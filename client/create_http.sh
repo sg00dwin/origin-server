@@ -15,10 +15,76 @@
 # General Public License and may only be used or replicated with the express
 # permission of Red Hat, Inc.
 
-LI_SERVER='li.mmcgrath.cloud.redhat.com'
+set -e
 
-echo -n "Username: "
-read username
-echo -n "Application: "
-read application
-curl --data-urlencode "username=${username}" --data-urlencode "application=${application}" "http://$LI_SERVER/create_http.php"
+LI_SERVER='li.mmcgrath.libra.mmcgrath.net'
+
+function quit {
+    echo $1 1>&2
+    exit
+}
+
+function print_help {
+    echo "Usage: $0"
+    echo "Create a new LAMP libra project."
+    echo
+    echo "  -u username"
+    echo "  -a application_name"
+    echo "  -d (optional: debug)"
+    exit 1
+}
+
+while getopts 'c:a:d' OPTION
+do
+    case $OPTION in
+        u) username=$OPTARG
+        ;;
+        a) application=$OPTARG
+        ;;
+        d) set -x
+        ;;
+        ?) print_help
+        ;;
+    esac
+done
+
+if ( [ -z "$username" ] || [ -z "$application" ] )
+then
+    print_help
+fi
+
+echo "Creating application space"
+
+curl --verbose -f --data-urlencode "username=${username}" --data-urlencode "application=${application}" "http://$LI_SERVER/create_http.php" > /tmp/libra_debug.txt 2>&1 || quit "Creation failed.  See /tmp/libra_debug.txt for more information"
+sleep_time=2
+attempt=0
+
+# Test several times, doubling sleep time between attempts.
+
+while [ $sleep_time -lt 65 ]
+do
+    attempt=$(($attempt+1))
+    echo "Testing attempt: $attempt"
+    curl -s -f http://${application}.${username}.libra.mmcgrath.net/ > /dev/null
+    exit_code=$?
+    case $exit_code in
+    0)
+        echo "Success!  Your application is now available at:"
+        echo
+        echo "      http://${application}.${username}.cloud.redhat.com/"
+        echo
+        exit 1
+    ;;
+    22)
+        echo "Connection success, but application not yet available.  Tryin again"
+    ;;
+    *)
+        echo "Attempt unknown"
+    ;;
+    esac
+    echo "sleeping ${sleep_time}s"
+    sleep ${sleep_time}
+    sleep_time=$(($sleep_time * 2))
+    
+done
+    
