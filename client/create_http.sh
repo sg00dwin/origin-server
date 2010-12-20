@@ -21,4 +21,4 @@ echo -n "Username: "
 read username
 echo -n "Application: "
 read application
-curl --data-urlencode "username=${username}" --data-urlencode "application=${application}" "http://$LI_SERVER/create_customer.php"
+curl --data-urlencode "username=${username}" --data-urlencode "application=${application}" "http://$LI_SERVER/create_http.php"
