@@ -63,6 +63,8 @@ attempt=0
 
 while [ $sleep_time -lt 65 ]
 do
+    echo "sleeping ${sleep_time}s"
+    sleep ${sleep_time}
     attempt=$(($attempt+1))
     echo "Testing attempt: $attempt"
     curl -s -f http://${application}.${username}.libra.mmcgrath.net/ > /dev/null
@@ -82,9 +84,6 @@ do
         echo "Attempt unknown"
     ;;
     esac
-    echo "sleeping ${sleep_time}s"
-    sleep ${sleep_time}
     sleep_time=$(($sleep_time * 2))
-    
 done
     
