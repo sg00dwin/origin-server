@@ -15,7 +15,7 @@
 # General Public License and may only be used or replicated with the express
 # permission of Red Hat, Inc.
 
-LI_SERVER='li.mmcgrath.cloud.redhat.com'
+LI_SERVER='li.mmcgrath.libra.mmcgrath.net'
 
 echo -n "Desired username: "
 read username

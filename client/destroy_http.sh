@@ -34,7 +34,7 @@ function print_help {
     exit 1
 }
 
-while getopts 'c:a:d' OPTION
+while getopts 'u:a:d' OPTION
 do
     case $OPTION in
         u) username=$OPTARG

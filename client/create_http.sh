@@ -34,7 +34,7 @@ function print_help {
     exit 1
 }
 
-while getopts 'c:a:d' OPTION
+while getopts 'u:a:d' OPTION
 do
     case $OPTION in
         u) username=$OPTARG
@@ -73,7 +73,7 @@ do
     0)
         echo "Success!  Your application is now available at:"
         echo
-        echo "      http://${application}.${username}.cloud.redhat.com/"
+        echo "      http://${application}.${username}.libra.mmcgrath.net/"
         echo
         exit 1
     ;;
