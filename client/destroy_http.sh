@@ -53,7 +53,7 @@ then
     print_help
 fi
 
-echo "Creating application space"
+echo "Destroying application space: ${application}"
 
 curl --verbose -f --data-urlencode "username=${username}" --data-urlencode "application=${application}" "http://$LI_SERVER/destroy_http.php" > /tmp/libra_debug.txt 2>&1 || quit "Creation failed.  See /tmp/libra_debug.txt for more information"
 sleep_time=2
