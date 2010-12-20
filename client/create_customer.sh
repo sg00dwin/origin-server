@@ -15,6 +15,7 @@
 # General Public License and may only be used or replicated with the express
 # permission of Red Hat, Inc.
 
+LI_SERVER='li.mmcgrath.cloud.redhat.com'
 
 echo -n "Desired username: "
 read username
@@ -30,4 +31,4 @@ ssh-keygen -t rsa -f ~/.ssh/libra_id_rsa
 fi
 ssh_key=$(awk '{ print $2 }' ~/.ssh/libra_id_rsa.pub)
 
-wget -qO- --post-data=username="${username}&email=${email}&ssh_key=${ssh_key}" http://localhost/li/create_customer.php
+curl --data-urlencode "username=${username}" --data-urlencode "email=${email}" --data-urlencode "ssh_key=${ssh_key}" "http://$LI_SERVER/create_customer.php"
