@@ -46,6 +46,10 @@ then
     print_help
 fi
 
+#
+# Check to see if a libra_id_rsa key exists, if not create it.
+#
+
 if [ -f ~/.ssh/libra_id_rsa ]
 then
 echo "Libra key found at ~/.ssh/libra_id_rsa.  Reusing..."
@@ -54,6 +58,10 @@ echo "Generating libra ssh key to ~/.ssh/libra_id_rsa"
 ssh-keygen -t rsa -f ~/.ssh/libra_id_rsa
 fi
 ssh_key=$(awk '{ print $2 }' ~/.ssh/libra_id_rsa.pub)
+
+#
+# Contact li server and create customer
+#
 
 TMPDIR=$(mktemp -d --suffix=libra)
 curl -s --data-urlencode "username=${username}" --data-urlencode "email=${email}" --data-urlencode "ssh_key=${ssh_key}" "http://$LI_SERVER/create_customer.php" > $TMPDIR/debug.log 2>&1 || quit "Creation failed.  See $TMPDIR/debug.log for more information"
