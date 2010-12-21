@@ -16,8 +16,8 @@ function my_exec($cmd, $input='')
                       );
          }
 
-$results = my_exec("/usr/sbin/mc-rpc -I mserver.cloud.redhat.com libra create_customer customer='$customer_name' email='$email' ssh_key='$ssh_key' 2>&1", $out);
-print_r("stdout: " . $results['stdout']);
-print_r("stderr: " . $results['stderr']);
-print_r("return: " . $results['return']);
+$results = my_exec("/usr/sbin/mc-rpc -I mserver.cloud.redhat.com libra create_customer customer='$customer_name' email='$email' ssh_key='$ssh_key -v' 2>&1", $out);
+print_r("\nstdout: " . $results['stdout']);
+print_r("\nstderr: " . $results['stderr']);
+print_r("\nreturn: " . $results['return']);
 ?>
