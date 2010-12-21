@@ -167,6 +167,8 @@ do
             echo
             echo "      http://${application}.${username}.libra.mmcgrath.net/"
             echo
+            echo "To make changes to your application, commit to $new_repo_path/."
+            echo "Then run 'git push libra master' to update your libra space"
             rm -rf $TMPDIR
             exit 1
         else

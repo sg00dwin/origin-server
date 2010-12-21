@@ -56,7 +56,7 @@ fi
 echo "Destroying application space: ${application}"
 
 TMPDIR=$(mktemp -d --suffix=libra)
-curl --verbose -f --data-urlencode "username=${username}" --data-urlencode "application=${application}" "http://$LI_SERVER/destroy_http.php" > $TMPDIR/debug.log 2>&1 || quit "Creation failed.  See $TMPDIR/debug.log for more information"
+curl --verbose -f --data-urlencode "username=${username}" --data-urlencode "application=${application}" "http://$LI_SERVER/destroy_http.php" > $TMPDIR/debug.log 2>&1 || quit "Destruction failed.  See $TMPDIR/debug.log for more information"
 sleep_time=2
 attempt=0
 

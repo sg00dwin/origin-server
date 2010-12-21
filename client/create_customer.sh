@@ -17,10 +17,34 @@
 
 LI_SERVER='li.mmcgrath.libra.mmcgrath.net'
 
-echo -n "Desired username: "
-read username
-echo -n "Email: "
-read email
+function print_help {
+    echo "Usage: $0"
+    echo "Create a new libra user."
+    echo
+    echo "  -u username             Libra Username"
+    echo "  -e email                Email address"
+    echo "  -d (optional: debug)"
+    exit 1
+}
+
+while getopts 'u:e:d' OPTION
+do
+    case $OPTION in
+        u) username=$OPTARG
+        ;;
+        e) email=$OPTARG
+        ;;
+        d) set -x
+        ;;
+        ?) print_help
+        ;;
+    esac
+done
+
+if ( [ -z "$username" ] || [ -z "$email" ] )
+then
+    print_help
+fi
 
 if [ -f ~/.ssh/libra_id_rsa ]
 then
@@ -31,4 +55,5 @@ ssh-keygen -t rsa -f ~/.ssh/libra_id_rsa
 fi
 ssh_key=$(awk '{ print $2 }' ~/.ssh/libra_id_rsa.pub)
 
-curl --data-urlencode "username=${username}" --data-urlencode "email=${email}" --data-urlencode "ssh_key=${ssh_key}" "http://$LI_SERVER/create_customer.php"
+TMPDIR=$(mktemp -d --suffix=libra)
+curl -s --data-urlencode "username=${username}" --data-urlencode "email=${email}" --data-urlencode "ssh_key=${ssh_key}" "http://$LI_SERVER/create_customer.php" > $TMPDIR/debug.log 2>&1 || quit "Creation failed.  See $TMPDIR/debug.log for more information"
