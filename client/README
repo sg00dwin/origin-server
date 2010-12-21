@@ -1,0 +1,37 @@
+Li
+========
+
+Thank you for helping test Li.  This is all non-production and still just a
+proof of concept.  It could vanish at any time or possibly get merged into
+another project.
+
+Please stop by #libra on an internal mailing list if you run into issue.
+
+
+Quickstart
+========
+
+Step 1:  Create a li customer:
+
+$ ./create_customer -u desiredusername -e emailaddress
+
+Step 2: Create a li application
+
+$ ./create_http -u desiredusername -a appname -n /path/to/new/git/repo
+
+Once that's complete, follow the directions printed at the end of running
+create_http
+
+
+Updating your site
+========
+
+Once your site is created, updating it is as simple as making changes to your
+git repo.  Commit them, then push.  For example:
+
+$ edit index.php
+$ git commit -a -m "what I did"
+$ git push libra master
+
+Then just reload your web page to see the changes
+
