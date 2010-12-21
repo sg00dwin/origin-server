@@ -27,7 +27,7 @@ function print_help {
     echo "Usage: $0"
     echo "Create a new libra user."
     echo
-    echo "  -u username             Libra Username"
+    echo "  -u username             Libra Username ^[a-zA-Z0-9]+$"
     echo "  -e email                Email address"
     echo "  -d (optional: debug)"
     exit 1
