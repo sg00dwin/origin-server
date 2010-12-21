@@ -98,10 +98,10 @@ echo
 # Create local git repo
 #
 
-echo "Creating local application space"
+echo "Creating local application space in"
 [ -d $new_repo_path ] && quit "$new_repo_path already exists!\nPlease specify a new path"
 mkdir -p $new_repo_path
-pushd $new_repo_path
+pushd $new_repo_path > /dev/null
 git init > /dev/null
 cat <<EOF >> .git/config
 [remote "libra"]
@@ -131,7 +131,8 @@ print 1;
 EOF
 git add *
 git commit -a -m "Initial libra creation" > /dev/null
-popd
+popd > /dev/null
+echo "    Repo created: $new_repo_path"
 
 #
 # Create remote application space
@@ -143,20 +144,21 @@ curl --verbose -f --data-urlencode "username=${username}" --data-urlencode "appl
 
 if grep -q 'Exit Code: 0' $TMPDIR/debug.log
 then
-    echo "creation successful"
+    echo "    Creation successful"
 else
-    quit "Creation failed.  See $TMPDIR/debug.log for more information"
+    quit "    Creation failed.  See $TMPDIR/debug.log for more information"
 fi
 
 #
 # Check / add new host to ~/.ssh/config
 #
 
+echo "Checking ~/.ssh/config"
 if grep -q ${application}.${username}.libra.mmcgrath.net ~/.ssh/config
 then
-    echo "Found ${application}.${username}.libra.mmcgrath.net in ~/.ssh/config."
+    echo "    Found ${application}.${username}.libra.mmcgrath.net in ~/.ssh/config."
 else
-    echo "Adding ${application}.${username}.libra.mmcgrath.net to ~/.ssh/config"
+    echo "    Adding ${application}.${username}.libra.mmcgrath.net to ~/.ssh/config"
     cat <<EOF >> ~/.ssh/config
 
 # Added by libra app on $(date)
@@ -186,10 +188,10 @@ fi
 # Push initial repo upstream (contains index and health_check)
 #
 
-pushd $new_repo_path
-echo "Doing initial test push"
+pushd $new_repo_path > /dev/null
+echo "Doing initial test push."
 git push -q libra master
-popd
+popd > /dev/null
 
 sleep_time=2
 attempt=0
@@ -198,12 +200,14 @@ attempt=0
 # Test several times, doubling sleep time between attempts.
 #
 
+echo
+echo "Confirming application is available"
 while [ $sleep_time -lt 65 ]
 do
-    echo "sleeping ${sleep_time}s"
+    echo "    sleeping ${sleep_time}s"
     sleep ${sleep_time}
     attempt=$(($attempt+1))
-    echo "Testing attempt: $attempt"
+    echo "    Testing attempt: $attempt"
     curl -s -f http://${application}.${username}.libra.mmcgrath.net/health_check.php > /dev/null
     curl -s -f http://${application}.${username}.libra.mmcgrath.net/health_check.php | grep -q -e '^1$'
     exit_codes=${PIPESTATUS[*]}
@@ -218,6 +222,7 @@ do
     0)
         if [ $grep_exit = "0" ]
         then
+            echo
             echo "Success!  Your application is now available at:"
             echo
             echo "      http://${application}.${username}.libra.mmcgrath.net/"
@@ -228,14 +233,14 @@ do
             rm -rf $TMPDIR
             exit 1
         else
-            echo "Connection success, health_check failed"
+            echo "    Connection success, health_check failed"
         fi
     ;;
     22)
-        echo "Connection success, but application not yet available.  Tryin again"
+        echo "    Connection success, but application not yet available.  Tryin again"
     ;;
     *)
-        echo "Attempt unknown"
+        echo "    Attempt unknown"
     ;;
     esac
     sleep_time=$(($sleep_time * 2))
