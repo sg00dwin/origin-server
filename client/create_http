@@ -28,8 +28,8 @@ function print_help {
     echo "Usage: $0"
     echo "Create a new LAMP libra project."
     echo
-    echo "  -u username             Your libra username"
-    echo "  -a application_name     Application name"
+    echo "  -u username             Your libra username ^[a-zA-Z0-9]+$"
+    echo "  -a application_name     Application name ^[a-zA-Z0-9]+$"
     echo "  -n new_repo_path        Path to new git repo"
     echo "  -y                      Pre-agree to conditions (don't prompt)"
     echo "  -d                      (optional: debug)"
@@ -102,7 +102,7 @@ echo "Creating local application space"
 [ -d $new_repo_path ] && quit "$new_repo_path already exists!\nPlease specify a new path"
 mkdir -p $new_repo_path
 pushd $new_repo_path
-git init
+git init > /dev/null
 cat <<EOF >> .git/config
 [remote "libra"]
     url = ssh://${username}@${application}.${username}.libra.mmcgrath.net/var/lib/libra/${username}/git/${application}.git/
@@ -141,6 +141,13 @@ TMPDIR=$(mktemp -d)
 echo "Creating remote application space"
 curl --verbose -f --data-urlencode "username=${username}" --data-urlencode "application=${application}" "http://$LI_SERVER/create_http.php" > $TMPDIR/debug.log 2>&1 || quit "Creation failed.  See $TMPDIR/debug.log for more information"
 
+if grep -q 'Exit Code: 0' $TMPDIR/debug.log
+then
+    echo "creation successful"
+else
+    quit "Creation failed.  See $TMPDIR/debug.log for more information"
+fi
+
 #
 # Check or add new host to ~/.ssh/config
 #
@@ -161,6 +168,19 @@ EOF
 fi
 chmod 0700 ~/.ssh/
 chmod 0600 ~/.ssh/config
+
+#
+# Confirm host exists
+#
+echo "Confirming host exists"
+if host ${application}.${username}.libra.mmcgrath.net > /dev/null
+then
+    echo "  Host not found, retrying in 5 seconds"
+    sleep 5
+    host ${application}.${username}.libra.mmcgrath.net > /dev/null || quit "Host could not be created.  Retry in a couple of minutes or report a bug"
+else
+    echo "  Host found"
+fi
 
 # 
 # Push initial repo upstream (contains index and health_check)
