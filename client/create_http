@@ -130,7 +130,7 @@ print 1;
 ?>
 EOF
 git add *
-git commit -a -m "Initial libra creation"
+git commit -a -m "Initial libra creation" > /dev/null
 popd
 
 #
@@ -149,7 +149,7 @@ else
 fi
 
 #
-# Check or add new host to ~/.ssh/config
+# Check / add new host to ~/.ssh/config
 #
 
 if grep -q ${application}.${username}.libra.mmcgrath.net ~/.ssh/config
