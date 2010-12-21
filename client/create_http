@@ -188,7 +188,7 @@ fi
 
 pushd $new_repo_path
 echo "Doing initial test push"
-git push libra master
+git push -q libra master
 popd
 
 sleep_time=2
