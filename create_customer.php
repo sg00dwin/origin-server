@@ -4,6 +4,20 @@ $customer_name = escapeshellarg(filter_var($_POST['username'], FILTER_SANITIZE_S
 $email = escapeshellarg(filter_var($_POST['email'], FILTER_SANITIZE_EMAIL, FILTER_FLAG_STRIP_LOW));
 $ssh_key = escapeshellarg(filter_var($_POST['ssh_key'], FILTER_SANITIZE_STRING));
 
-exec("/usr/sbin/mc-rpc -I mserver.cloud.redhat.com libra create_customer customer='$customer_name' email='$email' ssh_key='$ssh_key' 2>&1", $out);
-print_r($out);
+function my_exec($cmd, $input='')
+         {$proc=proc_open($cmd, array(0=>array('pipe', 'r'), 1=>array('pipe', 'w'), 2=>array('pipe', 'w')), $pipes);
+          fwrite($pipes[0], $input);fclose($pipes[0]);
+          $stdout=stream_get_contents($pipes[1]);fclose($pipes[1]);
+          $stderr=stream_get_contents($pipes[2]);fclose($pipes[2]);
+          $rtn=proc_close($proc);
+          return array('stdout'=>$stdout,
+                       'stderr'=>$stderr,
+                       'return'=>$rtn
+                      );
+         }
+
+$results = my_exec("/usr/sbin/mc-rpc -I mserver.cloud.redhat.com libra create_customer customer='$customer_name' email='$email' ssh_key='$ssh_key' 2>&1", $out);
+print_r("stdout: " . $results['stdout']);
+print_r("stderr: " . $results['stderr']);
+print_r("return: " . $results['return']);
 ?>
