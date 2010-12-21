@@ -81,6 +81,6 @@ then
     rm -rf $TMPDIR
     quit "Creation successful (probably).  You may now create an application"
 else
-    grep Already $TMPDIR/debug.log
+    grep Already $TMPDIR/debug.log ||:
     quit "Creation failed.  See $TMPDIR/debug.log for more information"
 fi

@@ -43,7 +43,7 @@ do
             echo $username | grep -q '[^a-zA-Z0-9]' && quit "Please make sure username is alpha-numeric only"
         ;;
         a) application=$OPTARG
-            echo $application | grep -q '[^a-zA-Z0-9]' && quit "Please make sure username is alpha-numeric only"
+            echo $application | grep -q '[^a-zA-Z0-9]' && quit "Please make sure application is alpha-numeric only"
         ;;
         n) new_repo_path=$OPTARG
         ;;
@@ -101,7 +101,7 @@ echo
 #
 
 echo "Creating local application space in"
-[ -d $new_repo_path ] && quit "$new_repo_path already exists!\nPlease specify a new path"
+[ -d $new_repo_path ] && quit "git repo: $new_repo_path/ already exists!\nPlease remove it or specify a new path."
 mkdir -p $new_repo_path
 pushd $new_repo_path > /dev/null
 git init > /dev/null
@@ -148,6 +148,8 @@ if grep -q 'Exit Code: 0' $TMPDIR/debug.log
 then
     echo "    Creation successful"
 else
+    echo
+    grep ERROR $TMPDIR/debug.log ||:
     quit "    Creation failed.  See $TMPDIR/debug.log for more information"
 fi
 
