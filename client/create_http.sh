@@ -45,7 +45,7 @@ do
         ;;
         n) new_repo_path=$OPTARG
         ;;
-        y) pre_agree=$OPTARG
+        y) pre_agree='y'
         ;;
         d) set -x
         ;;
@@ -109,8 +109,9 @@ git add *
 git commit -a -m "Initial libra creation"
 popd
 
+TMPDIR=$(mktemp -d --suffix=libra)
 echo "Creating remote application space"
-curl --verbose -f --data-urlencode "username=${username}" --data-urlencode "application=${application}" "http://$LI_SERVER/create_http.php" > /tmp/$USER_libra_debug.txt 2>&1 || quit "Creation failed.  See /tmp/libra_debug.txt for more information"
+curl --verbose -f --data-urlencode "username=${username}" --data-urlencode "application=${application}" "http://$LI_SERVER/create_http.php" > $TMPDIR/debug.log 2>&1 || quit "Creation failed.  See $TMPDIR/debug.log for more information"
 
 #
 # Check or add new host to ~/.ssh/config
@@ -122,6 +123,7 @@ then
 else
     echo "Adding ${application}.${username}.libra.mmcgrath.net to ~/.ssh/config"
     cat <<EOF >> ~/.ssh/config
+
 # Added by libra app on $(date)
 Host ${application}.${username}.libra.mmcgrath.net
     User ${username}
@@ -153,14 +155,23 @@ do
     attempt=$(($attempt+1))
     echo "Testing attempt: $attempt"
     curl -s -f http://${application}.${username}.libra.mmcgrath.net/health_check.php > /dev/null
-    exit_code=$?
+    curl -s -f http://${application}.${username}.libra.mmcgrath.net/health_check.php | grep -q -e '^1$'
+    exit_codes=${PIPESTATUS[*]}
+    grep_exit=$(echo $exit_codes | awk '{ print $2 }')
+    exit_code=$(echo $exit_codes | awk '{ print $1 }')
     case $exit_code in
     0)
-        echo "Success!  Your application is now available at:"
-        echo
-        echo "      http://${application}.${username}.libra.mmcgrath.net/"
-        echo
-        exit 1
+        if [ $grep_exit = "0" ]
+        then
+            echo "Success!  Your application is now available at:"
+            echo
+            echo "      http://${application}.${username}.libra.mmcgrath.net/"
+            echo
+            rm -rf $TMPDIR
+            exit 1
+        else
+            echo "Connection success, health_check failed"
+        fi
     ;;
     22)
         echo "Connection success, but application not yet available.  Tryin again"

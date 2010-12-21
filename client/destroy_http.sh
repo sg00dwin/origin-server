@@ -55,11 +55,14 @@ fi
 
 echo "Destroying application space: ${application}"
 
-curl --verbose -f --data-urlencode "username=${username}" --data-urlencode "application=${application}" "http://$LI_SERVER/destroy_http.php" > /tmp/$USER_libra_debug.txt 2>&1 || quit "Creation failed.  See /tmp/libra_debug.txt for more information"
+TMPDIR=$(mktemp -d --suffix=libra)
+curl --verbose -f --data-urlencode "username=${username}" --data-urlencode "application=${application}" "http://$LI_SERVER/destroy_http.php" > $TMPDIR/debug.log 2>&1 || quit "Creation failed.  See $TMPDIR/debug.log for more information"
 sleep_time=2
 attempt=0
 
+#
 # Test several times, doubling sleep time between attempts.
+#
 
 while [ $sleep_time -lt 65 ]
 do
@@ -67,11 +70,28 @@ do
     sleep ${sleep_time}
     attempt=$(($attempt+1))
     echo "Testing attempt: $attempt"
-    curl -s -f http://${application}.${username}.libra.mmcgrath.net/ > /dev/null
-    exit_code=$?
+    curl -s -f http://${application}.${username}.libra.mmcgrath.net/health_check.php | grep -q -e '^1$' ||:
+    exit_codes=${PIPESTATUS[*]}
+    grep_exit=$(echo $exit_codes | awk '{ print $2 }')
+    exit_code=$(echo $exit_codes | awk '{ print $1 }')
     case $exit_code in
     0)
-        echo "Application still exists"
+        if [ ! $grep_exit = '0' ]
+        then
+            echo "Remove successful!  Confirm removal at:"
+            echo
+            echo "      http://${application}.${username}.libra.mmcgrath.net/"
+            echo
+            rm -rf $TMPDIR
+            exit 1
+        else
+            echo "Connection success, health_check failed: Confirm removal at:"
+            echo
+            echo "      http://${application}.${username}.libra.mmcgrath.net/"
+            echo
+            rm -rf $TMPDIR
+            exit 1
+        fi
     ;;
     6)
         echo "Application removed!  Confirm at:"
@@ -85,4 +105,3 @@ do
     esac
     sleep_time=$(($sleep_time * 2))
 done
-    
