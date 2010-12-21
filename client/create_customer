@@ -37,8 +37,10 @@ while getopts 'u:e:d' OPTION
 do
     case $OPTION in
         u) username=$OPTARG
+            echo $username | grep -q '[^a-zA-Z0-9]' && quit "Please make sure username is alpha-numeric only"
         ;;
         e) email=$OPTARG
+            echo $email | egrep -q '[^[:space:]]+\>@[a-zA-Z_\.]+\.[a-zA-Z]{2,3}' || quit "Please make sure to provide an actual email address"
         ;;
         d) set -x
         ;;

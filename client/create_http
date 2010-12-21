@@ -40,8 +40,10 @@ while getopts 'u:a:n:dy' OPTION
 do
     case $OPTION in
         u) username=$OPTARG
+            echo $username | grep -q '[^a-zA-Z0-9]' && quit "Please make sure username is alpha-numeric only"
         ;;
         a) application=$OPTARG
+            echo $application | grep -q '[^a-zA-Z0-9]' && quit "Please make sure username is alpha-numeric only"
         ;;
         n) new_repo_path=$OPTARG
         ;;
@@ -175,7 +177,7 @@ chmod 0600 ~/.ssh/config
 # Confirm host exists
 #
 echo "Confirming host exists"
-if host ${application}.${username}.libra.mmcgrath.net > /dev/null
+if ! host ${application}.${username}.libra.mmcgrath.net > /dev/null
 then
     echo "  Host not found, retrying in 5 seconds"
     sleep 5
@@ -204,8 +206,6 @@ echo
 echo "Confirming application is available"
 while [ $sleep_time -lt 65 ]
 do
-    echo "    sleeping ${sleep_time}s"
-    sleep ${sleep_time}
     attempt=$(($attempt+1))
     echo "    Testing attempt: $attempt"
     curl -s -f http://${application}.${username}.libra.mmcgrath.net/health_check.php > /dev/null
@@ -243,5 +243,7 @@ do
         echo "    Attempt unknown"
     ;;
     esac
+    echo "    sleeping ${sleep_time}s"
+    sleep ${sleep_time}
     sleep_time=$(($sleep_time * 2))
 done
