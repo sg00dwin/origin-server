@@ -1,0 +1,35 @@
+#!/usr/bin/python -tt
+
+import sys, os
+
+commands = {
+    "git-receive-pack": "/usr/bin/git-receive-pack",
+    "git-upload-pack": "/usr/bin/git-upload-pack",
+}
+
+if __name__ == '__main__':
+    orig_cmd = os.environ.get('SSH_ORIGINAL_COMMAND')
+    if not orig_cmd:
+        print "Need a command"
+        sys.exit(1)
+    allargs = orig_cmd.split()
+    try:
+        basecmd = os.path.basename(allargs[0])
+        cmd = commands[basecmd]
+    except:
+        sys.stderr.write("Invalid command %s\n" % orig_cmd)
+        sys.exit(2)
+
+    if basecmd in ('git-receive-pack', 'git-upload-pack'):
+        # git repositories need to be parsed specially
+        thearg = ' '.join(allargs[1:])
+        if thearg[0] == "'" and thearg[-1] == "'":
+            thearg = thearg.replace("'","")
+        thearg = thearg.replace("\\'", "")
+        if thearg[:len('/var/lib/libra/')] != '/var/lib/libra/' or not os.path.isdir(thearg):
+            print "Invalid repository %s" % thearg
+            sys.exit(3)
+        allargs = [thearg]
+    os.execv(cmd, [cmd] + allargs)
+    sys.exit(1)
+

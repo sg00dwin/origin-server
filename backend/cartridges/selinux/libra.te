@@ -1,0 +1,3 @@
+# Selinux module for Libra
+
+policy_module(libra, 0.0.1)

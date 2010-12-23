@@ -1,0 +1,117 @@
+#!/bin/bash
+#
+# libra         This shell script starts libra services
+#
+# Author:       Seth Vidal <skvidal@phy.duke.edu>
+#               Mike McGrath <mmcgrath@redhat.com>
+#
+# chkconfig:    - 90 01
+#
+# description:  Start local libra services
+# processname:  NA
+#
+
+# source function library
+. /etc/rc.d/init.d/functions
+
+lockfile=/var/lock/subsys/libra
+
+RETVAL=0
+GROUP_RETVAL=0
+
+start() {
+    echo "Starting Libra Services: "
+    # This won't scale forever, but works fine in the '100 or so' range
+    for ctl_script in /var/lib/libra/*/httpd/*/*_ctl.sh
+    do
+        script_name=$(basename $ctl_script)
+        echo -n $"    Starting http for ${script_name%_ctl.sh}"
+        daemon --pidfile=httpd_${script_name} $ctl_script start
+        RETVAL=$?
+        echo
+        if [ $RETVAL -eq 0 ]
+        then
+            echo_success
+        else
+            GROUP_RETVAL=$(($GROUP_RETVAL+1))
+            echo_failure
+        fi
+    done
+    [ $GROUP_RETVAL -eq 0 ] && touch ${lockfile}
+    [ $GROUP_RETVAL -eq 0 ] && success || failure
+    echo -n $"Libra services started"
+    echo
+    return $GROUP_RETVAL
+}
+
+stop() {
+    echo "Stopping Libra Services: "
+    # This won't scale forever, but works fine in the '100 or so' range
+    for ctl_script in /var/lib/libra/*/httpd/*/*_ctl.sh
+    do
+        script_name=$(basename $ctl_script)
+        echo -n $"    Stopping http for ${script_name%_ctl.sh}"
+        daemon --pidfile=httpd_${script_name} $ctl_script stop
+        RETVAL=$?
+        echo
+        if [ $RETVAL -eq 0 ]
+        then
+            echo_success
+        else
+            GROUP_RETVAL=$(($GROUP_RETVAL+1))
+            echo_failure
+        fi
+    done
+    [ $GROUP_RETVAL -eq 0 ] && touch ${lockfile}
+    echo -n $"Libra services stopped"
+    echo
+    return $GROUP_RETVAL
+}
+
+restart() {
+    stop
+    start
+}
+
+case "$1" in
+  start)
+    start
+    ;;
+  stop) 
+    stop
+    ;;
+  restart|force-reload)
+    restart
+    ;;
+  reload)
+    ;;
+  condrestart)
+    [ -f "$lockfile" ] && restart
+    ;;
+  status)
+    echo "Checking Libra Services: "
+    # This won't scale forever, but works fine in the '100 or so' range
+    for ctl_script in /var/lib/libra/*/httpd/*/*_ctl.sh
+    do
+        script_name=$(basename $ctl_script)
+        echo -n $"    Checking http for ${script_name%_ctl.sh}"
+        daemon --pidfile=httpd_${script_name} $ctl_script status
+        RETVAL=$?
+        echo
+        if [ $RETVAL -eq 0 ]
+        then
+            echo_success
+        else
+            GROUP_RETVAL=$(($GROUP_RETVAL+1))
+            echo_failure
+        fi
+    done
+    echo
+    return $GROUP_RETVAL
+    ;;
+  *)
+    echo $"Usage: $0 {start|stop|status|restart|reload|force-reload|condrestart}"
+    exit 1
+esac
+
+exit $RETVAL
