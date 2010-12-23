@@ -1,3 +1,8 @@
+#
+# = libra.rb: Facter integration for li
+#
+# Author:: Mike McGrath
+# 
 # Copyright © 2010 Mike McGrath All rights reserved
 # Copyright © 2010 Red Hat, Inc. All rights reserved
 
@@ -13,17 +18,36 @@
 # incorporated in the source code or documentation are not subject to the GNU
 # General Public License and may only be used or replicated with the express
 # permission of Red Hat, Inc.
+#
+# == Description
+# 
+# libra.rb for facter adds several additional li related facts which can then
+# be queried by facter (and mcollective).  Examples include the number of git
+# repositories on the host, customer information, etc.
 
-# Count number of git repos on host
 
-if File.exists?("/var/lib/libra")
-    Facter.add(:git_repos) do
-        setcode do
-            %x[/bin/ls /var/lib/libra/*/git/ -d | /usr/bin/wc -l].chomp
+#
+# Count the number of git repos on this host
+#
+Facter.add(:git_repos) do
+    setcode do
+        git_repos=0
+        if File.exists?("/var/lib/libra")
+            Dir.foreach("/var/lib/libra/") do |customer|
+                if File.exists?("/var/lib/libra/#{customer}/git/")
+                    Dir.foreach("/var/lib/libra/#{customer}/git/") { |git|  git_repos += 1 if git =~ /git$/}
+                end
+            end
         end
+        git_repos
     end
+end
 
 
+#
+# Lists customers on the host as well as what what git repos they currently own
+#
+if File.exists?("/var/lib/libra")
     # Determine customers on host and hosted info
     customers = Dir.entries('/var/lib/libra/')
     
