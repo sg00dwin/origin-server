@@ -1,0 +1,29 @@
+Li Architecture
+===============
+
+The basic workflow is this:
+
+Client => php webapp => mcollective rpc => mcollective server => \
+    mcollective agent => local scripts (to create users, repos, etc)
+
+Of the workflow above, the code is seperated as follows:
+
+Client => client/
+php webapp => php/
+mcollective agent => backend/mcollective/
+local scripts => backend/mcollective/cartridges/
+
+The other bit missing is the facter facts located in:
+
+backend/mcollective/facter/
+
+The facter scripts only provide information (like the number of git repos on
+a given host).  Facter doesn't make changes.  Mcollective, however, can use
+these facts as filters or for searching using the mc-facts command.
+
+Mcollective
+===========
+
+Mcollective, using the stomp protocol, is the messaging bus.  More information:
+
+http://code.google.com/p/mcollective/
