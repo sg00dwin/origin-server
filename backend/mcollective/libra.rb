@@ -1,4 +1,34 @@
+# = libra.rb: li integration for mcollective
+#
+# Author:: Mike McGrath
+# 
+# Copyright © 2010 Mike McGrath All rights reserved
+# Copyright © 2010 Red Hat, Inc. All rights reserved
+#
+# This copyrighted material is made available to anyone wishing to use, modify,
+# copy, or redistribute it subject to the terms and conditions of the GNU
+# General Public License v.2.  This program is distributed in the hope that it
+# will be useful, but WITHOUT ANY WARRANTY expressed or implied, including the
+# implied warranties of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.  You should have
+# received a copy of the GNU General Public License along with this program;
+# if not, write to the Free Software Foundation, Inc., 51 Franklin Street,
+# Fifth Floor, Boston, MA 02110-1301, USA. Any Red Hat trademarks that are
+# incorporated in the source code or documentation are not subject to the GNU
+# General Public License and may only be used or replicated with the express
+# permission of Red Hat, Inc.
+#
+# == Description
+# 
+# libra.rb for mcollective does manipulation of libra services and customer
+# data.  This can start and stop services, create and destroy applications
+# as well as create new customers.
+#
+
 module MCollective
+    #
+    # Li mcollective agent
+    #
     module Agent
         class Libra<RPC::Agent
             metadata    :name        => "Libra Management",
@@ -9,11 +39,19 @@ module MCollective
                         :url         => "https://engineering.redhat.com/trac/Libra",
                         :timeout     => 60
 
-            # Basic echo server
+            #
+            # Simple echo method
+            # 
             def echo_action
                 validate :msg, String
                 reply[:msg] = request[:msg]
             end
+            #
+            # Creates a new customer.
+            # Creates username.
+            # Creates home dir structure.
+            # Adds ssh key.
+            #
             def create_customer_action
                 validate :customer, /^[a-zA-Z0-9]+$/
                 validate :email, /^[a-zA-Z][\w\.-]*[a-zA-Z0-9]@[a-zA-Z0-9][\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]$/
@@ -26,6 +64,9 @@ module MCollective
                 reply[:exitcode] = $?.exitstatus
                 reply.fail! "create_customer failed #{reply[:exitcode]}" unless reply[:exitcode] == 0
             end
+            #
+            # Creates http environment for customer to use
+            #
             def create_http_action
                 validate :customer, /^[a-zA-Z0-9]+$/
                 validate :application, /^[a-zA-Z0-9]+$/
@@ -37,6 +78,9 @@ module MCollective
                 reply[:exitcode] = $?.exitstatus
                 reply.fail! "create_http failed #{reply[:exitcode]}" unless reply[:exitcode] == 0
             end
+            #
+            # Destroys (deletes) http environment
+            #
             def destroy_http_action
                 validate :customer, /^[a-zA-Z0-9]+$/
                 validate :application, /^[a-zA-Z0-9]+$/
@@ -48,6 +92,9 @@ module MCollective
                 reply[:exitcode] = $?.exitstatus
                 reply.fail! "destroy_http failed #{reply[:exitcode]}" unless reply[:exitcode] == 0
             end
+            #
+            # Creates git repo for a customer
+            #
             def create_git_action
                 validate :customer, /^[a-zA-Z0-9]+$/
                 validate :application, /^[a-zA-Z0-9]+$/
