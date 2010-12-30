@@ -28,7 +28,7 @@ libra_kpfile = "#{ENV['HOME']}/.ssh/libra_id_rsa.pub"
 li_server = 'li.mmcgrath.libra.mmcgrath.net'
 debug = false
 
-def usage()
+def p_usage
     puts <<USAGE
 
 Usage: create_customer
@@ -46,12 +46,12 @@ end
 def validate_email(email)
     if email =~ /([^@]+)@([a-zA-Z0-9\.])+\.([a-zA-Z]{2,3})/
         if $1 =~ /[^a-zA-Z0-9\.]/
-            false
+            return false
         else
-            true
+            return true
         end
     else
-        false
+        return false
     end
 end
 
@@ -68,7 +68,7 @@ opts.each do |o, a|
 end
 
 if opt["help"]
-    usage()
+    p_usage
 end
 
 if opt["debug"]
@@ -78,7 +78,7 @@ end
 if opt["user"]
     if opt["user"] =~ /[^0-9a-zA-Z]/
         puts "username contains non-alphanumeric characters!"
-        usage()
+        p_usage
     end
 else
     puts "Libra username is required"
@@ -87,31 +87,32 @@ end
 if opt["email"]
     if !validate_email(opt["email"])
         puts "email contains invalid characters!"
-        usage()
+        p_usage
     end
 else
     puts "Libra email address is required"
 end
 
 if !opt["email"] || !opt["user"]
-    usage()
+    p_usage
 end
 
 #
 # Check to see if a libra_id_rsa key exists, if not create it.
 #
 
-if File::readable?(libra_kfile)
+if File.readable?(libra_kfile)
     puts "Libra key found at #{libra_kfile}.  Reusing..."
 else
     puts "Generating libra ssh key to #{libra_kfile}"
+    # Use system for interaction
     system("ssh-keygen -t rsa -f #{libra_kfile}")
 end
 
-ssh_key = File::open(libra_kpfile).gets.chomp.split(' ')[1]
+ssh_key = File.open(libra_kpfile).gets.chomp.split(' ')[1]
 
 puts "Contacting server http://#{li_server}"
-response = Net::HTTP.post_form(URI.parse("http://#{li_server}/create_customer.php"),
+response = Net.HTTP.post_form(URI.parse("http://#{li_server}/create_customer.php"),
                            {'username' => opt['user'],
                            'email' => opt['email'],
                            'ssh_key' => ssh_key})

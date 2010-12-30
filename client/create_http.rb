@@ -28,7 +28,7 @@ ssh_config_d = "#{ENV['HOME']}/.ssh/"
 li_server = 'li.mmcgrath.libra.mmcgrath.net'
 debug = false
 
-def usage()
+def p_usage
     puts <<USAGE
 
 Usage: create_http
@@ -60,7 +60,7 @@ opts.each do |o, a|
 end
 
 if opt["help"]
-    usage()
+    p_usage
 end
 
 if opt["debug"]
@@ -70,7 +70,7 @@ end
 if opt["user"]
     if opt["user"] =~ /[^0-9a-zA-Z]/
         puts "username contains non-alphanumeric characters!"
-        usage()
+        p_usage
     end
 else
     puts "Libra username is required"
@@ -79,7 +79,7 @@ end
 if opt["app"]
     if opt["app"] =~ /[^0-9a-zA-Z]/
         puts "application name contains non-alphanumeric characters!"
-        usage()
+        p_usage
     end
 else
     puts "Libra application name is required"
@@ -89,7 +89,7 @@ if !opt["repo"]
     puts "Git repo path is required"
 end
 if !opt["user"] || !opt["app"] || !opt["repo"]
-    usage()
+    p_usage
 end
 
 #
@@ -130,18 +130,18 @@ puts ""
 # Create local git repo
 #
 
-puts "Creating local application space in #{opt['repo']}"
-if File::directory?(opt['repo'])
+puts "Creating local application space: " + opt['repo']
+if File.directory?(opt['repo'])
     puts "We will not overwrite an existing git repo. Exiting"
     exit 255
 end
-Dir::mkdir(opt["repo"])
+Dir.mkdir(opt["repo"])
 
 #
 # head on over
 #
-old_dir = Dir::getwd
-Dir::chdir(opt["repo"])
+old_dir = Dir.getwd
+Dir.chdir(opt["repo"])
 git = `git init`
 if $?.exitstatus != 0
     puts "Error in calling git init"
@@ -149,7 +149,7 @@ if $?.exitstatus != 0
     exit 255
 end
 
-File::new(".git/config", "w").puts <<GIT
+File.new(".git/config", "w").puts <<GIT
 [remote "libra"]
     url = ssh://#{opt['user']}@#{opt['app']}.#{opt['user']}.libra.mmcgrath.net/var/lib/libra/#{opt['user']}/git/#{opt['app']}.git/
 GIT
@@ -158,7 +158,7 @@ GIT
 # Add our skeleton files
 #
 
-File::new("index.php", "w").puts <<HOMEPAGE
+File.new("index.php", "w").puts <<HOMEPAGE
 <html><title>#{opt['app']}</title>
 <body>
 <h1>Welcome to libra</h1>
@@ -171,24 +171,25 @@ git push libra master</pre>
 </html>
 HOMEPAGE
 
-File::new("health_check.php", "w").puts <<HEALTH
+File.new("health_check.php", "w").puts <<HEALTH
 <?php
 print 1;
 ?>
 HEALTH
 
-`git add *`
-`git commit -a -m 'Initial libra app creation'`
-Dir::chdir(old_dir)
+%x{git add *}
+%x{git commit -a -m 'Initial libra app creation'}
+
+Dir.chdir(old_dir)
 
 #
 # Create remote application space
 #
 
-puts "Creating remote application space"
+puts "Creating remote application space: " + opt['app']
 
 puts "Contacting server http://#{li_server}"
-response = Net::HTTP.post_form(URI.parse("http://#{li_server}/create_http.php"),
+response = Net.HTTP.post_form(URI.parse("http://#{li_server}/create_http.php"),
                            {'username' => opt['user'],
                            'application' => opt['app']})
 
@@ -211,9 +212,10 @@ puts "Checking ~/.ssh/config"
 my_url = "#{opt['app']}.#{opt['user']}.libra.mmcgrath.net"
 
 found = false
-File::open(ssh_config) do |sline|
+File.open(ssh_config) do |sline|
     if sline =~ /my_url/
         found = true
+        break
     end
 end
 
@@ -221,7 +223,7 @@ if found
     puts "Found #{my_url} in ~/.ssh/config... No need to adjust"
 else
     puts "    Adding #{my_url} to ~/.ssh/config"
-    File::open(ssh_config, "a").puts <<SSH
+    File.open(ssh_config, "a").puts <<SSH
 
 # Added by libra app on #{`date`}
 Host #{my_url}
@@ -231,8 +233,8 @@ Host #{my_url}
 SSH
 end
 
-File::chmod(0600, ssh_config)
-File::chmod(0700, ssh_config_d)
+File.chmod(0600, ssh_config)
+File.chmod(0700, ssh_config_d)
 
 #
 # Confirm that the host exists in DNS
@@ -256,10 +258,10 @@ end
 # Push initial repo upstream (contains index and health_check)
 #
 
-Dir::chdir(opt["repo"])
+Dir.chdir(opt["repo"])
 puts "Doing initial test push."
-system("git push libra master")
-Dir::chdir(old_dir)
+system("git push -q libra master")
+Dir.chdir(old_dir)
 
 sleep_time = 2
 attempt = 0
@@ -272,7 +274,7 @@ puts "Confirming application #{opt['app']} is available"
 while sleep_time < 65
     attempt+=1
     puts "  Attempt # #{attempt}"
-    response = Net::HTTP.get_response(URI.parse("http://#{my_url}/health_check.php"))
+    response = Net.HTTP.get_response(URI.parse("http://#{my_url}/health_check.php"))
     if response.code == "200" && response.body[0,1] == "1"
         puts <<LOOKSGOOD
 
