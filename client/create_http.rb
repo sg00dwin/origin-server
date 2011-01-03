@@ -28,6 +28,15 @@ ssh_config_d = "#{ENV['HOME']}/.ssh/"
 li_server = 'li.mmcgrath.libra.mmcgrath.net'
 debug = false
 
+def hostexist?(host)
+    begin
+        resp = Socket.gethostbyname(host)
+    rescue
+        resp = []
+    end
+    return resp.empty?
+end
+
 def p_usage
     puts <<USAGE
 
@@ -241,15 +250,13 @@ File.chmod(0700, ssh_config_d)
 #
 puts "Confirming that host exists..."
 loop = 0
-resp = Socket.gethostbyname(my_url)
-while loop < 5 && resp.count == 0
+while loop < 5 && !hostexist?(my_url)
     loop+=1
     puts "  retry # #{loop}"
     sleep 5
-    resp = Socket.gethostbyname(my_url)
 end
 
-if resp.count == 0
+if loop == 5
     puts "Host could not be created and/or found..."
     exit 255
 end
