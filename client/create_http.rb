@@ -189,7 +189,7 @@ Dir.chdir(old_dir)
 puts "Creating remote application space: " + opt['app']
 
 puts "Contacting server http://#{li_server}"
-response = Net.HTTP.post_form(URI.parse("http://#{li_server}/create_http.php"),
+response = Net::HTTP.post_form(URI.parse("http://#{li_server}/create_http.php"),
                            {'username' => opt['user'],
                            'application' => opt['app']})
 
