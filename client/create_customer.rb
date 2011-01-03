@@ -112,7 +112,7 @@ end
 ssh_key = File.open(libra_kpfile).gets.chomp.split(' ')[1]
 
 puts "Contacting server http://#{li_server}"
-response = Net.HTTP.post_form(URI.parse("http://#{li_server}/create_customer.php"),
+response = Net::HTTP.post_form(URI.parse("http://#{li_server}/create_customer.php"),
                            {'username' => opt['user'],
                            'email' => opt['email'],
                            'ssh_key' => ssh_key})

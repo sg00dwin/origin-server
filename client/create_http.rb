@@ -274,7 +274,7 @@ puts "Confirming application #{opt['app']} is available"
 while sleep_time < 65
     attempt+=1
     puts "  Attempt # #{attempt}"
-    response = Net.HTTP.get_response(URI.parse("http://#{my_url}/health_check.php"))
+    response = Net::HTTP.get_response(URI.parse("http://#{my_url}/health_check.php"))
     if response.code == "200" && response.body[0,1] == "1"
         puts <<LOOKSGOOD
 
