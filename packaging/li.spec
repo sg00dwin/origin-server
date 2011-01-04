@@ -47,6 +47,15 @@ rm -rf $RPM_BUILD_ROOT
 /sbin/chkconfig --add libra || :
 /sbin/service mcollective restart > /dev/null 2>&1 || :
 
+%preun node
+if [ "$1" -ge 1 ]; then
+    /sbin/chkconfig --del libra || :
+fi
+%postun node
+if [ "$1" -ge 1 ]; then
+    /sbin/service mcollective restart > /dev/null 2>&1 || :
+fi
+
 %files
 %defattr(-,root,root,-)
 %{_bindir}/libra_*
