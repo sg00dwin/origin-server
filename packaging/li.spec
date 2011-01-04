@@ -44,7 +44,8 @@ rake DESTDIR="$RPM_BUILD_ROOT" install_node
 rm -rf $RPM_BUILD_ROOT
 
 %post node
-/sbin/service mcollective restart
+/sbin/chkconfig --add libra || :
+/sbin/service mcollective restart > /dev/null 2>&1 || :
 
 %files
 %defattr(-,root,root,-)
@@ -54,8 +55,6 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %{_libexecdir}/mcollective/mcollective/agent/libra.rb
 %{ruby_sitelibdir}/facter/libra.rb
-
-
 
 %changelog
 * Tue Jan 04 2011 Mike McGrath <mmcgrath@redhat.com> - 0.01-1
