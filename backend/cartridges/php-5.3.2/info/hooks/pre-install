@@ -21,11 +21,7 @@
 set -e
 
 function print_help {
-    echo "Usage: $0"
-    echo "Confirm prereq checks for creating a php stack"
-    echo
-    echo "  -c customer_id"
-
+    echo "Usage: customername"
     exit 1
 }
 
@@ -34,11 +30,9 @@ function quit {
     exit 5
 }
 
-while getopts 'u:d' OPTION
+while getopts 'd' OPTION
 do
     case $OPTION in
-        u) username=$OPTARG
-        ;;
         d) set -x
         ;;
         ?) print_help
@@ -46,6 +40,7 @@ do
     esac
 done
 
+[ $# -eq 1 ] || print_help
 
 rpm -q php httpd > /dev/null || quit "Missing packages"
 [ -d /var/lib/libra ] || quit "Missing /var/lib/libra"
