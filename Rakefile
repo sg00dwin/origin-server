@@ -4,6 +4,7 @@ DEST_DIR = ENV["DESTDIR"] || "/"
 BIN_DIR = ENV["BINDIR"] || "#{DEST_DIR}/usr/bin"
 FACTER_DIR = ENV["FACTERDIR"] || "#{DEST_DIR}/#{Config::CONFIG['sitelibdir']}/facter"
 MCOLLECTIVE_DIR = ENV["MCOLLECTIVEDIR"] || "#{DEST_DIR}/usr/libexec/mcollective/mcollective/agent/"
+INITRD_DIR = ENV["INITRDDIR"} || "/etc/init.d/"
 
 CLIENT_FILES = ["client/create_customer.rb",
                 "client/create_http.rb",
@@ -41,10 +42,12 @@ end
 # Install node files
 #
 task :install_node => [:test_node] do
-    mkdir_p "#{FACTER_DIR}"
+    mkdir_p FACTER_DIR
     cp "backend/facter/libra.rb", FACTER_DIR
-    mkdir_p "#{MCOLLECTIVE_DIR}"
+    mkdir_p MCOLLECTIVE_DIR
     cp "backend/mcollective/libra.rb", MCOLLECTIVE_DIR
+    mkdir_p INITRD_DIR
+    cp "backend/scripts/libra", INITRD_DIR
 end
 
 # 
