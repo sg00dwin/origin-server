@@ -48,6 +48,8 @@ task :install_node => [:test_node] do
     cp "backend/mcollective/libra.rb", MCOLLECTIVE_DIR
     mkdir_p INITRD_DIR
     cp "backend/scripts/libra", INITRD_DIR
+    mkdir _p "#{DEST_DIR}/usr/bin"
+    cp "backend/scripts/trap-user" "#{DEST_DIR}/usr/bin"
 end
 
 # 
@@ -60,6 +62,7 @@ task :default do
     puts "  test_client         Test client files"
     puts "  install_node        Install node files"
     puts "  test_node           Test node files"
+    puts "  install_cartridges  Install cartridges"
     puts ""
     puts "Example: rake DESTDIR='/tmp/test/' install_client"
 end
