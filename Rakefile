@@ -2,7 +2,7 @@ require 'rbconfig'
 
 DEST_DIR = ENV["DESTDIR"] || "/"
 BIN_DIR = ENV["BINDIR"] || "#{DEST_DIR}/usr/bin"
-FACTER_DIR = ENV["FACTERDIR"] || "#{DEST_DIR}/#{Config::CONFIG['sitelibdir']}"
+FACTER_DIR = ENV["FACTERDIR"] || "#{DEST_DIR}/#{Config::CONFIG['sitelibdir']}/facter"
 MCOLLECTIVE_DIR = ENV["MCOLLECTIVEDIR"] || "#{DEST_DIR}/usr/libexec/mcollective/mcollective/agent/"
 
 CLIENT_FILES = ["client/create_customer.rb",
@@ -24,7 +24,10 @@ end
 #
 task :install_client => [:test_client] do
     mkdir_p "#{DEST_DIR}/usr/bin/"
-    cp CLIENT_FILES, "#{BIN_DIR}"
+    CLIENT_FILES.each {|client_name|
+        new_name = File.basename(client_name).gsub(/^/, "libra_").gsub(/.rb$/, '')
+        cp client_name, "#{BIN_DIR}/#{new_name}"
+    }
 end
 
 #
