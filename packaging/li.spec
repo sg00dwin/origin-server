@@ -2,7 +2,7 @@
 
 Name: li
 Version: 0.02
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -26,14 +26,14 @@ BuildArch: noarch
 %description node
 Turns current host into a Li managed node
 
-%package cartridge-php-4.3.2
-Summary: Provides php-4.3.2 support
+%package cartridge-php-5.3.2
+Summary: Provides php-5.3.2 support
 Group: Development/Languages
 Requires: li-node
-Requires: php = 4.3.2
+Requires: php = 5.3.2
 BuildArch: noarch
 
-%description cartridge-php-4.3.2
+%description cartridge-php-5.3.2
 Provides php support to li
 
 %prep
@@ -76,10 +76,13 @@ fi
 %{_sysconfdir}/init.d/libra
 %{_bindir}/trap-user
 
-%files cartridge-php-4.3.2
+%files cartridge-php-5.3.2
 %defattr(-,root,root,-)
 %{_libexecdir}/li/cartridges/php-5.3.2/
 
 %changelog
+* Tue Jan 04 2011 Mike McGrath <mmcgrath@redhat.com> - 0.02-2
+- Fixed cartridge
+
 * Tue Jan 04 2011 Mike McGrath <mmcgrath@redhat.com> - 0.01-1
 - initial packaging
