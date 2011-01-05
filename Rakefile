@@ -6,6 +6,7 @@ FACTER_DIR = ENV["FACTERDIR"] || "#{DEST_DIR}/#{Config::CONFIG['sitelibdir']}/fa
 MCOLLECTIVE_DIR = ENV["MCOLLECTIVEDIR"] || "#{DEST_DIR}/usr/libexec/mcollective/mcollective/agent/"
 INITRD_DIR = ENV["INITRDDIR"] || "#{DEST_DIR}/etc/init.d/"
 CARTRIDGE_DIR = ENV["CARTRIDGE_DIR"] || "#{DEST_DIR}/usr/libexec/li"
+LIBRA_DIR = ENV["LIBRA_DIR"] || "#{DEST_DIR}/var/lib/libra"
 CLIENT_FILES = ["client/create_customer.rb",
                 "client/create_http.rb",
                 "client/destroy_http.rb"]
@@ -50,6 +51,7 @@ task :install_node => [:test_node] do
     cp "backend/scripts/libra", INITRD_DIR
     mkdir_p "#{DEST_DIR}/usr/bin"
     cp "backend/scripts/trap-user", "#{DEST_DIR}/usr/bin"
+    mkdir_p LIBRA_DIR
 end
 
 # 

@@ -75,6 +75,7 @@ fi
 %{ruby_sitelibdir}/facter/libra.rb
 %{_sysconfdir}/init.d/libra
 %{_bindir}/trap-user
+%{_localstatedir}/lib/libra
 
 %files cartridge-php-5.3.2
 %defattr(-,root,root,-)
