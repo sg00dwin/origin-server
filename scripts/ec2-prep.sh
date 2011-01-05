@@ -18,6 +18,9 @@
 
 # This script will log in to an ec2 host and install epel, git and puppet
 
+# This key belongs to mmcgrath and fedora
+ACTIVATION_KEY='28fbe0785acc9f1bc8ccc98f216d26ab'
+
 function print_help {
     echo "Usage: $0 remote.host.name"
     exit 1
@@ -31,11 +34,15 @@ fi
 remotehost=$1
 
 ssh root@$remotehost "set -e
-rpm -Uvh http://download.fedora.redhat.com/pub/epel/5/x86_64/epel-release-5-4.noarch.rpm
+rpm -Uhv http://download.fedora.redhat.com/pub/epel/beta/6/x86_64/epel-release-6-5.noarch.rpm
+yum -y update
+# Check for libselinux-ruby (basically seeing if the host has rhel-x86_64-server-optional-6)
+yum info libselinux-ruby > /dev/null 2>&1 || (sed -i 's/^enabled.*/enabled = 1/g' /etc/yum/pluginconf.d/rhnplugin.conf && rhnreg_ks --activationkey=$ACTIVATION_KEY )
 yum -y install puppet git
 mkdir -p /var/lib/puppet/git/
 GIT_DIR=/var/lib/puppet/git git init
 echo 'git archive --format=tar HEAD | (cd /etc/puppet && tar xf -)
 puppet --modulepath=/etc/puppet/modules /etc/puppet/manifests/site.pp -v' > /var/lib/puppet/git/hooks/post-receive
 chmod +x /var/lib/puppet/git/hooks/post-receive
+reboot
 "
