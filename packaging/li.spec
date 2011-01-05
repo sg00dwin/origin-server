@@ -1,7 +1,7 @@
 %{!?ruby_sitelibdir: %global ruby_sitelibdir %(ruby -rrbconfig -e 'puts Config::CONFIG["sitelibdir"]')}
 
 Name: li
-Version: 0.01
+Version: 0.02
 Release: 1%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
@@ -32,7 +32,6 @@ Requires: php = 4.3.2
 
 %description cartridge-php-4.3.2
 Provides php support to li
-
 
 %prep
 %setup -q
