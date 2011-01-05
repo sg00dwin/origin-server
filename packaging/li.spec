@@ -27,7 +27,8 @@ Turns current host into a Li managed node
 %package cartridge-php-4.3.2
 Summary: Provides php-4.3.2 support
 Group: Development/Languages
-Requires: li-node, php, httpd
+Requires: li-node
+Requires: php = 4.3.2
 
 %description cartridge-php-4.3.2
 Provides php support to li
