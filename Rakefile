@@ -5,7 +5,7 @@ BIN_DIR = ENV["BINDIR"] || "#{DEST_DIR}/usr/bin"
 FACTER_DIR = ENV["FACTERDIR"] || "#{DEST_DIR}/#{Config::CONFIG['sitelibdir']}/facter"
 MCOLLECTIVE_DIR = ENV["MCOLLECTIVEDIR"] || "#{DEST_DIR}/usr/libexec/mcollective/mcollective/agent/"
 INITRD_DIR = ENV["INITRDDIR"] || "#{DEST_DIR}/etc/init.d/"
-CARTRIDGE_DIR = ENV["CARTRIDGE_DIR"] || "#{DEST_DIR}/usr/libexec/li"
+LIBEXEC_DIR = ENV["LIBEXECDIR"] || "#{DEST_DIR}/usr/libexec/li/"
 LIBRA_DIR = ENV["LIBRA_DIR"] || "#{DEST_DIR}/var/lib/libra"
 CLIENT_FILES = ["client/create_customer.rb",
                 "client/create_http.rb",
@@ -58,8 +58,8 @@ end
 # Install cartridges
 #
 task :install_cartridges do
-    mkdir_p CARTRIDGE_DIR
-    cp_r "cartridges/", "#{CARTRIDGE_DIR}"
+    mkdir_p LIBEXEC_DIR
+    cp_r "cartridges/", LIBEXEC_DIR
 end
 
 # 
