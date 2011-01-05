@@ -57,7 +57,7 @@ end
 #
 task :install_cartridges do
     mkdir_p CARTRIDGE_DIR
-    cp_r "backend/cartridges/", "#{CARTRIDGE_DIR}"
+    cp_r "cartridges/", "#{CARTRIDGE_DIR}"
 end
 
 # 
