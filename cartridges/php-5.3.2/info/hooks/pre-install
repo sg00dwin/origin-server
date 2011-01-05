@@ -20,6 +20,8 @@
 
 set -e
 
+[ -z "$CARTRIDGE_DIR" ] && CARTRIDGE_DIR="/usr/libexec/li/cartridges/php-5.3.2/"
+
 function print_help {
     echo "Usage: customername"
     exit 1
@@ -43,7 +45,5 @@ done
 [ $# -eq 1 ] || print_help
 
 rpm -q php httpd > /dev/null || quit "Missing packages"
-[ -d /var/lib/libra ] || quit "Missing /var/lib/libra"
-[ -f /etc/libra/php.conf ] || quit "Missing /etc/libra/php.conf"
-[ -f /etc/libra/httpd.conf ] || quit "Missing /etc/libra/httpd.conf"
+[ -d "$CARTRIDGE_DIR" ] || quit "Missing cartridge dir: $CARTRIDGE_DIR"
 [ -d "/var/lib/libra/${customer}" ] || quit "Missing customer namespace"
