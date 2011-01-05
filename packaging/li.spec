@@ -18,11 +18,19 @@ Provides Li client libraries
 
 %package node
 Summary: Multi-tenant cloud management system node tools
-Group: Network?Daemons
+Group: Network/Daemons
 Requires: mcollective
 
 %description node
 Turns current host into a Li managed node
+
+%package cartridge-php-4.3.2
+Summary: Provides php-4.3.2 support
+Group: Development/Languages
+Requires: li-node, php, httpd
+
+%description cartridge-php-4.3.2
+Provides php support to li
 
 
 %prep
@@ -36,9 +44,7 @@ rake test_node
 
 %install
 rm -rf $RPM_BUILD_ROOT
-rake DESTDIR="$RPM_BUILD_ROOT" install_client
-rake DESTDIR="$RPM_BUILD_ROOT" install_node
-
+rake DESTDIR="$RPM_BUILD_ROOT" install
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -64,6 +70,10 @@ fi
 %defattr(-,root,root,-)
 %{_libexecdir}/mcollective/mcollective/agent/libra.rb
 %{ruby_sitelibdir}/facter/libra.rb
+
+%files cartridge-php-4.3.2
+%defattr(-,root,root,-)
+%{_libexecdir}/li/cartridges/php-5.3.2/
 
 %changelog
 * Tue Jan 04 2011 Mike McGrath <mmcgrath@redhat.com> - 0.01-1
