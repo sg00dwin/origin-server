@@ -10,8 +10,9 @@ License: GPLv2
 URL: https://engineering.redhat.com/trac/Libra
 Source0: li-%{version}.tar.gz
 BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
+BuildArch: noarch
 
-BuildRequires: rake
+BuildRequires: rubygem-rake
 
 %description
 Provides Li client libraries
@@ -20,6 +21,7 @@ Provides Li client libraries
 Summary: Multi-tenant cloud management system node tools
 Group: Network/Daemons
 Requires: mcollective
+BuildArch: noarch
 
 %description node
 Turns current host into a Li managed node
@@ -29,6 +31,7 @@ Summary: Provides php-4.3.2 support
 Group: Development/Languages
 Requires: li-node
 Requires: php = 4.3.2
+BuildArch: noarch
 
 %description cartridge-php-4.3.2
 Provides php support to li
@@ -70,6 +73,8 @@ fi
 %defattr(-,root,root,-)
 %{_libexecdir}/mcollective/mcollective/agent/libra.rb
 %{ruby_sitelibdir}/facter/libra.rb
+%{_sysconfdir}/init.d/libra
+%{_bindir}/trap-user
 
 %files cartridge-php-4.3.2
 %defattr(-,root,root,-)
