@@ -4,8 +4,8 @@ DEST_DIR = ENV["DESTDIR"] || "/"
 BIN_DIR = ENV["BINDIR"] || "#{DEST_DIR}/usr/bin"
 FACTER_DIR = ENV["FACTERDIR"] || "#{DEST_DIR}/#{Config::CONFIG['sitelibdir']}/facter"
 MCOLLECTIVE_DIR = ENV["MCOLLECTIVEDIR"] || "#{DEST_DIR}/usr/libexec/mcollective/mcollective/agent/"
-INITRD_DIR = ENV["INITRDDIR"} || "/etc/init.d/"
-
+INITRD_DIR = ENV["INITRDDIR"] || "#{DEST_DIR}/etc/init.d/"
+CARTRIDGE_DIR = ENV["CARTRIDGE_DIR"] || "#{DEST_DIR}/usr/libexec/li"
 CLIENT_FILES = ["client/create_customer.rb",
                 "client/create_http.rb",
                 "client/destroy_http.rb"]
@@ -48,8 +48,22 @@ task :install_node => [:test_node] do
     cp "backend/mcollective/libra.rb", MCOLLECTIVE_DIR
     mkdir_p INITRD_DIR
     cp "backend/scripts/libra", INITRD_DIR
-    mkdir _p "#{DEST_DIR}/usr/bin"
-    cp "backend/scripts/trap-user" "#{DEST_DIR}/usr/bin"
+    mkdir_p "#{DEST_DIR}/usr/bin"
+    cp "backend/scripts/trap-user", "#{DEST_DIR}/usr/bin"
+end
+
+# 
+# Install cartridges
+#
+task :install_cartridges do
+    mkdir_p CARTRIDGE_DIR
+    cp_r "backend/cartridges/", "#{CARTRIDGE_DIR}"
+end
+
+# 
+# Install all
+#
+task :install => [:install_client, :install_node, :install_cartridges] do
 end
 
 # 
@@ -63,6 +77,7 @@ task :default do
     puts "  install_node        Install node files"
     puts "  test_node           Test node files"
     puts "  install_cartridges  Install cartridges"
+    puts "  install             Install all"
     puts ""
     puts "Example: rake DESTDIR='/tmp/test/' install_client"
 end
