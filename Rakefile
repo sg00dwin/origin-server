@@ -52,7 +52,8 @@ task :install_node => [:test_node] do
     mkdir_p "#{DEST_DIR}/usr/bin"
     cp "backend/scripts/trap-user", "#{DEST_DIR}/usr/bin"
     mkdir_p LIBRA_DIR
-    cp "backend/selinux/libra.pp", "#{DEST_DIR}/usr/share/selinux/packages/libra.pp"
+    mkdir_p "#{DEST_DIR}/usr/share/selinux/packages"
+    cp "backend/selinux/libra.pp", "#{DEST_DIR}/usr/share/selinux/packages"
 end
 
 # 
@@ -74,7 +75,7 @@ end
 # 
 # Install all
 #
-task :install => [:install_client, :install_node, :install_cartridges] do
+task :install => [:install_client, :install_node, :install_cartridges, :install_server] do
 end
 
 # 
@@ -88,6 +89,7 @@ task :default do
     puts "  install_node        Install node files"
     puts "  test_node           Test node files"
     puts "  install_cartridges  Install cartridges"
+    puts "  install_server      Install server"
     puts "  install             Install all"
     puts ""
     puts "Example: rake DESTDIR='/tmp/test/' install_client"
