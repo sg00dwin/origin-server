@@ -21,6 +21,8 @@ Provides Li client libraries
 Summary: Multi-tenant cloud management system node tools
 Group: Network/Daemons
 Requires: mcollective
+Requires(post): /usr/sbin/semodule
+Requires(postun): /usr/sbin/semodule
 BuildArch: noarch
 
 %description node
@@ -65,18 +67,20 @@ rake DESTDIR="$RPM_BUILD_ROOT" install
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%post node
+%post -n node
 /sbin/chkconfig --add libra || :
 /sbin/service mcollective restart > /dev/null 2>&1 || :
+/usr/sbin/semodule -i %_datadir/selinux/packages/libra.pp
 
 %preun node
 if [ "$1" -ge 1 ]; then
     /sbin/chkconfig --del libra || :
 fi
-%postun node
+%postun -n node
 if [ "$1" -ge 1 ]; then
     /sbin/service mcollective restart > /dev/null 2>&1 || :
 fi
+/usr/sbin/semodule -r libra
 
 %files
 %defattr(-,root,root,-)
@@ -90,6 +94,7 @@ fi
 %{_bindir}/trap-user
 %{_localstatedir}/lib/libra
 %{_libexecdir}/li/cartridges/li-controller-0.1/
+%{_datadir}/selinux/packages/libra.pp
 
 %files server
 %defattr(-,root,root,-)
