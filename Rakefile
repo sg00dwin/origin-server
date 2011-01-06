@@ -52,7 +52,7 @@ task :install_node => [:test_node] do
     mkdir_p "#{DEST_DIR}/usr/bin"
     cp "backend/scripts/trap-user", "#{DEST_DIR}/usr/bin"
     mkdir_p LIBRA_DIR
-    mkdir_p "backend/selinux/libra.pp", "#{DEST_DIR}/usr/share/selinux/packages/libra.pp"
+    cp "backend/selinux/libra.pp", "#{DEST_DIR}/usr/share/selinux/packages/libra.pp"
 end
 
 # 
