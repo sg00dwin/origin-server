@@ -6,6 +6,47 @@ metadata    :name        => "Libra Management",
             :url         => "https://engineering.redhat.com/trac/Libra",
             :timeout     => 60
 
+action "cartridge_do", :description => "run a cartridge action" do
+    display :always
+
+    input :cartridge,
+        :prompt         => "Cartridge",
+        :description    => "Full name and version of the cartridge to run an action on",
+        :type           => :string,
+        :validation     => '/^[a-zA-Z0-9\.\-]+$/',
+        :optional       => false,
+        :maxlength      => 64
+
+    input :action,
+        :prompt         => "Action",
+        :description    => "Cartridge hook to run",
+        :type           => :string,
+        :validation     => '/^(configure|deconfigure|info|post-install|post_remove|pre-install|reload|restart|start|status|stop)$/',
+        :optional       => false,
+        :maxlength      => 64
+
+    input :args,
+        :prompt         => "Args",
+        :description    => "Args to pass to cartridge",
+        :type           => :string,
+        :validation     => '/^.+$/',
+        :optional       => true,
+        :maxlength      => 64
+
+    output  :time,
+            :description => "The time as a message",
+            :display_as => "Time"
+
+    output  :output,
+            :description => "Output from creation script",
+            :display_as => "Output"
+
+    output :exitcode,
+           :description => "Exit code",
+           :display_as => "Exit Code"
+end
+
+
 action "create_customer", :description => "Creates a new customer" do
     display :always
 

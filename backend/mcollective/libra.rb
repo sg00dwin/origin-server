@@ -46,6 +46,21 @@ module MCollective
                 validate :msg, String
                 reply[:msg] = request[:msg]
             end
+
+            # 
+            # Passes arguments to cartridge for use
+            #
+            def cartridge_do_action
+                validate :cartridge, /^[a-zA-Z0-9\.\-]+$/
+                validate :action, /^(configure|deconfigure|info|post-install|post_remove|pre-install|reload|restart|start|status|stop)$/
+                validate :args, /^.+$/
+                cartridge = request[:cartridge]
+                action = request[:action]
+                args = request[:args]
+                reply[:output] = %x[/usr/libexec/li/cartridges/#{cartridge}/info/hooks/#{action} #{args}]
+                reply[:exitcode] = $?.exitstatus
+                reply.fail! "cartridge_action failed #{reply[:exitcode]}" unless reply[:exitcode] == 0
+            end
             #
             # Creates a new customer.
             # Creates username.

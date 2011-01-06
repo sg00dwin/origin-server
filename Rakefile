@@ -64,6 +64,14 @@ task :install_cartridges do
 end
 
 # 
+# Install server
+#
+task :install_server do
+    mkdir_p MCOLLECTIVE_DIR
+    cp "backend/mcollective/libra.ddl", MCOLLECTIVE_DIR
+end
+
+# 
 # Install all
 #
 task :install => [:install_client, :install_node, :install_cartridges] do
