@@ -64,27 +64,34 @@ rake test_node
 rm -rf $RPM_BUILD_ROOT
 rake DESTDIR="$RPM_BUILD_ROOT" install
 
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%post -n node
+
+%post node
 /sbin/chkconfig --add libra || :
 /sbin/service mcollective restart > /dev/null 2>&1 || :
 /usr/sbin/semodule -i %_datadir/selinux/packages/libra.pp
+
 
 %preun node
 if [ "$1" -ge 1 ]; then
     /sbin/chkconfig --del libra || :
 fi
-%postun -n node
+
+
+%postun node
 if [ "$1" -ge 1 ]; then
     /sbin/service mcollective restart > /dev/null 2>&1 || :
 fi
 /usr/sbin/semodule -r libra
 
+
 %files
 %defattr(-,root,root,-)
 %{_bindir}/libra_*
+
 
 %files node
 %defattr(-,root,root,-)
@@ -96,13 +103,16 @@ fi
 %{_libexecdir}/li/cartridges/li-controller-0.1/
 %{_datadir}/selinux/packages/libra.pp
 
+
 %files server
 %defattr(-,root,root,-)
 %{_libexecdir}/mcollective/mcollective/agent/libra.ddl
 
+
 %files cartridge-php-5.3.2
 %defattr(-,root,root,-)
 %{_libexecdir}/li/cartridges/php-5.3.2/
+
 
 %changelog
 * Thu Jan 06 2011 Mike McGrath <mmcgrath@redhat.com> - 0.03-1
