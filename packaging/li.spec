@@ -89,6 +89,7 @@ fi
 %{_sysconfdir}/init.d/libra
 %{_bindir}/trap-user
 %{_localstatedir}/lib/libra
+%{_libexecdir}/li/cartridges/li-controller-0.1/
 
 %files server
 %defattr(-,root,root,-)
