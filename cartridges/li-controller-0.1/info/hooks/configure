@@ -16,21 +16,52 @@
 # General Public License and may only be used or replicated with the express
 # permission of Red Hat, Inc.
 
-# Creates a per customer httpd instance
+# Creates a libra user
 
 # Exit on any errors
 set -e
 
-function print_help {
-    echo "Usage: $0 package-name config-dir"
+LIBRA_BASE='/var/lib/libra'
 
-    echo "$0 $@" | logger -p local0.notice -t libra_http_create
+function print_help {
+    echo "Usage: $0"
+    echo "  -c customer_id"
+    echo "  -e email"
+    echo "  -s ssh_pub_key"
+    echo "  -d (optional: debug)"
     exit 1
 }
 
-while getopts 'd' OPTION
+function create_customerspace {
+    if ! [ $# -eq 2 ]
+    then
+        echo "Usage: $0 customer_id $email"
+        exit 1
+    fi
+    CUSTOMER_HOME="$LIBRA_BASE/$customer_id/"
+
+    customer_id="$1"
+
+    mkdir -p "$CUSTOMER_HOME/etc/"
+    cat <<EOF > "$CUSTOMER_HOME/etc/customer_info"
+CUSTOMER_ID="$customer_id"
+EMAIL="$email"
+EOF
+
+    chmod 0700 -R "$CUSTOMER_HOME"
+    grep -q "$customer_id" /etc/passwd || useradd -d "$CUSTOMER_HOME" -M -s /bin/bash "$customer_id"
+    chown "$customer_id" -R "$CUSTOMER_HOME"
+}
+
+while getopts 'c:e:s:d' OPTION
 do
     case $OPTION in
+        c) customer_id=$OPTARG
+        ;;
+        e) email=$OPTARG
+        ;;
+        s) ssh_key=$OPTARG
+        ;;
         d) set -x
         ;;
         ?) print_help
@@ -38,102 +69,18 @@ do
     esac
 done
 
-customer_id=`basename $2`
-application=`$1`
-
-if ( [ -z "$customer_id" ] || [ -z "$application" ] )
+if ( [ -z "$customer_id" ] || [ -z "$email" ] || [ -z "$ssh_key" ] )
 then
     print_help
 fi
 
-CUSTOMER_HOME="$LIBRA_BASE/$customer_id/"
-APP_DIR="$CUSTOMER_HOME/httpd/$application"
+create_customerspace "$customer_id" "$email"
 
-#
-# Create git app repo
-#
-
-/usr/local/bin/libra/create_git.sh -c $customer_id -a $application
-
-cat <<EOF > $CUSTOMER_HOME/git/$application.git/hooks/post-receive
-rm -rf /var/lib/libra/$customer_id/httpd/test/html/*
-git archive --format=tar HEAD | (cd $APP_DIR/html && tar xf -)
-# Reload httpd here maybe?
+mkdir -p "$CUSTOMER_HOME/.ssh"
+chmod 0700 "$CUSTOMER_HOME/.ssh"
+cat <<EOF > "$CUSTOMER_HOME/.ssh/authorized_keys"
+command="/usr/bin/trap-user",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty ssh-rsa $ssh_key Libra-$customer_id-$email
 EOF
-chmod 0750 $CUSTOMER_HOME/git/$application.git/hooks/post-receive
-
-#
-# Create http base for application, every app gets its own apache instance
-#
-
-if [ -d "$APP_DIR" ]
-then
-    echo "ERROR: $application already exists.  Please destroy to re-create or pick a new app name"
-    exit 5
-fi
-
-mkdir -p "$APP_DIR"
-pushd "$APP_DIR" > /dev/null
-mkdir conf conf.d logs run html
-ln -s /usr/lib64/httpd/modules modules
-popd > /dev/null
-
-#
-# Find an open localhost IP
-# 
-
-
-IP=$(take_open_ip $customer_id $application "httpd" 8080)
-
-
-#
-# Create simple customer specific data
-#
-
-cat <<EOF > "$APP_DIR/conf.d/libra.conf"
-ServerRoot "$APP_DIR"
-DocumentRoot "$APP_DIR/html"
-Listen $IP:8080
-User $customer_id
-Group $customer_id
-EOF
-
-#
-# Create simple application start / stop script
-#
-
-cat <<EOF > "$APP_DIR/${application}_ctl.sh"
-#/bin/bash
-if ! [ \$# -eq 1 ]
-then
-    echo "Usage: \$0 [start|restart|graceful|graceful-stop|stop]"
-    exit 1
-fi
-/usr/sbin/httpd -C 'Include $APP_DIR/conf.d/*.conf' -f /etc/libra/httpd.conf -k \$1
-EOF
-
-chmod +x "$APP_DIR/${application}_ctl.sh"
-
-chown $customer_id.$customer_id -R $APP_DIR
-$APP_DIR/${application}_ctl.sh start
-
-#
-# Create virtualhost definition for apache
-#
-
-cat <<EOF > "/etc/httpd/conf.d/${customer_id}_${application}.conf"
-<VirtualHost *:80>
-  ServerName ${application}.${customer_id}.libra.mmcgrath.net
-  ServerAdmin mmcgrath@redhat.com
-  DocumentRoot /var/www/html
-  ErrorLog logs/$customer_id.libra.mmcgrath.net-error_log
-  TransferLog logs/$customer_id.libra.mmcgrath.net-access_log
-
-  ProxyPass / http://$IP:8080/
-  ProxyPassReverse / http://$IP:8080/
-</VirtualHost>
-EOF
-
-/sbin/service httpd configtest 2> /dev/null && /sbin/service httpd graceful
-
-/usr/local/bin/libra/update-ddns.sh -h ${application}.${customer_id} -d libra.mmcgrath.net -i $(/usr/bin/facter ipaddress)
+chmod 0600 "$CUSTOMER_HOME/.ssh/authorized_keys"
+chown "$customer_id"."$customer_id" -R "$CUSTOMER_HOME"
+/sbin/restorecon -R "$CUSTOMER_HOME/.ssh/"

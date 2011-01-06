@@ -38,4 +38,5 @@ then
     print_help
 fi
 
+groups "$customer_id" > /dev/null 2>&1 && quit "Customer $customer_id already exists"
 [ -d "/var/lib/libra/${customer}" ] || quit "Customer namespace already exists!"
