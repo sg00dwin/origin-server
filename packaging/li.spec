@@ -1,8 +1,8 @@
 %{!?ruby_sitelibdir: %global ruby_sitelibdir %(ruby -rrbconfig -e 'puts Config::CONFIG["sitelibdir"]')}
 
 Name: li
-Version: 0.02
-Release: 2%{?dist}
+Version: 0.03
+Release: 1%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -25,6 +25,19 @@ BuildArch: noarch
 
 %description node
 Turns current host into a Li managed node
+
+%package server
+Summary: Li server components
+Group: Network/Daemons
+Requires: mcollective-client
+BuildArch: noarch
+
+%description server
+This contains the server 'controlling' components of Li.  This can be on the
+same host as a node.
+
+Note: to use this you'll need activemq installed somewhere.  It doesn't have
+to be the same host as the server.
 
 %package cartridge-php-5.3.2
 Summary: Provides php-5.3.2 support
@@ -77,11 +90,18 @@ fi
 %{_bindir}/trap-user
 %{_localstatedir}/lib/libra
 
+%files server
+%defattr(-,root,root,-)
+%{_libexecdir}/mcollective/mcollective/agent/libra.ddl
+
 %files cartridge-php-5.3.2
 %defattr(-,root,root,-)
 %{_libexecdir}/li/cartridges/php-5.3.2/
 
 %changelog
+* Thu Jan 06 2011 Mike McGrath <mmcgrath@redhat.com> - 0.03-1
+- Added li-server bits
+
 * Tue Jan 04 2011 Mike McGrath <mmcgrath@redhat.com> - 0.02-2
 - Fixed cartridge
 
