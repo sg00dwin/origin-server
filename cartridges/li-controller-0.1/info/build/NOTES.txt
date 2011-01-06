@@ -1,0 +1,10 @@
+li-controller 0.1
+
+BUILD: These are just standard scripts
+
+DEPENDENCIES:
+All are pulled in automatically via yum
+
+BUNDLE:
+
+TODO:
