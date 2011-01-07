@@ -3,7 +3,7 @@
 $cartridge = escapeshellarg(filter_var($_POST['cartridge'], FILTER_SANITIZE_SPECIAL_CHARS, FILTER_FLAG_STRIP_LOW));
 $action = escapeshellarg(filter_var($_POST['action'], FILTER_SANITIZE_EMAIL, FILTER_FLAG_STRIP_LOW));
 $args = escapeshellarg(filter_var($_POST['args'], FILTER_SANITIZE_STRING));
-header("Status: 500 Not Found");
+header('HTTP/1.1 500 Internal Server Error', 500)
 
 function my_exec($cmd, $input='')
          {$proc=proc_open($cmd, array(0=>array('pipe', 'r'), 1=>array('pipe', 'w'), 2=>array('pipe', 'w')), $pipes);
