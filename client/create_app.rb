@@ -97,7 +97,7 @@ else
 end
 
 if opt["type"]
-    if opt["type"] =~ /^(php-5.3.2)$/
+    if !(opt["type"] =~ /^(php-5.3.2)$/)
         puts "type must be php-5.3.2"
         p_usage
     end
@@ -210,7 +210,7 @@ Dir.chdir(old_dir)
 puts "Creating remote application space: " + opt['app']
 
 puts "Contacting server http://#{li_server}"
-response = Net::HTTP.post_form(URI.parse("http://#{li_server}/cartridge_do.php"),
+response = Net::HTTP.post_form(URI.parse("http://#{li_server}/php/cartridge_do.php"),
                            {'cartridge' => opt['type'],
                             'action' => 'configure',
                             'args' => "#opt{'app'} #opt{'user'}"})
