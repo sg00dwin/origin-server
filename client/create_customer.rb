@@ -112,10 +112,10 @@ end
 ssh_key = File.open(libra_kpfile).gets.chomp.split(' ')[1]
 
 puts "Contacting server http://#{li_server}"
-response = Net::HTTP.post_form(URI.parse("http://#{li_server}/create_customer.php"),
-                           {'username' => opt['user'],
-                           'email' => opt['email'],
-                           'ssh_key' => ssh_key})
+response = Net::HTTP.post_form(URI.parse("http://#{li_server}/php/cartridge_do.php"),
+                           {'cartridge' => 'li-controller-0.1',
+                            'action' => 'configure',
+                            'args' => "-c #{opt['user']} -e #{opt['email']} -s #{ssh_key}"})
 
 if response.code == '200'
     if debug
