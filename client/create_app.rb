@@ -45,8 +45,8 @@ Create a new app libra project.
 
   -u|--user  username     Libra username    (alphanumeric) (required)
   -a|--app   application  Application name  (alphanumeric) (required)
-  -r|--repo  path         Git Repo path
-  -t|--type  type         Type of app to create (php-5.3.2)
+  -r|--repo  path         Git Repo path (required)
+  -t|--type  type         Type of app to create (php-5.3.2) (required)
   -b|--bypass             Bypass warnings
   -d|--debug              Print Debug info
   -h|--help               Show Usage info
