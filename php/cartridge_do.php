@@ -1,8 +1,8 @@
 <?php
 
-$customer_name = escapeshellarg(filter_var($_POST['username'], FILTER_SANITIZE_SPECIAL_CHARS, FILTER_FLAG_STRIP_LOW));
-$email = escapeshellarg(filter_var($_POST['email'], FILTER_SANITIZE_EMAIL, FILTER_FLAG_STRIP_LOW));
-$ssh_key = escapeshellarg(filter_var($_POST['ssh_key'], FILTER_SANITIZE_STRING));
+$cartridge = escapeshellarg(filter_var($_POST['cartridge'], FILTER_SANITIZE_SPECIAL_CHARS, FILTER_FLAG_STRIP_LOW));
+$action = escapeshellarg(filter_var($_POST['action'], FILTER_SANITIZE_EMAIL, FILTER_FLAG_STRIP_LOW));
+$args = escapeshellarg(filter_var($_POST['args'], FILTER_SANITIZE_STRING));
 
 function my_exec($cmd, $input='')
          {$proc=proc_open($cmd, array(0=>array('pipe', 'r'), 1=>array('pipe', 'w'), 2=>array('pipe', 'w')), $pipes);
