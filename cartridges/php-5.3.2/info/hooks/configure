@@ -190,3 +190,15 @@ EOF
 /sbin/service httpd configtest 2> /dev/null && /sbin/service httpd graceful
 
 #/usr/local/bin/libra/update-ddns.sh -h ${application}.${customer_id} -d libra.mmcgrath.net -i $(/usr/bin/facter ipaddress)
+# 
+# Update DNS
+#
+host=${application}.${customer_id}
+cat << EOF | nsupdate -d -v -y "$secret"
+server $resolver
+zone libra.mmcgrath.net
+update delete $host.libra.mmcgrath.net
+update add $host.libra.mmcgrath.net 60 A $(/usr/bin/facter ipaddress)
+send
+EOF
+
