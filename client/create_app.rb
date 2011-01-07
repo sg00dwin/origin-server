@@ -19,6 +19,7 @@
 require "uri"
 require "net/http"
 require "getoptlong"
+require 'resolv'
 
 #
 # Globals
@@ -29,12 +30,9 @@ li_server = 'li.mmcgrath.libra.mmcgrath.net'
 debug = false
 
 def hostexist?(host)
-    begin
-        resp = Socket.gethostbyname(host)
-    rescue
-        resp = []
-    end
-    return resp.empty?
+    dns = Resolv::DNS.new
+    resp = dns.getresources(host, Resolv::DNS::Resource::IN::A)
+    return resp.any?
 end
 
 def p_usage
@@ -170,16 +168,19 @@ if $?.exitstatus != 0
     exit 255
 end
 
-File.new(".git/config", "w").puts <<GIT
+f = File.new(".git/config", "w")
+f.puts <<GIT
 [remote "libra"]
     url = ssh://#{opt['user']}@#{opt['app']}.#{opt['user']}.libra.mmcgrath.net/var/lib/libra/#{opt['user']}/git/#{opt['app']}.git/
 GIT
+f.close
 
 #
 # Add our skeleton files
 #
 
-File.new("index.php", "w").puts <<HOMEPAGE
+f = File.new("index.php", "w")
+f.puts <<HOMEPAGE
 <html><title>#{opt['app']}</title>
 <body>
 <h1>Welcome to libra</h1>
@@ -191,15 +192,38 @@ git push libra master</pre>
 </body>
 </html>
 HOMEPAGE
+f.close
 
-File.new("health_check.php", "w").puts <<HEALTH
+f = File.new("health_check.php", "w")
+f.puts <<HEALTH
 <?php
 print 1;
 ?>
 HEALTH
+f.close
 
-%x{git add *}
-%x{git commit -a -m 'Initial libra app creation'}
+puts "add"
+
+git = %x[git add *]
+
+puts git
+if $?.exitstatus != 0
+    puts "Error in calling git add"
+    puts git
+    exit 255
+end
+
+puts "end"
+
+git=%x[git commit -a -m "Initial libra app creation"]
+
+puts git
+if $?.exitstatus != 0
+    puts "Error in calling git add"
+    puts git
+    exit 255
+end
+
 
 Dir.chdir(old_dir)
 
@@ -213,16 +237,21 @@ puts "Contacting server http://#{li_server}"
 response = Net::HTTP.post_form(URI.parse("http://#{li_server}/php/cartridge_do.php"),
                            {'cartridge' => opt['type'],
                             'action' => 'configure',
-                            'args' => "#opt{'app'} #opt{'user'}"})
+                            'args' => "#{opt['app']} #{opt['user']}"})
 
 if response.code == '200'
     if debug
         puts "HTTP response from server is #{response.body}"
     end
     puts "Creation successful"
+    if !(response.body =~ /exitcode=>0/)
+        puts "An error has occured: #{response.body}"
+        exit 253
+    end
 else
     puts "Problem with server. Response code was #{response.code}"
     puts "HTTP response from server is #{response.body}"
+    exit 254
 end
 
 #
@@ -245,7 +274,8 @@ if found
     puts "Found #{my_url} in ~/.ssh/config... No need to adjust"
 else
     puts "    Adding #{my_url} to ~/.ssh/config"
-    File.open(ssh_config, "a").puts <<SSH
+    f = File.open(ssh_config, "a")
+    f.puts <<SSH
 
 # Added by libra app on #{`date`}
 Host #{my_url}
@@ -253,6 +283,7 @@ Host #{my_url}
     IdentityFile ~/.ssh/libra_id_rsa
 
 SSH
+f.close
 end
 
 File.chmod(0600, ssh_config)
@@ -280,6 +311,7 @@ end
 
 Dir.chdir(opt["repo"])
 puts "Doing initial test push."
+puts 'system push'
 system("git push -q libra master")
 Dir.chdir(old_dir)
 
