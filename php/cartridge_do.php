@@ -18,7 +18,7 @@ function my_exec($cmd, $input='')
 
 print_r("\n/usr/sbin/mc-rpc --np -I 'ip-10-101-6-42' libra cartridge_do cartridge=$cartridge action=$action args=$args");
 $results = my_exec("/usr/sbin/mc-rpc -v --np -I 'ip-10-101-6-42' libra cartridge_do cartridge=$cartridge action=$action args=$args", $out);
-if($results['return'] != 0) {
+if($results['return'] != 0 || !strpos($results[stdout],'exitcode=>0');) {
     header('HTTP/1.1 500 Internal Server Error', 500);
 }
 print_r("\nstdout: " . $results['stdout']);
