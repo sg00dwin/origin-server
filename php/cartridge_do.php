@@ -16,7 +16,7 @@ function my_exec($cmd, $input='')
                       );
          }
 
-$results = my_exec("/usr/sbin/mc-rpc --np -I mserver.cloud.redhat.com libra create_customer cartridge='$cartridge' action='$action' args='$args'", $out);
+$results = my_exec("/usr/sbin/mc-rpc --np -I 'ip-10-101-6-42' libra create_customer cartridge='$cartridge' action='$action' args='$args'", $out);
 print_r("\nstdout: " . $results['stdout']);
 print_r("\nstderr: " . $results['stderr']);
 print_r("\nreturn: " . $results['return']);
