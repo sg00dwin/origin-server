@@ -311,7 +311,6 @@ end
 
 Dir.chdir(opt["repo"])
 puts "Doing initial test push."
-puts 'system push'
 system("git push -q libra master")
 Dir.chdir(old_dir)
 
