@@ -20,6 +20,7 @@ require "uri"
 require "net/http"
 require "getoptlong"
 require 'resolv'
+require 'json'
 
 #
 # Globals
@@ -233,11 +234,14 @@ Dir.chdir(old_dir)
 
 puts "Creating remote application space: " + opt['app']
 
+json_data = JSON.generate(
+               {:cartridge => "#{opt['type']}",
+                :action => 'configure',
+                :args => "#{opt['app']} #{opt['user']}"})
+
 puts "Contacting server http://#{li_server}"
 response = Net::HTTP.post_form(URI.parse("http://#{li_server}/php/cartridge_do.php"),
-                           {'cartridge' => opt['type'],
-                            'action' => 'configure',
-                            'args' => "#{opt['app']} #{opt['user']}"})
+                           { 'json_data' => json_data })
 
 if response.code == '200'
     if debug
