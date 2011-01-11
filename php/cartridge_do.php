@@ -18,7 +18,7 @@ function my_exec($cmd, $input='')
                       );
          }
 
-print_r"/usr/bin/mc-libra --cartridge $cartridge -a $action -u $username -n $app_name");
+print_r("/usr/bin/mc-libra --cartridge $cartridge -a $action -u $username -n $app_name");
 $results = my_exec("/usr/bin/mc-libra --cartridge $cartridge -a $action -u $username -n $app_name", $out);
 
 if($results['return'] != 0) {
