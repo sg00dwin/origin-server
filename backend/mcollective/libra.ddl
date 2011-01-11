@@ -13,7 +13,7 @@ action "cartridge_do", :description => "run a cartridge action" do
         :prompt         => "Cartridge",
         :description    => "Full name and version of the cartridge to run an action on",
         :type           => :string,
-        :validation     => '/^[a-zA-Z0-9\.\-]+$/',
+        :validation     => '^[a-zA-Z0-9\.\-]+$',
         :optional       => false,
         :maxlength      => 64
 
@@ -21,7 +21,7 @@ action "cartridge_do", :description => "run a cartridge action" do
         :prompt         => "Action",
         :description    => "Cartridge hook to run",
         :type           => :string,
-        :validation     => '/^(configure|deconfigure|info|post-install|post_remove|pre-install|reload|restart|start|status|stop)$/',
+        :validation     => '^(configure|deconfigure|info|post-install|post_remove|pre-install|reload|restart|start|status|stop)$',
         :optional       => false,
         :maxlength      => 64
 
@@ -29,9 +29,9 @@ action "cartridge_do", :description => "run a cartridge action" do
         :prompt         => "Args",
         :description    => "Args to pass to cartridge",
         :type           => :string,
-        :validation     => '/^.+$/',
+        :validation     => '^.+$',
         :optional       => true,
-        :maxlength      => 64
+        :maxlength      => 512
 
     output  :time,
             :description => "The time as a message",
