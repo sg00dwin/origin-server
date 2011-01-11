@@ -75,7 +75,7 @@ task :install_server do
     cp "backend/mcollective/mc-libra.rb", "#{BIN_DIR}/mc-libra"
     cp "backend/mcollective/new_user.rb", "#{BIN_DIR}/new_user"
     mkdir_p CONF_DIR
-    cp "backend/mcollective/libra_s3.conf" CONF_DIR
+    cp "backend/mcollective/libra_s3.conf", CONF_DIR
 end
 
 # 
