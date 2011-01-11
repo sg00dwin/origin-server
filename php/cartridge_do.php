@@ -24,9 +24,6 @@ $results = my_exec("/usr/bin/mc-libra --cartridge $cartridge -a $action -u $user
 if($results['return'] != 0) {
     header('HTTP/1.1 500 Internal Server Error', 500);
 }
-if(!strpos($results[stdout],'exitcode=>0')){
-    $results['return'] = 1;
-}
 print_r("\nstdout: " . $results['stdout']);
 print_r("\nstderr: " . $results['stderr']);
 print_r("\nreturn: " . $results['return']);
