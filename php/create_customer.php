@@ -1,6 +1,6 @@
 <?php
 
-$user_data = json_decode($_POST['json_data'])
+$user_data = json_decode($_POST['json_data']);
 $customer_name = escapeshellarg(filter_var($user_data->{'username'}, FILTER_SANITIZE_SPECIAL_CHARS, FILTER_FLAG_STRIP_LOW));
 $email = escapeshellarg(filter_var($user_data->{'email'}, FILTER_SANITIZE_EMAIL, FILTER_FLAG_STRIP_LOW));
 $ssh_key = escapeshellarg(filter_var($user_data->{'ssh'}, FILTER_SANITIZE_STRING));
