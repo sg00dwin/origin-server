@@ -111,6 +111,7 @@ fi
 %{_libexecdir}/mcollective/mcollective/agent/libra.ddl
 %{_bindir}/new_user
 %{_bindir}/mc-libra
+%config(noreplace) %{_sysconfdir}/libra/libra_s3.conf
 
 
 %files cartridge-php-5.3.2
