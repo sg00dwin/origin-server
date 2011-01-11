@@ -19,6 +19,7 @@
 require "uri"
 require "net/http"
 require "getoptlong"
+require "json"
 
 #
 # Globals
@@ -112,10 +113,12 @@ end
 ssh_key = File.open(libra_kpfile).gets.chomp.split(' ')[1]
 
 puts "Contacting server http://#{li_server}"
-response = Net::HTTP.post_form(URI.parse("http://#{li_server}/php/cartridge_do.php"),
-                           {'cartridge' => 'li-controller-0.1',
-                            'action' => 'configure',
-                            'args' => "-c #{opt['user']} -e #{opt['email']} -s #{ssh_key}"})
+json_data = JSON.generate(
+                {'username' => opt['user'],
+                'email' => opt['email']
+                'ssh' => opt['ssh']}
+response = Net::HTTP.post_form(URI.parse("http://#{li_server}/php/create_customer.php"),
+                           {'json_data' => json_data,})
 
 if response.code == '200'
     if debug

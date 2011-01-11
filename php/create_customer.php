@@ -1,8 +1,9 @@
 <?php
 
-$customer_name = escapeshellarg(filter_var($_POST['username'], FILTER_SANITIZE_SPECIAL_CHARS, FILTER_FLAG_STRIP_LOW));
-$email = escapeshellarg(filter_var($_POST['email'], FILTER_SANITIZE_EMAIL, FILTER_FLAG_STRIP_LOW));
-$ssh_key = escapeshellarg(filter_var($_POST['ssh_key'], FILTER_SANITIZE_STRING));
+$user_data = json_decode($_POST['json_data'])
+$customer_name = escapeshellarg(filter_var($user_data->{'username'}, FILTER_SANITIZE_SPECIAL_CHARS, FILTER_FLAG_STRIP_LOW));
+$email = escapeshellarg(filter_var($user_data->{'email'}, FILTER_SANITIZE_EMAIL, FILTER_FLAG_STRIP_LOW));
+$ssh_key = escapeshellarg(filter_var($user_data->{'ssh'}, FILTER_SANITIZE_STRING));
 
 function my_exec($cmd, $input='')
          {$proc=proc_open($cmd, array(0=>array('pipe', 'r'), 1=>array('pipe', 'w'), 2=>array('pipe', 'w')), $pipes);
@@ -16,7 +17,8 @@ function my_exec($cmd, $input='')
                       );
          }
 
-$results = my_exec("/usr/sbin/mc-rpc --np -I mserver.cloud.redhat.com libra create_customer customer='$customer_name' email='$email' ssh_key='$ssh_key'", $out);
+
+$results = my_exec("/usr/bin/new_user -u '$customer_name' -e '$email' -s '$ssh_key' ", $out);
 print_r("\nstdout: " . $results['stdout']);
 print_r("\nstderr: " . $results['stderr']);
 print_r("\nreturn: " . $results['return']);
