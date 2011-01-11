@@ -116,7 +116,7 @@ puts "Contacting server http://#{li_server}"
 json_data = JSON.generate(
                 {'username' => opt['user'],
                 'email' => opt['email'],
-                'ssh' => opt['ssh']})
+                'ssh' => ssh_key})
 response = Net::HTTP.post_form(URI.parse("http://#{li_server}/php/create_customer.php"),
                            {'json_data' => json_data,})
 
