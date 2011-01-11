@@ -11,7 +11,7 @@ include MCollective::RPC
 #
 # S3 connection info
 #
-config_path = File.exists?('libra_s3.conf') ? 'libra_s3.conf' : '/etc/libra_s3.conf'
+config_path = File.exists?('libra_s3.conf') ? 'libra_s3.conf' : '/etc/libra/libra_s3.conf'
 begin
     config = ParseConfig.new(config_path)
 rescue Errno::EACCES => e

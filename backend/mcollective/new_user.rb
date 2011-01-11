@@ -41,7 +41,7 @@ p_usage unless opt['user'] =~ /^[a-zA-Z0-9]+$/
 p_usage unless opt['email'] =~ /^[a-zA-Z][\w\.-]*[a-zA-Z0-9]@[a-zA-Z0-9][\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]$/
 p_usage unless defined? opt['ssh'] || (opt['ssh'] == Base64.encode64(Base64.decode64(opt['ssh'])).gsub(/\n/, '')) and opt['ssh'] =~ /^AAAAB3NzaC1yc2EA/
 
-config_path = File.exists?('libra_s3.conf') ? 'libra_s3.conf' : '/etc/libra_s3.conf'
+config_path = File.exists?('libra_s3.conf') ? 'libra_s3.conf' : '/etc/libra/libra_s3.conf'
 
 begin
     config = ParseConfig.new(config_path)
