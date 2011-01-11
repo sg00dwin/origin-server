@@ -6,7 +6,8 @@ FACTER_DIR = ENV["FACTERDIR"] || "#{DEST_DIR}/#{Config::CONFIG['sitelibdir']}/fa
 MCOLLECTIVE_DIR = ENV["MCOLLECTIVEDIR"] || "#{DEST_DIR}/usr/libexec/mcollective/mcollective/agent/"
 INITRD_DIR = ENV["INITRDDIR"] || "#{DEST_DIR}/etc/init.d/"
 LIBEXEC_DIR = ENV["LIBEXECDIR"] || "#{DEST_DIR}/usr/libexec/li/"
-LIBRA_DIR = ENV["LIBRA_DIR"] || "#{DEST_DIR}/var/lib/libra"
+LIBRA_DIR = ENV["LIBRADIR"] || "#{DEST_DIR}/var/lib/libra"
+CONF_DIR = ENV["CONFDIR"] || "#{DEST_DIR}/etc/libra"
 CLIENT_FILES = ["client/create_customer.rb",
                 "client/create_http.rb",
                 "client/destroy_http.rb"]
@@ -49,8 +50,8 @@ task :install_node => [:test_node] do
     cp "backend/mcollective/libra.rb", MCOLLECTIVE_DIR
     mkdir_p INITRD_DIR
     cp "backend/scripts/libra", INITRD_DIR
-    mkdir_p "#{DEST_DIR}/usr/bin"
-    cp "backend/scripts/trap-user", "#{DEST_DIR}/usr/bin"
+    mkdir_p BIN_DIR
+    cp "backend/scripts/trap-user", BIN_DIR
     mkdir_p LIBRA_DIR
     mkdir_p "#{DEST_DIR}/usr/share/selinux/packages"
     cp "backend/selinux/libra.pp", "#{DEST_DIR}/usr/share/selinux/packages"
@@ -70,6 +71,11 @@ end
 task :install_server do
     mkdir_p MCOLLECTIVE_DIR
     cp "backend/mcollective/libra.ddl", MCOLLECTIVE_DIR
+    mkdir_p BIN_DIR
+    cp "backend/mcollective/mc-libra.rb", "#{BIN_DIR}/mc-libra"
+    cp "backend/mcollective/new_user.rb", "#{BIN_DIR}/new_user"
+    mkdir_p CONF_DIR
+    cp "backend/mcollective/libra_s3.conf" CONF_DIR
 end
 
 # 

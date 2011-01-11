@@ -1,7 +1,7 @@
 %{!?ruby_sitelibdir: %global ruby_sitelibdir %(ruby -rrbconfig -e 'puts Config::CONFIG["sitelibdir"]')}
 
 Name: li
-Version: 0.03
+Version: 0.04
 Release: 1%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
@@ -33,6 +33,8 @@ Summary: Li server components
 Group: Network/Daemons
 Requires: mcollective-client
 BuildArch: noarch
+Requires: ruby-json
+Requires: rubygem-right_aws
 
 %description server
 This contains the server 'controlling' components of Li.  This can be on the
@@ -107,6 +109,8 @@ fi
 %files server
 %defattr(-,root,root,-)
 %{_libexecdir}/mcollective/mcollective/agent/libra.ddl
+%{_bindir}/new_user
+%{_bindir}/mc-libra
 
 
 %files cartridge-php-5.3.2
@@ -115,6 +119,11 @@ fi
 
 
 %changelog
+* Tue Jan 11 2011 Mike McGrath <mmcgrath@redhat.com> - 0.04-1
+- Added new binaries
+- new upstream release
+- Added new ruby deps
+
 * Thu Jan 06 2011 Mike McGrath <mmcgrath@redhat.com> - 0.03-1
 - Added li-server bits
 
