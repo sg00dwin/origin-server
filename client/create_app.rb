@@ -249,7 +249,7 @@ if response.code == '200'
         puts "HTTP response from server is #{response.body}"
     end
     puts "Creation successful"
-    if !(response.body =~ /exitcode=>0/)
+    if !(response.body =~ /Success/)
         puts "An error has occured: #{response.body}"
         exit 253
     end
@@ -286,6 +286,8 @@ else
 Host #{my_url}
     User #{opt['user']}
     IdentityFile ~/.ssh/libra_id_rsa
+    # This will eventually be replaced with sshfp
+    StrictHostKeyChecking no
 
 SSH
 f.close
