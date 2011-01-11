@@ -237,7 +237,8 @@ puts "Creating remote application space: " + opt['app']
 json_data = JSON.generate(
                {:cartridge => "#{opt['type']}",
                 :action => 'configure',
-                :args => "#{opt['app']} #{opt['user']}"})
+                :app_name => "#{opt['app']}",
+                :username => "#{opt['user']}"})
 
 puts "Contacting server http://#{li_server}"
 response = Net::HTTP.post_form(URI.parse("http://#{li_server}/php/cartridge_do.php"),

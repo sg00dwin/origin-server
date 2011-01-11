@@ -1,8 +1,10 @@
 <?php
 
-$cartridge = escapeshellarg(filter_var($_POST['cartridge'], FILTER_SANITIZE_SPECIAL_CHARS, FILTER_FLAG_STRIP_LOW));
-$action = escapeshellarg(filter_var($_POST['action'], FILTER_SANITIZE_EMAIL, FILTER_FLAG_STRIP_LOW));
-$args = escapeshellarg(filter_var($_POST['args'], FILTER_SANITIZE_STRING));
+$data = json_decode($_POST['json_data']);
+$cartridge = escapeshellarg(filter_var($data->{'cartridge'}, FILTER_SANITIZE_SPECIAL_CHARS, FILTER_FLAG_STRIP_LOW));
+$action = escapeshellarg(filter_var($data->{'action'}, FILTER_SANITIZE_EMAIL, FILTER_FLAG_STRIP_LOW));
+$app_name = escapeshellarg(filter_var($data->{'app_name'}, FILTER_SANITIZE_STRING));
+$username = escapeshellarg(filter_var($data->{'username'}, FILTER_SANITIZE_STRING));
 
 function my_exec($cmd, $input='')
          {$proc=proc_open($cmd, array(0=>array('pipe', 'r'), 1=>array('pipe', 'w'), 2=>array('pipe', 'w')), $pipes);
@@ -16,8 +18,9 @@ function my_exec($cmd, $input='')
                       );
          }
 
-print_r("\n/usr/sbin/mc-rpc --np -I 'ip-10-101-6-42' libra cartridge_do cartridge=$cartridge action=$action args=$args");
-$results = my_exec("/usr/sbin/mc-rpc -v --np -I 'ip-10-101-6-42' libra cartridge_do cartridge=$cartridge action=$action args=$args", $out);
+print_r"/usr/bin/mc-libra --cartridge $cartridge -a $action -u $username -n $app_name");
+$results = my_exec("/usr/bin/mc-libra --cartridge $cartridge -a $action -u $username -n $app_name", $out);
+
 if($results['return'] != 0) {
     header('HTTP/1.1 500 Internal Server Error', 500);
 }
