@@ -115,7 +115,7 @@ ssh_key = File.open(libra_kpfile).gets.chomp.split(' ')[1]
 puts "Contacting server http://#{li_server}"
 json_data = JSON.generate(
                 {'username' => opt['user'],
-                'email' => opt['email']
+                'email' => opt['email'],
                 'ssh' => opt['ssh']}
 response = Net::HTTP.post_form(URI.parse("http://#{li_server}/php/create_customer.php"),
                            {'json_data' => json_data,})
