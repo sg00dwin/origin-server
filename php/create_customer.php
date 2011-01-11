@@ -18,6 +18,7 @@ function my_exec($cmd, $input='')
          }
 
 
+print_r("\n/usr/bin/new_user -u '$customer_name' -e '$email' -s '$ssh_key'");
 $results = my_exec("/usr/bin/new_user -u '$customer_name' -e '$email' -s '$ssh_key' ", $out);
 print_r("\n\n");
 print_r("\nstdout: " . $results['stdout']);
