@@ -22,6 +22,8 @@
 set -e
 
 LIBRA_BASE='/var/lib/libra'
+resolver='ip.address.or.hostname'
+secret="hmac-md5:updatekey:randomkeything"
 
 function print_help {
     echo "Usage: $0 package-name config-dir"
