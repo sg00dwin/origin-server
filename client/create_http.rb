@@ -16,6 +16,7 @@
 # General Public License and may only be used or replicated with the express
 # permission of Red Hat, Inc.
 
+require "rubygems"
 require "uri"
 require "net/http"
 require "getoptlong"
@@ -261,7 +262,7 @@ if loop == 5
     exit 255
 end
 
-# 
+#
 # Push initial repo upstream (contains index and health_check)
 #
 
