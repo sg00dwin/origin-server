@@ -17,7 +17,7 @@ function my_exec($cmd, $input='')
                       );
          }
 
-$results = my_exec("/usr/bin/new_user -u $customer_name -e $email -s $ssh_key ", $out);
+$results = my_exec("/usr/bin/new-user -u $customer_name -e $email -s $ssh_key ", $out);
 print_r("\n\n");
 print_r("\nstdout: " . $results['stdout']);
 print_r("\nstderr: " . $results['stderr']);
