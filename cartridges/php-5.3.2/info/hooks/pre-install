@@ -48,4 +48,3 @@ customer=$1
 
 rpm -q php httpd > /dev/null || quit "Missing packages"
 [ -d "$CARTRIDGE_DIR" ] || quit "Missing cartridge dir: $CARTRIDGE_DIR"
-[ -d "/var/lib/libra/${customer}" ] || quit "Missing customer namespace"

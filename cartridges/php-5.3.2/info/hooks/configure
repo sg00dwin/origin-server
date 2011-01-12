@@ -21,12 +21,10 @@
 # Exit on any errors
 set -e
 
-LIBRA_BASE='/var/lib/libra'
-resolver='ip.address.or.hostname'
-secret="hmac-md5:updatekey:randomkeything"
+. /etc/libra/libra_node.conf
 
 function print_help {
-    echo "Usage: $0 package-name config-dir"
+    echo "Usage: $0 app-name username"
 
     echo "$0 $@" | logger -p local0.notice -t libra_http_create
     exit 1
@@ -131,6 +129,7 @@ mkdir -p "$APP_DIR"
 pushd "$APP_DIR" > /dev/null
 mkdir conf conf.d logs run html
 ln -s /usr/lib64/httpd/modules modules
+ln -s /etc/httpd/conf/magic conf/magic
 popd > /dev/null
 
 #
@@ -159,12 +158,30 @@ EOF
 
 cat <<EOF > "$APP_DIR/${application}_ctl.sh"
 #/bin/bash
-if ! [ \$# -eq 1 ]
+if ! [ $# -eq 1 ]
 then
-    echo "Usage: \$0 [start|restart|graceful|graceful-stop|stop]"
+    echo "Usage: $0 [start|restart|graceful|graceful-stop|stop]"
     exit 1
 fi
-/usr/sbin/httpd -C 'Include $APP_DIR/conf.d/*.conf' -f /usr/libexec/li/cartridges/php-5.3.2/info/configuration/etc/conf/httpd.conf -k \$1
+
+case "$1" in
+    start)
+        if [ -f $APP_DIR/run/stop_lock ]
+        then
+            echo -n " - Application is disabled" 1>&2
+            exit 0
+        else
+            /usr/sbin/httpd -C 'Include $APP_DIR/mmcgrathwoot/conf.d/*.conf' -f /usr/libexec/li/cartridges/php-5.3.2/info/configuration/etc/conf/httpd.conf -k $1
+        fi
+    ;;
+    restart|graceful|graceful-stop|stop)
+        /usr/sbin/httpd -C 'Include $APP_DIR/conf.d/*.conf' -f /usr/libexec/li/cartridges/php-5.3.2/info/configuration/etc/conf/httpd.conf -k $1
+    ;;
+    status)
+        echo "Coming soon"
+        exit 0
+    ;;
+esac
 EOF
 
 chmod +x "$APP_DIR/${application}_ctl.sh"
@@ -200,7 +217,7 @@ cat << EOF | nsupdate -d -v -y "$secret"
 server $resolver
 zone libra.mmcgrath.net
 update delete $host.libra.mmcgrath.net
-update add $host.libra.mmcgrath.net 60 A $(/usr/bin/facter ipaddress)
+update add $host.libra.mmcgrath.net 60 A 50.16.82.2
 send
 EOF
 
