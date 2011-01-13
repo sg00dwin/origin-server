@@ -158,24 +158,24 @@ EOF
 
 cat <<EOF > "$APP_DIR/${application}_ctl.sh"
 #/bin/bash
-if ! [ $# -eq 1 ]
+if ! [ \$# -eq 1 ]
 then
-    echo "Usage: $0 [start|restart|graceful|graceful-stop|stop]"
+    echo "Usage: \$0 [start|restart|graceful|graceful-stop|stop]"
     exit 1
 fi
 
-case "$1" in
+case "\$1" in
     start)
         if [ -f $APP_DIR/run/stop_lock ]
         then
             echo -n " - Application is disabled" 1>&2
             exit 0
         else
-            /usr/sbin/httpd -C 'Include $APP_DIR/mmcgrathwoot/conf.d/*.conf' -f /usr/libexec/li/cartridges/php-5.3.2/info/configuration/etc/conf/httpd.conf -k $1
+            /usr/sbin/httpd -C 'Include $APP_DIR/conf.d/*.conf' -f /usr/libexec/li/cartridges/php-5.3.2/info/configuration/etc/conf/httpd.conf -k \$1
         fi
     ;;
     restart|graceful|graceful-stop|stop)
-        /usr/sbin/httpd -C 'Include $APP_DIR/conf.d/*.conf' -f /usr/libexec/li/cartridges/php-5.3.2/info/configuration/etc/conf/httpd.conf -k $1
+        /usr/sbin/httpd -C 'Include $APP_DIR/conf.d/*.conf' -f /usr/libexec/li/cartridges/php-5.3.2/info/configuration/etc/conf/httpd.conf -k \$1
     ;;
     status)
         echo "Coming soon"
