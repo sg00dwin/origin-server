@@ -1,15 +1,18 @@
 require 'libra'
 include Libra
 
-Given /^an existing customer named '([a-zA-Z0-9]+)'$/ do |name|
-  puts User.find_all_usernames
-  #user = User.find('mmcgrath')
-  #pp user.servers
-  #pp user.apps
-  #pp user.apps_by_server
-  #result = User.exists(name, @options)
-  #raise UserNotFound if result.empty?
+Given /^an existing '([a-zA-Z0-9]+)' user$/ do |username|
+  # Make sure the given user exists
+  unless User.find(username)
+    User.create(username, 'blah', 'blah@example.org')
+  end
+end
 
-  # Otherwise, verify that the specific lookup works
-  #User.exists_on_server(result[0], name, @options).should be_true
+When /^I try to create a '([a-zA-Z0-9]+)' user$/ do |username|
+  lambda {
+    User.create(username, 'blah', 'blah@example.org')
+  }.should throw_symbol(:user_exists)
+end
+
+Then /^I should get an exception$/ do
 end

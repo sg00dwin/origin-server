@@ -1,6 +1,6 @@
 Feature: Setup a new application
 
   Scenario:
-    Given an existing customer named 'mhicks'
-    When I setup a new php application with name 'test_app'
-    Then the application should be accessible via DNS
+    Given an existing 'mhicks' user
+    When I try to create a 'mhicks' user
+    Then I should get an exception

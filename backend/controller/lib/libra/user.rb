@@ -18,9 +18,12 @@ module Libra
     end
 
     #
-    # Creates a new user
+    # Creates a new user, raising an exception
+    # if the user already exists.
     #
-    def create(username, ssh, email)
+    def self.create(username, ssh, email)
+      throw :user_exists if find(username)
+
       json = JSON.generate({:username => username, :email => email, :ssh => ssh})
       s3.put('libra', "user_info/#{username}.json", json)
       return new(json)
@@ -51,7 +54,7 @@ module Libra
     #
     def self.find(username)
       begin
-        return new(s3.get('libra', "user_info/#{name}.json")[:object])
+        return new(s3.get('libra', "user_info/#{username}.json")[:object])
       rescue RightAws::AwsError => e
         if e.message =~ /^NoSuchKey/
           return nil
