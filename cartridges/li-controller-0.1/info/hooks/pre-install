@@ -25,13 +25,12 @@ if [ -f '/etc/libra/node.conf' ]
 then
     . /etc/libra/node.conf
 elif [ -f 'node.conf' ]
+then
     . node.conf
 else
     echo "node.conf not found.  Cannot continue" 1>&2
     exit 3
 fi
-
-LIBRA_BASE=libra_dir
 
 function print_help {
     echo "Usage: $0 customername"
@@ -51,4 +50,4 @@ then
 fi
 
 groups "$customer_id" > /dev/null 2>&1 && quit "Customer $customer_id already exists"
-[ -d "$LIBRA_BASE/${customer}" ] || quit "Customer namespace already exists!"
+[ -d "$libra_dir/${customer}" ] || quit "Customer namespace already exists!"

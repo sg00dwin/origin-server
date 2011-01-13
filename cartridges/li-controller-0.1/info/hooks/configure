@@ -25,14 +25,13 @@ if [ -f '/etc/libra/node.conf' ]
 then
     . /etc/libra/node.conf
 elif [ -f 'node.conf' ]
+then
     . node.conf
 else
     echo "node.conf not found.  Cannot continue" 1>&2
     exit 3
 fi
 
-
-LIBRA_BASE=libra_dir
 
 function print_help {
     echo "Usage: $0"
@@ -49,7 +48,7 @@ function create_customerspace {
         echo "Usage: $0 customer_id $email"
         exit 1
     fi
-    CUSTOMER_HOME="$LIBRA_BASE/$customer_id/"
+    CUSTOMER_HOME="$libra_dir/$customer_id/"
 
     customer_id="$1"
 
