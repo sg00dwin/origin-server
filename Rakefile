@@ -50,6 +50,7 @@ task :install_node => [:test_node] do
     cp "backend/mcollective/libra.rb", MCOLLECTIVE_DIR
     mkdir_p INITRD_DIR
     cp "backend/scripts/libra", INITRD_DIR
+    cp "backend/scripts/libra-data", INITRD_DIR
     mkdir_p BIN_DIR
     cp "backend/scripts/trap-user", BIN_DIR
     mkdir_p LIBRA_DIR
