@@ -107,6 +107,7 @@ if create_user
                             :action => 'configure',
                             :args => "-c #{user_info["username"]} -e #{user_info["email"]} -s #{user_info["ssh"]}")
     unless user_resp[0][:data][:exitcode] == 0
+        p user_resp if verbose
         puts "remote user creation failed: #{user_resp[0][:data][:output]}"
         exit 233
     end
