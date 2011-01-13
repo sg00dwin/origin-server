@@ -1,6 +1,10 @@
-require 'pp'
+require 'libra'
+include Libra
 
-Given /^existing servers with git repositories$/ do
-  # Just test a client call for right now
-  @rpc_facts.get_fact(:fact => 'git_repos')
+Given /^an existing customer named '([a-zA-Z0-9]+)'$/ do |name|
+  result = UserHelper.exists(name, @options)
+  raise UserNotFound if result.empty?
+
+  # Otherwise, verify that the specific lookup works
+  UserHelper.exists_on_server(result[0], name, @options).should be_true
 end

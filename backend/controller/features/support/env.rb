@@ -1,4 +1,6 @@
+$LOAD_PATH << File.expand_path('../../../lib', __FILE__)
 require 'mcollective'
+require 'libra'
 
 World(MCollective::RPC)
 
@@ -8,10 +10,4 @@ Before do
                 :verbose     => false,
                 :filter      => {"identity"=>[], "fact"=>[], "agent"=>[], "cf_class"=>[]},
                 :config      => "test/etc/client.cfg"}
-
-    @libra = rpcclient("libra", :options => @options)
-    @libra.progress = false
-
-    @rpc_facts = rpcclient("rpcutil", :options => @options)
-    @rpc_facts.progress = false
 end
