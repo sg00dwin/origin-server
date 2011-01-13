@@ -21,7 +21,18 @@
 # Exit on any errors
 set -e
 
-LIBRA_BASE='/var/lib/libra'
+if [ -f '/etc/libra/node.conf' ]
+then
+    . /etc/libra/node.conf
+elif [ -f 'node.conf' ]
+    . node.conf
+else
+    echo "node.conf not found.  Cannot continue" 1>&2
+    exit 3
+fi
+
+
+LIBRA_BASE=libra_dir
 
 function print_help {
     echo "Usage: $0"
