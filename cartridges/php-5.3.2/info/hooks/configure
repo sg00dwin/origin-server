@@ -30,6 +30,11 @@ function print_help {
     exit 1
 }
 
+function error {
+    echo "$1" 1>&2
+    exit "$2"
+}
+
 function find_open_ip {
     # Find an open 127.0.x.x address to host application
     [ -f $LIBRA_CONF/ip_db ] || echo "customer_id,application_name,service_type,port" >> $LIBRA_CONF/ip_db
@@ -119,11 +124,7 @@ chmod 0750 $CUSTOMER_HOME/git/$application.git/hooks/post-receive
 # Create http base for application, every app gets its own apache instance
 #
 
-if [ -d "$APP_DIR" ]
-then
-    echo "ERROR: $application already exists.  Please destroy to re-create or pick a new app name"
-    exit 5
-fi
+[ -d "$APP_DIR" ] && error "${application}.  Please destroy then recreate, or pick a new name" 132
 
 mkdir -p "$APP_DIR"
 pushd "$APP_DIR" > /dev/null
@@ -184,10 +185,9 @@ case "\$1" in
 esac
 EOF
 
-chmod +x "$APP_DIR/${application}_ctl.sh"
-
-chown $customer_id.$customer_id -R $APP_DIR
-$APP_DIR/${application}_ctl.sh start
+chmod +x "$APP_DIR/${application}_ctl.sh" || error "Failed to chmod new application scripts" 122
+chown $customer_id.$customer_id -R $APP_DIR || error "Failed to chown new application space.  Please contact support" 123
+$APP_DIR/${application}_ctl.sh start || error "Failed to start ${application}" 121
 
 #
 # Create virtualhost definition for apache
@@ -206,18 +206,16 @@ cat <<EOF > "/etc/httpd/conf.d/${customer_id}_${application}.conf"
 </VirtualHost>
 EOF
 
-/sbin/service httpd configtest 2> /dev/null && /sbin/service httpd graceful
+/sbin/service httpd configtest 2> /dev/null && /sbin/service httpd graceful || error "Failed to restart master httpd, please contact support" 120
 
 #/usr/local/bin/libra/update-ddns.sh -h ${application}.${customer_id} -d libra.mmcgrath.net -i $(/usr/bin/facter ipaddress)
 # 
 # Update DNS
 #
 host=${application}.${customer_id}
-cat << EOF | nsupdate -d -v -y "$secret"
-server $resolver
+echo "server $resolver
 zone libra.mmcgrath.net
 update delete $host.libra.mmcgrath.net
 update add $host.libra.mmcgrath.net 60 A 50.16.82.2
 send
-EOF
-
+" | nsupdate -d -L0 -v -y "$secret" > /dev/null 2>&1 || error "DNS update for $host has failed" 200
