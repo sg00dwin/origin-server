@@ -28,11 +28,48 @@ module Libra
         result = response[:data][:value]
       end
 
-      # Only yield to the block if there is a result
-      # and a block was supplied
-      yield result if block_given? and result
+      return result
+    end
+
+    def rsuccess(response)
+      response[:body][:statuscode].to_i == 0
+    end
+
+    #
+    # Returns the fact value from the specified server.
+    # Yields to the supplied block if there is a non-nil
+    # value for the fact.
+    #
+    def rpc_get_fact(fact, server)
+      result = nil
+
+      User.rpc_exec_on_server('rpcutil', server) do |client|
+        client.get_fact(:fact => fact) do |response|
+          result = rvalue(response)
+
+          # Only yield to the block if there is a value
+          yield result if block_given? and result
+        end
+      end
 
       return result
+    end
+
+    #
+    # Yields to a supplied block with each server that
+    # has the specified fact, providing the server name
+    # and the fact value
+    #
+    def rpc_get_fact(fact)
+      User.rpc_exec('rpcutil') do |client|
+        client.get_fact(:fact => fact) do |response|
+          next unless Integer(response[:body][:statuscode]) == 0
+
+          # Yield the server and the value to the block
+          result = rvalue(response)
+          yield response[:senderid], result if result
+        end
+      end
     end
 
     #

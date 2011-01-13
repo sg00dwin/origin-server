@@ -73,10 +73,10 @@ module Libra
         @servers = {}
 
         # Make the rpc call to check
-        User.rpc_exec('rpcutil') do |client|
-          client.get_fact(:fact => "customer_#{username}").each do |resp|
-            User.rvalue(resp) { |value| @servers[resp[:sender]] = nil }
-          end
+        User.rpc_get_fact("customer_#{username}") do |server, value|
+          # Initialize the hash with the server as the key
+          # The applications will eventually become the value
+          @servers[server] = nil
         end
       end
 
@@ -90,15 +90,11 @@ module Libra
       # Use the cached value if it exists
       unless @apps
         servers.each do |server|
-          User.rpc_exec_on_server('rpcutil', server) do |client|
-            client.get_fact(:fact => "git_#{username}").each do |resp|
-              User.rvalue(resp) do |value|
-                # Split the string of apps into an array
-                @servers[server] = value.split(%r{,\s*}).collect do |path|
-                  # Parse out just the app name
-                  File.basename(path, ".git")
-                end
-              end
+          User.rpc_get_fact("git_#{username}", server) do |app_paths|
+            # Split the string of apps into an array
+            @servers[server] = app_paths.split(%r{,\s*}).collect do |path|
+              # Filter out just the app name to put in the array
+              File.basename(path, ".git")
             end
           end
         end
