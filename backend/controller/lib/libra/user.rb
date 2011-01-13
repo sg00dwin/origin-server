@@ -122,6 +122,18 @@ module Libra
     end
 
     #
+    # Configures the user on the specified server
+    #
+    def configure(server)
+      User.rpc_exec_on_server('libra', server) do |client|
+        resp = client.cartridge_do(:cartridge => 'li-controller-0.1',
+                                   :action => 'configure',
+                                   :args => "-c #{username} -e #{email} -s #{ssh}")
+        throw :creation_failed unless resp[0][:data][:exitcode] == 0
+      end
+    end
+
+    #
     # Clears out any cached data
     #
     def reload
