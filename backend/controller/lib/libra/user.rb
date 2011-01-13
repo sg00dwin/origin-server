@@ -83,6 +83,9 @@ module Libra
       return @servers.keys
     end
 
+    #
+    # Returns the applications that this user has running
+    #
     def apps
       # Use the cached value if it exists
       unless @apps
@@ -107,6 +110,9 @@ module Libra
       return @apps
     end
 
+    #
+    # Returns a hash of the server -> apps for this user
+    #
     def apps_by_server
       # Read in the apps if necessary
       apps unless @apps
@@ -116,7 +122,7 @@ module Libra
     end
 
     #
-    # Clears out any cached data at the instance level
+    # Clears out any cached data
     #
     def reload
       @servers, @apps = nil
