@@ -21,7 +21,27 @@
 # Exit on any errors
 set -e
 
-. /etc/libra/libra_node.conf
+if [ -f '/etc/libra/node.conf' ]
+then
+    . /etc/libra/node.conf
+elif [ -f 'node.conf' ]
+then
+    . node.conf
+else
+    echo "node.conf not found.  Cannot continue" 1>&2
+    exit 3
+fi
+
+if [ -f '/etc/libra/node_data.conf' ]
+then
+    . /etc/libra/node_data.conf
+elif [ -f 'node_data.conf' ]
+then
+    . node_data.conf
+else
+    echo "node_data.conf not found.  Cannot continue" 1>&2
+    exit 3
+fi
 
 function print_help {
     echo "Usage: $0 app-name username"
@@ -37,12 +57,12 @@ function error {
 
 function find_open_ip {
     # Find an open 127.0.x.x address to host application
-    [ -f $LIBRA_CONF/ip_db ] || echo "customer_id,application_name,service_type,port" >> $LIBRA_CONF/ip_db
+    [ -f $libra_conf_dir/ip_db ] || echo "customer_id,application_name,service_type,port" >> $libra_conf_dir/ip_db
     for i in `seq 0 255`
     do
         for j in `seq 2 255`
         do
-            if ! $(grep -q 127.0.$i.$j $LIBRA_CONF/ip_db)
+            if ! $(grep -q 127.0.$i.$j $libra_conf_dir/ip_db)
             then
                 echo 127.0.$i.$j
                 exit
@@ -52,7 +72,7 @@ function find_open_ip {
 }
 
 function take_open_ip {
-    # Writes a new IP to the ip database in $LIBRA_CONF/ip_db
+    # Writes a new IP to the ip database in $libra_conf_dir/ip_db
     # Example: take_open_ip mmcgrath phpmyadmin httpd
     if ! [ $# -eq 4 ]
     then
@@ -65,12 +85,12 @@ function take_open_ip {
     port=$4
 
     # if customer, app, service already exists, re-use IP
-    if $( grep -q "$customer_id,$application_name,$service_type" $LIBRA_CONF/ip_db )
+    if $( grep -q "$customer_id,$application_name,$service_type" $libra_conf_dir/ip_db )
     then
-        echo $(awk -F, "/$customer_id,$application_name,$service_type/"'{ print $1 }' $LIBRA_CONF/ip_db | head -n1)
+        echo $(awk -F, "/$customer_id,$application_name,$service_type/"'{ print $1 }' $libra_conf_dir/ip_db | head -n1)
     else
         IP=$(find_open_ip)
-        echo "$IP,$customer_id,$application_name,$service_type,$port" >> $LIBRA_CONF/ip_db
+        echo "$IP,$customer_id,$application_name,$service_type,$port" >> $libra_conf_dir/ip_db
         echo $IP
     fi
 }
@@ -78,7 +98,7 @@ function take_open_ip {
 function create_repo {
     application="$1"
     customer_id="$2"
-    CUSTOMER_HOME="${LIBRA_BASE}/${customer_id}"
+    CUSTOMER_HOME="${libra_dir}/${customer_id}"
     
     if [ ! -d $CUSTOMER_HOME ]; then echo "ERROR: Customer ${customer_id} not found!  Please create." 1>&2; exit 2; fi
     
@@ -104,7 +124,7 @@ done
 customer_id=`basename $2`
 application="$1"
 
-CUSTOMER_HOME="$LIBRA_BASE/$customer_id/"
+CUSTOMER_HOME="$libra_dir/$customer_id/"
 APP_DIR="$CUSTOMER_HOME/httpd/$application"
 
 #
@@ -195,11 +215,11 @@ $APP_DIR/${application}_ctl.sh start || error "Failed to start ${application}" 1
 
 cat <<EOF > "/etc/httpd/conf.d/${customer_id}_${application}.conf"
 <VirtualHost *:80>
-  ServerName ${application}.${customer_id}.libra.mmcgrath.net
+  ServerName ${application}.${customer_id}.${libra_domain}
   ServerAdmin mmcgrath@redhat.com
   DocumentRoot /var/www/html
-  ErrorLog logs/$customer_id.libra.mmcgrath.net-error_log
-  TransferLog logs/$customer_id.libra.mmcgrath.net-access_log
+  ErrorLog logs/$customer_id.${libra_domain}-error_log
+  TransferLog logs/$customer_id.${libra_domain}-access_log
 
   ProxyPass / http://$IP:8080/
   ProxyPassReverse / http://$IP:8080/
@@ -208,14 +228,13 @@ EOF
 
 /sbin/service httpd configtest 2> /dev/null && /sbin/service httpd graceful || error "Failed to restart master httpd, please contact support" 120
 
-#/usr/local/bin/libra/update-ddns.sh -h ${application}.${customer_id} -d libra.mmcgrath.net -i $(/usr/bin/facter ipaddress)
 # 
 # Update DNS
 #
 host=${application}.${customer_id}
 echo "server $resolver
-zone libra.mmcgrath.net
-update delete $host.libra.mmcgrath.net
-update add $host.libra.mmcgrath.net 60 A 50.16.82.2
+zone ${libra_domain}
+update delete $host.${libra_domain}
+update add $host.${libra_domain} 60 A ${public_ip}
 send
 " | nsupdate -d -L0 -v -y "$secret" > /dev/null 2>&1 || error "DNS update for $host has failed" 200

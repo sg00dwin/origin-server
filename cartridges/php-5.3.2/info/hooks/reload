@@ -21,7 +21,17 @@
 # Exit on any errors
 set -e
 
-. /etc/libra/libra_node.conf
+if [ -f '/etc/libra/node.conf' ]
+then
+    . /etc/libra/node.conf
+elif [ -f 'node.conf' ]
+then
+    . node.conf
+else
+    echo "node.conf not found.  Cannot continue" 1>&2
+    exit 3
+fi
+
 
 function print_help {
     echo "Usage: $0 app-name username"
@@ -47,7 +57,7 @@ done
 customer_id=`basename $2`
 application="$1"
 
-CUSTOMER_HOME="$LIBRA_BASE/$customer_id/"
+CUSTOMER_HOME="$libra_dir/$customer_id/"
 APP_DIR="$CUSTOMER_HOME/httpd/$application"
 
 #
