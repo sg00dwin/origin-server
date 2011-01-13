@@ -66,16 +66,27 @@ task :install_cartridges do
 end
 
 # 
+# Test server
+#
+task :test_server do
+    cd "backend/controller"
+    sh "rake", "cuc"
+    cd "../.."
+end
+
+# 
 # Install server
 #
-task :install_server do
+task :install_server => [:test_server] do
     mkdir_p MCOLLECTIVE_DIR
     cp "backend/mcollective/libra.ddl", MCOLLECTIVE_DIR
     mkdir_p BIN_DIR
-    cp "backend/mcollective/mc-libra.rb", "#{BIN_DIR}/mc-libra"
-    cp "backend/mcollective/new_user.rb", "#{BIN_DIR}/new_user"
+    cp "backend/controller/bin/mc-libra", "#{BIN_DIR}/mc-libra"
+    cp "backend/controller/bin/new-user", "#{BIN_DIR}/new-user"
     mkdir_p CONF_DIR
-    cp "backend/mcollective/libra_s3.conf", CONF_DIR
+    cp "backend/controller/conf/libra_s3.conf", CONF_DIR
+    cd "backend/controller"
+    sh "rake"
 end
 
 # 
@@ -95,6 +106,7 @@ task :default do
     puts "  install_node        Install node files"
     puts "  test_node           Test node files"
     puts "  install_cartridges  Install cartridges"
+    puts "  test_server         Test server files"
     puts "  install_server      Install server"
     puts "  install             Install all"
     puts ""

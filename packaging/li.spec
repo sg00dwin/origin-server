@@ -1,7 +1,8 @@
 %{!?ruby_sitelibdir: %global ruby_sitelibdir %(ruby -rrbconfig -e 'puts Config::CONFIG["sitelibdir"]')}
+%define gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 
 Name: li
-Version: 0.04
+Version: 0.05
 Release: 1%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
@@ -13,6 +14,11 @@ BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildArch: noarch
 
 BuildRequires: rubygem-rake
+BuildRequires: rubygem-rspec
+BuildRequires: rubygem-cucumber
+BuildRequires: mcollective
+BuildRequires: mcollective-client
+BuildRequires: mcollective-common
 
 %description
 Provides Li client libraries
@@ -60,11 +66,15 @@ Provides php support to li
 %build
 rake test_client
 rake test_node
+rake test_server
 
 
 %install
 rm -rf $RPM_BUILD_ROOT
 rake DESTDIR="$RPM_BUILD_ROOT" install
+mkdir -p .%{gemdir}
+gem install --install-dir $RPM_BUILD_ROOT/%{gemdir} --local -V --force --rdoc \
+     backend/controller/pkg/li-controller-%{version}.gem
 
 
 %clean
@@ -109,9 +119,15 @@ fi
 %files server
 %defattr(-,root,root,-)
 %{_libexecdir}/mcollective/mcollective/agent/libra.ddl
-%{_bindir}/new_user
+%{_bindir}/new-user
 %{_bindir}/mc-libra
 %config(noreplace) %{_sysconfdir}/libra/libra_s3.conf
+%{gemdir}/gems/li-controller-%{version}
+%{gemdir}/bin/mc-libra
+%{gemdir}/bin/new-user
+%{gemdir}/cache/li-controller-%{version}.gem
+%{gemdir}/doc/li-controller-%{version}
+%{gemdir}/specifications/li-controller-%{version}.gemspec
 
 
 %files cartridge-php-5.3.2
