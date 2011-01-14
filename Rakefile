@@ -78,7 +78,7 @@ end
 # 
 # Install server
 #
-task :install_server => [:test_server] do
+task :install_server do
     mkdir_p MCOLLECTIVE_DIR
     cp "backend/mcollective/libra.ddl", MCOLLECTIVE_DIR
     mkdir_p BIN_DIR
