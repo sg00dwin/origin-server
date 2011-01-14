@@ -9,8 +9,7 @@ LIBEXEC_DIR = ENV["LIBEXECDIR"] || "#{DEST_DIR}/usr/libexec/li/"
 LIBRA_DIR = ENV["LIBRADIR"] || "#{DEST_DIR}/var/lib/libra"
 CONF_DIR = ENV["CONFDIR"] || "#{DEST_DIR}/etc/libra"
 CLIENT_FILES = ["client/create_customer.rb",
-                "client/create_http.rb",
-                "client/destroy_http.rb"]
+                "client/create_app.rb"]
 
 NODE_FILES = ["backend/facter/libra.rb",
               "backend/mcollective/libra.rb"]
