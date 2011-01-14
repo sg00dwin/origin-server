@@ -81,37 +81,18 @@ module Libra
     end
 
     #
-    # Execute an RPC call for the specified agent on all servers
+    # Execute an RPC call for the specified agent.
+    # If a server is supplied, only execute for that server.
     #
-    def rpc_exec(agent)
+    def rpc_exec(agent, server=nil)
       # Use the passed in base options or parse them
       options = Libra.rpc_opts || rpcoptions
 
-      # Setup the rpc client
-      rpc_client = rpcclient(agent, :options => options)
-      rpc_client.progress = false
-      rpc_client.timeout = 1
-
-      # Execute a block and make sure we disconnect the client
-      begin
-        result = yield rpc_client
-      ensure
-        rpc_client.disconnect
+      if server
+        # Filter to the specified server
+        options[:filter]["identity"] = server
+        options[:mcollective_limit_targets] = "1"
       end
-
-      return result
-    end
-
-    #
-    # Execute an RPC call for the specified agent on the specified server
-    #
-    def rpc_exec(agent, server)
-      # Use the passed in base options or parse them
-      options = Libra.rpc_opts || rpcoptions
-
-      # Filter to the specified server
-      options[:filter]["identity"] = server
-      options[:mcollective_limit_targets] = "1"
 
       # Setup the rpc client
       rpc_client = rpcclient(agent, :options => options)

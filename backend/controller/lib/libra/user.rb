@@ -6,7 +6,6 @@ require 'pp'
 module Libra
   class User
     extend Helper
-    private_class_method :new
     attr_reader :username
     attr_accessor :ssh, :email
 
@@ -14,8 +13,9 @@ module Libra
       @username, @ssh, @email = username, ssh, email
     end
 
-    def initialize(json)
-      JSON.parse(json).each_pair {|key, value| instance_variable_set("@#{key}", value)}
+    def self.from_json(json)
+      data = JSON.parse(json)
+      new(data[:username], data[:ssh], data[:email])
     end
 
     #
@@ -24,7 +24,7 @@ module Libra
     #
     def self.create(username, ssh, email)
       throw :user_exists if find(username)
-      user = new(json)
+      user = new(username, ssh, email)
       user.update
       return user
     end
@@ -54,7 +54,7 @@ module Libra
     #
     def self.find(username)
       begin
-        return new(s3.get('libra', "user_info/#{username}.json")[:object])
+        return User.from_json(s3.get('libra', "user_info/#{username}.json")[:object])
       rescue RightAws::AwsError => e
         if e.message =~ /^NoSuchKey/
           return nil
@@ -69,7 +69,7 @@ module Libra
     #
     def update
       json = JSON.generate({:username => username, :email => email, :ssh => ssh})
-      s3.put('libra', "user_info/#{username}.json", json)
+      User.s3.put('libra', "user_info/#{username}.json", json)
     end
 
     #

@@ -4,6 +4,7 @@ require 'rubygems'
 require 'libra'
 
 include Libra
+Libra.logger = Logger.new('/var/log/libra.log')
 
 options = {}
 OptionParser.new do |opts|
@@ -44,11 +45,11 @@ end
 
 # Check if user already exists
 if User.find(options[:username])
-  unless opt['alter']
+  unless options[:alter]
       puts "User already exists!  To overwrite or change, use --alter"
       exit 254
   end
 end
 
 # Create the user
-User.new(options[:username], options[:email], options[:ssh])
+User.create(options[:username], options[:email], options[:ssh])

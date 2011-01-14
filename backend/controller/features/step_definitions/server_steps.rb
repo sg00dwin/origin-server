@@ -9,7 +9,7 @@ end
 
 
 When /^I try to find an available server$/ do
-  Server.find_available.should_not be_empty
+  Server.find_available.should_not be_nil
 end
 
 Then /^I should get a result$/ do
