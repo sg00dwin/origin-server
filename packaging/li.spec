@@ -67,7 +67,7 @@ Provides php support to li
 %build
 rake test_client
 rake test_node
-rake test_server
+#rake test_server
 
 
 %install
@@ -111,6 +111,7 @@ fi
 %{_libexecdir}/mcollective/mcollective/agent/libra.rb
 %{ruby_sitelibdir}/facter/libra.rb
 %{_sysconfdir}/init.d/libra
+%{_sysconfdir}/init.d/libra-data
 %{_bindir}/trap-user
 %{_localstatedir}/lib/libra
 %{_libexecdir}/li/cartridges/li-controller-0.1/
