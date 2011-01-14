@@ -142,7 +142,7 @@ end
 # Send Warning
 #
 
-if !opt["yes"]
+if !opt["bypass"]
     puts <<WARNING
 NOTICE: This is pre-alpha destructionware.  It is not tested, it
 might break at any time.  While we'll generally leave it running, there is no
