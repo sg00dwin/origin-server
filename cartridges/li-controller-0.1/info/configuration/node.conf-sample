@@ -1,2 +1,15 @@
-libra_dir='/var/lib/libra'
+# Users home dirs (where customer data ends up)
+libra_dir='/var/lib/libra/'
 
+# Configuration dir for libra
+libra_conf_dir='/etc/libra/'
+
+# Domain for DDNS management
+libra_domain='libra.mmcgrath.net'
+
+# DDNS resolver
+resolver='your-resolver'
+
+# DDNS Secret key
+secret="hmac-md5:keyname:keything"
+You have new mail in /var/spool/mail/root
