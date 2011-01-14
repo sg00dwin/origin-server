@@ -33,8 +33,9 @@ options = rpcoptions do |parser, options|
     parser.on('-n', '--name NAME', 'Name of application') {|v| options[:name] = v}
     #parser.on('-r', '--args ARGS', 'Args to pass') {|v| options[:args] = v}
     parser.on('-u', '--user USER', 'User to act on') {|v| options[:user] = v}
-
 end
+
+verbose = options[:verbose]
 
 unless options.include?(:cartridge) or options[:cartridge] =~ /^(php-5.3.2)$/
     puts "You need to specify a proper cartridge"
@@ -69,12 +70,13 @@ git_repos = {:repo_count => 100000} # Arbitrarly large value
 rpc_facts.get_fact(:fact => 'git_repos') do |resp|
     next unless Integer(resp[:body][:statuscode]) == 0
     repo_count = Integer(resp[:body][:data][:value])
+    puts "#{resp[:senderid]}: #{resp[:body][:data][:value]}" if verbose
     if repo_count < git_repos[:repo_count]
         git_repos[:repo_count] = repo_count
         git_repos[:target] = resp[:senderid]
     end
 end
-
+puts "Using node #{git_repos[:target]}" if verbose
 options[:filter]["identity"] = git_repos[:target]
 options[:mcollective_limit_targets] = "1"
 
@@ -94,6 +96,7 @@ if create_user
         if e.message =~ /^NoSuchKey/
             puts "Error: Trying to create an application for a user that does not exist"
             puts "Please create user, then try again"
+            puts e.message if verbose
         end
         exit 222
     end
@@ -104,6 +107,7 @@ if create_user
                             :action => 'configure',
                             :args => "-c #{user_info["username"]} -e #{user_info["email"]} -s #{user_info["ssh"]}")
     unless user_resp[0][:data][:exitcode] == 0
+        p user_resp if verbose
         puts "remote user creation failed: #{user_resp[0][:data][:output]}"
         exit 233
     end
@@ -127,6 +131,7 @@ resp = mc.cartridge_do(:cartridge => options[:cartridge],
 
 mc.disconnect
 
+puts "Exit code: #{resp[0][:data][:exitcode]}" if verbose
 if resp[0][:data][:exitcode] == 0
     puts "Success!"
 else

@@ -22,6 +22,7 @@ require "net/http"
 require "getoptlong"
 require 'resolv'
 require 'json'
+require 'parseconfig'
 
 #
 # Globals
@@ -30,6 +31,24 @@ ssh_config = "#{ENV['HOME']}/.ssh/config"
 ssh_config_d = "#{ENV['HOME']}/.ssh/"
 li_server = 'li.mmcgrath.libra.mmcgrath.net'
 debug = false
+
+config_path = File.exists?('client.conf') ? 'client.conf' : '/etc/libra/client.conf'
+
+unless File.exists?("#{ENV['HOME']}/.li")
+    file = File.open("#{ENV['HOME']}/.li", 'w')
+    file.close
+end
+
+begin
+    global_config = ParseConfig.new(config_path)
+    local_config = ParseConfig.new("#{ENV['HOME']}/.li")
+rescue Errno::EACCES => e
+    puts "Could not open config file: #{e.message}"
+    exit 253
+end
+
+li_server = local_config.get_value('li_server') ? local_config.get_value('li_server') : global_config.get_value('li_server')
+debug = local_config.get_value('debug') ? local_config.get_value('debug') : global_config.get_value('debug')
 
 def hostexist?(host)
     dns = Resolv::DNS.new

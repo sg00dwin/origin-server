@@ -21,6 +21,7 @@ Provides Li client libraries
 Summary: Multi-tenant cloud management system node tools
 Group: Network/Daemons
 Requires: mcollective
+Requires: rubygem-parseconfig
 Requires(post): /usr/sbin/semodule
 Requires(postun): /usr/sbin/semodule
 BuildArch: noarch

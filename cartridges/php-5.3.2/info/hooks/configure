@@ -21,23 +21,48 @@
 # Exit on any errors
 set -e
 
-LIBRA_BASE='/var/lib/libra'
+if [ -f '/etc/libra/node.conf' ]
+then
+    . /etc/libra/node.conf
+elif [ -f 'node.conf' ]
+then
+    . node.conf
+else
+    echo "node.conf not found.  Cannot continue" 1>&2
+    exit 3
+fi
+
+if [ -f '/etc/libra/node_data.conf' ]
+then
+    . /etc/libra/node_data.conf
+elif [ -f 'node_data.conf' ]
+then
+    . node_data.conf
+else
+    echo "node_data.conf not found.  Cannot continue" 1>&2
+    exit 3
+fi
 
 function print_help {
-    echo "Usage: $0 package-name config-dir"
+    echo "Usage: $0 app-name username"
 
     echo "$0 $@" | logger -p local0.notice -t libra_http_create
     exit 1
 }
 
+function error {
+    echo "$1" 1>&2
+    exit "$2"
+}
+
 function find_open_ip {
     # Find an open 127.0.x.x address to host application
-    [ -f $LIBRA_CONF/ip_db ] || echo "customer_id,application_name,service_type,port" >> $LIBRA_CONF/ip_db
+    [ -f $libra_conf_dir/ip_db ] || echo "customer_id,application_name,service_type,port" >> $libra_conf_dir/ip_db
     for i in `seq 0 255`
     do
         for j in `seq 2 255`
         do
-            if ! $(grep -q 127.0.$i.$j $LIBRA_CONF/ip_db)
+            if ! $(grep -q 127.0.$i.$j $libra_conf_dir/ip_db)
             then
                 echo 127.0.$i.$j
                 exit
@@ -47,7 +72,7 @@ function find_open_ip {
 }
 
 function take_open_ip {
-    # Writes a new IP to the ip database in $LIBRA_CONF/ip_db
+    # Writes a new IP to the ip database in $libra_conf_dir/ip_db
     # Example: take_open_ip mmcgrath phpmyadmin httpd
     if ! [ $# -eq 4 ]
     then
@@ -60,12 +85,12 @@ function take_open_ip {
     port=$4
 
     # if customer, app, service already exists, re-use IP
-    if $( grep -q "$customer_id,$application_name,$service_type" $LIBRA_CONF/ip_db )
+    if $( grep -q "$customer_id,$application_name,$service_type" $libra_conf_dir/ip_db )
     then
-        echo $(awk -F, "/$customer_id,$application_name,$service_type/"'{ print $1 }' $LIBRA_CONF/ip_db | head -n1)
+        echo $(awk -F, "/$customer_id,$application_name,$service_type/"'{ print $1 }' $libra_conf_dir/ip_db | head -n1)
     else
         IP=$(find_open_ip)
-        echo "$IP,$customer_id,$application_name,$service_type,$port" >> $LIBRA_CONF/ip_db
+        echo "$IP,$customer_id,$application_name,$service_type,$port" >> $libra_conf_dir/ip_db
         echo $IP
     fi
 }
@@ -73,7 +98,7 @@ function take_open_ip {
 function create_repo {
     application="$1"
     customer_id="$2"
-    CUSTOMER_HOME="${LIBRA_BASE}/${customer_id}"
+    CUSTOMER_HOME="${libra_dir}/${customer_id}"
     
     if [ ! -d $CUSTOMER_HOME ]; then echo "ERROR: Customer ${customer_id} not found!  Please create." 1>&2; exit 2; fi
     
@@ -99,7 +124,7 @@ done
 customer_id=`basename $2`
 application="$1"
 
-CUSTOMER_HOME="$LIBRA_BASE/$customer_id/"
+CUSTOMER_HOME="$libra_dir/$customer_id/"
 APP_DIR="$CUSTOMER_HOME/httpd/$application"
 
 #
@@ -119,16 +144,13 @@ chmod 0750 $CUSTOMER_HOME/git/$application.git/hooks/post-receive
 # Create http base for application, every app gets its own apache instance
 #
 
-if [ -d "$APP_DIR" ]
-then
-    echo "ERROR: $application already exists.  Please destroy to re-create or pick a new app name"
-    exit 5
-fi
+[ -d "$APP_DIR" ] && error "${application}.  Please destroy then recreate, or pick a new name" 132
 
 mkdir -p "$APP_DIR"
 pushd "$APP_DIR" > /dev/null
 mkdir conf conf.d logs run html
 ln -s /usr/lib64/httpd/modules modules
+ln -s /etc/httpd/conf/magic conf/magic
 popd > /dev/null
 
 #
@@ -162,13 +184,30 @@ then
     echo "Usage: \$0 [start|restart|graceful|graceful-stop|stop]"
     exit 1
 fi
-/usr/sbin/httpd -C 'Include $APP_DIR/conf.d/*.conf' -f /usr/libexec/li/cartridges/php-5.3.2/info/configuration/etc/conf/httpd.conf -k \$1
+
+case "\$1" in
+    start)
+        if [ -f $APP_DIR/run/stop_lock ]
+        then
+            echo -n " - Application is disabled" 1>&2
+            exit 0
+        else
+            /usr/sbin/httpd -C 'Include $APP_DIR/conf.d/*.conf' -f /usr/libexec/li/cartridges/php-5.3.2/info/configuration/etc/conf/httpd.conf -k \$1
+        fi
+    ;;
+    restart|graceful|graceful-stop|stop)
+        /usr/sbin/httpd -C 'Include $APP_DIR/conf.d/*.conf' -f /usr/libexec/li/cartridges/php-5.3.2/info/configuration/etc/conf/httpd.conf -k \$1
+    ;;
+    status)
+        echo "Coming soon"
+        exit 0
+    ;;
+esac
 EOF
 
-chmod +x "$APP_DIR/${application}_ctl.sh"
-
-chown $customer_id.$customer_id -R $APP_DIR
-$APP_DIR/${application}_ctl.sh start
+chmod +x "$APP_DIR/${application}_ctl.sh" || error "Failed to chmod new application scripts" 122
+chown $customer_id.$customer_id -R $APP_DIR || error "Failed to chown new application space.  Please contact support" 123
+$APP_DIR/${application}_ctl.sh start || error "Failed to start ${application}" 121
 
 #
 # Create virtualhost definition for apache
@@ -176,29 +215,26 @@ $APP_DIR/${application}_ctl.sh start
 
 cat <<EOF > "/etc/httpd/conf.d/${customer_id}_${application}.conf"
 <VirtualHost *:80>
-  ServerName ${application}.${customer_id}.libra.mmcgrath.net
+  ServerName ${application}.${customer_id}.${libra_domain}
   ServerAdmin mmcgrath@redhat.com
   DocumentRoot /var/www/html
-  ErrorLog logs/$customer_id.libra.mmcgrath.net-error_log
-  TransferLog logs/$customer_id.libra.mmcgrath.net-access_log
+  ErrorLog logs/$customer_id.${libra_domain}-error_log
+  TransferLog logs/$customer_id.${libra_domain}-access_log
 
   ProxyPass / http://$IP:8080/
   ProxyPassReverse / http://$IP:8080/
 </VirtualHost>
 EOF
 
-/sbin/service httpd configtest 2> /dev/null && /sbin/service httpd graceful
+/sbin/service httpd configtest 2> /dev/null && /sbin/service httpd graceful || error "Failed to restart master httpd, please contact support" 120
 
-#/usr/local/bin/libra/update-ddns.sh -h ${application}.${customer_id} -d libra.mmcgrath.net -i $(/usr/bin/facter ipaddress)
 # 
 # Update DNS
 #
 host=${application}.${customer_id}
-cat << EOF | nsupdate -d -v -y "$secret"
-server $resolver
-zone libra.mmcgrath.net
-update delete $host.libra.mmcgrath.net
-update add $host.libra.mmcgrath.net 60 A $(/usr/bin/facter ipaddress)
+echo "server $resolver
+zone ${libra_domain}
+update delete $host.${libra_domain}
+update add $host.${libra_domain} 60 A ${public_ip}
 send
-EOF
-
+" | nsupdate -d -L0 -v -y "$secret" > /dev/null 2>&1 || error "DNS update for $host has failed" 200
