@@ -21,15 +21,33 @@ require "uri"
 require "net/http"
 require "getoptlong"
 require "json"
+require 'parseconfig'
+
+config_path = File.exists?('client.conf') ? 'client.conf' : '/etc/libra/client.conf'
+
+unless File.exists?("#{ENV['HOME']}/.li")
+    file = File.open("#{ENV['HOME']}/.li", 'w')
+    file.close
+end
+
+begin
+    @global_config = ParseConfig.new(config_path)
+    @local_config = ParseConfig.new("#{ENV['HOME']}/.li")
+rescue Errno::EACCES => e
+    puts "Could not open config file: #{e.message}"
+    exit 253
+end
 
 #
-# Globals
+# Check for local var in ~/.li use it, else use /etc/libra/client.conf
 #
-libra_kfile = "#{ENV['HOME']}/.ssh/libra_id_rsa"
-libra_kpfile = "#{ENV['HOME']}/.ssh/libra_id_rsa.pub"
-li_server = 'li.mmcgrath.libra.mmcgrath.net'
-debug = false
+def get_var(var)
+    @local_config.get_value(var) ? @local_config.get_value(var) : @global_config.get_value(var)
+end
 
+#
+# print help
+#
 def p_usage
     puts <<USAGE
 
@@ -63,6 +81,13 @@ opts = GetoptLong.new(
     ["--user",  "-u", GetoptLong::REQUIRED_ARGUMENT],
     ["--email", "-e", GetoptLong::REQUIRED_ARGUMENT]
 )
+
+# Pull in configs from files
+li_server = get_var('li_server')
+debug = get_var('debug')
+
+libra_kfile = "#{ENV['HOME']}/.ssh/libra_id_rsa"
+libra_kpfile = "#{ENV['HOME']}/.ssh/libra_id_rsa.pub"
 
 opt = {}
 opts.each do |o, a|
