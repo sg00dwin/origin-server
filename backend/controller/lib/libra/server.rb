@@ -7,6 +7,15 @@ module Libra
   class Server
     extend Helper
 
+    # Cartridge definitions
+    @@C_CONTROLLER = 'li-controller-0.1'
+
+    attr_reader :name
+
+    def initialize(name)
+      @name = name
+    end
+
     #
     # Returns the preferred available server.
     # Currently this is defined by the server that
@@ -24,7 +33,7 @@ module Libra
         server_match, num_repos = server, repos if num_repos > repos
       end
 
-      return server_match
+      return new(server_match)
     end
 
     # Returns a list of all the servers that respond
@@ -33,11 +42,64 @@ module Libra
 
       rpc_exec('libra') do |client|
         client.echo(:msg => "ping") do |response|
-          servers << response[:senderid] if rsuccess(response)
+          servers << new(response[:senderid]) if rsuccess(response)
         end
       end
 
       return servers
+    end
+
+    #
+    # Configures the user on this server
+    #
+    def configure(user)
+      # Make the call to configure the user
+      execute(@@C_CONTROLLER, 'configure', :args => "-c #{user.username} -e #{user.email} -s #{user.ssh}")
+    end
+
+    #
+    # Configures the application for this user on this server
+    #
+    def configure_framework(framework, app_name, user)
+      # Make the call to configure the application
+      execute(framework, 'configure', :args => "#{app_name} #{user.username}")
+    end
+
+    #
+    #
+    # Anything below this point is private
+    #
+    #
+    private
+
+    #
+    # Execute the cartridge and action on this server
+    #
+    def execute(cartridge, action, args)
+      rpc_exec('libra', name) do |client|
+        client.cartridge_do(:cartridge => cartridge,
+                            :actions => actions,
+                            :args => args) do |response|
+          return_code = resp[0][:data][:exitcode]
+          output = resp[0][:data][:output]
+
+          raise ConfigException, output if return_code != 0
+        end
+      end
+    end
+
+    #
+    # Base equality on the server name
+    #
+    def ==(another_server)
+      self.name == another_server.name
+    end
+
+    #
+    # Base sorting on the server name
+    #
+    def <=>(another_server)
+      self.name <=> another_server.name
     end
   end
 end

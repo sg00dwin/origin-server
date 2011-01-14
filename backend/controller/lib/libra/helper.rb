@@ -2,6 +2,7 @@ require 'rubygems'
 require 'mcollective'
 require 'right_aws'
 require 'right_http_connection'
+require 'parseconfig'
 require 'pp'
 
 include MCollective::RPC
@@ -9,6 +10,13 @@ include MCollective::RPC
 module Libra
   module Helper
     def s3
+      # By default, read aws config from /etc/libra/libra_s3.conf
+      unless Libra.aws_key
+        config = ParseConfig.new('/etc/libra/libra_s3.conf')
+        Libra.aws_key = config.get_value('aws_access_key_id')
+        Libra.aws_secret = config.get_value('aws_secret_access_key')
+      end
+
       # This will verify the Amazon SSL connection
       Rightscale::HttpConnection.params[:ca_file] = "/etc/pki/tls/certs/ca-bundle.trust.crt"
       RightAws::S3Interface.new(Libra.aws_key, Libra.aws_secret, params = {:logger => Libra.logger})
@@ -73,7 +81,7 @@ module Libra
     end
 
     #
-    # Checks whether a user exists on the specified server
+    # Execute an RPC call for the specified agent on all servers
     #
     def rpc_exec(agent)
       # Use the passed in base options or parse them
@@ -95,9 +103,9 @@ module Libra
     end
 
     #
-    # Checks whether a user exists on the specified server
+    # Execute an RPC call for the specified agent on the specified server
     #
-    def rpc_exec_on_server(agent, server)
+    def rpc_exec(agent, server)
       # Use the passed in base options or parse them
       options = Libra.rpc_opts || rpcoptions
 

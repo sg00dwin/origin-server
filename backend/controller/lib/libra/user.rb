@@ -7,7 +7,8 @@ module Libra
   class User
     extend Helper
     private_class_method :new
-    attr_reader :username, :ssh, :email
+    attr_reader :username
+    attr_accessor :ssh, :email
 
     def initialize(username, ssh, email)
       @username, @ssh, @email = username, ssh, email
@@ -23,10 +24,9 @@ module Libra
     #
     def self.create(username, ssh, email)
       throw :user_exists if find(username)
-
-      json = JSON.generate({:username => username, :email => email, :ssh => ssh})
-      s3.put('libra', "user_info/#{username}.json", json)
-      return new(json)
+      user = new(json)
+      user.update
+      return user
     end
 
     #
@@ -65,6 +65,14 @@ module Libra
     end
 
     #
+    # Updates the user with the current information
+    #
+    def update
+      json = JSON.generate({:username => username, :email => email, :ssh => ssh})
+      s3.put('libra', "user_info/#{username}.json", json)
+    end
+
+    #
     # Returns the servers that this user exists on
     #
     def servers
@@ -76,7 +84,7 @@ module Libra
         User.rpc_get_fact("customer_#{username}") do |server, value|
           # Initialize the hash with the server as the key
           # The applications will eventually become the value
-          @servers[server] = nil
+          @servers[Server.new(server)] = nil
         end
       end
 
@@ -118,22 +126,24 @@ module Libra
     end
 
     #
-    # Configures the user on the specified server
-    #
-    def configure(server)
-      User.rpc_exec_on_server('libra', server) do |client|
-        resp = client.cartridge_do(:cartridge => 'li-controller-0.1',
-                                   :action => 'configure',
-                                   :args => "-c #{username} -e #{email} -s #{ssh}")
-        throw :creation_failed unless resp[0][:data][:exitcode] == 0
-      end
-    end
-
-    #
     # Clears out any cached data
     #
     def reload
       @servers, @apps = nil
+    end
+
+    #
+    # Base equality on the username
+    #
+    def ==(another_user)
+      self.username == another_user.username
+    end
+
+    #
+    # Base sorting on the username
+    #
+    def <=>(another_user)
+      self.username <=> another_user.username
     end
   end
 end
