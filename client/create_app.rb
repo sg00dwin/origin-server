@@ -85,8 +85,11 @@ opts = GetoptLong.new(
 
 
 # Pull in configs from files
+libra_domain = get_var('libra_domain')
+libra_dir = get_var('libra_dir')
 li_server = get_var('li_server')
 debug = get_var('debug')
+
 ssh_config = "#{ENV['HOME']}/.ssh/config"
 ssh_config_d = "#{ENV['HOME']}/.ssh/"
 
@@ -198,7 +201,7 @@ end
 f = File.new(".git/config", "w")
 f.puts <<GIT
 [remote "libra"]
-    url = ssh://#{opt['user']}@#{opt['app']}.#{opt['user']}.libra.mmcgrath.net/var/lib/libra/#{opt['user']}/git/#{opt['app']}.git/
+    url = ssh://#{opt['user']}@#{opt['app']}.#{opt['user']}.#{libra_domain}/#{libra_dir}/#{opt['user']}/git/#{opt['app']}.git/
 GIT
 f.close
 
@@ -291,7 +294,7 @@ end
 
 puts "Checking ~/.ssh/config"
 
-my_url = "#{opt['app']}.#{opt['user']}.libra.mmcgrath.net"
+my_url = "#{opt['app']}.#{opt['user']}.#{libra_domain}"
 
 found = false
 File.open(ssh_config) do |sline|
