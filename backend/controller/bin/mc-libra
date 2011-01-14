@@ -62,7 +62,7 @@ begin
 
   # Configure the app on the server
   server.configure_app(options[:cartridge], options[:app_name], user)
-rescue ConfigException => e
+rescue ConfigureException => e
   puts "ERROR: " + e
   exit 203
 end
