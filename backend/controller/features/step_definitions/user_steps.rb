@@ -2,7 +2,7 @@ require 'libra'
 include Libra
 require 'pp'
 
-Given /^an existing '([a-zA-Z0-9]+)' user$/ do |username|
+Given /^an existing '(\w+)' user$/ do |username|
   # Make sure the given user exists
   unless User.find(username)
     create_test_user(username)
@@ -27,17 +27,20 @@ When /^I modify and update the user$/ do
   @user.update
 end
 
-When /^I create a '([a-zA-Z0-9]+)' user$/ do |username|
+When /^I create a '(\w+)' user$/ do |username|
   lambda {
     create_test_user(username)
   }.should throw_symbol(:user_exists)
+
+  @failed = true
 end
 
 When /^I look up that user$/ do
   @user = User.find(@user.username)
 end
 
-Then /^I should get an exception$/ do
+Then /^it should fail$/ do
+  @failed.should be_true
 end
 
 Then /^he should have no servers$/ do

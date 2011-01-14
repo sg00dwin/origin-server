@@ -54,15 +54,15 @@ module Libra
     #
     def configure(user)
       # Make the call to configure the user
-      execute(@@C_CONTROLLER, 'configure', :args => "-c #{user.username} -e #{user.email} -s #{user.ssh}")
+      execute(@@C_CONTROLLER, 'configure', "-c #{user.username} -e #{user.email} -s #{user.ssh}")
     end
 
     #
     # Configures the application for this user on this server
     #
-    def configure_framework(framework, app_name, user)
+    def configure_app(framework, app_name, user)
       # Make the call to configure the application
-      execute(framework, 'configure', :args => "#{app_name} #{user.username}")
+      execute(framework, 'configure', "#{app_name} #{user.username}")
     end
 
     #
@@ -76,12 +76,12 @@ module Libra
     # Execute the cartridge and action on this server
     #
     def execute(cartridge, action, args)
-      rpc_exec('libra', name) do |client|
+      Server.rpc_exec('libra', name) do |client|
         client.cartridge_do(:cartridge => cartridge,
-                            :actions => actions,
+                            :action => action,
                             :args => args) do |response|
-          return_code = resp[0][:data][:exitcode]
-          output = resp[0][:data][:output]
+          return_code = response[:body][:data][:exitcode]
+          output = response[:body][:data][:output]
 
           raise ConfigException, output if return_code != 0
         end

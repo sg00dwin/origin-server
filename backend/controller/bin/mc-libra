@@ -15,8 +15,8 @@ OptionParser.new do |opts|
       options[:action] = action
     end
 
-    opts.on('-f', '--framework FRAMEWORK', 'Framework (e.g. php-5.3.2)') do |framework|
-      options[:framework] = framework
+    opts.on('-c', '--cartridge CARTRIDGE', 'Cartridge (e.g. php-5.3.2)') do |cartridge|
+      options[:cartridge] = cartridge
     end
 
     opts.on('-n', '--app APP', 'Application name') do |app_name|
@@ -28,8 +28,8 @@ OptionParser.new do |opts|
     end
 end.parse!
 
-unless options.include?(:framework) or options[:framework] =~ /^(php-5.3.2)$/
-    puts "You need to specify a proper framework:"
+unless options.include?(:cartridge) or options[:cartridge] =~ /^(php-5.3.2)$/
+    puts "You need to specify a proper cartridge:"
     puts "php-5.3.2"
     exit 254
 end
@@ -61,7 +61,7 @@ begin
   server.configure(user) unless user.servers.index(server)
 
   # Configure the app on the server
-  server.configure_framework(options[:framework], options[:app_name], user)
+  server.configure_app(options[:cartridge], options[:app_name], user)
 rescue ConfigException => e
   puts "ERROR: " + e
   exit 203
