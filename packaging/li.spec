@@ -2,7 +2,7 @@
 %define gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 
 Name: li
-Version: 0.06
+Version: 0.07
 Release: 1%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
@@ -86,6 +86,7 @@ rm -rf $RPM_BUILD_ROOT
 /sbin/chkconfig --add libra || :
 /sbin/service mcollective restart > /dev/null 2>&1 || :
 /usr/sbin/semodule -i %_datadir/selinux/packages/libra.pp
+/sbin/service libra-data start > /dev/null 2>&1 || :
 
 
 %preun node
@@ -116,6 +117,7 @@ fi
 %{_localstatedir}/lib/libra
 %{_libexecdir}/li/cartridges/li-controller-0.1/
 %{_datadir}/selinux/packages/libra.pp
+%config(noreplace) %{_sysconfdir}/libra/node.conf
 
 
 %files server
