@@ -84,7 +84,7 @@ opts = GetoptLong.new(
 
 # Pull in configs from files
 li_server = get_var('li_server')
-debug = get_var('debug') ==
+debug = get_var('debug')
 
 libra_kfile = "#{ENV['HOME']}/.ssh/libra_id_rsa"
 libra_kpfile = "#{ENV['HOME']}/.ssh/libra_id_rsa.pub"
