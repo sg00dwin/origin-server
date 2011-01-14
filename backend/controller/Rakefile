@@ -7,7 +7,7 @@ CLEAN.include("pkg")
 
 spec = Gem::Specification.new do |s|
     s.name = %q{li-controller}
-    s.version = "0.05"
+    s.version = "0.06"
     s.date = %q{2011-01-12}
     s.author = "Matt Hicks"
     s.email = %q{mhicks@redhat.com}
