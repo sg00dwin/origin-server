@@ -1,0 +1,70 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'libra'
+
+include Libra
+Libra.logger = Logger.new('/dev/null')
+
+options = {}
+OptionParser.new do |opts|
+    opts.define_head "Control libra agent"
+    opts.banner = "Usage: mc-libra [options]"
+
+    opts.on('-a', '--action ACTION', 'Action to call') do |action|
+      options[:action] = action
+    end
+
+    opts.on('-c', '--cartridge CARTRIDGE', 'Cartridge (e.g. php-5.3.2)') do |cartridge|
+      options[:cartridge] = cartridge
+    end
+
+    opts.on('-n', '--app APP', 'Application name') do |app_name|
+      options[:app_name] = app_name
+    end
+
+    opts.on('-u', '--username USERNAME', 'User to act on') do |username|
+      options[:username] = username
+    end
+end.parse!
+
+unless options.include?(:cartridge) or options[:cartridge] =~ /^(php-5.3.2)$/
+    puts "You need to specify a proper cartridge:"
+    puts "php-5.3.2"
+    exit 254
+end
+
+unless options.include?(:action) or options[:action] =~ /^(configure|deconfigure|info|post-install|post_remove|pre-install|reload|restart|start|status|stop)$/
+    puts "Specify supported action:"
+    puts "configure,deconfigure,info,post-install,post_remove,pre-install,reload,restart,start,status,stop"
+    exit 253
+end
+
+unless options.include?(:app_name) or options[:app_name] =~ /^.+$/
+    puts "Specify app name"
+    exit 252
+end
+
+unless options.include?(:username) or options[:username] =~ /^[a-zA-Z0-9]+$/
+    puts "Specify user"
+    exit 252
+end
+
+# Lookup the user
+user = User.find(options[:username])
+
+# Find the next available server
+server = Server.find_available
+
+begin
+  # Configure the user on this server if necessary
+  server.configure(user) unless user.servers.index(server)
+
+  # Configure the app on the server
+  server.configure_app(options[:cartridge], options[:app_name], user)
+rescue ConfigureException => e
+  puts "ERROR: " + e
+  exit 203
+end
+
+puts "Success!"

@@ -1,0 +1,60 @@
+#!/usr/bin/ruby
+
+require 'rubygems'
+require 'libra'
+
+include Libra
+Libra.logger = Logger.new('/dev/null')
+
+options = {}
+OptionParser.new do |opts|
+    opts.define_head "Create a new user"
+    opts.banner = "Usage: mc-libra [options]"
+
+    opts.on('-u', '--username USERNAME', "The unique username") do |username|
+      options[:username] = username
+    end
+
+    opts.on('-e', '--email EMAIL', 'The user email') do |email|
+      options[:email] = email
+    end
+
+    opts.on('-s', '--ssh SSH_KEY', 'The user public SSH key') do |ssh|
+      options[:ssh] = ssh
+    end
+
+    opts.on('-a', '--alter', 'Alter / Update user info') do
+      options[:alter] = true
+    end
+end.parse!
+
+unless options.include?(:username) or options[:username] =~ /^[a-zA-Z0-9]+$/
+    puts "The username is invalid."
+    exit 254
+end
+
+unless options.include?(:email) or options[:email] =~ /^[a-zA-Z][\w\.-]*[a-zA-Z0-9]@[a-zA-Z0-9][\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]$/
+    puts "The email is invalid."
+    exit 253
+end
+
+unless options.include?(:ssh) or options[:ssh] =~ (options[:ssh] == Base64.encode64(Base64.decode64(options[:ssh])).gsub(/\n/, ''))
+    puts "The ssh key is invalid."
+    exit 253
+end
+
+# Check if user already exists
+user = User.find(options[:username])
+if user
+  if options[:alter]
+    user.email=options[:email]
+    user.ssh=options[:ssh]
+    user.update
+  else
+    puts "User already exists!  To overwrite or change, use --alter"
+    exit 254
+  end
+else
+  # Create the user
+  User.create(options[:username], options[:email], options[:ssh])
+end
