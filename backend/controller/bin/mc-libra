@@ -5,54 +5,52 @@ require 'libra'
 
 include Libra
 
-#
-# Parse options
-#
-opts = OptionParser.new do |options|
-    parser.define_head "Control libra agent"
-    parser.banner = "Usage: mc-libra [options]"
+options = {}
+OptionParser.new do |opts|
+    opts.define_head "Control libra agent"
+    opts.banner = "Usage: mc-libra [options]"
 
-    parser.on('-a', '--action ACTION', 'Action to call') do |action|
+    opts.on('-a', '--action ACTION', 'Action to call') do |action|
       options[:action] = action
     end
 
-    parser.on('-f', '--framework FRAMEWORK', 'Framework (e.g. php-5.3.2)') do |framework|
+    opts.on('-f', '--framework FRAMEWORK', 'Framework (e.g. php-5.3.2)') do |framework|
       options[:framework] = framework
     end
 
-    parser.on('-n', '--app APP', 'Application name') do |app_name|
+    opts.on('-n', '--app APP', 'Application name') do |app_name|
       options[:app_name] = app_name
     end
 
-    parser.on('-u', '--username USERNAME', 'User to act on') do |username|
+    opts.on('-u', '--username USERNAME', 'User to act on') do |username|
       options[:username] = username
     end
-end
+end.parse!
 
-unless opts.include?(:framework) or opts[:framework] =~ /^(php-5.3.2)$/
+unless options.include?(:framework) or options[:framework] =~ /^(php-5.3.2)$/
     puts "You need to specify a proper framework:"
     puts "php-5.3.2"
     exit 254
 end
 
-unless opts.include?(:action) or opts[:action] =~ /^(configure|deconfigure|info|post-install|post_remove|pre-install|reload|restart|start|status|stop)$/
+unless options.include?(:action) or options[:action] =~ /^(configure|deconfigure|info|post-install|post_remove|pre-install|reload|restart|start|status|stop)$/
     puts "Specify supported action:"
     puts "configure,deconfigure,info,post-install,post_remove,pre-install,reload,restart,start,status,stop"
     exit 253
 end
 
-unless opts.include?(:app_name) or opts[:app_name] =~ /^.+$/
+unless options.include?(:app_name) or options[:app_name] =~ /^.+$/
     puts "Specify app name"
     exit 252
 end
 
-unless opts.include?(:user) or opts[:user] =~ /^[a-zA-Z0-9]+$/
+unless options.include?(:username) or options[:username] =~ /^[a-zA-Z0-9]+$/
     puts "Specify user"
     exit 252
 end
 
 # Lookup the user
-user = User.find(opts[:user])
+user = User.find(options[:username])
 
 # Find the next available server
 server = Server.find_available
@@ -62,7 +60,7 @@ begin
   server.configure(user) unless user.servers.index(server)
 
   # Configure the app on the server
-  server.configure_framework(opts[:framework], opts[:app_name], user)
+  server.configure_framework(options[:framework], options[:app_name], user)
 rescue ConfigException => e
   puts "ERROR: " + e
   exit 203

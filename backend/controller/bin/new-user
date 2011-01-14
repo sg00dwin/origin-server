@@ -5,44 +5,45 @@ require 'libra'
 
 include Libra
 
-opts = OptionParser.new do |options|
-    parser.define_head "Control libra agent"
-    parser.banner = "Usage: mc-libra [options]"
+options = {}
+OptionParser.new do |opts|
+    opts.define_head "Create a new user"
+    opts.banner = "Usage: mc-libra [options]"
 
-    parser.on('-u', '--username USERNAME', "The unique username") do |username|
+    opts.on('-u', '--username USERNAME', "The unique username") do |username|
       options[:username] = username
     end
 
-    parser.on('-e', '--email EMAIL', 'The user email') do |email|
+    opts.on('-e', '--email EMAIL', 'The user email') do |email|
       options[:email] = email
     end
 
-    parser.on('-s', '--ssh SSH_KEY', 'The user public SSH key') do |ssh_key|
-      options[:ssh_key] = ssh_key
+    opts.on('-s', '--ssh SSH_KEY', 'The user public SSH key') do |ssh|
+      options[:ssh] = ssh
     end
 
-    parser.on('-a', '--alter', 'Alter / Update user info') do
+    opts.on('-a', '--alter', 'Alter / Update user info') do
       options[:alter] = true
     end
-end
+end.parse!
 
-unless opts.include?(:username) or opts[:username] =~ /^[a-zA-Z0-9]+$/
+unless options.include?(:username) or options[:username] =~ /^[a-zA-Z0-9]+$/
     puts "The username is invalid."
     exit 254
 end
 
-unless opts.include?(:email) or opts[:email] =~ /^[a-zA-Z][\w\.-]*[a-zA-Z0-9]@[a-zA-Z0-9][\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]$/
+unless options.include?(:email) or options[:email] =~ /^[a-zA-Z][\w\.-]*[a-zA-Z0-9]@[a-zA-Z0-9][\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]$/
     puts "The email is invalid."
     exit 253
 end
 
-unless opts.include?(:ssh) or opts[:ssh] =~ (opts[:ssh] == Base64.encode64(Base64.decode64(opt['ssh'])).gsub(/\n/, ''))
+unless options.include?(:ssh) or options[:ssh] =~ (options[:ssh] == Base64.encode64(Base64.decode64(options[:ssh])).gsub(/\n/, ''))
     puts "The ssh key is invalid."
     exit 253
 end
 
 # Check if user already exists
-if User.find(opt['user'])
+if User.find(options[:username])
   unless opt['alter']
       puts "User already exists!  To overwrite or change, use --alter"
       exit 254
@@ -50,4 +51,4 @@ if User.find(opt['user'])
 end
 
 # Create the user
-User.new(opt['user'], opt['email'], opt['ssh'])
+User.new(options[:username], options[:email], options[:ssh])
