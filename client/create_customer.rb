@@ -84,7 +84,7 @@ opts = GetoptLong.new(
 
 # Pull in configs from files
 li_server = get_var('li_server')
-debug = get_var('debug')
+debug = get_var('debug') ==
 
 libra_kfile = "#{ENV['HOME']}/.ssh/libra_id_rsa"
 libra_kpfile = "#{ENV['HOME']}/.ssh/libra_id_rsa.pub"
@@ -138,19 +138,24 @@ end
 
 ssh_key = File.open(libra_kpfile).gets.chomp.split(' ')[1]
 
-puts "Contacting server http://#{li_server}"
+puts "Contacting http://#{li_server}"
 json_data = JSON.generate(
                 {'username' => opt['user'],
                 'email' => opt['email'],
                 'ssh' => ssh_key})
+puts "DEBUG: Json string: #{json_data}" if debug
 response = Net::HTTP.post_form(URI.parse("http://#{li_server}/php/create_customer.php"),
                            {'json_data' => json_data,})
-
+puts "DEBUG:" if debug
+p response if debug
 if response.code == '200'
     if debug
         puts "HTTP response from server is #{response.body}"
     end
-    puts "Creation successful (probably).  You may now create an application"
+    puts "Creation successful (probably)."
+    puts
+    puts "You may now create an application"
+    puts
 else
     puts "Problem with server. Response code was #{response.code}"
     puts "HTTP response from server is #{response.body}"
