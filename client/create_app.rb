@@ -232,22 +232,18 @@ print 1;
 HEALTH
 f.close
 
-puts "add"
-
 git = %x[git add *]
 
-puts git
+puts git if debug
 if $?.exitstatus != 0
     puts "Error in calling git add"
     puts git
     exit 255
 end
 
-puts "end"
-
 git=%x[git commit -a -m "Initial libra app creation"]
 
-puts git
+puts git if debug
 if $?.exitstatus != 0
     puts "Error in calling git add"
     puts git
@@ -274,9 +270,7 @@ response = Net::HTTP.post_form(URI.parse("http://#{li_server}/php/cartridge_do.p
                            { 'json_data' => json_data })
 
 if response.code == '200'
-    if debug
-        puts "HTTP response from server is #{response.body}"
-    end
+    puts "HTTP response from server is #{response.body}" if debug
     puts "Creation successful"
     if !(response.body =~ /Success/)
         puts "An error has occured: #{response.body}"
@@ -347,7 +341,15 @@ end
 
 Dir.chdir(opt["repo"])
 puts "Doing initial test push."
-system("git push -q libra master")
+git = %x[git push -q libra master]
+
+puts git if debug
+if $?.exitstatus != 0
+    puts "Error pushing git repo"
+    puts git
+    exit 233
+end
+
 Dir.chdir(old_dir)
 
 sleep_time = 2
