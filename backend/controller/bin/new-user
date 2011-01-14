@@ -4,7 +4,7 @@ require 'rubygems'
 require 'libra'
 
 include Libra
-Libra.logger = Logger.new('/var/log/libra.log')
+Libra.logger = Logger.new('/dev/null')
 
 options = {}
 OptionParser.new do |opts|
