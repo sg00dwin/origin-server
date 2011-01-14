@@ -24,14 +24,6 @@ require 'resolv'
 require 'json'
 require 'parseconfig'
 
-#
-# Globals
-#
-ssh_config = "#{ENV['HOME']}/.ssh/config"
-ssh_config_d = "#{ENV['HOME']}/.ssh/"
-li_server = 'li.mmcgrath.libra.mmcgrath.net'
-debug = false
-
 config_path = File.exists?('client.conf') ? 'client.conf' : '/etc/libra/client.conf'
 
 unless File.exists?("#{ENV['HOME']}/.li")
@@ -40,20 +32,27 @@ unless File.exists?("#{ENV['HOME']}/.li")
 end
 
 begin
-    global_config = ParseConfig.new(config_path)
-    local_config = ParseConfig.new("#{ENV['HOME']}/.li")
+    @global_config = ParseConfig.new(config_path)
+    @local_config = ParseConfig.new("#{ENV['HOME']}/.li")
 rescue Errno::EACCES => e
     puts "Could not open config file: #{e.message}"
     exit 253
 end
 
-li_server = local_config.get_value('li_server') ? local_config.get_value('li_server') : global_config.get_value('li_server')
-debug = local_config.get_value('debug') ? local_config.get_value('debug') : global_config.get_value('debug')
-
+#
+# Check if host exists
+# 
 def hostexist?(host)
     dns = Resolv::DNS.new
     resp = dns.getresources(host, Resolv::DNS::Resource::IN::A)
     return resp.any?
+end
+
+#
+# Check for local var in ~/.li use it, else use /etc/libra/client.conf
+#
+def get_var(var)
+    @local_config.get_value(var) ? @local_config.get_value(var) : @global_config.get_value(var)
 end
 
 def p_usage
@@ -83,6 +82,13 @@ opts = GetoptLong.new(
     ["--repo",  "-r", GetoptLong::REQUIRED_ARGUMENT],
     ["--type",  "-t", GetoptLong::REQUIRED_ARGUMENT]
 )
+
+
+# Pull in configs from files
+li_server = get_var('li_server')
+debug = get_var('debug')
+ssh_config = "#{ENV['HOME']}/.ssh/config"
+ssh_config_d = "#{ENV['HOME']}/.ssh/"
 
 opt = {}
 opts.each do |o, a|
