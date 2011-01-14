@@ -15,7 +15,7 @@ BuildArch: noarch
 
 BuildRequires: rubygem-rake
 BuildRequires: rubygem-rspec
-BuildRequires: rubygem-cucumber
+#BuildRequires: rubygem-cucumber
 BuildRequires: mcollective
 BuildRequires: mcollective-client
 BuildRequires: mcollective-common
