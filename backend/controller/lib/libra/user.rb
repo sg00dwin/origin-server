@@ -15,7 +15,7 @@ module Libra
 
     def self.from_json(json)
       data = JSON.parse(json)
-      new(data[:username], data[:ssh], data[:email])
+      new(data['username'], data['ssh'], data['email'])
     end
 
     #

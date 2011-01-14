@@ -3,7 +3,6 @@ require 'mcollective'
 require 'right_aws'
 require 'right_http_connection'
 require 'parseconfig'
-require 'pp'
 
 include MCollective::RPC
 
