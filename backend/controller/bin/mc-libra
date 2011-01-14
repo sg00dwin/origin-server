@@ -61,7 +61,7 @@ begin
   server.configure(user) unless user.servers.index(server)
 
   # Configure the app on the server
-  server.configure_app(options[:cartridge], options[:app_name], user)
+  server.execute_app(options[:cartridge], options[:action], options[:app_name], user)
 rescue ConfigureException => e
   puts "ERROR: " + e
   exit 203
