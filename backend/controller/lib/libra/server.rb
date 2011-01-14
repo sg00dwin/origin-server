@@ -60,9 +60,9 @@ module Libra
     #
     # Configures the application for this user on this server
     #
-    def configure_app(framework, app_name, user)
+    def execute_app(framework, action, app_name, user)
       # Make the call to configure the application
-      execute(framework, 'configure', "#{app_name} #{user.username}")
+      execute(framework, action, "#{app_name} #{user.username}")
     end
 
     #
