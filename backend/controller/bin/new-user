@@ -44,12 +44,17 @@ unless options.include?(:ssh) or options[:ssh] =~ (options[:ssh] == Base64.encod
 end
 
 # Check if user already exists
-if User.find(options[:username])
-  unless options[:alter]
-      puts "User already exists!  To overwrite or change, use --alter"
-      exit 254
+user = User.find(options[:username])
+if user
+  if options[:alter]
+    user.email=options[:email]
+    user.ssh=options[:ssh]
+    user.update
+  else
+    puts "User already exists!  To overwrite or change, use --alter"
+    exit 254
   end
+else
+  # Create the user
+  User.create(options[:username], options[:email], options[:ssh])
 end
-
-# Create the user
-User.create(options[:username], options[:email], options[:ssh])
