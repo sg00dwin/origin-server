@@ -137,6 +137,7 @@ unless defined? opt["command"] and opt["command"] =~ /(start|stop|restart|reload
     puts "Command is required"
     p_usage
 end
+
 if !opt["user"] || !opt["app"] || !opt["command"] || !opt["type"]
     p_usage
 end
@@ -147,6 +148,11 @@ end
 #
 
 if !opt["bypass"] and opt["command"] == "destroy"
+    # deconfigure is the actual hook called on 'destroy'
+    # destroy is used for clarity
+
+    opt["command"] = "deconfigure" if opt["command"] == "destroy"
+
     puts <<WARNING
 !!!! WARNING !!!! WARNING !!!! WARNING !!!!
 You are about to destroy the #{opt['app']} application.
