@@ -16,7 +16,10 @@ function my_exec($cmd, $input='')
          }
 
 $results = my_exec("/usr/sbin/mc-rpc --np -I mserver.cloud.redhat.com libra create_http customer='$customer_name' application='$application'", $out);
-print_r("\nstdout: " . $results['stdout']);
-print_r("\nstderr: " . $results['stderr']);
-print_r("\nreturn: " . $results['return']);
+
+print json_encode($results);
+
+// print_r("\nstdout: " . $results['stdout']);
+// print_r("\nstderr: " . $results['stderr']);
+// print_r("\nreturn: " . $results['return']);
 ?>
