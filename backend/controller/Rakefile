@@ -26,7 +26,14 @@ end
 task :default => [:package]
 
 Rake::GemPackageTask.new(spec) do |pkg|
-    pkg.need_tar = true
+    pkg.need_tar = false
+end
+
+desc 'Install the new li-controller gem'
+task :install do
+  sh 'rake clean package'
+  sh 'sudo gem uninstall -ax li-controller'
+  sh 'sudo gem install pkg/li-controller-0.07.gem'
 end
 
 # Start development dependencies

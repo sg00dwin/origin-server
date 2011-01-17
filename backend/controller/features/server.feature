@@ -9,4 +9,4 @@ Feature: Setup a new application
     Given a newly created user
     And an available server
     When I create a 'test' app for 'php-5.3.2'
-    Then the user should have the app
+    Then the user should have the app on one server

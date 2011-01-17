@@ -15,6 +15,11 @@ module Libra
                                 params = {:logger => Libra.c[:logger]})
     end
 
+    def self.rpc_options
+      # Make a deep copy of the default options
+      Marshal::load(Marshal::dump(Libra.c[:rpc_opts]))
+    end
+
     #
     # Return the value of the MCollective response
     # for both a single result and a multiple result
@@ -41,28 +46,10 @@ module Libra
     # Yields to the supplied block if there is a non-nil
     # value for the fact.
     #
-    def self.rpc_get_fact(fact, server)
+    def self.rpc_get_fact(fact, server=nil)
       result = nil
 
-      User.rpc_exec_on_server('rpcutil', server) do |client|
-        client.get_fact(:fact => fact) do |response|
-          result = rvalue(response)
-
-          # Only yield to the block if there is a value
-          yield result if block_given? and result
-        end
-      end
-
-      return result
-    end
-
-    #
-    # Yields to a supplied block with each server that
-    # has the specified fact, providing the server name
-    # and the fact value
-    #
-    def self.rpc_get_fact(fact)
-      rpc_exec('rpcutil') do |client|
+      rpc_exec('rpcutil', server) do |client|
         client.get_fact(:fact => fact) do |response|
           next unless Integer(response[:body][:statuscode]) == 0
 
@@ -71,6 +58,8 @@ module Libra
           yield response[:senderid], result if result
         end
       end
+
+      return result
     end
 
     #
@@ -78,8 +67,7 @@ module Libra
     # If a server is supplied, only execute for that server.
     #
     def self.rpc_exec(agent, server=nil)
-      # Use the passed in base options or parse them
-      options = Libra.c[:rpc_opts]
+      options = rpc_options
 
       if server
         # Filter to the specified server

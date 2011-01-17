@@ -25,8 +25,12 @@ When /^I create a '(\w+)' app for '(.+)'$/ do |app, framework|
   @server.execute(framework, 'configure', app, @user)
 end
 
-Then /^the user should have the app$/ do
-  @user.apps.index(@app).should_not == -1
+Then /^the user should have the app on one server$/ do
+  count = 0
+  @user.apps_by_server.each_value do |app|
+    count += 1 if app == @app
+    raise "App on too many servers" if count > 1
+  end
 end
 
 Then /^I should get a result$/ do
