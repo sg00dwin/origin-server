@@ -27,7 +27,7 @@ if __name__ == '__main__':
             thearg = thearg.replace("'","")
         thearg = thearg.replace("\\'", "")
         thearg = thearg.replace("//", "/")
-        if thearg[:len(os.path.abspath('/var/lib/libra/'))] != '/var/lib/libra/' or not os.path.isdir(thearg):
+        if not os.path.abspath(thearg).startswith('/var/lib/libra/') or not os.path.isdir(thearg):
             print "Invalid repository %s" % thearg
             sys.exit(3)
         allargs = [thearg]
