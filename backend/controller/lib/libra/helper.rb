@@ -7,7 +7,7 @@ include MCollective::RPC
 
 module Libra
   module Helper
-    def s3
+    def self.s3
       # This will verify the Amazon SSL connection
       Rightscale::HttpConnection.params[:ca_file] = "/etc/pki/tls/certs/ca-bundle.trust.crt"
       RightAws::S3Interface.new(Libra.c[:aws_key],
@@ -20,7 +20,7 @@ module Libra
     # for both a single result and a multiple result
     # structure
     #
-    def rvalue(response)
+    def self.rvalue(response)
       result = nil
 
       if response[:body]
@@ -32,7 +32,7 @@ module Libra
       return result
     end
 
-    def rsuccess(response)
+    def self.rsuccess(response)
       response[:body][:statuscode].to_i == 0
     end
 
@@ -41,7 +41,7 @@ module Libra
     # Yields to the supplied block if there is a non-nil
     # value for the fact.
     #
-    def rpc_get_fact(fact, server)
+    def self.rpc_get_fact(fact, server)
       result = nil
 
       User.rpc_exec_on_server('rpcutil', server) do |client|
@@ -61,8 +61,8 @@ module Libra
     # has the specified fact, providing the server name
     # and the fact value
     #
-    def rpc_get_fact(fact)
-      User.rpc_exec('rpcutil') do |client|
+    def self.rpc_get_fact(fact)
+      rpc_exec('rpcutil') do |client|
         client.get_fact(:fact => fact) do |response|
           next unless Integer(response[:body][:statuscode]) == 0
 
@@ -77,7 +77,7 @@ module Libra
     # Execute an RPC call for the specified agent.
     # If a server is supplied, only execute for that server.
     #
-    def rpc_exec(agent, server=nil)
+    def self.rpc_exec(agent, server=nil)
       # Use the passed in base options or parse them
       options = Libra.c[:rpc_opts]
 

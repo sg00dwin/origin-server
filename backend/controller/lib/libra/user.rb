@@ -1,11 +1,9 @@
 require 'libra/helper'
 require 'right_aws'
 require 'json'
-require 'pp'
 
 module Libra
   class User
-    extend Helper
     attr_reader :username
     attr_accessor :ssh, :email
 
@@ -38,7 +36,7 @@ module Libra
       usernames = []
 
       # Retrieve the current list of usernames
-      s3.incrementally_list_bucket('libra', { 'prefix' => 'user_info'}) do |result|
+      Helper.s3.incrementally_list_bucket('libra', { 'prefix' => 'user_info'}) do |result|
         result[:contents].each do |bucket|
           usernames << File.basename(bucket[:key], ".json")
         end
@@ -54,7 +52,7 @@ module Libra
     #
     def self.find(username)
       begin
-        return User.from_json(s3.get('libra', "user_info/#{username}.json")[:object])
+        return User.from_json(Helper.s3.get('libra', "user_info/#{username}.json")[:object])
       rescue RightAws::AwsError => e
         if e.message =~ /^NoSuchKey/
           return nil
@@ -69,7 +67,7 @@ module Libra
     #
     def update
       json = JSON.generate({:username => username, :email => email, :ssh => ssh})
-      User.s3.put('libra', "user_info/#{username}.json", json)
+      Helper.s3.put('libra', "user_info/#{username}.json", json)
     end
 
     #
@@ -81,7 +79,7 @@ module Libra
         @servers = {}
 
         # Make the rpc call to check
-        User.rpc_get_fact("customer_#{username}") do |server, value|
+        Helper.rpc_get_fact("customer_#{username}") do |server, value|
           # Initialize the hash with the server as the key
           # The applications will eventually become the value
           @servers[Server.new(server)] = nil
@@ -98,7 +96,7 @@ module Libra
       # Use the cached value if it exists
       unless @apps
         servers.each do |server|
-          User.rpc_get_fact("git_#{username}", server) do |app_paths|
+          Helper.rpc_get_fact("git_#{username}", server) do |app_paths|
             # Split the string of apps into an array
             @servers[server] = app_paths.split(%r{,\s*}).collect do |path|
               # Filter out just the app name to put in the array

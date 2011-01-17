@@ -53,21 +53,5 @@ end
 # Set the MCollective options
 Libra.c[:rpc_opts] = options
 
-# Lookup the user
-user = User.find(options[:username])
-
-# Find the next available server
-server = Server.find_available
-
-begin
-  # Configure the user on this server if necessary
-  server.configure(user) unless user.servers.index(server)
-
-  # Configure the app on the server
-  server.execute_app(options[:cartridge], options[:action], options[:app_name], user)
-rescue ConfigureException => e
-  puts "ERROR: " + e
-  exit 203
-end
-
-puts "Success!"
+# Execute the options on a Libra framework
+Libra.execute(options[:cartridge], options[:action], options[:app_name], options[:username])
