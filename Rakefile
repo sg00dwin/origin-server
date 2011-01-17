@@ -64,7 +64,7 @@ task :install_cartridges do
     mkdir_p LIBEXEC_DIR
     cp_r "cartridges/", LIBEXEC_DIR
     mkdir_p CONF_DIR
-    sh "ln", "-s", "#{LIBEXEC_DIR}/cartridges/li-controller-0.1/info/configuration/node.conf-sample", "#{CONF_DIR}/node.conf"
+    cp_r "#{LIBEXEC_DIR}/cartridges/li-controller-0.1/info/configuration/node.conf-sample", "#{CONF_DIR}/node.conf"
 end
 
 # 
