@@ -18,11 +18,11 @@ end
 
 When /^I create a '(\w+)' app for '(.+)'$/ do |app, framework|
   # Create the user on the server
-  @server.configure(@user)
+  @server.create_user(@user)
 
   # Create the app on the server
   @app = app
-  @server.execute_app(framework, 'configure', app, @user)
+  @server.execute(framework, 'configure', app, @user)
 end
 
 Then /^the user should have the app$/ do
