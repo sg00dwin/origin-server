@@ -42,6 +42,7 @@ Requires: mcollective-client
 BuildArch: noarch
 Requires: ruby-json
 Requires: rubygem-right_aws
+Requires: rubygem-parseconfig
 
 %description server
 This contains the server 'controlling' components of Li.  This can be on the
