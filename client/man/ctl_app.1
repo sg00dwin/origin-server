@@ -1,0 +1,71 @@
+.\" Process this file with
+.\" groff -man -Tascii create_customer.1
+.\"
+.TH CTL_APP 1 "JANUARY 2011" Linux "User Manuals"
+.SH NAME
+ctl_app \- Control an existing rhcloud.com application
+.SH SYNOPSIS
+.B ctl_app [-u
+.I username
+.B ]
+.B [-a
+.I application_name
+.B ]
+.B [-t
+.I framework_type
+.B ]
+.B [-c
+.I command
+.B ] [-b] [-d] [-h]
+.SH DESCRIPTION
+.B ctl_app
+controls an existing rhcloud.com application.  To create
+an application use the
+.BR create_app (1)
+command.
+
+.BR command
+options include start, stop, restart, reload, status and
+destroy.  Note that
+.BR destroy
+is not reversable and will stop your application from
+then remove the application and repo from the remote
+server.  No local changes are made.
+
+.SH OPTIONS
+.IP "-u|--user username"
+Username to create.  Alphanumeric
+.IP "-a|--app application_name"
+Name of application to create
+.IP "-t|--type framework_type"
+Framework type to create.  Currently only php-5.3.2 is supported
+.IP "-c|--command command"
+The command to send to remote server (start|stop|restart|reload|status|destroy)
+.IP -b|--bypass
+Bypass any TOS/SLA warnings and notifications
+.IP -d|--debug
+Enable debugging / verbose output
+.IP -h|--help
+Display help menu
+.SH FILES
+.I /etc/libra.conf
+.RS
+The system wide configuration file. See
+.BR libra.conf (5)
+for further details
+.RE
+.I ~/.libra
+.RS
+Per user configuration file. See
+.BR libra.conf (5)
+for further details.
+.RE
+.SH BUGS
+Please contact the Red Hat Libra team.
+TODO: ADD EXTERNAL BUG TRACKER OR LIBRA TEAM CONTACT EMAIL
+.SH AUTHOR
+Mike McGrath <mmcgrath@redhat.com>
+.SH "SEE ALSO"
+.BR create_customer (1),
+.BR create_app (1),
+.BR libra.conf (5),

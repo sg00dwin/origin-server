@@ -1,0 +1,94 @@
+.\" Process this file with
+.\" groff -man -Tascii create_customer.1
+.\"
+.TH CREATE_APP 1 "JANUARY 2011" Linux "User Manuals"
+.SH NAME
+create_app \- creates a new hosted application at
+rhcloud.com
+.SH SYNOPSIS
+.B create_app [-u
+.I username
+.B ]
+.B [-a
+.I application_name
+.B ]
+.B [-r
+.I local_repo_path
+.B ]
+.B [-t
+.I framework_type
+.B ] [-b] [-d] [-h]
+.SH DESCRIPTION
+.B create_app
+create a new application at rhcloud.com. Once
+created the application will be available at
+.B app_name.username.rhcloud.com
+
+At the moment the only repo type supported is
+git.  Git pushes via ssh+git and uses
+.I ~/.ssh/id_rsa_libra
+which was created automatically when
+.I create_customer
+was run. Once an application has been created,
+.BR ctl_app (1)
+actually allows control of that application
+including starting, stopping and destroying
+the application. To update a new application, cd to the newly
+created repo directory (specified by
+.BR -r|--repo
+) then make your changes and run
+.BR git
+.BR push
+.BR libra
+.BR master
+.SH OPTIONS
+.IP "-u|--user username"
+Username to create.  Alphanumeric
+.IP "-a|--app application_name"
+Name of application to create
+.IP "-r|--repo repo_path"
+Local repo to create (must be empty)
+.IP "-t|--type framework_type"
+Framework type to create.  Currently only php-5.3.2 is supported
+.IP -b|--bypass
+Bypass any TOS/SLA warnings and notifications
+.IP -d|--debug
+Enable debugging / verbose output
+.IP -h|--help
+Display help menu
+.SH FILES
+.I /etc/libra.conf
+.RS
+The system wide configuration file. See
+.BR libra.conf (5)
+for further details
+.RE
+.I ~/.libra
+.RS
+Per user configuration file. See
+.BR libra.conf (5)
+for further details.
+.RE
+.I ~/.ssh/config
+.RS
+SSH Config file is altered automatically to create support for
+newly created libra hosts.  Should be harmless.  See
+.BR ssh_config (5)
+for more information.
+.RE
+.I ~/.ssh/id_rsa_libra
+.RS
+SSH key created by create_customer to interact with libra services
+see
+.BR ssh-keygen (1)
+for more information
+.RE
+.SH BUGS
+Please contact the Red Hat Libra team.
+TODO: ADD EXTERNAL BUG TRACKER OR LIBRA TEAM CONTACT EMAIL
+.SH AUTHOR
+Mike McGrath <mmcgrath@redhat.com>
+.SH "SEE ALSO"
+.BR create_customer (1),
+.BR ctl_app (1),
+.BR libra.conf (5),

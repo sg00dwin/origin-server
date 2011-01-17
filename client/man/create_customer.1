@@ -1,0 +1,60 @@
+.\" Process this file with
+.\" groff -man -Tascii create_customer.1
+.\"
+.TH CREATE_CUSTOMER 1 "JANUARY 2011" Linux "User Manuals"
+.SH NAME
+create_customer \- creates a new Libra user
+.SH SYNOPSIS
+.B create_customer [-u
+.I username
+.B ]
+.B [-e
+.I email
+.B ] [-d] [-h]
+.SH DESCRIPTION
+.B create_customer
+create a new user at rhcloud.com.  Once created
+this user will be able to create and control
+applications.
+
+Running
+.B create_customer
+will cause a new ssh key to be created in ssh
+dir at
+.I ~/.ssh/id_rsa_libra
+
+Once created run
+.BR create_app (1)
+to create new applications or run
+.BR ctl_app (1)
+to control created applications.
+.SH OPTIONS
+.IP "-u|--user username"
+Username to create.  Alphanumeric
+.IP "-e|--email email"
+Email Address to use
+.IP -d|--debug
+Enable debugging / verbose output
+.IP -h|--help
+Display help menu
+.SH FILES
+.I /etc/libra.conf
+.RS
+The system wide configuration file. See
+.BR libra.conf (5)
+for further details
+.RE
+.I ~/.libra
+.RS
+Per user configuration file. See
+.BR libra.conf (5)
+for further details.
+.RE
+.SH BUGS
+Please contact the Red Hat Libra team.
+.SH AUTHOR
+Mike McGrath <mmcgrath@redhat.com>
+.SH "SEE ALSO"
+.BR create_app (1),
+.BR ctl_app (1),
+.BR libra.conf (5),
