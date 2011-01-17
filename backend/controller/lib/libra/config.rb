@@ -36,7 +36,7 @@ module Libra
   end
 
   # Configuration access shortcut
-  def c
+  def self.c
     @@config
   end
 
