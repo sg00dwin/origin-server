@@ -3,8 +3,6 @@ require 'parseconfig'
 
 module Libra
   def self.configure
-    puts "Beginning Libra Configuration"
-
     @@config = {}
 
     # Default to a null logger
