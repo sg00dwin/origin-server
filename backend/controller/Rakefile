@@ -59,9 +59,14 @@ begin
 
     require "cucumber/rake/task"
 
-    desc "Run all cucumber tests"
+    desc "Run all cucumber core tests"
     Cucumber::Rake::Task.new(:cuc) do |t|
-      t.cucumber_opts = ["features"]
+      t.cucumber_opts = "--tags ~@sprint"
+    end
+
+    desc "Run all cucumber sprint tests (warning: lots of data created)"
+    Cucumber::Rake::Task.new(:cuc_sprint) do |t|
+      t.cucumber_opts = "--tags @sprint"
     end
 rescue LoadError
     # Ignore error - this allows rake to be run from
