@@ -173,7 +173,7 @@ DocumentRoot "$APP_DIR/deploy/public"
 Listen $IP:8080
 User $customer_id
 Group $customer_id
-PassengerTempDir "$APP_DIR/deploy/tmp"
+PassengerUser $customer_id
 <Directory $APP_DIR/deploy/public>
   AllowOverride all
   Options -MultiViews
