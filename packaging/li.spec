@@ -130,6 +130,7 @@ fi
 %{gemdir}/gems/li-controller-%{version}
 %{gemdir}/bin/mc-libra
 %{gemdir}/bin/new-user
+%{gemdir}/bin/li-capacity
 %{gemdir}/cache/li-controller-%{version}.gem
 %{gemdir}/doc/li-controller-%{version}
 %{gemdir}/specifications/li-controller-%{version}.gemspec
@@ -141,6 +142,10 @@ fi
 
 
 %changelog
+* Tue Jan 18 2011 Mike McGrath <mmcgrath@redhat.com> - 0.08-1
+- Added li-capacity bin
+- Upstream released new version
+
 * Mon Jan 17 2011 Mike McGrath <mmcgrath@redhat.com> - 0.07-1
 - Upstream released new version
 - Added node configs
