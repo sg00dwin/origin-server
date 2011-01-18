@@ -2,5 +2,5 @@
 
 # Passenger SELinux contexts
 /var/lib/libra/([^/]*/)?rack/([^/]*/)?log(/.*)?  gen_context(system_u:object_r:passenger_log_t,s0)
-/var/lib/libra/([^/]*/)?rack/([^/]*/)?run(/.*)?  gen_context(system_u:object_r:passenger_var_run_t,s0)
-/var/lib/libra/([^/]*/)?rack/(?!log$|log/|run$|run/)(.*)?  gen_context(system_u:object_r:passenger_var_lib_t,s0)
+/var/lib/libra/([^/]*/)?rack/([^/]*/)?tmp(/.*)?  gen_context(system_u:object_r:passenger_var_run_t,s0)
+/var/lib/libra/([^/]*/)?rack/(?!log$|log/|tmp$|tmp/)(.*)?  gen_context(system_u:object_r:passenger_var_lib_t,s0)

@@ -99,9 +99,9 @@ function create_repo {
     application="$1"
     customer_id="$2"
     CUSTOMER_HOME="${libra_dir}/${customer_id}"
-    
+
     if [ ! -d $CUSTOMER_HOME ]; then echo "ERROR: Customer ${customer_id} not found!  Please create." 1>&2; exit 2; fi
-    
+
     GIT_DIR=$CUSTOMER_HOME/git/$application.git
     mkdir -p $(dirname $GIT_DIR) 2>&1
     GIT_DIR=$GIT_DIR git init --shared > /dev/null
@@ -134,7 +134,7 @@ APP_DIR="$CUSTOMER_HOME/httpd/$application"
 create_repo $application $customer_id
 
 cat <<EOF > $CUSTOMER_HOME/git/$application.git/hooks/post-receive
-rm -rf /var/lib/libra/$customer_id/httpd/test/html/*
+rm -rf $APP_DIR/html/*
 git archive --format=tar HEAD | (cd $APP_DIR/html && tar xf -)
 # Reload httpd here maybe?
 EOF
@@ -155,7 +155,7 @@ popd > /dev/null
 
 #
 # Find an open localhost IP
-# 
+#
 
 
 IP=$(take_open_ip $customer_id $application "httpd" 8080)
@@ -228,7 +228,7 @@ EOF
 
 /sbin/service httpd configtest 2> /dev/null && /sbin/service httpd graceful || error "Failed to restart master httpd, please contact support" 120
 
-# 
+#
 # Update DNS
 #
 host=${application}.${customer_id}
