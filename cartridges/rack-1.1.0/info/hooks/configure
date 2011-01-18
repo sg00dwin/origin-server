@@ -160,7 +160,7 @@ popd > /dev/null
 #
 
 
-IP=$(take_open_ip $customer_id $application "httpd" 8080)
+IP=$(take_open_ip $customer_id $application "rack" 8080)
 
 
 #
