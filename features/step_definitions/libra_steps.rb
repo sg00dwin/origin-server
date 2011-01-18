@@ -1,15 +1,18 @@
 require 'pp'
 
-Given /^a running libra cluster$/ do
-  puts "Running"
+Given /^the libra client tools$/ do
+  File.exists?("/usr/bin/libra_create_app").should be_true
+  File.exists?("/usr/bin/libra_create_customer").should be_true
+  File.exists?("/etc/libra/client.conf").should be_true
 end
 
-When /^10 new customers are created$/ do
-  puts "Created"
+When /^(\d+) new customers are created$/ do |num_customers|
+  puts "Created #{num_customers}"
 end
 
-When /^5 applications of type php-5.3.2 are created per customer$/ do
-
+When /^(\d+) applications of type '(.+)' are created per customer$/ do |num_apps, framework|
+  puts "Num apps #{num_apps}"
+  puts "Framework #{framework}"
 end
 
 Then /^they should all be accessible$/ do
