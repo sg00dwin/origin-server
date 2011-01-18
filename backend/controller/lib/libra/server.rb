@@ -9,9 +9,9 @@ module Libra
 
     attr_reader :name, :repos
 
-    def initialize(name, repos)
+    def initialize(name, repos=nil)
       @name = name
-      @repos = repos.to_i
+      @repos = repos.to_i if repos
     end
 
     def self.create(opts={})
@@ -98,6 +98,26 @@ module Libra
           raise ConfigureException, output if return_code != 0
         end
       end
+    end
+
+    #
+    # Returns the number of repos that the server has
+    # looking it up if needed
+    #
+    def repos
+      # Only call out to MCollective if the value isn't set
+      Helper.rpc_get_fact('git_repos', name) do |server, repos|
+        @repos = repos
+      end unless @repos
+
+      return @repos
+    end
+
+    #
+    # Clears out any cached data
+    #
+    def reload
+      @repos = nil
     end
 
     #
