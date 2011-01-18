@@ -2,31 +2,31 @@
 
 require 'rubygems'
 require 'libra'
+require 'mcollective'
 
+include MCollective::RPC
 include Libra
-Libra.logger = Logger.new('/dev/null')
 
-options = {}
-OptionParser.new do |opts|
-    opts.define_head "Control libra agent"
-    opts.banner = "Usage: mc-libra [options]"
+options = rpcoptions do |parser, options|
+    parser.define_head "Control libra agent"
+    parser.banner = "Usage: mc-libra [options]"
 
-    opts.on('-a', '--action ACTION', 'Action to call') do |action|
+    parser.on('-a', '--action ACTION', 'Action to call') do |action|
       options[:action] = action
     end
 
-    opts.on('-c', '--cartridge CARTRIDGE', 'Cartridge (e.g. php-5.3.2)') do |cartridge|
+    parser.on('-c', '--cartridge CARTRIDGE', 'Cartridge (e.g. php-5.3.2)') do |cartridge|
       options[:cartridge] = cartridge
     end
 
-    opts.on('-n', '--app APP', 'Application name') do |app_name|
+    parser.on('-n', '--app APP', 'Application name') do |app_name|
       options[:app_name] = app_name
     end
 
-    opts.on('-u', '--username USERNAME', 'User to act on') do |username|
+    parser.on('-u', '--username USERNAME', 'User to act on') do |username|
       options[:username] = username
     end
-end.parse!
+end
 
 unless options.include?(:cartridge) or options[:cartridge] =~ /^(php-5.3.2)$/
     puts "You need to specify a proper cartridge:"
@@ -50,21 +50,8 @@ unless options.include?(:username) or options[:username] =~ /^[a-zA-Z0-9]+$/
     exit 252
 end
 
-# Lookup the user
-user = User.find(options[:username])
+# Set the MCollective options
+Libra.c[:rpc_opts] = options
 
-# Find the next available server
-server = Server.find_available
-
-begin
-  # Configure the user on this server if necessary
-  server.configure(user) unless user.servers.index(server)
-
-  # Configure the app on the server
-  server.execute_app(options[:cartridge], options[:action], options[:app_name], user)
-rescue ConfigureException => e
-  puts "ERROR: " + e
-  exit 203
-end
-
-puts "Success!"
+# Execute the options on a Libra framework
+Libra.execute(options[:cartridge], options[:action], options[:app_name], options[:username])

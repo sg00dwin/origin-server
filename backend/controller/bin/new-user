@@ -2,31 +2,31 @@
 
 require 'rubygems'
 require 'libra'
+require 'mcollective'
 
+include MCollective::RPC
 include Libra
-Libra.logger = Logger.new('/dev/null')
 
-options = {}
-OptionParser.new do |opts|
-    opts.define_head "Create a new user"
-    opts.banner = "Usage: mc-libra [options]"
+options = rpcoptions do |parser, options|
+    parser.define_head "Create a new user"
+    parser.banner = "Usage: mc-libra [options]"
 
-    opts.on('-u', '--username USERNAME', "The unique username") do |username|
+    parser.on('-u', '--username USERNAME', "The unique username") do |username|
       options[:username] = username
     end
 
-    opts.on('-e', '--email EMAIL', 'The user email') do |email|
+    parser.on('-e', '--email EMAIL', 'The user email') do |email|
       options[:email] = email
     end
 
-    opts.on('-s', '--ssh SSH_KEY', 'The user public SSH key') do |ssh|
+    parser.on('-s', '--ssh SSH_KEY', 'The user public SSH key') do |ssh|
       options[:ssh] = ssh
     end
 
-    opts.on('-a', '--alter', 'Alter / Update user info') do
+    parser.on('-a', '--alter', 'Alter / Update user info') do
       options[:alter] = true
     end
-end.parse!
+end
 
 unless options.include?(:username) or options[:username] =~ /^[a-zA-Z0-9]+$/
     puts "The username is invalid."
@@ -43,6 +43,9 @@ unless options.include?(:ssh) or options[:ssh] =~ (options[:ssh] == Base64.encod
     exit 253
 end
 
+# Set the MCollective options
+Libra.c[:rpc_opts] = options
+
 # Check if user already exists
 user = User.find(options[:username])
 if user
@@ -56,5 +59,5 @@ if user
   end
 else
   # Create the user
-  User.create(options[:username], options[:email], options[:ssh])
+  User.create(options[:username], options[:ssh], options[:email])
 end

@@ -7,8 +7,8 @@ CLEAN.include("pkg")
 
 spec = Gem::Specification.new do |s|
     s.name = %q{li-controller}
-    s.version = "0.06"
-    s.date = %q{2011-01-12}
+    s.version = "0.07"
+    s.date = %q{2011-01-17}
     s.author = "Matt Hicks"
     s.email = %q{mhicks@redhat.com}
     s.summary = %q{Libra server side controller}
@@ -26,7 +26,14 @@ end
 task :default => [:package]
 
 Rake::GemPackageTask.new(spec) do |pkg|
-    pkg.need_tar = true
+    pkg.need_tar = false
+end
+
+desc 'Install the new li-controller gem'
+task :install do
+  sh 'rake clean package'
+  sh 'sudo gem uninstall -ax li-controller'
+  sh 'sudo gem install pkg/li-controller-0.07.gem'
 end
 
 # Start development dependencies

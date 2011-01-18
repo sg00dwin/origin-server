@@ -2,23 +2,22 @@ require 'rubygems'
 require 'mcollective'
 require 'right_aws'
 require 'right_http_connection'
-require 'parseconfig'
 
 include MCollective::RPC
 
 module Libra
   module Helper
-    def s3
-      # By default, read aws config from /etc/libra/libra_s3.conf
-      unless Libra.aws_key
-        config = ParseConfig.new('/etc/libra/libra_s3.conf')
-        Libra.aws_key = config.get_value('aws_access_key_id')
-        Libra.aws_secret = config.get_value('aws_secret_access_key')
-      end
-
+    def self.s3
       # This will verify the Amazon SSL connection
       Rightscale::HttpConnection.params[:ca_file] = "/etc/pki/tls/certs/ca-bundle.trust.crt"
-      RightAws::S3Interface.new(Libra.aws_key, Libra.aws_secret, params = {:logger => Libra.logger})
+      RightAws::S3Interface.new(Libra.c[:aws_key],
+                                Libra.c[:aws_secret],
+                                params = {:logger => Libra.c[:logger]})
+    end
+
+    def self.rpc_options
+      # Make a deep copy of the default options
+      Marshal::load(Marshal::dump(Libra.c[:rpc_opts]))
     end
 
     #
@@ -26,7 +25,7 @@ module Libra
     # for both a single result and a multiple result
     # structure
     #
-    def rvalue(response)
+    def self.rvalue(response)
       result = nil
 
       if response[:body]
@@ -38,7 +37,7 @@ module Libra
       return result
     end
 
-    def rsuccess(response)
+    def self.rsuccess(response)
       response[:body][:statuscode].to_i == 0
     end
 
@@ -47,28 +46,10 @@ module Libra
     # Yields to the supplied block if there is a non-nil
     # value for the fact.
     #
-    def rpc_get_fact(fact, server)
+    def self.rpc_get_fact(fact, server=nil)
       result = nil
 
-      User.rpc_exec_on_server('rpcutil', server) do |client|
-        client.get_fact(:fact => fact) do |response|
-          result = rvalue(response)
-
-          # Only yield to the block if there is a value
-          yield result if block_given? and result
-        end
-      end
-
-      return result
-    end
-
-    #
-    # Yields to a supplied block with each server that
-    # has the specified fact, providing the server name
-    # and the fact value
-    #
-    def rpc_get_fact(fact)
-      User.rpc_exec('rpcutil') do |client|
+      rpc_exec('rpcutil', server) do |client|
         client.get_fact(:fact => fact) do |response|
           next unless Integer(response[:body][:statuscode]) == 0
 
@@ -77,15 +58,16 @@ module Libra
           yield response[:senderid], result if result
         end
       end
+
+      return result
     end
 
     #
     # Execute an RPC call for the specified agent.
     # If a server is supplied, only execute for that server.
     #
-    def rpc_exec(agent, server=nil)
-      # Use the passed in base options or parse them
-      options = Libra.rpc_opts || rpcoptions
+    def self.rpc_exec(agent, server=nil)
+      options = rpc_options
 
       if server
         # Filter to the specified server

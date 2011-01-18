@@ -42,6 +42,7 @@ Requires: mcollective-client
 BuildArch: noarch
 Requires: ruby-json
 Requires: rubygem-right_aws
+Requires: rubygem-parseconfig
 
 %description server
 This contains the server 'controlling' components of Li.  This can be on the
@@ -140,6 +141,10 @@ fi
 
 
 %changelog
+* Mon Jan 17 2011 Mike McGrath <mmcgrath@redhat.com> - 0.07-1
+- Upstream released new version
+- Added node configs
+
 * Fri Jan 14 2011 Mike McGrath <mmcgrath@redhat.com> - 0.06-1
 - Upstream released new version
 

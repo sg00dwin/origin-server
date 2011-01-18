@@ -1,12 +1,9 @@
 require 'libra/helper'
 require 'right_aws'
 require 'json'
-require 'pp'
 
 module Libra
   class Server
-    extend Helper
-
     # Cartridge definitions
     @@C_CONTROLLER = 'li-controller-0.1'
 
@@ -25,7 +22,7 @@ module Libra
       # Defaults
       server_match, num_repos = nil, -1
 
-      rpc_get_fact('git_repos') do |server, repos|
+      Helper.rpc_get_fact('git_repos') do |server, repos|
         # Initialize the results if needed
         server_match, num_repos = server, repos unless server_match
 
@@ -40,9 +37,9 @@ module Libra
     def self.find_all
       servers = []
 
-      rpc_exec('libra') do |client|
+      Helper.rpc_exec('libra') do |client|
         client.echo(:msg => "ping") do |response|
-          servers << new(response[:senderid]) if rsuccess(response)
+          servers << new(response[:senderid]) if Helper.rsuccess(response)
         end
       end
 
@@ -52,17 +49,17 @@ module Libra
     #
     # Configures the user on this server
     #
-    def configure(user)
+    def create_user(user)
       # Make the call to configure the user
-      execute(@@C_CONTROLLER, 'configure', "-c #{user.username} -e #{user.email} -s #{user.ssh}")
+      execute_internal(@@C_CONTROLLER, 'configure', "-c #{user.username} -e #{user.email} -s #{user.ssh}")
     end
 
     #
     # Configures the application for this user on this server
     #
-    def execute_app(framework, action, app_name, user)
+    def execute(framework, action, app_name, user)
       # Make the call to configure the application
-      execute(framework, action, "#{app_name} #{user.username}")
+      execute_internal(framework, action, "#{app_name} #{user.username}")
     end
 
     #
@@ -75,8 +72,8 @@ module Libra
     #
     # Execute the cartridge and action on this server
     #
-    def execute(cartridge, action, args)
-      Server.rpc_exec('libra', name) do |client|
+    def execute_internal(cartridge, action, args)
+      Helper.rpc_exec('libra', name) do |client|
         client.cartridge_do(:cartridge => cartridge,
                             :action => action,
                             :args => args) do |response|

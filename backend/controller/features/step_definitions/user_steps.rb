@@ -39,7 +39,7 @@ When /^I look up that user$/ do
   @user = User.find(@user.username)
 end
 
-Then /^it should fail$/ do
+Then /^I should get an exception$/ do
   @failed.should be_true
 end
 

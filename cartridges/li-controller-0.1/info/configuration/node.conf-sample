@@ -12,4 +12,3 @@ resolver='your-resolver'
 
 # DDNS Secret key
 secret="hmac-md5:keyname:keything"
-You have new mail in /var/spool/mail/root
