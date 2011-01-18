@@ -1,5 +1,6 @@
 require 'rubygems'
 require 'parseconfig'
+require 'logger'
 
 module Libra
   def self.configure
@@ -11,18 +12,35 @@ module Libra
     # Amazon AWS Configuration
     begin
       # First check for environment variables
-      @@config[:aws_key] = ENV['S3_AWS_KEY']
-      @@config[:aws_secret] = ENV['S3_AWS_SECRET']
+      @@config[:aws_key] = ENV['AWS_KEY']
+      @@config[:aws_secret] = ENV['AWS_SECRET']
+      @@config[:aws_keypair] = ENV['AWS_KEYPAIR']
+      @@config[:aws_ami] = ENV['AWS_AMI']
+      @@config[:repo_threshold] = ENV['REPO_THRESHOLD'].to_i
 
-      unless @@config[:aws_key] or @@config[:aws_secret]
-        # Then, try and parse the config file
-        fs_config = ParseConfig.new('/etc/libra/libra_s3.conf')
-        @@config[:aws_key] ||= fs_config.aws_key
-        @@config[:aws_secret] ||= fs_config.aws_secret
-      end
+      # Optional configuration
+      @@config[:aws_name] = ENV['AWS_NAME']
+      @@config[:aws_environment] = ENV['AWS_ENVIRONMENT']
+
+      fs_config = ParseConfig.new('/etc/libra/controller.conf')
+      @@config[:aws_key] ||= fs_config.aws_key
+      @@config[:aws_secret] ||= fs_config.aws_secret
+      @@config[:aws_keypair] ||= fs_config.aws_keypair
+      @@config[:aws_ami] ||= fs_config.aws_ami
+      @@config[:repo_threshold] ||= fs_config.repo_threshold.to_i
+
+      # Optional configuration
+      @@config[:aws_name] = fs_config.aws_name
+      @@config[:aws_environment] = fs_config.aws_environment
+    rescue
+      # Ignore as long as we have the values below
     ensure
       error_msg = "Not able to find AWS configuration in environment or config file"
-      raise ConfigureException error_msg unless (@@config[:aws_secret] and @@config[:aws_secret])
+      raise Libra::ConfigureException, error_msg unless (@@config[:aws_key] and
+                                                         @@config[:aws_secret] and
+                                                         @@config[:aws_keypair] and
+                                                         @@config[:aws_ami] and
+                                                         @@config[:repo_threshold])
     end
 
     # Now, initialize the MCollective options

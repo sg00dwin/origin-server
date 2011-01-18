@@ -1,10 +1,11 @@
 require 'rubygems'
 require 'rake'
+
+# Require these within the namespace
 require 'rake/clean'
 require 'rake/gempackagetask'
 
-CLEAN.include("pkg")
-
+# Setup the gem specification for packaging gems
 spec = Gem::Specification.new do |s|
     s.name = %q{li-controller}
     s.version = "0.07"
@@ -15,7 +16,7 @@ spec = Gem::Specification.new do |s|
     s.homepage = %q{https://engineering.redhat.com/trac/Libra}
     s.description = %q{Libra server side controller}
     s.files = FileList['conf/*', 'lib/**/*.rb', 'bin/*'].to_a
-    s.executables = ['mc-libra', 'new-user']
+    s.executables = ['mc-libra', 'new-user', 'li-capacity']
     s.add_dependency('parseconfig')
     s.add_dependency('json')
     s.add_dependency('right_aws')
@@ -23,20 +24,29 @@ spec = Gem::Specification.new do |s|
     s.add_development_dependency("cucumber")
 end
 
-task :default => [:package]
 
+# Define a :package task that bundles the gem
 Rake::GemPackageTask.new(spec) do |pkg|
-    pkg.need_tar = false
+  pkg.need_tar = false
 end
 
-desc 'Install the new li-controller gem'
-task :install do
-  sh 'rake clean package'
-  sh 'sudo gem uninstall -ax li-controller'
-  sh 'sudo gem install pkg/li-controller-0.07.gem'
+# Add the 'pkg' directory to the clean task
+CLEAN.include("pkg")
+
+# Add an install method that
+desc 'Install a clean version of the new li-controller gem'
+task :install => [:clean, :package] do
+  # Force uninstallation of the gem - including binaries
+  sh "sudo gem uninstall -ax li-controller"
+
+  # Install the gem
+  sh "sudo gem install pkg/li-controller-#{spec.version}.gem"
 end
 
-# Start development dependencies
+#
+# Start development dependencies - if the dependencies
+# are not installed, these tasks won't be listed
+#
 begin
     require 'spec/rake/spectask'
 
@@ -54,5 +64,9 @@ begin
       t.cucumber_opts = ["features"]
     end
 rescue LoadError
-    # Don't list the tasks if dependencies aren't installed
+    # Ignore error - this allows rake to be run from
+    # non-development servers
 end
+
+# Set the default to :package
+task :default => :package

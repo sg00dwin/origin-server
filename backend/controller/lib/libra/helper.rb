@@ -7,6 +7,13 @@ include MCollective::RPC
 
 module Libra
   module Helper
+    def self.ec2
+      Rightscale::HttpConnection.params[:ca_file] = "/etc/pki/tls/certs/ca-bundle.trust.crt"
+      RightAws::Ec2.new(Libra.c[:aws_key],
+                        Libra.c[:aws_secret],
+                        params = {:logger => Libra.c[:logger]})
+    end
+
     def self.s3
       # This will verify the Amazon SSL connection
       Rightscale::HttpConnection.params[:ca_file] = "/etc/pki/tls/certs/ca-bundle.trust.crt"

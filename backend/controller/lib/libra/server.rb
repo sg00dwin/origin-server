@@ -7,10 +7,32 @@ module Libra
     # Cartridge definitions
     @@C_CONTROLLER = 'li-controller-0.1'
 
-    attr_reader :name
+    attr_reader :name, :repos
 
-    def initialize(name)
+    def initialize(name, repos)
       @name = name
+      @repos = repos.to_i
+    end
+
+    def self.create(opts={})
+      # Set defaults
+      opts[:key_name] ||= Libra.c[:aws_keypair]
+      opts[:image_id] ||= Libra.c[:aws_ami]
+      opts[:max_count] ||= 1
+      opts[:instance_type] ||= "m1.large"
+
+      # Create the instances in EC2, returning
+      # an array of the image id's
+      Helper.ec2.run_instances(opts[:image_id],
+                                        opts[:max_count],
+                                        opts[:max_count],
+                                        nil,
+                                        opts[:key_name],
+                                        "",
+                                        nil,
+                                        opts[:instance_type]).collect do |server|
+        server[:aws_instance_id]
+      end
     end
 
     #
@@ -30,17 +52,17 @@ module Libra
         server_match, num_repos = server, repos if num_repos > repos
       end
 
-      return new(server_match)
+      return new(server_match, num_repos)
     end
 
+    #
     # Returns a list of all the servers that respond
+    #
     def self.find_all
       servers = []
 
-      Helper.rpc_exec('libra') do |client|
-        client.echo(:msg => "ping") do |response|
-          servers << new(response[:senderid]) if Helper.rsuccess(response)
-        end
+      Helper.rpc_get_fact('git_repos') do |server, repos|
+        servers << new(server, repos)
       end
 
       return servers
@@ -61,13 +83,6 @@ module Libra
       # Make the call to configure the application
       execute_internal(framework, action, "#{app_name} #{user.username}")
     end
-
-    #
-    #
-    # Anything below this point is private
-    #
-    #
-    private
 
     #
     # Execute the cartridge and action on this server
