@@ -23,15 +23,15 @@ module Libra
       @@config[:aws_environment] = ENV['AWS_ENVIRONMENT']
 
       fs_config = ParseConfig.new('/etc/libra/controller.conf')
-      @@config[:aws_key] ||= fs_config.aws_key
-      @@config[:aws_secret] ||= fs_config.aws_secret
-      @@config[:aws_keypair] ||= fs_config.aws_keypair
-      @@config[:aws_ami] ||= fs_config.aws_ami
-      @@config[:repo_threshold] ||= fs_config.repo_threshold.to_i
+      @@config[:aws_key] ||= fs_config.get_value('aws_key')
+      @@config[:aws_secret] ||= fs_config.get_value('aws_secret')
+      @@config[:aws_keypair] ||= fs_config.get_value('aws_keypair')
+      @@config[:aws_ami] ||= fs_config.get_value('aws_ami')
+      @@config[:repo_threshold] ||= fs_config.get_value('repo_threshold').to_i
 
       # Optional configuration
-      @@config[:aws_name] = fs_config.aws_name
-      @@config[:aws_environment] = fs_config.aws_environment
+      @@config[:aws_name] = fs_config.get_value('aws_name')
+      @@config[:aws_environment] = fs_config.get_value('aws_environment')
     rescue
       # Ignore as long as we have the values below
     ensure
