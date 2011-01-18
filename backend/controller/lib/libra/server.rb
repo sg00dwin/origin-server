@@ -42,17 +42,17 @@ module Libra
     #
     def self.find_available
       # Defaults
-      server_match, num_repos = nil, -1
+      current_server, current_repos = nil, 100000000
 
       Helper.rpc_get_fact('git_repos') do |server, repos|
-        # Initialize the results if needed
-        server_match, num_repos = server, repos unless server_match
-
-        # See if this is a better match
-        server_match, num_repos = server, repos if num_repos > repos
+        num_repos = repos.to_i
+        if num_repos < current_repos
+          current_server = server
+          current_repos = num_repos
+        end
       end
 
-      return new(server_match, num_repos)
+      return new(current_server, current_repos)
     end
 
     #

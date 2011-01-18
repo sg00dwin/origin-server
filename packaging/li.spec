@@ -67,8 +67,8 @@ Group: Development/Languages
 Requires: li-node
 Requires: ruby
 Requires: rubygems
-Requires: rubygem-rack = 1.1.0
-Requires: rubygem-passenger = 3.0.2
+Requires: rubygem-rack = 1:1.1.0
+Requires: rubygem-passenger = 1:3.0.2
 Requires: rubygem-passenger-native
 Requires: rubygem-passenger-native-libs
 Requires: mod_passenger

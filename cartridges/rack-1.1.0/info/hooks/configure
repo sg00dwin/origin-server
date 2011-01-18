@@ -150,7 +150,7 @@ chmod 0750 $CUSTOMER_HOME/git/$application.git/hooks/post-receive
 
 mkdir -p "$APP_DIR"
 pushd "$APP_DIR" > /dev/null
-mkdir conf conf.d logs run deploy
+mkdir conf conf.d logs run deploy deploy/public
 ln -s /usr/lib64/httpd/modules modules
 ln -s /etc/httpd/conf/magic conf/magic
 popd > /dev/null
