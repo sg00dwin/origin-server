@@ -2,7 +2,7 @@
 %define gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 
 Name: li
-Version: 0.07
+Version: 0.08
 Release: 1%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
@@ -126,7 +126,7 @@ fi
 %{_libexecdir}/mcollective/mcollective/agent/libra.ddl
 %{_bindir}/new-user
 %{_bindir}/mc-libra
-%config(noreplace) %{_sysconfdir}/libra/libra_s3.conf
+%config(noreplace) %{_sysconfdir}/libra/controller.conf
 %{gemdir}/gems/li-controller-%{version}
 %{gemdir}/bin/mc-libra
 %{gemdir}/bin/new-user
