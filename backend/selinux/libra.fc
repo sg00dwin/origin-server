@@ -1,6 +1,6 @@
 /var/lib/libra/([^/]*/)?.ssh(/.*)?	gen_context(system_u:object_r:ssh_home_t,s0)
 
 # Passenger SELinux contexts
-/var/lib/libra/([^/]*/)?/httpd/rack/([^/]*/)?log(/.*)?  gen_context(system_u:object_r:passenger_log_t,s0)
-/var/lib/libra/([^/]*/)?/httpd/rack/([^/]*/)?tmp(/.*)?  gen_context(system_u:object_r:passenger_var_run_t,s0)
-/var/lib/libra/([^/]*/)?/httpd/rack/(?!log$|log/|tmp$|tmp/)(.*)?  gen_context(system_u:object_r:passenger_var_lib_t,s0)
+/var/lib/libra/([^/]*/)?/rack/deploy/([^/]*/)?log(/.*)?  gen_context(system_u:object_r:passenger_log_t,s0)
+/var/lib/libra/([^/]*/)?/rack/deploy/([^/]*/)?tmp(/.*)?  gen_context(system_u:object_r:passenger_var_run_t,s0)
+/var/lib/libra/([^/]*/)?/rack/deploy/(?!log$|log/|tmp$|tmp/)(.*)?  gen_context(system_u:object_r:passenger_var_lib_t,s0)

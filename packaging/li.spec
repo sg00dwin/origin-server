@@ -2,7 +2,7 @@
 %define gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 
 Name: li
-Version: 0.08
+Version: 0.09
 Release: 1%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
@@ -60,6 +60,22 @@ BuildArch: noarch
 
 %description cartridge-php-5.3.2
 Provides php support to li
+
+%package cartridge-rack-1.1.0
+Summary: Provides ruby rack support running on Phusion Passenger
+Group: Development/Languages
+Requires: li-node
+Requires: ruby
+Requires: rubygems
+Requires: rubygem-rack = 1.1.0
+Requires: rubygem-passenger = 3.0.2
+Requires: rubygem-passenger-native
+Requires: rubygem-passenger-native-libs
+Requires: mod_passenger
+BuildArch: noarch
+
+%description cartridge-rack-1.1.0
+Provides rack support to li
 
 %prep
 %setup -q
@@ -140,8 +156,15 @@ fi
 %defattr(-,root,root,-)
 %{_libexecdir}/li/cartridges/php-5.3.2/
 
+%files cartridge-rack-1.1.0
+%defattr(-,root,root,-)
+%{_libexecdir}/li/cartridges/rack-1.1.0/
 
 %changelog
+* Tue Jan 18 2011 Matt Hicks <mhicks@redhat.com> - 0.09-1
+- Added rack cartridge
+- Upstream released new version
+
 * Tue Jan 18 2011 Mike McGrath <mmcgrath@redhat.com> - 0.08-1
 - Added li-capacity bin
 - Upstream released new version
