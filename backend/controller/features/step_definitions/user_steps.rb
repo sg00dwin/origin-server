@@ -1,6 +1,5 @@
 require 'libra'
 include Libra
-require 'pp'
 
 Given /^an existing '(\w+)' user$/ do |username|
   # Make sure the given user exists
@@ -10,16 +9,7 @@ Given /^an existing '(\w+)' user$/ do |username|
 end
 
 Given /^a newly created user$/ do
-  user = "match"
-
-  while user do
-    # Generate a random username
-    chars = ("1".."9").to_a
-    username = "test" + Array.new(5, '').collect{chars[rand(chars.size)]}.join
-    user = User.find(username)
-  end
-
-  @user = create_test_user(username)
+  @user = create_unique_test_user
 end
 
 When /^I modify and update the user$/ do

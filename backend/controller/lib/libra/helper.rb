@@ -8,7 +8,9 @@ include MCollective::RPC
 module Libra
   module Helper
     def self.ec2
+      # This will verify the Amazon SSL connection
       Rightscale::HttpConnection.params[:ca_file] = "/etc/pki/tls/certs/ca-bundle.trust.crt"
+      # Note - might need to look at setting :multi_thread => false
       RightAws::Ec2.new(Libra.c[:aws_key],
                         Libra.c[:aws_secret],
                         params = {:logger => Libra.c[:logger]})
@@ -17,6 +19,7 @@ module Libra
     def self.s3
       # This will verify the Amazon SSL connection
       Rightscale::HttpConnection.params[:ca_file] = "/etc/pki/tls/certs/ca-bundle.trust.crt"
+      # Note - might need to look at setting :multi_thread => false
       RightAws::S3Interface.new(Libra.c[:aws_key],
                                 Libra.c[:aws_secret],
                                 params = {:logger => Libra.c[:logger]})
@@ -84,8 +87,8 @@ module Libra
 
       # Setup the rpc client
       rpc_client = rpcclient(agent, :options => options)
-      rpc_client.progress = false
-      rpc_client.timeout = 1
+      Libra.c[:logger].debug("#{Thread.current.object_id} Spinning up rpc_client")
+      Libra.c[:logger].debug("rpc_client #{rpc_client}")
 
       # Execute a block and make sure we disconnect the client
       begin

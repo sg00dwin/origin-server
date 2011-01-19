@@ -64,10 +64,13 @@ begin
       t.cucumber_opts = "--tags ~@sprint"
     end
 
-    desc "Run all cucumber sprint tests (warning: lots of data created)"
-    Cucumber::Rake::Task.new(:cuc_sprint) do |t|
-      t.cucumber_opts = "--tags @sprint"
+    desc "Run a cucumber sprint test (supply the sprint number as an argument)"
+    task :cuc_sprint, :sprint_num do |t, args|
+      Cucumber::Rake::Task.new(:cuc_sprint) do |t|
+        t.cucumber_opts = "--tags @sprint#{args[:sprint_num]}"
+      end
     end
+
 rescue LoadError
     # Ignore error - this allows rake to be run from
     # non-development servers
