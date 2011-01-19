@@ -6,14 +6,14 @@ require 'logger'
 World(MCollective::RPC)
 
 # Setup logging for the entire test run
-FileUtils.rm('/tmp/libra-test.log')
-@@logger = Logger.new('/tmp/libra-test.log')
-@@logger.level = Logger::DEBUG
-Libra.c[:logger] = @@logger
+FileUtils.rm_f('/tmp/libra-test.log')
+$logger = Logger.new('/tmp/libra-test.log')
+$logger.level = Logger::DEBUG
+Libra.c[:logger] = $logger
 
 module Libra
   module Test
-    class User
+    module User
       #
       # Obtain a unique username from S3.
       #
@@ -26,18 +26,18 @@ module Libra
       def get_unique_username(sprint=nil, reserved_usernames=[])
         result=nil
 
-        @@logger.info("reserved = #{reserved_usernames}")
+        $logger.info("reserved = #{reserved_usernames}")
 
         loop do
           # Generate a random username
           chars = ("1".."9").to_a
           prefix = sprint ? "sprint#{sprint}" : "test"
           username = prefix + Array.new(5, '').collect{chars[rand(chars.size)]}.join
-          @@logger.info("attempting = #{username}")
+          $logger.info("attempting = #{username}")
 
-          user = User.find(username)
+          user = Libra::User.find(username)
 
-          @@logger.info("looked up user = #{user}")
+          $logger.info("looked up user = #{user}")
 
           unless user or reserved_usernames.index(username)
             result = username
@@ -45,7 +45,7 @@ module Libra
           end
         end
 
-        @@logger.info("returning username = #{result}")
+        $logger.info("returning username = #{result}")
 
         return result
       end
@@ -63,27 +63,27 @@ module Libra
       # email and ssh key
       #
       def create_test_user(username)
-        User.create(username, @test_ssh_key, @test_email)
+        Libra::User.create(username, @test_ssh_key, @test_email)
       end
     end
 
-    class Util
+    module Util
       #
       # Run a command with logging.  If the command
       # returns a non-zero error code, raise an exception
       #
       def run(cmd)
-          @@logger.info("Running: #{cmd}")
+          $logger.info("Running: #{cmd}")
 
           output = `#{cmd} 2>&1`
           exit_code = $?
 
           # Raise an exception on a non-zero exit code
           unless exit_code.to_i
-            @@logger.error("ERROR running #{cmd}.  Output:\n#{output}")
+            $logger.error("ERROR running #{cmd}.  Output:\n#{output}")
             raise RuntimeError, "Running #{cmd} failed"
           else
-            @@logger.info("Output :\n#{output}")
+            $logger.info("Output :\n#{output}")
           end
 
           return exit_code
@@ -112,7 +112,7 @@ module Libra
             data = f_data.pop
 
             # Fork off the command
-            @@logger.info("Forking with data element #{data}")
+            $logger.info("Forking with data element #{data}")
             fork do
               yield data
             end
