@@ -101,6 +101,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %post node
 /sbin/chkconfig --add libra || :
+/sbin/chkconfig --add libra-data || :
 /sbin/service mcollective restart > /dev/null 2>&1 || :
 /usr/sbin/semodule -i %_datadir/selinux/packages/libra.pp
 /sbin/service libra-data start > /dev/null 2>&1 || :
@@ -109,6 +110,7 @@ rm -rf $RPM_BUILD_ROOT
 %preun node
 if [ "$1" -ge 1 ]; then
     /sbin/chkconfig --del libra || :
+    /sbin/chkconfig --del libra-data || :
 fi
 
 
