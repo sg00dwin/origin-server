@@ -41,7 +41,7 @@ end
 
 #
 # Check if host exists
-# 
+#
 def hostexist?(host)
     dns = Resolv::DNS.new
     resp = dns.getresources(host, Resolv::DNS::Resource::IN::A)
@@ -272,10 +272,6 @@ response = Net::HTTP.post_form(URI.parse("http://#{li_server}/php/cartridge_do.p
 if response.code == '200'
     puts "HTTP response from server is #{response.body}" if debug
     puts "Creation successful"
-    if !(response.body =~ /return: 0/)
-        puts "An error has occured: #{response.body}"
-        exit 253
-    end
 else
     puts "Problem with server. Response code was #{response.code}"
     puts "HTTP response from server is #{response.body}"
