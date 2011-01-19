@@ -8,6 +8,7 @@ World(MCollective::RPC)
 # Setup a logger for everyone
 @@logger = Logger.new('/tmp/libra-test.log')
 @@logger.level = Logger::INFO
+Libra.c[:logger] = @@logger
 
 # For threaded operations, the number of threads to use
 @@THREADS = 10

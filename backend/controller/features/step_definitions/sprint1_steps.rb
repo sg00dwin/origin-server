@@ -89,8 +89,8 @@ When /^(\d+) applications of type '(.+)' are created per user$/ do |num_apps, fr
     end
 
     # Pause between spinning up threads
-    #puts "Sleeping"
-    #sleep 5
+    puts "Sleeping"
+    sleep 5
   end
 
   threads.each {|t| t.join }

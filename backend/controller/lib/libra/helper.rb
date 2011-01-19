@@ -84,8 +84,8 @@ module Libra
 
       # Setup the rpc client
       rpc_client = rpcclient(agent, :options => options)
-      rpc_client.progress = false
-      rpc_client.timeout = 1
+      Libra.c[:logger].debug("#{Thread.current.object_id} Spinning up rpc_client")
+      Libra.c[:logger].debug("rpc_client #{rpc_client}")
 
       # Execute a block and make sure we disconnect the client
       begin

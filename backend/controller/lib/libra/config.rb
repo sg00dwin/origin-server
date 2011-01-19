@@ -44,9 +44,10 @@ module Libra
     end
 
     # Now, initialize the MCollective options
-    @@config[:rpc_opts] = {:disctimeout => 2,
-                           :timeout     => 5,
+    @@config[:rpc_opts] = {:disctimeout => 10,
+                           :timeout     => 10,
                            :verbose     => false,
+                           :progress_bar=> false,
                            :filter      => {"identity"=>[], "fact"=>[], "agent"=>[], "cf_class"=>[]},
                            :config      => "/etc/mcollective/client.cfg"}
   end
