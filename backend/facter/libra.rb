@@ -30,17 +30,7 @@
 # Count the number of git repos on this host
 #
 Facter.add(:git_repos) do
-    setcode do
-        git_repos=0
-        if File.exists?("/var/lib/libra")
-            Dir.foreach("/var/lib/libra/") do |customer|
-                if File.exists?("/var/lib/libra/#{customer}/git/")
-                    Dir.foreach("/var/lib/libra/#{customer}/git/") { |git|  git_repos += 1 if git =~ /git$/}
-                end
-            end
-        end
-        git_repos
-    end
+    setcode { Dir.glob("/var/lib/libra/*/git/*.git").count }
 end
 
 
