@@ -10,7 +10,7 @@ World(MCollective::RPC)
 @@logger.level = Logger::INFO
 
 # For threaded operations, the number of threads to use
-@@THREADS = 30
+@@THREADS = 10
 
 def get_unique_username(sprint=nil, reserved_usernames=[])
   result=nil

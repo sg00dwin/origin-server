@@ -11,8 +11,7 @@ When /^(\d+) new users are created$/ do |num_users|
 
   runs = 0
   failed = false
-  quit = false
-  r_usernames = []
+  @usernames = []
 
   # Create users with multiple threads
   threads = @@THREADS.times.collect do
@@ -27,27 +26,20 @@ When /^(\d+) new users are created$/ do |num_users|
           Thread.exit if failed or runs >= num_users.to_i
 
           # Safely get the next username
-          username = get_unique_username(1, r_usernames)
-
-          # Add it to the reserved list
-          r_usernames << username
+          username = get_unique_username(1, @usernames)
+          @usernames << username
         end
 
 
         # Create the user
         begin
-          run("/usr/bin/libra_create_customer -u #{username} -e nobody@example.com") if username
+          run("/usr/bin/libra_create_customer -u #{username} -e nobody@example.com")
         rescue
           mutex.synchronize { failed = true }
         end
 
-        mutex.synchronize do
-          # Remove the username from the reserved list
-          r_usernames.delete(username)
-        end
-
         # Verify the user was created
-        @@logger.info("Looking up user: #{username}")
+        @@logger.info("Verifying user: #{username}")
         User.find(username).should_not be_nil
       end
     end
@@ -58,8 +50,50 @@ end
 
 When /^(\d+) applications of type '(.+)' are created per user$/ do |num_apps, framework|
   @apps = (num_apps.to_i).times.collect{|num| "app#{num}" }
-  puts "Num apps #{num_apps}"
-  puts "Framework #{framework}"
+
+  # Generate the 'product' of username / app combinations
+  @user_apps = @usernames.product(@apps)
+
+  mutex = Mutex.new
+  failed = false
+
+  # Create users with multiple threads
+  threads = @@THREADS.times.collect do
+    Thread.new do
+      loop do
+        username = nil
+        app = nil
+        mutex.synchronize do
+          # Safely pop a combination to process
+          result = @user_apps.pop
+
+          # Break if thread has failed or we hit the limit
+          Thread.exit if failed or !result
+
+          # Parse out the username and app name
+          username = result[0]
+          app = result[1]
+        end
+
+        # Create the application
+        begin
+          run("/usr/bin/libra_create_app -u #{username} -a #{app} -r /tmp/#{username}_#{app}_repo -t php-5.3.2 -b")
+        rescue
+          mutex.synchronize { failed = true }
+        end
+
+        # Verify the user was created
+        @@logger.info("Verifying app creation: #{username} / #{app}")
+        User.find(username).apps.index(app).should_not be_nil
+      end
+    end
+
+    # Pause between spinning up threads
+    #puts "Sleeping"
+    #sleep 5
+  end
+
+  threads.each {|t| t.join }
 end
 
 Then /^they should all be accessible$/ do
