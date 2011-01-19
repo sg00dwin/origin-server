@@ -95,7 +95,7 @@ module Libra
           return_code = response[:body][:data][:exitcode]
           output = response[:body][:data][:output]
 
-          raise ConfigureException, output if return_code != 0
+          raise CartridgeException, output if return_code != 0
         end
       end
     end

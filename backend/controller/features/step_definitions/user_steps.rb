@@ -1,5 +1,7 @@
 require 'libra'
 include Libra
+include Libra::Test::User
+include Libra::Test::Util
 
 Given /^an existing '(\w+)' user$/ do |username|
   # Make sure the given user exists
