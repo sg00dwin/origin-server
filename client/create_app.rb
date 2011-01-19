@@ -320,11 +320,11 @@ File.chmod(0700, ssh_config_d)
 #
 puts "Confirming that host exists..."
 loop = 0
-sleep_time = 5
+sleep_time = 2.5
 while loop < 5 && !hostexist?(my_url)
+    sleep sleep_time *= 2
     loop+=1
     puts "  retry # #{loop}"
-    sleep sleep_time *= 2
 end
 
 if loop == 5
