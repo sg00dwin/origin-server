@@ -1,5 +1,5 @@
-require 'thread'
-require 'pp'
+require 'net/http'
+require 'uri'
 
 Given /^the libra client tools$/ do
   File.exists?("/usr/bin/libra_create_app").should be_true
@@ -71,12 +71,13 @@ When /^(\d+) applications of type '(.+)' are created per user$/ do |num_apps, fr
         # Create the application
         @@logger.info("Fork application creation #{username} / #{app}")
         run("/usr/bin/libra_create_app -u #{username} -a #{app} -r /tmp/#{username}_#{app}_repo -t php-5.3.2 -b")
-      end if username
+      end if user_app
     end
 
     # Wait for the 10 processes to finish
     @@MAX_PROC.times do
       begin
+        @@logger.info("Waiting for processes to complete")
         Process.wait
         exit_code = $?.exitstatus
         raise "App creation failed" if exit_code != 0
@@ -91,5 +92,12 @@ When /^(\d+) applications of type '(.+)' are created per user$/ do |num_apps, fr
 end
 
 Then /^they should all be accessible$/ do
+  # Generate the 'product' of username / app combinations
+  user_apps = @usernames.product(@apps)
 
+  # Hit the health check page for each app
+  user_apps.each do |user_app|
+    url = "http://#{user_app[1]}.#{user_app[0]}.libra.mmcgrath.net/php/health_check.php"
+    Net::HTTP.get_response(URI.parse(url)).code.should == 200
+  end
 end
