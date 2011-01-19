@@ -6,7 +6,7 @@ require 'logger'
 World(MCollective::RPC)
 
 # Remove all logs to begin
-FileUtils.rm_f Dir.glob("/tmp/libra-sprint1*.log")
+FileUtils.rm_f Dir.glob("/tmp/libra*.log")
 
 module Libra
   module Test
@@ -66,16 +66,6 @@ module Libra
 
     module Util
       #
-      # Setup a logger for the process
-      #
-      def setup_process_logger()
-        prefix = $PREFIX || "test"
-        $logger = Logger.new("/tmp/libra-#{prefix}-#{$$}.log")
-        $logger.level = Logger::DEBUG
-        Libra.c[:logger] = $logger
-      end
-
-      #
       # Run a command with logging.  If the command
       # returns a non-zero error code, raise an exception
       #
@@ -121,7 +111,6 @@ module Libra
             # Fork off the command
             $logger.info("Forking with data element #{data}")
             fork do
-              setup_process_logger
               yield data
             end
 
@@ -149,9 +138,6 @@ end
 # Cucumber test setup
 #
 Before do
-  # Setup a logger for this process
-  setup_process_logger
-
   # Setup the MCollective options
   Libra.c[:rpc_opts][:config] = "test/etc/client.cfg"
 
@@ -162,3 +148,8 @@ Before do
   # Default the maximum number of processes
   @max_processes = 10
 end
+
+# Global, one time setup
+$logger = Logger.new("/tmp/libra-cucumber.log")
+$logger.level = Logger::DEBUG
+Libra.c[:logger] = $logger

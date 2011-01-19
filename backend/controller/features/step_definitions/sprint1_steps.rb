@@ -3,9 +3,6 @@ require 'uri'
 include Libra::Test::User
 include Libra::Test::Util
 
-# Setup the logs for this run
-$PREFIX="sprint1"
-
 Given /^the libra client tools$/ do
   File.exists?("/usr/bin/libra_create_app").should be_true
   File.exists?("/usr/bin/libra_create_customer").should be_true
@@ -48,14 +45,24 @@ Then /^they should all be accessible$/ do
   # Generate the 'product' of username / app combinations
   user_apps = @usernames.product(@apps)
 
-  urls = []
+  urls = {}
   # Hit the health check page for each app
   user_apps.each do |user_app|
     url = "http://#{user_app[1]}.#{user_app[0]}.libra.mmcgrath.net/health_check.php"
-    urls << url
-    Net::HTTP.get_response(URI.parse(url)).code.should == "200"
+    code = Net::HTTP.get_response(URI.parse(url)).code
+    urls[url] = code
   end
 
-  $logger.info("Created the following urls:")
-  urls.each {|url| $logger.info(url)}
+  # Print out the results:
+  #  Format = code - url
+  $logger.info("URL Results")
+  urls.each_pair do |url, code|
+    $logger.info("#{code} - #{url}")
+  end
+
+  # Get all the unique responses
+  # There should only be 1 result ["200"]
+  uniq_responses = urls.values.uniq
+  uniq_responses.length.should == 1
+  uniq_responses[0].should == "200"
 end

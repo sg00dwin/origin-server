@@ -16,7 +16,7 @@ module Libra
       @@config[:aws_secret] = ENV['AWS_SECRET']
       @@config[:aws_keypair] = ENV['AWS_KEYPAIR']
       @@config[:aws_ami] = ENV['AWS_AMI']
-      @@config[:repo_threshold] = ENV['REPO_THRESHOLD'].to_i
+      @@config[:repo_threshold] = ENV['REPO_THRESHOLD'].to_i if ENV['REPO_THRESHOLD']
 
       # Optional configuration
       @@config[:aws_name] = ENV['AWS_NAME']
