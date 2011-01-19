@@ -7,11 +7,11 @@ World(MCollective::RPC)
 
 # Setup a logger for everyone
 @@logger = Logger.new('/tmp/libra-test.log')
-@@logger.level = Logger::INFO
+@@logger.level = Logger::DEBUG
 Libra.c[:logger] = @@logger
 
-# For threaded operations, the number of threads to use
-@@THREADS = 10
+# Maximum number of subprocesses to allow
+@@MAX_PROC = 10
 
 def get_unique_username(sprint=nil, reserved_usernames=[])
   result=nil

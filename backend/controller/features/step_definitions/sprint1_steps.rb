@@ -1,4 +1,5 @@
 require 'thread'
+require 'pp'
 
 Given /^the libra client tools$/ do
   File.exists?("/usr/bin/libra_create_app").should be_true
@@ -7,93 +8,86 @@ Given /^the libra client tools$/ do
 end
 
 When /^(\d+) new users are created$/ do |num_users|
-  mutex = Mutex.new
+  num_users = num_users.to_i
 
-  runs = 0
-  failed = false
+  # Come up with the list of usernames to create
   @usernames = []
-
-  # Create users with multiple threads
-  threads = @@THREADS.times.collect do
-    Thread.new do
-      loop do
-        username = nil
-        mutex.synchronize do
-          # Increment the number of runs
-          runs += 1
-
-          # Break if thread has failed or we hit the limit
-          Thread.exit if failed or runs >= num_users.to_i
-
-          # Safely get the next username
-          username = get_unique_username(1, @usernames)
-          @usernames << username
-        end
-
-
-        # Create the user
-        begin
-          run("/usr/bin/libra_create_customer -u #{username} -e nobody@example.com")
-        rescue
-          mutex.synchronize { failed = true }
-        end
-
-        # Verify the user was created
-        @@logger.info("Verifying user: #{username}")
-        User.find(username).should_not be_nil
-      end
-    end
+  num_users.times do
+    @usernames << get_unique_username(1, @usernames)
   end
 
-  threads.each {|t| t.join }
+  # Copy the array of usernames for the fork processing
+  f_usernames = Array.new(@usernames)
+
+  # Create the users in subprocesses
+  loop do
+    # Don't fork more than 10 processes at a time
+    @@MAX_PROC.times do
+      # Pop a username off the array
+      username = f_usernames.pop
+
+      # Process the username in a subprocess
+      fork do
+        @@logger.info("Fork Creating user #{username}")
+        run("/usr/bin/libra_create_customer -u #{username} -e nobody@example.com")
+      end if username
+    end
+
+    # Wait for the 10 processes to finish
+    @@MAX_PROC.times do
+      begin
+        Process.wait
+        exit_code = $?.exitstatus
+        raise "User creation failed" if exit_code != 0
+      rescue
+        break
+      end
+    end
+
+    # Break if we've processed all the usernames
+    break if f_usernames.empty?
+  end
 end
 
 When /^(\d+) applications of type '(.+)' are created per user$/ do |num_apps, framework|
   @apps = (num_apps.to_i).times.collect{|num| "app#{num}" }
 
   # Generate the 'product' of username / app combinations
-  @user_apps = @usernames.product(@apps)
+  user_apps = @usernames.product(@apps)
 
-  mutex = Mutex.new
-  failed = false
+  # Create the users in subprocesses
+  loop do
+    # Don't fork more than 10 processes at a time
+    @@MAX_PROC.times do
+      # Pop a user_app tuple off the array
+      user_app = user_apps.pop
 
-  # Create users with multiple threads
-  threads = @@THREADS.times.collect do
-    Thread.new do
-      loop do
-        username = nil
-        app = nil
-        mutex.synchronize do
-          # Safely pop a combination to process
-          result = @user_apps.pop
-
-          # Break if thread has failed or we hit the limit
-          Thread.exit if failed or !result
-
-          # Parse out the username and app name
-          username = result[0]
-          app = result[1]
-        end
+      # Process the username in a subprocess
+      fork do
+        # Parse the tuple
+        username = user_app[0]
+        app = user_app[1]
 
         # Create the application
-        begin
-          run("/usr/bin/libra_create_app -u #{username} -a #{app} -r /tmp/#{username}_#{app}_repo -t php-5.3.2 -b")
-        rescue
-          mutex.synchronize { failed = true }
-        end
+        @@logger.info("Fork application creation #{username} / #{app}")
+        run("/usr/bin/libra_create_app -u #{username} -a #{app} -r /tmp/#{username}_#{app}_repo -t php-5.3.2 -b")
+      end if username
+    end
 
-        # Verify the user was created
-        @@logger.info("Verifying app creation: #{username} / #{app}")
-        User.find(username).apps.index(app).should_not be_nil
+    # Wait for the 10 processes to finish
+    @@MAX_PROC.times do
+      begin
+        Process.wait
+        exit_code = $?.exitstatus
+        raise "App creation failed" if exit_code != 0
+      rescue
+        break
       end
     end
 
-    # Pause between spinning up threads
-    puts "Sleeping"
-    sleep 5
+    # Break if we've processed all the usernames
+    break if user_apps.empty?
   end
-
-  threads.each {|t| t.join }
 end
 
 Then /^they should all be accessible$/ do
