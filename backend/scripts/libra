@@ -5,7 +5,7 @@
 # Author:       Seth Vidal <skvidal@phy.duke.edu>
 #               Mike McGrath <mmcgrath@redhat.com>
 #
-# chkconfig:    - 90 01
+# chkconfig:    345 90 01
 #
 # description:  Start local libra services
 # processname:  NA
