@@ -45,9 +45,14 @@ Then /^they should all be accessible$/ do
   # Generate the 'product' of username / app combinations
   user_apps = @usernames.product(@apps)
 
+  urls = []
   # Hit the health check page for each app
   user_apps.each do |user_app|
-    url = "http://#{user_app[1]}.#{user_app[0]}.libra.mmcgrath.net/php/health_check.php"
-    Net::HTTP.get_response(URI.parse(url)).code.should == 200
+    url = "http://#{user_app[1]}.#{user_app[0]}.libra.mmcgrath.net/health_check.php"
+    urls << url
+    Net::HTTP.get_response(URI.parse(url)).code.should == "200"
   end
+
+  $logger.info("Created the following urls:")
+  urls.each {|url| $logger.info(url)}
 end
