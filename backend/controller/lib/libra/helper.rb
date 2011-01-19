@@ -59,6 +59,7 @@ module Libra
     def self.rpc_get_fact(fact, server=nil)
       result = nil
 
+      Libra.c[:logger].debug("rpc_get_fact: fact=#{fact}")
       rpc_exec('rpcutil', server) do |client|
         client.get_fact(:fact => fact) do |response|
           next unless Integer(response[:body][:statuscode]) == 0
@@ -80,6 +81,7 @@ module Libra
       options = rpc_options
 
       if server
+        Libra.c[:logger].debug("rpc_exec: Filtering rpc_exec to server #{server}")
         # Filter to the specified server
         options[:filter]["identity"] = server
         options[:mcollective_limit_targets] = "1"
@@ -87,8 +89,7 @@ module Libra
 
       # Setup the rpc client
       rpc_client = rpcclient(agent, :options => options)
-      Libra.c[:logger].debug("#{Thread.current.object_id} Spinning up rpc_client")
-      Libra.c[:logger].debug("rpc_client #{rpc_client}")
+      Libra.c[:logger].debug("rpc_exec: rpc_client=#{rpc_client}")
 
       # Execute a block and make sure we disconnect the client
       begin

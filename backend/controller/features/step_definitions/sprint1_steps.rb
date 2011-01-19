@@ -3,6 +3,9 @@ require 'uri'
 include Libra::Test::User
 include Libra::Test::Util
 
+# Setup the logs for this run
+$PREFIX="sprint1"
+
 Given /^the libra client tools$/ do
   File.exists?("/usr/bin/libra_create_app").should be_true
   File.exists?("/usr/bin/libra_create_customer").should be_true
