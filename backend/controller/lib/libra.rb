@@ -13,9 +13,13 @@ module Libra
     user = User.find(username)
 
     # Find the next available server
+    Libra.c[:rpc_opts][:disctimeout] = 1
+    Libra.c[:rpc_opts][:timeout] = 2
     server = Server.find_available
 
     # Configure the user on this server if necessary
+    Libra.c[:rpc_opts][:disctimeout] = 1
+    Libra.c[:rpc_opts][:timeout] = 15
     server.create_user(user) unless user.servers.index(server)
 
     # Configure the app on the server using a framework cartridge
