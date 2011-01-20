@@ -88,7 +88,7 @@ opts = GetoptLong.new(
 libra_domain = get_var('libra_domain')
 libra_dir = get_var('libra_dir')
 li_server = get_var('li_server')
-debug = get_var('debug')
+debug = get_var('debug') == 'false' ? nil : get_var('debug')
 
 ssh_config = "#{ENV['HOME']}/.ssh/config"
 ssh_config_d = "#{ENV['HOME']}/.ssh/"
