@@ -1,4 +1,4 @@
 module Libra
-  class ConfigureException < RuntimeError
-  end
+  class ConfigureException < StandardError; end
+  class CartridgeException < StandardError; end
 end

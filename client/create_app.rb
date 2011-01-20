@@ -41,7 +41,7 @@ end
 
 #
 # Check if host exists
-# 
+#
 def hostexist?(host)
     dns = Resolv::DNS.new
     resp = dns.getresources(host, Resolv::DNS::Resource::IN::A)
@@ -272,10 +272,6 @@ response = Net::HTTP.post_form(URI.parse("http://#{li_server}/php/cartridge_do.p
 if response.code == '200'
     puts "HTTP response from server is #{response.body}" if debug
     puts "Creation successful"
-    if !(response.body =~ /Success/)
-        puts "An error has occured: #{response.body}"
-        exit 253
-    end
 else
     puts "Problem with server. Response code was #{response.code}"
     puts "HTTP response from server is #{response.body}"
@@ -324,10 +320,11 @@ File.chmod(0700, ssh_config_d)
 #
 puts "Confirming that host exists..."
 loop = 0
+sleep_time = 2.5
 while loop < 5 && !hostexist?(my_url)
+    sleep sleep_time *= 2
     loop+=1
     puts "  retry # #{loop}"
-    sleep 5
 end
 
 if loop == 5

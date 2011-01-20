@@ -156,8 +156,9 @@ if response.code == '200'
     puts
     puts "You may now create an application"
     puts
+    exit 0
 else
     puts "Problem with server. Response code was #{response.code}"
     puts "HTTP response from server is #{response.body}"
+    exit 255
 end
-0

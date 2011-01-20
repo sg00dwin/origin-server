@@ -125,7 +125,7 @@ customer_id=`basename $2`
 application="$1"
 
 CUSTOMER_HOME="$libra_dir/$customer_id/"
-APP_DIR="$CUSTOMER_HOME/httpd/$application"
+APP_DIR="$CUSTOMER_HOME/rack/$application"
 
 #
 # Create git app repo
@@ -134,9 +134,11 @@ APP_DIR="$CUSTOMER_HOME/httpd/$application"
 create_repo $application $customer_id
 
 cat <<EOF > $CUSTOMER_HOME/git/$application.git/hooks/post-receive
-rm -rf $APP_DIR/html/*
-git archive --format=tar HEAD | (cd $APP_DIR/html && tar xf -)
-# Reload httpd here maybe?
+rm -rf $APP_DIR/deploy/*
+git archive --format=tar HEAD | (cd $APP_DIR/deploy && tar xf -)
+
+# Reload passenger
+touch $APP_DIR/deploy/tmp/restart.txt
 EOF
 chmod 0750 $CUSTOMER_HOME/git/$application.git/hooks/post-receive
 
@@ -148,7 +150,7 @@ chmod 0750 $CUSTOMER_HOME/git/$application.git/hooks/post-receive
 
 mkdir -p "$APP_DIR"
 pushd "$APP_DIR" > /dev/null
-mkdir conf conf.d logs run html
+mkdir conf conf.d logs run deploy deploy/public
 ln -s /usr/lib64/httpd/modules modules
 ln -s /etc/httpd/conf/magic conf/magic
 popd > /dev/null
@@ -158,7 +160,7 @@ popd > /dev/null
 #
 
 
-IP=$(take_open_ip $customer_id $application "httpd" 8080)
+IP=$(take_open_ip $customer_id $application "rack" 8080)
 
 
 #
@@ -167,10 +169,15 @@ IP=$(take_open_ip $customer_id $application "httpd" 8080)
 
 cat <<EOF > "$APP_DIR/conf.d/libra.conf"
 ServerRoot "$APP_DIR"
-DocumentRoot "$APP_DIR/html"
+DocumentRoot "$APP_DIR/deploy/public"
 Listen $IP:8080
 User $customer_id
 Group $customer_id
+PassengerUser $customer_id
+<Directory $APP_DIR/deploy/public>
+  AllowOverride all
+  Options -MultiViews
+</Directory>
 EOF
 
 #
@@ -192,11 +199,11 @@ case "\$1" in
             echo -n " - Application is disabled" 1>&2
             exit 0
         else
-            /usr/sbin/httpd -C 'Include $APP_DIR/conf.d/*.conf' -f /usr/libexec/li/cartridges/php-5.3.2/info/configuration/etc/conf/httpd.conf -k \$1
+            /usr/sbin/httpd -C 'Include $APP_DIR/conf.d/*.conf' -f /usr/libexec/li/cartridges/rack-1.1.0/info/configuration/etc/conf/httpd.conf -k \$1
         fi
     ;;
     restart|graceful|graceful-stop|stop)
-        /usr/sbin/httpd -C 'Include $APP_DIR/conf.d/*.conf' -f /usr/libexec/li/cartridges/php-5.3.2/info/configuration/etc/conf/httpd.conf -k \$1
+        /usr/sbin/httpd -C 'Include $APP_DIR/conf.d/*.conf' -f /usr/libexec/li/cartridges/rack-1.1.0/info/configuration/etc/conf/httpd.conf -k \$1
     ;;
     status)
         echo "Coming soon"

@@ -1,5 +1,7 @@
 require 'libra'
 include Libra
+include Libra::Test::User
+include Libra::Test::Util
 
 Given /^at least one server$/ do
   servers = Server.find_all

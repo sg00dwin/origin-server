@@ -86,7 +86,7 @@ task :install_server do
     cp "backend/controller/bin/mc-libra", "#{BIN_DIR}/mc-libra"
     cp "backend/controller/bin/new-user", "#{BIN_DIR}/new-user"
     mkdir_p CONF_DIR
-    cp "backend/controller/conf/libra_s3.conf", CONF_DIR
+    cp "backend/controller/conf/controller.conf", CONF_DIR
     cd "backend/controller"
     sh "rake"
 end

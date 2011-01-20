@@ -190,7 +190,7 @@ response = Net::HTTP.post_form(URI.parse("http://#{li_server}/php/cartridge_do.p
 if response.code == '200'
     puts "HTTP response from server is #{response.body}" if debug
     puts "Action successful"
-    if !(response.body =~ /Success/)
+    if !(response.body =~ /return: 0/)
         puts "An error has occured: #{response.body}"
         exit 253
     end

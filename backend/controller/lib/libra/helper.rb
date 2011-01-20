@@ -7,9 +7,19 @@ include MCollective::RPC
 
 module Libra
   module Helper
+    def self.ec2
+      # This will verify the Amazon SSL connection
+      Rightscale::HttpConnection.params[:ca_file] = "/etc/pki/tls/certs/ca-bundle.trust.crt"
+      # Note - might need to look at setting :multi_thread => false
+      RightAws::Ec2.new(Libra.c[:aws_key],
+                        Libra.c[:aws_secret],
+                        params = {:logger => Libra.c[:logger]})
+    end
+
     def self.s3
       # This will verify the Amazon SSL connection
       Rightscale::HttpConnection.params[:ca_file] = "/etc/pki/tls/certs/ca-bundle.trust.crt"
+      # Note - might need to look at setting :multi_thread => false
       RightAws::S3Interface.new(Libra.c[:aws_key],
                                 Libra.c[:aws_secret],
                                 params = {:logger => Libra.c[:logger]})
@@ -49,6 +59,7 @@ module Libra
     def self.rpc_get_fact(fact, server=nil)
       result = nil
 
+      Libra.c[:logger].debug("rpc_get_fact: fact=#{fact}")
       rpc_exec('rpcutil', server) do |client|
         client.get_fact(:fact => fact) do |response|
           next unless Integer(response[:body][:statuscode]) == 0
@@ -70,6 +81,7 @@ module Libra
       options = rpc_options
 
       if server
+        Libra.c[:logger].debug("rpc_exec: Filtering rpc_exec to server #{server}")
         # Filter to the specified server
         options[:filter]["identity"] = server
         options[:mcollective_limit_targets] = "1"
@@ -77,8 +89,7 @@ module Libra
 
       # Setup the rpc client
       rpc_client = rpcclient(agent, :options => options)
-      rpc_client.progress = false
-      rpc_client.timeout = 1
+      Libra.c[:logger].debug("rpc_exec: rpc_client=#{rpc_client}")
 
       # Execute a block and make sure we disconnect the client
       begin

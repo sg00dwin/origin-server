@@ -59,7 +59,7 @@ EMAIL="$email"
 EOF
 
     chmod 0700 -R "$CUSTOMER_HOME"
-    grep -q "$customer_id" /etc/passwd || useradd -d "$CUSTOMER_HOME" -M -s /bin/bash "$customer_id"
+    id "$customer_id" > /dev/null || useradd -d "$CUSTOMER_HOME" -M -s /bin/bash "$customer_id"
     chown "$customer_id" -R "$CUSTOMER_HOME"
 }
 
