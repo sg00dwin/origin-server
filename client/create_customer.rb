@@ -151,7 +151,7 @@ puts "DEBUG:" if debug
 p response if debug
 json_resp = JSON.parse(response.body);
 
-if json_resp['return'].strip == "0"
+if json_resp['return'].to_s.strip == "0"
     if debug
         puts "HTTP response from server is #{response.body}"
     end
