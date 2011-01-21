@@ -17,6 +17,7 @@ module Libra
       @@config[:aws_keypair] = ENV['AWS_KEYPAIR']
       @@config[:aws_ami] = ENV['AWS_AMI']
       @@config[:repo_threshold] = ENV['REPO_THRESHOLD'].to_i if ENV['REPO_THRESHOLD']
+      @@config[:s3_bucket] = ENV['S3_BUCKET']
 
       # Optional configuration
       @@config[:aws_name] = ENV['AWS_NAME']
@@ -28,6 +29,7 @@ module Libra
       @@config[:aws_keypair] ||= fs_config.get_value('aws_keypair')
       @@config[:aws_ami] ||= fs_config.get_value('aws_ami')
       @@config[:repo_threshold] ||= fs_config.get_value('repo_threshold').to_i
+      @@config[:s3_bucket] = fs_config.get_value('s3_bucket')
 
       # Optional configuration
       @@config[:aws_name] = fs_config.get_value('aws_name')
@@ -40,7 +42,8 @@ module Libra
                                                          @@config[:aws_secret] and
                                                          @@config[:aws_keypair] and
                                                          @@config[:aws_ami] and
-                                                         @@config[:repo_threshold])
+                                                         @@config[:repo_threshold] and
+                                                         @@config[:s3_bucket])
     end
 
     # Now, initialize the MCollective options

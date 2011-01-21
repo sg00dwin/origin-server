@@ -36,7 +36,7 @@ module Libra
       usernames = []
 
       # Retrieve the current list of usernames
-      Helper.s3.incrementally_list_bucket('libra', { 'prefix' => 'user_info'}) do |result|
+      Helper.s3.incrementally_list_bucket(Libra.c[:s3_bucket], { 'prefix' => 'user_info'}) do |result|
         result[:contents].each do |bucket|
           usernames << File.basename(bucket[:key], ".json")
         end
@@ -52,7 +52,7 @@ module Libra
     #
     def self.find(username)
       begin
-        return User.from_json(Helper.s3.get('libra', "user_info/#{username}/user.json")[:object])
+        return User.from_json(Helper.s3.get(Libra.c[:s3_bucket], "user_info/#{username}/user.json")[:object])
       rescue RightAws::AwsError => e
         if e.message =~ /^NoSuchKey/
           return nil
@@ -67,7 +67,7 @@ module Libra
     #
     def update
       json = JSON.generate({:username => username, :email => email, :ssh => ssh})
-      Helper.s3.put('libra', "user_info/#{username}/user.json", json)
+      Helper.s3.put(Libra.c[:s3_bucket], "user_info/#{username}/user.json", json)
     end
 
     #
