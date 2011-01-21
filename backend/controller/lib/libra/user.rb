@@ -96,23 +96,17 @@ module Libra
     def apps
       # Use the cached value if it exists
       unless @apps
-        servers.each do |server|
-          Helper.rpc_get_fact("git_#{username}", server) do |app_paths|
-            # Split the string of apps into an array
-            @servers[server] = app_paths.split(%r{,\s*}).collect do |path|
-              # Filter out just the app name to put in the array
-              File.basename(path, ".git")
-            end
-          end
+        @apps = {}
+        app_list = Helper.s3.list_bucket(Libra.c[:s3_bucket], 
+                  { 'prefix' => "user_info/#{@username}/apps/"})
+        app_list.each do |key|
+          json = Helper.s3.get(Libra.c[:s3_bucket], key[:key])
+          app_name = key[:key].sub("user_info/#{@username}/apps/", "").sub(".json", "")
+          @apps[app_name.to_sym] = app_info(app_name)
         end
-
-        # Cache a unique, sorted list of all the apps
-        @apps = @servers.values.flatten.uniq.sort
       end
-
-      return @apps
+      @apps
     end
-
     #
     # Returns a hash of the server -> apps for this user
     #
