@@ -1,6 +1,7 @@
 require 'libra/helper'
 require 'right_aws'
 require 'json'
+require 'date'
 
 module Libra
   class User
@@ -122,6 +123,41 @@ module Libra
       # Return the server -> app structure
       return @servers
     end
+
+    #
+    # Create's an S3 cache of the app for easy tracking and verification
+    #
+    def create_app(app_name, framework,
+                    creation_time=DateTime::now().strftime)
+      json = JSON.generate({:framework => framework,
+                            :creation_time => creation_time})
+      Helper.s3.put(Libra.c[:s3_bucket],
+                    "user_info/#{@username}/apps/#{app_name}.json", json)
+      JSON.parse(json)
+    end
+
+    #
+    # Delete an S3 cache of an app
+    #
+    def delete_app(app_name)
+      Helper.s3.delete(Libra.c[:s3_bucket],
+                        "user_info/#{@username}/apps/#{app_name}.json")
+    end
+
+    #
+    # Check if an application already exists
+    #
+    def app_info(app_name)
+      return JSON.parse(Helper.s3.get(Libra.c[:s3_bucket],
+            "user_info/#{@username}/apps/#{app_name}.json")[:object])
+    rescue RightAws::AwsError => e
+      if e.message =~ /^NoSuchKey/
+        return nil
+      else
+        raise e
+      end
+    end
+        
 
     #
     # Clears out any cached data

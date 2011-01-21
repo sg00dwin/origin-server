@@ -12,6 +12,13 @@ module Libra
     # Lookup the user
     user = User.find(username)
 
+    # App exists check
+    if action == 'configure'
+      throw :app_already_exists if user.app_info(app_name)
+    else
+      throw :app_does_not_exist unless user.app_info(app_name)
+    end
+
     # Find the next available server
     Libra.c[:rpc_opts][:disctimeout] = 1
     Libra.c[:rpc_opts][:timeout] = 2
@@ -24,6 +31,8 @@ module Libra
 
     # Configure the app on the server using a framework cartridge
     server.execute(framework, action, app_name, user)
+    user.create_app(app_name, framework) if action == 'configure'
+    user.delete_app(app_name) if action == 'deconfigure'
   end
 
   #
