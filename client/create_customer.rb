@@ -84,7 +84,8 @@ opts = GetoptLong.new(
 
 # Pull in configs from files
 li_server = get_var('li_server')
-debug = get_var('debug')
+debug = get_var('debug') == 'false' ? nil : get_var('debug')
+puts "woot" if debug
 
 libra_kfile = "#{ENV['HOME']}/.ssh/libra_id_rsa"
 libra_kpfile = "#{ENV['HOME']}/.ssh/libra_id_rsa.pub"
@@ -148,7 +149,7 @@ response = Net::HTTP.post_form(URI.parse("http://#{li_server}/php/create_custome
                            {'json_data' => json_data,})
 puts "DEBUG:" if debug
 p response if debug
-if response.code == '200'
+if response.body =~ /return: 0/
     if debug
         puts "HTTP response from server is #{response.body}"
     end
