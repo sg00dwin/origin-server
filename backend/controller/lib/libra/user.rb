@@ -52,7 +52,7 @@ module Libra
     #
     def self.find(username)
       begin
-        return User.from_json(Helper.s3.get('libra', "user_info/#{username}.json")[:object])
+        return User.from_json(Helper.s3.get('libra', "user_info/#{username}/user.json")[:object])
       rescue RightAws::AwsError => e
         if e.message =~ /^NoSuchKey/
           return nil
@@ -67,7 +67,7 @@ module Libra
     #
     def update
       json = JSON.generate({:username => username, :email => email, :ssh => ssh})
-      Helper.s3.put('libra', "user_info/#{username}.json", json)
+      Helper.s3.put('libra', "user_info/#{username}/user.json", json)
     end
 
     #
