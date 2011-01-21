@@ -149,7 +149,9 @@ response = Net::HTTP.post_form(URI.parse("http://#{li_server}/php/create_custome
                            {'json_data' => json_data,})
 puts "DEBUG:" if debug
 p response if debug
-if response.body =~ /return: 0/
+json_resp = JSON.parse(response.body);
+
+if json_resp['return'].strip == "0"
     if debug
         puts "HTTP response from server is #{response.body}"
     end

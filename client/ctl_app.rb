@@ -187,10 +187,12 @@ puts "Contacting server http://#{li_server}"
 response = Net::HTTP.post_form(URI.parse("http://#{li_server}/php/cartridge_do.php"),
                            { 'json_data' => json_data })
 
+json_resp = JSON.parse(response.body);
+
 if response.code == '200'
     puts "HTTP response from server is #{response.body}" if debug
     puts "Action successful"
-    if !(response.body =~ /return: 0/)
+    if (json_resp['return'].strip != "0")
         puts "An error has occured: #{response.body}"
         exit 253
     end
