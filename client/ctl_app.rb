@@ -192,7 +192,7 @@ json_resp = JSON.parse(response.body);
 if response.code == '200'
     puts "HTTP response from server is #{response.body}" if debug
     puts "Action successful"
-    if (json_resp['return'].strip != "0")
+    if (json_resp['return'].to_s.strip != "0")
         puts "An error has occured: #{response.body}"
         exit 253
     end
