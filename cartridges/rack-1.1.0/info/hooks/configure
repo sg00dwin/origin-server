@@ -225,8 +225,6 @@ cat <<EOF > "/etc/httpd/conf.d/${customer_id}_${application}.conf"
   ServerName ${application}.${customer_id}.${libra_domain}
   ServerAdmin mmcgrath@redhat.com
   DocumentRoot /var/www/html
-  ErrorLog logs/$customer_id.${libra_domain}-error_log
-  TransferLog logs/$customer_id.${libra_domain}-access_log
 
   ProxyPass / http://$IP:8080/
   ProxyPassReverse / http://$IP:8080/
