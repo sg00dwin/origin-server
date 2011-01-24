@@ -30,8 +30,7 @@ end
 task :install_client => [:test_client] do
     mkdir_p "#{DEST_DIR}/usr/bin/"
     CLIENT_FILES.each {|client_name|
-        new_name = File.basename(client_name).gsub(/^/, "libra_").gsub(/.rb$/, '')
-        cp client_name, "#{BIN_DIR}/#{new_name}"
+        cp client_name, "#{BIN_DIR}/#{client_name}"
     }
 end
 
