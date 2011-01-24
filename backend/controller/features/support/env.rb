@@ -100,7 +100,7 @@ module Libra
       #
       def fork_cmd(in_data, max_processes, fail_on_error=true, delay=true)
         # Convert the input argument to an array if necessart
-        f_data = Array.try_convert(in_data) ? in_data : Array.new(1, in_data)
+        f_data = in_data.kind_of?(Array) ? in_data : Array.new(1, in_data)
 
         # Create the users in subprocesses
         loop do

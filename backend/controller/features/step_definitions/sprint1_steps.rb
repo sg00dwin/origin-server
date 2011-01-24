@@ -16,10 +16,10 @@ end
 Given /^(\d+) new users$/ do |num_users|
   # Create an empty array of users to defer
   # creation to the forked process
-  @usernames = Array.new(num_users)
+  @usernames = Array.new(num_users.to_i)
 end
 
-When /^(\d+) applications of type '(.+)' are created per unique user$/ do |num_apps, framework|
+When /^(\d+) applications of type '(.+)' are created per user$/ do |num_apps, framework|
   # Generate the array of apps
   @apps = (num_apps.to_i).times.collect{|num| "app#{num}" }
 
@@ -28,7 +28,7 @@ When /^(\d+) applications of type '(.+)' are created per unique user$/ do |num_a
     # Get a unique username to create in the forked process
     # and add it to the list of reserved usernames to avoid
     # race conditions of duplicate users
-    username = get_unique_user(1, @usernames)
+    username = get_unique_username(1, @usernames)
     @usernames[index] = username
 
     # Fork off the creation of the user and apps
