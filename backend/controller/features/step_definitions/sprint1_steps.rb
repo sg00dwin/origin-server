@@ -13,31 +13,34 @@ Given /^(\d+) concurrent processes$/ do |max_processes|
   @max_processes = max_processes.to_i
 end
 
-When /^(\d+) new users are created$/ do |num_users|
-  num_users = num_users.to_i
-
-  # Come up with the list of usernames to create
-  @usernames = []
-  num_users.times do
-    @usernames << get_unique_username(1, @usernames)
-  end
-
-  # Fork off the creation of usernames
-  fork_cmd(@usernames, @max_processes) do |username|
-    run("/usr/bin/libra_create_customer -u #{username} -e nobody@example.com")
-  end
+Given /^(\d+) new users$/ do |num_users|
+  # Create an empty array of users to defer
+  # creation to the forked process
+  @usernames = Array.new(num_users.to_i)
 end
 
 When /^(\d+) applications of type '(.+)' are created per user$/ do |num_apps, framework|
+  # Generate the array of apps
   @apps = (num_apps.to_i).times.collect{|num| "app#{num}" }
 
-  # Generate the 'product' of username / app combinations
-  user_apps = @usernames.product(@apps)
+  # Limit loop on the number of users established in a previous step
+  @usernames.each_with_index do |data, index|
+    # Get a unique username to create in the forked process
+    # and add it to the list of reserved usernames to avoid
+    # race conditions of duplicate users
+    username = get_unique_username(1, @usernames)
+    @usernames[index] = username
 
-  # Fork off the creation of apps
-  fork_cmd(user_apps, @max_processes) do |user_app|
-    username, app = user_app[0], user_app[1]
-    run("/usr/bin/libra_create_app -u #{username} -a #{app} -r /tmp/#{username}_#{app}_repo -t php-5.3.2 -b")
+    # Fork off the creation of the user and apps
+    fork_cmd(username, @max_processes, false) do
+      # Create the username on the first run
+      run("/usr/bin/libra_create_customer -u #{username} -e nobody@example.com")
+
+      # Then create each of the apps
+      @apps.each do |app|
+        run("/usr/bin/libra_create_app -u #{username} -a #{app} -r /tmp/libra_repo_#{username}_#{app}_repo -t php-5.3.2 -b")
+      end
+    end
   end
 end
 
