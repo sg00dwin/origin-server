@@ -1,12 +1,17 @@
 $LOAD_PATH << File.expand_path('../../../lib', __FILE__)
 require 'mcollective'
 require 'libra'
+require 'timeout'
 require 'logger'
+require 'fileutils'
 
 World(MCollective::RPC)
 
 # Remove all logs to begin
 FileUtils.rm_f Dir.glob("/tmp/libra*.log")
+
+# Remove all temporary repos
+FileUtils.rm_f Dir.glob("/tmp/libra_repo*")
 
 module Libra
   module Test
@@ -22,8 +27,6 @@ module Libra
       #
       def get_unique_username(sprint=nil, reserved_usernames=[])
         result=nil
-
-        $logger.info("reserved = #{reserved_usernames}")
 
         loop do
           # Generate a random username
@@ -95,23 +98,23 @@ module Libra
       #   max_processes = the number of processes to use
       #   delay = sleep between 0-1 seconds between forks
       #
-      def fork_cmd(in_data, max_processes, delay=true)
-        # Copy the data array
-        f_data = Array.new(in_data)
+      def fork_cmd(in_data, max_processes, fail_on_error=true, delay=true)
+        # Convert the input argument to an array if necessart
+        f_data = Array.try_convert(in_data) ? in_data : Array.new(1, in_data)
 
         # Create the users in subprocesses
         loop do
           # Don't fork more processes than we have data elements
           num_processes = f_data.length < max_processes ? f_data.length: max_processes
 
-          num_processes.times do
+          num_processes.times do |count|
             # Pop a piece of data off the array
             data = f_data.pop
 
             # Fork off the command
             $logger.info("Forking with data element #{data}")
             fork do
-              yield data
+              yield data, count
             end
 
             # if delaying, sleep to delay forks
@@ -120,10 +123,11 @@ module Libra
 
           # Wait for the processes to finish
           num_processes.times do
-              Process.wait
+              # Fail after waiting for 60 seconds
+              Timeout::timeout(60) { Process.wait }
               exit_code = $?.exitstatus
               process_id = $?.to_i
-              raise "Forking failed / pid=#{process_id} / exit_code=#{exit_code}" if exit_code != 0
+              raise "Forking failed / pid=#{process_id} / exit_code=#{exit_code}" if exit_code != 0 and fail_on_error
           end
 
           # Break if we've processed all the usernames
