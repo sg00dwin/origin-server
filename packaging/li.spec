@@ -143,10 +143,10 @@ fi
 %defattr(-,root,root,-)
 %{_libexecdir}/mcollective/mcollective/agent/libra.ddl
 %{_bindir}/new-user
-%{_bindir}/mc-libra
+%{_bindir}/mc-rhc-cartridge-do
 %config(noreplace) %{_sysconfdir}/libra/controller.conf
 %{gemdir}/gems/li-controller-%{version}
-%{gemdir}/bin/mc-libra
+%{gemdir}/bin/mc-rhc-cartridge-do
 %{gemdir}/bin/new-user
 %{gemdir}/bin/li-capacity
 %{gemdir}/cache/li-controller-%{version}.gem

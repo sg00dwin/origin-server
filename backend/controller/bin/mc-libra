@@ -9,7 +9,7 @@ include Libra
 
 options = rpcoptions do |parser, options|
     parser.define_head "Control libra agent"
-    parser.banner = "Usage: mc-libra [options]"
+    parser.banner = "Usage: mc-rhc-cartridge-do [options]"
 
     parser.on('-a', '--action ACTION', 'Action to call') do |action|
       options[:action] = action

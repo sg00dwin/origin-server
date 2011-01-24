@@ -18,8 +18,8 @@ function my_exec($cmd, $input='')
                       );
          }
 
-// print_r("/usr/bin/mc-libra --cartridge $cartridge -a $action -u $username -n $app_name");
-$results = my_exec("/usr/bin/mc-libra --cartridge $cartridge -a $action -u $username -n $app_name", $out);
+// print_r("/usr/bin/mc-rhc-cartridge-do --cartridge $cartridge -a $action -u $username -n $app_name");
+$results = my_exec("/usr/bin/mc-rhc-cartridge-do --cartridge $cartridge -a $action -u $username -n $app_name", $out);
 
 if($results['return'] != 0) {
     header('HTTP/1.1 500 Internal Server Error', 500);
