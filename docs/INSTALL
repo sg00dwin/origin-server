@@ -65,7 +65,7 @@ Install and configure controller
 2) Add your EC2 key and secret to /etc/libra/controller.conf
 3) Create libra bucket (log in to amazon or use s3cmd and create a bucket called libra
 4) Create a new user by running:
-    /usr/bin/new-user -u username -e e@mai.l -s ssh_key
+    /usr/bin/rhc-new-user -u username -e e@mai.l -s ssh_key
     NOTE: "ssh_key" in this case must just be the payload portion of an RSA ssh
     key. (exclude the ssh-rsa from the begining and the comment / email from the end)
 

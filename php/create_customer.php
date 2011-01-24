@@ -17,7 +17,7 @@ function my_exec($cmd, $input='')
                       );
          }
 
-$results = my_exec("/usr/bin/new-user -u $customer_name -e $email -s $ssh_key ", $out);
+$results = my_exec("/usr/bin/rhc-new-user -u $customer_name -e $email -s $ssh_key ", $out);
 
 print json_encode($results);
 

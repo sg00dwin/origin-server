@@ -84,7 +84,7 @@ task :install_server do
     cp "backend/mcollective/libra.ddl", MCOLLECTIVE_DIR
     mkdir_p BIN_DIR
     cp "backend/controller/bin/mc-rhc-cartridge-do", "#{BIN_DIR}/mc-rhc-cartridge-do"
-    cp "backend/controller/bin/new-user", "#{BIN_DIR}/new-user"
+    cp "backend/controller/bin/rhc-new-user", "#{BIN_DIR}/rhc-new-user"
     mkdir_p CONF_DIR
     cp "backend/controller/conf/controller.conf", CONF_DIR
     cd "backend/controller"
