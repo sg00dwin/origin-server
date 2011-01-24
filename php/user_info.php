@@ -16,6 +16,7 @@ function my_exec($cmd, $input='')
                       );
          }
 
+print_r("\n/usr/bin/rhc-user-info -u $username $flags");
 $results = my_exec("/usr/bin/rhc-user-info -u $username $flags", $out);
 
 if($results['return'] != 0) {
