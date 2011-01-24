@@ -148,9 +148,10 @@ chmod 0750 $CUSTOMER_HOME/git/$application.git/hooks/post-receive
 
 mkdir -p "$APP_DIR"
 pushd "$APP_DIR" > /dev/null
-mkdir conf conf.d logs run html
+mkdir conf conf.d logs run html sessions
 ln -s /usr/lib64/httpd/modules modules
 ln -s /etc/httpd/conf/magic conf/magic
+sed "s,TEMPLATE_SET_ME_SESSION_SAVE_PATH,$APP_DIR/sessions/," /usr/libexec/li/cartridges/php-5.3.2/info/configuration/etc/conf/php.ini > $APP_DIR/conf/php.ini
 popd > /dev/null
 
 #
@@ -179,6 +180,9 @@ EOF
 
 cat <<EOF > "$APP_DIR/${application}_ctl.sh"
 #/bin/bash
+
+PHPRC="$APP_DIR/conf/php.ini"
+
 if ! [ \$# -eq 1 ]
 then
     echo "Usage: \$0 [start|restart|graceful|graceful-stop|stop]"
