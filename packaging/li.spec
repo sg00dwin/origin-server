@@ -169,10 +169,11 @@ fi
 * Mon Jan 24 2011 Mike McGrath <mmcgrath@redhat.com> 0.12-1
 - Upstream released new version
 
+* Mon Jan 24 2011  Matt Hicks <mhicks@redhat.com> 0.11-2
+- Added qpid messaging support for mcollective
+
 * Thu Jan 20 2011 Mike McGrath <mmcgrath@redhat.com> 0.11-1
 - Upstream released new version
-* Wed Jan 24 2011  Matt Hicks <mhicks@redhat.com> 0.11-1
-- Added qpid messaging support for mcollective
 
 * Wed Jan 19 2011 Mike McGrath <mmcgrath@redhat.com> 0.10-1
 - Upstream released new version
