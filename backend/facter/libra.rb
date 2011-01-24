@@ -39,9 +39,8 @@ end
 #
 if File.exists?("/var/lib/libra")
     # Determine customers on host and hosted info
-    customers = Dir.entries('/var/lib/libra/')
+    Dir.entries('/var/lib/libra/').each do |customer|
     
-    customers.each do |customer|
         if customer =~ /[A-Za-z0-9]/
             Facter.add("customer_#{customer}") do
                 setcode do customer end
