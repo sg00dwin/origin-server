@@ -27,6 +27,7 @@ Provides Li client libraries
 Summary: Multi-tenant cloud management system node tools
 Group: Network/Daemons
 Requires: mcollective
+Requires: ruby-qpid
 Requires: rubygem-parseconfig
 Requires(post): /usr/sbin/semodule
 Requires(postun): /usr/sbin/semodule
@@ -39,6 +40,7 @@ Turns current host into a Li managed node
 Summary: Li server components
 Group: Network/Daemons
 Requires: mcollective-client
+Requires: ruby-qpid
 BuildArch: noarch
 Requires: ruby-json
 Requires: rubygem-right_aws
@@ -48,8 +50,8 @@ Requires: rubygem-parseconfig
 This contains the server 'controlling' components of Li.  This can be on the
 same host as a node.
 
-Note: to use this you'll need activemq installed somewhere.  It doesn't have
-to be the same host as the server.
+Note: to use this you'll need qpid installed somewhere.  It doesn't have
+to be the same host as the server.  It is the 'qpid-cpp-server' package.
 
 %package cartridge-php-5.3.2
 Summary: Provides php-5.3.2 support
@@ -129,6 +131,7 @@ fi
 %files node
 %defattr(-,root,root,-)
 %{_libexecdir}/mcollective/mcollective/agent/libra.rb
+%{_libexecdir}/mcollective/mcollective/connector/amqp.rb
 %{ruby_sitelibdir}/facter/libra.rb
 %{_sysconfdir}/init.d/libra
 %{_sysconfdir}/init.d/libra-data
@@ -163,8 +166,8 @@ fi
 %{_libexecdir}/li/cartridges/rack-1.1.0/
 
 %changelog
-* Thu Jan 20 2011 Mike McGrath <mmcgrath@redhat.com> 0.11-1
-- Upstream released new version
+* Wed Jan 24 2011  Matt Hicks <mhicks@redhat.com> 0.11-1
+- Added qpid messaging support for mcollective
 
 * Wed Jan 19 2011 Mike McGrath <mmcgrath@redhat.com> 0.10-1
 - Upstream released new version

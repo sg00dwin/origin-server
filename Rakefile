@@ -4,6 +4,7 @@ DEST_DIR = ENV["DESTDIR"] || "/"
 BIN_DIR = ENV["BINDIR"] || "#{DEST_DIR}/usr/bin"
 FACTER_DIR = ENV["FACTERDIR"] || "#{DEST_DIR}/#{Config::CONFIG['sitelibdir']}/facter"
 MCOLLECTIVE_DIR = ENV["MCOLLECTIVEDIR"] || "#{DEST_DIR}/usr/libexec/mcollective/mcollective/agent/"
+MCOLLECTIVE_CONN_DIR = ENV["MCOLLECTIVECONNDIR"] || "#{DEST_DIR}/usr/libexec/mcollective/mcollective/connector/"
 INITRD_DIR = ENV["INITRDDIR"] || "#{DEST_DIR}/etc/init.d/"
 LIBEXEC_DIR = ENV["LIBEXECDIR"] || "#{DEST_DIR}/usr/libexec/li/"
 LIBRA_DIR = ENV["LIBRADIR"] || "#{DEST_DIR}/var/lib/libra"
@@ -12,7 +13,8 @@ CLIENT_FILES = ["client/create_customer.rb",
                 "client/create_app.rb"]
 
 NODE_FILES = ["backend/facter/libra.rb",
-              "backend/mcollective/libra.rb"]
+              "backend/mcollective/libra.rb",
+              "backend/mcollective/connector/amqp.rb"]
 
 #
 # Test client files
@@ -21,7 +23,7 @@ task :test_client do
     CLIENT_FILES.each{|client_file| sh "ruby", "-c", client_file}
 end
 
-# 
+#
 # Install client files
 #
 task :install_client => [:test_client] do
@@ -39,7 +41,7 @@ task :test_node do
     NODE_FILES.each{|node_file| sh "ruby", "-c", node_file}
 end
 
-# 
+#
 # Install node files
 #
 task :install_node => [:test_node] do
@@ -47,6 +49,8 @@ task :install_node => [:test_node] do
     cp "backend/facter/libra.rb", FACTER_DIR
     mkdir_p MCOLLECTIVE_DIR
     cp "backend/mcollective/libra.rb", MCOLLECTIVE_DIR
+    mkdir_p MCOLLECTIVE_CONN_DIR
+    cp "backend/mcollective/connector/amqp.rb", MCOLLECTIVE_CONN_DIR
     mkdir_p INITRD_DIR
     cp "backend/scripts/libra", INITRD_DIR
     cp "backend/scripts/libra-data", INITRD_DIR
@@ -57,7 +61,7 @@ task :install_node => [:test_node] do
     cp "backend/selinux/libra.pp", "#{DEST_DIR}/usr/share/selinux/packages"
 end
 
-# 
+#
 # Install cartridges
 #
 task :install_cartridges do
@@ -67,7 +71,7 @@ task :install_cartridges do
     cp_r "#{LIBEXEC_DIR}/cartridges/li-controller-0.1/info/configuration/node.conf-sample", "#{CONF_DIR}/node.conf"
 end
 
-# 
+#
 # Test server
 #
 task :test_server do
@@ -76,7 +80,7 @@ task :test_server do
     cd "../.."
 end
 
-# 
+#
 # Install server
 #
 task :install_server do
@@ -91,13 +95,13 @@ task :install_server do
     sh "rake"
 end
 
-# 
+#
 # Install all
 #
 task :install => [:install_client, :install_node, :install_cartridges, :install_server] do
 end
 
-# 
+#
 # print help
 #
 task :default do
