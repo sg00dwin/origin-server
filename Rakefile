@@ -9,8 +9,9 @@ INITRD_DIR = ENV["INITRDDIR"] || "#{DEST_DIR}/etc/init.d/"
 LIBEXEC_DIR = ENV["LIBEXECDIR"] || "#{DEST_DIR}/usr/libexec/li/"
 LIBRA_DIR = ENV["LIBRADIR"] || "#{DEST_DIR}/var/lib/libra"
 CONF_DIR = ENV["CONFDIR"] || "#{DEST_DIR}/etc/libra"
-CLIENT_FILES = ["client/create_customer.rb",
-                "client/create_app.rb"]
+CLIENT_FILES = ["client/rhc-create-user",
+                "client/rhc-create-app",
+                "client/rhc-ctl-app"]
 
 NODE_FILES = ["backend/facter/libra.rb",
               "backend/mcollective/libra.rb",

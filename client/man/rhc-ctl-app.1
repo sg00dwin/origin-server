@@ -1,11 +1,11 @@
 .\" Process this file with
-.\" groff -man -Tascii create_customer.1
+.\" groff -man -Tascii rhc-create-user.1
 .\"
 .TH CTL_APP 1 "JANUARY 2011" Linux "User Manuals"
 .SH NAME
-ctl_app \- Control an existing rhcloud.com application
+rhc-ctl-app \- Control an existing rhcloud.com application
 .SH SYNOPSIS
-.B ctl_app [-u
+.B rhc-ctl-app [-u
 .I username
 .B ]
 .B [-a
@@ -18,10 +18,10 @@ ctl_app \- Control an existing rhcloud.com application
 .I command
 .B ] [-b] [-d] [-h]
 .SH DESCRIPTION
-.B ctl_app
+.B rhc-ctl-app
 controls an existing rhcloud.com application.  To create
 an application use the
-.BR create_app (1)
+.BR rhc-create-app (1)
 command.
 
 .BR command
@@ -66,6 +66,6 @@ TODO: ADD EXTERNAL BUG TRACKER OR LIBRA TEAM CONTACT EMAIL
 .SH AUTHOR
 Mike McGrath <mmcgrath@redhat.com>
 .SH "SEE ALSO"
-.BR create_customer (1),
-.BR create_app (1),
+.BR rhc-create-user (1),
+.BR rhc-create-app (1),
 .BR libra.conf (5),
