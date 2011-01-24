@@ -23,6 +23,22 @@ module MCollective
                 @log = Log.instance
             end
 
+            # Will disconnect and try and reconnect once a second until the service is available
+            def reconnect
+                @log.debug("Reconnect attempt")
+                begin
+                    disconnect
+                    connect
+                    @subscriptions.each do |source|
+                        @session.exchange_bind(:queue => @uniquename, :binding_key => "#{source}")
+                    end
+                rescue Exception => e
+                    @log.debug("Reconnect Exception #{e}")
+                    sleep 1
+                    retry
+                end
+            end
+
             # Connects to the Qpid middleware
             def connect
                 if @connection
@@ -47,14 +63,14 @@ module MCollective
                 @session = @connection.session(@uniquename)
 
                 # Create a direct exchange
-                @session.exchange_declare("mc-exchange", :type => "direct")
+                #@session.exchange_declare("mc-exchange", :type => "direct")
 
                 # Declare a unique queue for communications
                 @session.queue_declare(@uniquename)
                 @log.debug("Using queue #{@uniquename}")
 
                 # Bind the exchange to the queue so messages get mapped
-                @session.exchange_bind(:exchange => "mc-exchange", :queue => @uniquename)
+                #@session.exchange_bind(:exchange => "mc-exchange", :queue => @uniquename)
 
                 # Subscribe this session to the queue, using a local
                 # buffer called 'messages' for received messages
@@ -72,10 +88,16 @@ module MCollective
 
             # Receives a message from the Qpid connection
             def receive
-                @log.debug("Waiting for a message...")
-                msg = @incoming.get(1)
-                @log.debug("Received message")
-                Request.new(msg.body)
+                begin
+                    @log.debug("Waiting for a message...")
+                    msg = @incoming.get(1)
+                    @log.debug("Received message")
+                    Request.new(msg.body)
+                rescue Qpid::Closed => e
+                    @log.debug("Caught Exception #{e}")
+                    reconnect
+                    retry
+                end
             end
 
             # Sends a message to the Qpid session
@@ -109,9 +131,25 @@ module MCollective
             # Disconnects from the Qpid connection
             def disconnect
                 @log.debug("Disconnecting from Qpid")
-                @session.message_cancel(:destination => "messages")
-                @session.close
-                @connection.close
+
+                # Cleanup the session
+                begin
+                    @session.message_cancel(:destination => "messages")
+                    @session.close
+                rescue Exception => e
+                    @log.debug("Failed to cleanup session: #{e}")
+                ensure
+                    @session = nil
+                end
+
+                # Cleanup the connection
+                begin
+                    @connection.close
+                rescue Exception => e
+                    @log.debug("Failed to cleanup connection: #{e}")
+                ensure
+                    @connection = nil
+                end
             end
 
             private
