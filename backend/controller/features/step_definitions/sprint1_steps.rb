@@ -52,8 +52,9 @@ Then /^they should all be accessible$/ do
   # Hit the health check page for each app
   user_apps.each do |user_app|
     # Make sure to handle timeouts
+    host = "#{user_app[1]}.#{user_app[0]}.rhcloud.com"
     begin
-      res = Net::HTTP.start("#{user_app[1]}.#{user_app[0]}.rhcloud.com", 80) do |http|
+      res = Net::HTTP.start(host, 80) do |http|
         http.read_timeout = 5
         http.get("/health_check.php")
       end
@@ -63,7 +64,7 @@ Then /^they should all be accessible$/ do
     end
 
     # Store the results
-    urls[url] = code
+    urls[host] = code
   end
 
   # Print out the results:
