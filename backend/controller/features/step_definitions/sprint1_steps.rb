@@ -4,8 +4,8 @@ include Libra::Test::User
 include Libra::Test::Util
 
 Given /^the libra client tools$/ do
-  File.exists?("/usr/bin/libra_create_app").should be_true
-  File.exists?("/usr/bin/libra_create_customer").should be_true
+  File.exists?("/usr/bin/rhc-create-app").should be_true
+  File.exists?("/usr/bin/rhc-create-user").should be_true
   File.exists?("/etc/libra/client.conf").should be_true
 end
 
@@ -34,11 +34,11 @@ When /^(\d+) applications of type '(.+)' are created per user$/ do |num_apps, fr
     # Fork off the creation of the user and apps
     fork_cmd(username, @max_processes, false) do
       # Create the username on the first run
-      run("/usr/bin/libra_create_customer -u #{username} -e nobody@example.com")
+      run("/usr/bin/rhc-create-user -u #{username} -e libra-test@redhat.com")
 
       # Then create each of the apps
       @apps.each do |app|
-        run("/usr/bin/libra_create_app -u #{username} -a #{app} -r /tmp/libra_repo_#{username}_#{app}_repo -t php-5.3.2 -b")
+        run("/usr/bin/rhc-create-app -u #{username} -a #{app} -r /tmp/rhc_repo_#{username}_#{app}_repo -t php-5.3.2 -b")
       end
     end
   end
@@ -51,7 +51,7 @@ Then /^they should all be accessible$/ do
   urls = {}
   # Hit the health check page for each app
   user_apps.each do |user_app|
-    url = "http://#{user_app[1]}.#{user_app[0]}.libra.mmcgrath.net/health_check.php"
+    url = "http://#{user_app[1]}.#{user_app[0]}.rhcloud.com/health_check.php"
     code = Net::HTTP.get_response(URI.parse(url)).code
     urls[url] = code
   end
