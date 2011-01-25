@@ -153,7 +153,10 @@ json_resp = JSON.parse(response.body);
 
 if json_resp['return'].to_s.strip == "0"
     if debug
-        puts "HTTP response from server is #{response.body}"
+        puts "HTTP response from server is:"
+        json_resp.each do |k,v|
+            puts "#{k.to_s}: #{v.to_s}"
+        end
     end
     puts "Creation successful (probably)."
     puts
@@ -163,5 +166,8 @@ if json_resp['return'].to_s.strip == "0"
 else
     puts "Problem with server. Response code was #{response.code}"
     puts "HTTP response from server is #{response.body}"
+    json_resp.each do |k,v|
+        puts "#{k.to_s}: #{v.to_s}"
+    end
     exit 255
 end

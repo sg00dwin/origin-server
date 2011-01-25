@@ -269,12 +269,21 @@ puts "Contacting server http://#{li_server}"
 response = Net::HTTP.post_form(URI.parse("http://#{li_server}/php/cartridge_do.php"),
                            { 'json_data' => json_data })
 
+json_resp = JSON.parse(response.body);
 if response.code == '200'
-    puts "HTTP response from server is #{response.body}" if debug
+    if debug
+        puts "HTTP response from server is:"
+        json_resp.each do |k,v|
+            puts "#{k.to_s}: #{v.to_s}"
+        end
+    end
     puts "Creation successful"
 else
     puts "Problem with server. Response code was #{response.code}"
     puts "HTTP response from server is #{response.body}"
+    json_resp.each do |k,v|
+        puts "#{k.to_s}: #{v.to_s}"
+    end
     exit 254
 end
 
