@@ -65,7 +65,7 @@ end
 
 def validate_email(email)
     if email =~ /([^@]+)@([a-zA-Z0-9\.])+\.([a-zA-Z]{2,3})/
-        if $1 =~ /[^a-zA-Z0-9\.]/
+        if $1 =~ /[^a-zA-Z0-9\.\-\+]/
             return false
         else
             return true
