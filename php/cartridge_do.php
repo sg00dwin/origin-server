@@ -1,5 +1,5 @@
 <?php
-
+@ob_start();
 $data = json_decode($_POST['json_data']);
 $cartridge = escapeshellarg(filter_var($data->{'cartridge'}, FILTER_SANITIZE_SPECIAL_CHARS, FILTER_FLAG_STRIP_LOW));
 $action = escapeshellarg(filter_var($data->{'action'}, FILTER_SANITIZE_EMAIL, FILTER_FLAG_STRIP_LOW));
@@ -22,7 +22,8 @@ function my_exec($cmd, $input='')
 $results = my_exec("/usr/bin/mc-rhc-cartridge-do --cartridge $cartridge -a $action -u $username -n $app_name", $out);
 
 if($results['return'] != 0) {
-    header('HTTP/1.1 500 Internal Server Error', 500);
+    header('HTTP/1.1 503 Service Unavailable', 503);
+    header('Status: 503 Service Unavailable');
 }
 
 print json_encode($results);
@@ -30,4 +31,6 @@ print json_encode($results);
 // print_r("\nstdout: " . $results['stdout']);
 // print_r("\nstderr: " . $results['stderr']);
 // print_r("\nreturn: " . $results['return']);
+
+ob_end_flush();
 ?>
