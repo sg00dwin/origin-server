@@ -125,8 +125,8 @@ fi
 
 %files
 %defattr(-,root,root,-)
-%{_bindir}/rhc_*
-%{_mandir}/man1/rhc*
+%{_bindir}/rhc-*
+%{_mandir}/man1/rhc-*
 %{_mandir}/man5/libra*
 
 
