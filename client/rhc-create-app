@@ -58,7 +58,7 @@ end
 def p_usage
     puts <<USAGE
 
-Usage: create_app
+Usage: $0
 Create a new app libra project.
 
   -u|--user  username     Libra username    (alphanumeric) (required)

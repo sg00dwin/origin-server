@@ -51,7 +51,7 @@ end
 def p_usage
     puts <<USAGE
 
-Usage: create_customer
+Usage: $0
 Create a new libra user.
 
   -u|--user   username    Libra username (alphanumeric) (required)

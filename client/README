@@ -15,11 +15,11 @@ IMPORTANT: Make sure you have git, curl and openssh-clients installed
 
 Step 1:  Create a li customer:
 
-$ ./create_customer -u desiredusername -e emailaddress
+$ ./rhc-create-user -u desiredusername -e emailaddress
 
 Step 2: Create a li application
 
-$ ./create_http -u desiredusername -a appname -n /path/to/new/git/repo
+$ ./rhc-create-app -u desiredusername -a appname -n /path/to/new/git/repo
 
 Once that's complete, follow the directions printed at the end of running
 create_http

@@ -58,7 +58,7 @@ end
 def p_usage
     puts <<USAGE
 
-Usage: ctl_app
+Usage: $0
 Control a libra app
 
   -u|--user  username     Libra username    (alphanumeric) (required)
