@@ -11,18 +11,23 @@ Please stop by #libra on an internal mailing list if you run into issue.
 Quickstart
 ========
 
-IMPORTANT: Make sure you have git, curl and openssh-clients installed
+DEPENDENCIES: git
+              openssh-clients
+              ruby (1.8.6 or later)
+              rubygems
+              json gem
+              parseconfig gem
 
 Step 1:  Create a li customer:
 
-$ ./create_customer -u desiredusername -e emailaddress
+$ ./rhc-create-user -u desiredusername -e emailaddress
 
 Step 2: Create a li application
 
-$ ./create_http -u desiredusername -a appname -n /path/to/new/git/repo
+$ ./rhc-create-app -u desiredusername -a appname -n /path/to/new/git/repo
 
 Once that's complete, follow the directions printed at the end of running
-create_http
+rhc-create-app
 
 
 Updating your site

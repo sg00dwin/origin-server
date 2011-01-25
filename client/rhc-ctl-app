@@ -58,7 +58,7 @@ end
 def p_usage
     puts <<USAGE
 
-Usage: ctl_app
+Usage: #{$0}
 Control a libra app
 
   -u|--user  username     Libra username    (alphanumeric) (required)
@@ -194,10 +194,16 @@ if response.code == '200'
     puts "Action successful"
     if (json_resp['return'].to_s.strip != "0")
         puts "An error has occured: #{response.body}"
+        json_resp.each do |k,v|
+            puts "#{k.to_s}: #{v.to_s}"
+        end
         exit 253
     end
 else
     puts "Problem with server. Response code was #{response.code}"
     puts "HTTP response from server is #{response.body}"
+    json_resp.each do |k,v|
+        puts "#{k.to_s}: #{v.to_s}"
+    end
     exit 254
 end
