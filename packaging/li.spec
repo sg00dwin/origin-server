@@ -125,7 +125,7 @@ fi
 
 %files
 %defattr(-,root,root,-)
-%{_bindir}/libra_*
+%{_bindir}/rhc_*
 
 
 %files node
