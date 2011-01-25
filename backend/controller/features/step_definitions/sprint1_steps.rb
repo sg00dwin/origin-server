@@ -34,7 +34,7 @@ When /^(\d+) applications of type '(.+)' are created per user$/ do |num_apps, fr
     # Fork off the creation of the user and apps
     fork_cmd(username, @max_processes, false) do
       # Create the username on the first run
-      run("/usr/bin/rhc-create-user -u #{username} -e libra-test@redhat.com")
+      run("/usr/bin/rhc-create-user -u #{username} -e noone@example.com")
 
       # Then create each of the apps
       @apps.each do |app|
