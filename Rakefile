@@ -11,7 +11,8 @@ LIBRA_DIR = ENV["LIBRADIR"] || "#{DEST_DIR}/var/lib/libra"
 CONF_DIR = ENV["CONFDIR"] || "#{DEST_DIR}/etc/libra"
 CLIENT_FILES = ["client/rhc-create-user",
                 "client/rhc-create-app",
-                "client/rhc-ctl-app"]
+                "client/rhc-ctl-app",
+                "client/rhc-user-info"]
 
 NODE_FILES = ["backend/facter/libra.rb",
               "backend/mcollective/libra.rb",
@@ -28,9 +29,9 @@ end
 # Install client files
 #
 task :install_client => [:test_client] do
-    mkdir_p "#{DEST_DIR}/usr/bin/"
+    mkdir_p "#{BIN_DIR}"
     CLIENT_FILES.each {|client_name|
-        cp client_name, "#{BIN_DIR}/#{client_name}"
+        cp client_name, "#{BIN_DIR}/"
     }
 end
 
