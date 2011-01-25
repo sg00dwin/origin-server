@@ -34,7 +34,7 @@ task :install_client => [:test_client] do
     }
     Dir.glob("client/man/*").each {|file_name|
         man_section = file_name.to_s.split('').last
-        cp file_name "#{MAN_DIR}/man#{man_section}/"
+        cp file_name, "#{MAN_DIR}/man#{man_section}/"
     }
 end
 
