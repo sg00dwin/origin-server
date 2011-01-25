@@ -93,6 +93,7 @@ task :install_server do
     mkdir_p BIN_DIR
     cp "backend/controller/bin/mc-rhc-cartridge-do", "#{BIN_DIR}/mc-rhc-cartridge-do"
     cp "backend/controller/bin/rhc-new-user", "#{BIN_DIR}/rhc-new-user"
+    cp "backend/controller/bin/rhc-user-info", "#{BIN_DIR}/rhc-user-info"
     mkdir_p CONF_DIR
     cp "backend/controller/conf/controller.conf", CONF_DIR
     cd "backend/controller"
