@@ -8,10 +8,10 @@ require 'fileutils'
 World(MCollective::RPC)
 
 # Remove all logs to begin
-FileUtils.rm_f Dir.glob("/tmp/libra*.log")
+FileUtils.rm_f Dir.glob("/tmp/rhc*.log")
 
 # Remove all temporary repos
-FileUtils.rm_f Dir.glob("/tmp/libra_repo*")
+FileUtils.rm_f Dir.glob("/tmp/rhc_repo*")
 
 module Libra
   module Test
@@ -154,6 +154,6 @@ Before do
 end
 
 # Global, one time setup
-$logger = Logger.new("/tmp/libra-cucumber.log")
+$logger = Logger.new("/tmp/rhc-cucumber.log")
 $logger.level = Logger::DEBUG
 Libra.c[:logger] = $logger
