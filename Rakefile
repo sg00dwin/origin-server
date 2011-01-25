@@ -9,10 +9,7 @@ INITRD_DIR = ENV["INITRDDIR"] || "#{DEST_DIR}/etc/init.d/"
 LIBEXEC_DIR = ENV["LIBEXECDIR"] || "#{DEST_DIR}/usr/libexec/li/"
 LIBRA_DIR = ENV["LIBRADIR"] || "#{DEST_DIR}/var/lib/libra"
 CONF_DIR = ENV["CONFDIR"] || "#{DEST_DIR}/etc/libra"
-CLIENT_FILES = ["client/rhc-create-user",
-                "client/rhc-create-app",
-                "client/rhc-ctl-app",
-                "client/rhc-user-info"]
+MAN_DIR= ENV["MANDIR"] || "#{DEST_DIR}/usr/share/man/"
 
 NODE_FILES = ["backend/facter/libra.rb",
               "backend/mcollective/libra.rb",
@@ -22,7 +19,7 @@ NODE_FILES = ["backend/facter/libra.rb",
 # Test client files
 #
 task :test_client do
-    CLIENT_FILES.each{|client_file| sh "ruby", "-c", client_file}
+    Dir.glob("client/rhc*").each{|client_file| sh "ruby", "-c", client_file}
 end
 
 #
@@ -30,8 +27,14 @@ end
 #
 task :install_client => [:test_client] do
     mkdir_p "#{BIN_DIR}"
-    CLIENT_FILES.each {|client_name|
-        cp client_name, "#{BIN_DIR}/"
+    mkdir_p "#{MAN_DIR}/man1"
+    mkdir_p "#{MAN_DIR}/man5"
+    Dir.glob("client/rhc*").each {|file_name|
+        cp file_name, "#{BIN_DIR}/"
+    }
+    Dir.glob("client/man/*").each {|file_name|
+        man_section = file_name.to_s.split('').last
+        cp file_name "#{MAN_DIR}/man#{man_section}/"
     }
 end
 

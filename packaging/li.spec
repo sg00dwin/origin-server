@@ -126,6 +126,8 @@ fi
 %files
 %defattr(-,root,root,-)
 %{_bindir}/rhc_*
+%{_mandir}/man1/rhc*
+%{_mandir}/man5/libra*
 
 
 %files node
