@@ -110,16 +110,17 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %preun node
-if [ "%1" -le "1" ]; then
+if [ "%1" -eq "0" ]; then
     /sbin/chkconfig --del libra || :
     /sbin/chkconfig --del libra-data || :
     /usr/sbin/semodule -r libra
 fi
 
 %postun node
-if [ "$1" -ge 1 ]; then
+if [ "$1" -eq 1 ]; then
     /sbin/service mcollective restart > /dev/null 2>&1 || :
 fi
+/usr/sbin/semodule -r %_datadir/selinux/packages/libra.pp
 
 %files
 %defattr(-,root,root,-)
