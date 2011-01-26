@@ -24,10 +24,15 @@ module Libra
     Libra.c[:rpc_opts][:timeout] = 2
     server = Server.find_available
 
+    puts "Node: #{server.name} - #{server.repos} repos" if Libra.c[:rpc_opts][:verbose]
+
     # Configure the user on this server if necessary
     Libra.c[:rpc_opts][:disctimeout] = 1
     Libra.c[:rpc_opts][:timeout] = 15
-    server.create_user(user) unless user.servers.index(server)
+    unless user.servers.index(server) do
+      puts "User not found on node.  Creating #{user}" if Libra.c[:rpc_opts][:verbose]
+      server.create_user(user)
+    end
 
     # Configure the app on the server using a framework cartridge
     server.execute(framework, action, app_name, user)

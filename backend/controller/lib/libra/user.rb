@@ -23,6 +23,7 @@ module Libra
     #
     def self.create(username, ssh, email)
       throw :user_exists if find(username)
+      puts "DEBUG: user.rb:create username:#{username} ssh:#{ssh} email:#{email}" if Libra.c[:rpc_opts][:verbose]
       user = new(username, ssh, email)
       user.update
       return user
@@ -68,6 +69,7 @@ module Libra
     #
     def update
       json = JSON.generate({:username => username, :email => email, :ssh => ssh})
+      puts "DEBUG: user.rb:update json:#{json}" if Libra.c[:rpc_opts][:verbose]
       Helper.s3.put(Libra.c[:s3_bucket], "user_info/#{username}/user.json", json)
     end
 

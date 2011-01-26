@@ -51,7 +51,7 @@ module Libra
           current_repos = num_repos
         end
       end
-
+      puts "DEBUG: server.rb:find_available #{current_server}: #{current_repos}" if Libra.c[:rpc_opts][:verbose]
       return new(current_server, current_repos)
     end
 
@@ -81,6 +81,7 @@ module Libra
     #
     def execute(framework, action, app_name, user)
       # Make the call to configure the application
+      puts "DEBUG: server.rb:execute framework:#{framework} action:#{action} app_name:#{app_name} user:#{user}" if Libra.c[:rpc_opts][:verbose]
       execute_internal(framework, action, "#{app_name} #{user.username}")
     end
 
@@ -94,6 +95,9 @@ module Libra
                             :args => args) do |response|
           return_code = response[:body][:data][:exitcode]
           output = response[:body][:data][:output]
+
+          puts "DEBUG: server.rb:execute_internal return_code: #{return_code}" if Libra.c[:rpc_opts][:verbose]
+          puts "DEBUG: server.rb:execute_internal output: #{output}" if Libra.c[:rpc_opts][:verbose]
 
           raise CartridgeException, output if return_code != 0
         end
