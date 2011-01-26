@@ -97,7 +97,8 @@ function take_open_ip {
 
 function create_repo {
     application="$1"
-    customer_id="$2"
+    user_id=$2
+    group_id=$3
     CUSTOMER_HOME="${libra_dir}/${customer_id}"
 
     if [ ! -d $CUSTOMER_HOME ]; then echo "ERROR: Customer ${customer_id} not found!  Please create." 1>&2; exit 2; fi
@@ -105,7 +106,7 @@ function create_repo {
     GIT_DIR=$CUSTOMER_HOME/git/$application.git
     mkdir -p $(dirname $GIT_DIR) 2>&1
     GIT_DIR=$GIT_DIR git init --shared > /dev/null
-    chown $customer_id.$customer_id -R $GIT_DIR
+    chown $user_id.$group_id -R $GIT_DIR
 }
 
 while getopts 'd' OPTION
@@ -128,10 +129,19 @@ CUSTOMER_HOME="$libra_dir/$customer_id/"
 APP_DIR="$CUSTOMER_HOME/httpd/$application"
 
 #
+# Get user id info
+# Not caching this information caused some early chowns to work but some later
+# chowns to fail with a user not found error
+
+user_id=$(id -u "$customer_id") || error "Could not find user $customer_id" 134
+group_id=$(id -g "$customer_id") || error "Could not find user $customer_id" 135
+
+
+#
 # Create git app repo
 #
 
-create_repo $application $customer_id
+create_repo $application $user_id $group_id
 
 cat <<EOF > $CUSTOMER_HOME/git/$application.git/hooks/post-receive
 rm -rf $APP_DIR/html/*
@@ -210,7 +220,7 @@ esac
 EOF
 
 chmod +x "$APP_DIR/${application}_ctl.sh" || error "Failed to chmod new application scripts" 122
-chown $customer_id.$customer_id -R $APP_DIR || error "Failed to chown new application space.  Please contact support" 123
+chown $user_id.$group_id -R $APP_DIR || error "Failed to chown new application space.  Please contact support" 123
 $APP_DIR/${application}_ctl.sh start || error "Failed to start ${application}" 121
 
 #
