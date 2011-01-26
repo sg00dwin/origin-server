@@ -29,7 +29,7 @@ module Libra
     # Configure the user on this server if necessary
     Libra.c[:rpc_opts][:disctimeout] = 1
     Libra.c[:rpc_opts][:timeout] = 15
-    unless user.servers.index(server) do
+    unless user.servers.index(server)
       puts "User not found on node.  Creating #{user}" if Libra.c[:rpc_opts][:verbose]
       server.create_user(user)
     end
