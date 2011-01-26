@@ -61,7 +61,8 @@ module Libra
         return result
       end
 
-       Create a user with a unique username and a testing
+      #
+      # Create a user with a unique username and a testing
       # email and ssh key
       #
       def create_unique_test_user(sprint=nil)
