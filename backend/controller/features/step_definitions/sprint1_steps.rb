@@ -4,9 +4,9 @@ include Libra::Test::User
 include Libra::Test::Util
 
 Given /^the libra client tools$/ do
-  File.exists?(@create_app_script).should be_true
-  File.exists?(@create_user_script).should be_true
-  File.exists?(@client_config).should be_true
+  File.exists?($create_app_script).should be_true
+  File.exists?($create_user_script).should be_true
+  File.exists?($client_config).should be_true
 end
 
 Given /^(\d+) concurrent processes$/ do |max_processes|
@@ -34,11 +34,11 @@ When /^(\d+) applications of type '(.+)' are created per user$/ do |num_apps, fr
     # Fork off the creation of the user and apps
     fork_cmd(username, @max_processes, false) do
       # Create the username on the first run
-      run("#{@create_user_script} -u #{username} -e #{@email}")
+      run("#{$create_user_script} -u #{username} -e #{$email}")
 
       # Then create each of the apps
       @apps.each do |app|
-        run("#{@create_app_script} -u #{username} -a #{app} -r #{@temp}/#{username}_#{app}_repo -t php-5.3.2 -b")
+        run("#{$create_app_script} -u #{username} -a #{app} -r #{@temp}/#{username}_#{app}_repo -t php-5.3.2 -b")
       end
     end
   end
@@ -52,7 +52,7 @@ Then /^they should all be accessible$/ do
   # Hit the health check page for each app
   user_apps.each do |user_app|
     # Make sure to handle timeouts
-    host = "#{user_app[1]}.#{user_app[0]}.#{@domain}"
+    host = "#{user_app[1]}.#{user_app[0]}.#{$domain}"
     begin
       res = Net::HTTP.start(host, 80) do |http|
         http.read_timeout = 5

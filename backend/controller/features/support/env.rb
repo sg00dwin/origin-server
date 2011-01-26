@@ -10,18 +10,18 @@ World(MCollective::RPC)
 #
 # Define global variables
 #
-@domain = "rhcloud.com"
-@temp = "/tmp/rhc"
-@email = "noone@example.com"
-@create_app_script = "/usr/bin/rhc-create-app"
-@create_user_script = "/usr/bin/rhc-create-user"
-@client_config = "/etc/libra/client.conf"
+$domain = "rhcloud.com"
+$temp = "/tmp/rhc"
+$email = "noone@example.com"
+$create_app_script = "/usr/bin/rhc-create-app"
+$create_user_script = "/usr/bin/rhc-create-user"
+$client_config = "/etc/libra/client.conf"
 
 # Create the temporary space
-FileUtils.mkdir_p @temp
+FileUtils.mkdir_p $temp
 
 # Remove all temporary data
-FileUtils.rm_f Dir.glob(File.join(@temp, "*"))
+FileUtils.rm_f Dir.glob(File.join($temp, "*"))
 
 module Libra
   module Test
@@ -164,6 +164,6 @@ Before do
 end
 
 # Global, one time setup
-$logger = Logger.new(File.join(@temp, "cucumber.log"))
+$logger = Logger.new(File.join($temp, "cucumber.log"))
 $logger.level = Logger::DEBUG
 Libra.c[:logger] = $logger
