@@ -7,11 +7,21 @@ require 'fileutils'
 
 World(MCollective::RPC)
 
-# Remove all logs to begin
-FileUtils.rm_f Dir.glob("/tmp/rhc*.log")
+#
+# Define global variables
+#
+@domain = "rhcloud.com"
+@temp = "/tmp/rhc"
+@email = "noone@example.com"
+@create_app_script = "/usr/bin/rhc-create-app"
+@create_user_script = "/usr/bin/rhc-create-user"
+@client_config = "/etc/libra/client.conf"
 
-# Remove all temporary repos
-FileUtils.rm_f Dir.glob("/tmp/rhc_repo*")
+# Create the temporary space
+FileUtils.mkdir_p @temp
+
+# Remove all temporary data
+FileUtils.rm_f Dir.glob(File.join(@temp, "*"))
 
 module Libra
   module Test
@@ -123,8 +133,8 @@ module Libra
 
           # Wait for the processes to finish
           num_processes.times do
-              # Fail after waiting for 60 seconds
-              Timeout::timeout(60) { Process.wait }
+              # Fail after waiting for 5 minutes
+              Timeout::timeout(300) { Process.wait }
               exit_code = $?.exitstatus
               process_id = $?.to_i
               raise "Forking failed / pid=#{process_id} / exit_code=#{exit_code}" if exit_code != 0 and fail_on_error
@@ -154,6 +164,6 @@ Before do
 end
 
 # Global, one time setup
-$logger = Logger.new("/tmp/rhc-cucumber.log")
+$logger = Logger.new(File.join(@temp, "cucumber.log"))
 $logger.level = Logger::DEBUG
 Libra.c[:logger] = $logger
