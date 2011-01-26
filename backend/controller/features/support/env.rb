@@ -22,6 +22,7 @@ FileUtils.mkdir_p $temp
 
 # Remove all temporary data
 FileUtils.rm_f Dir.glob(File.join($temp, "*"))
+FileUtils.rm_f File.join(File.expand_path("~"), "/.ssh/known_hosts")
 
 module Libra
   module Test
