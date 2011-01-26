@@ -23,6 +23,8 @@ When /^(\d+) applications of type '(.+)' are created per user$/ do |num_apps, fr
   # Generate the array of apps
   @apps = (num_apps.to_i).times.collect{|num| "app#{num}" }
 
+  processes = []
+
   # Limit loop on the number of users established in a previous step
   @usernames.each_with_index do |data, index|
     # Get a unique username to create in the forked process
@@ -31,19 +33,34 @@ When /^(\d+) applications of type '(.+)' are created per user$/ do |num_apps, fr
     username = get_unique_username(1, @usernames)
     @usernames[index] = username
 
-    # Generate the 'product' of username / app combinations
-    user_apps = @apps.collect {|app| [username, app]}
+    # Create the users in subprocesses
+    # Count the current sub processes
+    # if at max, wait for some to finish and keep going
 
-    # Fork off the creation of the user and apps
-    fork_cmd(user_apps, @max_processes, false) do |user_app, count|
-      # Parse out the data structure
-      username, app = user_app[0], user_app[1]
-
-      # Create the username on the first run
+    processes << fork do
+      # Create the user and the apps
       run("#{$create_user_script} -u #{username} -e #{$email}") if count == 0
+      @apps.each do |app|
+        run("#{$create_app_script} -u #{username} -a #{app} -r #{@temp}/#{username}_#{app}_repo -t php-5.3.2 -b")
+      end
+    end
 
-      # Run the app each time
-      run("#{$create_app_script} -u #{username} -a #{app} -r #{@temp}/#{username}_#{app}_repo -t php-5.3.2 -b")
+    # Wait for some process to complete if necessary
+    Timeout::timeout(300) do
+      pid = processes.shift
+      Process.wait(pid)
+      $logger.error("Process #{pid} failed") if $?.exitstatus != 0
+    end if processes.length >= @max_processes
+
+    # sleep a little to randomize forks
+    sleep rand
+  end
+
+  # Wait for the remaining processes
+  processes.reverse.each do |pid|
+    Timeout::timeout(300) do
+      Process.wait(pid)
+      $logger.error("Process #{pid} failed") if $?.exitstatus != 0
     end
   end
 end

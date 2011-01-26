@@ -61,8 +61,7 @@ module Libra
         return result
       end
 
-      #
-      # Create a user with a unique username and a testing
+       Create a user with a unique username and a testing
       # email and ssh key
       #
       def create_unique_test_user(sprint=nil)
@@ -98,52 +97,6 @@ module Libra
           end
 
           return exit_code
-      end
-
-      #
-      # Fork processes to run the supplied block of code.  Each
-      # processes will pop an entry off the in_data array until
-      # the array is exhausted.
-      #
-      #   in_data = an array of data elements to process
-      #   max_processes = the number of processes to use
-      #   delay = sleep between 0-1 seconds between forks
-      #
-      def fork_cmd(in_data, max_processes, fail_on_error=true, delay=true)
-        # Convert the input argument to an array if necessart
-        f_data = in_data.kind_of?(Array) ? in_data : Array.new(1, in_data)
-
-        # Create the users in subprocesses
-        loop do
-          # Don't fork more processes than we have data elements
-          num_processes = f_data.length < max_processes ? f_data.length: max_processes
-
-          num_processes.times do |count|
-            # Pop a piece of data off the array
-            data = f_data.pop
-
-            # Fork off the command
-            $logger.info("Forking with data element #{data}")
-            fork do
-              yield data, count
-            end
-
-            # if delaying, sleep to delay forks
-            sleep rand if delay
-          end
-
-          # Wait for the processes to finish
-          num_processes.times do
-              # Fail after waiting for 5 minutes
-              Timeout::timeout(300) { Process.wait }
-              exit_code = $?.exitstatus
-              process_id = $?.to_i
-              raise "Forking failed / pid=#{process_id} / exit_code=#{exit_code}" if exit_code != 0 and fail_on_error
-          end
-
-          # Break if we've processed all the usernames
-          break if f_data.empty?
-        end
       end
     end
   end
