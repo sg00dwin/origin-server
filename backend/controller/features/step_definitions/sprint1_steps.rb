@@ -31,15 +31,19 @@ When /^(\d+) applications of type '(.+)' are created per user$/ do |num_apps, fr
     username = get_unique_username(1, @usernames)
     @usernames[index] = username
 
-    # Fork off the creation of the user and apps
-    fork_cmd(username, @max_processes, false) do
-      # Create the username on the first run
-      run("#{$create_user_script} -u #{username} -e #{$email}")
+    # Generate the 'product' of username / app combinations
+    user_apps = @apps.collect {|app| [username, app]}
 
-      # Then create each of the apps
-      @apps.each do |app|
-        run("#{$create_app_script} -u #{username} -a #{app} -r #{@temp}/#{username}_#{app}_repo -t php-5.3.2 -b")
-      end
+    # Fork off the creation of the user and apps
+    fork_cmd(user_apps, @max_processes, false) do |user_app, count|
+      # Parse out the data structure
+      username, app = user_app[0], user_app[1]
+
+      # Create the username on the first run
+      run("#{$create_user_script} -u #{username} -e #{$email}") if count == 0
+
+      # Run the app each time
+      run("#{$create_app_script} -u #{username} -a #{app} -r #{@temp}/#{username}_#{app}_repo -t php-5.3.2 -b")
     end
   end
 end
