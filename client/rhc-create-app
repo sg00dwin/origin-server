@@ -316,6 +316,7 @@ Host #{my_url}
     IdentityFile ~/.ssh/libra_id_rsa
     # This will eventually be replaced with sshfp
     StrictHostKeyChecking no
+    PasswordAuthentication no
 
 SSH
 f.close
