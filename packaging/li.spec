@@ -110,7 +110,7 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %preun node
-if [ "%1" -eq "0" ]; then
+if [ "$1" -eq "0" ]; then
     /sbin/chkconfig --del libra || :
     /sbin/chkconfig --del libra-data || :
     /usr/sbin/semodule -r libra
