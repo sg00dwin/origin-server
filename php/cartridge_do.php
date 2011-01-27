@@ -19,7 +19,8 @@ function my_exec($cmd, $input='')
          }
 
 // print_r("/usr/bin/mc-rhc-cartridge-do --cartridge $cartridge -a $action -u $username -n $app_name");
-$results = my_exec("/usr/bin/mc-rhc-cartridge-do --cartridge $cartridge -a $action -u $username -n $app_name", $out);
+$out = '';
+$results = my_exec("/usr/bin/mc-rhc-cartridge-do --cartridge $cartridge -a $action -u $username -n $app_name -v", $out);
 
 if($results['return'] != 0) {
     header('HTTP/1.1 503 Service Unavailable', 503);
