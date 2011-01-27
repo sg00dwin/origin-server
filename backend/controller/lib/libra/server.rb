@@ -51,6 +51,7 @@ module Libra
           current_repos = num_repos
         end
       end
+      throw :no_servers_found unless current_server
       puts "DEBUG: server.rb:find_available #{current_server}: #{current_repos}" if Libra.c[:rpc_opts][:verbose]
       return new(current_server, current_repos)
     end
