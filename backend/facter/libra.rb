@@ -47,12 +47,12 @@ if File.exists?("/var/lib/libra")
             end
         end
 
-        if File.exists?("/var/lib/libra/#{customer}/git/")
-            git_repos = Dir.glob("/var/lib/libra/#{customer}/git/*.git")
-            Facter.add("git_#{customer}") do
-                setcode do git_repos.join(',') end
-            end
-        end
+#        if File.exists?("/var/lib/libra/#{customer}/git/")
+#            git_repos = Dir.glob("/var/lib/libra/#{customer}/git/*.git")
+#            Facter.add("git_#{customer}") do
+#                setcode do git_repos.join(',') end
+#            end
+#        end
     end
 end
 
