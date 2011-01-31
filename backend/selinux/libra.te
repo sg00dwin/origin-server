@@ -66,4 +66,3 @@ require {
 
 libra_search_lib(sshd_t)
 allow httpd_t libra_var_lib_t:dir search;
-
