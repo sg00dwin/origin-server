@@ -1,3 +1,74 @@
-# Selinux module for Libra
+policy_module(libra,1.0.0)
 
-policy_module(libra, 0.0.1)
+########################################
+#
+# Declarations
+#
+
+type libra_t;
+type libra_exec_t;
+init_daemon_domain(libra_t, libra_exec_t)
+
+#permissive libra_t;
+
+type libra_var_lib_t;
+files_type(libra_var_lib_t)
+
+########################################
+#
+# libra local policy
+#
+allow libra_t self:capability { kill };
+allow libra_t self:process { fork getpgid setrlimit setsched signal signull };
+allow libra_t self:sem create_sem_perms;
+allow libra_t self:tcp_socket  create_stream_socket_perms;
+
+allow libra_t self:fifo_file rw_fifo_file_perms;
+allow libra_t self:unix_stream_socket create_stream_socket_perms;
+
+manage_dirs_pattern(libra_t, libra_var_lib_t, libra_var_lib_t)
+manage_files_pattern(libra_t, libra_var_lib_t, libra_var_lib_t)
+manage_lnk_files_pattern(libra_t, libra_var_lib_t, libra_var_lib_t)
+files_var_lib_filetrans(libra_t, libra_var_lib_t, { dir file } )
+
+kernel_dontaudit_read_system_state(libra_t)
+
+# Network access allowed to libra apps
+corenet_tcp_connect_mysqld_port(libra_t)
+corenet_tcp_connect_http_port(libra_t)
+
+files_read_usr_files(libra_t)
+
+corecmd_exec_bin(libra_t)
+corecmd_exec_shell(libra_t)
+
+domain_use_interactive_fds(libra_t)
+
+files_read_etc_files(libra_t)
+
+auth_use_nsswitch(libra_t)
+
+logging_send_syslog_msg(libra_t)
+
+miscfiles_read_localization(libra_t)
+
+require {
+	type httpd_exec_t;
+}
+
+#============= libra_t ==============
+allow libra_t httpd_exec_t:file entrypoint;
+apache_exec_modules(libra_t)
+apache_getattr_suexec(libra_t)
+apache_list_modules(libra_t)
+apache_read_config(libra_t)
+apache_search_config(libra_t)
+corenet_tcp_bind_http_cache_port(libra_t)
+
+require {
+	type sshd_t;
+	type httpd_t;
+}
+
+libra_search_lib(sshd_t)
+allow httpd_t libra_var_lib_t:dir search;
