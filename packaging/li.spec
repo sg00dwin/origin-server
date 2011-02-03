@@ -3,7 +3,7 @@
 
 Name: li
 Version: 0.15
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -16,9 +16,9 @@ BuildArch: noarch
 BuildRequires: rubygem-rake
 BuildRequires: rubygem-rspec
 #BuildRequires: rubygem-cucumber
-BuildRequires: mcollective
-BuildRequires: mcollective-client
-BuildRequires: mcollective-common
+#BuildRequires: mcollective
+#BuildRequires: mcollective-client
+#BuildRequires: mcollective-common
 
 %description
 Provides Li client libraries
@@ -167,6 +167,9 @@ fi
 %{_libexecdir}/li/cartridges/rack-1.1.0/
 
 %changelog
+* Thu Feb 03 2011 Mike McGrath <mmcgrath@redhat.com> 0.15-2
+- Removed mcollective build requires
+
 * Thu Jan 26 2011 Mike McGrath <mmcgrath@redhat.com> 0.15-1
 - Upstream released new version
 
