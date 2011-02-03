@@ -130,6 +130,7 @@ fi
 %{_bindir}/rhc-user-ctl-app
 %{_mandir}/man1/rhc-*
 %{_mandir}/man5/libra*
+%config(noreplace) ${_sysconfdir}/libra/client.conf
 
 
 %files node

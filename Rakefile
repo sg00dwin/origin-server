@@ -29,6 +29,7 @@ task :install_client => [:test_client] do
     mkdir_p "#{BIN_DIR}"
     mkdir_p "#{MAN_DIR}/man1"
     mkdir_p "#{MAN_DIR}/man5"
+    mkdir_p "#{CONF_DIR}"
     Dir.glob("client/rhc*").each {|file_name|
         cp file_name, "#{BIN_DIR}/"
     }
@@ -36,6 +37,7 @@ task :install_client => [:test_client] do
         man_section = file_name.to_s.split('').last
         cp file_name, "#{MAN_DIR}/man#{man_section}/"
     }
+    cp "client/client.conf", "#{CONF_DIR}"
 end
 
 #
