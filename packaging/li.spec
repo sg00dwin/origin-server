@@ -124,7 +124,10 @@ fi
 
 %files
 %defattr(-,root,root,-)
-%{_bindir}/rhc-*
+%{_bindir}/rhc-create-app
+%{_bindir}/rhc-create-user
+%{_bindir}/rhc-user-info
+%{_bindir}/rhc-user-ctl-app
 %{_mandir}/man1/rhc-*
 %{_mandir}/man5/libra*
 
