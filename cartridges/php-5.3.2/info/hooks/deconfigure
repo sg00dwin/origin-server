@@ -97,8 +97,23 @@ destroy_repo $application $customer_id
 
 [ ! -d "$APP_DIR" ] && error "${application} does not exist" 138
 
-$APP_DIR/${application}_ctl.sh stop || error "Failed to stop ${application}" 140
-rm -rf "$APP_DIR"
+runcon -t initrc_t -r system_r runuser "$customer_id" $APP_DIR/${application}_ctl.sh stop || error "Failed to stop ${application}" 140
+
+IP=$(awk -F, "/$customer_id,$application,/"'{ print $1 }' /etc/libra/ip_db | head -n1)
+range_one=$(echo $IP | awk -F\. '{ print $3 }')
+range_two=$(echo $IP | awk -F\. '{ print $4 }')
+
+
+# Confirm pid is gone before removing apps
+i=0
+while [ -f ${APP_DIR}/run/httpd.pid ] && [ $i -lt 30 ]
+    do
+    sleep .1
+    i=$(($i + 1))
+done
+#rm -rf "$APP_DIR"
+runcon -l s0-s0:c0.c1023 rm -rf "$APP_DIR"
+#runcon -t libra_t -l s$range_one:c$range_two runuser mmcgrath -c "rm -rf '$APP_DIR'"
 
 #
 # remove localhost IP

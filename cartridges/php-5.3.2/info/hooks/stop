@@ -63,5 +63,5 @@ APP_DIR="$CUSTOMER_HOME/httpd/$application"
 # Start application
 #
 
-"$APP_DIR/${application}_ctl.sh" stop
+runcon -t initrc_t -r system_r runuser "$customer_id" "$APP_DIR/${application}_ctl.sh" stop
 touch "$APP_DIR/run/stop_lock"
