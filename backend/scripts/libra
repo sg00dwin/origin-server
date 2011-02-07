@@ -24,9 +24,10 @@ start() {
     # This won't scale forever, but works fine in the '100 or so' range
     for ctl_script in /var/lib/libra/*/httpd/*/*_ctl.sh
     do
+        run_as=$( echo $ctl_script | awk -F/ '{print $5}')
         script_name=$(basename $ctl_script)
-        echo -n $"    Starting http for ${script_name%_ctl.sh}"
-        daemon --pidfile=httpd_${script_name} $ctl_script start
+        echo -n $"    Starting http for $run_as-${script_name%_ctl.sh}"
+        daemon --user=$run_as --pidfile=httpd_${script_name} $ctl_script start
         RETVAL=$?
         echo
         if [ $RETVAL -eq 0 ]
@@ -49,9 +50,10 @@ stop() {
     # This won't scale forever, but works fine in the '100 or so' range
     for ctl_script in /var/lib/libra/*/httpd/*/*_ctl.sh
     do
+        run_as=$( echo $ctl_script | awk -F/ '{print $5}')
         script_name=$(basename $ctl_script)
         echo -n $"    Stopping http for ${script_name%_ctl.sh}"
-        daemon --pidfile=httpd_${script_name} $ctl_script stop
+        daemon --user=$run_as --pidfile=httpd_${script_name} $ctl_script stop
         RETVAL=$?
         echo
         if [ $RETVAL -eq 0 ]
