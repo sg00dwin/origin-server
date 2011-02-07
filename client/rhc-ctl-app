@@ -147,11 +147,11 @@ end
 # Send Warning
 #
 
+opt["command"] = "deconfigure" if opt["command"] == "destroy"
 if !opt["bypass"] and opt["command"] == "destroy"
     # deconfigure is the actual hook called on 'destroy'
     # destroy is used for clarity
 
-    opt["command"] = "deconfigure" if opt["command"] == "destroy"
 
     puts <<WARNING
 !!!! WARNING !!!! WARNING !!!! WARNING !!!!
