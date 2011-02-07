@@ -64,7 +64,7 @@ apache_getattr_suexec(libra_t)
 apache_list_modules(libra_t)
 apache_read_config(libra_t)
 apache_search_config(libra_t)
-apache_getattr_sys_content(libra_t)
+apache_read_sys_content(libra_t)
 corenet_tcp_bind_http_cache_port(libra_t)
 
 require {
