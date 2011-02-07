@@ -127,7 +127,7 @@ fi
 %{_bindir}/rhc-create-app
 %{_bindir}/rhc-create-user
 %{_bindir}/rhc-user-info
-%{_bindir}/rhc-user-ctl-app
+%{_bindir}/rhc-ctl-app
 %{_mandir}/man1/rhc-*
 %{_mandir}/man5/libra*
 %config(noreplace) ${_sysconfdir}/libra/client.conf
