@@ -192,7 +192,7 @@ range_two=$(echo $IP | awk -F\. '{ print $4 }')
 cat <<EOF > "$APP_DIR/${application}_ctl.sh"
 #/bin/bash
 
-PHPRC="$APP_DIR/conf/php.ini"
+export PHPRC="$APP_DIR/conf/php.ini"
 
 if ! [ \$# -eq 1 ]
 then
