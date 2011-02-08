@@ -8,8 +8,8 @@ require 'rake/gempackagetask'
 # Setup the gem specification for packaging gems
 spec = Gem::Specification.new do |s|
     s.name = %q{li-controller}
-    s.version = "0.16"
-    s.date = %q{2011-02-07}
+    s.version = "0.17"
+    s.date = %q{2011-02-08}
     s.author = "Matt Hicks"
     s.email = %q{mhicks@redhat.com}
     s.summary = %q{Libra server side controller}

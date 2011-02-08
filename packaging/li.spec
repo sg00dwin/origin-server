@@ -2,7 +2,7 @@
 %define gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 
 Name: li
-Version: 0.16
+Version: 0.17
 Release: 1%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
@@ -171,6 +171,9 @@ fi
 %{_libexecdir}/li/cartridges/rack-1.1.0/
 
 %changelog
+* Tue Feb 08 2011 Mike McGrath <mmcgrath@redhat.com> 0.17-1
+- Upstream released new version
+
 * Mon Feb 07 2011 Mike McGrath <mmcgrath@redhat.com> 0.16-2
 - Upstream released new version
 
