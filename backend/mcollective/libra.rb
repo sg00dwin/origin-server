@@ -57,7 +57,7 @@ module MCollective
                 cartridge = request[:cartridge]
                 action = request[:action]
                 args = request[:args]
-                reply[:output] = %x[/usr/libexec/li/cartridges/#{cartridge}/info/hooks/#{action} #{args} 2>&1 ]
+                reply[:output] = %x[/usr/bin/runcon -l s0-s0:c0.c1023 /usr/libexec/li/cartridges/#{cartridge}/info/hooks/#{action} #{args} 2>&1 ]
                 reply[:exitcode] = $?.exitstatus
                 reply.fail! "cartridge_action failed #{reply[:exitcode]}" unless reply[:exitcode] == 0
             end
