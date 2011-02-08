@@ -188,8 +188,10 @@ EOF
 #
 # Create simple application start / stop script
 #
-range_one=$(echo $IP | awk -F\. '{ print $3 }')
 range_two=$(echo $IP | awk -F\. '{ print $4 }')
+uid=$(id -u "$customer_id")
+c_val=$(($uid - 499))
+
 cat <<EOF > "$APP_DIR/${application}_ctl.sh"
 #/bin/bash
 
@@ -212,11 +214,11 @@ case "\$1" in
             echo -n " - Application is disabled" 1>&2
             exit 0
         else
-            $initrc_t runcon -t libra_t -l s$range_one:c$range_two /usr/sbin/httpd -C 'Include $APP_DIR/conf.d/*.conf' -f /usr/libexec/li/cartridges/php-5.3.2/info/configuration/etc/conf/httpd.conf -k \$1
+            $initrc_t runcon -t libra_t -l s0:c$c_val /usr/sbin/httpd -C 'Include $APP_DIR/conf.d/*.conf' -f /usr/libexec/li/cartridges/php-5.3.2/info/configuration/etc/conf/httpd.conf -k \$1
         fi
     ;;
     restart|graceful|graceful-stop|stop)
-        $initrc_t runcon -t libra_t -l s$range_one:c$range_two /usr/sbin/httpd -C 'Include $APP_DIR/conf.d/*.conf' -f /usr/libexec/li/cartridges/php-5.3.2/info/configuration/etc/conf/httpd.conf -k \$1
+        $initrc_t runcon -t libra_t -l s0:c$c_val /usr/sbin/httpd -C 'Include $APP_DIR/conf.d/*.conf' -f /usr/libexec/li/cartridges/php-5.3.2/info/configuration/etc/conf/httpd.conf -k \$1
     ;;
     status)
         echo "Coming soon"
