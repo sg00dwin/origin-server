@@ -203,6 +203,16 @@ then
     exit 1
 fi
 
+if whoami | grep -q root
+then
+    echo 1>&2
+    echo "Please don't run script as root, try:" 1>&2
+    echo "runuser $customer_id $0" 1>&2
+    echo 2>&1
+    exit 15
+fi
+
+
 # Verify we are running as system_r:initrc_t.  Should work fine from unconfined
 initrc_t=''
 runcon | grep -q 'system_r:initrc_t:' || initrc_t='runcon -t initrc_t -r system_r'
