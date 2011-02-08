@@ -2,8 +2,8 @@
 %define gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 
 Name: li
-Version: 0.15
-Release: 2%{?dist}
+Version: 0.16
+Release: 1%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -127,10 +127,10 @@ fi
 %{_bindir}/rhc-create-app
 %{_bindir}/rhc-create-user
 %{_bindir}/rhc-user-info
-%{_bindir}/rhc-user-ctl-app
+%{_bindir}/rhc-ctl-app
 %{_mandir}/man1/rhc-*
 %{_mandir}/man5/libra*
-%config(noreplace) ${_sysconfdir}/libra/client.conf
+%config(noreplace) %{_sysconfdir}/libra/client.conf
 
 
 %files node
@@ -171,6 +171,9 @@ fi
 %{_libexecdir}/li/cartridges/rack-1.1.0/
 
 %changelog
+* Mon Feb 07 2011 Mike McGrath <mmcgrath@redhat.com> 0.16-2
+- Upstream released new version
+
 * Thu Feb 03 2011 Mike McGrath <mmcgrath@redhat.com> 0.15-2
 - Removed mcollective build requires
 
