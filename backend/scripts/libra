@@ -19,6 +19,16 @@ lockfile=/var/lock/subsys/libra
 RETVAL=0
 GROUP_RETVAL=0
 
+# UGLY HACK, fix this later
+if ! ( runcon | grep -q s0-s0:c0.c1023 )
+then
+    echo 1>&2
+    echo "ERROR: incorrect selinux range - please rerun with:" 1>&2
+    echo "runcon -l s0-s0:c0.c1023 $0" 1>&2
+    echo 1>&2
+    exit 243
+fi
+
 start() {
     echo "Starting Libra Services: "
     # This won't scale forever, but works fine in the '100 or so' range
@@ -27,7 +37,7 @@ start() {
         run_as=$( echo $ctl_script | awk -F/ '{print $5}')
         script_name=$(basename $ctl_script)
         echo -n $"    Starting http for $run_as-${script_name%_ctl.sh}"
-        daemon --user=$run_as --pidfile=httpd_${script_name} $ctl_script start
+        daemon --user=$run_as --pidfile=httpd_${script_name} runcon -l s0-s0:c0.c1023 $ctl_script start
         RETVAL=$?
         echo
         if [ $RETVAL -eq 0 ]
@@ -53,7 +63,7 @@ stop() {
         run_as=$( echo $ctl_script | awk -F/ '{print $5}')
         script_name=$(basename $ctl_script)
         echo -n $"    Stopping http for ${script_name%_ctl.sh}"
-        daemon --user=$run_as --pidfile=httpd_${script_name} $ctl_script stop
+        daemon --user=$run_as --pidfile=httpd_${script_name} runcon -l s0-s0:c0.c1023 $ctl_script stop
         RETVAL=$?
         echo
         if [ $RETVAL -eq 0 ]
