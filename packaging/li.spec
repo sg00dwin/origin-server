@@ -15,6 +15,8 @@ BuildArch: noarch
 
 BuildRequires: rubygem-rake
 BuildRequires: rubygem-rspec
+Requires: rubygems-parseconfig
+Requires: rubygems-json
 #BuildRequires: rubygem-cucumber
 #BuildRequires: mcollective
 #BuildRequires: mcollective-client
@@ -22,6 +24,22 @@ BuildRequires: rubygem-rspec
 
 %description
 Provides Li client libraries
+
+%package devel
+Summary: Dependencies for Libra development
+Group: Development/Libraries
+Requires: rubygem-rake
+Requires: rubygem-cucumber
+Requires: rubygem-rspec
+Requires: rubygem-right_aws
+Requires: rubygem-json
+Requires: mcollective-client
+Requires: mcollective-common
+Requires: ruby-qpid
+BuildArch: noarch
+
+%description devel
+Provides all the development dependencies to be able to run the libra tests
 
 %package node
 Summary: Multi-tenant cloud management system node tools
@@ -86,7 +104,7 @@ Provides rack support to li
 %build
 rake test_client
 rake test_node
-#rake test_server
+rake test_server
 
 
 %install
