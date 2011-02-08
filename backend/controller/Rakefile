@@ -4,7 +4,6 @@ require 'rake'
 # Require these within the namespace
 require 'rake/clean'
 require 'rake/gempackagetask'
-require "cucumber/rake/task"
 
 # Setup the gem specification for packaging gems
 # Read the version from the RPM
@@ -18,7 +17,7 @@ spec = Gem::Specification.new do |s|
     s.homepage = %q{https://engineering.redhat.com/trac/Libra}
     s.description = %q{Libra server side controller}
     s.files = FileList['conf/*', 'lib/**/*.rb', 'bin/*'].to_a
-    s.executables = ['mc-rhc-cartridge-do', 'rhc-new-user', 'li-capacity']
+    s.executables = ['mc-rhc-cartridge-do', 'rhc-new-user', 'rhc-capacity']
     s.add_dependency('parseconfig')
     s.add_dependency('json')
     s.add_dependency('right_aws')
@@ -35,31 +34,42 @@ end
 # Add the 'pkg' directory to the clean task
 CLEAN.include("pkg")
 
-# Add an install method that
-desc 'Install a clean version of the new li-controller gem'
-task :install => [:clean, :package] do
-  # Force uninstallation of the gem - including binaries
-  sh "sudo gem uninstall -ax li-controller"
+#
+# Start development dependencies - if the dependencies
+# are not installed, these tasks won't be listed
+#
+begin
+    require "cucumber/rake/task"
 
-  # Install the gem
-  sh "sudo gem install pkg/li-controller-#{spec.version}.gem"
-end
+    # Add an install method that
+    desc 'Install a clean version of the new li-controller gem'
+    task :install => [:clean, :package] do
+      # Force uninstallation of the gem - including binaries
+      sh "sudo gem uninstall -ax li-controller"
 
-desc "Run all cucumber unit tests"
-Cucumber::Rake::Task.new(:cuc_unit) do |t|
-  t.cucumber_opts = "--tags @unit"
-end
+      # Install the gem
+      sh "sudo gem install pkg/li-controller-#{spec.version}.gem"
+    end
 
-desc "Run all cucumber integration tests"
-Cucumber::Rake::Task.new(:cuc_int) do |t|
-  t.cucumber_opts = "--tags ~@sprint"
-end
+    desc "Run all cucumber unit tests"
+    Cucumber::Rake::Task.new(:cuc_unit) do |t|
+      t.cucumber_opts = "--tags @unit"
+    end
 
-desc "Run a cucumber sprint test (supply the sprint number as an argument)"
-task :cuc_sprint, :sprint_num do |t, args|
-  Cucumber::Rake::Task.new(:cuc_sprint) do |t|
-    t.cucumber_opts = "--tags @sprint#{args[:sprint_num]}"
-  end
+    desc "Run all cucumber integration tests"
+    Cucumber::Rake::Task.new(:cuc_int) do |t|
+      t.cucumber_opts = "--tags ~@sprint"
+    end
+
+    desc "Run a cucumber sprint test (supply the sprint number as an argument)"
+    task :cuc_sprint, :sprint_num do |t, args|
+      Cucumber::Rake::Task.new(:cuc_sprint) do |t|
+        t.cucumber_opts = "--tags @sprint#{args[:sprint_num]}"
+      end
+    end
+rescue LoadError
+    # Ignore error - this allows rake to be run from
+    # non-development servers
 end
 
 # Set the default to :package
