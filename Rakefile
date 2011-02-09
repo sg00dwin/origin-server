@@ -154,12 +154,21 @@ task :bump_release => [:version, :commit_check] do
     @version = @version.succ
     puts "New Version number is #{@version}"
 
-    # Get the RPM version and reset the release
+    # Get the RPM version and reset the release number to 1
     replace = File.read(RPM_SPEC).gsub(RPM_REGEX, "\\1#{@version}")
-    replace = replace.gsub(RPM_REL_REGEX, "\\1#{0}\\3")
-    File.open(RPM_SPEC, "w") {|file| file.puts replace}
+    replace = replace.gsub(RPM_REL_REGEX, "\\1" + "1" + "\\3")
 
-    sh "git commit -a -m 'Release version incremented'"
+    # Add a comment to the RPM log
+    comment = "* " + Time.now.strftime("%a %b %d %Y")
+    comment << " " + `git config --get user.name`.chomp
+    comment << " <" + `git config --get user.email`.chomp + ">"
+    comment << " " + @version + "-1"
+    comment << "\n- Upstream released new version\n"
+    replace = replace.gsub(/(%changelog.*)/, "\\1\n#{comment}")
+
+    # Write out and commit the new spec file
+    File.open(RPM_SPEC, "w") {|file| file.puts replace}
+    sh "git commit -a -m 'Upstream released new version'"
 end
 
 desc "Increment release number and build Libra RPMs"
