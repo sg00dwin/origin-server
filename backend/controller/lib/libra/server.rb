@@ -36,7 +36,7 @@ module Libra
         instances.each {|i| Helper.ec2.create_tag(i, 'Name', opts[:aws_name])}
       end
 
-      return instances
+      instances
     end
 
     #
@@ -57,7 +57,7 @@ module Libra
       end
       throw :no_servers_found unless current_server
       puts "DEBUG: server.rb:find_available #{current_server}: #{current_repos}" if Libra.c[:rpc_opts][:verbose]
-      return new(current_server, current_repos)
+      new(current_server, current_repos)
     end
 
     #
@@ -70,7 +70,7 @@ module Libra
         servers << new(server, repos)
       end
 
-      return servers
+      servers
     end
 
     #
@@ -119,7 +119,7 @@ module Libra
         @repos = repos
       end unless @repos
 
-      return @repos
+      @repos
     end
 
     #
