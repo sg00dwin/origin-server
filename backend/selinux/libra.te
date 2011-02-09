@@ -69,6 +69,7 @@ apache_search_config(libra_t)
 apache_read_sys_content(libra_t)
 corenet_tcp_bind_http_cache_port(libra_t)
 
+# Allows users to use ssh to push code
 require {
 	type sshd_t;
 	type httpd_t;
