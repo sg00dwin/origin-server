@@ -1,5 +1,5 @@
 require 'libra/helper'
-require 'right_aws'
+require 'aws'
 require 'json'
 
 module Libra
@@ -24,13 +24,13 @@ module Libra
       # Create the instances in EC2, returning
       # an array of the image id's
       Helper.ec2.run_instances(opts[:image_id],
-                                        opts[:max_count],
-                                        opts[:max_count],
-                                        nil,
-                                        opts[:key_name],
-                                        "",
-                                        nil,
-                                        opts[:instance_type]).collect do |server|
+                               opts[:max_count],
+                               opts[:max_count],
+                               nil,
+                               opts[:key_name],
+                               "",
+                               nil,
+                               opts[:instance_type]).collect do |server|
         server[:aws_instance_id]
       end
     end

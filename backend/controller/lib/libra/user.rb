@@ -1,5 +1,5 @@
 require 'libra/helper'
-require 'right_aws'
+require 'aws'
 require 'json'
 require 'date'
 
@@ -55,7 +55,7 @@ module Libra
     def self.find(username)
       begin
         return User.from_json(Helper.s3.get(Libra.c[:s3_bucket], "user_info/#{username}/user.json")[:object])
-      rescue RightAws::AwsError => e
+      rescue Aws::AwsError => e
         if e.message =~ /^NoSuchKey/
           return nil
         else
@@ -99,7 +99,7 @@ module Libra
       # Use the cached value if it exists
       unless @apps
         @apps = {}
-        app_list = Helper.s3.list_bucket(Libra.c[:s3_bucket], 
+        app_list = Helper.s3.list_bucket(Libra.c[:s3_bucket],
                   { 'prefix' => "user_info/#{@username}/apps/"})
         app_list.each do |key|
           json = Helper.s3.get(Libra.c[:s3_bucket], key[:key])
@@ -108,16 +108,6 @@ module Libra
         end
       end
       @apps
-    end
-    #
-    # Returns a hash of the server -> apps for this user
-    #
-    def apps_by_server
-      # Read in the apps if necessary
-      apps unless @apps
-
-      # Return the server -> app structure
-      return @servers
     end
 
     #
@@ -153,7 +143,7 @@ module Libra
         raise e
       end
     end
-        
+
 
     #
     # Clears out any cached data

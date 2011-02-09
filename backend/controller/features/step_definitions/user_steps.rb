@@ -41,7 +41,6 @@ end
 
 Then /^he should have no applications$/ do
   @user.apps.should be_empty
-  @user.apps_by_server.should be_empty
 end
 
 Then /^the changes are saved$/ do
