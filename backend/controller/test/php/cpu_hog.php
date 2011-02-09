@@ -1,7 +1,10 @@
 <?php
 
 function do_something_not_particularly_efficient() {    
-    $x = "doing"."something"."useless";
+    $x = "doing";
+    $x = $x."something";
+    $x = $x."useless";
+    return $x;
 }
 
 function inefficient_infinite_loop() {
