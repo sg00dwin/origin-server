@@ -10,7 +10,6 @@ require 'rake/gempackagetask'
 spec = Gem::Specification.new do |s|
     s.name = %q{li-controller}
     s.version = /Version: (\d+\.\d+)/.match(File.read("../../packaging/li.spec"))[1]
-    s.date = %q{2011-01-27}
     s.author = "Matt Hicks"
     s.email = %q{mhicks@redhat.com}
     s.summary = %q{Libra server side controller}
