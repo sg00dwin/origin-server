@@ -26,7 +26,7 @@ module Libra
       puts "DEBUG: user.rb:create username:#{username} ssh:#{ssh} email:#{email}" if Libra.c[:rpc_opts][:verbose]
       user = new(username, ssh, email)
       user.update
-      return user
+      user
     end
 
     #
@@ -43,8 +43,7 @@ module Libra
           usernames << File.basename(bucket[:key], ".json")
         end
       end
-
-      return usernames
+      usernames
     end
 
     #

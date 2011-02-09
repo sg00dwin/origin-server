@@ -44,7 +44,7 @@ module Libra
         result = response[:data][:value]
       end
 
-      return result
+      result
     end
 
     def self.rsuccess(response)
@@ -70,7 +70,7 @@ module Libra
         end
       end
 
-      return result
+      result
     end
 
     #
@@ -98,7 +98,7 @@ module Libra
         rpc_client.disconnect
       end
 
-      return result
+      result
     end
   end
 end
