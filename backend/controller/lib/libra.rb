@@ -45,24 +45,18 @@ module Libra
   # necessary
   #
   def self.adjust_capacity
-    # Whether or not we need to add another server
-    add_server = true
-
     # Get the initial capacity
     current_servers = Server.find_all
     current_servers.each do |server|
       # If any server is below the threshold,
       # don't add a new server
       if server.repos < c[:repo_threshold]
-        add_server = false
-        break
+        return
       end
     end
 
     # Add the additional server if needed
-    if add_server
-      result = Server.create
-      puts "Added EC2 instance #{result[0]}"
-    end
+    result = Server.create
+    puts "Added EC2 instance #{result[0]}"
   end
 end

@@ -1,4 +1,5 @@
 require 'libra'
+require 'resolv'
 include Libra
 include Libra::Test::User
 include Libra::Test::Util
@@ -25,14 +26,15 @@ When /^I create a '(\w+)' app for '(.+)'$/ do |app, framework|
   # Create the app on the server
   @app = app
   @server.execute(framework, 'configure', app, @user)
+
+  # Create the S3 cache entry
+  @user.create_app(app, framework)
 end
 
 Then /^the user should have the app on one server$/ do
-  count = 0
-  @user.apps_by_server.each_value do |app|
-    count += 1 if app == @app
-    raise "App on too many servers" if count > 1
-  end
+  host = "#{@app}.#{@user.username}.rhcloud.com"
+  host_ip = Resolv::DNS.new.getresource(host, Resolv::DNS::Resource::IN::A).address.to_s
+  host_ip.should_not be_nil
 end
 
 Then /^I should get a result$/ do

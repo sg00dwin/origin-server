@@ -17,22 +17,31 @@
 # permission of Red Hat, Inc.
 
 # Creates a libra user
+#
+# IN: username
+#     email address
+#     SSH RSA public key
+#
+# 1) create a local user account: username, home directory
+# 2) enable login via SSH using RSA key: trap user
+# 3) place Libra service information: $HOME/etc/customer_info
+# 4) Place limits on user: number of processes
+
+# 
+#
+# default values
+#
+DEFAULT_LIBRA_DIR=/var/lib/libra
+DEFAULT_LIBRA_CONF_DIR=/etc/libra
+DEFAULT_LIMITS_PRIORITY=85
+DEFAULT_LIMITS_NPROC=10 # this should be updated from node.conf
 
 # Exit on any errors
-set -e
+# set -e
 
-if [ -f '/etc/libra/node.conf' ]
-then
-    . /etc/libra/node.conf
-elif [ -f 'node.conf' ]
-then
-    . node.conf
-else
-    echo "node.conf not found.  Cannot continue" 1>&2
-    exit 3
-fi
-
-
+#
+#  provide usage information
+#
 function print_help {
     echo "Usage: $0"
     echo "  -c customer_id"
@@ -42,55 +51,241 @@ function print_help {
     exit 1
 }
 
-function create_customerspace {
-    if ! [ $# -eq 2 ]
+function initialize {
+    # import Libra node configuration
+    if [ -f '/etc/libra/node.conf' ]
     then
-        echo "Usage: $0 customer_id $email"
-        exit 1
+	. /etc/libra/node.conf
+    elif [ -f 'node.conf' ]
+    then
+	. node.conf
+    else
+	echo "node.conf not found.  Cannot continue" 1>&2
+	exit 3
     fi
-    CUSTOMER_HOME="$libra_dir/$customer_id/"
 
-    customer_id="$1"
+    if [ -z "$libra_dir" ]
+    then
+	libra_dir=$DEFAULT_LIBRA_DIR
+    fi
 
-    mkdir -p "$CUSTOMER_HOME/etc/"
-    cat <<EOF > "$CUSTOMER_HOME/etc/customer_info"
-CUSTOMER_ID="$customer_id"
-EMAIL="$email"
-EOF
+    # Provide defaults for values left unset in node configuration
+    if [ -z "$limits_priority" ]
+    then
+	limits_priority=$DEFAULT_LIMITS_PRIORITY
+    fi
 
-    chmod 0700 -R "$CUSTOMER_HOME"
-    id "$customer_id" > /dev/null || useradd -d "$CUSTOMER_HOME" -M -s /bin/bash "$customer_id"
-    chown "$customer_id" -R "$CUSTOMER_HOME"
+    if [ -z "$limits_nproc" ]
+    then
+	limits_nproc=$DEFAULT_LIMITS_NPROC
+    fi
 }
 
-while getopts 'c:e:s:d' OPTION
-do
-    case $OPTION in
-        c) customer_id=$OPTARG
-        ;;
-        e) email=$OPTARG
-        ;;
-        s) ssh_key=$OPTARG
-        ;;
-        d) set -x
-        ;;
-        ?) print_help
-        ;;
-    esac
-done
+function parse_options {
+    while getopts 'c:e:s:p:P:dnr' OPTION
+    do
+	case $OPTION in
+            c) username=$OPTARG
+		;;
+            e) email=$OPTARG
+		;;
+            s) ssh_key=$OPTARG
+		;;
+            p) limits_nproc=$OPTARG
+		;;
+            P) limits_priority=$OPTARG
+		;;
+            d) set -x
+		;;
+	    n) NOOP='echo'
+		;;
+	    r) REVERT="TRUE"
+		;;
+            ?) print_help
+		;;
+	esac
+    done
 
-if ( [ -z "$customer_id" ] || [ -z "$email" ] || [ -z "$ssh_key" ] )
-then
-    print_help
-fi
+    if ( [ -z "$username" ] || [ -z "$email" ] || [ -z "$ssh_key" ] )
+    then
+	print_help
+    fi
+}
 
-create_customerspace "$customer_id" "$email"
+function homedir {
+    USERNAME=$1
+    USERHOME=`grep $USERNAME /etc/passwd | cut -d: -f6`
 
-mkdir -p "$CUSTOMER_HOME/.ssh"
-chmod 0700 "$CUSTOMER_HOME/.ssh"
-cat <<EOF > "$CUSTOMER_HOME/.ssh/authorized_keys"
-command="/usr/bin/trap-user",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty ssh-rsa $ssh_key Libra-$customer_id-$email
+    if [ -n "${USERHOME}" ]
+    then
+        echo $USERHOME
+    else
+	echo "WARNING: user $USERNAME does not exist.  Providing dummy value for homedir" >&2
+	echo $libra_dir/$USERNAME
+    fi
+}
+
+#
+# Create a local user account
+#
+# IN: username
+# IN: homeroot
+
+function create_user_account() {
+    USERNAME=$1
+    HOMEROOT=$2
+
+    HOMEDIR=$HOMEROOT/$USERNAME
+
+    # check if the user can be identified already
+    id $USERNAME >/dev/null 2>&1
+    USEREXISTS=$?
+
+    if [ $USEREXISTS -ne 0 ]
+    then
+	${NOOP} useradd -d $HOMEROOT/$USERNAME -s /bin/bash $USERNAME
+	if [ $? -ne 0 ]
+        then
+	    echo "ERROR: unable to create user account $USERNAME"
+	    exit 1
+        fi
+    fi
+}
+
+function remove_user_account {
+    USERNAME=$1
+
+    ${NOOP} userdel -f -r ${USERNAME}
+}
+
+#
+# Configure Libra application information
+#
+# IN: username
+# IN: user home directory
+# IN: email
+function configure_user_account {
+    USERNAME=$1
+    EMAIL="$2"
+
+    USERHOME=`homedir $USERNAME`
+    USERETC=$USERHOME/etc
+
+    ${NOOP} su $USERNAME -c "mkdir $USERETC"
+    if [ -z "${NOOP}" ]
+    then
+	su $USERNAME -c "cat <<EOF > ${USERETC}/customer_info
+EOF"
+    else
+	echo "su $USERNAME -c \"cat <<EOF > ${USERETC}/customer_info
+CUSTOMER_ID=\"${USERNAME}\"
+EMAIL=\"${EMAIL}\"
+EOF\""
+    fi
+}
+
+
+#
+# Enable SSH RSA access for a user
+#
+# ASSUME: local user with username exists
+# IN: username
+# IN: user home directory
+# IN: user email address
+# IN: SSH RSA key string
+#
+function enable_user_ssh_access {
+    USERNAME=$1
+    USEREMAIL="$2"
+    SSHKEY="$3"
+    
+    USERHOME=`homedir $USERNAME`
+    SSHDIR=$USERHOME/.ssh
+
+    ${NOOP} su $USERNAME -c "mkdir $SSHDIR"
+    ${NOOP} su $USERNAME -c "chmod 700 $SSHDIR"
+    if [ -z "${NOOP}" ]
+    then
+	su $USERNAME -c "cat <<EOF > $SSHDIR/authorized_keys
+command=\"/usr/bin/trap-user\",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty ssh-rsa $SSHKEY Libra-$USERNAME-$USEREMAIL
+EOF"
+    else
+	echo "su $USERNAME -c \"cat <<EOF > $SSHDIR/authorized_keys
+command=\\\"/usr/bin/trap-user\\\",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty ssh-rsa $SSHKEY Libra-$USERNAME-$USEREMAIL
+EOF\""
+    fi
+    ${NOOP} su $USERNAME -c "chmod 600 $SSHDIR/authorized_keys"
+}
+
+
+#
+# Add a PAM limit set to the user
+#
+# IN: username
+# IN: limits_priority
+# IN: limits_nproc
+#
+# TODO: check if file already exists
+function limit_user_account {
+    USERNAME=$1
+    LIMITS_PRIORITY=${2:-$limits_priority}
+    LIMITS_NPROC=${3:-$limits_nproc}
+
+    LIMITSFILE=/etc/security/limits.d/${LIMITS_PRIORITY}-${USERNAME}.conf
+
+    if [ -z "${NOOP}" ]
+    then
+	cat <<EOF > ${LIMITSFILE}
+# PAM process limits for guest $customer_id
+# see limits.conf(5) for details
+#Each line describes a limit for a user in the form:
+#
+#<domain> <type> <item> <value>
+${USERNAME} hard nproc ${LIMITS_NPROC}
 EOF
-chmod 0600 "$CUSTOMER_HOME/.ssh/authorized_keys"
-chown "$customer_id"."$customer_id" -R "$CUSTOMER_HOME"
-/sbin/restorecon -R "$CUSTOMER_HOME/.ssh/"
+    else
+	echo "cat <<EOF > ${LIMITSFILE}
+# PAM process limits for guest $customer_id
+# see limits.conf(5) for details
+#Each line describes a limit for a user in the form:
+#
+#<domain>        <type>  <item>  <value>
+${USERNAME}     hard    nproc   ${LIMITS_NPROC}
+EOF"
+    fi
+}
+
+function remove_user_limits {
+    USERNAME=$1
+    LIMITS_PRIORITY=${2:-$limits_priority}
+
+    LIMITSFILE=/etc/security/limits.d/${LIMITS_PRIORITY}-${USERNAME}.conf
+
+
+    ${NOOP} rm -f ${LIMITSFILE}
+}
+
+# ============================================================================
+#                                 MAIN
+# ============================================================================
+
+# get configuration values from libra configuration files or defaults
+initialize
+
+# provides values for username, email and ssh_key
+parse_options $*
+
+if [ -z "$REVERT" ]
+then
+    create_user_account $username $libra_dir
+
+    configure_user_account $username $email
+
+    enable_user_ssh_access $username $email "$ssh_key"
+
+    limit_user_account $username
+else
+    remove_user_limits $username
+    
+    remove_user_account $username
+fi

@@ -1,4 +1,4 @@
-@sprint1
+@sprint
 Feature: Setup a new application
 
   Scenario:

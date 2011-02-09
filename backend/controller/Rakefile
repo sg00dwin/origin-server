@@ -19,7 +19,7 @@ spec = Gem::Specification.new do |s|
     s.executables = ['mc-rhc-cartridge-do', 'rhc-new-user', 'rhc-capacity']
     s.add_dependency('parseconfig')
     s.add_dependency('json')
-    s.add_dependency('right_aws')
+    s.add_dependency('aws')
     s.add_development_dependency("rspec")
     s.add_development_dependency("cucumber")
 end
@@ -57,13 +57,13 @@ begin
 
     desc "Run all cucumber integration tests"
     Cucumber::Rake::Task.new(:cuc_int) do |t|
-      t.cucumber_opts = "--tags ~@sprint"
+      t.cucumber_opts = "--tags ~@sprint1"
     end
 
-    desc "Run a cucumber sprint test (supply the sprint number as an argument)"
-    task :cuc_sprint, :sprint_num do |t, args|
+    desc "Run the cucumber sprint tests"
+    task :cuc_sprint do |t, args|
       Cucumber::Rake::Task.new(:cuc_sprint) do |t|
-        t.cucumber_opts = "--tags @sprint#{args[:sprint_num]}"
+        t.cucumber_opts = "--tags @sprint"
       end
     end
 rescue LoadError
