@@ -15,16 +15,16 @@ NODE_FILES = ["backend/facter/libra.rb",
               "backend/mcollective/libra.rb",
               "backend/mcollective/connector/amqp.rb"]
 
-#
-# Test client files
-#
+C_DIR = "backend/controller"
+MOCK_ENV = "li-6-x86_64"
+RPM_SPEC = "packaging/li.spec"
+RPM_REGEX = /(Version: )(\d+\.\d+)/
+RPM_REL_REGEX = /(Release: )(\d)(.*)/
+
 task :test_client do
     Dir.glob("client/rhc*").each{|client_file| sh "ruby", "-c", client_file}
 end
 
-#
-# Install client files
-#
 task :install_client => [:test_client] do
     mkdir_p "#{BIN_DIR}"
     mkdir_p "#{MAN_DIR}/man1"
@@ -40,16 +40,10 @@ task :install_client => [:test_client] do
     cp "client/client.conf", "#{CONF_DIR}"
 end
 
-#
-# Test node files
-#
 task :test_node do
     NODE_FILES.each{|node_file| sh "ruby", "-c", node_file}
 end
 
-#
-# Install node files
-#
 task :install_node => [:test_node] do
     mkdir_p FACTER_DIR
     cp "backend/facter/libra.rb", FACTER_DIR
@@ -67,61 +61,129 @@ task :install_node => [:test_node] do
     cp "backend/selinux/libra.pp", "#{DEST_DIR}/usr/share/selinux/packages"
 end
 
-#
-# Install cartridges
-#
 task :install_cartridges do
     mkdir_p LIBEXEC_DIR
     cp_r "cartridges/", LIBEXEC_DIR
     mkdir_p CONF_DIR
-    cp_r "#{LIBEXEC_DIR}/cartridges/li-controller-0.1/info/configuration/node.conf-sample", "#{CONF_DIR}/node.conf"
+    sample_conf = Dir.glob("cartridges/li-controller*/**/node.conf-sample")[0]
+    cp_r sample_conf, "#{CONF_DIR}/node.conf"
 end
 
-#
-# Test server
-#
 task :test_server do
-    cd "backend/controller"
-    sh "rake", "cuc"
-    cd "../.."
+# Can't run this until rubygem-cucumber is available in EPEL-6
+#    cd C_DIR
+#    sh "rake", "cuc_unit"
+#    cd "../.."
 end
 
-#
-# Install server
-#
 task :install_server do
     mkdir_p MCOLLECTIVE_DIR
     cp "backend/mcollective/libra.ddl", MCOLLECTIVE_DIR
+
     mkdir_p BIN_DIR
-    cp "backend/controller/bin/mc-rhc-cartridge-do", "#{BIN_DIR}/mc-rhc-cartridge-do"
-    cp "backend/controller/bin/rhc-new-user", "#{BIN_DIR}/rhc-new-user"
-    cp "backend/controller/bin/rhc-user-info", "#{BIN_DIR}/rhc-user-info"
+    Dir.glob("#{C_DIR}/bin/*").each do |script|
+      cp script, File.join(BIN_DIR, File.basename(script))
+    end
+
     mkdir_p CONF_DIR
-    cp "backend/controller/conf/controller.conf", CONF_DIR
-    cd "backend/controller"
-    sh "rake"
+    cp "#{C_DIR}/conf/controller.conf", CONF_DIR
+    cd C_DIR
+    sh "rake", "package"
 end
 
-#
-# Install all
-#
-task :install => [:install_client, :install_node, :install_cartridges, :install_server] do
+desc "Install all the Libra files (e.g. rake DESTDIR='/tmp/test/ install')"
+task :install => [:install_client, :install_node, :install_cartridges, :install_server]
+
+task :version do
+    @version = RPM_REGEX.match(File.read(RPM_SPEC))[2]
+    puts "Current Version is #{@version}"
 end
 
-#
-# print help
-#
-task :default do
-    puts "Specify a rake option:"
-    puts ""
-    puts "  install_client      Install client files"
-    puts "  test_client         Test client files"
-    puts "  install_node        Install node files"
-    puts "  test_node           Test node files"
-    puts "  install_cartridges  Install cartridges"
-    puts "  test_server         Test server files"
-    puts "  install_server      Install server"
-    puts "  install             Install all"
-    puts ""
-    puts "Example: rake DESTDIR='/tmp/test/' install_client"
+task :setup_mock do
+    unless File.exists?("/etc/mock/#{MOCK_ENV}.cfg")
+      puts "Configuring Libra Mock Environment"
+      puts "NOTE: Will prompt for sudo password"
+      sh "sudo yum install -y mock"
+      sh "sudo cp packaging/#{mock}.cfg /etc/mock"
+    end
+end
+
+task :buildroot do
+    # Get the RPM build root for the system
+    @buildroot = `rpm --eval "%{_topdir}"`.chomp!
+    puts "Build root is #{@buildroot}"
+end
+
+task :commit_check do
+    # Get the current spec version
+    # Make sure everything is committed - otherwise exit
+    sh("git diff-index --quiet HEAD") do |ok, res|
+      if !ok
+        puts "ERROR - Uncommitted repository changes"
+        puts "Checkin / revert before continuing."
+        exit 1
+      end
+    end
+end
+
+desc "Build the Libra SRPM"
+task :srpm => [:version, :buildroot, :commit_check] do
+    # Archive the git repository and compress it for the SOURCES
+    src = "#{@buildroot}/SOURCES/li-#{@version}.tar"
+    sh "git archive --prefix=li-#{@version}/ HEAD --output #{src}"
+    sh "gzip -f #{src}"
+
+    # Move the SPEC file out
+    cp "packaging/li.spec", "#{@buildroot}/SPECS"
+
+    # Build the source RPM
+    sh "rpmbuild -bs #{@buildroot}/SPECS/li.spec"
+end
+
+desc "Build the Libra RPMs"
+task :rpm => [:setup_mock, :srpm] do
+    # Find the built src RPM
+    srpm = Dir.glob("#{@buildroot}/SRPMS/li-#{@version}*.rpm")[0]
+
+    # Build the RPMs with mock
+    sh "mock -r #{MOCK_ENV} #{srpm}"
+end
+
+task :bump_release => [:version, :commit_check] do
+    # Bump the version number
+    @version = @version.succ
+    puts "New Version number is #{@version}"
+
+    # Get the RPM version and reset the release number to 1
+    replace = File.read(RPM_SPEC).gsub(RPM_REGEX, "\\1#{@version}")
+    replace = replace.gsub(RPM_REL_REGEX, "\\1" + "1" + "\\3")
+
+    # Add a comment to the RPM log
+    comment = "* " + Time.now.strftime("%a %b %d %Y")
+    comment << " " + `git config --get user.name`.chomp
+    comment << " <" + `git config --get user.email`.chomp + ">"
+    comment << " " + @version + "-1"
+    comment << "\n- Upstream released new version\n"
+    replace = replace.gsub(/(%changelog.*)/, "\\1\n#{comment}")
+
+    # Write out and commit the new spec file
+    File.open(RPM_SPEC, "w") {|file| file.puts replace}
+    sh "git commit -a -m 'Upstream released new version'"
+end
+
+desc "Increment release number and build Libra RPMs"
+task :release => [:bump_release, :rpm]
+
+desc "Run the Libra unit tests"
+task :test_unit do
+    cd C_DIR
+    sh "rake", "cuc_unit"
+    cd "../.."
+end
+
+desc "Run the Libra integration tests"
+task :test_int do
+    cd C_DIR
+    sh "rake", "cuc_int"
+    cd "../.."
 end

@@ -195,7 +195,7 @@ c_val=$(($uid - 499))
 cat <<EOF > "$APP_DIR/${application}_ctl.sh"
 #/bin/bash
 
-PHPRC="$APP_DIR/conf/php.ini"
+export PHPRC="$APP_DIR/conf/php.ini"
 
 if ! [ \$# -eq 1 ]
 then
@@ -224,11 +224,11 @@ case "\$1" in
             echo -n " - Application is disabled" 1>&2
             exit 0
         else
-            $initrc_t runcon -t libra_t -l s0:c$c_val /usr/sbin/httpd -C 'Include $APP_DIR/conf.d/*.conf' -f /usr/libexec/li/cartridges/php-5.3.2/info/configuration/etc/conf/httpd.conf -k \$1
+            \$initrc_t runcon -t libra_t -l s0:c$c_val /usr/sbin/httpd -C 'Include $APP_DIR/conf.d/*.conf' -f /usr/libexec/li/cartridges/php-5.3.2/info/configuration/etc/conf/httpd.conf -k \$1
         fi
     ;;
     restart|graceful|graceful-stop|stop)
-        $initrc_t runcon -t libra_t -l s0:c$c_val /usr/sbin/httpd -C 'Include $APP_DIR/conf.d/*.conf' -f /usr/libexec/li/cartridges/php-5.3.2/info/configuration/etc/conf/httpd.conf -k \$1
+        \$initrc_t runcon -t libra_t -l s0:c$c_val /usr/sbin/httpd -C 'Include $APP_DIR/conf.d/*.conf' -f /usr/libexec/li/cartridges/php-5.3.2/info/configuration/etc/conf/httpd.conf -k \$1
     ;;
     status)
         echo "Coming soon"

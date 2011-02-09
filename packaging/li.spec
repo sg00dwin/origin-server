@@ -3,7 +3,7 @@
 
 Name: li
 Version: 0.17
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -15,6 +15,8 @@ BuildArch: noarch
 
 BuildRequires: rubygem-rake
 BuildRequires: rubygem-rspec
+Requires: rubygems-parseconfig
+Requires: rubygems-json
 #BuildRequires: rubygem-cucumber
 #BuildRequires: mcollective
 #BuildRequires: mcollective-client
@@ -22,6 +24,22 @@ BuildRequires: rubygem-rspec
 
 %description
 Provides Li client libraries
+
+%package devel
+Summary: Dependencies for Libra development
+Group: Development/Libraries
+Requires: rubygem-rake
+Requires: rubygem-cucumber
+Requires: rubygem-rspec
+Requires: rubygem-right_aws
+Requires: rubygem-json
+Requires: mcollective-client
+Requires: mcollective-common
+Requires: ruby-qpid
+BuildArch: noarch
+
+%description devel
+Provides all the development dependencies to be able to run the libra tests
 
 %package node
 Summary: Multi-tenant cloud management system node tools
@@ -86,7 +104,7 @@ Provides rack support to li
 %build
 rake test_client
 rake test_node
-#rake test_server
+rake test_server
 
 
 %install
@@ -124,6 +142,7 @@ fi
 
 %files
 %defattr(-,root,root,-)
+%{_bindir}/rhc-capacity
 %{_bindir}/rhc-create-app
 %{_bindir}/rhc-create-user
 %{_bindir}/rhc-user-info
@@ -141,7 +160,7 @@ fi
 %{_sysconfdir}/init.d/libra
 %{_sysconfdir}/init.d/libra-data
 %{_bindir}/trap-user
-%{_localstatedir}/lib/libra
+%attr(0751,root,root) %{_localstatedir}/lib/libra
 %{_libexecdir}/li/cartridges/li-controller-0.1/
 %{_datadir}/selinux/packages/libra.pp
 %config(noreplace) %{_sysconfdir}/libra/node.conf
@@ -150,13 +169,14 @@ fi
 %files server
 %defattr(-,root,root,-)
 %{_libexecdir}/mcollective/mcollective/agent/libra.ddl
+%{_bindir}/rhc-capacity
 %{_bindir}/rhc-new-user
 %{_bindir}/mc-rhc-cartridge-do
 %config(noreplace) %{_sysconfdir}/libra/controller.conf
 %{gemdir}/gems/li-controller-%{version}
 %{gemdir}/bin/mc-rhc-cartridge-do
 %{gemdir}/bin/rhc-new-user
-%{gemdir}/bin/li-capacity
+%{gemdir}/bin/rhc-capacity
 %{gemdir}/cache/li-controller-%{version}.gem
 %{gemdir}/doc/li-controller-%{version}
 %{gemdir}/specifications/li-controller-%{version}.gemspec
@@ -171,6 +191,9 @@ fi
 %{_libexecdir}/li/cartridges/rack-1.1.0/
 
 %changelog
+* Thu Feb 08 2011 Matt Hicks <mhicks@redhat.com> 0.17-2
+- General cleanup and moving li-capacity to rhc-capacity
+
 * Tue Feb 08 2011 Mike McGrath <mmcgrath@redhat.com> 0.17-1
 - Upstream released new version
 
