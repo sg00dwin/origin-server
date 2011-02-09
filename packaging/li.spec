@@ -31,7 +31,7 @@ Group: Development/Libraries
 Requires: rubygem-rake
 Requires: rubygem-cucumber
 Requires: rubygem-rspec
-Requires: rubygem-right_aws
+Requires: rubygem-aws
 Requires: rubygem-json
 Requires: mcollective-client
 Requires: mcollective-common
@@ -61,7 +61,7 @@ Requires: mcollective-client
 Requires: ruby-qpid
 BuildArch: noarch
 Requires: ruby-json
-Requires: rubygem-right_aws
+Requires: rubygem-aws
 Requires: rubygem-parseconfig
 
 %description server

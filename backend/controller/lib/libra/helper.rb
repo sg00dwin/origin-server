@@ -1,6 +1,6 @@
 require 'rubygems'
 require 'mcollective'
-require 'right_aws'
+require 'aws'
 require 'right_http_connection'
 
 include MCollective::RPC
@@ -11,18 +11,18 @@ module Libra
       # This will verify the Amazon SSL connection
       Rightscale::HttpConnection.params[:ca_file] = "/etc/pki/tls/certs/ca-bundle.trust.crt"
       # Note - might need to look at setting :multi_thread => false
-      RightAws::Ec2.new(Libra.c[:aws_key],
-                        Libra.c[:aws_secret],
-                        params = {:logger => Libra.c[:logger]})
+      Aws::Ec2.new(Libra.c[:aws_key],
+                   Libra.c[:aws_secret],
+                   params = {:logger => Libra.c[:logger]})
     end
 
     def self.s3
       # This will verify the Amazon SSL connection
       Rightscale::HttpConnection.params[:ca_file] = "/etc/pki/tls/certs/ca-bundle.trust.crt"
       # Note - might need to look at setting :multi_thread => false
-      RightAws::S3Interface.new(Libra.c[:aws_key],
-                                Libra.c[:aws_secret],
-                                params = {:logger => Libra.c[:logger]})
+      Aws::S3Interface.new(Libra.c[:aws_key],
+                           Libra.c[:aws_secret],
+                           params = {:logger => Libra.c[:logger]})
     end
 
     def self.rpc_options
