@@ -93,10 +93,9 @@ module Libra
             result_out << stdout.read
             result_err << stderr.read
           end
-          exit_code = $?
 
           # Raise an exception on a non-zero exit code
-          unless exit_code.to_i
+          unless result_err.empty?
             $logger.error("ERROR running #{cmd}")
             $logger.error("Standard Output:\n#{result_out}")
             $logger.error("Standard Error:\n#{result_err}")
@@ -104,8 +103,6 @@ module Libra
           else
             $logger.info("Standard Output:\n#{result_out}")
           end
-
-          return exit_code
       end
     end
   end
