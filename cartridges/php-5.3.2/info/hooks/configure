@@ -188,7 +188,6 @@ EOF
 #
 # Create simple application start / stop script
 #
-range_two=$(echo $IP | awk -F\. '{ print $4 }')
 uid=$(id -u "$customer_id")
 c_val=$(($uid - 499))
 
@@ -239,7 +238,7 @@ EOF
 
 chmod +x "$APP_DIR/${application}_ctl.sh" || error "Failed to chmod new application scripts" 122
 chown $user_id.$group_id -R $APP_DIR || error "Failed to chown new application space.  Please contact support" 123
-chcon -t libra_var_lib_t -R "$APP_DIR"
+chcon -t libra_var_lib_t -l s0:c$c_val -R "$APP_DIR"
 runcon -t initrc_t -r system_r runuser "$customer_id" "$APP_DIR/${application}_ctl.sh" start || error "Failed to start ${application}" 121
 
 #
