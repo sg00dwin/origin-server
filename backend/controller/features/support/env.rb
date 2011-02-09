@@ -4,6 +4,7 @@ require 'libra'
 require 'timeout'
 require 'logger'
 require 'fileutils'
+require 'open3'
 
 World(MCollective::RPC)
 
@@ -86,15 +87,22 @@ module Libra
       def run(cmd)
           $logger.info("Running: #{cmd}")
 
-          output = `#{cmd} 2>&1`
+          result_out = ""
+          result_err = ""
+          Open3.popen3(cmd) do |stdin, stdout, stderr|
+            result_out << stdout.read
+            result_err << stderr.read
+          end
           exit_code = $?
 
           # Raise an exception on a non-zero exit code
           unless exit_code.to_i
-            $logger.error("ERROR running #{cmd}.  Output:\n#{output}")
+            $logger.error("ERROR running #{cmd}")
+            $logger.error("Standard Output:\n#{result_out}")
+            $logger.error("Standard Error:\n#{result_err}")
             raise RuntimeError, "Running #{cmd} failed"
           else
-            $logger.info("Output :\n#{output}")
+            $logger.info("Standard Output:\n#{result_out}")
           end
 
           return exit_code
