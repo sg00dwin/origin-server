@@ -87,7 +87,7 @@ function take_open_ip {
     # if customer, app, service already exists, re-use IP
     if $( grep -q "$customer_id,$application_name,$service_type" $libra_conf_dir/ip_db )
     then
-        echo $(awk -F, "/$customer_id,$application_name,$service_type/"'{ print $1 }' $libra_conf_dir/ip_db | head -n1)
+        echo $(awk -F, "/,$customer_id,$application_name,$service_type/"'{ print $1 }' $libra_conf_dir/ip_db | head -n1)
     else
         IP=$(find_open_ip)
         echo "$IP,$customer_id,$application_name,$service_type,$port" >> $libra_conf_dir/ip_db
