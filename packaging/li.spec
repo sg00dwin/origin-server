@@ -138,7 +138,7 @@ fi
 if [ "$1" -eq 1 ]; then
     /sbin/service mcollective restart > /dev/null 2>&1 || :
 fi
-/usr/sbin/semodule -r %_datadir/selinux/packages/libra.pp
+/usr/sbin/semodule -r libra
 
 %files
 %defattr(-,root,root,-)
