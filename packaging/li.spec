@@ -15,8 +15,8 @@ BuildArch: noarch
 
 BuildRequires: rubygem-rake
 BuildRequires: rubygem-rspec
-Requires: rubygems-parseconfig
-Requires: rubygems-json
+Requires: rubygem-parseconfig
+Requires: rubygem-json
 #BuildRequires: rubygem-cucumber
 #BuildRequires: mcollective
 #BuildRequires: mcollective-client
