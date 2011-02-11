@@ -56,6 +56,7 @@ task :install_node => [:test_node] do
     cp "backend/scripts/libra-data", INITRD_DIR
     mkdir_p BIN_DIR
     cp "backend/scripts/trap-user", BIN_DIR
+    cp "backend/scripts/rhc-restorecon", BIN_DIR
     mkdir_p LIBRA_DIR
     mkdir_p "#{DEST_DIR}/usr/share/selinux/packages"
     cp "backend/selinux/libra.pp", "#{DEST_DIR}/usr/share/selinux/packages"

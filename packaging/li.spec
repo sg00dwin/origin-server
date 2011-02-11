@@ -160,6 +160,7 @@ fi
 %{_sysconfdir}/init.d/libra
 %{_sysconfdir}/init.d/libra-data
 %{_bindir}/trap-user
+%{_bindir}/rhc-restorecon
 %attr(0751,root,root) %{_localstatedir}/lib/libra
 %{_libexecdir}/li/cartridges/li-controller-0.1/
 %{_datadir}/selinux/packages/libra.pp
