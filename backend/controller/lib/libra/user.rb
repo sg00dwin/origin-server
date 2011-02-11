@@ -135,7 +135,7 @@ module Libra
     def app_info(app_name)
       return JSON.parse(Helper.s3.get(Libra.c[:s3_bucket],
             "user_info/#{@username}/apps/#{app_name}.json")[:object])
-    rescue RightAws::AwsError => e
+    rescue Aws::AwsError => e
       if e.message =~ /^NoSuchKey/
         return nil
       else
