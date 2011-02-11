@@ -41,7 +41,7 @@ When /^(\d+) applications of type '(.+)' are created per user$/ do |num_apps, fr
       # Create the user and the apps
       run("#{$create_user_script} -u #{username} -e #{$email}")
       @apps.each do |app|
-        run("#{$create_app_script} -u #{username} -a #{app} -r #{@temp}/#{username}_#{app}_repo -t php-5.3.2 -b -d")
+        run("#{$create_app_script} -u #{username} -a #{app} -r #{$temp}/#{username}_#{app}_repo -t php-5.3.2 -b -d")
       end
     end
 
@@ -75,6 +75,7 @@ Then /^they should all be accessible$/ do
     # Make sure to handle timeouts
     host = "#{user_app[1]}.#{user_app[0]}.#{$domain}"
     begin
+      $logger.info("Checking host #{host}")
       res = Net::HTTP.start(host, 80) do |http|
         http.read_timeout = 5
         http.get("/health_check.php")

@@ -2,8 +2,8 @@
 %define gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 
 Name: li
-Version: 0.17
-Release: 2%{?dist}
+Version: 0.19
+Release: 1%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -15,8 +15,8 @@ BuildArch: noarch
 
 BuildRequires: rubygem-rake
 BuildRequires: rubygem-rspec
-Requires: rubygems-parseconfig
-Requires: rubygems-json
+Requires: rubygem-parseconfig
+Requires: rubygem-json
 #BuildRequires: rubygem-cucumber
 #BuildRequires: mcollective
 #BuildRequires: mcollective-client
@@ -138,7 +138,7 @@ fi
 if [ "$1" -eq 1 ]; then
     /sbin/service mcollective restart > /dev/null 2>&1 || :
 fi
-/usr/sbin/semodule -r %_datadir/selinux/packages/libra.pp
+/usr/sbin/semodule -r libra
 
 %files
 %defattr(-,root,root,-)
@@ -191,7 +191,13 @@ fi
 %{_libexecdir}/li/cartridges/rack-1.1.0/
 
 %changelog
-* Thu Feb 08 2011 Matt Hicks <mhicks@redhat.com> 0.17-2
+* Fri Feb 11 2011 Mike McGrath <mmcgrath@redhat.com> 0.19-1
+- New version
+
+* Thu Feb 10 2011 Mike McGrath <mmcgrath@redhat.com> 0.18-1
+- Upstream released new version
+
+* Thu Feb 10 2011 Matt Hicks <mhicks@redhat.com> 0.17-2
 - General cleanup and moving li-capacity to rhc-capacity
 
 * Tue Feb 08 2011 Mike McGrath <mmcgrath@redhat.com> 0.17-1

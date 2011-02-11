@@ -4,6 +4,7 @@ require 'libra'
 require 'timeout'
 require 'logger'
 require 'fileutils'
+require 'open3'
 
 World(MCollective::RPC)
 
@@ -86,16 +87,37 @@ module Libra
       def run(cmd)
           $logger.info("Running: #{cmd}")
 
-          output = `#{cmd} 2>&1`
-          exit_code = $?
+          # Open up IO pipes for the sub process communication
+          rd1, wr1 = IO.pipe
+          rd2, wr2 = IO.pipe
 
-          # Raise an exception on a non-zero exit code
-          unless exit_code.to_i
-            $logger.error("ERROR running #{cmd}.  Output:\n#{output}")
-            raise RuntimeError, "Running #{cmd} failed"
-          else
-            $logger.info("Output :\n#{output}")
+          # Fork a subprocess so we can get an accurate return code
+          # In Ruby 1.9, we can replace this with Process.spawn
+          pid = fork do
+            rd1.close
+            rd2.close
+            $stdout.reopen(wr1)
+            $stderr.reopen(wr2)
+            exec(cmd)
+            raise "Command execution failed - #{cmd}"
           end
+
+          # Close the end of the pipe we aren't using
+          wr1.close
+          wr2.close
+
+          # Wait for the process to complete and get the exit code
+          Process.wait(pid)
+          exit_code = $?.exitstatus
+
+          $logger.error("Standard Output:\n#{rd1.read}")
+          $logger.info("Standard Error:\n#{rd2.read}")
+
+          # Close out the streams
+          rd1.close
+          rd2.close
+
+          raise "ERROR - Non-zero (#{exit_code}) exit code for #{cmd}" if exit_code != 0
 
           return exit_code
       end

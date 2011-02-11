@@ -25,6 +25,7 @@
 # be queried by facter (and mcollective).  Examples include the number of git
 # repositories on the host, customer information, etc.
 
+require 'parseconfig'
 
 #
 # Count the number of git repos on this host
@@ -33,6 +34,15 @@ Facter.add(:git_repos) do
     setcode { Dir.glob("/var/lib/libra/*/git/*.git").count }
 end
 
+#
+# Pull public_ip out of the node_data config
+#
+
+Facter.add(:public_ip) do
+    config_file = ParseConfig.new('/etc/libra/node_data.conf')
+    public_ip = config_file.get_value('public_ip') ? config_file.get_value('public_ip') : 'UNKNOWN'
+    setcode { public_ip }
+end
 
 #
 # Lists customers on the host as well as what what git repos they currently own

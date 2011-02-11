@@ -187,3 +187,10 @@ task :test_int do
     sh "rake", "cuc_int"
     cd "../.."
 end
+
+desc "Run the Libra sprint tests"
+task :test_sprint do
+    cd C_DIR
+    sh "rake", "cuc_sprint"
+    cd "../.."
+end

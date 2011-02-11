@@ -60,10 +60,10 @@ begin
       t.cucumber_opts = "--tags ~@sprint1"
     end
 
-    desc "Run a cucumber sprint test (supply the sprint number as an argument)"
-    task :cuc_sprint, :sprint_num do |t, args|
+    desc "Run the cucumber sprint tests"
+    task :cuc_sprint do |t, args|
       Cucumber::Rake::Task.new(:cuc_sprint) do |t|
-        t.cucumber_opts = "--tags @sprint#{args[:sprint_num]}"
+        t.cucumber_opts = "--tags @sprint"
       end
     end
 rescue LoadError
