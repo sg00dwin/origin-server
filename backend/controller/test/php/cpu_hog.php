@@ -14,7 +14,6 @@ function inefficient_infinite_loop() {
             do_something_not_particularly_efficient();
         }
     }
-print(1);
     inefficient_infinite_loop();
 }
 
