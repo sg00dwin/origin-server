@@ -121,8 +121,16 @@ function homedir {
         echo $USERHOME
     else
 	echo "WARNING: user $USERNAME does not exist.  Providing dummy value for homedir" >&2
-	echo $libra_dir/$USERNAME
+        # remove duplicate slashes (/) and return the result
+	echo ${libra_dir}/${USERNAME} | tr -s '/'
     fi
+}
+
+# Find the next available UID/GID pair
+function next_uid() {
+  expr `cat /etc/passwd | cut -d: -f3 | sort -n | tail -1` + 1
+
+  # Should check if the GID is free as well
 }
 
 #
@@ -131,11 +139,14 @@ function homedir {
 # IN: username
 # IN: homeroot
 
+
 function create_user_account() {
     USERNAME=$1
-    HOMEROOT=$2
 
-    HOMEDIR=$HOMEROOT/$USERNAME
+    # Don't depend on useradd to select the next UID/GID pair
+    NEXTUID=`next_uid`
+
+    HOMEDIR=`homedir $USERNAME`
 
     # check if the user can be identified already
     id $USERNAME >/dev/null 2>&1
@@ -143,7 +154,9 @@ function create_user_account() {
 
     if [ $USEREXISTS -ne 0 ]
     then
-	${NOOP} useradd -d $HOMEROOT/$USERNAME -s /bin/bash $USERNAME
+        ${NOOP} groupadd -g ${NEXTUID} ${USERNAME}
+
+	${NOOP} useradd -g ${USERNAME} -u ${NEXTUID} -d ${HOMEDIR} -s /bin/bash $USERNAME
 	if [ $? -ne 0 ]
         then
 	    echo "ERROR: unable to create user account $USERNAME"
@@ -277,7 +290,7 @@ parse_options $*
 
 if [ -z "$REVERT" ]
 then
-    create_user_account $username $libra_dir
+    create_user_account $username
 
     configure_user_account $username $email
 
