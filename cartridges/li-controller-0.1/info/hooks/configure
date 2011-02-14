@@ -120,7 +120,6 @@ function homedir {
     then
         echo $USERHOME
     else
-	echo "WARNING: user $USERNAME does not exist.  Providing dummy value for homedir" >&2
         # remove duplicate slashes (/) and return the result
 	echo ${libra_dir}/${USERNAME} | tr -s '/'
     fi
