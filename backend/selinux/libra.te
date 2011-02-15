@@ -1,4 +1,4 @@
-policy_module(libra,1.0.0)
+policy_module(libra,1.0.1)
 
 ########################################
 #
@@ -7,7 +7,22 @@ policy_module(libra,1.0.0)
 
 type libra_t;
 type libra_exec_t;
+type libra_initrc_t;
+type libra_initrc_exec_t;
+
+gen_require(`
+    role system_r;
+    role unconfined_r;
+    type unconfined_t;
+')
+ 
 init_daemon_domain(libra_t, libra_exec_t)
+
+role_transition unconfined_r libra_initrc_exec_t system_r;
+unconfined_domain_noaudit(libra_initrc_t)
+ 
+domtrans_pattern(unconfined_t, libra_initrc_exec_t, libra_initrc_t)
+libra_domtrans(libra_initrc_t)
 
 #permissive libra_t;
 
