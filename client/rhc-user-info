@@ -112,6 +112,7 @@ if opt["user"]
     end
 else
     puts "Libra username is required"
+    p_usage
 end
 
 flags = ''
