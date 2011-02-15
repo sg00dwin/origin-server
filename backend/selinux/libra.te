@@ -18,9 +18,14 @@ gen_require(`
  
 init_daemon_domain(libra_t, libra_exec_t)
 
+##
 role_transition unconfined_r libra_initrc_exec_t system_r;
 unconfined_domain_noaudit(libra_initrc_t)
- 
+
+init_daemon_domain(libra_initrc_t, libra_initrc_exec_t)
+init_ranged_daemon_domain(libra_initrc_t, libra_initrc_exec_t, s0 - mcs_systemhigh)
+
+# 
 domtrans_pattern(unconfined_t, libra_initrc_exec_t, libra_initrc_t)
 libra_domtrans(libra_initrc_t)
 
