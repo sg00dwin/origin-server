@@ -1,6 +1,7 @@
 #!/usr/bin/python -tt
 
 import sys, os
+import syslog
 
 commands = {
     "git-receive-pack": "/usr/bin/git-receive-pack",
@@ -17,7 +18,8 @@ if __name__ == '__main__':
         basecmd = os.path.basename(allargs[0])
         cmd = commands[basecmd]
     except:
-        sys.stderr.write("Invalid command %s\n" % orig_cmd)
+        syslog.syslog("Invalid command %s" % orig_cmd)
+        sys.stderr.write("Invalid command %s" % orig_cmd)
         sys.exit(2)
 
     if basecmd in ('git-receive-pack', 'git-upload-pack'):
@@ -27,9 +29,22 @@ if __name__ == '__main__':
             thearg = thearg.replace("'","")
         thearg = thearg.replace("\\'", "")
         thearg = thearg.replace("//", "/")
-        if not os.path.abspath(thearg).startswith('/var/lib/libra/') or not os.path.isdir(thearg):
-            print "Invalid repository %s" % thearg
+
+        # replace leading tilde (~) with user's home path
+        realpath = os.path.expanduser(thearg)
+        if not realpath.startswith('/var/lib/libra/'):
+            syslog.syslog("Invalid repository: not in libra_root - %s: (%s)" % 
+                          (thearg, realpath))
+            print "Invalid repository %s: not in libra_root" % thearg
             sys.exit(3)
+
+        if not os.path.isdir(realpath):
+            syslog.syslog("Invalid repository %s (%s)" % 
+                          (thearg, realpath))
+            print "Invalid repository %s: not a directory" % thearg
+            sys.exit(3)
+
+
         allargs = [thearg]
     os.execv(cmd, [cmd] + allargs)
     sys.exit(1)
