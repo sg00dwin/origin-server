@@ -108,6 +108,7 @@ case "$1" in
   status)
     echo "Checking Libra Services: "
     # This won't scale forever, but works fine in the '100 or so' range
+    #  would be easy to convert to a 'in `find...`'     jj
     for ctl_script in /var/lib/libra/*/httpd/*/*_ctl.sh
     do
         script_name=$(basename $ctl_script)
