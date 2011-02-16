@@ -102,3 +102,55 @@ Then /^they should all be accessible$/ do
   uniq_responses.length.should == 1
   uniq_responses[0].should == "200"
 end
+
+
+Then /^they should be able to be changed$/ do
+  # Generate the 'product' of username / app combinations
+  user_apps = @usernames.product(@apps)
+
+  # Make a change and push it
+  urls = {}
+  user_apps.each do |user_app|
+    $logger.info("Changing to dir=#{$temp}/#{user_app[0]}_#{user_app[1]}_repo")
+    Dir.chdir("#{$temp}/#{user_app[0]}_#{user_app[1]}_repo")
+    system('sed -i "/<h1>/a<p>making a change</p>" index.php')
+    #wc = %x[cat index.php | wc -m --chars].chomp.to_i;
+    $logger.info("git commit -a -m 'Testing a commit'")
+    system("git commit -a -m 'Testing a commit'")
+    $logger.info('git push libra master')
+    system('git push libra master')
+    # Make sure to handle timeouts
+    host = "#{user_app[1]}.#{user_app[0]}.#{$domain}"
+    begin
+      req = Net::HTTP::Get.new('/index.php')
+      $logger.info("host= #{host}")    
+      res = Net::HTTP.start(host, 80) do |http|
+        #http.read_timeout = 5
+        http.request(req)
+      end
+      code = res.code
+      file = File.open("index.php", "rb")
+      contents = file.read
+      #validate the change made it up
+      res.body.should == contents  
+    rescue Net::HTTPError
+      code = -1
+    end
+
+    # Store the results
+    urls[host] = code
+  end
+
+  # Print out the results:
+  #  Format = code - url
+  $logger.info("URL Results")
+  urls.each_pair do |url, code|
+    $logger.info("#{code} - #{url}")
+  end
+
+  # Get all the unique responses
+  # There should only be 1 result ["200"]
+  uniq_responses = urls.values.uniq
+  uniq_responses.length.should == 1
+  uniq_responses[0].should == "200"
+end
