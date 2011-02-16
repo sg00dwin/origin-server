@@ -155,7 +155,7 @@ function create_user_account() {
     then
         ${NOOP} groupadd -g ${NEXTUID} ${USERNAME}
 
-	${NOOP} useradd -g ${USERNAME} -u ${NEXTUID} -d ${HOMEDIR} -s /bin/bash $USERNAME
+	${NOOP} useradd -g ${USERNAME} -u ${NEXTUID} -d ${HOMEDIR} -s /usr/bin/trap-user $USERNAME
 	if [ $? -ne 0 ]
         then
 	    echo "ERROR: unable to create user account $USERNAME"
@@ -183,17 +183,20 @@ function configure_user_account {
     USERHOME=`homedir $USERNAME`
     USERETC=$USERHOME/etc
 
-    ${NOOP} su $USERNAME -c "mkdir $USERETC"
+    ${NOOP} mkdir $USERETC
     if [ -z "${NOOP}" ]
     then
-	su $USERNAME -c "cat <<EOF > ${USERETC}/customer_info
-EOF"
-    else
-	echo "su $USERNAME -c \"cat <<EOF > ${USERETC}/customer_info
+	${NOOP} cat <<EOF >${USERETC}/customer_info
 CUSTOMER_ID=\"${USERNAME}\"
 EMAIL=\"${EMAIL}\"
-EOF\""
+EOF
+    else
+        echo "cat <<EOF > ${USERETC}/customer_info
+EOF"
     fi
+
+    # Give the new user ownership
+    ${NOOP} chown -R $USERNAME:$USERNAME $USERETC
 }
 
 
@@ -212,21 +215,25 @@ function enable_user_ssh_access {
     SSHKEY="$3"
     
     USERHOME=`homedir $USERNAME`
-    SSHDIR=$USERHOME/.ssh
+    SSHDIR=${USERHOME}/.ssh
 
-    ${NOOP} su $USERNAME -c "mkdir $SSHDIR"
-    ${NOOP} su $USERNAME -c "chmod 700 $SSHDIR"
+    ${NOOP} mkdir ${SSHDIR}
+    ${NOOP} chmod 700 ${SSHDIR}
     if [ -z "${NOOP}" ]
     then
-	su $USERNAME -c "cat <<EOF > $SSHDIR/authorized_keys
-command=\"/usr/bin/trap-user\",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty ssh-rsa $SSHKEY Libra-$USERNAME-$USEREMAIL
-EOF"
+	cat <<EOF > ${SSHDIR}/authorized_keys
+command="/usr/bin/trap-user",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty ssh-rsa $SSHKEY Libra-$USERNAME-$USEREMAIL
+EOF
     else
-	echo "su $USERNAME -c \"cat <<EOF > $SSHDIR/authorized_keys
+	echo "cat <<EOF > $SSHDIR/authorized_keys
 command=\\\"/usr/bin/trap-user\\\",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty ssh-rsa $SSHKEY Libra-$USERNAME-$USEREMAIL
 EOF\""
     fi
-    ${NOOP} su $USERNAME -c "chmod 600 $SSHDIR/authorized_keys"
+
+    ${NOOP} chmod 600 ${SSHDIR}/authorized_keys
+
+    # Give the new user ownership
+    ${NOOP} chown -R ${USERNAME}:${USERNAME} ${SSHDIR}
 }
 
 
