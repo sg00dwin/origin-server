@@ -16,7 +16,7 @@ gen_require(`
     type unconfined_t;
 ')
  
-init_daemon_domain(libra_t, libra_exec_t)
+init_system_domain(libra_t, libra_exec_t)
 
 ##
 role_transition unconfined_r libra_initrc_exec_t system_r;
