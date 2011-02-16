@@ -19,13 +19,19 @@ lockfile=/var/lock/subsys/libra
 RETVAL=0
 GROUP_RETVAL=0
 
-if ! ( runcon | grep -q s0-s0:c0.c1023 )
-then
-    echo 1>&2
-    echo "ERROR: incorrect selinux range - please rerun with:" 1>&2
-    echo "runcon -l s0-s0:c0.c1023 $0" 1>&2
-    echo 1>&2
-    exit 243
+selinuxenabled
+if [ $? -eq 1 ]
+then 
+    if ! ( runcon | grep -q s0-s0:c0.c1023 )
+    then
+        echo 1>&2
+        echo "ERROR: incorrect selinux range - please rerun with:" 1>&2
+        echo "runcon -l s0-s0:c0.c1023 $0" 1>&2
+        echo 1>&2
+        exit 243
+    else
+        echo "WARNING: Running with selinux disabled" 1>&2
+    fi
 fi
 
 start() {
@@ -102,6 +108,7 @@ case "$1" in
   status)
     echo "Checking Libra Services: "
     # This won't scale forever, but works fine in the '100 or so' range
+    #  would be easy to convert to a 'in `find...`'     jj
     for ctl_script in /var/lib/libra/*/httpd/*/*_ctl.sh
     do
         script_name=$(basename $ctl_script)

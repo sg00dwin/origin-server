@@ -1,9 +1,9 @@
 <?php
 
 function do_something_not_particularly_efficient() {    
-    $x = "doing";
-    $x = $x."something";
-    $x = $x."useless";
+    $x = "useless";
+    $x = "something".$x;
+    $x = "doing".$x;
     return $x;
 }
 
