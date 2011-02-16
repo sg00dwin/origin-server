@@ -22,21 +22,21 @@
           <authorizationPlugin>
             <map>
               <authorizationMap>
-                <authorizationEntries>                                                                                                                                                                         
-                  <authorizationEntry queue=">" write="admins" read="admins" admin="admins" />                                                                                                                 
-                  <authorizationEntry topic=">" write="admins" read="admins" admin="admins" />                                                                                                                 
-                  <authorizationEntry topic="mcollective.>" write="mcollective" read="mcollective" admin="mcollective" />                                                                                      
-                  <authorizationEntry topic="mcollective.>" write="mcollective" read="mcollective" admin="mcollective" />                                                                                      
-                  <authorizationEntry topic="ActiveMQ.Advisory.>" read="everyone" write="everyone" admin="everyone"/>                                                                                          
-                </authorizationEntries>                                                                                                                                                                        
-              </authorizationMap>                                                                                                                                                                              
-            </map>                                                                                                                                                                                             
-          </authorizationPlugin>                                                                                                                                                                               
-        </plugins>                                                                                                                                                                                             
-                                                                                                                                                                                                               
-        <systemUsage>                                                                                                                                                                                          
-            <systemUsage>                                                                                                                                                                                      
-                <memoryUsage>                                                                                                                                                                                  
+                <authorizationEntries>
+                  <authorizationEntry queue=">" write="admins" read="admins" admin="admins" />
+                  <authorizationEntry topic=">" write="admins" read="admins" admin="admins" />
+                  <authorizationEntry topic="mcollective.>" write="mcollective" read="mcollective" admin="mcollective" />
+                  <authorizationEntry topic="mcollective.>" write="mcollective" read="mcollective" admin="mcollective" />
+                  <authorizationEntry topic="ActiveMQ.Advisory.>" read="everyone" write="everyone" admin="everyone"/>
+                </authorizationEntries>
+              </authorizationMap>
+            </map>
+          </authorizationPlugin>
+        </plugins>
+
+        <systemUsage>
+            <systemUsage>
+                <memoryUsage>
                     <memoryUsage limit="20 mb"/>
                 </memoryUsage>
                 <storeUsage>
