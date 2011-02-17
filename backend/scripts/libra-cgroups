@@ -1,0 +1,222 @@
+#!/bin/bash
+#
+# libra-cgroups This shell script initializes libra control groups
+#
+# Author:       Seth Vidal <skvidal@phy.duke.edu>
+#               Mike McGrath <mmcgrath@redhat.com>
+#               Mark lamourine <markllama@redhat.com>
+#
+# chkconfig:    - 6 94
+#
+# description:  Create Libra user cgroups
+# processname:  NA
+#
+
+# source function library
+. /etc/rc.d/init.d/functions
+
+# import libra cgroups settings
+if [ -f /etc/sysconfig/libra-cgroups ]
+then
+    . /etc/sysconfig/libra-cgroups
+fi
+
+lockfile=/var/lock/subsys/libra-cgroups
+
+RETVAL=0
+GROUP_RETVAL=0
+
+#
+# Set defaults if not provided
+#
+LIBRA_CGROUP_ROOT=${LIBRA_CGROUP_ROOT:="/libra"}
+LIBRA_CGROUP_SUBSYSTEMS=${LIBRA_CGROUP_SUBSYSTEMS:="cpu,cpuacct,memory,net_cls,freezer"}
+
+CGROUP_RULES_FILE=${CGROUP_RULES_FILE:="/etc/cgrules.conf"}
+
+#
+# Create a new libra user cgroup
+#
+add_cgroup() {
+    # USERNAME=$1
+    cgcreate -g ${LIBRA_CGROUP_SUBSYSTEMS}:${LIBRA_CGROUP_ROOT}/$1
+}
+
+#
+# Delete a libra user cgroup
+#
+delete_cgroup() {
+    # USERNAME=$1
+    cgdelete ${LIBRA_CGROUP_SUBSYSTEMS}:${LIBRA_CGROUP_ROOT}/$1
+}
+
+
+#
+# check which user cgroups exist
+#
+cgroup_user_subsystems() {
+    # USERNAME=$1
+    lscgroup | grep ":${LIBRA_CGROUP_ROOT}/$1\$" | cut -d: -f1
+}
+
+#
+# Check that a group binding rule exists for a user
+#
+cgroup_rule_exists() {
+    #USERNAME=$1
+    # remove comments, get first field, match exactly, quiet
+    grep -v '^#' ${CGROUP_RULES_FILE} | cut -f1 | grep -q -x $1
+}
+
+
+#
+# Bind the user to the cgroup: update /etc/cgrules.conf and kick cgred
+#
+add_cgroup_rule() {
+    # USERNAME=$1
+    cat <<EOF >>${CGROUP_RULES_FILE}
+$1	$LIBRA_CGROUP_SUBSYSTEMS	$LIBRA_CGROUP_ROOT/$1
+EOF
+}
+
+#
+# Unbind the user from any cgroup
+#
+delete_cgroup_rule() {
+    # USERNAME=$1
+    sed -i -e "/^$1\s/d" ${CGROUP_RULES_FILE}
+}
+
+start() {
+    echo "Initializing Libra Guest Control Groups: "
+
+    # create the root of the libra user control group
+    add_cgroup # defaults to creating the root group
+
+    # This won't scale forever, but works fine in the '100 or so' range
+    for USERNAME in `grep 'libra guest' /etc/passwd | cut -d: -f1`
+    do
+	add_cgroup $USERNAME
+	RETVAL=$?
+	# CHECK
+
+	if ( cgroup_rule_exists $USERNAME )
+	then
+	    delete_cgroup_rule $USERNAME
+        fi
+        add_cgroup_rule $USERNAME
+	
+        echo
+        if [ $RETVAL -eq 0 ]
+        then
+            echo_success
+        else
+            GROUP_RETVAL=$(($GROUP_RETVAL+1))
+            echo_failure
+        fi
+    done
+
+    # kick the Cgroups rules daemon
+    service cgred reload
+
+    [ $GROUP_RETVAL -eq 0 ] && touch ${lockfile}
+    [ $GROUP_RETVAL -eq 0 ] && success || failure
+
+    echo -n $"Libra cgroups initialized"
+    echo
+    return $GROUP_RETVAL
+}
+
+stop() {
+    echo "Stopping Libra cgroups: "
+    # This won't scale forever, but works fine in the '100 or so' range
+    for USERNAME in `grep 'libra guest' /etc/passwd | cut -d: -f1`
+    do
+	# kill any processes owned by these users
+	pkill -u $USERNAME
+
+	# remove the user's cgroup
+	delete_cgroup $USERNAME
+
+	# remove the user's cgroup binding rule
+	delete_cgroup_rule $USERNAME
+
+        echo
+        if [ $RETVAL -eq 0 ]
+        then
+            echo_success
+        else
+            GROUP_RETVAL=$(($GROUP_RETVAL+1))
+            echo_failure
+        fi
+    done
+
+    # notify the cgroup rule daemon
+    service cgred reload
+
+    [ $GROUP_RETVAL -eq 0 ] && touch ${lockfile}
+    echo -n $"Libra cgroups uninitialized"
+    echo
+    return $GROUP_RETVAL
+}
+
+restart() {
+    stop
+    start
+}
+
+case "$1" in
+  start)
+    start
+    ;;
+  stop) 
+    stop
+    ;;
+  restart|force-reload)
+    restart
+    ;;
+  reload)
+    ;;
+  condrestart)
+    [ -f "$lockfile" ] && restart
+    ;;
+  status)
+    echo "Checking Libra Services: "
+
+    # check that the /libra cgroup exists
+
+    # This won't scale forever, but works fine in the '100 or so' range
+    #  would be easy to convert to a 'in `find...`'     jj
+    for USERNAME in `grep 'libra guest' /etc/passwd | cut -d: -f1`
+    do
+	# check that /libra/<username> exists
+	SUBSYSTEMS=`cgroup_user_subsystems`
+	if (cgroup_rule_exists $USERNAME)
+        then 
+            BOUND="BOUND"
+        else
+            BOUNT="UNBOUND"
+        fi
+
+	echo "${USERNAME}: $BOUND	" `echo $SUBSYSTEMS | tr ' ' ,`
+	# check that cgrule exists
+
+        RETVAL=$?
+        echo
+        if [ $RETVAL -eq 0 ]
+        then
+            echo_success
+        else
+            GROUP_RETVAL=$(($GROUP_RETVAL+1))
+            echo_failure
+        fi
+    done
+    echo
+    return $GROUP_RETVAL
+    ;;
+  *)
+    echo $"Usage: $0 {start|stop|status|restart|reload|force-reload|condrestart}"
+    exit 1
+esac
+
+exit $RETVAL
