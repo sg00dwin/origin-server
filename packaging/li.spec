@@ -47,6 +47,7 @@ Group: Network/Daemons
 Requires: mcollective
 Requires: ruby-qpid
 Requires: rubygem-parseconfig
+Requires: libcgroup
 Requires(post): /usr/sbin/semodule
 Requires(postun): /usr/sbin/semodule
 BuildArch: noarch
