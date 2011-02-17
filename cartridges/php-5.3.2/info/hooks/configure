@@ -125,7 +125,7 @@ done
 customer_id=`basename $2`
 application="$1"
 
-CUSTOMER_HOME="$libra_dir/$customer_id/"
+CUSTOMER_HOME="$libra_dir/$customer_id"
 APP_DIR="$CUSTOMER_HOME/httpd/$application"
 
 #
