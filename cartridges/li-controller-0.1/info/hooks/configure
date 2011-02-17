@@ -155,7 +155,7 @@ function create_user_account() {
     then
         ${NOOP} groupadd -g ${NEXTUID} ${USERNAME}
 
-	${NOOP} useradd -g ${USERNAME} -u ${NEXTUID} -d ${HOMEDIR} -s /usr/bin/trap-user $USERNAME
+	${NOOP} useradd -g ${USERNAME} -u ${NEXTUID} -d ${HOMEDIR} -s /usr/bin/trap-user -c "libra guest" $USERNAME
 	if [ $? -ne 0 ]
         then
 	    echo "ERROR: unable to create user account $USERNAME"
