@@ -155,7 +155,7 @@ function create_user_account() {
     then
         ${NOOP} groupadd -g ${NEXTUID} ${USERNAME}
 
-	${NOOP} useradd -g ${USERNAME} -u ${NEXTUID} -d ${HOMEDIR} -s /usr/bin/trap-user -c "libra guest" $USERNAME
+	${NOOP} useradd -g ${USERNAME} -u ${NEXTUID} -d ${HOMEDIR} -s /bin/bash -c "libra guest" $USERNAME
 	if [ $? -ne 0 ]
         then
 	    echo "ERROR: unable to create user account $USERNAME"
@@ -183,7 +183,7 @@ function configure_user_account {
     USERHOME=`homedir $USERNAME`
     USERETC=$USERHOME/etc
 
-    ${NOOP} mkdir $USERETC
+    ${NOOP} mkdir -p $USERETC
     if [ -z "${NOOP}" ]
     then
 	${NOOP} cat <<EOF >${USERETC}/customer_info
@@ -217,7 +217,7 @@ function enable_user_ssh_access {
     USERHOME=`homedir $USERNAME`
     SSHDIR=${USERHOME}/.ssh
 
-    ${NOOP} mkdir ${SSHDIR}
+    ${NOOP} mkdir -p ${SSHDIR}
     ${NOOP} chmod 700 ${SSHDIR}
     if [ -z "${NOOP}" ]
     then
