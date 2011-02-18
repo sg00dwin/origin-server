@@ -147,6 +147,7 @@ rm -rf $APP_DIR/deploy/*
 git archive --format=tar HEAD | (cd $APP_DIR/deploy && tar xf -)
 
 # Reload passenger
+mkdir $APP_DIR/deploy/tmp
 touch $APP_DIR/deploy/tmp/restart.txt
 EOF
 chmod 0750 $CUSTOMER_HOME/git/$application.git/hooks/post-receive
