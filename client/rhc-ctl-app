@@ -56,14 +56,15 @@ def get_var(var)
 end
 
 def p_usage
+    username = @local_config.get_value('default_user') ? "Default: #{@local_config.get_value('default_user')}" : "(required)"
     puts <<USAGE
 
 Usage: #{$0}
 Control a libra app
 
-  -u|--user  username     Libra username    (alphanumeric) (required)
   -a|--app   application  Application name  (alphanumeric) (required)
   -t|--type  type         Type of app to operate on (php-5.3.2, rack-1.1.0) (required)
+  -u|--user  username     Libra username    (alphanumeric) (#{username})
   -c|--command command    (start|stop|restart|reload|status|destroy)
   -b|--bypass             Bypass warnings
   -d|--debug              Print Debug info
@@ -77,7 +78,7 @@ opts = GetoptLong.new(
     ["--debug",     "-d", GetoptLong::NO_ARGUMENT],
     ["--help",      "-h", GetoptLong::NO_ARGUMENT],
     ["--bypass",    "-b", GetoptLong::NO_ARGUMENT],
-    ["--user",      "-u", GetoptLong::REQUIRED_ARGUMENT],
+    ["--user",      "-u", GetoptLong::OPTIONAL_ARGUMENT],
     ["--app",       "-a", GetoptLong::REQUIRED_ARGUMENT],
     ["--command",   "-c", GetoptLong::REQUIRED_ARGUMENT],
     ["--type",      "-t", GetoptLong::REQUIRED_ARGUMENT]
@@ -104,6 +105,8 @@ end
 if opt["debug"]
     debug = true
 end
+
+opt["user"] = @local_config.get_value('default_user')
 
 if opt["user"]
     if opt["user"] =~ /[^0-9a-zA-Z]/
@@ -141,6 +144,7 @@ end
 if !opt["user"] || !opt["app"] || !opt["command"] || !opt["type"]
     p_usage
 end
+
 
 
 #
