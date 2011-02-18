@@ -2,7 +2,7 @@
 %define gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 
 Name: li
-Version: 0.23
+Version: 0.24
 Release: 1%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
@@ -139,7 +139,7 @@ fi
 if [ "$1" -eq 1 ]; then
     /sbin/service mcollective restart > /dev/null 2>&1 || :
 fi
-/usr/sbin/semodule -r libra
+#/usr/sbin/semodule -r libra
 
 %files
 %defattr(-,root,root,-)
@@ -193,7 +193,7 @@ fi
 %{_libexecdir}/li/cartridges/rack-1.1.0/
 
 %changelog
-* Fri Feb 18 2011 Mike McGrath <mmcgrath@redhat.com> 0.23-1
+* Fri Feb 18 2011 Mike McGrath <mmcgrath@redhat.com> 0.24-1
 - New version from upstream
 
 * Tue Feb 15 2011 Mike McGrath <mmcgrath@redhat.com> 0.22-1
