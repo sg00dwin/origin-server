@@ -3,6 +3,7 @@
 require 'rubygems'
 require 'libra'
 require 'mcollective'
+require 'json'
 
 include MCollective::RPC
 include Libra
@@ -59,5 +60,12 @@ if user
   end
 else
   # Create the user
-  User.create(options[:username], options[:ssh], options[:email])
+  user = User.create(options[:username], options[:ssh], options[:email])
 end
+
+json_return = JSON.generate({
+                        :username => user.username,
+                        :uuid => user.uuid
+                        })
+
+puts json_return
