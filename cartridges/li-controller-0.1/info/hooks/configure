@@ -234,6 +234,7 @@ EOF\""
 
     # Give the new user ownership
     ${NOOP} chown -R ${USERNAME}:${USERNAME} ${SSHDIR}
+    ${NOOP} restorecon -R ${SSHDIR}
 }
 
 
