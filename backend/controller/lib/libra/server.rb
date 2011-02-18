@@ -78,7 +78,7 @@ module Libra
     #
     def create_user(user)
       # Make the call to configure the user
-      execute_internal(@@C_CONTROLLER, 'configure', "-c #{user.username} -e #{user.email} -s #{user.ssh}")
+      execute_internal(@@C_CONTROLLER, 'configure', "-c #{user.uuid} -e #{user.email} -s #{user.ssh}")
     end
 
     #
@@ -87,7 +87,7 @@ module Libra
     def execute(framework, action, app_name, user)
       # Make the call to configure the application
       puts "DEBUG: server.rb:execute framework:#{framework} action:#{action} app_name:#{app_name} user:#{user}" if Libra.c[:rpc_opts][:verbose]
-      execute_internal(framework, action, "#{app_name} #{user.username}")
+      execute_internal(framework, action, "#{app_name} #{user.username} #{user.uuid}")
     end
 
     #
