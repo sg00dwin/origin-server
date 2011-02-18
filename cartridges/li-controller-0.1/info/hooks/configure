@@ -34,7 +34,7 @@
 DEFAULT_LIBRA_DIR=/var/lib/libra
 DEFAULT_LIBRA_CONF_DIR=/etc/libra
 DEFAULT_LIMITS_PRIORITY=85
-DEFAULT_LIMITS_NPROC=10 # this should be updated from node.conf
+DEFAULT_LIMITS_NPROC=50 # this should be updated from node.conf
 
 # Exit on any errors
 # set -e
