@@ -123,15 +123,19 @@ rm -rf $RPM_BUILD_ROOT
 %post node
 /sbin/chkconfig --add libra || :
 /sbin/chkconfig --add libra-data || :
+/sbin/chkconfig --add libra-cgroups || :
 /sbin/service mcollective restart > /dev/null 2>&1 || :
 /usr/sbin/semodule -i %_datadir/selinux/packages/libra.pp
+/sbin/service libra-cgroups start > /dev/null 2>&1 || :
 /sbin/service libra-data start > /dev/null 2>&1 || :
 
 
 %preun node
 if [ "$1" -eq "0" ]; then
-    /sbin/chkconfig --del libra || :
+    /sbin/service libra-cgroups stop > /dev/null 2>&1 || :
+    /sbin/chkconfig --del libra-cgroups || :
     /sbin/chkconfig --del libra-data || :
+    /sbin/chkconfig --del libra || :
     /usr/sbin/semodule -r libra
 fi
 
@@ -160,6 +164,7 @@ fi
 %{ruby_sitelibdir}/facter/libra.rb
 %{_sysconfdir}/init.d/libra
 %{_sysconfdir}/init.d/libra-data
+%{_sysconfdir}/init.d/libra-cgroups
 %{_bindir}/trap-user
 %{_bindir}/rhc-restorecon
 %attr(0751,root,root) %{_localstatedir}/lib/libra
