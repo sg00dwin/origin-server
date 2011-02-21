@@ -152,7 +152,8 @@ end
 #
 
 opt["command"] = "deconfigure" if opt["command"] == "destroy"
-if !opt["bypass"] and opt["command"] == "destroy"
+
+if !opt["bypass"] and opt["command"] == "deconfigure"
     # deconfigure is the actual hook called on 'destroy'
     # destroy is used for clarity
 
