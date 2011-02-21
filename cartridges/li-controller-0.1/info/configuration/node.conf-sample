@@ -5,7 +5,7 @@ libra_dir='/var/lib/libra/'
 libra_conf_dir='/etc/libra/'
 
 # Domain for DDNS management
-libra_domain='libra.mmcgrath.net'
+libra_domain='rhcloud.com'
 
 # DDNS resolver
 resolver='your-resolver'
