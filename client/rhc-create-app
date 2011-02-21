@@ -55,15 +55,17 @@ def get_var(var)
     @local_config.get_value(var) ? @local_config.get_value(var) : @global_config.get_value(var)
 end
 
+
 def p_usage
+    username = @local_config.get_value('default_user') ? "Default: #{@local_config.get_value('default_user')}" : "(required)"
     puts <<USAGE
 
 Usage: #{$0}
 Create a new app libra project.
 
-  -u|--user  username     Libra username    (alphanumeric) (required)
   -a|--app   application  Application name  (alphanumeric) (required)
   -t|--type  type         Type of app to create (php-5.3.2, rack-1.1.0) (required)
+  -u|--user  username     Libra username    (alphanumeric) (#{username})
   -r|--repo  path         Git Repo path (defaults to ./$app_name)
   -b|--bypass             Bypass warnings
   -d|--debug              Print Debug info
@@ -106,6 +108,8 @@ if opt["debug"]
     debug = true
 end
 
+opt["user"] = @local_config.get_value('default_user') unless opt["user"]
+
 if opt["user"]
     if opt["user"] =~ /[^0-9a-zA-Z]/
         puts "username contains non-alphanumeric characters!"
@@ -135,6 +139,16 @@ end
 
 if !opt["user"] || !opt["app"] || !opt["type"]
     p_usage
+end
+
+#
+# Get UUID from file
+#
+
+uuid = @local_config.get_value(opt["user"])
+unless uuid
+    puts "Could not find UUID for #{opt["user"]}"
+    exit 149
 end
 
 opt["repo"] = opt["app"] unless opt["repo"]
@@ -199,7 +213,7 @@ end
 f = File.new(".git/config", "w")
 f.puts <<GIT
 [remote "libra"]
-    url = ssh://#{opt['user']}@#{opt['app']}.#{opt['user']}.#{libra_domain}/#{libra_dir}/#{opt['user']}/git/#{opt['app']}.git/
+    url = ssh://#{uuid}@#{opt['app']}.#{opt['user']}.#{libra_domain}/#{libra_dir}/#{uuid}/git/#{opt['app']}.git/
 GIT
 f.close
 
@@ -310,7 +324,7 @@ else
 
 # Added by libra app on #{`date`}
 Host #{my_url}
-    User #{opt['user']}
+    User #{uuid}
     IdentityFile ~/.ssh/libra_id_rsa
     # This will eventually be replaced with sshfp
     StrictHostKeyChecking no

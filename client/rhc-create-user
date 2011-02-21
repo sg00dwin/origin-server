@@ -85,7 +85,7 @@ opts = GetoptLong.new(
 # Pull in configs from files
 li_server = get_var('li_server')
 debug = get_var('debug') == 'false' ? nil : get_var('debug')
-puts "woot" if debug
+
 
 libra_kfile = "#{ENV['HOME']}/.ssh/libra_id_rsa"
 libra_kpfile = "#{ENV['HOME']}/.ssh/libra_id_rsa.pub"
@@ -126,6 +126,25 @@ if !opt["email"] || !opt["user"]
 end
 
 #
+# Add a new user to configs
+#
+
+def add_user_config(username, uuid)
+    f = open("#{ENV['HOME']}/.li", 'a')
+    unless @local_config.get_value('default_user')
+        f.puts("# Default user to use if none is specified")
+        f.puts("default_user=#{username}")
+        f.puts("")
+    end
+    unless @local_config.get_value(username)
+        puts "Adding user to #{ENV['HOME']}/.li"
+        f.puts("#{username}=#{uuid}")
+    end
+    f.close
+end
+
+
+#
 # Check to see if a libra_id_rsa key exists, if not create it.
 #
 
@@ -158,6 +177,10 @@ if json_resp['return'].to_s.strip == "0"
             puts "#{k.to_s}: #{v.to_s}"
         end
     end
+
+    json_userinfo = JSON.parse(json_resp['stdout'])
+    add_user_config(json_userinfo['username'], json_userinfo['uuid'])
+
     puts "Creation successful (probably)."
     puts
     puts "You may now create an application"

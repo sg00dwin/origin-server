@@ -16,9 +16,9 @@ home_dirs.each do |home_dir|
         begin
             username = home_dir.split('/')[-1]
             user = Etc.getpwnam(username)
-            c_val = user.uid - 499
-            puts "chcon -t libra_var_lib_t -l s0:c#{c_val} -R #{home_dir}/[^.]*" if debug
-            %x[chcon -t libra_var_lib_t -l s0:c#{c_val} -R #{home_dir}/[^.]*]
+            c_val = user.uid.divmod(1023)
+            puts "chcon -t libra_var_lib_t -l s0:c#{c_val[0]},c#{c_val[1]} -R #{home_dir}/[^.]*" if debug
+            %x[chcon -t libra_var_lib_t -l s0:c#{c_val[0]},c#{c_val[1]} -R #{home_dir}/[^.]*]
         rescue ArgumentError
             puts "Warning: #{home_dir} is not owned by #{user} - #{$!}"
         end

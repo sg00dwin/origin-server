@@ -3,18 +3,30 @@ require 'aws'
 require 'json'
 require 'date'
 
+def gen_small_uuid()
+    # Put config option for username here so we can ignore uuid for dev environments
+    %x[/usr/bin/uuidgen].gsub('-', '').strip
+end
+
 module Libra
   class User
     attr_reader :username
-    attr_accessor :ssh, :email
+    attr_accessor :ssh, :email, :uuid
 
-    def initialize(username, ssh, email)
-      @username, @ssh, @email = username, ssh, email
+    def initialize(username, ssh, email, uuid)
+      @username, @ssh, @email, @uuid = username, ssh, email, uuid
     end
 
     def self.from_json(json)
       data = JSON.parse(json)
-      new(data['username'], data['ssh'], data['email'])
+      if data['uuid']
+        new(data['username'], data['ssh'], data['email'], data['uuid'])
+      else
+        uuid = gen_small_uuid()
+        user = new(data['username'], data['ssh'], data['email'], uuid)
+        user.update
+        user
+      end
     end
 
     #
@@ -24,7 +36,8 @@ module Libra
     def self.create(username, ssh, email)
       throw :user_exists if find(username)
       puts "DEBUG: user.rb:create username:#{username} ssh:#{ssh} email:#{email}" if Libra.c[:rpc_opts][:verbose]
-      user = new(username, ssh, email)
+      uuid = gen_small_uuid()
+      user = new(username, ssh, email, uuid)
       user.update
       user
     end
@@ -67,7 +80,7 @@ module Libra
     # Updates the user with the current information
     #
     def update
-      json = JSON.generate({:username => username, :email => email, :ssh => ssh})
+      json = JSON.generate({:username => username, :email => email, :ssh => ssh, :uuid => uuid})
       puts "DEBUG: user.rb:update json:#{json}" if Libra.c[:rpc_opts][:verbose]
       Helper.s3.put(Libra.c[:s3_bucket], "user_info/#{username}/user.json", json)
     end

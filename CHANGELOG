@@ -1,0 +1,6 @@
+2011-02-18  Mike McGrath <mmcgrath@redhat.com> - 0.24
+
+    * Users are not obfuscated by a randomly generated UUID stored in S3
+    * Client tools now store username and uuid in ~/.li
+    * Client tools now store default username in ~/.li
+    * SELinux policy updated to fix ~/.ssh contexts

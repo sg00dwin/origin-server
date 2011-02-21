@@ -57,10 +57,10 @@ function error {
 
 function destroy_repo {
     application="$1"
-    customer_id="$2"
-    CUSTOMER_HOME="${libra_dir}/${customer_id}"
+    uuid="$2"
+    CUSTOMER_HOME="${libra_dir}/${uuid}"
     
-    if [ ! -d $CUSTOMER_HOME ]; then echo "ERROR: Customer ${customer_id} not found!  Please create." 1>&2; exit 2; fi
+    if [ ! -d $CUSTOMER_HOME ]; then echo "ERROR: Customer ${uuid} not found!  Please create." 1>&2; exit 2; fi
     
     GIT_DIR=$CUSTOMER_HOME/git/$application.git
     rm -rf $GIT_DIR || error "Could not remove ${application}" 108
@@ -77,19 +77,20 @@ do
 done
 
 
-[ $# -eq 2 ] || print_help
+[ $# -eq 3 ] || print_help
 
-customer_id=`basename $2`
+namespace=`basename $2`
 application="$1"
+uuid=$3
 
-CUSTOMER_HOME="$libra_dir/$customer_id/"
+CUSTOMER_HOME="$libra_dir/$uuid/"
 APP_DIR="$CUSTOMER_HOME/httpd/$application"
 
 #
 # Destroy git app repo
 #
 
-destroy_repo $application $customer_id
+destroy_repo $application $uuid
 
 #
 # Create http base for application, every app gets its own apache instance
@@ -97,9 +98,9 @@ destroy_repo $application $customer_id
 
 [ ! -d "$APP_DIR" ] && error "${application} does not exist" 138
 
-runcon -t initrc_t -r system_r runuser -s /bin/sh "$customer_id" $APP_DIR/${application}_ctl.sh stop || error "Failed to stop ${application}" 140
+runcon -t initrc_t -r system_r runuser "$uuid" $APP_DIR/${application}_ctl.sh stop || error "Failed to stop ${application}" 140
 
-IP=$(awk -F, "/$customer_id,$application,/"'{ print $1 }' /etc/libra/ip_db | head -n1)
+IP=$(awk -F, "/$uuid,$application,/"'{ print $1 }' /etc/libra/ip_db | head -n1)
 range_one=$(echo $IP | awk -F\. '{ print $3 }')
 range_two=$(echo $IP | awk -F\. '{ print $4 }')
 
@@ -119,18 +120,18 @@ runcon -l s0-s0:c0.c1023 rm -rf "$APP_DIR"
 # remove localhost IP
 # 
 
-sed -i "/,${customer_id},${application},httpd,8080/d" /etc/libra/ip_db
+sed -i "/,${uuid},${application},httpd,8080/d" /etc/libra/ip_db
 
 #
 # Remove virtualhost definition for apache
 #
-rm -rf /etc/httpd/conf.d/${customer_id}_${application}.conf || error "Could not remove apache definition" 156
+rm -rf /etc/httpd/conf.d/${uuid}_${namespace}_${application}.conf || error "Could not remove apache definition" 156
 /sbin/service httpd configtest 2> /dev/null && /sbin/service httpd graceful || error "Failed to restart master httpd, please contact support" 120
 
 # 
 # Update DNS
 #
-host=${application}.${customer_id}
+host=${application}.${namespace}
 echo "server $resolver
 zone ${libra_domain}
 update delete $host.${libra_domain}
