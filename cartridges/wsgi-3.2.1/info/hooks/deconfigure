@@ -1,0 +1,123 @@
+#!/bin/bash
+
+# Copyright © 2010 Mike McGrath All rights reserved
+# Copyright © 2010 Red Hat, Inc. All rights reserved
+
+# This copyrighted material is made available to anyone wishing to use, modify,
+# copy, or redistribute it subject to the terms and conditions of the GNU
+# General Public License v.2.  This program is distributed in the hope that it
+# will be useful, but WITHOUT ANY WARRANTY expressed or implied, including the
+# implied warranties of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.  You should have
+# received a copy of the GNU General Public License along with this program;
+# if not, write to the Free Software Foundation, Inc., 51 Franklin Street,
+# Fifth Floor, Boston, MA 02110-1301, USA. Any Red Hat trademarks that are
+# incorporated in the source code or documentation are not subject to the GNU
+# General Public License and may only be used or replicated with the express
+# permission of Red Hat, Inc.
+
+# Destroys http instance
+
+# Exit on any errors
+set -e
+
+if [ -f '/etc/libra/node.conf' ]
+then
+    . /etc/libra/node.conf
+elif [ -f 'node.conf' ]
+then
+    . node.conf
+else
+    echo "node.conf not found.  Cannot continue" 1>&2
+    exit 3
+fi
+
+if [ -f '/etc/libra/node_data.conf' ]
+then
+    . /etc/libra/node_data.conf
+elif [ -f 'node_data.conf' ]
+then
+    . node_data.conf
+else
+    echo "node_data.conf not found.  Cannot continue" 1>&2
+    exit 3
+fi
+
+function print_help {
+    echo "Usage: $0 app-name username"
+
+    echo "$0 $@" | logger -p local0.notice -t libra_http_create
+    exit 1
+}
+
+function error {
+    echo "$1" 1>&2
+    exit "$2"
+}
+
+function destroy_repo {
+    application="$1"
+    customer_id="$2"
+    CUSTOMER_HOME="${libra_dir}/${customer_id}"
+    
+    if [ ! -d $CUSTOMER_HOME ]; then echo "ERROR: Customer ${customer_id} not found!  Please create." 1>&2; exit 2; fi
+    
+    GIT_DIR=$CUSTOMER_HOME/git/$application.git
+    rm -rf $GIT_DIR || error "Could not remove ${application}" 108
+}
+
+while getopts 'd' OPTION
+do
+    case $OPTION in
+        d) set -x
+        ;;
+        ?) print_help
+        ;;
+    esac
+done
+
+
+[ $# -eq 2 ] || print_help
+
+customer_id=`basename $2`
+application="$1"
+
+CUSTOMER_HOME="$libra_dir/$customer_id/"
+APP_DIR="$CUSTOMER_HOME/httpd/$application"
+
+#
+# Destroy git app repo
+#
+
+destroy_repo $application $customer_id
+
+#
+# Create http base for application, every app gets its own apache instance
+#
+
+[ ! -d "$APP_DIR" ] && error "${application} does not exist" 138
+
+$APP_DIR/${application}_ctl.sh stop || error "Failed to stop ${application}" 140
+rm -rf "$APP_DIR"
+
+#
+# remove localhost IP
+# 
+
+sed -i "/,${customer_id},${application},httpd,8080/d" /etc/libra/ip_db
+
+#
+# Remove virtualhost definition for apache
+#
+rm -rf /etc/httpd/conf.d/${customer_id}_${application}.conf || error "Could not remove apache definition" 156
+/sbin/service httpd configtest 2> /dev/null && /sbin/service httpd graceful || error "Failed to restart master httpd, please contact support" 120
+
+# 
+# Update DNS
+#
+host=${application}.${customer_id}
+echo "server $resolver
+zone ${libra_domain}
+update delete $host.${libra_domain}
+send
+" | nsupdate -d -L0 -v -y "$secret" > /dev/null 2>&1 || error "DNS update for $host has failed" 200
