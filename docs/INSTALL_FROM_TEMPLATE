@@ -7,18 +7,22 @@ export EC2_CERT=~/.aws/libratest/cert-YVICJKJDDLYG2LNKHFV47Z6GO4S5MY4B.pem
 4) Run ec2-describe-images (to prove it works and pick the image you want to instantiate).  You'll need the ami name.
 
 Instantiate and setup the image (starting with an ami name (Ex: ami-f4e3109d)):
-1) Run "ec2-run-instances ami-f4e3109d -t t1.micro" and get the instance id from the output (Ex: i-6347070d).  If you need more power you can use m1.large (~.02 per hour vs. ~.34 per hour).  t1.mirco is plenty for small numbers of users/apps.
+1) Run "ec2-run-instances ami-f4e3109d -t m1.large" and get the instance id from the output (Ex: i-6347070d).  If you need less power you can use t1.micro (~.02 per hour (micro) vs. ~.34 per hour (large)).  We are working to get m1.small working.
 2) Run "ec2-describe-instances i-6347070d" and get the external name from the output after the ami id (Ex:  ec2-50-17-87-119.compute-1.amazonaws.com)
 3) Copy libra.pem from /li/docs/libra to the current dir and run "chmod 600 libra.pem"
 4) In another terminal run on the local machine run "cat .ssh/libra_id_rsa.pub" or pick some other public key you want to use.  Copy just the key between ssh-rsa and the identifier at the end to use in step 6)
 5) Log into the new instance with "ssh -i libra.pem root@ec2-50-17-87-119.compute-1.amazonaws.com"
-6) /usr/bin/rhc-new-user -u <make up a userid and not your RedHat id> -e <email> -s <the key you just copied from 4)>
-7) mc-rhc-cartridge-do -a configure -n li -u <userid> --cartridge php-5.3.2
-8) You can now browse to http://li.<userid>.rhcloud.com/  (should say forbidden)
-9) cd ~<userid>  (Under var/lib/libra  currently it's <user uuid>.  Remember user uuid for below.)
-10) chcon -t ssh_home_t .ssh -R
-11) chgrp <user uuid> /etc/mcollective/client.cfg
-12) Run "vi /etc/security/limits.d/85-<user uuid>.conf" and change nproc 10 to nproc 500
+6) vi /etc/libra/node.conf and add the line 
+limits_nproc=100
+7) /usr/bin/rhc-new-user -u <make up a userid and not your RedHat id> -e <email> -s <the key you just copied from 4)>
+This should output something like:
+{"username":"userid","uuid":"69559fc92d224996bcc38ba19f10ca87"}
+Remember this "uuid" as <user uuid>.
+8) mc-rhc-cartridge-do -a configure -n li -u <userid> --cartridge php-5.3.2
+9) You can now browse to http://li.<userid>.rhcloud.com/  (should say forbidden)
+10) cd ~<user uuid>
+11) chcon -t ssh_home_t .ssh -R
+12) chgrp <user uuid> /etc/mcollective/client.cfg
 
 Now back on the client machine:
 1) edit ~/.ssh/config and add an entry like:
