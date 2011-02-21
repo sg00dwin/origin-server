@@ -35,8 +35,8 @@ remotehost=$1
 
 ssh root@$remotehost "set -e
 rpm -Uhv http://download.fedora.redhat.com/pub/epel/beta/6/x86_64/epel-release-6-5.noarch.rpm
-# Check for libselinux-ruby (basically seeing if the host has rhel-x86_64-server-optional-6)
-yum info libselinux-ruby > /dev/null 2>&1 || (sed -i 's/^enabled.*/enabled = 1/g' /etc/yum/pluginconf.d/rhnplugin.conf && rhnreg_ks --activationkey=$ACTIVATION_KEY )
+rpm -e rh-amazon-rhui-client
+rpm -Uhv http://209.132.178.9/gpxe/trees/li/rhel/6/x86_64/rhel6-and-optional-0.1-1.noarch.rpm
 yum -y update
 yum -y install puppet git
 mkdir -p /var/lib/puppet/git/
