@@ -14,11 +14,11 @@ Instantiate and setup the image (starting with an ami name (Ex: ami-f4e3109d)):
 5) Log into the new instance with "ssh -i libra.pem root@ec2-50-17-87-119.compute-1.amazonaws.com"
 6) /usr/bin/rhc-new-user -u <make up a userid and not your RedHat id> -e <email> -s <the key you just copied from 4)>
 7) mc-rhc-cartridge-do -a configure -n li -u <userid> --cartridge php-5.3.2
-8) You can now browse to http://li.<userid>.rhcloud.com/
-9) cd ~<userid>
+8) You can now browse to http://li.<userid>.rhcloud.com/  (should say forbidden)
+9) cd ~<userid>  (Under var/lib/libra  currently it's <user uuid>.  Remember user uuid for below.)
 10) chcon -t ssh_home_t .ssh -R
-11) chgrp <userid> /etc/mcollective/client.cfg
-12) Run "vi /etc/security/limits.d/85-<userid>.conf" and change nproc 10 to nproc 50
+11) chgrp <user uuid> /etc/mcollective/client.cfg
+12) Run "vi /etc/security/limits.d/85-<user uuid>.conf" and change nproc 10 to nproc 500
 
 Now back on the client machine:
 1) edit ~/.ssh/config and add an entry like:
@@ -26,7 +26,7 @@ Host li
    User <userid>
    HostName li.<userid>.rhcloud.com
        IdentityFile ~/.ssh/libra_id_rsa
-2) From your local git li repo run "git push ssh://<userid>@li.<userid>.rhcloud.com/var/lib/libra/<userid>/git/li.git master" and you should be able to see the source pushed to http://li.<userid>.rhcloud.com/
+2) From your local git li repo run "git push ssh://<user uuid>@li.<userid>.rhcloud.com/var/lib/libra/<user uuid>/git/li.git master" and you should be able to see the source pushed to http://li.<userid>.rhcloud.com/
 3) From the root of the li repo run cp ./client/client.conf ~/.li
 4) edit ~./li and change "li_server = 'lidemo.mcgrath.rhcloud.com'" to "li_server = 'li.<userid>.rhcloud.com'"
 5) rhc-create-app -u <userid> -a <appname> -r <app folder> -t php-5.3.2 -b
