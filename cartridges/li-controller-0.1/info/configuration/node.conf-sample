@@ -4,15 +4,6 @@ libra_dir='/var/lib/libra/'
 # Configuration dir for libra
 libra_conf_dir='/etc/libra/'
 
-# Domain for DDNS management
-libra_domain='rhcloud.com'
-
-# DDNS resolver
-resolver='your-resolver'
-
-# DDNS Secret key
-secret="hmac-md5:keyname:keything"
-
 # Enable user-unobfuscate to create ~/username in addition to ~/uuid
 # DO NOT ENABLE IN PRODUCTION, it would reveal customer information
 unobfuscate=0

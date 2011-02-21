@@ -31,6 +31,11 @@ module Libra
       @@config[:repo_threshold] ||= fs_config.get_value('repo_threshold').to_i
       @@config[:s3_bucket] = fs_config.get_value('s3_bucket')
 
+      # DDNS configuration
+      @@config[:libra_domain] = fs_config.get_value('libra_domain')
+      @@config[:resolver] = fs_config.get_value('resolver')
+      @@config[:secret] = fs_config.get_value('secret')
+
       # Optional configuration
       @@config[:aws_name] = fs_config.get_value('aws_name')
       @@config[:aws_environment] = fs_config.get_value('aws_environment')
