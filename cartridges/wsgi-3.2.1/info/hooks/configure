@@ -1,0 +1,272 @@
+#!/bin/bash
+
+# Copyright © 2010 Mike McGrath All rights reserved
+# Copyright © 2010 Red Hat, Inc. All rights reserved
+
+# This copyrighted material is made available to anyone wishing to use, modify,
+# copy, or redistribute it subject to the terms and conditions of the GNU
+# General Public License v.2.  This program is distributed in the hope that it
+# will be useful, but WITHOUT ANY WARRANTY expressed or implied, including the
+# implied warranties of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.  You should have
+# received a copy of the GNU General Public License along with this program;
+# if not, write to the Free Software Foundation, Inc., 51 Franklin Street,
+# Fifth Floor, Boston, MA 02110-1301, USA. Any Red Hat trademarks that are
+# incorporated in the source code or documentation are not subject to the GNU
+# General Public License and may only be used or replicated with the express
+# permission of Red Hat, Inc.
+
+# Creates a per customer httpd instance
+
+# Exit on any errors
+set -e
+
+if [ -f '/etc/libra/node.conf' ]
+then
+    . /etc/libra/node.conf
+elif [ -f 'node.conf' ]
+then
+    . node.conf
+else
+    echo "node.conf not found.  Cannot continue" 1>&2
+    exit 3
+fi
+
+if [ -f '/etc/libra/node_data.conf' ]
+then
+    . /etc/libra/node_data.conf
+elif [ -f 'node_data.conf' ]
+then
+    . node_data.conf
+else
+    echo "node_data.conf not found.  Cannot continue" 1>&2
+    exit 3
+fi
+
+function print_help {
+    echo "Usage: $0 app-name username uuid"
+
+    echo "$0 $@" | logger -p local0.notice -t libra_http_create
+    exit 1
+}
+
+function error {
+    echo "$1" 1>&2
+    exit "$2"
+}
+
+function find_open_ip {
+    # Find an open 127.0.x.x address to host application
+    [ -f $libra_conf_dir/ip_db ] || echo "uuid,application_name,service_type,port" >> $libra_conf_dir/ip_db
+    for i in `seq 0 255`
+    do
+        for j in `seq 2 255`
+        do
+            if ! $(grep -q 127.0.$i.$j $libra_conf_dir/ip_db)
+            then
+                echo 127.0.$i.$j
+                exit
+            fi
+        done
+    done
+}
+
+function take_open_ip {
+    # Writes a new IP to the ip database in $libra_conf_dir/ip_db
+    # Example: take_open_ip mmcgrath phpmyadmin httpd
+    if ! [ $# -eq 4 ]
+    then
+        echo "Usage: $0 uuid application_name service_type port"
+        exit 1
+    fi
+    uuid=$1
+    application_name=$2
+    service_type=$3
+    port=$4
+
+    # if customer, app, service already exists, re-use IP
+    if $( grep -q ",$uuid,$application_name,$service_type" $libra_conf_dir/ip_db )
+    then
+        echo $(awk -F, "/,$uuid,$application_name,$service_type/"'{ print $1 }' $libra_conf_dir/ip_db | head -n1)
+    else
+        IP=$(find_open_ip)
+        echo "$IP,$uuid,$application_name,$service_type,$port" >> $libra_conf_dir/ip_db
+        echo $IP
+    fi
+}
+
+function create_repo {
+    application="$1"
+    user_id=$2
+    group_id=$3
+    CUSTOMER_HOME="${libra_dir}/${uuid}"
+
+    if [ ! -d $CUSTOMER_HOME ]; then echo "ERROR: Customer ${uuid} not found!  Please create." 1>&2; exit 2; fi
+
+    GIT_DIR=$CUSTOMER_HOME/git/$application.git
+    mkdir -p $(dirname $GIT_DIR) 2>&1
+    GIT_DIR=$GIT_DIR git init --shared > /dev/null
+    chown $user_id.$group_id -R $GIT_DIR
+}
+
+while getopts 'd' OPTION
+do
+    case $OPTION in
+        d) set -x
+        ;;
+        ?) print_help
+        ;;
+    esac
+done
+
+[ $# -eq 3 ] || print_help
+
+namespace=`basename $2`
+application="$1"
+uuid=$3
+
+CUSTOMER_HOME="$libra_dir/$uuid/"
+APP_DIR="$CUSTOMER_HOME/wsgi/$application"
+
+#
+# Get user id info
+# Not caching this information caused some early chowns to work but some later
+# chowns to fail with a user not found error
+
+user_id=$(id -u "$uuid") || error "Could not find user $uuid ($namespace)" 134
+group_id=$(id -g "$uuid") || error "Could not find user $uuid ($namespace)" 135
+
+#
+# Create git app repo
+#
+
+create_repo $application $user_id $group_id
+
+cat <<EOF > $CUSTOMER_HOME/git/$application.git/hooks/post-receive
+rm -rf $APP_DIR/deploy/*
+git archive --format=tar HEAD | (cd $APP_DIR/deploy && tar xf -)
+
+# Reload passenger
+mkdir $APP_DIR/deploy/tmp
+touch $APP_DIR/deploy/tmp/restart.txt
+EOF
+chmod 0750 $CUSTOMER_HOME/git/$application.git/hooks/post-receive
+
+#
+# Create http base for application, every app gets its own apache instance
+#
+
+[ -d "$APP_DIR" ] && error "${application}.  Please destroy then recreate, or pick a new name" 132
+
+mkdir -p "$APP_DIR"
+pushd "$APP_DIR" > /dev/null
+mkdir conf conf.d logs run deploy deploy/public
+ln -s /usr/lib64/httpd/modules modules
+ln -s /etc/httpd/conf/magic conf/magic
+
+popd > /dev/null
+
+#
+# Find an open localhost IP
+#
+
+
+IP=$(take_open_ip $uuid $application "wsgi" 8080)
+
+
+#
+# Create simple customer specific data
+#
+
+cat <<EOF > "$APP_DIR/conf.d/libra.conf"
+ServerRoot "$APP_DIR"
+DocumentRoot "$APP_DIR/deploy/public"
+Listen $IP:8080
+User $uuid
+Group $uuid
+PassengerUser $customer_id
+<Directory $APP_DIR/deploy/public>
+  AllowOverride all
+  Options -MultiViews
+</Directory>
+
+WSGIScriptAlias / "$APP_DIR/deploy/public/$application.wsgi"
+
+EOF
+
+#
+# Create simple application start / stop script
+#
+uid=$(id -u "$uuid")
+c_val="c$(($uid/1023)),c$(($uid%1023))"
+
+cat <<EOF > "$APP_DIR/${application}_ctl.sh"
+#/bin/bash
+if ! [ \$# -eq 1 ]
+then
+    echo "Usage: \$0 [start|restart|graceful|graceful-stop|stop]"
+    exit 1
+fi
+
+if whoami | grep -q root
+then
+    echo 1>&2
+    echo "Please don't run script as root, try:" 1>&2
+    echo "runuser $uuid $0" 1>&2
+    echo 2>&1
+    exit 15
+fi
+
+
+case "\$1" in
+    start)
+        if [ -f $APP_DIR/run/stop_lock ]
+        then
+            echo -n " - Application is disabled" 1>&2
+            exit 0
+        else
+            /usr/sbin/httpd -C 'Include $APP_DIR/conf.d/*.conf' -f /usr/libexec/li/cartridges/wsgi-3.2.1/info/configuration/etc/conf/httpd.conf -k \$1
+        fi
+    ;;
+    restart|graceful|graceful-stop|stop)
+        /usr/sbin/httpd -C 'Include $APP_DIR/conf.d/*.conf' -f /usr/libexec/li/cartridges/wsgi-3.2.1/info/configuration/etc/conf/httpd.conf -k \$1
+    ;;
+    status)
+        echo "Coming soon"
+        exit 0
+    ;;
+esac
+EOF
+
+chmod +x "$APP_DIR/${application}_ctl.sh" || error "Failed to chmod new application scripts" 122
+chown $user_id.$group_id -R $APP_DIR || error "Failed to chown new application space.  Please contact support" 123
+chcon -t libra_var_lib_t -l s0:$c_val -R "$APP_DIR"
+$APP_DIR/${application}_ctl.sh start || error "Failed to start ${application}" 121
+
+#
+# Create virtualhost definition for apache
+#
+
+cat <<EOF > "/etc/httpd/conf.d/${uuid}_${namespace}_${application}.conf"
+<VirtualHost *:80>
+  ServerName ${application}.${namespace}.${libra_domain}
+  ServerAdmin mmcgrath@redhat.com
+  DocumentRoot /var/www/html
+
+  ProxyPass / http://$IP:8080/
+  ProxyPassReverse / http://$IP:8080/
+</VirtualHost>
+EOF
+
+/sbin/service httpd configtest 2> /dev/null && /sbin/service httpd graceful || error "Failed to restart master httpd, please contact support" 120
+
+#
+# Update DNS
+#
+host=${application}.${namespace}
+echo "server $resolver
+zone ${libra_domain}
+update delete $host.${libra_domain}
+update add $host.${libra_domain} 60 A ${public_ip}
+send
+" | nsupdate -d -L0 -v -y "$secret" > /dev/null 2>&1 || error "DNS update for $host has failed" 200
