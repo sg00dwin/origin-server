@@ -168,7 +168,7 @@ WARNING
     print "Do you want to destroy this application (y/n): "
     agree = gets.chomp
     if agree != 'y'
-        puts "Sorry this won't work for you, keep tabs for future updates"
+        puts "Destroy aborted"
         exit 5
     end
 end
