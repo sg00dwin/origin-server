@@ -2,7 +2,7 @@
 %define gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 
 Name: li
-Version: 0.25
+Version: 0.26
 Release: 1%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
@@ -126,6 +126,8 @@ rm -rf $RPM_BUILD_ROOT
 /sbin/chkconfig --add libra-cgroups || :
 /sbin/service mcollective restart > /dev/null 2>&1 || :
 /usr/sbin/semodule -i %_datadir/selinux/packages/libra.pp
+/sbin/restorecon /etc/init.d/libra || :
+/usr/bin/rhc-restorecon || :
 /sbin/service libra-cgroups start > /dev/null 2>&1 || :
 /sbin/service libra-data start > /dev/null 2>&1 || :
 
@@ -198,6 +200,10 @@ fi
 %{_libexecdir}/li/cartridges/rack-1.1.0/
 
 %changelog
+* Mon Feb 21 2011 Mike McGrath <mmcgrath@redhat.com> 0.26-1
+- Added restorecon bits
+- Upstream released new version
+
 * Fri Feb 18 2011 Mike McGrath <mmcgrath@redhat.com> 0.25-1
 - New version from upstream
 
