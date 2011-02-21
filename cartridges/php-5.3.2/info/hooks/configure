@@ -272,13 +272,3 @@ EOF
 
 /sbin/service httpd configtest 2> /dev/null && /sbin/service httpd graceful || error "Failed to restart master httpd, please contact support" 120
 
-#
-# Update DNS
-#
-host=${application}.${namespace}
-echo "server $resolver
-zone ${libra_domain}
-update delete $host.${libra_domain}
-update add $host.${libra_domain} 60 A ${public_ip}
-send
-" | nsupdate -d -L0 -v -y "$secret" > /dev/null 2>&1 || error "DNS update for $host has failed" 200
