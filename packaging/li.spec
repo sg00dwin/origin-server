@@ -77,6 +77,7 @@ Summary: Provides php-5.3.2 support
 Group: Development/Languages
 Requires: li-node
 Requires: php = 5.3.2
+Requires: rubygem-builder
 BuildArch: noarch
 
 %description cartridge-php-5.3.2
