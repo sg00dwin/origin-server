@@ -74,6 +74,17 @@ module Libra
     end
 
     #
+    # Given a known fact and node, get a single fact directly.
+    # This is significantly faster then the get_facts method
+    # If multiple nodes of the same name exist, it will pick just one
+    #
+    def self.rpc_get_fact_direct(fact, node)
+        options = rpc_options
+        util = rpcclient("rpcutil", :options => options)
+        util.custom_request('get_fact', {:fact => fact}, {'identity' => node})[0].results[:data][:value]
+    end
+
+    #
     # Execute an RPC call for the specified agent.
     # If a server is supplied, only execute for that server.
     #
