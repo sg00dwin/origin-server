@@ -44,7 +44,7 @@ else
 fi
 
 function print_help {
-    echo "Usage: $0 app-name username"
+    echo "Usage: $0 app-name username uuid"
 
     echo "$0 $@" | logger -p local0.notice -t libra_http_create
     exit 1
@@ -57,7 +57,7 @@ function error {
 
 function find_open_ip {
     # Find an open 127.0.x.x address to host application
-    [ -f $libra_conf_dir/ip_db ] || echo "customer_id,application_name,service_type,port" >> $libra_conf_dir/ip_db
+    [ -f $libra_conf_dir/ip_db ] || echo "uuid,application_name,service_type,port" >> $libra_conf_dir/ip_db
     for i in `seq 0 255`
     do
         for j in `seq 2 255`
@@ -76,36 +76,37 @@ function take_open_ip {
     # Example: take_open_ip mmcgrath phpmyadmin httpd
     if ! [ $# -eq 4 ]
     then
-        echo "Usage: $0 customer_id application_name service_type port"
+        echo "Usage: $0 uuid application_name service_type port"
         exit 1
     fi
-    customer_id=$1
+    uuid=$1
     application_name=$2
     service_type=$3
     port=$4
 
     # if customer, app, service already exists, re-use IP
-    if $( grep -q "$customer_id,$application_name,$service_type" $libra_conf_dir/ip_db )
+    if $( grep -q ",$uuid,$application_name,$service_type" $libra_conf_dir/ip_db )
     then
-        echo $(awk -F, "/$customer_id,$application_name,$service_type/"'{ print $1 }' $libra_conf_dir/ip_db | head -n1)
+        echo $(awk -F, "/,$uuid,$application_name,$service_type/"'{ print $1 }' $libra_conf_dir/ip_db | head -n1)
     else
         IP=$(find_open_ip)
-        echo "$IP,$customer_id,$application_name,$service_type,$port" >> $libra_conf_dir/ip_db
+        echo "$IP,$uuid,$application_name,$service_type,$port" >> $libra_conf_dir/ip_db
         echo $IP
     fi
 }
 
 function create_repo {
     application="$1"
-    customer_id="$2"
-    CUSTOMER_HOME="${libra_dir}/${customer_id}"
+    user_id=$2
+    group_id=$3
+    CUSTOMER_HOME="${libra_dir}/${uuid}"
 
-    if [ ! -d $CUSTOMER_HOME ]; then echo "ERROR: Customer ${customer_id} not found!  Please create." 1>&2; exit 2; fi
+    if [ ! -d $CUSTOMER_HOME ]; then echo "ERROR: Customer ${uuid} not found!  Please create." 1>&2; exit 2; fi
 
     GIT_DIR=$CUSTOMER_HOME/git/$application.git
     mkdir -p $(dirname $GIT_DIR) 2>&1
     GIT_DIR=$GIT_DIR git init --shared > /dev/null
-    chown $customer_id.$customer_id -R $GIT_DIR
+    chown $user_id.$group_id -R $GIT_DIR
 }
 
 while getopts 'd' OPTION
@@ -118,26 +119,35 @@ do
     esac
 done
 
+[ $# -eq 3 ] || print_help
 
-[ $# -eq 2 ] || print_help
-
-customer_id=`basename $2`
+namespace=`basename $2`
 application="$1"
+uuid=$3
 
-CUSTOMER_HOME="$libra_dir/$customer_id/"
+CUSTOMER_HOME="$libra_dir/$uuid/"
 APP_DIR="$CUSTOMER_HOME/rack/$application"
+
+#
+# Get user id info
+# Not caching this information caused some early chowns to work but some later
+# chowns to fail with a user not found error
+
+user_id=$(id -u "$uuid") || error "Could not find user $uuid ($namespace)" 134
+group_id=$(id -g "$uuid") || error "Could not find user $uuid ($namespace)" 135
 
 #
 # Create git app repo
 #
 
-create_repo $application $customer_id
+create_repo $application $user_id $group_id
 
 cat <<EOF > $CUSTOMER_HOME/git/$application.git/hooks/post-receive
 rm -rf $APP_DIR/deploy/*
 git archive --format=tar HEAD | (cd $APP_DIR/deploy && tar xf -)
 
 # Reload passenger
+mkdir $APP_DIR/deploy/tmp
 touch $APP_DIR/deploy/tmp/restart.txt
 EOF
 chmod 0750 $CUSTOMER_HOME/git/$application.git/hooks/post-receive
@@ -153,6 +163,7 @@ pushd "$APP_DIR" > /dev/null
 mkdir conf conf.d logs run deploy deploy/public
 ln -s /usr/lib64/httpd/modules modules
 ln -s /etc/httpd/conf/magic conf/magic
+
 popd > /dev/null
 
 #
@@ -160,7 +171,7 @@ popd > /dev/null
 #
 
 
-IP=$(take_open_ip $customer_id $application "rack" 8080)
+IP=$(take_open_ip $uuid $application "rack" 8080)
 
 
 #
@@ -171,8 +182,8 @@ cat <<EOF > "$APP_DIR/conf.d/libra.conf"
 ServerRoot "$APP_DIR"
 DocumentRoot "$APP_DIR/deploy/public"
 Listen $IP:8080
-User $customer_id
-Group $customer_id
+User $uuid
+Group $uuid
 PassengerUser $customer_id
 <Directory $APP_DIR/deploy/public>
   AllowOverride all
@@ -183,6 +194,8 @@ EOF
 #
 # Create simple application start / stop script
 #
+uid=$(id -u "$uuid")
+c_val="c$(($uid/1023)),c$(($uid%1023))"
 
 cat <<EOF > "$APP_DIR/${application}_ctl.sh"
 #/bin/bash
@@ -191,6 +204,16 @@ then
     echo "Usage: \$0 [start|restart|graceful|graceful-stop|stop]"
     exit 1
 fi
+
+if whoami | grep -q root
+then
+    echo 1>&2
+    echo "Please don't run script as root, try:" 1>&2
+    echo "runuser $uuid $0" 1>&2
+    echo 2>&1
+    exit 15
+fi
+
 
 case "\$1" in
     start)
@@ -213,16 +236,17 @@ esac
 EOF
 
 chmod +x "$APP_DIR/${application}_ctl.sh" || error "Failed to chmod new application scripts" 122
-chown $customer_id.$customer_id -R $APP_DIR || error "Failed to chown new application space.  Please contact support" 123
+chown $user_id.$group_id -R $APP_DIR || error "Failed to chown new application space.  Please contact support" 123
+chcon -t libra_var_lib_t -l s0:$c_val -R "$APP_DIR"
 $APP_DIR/${application}_ctl.sh start || error "Failed to start ${application}" 121
 
 #
 # Create virtualhost definition for apache
 #
 
-cat <<EOF > "/etc/httpd/conf.d/${customer_id}_${application}.conf"
+cat <<EOF > "/etc/httpd/conf.d/${uuid}_${namespace}_${application}.conf"
 <VirtualHost *:80>
-  ServerName ${application}.${customer_id}.${libra_domain}
+  ServerName ${application}.${namespace}.${libra_domain}
   ServerAdmin mmcgrath@redhat.com
   DocumentRoot /var/www/html
 
@@ -236,7 +260,7 @@ EOF
 #
 # Update DNS
 #
-host=${application}.${customer_id}
+host=${application}.${namespace}
 echo "server $resolver
 zone ${libra_domain}
 update delete $host.${libra_domain}

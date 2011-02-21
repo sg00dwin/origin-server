@@ -106,7 +106,7 @@ if opt["debug"]
     debug = true
 end
 
-opt["user"] = @local_config.get_value('default_user')
+opt["user"] = @local_config.get_value('default_user') unless opt["user"]
 
 if opt["user"]
     if opt["user"] =~ /[^0-9a-zA-Z]/

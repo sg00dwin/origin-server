@@ -18,9 +18,6 @@
 
 # Destroys http instance
 
-# Exit on any errors
-set -e
-
 if [ -f '/etc/libra/node.conf' ]
 then
     . /etc/libra/node.conf

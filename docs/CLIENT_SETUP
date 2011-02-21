@@ -1,0 +1,40 @@
+Clone the git repos:
+
+Add this to your ~/.ssh/config file:
+
+Host git
+   User <YOUR_RH_USERID>
+   HostName 184.72.218.112
+       IdentityFile ~/.ssh/YOUR_KEY
+
+Then, you can clone the git repositories with:
+
+git clone ssh://git/srv/git/li
+
+And the Rack broker application with:
+
+git clone ssh://git/srv/git/broker
+
+
+Add Li Repo at /etc/yum.repos.d/li.repo.  Example in li/docs/li/.repo
+
+yum install mcollective-common mcollective-client li rubygems rubygem-parseconfig rubygem-json rubygem-stomp rubygem-right_aws rubygem-aws rubygem-rake rubygem-rspec rubygem-cucumber
+
+cp client.conf /etc/libra/client.conf  and point to your broker system
+mkdir /etc/mcollective
+cp backend/controller/test/etc/client.cfg /etc/mcollective/client.cfg
+cp backend/controller/conf/controller.conf /etc/libra/controller.conf
+
+Example Usage:
+rhc-create-user -u <userid> -e blah@email.com
+rhc-create-app -u <userid> -a <appname> -r <Ex: /tmp/rhc/appname> -repo -t php-5.3.2 -b
+You should now be able to browse to:  http://appname.userid.rhcloud.com
+Now make a change under /tmp/rhc/appname
+git commit -a -m "Test commit"
+git push libra master
+The change should be seen at:  http://appname.userid.rhcloud.com
+
+
+Running Test Cases:
+rake cuc_int sprint[1]
+tail -f /tmp/rhc/cucumber.log (To see log output)

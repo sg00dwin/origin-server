@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #
 # libra-cgroups This shell script initializes libra control groups
 #
@@ -33,6 +33,13 @@ LIBRA_CGROUP_ROOT=${LIBRA_CGROUP_ROOT:="/libra"}
 LIBRA_CGROUP_SUBSYSTEMS=${LIBRA_CGROUP_SUBSYSTEMS:="cpu,cpuacct,memory,net_cls,freezer"}
 
 CGROUP_RULES_FILE=${CGROUP_RULES_FILE:="/etc/cgrules.conf"}
+
+#
+# List the libra guest users
+#
+libra_users() {
+    grep 'libra guest' /etc/passwd | cut -d: -f1
+}
 
 #
 # Create a new libra user cgroup
@@ -94,12 +101,12 @@ start() {
     add_cgroup # defaults to creating the root group
 
     # This won't scale forever, but works fine in the '100 or so' range
-    for USERNAME in `grep 'libra guest' /etc/passwd | cut -d: -f1`
+    for USERNAME in `libra_users`
     do
 	add_cgroup $USERNAME
 	RETVAL=$?
-	# CHECK
 
+	# CHECK: don't trust old rules
 	if ( cgroup_rule_exists $USERNAME )
 	then
 	    delete_cgroup_rule $USERNAME
@@ -130,7 +137,7 @@ start() {
 stop() {
     echo "Stopping Libra cgroups: "
     # This won't scale forever, but works fine in the '100 or so' range
-    for USERNAME in `grep 'libra guest' /etc/passwd | cut -d: -f1`
+    for USERNAME in `libra_users`
     do
 	# kill any processes owned by these users
 	pkill -u $USERNAME
@@ -165,22 +172,7 @@ restart() {
     start
 }
 
-case "$1" in
-  start)
-    start
-    ;;
-  stop) 
-    stop
-    ;;
-  restart|force-reload)
-    restart
-    ;;
-  reload)
-    ;;
-  condrestart)
-    [ -f "$lockfile" ] && restart
-    ;;
-  status)
+status() {
     echo "Checking Libra Services: "
 
     # check that the /libra cgroup exists
@@ -191,11 +183,11 @@ case "$1" in
     do
 	# check that /libra/<username> exists
 	SUBSYSTEMS=`cgroup_user_subsystems`
-	if (cgroup_rule_exists $USERNAME)
+	if ( cgroup_rule_exists $USERNAME )
         then 
             BOUND="BOUND"
         else
-            BOUNT="UNBOUND"
+            BOUND="UNBOUND"
         fi
 
 	echo "${USERNAME}: $BOUND	" `echo $SUBSYSTEMS | tr ' ' ,`
@@ -213,6 +205,26 @@ case "$1" in
     done
     echo
     return $GROUP_RETVAL
+}
+
+
+case "$1" in
+  start)
+    start
+    ;;
+  stop) 
+    stop
+    ;;
+  restart|force-reload)
+    restart
+    ;;
+  reload)
+    ;;
+  condrestart)
+    [ -f "$lockfile" ] && restart
+    ;;
+  status)
+    status
     ;;
   *)
     echo $"Usage: $0 {start|stop|status|restart|reload|force-reload|condrestart}"

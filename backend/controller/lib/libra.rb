@@ -16,7 +16,11 @@ module Libra
     if action == 'configure'
       throw :app_already_exists if user.app_info(app_name)
     else
-      throw :app_does_not_exist unless user.app_info(app_name)
+      if action == 'deconfigure'
+        puts "app not found, attempting to remove anyway..." unless user.app_info(app_name)
+      else
+        throw :app_does_not_exist unless user.app_info(app_name)
+      end
     end
 
     # Find the next available server
