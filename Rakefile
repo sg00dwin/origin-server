@@ -81,6 +81,7 @@ end
 task :install_server do
     mkdir_p MCOLLECTIVE_DIR
     cp "backend/mcollective/libra.ddl", MCOLLECTIVE_DIR
+    cp "backend/mcollective/update_yaml.pp", MCOLLECTIVE_DIR/../../
 
     mkdir_p BIN_DIR
     Dir.glob("#{C_DIR}/bin/*").each do |script|

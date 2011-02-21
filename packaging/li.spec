@@ -179,6 +179,7 @@ fi
 %files server
 %defattr(-,root,root,-)
 %{_libexecdir}/mcollective/mcollective/agent/libra.ddl
+%{_libexecdir}/mcollective/update_yaml.pp
 %{_bindir}/rhc-capacity
 %{_bindir}/rhc-new-user
 %{_bindir}/mc-rhc-cartridge-do
