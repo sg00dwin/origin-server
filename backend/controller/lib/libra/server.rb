@@ -156,6 +156,13 @@ EOF
       @repos
     end
 
+    # 
+    # Returns the requested fact
+    #
+    def get_fact_direct(fact)
+        Helper.rpc_get_fact_direct(fact, self.name)
+    end
+
     #
     # Clears out any cached data
     #
