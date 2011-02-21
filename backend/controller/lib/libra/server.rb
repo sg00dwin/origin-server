@@ -74,6 +74,40 @@ module Libra
     end
 
     #
+    # Add a DNS entry for new app
+    #
+    def self.nsupdate_add(application, namespace, public_ip)
+      host = "#{application}.#{namespace}"
+      nsupdate_input_template = <<EOF
+"server #{@@config[:resolver]}
+zone #{@@config[:libra_domain]}
+update delete #{host}.#{@@config[:libra_domain]}
+update add #{host}.#{@@config[:libra_domain]} 60 A #{public_ip}
+send"
+EOF
+      nsupdate_string = eval nsupdate_input_template
+      puts "DEBUG: server.rb:self.nsupdate_add nsupdate_input_template: #{nsupdate_input_template}" if Libra.c[:rpc_opts][:verbose]
+      IO.popen("/usr/bin/nsupdate -L0 -v -y '#{@@config[:secret]}'", 'w'){ |io| io.puts nsupdate_string }
+    end
+
+    #
+    # Remove a DNS entry for a deleted app
+    #
+    def self.nsupdate_del(application, namespace, public_ip)
+      host = "#{application}.#{namespace}"
+      nsupdate_input_template = <<EOF
+"server #{@@config[:resolver]}
+zone #{@@config[:libra_domain]}
+update delete #{host}.#{@@config[:libra_domain]}
+send"
+EOF
+      nsupdate_string = eval nsupdate_input_template
+      puts "DEBUG: server.rb:self.nsupdate_del nsupdate_input_template: #{nsupdate_input_template}" if Libra.c[:rpc_opts][:verbose]
+      IO.popen("/usr/bin/nsupdate -L0 -v -y '#{@@config[:secret]}'", 'w'){ |io| io.puts nsupdate_string }
+    end
+
+
+    #
     # Configures the user on this server
     #
     def create_user(user)

@@ -37,6 +37,12 @@ module Libra
 
     # Configure the app on the server using a framework cartridge
     server.execute(framework, action, app_name, user)
+
+    # update DNS
+    public_ip = Helper.rpc_get_fact_direct('public_ip', server.name)
+    Server.nsupdate_add(app_name, user.username, public_ip) if action == 'configure'
+    Server.nsupdate_del(app_name, user.username, public_ip) if action == 'deconfigure'
+    
     user.create_app(app_name, framework) if action == 'configure'
     user.delete_app(app_name) if action == 'deconfigure'
   end
