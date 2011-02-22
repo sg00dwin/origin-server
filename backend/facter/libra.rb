@@ -45,6 +45,13 @@ Facter.add(:public_ip) do
 end
 
 #
+# Get sshfp record
+#
+Facter.add(:sshfp) do
+    setcode { %x[/usr/bin/ssh-keygen -r $(hostname) -f /etc/ssh/ssh_host_rsa_key]}
+end
+
+#
 # Lists customers on the host as well as what what git repos they currently own
 #
 if File.exists?("/var/lib/libra")
