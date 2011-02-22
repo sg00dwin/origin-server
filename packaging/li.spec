@@ -198,6 +198,7 @@ fi
 %{gemdir}/gems/li-controller-%{version}
 %{gemdir}/bin/mc-rhc-cartridge-do
 %{gemdir}/bin/rhc-new-user
+%{gemdir}/bin/rhc-get-user-info
 %{gemdir}/bin/rhc-capacity
 %{gemdir}/cache/li-controller-%{version}.gem
 %{gemdir}/doc/li-controller-%{version}
