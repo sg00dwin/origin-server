@@ -16,7 +16,7 @@ function my_exec($cmd, $input='')
                       );
          }
 
-$results = my_exec("/usr/bin/rhc-user-info -u $username $flags", $out);
+$results = my_exec("/usr/bin/rhc-get-user-info -u $username $flags", $out);
 
 if($results['return'] != 0) {
     header('HTTP/1.1 500 Internal Server Error', 500);
