@@ -326,7 +326,7 @@ else
 Host #{my_url}
     User #{uuid}
     IdentityFile ~/.ssh/libra_id_rsa
-    # This will eventually be replaced with sshfp
+    VerifyHostKeyDNS yes
     StrictHostKeyChecking no
     PasswordAuthentication no
 
