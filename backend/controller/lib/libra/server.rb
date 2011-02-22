@@ -112,7 +112,8 @@ EOF
     #
     def create_user(user)
       # Make the call to configure the user
-      execute_internal(@@C_CONTROLLER, 'configure', "-c #{user.uuid} -e #{user.email} -s #{user.ssh}")
+      #execute_internal(@@C_CONTROLLER, 'configure', "-c #{user.uuid} -e #{user.email} -s #{user.ssh}")
+      execute_direct(@@C_CONTROLLER, 'configure', "-c #{user.uuid} -e #{user.email} -s #{user.ssh}")
     end
 
     #
@@ -143,6 +144,18 @@ EOF
       end
     end
 
+
+    #
+    # Execute cartridge directly on a node
+    #
+    def execute_direct(cartridge, action, args)
+        mc_args = { :cartridge => cartridge,
+                    :action => action,
+                    :args => args }
+        rpc_client = Helper.rpc_exec_direct('libra')
+        rpc_client.custom_request('cartridge_do', mc_args, {'identity' => self.name})
+    end
+
     #
     # Returns the number of repos that the server has
     # looking it up if needed
@@ -154,6 +167,13 @@ EOF
       end unless @repos
 
       @repos
+    end
+
+    # 
+    # Returns the requested fact
+    #
+    def get_fact_direct(fact)
+        Helper.rpc_get_fact_direct(fact, self.name)
     end
 
     #

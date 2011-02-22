@@ -10,7 +10,7 @@ Instantiate and setup the image (starting with an ami name (Ex: ami-f4e3109d)):
 1) Run "ec2-run-instances ami-f4e3109d -t m1.large" and get the instance id from the output (Ex: i-6347070d).  If you need less power you can use t1.micro (~.02 per hour (micro) vs. ~.34 per hour (large)).  We are working to get m1.small working.
 2) Run "ec2-describe-instances i-6347070d" and get the external name from the output after the ami id (Ex:  ec2-50-17-87-119.compute-1.amazonaws.com)
 3) Copy libra.pem from /li/docs/libra to the current dir and run "chmod 600 libra.pem"
-4) In another terminal run on the local machine run "cat .ssh/libra_id_rsa.pub" or pick some other public key you want to use.  Copy just the key between ssh-rsa and the identifier at the end to use in step 6)
+4) In another terminal run on the local machine run "cat .ssh/libra_id_rsa.pub" or pick some other public key you want to use.  Copy just the key between ssh-rsa and the identifier at the end to use in step 7)
 5) Log into the new instance with "ssh -i libra.pem root@ec2-50-17-87-119.compute-1.amazonaws.com"
 6) vi /etc/libra/node.conf and add the line 
 limits_nproc=100
@@ -32,8 +32,9 @@ Host li.<userid>.rhcloud.com
 2) From your local git li repo run "git push ssh://<user uuid>@li.<userid>.rhcloud.com/var/lib/libra/<user uuid>/git/li.git master" and you should be able to see the source pushed to http://li.<userid>.rhcloud.com/
 3) From the root of the li repo run cp ./client/client.conf ~/.li
 4) edit ~./li and change "li_server = 'lidemo.mcgrath.rhcloud.com'" to "li_server = 'li.<userid>.rhcloud.com'"
-5) rhc-create-app -u <userid> -a <appname> -r <app folder> -t php-5.3.2 -b
-6) You can now browse to http://<appname>.<userid>.rhcloud.com/
+5) add a line <userid>=<user uuid>
+6) rhc-create-app -u <userid> -a <appname> -r <app folder> -t php-5.3.2 -b
+7) You can now browse to http://<appname>.<userid>.rhcloud.com/
 
 You can delete an instance with:
 ec2-terminate-instances <instance_id>

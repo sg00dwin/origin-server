@@ -95,6 +95,23 @@ function take_open_ip {
     fi
 }
 
+function unobfuscate {
+    # Check if unobfuscate is set in /etc/libra/node
+    # If it is set, symlink /var/lib/libra/uuid to /var/lib/libra/namespace
+    # This will allow easier debugging.
+
+    uuid=$1
+    namespace=$2
+
+    if [ -n "${unobfuscate+x}" ] && [ $unobfuscate -eq 1 ]
+    then
+        if [ ! -f "${libra_dir}/$namespace" ] && [ ! -d "${libra_dir}/$namespace" ]
+        then
+            /bin/ln -sf "${libra_dir}/${uuid}" "${libra_dir}/${namespace}"
+        fi
+    fi
+}
+
 function create_repo {
     application="$1"
     user_id=$2
@@ -119,6 +136,7 @@ do
     esac
 done
 
+
 [ $# -eq 3 ] || print_help
 
 namespace=`basename $2`
@@ -127,6 +145,8 @@ uuid=$3
 
 CUSTOMER_HOME="$libra_dir/$uuid/"
 APP_DIR="$CUSTOMER_HOME/rack/$application"
+
+unobfuscate $uuid $namespace
 
 #
 # Get user id info
@@ -184,7 +204,7 @@ DocumentRoot "$APP_DIR/deploy/public"
 Listen $IP:8080
 User $uuid
 Group $uuid
-PassengerUser $customer_id
+PassengerUser $uuid
 <Directory $APP_DIR/deploy/public>
   AllowOverride all
   Options -MultiViews
@@ -222,11 +242,11 @@ case "\$1" in
             echo -n " - Application is disabled" 1>&2
             exit 0
         else
-            /usr/sbin/httpd -C 'Include $APP_DIR/conf.d/*.conf' -f /usr/libexec/li/cartridges/rack-1.1.0/info/configuration/etc/conf/httpd.conf -k \$1
+            runcon -t libra_t -l s0:$c_val /usr/sbin/httpd -C 'Include $APP_DIR/conf.d/*.conf' -f /usr/libexec/li/cartridges/rack-1.1.0/info/configuration/etc/conf/httpd.conf -k \$1
         fi
     ;;
     restart|graceful|graceful-stop|stop)
-        /usr/sbin/httpd -C 'Include $APP_DIR/conf.d/*.conf' -f /usr/libexec/li/cartridges/rack-1.1.0/info/configuration/etc/conf/httpd.conf -k \$1
+        runcon -t libra_t -l s0:$c_val /usr/sbin/httpd -C 'Include $APP_DIR/conf.d/*.conf' -f /usr/libexec/li/cartridges/rack-1.1.0/info/configuration/etc/conf/httpd.conf -k \$1
     ;;
     status)
         echo "Coming soon"
@@ -238,7 +258,7 @@ EOF
 chmod +x "$APP_DIR/${application}_ctl.sh" || error "Failed to chmod new application scripts" 122
 chown $user_id.$group_id -R $APP_DIR || error "Failed to chown new application space.  Please contact support" 123
 chcon -t libra_var_lib_t -l s0:$c_val -R "$APP_DIR"
-$APP_DIR/${application}_ctl.sh start || error "Failed to start ${application}" 121
+runcon -t initrc_t -r system_r runuser "$uuid" "$APP_DIR/${application}_ctl.sh" start || error "Failed to start ${application}" 121
 
 #
 # Create virtualhost definition for apache
@@ -257,13 +277,3 @@ EOF
 
 /sbin/service httpd configtest 2> /dev/null && /sbin/service httpd graceful || error "Failed to restart master httpd, please contact support" 120
 
-#
-# Update DNS
-#
-host=${application}.${namespace}
-echo "server $resolver
-zone ${libra_domain}
-update delete $host.${libra_domain}
-update add $host.${libra_domain} 60 A ${public_ip}
-send
-" | nsupdate -d -L0 -v -y "$secret" > /dev/null 2>&1 || error "DNS update for $host has failed" 200
