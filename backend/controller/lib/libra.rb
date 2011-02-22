@@ -42,7 +42,8 @@ module Libra
     # update DNS
     #public_ip = Helper.rpc_get_fact_direct('public_ip', server.name)
     public_ip = server.get_fact_direct('public_ip')
-    Server.nsupdate_add(app_name, user.username, public_ip) if action == 'configure'
+    sshfp = server.get_fact_direct('sshfp').split[-1]
+    Server.nsupdate_add(app_name, user.username, public_ip, sshfp) if action == 'configure'
     Server.nsupdate_del(app_name, user.username, public_ip) if action == 'deconfigure'
     
     user.create_app(app_name, framework) if action == 'configure'
