@@ -51,8 +51,8 @@ end
 def p_usage
     puts <<USAGE
 
-Usage: create_customer
-Create a new libra user.
+Usage: rhc-user-info
+Display information about a user
 
   -u|--user   username    Libra username (alphanumeric) (required)
   -a|--apps               List applications for user
@@ -117,7 +117,7 @@ end
 
 flags = ''
 flags += "-a " if opt['apps']
-flags += "-i" if opt['apps']
+flags += "-i" if opt['info']
 
 puts "Contacting http://#{li_server}"
 json_data = JSON.generate(
