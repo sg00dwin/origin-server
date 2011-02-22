@@ -103,7 +103,7 @@ function unobfuscate {
     uuid=$1
     namespace=$2
 
-    if [ $unobfuscate -eq 1 ]
+    if [ -n "${unobfuscate+x}" ] && [ $unobfuscate -eq 1 ]
     then
         if [ ! -f "${libra_dir}/$namespace" ] && [ ! -d "${libra_dir}/$namespace" ]
         then
@@ -204,7 +204,7 @@ DocumentRoot "$APP_DIR/deploy/public"
 Listen $IP:8080
 User $uuid
 Group $uuid
-PassengerUser $customer_id
+PassengerUser $uuid
 <Directory $APP_DIR/deploy/public>
   AllowOverride all
   Options -MultiViews
