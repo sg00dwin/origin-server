@@ -3,7 +3,7 @@
 
 Name: li
 Version: 0.28
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -98,6 +98,17 @@ BuildArch: noarch
 
 %description cartridge-rack-1.1.0
 Provides rack support to li
+
+%package wsgi-3.2.1
+Summary: Provides php-wsgi-3.2.1 support
+Group: Development/Languages
+Requires: li-node
+Requires: httpd
+Requires: mod_wsgi = 3.2.1
+BuildArch: noarch
+
+%description wsgi-3.2.1
+Provides wsgi support to li
 
 %prep
 %setup -q
@@ -201,9 +212,14 @@ fi
 %defattr(-,root,root,-)
 %{_libexecdir}/li/cartridges/rack-1.1.0/
 
+%files cartridge-wsgi-3.2.1
+%defattr(-,root,root,-)
+%{_libexecdir}/li/cartridges/wsgi-3.2.1
+
 %changelog
-* Tue Feb 22 2011 Mike McGrath <mmcgrath@redhat.com> 0.28-1
+* Tue Feb 22 2011 Mike McGrath <mmcgrath@redhat.com> 0.28-2
 - Upstream released new version
+- Added wsgi
 
 * Mon Feb 21 2011 Mike McGrath <mmcgrath@redhat.com> 0.27-1
 - Added restorecon bits
