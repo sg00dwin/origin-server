@@ -1,7 +1,6 @@
 <?php
 
 $data = json_decode($_POST['json_data']);
-$flags = escapeshellarg(filter_var($data->{'flags'}, FILTER_SANITIZE_EMAIL, FILTER_FLAG_STRIP_LOW));
 $username = escapeshellarg(filter_var($data->{'username'}, FILTER_SANITIZE_STRING));
 
 function my_exec($cmd, $input='')
@@ -16,7 +15,7 @@ function my_exec($cmd, $input='')
                       );
          }
 
-$results = my_exec("/usr/bin/rhc-get-user-info -u $username $flags", $out);
+$results = my_exec("/usr/bin/rhc-get-user-info -u $username", $out);
 
 if($results['return'] != 0) {
     header('HTTP/1.1 500 Internal Server Error', 500);
