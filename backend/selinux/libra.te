@@ -58,6 +58,8 @@ corenet_tcp_connect_mysqld_port(libra_t)
 corenet_tcp_connect_http_port(libra_t)
 corenet_tcp_connect_amqp_port(libra_t)
 corenet_tcp_connect_generic_port(libra_t)
+corenet_udp_bind_generic_port(libra_t)
+dev_read_rand(libra_t)
 
 files_read_usr_files(libra_t)
 
