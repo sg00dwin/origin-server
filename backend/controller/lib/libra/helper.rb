@@ -78,6 +78,7 @@ module Libra
     # This is significantly faster then the get_facts method
     # If multiple nodes of the same name exist, it will pick just one
     #
+
     def self.rpc_get_fact_direct(fact, node)
         options = rpc_options
         util = rpcclient("rpcutil", :options => options)
@@ -110,6 +111,17 @@ module Libra
       end
 
       result
+    end
+
+    #
+    # Execute direct rpc call directly against a node
+    # If more then one node exists, just pick one
+    def self.rpc_exec_direct(agent)
+        Libra.c[:rpc_opts][:progress_bar] = false
+        options = rpc_options
+        rpc_client = rpcclient(agent, :options => options)
+        Libra.c[:logger].debug("rpc_exec: rpc_client=#{rpc_client}")
+        rpc_client 
     end
   end
 end

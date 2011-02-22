@@ -112,7 +112,8 @@ EOF
     #
     def create_user(user)
       # Make the call to configure the user
-      execute_internal(@@C_CONTROLLER, 'configure', "-c #{user.uuid} -e #{user.email} -s #{user.ssh}")
+      #execute_internal(@@C_CONTROLLER, 'configure', "-c #{user.uuid} -e #{user.email} -s #{user.ssh}")
+      execute_direct(@@C_CONTROLLER, 'configure', "-c #{user.uuid} -e #{user.email} -s #{user.ssh}")
     end
 
     #
@@ -141,6 +142,18 @@ EOF
           raise CartridgeException, output if return_code != 0
         end
       end
+    end
+
+
+    #
+    # Execute cartridge directly on a node
+    #
+    def execute_direct(cartridge, action, args)
+        mc_args = { :cartridge => cartridge,
+                    :action => action,
+                    :args => args }
+        rpc_client = Helper.rpc_exec_direct('libra')
+        rpc_client.custom_request('cartridge_do', mc_args, {'identity' => self.name})
     end
 
     #
