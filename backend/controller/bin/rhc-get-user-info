@@ -1,0 +1,68 @@
+#!/usr/bin/ruby
+
+require 'rubygems'
+require 'libra'
+require 'mcollective'
+require 'json'
+
+include MCollective::RPC
+include Libra
+
+options = rpcoptions do |parser, options|
+    parser.define_head "Create a new user"
+    parser.banner = "Usage: mc-libra [options]"
+
+    parser.on('-u', '--username USERNAME', "The unique username") do |username|
+      options[:username] = username
+    end
+end
+
+# Set the MCollective options
+Libra.c[:rpc_opts] = options
+
+# Check if user already exists
+user = User.find(options[:username])
+#json_return = JSON.generate({
+#                        :username => user.username,
+#                        :uuid => user.uuid
+#                        })
+#
+#puts json_return
+user_info = {
+    :username => user.username,
+    :email => user.email,
+    :ssh_key => user.ssh,
+    :uuid => user.uuid
+}
+app_info = {}
+user.apps.each do |key, app|
+    app_info["#{key}.#{user.username}"] = {
+        :framework => app['framework'],
+        :creation_time => app['creation_time']
+    }
+end
+
+json_return = JSON.generate({
+    :user_info => user_info,
+    :app_info => app_info
+})
+
+puts json_return
+#if user
+#  if options[:info]
+#    puts "Username: #{user.username}"
+#    puts "Email: #{user.email}"
+#    puts "SSH key: #{user.ssh}"
+#    puts "UUID: #{user.uuid}"
+#  end
+#  if options[:apps]
+#    user.apps.each do |key, app|
+#      puts "#{key}.#{user.username}"
+#      puts "    Framework: #{app['framework']}"
+#      puts "    Creation: #{app['creation_time']}"
+#    end
+#  end
+#else
+#  puts "User could not be found"
+#  exit 253
+#end
