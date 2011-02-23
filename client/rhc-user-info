@@ -49,12 +49,13 @@ end
 # print help
 #
 def p_usage
+    username = @local_config.get_value('default_user') ? "Default: #{@local_config.get_value('default_user')}" : "(required)"
     puts <<USAGE
 
 Usage: rhc-user-info
 Display information about a user
 
-  -u|--user   username    Libra username (alphanumeric) (required)
+  -u|--user   username    Libra username (alphanumeric) (#{username})
   -a|--apps               List applications for user
   -i|--info               Show user info
   -d|--debug              Print Debug info
@@ -105,6 +106,8 @@ if opt["debug"]
     debug = true
 end
 
+opt["user"] = @local_config.get_value('default_user') unless opt["user"]
+
 if opt["user"]
     if opt["user"] =~ /[^0-9a-zA-Z]/
         puts "username contains non-alphanumeric characters!"
@@ -135,6 +138,15 @@ if debug
     puts "HTTP response from server is #{response.body}"
 end
 user_info = JSON.parse(json_resp['stdout'].to_s)
+
+if user_info['user_info']['uuid'] != @local_config.get_value(opt["user"])
+    puts
+    puts "WARNING!  The UUID in your ~/.li file is either missing or incorrect."
+    puts "Please ensure the following line exists in ~/.li"
+    puts
+    puts "#{opt['user']}=#{user_info['user_info']['uuid']}"
+    puts
+end
 
 if opt['info']
     puts "User Info"
