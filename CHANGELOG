@@ -17,3 +17,4 @@
     * Client tools now store username and uuid in ~/.li
     * Client tools now store default username in ~/.li
     * SELinux policy updated to fix ~/.ssh contexts
+
