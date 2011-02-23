@@ -162,11 +162,11 @@ group_id=$(id -g "$uuid") || error "Could not find user $uuid ($namespace)" 135
 create_repo $application $user_id $group_id
 
 cat <<EOF > $CUSTOMER_HOME/git/$application.git/hooks/post-receive
-rm -rf $APP_DIR/deploy/*
+###rm -rf $APP_DIR/deploy/*
 git archive --format=tar HEAD | (cd $APP_DIR/deploy && tar xf -)
 
-# Reload passenger
-mkdir $APP_DIR/deploy/tmp
+# Reload wsgi
+###mkdir $APP_DIR/deploy/tmp
 touch $APP_DIR/deploy/tmp/restart.txt
 EOF
 chmod 0750 $CUSTOMER_HOME/git/$application.git/hooks/post-receive
@@ -179,7 +179,7 @@ chmod 0750 $CUSTOMER_HOME/git/$application.git/hooks/post-receive
 
 mkdir -p "$APP_DIR"
 pushd "$APP_DIR" > /dev/null
-mkdir conf conf.d logs run deploy deploy/public
+mkdir conf conf.d logs run deploy deploy/public deploy/tmp
 ln -s /usr/lib64/httpd/modules modules
 ln -s /etc/httpd/conf/magic conf/magic
 
@@ -203,7 +203,7 @@ DocumentRoot "$APP_DIR/deploy/public"
 Listen $IP:8080
 User $uuid
 Group $uuid
-PassengerUser $customer_id
+PassengerUser $uuid
 <Directory $APP_DIR/deploy/public>
   AllowOverride all
   Options -MultiViews
