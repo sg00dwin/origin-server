@@ -115,14 +115,9 @@ else
     p_usage
 end
 
-flags = ''
-flags += "-a " if opt['apps']
-flags += "-i" if opt['info']
-
 puts "Contacting http://#{li_server}"
 json_data = JSON.generate(
-                {'username' => opt['user'],
-                'flags' => flags})
+                {'username' => opt['user']})
 puts "DEBUG: Json string: #{json_data}" if debug
 response = Net::HTTP.post_form(URI.parse("http://#{li_server}/php/user_info.php"),
                            {'json_data' => json_data,})
