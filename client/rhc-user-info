@@ -130,14 +130,38 @@ puts "DEBUG:" if debug
 p response if debug
 json_resp = JSON.parse(response.body);
 
-if json_resp['return'].to_s.strip == "0"
-    if debug
-        puts "HTTP response from server is #{response.body}"
-    end
-    puts json_resp['stdout'].to_s
-    exit 0
-else
+unless json_resp['return'].to_s.strip == "0"
     puts "Problem with server. Response code was #{response.code}"
     puts "HTTP response from server is #{response.body}"
     exit 255
 end
+
+if debug
+    puts "HTTP response from server is #{response.body}"
+end
+user_info = JSON.parse(json_resp['stdout'].to_s)
+
+if opt['info']
+    puts "User Info"
+    puts "========="
+    puts "Username: #{user_info['user_info']['username']}"
+    puts "    UUID: #{user_info['user_info']['uuid']}"
+    puts "   email: #{user_info['user_info']['email']}"
+    puts " ssh_key: #{user_info['user_info']['ssh_key']}"
+end
+
+if opt['apps']
+    puts "\n\n" if opt['info']
+
+    puts "Application Info"
+    puts "================"
+    user_info['app_info'].each do |key, val|
+        puts key
+        puts "  Framework: #{val['framework']}"
+        puts "  Creation: #{val['creation_time']}"
+        puts ""
+    end
+    
+end
+
+exit 0
