@@ -299,12 +299,23 @@ if [ -z "$REVERT" ]
 then
     create_user_account $username
 
+    if (service cgconfig status > /dev/null )
+    then
+	service libra-cgroups startuser ${username} > /dev/null
+    fi
+
     configure_user_account $username $email
 
     enable_user_ssh_access $username $email "$ssh_key"
 
     limit_user_account $username
+
 else
+    if (service cgconfig status > /dev/null)
+    then
+	service libra-cgroups stopuser ${username} > /dev/null
+    fi
+
     remove_user_limits $username
     
     remove_user_account $username

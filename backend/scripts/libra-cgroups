@@ -94,33 +94,59 @@ delete_cgroup_rule() {
     sed -i -e "/^$1\s/d" ${CGROUP_RULES_FILE}
 }
 
+startuser() {
+    NEWUSER=$1
+
+    echo -n "starting cgroups for $NEWUSER..."
+
+    add_cgroup $NEWUSER
+    if [ $? != 0 ]
+    then
+	RETVAL=$?
+    fi
+    
+    # CHECK: don't trust old rules
+    if ( cgroup_rule_exists $NEWUSER )
+    then
+	delete_cgroup_rule $NEWUSER
+    fi
+    add_cgroup_rule $NEWUSER
+    if [ $? != 0 ]
+    then
+	RETVAL=$?
+    fi
+	
+    if [ $RETVAL -eq 0 ]
+    then
+        echo_success
+    else
+        GROUP_RETVAL=$(($GROUP_RETVAL+1))
+        echo_failure
+    fi
+    echo
+}
+
+
 start() {
-    echo "Initializing Libra Guest Control Groups: "
+    echo "Initializing Libra guest control groups: "
+
+    if !(service cgconfig status >/dev/null)
+    then
+       RETVAL=1
+       GROUP_RETVAL=3
+       echo "cgconfig service not running"
+
+       return $GROUP_RETVAL
+    fi
 
     # create the root of the libra user control group
     add_cgroup # defaults to creating the root group
+    RETVAL=$?
 
     # This won't scale forever, but works fine in the '100 or so' range
     for USERNAME in `libra_users`
     do
-	add_cgroup $USERNAME
-	RETVAL=$?
-
-	# CHECK: don't trust old rules
-	if ( cgroup_rule_exists $USERNAME )
-	then
-	    delete_cgroup_rule $USERNAME
-        fi
-        add_cgroup_rule $USERNAME
-	
-        echo
-        if [ $RETVAL -eq 0 ]
-        then
-            echo_success
-        else
-            GROUP_RETVAL=$(($GROUP_RETVAL+1))
-            echo_failure
-        fi
+	startuser $USERNAME
     done
 
     # kick the Cgroups rules daemon
@@ -134,32 +160,68 @@ start() {
     return $GROUP_RETVAL
 }
 
+
+stopuser() {
+    DELUSER=$1
+    echo -n "stopping cgroups for $DELUSER..."
+
+    # kill any processes owned by these users
+    pkill -u $DELUSER
+    
+    # remove the user's cgroup
+    delete_cgroup $DELUSER
+    if [ $? != 0 ]
+    then
+	RETVAL=$?
+    fi
+    
+    # remove the user's cgroup binding rule
+    delete_cgroup_rule $DELUSER
+    if [ $? != 0 ]
+    then
+	RETVAL=$?
+    fi
+
+    if [ $RETVAL -eq 0 ]
+    then
+        echo_success
+    else
+        GROUP_RETVAL=$(($GROUP_RETVAL+1))
+        echo_failure
+    fi
+}
+
 stop() {
-    echo "Stopping Libra cgroups: "
+    echo "Removing Libra guest control groups: "
+
+    if !(service cgconfig status >/dev/null)
+    then
+       RETVAL=1
+       GROUP_RETVAL=3
+       echo "cgconfig service not running"
+
+       return $GROUP_RETVAL
+    fi
+
     # This won't scale forever, but works fine in the '100 or so' range
     for USERNAME in `libra_users`
     do
-	# kill any processes owned by these users
-	pkill -u $USERNAME
-
-	# remove the user's cgroup
-	delete_cgroup $USERNAME
-
-	# remove the user's cgroup binding rule
-	delete_cgroup_rule $USERNAME
-
-        echo
-        if [ $RETVAL -eq 0 ]
-        then
-            echo_success
-        else
-            GROUP_RETVAL=$(($GROUP_RETVAL+1))
-            echo_failure
-        fi
+	stopuser $USERNAME
     done
 
     # notify the cgroup rule daemon
     service cgred reload
+
+    # remove the libra root cgroup
+    delete_cgroup
+
+    if [ $RETVAL -eq 0 ]
+    then
+        echo_success
+    else
+        GROUP_RETVAL=$(($GROUP_RETVAL+1))
+        echo_failure
+    fi
 
     [ $GROUP_RETVAL -eq 0 ] && touch ${lockfile}
     echo -n $"Libra cgroups uninitialized"
@@ -175,26 +237,33 @@ restart() {
 status() {
     echo "Checking Libra Services: "
 
+    if [ -z "$1" ]
+    then
+	USERLIST=`libra_users`
+    else
+        USERLIST=$1
+    fi
+
     # check that the /libra cgroup exists
 
     # This won't scale forever, but works fine in the '100 or so' range
     #  would be easy to convert to a 'in `find...`'     jj
-    for USERNAME in `grep 'libra guest' /etc/passwd | cut -d: -f1`
+    for USERNAME in $USERLIST
     do
 	# check that /libra/<username> exists
 	SUBSYSTEMS=`cgroup_user_subsystems`
 	if ( cgroup_rule_exists $USERNAME )
-        then 
+        then
+	    RETVAL=0
             BOUND="BOUND"
         else
+	    RETVAL=1
             BOUND="UNBOUND"
         fi
 
-	echo "${USERNAME}: $BOUND	" `echo $SUBSYSTEMS | tr ' ' ,`
+	echo -n "${USERNAME}: $BOUND	" `echo $SUBSYSTEMS | tr ' ' ,`
 	# check that cgrule exists
 
-        RETVAL=$?
-        echo
         if [ $RETVAL -eq 0 ]
         then
             echo_success
@@ -202,8 +271,8 @@ status() {
             GROUP_RETVAL=$(($GROUP_RETVAL+1))
             echo_failure
         fi
+	echo
     done
-    echo
     return $GROUP_RETVAL
 }
 
@@ -212,22 +281,47 @@ case "$1" in
   start)
     start
     ;;
+
   stop) 
     stop
     ;;
-  restart|force-reload)
+
+  restart|force-reload|reload)
     restart
     ;;
-  reload)
-    ;;
+
   condrestart)
     [ -f "$lockfile" ] && restart
     ;;
+
   status)
-    status
+    status $2
     ;;
+
+  startuser)
+    if (service cgconfig status >/dev/null)
+    then
+	startuser $2
+	service cgred reload
+    else
+	RETVAL=1
+	echo "cgconfig service not running"
+    fi
+    ;;
+
+  stopuser)
+    if (service cgconfig status >/dev/null)
+    then
+	stopuser $2
+	service cgred reload
+    else
+	RETVAL=1
+	echo "cgconfig service not running"
+    fi
+    ;;
+
   *)
-    echo $"Usage: $0 {start|stop|status|restart|reload|force-reload|condrestart}"
+    echo $"Usage: $0 {start|stop|status|restart|reload|force-reload|condrestart|startuser <username>|stopuser <username>}"
     exit 1
 esac
 
