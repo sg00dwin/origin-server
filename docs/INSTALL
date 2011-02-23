@@ -31,6 +31,9 @@ automatically generated)
 Prereqs
 =======
 
+You'll need access to RHEL6, RHEL6-optional and EPEL packages.  If you're on ec2
+follow the steps below.  If you're building locally, you'll need RHEL entitlements.
+
 Make sure you have the optional and epel repos enabled:
 rpm -Uhv http://download.fedora.redhat.com/pub/epel/beta/6/x86_64/epel-release-6-5.noarch.rpm
 rpm -e rh-amazon-rhui-client
