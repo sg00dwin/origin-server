@@ -23,11 +23,7 @@ require "getoptlong"
 require 'resolv'
 require 'json'
 require 'parseconfig'
-
-TYPES = { "php-5.3.2" => :php,
-          "rack-1.1.0" => :rack,
-          "wsgi-3.2.1" => :wsgi
-        }
+require File.dirname($0) + '/rhc-common'
 
 config_path = File.exists?('client.conf') ? 'client.conf' : '/etc/libra/client.conf'
 
@@ -63,15 +59,7 @@ end
 
 def p_usage
     username = @local_config.get_value('default_user') ? "Default: #{@local_config.get_value('default_user')}" : "(required)"
-    i = 1
-    type_keys = ''
-    TYPES.each_key do |key|
-        type_keys += key
-        if i < TYPES.size
-            type_keys += ', '
-        end
-        i += 1
-    end    
+    type_keys = RHC::get_type_keys(', ')
     puts <<USAGE
 
 Usage: #{$0}
@@ -124,43 +112,18 @@ end
 
 opt["user"] = @local_config.get_value('default_user') unless opt["user"]
 
-if opt["user"]
-    if opt["user"] =~ /[^0-9a-zA-Z]/
-        puts "username contains non-alphanumeric characters!"
-        p_usage
-    end
-else
-    puts "Libra username is required"
+if !RHC::check_user(opt['user'])
+    p_usage
 end
 
-if opt["app"]
-    if opt["app"] =~ /[^0-9a-zA-Z]/
-        puts "application name contains non-alphanumeric characters!"
-        p_usage
-    end
-else
-    puts "Libra application name is required"
+if !RHC::check_app(opt['app'])
+    p_usage
 end
 
 
-if opt['type']    
-    if !(TYPES.has_key?(opt['type']))        
-        type_error = 'type must be '  
-        i = 1;
-        TYPES.each_key do |key|
-          type_error += key         
-          if i < TYPES.size
-            type_error += ' or '
-          end
-          i += 1
-        end
-        puts type_error
-        p_usage
-    else
-        @type = TYPES[opt["type"]]
-    end
-else
-    puts "Type is required"
+@type = RHC::get_type(opt['type'])
+if !@type  
+    p_usage
 end
 
 if !opt["user"] || !opt["app"] || !opt["type"]
