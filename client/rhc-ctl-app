@@ -63,7 +63,7 @@ Usage: #{$0}
 Control a libra app
 
   -a|--app   application  Application name  (alphanumeric) (required)
-  -t|--type  type         Type of app to operate on (php-5.3.2, rack-1.1.0) (required)
+  -t|--type  type         Type of app to operate on (php-5.3.2, rack-1.1.0, wsgi-3.2.1) (required)
   -u|--user  username     Libra username    (alphanumeric) (#{username})
   -c|--command command    (start|stop|restart|reload|status|destroy)
   -b|--bypass             Bypass warnings
@@ -127,8 +127,8 @@ else
 end
 
 if opt["type"]
-    if !(opt["type"] =~ /^(php-5.3.2|rack-1.1.0)$/)
-        puts "type must be php-5.3.2 or rack-1.1.0"
+    if !(opt["type"] =~ /^(php-5.3.2|rack-1.1.0|wsgi-3.2.1)$/)
+        puts "type must be php-5.3.2, rack-1.1.0 or wsgi-3.2.1"
         p_usage
     end
 else
