@@ -295,6 +295,9 @@ map '/lobster' do
 end
 RACKCONFIG
   f.close
+
+elsif (@type == :wsgi)
+  #placeholder
 end
 
 git = %x[git add *]
