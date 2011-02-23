@@ -158,6 +158,29 @@ EOF
     end
 
     #
+    # Execute an action on many nodes based by fact
+    #
+    def self.execute_many(cartridge, action, args, fact, value, operator="==")
+        options = Libra.c[:rpc_opts]
+        options[:filter]['fact'] = [{:value=>value, :fact=>fact, :operator=>operator}]
+        p options if Libra.c[:rpc_opts][:verbose]
+
+        Helper.rpc_exec('libra') do |client|
+        client.cartridge_do(:cartridge => cartridge,
+                            :action => action,
+                            :args => args) do |response|
+          return_code = response[:body][:data][:exitcode]
+          output = response[:body][:data][:output]
+
+          puts "DEBUG: server.rb:execute_internal return_code: #{return_code}" if Libra.c[:rpc_opts][:verbose]
+          puts "DEBUG: server.rb:execute_internal output: #{output}" if Libra.c[:rpc_opts][:verbose]
+
+          raise CartridgeException, output if return_code != 0
+        end
+      end
+    end
+
+    #
     # Returns the number of repos that the server has
     # looking it up if needed
     #
