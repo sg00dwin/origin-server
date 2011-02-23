@@ -221,21 +221,23 @@ f.close
 # Add our skeleton files
 #
 
-f = File.new("index.php", "w")
-f.puts <<HOMEPAGE
+welcome_message = <<-WELCOME
 <html><title>#{opt['app']}</title>
 <body>
 <h1>Welcome to libra</h1>
 <p>Place your application here</p>
 <p>In order to commit to your new project, go to your projects git repo (created with the create_http command).  Make your changes, then run:</p>
-<pre>git commit -a -m "Some commit message"
+<pre>git commit -a -m 'Some commit message'
 git push libra master</pre>
 <p>Then reload this page</p>
 </body>
 </html>
-HOMEPAGE
-f.close
+WELCOME
 
+if (opt["type"] == 'php-5.3.2')
+f = File.new("index.php", "w")
+f.puts("#{welcome_message}")
+f.close
 f = File.new("health_check.php", "w")
 f.puts <<HEALTH
 <?php
@@ -243,6 +245,31 @@ print 1;
 ?>
 HEALTH
 f.close
+elsif (opt["type"] == 'rack-1.1.0')
+f = File.new("config.ru", "w")
+f.puts <<RACKCONFIG
+require 'rack/lobster'
+
+map '/health' do
+  health = proc do |env|
+    [200, { "Content-Type" => "text/html" }, ["1"]]
+  end
+  run health
+end
+
+map '/' do
+  welcome = proc do |env|
+    [200, { "Content-Type" => "text/html" }, ["#{welcome_message}"]]
+  end
+  run welcome
+end
+
+map '/lobster' do
+  run Rack::Lobster.new
+end
+RACKCONFIG
+f.close
+end
 
 git = %x[git add *]
 
@@ -382,7 +409,14 @@ puts "Confirming application #{opt['app']} is available"
 while sleep_time < 65
     attempt+=1
     puts "  Attempt # #{attempt}"
-    response = Net::HTTP.get_response(URI.parse("http://#{my_url}/health_check.php"))
+    page = ''
+    if (opt['type'] == 'php-5.3.2')
+      page = 'health_check.php'
+    elsif (opt['type'] == 'rack-1.1.0')
+      page = 'health'
+    end
+    url = URI.parse("http://#{my_url}/#{page}")
+    response = Net::HTTP.get_response(url)
     if response.code == "200" && response.body[0,1] == "1"
         puts <<LOOKSGOOD
 
