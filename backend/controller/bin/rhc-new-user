@@ -54,6 +54,9 @@ if user
     user.email=options[:email]
     user.ssh=options[:ssh]
     user.update
+    Server.execute_many('li-controller-0.1', 'configure',
+        "-c #{user.uuid} -e #{user.email} -s #{user.ssh}",
+        "customer_#{user.username}", user.username)
   else
     puts "User already exists!  To overwrite or change, use --alter"
     exit 254
