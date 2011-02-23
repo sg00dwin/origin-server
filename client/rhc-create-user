@@ -54,8 +54,12 @@ def p_usage
 Usage: #{$0}
 Create a new libra user.
 
+  NOTE: to change ssh key, please alter your ~/.ssh/libra_id_rsa and
+        ~/.ssh/libra_id_rsa.pub key, then re-run with --alter
+
   -u|--user   username    Libra username (alphanumeric) (required)
   -e|--email  email       Email address (required)
+  -a|--alter              Alter existing user
   -d|--debug              Print Debug info
   -h|--help               Show Usage info
 
@@ -79,7 +83,8 @@ opts = GetoptLong.new(
     ["--debug", "-d", GetoptLong::NO_ARGUMENT],
     ["--help",  "-h", GetoptLong::NO_ARGUMENT],
     ["--user",  "-u", GetoptLong::REQUIRED_ARGUMENT],
-    ["--email", "-e", GetoptLong::REQUIRED_ARGUMENT]
+    ["--email", "-e", GetoptLong::REQUIRED_ARGUMENT],
+    ["--alter", "-a", GetoptLong::NO_ARGUMENT]
 )
 
 # Pull in configs from files
@@ -162,7 +167,8 @@ puts "Contacting http://#{li_server}"
 json_data = JSON.generate(
                 {'username' => opt['user'],
                 'email' => opt['email'],
-                'ssh' => ssh_key})
+                'ssh' => ssh_key,
+                'alter' => opt['alter']})
 puts "DEBUG: Json string: #{json_data}" if debug
 response = Net::HTTP.post_form(URI.parse("http://#{li_server}/php/create_customer.php"),
                            {'json_data' => json_data,})
