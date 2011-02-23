@@ -1,5 +1,7 @@
 # Rakefile for li-express
 #
+#
+
 require 'rbconfig'
 
 DEST_DIR = ENV["DESTDIR"] || "/"
