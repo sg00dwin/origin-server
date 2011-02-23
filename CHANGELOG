@@ -1,3 +1,6 @@
+2011-02-23 Mike McGrath <mmcgrath@redhat.com>
+    * rhc-create-user now allows alteration of user info and ssh keys
+
 2011-02-22 Mike McGrath <mmcgrath@redhat.com>
     * SSHFP is now enabled serverside and client side for DNS ssh verification
     * rhc-user-info now works correctly, uses json and does a UUID check (sends warning too)
