@@ -44,7 +44,7 @@ DEFAULT_LIMITS_NPROC=50 # this should be updated from node.conf
 #
 function print_help {
     echo "Usage: $0"
-    echo "  -c customer_id"
+    echo "  -c customer_uuid"
     echo "  -e email"
     echo "  -s ssh_pub_key"
     echo "  -d (optional: debug)"
