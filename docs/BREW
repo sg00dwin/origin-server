@@ -1,11 +1,25 @@
 Purpose: provide information on how to do brew builds.
 
-BASICS:
-=======
+BUILD BASICS:
+============
 cvs -d :gserver:cvs.devel.redhat.com:/cvs/dist co $pkg
 cd $pkg/RHEL-6-LIBRA
 make tag
 make build
+
+Import a new package
+====================
+
+To import a new package first you need the common module:
+
+cvs -d :gserver:cvs.devel.redhat.com:/cvs/dist co common
+
+Then cd common and run:
+
+./cvs-import.sh -b devel /path/to/srpm
+
+Next ask releng to create a RHEL-6-LIBRA branch for that package.  Then follow
+the directions in BUILD BASICS above.
 
 Brew hierarchy
 ==============
