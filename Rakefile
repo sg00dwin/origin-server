@@ -195,6 +195,11 @@ task :test_int do
     cd "../.."
 end
 
+desc "Create a brew build based on current info"
+task :brew_build => [:srpm] do
+
+end
+
 desc "Run the Libra sprint tests"
 task :test_sprint do
     cd C_DIR
