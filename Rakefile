@@ -213,6 +213,17 @@ task :brew_build => [:version, :buildroot, :srpm] do
     sh "make build"
 end
 
+desc "Build mash repo from latest li builds"
+task :mash do
+    if ! File.exists?("/etc/mash/li.mash")
+        puts
+        puts "Please install and configure mash.  Read docs/BREW for setup steps"
+        puts
+        exit 222
+    end
+    sh "/usr/bin/mash -o /tmp/li -c /etc/mash/li-mash.conf li"
+end
+
 desc "Run the Libra sprint tests"
 task :test_sprint do
     cd C_DIR
