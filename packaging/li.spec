@@ -101,10 +101,11 @@ Provides rack support to li
 
 
 %package cartridge-wsgi-3.2.1
-Summary: Provides php-wsgi-3.2.1 support
+Summary: Provides python-wsgi-3.2.1 support
 Group: Development/Languages
 Requires: li-node
 Requires: httpd
+Requires: python
 Requires: mod_wsgi = 3.2.1
 BuildArch: noarch
 
