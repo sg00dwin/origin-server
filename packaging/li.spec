@@ -2,7 +2,7 @@
 %define gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 
 Name: li
-Version: 0.29
+Version: 0.30
 Release: 1%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
@@ -225,6 +225,9 @@ fi
 %{_libexecdir}/li/cartridges/wsgi-3.2.1/
 
 %changelog
+* Thu Feb 24 2011 Mike McGrath <mmcgrath@redhat.com> 0.30-1
+- Prepping for a new release
+
 * Tue Feb 22 2011 Mike McGrath <mmcgrath@redhat.com> 0.29-1
 - Upstream released new version
 - Added wsgi
