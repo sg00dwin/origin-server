@@ -37,7 +37,6 @@ end
 #
 # Pull public_ip out of the node_data config
 #
-
 Facter.add(:public_ip) do
     config_file = ParseConfig.new('/etc/libra/node_data.conf')
     public_ip = config_file.get_value('public_ip') ? config_file.get_value('public_ip') : 'UNKNOWN'
@@ -64,12 +63,13 @@ if File.exists?("/var/lib/libra")
             end
         end
 
-#        if File.exists?("/var/lib/libra/#{customer}/git/")
-#            git_repos = Dir.glob("/var/lib/libra/#{customer}/git/*.git")
-#            Facter.add("git_#{customer}") do
-#                setcode do git_repos.join(',') end
-#            end
-#        end
+        # Repo counts for a customer
+        if File.exists?("/var/lib/libra/#{customer}/git/")
+            git_repos = Dir.glob("/var/lib/libra/#{customer}/git/*.git")
+            Facter.add("git_cnt_#{customer}") do
+                setcode do git_repos.size end
+            end
+        end
     end
 end
 

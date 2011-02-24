@@ -38,6 +38,18 @@ module Libra
 
       instances
     end
+    
+    #
+    # Validates number repos for a user is below the valid number of apps
+    #
+    def self.validate_repo_limit(uuid)
+      num_repos = 0;
+      Helper.rpc_get_fact("git_cnt_#{uuid}") do |server, repos|
+        num_repos += repos.to_i        
+      end
+      puts "DEBUG: server.rb:validate_repo_limit #{uuid}: #{num_repos.to_s}" if Libra.c[:rpc_opts][:verbose]
+      throw :repo_limit_exceeded unless num_repos < Libra.c[:per_user_app_limit]
+    end
 
     #
     # Returns the preferred available server.

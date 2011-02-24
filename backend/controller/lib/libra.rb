@@ -22,6 +22,8 @@ module Libra
         throw :app_does_not_exist unless user.app_info(app_name)
       end
     end
+    
+    Server.validate_repo_limit(user.uuid)
 
     # Find the next available server
     Libra.c[:rpc_opts][:disctimeout] = 1

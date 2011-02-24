@@ -39,6 +39,8 @@ module Libra
       # Optional configuration
       @@config[:aws_name] = fs_config.get_value('aws_name')
       @@config[:aws_environment] = fs_config.get_value('aws_environment')
+      per_user_app_limit = fs_config.get_value('per_user_app_limit')
+      @@config[:per_user_app_limit] =  per_user_app_limit ? per_user_app_limit.to_i : 100
     rescue
       # Ignore as long as we have the values below
     ensure
