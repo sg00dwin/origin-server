@@ -18,7 +18,7 @@ Then cd common and run:
 
 ./cvs-import.sh -b devel /path/to/srpm
 
-Next ask releng to create a RHEL-6-LIBRA branch for that package.  Then follow
+Next ask release-engineering@redhat.com to create a RHEL-6-LIBRA branch for that package.  Then follow
 the directions in BUILD BASICS above.
 
 Brew hierarchy
