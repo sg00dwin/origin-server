@@ -16,7 +16,7 @@ spec = Gem::Specification.new do |s|
     s.homepage = %q{https://engineering.redhat.com/trac/Libra}
     s.description = %q{Libra server side controller}
     s.files = FileList['conf/*', 'lib/**/*.rb', 'bin/*'].to_a
-    s.executables = ['mc-rhc-cartridge-do', 'rhc-new-user', 'rhc-capacity']
+    s.executables = ['mc-rhc-cartridge-do', 'rhc-new-user', 'rhc-capacity', 'rhc-get-user-info']
     s.add_dependency('parseconfig')
     s.add_dependency('json')
     s.add_dependency('aws')

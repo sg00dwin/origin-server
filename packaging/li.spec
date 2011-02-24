@@ -99,11 +99,13 @@ BuildArch: noarch
 %description cartridge-rack-1.1.0
 Provides rack support to li
 
+
 %package cartridge-wsgi-3.2.1
-Summary: Provides php-wsgi-3.2.1 support
+Summary: Provides python-wsgi-3.2.1 support
 Group: Development/Languages
 Requires: li-node
 Requires: httpd
+Requires: python
 Requires: mod_wsgi = 3.2.1
 BuildArch: noarch
 
@@ -126,7 +128,7 @@ rake DESTDIR="$RPM_BUILD_ROOT" install
 mkdir -p .%{gemdir}
 gem install --install-dir $RPM_BUILD_ROOT/%{gemdir} --local -V --force --rdoc \
      backend/controller/pkg/li-controller-%{version}.gem
-
+mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/run/passenger
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -166,6 +168,7 @@ fi
 %{_bindir}/rhc-create-user
 %{_bindir}/rhc-user-info
 %{_bindir}/rhc-ctl-app
+%{_bindir}/rhc-common.rb
 %{_mandir}/man1/rhc-*
 %{_mandir}/man5/libra*
 %config(noreplace) %{_sysconfdir}/libra/client.conf
@@ -193,6 +196,7 @@ fi
 %{_libexecdir}/mcollective/update_yaml.pp
 %{_bindir}/rhc-capacity
 %{_bindir}/rhc-new-user
+%{_bindir}/rhc-get-user-info
 %{_bindir}/mc-rhc-cartridge-do
 %config(noreplace) %{_sysconfdir}/libra/controller.conf
 %{gemdir}/gems/li-controller-%{version}
@@ -212,6 +216,9 @@ fi
 %files cartridge-rack-1.1.0
 %defattr(-,root,root,-)
 %{_libexecdir}/li/cartridges/rack-1.1.0/
+#temporary until we get the perms worked out for passenger
+%attr(777, root, root) %{_localstatedir}/run/passenger
+
 
 %files cartridge-wsgi-3.2.1
 %defattr(-,root,root,-)

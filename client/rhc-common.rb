@@ -34,6 +34,7 @@ module RHC
             end
         else
             puts "Libra #{type} name is required"
+            return false
         end
         true
     end
@@ -42,14 +43,13 @@ module RHC
         if type   
             if !(RHC::TYPES.has_key?(type))        
                 puts 'type must be ' << RHC::get_type_keys(' or ')
-                return nil;
             else
                 return RHC::TYPES[type]
             end
         else
             puts "Type is required"
         end
-         nil
+        nil
     end      
     
 end
