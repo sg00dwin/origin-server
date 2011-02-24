@@ -20,10 +20,10 @@ Add Li Repo at /etc/yum.repos.d/li.repo.  Example in li/docs/li/.repo
 
 yum install mcollective-common mcollective-client li rubygems rubygem-parseconfig rubygem-json rubygem-stomp rubygem-right_aws rubygem-aws rubygem-rake rubygem-rspec rubygem-cucumber
 
-cp client.conf /etc/libra/client.conf  and point to your broker system
+cp /etc/client.conf ~/.li
+edit ~.li and point li_server your broker system
 mkdir /etc/mcollective
-cp backend/controller/test/etc/client.cfg /etc/mcollective/client.cfg
-cp backend/controller/conf/controller.conf /etc/libra/controller.conf
+cp li/backend/controller/test/etc/client.cfg /etc/mcollective/client.cfg
 
 Example Usage:
 rhc-create-user -u <userid> -e blah@email.com
@@ -33,7 +33,6 @@ Now make a change under /tmp/rhc/appname
 git commit -a -m "Test commit"
 git push libra master
 The change should be seen at:  http://appname.userid.rhcloud.com
-
 
 Running Test Cases:
 rake cuc_int sprint[1]
