@@ -196,8 +196,21 @@ task :test_int do
 end
 
 desc "Create a brew build based on current info"
-task :brew_build => [:srpm] do
-
+task :brew_build => [:version, :buildroot, :srpm] do
+    srpm = Dir.glob("#{@buildroot}/SRPMS/li-#{@version}*.rpm")[0]
+    if ! Dir.exists?("#{ENV['HOME']}/cvs/li/RHEL-6-LIBRA")
+        puts "Please check out the li cvs root:"
+        puts
+        puts "mkdir -p #{ENV['HOME']}/cvs; cd #{ENV['HOME']}/cvs"
+        puts "cvs -d :gserver:cvs.devel.redhat.com:/cvs/dist co li"
+        exit 206
+    end
+    cp "packaging/li.spec", "#{ENV['HOME']}/cvs/li/RHEL-6-LIBRA"
+    cd "#{ENV['HOME']}/cvs/li/RHEL-6-LIBRA"
+    sh "make new-source FILES='#{@buildroot}/SOURCES/li-#{@version}.tar.gz'"
+    sh "cvs commit -m 'Updating to most recent li build #{@version}'"
+    sh "make tag"
+    sh "make build"
 end
 
 desc "Run the Libra sprint tests"
