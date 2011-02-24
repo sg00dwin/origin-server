@@ -260,7 +260,31 @@ RACKCONFIG
   f.close
 
 elsif (@type == :wsgi)
-  #placeholder
+  f = File.new("application", "w")
+  f.puts <<WSGIAPP
+def application(environ, start_response):
+
+   response_body = "#{welcome_message}"
+   status = '200 OK'
+   response_headers = [('Content-Type', 'text/plain'),
+                       ('Content-Length', str(len(response_body)))]
+   # 
+   start_response(status, response_headers)
+   return [response_body]
+WSGIAPP
+  f.close
+  f = File.new("health", "w")
+  f.puts <<WSGIHEALTH
+def application(environ, start_response):
+
+   response_body = "1"
+   status = '200 OK'
+   response_headers = [('Content-Type', 'text/plain'),
+                       ('Content-Length', str(len(response_body)))]
+   start_response(status, response_headers)
+   return [response_body]
+WSGIHEALTH
+  f.close
 end
 
 git = %x[git add *]
