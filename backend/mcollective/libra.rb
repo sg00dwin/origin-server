@@ -83,43 +83,34 @@ module MCollective
             # Creates http environment for customer to use
             #
             def create_http_action
-                validate :customer, /^[a-zA-Z0-9]+$/
-                validate :application, /^[a-zA-Z0-9]+$/
-                customer = request[:customer]
-                application = request[:application]
-
-                reply.fail! "Cannot find create_http.sh" unless File.exist?("/usr/local/bin/libra/create_http.sh")
-                reply[:output] = %x[/usr/local/bin/libra/create_http.sh -c #{customer} -a #{application} 2>&1]
-                reply[:exitcode] = $?.exitstatus
-                reply.fail! "create_http failed #{reply[:exitcode]}" unless reply[:exitcode] == 0
+                execute_script('create_http')
             end
             #
             # Destroys (deletes) http environment
             #
             def destroy_http_action
-                validate :customer, /^[a-zA-Z0-9]+$/
-                validate :application, /^[a-zA-Z0-9]+$/
-                customer = request[:customer]
-                application = request[:application]
-
-                reply.fail! "Cannot find destroy_http.sh" unless File.exist?("/usr/local/bin/libra/destroy_http.sh")
-                reply[:output] = %x[/usr/local/bin/libra/destroy_http.sh -c #{customer} -a #{application} 2>&1]
-                reply[:exitcode] = $?.exitstatus
-                reply.fail! "destroy_http failed #{reply[:exitcode]}" unless reply[:exitcode] == 0
+                execute_script('destroy_http')
             end
             #
             # Creates git repo for a customer
             #
             def create_git_action
+                execute_script('create_git')
+            end
+            
+            #
+            # Executes an action
+            #
+            def execute_script(script)
                 validate :customer, /^[a-zA-Z0-9]+$/
                 validate :application, /^[a-zA-Z0-9]+$/
                 customer = request[:customer]
                 application = request[:application]
 
-                reply.fail! "Cannot find create_git.sh" unless File.exist?("/usr/local/bin/libra/create_git.sh")
-                reply[:output] = %x[/usr/local/bin/libra/create_git.sh -c #{customer} -a #{application} 2>&1]
+                reply.fail! "Cannot find #{script}.sh" unless File.exist?("/usr/local/bin/libra/#{script}.sh")
+                reply[:output] = %x[/usr/local/bin/libra/#{script}.sh -c #{customer} -a #{application} 2>&1]
                 reply[:exitcode] = $?.exitstatus
-                reply.fail! "create_git failed #{reply[:exitcode]}" unless reply[:exitcode] == 0
+                reply.fail! "#{script} failed #{reply[:exitcode]}" unless reply[:exitcode] == 0
             end
         end
     end
