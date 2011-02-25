@@ -23,6 +23,7 @@ require "getoptlong"
 require 'resolv'
 require 'json'
 require 'parseconfig'
+require 'fileutils' 
 require File.dirname($0) + '/rhc-common'
 
 config_path = File.exists?('client.conf') ? 'client.conf' : '/etc/libra/client.conf'
@@ -180,12 +181,19 @@ puts ""
 # Create local git repo
 #
 
+def cleanup_and_exit(repo, code)
+    FileUtils.rm_rf repo
+    exit code
+end
+
 puts "Creating local application space: " + opt['repo']
-if File.directory?(opt['repo'])
+
+if File.exists?(opt['repo']) 
     puts "We will not overwrite an existing git repo. Exiting"
     exit 255
+else
+    Dir.mkdir(opt['repo'])
 end
-Dir.mkdir(opt["repo"])
 
 #
 # head on over
@@ -338,8 +346,8 @@ else
     puts "HTTP response from server is #{response.body}"
     json_resp.each do |k,v|
         puts "#{k.to_s}: #{v.to_s}"
-    end
-    exit 254
+    end    
+    cleanup_and_exit(opt['repo'], 254)
 end
 
 #

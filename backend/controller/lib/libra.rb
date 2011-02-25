@@ -23,7 +23,7 @@ module Libra
       end
     end
     
-    Server.validate_repo_limit(user.uuid)
+    Server.validate_app_limit(user)
 
     # Find the next available server
     Libra.c[:rpc_opts][:disctimeout] = 1

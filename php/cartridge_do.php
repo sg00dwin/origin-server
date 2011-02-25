@@ -22,9 +22,9 @@ function my_exec($cmd, $input='')
 $out = '';
 $results = my_exec("/usr/bin/mc-rhc-cartridge-do --cartridge $cartridge -a $action -u $username -n $app_name -v", $out);
 
-if($results['return'] != 0) {
-    header('HTTP/1.1 503 Service Unavailable', 503);
-    header('Status: 503 Service Unavailable');
+if ($results['return'] != 0) {
+    header('HTTP/1.1 500 Service Error', 500);
+    header('Status: 500 Service Error');
 }
 
 print json_encode($results);
