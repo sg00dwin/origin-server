@@ -176,137 +176,15 @@ puts ""
 puts "Remember: this is pre-alpha destructionware.  Let #libra know of any bugs you find"
 puts ""
 
-#
-# Create local git repo
-#
 
-puts "Creating local application space: " + opt['repo']
-if File.directory?(opt['repo'])
+#
+# Confirm local repo space before doing anything else
+#
+if File.exists?(opt['repo'])
     puts "We will not overwrite an existing git repo. Exiting"
     exit 255
 end
-Dir.mkdir(opt["repo"])
 
-#
-# head on over
-#
-old_dir = Dir.getwd
-Dir.chdir(opt["repo"])
-git = `git init`
-if $?.exitstatus != 0
-    puts "Error in calling git init"
-    puts git
-    exit 255
-end
-
-f = File.new(".git/config", "w")
-f.puts <<GIT
-[remote "libra"]
-    url = ssh://#{uuid}@#{opt['app']}.#{opt['user']}.#{libra_domain}/#{libra_dir}/#{uuid}/git/#{opt['app']}.git/
-GIT
-f.close
-
-#
-# Add our skeleton files
-#
-
-welcome_message = <<-WELCOME
-<html><title>#{opt['app']}</title>
-<body>
-<h1>Welcome to libra</h1>
-<p>Place your application here</p>
-<p>In order to commit to your new project, go to your projects git repo (created with the create_http command).  Make your changes, then run:</p>
-<pre>git commit -a -m 'Some commit message'
-git push libra master</pre>
-<p>Then reload this page</p>
-</body>
-</html>
-WELCOME
-
-if (@type == :php)
-  f = File.new("index.php", "w")
-  f.puts("#{welcome_message}")
-  f.close
-  f = File.new("health_check.php", "w")
-  f.puts <<HEALTH
-<?php
-print 1;
-?>
-HEALTH
-  f.close
-elsif (@type == :rack)
-  f = File.new("config.ru", "w")
-  f.puts <<RACKCONFIG
-require 'rack/lobster'
-
-map '/health' do
-  health = proc do |env|
-    [200, { "Content-Type" => "text/html" }, ["1"]]
-  end
-  run health
-end
-
-map '/' do
-  welcome = proc do |env|
-    [200, { "Content-Type" => "text/html" }, ["#{welcome_message}"]]
-  end
-  run welcome
-end
-
-map '/lobster' do
-  run Rack::Lobster.new
-end
-RACKCONFIG
-  f.close
-
-elsif (@type == :wsgi)
-  f = File.new("application", "w")
-  f.puts <<WSGIAPP
-def application(environ, start_response):
-
-   response_body = "#{welcome_message}"
-   status = '200 OK'
-   response_headers = [('Content-Type', 'text/plain'),
-                       ('Content-Length', str(len(response_body)))]
-   # 
-   start_response(status, response_headers)
-   return [response_body]
-WSGIAPP
-  f.close
-  f = File.new("health", "w")
-  f.puts <<WSGIHEALTH
-def application(environ, start_response):
-
-   response_body = "1"
-   status = '200 OK'
-   response_headers = [('Content-Type', 'text/plain'),
-                       ('Content-Length', str(len(response_body)))]
-   start_response(status, response_headers)
-   return [response_body]
-WSGIHEALTH
-  f.close
-end
-
-git = %x[git add *]
-
-puts git if debug
-if $?.exitstatus != 0
-    puts "Error in calling git add"
-    puts git
-    exit 255
-end
-
-git=%x[git commit -a -m "Initial libra app creation"]
-
-puts git if debug
-if $?.exitstatus != 0
-    puts "Error in calling git add"
-    puts git
-    exit 255
-end
-
-
-Dir.chdir(old_dir)
 
 #
 # Create remote application space
@@ -397,25 +275,19 @@ if loop == 5
     exit 255
 end
 
-#
-# Push initial repo upstream (contains index and health_check)
-#
-
-Dir.chdir(opt["repo"])
-puts "Doing initial test push."
-git = %x[git push -q libra master]
-
-puts git if debug
-if $?.exitstatus != 0
-    puts "Error pushing git repo"
-    puts git
-    exit 233
-end
-
-Dir.chdir(old_dir)
-
 sleep_time = 2
 attempt = 0
+
+#
+# Pull new repo locally
+#
+puts "Pulling new repo down"
+git_pull = `git clone ssh://#{opt['app']}.#{opt['user']}.#{libra_domain}/#{libra_dir}/#{uuid}/git/#{opt['app']}.git/ #{opt['repo']}`
+if $?.exitstatus != 0
+    puts "Error in git pull"
+    puts git
+    exit 255
+end
 
 #
 # Test several times, doubling sleep time between attempts.
