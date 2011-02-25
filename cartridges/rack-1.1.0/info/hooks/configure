@@ -228,7 +228,7 @@ if whoami | grep -q root
 then
     echo 1>&2
     echo "Please don't run script as root, try:" 1>&2
-    echo "runuser $uuid $0" 1>&2
+    echo "runuser --shell /bin/sh $uuid $0" 1>&2
     echo 2>&1
     exit 15
 fi
@@ -257,7 +257,7 @@ EOF
 chmod +x "$APP_DIR/${application}_ctl.sh" || error "Failed to chmod new application scripts" 122
 chown $user_id.$group_id -R $APP_DIR || error "Failed to chown new application space.  Please contact support" 123
 chcon -t libra_var_lib_t -l s0:$c_val -R "$APP_DIR"
-runcon -t initrc_t -r system_r runuser "$uuid" "$APP_DIR/${application}_ctl.sh" start || error "Failed to start ${application}" 121
+runcon -t initrc_t -r system_r runuser --shell /bin/sh "$uuid" "$APP_DIR/${application}_ctl.sh" start || error "Failed to start ${application}" 121
 
 #
 # Create virtualhost definition for apache
