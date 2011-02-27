@@ -285,7 +285,7 @@ puts "Pulling new repo down"
 git_pull = `git clone ssh://#{opt['app']}.#{opt['user']}.#{libra_domain}/#{libra_dir}/#{uuid}/git/#{opt['app']}.git/ #{opt['repo']}`
 if $?.exitstatus != 0
     puts "Error in git pull"
-    puts git
+    puts git_pull
     exit 255
 end
 
