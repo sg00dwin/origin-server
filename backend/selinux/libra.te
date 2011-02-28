@@ -99,3 +99,10 @@ require {
 
 libra_search_lib(sshd_t)
 allow httpd_t libra_var_lib_t:dir search;
+
+#################################
+# Potentially dangerous configs #
+#################################
+
+# Allow users to execute files in their home dir
+# allow libra_t libra_var_lib_t:file { execute execute_no_trans };
