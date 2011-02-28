@@ -1,37 +1,30 @@
-require "qpid"
-require "socket"
+require 'cqpid'
+require 'pp'
 
 module MCollective
+
     module Connector
-        # Handles sending and receiving messages over the AMQP protocol, using Qpid
-        #
-        # This plugin supports version 0-10 and newer of the AMQP
-        #
-        # For all versions you can configure it as follows:
-        #
-        #    connector = amqp
-        #    plugin.qpid.host = localhost
-        #    plugin.qpid.port = 5672
-        #
-        class Amqp<Base
-            attr_reader :connection
 
-            def initialize
-                @config = Config.instance
-                @subscriptions = []
+       class Amqp<Base
+           attr_reader :connection
 
-                @log = Log.instance
-            end
+           def initialize
+               @config = Config.instance
+               @subscriptions = {}
+               @log = Log.instance
+           end
 
-            # Will disconnect and try and reconnect once a second until the service is available
             def reconnect
-                @log.debug("Reconnect attempt")
+                @log.debug("Reconnect attempt to qpidd")
+                #puts "Reconnect attempt to qpidd"
                 begin
-                    disconnect
-                    connect
-                    @subscriptions.each do |source|
-                        @session.exchange_bind(:queue => @uniquename, :binding_key => "#{source}")
-                    end
+		  subscriptions_new = {}
+                  @subscriptions.each_key do |source|
+                    receiver = @session.createReceiver("amq.direct#{source}")
+                    subscriptions_new[source] = receiver
+                  end
+		  @subscriptions = subscriptions_new
+                  @sender = @session.createSender("amq.direct")
                 rescue Exception => e
                     @log.debug("Reconnect Exception #{e}")
                     sleep 1
@@ -39,102 +32,107 @@ module MCollective
                 end
             end
 
-            # Connects to the Qpid middleware
-            def connect
-                if @connection
-                    @log.debug("Already connection, not re-initializing connection")
-                    return
-                end
+           def connect
+               @log.debug("Connecton attempt to qpidd")
+               if @connection
+                   @log.debug("Already connection, not re-initializing connection")
+                   return
+               end
 
-                # Parse out the config info
-                host = get_option("amqp.host")
-                port = get_option("amqp.port", 5672).to_i
+               # Parse out the config info
+               url = "amqp:tcp:" + get_option("amqp.url")
+               ha_url = "amqp:tcp:" + get_option("amqp.ha-url")
+               reconnect_url = "{reconnect-urls: '#{ha_url}', reconnect:true, heartbeat:1}"
 
-                @log.debug("Connecting to #{host}:#{port}")
+               @log.debug("Connecting to #{url}, #{reconnect_url}")
+               @connection = Cqpid::Connection.new(url, reconnect_url)
+               @connection.open
+               @session = @connection.createSession
+               
+               # Set up the topic change
+               @sender = @session.createSender("amq.direct")
+               
+               @log.info("AMQP Connection established")     
+           end
 
-                # Create a unique identifier for the various channels
-                @uniquename = @config.identity + "_" + $$.to_s
-
-                # Establish a new connection
-                @connection = Qpid::Connection.new(TCPSocket.new(host, port))
-                @connection.start(10)
-
-                # Create a unique session
-                @session = @connection.session(@uniquename)
-
-                # Create a direct exchange
-                #@session.exchange_declare("mc-exchange", :type => "direct")
-
-                # Declare a unique queue for communications
-                @session.queue_declare(@uniquename)
-                @log.debug("Using queue #{@uniquename}")
-
-                # Bind the exchange to the queue so messages get mapped
-                #@session.exchange_bind(:exchange => "mc-exchange", :queue => @uniquename)
-
-                # Subscribe this session to the queue, using a local
-                # buffer called 'messages' for received messages
-                @session.message_subscribe(:destination => "messages", :queue => @uniquename,
-                      :accept_mode => @session.message_accept_mode.none)
-
-                # Grab a handle to the local 'messages' buffer
-                @incoming = @session.incoming("messages")
-
-                # Enable incoming message flow
-                @incoming.start()
-
-                @log.info("AMQP Connection established")
-            end
-
-            # Receives a message from the Qpid connection
             def receive
                 begin
                     @log.debug("Waiting for a message...")
-                    msg = @incoming.get(1)
-                    @log.debug("Received message")
-                    Request.new(msg.body)
-                rescue Qpid::Closed => e
+	            receiver = Cqpid::Receiver.new
+		    while 1 do
+                      break if @session.nextReceiver(receiver,Cqpid::Duration.SECOND)
+                      sleep 0.01
+                    end
+                    msg = receiver.fetch()
+                  
+                    # For debugging - TO-DO remove
+                    #@log.debug("Received message #{msg.getContent}")
+
+                    @session.acknowledge
+		    #puts "\n\n###Received and returning Content:\n #{msg.getContent}"
+                    Request.new(msg.getContent)
+                rescue StandardError => e
                     @log.debug("Caught Exception #{e}")
                     reconnect
                     retry
                 end
             end
 
-            # Sends a message to the Qpid session
             def send(target, msg)
-                @log.debug("Sending a message to target '#{target}'")
-                dp = @session.delivery_properties(:routing_key => "#{target}")
-                mp = @session.message_properties(:content_type => "text/plain")
-                @session.message_transfer(:message => Qpid::Message.new(dp, mp, msg))
-                @log.debug("Message sent")
-            end
+                begin
+                  @log.debug("in send with #{target}")
 
-            # Subscribe to a topic or queue
+                  # For debugging - TO-DO remove
+                  #@log.debug("Sending a message to target 'amq.direct#{target}'")
+                  #@log.debug("Sending message #{msg}")
+		  #puts "\n\n###Sending Content:\n #{msg}"
+               
+                  @message = Cqpid::Message.new()
+                  @message.setSubject(target[1..-1])
+                  @message.setContent(msg)
+                  @message.setContentType("text/plain")
+                  @sender.send(@message);
+                  @log.debug("Message sent")
+                rescue StandardError => e
+                    @log.debug("Caught Exception #{e}")
+                    reconnect
+                end
+            end
+            
+            # Subscribe to a topic tor queue
             def subscribe(source)
+                #puts "[amqp.rb] Subscription request for #{source}"
                 @log.debug("Subscription request for #{source}")
                 unless @subscriptions.include?(source)
-                    @log.debug("Subscribing to #{source}")
-                    @session.exchange_bind(:queue =>  @uniquename, :binding_key => "#{source}")
-                    @subscriptions << source
+                    new_source = "amq.direct" + source
+                    @log.debug("Subscribing to #{new_source}")
+                    receiver = @session.createReceiver(new_source)
+                    receiver.setCapacity(10)
+                    @subscriptions[source] = receiver
                 end
                 @log.debug("Current subscriptions #{@subscriptions}")
             end
 
             # Subscribe to a topic or queue
             def unsubscribe(source)
+                #puts "[amqp.rb] in unsubscribe with #{source}"
                 @log.debug("Unsubscribing #{source}")
-                @session.exchange_unbind(:queue => @uniquename , :binding_key => "#{source}")
-                @subscriptions.delete(source)
+                receiver = @subscriptions.delete(source)
+                receiver.close
                 @log.debug("Current subscriptions #{@subscriptions}")
             end
 
             # Disconnects from the Qpid connection
             def disconnect
                 @log.debug("Disconnecting from Qpid")
+                #puts "Disconnecting from Qpid" 
 
                 # Cleanup the session
                 begin
-                    @session.message_cancel(:destination => "messages")
+                    # @session.message_cancel(:destination => "messages")
+                    # do we need something like 
+                    # @session.sendFlush  ??
+                    @session.sync
                     @session.close
                 rescue Exception => e
                     @log.debug("Failed to cleanup session: #{e}")
@@ -165,5 +163,3 @@ module MCollective
         end
     end
 end
-
-# vi:tabstop=4:expandtab:ai
