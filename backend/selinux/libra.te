@@ -7,32 +7,22 @@ policy_module(libra,1.0.1)
 
 type libra_t;
 type libra_exec_t;
-type libra_initrc_t;
-type libra_initrc_exec_t;
-
-gen_require(`
-    role system_r;
-    role unconfined_r;
-    type unconfined_t;
-')
- 
 init_system_domain(libra_t, libra_exec_t)
 
-##
-role_transition unconfined_r libra_initrc_exec_t system_r;
-unconfined_domain_noaudit(libra_initrc_t)
-
+type libra_initrc_t;
+type libra_initrc_exec_t;
 init_daemon_domain(libra_initrc_t, libra_initrc_exec_t)
 init_ranged_daemon_domain(libra_initrc_t, libra_initrc_exec_t, s0 - mcs_systemhigh)
 
-# 
-domtrans_pattern(unconfined_t, libra_initrc_exec_t, libra_initrc_t)
-libra_domtrans(libra_initrc_t)
-
-#permissive libra_t;
+type libra_tmp_t;
+files_tmp_file(libra_tmp_t)
 
 type libra_var_lib_t;
 files_type(libra_var_lib_t)
+
+gen_require(`
+    type client_packet_t;
+')
 
 ########################################
 #
@@ -40,16 +30,22 @@ files_type(libra_var_lib_t)
 #
 allow libra_t self:capability { kill };
 allow libra_t self:process { fork getpgid setrlimit setsched signal signull };
+allow libra_t self:process { sigkill setpgid };
 allow libra_t self:sem create_sem_perms;
 allow libra_t self:tcp_socket  create_stream_socket_perms;
 
 allow libra_t self:fifo_file rw_fifo_file_perms;
-allow libra_t self:unix_stream_socket create_stream_socket_perms;
+allow libra_t self:unix_stream_socket { create_stream_socket_perms connectto };
+
+manage_dirs_pattern(libra_t, libra_tmp_t, libra_tmp_t)
+manage_files_pattern(libra_t, libra_tmp_t, libra_tmp_t)
+files_tmp_filetrans(libra_t, libra_tmp_t, { file dir })
 
 manage_dirs_pattern(libra_t, libra_var_lib_t, libra_var_lib_t)
 manage_files_pattern(libra_t, libra_var_lib_t, libra_var_lib_t)
+manage_sock_files_pattern(libra_t, libra_var_lib_t, libra_var_lib_t)
 manage_lnk_files_pattern(libra_t, libra_var_lib_t, libra_var_lib_t)
-files_var_lib_filetrans(libra_t, libra_var_lib_t, { dir file } )
+files_var_lib_filetrans(libra_t, libra_var_lib_t, { dir file sock_file } )
 
 kernel_dontaudit_read_system_state(libra_t)
 
@@ -58,8 +54,7 @@ corenet_tcp_connect_mysqld_port(libra_t)
 corenet_tcp_connect_http_port(libra_t)
 corenet_tcp_connect_amqp_port(libra_t)
 corenet_tcp_connect_generic_port(libra_t)
-corenet_udp_bind_generic_port(libra_t)
-dev_read_rand(libra_t)
+allow libra_t client_packet_t:packet { recv send };
 
 files_read_usr_files(libra_t)
 
@@ -67,6 +62,7 @@ corecmd_exec_bin(libra_t)
 corecmd_exec_shell(libra_t)
 
 domain_use_interactive_fds(libra_t)
+domain_dontaudit_read_all_domains_state(libra_t)
 
 files_read_etc_files(libra_t)
 
@@ -81,8 +77,8 @@ require {
 }
 
 
-#============= libra_t ==============
 allow libra_t httpd_exec_t:file entrypoint;
+apache_exec(libra_t)
 apache_exec_modules(libra_t)
 apache_getattr_suexec(libra_t)
 apache_list_modules(libra_t)
@@ -91,10 +87,34 @@ apache_search_config(libra_t)
 apache_read_sys_content(libra_t)
 corenet_tcp_bind_http_cache_port(libra_t)
 
+########################################
+#
+# libra initrc local policy
+#
+
+gen_require(`
+    role system_r;
+    role unconfined_r;
+    type unconfined_t;
+')
+ 
+role_transition unconfined_r libra_initrc_exec_t system_r;
+unconfined_domain_noaudit(libra_initrc_t)
+
+libra_domtrans(libra_initrc_t)
+
+domtrans_pattern(unconfined_t, libra_initrc_exec_t, libra_initrc_t)
+
+########################################
+#
+# generic policy 
+#
+
 # Allows users to use ssh to push code
 require {
 	type sshd_t;
 	type httpd_t;
+	type node_t;
 }
 
 libra_search_lib(sshd_t)
@@ -105,4 +125,4 @@ allow httpd_t libra_var_lib_t:dir search;
 #################################
 
 # Allow users to execute files in their home dir
-# allow libra_t libra_var_lib_t:file { execute execute_no_trans };
+allow libra_t libra_var_lib_t:file { execute execute_no_trans };
