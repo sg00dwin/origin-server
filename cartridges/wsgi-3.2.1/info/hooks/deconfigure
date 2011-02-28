@@ -98,7 +98,7 @@ destroy_repo $application $uuid
 
 [ ! -d "$APP_DIR" ] && error "${application} does not exist" 138
 
-runcon -t initrc_t -r system_r runuser "$uuid" $APP_DIR/${application}_ctl.sh stop || error "Failed to stop ${application}" 140
+runcon -t initrc_t -r system_r runuser --shell /bin/sh "$uuid" $APP_DIR/${application}_ctl.sh stop || error "Failed to stop ${application}" 140
 
 IP=$(awk -F, "/$uuid,$application,/"'{ print $1 }' /etc/libra/ip_db | head -n1)
 range_one=$(echo $IP | awk -F\. '{ print $3 }')
