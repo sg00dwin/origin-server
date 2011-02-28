@@ -2,7 +2,7 @@
 %define gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 
 Name: li
-Version: 0.30
+Version: 0.31
 Release: 1%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
@@ -144,6 +144,7 @@ rm -rf $RPM_BUILD_ROOT
 /usr/bin/rhc-restorecon || :
 /sbin/service libra-cgroups start > /dev/null 2>&1 || :
 /sbin/service libra-data start > /dev/null 2>&1 || :
+echo "/usr/bin/trap-user" >> /etc/shells
 
 
 %preun node
@@ -153,6 +154,7 @@ if [ "$1" -eq "0" ]; then
     /sbin/chkconfig --del libra-data || :
     /sbin/chkconfig --del libra || :
     /usr/sbin/semodule -r libra
+    sed -i -e '\:/usr/bin/trap-user:d' /etc/shells
 fi
 
 %postun node
@@ -225,6 +227,9 @@ fi
 %{_libexecdir}/li/cartridges/wsgi-3.2.1/
 
 %changelog
+* Fri Feb 25 2011 Mike McGrath <mmcgrath@redhat.com> 0.31-1
+- Release for demo
+
 * Thu Feb 24 2011 Mike McGrath <mmcgrath@redhat.com> 0.30-1
 - Prepping for a new release
 

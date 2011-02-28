@@ -63,4 +63,4 @@ APP_DIR="$CUSTOMER_HOME/httpd/$application"
 # Start application
 #
 
-runcon -t initrc_t -r system_r runuser "$customer_id" "$APP_DIR/${application}_ctl.sh" restart
+runcon -t initrc_t -r system_r runuser --shell /bin/sh "$customer_id" "$APP_DIR/${application}_ctl.sh" restart

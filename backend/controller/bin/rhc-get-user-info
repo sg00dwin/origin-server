@@ -15,13 +15,6 @@ options = rpcoptions do |parser, options|
       options[:username] = username
     end
 
-    parser.on('-i', '--info', 'Display user info') do
-      options[:info] = true
-    end
-
-    parser.on('-a', '--pps', 'App list') do
-      options[:apps] = true
-    end
 end
 
 # Set the MCollective options
@@ -29,20 +22,24 @@ Libra.c[:rpc_opts] = options
 
 # Check if user already exists
 user = User.find(options[:username])
-if user
-  if options[:info]
-    puts "Username: #{user.username}"
-    puts "Email: #{user.email}"
-    puts "SSH key: #{user.ssh}"
-  end
-  if options[:apps]
-    user.apps.each do |key, app|
-      puts "#{key}.#{user.username}"
-      puts "    Framework: #{app['framework']}"
-      puts "    Creation: #{app['creation_time']}"
-    end
-  end
-else
-  puts "User could not be found"
-  exit 253
+user_info = {
+    :username => user.username,
+    :uuid => user.uuid,
+    :email => user.email,
+    :ssh_key => user.ssh
+    }
+
+app_info = {}
+
+user.apps.each do |key, app|
+    app_info[key] = {
+        :framework => app['framework'],
+        :creation_time => app['creation_time']
+    }
 end
+
+json_data = JSON.generate(
+                {:user_info => user_info,
+                 :app_info => app_info})
+
+puts json_data
