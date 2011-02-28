@@ -111,7 +111,7 @@ task :setup_mock do
       puts "Configuring Libra Mock Environment"
       puts "NOTE: Will prompt for sudo password"
       sh "sudo yum install -y mock"
-      sh "sudo cp packaging/#{mock}.cfg /etc/mock"
+      sh "sudo cp packaging/#{MOCK_ENV}.cfg /etc/mock"
     end
 end
 
