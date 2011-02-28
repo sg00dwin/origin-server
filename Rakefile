@@ -207,6 +207,7 @@ task :brew_build => [:version, :buildroot, :srpm] do
     end
     cp "packaging/li.spec", "#{ENV['HOME']}/cvs/li/RHEL-6-LIBRA"
     cd "#{ENV['HOME']}/cvs/li/RHEL-6-LIBRA"
+    sh "cvs up -d"
     sh "make new-source FILES='#{@buildroot}/SOURCES/li-#{@version}.tar.gz'"
     sh "cvs commit -m 'Updating to most recent li build #{@version}'"
     sh "make tag"
