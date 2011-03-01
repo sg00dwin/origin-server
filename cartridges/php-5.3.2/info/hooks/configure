@@ -116,6 +116,7 @@ function create_repo {
     application="$1"
     user_id=$2
     group_id=$3
+    c_val=$4
     CUSTOMER_HOME="${libra_dir}/${uuid}"
 
     if [ ! -d $CUSTOMER_HOME ]; then echo "ERROR: Customer ${uuid} not found!  Please create." 1>&2; exit 2; fi
@@ -131,7 +132,6 @@ EOF
 
     chmod 0750 $CUSTOMER_HOME/git/$application.git/hooks/post-receive
     chown $user_id.$group_id -R $GIT_DIR
-    chcon -t libra_var_lib_t -l s0:$c_val -R "$GIT_DIR"
 }
 
 while getopts 'd' OPTION
@@ -168,7 +168,7 @@ group_id=$(id -g "$uuid") || error "Could not find user $uuid ($namespace)" 135
 # Create git app repo
 #
 
-create_repo $application $user_id $group_id
+create_repo $application $user_id $group_id $c_val
 
 
 #
