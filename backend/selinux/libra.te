@@ -49,12 +49,15 @@ files_var_lib_filetrans(libra_t, libra_var_lib_t, { dir file sock_file } )
 
 kernel_dontaudit_read_system_state(libra_t)
 
+dev_read_rand(libra_t)
+
 # Network access allowed to libra apps
 corenet_tcp_connect_mysqld_port(libra_t)
 corenet_tcp_connect_http_port(libra_t)
 corenet_tcp_connect_amqp_port(libra_t)
 corenet_tcp_connect_generic_port(libra_t)
 allow libra_t client_packet_t:packet { recv send };
+corenet_udp_bind_generic_port(libra_t)
 
 files_read_usr_files(libra_t)
 
