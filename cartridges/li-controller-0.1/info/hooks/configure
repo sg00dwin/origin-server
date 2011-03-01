@@ -127,9 +127,19 @@ function homedir {
 
 # Find the next available UID/GID pair
 function next_uid() {
-  expr `cat /etc/passwd | cut -d: -f3 | sort -n | tail -1` + 1
 
-  # Should check if the GID is free as well
+  # find the lowest number greater than or equal to 500 which is not used 
+  # either as a UID or GID
+  # Line 1: create a set of UID's from /etc/passwd
+  # Line 2: create a set of GID's from /etc/group
+  # count up from 500 until you find one not used in either
+  python -c "pid = set([int(line.split(':')[2]) for line in open('/etc/passwd').readlines()])
+gid = set([int(line.split(':')[2]) for line in open('/etc/group')])
+i = 500
+while i in pid or i in gid: i += 1
+print i
+"
+
 }
 
 #
