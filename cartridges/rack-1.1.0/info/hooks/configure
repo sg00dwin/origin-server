@@ -183,7 +183,8 @@ create_repo $application $user_id $group_id
 mkdir -p "$APP_DIR"
 mkdir -p "$APP_DIR/rack/tmp"
 
-#APP_DIR_SHORT="/s/${uuid}_${application}"
+mkdir -p /s
+chmod 777 /s
 APP_DIR_TEMP_SHORT="/s/$(echo \"${uuid}_${application}\" | md5sum | cut -d ' ' -f1)"
 ln -s $APP_DIR/rack/tmp $APP_DIR_TEMP_SHORT
 pushd "$APP_DIR" > /dev/null
@@ -268,6 +269,8 @@ case "\$1" in
 esac
 EOF
 
+chcon -t libra_var_lib_t /s
+chcon -h -t libra_var_lib_t -l s0:$c_val $APP_DIR_TEMP_SHORT
 chmod +x "$APP_DIR/${application}_ctl.sh" || error "Failed to chmod new application scripts" 122
 chown $user_id.$group_id -R $APP_DIR || error "Failed to chown new application space.  Please contact support" 123
 chcon -t libra_var_lib_t -l s0:$c_val -R "$APP_DIR"
