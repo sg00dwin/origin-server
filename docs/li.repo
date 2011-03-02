@@ -13,3 +13,10 @@ failovermethod=priority
 enabled=0
 gpgkey=http://209.132.178.9/gpxe/trees/li/li-signing.asc
 gpgcheck=0
+
+[qpid]
+name=Qpid repo for Enterprise Linux 6 - $basearch
+baseurl=http://209.132.178.9/gpxe/trees/qpid/$basearch/Packages
+failovermethod=priority
+enabled=1
+gpgcheck=0
