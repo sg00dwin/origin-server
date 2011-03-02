@@ -1,0 +1,6 @@
+1. git clone git://github.com/FooBarWidget/passenger.git
+
+2. Change the 'passenger/rpm/release/build.rb' file as follows:
+(line 11)  CFGLIMIT=%w{epel-6}
+
+3. Run 'rake package:yum'
