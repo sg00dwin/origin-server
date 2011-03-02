@@ -128,7 +128,6 @@ rake DESTDIR="$RPM_BUILD_ROOT" install
 mkdir -p .%{gemdir}
 gem install --install-dir $RPM_BUILD_ROOT/%{gemdir} --local -V --force --rdoc \
      backend/controller/pkg/li-controller-%{version}.gem
-mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/run/passenger
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -218,8 +217,6 @@ fi
 %files cartridge-rack-1.1.0
 %defattr(-,root,root,-)
 %{_libexecdir}/li/cartridges/rack-1.1.0/
-#temporary until we get the perms worked out for passenger
-%attr(777, root, root) %{_localstatedir}/run/passenger
 
 
 %files cartridge-wsgi-3.2.1

@@ -156,6 +156,7 @@ uuid=$3
 CUSTOMER_HOME="$libra_dir/$uuid/"
 APP_DIR="$CUSTOMER_HOME/rack/$application"
 
+
 unobfuscate $uuid $namespace
 
 #
@@ -180,6 +181,11 @@ create_repo $application $user_id $group_id
 [ -d "$APP_DIR" ] && error "${application}.  Please destroy then recreate, or pick a new name" 132
 
 mkdir -p "$APP_DIR"
+mkdir -p "$APP_DIR/rack/tmp"
+
+#APP_DIR_SHORT="/s/${uuid}_${application}"
+APP_DIR_TEMP_SHORT="/s/$(echo \"${uuid}_${application}\" | md5sum | cut -d ' ' -f1)"
+ln -s $APP_DIR/rack/tmp $APP_DIR_TEMP_SHORT
 pushd "$APP_DIR" > /dev/null
 mkdir conf conf.d logs run deploy deploy/public deploy/tmp
 ln -s /usr/lib64/httpd/modules modules
@@ -209,6 +215,8 @@ Listen $IP:8080
 User $uuid
 Group $uuid
 PassengerUser $uuid
+PassengerTempDir "$APP_DIR_TEMP_SHORT"
+PassengerAnalyticsLogDir "$APP_DIR_TEMP_SHORT"
 <Directory $APP_DIR/deploy/public>
   AllowOverride all
   Options -MultiViews
@@ -238,6 +246,7 @@ then
     exit 15
 fi
 
+export TMPDIR=$APP_DIR/rack/rack/tmp
 
 case "\$1" in
     start)
@@ -280,4 +289,3 @@ cat <<EOF > "/etc/httpd/conf.d/${uuid}_${namespace}_${application}.conf"
 EOF
 
 /sbin/service httpd configtest 2> /dev/null && /sbin/service httpd graceful || error "Failed to restart master httpd, please contact support" 120
-
