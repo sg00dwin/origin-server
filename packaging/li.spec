@@ -35,7 +35,8 @@ Requires: rubygem-aws
 Requires: rubygem-json
 Requires: mcollective-client
 Requires: mcollective-common
-Requires: ruby-qpid
+Requires: qpid-cpp-client
+Requires: ruby-qmf
 BuildArch: noarch
 
 %description devel
@@ -45,7 +46,8 @@ Provides all the development dependencies to be able to run the libra tests
 Summary: Multi-tenant cloud management system node tools
 Group: Network/Daemons
 Requires: mcollective
-Requires: ruby-qpid
+Requires: qpid-cpp-client
+Requires: ruby-qmf
 Requires: rubygem-parseconfig
 Requires: libcgroup
 Requires(post): /usr/sbin/semodule
@@ -59,7 +61,8 @@ Turns current host into a Li managed node
 Summary: Li server components
 Group: Network/Daemons
 Requires: mcollective-client
-Requires: ruby-qpid
+Requires: qpid-cpp-client
+Requires: ruby-qmf
 BuildArch: noarch
 Requires: ruby-json
 Requires: rubygem-aws
