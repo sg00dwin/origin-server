@@ -167,7 +167,8 @@ group_id=$(id -g "$uuid") || error "Could not find user $uuid ($namespace)" 135
 #
 # Create git app repo
 #
-
+uid=$(id -u "$uuid")
+c_val="c$(($uid/1023)),c$(($uid%1023))"
 create_repo $application $user_id $group_id $c_val
 
 
@@ -213,9 +214,6 @@ EOF
 #
 # Create simple application start / stop script
 #
-uid=$(id -u "$uuid")
-c_val="c$(($uid/1023)),c$(($uid%1023))"
-
 cat <<EOF > "$APP_DIR/${application}_ctl.sh"
 #/bin/bash
 
