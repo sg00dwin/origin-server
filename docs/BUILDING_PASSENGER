@@ -10,4 +10,10 @@
   sudo ./rpm/release/mocksetup.sh
 
 5. Build epel-6 (against the RHEL 6 binaries)
-  ./rpm/release/build.rb epel-6
+  ./rpm/release/build.rb epel-6-x86_64
+
+6. Build a repo from the RPMs
+  mkdir -p /tmp/passenger
+  cp /var/lib/mock/passenger-epel-6-x86_64/result/*.rpm /tmp/passenger
+  cp /var/lib/mock/passenger-build-repo/*.rpm /tmp/passenger
+  createrepo /tmp/passenger
