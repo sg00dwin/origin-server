@@ -38,7 +38,7 @@ git repo.  Commit them, then push.  For example:
 
 $ edit index.php
 $ git commit -a -m "what I did"
-$ git push libra master
+$ git push origin master
 
 Then just reload your web page to see the changes
 
