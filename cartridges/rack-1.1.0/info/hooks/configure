@@ -184,7 +184,7 @@ mkdir -p "$APP_DIR"
 mkdir -p "$APP_DIR/rack/tmp"
 
 mkdir -p /s
-chmod 777 /s
+chmod 751 /s
 APP_DIR_TEMP_SHORT=$(echo $(mktemp -d -p /s))
 #"/s/$(echo \"${uuid}_${application}\" | md5sum | cut -d ' ' -f1)"
 ln -s $APP_DIR/rack/tmp $APP_DIR_TEMP_SHORT
