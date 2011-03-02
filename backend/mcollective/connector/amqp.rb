@@ -16,7 +16,7 @@ module MCollective
 
             def reconnect
                 @log.debug("Reconnect attempt to qpidd")
-                #puts "Reconnect attempt to qpidd"
+
                 begin
 		  subscriptions_new = {}
                   @subscriptions.each_key do |source|
@@ -30,10 +30,11 @@ module MCollective
                     sleep 1
                     retry
                 end
+                @log.info("AMQP Connection reconnected")
             end
 
            def connect
-               @log.debug("Connecton attempt to qpidd")
+               @log.debug("Connection attempt to qpidd")
                if @connection
                    @log.debug("Already connection, not re-initializing connection")
                    return
@@ -48,11 +49,11 @@ module MCollective
                @connection = Cqpid::Connection.new(url, reconnect_url)
                @connection.open
                @session = @connection.createSession
-               
+
                # Set up the topic change
                @sender = @session.createSender("amq.direct")
-               
-               @log.info("AMQP Connection established")     
+
+               @log.info("AMQP Connection established")
            end
 
             def receive
@@ -64,12 +65,11 @@ module MCollective
                       sleep 0.01
                     end
                     msg = receiver.fetch()
-                  
-                    # For debugging - TO-DO remove
+
+                    @log.debug("Received message")
                     #@log.debug("Received message #{msg.getContent}")
 
                     @session.acknowledge
-		    #puts "\n\n###Received and returning Content:\n #{msg.getContent}"
                     Request.new(msg.getContent)
                 rescue StandardError => e
                     @log.debug("Caught Exception #{e}")
@@ -82,11 +82,9 @@ module MCollective
                 begin
                   @log.debug("in send with #{target}")
 
-                  # For debugging - TO-DO remove
-                  #@log.debug("Sending a message to target 'amq.direct#{target}'")
+                  @log.debug("Sending a message to target 'amq.direct#{target}'")
                   #@log.debug("Sending message #{msg}")
-		  #puts "\n\n###Sending Content:\n #{msg}"
-               
+
                   @message = Cqpid::Message.new()
                   @message.setSubject(target[1..-1])
                   @message.setContent(msg)
@@ -98,10 +96,9 @@ module MCollective
                     reconnect
                 end
             end
-            
+
             # Subscribe to a topic tor queue
             def subscribe(source)
-                #puts "[amqp.rb] Subscription request for #{source}"
                 @log.debug("Subscription request for #{source}")
                 unless @subscriptions.include?(source)
                     new_source = "amq.direct" + source
@@ -115,7 +112,6 @@ module MCollective
 
             # Subscribe to a topic or queue
             def unsubscribe(source)
-                #puts "[amqp.rb] in unsubscribe with #{source}"
                 @log.debug("Unsubscribing #{source}")
                 receiver = @subscriptions.delete(source)
                 receiver.close
@@ -125,13 +121,9 @@ module MCollective
             # Disconnects from the Qpid connection
             def disconnect
                 @log.debug("Disconnecting from Qpid")
-                #puts "Disconnecting from Qpid" 
 
                 # Cleanup the session
                 begin
-                    # @session.message_cancel(:destination => "messages")
-                    # do we need something like 
-                    # @session.sendFlush  ??
                     @session.sync
                     @session.close
                 rescue Exception => e
@@ -139,6 +131,9 @@ module MCollective
                 ensure
                     @session = nil
                 end
+
+                # Clear the subscription cache
+                @subscriptions = {}
 
                 # Cleanup the connection
                 begin
