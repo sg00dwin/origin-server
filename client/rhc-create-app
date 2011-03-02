@@ -320,7 +320,7 @@ Success!  Your application is now available at:
       http://#{my_url}/
 
 To make changes to your application, commit to $new_repo_path/.
-Then run 'git push libra master' to update your libra space
+Then run 'git push origin master' to update your libra space
 
 LOOKSGOOD
         exit 0

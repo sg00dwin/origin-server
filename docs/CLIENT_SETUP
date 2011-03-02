@@ -31,7 +31,7 @@ rhc-create-app -u <userid> -a <appname> -r <Ex: /tmp/rhc/appname> -repo -t php-5
 You should now be able to browse to:  http://appname.userid.rhcloud.com
 Now make a change under /tmp/rhc/appname
 git commit -a -m "Test commit"
-git push libra master
+git push origin master
 The change should be seen at:  http://appname.userid.rhcloud.com
 
 Running Test Cases:
