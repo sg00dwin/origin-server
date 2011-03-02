@@ -134,7 +134,7 @@ function next_uid() {
   # Line 2: create a set of GID's from /etc/group
   # count up from 500 until you find one not used in either
   python -c "pid = set([int(line.split(':')[2]) for line in open('/etc/passwd').readlines()])
-gid = set([int(line.split(':')[2]) for line in open('/etc/group')])
+gid = set([int(line.split(':')[2]) for line in open('/etc/group').readlines()])
 i = 500
 while i in pid or i in gid: i += 1
 print i
