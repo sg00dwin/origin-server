@@ -15,5 +15,6 @@
 6. Build a repo from the RPMs
   mkdir -p /tmp/passenger
   cp /var/lib/mock/passenger-epel-6-x86_64/result/*.rpm /tmp/passenger
-  cp /var/lib/mock/passenger-build-repo/*.rpm /tmp/passenger
+  rm /tmp/passenger/nginx*.rpm
+  rm /tmp/passenger/*standalone*.rpm
   createrepo /tmp/passenger
