@@ -33,8 +33,10 @@
 #
 DEFAULT_LIBRA_DIR=/var/lib/libra
 DEFAULT_LIBRA_CONF_DIR=/etc/libra
-DEFAULT_LIMITS_PRIORITY=85
-DEFAULT_LIMITS_NPROC=50 # this should be updated from node.conf
+
+# defaults
+limits_order=84
+limits_nproc=50
 
 # Exit on any errors
 # set -e
@@ -64,25 +66,19 @@ function initialize {
 	exit 3
     fi
 
+    if [ -f "/etc/libra/resource_limits.conf" ]
+    then
+	. /etc/libra/resource_limits.conf
+    fi
+
     if [ -z "$libra_dir" ]
     then
 	libra_dir=$DEFAULT_LIBRA_DIR
     fi
-
-    # Provide defaults for values left unset in node configuration
-    if [ -z "$limits_priority" ]
-    then
-	limits_priority=$DEFAULT_LIMITS_PRIORITY
-    fi
-
-    if [ -z "$limits_nproc" ]
-    then
-	limits_nproc=$DEFAULT_LIMITS_NPROC
-    fi
 }
 
 function parse_options {
-    while getopts 'c:e:s:p:P:dnr' OPTION
+    while getopts 'c:e:s:p:o:dnr' OPTION
     do
 	case $OPTION in
             c) username=$OPTARG
@@ -93,7 +89,7 @@ function parse_options {
 		;;
             p) limits_nproc=$OPTARG
 		;;
-            P) limits_priority=$OPTARG
+            o) limits_order=$OPTARG
 		;;
             d) set -x
 		;;
@@ -252,16 +248,20 @@ EOF\""
 # Add a PAM limit set to the user
 #
 # IN: username
-# IN: limits_priority
+# IN: limits_order
 # IN: limits_nproc
 #
+
+LIMITSVARS="core data fsize memlock nofile rss stack cpu nproc as maxlogins priority locks sigpending msgqueue nice rprio"
+
 # TODO: check if file already exists
 function limit_user_account {
     USERNAME=$1
-    LIMITS_PRIORITY=${2:-$limits_priority}
-    LIMITS_NPROC=${3:-$limits_nproc}
+    #assume these come from sourced config file into environment
+    #LIMITS_ORDER=${2:-$limits_order}
+    #LIMITS_NPROC=${3:-$limits_nproc}
 
-    LIMITSFILE=/etc/security/limits.d/${LIMITS_PRIORITY}-${USERNAME}.conf
+    LIMITSFILE=/etc/security/limits.d/${limits_order}-${USERNAME}.conf
 
     if [ -z "${NOOP}" ]
     then
@@ -271,7 +271,6 @@ function limit_user_account {
 #Each line describes a limit for a user in the form:
 #
 #<domain> <type> <item> <value>
-${USERNAME} hard nproc ${LIMITS_NPROC}
 EOF
     else
 	echo "cat <<EOF > ${LIMITSFILE}
@@ -282,14 +281,30 @@ EOF
 #<domain>        <type>  <item>  <value>
 ${USERNAME}     hard    nproc   ${LIMITS_NPROC}
 EOF"
+	
     fi
+
+    for KEY in $LIMITSVARS
+    do
+	VALUE=`eval echo \\$limits_$KEY`
+	if [ -n "$VALUE" ]
+	then
+	    if [ -z "${NOOP}" ]
+            then
+		echo "${USERNAME} hard $KEY $VALUE" >> ${LIMITSFILE}
+            else
+		echo "echo \"${USERNAME} hard $KEY $VALUE\" >> ${LIMITSFILE}"
+	    fi
+	fi
+    done
+
 }
 
 function remove_user_limits {
     USERNAME=$1
-    LIMITS_PRIORITY=${2:-$limits_priority}
+    LIMITS_ORDER=${2:-$limits_order}
 
-    LIMITSFILE=/etc/security/limits.d/${LIMITS_PRIORITY}-${USERNAME}.conf
+    LIMITSFILE=/etc/security/limits.d/${LIMITS_ORDER}-${USERNAME}.conf
 
 
     ${NOOP} rm -f ${LIMITSFILE}
