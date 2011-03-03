@@ -97,6 +97,9 @@ Requires: rubygem-passenger
 Requires: rubygem-passenger-native
 Requires: rubygem-passenger-native-libs
 Requires: mod_passenger
+Requires: rubygem-sqlite3-ruby
+Requires: ruby-sqlite3
+Requires: ruby-mysql
 BuildArch: noarch
 
 %description cartridge-rack-1.1.0
