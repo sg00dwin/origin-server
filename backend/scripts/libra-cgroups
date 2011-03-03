@@ -23,6 +23,16 @@ fi
 
 lockfile=/var/lock/subsys/libra-cgroups
 
+if [ -f /etc/libra/node.conf ]
+then
+    . /etc/libra/node.conf
+fi
+
+if [ -f /etc/libra/resource_limits.conf ]
+then
+    . /etc/libra/resource_limits.conf
+fi
+
 RETVAL=0
 GROUP_RETVAL=0
 
@@ -33,6 +43,44 @@ LIBRA_CGROUP_ROOT=${LIBRA_CGROUP_ROOT:="/libra"}
 LIBRA_CGROUP_SUBSYSTEMS=${LIBRA_CGROUP_SUBSYSTEMS:="cpu,cpuacct,memory,net_cls,freezer"}
 
 CGROUP_RULES_FILE=${CGROUP_RULES_FILE:="/etc/cgrules.conf"}
+
+CPU_VARS="rt_period_us rt_runtime_us shares"
+MEM_VARS="limit_in_bytes memsw_limit_in_bytes soft_limit_in_bytes swappiness"
+
+# Get a user's UID
+function uid() {
+    grep -e "^$1:" /etc/passwd | cut -d: -f3
+}
+
+#
+# Convert a UID number into an selinux MCS pair
+#
+function mcs() {
+    #       div           mod
+    echo `expr $1 / 1023`:`expr $1 % 1023`
+}
+
+#
+# Convert an MCS pair into a cgroup net class id
+#
+function netid() {
+    echo -n 0x
+    for COMPONENT in `echo $1 | tr : '\n'`
+    do
+	printf "%04x" $COMPONENT
+    done
+    echo
+}
+
+function set_net_cls() {
+    CGPATH=libra/$1
+    USERNAME=$1
+    USERID=`uid $1`
+    USERMCS=`mcs $USERID`
+    USERCLASSID=`netid $USERMCS`
+    cgset -r net_cls.classid=$USERCLASSID $CGPATH
+}
+
 
 #
 # List the libra guest users
@@ -104,7 +152,12 @@ startuser() {
     then
 	RETVAL=$?
     fi
-    
+
+    #set_cpu $NEWUSER
+    #set_memory $NEWUSER
+    #set_blkio $NEWUSER
+    set_net_cls $NEWUSER
+
     # CHECK: don't trust old rules
     if ( cgroup_rule_exists $NEWUSER )
     then
