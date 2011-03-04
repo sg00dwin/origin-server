@@ -125,8 +125,8 @@ function create_repo {
     mkdir -p "$CUSTOMER_HOME/git"
     cp -ad /usr/libexec/li/cartridges/php-5.3.2/info/data/git_template.git $GIT_DIR
     cat <<EOF > $CUSTOMER_HOME/git/$application.git/hooks/post-receive
-rm -rf $APP_DIR/html/*
-git archive --format=tar HEAD | (cd $APP_DIR/html && tar xf -)
+rm -rf $APP_DIR/repo/*
+git archive --format=tar HEAD | (cd $APP_DIR/repo && tar xf -)
 # Reload httpd here maybe?
 EOF
 
@@ -152,7 +152,7 @@ application="$1"
 uuid=$3
 
 CUSTOMER_HOME="$libra_dir/$uuid/"
-APP_DIR="$CUSTOMER_HOME/httpd/$application"
+APP_DIR="$CUSTOMER_HOME/php/$application"
 
 unobfuscate $uuid $namespace
 
@@ -180,23 +180,23 @@ create_repo $application $user_id $group_id $c_val
 
 mkdir -p "$APP_DIR"
 pushd "$APP_DIR" > /dev/null
-mkdir conf conf.d logs run html sessions
+mkdir conf conf.d logs run repo sessions data tmp
 ln -s /usr/lib64/httpd/modules modules
 ln -s /etc/httpd/conf/magic conf/magic
 sed "s,TEMPLATE_SET_ME_SESSION_SAVE_PATH,$APP_DIR/sessions/," /usr/libexec/li/cartridges/php-5.3.2/info/configuration/etc/conf/php.ini > $APP_DIR/conf/php.ini
 popd > /dev/null
 
 #
-# Populate html dir
+# Populate repo dir
 #
-GIT_DIR="$GIT_DIR" git archive --format=tar HEAD | (cd "${APP_DIR}/html" && tar xf -)
+GIT_DIR="$GIT_DIR" git archive --format=tar HEAD | (cd "${APP_DIR}/repo" && tar xf -)
 
 #
 # Find an open localhost IP
 #
 
 
-IP=$(take_open_ip $uuid $application "httpd" 8080)
+IP=$(take_open_ip $uuid $application "php" 8080)
 
 
 #
@@ -205,7 +205,7 @@ IP=$(take_open_ip $uuid $application "httpd" 8080)
 
 cat <<EOF > "$APP_DIR/conf.d/libra.conf"
 ServerRoot "$APP_DIR"
-DocumentRoot "$APP_DIR/html"
+DocumentRoot "$APP_DIR/repo/php"
 Listen $IP:8080
 User $uuid
 Group $uuid
