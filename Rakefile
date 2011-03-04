@@ -196,7 +196,7 @@ task :test_int do
 end
 
 desc "Create a brew build based on current info"
-task :brew_build => [:version, :buildroot, :srpm] do
+task :brew => [:version, :buildroot, :srpm] do
     srpm = Dir.glob("#{@buildroot}/SRPMS/li-#{@version}*.rpm")[0]
     if ! File.exists?("#{ENV['HOME']}/cvs/li/RHEL-6-LIBRA")
         puts "Please check out the li cvs root:"
