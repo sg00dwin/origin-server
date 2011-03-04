@@ -62,7 +62,7 @@ module MCollective
 	            receiver = Cqpid::Receiver.new
 		    while 1 do
                       break if @session.nextReceiver(receiver,Cqpid::Duration.IMMEDIATE)
-                      #sleep 0.01
+                      sleep 0.01
                     end
                     msg = receiver.fetch()
 
