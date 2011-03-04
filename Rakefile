@@ -41,7 +41,7 @@ task :install_client => [:test_client] do
         man_section = file_name.to_s.split('').last
         cp file_name, "#{MAN_DIR}/man#{man_section}/"
     }
-    cp "client/client.conf", "#{CONF_DIR}"
+    cp "client/client.conf", "#{CONF_DIR}" unless File.exists? "#{CONF_DIR}/client.conf"
 end
 
 task :test_node do
@@ -72,7 +72,7 @@ task :install_cartridges do
     cp_r "cartridges/", LIBEXEC_DIR
     mkdir_p CONF_DIR
     sample_conf = Dir.glob("cartridges/li-controller*/**/node.conf-sample")[0]
-    cp_r sample_conf, "#{CONF_DIR}/node.conf"
+    cp_r sample_conf, "#{CONF_DIR}/node.conf" unless File.exists? "#{CONF_DIR}/node.conf"
 end
 
 task :test_server do
@@ -93,7 +93,7 @@ task :install_server do
     end
 
     mkdir_p CONF_DIR
-    cp "#{C_DIR}/conf/controller.conf", CONF_DIR
+    cp "#{C_DIR}/conf/controller.conf", CONF_DIR unless File.exists? "#{CONF_DIR}/controller.conf"
     cd C_DIR
     sh "rake", "package"
 end
