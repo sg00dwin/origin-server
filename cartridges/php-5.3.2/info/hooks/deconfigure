@@ -81,7 +81,7 @@ application="$1"
 uuid=$3
 
 CUSTOMER_HOME="$libra_dir/$uuid/"
-APP_DIR="$CUSTOMER_HOME/httpd/$application"
+APP_DIR="$CUSTOMER_HOME/php/$application"
 
 #
 # Destroy git app repo

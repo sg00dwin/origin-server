@@ -58,7 +58,7 @@ customer_id=$3
 application="$1"
 
 CUSTOMER_HOME="$libra_dir/$customer_id/"
-APP_DIR="$CUSTOMER_HOME/httpd/$application"
+APP_DIR="$CUSTOMER_HOME/php/$application"
 
 #
 # Start application
