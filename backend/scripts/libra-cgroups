@@ -6,7 +6,7 @@
 #               Mike McGrath <mmcgrath@redhat.com>
 #               Mark lamourine <markllama@redhat.com>
 #
-# chkconfig:    - 6 94
+# chkconfig:    345 6 94
 #
 # description:  Create Libra user cgroups
 # processname:  NA
@@ -52,6 +52,14 @@ function uid() {
     grep -e "^$1:" /etc/passwd | cut -d: -f3
 }
 
+# get a user's home directory
+function homedir() {
+    grep -e "^$1:" /etc/passwd | cut -d: -f6
+}
+
+# ============================================================================
+#  Functions for setting the net class
+# ============================================================================
 #
 # Convert a UID number into an selinux MCS pair
 #
@@ -73,16 +81,82 @@ function netid() {
 }
 
 function set_net_cls() {
+    # USERNAME=$1
     CGPATH=libra/$1
-    USERNAME=$1
     USERID=`uid $1`
     USERMCS=`mcs $USERID`
     USERCLASSID=`netid $USERMCS`
     cgset -r net_cls.classid=$USERCLASSID $CGPATH
 }
 
+# ==========================================================================
+#  Functions for tuning the user's CPU limits in cgroups
+# ==========================================================================
+CPUVARS="rt_period_us rt_runtime_us shares"
+function set_cpu() {
+    # USERNAME=$1
+    CGPATH=libra/$1
 
-#
+    for VARNAME in $CPUVARS
+    do
+	# cgroups names can have periods(.)  shell varnames can't
+	SAFENAME=`echo $VARNAME | tr . _`
+	VALUE=`eval echo \\$cgroup_cpu_$SAFENAME`
+	if [ -n "${VALUE}" ]
+	then
+	    # TODO: get per-app increments
+	    cgset -r "cpu.$VARNAME=$VALUE" $CGPATH
+	fi
+    done
+}
+
+# ==========================================================================
+#  Functions for tuning the user's memory limits in cgroups
+# ==========================================================================
+MEMVARS="limit_in_bytes memsw.limit_in_bytes soft_limit_in_bytes swappiness"
+function set_memory() {
+    # USERNAME=$1
+    CGPATH=libra/$1
+
+    # for each var get and set the value
+    for VARNAME in $MEMVARS
+    do
+	# cgroups names can have periods(.)  shell varnames can't
+	SAFENAME=`echo $VARNAME | tr . _`
+	VALUE=`eval echo \\$cgroup_memory_$SAFENAME`
+	if [ -n "${VALUE}" ]
+	then
+	    # TODO: get per-app increments
+	    cgset -r "memory.$VARNAME=$VALUE" $CGPATH
+	fi
+    done
+}
+
+# ==========================================================================
+#  Functions for tuning the user's memory limits in cgroups
+# ==========================================================================
+BLKIOVARS="weight weight_device"
+function set_blkio() {
+    # USERNAME=$1
+    CGPATH=/$1
+
+    # for each var get and set the value
+    for VARNAME in $BLKIOVARS
+    do
+	# cgroups names can have periods(.)  shell varnames can't
+	SAFENAME=`echo $VARNAME | tr . _`
+	VALUE=`eval echo \\$cgroup_blkio_$SAFENAME`
+	if [ -n "${VALUE}" ]
+	then
+	    # TODO: get per-app increments
+	    # TODO: weight_device should really use the user's home device
+	    #       and set the rest (if any) to 0
+	    # cgset -r "blkio.$VARNAME=$VALUE" $CGPATH
+	    echo nothing >>/dev/null
+	fi
+    done
+}
+
 # List the libra guest users
 #
 libra_users() {
@@ -153,8 +227,8 @@ startuser() {
 	RETVAL=$?
     fi
 
-    #set_cpu $NEWUSER
-    #set_memory $NEWUSER
+    set_cpu $NEWUSER
+    set_memory $NEWUSER
     #set_blkio $NEWUSER
     set_net_cls $NEWUSER
 
