@@ -37,6 +37,8 @@ DEFAULT_LIBRA_CONF_DIR=/etc/libra
 # defaults
 limits_order=84
 limits_nproc=50
+quota_inodes=1000
+quota_blocks=`expr 1024 \* 1024 \* 128` # 128MB
 
 # Exit on any errors
 # set -e
@@ -108,6 +110,9 @@ function parse_options {
     fi
 }
 
+#
+# Generate a user's home directory from their username
+#
 function homedir {
     USERNAME=$1
     USERHOME=`grep $USERNAME /etc/passwd | cut -d: -f6`
@@ -120,6 +125,12 @@ function homedir {
 	echo ${libra_dir}/${USERNAME} | tr -s '/'
     fi
 }
+
+# Find the filesystem which holds a user's home directory
+function home_filesystem {
+    df ${libra_dir} | tail -1 | cut -d' ' -f1
+}
+
 
 # Find the next available UID/GID pair
 function next_uid() {
@@ -255,7 +266,7 @@ EOF\""
 LIMITSVARS="core data fsize memlock nofile rss stack cpu nproc as maxlogins priority locks sigpending msgqueue nice rprio"
 
 # TODO: check if file already exists
-function limit_user_account {
+function set_pam_limits {
     USERNAME=$1
     #assume these come from sourced config file into environment
     #LIMITS_ORDER=${2:-$limits_order}
@@ -300,7 +311,7 @@ EOF"
 
 }
 
-function remove_user_limits {
+function remove_pam_limits {
     USERNAME=$1
     LIMITS_ORDER=${2:-$limits_order}
 
@@ -308,6 +319,62 @@ function remove_user_limits {
 
 
     ${NOOP} rm -f ${LIMITSFILE}
+}
+
+
+#
+# Are quotas configured
+# return true if configured, else false
+#
+function quotas_configured {
+    quotaon -u -p $libra_dir >/dev/null 2>&1
+    if [ $? -eq 0 ]
+    then
+	return 1
+    else
+	return 0
+    fi
+}
+
+# Are quotas enabled on libra home directories
+# echos "yes" or "no".  Returns 1 if not configured
+function quotas_enabled {
+    quotaon -u -p $libra_dir 2>/dev/null | cut -d' ' -f7
+}
+
+#
+# Get the user's current quotas in a managable string form:
+#      inodes       blocks
+# fs use soft hard use soft hard
+# empty string means "no quotas set"
+#
+function user_quotas {
+    # USERNAME=$1
+    FS=`home_filesystem`
+    quota -w -u $1 | grep $FS | tr -s ' ' | sed 's/^ //'
+}
+
+#
+# Set a user's inode and block quotas on the home file system
+# usage: set_fs_quota <username> <inodes> <blocks>
+function set_fs_quotas {
+    # USERNAME=$1
+    # QUOTA_INODES=${2:-$quota_inode}
+    # QUOTA_BLOCKS=${3:-$quota_block}
+
+    if quotas_configured
+    then
+	setquota $1 0 $2 0 $3 `home_filesystem`
+    fi
+}
+
+# Remove filesystem quota limits for the user
+function remove_fs_quotas {
+    USERNAME=$1
+    if quotas_configured
+    then
+	setquota $1 0 0 0 0 `home_filesystem`
+    fi
 }
 
 # ============================================================================
@@ -333,7 +400,9 @@ then
 
     enable_user_ssh_access $username $email "$ssh_key"
 
-    limit_user_account $username
+    set_pam_limits $username
+
+    set_fs_quotas $username $quota_inodes $quota_blocks
 
 else
     if (service cgconfig status > /dev/null)
@@ -341,7 +410,9 @@ else
 	service libra-cgroups stopuser ${username} > /dev/null
     fi
 
-    remove_user_limits $username
+    remove_fs_quotas $username
+
+    remove_pam_limits $username
     
     remove_user_account $username
 fi
