@@ -39,7 +39,11 @@ module Libra
 
     # Configure the app on the server using a framework cartridge
     #server.execute(framework, action, app_name, user)
-    server.execute_direct(framework, action, "#{app_name} #{user.username} #{user.uuid}")
+    result = server.execute_direct(framework, action, "#{app_name} #{user.username} #{user.uuid}")
+    unless result.results[:data][:exitcode] == 0
+        puts result.results[:data][:output]
+        throw :node_execution_failure
+    end
 
     # update DNS
     #public_ip = Helper.rpc_get_fact_direct('public_ip', server.name)
