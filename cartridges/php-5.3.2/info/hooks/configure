@@ -43,6 +43,15 @@ else
     exit 3
 fi
 
+apache_bandwidth="all 100000"
+apache_maxconnection="all 20"
+apache_bandwidtherror="510"
+
+if [ -f '/etc/libra/resource_limits.conf' ]
+then
+    . /etc/libra/resource_limits.conf
+fi
+
 function print_help {
     echo "Usage: $0 app-name username uuid"
 
