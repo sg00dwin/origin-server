@@ -73,6 +73,7 @@ task :install_cartridges do
     mkdir_p CONF_DIR
     sample_conf = Dir.glob("cartridges/li-controller*/**/node.conf-sample")[0]
     cp_r sample_conf, "#{CONF_DIR}/node.conf" unless File.exists? "#{CONF_DIR}/node.conf"
+    cp "./client/resource_limits.conf", "#{CONF_DIR}/resource_limits.conf" unless File.exists? "#{CONF_DIR}/resource_limits.conf"
 end
 
 task :test_server do
