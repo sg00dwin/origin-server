@@ -2,7 +2,7 @@
 %define gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 
 Name: li
-Version: 0.34
+Version: 0.35
 Release: 1%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
@@ -50,6 +50,7 @@ Requires: qpid-cpp-client
 Requires: ruby-qmf
 Requires: rubygem-parseconfig
 Requires: libcgroup
+Requires: git
 Requires(post): /usr/sbin/semodule
 Requires(postun): /usr/sbin/semodule
 BuildArch: noarch
@@ -231,6 +232,12 @@ fi
 %{_libexecdir}/li/cartridges/wsgi-3.2.1/
 
 %changelog
+* Fri Mar 04 2011 Mike McGrath <mmcgrath@redhat.com> 0.35-1
+- New upstream version
+
+* Fri Mar 04 2011 Mike McGrath <mmcgrath@redhat.com> 0.34-2
+- Added git dep on li-node
+
 * Thu Mar 03 2011 Mike McGrath <mmcgrath@redhat.com> 0.34-1
 - New upstream version
 
