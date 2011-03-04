@@ -7,3 +7,6 @@ libra_conf_dir='/etc/libra/'
 # Enable user-unobfuscate to create ~/username in addition to ~/uuid
 # DO NOT ENABLE IN PRODUCTION, it would reveal customer information
 unobfuscate=0
+
+# Libra domain
+libra_domain='rhcloud.com'
