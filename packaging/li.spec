@@ -196,7 +196,7 @@ fi
 %{_libexecdir}/li/cartridges/li-controller-0.1/
 %{_datadir}/selinux/packages/libra.pp
 %config(noreplace) %{_sysconfdir}/libra/node.conf
-%config(noreplace) ${_sysconfdir}/libra/resource_limits.conf
+%config(noreplace) %{_sysconfdir}/libra/resource_limits.conf
 
 
 %files server
