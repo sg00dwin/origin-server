@@ -229,7 +229,7 @@ Group $uuid
 #  BandWidth $apache_bandwidth
 #  MaxConnection $apache_maxconnection
 #  BandWidthError $apache_bandwidtherror
-</IfModule>
+#</IfModule>
 
 EOF
 
