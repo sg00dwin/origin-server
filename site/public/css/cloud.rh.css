@@ -1,0 +1,500 @@
+/** TODO:
+ *  - fix -moz-border-radius refs to be cross-browser
+ *
+ */
+
+body {
+        background:#444;
+}
+
+
+#header_right {
+        text-align: right;
+}
+
+/* Main nav */
+
+#nav {
+        background: url(../img/bg_mainnav.png) repeat-x red;
+        min-height: 20px;
+        padding-top: 5px;
+        padding-bottom: 5px;
+	border-top: 1px solid #fe7272;
+}
+
+#nav ul {
+        margin: 0px;
+}
+
+#nav li {
+        float: left;
+        list-style-type: none;
+}
+
+
+/* Page block styling */
+
+#logo {
+	margin-top: 1em;
+	margin-bottom: 1em;
+}
+
+#login {
+	width: 50px;
+	float: right;
+	background: url(../img/bg_login_button.png) repeat-x red;
+	padding: 6px 30px;
+}
+
+#mainslug {
+	margin-top: 50px;
+	margin-bottom: .5em;
+}
+
+#login a {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+	text-decoration: none;
+	text-transform: uppercase;
+	font-weight: bold;
+}
+
+#head > div.omega {
+	padding-right: 10px;
+}
+
+#pageheader.express { background: url(../img/bg_express.png) repeat-x #6699cc; }
+#pageheader.appscale { background: url(../img/bg_appscale.png) repeat-x #c88fd7; }
+#pageheader.fabric { background: url(../img/bg_appscale.png) repeat-x #8dd35f; }
+
+#news_title {
+        background: #333;
+        height: 30px;
+}
+
+#news {
+        padding-top: 5px;
+        padding-bottom: 5px;
+        max-height: 20px;
+}
+
+#breadcrumb {
+	margin-bottom: 1em;
+	color: #aaa;
+}
+
+#breadcrumb a {
+	text-decoration: none;
+	color: #aaa !important;
+}
+
+#page {
+	background: white url(../img/bg_gradient.png) repeat-x;
+        color: black;
+	padding-top: 2em;
+	padding-bottom: 5em;
+}
+
+#page > div {
+}
+
+#pagetop {
+	background: #e6e6e6;
+}
+
+#slugs {
+	background: #ececec;
+	margin-left: 0px;
+	padding-left: 5px;
+	padding-bottom: 1em;
+}
+
+.slug {
+	margin-right: 0px;
+	margin-left: 0px;
+	padding-left: 5px;
+}
+
+.slug a.learn {
+	float: right;
+	margin-right: 12px;
+}
+
+.slug a {
+	color: #3771c8;
+}
+
+#sidenav {
+	background: #e6e6e6;
+}
+
+#sidenav div.grid_6 {
+	border-bottom: 1px solid #ccc;
+	border-top: 1px solid white;
+	margin-top: 0px;
+	margin-bottom: 0px;
+}
+
+#sidenav div.omega { border-bottom: none; }
+#sidenav div.alpha { border-top: none; margin-left: 5px; }
+
+#app_promos {
+	background: #ececec;
+}
+
+#app_promos > div {
+	background: white;
+}
+
+#footer {
+	background: black;
+	padding-top: 1.5em;
+	padding-bottom: 1em;
+}
+
+#subfooter {
+	padding-top: 2em;
+	padding-bottom: 4em;
+}
+
+/* App Promo Banners */
+
+#app_promos .express {
+	background: url(../img/banner_bg_express.png) white;
+}
+
+#app_promos .appscale {
+	background: url(../img/banner_bg_appscale.png) white;
+}
+
+#app_promos .fabric {
+	background: url(../img/banner_bg_fabric.png) white;
+}
+
+#app_promos h3,
+#app_promos h4,
+#app_promos p {
+	margin-top: 1em;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+}
+
+#app_promos a {
+	padding: 5px 10px;
+	background: #777;
+	color: white !important;
+	font-weight: bold;
+	text-decoration: none;
+	text-transform: uppercase;
+}
+
+/* Registration form */
+
+#registration input {
+	border: 1px solid #aaa;
+	-moz-border-radius: 4px;
+	font-size: 14pt;
+	width: 200px;
+}
+
+#registration td,
+#registration th {
+	padding-top: 1.5em;
+}
+
+#registration table {
+	margin-bottom: 40px;
+}
+
+#form_notes {
+	background: #f2f2f2;
+	padding: 10px;
+	-moz-border-radius: 4px;
+
+}
+
+#email_tooltips th {
+  visibility: hidden;
+}
+
+#email_tooltips th,
+#email_tooltips td {
+  padding-top: 0px;
+  vertical-align: top;
+}
+
+/* Footer & Subfooter */
+
+#footer ul,
+#subfooter ul {
+	margin-top: .5em;
+	margin-left: -2.2em;
+	list-style-type: none;
+}
+
+#subfooter li {
+	float: left;
+}
+
+/* Typography */
+
+
+p, ul, ol, li, h1, h2, h3, h4, h5, h6, a { color: white; }
+
+#pagetop p, #pagetop ul, #pagetop ol, #pagetop li, #pagetop h1, #pagetop h2, #pagetop h3, #pagetop h4, #pagetop h5, #pagetop h6, #pagetop a { color: #777; }
+
+#page p, #page ul, #page ol, #page li, #page h1, #page h2, #page h3, #page h4, #page h5, #page h6, #page a { color: #777; }
+
+#app_promos p, #app_promos ul, #app_promos ol, #app_promos li, #app_promos h1, #app_promos h2, #app_promos h3, #app_promos h4, #app_promos h5, #app_promos h6, #app_promos a { color: #777; }
+
+#nav {
+	font-weight: bold;
+}
+
+#news_title h4 {
+        font-size: 12pt;
+        padding-top: 4px;
+        padding-bottom: 4px;
+        padding-left: 10px;
+}
+
+.slug h3 {
+	font-size: 12pt;
+	color: #555;
+	margin-top: .5em;
+	margin-bottom: .5em;
+	text-shadow: 0px 1px 0px #fff;
+}
+
+#sidenav h4 {
+	font-size: 10pt;
+	margin-bottom: .5em;
+	margin-top: .5em;
+	line-height: 12pt;
+	text-transform: uppercase;
+}
+
+#app_promos h3 { font-size: 10pt; }
+#app_promos h4 { 
+	font-size: 14pt; 
+	text-transform: uppercase;
+}
+
+#footer h5 {
+	color: #ccc;
+	font-size: 8pt;
+	text-transform: uppercase;
+	margin-bottom: .5em;
+}
+
+#footer a,
+#subfooter a {
+	text-decoration: none;
+}
+
+#mainslug {
+	font-size: 12pt;
+	color: #ccc;
+}
+
+/* Common non-typographic styles */
+
+a.button {
+	background: #777;
+	color: white !important;
+	font-weight: bold;
+	padding: 5px 10px;
+	text-decoration: none;
+	text-transform: uppercase;
+	text-align: center;
+	width: 50%;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+p img {
+	margin-right: 10px;
+}
+
+/* these titles are for non-front pages */
+
+#title h2 {
+	font-size: 38pt;
+	font-weight: normal;
+	text-transform: uppercase;
+	margin-top: 5px;
+	margin-bottom: -10px !important;
+	margin-left: 10px;
+}
+
+#title p {
+	font-size: 12pt;
+	text-transform: uppercase;
+	font-weight: bold;
+	margin-bottom: 15px !important;
+	margin-left: 10px;
+}
+
+#page h3 {
+	font-size: 22pt;
+	margin-top: 0px;
+	margin-bottom: 7px;
+}
+
+#form_notes h4 {
+	font-size: 11pt;
+	margin-bottom: .5em;
+}
+
+#form_notes p,
+#form_notes ul {
+	margin-bottom: .75em;
+	font-size: 9pt;
+}
+
+#form_notes a,
+#registration a {
+	color: #3771c8;
+	text-decoration: none;
+	font-weight: bold;
+}
+
+#registration th {
+	color: #777;
+	font-weight: bold;
+	text-align: right;
+	padding-right: 1em;
+	font-size: 10pt;
+	line-height: 1.2em;
+}
+
+#email_tooltips /* used on registration form */ {
+	font-size: 8pt;
+	color: #aaa;
+}
+
+#captcha th {
+	vertical-align: top;
+}
+
+#terms_and_conditions {
+	color: #bbb !important;
+	border-top: 1px solid #dedede;
+	padding-top: .5em;
+	margin-top: 2em;
+}
+
+/* Slideshow stuffs! */
+
+.slideShow ul, .slideShow li {
+	list-style-type: none;
+	margin: 0px;
+	padding: 0px;
+}
+
+.slideShow {
+	clear: both;
+	position: table;
+	display: block;
+	height: 250px;
+}
+
+.newsTicker {
+	clear: auto;
+	height: 30px;
+}
+
+.slideShow .navigation {
+	position: relative;
+	clear: both;
+	display: block;
+	width: 950px;
+	margin-left: auto;
+	margin-right: auto;
+	z-index: 10999 !important;
+	padding-left: 10px;
+	margin-top: 200px;
+}
+
+.slideShow .navigation li {
+	display: inline; 
+}
+
+.slideShow .navigation a {
+	margin: 0px 2px 0px 0px;
+	padding: 3px 8px;
+	display: inline-block;
+	text-decoration: none;
+	font-size: .8em;
+	font-weight: bold;
+	background-color: white;
+	color: #3c6eb4;
+	border: 1px solid #3c6eb4;
+}
+
+.slideShow .navigation a:hover, .slideShow .navigation a.selected {
+	background-color: #3c6eb4;
+	font-weight: bold;
+	color: white;
+	border: 1px solid white;
+}
+
+.simpleSlideShow { 
+	width: 960px; 
+}
+
+#slides ul { 
+	width: 960px; 
+	margin-left: -5px;
+}
+
+li.slide { 
+	width: 960px !important; 
+}
+
+.slide-canvas {
+	position: relative;
+	display: block;
+	width: 960px !important;
+	height: 250px !important;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.slide-canvas div {
+	display: block;
+}
+
+#slides #express { background: url(../img/slide_express.png) no-repeat #6699cc; }
+#slides #appscale { background: url(../img/slide_appscale.png) repeat-x #c88fd7; }
+
+.slides li p {
+	font-size: 1.1em;
+}
+
+.slide div a { color: white; }
+
+.slide .content {
+	position: absolute;
+	display: block;
+	width: 960px;
+	height: 245px;
+	top: 5px;
+	background: none;
+	color: #fff;
+	z-index: 1000;
+	padding: 0.2em 10px;
+}
+
+#slides .content h2 {
+	color: white;
+	font-size: 1.8em;
+	text-transform: none;
+	margin-top: 10px;
+	font-weight: normal;
+}
+
