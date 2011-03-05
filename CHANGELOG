@@ -1,3 +1,6 @@
+2011-03-05 Mike McGrath <mmcgrath@redhat.com>
+    * No longer adding a new entry for every new application
+
 2011-02-23 Mike McGrath <mmcgrath@redhat.com>
     * rhc-create-user now allows alteration of user info and ssh keys
 
