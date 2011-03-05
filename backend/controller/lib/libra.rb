@@ -25,14 +25,14 @@ module Libra
     end        
 
     # Find the next available server
-    Libra.c[:rpc_opts][:disctimeout] = 2
+    Libra.c[:rpc_opts][:disctimeout] = 1
     Libra.c[:rpc_opts][:timeout] = 2
     server = Server.find_available
 
     puts "Node: #{server.name} - #{server.repos} repos" if Libra.c[:rpc_opts][:verbose]
 
     # Configure the user on this server if necessary
-    Libra.c[:rpc_opts][:disctimeout] = 2
+    Libra.c[:rpc_opts][:disctimeout] = 1
     Libra.c[:rpc_opts][:timeout] = 15
     server.create_user(user)
 
