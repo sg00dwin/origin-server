@@ -33,7 +33,7 @@ fi
 start() {
     echo "Starting Libra Services: "
     # This won't scale forever, but works fine in the '100 or so' range
-    for ctl_script in /var/lib/libra/*/{httpd,rack,php}/*/*_ctl.sh
+    for ctl_script in `/bin/find /var/lib/libra/ -maxdepth 4 -mindepth 4 -type f -name "*_ctl.sh"`
     do
         run_as=$( echo $ctl_script | awk -F/ '{print $5}')
         script_name=$(basename $ctl_script)
@@ -59,11 +59,11 @@ start() {
 stop() {
     echo "Stopping Libra Services: "
     # This won't scale forever, but works fine in the '100 or so' range
-    for ctl_script in /var/lib/libra/*/{httpd,rack,php}/*/*_ctl.sh
+    for ctl_script in `/bin/find /var/lib/libra/ -maxdepth 4 -mindepth 4 -type f -name "*_ctl.sh"`
     do
         run_as=$( echo $ctl_script | awk -F/ '{print $5}')
         script_name=$(basename $ctl_script)
-        echo -n $"    Stopping http for ${script_name%_ctl.sh}"
+        echo -n $"    Stopping http for $run_as-${script_name%_ctl.sh}"
         daemon --user=$run_as --pidfile=httpd_${script_name} $ctl_script stop
         RETVAL=$?
         echo
@@ -104,7 +104,7 @@ case "$1" in
   status)
     echo "Checking Libra Services: "
     # This won't scale forever, but works fine in the '100 or so' range
-    for ctl_script in /var/lib/libra/*/{httpd,rack,php}/*/*_ctl.sh
+    for ctl_script in `/bin/find /var/lib/libra/ -maxdepth 4 -mindepth 4 -type f -name "*_ctl.sh"`
     do
         script_name=$(basename $ctl_script)
         echo -n $"    Checking http for ${script_name%_ctl.sh}"
