@@ -15,25 +15,24 @@ module Libra
     # App exists check
     if action == 'configure'
       throw :app_already_exists if user.app_info(app_name)
+      Server.validate_app_limit(user)
     else
       if action == 'deconfigure'
         puts "app not found, attempting to remove anyway..." unless user.app_info(app_name)
       else
         throw :app_does_not_exist unless user.app_info(app_name)
       end
-    end
-    
-    Server.validate_app_limit(user)
+    end        
 
     # Find the next available server
-    Libra.c[:rpc_opts][:disctimeout] = 2
+    Libra.c[:rpc_opts][:disctimeout] = 1
     Libra.c[:rpc_opts][:timeout] = 2
     server = Server.find_available
 
     puts "Node: #{server.name} - #{server.repos} repos" if Libra.c[:rpc_opts][:verbose]
 
     # Configure the user on this server if necessary
-    Libra.c[:rpc_opts][:disctimeout] = 2
+    Libra.c[:rpc_opts][:disctimeout] = 1
     Libra.c[:rpc_opts][:timeout] = 15
     server.create_user(user)
 
