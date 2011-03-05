@@ -22,6 +22,10 @@ Libra.c[:rpc_opts] = options
 
 # Check if user already exists
 user = User.find(options[:username])
+unless user
+    puts "Could not find user #{options[:username]}"
+    exit 5
+end
 user_info = {
     :username => user.username,
     :uuid => user.uuid,
