@@ -236,23 +236,24 @@ puts "Checking ~/.ssh/config"
 my_url = "#{opt['app']}.#{opt['user']}.#{libra_domain}"
 
 found = false
-File.open(ssh_config) do |sline|
-    if sline =~ /my_url/
-        found = true
-        break
+File.open(ssh_config, "r") do |sline|
+    while(line = sline.gets)
+        if line.to_s.start_with? "Host *.#{libra_domain}"
+            found = true
+            break
+        end
     end
 end
 
 if found
-    puts "Found #{my_url} in ~/.ssh/config... No need to adjust"
+    puts "Found #{libra_domain} in ~/.ssh/config... No need to adjust"
 else
-    puts "    Adding #{my_url} to ~/.ssh/config"
+    puts "    Adding #{libra_domain} to ~/.ssh/config"
     f = File.open(ssh_config, "a")
     f.puts <<SSH
 
 # Added by libra app on #{`date`}
-Host #{my_url}
-    User #{uuid}
+Host *.#{libra_domain}
     IdentityFile ~/.ssh/libra_id_rsa
     VerifyHostKeyDNS yes
     StrictHostKeyChecking no
@@ -289,7 +290,10 @@ attempt = 0
 # Pull new repo locally
 #
 puts "Pulling new repo down"
-git_pull = `git clone ssh://#{opt['app']}.#{opt['user']}.#{libra_domain}/#{libra_dir}/#{uuid}/git/#{opt['app']}.git/ #{opt['repo']}`
+git_url = "ssh://#{uuid}@#{opt['app']}.#{opt['user']}.#{libra_domain}/#{libra_dir}/#{uuid}/git/#{opt['app']}.git/"
+
+puts "git clone #{git_url} #{opt['repo']}" if debug
+git_pull = `git clone #{git_url} #{opt['repo']}`
 if $?.exitstatus != 0
     puts "Error in git pull"
     puts git_pull
@@ -315,12 +319,16 @@ while sleep_time < 65
     if response.code == "200" && response.body[0,1] == "1"
         puts <<LOOKSGOOD
 
-Success!  Your application is now available at:
+Success!  Your application is now published here:
 
       http://#{my_url}/
 
-To make changes to your application, commit to $new_repo_path/.
-Then run 'git push origin master' to update your libra space
+The remote repository is located here:
+
+    #{git_url}
+
+To make changes to your application, commit to #{opt['repo']}/.
+Then run 'git push' to update your libra space
 
 LOOKSGOOD
         exit 0
