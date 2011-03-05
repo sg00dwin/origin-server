@@ -70,6 +70,7 @@ Create a new app libra project.
   -t|--type  type         Type of app to create (#{type_keys}) (required)
   -u|--user  username     Libra username    (alphanumeric) (#{username})
   -r|--repo  path         Git Repo path (defaults to ./$app_name)
+  -n|--nogit              Only create remote space, don't pull it locally
   -b|--bypass             Bypass warnings
   -d|--debug              Print Debug info
   -h|--help               Show Usage info
@@ -82,6 +83,7 @@ opts = GetoptLong.new(
     ["--debug", "-d", GetoptLong::NO_ARGUMENT],
     ["--help",  "-h", GetoptLong::NO_ARGUMENT],
     ["--bypass","-b", GetoptLong::NO_ARGUMENT],
+    ["--nogit", "-n", GetoptLong::NO_ARGUMENT],
     ["--user",  "-u", GetoptLong::REQUIRED_ARGUMENT],
     ["--app",   "-a", GetoptLong::REQUIRED_ARGUMENT],
     ["--repo",  "-r", GetoptLong::OPTIONAL_ARGUMENT],
@@ -289,17 +291,33 @@ attempt = 0
 #
 # Pull new repo locally
 #
-puts "Pulling new repo down"
-git_url = "ssh://#{uuid}@#{opt['app']}.#{opt['user']}.#{libra_domain}/#{libra_dir}/#{uuid}/git/#{opt['app']}.git/"
+#  Full path
+# git_url = "ssh://#{uuid}@#{opt['app']}.#{opt['user']}.#{libra_domain}/#{libra_dir}/#{uuid}/git/#{opt['app']}.git/"
 
-puts "git clone #{git_url} #{opt['repo']}" if debug
-git_pull = `git clone #{git_url} #{opt['repo']}`
-if $?.exitstatus != 0
-    puts "Error in git pull"
-    puts git_pull
-    exit 255
+# Shorter path (easier to read)
+git_url = "ssh://#{uuid}@#{opt['app']}.#{opt['user']}.#{libra_domain}/~/git/#{opt['app']}.git/"
+
+unless opt['nogit']
+    puts "Pulling new repo down"
+
+    puts "git clone #{git_url} #{opt['repo']}" if debug
+    git_pull = `git clone #{git_url} #{opt['repo']}`
+    if $?.exitstatus != 0
+        puts "Error in git pull"
+        puts git_pull
+        exit 255
+    end
+else
+    puts <<IMPORTANT
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+IMPORTANT: Since the -n flag was specified, no local repo has been created.
+This means you can't make changes to your published application until after
+you clone the repo yourself.  See the git url below for more information.
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+IMPORTANT
 end
-
 #
 # Test several times, doubling sleep time between attempts.
 #
