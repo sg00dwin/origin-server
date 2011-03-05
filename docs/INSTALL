@@ -126,3 +126,4 @@ Non-ec2
 
 To run on non-ec2 you need to alter /etc/libra/node_data.conf and set instance_id
 and public_ip to the IP of your host.
+
