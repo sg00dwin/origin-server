@@ -78,19 +78,6 @@
 		<%= form_tag("http://", :method => "post", :id => "user_form") do %>		
 			<table>
 			<tr>
-				<th>First Name</th>
-				<td><input type="text" name="firstname"></input></td>
-			</tr>
-			<tr>
-				<th>Last Name</th>
-				<td><input type="text" name="lastname"></input></td>
-			</tr>
-			<tr>
-				<th>Desired Namespace</th>
-				<td><input type="text" name="namespace"></input>				<span>.rhcloud.com</span>
-				</td>
-			</tr>
-			<tr>
 				<th>Email</th>
 				<td><input type="text" name="email_address"></input>
 			</tr>
@@ -98,10 +85,21 @@
 				<th>Why we are collecting your email</th>
 				<td>We will never spam you (<a href="#">see our privacy policy</a>.)<br /> We'll send you an email to finalize your login creation.</td>
 			</tr>
-			<tr id="captcha">
-				<th>Prove You Are Human</th>
-				<td><img src="img/captcha.png"></td>
-			</tr>
+			<tr>
+                <th>Password</th>
+                <td><input type="password" name="password"></input>
+            </tr>
+			<tr>
+                <th>Retype Password</th>
+                <td><input type="password" name="password_verify"></input>
+            </tr>
+            <tr id="captcha">
+                <th>Prove You Are Human</th>
+                <td><img src="img/captcha.png"></td>
+            </tr>
+			<tr>                
+                <td><input type="hidden" name="redirect_url"></input>
+            </tr>
 			</table>
 			<a href="javascript:;" class="button" onclick="document.getElementById('user_form').submit(); return false;">Register now</a>
         <% end %>
