@@ -1,11 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
-<html xmlns="http://www.w3.org/1999/xhtml"> 
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<title>CAN I HAZ A PROPER PAGE TITLE? (OR CHEEZBURGER)</title>
-		<meta http-equiv="Content-Type" content="text/html;charset=utf-8" /> 
-	<meta name="description" content="" /> 
-	<meta name="keywords" content="" /> 
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+	<meta name="description" content="" />
+	<meta name="keywords" content="" />
 
 	<link rel="stylesheet" href="css/reset.css" />
 	<link rel="stylesheet" href="css/text.css" />
@@ -22,7 +22,7 @@
 	<div class="grid_6 alpha" id="logo">
 		<a href="#"><img src="img/logo.png" alt="RH Cloud"></a>
 	</div>
-	
+
 	<div class="grid_18 omega" id="header_right">
 		<div id="login"><a href="#">Login</a></div>
 		<div class="clear"></div>
@@ -58,28 +58,28 @@
 
 	<div class="grid_10" id="title_accent">
 	</div>
-	
+
 	<div class="clear"></div>
 </div>
 
 
 
 <div id="page" class="container_24">
-		
+
 	<div id="breadcrumb" class="prefix_1 grid_22 suffix_1">
-		<a href="#">Solutions</a> &gt; <a href="#">Express</a> &gt; <a href="#">Register</a> 
+		<a href="#">Solutions</a> &gt; <a href="#">Express</a> &gt; <a href="#">Register</a>
 	</div>
 
 	<div class="clear"></div>
 
 	<div id="registration" class="prefix_1 grid_12 suffix_1">
 		<h3>Register for access to Express</h3>
-		<p><img src="img/icon_shadowman.png" alt="Red Hat logo" /><a href="#">Do you already have a redhat.com / RHN login?</a></p>		
-		<%= form_tag("http://", :method => "post", :id => "user_form") do %>		
+		<p><img src="img/icon_shadowman.png" alt="Red Hat logo" /><a href="#">Do you already have a redhat.com / RHN login?</a></p>
+		<%= form_tag("https://streamline.devlab.phx1.redhat.com/wapps/streamline/registration.html", :method => "post", :id => "user_form") do %>
 			<table>
 			<tr>
 				<th>Email</th>
-				<td><input type="text" name="email_address"></input>
+				<td><input type="text" id="emailAddress" name="emailAddress"></input>
 			</tr>
 			<tr id="email_tooltips">
 				<th>Why we are collecting your email</th>
@@ -87,29 +87,37 @@
 			</tr>
 			<tr>
                 <th>Password</th>
-                <td><input type="password" name="password"></input>
+                <td><input type="password" id="password" name="password"></input>
             </tr>
-			<tr>
+            <tr>
                 <th>Retype Password</th>
-                <td><input type="password" name="password_verify"></input>
+                <td><input type="password" id="passwordConfirmation" name="passwordConfirmation"></input>
             </tr>
             <tr id="captcha">
                 <th>Prove You Are Human</th>
-                <td><img src="img/captcha.png"></td>
+                <td><img src="https://streamline.devlab.phx1.redhat.com/wapps/streamline/ajax/captcha.html"></td>
             </tr>
-			<tr>                
-                <td><input type="hidden" name="redirect_url"></input>
+            <tr>
+                <th>Enter the text as seen above</th>
+                <td><input type="input" id="captchaAnswer" name="captchaAnswer"></input>
             </tr>
-			</table>
+            <tr>
+                <th>Terms Acceptance</th>
+                <td><input type="checkbox" name="termsAccepted" id="termsAccepted" tabindex="5" value="true"/></input>
+            </tr>
+            <tr>
+                <td><input type="hidden" name="redirect_url" value="http://www.redhat.com"></input>
+            </tr>
+	</table>
 			<a href="javascript:;" class="button" onclick="document.getElementById('user_form').submit(); return false;">Register now</a>
         <% end %>
 
 	</div>
 	<div id="form_notes" class="grid_9 suffix_1">
-		<h4>What is Express?</h4>	
+		<h4>What is Express?</h4>
 		<p>'Come, we shall have some fun now!' thought Alice. 'I'm glad they've begun asking riddles.—I believe I can guess that,' she added aloud.</p>
 		<p>'Do you mean that you think you can find out the answer to it?' said the March Hare.</p>
-		
+
 		<h4>What do I need to register?</h4>
 		<ul>
 			<li>An email address</li>
@@ -128,7 +136,7 @@
 		</ul>
 	</div>
 
-	
+
 	<div class="clear"></div>
 
         <div class="prefix_1 grid_22 suffix_1">
