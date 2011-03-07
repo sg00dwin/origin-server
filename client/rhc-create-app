@@ -195,7 +195,17 @@ if File.exists?(opt['repo'])
     puts
     exit 255
 else
-    Dir.mkdir(opt['repo'])
+    begin
+        Dir.mkdir(opt['repo'])
+    rescue Errno::EACCES
+        puts "Could not write to #{File.expand_path(opt['repo'])}"
+        puts "Reason: " + $!
+        puts
+        puts "Please re-run from a directory you have write access to or specify -r with a"
+        puts "path you have write access to"
+        puts
+        exit 206
+    end
 end
 
 #
