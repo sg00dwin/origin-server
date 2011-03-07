@@ -15,7 +15,7 @@ body {
 /* Main nav */
 
 #nav {
-        background: url(../images/bg_mainnav.png) repeat-x red;
+        background: url(../img/bg_mainnav.png) repeat-x red;
         min-height: 20px;
         padding-top: 5px;
         padding-bottom: 5px;
@@ -32,6 +32,67 @@ body {
 }
 
 
+/* Login stuff */
+
+#login {
+	width: 50px;
+	float: right;
+	background: url(../img/bg_login_button.png) repeat-x red;
+	padding: 6px 30px;
+}
+
+#loginbox {
+ 	background: url(../img/bg_login_button.png) repeat-x red;
+        padding: 16px;
+}
+
+#loginbox ul {
+	padding-bottom: 0px;
+	margin-bottom: 0px;
+	margin-left: 40px;
+}
+
+#loginbox p img {
+	float: left;
+	margin-bottom: 8px;
+	margin-top: -5px;
+}
+
+#loginbox ul {
+	list-style-type: none;
+	padding: 0px;
+	margin-left: 10px;
+}
+
+#loginbox li  {
+	background: url(../img/bullet_triangle_yellow.png) no-repeat 0px 5px;
+	padding-left: 14px;
+}
+
+#fancybox-wrap {
+  padding: 0px !important;
+  top: 0px !important;
+  margin-left: 280px;
+}
+
+#fancybox-close {
+  top: 5px !important;
+  right: 5px !important;
+}
+
+#fancybox-frame html,
+#fancybox-frame body {
+	height: 450px !important;
+	background: red;
+}
+
+#fancybox-outer,
+#fancybox-content,
+#fancybox-wrap {
+	width: 400px !important;
+	background: red; 
+}
+
 /* Page block styling */
 
 #logo {
@@ -39,12 +100,6 @@ body {
 	margin-bottom: 1em;
 }
 
-#login {
-	width: 50px;
-	float: right;
-	background: url(../images/bg_login_button.png) repeat-x red;
-	padding: 6px 30px;
-}
 
 #mainslug {
 	margin-top: 50px;
@@ -65,9 +120,9 @@ body {
 	padding-right: 10px;
 }
 
-#pageheader.express { background: url(../images/bg_express.png) repeat-x #6699cc; }
-#pageheader.appscale { background: url(../images/bg_appscale.png) repeat-x #c88fd7; }
-#pageheader.fabric { background: url(../images/bg_appscale.png) repeat-x #8dd35f; }
+#pageheader.express { background: url(../img/bg_express.png) repeat-x #6699cc; }
+#pageheader.appscale { background: url(../img/bg_appscale.png) repeat-x #c88fd7; }
+#pageheader.fabric { background: url(../img/bg_appscale.png) repeat-x #8dd35f; }
 
 #news_title {
         background: #333;
@@ -91,7 +146,7 @@ body {
 }
 
 #page {
-	background: white url(../images/bg_gradient.png) repeat-x;
+	background: white url(../img/bg_gradient.png) repeat-x;
         color: black;
 	padding-top: 2em;
 	padding-bottom: 5em;
@@ -109,6 +164,12 @@ body {
 	margin-left: 0px;
 	padding-left: 5px;
 	padding-bottom: 1em;
+	padding-top: 12px;
+}
+
+#slugs .suffix_1 {
+  padding-left: 15px;
+  margin-right: -15px;
 }
 
 .slug {
@@ -162,15 +223,15 @@ body {
 /* App Promo Banners */
 
 #app_promos .express {
-	background: url(../images/banner_bg_express.png) white;
+	background: url(../img/banner_bg_express.png) white;
 }
 
 #app_promos .appscale {
-	background: url(../images/banner_bg_appscale.png) white;
+	background: url(../img/banner_bg_appscale.png) white;
 }
 
 #app_promos .fabric {
-	background: url(../images/banner_bg_fabric.png) white;
+	background: url(../img/banner_bg_fabric.png) white;
 }
 
 #app_promos h3,
@@ -193,31 +254,18 @@ body {
 
 /* Registration form */
 
-#recaptcha_widget_div, #registration input {
-        margin-bottom: 1em;
-}
-
-#registration input {
+#registration input,
+#loginbox input {
 	border: 1px solid #aaa;
 	-moz-border-radius: 4px;
 	font-size: 14pt;
-        display: block;
+	width: 200px;
 }
 
-#registration input.button {
-	background: #777;
-	color: white !important;
-	font-weight: bold;
-	padding: 5px 10px;
+#loginbox a {
+	font-family: Overpass;
+	font-size: 11pt;
 	text-decoration: none;
-	text-transform: uppercase;
-	text-align: center;
-	font-size: 1em;
-}
-
-#registration label {
-	color: #777;
-	font-weight: bold;
 }
 
 #registration td,
@@ -266,9 +314,49 @@ p, ul, ol, li, h1, h2, h3, h4, h5, h6, a { color: white; }
 
 #pagetop p, #pagetop ul, #pagetop ol, #pagetop li, #pagetop h1, #pagetop h2, #pagetop h3, #pagetop h4, #pagetop h5, #pagetop h6, #pagetop a { color: #777; }
 
+#pagetop h1, #page h1, #pagetop h2, #page h2, #pagetop h3, #page h3, #pagetop h4, #page h4, #pagetop h5, #page h5, #pagetop h6, #page h6 {
+	font-family: 'Overpass';
+}
+
 #page p, #page ul, #page ol, #page li, #page h1, #page h2, #page h3, #page h4, #page h5, #page h6, #page a { color: #777; }
 
 #app_promos p, #app_promos ul, #app_promos ol, #app_promos li, #app_promos h1, #app_promos h2, #app_promos h3, #app_promos h4, #app_promos h5, #app_promos h6, #app_promos a { color: #777; }
+
+#login {
+	font-family: 'Overpass';
+}
+
+#loginbox h1 {
+        font-family: 'Overpass';
+	font-weight: normal;
+        text-transform: uppercase;
+	margin-bottom: 8px;
+}
+
+#loginbox p {
+        font-family: 'Overpass';
+	font-size: 11pt;
+	line-height: 13pt;
+}
+
+#loginbox input,
+#loginbox input.button {
+	margin-bottom: 1.5em;
+	margin-left: 40px !important;
+	width: 300px;
+}
+
+#loginbox input {
+/*
+	display: inline !important;
+*/
+}
+
+#pagetop h3 {
+	font-size: 13pt;
+	color: #444;
+	line-height: 16pt;
+}
 
 #nav {
 	font-weight: bold;
@@ -292,14 +380,15 @@ p, ul, ol, li, h1, h2, h3, h4, h5, h6, a { color: white; }
 #sidenav h4 {
 	font-size: 10pt;
 	margin-bottom: .5em;
-	margin-top: .5em;
+	margin-top: 1em;
 	line-height: 12pt;
 	text-transform: uppercase;
+	font-family: 'Overpass';
 }
 
 #app_promos h3 { font-size: 10pt; }
-#app_promos h4 {
-	font-size: 14pt;
+#app_promos h4 { 
+	font-size: 14pt; 
 	text-transform: uppercase;
 }
 
@@ -318,12 +407,14 @@ p, ul, ol, li, h1, h2, h3, h4, h5, h6, a { color: white; }
 #mainslug {
 	font-size: 12pt;
 	color: #ccc;
+	font-family: 'Overpass';
 }
 
 /* Common non-typographic styles */
 
-a.button {
-	background: #777;
+a.button,
+#loginbox input.button {
+	background: #555;
 	color: white !important;
 	font-weight: bold;
 	padding: 5px 10px;
@@ -334,6 +425,12 @@ a.button {
 	display: block;
 	margin-left: auto;
 	margin-right: auto;
+	border: 0px;
+}
+
+#loginbox input.button {
+	width: 100px;
+	font-size: 11pt !important;
 }
 
 p img {
@@ -349,6 +446,7 @@ p img {
 	margin-top: 5px;
 	margin-bottom: -10px !important;
 	margin-left: 10px;
+	font-family: 'Overpass';
 }
 
 #title p {
@@ -363,11 +461,15 @@ p img {
 	font-size: 22pt;
 	margin-top: 0px;
 	margin-bottom: 7px;
+	font-family: 'Overpass';
+	font-weight: normal;
 }
 
 #form_notes h4 {
 	font-size: 11pt;
 	margin-bottom: .5em;
+	font-family: 'Overpass';
+	font-weight: normal;
 }
 
 #form_notes p,
@@ -426,6 +528,7 @@ p img {
 .newsTicker {
 	clear: auto;
 	height: 30px;
+	font-family: 'Overpass';
 }
 
 .slideShow .navigation {
@@ -435,13 +538,13 @@ p img {
 	width: 950px;
 	margin-left: auto;
 	margin-right: auto;
-	z-index: 10999 !important;
+	z-index: 998 !important;
 	padding-left: 10px;
 	margin-top: 200px;
 }
 
 .slideShow .navigation li {
-	display: inline;
+	display: inline; 
 }
 
 .slideShow .navigation a {
@@ -454,6 +557,7 @@ p img {
 	background-color: white;
 	color: #3c6eb4;
 	border: 1px solid #3c6eb4;
+	font-family: 'Overpass';
 }
 
 .slideShow .navigation a:hover, .slideShow .navigation a.selected {
@@ -463,17 +567,17 @@ p img {
 	border: 1px solid white;
 }
 
-.simpleSlideShow {
-	width: 960px;
+.simpleSlideShow { 
+	width: 960px; 
 }
 
-#slides ul {
-	width: 960px;
+#slides ul { 
+	width: 960px; 
 	margin-left: -5px;
 }
 
-li.slide {
-	width: 960px !important;
+li.slide { 
+	width: 960px !important; 
 }
 
 .slide-canvas {
@@ -489,11 +593,12 @@ li.slide {
 	display: block;
 }
 
-#slides #express { background: url(../images/slide_express.png) no-repeat #6699cc; }
-#slides #appscale { background: url(../images/slide_appscale.png) repeat-x #c88fd7; }
+#slides #express { background: url(../img/slide_express.png) no-repeat #6699cc; }
+#slides #appscale { background: url(../img/slide_appscale.png) repeat-x #c88fd7; }
 
 .slides li p {
 	font-size: 1.1em;
+	font-family: 'Overpass';
 }
 
 .slide div a { color: white; }
@@ -506,15 +611,22 @@ li.slide {
 	top: 5px;
 	background: none;
 	color: #fff;
-	z-index: 1000;
+	z-index: 980;
 	padding: 0.2em 10px;
+	font-family: 'Overpass';
 }
 
 #slides .content h2 {
 	color: white;
-	font-size: 1.8em;
+	font-size: 25pt;
 	text-transform: none;
-	margin-top: 10px;
+	margin-top: 0px;
 	font-weight: normal;
+	font-family: 'Overpass';
+	margin-bottom: 0px;
 }
 
+#slides .content p {
+	font-size: 13pt;
+	width: 600px;
+}
