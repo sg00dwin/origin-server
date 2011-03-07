@@ -251,15 +251,24 @@ puts "Checking ~/.ssh/config"
 my_url = "#{opt['app']}.#{opt['user']}.#{libra_domain}"
 
 found = false
-File.open(ssh_config, "r") do |sline|
-    while(line = sline.gets)
-        if line.to_s.start_with? "Host *.#{libra_domain}"
-            found = true
-            break
+
+begin
+    File.open(ssh_config, "r") do |sline|
+        while(line = sline.gets)
+            if line.to_s.start_with? "Host *.#{libra_domain}"
+                found = true
+                break
+            end
         end
     end
+rescue Errno::EACCES
+    puts "Could not write to #{ssh_config}"
+    puts "Reason: " + $!
+    puts
+    puts "Please correct this first.  Then run rerun."
+    puts
+    exit 240
 end
-
 if found
     puts "Found #{libra_domain} in ~/.ssh/config... No need to adjust"
 else
