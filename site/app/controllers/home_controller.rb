@@ -1,6 +1,5 @@
-class RegisterController < ApplicationController
-  layout 'main'
-
+class HomeController < ApplicationController
+  
   def index
   end
 
