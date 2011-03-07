@@ -189,7 +189,10 @@ def cleanup_and_exit(repo, code)
 end
 
 if File.exists?(opt['repo']) 
-    puts "We will not overwrite an existing git repo. Exiting"
+    puts "We will not overwrite an existing git repo. Please remove:"
+    puts "  #{File.expand_path(opt['repo'])}"
+    puts "Then try again."
+    puts
     exit 255
 else
     Dir.mkdir(opt['repo'])
@@ -278,7 +281,7 @@ sleep_time = 2.5
 while loop < 5 && !hostexist?(my_url)
     sleep sleep_time *= 2
     loop+=1
-    puts "  retry # #{loop}"
+    puts "  retry # #{loop} - #{my_url}"
 end
 
 if loop == 5
