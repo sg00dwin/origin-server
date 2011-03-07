@@ -1,0 +1,34 @@
+<%= content_tag :div, :id => "registration", :class => "prefix_1 grid_12 suffix_1" do -%>
+  <%= content_tag :h3, "Register for access to Express" %>
+
+  <%= content_tag :p do -%>
+    <%= image_tag "icon_shadowman.png", :alt => "Red Hat Logo" %>
+    <%= link_to "Do you already have a redhat.com / RHN login?", "#" %>
+  <% end %>
+
+  <%= form_for(@user, :id => "user_form") do |f| -%>
+      <% @user.errors.full_messages.each do |msg| %>
+        <p><%= msg %></p>
+      <% end %>
+      <%= f.label "emailAddress", "Email" %>
+      <%= f.text_field "emailAddress" %>
+
+      <%= f.label "password", "Password" %>
+      <%= f.password_field "password" %>
+
+      <%= f.label "passwordConfirmation", "Retype Password" %>
+      <%= f.password_field "passwordConfirmation" %>
+
+      <%= f.label "captcha", "Prove You Are Human" %>
+      <%= recaptcha_tags %>
+
+      <%= f.label "termsAccepted", "Terms Acceptance" %>
+      <%= content_tag :p do -%>
+        By selecting the checkbox, I confirm that I accept the following
+        <%= link_to "Terms and Conditions", "http://www.redhat.com", {:target => "_blank"} %>
+        <%= f.check_box "termsAccepted" %>
+      <% end %>
+
+      <%= f.submit "Register Now", :class => "button" %>
+  <% end %>
+<% end %>
