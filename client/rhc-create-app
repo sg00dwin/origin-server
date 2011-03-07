@@ -260,6 +260,7 @@ Host *.#{libra_domain}
     VerifyHostKeyDNS yes
     StrictHostKeyChecking no
     PasswordAuthentication no
+    UserKnownHostsFile ~/.ssh/libra_known_hosts
 
 SSH
 f.close
