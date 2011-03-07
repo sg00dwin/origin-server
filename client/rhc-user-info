@@ -118,6 +118,8 @@ else
     p_usage
 end
 
+opt['apps'] = true if not opt['info'] and not opt['apps']
+
 puts "Contacting http://#{li_server}"
 json_data = JSON.generate(
                 {'username' => opt['user']})

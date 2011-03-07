@@ -189,10 +189,23 @@ def cleanup_and_exit(repo, code)
 end
 
 if File.exists?(opt['repo']) 
-    puts "We will not overwrite an existing git repo. Exiting"
+    puts "We will not overwrite an existing git repo. Please remove:"
+    puts "  #{File.expand_path(opt['repo'])}"
+    puts "Then try again."
+    puts
     exit 255
 else
-    Dir.mkdir(opt['repo'])
+    begin
+        Dir.mkdir(opt['repo'])
+    rescue Errno::EACCES
+        puts "Could not write to #{File.expand_path(opt['repo'])}"
+        puts "Reason: " + $!
+        puts
+        puts "Please re-run from a directory you have write access to or specify -r with a"
+        puts "path you have write access to"
+        puts
+        exit 206
+    end
 end
 
 #
@@ -238,15 +251,24 @@ puts "Checking ~/.ssh/config"
 my_url = "#{opt['app']}.#{opt['user']}.#{libra_domain}"
 
 found = false
-File.open(ssh_config, "r") do |sline|
-    while(line = sline.gets)
-        if line.to_s.start_with? "Host *.#{libra_domain}"
-            found = true
-            break
+
+begin
+    File.open(ssh_config, "r") do |sline|
+        while(line = sline.gets)
+            if line.to_s.start_with? "Host *.#{libra_domain}"
+                found = true
+                break
+            end
         end
     end
+rescue Errno::EACCES
+    puts "Could not write to #{ssh_config}"
+    puts "Reason: " + $!
+    puts
+    puts "Please correct this first.  Then run rerun."
+    puts
+    exit 240
 end
-
 if found
     puts "Found #{libra_domain} in ~/.ssh/config... No need to adjust"
 else
@@ -260,6 +282,7 @@ Host *.#{libra_domain}
     VerifyHostKeyDNS yes
     StrictHostKeyChecking no
     PasswordAuthentication no
+    UserKnownHostsFile ~/.ssh/libra_known_hosts
 
 SSH
 f.close
@@ -277,7 +300,7 @@ sleep_time = 2.5
 while loop < 5 && !hostexist?(my_url)
     sleep sleep_time *= 2
     loop+=1
-    puts "  retry # #{loop}"
+    puts "  retry # #{loop} - #{my_url}"
 end
 
 if loop == 5
