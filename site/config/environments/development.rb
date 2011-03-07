@@ -22,5 +22,7 @@ RedHatCloud::Application.configure do
 
   # Only use best-standards-support built into browsers
   config.action_dispatch.best_standards_support = :builtin
+
+  config.corp_server = "https://streamline.devlab.phx1.redhat.com/wapps/streamline"
 end
 

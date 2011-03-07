@@ -1,14 +1,118 @@
-<!DOCTYPE html>
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-  <title>RedHatCloud</title>
-  <%= stylesheet_link_tag :all %>
-  <%= javascript_include_tag :defaults %>
-  <%= csrf_meta_tag %>
+      <title>Red Hat Cloud</title>
+      <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+      <meta name="description" content="" />
+      <meta name="keywords" content="" />
+
+      <%= stylesheet_link_tag :all %>
+      <%= javascript_include_tag :defaults %>
+      <%= csrf_meta_tag %>
 </head>
 <body>
+<div id="head" class="container_24">
 
+<!-- start page header -->
+
+	<div class="grid_6 alpha" id="logo">
+		<a href="#"><img src="images/logo.png" alt="RH Cloud"></a>
+	</div>
+
+	<div class="grid_18 omega" id="header_right">
+		<div id="login"><a href="#">Login</a></div>
+		<div class="clear"></div>
+		<p id="mainslug">A cloud-based application platform from the open source leader.</p>
+	</div>
+
+	<div class="clear"></div>
+
+<!-- start mainnav, end page header -->
+
+	<div class="grid_24 alpha omega" id="nav">
+		<ul>
+			<li>What is RH Cloud?</li>
+			<li>Express for Developers</li>
+			<li>AppScale for Ops</li>
+			<li>Fabric</li>
+			<li>Community</li>
+			<li>FAQ</li>
+			<li>Help</li>
+		</ul>
+	</div>
+
+	<div class="clear"></div>
+
+</div>
 <%= yield %>
+<div id="footer" class="container_24">
+	<div class="prefix_1 grid_3">
+		<h5>Red Hat</h5>
+		<ul>
+			<li><a href="#">About</a></li>
+			<li><a href="#">Legal</a></li>
+			<li><a href="#">Privacy Policy</a></li>
+			<li><a href="#">Partner with Us</a></li>
+		</ul>
+	</div>
+	<div class="prefix_1 grid_3">
+		<h5>Red Hat Cloud</h5>
+		<ul>
+			<li><a href="#">How it works</a></li>
+			<li><a href="#">Pricing</a></li>
+			<li><a href="#">News &amp; Events</a></li>
+			<li><a href="#">Blog</a></li>
+	</div>
+	<div class="prefix_1 grid_3">
+		<h5>Solutions</h5>
+		<ul>
+			<li><a href="#">Express</a>
+			<li><a href="#">AppScale</a>
+			<li><a href="#">Fabric</a>
+		</ul>
+	</div>
+	<div class="prefix_1 grid_3">
+		<h5>Resources</h5>
+		<ul>
+			<li><a href="#">Community</a>
+			<li><a href="#">Documentation</a>
+			<li><a href="#">Tutorials</a>
+			<li><a href="#">Videos</a>
+		</ul>
+	</div>
+	<div class="prefix_1 grid_7">
+		<h5>Powered By:</h5>
+	</div>
 
+	<div class="clear"></div>
+</div>
+
+<!-- begin sub-footer, end footer -->
+<div id="subfooter" class="container_24">
+	<div class="grid_1 suffix_1">
+		<img src="shadowman.png" alt="Red Hat Logo" />
+	</div>
+	<div class="grid_21 suffix_1">
+		<p>Copyright &copy; 2011 Red Hat, Inc.</p>
+		<ul>
+			<li><a href="#">Accessibility Statement</a></li>
+			<li><a href="#">Privacy Policy</a></li>
+			<li><a href="#">Terms of Use</a></li>
+			<li><a href="#">Patent Promise</a></li>
+			<li><a href="#">Trademark Guidelines</a></li>
+		</ul>
+		<ul>
+			<li><a href="#">About Red Hat</a></li>
+			<li><a href="#">Contact Us</a></li>
+			<li><a href="#">Careers</a></li>
+			<li><a href="#">Site Map</a></li>
+			<li><a href="#">FAQs</a></li>
+			<li><a href="#">System Requirements</a></li>
+		</ul>
+	</div>
+	<div class="clear"></div>
+</div>
 </body>
 </html>
