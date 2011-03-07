@@ -17,6 +17,7 @@ BuildRequires: rubygem-rake
 BuildRequires: rubygem-rspec
 Requires: rubygem-parseconfig
 Requires: rubygem-json
+Requires: git
 #BuildRequires: rubygem-cucumber
 #BuildRequires: mcollective
 #BuildRequires: mcollective-client
