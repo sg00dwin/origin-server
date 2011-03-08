@@ -26,7 +26,7 @@ Requires: git
 %description
 Provides Li client libraries
 
-%package devel
+%package devenv
 Summary: Dependencies for Libra development
 Group: Development/Libraries
 Requires: rubygem-rake
@@ -35,12 +35,18 @@ Requires: rubygem-rspec
 Requires: rubygem-aws
 Requires: rubygem-json
 Requires: mcollective-client
-Requires: mcollective-common
+Requires: mcollective
 Requires: qpid-cpp-client
 Requires: ruby-qmf
+Requires: li
+Requires: li-node
+Requires: li-server
+Requires: li-php
+Requires: li-cartridge-php-5.3.2
+Requires: puppet
 BuildArch: noarch
 
-%description devel
+%description devenv
 Provides all the development dependencies to be able to run the libra tests
 
 %package node
@@ -149,10 +155,39 @@ rake DESTDIR="$RPM_BUILD_ROOT" install_php
 mkdir -p .%{gemdir}
 gem install --install-dir $RPM_BUILD_ROOT/%{gemdir} --local -V --force --rdoc \
      backend/controller/pkg/li-controller-%{version}.gem
+mkdir $RPM_BUILD_ROOT/etc/libra/devenv/
+cp -adv docs/devenv $RPM_BUILD_ROOT/etc/libra/devenv/
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+
+%post devenv
+# qpid
+/bin/cp -f /etc/libra/devenv/qpidd.conf /etc/qpidd.conf
+service qpidd restart
+chkconfig qpidd on
+
+# mcollective
+/bin/cp -f /etc/libra/devenv/client.cfg /etc/libra/devenv/server.cfg /etc/mcollective
+service mcollective start
+chkconfig mcollective on
+
+# iptables
+/bin/cp -f /etc/libra/devenv/iptables /etc/sysconfig/iptables
+/etc/init.d/iptables restart
+
+# httpd
+/bin/cp -f /etc/libra/devenv/NameVirtualHost.conf /etc/httpd/conf.d/
+/etc/init.d/httpd restart
+chkconfig httpd on
+
+# Disable selinux (for now)
+setenforce 0
+
+# Setup facts
+/usr/bin/puppet /usr/libexec/mcollective/update_yaml.pp
+crontab -u root /etc/libra/devenv/crontab
 
 %post node
 /sbin/chkconfig --add libra || :
@@ -194,6 +229,11 @@ fi
 %{_mandir}/man1/rhc-*
 %{_mandir}/man5/libra*
 %config(noreplace) %{_sysconfdir}/libra/client.conf
+
+
+%files devenv
+%defattr(-,root,root,-)
+%{_sysconfdir}/libra/devenv/
 
 
 %files php
