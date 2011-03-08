@@ -270,6 +270,49 @@ body {
 	text-decoration: none;
 }
 
+#registration form {
+	width: 500px;
+}
+
+input#user_emailAddress,
+input#user_password,
+input#user_passwordConfirmation,
+input#user_password {
+	width: 250px !important;
+	float: left;
+	clear: right;
+	height: 24px;
+	margin-bottom: 16px;
+	margin-left: 16px;
+}
+
+label {
+	color: #777;
+	font-size: 10pt;
+	font-weight: bold;
+	width: 140px;
+	float: left;
+	text-align: right;
+	clear: left;
+	line-height: 30px;
+	margin-bottom: 16px;
+}
+
+#recaptcha_area {
+	float: left;
+	margin-left: 10px;
+	clear: right;
+}
+
+.recaptcha_input_area label {
+	line-height: inherit;
+}
+
+form p {
+	clear: left;
+}
+
+
 #registration td,
 #registration th {
 	padding-top: 1.5em;
