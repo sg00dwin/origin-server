@@ -39,6 +39,16 @@ rescue Errno::EACCES => e
 end
 
 #
+# Check for proxy environment
+#
+if ENV['http_proxy']
+    host, port = ENV['http_proxy'].split(':')
+    @http = Net::HTTP::Proxy(host, port)
+else
+    @http = Net::HTTP
+end
+
+#
 # Check for local var in ~/.li use it, else use /etc/libra/client.conf
 #
 def get_var(var)
@@ -170,7 +180,7 @@ json_data = JSON.generate(
                 'ssh' => ssh_key,
                 'alter' => opt['alter']})
 puts "DEBUG: Json string: #{json_data}" if debug
-response = Net::HTTP.post_form(URI.parse("http://#{li_server}/php/create_customer.php"),
+response = @http.post_form(URI.parse("http://#{li_server}/php/create_customer.php"),
                            {'json_data' => json_data,})
 puts "DEBUG:" if debug
 p response if debug

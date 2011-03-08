@@ -42,6 +42,17 @@ rescue Errno::EACCES => e
 end
 
 #
+# Check for proxy environment
+#
+if ENV['http_proxy']
+    host, port = ENV['http_proxy'].split(':')
+    @http = Net::HTTP::Proxy(host, port)
+else
+    @http = Net::HTTP
+end
+
+
+#
 # Check if host exists
 #
 def hostexist?(host)
@@ -221,7 +232,7 @@ json_data = JSON.generate(
                 :username => "#{opt['user']}"})
 
 puts "Contacting server http://#{li_server}"
-response = Net::HTTP.post_form(URI.parse("http://#{li_server}/php/cartridge_do.php"),
+response = @http.post_form(URI.parse("http://#{li_server}/php/cartridge_do.php"),
                            { 'json_data' => json_data })
 
 json_resp = JSON.parse(response.body);
@@ -356,7 +367,7 @@ while sleep_time < 65
       page = 'health'
     end
     url = URI.parse("http://#{my_url}/#{page}")
-    response = Net::HTTP.get_response(url)
+    response = @http.get_response(url)
     if response.code == "200" && response.body[0,1] == "1"
         puts <<LOOKSGOOD
 
