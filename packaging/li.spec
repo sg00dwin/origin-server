@@ -3,7 +3,7 @@
 
 Name: li
 Version: 0.39
-Release: 0%{?dist}
+Release: 1%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -154,7 +154,7 @@ mkdir -p .%{gemdir}
 gem install --install-dir $RPM_BUILD_ROOT/%{gemdir} --local -V --force --rdoc \
      backend/controller/pkg/li-controller-%{version}.gem
 mkdir $RPM_BUILD_ROOT/etc/libra/devenv/
-cp -adv docs/devenv $RPM_BUILD_ROOT/etc/libra/devenv/
+cp -adv docs/devenv/* $RPM_BUILD_ROOT/etc/libra/devenv/
 
 %clean
 rm -rf $RPM_BUILD_ROOT
