@@ -34,6 +34,7 @@ Requires: rubygem-json
 Requires: mcollective-client
 Requires: mcollective
 Requires: qpid-cpp-client
+Requires: qpid-cpp-server
 Requires: ruby-qmf
 Requires: li
 Requires: li-node
@@ -187,7 +188,7 @@ setenforce 0
 crontab -u root /etc/libra/devenv/crontab
 
 # Libra
-/bin/cp -f /etc/libra/devenv/client.conf /etc/libra/devenv/node.conf /etc/libra/controller.conf /etc/libra
+/bin/cp -f /etc/libra/devenv/client.conf /etc/libra/devenv/node.conf /etc/libra/devenv/controller.conf /etc/libra
 
 %post node
 /sbin/chkconfig --add libra || :
