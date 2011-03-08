@@ -199,6 +199,10 @@ def cleanup_and_exit(repo, code)
     exit code
 end
 
+#
+# Confirm local git repo exists
+#
+
 if File.exists?(opt['repo']) 
     puts "We will not overwrite an existing git repo. Please remove:"
     puts "  #{File.expand_path(opt['repo'])}"
@@ -207,7 +211,7 @@ if File.exists?(opt['repo'])
     exit 255
 else
     begin
-        Dir.mkdir(opt['repo'])
+        FileUtils.mkdir_p(opt['repo'])
     rescue Errno::EACCES
         puts "Could not write to #{File.expand_path(opt['repo'])}"
         puts "Reason: " + $!
@@ -217,6 +221,18 @@ else
         puts
         exit 206
     end
+end
+
+#
+# Confirm libra_id_rsa exists
+#
+unless File.exists?("#{ssh_config_d}/libra_id_rsa")
+    puts
+    puts "Could not find #{ssh_config_d}/libra_id_rsa, cannot continue"
+    puts "This file was created by rhc-user-create.  If it does not exist you may need to create"
+    puts "a new one."
+    puts
+    exit 235
 end
 
 #
@@ -273,19 +289,22 @@ begin
         end
     end
 rescue Errno::EACCES
-    puts "Could not write to #{ssh_config}"
+    puts "Could not read from #{ssh_config}"
     puts "Reason: " + $!
     puts
     puts "Please correct this first.  Then run rerun."
     puts
     exit 240
+rescue Errno::ENOENT
+    puts "Could not find #{ssh_config}.  This is ok, continuing"
 end
 if found
     puts "Found #{libra_domain} in ~/.ssh/config... No need to adjust"
 else
     puts "    Adding #{libra_domain} to ~/.ssh/config"
-    f = File.open(ssh_config, "a")
-    f.puts <<SSH
+    begin
+        f = File.open(ssh_config, "a")
+        f.puts <<SSH
 
 # Added by libra app on #{`date`}
 Host *.#{libra_domain}
@@ -296,11 +315,27 @@ Host *.#{libra_domain}
     UserKnownHostsFile ~/.ssh/libra_known_hosts
 
 SSH
-f.close
+        f.close
+     rescue Errno::EACCES
+        puts "Could not write to #{ssh_config}"
+        puts "Reason: " + $!
+        puts
+        puts "Please correct this first.  Then run rerun."
+        puts
+        exit 240
+    rescue Errno::ENOENT
+        # Make directory and config if they do not exist
+        puts "Could not find directory: " + $!
+        puts "creating"
+        FileUtils.mkdir_p ssh_config_d
+        file = File.open(ssh_config, 'w')
+        file.close
+        retry
+    end   
 end
 
-File.chmod(0600, ssh_config)
 File.chmod(0700, ssh_config_d)
+File.chmod(0600, ssh_config)
 
 #
 # Confirm that the host exists in DNS
