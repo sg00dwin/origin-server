@@ -2,8 +2,8 @@
 %define gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 
 Name: li
-Version: 0.38
-Release: 3%{?dist}
+Version: 0.39
+Release: 0%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -292,6 +292,9 @@ fi
 %{_libexecdir}/li/cartridges/wsgi-3.2.1/
 
 %changelog
+* Tue Mar 08 2011 Mike McGrath <mmcgrath@redhat.com> 0.39-1
+- New version
+
 * Tue Mar 08 2011 Mike McGrath <mmcgrath@redhat.com> 0.38-3
 - Added devenv (auto setup)
 
