@@ -3,7 +3,7 @@
 
 Name: li
 Version: 0.38
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -120,6 +120,18 @@ BuildArch: noarch
 %description cartridge-wsgi-3.2.1
 Provides wsgi support to li
 
+%package php
+Summary: php app for li interface
+Group: Development/Languages
+Requires: php
+Requires: httpd
+Requires: li-node
+Requires: li-server
+
+%description php
+When you want to run the php app outside of the normal framework this
+application makes it easy to setup.
+
 %prep
 %setup -q
 
@@ -133,6 +145,7 @@ rake test_server
 %install
 rm -rf $RPM_BUILD_ROOT
 rake DESTDIR="$RPM_BUILD_ROOT" install
+rake DESTDIR="$RPM_BUILD_ROOT" install_php
 mkdir -p .%{gemdir}
 gem install --install-dir $RPM_BUILD_ROOT/%{gemdir} --local -V --force --rdoc \
      backend/controller/pkg/li-controller-%{version}.gem
@@ -181,6 +194,11 @@ fi
 %{_mandir}/man1/rhc-*
 %{_mandir}/man5/libra*
 %config(noreplace) %{_sysconfdir}/libra/client.conf
+
+
+%files php
+%defattr(-,root,root,-)
+%{_localstatedir}/www/html/php
 
 
 %files node
@@ -233,6 +251,9 @@ fi
 %{_libexecdir}/li/cartridges/wsgi-3.2.1/
 
 %changelog
+* Tue Mar 08 2011 Mike McGrath <mmcgrath@redhat.com> 0.38-2
+- Added php files
+
 * Sun Mar 07 2011 Mike McGrath <mmcgrath@redhat.com> 0.38-1
 - New release
 
