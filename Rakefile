@@ -13,7 +13,8 @@ INITRD_DIR = ENV["INITRDDIR"] || "#{DEST_DIR}/etc/init.d/"
 LIBEXEC_DIR = ENV["LIBEXECDIR"] || "#{DEST_DIR}/usr/libexec/li/"
 LIBRA_DIR = ENV["LIBRADIR"] || "#{DEST_DIR}/var/lib/libra"
 CONF_DIR = ENV["CONFDIR"] || "#{DEST_DIR}/etc/libra"
-MAN_DIR= ENV["MANDIR"] || "#{DEST_DIR}/usr/share/man/"
+MAN_DIR = ENV["MANDIR"] || "#{DEST_DIR}/usr/share/man/"
+HTML_DIR = ENV["PHPDIR"] || "#{DEST_DIR}/var/www/html/"
 
 NODE_FILES = ["backend/facter/libra.rb",
               "backend/mcollective/libra.rb",
@@ -24,6 +25,12 @@ MOCK_ENV = "li-6-x86_64"
 RPM_SPEC = "packaging/li.spec"
 RPM_REGEX = /(Version: )(\d+\.\d+)/
 RPM_REL_REGEX = /(Release: )(\d)(.*)/
+
+desc "Install php files"
+task :install_php do
+    mkdir_p HTML_DIR
+    cp_r "php/", HTML_DIR
+end
 
 task :test_client do
     Dir.glob("client/rhc*").each{|client_file| sh "ruby", "-c", client_file}
