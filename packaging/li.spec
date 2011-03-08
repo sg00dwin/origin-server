@@ -30,9 +30,6 @@ Provides Li client libraries
 Summary: Dependencies for Libra development
 Group: Development/Libraries
 Requires: rubygem-rake
-Requires: rubygem-cucumber
-Requires: rubygem-rspec
-Requires: rubygem-aws
 Requires: rubygem-json
 Requires: mcollective-client
 Requires: mcollective
