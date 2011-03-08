@@ -189,6 +189,9 @@ setenforce 0
 /usr/bin/puppet /usr/libexec/mcollective/update_yaml.pp
 crontab -u root /etc/libra/devenv/crontab
 
+# Libra
+/bin/cp -f /etc/libra/devenv/client.conf /etc/libra/devenv/node.conf /etc/libra/controller.conf /etc/libra
+
 %post node
 /sbin/chkconfig --add libra || :
 /sbin/chkconfig --add libra-data || :
