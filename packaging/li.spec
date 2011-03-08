@@ -3,7 +3,7 @@
 
 Name: li
 Version: 0.38
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -294,6 +294,9 @@ fi
 %{_libexecdir}/li/cartridges/wsgi-3.2.1/
 
 %changelog
+* Tue Mar 08 2011 Mike McGrath <mmcgrath@redhat.com> 0.38-3
+- Added devenv (auto setup)
+
 * Tue Mar 08 2011 Mike McGrath <mmcgrath@redhat.com> 0.38-2
 - Added php files
 
