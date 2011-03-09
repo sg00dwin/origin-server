@@ -47,6 +47,28 @@ BuildArch: noarch
 %description devenv
 Provides all the development dependencies to be able to run the libra tests
 
+%package qe-env
+Summary: Dependencies for Libra QE
+Group: Development/Libraries
+Requires: rubygem-rake
+Requires: rubygem-json
+Requires: mcollective-client
+Requires: mcollective
+Requires: qpid-cpp-client
+Requires: qpid-cpp-server
+Requires: ruby-qmf
+Requires: li
+Requires: li-node
+Requires: li-server
+Requires: li-php
+Requires: li-cartridge-php-5.3.2
+Requires: puppet
+BuildArch: noarch
+
+%description qe-env
+Provides all the QE dependencies to be able to run libra
+
+
 %package node
 Summary: Multi-tenant cloud management system node tools
 Group: Network/Daemons
@@ -190,6 +212,38 @@ crontab -u root /etc/libra/devenv/crontab
 # Libra
 /bin/cp -f /etc/libra/devenv/client.conf /etc/libra/devenv/node.conf /etc/libra/devenv/controller.conf /etc/libra
 
+
+%post qe-env
+# qpid
+/bin/cp -f /etc/libra/qe-env/qpidd.conf /etc/qpidd.conf
+service qpidd restart
+chkconfig qpidd on
+
+# mcollective
+/bin/cp -f /etc/libra/qe-env/client.cfg /etc/libra/qe-env/server.cfg /etc/mcollective
+service mcollective start
+chkconfig mcollective on
+
+# iptables
+/bin/cp -f /etc/libra/qe-env/iptables /etc/sysconfig/iptables
+/etc/init.d/iptables restart
+
+# httpd
+/bin/cp -f /etc/libra/qe-env/NameVirtualHost.conf /etc/httpd/conf.d/
+/etc/init.d/httpd restart
+chkconfig httpd on
+
+# Disable selinux (for now)
+setenforce 0
+
+# Setup facts
+/usr/bin/puppet /usr/libexec/mcollective/update_yaml.pp
+crontab -u root /etc/libra/qe-env/crontab
+
+# Libra
+/bin/cp -f /etc/libra/qe-env/client.conf /etc/libra/qe-env/node.conf /etc/libra/qe-env/controller.conf /etc/libra
+
+
 %post node
 /sbin/chkconfig --add libra || :
 /sbin/chkconfig --add libra-data || :
@@ -236,6 +290,9 @@ fi
 %defattr(-,root,root,-)
 %{_sysconfdir}/libra/devenv/
 
+%files qe-env
+%defattr(-,root,root,-)
+%{_sysconfdir}/libra/qe-env/
 
 %files php
 %defattr(-,root,root,-)

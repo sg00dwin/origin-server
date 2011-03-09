@@ -3,6 +3,7 @@
 #
 
 require 'rbconfig'
+require 'build/ami'
 
 DEST_DIR = ENV["DESTDIR"] || "/"
 BIN_DIR = ENV["BINDIR"] || "#{DEST_DIR}/usr/bin"
