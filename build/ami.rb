@@ -1,5 +1,5 @@
 require 'fileutils'
-
+require 'parseconfig'
 begin
   require 'aws'
   require 'right_http_connection'
@@ -11,17 +11,14 @@ begin
     BREW_LI = "https://brewweb.devel.redhat.com/packageinfo?packageID=31345"
     GIT_REPO_PUPPET="ssh://puppet1.ops.rhcloud.com/srv/git/puppet.git"
     CONTENT_TREE={'puppet' => '/etc/puppet'}
-    RSA = File.expand_path("../../docs/libra.pem", File.expand_path(__FILE__))
+    RSA = File.expand_path("../../docs/libra-new.pem", File.expand_path(__FILE__))
     SSH = "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PasswordAuthentication=no -i " + RSA
 
     # This will verify the Amazon SSL connection
     Rightscale::HttpConnection.params[:ca_file] = "/etc/pki/tls/certs/ca-bundle.trust.crt"
 
     def conn
-      # Create the AWS connection
-      Aws::Ec2.new(ENV['AMAZON_ACCESS_KEY_ID'],
-                   ENV['AMAZON_SECRET_ACCESS_KEY'],
-                   params = {:logger => Logger.new('/dev/null')})
+      Aws::Ec2.new(@access_key, @secret_key, params = {:logger => Logger.new('/dev/null')})
     end
 
     def terminate(instance)
@@ -51,12 +48,30 @@ begin
       conn.describe_instances([@instance])[0][key]
     end
 
+    task :creds do
+      begin
+        config = ParseConfig.new(File.expand_path("~/.awscred"))
+        @access_key = config.get_value("AWSAccessKeyId")
+        @secret_key = config.get_value("AWSSecretKey")
+      rescue StandardError => e
+        puts e
+        msg = <<-eos
+          Couldn't access credentials in ~/.awscred
+
+          Please create a file with the following format:
+            AWSAccessKeyId=<ACCESS_KEY>
+            AWSSecretKey=<SECRET_KEY>
+        eos
+        fail msg
+      end
+    end
+
     task :version do
       @version = `curl -s #{BREW_LI} | grep -o -E li-.{4} | head -n1`.chomp
       puts "Current version is #{@version}"
     end
 
-    task :instance => [:version] do
+    task :instance => [:version, :creds] do
       # Look up any tagged instances
       instances = conn.describe_instances.map do |i|
         if (i[:aws_state] == "running") and (i[:tags]["Name"] == @version)
@@ -102,7 +117,7 @@ begin
       end
     end
 
-    task :check => [:version] do
+    task :check => [:creds, :version] do
       conn.describe_images_by_owner.each do |i|
         fail "AMI already exists" if i[:aws_name] == @version
       end
@@ -115,7 +130,7 @@ begin
     end
 
     desc "Remove the current registered AMI and instances"
-    task :clean => [:version] do
+    task :clean => [:creds, :version] do
       # Terminate any tagged instances
       instances = conn.describe_instances.collect do |i|
         if (i[:aws_state] == "running") and (i[:tags]["Name"] == @version)
