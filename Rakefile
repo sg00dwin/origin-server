@@ -115,15 +115,6 @@ task :version do
     puts "Current Version is #{@version}"
 end
 
-task :setup_mock do
-    unless File.exists?("/etc/mock/#{MOCK_ENV}.cfg")
-      puts "Configuring Libra Mock Environment"
-      puts "NOTE: Will prompt for sudo password"
-      sh "sudo yum install -y mock"
-      sh "sudo cp packaging/#{MOCK_ENV}.cfg /etc/mock"
-    end
-end
-
 task :buildroot do
     # Get the RPM build root for the system
     @buildroot = `rpm --eval "%{_topdir}"`.chomp!
@@ -154,15 +145,6 @@ task :srpm => [:version, :buildroot, :commit_check] do
 
     # Build the source RPM
     sh "rpmbuild -bs #{@buildroot}/SPECS/li.spec"
-end
-
-desc "Build the Libra RPMs"
-task :rpm => [:setup_mock, :srpm] do
-    # Find the built src RPM
-    srpm = Dir.glob("#{@buildroot}/SRPMS/li-#{@version}*.rpm")[0]
-
-    # Build the RPMs with mock
-    sh "mock -r #{MOCK_ENV} #{srpm}"
 end
 
 task :bump_release => [:version, :commit_check] do

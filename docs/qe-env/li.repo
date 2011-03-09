@@ -1,0 +1,15 @@
+[li]
+name=Li repo for Enterprise Linux 6 - $basearch
+baseurl=http://209.132.178.9/gpxe/trees/li-mash/$basearch/
+failovermethod=priority
+enabled=1
+gpgcheck=0
+gpgkey=http://209.132.178.9/gpxe/trees/li/li-signing.asc
+
+[li-source]
+name=Li repo for Enterprise Linux 6 - Source
+baseurl=http://209.132.178.9/gpxe/trees/li-mash/source/SRPMS/
+failovermethod=priority
+enabled=0
+gpgkey=http://209.132.178.9/gpxe/trees/li/li-signing.asc
+gpgcheck=0
