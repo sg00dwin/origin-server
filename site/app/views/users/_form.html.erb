@@ -7,7 +7,7 @@
   <% end %>
 
   <%= form_for(@user, :id => "user_form") do |f| -%>
-      <% @user.errors.full_messages.each do |msg| %>
+      <% @user.errors.each do |field, msg| %>
         <p><%= msg %></p>
       <% end %>
       <%= f.label "emailAddress", "Email" %>
