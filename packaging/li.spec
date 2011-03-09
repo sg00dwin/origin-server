@@ -177,6 +177,7 @@ gem install --install-dir $RPM_BUILD_ROOT/%{gemdir} --local -V --force --rdoc \
      backend/controller/pkg/li-controller-%{version}.gem
 mkdir $RPM_BUILD_ROOT/etc/libra/devenv/
 cp -adv docs/devenv/* $RPM_BUILD_ROOT/etc/libra/devenv/
+cp -adv docs/qe-env/* $RPM_BUILD_ROOT/etc/libra/qe-env/
 
 %clean
 rm -rf $RPM_BUILD_ROOT

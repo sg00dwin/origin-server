@@ -97,8 +97,8 @@ begin
         `#{SSH} #{@server} 'sh li-devenv.sh'`
         `#{SSH} #{@server} 'yum update -y'`
         conn.reboot_instances([@instance])
-        Rake::Task["available"].reenable
-        Rake::Task["available"].invoke
+        Rake::Task[:available].reenable
+        Rake::Task[:available].invoke
       end
     end
 
