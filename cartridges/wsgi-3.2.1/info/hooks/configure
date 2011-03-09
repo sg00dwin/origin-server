@@ -43,6 +43,15 @@ else
     exit 3
 fi
 
+apache_bandwidth="all 100000"
+apache_maxconnection="all 20"
+apache_bandwidtherror="510"
+
+if [ -f '/etc/libra/resource_limits.conf' ]
+then
+    . /etc/libra/resource_limits.conf
+fi
+
 function print_help {
     echo "Usage: $0 app-name username uuid"
 
@@ -103,7 +112,7 @@ function unobfuscate {
     uuid=$1
     namespace=$2
 
-    if [ -n "${unobfuscate+x}" ] && [ $unobfuscate -eq 1 ]
+    if [ $unobfuscate -eq 1 ]
     then
         if [ ! -f "${libra_dir}/$namespace" ] && [ ! -d "${libra_dir}/$namespace" ]
         then
@@ -116,13 +125,21 @@ function create_repo {
     application="$1"
     user_id=$2
     group_id=$3
+    c_val=$4
     CUSTOMER_HOME="${libra_dir}/${uuid}"
 
     if [ ! -d $CUSTOMER_HOME ]; then echo "ERROR: Customer ${uuid} not found!  Please create." 1>&2; exit 2; fi
 
     GIT_DIR=$CUSTOMER_HOME/git/$application.git
-    mkdir -p $(dirname $GIT_DIR) 2>&1
-    GIT_DIR=$GIT_DIR git init --shared > /dev/null
+    mkdir -p "$CUSTOMER_HOME/git"
+    cp -ad /usr/libexec/li/cartridges/wsgi-3.2.1/info/data/git_template.git $GIT_DIR
+    cat <<EOF > $CUSTOMER_HOME/git/$application.git/hooks/post-receive
+rm -rf $APP_DIR/repo/*
+git archive --format=tar HEAD | (cd $APP_DIR/repo && tar xf -)
+# Reload httpd here maybe?
+EOF
+
+    chmod 0750 $CUSTOMER_HOME/git/$application.git/hooks/post-receive
     chown $user_id.$group_id -R $GIT_DIR
 }
 
@@ -158,8 +175,9 @@ group_id=$(id -g "$uuid") || error "Could not find user $uuid ($namespace)" 135
 #
 # Create git app repo
 #
-
-create_repo $application $user_id $group_id
+uid=$(id -u "$uuid")
+c_val="c$(($uid/1023)),c$(($uid%1023))"
+create_repo $application $user_id $group_id $c_val
 
 cat <<EOF > $CUSTOMER_HOME/git/$application.git/hooks/post-receive
 ###rm -rf $APP_DIR/deploy/*
@@ -179,11 +197,15 @@ chmod 0750 $CUSTOMER_HOME/git/$application.git/hooks/post-receive
 
 mkdir -p "$APP_DIR"
 pushd "$APP_DIR" > /dev/null
-mkdir conf conf.d logs run deploy deploy/public deploy/tmp
+mkdir conf conf.d logs run repo sessions data tmp
 ln -s /usr/lib64/httpd/modules modules
 ln -s /etc/httpd/conf/magic conf/magic
-
 popd > /dev/null
+
+#
+# Populate repo dir
+#
+GIT_DIR="$GIT_DIR" git archive --format=tar HEAD | (cd "${APP_DIR}/repo" && tar xf -)
 
 #
 # Find an open localhost IP
@@ -199,26 +221,23 @@ IP=$(take_open_ip $uuid $application "wsgi" 8080)
 
 cat <<EOF > "$APP_DIR/conf.d/libra.conf"
 ServerRoot "$APP_DIR"
-DocumentRoot "$APP_DIR/deploy/public"
+DocumentRoot "$APP_DIR/repo/wsgi"
 Listen $IP:8080
 User $uuid
 Group $uuid
-PassengerUser $uuid
-<Directory $APP_DIR/deploy/public>
+
+<Directory $APP_DIR/repo/wsgi>
   AllowOverride all
   Options -MultiViews
 </Directory>
 
-WSGIScriptAlias / "$APP_DIR/deploy/public/$application.wsgi"
+WSGIScriptAlias / "$APP_DIR/repo/wsgi/$application.wsgi"
 
 EOF
 
 #
 # Create simple application start / stop script
 #
-uid=$(id -u "$uuid")
-c_val="c$(($uid/1023)),c$(($uid%1023))"
-
 cat <<EOF > "$APP_DIR/${application}_ctl.sh"
 #/bin/bash
 if ! [ \$# -eq 1 ]
@@ -278,14 +297,3 @@ cat <<EOF > "/etc/httpd/conf.d/${uuid}_${namespace}_${application}.conf"
 EOF
 
 /sbin/service httpd configtest 2> /dev/null && /sbin/service httpd graceful || error "Failed to restart master httpd, please contact support" 120
-
-#
-# Update DNS
-#
-host=${application}.${namespace}
-echo "server $resolver
-zone ${libra_domain}
-update delete $host.${libra_domain}
-update add $host.${libra_domain} 60 A ${public_ip}
-send
-" | nsupdate -d -L0 -v -y "$secret" > /dev/null 2>&1 || error "DNS update for $host has failed" 200
