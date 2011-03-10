@@ -400,6 +400,8 @@ while sleep_time < 65
       page = 'health_check.php'
     elsif (@type == :rack)
       page = 'health'
+    elsif (@type == :wsgi)
+      page = 'health'
     end
     url = URI.parse("http://#{my_url}/#{page}")
     response = @http.get_response(url)

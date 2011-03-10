@@ -231,7 +231,7 @@ Group $uuid
   Options -MultiViews
 </Directory>
 
-WSGIScriptAlias / "$APP_DIR/repo/wsgi/$application.wsgi"
+WSGIScriptAlias / "$APP_DIR/repo/wsgi/application"
 
 EOF
 
