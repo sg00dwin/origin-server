@@ -56,43 +56,21 @@ function error {
 }
 
 function find_open_ip {
-    # Find an open 127.0.x.x address to host application
-    [ -f $libra_conf_dir/ip_db ] || echo "uuid,application_name,service_type,port" >> $libra_conf_dir/ip_db
-    for i in `seq 0 255`
+    uid=$1
+    uuid=$2
+    for host_ip in `seq 1 127`
     do
-        for j in `seq 2 255`
-        do
-            if ! $(grep -q 127.0.$i.$j $libra_conf_dir/ip_db)
-            then
-                echo 127.0.$i.$j
-                exit
-            fi
-        done
+        a=$(($uid*128+2130706432 + $host_ip))
+        new_ip=$(($a>>24 )).$(($(($a%16777216))<<8>>24)).$(($(($a%65536))<<16>>24)).$(($(($a%256))<<24>>24))
+        if ! grep -qe '^Listen '$new_ip':8080$' $(find /var/lib/libra/$uuid/ -maxdepth 4 -mindepth 4 -name libra.conf) /etc/sysconfig/network
+        then
+            echo $new_ip
+            exit
+        fi
     done
-}
 
-function take_open_ip {
-    # Writes a new IP to the ip database in $libra_conf_dir/ip_db
-    # Example: take_open_ip mmcgrath phpmyadmin httpd
-    if ! [ $# -eq 4 ]
-    then
-        echo "Usage: $0 uuid application_name service_type port"
-        exit 1
-    fi
-    uuid=$1
-    application_name=$2
-    service_type=$3
-    port=$4
-
-    # if customer, app, service already exists, re-use IP
-    if $( grep -q ",$uuid,$application_name,$service_type" $libra_conf_dir/ip_db )
-    then
-        echo $(awk -F, "/,$uuid,$application_name,$service_type/"'{ print $1 }' $libra_conf_dir/ip_db | head -n1)
-    else
-        IP=$(find_open_ip)
-        echo "$IP,$uuid,$application_name,$service_type,$port" >> $libra_conf_dir/ip_db
-        echo $IP
-    fi
+    echo "Could not find open IP" 1>&2
+    exit 5
 }
 
 function unobfuscate {
@@ -206,8 +184,7 @@ GIT_DIR="$GIT_DIR" git archive --format=tar HEAD | (cd "${APP_DIR}/deploy" && ta
 #
 # Find an open localhost IP
 #
-IP=$(take_open_ip $uuid $application "rack" 8080)
-
+IP=$(find_open_ip $uid $uuid)
 
 #
 # Create simple customer specific data
