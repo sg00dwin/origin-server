@@ -5,11 +5,12 @@
     <%= image_tag "icon_shadowman.png", :alt => "Red Hat Logo" %>
     <%= link_to "Do you already have a redhat.com / RHN login?", "#" %>
   <% end %>
-
+	<div>
+	  <% @user.errors.each do |field, msg| %>        
+	      <p><strong><font color="red"><%= msg %></font></strong></p>
+	  <% end %>
+	</div>
   <%= form_for(@user, :id => "user_form") do |f| -%>
-      <% @user.errors.each do |field, msg| %>
-        <p><%= msg %></p>
-      <% end %>
       <%= f.label "emailAddress", "Email" %>
       <%= f.text_field "emailAddress" %>
 
