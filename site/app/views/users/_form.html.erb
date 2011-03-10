@@ -1,3 +1,22 @@
+<script>
+	function validate() {
+  	if (document.getElementById('user_password').value != document.getElementById('user_passwordConfirmation').value) {			
+		  var errorsDiv = document.getElementById('errors_div');
+			while (errorsDiv.firstChild)
+			  errorsDiv.removeChild(errorsDiv.firstChild);
+		  var p = document.createElement('p');
+			  errorsDiv.appendChild(p);
+			  var s = document.createElement('strong');
+				  p.appendChild(s);
+				  var f = document.createElement('font');					  
+					  f.color = 'red';
+						s.appendChild(f);
+						f.appendChild(document.createTextNode('Passwords must match'));
+		  return false;		
+	  }
+		return true;
+  }
+</script>
 <%= content_tag :div, :id => "registration", :class => "prefix_1 grid_12 suffix_1" do -%>
   <%= content_tag :h3, "Register for access to Express" %>
 
@@ -5,7 +24,7 @@
     <%= image_tag "icon_shadowman.png", :alt => "Red Hat Logo" %>
     <%= link_to "Do you already have a redhat.com / RHN login?", "#" %>
   <% end %>
-	<div>
+	<div id="errors_div">
 	  <% @user.errors.each do |field, msg| %>        
 	      <p><strong><font color="red"><%= msg %></font></strong></p>
 	  <% end %>
@@ -30,6 +49,6 @@
         <%= f.check_box "termsAccepted" %>
       <% end %>
 
-      <%= f.submit "Register Now", :class => "button" %>
+      <%= f.submit "Register Now", :class => "button", :onclick=>"return validate()" %>
   <% end %>
 <% end %>
