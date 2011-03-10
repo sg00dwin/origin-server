@@ -11,7 +11,7 @@ begin
     AMI="ami-6a897e03"
     TYPE="m1.large"
     KEY_PAIR="libra"
-    BUILD_REGEX = /li-\d\.\d{2}-build/
+    BUILD_REGEX = /li-\d\.\d{2}/
     BREW_LI = "https://brewweb.devel.redhat.com/packageinfo?packageID=31345"
     GIT_REPO_PUPPET="ssh://puppet1.ops.rhcloud.com/srv/git/puppet.git"
     CONTENT_TREE={'puppet' => '/etc/puppet'}
@@ -100,6 +100,7 @@ begin
         @instance = instances[0]
         puts "Using existing instance #{@instance}"
         @update = true
+        @existing = true
       end
 
       # Make sure the name matches the current version
@@ -120,26 +121,31 @@ begin
       end
     end
 
-    task :firstboot => [:available] do
-      if `#{SSH} #{@server} 'test -e li-devenv.sh; echo $?'`.chomp == "1"
-        puts "Running firstboot"
-        `#{SSH} #{@server} 'wget http://209.132.178.9/gpxe/trees/li-devenv.sh'`
-        `#{SSH} #{@server} 'sh li-devenv.sh'`
-        `#{SSH} #{@server} 'yum update -y'`
-        conn.reboot_instances([@instance])
-        sleep 10
-        Rake::Task["ami:available"].execute
+    task :update => [:available] do
+      if @existing
+          puts "Updating existing instance"
+          `#{SSH} #{@server} 'yum update -y'`
+      else
+        if `#{SSH} #{@server} 'test -e li-devenv.sh; echo $?'`.chomp == "1"
+          puts "Running firstboot"
+          `#{SSH} #{@server} 'wget http://209.132.178.9/gpxe/trees/li-devenv.sh'`
+          `#{SSH} #{@server} 'sh li-devenv.sh'`
+          `#{SSH} #{@server} 'yum update -y'`
+          conn.reboot_instances([@instance])
+          sleep 10
+          Rake::Task["ami:available"].execute
+        end
       end
     end
 
     task :check => [:creds, :version] do
       conn.describe_images_by_owner.each do |i|
-        fail "AMI already exists" if i[:aws_name].start_with?(@version)
+        fail "AMI already exists" if i[:aws_name] and i[:aws_name].start_with?(@version)
       end
     end
 
     desc "Create a new AMI from the latest li build"
-    task :image => [:check, :firstboot] do
+    task :image => [:check, :update] do
       tag = @update ? "#{@version}-update" : "#{@version}-clean"
       image = conn.create_image(@instance, tag)
       puts "Creating AMI #{image}"
@@ -158,7 +164,7 @@ begin
 
       # Deregister any images
       conn.describe_images_by_owner.each do |i|
-        if i[:aws_name].start_with?(@version)
+        if i[:aws_name] and i[:aws_name].start_with?(@version)
           conn.deregister_image(i[:aws_id])
         end
       end
