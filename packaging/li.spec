@@ -204,6 +204,9 @@ chkconfig mcollective on
 /etc/init.d/httpd restart
 chkconfig httpd on
 
+# Allow httpd to relay
+/usr/sbin/setsebool -P httpd_can_network_relay=on || :
+
 # Disable selinux (for now)
 setenforce 0
 
