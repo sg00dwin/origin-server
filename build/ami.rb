@@ -169,6 +169,10 @@ begin
         end
       end
     end
+
+    task :prune do
+      puts "TODO - prune old AMI's"
+    end
   end
 rescue LoadError
     # Ignore error - this allows rake to be run from
