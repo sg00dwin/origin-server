@@ -3,7 +3,7 @@
 
 Name: li
 Version: 0.41
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -355,6 +355,9 @@ fi
 %{_libexecdir}/li/cartridges/wsgi-3.2.1/
 
 %changelog
+* Thu Mar 10 2011 Matt Hicks <mhicks@redhat.com> 0.41-2
+- Fixing build deps
+
 * Thu Mar 10 2011 Mike McGrath <mmcgrath@redhat.com> 0.41-1
 - New version
 
