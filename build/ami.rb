@@ -140,7 +140,10 @@ begin
 
     task :check => [:creds, :version] do
       conn.describe_images_by_owner.each do |i|
-        fail "AMI already exists" if i[:aws_name] and i[:aws_name].start_with?(@version)
+        if i[:aws_name] and i[:aws_name].start_with?(@version)
+          puts "AMI already exists"
+          exit 0
+        end
       end
     end
 
