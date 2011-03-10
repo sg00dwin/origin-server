@@ -8,6 +8,10 @@ begin
     #
     # Global definitions
     #
+    AMI="ami-6a897e03"
+    TYPE="m1.large"
+    KEY_PAIR="libra"
+    BUILD_REGEX = /li-\d\.\d{2}-build/
     BREW_LI = "https://brewweb.devel.redhat.com/packageinfo?packageID=31345"
     GIT_REPO_PUPPET="ssh://puppet1.ops.rhcloud.com/srv/git/puppet.git"
     CONTENT_TREE={'puppet' => '/etc/puppet'}
@@ -35,8 +39,8 @@ begin
 
       if instances.empty?
         puts "Creating new instance..."
-        options = {:key_name => "libra", :instance_type => "m1.large"}
-        @instance = conn.launch_instances("ami-6a897e03", options)[0][:aws_instance_id]
+        options = {:key_name => KEY_PAIR, :instance_type => TYPE}
+        @instance = conn.launch_instances(AMI, options)[0][:aws_instance_id]
         puts "Created new instance #{@instance}"
       else
         @instance = instances[0]
@@ -46,6 +50,14 @@ begin
 
     def instance_value(key)
       conn.describe_instances([@instance])[0][key]
+    end
+
+    def image_available
+      conn.describe_images_by_owner.each do |i|
+        if i[:aws_name].start_with?(@version)
+          return i[:aws_state] == "available"
+        end
+      end
     end
 
     task :creds do
@@ -74,21 +86,24 @@ begin
     task :instance => [:version, :creds] do
       # Look up any tagged instances
       instances = conn.describe_instances.map do |i|
-        if (i[:aws_state] == "running") and (i[:tags]["Name"] == @version)
+        if (i[:aws_state] == "running") and (i[:tags]["Name"] =~ BUILD_REGEX)
           i[:aws_instance_id]
         end
       end.compact
 
       if instances.empty?
-        options = {:key_name => "libra", :instance_type => "m1.large"}
-        @instance = conn.launch_instances("ami-6a897e03", options)[0][:aws_instance_id]
+        options = {:key_name => KEY_PAIR, :instance_type => TYPE}
+        @instance = conn.launch_instances(AMI, options)[0][:aws_instance_id]
         sleep 5
-        conn.create_tag(@instance, 'Name', @version)
         puts "Created new instance #{@instance}"
       else
         @instance = instances[0]
         puts "Using existing instance #{@instance}"
+        @update = true
       end
+
+      # Make sure the name matches the current version
+      conn.create_tag(@instance, 'Name', @version)
     end
 
     task :available => [:instance] do
@@ -119,13 +134,14 @@ begin
 
     task :check => [:creds, :version] do
       conn.describe_images_by_owner.each do |i|
-        fail "AMI already exists" if i[:aws_name] == @version
+        fail "AMI already exists" if i[:aws_name].start_with?(@version)
       end
     end
 
     desc "Create a new AMI from the latest li build"
     task :image => [:check, :firstboot] do
-      image = conn.create_image(@instance, @version)
+      tag = @update ? "#{@version}-update" : "#{@version}-clean"
+      image = conn.create_image(@instance, tag)
       puts "Creating AMI #{image}"
     end
 
@@ -133,7 +149,7 @@ begin
     task :clean => [:creds, :version] do
       # Terminate any tagged instances
       instances = conn.describe_instances.collect do |i|
-        if (i[:aws_state] == "running") and (i[:tags]["Name"] == @version)
+        if (i[:aws_state] == "running") and (i[:tags]["Name"] =~ BUILD_REGEX)
           i[:aws_instance_id]
         end
       end.compact
@@ -142,7 +158,7 @@ begin
 
       # Deregister any images
       conn.describe_images_by_owner.each do |i|
-        if i[:aws_name] == @version
+        if i[:aws_name].start_with?(@version)
           conn.deregister_image(i[:aws_id])
         end
       end
