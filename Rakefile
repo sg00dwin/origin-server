@@ -16,6 +16,7 @@ LIBRA_DIR = ENV["LIBRADIR"] || "#{DEST_DIR}/var/lib/libra"
 CONF_DIR = ENV["CONFDIR"] || "#{DEST_DIR}/etc/libra"
 MAN_DIR = ENV["MANDIR"] || "#{DEST_DIR}/usr/share/man/"
 HTML_DIR = ENV["PHPDIR"] || "#{DEST_DIR}/var/www/html/"
+HTTP_CONF_DIR = ENV["HTTPCONFDIR"] || "#{DEST_DIR}/etc/httpd/conf.d/"
 
 NODE_FILES = ["backend/facter/libra.rb",
               "backend/mcollective/libra.rb",
@@ -73,6 +74,8 @@ task :install_node => [:test_node] do
     mkdir_p LIBRA_DIR
     mkdir_p "#{DEST_DIR}/usr/share/selinux/packages"
     cp "backend/selinux/libra.pp", "#{DEST_DIR}/usr/share/selinux/packages"
+    mkdir_p HTTP_CONF_DIR
+    cp "docs/000000_default.conf", HTTP_CONF_DIR
 end
 
 task :install_cartridges do
