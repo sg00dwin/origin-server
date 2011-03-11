@@ -148,7 +148,7 @@ begin
     end
 
     desc "Create a new AMI from the latest li build"
-    task :image => [:check, :update] do
+    task :image => [:check, :update, :prune] do
       tag = @update ? "#{@version}-update" : "#{@version}-clean"
       image = conn.create_image(@instance, tag)
       puts "Creating AMI #{image}"
@@ -173,8 +173,22 @@ begin
       end
     end
 
-    task :prune do
-      puts "TODO - prune old AMI's"
+    task :prune => [:creds, :version] do
+      images = []
+      conn.describe_images_by_owner.each do |i|
+        if i[:aws_name] and i[:aws_name].start_with?(@version)
+          images << i[:aws_name]
+        end
+      end
+
+      # Keep the 5 most recent images
+      images.sort!.pop(5)
+
+      # Prune the rest
+      images.each do |name|
+          puts "Removing AMI #{name}"
+          #conn.deregister_image(name)
+      end
     end
   end
 rescue LoadError
