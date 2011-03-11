@@ -19,6 +19,7 @@
 require "rubygems"
 require "uri"
 require "net/http"
+require "net/https"
 require "getoptlong"
 require "json"
 require 'parseconfig'
@@ -59,17 +60,17 @@ end
 # print help
 #
 def p_usage
-    username = @local_config.get_value('default_user') ? "Default: #{@local_config.get_value('default_user')}" : "(required)"
+    namespace = @local_config.get_value('default_namespace') ? "Default: #{@local_config.get_value('default_namespace')}" : "(required)"
     puts <<USAGE
 
 Usage: rhc-user-info
 Display information about a user
 
-  -u|--user   username    Libra username (alphanumeric) (#{username})
-  -a|--apps               List applications for user
-  -i|--info               Show user info
-  -d|--debug              Print Debug info
-  -h|--help               Show Usage info
+  -n|--namespace   namespace    RHCloud namespace (alphanumeric) (#{namespace})
+  -a|--apps                     List applications for namespace
+  -i|--info                     Show user info
+  -d|--debug                    Print Debug info
+  -h|--help                     Show Usage info
 
 USAGE
 exit 255
@@ -92,7 +93,7 @@ opts = GetoptLong.new(
     ["--help",  "-h", GetoptLong::NO_ARGUMENT],
     ["--apps",  "-a", GetoptLong::NO_ARGUMENT],
     ["--info",  "-i", GetoptLong::NO_ARGUMENT],
-    ["--user",  "-u", GetoptLong::REQUIRED_ARGUMENT]
+    ["--namespace",  "-n", GetoptLong::REQUIRED_ARGUMENT]
 )
 
 # Pull in configs from files
@@ -116,26 +117,36 @@ if opt["debug"]
     debug = true
 end
 
-opt["user"] = @local_config.get_value('default_user') unless opt["user"]
+opt["namespace"] = @local_config.get_value('default_namespace') unless opt["namespace"]
 
-if opt["user"]
-    if opt["user"] =~ /[^0-9a-zA-Z]/
-        puts "username contains non-alphanumeric characters!"
+if opt["namespace"]
+    if opt["namespace"] =~ /[^0-9a-zA-Z]/
+        puts "namespace contains non-alphanumeric characters!"
         p_usage
     end
 else
-    puts "Libra username is required"
+    puts "Namespace is required"
     p_usage
 end
 
 opt['apps'] = true if not opt['info'] and not opt['apps']
 
-puts "Contacting http://#{li_server}"
+puts "Contacting https://#{li_server}"
 json_data = JSON.generate(
-                {'username' => opt['user']})
+                {'namespace' => opt['namespace']})
 puts "DEBUG: Json string: #{json_data}" if debug
-response = @http.post_form(URI.parse("http://#{li_server}/php/user_info.php"),
-                           {'json_data' => json_data,})
+
+url = URI.parse("https://#{li_server}/php/user_info.php")
+req = @http::Post.new(url.path)
+
+req.set_form_data({'json_data' => json_data})
+http = @http.new(url.host, url.port)
+if url.scheme == "https"
+  http.use_ssl = true
+  http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+end
+response = http.start {|http| http.request(req)}
+
 puts "DEBUG:" if debug
 p response if debug
 json_resp = JSON.parse(response.body);
@@ -151,19 +162,19 @@ if debug
 end
 user_info = JSON.parse(json_resp['stdout'].to_s)
 
-if user_info['user_info']['uuid'] != @local_config.get_value(opt["user"])
+if user_info['user_info']['uuid'] != @local_config.get_value(opt["namespace"])
     puts
     puts "WARNING!  The UUID in your ~/.li file is either missing or incorrect."
     puts "Please ensure the following line exists in ~/.li"
     puts
-    puts "#{opt['user']}=#{user_info['user_info']['uuid']}"
+    puts "#{opt['namespace']}=#{user_info['user_info']['uuid']}"
     puts
 end
 
 if opt['info']
     puts "User Info"
     puts "========="
-    puts "Username: #{user_info['user_info']['username']}"
+    puts "Namespace: #{user_info['user_info']['username']}"
     puts "    UUID: #{user_info['user_info']['uuid']}"
     puts "   email: #{user_info['user_info']['email']}"
     puts " ssh_key: #{user_info['user_info']['ssh_key']}"

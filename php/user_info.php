@@ -1,7 +1,7 @@
 <?php
 
 $data = json_decode($_POST['json_data']);
-$username = escapeshellarg(filter_var($data->{'username'}, FILTER_SANITIZE_STRING));
+$namespace = escapeshellarg(filter_var($data->{'namespace'}, FILTER_SANITIZE_STRING));
 
 function my_exec($cmd, $input='')
          {$proc=proc_open($cmd, array(0=>array('pipe', 'r'), 1=>array('pipe', 'w'), 2=>array('pipe', 'w')), $pipes);
@@ -15,7 +15,7 @@ function my_exec($cmd, $input='')
                       );
          }
 
-$results = my_exec("/usr/bin/rhc-get-user-info -u $username", $out);
+$results = my_exec("/usr/bin/rhc-get-user-info -n $namespace", $out);
 
 if($results['return'] != 0) {
     header('HTTP/1.1 500 Internal Server Error', 500);

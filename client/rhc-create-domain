@@ -19,6 +19,7 @@
 require "rubygems"
 require "uri"
 require "net/http"
+require "net/https"
 require "getoptlong"
 require "json"
 require 'parseconfig'
@@ -62,16 +63,16 @@ def p_usage
     puts <<USAGE
 
 Usage: #{$0}
-Create a new libra user.
+Bind a registered rhcloud user to a domain in rhcloud.
 
   NOTE: to change ssh key, please alter your ~/.ssh/libra_id_rsa and
         ~/.ssh/libra_id_rsa.pub key, then re-run with --alter
 
-  -u|--user   username    Libra username (alphanumeric) (required)
-  -e|--email  email       Email address (required)
-  -a|--alter              Alter existing user
-  -d|--debug              Print Debug info
-  -h|--help               Show Usage info
+  -n|--namespace   namespace   Libra namespace (alphanumeric) (required)
+  -e|--email       email       Email address (required)
+  -a|--alter                   Alter existing namespace
+  -d|--debug                   Print Debug info
+  -h|--help                    Show Usage info
 
 USAGE
 exit 255
@@ -92,7 +93,7 @@ end
 opts = GetoptLong.new(
     ["--debug", "-d", GetoptLong::NO_ARGUMENT],
     ["--help",  "-h", GetoptLong::NO_ARGUMENT],
-    ["--user",  "-u", GetoptLong::REQUIRED_ARGUMENT],
+    ["--namespace",  "-n", GetoptLong::REQUIRED_ARGUMENT],
     ["--email", "-e", GetoptLong::REQUIRED_ARGUMENT],
     ["--alter", "-a", GetoptLong::NO_ARGUMENT]
 )
@@ -118,13 +119,13 @@ if opt["debug"]
     debug = true
 end
 
-if opt["user"]
-    if opt["user"] =~ /[^0-9a-zA-Z]/
-        puts "username contains non-alphanumeric characters!"
+if opt["namespace"]
+    if opt["namespace"] =~ /[^0-9a-zA-Z]/
+        puts "namespace contains non-alphanumeric characters!"
         p_usage
     end
 else
-    puts "Libra username is required"
+    puts "Namespace is required"
 end
 
 if opt["email"]
@@ -136,24 +137,33 @@ else
     puts "Libra email address is required"
 end
 
-if !opt["email"] || !opt["user"]
+if !opt["email"] || !opt["namespace"]
     p_usage
 end
 
+begin
+  print "Password: "
+  system "stty -echo"
+  password = gets.chomp  
+ensure
+  system "stty echo"
+end
+puts "\n"
+
 #
-# Add a new user to configs
+# Add a new namespace to configs
 #
 
-def add_user_config(username, uuid)
+def add_namespace_config(namespace, uuid)
     f = open("#{ENV['HOME']}/.li", 'a')
-    unless @local_config.get_value('default_user')
-        f.puts("# Default user to use if none is specified")
-        f.puts("default_user=#{username}")
+    unless @local_config.get_value('default_namespace')
+        f.puts("# Default namespace to use if none is specified")
+        f.puts("namespace=#{namespace}")
         f.puts("")
     end
-    unless @local_config.get_value(username)
-        puts "Adding user to #{ENV['HOME']}/.li"
-        f.puts("#{username}=#{uuid}")
+    unless @local_config.get_value(namespace)
+        puts "Adding namespace to #{ENV['HOME']}/.li"
+        f.puts("#{namespace}=#{uuid}")
     end
     f.close
 end
@@ -173,15 +183,26 @@ end
 
 ssh_key = File.open(libra_kpfile).gets.chomp.split(' ')[1]
 
-puts "Contacting http://#{li_server}"
+puts "Contacting https://#{li_server}"
 json_data = JSON.generate(
-                {'username' => opt['user'],
+                {'namespace' => opt['namespace'],
                 'email' => opt['email'],
+                'password' => password,
                 'ssh' => ssh_key,
                 'alter' => opt['alter']})
 puts "DEBUG: Json string: #{json_data}" if debug
-response = @http.post_form(URI.parse("http://#{li_server}/php/create_customer.php"),
-                           {'json_data' => json_data,})
+
+url = URI.parse("https://#{li_server}/php/create_customer.php")
+req = @http::Post.new(url.path)
+
+req.set_form_data({'json_data' => json_data})
+http = @http.new(url.host, url.port)
+if url.scheme == "https"
+  http.use_ssl = true
+  http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+end
+response = http.start {|http| http.request(req)}
+
 puts "DEBUG:" if debug
 p response if debug
 json_resp = JSON.parse(response.body);
@@ -194,8 +215,8 @@ if json_resp['return'].to_s.strip == "0"
         end
     end
 
-    json_userinfo = JSON.parse(json_resp['stdout'])
-    add_user_config(json_userinfo['username'], json_userinfo['uuid'])
+    json_namespaceinfo = JSON.parse(json_resp['stdout'])
+    add_namespace_config(json_namespaceinfo['namespace'], json_namespaceinfo['uuid'])
 
     if opt['alter'] != ''
         puts "Creation successful (probably)."
@@ -203,7 +224,7 @@ if json_resp['return'].to_s.strip == "0"
         puts "You may now create an application"
         puts
     else
-        puts "User alteration successful."
+        puts "Namespace alteration successful."
         puts
     end
     exit 0

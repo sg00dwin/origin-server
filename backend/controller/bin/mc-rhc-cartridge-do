@@ -19,12 +19,12 @@ options = rpcoptions do |parser, options|
       options[:cartridge] = cartridge
     end
 
-    parser.on('-n', '--app APP', 'Application name') do |app_name|
-      options[:app_name] = app_name
+    parser.on('-l', '--app APP', 'Application label') do |app_label|
+      options[:app_label] = app_label
     end
 
-    parser.on('-u', '--username USERNAME', 'User to act on') do |username|
-      options[:username] = username
+    parser.on('-n', '--namespace NAMESPACE', 'Namespace to act on') do |namespace|
+      options[:namespace] = namespace
     end
 end
 
@@ -41,13 +41,13 @@ unless options.include?(:action) or options[:action] =~ /^(configure|deconfigure
     exit 253
 end
 
-unless options.include?(:app_name) or options[:app_name] =~ /^.+$/
+unless options.include?(:app_label) or options[:app_label] =~ /^.+$/
     puts "Specify app name"
     exit 252
 end
 
-unless options.include?(:username) or options[:username] =~ /^[a-zA-Z0-9]+$/
-    puts "Specify user"
+unless options.include?(:namespace) or options[:namespace] =~ /^[a-zA-Z0-9]+$/
+    puts "Specify namespace"
     exit 252
 end
 
@@ -55,4 +55,4 @@ end
 Libra.c[:rpc_opts] = options
 
 # Execute the options on a Libra framework
-Libra.execute(options[:cartridge], options[:action], options[:app_name], options[:username])
+Libra.execute(options[:cartridge], options[:action], options[:app_label], options[:namespace])

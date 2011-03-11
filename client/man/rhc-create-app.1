@@ -1,13 +1,13 @@
 .\" Process this file with
-.\" groff -man -Tascii rhc-create-user.1
+.\" groff -man -Tascii rhc-create-domain.1
 .\"
 .TH CREATE_APP 1 "JANUARY 2011" Linux "User Manuals"
 .SH NAME
 rhc-create-app \- creates a new hosted application at
 rhcloud.com
 .SH SYNOPSIS
-.B rhc-create-app [-u
-.I username
+.B rhc-create-app [-n
+.I namespace
 .B ]
 .B [-a
 .I application_name
@@ -22,13 +22,13 @@ rhcloud.com
 .B rhc-create-app
 create a new application at rhcloud.com. Once
 created the application will be available at
-.B app_name.username.rhcloud.com
+.B app_name.namespace.rhcloud.com
 
 At the moment the only repo type supported is
 git.  Git pushes via ssh+git and uses
 .I ~/.ssh/id_rsa_libra
 which was created automatically when
-.I rhc-create-user
+.I rhc-create-domain
 was run. Once an application has been created,
 .BR rhc-ctl-app (1)
 actually allows control of that application
@@ -42,8 +42,8 @@ created repo directory (specified by
 .BR origin
 .BR master
 .SH OPTIONS
-.IP "-u|--user username"
-Username to create.  Alphanumeric
+.IP "-n|--namespace namespace"
+Desired namespace to create.  Alphanumeric
 .IP "-a|--app application_name"
 Name of application to create
 .IP "-r|--repo repo_path"
@@ -78,7 +78,7 @@ for more information.
 .RE
 .I ~/.ssh/id_rsa_libra
 .RS
-SSH key created by rhc-create-user to interact with libra services
+SSH key created by rhc-create-domain to interact with libra services
 see
 .BR ssh-keygen (1)
 for more information
@@ -89,6 +89,6 @@ TODO: ADD EXTERNAL BUG TRACKER OR LIBRA TEAM CONTACT EMAIL
 .SH AUTHOR
 Mike McGrath <mmcgrath@redhat.com>
 .SH "SEE ALSO"
-.BR rhc-create-user (1),
+.BR rhc-create-domain (1),
 .BR rhc-ctl-app (1),
 .BR libra.conf (5),

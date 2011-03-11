@@ -18,8 +18,8 @@ module RHC
         type_keys
     end
     
-    def RHC.check_user(user)
-        check_field(user, 'username')
+    def RHC.check_namespace(namespace)
+        check_field(namespace, 'namespace')
     end
     
     def RHC.check_app(app)
@@ -29,11 +29,11 @@ module RHC
     def RHC.check_field(field, type)
         if field
             if field =~ /[^0-9a-zA-Z]/
-                puts "application name contains non-alphanumeric characters!"
+                puts "#{type} contains non-alphanumeric characters!"
                 return false
             end
         else
-            puts "Libra #{type} name is required"
+            puts "#{type} is required"
             return false
         end
         true

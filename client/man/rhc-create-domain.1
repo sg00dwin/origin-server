@@ -5,20 +5,20 @@
 .SH NAME
 rhc-create-user \- creates a new Libra user
 .SH SYNOPSIS
-.B rhc-create-user [-u
-.I username
+.B rhc-create-user [-n
+.I namespace
 .B ]
 .B [-e
 .I email
 .B ] [-d] [-h]
 .SH DESCRIPTION
-.B rhc-create-user
-create a new user at rhcloud.com.  Once created
+.B rhc-create-domain
+create a new domain at rhcloud.com.  Once created
 this user will be able to create and control
 applications.
 
 Running
-.B rhc-create-user
+.B rhc-create-domain
 will cause a new ssh key to be created in ssh
 dir at
 .I ~/.ssh/id_rsa_libra
@@ -29,8 +29,8 @@ to create new applications or run
 .BR rhc-ctl-app (1)
 to control created applications.
 .SH OPTIONS
-.IP "-u|--user username"
-Username to create.  Alphanumeric
+.IP "-n|--namespace namespace"
+Desired namespace to create.  Alphanumeric
 .IP "-e|--email email"
 Email Address to use
 .IP "-a|--alter"

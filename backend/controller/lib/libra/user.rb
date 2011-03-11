@@ -2,6 +2,8 @@ require 'libra/helper'
 require 'aws'
 require 'json'
 require 'date'
+require 'net/http'
+require 'net/https'
 
 def gen_small_uuid()
     # Put config option for username here so we can ignore uuid for dev environments
@@ -40,6 +42,39 @@ module Libra
       user = new(username, ssh, email, uuid)
       user.update
       user
+    end
+    
+    #
+    # Finds all registered usernames
+    #
+    #   User.find_all_usernames
+    #
+    def self.valid_registration?(username, password)
+=begin
+        #url = URI.parse('https://streamline.devlab.phx1.redhat.com/streamline/login.html')
+        url = URI.parse('https://streamline1.stg.rhcloud.com/streamline/login.html')
+        req = Net::HTTP::Post.new(url.path)
+        
+        req.set_form_data({ 'username' => username, 'password' => password })
+        http = Net::HTTP.new(url.host, url.port)
+        if url.scheme == "https"
+          http.use_ssl = true
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+        end
+        response = http.start {|http| http.request(req)}
+        case response
+        when Net::HTTPSuccess
+          return true
+        else
+          puts "Problem with server. Response code was #{response.code}"
+          #puts "HTTP response from server is #{response.body}"      
+        end
+      rescue Net::HTTPBadResponse => e
+        puts e
+        #raise
+=end
+      #return false
+      return true
     end
 
     #

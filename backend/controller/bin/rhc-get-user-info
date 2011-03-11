@@ -8,22 +8,21 @@ include MCollective::RPC
 include Libra
 
 options = rpcoptions do |parser, options|
-    parser.define_head "Create a new user"
-    parser.banner = "Usage: mc-libra [options]"
+    parser.define_head "Get info about a user"
+    parser.banner = "Usage: rhc-get-user-info [options]"
 
-    parser.on('-u', '--username USERNAME', "The unique username") do |username|
-      options[:username] = username
+    parser.on('-n', '--namespace NAMESPACE', "The unique namespace") do |namespace|
+      options[:namepsace] = namespace
     end
-
 end
 
 # Set the MCollective options
 Libra.c[:rpc_opts] = options
 
-# Check if user already exists
-user = User.find(options[:username])
+# Check if namespace already exists
+user = User.find(options[:namespace])
 unless user
-    puts "Could not find user #{options[:username]}"
+    puts "Could not find user with namespace #{options[:namespace]}"
     exit 5
 end
 user_info = {

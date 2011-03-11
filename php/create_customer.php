@@ -1,8 +1,9 @@
 <?php
 
 $user_data = json_decode($_POST['json_data']);
-$customer_name = escapeshellarg(filter_var($user_data->{'username'}, FILTER_SANITIZE_SPECIAL_CHARS, FILTER_FLAG_STRIP_LOW));
+$namespace = escapeshellarg(filter_var($user_data->{'namespace'}, FILTER_SANITIZE_SPECIAL_CHARS, FILTER_FLAG_STRIP_LOW));
 $email = escapeshellarg(filter_var($user_data->{'email'}, FILTER_SANITIZE_EMAIL, FILTER_FLAG_STRIP_LOW));
+$password = escapeshellarg(filter_var($user_data->{'password'}, FILTER_SANITIZE_STRING));
 $ssh_key = escapeshellarg(filter_var($user_data->{'ssh'}, FILTER_SANITIZE_STRING));
 $alter = escapeshellarg(filter_var($user_data->{'alter'}, FILTER_SANITIZE_STRING));
 
@@ -20,7 +21,7 @@ function my_exec($cmd, $input='')
 $out='';
 if($alter)
     $alter = "--alter";
-$results = my_exec("/usr/bin/rhc-new-user -u $customer_name -e $email -s $ssh_key $alter", $out);
+$results = my_exec("/usr/bin/rhc-new-user -n $namespace -e $email -p $password -s $ssh_key $alter", $out);
 
 print json_encode($results);
 

@@ -8,9 +8,9 @@ module Libra
   #
   # Executes
   #
-  def self.execute(framework, action, app_name, username)
+  def self.execute(framework, action, app_name, namespace)
     # Lookup the user
-    user = User.find(username)
+    user = User.find(namespace)
 
     # App exists check
     if action == 'configure'

@@ -282,7 +282,7 @@ fi
 %defattr(-,root,root,-)
 %{_bindir}/rhc-capacity
 %{_bindir}/rhc-create-app
-%{_bindir}/rhc-create-user
+%{_bindir}/rhc-create-domain
 %{_bindir}/rhc-user-info
 %{_bindir}/rhc-ctl-app
 %{_bindir}/rhc-common.rb
