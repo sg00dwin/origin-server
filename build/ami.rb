@@ -87,7 +87,11 @@ begin
     end
 
     task :version do
-      @version = `curl -s #{BREW_LI} | grep -o -E li-.{4} | head -n1`.chomp
+      version = `yum info li | grep Version | tail -n1 | grep -o -E "[0-9]\.[0-9]+"`.chomp
+
+      # Only take the release up until the '.'
+      release = `yum info li | grep Release | tail -n1 | grep -o -E "[0-9]\..+"`.chomp
+      @version = "#{version}-#{release.split('.')[0]}"
       puts "Current version is #{@version}"
     end
 
