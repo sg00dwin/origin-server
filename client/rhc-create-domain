@@ -126,14 +126,16 @@ if !opt["rhlogin"] || !opt["namespace"]
     p_usage
 end
 
-begin
-  print "Password: "
-  system "stty -echo"
-  password = gets.chomp  
-ensure
-  system "stty echo"
+if !(opt['alter'])
+  begin
+    print "Password: "
+    system "stty -echo"
+    password = gets.chomp  
+  ensure
+    system "stty echo"
+  end
+  puts "\n"
 end
-puts "\n"
 
 #
 # Add a new namespace to configs

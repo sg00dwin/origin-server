@@ -50,12 +50,12 @@ module Libra
     #   User.find_all_rhlogins
     #
     def self.valid_registration?(rhlogin, password)
-=begin
-        #url = URI.parse('https://streamline.devlab.phx1.redhat.com/streamline/login.html')
-        url = URI.parse('https://streamline1.stg.rhcloud.com/streamline/login.html')
+      begin
+        #url = URI.parse('https://streamline.devlab.phx1.redhat.com/wapps/streamline/login.html')
+        url = URI.parse('https://streamline1.stg.rhcloud.com/wapps/streamline/login.html')
         req = Net::HTTP::Post.new(url.path)
         
-        req.set_form_data({ 'rhlogin' => rhlogin, 'password' => password })
+        req.set_form_data({ 'login' => rhlogin, 'password' => password })
         http = Net::HTTP.new(url.host, url.port)
         if url.scheme == "https"
           http.use_ssl = true
@@ -63,7 +63,7 @@ module Libra
         end
         response = http.start {|http| http.request(req)}
         case response
-        when Net::HTTPSuccess
+        when Net::HTTPSuccess, Net::HTTPRedirection
           return true
         else
           puts "Problem with server. Response code was #{response.code}"
@@ -72,9 +72,8 @@ module Libra
       rescue Net::HTTPBadResponse => e
         puts e
         #raise
-=end
-      #return false
-      return true
+      end
+      return false
     end
 
     #
