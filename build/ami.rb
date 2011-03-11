@@ -91,7 +91,7 @@ begin
 
       # Only take the release up until the '.'
       release = `yum info li | grep Release | tail -n1 | grep -o -E "[0-9]\..+"`.chomp
-      @version = "#{version}-#{release.split('.')[0]}"
+      @version = "li-#{version}-#{release.split('.')[0]}"
       puts "Current version is #{@version}"
     end
 
