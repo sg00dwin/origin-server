@@ -8,14 +8,15 @@ begin
     #
     # Global definitions
     #
-    AMI="ami-6a897e03"
-    TYPE="m1.large"
-    KEY_PAIR="libra"
+    AMI = "ami-6a897e03"
+    TYPE = "m1.large"
+    KEY_PAIR = "libra"
+    OPTIONS = {:key_name => KEY_PAIR, :instance_type => TYPE}
     BUILD_REGEX = /li-\d\.\d{2}/
     BREW_LI = "https://brewweb.devel.redhat.com/packageinfo?packageID=31345"
-    GIT_REPO_PUPPET="ssh://puppet1.ops.rhcloud.com/srv/git/puppet.git"
-    CONTENT_TREE={'puppet' => '/etc/puppet'}
-    RSA = File.expand_path("../../docs/libra-new.pem", File.expand_path(__FILE__))
+    GIT_REPO_PUPPET = "ssh://puppet1.ops.rhcloud.com/srv/git/puppet.git"
+    CONTENT_TREE = {'puppet' => '/etc/puppet'}
+    RSA = File.expand_path("~/.ssh/libra-new.pem")
     SSH = "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PasswordAuthentication=no -i " + RSA
 
     # This will verify the Amazon SSL connection
@@ -76,6 +77,13 @@ begin
         eos
         fail msg
       end
+
+      unless File.exists?(RSA)
+        puts "Setting up RSA key"
+        libra_key = File.expand_path("../../docs/libra-new.pem", File.expand_path(__FILE__))
+        FileUtils.cp(libra_key, RSA)
+        File.chmod(0600, RSA)
+      end
     end
 
     task :version do
@@ -92,8 +100,7 @@ begin
       end.compact
 
       if instances.empty?
-        options = {:key_name => KEY_PAIR, :instance_type => TYPE}
-        @instance = conn.launch_instances(AMI, options)[0][:aws_instance_id]
+        @instance = conn.launch_instances(AMI, OPTIONS)[0][:aws_instance_id]
         sleep 5
         puts "Created new instance #{@instance}"
       else
@@ -173,10 +180,10 @@ begin
       end
     end
 
-    task :prune => [:creds, :version] do
+    task :prune => [:creds] do
       images = []
       conn.describe_images_by_owner.each do |i|
-        if i[:aws_name] and i[:aws_name].start_with?(@version)
+        if i[:aws_name] and i[:aws_name] =~ BUILD_REGEX
           images << i[:aws_name]
         end
       end
@@ -186,9 +193,40 @@ begin
 
       # Prune the rest
       images.each do |name|
-          puts "Removing AMI #{name}"
-          #conn.deregister_image(name)
+        puts "Removing AMI #{name}"
+        conn.deregister_image(name)
       end
+    end
+
+    task :current => [:creds, :version] do
+      # Find the current AMI
+      conn.describe_images_by_owner.each do |i|
+        if i[:aws_name] and i[:aws_name].start_with?(@version)
+          @ami = i[:aws_id]
+          break
+        end
+      end
+
+      if @ami
+        puts "Current AMI for version #{@version} is #{@ami}"
+      else
+        puts "No AMI exists for current version"
+        exit 0
+      end
+    end
+
+    task :verify => [:current] do
+      puts "Launching verification instance for AMI #{@ami}"
+      @instance = conn.launch_instances(@ami, OPTIONS)[0][:aws_instance_id]
+      conn.create_tag(@instance, 'Name', "#{@version}-verify")
+
+      # Wait for it to be available
+      Rake::Task["ami:available"].execute
+
+      # Wait a few more seconds to let services start
+      sleep 10
+
+      # Test user creation and app creation
     end
   end
 rescue LoadError
