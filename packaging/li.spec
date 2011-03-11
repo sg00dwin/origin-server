@@ -3,7 +3,7 @@
 
 Name: li
 Version: 0.41
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -15,7 +15,6 @@ BuildArch: noarch
 
 BuildRequires: rubygem-rake
 BuildRequires: rubygem-rspec
-BuildRequires: rubygem-parseconfig
 Requires: rubygem-parseconfig
 Requires: rubygem-json
 Requires: git
@@ -355,6 +354,9 @@ fi
 %{_libexecdir}/li/cartridges/wsgi-3.2.1/
 
 %changelog
+* Thu Mar 10 2011 Matt Hicks <mhicks@redhat.com> 0.41-2
+- Removing parseconfig build dep
+
 * Thu Mar 10 2011 Matt Hicks <mhicks@redhat.com> 0.41-2
 - Fixing build deps
 
