@@ -3,7 +3,7 @@
 
 Name: li
 Version: 0.41
-Release: 3%{?dist}
+Release: 4%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -294,10 +294,12 @@ fi
 %files devenv
 %defattr(-,root,root,-)
 %{_sysconfdir}/libra/devenv/
+%{_sysconfdir}/httpd/000000_default.conf
 
 %files qe-env
 %defattr(-,root,root,-)
 %{_sysconfdir}/libra/qe-env/
+%{_sysconfdir}/httpd/000000_default.conf
 
 %files php
 %defattr(-,root,root,-)
@@ -354,6 +356,9 @@ fi
 %{_libexecdir}/li/cartridges/wsgi-3.2.1/
 
 %changelog
+* Thu Mar 10 2011 Matt Hicks <mhicks@redhat.com> 0.41-4
+- Added files definition for the default vhost file
+
 * Thu Mar 10 2011 Matt Hicks <mhicks@redhat.com> 0.41-3
 - Removing parseconfig build dep
 
