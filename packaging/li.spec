@@ -3,7 +3,7 @@
 
 Name: li
 Version: 0.41
-Release: 5%{?dist}
+Release: 6%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -319,7 +319,7 @@ fi
 %{_datadir}/selinux/packages/libra.pp
 %config(noreplace) %{_sysconfdir}/libra/node.conf
 %config(noreplace) %{_sysconfdir}/libra/resource_limits.conf
-%{_sysconfdir}/httpd/000000_default.conf
+%{_sysconfdir}/httpd/conf.d/000000_default.conf
 
 
 %files server
@@ -355,6 +355,9 @@ fi
 %{_libexecdir}/li/cartridges/wsgi-3.2.1/
 
 %changelog
+* Thu Mar 11 2011 Matt Hicks <mhicks@redhat.com> 0.41-6
+- Fixed file path
+
 * Thu Mar 11 2011 Matt Hicks <mhicks@redhat.com> 0.41-5
 - Moved vhost file definition to the node section
 
