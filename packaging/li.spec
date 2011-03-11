@@ -3,7 +3,7 @@
 
 Name: li
 Version: 0.42
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -260,6 +260,8 @@ crontab -u root /etc/libra/qe-env/crontab
 /sbin/service libra-cgroups start > /dev/null 2>&1 || :
 /sbin/service libra-data start > /dev/null 2>&1 || :
 echo "/usr/bin/trap-user" >> /etc/shells
+/sbin/restorecon /etc/init.d/libra || :
+/sbin/restorecon /etc/init.d/mcollective || :
 
 
 %preun node
@@ -355,6 +357,9 @@ fi
 %{_libexecdir}/li/cartridges/wsgi-3.2.1/
 
 %changelog
+* Fri Mar 11 2011 Mike McGrath <mmcgrath@redhat.com> 0.42-2
+- Added restorecon to libra and mcollective
+
 * Fri Mar 11 2011 Mike McGrath <mmcgrath@redhat.com> 0.42-1
 - New release
 
