@@ -21,7 +21,7 @@ function my_exec($cmd, $input='')
 $out='';
 if(strcmp($alter, "'--alter'") == 0)
     $alter = "--alter";
-$results = my_exec("/usr/bin/rhc-new-user -n $namespace -l $rhlogin -p $password -s $ssh_key $alter", $out);
+$results = my_exec("/usr/bin/rhc-new-user -n $namespace -l $rhlogin -p $password -s $ssh_key $alter -q | grep -v 'No request sent'", $out);
 
 print json_encode($results);
 
