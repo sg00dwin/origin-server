@@ -3,7 +3,7 @@
 
 Name: li
 Version: 0.41
-Release: 3%{?dist}
+Release: 6%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -15,7 +15,6 @@ BuildArch: noarch
 
 BuildRequires: rubygem-rake
 BuildRequires: rubygem-rspec
-BuildRequires: rubygem-parseconfig
 Requires: rubygem-parseconfig
 Requires: rubygem-json
 Requires: git
@@ -320,6 +319,7 @@ fi
 %{_datadir}/selinux/packages/libra.pp
 %config(noreplace) %{_sysconfdir}/libra/node.conf
 %config(noreplace) %{_sysconfdir}/libra/resource_limits.conf
+%{_sysconfdir}/httpd/conf.d/000000_default.conf
 
 
 %files server
@@ -355,8 +355,17 @@ fi
 %{_libexecdir}/li/cartridges/wsgi-3.2.1/
 
 %changelog
+* Thu Mar 11 2011 Matt Hicks <mhicks@redhat.com> 0.41-6
+- Fixed file path
+
+* Thu Mar 11 2011 Matt Hicks <mhicks@redhat.com> 0.41-5
+- Moved vhost file definition to the node section
+
+* Thu Mar 10 2011 Matt Hicks <mhicks@redhat.com> 0.41-4
+- Added files definition for the default vhost file
+
 * Thu Mar 10 2011 Matt Hicks <mhicks@redhat.com> 0.41-3
-- Release bump for build
+- Removing parseconfig build dep
 
 * Thu Mar 10 2011 Matt Hicks <mhicks@redhat.com> 0.41-2
 - Fixing build deps

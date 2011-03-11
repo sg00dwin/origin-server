@@ -1,6 +1,6 @@
-require 'fileutils'
-require 'parseconfig'
 begin
+  require 'parseconfig'
+  require 'fileutils'
   require 'aws'
   require 'right_http_connection'
 
