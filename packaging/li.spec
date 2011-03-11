@@ -294,12 +294,10 @@ fi
 %files devenv
 %defattr(-,root,root,-)
 %{_sysconfdir}/libra/devenv/
-%{_sysconfdir}/httpd/000000_default.conf
 
 %files qe-env
 %defattr(-,root,root,-)
 %{_sysconfdir}/libra/qe-env/
-%{_sysconfdir}/httpd/000000_default.conf
 
 %files php
 %defattr(-,root,root,-)
@@ -321,6 +319,7 @@ fi
 %{_datadir}/selinux/packages/libra.pp
 %config(noreplace) %{_sysconfdir}/libra/node.conf
 %config(noreplace) %{_sysconfdir}/libra/resource_limits.conf
+%{_sysconfdir}/httpd/000000_default.conf
 
 
 %files server
@@ -356,6 +355,9 @@ fi
 %{_libexecdir}/li/cartridges/wsgi-3.2.1/
 
 %changelog
+* Thu Mar 11 2011 Matt Hicks <mhicks@redhat.com> 0.41-5
+- Moved vhost file definition to the node section
+
 * Thu Mar 10 2011 Matt Hicks <mhicks@redhat.com> 0.41-4
 - Added files definition for the default vhost file
 
