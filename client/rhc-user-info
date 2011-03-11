@@ -141,7 +141,7 @@ if opt['info']
     puts "========="
     puts "Namespace: #{user_info['user_info']['namespace']}"
     puts "    UUID: #{user_info['user_info']['uuid']}"
-    puts "   email: #{user_info['user_info']['email']}"
+    puts "   RHLogin: #{user_info['user_info']['rhlogin']}"
     puts " ssh_key: #{user_info['user_info']['ssh_key']}"
 end
 
