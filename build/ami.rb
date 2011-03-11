@@ -1,6 +1,6 @@
-require 'fileutils'
-require 'parseconfig'
 begin
+  require 'parseconfig'
+  require 'fileutils'
   require 'aws'
   require 'right_http_connection'
 
@@ -8,14 +8,15 @@ begin
     #
     # Global definitions
     #
-    AMI="ami-6a897e03"
-    TYPE="m1.large"
-    KEY_PAIR="libra"
+    AMI = "ami-6a897e03"
+    TYPE = "m1.large"
+    KEY_PAIR = "libra"
+    OPTIONS = {:key_name => KEY_PAIR, :instance_type => TYPE}
     BUILD_REGEX = /li-\d\.\d{2}/
     BREW_LI = "https://brewweb.devel.redhat.com/packageinfo?packageID=31345"
-    GIT_REPO_PUPPET="ssh://puppet1.ops.rhcloud.com/srv/git/puppet.git"
-    CONTENT_TREE={'puppet' => '/etc/puppet'}
-    RSA = File.expand_path("../../docs/libra-new.pem", File.expand_path(__FILE__))
+    GIT_REPO_PUPPET = "ssh://puppet1.ops.rhcloud.com/srv/git/puppet.git"
+    CONTENT_TREE = {'puppet' => '/etc/puppet'}
+    RSA = File.expand_path("~/.ssh/libra-new.pem")
     SSH = "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PasswordAuthentication=no -i " + RSA
 
     # This will verify the Amazon SSL connection
@@ -76,10 +77,21 @@ begin
         eos
         fail msg
       end
+
+      unless File.exists?(RSA)
+        puts "Setting up RSA key"
+        libra_key = File.expand_path("../../docs/libra-new.pem", File.expand_path(__FILE__))
+        FileUtils.cp(libra_key, RSA)
+        File.chmod(0600, RSA)
+      end
     end
 
     task :version do
-      @version = `curl -s #{BREW_LI} | grep -o -E li-.{4} | head -n1`.chomp
+      version = `yum info li | grep Version | tail -n1 | grep -o -E "[0-9]\.[0-9]+"`.chomp
+
+      # Only take the release up until the '.'
+      release = `yum info li | grep Release | tail -n1 | grep -o -E "[0-9]\..+"`.chomp
+      @version = "li-#{version}-#{release.split('.')[0]}"
       puts "Current version is #{@version}"
     end
 
@@ -92,8 +104,7 @@ begin
       end.compact
 
       if instances.empty?
-        options = {:key_name => KEY_PAIR, :instance_type => TYPE}
-        @instance = conn.launch_instances(AMI, options)[0][:aws_instance_id]
+        @instance = conn.launch_instances(AMI, OPTIONS)[0][:aws_instance_id]
         sleep 5
         puts "Created new instance #{@instance}"
       else
@@ -140,12 +151,15 @@ begin
 
     task :check => [:creds, :version] do
       conn.describe_images_by_owner.each do |i|
-        fail "AMI already exists" if i[:aws_name] and i[:aws_name].start_with?(@version)
+        if i[:aws_name] and i[:aws_name].start_with?(@version)
+          puts "AMI already exists"
+          exit 0
+        end
       end
     end
 
     desc "Create a new AMI from the latest li build"
-    task :image => [:check, :update] do
+    task :image => [:check, :update, :prune] do
       tag = @update ? "#{@version}-update" : "#{@version}-clean"
       image = conn.create_image(@instance, tag)
       puts "Creating AMI #{image}"
@@ -168,6 +182,55 @@ begin
           conn.deregister_image(i[:aws_id])
         end
       end
+    end
+
+    task :prune => [:creds] do
+      images = []
+      conn.describe_images_by_owner.each do |i|
+        if i[:aws_name] and i[:aws_name] =~ BUILD_REGEX
+          images << i[:aws_name]
+        end
+      end
+
+      # Keep the 5 most recent images
+      images.sort!.pop(5)
+
+      # Prune the rest
+      images.each do |name|
+        puts "Removing AMI #{name}"
+        conn.deregister_image(name)
+      end
+    end
+
+    task :current => [:creds, :version] do
+      # Find the current AMI
+      conn.describe_images_by_owner.each do |i|
+        if i[:aws_name] and i[:aws_name].start_with?(@version)
+          @ami = i[:aws_id]
+          break
+        end
+      end
+
+      if @ami
+        puts "Current AMI for version #{@version} is #{@ami}"
+      else
+        puts "No AMI exists for current version"
+        exit 0
+      end
+    end
+
+    task :verify => [:current] do
+      puts "Launching verification instance for AMI #{@ami}"
+      @instance = conn.launch_instances(@ami, OPTIONS)[0][:aws_instance_id]
+      conn.create_tag(@instance, 'Name', "#{@version}-verify")
+
+      # Wait for it to be available
+      Rake::Task["ami:available"].execute
+
+      # Wait a few more seconds to let services start
+      sleep 10
+
+      # Test user creation and app creation
     end
   end
 rescue LoadError

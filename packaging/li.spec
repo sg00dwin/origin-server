@@ -2,7 +2,7 @@
 %define gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 
 Name: li
-Version: 0.40
+Version: 0.42
 Release: 1%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
@@ -319,6 +319,7 @@ fi
 %{_datadir}/selinux/packages/libra.pp
 %config(noreplace) %{_sysconfdir}/libra/node.conf
 %config(noreplace) %{_sysconfdir}/libra/resource_limits.conf
+%{_sysconfdir}/httpd/conf.d/000000_default.conf
 
 
 %files server
@@ -354,6 +355,27 @@ fi
 %{_libexecdir}/li/cartridges/wsgi-3.2.1/
 
 %changelog
+* Fri Mar 11 2011 Mike McGrath <mmcgrath@redhat.com> 0.42-1
+- New release
+
+* Thu Mar 10 2011 Matt Hicks <mhicks@redhat.com> 0.41-6
+- Fixed file path
+
+* Thu Mar 10 2011 Matt Hicks <mhicks@redhat.com> 0.41-5
+- Moved vhost file definition to the node section
+
+* Thu Mar 10 2011 Matt Hicks <mhicks@redhat.com> 0.41-4
+- Added files definition for the default vhost file
+
+* Thu Mar 10 2011 Matt Hicks <mhicks@redhat.com> 0.41-3
+- Removing parseconfig build dep
+
+* Thu Mar 10 2011 Matt Hicks <mhicks@redhat.com> 0.41-2
+- Fixing build deps
+
+* Thu Mar 10 2011 Mike McGrath <mmcgrath@redhat.com> 0.41-1
+- New version
+
 * Thu Mar 10 2011 Mike McGrath <mmcgrath@redhat.com> 0.40-1
 - New version
 
