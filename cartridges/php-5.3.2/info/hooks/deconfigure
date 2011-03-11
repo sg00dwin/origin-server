@@ -89,7 +89,7 @@ APP_DIR="$CUSTOMER_HOME/php/$application"
 
 destroy_repo $application $uuid
 
-runcon -t initrc_t -r system_r runuser --shell /bin/sh "$uuid" $APP_DIR/${application}_ctl.sh stop || echo "Failed to stop ${application}" 1>&2
+runuser --shell /bin/sh "$uuid" $APP_DIR/${application}_ctl.sh stop || echo "Failed to stop ${application}" 1>&2
 
 IP=$(awk -F, "/$uuid,$application,/"'{ print $1 }' /etc/libra/ip_db | head -n1)
 range_one=$(echo $IP | awk -F\. '{ print $3 }')

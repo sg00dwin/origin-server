@@ -63,5 +63,5 @@ APP_DIR="$CUSTOMER_HOME/php/$application"
 # Start application
 #
 
-runcon -t initrc_t -r system_r runuser --shell /bin/sh "$customer_id" "$APP_DIR/${application}_ctl.sh" stop
+runuser --shell /bin/sh "$customer_id" "$APP_DIR/${application}_ctl.sh" stop
 touch "$APP_DIR/run/stop_lock"
