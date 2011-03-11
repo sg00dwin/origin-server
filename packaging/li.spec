@@ -354,7 +354,7 @@ fi
 %{_libexecdir}/li/cartridges/wsgi-3.2.1/
 
 %changelog
-* Thu Mar 10 2011 Matt Hicks <mhicks@redhat.com> 0.41-2
+* Thu Mar 10 2011 Matt Hicks <mhicks@redhat.com> 0.41-3
 - Removing parseconfig build dep
 
 * Thu Mar 10 2011 Matt Hicks <mhicks@redhat.com> 0.41-2
