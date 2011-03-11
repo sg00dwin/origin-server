@@ -3,7 +3,7 @@
 
 Name: li
 Version: 0.41
-Release: 4%{?dist}
+Release: 5%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
