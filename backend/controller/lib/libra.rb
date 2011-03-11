@@ -38,7 +38,7 @@ module Libra
 
     # Configure the app on the server using a framework cartridge
     #server.execute(framework, action, app_name, user)
-    result = server.execute_direct(framework, action, "#{app_name} #{user.rhlogin} #{user.uuid}")[0]
+    result = server.execute_direct(framework, action, "#{app_name} #{user.namespace} #{user.uuid}")[0]
     unless result.results[:data][:exitcode] == 0
         puts result.results[:data][:output]
         throw :node_execution_failure
