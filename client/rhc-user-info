@@ -23,6 +23,7 @@ require "net/https"
 require "getoptlong"
 require "json"
 require 'parseconfig'
+require File.dirname($0) + '/rhc-common'
 
 config_path = File.exists?('client.conf') ? 'client.conf' : '/etc/libra/client.conf'
 
@@ -60,17 +61,17 @@ end
 # print help
 #
 def p_usage
-    namespace = @local_config.get_value('default_namespace') ? "Default: #{@local_config.get_value('default_namespace')}" : "(required)"
+    rhlogin = @local_config.get_value('default_rhlogin') ? "Default: #{@local_config.get_value('default_rhlogin')}" : "(required)"
     puts <<USAGE
 
 Usage: rhc-user-info
 Display information about a user
 
-  -n|--namespace   namespace    RHCloud namespace (alphanumeric) (#{namespace})
-  -a|--apps                     List applications for namespace
-  -i|--info                     Show user info
-  -d|--debug                    Print Debug info
-  -h|--help                     Show Usage info
+  -l|--rhlogin   rhlogin    RHCloud rhlogin (alphanumeric) (#{rhlogin})
+  -a|--apps                 List applications for rhlogin
+  -i|--info                 Show user info
+  -d|--debug                Print Debug info
+  -h|--help                 Show Usage info
 
 USAGE
 exit 255
@@ -93,7 +94,7 @@ opts = GetoptLong.new(
     ["--help",  "-h", GetoptLong::NO_ARGUMENT],
     ["--apps",  "-a", GetoptLong::NO_ARGUMENT],
     ["--info",  "-i", GetoptLong::NO_ARGUMENT],
-    ["--namespace",  "-n", GetoptLong::REQUIRED_ARGUMENT]
+    ["--rhlogin",  "-l", GetoptLong::REQUIRED_ARGUMENT]
 )
 
 # Pull in configs from files
@@ -117,64 +118,28 @@ if opt["debug"]
     debug = true
 end
 
-opt["namespace"] = @local_config.get_value('default_namespace') unless opt["namespace"]
+opt["rhlogin"] = @local_config.get_value('default_rhlogin') unless opt["rhlogin"]
 
-if opt["namespace"]
-    if opt["namespace"] =~ /[^0-9a-zA-Z]/
-        puts "namespace contains non-alphanumeric characters!"
-        p_usage
-    end
-else
-    puts "Namespace is required"
+if !RHC::check_rhlogin(opt['rhlogin'])
     p_usage
 end
 
 opt['apps'] = true if not opt['info'] and not opt['apps']
+user_info = RHC::get_user_info(li_server, opt['rhlogin'], @http, debug)
 
-puts "Contacting https://#{li_server}"
-json_data = JSON.generate(
-                {'namespace' => opt['namespace']})
-puts "DEBUG: Json string: #{json_data}" if debug
-
-url = URI.parse("https://#{li_server}/php/user_info.php")
-req = @http::Post.new(url.path)
-
-req.set_form_data({'json_data' => json_data})
-http = @http.new(url.host, url.port)
-if url.scheme == "https"
-  http.use_ssl = true
-  http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-end
-response = http.start {|http| http.request(req)}
-
-puts "DEBUG:" if debug
-p response if debug
-json_resp = JSON.parse(response.body);
-
-unless json_resp['return'].to_s.strip == "0"
-    puts "Problem with server. Response code was #{response.code}"
-    puts "HTTP response from server is #{response.body}"
-    exit 255
-end
-
-if debug
-    puts "HTTP response from server is #{response.body}"
-end
-user_info = JSON.parse(json_resp['stdout'].to_s)
-
-if user_info['user_info']['uuid'] != @local_config.get_value(opt["namespace"])
+if user_info['user_info']['uuid'] != @local_config.get_value(opt["rhlogin"])
     puts
     puts "WARNING!  The UUID in your ~/.li file is either missing or incorrect."
     puts "Please ensure the following line exists in ~/.li"
     puts
-    puts "#{opt['namespace']}=#{user_info['user_info']['uuid']}"
+    puts "#{opt['rhlogin']}=#{user_info['user_info'][' uuid']}"
     puts
 end
 
 if opt['info']
     puts "User Info"
     puts "========="
-    puts "Namespace: #{user_info['user_info']['username']}"
+    puts "Namespace: #{user_info['user_info']['namespace']}"
     puts "    UUID: #{user_info['user_info']['uuid']}"
     puts "   email: #{user_info['user_info']['email']}"
     puts " ssh_key: #{user_info['user_info']['ssh_key']}"
@@ -189,8 +154,8 @@ if opt['apps']
         puts key
         puts "  Framework: #{val['framework']}"
         puts "   Creation: #{val['creation_time']}"
-        puts "    Git URL: ssh://#{user_info['user_info']['uuid']}@#{key}.#{user_info['user_info']['username']}.#{libra_domain}/~/git/#{key}.git/"
-        puts " Public URL: http://#{key}.#{user_info['user_info']['username']}.#{libra_domain}/"
+        puts "    Git URL: ssh://#{user_info['user_info']['uuid']}@#{key}.#{user_info['user_info']['namespace']}.#{libra_domain}/~/git/#{key}.git/"
+        puts " Public URL: http://#{key}.#{user_info['user_info']['namespace']}.#{libra_domain}/"
         puts ""
     end
     

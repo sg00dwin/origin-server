@@ -68,7 +68,7 @@ def get_var(var)
 end
 
 def p_usage
-    namespace = @local_config.get_value('default_namespace') ? "Default: #{@local_config.get_value('default_namespace')}" : "(required)"
+    rhlogin = @local_config.get_value('default_rhlogin') ? "Default: #{@local_config.get_value('default_rhlogin')}" : "(required)"
     type_keys = RHC::get_type_keys(', ')
     puts <<USAGE
 
@@ -77,7 +77,7 @@ Control a libra app
 
   -a|--app   application   Application name  (alphanumeric) (required)
   -t|--type  type          Type of app to operate on (#{type_keys}) (required)
-  -n|--namespace namespace  RHCloud namespace    (alphanumeric) (#{namespace})
+  -l|--rhlogin rhlogin     Red Hat login  (alphanumeric) (#{rhlogin})
   -c|--command command     (start|stop|restart|reload|status|destroy)
   -b|--bypass              Bypass warnings
   -d|--debug               Print Debug info
@@ -91,7 +91,7 @@ opts = GetoptLong.new(
     ["--debug",     "-d", GetoptLong::NO_ARGUMENT],
     ["--help",      "-h", GetoptLong::NO_ARGUMENT],
     ["--bypass",    "-b", GetoptLong::NO_ARGUMENT],
-    ["--namespace", "-n", GetoptLong::OPTIONAL_ARGUMENT],
+    ["--rhlogin",   "-l", GetoptLong::OPTIONAL_ARGUMENT],
     ["--app",       "-a", GetoptLong::REQUIRED_ARGUMENT],
     ["--command",   "-c", GetoptLong::REQUIRED_ARGUMENT],
     ["--type",      "-t", GetoptLong::REQUIRED_ARGUMENT]
@@ -119,9 +119,9 @@ if opt["debug"]
     debug = true
 end
 
-opt["namespace"] = @local_config.get_value('default_namespace') unless opt["namespace"]
+opt["rhlogin"] = @local_config.get_value('default_rhlogin') unless opt["rhlogin"]
 
-if !RHC::check_namespace(opt['namespace'])
+if !RHC::check_rhlogin(opt['rhlogin'])
     p_usage
 end
 
@@ -139,7 +139,7 @@ unless defined? opt["command"] and opt["command"] =~ /(start|stop|restart|reload
     p_usage
 end
 
-if !opt["namespace"] || !opt["app"] || !opt["command"] || !opt["type"]
+if !opt["rhlogin"] || !opt["app"] || !opt["command"] || !opt["type"]
     p_usage
 end
 
@@ -183,8 +183,8 @@ puts "Creating remote application space: " + opt['app']
 json_data = JSON.generate(
                {:cartridge => "#{opt['type']}",
                 :action => opt['command'],
-                :app_label => "#{opt['app']}",
-                :namespace => "#{opt['namespace']}"})
+                :app_name => "#{opt['app']}",
+                :rhlogin => "#{opt['rhlogin']}"})
 
 puts "Contacting server https://#{li_server}"
 

@@ -6,8 +6,8 @@
 rhc-create-app \- creates a new hosted application at
 rhcloud.com
 .SH SYNOPSIS
-.B rhc-create-app [-n
-.I namespace
+.B rhc-create-app [-l
+.I rhlogin
 .B ]
 .B [-a
 .I application_name
@@ -42,8 +42,8 @@ created repo directory (specified by
 .BR origin
 .BR master
 .SH OPTIONS
-.IP "-n|--namespace namespace"
-Desired namespace to create.  Alphanumeric
+.IP "-l|--rhlogin login"
+Red Hat login.  Alphanumeric
 .IP "-a|--app application_name"
 Name of application to create
 .IP "-r|--repo repo_path"

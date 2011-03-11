@@ -47,9 +47,9 @@ module Libra
       Helper.rpc_get_fact("git_cnt_#{user.uuid}") do |server, repos|
         num_repos += repos.to_i        
       end
-      puts "DEBUG: server.rb:validate_app_limit #{user.username}: num of apps(#{num_repos.to_s}) must be < app limit (#{Libra.c[:per_user_app_limit]})" if Libra.c[:rpc_opts][:verbose]
+      puts "DEBUG: server.rb:validate_app_limit #{user.rhlogin}: num of apps(#{num_repos.to_s}) must be < app limit (#{Libra.c[:per_user_app_limit]})" if Libra.c[:rpc_opts][:verbose]
       if (num_repos >= Libra.c[:per_user_app_limit])
-          $stderr.puts "ERROR: #{user.username} has already reached the application limit of #{Libra.c[:per_user_app_limit]}" if Libra.c[:rpc_opts][:verbose]
+          $stderr.puts "ERROR: #{user.rhlogin} has already reached the application limit of #{Libra.c[:per_user_app_limit]}" if Libra.c[:rpc_opts][:verbose]
           throw :per_user_application_limit_exceeded
       end
     end
@@ -128,8 +128,8 @@ EOF
     #
     def create_user(user)
       # Make the call to configure the user
-      #execute_internal(@@C_CONTROLLER, 'configure', "-c #{user.uuid} -e #{user.email} -s #{user.ssh}")
-      execute_direct(@@C_CONTROLLER, 'configure', "-c #{user.uuid} -e #{user.email} -s #{user.ssh}")
+      #execute_internal(@@C_CONTROLLER, 'configure', "-c #{user.uuid} -e #{user.rhlogin} -s #{user.ssh}")
+      execute_direct(@@C_CONTROLLER, 'configure', "-c #{user.uuid} -e #{user.rhlogin} -s #{user.ssh}")
     end
 
     #
@@ -138,7 +138,7 @@ EOF
     def execute(framework, action, app_name, user)
       # Make the call to configure the application
       puts "DEBUG: server.rb:execute framework:#{framework} action:#{action} app_name:#{app_name} user:#{user}" if Libra.c[:rpc_opts][:verbose]
-      execute_internal(framework, action, "#{app_name} #{user.username} #{user.uuid}")
+      execute_internal(framework, action, "#{app_name} #{user.rhlogin} #{user.uuid}")
     end
 
     #
@@ -179,7 +179,6 @@ EOF
         options = Libra.c[:rpc_opts]
         options[:filter]['fact'] = [{:value=>value, :fact=>fact, :operator=>operator}]
         p options if Libra.c[:rpc_opts][:verbose]
-
         Helper.rpc_exec('libra') do |client|
         client.cartridge_do(:cartridge => cartridge,
                             :action => action,
@@ -189,7 +188,6 @@ EOF
 
           puts "DEBUG: server.rb:execute_internal return_code: #{return_code}" if Libra.c[:rpc_opts][:verbose]
           puts "DEBUG: server.rb:execute_internal output: #{output}" if Libra.c[:rpc_opts][:verbose]
-
           raise CartridgeException, output if return_code != 0
         end
       end

@@ -6,26 +6,26 @@ require 'net/http'
 require 'net/https'
 
 def gen_small_uuid()
-    # Put config option for username here so we can ignore uuid for dev environments
+    # Put config option for rhlogin here so we can ignore uuid for dev environments
     %x[/usr/bin/uuidgen].gsub('-', '').strip
 end
 
 module Libra
   class User
-    attr_reader :username
-    attr_accessor :ssh, :email, :uuid
+    attr_reader :rhlogin
+    attr_accessor :ssh, :namespace, :uuid
 
-    def initialize(username, ssh, email, uuid)
-      @username, @ssh, @email, @uuid = username, ssh, email, uuid
+    def initialize(rhlogin, ssh, namespace, uuid)
+      @rhlogin, @ssh, @namespace, @uuid = rhlogin, ssh, namespace, uuid
     end
 
     def self.from_json(json)
       data = JSON.parse(json)
       if data['uuid']
-        new(data['username'], data['ssh'], data['email'], data['uuid'])
+        new(data['rhlogin'], data['ssh'], data['namespace'], data['uuid'])
       else
         uuid = gen_small_uuid()
-        user = new(data['username'], data['ssh'], data['email'], uuid)
+        user = new(data['rhlogin'], data['ssh'], data['namespace'], uuid)
         user.update
         user
       end
@@ -35,27 +35,27 @@ module Libra
     # Creates a new user, raising an exception
     # if the user already exists.
     #
-    def self.create(username, ssh, email)
-      throw :user_exists if find(username)
-      puts "DEBUG: user.rb:create username:#{username} ssh:#{ssh} email:#{email}" if Libra.c[:rpc_opts][:verbose]
+    def self.create(rhlogin, ssh, namespace)
+      throw :user_exists if find(rhlogin)
+      puts "DEBUG: user.rb:create rhlogin:#{rhlogin} ssh:#{ssh} namespace:#{namespace}" if Libra.c[:rpc_opts][:verbose]
       uuid = gen_small_uuid()
-      user = new(username, ssh, email, uuid)
+      user = new(rhlogin, ssh, namespace, uuid)
       user.update
-      user
+      user      
     end
     
     #
-    # Finds all registered usernames
+    # Finds all registered rhlogins
     #
-    #   User.find_all_usernames
+    #   User.find_all_rhlogins
     #
-    def self.valid_registration?(username, password)
+    def self.valid_registration?(rhlogin, password)
 =begin
         #url = URI.parse('https://streamline.devlab.phx1.redhat.com/streamline/login.html')
         url = URI.parse('https://streamline1.stg.rhcloud.com/streamline/login.html')
         req = Net::HTTP::Post.new(url.path)
         
-        req.set_form_data({ 'username' => username, 'password' => password })
+        req.set_form_data({ 'rhlogin' => rhlogin, 'password' => password })
         http = Net::HTTP.new(url.host, url.port)
         if url.scheme == "https"
           http.use_ssl = true
@@ -78,20 +78,20 @@ module Libra
     end
 
     #
-    # Finds all registered usernames
+    # Finds all registered rhlogins
     #
-    #   User.find_all_usernames
+    #   User.find_all_rhlogins
     #
-    def self.find_all_usernames
-      usernames = []
+    def self.find_all_rhlogins
+      rhlogins = []
 
-      # Retrieve the current list of usernames
+      # Retrieve the current list of rhlogins
       Helper.s3.incrementally_list_bucket(Libra.c[:s3_bucket], { 'prefix' => 'user_info'}) do |result|
         result[:contents].each do |bucket|
-          usernames << File.basename(bucket[:key], ".json")
+          rhlogins << File.basename(bucket[:key], ".json")
         end
       end
-      usernames
+      rhlogins
     end
 
     #
@@ -99,9 +99,9 @@ module Libra
     #
     #   User.find('test_user')
     #
-    def self.find(username)
+    def self.find(rhlogin)
       begin
-        return User.from_json(Helper.s3.get(Libra.c[:s3_bucket], "user_info/#{username}/user.json")[:object])
+        return User.from_json(Helper.s3.get(Libra.c[:s3_bucket], "user_info/#{rhlogin}/user.json")[:object])
       rescue Aws::AwsError => e
         if e.message =~ /^NoSuchKey/
           return nil
@@ -115,9 +115,9 @@ module Libra
     # Updates the user with the current information
     #
     def update
-      json = JSON.generate({:username => username, :email => email, :ssh => ssh, :uuid => uuid})
+      json = JSON.generate({:rhlogin => rhlogin, :namespace => namespace, :ssh => ssh, :uuid => uuid})
       puts "DEBUG: user.rb:update json:#{json}" if Libra.c[:rpc_opts][:verbose]
-      Helper.s3.put(Libra.c[:s3_bucket], "user_info/#{username}/user.json", json)
+      Helper.s3.put(Libra.c[:s3_bucket], "user_info/#{rhlogin}/user.json", json)
     end
 
     #
@@ -129,7 +129,7 @@ module Libra
         @servers = {}
 
         # Make the rpc call to check
-        Helper.rpc_get_fact("customer_#{username}") do |server, value|
+        Helper.rpc_get_fact("customer_#{rhlogin}") do |server, value|
           # Initialize the hash with the server as the key
           # The applications will eventually become the value
           @servers[Server.new(server)] = nil
@@ -147,10 +147,10 @@ module Libra
       unless @apps
         @apps = {}
         app_list = Helper.s3.list_bucket(Libra.c[:s3_bucket],
-                  { 'prefix' => "user_info/#{@username}/apps/"})
+                  { 'prefix' => "user_info/#{@rhlogin}/apps/"})
         app_list.each do |key|
           json = Helper.s3.get(Libra.c[:s3_bucket], key[:key])
-          app_name = key[:key].sub("user_info/#{@username}/apps/", "").sub(".json", "")
+          app_name = key[:key].sub("user_info/#{@rhlogin}/apps/", "").sub(".json", "")
           @apps[app_name.to_sym] = app_info(app_name)
         end
       end
@@ -165,7 +165,7 @@ module Libra
       json = JSON.generate({:framework => framework,
                             :creation_time => creation_time})
       Helper.s3.put(Libra.c[:s3_bucket],
-                    "user_info/#{@username}/apps/#{app_name}.json", json)
+                    "user_info/#{@rhlogin}/apps/#{app_name}.json", json)
       JSON.parse(json)
     end
 
@@ -174,7 +174,7 @@ module Libra
     #
     def delete_app(app_name)
       Helper.s3.delete(Libra.c[:s3_bucket],
-                        "user_info/#{@username}/apps/#{app_name}.json")
+                        "user_info/#{@rhlogin}/apps/#{app_name}.json")
     end
 
     #
@@ -182,7 +182,7 @@ module Libra
     #
     def app_info(app_name)
       return JSON.parse(Helper.s3.get(Libra.c[:s3_bucket],
-            "user_info/#{@username}/apps/#{app_name}.json")[:object])
+            "user_info/#{@rhlogin}/apps/#{app_name}.json")[:object])
     rescue Aws::AwsError => e
       if e.message =~ /^NoSuchKey/
         return nil
@@ -200,17 +200,17 @@ module Libra
     end
 
     #
-    # Base equality on the username
+    # Base equality on the rhlogin
     #
     def ==(another_user)
-      self.username == another_user.username
+      self.rhlogin == another_user.rhlogin
     end
 
     #
-    # Base sorting on the username
+    # Base sorting on the rhlogin
     #
     def <=>(another_user)
-      self.username <=> another_user.username
+      self.rhlogin <=> another_user.rhlogin
     end
   end
 end

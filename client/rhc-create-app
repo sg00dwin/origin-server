@@ -71,7 +71,7 @@ end
 
 
 def p_usage
-    namespace = @local_config.get_value('default_namespace') ? "Default: #{@local_config.get_value('default_namespace')}" : "(required)"
+    rhlogin = @local_config.get_value('default_rhlogin') ? "Default: #{@local_config.get_value('default_rhlogin')}" : "(required)"
     type_keys = RHC::get_type_keys(', ')
     puts <<USAGE
 
@@ -80,9 +80,9 @@ Create a new app libra project.
 
   -a|--app   application     Application name  (alphanumeric) (required)
   -t|--type  type            Type of app to create (#{type_keys}) (required)
-  -n|--namespace  namespace  RHCloud namespace  (alphanumeric) (#{namespace})
+  -l|--rhlogin  rhlogin      RHCloud rhlogin  (alphanumeric) (#{rhlogin})
   -r|--repo  path            Git Repo path (defaults to ./$app_name)
-  -g|--nogit                 Only create remote space, don't pull it locally
+  -n|--nogit                 Only create remote space, don't pull it locally
   -b|--bypass                Bypass warnings
   -d|--debug                 Print Debug info
   -h|--help                  Show Usage info
@@ -95,13 +95,12 @@ opts = GetoptLong.new(
     ["--debug", "-d", GetoptLong::NO_ARGUMENT],
     ["--help",  "-h", GetoptLong::NO_ARGUMENT],
     ["--bypass","-b", GetoptLong::NO_ARGUMENT],
-    ["--nogit", "-g", GetoptLong::NO_ARGUMENT],
-    ["--namespace",  "-n", GetoptLong::REQUIRED_ARGUMENT],
+    ["--nogit", "-n", GetoptLong::NO_ARGUMENT],
+    ["--rhlogin",  "-l", GetoptLong::REQUIRED_ARGUMENT],
     ["--app",   "-a", GetoptLong::REQUIRED_ARGUMENT],
     ["--repo",  "-r", GetoptLong::OPTIONAL_ARGUMENT],
     ["--type",  "-t", GetoptLong::REQUIRED_ARGUMENT]
 )
-
 
 # Pull in configs from files
 libra_domain = get_var('libra_domain')
@@ -125,9 +124,9 @@ if opt["debug"]
     debug = true
 end
 
-opt["namespace"] = @local_config.get_value('default_namespace') unless opt["namespace"]
+opt["rhlogin"] = @local_config.get_value('default_rhlogin') unless opt["rhlogin"]
 
-if !RHC::check_namespace(opt['namespace'])
+if !RHC::check_rhlogin(opt['rhlogin'])
     p_usage
 end
 
@@ -135,13 +134,12 @@ if !RHC::check_app(opt['app'])
     p_usage
 end
 
-
 @type = RHC::get_type(opt['type'])
 if !@type  
     p_usage
 end
 
-if !opt["namespace"] || !opt["app"] || !opt["type"]
+if !opt["rhlogin"] || !opt["app"] || !opt["type"]
     p_usage
 end
 
@@ -149,9 +147,9 @@ end
 # Get UUID from file
 #
 
-uuid = @local_config.get_value(opt["namespace"])
+uuid = @local_config.get_value(opt["rhlogin"])
 unless uuid
-    puts "Could not find UUID for #{opt["namespace"]}"
+    puts "Could not find UUID for #{opt["rhlogin"]}"
     exit 149
 end
 
@@ -245,8 +243,8 @@ puts "Creating remote application space: " + opt['app']
 json_data = JSON.generate(
                {:cartridge => "#{opt['type']}",
                 :action => 'configure',
-                :app_label => "#{opt['app']}",
-                :namespace => "#{opt['namespace']}"})
+                :app_name => "#{opt['app']}",
+                :rhlogin => "#{opt['rhlogin']}"})
 
 puts "Contacting server https://#{li_server}"
 
@@ -285,7 +283,10 @@ end
 
 puts "Checking ~/.ssh/config"
 
-my_url = "#{opt['app']}.#{opt['namespace']}.#{libra_domain}"
+
+user_info = RHC::get_user_info(li_server, opt['rhlogin'], @http, debug)
+
+my_url = "#{opt['app']}.#{user_info['user_info']['namespace']}.#{libra_domain}"
 
 found = false
 
@@ -371,10 +372,10 @@ attempt = 0
 # Pull new repo locally
 #
 #  Full path
-# git_url = "ssh://#{uuid}@#{opt['app']}.#{opt['namespace']}.#{libra_domain}/#{libra_dir}/#{uuid}/git/#{opt['app']}.git/"
+# git_url = "ssh://#{uuid}@#{opt['app']}.#{user_info['user_info']['namespace']}.#{libra_domain}/#{libra_dir}/#{uuid}/git/#{opt['app']}.git/"
 
 # Shorter path (easier to read)
-git_url = "ssh://#{uuid}@#{opt['app']}.#{opt['namespace']}.#{libra_domain}/~/git/#{opt['app']}.git/"
+git_url = "ssh://#{uuid}@#{opt['app']}.#{user_info['user_info']['namespace']}.#{libra_domain}/~/git/#{opt['app']}.git/"
 
 unless opt['nogit']
     puts "Pulling new repo down"

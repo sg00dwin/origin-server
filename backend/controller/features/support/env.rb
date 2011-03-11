@@ -75,7 +75,7 @@ module Libra
       # email and ssh key
       #
       def create_test_user(username)
-        Libra::User.create(username, @test_ssh_key, @test_email)
+        Libra::User.create(@test_email, @test_ssh_key, username)
       end
     end
 

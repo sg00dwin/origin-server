@@ -5,8 +5,8 @@
 .SH NAME
 rhc-ctl-app \- Control an existing rhcloud.com application
 .SH SYNOPSIS
-.B rhc-ctl-app [-n
-.I namespace
+.B rhc-ctl-app [-l
+.I rhlogin
 .B ]
 .B [-a
 .I application_name
@@ -33,8 +33,8 @@ then remove the application and repo from the remote
 server.  No local changes are made.
 
 .SH OPTIONS
-.IP "-n|--namespace namespace"
-Desired namespace to create.  Alphanumeric
+.IP "-l|--rhlogin rhlogin"
+Red Hat login.  Alphanumeric
 .IP "-a|--app application_name"
 Name of application to create
 .IP "-t|--type framework_type"

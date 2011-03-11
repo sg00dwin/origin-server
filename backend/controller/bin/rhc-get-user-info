@@ -11,24 +11,24 @@ options = rpcoptions do |parser, options|
     parser.define_head "Get info about a user"
     parser.banner = "Usage: rhc-get-user-info [options]"
 
-    parser.on('-n', '--namespace NAMESPACE', "The unique namespace") do |namespace|
-      options[:namepsace] = namespace
+    parser.on('-l', '--rhlogin RHLOGIN', "The unique rhlogin") do |rhlogin|
+      options[:rhlogin] = rhlogin
     end
 end
 
 # Set the MCollective options
 Libra.c[:rpc_opts] = options
 
-# Check if namespace already exists
-user = User.find(options[:namespace])
+# Check if rhlogin already exists
+user = User.find(options[:rhlogin])
 unless user
-    puts "Could not find user with namespace #{options[:namespace]}"
+    puts "Could not find user with rhlogin #{options[:rhlogin]}"
     exit 5
 end
 user_info = {
-    :username => user.username,
+    :rhlogin => user.rhlogin,
     :uuid => user.uuid,
-    :email => user.email,
+    :namespace => user.namespace,
     :ssh_key => user.ssh
     }
 

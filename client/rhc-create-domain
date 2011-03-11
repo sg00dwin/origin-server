@@ -23,6 +23,7 @@ require "net/https"
 require "getoptlong"
 require "json"
 require 'parseconfig'
+require File.dirname($0) + '/rhc-common'
 
 config_path = File.exists?('client.conf') ? 'client.conf' : '/etc/libra/client.conf'
 
@@ -69,7 +70,7 @@ Bind a registered rhcloud user to a domain in rhcloud.
         ~/.ssh/libra_id_rsa.pub key, then re-run with --alter
 
   -n|--namespace   namespace   Libra namespace (alphanumeric) (required)
-  -e|--email       email       Email address (required)
+  -l|--rhlogin     rhlogin     Red Hat login (often email) (required)
   -a|--alter                   Alter existing namespace
   -d|--debug                   Print Debug info
   -h|--help                    Show Usage info
@@ -78,23 +79,11 @@ USAGE
 exit 255
 end
 
-def validate_email(email)
-    if email =~ /([^@]+)@([a-zA-Z0-9\.])+\.([a-zA-Z]{2,3})/
-        if $1 =~ /[^a-zA-Z0-9\.\-\+]/
-            return false
-        else
-            return true
-        end
-    else
-        return false
-    end
-end
-
 opts = GetoptLong.new(
     ["--debug", "-d", GetoptLong::NO_ARGUMENT],
     ["--help",  "-h", GetoptLong::NO_ARGUMENT],
-    ["--namespace",  "-n", GetoptLong::REQUIRED_ARGUMENT],
-    ["--email", "-e", GetoptLong::REQUIRED_ARGUMENT],
+    ["--rhlogin",  "-l", GetoptLong::REQUIRED_ARGUMENT],
+    ["--namespace", "-n", GetoptLong::REQUIRED_ARGUMENT],
     ["--alter", "-a", GetoptLong::NO_ARGUMENT]
 )
 
@@ -128,16 +117,12 @@ else
     puts "Namespace is required"
 end
 
-if opt["email"]
-    if !validate_email(opt["email"])
-        puts "email contains invalid characters!"
-        p_usage
-    end
-else
-    puts "Libra email address is required"
+if !RHC::check_rhlogin(opt['rhlogin'])
+    p_usage
 end
 
-if !opt["email"] || !opt["namespace"]
+
+if !opt["rhlogin"] || !opt["namespace"]
     p_usage
 end
 
@@ -154,16 +139,16 @@ puts "\n"
 # Add a new namespace to configs
 #
 
-def add_namespace_config(namespace, uuid)
+def add_rhlogin_config(rhlogin, uuid)
     f = open("#{ENV['HOME']}/.li", 'a')
-    unless @local_config.get_value('default_namespace')
-        f.puts("# Default namespace to use if none is specified")
-        f.puts("namespace=#{namespace}")
+    unless @local_config.get_value('default_rhlogin')
+        f.puts("# Default rhlogin to use if none is specified")
+        f.puts("rhlogin=#{rhlogin}")
         f.puts("")
     end
-    unless @local_config.get_value(namespace)
-        puts "Adding namespace to #{ENV['HOME']}/.li"
-        f.puts("#{namespace}=#{uuid}")
+    unless @local_config.get_value(rhlogin)
+        puts "Adding rhlogin to #{ENV['HOME']}/.li"
+        f.puts("#{rhlogin}=#{uuid}")
     end
     f.close
 end
@@ -184,12 +169,14 @@ end
 ssh_key = File.open(libra_kpfile).gets.chomp.split(' ')[1]
 
 puts "Contacting https://#{li_server}"
-json_data = JSON.generate(
-                {'namespace' => opt['namespace'],
-                'email' => opt['email'],
+data = {'namespace' => opt['namespace'],
+                'rhlogin' => opt['rhlogin'],
                 'password' => password,
-                'ssh' => ssh_key,
-                'alter' => opt['alter']})
+                'ssh' => ssh_key}                
+if (opt['alter'])
+  data['alter'] = "--alter"   
+end
+json_data = JSON.generate(data)
 puts "DEBUG: Json string: #{json_data}" if debug
 
 url = URI.parse("https://#{li_server}/php/create_customer.php")
@@ -215,8 +202,8 @@ if json_resp['return'].to_s.strip == "0"
         end
     end
 
-    json_namespaceinfo = JSON.parse(json_resp['stdout'])
-    add_namespace_config(json_namespaceinfo['namespace'], json_namespaceinfo['uuid'])
+    json_rhlogininfo = JSON.parse(json_resp['stdout'])
+    add_rhlogin_config(json_rhlogininfo['rhlogin'], json_rhlogininfo['uuid'])
 
     if opt['alter'] != ''
         puts "Creation successful (probably)."
@@ -224,7 +211,7 @@ if json_resp['return'].to_s.strip == "0"
         puts "You may now create an application"
         puts
     else
-        puts "Namespace alteration successful."
+        puts "RHLogin alteration successful."
         puts
     end
     exit 0

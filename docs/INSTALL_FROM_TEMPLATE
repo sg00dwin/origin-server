@@ -18,11 +18,11 @@ controls
 6) vi /etc/libra/node.conf and add the lines
 unobfuscate=1
 limits_nproc=100
-7) /usr/bin/rhc-new-user -n <make up a namespace and not your RedHat id> -e <email> -s <the key you just copied from 4)>
+7) /usr/bin/rhc-new-user -n <namespace> -l <rhlogin> -s <the key you just copied from 4)>
 This should output something like:
-{"namespace":"<namespace>","uuid":"69559fc92d224996bcc38ba19f10ca87"}
+{"rhlogin":"<rhlogin>","uuid":"69559fc92d224996bcc38ba19f10ca87"}
 Remember this "uuid" as <uuid>.
-8) mc-rhc-cartridge-do -v -a configure -t li -n <namespace> --cartridge php-5.3.2
+8) mc-rhc-cartridge-do -v -a configure -n li -l <rhlogin> --cartridge php-5.3.2
 9) You can now browse to http://li.<userid>.rhcloud.com/  (should say forbidden)
 10) cd ~<uuid>
 11) chcon -t ssh_home_t .ssh -R
@@ -43,8 +43,8 @@ Host li.<namespace>.rhcloud.com
   git push
 3) From the root of the li repo run cp ./client/client.conf ~/.li
 4) edit ~/.li and change "li_server = 'lidemo.mcgrath.rhcloud.com'" to "li_server = 'li.<namespace>.rhcloud.com'"
-5) add a line <namespace>=<uuid>
-6) rhc-create-app -n <namespace> -a <appname> -r <app folder> -t php-5.3.2 -b
+5) add a line <rhlogin>=<uuid>
+6) rhc-create-app -l <rhlogin> -a <appname> -r <app folder> -t php-5.3.2 -b
 7) You can now browse to http://<appname>.<namespace>.rhcloud.com/
 
 You can delete an instance with:

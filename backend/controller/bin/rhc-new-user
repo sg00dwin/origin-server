@@ -12,12 +12,12 @@ options = rpcoptions do |parser, options|
     parser.define_head "Create a new user"
     parser.banner = "Usage: rhc-new-user [options]"
 
-    parser.on('-n', '--namespace NAMESPACE', "The unique namespace") do |namespace|
-      options[:namespace] = namespace
+    parser.on('-l', '--rhlogin RHLOGIN', "The Red Hat login") do |rhlogin|
+      options[:rhlogin] = rhlogin
     end
 
-    parser.on('-e', '--email EMAIL', 'The user email') do |email|
-      options[:email] = email
+    parser.on('-n', '--namespace NAMESPACE', 'The unique namespace') do |namespace|
+      options[:namespace] = namespace
     end
 
     parser.on('-s', '--ssh SSH_KEY', 'The user public SSH key') do |ssh|
@@ -38,8 +38,8 @@ unless options.include?(:namespace) or options[:namespace] =~ /^[a-zA-Z0-9]+$/
     exit 254
 end
 
-unless options.include?(:email) or options[:email] =~ /^[a-zA-Z][\w\.-]*[a-zA-Z0-9]@[a-zA-Z0-9][\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]$/
-    puts "The email is invalid."
+unless options.include?(:rhlogin) or options[:rhlogin] =~ /^[a-zA-Z][\w\.-]*[a-zA-Z0-9]@[a-zA-Z0-9][\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]$/
+    puts "The rhlogin is invalid."
     exit 253
 end
 
@@ -57,22 +57,22 @@ end
 Libra.c[:rpc_opts] = options
 
 # Check if user already exists
-user = User.find(options[:namespace])
+user = User.find(options[:rhlogin])
 if user
   if options[:alter]
-    user.email=options[:email]
+    user.namespace=options[:namespace]
     user.ssh=options[:ssh]
     user.update
     Server.execute_many('li-controller-0.1', 'configure',
-        "-c #{user.uuid} -e #{user.email} -s #{user.ssh}",
-        "customer_#{user.username}", user.username)
+        "-c #{user.uuid} -e #{user.rhlogin} -s #{user.ssh}",
+        "customer_#{user.rhlogin}", user.rhlogin)
   else
     puts "Namespace already exists!  To overwrite or change, use --alter"
     exit 254
   end
 else
-  if User.valid_registration?(options[:email], options[:password])
-    user = User.create(options[:namespace], options[:ssh], options[:email])
+  if User.valid_registration?(options[:rhlogin], options[:password])
+    user = User.create(options[:rhlogin], options[:ssh], options[:namespace])
   else
     puts "User registration invalid"
     exit 250
@@ -80,7 +80,7 @@ else
 end
 
 json_return = JSON.generate({
-                        :namespace => user.username,
+                        :rhlogin => user.rhlogin,
                         :uuid => user.uuid
                         })
 
