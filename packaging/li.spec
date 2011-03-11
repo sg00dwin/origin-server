@@ -2,8 +2,8 @@
 %define gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 
 Name: li
-Version: 0.41
-Release: 6%{?dist}
+Version: 0.42
+Release: 1%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -355,10 +355,13 @@ fi
 %{_libexecdir}/li/cartridges/wsgi-3.2.1/
 
 %changelog
-* Thu Mar 11 2011 Matt Hicks <mhicks@redhat.com> 0.41-6
+* Fri Mar 11 2011 Mike McGrath <mmcgrath@redhat.com> 0.42-1
+- New release
+
+* Thu Mar 10 2011 Matt Hicks <mhicks@redhat.com> 0.41-6
 - Fixed file path
 
-* Thu Mar 11 2011 Matt Hicks <mhicks@redhat.com> 0.41-5
+* Thu Mar 10 2011 Matt Hicks <mhicks@redhat.com> 0.41-5
 - Moved vhost file definition to the node section
 
 * Thu Mar 10 2011 Matt Hicks <mhicks@redhat.com> 0.41-4
