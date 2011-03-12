@@ -145,7 +145,7 @@ def add_rhlogin_config(rhlogin, uuid)
     f = open("#{ENV['HOME']}/.li", 'a')
     unless @local_config.get_value('default_rhlogin')
         f.puts("# Default rhlogin to use if none is specified")
-        f.puts("rhlogin=#{rhlogin}")
+        f.puts("default_rhlogin=#{rhlogin}")
         f.puts("")
     end
     unless @local_config.get_value(rhlogin)
