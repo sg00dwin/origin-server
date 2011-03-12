@@ -103,7 +103,7 @@ update add #{host}.#{@@config[:libra_domain]} 60 SSHFP 1 1 #{sshfp}
 send"
 EOF
 
-      execute_nsupdate(nsupdate_string)      
+      execute_nsupdate(nsupdate_input_template)      
     end
 
     #
@@ -118,7 +118,7 @@ update delete #{host}.#{@@config[:libra_domain]}
 send"
 EOF
 
-      execute_nsupdate(nsupdate_string)
+      execute_nsupdate(nsupdate_input_template)
     end   
   
     #
@@ -133,10 +133,10 @@ update add #{namespace}.#{@@config[:libra_domain]} 60 TXT 'Text record for #{nam
 send"
 EOF
 
-      execute_nsupdate(nsupdate_string)
+      execute_nsupdate(nsupdate_input_template)
     end
     
-    def self.execute_nsupdate(nsupdate_string)
+    def self.execute_nsupdate(nsupdate_input_template)
       nsupdate_string = eval nsupdate_input_template
       puts "DEBUG: server.rb:self.execute_nsupdate nsupdate_input_template: #{nsupdate_input_template}" if Libra.c[:rpc_opts][:verbose]
     
