@@ -1,6 +1,7 @@
 require 'libra/helper'
 require 'aws'
 require 'json'
+require 'resolv'
 
 module Libra
   class Server
@@ -101,9 +102,8 @@ update add #{host}.#{@@config[:libra_domain]} 60 A #{public_ip}
 update add #{host}.#{@@config[:libra_domain]} 60 SSHFP 1 1 #{sshfp}
 send"
 EOF
-      nsupdate_string = eval nsupdate_input_template
-      puts "DEBUG: server.rb:self.nsupdate_add nsupdate_input_template: #{nsupdate_input_template}" if Libra.c[:rpc_opts][:verbose]
-      IO.popen("/usr/bin/nsupdate -L0 -v -y '#{@@config[:secret]}'", 'w'){ |io| io.puts nsupdate_string }
+
+      execute_nsupdate(nsupdate_string)      
     end
 
     #
@@ -117,11 +117,39 @@ zone #{@@config[:libra_domain]}
 update delete #{host}.#{@@config[:libra_domain]}
 send"
 EOF
+
+      execute_nsupdate(nsupdate_string)
+    end   
+  
+    #
+    # Add a DNS txt entry for new namespace
+    #
+    def self.nsupdate_add_txt(namespace)      
+      nsupdate_input_template = <<EOF
+"server #{@@config[:resolver]}
+zone #{@@config[:libra_domain]}
+update delete #{namespace}.#{@@config[:libra_domain]}
+update add #{namespace}.#{@@config[:libra_domain]} 60 TXT 'Text record for #{namespace}'
+send"
+EOF
+
+      execute_nsupdate(nsupdate_string)
+    end
+    
+    def self.execute_nsupdate(nsupdate_string)
       nsupdate_string = eval nsupdate_input_template
-      puts "DEBUG: server.rb:self.nsupdate_del nsupdate_input_template: #{nsupdate_input_template}" if Libra.c[:rpc_opts][:verbose]
+      puts "DEBUG: server.rb:self.execute_nsupdate nsupdate_input_template: #{nsupdate_input_template}" if Libra.c[:rpc_opts][:verbose]
+    
       IO.popen("/usr/bin/nsupdate -L0 -v -y '#{@@config[:secret]}'", 'w'){ |io| io.puts nsupdate_string }
     end
-
+  
+    #
+    # Get a DNS txt entry
+    #
+    def self.get_dns_txt(namespace)
+      dns = Resolv::DNS.new
+      resp = dns.getresources("#{namespace}.#{@@config[:libra_domain]}", Resolv::DNS::Resource::IN::TXT)
+    end
 
     #
     # Configures the user on this server
@@ -142,6 +170,17 @@ EOF
     end
 
     #
+    # Execute cartridge directly on a node
+    #
+    def execute_direct(cartridge, action, args)
+        mc_args = { :cartridge => cartridge,
+                    :action => action,
+                    :args => args }
+        rpc_client = Helper.rpc_exec_direct('libra')
+        rpc_client.custom_request('cartridge_do', mc_args, {'identity' => self.name})
+    end
+    
+    #
     # Execute the cartridge and action on this server
     #
     def execute_internal(cartridge, action, args)
@@ -158,19 +197,7 @@ EOF
           raise CartridgeException, output if return_code != 0
         end
       end
-    end
-
-
-    #
-    # Execute cartridge directly on a node
-    #
-    def execute_direct(cartridge, action, args)
-        mc_args = { :cartridge => cartridge,
-                    :action => action,
-                    :args => args }
-        rpc_client = Helper.rpc_exec_direct('libra')
-        rpc_client.custom_request('cartridge_do', mc_args, {'identity' => self.name})
-    end
+    end    
 
     #
     # Execute an action on many nodes based by fact

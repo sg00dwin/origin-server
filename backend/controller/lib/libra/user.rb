@@ -1,4 +1,5 @@
 require 'libra/helper'
+require 'libra/server'
 require 'aws'
 require 'json'
 require 'date'
@@ -37,11 +38,14 @@ module Libra
     #
     def self.create(rhlogin, ssh, namespace)
       throw :user_exists if find(rhlogin)
+      throw :namespace_already_exists if Server.get_dns_txt(namespace).length > 0
+      # TODO bit of a race condition here (can nsupdate fail on exists?)
+      Server.nsupdate_add_txt(namespace)
       puts "DEBUG: user.rb:create rhlogin:#{rhlogin} ssh:#{ssh} namespace:#{namespace}" if Libra.c[:rpc_opts][:verbose]
       uuid = gen_small_uuid()
       user = new(rhlogin, ssh, namespace, uuid)
       user.update
-      user      
+      user
     end
     
     #
@@ -50,6 +54,7 @@ module Libra
     #   User.find_all_rhlogins
     #
     def self.valid_registration?(rhlogin, password)
+#=begin      
       begin
         #url = URI.parse('https://streamline.devlab.phx1.redhat.com/wapps/streamline/login.html')
         url = URI.parse('https://streamline1.stg.rhcloud.com/wapps/streamline/login.html')
@@ -73,7 +78,9 @@ module Libra
         puts e
         #raise
       end
-      return false
+      false
+#=end
+#true
     end
 
     #

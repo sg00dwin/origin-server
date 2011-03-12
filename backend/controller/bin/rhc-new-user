@@ -67,7 +67,7 @@ if user
         "-c #{user.uuid} -e #{user.rhlogin} -s #{user.ssh}",
         "customer_#{user.rhlogin}", user.rhlogin)
   else
-    puts "Namespace already exists!  To overwrite or change, use --alter"
+    puts "User already has a registered namespace.  To overwrite or change, use --alter"
     exit 254
   end
 else
