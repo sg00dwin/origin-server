@@ -56,8 +56,8 @@ module Libra
     def self.valid_registration?(rhlogin, password)
 #=begin      
       begin
-        #url = URI.parse('https://streamline.devlab.phx1.redhat.com/wapps/streamline/login.html')
-        url = URI.parse('https://streamline1.stg.rhcloud.com/wapps/streamline/login.html')
+        url = URI.parse('https://streamline.devlab.phx1.redhat.com/wapps/streamline/login.html')
+        #url = URI.parse('https://streamline1.stg.rhcloud.com/wapps/streamline/login.html')
         req = Net::HTTP::Post.new(url.path)
         
         req.set_form_data({ 'login' => rhlogin, 'password' => password })
