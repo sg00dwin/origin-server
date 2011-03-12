@@ -8,9 +8,9 @@ module Libra
   #
   # Executes
   #
-  def self.execute(framework, action, app_name, username)
+  def self.execute(framework, action, app_name, rhlogin)
     # Lookup the user
-    user = User.find(username)
+    user = User.find(rhlogin)
 
     # App exists check
     if action == 'configure'
@@ -22,7 +22,7 @@ module Libra
       else
         throw :app_does_not_exist unless user.app_info(app_name)
       end
-    end        
+    end
 
     # Find the next available server
     Libra.c[:rpc_opts][:disctimeout] = 1
@@ -38,7 +38,7 @@ module Libra
 
     # Configure the app on the server using a framework cartridge
     #server.execute(framework, action, app_name, user)
-    result = server.execute_direct(framework, action, "#{app_name} #{user.username} #{user.uuid}")[0]
+    result = server.execute_direct(framework, action, "#{app_name} #{user.namespace} #{user.uuid}")[0]
     unless result.results[:data][:exitcode] == 0
         puts result.results[:data][:output]
         throw :node_execution_failure
@@ -48,8 +48,8 @@ module Libra
     #public_ip = Helper.rpc_get_fact_direct('public_ip', server.name)
     public_ip = server.get_fact_direct('public_ip')
     sshfp = server.get_fact_direct('sshfp').split[-1]
-    Server.nsupdate_add(app_name, user.username, public_ip, sshfp) if action == 'configure'
-    Server.nsupdate_del(app_name, user.username, public_ip) if action == 'deconfigure'
+    Server.nsupdate_add(app_name, user.namespace, public_ip, sshfp) if action == 'configure'
+    Server.nsupdate_del(app_name, user.namespace, public_ip) if action == 'deconfigure'
     
     user.create_app(app_name, framework) if action == 'configure'
     user.delete_app(app_name) if action == 'deconfigure'

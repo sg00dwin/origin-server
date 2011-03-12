@@ -20,11 +20,11 @@ DEPENDENCIES: git
 
 Step 1:  Create a li customer:
 
-$ ./rhc-create-user -u desiredusername -e emailaddress
+$ ./rhc-create-domain -n desirednamespace -l rhlogin
 
 Step 2: Create a li application
 
-$ ./rhc-create-app -u desiredusername -a appname -n /path/to/new/git/repo
+$ ./rhc-create-app -l rhlogin -a appname -r /path/to/new/git/repo
 
 Once that's complete, follow the directions printed at the end of running
 rhc-create-app
@@ -38,7 +38,7 @@ git repo.  Commit them, then push.  For example:
 
 $ edit index.php
 $ git commit -a -m "what I did"
-$ git push origin master
+$ git push
 
 Then just reload your web page to see the changes
 

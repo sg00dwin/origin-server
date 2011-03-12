@@ -19,6 +19,7 @@
 require "rubygems"
 require "uri"
 require "net/http"
+require "net/https"
 require "getoptlong"
 require 'resolv'
 require 'json'
@@ -70,21 +71,21 @@ end
 
 
 def p_usage
-    username = @local_config.get_value('default_user') ? "Default: #{@local_config.get_value('default_user')}" : "(required)"
+    rhlogin = @local_config.get_value('default_rhlogin') ? "Default: #{@local_config.get_value('default_rhlogin')}" : "(required)"
     type_keys = RHC::get_type_keys(', ')
     puts <<USAGE
 
 Usage: #{$0}
 Create a new app libra project.
 
-  -a|--app   application  Application name  (alphanumeric) (required)
-  -t|--type  type         Type of app to create (#{type_keys}) (required)
-  -u|--user  username     Libra username    (alphanumeric) (#{username})
-  -r|--repo  path         Git Repo path (defaults to ./$app_name)
-  -n|--nogit              Only create remote space, don't pull it locally
-  -b|--bypass             Bypass warnings
-  -d|--debug              Print Debug info
-  -h|--help               Show Usage info
+  -a|--app   application     Application name  (alphanumeric) (required)
+  -t|--type  type            Type of app to create (#{type_keys}) (required)
+  -l|--rhlogin  rhlogin      RHCloud rhlogin  (alphanumeric) (#{rhlogin})
+  -r|--repo  path            Git Repo path (defaults to ./$app_name)
+  -n|--nogit                 Only create remote space, don't pull it locally
+  -b|--bypass                Bypass warnings
+  -d|--debug                 Print Debug info
+  -h|--help                  Show Usage info
 
 USAGE
 exit 255
@@ -95,12 +96,11 @@ opts = GetoptLong.new(
     ["--help",  "-h", GetoptLong::NO_ARGUMENT],
     ["--bypass","-b", GetoptLong::NO_ARGUMENT],
     ["--nogit", "-n", GetoptLong::NO_ARGUMENT],
-    ["--user",  "-u", GetoptLong::REQUIRED_ARGUMENT],
+    ["--rhlogin",  "-l", GetoptLong::REQUIRED_ARGUMENT],
     ["--app",   "-a", GetoptLong::REQUIRED_ARGUMENT],
     ["--repo",  "-r", GetoptLong::OPTIONAL_ARGUMENT],
     ["--type",  "-t", GetoptLong::REQUIRED_ARGUMENT]
 )
-
 
 # Pull in configs from files
 libra_domain = get_var('libra_domain')
@@ -124,9 +124,9 @@ if opt["debug"]
     debug = true
 end
 
-opt["user"] = @local_config.get_value('default_user') unless opt["user"]
+opt["rhlogin"] = @local_config.get_value('default_rhlogin') unless opt["rhlogin"]
 
-if !RHC::check_user(opt['user'])
+if !RHC::check_rhlogin(opt['rhlogin'])
     p_usage
 end
 
@@ -134,13 +134,12 @@ if !RHC::check_app(opt['app'])
     p_usage
 end
 
-
 @type = RHC::get_type(opt['type'])
 if !@type  
     p_usage
 end
 
-if !opt["user"] || !opt["app"] || !opt["type"]
+if !opt["rhlogin"] || !opt["app"] || !opt["type"]
     p_usage
 end
 
@@ -148,9 +147,9 @@ end
 # Get UUID from file
 #
 
-uuid = @local_config.get_value(opt["user"])
+uuid = @local_config.get_value(opt["rhlogin"])
 unless uuid
-    puts "Could not find UUID for #{opt["user"]}"
+    puts "Could not find UUID for #{opt["rhlogin"]}"
     exit 149
 end
 
@@ -229,7 +228,7 @@ end
 unless File.exists?("#{ssh_config_d}/libra_id_rsa")
     puts
     puts "Could not find #{ssh_config_d}/libra_id_rsa, cannot continue"
-    puts "This file was created by rhc-user-create.  If it does not exist you may need to create"
+    puts "This file was created by rhc-create-domain.  If it does not exist you may need to create"
     puts "a new one."
     puts
     exit 235
@@ -245,11 +244,20 @@ json_data = JSON.generate(
                {:cartridge => "#{opt['type']}",
                 :action => 'configure',
                 :app_name => "#{opt['app']}",
-                :username => "#{opt['user']}"})
+                :rhlogin => "#{opt['rhlogin']}"})
 
-puts "Contacting server http://#{li_server}"
-response = @http.post_form(URI.parse("http://#{li_server}/php/cartridge_do.php"),
-                           { 'json_data' => json_data })
+puts "Contacting server https://#{li_server}"
+
+url = URI.parse("https://#{li_server}/php/cartridge_do.php")
+req = @http::Post.new(url.path)
+
+req.set_form_data({'json_data' => json_data})
+http = @http.new(url.host, url.port)
+if url.scheme == "https"
+  http.use_ssl = true
+  http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+end
+response = http.start {|http| http.request(req)}
 
 json_resp = JSON.parse(response.body);
 if response.code == '200'
@@ -275,7 +283,10 @@ end
 
 puts "Checking ~/.ssh/config"
 
-my_url = "#{opt['app']}.#{opt['user']}.#{libra_domain}"
+
+user_info = RHC::get_user_info(li_server, opt['rhlogin'], @http, debug)
+
+my_url = "#{opt['app']}.#{user_info['user_info']['namespace']}.#{libra_domain}"
 
 found = false
 
@@ -361,10 +372,10 @@ attempt = 0
 # Pull new repo locally
 #
 #  Full path
-# git_url = "ssh://#{uuid}@#{opt['app']}.#{opt['user']}.#{libra_domain}/#{libra_dir}/#{uuid}/git/#{opt['app']}.git/"
+# git_url = "ssh://#{uuid}@#{opt['app']}.#{user_info['user_info']['namespace']}.#{libra_domain}/#{libra_dir}/#{uuid}/git/#{opt['app']}.git/"
 
 # Shorter path (easier to read)
-git_url = "ssh://#{uuid}@#{opt['app']}.#{opt['user']}.#{libra_domain}/~/git/#{opt['app']}.git/"
+git_url = "ssh://#{uuid}@#{opt['app']}.#{user_info['user_info']['namespace']}.#{libra_domain}/~/git/#{opt['app']}.git/"
 
 unless opt['nogit']
     puts "Pulling new repo down"

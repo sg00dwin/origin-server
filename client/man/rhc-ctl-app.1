@@ -1,12 +1,12 @@
 .\" Process this file with
-.\" groff -man -Tascii rhc-create-user.1
+.\" groff -man -Tascii rhc-create-domain.1
 .\"
 .TH CTL_APP 1 "JANUARY 2011" Linux "User Manuals"
 .SH NAME
 rhc-ctl-app \- Control an existing rhcloud.com application
 .SH SYNOPSIS
-.B rhc-ctl-app [-u
-.I username
+.B rhc-ctl-app [-l
+.I rhlogin
 .B ]
 .B [-a
 .I application_name
@@ -33,8 +33,8 @@ then remove the application and repo from the remote
 server.  No local changes are made.
 
 .SH OPTIONS
-.IP "-u|--user username"
-Username to create.  Alphanumeric
+.IP "-l|--rhlogin rhlogin"
+Red Hat login.  Alphanumeric
 .IP "-a|--app application_name"
 Name of application to create
 .IP "-t|--type framework_type"
@@ -66,6 +66,6 @@ TODO: ADD EXTERNAL BUG TRACKER OR LIBRA TEAM CONTACT EMAIL
 .SH AUTHOR
 Mike McGrath <mmcgrath@redhat.com>
 .SH "SEE ALSO"
-.BR rhc-create-user (1),
+.BR rhc-create-domain (1),
 .BR rhc-create-app (1),
 .BR libra.conf (5),

@@ -23,8 +23,8 @@ options = rpcoptions do |parser, options|
       options[:app_name] = app_name
     end
 
-    parser.on('-u', '--username USERNAME', 'User to act on') do |username|
-      options[:username] = username
+    parser.on('-l', '--rhlogin RHLOGIN', 'Account to act on') do |rhlogin|
+      options[:rhlogin] = rhlogin
     end
 end
 
@@ -46,8 +46,8 @@ unless options.include?(:app_name) or options[:app_name] =~ /^.+$/
     exit 252
 end
 
-unless options.include?(:username) or options[:username] =~ /^[a-zA-Z0-9]+$/
-    puts "Specify user"
+unless options.include?(:rhlogin) or options[:rhlogin] =~ /^[a-zA-Z0-9]+$/
+    puts "Specify rhlogin"
     exit 252
 end
 
@@ -55,4 +55,4 @@ end
 Libra.c[:rpc_opts] = options
 
 # Execute the options on a Libra framework
-Libra.execute(options[:cartridge], options[:action], options[:app_name], options[:username])
+Libra.execute(options[:cartridge], options[:action], options[:app_name], options[:rhlogin])
