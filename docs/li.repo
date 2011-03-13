@@ -20,3 +20,10 @@ baseurl=http://209.132.178.9/gpxe/trees/qpid/$basearch/Packages
 failovermethod=priority
 enabled=1
 gpgcheck=0
+
+[passenger]
+name=Passenger repo for Enterprise Linux 6 - $basearch
+baseurl=http://209.132.178.9/gpxe/trees/passenger
+failovermethod=priority
+enabled=1
+gpgcheck=0

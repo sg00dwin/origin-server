@@ -4,25 +4,6 @@
 
 ########################################
 ## <summary>
-##	Execute a domain transition to run libra.
-## </summary>
-## <param name="domain">
-## <summary>
-##	Domain allowed access.
-## </summary>
-## </param>
-#
-interface(`libra_domtrans',`
-	gen_require(`
-		type libra_t, libra_exec_t;
-	')
-
-	domtrans_pattern($1, libra_exec_t, libra_t)
-')
-
-
-########################################
-## <summary>
 ##	Execute libra server in the libra domain.
 ## </summary>
 ## <param name="domain">
@@ -324,4 +305,24 @@ interface(`libra_admin',`
 	files_search_pids($1)
 	admin_pattern($1, libra_var_run_t)
 
+')
+
+########################################
+## <summary>
+##	Make the specified type usable as a libra domain.
+## </summary>
+## <param name="type">
+##	<summary>
+##	Type to be used as a libra domain type.
+##	</summary>
+## </param>
+#
+template(`libra_service_domain',`
+	gen_require(`
+		attribute libra_domain;
+	')
+
+	typeattribute $1 libra_domain;
+	domain_type($1)
+	role system_r types $1;
 ')

@@ -39,9 +39,9 @@ When /^(\d+) applications of type '(.+)' are created per user$/ do |num_apps, fr
 
     processes << fork do
       # Create the user and the apps
-      run("#{$create_user_script} -u #{username} -e #{$email}")
+      run("#{$create_user_script} -n #{username} -e #{$email}")
       @apps.each do |app|
-        run("#{$create_app_script} -u #{username} -a #{app} -r #{$temp}/#{username}_#{app}_repo -t php-5.3.2 -b -d")
+        run("#{$create_app_script} -n #{username} -a #{app} -r #{$temp}/#{username}_#{app}_repo -t php-5.3.2 -b -d")
       end
     end
 
