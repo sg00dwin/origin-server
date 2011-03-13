@@ -54,33 +54,34 @@ module Libra
     #   User.find_all_rhlogins
     #
     def self.valid_registration?(rhlogin, password)
-#=begin      
-      begin
-        url = URI.parse('https://streamline.devlab.phx1.redhat.com/wapps/streamline/login.html')
-        #url = URI.parse('https://streamline1.stg.rhcloud.com/wapps/streamline/login.html')
-        req = Net::HTTP::Post.new(url.path)
-        
-        req.set_form_data({ 'login' => rhlogin, 'password' => password })
-        http = Net::HTTP.new(url.host, url.port)
-        if url.scheme == "https"
-          http.use_ssl = true
-          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      if !Libra.c[:bypass_user_reg]
+        begin
+          url = URI.parse('https://streamline.devlab.phx1.redhat.com/wapps/streamline/login.html')
+          #url = URI.parse('https://streamline1.stg.rhcloud.com/wapps/streamline/login.html')
+          req = Net::HTTP::Post.new(url.path)
+          
+          req.set_form_data({ 'login' => rhlogin, 'password' => password })
+          http = Net::HTTP.new(url.host, url.port)
+          if url.scheme == "https"
+            http.use_ssl = true
+            http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+          end
+          response = http.start {|http| http.request(req)}
+          case response
+          when Net::HTTPSuccess, Net::HTTPRedirection
+            return true
+          else
+            puts "Problem with server. Response code was #{response.code}"
+            #puts "HTTP response from server is #{response.body}"      
+          end
+        rescue Net::HTTPBadResponse => e
+          puts e
+          #raise
         end
-        response = http.start {|http| http.request(req)}
-        case response
-        when Net::HTTPSuccess, Net::HTTPRedirection
-          return true
-        else
-          puts "Problem with server. Response code was #{response.code}"
-          #puts "HTTP response from server is #{response.body}"      
-        end
-      rescue Net::HTTPBadResponse => e
-        puts e
-        #raise
+        false
+      else
+        true
       end
-      false
-#=end
-#true
     end
 
     #
