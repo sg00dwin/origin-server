@@ -212,8 +212,8 @@ EOF
 EOF"
     fi
 
-    # Give the new user ownership
-    ${NOOP} chown -R $USERNAME:$USERNAME $USERETC
+    # Ensure the new directory is root protected
+    ${NOOP} chown -R root.root $USERETC
 }
 
 
