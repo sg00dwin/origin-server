@@ -120,9 +120,11 @@ git archive --format=tar HEAD | (cd $APP_DIR/deploy && tar xf -)
 # Reload passenger
 touch $APP_DIR/deploy/tmp/restart.txt
 EOF
-    chmod 0750 $CUSTOMER_HOME/git/$application.git/hooks/post-receive
+
+    chmod 0755 $CUSTOMER_HOME/git/$application.git/hooks/post-receive
     chown $user_id.$group_id -R $GIT_DIR
-    chcon -t libra_var_lib_t -l s0:$c_val -R "$GIT_DIR"
+    # Secure the hooks dir
+    chown root.root -R $GIT_DIR/hooks
 }
 
 while getopts 'd' OPTION
@@ -186,7 +188,7 @@ ln -s /etc/httpd/conf/magic conf/magic
 popd > /dev/null
 
 #
-# Populate html dir
+# Populate deploy dir
 #
 GIT_DIR="$GIT_DIR" git archive --format=tar HEAD | (cd "${APP_DIR}/deploy" && tar xf -)
 
@@ -276,6 +278,8 @@ chcon -t libra_var_lib_t /s
 chcon -h -t libra_var_lib_t -l s0:$c_val $APP_DIR_TEMP_SHORT
 chmod +x "$APP_DIR/${application}_ctl.sh" || error "Failed to chmod new application scripts" 122
 chown $user_id.$group_id -R $APP_DIR || error "Failed to chown new application space.  Please contact support" 123
+# Secure script and config dirs.
+chown root.root -R "$APP_DIR/${application}_ctl.sh" "$APP_DIR/conf" "$APP_DIR/conf.d"
 chcon -t libra_var_lib_t -l s0:$c_val -R "$APP_DIR"
 runuser --shell /bin/sh "$uuid" "$APP_DIR/${application}_ctl.sh" start || error "Failed to start ${application}" 121
 
