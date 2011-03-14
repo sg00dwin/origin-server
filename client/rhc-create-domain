@@ -70,6 +70,7 @@ Bind a registered rhcloud user to a domain in rhcloud.
 
   -n|--namespace   namespace   Libra namespace (alphanumeric) (required)
   -l|--rhlogin     rhlogin     Red Hat login (often email) (required)
+  -p|--password    password    RHLogin password (optional, will prompt)
   -a|--alter                   Alter existing namespace
   -d|--debug                   Print Debug info
   -h|--help                    Show Usage info
@@ -82,6 +83,7 @@ opts = GetoptLong.new(
     ["--debug", "-d", GetoptLong::NO_ARGUMENT],
     ["--help",  "-h", GetoptLong::NO_ARGUMENT],
     ["--rhlogin",  "-l", GetoptLong::REQUIRED_ARGUMENT],
+    ["--password",  "-p", GetoptLong::OPTIONAL_ARGUMENT],
     ["--namespace", "-n", GetoptLong::REQUIRED_ARGUMENT],
     ["--alter", "-a", GetoptLong::NO_ARGUMENT]
 )
@@ -125,15 +127,9 @@ if !opt["rhlogin"] || !opt["namespace"]
     p_usage
 end
 
-if !(opt['alter'])
-  begin
-    print "Password: "
-    system "stty -echo"
-    password = gets.chomp
-  ensure
-    system "stty echo"
-  end
-  puts "\n"
+password = opt['password'] 
+if !password
+  password = RHC::get_password
 end
 
 #
@@ -181,15 +177,7 @@ json_data = JSON.generate(data)
 puts "DEBUG: Json string: #{json_data}" if debug
 
 url = URI.parse("https://#{li_server}/php/create_customer.php")
-req = @http::Post.new(url.path)
-
-req.set_form_data({'json_data' => json_data})
-http = @http.new(url.host, url.port)
-if url.scheme == "https"
-  http.use_ssl = true
-  http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-end
-response = http.start {|http| http.request(req)}
+response = RHC::http_post(@http, url, json_data)
 
 puts "DEBUG:" if debug
 p response if debug

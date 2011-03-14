@@ -71,27 +71,20 @@ module RHC
     nil
   end
     
-  def RHC.get_user_info(li_server, rhlogin, net_http, debug)  
+  def RHC.get_user_info(li_server, rhlogin, password, net_http, debug)  
     
     puts "Contacting https://#{li_server}"
     json_data = JSON.generate(
-                    {'rhlogin' => rhlogin})
+                    {'rhlogin' => rhlogin,
+                    'password' => password})
     puts "DEBUG: Json string: #{json_data}" if debug
     
     url = URI.parse("https://#{li_server}/php/user_info.php")
-    req = net_http::Post.new(url.path)
-    
-    req.set_form_data({'json_data' => json_data})
-    http = net_http.new(url.host, url.port)
-    if url.scheme == "https"
-      http.use_ssl = true
-      http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-    end
-    response = http.start {|http| http.request(req)}
+    response = http_post(net_http, url, json_data)
     
     puts "DEBUG:" if debug
     p response if debug
-    json_resp = JSON.parse(response.body);
+    json_resp = JSON.parse(response.body)
     
     unless json_resp['return'].to_s.strip == "0"
         puts "Problem with server. Response code was #{response.code}"
@@ -104,6 +97,32 @@ module RHC
     end
     user_info = JSON.parse(json_resp['stdout'].to_s)  
     user_info
+  end
+  
+  def RHC.get_password
+    password = nil
+    begin
+      print "Password: "
+      system "stty -echo"
+      password = gets.chomp
+    ensure
+      system "stty echo"
+    end  
+    puts "\n"
+    password
+  end
+  
+  def RHC.http_post(http, url, json_data)
+    req = http::Post.new(url.path)
+    
+    req.set_form_data({'json_data' => json_data})
+    http = http.new(url.host, url.port)
+    if url.scheme == "https"
+      http.use_ssl = true
+      http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+    end
+    response = http.start {|http| http.request(req)}
+    response
   end
     
 end

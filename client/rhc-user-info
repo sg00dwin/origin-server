@@ -67,6 +67,7 @@ Usage: rhc-user-info
 Display information about a user
 
   -l|--rhlogin   rhlogin    RHCloud rhlogin (alphanumeric) (#{rhlogin})
+  -p|--password  password   RHLogin password (alphanumeric) (optional, will prompt)
   -a|--apps                 List applications for rhlogin
   -i|--info                 Show user info
   -d|--debug                Print Debug info
@@ -93,7 +94,8 @@ opts = GetoptLong.new(
     ["--help",  "-h", GetoptLong::NO_ARGUMENT],
     ["--apps",  "-a", GetoptLong::NO_ARGUMENT],
     ["--info",  "-i", GetoptLong::NO_ARGUMENT],
-    ["--rhlogin",  "-l", GetoptLong::REQUIRED_ARGUMENT]
+    ["--rhlogin",  "-l", GetoptLong::REQUIRED_ARGUMENT],
+    ["--password",  "-p", GetoptLong::OPTIONAL_ARGUMENT]
 )
 
 # Pull in configs from files
@@ -123,8 +125,13 @@ if !RHC::check_rhlogin(opt['rhlogin'])
     p_usage
 end
 
+password = opt['password'] 
+if !password
+  password = RHC::get_password
+end
+
 opt['apps'] = true if not opt['info'] and not opt['apps']
-user_info = RHC::get_user_info(li_server, opt['rhlogin'], @http, debug)
+user_info = RHC::get_user_info(li_server, opt['rhlogin'], password, @http, debug)
 
 if user_info['user_info']['uuid'] != @local_config.get_value(opt["rhlogin"])
     puts

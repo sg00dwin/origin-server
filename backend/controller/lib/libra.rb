@@ -8,9 +8,12 @@ module Libra
   #
   # Executes
   #
-  def self.execute(framework, action, app_name, rhlogin)
+  def self.execute(framework, action, app_name, rhlogin, password)
     # Lookup the user
     user = User.find(rhlogin)
+    
+    # Validate registration
+    throw :invalid_user_registration unless User.valid_registration?(rhlogin, password)
 
     # App exists check
     if action == 'configure'

@@ -79,6 +79,7 @@ Create a new app libra project.
   -a|--app   application     Application name  (alphanumeric) (required)
   -t|--type  type            Type of app to create (#{type_keys}) (required)
   -l|--rhlogin  rhlogin      RHCloud rhlogin  (alphanumeric) (#{rhlogin})
+  -p|--password  password    RHLogin password  (alphanumeric) (optional, will prompt)
   -r|--repo  path            Git Repo path (defaults to ./$app_name)
   -n|--nogit                 Only create remote space, don't pull it locally
   -b|--bypass                Bypass warnings
@@ -94,7 +95,8 @@ opts = GetoptLong.new(
     ["--help",  "-h", GetoptLong::NO_ARGUMENT],
     ["--bypass","-b", GetoptLong::NO_ARGUMENT],
     ["--nogit", "-n", GetoptLong::NO_ARGUMENT],
-    ["--rhlogin",  "-l", GetoptLong::REQUIRED_ARGUMENT],
+    ["--rhlogin",  "-l", GetoptLong::OPTIONAL_ARGUMENT],
+    ["--password",  "-p", GetoptLong::OPTIONAL_ARGUMENT],
     ["--app",   "-a", GetoptLong::REQUIRED_ARGUMENT],
     ["--repo",  "-r", GetoptLong::OPTIONAL_ARGUMENT],
     ["--type",  "-t", GetoptLong::REQUIRED_ARGUMENT]
@@ -139,6 +141,11 @@ end
 
 if !opt["rhlogin"] || !opt["app"] || !opt["type"]
     p_usage
+end
+
+password = opt['password'] 
+if !password
+  password = RHC::get_password
 end
 
 #
@@ -242,20 +249,14 @@ json_data = JSON.generate(
                {:cartridge => "#{opt['type']}",
                 :action => 'configure',
                 :app_name => "#{opt['app']}",
-                :rhlogin => "#{opt['rhlogin']}"})
+                :rhlogin => "#{opt['rhlogin']}",
+                :password => password
+                })
 
 puts "Contacting server https://#{li_server}"
 
 url = URI.parse("https://#{li_server}/php/cartridge_do.php")
-req = @http::Post.new(url.path)
-
-req.set_form_data({'json_data' => json_data})
-http = @http.new(url.host, url.port)
-if url.scheme == "https"
-  http.use_ssl = true
-  http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-end
-response = http.start {|http| http.request(req)}
+response = RHC::http_post(@http, url, json_data)
 
 json_resp = JSON.parse(response.body);
 if response.code == '200'
@@ -282,7 +283,7 @@ end
 puts "Checking ~/.ssh/config"
 
 
-user_info = RHC::get_user_info(li_server, opt['rhlogin'], @http, debug)
+user_info = RHC::get_user_info(li_server, opt['rhlogin'], password, @http, debug)
 
 my_url = "#{opt['app']}.#{user_info['user_info']['namespace']}.#{libra_domain}"
 
