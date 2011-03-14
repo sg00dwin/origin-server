@@ -223,6 +223,7 @@ begin
       puts "Launching verification instance for AMI #{@ami}"
       @instance = conn.launch_instances(@ami, OPTIONS)[0][:aws_instance_id]
       conn.create_tag(@instance, 'Name', "#{@version}-verify")
+      dns = instance_value(:dns_name)
 
       # Wait for it to be available
       Rake::Task["ami:available"].execute
@@ -230,7 +231,26 @@ begin
       # Wait a few more seconds to let services start
       sleep 10
 
-      # Test user creation and app creation
+      begin
+        # Test user creation and app creation
+        puts "Testing user creation"
+        chars = ("1".."9").to_a
+        username = "jenkins" + Array.new(5, '').collect{chars[rand(chars.size)]}.join
+
+        puts "Setting up the config file"
+        puts "TBD - need to config the server to talk to"
+
+        puts "Creating a new user"
+        puts "rhc-create-user -u #{username} -e libra-test@redhat.com"
+        puts "Creating a new app"
+        puts "rhc-create-app -u #{username} -a test -t php-5.3.2 -n -b"
+
+        # Tag the image as verified
+        conn.create_tag(@instance, 'Name', "#{@version}-verify")
+      ensure
+        puts "Terminating instance"
+        conn.terminate_instances([@instance])
+      end
     end
   end
 rescue LoadError
