@@ -2,8 +2,8 @@
 %define gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 
 Name: li
-Version: 0.42
-Release: 2%{?dist}
+Version: 0.43
+Release: 1%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -362,6 +362,9 @@ fi
 %{_libexecdir}/li/cartridges/wsgi-3.2.1/
 
 %changelog
+* Mon Mar 14 2011 Mike McGrath <mmcgrath@redhat.com> 0.43-1
+- Upstream released new version
+
 * Fri Mar 11 2011 Mike McGrath <mmcgrath@redhat.com> 0.42-2
 - Added restorecon to libra and mcollective
 
