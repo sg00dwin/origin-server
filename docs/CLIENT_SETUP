@@ -1,19 +1,12 @@
 Clone the git repos:
 
-Add this to your ~/.ssh/config file:
-
-Host git
-   User <YOUR_RH_USERID>
-   HostName 184.72.218.112
-       IdentityFile ~/.ssh/YOUR_KEY
-
 Then, you can clone the git repositories with:
 
-git clone ssh://git/srv/git/li
+git clone ssh://git1.ops.rhcloud.com/srv/git/li
 
 And the Rack broker application with:
 
-git clone ssh://git/srv/git/broker
+git clone ssh://git1.ops.rhcloud.com/srv/git/broker
 
 
 Add Li Repo at /etc/yum.repos.d/li.repo.  Example in li/docs/li/.repo
