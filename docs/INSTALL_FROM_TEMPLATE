@@ -18,34 +18,34 @@ controls
 6) vi /etc/libra/node.conf and add the lines
 unobfuscate=1
 limits_nproc=100
-7) /usr/bin/rhc-new-user -u <make up a userid and not your RedHat id> -e <email> -s <the key you just copied from 4)>
+7) /usr/bin/rhc-new-user -n <namespace> -l <rhlogin> -s <the key you just copied from 4)>
 This should output something like:
-{"username":"userid","uuid":"69559fc92d224996bcc38ba19f10ca87"}
-Remember this "uuid" as <user uuid>.
-8) mc-rhc-cartridge-do -v -a configure -n li -u <userid> --cartridge php-5.3.2
+{"rhlogin":"<rhlogin>","uuid":"69559fc92d224996bcc38ba19f10ca87"}
+Remember this "uuid" as <uuid>.
+8) mc-rhc-cartridge-do -v -a configure -n li -l <rhlogin> --cartridge php-5.3.2
 9) You can now browse to http://li.<userid>.rhcloud.com/  (should say forbidden)
-10) cd ~<user uuid>
+10) cd ~<uuid>
 11) chcon -t ssh_home_t .ssh -R
-12) chgrp <user uuid> /etc/mcollective/client.cfg
+12) chgrp <uuid> /etc/mcollective/client.cfg
 
 Now back on the client machine:
 1) edit ~/.ssh/config and add an entry like:
-Host li.<userid>.rhcloud.com
+Host li.<namespace>.rhcloud.com
    User <uuid>
    IdentityFile ~/.ssh/libra_id_rsa
 2) Clone the existing repo and update it with the php app as follows
   cd /tmp
-  git clone ssh://li.<userid>.rhcloud.com/var/lib/libra/<user uuid>/git/li.git
+  git clone ssh://li.<namespace>.rhcloud.com/var/lib/libra/<uuid>/git/li.git
   cd li
   cp -r <libra>/php .
   git add .
   git commit -a -m "Adding broker app"
   git push
 3) From the root of the li repo run cp ./client/client.conf ~/.li
-4) edit ~/.li and change "li_server = 'lidemo.mcgrath.rhcloud.com'" to "li_server = 'li.<userid>.rhcloud.com'"
-5) add a line <userid>=<user uuid>
-6) rhc-create-app -u <userid> -a <appname> -r <app folder> -t php-5.3.2 -b
-7) You can now browse to http://<appname>.<userid>.rhcloud.com/
+4) edit ~/.li and change "li_server = 'lidemo.mcgrath.rhcloud.com'" to "li_server = 'li.<namespace>.rhcloud.com'"
+5) add a line <rhlogin>=<uuid>
+6) rhc-create-app -l <rhlogin> -a <appname> -r <app folder> -t php-5.3.2 -b
+7) You can now browse to http://<appname>.<namespace>.rhcloud.com/
 
 You can delete an instance with:
 ec2-terminate-instances <instance_id>

@@ -3,10 +3,10 @@ include Libra
 include Libra::Test::User
 include Libra::Test::Util
 
-Given /^an existing '(\w+)' user$/ do |username|
+Given /^an existing '(\w+)' user$/ do |rhlogin|
   # Make sure the given user exists
-  unless User.find(username)
-    create_test_user(username)
+  unless User.find(rhlogin)
+    create_test_user(rhlogin)
   end
 end
 
@@ -15,20 +15,20 @@ Given /^a newly created user$/ do
 end
 
 When /^I modify and update the user$/ do
-  @user.email = "blah@example.org"
+  @user.namespace = "blah"
   @user.update
 end
 
-When /^I create a '(\w+)' user$/ do |username|
+When /^I create a '(\w+)' user$/ do |rhlogin|
   lambda {
-    create_test_user(username)
+    create_test_user(rhlogin)
   }.should throw_symbol(:user_exists)
 
   @failed = true
 end
 
 When /^I look up that user$/ do
-  @user = User.find(@user.username)
+  @user = User.find(@user.rhlogin)
 end
 
 Then /^I should get an exception$/ do
@@ -44,6 +44,6 @@ Then /^he should have no applications$/ do
 end
 
 Then /^the changes are saved$/ do
-  @user_saved = User.find(@user.username)
-  @user_saved.email.should == "blah@example.org"
+  @user_saved = User.find(@user.rhlogin)
+  @user_saved.email.should == "blah"
 end

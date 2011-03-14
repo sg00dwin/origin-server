@@ -64,4 +64,4 @@ APP_DIR="$CUSTOMER_HOME/httpd/$application"
 # Start application
 #
 
-"$APP_DIR/${application}_ctl.sh" reload
+runuser --shell /bin/sh "$customer_id" "$APP_DIR/${application}_ctl.sh" reload

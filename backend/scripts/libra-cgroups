@@ -101,7 +101,7 @@ function set_cpu() {
     do
 	# cgroups names can have periods(.)  shell varnames can't
 	SAFENAME=`echo $VARNAME | tr . _`
-	VALUE=`eval echo \\$cgroup_cpu_$SAFENAME`
+	VALUE=`eval echo \\$cpu_$SAFENAME`
 	if [ -n "${VALUE}" ]
 	then
 	    # TODO: get per-app increments
@@ -123,7 +123,7 @@ function set_memory() {
     do
 	# cgroups names can have periods(.)  shell varnames can't
 	SAFENAME=`echo $VARNAME | tr . _`
-	VALUE=`eval echo \\$cgroup_memory_$SAFENAME`
+	VALUE=`eval echo \\$memory_$SAFENAME`
 	if [ -n "${VALUE}" ]
 	then
 	    # TODO: get per-app increments
@@ -145,7 +145,7 @@ function set_blkio() {
     do
 	# cgroups names can have periods(.)  shell varnames can't
 	SAFENAME=`echo $VARNAME | tr . _`
-	VALUE=`eval echo \\$cgroup_blkio_$SAFENAME`
+	VALUE=`eval echo \\$blkio_$SAFENAME`
 	if [ -n "${VALUE}" ]
 	then
 	    # TODO: get per-app increments

@@ -19,6 +19,7 @@
 require "rubygems"
 require "uri"
 require "net/http"
+require "net/https"
 require "getoptlong"
 require 'resolv'
 require 'json'
@@ -67,20 +68,20 @@ def get_var(var)
 end
 
 def p_usage
-    username = @local_config.get_value('default_user') ? "Default: #{@local_config.get_value('default_user')}" : "(required)"
+    rhlogin = @local_config.get_value('default_rhlogin') ? "Default: #{@local_config.get_value('default_rhlogin')}" : "(required)"
     type_keys = RHC::get_type_keys(', ')
     puts <<USAGE
 
 Usage: #{$0}
 Control a libra app
 
-  -a|--app   application  Application name  (alphanumeric) (required)
-  -t|--type  type         Type of app to operate on (#{type_keys}) (required)
-  -u|--user  username     Libra username    (alphanumeric) (#{username})
-  -c|--command command    (start|stop|restart|reload|status|destroy)
-  -b|--bypass             Bypass warnings
-  -d|--debug              Print Debug info
-  -h|--help               Show Usage info
+  -a|--app   application   Application name  (alphanumeric) (required)
+  -t|--type  type          Type of app to operate on (#{type_keys}) (required)
+  -l|--rhlogin rhlogin     Red Hat login  (alphanumeric) (#{rhlogin})
+  -c|--command command     (start|stop|restart|reload|status|destroy)
+  -b|--bypass              Bypass warnings
+  -d|--debug               Print Debug info
+  -h|--help                Show Usage info
 
 USAGE
 exit 255
@@ -90,7 +91,7 @@ opts = GetoptLong.new(
     ["--debug",     "-d", GetoptLong::NO_ARGUMENT],
     ["--help",      "-h", GetoptLong::NO_ARGUMENT],
     ["--bypass",    "-b", GetoptLong::NO_ARGUMENT],
-    ["--user",      "-u", GetoptLong::OPTIONAL_ARGUMENT],
+    ["--rhlogin",   "-l", GetoptLong::OPTIONAL_ARGUMENT],
     ["--app",       "-a", GetoptLong::REQUIRED_ARGUMENT],
     ["--command",   "-c", GetoptLong::REQUIRED_ARGUMENT],
     ["--type",      "-t", GetoptLong::REQUIRED_ARGUMENT]
@@ -118,9 +119,9 @@ if opt["debug"]
     debug = true
 end
 
-opt["user"] = @local_config.get_value('default_user') unless opt["user"]
+opt["rhlogin"] = @local_config.get_value('default_rhlogin') unless opt["rhlogin"]
 
-if !RHC::check_user(opt['user'])
+if !RHC::check_rhlogin(opt['rhlogin'])
     p_usage
 end
 
@@ -138,7 +139,7 @@ unless defined? opt["command"] and opt["command"] =~ /(start|stop|restart|reload
     p_usage
 end
 
-if !opt["user"] || !opt["app"] || !opt["command"] || !opt["type"]
+if !opt["rhlogin"] || !opt["app"] || !opt["command"] || !opt["type"]
     p_usage
 end
 
@@ -183,11 +184,20 @@ json_data = JSON.generate(
                {:cartridge => "#{opt['type']}",
                 :action => opt['command'],
                 :app_name => "#{opt['app']}",
-                :username => "#{opt['user']}"})
+                :rhlogin => "#{opt['rhlogin']}"})
 
-puts "Contacting server http://#{li_server}"
-response = @http.post_form(URI.parse("http://#{li_server}/php/cartridge_do.php"),
-                           { 'json_data' => json_data })
+puts "Contacting server https://#{li_server}"
+
+url = URI.parse("https://#{li_server}/php/cartridge_do.php")
+req = @http::Post.new(url.path)
+
+req.set_form_data({'json_data' => json_data})
+http = @http.new(url.host, url.port)
+if url.scheme == "https"
+  http.use_ssl = true
+  http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+end
+response = http.start {|http| http.request(req)}
 
 json_resp = JSON.parse(response.body);
 

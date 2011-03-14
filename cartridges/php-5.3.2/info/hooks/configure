@@ -20,6 +20,7 @@
 
 # Exit on any errors
 set -e
+set -x
 
 if [ -f '/etc/libra/node.conf' ]
 then
@@ -65,43 +66,21 @@ function error {
 }
 
 function find_open_ip {
-    # Find an open 127.0.x.x address to host application
-    [ -f $libra_conf_dir/ip_db ] || echo "uuid,application_name,service_type,port" >> $libra_conf_dir/ip_db
-    for i in `seq 0 255`
+    uid=$1
+    uuid=$2
+    for host_ip in `seq 1 127`
     do
-        for j in `seq 2 255`
-        do
-            if ! $(grep -q 127.0.$i.$j $libra_conf_dir/ip_db)
-            then
-                echo 127.0.$i.$j
-                exit
-            fi
-        done
+        a=$(($uid*128+2130706432 + $host_ip))
+        new_ip=$(($a>>24 )).$(($(($a%16777216))<<8>>24)).$(($(($a%65536))<<16>>24)).$(($(($a%256))<<24>>24))
+        if ! grep -qe '^Listen '$new_ip':8080$' $(find /var/lib/libra/$uuid/ -maxdepth 4 -mindepth 4 -name libra.conf) /etc/sysconfig/network
+        then
+            echo $new_ip
+            exit
+        fi
     done
-}
 
-function take_open_ip {
-    # Writes a new IP to the ip database in $libra_conf_dir/ip_db
-    # Example: take_open_ip mmcgrath phpmyadmin httpd
-    if ! [ $# -eq 4 ]
-    then
-        echo "Usage: $0 uuid application_name service_type port"
-        exit 1
-    fi
-    uuid=$1
-    application_name=$2
-    service_type=$3
-    port=$4
-
-    # if customer, app, service already exists, re-use IP
-    if $( grep -q ",$uuid,$application_name,$service_type" $libra_conf_dir/ip_db )
-    then
-        echo $(awk -F, "/,$uuid,$application_name,$service_type/"'{ print $1 }' $libra_conf_dir/ip_db | head -n1)
-    else
-        IP=$(find_open_ip)
-        echo "$IP,$uuid,$application_name,$service_type,$port" >> $libra_conf_dir/ip_db
-        echo $IP
-    fi
+    echo "Could not find open IP" 1>&2
+    exit 5
 }
 
 function unobfuscate {
@@ -204,8 +183,7 @@ GIT_DIR="$GIT_DIR" git archive --format=tar HEAD | (cd "${APP_DIR}/repo" && tar 
 # Find an open localhost IP
 #
 
-
-IP=$(take_open_ip $uuid $application "php" 8080)
+IP=$(find_open_ip $uid $uuid)
 
 
 #
@@ -219,17 +197,17 @@ Listen $IP:8080
 User $uuid
 Group $uuid
 
-#<IfModule !mod_bw.c>
-#    LoadModule bw_module    modules/mod_bw.so
-#</IfModule>
-#
-#<ifModule mod_bw.c>
-#  BandWidthModule On
-#  ForceBandWidthModule On
-#  BandWidth $apache_bandwidth
-#  MaxConnection $apache_maxconnection
-#  BandWidthError $apache_bandwidtherror
-#</IfModule>
+<IfModule !mod_bw.c>
+    LoadModule bw_module    modules/mod_bw.so
+</IfModule>
+
+<ifModule mod_bw.c>
+  BandWidthModule On
+  ForceBandWidthModule On
+  BandWidth $apache_bandwidth
+  MaxConnection $apache_maxconnection
+  BandWidthError $apache_bandwidtherror
+</IfModule>
 
 EOF
 
@@ -280,7 +258,7 @@ EOF
 chmod +x "$APP_DIR/${application}_ctl.sh" || error "Failed to chmod new application scripts" 122
 chown $user_id.$group_id -R $APP_DIR || error "Failed to chown new application space.  Please contact support" 123
 chcon -t libra_var_lib_t -l s0:$c_val -R "$APP_DIR"
-runcon -t initrc_t -r system_r runuser --shell /bin/sh "$uuid" "$APP_DIR/${application}_ctl.sh" start || error "Failed to start ${application}" 121
+runuser --shell /bin/sh "$uuid" "$APP_DIR/${application}_ctl.sh" start || error "Failed to start ${application}" 121
 
 #
 # Create virtualhost definition for apache

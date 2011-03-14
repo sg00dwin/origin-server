@@ -2,7 +2,7 @@
 %define gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 
 Name: li
-Version: 0.40
+Version: 0.42
 Release: 1%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
@@ -77,6 +77,7 @@ Requires: qpid-cpp-client
 Requires: ruby-qmf
 Requires: rubygem-parseconfig
 Requires: libcgroup
+Requires: mod_bw
 Requires: git
 Requires(post): /usr/sbin/semodule
 Requires(postun): /usr/sbin/semodule
@@ -108,6 +109,7 @@ Summary: Provides php-5.3.2 support
 Group: Development/Languages
 Requires: li-node
 Requires: php = 5.3.2
+Requires: mod_bw
 Requires: rubygem-builder
 BuildArch: noarch
 
@@ -118,6 +120,8 @@ Provides php support to li
 Summary: Provides ruby rack support running on Phusion Passenger
 Group: Development/Languages
 Requires: li-node
+Requires: httpd
+Requires: mod_bw
 Requires: ruby
 Requires: rubygems
 Requires: rubygem-rack = 1:1.1.0
@@ -139,6 +143,7 @@ Summary: Provides python-wsgi-3.2.1 support
 Group: Development/Languages
 Requires: li-node
 Requires: httpd
+Requires: mod_bw
 Requires: python
 Requires: mod_wsgi = 3.2.1
 BuildArch: noarch
@@ -282,7 +287,7 @@ fi
 %defattr(-,root,root,-)
 %{_bindir}/rhc-capacity
 %{_bindir}/rhc-create-app
-%{_bindir}/rhc-create-user
+%{_bindir}/rhc-create-domain
 %{_bindir}/rhc-user-info
 %{_bindir}/rhc-ctl-app
 %{_bindir}/rhc-common.rb
@@ -319,6 +324,7 @@ fi
 %{_datadir}/selinux/packages/libra.pp
 %config(noreplace) %{_sysconfdir}/libra/node.conf
 %config(noreplace) %{_sysconfdir}/libra/resource_limits.conf
+%{_sysconfdir}/httpd/conf.d/000000_default.conf
 
 
 %files server
@@ -354,6 +360,27 @@ fi
 %{_libexecdir}/li/cartridges/wsgi-3.2.1/
 
 %changelog
+* Fri Mar 11 2011 Mike McGrath <mmcgrath@redhat.com> 0.42-1
+- New release
+
+* Thu Mar 10 2011 Matt Hicks <mhicks@redhat.com> 0.41-6
+- Fixed file path
+
+* Thu Mar 10 2011 Matt Hicks <mhicks@redhat.com> 0.41-5
+- Moved vhost file definition to the node section
+
+* Thu Mar 10 2011 Matt Hicks <mhicks@redhat.com> 0.41-4
+- Added files definition for the default vhost file
+
+* Thu Mar 10 2011 Matt Hicks <mhicks@redhat.com> 0.41-3
+- Removing parseconfig build dep
+
+* Thu Mar 10 2011 Matt Hicks <mhicks@redhat.com> 0.41-2
+- Fixing build deps
+
+* Thu Mar 10 2011 Mike McGrath <mmcgrath@redhat.com> 0.41-1
+- New version
+
 * Thu Mar 10 2011 Mike McGrath <mmcgrath@redhat.com> 0.40-1
 - New version
 
