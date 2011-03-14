@@ -77,6 +77,7 @@ Requires: qpid-cpp-client
 Requires: ruby-qmf
 Requires: rubygem-parseconfig
 Requires: libcgroup
+Requires: mod_bw
 Requires: git
 Requires(post): /usr/sbin/semodule
 Requires(postun): /usr/sbin/semodule
@@ -108,6 +109,7 @@ Summary: Provides php-5.3.2 support
 Group: Development/Languages
 Requires: li-node
 Requires: php = 5.3.2
+Requires: mod_bw
 Requires: rubygem-builder
 BuildArch: noarch
 
@@ -118,6 +120,8 @@ Provides php support to li
 Summary: Provides ruby rack support running on Phusion Passenger
 Group: Development/Languages
 Requires: li-node
+Requires: httpd
+Requires: mod_bw
 Requires: ruby
 Requires: rubygems
 Requires: rubygem-rack = 1:1.1.0
@@ -139,6 +143,7 @@ Summary: Provides python-wsgi-3.2.1 support
 Group: Development/Languages
 Requires: li-node
 Requires: httpd
+Requires: mod_bw
 Requires: python
 Requires: mod_wsgi = 3.2.1
 BuildArch: noarch
