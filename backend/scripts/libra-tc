@@ -44,7 +44,7 @@ function uid() {
 
 function netclass() {
     # major = 1, minor = UID 
-    printf "0x1%04x" $1
+    printf "%04x" $1
 }
 
 # List the libra guest users
@@ -97,18 +97,16 @@ start() {
 # page.
 
 # The first line creates the root qdisc
-    $TC qdisc add dev $IF root handle 1: htb
+    ${NOOP} $TC qdisc add dev $IF root handle 1: htb
 
 # This line creates a container for tagged Libra traffic
     # Since user classes start at 1:1
-    $TC class add dev $IF parent 1: classid 1:1023 htb rate ${TOTALLIMIT}mbits
+    ${NOOP} $TC class add dev $IF parent 1: classid 1:1 htb rate ${TOTALLIMIT}mbit
 
 # for each user
     for USERNAME in `libra_users`
     do
-	UID=`uid $USERNAME`
-	NETCLASS=`netclass $UID`
-	$TC class add dev $IF parent 1:1023 classid 1:$NETCLASS htb rate ${USERLIMIT}mbits
+	startuser $USERNAME
     done
 
     # 
@@ -126,61 +124,98 @@ start() {
 stop() {
 
 # Stop the bandwidth shaping.
-    $TC qdisc del dev $IF root
+    ${NOOP} $TC qdisc del dev $IF root
 
 }
 
+startuser() {
+    # USERNAME=$1
+    echo "Starting user $1"
+    USERID=`uid $1`
+    NETCLASS=`netclass $USERID`
+    ${NOOP} $TC class add dev $IF parent 1:1 classid 1:$NETCLASS htb rate ${USERLIMIT}mbit
+
+}
+
+stopuser() {
+    # USERNAME=$1
+
+    echo "Stopping user $1"
+    USERID=`uid $1`
+    NETCLASS=`netclass $USERID`
+    ${NOOP} $TC class del dev $IF parent 1:1 classid 1:$NETCLASS
+}
+
+
 restart() {
 
-# Self-explanatory.
+    # Self-explanatory.
     stop
     sleep 1
     start
 
 }
 
-show() {
-
-# Display status of traffic control status.
-    $TC -s qdisc ls dev $IF
+status() {
+    # USERNAME=$1
+    # Display status of traffic control status.
+    if [ -z "$1" ]
+    then
+	$TC -s qdisc ls dev $IF
+	$TC -s class ls dev $IF
+    else
+	USERID=`uid $1`
+	NETCLASS=`netclass $USERID`
+	$TC -s class show dev $IF classid 1:${NETCLASS}
+    fi
 
 }
 
 case "$1" in
 
-  start)
+    start)
 
-    echo -n "Starting bandwidth shaping: "
-    start
-    echo "done"
-    ;;
+	echo -n "Starting bandwidth shaping: "
+	start
+	echo "done"
+	;;
 
-  stop)
+    stop)
 
-    echo -n "Stopping bandwidth shaping: "
-    stop
-    echo "done"
-    ;;
+	echo -n "Stopping bandwidth shaping: "
+	stop
+	echo "done"
+	;;
 
-  restart)
+    startuser)
+	echo -n "Starting bandwidth shaping for user $2"
+	startuser $2
+	;;
 
-    echo -n "Restarting bandwidth shaping: "
-    restart
-    echo "done"
-    ;;
+    stopuser)
+	echo -n "Stopping bandwidth shaping for user $2"
+	stopuser $2
+	;;
 
-  show)
+    restart)
 
-    echo "Bandwidth shaping status for $IF:"
-    show
-    echo ""
-    ;;
+	echo -n "Restarting bandwidth shaping: "
+	restart
+	echo "done"
+	;;
 
-  *)
+    show|status)
 
-    pwd=$(pwd)
-    echo "Usage: tc.bash {start|stop|restart|show}"
-    ;;
+	echo "Bandwidth shaping status for $IF:"
+	status $2
+	echo ""
+	;;
+    
+    *)
+
+	pwd=$(pwd)
+	echo "Usage: $0 {start|stop|restart|status [username]|startuser <username>|stopuser <username>}"
+	;;
 
 esac
 
