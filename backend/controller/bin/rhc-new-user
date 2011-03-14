@@ -10,14 +10,14 @@ include Libra
 
 options = rpcoptions do |parser, options|
     parser.define_head "Create a new user"
-    parser.banner = "Usage: mc-libra [options]"
+    parser.banner = "Usage: rhc-new-user [options]"
 
-    parser.on('-u', '--username USERNAME', "The unique username") do |username|
-      options[:username] = username
+    parser.on('-l', '--rhlogin RHLOGIN', "The Red Hat login") do |rhlogin|
+      options[:rhlogin] = rhlogin
     end
 
-    parser.on('-e', '--email EMAIL', 'The user email') do |email|
-      options[:email] = email
+    parser.on('-n', '--namespace NAMESPACE', 'The unique namespace') do |namespace|
+      options[:namespace] = namespace
     end
 
     parser.on('-s', '--ssh SSH_KEY', 'The user public SSH key') do |ssh|
@@ -27,47 +27,60 @@ options = rpcoptions do |parser, options|
     parser.on('-a', '--alter', 'Alter / Update user info') do
       options[:alter] = true
     end
+    
+    parser.on('-p', '--password PASSWORD', 'The user password') do |password|
+      options[:password] = password
+    end
 end
 
-unless options.include?(:username) or options[:username] =~ /^[a-zA-Z0-9]+$/
-    puts "The username is invalid."
+unless options.include?(:namespace) or options[:namespace] =~ /^[a-zA-Z0-9]+$/
+    puts "The namespace is invalid."
     exit 254
 end
 
-unless options.include?(:email) or options[:email] =~ /^[a-zA-Z][\w\.-]*[a-zA-Z0-9]@[a-zA-Z0-9][\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]$/
-    puts "The email is invalid."
+unless options.include?(:rhlogin) or options[:rhlogin] =~ /^[a-zA-Z][\w\.-]*[a-zA-Z0-9]@[a-zA-Z0-9][\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]$/
+    puts "The rhlogin is invalid."
     exit 253
 end
 
 unless options.include?(:ssh) or options[:ssh] =~ (options[:ssh] == Base64.encode64(Base64.decode64(options[:ssh])).gsub(/\n/, ''))
     puts "The ssh key is invalid."
-    exit 253
+    exit 252
+end
+
+unless options.include?(:password)
+    puts "The password is missing."
+    exit 251
 end
 
 # Set the MCollective options
 Libra.c[:rpc_opts] = options
 
 # Check if user already exists
-user = User.find(options[:username])
+user = User.find(options[:rhlogin])
 if user
   if options[:alter]
-    user.email=options[:email]
+    user.namespace=options[:namespace]
     user.ssh=options[:ssh]
     user.update
     Server.execute_many('li-controller-0.1', 'configure',
-        "-c #{user.uuid} -e #{user.email} -s #{user.ssh}",
-        "customer_#{user.username}", user.username)
+        "-c #{user.uuid} -e #{user.rhlogin} -s #{user.ssh}",
+        "customer_#{user.rhlogin}", user.rhlogin)
   else
-    puts "User already exists!  To overwrite or change, use --alter"
+    puts "User already has a registered namespace.  To overwrite or change, use --alter"
     exit 254
   end
 else
-  # Create the user
-  user = User.create(options[:username], options[:ssh], options[:email])
+  if User.valid_registration?(options[:rhlogin], options[:password])
+    user = User.create(options[:rhlogin], options[:ssh], options[:namespace])
+  else
+    puts "User registration invalid"
+    exit 250
+  end
 end
 
 json_return = JSON.generate({
-                        :username => user.username,
+                        :rhlogin => user.rhlogin,
                         :uuid => user.uuid
                         })
 

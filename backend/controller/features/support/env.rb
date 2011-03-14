@@ -15,7 +15,7 @@ $domain = "rhcloud.com"
 $temp = "/tmp/rhc"
 $email = "noone@example.com"
 $create_app_script = "/usr/bin/rhc-create-app"
-$create_user_script = "/usr/bin/rhc-create-user"
+$create_user_script = "/usr/bin/rhc-create-domain"
 $client_config = "/etc/libra/client.conf"
 
 # Create the temporary space
@@ -75,7 +75,7 @@ module Libra
       # email and ssh key
       #
       def create_test_user(username)
-        Libra::User.create(username, @test_ssh_key, @test_email)
+        Libra::User.create(@test_email, @test_ssh_key, username)
       end
     end
 

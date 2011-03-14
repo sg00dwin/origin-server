@@ -90,7 +90,7 @@ Install and configure controller
 2) Add your EC2 key and secret to /etc/libra/controller.conf
 3) Create libra bucket (log in to amazon or use s3cmd and create a bucket called libra
 4) Create a new user by running:
-    /usr/bin/rhc-new-user -u username -e e@mai.l -s ssh_key
+    /usr/bin/rhc-new-user -n namespace -l <rhlogin> -s ssh_key
     NOTE: "ssh_key" in this case must just be the payload portion of an RSA ssh
     key. (exclude the ssh-rsa from the begining and the comment / email from the end)
 5) After running the command from 4) make note of the uuid that is printed to the screen
@@ -108,10 +108,10 @@ Install a cartridge
 ===================
 
 1) run "yum install li-cartridge-php-5.3.2"
-2) run "mc-rhc-cartridge-do -a configure -n li -u $namespace --cartridge php-5.3.2"
-    Note: "username" should be the same username you used earlier
+2) run "mc-rhc-cartridge-do -a configure -n li -l $rhlogin --cartridge php-5.3.2"
+    Note: "rhlogin" should be the same rhlogin you used earlier
     Note: "uuid" is the uuid you got fro step 5) in "install and configure controller"
-3) Confirm the site comes up at li.username.domain_specified earlier
+3) Confirm the site comes up at li.namespace.domain_specified earlier
     Note: If you do not have ddns setup, you can check /etc/libra/id_db for the
     localhost and port number.
 
