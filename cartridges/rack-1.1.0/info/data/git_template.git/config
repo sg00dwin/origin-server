@@ -1,6 +1,7 @@
 [core]
-	repositoryformatversion = 0
-	filemode = true
-	bare = true
-[remote "origin"]
-	url = /tmp/rhc/racktemplate/
+  repositoryformatversion = 0
+  filemode = true
+  bare = true
+  sharedrepository = 1
+[receive]
+  denyNonFastforwards = true
