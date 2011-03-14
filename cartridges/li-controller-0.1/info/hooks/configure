@@ -179,8 +179,8 @@ function create_user_account() {
 	    exit 1
         fi
     fi
-    # Ensure HOMEDIR is not owned by the user (we don't want the user changing this)
-    ${NOOP} chown root.root "${HOMEDIR}"
+    ${NOOP} chown "root.$USERNAME" "$HOMEDIR"
+    ${NOOP} chmod 0750 "$HOMEDIR"
 }
 
 function remove_user_account {
