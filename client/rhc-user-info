@@ -23,18 +23,17 @@ require "net/https"
 require "getoptlong"
 require "json"
 require 'parseconfig'
+require 'fileutils'
 require File.dirname($0) + '/rhc-common'
 
-config_path = File.exists?('client.conf') ? 'client.conf' : '/etc/libra/client.conf'
+@config_path = File.exists?('client.conf') ? 'client.conf' : '/etc/libra/client.conf'
+@local_config_path = File.exists?('.li') ? '.li' : "#{ENV['HOME']}/.li"
 
-unless File.exists?("#{ENV['HOME']}/.li")
-    file = File.open("#{ENV['HOME']}/.li", 'w')
-    file.close
-end
+FileUtils.touch @local_config_path
 
 begin
-    @global_config = ParseConfig.new(config_path)
-    @local_config = ParseConfig.new("#{ENV['HOME']}/.li")
+    @global_config = ParseConfig.new(@config_path)
+    @local_config = ParseConfig.new(@local_config_path)
 rescue Errno::EACCES => e
     puts "Could not open config file: #{e.message}"
     exit 253
@@ -158,7 +157,7 @@ if opt['apps']
         puts " Public URL: http://#{key}.#{user_info['user_info']['namespace']}.#{libra_domain}/"
         puts ""
     end
-    
+
 end
 
 exit 0

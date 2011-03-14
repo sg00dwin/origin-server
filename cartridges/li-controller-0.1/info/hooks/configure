@@ -179,6 +179,8 @@ function create_user_account() {
 	    exit 1
         fi
     fi
+    ${NOOP} chown "root.$USERNAME" "$HOMEDIR"
+    ${NOOP} chmod 0750 "$HOMEDIR"
 }
 
 function remove_user_account {
@@ -212,8 +214,8 @@ EOF
 EOF"
     fi
 
-    # Give the new user ownership
-    ${NOOP} chown -R $USERNAME:$USERNAME $USERETC
+    # Ensure the new directory is root protected
+    ${NOOP} chown -R root.root $USERETC
 }
 
 
@@ -249,8 +251,8 @@ EOF\""
 
     ${NOOP} chmod 600 ${SSHDIR}/authorized_keys
 
-    # Give the new user ownership
-    ${NOOP} chown -R ${USERNAME}:${USERNAME} ${SSHDIR}
+    # Give force ssh key to not change
+    ${NOOP} chown -R root.root ${SSHDIR}
     ${NOOP} restorecon -R ${SSHDIR}
 }
 
