@@ -24,19 +24,17 @@ require "getoptlong"
 require 'resolv'
 require 'json'
 require 'parseconfig'
-require 'fileutils' 
+require 'fileutils'
 require File.dirname($0) + '/rhc-common'
 
 config_path = File.exists?('client.conf') ? 'client.conf' : '/etc/libra/client.conf'
+local_config_path = File.exists?('.li') ? '.li' : "#{ENV['HOME']}/.li"
 
-unless File.exists?("#{ENV['HOME']}/.li")
-    file = File.open("#{ENV['HOME']}/.li", 'w')
-    file.close
-end
+FileUtils.touch local_config_path
 
 begin
     @global_config = ParseConfig.new(config_path)
-    @local_config = ParseConfig.new("#{ENV['HOME']}/.li")
+    @local_config = ParseConfig.new(local_config_path)
 rescue Errno::EACCES => e
     puts "Could not open config file: #{e.message}"
     exit 253
@@ -135,7 +133,7 @@ if !RHC::check_app(opt['app'])
 end
 
 @type = RHC::get_type(opt['type'])
-if !@type  
+if !@type
     p_usage
 end
 
@@ -202,7 +200,7 @@ end
 # Confirm local git repo exists
 #
 
-if File.exists?(opt['repo']) 
+if File.exists?(opt['repo'])
     puts "We will not overwrite an existing git repo. Please remove:"
     puts "  #{File.expand_path(opt['repo'])}"
     puts "Then try again."
@@ -273,7 +271,7 @@ else
     puts "HTTP response from server is #{response.body}"
     json_resp.each do |k,v|
         puts "#{k.to_s}: #{v.to_s}"
-    end    
+    end
     cleanup_and_exit(opt['repo'], 254)
 end
 
@@ -342,7 +340,7 @@ SSH
         file = File.open(ssh_config, 'w')
         file.close
         retry
-    end   
+    end
 end
 
 File.chmod(0700, ssh_config_d)

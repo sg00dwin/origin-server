@@ -23,18 +23,17 @@ require "net/https"
 require "getoptlong"
 require "json"
 require 'parseconfig'
+require 'fileutils'
 require File.dirname($0) + '/rhc-common'
 
 config_path = File.exists?('client.conf') ? 'client.conf' : '/etc/libra/client.conf'
+local_config_path = File.exists?('.li') ? '.li' : "#{ENV['HOME']}/.li"
 
-unless File.exists?("#{ENV['HOME']}/.li")
-    file = File.open("#{ENV['HOME']}/.li", 'w')
-    file.close
-end
+FileUtils.touch local_config_path
 
 begin
     @global_config = ParseConfig.new(config_path)
-    @local_config = ParseConfig.new("#{ENV['HOME']}/.li")
+    @local_config = ParseConfig.new(local_config_path)
 rescue Errno::EACCES => e
     puts "Could not open config file: #{e.message}"
     exit 253
@@ -130,7 +129,7 @@ if !(opt['alter'])
   begin
     print "Password: "
     system "stty -echo"
-    password = gets.chomp  
+    password = gets.chomp
   ensure
     system "stty echo"
   end
@@ -142,7 +141,7 @@ end
 #
 
 def add_rhlogin_config(rhlogin, uuid)
-    f = open("#{ENV['HOME']}/.li", 'a')
+    f = open(local_config_path, 'a')
     unless @local_config.get_value('default_rhlogin')
         f.puts("# Default rhlogin to use if none is specified")
         f.puts("default_rhlogin=#{rhlogin}")
@@ -174,9 +173,9 @@ puts "Contacting https://#{li_server}"
 data = {'namespace' => opt['namespace'],
                 'rhlogin' => opt['rhlogin'],
                 'password' => password,
-                'ssh' => ssh_key}                
+                'ssh' => ssh_key}
 if (opt['alter'])
-  data['alter'] = "--alter"   
+  data['alter'] = "--alter"
 end
 json_data = JSON.generate(data)
 puts "DEBUG: Json string: #{json_data}" if debug
