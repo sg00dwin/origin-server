@@ -269,6 +269,7 @@ echo "/usr/bin/trap-user" >> /etc/shells
 /sbin/restorecon /etc/init.d/mcollective || :
 # mount all desired cgroups under a single root
 perl -p -i -e 's:/[^/;]+;:;:; /blkio|cpuset|devices/ && ($_ = "#$_")' /etc/cgconfig.conf
+service cgconfig restart
 
 
 %preun node
