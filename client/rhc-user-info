@@ -138,7 +138,7 @@ if user_info['user_info']['uuid'] != @local_config.get_value(opt["rhlogin"])
     puts "WARNING!  The UUID in your ~/.li file is either missing or incorrect."
     puts "Please ensure the following line exists in ~/.li"
     puts
-    puts "#{opt['rhlogin']}=#{user_info['user_info'][' uuid']}"
+    puts "#{opt['rhlogin']}=#{user_info['user_info']['uuid']}"
     puts
 end
 
