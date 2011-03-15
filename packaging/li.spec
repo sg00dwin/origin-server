@@ -77,7 +77,6 @@ Requires: qpid-cpp-client
 Requires: ruby-qmf
 Requires: rubygem-parseconfig
 Requires: libcgroup
-Requires: mod_bw
 Requires: git
 Requires(post): /usr/sbin/semodule
 Requires(postun): /usr/sbin/semodule
