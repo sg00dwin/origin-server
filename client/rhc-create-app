@@ -134,8 +134,8 @@ if !RHC::check_app(opt['app'])
     p_usage
 end
 
-@type = RHC::get_type(opt['type'])
-if !@type
+type = RHC::get_type(opt['type'])
+if !type
     p_usage
 end
 
@@ -406,11 +406,11 @@ while sleep_time < 65
     attempt+=1
     puts "  Attempt # #{attempt}"
     page = ''
-    if (@type == :php)
+    if (type == :php)
       page = 'health_check.php'
-    elsif (@type == :rack)
+    elsif (type == :rack)
       page = 'health'
-    elsif (@type == :wsgi)
+    elsif (type == :wsgi)
       page = 'health'
     end
     url = URI.parse("http://#{my_url}/#{page}")
