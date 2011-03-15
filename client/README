@@ -18,6 +18,8 @@ DEPENDENCIES: git
               json gem
               parseconfig gem
 
+Step 0:  export http_proxy=file.rdu.redhat.com:3128
+
 Step 1:  Create a li customer:
 
 $ ./rhc-create-domain -n desirednamespace -l rhlogin

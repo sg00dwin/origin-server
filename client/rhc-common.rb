@@ -142,3 +142,37 @@ module RHC
   end
     
 end
+
+#
+# Config paths... /etc/libra/client.conf -> ./client.conf -> ~/.li/client.conf
+#
+@config_path = File.exists?('client.conf') ? 'client.conf' : '/etc/libra/client.conf'
+@local_config_path = "#{ENV['HOME']}/.li/client.conf"
+
+FileUtils.touch @local_config_path
+
+begin
+    @global_config = ParseConfig.new(@config_path)
+    @local_config = ParseConfig.new(@local_config_path)
+rescue Errno::EACCES => e
+    puts "Could not open config file: #{e.message}"
+    exit 253
+end
+
+#
+# Check for proxy environment
+#
+if ENV['http_proxy']
+    host, port = ENV['http_proxy'].split(':')
+    @http = Net::HTTP::Proxy(host, port)
+else
+    @http = Net::HTTP
+end
+
+#
+# Check for local var in ~/.li use it, else use /etc/libra/client.conf
+#
+def get_var(var)
+    @local_config.get_value(var) ? @local_config.get_value(var) : @global_config.get_value(var)
+end
+
