@@ -150,23 +150,16 @@ end
 if File.exists?("#{ENV['HOME']}/.li")
     if !File.directory?("#{ENV['HOME']}/.li")
         print "Moving old-style config file..."
-        File.rename("#{ENV['HOME']}/.li", "#{ENV['HOME']}/.li.bak")
-        Dir.mkdir("#{ENV['HOME']}/.li")
-        File.rename("#{ENV['HOME']}/.li.bak", "#{ENV['HOME']}/.li/client.conf")
+        FileUtils.mv "#{ENV['HOME']}/.li", "#{ENV['HOME']}/.li.bak"
+        FileUtils.mkdir_p "#{ENV['HOME']}/.li"
+        FileUtils.mv "#{ENV['HOME']}/.li.bak", "#{ENV['HOME']}/.li/client.conf"
         puts " Done."
     end
 else
-    Dir.mkdir("#{ENV['HOME']}/.li")
+    FileUtils.mkdir_p "#{ENV['HOME']}/.li"
 end
 @local_config_path = "#{ENV['HOME']}/.li/client.conf"
-@legacy_config_path = "#{ENV['HOME']}/.li"
 
-unless File.directory?(@legacy_config_path)
-  puts "Backing up old config file at ~/.li"
-  FileUtils.mv @legacy_config_path, @legacy_config_path + ".bak"
-end
-
-FileUtils.mkdir_p "#{ENV['HOME']}/.li"
 FileUtils.touch @local_config_path
 
 begin
