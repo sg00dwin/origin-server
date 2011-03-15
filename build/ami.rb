@@ -53,14 +53,6 @@ begin
       conn.describe_instances([@instance])[0][key]
     end
 
-    def image_available
-      conn.describe_images_by_owner.each do |i|
-        if i[:aws_name].start_with?(@version)
-          return i[:aws_state] == "available"
-        end
-      end
-    end
-
     task :creds do
       begin
         config = ParseConfig.new(File.expand_path("~/.awscred"))
@@ -219,14 +211,31 @@ begin
       end
     end
 
-    task :verify => [:current] do
+    task :image_available =>[:current] do
+      conn.describe_images_by_owner.each do |i|
+        if i[:aws_name] and i[:aws_name].start_with?(@version)
+          unless i[:aws_state] == "available"
+            puts "AMI image for version #{@version} not yet available."
+            exit 0
+          end
+        end
+      end
+    end
+
+    task :image_verify => [:image_available] do
+      tags = conn.describe_images([@ami])[0][:tags]
+      if tags and tags["Name"] == "verified"
+        puts "Image already verified"
+        exit 0
+      end
+
       puts "Launching verification instance for AMI #{@ami}"
       @instance = conn.launch_instances(@ami, OPTIONS)[0][:aws_instance_id]
       conn.create_tag(@instance, 'Name', "#{@version}-verify")
-      dns = instance_value(:dns_name)
 
       # Wait for it to be available
       Rake::Task["ami:available"].execute
+      dns = instance_value(:dns_name)
 
       # Wait a few more seconds to let services start
       sleep 10
@@ -235,21 +244,26 @@ begin
         # Test user creation and app creation
         puts "Testing user creation"
         chars = ("1".."9").to_a
-        username = "jenkins" + Array.new(5, '').collect{chars[rand(chars.size)]}.join
+        namespace = "jenkins" + Array.new(5, '').collect{chars[rand(chars.size)]}.join
 
+        FileUtils.mkdir ".li"
         puts "Setting up the config file"
-        puts "TBD - need to config the server to talk to"
+        File.open(".li/client.conf", "w") do |file|
+          file.puts "libra_domain='rhcloud.com'"
+          file.puts "li_server='#{dns}'"
+          file.puts "libra_dir='/var/lib/libra'"
+        end
 
-        puts "Creating a new user"
-        puts "rhc-create-user -u #{username} -e libra-test@redhat.com"
-        puts "Creating a new app"
-        puts "rhc-create-app -u #{username} -a test -t php-5.3.2 -n -b"
+        puts "Creating a new user..."
+        sh "rhc-create-domain -n #{namespace} -l libra-test+#{namespace}@redhat.com -p test"
+        puts "Creating a new app..."
+        sh "rhc-create-app -a mytest -t php-5.3.2 -n -p blah"
 
         # Tag the image as verified
-        conn.create_tag(@instance, 'Name', "#{@version}-verify")
+        conn.create_tag(@ami, 'Name', "dev-verified")
       ensure
         puts "Terminating instance"
-        conn.terminate_instances([@instance])
+        #conn.terminate_instances([@instance])
       end
     end
   end
