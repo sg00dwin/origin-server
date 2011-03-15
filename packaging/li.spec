@@ -2,8 +2,8 @@
 %define gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 
 Name: li
-Version: 0.45
-Release: 2%{?dist}
+Version: 0.46
+Release: 1%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -41,6 +41,8 @@ Requires: li-node
 Requires: li-server
 Requires: li-php
 Requires: li-cartridge-php-5.3.2
+Requires: li-cartridge-wsgi-3.2.1
+Requires: li-cartridge-rack-1.1.0
 Requires: puppet
 BuildArch: noarch
 
@@ -62,6 +64,8 @@ Requires: li-node
 Requires: li-server
 Requires: li-php
 Requires: li-cartridge-php-5.3.2
+Requires: li-cartridge-wsgi-3.2.1
+Requires: li-cartridge-rack-1.1.0
 Requires: puppet
 BuildArch: noarch
 
@@ -147,7 +151,7 @@ Requires: li-node
 Requires: httpd
 Requires: mod_bw
 Requires: python
-Requires: mod_wsgi = 3.2.1
+Requires: mod_wsgi = 3.2
 BuildArch: noarch
 
 %description cartridge-wsgi-3.2.1
@@ -271,6 +275,7 @@ echo "/usr/bin/trap-user" >> /etc/shells
 /sbin/restorecon /etc/init.d/mcollective || :
 # mount all desired cgroups under a single root
 perl -p -i -e 's:/[^/;]+;:;:; /blkio|cpuset|devices/ && ($_ = "#$_")' /etc/cgconfig.conf
+service cgconfig restart
 
 # Ensure the default users have a more restricted shell then normal.
 semanage login -m -s guest_u __default__
@@ -368,6 +373,9 @@ fi
 %{_libexecdir}/li/cartridges/wsgi-3.2.1/
 
 %changelog
+* Mon Mar 15 2011 Jim Jagielski <jimjag@redhat.com> 0.46-1
+- New version
+
 * Tue Mar 15 2011 Mike McGrath <mmcgrath@redhat.com> 0.45-2
 - Added semanage command for guest users
 

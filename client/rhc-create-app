@@ -27,30 +27,6 @@ require 'parseconfig'
 require 'fileutils'
 require File.dirname($0) + '/rhc-common'
 
-@config_path = File.exists?('client.conf') ? 'client.conf' : '/etc/libra/client.conf'
-@local_config_path = File.exists?('.li') ? '.li' : "#{ENV['HOME']}/.li"
-
-FileUtils.touch @local_config_path
-
-begin
-    @global_config = ParseConfig.new(@config_path)
-    @local_config = ParseConfig.new(@local_config_path)
-rescue Errno::EACCES => e
-    puts "Could not open config file: #{e.message}"
-    exit 253
-end
-
-#
-# Check for proxy environment
-#
-if ENV['http_proxy']
-    host, port = ENV['http_proxy'].split(':')
-    @http = Net::HTTP::Proxy(host, port)
-else
-    @http = Net::HTTP
-end
-
-
 #
 # Check if host exists
 #
@@ -59,14 +35,6 @@ def hostexist?(host)
     resp = dns.getresources(host, Resolv::DNS::Resource::IN::A)
     return resp.any?
 end
-
-#
-# Check for local var in ~/.li use it, else use /etc/libra/client.conf
-#
-def get_var(var)
-    @local_config.get_value(var) ? @local_config.get_value(var) : @global_config.get_value(var)
-end
-
 
 def p_usage
     rhlogin = @local_config.get_value('default_rhlogin') ? "Default: #{@local_config.get_value('default_rhlogin')}" : "(required)"
@@ -82,7 +50,6 @@ Create a new app libra project.
   -p|--password  password    RHLogin password  (alphanumeric) (optional, will prompt)
   -r|--repo  path            Git Repo path (defaults to ./$app_name)
   -n|--nogit                 Only create remote space, don't pull it locally
-  -b|--bypass                Bypass warnings
   -d|--debug                 Print Debug info
   -h|--help                  Show Usage info
 
@@ -93,7 +60,6 @@ end
 opts = GetoptLong.new(
     ["--debug", "-d", GetoptLong::NO_ARGUMENT],
     ["--help",  "-h", GetoptLong::NO_ARGUMENT],
-    ["--bypass","-b", GetoptLong::NO_ARGUMENT],
     ["--nogit", "-n", GetoptLong::NO_ARGUMENT],
     ["--rhlogin",  "-l", GetoptLong::OPTIONAL_ARGUMENT],
     ["--password",  "-p", GetoptLong::OPTIONAL_ARGUMENT],
@@ -143,7 +109,7 @@ if !opt["rhlogin"] || !opt["app"] || !opt["type"]
     p_usage
 end
 
-password = opt['password'] 
+password = opt['password']
 if !password
   password = RHC::get_password
 end
@@ -160,38 +126,8 @@ end
 
 opt["repo"] = opt["app"] unless opt["repo"]
 
-#
-# Send Warning
-#
-
-if !opt["bypass"]
-    puts <<WARNING
-NOTICE: This is pre-alpha destructionware.  It is not tested, it
-might break at any time.  While we'll generally leave it running, there is no
-attempt at data protection or downtime minimization.  This is just a proof
-of concept, do not store anything important here.
-
-Thar be dragons this way.
-
-Rules/Terms:
-1) Don't put anything important here.
-2) Know we won't be protecting data in any way and may arbitrarly destroy it
-3) The service will go up and down as we are developing it, which may be a lot
-4) We'll be altering your ~/.ssh/config file a bit, should be harmless.
-5) Bugs should be sent to the libra team
-6) This entire service may vanish as this is just a proof of concept.
-
-WARNING
-
-    print "Do you agree to the rules and terms? (y/n): "
-    agree = gets.chomp
-    if agree != 'y'
-        puts "Sorry this won't work for you, keep tabs for future updates"
-        exit 5
-    end
-end
 puts ""
-puts "Remember: this is pre-alpha destructionware.  Let #libra know of any bugs you find"
+puts "Please support the beta - let #libra know of any bugs you find"
 puts ""
 
 #

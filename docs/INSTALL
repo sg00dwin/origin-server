@@ -6,7 +6,7 @@ Overview and below is the hard way.
 The easy way?
 
 Create a RHEL6 x86_64 instance on ec2.
-download and run http://209.132.178.9/gpxe/trees/li-devenv.sh
+copy and run ../scripts/li-devenv.sh
 
 done, you can now create users and apps.
 

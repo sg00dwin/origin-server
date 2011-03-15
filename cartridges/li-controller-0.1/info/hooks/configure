@@ -37,8 +37,9 @@ DEFAULT_LIBRA_CONF_DIR=/etc/libra
 # defaults
 limits_order=84
 limits_nproc=50
-quota_inodes=1000
-quota_blocks=`expr 1024 \* 1024 \* 128` # 128MB
+quota_files=1000
+# a block = 1Kbytes: 1k * 1024 * 128
+quota_blocks=`expr 1024 \* 128` # 128MB
 
 # Exit on any errors
 # set -e
@@ -361,8 +362,8 @@ function user_quotas {
 # usage: set_fs_quota <username> <inodes> <blocks>
 function set_fs_quotas {
     # USERNAME=$1
-    # QUOTA_INODES=${2:-$quota_inode}
-    # QUOTA_BLOCKS=${3:-$quota_block}
+    # QUOTA_BLOCKS=${2:-$quota_blocks}
+    # QUOTA_FILES=${3:-$quota_files}
 
     if quotas_configured
     then
@@ -404,7 +405,7 @@ then
 
     set_pam_limits $username
 
-    set_fs_quotas $username $quota_inodes $quota_blocks
+    set_fs_quotas $username $quota_blocks $quota_files
 
 else
     if (service cgconfig status > /dev/null)
