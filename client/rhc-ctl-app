@@ -178,12 +178,6 @@ puts ""
 puts "Remember: this is pre-alpha destructionware.  Let #libra know of any bugs you find."
 puts ""
 
-#
-# Create remote application space
-#
-
-puts "Creating remote application space: " + opt['app']
-
 json_data = JSON.generate(
                {:cartridge => framework,
                 :action => opt['command'],

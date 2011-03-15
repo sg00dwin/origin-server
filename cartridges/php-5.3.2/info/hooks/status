@@ -53,7 +53,7 @@ done
 
 [ $# -eq 3 ] || print_help
 
-customer_id=`basename $3
+customer_id=`basename $3`
 application="$1"
 
 CUSTOMER_HOME="$libra_dir/$customer_id/"
@@ -63,4 +63,4 @@ APP_DIR="$CUSTOMER_HOME/php/$application"
 # Start application
 #
 
-"$APP_DIR/${application}_ctl.sh" status
+runuser --shell /bin/sh "$customer_id" "$APP_DIR/${application}_ctl.sh" status
