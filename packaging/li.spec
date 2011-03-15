@@ -149,7 +149,7 @@ Requires: li-node
 Requires: httpd
 Requires: mod_bw
 Requires: python
-Requires: mod_wsgi = 3.2.1
+Requires: mod_wsgi = 3.2
 BuildArch: noarch
 
 %description cartridge-wsgi-3.2.1
@@ -273,6 +273,7 @@ echo "/usr/bin/trap-user" >> /etc/shells
 /sbin/restorecon /etc/init.d/mcollective || :
 # mount all desired cgroups under a single root
 perl -p -i -e 's:/[^/;]+;:;:; /blkio|cpuset|devices/ && ($_ = "#$_")' /etc/cgconfig.conf
+service cgconfig restart
 
 
 %preun node
