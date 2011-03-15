@@ -39,7 +39,7 @@ limits_order=84
 limits_nproc=50
 quota_files=1000
 # a block = 1Kbytes: 1k * 1024 * 128
-quota_blocks=`1024 \* 128` # 128MB
+quota_blocks=`expr 1024 \* 128` # 128MB
 
 # Exit on any errors
 # set -e
