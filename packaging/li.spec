@@ -3,7 +3,7 @@
 
 Name: li
 Version: 0.45
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -79,7 +79,9 @@ Requires: rubygem-parseconfig
 Requires: libcgroup
 Requires: git
 Requires(post): /usr/sbin/semodule
+Requires(post): /usr/sbin/semanage
 Requires(postun): /usr/sbin/semodule
+Requires(postun): /usr/sbin/semanage
 BuildArch: noarch
 
 %description node
@@ -270,6 +272,8 @@ echo "/usr/bin/trap-user" >> /etc/shells
 # mount all desired cgroups under a single root
 perl -p -i -e 's:/[^/;]+;:;:; /blkio|cpuset|devices/ && ($_ = "#$_")' /etc/cgconfig.conf
 
+# Ensure the default users have a more restricted shell then normal.
+semanage login -m -s guest_u __default__
 
 %preun node
 if [ "$1" -eq "0" ]; then
@@ -364,6 +368,9 @@ fi
 %{_libexecdir}/li/cartridges/wsgi-3.2.1/
 
 %changelog
+* Tue Mar 15 2011 Mike McGrath <mmcgrath@redhat.com> 0.45-2
+- Added semanage command for guest users
+
 * Mon Mar 14 2011 Mike McGrath <mmcgrath@redhat.com> 0.45-1
 - New version
 
