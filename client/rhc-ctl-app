@@ -68,15 +68,14 @@ end
 
 def p_usage
     rhlogin = @local_config.get_value('default_rhlogin') ? "Default: #{@local_config.get_value('default_rhlogin')}" : "(required)"
-    type_keys = RHC::get_type_keys(', ')
     puts <<USAGE
 
 Usage: #{$0}
 Control a libra app
 
   -a|--app   application   Application name  (alphanumeric) (required)
-  -t|--type  type          Type of app to operate on (#{type_keys}) (required)
   -l|--rhlogin rhlogin     Red Hat login  (alphanumeric) (#{rhlogin})
+  -p|--password password   RHLogin password  (alphanumeric) (optional, will prompt)
   -c|--command command     (start|stop|restart|reload|status|destroy)
   -b|--bypass              Bypass warnings
   -d|--debug               Print Debug info
@@ -91,9 +90,9 @@ opts = GetoptLong.new(
     ["--help",      "-h", GetoptLong::NO_ARGUMENT],
     ["--bypass",    "-b", GetoptLong::NO_ARGUMENT],
     ["--rhlogin",   "-l", GetoptLong::OPTIONAL_ARGUMENT],
+    ["--password",   "-p", GetoptLong::OPTIONAL_ARGUMENT],
     ["--app",       "-a", GetoptLong::REQUIRED_ARGUMENT],
-    ["--command",   "-c", GetoptLong::REQUIRED_ARGUMENT],
-    ["--type",      "-t", GetoptLong::REQUIRED_ARGUMENT]
+    ["--command",   "-c", GetoptLong::REQUIRED_ARGUMENT]
 )
 
 
@@ -128,22 +127,28 @@ if !RHC::check_app(opt['app'])
     p_usage
 end
 
-@type = RHC::get_type(opt['type'])
-if !@type
-    p_usage
-end
-
 unless defined? opt["command"] and opt["command"] =~ /(start|stop|restart|reload|status|destroy)/
     puts "Command is required"
     p_usage
 end
 
-if !opt["rhlogin"] || !opt["app"] || !opt["command"] || !opt["type"]
+if !opt['rhlogin'] || !opt['app'] || !opt['command']
     p_usage
 end
 
+password = opt['password'] 
+if !password
+  password = RHC::get_password
+end
 
-
+user_info = RHC::get_user_info(li_server, opt['rhlogin'], password, @http, debug)
+app = user_info['app_info'][opt['app']]
+if app
+  framework = app['framework']
+else
+  puts "Application not found: #{opt['app']}"
+  exit 252
+end
 #
 # Send Warning
 #
@@ -170,7 +175,7 @@ WARNING
     end
 end
 puts ""
-puts "Remember: this is pre-alpha destructionware.  Let #libra know of any bugs you find"
+puts "Remember: this is pre-alpha destructionware.  Let #libra know of any bugs you find."
 puts ""
 
 #
@@ -180,23 +185,17 @@ puts ""
 puts "Creating remote application space: " + opt['app']
 
 json_data = JSON.generate(
-               {:cartridge => "#{opt['type']}",
+               {:cartridge => framework,
                 :action => opt['command'],
                 :app_name => "#{opt['app']}",
-                :rhlogin => "#{opt['rhlogin']}"})
+                :rhlogin => "#{opt['rhlogin']}",
+                :password => password
+                })
 
 puts "Contacting server https://#{li_server}"
 
 url = URI.parse("https://#{li_server}/php/cartridge_do.php")
-req = @http::Post.new(url.path)
-
-req.set_form_data({'json_data' => json_data})
-http = @http.new(url.host, url.port)
-if url.scheme == "https"
-  http.use_ssl = true
-  http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-end
-response = http.start {|http| http.request(req)}
+response = RHC::http_post(@http, url, json_data)
 
 json_resp = JSON.parse(response.body);
 

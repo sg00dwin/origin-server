@@ -5,6 +5,7 @@ $cartridge = escapeshellarg(filter_var($data->{'cartridge'}, FILTER_SANITIZE_SPE
 $action = escapeshellarg(filter_var($data->{'action'}, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW));
 $app_name = escapeshellarg(filter_var($data->{'app_name'}, FILTER_SANITIZE_STRING));
 $rhlogin = escapeshellarg(filter_var($data->{'rhlogin'}, FILTER_SANITIZE_STRING));
+$password = escapeshellarg(filter_var($data->{'password'}, FILTER_SANITIZE_STRING));
 
 function my_exec($cmd, $input='')
          {$proc=proc_open($cmd, array(0=>array('pipe', 'r'), 1=>array('pipe', 'w'), 2=>array('pipe', 'w')), $pipes);
@@ -18,9 +19,9 @@ function my_exec($cmd, $input='')
                       );
          }
 
-// print_r("/usr/bin/mc-rhc-cartridge-do --cartridge $cartridge -a $action -l $rhlogin -n $app_name");
+// print_r("/usr/bin/mc-rhc-cartridge-do --cartridge $cartridge -a $action -l $rhlogin -p $password -n $app_name");
 $out = '';
-$results = my_exec("/usr/bin/mc-rhc-cartridge-do --cartridge $cartridge -a $action -l $rhlogin -n $app_name -v", $out);
+$results = my_exec("/usr/bin/mc-rhc-cartridge-do --cartridge $cartridge -a $action -l $rhlogin -p $password -n $app_name -v", $out);
 
 if ($results['return'] != 0) {
     header('HTTP/1.1 500 Service Error', 500);

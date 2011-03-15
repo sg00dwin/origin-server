@@ -8,11 +8,11 @@ rhc-ctl-app \- Control an existing rhcloud.com application
 .B rhc-ctl-app [-l
 .I rhlogin
 .B ]
+.B [-p
+.I password
+.B ]
 .B [-a
 .I application_name
-.B ]
-.B [-t
-.I framework_type
 .B ]
 .B [-c
 .I command
@@ -33,8 +33,10 @@ then remove the application and repo from the remote
 server.  No local changes are made.
 
 .SH OPTIONS
-.IP "-l|--rhlogin rhlogin"
+.IP "-l|--rhlogin login"
 Red Hat login.  Alphanumeric
+.IP "-p|--password password"
+RHLogin password.  Alphanumeric
 .IP "-a|--app application_name"
 Name of application to create
 .IP "-t|--type framework_type"

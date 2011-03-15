@@ -2,7 +2,7 @@
 %define gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 
 Name: li
-Version: 0.44
+Version: 0.45
 Release: 1%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
@@ -129,6 +129,7 @@ Requires: rubygem-passenger
 Requires: rubygem-passenger-native
 Requires: rubygem-passenger-native-libs
 Requires: mod_passenger
+Requires: rubygem-bundler
 Requires: rubygem-sqlite3-ruby
 Requires: ruby-sqlite3
 Requires: ruby-mysql
@@ -364,6 +365,9 @@ fi
 %{_libexecdir}/li/cartridges/wsgi-3.2.1/
 
 %changelog
+* Mon Mar 14 2011 Mike McGrath <mmcgrath@redhat.com> 0.45-1
+- New version
+
 * Mon Mar 14 2011 Mike McGrath <mmcgrath@redhat.com> 0.44-1
 - Upstream released new version
 

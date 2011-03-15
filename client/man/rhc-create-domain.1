@@ -8,8 +8,11 @@ rhc-create-user \- creates a new Libra user
 .B rhc-create-user [-l
 .I rhlogin
 .B ]
-.B [-e
-.I email
+.B [-p
+.I password
+.B ]
+.B [-n
+.I namespace
 .B ] [-d] [-h]
 .SH DESCRIPTION
 .B rhc-create-domain
@@ -33,6 +36,8 @@ to control created applications.
 Desired namespace to create.  Alphanumeric
 .IP "-l|--rhlogin login"
 Red Hat login (often email) to use
+.IP "-p|--password password"
+RHLogin password (often email)
 .IP "-a|--alter"
 Alter an existing user (change email or ssh key)
 .IP -d|--debug
