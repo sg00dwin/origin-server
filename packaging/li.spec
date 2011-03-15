@@ -145,7 +145,7 @@ Requires: li-node
 Requires: httpd
 Requires: mod_bw
 Requires: python
-Requires: mod_wsgi = 3.2.1
+Requires: mod_wsgi = 3.2
 BuildArch: noarch
 
 %description cartridge-wsgi-3.2.1
