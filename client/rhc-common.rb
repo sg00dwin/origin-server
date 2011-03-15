@@ -170,7 +170,7 @@ else
 end
 
 #
-# Check for local var in ~/.li use it, else use /etc/libra/client.conf
+# Check for local var in ~/.li/config.conf use it, else use /etc/libra/client.conf
 #
 def get_var(var)
     @local_config.get_value(var) ? @local_config.get_value(var) : @global_config.get_value(var)
