@@ -20,7 +20,7 @@
 
 # Exit on any errors
 set -e
-set -x
+#set -x
 
 if [ -f '/etc/libra/node.conf' ]
 then
