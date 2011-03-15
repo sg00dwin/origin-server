@@ -70,14 +70,30 @@ module RHC
     end
     nil
   end
+  
+  def RHC.print_post_data(h, debug)
+    if (debug)
+      puts 'DEBUG: Submitting form:'
+      h.each do |k,v|
+        if k.to_s != 'password'
+          puts "#{k.to_s}: #{v.to_s}"
+        else
+          print 'password: '
+          for i in (1..v.length)
+            print 'X'
+          end
+          puts ''
+        end
+      end
+    end
+  end
     
   def RHC.get_user_info(li_server, rhlogin, password, net_http, debug)  
     
     puts "Contacting https://#{li_server}"
-    json_data = JSON.generate(
-                    {'rhlogin' => rhlogin,
-                    'password' => password})
-    puts "DEBUG: Json string: #{json_data}" if debug
+    data = {'rhlogin' => rhlogin, 'password' => password}
+    print_post_data(data, debug)
+    json_data = JSON.generate(data)    
     
     url = URI.parse("https://#{li_server}/php/user_info.php")
     response = http_post(net_http, url, json_data)

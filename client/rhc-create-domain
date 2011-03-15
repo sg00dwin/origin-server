@@ -173,8 +173,8 @@ data = {'namespace' => opt['namespace'],
 if (opt['alter'])
   data['alter'] = "--alter"
 end
+RHC::print_post_data(data, debug)
 json_data = JSON.generate(data)
-puts "DEBUG: Json string: #{json_data}" if debug
 
 url = URI.parse("https://#{li_server}/php/create_customer.php")
 response = RHC::http_post(@http, url, json_data)
