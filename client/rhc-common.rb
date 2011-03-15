@@ -147,6 +147,17 @@ end
 # Config paths... /etc/libra/client.conf -> ./client.conf -> ~/.li/client.conf
 #
 @config_path = File.exists?('client.conf') ? 'client.conf' : '/etc/libra/client.conf'
+if File.exists?("#{ENV['HOME']}/.li")
+    if !File.directory?("#{ENV['HOME']}/.li")
+        print "Moving old-style config file..."
+        File.rename("#{ENV['HOME']}/.li", "#{ENV['HOME']}/.li.bak")
+        Dir.mkdir("#{ENV['HOME']}/.li")
+        File.rename("#{ENV['HOME']}/.li.bak", "#{ENV['HOME']}/.li/client.conf")
+        puts " Done."
+    end
+else
+    Dir.mkdir("#{ENV['HOME']}/.li")
+end
 @local_config_path = "#{ENV['HOME']}/.li/client.conf"
 @legacy_config_path = "#{ENV['HOME']}/.li"
 
