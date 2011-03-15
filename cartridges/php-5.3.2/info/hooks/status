@@ -53,7 +53,7 @@ done
 
 [ $# -eq 3 ] || print_help
 
-customer_id=`basename $3
+customer_id=`basename $3`
 application="$1"
 
 CUSTOMER_HOME="$libra_dir/$customer_id/"
