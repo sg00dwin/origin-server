@@ -2,7 +2,7 @@
 %define gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 
 Name: li
-Version: 0.45
+Version: 0.46
 Release: 1%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
@@ -41,6 +41,8 @@ Requires: li-node
 Requires: li-server
 Requires: li-php
 Requires: li-cartridge-php-5.3.2
+Requires: li-cartridge-wsgi-3.2.1
+Requires: li-cartridge-rack-1.1.0
 Requires: puppet
 BuildArch: noarch
 
@@ -62,6 +64,8 @@ Requires: li-node
 Requires: li-server
 Requires: li-php
 Requires: li-cartridge-php-5.3.2
+Requires: li-cartridge-wsgi-3.2.1
+Requires: li-cartridge-rack-1.1.0
 Requires: puppet
 BuildArch: noarch
 
@@ -365,6 +369,9 @@ fi
 %{_libexecdir}/li/cartridges/wsgi-3.2.1/
 
 %changelog
+* Mon Mar 15 2011 Jim Jagielski <jimjag@redhat.com> 0.46-1
+- New version
+
 * Mon Mar 14 2011 Mike McGrath <mmcgrath@redhat.com> 0.45-1
 - New version
 
