@@ -246,18 +246,16 @@ begin
         chars = ("1".."9").to_a
         namespace = "jenkins" + Array.new(5, '').collect{chars[rand(chars.size)]}.join
 
-        FileUtils.mkdir ".li"
         puts "Setting up the config file"
-        File.open(".li/client.conf", "w") do |file|
+        File.open("client.conf", "w") do |file|
           file.puts "libra_domain='rhcloud.com'"
           file.puts "li_server='#{dns}'"
-          file.puts "libra_dir='/var/lib/libra'"
         end
 
         puts "Creating a new user..."
         sh "rhc-create-domain -n #{namespace} -l libra-test+#{namespace}@redhat.com -p test"
         puts "Creating a new app..."
-        sh "rhc-create-app -a mytest -t php-5.3.2 -n -p blah"
+        sh "rhc-create-app -a mytest -t php-5.3.2 -l libra-test+#{namespace}@redhat.com -n -p blah"
 
         # Tag the image as verified
         conn.create_tag(@ami, 'Name', "dev-verified")
