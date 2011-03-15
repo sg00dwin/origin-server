@@ -56,8 +56,7 @@ module Libra
     def self.valid_registration?(rhlogin, password)
       if !Libra.c[:bypass_user_reg]
         begin
-          #url = URI.parse('https://streamline.devlab.phx1.redhat.com/wapps/streamline/login.html')
-          url = URI.parse('https://streamline1.stg.rhcloud.com/wapps/streamline/login.html')
+          url = URI.parse(Libra.c[:user_reg_url])
           req = Net::HTTP::Post.new(url.path)
           
           req.set_form_data({ 'login' => rhlogin, 'password' => password, 'redirectUrl' => '/wapps/ugc/protected/account.html' })
