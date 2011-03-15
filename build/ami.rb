@@ -223,10 +223,12 @@ begin
     end
 
     task :image_verify => [:image_available] do
-      tags = conn.describe_images([@ami])[0][:tags]
-      if tags and tags["Name"] == "verified"
-        puts "Image already verified"
-        exit 0
+      # See if the current image is already verified
+      conn.describe_tags('Filter.1.Name' => 'resource-id', 'Filter.1.Value.1' => @ami).each do |tag|
+        if tag[:aws_key] == "Name" and tag[:aws_value] == "dev-verified"
+          puts "Image already verified"
+          exit 0
+        end
       end
 
       puts "Launching verification instance for AMI #{@ami}"
@@ -261,7 +263,7 @@ begin
         conn.create_tag(@ami, 'Name', "dev-verified")
       ensure
         puts "Terminating instance"
-        #conn.terminate_instances([@instance])
+        conn.terminate_instances([@instance])
       end
     end
   end
