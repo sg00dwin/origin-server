@@ -142,8 +142,13 @@ if !password
 end
 
 user_info = RHC::get_user_info(li_server, opt['rhlogin'], password, @http, debug)
-framework = user_info['app_info'][opt['app']]['framework']
-
+app = user_info['app_info'][opt['app']]
+if app
+  framework = ['framework']
+else
+  puts "Application not found: #{opt['app']}"
+  exit 252
+end
 #
 # Send Warning
 #
@@ -170,7 +175,7 @@ WARNING
     end
 end
 puts ""
-puts "Remember: this is pre-alpha destructionware.  Let #libra know of any bugs you find"
+puts "Remember: this is pre-alpha destructionware.  Let #libra know of any bugs you find."
 puts ""
 
 #
