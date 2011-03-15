@@ -131,15 +131,6 @@ puts "Please support the beta - let #libra know of any bugs you find"
 puts ""
 
 #
-# Create local git repo
-#
-
-def cleanup_and_exit(repo, code)
-    FileUtils.rm_rf repo
-    exit code
-end
-
-#
 # Confirm local git repo exists
 #
 
@@ -151,9 +142,11 @@ if File.exists?(opt['repo'])
     exit 255
 else
     begin
-        FileUtils.mkdir_p(opt['repo'])
+        # Create the parent directory for the git repo
+        @git_parent = File.expand_path(opt['repo'] + "/../")
+        FileUtils.mkdir_p(@git_parent)
     rescue Errno::EACCES
-        puts "Could not write to #{File.expand_path(opt['repo'])}"
+        puts "Could not write to #{@git_parent}"
         puts "Reason: " + $!
         puts
         puts "Please re-run from a directory you have write access to or specify -r with a"
@@ -209,7 +202,7 @@ else
     json_resp.each do |k,v|
         puts "#{k.to_s}: #{v.to_s}"
     end
-    cleanup_and_exit(opt['repo'], 254)
+    exit 254
 end
 
 #

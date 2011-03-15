@@ -83,7 +83,9 @@ Requires: rubygem-parseconfig
 Requires: libcgroup
 Requires: git
 Requires(post): /usr/sbin/semodule
+Requires(post): /usr/sbin/semanage
 Requires(postun): /usr/sbin/semodule
+Requires(postun): /usr/sbin/semanage
 BuildArch: noarch
 
 %description node
@@ -275,6 +277,8 @@ echo "/usr/bin/trap-user" >> /etc/shells
 perl -p -i -e 's:/[^/;]+;:;:; /blkio|cpuset|devices/ && ($_ = "#$_")' /etc/cgconfig.conf
 service cgconfig restart
 
+# Ensure the default users have a more restricted shell then normal.
+semanage login -m -s guest_u __default__
 
 %preun node
 if [ "$1" -eq "0" ]; then
@@ -371,6 +375,9 @@ fi
 %changelog
 * Mon Mar 15 2011 Jim Jagielski <jimjag@redhat.com> 0.46-1
 - New version
+
+* Tue Mar 15 2011 Mike McGrath <mmcgrath@redhat.com> 0.45-2
+- Added semanage command for guest users
 
 * Mon Mar 14 2011 Mike McGrath <mmcgrath@redhat.com> 0.45-1
 - New version
