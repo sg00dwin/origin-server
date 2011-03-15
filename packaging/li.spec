@@ -77,7 +77,6 @@ Requires: qpid-cpp-client
 Requires: ruby-qmf
 Requires: rubygem-parseconfig
 Requires: libcgroup
-Requires: mod_bw
 Requires: git
 Requires(post): /usr/sbin/semodule
 Requires(postun): /usr/sbin/semodule
@@ -268,6 +267,8 @@ crontab -u root /etc/libra/qe-env/crontab
 echo "/usr/bin/trap-user" >> /etc/shells
 /sbin/restorecon /etc/init.d/libra || :
 /sbin/restorecon /etc/init.d/mcollective || :
+# mount all desired cgroups under a single root
+perl -p -i -e 's:/[^/;]+;:;:; /blkio|cpuset|devices/ && ($_ = "#$_")' /etc/cgconfig.conf
 
 
 %preun node
