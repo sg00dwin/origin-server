@@ -150,7 +150,6 @@ Provides rack support to li
 %package site
 Summary: Provide li site
 Group: Development/Languages
-Requires: li-server
 Requires: httpd
 Requires: ruby
 Requires: rubygems
@@ -390,6 +389,8 @@ fi
 pushd %{_localstatedir}/www/html/site > /dev/null
 bundle install --deployment
 popd > /dev/null
+touch %{_localstatedir}/www/html/site/log/production.log
+touch %{_localstatedir}/www/html/site/db/production.sqlite3
 
 %files cartridge-php-5.3.2
 %defattr(-,root,root,-)
