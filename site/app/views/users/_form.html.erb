@@ -1,6 +1,6 @@
 <script>
 	function validate() {
-  	if (document.getElementById('user_password').value != document.getElementById('user_passwordConfirmation').value) {			
+  	if (document.getElementById('user_password').value != document.getElementById('user_passwordConfirmation').value) {
 		  var errorsDiv = document.getElementById('errors_div');
 			while (errorsDiv.firstChild)
 			  errorsDiv.removeChild(errorsDiv.firstChild);
@@ -8,11 +8,11 @@
 			  errorsDiv.appendChild(p);
 			  var s = document.createElement('strong');
 				  p.appendChild(s);
-				  var f = document.createElement('font');					  
+				  var f = document.createElement('font');
 					  f.color = 'red';
 						s.appendChild(f);
 						f.appendChild(document.createTextNode('Passwords must match'));
-		  return false;		
+		  return false;
 	  }
 		return true;
   }
@@ -25,7 +25,7 @@
     <%= link_to "Do you already have a redhat.com / RHN login?", "#" %>
   <% end %>
 	<div id="errors_div">
-	  <% @user.errors.each do |field, msg| %>        
+	  <% @user.errors.each do |field, msg| %>
 	      <p><strong><font color="red"><%= msg %></font></strong></p>
 	  <% end %>
 	</div>
@@ -41,13 +41,6 @@
 
       <%= f.label "captcha", "Prove You Are Human" %>
       <%= recaptcha_tags %>
-
-      <%= f.label "termsAccepted", "Terms Acceptance" %>
-      <%= content_tag :p do -%>
-        By selecting the checkbox, I confirm that I accept the following
-        <%= link_to "Terms and Conditions", "http://www.redhat.com", {:target => "_blank"} %>
-        <%= f.check_box "termsAccepted" %>
-      <% end %>
 
       <%= f.submit "Register Now", :class => "button", :onclick=>"return validate()" %>
   <% end %>
