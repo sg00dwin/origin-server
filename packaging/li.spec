@@ -3,7 +3,7 @@
 
 Name: li
 Version: 0.46
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -299,7 +299,6 @@ fi
 
 %files
 %defattr(-,root,root,-)
-%{_bindir}/rhc-capacity
 %{_bindir}/rhc-create-app
 %{_bindir}/rhc-create-domain
 %{_bindir}/rhc-user-info
@@ -374,6 +373,9 @@ fi
 %{_libexecdir}/li/cartridges/wsgi-3.2.1/
 
 %changelog
+* Mon Mar 15 2011 Mike McGrath <mmcgrath@redhat.com> 0.47-3
+- Removed rhc-capacity from li tools
+
 * Mon Mar 15 2011 Mike McGrath <mmcgrath@redhat.com> 0.47-2
 - Fixed manpage name
 
