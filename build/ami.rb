@@ -79,6 +79,8 @@ begin
     end
 
     task :version do
+      # Clean up any caching
+      `yum clean metadata`
       version = `yum info li | grep Version | tail -n1 | grep -o -E "[0-9]\.[0-9]+"`.chomp
 
       # Only take the release up until the '.'
