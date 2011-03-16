@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# This script will lock down the host so only specific users are allowed to bind to specific IP addresses
+# It can be called with:
+#
+# [ $(semanage node -l | grep -c 255.255.255.128) -lt 1000 ] && ./rhc-ip-prep.sh
+
 # lock down the localhost ip addresses
 
 for uid in `seq 500 1550`
