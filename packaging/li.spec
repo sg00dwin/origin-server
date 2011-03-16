@@ -3,7 +3,7 @@
 
 Name: li
 Version: 0.46
-Release: 3%{?dist}
+Release: 4%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -119,6 +119,7 @@ Requires: li-node
 Requires: php = 5.3.2
 Requires: mod_bw
 Requires: rubygem-builder
+Requires: php-pdo
 BuildArch: noarch
 
 %description cartridge-php-5.3.2
@@ -298,6 +299,7 @@ echo "/usr/bin/trap-user" >> /etc/shells
 # mount all desired cgroups under a single root
 perl -p -i -e 's:/[^/;]+;:;:; /blkio|cpuset|devices/ && ($_ = "#$_")' /etc/cgconfig.conf
 service cgconfig restart
+[ $(/usr/sbin/semanage node -l | /bin/grep -c 255.255.255.128) -lt 1000 ] && /usr/local/bin/rhc-ip-prep.sh
 
 # Ensure the default users have a more restricted shell then normal.
 semanage login -m -s guest_u __default__
@@ -402,13 +404,17 @@ popd > /dev/null
 %{_libexecdir}/li/cartridges/wsgi-3.2.1/
 
 %changelog
-* Mon Mar 15 2011 Mike McGrath <mmcgrath@redhat.com> 0.47-3
+* Wed Mar 16 2011 Mike McGrath <mmcgrath@redhat.com> 0.47-4
+- Added rhc-ip-prep.sh and auto run
+- Added requires for php-pdo
+
+* Tue Mar 15 2011 Mike McGrath <mmcgrath@redhat.com> 0.47-3
 - Removed rhc-capacity from li tools
 
-* Mon Mar 15 2011 Mike McGrath <mmcgrath@redhat.com> 0.47-2
+* Tue Mar 15 2011 Mike McGrath <mmcgrath@redhat.com> 0.47-2
 - Fixed manpage name
 
-* Mon Mar 15 2011 Jim Jagielski <jimjag@redhat.com> 0.46-1
+* Tue Mar 15 2011 Jim Jagielski <jimjag@redhat.com> 0.46-1
 - New version
 
 * Tue Mar 15 2011 Mike McGrath <mmcgrath@redhat.com> 0.45-2
