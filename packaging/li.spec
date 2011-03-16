@@ -41,6 +41,7 @@ Requires: li
 Requires: li-node
 Requires: li-server
 Requires: li-php
+Requires: li-site
 Requires: li-cartridge-php-5.3.2
 Requires: li-cartridge-wsgi-3.2.1
 Requires: li-cartridge-rack-1.1.0
@@ -64,6 +65,7 @@ Requires: li
 Requires: li-node
 Requires: li-server
 Requires: li-php
+Requires: li-site
 Requires: li-cartridge-php-5.3.2
 Requires: li-cartridge-wsgi-3.2.1
 Requires: li-cartridge-rack-1.1.0
@@ -145,6 +147,26 @@ BuildArch: noarch
 %description cartridge-rack-1.1.0
 Provides rack support to li
 
+%package site
+Summary: Provide li site
+Group: Development/Languages
+Requires: li-server
+Requires: httpd
+Requires: ruby
+Requires: rubygems
+Requires: rubygem-rack = 1:1.1.0
+Requires: rubygem-passenger
+Requires: rubygem-passenger-native
+Requires: rubygem-passenger-native-libs
+Requires: mod_passenger
+Requires: rubygem-bundler
+BuildArch: noarch
+
+%description site
+Provides the site for li
+
+%post site
+echo -e "RailsBaseURI /app\n<Directory /var/www/html/site/public>\n    Options -MultiViews\n</Directory>" >> /etc/httpd/conf/httpd.conf
 
 %package cartridge-wsgi-3.2.1
 Summary: Provides python-wsgi-3.2.1 support
@@ -185,6 +207,8 @@ rake test_server
 rm -rf $RPM_BUILD_ROOT
 rake DESTDIR="$RPM_BUILD_ROOT" install
 rake DESTDIR="$RPM_BUILD_ROOT" install_php
+rake DESTDIR="$RPM_BUILD_ROOT" install_site
+ln -s $RPM_BUILD_ROOT/%{_localstatedir}/www/html/site/public $RPM_BUILD_ROOT/%{_localstatedir}/www/html/app
 mkdir -p .%{gemdir}
 gem install --install-dir $RPM_BUILD_ROOT/%{gemdir} --local -V --force --rdoc \
      backend/controller/pkg/li-controller-%{version}.gem
@@ -310,7 +334,6 @@ fi
 %{_mandir}/man5/client*
 %config(noreplace) %{_sysconfdir}/libra/client.conf
 
-
 %files devenv
 %defattr(-,root,root,-)
 %{_sysconfdir}/libra/devenv/
@@ -360,6 +383,10 @@ fi
 %{gemdir}/doc/li-controller-%{version}
 %{gemdir}/specifications/li-controller-%{version}.gemspec
 
+%files site
+%defattr(-,root,root,-)
+%{_localstatedir}/www/html/site
+%{_localstatedir}/www/html/app
 
 %files cartridge-php-5.3.2
 %defattr(-,root,root,-)
@@ -368,7 +395,6 @@ fi
 %files cartridge-rack-1.1.0
 %defattr(-,root,root,-)
 %{_libexecdir}/li/cartridges/rack-1.1.0/
-
 
 %files cartridge-wsgi-3.2.1
 %defattr(-,root,root,-)
