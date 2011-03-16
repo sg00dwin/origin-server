@@ -3,7 +3,7 @@
 
 Name: li
 Version: 0.47
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -120,6 +120,8 @@ Requires: php = 5.3.2
 Requires: mod_bw
 Requires: rubygem-builder
 Requires: php-pdo
+Requires: php-gd
+Requires: php-xml
 BuildArch: noarch
 
 %description cartridge-php-5.3.2
@@ -407,6 +409,9 @@ touch %{_localstatedir}/www/html/site/db/production.sqlite3
 %{_libexecdir}/li/cartridges/wsgi-3.2.1/
 
 %changelog
+* Wed Mar 17 2011 Mike McGrath <mmcgrath@redhat.com> 0.47-2
+- added php-gd and php-xml to the php dep list
+
 * Wed Mar 16 2011 Matt Hicks <mhicks@redhat.com> 0.47-1
 - Adding rhc-ip-prep.sh to node files
 - Adding site RPM
