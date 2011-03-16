@@ -1,21 +1,21 @@
 <script>
-	function validate() {
-  	if (document.getElementById('user_password').value != document.getElementById('user_passwordConfirmation').value) {
-		  var errorsDiv = document.getElementById('errors_div');
-			while (errorsDiv.firstChild)
-			  errorsDiv.removeChild(errorsDiv.firstChild);
-		  var p = document.createElement('p');
-			  errorsDiv.appendChild(p);
-			  var s = document.createElement('strong');
-				  p.appendChild(s);
-				  var f = document.createElement('font');
-					  f.color = 'red';
-						s.appendChild(f);
-						f.appendChild(document.createTextNode('Passwords must match'));
-		  return false;
-	  }
-		return true;
+function validate() {
+  if (document.getElementById('user_password').value != document.getElementById('user_passwordConfirmation').value) {
+    var errorsDiv = document.getElementById('errors_div');
+    while (errorsDiv.firstChild)
+      errorsDiv.removeChild(errorsDiv.firstChild);
+    var p = document.createElement('p');
+    errorsDiv.appendChild(p);
+    var s = document.createElement('strong');
+    p.appendChild(s);
+    var f = document.createElement('font');
+    f.color = 'red';
+    s.appendChild(f);
+    f.appendChild(document.createTextNode('Passwords must match'));
+    return false;
   }
+  return true;
+}
 </script>
 <%= content_tag :div, :id => "registration", :class => "prefix_1 grid_12 suffix_1" do -%>
   <%= content_tag :h3, "Register for access to Express" %>
@@ -24,12 +24,12 @@
     <%= image_tag "icon_shadowman.png", :alt => "Red Hat Logo" %>
     <%= link_to "Do you already have a redhat.com / RHN login?", "#" %>
   <% end %>
-	<div id="errors_div">
-	  <% @user.errors.each do |field, msg| %>
-	      <p><strong><font color="red"><%= msg %></font></strong></p>
-	  <% end %>
-	</div>
-  <%= form_for(@user, :id => "user_form") do |f| -%>
+        <div id="errors_div">
+          <% @user.errors.each do |field, msg| %>
+              <p><strong><font color="red"><%= msg %></font></strong></p>
+          <% end %>
+        </div>
+    <%= form_for(@user, :id => "user_form", :url => "/users.html") do |f| -%>
       <%= f.label "emailAddress", "Email" %>
       <%= f.text_field "emailAddress" %>
 

@@ -3,7 +3,7 @@ class HomeController < ApplicationController
   def index
   end
 
-  def registered
+  def getting_started
   end
 
 end
