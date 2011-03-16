@@ -127,7 +127,15 @@ begin
     task :update => [:available] do
       if @existing
           puts "Updating existing instance"
+          `#{SSH} #{@server} 'yum clean all'`
           `#{SSH} #{@server} 'yum update -y'`
+
+          # Make sure the right version is installed
+          rpm = `#{SSH} #{@server} 'rpm -q li'`
+          unless rpm.start_with?(@version)
+            puts "Warning - latest version not available in repo"
+            exit 0
+          end
       else
         if `#{SSH} #{@server} 'test -e li-devenv.sh; echo $?'`.chomp == "1"
           puts "Running firstboot"
