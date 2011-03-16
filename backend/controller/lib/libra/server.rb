@@ -97,7 +97,7 @@ module Libra
       nsupdate_input_template = <<EOF
 "server #{@@config[:resolver]}
 zone #{@@config[:libra_domain]}
-update delete #{host}-#{@@config[:libra_domain]}
+update delete #{host}.#{@@config[:libra_domain]}
 update add #{host}.#{@@config[:libra_domain]} 60 A #{public_ip}
 update add #{host}.#{@@config[:libra_domain]} 60 SSHFP 1 1 #{sshfp}
 send"
