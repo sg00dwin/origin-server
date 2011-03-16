@@ -10,4 +10,3 @@ site/.bundle
 site/log/*
 site/tmp/*
 site/db/development.sqlite3
-site/Gemfile.lock
