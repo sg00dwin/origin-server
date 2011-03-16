@@ -39,6 +39,8 @@ desc "Install site files"
 task :install_site do
     mkdir_p SITE_DIR
     cp_r "site/", SITE_DIR
+    mkdir_p HTTP_CONF_DIR
+    cp "docs/rails.conf", HTTP_CONF_DIR
 end
 
 task :test_client do

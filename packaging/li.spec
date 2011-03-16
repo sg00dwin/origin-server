@@ -164,9 +164,6 @@ BuildArch: noarch
 %description site
 Provides the site for li
 
-%post site
-echo -e "RailsBaseURI /app\n<Directory /var/www/html/site/public>\n    Options -MultiViews\n</Directory>" >> /etc/httpd/conf/httpd.conf
-
 %package cartridge-wsgi-3.2.1
 Summary: Provides python-wsgi-3.2.1 support
 Group: Development/Languages
@@ -207,7 +204,7 @@ rm -rf $RPM_BUILD_ROOT
 rake DESTDIR="$RPM_BUILD_ROOT" install
 rake DESTDIR="$RPM_BUILD_ROOT" install_php
 rake DESTDIR="$RPM_BUILD_ROOT" install_site
-ln -s $RPM_BUILD_ROOT/%{_localstatedir}/www/html/site/public $RPM_BUILD_ROOT/%{_localstatedir}/www/html/app
+ln -s %{_localstatedir}/www/html/site/public $RPM_BUILD_ROOT/%{_localstatedir}/www/html/app
 mkdir -p .%{gemdir}
 gem install --install-dir $RPM_BUILD_ROOT/%{gemdir} --local -V --force --rdoc \
      backend/controller/pkg/li-controller-%{version}.gem
@@ -385,6 +382,12 @@ fi
 %defattr(-,root,root,-)
 %{_localstatedir}/www/html/site
 %{_localstatedir}/www/html/app
+%{_sysconfdir}/httpd/conf.d/rails.conf
+
+%post site
+pushd %{_localstatedir}/www/html/site > /dev/null
+bundle install --deployment
+popd > /dev/null
 
 %files cartridge-php-5.3.2
 %defattr(-,root,root,-)
