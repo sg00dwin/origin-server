@@ -78,17 +78,18 @@ libra_users() {
 TC=/sbin/tc
 
 # The network interface we're planning on limiting bandwidth.
-IF=eth0             # Interface
+tc_if=${tc_if:="eth0"}             # Interface
 
 # total bandwidth = 10240mbit
 # libra bandwidth = 80% ~= 8000mbit
 # max apps = 400
 # bandwidth/app = 200mbit
 # oversubscribe=??
-TOTALLIMIT=8000
-USERSHARE=200
-OVERSUBSCRIBE=1
-USERLIMIT=$(expr $USERSHARE \* $OVERSUBSCRIBE)
+tc_max_libra=${tc_max_libra:=8000}
+tc_user_share=${tc_user_share:=2}
+tc_oversubscribe=${tc_oversubscribe:=10}
+OVERSUBSCRIBE=$(expr $tc_user_share \* $tc_oversubscribe)
+tc_user_limit=${tc_user_limit:=$OVERSUBSCRIBE}
 
 start() {
 
@@ -97,11 +98,11 @@ start() {
 # page.
 
 # The first line creates the root qdisc
-    ${NOOP} $TC qdisc add dev $IF root handle 1: htb
+    ${NOOP} $TC qdisc add dev $tc_if root handle 1: htb r2q 1
 
 # This line creates a container for tagged Libra traffic
     # Since user classes start at 1:1
-    ${NOOP} $TC class add dev $IF parent 1: classid 1:1 htb rate ${TOTALLIMIT}mbit
+    ${NOOP} $TC class add dev $tc_if parent 1: classid 1:1 htb rate ${tc_max_libra}mbit
 
 # for each user
     for USERNAME in `libra_users`
@@ -124,7 +125,7 @@ start() {
 stop() {
 
 # Stop the bandwidth shaping.
-    ${NOOP} $TC qdisc del dev $IF root
+    ${NOOP} $TC qdisc del dev $tc_if root
 
 }
 
@@ -133,7 +134,7 @@ startuser() {
     echo "Starting user $1"
     USERID=`uid $1`
     NETCLASS=`netclass $USERID`
-    ${NOOP} $TC class add dev $IF parent 1:1 classid 1:$NETCLASS htb rate ${USERLIMIT}mbit
+    ${NOOP} $TC class add dev $tc_if parent 1:1 classid 1:$NETCLASS htb rate ${tc_user_share}mbit ceil ${tc_user_limit}mbit
 
 }
 
@@ -143,7 +144,7 @@ stopuser() {
     echo "Stopping user $1"
     USERID=`uid $1`
     NETCLASS=`netclass $USERID`
-    ${NOOP} $TC class del dev $IF parent 1:1 classid 1:$NETCLASS
+    ${NOOP} $TC class del dev $tc_if parent 1:1 classid 1:$NETCLASS
 }
 
 
@@ -161,12 +162,12 @@ status() {
     # Display status of traffic control status.
     if [ -z "$1" ]
     then
-	$TC -s qdisc ls dev $IF
-	$TC -s class ls dev $IF
+	$TC -s qdisc ls dev $tc_if
+	$TC -s class ls dev $tc_if
     else
 	USERID=`uid $1`
 	NETCLASS=`netclass $USERID`
-	$TC -s class show dev $IF classid 1:${NETCLASS}
+	$TC -s class show dev $$tc_if classid 1:${NETCLASS}
     fi
 
 }
@@ -206,7 +207,7 @@ case "$1" in
 
     show|status)
 
-	echo "Bandwidth shaping status for $IF:"
+	echo "Bandwidth shaping status for $tc_if:"
 	status $2
 	echo ""
 	;;
