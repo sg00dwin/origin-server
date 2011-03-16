@@ -50,7 +50,7 @@ unless options.include?(:app_name) or options[:app_name] =~ /^.+$/
     exit 252
 end
 
-unless options.include?(:rhlogin) or options[:rhlogin] =~ /^[a-zA-Z][\w\.-]*[a-zA-Z0-9]@[a-zA-Z0-9][\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]$/
+unless options.include?(:rhlogin) or !(options[:rhlogin] =~ /["\$\^<>\|\+%\/;:,\\\*=~]/)
     puts "Specify rhlogin"
     exit 251
 end

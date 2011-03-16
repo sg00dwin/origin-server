@@ -25,15 +25,12 @@ module RHC
     type_keys
   end
 
+  # Invalid chars (") ($) (^) (<) (>) (|) (+) (%) (/) (;) (:) (,) (\) (*) (=) (~)
   def RHC.check_rhlogin(rhlogin)
-    if rhlogin =~ /([^@]+)@([a-zA-Z0-9\.])+\.([a-zA-Z]{2,3})/
-      if $1 =~ /[^a-zA-Z0-9\.\-\+]/
-        return false
-      else
-        return true
-      end
-    else
+    if (rhlogin =~ /["\$\^<>\|\+%\/;:,\\\*=~]/ || rhlogin.length < 6)
       return false
+    else
+      return true
     end
   end
 
