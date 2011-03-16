@@ -390,6 +390,7 @@ fi
 pushd %{_localstatedir}/www/html/site > /dev/null
 bundle install --deployment
 popd > /dev/null
+mkdir -p %{_localstatedir}/www/html/site/log
 touch %{_localstatedir}/www/html/site/log/production.log
 touch %{_localstatedir}/www/html/site/db/production.sqlite3
 
