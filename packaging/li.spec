@@ -3,7 +3,7 @@
 
 Name: li
 Version: 0.46
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -305,7 +305,7 @@ fi
 %{_bindir}/rhc-ctl-app
 %{_bindir}/rhc-common.rb
 %{_mandir}/man1/rhc-*
-%{_mandir}/man5/libra*
+%{_mandir}/man5/client*
 %config(noreplace) %{_sysconfdir}/libra/client.conf
 
 
@@ -373,6 +373,9 @@ fi
 %{_libexecdir}/li/cartridges/wsgi-3.2.1/
 
 %changelog
+* Mon Mar 15 2011 Mike McGrath <mmcgrath@redhat.com> 0.47-2
+- Fixed manpage name
+
 * Mon Mar 15 2011 Jim Jagielski <jimjag@redhat.com> 0.46-1
 - New version
 
