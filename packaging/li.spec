@@ -2,8 +2,8 @@
 %define gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 
 Name: li
-Version: 0.46
-Release: 4%{?dist}
+Version: 0.47
+Release: 5%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -351,6 +351,7 @@ fi
 %{_sysconfdir}/init.d/libra
 %{_sysconfdir}/init.d/libra-data
 %{_sysconfdir}/init.d/libra-cgroups
+%{_bindir}/rhc-ip-prep.sh
 %{_bindir}/trap-user
 %{_bindir}/rhc-restorecon
 %attr(0751,root,root) %{_localstatedir}/lib/libra
@@ -405,6 +406,9 @@ touch %{_localstatedir}/www/html/site/db/production.sqlite3
 %{_libexecdir}/li/cartridges/wsgi-3.2.1/
 
 %changelog
+* Wed Mar 16 2011 Matt Hicks <mhicks@redhat.com> 0.47-5
+- rhc-ip-prep.sh added to node files
+
 * Wed Mar 16 2011 Mike McGrath <mmcgrath@redhat.com> 0.47-4
 - Added rhc-ip-prep.sh and auto run
 - Added requires for php-pdo
