@@ -74,6 +74,7 @@ task :install_node => [:test_node] do
     mkdir_p LIBRA_DIR
     mkdir_p "#{DEST_DIR}/usr/share/selinux/packages"
     cp "backend/selinux/libra.pp", "#{DEST_DIR}/usr/share/selinux/packages"
+    cp "backend/selinux/rhc-ip-prep.sh", "#{BIN_DIR}"
     mkdir_p HTTP_CONF_DIR
     cp "docs/000000_default.conf", HTTP_CONF_DIR
 end
