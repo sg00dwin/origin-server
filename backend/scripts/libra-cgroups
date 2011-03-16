@@ -60,32 +60,22 @@ function homedir() {
 # ============================================================================
 #  Functions for setting the net class
 # ============================================================================
-#
-# Convert a UID number into an selinux MCS pair
-#
-function mcs() {
-    #       div           mod
-    echo `expr $1 / 1023`:`expr $1 % 1023`
-}
 
 #
 # Convert an MCS pair into a cgroup net class id
 #
-function netid() {
-    echo -n 0x
-    for COMPONENT in `echo $1 | tr : '\n'`
-    do
-	printf "%04x" $COMPONENT
-    done
-    echo
+function classid() {
+    # major: 1, minor UID
+    printf "0x1%04x" $1
 }
 
 function set_net_cls() {
     # USERNAME=$1
     CGPATH=libra/$1
     USERID=`uid $1`
-    USERMCS=`mcs $USERID`
-    USERCLASSID=`netid $USERMCS`
+    USERCLASSID=`classid $USERID`
+    #cgset -r net_cls.classid=$USERCLASSID $CGPATH
+    # it turns out that net_cls doesn't REALLY want an MCS
     cgset -r net_cls.classid=$USERCLASSID $CGPATH
 }
 
@@ -161,6 +151,11 @@ function set_blkio() {
 #
 libra_users() {
     grep 'libra guest' /etc/passwd | cut -d: -f1
+}
+
+valid_user() {
+    # check if the user name exists and is tagged as a libra guest user
+    grep ":libra guest:" /etc/passwd | cut -d: -f1 | grep -e "^$1\$" >/dev/null 2>&1
 }
 
 #

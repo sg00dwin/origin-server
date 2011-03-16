@@ -22,7 +22,7 @@ enabled=1
 gpgcheck=0
 
 [passenger]
-name=Passenger repo for Enterprise Linux 6 - $basearch
+name=Passenger repo for Enterprise Linux 6
 baseurl=http://209.132.178.9/gpxe/trees/passenger
 failovermethod=priority
 enabled=1

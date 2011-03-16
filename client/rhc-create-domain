@@ -23,39 +23,8 @@ require "net/https"
 require "getoptlong"
 require "json"
 require 'parseconfig'
+require 'fileutils'
 require File.dirname($0) + '/rhc-common'
-
-config_path = File.exists?('client.conf') ? 'client.conf' : '/etc/libra/client.conf'
-
-unless File.exists?("#{ENV['HOME']}/.li")
-    file = File.open("#{ENV['HOME']}/.li", 'w')
-    file.close
-end
-
-begin
-    @global_config = ParseConfig.new(config_path)
-    @local_config = ParseConfig.new("#{ENV['HOME']}/.li")
-rescue Errno::EACCES => e
-    puts "Could not open config file: #{e.message}"
-    exit 253
-end
-
-#
-# Check for proxy environment
-#
-if ENV['http_proxy']
-    host, port = ENV['http_proxy'].split(':')
-    @http = Net::HTTP::Proxy(host, port)
-else
-    @http = Net::HTTP
-end
-
-#
-# Check for local var in ~/.li use it, else use /etc/libra/client.conf
-#
-def get_var(var)
-    @local_config.get_value(var) ? @local_config.get_value(var) : @global_config.get_value(var)
-end
 
 #
 # print help
@@ -71,6 +40,7 @@ Bind a registered rhcloud user to a domain in rhcloud.
 
   -n|--namespace   namespace   Libra namespace (alphanumeric) (required)
   -l|--rhlogin     rhlogin     Red Hat login (often email) (required)
+  -p|--password    password    RHLogin password (optional, will prompt)
   -a|--alter                   Alter existing namespace
   -d|--debug                   Print Debug info
   -h|--help                    Show Usage info
@@ -83,6 +53,7 @@ opts = GetoptLong.new(
     ["--debug", "-d", GetoptLong::NO_ARGUMENT],
     ["--help",  "-h", GetoptLong::NO_ARGUMENT],
     ["--rhlogin",  "-l", GetoptLong::REQUIRED_ARGUMENT],
+    ["--password",  "-p", GetoptLong::OPTIONAL_ARGUMENT],
     ["--namespace", "-n", GetoptLong::REQUIRED_ARGUMENT],
     ["--alter", "-a", GetoptLong::NO_ARGUMENT]
 )
@@ -126,15 +97,9 @@ if !opt["rhlogin"] || !opt["namespace"]
     p_usage
 end
 
-if !(opt['alter'])
-  begin
-    print "Password: "
-    system "stty -echo"
-    password = gets.chomp  
-  ensure
-    system "stty echo"
-  end
-  puts "\n"
+password = opt['password'] 
+if !password
+  password = RHC::get_password
 end
 
 #
@@ -142,7 +107,7 @@ end
 #
 
 def add_rhlogin_config(rhlogin, uuid)
-    f = open("#{ENV['HOME']}/.li", 'a')
+    f = open(@local_config_path, 'a')
     unless @local_config.get_value('default_rhlogin')
         f.puts("# Default rhlogin to use if none is specified")
         f.puts("default_rhlogin=#{rhlogin}")
@@ -174,23 +139,15 @@ puts "Contacting https://#{li_server}"
 data = {'namespace' => opt['namespace'],
                 'rhlogin' => opt['rhlogin'],
                 'password' => password,
-                'ssh' => ssh_key}                
+                'ssh' => ssh_key}
 if (opt['alter'])
-  data['alter'] = "--alter"   
+  data['alter'] = "--alter"
 end
+RHC::print_post_data(data, debug)
 json_data = JSON.generate(data)
-puts "DEBUG: Json string: #{json_data}" if debug
 
 url = URI.parse("https://#{li_server}/php/create_customer.php")
-req = @http::Post.new(url.path)
-
-req.set_form_data({'json_data' => json_data})
-http = @http.new(url.host, url.port)
-if url.scheme == "https"
-  http.use_ssl = true
-  http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-end
-response = http.start {|http| http.request(req)}
+response = RHC::http_post(@http, url, json_data)
 
 puts "DEBUG:" if debug
 p response if debug

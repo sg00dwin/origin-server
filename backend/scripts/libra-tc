@@ -1,0 +1,222 @@
+#!/bin/sh
+#
+# libra-tc This shell script initializes libra traffic control for users
+#
+# Author:       Mark lamourine <markllama@redhat.com>
+# Liberally excerpted from an example by Scott Seong
+#   http://www.topwebhosts.org/tools/traffic-control.php
+#
+# chkconfig:    345 7 93
+#
+# description:  Set Libra traffic control limits
+# processname:  NA
+#
+
+# source function library
+. /etc/rc.d/init.d/functions
+
+# import libra cgroups settings
+if [ -f /etc/sysconfig/libra-cgroups ]
+then
+    . /etc/sysconfig/libra-cgroups
+fi
+
+lockfile=/var/lock/subsys/libra-cgroups
+
+if [ -f /etc/libra/node.conf ]
+then
+    . /etc/libra/node.conf
+fi
+
+if [ -f /etc/libra/resource_limits.conf ]
+then
+    . /etc/libra/resource_limits.conf
+fi
+
+# ============================================================================
+#  Functions for setting the net class
+# ============================================================================
+
+# Get a user's UID
+function uid() {
+    grep -e "^$1:" /etc/passwd | cut -d: -f3
+}
+
+function netclass() {
+    # major = 1, minor = UID 
+    printf "%04x" $1
+}
+
+# List the libra guest users
+#
+libra_users() {
+    grep 'libra guest' /etc/passwd | cut -d: -f1
+}
+
+#
+#  tc uses the following units when passed as a parameter.
+#  kbps: Kilobytes per second 
+#  mbps: Megabytes per second
+#  kbit: Kilobits per second
+#  mbit: Megabits per second
+#  bps: Bytes per second 
+#       Amounts of data can be specified in:
+#       kb or k: Kilobytes
+#       mb or m: Megabytes
+#       mbit: Megabits
+#       kbit: Kilobits
+#  To get the byte figure from bits, divide the number by 8 bit
+#
+
+# Create a Libra parent qdesc and limit it to a large percentage of the
+# bandwidth of the interface (leaving some for the OS)
+# 
+# Then create for each user a qdesc and limit it to a small fraction of
+# the total bandwidth
+#
+# Name of the traffic control command.
+TC=/sbin/tc
+
+# The network interface we're planning on limiting bandwidth.
+IF=eth0             # Interface
+
+# total bandwidth = 10240mbit
+# libra bandwidth = 80% ~= 8000mbit
+# max apps = 400
+# bandwidth/app = 200mbit
+# oversubscribe=??
+TOTALLIMIT=8000
+USERSHARE=200
+OVERSUBSCRIBE=1
+USERLIMIT=$(expr $USERSHARE \* $OVERSUBSCRIBE)
+
+start() {
+
+# We'll use Hierarchical Token Bucket (HTB) to shape bandwidth.
+# For detailed configuration options, please consult Linux man
+# page.
+
+# The first line creates the root qdisc
+    ${NOOP} $TC qdisc add dev $IF root handle 1: htb
+
+# This line creates a container for tagged Libra traffic
+    # Since user classes start at 1:1
+    ${NOOP} $TC class add dev $IF parent 1: classid 1:1 htb rate ${TOTALLIMIT}mbit
+
+# for each user
+    for USERNAME in `libra_users`
+    do
+	startuser $USERNAME
+    done
+
+    # 
+
+# The first line creates the root qdisc, and the next two lines
+# create two child qdisc that are to be used to shape download 
+# and upload bandwidth.
+#
+# The 4th and 5th line creates the filter to match the interface.
+# The 'dst' IP address is used to limit download speed, and the 
+# 'src' IP address is used to limit upload speed.
+
+}
+
+stop() {
+
+# Stop the bandwidth shaping.
+    ${NOOP} $TC qdisc del dev $IF root
+
+}
+
+startuser() {
+    # USERNAME=$1
+    echo "Starting user $1"
+    USERID=`uid $1`
+    NETCLASS=`netclass $USERID`
+    ${NOOP} $TC class add dev $IF parent 1:1 classid 1:$NETCLASS htb rate ${USERLIMIT}mbit
+
+}
+
+stopuser() {
+    # USERNAME=$1
+
+    echo "Stopping user $1"
+    USERID=`uid $1`
+    NETCLASS=`netclass $USERID`
+    ${NOOP} $TC class del dev $IF parent 1:1 classid 1:$NETCLASS
+}
+
+
+restart() {
+
+    # Self-explanatory.
+    stop
+    sleep 1
+    start
+
+}
+
+status() {
+    # USERNAME=$1
+    # Display status of traffic control status.
+    if [ -z "$1" ]
+    then
+	$TC -s qdisc ls dev $IF
+	$TC -s class ls dev $IF
+    else
+	USERID=`uid $1`
+	NETCLASS=`netclass $USERID`
+	$TC -s class show dev $IF classid 1:${NETCLASS}
+    fi
+
+}
+
+case "$1" in
+
+    start)
+
+	echo -n "Starting bandwidth shaping: "
+	start
+	echo "done"
+	;;
+
+    stop)
+
+	echo -n "Stopping bandwidth shaping: "
+	stop
+	echo "done"
+	;;
+
+    startuser)
+	echo -n "Starting bandwidth shaping for user $2"
+	startuser $2
+	;;
+
+    stopuser)
+	echo -n "Stopping bandwidth shaping for user $2"
+	stopuser $2
+	;;
+
+    restart)
+
+	echo -n "Restarting bandwidth shaping: "
+	restart
+	echo "done"
+	;;
+
+    show|status)
+
+	echo "Bandwidth shaping status for $IF:"
+	status $2
+	echo ""
+	;;
+    
+    *)
+
+	pwd=$(pwd)
+	echo "Usage: $0 {start|stop|restart|status [username]|startuser <username>|stopuser <username>}"
+	;;
+
+esac
+
+exit 0

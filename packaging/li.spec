@@ -2,8 +2,8 @@
 %define gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 
 Name: li
-Version: 0.44
-Release: 1%{?dist}
+Version: 0.46
+Release: 3%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -15,6 +15,7 @@ BuildArch: noarch
 
 BuildRequires: rubygem-rake
 BuildRequires: rubygem-rspec
+Requires: ruby >= 1.8.7
 Requires: rubygem-parseconfig
 Requires: rubygem-json
 Requires: git
@@ -41,6 +42,8 @@ Requires: li-node
 Requires: li-server
 Requires: li-php
 Requires: li-cartridge-php-5.3.2
+Requires: li-cartridge-wsgi-3.2.1
+Requires: li-cartridge-rack-1.1.0
 Requires: puppet
 BuildArch: noarch
 
@@ -62,6 +65,8 @@ Requires: li-node
 Requires: li-server
 Requires: li-php
 Requires: li-cartridge-php-5.3.2
+Requires: li-cartridge-wsgi-3.2.1
+Requires: li-cartridge-rack-1.1.0
 Requires: puppet
 BuildArch: noarch
 
@@ -77,10 +82,11 @@ Requires: qpid-cpp-client
 Requires: ruby-qmf
 Requires: rubygem-parseconfig
 Requires: libcgroup
-Requires: mod_bw
 Requires: git
 Requires(post): /usr/sbin/semodule
+Requires(post): /usr/sbin/semanage
 Requires(postun): /usr/sbin/semodule
+Requires(postun): /usr/sbin/semanage
 BuildArch: noarch
 
 %description node
@@ -129,6 +135,7 @@ Requires: rubygem-passenger
 Requires: rubygem-passenger-native
 Requires: rubygem-passenger-native-libs
 Requires: mod_passenger
+Requires: rubygem-bundler
 Requires: rubygem-sqlite3-ruby
 Requires: ruby-sqlite3
 Requires: ruby-mysql
@@ -145,7 +152,7 @@ Requires: li-node
 Requires: httpd
 Requires: mod_bw
 Requires: python
-Requires: mod_wsgi = 3.2.1
+Requires: mod_wsgi = 3.2
 BuildArch: noarch
 
 %description cartridge-wsgi-3.2.1
@@ -267,7 +274,12 @@ crontab -u root /etc/libra/qe-env/crontab
 echo "/usr/bin/trap-user" >> /etc/shells
 /sbin/restorecon /etc/init.d/libra || :
 /sbin/restorecon /etc/init.d/mcollective || :
+# mount all desired cgroups under a single root
+perl -p -i -e 's:/[^/;]+;:;:; /blkio|cpuset|devices/ && ($_ = "#$_")' /etc/cgconfig.conf
+service cgconfig restart
 
+# Ensure the default users have a more restricted shell then normal.
+semanage login -m -s guest_u __default__
 
 %preun node
 if [ "$1" -eq "0" ]; then
@@ -287,14 +299,13 @@ fi
 
 %files
 %defattr(-,root,root,-)
-%{_bindir}/rhc-capacity
 %{_bindir}/rhc-create-app
 %{_bindir}/rhc-create-domain
 %{_bindir}/rhc-user-info
 %{_bindir}/rhc-ctl-app
 %{_bindir}/rhc-common.rb
 %{_mandir}/man1/rhc-*
-%{_mandir}/man5/libra*
+%{_mandir}/man5/client*
 %config(noreplace) %{_sysconfdir}/libra/client.conf
 
 
@@ -362,6 +373,21 @@ fi
 %{_libexecdir}/li/cartridges/wsgi-3.2.1/
 
 %changelog
+* Mon Mar 15 2011 Mike McGrath <mmcgrath@redhat.com> 0.47-3
+- Removed rhc-capacity from li tools
+
+* Mon Mar 15 2011 Mike McGrath <mmcgrath@redhat.com> 0.47-2
+- Fixed manpage name
+
+* Mon Mar 15 2011 Jim Jagielski <jimjag@redhat.com> 0.46-1
+- New version
+
+* Tue Mar 15 2011 Mike McGrath <mmcgrath@redhat.com> 0.45-2
+- Added semanage command for guest users
+
+* Mon Mar 14 2011 Mike McGrath <mmcgrath@redhat.com> 0.45-1
+- New version
+
 * Mon Mar 14 2011 Mike McGrath <mmcgrath@redhat.com> 0.44-1
 - Upstream released new version
 

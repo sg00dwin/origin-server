@@ -22,7 +22,7 @@ limits_nproc=100
 This should output something like:
 {"rhlogin":"<rhlogin>","uuid":"69559fc92d224996bcc38ba19f10ca87"}
 Remember this "uuid" as <uuid>.
-8) mc-rhc-cartridge-do -v -a configure -n li -l <rhlogin> --cartridge php-5.3.2
+8) mc-rhc-cartridge-do -v -a configure -n li -l <rhlogin> --cartridge php-5.3.2 -p <password>
 9) You can now browse to http://li.<userid>.rhcloud.com/  (should say forbidden)
 10) cd ~<uuid>
 11) chcon -t ssh_home_t .ssh -R

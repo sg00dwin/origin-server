@@ -24,34 +24,8 @@ require "getoptlong"
 require 'resolv'
 require 'json'
 require 'parseconfig'
-require 'fileutils' 
+require 'fileutils'
 require File.dirname($0) + '/rhc-common'
-
-config_path = File.exists?('client.conf') ? 'client.conf' : '/etc/libra/client.conf'
-
-unless File.exists?("#{ENV['HOME']}/.li")
-    file = File.open("#{ENV['HOME']}/.li", 'w')
-    file.close
-end
-
-begin
-    @global_config = ParseConfig.new(config_path)
-    @local_config = ParseConfig.new("#{ENV['HOME']}/.li")
-rescue Errno::EACCES => e
-    puts "Could not open config file: #{e.message}"
-    exit 253
-end
-
-#
-# Check for proxy environment
-#
-if ENV['http_proxy']
-    host, port = ENV['http_proxy'].split(':')
-    @http = Net::HTTP::Proxy(host, port)
-else
-    @http = Net::HTTP
-end
-
 
 #
 # Check if host exists
@@ -61,14 +35,6 @@ def hostexist?(host)
     resp = dns.getresources(host, Resolv::DNS::Resource::IN::A)
     return resp.any?
 end
-
-#
-# Check for local var in ~/.li use it, else use /etc/libra/client.conf
-#
-def get_var(var)
-    @local_config.get_value(var) ? @local_config.get_value(var) : @global_config.get_value(var)
-end
-
 
 def p_usage
     rhlogin = @local_config.get_value('default_rhlogin') ? "Default: #{@local_config.get_value('default_rhlogin')}" : "(required)"
@@ -81,9 +47,9 @@ Create a new app libra project.
   -a|--app   application     Application name  (alphanumeric) (required)
   -t|--type  type            Type of app to create (#{type_keys}) (required)
   -l|--rhlogin  rhlogin      RHCloud rhlogin  (alphanumeric) (#{rhlogin})
+  -p|--password  password    RHLogin password  (alphanumeric) (optional, will prompt)
   -r|--repo  path            Git Repo path (defaults to ./$app_name)
   -n|--nogit                 Only create remote space, don't pull it locally
-  -b|--bypass                Bypass warnings
   -d|--debug                 Print Debug info
   -h|--help                  Show Usage info
 
@@ -94,9 +60,9 @@ end
 opts = GetoptLong.new(
     ["--debug", "-d", GetoptLong::NO_ARGUMENT],
     ["--help",  "-h", GetoptLong::NO_ARGUMENT],
-    ["--bypass","-b", GetoptLong::NO_ARGUMENT],
     ["--nogit", "-n", GetoptLong::NO_ARGUMENT],
-    ["--rhlogin",  "-l", GetoptLong::REQUIRED_ARGUMENT],
+    ["--rhlogin",  "-l", GetoptLong::OPTIONAL_ARGUMENT],
+    ["--password",  "-p", GetoptLong::OPTIONAL_ARGUMENT],
     ["--app",   "-a", GetoptLong::REQUIRED_ARGUMENT],
     ["--repo",  "-r", GetoptLong::OPTIONAL_ARGUMENT],
     ["--type",  "-t", GetoptLong::REQUIRED_ARGUMENT]
@@ -134,13 +100,18 @@ if !RHC::check_app(opt['app'])
     p_usage
 end
 
-@type = RHC::get_type(opt['type'])
-if !@type  
+type = RHC::get_type(opt['type'])
+if !type
     p_usage
 end
 
 if !opt["rhlogin"] || !opt["app"] || !opt["type"]
     p_usage
+end
+
+password = opt['password']
+if !password
+  password = RHC::get_password
 end
 
 #
@@ -155,54 +126,15 @@ end
 
 opt["repo"] = opt["app"] unless opt["repo"]
 
-#
-# Send Warning
-#
-
-if !opt["bypass"]
-    puts <<WARNING
-NOTICE: This is pre-alpha destructionware.  It is not tested, it
-might break at any time.  While we'll generally leave it running, there is no
-attempt at data protection or downtime minimization.  This is just a proof
-of concept, do not store anything important here.
-
-Thar be dragons this way.
-
-Rules/Terms:
-1) Don't put anything important here.
-2) Know we won't be protecting data in any way and may arbitrarly destroy it
-3) The service will go up and down as we are developing it, which may be a lot
-4) We'll be altering your ~/.ssh/config file a bit, should be harmless.
-5) Bugs should be sent to the libra team
-6) This entire service may vanish as this is just a proof of concept.
-
-WARNING
-
-    print "Do you agree to the rules and terms? (y/n): "
-    agree = gets.chomp
-    if agree != 'y'
-        puts "Sorry this won't work for you, keep tabs for future updates"
-        exit 5
-    end
-end
 puts ""
-puts "Remember: this is pre-alpha destructionware.  Let #libra know of any bugs you find"
+puts "Please support the beta - let #libra know of any bugs you find"
 puts ""
-
-#
-# Create local git repo
-#
-
-def cleanup_and_exit(repo, code)
-    FileUtils.rm_rf repo
-    exit code
-end
 
 #
 # Confirm local git repo exists
 #
 
-if File.exists?(opt['repo']) 
+if File.exists?(opt['repo'])
     puts "We will not overwrite an existing git repo. Please remove:"
     puts "  #{File.expand_path(opt['repo'])}"
     puts "Then try again."
@@ -210,9 +142,11 @@ if File.exists?(opt['repo'])
     exit 255
 else
     begin
-        FileUtils.mkdir_p(opt['repo'])
+        # Create the parent directory for the git repo
+        @git_parent = File.expand_path(opt['repo'] + "/../")
+        FileUtils.mkdir_p(@git_parent)
     rescue Errno::EACCES
-        puts "Could not write to #{File.expand_path(opt['repo'])}"
+        puts "Could not write to #{@git_parent}"
         puts "Reason: " + $!
         puts
         puts "Please re-run from a directory you have write access to or specify -r with a"
@@ -244,20 +178,14 @@ json_data = JSON.generate(
                {:cartridge => "#{opt['type']}",
                 :action => 'configure',
                 :app_name => "#{opt['app']}",
-                :rhlogin => "#{opt['rhlogin']}"})
+                :rhlogin => "#{opt['rhlogin']}",
+                :password => password
+                })
 
 puts "Contacting server https://#{li_server}"
 
 url = URI.parse("https://#{li_server}/php/cartridge_do.php")
-req = @http::Post.new(url.path)
-
-req.set_form_data({'json_data' => json_data})
-http = @http.new(url.host, url.port)
-if url.scheme == "https"
-  http.use_ssl = true
-  http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-end
-response = http.start {|http| http.request(req)}
+response = RHC::http_post(@http, url, json_data)
 
 json_resp = JSON.parse(response.body);
 if response.code == '200'
@@ -273,8 +201,8 @@ else
     puts "HTTP response from server is #{response.body}"
     json_resp.each do |k,v|
         puts "#{k.to_s}: #{v.to_s}"
-    end    
-    cleanup_and_exit(opt['repo'], 254)
+    end
+    exit 254
 end
 
 #
@@ -284,7 +212,7 @@ end
 puts "Checking ~/.ssh/config"
 
 
-user_info = RHC::get_user_info(li_server, opt['rhlogin'], @http, debug)
+user_info = RHC::get_user_info(li_server, opt['rhlogin'], password, @http, debug)
 
 my_url = "#{opt['app']}.#{user_info['user_info']['namespace']}.#{libra_domain}"
 
@@ -342,7 +270,7 @@ SSH
         file = File.open(ssh_config, 'w')
         file.close
         retry
-    end   
+    end
 end
 
 File.chmod(0700, ssh_config_d)
@@ -407,11 +335,11 @@ while sleep_time < 65
     attempt+=1
     puts "  Attempt # #{attempt}"
     page = ''
-    if (@type == :php)
+    if (type == :php)
       page = 'health_check.php'
-    elsif (@type == :rack)
+    elsif (type == :rack)
       page = 'health'
-    elsif (@type == :wsgi)
+    elsif (type == :wsgi)
       page = 'health'
     end
     url = URI.parse("http://#{my_url}/#{page}")

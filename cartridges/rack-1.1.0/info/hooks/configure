@@ -246,7 +246,7 @@ if whoami | grep -q root
 then
     echo 1>&2
     echo "Please don't run script as root, try:" 1>&2
-    echo "runuser --shell /bin/sh $uuid $0" 1>&2
+    echo "runuser --shell /bin/sh $uuid $APP_DIR/${application}_ctl.sh" 1>&2
     echo 2>&1
     exit 15
 fi

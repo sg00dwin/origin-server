@@ -8,8 +8,11 @@ rhc-create-user \- creates a new Libra user
 .B rhc-create-user [-l
 .I rhlogin
 .B ]
-.B [-e
-.I email
+.B [-p
+.I password
+.B ]
+.B [-n
+.I namespace
 .B ] [-d] [-h]
 .SH DESCRIPTION
 .B rhc-create-domain
@@ -33,6 +36,8 @@ to control created applications.
 Desired namespace to create.  Alphanumeric
 .IP "-l|--rhlogin login"
 Red Hat login (often email) to use
+.IP "-p|--password password"
+RHLogin password (often email)
 .IP "-a|--alter"
 Alter an existing user (change email or ssh key)
 .IP -d|--debug
@@ -40,16 +45,22 @@ Enable debugging / verbose output
 .IP -h|--help
 Display help menu
 .SH FILES
-.I /etc/libra.conf
+.I /etc/libra/client.conf
 .RS
 The system wide configuration file. See
-.BR libra.conf (5)
+.BR client.conf (5)
 for further details
 .RE
-.I ~/.libra
+.I ./client.conf
+.RS
+Local configuration file. See
+.BR client.conf (5)
+for further details.
+.RE
+.I ~/.li/client.conf
 .RS
 Per user configuration file. See
-.BR libra.conf (5)
+.BR client.conf (5)
 for further details.
 .RE
 .SH BUGS

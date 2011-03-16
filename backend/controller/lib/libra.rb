@@ -8,14 +8,19 @@ module Libra
   #
   # Executes
   #
-  def self.execute(framework, action, app_name, rhlogin)
+  def self.execute(framework, action, app_name, rhlogin, password)
     # Lookup the user
     user = User.find(rhlogin)
+    
+    # Validate registration
+    throw :invalid_user_registration unless User.valid_registration?(rhlogin, password)
 
     # App exists check
     if action == 'configure'
       throw :app_already_exists if user.app_info(app_name)
       Server.validate_app_limit(user)
+      # Create S3 app entry on configure (one of the first things)
+      user.create_app(app_name, framework)
     else
       if action == 'deconfigure'
         puts "app not found, attempting to remove anyway..." unless user.app_info(app_name)
@@ -37,7 +42,6 @@ module Libra
     server.create_user(user)
 
     # Configure the app on the server using a framework cartridge
-    #server.execute(framework, action, app_name, user)
     result = server.execute_direct(framework, action, "#{app_name} #{user.namespace} #{user.uuid}")[0]
     unless result.results[:data][:exitcode] == 0
         puts result.results[:data][:output]
@@ -45,13 +49,12 @@ module Libra
     end
 
     # update DNS
-    #public_ip = Helper.rpc_get_fact_direct('public_ip', server.name)
     public_ip = server.get_fact_direct('public_ip')
     sshfp = server.get_fact_direct('sshfp').split[-1]
     Server.nsupdate_add(app_name, user.namespace, public_ip, sshfp) if action == 'configure'
     Server.nsupdate_del(app_name, user.namespace, public_ip) if action == 'deconfigure'
-    
-    user.create_app(app_name, framework) if action == 'configure'
+
+    # Remove S3 app on deconfigure (one of the last things
     user.delete_app(app_name) if action == 'deconfigure'
   end
 
