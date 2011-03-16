@@ -79,8 +79,6 @@ begin
       # Look up any tagged instances
       instances = conn.describe_instances.map do |i|
         if (i[:aws_state] == "running") and (i[:tags]["Name"] =~ BUILD_REGEX)
-          puts "Found running instance"
-          pp i
           i[:aws_instance_id]
         end
       end.compact
@@ -94,7 +92,6 @@ begin
         puts "Using existing instance #{@instance}"
         @update = true
         @existing = true
-        exit 255
       end
 
       # Make sure the name matches the current version
