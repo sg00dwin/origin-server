@@ -15,6 +15,7 @@ BuildArch: noarch
 
 BuildRequires: rubygem-rake
 BuildRequires: rubygem-rspec
+Requires: ruby >= 1.8.7
 Requires: rubygem-parseconfig
 Requires: rubygem-json
 Requires: git
