@@ -93,7 +93,7 @@ module Libra
     # Add a DNS entry for new app
     #
     def self.nsupdate_add(application, namespace, public_ip, sshfp)
-      host = "#{application}.#{namespace}"
+      host = "#{application}-#{namespace}"
       nsupdate_input_template = <<EOF
 "server #{@@config[:resolver]}
 zone #{@@config[:libra_domain]}
@@ -110,7 +110,7 @@ EOF
     # Remove a DNS entry for a deleted app
     #
     def self.nsupdate_del(application, namespace, public_ip)
-      host = "#{application}.#{namespace}"
+      host = "#{application}-#{namespace}"
       nsupdate_input_template = <<EOF
 "server #{@@config[:resolver]}
 zone #{@@config[:libra_domain]}

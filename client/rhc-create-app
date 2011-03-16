@@ -175,10 +175,10 @@ end
 puts "Creating remote application space: " + opt['app']
 
 json_data = JSON.generate(
-               {:cartridge => "#{opt['type']}",
+               {:cartridge => opt['type'],
                 :action => 'configure',
-                :app_name => "#{opt['app']}",
-                :rhlogin => "#{opt['rhlogin']}",
+                :app_name => opt['app'],
+                :rhlogin => opt['rhlogin'],
                 :password => password
                 })
 
@@ -206,15 +206,33 @@ else
 end
 
 #
+# At this point, we need to register a handler to guarantee app
+# cleanup on any exceptions or calls to exit
+#
+at_exit do
+    unless $!.nil? || $!.is_a?(SystemExit) && $!.success?
+        json_data = JSON.generate(
+                   {:cartridge => opt['type'],
+                    :action => 'deconfigure',
+                    :app_name => opt['app'],
+                    :rhlogin => opt['rhlogin'],
+                    :password => password
+                    })
+        puts "Cleaning up application"
+        url = URI.parse("https://#{li_server}/php/cartridge_do.php")
+        RHC::http_post(@http, url, json_data)
+    end
+end
+
+#
 # Check / add new host to ~/.ssh/config
 #
 
 puts "Checking ~/.ssh/config"
 
-
 user_info = RHC::get_user_info(li_server, opt['rhlogin'], password, @http, debug)
 
-my_url = "#{opt['app']}.#{user_info['user_info']['namespace']}.#{libra_domain}"
+my_url = "#{opt['app']}-#{user_info['user_info']['namespace']}.#{libra_domain}"
 
 found = false
 
@@ -303,7 +321,7 @@ attempt = 0
 # git_url = "ssh://#{uuid}@#{opt['app']}.#{user_info['user_info']['namespace']}.#{libra_domain}/#{libra_dir}/#{uuid}/git/#{opt['app']}.git/"
 
 # Shorter path (easier to read)
-git_url = "ssh://#{uuid}@#{opt['app']}.#{user_info['user_info']['namespace']}.#{libra_domain}/~/git/#{opt['app']}.git/"
+git_url = "ssh://#{uuid}@#{opt['app']}-#{user_info['user_info']['namespace']}.#{libra_domain}/~/git/#{opt['app']}.git/"
 
 unless opt['nogit']
     puts "Pulling new repo down"
@@ -326,6 +344,18 @@ you clone the repo yourself.  See the git url below for more information.
 
 IMPORTANT
 end
+
+#
+# At this point, we need to register a handler to guarantee git
+# repo cleanup on any exceptions or calls to exit
+#
+at_exit do
+    unless $!.nil? || $!.is_a?(SystemExit) && $!.success?
+        puts "Cleaning up git repo"
+        FileUtils.rm_rf opt['repo']
+    end
+end
+
 #
 # Test several times, doubling sleep time between attempts.
 #

@@ -25,6 +25,12 @@ failovermethod=priority
 enabled=1
 gpgcheck=1
 gpgkey=http://209.132.178.9/gpxe/trees/li/li-signing.asc
+[passenger]
+name=Passenger repo for Enterprise Linux 6
+baseurl=http://209.132.178.9/gpxe/trees/passenger
+failovermethod=priority
+enabled=1
+gpgcheck=0
 EOF
 
 yum -y install li-devenv
