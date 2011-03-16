@@ -16,6 +16,7 @@ LIBRA_DIR = ENV["LIBRADIR"] || "#{DEST_DIR}/var/lib/libra"
 CONF_DIR = ENV["CONFDIR"] || "#{DEST_DIR}/etc/libra"
 MAN_DIR = ENV["MANDIR"] || "#{DEST_DIR}/usr/share/man/"
 HTML_DIR = ENV["PHPDIR"] || "#{DEST_DIR}/var/www/html/"
+SITE_DIR = ENV["SITEDIR"] || "#{DEST_DIR}/var/www/html/"
 HTTP_CONF_DIR = ENV["HTTPCONFDIR"] || "#{DEST_DIR}/etc/httpd/conf.d/"
 
 NODE_FILES = ["backend/facter/libra.rb",
@@ -32,6 +33,12 @@ desc "Install php files"
 task :install_php do
     mkdir_p HTML_DIR
     cp_r "php/", HTML_DIR
+end
+
+desc "Install site files"
+task :install_site do
+    mkdir_p SITE_DIR
+    cp_r "site/", SITE_DIR
 end
 
 task :test_client do
