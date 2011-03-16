@@ -3,7 +3,7 @@
 
 Name: li
 Version: 0.47
-Release: 5%{?dist}
+Release: 1%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -406,17 +406,18 @@ touch %{_localstatedir}/www/html/site/db/production.sqlite3
 %{_libexecdir}/li/cartridges/wsgi-3.2.1/
 
 %changelog
-* Wed Mar 16 2011 Matt Hicks <mhicks@redhat.com> 0.47-5
-- rhc-ip-prep.sh added to node files
+* Wed Mar 16 2011 Matt Hicks <mhicks@redhat.com> 0.47-1
+- Adding rhc-ip-prep.sh to node files
+- Adding site RPM
 
-* Wed Mar 16 2011 Mike McGrath <mmcgrath@redhat.com> 0.47-4
+* Wed Mar 16 2011 Mike McGrath <mmcgrath@redhat.com> 0.46-4
 - Added rhc-ip-prep.sh and auto run
 - Added requires for php-pdo
 
-* Tue Mar 15 2011 Mike McGrath <mmcgrath@redhat.com> 0.47-3
+* Tue Mar 15 2011 Mike McGrath <mmcgrath@redhat.com> 0.46-3
 - Removed rhc-capacity from li tools
 
-* Tue Mar 15 2011 Mike McGrath <mmcgrath@redhat.com> 0.47-2
+* Tue Mar 15 2011 Mike McGrath <mmcgrath@redhat.com> 0.46-2
 - Fixed manpage name
 
 * Tue Mar 15 2011 Jim Jagielski <jimjag@redhat.com> 0.46-1
