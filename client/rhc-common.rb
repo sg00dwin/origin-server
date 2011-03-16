@@ -25,9 +25,13 @@ module RHC
     type_keys
   end
 
-  # Invalid chars (") ($) (^) (<) (>) (|) (+) (%) (/) (;) (:) (,) (\) (*) (=) (~)
+  # Invalid chars (") ($) (^) (<) (>) (|) (%) (/) (;) (:) (,) (\) (*) (=) (~)
   def RHC.check_rhlogin(rhlogin)
-    if (rhlogin =~ /["\$\^<>\|\+%\/;:,\\\*=~]/ || rhlogin.length < 6)
+    if rhlogin.length < 6
+      puts "RHLogin must be at least 6 characters"
+      return false
+    elsif rhlogin =~ /["\$\^<>\|%\/;:,\\\*=~]/
+      puts "RHLogin may not contain any of these characters: " 
       return false
     else
       return true
@@ -46,7 +50,7 @@ module RHC
     if field
       if field =~ /[^0-9a-zA-Z]/
         puts "#{type} contains non-alphanumeric characters!"
-          return false
+        return false
       end
     else
       puts "#{type} is required"

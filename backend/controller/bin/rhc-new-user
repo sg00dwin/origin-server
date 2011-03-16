@@ -38,7 +38,7 @@ unless options.include?(:namespace) or options[:namespace] =~ /^[a-zA-Z0-9]+$/
     exit 254
 end
 
-unless options.include?(:rhlogin) or !(options[:rhlogin] =~ /["\$\^<>\|\+%\/;:,\\\*=~]/)
+unless options.include?(:rhlogin) or !(options[:rhlogin] =~ /["\$\^<>\|%\/;:,\\\*=~]/)
     puts "The rhlogin is invalid."
     exit 253
 end
