@@ -1,4 +1,4 @@
-policy_module(libra,1.0.4)
+policy_module(libra,1.0.5)
 
 ########################################
 #
@@ -32,6 +32,7 @@ libra_service_domain(libra_min_t)
 #
 corenet_tcp_connect_mysqld_port(libra_t)
 corenet_tcp_connect_http_port(libra_t)
+corenet_tcp_connect_http_cache_port(libra_t)
 corenet_tcp_connect_amqp_port(libra_t)
 corenet_tcp_connect_generic_port(libra_t)
 corenet_udp_bind_generic_port(libra_t)
