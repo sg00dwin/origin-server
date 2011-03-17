@@ -133,7 +133,7 @@ if opt['apps']
         puts "  Framework: #{val['framework']}"
         puts "   Creation: #{val['creation_time']}"
         puts "    Git URL: ssh://#{user_info['user_info']['uuid']}@#{key}.#{user_info['user_info']['namespace']}.#{libra_domain}/~/git/#{key}.git/"
-        puts " Public URL: http://#{key}.#{user_info['user_info']['namespace']}.#{libra_domain}/"
+        puts " Public URL: http://#{key}-#{user_info['user_info']['namespace']}.#{libra_domain}/"
         puts ""
     end
 
