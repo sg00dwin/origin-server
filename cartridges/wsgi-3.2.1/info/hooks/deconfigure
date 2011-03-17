@@ -100,7 +100,6 @@ destroy_repo $application $uuid
 
 runuser --shell /bin/sh "$uuid" $APP_DIR/${application}_ctl.sh stop || error "Failed to stop ${application}" 140
 
-IP=$(awk -F, "/$uuid,$application,/"'{ print $1 }' /etc/libra/ip_db | head -n1)
 range_one=$(echo $IP | awk -F\. '{ print $3 }')
 range_two=$(echo $IP | awk -F\. '{ print $4 }')
 
@@ -114,13 +113,6 @@ while [ -f ${APP_DIR}/run/httpd.pid ] && [ $i -lt 30 ]
 done
 #rm -rf "$APP_DIR"
 runcon -l s0-s0:c0.c1023 rm -rf "$APP_DIR"
-
-
-#
-# remove localhost IP
-# 
-
-sed -i "/,${uuid},${application},httpd,8080/d" /etc/libra/ip_db
 
 #
 # Remove virtualhost definition for apache
