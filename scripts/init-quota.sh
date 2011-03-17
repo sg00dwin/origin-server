@@ -29,7 +29,8 @@ function get_mountpoint() {
 }
 
 function get_mount_options() {
-    mount | grep $1 | sed -e 's/^.*(// ; s/).*$// '
+    #mount | grep $1 | sed -e 's/^.*(// ; s/).*$// '
+    cat /etc/fstab | tr -s ' ' | grep $1 | awk '{print $4;}'
 }
 
 LIBRA_FILESYSTEM=`get_filesystem $libra_dir`
@@ -40,8 +41,8 @@ QUOTA_FILE=${LIBRA_MOUNTPOINT}/aquota.user
 #
 # Add quota options to libra filesystem mount
 #
-function_update_fstab() {
-    # LIBRA_FILESYSTEM=$1
+function update_fstab() {
+    # LIBRA_MOUNTPOINT=$1
     CURRENT_OPTIONS=`get_mount_options $1`
     QUOTA_OPTIONS=usrjquota=aquota.user,jqfmt=vfsv0
     NEW_OPTIONS=${CURRENT_OPTIONS},${QUOTA_OPTIONS}
@@ -67,11 +68,12 @@ function init_quota_db() {
 #
 # MAIN
 #
-update_fstab $LIBRA_FILESYSTEM
-
-init_quota_db $LIBRA_MOUNTPOINT
+update_fstab $LIBRA_MOUNTPOINT
 
 # remount to enable
 mount -o remount $LIBRA_FILESYSTEM
+
+init_quota_db $LIBRA_MOUNTPOINT
+
 # enable quotas
 quotaon -a
