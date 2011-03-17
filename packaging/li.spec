@@ -285,21 +285,24 @@ crontab -u root /etc/libra/qe-env/crontab
 
 
 %post node
+# mount all desired cgroups under a single root
+perl -p -i -e 's:/cgroup/[^\s]+;:/cgroup;:; /blkio|cpuset|devices/ && ($_ = "#$_")' /etc/cgconfig.conf
+/sbin/restorecon /etc/cgconfig.conf || :
+/sbin/service cgconfig restart >/dev/null 2>&1 || :
 /sbin/chkconfig --add libra || :
 /sbin/chkconfig --add libra-data || :
 /sbin/chkconfig --add libra-cgroups || :
+/sbin/chkconfig --add libra-tc || :
 /sbin/service mcollective restart > /dev/null 2>&1 || :
 /usr/sbin/semodule -i %_datadir/selinux/packages/libra.pp
 /sbin/restorecon /etc/init.d/libra || :
 /usr/bin/rhc-restorecon || :
 /sbin/service libra-cgroups start > /dev/null 2>&1 || :
+/sbin/service libra-tc start > /dev/null 2>&1 || :
 /sbin/service libra-data start > /dev/null 2>&1 || :
 echo "/usr/bin/trap-user" >> /etc/shells
 /sbin/restorecon /etc/init.d/libra || :
 /sbin/restorecon /etc/init.d/mcollective || :
-# mount all desired cgroups under a single root
-perl -p -i -e 's:/[^/;]+;:;:; /blkio|cpuset|devices/ && ($_ = "#$_")' /etc/cgconfig.conf
-service cgconfig restart
 [ $(/usr/sbin/semanage node -l | /bin/grep -c 255.255.255.128) -lt 1000 ] && /usr/bin/rhc-ip-prep.sh || :
 
 # Ensure the default users have a more restricted shell then normal.
@@ -307,7 +310,9 @@ semanage login -m -s guest_u __default__ || :
 
 %preun node
 if [ "$1" -eq "0" ]; then
+    /sbin/service libra-tc stop > /dev/null 2>&1 || :
     /sbin/service libra-cgroups stop > /dev/null 2>&1 || :
+    /sbin/chkconfig --del libra-tc || :
     /sbin/chkconfig --del libra-cgroups || :
     /sbin/chkconfig --del libra-data || :
     /sbin/chkconfig --del libra || :
@@ -353,6 +358,7 @@ fi
 %{_sysconfdir}/init.d/libra
 %{_sysconfdir}/init.d/libra-data
 %{_sysconfdir}/init.d/libra-cgroups
+%{_sysconfdir}/init.d/libra-tc
 %{_bindir}/rhc-ip-prep.sh
 %{_bindir}/trap-user
 %{_bindir}/rhc-restorecon

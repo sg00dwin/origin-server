@@ -176,17 +176,17 @@ begin
       images = []
       conn.describe_images_by_owner.each do |i|
         if i[:aws_name] and i[:aws_name] =~ BUILD_REGEX
-          images << i[:aws_name]
+          images << i[:aws_id]
         end
       end
 
       # Keep the 5 most recent images
-      images.sort!.pop(5)
+      images.sort!.pop(10)
 
       # Prune the rest
-      images.each do |name|
-        puts "Removing AMI #{name}"
-        conn.deregister_image(name)
+      images.each do |i|
+        puts "Removing AMI #{i}"
+        conn.deregister_image(i)
       end
     end
 

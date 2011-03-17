@@ -77,6 +77,7 @@ task :install_node => [:test_node] do
     cp "backend/scripts/libra", INITRD_DIR
     cp "backend/scripts/libra-data", INITRD_DIR
     cp "backend/scripts/libra-cgroups", INITRD_DIR
+    cp "backend/scripts/libra-tc", INITRD_DIR
     mkdir_p BIN_DIR
     cp "backend/scripts/trap-user", BIN_DIR
     cp "backend/scripts/rhc-restorecon", BIN_DIR
