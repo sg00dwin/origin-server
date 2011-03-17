@@ -31,7 +31,7 @@ module RHC
       puts 'RHLogin must be at least 6 characters'
       return false
     elsif rhlogin =~ /["\$\^<>\|%\/;:,\\\*=~]/
-      puts 'RHLogin may not contain any of these characters: (\") ($) (^) (<) (>) (|) (%) (/) (;) (:) (,) (\) (*) (=) (~)' 
+      puts 'RHLogin may not contain any of these characters: (\") ($) (^) (<) (>) (|) (%) (/) (;) (:) (,) (\) (*) (=) (~)'
       return false
     else
       return true
@@ -89,14 +89,14 @@ module RHC
     end
   end
 
-  def RHC.get_user_info(li_server, rhlogin, password, net_http, debug)
+  def RHC.get_user_info(libra_server, rhlogin, password, net_http, debug)
 
-    puts "Contacting https://#{li_server}"
+    puts "Contacting https://#{libra_server}"
     data = {'rhlogin' => rhlogin, 'password' => password}
     print_post_data(data, debug)
     json_data = JSON.generate(data)
 
-    url = URI.parse("https://#{li_server}/php/user_info.php")
+    url = URI.parse("https://#{libra_server}/php/user_info.php")
     response = http_post(net_http, url, json_data)
 
     puts "DEBUG:" if debug
@@ -145,21 +145,21 @@ module RHC
 end
 
 #
-# Config paths... /etc/libra/client.conf -> ./client.conf -> ~/.li/client.conf
+# Config paths... /etc/libra/libra.conf -> ./libra.conf -> ~/.li/libra.conf
 #
-@config_path = File.exists?('client.conf') ? 'client.conf' : '/etc/libra/client.conf'
+@config_path = File.exists?('libra.conf') ? 'libra.conf' : '/etc/libra/libra.conf'
 if File.exists?("#{ENV['HOME']}/.li")
     if !File.directory?("#{ENV['HOME']}/.li")
         print "Moving old-style config file..."
         FileUtils.mv "#{ENV['HOME']}/.li", "#{ENV['HOME']}/.li.bak"
         FileUtils.mkdir_p "#{ENV['HOME']}/.li"
-        FileUtils.mv "#{ENV['HOME']}/.li.bak", "#{ENV['HOME']}/.li/client.conf"
+        FileUtils.mv "#{ENV['HOME']}/.li.bak", "#{ENV['HOME']}/.li/libra.conf"
         puts " Done."
     end
 else
     FileUtils.mkdir_p "#{ENV['HOME']}/.li"
 end
-@local_config_path = "#{ENV['HOME']}/.li/client.conf"
+@local_config_path = "#{ENV['HOME']}/.li/libra.conf"
 
 FileUtils.touch @local_config_path
 
@@ -182,7 +182,7 @@ else
 end
 
 #
-# Check for local var in ~/.li/config.conf use it, else use /etc/libra/client.conf
+# Check for local var in ~/.li/libra.conf use it, else use /etc/libra/libra.conf
 #
 def get_var(var)
     @local_config.get_value(var) ? @local_config.get_value(var) : @global_config.get_value(var)

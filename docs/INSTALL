@@ -122,8 +122,8 @@ Host li.<userid>.rhcloud.com
    User <user uuid>
    IdentityFile ~/.ssh/libra_id_rsa
 2) From your local git li repo run "git push ssh://<user uuid>@li.<userid>.rhcloud.com/var/lib/libra/<user uuid>/git/li.git master" and you should be able to see the source pushed to http://li.<userid>.rhcloud.com/
-3) From the root of the li repo run cp ./client/client.conf ~/.li
-4) edit ~./li and change "li_server = 'lidemo.mcgrath.rhcloud.com'" to "li_server = 'li.<userid>.rhcloud.com'"
+3) From the root of the li repo run cp ./client/libra.conf ~/.li
+4) edit ~./li and change "libra_server = 'li.beta.rhcloud.com'" to "libra_server = 'li.<userid>.rhcloud.com'"
 
 
 That's it

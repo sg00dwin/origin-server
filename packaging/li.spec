@@ -250,7 +250,7 @@ setenforce 0
 crontab -u root /etc/libra/devenv/crontab
 
 # Libra
-/bin/cp -f /etc/libra/devenv/client.conf /etc/libra/devenv/node.conf /etc/libra/devenv/controller.conf /etc/libra
+/bin/cp -f /etc/libra/devenv/libra.conf /etc/libra/devenv/node.conf /etc/libra/devenv/controller.conf /etc/libra
 
 
 %post qe-env
@@ -281,7 +281,7 @@ setenforce 0
 crontab -u root /etc/libra/qe-env/crontab
 
 # Libra
-/bin/cp -f /etc/libra/qe-env/client.conf /etc/libra/qe-env/node.conf /etc/libra/qe-env/controller.conf /etc/libra
+/bin/cp -f /etc/libra/qe-env/libra.conf /etc/libra/qe-env/node.conf /etc/libra/qe-env/controller.conf /etc/libra
 
 
 %post node
@@ -329,8 +329,8 @@ fi
 %{_bindir}/rhc-ctl-app
 %{_bindir}/rhc-common.rb
 %{_mandir}/man1/rhc-*
-%{_mandir}/man5/client*
-%config(noreplace) %{_sysconfdir}/libra/client.conf
+%{_mandir}/man5/libra*
+%config(noreplace) %{_sysconfdir}/libra/libra.conf
 
 %files devenv
 %defattr(-,root,root,-)

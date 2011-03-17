@@ -245,9 +245,9 @@ begin
         namespace = "jenkins" + Array.new(5, '').collect{chars[rand(chars.size)]}.join
 
         puts "Setting up the config file"
-        File.open("client.conf", "w") do |file|
+        File.open("libra.conf", "w") do |file|
           file.puts "libra_domain='rhcloud.com'"
-          file.puts "li_server='#{dns}'"
+          file.puts "libra_server='#{dns}'"
         end
 
         puts "Creating a new user..."

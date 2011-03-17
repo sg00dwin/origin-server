@@ -59,7 +59,7 @@ opts = GetoptLong.new(
 )
 
 # Pull in configs from files
-li_server = get_var('li_server')
+libra_server = get_var('libra_server')
 debug = get_var('debug') == 'false' ? nil : get_var('debug')
 
 
@@ -97,7 +97,7 @@ if !opt["rhlogin"] || !opt["namespace"]
     p_usage
 end
 
-password = opt['password'] 
+password = opt['password']
 if !password
   password = RHC::get_password
 end
@@ -135,7 +135,7 @@ end
 
 ssh_key = File.open(libra_kpfile).gets.chomp.split(' ')[1]
 
-puts "Contacting https://#{li_server}"
+puts "Contacting https://#{libra_server}"
 data = {'namespace' => opt['namespace'],
                 'rhlogin' => opt['rhlogin'],
                 'password' => password,
@@ -146,7 +146,7 @@ end
 RHC::print_post_data(data, debug)
 json_data = JSON.generate(data)
 
-url = URI.parse("https://#{li_server}/php/create_customer.php")
+url = URI.parse("https://#{libra_server}/php/create_customer.php")
 response = RHC::http_post(@http, url, json_data)
 
 puts "DEBUG:" if debug

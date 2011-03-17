@@ -71,7 +71,7 @@ opts = GetoptLong.new(
 # Pull in configs from files
 libra_domain = get_var('libra_domain')
 libra_dir = get_var('libra_dir')
-li_server = get_var('li_server')
+libra_server = get_var('libra_server')
 debug = get_var('debug') == 'false' ? nil : get_var('debug')
 
 ssh_config = "#{ENV['HOME']}/.ssh/config"
@@ -182,9 +182,9 @@ json_data = JSON.generate(
                 :password => password
                 })
 
-puts "Contacting server https://#{li_server}"
+puts "Contacting server https://#{libra_server}"
 
-url = URI.parse("https://#{li_server}/php/cartridge_do.php")
+url = URI.parse("https://#{libra_server}/php/cartridge_do.php")
 response = RHC::http_post(@http, url, json_data)
 
 json_resp = JSON.parse(response.body);
@@ -219,7 +219,7 @@ at_exit do
                     :password => password
                     })
         puts "Cleaning up application"
-        url = URI.parse("https://#{li_server}/php/cartridge_do.php")
+        url = URI.parse("https://#{libra_server}/php/cartridge_do.php")
         RHC::http_post(@http, url, json_data)
     end
 end
@@ -230,7 +230,7 @@ end
 
 puts "Checking ~/.ssh/config"
 
-user_info = RHC::get_user_info(li_server, opt['rhlogin'], password, @http, debug)
+user_info = RHC::get_user_info(libra_server, opt['rhlogin'], password, @http, debug)
 
 my_url = "#{opt['app']}-#{user_info['user_info']['namespace']}.#{libra_domain}"
 

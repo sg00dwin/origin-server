@@ -69,7 +69,7 @@ opts = GetoptLong.new(
 # Pull in configs from files
 libra_domain = get_var('libra_domain')
 libra_dir = get_var('libra_dir')
-li_server = get_var('li_server')
+libra_server = get_var('libra_server')
 debug = get_var('debug') == 'false' ? nil : get_var('debug')
 ssh_config = "#{ENV['HOME']}/.ssh/config"
 ssh_config_d = "#{ENV['HOME']}/.ssh/"
@@ -106,12 +106,12 @@ if !opt['rhlogin'] || !opt['app'] || !opt['command']
     p_usage
 end
 
-password = opt['password'] 
+password = opt['password']
 if !password
   password = RHC::get_password
 end
 
-user_info = RHC::get_user_info(li_server, opt['rhlogin'], password, @http, debug)
+user_info = RHC::get_user_info(libra_server, opt['rhlogin'], password, @http, debug)
 app = user_info['app_info'][opt['app']]
 if app
   framework = app['framework']
@@ -156,9 +156,9 @@ json_data = JSON.generate(
                 :password => password
                 })
 
-puts "Contacting server https://#{li_server}"
+puts "Contacting server https://#{libra_server}"
 
-url = URI.parse("https://#{li_server}/php/cartridge_do.php")
+url = URI.parse("https://#{libra_server}/php/cartridge_do.php")
 response = RHC::http_post(@http, url, json_data)
 
 json_resp = JSON.parse(response.body);

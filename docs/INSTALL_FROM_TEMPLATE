@@ -41,8 +41,8 @@ Host li.<namespace>.rhcloud.com
   git add .
   git commit -a -m "Adding broker app"
   git push
-3) From the root of the li repo run cp ./client/client.conf ~/.li
-4) edit ~/.li and change "li_server = 'lidemo.mcgrath.rhcloud.com'" to "li_server = 'li.<namespace>.rhcloud.com'"
+3) From the root of the li repo run cp ./client/libra.conf ~/.li
+4) edit ~/.li and change "libra_server = 'li.beta.rhcloud.com'" to "libra_server = 'li.<namespace>.rhcloud.com'"
 5) add a line <rhlogin>=<uuid>
 6) rhc-create-app -l <rhlogin> -a <appname> -r <app folder> -t php-5.3.2 -b
 7) You can now browse to http://<appname>.<namespace>.rhcloud.com/

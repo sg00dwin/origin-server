@@ -59,7 +59,7 @@ task :install_client => [:test_client] do
         man_section = file_name.to_s.split('').last
         cp file_name, "#{MAN_DIR}/man#{man_section}/"
     }
-    cp "client/client.conf", "#{CONF_DIR}" unless File.exists? "#{CONF_DIR}/client.conf"
+    cp "client/libra.conf", "#{CONF_DIR}" unless File.exists? "#{CONF_DIR}/libra.conf"
 end
 
 task :test_node do

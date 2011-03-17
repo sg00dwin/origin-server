@@ -13,8 +13,8 @@ Add Li Repo at /etc/yum.repos.d/li.repo.  Example in li/docs/li/.repo
 
 yum install mcollective-common mcollective-client li rubygems rubygem-parseconfig rubygem-json rubygem-stomp rubygem-right_aws rubygem-aws rubygem-rake rubygem-rspec rubygem-cucumber
 
-cp /etc/client.conf ~/.li
-edit ~.li and point li_server your broker system
+cp /etc/libra/libra.conf ~/.li
+edit ~.li and point libra_server your broker system
 mkdir /etc/mcollective
 cp li/backend/controller/test/etc/client.cfg /etc/mcollective/client.cfg
 

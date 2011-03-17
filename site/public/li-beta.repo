@@ -1,6 +1,6 @@
 [li-beta]
-name=Li client repo for Enterprise Linux 6
-baseurl=http://li.rhbeta.demo.rhcloud.com/rpms/
+name=Libra Beta Repo for Enterprise Linux 6
+baseurl=http://li.beta.rhcloud.com/rpms/
 failovermethod=priority
 skip_if_unavailable=1
 enabled=1

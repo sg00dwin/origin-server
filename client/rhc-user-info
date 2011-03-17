@@ -69,7 +69,7 @@ opts = GetoptLong.new(
 )
 
 # Pull in configs from files
-li_server = get_var('li_server')
+libra_server = get_var('libra_server')
 debug = get_var('debug') == 'false' ? nil : get_var('debug')
 libra_domain = get_var('libra_domain')
 
@@ -95,13 +95,13 @@ if !RHC::check_rhlogin(opt['rhlogin'])
     p_usage
 end
 
-password = opt['password'] 
+password = opt['password']
 if !password
   password = RHC::get_password
 end
 
 opt['apps'] = true if not opt['info'] and not opt['apps']
-user_info = RHC::get_user_info(li_server, opt['rhlogin'], password, @http, debug)
+user_info = RHC::get_user_info(libra_server, opt['rhlogin'], password, @http, debug)
 
 if user_info['user_info']['uuid'] != @local_config.get_value(opt["rhlogin"])
     puts
