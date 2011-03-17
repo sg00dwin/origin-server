@@ -5,6 +5,7 @@
 #
 #
 # Get libra_dir configured value
+# TODO: MAL 20110317 restore when libra_dir is in it's own filesystem
 if [ -f /etc/libra/node.conf ]
 then
     . /etc/libra/node.conf
@@ -17,7 +18,12 @@ then
 fi
 
 # default if no one gives you a good answer
-libra_dir=${libra_dir:=/var/lib/libra}
+# this applies until we get a separate partition for Libra
+# because you can't apply quotas to bind mounts
+libra_dir=${libra_dir:=/}
+
+# remove trailing / as they mess up the searches
+libra_dir=`echo $libra_dir | tr -s / | perl -p -e 's:(.)/$:$1 :'`
 
 #function get_filesystem() {
 #    # $1=libra_dir
@@ -25,17 +31,17 @@ libra_dir=${libra_dir:=/var/lib/libra}
 #}
 
 function get_mountpoint() {
-    df $1 | tail -1 | tr -s ' ' | cut -d' ' -f 6
+    df $1 | tail -1 | tr -s ' ' | cut -d' ' -f 6 | sort -u
 }
 
 function get_mount_options() {
-    #mount | grep $1 | sed -e 's/^.*(// ; s/).*$// '
-    cat /etc/fstab | tr -s ' ' | grep $1 | awk '{print $4;}'
+    mount | grep " $1 " | sed -e 's/^.*(// ; s/).*$// ' | sort -u
+    #cat /etc/fstab | tr -s ' ' | grep $1 | awk '{print $4;}'
 }
 
-LIBRA_FILESYSTEM=`get_filesystem $libra_dir`
+#LIBRA_FILESYSTEM=`get_filesystem $libra_dir`
 LIBRA_MOUNTPOINT=`get_mountpoint $libra_dir`
-QUOTA_FILE=${LIBRA_MOUNTPOINT}/aquota.user
+QUOTA_FILE=$( echo ${LIBRA_MOUNTPOINT}/aquota.user | tr -s /)
 
 
 #
@@ -57,11 +63,11 @@ function update_fstab() {
 function init_quota_db() {
     # LIBRA_MOUNTPOINT=$1
     # create the quota DB file on the filesystem
-    QUOTA_FILE=$1/aquota.user
+    QUOTA_FILE=$(echo $1/aquota.user | tr -s /)
     touch $QUOTA_FILE
     chmod 600 $QUOTA_FILE
     # initialize quota db on the filesystem
-    quotacheck -cmu $1
+    quotacheck -cmuf $1
 }
 
 
@@ -71,7 +77,12 @@ function init_quota_db() {
 update_fstab $LIBRA_MOUNTPOINT
 
 # remount to enable
-mount -o remount $LIBRA_MOUNTPOINT
+CURRENT_OPTIONS=`get_mount_options $LIBRA_MOUNTPOINT`
+QUOTA_OPTIONS=usrjquota=aquota.user,jqfmt=vfsv0
+# check to avoid doing it again
+NEW_OPTIONS=${CURRENT_OPTIONS},${QUOTA_OPTIONS}
+
+mount -o remount,${NEW_OPTIONS} $LIBRA_MOUNTPOINT
 
 init_quota_db $LIBRA_MOUNTPOINT
 
