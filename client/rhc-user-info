@@ -104,12 +104,14 @@ opt['apps'] = true if not opt['info'] and not opt['apps']
 user_info = RHC::get_user_info(libra_server, opt['rhlogin'], password, @http, debug)
 
 if user_info['user_info']['uuid'] != @local_config.get_value(opt["rhlogin"])
-    puts
-    puts "WARNING!  The UUID in your ~/.li file is either missing or incorrect."
-    puts "Please ensure the following line exists in ~/.li"
+    puts "!! WARNING !! WARNING !! WARNING !! WARNING !!"
+    puts 
+    puts "The UUID in your ~/.li/libra.conf file is either missing or incorrect."
+    puts "Please ensure the below line exists in ~/.li/libra.conf"
     puts
     puts "#{opt['rhlogin']}=#{user_info['user_info']['uuid']}"
     puts
+    puts "!! WARNING !! WARNING !! WARNING !! WARNING !!"
 end
 
 if opt['info']
