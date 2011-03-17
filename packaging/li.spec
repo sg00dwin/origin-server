@@ -234,6 +234,9 @@ chkconfig mcollective on
 /bin/cp -f /etc/libra/devenv/iptables /etc/sysconfig/iptables
 /etc/init.d/iptables restart
 
+# enable development environment
+/bin/sed -i 's/#RailsEnv/RailsEnv/g' /etc/httpd/conf.d/rails.conf
+
 # httpd
 /bin/cp -f /etc/libra/devenv/NameVirtualHost.conf /etc/httpd/conf.d/
 /etc/init.d/httpd restart
