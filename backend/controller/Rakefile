@@ -33,43 +33,6 @@ end
 # Add the 'pkg' directory to the clean task
 CLEAN.include("pkg")
 
-#
-# Start development dependencies - if the dependencies
-# are not installed, these tasks won't be listed
-#
-begin
-    require "cucumber/rake/task"
-
-    # Add an install method that
-    desc 'Install a clean version of the new li-controller gem'
-    task :install => [:clean, :package] do
-      # Force uninstallation of the gem - including binaries
-      sh "sudo gem uninstall -ax li-controller"
-
-      # Install the gem
-      sh "sudo gem install pkg/li-controller-#{spec.version}.gem"
-    end
-
-    desc "Run all cucumber unit tests"
-    Cucumber::Rake::Task.new(:cuc_unit) do |t|
-      t.cucumber_opts = "--tags @unit"
-    end
-
-    desc "Run all cucumber integration tests"
-    Cucumber::Rake::Task.new(:cuc_int) do |t|
-      t.cucumber_opts = "--tags ~@sprint1"
-    end
-
-    desc "Run the cucumber sprint tests"
-    task :cuc_sprint do |t, args|
-      Cucumber::Rake::Task.new(:cuc_sprint) do |t|
-        t.cucumber_opts = "--tags @sprint"
-      end
-    end
-rescue LoadError
-    # Ignore error - this allows rake to be run from
-    # non-development servers
-end
 
 # Set the default to :package
 task :default => :package

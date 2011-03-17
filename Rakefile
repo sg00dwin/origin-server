@@ -4,6 +4,7 @@
 
 require 'rbconfig'
 require 'build/ami'
+require 'build/test'
 
 DEST_DIR = ENV["DESTDIR"] || "/"
 BIN_DIR = ENV["BINDIR"] || "#{DEST_DIR}/usr/bin"
@@ -186,20 +187,6 @@ end
 desc "Increment release number and build Libra RPMs"
 task :release => [:bump_release, :rpm]
 
-desc "Run the Libra unit tests"
-task :test_unit do
-    cd C_DIR
-    sh "rake", "cuc_unit"
-    cd "../.."
-end
-
-desc "Run the Libra integration tests"
-task :test_int do
-    cd C_DIR
-    sh "rake", "cuc_int"
-    cd "../.."
-end
-
 desc "Create a brew build based on current info"
 task :brew => [:version, :buildroot, :srpm] do
     srpm = Dir.glob("#{@buildroot}/SRPMS/li-#{@version}*.rpm")[0]
@@ -228,11 +215,4 @@ task :mash do
         exit 222
     end
     sh "/usr/bin/mash -o /tmp/li -c /etc/mash/li-mash.conf li"
-end
-
-desc "Run the Libra sprint tests"
-task :test_sprint do
-    cd C_DIR
-    sh "rake", "cuc_sprint"
-    cd "../.."
 end

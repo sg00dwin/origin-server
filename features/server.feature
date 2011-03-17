@@ -6,7 +6,7 @@ Feature: Setup a new application
     Then I should get a result
 
   Scenario:
-    Given a newly created user
-    And an available server
+    Given an available server
+    And a newly created user
     When I create a 'test' app for 'php-5.3.2'
     Then the user should have the app on one server

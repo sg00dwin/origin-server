@@ -20,19 +20,12 @@ When /^I find an available server$/ do
 end
 
 When /^I create a '(\w+)' app for '(.+)'$/ do |app, framework|
-  # Create the user on the server
-  @server.create_user(@user)
-
-  # Create the app on the server
   @app = app
-  @server.execute(framework, 'configure', app, @user)
-
-  # Create the S3 cache entry
-  @user.create_app(app, framework)
+  Libra.execute(framework, 'configure', @app, @user.rhlogin, 'redhat')
 end
 
 Then /^the user should have the app on one server$/ do
-  host = "#{@app}.#{@user.username}.rhcloud.com"
+  host = "#{@app}-#{@user.namespace}.rhcloud.com"
   host_ip = Resolv::DNS.new.getresource(host, Resolv::DNS::Resource::IN::A).address.to_s
   host_ip.should_not be_nil
 end

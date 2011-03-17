@@ -1,4 +1,4 @@
-$LOAD_PATH << File.expand_path('../../../lib', __FILE__)
+$LOAD_PATH << File.expand_path('../../../backend/controller/lib', __FILE__)
 require 'mcollective'
 require 'libra'
 require 'timeout'
@@ -11,11 +11,13 @@ World(MCollective::RPC)
 #
 # Define global variables
 #
+$curr_dir = File.expand_path(File.dirname(__FILE__))
+$mc_client_cfg = File.expand_path("#{$curr_dir}/../misc/mcollective-client.cfg")
+$pub_key = File.expand_path("#{$curr_dir}/../misc/id_rsa.pub")
 $domain = "rhcloud.com"
 $temp = "/tmp/rhc"
-$email = "noone@example.com"
 $create_app_script = "/usr/bin/rhc-create-app"
-$create_user_script = "/usr/bin/rhc-create-domain"
+$create_domain_script = "/usr/bin/rhc-create-domain"
 $client_config = "/etc/libra/client.conf"
 
 # Create the temporary space
@@ -23,33 +25,58 @@ FileUtils.mkdir_p $temp
 
 # Remove all temporary data
 FileUtils.rm_f Dir.glob(File.join($temp, "*"))
-FileUtils.rm_f File.join(File.expand_path("~"), "/.ssh/known_hosts")
 
 module Libra
   module Test
     module User
       #
-      # Obtain a unique username from S3.
+      # Obtain a unique namespace from S3.
       #
-      #   sprint = The number of the sprint which, if supplied,
-      #     will be added as a prefix to the username to result
-      #     in something like "sprint1username"
-      #   reserved_usernames = A list of reserved names that may
+      #   reserved_namespace = A list of reserved namespaces that may
       #     not be in the global store
       #
-      def get_unique_username(sprint=nil, reserved_usernames=[])
+      def get_unique_namespace(reserved_namespaces=[])
         result=nil
 
         loop do
           # Generate a random username
           chars = ("1".."9").to_a
-          prefix = sprint ? "sprint#{sprint}" : "test"
-          username = prefix + Array.new(5, '').collect{chars[rand(chars.size)]}.join
-          $logger.info("attempting = #{username}")
+          namespace = "sprint-ns-" + Array.new(5, '').collect{chars[rand(chars.size)]}.join
+          $logger.info("li - checking availability of namespace = #{namespace}")
+
+          records = Libra::Server.get_dns_txt(namespace)
+
+          $logger.info("li - namespace lookup result = #{records}")
+
+          unless !records.empty? or reserved_namespaces.index(namespace)
+            result = namespace
+            break
+          end
+        end
+
+        $logger.info("li - returning namespace = #{result}")
+
+        return result
+      end
+
+      #
+      # Obtain a unique username from S3.
+      #
+      #   reserved_usernames = A list of reserved names that may
+      #     not be in the global store
+      #
+      def get_unique_username(reserved_usernames=[])
+        result=nil
+
+        loop do
+          # Generate a random username
+          chars = ("1".."9").to_a
+          username = "sprint" + Array.new(5, '').collect{chars[rand(chars.size)]}.join
+          $logger.info("li - checking availability of username = #{username}")
 
           user = Libra::User.find(username)
 
-          $logger.info("looked up user = #{user}")
+          $logger.info("li - username lookup result = #{user}")
 
           unless user or reserved_usernames.index(username)
             result = username
@@ -57,7 +84,7 @@ module Libra
           end
         end
 
-        $logger.info("returning username = #{result}")
+        $logger.info("li - returning username = #{result}")
 
         return result
       end
@@ -66,16 +93,16 @@ module Libra
       # Create a user with a unique username and a testing
       # email and ssh key
       #
-      def create_unique_test_user(sprint=nil)
-        @user = create_test_user(get_unique_username(sprint))
+      def create_unique_test_user
+        @user = create_test_user(get_unique_username)
       end
 
       #
       # Create a user with the supplied username and a testing
       # email and ssh key
       #
-      def create_test_user(username)
-        Libra::User.create(@test_email, @test_ssh_key, username)
+      def create_test_user(rhlogin)
+        Libra::User.create(rhlogin, $test_ssh_key, get_unique_namespace)
       end
     end
 
@@ -125,22 +152,18 @@ module Libra
   end
 end
 
-#
-# Cucumber test setup
-#
-Before do
-  # Setup the MCollective options
-  Libra.c[:rpc_opts][:config] = "test/etc/client.cfg"
-
-  # Setup test user info
-  @test_ssh_key = ssh_key = File.open("test/id_rsa.pub").gets.chomp.split(' ')[1]
-  @test_email = "libra-test@redhat.com"
-
-  # Default the maximum number of processes
-  @max_processes = 10
-end
-
 # Global, one time setup
 $logger = Logger.new(File.join($temp, "cucumber.log"))
 $logger.level = Logger::DEBUG
 Libra.c[:logger] = $logger
+Libra.c[:bypass_user_reg] = true
+#Libra.c[:rpc_opts][:verbose] = true
+
+# Setup the MCollective options
+Libra.c[:rpc_opts][:config] = $mc_client_cfg
+
+# Setup test user info
+$test_ssh_key = ssh_key = File.open($pub_key).gets.chomp.split(' ')[1]
+
+# Default the maximum number of processes
+@max_processes = 2

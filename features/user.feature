@@ -1,8 +1,8 @@
 Feature: Setup a new application
 
   Scenario:
-    Given an existing 'mhicks' user
-    When I create a 'mhicks' user
+    Given an existing 'mhicks@redhat.com' user
+    When I create a 'mhicks@redhat.com' user
     Then I should get an exception
 
   Scenario:

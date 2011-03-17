@@ -3,7 +3,7 @@ include Libra
 include Libra::Test::User
 include Libra::Test::Util
 
-Given /^an existing '(\w+)' user$/ do |rhlogin|
+Given /^an existing '(.*)' user$/ do |rhlogin|
   # Make sure the given user exists
   unless User.find(rhlogin)
     create_test_user(rhlogin)
@@ -19,7 +19,7 @@ When /^I modify and update the user$/ do
   @user.update
 end
 
-When /^I create a '(\w+)' user$/ do |rhlogin|
+When /^I create a '(.*)' user$/ do |rhlogin|
   lambda {
     create_test_user(rhlogin)
   }.should throw_symbol(:user_exists)
@@ -45,5 +45,5 @@ end
 
 Then /^the changes are saved$/ do
   @user_saved = User.find(@user.rhlogin)
-  @user_saved.email.should == "blah"
+  @user_saved.namespace.should == "blah"
 end

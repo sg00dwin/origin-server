@@ -88,7 +88,7 @@ update add #{host}.#{@@config[:libra_domain]} 60 SSHFP 1 1 #{sshfp}
 send"
 EOF
 
-      execute_nsupdate(nsupdate_input_template)      
+      execute_nsupdate(nsupdate_input_template)
     end
 
     #
@@ -104,12 +104,12 @@ send"
 EOF
 
       execute_nsupdate(nsupdate_input_template)
-    end   
-  
+    end
+
     #
     # Add a DNS txt entry for new namespace
     #
-    def self.nsupdate_add_txt(namespace)      
+    def self.nsupdate_add_txt(namespace)
       nsupdate_input_template = <<EOF
 "server #{@@config[:resolver]}
 zone #{@@config[:libra_domain]}
@@ -120,14 +120,14 @@ EOF
 
       execute_nsupdate(nsupdate_input_template)
     end
-    
+
     def self.execute_nsupdate(nsupdate_input_template)
       nsupdate_string = eval nsupdate_input_template
       puts "DEBUG: server.rb:self.execute_nsupdate nsupdate_input_template: #{nsupdate_input_template}" if Libra.c[:rpc_opts][:verbose]
-    
+
       IO.popen("/usr/bin/nsupdate -L0 -v -y '#{@@config[:secret]}'", 'w'){ |io| io.puts nsupdate_string }
     end
-  
+
     #
     # Get a DNS txt entry
     #
@@ -164,7 +164,7 @@ EOF
         rpc_client = Helper.rpc_exec_direct('libra')
         rpc_client.custom_request('cartridge_do', mc_args, {'identity' => self.name})
     end
-    
+
     #
     # Execute the cartridge and action on this server
     #
@@ -182,7 +182,7 @@ EOF
           raise CartridgeException, output if return_code != 0
         end
       end
-    end    
+    end
 
     #
     # Execute an action on many nodes based by fact
@@ -218,7 +218,7 @@ EOF
       @repos
     end
 
-    # 
+    #
     # Returns the requested fact
     #
     def get_fact_direct(fact)

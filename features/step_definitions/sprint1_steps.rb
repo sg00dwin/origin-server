@@ -5,7 +5,7 @@ include Libra::Test::Util
 
 Given /^the libra client tools$/ do
   File.exists?($create_app_script).should be_true
-  File.exists?($create_user_script).should be_true
+  File.exists?($create_domain_script).should be_true
   File.exists?($client_config).should be_true
 end
 
@@ -30,7 +30,7 @@ When /^(\d+) applications of type '(.+)' are created per user$/ do |num_apps, fr
     # Get a unique username to create in the forked process
     # and add it to the list of reserved usernames to avoid
     # race conditions of duplicate users
-    username = get_unique_username(1, @usernames)
+    username = get_unique_username(@usernames)
     @usernames[index] = username
 
     # Create the users in subprocesses
@@ -39,7 +39,7 @@ When /^(\d+) applications of type '(.+)' are created per user$/ do |num_apps, fr
 
     processes << fork do
       # Create the user and the apps
-      run("#{$create_user_script} -n #{username} -l #{$email} -p fakepw")
+      run("#{$create_domain_script} -n #{username} -l #{$email} -p fakepw")
       @apps.each do |app|
         run("#{$create_app_script} -l #{$email} -a #{app} -r #{$temp}/#{username}_#{app}_repo -t php-5.3.2 -b -d -p fakepw")
       end
@@ -123,7 +123,7 @@ Then /^they should be able to be changed$/ do
     host = "#{user_app[1]}.#{user_app[0]}.#{$domain}"
     begin
       req = Net::HTTP::Get.new('/index.php')
-      $logger.info("host= #{host}")    
+      $logger.info("host= #{host}")
       res = Net::HTTP.start(host, 80) do |http|
         #http.read_timeout = 5
         http.request(req)
@@ -132,7 +132,7 @@ Then /^they should be able to be changed$/ do
       file = File.open("index.php", "rb")
       contents = file.read
       #validate the change made it up
-      res.body.should == contents  
+      res.body.should == contents
     rescue Net::HTTPError
       code = -1
     end
