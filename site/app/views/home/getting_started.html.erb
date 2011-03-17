@@ -1,0 +1,55 @@
+<div id="page" class="container_24">
+
+    <div class="clear"></div>
+
+    <div id="registered" class="prefix_1 grid_22 suffix_1">
+        <h3>Let's get Coding!</h3>
+        <h4>Prerequisites</h4>
+        <p><strong>Note:</strong> These directions are for EL6 and F14.  The
+        rpm should work on other distos too but has only been tested on EL6
+        and F14</p>
+        <h4>Step 1</h4>
+        <p>Download the express repo file <a href="/li-beta.repo">li-beta.repo</a> and place it in your /etc/yum.repos.d/ directory</p>
+        <h4>Step 2</h4>
+        <p>Install the client tools: <pre>sudo -E yum install li</pre></p>
+        <h4>Step 3</h4>
+        <p>Next replace your /etc/libra/client.conf:
+<pre>
+# Default Libra domain
+libra_domain='demo.rhcloud.com'
+
+# Remote installation dir
+libra_dir='/var/lib/libra'
+
+# Remote API server
+li_server = 'li.rhbeta.demo.rhcloud.com'
+
+# Logging
+debug = false
+</pre></p>
+        <h4>Step 4</h4>
+        <p>Next create a DNS domain you like:
+            <pre>$ rhc-create-domain -n dns_nick -l email@address</pre>
+            <pre>Password: (type... type... type...)</pre>
+        </p>
+        <h4>Step 5</h4>
+        <p>Now you can start creating applications.  The example below will
+        create a php application called 'racer':
+            <pre>$ rhc-create-app -a racer -t php-5.3.2</pre>
+            <pre>Password: (type... type... type...)</pre></p>
+
+        <h4>Your App is Live... Seriously</h4>
+        <p><strong>Important Reminder: This application is visible to the
+          world.</strong>  In the beta we want to see real world traffic and
+        want to offer as much flexibility as possible for you to try out what
+        you like.  However, <em>please</em> be sensitive to the fact that your
+        applications will be publicly accessible.</p>
+        <p>If you need any help, we're on the internal <strong>#libra</strong>
+        channel and feel free to ask us any questions.  We'll be making
+        improvements throughout the beta, so if you've got a great idea, or if
+        you are blocked on something, please share it with us and we'll try
+        and incorporate it!</p>
+    </div>
+    <div class="clear"></div>
+
+</div> <!-- end page container -->

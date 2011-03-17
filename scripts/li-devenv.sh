@@ -18,6 +18,7 @@ failovermethod=priority
 enabled=0
 gpgkey=http://209.132.178.9/gpxe/trees/li/li-signing.asc
 gpgcheck=0
+
 [qpid]
 name=Qpid repo
 baseurl=http://209.132.178.9/gpxe/trees/qpid/\$basearch/Packages/
@@ -25,6 +26,7 @@ failovermethod=priority
 enabled=1
 gpgcheck=1
 gpgkey=http://209.132.178.9/gpxe/trees/li/li-signing.asc
+
 [passenger]
 name=Passenger repo for Enterprise Linux 6
 baseurl=http://209.132.178.9/gpxe/trees/passenger

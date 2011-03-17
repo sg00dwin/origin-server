@@ -34,21 +34,6 @@ begin
         @conn.reboot_instances([instance])
     end
 
-    def get_instance
-      # Look up any tagged instances
-      instances = conn.describe_images_by_owner.map {|i| i[:aws_id] if i[:aws_name] == @version}.compact
-
-      if instances.empty?
-        puts "Creating new instance..."
-        options = {:key_name => KEY_PAIR, :instance_type => TYPE}
-        @instance = conn.launch_instances(AMI, options)[0][:aws_instance_id]
-        puts "Created new instance #{@instance}"
-      else
-        @instance = instances[0]
-        puts "Found running instance #{@instance}"
-      end
-    end
-
     def instance_value(key)
       conn.describe_instances([@instance])[0][key]
     end
@@ -79,6 +64,8 @@ begin
     end
 
     task :version do
+      # Clean up any caching
+      `yum clean metadata`
       version = `yum info li | grep Version | tail -n1 | grep -o -E "[0-9]\.[0-9]+"`.chomp
 
       # Only take the release up until the '.'
@@ -88,6 +75,7 @@ begin
     end
 
     task :instance => [:version, :creds] do
+      puts "Finding instance to use for builder..."
       # Look up any tagged instances
       instances = conn.describe_instances.map do |i|
         if (i[:aws_state] == "running") and (i[:tags]["Name"] =~ BUILD_REGEX)
@@ -127,7 +115,15 @@ begin
     task :update => [:available] do
       if @existing
           puts "Updating existing instance"
+          `#{SSH} #{@server} 'yum clean all'`
           `#{SSH} #{@server} 'yum update -y'`
+
+          # Make sure the right version is installed
+          rpm = `#{SSH} #{@server} 'rpm -q li'`
+          unless rpm.start_with?(@version)
+            puts "Warning - latest version not available in repo"
+            exit 0
+          end
       else
         if `#{SSH} #{@server} 'test -e li-devenv.sh; echo $?'`.chomp == "1"
           puts "Running firstboot"
