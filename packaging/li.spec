@@ -245,9 +245,6 @@ chkconfig httpd on
 # Allow httpd to relay
 /usr/sbin/setsebool -P httpd_can_network_relay=on || :
 
-# Disable selinux (for now)
-setenforce 0
-
 # Setup facts
 /usr/bin/puppet /usr/libexec/mcollective/update_yaml.pp
 crontab -u root /etc/libra/devenv/crontab
@@ -275,9 +272,6 @@ chkconfig mcollective on
 /bin/cp -f /etc/libra/qe-env/NameVirtualHost.conf /etc/httpd/conf.d/
 /etc/init.d/httpd restart
 chkconfig httpd on
-
-# Disable selinux (for now)
-setenforce 0
 
 # Setup facts
 /usr/bin/puppet /usr/libexec/mcollective/update_yaml.pp
