@@ -286,7 +286,7 @@ crontab -u root /etc/libra/qe-env/crontab
 
 %post node
 # mount all desired cgroups under a single root
-perl -p -i -e 's:/[^/;]+;:;:; /blkio|cpuset|devices/ && ($_ = "#$_")' /etc/cgconfig.conf
+perl -p -i -e 's:/cgroup/[^\s]+;:/cgroup;:; /blkio|cpuset|devices/ && ($_ = "#$_")' /etc/cgconfig.conf
 /sbin/restorecon /etc/cgconfig.conf || :
 /sbin/service cgconfig restart >/dev/null 2>&1 || :
 /sbin/chkconfig --add libra || :
@@ -357,7 +357,8 @@ fi
 %{ruby_sitelibdir}/facter/libra.rb
 %{_sysconfdir}/init.d/libra
 %{_sysconfdir}/init.d/libra-data
-%{_sysconfdir}/init.d/libra-cgroups
+%{_sysconfydir}/init.d/libra-cgroups
+%{_sysconfydir}/init.d/libra-tc
 %{_bindir}/rhc-ip-prep.sh
 %{_bindir}/trap-user
 %{_bindir}/rhc-restorecon
