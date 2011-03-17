@@ -20,7 +20,7 @@ fi
 # default if no one gives you a good answer
 # this applies until we get a separate partition for Libra
 # because you can't apply quotas to bind mounts
-libra_dir=${libra_dir:=/}
+libra_dir=${libra_dir:=/var/lib/libra}
 
 # remove trailing / as they mess up the searches
 libra_dir=`echo $libra_dir | tr -s / | perl -p -e 's:(.)/$:$1 :'`
