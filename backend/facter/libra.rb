@@ -31,7 +31,7 @@ require 'parseconfig'
 # Count the number of git repos on this host
 #
 Facter.add(:git_repos) do
-    setcode { Dir.glob("/var/lib/libra/*/git/*.git").count }
+    setcode { Dir.glob("/var/lib/libra/**/git/*.git").count }
 end
 
 #
