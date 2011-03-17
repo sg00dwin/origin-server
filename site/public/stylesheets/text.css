@@ -2,18 +2,18 @@ body{font:13px/1.5 'Helvetica Neue',Arial,'Liberation Sans',FreeSans,sans-serif}
 
 @font-face {
 	font-family: 'Overpass';
-	src: local('☺'), 
-		url('/stylesheets/fonts/Overpass.otf') format('opentype');
-		url('/stylesheets/fonts/Overpass.ttf') format('truetype');
+	src: local('☺'),
+		url('fonts/Overpass.otf') format('opentype');
+		url('fonts/Overpass.ttf') format('truetype');
 	font-weight: normal;
 	font-style: normal;
 }
 
 @font-face {
 	font-family: 'OverpassBold';
-	src: local('☺'), 
-		url('/stylesheets/fonts/Overpass_Bold.otf') format('opentype');
-		url('/stylesheets/fonts/Overpass_Bold.ttf') format('truetype');
+	src: local('☺'),
+		url('fonts/Overpass_Bold.otf') format('opentype');
+		url('fonts/Overpass_Bold.ttf') format('truetype');
 	font-weight: normal;
 	font-style: normal;
 }

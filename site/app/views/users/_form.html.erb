@@ -29,7 +29,7 @@ function validate() {
               <p><strong><font color="red"><%= msg %></font></strong></p>
           <% end %>
         </div>
-    <%= form_for(@user, :id => "user_form", :url => "/users.html") do |f| -%>
+    <%= form_for(@user, :id => "user_form", :url => "users.html") do |f| -%>
       <%= f.label "emailAddress", "Email" %>
       <%= f.text_field "emailAddress" %>
 
