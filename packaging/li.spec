@@ -2,8 +2,8 @@
 %define gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 
 Name: li
-Version: 0.47
-Release: 3%{?dist}
+Version: 0.48
+Release: 1%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -409,6 +409,9 @@ touch %{_localstatedir}/www/html/site/db/production.sqlite3
 %{_libexecdir}/li/cartridges/wsgi-3.2.1/
 
 %changelog
+* Wed Mar 16 2011 Mike McGrath <mmcgrath@redhat.com> 0.48-1
+- New release
+
 * Wed Mar 16 2011 Matt Hicks <mhicks@redhat.com> 0.47-3
 - Renaming client.conf to libra.conf
 
