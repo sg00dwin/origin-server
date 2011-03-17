@@ -82,6 +82,18 @@ module Libra
         true
       end
     end
+    
+    #
+    # Validates number of apps for a user is below the limit
+    #
+    def validate_app_limit
+      num_apps = apps.length
+      puts "DEBUG: server.rb:validate_app_limit #{@rhlogin}: num of apps(#{num_apps.to_s}) must be < app limit (#{Libra.c[:per_user_app_limit]})" if Libra.c[:rpc_opts][:verbose]
+      if (num_apps >= Libra.c[:per_user_app_limit])
+          $stderr.puts "ERROR: #{@rhlogin} has already reached the application limit of #{Libra.c[:per_user_app_limit]}" if Libra.c[:rpc_opts][:verbose]
+          throw :per_user_application_limit_exceeded
+      end
+    end
 
     #
     # Finds all registered rhlogins

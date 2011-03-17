@@ -234,6 +234,9 @@ chkconfig mcollective on
 /bin/cp -f /etc/libra/devenv/iptables /etc/sysconfig/iptables
 /etc/init.d/iptables restart
 
+# enable development environment
+/bin/sed -i 's/#RailsEnv/RailsEnv/g' /etc/httpd/conf.d/rails.conf
+
 # httpd
 /bin/cp -f /etc/libra/devenv/NameVirtualHost.conf /etc/httpd/conf.d/
 /etc/init.d/httpd restart
@@ -241,9 +244,6 @@ chkconfig httpd on
 
 # Allow httpd to relay
 /usr/sbin/setsebool -P httpd_can_network_relay=on || :
-
-# Disable selinux (for now)
-setenforce 0
 
 # Setup facts
 /usr/bin/puppet /usr/libexec/mcollective/update_yaml.pp
@@ -272,9 +272,6 @@ chkconfig mcollective on
 /bin/cp -f /etc/libra/qe-env/NameVirtualHost.conf /etc/httpd/conf.d/
 /etc/init.d/httpd restart
 chkconfig httpd on
-
-# Disable selinux (for now)
-setenforce 0
 
 # Setup facts
 /usr/bin/puppet /usr/libexec/mcollective/update_yaml.pp

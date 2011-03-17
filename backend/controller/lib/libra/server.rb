@@ -39,21 +39,6 @@ module Libra
 
       instances
     end
-    
-    #
-    # Validates number of repos for a user is below the valid number of apps
-    #
-    def self.validate_app_limit(user)
-      num_repos = 0;
-      Helper.rpc_get_fact("git_cnt_#{user.uuid}") do |server, repos|
-        num_repos += repos.to_i        
-      end
-      puts "DEBUG: server.rb:validate_app_limit #{user.rhlogin}: num of apps(#{num_repos.to_s}) must be < app limit (#{Libra.c[:per_user_app_limit]})" if Libra.c[:rpc_opts][:verbose]
-      if (num_repos >= Libra.c[:per_user_app_limit])
-          $stderr.puts "ERROR: #{user.rhlogin} has already reached the application limit of #{Libra.c[:per_user_app_limit]}" if Libra.c[:rpc_opts][:verbose]
-          throw :per_user_application_limit_exceeded
-      end
-    end
 
     #
     # Returns the preferred available server.

@@ -18,7 +18,7 @@ module Libra
     # App exists check
     if action == 'configure'
       throw :app_already_exists if user.app_info(app_name)
-      Server.validate_app_limit(user)
+      user.validate_app_limit
       # Create S3 app entry on configure (one of the first things)
       user.create_app(app_name, framework)
     else
