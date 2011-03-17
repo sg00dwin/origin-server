@@ -19,10 +19,10 @@ fi
 # default if no one gives you a good answer
 libra_dir=${libra_dir:=/var/lib/libra}
 
-function get_filesystem() {
-    # $1=libra_dir
-    df $1 | tail -1 | tr -s ' ' | cut -d' ' -f 1
-}
+#function get_filesystem() {
+#    # $1=libra_dir
+#    df $1 | tail -1 | tr -s ' ' | cut -d' ' -f 1
+#}
 
 function get_mountpoint() {
     df $1 | tail -1 | tr -s ' ' | cut -d' ' -f 6
@@ -71,7 +71,7 @@ function init_quota_db() {
 update_fstab $LIBRA_MOUNTPOINT
 
 # remount to enable
-mount -o remount $LIBRA_FILESYSTEM
+mount -o remount $LIBRA_MOUNTPOINT
 
 init_quota_db $LIBRA_MOUNTPOINT
 
