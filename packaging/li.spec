@@ -357,8 +357,8 @@ fi
 %{ruby_sitelibdir}/facter/libra.rb
 %{_sysconfdir}/init.d/libra
 %{_sysconfdir}/init.d/libra-data
-%{_sysconfydir}/init.d/libra-cgroups
-%{_sysconfydir}/init.d/libra-tc
+%{_sysconfdir}/init.d/libra-cgroups
+%{_sysconfdir}/init.d/libra-tc
 %{_bindir}/rhc-ip-prep.sh
 %{_bindir}/trap-user
 %{_bindir}/rhc-restorecon
