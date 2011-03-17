@@ -300,10 +300,10 @@ echo "/usr/bin/trap-user" >> /etc/shells
 # mount all desired cgroups under a single root
 perl -p -i -e 's:/[^/;]+;:;:; /blkio|cpuset|devices/ && ($_ = "#$_")' /etc/cgconfig.conf
 service cgconfig restart
-[ $(/usr/sbin/semanage node -l | /bin/grep -c 255.255.255.128) -lt 1000 ] && /usr/bin/rhc-ip-prep.sh
+[ $(/usr/sbin/semanage node -l | /bin/grep -c 255.255.255.128) -lt 1000 ] && /usr/bin/rhc-ip-prep.sh || :
 
 # Ensure the default users have a more restricted shell then normal.
-semanage login -m -s guest_u __default__
+semanage login -m -s guest_u __default__ || :
 
 %preun node
 if [ "$1" -eq "0" ]; then
