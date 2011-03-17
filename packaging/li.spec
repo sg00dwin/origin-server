@@ -160,6 +160,8 @@ Requires: rubygem-passenger
 Requires: rubygem-passenger-native
 Requires: rubygem-passenger-native-libs
 Requires: mod_passenger
+Requires: rubygem-sqlite3-ruby
+Requires: ruby-sqlite3
 Requires: rubygem-bundler
 BuildArch: noarch
 
