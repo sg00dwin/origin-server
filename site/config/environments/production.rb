@@ -46,4 +46,6 @@ RedHatCloud::Application.configure do
 
   # Send deprecation notices to registered listeners
   config.active_support.deprecation = :notify
+
+  config.corp_server = "https://streamline.devlab.phx1.redhat.com/wapps/streamline"
 end
