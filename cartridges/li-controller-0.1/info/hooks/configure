@@ -325,12 +325,23 @@ function remove_pam_limits {
 }
 
 
+
+function get_quota_root() {
+    # DIR=$1
+    QUOTA_ROOT=$1
+    while [ -n "$QUOTA_ROOT" -a ! -f "$QUOTA_ROOT/aquota.user" ]
+    do
+	QUOTA_ROOT=`dirname $QUOTA_ROOT`
+    done
+    echo $QUOTA_ROOT
+}
+
 #
 # Are quotas configured
 # return true if configured, else false
 #
 function quotas_configured {
-    quotaon -u -p $libra_dir >/dev/null 2>&1
+    quotaon -u -p `get_quota_root $libra_dir` >/dev/null 2>&1
     if [ $? -eq 0 ]
     then
 	return 1
@@ -342,7 +353,7 @@ function quotas_configured {
 # Are quotas enabled on libra home directories
 # echos "yes" or "no".  Returns 1 if not configured
 function quotas_enabled {
-    quotaon -u -p $libra_dir 2>/dev/null | cut -d' ' -f7
+    quotaon -u -p `get_quota_root $libra_dir` 2>/dev/null | cut -d' ' -f7
 }
 
 #
@@ -367,7 +378,7 @@ function set_fs_quotas {
 
     if quotas_configured
     then
-	setquota $1 0 $2 0 $3 `home_filesystem`
+	setquota $1 0 $2 0 $3 `get_quota_root $libra_dir`
     fi
 }
 
@@ -376,7 +387,7 @@ function remove_fs_quotas {
     USERNAME=$1
     if quotas_configured
     then
-	setquota $1 0 0 0 0 `home_filesystem`
+	setquota $1 0 0 0 0 `get_quota_root $libra_dir`
     fi
 }
 
