@@ -3,7 +3,7 @@
 
 Name: li
 Version: 0.53
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -261,10 +261,10 @@ crontab -u root /etc/libra/devenv/crontab
 /bin/cp -f /etc/libra/devenv/libra.conf /etc/libra/devenv/node.conf /etc/libra/devenv/controller.conf /etc/libra
 
 # enable disk quotas
-/usr/libexec/li/devenv/init-quota.sh
+#/usr/libexec/li/devenv/init-quota.sh
 
 # secure remounts of special filesystems
-/usr/libexec/li/devenv/remount-secure.sh
+#/usr/libexec/li/devenv/remount-secure.sh
 
 %post qe-env
 # qpid
@@ -293,10 +293,10 @@ crontab -u root /etc/libra/qe-env/crontab
 /bin/cp -f /etc/libra/qe-env/libra.conf /etc/libra/qe-env/node.conf /etc/libra/qe-env/controller.conf /etc/libra
 
 # enable disk quotas
-/usr/libexec/li/qe-env/init-quota.sh
+#/usr/libexec/li/qe-env/init-quota.sh
 
 # secure remounts of special filesystems
-/usr/libexec/li/qe-env/remount-secure.sh
+#/usr/libexec/li/qe-env/remount-secure.sh
 
 %post node
 # mount all desired cgroups under a single root
@@ -432,6 +432,9 @@ touch %{_localstatedir}/www/html/site/db/production.sqlite3
 %{_libexecdir}/li/cartridges/wsgi-3.2.1/
 
 %changelog
+* Fri Mar 18 2011 Mike McGrath <mmcgrath@redhat.com> 0.53-2
+- Removing quota bits
+
 * Fri Mar 18 2011 Mike McGrath <mmcgrath@redhat.com> 0.53-1
 - New release
 
