@@ -302,7 +302,8 @@ crontab -u root /etc/libra/qe-env/crontab
 # mount all desired cgroups under a single root
 perl -p -i -e 's:/cgroup/[^\s]+;:/cgroup/all;:; /blkio|cpuset|devices/ && ($_ = "#$_")' /etc/cgconfig.conf
 /sbin/restorecon /etc/cgconfig.conf || :
-/sbin/service cgconfig restart >/dev/null 2>&1 || :
+# only restart if it's on
+chkconfig cgconfig && /sbin/service cgconfig restart >/dev/null 2>&1 || :
 /sbin/chkconfig --add libra || :
 /sbin/chkconfig --add libra-data || :
 /sbin/chkconfig --add libra-cgroups || :
@@ -311,8 +312,10 @@ perl -p -i -e 's:/cgroup/[^\s]+;:/cgroup/all;:; /blkio|cpuset|devices/ && ($_ = 
 /usr/sbin/semodule -i %_datadir/selinux/packages/libra.pp
 /sbin/restorecon /etc/init.d/libra || :
 /usr/bin/rhc-restorecon || :
-/sbin/service libra-cgroups start > /dev/null 2>&1 || :
-/sbin/service libra-tc start > /dev/null 2>&1 || :
+# only enable if cgconfig is
+chkconfig cgconfig && /sbin/service libra-cgroups start > /dev/null 2>&1 || :
+# only enable if cgconfig is
+chkconfig cgconfig && /sbin/service libra-tc start > /dev/null 2>&1 || :
 /sbin/service libra-data start > /dev/null 2>&1 || :
 echo "/usr/bin/trap-user" >> /etc/shells
 /sbin/restorecon /etc/init.d/libra || :
