@@ -7,7 +7,8 @@ Feature: Limit User Resources
   Scenario:
     Given a newly created user
     And a newly created application
-    When he pushes 1000 files to the application
+    And he adds 1000 files to his application
+    When he pushes his application
     Then the push should fail
 
   # - Quota: File count recovery
