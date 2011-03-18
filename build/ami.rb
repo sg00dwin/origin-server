@@ -230,7 +230,7 @@ begin
 
       puts "Launching verification instance for AMI #{@ami}"
       @instance = conn.launch_instances(@ami, OPTIONS)[0][:aws_instance_id]
-      conn.create_tag(@instance, 'Name', "#{@version}-verify")
+      conn.create_tag(@instance, 'Name', "verifier-#{@version}")
 
       # Wait for it to be available
       Rake::Task["ami:available"].execute
