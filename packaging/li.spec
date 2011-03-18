@@ -220,9 +220,9 @@ cp -adv scripts/remount-secure.sh $RPM_BUILD_ROOT/usr/libexec/li/devenv/
 
 mkdir $RPM_BUILD_ROOT/etc/libra/qe-env/
 cp -adv docs/qe-env/* $RPM_BUILD_ROOT/etc/libra/qe-env/
-mkdir $RPM_BUILD_ROOT/usr/libexec/li/qa-env
-cp -adv scripts/init-quota.sh $RPM_BUILD_ROOT/usr/libexec/li/qa-env/
-cp -adv scripts/remount-secure.sh $RPM_BUILD_ROOT/usr/libexec/li/qa-env/
+mkdir $RPM_BUILD_ROOT/usr/libexec/li/qe-env
+cp -adv scripts/init-quota.sh $RPM_BUILD_ROOT/usr/libexec/li/qe-env/
+cp -adv scripts/remount-secure.sh $RPM_BUILD_ROOT/usr/libexec/li/qe-env/
 
 %clean
 rm -rf $RPM_BUILD_ROOT
