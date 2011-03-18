@@ -416,6 +416,7 @@ bundle install --deployment
 popd > /dev/null
 mkdir -p %{_localstatedir}/www/html/site/log
 touch %{_localstatedir}/www/html/site/log/production.log
+chmod 0666 %{_localstatedir}/www/html/site/log/production.log
 touch %{_localstatedir}/www/html/site/db/production.sqlite3
 
 %files cartridge-php-5.3.2
