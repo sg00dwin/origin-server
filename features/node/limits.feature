@@ -17,7 +17,7 @@ Feature: Limit User Resources
     And he adds 1000 files to the application
     And he pushes his application
     When he destroys his application
-    And he purges 1000 files from the appliction
+    And he purges 1000 files from the application
     And he pushes his application
     Then the push should succeed
 
@@ -40,9 +40,22 @@ Feature: Limit User Resources
     And he pushes his application
     Then the push should succeed
 
-
   # Process Resources
+  # - fork bomb
+  Scenario:
+    Given a user
+    And an appliction
+    When he starts a fork-bomb on his application
+    Then his application should not respond
+    And he should have fewer than 51 processes
 
+  # - fork bomb recovery
+  Scenario:
+    Given a user
+    And an application
+    And he starts a fork-bomb on his application
+    When he restarts his application
+    Then his application should respond
 
   # Network Resources
 
