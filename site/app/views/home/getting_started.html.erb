@@ -8,6 +8,8 @@
         <p><strong>Note:</strong> These directions are for EL6 and F14.  The
         rpm should work on other distos too but has only been tested on EL6
         and F14</p>
+        <p>Make sure you have a registered account.  If you jumped straight to
+        this page, you need to first register a user (<%= link_to("Click Here", :action => 'index', :controller => 'users', :only_path => false, :protocol => 'https') %>) since you'll need a valid password.</p>
         <h4>Step 1</h4>
         <p>Download the express repo file <a href="li-beta.repo">li-beta.repo</a> and place it in your /etc/yum.repos.d/ directory</p>
         <h4>Step 2</h4>
