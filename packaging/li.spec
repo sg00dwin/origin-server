@@ -2,8 +2,8 @@
 %define gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 
 Name: li
-Version: 0.53
-Release: 2%{?dist}
+Version: 0.54
+Release: 1%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -432,7 +432,7 @@ touch %{_localstatedir}/www/html/site/db/production.sqlite3
 %{_libexecdir}/li/cartridges/wsgi-3.2.1/
 
 %changelog
-* Fri Mar 18 2011 Mike McGrath <mmcgrath@redhat.com> 0.53-2
+* Fri Mar 18 2011 Mike McGrath <mmcgrath@redhat.com> 0.54-1
 - Removing quota bits
 
 * Fri Mar 18 2011 Mike McGrath <mmcgrath@redhat.com> 0.53-1
