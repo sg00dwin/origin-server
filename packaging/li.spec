@@ -214,8 +214,15 @@ gem install --install-dir $RPM_BUILD_ROOT/%{gemdir} --local -V --force --rdoc \
      backend/controller/pkg/li-controller-%{version}.gem
 mkdir $RPM_BUILD_ROOT/etc/libra/devenv/
 cp -adv docs/devenv/* $RPM_BUILD_ROOT/etc/libra/devenv/
+mkdir $RPM_BUILD_ROOT/usr/libexec/li/devenv
+cp -adv scripts/init-quota.sh $RPM_BUILD_ROOT/usr/libexec/li/devenv/
+cp -adv scripts/remount-secure.sh $RPM_BUILD_ROOT/usr/libexec/li/devenv/
+
 mkdir $RPM_BUILD_ROOT/etc/libra/qe-env/
 cp -adv docs/qe-env/* $RPM_BUILD_ROOT/etc/libra/qe-env/
+mkdir $RPM_BUILD_ROOT/usr/libexec/li/qa-env
+cp -adv scripts/init-quota.sh $RPM_BUILD_ROOT/usr/libexec/li/qa-env/
+cp -adv scripts/remount-secure.sh $RPM_BUILD_ROOT/usr/libexec/li/qa-env/
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -254,6 +261,11 @@ crontab -u root /etc/libra/devenv/crontab
 # Libra
 /bin/cp -f /etc/libra/devenv/libra.conf /etc/libra/devenv/node.conf /etc/libra/devenv/controller.conf /etc/libra
 
+# enable disk quotas
+/usr/libexec/li/devenv/init-quota.sh
+
+# secure remounts of special filesystems
+/usr/libexec/li/devenv/remount-secure.sh
 
 %post qe-env
 # qpid
@@ -282,6 +294,11 @@ crontab -u root /etc/libra/qe-env/crontab
 # Libra
 /bin/cp -f /etc/libra/qe-env/libra.conf /etc/libra/qe-env/node.conf /etc/libra/qe-env/controller.conf /etc/libra
 
+# enable disk quotas
+/usr/libexec/li/devenv/init-quota.sh
+
+# secure remounts of special filesystems
+/usr/libexec/li/devenv/remount-secure.sh
 
 %post node
 # mount all desired cgroups under a single root
@@ -339,10 +356,12 @@ fi
 %files devenv
 %defattr(-,root,root,-)
 %{_sysconfdir}/libra/devenv/
+%{_libexecdir}/li/devenv/
 
 %files qe-env
 %defattr(-,root,root,-)
 %{_sysconfdir}/libra/qe-env/
+%{_libexecdir}/li/qe-env/
 
 %files php
 %defattr(-,root,root,-)
