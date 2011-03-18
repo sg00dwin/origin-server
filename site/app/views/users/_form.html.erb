@@ -20,15 +20,11 @@ function validate() {
 <%= content_tag :div, :id => "registration", :class => "prefix_1 grid_12 suffix_1" do -%>
   <%= content_tag :h3, "Register for access to Express" %>
 
-  <%= content_tag :p do -%>
-    <%= image_tag "icon_shadowman.png", :alt => "Red Hat Logo" %>
-    <%= link_to "Do you already have a redhat.com / RHN login?", "#" %>
-  <% end %>
-        <div id="errors_div">
-          <% @user.errors.each do |field, msg| %>
-              <p><strong><font color="red"><%= msg %></font></strong></p>
-          <% end %>
-        </div>
+    <div id="errors_div">
+      <% @user.errors.each do |field, msg| %>
+          <p><strong><font color="red"><%= msg %></font></strong></p>
+      <% end %>
+    </div>
     <%= form_for(@user, :id => "user_form", :url => "users.html") do |f| -%>
       <%= f.label "emailAddress", "Email" %>
       <%= f.text_field "emailAddress" %>
