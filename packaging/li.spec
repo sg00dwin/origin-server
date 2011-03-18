@@ -247,7 +247,6 @@ chkconfig mcollective on
 /bin/sed -i 's/#RailsEnv/RailsEnv/g' /etc/httpd/conf.d/rails.conf
 
 # httpd
-/bin/cp -f /etc/libra/devenv/NameVirtualHost.conf /etc/httpd/conf.d/
 /etc/init.d/httpd restart
 chkconfig httpd on
 
@@ -283,7 +282,6 @@ chkconfig mcollective on
 /etc/init.d/iptables restart
 
 # httpd
-/bin/cp -f /etc/libra/qe-env/NameVirtualHost.conf /etc/httpd/conf.d/
 /etc/init.d/httpd restart
 chkconfig httpd on
 
