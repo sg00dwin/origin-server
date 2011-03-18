@@ -92,7 +92,7 @@ body {
 #fancybox-content,
 #fancybox-wrap {
 	width: 400px !important;
-	background: red; 
+	background: red;
 }
 
 /* Page block styling */
@@ -432,8 +432,8 @@ p, ul, ol, li, h1, h2, h3, h4, h5, h6, a { color: white; }
 }
 
 #app_promos h3 { font-size: 10pt; }
-#app_promos h4 { 
-	font-size: 14pt; 
+#app_promos h4 {
+	font-size: 14pt;
 	text-transform: uppercase;
 }
 
@@ -589,7 +589,7 @@ p images {
 }
 
 .slideShow .navigation li {
-	display: inline; 
+	display: inline;
 }
 
 .slideShow .navigation a {
@@ -612,17 +612,17 @@ p images {
 	border: 1px solid white;
 }
 
-.simpleSlideShow { 
-	width: 960px; 
+.simpleSlideShow {
+	width: 960px;
 }
 
-#slides ul { 
-	width: 960px; 
+#slides ul {
+	width: 960px;
 	margin-left: -5px;
 }
 
-li.slide { 
-	width: 960px !important; 
+li.slide {
+	width: 960px !important;
 }
 
 .slide-canvas {
@@ -674,4 +674,34 @@ li.slide {
 #slides .content p {
 	font-size: 13pt;
 	width: 600px;
+}
+
+
+/* Beta specific hacks */
+#beta-notes {
+  background: none repeat scroll 0 0 #F2F2F2;
+  margin: 0px 0px 10px 10px ;
+  padding: 10px;
+}
+
+#beta-notes h4 {
+  font-style: italic;
+  margin-bottom: 10px;
+}
+
+#beta-notes p {
+  font-weight: bold;
+  margin: 0px 0px 10px 20px;
+}
+
+#beta-notes pre {
+  margin: 0px 0px 10px 40px;
+}
+
+#user_form_submit {
+  text-align: center;
+}
+
+#captcha {
+  margin-bottom:20px;
 }
