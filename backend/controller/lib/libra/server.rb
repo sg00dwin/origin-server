@@ -151,7 +151,7 @@ EOF
     def execute(framework, action, app_name, user)
       # Make the call to configure the application
       puts "DEBUG: server.rb:execute framework:#{framework} action:#{action} app_name:#{app_name} user:#{user}" if Libra.c[:rpc_opts][:verbose]
-      execute_internal(framework, action, "#{app_name} #{user.rhlogin} #{user.uuid}")
+      execute_internal(framework, action, "#{app_name} #{user.namespace} #{user.uuid}")
     end
 
     #
