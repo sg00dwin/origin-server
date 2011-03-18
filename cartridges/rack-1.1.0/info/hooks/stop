@@ -33,7 +33,7 @@ else
 fi
 
 function print_help {
-    echo "Usage: $0 app-name username"
+    echo "Usage: $0 app-name username uuid"
     echo "Stop a running application and disable it"
 
     echo "$0 $@" | logger -p local0.notice -t libra_http_create
@@ -51,13 +51,13 @@ do
 done
 
 
-[ $# -eq 2 ] || print_help
+[ $# -eq 3 ] || print_help
 
-customer_id=`basename $2`
+customer_id=`basename $3`
 application="$1"
 
 CUSTOMER_HOME="$libra_dir/$customer_id/"
-APP_DIR="$CUSTOMER_HOME/httpd/$application"
+APP_DIR="$CUSTOMER_HOME/rack/$application"
 
 #
 # Start application
