@@ -12,7 +12,8 @@ begin
     TYPE = "m1.large"
     KEY_PAIR = "libra"
     OPTIONS = {:key_name => KEY_PAIR, :instance_type => TYPE}
-    BUILD_REGEX = /li-\d\.\d{2}/
+    AMI_REGEX = /li-\d\.\d{2}/
+    BUILD_REGEX = /builder-li-\d\.\d{2}/
     BREW_LI = "https://brewweb.devel.redhat.com/packageinfo?packageID=31345"
     GIT_REPO_PUPPET = "ssh://puppet1.ops.rhcloud.com/srv/git/puppet.git"
     CONTENT_TREE = {'puppet' => '/etc/puppet'}
@@ -95,7 +96,7 @@ begin
       end
 
       # Make sure the name matches the current version
-      conn.create_tag(@instance, 'Name', @version)
+      conn.create_tag(@instance, 'Name', "builder-" + @version)
     end
 
     task :available => [:instance] do
@@ -175,7 +176,7 @@ begin
     task :prune => [:creds] do
       images = []
       conn.describe_images_by_owner.each do |i|
-        if i[:aws_name] and i[:aws_name] =~ BUILD_REGEX
+        if i[:aws_name] and i[:aws_name] =~ AMI_REGEX
           images << i[:aws_id]
         end
       end
