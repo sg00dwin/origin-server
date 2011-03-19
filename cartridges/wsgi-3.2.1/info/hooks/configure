@@ -122,6 +122,7 @@ EOF
     chown $user_id.$group_id -R $GIT_DIR
     # Secure the hooks dir
     chown root:root -R $GIT_DIR/hooks
+    chown root:root $GIT_DIR
 }
 
 while getopts 'd' OPTION
@@ -263,6 +264,7 @@ chmod +x "$APP_DIR/${application}_ctl.sh" || error "Failed to chmod new applicat
 chown $user_id.$group_id -R $APP_DIR || error "Failed to chown new application space.  Please contact support" 123
 # Secure script and config dirs.
 chown root:root -R "$APP_DIR/${application}_ctl.sh" "$APP_DIR/conf" "$APP_DIR/conf.d"
+chown root:root "$APP_DIR"
 chcon -t libra_var_lib_t -l s0:$c_val -R "$APP_DIR"
 runuser --shell /bin/sh "$uuid" "$APP_DIR/${application}_ctl.sh" start || error "Failed to start ${application}" 121
 
