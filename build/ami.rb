@@ -12,6 +12,7 @@ begin
     TYPE = "m1.large"
     KEY_PAIR = "libra"
     OPTIONS = {:key_name => KEY_PAIR, :instance_type => TYPE}
+    VERSION_REGEX = /li-\d\.\d{2}-\d+/
     AMI_REGEX = /li-\d\.\d{2}/
     BUILD_REGEX = /builder-li-\d\.\d{2}/
     BREW_LI = "https://brewweb.devel.redhat.com/packageinfo?packageID=31345"
@@ -72,6 +73,9 @@ begin
       # Only take the release up until the '.'
       release = `yum info li | grep Release | tail -n1 | grep -o -E "[0-9]\..+"`.chomp
       @version = "li-#{version}-#{release.split('.')[0]}"
+
+      raise "Invalid version format" unless @version =~ VERSION_REGEX
+
       puts "Current version is #{@version}"
     end
 
