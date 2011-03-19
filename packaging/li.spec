@@ -3,7 +3,7 @@
 
 Name: li
 Version: 0.56
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -386,7 +386,8 @@ fi
 %{_datadir}/selinux/packages/libra.pp
 %config(noreplace) %{_sysconfdir}/libra/node.conf
 %config(noreplace) %{_sysconfdir}/libra/resource_limits.conf
-%{_sysconfdir}/httpd/conf.d/000000_default.conf
+%attr(0750,root,root) %{_sysconfdir}/httpd/conf.d/000000_default.conf
+%attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 
 %files server
@@ -435,6 +436,9 @@ touch %{_localstatedir}/www/html/site/db/production.sqlite3
 %{_libexecdir}/li/cartridges/wsgi-3.2.1/
 
 %changelog
+* Sat Mar 19 2011 Mike McGrath <mmcgrath@redhat.com> 0.56-2
+- Added conf.d/libra
+
 * Fri Mar 18 2011 Mike McGrath <mmcgrath@redhat.com> 0.56-1
 - Prepping for release
 

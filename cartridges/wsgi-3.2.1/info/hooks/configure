@@ -272,7 +272,7 @@ runuser --shell /bin/sh "$uuid" "$APP_DIR/${application}_ctl.sh" start || error 
 # Create virtualhost definition for apache
 #
 
-cat <<EOF > "/etc/httpd/conf.d/${uuid}_${namespace}_${application}.conf"
+cat <<EOF > "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}.conf"
 <VirtualHost *:80>
   ServerName ${application}-${namespace}.${libra_domain}
   ServerAdmin mmcgrath@redhat.com
