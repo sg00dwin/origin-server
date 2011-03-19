@@ -324,6 +324,63 @@ function remove_pam_limits {
     ${NOOP} rm -f ${LIMITSFILE}
 }
 
+# conditions
+
+# ============================================================================
+# Quota management
+# ============================================================================
+#
+# We need to be able to find the terminal mount point or device file for
+# the filesystem containing the Libra application home directories.
+#
+# df(1) will present the device and mountpoint when given a file or directory
+#
+# A terminal mount point is identified when the device is either a UUID or
+# a file path in /dev.
+#
+# If it is not, and the mount options contain 'bind' then search again using
+# dirname of the bind "device" path.
+# 
+# repeat until you find a terminal device 
+#
+#function get_filesystem() {
+#    # $1=libra_dir
+#    df $1 | tail -1 | tr -s ' ' | cut -d' ' -f 1
+#}
+
+function get_mountpoint() {
+    df $1 | tail -1 | tr -s ' ' | cut -d' ' -f 6 | sort -u
+}
+
+function get_mount_device() {
+    df $1 | tail -1 | tr -s ' ' | cut -d' ' -f 1 | sort -u
+}
+
+function get_mount_options() {
+    mount | grep " $1 " | sed -e 's/^.*(// ; s/).*$// ' | sort -u
+    #cat /etc/fstab | tr -s ' ' | grep $1 | awk '{print $4;}'
+}
+
+#
+# This is not efficient, but it avoids bind mounts
+#
+function get_terminal_mountpoint() {
+    # DIR=$1
+    MP=`get_mountpoint $1`
+    DEV=`get_mount_device $1`
+
+    while echo $DEV | grep -v -E '^/dev/|LABEL=|UUID=' >/dev/null 2>&1
+    do
+	MP=`dirname $DEV`
+	DEV=`get_mount_device $MP`
+    done
+
+    echo $MP
+}
+
+#LIBRA_FILESYSTEM=`get_filesystem $libra_dir`
+LIBRA_MOUNTPOINT=`get_terminal_mountpoint $libra_dir`
+QUOTA_FILE=$( echo ${LIBRA_MOUNTPOINT}/aquota.user | tr -s /)
 
 
 function get_quota_root() {
@@ -364,7 +421,7 @@ function quotas_enabled {
 #
 function user_quotas {
     # USERNAME=$1
-    FS=`home_filesystem`
+    FS=`get_quota_root $libra_dir`
     quota -w -u $1 | grep $FS | tr -s ' ' | sed 's/^ //'
 }
 
