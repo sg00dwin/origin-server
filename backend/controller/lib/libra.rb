@@ -39,7 +39,7 @@ module Libra
     # Configure the user on this server if necessary
     Libra.c[:rpc_opts][:disctimeout] = 1
     Libra.c[:rpc_opts][:timeout] = 15
-    server.create_user(user)
+    server.create_user(user) if action == 'configure'
 
     # Configure the app on the server using a framework cartridge
     result = server.execute_direct(framework, action, "#{app_name} #{user.namespace} #{user.uuid}")[0]
