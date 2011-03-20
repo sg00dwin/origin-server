@@ -383,12 +383,21 @@ LIBRA_MOUNTPOINT=`get_terminal_mountpoint $libra_dir`
 QUOTA_FILE=$( echo ${LIBRA_MOUNTPOINT}/aquota.user | tr -s /)
 
 
+#
+# Find the quota mountpoint by searching back from a known path until
+# you find aquota.user
+#
 function get_quota_root() {
     # DIR=$1
     QUOTA_ROOT=$1
     while [ -n "$QUOTA_ROOT" -a ! -f "$QUOTA_ROOT/aquota.user" ]
     do
-	QUOTA_ROOT=`dirname $QUOTA_ROOT`
+	if [ "$QUOTA_ROOT" = "/" ]
+        then
+            QUOTA_ROOT=""
+        else
+	    QUOTA_ROOT=`dirname $QUOTA_ROOT`
+        fi
     done
     echo $QUOTA_ROOT
 }
@@ -398,6 +407,14 @@ function get_quota_root() {
 # return true if configured, else false
 #
 function quotas_configured {
+    QUOTA_ROOT=`get_quota_root`
+    # if you can't find the quota root, then it's not configured
+    if [ -z "$QUOTA_ROOT" ]
+    then
+	return 1
+    fi
+
+    # Then check if it has been initialized
     quotaon -u -p `get_quota_root $libra_dir` >/dev/null 2>&1
     if [ $? -eq 0 ]
     then
@@ -410,7 +427,13 @@ function quotas_configured {
 # Are quotas enabled on libra home directories
 # echos "yes" or "no".  Returns 1 if not configured
 function quotas_enabled {
-    quotaon -u -p `get_quota_root $libra_dir` 2>/dev/null | cut -d' ' -f7
+    QUOTA_ROOT=`get_quota_root`
+    if [ -n "$QUOTA_ROOT" ]
+    then
+	quotaon -u -p `get_quota_root $libra_dir` 2>/dev/null | cut -d' ' -f7
+    else
+        return 0
+    fi
 }
 
 #
@@ -436,6 +459,8 @@ function set_fs_quotas {
     if quotas_configured
     then
 	setquota $1 0 $2 0 $3 `get_quota_root $libra_dir`
+    else
+	echo "WARNING: quotas not configured" >&2
     fi
 }
 
@@ -445,6 +470,8 @@ function remove_fs_quotas {
     if quotas_configured
     then
 	setquota $1 0 0 0 0 `get_quota_root $libra_dir`
+    else
+	echo "WARNING: quotas not configured" >&2
     fi
 }
 
