@@ -403,34 +403,28 @@ function get_quota_root() {
 }
 
 #
-# Are quotas configured
-# return true if configured, else false
-#
+# Are quotas configured?
+# quotaon prints the status of all configured filesystems
+# if no filesystems are configured, there is no output
 function quotas_configured {
-    QUOTA_ROOT=`get_quota_root`
-    # if you can't find the quota root, then it's not configured
-    if [ -z "$QUOTA_ROOT" ]
+    test -n `quotaon -u -p -a > /dev/null 2>&1`
+}
+
+# Are quotas enabled on the specified directory?
+function quotas_enabled {
+    # DIR=$1
+    QUOTA_ROOT=`get_quota_root $1`
+    # if you can't find the quota root for the given directory, it's not enabled
+    if [ -z "${QUOTA_ROOT}" ]
     then
 	return 1
     fi
-
-    # Then check if it has been initialized
-    quotaon -u -p `get_quota_root $libra_dir` >/dev/null 2>&1
+    quotaon -u -p $QUOTA_ROOT
+    # quotaon returns the opposite of what you expect
+    # 1 = enabled, 0 = not enabled
     if [ $? -eq 0 ]
     then
 	return 1
-    else
-	return 0
-    fi
-}
-
-# Are quotas enabled on libra home directories
-# echos "yes" or "no".  Returns 1 if not configured
-function quotas_enabled {
-    QUOTA_ROOT=`get_quota_root`
-    if [ -n "$QUOTA_ROOT" ]
-    then
-	quotaon -u -p `get_quota_root $libra_dir` 2>/dev/null | cut -d' ' -f7
     else
         return 0
     fi
@@ -455,10 +449,18 @@ function set_fs_quotas {
     # USERNAME=$1
     # QUOTA_BLOCKS=${2:-$quota_blocks}
     # QUOTA_FILES=${3:-$quota_files}
-
+    
+    # get the user home directory
+    # get the quota mount point
     if quotas_configured
     then
-	setquota $1 0 $2 0 $3 `get_quota_root $libra_dir`
+	if quotas_enabled $libra_dir
+	then
+	    setquota $1 0 $2 0 $3 `get_quota_root $libra_dir`
+	else
+	    echo "WARNING: quotas not enabled on $libra_dir" >&2
+	fi
+	
     else
 	echo "WARNING: quotas not configured" >&2
     fi
@@ -469,7 +471,12 @@ function remove_fs_quotas {
     USERNAME=$1
     if quotas_configured
     then
-	setquota $1 0 0 0 0 `get_quota_root $libra_dir`
+	if quotas_enabled $libra_dir
+	then
+	    setquota $1 0 0 0 0 `get_quota_root $libra_dir`
+	else
+	    echo "WARNING: quotas not enabled on $libra_dir" >&2
+	fi
     else
 	echo "WARNING: quotas not configured" >&2
     fi
