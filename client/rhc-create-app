@@ -182,7 +182,7 @@ json_data = JSON.generate(
                 :password => password
                 })
 
-puts "Contacting server https://#{libra_server}"
+puts "Contacting https://#{libra_server}"
 
 url = URI.parse("https://#{libra_server}/php/cartridge_do.php")
 response = RHC::http_post(@http, url, json_data)
