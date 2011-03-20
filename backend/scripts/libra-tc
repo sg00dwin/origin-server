@@ -90,6 +90,10 @@ tc_user_share=${tc_user_share:=2}
 tc_oversubscribe=${tc_oversubscribe:=10}
 OVERSUBSCRIBE=$(expr $tc_user_share \* $tc_oversubscribe)
 tc_user_limit=${tc_user_limit:=$OVERSUBSCRIBE}
+# tc quantum is rate / r2q
+# r2q is 10 by default
+# r2q will generate a warning if 1500 > quantum > 60000 
+tc_rate_to_quantum_ratio=10
 
 start() {
 
@@ -98,7 +102,7 @@ start() {
 # page.
 
 # The first line creates the root qdisc
-    ${NOOP} $TC qdisc add dev $tc_if root handle 1: htb r2q 1
+    ${NOOP} $TC qdisc add dev $tc_if root handle 1: htb r2q $tc_rate_to_quantum_ratio
 
 # This line creates a container for tagged Libra traffic
     # Since user classes start at 1:1
