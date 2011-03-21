@@ -94,6 +94,14 @@ BuildArch: noarch
 %description node
 Turns current host into a Li managed node
 
+%package node-tools
+Summary: Utilities to help monitor and manage a Li node
+BuildArch: noarch
+
+%description node-tools
+A set of scripts to be run a node which provide status, statistics and some
+well defined controls
+
 %package server
 Summary: Li server components
 Group: Network/Daemons
@@ -212,6 +220,7 @@ ln -s %{_localstatedir}/www/html/site/public $RPM_BUILD_ROOT/%{_localstatedir}/w
 mkdir -p .%{gemdir}
 gem install --install-dir $RPM_BUILD_ROOT/%{gemdir} --local -V --force --rdoc \
      backend/controller/pkg/li-controller-%{version}.gem
+
 mkdir $RPM_BUILD_ROOT/etc/libra/devenv/
 cp -adv docs/devenv/* $RPM_BUILD_ROOT/etc/libra/devenv/
 mkdir $RPM_BUILD_ROOT/usr/libexec/li/devenv
@@ -223,6 +232,9 @@ cp -adv docs/qe-env/* $RPM_BUILD_ROOT/etc/libra/qe-env/
 mkdir $RPM_BUILD_ROOT/usr/libexec/li/qe-env
 cp -adv scripts/init-quota.sh $RPM_BUILD_ROOT/usr/libexec/li/qe-env/
 cp -adv scripts/remount-secure.sh $RPM_BUILD_ROOT/usr/libexec/li/qe-env/
+
+mkdir $RPM_BUILD_ROOT/usr/libexec/li/node-tools
+cp -adv node-tools/* $RPM_BUILD_ROOT/usr/libexec/li/node-tools
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -390,6 +402,9 @@ fi
 %attr(0750,root,root) %{_sysconfdir}/httpd/conf.d/000000_default.conf
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
+%files node-tools
+%defattr(-,root,root,-)
+%{_libexecdir}/li/node-tools/
 
 %files server
 %defattr(-,root,root,-)
