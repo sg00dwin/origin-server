@@ -103,8 +103,13 @@ LIBRA_ACCOUNT_PATTERN=${LIBRA_ACCOUNT_PATTERN:=":libra guest:"}
 
 
 TEXT_HEADER_FORMAT="--- Application List Header ---"
-TEXT_ACCOUNT_FORMAT="%s"
-TEXT_ACCOUNT_SEPERATOR=""
+TEXT_ACCOUNT_HEADER='username: %s'
+TEXT_ACCOUNT_FOOTER=''
+TEXT_ACCOUNT_SEPERATOR=''
+TEXT_APPLIST_HEADER='  applications:'
+TEXT_APPLICATION_FORMAT='    name: %s, type: %s'
+TEXT_APPLIST_FOOTER='\n'
+TEXT_APPLIST_SEPERATOR=''
 TEXT_FOOTER_FORMAT="--- Application List Footer ---"
 
 
@@ -113,21 +118,39 @@ JSON_ACCOUNT_HEADER='  {"username": "%s"'
 JSON_ACCOUNT_FOOTER='  }'
 JSON_ACCOUNT_SEPERATOR=','
 JSON_APPLIST_HEADER='    {"applications": ['
-JSON_APPLICATION_FORMAT='       {"name": "%s"}'
+JSON_APPLICATION_FORMAT='       {"name": "%s", "type": "%s"}'
 JSON_APPLIST_FOOTER='    }'
 JSON_APPLIST_SEPERATOR=','
 JSON_FOOTER_FORMAT=']}'
 
 
 XML_HEADER_FORMAT="<accounts>"
-XML_ACCOUNT_FORMAT='  <account username="%s" />'
-XML_ACCOUNT_SEPERATOR=""
+XML_ACCOUNT_HEADER='  <user "username"="%s" >'
+XML_ACCOUNT_FOOTER='  </user>'
+XML_ACCOUNT_SEPERATOR=''
+XML_APPLIST_HEADER='    <applications>'
+XML_APPLICATION_FORMAT='       <application name="%s" type="%s" />'
+XML_APPLIST_FOOTER='    </applications>'
+XML_APPLIST_SEPERATOR=''
 XML_FOOTER_FORMAT="</accounts>"
 
-eval "HEADER_FORMAT=\"\$${OUTPUT_FORMAT}_HEADER_FORMAT\""
-eval "ACCOUNT_FORMAT=\"\$${OUTPUT_FORMAT}_ACCOUNT_FORMAT\""
-eval "ACCOUNT_SEPERATOR=\"\$${OUTPUT_FORMAT}_ACCOUNT_SEPERATOR\""
-eval "FOOTER_FORMAT=\"\$${OUTPUT_FORMAT}_FOOTER_FORMAT\""
+FORMAT_STRINGS="
+HEADER_FORMAT 
+ACCOUNT_HEADER ACCOUNT_FOOTER ACCOUNT_SEPERATOR
+APPLIST_HEADER APPLIST_FOOTER APPLIST_SEPERATOR
+APPLICATION_FORMAT
+FOOTER_FORMAT
+"
+
+for FORMAT_NAME in $FORMAT_STRINGS
+do
+    eval "${FORMAT_NAME}=\"\$"`echo ${OUTPUT_FORMAT}_${FORMAT_NAME}`"\""
+done
+
+#eval "HEADER_FORMAT=\"\$${OUTPUT_FORMAT}_HEADER_FORMAT\""
+#eval "ACCOUNT_FORMAT=\"\$${OUTPUT_FORMAT}_ACCOUNT_FORMAT\""
+#eval "ACCOUNT_SEPERATOR=\"\$${OUTPUT_FORMAT}_ACCOUNT_SEPERATOR\""
+#eval "FOOTER_FORMAT=\"\$${OUTPUT_FORMAT}_FOOTER_FORMAT\""
 
 
 #
@@ -195,8 +218,32 @@ function print_header() {
     printf -- "$HEADER_FORMAT\n"
 }
 
+function print_account_header() {
+    printf "  $ACCOUNT_HEADER" $1
+}
+
+function print_account_footer() {
+    
+    printf "  $ACCOUNT_FOOTER"
+}
+
+function print_application_header() {
+    printf "    application header\n"
+}
+
+function print_application_footer() {
+    printf "    application footer\n"
+}
+
+function homedir() {
+    # USERNAME=$1
+    grep -E ^$1: ${PASSWD_FILE} | cut -d: -f 6
+}
+
 function get_application_list() {
-    echo getting application list for user $1
+    # USERNAME=$1
+    
+    ls -d `homedir $1`/git/*.git | sed -e 's:^.*/:: ; s/.git$//'
 }
 
 function print_application_list() {
@@ -244,8 +291,10 @@ print_header
 for USERNAME in $ACCOUNT_LIST
 do
     if username_is_valid $USERNAME
-    do
-       print_application_list $USERNAME
-    done
+    then
+	print_account_header $USERNAME
+	print_application_list $USERNAME
+	print_account_footer
+    fi
 done
 print_footer
