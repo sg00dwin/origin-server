@@ -63,7 +63,7 @@ function destroy_repo {
     if [ ! -d $CUSTOMER_HOME ]; then echo "ERROR: Customer ${uuid} not found!  Please create." 1>&2; exit 2; fi
 
     GIT_DIR=$CUSTOMER_HOME/git/$application.git
-    rm -rf $GIT_DIR || error "Could not remove ${application}" 108
+    rm -rf $GIT_DIR || echo "Could not remove ${application}" 1>&2
 }
 
 while getopts 'd' OPTION
@@ -93,10 +93,8 @@ APP_DIR="$CUSTOMER_HOME/rack/$application"
 destroy_repo $application $uuid
 
 #
-# Create http base for application, every app gets its own apache instance
+# Shutdown application and remove application
 #
-
-[ ! -d "$APP_DIR" ] && error "${application} does not exist" 138
 
 runuser --shell /bin/sh "$uuid" $APP_DIR/${application}_ctl.sh stop || echo "Failed to stop ${application}" 1>&2
 
@@ -108,7 +106,7 @@ while [ -f ${APP_DIR}/run/httpd.pid ] && [ $i -lt 30 ]
     i=$(($i + 1))
 done
 #rm -rf "$APP_DIR"
-runcon -l s0-s0:c0.c1023 rm -rf "$APP_DIR"
+runcon -l s0-s0:c0.c1023 rm -rf "$APP_DIR" || echo "could not remove ${application}" 1>&2
 
 #
 # Remove virtualhost definition for apache
