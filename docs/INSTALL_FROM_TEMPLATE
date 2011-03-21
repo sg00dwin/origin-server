@@ -45,7 +45,7 @@ Host li.<namespace>.rhcloud.com
 4) edit ~/.li and change "libra_server = 'li.beta.rhcloud.com'" to "libra_server = 'li.<namespace>.rhcloud.com'"
 5) add a line <rhlogin>=<uuid>
 6) rhc-create-app -l <rhlogin> -a <appname> -r <app folder> -t php-5.3.2 -b
-7) You can now browse to http://<appname>.<namespace>.rhcloud.com/
+7) You can now browse to http://<appname>-<namespace>.rhcloud.com/
 
 You can delete an instance with:
 ec2-terminate-instances <instance_id>

@@ -21,11 +21,11 @@ cp li/backend/controller/test/etc/client.cfg /etc/mcollective/client.cfg
 Example Usage:
 rhc-create-domain -n <namespace> -l <rhlogin>
 rhc-create-app -l <rhlogin> -a <appname> -r <Ex: /tmp/rhc/appname> -repo -t php-5.3.2 -b
-You should now be able to browse to:  http://appname.userid.rhcloud.com
+You should now be able to browse to:  http://appname-userid.rhcloud.com
 Now make a change under /tmp/rhc/appname
 git commit -a -m "Test commit"
 git push
-The change should be seen at:  http://appname.namespace.rhcloud.com
+The change should be seen at:  http://appname-namespace.rhcloud.com
 
 Running Test Cases:
 rake cuc_int sprint[1]
