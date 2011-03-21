@@ -165,10 +165,13 @@ if json_resp['return'].to_s.strip == "0"
     add_rhlogin_config(json_rhlogininfo['rhlogin'], json_rhlogininfo['uuid'])
 
     if opt['alter'] != ''
-        puts "Creation successful (probably)."
-        puts
-        puts "You may now create an application"
-        puts
+        puts <<EOF
+Creation successful
+
+You may now create an application.  Please make note of your local config file
+in ~/.li/libra.conf which has been created and populated for you.
+
+EOF
     else
         puts "RHLogin alteration successful."
         puts
