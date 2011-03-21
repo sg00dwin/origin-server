@@ -1,4 +1,4 @@
-<script type="javascript">
+<script type="text/javascript">
 function validate() {
   if (document.getElementById('user_password').value != document.getElementById('user_passwordConfirmation').value) {
     var errorsDiv = document.getElementById('errors_div');
@@ -12,6 +12,8 @@ function validate() {
     f.color = 'red';
     s.appendChild(f);
     f.appendChild(document.createTextNode('Passwords must match'));
+	  errorsDiv.focus();
+		document.getElementById('user_emailAddress').focus();
     return false;
   }
   return true;
@@ -57,6 +59,11 @@ function validate() {
       <div id="user_form_submit" class="grid_12">
         <%= f.submit "Register Now", :class => "button", :onclick=>"return validate()" %>
       </div>
+    <% end %>
+		<% if (@user.errors.length > 0) %>
+        <script type="text/javascript">
+            document.getElementById('user_emailAddress').focus();
+        </script>
     <% end %>
     </div>
 <% end %>
