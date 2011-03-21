@@ -18,5 +18,5 @@ If either are missing you can install them with:
     # gem install json
     # gem install parseconfig
 
-That's it, the above deps are installed, the rhc-command should start
+That's it, the above deps are installed, the rhc-commands should start
 functioning, see USAGE.txt for more information.
