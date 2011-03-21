@@ -3,7 +3,7 @@
 
 Name: li
 Version: 0.58
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -345,6 +345,7 @@ fi
 
 %files
 %defattr(-,root,root,-)
+%doc docs/USAGE.txt
 %{_bindir}/rhc-create-app
 %{_bindir}/rhc-create-domain
 %{_bindir}/rhc-user-info
@@ -436,6 +437,9 @@ touch %{_localstatedir}/www/html/site/db/production.sqlite3
 %{_libexecdir}/li/cartridges/wsgi-3.2.1/
 
 %changelog
+* Sun Mar 20 2011 Mike McGrath <mmcgrath@redhat.com> 0.59-1
+- Added docs
+
 * Sat Mar 19 2011 Mike McGrath <mmcgrath@redhat.com> 0.58-1
 - New release
 - Disabled secure mount
