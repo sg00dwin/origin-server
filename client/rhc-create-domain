@@ -141,19 +141,22 @@ data = {'namespace' => opt['namespace'],
                 'password' => password,
                 'ssh' => ssh_key}
 if (opt['alter'])
-  data['alter'] = "--alter"
+  data['alter'] = "true"  
+end
+if debug
+  data['debug'] = "true" 
 end
 RHC::print_post_data(data, debug)
 json_data = JSON.generate(data)
 
-url = URI.parse("https://#{libra_server}/php/create_customer.php")
+url = URI.parse("https://#{libra_server}/broker/domainservice")
 response = RHC::http_post(@http, url, json_data)
 
 puts "DEBUG:" if debug
 p response if debug
 json_resp = JSON.parse(response.body);
 
-if json_resp['return'].to_s.strip == "0"
+if response.code == '200'
     if debug
         puts "HTTP response from server is:"
         json_resp.each do |k,v|
@@ -161,7 +164,7 @@ if json_resp['return'].to_s.strip == "0"
         end
     end
 
-    json_rhlogininfo = JSON.parse(json_resp['stdout'])
+    json_rhlogininfo = JSON.parse(json_resp['result'])
     add_rhlogin_config(json_rhlogininfo['rhlogin'], json_rhlogininfo['uuid'])
 
     if opt['alter'] != ''

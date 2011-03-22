@@ -93,27 +93,35 @@ module RHC
 
     puts "Contacting https://#{libra_server}"
     data = {'rhlogin' => rhlogin, 'password' => password}
+    if debug
+      data['debug'] = "true"
+    end
     print_post_data(data, debug)
     json_data = JSON.generate(data)
 
-    url = URI.parse("https://#{libra_server}/php/user_info.php")
+    url = URI.parse("https://#{libra_server}/broker/userinfoservice")
     response = http_post(net_http, url, json_data)
 
     puts "DEBUG:" if debug
-    p response if debug
+    p response if debug  
     json_resp = JSON.parse(response.body)
 
-    unless json_resp['return'].to_s.strip == "0"
-        puts "Problem with server. Response code was #{response.code}"
-        puts "HTTP response from server is #{response.body}"
+    unless response.code == '200'
+        if response.code == '404'
+          puts "A user with rhlogin #{rhlogin} does not exist"          
+        elsif response.code == '401'
+          puts "Invalid user credentials"
+        else
+          puts "Problem with server. Response code was #{response.code}"
+          puts "HTTP response from server is #{response.body}"
+        end
         exit 255
     end
-
     if debug
         puts "HTTP response from server is #{response.body}"
     end
-    user_info = JSON.parse(json_resp['stdout'].to_s)
-    user_info
+    user_info = JSON.parse(json_resp['result'].to_s)
+    user_info    
   end
 
   def RHC.get_password

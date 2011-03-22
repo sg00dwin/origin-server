@@ -148,17 +148,21 @@ puts ""
 puts "Remember: this is pre-alpha destructionware.  Let #libra know of any bugs you find."
 puts ""
 
-json_data = JSON.generate(
-               {:cartridge => framework,
+data = {:cartridge => framework,
                 :action => opt['command'],
                 :app_name => "#{opt['app']}",
                 :rhlogin => "#{opt['rhlogin']}",
                 :password => password
-                })
+                }
+if debug
+  data['debug'] = "true"
+end
+
+json_data = JSON.generate(data)
 
 puts "Contacting https://#{libra_server}"
 
-url = URI.parse("https://#{libra_server}/php/cartridge_do.php")
+url = URI.parse("https://#{libra_server}/broker/cartridgeservice")
 response = RHC::http_post(@http, url, json_data)
 
 json_resp = JSON.parse(response.body);
@@ -166,13 +170,6 @@ json_resp = JSON.parse(response.body);
 if response.code == '200'
     puts "HTTP response from server is #{response.body}" if debug
     puts "Action successful"
-    if (json_resp['return'].to_s.strip != "0")
-        puts "An error has occured: #{response.body}"
-        json_resp.each do |k,v|
-            puts "#{k.to_s}: #{v.to_s}"
-        end
-        exit 253
-    end
 else
     puts "Problem with server. Response code was #{response.code}"
     puts "HTTP response from server is #{response.body}"

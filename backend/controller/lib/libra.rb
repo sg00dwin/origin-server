@@ -5,6 +5,11 @@ require 'libra/server.rb'
 require 'libra/user.rb'
 
 module Libra
+  
+  def self.debug(str)
+    Libra.c[:debugIO].puts str
+  end
+  
   #
   # Executes
   #
@@ -23,7 +28,7 @@ module Libra
       user.create_app(app_name, framework)
     else
       if action == 'deconfigure'
-        puts "app not found, attempting to remove anyway..." unless user.app_info(app_name)
+        Libra.debug "app not found, attempting to remove anyway..." unless user.app_info(app_name)
       else
         throw :app_does_not_exist unless user.app_info(app_name)
       end
@@ -34,7 +39,7 @@ module Libra
     Libra.c[:rpc_opts][:timeout] = 2
     server = Server.find_available
 
-    puts "Node: #{server.name} - #{server.repos} repos" if Libra.c[:rpc_opts][:verbose]
+    Libra.debug "Node: #{server.name} - #{server.repos} repos" if Libra.c[:rpc_opts][:verbose]
 
     # Configure the user on this server if necessary
     Libra.c[:rpc_opts][:disctimeout] = 1
@@ -44,13 +49,13 @@ module Libra
     # Configure the app on the server using a framework cartridge
     result = server.execute_direct(framework, action, "#{app_name} #{user.namespace} #{user.uuid}")[0]
     unless result.results[:data][:exitcode] == 0
-        puts result.results[:data][:output]
+        Libra.debug result.results[:data][:output]
         throw :node_execution_failure
     end
 
     # update DNS
     public_ip = server.get_fact_direct('public_ip')
-    puts "PUBLIC IP: #{public_ip}"
+    Libra.debug "PUBLIC IP: #{public_ip}"
     sshfp = server.get_fact_direct('sshfp').split[-1]
     Server.nsupdate_add(app_name, user.namespace, public_ip, sshfp) if action == 'configure'
     Server.nsupdate_del(app_name, user.namespace, public_ip) if action == 'deconfigure'
@@ -76,6 +81,6 @@ module Libra
 
     # Add the additional server if needed
     result = Server.create
-    puts "Added EC2 instance #{result[0]}"
+    Libra.debug "Added EC2 instance #{result[0]}"
   end
 end

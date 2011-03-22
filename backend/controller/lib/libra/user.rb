@@ -41,7 +41,7 @@ module Libra
       throw :namespace_already_exists if Server.get_dns_txt(namespace).length > 0
       # TODO bit of a race condition here (can nsupdate fail on exists?)
       Server.nsupdate_add_txt(namespace)
-      puts "DEBUG: user.rb:create rhlogin:#{rhlogin} ssh:#{ssh} namespace:#{namespace}" if Libra.c[:rpc_opts][:verbose]
+      Libra.debug "DEBUG: user.rb:create rhlogin:#{rhlogin} ssh:#{ssh} namespace:#{namespace}" if Libra.c[:rpc_opts][:verbose]
       uuid = gen_small_uuid()
       user = new(rhlogin, ssh, namespace, uuid)
       user.update
@@ -70,11 +70,11 @@ module Libra
           when Net::HTTPSuccess, Net::HTTPRedirection
             return true
           else
-            puts "Problem with server. Response code was #{response.code}"
-            #puts "HTTP response from server is #{response.body}"      
+            Libra.debug "Problem with server. Response code was #{response.code}"
+            #Libra.debug "HTTP response from server is #{response.body}"      
           end
         rescue Net::HTTPBadResponse => e
-          puts e
+          Libra.debug e
           #raise
         end
         false
@@ -88,9 +88,9 @@ module Libra
     #
     def validate_app_limit
       num_apps = apps.length
-      puts "DEBUG: server.rb:validate_app_limit #{@rhlogin}: num of apps(#{num_apps.to_s}) must be < app limit (#{Libra.c[:per_user_app_limit]})" if Libra.c[:rpc_opts][:verbose]
+      Libra.debug "DEBUG: server.rb:validate_app_limit #{@rhlogin}: num of apps(#{num_apps.to_s}) must be < app limit (#{Libra.c[:per_user_app_limit]})" if Libra.c[:rpc_opts][:verbose]
       if (num_apps >= Libra.c[:per_user_app_limit])
-          $stderr.puts "ERROR: #{@rhlogin} has already reached the application limit of #{Libra.c[:per_user_app_limit]}" if Libra.c[:rpc_opts][:verbose]
+          Libra.debug "ERROR: #{@rhlogin} has already reached the application limit of #{Libra.c[:per_user_app_limit]}" if Libra.c[:rpc_opts][:verbose]
           throw :per_user_application_limit_exceeded
       end
     end
@@ -134,7 +134,7 @@ module Libra
     #
     def update
       json = JSON.generate({:rhlogin => rhlogin, :namespace => namespace, :ssh => ssh, :uuid => uuid})
-      puts "DEBUG: user.rb:update json:#{json}" if Libra.c[:rpc_opts][:verbose]
+      Libra.debug "DEBUG: user.rb:update json:#{json}" if Libra.c[:rpc_opts][:verbose]
       Helper.s3.put(Libra.c[:s3_bucket], "user_info/#{rhlogin}/user.json", json)
     end
 

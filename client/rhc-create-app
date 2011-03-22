@@ -174,17 +174,20 @@ end
 
 puts "Creating remote application space: " + opt['app']
 
-json_data = JSON.generate(
-               {:cartridge => opt['type'],
+data = {:cartridge => opt['type'],
                 :action => 'configure',
                 :app_name => opt['app'],
                 :rhlogin => opt['rhlogin'],
                 :password => password
-                })
+                }
+if debug
+  data['debug'] = "true"
+end
+json_data = JSON.generate(data)
 
 puts "Contacting https://#{libra_server}"
 
-url = URI.parse("https://#{libra_server}/php/cartridge_do.php")
+url = URI.parse("https://#{libra_server}/broker/cartridgeservice")
 response = RHC::http_post(@http, url, json_data)
 
 json_resp = JSON.parse(response.body);
@@ -219,7 +222,7 @@ at_exit do
                     :password => password
                     })
         puts "Cleaning up application"
-        url = URI.parse("https://#{libra_server}/php/cartridge_do.php")
+        url = URI.parse("https://#{libra_server}/broker/cartridgeservice")
         RHC::http_post(@http, url, json_data)
     end
 end
