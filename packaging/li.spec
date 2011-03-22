@@ -96,11 +96,13 @@ Turns current host into a Li managed node
 
 %package node-tools
 Summary: Utilities to help monitor and manage a Li node
+Group: Network/Daemons
+Requires: ruby-json
 BuildArch: noarch
 
 %description node-tools
-A set of scripts to be run a node which provide status, statistics and some
-well defined controls
+Status and control tools for Libra Nodes
+
 
 %package server
 Summary: Li server components
@@ -234,7 +236,8 @@ cp -adv scripts/init-quota.sh $RPM_BUILD_ROOT/usr/libexec/li/qe-env/
 cp -adv scripts/remount-secure.sh $RPM_BUILD_ROOT/usr/libexec/li/qe-env/
 
 mkdir $RPM_BUILD_ROOT/usr/libexec/li/node-tools
-cp -adv node-tools/* $RPM_BUILD_ROOT/usr/libexec/li/node-tools
+cp -adv node-tools/bin/* $RPM_BUILD_ROOT/usr/libexec/li/node-tools
+
 
 %clean
 rm -rf $RPM_BUILD_ROOT

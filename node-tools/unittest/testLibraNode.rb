@@ -3,11 +3,21 @@
 require 'test/unit'
 require 'libranode'
 
+GuestAccount.passwd_file = File.dirname(__FILE__) + "/data/passwd"
+
+class LibraListAccountsTest < Test::Unit::TestCase
+
+  def testAccountList
+    alist = GuestAccount.accounts
+    assert_equal(400, alist.length)
+  end
+end
+
 class LibraAccountTest < Test::Unit::TestCase
   
   def setup
-    @username = "aabbccddeeffgghhiijj01234567890ff"
-    @a0 = GuestAccount.new("aabbccddeeffgghhiijj01234567890ff")
+    @username = "aabbccddeeff00112233445566778000"
+    @a0 = GuestAccount.new(@username)
   end
 
   def testInitialize
@@ -26,4 +36,34 @@ class LibraAccountTest < Test::Unit::TestCase
     assert_equal("{\n  \"username\": \"%s\"\n}" % @username, @a0.to_json)
   end
 
+  def testHomedir
+    assert_equal("/var/lib/libra/%s" % @username, @a0.homedir)
+  end
+end
+
+class LibraApplicationTest < Test::Unit::TestCase
+
+  def setup
+    @appname = "myapp0"
+    @apptype = "php-5.3.2"
+    @app0 = Application.new(@appname, @apptype)
+  end
+
+  def testInitialize
+    assert_equal(@appname, @app0.appname)
+    assert_equal(@apptype, @app0.apptype)
+    assert_nil(@app0.account)
+  end
+
+  def testText
+    assert(false, "test not implemented")
+  end
+
+  def testXml
+    assert(false, "test not implemented")
+  end
+
+  def testJson
+    assert(false, "test not implemented")
+  end
 end
