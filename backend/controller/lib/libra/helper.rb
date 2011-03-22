@@ -83,7 +83,7 @@ module Libra
 
         rpc_client = rpcclient("rpcutil", :options => options)
         begin
-          result = rpc_client.custom_request('get_fact', {:fact => fact}, {'identity' => node})[0].results[:data][:value]
+          result = rpc_client.custom_request('get_fact', {:fact => fact}, node, {'identity' => node})[0].results[:data][:value]
         ensure
           rpc_client.disconnect
         end
