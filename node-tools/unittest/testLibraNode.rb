@@ -39,6 +39,13 @@ class LibraAccountTest < Test::Unit::TestCase
   def testHomedir
     assert_equal("/var/lib/libra/%s" % @username, @a0.homedir)
   end
+
+  def testAppnames
+    homedir = File.dirname( __FILE__ ) + "/data/home/#{@a0.username}"
+    puts "homedir = " + homedir
+    applist = ["bar", "foo", "gronk"]
+    assert_equal(applist, @a0.appnames(homedir))
+  end
 end
 
 class LibraApplicationTest < Test::Unit::TestCase

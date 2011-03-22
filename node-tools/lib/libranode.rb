@@ -7,8 +7,6 @@ require 'rubygems'
 require 'builder'
 require 'json'
 
-
-
 #
 # Open the password file, find all the entries with the marker in them
 # and create a data structure with the usernames of all matching accounts
@@ -54,14 +52,16 @@ class GuestAccount
   end
 
   # find the applications associated with this user
-  def applications
+  def appnames(homedir=nil)
     # get the user's home directory
+    homedir ||= self.homedir
 
     # find the git repositories
-
-    # remove leading/trailing stuff
-
-    # find the app type
+    apps = []
+    Dir[ homedir + "/git/*.git"].each do |gitdir| 
+      apps << File.basename(gitdir, ".git")
+    end
+    apps.sort
   end
 
   # ------------------------------------------------------------------------
