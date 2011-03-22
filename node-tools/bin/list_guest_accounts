@@ -141,7 +141,7 @@ def report_json(accounts)
   accounts.each do |username|
     accts.push({"username" => username})
   end
-  JSON.generate({"accounts" => accts})
+  JSON.pretty_generate({"accounts" => accts})
 end
 
 require 'rubygems'

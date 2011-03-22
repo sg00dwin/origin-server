@@ -1,0 +1,22 @@
+#!/usr/bin/ruby
+#
+# Test and install Libra Node tools
+#
+require "rake/testtask"
+
+task :default => [:test]
+
+Rake::TestTask.new do |test|
+  test.libs << "unittest"
+  test.test_files = Dir[ "unittest/test*.rb" ]
+  test.verbose = false
+end
+
+task :install do
+  # copy lib files to ruby lib directory
+
+  # copy bin files to libexec/li/node-tools/
+
+  # copy doc files to share/doc/<pkgname>/
+end
+
