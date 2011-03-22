@@ -7,7 +7,12 @@ require 'libra/user.rb'
 module Libra
   
   def self.debug(str)
-    Libra.c[:debugIO].puts str
+    debugIO = Thread.current[:debugIO]
+    if debugIO
+      debugIO.puts str
+    else
+      puts str
+    end    
   end
   
   #

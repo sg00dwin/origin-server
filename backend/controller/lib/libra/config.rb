@@ -8,8 +8,6 @@ module Libra
 
     # Default to a null logger
     @@config[:logger] = Logger.new('/dev/null')
-    
-    @@config[:debugIO] = $stdout
 
     # Amazon AWS Configuration
     begin
