@@ -99,7 +99,7 @@ module RHC
     print_post_data(data, debug)
     json_data = JSON.generate(data)
 
-    url = URI.parse("https://#{libra_server}/broker/userinfoservice")
+    url = URI.parse("https://#{libra_server}/app/broker/userinfo")
     response = http_post(net_http, url, json_data)
 
     puts "DEBUG:" if debug
