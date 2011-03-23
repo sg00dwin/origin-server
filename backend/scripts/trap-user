@@ -8,6 +8,7 @@ import syslog
 commands = {
     "git-receive-pack": "/usr/bin/git-receive-pack",
     "git-upload-pack": "/usr/bin/git-upload-pack",
+    "snapshot": "/bin/tar",
 }
 
 #
@@ -63,8 +64,17 @@ if __name__ == '__main__':
         syslog.syslog("Invalid command %s" % orig_cmd)
         sys.stderr.write("Invalid command %s" % orig_cmd)
         sys.exit(2)
-
-    if basecmd in ('git-receive-pack', 'git-upload-pack'):
+    if basecmd in ('snapshot'):
+        type = allargs[1]
+        name = allargs[2]
+        if type.isalnum() and name.isalnum():
+            path = os.path.expanduser('~')
+            allargs = "-czf - %s/%s/%s/" % (path, type, name)
+            allargs = allargs.split()
+        else:
+            print "Failed sanitization"
+            sys.exit(35)
+    elif basecmd in ('git-receive-pack', 'git-upload-pack'):
         # git repositories need to be parsed specially
         thearg = ' '.join(allargs[1:])
         if thearg[0] == "'" and thearg[-1] == "'":
