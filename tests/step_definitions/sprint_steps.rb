@@ -39,7 +39,7 @@ When /^(\d+) applications of type '(.+)' are created per user$/ do |num_apps, fr
 
     processes << fork do
       # Create the user and the apps
-      run("#{$create_domain_script} -n #{username} -l #{$email} -p fakepw")
+      run("#{$create_domain_script} -n #{username} -l libra-test+#{username}@redhat.com -p fakepw")
       @apps.each do |app|
         run("#{$create_app_script} -l #{$email} -a #{app} -r #{$temp}/#{username}_#{app}_repo -t php-5.3.2 -b -d -p fakepw")
       end

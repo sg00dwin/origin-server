@@ -18,7 +18,7 @@ $domain = "rhcloud.com"
 $temp = "/tmp/rhc"
 $create_app_script = "/usr/bin/rhc-create-app"
 $create_domain_script = "/usr/bin/rhc-create-domain"
-$client_config = "/etc/libra/client.conf"
+$client_config = "/etc/libra/libra.conf"
 
 # Create the temporary space
 FileUtils.mkdir_p $temp
