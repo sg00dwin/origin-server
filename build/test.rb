@@ -13,10 +13,8 @@ begin
     end
 
     desc "Run the sprint tests"
-    task :cuc_sprint do |t, args|
-      Cucumber::Rake::Task.new(:sprint) do |t|
-        t.cucumber_opts = "tests --tags @sprint"
-      end
+    Cucumber::Rake::Task.new(:sprint) do |t|
+      t.cucumber_opts = "tests --tags @sprint"
     end
   end
 rescue LoadError
