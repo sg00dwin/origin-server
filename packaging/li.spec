@@ -366,6 +366,7 @@ fi
 %{_bindir}/rhc-create-domain
 %{_bindir}/rhc-user-info
 %{_bindir}/rhc-ctl-app
+%{_bindir}/rhc-snapshot
 %{_bindir}/rhc-common.rb
 %{_mandir}/man1/rhc-*
 %{_mandir}/man5/libra*
