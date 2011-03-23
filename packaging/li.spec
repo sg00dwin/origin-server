@@ -132,6 +132,7 @@ Requires: rubygem-builder
 Requires: php-pdo
 Requires: php-gd
 Requires: php-xml
+Requires: php-mysql
 BuildArch: noarch
 
 %description cartridge-php-5.3.2
