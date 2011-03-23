@@ -1,7 +1,7 @@
 #/usr/bin/ruby
 
 require 'test/unit'
-require 'libranode'
+require 'libra/node'
 
 GuestAccount.passwd_file = File.dirname(__FILE__) + "/data/passwd"
 
