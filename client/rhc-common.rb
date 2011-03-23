@@ -147,6 +147,12 @@ module RHC
       http.verify_mode = OpenSSL::SSL::VERIFY_NONE
     end
     response = http.start {|http| http.request(req)}
+    if response.code == '404' && response.content_type == 'text/html'
+      # TODO probably want to remove this at some point 
+      puts "!!!! WARNING !!!! WARNING !!!! WARNING !!!!"
+      puts "RHCloud server not found.  You might want to try updating your rhc client tools."
+      exit 255
+    end
     response
   end
 
