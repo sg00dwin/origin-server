@@ -419,7 +419,7 @@ function quotas_enabled {
     then
 	return 1
     fi
-    quotaon -u -p $QUOTA_ROOT
+    quotaon -u -p $QUOTA_ROOT >/dev/null 2>&1
     # quotaon returns the opposite of what you expect
     # 1 = enabled, 0 = not enabled
     if [ $? -eq 0 ]
