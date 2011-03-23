@@ -65,6 +65,7 @@ if __name__ == '__main__':
         sys.stderr.write("Invalid command %s" % orig_cmd)
         sys.exit(2)
     if basecmd in ('snapshot'):
+        # This gets called with "snapshot $TYPE $APP_NAME"
         type = allargs[1]
         name = allargs[2]
         if type.isalnum() and name.isalnum():
