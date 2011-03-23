@@ -68,6 +68,10 @@ if __name__ == '__main__':
         # This gets called with "snapshot $TYPE $APP_NAME"
         type = allargs[1]
         name = allargs[2]
+        if not type in ('php', 'rack', 'git', 'wsgi'):
+            print "unknown type: %s" % type
+            sys.exit(73)
+
         if type.isalnum() and name.isalnum():
             path = os.path.expanduser('~')
             allargs = "-czf - -C %s/%s/ --exclude=./%s/%s_ctl.sh --exclude=./%s/conf.d/libra.conf --exclude=./%s/run/httpd.pid ./%s/" % (path, type, name, name, name, name, name)
