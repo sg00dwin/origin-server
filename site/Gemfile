@@ -4,10 +4,7 @@ gem 'rails', '3.0.5'
 gem 'recaptcha', :require => 'recaptcha/rails'
 gem 'json'
 gem 'stomp'
-
-group :production do  
-  gem 'li-controller'
-end
+gem 'li-controller'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'

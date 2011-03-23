@@ -48,7 +48,7 @@ class BrokerController < ApplicationController
         user_info = {
             :rhlogin => user.rhlogin,
             :uuid => user.uuid,
-            :namesdebugpace => user.namespace,
+            :namespace => user.namespace,
             :ssh_key => user.ssh
             }                
         app_info = {}
