@@ -98,6 +98,7 @@ Turns current host into a Li managed node
 Summary: Utilities to help monitor and manage a Li node
 Group: Network/Daemons
 Requires: ruby-json
+Requires: ruby-nokogiri
 BuildArch: noarch
 
 %description node-tools

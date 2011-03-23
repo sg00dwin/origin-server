@@ -29,7 +29,7 @@ class LibraAccountTest < Test::Unit::TestCase
   end
 
   def testXml
-    assert_equal("<account username=\"%s\"/>\n" % @username, @a0.to_xml)
+    assert_equal("<account username=\"%s\"/>" % @username, @a0.to_xml)
   end
 
   def testJson
@@ -70,7 +70,7 @@ class LibraApplicationTest < Test::Unit::TestCase
   end
 
   def testXml
-    assert_equal("<application appname=\"%s\"/>\n" % @appname, @app0.to_xml)
+    assert_equal("<application appname=\"%s\"/>" % @appname, @app0.to_xml)
   end
 
   def testJson

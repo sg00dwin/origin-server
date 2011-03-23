@@ -4,7 +4,7 @@
 #
 
 require 'rubygems'
-require 'builder'
+require 'nokogiri' # XML processing
 require 'json'
 
 #
@@ -35,8 +35,10 @@ class GuestAccount
   end
 
   def to_xml
-    xml = Builder::XmlMarkup.new( :indent => 2 )
-    xml.account(:username => @username)
+    builder = Nokogiri::XML::Builder.new do |xml|
+      xml.account(:username => @username)
+    end
+    builder.doc.root.to_xml
   end
   
   def to_json
@@ -117,8 +119,10 @@ class Application
   end
 
   def to_xml
-    xml = Builder::XmlMarkup.new( :indent => 2 )
-    xml.application(:appname => @appname)
+    builder = Nokogiri::XML::Builder.new do |xml|
+      xml.application(:appname => @appname)
+    end
+    builder.doc.root.to_xml
   end
   
   def to_json
