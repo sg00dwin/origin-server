@@ -237,9 +237,8 @@ mkdir $RPM_BUILD_ROOT/usr/libexec/li/qe-env
 cp -adv scripts/init-quota.sh $RPM_BUILD_ROOT/usr/libexec/li/qe-env/
 cp -adv scripts/remount-secure.sh $RPM_BUILD_ROOT/usr/libexec/li/qe-env/
 
-mkdir $RPM_BUILD_ROOT/usr/libexec/li/node-tools
-cp -adv node-tools/bin/* $RPM_BUILD_ROOT/usr/libexec/li/node-tools
-
+gem install --install-dir $RPM_BUILD_ROOT/%{gemdir} --local -V --force --rdoc \
+     node-tools/pkg/li-node-tools-%{version}.gem
 
 %clean
 rm -rf $RPM_BUILD_ROOT

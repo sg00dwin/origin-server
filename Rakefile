@@ -20,11 +20,13 @@ HTML_DIR = ENV["PHPDIR"] || "#{DEST_DIR}/var/www/html/"
 SITE_DIR = ENV["SITEDIR"] || "#{DEST_DIR}/var/www/html/"
 HTTP_CONF_DIR = ENV["HTTPCONFDIR"] || "#{DEST_DIR}/etc/httpd/conf.d/"
 
+RAKE_ROOT=File.dirname(__FILE__)
 NODE_FILES = ["backend/facter/libra.rb",
               "backend/mcollective/libra.rb",
               "backend/mcollective/connector/amqp.rb"]
 
 C_DIR = "backend/controller"
+NODE_TOOLS_DIR="#{RAKE_ROOT}/node-tools"
 MOCK_ENV = "li-6-x86_64"
 RPM_SPEC = "packaging/li.spec"
 RPM_REGEX = /(Version: )(\d+\.\d+)/
@@ -122,6 +124,19 @@ task :install_server do
     cp "#{C_DIR}/conf/controller.conf", CONF_DIR unless File.exists? "#{CONF_DIR}/controller.conf"
     cd C_DIR
     sh "rake", "package"
+end
+
+task :test_node_tools do
+  cd NODE_TOOLS_DIR
+  sh "rake", "test"
+  cd RAKE_ROOT
+end
+ 
+task :install_node_tools => [:test_node_tools] do
+  cd NODE_TOOLS_DIR
+  sh "rake", "clean"
+  sh "rake", "package"
+  cd RAKE_ROOT
 end
 
 desc "Install all the Libra files (e.g. rake DESTDIR='/tmp/test/ install')"
