@@ -38,11 +38,11 @@ class LibraAccountTest < Test::Unit::TestCase
 
   def testHomedir
     assert_equal("/var/lib/libra/%s" % @username, @a0.homedir)
+    assert_equal("/var/lib/libra/%s" % @username, @a0.homedir)
   end
 
   def testAppnames
     homedir = File.dirname( __FILE__ ) + "/data/home/#{@a0.username}"
-    puts "homedir = " + homedir
     applist = ["bar", "foo", "gronk"]
     assert_equal(applist, @a0.appnames(homedir))
   end
@@ -51,9 +51,12 @@ end
 class LibraApplicationTest < Test::Unit::TestCase
 
   def setup
+    @username = ""
     @appname = "myapp0"
+    @acct = GuestAccount.new(@username)
     @apptype = "php-5.3.2"
-    @app0 = Application.new(@appname, @apptype)
+    @app0 = Application.new(@appname, nil, @apptype)
+    #@app1 = Application.new(@appname, @acct)
   end
 
   def testInitialize
@@ -63,14 +66,14 @@ class LibraApplicationTest < Test::Unit::TestCase
   end
 
   def testText
-    assert(false, "test not implemented")
+    assert_equal(@appname, @app0.to_s)
   end
 
   def testXml
-    assert(false, "test not implemented")
+    assert_equal("<application appname=\"%s\"/>\n" % @appname, @app0.to_xml)
   end
 
   def testJson
-    assert(false, "test not implemented")
+    assert_equal("{\n  \"appname\": \"%s\"\n}" % @appname, @app0.to_json)
   end
 end

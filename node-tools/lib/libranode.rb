@@ -26,6 +26,8 @@ class GuestAccount
 
   def initialize(username)
     @username = username
+    @homedir = nil
+    @applications = nil
   end
 
   def to_s
@@ -43,16 +45,19 @@ class GuestAccount
 
   # find a user's home directory
   def homedir
+    return @homedir if @homedir
     File.open(@@passwd_file, "r") do |f|
       while line = f.gets do
         entry = line.split(":")
-        return entry[5] if entry[0] == @username
+        return @homedir = entry[5] if entry[0] == @username
       end
     end
   end
 
   # find the applications associated with this user
   def appnames(homedir=nil)
+    return @applications.keys if @applications
+
     # get the user's home directory
     homedir ||= self.homedir
 
@@ -64,6 +69,16 @@ class GuestAccount
     apps.sort
   end
 
+  # populate and return the application data structures
+  def applications(refresh=false, homedir=nil)
+    return @applications if @applications
+
+    apps = {}
+    self.appnames.each do |appname|
+      apps << Application.new(appname, self)
+    end
+    @applications = apps
+  end
   # ------------------------------------------------------------------------
   # Class Methods
   # ------------------------------------------------------------------------
@@ -90,11 +105,24 @@ class Application
   attr_reader :appname, :apptype
   attr :account
 
-  def initialize(appname, apptype=nil, account=nil)
+  def initialize(appname, account=nil, apptype=nil)
     @appname = appname
-    @apptype = apptype
     @account = account
+    @apptype = apptype
   end
 
+
+  def to_s
+    @appname
+  end
+
+  def to_xml
+    xml = Builder::XmlMarkup.new( :indent => 2 )
+    xml.application(:appname => @appname)
+  end
   
+  def to_json
+    JSON.pretty_generate({"appname" => @appname})
+  end
+
 end
