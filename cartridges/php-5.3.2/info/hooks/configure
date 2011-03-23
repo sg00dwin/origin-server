@@ -112,7 +112,8 @@ function create_repo {
     GIT_DIR=$CUSTOMER_HOME/git/$application.git
     mkdir -p "$CUSTOMER_HOME/git"
     cp -ad /usr/libexec/li/cartridges/php-5.3.2/info/data/git_template.git $GIT_DIR
-    cat <<EOF > $CUSTOMER_HOME/git/$application.git/hooks/post-receive
+    echo "php 5.3.2 application '$application'" > $GIT_DIR/description
+    cat <<EOF > $GIT_DIR/hooks/post-receive
 rm -rf $APP_DIR/repo/*
 git archive --format=tar HEAD | (cd $APP_DIR/repo && tar xf -)
 # Reload httpd here maybe?
