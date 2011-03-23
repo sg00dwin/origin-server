@@ -409,7 +409,14 @@ fi
 
 %files node-tools
 %defattr(-,root,root,-)
-%{_libexecdir}/li/node-tools/
+%{_bindir}/li-accounts
+%{_bindir}/li-applications
+%{gemdir}/gems/li-node-tools-%{version}
+%{gemdir}/bin/li-accounts
+%{gemdir}/bin/li-applications
+%{gemdir}/cache/li-node-tools-%{version}.gem
+%{gemdir}/doc/li-node-tools-%{version}
+%{gemdir}/specifications/li-node-dir-%{version}.gemspec
 
 %files server
 %defattr(-,root,root,-)
