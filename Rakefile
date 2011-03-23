@@ -140,7 +140,7 @@ task :install_node_tools => [:test_node_tools] do
 end
 
 desc "Install all the Libra files (e.g. rake DESTDIR='/tmp/test/ install')"
-task :install => [:install_client, :install_node, :install_cartridges, :install_server]
+task :install => [:install_client, :install_node, :install_node_tools, :install_cartridges, :install_server]
 
 task :version do
     @version = RPM_REGEX.match(File.read(RPM_SPEC))[2]
