@@ -416,7 +416,7 @@ fi
 %{gemdir}/bin/li-applications
 %{gemdir}/cache/li-node-tools-%{version}.gem
 %{gemdir}/doc/li-node-tools-%{version}
-%{gemdir}/specifications/li-node-dir-%{version}.gemspec
+%{gemdir}/specifications/li-node-tools-%{version}.gemspec
 
 %files server
 %defattr(-,root,root,-)
