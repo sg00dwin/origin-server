@@ -70,7 +70,7 @@ if __name__ == '__main__':
         name = allargs[2]
         if type.isalnum() and name.isalnum():
             path = os.path.expanduser('~')
-            allargs = "-czf - %s/%s/%s/" % (path, type, name)
+            allargs = "-czf - -C %s/%s/ --exclude=./%s/%s_ctl.sh ./%s/" % (path, type, name, name, name)
             allargs = allargs.split()
         else:
             print "Failed sanitization"
