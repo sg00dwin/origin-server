@@ -135,6 +135,10 @@ end
 task :install_node_tools => [:test_node_tools] do
   cd NODE_TOOLS_DIR
   sh "rake", "clean"
+  mkdir_p BIN_DIR
+  Dir.glob("bin/*").each do |script|
+    cp script, File.join(BIN_DIR, File.basename(script))
+  end
   sh "rake", "package"
   cd RAKE_ROOT
 end
