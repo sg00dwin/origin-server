@@ -34,6 +34,7 @@ Requires: li-cartridge-php-5.3.2
 Requires: li-cartridge-wsgi-3.2.1
 Requires: li-cartridge-rack-1.1.0
 Requires: qpid-cpp-server
+Requires: puppet
 BuildArch: noarch
 
 %description devenv
