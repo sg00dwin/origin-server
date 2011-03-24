@@ -23,11 +23,11 @@ module Libra
     user = User.find(rhlogin)
     
     # Validate registration
-    throw :invalid_user_registration unless User.valid_registration?(rhlogin, password)
+    raise "Invalid RHLogin or password" unless User.valid_registration?(rhlogin, password)
 
     # App exists check
     if action == 'configure'
-      throw :app_already_exists if user.app_info(app_name)
+      raise "An application named '#{app_name}' already exists" if user.app_info(app_name)
       user.validate_app_limit
       # Create S3 app entry on configure (one of the first things)
       user.create_app(app_name, framework)
@@ -35,7 +35,7 @@ module Libra
       if action == 'deconfigure'
         Libra.debug "app not found, attempting to remove anyway..." unless user.app_info(app_name)
       else
-        throw :app_does_not_exist unless user.app_info(app_name)
+        raise "An application named '#{app_name}' does not exist" unless user.app_info(app_name)
       end
     end
 
@@ -55,7 +55,7 @@ module Libra
     result = server.execute_direct(framework, action, "#{app_name} #{user.namespace} #{user.uuid}")[0]
     unless result.results[:data][:exitcode] == 0
         Libra.debug result.results[:data][:output]
-        throw :node_execution_failure
+        raise "Node execution failure.  If the problem persists please contact Red Hat support."
     end
 
     # update DNS

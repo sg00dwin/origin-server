@@ -174,10 +174,25 @@ module RHC
   
   def self.print_json_body(response, debug)
     json_resp = JSON.parse(response.body);
-    json_resp.each do |k,v|
-      if (debug || (!debug && k != 'debug'))
-        puts "#{k.to_s}: #{v.to_s}"
-      end
+    if debug
+      if json_resp['debug']        
+        puts ''
+        puts 'DEBUG:'
+        puts json_resp['debug']
+        if (json_resp.length > 2)
+          json_resp.each do |k,v|
+            if (k != 'results' && k != 'debug')
+              puts "#{k.to_s}: #{v.to_s}"
+            end
+          end
+        end
+      end      
+    end
+    if json_resp['result']
+      puts ''
+      puts 'RESULT:'
+      puts json_resp['result']
+      puts ''
     end
   end
 

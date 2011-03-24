@@ -56,7 +56,7 @@ module Libra
           current_repos = num_repos
         end
       end
-      throw :no_servers_found unless current_server
+      raise "No nodes available.  If the problem persists please contact Red Hat support." unless current_server
       Libra.debug "DEBUG: server.rb:find_available #{current_server}: #{current_repos}" if Libra.c[:rpc_opts][:verbose]
       new(current_server, current_repos)
     end
