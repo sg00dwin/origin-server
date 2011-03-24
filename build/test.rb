@@ -4,19 +4,17 @@ begin
 
     desc "Run all unit tests"
     Cucumber::Rake::Task.new(:unit) do |t|
-      t.cucumber_opts = "--tags @unit"
+      t.cucumber_opts = "tests --tags @unit"
     end
 
     desc "Run all integration tests"
     Cucumber::Rake::Task.new(:integration) do |t|
-      t.cucumber_opts = "--tags ~@sprint1"
+      t.cucumber_opts = "tests --tags ~@sprint"
     end
 
     desc "Run the sprint tests"
-    task :cuc_sprint do |t, args|
-      Cucumber::Rake::Task.new(:sprint) do |t|
-        t.cucumber_opts = "--tags @sprint"
-      end
+    Cucumber::Rake::Task.new(:sprint) do |t|
+      t.cucumber_opts = "tests --tags @sprint"
     end
   end
 rescue LoadError

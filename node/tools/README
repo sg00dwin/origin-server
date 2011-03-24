@@ -1,0 +1,100 @@
+These are a set of short scripts intended to be called on the node via a message.
+The results are returned on stdout.
+
+GOALS
+  Provide one-call scripts to survey and possibly control aspects of node guest
+  user accounts and applications.
+
+CALLING CONVENTIONS
+  All scripts will be callable with an absolute path and a set of arguments.
+  The arguments will follow GNU short/long option conventions.  Each script
+  will accept a minimal set of arguments.
+
+  -h|--help
+    Print usage information
+
+  -v|--verbose
+    Generate additonal human readable output
+
+  -d|--debug
+    Generate additional output useful to people diagnosing problems
+
+  -n|--dryrun (no-op)
+    Run through the logic but take no action which has side effects
+
+  -f|--output=text|json|xml
+    Generate output in text or a machine parsable format.
+  
+    text is the default and is required.
+    json and xml are optional.  If not supported, generate an error, a message
+    and stop.  The message must be in the requested format.
+
+OUTPUT FORMATS
+
+    The output of these scripts is meant to be useful both to a human operator
+    and to programmatic tools.  To aid in machine parsing and integration
+    if the output, it will be presented, when requested in a standard
+    structured serial form.
+
+    Only the text output is required. However, structured output is highly
+    desirable to aid in the script integration with infrastructure monitoring
+    and management.
+
+    Two possible forms are JSON and XML.  Parsers exist for most languages for
+    these two forms.
+
+SCRIPTING LANGUAGES
+
+    These scripts can be in any language which is guarenteed to be present.
+    JSON and XML generation modules are highly desirable.  Bourne shell, Perl,
+    and Python, and Ruby are all candidates.
+
+    Ruby is the preferred language as the user application cartridges ensure
+    that Ruby, and a JSON generator module. Further, much of the Libra
+    infrastructure is implemented in Ruby.
+
+
+SAMPLE USES
+
+ * list installed users
+ * list installed applications
+
+ * limits monitoring
+   * quotas configured
+   * quotas enabled/disabled
+   * cgroups enabled
+   * cgroups status
+   * traffic control (tc) enabled
+   * traffic control status
+   * master httpd status
+
+ * node service statistics:
+   * file quota
+   * disk usage
+   * network traffic limits
+   * network usage
+   * cpu usage
+   * memory usage
+   * httpd status
+
+* active retuning
+  * reset quotas (all/per user)
+  * reset cgroup limits (all/per user)
+  * reset cgroup counters (all/per user)
+  * reset traffic control limits (all/per user)
+  * reset traffic control counters (all/per user)
+
+* application statistics
+   * file quota
+   * disk usage
+   * network traffic limits
+   * network usage
+   * cpu usage
+   * memory usage
+   * httpd status
+
+* application management
+
+  * reset application services
+  * clear and re-initialize application files
+

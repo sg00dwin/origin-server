@@ -18,7 +18,7 @@ begin
     BREW_LI = "https://brewweb.devel.redhat.com/packageinfo?packageID=31345"
     GIT_REPO_PUPPET = "ssh://puppet1.ops.rhcloud.com/srv/git/puppet.git"
     CONTENT_TREE = {'puppet' => '/etc/puppet'}
-    RSA = File.expand_path("~/.ssh/libra-new.pem")
+    RSA = File.expand_path("~/.ssh/libra.pem")
     SSH = "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PasswordAuthentication=no -i " + RSA
 
     # This will verify the Amazon SSL connection
@@ -59,7 +59,7 @@ begin
 
       unless File.exists?(RSA)
         puts "Setting up RSA key"
-        libra_key = File.expand_path("../../docs/libra-new.pem", File.expand_path(__FILE__))
+        libra_key = File.expand_path("../../docs/libra.pem", File.expand_path(__FILE__))
         FileUtils.cp(libra_key, RSA)
         File.chmod(0600, RSA)
       end

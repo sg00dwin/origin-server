@@ -1,0 +1,69 @@
+<script type="text/javascript">
+function validate() {
+  if (document.getElementById('user_password').value != document.getElementById('user_passwordConfirmation').value) {
+    var errorsDiv = document.getElementById('errors_div');
+    while (errorsDiv.firstChild)
+      errorsDiv.removeChild(errorsDiv.firstChild);
+    var p = document.createElement('p');
+    errorsDiv.appendChild(p);
+    var s = document.createElement('strong');
+    p.appendChild(s);
+    var f = document.createElement('font');
+    f.color = 'red';
+    s.appendChild(f);
+    f.appendChild(document.createTextNode('Passwords must match'));
+	  errorsDiv.focus();
+		document.getElementById('user_emailAddress').focus();
+    return false;
+  }
+  return true;
+}
+</script>
+<%= content_tag :div, :id => "registration", :class => "prefix_1 grid_12 suffix_1" do -%>
+  <%= content_tag :h3, "Register for access to Express" %>
+
+  <div id="beta-notes" class="grid_12">
+    <h4>Important Notes</h4>
+    <p>Use a @redhat.com email address</p>
+    <p>If the email address is alread registered, you can make it unique by
+    using something like: <pre>mhicks+libra@redhat.com</pre></p>
+  </div>
+
+    <div id="errors_div" class="grid_12">
+      <% @user.errors.each do |field, msg| %>
+          <p><strong><font color="red"><%= msg %></font></strong></p>
+      <% end %>
+    </div>
+    <div id="user_form" class="grid_12">
+    <%= form_for(@user, :id => "user_form") do |f| -%>
+      <div class="grid_12">
+        <%= f.label "emailAddress", "Email" %>
+        <%= f.text_field "emailAddress" %>
+      </div>
+
+      <div class="grid_12">
+        <%= f.label "password", "Password" %>
+        <%= f.password_field "password" %>
+      </div>
+
+      <div class="grid_12">
+        <%= f.label "passwordConfirmation", "Retype Password" %>
+        <%= f.password_field "passwordConfirmation" %>
+      </div>
+
+      <div id="captcha" class="grid_12">
+        <label>Prove You Are Human</label>
+        <%= recaptcha_tags %>
+      </div>
+
+      <div id="user_form_submit" class="grid_12">
+        <%= f.submit "Register Now", :class => "button", :onclick=>"return validate()" %>
+      </div>
+    <% end %>
+		<% if (@user.errors.length > 0) %>
+        <script type="text/javascript">
+            document.getElementById('user_emailAddress').focus();
+        </script>
+    <% end %>
+    </div>
+<% end %>

@@ -1,8 +1,8 @@
 # Default Libra domain
-libra_domain='rhcloud.com'
+libra_domain='beta.rhcloud.com'
 
 # Remote API server
-libra_server = 'localhost'
+libra_server = 'li.beta.rhcloud.com'
 
 # Logging
 debug = false

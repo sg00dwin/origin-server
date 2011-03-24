@@ -1,0 +1,168 @@
+#!/usr/bin/env ruby
+# Copyright © 2010 Jim Jagielski All rights reserved
+# Copyright © 2010 Mike McGrath All rights reserved
+# Copyright © 2010 Red Hat, Inc. All rights reserved
+
+# This copyrighted material is made available to anyone wishing to use, modify,
+# copy, or redistribute it subject to the terms and conditions of the GNU
+# General Public License v.2.  This program is distributed in the hope that it
+# will be useful, but WITHOUT ANY WARRANTY expressed or implied, including the
+# implied warranties of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.  You should have
+# received a copy of the GNU General Public License along with this program;
+# if not, write to the Free Software Foundation, Inc., 51 Franklin Street,
+# Fifth Floor, Boston, MA 02110-1301, USA. Any Red Hat trademarks that are
+# incorporated in the source code or documentation are not subject to the GNU
+# General Public License and may only be used or replicated with the express
+# permission of Red Hat, Inc.
+
+require 'rhc-common'
+
+#
+# print help
+#
+def p_usage
+    puts <<USAGE
+
+Usage: #{$0}
+Bind a registered rhcloud user to a domain in rhcloud.
+
+  NOTE: to change ssh key, please alter your ~/.ssh/libra_id_rsa and
+        ~/.ssh/libra_id_rsa.pub key, then re-run with --alter
+
+  -n|--namespace   namespace   Libra namespace (alphanumeric) (required)
+  -l|--rhlogin     rhlogin     Red Hat login (often email) (required)
+  -p|--password    password    RHLogin password (optional, will prompt)
+  -a|--alter                   Alter existing namespace
+  -d|--debug                   Print Debug info
+  -h|--help                    Show Usage info
+
+USAGE
+exit 255
+end
+
+opts = GetoptLong.new(
+    ["--debug", "-d", GetoptLong::NO_ARGUMENT],
+    ["--help",  "-h", GetoptLong::NO_ARGUMENT],
+    ["--rhlogin",  "-l", GetoptLong::REQUIRED_ARGUMENT],
+    ["--password",  "-p", GetoptLong::OPTIONAL_ARGUMENT],
+    ["--namespace", "-n", GetoptLong::REQUIRED_ARGUMENT],
+    ["--alter", "-a", GetoptLong::NO_ARGUMENT]
+)
+
+# Pull in configs from files
+libra_server = get_var('libra_server')
+debug = get_var('debug') == 'false' ? nil : get_var('debug')
+
+
+libra_kfile = "#{ENV['HOME']}/.ssh/libra_id_rsa"
+libra_kpfile = "#{ENV['HOME']}/.ssh/libra_id_rsa.pub"
+
+opt = {}
+opts.each do |o, a|
+    opt[o[2..-1]] = a.to_s
+end
+
+if opt["help"]
+    p_usage
+end
+
+if opt["debug"]
+    debug = true
+end
+
+if opt["namespace"]
+    if opt["namespace"] =~ /[^0-9a-zA-Z]/
+        puts "namespace contains non-alphanumeric characters!"
+        p_usage
+    end
+else
+    puts "Namespace is required"
+end
+
+if !RHC::check_rhlogin(opt['rhlogin'])
+    p_usage
+end
+
+
+if !opt["rhlogin"] || !opt["namespace"]
+    p_usage
+end
+
+password = opt['password']
+if !password
+  password = RHC::get_password
+end
+
+#
+# Add a new namespace to configs
+#
+
+def add_rhlogin_config(rhlogin, uuid)
+    f = open(@local_config_path, 'a')
+    unless @local_config.get_value('default_rhlogin')
+        f.puts("# Default rhlogin to use if none is specified")
+        f.puts("default_rhlogin=#{rhlogin}")
+        f.puts("")
+    end
+    unless @local_config.get_value(rhlogin)
+        puts "Adding rhlogin to #{ENV['HOME']}/.li"
+        f.puts("#{rhlogin}=#{uuid}")
+    end
+    f.close
+end
+
+
+#
+# Check to see if a libra_id_rsa key exists, if not create it.
+#
+
+if File.readable?(libra_kfile)
+    puts "Libra key found at #{libra_kfile}.  Reusing..."
+else
+    puts "Generating libra ssh key to #{libra_kfile}"
+    # Use system for interaction
+    system("ssh-keygen -t rsa -f #{libra_kfile}")
+end
+
+ssh_key = File.open(libra_kpfile).gets.chomp.split(' ')[1]
+
+puts "Contacting https://#{libra_server}"
+data = {'namespace' => opt['namespace'],
+                'rhlogin' => opt['rhlogin'],
+                'password' => password,
+                'ssh' => ssh_key}
+if (opt['alter'])
+  data['alter'] = "true"
+end
+if debug
+  data['debug'] = "true"
+end
+RHC::print_post_data(data, debug)
+json_data = JSON.generate(data)
+
+url = URI.parse("https://#{libra_server}/app/broker/domain")
+response = RHC::http_post(@http, url, json_data)
+
+if response.code == '200'
+    RHC::print_response_success(response, debug)
+    json_resp = JSON.parse(response.body);
+    json_rhlogininfo = JSON.parse(json_resp['result'])
+    add_rhlogin_config(json_rhlogininfo['rhlogin'], json_rhlogininfo['uuid'])
+
+    if opt['alter'] != ''
+        puts <<EOF
+Creation successful
+
+You may now create an application.  Please make note of your local config file
+in ~/.li/libra.conf which has been created and populated for you.
+
+EOF
+    else
+        puts "RHLogin alteration successful."
+        puts
+    end
+    exit 0
+else
+    RHC::print_response_err(response, debug, 254)
+end

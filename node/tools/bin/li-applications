@@ -1,0 +1,214 @@
+#!/usr/bin/ruby
+#============================================================================
+# Author: Mark Lamourine <markllama@redhat.com>
+# Copyright: 2011
+# License: GNU Public License V2
+# ===========================================================================
+# 
+# list_guest_accounts
+# 
+# This is a Libra node utility to survey the list of guest accounts on a node
+# 
+# ===========================================================================
+
+# ---------------------------------------------------------------------------
+#  Initialize Logging
+# ---------------------------------------------------------------------------
+require 'logger'
+
+log = Logger.new(STDOUT)
+log.level = Logger::WARN
+log.formatter = proc { |severity, datetime, programname, msg|
+  "#{severity}: #{msg}\n"
+}
+
+# ----------------------------------------------------------------------------
+# Define CLI/Environment options and defaults
+# ----------------------------------------------------------------------------
+require 'getoptlong'
+
+usage_message ="
+usage: #{$0} [options]
+
+options:
+
+   Standard Options -
+   --help|-h:      print this message
+   --debug|-d:     add output useful for debugging
+   --verbose|-v:   add output to make curious humans happy
+   --dryrun|-n:    run the logic but make no changes
+
+   Application Options -
+   --format|-f text|json|xml  # select the output format (default: text)  
+
+"
+
+#
+# standard options and their default values
+#
+standard_options = 
+  [
+   ["--help", "-h", GetoptLong::NO_ARGUMENT], 
+   ["--debug", "-d", GetoptLong::NO_ARGUMENT],
+   ["--verbose", "-v", GetoptLong::NO_ARGUMENT],
+   ["--dryrun", "-n", GetoptLong::NO_ARGUMENT]
+  ]
+
+standard_defaults = {
+  # standard defaults
+  :help => false,
+  :debug => false,
+  :verbose => false,
+  :dryrun => false,
+}
+
+#
+# Add your options here
+#
+app_options =
+  [
+   ["--format", "-f", GetoptLong::REQUIRED_ARGUMENT],
+   ["--passwd_file", "-p", GetoptLong::REQUIRED_ARGUMENT],
+   ["--guest_marker", "-m", GetoptLong::REQUIRED_ARGUMENT]
+  ]
+
+app_defaults = {
+  :format => "text",  # alternates: text|json|xml
+  # These are really for debugging
+  :passwd_file => "/etc/passwd",
+  :guest_marker => ":libra guest:"
+}
+
+#
+# Combine the standard and application options and defaults
+#
+
+all_options = standard_options + app_options
+defaults = standard_defaults.merge app_defaults
+
+#
+# Process the CLI and environment options
+#
+opts = {}
+optparser = GetoptLong.new(*all_options)
+optparser.each {|key, value| opts[key[2..-1].to_sym] = value }
+
+# Apply environment variable values or defaults as needed
+defaults.each do |key, dvalue|
+  #if no matching value in opts, set the default
+  if opts[key] == nil
+    # check for ENV to supersede the default as well
+    if ENV[key.to_s.upcase] != nil
+      opts[key] = ENV[key.to_s.upcase]
+    else
+      opts[key] = dvalue
+    end
+  end
+end
+
+# Adjust logging for user input
+log.level = Logger::DEBUG if opts[:debug] 
+
+
+# =============================================================================
+#
+# Application logic - Add the guts here
+#
+# =============================================================================
+require 'json'
+require 'rubygems'
+require 'builder'
+
+class LibraNodeAccount
+  
+  :attr_reader username
+
+  def initialize(username)
+    @username = username
+  end
+
+  # expand this as more attributes are available
+  def to_s
+    @username
+  end
+
+  def to_xml
+    xml = Builder::XmlMarkup.new( :indent => 2 )
+    xml.account(:username => @username)
+  end
+  
+  def to_json
+    JSON.pretty_generate({"username" => @username})
+  end
+end
+
+
+def report(accounts, format="text")
+  case format
+    when "text": report_text accounts
+    when "json": report_json accounts
+    when "xml": report_xml accounts
+  end
+end
+
+def report_text(accounts)
+  # write header
+  report = ""
+  report += "-" * 32 + " Libra Accounts " + "-" * 32 + "\n"
+
+  accounts.each {|a| report += a + "\n"}
+
+  report += "-" * 80 + "\n"
+end
+
+def report_json(accounts)
+  accts = []
+  accounts.each do |username|
+    accts.push({"username" => username})
+  end
+  JSON.generate({"accounts" => accts})
+end
+
+def report_xml(accounts)
+  xml = Builder::XmlMarkup.new( :indent => 2 )
+  xml.instruct! :xml, :encoding => "UTF-8"
+  xml.accounts do |alist|
+    accounts.each do |username|
+      alist.account(:username => username)
+    end
+  end
+end
+
+# =============================================================================
+# =============================================================================
+#                                   MAIN
+# =============================================================================
+# =============================================================================
+
+# Just provide help if requested
+if opts[:help]
+  puts usage_message
+  exit
+end
+
+#
+# Open the password file, find all the entries with the marker in them
+# and create a data structure with the usernames of all matching accounts
+#
+userlist = []
+guest_re = Regexp.new(opts[:guest_marker])
+File.open(opts[:passwd_file], "r") do |f|
+  while line = f.gets
+    if guest_re =~ line
+      userlist.push(line.split(":")[0])
+    end
+  end
+end
+
+# For each account, find the applications.  Note the app name and type
+applications = {}
+userlist.each do |username|
+
+end
+
+puts report applications, opts[:format]
