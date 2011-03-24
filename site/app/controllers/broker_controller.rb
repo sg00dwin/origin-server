@@ -25,16 +25,25 @@ class BrokerController < ApplicationController
     end
     data
   end
+  
+  def render_unauthorized
+    render :json => generate_result_json("Invalid user credentials"), :status => :unauthorized
+  end
 
   def cartridge_post
     begin
       # Parse the incoming data
       data = parse_json_data(params['json_data'])
-
-      # Execute a framework cartridge
-      Libra.execute(data['cartridge'], data['action'], data['app_name'], data['rhlogin'], data['password'])         
-
-      render :json => generate_result_json("Success") and return
+            
+      if User.valid_registration?(data['rhlogin'], data['password'])
+  
+        # Execute a framework cartridge
+        Libra.execute(data['cartridge'], data['action'], data['app_name'], data['rhlogin'])         
+  
+        render :json => generate_result_json("Success") and return
+      else
+        render_unauthorized and return
+      end
     rescue Exception => e
       render :json => generate_result_json(e.message), :status => :internal_server_error and return
     end
@@ -73,8 +82,7 @@ class BrokerController < ApplicationController
           render :json => generate_result_json("User does not exist"), :status => :not_found and return
         end
       else
-        Libra.debug "Invalid user credentials"
-        render :json => generate_result_json("Invalid user credentials"), :status => :unauthorized and return
+        render_unauthorized and return
       end    
     rescue Exception => e
       render :json => generate_result_json(e.message), :status => :internal_server_error and return
@@ -85,29 +93,29 @@ class BrokerController < ApplicationController
     begin
       # Parse the incoming data
       data = parse_json_data(params['json_data'])
-                        
-      user = User.find(data['rhlogin'])
-      if user
-        if data['alter']
-          if user.namespace != data['namespace']
-            render :json => generate_result_json("You may not change your registered namespace of: #{user.namespace}"), :status => :conflict and return  
+                              
+      if User.valid_registration?(data['rhlogin'], data['password'])
+        user = User.find(data['rhlogin'])
+        if user
+          if data['alter']          
+            if user.namespace != data['namespace']
+              render :json => generate_result_json("You may not change your registered namespace of: #{user.namespace}"), :status => :conflict and return  
+            else
+              user.namespace=data['namespace']
+              user.ssh=data['ssh']
+              user.update
+              Server.execute_many('li-controller-0.1', 'configure',
+                  "-c #{user.uuid} -e #{user.rhlogin} -s #{user.ssh}",
+                  "customer_#{user.rhlogin}", user.rhlogin)
+            end
           else
-            user.namespace=data['namespace']
-            user.ssh=data['ssh']
-            user.update
-            Server.execute_many('li-controller-0.1', 'configure',
-                "-c #{user.uuid} -e #{user.rhlogin} -s #{user.ssh}",
-                "customer_#{user.rhlogin}", user.rhlogin)
+            render :json => generate_result_json("User already has a registered namespace.  To overwrite or change, use --alter"), :status => :conflict and return
           end
-        else
-          render :json => generate_result_json("User already has a registered namespace.  To overwrite or change, use --alter"), :status => :conflict and return
+        else        
+          user = User.create(data['rhlogin'], data['ssh'], data['namespace'])
         end
       else
-        if User.valid_registration?(data['rhlogin'], data['password'])
-          user = User.create(data['rhlogin'], data['ssh'], data['namespace'])
-        else
-          render :json => generate_result_json("Invalid user credentials"), :status => :unauthorized and return
-        end
+        render_unauthorized and return
       end
   
       json_data = JSON.generate({

@@ -14,45 +14,35 @@ options = rpcoptions do |parser, options|
     parser.on('-l', '--rhlogin RHLOGIN', "The unique rhlogin") do |rhlogin|
       options[:rhlogin] = rhlogin
     end
-    
-    parser.on('-p', '--password PASSWORD', "The rhlogin password") do |password|
-      options[:password] = password
-    end
 end
 
+# Set the MCollective options
+Libra.c[:rpc_opts] = options
 
-if User.valid_registration?(options[:rhlogin], options[:password])
-  # Set the MCollective options
-  Libra.c[:rpc_opts] = options
-  
-  # Check if rhlogin already exists
-  user = User.find(options[:rhlogin])
-  unless user
-      puts "Could not find user with rhlogin #{options[:rhlogin]}"
-      exit 5
-  end
-  user_info = {
-      :rhlogin => user.rhlogin,
-      :uuid => user.uuid,
-      :namespace => user.namespace,
-      :ssh_key => user.ssh
-      }
-  
-  app_info = {}
-  
-  user.apps.each do |key, app|
-      app_info[key] = {
-          :framework => app['framework'],
-          :creation_time => app['creation_time']
-      }
-  end
-  
-  json_data = JSON.generate(
-                  {:user_info => user_info,
-                   :app_info => app_info})
-  
-  puts json_data
-else
-  puts "User registration invalid"
-  exit 250
+# Check if rhlogin already exists
+user = User.find(options[:rhlogin])
+unless user
+    puts "Could not find user with rhlogin #{options[:rhlogin]}"
+    exit 5
 end
+user_info = {
+    :rhlogin => user.rhlogin,
+    :uuid => user.uuid,
+    :namespace => user.namespace,
+    :ssh_key => user.ssh
+    }
+
+app_info = {}
+
+user.apps.each do |key, app|
+    app_info[key] = {
+        :framework => app['framework'],
+        :creation_time => app['creation_time']
+    }
+end
+
+json_data = JSON.generate(
+                {:user_info => user_info,
+                 :app_info => app_info})
+
+puts json_data

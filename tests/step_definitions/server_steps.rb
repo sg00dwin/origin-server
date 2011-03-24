@@ -21,7 +21,7 @@ end
 
 When /^I create a '(\w+)' app for '(.+)'$/ do |app, framework|
   @app = app
-  Libra.execute(framework, 'configure', @app, @user.rhlogin, 'redhat')
+  Libra.execute(framework, 'configure', @app, @user.rhlogin)
 end
 
 Then /^the user should have the app on one server$/ do

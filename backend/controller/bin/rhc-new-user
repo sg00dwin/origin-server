@@ -27,10 +27,6 @@ options = rpcoptions do |parser, options|
     parser.on('-a', '--alter', 'Alter / Update user info') do
       options[:alter] = true
     end
-    
-    parser.on('-p', '--password PASSWORD', 'The user password') do |password|
-      options[:password] = password
-    end
 end
 
 unless options.include?(:namespace) or options[:namespace] =~ /^[a-zA-Z0-9]+$/
@@ -46,11 +42,6 @@ end
 unless options.include?(:ssh) or options[:ssh] =~ (options[:ssh] == Base64.encode64(Base64.decode64(options[:ssh])).gsub(/\n/, ''))
     puts "The ssh key is invalid."
     exit 252
-end
-
-unless options.include?(:password)
-    puts "The password is missing."
-    exit 251
 end
 
 # Set the MCollective options
@@ -70,13 +61,8 @@ if user
     puts "User already has a registered namespace.  To overwrite or change, use --alter"
     exit 254
   end
-else
-  if User.valid_registration?(options[:rhlogin], options[:password])
-    user = User.create(options[:rhlogin], options[:ssh], options[:namespace])
-  else
-    puts "User registration invalid"
-    exit 250
-  end
+else  
+  user = User.create(options[:rhlogin], options[:ssh], options[:namespace])
 end
 
 json_return = JSON.generate({
