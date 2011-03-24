@@ -194,6 +194,9 @@ chkconfig mcollective on
 /bin/cp -f /etc/libra/devenv/iptables /etc/sysconfig/iptables
 /etc/init.d/iptables restart
 
+# Adding passenger user
+useradd libra_passenger -g libra_user -d /var/lib/passenger -r -s /sbin/nologin
+
 # enable development environment
 /bin/sed -i 's/#RailsEnv/RailsEnv/g' /etc/httpd/conf.d/rails.conf
 
