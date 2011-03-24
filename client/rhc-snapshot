@@ -115,8 +115,16 @@ rescue NoMethodError
     exit 115
 end
 
-puts "NOTE: This feature is experimental.  For now though, please run the command below:"
-puts
-puts "ssh #{user_info['user_info']['uuid']}@#{app}-#{user_info['user_info']['namespace']}.#{libra_domain} 'snapshot #{framework} #{app}' > #{opt['save']}"
-puts
+puts "Pulling down a snapshot to #{opt['save']}"
+puts 
+puts "ssh #{user_info['user_info']['uuid']}@#{app}-#{user_info['user_info']['namespace']}.#{libra_domain} 'snapshot #{framework} #{app}' > #{opt['save']}" if debug
+git_pull = `ssh #{user_info['user_info']['uuid']}@#{app}-#{user_info['user_info']['namespace']}.#{libra_domain} 'snapshot #{framework} #{app}' > #{opt['save']}`
+if $?.exitstatus != 0
+    puts
+    puts "Error in trying to save snapshot.  You can try to save manually by running:"
+    puts
+    puts "ssh #{user_info['user_info']['uuid']}@#{app}-#{user_info['user_info']['namespace']}.#{libra_domain} 'snapshot #{framework} #{app}' > #{opt['save']}"
+    puts
+    exit 6
+end
 exit 0
