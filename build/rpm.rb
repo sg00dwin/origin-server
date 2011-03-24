@@ -85,7 +85,7 @@ namespace :rpm do
           puts "cvs -d :gserver:cvs.devel.redhat.com:/cvs/dist co li"
           exit 206
       end
-      cp "specs/li.spec", "#{ENV['HOME']}/cvs/li/RHEL-6-LIBRA"
+      cp "build/specs/li.spec", "#{ENV['HOME']}/cvs/li/RHEL-6-LIBRA"
       cd "#{ENV['HOME']}/cvs/li/RHEL-6-LIBRA"
       sh "cvs up -d"
       sh "make new-source FILES='#{@buildroot}/SOURCES/li-#{@version}.tar.gz'"
