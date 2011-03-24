@@ -152,18 +152,9 @@ json_data = JSON.generate(data)
 url = URI.parse("https://#{libra_server}/app/broker/domain")
 response = RHC::http_post(@http, url, json_data)
 
-puts "DEBUG:" if debug
-p response if debug
-json_resp = JSON.parse(response.body);
-
-if response.code == '200'
-    if debug
-        puts "HTTP response from server is:"
-        json_resp.each do |k,v|
-            puts "#{k.to_s}: #{v.to_s}"
-        end
-    end
-
+if response.code == '200'    
+    RHC::print_response_success(response, debug)
+    json_resp = JSON.parse(response.body);
     json_rhlogininfo = JSON.parse(json_resp['result'])
     add_rhlogin_config(json_rhlogininfo['rhlogin'], json_rhlogininfo['uuid'])
 
@@ -181,10 +172,5 @@ EOF
     end
     exit 0
 else
-    puts "Problem with server. Response code was #{response.code}"
-    puts "HTTP response from server is #{response.body}"
-    json_resp.each do |k,v|
-        puts "#{k.to_s}: #{v.to_s}"
-    end
-    exit 255
+    RHC::print_response_err(response, debug, 254)
 end

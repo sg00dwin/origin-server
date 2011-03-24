@@ -12,7 +12,7 @@ module RHC
     "wsgi-3.2.1" => :wsgi
   }
 
-  def RHC.get_type_keys(sep)
+  def self.get_type_keys(sep)
     i = 1
     type_keys = ''
     TYPES.each_key do |key|
@@ -26,7 +26,7 @@ module RHC
   end
 
   # Invalid chars (") ($) (^) (<) (>) (|) (%) (/) (;) (:) (,) (\) (*) (=) (~)
-  def RHC.check_rhlogin(rhlogin)
+  def self.check_rhlogin(rhlogin)
     if rhlogin && rhlogin.length < 6
       puts 'RHLogin must be at least 6 characters'
       return false
@@ -38,15 +38,15 @@ module RHC
     end
   end
 
-  def RHC.check_app(app)
+  def self.check_app(app)
     check_field(app, 'application')
   end
 
-  def RHC.check_namespace(namespace)
+  def self.check_namespace(namespace)
     check_field(namespace, 'namespace')
   end
 
-  def RHC.check_field(field, type)
+  def self.check_field(field, type)
     if field
       if field =~ /[^0-9a-zA-Z]/
         puts "#{type} contains non-alphanumeric characters!"
@@ -59,7 +59,7 @@ module RHC
     true
   end
 
-  def RHC.get_type(type)
+  def self.get_type(type)
     if type
       if !(RHC::TYPES.has_key?(type))
         puts 'type must be ' << RHC::get_type_keys(' or ')
@@ -72,7 +72,7 @@ module RHC
     nil
   end
 
-  def RHC.print_post_data(h, debug)
+  def self.print_post_data(h, debug)
     if (debug)
       puts 'DEBUG: Submitting form:'
       h.each do |k,v|
@@ -89,7 +89,7 @@ module RHC
     end
   end
 
-  def RHC.get_user_info(libra_server, rhlogin, password, net_http, debug)
+  def self.get_user_info(libra_server, rhlogin, password, net_http, debug)
 
     puts "Contacting https://#{libra_server}"
     data = {'rhlogin' => rhlogin, 'password' => password}
@@ -100,11 +100,7 @@ module RHC
     json_data = JSON.generate(data)
 
     url = URI.parse("https://#{libra_server}/app/broker/userinfo")
-    response = http_post(net_http, url, json_data)
-
-    puts "DEBUG:" if debug
-    p response if debug  
-    json_resp = JSON.parse(response.body)
+    response = http_post(net_http, url, json_data) 
 
     unless response.code == '200'
         if response.code == '404'
@@ -112,19 +108,17 @@ module RHC
         elsif response.code == '401'
           puts "Invalid user credentials"
         else
-          puts "Problem with server. Response code was #{response.code}"
-          puts "HTTP response from server is #{response.body}"
+          print_response_err(response, debug, 254)
         end
         exit 255
     end
-    if debug
-        puts "HTTP response from server is #{response.body}"
-    end
+    print_response_success(response, debug)
+    json_resp = JSON.parse(response.body)
     user_info = JSON.parse(json_resp['result'].to_s)
     user_info    
   end
 
-  def RHC.get_password
+  def self.get_password
     password = nil
     begin
       print "Password: "
@@ -137,7 +131,7 @@ module RHC
     password
   end
 
-  def RHC.http_post(http, url, json_data)
+  def self.http_post(http, url, json_data)
     req = http::Post.new(url.path)
 
     req.set_form_data({'json_data' => json_data})
@@ -154,6 +148,37 @@ module RHC
       exit 255
     end
     response
+  end
+  
+  def self.print_response_err(response, debug, exit_code)
+    puts "Problem reported from server. Response code was #{response.code}."
+    if (!debug)      
+      puts "Re-run with -d for more information."
+    end    
+    if response.content_type == 'application/json'
+      print_json_body(response, debug)
+    elsif debug
+      puts "HTTP response from server is #{response.body}"
+    end
+    if (exit_code)
+      exit exit_code
+    end
+  end
+  
+  def self.print_response_success(response, debug)
+    if debug
+      puts "HTTP response from server is:"
+      print_json_body(response, debug)
+    end
+  end
+  
+  def self.print_json_body(response, debug)
+    json_resp = JSON.parse(response.body);
+    json_resp.each do |k,v|
+      if (debug || (!debug && k != 'debug'))
+        puts "#{k.to_s}: #{v.to_s}"
+      end
+    end
   end
 
 end

@@ -27,84 +27,98 @@ class BrokerController < ApplicationController
   end
 
   def cartridge_post
+    begin
       # Parse the incoming data
       data = parse_json_data(params['json_data'])
 
       # Execute a framework cartridge
       Libra.execute(data['cartridge'], data['action'], data['app_name'], data['rhlogin'], data['password'])         
 
-      render :json => generate_result_json("Success")
-      # TODO handle errors 
+      render :json => generate_result_json("Success") and return
+    rescue Exception => e
+      render :json => generate_result_json(e.message), :status => :internal_server_error and return
+    end
   end
   
   def user_info_post
-    # Parse the incoming data
-    data = parse_json_data(params['json_data'])
-
-    # Check if user already exists
-    if User.valid_registration?(data['rhlogin'], data['password'])
-      user = User.find(data['rhlogin'])
-      if user
-        user_info = {
-            :rhlogin => user.rhlogin,
-            :uuid => user.uuid,
-            :namespace => user.namespace,
-            :ssh_key => user.ssh
-            }                
-        app_info = {}
-        
-        user.apps.each do |key, app|
-            app_info[key] = {
-                :framework => app['framework'],
-                :creation_time => app['creation_time']
-            }
+    begin
+      # Parse the incoming data
+      data = parse_json_data(params['json_data'])
+  
+      # Check if user already exists
+      if User.valid_registration?(data['rhlogin'], data['password'])
+        user = User.find(data['rhlogin'])
+        if user
+          user_info = {
+              :rhlogin => user.rhlogin,
+              :uuid => user.uuid,
+              :namespace => user.namespace,
+              :ssh_key => user.ssh
+              }                
+          app_info = {}
+          
+          user.apps.each do |key, app|
+              app_info[key] = {
+                  :framework => app['framework'],
+                  :creation_time => app['creation_time']
+              }
+          end
+          
+          json_data = JSON.generate({:user_info => user_info,
+             :app_info => app_info})
+          
+          render :json => generate_result_json(json_data) and return
+        else
+          # Return a 404 to denote the user doesn't exist
+          render :json => generate_result_json("User does not exist"), :status => :not_found and return
         end
-        
-        json_data = JSON.generate({:user_info => user_info,
-           :app_info => app_info})
-        
-        render :json => generate_result_json(json_data)
       else
-        # Return a 404 to denote the user doesn't exist
-        render :json => generate_result_json("User does not exist"), :status => :not_found
-      end
-    else
-      Libra.debug "Invalid user credentials"
-      render :json => generate_result_json("Invalid user credentials"), :status => :unauthorized
-    end    
+        Libra.debug "Invalid user credentials"
+        render :json => generate_result_json("Invalid user credentials"), :status => :unauthorized and return
+      end    
+    rescue Exception => e
+      render :json => generate_result_json(e.message), :status => :internal_server_error and return
+    end
   end
   
   def domain_post 
-    # Parse the incoming data
-    data = parse_json_data(params['json_data'])
-                      
-    user = User.find(data['rhlogin'])
-    if user
-      if data['alter']
-        user.namespace=data['namespace']
-        user.ssh=data['ssh']
-        user.update
-        Server.execute_many('li-controller-0.1', 'configure',
-            "-c #{user.uuid} -e #{user.rhlogin} -s #{user.ssh}",
-            "customer_#{user.rhlogin}", user.rhlogin)
+    begin
+      # Parse the incoming data
+      data = parse_json_data(params['json_data'])
+                        
+      user = User.find(data['rhlogin'])
+      if user
+        if data['alter']
+          if user.namespace != data['namespace']
+            render :json => generate_result_json("You may not change your registered namespace of: #{user.namespace}"), :status => :conflict and return  
+          else
+            user.namespace=data['namespace']
+            user.ssh=data['ssh']
+            user.update
+            Server.execute_many('li-controller-0.1', 'configure',
+                "-c #{user.uuid} -e #{user.rhlogin} -s #{user.ssh}",
+                "customer_#{user.rhlogin}", user.rhlogin)
+          end
+        else
+          render :json => generate_result_json("User already has a registered namespace.  To overwrite or change, use --alter"), :status => :conflict and return
+        end
       else
-        render :json => generate_result_json("User already has a registered namespace.  To overwrite or change, use --alter"), :status => :conflict
+        if User.valid_registration?(data['rhlogin'], data['password'])
+          user = User.create(data['rhlogin'], data['ssh'], data['namespace'])
+        else
+          render :json => generate_result_json("Invalid user credentials"), :status => :unauthorized and return
+        end
       end
-    else
-      if User.valid_registration?(data['rhlogin'], data['password'])
-        user = User.create(data['rhlogin'], data['ssh'], data['namespace'])
-      else
-        render :json => generate_result_json("Invalid user credentials"), :status => :unauthorized
-      end
+  
+      json_data = JSON.generate({
+                              :rhlogin => user.rhlogin,
+                              :uuid => user.uuid
+                              })
+                                                                  
+      # Just return a 200 success
+      render :json => generate_result_json(json_data) and return
+    rescue Exception => e
+      render :json => generate_result_json(e.message), :status => :internal_server_error and return
     end
-
-    json_data = JSON.generate({
-                            :rhlogin => user.rhlogin,
-                            :uuid => user.uuid
-                            })
-                                                                
-    # Just return a 200 success
-    render :json => generate_result_json(json_data)
-    # TODO handle errors
   end
 end
