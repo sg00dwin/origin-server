@@ -350,7 +350,10 @@ touch %{_localstatedir}/www/html/libra/db/production.sqlite3
 %{_libexecdir}/li/cartridges/wsgi-3.2.1/
 
 %changelog
-* Sun Mar 20 2011 Mike McGrath <mmcgrath@redhat.com> 0.59-1
+* Thu Mar 24 2011 Mike McGrath <mmcgrath@redhat.com> 0.59-1
+- New release
+
+* Sun Mar 20 2011 Mike McGrath <mmcgrath@redhat.com> 0.58-2
 - Added docs
 
 * Sat Mar 19 2011 Mike McGrath <mmcgrath@redhat.com> 0.58-1
