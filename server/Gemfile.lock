@@ -71,7 +71,7 @@ GEM
       polyglot (>= 0.3.1)
     tzinfo (0.3.25)
     uuidtools (2.1.2)
-    xml-simple (1.0.15)
+    xml-simple (1.0.12)
 
 PLATFORMS
   ruby
@@ -84,3 +84,4 @@ DEPENDENCIES
   recaptcha
   right_http_connection
   stomp
+  xml-simple

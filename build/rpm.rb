@@ -50,6 +50,21 @@ namespace :rpm do
       sh "rpmbuild -bs #{@buildroot}/SPECS/li.spec"
   end
 
+  task :test_srpm => [:buildroot, :commit_check] do
+      @version = "0.1"
+
+      # Archive the git repository and compress it for the SOURCES
+      src = "#{@buildroot}/SOURCES/li-tests-#{@version}.tar"
+      sh "git archive --prefix=li-tests-#{@version}/ HEAD --output #{src}"
+      sh "gzip -f #{src}"
+
+      # Move the SPEC file out
+      cp File.dirname(File.expand_path(__FILE__)) + "/specs/tests.spec", "#{@buildroot}/SPECS"
+
+      # Build the source RPM
+      sh "rpmbuild -bs #{@buildroot}/SPECS/tests.spec"
+  end
+
   task :bump_release => [:version, :commit_check] do
       # Bump the version number
       @version = @version.succ
@@ -85,7 +100,7 @@ namespace :rpm do
           puts "cvs -d :gserver:cvs.devel.redhat.com:/cvs/dist co li"
           exit 206
       end
-      cp "specs/li.spec", "#{ENV['HOME']}/cvs/li/RHEL-6-LIBRA"
+      cp "build/specs/li.spec", "#{ENV['HOME']}/cvs/li/RHEL-6-LIBRA"
       cd "#{ENV['HOME']}/cvs/li/RHEL-6-LIBRA"
       sh "cvs up -d"
       sh "make new-source FILES='#{@buildroot}/SOURCES/li-#{@version}.tar.gz'"
