@@ -35,6 +35,8 @@ Requires: li-cartridge-wsgi-3.2.1
 Requires: li-cartridge-rack-1.1.0
 Requires: qpid-cpp-server
 Requires: puppet
+Requires: rubygem-cucumber
+Requires: rubygem-rspec
 BuildArch: noarch
 
 %description devenv
