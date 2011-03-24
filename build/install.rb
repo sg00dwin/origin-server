@@ -18,18 +18,20 @@ namespace :install do
   end
 
   task :client do
-      mkdir_p "#{BIN_DIR}"
-      mkdir_p "#{MAN_DIR}/man1"
-      mkdir_p "#{MAN_DIR}/man5"
-      mkdir_p "#{CONF_DIR}"
-      Dir.glob("client/rhc*").each {|file_name|
-          cp file_name, "#{BIN_DIR}/"
-      }
-      Dir.glob("client/man/*").each {|file_name|
+      cd CLIENT_ROOT
+
+      mkdir_p MAN_DIR + "/man1"
+      mkdir_p MAN_DIR + "/man5"
+      Dir.glob("man/*").each {|file_name|
           man_section = file_name.to_s.split('').last
           cp file_name, "#{MAN_DIR}/man#{man_section}/"
       }
-      cp "client/libra.conf.sample", "#{CONF_DIR}/libra.conf" unless File.exists? "#{CONF_DIR}/libra.conf"
+
+      mkdir_p CONF_DIR
+      cp "conf/libra.conf.sample", CONF_DIR + "/libra.conf" unless File.exists? CONF_DIR + "/libra.conf"
+
+      # Package the gem
+      sh "rake", "package"
   end
 
   task :common do
@@ -81,11 +83,6 @@ namespace :install do
 
       # Tools installation
       cd "tools"
-      sh "rake", "clean"
-      mkdir_p BIN_DIR
-      Dir.glob("bin/*").each do |script|
-          cp script, File.join(BIN_DIR, File.basename(script))
-      end
       sh "rake", "package"
   end
 

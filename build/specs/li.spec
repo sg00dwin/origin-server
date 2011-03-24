@@ -170,7 +170,9 @@ mkdir $RPM_BUILD_ROOT/etc/libra/devenv/
 cp -adv docs/devenv/* $RPM_BUILD_ROOT/etc/libra/devenv/
 
 mkdir -p .%{gemdir}
-gem install --install-dir $RPM_BUILD_ROOT/%{gemdir} --local -V --force --rdoc \
+gem install --install-dir $RPM_BUILD_ROOT/%{gemdir} --bindir $RPM_BUILD_ROOT/%{_bindir} --local -V --force --rdoc \
+     client/pkg/li-%{version}.gem
+gem install --install-dir $RPM_BUILD_ROOT/%{gemdir} --bindir $RPM_BUILD_ROOT/%{_bindir} --local -V --force --rdoc \
      node/tools/pkg/li-node-tools-%{version}.gem
 
 %clean
@@ -268,9 +270,12 @@ fi
 %{_bindir}/rhc-user-info
 %{_bindir}/rhc-ctl-app
 %{_bindir}/rhc-snapshot
-%{_bindir}/rhc-common.rb
 %{_mandir}/man1/rhc-*
 %{_mandir}/man5/libra*
+%{gemdir}/gems/li-%{version}/
+%{gemdir}/cache/li-%{version}.gem
+%{gemdir}/doc/li-%{version}
+%{gemdir}/specifications/li-%{version}.gemspec
 %config(noreplace) %{_sysconfdir}/libra/libra.conf
 
 %files devenv
@@ -308,8 +313,6 @@ fi
 %{_bindir}/li-accounts
 %{_bindir}/li-applications
 %{gemdir}/gems/li-node-tools-%{version}
-%{gemdir}/bin/li-accounts
-%{gemdir}/bin/li-applications
 %{gemdir}/cache/li-node-tools-%{version}.gem
 %{gemdir}/doc/li-node-tools-%{version}
 %{gemdir}/specifications/li-node-tools-%{version}.gemspec

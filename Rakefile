@@ -1,5 +1,5 @@
 require 'build/globals'
 require 'build/ami'
-require 'build/test'
 require 'build/install'
 require 'build/rpm'
+require 'build/test'

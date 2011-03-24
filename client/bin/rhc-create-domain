@@ -16,15 +16,7 @@
 # General Public License and may only be used or replicated with the express
 # permission of Red Hat, Inc.
 
-require "rubygems"
-require "uri"
-require "net/http"
-require "net/https"
-require "getoptlong"
-require "json"
-require 'parseconfig'
-require 'fileutils'
-require File.dirname($0) + '/rhc-common'
+require 'rhc-common'
 
 #
 # print help
@@ -141,10 +133,10 @@ data = {'namespace' => opt['namespace'],
                 'password' => password,
                 'ssh' => ssh_key}
 if (opt['alter'])
-  data['alter'] = "true"  
+  data['alter'] = "true"
 end
 if debug
-  data['debug'] = "true" 
+  data['debug'] = "true"
 end
 RHC::print_post_data(data, debug)
 json_data = JSON.generate(data)
@@ -152,7 +144,7 @@ json_data = JSON.generate(data)
 url = URI.parse("https://#{libra_server}/app/broker/domain")
 response = RHC::http_post(@http, url, json_data)
 
-if response.code == '200'    
+if response.code == '200'
     RHC::print_response_success(response, debug)
     json_resp = JSON.parse(response.body);
     json_rhlogininfo = JSON.parse(json_resp['result'])

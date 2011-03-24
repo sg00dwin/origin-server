@@ -24,7 +24,7 @@ require "getoptlong"
 require "json"
 require 'parseconfig'
 require 'fileutils'
-require File.dirname($0) + '/rhc-common'
+require 'rhc-common'
 
 #
 # print help
@@ -105,7 +105,7 @@ user_info = RHC::get_user_info(libra_server, opt['rhlogin'], password, @http, de
 
 if user_info['user_info']['uuid'] != @local_config.get_value(opt["rhlogin"])
     puts "!! WARNING !! WARNING !! WARNING !! WARNING !!"
-    puts 
+    puts
     puts "The UUID in your ~/.li/libra.conf file is either missing or incorrect."
     puts "Please ensure the below line exists in ~/.li/libra.conf"
     puts

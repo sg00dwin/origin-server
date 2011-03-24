@@ -1,9 +1,12 @@
 require "rubygems"
-require "uri"
+require 'fileutils'
+require "getoptlong"
+require "json"
 require "net/http"
 require "net/https"
-require "json"
 require "parseconfig"
+require 'resolv'
+require "uri"
 
 module RHC
 
@@ -100,7 +103,7 @@ module RHC
     json_data = JSON.generate(data)
 
     url = URI.parse("https://#{libra_server}/app/broker/userinfo")
-    response = http_post(net_http, url, json_data) 
+    response = http_post(net_http, url, json_data)
 
     unless response.code == '200'
         if response.code == '404'
@@ -142,19 +145,19 @@ module RHC
     end
     response = http.start {|http| http.request(req)}
     if response.code == '404' && response.content_type == 'text/html'
-      # TODO probably want to remove this at some point 
+      # TODO probably want to remove this at some point
       puts "!!!! WARNING !!!! WARNING !!!! WARNING !!!!"
       puts "RHCloud server not found.  You might want to try updating your rhc client tools."
       exit 255
     end
     response
   end
-  
+
   def self.print_response_err(response, debug, exit_code)
     puts "Problem reported from server. Response code was #{response.code}."
-    if (!debug)      
+    if (!debug)
       puts "Re-run with -d for more information."
-    end    
+    end
     if response.content_type == 'application/json'
       print_json_body(response, debug)
     elsif debug
@@ -164,18 +167,18 @@ module RHC
       exit exit_code
     end
   end
-  
+
   def self.print_response_success(response, debug)
     if debug
       puts "HTTP response from server is:"
       print_json_body(response, debug)
     end
   end
-  
+
   def self.print_json_body(response, debug)
     json_resp = JSON.parse(response.body);
     if debug
-      if json_resp['debug']        
+      if json_resp['debug']
         puts ''
         puts 'DEBUG:'
         puts json_resp['debug']
@@ -186,7 +189,7 @@ module RHC
             end
           end
         end
-      end      
+      end
     end
     if json_resp['result']
       puts ''

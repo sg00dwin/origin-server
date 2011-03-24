@@ -11,6 +11,7 @@ MAN_DIR = ENV["MANDIR"] || "#{DEST_DIR}/usr/share/man"
 HTML_DIR = ENV["HTMLDIR"] || "#{DEST_DIR}/var/www/html"
 HTTP_CONF_DIR = ENV["HTTPCONFDIR"] || "#{DEST_DIR}/etc/httpd/conf.d"
 ROOT = File.expand_path(File.expand_path(__FILE__) + "/../../")
+BUILD_ROOT = ROOT + "/build"
 CLIENT_ROOT = ROOT + "/client"
 COMMON_ROOT = ROOT + "/common"
 NODE_ROOT = ROOT + "/node"

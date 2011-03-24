@@ -16,16 +16,7 @@
 # General Public License and may only be used or replicated with the express
 # permission of Red Hat, Inc.
 
-require "rubygems"
-require "uri"
-require "net/http"
-require "net/https"
-require "getoptlong"
-require 'resolv'
-require 'json'
-require 'parseconfig'
-require 'fileutils'
-require File.dirname($0) + '/rhc-common'
+require 'rhc-common'
 
 #
 # Check if host exists
@@ -191,7 +182,7 @@ url = URI.parse("https://#{libra_server}/app/broker/cartridge")
 response = RHC::http_post(@http, url, json_data)
 
 if response.code == '200'
-    RHC::print_response_success(response, debug)    
+    RHC::print_response_success(response, debug)
     puts "Creation successful"
 else
     RHC::print_response_err(response, debug, 254)

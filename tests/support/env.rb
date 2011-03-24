@@ -1,4 +1,4 @@
-$LOAD_PATH << File.expand_path('../../../backend/controller/lib', __FILE__)
+$LOAD_PATH << File.expand_path('../../../server/lib', __FILE__)
 require 'mcollective'
 require 'libra'
 require 'timeout'
