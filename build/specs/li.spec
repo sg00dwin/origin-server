@@ -2,7 +2,7 @@
 %define gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 
 Name: li
-Version: 0.59
+Version: 0.59.1
 Release: 1%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
@@ -194,6 +194,9 @@ chkconfig mcollective on
 /bin/cp -f /etc/libra/devenv/iptables /etc/sysconfig/iptables
 /etc/init.d/iptables restart
 
+# Adding passenger user
+useradd libra_passenger -g libra_user -d /var/lib/passenger -r -s /sbin/nologin
+
 # enable development environment
 /bin/sed -i 's/#RailsEnv/RailsEnv/g' /etc/httpd/conf.d/rails.conf
 
@@ -350,6 +353,9 @@ touch %{_localstatedir}/www/html/libra/db/production.sqlite3
 %{_libexecdir}/li/cartridges/wsgi-3.2.1/
 
 %changelog
+* Thu Mar 24 2011 Mike McGrath <mmcgrath@redhat.com> 0.59.1-1
+- Fixing site related issues
+
 * Thu Mar 24 2011 Mike McGrath <mmcgrath@redhat.com> 0.59-1
 - New release
 
