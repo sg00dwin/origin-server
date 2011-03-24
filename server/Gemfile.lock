@@ -33,6 +33,7 @@ GEM
     builder (2.1.2)
     erubis (2.6.6)
       abstract (>= 1.0.0)
+    http_connection (1.4.0)
     i18n (0.5.0)
     json (1.4.3)
     mail (2.2.15)
@@ -69,6 +70,8 @@ GEM
     treetop (1.4.9)
       polyglot (>= 0.3.1)
     tzinfo (0.3.25)
+    uuidtools (2.1.2)
+    xml-simple (1.0.15)
 
 PLATFORMS
   ruby
@@ -79,4 +82,5 @@ DEPENDENCIES
   parseconfig
   rails (= 3.0.5)
   recaptcha
+  right_http_connection
   stomp

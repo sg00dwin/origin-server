@@ -35,7 +35,7 @@ class BrokerController < ApplicationController
       # Parse the incoming data
       data = parse_json_data(params['json_data'])
             
-      if User.valid_registration?(data['rhlogin'], data['password'])
+      if Libra::User.valid_registration?(data['rhlogin'], data['password'])
   
         # Execute a framework cartridge
         Libra.execute(data['cartridge'], data['action'], data['app_name'], data['rhlogin'])         
@@ -55,8 +55,8 @@ class BrokerController < ApplicationController
       data = parse_json_data(params['json_data'])
   
       # Check if user already exists
-      if User.valid_registration?(data['rhlogin'], data['password'])
-        user = User.find(data['rhlogin'])
+      if Libra::User.valid_registration?(data['rhlogin'], data['password'])
+        user = Libra::User.find(data['rhlogin'])
         if user
           user_info = {
               :rhlogin => user.rhlogin,
@@ -94,8 +94,8 @@ class BrokerController < ApplicationController
       # Parse the incoming data
       data = parse_json_data(params['json_data'])
                               
-      if User.valid_registration?(data['rhlogin'], data['password'])
-        user = User.find(data['rhlogin'])
+      if Libra::User.valid_registration?(data['rhlogin'], data['password'])
+        user = Libra::User.find(data['rhlogin'])
         if user
           if data['alter']          
             if user.namespace != data['namespace']
@@ -112,7 +112,7 @@ class BrokerController < ApplicationController
             render :json => generate_result_json("User already has a registered namespace.  To overwrite or change, use --alter"), :status => :conflict and return
           end
         else        
-          user = User.create(data['rhlogin'], data['ssh'], data['namespace'])
+          user = Libra::User.create(data['rhlogin'], data['ssh'], data['namespace'])
         end
       else
         render_unauthorized and return
