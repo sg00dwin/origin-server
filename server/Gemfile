@@ -7,6 +7,7 @@ gem 'stomp'
 gem 'parseconfig'
 gem 'aws'
 gem 'right_http_connection'
+gem 'xml-simple'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'

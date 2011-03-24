@@ -84,3 +84,4 @@ DEPENDENCIES
   recaptcha
   right_http_connection
   stomp
+  xml-simple
