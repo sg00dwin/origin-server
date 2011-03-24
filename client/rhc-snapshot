@@ -33,7 +33,7 @@ def p_usage
     rhlogin = @local_config.get_value('default_rhlogin') ? "Default: #{@local_config.get_value('default_rhlogin')}" : "(required)"
     puts <<USAGE
 
-Usage: rhc-user-info
+Usage: rhc-snapshot
 Display information about a user
 
   -l|--rhlogin   rhlogin    RHCloud rhlogin (alphanumeric) (#{rhlogin})
@@ -45,18 +45,6 @@ Display information about a user
 
 USAGE
 exit 255
-end
-
-def validate_email(email)
-    if email =~ /([^@]+)@([a-zA-Z0-9\.])+\.([a-zA-Z]{2,3})/
-        if $1 =~ /[^a-zA-Z0-9\.]/
-            return false
-        else
-            return true
-        end
-    else
-        return false
-    end
 end
 
 opts = GetoptLong.new(

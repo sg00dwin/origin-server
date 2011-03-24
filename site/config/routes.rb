@@ -8,7 +8,11 @@ RedHatCloud::Application.routes.draw do
   #   match 'products/:id' => 'catalog#view'
   # Keep in mind you can assign values other than :controller and :action
   match 'index' => 'home#index'
-  match 'getting_started' => 'home#getting_started'
+  match 'getting_started' => 'home#getting_started', :via => [:post]
+  
+  match 'broker/cartridge' => 'broker#cartridge_post', :via => [:post]
+  match 'broker/domain' => 'broker#domain_post', :via => [:post]
+  match 'broker/userinfo' => 'broker#user_info_post', :via => [:post]
 
   # Sample of named route:
   #   match 'products/:id/purchase' => 'catalog#purchase', :as => :purchase
@@ -52,7 +56,7 @@ RedHatCloud::Application.routes.draw do
 
   # You can have the root of your site routed with "root"
   # just remember to delete public/index.html.
-  root :to => "home#index"
+  root :to => "home#index"    
 
   # See how all your routes lay out with "rake routes"
 

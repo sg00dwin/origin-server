@@ -22,7 +22,7 @@ end
 When /^I create a '(.*)' user$/ do |rhlogin|
   lambda {
     create_test_user(rhlogin)
-  }.should throw_symbol(:user_exists)
+  }.should raise_error(Exception) 
 
   @failed = true
 end

@@ -38,10 +38,11 @@ When /^(\d+) applications of type '(.+)' are created per user$/ do |num_apps, fr
     # if at max, wait for some to finish and keep going
 
     processes << fork do
+      login = "libra-test+#{username}@redhat.com"
       # Create the user and the apps
-      run("#{$create_domain_script} -n #{username} -l #{$email} -p fakepw")
+      run("#{$create_domain_script} -n #{username} -l #{login} -p fakepw")
       @apps.each do |app|
-        run("#{$create_app_script} -l #{$email} -a #{app} -r #{$temp}/#{username}_#{app}_repo -t php-5.3.2 -b -d -p fakepw")
+        run("#{$create_app_script} -l #{login} -a #{app} -r #{$temp}/#{username}_#{app}_repo -t php-5.3.2 -p fakepw")
       end
     end
 

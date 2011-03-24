@@ -13,12 +13,17 @@ World(MCollective::RPC)
 #
 $curr_dir = File.expand_path(File.dirname(__FILE__))
 $mc_client_cfg = File.expand_path("#{$curr_dir}/../misc/mcollective-client.cfg")
-$pub_key = File.expand_path("#{$curr_dir}/../misc/id_rsa.pub")
 $domain = "rhcloud.com"
 $temp = "/tmp/rhc"
 $create_app_script = "/usr/bin/rhc-create-app"
 $create_domain_script = "/usr/bin/rhc-create-domain"
-$client_config = "/etc/libra/client.conf"
+$client_config = "/etc/libra/libra.conf"
+
+# RSA Key constants
+$libra_pub_key = File.expand_path("~/.ssh/libra_id_rsa.pub")
+$libra_priv_key = File.expand_path("~/.ssh/libra_id_rsa")
+$test_priv_key = File.expand_path("#{$curr_dir}/../misc/libra_id_rsa")
+$test_pub_key = File.expand_path("#{$curr_dir}/../misc/libra_id_rsa.pub")
 
 # Create the temporary space
 FileUtils.mkdir_p $temp
@@ -163,7 +168,11 @@ Libra.c[:bypass_user_reg] = true
 Libra.c[:rpc_opts][:config] = $mc_client_cfg
 
 # Setup test user info
-$test_ssh_key = ssh_key = File.open($pub_key).gets.chomp.split(' ')[1]
+$test_ssh_key = ssh_key = File.open($test_pub_key).gets.chomp.split(' ')[1]
 
 # Default the maximum number of processes
 @max_processes = 2
+
+# Setup the default keys if necessary
+FileUtils.cp $test_pub_key, $libra_pub_key if !File.exists?($libra_pub_key)
+FileUtils.cp $test_priv_key, $libra_priv_key if !File.exists?($libra_priv_key)

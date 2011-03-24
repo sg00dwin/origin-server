@@ -174,35 +174,27 @@ end
 
 puts "Creating remote application space: " + opt['app']
 
-json_data = JSON.generate(
-               {:cartridge => opt['type'],
+data = {:cartridge => opt['type'],
                 :action => 'configure',
                 :app_name => opt['app'],
                 :rhlogin => opt['rhlogin'],
                 :password => password
-                })
+                }
+if debug
+  data['debug'] = "true"
+end
+json_data = JSON.generate(data)
 
 puts "Contacting https://#{libra_server}"
 
-url = URI.parse("https://#{libra_server}/php/cartridge_do.php")
+url = URI.parse("https://#{libra_server}/app/broker/cartridge")
 response = RHC::http_post(@http, url, json_data)
 
-json_resp = JSON.parse(response.body);
 if response.code == '200'
-    if debug
-        puts "HTTP response from server is:"
-        json_resp.each do |k,v|
-            puts "#{k.to_s}: #{v.to_s}"
-        end
-    end
+    RHC::print_response_success(response, debug)    
     puts "Creation successful"
 else
-    puts "Problem with server. Response code was #{response.code}"
-    puts "HTTP response from server is #{response.body}"
-    json_resp.each do |k,v|
-        puts "#{k.to_s}: #{v.to_s}"
-    end
-    exit 254
+    RHC::print_response_err(response, debug, 254)
 end
 
 #
@@ -219,7 +211,7 @@ at_exit do
                     :password => password
                     })
         puts "Cleaning up application"
-        url = URI.parse("https://#{libra_server}/php/cartridge_do.php")
+        url = URI.parse("https://#{libra_server}/app/broker/cartridge")
         RHC::http_post(@http, url, json_data)
     end
 end

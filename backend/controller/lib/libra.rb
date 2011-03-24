@@ -5,27 +5,34 @@ require 'libra/server.rb'
 require 'libra/user.rb'
 
 module Libra
+  
+  def self.debug(str)
+    debugIO = Thread.current[:debugIO]
+    if debugIO
+      debugIO.puts str
+    else
+      puts str
+    end    
+  end
+  
   #
   # Executes
   #
-  def self.execute(framework, action, app_name, rhlogin, password)
+  def self.execute(framework, action, app_name, rhlogin)
     # Lookup the user
-    user = User.find(rhlogin)
-    
-    # Validate registration
-    throw :invalid_user_registration unless User.valid_registration?(rhlogin, password)
+    user = User.find(rhlogin)        
 
     # App exists check
     if action == 'configure'
-      throw :app_already_exists if user.app_info(app_name)
+      raise "An application named '#{app_name}' already exists" if user.app_info(app_name)
       user.validate_app_limit
       # Create S3 app entry on configure (one of the first things)
       user.create_app(app_name, framework)
     else
       if action == 'deconfigure'
-        puts "app not found, attempting to remove anyway..." unless user.app_info(app_name)
+        Libra.debug "app not found, attempting to remove anyway..." unless user.app_info(app_name)
       else
-        throw :app_does_not_exist unless user.app_info(app_name)
+        raise "An application named '#{app_name}' does not exist" unless user.app_info(app_name)
       end
     end
 
@@ -34,7 +41,7 @@ module Libra
     Libra.c[:rpc_opts][:timeout] = 2
     server = Server.find_available
 
-    puts "Node: #{server.name} - #{server.repos} repos" if Libra.c[:rpc_opts][:verbose]
+    Libra.debug "Node: #{server.name} - #{server.repos} repos" if Libra.c[:rpc_opts][:verbose]
 
     # Configure the user on this server if necessary
     Libra.c[:rpc_opts][:disctimeout] = 1
@@ -44,13 +51,13 @@ module Libra
     # Configure the app on the server using a framework cartridge
     result = server.execute_direct(framework, action, "#{app_name} #{user.namespace} #{user.uuid}")[0]
     unless result.results[:data][:exitcode] == 0
-        puts result.results[:data][:output]
-        throw :node_execution_failure
+        Libra.debug result.results[:data][:output]
+        raise "Node execution failure.  If the problem persists please contact Red Hat support."
     end
 
     # update DNS
     public_ip = server.get_fact_direct('public_ip')
-    puts "PUBLIC IP: #{public_ip}"
+    Libra.debug "PUBLIC IP: #{public_ip}"
     sshfp = server.get_fact_direct('sshfp').split[-1]
     Server.nsupdate_add(app_name, user.namespace, public_ip, sshfp) if action == 'configure'
     Server.nsupdate_del(app_name, user.namespace, public_ip) if action == 'deconfigure'
@@ -76,6 +83,6 @@ module Libra
 
     # Add the additional server if needed
     result = Server.create
-    puts "Added EC2 instance #{result[0]}"
+    Libra.debug "Added EC2 instance #{result[0]}"
   end
 end
