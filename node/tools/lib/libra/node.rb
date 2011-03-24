@@ -33,9 +33,18 @@ module Libra
 
     class Status
 
-      attr_reader :selinux, :qpid, :mcollective, :cgroups, :tc, :quota, :httpd
+      #attr_reader :packages :selinux, :qpid, :mcollective, 
+      #attr_reader :cgroups, :tc, :quota, :httpd
+
+      @@package_list = ['qpid-cpp-server', 'qpid-cpp-client', 'ruby-qmf',
+                        'mcollective', 'mcollective-client',
+                        'li-node',
+                        'li-cartridge-php-5.3.2', 
+                        'li-rack-1.1.0', 
+                        'li-wsgi-3.2.1']
 
       def initialize
+        @packages = nil
         @selinux = nil
         @qpid = nil
         @mcollective = nil
@@ -47,8 +56,8 @@ module Libra
       end
 
       def to_s
-      end
 
+      end
       
       def to_json
 
@@ -58,7 +67,21 @@ module Libra
         new(*o)
         # add status
       end
+
+      def to_xml
+
+      end
+
+      #
+      # Check the set of required packages
+      # 
+      def packages
+        packages = {}
+        @@packagelist.each { |pkgname| packages[pkgname => `rpm -q --qf '%{NAME} %{VERSION}' #{pkgname}`]}
+      end
     end
+
+    
 
     class GuestAccount
  
