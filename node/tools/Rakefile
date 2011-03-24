@@ -26,6 +26,9 @@ spec = Gem::Specification.new do |s|
   s.executables = ['li-accounts', 'li-applications']
   s.add_dependency('json')
   s.add_dependency('nokogiri')  # XML processing
+  # MAL 20110323 - not sure what these are for.  Uncomment when you need them.
+  #s.add_development_dependency("rspec")
+  #s.add_development_dependency("cucumber")
 end
 
 # Define a :package task that bundles the gem

@@ -3,12 +3,12 @@
 require 'test/unit'
 require 'libra/node'
 
-GuestAccount.passwd_file = File.dirname(__FILE__) + "/data/etc/passwd"
+Libra::Node::GuestAccount.passwd_file = File.dirname(__FILE__) + "/data/etc/passwd"
 
 class LibraListAccountsTest < Test::Unit::TestCase
 
   def testAccountList
-    alist = GuestAccount.accounts
+    alist = Libra::Node::GuestAccount.accounts
     assert_equal(400, alist.length)
   end
 end
@@ -17,7 +17,7 @@ class LibraAccountTest < Test::Unit::TestCase
   
   def setup
     @username = "aabbccddeeff00112233445566778000"
-    @a0 = GuestAccount.new(@username)
+    @a0 = Libra::Node::GuestAccount.new(@username)
   end
 
   def testInitialize
@@ -33,7 +33,8 @@ class LibraAccountTest < Test::Unit::TestCase
   end
 
   def testJson
-    assert_equal("{\n  \"username\": \"%s\"\n}" % @username, @a0.to_json)
+    a0 = JSON.parse(@a0.to_json)
+    assert_equal(@username, a0.username)
   end
 
   def testHomedir
@@ -53,10 +54,10 @@ class LibraApplicationTest < Test::Unit::TestCase
   def setup
     @username = ""
     @appname = "myapp0"
-    @acct = GuestAccount.new(@username)
+    @acct = Libra::Node::GuestAccount.new(@username)
     @apptype = "php-5.3.2"
-    @app0 = Application.new(@appname, nil, @apptype)
-    #@app1 = Application.new(@appname, @acct)
+    @app0 = Libra::Node::Application.new(@appname, nil, @apptype)
+    #@app1 = Libra::Node::Application.new(@appname, @acct)
   end
 
   def testInitialize
@@ -74,6 +75,7 @@ class LibraApplicationTest < Test::Unit::TestCase
   end
 
   def testJson
-    assert_equal("{\n  \"appname\": \"%s\"\n}" % @appname, @app0.to_json)
+    app0 = JSON.parse(@app0.to_json)
+    assert_equal(@appname, app0.appname)
   end
 end
