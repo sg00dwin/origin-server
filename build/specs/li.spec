@@ -198,6 +198,9 @@ chkconfig mcollective on
 /usr/sbin/groupadd -r libra_user
 /usr/sbin/useradd libra_passenger -g libra_user -d /var/lib/passenger -r -s /sbin/nologin
 
+# Change group for mcollective client.cfg
+/bin/chgrp libra_user /etc/mcollective/client.cfg
+
 # enable development environment
 /bin/sed -i 's/#RailsEnv/RailsEnv/g' /etc/httpd/conf.d/rails.conf
 
