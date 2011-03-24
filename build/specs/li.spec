@@ -220,7 +220,7 @@ crontab -u root /etc/libra/devenv/crontab
 /bin/cp -f /etc/libra/devenv/libra.conf /etc/libra/devenv/node.conf /etc/libra/devenv/controller.conf /etc/libra
 
 # enable disk quotas
-/usr/bin/rhc-init-quota
+#/usr/bin/rhc-init-quota
 
 # secure remounts of special filesystems
 #/usr/libexec/li/devenv/remount-secure.sh
