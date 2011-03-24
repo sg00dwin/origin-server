@@ -49,9 +49,9 @@ module Libra
     end
     
     #
-    # Finds all registered rhlogins
+    # Returns whether rhlogin with pw are registered
     #
-    #   User.find_all_rhlogins
+    #   User.valid_registration?
     #
     def self.valid_registration?(rhlogin, password)
       if !Libra.c[:bypass_user_reg]

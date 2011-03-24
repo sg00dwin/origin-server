@@ -69,7 +69,7 @@ function error {
 function address() {
     # uid=$1
     # final=$2
-    printf "0x08x\n" "$((0x7f000000 + $(($1<<7)) + $2))"
+    printf "0x%08x\n" "$((0x7f000000 + $(($1<<7)) + $2))"
 }
 
 # convert an integer IP address to dotted quad format

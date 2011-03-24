@@ -13,6 +13,53 @@ require 'json'
 #
 module Libra
   module Node
+
+
+    # survey the status of the Libra services on a node
+    #   Access Controls
+    #    SELinux
+    #   Messaging
+    #     qpid
+    #     mcollective
+    #   Resource Control
+    #     cgconfig
+    #     cgred
+    #     libra-cgroups
+    #     libra-tc
+    #     quotas
+    #   Service
+    #     httpd
+    #     user applications
+
+    class Status
+
+      attr_reader :selinux, :qpid, :mcollective, :cgroups, :tc, :quota, :httpd
+
+      def initialize
+        @selinux = nil
+        @qpid = nil
+        @mcollective = nil
+        @cgroups = nil
+        @tc = nil
+        @quota = nil
+        @httpd = nil
+        @applications = nil
+      end
+
+      def to_s
+      end
+
+      
+      def to_json
+
+      end
+
+      def self.json_create(o)
+        new(*o)
+        # add status
+      end
+    end
+
     class GuestAccount
  
       # Used to find accounts
