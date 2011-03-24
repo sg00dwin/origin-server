@@ -135,6 +135,7 @@ def report_text(accounts)
   report += "-" * 80 + "\n"
 end
 
+require 'rubygems'
 require 'json'
 def report_json(accounts)
   accts = []
@@ -144,16 +145,15 @@ def report_json(accounts)
   JSON.pretty_generate({"accounts" => accts})
 end
 
-require 'rubygems'
-require 'builder'
+require 'nokogiri'
 def report_xml(accounts)
-  xml = Builder::XmlMarkup.new( :indent => 2 )
-  xml.instruct! :xml, :encoding => "UTF-8"
+  xml = Nokogiri::XML::Builder.new
   xml.accounts do |alist|
     accounts.each do |username|
       alist.account(:username => username)
     end
   end
+  xml.to_xml
 end
 
 # =============================================================================
