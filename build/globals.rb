@@ -9,6 +9,7 @@ LIBRA_DIR = ENV["LIBRADIR"] || "#{DEST_DIR}/var/lib/libra"
 CONF_DIR = ENV["CONFDIR"] || "#{DEST_DIR}/etc/libra"
 MAN_DIR = ENV["MANDIR"] || "#{DEST_DIR}/usr/share/man"
 HTML_DIR = ENV["HTMLDIR"] || "#{DEST_DIR}/var/www/html"
+TEST_DIR = ENV["TESTDIR"] || "#{DEST_DIR}/root"
 HTTP_CONF_DIR = ENV["HTTPCONFDIR"] || "#{DEST_DIR}/etc/httpd/conf.d"
 ROOT = File.expand_path(File.expand_path(__FILE__) + "/../../")
 BUILD_ROOT = ROOT + "/build"
