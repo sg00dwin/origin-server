@@ -3,7 +3,7 @@
 require 'test/unit'
 require 'libra/node'
 
-GuestAccount.passwd_file = File.dirname(__FILE__) + "/data/passwd"
+GuestAccount.passwd_file = File.dirname(__FILE__) + "/data/etc/passwd"
 
 class LibraListAccountsTest < Test::Unit::TestCase
 
@@ -42,7 +42,7 @@ class LibraAccountTest < Test::Unit::TestCase
   end
 
   def testAppnames
-    homedir = File.dirname( __FILE__ ) + "/data/home/#{@a0.username}"
+    homedir = File.dirname( __FILE__ ) + "/data/var/lib/libra/#{@a0.username}"
     applist = ["bar", "foo", "gronk"]
     assert_equal(applist, @a0.appnames(homedir))
   end
