@@ -104,7 +104,7 @@ module RHC
 
     unless response.code == '200'
         if response.code == '404'
-          puts "A user with rhlogin #{rhlogin} does not exist"          
+          puts "A user with rhlogin '#{rhlogin}' does not have a registered domain.  Be sure to run rhc-create-domain before using the other rhc tools."
         elsif response.code == '401'
           puts "Invalid user credentials"
         else
@@ -115,7 +115,7 @@ module RHC
     print_response_success(response, debug)
     json_resp = JSON.parse(response.body)
     user_info = JSON.parse(json_resp['result'].to_s)
-    user_info    
+    user_info
   end
 
   def self.get_password
