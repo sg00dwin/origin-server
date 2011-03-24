@@ -44,7 +44,7 @@ namespace :rpm do
       sh "gzip -f #{src}"
 
       # Move the SPEC file out
-      cp File.dirname(File.expand_path(__FILE__)) + "specs/li.spec", "#{@buildroot}/SPECS"
+      cp File.dirname(File.expand_path(__FILE__)) + "/specs/li.spec", "#{@buildroot}/SPECS"
 
       # Build the source RPM
       sh "rpmbuild -bs #{@buildroot}/SPECS/li.spec"
