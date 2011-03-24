@@ -59,7 +59,6 @@ opts = GetoptLong.new(
 
 # Pull in configs from files
 libra_domain = get_var('libra_domain')
-libra_dir = get_var('libra_dir')
 libra_server = get_var('libra_server')
 debug = get_var('debug') == 'false' ? nil : get_var('debug')
 ssh_config = "#{ENV['HOME']}/.ssh/config"
