@@ -8,7 +8,7 @@ class TestStatus < Test::Unit::TestCase
   
   def setup
     @s0 = Libra::Node::Status.new
-    #@s0 = Libra::Node::Status.new [:all]
+    #@s1 = Libra::Node::Status.new [:all]
   end
 
   def testConstructor
@@ -41,5 +41,14 @@ class TestStatus < Test::Unit::TestCase
 
     # force "Enforcing"
   end
-  
+
+  def testText
+    s0 = Libra::Node::Status.new [:all]
+    puts "\n-- Start testText --"
+    puts s0.to_s
+    puts "-- End testText --"
+
+    
+  end
+
 end

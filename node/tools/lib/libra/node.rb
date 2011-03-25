@@ -40,7 +40,8 @@ module Libra
 
     class Status
 
-      attr_writer :packages, :selinux
+      attr        :hostname
+      attr_writer :packages, :selinux, :qpid
 
       #attr_writer :packages :selinux, :qpid, :mcollective, 
       #attr_writer :cgroups, :tc, :quota, :httpd
@@ -64,6 +65,7 @@ module Libra
                   :quota, :httpd, :applications]
 
       def initialize(checks=[])
+        @hostname = `hostname`.strip
         @packages = nil
         @selinux = nil
         @qpid = nil
@@ -82,12 +84,48 @@ module Libra
             packages(check=true)
           when :selinux then
             selinux(check=true)
+          when :qpid then
+            qpid(check=true)
           end
         end
       end
 
       def to_s
+        headerstring = " Libra Node Status for host #{@hostname} "
+        indent = (80 - headerstring.length) / 2
+        out = "-" * indent + headerstring + "-" * indent + "\n"
+        # selinux
+        if @selinux
+          out += "SELinux: #{@selinux}\n"
+        end
+        
+        # packages
+        if @packages
+          out += "\nPackages:\n"
+          packages.keys.sort.each do |pkgname|
+            out += "  #{pkgname} "
+            if packages[pkgname] then
+              out += "#{@packages[pkgname][:version]} #{@packages[pkgname][:release]}\n"
+            else
+              out += "not installed\n"
+            end
+          end
+        end
 
+        # qpid
+        if @qpid
+          out += "\nQPID: #{@qpid}\n"
+        end
+        # mcollective
+        # cgroup service
+        # cgred service
+        # httpd service
+
+        # libra cgroups
+        # libra tc
+        # quotas
+
+        out += "\n" + "-" * 80
       end
       
       def to_json
@@ -126,6 +164,22 @@ module Libra
       def selinux(check=false)
         return @selinux if not check
         @selinux = `getenforce`.strip 
+      end
+
+      def qpid(check=false)
+        # check for present, enabled, running
+        return @qpid if not check
+        @qpid = `service qpid status 2>&1`
+      end
+
+      def cgconfig(check=false)
+        return @cgconfig if not check
+        @cgconfig = `service cgconfig status 2>&1`
+      end
+
+      def cgred(check=false)
+        return @cgred if not check
+        @cgred = `service cgconfig status 2>&1`
       end
     end
 
