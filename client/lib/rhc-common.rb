@@ -111,7 +111,7 @@ module RHC
         elsif response.code == '401'
           puts "Invalid user credentials"
         else
-          print_response_err(response, debug, 254)
+          print_response_err(response, debug)
         end
         exit 255
     end
@@ -155,19 +155,18 @@ module RHC
     response
   end
 
-  def self.print_response_err(response, debug, exit_code)
+  def self.print_response_err(response, debug)
     puts "Problem reported from server. Response code was #{response.code}."
     if (!debug)
       puts "Re-run with -d for more information."
     end
+    exit_code = 255
     if response.content_type == 'application/json'
-      print_json_body(response, debug)
+      exit_code = print_json_body(response, debug)
     elsif debug
       puts "HTTP response from server is #{response.body}"
     end
-    if (exit_code)
-      exit exit_code
-    end
+    exit exit_code
   end
 
   def self.print_response_success(response, debug)
@@ -179,14 +178,17 @@ module RHC
 
   def self.print_json_body(response, debug)
     json_resp = JSON.parse(response.body);
+    exit_code = json_resp['exit_code']
     if debug
       if json_resp['debug']
         puts ''
         puts 'DEBUG:'
         puts json_resp['debug']
-        if (json_resp.length > 2)
+        puts ''
+        puts "Exit Code: #{exit_code}"
+        if (json_resp.length > 3)
           json_resp.each do |k,v|
-            if (k != 'results' && k != 'debug')
+            if (k != 'results' && k != 'debug' && k != 'exit_code')
               puts "#{k.to_s}: #{v.to_s}"
             end
           end
@@ -199,6 +201,7 @@ module RHC
       puts json_resp['result']
       puts ''
     end
+    exit_code
   end
 
 end
