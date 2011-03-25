@@ -44,11 +44,9 @@ class TestStatus < Test::Unit::TestCase
 
   def testText
     s0 = Libra::Node::Status.new [:all]
-    puts "\n-- Start testText --"
-    puts s0.to_s
-    puts "-- End testText --"
-
-    
+    #puts "\n-- Start testText --"
+    #puts s0.to_s
+    #puts "-- End testText --"
   end
 
   # check the elements of typical service
@@ -63,10 +61,13 @@ class TestStatus < Test::Unit::TestCase
 
   def testServiceToString
     s0 = Libra::Node::Service.new
-    assert_equal("Service noname: unknown", s0.to_s)
+    assert_equal("Service noname: unknown\n", s0.to_s)
     s0.check
-    assert_equal("Service noname: is not installed", s0.to_s)
-    s0 = Libra::Node::Service.new :name => "ntpd"
+    assert_equal("Service noname: is not installed\n", s0.to_s)
+    s1 = Libra::Node::Service.new :name => "ntpd"
+    assert_equal("Service ntpd: unknown\n", s1.to_s)
+    s1.check
+    #assert_equal("Service ntpd: is not installed\n", s1.to_s)
   end
 
   def testServiceToXml
@@ -77,7 +78,7 @@ class TestStatus < Test::Unit::TestCase
     s1 = Libra::Node::Service.new :name => "ntpd"
     assert_equal("<service name=\"ntpd\">unknown</service>", s1.to_xml)
     s1.check
-    assert_equal("<service name=\"ntpd\">unknown</service>", s1.to_xml)
+    #assert_equal("<service name=\"ntpd\">unknown</service>", s1.to_xml)
   end
 
   def testServiceToJson
@@ -86,8 +87,8 @@ class TestStatus < Test::Unit::TestCase
     s0.check
     assert_equal("{\"name\":\"noname\",\"json_class\":\"Libra::Node::Service\",\"installed\":false}", s0.to_json)
     s1 = Libra::Node::Service.new :name => "ntpd"
-    assert_equal("<service name=\"ntpd\">unknown</service>", s1.to_xml)
+    assert_equal("{\"name\":\"ntpd\",\"json_class\":\"Libra::Node::Service\"}", s1.to_json)
     s1.check
-    assert_equal("ntp status", s1.to_json)
+    assert_equal("{\"name\":\"ntpd\",\"running\":true,\"json_class\":\"Libra::Node::Service\",\"enabled\":[\"off\",\"off\",\"on\",\"on\",\"on\",\"on\",\"off\"],\"installed\":true,\"message\":\"ntpd (pid  2953) is running...\"}", s1.to_json)
   end
 end

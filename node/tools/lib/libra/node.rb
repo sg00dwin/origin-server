@@ -340,14 +340,20 @@ module Libra
       end
 
       def to_s
-        out = "Service #{@@name}: "
+        out = "Service #{@name}: "
         case @installed
         when false
-          out += "is not installed"
+          out += "is not installed\n"
         when true
-          out += @running ? "Running" : "Stopped"
+          out += @running ? "  Running\n" : "Stopped\n"
+          out += "  Runlevels:"
+          (0..6).each do |runlevel|
+            out += "  #{runlevel}:#{@enabled[runlevel]}"
+          end
+          out += "\n"
+          out += "  Message: " + @message + "\n"
         when nil
-          out += "unknown"
+          out += "unknown\n"
         end
         out
       end
@@ -389,15 +395,8 @@ module Libra
         struct['installed'] = @installed if @installed != nil
         struct['enabled'] = @enabled if @enabled != nil
         struct['running'] = @running if @running != nil
+        struct['message'] = @message if @installed
         JSON.generate(struct)
-
-        #JSON.generate({"json_class" => self.class.name,
-        #                "name" => @name,
-        #                "installed" => @installed,
-        #                "enabled" => @enabled,
-        #                "running" => @running,
-        #                "message" => @message
-        #              })
       end
 
       def check
