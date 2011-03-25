@@ -59,10 +59,10 @@ namespace :rpm do
       sh "gzip -f #{src}"
 
       # Move the SPEC file out
-      cp File.dirname(File.expand_path(__FILE__)) + "/specs/tests.spec", "#{@buildroot}/SPECS"
+      cp File.dirname(File.expand_path(__FILE__)) + "/specs/li-tests.spec", "#{@buildroot}/SPECS"
 
       # Build the source RPM
-      sh "rpmbuild -bs #{@buildroot}/SPECS/tests.spec"
+      sh "rpmbuild -bs #{@buildroot}/SPECS/li-tests.spec"
   end
 
   task :bump_release => [:version, :commit_check] do
