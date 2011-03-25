@@ -10,7 +10,7 @@ class BrokerController < ApplicationController
   
   def generate_result_json(result)      
       json = JSON.generate({
-                  :debug => Thread.current[:debugIO].string,
+                  :debug => Thread.current[:debugIO] ? Thread.current[:debugIO].string : '',
                   :result => result
                   })
       json
@@ -29,6 +29,21 @@ class BrokerController < ApplicationController
   def render_unauthorized
     render :json => generate_result_json("Invalid user credentials"), :status => :unauthorized
   end
+  
+  def render_internal_server_error(e, method_name)   
+    if !(e.is_a? Libra::LibraException) 
+      logger.error "Exception rescued in #{method_name}:"
+      logger.error e.message
+      logger.error e.backtrace
+      # TODO should we leave this?  Everything that gets in here is unknown and users can tell us about it.  But will mean impl details showing up on the client.
+      Libra.debug e.message
+      Libra.debug e.backtrace
+    elsif !(e.is_a? Libra::UserException) # User Exceptions just go back to the client
+      logger.error "Exception rescued in #{method_name}:"
+      logger.error e.message
+    end
+    render :json => generate_result_json(e.message), :status => :internal_server_error
+  end
 
   def cartridge_post
     begin
@@ -45,7 +60,7 @@ class BrokerController < ApplicationController
         render_unauthorized and return
       end
     rescue Exception => e
-      render :json => generate_result_json(e.message), :status => :internal_server_error and return
+      render_internal_server_error(e, 'cartridge_post') and return
     end
   end
   
@@ -85,7 +100,7 @@ class BrokerController < ApplicationController
         render_unauthorized and return
       end    
     rescue Exception => e
-      render :json => generate_result_json(e.message), :status => :internal_server_error and return
+      render_internal_server_error(e, 'user_info_post') and return
     end
   end
   
@@ -126,7 +141,7 @@ class BrokerController < ApplicationController
       # Just return a 200 success
       render :json => generate_result_json(json_data) and return
     rescue Exception => e
-      render :json => generate_result_json(e.message), :status => :internal_server_error and return
+      render_internal_server_error(e, 'user_info_post') and return
     end
   end
 end
