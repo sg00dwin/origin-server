@@ -3,6 +3,7 @@ require 'libra/config.rb'
 require 'libra/helper.rb'
 require 'libra/server.rb'
 require 'libra/user.rb'
+require 'libra/nurture.rb'
 
 module Libra
   
@@ -12,8 +13,16 @@ module Libra
       debugIO.puts str
     else
       puts str
-    end    
+    end
   end
+  
+  def self.logger_debug(str)    
+    if defined? RAILS_DEFAULT_LOGGER
+      RAILS_DEFAULT_LOGGER.debug str
+    else
+      puts str
+    end
+  end  
   
   #
   # Executes
@@ -49,6 +58,7 @@ module Libra
     server.create_user(user) if action == 'configure'
 
     # Configure the app on the server using a framework cartridge
+    Nurture.application(rhlogin, user.uuid, app_name, user.namespace, framework, action)
     result = server.execute_direct(framework, action, "#{app_name} #{user.namespace} #{user.uuid}")[0]
     unless result.results[:data][:exitcode] == 0
         Libra.debug result.results[:data][:output]
@@ -57,7 +67,7 @@ module Libra
 
     # update DNS
     public_ip = server.get_fact_direct('public_ip')
-    puts "PUBLIC IP: #{public_ip}"
+    Libra.logger_debug "PUBLIC IP: #{public_ip}"
     sshfp = server.get_fact_direct('sshfp').split[-1]
     Server.nsupdate_add(app_name, user.namespace, public_ip, sshfp) if action == 'configure'
     Server.nsupdate_del(app_name, user.namespace, public_ip) if action == 'deconfigure'
@@ -83,6 +93,6 @@ module Libra
 
     # Add the additional server if needed
     result = Server.create
-    puts "Added EC2 instance #{result[0]}"
+    Libra.logger_debug "Added EC2 instance #{result[0]}"
   end
 end

@@ -57,7 +57,7 @@ module Libra
         end
       end
       raise NodeException.new(140), "No nodes available.  If the problem persists please contact Red Hat support.", caller[0..5] unless current_server
-      puts "DEBUG: server.rb:find_available #{current_server}: #{current_repos}" if Libra.c[:rpc_opts][:verbose]
+      Libra.logger_debug "DEBUG: server.rb:find_available #{current_server}: #{current_repos}" if Libra.c[:rpc_opts][:verbose]
       new(current_server, current_repos)
     end
 
@@ -123,7 +123,7 @@ EOF
 
     def self.execute_nsupdate(nsupdate_input_template)
       nsupdate_string = eval nsupdate_input_template
-      puts "DEBUG: server.rb:self.execute_nsupdate nsupdate_input_template: #{nsupdate_input_template}" if Libra.c[:rpc_opts][:verbose]
+      Libra.logger_debug "DEBUG: server.rb:self.execute_nsupdate nsupdate_input_template: #{nsupdate_input_template}" if Libra.c[:rpc_opts][:verbose]
 
       IO.popen("/usr/bin/nsupdate -L0 -v -y '#{Libra.c[:secret]}'", 'w'){ |io| io.puts nsupdate_string }
     end

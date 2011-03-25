@@ -1,8 +1,11 @@
 #!/usr/bin/ruby
 
+$:.unshift(File.dirname(__FILE__) + '/../lib')
 require 'rubygems'
-require 'libra'
 require 'mcollective'
+require 'fileutils'
+require 'libra'
+
 
 include MCollective::RPC
 include Libra
