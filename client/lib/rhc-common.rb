@@ -92,7 +92,7 @@ module RHC
     end
   end
 
-  def self.get_user_info(libra_server, rhlogin, password, net_http, debug)
+  def self.get_user_info(libra_server, rhlogin, password, net_http, debug, print_result)
 
     puts "Contacting https://#{libra_server}"
     data = {'rhlogin' => rhlogin, 'password' => password}
@@ -115,7 +115,8 @@ module RHC
         end
         exit 255
     end
-    print_response_success(response, debug)
+    if print_result
+      print_response_success(response, debug)
     json_resp = JSON.parse(response.body)
     user_info = JSON.parse(json_resp['result'].to_s)
     user_info

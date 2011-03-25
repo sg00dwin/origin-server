@@ -37,8 +37,8 @@ module Libra
     # if the user already exists.
     #
     def self.create(rhlogin, ssh, namespace)
-      raise "A user with RHLogin '#{rhlogin}' already exists" if find(rhlogin)
-      raise "A namespace with name '#{namespace}' already exists" if Server.get_dns_txt(namespace).length > 0
+      raise UserException.new "A user with RHLogin '#{rhlogin}' already exists" if find(rhlogin)
+      raise UserException.new "A namespace with name '#{namespace}' already exists" if Server.get_dns_txt(namespace).length > 0
       # TODO bit of a race condition here (can nsupdate fail on exists?)
       Server.nsupdate_add_txt(namespace)
       Libra.debug "DEBUG: user.rb:create rhlogin:#{rhlogin} ssh:#{ssh} namespace:#{namespace}" if Libra.c[:rpc_opts][:verbose]
@@ -90,7 +90,7 @@ module Libra
       num_apps = apps.length
       Libra.debug "DEBUG: server.rb:validate_app_limit #{@rhlogin}: num of apps(#{num_apps.to_s}) must be < app limit (#{Libra.c[:per_user_app_limit]})" if Libra.c[:rpc_opts][:verbose]
       if (num_apps >= Libra.c[:per_user_app_limit])
-        raise "#{@rhlogin} has already reached the application limit of #{Libra.c[:per_user_app_limit]}"
+        raise UserException.new "#{@rhlogin} has already reached the application limit of #{Libra.c[:per_user_app_limit]}"
       end
     end
 

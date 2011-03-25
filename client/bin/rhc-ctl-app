@@ -101,7 +101,7 @@ if !password
   password = RHC::get_password
 end
 
-user_info = RHC::get_user_info(libra_server, opt['rhlogin'], password, @http, debug)
+user_info = RHC::get_user_info(libra_server, opt['rhlogin'], password, @http, debug, false)
 app = user_info['app_info'][opt['app']]
 if app
   framework = app['framework']
