@@ -5,8 +5,8 @@
 #*#
 .project
 .loadpath
-site/vendor/*
-site/.bundle
-site/log/*
-site/tmp/*
-site/db/development.sqlite3
+server/vendor/*
+server/.bundle
+server/log/*
+server/tmp/*
+server/db/development.sqlite3

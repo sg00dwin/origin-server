@@ -184,7 +184,7 @@ if response.code == '200'
     RHC::print_response_success(response, debug)
     puts "Creation successful"
 else
-    RHC::print_response_err(response, debug, 254)
+    RHC::print_response_err(response, debug)
 end
 
 #

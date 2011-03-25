@@ -48,7 +48,7 @@ module Libra
       # Ignore as long as we have the values below
     ensure
       error_msg = "Not able to find AWS configuration in environment or config file"
-      raise Libra::ConfigureException, error_msg unless (@@config[:aws_key] and
+      raise Libra::ConfigureException.new(199), error_msg, caller[0..5] unless (@@config[:aws_key] and
                                                          @@config[:aws_secret] and
                                                          @@config[:aws_keypair] and
                                                          @@config[:aws_ami] and

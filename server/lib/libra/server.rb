@@ -56,8 +56,8 @@ module Libra
           current_repos = num_repos
         end
       end
-      raise NodeException.new "No nodes available.  If the problem persists please contact Red Hat support." unless current_server
-      Libra.debug "DEBUG: server.rb:find_available #{current_server}: #{current_repos}" if Libra.c[:rpc_opts][:verbose]
+      raise NodeException.new(140), "No nodes available.  If the problem persists please contact Red Hat support.", caller[0..5] unless current_server
+      puts "DEBUG: server.rb:find_available #{current_server}: #{current_repos}" if Libra.c[:rpc_opts][:verbose]
       new(current_server, current_repos)
     end
 
@@ -123,7 +123,7 @@ EOF
 
     def self.execute_nsupdate(nsupdate_input_template)
       nsupdate_string = eval nsupdate_input_template
-      Libra.debug "DEBUG: server.rb:self.execute_nsupdate nsupdate_input_template: #{nsupdate_input_template}" if Libra.c[:rpc_opts][:verbose]
+      puts "DEBUG: server.rb:self.execute_nsupdate nsupdate_input_template: #{nsupdate_input_template}" if Libra.c[:rpc_opts][:verbose]
 
       IO.popen("/usr/bin/nsupdate -L0 -v -y '#{Libra.c[:secret]}'", 'w'){ |io| io.puts nsupdate_string }
     end
@@ -150,7 +150,7 @@ EOF
     #
     def execute(framework, action, app_name, user)
       # Make the call to configure the application
-      Libra.debug "DEBUG: server.rb:execute framework:#{framework} action:#{action} app_name:#{app_name} user:#{user}" if Libra.c[:rpc_opts][:verbose]
+      Libra.debug "DEBUG: Executing framework:#{framework} action:#{action} app_name:#{app_name} user:#{user}" if Libra.c[:rpc_opts][:verbose]
       execute_internal(framework, action, "#{app_name} #{user.namespace} #{user.uuid}")
     end
 
@@ -176,10 +176,10 @@ EOF
           return_code = response[:body][:data][:exitcode]
           output = response[:body][:data][:output]
 
-          Libra.debug "DEBUG: server.rb:execute_internal return_code: #{return_code}" if Libra.c[:rpc_opts][:verbose]
-          Libra.debug "DEBUG: server.rb:execute_internal output: #{output}" if Libra.c[:rpc_opts][:verbose]
+          Libra.debug "DEBUG: Cartridge return code: #{return_code}" if Libra.c[:rpc_opts][:verbose]
+          Libra.debug "DEBUG: Cartridge output: #{output}" if Libra.c[:rpc_opts][:verbose]
 
-          raise CartridgeException, output if return_code != 0
+          raise CartridgeException.new(141), output, caller[0..5] if return_code != 0
         end
       end
     end
@@ -198,9 +198,9 @@ EOF
           return_code = response[:body][:data][:exitcode]
           output = response[:body][:data][:output]
 
-          Libra.debug "DEBUG: server.rb:execute_internal return_code: #{return_code}" if Libra.c[:rpc_opts][:verbose]
-          Libra.debug "DEBUG: server.rb:execute_internal output: #{output}" if Libra.c[:rpc_opts][:verbose]
-          raise CartridgeException, output if return_code != 0
+          Libra.debug "DEBUG: Cartridge return code: #{return_code}" if Libra.c[:rpc_opts][:verbose]
+          Libra.debug "DEBUG: Cartridge output: #{output}" if Libra.c[:rpc_opts][:verbose]
+          raise CartridgeException.new(142), output, caller[0..5] if return_code != 0
         end
       end
     end
