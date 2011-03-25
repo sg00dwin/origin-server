@@ -101,7 +101,7 @@ if !password
 end
 
 opt['apps'] = true if not opt['info'] and not opt['apps']
-user_info = RHC::get_user_info(libra_server, opt['rhlogin'], password, @http, debug)
+user_info = RHC::get_user_info(libra_server, opt['rhlogin'], password, @http, debug, true)
 
 if user_info['user_info']['uuid'] != @local_config.get_value(opt["rhlogin"])
     puts "!! WARNING !! WARNING !! WARNING !! WARNING !!"

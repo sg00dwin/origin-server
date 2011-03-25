@@ -212,7 +212,7 @@ end
 
 puts "Checking ~/.ssh/config"
 
-user_info = RHC::get_user_info(libra_server, opt['rhlogin'], password, @http, debug)
+user_info = RHC::get_user_info(libra_server, opt['rhlogin'], password, @http, debug, false)
 
 my_url = "#{opt['app']}-#{user_info['user_info']['namespace']}.#{libra_domain}"
 

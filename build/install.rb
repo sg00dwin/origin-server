@@ -110,6 +110,13 @@ namespace :install do
       cp "config/controller.conf", CONF_DIR unless File.exists? "#{CONF_DIR}/controller.conf"
   end
 
+  task :tests do
+      cd ROOT
+
+      mkdir_p TEST_DIR
+      cp_r "tests", TEST_DIR
+  end
+
   desc "Install all the Libra files (e.g. rake DESTDIR='/tmp/test/ install')"
   task :all => [:client, :common, :node, :server]
 end

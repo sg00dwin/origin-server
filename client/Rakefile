@@ -10,8 +10,7 @@ task :default => [:package]
 # Create the gem specification for packaging
 spec = Gem::Specification.new do |s|
     s.name = %q{li}
-    s.version = /Version: (\d+\.\d+)/.match(File.read("../build/specs/li.spec")
-  )[1]
+    s.version = /(Version: )(.*)/.match(File.read("../build/specs/li.spec"))[2]
     s.author = "Red Hat"
     s.email = %q{libra-list@redhat.com}
     s.summary = %q{Libra client tools}
