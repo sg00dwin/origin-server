@@ -17,8 +17,8 @@ body {
 #nav {
         background: url(../images/bg_mainnav.png) repeat-x red;
         min-height: 20px;
-        padding-top: 5px;
-        padding-bottom: 5px;
+        padding-top: 7px;
+        padding-bottom: 7px;
 	border-top: 1px solid #fe7272;
 }
 
@@ -31,8 +31,16 @@ body {
         list-style-type: none;
 	font-family: Overpass;
 	font-weight: normal;
+	font-size: 11pt;
 }
 
+#nav li a {
+	text-decoration: none;
+}
+
+#nav li a:hover {
+	color: black;
+}
 
 /* Login stuff */
 
