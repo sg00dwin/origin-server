@@ -363,9 +363,10 @@ module Libra
             elsif @enabled == nil then
               xml.text("not installed")
             else
+              puts "service #{@name}, enabled = #{@enabled}"
               for num in (0..6) do
                 xml.runlevel(:level => num) {
-                  xml.text(@enabled[num] ? "on" : "off")
+                  xml.text(@enabled[num])
                 }
               end
               xml.message = @message
@@ -381,12 +382,22 @@ module Libra
       end
 
       def to_json
-        JSON.generate({"json_class" => self.class.name,
-                        "name" => @name,
-                        "enabled" => @enabled,
-                        "status" => @status,
-                        "message" => @message
-                      })
+        struct = {
+          "json_class" => self.class.name,
+          "name" => @name
+        }
+        struct['installed'] = @installed if @installed != nil
+        struct['enabled'] = @enabled if @enabled != nil
+        struct['running'] = @running if @running != nil
+        JSON.generate(struct)
+
+        #JSON.generate({"json_class" => self.class.name,
+        #                "name" => @name,
+        #                "installed" => @installed,
+        #                "enabled" => @enabled,
+        #                "running" => @running,
+        #                "message" => @message
+        #              })
       end
 
       def check

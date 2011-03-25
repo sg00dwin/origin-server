@@ -79,4 +79,15 @@ class TestStatus < Test::Unit::TestCase
     s1.check
     assert_equal("<service name=\"ntpd\">unknown</service>", s1.to_xml)
   end
+
+  def testServiceToJson
+    s0 = Libra::Node::Service.new
+    assert_equal("{\"name\":\"noname\",\"json_class\":\"Libra::Node::Service\"}", s0.to_json)
+    s0.check
+    assert_equal("{\"name\":\"noname\",\"json_class\":\"Libra::Node::Service\",\"installed\":false}", s0.to_json)
+    s1 = Libra::Node::Service.new :name => "ntpd"
+    assert_equal("<service name=\"ntpd\">unknown</service>", s1.to_xml)
+    s1.check
+    assert_equal("ntp status", s1.to_json)
+  end
 end
