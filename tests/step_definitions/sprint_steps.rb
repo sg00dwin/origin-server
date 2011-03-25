@@ -74,7 +74,7 @@ Then /^they should all be accessible$/ do
   # Hit the health check page for each app
   user_apps.each do |user_app|
     # Make sure to handle timeouts
-    host = "#{user_app[1]}.#{user_app[0]}.#{$domain}"
+    host = "#{user_app[1]}-#{user_app[0]}.#{$domain}"
     begin
       $logger.info("Checking host #{host}")
       res = Net::HTTP.start(host, 80) do |http|
@@ -114,14 +114,14 @@ Then /^they should be able to be changed$/ do
   user_apps.each do |user_app|
     $logger.info("Changing to dir=#{$temp}/#{user_app[0]}_#{user_app[1]}_repo")
     Dir.chdir("#{$temp}/#{user_app[0]}_#{user_app[1]}_repo")
-    system('sed -i "/<h1>/a<p>making a change</p>" index.php')
+    system('sed -i "/<h1>/a<p>making a change</p>" php/index.php')
     #wc = %x[cat index.php | wc -m --chars].chomp.to_i;
     $logger.info("git commit -a -m 'Testing a commit'")
     system("git commit -a -m 'Testing a commit'")
-    $logger.info('git push libra master')
-    system('git push libra master')
+    $logger.info('git push')
+    system('git push')
     # Make sure to handle timeouts
-    host = "#{user_app[1]}.#{user_app[0]}.#{$domain}"
+    host = "#{user_app[1]}-#{user_app[0]}.#{$domain}"
     begin
       req = Net::HTTP::Get.new('/index.php')
       $logger.info("host= #{host}")
@@ -130,7 +130,7 @@ Then /^they should be able to be changed$/ do
         http.request(req)
       end
       code = res.code
-      file = File.open("index.php", "rb")
+      file = File.open("php/index.php", "rb")
       contents = file.read
       #validate the change made it up
       res.body.should == contents
