@@ -117,6 +117,7 @@ module RHC
     end
     if print_result
       print_response_success(response, debug)
+    end
     json_resp = JSON.parse(response.body)
     user_info = JSON.parse(json_resp['result'].to_s)
     user_info
