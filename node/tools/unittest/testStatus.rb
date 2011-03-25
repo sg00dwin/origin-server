@@ -51,4 +51,32 @@ class TestStatus < Test::Unit::TestCase
     
   end
 
+  # check the elements of typical service
+  def testService
+    s0 = Libra::Node::Service.new
+    assert_nil(s0.installed)
+    assert_nil(s0.enabled)
+    assert_nil(s0.running)
+    assert_nil(s0.message)
+    s1 = Libra::Node::Service.new :name => "ntpd"
+  end
+
+  def testServiceToString
+    s0 = Libra::Node::Service.new
+    assert_equal("Service noname: unknown", s0.to_s)
+    s0.check
+    assert_equal("Service noname: is not installed", s0.to_s)
+    s0 = Libra::Node::Service.new :name => "ntpd"
+  end
+
+  def testServiceToXml
+    s0 = Libra::Node::Service.new
+    assert_equal("<service name=\"noname\">unknown</service>", s0.to_xml)
+    s0.check
+    assert_equal("<service name=\"noname\">not installed</service>", s0.to_xml)
+    s1 = Libra::Node::Service.new :name => "ntpd"
+    assert_equal("<service name=\"ntpd\">unknown</service>", s1.to_xml)
+    s1.check
+    assert_equal("<service name=\"ntpd\">unknown</service>", s1.to_xml)
+  end
 end

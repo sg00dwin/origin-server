@@ -311,5 +311,106 @@ module Libra
       end
 
     end
+    
+
+    #
+    # Model a generic service
+    # 
+    class Service
+
+      #
+      # Service.new
+      # Service.new [:check]
+      #
+      attr_accessor :installed, :enabled, :running, :message
+
+      @@name = 'noname'
+      @@stop_pattern = /#{@@name} is stopped/
+      @@running_pattern = /#{@@name} \(pid (%d+)\) is running/
+
+      def initialize(args={})
+        @name = args[:name] || @@name
+        @stop_pattern = args[:stop_pattern] || @@stop_pattern
+        @running_pattern = args[:running_pattern] || @@running_pattern
+
+        @installed = nil
+        @enabled = nil
+        @running = nil
+        @message = nil
+      end
+
+      def to_s
+        out = "Service #{@@name}: "
+        case @installed
+        when false
+          out += "is not installed"
+        when true
+          out += @running ? "Running" : "Stopped"
+        when nil
+          out += "unknown"
+        end
+        out
+      end
+
+      def to_xml
+        builder = Nokogiri::XML::Builder.new do |xml|
+          attrs = {:name => @name}
+          attrs[:running] = @running ? "true" : "false" if @running != nil
+          
+          xml.service(attrs) {
+            if @installed == nil then
+              xml.text("unknown")
+            elsif @enabled == nil then
+              xml.text("not installed")
+            else
+              for num in (0..6) do
+                xml.runlevel(:level => num) {
+                  xml.text(@enabled[num] ? "on" : "off")
+                }
+              end
+              xml.message = @message
+            end
+          }
+        end
+        builder.doc.root.to_xml
+
+      end
+
+      def self.json_create(o)
+        new(*o)
+      end
+
+      def to_json
+        JSON.generate({"json_class" => self.class.name,
+                        "name" => @name,
+                        "enabled" => @enabled,
+                        "status" => @status,
+                        "message" => @message
+                      })
+      end
+
+      def check
+        cmd = "chkconfig --list #{@name} 2>&1"
+        response = `#{cmd}`.strip
+        
+        if /error reading information on service/ =~ response then
+          @installed = false
+          @enabled = nil
+          @running = nil
+          @message = "not installed"
+          return
+        end
+        @installed = true
+
+        # parse the config string
+        @enabled = response.split[1..-1].map {|v| v.tr("0-9:", "")}
+        @message = `service #{@name} status`.strip
+        if @stopped_pattern =~ @message then
+          @running = false
+        else
+          @running = true
+        end           
+      end
+    end
   end
 end
