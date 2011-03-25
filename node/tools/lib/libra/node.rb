@@ -31,10 +31,19 @@ module Libra
     #     httpd
     #     user applications
 
+    # calling examples
+    # Node.new - 
+    # Node.new(json => "")
+    # Node.new(xml => "")
+    # Node.new(survey => :all)
+    # Node.new(survey => [:selinux, :qpid, ...])
+
     class Status
 
-      #attr_reader :packages :selinux, :qpid, :mcollective, 
-      #attr_reader :cgroups, :tc, :quota, :httpd
+      attr_writer :packages, :selinux
+
+      #attr_writer :packages :selinux, :qpid, :mcollective, 
+      #attr_writer :cgroups, :tc, :quota, :httpd
 
       @@package_list = ['qpid-cpp-server', 'qpid-cpp-client', 'ruby-qmf',
                         'mcollective', 'mcollective-client',
@@ -42,8 +51,19 @@ module Libra
                         'li-cartridge-php-5.3.2', 
                         'li-rack-1.1.0', 
                         'li-wsgi-3.2.1']
+      def self.package_list=(packages)
+        @@package_list = packages
+      end
 
-      def initialize
+      @@selinux_command = "getenforce"
+      def self.selinux_command(cmd)
+        @@selinux_command = cmd
+      end
+
+      @@checks = [:packages, :selinux, :qpid, :mcollective, :cgroups, :tc,
+                  :quota, :httpd, :applications]
+
+      def initialize(checks=[])
         @packages = nil
         @selinux = nil
         @qpid = nil
@@ -53,6 +73,17 @@ module Libra
         @quota = nil
         @httpd = nil
         @applications = nil
+
+        # check of args[0] is a Hash and contains one element: json
+        checks = @@checks if checks[0] == :all
+        checks.each do |check|
+          case check
+          when :packages then
+            packages(check=true)
+          when :selinux then
+            selinux(check=true)
+          end
+        end
       end
 
       def to_s
@@ -75,13 +106,28 @@ module Libra
       #
       # Check the set of required packages
       # 
-      def packages
-        packages = {}
-        @@packagelist.each { |pkgname| packages[pkgname => `rpm -q --qf '%{NAME} %{VERSION}' #{pkgname}`]}
+      def packages(check=false)
+        return @packages if not check
+        @packages = {}
+        @@package_list.each do |pkgname|
+          pkgspec = `rpm -q --qf '%{VERSION} %{RELEASE}' #{pkgname}`.strip
+          if /is not installed$/ =~ pkgspec then
+            @packages[pkgname] = nil
+          else
+            pkgspec = pkgspec.split
+            @packages[pkgname] = {:version => pkgspec[0], :release => pkgspec[1]}
+          end
+        end
+      end
+
+      #
+      # Check or report SELinux status
+      #
+      def selinux(check=false)
+        return @selinux if not check
+        @selinux = `getenforce`.strip 
       end
     end
-
-    
 
     class GuestAccount
  
