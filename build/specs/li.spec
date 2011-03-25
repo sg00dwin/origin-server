@@ -34,6 +34,9 @@ Requires: li-cartridge-php-5.3.2
 Requires: li-cartridge-wsgi-3.2.1
 Requires: li-cartridge-rack-1.1.0
 Requires: qpid-cpp-server
+Requires: puppet
+Requires: rubygem-cucumber
+Requires: rubygem-rspec
 BuildArch: noarch
 
 %description devenv
@@ -195,7 +198,11 @@ chkconfig mcollective on
 /etc/init.d/iptables restart
 
 # Adding passenger user
-useradd libra_passenger -g libra_user -d /var/lib/passenger -r -s /sbin/nologin
+/usr/sbin/groupadd -r libra_user
+/usr/sbin/useradd libra_passenger -g libra_user -d /var/lib/passenger -r -s /sbin/nologin
+
+# Change group for mcollective client.cfg
+/bin/chgrp libra_user /etc/mcollective/client.cfg
 
 # enable development environment
 /bin/sed -i 's/#RailsEnv/RailsEnv/g' /etc/httpd/conf.d/rails.conf
@@ -215,7 +222,7 @@ crontab -u root /etc/libra/devenv/crontab
 /bin/cp -f /etc/libra/devenv/libra.conf /etc/libra/devenv/node.conf /etc/libra/devenv/controller.conf /etc/libra
 
 # enable disk quotas
-/usr/bin/rhc-init-quota
+#/usr/bin/rhc-init-quota
 
 # secure remounts of special filesystems
 #/usr/libexec/li/devenv/remount-secure.sh
@@ -354,6 +361,9 @@ touch %{_localstatedir}/www/html/libra/db/production.sqlite3
 
 %changelog
 * Thu Mar 24 2011 Mike McGrath <mmcgrath@redhat.com> 0.60.1-1
+- Additional site related fixes
+
+* Thu Mar 24 2011 Mike McGrath <mmcgrath@redhat.com> 0.60-1
 - Fixing site related issues
 
 * Thu Mar 24 2011 Mike McGrath <mmcgrath@redhat.com> 0.59-1
