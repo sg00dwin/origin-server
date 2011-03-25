@@ -21,6 +21,8 @@ module Libra
 # ============================================================================
 
     # survey the status of the Libra services on a node
+    #   Host
+    #   Uptime
     #   Access Controls
     #    SELinux
     #   Messaging
@@ -36,16 +38,96 @@ module Libra
     #     httpd
     #     user applications
 
-    # calling examples
-    # Node.new - 
-    # Node.new(json => "")
-    # Node.new(xml => "")
-    # Node.new(survey => :all)
-    # Node.new(survey => [:selinux, :qpid, ...])
-
+    # Usage Samples
+    # s = Status.new
+    # s.check :qpid
 
     class Status
 
+      class << self
+        attr_reader :checks
+      end
+
+      @checks = [:hostinfo]
+      
+      def initialize(*checks)
+
+        @hostinfo = HostInfo.new
+
+        checks = self.class.checks if checks.length == 1 and checks[0] == :all
+        checks.each do |csym|
+          if not self.class.checks.member? csym then
+            puts "invalid check symbol " + csym.to_s
+            # raise an exception
+          end
+
+          # continue processing
+        end
+      end
+    end
+
+# ============================================================================
+#
+# Host Information
+#
+# ============================================================================
+
+    class HostInfo
+      
+      attr_reader :hostname, :uptime
+
+      def initialize(initcheck=nil)
+        if initcheck then check else
+          @hostname = nil
+          #@uname = nil
+          @uptime = nil
+        end
+      end
+
+      def check
+        @hostname = `hostname`
+        #@uname = `uname -a`
+        @uptime = `uptime`
+      end
+
+      def to_s
+        out = "-- HostInfo --\n"
+        if @hostname then
+          out += "  Hostname: #{@hostname}\n"
+          out += "  Uptime: #{@uptime}\n"
+        end
+        out += "\n"
+      end
+
+      def to_xml
+        builder = Nokogiri::XML::Builder.new do |xml|
+          if @hostname then
+            xml.hostinfo(:hostname => @hostname, 
+                         :uptime => @uptime)
+          end
+        end
+        builder.doc.root.to_xml
+      end
+
+      def to_json
+        hash = {
+          "json_class" => self.class.name,
+        }
+        if @hostname then
+          hash["hostname"] = @hostname
+          hash["uptime"] = @uptime
+        end
+        JSON.generate(hash)
+      end
+
+      def self.json_create(o)
+        new.init(o)
+      end
+
+      def init(o)
+        @hostname = o['hostname']
+        @uptime = o['uptime']
+      end
     end
 
 # =============================================================================
@@ -258,7 +340,6 @@ module Libra
           }
         end
         builder.doc.root.to_xml
-
       end
 
       def self.json_create(o)
