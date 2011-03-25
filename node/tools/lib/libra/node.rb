@@ -14,7 +14,6 @@ require 'json'
 module Libra
   module Node
 
-
     # survey the status of the Libra services on a node
     #   Access Controls
     #    SELinux
@@ -52,6 +51,10 @@ module Libra
                         'li-cartridge-php-5.3.2', 
                         'li-rack-1.1.0', 
                         'li-wsgi-3.2.1']
+
+      @@selinux_booleans = {}
+      @@sysctl_values = {}
+
       def self.package_list=(packages)
         @@package_list = packages
       end
@@ -66,11 +69,13 @@ module Libra
 
       def initialize(checks=[])
         @hostname = `hostname`.strip
+        @syscfg = nil
         @packages = nil
         @selinux = nil
-        @qpid = nil
-        @mcollective = nil
-        @cgroups = nil
+        #@qpid = QpidService.new
+        #@mcollective = McollectiveService.new
+        #@cgconfig = CgconfigService.new
+        #@cgred = CgRulesService.new
         @tc = nil
         @quota = nil
         @httpd = nil
@@ -84,8 +89,10 @@ module Libra
             packages(check=true)
           when :selinux then
             selinux(check=true)
-          when :qpid then
-            qpid(check=true)
+          #when :qpid then
+          #  qpid(check=true)
+          #when :cgconfig then
+          #  cgconfig(check=true)
           end
         end
       end
@@ -318,29 +325,33 @@ module Libra
     # 
     class Service
 
+      class << self
+        attr_accessor :servicename, :stop_pattern, :running_pattern
+      end
+
       #
       # Service.new
       # Service.new [:check]
       #
       attr_accessor :installed, :enabled, :running, :message
 
-      @@name = 'noname'
-      @@stop_pattern = /#{@@name} is stopped/
-      @@running_pattern = /#{@@name} \(pid (%d+)\) is running/
+      @servicename = 'noname'
+      @stop_pattern = /#{@name} is stopped/
+      @running_pattern = /#{@name} \(pid (%d+)\) is running/
+
+      @installed = nil
+      @enabled = nil
+      @running = nil
+      @message = nil
 
       def initialize(args={})
-        @name = args[:name] || @@name
-        @stop_pattern = args[:stop_pattern] || @@stop_pattern
-        @running_pattern = args[:running_pattern] || @@running_pattern
-
-        @installed = nil
-        @enabled = nil
-        @running = nil
-        @message = nil
+        @servicename = args[:servicename] || self.class.servicename
+        @stop_pattern = args[:stop_pattern] || self.class.stop_pattern
+        @running_pattern = args[:running_pattern] || self.class.running_pattern
       end
 
       def to_s
-        out = "Service #{@name}: "
+        out = "Service #{@servicename}: "
         case @installed
         when false
           out += "is not installed\n"
@@ -360,7 +371,7 @@ module Libra
 
       def to_xml
         builder = Nokogiri::XML::Builder.new do |xml|
-          attrs = {:name => @name}
+          attrs = {:name => @servicename}
           attrs[:running] = @running ? "true" : "false" if @running != nil
           
           xml.service(attrs) {
@@ -369,7 +380,6 @@ module Libra
             elsif @enabled == nil then
               xml.text("not installed")
             else
-              puts "service #{@name}, enabled = #{@enabled}"
               for num in (0..6) do
                 xml.runlevel(:level => num) {
                   xml.text(@enabled[num])
@@ -384,13 +394,24 @@ module Libra
       end
 
       def self.json_create(o)
-        new(*o)
+        new.init_json(o)
       end
+
+      def init_json(o)
+        @servicename = o['name']
+        @installed = o['installed']
+        @running = o['running']
+        @enabled = o['enabled']
+        @message = o['message']
+        self
+      end
+      
+      public
 
       def to_json
         struct = {
           "json_class" => self.class.name,
-          "name" => @name
+          "name" => @servicename
         }
         struct['installed'] = @installed if @installed != nil
         struct['enabled'] = @enabled if @enabled != nil
@@ -400,7 +421,7 @@ module Libra
       end
 
       def check
-        cmd = "chkconfig --list #{@name} 2>&1"
+        cmd = "chkconfig --list #{@servicename} 2>&1"
         response = `#{cmd}`.strip
         
         if /error reading information on service/ =~ response then
@@ -414,13 +435,35 @@ module Libra
 
         # parse the config string
         @enabled = response.split[1..-1].map {|v| v.tr("0-9:", "")}
-        @message = `service #{@name} status`.strip
+        @message = `service #{@servicename} status`.strip
         if @stopped_pattern =~ @message then
           @running = false
         else
           @running = true
         end           
       end
+
     end
+
+    # check the QPID service
+    class QpidService < Libra::Node::Service
+      @servicename = "qppid"
+    end
+
+    class McollectiveService < Libra::Node::Service
+      @servicename = "mcollectived"
+    end
+
+    class CgconfigService < Libra::Node::Service
+      @servicename = "cgconfig"
+      @running_pattern = /Running/
+      @stopped_pattern = /Stopped/
+    end
+
+    class CgRulesService < Libra::Node::Service
+      @servicename = "cgred"
+    end
+
+
   end
 end
