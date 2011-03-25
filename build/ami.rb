@@ -12,9 +12,9 @@ begin
     TYPE = "m1.large"
     KEY_PAIR = "libra"
     OPTIONS = {:key_name => KEY_PAIR, :instance_type => TYPE}
-    VERSION_REGEX = /li-\d\.\d{2}-\d+/
-    AMI_REGEX = /li-\d\.\d{2}/
-    BUILD_REGEX = /builder-li-\d\.\d{2}/
+    VERSION_REGEX = /li-\d+\.\d+\.\d*-\d+/
+    AMI_REGEX = /li-\d+\.\d+/
+    BUILD_REGEX = /builder-li-\d+\.\d+/
     BREW_LI = "https://brewweb.devel.redhat.com/packageinfo?packageID=31345"
     GIT_REPO_PUPPET = "ssh://puppet1.ops.rhcloud.com/srv/git/puppet.git"
     CONTENT_TREE = {'puppet' => '/etc/puppet'}
