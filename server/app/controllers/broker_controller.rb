@@ -12,7 +12,7 @@ class BrokerController < ApplicationController
       json = JSON.generate({
                   :debug => Thread.current[:debugIO] ? Thread.current[:debugIO].string : '',
                   :result => result,
-                  :exit_code => exit_code ? exit_code : 0
+                  :exit_code => exit_code
                   })
       json
   end
