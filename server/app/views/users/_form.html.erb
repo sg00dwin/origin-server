@@ -43,12 +43,12 @@ function validate() {
 
       <div class="grid_12">
         <%= f.label "password", "Password" %>
-        <%= f.password_field "password" %>
+        <%= f.password_field "password", :autocomplete => "off" %>
       </div>
 
       <div class="grid_12">
         <%= f.label "passwordConfirmation", "Retype Password" %>
-        <%= f.password_field "passwordConfirmation" %>
+        <%= f.password_field "passwordConfirmation", :autocomplete => "off" %>
       </div>
 
       <div id="captcha" class="grid_12">
