@@ -14,6 +14,12 @@ require 'json'
 module Libra
   module Node
 
+# ============================================================================
+#
+# Libra Node Service Status
+#
+# ============================================================================
+
     # survey the status of the Libra services on a node
     #   Access Controls
     #    SELinux
@@ -37,159 +43,16 @@ module Libra
     # Node.new(survey => :all)
     # Node.new(survey => [:selinux, :qpid, ...])
 
+
     class Status
 
-      attr        :hostname
-      attr_writer :packages, :selinux, :qpid
-
-      #attr_writer :packages :selinux, :qpid, :mcollective, 
-      #attr_writer :cgroups, :tc, :quota, :httpd
-
-      @@package_list = ['qpid-cpp-server', 'qpid-cpp-client', 'ruby-qmf',
-                        'mcollective', 'mcollective-client',
-                        'li-node',
-                        'li-cartridge-php-5.3.2', 
-                        'li-rack-1.1.0', 
-                        'li-wsgi-3.2.1']
-
-      @@selinux_booleans = {}
-      @@sysctl_values = {}
-
-      def self.package_list=(packages)
-        @@package_list = packages
-      end
-
-      @@selinux_command = "getenforce"
-      def self.selinux_command(cmd)
-        @@selinux_command = cmd
-      end
-
-      @@checks = [:packages, :selinux, :qpid, :mcollective, :cgroups, :tc,
-                  :quota, :httpd, :applications]
-
-      def initialize(checks=[])
-        @hostname = `hostname`.strip
-        @syscfg = nil
-        @packages = nil
-        @selinux = nil
-        #@qpid = QpidService.new
-        #@mcollective = McollectiveService.new
-        #@cgconfig = CgconfigService.new
-        #@cgred = CgRulesService.new
-        @tc = nil
-        @quota = nil
-        @httpd = nil
-        @applications = nil
-
-        # check of args[0] is a Hash and contains one element: json
-        checks = @@checks if checks[0] == :all
-        checks.each do |check|
-          case check
-          when :packages then
-            packages(check=true)
-          when :selinux then
-            selinux(check=true)
-          #when :qpid then
-          #  qpid(check=true)
-          #when :cgconfig then
-          #  cgconfig(check=true)
-          end
-        end
-      end
-
-      def to_s
-        headerstring = " Libra Node Status for host #{@hostname} "
-        indent = (80 - headerstring.length) / 2
-        out = "-" * indent + headerstring + "-" * indent + "\n"
-        # selinux
-        if @selinux
-          out += "SELinux: #{@selinux}\n"
-        end
-        
-        # packages
-        if @packages
-          out += "\nPackages:\n"
-          packages.keys.sort.each do |pkgname|
-            out += "  #{pkgname} "
-            if packages[pkgname] then
-              out += "#{@packages[pkgname][:version]} #{@packages[pkgname][:release]}\n"
-            else
-              out += "not installed\n"
-            end
-          end
-        end
-
-        # qpid
-        if @qpid
-          out += "\nQPID: #{@qpid}\n"
-        end
-        # mcollective
-        # cgroup service
-        # cgred service
-        # httpd service
-
-        # libra cgroups
-        # libra tc
-        # quotas
-
-        out += "\n" + "-" * 80
-      end
-      
-      def to_json
-
-      end
-
-      def self.json_create(o)
-        new(*o)
-        # add status
-      end
-
-      def to_xml
-
-      end
-
-      #
-      # Check the set of required packages
-      # 
-      def packages(check=false)
-        return @packages if not check
-        @packages = {}
-        @@package_list.each do |pkgname|
-          pkgspec = `rpm -q --qf '%{VERSION} %{RELEASE}' #{pkgname}`.strip
-          if /is not installed$/ =~ pkgspec then
-            @packages[pkgname] = nil
-          else
-            pkgspec = pkgspec.split
-            @packages[pkgname] = {:version => pkgspec[0], :release => pkgspec[1]}
-          end
-        end
-      end
-
-      #
-      # Check or report SELinux status
-      #
-      def selinux(check=false)
-        return @selinux if not check
-        @selinux = `getenforce`.strip 
-      end
-
-      def qpid(check=false)
-        # check for present, enabled, running
-        return @qpid if not check
-        @qpid = `service qpid status 2>&1`
-      end
-
-      def cgconfig(check=false)
-        return @cgconfig if not check
-        @cgconfig = `service cgconfig status 2>&1`
-      end
-
-      def cgred(check=false)
-        return @cgred if not check
-        @cgred = `service cgconfig status 2>&1`
-      end
     end
 
+# =============================================================================
+#
+#  Guest Account Class
+#
+# =============================================================================
     class GuestAccount
  
       # Used to find accounts
@@ -285,6 +148,12 @@ module Libra
 
     end
 
+# =============================================================================
+#
+# Application Class
+#
+# =============================================================================
+
     class Application
 
       attr_reader :appname, :apptype
@@ -320,19 +189,18 @@ module Libra
     end
     
 
-    #
-    # Model a generic service
-    # 
+# ========================================================================
+#
+# Generic Service Class
+#
+# ========================================================================
+
     class Service
 
       class << self
         attr_accessor :servicename, :stop_pattern, :running_pattern
       end
 
-      #
-      # Service.new
-      # Service.new [:check]
-      #
       attr_accessor :installed, :enabled, :running, :message
 
       @servicename = 'noname'
@@ -445,6 +313,17 @@ module Libra
 
     end
 
+# ===========================================================================
+#
+# Specialized Service Classes
+#
+# ===========================================================================
+
+    # NTP daemon
+    class NtpService < Libra::Node::Service
+      @servicename = "ntpd"
+    end
+
     # check the QPID service
     class QpidService < Libra::Node::Service
       @servicename = "qppid"
@@ -460,10 +339,12 @@ module Libra
       @stopped_pattern = /Stopped/
     end
 
-    class CgRulesService < Libra::Node::Service
+    class CgRedService < Libra::Node::Service
       @servicename = "cgred"
     end
 
-
+    class HttpdService < Libra::Node::Service
+      @servicename = "httpd"
+    end
   end
 end

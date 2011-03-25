@@ -46,7 +46,7 @@ class TestService < Test::Unit::TestCase
     s1 = Libra::Node::Service.new :servicename => "ntpd"
     assert_equal("{\"name\":\"ntpd\",\"json_class\":\"Libra::Node::Service\"}", s1.to_json)
     s1.check
-    assert_equal("{\"name\":\"ntpd\",\"running\":true,\"json_class\":\"Libra::Node::Service\",\"enabled\":[\"off\",\"off\",\"on\",\"on\",\"on\",\"on\",\"off\"],\"installed\":true,\"message\":\"ntpd (pid  2953) is running...\"}", s1.to_json)
+    assert_match(/\{"name":"ntpd","running":true,"json_class":"Libra::Node::Service","enabled":\["off","off","on","on","on","on","off"\],"installed":true,"message":"ntpd \(pid /, s1.to_json)
   end
 
   def testServiceFromJson
@@ -59,7 +59,7 @@ class TestService < Test::Unit::TestCase
     json1 = s1.to_json
 
     assert_equal(json0, json1)
-    p json1
+    #p json1
     #p s1.to_xml
   end
 end
