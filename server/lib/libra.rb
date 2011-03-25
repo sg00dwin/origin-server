@@ -3,6 +3,7 @@ require 'libra/config.rb'
 require 'libra/helper.rb'
 require 'libra/server.rb'
 require 'libra/user.rb'
+require 'libra/nurture.rb'
 
 module Libra
   
@@ -57,6 +58,7 @@ module Libra
     server.create_user(user) if action == 'configure'
 
     # Configure the app on the server using a framework cartridge
+    Nurture.application(rhlogin, user.uuid, app_name, user.namespace, framework, action)
     result = server.execute_direct(framework, action, "#{app_name} #{user.namespace} #{user.uuid}")[0]
     unless result.results[:data][:exitcode] == 0
         Libra.debug result.results[:data][:output]

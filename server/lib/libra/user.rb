@@ -1,5 +1,6 @@
 require 'libra/helper'
 require 'libra/server'
+require 'libra/nurture'
 require 'aws'
 require 'json'
 require 'date'
@@ -45,6 +46,7 @@ module Libra
       uuid = gen_small_uuid()
       user = new(rhlogin, ssh, namespace, uuid)
       user.update
+      Nurture.libra_contact(rhlogin, uuid, namespace)
       user
     end
     
