@@ -167,7 +167,7 @@ rake install:test:all
 %install
 rm -rf $RPM_BUILD_ROOT
 rake DESTDIR="$RPM_BUILD_ROOT" install:all
-ln -s %{_localstatedir}/www/html/libra/public $RPM_BUILD_ROOT/%{_localstatedir}/www/html/app
+ln -s %{_localstatedir}/www/libra/public $RPM_BUILD_ROOT/%{_localstatedir}/www/html/app
 
 mkdir $RPM_BUILD_ROOT/etc/libra/devenv/
 cp -adv docs/devenv/* $RPM_BUILD_ROOT/etc/libra/devenv/
@@ -333,19 +333,19 @@ fi
 %{_bindir}/rhc-new-user
 %{_bindir}/rhc-get-user-info
 %{_bindir}/rhc-cartridge-do
-%{_localstatedir}/www/html/libra
+%{_localstatedir}/www/libra
 %{_localstatedir}/www/html/app
 %{_sysconfdir}/httpd/conf.d/rails.conf
 %config(noreplace) %{_sysconfdir}/libra/controller.conf
 
 %post server
-pushd %{_localstatedir}/www/html/libra > /dev/null
+pushd %{_localstatedir}/www/libra > /dev/null
 bundle install --deployment
 popd > /dev/null
-mkdir -p %{_localstatedir}/www/html/libra/log
-touch %{_localstatedir}/www/html/libra/log/production.log
-chmod 0666 %{_localstatedir}/www/html/libra/log/production.log
-touch %{_localstatedir}/www/html/libra/db/production.sqlite3
+mkdir -p %{_localstatedir}/www/libra/log
+touch %{_localstatedir}/www/libra/log/production.log
+chmod 0666 %{_localstatedir}/www/libra/log/production.log
+touch %{_localstatedir}/www/libra/db/production.sqlite3
 
 %files cartridge-php-5.3.2
 %defattr(-,root,root,-)

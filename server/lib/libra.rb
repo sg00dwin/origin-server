@@ -3,6 +3,7 @@ require 'libra/config.rb'
 require 'libra/helper.rb'
 require 'libra/server.rb'
 require 'libra/user.rb'
+require 'libra/nurture.rb'
 
 module Libra
   
@@ -12,8 +13,16 @@ module Libra
       debugIO.puts str
     else
       puts str
-    end    
+    end
   end
+  
+  def self.logger_debug(str)    
+    if defined? RAILS_DEFAULT_LOGGER
+      RAILS_DEFAULT_LOGGER.debug str
+    else
+      puts str
+    end
+  end  
   
   #
   # Executes
@@ -24,15 +33,15 @@ module Libra
 
     # App exists check
     if action == 'configure'
-      raise UserException.new "An application named '#{app_name}' already exists" if user.app_info(app_name)
+      raise UserException.new(100), "An application named '#{app_name}' already exists", caller[0..5] if user.app_info(app_name)
       user.validate_app_limit
       # Create S3 app entry on configure (one of the first things)
       user.create_app(app_name, framework)
     else
       if action == 'deconfigure'
-        Libra.debug "app not found, attempting to remove anyway..." unless user.app_info(app_name)
+        Libra.debug "Application not found, attempting to remove anyway..." unless user.app_info(app_name)
       else
-        raise UserException.new "An application named '#{app_name}' does not exist" unless user.app_info(app_name)
+        raise UserException.new(101), "An application named '#{app_name}' does not exist", caller[0..5] unless user.app_info(app_name)
       end
     end
 
@@ -49,15 +58,16 @@ module Libra
     server.create_user(user) if action == 'configure'
 
     # Configure the app on the server using a framework cartridge
+    Nurture.application(rhlogin, user.uuid, app_name, user.namespace, framework, action)
     result = server.execute_direct(framework, action, "#{app_name} #{user.namespace} #{user.uuid}")[0]
     unless result.results[:data][:exitcode] == 0
         Libra.debug result.results[:data][:output]
-        raise "Node execution failure.  If the problem persists please contact Red Hat support."
+        raise NodeException.new(143), "Node execution failure.  If the problem persists please contact Red Hat support.", caller[0..5]
     end
 
     # update DNS
     public_ip = server.get_fact_direct('public_ip')
-    Libra.debug "PUBLIC IP: #{public_ip}"
+    Libra.logger_debug "PUBLIC IP: #{public_ip}"
     sshfp = server.get_fact_direct('sshfp').split[-1]
     Server.nsupdate_add(app_name, user.namespace, public_ip, sshfp) if action == 'configure'
     Server.nsupdate_del(app_name, user.namespace, public_ip) if action == 'deconfigure'
@@ -83,6 +93,6 @@ module Libra
 
     # Add the additional server if needed
     result = Server.create
-    Libra.debug "Added EC2 instance #{result[0]}"
+    Libra.logger_debug "Added EC2 instance #{result[0]}"
   end
 end

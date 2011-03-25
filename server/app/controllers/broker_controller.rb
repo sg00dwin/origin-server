@@ -8,10 +8,11 @@ include Libra
 
 class BrokerController < ApplicationController  
   
-  def generate_result_json(result)      
+  def generate_result_json(result, exit_code=0)      
       json = JSON.generate({
                   :debug => Thread.current[:debugIO] ? Thread.current[:debugIO].string : '',
-                  :result => result
+                  :result => result,
+                  :exit_code => exit_code
                   })
       json
   end
@@ -27,10 +28,10 @@ class BrokerController < ApplicationController
   end
   
   def render_unauthorized
-    render :json => generate_result_json("Invalid user credentials"), :status => :unauthorized
+    render :json => generate_result_json("Invalid user credentials", 97), :status => :unauthorized
   end
   
-  def render_internal_server_error(e, method_name)   
+  def render_internal_server_error(e, method_name)      
     if !(e.is_a? Libra::LibraException) 
       logger.error "Exception rescued in #{method_name}:"
       logger.error e.message
@@ -42,7 +43,7 @@ class BrokerController < ApplicationController
       logger.error "Exception rescued in #{method_name}:"
       logger.error e.message
     end
-    render :json => generate_result_json(e.message), :status => :internal_server_error
+    render :json => generate_result_json(e.message, e.respond_to?('exit_code') ? e.exit_code : 255), :status => :internal_server_error
   end
 
   def cartridge_post
@@ -55,7 +56,7 @@ class BrokerController < ApplicationController
         # Execute a framework cartridge
         Libra.execute(data['cartridge'], data['action'], data['app_name'], data['rhlogin'])         
   
-        render :json => generate_result_json("Success") and return
+        render :json => generate_result_json("Successfully created application on node") and return
       else
         render_unauthorized and return
       end
@@ -94,7 +95,7 @@ class BrokerController < ApplicationController
           render :json => generate_result_json(json_data) and return
         else
           # Return a 404 to denote the user doesn't exist
-          render :json => generate_result_json("User does not exist"), :status => :not_found and return
+          render :json => generate_result_json("User does not exist", 99), :status => :not_found and return
         end
       else
         render_unauthorized and return
@@ -114,7 +115,7 @@ class BrokerController < ApplicationController
         if user
           if data['alter']          
             if user.namespace != data['namespace']
-              render :json => generate_result_json("You may not change your registered namespace of: #{user.namespace}"), :status => :conflict and return  
+              render :json => generate_result_json("You may not change your registered namespace of: #{user.namespace}", 98), :status => :conflict and return  
             else
               user.namespace=data['namespace']
               user.ssh=data['ssh']
@@ -124,7 +125,7 @@ class BrokerController < ApplicationController
                   "customer_#{user.rhlogin}", user.rhlogin)
             end
           else
-            render :json => generate_result_json("User already has a registered namespace.  To overwrite or change, use --alter"), :status => :conflict and return
+            render :json => generate_result_json("User already has a registered namespace.  To overwrite or change, use --alter", 97), :status => :conflict and return
           end
         else        
           user = Libra::User.create(data['rhlogin'], data['ssh'], data['namespace'])

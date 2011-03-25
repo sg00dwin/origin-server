@@ -1,5 +1,6 @@
 require 'libra/helper'
 require 'libra/server'
+require 'libra/nurture'
 require 'aws'
 require 'json'
 require 'date'
@@ -37,14 +38,15 @@ module Libra
     # if the user already exists.
     #
     def self.create(rhlogin, ssh, namespace)
-      raise UserException.new "A user with RHLogin '#{rhlogin}' already exists" if find(rhlogin)
-      raise UserException.new "A namespace with name '#{namespace}' already exists" if Server.get_dns_txt(namespace).length > 0
+      raise UserException.new(102), "A user with RHLogin '#{rhlogin}' already exists", caller[0..5] if find(rhlogin)
+      raise UserException.new(103), "A namespace with name '#{namespace}' already exists", caller[0..5] if Server.get_dns_txt(namespace).length > 0
       # TODO bit of a race condition here (can nsupdate fail on exists?)
       Server.nsupdate_add_txt(namespace)
-      Libra.debug "DEBUG: user.rb:create rhlogin:#{rhlogin} ssh:#{ssh} namespace:#{namespace}" if Libra.c[:rpc_opts][:verbose]
+      Libra.debug "DEBUG: Creating user entry rhlogin:#{rhlogin} ssh:#{ssh} namespace:#{namespace}" if Libra.c[:rpc_opts][:verbose]
       uuid = gen_small_uuid()
       user = new(rhlogin, ssh, namespace, uuid)
       user.update
+      Nurture.libra_contact(rhlogin, uuid, namespace)
       user
     end
     
@@ -88,9 +90,9 @@ module Libra
     #
     def validate_app_limit
       num_apps = apps.length
-      Libra.debug "DEBUG: server.rb:validate_app_limit #{@rhlogin}: num of apps(#{num_apps.to_s}) must be < app limit (#{Libra.c[:per_user_app_limit]})" if Libra.c[:rpc_opts][:verbose]
+      Libra.debug "DEBUG: Validating application limit #{@rhlogin}: num of apps(#{num_apps.to_s}) must be < app limit (#{Libra.c[:per_user_app_limit]})" if Libra.c[:rpc_opts][:verbose]
       if (num_apps >= Libra.c[:per_user_app_limit])
-        raise UserException.new "#{@rhlogin} has already reached the application limit of #{Libra.c[:per_user_app_limit]}"
+        raise UserException.new(104), "#{@rhlogin} has already reached the application limit of #{Libra.c[:per_user_app_limit]}", caller[0..5]
       end
     end
 
@@ -133,7 +135,7 @@ module Libra
     #
     def update
       json = JSON.generate({:rhlogin => rhlogin, :namespace => namespace, :ssh => ssh, :uuid => uuid})
-      Libra.debug "DEBUG: user.rb:update json:#{json}" if Libra.c[:rpc_opts][:verbose]
+      Libra.debug "DEBUG: Updating user json:#{json}" if Libra.c[:rpc_opts][:verbose]
       Helper.s3.put(Libra.c[:s3_bucket], "user_info/#{rhlogin}/user.json", json)
     end
 

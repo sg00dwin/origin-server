@@ -112,28 +112,30 @@ Then /^they should be able to be changed$/ do
   # Make a change and push it
   urls = {}
   user_apps.each do |user_app|
-    $logger.info("Changing to dir=#{$temp}/#{user_app[0]}_#{user_app[1]}_repo")
-    Dir.chdir("#{$temp}/#{user_app[0]}_#{user_app[1]}_repo")
-    system('sed -i "/<h1>/a<p>making a change</p>" php/index.php')
-    #wc = %x[cat index.php | wc -m --chars].chomp.to_i;
-    $logger.info("git commit -a -m 'Testing a commit'")
-    system("git commit -a -m 'Testing a commit'")
-    $logger.info('git push')
-    system('git push')
+
+    # Make a change
+    repo = "#{$temp}/#{user_app[0]}_#{user_app[1]}_repo"
+    $logger.info("Changing to dir=#{repo}")
+    Dir.chdir(repo)
+    run('sed -i "/<h1>/a<p>making a change</p>" php/index.php')
+    run("git commit -a -m 'Making a change'")
+    run('git push')
+
     # Make sure to handle timeouts
     host = "#{user_app[1]}-#{user_app[0]}.#{$domain}"
+    $logger.info("host= #{host}")
     begin
       req = Net::HTTP::Get.new('/index.php')
-      $logger.info("host= #{host}")
       res = Net::HTTP.start(host, 80) do |http|
-        #http.read_timeout = 5
+        http.read_timeout = 30
         http.request(req)
       end
+
+      # Store the response code for later use
       code = res.code
-      file = File.open("php/index.php", "rb")
-      contents = file.read
-      #validate the change made it up
-      res.body.should == contents
+
+      # Verify the content of the response
+      File.open("php/index.php", "rb") {|f| res.body.should == f.read}
     rescue Net::HTTPError
       code = -1
     end
