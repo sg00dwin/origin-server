@@ -216,6 +216,49 @@ module Libra
       end
     end
 
+# ============================================================================
+#
+# Selinux
+#
+# ============================================================================
+
+    class Selinux
+      # enable (true|false)
+      # enforcing (true|false)
+      # type (mls|targeted)
+      # policy version
+      # booleans
+
+      def initialize
+        
+      end
+
+      def to_s
+
+      end
+
+      def to_xml
+
+      end
+
+      def to_json
+
+      end
+
+      def self.json_create(o)
+        new.init(o)
+      end
+
+      def init(o)
+
+      end
+
+      def check
+
+      end
+    end
+
+
 # =============================================================================
 #
 #  Guest Account Class
@@ -513,3 +556,123 @@ module Libra
     end
   end
 end
+
+
+# ============================================================================
+#
+# Libra User cgroups
+#
+# ============================================================================
+
+    class UserCgroups
+
+      def initialize
+        
+      end
+
+      def to_s
+
+      end
+
+      def to_xml
+
+      end
+
+      def to_json
+
+      end
+
+      def self.json_create(o)
+        new.init(o)
+      end
+
+      def init(o)
+
+      end
+
+      def check
+
+      end
+    end
+
+# ============================================================================
+#
+# User Traffic Control
+#
+# ============================================================================
+
+    class TrafficControl
+      # check: enabled (true|false)
+      #        enforcing (true|false)
+      #        type (targeted|mls)
+      #        policy version
+      #        required booleans
+
+      def initialize
+        
+      end
+
+      def to_s
+
+      end
+
+      def to_xml
+
+      end
+
+      def to_json
+
+      end
+
+      def self.json_create(o)
+        new.init(o)
+      end
+
+      def init(o)
+
+      end
+
+      def check
+
+      end
+    end
+
+
+# ============================================================================
+#
+# File system quotas
+#
+# ============================================================================
+
+    class FileSystemQuotas
+
+      def initialize
+        
+      end
+
+      def to_s
+
+      end
+
+      def to_xml
+
+      end
+
+      def to_json
+
+      end
+
+      def self.json_create(o)
+        new.init(o)
+      end
+
+      def init(o)
+
+      end
+
+      def check
+
+      end
+    end
+
+
