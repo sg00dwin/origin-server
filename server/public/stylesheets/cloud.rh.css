@@ -17,8 +17,8 @@ body {
 #nav {
         background: url(../images/bg_mainnav.png) repeat-x red;
         min-height: 20px;
-        padding-top: 5px;
-        padding-bottom: 5px;
+        padding-top: 7px;
+        padding-bottom: 7px;
 	border-top: 1px solid #fe7272;
 }
 
@@ -31,8 +31,16 @@ body {
         list-style-type: none;
 	font-family: Overpass;
 	font-weight: normal;
+	font-size: 11pt;
 }
 
+#nav li a {
+	text-decoration: none;
+}
+
+#nav li a:hover {
+	color: black;
+}
 
 /* Login stuff */
 
@@ -122,6 +130,11 @@ body {
 	padding-right: 10px;
 }
 
+#pageheader { margin-bottom: 2em; }
+
+#page #pageheader h2,
+#page #pageheader p { color: white; }
+
 #pageheader.express { background: url(../images/bg_express.png) repeat-x #6699cc; }
 #pageheader.appscale { background: url(../images/bg_appscale.png) repeat-x #c88fd7; }
 #pageheader.fabric { background: url(../images/bg_appscale.png) repeat-x #8dd35f; }
@@ -150,7 +163,7 @@ body {
 #page {
 	background: white url(../images/bg_gradient.png) repeat-x;
         color: black;
-	padding-top: 2em;
+	padding-top: 0px;
 	padding-bottom: 5em;
 }
 
