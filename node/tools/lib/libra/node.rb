@@ -48,22 +48,108 @@ module Libra
         attr_reader :checks
       end
 
-      @checks = [:hostinfo]
+      @checks = [ :hostinfo, :ntpd, :qpidd, :mcollectived, 
+                  :cgconfig, :cgred, :httpd ]
       
-      def initialize(*checks)
+      attr_reader :hostinfo, :ntpd, :qppid, :mcollectived
 
+      def initialize(*checks)
+        
         @hostinfo = HostInfo.new
+        @ntpd = NtpService.new
+        @qpidd = QpidService.new
+        @mcollectived = McollectiveService.new
+        @cgconfig = CgconfigService.new
+        @cgred = CgredService.new
+        @httpd = HttpdService.new
 
         checks = self.class.checks if checks.length == 1 and checks[0] == :all
+        check(checks)
+
+      end
+
+      def to_s
+        # print the header
+        title = "Libra Node Status"
+        fillcount = (80 - (title.length + 2)) / 2
+        out = "=" * fillcount + " " + title + " " + "=" * fillcount + "\n"
+
+        out += @hostinfo.to_s + "\n" if @hostinfo
+        out += @ntpd.to_s + "\n" if @ntpd
+        out += @qpidd.to_s + "\n" if @qpidd
+        out += @mcollectived.to_s + "\n" if @mcollectived
+        out += @cgconfig.to_s + "\n" if @cgconfig
+        out += @cgred.to_s + "\n" if @cgred
+        out += @httpd.to_s + "\n" if @httpd
+
+        out += "=" * 80 + "\n"
+
+      end
+
+      def to_xml
+        builder = Nokogiri::XML::Builder.new do |xml|
+          xml.status {
+            xml << @hostinfo.to_xml if @hostinfo
+            xml << @ntpd.to_xml if @ntpd
+            xml << @qpidd.to_xml if @qpidd
+            xml << @mcollectived.to_xml if @mcollectived
+            xml << @cgconfig.to_xml if @cgconfig
+            xml << @cgred.to_xml if @cgred
+            xml << @httpd.to_xml if @httpd
+          }
+        end
+        builder.doc.root.to_xml
+      end
+
+      def to_json
+        hash = {
+          "json_class" => self.class.name
+        }
+        hash['hostinfo'] = @hostinfo.to_json if @hostinfo
+        hash['ntpd'] = @ntpd.to_json if @ntpd
+        hash['qpidd'] = @qpidd.to_json if @qpidd
+        hash['mcollectived'] = @mcollectived.to_json if @mcollectived
+        hash['cgconfig'] = @cgconfig.to_json if @cgconfig
+        hash['cgred'] = @cgred.to_json if @cgred
+        hash['httpd'] = @qpidd.to_json if @httpd
+        JSON.generate(hash)
+      end
+
+      def self.json_create(o)
+        new.init(o)        
+      end
+
+      def init(o)
+        # set values
+        self
+      end
+
+      def check(checks)
         checks.each do |csym|
-          if not self.class.checks.member? csym then
-            puts "invalid check symbol " + csym.to_s
-            # raise an exception
+          if self.class.checks.index csym == nil
+            puts "invalid check #{csym}"
+            # raise and exception
           end
 
-          # continue processing
+          case csym
+          when :hostinfo
+            @hostinfo.check
+          when :ntpd
+            @ntpd.check
+          when :qpidd
+            @qpidd.check
+          when :mcollectived
+            @mcollectived.check
+          when :cgconfig
+            @cgconfig.check
+          when :cgred
+            @cgred.check
+          when :httpd
+            @httpd.check
+          end
         end
       end
+
     end
 
 # ============================================================================
@@ -85,9 +171,9 @@ module Libra
       end
 
       def check
-        @hostname = `hostname`
-        #@uname = `uname -a`
-        @uptime = `uptime`
+        @hostname = `hostname`.strip
+        #@uname = `uname -a`.strip
+        @uptime = `uptime`.strip
       end
 
       def to_s
@@ -96,7 +182,6 @@ module Libra
           out += "  Hostname: #{@hostname}\n"
           out += "  Uptime: #{@uptime}\n"
         end
-        out += "\n"
       end
 
       def to_xml
@@ -127,6 +212,7 @@ module Libra
       def init(o)
         @hostname = o['hostname']
         @uptime = o['uptime']
+        self
       end
     end
 
@@ -355,8 +441,6 @@ module Libra
         self
       end
       
-      public
-
       def to_json
         struct = {
           "json_class" => self.class.name,
@@ -407,7 +491,7 @@ module Libra
 
     # check the QPID service
     class QpidService < Libra::Node::Service
-      @servicename = "qppid"
+      @servicename = "qpidd"
     end
 
     class McollectiveService < Libra::Node::Service
@@ -420,7 +504,7 @@ module Libra
       @stopped_pattern = /Stopped/
     end
 
-    class CgRedService < Libra::Node::Service
+    class CgredService < Libra::Node::Service
       @servicename = "cgred"
     end
 

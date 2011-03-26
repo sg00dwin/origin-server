@@ -10,7 +10,7 @@ class TestHostInfo < Test::Unit::TestCase
     attr_reader :hostname
   end
 
-  @hostname = `hostname`
+  @hostname = `hostname`.strip
 
   def setup
     @testinfo = {
@@ -33,14 +33,14 @@ class TestHostInfo < Test::Unit::TestCase
   end
 
   def testToString
-    teststring = "-- HostInfo --\n  Hostname: myhost\n  Uptime: 00:00:00\n\n"
+    teststring = "-- HostInfo --\n  Hostname: myhost\n  Uptime: 00:00:00\n"
     h0 = Libra::Node::HostInfo.new
     h0.init @testinfo
     assert_equal(teststring, h0.to_s)
   end
 
   def testToXml
-    testxml = '<hostinfo uptime="00:00:00" hostname="myhost"/>'
+    testxml = '<hostinfo hostname="myhost" uptime="00:00:00"/>'
     h0 = Libra::Node::HostInfo.new
     h0.init @testinfo
     assert_equal(testxml, h0.to_xml)
@@ -53,11 +53,15 @@ class TestHostInfo < Test::Unit::TestCase
     assert_equal(testjson0, h0.to_json)
     h0.init @testinfo
     assert_equal(testjson1, h0.to_json)
-
   end
 
   def testParseJson
-
+    h0 = Libra::Node::HostInfo.new
+    h0.init @testinfo
+    json0 = h0.to_json
+    h1 = JSON.parse(json0)
+    assert_equal(h0.hostname, h1.hostname)
+    assert_equal(h0.uptime, h1.uptime)    
   end
 
 end
