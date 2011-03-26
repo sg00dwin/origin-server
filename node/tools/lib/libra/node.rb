@@ -218,6 +218,117 @@ module Libra
 
 # ============================================================================
 #
+# Disk Usage
+#
+# ============================================================================
+
+    class DiskUsage
+
+      def initialize
+        
+      end
+
+      def to_s
+
+      end
+
+      def to_xml
+
+      end
+
+      def to_json
+
+      end
+
+      def self.json_create(o)
+        new.init(o)
+      end
+
+      def init(o)
+
+      end
+
+      def check
+
+      end
+    end
+
+# ============================================================================
+#
+# CPU Status
+#
+# ============================================================================
+
+    class CpuStatus
+
+      def initialize
+        
+      end
+
+      def to_s
+
+      end
+
+      def to_xml
+
+      end
+
+      def to_json
+
+      end
+
+      def self.json_create(o)
+        new.init(o)
+      end
+
+      def init(o)
+
+      end
+
+      def check
+
+      end
+    end
+
+# ============================================================================
+#
+# MemoryStatus
+#
+# ============================================================================
+
+    class MemoryStatus
+
+      def initialize
+        
+      end
+
+      def to_s
+
+      end
+
+      def to_xml
+
+      end
+
+      def to_json
+
+      end
+
+      def self.json_create(o)
+        new.init(o)
+      end
+
+      def init(o)
+
+      end
+
+      def check
+
+      end
+    end
+
+# ============================================================================
+#
 # Selinux
 #
 # ============================================================================

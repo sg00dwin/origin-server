@@ -18,15 +18,15 @@ class TestStatus < Test::Unit::TestCase
 
   def testHostInfo
     s0 = Libra::Node::Status.new :all
-    puts "\n----\n\n"
-    puts s0.to_s
-    puts "\n----\n"
-    puts "hostinfo = #{s0.hostinfo}"
+    #puts "\n----\n\n"
+    #puts s0.to_s
+    #puts "\n----\n"
+    #puts "hostinfo = #{s0.hostinfo}"
   end
 
   def testToXml
     s0 = Libra::Node::Status.new :all
-    puts s0.to_xml
+    #puts s0.to_xml
     #puts s0.ntpd.to_xml
   end
 
