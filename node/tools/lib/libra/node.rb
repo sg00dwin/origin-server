@@ -225,11 +225,23 @@ module Libra
     class DiskUsage
 
       def initialize
-        
+        @filesystems = nil
       end
 
       def to_s
-
+        out = "-- Disk Usage --\n"
+        out += "  Filesystem       1K-blocks     Used Available Use% Mounted on\n"
+        @filesystems.keys.sort.each do |fs|
+          out += "  %-15s %9s %9s %9s %4s %s\n" % [
+          fs, 
+          @filesystems[fs]['size'],
+          @filesystems[fs]['used'], 
+          @filesystems[fs]['available'],
+          @filesystems[fs]['percent'],
+          @filesystems[fs]['mountpoint']
+                                                             ]
+        end
+        out
       end
 
       def to_xml
@@ -249,7 +261,20 @@ module Libra
       end
 
       def check
-
+        @filesystems = {}
+        input = `df -k | tr -s ' ' 2>&1`
+        lines = input.split("\n")
+        lines[1..-1].each do |line|
+          parts = line.split(" ")
+          key = parts[0]
+          @filesystems[key] = {
+            "size" => parts[1],
+            "used" => parts[2],
+            "available" => parts[3],
+            "percent" => parts[4],
+            "mountpoint" => parts[5]
+          }          
+        end
       end
     end
 
