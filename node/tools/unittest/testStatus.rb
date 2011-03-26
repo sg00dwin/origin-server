@@ -27,10 +27,11 @@ class TestStatus < Test::Unit::TestCase
   def testToXml
     s0 = Libra::Node::Status.new :all
     puts s0.to_xml
+    #puts s0.ntpd.to_xml
   end
 
   def testToJson
     s0 = Libra::Node::Status.new :all
-    puts s0.to_json
+    #puts s0.to_json
   end
 end

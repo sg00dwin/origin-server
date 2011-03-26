@@ -35,6 +35,7 @@ class TestService < Test::Unit::TestCase
     s1 = Libra::Node::Service.new :servicename => "ntpd"
     assert_equal("<service name=\"ntpd\">unknown</service>", s1.to_xml)
     s1.check
+    s2 = Nokogiri::XML.parse(s1.to_xml)
     #assert_equal("<service name=\"ntpd\">unknown</service>", s1.to_xml)
   end
 

@@ -409,13 +409,13 @@ module Libra
     class Service
 
       class << self
-        attr_accessor :servicename, :stop_pattern, :running_pattern
+        attr_accessor :servicename, :stopped_pattern, :running_pattern
       end
 
       attr_accessor :installed, :enabled, :running, :message
 
       @servicename = 'noname'
-      @stop_pattern = /#{@name} is stopped/
+      @stopped_pattern = /#{@name} is stopped/
       @running_pattern = /#{@name} \(pid (%d+)\) is running/
 
       @installed = nil
@@ -424,9 +424,9 @@ module Libra
       @message = nil
 
       def initialize(args={})
-        @servicename = args[:servicename] || self.class.servicename
-        @stop_pattern = args[:stop_pattern] || self.class.stop_pattern
-        @running_pattern = args[:running_pattern] || self.class.running_pattern
+        @servicename = self.class.servicename
+        @stopped_pattern = self.class.stopped_pattern
+        @running_pattern = self.class.running_pattern
       end
 
       def to_s
@@ -451,9 +451,10 @@ module Libra
       def to_xml
         builder = Nokogiri::XML::Builder.new do |xml|
           attrs = {:name => @servicename}
+
           attrs[:running] = @running ? "true" : "false" if @running != nil
           
-          xml.service(attrs) {
+           xml.service(attrs) {
             if @installed == nil then
               xml.text("unknown")
             elsif @enabled == nil then
@@ -464,7 +465,9 @@ module Libra
                   xml.text(@enabled[num])
                 }
               end
-              xml.message = @message
+              xml.message {
+                xml.text(@message)
+              }
             end
           }
         end
@@ -478,8 +481,8 @@ module Libra
       def init_json(o)
         @servicename = o['name']
         @installed = o['installed']
-        @running = o['running']
         @enabled = o['enabled']
+        @running = o['running']
         @message = o['message']
         self
       end
@@ -489,7 +492,7 @@ module Libra
           "json_class" => self.class.name,
           "name" => @servicename
         }
-        struct['installed'] = @installed if @installed != nil
+        struct['installed'] = @installed
         struct['enabled'] = @enabled if @enabled != nil
         struct['running'] = @running if @running != nil
         struct['message'] = @message if @installed
@@ -507,18 +510,21 @@ module Libra
           @message = "not installed"
           return
         end
-        @installed = true
 
         # parse the config string
+        @installed = true
         @enabled = response.split[1..-1].map {|v| v.tr("0-9:", "")}
         @message = `service #{@servicename} status`.strip
-        if @stopped_pattern =~ @message then
+        if @running_pattern =~ @message then
+          @running = true
+        elsif @stopped_pattern =~ @message then
           @running = false
         else
-          @running = true
+          puts "Unable to determine run state for #{@servicename}"
+          p @running_pattern
+          p @stopped_pattern
         end           
       end
-
     end
 
 # ===========================================================================
@@ -530,29 +536,39 @@ module Libra
     # NTP daemon
     class NtpService < Libra::Node::Service
       @servicename = "ntpd"
+      @running_pattern = Regexp.new "#{@servicename} \\(pid .*\\) is running\.\.\."
+      @stopped_pattern = Regexp.new "#{@servicename} is stopped"
     end
 
     # check the QPID service
     class QpidService < Libra::Node::Service
       @servicename = "qpidd"
+      @running_pattern = /#{@servicename} \(pid (%d+)\) is running/
+      @stopped_pattern = /#{@servicename} is stopped/
     end
 
     class McollectiveService < Libra::Node::Service
       @servicename = "mcollectived"
+      @running_pattern = /#{@servicename} \(pid (%d+)\) is running/
+      @stopped_pattern = /#{@servicename} is stopped/
     end
 
     class CgconfigService < Libra::Node::Service
       @servicename = "cgconfig"
-      @running_pattern = /Running/
-      @stopped_pattern = /Stopped/
+      @running_pattern = Regexp.new "Running"
+      @stopped_pattern = Regexp.new "Stopped"
     end
 
     class CgredService < Libra::Node::Service
       @servicename = "cgred"
+      @running_pattern = /#{@servicename} \(pid (%d+)\) is running/
+      @stopped_pattern = /#{@servicename} is stopped/
     end
 
     class HttpdService < Libra::Node::Service
       @servicename = "httpd"
+      @running_pattern = /#{@servicename} \(pid (%d+)\) is running/
+      @stopped_pattern = /#{@servicename} is stopped/
     end
   end
 end
