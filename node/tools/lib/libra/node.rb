@@ -247,30 +247,26 @@ module Libra
 
       def to_xml
         builder = Nokogiri::XML::Builder.new do |xml|
-          if @hostname then
-            xml.diskusage {
-              @filesystems.keys.sort.each do |fsname|
-                fs = @filesystems[fsname]
-                xml.filesystem(fs => fsname,
-                               size => fs['size'],
-                               used => fs['used'], 
-                               available => fs['available'],
-                               percent => fs['percent']) {
-                  xml.text(fs['mountpoint'])
-                }
-              end
+          xml.diskusage {
+            @filesystems.keys.sort.each do |fsname|
+              fs = @filesystems[fsname]
+              xml.filesystem(:fs => fsname,
+                             :size => fs['size'],
+                             :used => fs['used'], 
+                             :available => fs['available'],
+                             :percent => fs['percent']) {
+                xml.text(fs['mountpoint'])
+              }
             end
-          end
-        end
-              
-            }
-          end
+          }
         end
         builder.doc.root.to_xml
       end
 
       def to_json
-
+        hash = @filesystems
+        hash = {'json_class' => self.class.name, 'filesystems' => @filesystems}
+        JSON.generate(hash)
       end
 
       def self.json_create(o)
@@ -278,7 +274,8 @@ module Libra
       end
 
       def init(o)
-
+        @filesystems = o['filesystems']
+        self
       end
 
       def check
