@@ -231,21 +231,42 @@ module Libra
       def to_s
         out = "-- Disk Usage --\n"
         out += "  Filesystem       1K-blocks     Used Available Use% Mounted on\n"
-        @filesystems.keys.sort.each do |fs|
+        @filesystems.keys.sort.each do |fsname|
+          fs = @filesystems[fsname]
           out += "  %-15s %9s %9s %9s %4s %s\n" % [
-          fs, 
-          @filesystems[fs]['size'],
-          @filesystems[fs]['used'], 
-          @filesystems[fs]['available'],
-          @filesystems[fs]['percent'],
-          @filesystems[fs]['mountpoint']
-                                                             ]
+          fsname, 
+          fs['size'],
+          fs['used'], 
+          fs['available'],
+          fs['percent'],
+          fs['mountpoint']
+                                                  ]
         end
         out
       end
 
       def to_xml
-
+        builder = Nokogiri::XML::Builder.new do |xml|
+          if @hostname then
+            xml.diskusage {
+              @filesystems.keys.sort.each do |fsname|
+                fs = @filesystems[fsname]
+                xml.filesystem(fs => fsname,
+                               size => fs['size'],
+                               used => fs['used'], 
+                               available => fs['available'],
+                               percent => fs['percent']) {
+                  xml.text(fs['mountpoint'])
+                }
+              end
+            end
+          end
+        end
+              
+            }
+          end
+        end
+        builder.doc.root.to_xml
       end
 
       def to_json
