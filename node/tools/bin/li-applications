@@ -121,7 +121,7 @@ require 'builder'
 
 class LibraNodeAccount
   
-  :attr_reader username
+  attr_reader :username
 
   def initialize(username)
     @username = username
@@ -154,7 +154,7 @@ end
 def report_text(accounts)
   # write header
   report = ""
-  report += "-" * 32 + " Libra Accounts " + "-" * 32 + "\n"
+  report += "-" * 30 + " Libra Applications " + "-" * 30 + "\n"
 
   accounts.each {|a| report += a + "\n"}
 
