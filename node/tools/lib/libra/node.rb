@@ -55,13 +55,13 @@ module Libra
 
       def initialize(*checks)
         
-        @hostinfo = HostInfo.new
-        @ntpd = NtpService.new
-        @qpidd = QpidService.new
-        @mcollectived = McollectiveService.new
-        @cgconfig = CgconfigService.new
-        @cgred = CgredService.new
-        @httpd = HttpdService.new
+        @hostinfo = Libra::Node::HostInfo.new
+        @ntpd = Libra::Node::NtpService.new
+        @qpidd = Libra::Node::QpidService.new
+        @mcollectived = Libra::Node::McollectiveService.new
+        @cgconfig = Libra::Node::CgconfigService.new
+        @cgred = Libra::Node::CgredService.new
+        @httpd = Libra::Node::HttpdService.new
 
         checks = self.class.checks if checks.length == 1 and checks[0] == :all
         check(checks)
@@ -124,7 +124,7 @@ module Libra
         self
       end
 
-      def check(checks)
+      def check(checks=[])
         checks.each do |csym|
           if self.class.checks.index csym == nil
             puts "invalid check #{csym}"

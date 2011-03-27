@@ -62,11 +62,11 @@ standard_defaults = {
 #
 app_options =
   [
-
+   ["--format", "-f", GetoptLong::REQUIRED_ARGUMENT]
   ]
 
 app_defaults = {
-
+  :format => "text"
 }
 
 #
@@ -105,23 +105,23 @@ log.level = Logger::DEBUG if opts[:debug]
 # Application logic - Add the guts here
 #
 # =============================================================================
-
-require 'rubygems'
-require 'json'
-require 'nokogiri'
-
-#
-# Determine the status of the QPID service
-#
-def qpidd_status
-  
-end
+require "libra/node"
 
 # =============================================================================
 # =============================================================================
 #                                   MAIN
 # =============================================================================
 # =============================================================================
+status = Libra::Node::Status.new :all
+status.check
 
-
-log.debug "Hey, it you enabled debugging"
+case opts[:format]
+when 'text'
+  puts status
+when 'json'
+  puts status.to_json
+when 'xml'
+  puts status.to_xml
+else
+  puts "invalid format '#{opts[:format]}, (text|json|xml)"
+end
