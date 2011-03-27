@@ -170,17 +170,7 @@ EOF
     #
     def execute_internal(cartridge, action, args)
       Helper.rpc_exec('libra', name) do |client|
-        client.cartridge_do(:cartridge => cartridge,
-                            :action => action,
-                            :args => args) do |response|
-          return_code = response[:body][:data][:exitcode]
-          output = response[:body][:data][:output]
-
-          Libra.debug "DEBUG: Cartridge return code: #{return_code}" if Libra.c[:rpc_opts][:verbose]
-          Libra.debug "DEBUG: Cartridge output: #{output}" if Libra.c[:rpc_opts][:verbose]
-
-          raise CartridgeException.new(141), output, caller[0..5] if return_code != 0
-        end
+        cartridge_do(client, cartridge, action, args)
       end
     end
 
@@ -192,17 +182,21 @@ EOF
         options[:filter]['fact'] = [{:value=>value, :fact=>fact, :operator=>operator}]
         p options if Libra.c[:rpc_opts][:verbose]
         Helper.rpc_exec('libra') do |client|
-        client.cartridge_do(:cartridge => cartridge,
-                            :action => action,
-                            :args => args) do |response|
-          return_code = response[:body][:data][:exitcode]
-          output = response[:body][:data][:output]
-
-          Libra.debug "DEBUG: Cartridge return code: #{return_code}" if Libra.c[:rpc_opts][:verbose]
-          Libra.debug "DEBUG: Cartridge output: #{output}" if Libra.c[:rpc_opts][:verbose]
-          raise CartridgeException.new(142), output, caller[0..5] if return_code != 0
-        end
+        cartridge_do(client, cartridge, action, args)
       end
+    end
+    
+    def self.cartridge_do(client, cartridge, action, args)
+      client.cartridge_do(:cartridge => cartridge,
+                          :action => action,
+                          :args => args) do |response|
+        return_code = response[:body][:data][:exitcode]
+        output = response[:body][:data][:output]
+
+        Libra.debug "DEBUG: Cartridge return code: #{return_code}" if Libra.c[:rpc_opts][:verbose]
+        Libra.debug "DEBUG: Cartridge output: #{output}" if Libra.c[:rpc_opts][:verbose]
+        raise CartridgeException.new(141), output, caller[0..5] if return_code != 0
+      end      
     end
 
     #
