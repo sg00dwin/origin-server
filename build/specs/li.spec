@@ -2,7 +2,7 @@
 %define gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 
 Name: li
-Version: 0.60.3
+Version: 0.60.4
 Release: 1%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
@@ -181,7 +181,6 @@ gem install --install-dir $RPM_BUILD_ROOT/%{gemdir} --bindir $RPM_BUILD_ROOT/%{_
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-
 %post devenv
 # qpid
 /bin/cp -f /etc/libra/devenv/qpidd.conf /etc/qpidd.conf
@@ -193,16 +192,17 @@ chkconfig qpidd on
 service mcollective start
 chkconfig mcollective on
 
+# cggroups
+chkconfig cgconfig on
+service cgconfig start
+chkconfig cgred on
+service cgred start
+service libra-cgroups start
+service libra-tc start
+
 # iptables
 /bin/cp -f /etc/libra/devenv/iptables /etc/sysconfig/iptables
 /etc/init.d/iptables restart
-
-# Adding passenger user
-/usr/sbin/groupadd -r libra_user
-/usr/sbin/useradd libra_passenger -g libra_user -d /var/lib/passenger -r -s /sbin/nologin
-
-# Change group for mcollective client.cfg
-/bin/chgrp libra_user /etc/mcollective/client.cfg
 
 # enable development environment
 /bin/sed -i 's/#RailsEnv/RailsEnv/g' /etc/httpd/conf.d/rails.conf
@@ -214,6 +214,10 @@ chkconfig httpd on
 # Allow httpd to relay
 /usr/sbin/setsebool -P httpd_can_network_relay=on || :
 
+# Increase kernel semaphores to accomodate many httpds
+echo "kernel.sem = 250	32000	32	4096" >> /etc/sysctl.conf
+sysctl kernel.sem="250	32000	32	4096"
+
 # Setup facts
 /usr/bin/puppet /usr/libexec/mcollective/update_yaml.pp
 crontab -u root /etc/libra/devenv/crontab
@@ -222,7 +226,7 @@ crontab -u root /etc/libra/devenv/crontab
 /bin/cp -f /etc/libra/devenv/libra.conf /etc/libra/devenv/node.conf /etc/libra/devenv/controller.conf /etc/libra
 
 # enable disk quotas
-#/usr/bin/rhc-init-quota
+/usr/bin/rhc-init-quota
 
 # secure remounts of special filesystems
 #/usr/libexec/li/devenv/remount-secure.sh
@@ -339,6 +343,14 @@ fi
 %config(noreplace) %{_sysconfdir}/libra/controller.conf
 
 %post server
+# Adding passenger user
+/usr/sbin/groupadd -r libra_user
+/usr/sbin/useradd libra_passenger -g libra_user -d /var/lib/passenger -r -s /sbin/nologin
+
+# Change group for mcollective client.cfg
+/bin/chgrp libra_user /etc/mcollective/client.cfg
+
+# Install any Rails dependencies
 pushd %{_localstatedir}/www/libra > /dev/null
 bundle install --deployment
 popd > /dev/null
@@ -346,6 +358,8 @@ mkdir -p %{_localstatedir}/www/libra/log
 touch %{_localstatedir}/www/libra/log/production.log
 chmod 0666 %{_localstatedir}/www/libra/log/production.log
 touch %{_localstatedir}/www/libra/db/production.sqlite3
+
+/etc/init.d/httpd restart
 
 %files cartridge-php-5.3.2
 %defattr(-,root,root,-)
@@ -360,6 +374,9 @@ touch %{_localstatedir}/www/libra/db/production.sqlite3
 %{_libexecdir}/li/cartridges/wsgi-3.2.1/
 
 %changelog
+* Mon Mar 28 2011 Mike McGrath <mmcgrath@redhat.com> 0.60.4-1
+- Additional site and streamline fixes
+
 * Thu Mar 24 2011 Mike McGrath <mmcgrath@redhat.com> 0.60.3-1
 - Additional site related fixes
 

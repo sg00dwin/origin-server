@@ -16,7 +16,7 @@ spec = Gem::Specification.new do |s|
     s.summary = %q{Libra client tools}
     s.homepage = %q{https://www.redhat.com}
     s.description = %q{Libra client tools}
-    s.files = FileList['lib/**/*.rb', 'bin/*'].to_a
+    s.files = FileList['lib/**/*.rb', 'bin/*', 'conf/*'].to_a
     s.files += %w(LICENSE README Rakefile)
     s.executables = ['rhc-create-app', 'rhc-create-domain', 'rhc-ctl-app', 'rhc-snapshot', 'rhc-user-info']
     s.add_dependency('json')

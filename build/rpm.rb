@@ -13,7 +13,7 @@ namespace :rpm do
   task :commit_check do
       # Get the current spec version
       # Make sure everything is committed - otherwise exit
-      sh("git diff-index --quiet HEAD") do |ok, res|
+      sh("git diff-index --quiet #{TARGET_BRANCH}") do |ok, res|
         if !ok
           puts "ERROR - Uncommitted repository changes"
           puts "Checkin / revert before continuing."
@@ -22,25 +22,11 @@ namespace :rpm do
       end
   end
 
-  desc "Client tarball release"
-  task :client_tarball => [:version, :buildroot, :commit_check] do
-      # Build client tarball for a tarball install
-      sh "rm -rf #{@buildroot}/SOURCES/li-#{@version}"
-      mkdir_p "#{@buildroot}/SOURCES/li-#{@version}/docs"
-      sh "cp -adv client/rhc-* client/man #{@buildroot}/SOURCES/li-#{@version}"
-      cp "client/libra.conf.sample", "#{@buildroot}/SOURCES/li-#{@version}/libra.conf"
-      cp "docs/INSTALL_FROM_TARBALL.txt", "#{@buildroot}/SOURCES/li-#{@version}/docs"
-      cp "docs/USAGE.txt", "#{@buildroot}/SOURCES/li-#{@version}/docs"
-      cd "#{@buildroot}/SOURCES/"
-      sh "tar -czvf li-#{@version}.tar.gz li-#{@version}"
-      puts "tarball complete - #{@buildroot}/SOURCES/li-#{@version}.tar.gz"
-  end
-
   desc "Build the Libra SRPM"
   task :srpm => [:version, :buildroot, :commit_check] do
       # Archive the git repository and compress it for the SOURCES
       src = "#{@buildroot}/SOURCES/li-#{@version}.tar"
-      sh "git archive --prefix=li-#{@version}/ HEAD --output #{src}"
+      sh "git archive --prefix=li-#{@version}/ #{TARGET_BRANCH} --output #{src}"
       sh "gzip -f #{src}"
 
       # Move the SPEC file out
@@ -55,7 +41,7 @@ namespace :rpm do
 
       # Archive the git repository and compress it for the SOURCES
       src = "#{@buildroot}/SOURCES/li-tests-#{@version}.tar"
-      sh "git archive --prefix=li-tests-#{@version}/ HEAD --output #{src}"
+      sh "git archive --prefix=li-tests-#{@version}/ #{TARGET_BRANCH} --output #{src}"
       sh "gzip -f #{src}"
 
       # Move the SPEC file out

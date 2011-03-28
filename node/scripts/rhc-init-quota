@@ -73,6 +73,7 @@ function init_quota_db() {
     QUOTA_FILE=$(echo $1/aquota.user | tr -s /)
     touch $QUOTA_FILE
     chmod 600 $QUOTA_FILE
+    restorecon ${QUOTA_FILE}
     # initialize quota db on the filesystem
     quotacheck -cmuf $1
 }

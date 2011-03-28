@@ -176,3 +176,4 @@ $test_ssh_key = ssh_key = File.open($test_pub_key).gets.chomp.split(' ')[1]
 # Setup the default keys if necessary
 FileUtils.cp $test_pub_key, $libra_pub_key if !File.exists?($libra_pub_key)
 FileUtils.cp $test_priv_key, $libra_priv_key if !File.exists?($libra_priv_key)
+FileUtils.chmod 0600, $libra_priv_key

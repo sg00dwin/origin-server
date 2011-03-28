@@ -15,11 +15,16 @@ begin
     VERSION_REGEX = /li-\d+\.\d+\.\d*-\d+/
     AMI_REGEX = /li-\d+\.\d+/
     BUILD_REGEX = /builder-li-\d+\.\d+/
+    VERIFIER_REGEX = /verifier-li-\d+\.\d+/
     BREW_LI = "https://brewweb.devel.redhat.com/packageinfo?packageID=31345"
     GIT_REPO_PUPPET = "ssh://puppet1.ops.rhcloud.com/srv/git/puppet.git"
     CONTENT_TREE = {'puppet' => '/etc/puppet'}
     RSA = File.expand_path("~/.ssh/libra.pem")
     SSH = "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PasswordAuthentication=no -i " + RSA
+    SCP = "scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PasswordAuthentication=no -i " + RSA
+
+    # Static initialization
+    $stdout.sync = true
 
     # This will verify the Amazon SSL connection
     Rightscale::HttpConnection.params[:ca_file] = "/etc/pki/tls/certs/ca-bundle.trust.crt"
@@ -233,7 +238,7 @@ begin
       end
     end
 
-    task :image_verify => [:image_available] do
+    task :image_prereqs do
       # See if the current image is already verified
       conn.describe_tags('Filter.1.Name' => 'resource-id', 'Filter.1.Value.1' => @ami).each do |tag|
         if tag[:aws_key] == "Name" and tag[:aws_value] == "dev-verified"
@@ -242,6 +247,16 @@ begin
         end
       end
 
+      # Do not launch if there is a verifier instance running
+      conn.describe_instances.map do |i|
+        if (i[:aws_state] == "running") and (i[:tags]["Name"] =~ VERIFIER_REGEX)
+          puts "Verifier already running - exiting"
+          exit 0
+        end
+      end
+    end
+
+    task :image_verify => [:image_available, :image_prereqs] do
       puts "Launching verification instance for AMI #{@ami}"
       @instance = conn.launch_instances(@ami, OPTIONS)[0][:aws_instance_id]
       conn.create_tag(@instance, 'Name', "verifier-#{@version}")
@@ -249,29 +264,41 @@ begin
       # Wait for it to be available
       Rake::Task["ami:available"].execute
       dns = instance_value(:dns_name)
+      @server = "root@" + dns
 
       # Wait a few more seconds to let services start
       sleep 10
 
       begin
-        # Test user creation and app creation
-        puts "Testing user creation"
-        chars = ("1".."9").to_a
-        namespace = "jenkins" + Array.new(5, '').collect{chars[rand(chars.size)]}.join
+        # Copy the tests to the verifier instance
+        puts "Copying tests to remote instance"
+        puts "Building an archive of the codebase"
+        `git archive HEAD --output /tmp/li.tar`
+        puts "Transferring archive"
+        `#{SCP} /tmp/li.tar #{@server}:~/`
+        puts "Extracting archive"
+        `#{SSH} #{@server} 'tar -xf li.tar'`
 
-        puts "Setting up the config file"
-        File.open("libra.conf", "w") do |file|
-          file.puts "libra_domain='rhcloud.com'"
-          file.puts "libra_server='#{dns}'"
+        private_ip = `#{SSH} #{@server} 'facter ipaddress'`.chomp
+        puts "Updating the controller to use the AMZ private IP '#{private_ip}'"
+        `#{SSH} #{@server} "sed -i \"s/public_ip.*/public_ip='#{private_ip}'/g\" /etc/libra/node_data.conf"`
+        puts "Bounding Apache to pick up the change"
+        `#{SSH} #{@server} 'service httpd restart'`
+
+        # Run user tests
+        puts "Running regression tests"
+        puts `#{SSH} #{@server} 'rake test:all'`
+        p = $?
+
+        if p.exitstatus != 0
+          puts "ERROR - Non-zero exit code from Cucumber tests (exit: #{p.exitstatus})"
+          puts "Cucumber log output:"
+          puts `#{SSH} #{@server} 'cat /tmp/rhc/cucumber.log'`
+          fail "ERROR - Tests failed"
         end
 
-        puts "Creating a new user..."
-        sh "rhc-create-domain -n #{namespace} -l libra-test+#{namespace}@redhat.com -p test"
-        puts "Creating a new app..."
-        sh "rhc-create-app -a mytest -t php-5.3.2 -l libra-test+#{namespace}@redhat.com -n -p blah"
-
         # Tag the image as verified
-        conn.create_tag(@ami, 'Name', "dev-verified")
+        conn.create_tag(@ami, 'Name', "qe-ready")
       ensure
         puts "Terminating instance"
         conn.terminate_instances([@instance])
