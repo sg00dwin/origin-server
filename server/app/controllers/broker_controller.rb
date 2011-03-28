@@ -56,7 +56,7 @@ class BrokerController < ApplicationController
         # Execute a framework cartridge
         Libra.execute(data['cartridge'], data['action'], data['app_name'], data['rhlogin'])         
   
-        render :json => generate_result_json("Successfully created application on node") and return
+        render :json => generate_result_json("Success") and return
       else
         render_unauthorized and return
       end
