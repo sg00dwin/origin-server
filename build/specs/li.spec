@@ -222,6 +222,10 @@ chkconfig httpd on
 # Allow httpd to relay
 /usr/sbin/setsebool -P httpd_can_network_relay=on || :
 
+# Increase kernel semaphores to accomodate many httpds
+echo "kernel.sem = 250	32000	32	4096" >> /etc/sysctl.conf
+sysctl kernel.sem="250	32000	32	4096"
+
 # Setup facts
 /usr/bin/puppet /usr/libexec/mcollective/update_yaml.pp
 crontab -u root /etc/libra/devenv/crontab
