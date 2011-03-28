@@ -8,6 +8,8 @@ RedHatCloud::Application.routes.draw do
   #   match 'products/:id' => 'catalog#view'
   # Keep in mind you can assign values other than :controller and :action
   match 'index' => 'home#index'
+  match 'index2' => 'home#index2'
+  match 'appscale' => 'home#appscale'
   match 'getting_started' => 'home#getting_started'
   
   match 'broker/cartridge' => 'broker#cartridge_post', :via => [:post]
@@ -19,7 +21,7 @@ RedHatCloud::Application.routes.draw do
   # This route can be invoked with purchase_url(:id => product.id)
 
   # Sample resource route (maps HTTP verbs to controller actions automatically):
-  resources :users, :constraints => { :protocol => "https" }
+  resources :users, :constraints => { :protocol => "http" }
 
   # Sample resource route with options:
   #   resources :products do
