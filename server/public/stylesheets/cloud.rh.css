@@ -174,6 +174,13 @@ body {
 	background: #e6e6e6;
 }
 
+#pagetop #slugs h3 {
+	font-family: 'Overpass';
+	color: #444;
+	font-size: 13pt;
+	line-height: 16pt;
+}
+
 #slugs {
 	background: #ececec;
 	margin-left: 0px;
@@ -218,6 +225,7 @@ body {
 
 #app_promos {
 	background: #ececec;
+        padding-bottom: 2em;
 }
 
 #app_promos > div {
@@ -252,10 +260,14 @@ body {
 #app_promos h3,
 #app_promos h4,
 #app_promos p {
-	margin-top: 1em;
+	margin-top: 1em !important;
 	margin-left: auto;
 	margin-right: auto;
 	text-align: center;
+}
+
+#page #app_promos h3 {
+        font-size: 10pt;
 }
 
 #app_promos a {
@@ -265,6 +277,10 @@ body {
 	font-weight: bold;
 	text-decoration: none;
 	text-transform: uppercase;
+}
+
+#app_promos .grid_8 {
+        min-height: 170px;
 }
 
 /* Registration form */
@@ -587,6 +603,16 @@ p images {
 	clear: auto;
 	height: 30px;
 	font-family: 'Overpass';
+        background-color: #444;
+}
+
+.newsTicker li, #news_title h4 {
+	color: white !important;
+}
+
+
+li.news_item {
+        width: 800px !important;
 }
 
 .slideShow .navigation {
@@ -621,7 +647,7 @@ p images {
 .slideShow .navigation a:hover, .slideShow .navigation a.selected {
 	background-color: #3c6eb4;
 	font-weight: bold;
-	color: white;
+	color: white !important;
 	border: 1px solid white;
 }
 
@@ -687,7 +713,10 @@ li.slide {
 #slides .content p {
 	font-size: 13pt;
 	width: 600px;
+	color: white;
 }
+
+
 
 
 /* Beta specific hacks */
