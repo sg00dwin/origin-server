@@ -724,8 +724,6 @@ module Libra
       @running_pattern = /#{@servicename} \(pid (%d+)\) is running/
       @stopped_pattern = /#{@servicename} is stopped/
     end
-  end
-end
 
 
 # ============================================================================
@@ -845,4 +843,105 @@ end
       end
     end
 
+# ============================================================================
+#
+# File system quotas
+#
+# ============================================================================
 
+    class FileSystemQuotas
+
+      def initialize
+        
+      end
+
+      def to_s
+
+      end
+
+      def to_xml
+
+      end
+
+      def to_json
+
+      end
+
+      def self.json_create(o)
+        new.init(o)
+      end
+
+      def init(o)
+
+      end
+
+      def check
+
+      end
+    end
+
+# ============================================================================
+#
+# System Kernel Settings (sysctl)
+#
+# ============================================================================
+
+    class SysCtl
+
+      def initialize(keys=[])
+        @keys = keys
+        @settings = {}
+      end
+
+      def to_s
+
+      end
+
+      def to_xml
+
+      end
+
+      def to_json
+
+      end
+
+      def self.json_create(o)
+        new.init(o)
+      end
+
+      def init(o)
+
+      end
+
+      def check
+        pattern = Regexp.new "^(<lhs>[^ ]+) = (<rhs>.*)$"
+        error_pattern = Regexp.new "error: (<msg>.*)"
+        if @keys == :all then
+          response = `sysctl -a 2>&1`
+          lines = response.split("\n")
+          lines.each do |line|
+            if pattern =~ line then
+              key = pattern.match(:lhs)
+              value = pattern.match(:rhs)
+              @settings[key] = value
+            elsif error_pattern =~ line
+              @settings[key] = error_pattern(:msg)
+            end
+          end
+        else
+          @keys.each do |key|
+            line = `sysctl #{key} 2>&1`.strip
+            if pattern =~ line then
+              #key = pattern.match(:lhs)
+              value = pattern.match(:rhs)
+              @settings[key] = value                          
+            elsif error_pattern =~ line
+              @settings[key] = error_pattern(:msg)
+            end
+          end
+        end
+      end
+    end
+
+  end
+end
