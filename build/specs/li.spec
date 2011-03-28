@@ -193,6 +193,14 @@ chkconfig qpidd on
 service mcollective start
 chkconfig mcollective on
 
+# cggroups
+chkconfig cgconfig on
+service cgconfig start
+chkconfig cgred on
+service cgred start
+service libra-cgroups start
+service libra-tc start
+
 # iptables
 /bin/cp -f /etc/libra/devenv/iptables /etc/sysconfig/iptables
 /etc/init.d/iptables restart
@@ -222,7 +230,7 @@ crontab -u root /etc/libra/devenv/crontab
 /bin/cp -f /etc/libra/devenv/libra.conf /etc/libra/devenv/node.conf /etc/libra/devenv/controller.conf /etc/libra
 
 # enable disk quotas
-#/usr/bin/rhc-init-quota
+/usr/bin/rhc-init-quota
 
 # secure remounts of special filesystems
 #/usr/libexec/li/devenv/remount-secure.sh
