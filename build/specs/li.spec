@@ -2,7 +2,7 @@
 %define gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 
 Name: li
-Version: 0.60.3
+Version: 0.60.4
 Release: 1%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
@@ -374,6 +374,9 @@ touch %{_localstatedir}/www/libra/db/production.sqlite3
 %{_libexecdir}/li/cartridges/wsgi-3.2.1/
 
 %changelog
+* Mon Mar 28 2011 Mike McGrath <mmcgrath@redhat.com> 0.60.4-1
+- Additional site and streamline fixes
+
 * Thu Mar 24 2011 Mike McGrath <mmcgrath@redhat.com> 0.60.3-1
 - Additional site related fixes
 

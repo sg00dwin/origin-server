@@ -13,7 +13,7 @@ namespace :rpm do
   task :commit_check do
       # Get the current spec version
       # Make sure everything is committed - otherwise exit
-      sh("git diff-index --quiet HEAD") do |ok, res|
+      sh("git diff-index --quiet #{TARGET_BRANCH}") do |ok, res|
         if !ok
           puts "ERROR - Uncommitted repository changes"
           puts "Checkin / revert before continuing."
@@ -26,7 +26,7 @@ namespace :rpm do
   task :srpm => [:version, :buildroot, :commit_check] do
       # Archive the git repository and compress it for the SOURCES
       src = "#{@buildroot}/SOURCES/li-#{@version}.tar"
-      sh "git archive --prefix=li-#{@version}/ HEAD --output #{src}"
+      sh "git archive --prefix=li-#{@version}/ #{TARGET_BRANCH} --output #{src}"
       sh "gzip -f #{src}"
 
       # Move the SPEC file out
@@ -41,7 +41,7 @@ namespace :rpm do
 
       # Archive the git repository and compress it for the SOURCES
       src = "#{@buildroot}/SOURCES/li-tests-#{@version}.tar"
-      sh "git archive --prefix=li-tests-#{@version}/ HEAD --output #{src}"
+      sh "git archive --prefix=li-tests-#{@version}/ #{TARGET_BRANCH} --output #{src}"
       sh "gzip -f #{src}"
 
       # Move the SPEC file out
