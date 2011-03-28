@@ -209,6 +209,15 @@ body {
 	color: #3771c8;
 }
 
+#slugs ul {
+        width: 100%;
+        list-style-position: outside;
+}
+
+#slugs li {
+        margin-left: 10px;
+}
+
 #sidenav {
 	background: #e6e6e6;
 }
