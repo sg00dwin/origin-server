@@ -65,9 +65,19 @@ begin
       end
     end
 
-    task :version do
-      # Clean up any caching
-      #`yum clean metadata`
+    task :yum_clean do
+      `yum clean metadata`
+      p1 = $?
+      `yum info li`
+      p2 = $?
+
+      if p1.exitstatus != 0 or p2.exitstatus != 0
+        puts "Error cleaning yum state - exiting"
+        exit 0
+      end
+    end
+
+    task :version => [:yum_clean] do
       version = `yum info li | grep Version | tail -n1 | grep -o -E "[0-9]\.[0-9]+\.?[0-9]*"`.chomp
 
       # Only take the release up until the '.'
