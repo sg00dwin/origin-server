@@ -113,7 +113,7 @@ module RHC
         else
           print_response_err(response, debug)
         end
-        exit 255
+        exit 254
     end
     if print_result
       print_response_success(response, debug)
@@ -150,7 +150,7 @@ module RHC
       # TODO probably want to remove this at some point
       puts "!!!! WARNING !!!! WARNING !!!! WARNING !!!!"
       puts "RHCloud server not found.  You might want to try updating your rhc client tools."
-      exit 255
+      exit 218
     end
     response
   end
@@ -160,7 +160,7 @@ module RHC
     if (!debug)
       puts "Re-run with -d for more information."
     end
-    exit_code = 255
+    exit_code = 254
     if response.content_type == 'application/json'
       exit_code = print_json_body(response, debug)
     elsif debug

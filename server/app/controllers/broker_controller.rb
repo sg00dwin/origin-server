@@ -43,7 +43,7 @@ class BrokerController < ApplicationController
       logger.error "Exception rescued in #{method_name}:"
       logger.error e.message
     end
-    render :json => generate_result_json(e.message, e.respond_to?('exit_code') ? e.exit_code : 255), :status => :internal_server_error
+    render :json => generate_result_json(e.message, e.respond_to?('exit_code') ? e.exit_code : 254), :status => :internal_server_error
   end
 
   def cartridge_post
@@ -52,11 +52,21 @@ class BrokerController < ApplicationController
       data = parse_json_data(params['json_data'])
             
       if Libra::User.valid_registration?(data['rhlogin'], data['password'])
-  
+
+        action = data['action']
+        app_name = data['app_name']
+
         # Execute a framework cartridge
-        Libra.execute(data['cartridge'], data['action'], data['app_name'], data['rhlogin'])         
+        Libra.execute(data['cartridge'], action, app_name, data['rhlogin'])
+        
+        message = 'Success'
+        if action == 'configure'
+          message = "Successfully created application: #{app_name}"
+        elsif action == 'deconfigure'
+          message = "Successfully destroyed application: #{app_name}"
+        end
   
-        render :json => generate_result_json("Successfully created application on node") and return
+        render :json => generate_result_json(message) and return
       else
         render_unauthorized and return
       end

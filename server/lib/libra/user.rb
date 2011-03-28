@@ -80,6 +80,8 @@ module Libra
           #raise
         end
         false
+      elsif rhlogin == 'invalid_cred_user' #TODO remove fake user check before release
+        false
       else
         true
       end

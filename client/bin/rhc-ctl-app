@@ -107,7 +107,7 @@ if app
   framework = app['framework']
 else
   puts "Application not found: #{opt['app']}"
-  exit 252
+  exit 101
 end
 #
 # Send Warning
@@ -131,7 +131,7 @@ WARNING
     agree = gets.chomp
     if agree != 'y'
         puts "Destroy aborted"
-        exit 5
+        exit 217
     end
 end
 puts ""
