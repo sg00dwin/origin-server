@@ -243,8 +243,7 @@ begin
       conn.describe_tags('Filter.1.Name' => 'resource-id', 'Filter.1.Value.1' => @ami).each do |tag|
         if tag[:aws_key] == "Name" and tag[:aws_value] == "dev-verified"
           puts "Image already verified"
-          # TODO - Uncomment this
-          #exit 0
+          exit 0
         end
       end
 
@@ -252,7 +251,7 @@ begin
       conn.describe_instances.map do |i|
         if (i[:aws_state] == "running") and (i[:tags]["Name"] =~ VERIFIER_REGEX)
           puts "Verifier already running - exiting"
-          #exit 0
+          exit 0
         end
       end
     end
@@ -288,23 +287,21 @@ begin
 
         # Run user tests
         puts "Running regression tests"
-        puts "********** INTEGRATION TESTS *************"
-        puts `#{SSH} #{@server} 'rake test:integration'`
-        p1 = $?
-        puts "********** SPRINT TESTS *************"
-        puts `#{SSH} #{@server} 'rake test:sprint'`
-        p2 = $?
+        puts `#{SSH} #{@server} 'rake test:all'`
+        p = $?
 
-        if p1.exitstatus != 0 or p2.exitstatus != 0
-          fail "ERROR - Rake tests failed"
+        if p.exitstatus != 0
+          puts "ERROR - Non-zero exit code from Cucumber tests (exit: #{p.exitstatus})"
+          puts "Cucumber log output:"
+          puts `#{SSH} #{@server} 'cat /tmp/rhc/cucumber.log'`
+          fail "ERROR - Tests failed"
         end
 
         # Tag the image as verified
         conn.create_tag(@ami, 'Name', "qe-ready")
       ensure
         puts "Terminating instance"
-        # TODO - uncomment
-        #conn.terminate_instances([@instance])
+        conn.terminate_instances([@instance])
       end
     end
   end
