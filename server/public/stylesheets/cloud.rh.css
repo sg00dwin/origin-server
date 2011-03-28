@@ -130,8 +130,6 @@ body {
 	padding-right: 10px;
 }
 
-#pageheader { margin-bottom: 2em; }
-
 #page #pageheader h2,
 #page #pageheader p { color: white; }
 
@@ -165,6 +163,7 @@ body {
         color: black;
 	padding-top: 0px;
 	padding-bottom: 5em;
+        padding-top: 2em;
 }
 
 #page > div {
@@ -234,7 +233,6 @@ body {
 
 #app_promos {
 	background: #ececec;
-        padding-bottom: 2em;
 }
 
 #app_promos > div {
