@@ -207,9 +207,11 @@ module RHC
 end
 
 #
-# Config paths... /etc/libra/libra.conf -> ./libra.conf -> ~/.li/libra.conf
+# Config paths... /etc/libra/libra.conf or $GEM/conf/libra.conf -> ~/.li/libra.conf
 #
-@config_path = File.exists?('libra.conf') ? 'libra.conf' : '/etc/libra/libra.conf'
+linux_cfg = '/etc/libra/libra.conf'
+gem_cfg = File.join(File.expand_path(File.dirname(__FILE__) + "/../conf"), 'libra.conf')
+@config_path = File.exists?(linux_cfg) ? linux_cfg : gem_cfg
 if File.exists?("#{ENV['HOME']}/.li")
     if !File.directory?("#{ENV['HOME']}/.li")
         print "Moving old-style config file..."
