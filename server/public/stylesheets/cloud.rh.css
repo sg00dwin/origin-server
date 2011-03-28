@@ -264,9 +264,10 @@ body {
 	margin-left: auto;
 	margin-right: auto;
 	text-align: center;
+        font-family: 'Overpass';
 }
 
-#page #app_promos h3 {
+#app_promos h3 {
         font-size: 10pt;
 }
 
