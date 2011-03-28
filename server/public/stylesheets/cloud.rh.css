@@ -678,8 +678,8 @@ li.slide {
 	display: block;
 }
 
-#slides #express { background: url(../images/slide_express.png) no-repeat #6699cc; }
-#slides #appscale { background: url(../images/slide_appscale.png) repeat-x #c88fd7; }
+#slides #express { background: /*url(../images/slide_express.png) no-repeat*/ #6699cc; }
+#slides #appscale { background: /*url(../images/slide_appscale.png) repeat-x*/ #c88fd7; }
 
 .slides li p {
 	font-size: 1.1em;
