@@ -181,7 +181,6 @@ gem install --install-dir $RPM_BUILD_ROOT/%{gemdir} --bindir $RPM_BUILD_ROOT/%{_
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-
 %post devenv
 # qpid
 /bin/cp -f /etc/libra/devenv/qpidd.conf /etc/qpidd.conf
@@ -204,13 +203,6 @@ service libra-tc start
 # iptables
 /bin/cp -f /etc/libra/devenv/iptables /etc/sysconfig/iptables
 /etc/init.d/iptables restart
-
-# Adding passenger user
-/usr/sbin/groupadd -r libra_user
-/usr/sbin/useradd libra_passenger -g libra_user -d /var/lib/passenger -r -s /sbin/nologin
-
-# Change group for mcollective client.cfg
-/bin/chgrp libra_user /etc/mcollective/client.cfg
 
 # enable development environment
 /bin/sed -i 's/#RailsEnv/RailsEnv/g' /etc/httpd/conf.d/rails.conf
@@ -351,6 +343,14 @@ fi
 %config(noreplace) %{_sysconfdir}/libra/controller.conf
 
 %post server
+# Adding passenger user
+/usr/sbin/groupadd -r libra_user
+/usr/sbin/useradd libra_passenger -g libra_user -d /var/lib/passenger -r -s /sbin/nologin
+
+# Change group for mcollective client.cfg
+/bin/chgrp libra_user /etc/mcollective/client.cfg
+
+# Install any Rails dependencies
 pushd %{_localstatedir}/www/libra > /dev/null
 bundle install --deployment
 popd > /dev/null
@@ -358,6 +358,8 @@ mkdir -p %{_localstatedir}/www/libra/log
 touch %{_localstatedir}/www/libra/log/production.log
 chmod 0666 %{_localstatedir}/www/libra/log/production.log
 touch %{_localstatedir}/www/libra/db/production.sqlite3
+
+/etc/init.d/httpd restart
 
 %files cartridge-php-5.3.2
 %defattr(-,root,root,-)
