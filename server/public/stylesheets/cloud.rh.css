@@ -225,6 +225,7 @@ body {
 
 #app_promos {
 	background: #ececec;
+        padding-bottom: 2em;
 }
 
 #app_promos > div {
