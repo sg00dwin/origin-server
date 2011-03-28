@@ -5,6 +5,7 @@ begin
     desc "Run all tests"
     Cucumber::Rake::Task.new(:all) do |t|
       t.cucumber_opts = "tests"
+      t.fork = false
     end
   end
 rescue LoadError
