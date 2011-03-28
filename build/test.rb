@@ -2,19 +2,9 @@ begin
   namespace :test do
     require "cucumber/rake/task"
 
-    desc "Run all unit tests"
-    Cucumber::Rake::Task.new(:unit) do |t|
-      t.cucumber_opts = "tests --tags @unit"
-    end
-
-    desc "Run all integration tests"
-    Cucumber::Rake::Task.new(:integration) do |t|
-      t.cucumber_opts = "tests --tags ~@sprint"
-    end
-
-    desc "Run the sprint tests"
-    Cucumber::Rake::Task.new(:sprint) do |t|
-      t.cucumber_opts = "tests --tags @sprint"
+    desc "Run all tests"
+    Cucumber::Rake::Task.new(:all) do |t|
+      t.cucumber_opts = "tests"
     end
   end
 rescue LoadError
