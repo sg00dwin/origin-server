@@ -92,7 +92,7 @@ rescue NoMethodError
     puts "Could not find app '#{opt['app']}'.  Please run rhc-user-info to get a list"
     puts "of your current running applications"
     puts
-    exit 115
+    exit 101
 end
 
 puts "Pulling down a snapshot to #{opt['save']}"
@@ -105,6 +105,6 @@ if $?.exitstatus != 0
     puts
     puts "ssh #{user_info['user_info']['uuid']}@#{app}-#{user_info['user_info']['namespace']}.#{libra_domain} 'snapshot #{framework} #{app}' > #{opt['save']}"
     puts
-    exit 6
+    exit 254
 end
 exit 0

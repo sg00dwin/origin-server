@@ -43,7 +43,7 @@ class BrokerController < ApplicationController
       logger.error "Exception rescued in #{method_name}:"
       logger.error e.message
     end
-    render :json => generate_result_json(e.message, e.respond_to?('exit_code') ? e.exit_code : 255), :status => :internal_server_error
+    render :json => generate_result_json(e.message, e.respond_to?('exit_code') ? e.exit_code : 254), :status => :internal_server_error
   end
 
   def cartridge_post

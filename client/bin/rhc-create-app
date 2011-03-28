@@ -111,7 +111,7 @@ end
 uuid = @local_config.get_value(opt["rhlogin"])
 unless uuid
     puts "Could not find UUID for #{opt["rhlogin"]}"
-    exit 149
+    exit 99
 end
 
 opt["repo"] = opt["app"] unless opt["repo"]
@@ -129,7 +129,7 @@ if File.exists?(opt['repo'])
     puts "  #{File.expand_path(opt['repo'])}"
     puts "Then try again."
     puts
-    exit 255
+    exit 210
 else
     begin
         # Create the parent directory for the git repo
@@ -142,7 +142,7 @@ else
         puts "Please re-run from a directory you have write access to or specify -r with a"
         puts "path you have write access to"
         puts
-        exit 206
+        exit 211
     end
 end
 
@@ -155,7 +155,7 @@ unless File.exists?("#{ssh_config_d}/libra_id_rsa")
     puts "This file was created by rhc-create-domain.  If it does not exist you may need to create"
     puts "a new one."
     puts
-    exit 235
+    exit 212
 end
 
 #
@@ -233,7 +233,7 @@ rescue Errno::EACCES
     puts
     puts "Please correct this first.  Then run rerun."
     puts
-    exit 240
+    exit 213
 rescue Errno::ENOENT
     puts "Could not find #{ssh_config}.  This is ok, continuing"
 end
@@ -261,7 +261,7 @@ SSH
         puts
         puts "Please correct this first.  Then run rerun."
         puts
-        exit 240
+        exit 214
     rescue Errno::ENOENT
         # Make directory and config if they do not exist
         puts "Could not find directory: " + $!
@@ -290,7 +290,7 @@ end
 
 if loop == 5
     puts "Host could not be created and/or found..."
-    exit 255
+    exit 215
 end
 
 sleep_time = 2
@@ -310,7 +310,7 @@ unless opt['nogit']
     if $?.exitstatus != 0
         puts "Error in git pull"
         puts git_pull
-        exit 255
+        exit 216
     end
 else
     puts <<IMPORTANT
@@ -378,4 +378,4 @@ LOOKSGOOD
     sleep_time *= 2
 end
 puts "Unable to find or access the site... problems"
-exit 255
+exit 254
