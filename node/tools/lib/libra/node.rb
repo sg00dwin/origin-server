@@ -886,7 +886,7 @@ module Libra
 #
 # ============================================================================
 
-    class SysCtl
+    class Sysctl
 
       def initialize(keys=[])
         @keys = keys
