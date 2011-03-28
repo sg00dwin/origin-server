@@ -64,7 +64,7 @@ begin
 
       unless File.exists?(RSA)
         puts "Setting up RSA key"
-        libra_key = File.expand_path("../../docs/libra.pem", File.expand_path(__FILE__))
+        libra_key = File.expand_path("../../misc/libra.pem", File.expand_path(__FILE__))
         FileUtils.cp(libra_key, RSA)
         File.chmod(0600, RSA)
       end

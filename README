@@ -1,0 +1,21 @@
+Directory Structure:
+
+build: 
+  Build Artifacts
+client:
+  Contains the client tools
+common:
+  Artifacts shared across server and node (and potentially client)
+misc:
+  Bucket for documentation/development utilities/etc
+node:
+  Contains code specific to the nodes which run the various cartridges
+server:
+  Contains site, broker/controller
+tests:
+  Location for cucumber test cases
+  
+
+
+
+

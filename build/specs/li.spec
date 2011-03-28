@@ -170,7 +170,7 @@ rake DESTDIR="$RPM_BUILD_ROOT" install:all
 ln -s %{_localstatedir}/www/libra/public $RPM_BUILD_ROOT/%{_localstatedir}/www/html/app
 
 mkdir $RPM_BUILD_ROOT/etc/libra/devenv/
-cp -adv docs/devenv/* $RPM_BUILD_ROOT/etc/libra/devenv/
+cp -adv misc/devenv/* $RPM_BUILD_ROOT/etc/libra/devenv/
 
 mkdir -p .%{gemdir}
 gem install --install-dir $RPM_BUILD_ROOT/%{gemdir} --bindir $RPM_BUILD_ROOT/%{_bindir} --local -V --force --rdoc \
@@ -278,7 +278,7 @@ fi
 
 %files
 %defattr(-,root,root,-)
-%doc docs/USAGE.txt
+%doc misc/docs/USAGE.txt
 %{_bindir}/rhc-create-app
 %{_bindir}/rhc-create-domain
 %{_bindir}/rhc-user-info
