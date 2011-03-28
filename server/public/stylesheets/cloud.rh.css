@@ -587,6 +587,16 @@ p images {
 	clear: auto;
 	height: 30px;
 	font-family: 'Overpass';
+        background-color: #444;
+}
+
+.newsTicker li, #news_title h4 {
+	color: white !important;
+}
+
+
+li.news_item {
+        width: 800px !important;
 }
 
 .slideShow .navigation {
@@ -621,7 +631,7 @@ p images {
 .slideShow .navigation a:hover, .slideShow .navigation a.selected {
 	background-color: #3c6eb4;
 	font-weight: bold;
-	color: white;
+	color: white !important;
 	border: 1px solid white;
 }
 
@@ -687,7 +697,10 @@ li.slide {
 #slides .content p {
 	font-size: 13pt;
 	width: 600px;
+	color: white;
 }
+
+
 
 
 /* Beta specific hacks */
