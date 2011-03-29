@@ -74,7 +74,7 @@ Then /^they should all be accessible$/ do
     begin
       $logger.info("Checking host #{host}")
       res = Net::HTTP.start(host, 80) do |http|
-        http.read_timeout = 5
+        http.read_timeout = 10
         http.get("/health_check.php")
       end
       code = res.code
