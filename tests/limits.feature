@@ -1,9 +1,7 @@
 # Libra Node Limits
-
 Feature: Limit User Resources
 
-  # File Resources
-  # - Quota: File count
+  # Quota: File count limits
   Scenario:
     Given a newly created user
     And a newly created application
@@ -11,7 +9,7 @@ Feature: Limit User Resources
     When he pushes his application
     Then the push should fail
 
-  # - Quota: File count recovery
+  # Quota: File count recovery
   Scenario:
     Given a newly created user
     And a newly created application
@@ -22,7 +20,7 @@ Feature: Limit User Resources
     And he pushes his application
     Then the push should succeed
 
-  # - Quota: File capacity
+  # Quota: File size capacity
   Scenario:
     Given a newly created user
     And a newly created application
@@ -30,7 +28,7 @@ Feature: Limit User Resources
     When he pushes his application
     Then the push should fail
 
-  # - Quota: File capacity recovery
+  # Quota: File capacity recovery
   Scenario:
     Given a newly created user
     And a newly created application
@@ -41,8 +39,7 @@ Feature: Limit User Resources
     And he pushes his application
     Then the push should succeed
 
-  # Process Resources
-  # - fork bomb
+  # Process Limits: Control fork bomb
   Scenario:
     Given a user
     And an appliction
@@ -50,13 +47,10 @@ Feature: Limit User Resources
     Then his application should not respond
     And he should have fewer than 51 processes
 
-  # - fork bomb recovery
+  # Admin override: Fork bomb recovery
   Scenario:
     Given a user
     And an application
     And he starts a fork-bomb on his application
     When he restarts his application
     Then his application should respond
-
-  # Network Resources
-

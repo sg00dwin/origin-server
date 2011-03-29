@@ -272,8 +272,8 @@ begin
       begin
         # Copy the tests to the verifier instance
         puts "Copying tests to remote instance"
-        puts "Building an archive of the codebase"
-        `git archive HEAD --output /tmp/li.tar`
+        puts "Building an archive of the tests"
+        `git archive HEAD --output /tmp/li.tar tests`
         puts "Transferring archive"
         `#{SCP} /tmp/li.tar #{@server}:~/`
         puts "Extracting archive"
@@ -287,13 +287,13 @@ begin
 
         # Run user tests
         puts "Running regression tests"
-        puts `#{SSH} #{@server} 'rake test:all'`
+        puts `#{SSH} #{@server} 'cd tests; rake test:all 2>&1 | tee /tmp/rhc/rake.log'`
         p = $?
 
         if p.exitstatus != 0
-          puts "ERROR - Non-zero exit code from Cucumber tests (exit: #{p.exitstatus})"
-          puts "Cucumber log output:"
-          puts `#{SSH} #{@server} 'cat /tmp/rhc/cucumber.log'`
+          puts "ERROR - Non-zero exit code from tests (exit: #{p.exitstatus})"
+          puts "Downloading logs for analysis..."
+          puts `#{SCP} -r #{@server}:/tmp/rhc'`
           fail "ERROR - Tests failed"
         end
 
