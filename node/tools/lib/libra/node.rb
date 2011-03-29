@@ -903,14 +903,16 @@ module Libra
 
       def to_s
         out = "-- Sysctl --\n"
-        @settings.keys.sort.each do |key|
+        names = @settings.keys || []
+        puts "there are %d names" % [names.length]
+        names.sort.each do |key|
           out += "  #{key} = #{@settings[key]}\n"
         end
         out
       end
 
       def to_xml
-
+        
       end
 
       def to_json
@@ -926,33 +928,42 @@ module Libra
       end
 
       def check
-        pattern = Regexp.new "([^ ]+ = (.*))"
-        error_pattern = Regexp.new "error: (<msg>.*)"
+        # these should be class or class instance variables
+        pattern = Regexp.new "([^ ]+) = (.*)"
+        error_pattern = Regexp.new "error:\s+(.*) on key '(.*)'"
+        unknown_pattern = Regexp.new "error: \".*\" is an unknown key"
+
         if @keys == :all then
-          puts "checking all"
+          # get everything
           response = `sysctl -a 2>&1`
           lines = response.split("\n")
           lines.each do |line|
-            puts "line is #{line}"
             if pattern =~ line then
-              puts "match"
               key = Regexp.last_match(1)
               value = Regexp.last_match(2)
               @settings[key] = value
             elsif error_pattern =~ line
-              @settings[key] = error_pattern(:msg)
+              error_message = Regexp.last_match(1)
+              key = Regexp.last_match(2)
+              
+              @settings[key] = "error: " + error_message
+            else
+              puts "NO match for #{line}"
             end
           end
         else
-          puts "checking #{@keys}"
+
+          # get values for each requested key
           @keys.each do |key|
             line = `sysctl #{key} 2>&1`.strip
             if pattern =~ line then
-              #key = pattern.match(:lhs)
-              value = pattern.match(:rhs)
+              key = Regexp.last_match(1)
+              value = Regexp.last_match(2)
               @settings[key] = value                          
             elsif error_pattern =~ line
-              @settings[key] = error_pattern(:msg)
+              @settings[key] = error_pattern(1)
+            elsif unknown_pattern =~ line
+              @settings[key] = "error: unknown key"
             end
           end
         end
