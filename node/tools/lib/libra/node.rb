@@ -690,8 +690,10 @@ module Libra
     # NTP daemon
     class NtpService < Libra::Node::Service
       @servicename = "ntpd"
-      @running_pattern = Regexp.new @servicename + '\s+\(pid\s+(\d+)\) is running\.\.\."
+      @running_pattern = Regexp.new @servicename + '\s+\(pid\s+(\d+)\) is running\.\.\.'
       @stopped_pattern = Regexp.new "#{@servicename} is stopped"
+
+      # TODO: add peer and offset status 
     end
 
     # check the QPID service
@@ -705,12 +707,16 @@ module Libra
       @servicename = "mcollective"
       @running_pattern = Regexp.new 'mcollectived \s+\((\d+)\) is running'
       @stopped_pattern = /mcollectived is stopped/
+
+      # TODO: add mc-ping (and other?) message status
     end
 
     class CgconfigService < Libra::Node::Service
       @servicename = "cgconfig"
       @running_pattern = Regexp.new "Running"
       @stopped_pattern = Regexp.new "Stopped"
+
+      # add report on initial setup and status
     end
 
     class CgredService < Libra::Node::Service
@@ -723,6 +729,8 @@ module Libra
       @servicename = "httpd"
       @running_pattern = Regexp.new @servicename + '\s+\(pid\s+(\d+)\) is running'
       @stopped_pattern = /#{@servicename} is stopped/
+
+      # add report of number of daemons, sites served etc
     end
 
 
