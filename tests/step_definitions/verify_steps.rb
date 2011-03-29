@@ -11,7 +11,7 @@ end
 
 Given /^the following test data$/ do |table|
   table.hashes.each do |row|
-    @max_processes = row['processes']
+    @max_processes = row['processes'].to_i
     @usernames = Array.new(row['users'].to_i)
     @apps = (row['apps'].to_i).times.collect{|num| "app#{num}" }
     @type = row['type']
@@ -45,7 +45,6 @@ When /the applications are created$/ do
     # Wait for some process to complete if necessary
     Timeout::timeout(300) do
       pid = processes.shift
-      puts "Waiting on pid #{pid}"
       Process.wait(pid)
       $logger.error("Process #{pid} failed") if $?.exitstatus != 0
     end if processes.length >= @max_processes

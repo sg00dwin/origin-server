@@ -127,7 +127,7 @@ begin
     end
 
     # Grouping of common prereqs
-    task :prereq => [:creds, :version]
+    task :prereqs => [:creds, :version]
 
     # Tasks dealing with building new AMIs
     namespace :builder do
@@ -353,7 +353,7 @@ begin
 
           # Run user tests
           print "Running verification tests..."
-          `#{SSH} #{@server} 'cucumber --name "Verification Tests" --format junit -o /tmp/rhc/ li/tests/'`
+          `#{SSH} #{@server} 'cucumber --tags @verify --format junit -o /tmp/rhc/ li/tests/'`
           p = $?
           puts "Done"
 
@@ -366,12 +366,14 @@ begin
           end
 
           print "Tagging image as 'qe-ready'..."
-          conn.create_tag(@ami, 'Name', "qe-ready")
+          conn.create_tag(@ami, 'Name', "qe-ready") unless ENV['LIBRA_DEV']
           puts "Done"
         ensure
-          print "Terminating instance..."
-          conn.terminate_instances([@instance])
-          puts "Done"
+          unless ENV['LIBRA_DEV']
+            print "Terminating instance..."
+            conn.terminate_instances([@instance])
+            puts "Done"
+          end
         end
       end
     end

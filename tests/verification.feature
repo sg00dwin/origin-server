@@ -1,4 +1,4 @@
-@sprint
+@verify
 Feature: Verification Tests
 
   Scenario: PHP Creation tests
