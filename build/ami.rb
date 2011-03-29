@@ -20,8 +20,8 @@ begin
     GIT_REPO_PUPPET = "ssh://puppet1.ops.rhcloud.com/srv/git/puppet.git"
     CONTENT_TREE = {'puppet' => '/etc/puppet'}
     RSA = File.expand_path("~/.ssh/libra.pem")
-    SSH = "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PasswordAuthentication=no -i " + RSA
-    SCP = "scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PasswordAuthentication=no -i " + RSA
+    SSH = "ssh 2> /dev/null -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PasswordAuthentication=no -i " + RSA
+    SCP = "scp 2> /dev/null -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PasswordAuthentication=no -i " + RSA
 
     # Static initialization
     $stdout.sync = true
@@ -91,7 +91,7 @@ begin
 
       raise "Invalid version format" unless @version =~ VERSION_REGEX
 
-      puts "Current version is #{@version}"
+      puts "Current version: #{@version}"
     end
 
     task :instance => [:version, :creds] do
@@ -220,9 +220,9 @@ begin
       end
 
       if @ami
-        puts "Current AMI for version #{@version} is #{@ami}"
+        puts "AMI for version #{@version}: #{@ami}"
       else
-        puts "No AMI exists for current version"
+        puts "No AMI exists for version #{@version}"
         exit 0
       end
     end
@@ -242,7 +242,7 @@ begin
       # See if the current image is already verified
       conn.describe_tags('Filter.1.Name' => 'resource-id', 'Filter.1.Value.1' => @ami).each do |tag|
         if tag[:aws_key] == "Name" and tag[:aws_value] == "dev-verified"
-          puts "Image already verified"
+          puts "EXITING - Image already verified"
           exit 0
         end
       end
@@ -250,58 +250,70 @@ begin
       # Do not launch if there is a verifier instance running
       conn.describe_instances.map do |i|
         if (i[:aws_state] == "running") and (i[:tags]["Name"] =~ VERIFIER_REGEX)
-          puts "Verifier already running - exiting"
+          puts "EXITING - Verifier already running"
           exit 0
         end
       end
     end
 
-    task :image_verify => [:image_available, :image_prereqs] do
-      puts "Launching verification instance for AMI #{@ami}"
+    desc "Verify the current AMI image"
+    task :verify => [:image_available, :image_prereqs] do
+      print "Launching verification instance..."
       @instance = conn.launch_instances(@ami, OPTIONS)[0][:aws_instance_id]
+      puts "Done (#{@instance})"
+
+      print "Tagging instance..."
       conn.create_tag(@instance, 'Name', "verifier-#{@version}")
+      puts "Done"
 
       # Wait for it to be available
+      print "Waiting for instance to be accessible..."
       Rake::Task["ami:available"].execute
       dns = instance_value(:dns_name)
       @server = "root@" + dns
+      puts "Done (#{dns})"
 
       # Wait a few more seconds to let services start
       sleep 10
 
       begin
         # Copy the tests to the verifier instance
-        puts "Copying tests to remote instance"
-        puts "Building an archive of the tests"
-        `git archive HEAD --output /tmp/li.tar tests`
-        puts "Transferring archive"
+        print "Copying tests to remote instance..."
+        `git archive HEAD --output /tmp/li.tar`
         `#{SCP} /tmp/li.tar #{@server}:~/`
-        puts "Extracting archive"
         `#{SSH} #{@server} 'tar -xf li.tar'`
+        puts "Done"
 
         private_ip = `#{SSH} #{@server} 'facter ipaddress'`.chomp
-        puts "Updating the controller to use the AMZ private IP '#{private_ip}'"
+        print "Updating the controller to use the AMZ private IP '#{private_ip}'..."
         `#{SSH} #{@server} "sed -i \"s/public_ip.*/public_ip='#{private_ip}'/g\" /etc/libra/node_data.conf"`
-        puts "Bounding Apache to pick up the change"
+        puts "Done"
+
+        print "Bounding Apache to pick up the change..."
         `#{SSH} #{@server} 'service httpd restart'`
+        puts "Done"
 
         # Run user tests
-        puts "Running regression tests"
-        puts `#{SSH} #{@server} 'cd tests; rake test:all 2>&1 | tee /tmp/rhc/rake.log'`
+        print "BEGIN - Test Output"
+        puts `#{SSH} #{@server} 'rake test:all'`
         p = $?
+        puts "END - Test Output"
 
         if p.exitstatus != 0
           puts "ERROR - Non-zero exit code from tests (exit: #{p.exitstatus})"
-          puts "Downloading logs for analysis..."
-          puts `#{SCP} -r #{@server}:/tmp/rhc'`
+          print "Downloading logs for analysis..."
+          `#{SCP} -r #{@server}:/tmp/rhc .`
+          puts "Done"
           fail "ERROR - Tests failed"
         end
 
-        # Tag the image as verified
+        print "Tagging image as 'qe-ready'..."
         conn.create_tag(@ami, 'Name', "qe-ready")
+        puts "Done"
       ensure
-        puts "Terminating instance"
+        print "Terminating instance..."
         conn.terminate_instances([@instance])
+        puts "Done"
       end
     end
   end
