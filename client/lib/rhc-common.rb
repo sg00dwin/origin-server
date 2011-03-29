@@ -108,8 +108,10 @@ module RHC
     unless response.code == '200'
       if response.code == '404'
         puts "A user with rhlogin '#{rhlogin}' does not have a registered domain.  Be sure to run rhc-create-domain before using the other rhc tools."
+        exit 99
       elsif response.code == '401'
         puts "Invalid user credentials"
+        exit 97
       else
         print_response_err(response, debug)
       end
