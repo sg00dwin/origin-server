@@ -867,15 +867,6 @@ module Libra
         end
       end
 
-      #
-      # Hash Methods
-      #
-      # each
-
-
-      # []
-
-
       def to_s
         out = "-- Sysctl --\n"
         names = self.keys
@@ -957,6 +948,103 @@ module Libra
               self[key] = error_pattern(1)
             elsif unknown_pattern =~ line
               self[key] = "error: unknown key"
+            end
+          end
+        end
+      end
+    end
+
+# ============================================================================
+#
+# System Kernel Settings (sysctl)
+#
+# ============================================================================
+
+    class SelinuxBoolean < Hash
+      
+      def initialize(keys=[])
+        super
+        keys.each do |key|
+          self[key] = nil
+        end
+      end
+
+      def to_s
+        out = "-- Selinux Booleans --\n"
+        names = self.keys
+        names.sort.each do |key|
+          out += "  #{key} = #{self[key]}\n"
+        end
+        out
+      end
+
+      def to_xml
+        builder = Nokogiri::XML::Builder.new do |xml|
+           xml.sebool {
+            self.keys.sort.each do |key|
+              xml.boolean(:name => key, :value => self[key])
+            end
+          }
+        end
+        builder.doc.root.to_xml
+      end
+
+      def to_json
+        struct = {
+          "json_class" => self.class.name,
+          "sebool" => {}
+        }
+
+        self.keys.sort.each do |key|
+          struct["sebool"][key] = self[key]
+        end
+        JSON.generate(struct)
+      end
+
+      def self.json_create(o)
+        new.init(o)
+      end
+
+      def init(o)
+        o['sebool'].each do |key|
+          self[key] = o['sebool'][key]
+        end
+      end
+
+      def check
+        # these should be class or class instance variables
+        pattern = Regexp.new "([^ ]+) --> (.*)"
+        error_pattern = Regexp.new "Error getting active value for (.*)"
+
+        if self.length == 0 then
+          # get everything
+          response = `getsebool -a 2>&1`
+          lines = response.split("\n")
+          lines.each do |line|
+            if pattern =~ line then
+              key = Regexp.last_match(1)
+              value = Regexp.last_match(2)
+              self[key] = value
+            elsif error_pattern =~ line
+              error_message = Regexp.last_match(1)
+              key = Regexp.last_match(2)
+              
+              self[key] = "error: " + error_message
+            else
+              puts "NO match for #{line}"
+            end
+          end
+        else
+
+          # get values for each requested key
+          self.keys.each do |key|
+            line = `getsebool #{key} 2>&1`.strip
+            if pattern =~ line then
+              key = Regexp.last_match(1)
+              value = Regexp.last_match(2)
+              self[key] = value                          
+            elsif error_pattern =~ line
+              self[key] = error_pattern(1)
             end
           end
         end
