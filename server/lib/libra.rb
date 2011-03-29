@@ -26,8 +26,8 @@ module Libra
   end
   
   def self.logger_debug(str)    
-    if defined? RAILS_DEFAULT_LOGGER
-      RAILS_DEFAULT_LOGGER.debug str
+    if defined? Rails
+      Rails.logger.debug str
     else
       puts str
     end
