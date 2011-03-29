@@ -89,14 +89,15 @@ BuildArch: noarch
 Requires: httpd
 Requires: ruby
 Requires: rubygems
+Requires: rubygem-abstract
 Requires: rubygem-aws
+Requires: rubygem-erubis
+Requires: rubygem-mime-types
 Requires: rubygem-rack = 1:1.1.0
 Requires: rubygem-passenger
 Requires: rubygem-passenger-native
 Requires: rubygem-passenger-native-libs
 Requires: mod_passenger
-Requires: rubygem-sqlite3-ruby
-Requires: ruby-sqlite3
 Requires: rubygem-bundler
 
 %description server
@@ -357,7 +358,6 @@ popd > /dev/null
 mkdir -p %{_localstatedir}/www/libra/log
 touch %{_localstatedir}/www/libra/log/production.log
 chmod 0666 %{_localstatedir}/www/libra/log/production.log
-touch %{_localstatedir}/www/libra/db/production.sqlite3
 
 /etc/init.d/httpd restart
 
