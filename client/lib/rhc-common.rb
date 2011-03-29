@@ -95,7 +95,7 @@ module RHC
   def self.get_user_info(libra_server, rhlogin, password, net_http, debug, print_result)
     
     puts "Contacting https://#{libra_server}"
-    data = {'rhlogin' => rhlogin, 'password' => password}
+    data = {'rhlogin' => rhlogin}
     if debug
       data['debug'] = "true"
     end
@@ -103,7 +103,7 @@ module RHC
     json_data = JSON.generate(data)
     
     url = URI.parse("https://#{libra_server}/app/broker/userinfo")
-    response = http_post(net_http, url, json_data)
+    response = http_post(net_http, url, json_data, password)
     
     unless response.code == '200'
       if response.code == '404'
@@ -136,10 +136,10 @@ module RHC
     password
   end
   
-  def self.http_post(http, url, json_data)
+  def self.http_post(http, url, json_data, password)
     req = http::Post.new(url.path)
     
-    req.set_form_data({'json_data' => json_data})
+    req.set_form_data({'json_data' => json_data, 'password' => password})
     http = http.new(url.host, url.port)
     if url.scheme == "https"
       http.use_ssl = true

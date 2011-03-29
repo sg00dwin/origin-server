@@ -51,8 +51,7 @@ class BrokerController < ApplicationController
     begin
       # Parse the incoming data
       data = parse_json_data(params['json_data'])
-            
-      if Libra::User.valid_registration?(data['rhlogin'], data['password'])
+      if Libra::User.valid_registration?(data['rhlogin'], params['password'])
 
         action = data['action']
         app_name = data['app_name']
@@ -84,7 +83,7 @@ class BrokerController < ApplicationController
       data = parse_json_data(params['json_data'])
   
       # Check if user already exists
-      if Libra::User.valid_registration?(data['rhlogin'], data['password'])
+      if Libra::User.valid_registration?(data['rhlogin'], params['password'])
         user = Libra::User.find(data['rhlogin'])
         if user
           user_info = {
@@ -123,7 +122,7 @@ class BrokerController < ApplicationController
       # Parse the incoming data
       data = parse_json_data(params['json_data'])
                               
-      if Libra::User.valid_registration?(data['rhlogin'], data['password'])
+      if Libra::User.valid_registration?(data['rhlogin'], params['password'])
         user = Libra::User.find(data['rhlogin'])
         if user
           if data['alter']          

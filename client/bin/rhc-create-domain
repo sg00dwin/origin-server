@@ -129,8 +129,7 @@ ssh_key = File.open(libra_kpfile).gets.chomp.split(' ')[1]
 
 puts "Contacting https://#{libra_server}"
 data = {'namespace' => opt['namespace'],
-                'rhlogin' => opt['rhlogin'],
-                'password' => password,
+                'rhlogin' => opt['rhlogin']
                 'ssh' => ssh_key}
 if (opt['alter'])
   data['alter'] = "true"
@@ -142,7 +141,7 @@ RHC::print_post_data(data, debug)
 json_data = JSON.generate(data)
 
 url = URI.parse("https://#{libra_server}/app/broker/domain")
-response = RHC::http_post(@http, url, json_data)
+response = RHC::http_post(@http, url, json_data, password)
 
 if response.code == '200'
     RHC::print_response_success(response, debug)

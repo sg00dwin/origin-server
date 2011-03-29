@@ -44,8 +44,8 @@ user.apps.each do |key, app|
     }
 end
 
-json_data = JSON.generate(
+json_result = JSON.generate(
                 {:user_info => user_info,
                  :app_info => app_info})
 
-puts json_data
+puts json_result
