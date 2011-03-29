@@ -25,76 +25,11 @@ begin
     SSH = "ssh 2> /dev/null -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PasswordAuthentication=no -i " + RSA
     SCP = "scp 2> /dev/null -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PasswordAuthentication=no -i " + RSA
 
-    #
-    # Static initialization
-    #
+    # Force synchronous stdout
     $stdout.sync = true
-
-    #
-    # Ensure the Amazon credentials exist
-    #
-    begin
-      config = ParseConfig.new(File.expand_path("~/.awscred"))
-      @access_key = config.get_value("AWSAccessKeyId")
-      @secret_key = config.get_value("AWSSecretKey")
-    rescue StandardError => e
-      puts e
-      msg = <<-eos
-        Couldn't access credentials in ~/.awscred
-
-        Please create a file with the following format:
-          AWSAccessKeyId=<ACCESS_KEY>
-          AWSSecretKey=<SECRET_KEY>
-      eos
-      exit 1
-    end
-
-    #
-    # Ensure the libra RSA key is setup
-    #
-    unless File.exists?(RSA)
-      print "Setting up RSA key..."
-      libra_key = File.expand_path("../../misc/libra.pem", File.expand_path(__FILE__))
-      FileUtils.cp(libra_key, RSA)
-      FileUtils.chmod 0600, RSA
-      puts "Done"
-    end
 
     # This will verify the Amazon SSL connection
     Rightscale::HttpConnection.params[:ca_file] = "/etc/pki/tls/certs/ca-bundle.trust.crt"
-
-    #
-    # Ensure we can get the current version of li
-    #
-    yum_output = `yum info li`
-    p = $?
-
-    if p.exitstatus != 0
-      puts "WARNING - yum error getting li info, cleaning metadata and trying again"
-      `yum clean metadata`
-      `yum info li`
-      p = $?
-      if p.exitstatus != 0
-        puts "EXITING - Error cleaning yum state"
-        exit 0
-      end
-    end
-
-    # Process the yum output to get a version
-    version = yum_output.split("\n").collect do |line|
-      line.split(":")[1].strip if line.start_with?("Version")
-    end.compact[0]
-
-    # Process the yum output to get a release
-    release = yum_output.split("\n").collect do |line|
-      line.split(":")[1].strip if line.start_with?("Release")
-    end.compact[0]
-
-    @version = "li-#{version}-#{release.split('.')[0]}"
-
-    raise "Invalid version format" unless @version =~ VERSION_REGEX
-
-    puts "Current version: #{@version}"
 
     #
     # Helper method definitions
@@ -131,10 +66,73 @@ begin
         end
     end
 
+    # Ensure AMZ and RSA credentials exist
+    task :creds do
+      begin
+        config = ParseConfig.new(File.expand_path("~/.awscred"))
+        @access_key = config.get_value("AWSAccessKeyId")
+        @secret_key = config.get_value("AWSSecretKey")
+      rescue StandardError => e
+        puts e
+        msg = <<-eos
+          Couldn't access credentials in ~/.awscred
+
+          Please create a file with the following format:
+            AWSAccessKeyId=<ACCESS_KEY>
+            AWSSecretKey=<SECRET_KEY>
+        eos
+        exit 1
+      end
+
+      unless File.exists?(RSA)
+        print "Setting up RSA key..."
+        libra_key = File.expand_path("../../misc/libra.pem", File.expand_path(__FILE__))
+        FileUtils.cp(libra_key, RSA)
+        FileUtils.chmod 0600, RSA
+        puts "Done"
+      end
+    end
+
+    # Ensure we can parse the current version
+    task :version do
+      yum_output = `yum info li`
+      p = $?
+
+      if p.exitstatus != 0
+        puts "WARNING - yum error getting li info, cleaning metadata and trying again"
+        `yum clean metadata`
+        `yum info li`
+        p = $?
+        if p.exitstatus != 0
+          puts "EXITING - Error cleaning yum state"
+          exit 0
+        end
+      end
+
+      # Process the yum output to get a version
+      version = yum_output.split("\n").collect do |line|
+        line.split(":")[1].strip if line.start_with?("Version")
+      end.compact[0]
+
+      # Process the yum output to get a release
+      release = yum_output.split("\n").collect do |line|
+        line.split(":")[1].strip if line.start_with?("Release")
+      end.compact[0]
+
+      @version = "li-#{version}-#{release.split('.')[0]}"
+
+      raise "Invalid version format" unless @version =~ VERSION_REGEX
+
+      puts "Current version: #{@version}"
+    end
+
+    # Grouping of common prereqs
+    task :prereq => [:creds, :version]
+
     # Tasks dealing with building new AMIs
     namespace :builder do
       desc "Remove any running builders"
-      task :clean do
+      task :clean => ["ami:prereqs"] do
         # Terminate any tagged instances
         instances = conn.describe_instances.collect do |i|
           if (i[:aws_state] == "running") and (i[:tags]["Name"] =~ BUILD_REGEX)
@@ -145,7 +143,7 @@ begin
         conn.terminate_instances(instances) unless instances.empty?
       end
 
-      task :find do
+      task :find => ["ami:prereqs"] do
         print "Finding builder instance..."
 
         # Look up any tagged instances
@@ -210,7 +208,7 @@ begin
 
     namespace :image do
       desc "Remove the current registered AMI"
-      task :clean do
+      task :clean => ["ami:prereqs"] do
         conn.describe_images_by_owner.each do |i|
           if i[:aws_name] and i[:aws_name].start_with?(@version)
             conn.deregister_image(i[:aws_id])
@@ -219,7 +217,7 @@ begin
       end
 
       # Fails if an AMI for the current version already exists
-      task :exists do
+      task :exists => ["ami:prereqs"] do
         conn.describe_images_by_owner.each do |i|
           if i[:aws_name] and i[:aws_name].start_with?(@version)
             puts "EXITING - AMI already exists"
@@ -237,7 +235,7 @@ begin
       end
 
       # Delete all but the 10 most recent images
-      task :prune do
+      task :prune => ["ami:prereqs"] do
         images = []
         conn.describe_images_by_owner.each do |i|
           if i[:aws_name] and i[:aws_name] =~ AMI_REGEX
@@ -258,7 +256,7 @@ begin
 
     namespace :verify do
       desc "Terminate verifier with names matching /#{VERIFIER_REGEX.source}/"
-      task :clean do
+      task :clean => ["ami:prereqs"] do
         # Do not launch if there is a verifier instance running
         instances = conn.describe_instances.collect do |i|
           if (i[:aws_state] == "running") and (i[:tags]["Name"] =~ VERIFIER_REGEX)
@@ -270,7 +268,7 @@ begin
       end
 
       # A task to allow Jenkins to gracefully exit if the image is verified
-      task :already_verified do
+      task :already_verified => ["ami:prereqs"] do
         # See if the current image is already verified
         conn.describe_tags('Filter.1.Name' => 'resource-id', 'Filter.1.Value.1' => @ami).each do |tag|
           if tag[:aws_key] == "Name" and tag[:aws_value] == "dev-verified"
@@ -281,7 +279,7 @@ begin
       end
 
       # Make sure that an AMI is available to verify
-      task :prereqs do
+      task :prereqs => ["ami:prereqs"] do
         # See if the image exists and is available
         images = conn.describe_images_by_owner.collect do |i|
           if i[:aws_name] and i[:aws_name].start_with?(@version)
@@ -298,7 +296,7 @@ begin
       end
 
       desc "Update the tests on the current verifier"
-      task :update do
+      task :update => ["ami:prereqs"] do
         print "Updating tests to remote instance..."
         `git archive --prefix li/ HEAD --output /tmp/li.tar`
         `#{SCP} /tmp/li.tar #{@server}:~/`
