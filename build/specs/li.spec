@@ -184,9 +184,10 @@ rm -rf $RPM_BUILD_ROOT
 
 %post devenv
 
-# ntpd
-service ntpd start
-chkconfig ntpd on
+# ntp is not needed in para-virtualized systems
+# the host maintains the clock
+#service ntpd start
+#chkconfig ntpd on
 
 # qpid
 /bin/cp -f /etc/libra/devenv/qpidd.conf /etc/qpidd.conf
