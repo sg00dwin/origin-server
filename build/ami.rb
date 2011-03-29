@@ -317,8 +317,10 @@ begin
         if instances.empty?
           print "\n  Creating new instance..."
           @instance = conn.launch_instances(@ami, OPTIONS)[0][:aws_instance_id]
+
+          # Quick pause before tagging to reduce errors
+          sleep 10
           conn.create_tag(@instance, 'Name', PREFIX + "verifier-#{@version}")
-          sleep 5
           puts "Done"
         else
           @instance = instances[0]
