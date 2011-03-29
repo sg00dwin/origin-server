@@ -902,7 +902,11 @@ module Libra
       end
 
       def to_s
-
+        out = "-- Sysctl --\n"
+        @settings.keys.sort.each do |key|
+          out += "  #{key} = #{@settings[key]}\n"
+        end
+        out
       end
 
       def to_xml
@@ -922,21 +926,25 @@ module Libra
       end
 
       def check
-        pattern = Regexp.new "^(<lhs>[^ ]+) = (<rhs>.*)$"
+        pattern = Regexp.new "([^ ]+ = (.*))"
         error_pattern = Regexp.new "error: (<msg>.*)"
         if @keys == :all then
+          puts "checking all"
           response = `sysctl -a 2>&1`
           lines = response.split("\n")
           lines.each do |line|
+            puts "line is #{line}"
             if pattern =~ line then
-              key = pattern.match(:lhs)
-              value = pattern.match(:rhs)
+              puts "match"
+              key = Regexp.last_match(1)
+              value = Regexp.last_match(2)
               @settings[key] = value
             elsif error_pattern =~ line
               @settings[key] = error_pattern(:msg)
             end
           end
         else
+          puts "checking #{@keys}"
           @keys.each do |key|
             line = `sysctl #{key} 2>&1`.strip
             if pattern =~ line then

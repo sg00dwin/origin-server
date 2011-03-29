@@ -50,7 +50,7 @@ module Libra
     Libra.c[:rpc_opts][:timeout] = 2
     server = Server.find_available
 
-    Libra.debug "Node: #{server.name} - #{server.repos} repos" if Libra.c[:rpc_opts][:verbose]
+    Libra.logger_debug "Node: #{server.name} - #{server.repos} repos" if Libra.c[:rpc_opts][:verbose]
 
     # Configure the user on this server if necessary
     Libra.c[:rpc_opts][:disctimeout] = 1
