@@ -932,7 +932,7 @@ module Libra
               
               self[key] = "error: " + error_message
             else
-              puts "NO match for #{line}"
+              puts "sysctl NO match for #{line}"
             end
           end
         else
@@ -1015,6 +1015,7 @@ module Libra
         # these should be class or class instance variables
         pattern = Regexp.new "([^ ]+) --> (.*)"
         error_pattern = Regexp.new "Error getting active value for (.*)"
+        disabled_pattern = Regexp.new "getsebool:\s+SELinux is disabled"
 
         if self.length == 0 then
           # get everything
@@ -1030,8 +1031,10 @@ module Libra
               key = Regexp.last_match(2)
               
               self[key] = "error: " + error_message
+            elsif disabled_pattern =~ line
+              return nil
             else
-              puts "NO match for #{line}"
+              puts "Selinux: NO match for #{line}"
             end
           end
         else
