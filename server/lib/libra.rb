@@ -7,10 +7,19 @@ require 'libra/nurture.rb'
 
 module Libra
   
-  def self.debug(str)
+  def self.client_debug(str)
     debugIO = Thread.current[:debugIO]
     if debugIO
       debugIO.puts str
+    else
+      puts str
+    end
+  end
+  
+  def self.client_result(str)
+    resultIO = Thread.current[:resultIO]
+    if resultIO
+      resultIO.puts str
     else
       puts str
     end
@@ -39,7 +48,7 @@ module Libra
       user.create_app(app_name, framework)
     else
       if action == 'deconfigure'
-        Libra.debug "Application not found, attempting to remove anyway..." unless user.app_info(app_name)
+        Libra.client_debug "Application not found, attempting to remove anyway..." unless user.app_info(app_name)
       else
         raise UserException.new(101), "An application named '#{app_name}' does not exist", caller[0..5] unless user.app_info(app_name)
       end
@@ -59,10 +68,12 @@ module Libra
 
     # Configure the app on the server using a framework cartridge
     Nurture.application(rhlogin, user.uuid, app_name, user.namespace, framework, action)
-    result = server.execute_direct(framework, action, "#{app_name} #{user.namespace} #{user.uuid}")[0]
-    unless result.results[:data][:exitcode] == 0
-        Libra.debug result.results[:data][:output]
-        raise NodeException.new(143), "Node execution failure.  If the problem persists please contact Red Hat support.", caller[0..5]
+    result = server.execute_direct(framework, action, "#{app_name} #{user.namespace} #{user.uuid}")[0]    
+    if result.results[:data][:exitcode] != 0
+      Libra.client_debug result.results[:data][:output]
+      raise NodeException.new(143), "Node execution failure.  If the problem persists please contact Red Hat support.", caller[0..5]
+    elsif action == 'status'
+      Libra.client_result result.results[:data][:output]
     end
 
     # update DNS

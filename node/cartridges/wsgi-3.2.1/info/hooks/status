@@ -60,7 +60,7 @@ CUSTOMER_HOME="$libra_dir/$customer_id/"
 APP_DIR="$CUSTOMER_HOME/wsgi/$application"
 
 #
-# Start application
+# Get the status of the application
 #
 
-runuser --shell /bin/sh "$customer_id" "$APP_DIR/${application}_ctl.sh" status
+runuser --shell /bin/sh "$customer_id" -c "/usr/bin/wget -qO- http://$(awk '/Listen/{ print $2 }' $APP_DIR/conf.d/libra.conf)/server-status?auto"

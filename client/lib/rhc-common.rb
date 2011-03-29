@@ -9,12 +9,12 @@ require 'resolv'
 require "uri"
 
 module RHC
-
+  
   TYPES = { "php-5.3.2" => :php,
     "rack-1.1.0" => :rack,
     "wsgi-3.2.1" => :wsgi
   }
-
+  
   def self.get_type_keys(sep)
     i = 1
     type_keys = ''
@@ -23,11 +23,11 @@ module RHC
       if i < TYPES.size
         type_keys += sep
       end
-        i += 1
+      i += 1
     end
     type_keys
   end
-
+  
   # Invalid chars (") ($) (^) (<) (>) (|) (%) (/) (;) (:) (,) (\) (*) (=) (~)
   def self.check_rhlogin(rhlogin)
     if rhlogin && rhlogin.length < 6
@@ -40,15 +40,15 @@ module RHC
       return true
     end
   end
-
+  
   def self.check_app(app)
     check_field(app, 'application')
   end
-
+  
   def self.check_namespace(namespace)
     check_field(namespace, 'namespace')
   end
-
+  
   def self.check_field(field, type)
     if field
       if field =~ /[^0-9a-zA-Z]/
@@ -61,7 +61,7 @@ module RHC
     end
     true
   end
-
+  
   def self.get_type(type)
     if type
       if !(RHC::TYPES.has_key?(type))
@@ -74,7 +74,7 @@ module RHC
     end
     nil
   end
-
+  
   def self.print_post_data(h, debug)
     if (debug)
       puts 'DEBUG: Submitting form:'
@@ -91,9 +91,9 @@ module RHC
       end
     end
   end
-
+  
   def self.get_user_info(libra_server, rhlogin, password, net_http, debug, print_result)
-
+    
     puts "Contacting https://#{libra_server}"
     data = {'rhlogin' => rhlogin, 'password' => password}
     if debug
@@ -101,19 +101,19 @@ module RHC
     end
     print_post_data(data, debug)
     json_data = JSON.generate(data)
-
+    
     url = URI.parse("https://#{libra_server}/app/broker/userinfo")
     response = http_post(net_http, url, json_data)
-
+    
     unless response.code == '200'
-        if response.code == '404'
-          puts "A user with rhlogin '#{rhlogin}' does not have a registered domain.  Be sure to run rhc-create-domain before using the other rhc tools."
-        elsif response.code == '401'
-          puts "Invalid user credentials"
-        else
-          print_response_err(response, debug)
-        end
-        exit 254
+      if response.code == '404'
+        puts "A user with rhlogin '#{rhlogin}' does not have a registered domain.  Be sure to run rhc-create-domain before using the other rhc tools."
+      elsif response.code == '401'
+        puts "Invalid user credentials"
+      else
+        print_response_err(response, debug)
+      end
+      exit 254
     end
     if print_result
       print_response_success(response, debug)
@@ -122,7 +122,7 @@ module RHC
     user_info = JSON.parse(json_resp['result'].to_s)
     user_info
   end
-
+  
   def self.get_password
     password = nil
     begin
@@ -135,10 +135,10 @@ module RHC
     puts "\n"
     password
   end
-
+  
   def self.http_post(http, url, json_data)
     req = http::Post.new(url.path)
-
+    
     req.set_form_data({'json_data' => json_data})
     http = http.new(url.host, url.port)
     if url.scheme == "https"
@@ -154,7 +154,7 @@ module RHC
     end
     response
   end
-
+  
   def self.print_response_err(response, debug)
     puts "Problem reported from server. Response code was #{response.code}."
     if (!debug)
@@ -168,14 +168,16 @@ module RHC
     end
     exit exit_code.nil? ? 666 : exit_code
   end
-
-  def self.print_response_success(response, debug)
+  
+  def self.print_response_success(response, debug, always_print_result=false)
     if debug
-      puts "HTTP response from server is:"
+      puts "Response from server:"
+      print_json_body(response, debug)
+    elsif always_print_result
       print_json_body(response, debug)
     end
   end
-
+  
   def self.print_json_body(response, debug)
     json_resp = JSON.parse(response.body);
     exit_code = json_resp['exit_code']
@@ -203,7 +205,7 @@ module RHC
     end
     exit_code
   end
-
+  
 end
 
 #
@@ -213,42 +215,41 @@ linux_cfg = '/etc/libra/libra.conf'
 gem_cfg = File.join(File.expand_path(File.dirname(__FILE__) + "/../conf"), 'libra.conf')
 @config_path = File.exists?(linux_cfg) ? linux_cfg : gem_cfg
 if File.exists?("#{ENV['HOME']}/.li")
-    if !File.directory?("#{ENV['HOME']}/.li")
-        print "Moving old-style config file..."
-        FileUtils.mv "#{ENV['HOME']}/.li", "#{ENV['HOME']}/.li.bak"
-        FileUtils.mkdir_p "#{ENV['HOME']}/.li"
-        FileUtils.mv "#{ENV['HOME']}/.li.bak", "#{ENV['HOME']}/.li/libra.conf"
-        puts " Done."
-    end
-else
+  if !File.directory?("#{ENV['HOME']}/.li")
+    print "Moving old-style config file..."
+    FileUtils.mv "#{ENV['HOME']}/.li", "#{ENV['HOME']}/.li.bak"
     FileUtils.mkdir_p "#{ENV['HOME']}/.li"
+    FileUtils.mv "#{ENV['HOME']}/.li.bak", "#{ENV['HOME']}/.li/libra.conf"
+    puts " Done."
+  end
+else
+  FileUtils.mkdir_p "#{ENV['HOME']}/.li"
 end
 @local_config_path = "#{ENV['HOME']}/.li/libra.conf"
 
 FileUtils.touch @local_config_path
 
 begin
-    @global_config = ParseConfig.new(@config_path)
-    @local_config = ParseConfig.new(@local_config_path)
+  @global_config = ParseConfig.new(@config_path)
+  @local_config = ParseConfig.new(@local_config_path)
 rescue Errno::EACCES => e
-    puts "Could not open config file: #{e.message}"
-    exit 253
+  puts "Could not open config file: #{e.message}"
+  exit 253
 end
 
 #
 # Check for proxy environment
 #
 if ENV['http_proxy']
-    host, port = ENV['http_proxy'].split(':')
-    @http = Net::HTTP::Proxy(host, port)
+  host, port = ENV['http_proxy'].split(':')
+  @http = Net::HTTP::Proxy(host, port)
 else
-    @http = Net::HTTP
+  @http = Net::HTTP
 end
 
 #
 # Check for local var in ~/.li/libra.conf use it, else use /etc/libra/libra.conf
 #
 def get_var(var)
-    @local_config.get_value(var) ? @local_config.get_value(var) : @global_config.get_value(var)
+  @local_config.get_value(var) ? @local_config.get_value(var) : @global_config.get_value(var)
 end
-
