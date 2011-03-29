@@ -181,8 +181,7 @@ url = URI.parse("https://#{libra_server}/app/broker/cartridge")
 response = RHC::http_post(@http, url, json_data)
 
 if response.code == '200'
-    RHC::print_response_success(response, debug)
-    puts "Creation successful"
+    RHC::print_response_success(response, debug, true)
 else
     RHC::print_response_err(response, debug)
 end

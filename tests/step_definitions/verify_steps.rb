@@ -9,20 +9,16 @@ Given /^the libra client tools$/ do
   File.exists?($client_config).should be_true
 end
 
-Given /^(\d+) concurrent processes$/ do |max_processes|
-  @max_processes = max_processes.to_i
+Given /^the following test data$/ do |table|
+  table.hashes.each do |row|
+    @max_processes = row['processes'].to_i
+    @usernames = Array.new(row['users'].to_i)
+    @apps = (row['apps'].to_i).times.collect{|num| "app#{num}" }
+    @type = row['type']
+  end
 end
 
-Given /^(\d+) new users$/ do |num_users|
-  # Create an empty array of users to defer
-  # creation to the forked process
-  @usernames = Array.new(num_users.to_i)
-end
-
-When /^(\d+) applications of type '(.+)' are created per user$/ do |num_apps, framework|
-  # Generate the array of apps
-  @apps = (num_apps.to_i).times.collect{|num| "app#{num}" }
-
+When /the applications are created$/ do
   processes = []
 
   # Limit loop on the number of users established in a previous step
@@ -42,7 +38,7 @@ When /^(\d+) applications of type '(.+)' are created per user$/ do |num_apps, fr
       # Create the user and the apps
       run("#{$create_domain_script} -n #{username} -l #{login} -p fakepw -d")
       @apps.each do |app|
-        run("#{$create_app_script} -l #{login} -a #{app} -r #{$temp}/#{username}_#{app}_repo -t php-5.3.2 -p fakepw -d")
+        run("#{$create_app_script} -l #{login} -a #{app} -r #{$temp}/#{username}_#{app}_repo -t #{@type} -p fakepw -d")
       end
     end
 

@@ -3,6 +3,7 @@ begin
   require 'fileutils'
   require 'aws'
   require 'right_http_connection'
+  require 'pp'
 
   namespace :ami do
     #
@@ -15,7 +16,8 @@ begin
     VERSION_REGEX = /li-\d+\.\d+\.\d*-\d+/
     AMI_REGEX = /li-\d+\.\d+/
     BUILD_REGEX = /builder-li-\d+\.\d+/
-    VERIFIER_REGEX = /verifier-li-\d+\.\d+/
+    PREFIX = ENV['LIBRA_DEV'] ? ENV['LIBRA_DEV'] + "-" : ""
+    VERIFIER_REGEX = /#{PREFIX}verifier-li-\d+\.\d+/
     BREW_LI = "https://brewweb.devel.redhat.com/packageinfo?packageID=31345"
     GIT_REPO_PUPPET = "ssh://puppet1.ops.rhcloud.com/srv/git/puppet.git"
     CONTENT_TREE = {'puppet' => '/etc/puppet'}
@@ -23,12 +25,15 @@ begin
     SSH = "ssh 2> /dev/null -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PasswordAuthentication=no -i " + RSA
     SCP = "scp 2> /dev/null -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PasswordAuthentication=no -i " + RSA
 
-    # Static initialization
+    # Force synchronous stdout
     $stdout.sync = true
 
     # This will verify the Amazon SSL connection
     Rightscale::HttpConnection.params[:ca_file] = "/etc/pki/tls/certs/ca-bundle.trust.crt"
 
+    #
+    # Helper method definitions
+    #
     def conn
       Aws::Ec2.new(@access_key, @secret_key, params = {:logger => Logger.new('/dev/null')})
     end
@@ -45,6 +50,23 @@ begin
       conn.describe_instances([@instance])[0][key]
     end
 
+    # Blocks until the current instance is available
+    def instance_available
+        # Wait until the AWS state is running
+        until instance_value(:aws_state) == "running"
+          sleep 5
+        end
+
+        @dns = instance_value(:dns_name)
+        @server = "root@" + @dns
+
+        # Block until we can SSH to the instance
+        until `#{SSH} #{@server} 'echo Success'`.split[-1] == "Success"
+          sleep 5
+        end
+    end
+
+    # Ensure AMZ and RSA credentials exist
     task :creds do
       begin
         config = ParseConfig.new(File.expand_path("~/.awscred"))
@@ -59,34 +81,44 @@ begin
             AWSAccessKeyId=<ACCESS_KEY>
             AWSSecretKey=<SECRET_KEY>
         eos
-        fail msg
+        exit 1
       end
 
       unless File.exists?(RSA)
-        puts "Setting up RSA key"
+        print "Setting up RSA key..."
         libra_key = File.expand_path("../../misc/libra.pem", File.expand_path(__FILE__))
         FileUtils.cp(libra_key, RSA)
-        File.chmod(0600, RSA)
+        FileUtils.chmod 0600, RSA
+        puts "Done"
       end
     end
 
-    task :yum_clean do
-      `yum clean metadata`
-      p1 = $?
-      `yum info li`
-      p2 = $?
+    # Ensure we can parse the current version
+    task :version do
+      yum_output = `yum info li`
+      p = $?
 
-      if p1.exitstatus != 0 or p2.exitstatus != 0
-        puts "Error cleaning yum state - exiting"
-        exit 0
+      if p.exitstatus != 0
+        puts "WARNING - yum error getting li info, cleaning metadata and trying again"
+        `yum clean metadata`
+        `yum info li`
+        p = $?
+        if p.exitstatus != 0
+          puts "EXITING - Error cleaning yum state"
+          exit 0
+        end
       end
-    end
 
-    task :version => [:yum_clean] do
-      version = `yum info li | grep Version | tail -n1 | grep -o -E "[0-9]\.[0-9]+\.?[0-9]*"`.chomp
+      # Process the yum output to get a version
+      version = yum_output.split("\n").collect do |line|
+        line.split(":")[1].strip if line.start_with?("Version")
+      end.compact[0]
 
-      # Only take the release up until the '.'
-      release = `yum info li | grep Release | tail -n1 | grep -o -E "[0-9]\..+"`.chomp
+      # Process the yum output to get a release
+      release = yum_output.split("\n").collect do |line|
+        line.split(":")[1].strip if line.start_with?("Release")
+      end.compact[0]
+
       @version = "li-#{version}-#{release.split('.')[0]}"
 
       raise "Invalid version format" unless @version =~ VERSION_REGEX
@@ -94,226 +126,255 @@ begin
       puts "Current version: #{@version}"
     end
 
-    task :instance => [:version, :creds] do
-      puts "Finding instance to use for builder..."
-      # Look up any tagged instances
-      instances = conn.describe_instances.map do |i|
-        if (i[:aws_state] == "running") and (i[:tags]["Name"] =~ BUILD_REGEX)
-          i[:aws_instance_id]
-        end
-      end.compact
+    # Grouping of common prereqs
+    task :prereqs => [:creds, :version]
 
-      if instances.empty?
-        @instance = conn.launch_instances(AMI, OPTIONS)[0][:aws_instance_id]
-        sleep 5
-        puts "Created new instance #{@instance}"
-      else
-        @instance = instances[0]
-        puts "Using existing instance #{@instance}"
-        @update = true
-        @existing = true
-      end
-
-      # Make sure the name matches the current version
-      conn.create_tag(@instance, 'Name', "builder-" + @version)
-    end
-
-    task :available => [:instance] do
-      # Wait for it to be running
-      until instance_value(:aws_state) == "running"
-        sleep 5
-      end
-
-      @server = "root@" + instance_value(:dns_name)
-
-      # Make sure we can SSH in
-      until `#{SSH} #{@server} 'echo Success'`.split[-1] == "Success"
-        sleep 5
-      end
-    end
-
-    task :update => [:available] do
-      if @existing
-          puts "Updating existing instance"
-          `#{SSH} #{@server} 'yum clean all'`
-          `#{SSH} #{@server} 'yum update -y'`
-
-          # Make sure the right version is installed
-          rpm = `#{SSH} #{@server} 'rpm -q li'`
-          unless rpm.start_with?(@version)
-            puts "Warning - latest version not available in repo"
-            exit 0
+    # Tasks dealing with building new AMIs
+    namespace :builder do
+      desc "Remove any running builders"
+      task :clean => ["ami:prereqs"] do
+        # Terminate any tagged instances
+        instances = conn.describe_instances.collect do |i|
+          if (i[:aws_state] == "running") and (i[:tags]["Name"] =~ BUILD_REGEX)
+            i[:aws_instance_id]
           end
-      else
-        if `#{SSH} #{@server} 'test -e li-devenv.sh; echo $?'`.chomp == "1"
-          puts "Running firstboot"
+        end.compact
+
+        conn.terminate_instances(instances) unless instances.empty?
+      end
+
+      task :find => ["ami:prereqs"] do
+        print "Finding builder instance..."
+
+        # Look up any tagged instances
+        instances = conn.describe_instances.map do |i|
+          if (i[:aws_state] == "running") and (i[:tags]["Name"] =~ BUILD_REGEX)
+            i[:aws_instance_id]
+          end
+        end.compact
+
+        if instances.empty?
+          print "\n  Creating new instance..."
+          @instance = conn.launch_instances(AMI, OPTIONS)[0][:aws_instance_id]
+          sleep 5
+          puts "Done"
+        else
+          @instance = instances[0]
+          @existing = true
+        end
+        puts "Done (#{@instance})"
+
+        print "Waiting for instance to be available..."
+        instance_available
+        puts "Done (#{@dns})"
+      end
+
+      # Create a builder running the latest code
+      task :start => [:find] do
+        if @existing
+            print "Updating to latest code..."
+            `#{SSH} #{@server} 'yum clean all'`
+            `#{SSH} #{@server} 'yum update -y'`
+            puts "Done"
+
+            # Make sure the right version is installed
+            print "Verifying update..."
+            rpm = `#{SSH} #{@server} 'rpm -q li'`
+            unless rpm.start_with?(@version)
+              fail "Expected updated version to be #{@version}, actual was #{rpm}"
+            end
+            puts "Done"
+        else
+          print "Performing clean install with the latest code..."
           `#{SSH} #{@server} 'wget http://209.132.178.9/gpxe/trees/li-devenv.sh'`
           `#{SSH} #{@server} 'sh li-devenv.sh'`
+          puts "Done"
+          print "Updating all packages on the system..."
           `#{SSH} #{@server} 'yum update -y'`
+          puts "Done"
+          print "Rebooting instance to apply new kernel"
           conn.reboot_instances([@instance])
           sleep 10
-          Rake::Task["ami:available"].execute
+          instance_available
+          puts "Done"
         end
+
+        # Make sure the name matches the current version
+        print "Updating builder tag to latest version..."
+        conn.create_tag(@instance, 'Name', "builder-" + @version)
+        puts "Done"
       end
     end
 
-    task :check => [:creds, :version] do
-      conn.describe_images_by_owner.each do |i|
-        if i[:aws_name] and i[:aws_name].start_with?(@version)
-          puts "AMI already exists"
-          exit 0
-        end
-      end
-    end
-
-    desc "Create a new AMI from the latest li build"
-    task :image => [:check, :update, :prune] do
-      tag = @update ? "#{@version}-update" : "#{@version}-clean"
-      image = conn.create_image(@instance, tag)
-      puts "Creating AMI #{image}"
-    end
-
-    desc "Remove the current registered AMI and instances"
-    task :clean => [:creds, :version] do
-      # Terminate any tagged instances
-      instances = conn.describe_instances.collect do |i|
-        if (i[:aws_state] == "running") and (i[:tags]["Name"] =~ BUILD_REGEX)
-          i[:aws_instance_id]
-        end
-      end.compact
-
-      conn.terminate_instances(instances) unless instances.empty?
-
-      # Deregister any images
-      conn.describe_images_by_owner.each do |i|
-        if i[:aws_name] and i[:aws_name].start_with?(@version)
-          conn.deregister_image(i[:aws_id])
-        end
-      end
-    end
-
-    task :prune => [:creds] do
-      images = []
-      conn.describe_images_by_owner.each do |i|
-        if i[:aws_name] and i[:aws_name] =~ AMI_REGEX
-          images << i[:aws_id]
+    namespace :image do
+      desc "Remove the current registered AMI"
+      task :clean => ["ami:prereqs"] do
+        conn.describe_images_by_owner.each do |i|
+          if i[:aws_name] and i[:aws_name].start_with?(@version)
+            conn.deregister_image(i[:aws_id])
+          end
         end
       end
 
-      # Keep the 5 most recent images
-      images.sort!.pop(10)
-
-      # Prune the rest
-      images.each do |i|
-        puts "Removing AMI #{i}"
-        conn.deregister_image(i)
-      end
-    end
-
-    task :current => [:creds, :version] do
-      # Find the current AMI
-      conn.describe_images_by_owner.each do |i|
-        if i[:aws_name] and i[:aws_name].start_with?(@version)
-          @ami = i[:aws_id]
-          break
-        end
-      end
-
-      if @ami
-        puts "AMI for version #{@version}: #{@ami}"
-      else
-        puts "No AMI exists for version #{@version}"
-        exit 0
-      end
-    end
-
-    task :image_available =>[:current] do
-      conn.describe_images_by_owner.each do |i|
-        if i[:aws_name] and i[:aws_name].start_with?(@version)
-          unless i[:aws_state] == "available"
-            puts "AMI image for version #{@version} not yet available."
+      # Fails if an AMI for the current version already exists
+      task :exists => ["ami:prereqs"] do
+        conn.describe_images_by_owner.each do |i|
+          if i[:aws_name] and i[:aws_name].start_with?(@version)
+            puts "EXITING - AMI already exists"
             exit 0
           end
         end
       end
+
+      desc "Create a new AMI from the latest li build"
+      task :new => [:exists, "ami:builder:start"] do
+        tag = @existing ? "#{@version}-update" : "#{@version}-clean"
+        print "Registering AMI #{image}..."
+        image = conn.create_image(@instance, tag)
+        puts "Done"
+      end
+
+      # Delete all but the 10 most recent images
+      task :prune => ["ami:prereqs"] do
+        images = []
+        conn.describe_images_by_owner.each do |i|
+          if i[:aws_name] and i[:aws_name] =~ AMI_REGEX
+            images << i[:aws_id]
+          end
+        end
+
+        # Keep the 10 most recent images
+        images.sort!.pop(10)
+
+        # Prune the rest
+        images.each do |i|
+          puts "Removing AMI #{i}"
+          conn.deregister_image(i)
+        end
+      end
     end
 
-    task :image_prereqs do
-      # See if the current image is already verified
-      conn.describe_tags('Filter.1.Name' => 'resource-id', 'Filter.1.Value.1' => @ami).each do |tag|
-        if tag[:aws_key] == "Name" and tag[:aws_value] == "dev-verified"
-          puts "EXITING - Image already verified"
-          exit 0
+    namespace :verify do
+      desc "Terminate verifier with names matching /#{VERIFIER_REGEX.source}/"
+      task :clean => ["ami:prereqs"] do
+        # Do not launch if there is a verifier instance running
+        instances = conn.describe_instances.collect do |i|
+          if (i[:aws_state] == "running") and (i[:tags]["Name"] =~ VERIFIER_REGEX)
+            i[:aws_instance_id]
+          end
+        end.compact
+        print "Terminating instances: #{instances.pretty_inspect}"
+        conn.terminate_instances([@instance])
+      end
+
+      # A task to allow Jenkins to gracefully exit if the image is verified
+      task :already_verified => ["ami:prereqs"] do
+        # See if the current image is already verified
+        conn.describe_tags('Filter.1.Name' => 'resource-id', 'Filter.1.Value.1' => @ami).each do |tag|
+          if tag[:aws_key] == "Name" and tag[:aws_value] == "dev-verified"
+            puts "EXITING - Image already verified"
+            exit 0
+          end
         end
       end
 
-      # Do not launch if there is a verifier instance running
-      conn.describe_instances.map do |i|
-        if (i[:aws_state] == "running") and (i[:tags]["Name"] =~ VERIFIER_REGEX)
-          puts "EXITING - Verifier already running"
-          exit 0
+      # Make sure that an AMI is available to verify
+      task :prereqs => ["ami:prereqs"] do
+        # See if the image exists and is available
+        images = conn.describe_images_by_owner.collect do |i|
+          if i[:aws_name] and i[:aws_name].start_with?(@version)
+            @ami = i[:aws_id]
+            i[:aws_state]
+          end
+        end.compact
+
+        if images.empty?
+          puts "EXITING - Image doesn't exist for current version"
+        elsif images[0] != "available"
+          puts "EXITING - Image exists but isn't available yet"
         end
       end
-    end
 
-    desc "Verify the current AMI image"
-    task :verify => [:image_available, :image_prereqs] do
-      print "Launching verification instance..."
-      @instance = conn.launch_instances(@ami, OPTIONS)[0][:aws_instance_id]
-      puts "Done (#{@instance})"
-
-      print "Tagging instance..."
-      conn.create_tag(@instance, 'Name', "verifier-#{@version}")
-      puts "Done"
-
-      # Wait for it to be available
-      print "Waiting for instance to be accessible..."
-      Rake::Task["ami:available"].execute
-      dns = instance_value(:dns_name)
-      @server = "root@" + dns
-      puts "Done (#{dns})"
-
-      # Wait a few more seconds to let services start
-      sleep 10
-
-      begin
-        # Copy the tests to the verifier instance
-        print "Copying tests to remote instance..."
-        `git archive HEAD --output /tmp/li.tar`
+      desc "Update the tests on the current verifier"
+      task :update => ["ami:prereqs"] do
+        print "Updating tests to remote instance..."
+        `git archive --prefix li/ HEAD --output /tmp/li.tar`
         `#{SCP} /tmp/li.tar #{@server}:~/`
-        `#{SSH} #{@server} 'tar -xf li.tar'`
+        `#{SSH} #{@server} 'rm -rf li; tar -xf li.tar'`
+        puts "Done"
+      end
+
+      task :find => [:prereqs] do
+        print "Finding verifier instance..."
+
+        # Look up any tagged instances
+        instances = conn.describe_instances.map do |i|
+          if (i[:aws_state] == "running") and (i[:tags]["Name"] =~ VERIFIER_REGEX)
+            i[:aws_instance_id]
+          end
+        end.compact
+
+        if instances.empty?
+          print "\n  Creating new instance..."
+          @instance = conn.launch_instances(@ami, OPTIONS)[0][:aws_instance_id]
+          conn.create_tag(@instance, 'Name', PREFIX + "verifier-#{@version}")
+          sleep 5
+          puts "Done"
+        else
+          @instance = instances[0]
+          @existing = true
+        end
+        puts "Done (#{@instance})"
+
+        # Wait until the instance is available
+        print "Verifying instance is available..."
+        instance_available
+        puts "Done (#{@dns})"
+      end
+
+      desc "Run verification tests on the current version"
+      task :start => [:find] do
+        print "Updating verifier tag..."
+        conn.create_tag(@instance, 'Name', PREFIX + "verifier-#{@version}")
         puts "Done"
 
-        private_ip = `#{SSH} #{@server} 'facter ipaddress'`.chomp
-        print "Updating the controller to use the AMZ private IP '#{private_ip}'..."
-        `#{SSH} #{@server} "sed -i \"s/public_ip.*/public_ip='#{private_ip}'/g\" /etc/libra/node_data.conf"`
-        puts "Done"
+        begin
+          private_ip = `#{SSH} #{@server} 'facter ipaddress'`.chomp
+          print "Updating the controller to use the AMZ private IP '#{private_ip}'..."
+          `#{SSH} #{@server} "sed -i \"s/public_ip.*/public_ip='#{private_ip}'/g\" /etc/libra/node_data.conf"`
+          puts "Done"
 
-        print "Bounding Apache to pick up the change..."
-        `#{SSH} #{@server} 'service httpd restart'`
-        puts "Done"
+          print "Bounding Apache to pick up the change..."
+          `#{SSH} #{@server} 'service httpd restart'`
+          puts "Done"
 
-        # Run user tests
-        print "BEGIN - Test Output"
-        puts `#{SSH} #{@server} 'rake test:all'`
-        p = $?
-        puts "END - Test Output"
+          # Update the test
+          Rake::Task["ami:verify:update"].execute
 
-        if p.exitstatus != 0
-          puts "ERROR - Non-zero exit code from tests (exit: #{p.exitstatus})"
-          print "Downloading logs for analysis..."
+          # Run user tests
+          print "Running verification tests..."
+          `#{SSH} #{@server} 'cucumber --tags @verify --format junit -o /tmp/rhc/ li/tests/'`
+          p = $?
+          puts "Done"
+
+          print "Downloading verification output..."
           `#{SCP} -r #{@server}:/tmp/rhc .`
           puts "Done"
-          fail "ERROR - Tests failed"
-        end
 
-        print "Tagging image as 'qe-ready'..."
-        conn.create_tag(@ami, 'Name', "qe-ready")
-        puts "Done"
-      ensure
-        print "Terminating instance..."
-        conn.terminate_instances([@instance])
-        puts "Done"
+          if p.exitstatus != 0
+            fail "ERROR - Non-zero exit code from tests (exit: #{p.exitstatus})"
+          end
+
+          print "Tagging image as 'qe-ready'..."
+          conn.create_tag(@ami, 'Name', "qe-ready") unless ENV['LIBRA_DEV']
+          puts "Done"
+        ensure
+          unless ENV['LIBRA_DEV']
+            print "Terminating instance..."
+            conn.terminate_instances([@instance])
+            puts "Done"
+          end
+        end
       end
     end
   end

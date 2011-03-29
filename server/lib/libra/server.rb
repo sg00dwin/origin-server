@@ -150,7 +150,7 @@ EOF
     #
     def execute(framework, action, app_name, user)
       # Make the call to configure the application
-      Libra.debug "DEBUG: Executing framework:#{framework} action:#{action} app_name:#{app_name} user:#{user}" if Libra.c[:rpc_opts][:verbose]
+      Libra.client_debug "DEBUG: Executing framework:#{framework} action:#{action} app_name:#{app_name} user:#{user}" if Libra.c[:rpc_opts][:verbose]
       execute_internal(framework, action, "#{app_name} #{user.namespace} #{user.uuid}")
     end
 
@@ -193,8 +193,8 @@ EOF
         return_code = response[:body][:data][:exitcode]
         output = response[:body][:data][:output]
 
-        Libra.debug "DEBUG: Cartridge return code: #{return_code}" if Libra.c[:rpc_opts][:verbose]
-        Libra.debug "DEBUG: Cartridge output: #{output}" if Libra.c[:rpc_opts][:verbose]
+        Libra.client_debug "DEBUG: Cartridge return code: #{return_code}" if Libra.c[:rpc_opts][:verbose]
+        Libra.client_debug "DEBUG: Cartridge output: #{output}" if Libra.c[:rpc_opts][:verbose]
         raise CartridgeException.new(141), output, caller[0..5] if return_code != 0
       end      
     end

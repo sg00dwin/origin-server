@@ -18,9 +18,10 @@ class BrokerController < ApplicationController
   end
   
   def parse_json_data(json_data)
-    data = JSON.parse(json_data)
-    thread = Thread.current
-    thread[:debugIO] = StringIO.new # Need to find a better way to do this.  Object structure for request would work.  Perhaps there is something more elegant built into rails?
+    thread = Thread.current # Need to find a better way to do this.  Object structure for request would work.  Perhaps there is something more elegant built into rails?
+    thread[:debugIO] = StringIO.new
+    thread[:resultIO] = StringIO.new
+    data = JSON.parse(json_data)    
     if (data['debug'])
       Libra.c[:rpc_opts][:verbose] = true       
     end
@@ -37,8 +38,8 @@ class BrokerController < ApplicationController
       logger.error e.message
       logger.error e.backtrace
       # TODO should we leave this?  Everything that gets in here is unknown and users can tell us about it.  But will mean impl details showing up on the client.
-      Libra.debug e.message
-      Libra.debug e.backtrace
+      Libra.client_debug e.message
+      Libra.client_debug e.backtrace
     elsif !(e.is_a? Libra::UserException) # User Exceptions just go back to the client
       logger.error "Exception rescued in #{method_name}:"
       logger.error e.message
@@ -64,6 +65,8 @@ class BrokerController < ApplicationController
           message = "Successfully created application: #{app_name}"
         elsif action == 'deconfigure'
           message = "Successfully destroyed application: #{app_name}"
+        elsif action == 'status'
+          message = Thread.current[:resultIO].string
         end
   
         render :json => generate_result_json(message) and return
