@@ -101,7 +101,7 @@ begin
       if p.exitstatus != 0
         puts "WARNING - yum error getting li info, cleaning metadata and trying again"
         `yum clean metadata`
-        `yum info li`
+        yum_output = `yum info li`
         p = $?
         if p.exitstatus != 0
           puts "EXITING - Error cleaning yum state"
@@ -112,12 +112,12 @@ begin
       # Process the yum output to get a version
       version = yum_output.split("\n").collect do |line|
         line.split(":")[1].strip if line.start_with?("Version")
-      end.compact[0]
+      end.compact[-1]
 
       # Process the yum output to get a release
       release = yum_output.split("\n").collect do |line|
         line.split(":")[1].strip if line.start_with?("Release")
-      end.compact[0]
+      end.compact[-1]
 
       @version = "li-#{version}-#{release.split('.')[0]}"
 
