@@ -78,7 +78,7 @@ Then /^they should all be accessible$/ do
         http.get("/health_check.php")
       end
       code = res.code
-    rescue Net::HTTPError
+    rescue Exception
       code = -1
     end
 
@@ -108,31 +108,38 @@ Then /^they should be able to be changed$/ do
   # Make a change and push it
   urls = {}
   user_apps.each do |user_app|
-
-    # Make a change
     repo = "#{$temp}/#{user_app[0]}_#{user_app[1]}_repo"
     $logger.info("Changing to dir=#{repo}")
     Dir.chdir(repo)
-    run('sed -i "/<h1>/a<p>making a change</p>" php/index.php')
-    run("git commit -a -m 'Making a change'")
+
+    app_file = case @type
+      when "php-5.3.2" then "php/index.php"
+      when "rack-1.1.0" then "config.ru"
+      when "wsgi-3.2.1" then "wsgi/application"
+    end
+
+    # Make a change to the app
+    run("sed -i 's/Welcome/TEST/' #{app_file}")
+    run("git commit -a -m 'Test change'")
     run('git push')
 
-    # Make sure to handle timeouts
+    # Allow change to be loaded
+    sleep 30
+
     host = "#{user_app[1]}-#{user_app[0]}.#{$domain}"
     $logger.info("host= #{host}")
     begin
-      req = Net::HTTP::Get.new('/index.php')
       res = Net::HTTP.start(host, 80) do |http|
-        http.read_timeout = 30
-        http.request(req)
+        http.read_timeout = 60
+        http.get("/")
       end
 
       # Store the response code for later use
       code = res.code
 
       # Verify the content of the response
-      File.open("php/index.php", "rb") {|f| res.body.should == f.read}
-    rescue Net::HTTPError
+      File.open(app_file, "rb") {|f| res.body.should == f.read}
+    rescue Exception
       code = -1
     end
 
@@ -142,7 +149,7 @@ Then /^they should be able to be changed$/ do
 
   # Print out the results:
   #  Format = code - url
-  $logger.info("URL Results")
+  $logger.info("Change Results")
   urls.each_pair do |url, code|
     $logger.info("#{code} - #{url}")
   end

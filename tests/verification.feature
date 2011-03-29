@@ -32,7 +32,25 @@ Feature: Verification Tests
       |     1     |   2   |  1   | php-5.3.2 |
     When the applications are created
     Then they should all be accessible
-    Then they should be able to be changed
+    And they should be able to be changed
+
+  Scenario: Rack modification tests
+    Given the libra client tools
+    And the following test data
+      | processes | users | apps |    type    |
+      |     1     |   2   |  1   | rack-1.1.0 |
+    When the applications are created
+    Then they should all be accessible
+    And they should be able to be changed
+
+  Scenario: WSGI modification tests
+    Given the libra client tools
+    And the following test data
+      | processes | users | apps |    type    |
+      |     1     |   2   |  1   | wsgi-3.2.1 |
+    When the applications are created
+    Then they should all be accessible
+    And they should be able to be changed
 
   Scenario: Broker throughput tests
     Given the libra client tools
