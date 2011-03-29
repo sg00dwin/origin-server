@@ -269,6 +269,18 @@ begin
         conn.terminate_instances([@instance])
       end
 
+      # A task to allow Jenkins to gracefully exit if the image is verified
+      task :already_verified do
+        # See if the current image is already verified
+        conn.describe_tags('Filter.1.Name' => 'resource-id', 'Filter.1.Value.1' => @ami).each do |tag|
+          if tag[:aws_key] == "Name" and tag[:aws_value] == "dev-verified"
+            puts "EXITING - Image already verified"
+            exit 0
+          end
+        end
+      end
+
+      # Make sure that an AMI is available to verify
       task :prereqs do
         # See if the image exists and is available
         images = conn.describe_images_by_owner.collect do |i|
@@ -282,22 +294,6 @@ begin
           puts "EXITING - Image doesn't exist for current version"
         elsif images[0] != "available"
           puts "EXITING - Image exists but isn't available yet"
-        end
-
-        # See if the current image is already verified
-        conn.describe_tags('Filter.1.Name' => 'resource-id', 'Filter.1.Value.1' => @ami).each do |tag|
-          if tag[:aws_key] == "Name" and tag[:aws_value] == "dev-verified"
-            puts "EXITING - Image already verified"
-            exit 0
-          end
-        end
-
-        # Do not launch if there is a verifier instance running
-        conn.describe_instances.map do |i|
-          if (i[:aws_state] == "running") and (i[:tags]["Name"] =~ VERIFIER_REGEX)
-            puts "EXITING - Verifier already running (#{i[:tags]["Name"]})"
-            exit 0
-          end
         end
       end
 
@@ -358,10 +354,10 @@ begin
           Rake::Task["ami:verify:update"].execute
 
           # Run user tests
-          print "BEGIN - Test Output"
-          `#{SSH} #{@server} 'cucumber --name "Verification Tests" --format html -o /tmp/rhc/cucumber.html li/tests/'`
+          print "Running verification tests..."
+          `#{SSH} #{@server} 'cucumber --name "Verification Tests" --format junit -o /tmp/rhc/ li/tests/'`
           p = $?
-          puts "END - Test Output"
+          puts "Done"
 
           print "Downloading verification output..."
           `#{SCP} -r #{@server}:/tmp/rhc .`
@@ -372,11 +368,11 @@ begin
           end
 
           print "Tagging image as 'qe-ready'..."
-          #conn.create_tag(@ami, 'Name', "qe-ready")
+          conn.create_tag(@ami, 'Name', "qe-ready")
           puts "Done"
         ensure
           print "Terminating instance..."
-          #conn.terminate_instances([@instance])
+          conn.terminate_instances([@instance])
           puts "Done"
         end
       end
