@@ -55,9 +55,9 @@ rpm -Uhv http://209.132.178.9/gpxe/trees/li/rhel/6/x86_64/rhel6-and-optional-0.1
 Install and configure activemq
 ==============================
 
-1) Copy the docs/li.repo file to /etc/yum.repos.d/
+1) Copy the misc/li.repo file to /etc/yum.repos.d/
 2) Run "yum install activemq activemq-info-provider"
-3) Copy docs/activemq.xml to /etc/activemq/activemq.xml
+3) Copy misc/activemq.xml to /etc/activemq/activemq.xml
 4) Start activemq: service activemq start
 
 

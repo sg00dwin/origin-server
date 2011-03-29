@@ -99,7 +99,7 @@ namespace :rpm do
   task :mash do
       if ! File.exists?("/etc/mash/li.mash")
           puts
-          puts "Please install and configure mash.  Read docs/BREW for setup steps"
+          puts "Please install and configure mash.  Read misc/BREW for setup steps"
           puts
           exit 222
       end

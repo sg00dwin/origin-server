@@ -49,6 +49,7 @@ When /^(\d+) applications of type '(.+)' are created per user$/ do |num_apps, fr
     # Wait for some process to complete if necessary
     Timeout::timeout(300) do
       pid = processes.shift
+      puts "Waiting on pid #{pid}"
       Process.wait(pid)
       $logger.error("Process #{pid} failed") if $?.exitstatus != 0
     end if processes.length >= @max_processes

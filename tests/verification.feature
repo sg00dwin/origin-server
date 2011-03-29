@@ -1,5 +1,5 @@
 @sprint
-Feature: Setup a new application
+Feature: Verification Tests
 
   Scenario:
     Given the libra client tools

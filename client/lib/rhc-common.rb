@@ -166,7 +166,7 @@ module RHC
     elsif debug
       puts "HTTP response from server is #{response.body}"
     end
-    exit exit_code
+    exit exit_code.nil? ? 666 : exit_code
   end
 
   def self.print_response_success(response, debug)

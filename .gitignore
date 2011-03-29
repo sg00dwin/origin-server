@@ -9,4 +9,3 @@ server/vendor/*
 server/.bundle
 server/log/*
 server/tmp/*
-server/db/development.sqlite3

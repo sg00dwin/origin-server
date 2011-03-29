@@ -89,14 +89,15 @@ BuildArch: noarch
 Requires: httpd
 Requires: ruby
 Requires: rubygems
+Requires: rubygem-abstract
 Requires: rubygem-aws
+Requires: rubygem-erubis
+Requires: rubygem-mime-types
 Requires: rubygem-rack = 1:1.1.0
 Requires: rubygem-passenger
 Requires: rubygem-passenger-native
 Requires: rubygem-passenger-native-libs
 Requires: mod_passenger
-Requires: rubygem-sqlite3-ruby
-Requires: ruby-sqlite3
 Requires: rubygem-bundler
 
 %description server
@@ -170,7 +171,7 @@ rake DESTDIR="$RPM_BUILD_ROOT" install:all
 ln -s %{_localstatedir}/www/libra/public $RPM_BUILD_ROOT/%{_localstatedir}/www/html/app
 
 mkdir $RPM_BUILD_ROOT/etc/libra/devenv/
-cp -adv docs/devenv/* $RPM_BUILD_ROOT/etc/libra/devenv/
+cp -adv misc/devenv/* $RPM_BUILD_ROOT/etc/libra/devenv/
 
 mkdir -p .%{gemdir}
 gem install --install-dir $RPM_BUILD_ROOT/%{gemdir} --bindir $RPM_BUILD_ROOT/%{_bindir} --local -V --force --rdoc \
@@ -278,7 +279,7 @@ fi
 
 %files
 %defattr(-,root,root,-)
-%doc docs/USAGE.txt
+%doc misc/docs/USAGE.txt
 %{_bindir}/rhc-create-app
 %{_bindir}/rhc-create-domain
 %{_bindir}/rhc-user-info
@@ -326,6 +327,7 @@ fi
 %defattr(-,root,root,-)
 %{_bindir}/li-accounts
 %{_bindir}/li-applications
+%{_bindir}/li-status
 %{gemdir}/gems/li-node-tools-%{version}
 %{gemdir}/cache/li-node-tools-%{version}.gem
 %{gemdir}/doc/li-node-tools-%{version}
@@ -357,7 +359,6 @@ popd > /dev/null
 mkdir -p %{_localstatedir}/www/libra/log
 touch %{_localstatedir}/www/libra/log/production.log
 chmod 0666 %{_localstatedir}/www/libra/log/production.log
-touch %{_localstatedir}/www/libra/db/production.sqlite3
 
 /etc/init.d/httpd restart
 

@@ -217,6 +217,79 @@ body {
         margin-left: 10px;
 }
 
+.video_promo img, {
+  float: right;
+  margin-left: 12px;
+  margin-right: 12px;
+}
+
+#page h2 {
+  font-size: 20pt;
+}
+
+#appscale_steps h6 {
+  font-weight: normal;
+}
+
+#appscale_steps h6 strong {
+  text-transform: uppercase;
+}
+
+#appscale_steps p {
+  font-size: 11pt;
+  margin-bottom: 0px;
+}
+
+#appscale_steps a,
+#appscale_nowwhat a,
+{
+  font-size: 11pt;
+  display: block;
+  text-decoration: none;
+  margin-bottom: 1em;
+  text-align: right;
+  font-weight: bold;
+  color: #3C6EB4;
+}
+
+#sidenav div {
+  margin-left: 10px;
+}
+
+#sidenav a.readmore {
+  display: block;
+  text-decoration: none;
+  color: #3C6EB4;
+  font-weight: bold;
+  text-align: right;
+  font-size: 9pt;
+  margin-right: 10px;
+}
+
+.appscale_details #sidenav {
+  background: none;
+}
+
+#sidenav h2 {
+  padding-top: 1em;
+  font-size: 10pt;
+  text-transform: uppercase;
+  color: #666;
+}
+
+#sidenav h3 {
+  font-size: 11pt;
+  color: #111;
+}
+
+#sidenav ul {
+  margin-bottom: 1em;
+}
+
+#sidebar img.video_promo {
+
+}
+
 #sidenav {
 	background: #e6e6e6;
 }

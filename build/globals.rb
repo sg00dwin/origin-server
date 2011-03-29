@@ -17,6 +17,7 @@ BUILD_ROOT = ROOT + "/build"
 CLIENT_ROOT = ROOT + "/client"
 COMMON_ROOT = ROOT + "/common"
 NODE_ROOT = ROOT + "/node"
+TESTS_ROOT = ROOT + "/tests"
 SERVER_ROOT = ROOT + "/server"
 RPM_SPEC = ROOT + "/build/specs/li.spec"
 RPM_REGEX = /(Version: )(.*)/
