@@ -183,6 +183,11 @@ gem install --install-dir $RPM_BUILD_ROOT/%{gemdir} --bindir $RPM_BUILD_ROOT/%{_
 rm -rf $RPM_BUILD_ROOT
 
 %post devenv
+
+# ntpd
+service ntpd start
+chkconfig ntpd on
+
 # qpid
 /bin/cp -f /etc/libra/devenv/qpidd.conf /etc/qpidd.conf
 service qpidd restart
