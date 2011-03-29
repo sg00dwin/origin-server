@@ -107,8 +107,9 @@ case "$1" in
     for ctl_script in `/bin/find /var/lib/libra/ -maxdepth 4 -mindepth 4 -type f -name "*_ctl.sh"`
     do
         script_name=$(basename $ctl_script)
+	run_as=$( echo $ctl_script | awk -F/ '{print $5}')
         echo -n $"    Checking http for ${script_name%_ctl.sh}"
-        daemon --pidfile=httpd_${script_name} $ctl_script status
+        daemon --user=$run_as --pidfile=httpd_${script_name} $ctl_script status
         RETVAL=$?
         echo
         if [ $RETVAL -eq 0 ]
@@ -120,7 +121,7 @@ case "$1" in
         fi
     done
     echo
-    return $GROUP_RETVAL
+    #return $GROUP_RETVAL
     ;;
   *)
     echo $"Usage: $0 {start|stop|status|restart|reload|force-reload|condrestart}"
