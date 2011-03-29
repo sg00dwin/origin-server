@@ -56,6 +56,6 @@ Feature: Verification Tests
     Given the libra client tools
     And the following test data
       | processes | users | apps |    type   |
-      |     10    |   20  |  1   | php-5.3.2 |
+      |     2     |   10  |  1   | php-5.3.2 |
     When the applications are created
     Then they should all be accessible

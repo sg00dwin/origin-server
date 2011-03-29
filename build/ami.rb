@@ -26,7 +26,7 @@ begin
     SCP = "scp 2> /dev/null -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PasswordAuthentication=no -i " + RSA
 
     # Force synchronous stdout
-    $stdout.sync = true
+    STDOUT.sync, STDERR.sync = true
 
     # This will verify the Amazon SSL connection
     Rightscale::HttpConnection.params[:ca_file] = "/etc/pki/tls/certs/ca-bundle.trust.crt"
@@ -296,7 +296,7 @@ begin
       end
 
       desc "Update the tests on the current verifier"
-      task :update => ["ami:prereqs"] do
+      task :update => [:prereqs, :find] do
         print "Updating tests to remote instance..."
         `git archive --prefix li/ HEAD --output /tmp/li.tar`
         `#{SCP} /tmp/li.tar #{@server}:~/`
