@@ -327,6 +327,7 @@ fi
 %defattr(-,root,root,-)
 %{_bindir}/li-accounts
 %{_bindir}/li-applications
+%{_bindir}/li-status
 %{gemdir}/gems/li-node-tools-%{version}
 %{gemdir}/cache/li-node-tools-%{version}.gem
 %{gemdir}/doc/li-node-tools-%{version}
