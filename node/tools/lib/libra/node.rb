@@ -851,42 +851,6 @@ module Libra
       end
     end
 
-# ============================================================================
-#
-# File system quotas
-#
-# ============================================================================
-
-    class FileSystemQuotas
-
-      def initialize
-        
-      end
-
-      def to_s
-
-      end
-
-      def to_xml
-
-      end
-
-      def to_json
-
-      end
-
-      def self.json_create(o)
-        new.init(o)
-      end
-
-      def init(o)
-
-      end
-
-      def check
-
-      end
-    end
 
 # ============================================================================
 #
@@ -894,29 +858,56 @@ module Libra
 #
 # ============================================================================
 
-    class Sysctl
-
+    class Sysctl < Hash
+      
       def initialize(keys=[])
-        @keys = keys
-        @settings = {}
+        super
+        keys.each do |key|
+          self[key] = nil
+        end
       end
+
+      #
+      # Hash Methods
+      #
+      # each
+
+
+      # []
+
 
       def to_s
         out = "-- Sysctl --\n"
-        names = @settings.keys || []
-        puts "there are %d names" % [names.length]
+        names = self.keys
         names.sort.each do |key|
-          out += "  #{key} = #{@settings[key]}\n"
+          out += "  #{key} = #{self[key]}\n"
         end
         out
       end
 
       def to_xml
-        
+        builder = Nokogiri::XML::Builder.new do |xml|
+           xml.sysctl {
+            self.keys.sort.each do |key|
+              xml.setting(:name => key) {
+                xml.text(self[key])
+              }
+            end
+          }
+        end
+        builder.doc.root.to_xml
       end
 
       def to_json
+        struct = {
+          "json_class" => self.class.name,
+          "sysctl" => {}
+        }
 
+        self.keys.sort.each do |key|
+          struct["sysctl"][key] = self[key]
+        end
+        JSON.generate(struct)
       end
 
       def self.json_create(o)
@@ -924,7 +915,9 @@ module Libra
       end
 
       def init(o)
-
+        o['sysctl'].each do |key|
+          self[key] = o['sysctl'][key]
+        end
       end
 
       def check
@@ -933,7 +926,7 @@ module Libra
         error_pattern = Regexp.new "error:\s+(.*) on key '(.*)'"
         unknown_pattern = Regexp.new "error: \".*\" is an unknown key"
 
-        if @keys == :all then
+        if self.length == 0 then
           # get everything
           response = `sysctl -a 2>&1`
           lines = response.split("\n")
@@ -941,12 +934,12 @@ module Libra
             if pattern =~ line then
               key = Regexp.last_match(1)
               value = Regexp.last_match(2)
-              @settings[key] = value
+              self[key] = value
             elsif error_pattern =~ line
               error_message = Regexp.last_match(1)
               key = Regexp.last_match(2)
               
-              @settings[key] = "error: " + error_message
+              self[key] = "error: " + error_message
             else
               puts "NO match for #{line}"
             end
@@ -954,16 +947,16 @@ module Libra
         else
 
           # get values for each requested key
-          @keys.each do |key|
+          self.keys.each do |key|
             line = `sysctl #{key} 2>&1`.strip
             if pattern =~ line then
               key = Regexp.last_match(1)
               value = Regexp.last_match(2)
-              @settings[key] = value                          
+              self[key] = value                          
             elsif error_pattern =~ line
-              @settings[key] = error_pattern(1)
+              self[key] = error_pattern(1)
             elsif unknown_pattern =~ line
-              @settings[key] = "error: unknown key"
+              self[key] = "error: unknown key"
             end
           end
         end
