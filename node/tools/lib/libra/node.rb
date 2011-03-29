@@ -570,7 +570,7 @@ module Libra
 
       @servicename = 'noname'
       @stopped_pattern = /#{@name} is stopped/
-      @running_pattern = /#{@name} \(pid (%d+)\) is running/
+      @running_pattern = /#{@name} \(pid (\d+)\) is running/
 
       @installed = nil
       @enabled = nil
@@ -690,21 +690,21 @@ module Libra
     # NTP daemon
     class NtpService < Libra::Node::Service
       @servicename = "ntpd"
-      @running_pattern = Regexp.new "#{@servicename} \\(pid .*\\) is running\.\.\."
+      @running_pattern = Regexp.new @servicename + '\s+\(pid\s+(\d+)\) is running\.\.\."
       @stopped_pattern = Regexp.new "#{@servicename} is stopped"
     end
 
     # check the QPID service
     class QpidService < Libra::Node::Service
       @servicename = "qpidd"
-      @running_pattern = /#{@servicename} \(pid (%d+)\) is running/
-      @stopped_pattern = /#{@servicename} is stopped/
+      @running_pattern = Regexp.new @servicename + '\s+\(pid\s+(\d+)\) is running'
+      @stopped_pattern = Regexp.new "#{@servicename} is stopped"
     end
 
     class McollectiveService < Libra::Node::Service
-      @servicename = "mcollectived"
-      @running_pattern = /#{@servicename} \(pid (%d+)\) is running/
-      @stopped_pattern = /#{@servicename} is stopped/
+      @servicename = "mcollective"
+      @running_pattern = Regexp.new 'mcollectived \s+\((\d+)\) is running'
+      @stopped_pattern = /mcollectived is stopped/
     end
 
     class CgconfigService < Libra::Node::Service
@@ -715,13 +715,13 @@ module Libra
 
     class CgredService < Libra::Node::Service
       @servicename = "cgred"
-      @running_pattern = /#{@servicename} \(pid (%d+)\) is running/
+      @running_pattern = Regexp.new @servicename + '\s+\(pid\s+(\d+)\) is running'
       @stopped_pattern = /#{@servicename} is stopped/
     end
 
     class HttpdService < Libra::Node::Service
       @servicename = "httpd"
-      @running_pattern = /#{@servicename} \(pid (%d+)\) is running/
+      @running_pattern = Regexp.new @servicename + '\s+\(pid\s+(\d+)\) is running'
       @stopped_pattern = /#{@servicename} is stopped/
     end
 
