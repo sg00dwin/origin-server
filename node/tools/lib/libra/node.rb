@@ -49,7 +49,7 @@ module Libra
       end
 
       @checks = [ 
-                 :hostinfo, :filesystems, :quotoas, :sysctl, :selinux, :sebool, 
+                 :hostinfo, :filesystems, :quotas, :sysctl, :selinux, :sebool, 
                  :ntpd, :qpidd, :mcollectived, :cgconfig, :cgred, :httpd 
                 ]
 
@@ -770,7 +770,7 @@ module Libra
 
     class McollectiveService < Libra::Node::Service
       @servicename = "mcollective"
-      @running_pattern = Regexp.new 'mcollectived \s+\((\d+)\) is running'
+      @running_pattern = Regexp.new 'mcollectived\s+\((\d+)\) is running'
       @stopped_pattern = /mcollectived is stopped/
 
       # TODO: add mc-ping (and other?) message status
@@ -887,7 +887,7 @@ module Libra
 
     class FilesystemQuotas
 
-      @fspattern = /user quota on ([^ ]+) \([^)]+\) is (on|off)/
+      @fspattern = /user quota on ([^ ]+) \(([^)]+)\) is (on|off)/
       @fsformat = "  %-15s%-15s %-3s\n"
       class << self
         attr_reader :fspattern, :fsformat
@@ -944,10 +944,7 @@ module Libra
             "status" => fs[:status]
           }
         end
-        p self
-
         json = JSON.generate(hash)
-        json
       end
 
       def self.json_create(o)
@@ -969,6 +966,7 @@ module Libra
         response = `quotaon -u -p -a`
         lines = response.split("\n")
         lines.each do |line|
+          self.class.fspattern =~ line
           fs, dev, status = Regexp.last_match[1..3]
           @filesystems[fs] = {:device => dev, :status => status }
         end
