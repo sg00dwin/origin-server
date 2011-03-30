@@ -45,17 +45,25 @@ module Libra
     class Status
 
       class << self
-        attr_reader :checks
+        attr_reader :checks, :sebooleans, :sysctl
       end
 
-      @checks = [ :hostinfo, :ntpd, :qpidd, :mcollectived, 
-                  :cgconfig, :cgred, :httpd ]
+      @checks = [ 
+                 :hostinfo, :sysctl, :selinux, :sebool, 
+                 :ntpd, :qpidd, :mcollectived, :cgconfig, :cgred, :httpd 
+                ]
+
+      @sebooleans = ["httpd_can_network_connect"]
+      @sysctl = ["kernel.sem"]
       
       attr_reader :hostinfo, :ntpd, :qppid, :mcollectived
 
       def initialize(*checks)
         
         @hostinfo = Libra::Node::HostInfo.new
+        @sysctl = Libra::Node::Sysctl.new self.class.sysctl
+        @selinux = Libra::Node::Selinux.new
+        @sebool = Libra::Node::SelinuxBoolean.new self.class.sebooleans
         @ntpd = Libra::Node::NtpService.new
         @qpidd = Libra::Node::QpidService.new
         @mcollectived = Libra::Node::McollectiveService.new
@@ -75,6 +83,9 @@ module Libra
         out = "=" * fillcount + " " + title + " " + "=" * fillcount + "\n"
 
         out += @hostinfo.to_s + "\n" if @hostinfo
+        out += @sysctl.to_s + "\n" if @sysctl
+        out += @selinux.to_s + "\n" if @selinux
+        out += @sebool.to_s + "\n" if @sebool
         out += @ntpd.to_s + "\n" if @ntpd
         out += @qpidd.to_s + "\n" if @qpidd
         out += @mcollectived.to_s + "\n" if @mcollectived
@@ -90,6 +101,9 @@ module Libra
         builder = Nokogiri::XML::Builder.new do |xml|
           xml.status {
             xml << @hostinfo.to_xml if @hostinfo
+            xml << @sysctl.to_xml if @sysctl
+            xml << @selinux.to_xml if @selinux
+            xml << @sebool.to_xml if @sebool
             xml << @ntpd.to_xml if @ntpd
             xml << @qpidd.to_xml if @qpidd
             xml << @mcollectived.to_xml if @mcollectived
@@ -106,6 +120,9 @@ module Libra
           "json_class" => self.class.name
         }
         hash['hostinfo'] = @hostinfo.to_json if @hostinfo
+        hash['sysctl'] = @sysctl.to_json if @sysctl
+        hash['selinux'] = @selinux.to_json if @selinux
+        hash['sebool'] = @sebool.to_json if @sebool
         hash['ntpd'] = @ntpd.to_json if @ntpd
         hash['qpidd'] = @qpidd.to_json if @qpidd
         hash['mcollectived'] = @mcollectived.to_json if @mcollectived
@@ -134,6 +151,12 @@ module Libra
           case csym
           when :hostinfo
             @hostinfo.check
+          when :sysctl
+            @sysctl.check
+          when :selinux
+            @selinux.check
+          when :sebool
+            @sebool.check
           when :ntpd
             @ntpd.check
           when :qpidd
