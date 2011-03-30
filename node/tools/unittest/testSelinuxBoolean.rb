@@ -19,7 +19,7 @@ class TestSelinuxBoolean < Test::Unit::TestCase
 
     se1 = Libra::Node::SelinuxBoolean.new 'httpd_can_network_relay'
     se1.check
-    puts se1.to_xml
+    #puts se1.to_xml
 
   end
 

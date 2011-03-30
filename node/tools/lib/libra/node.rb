@@ -375,6 +375,7 @@ module Libra
 # Selinux
 #
 # ============================================================================
+# requires RPM policycoreutils
 
     class Selinux
       # enable (true|false)
@@ -383,20 +384,36 @@ module Libra
       # policy version
       # booleans
 
+      attr_reader :enabled, :enforcing
+
       def initialize
-        
+        @enabled = nil
+        @enforcing = nil
       end
 
       def to_s
-
+        out = "-- Selinux --\n"
+        out += "  Enabled = %s\n" % [ @enabled == nil ? "unknown" : @enabled.to_s ]
+        out += "  Enforcing = %s\n" % [ @enforcing = nil ? "unknown": @enforcing.to_s ]
       end
 
       def to_xml
-
+        builder = Nokogiri::XML::Builder.new do |xml|
+          attrs = {}
+          attrs['enabled'] = @enabled.to_s if @enabled != nil
+          attrs['enforcing'] = @enforcing.to_s if @enforcing != nil
+          xml.selinux(attrs)
+        end
+        builder.doc.root.to_xml        
       end
 
       def to_json
-
+        hash = {
+          "json_class" => self.class.name,
+          "enabled" => @enabled,
+          "enforcing" => @enforcing
+        }
+        JSON.generate(hash)
       end
 
       def self.json_create(o)
@@ -404,10 +421,23 @@ module Libra
       end
 
       def init(o)
-
+        @enabled = o['enabled']
+        @enforcing = o['enforcing']
+        self
       end
 
       def check
+        response = `getenforce`.strip
+        case response
+        when "Disabled"
+          @enabled = false
+        when "Permissive"
+          @enabled = true
+          @enforcing = false
+        when "Enforcing"
+          @enabled = true
+          @enforcing = true
+        end
 
       end
     end
