@@ -49,7 +49,7 @@ module Libra
       end
 
       @checks = [ 
-                 :hostinfo, :filesystems, :sysctl, :selinux, :sebool, 
+                 :hostinfo, :filesystems, :quotoas, :sysctl, :selinux, :sebool, 
                  :ntpd, :qpidd, :mcollectived, :cgconfig, :cgred, :httpd 
                 ]
 
@@ -62,6 +62,7 @@ module Libra
         
         @hostinfo = Libra::Node::HostInfo.new
         @filesystems = Libra::Node::Filesystems.new
+        @quotas = Libra::Node::FilesystemQuotas.new
         @sysctl = Libra::Node::Sysctl.new self.class.sysctl
         @selinux = Libra::Node::Selinux.new
         @sebool = Libra::Node::SelinuxBoolean.new self.class.sebooleans
@@ -85,6 +86,7 @@ module Libra
 
         out += @hostinfo.to_s + "\n" if @hostinfo
         out += @filesystems.to_s + "\n" if @filesystems
+        out += @quotas.to_s + "\n" if @quotas
         out += @sysctl.to_s + "\n" if @sysctl
         out += @selinux.to_s + "\n" if @selinux
         out += @sebool.to_s + "\n" if @sebool
@@ -104,6 +106,7 @@ module Libra
           xml.status {
             xml << @hostinfo.to_xml if @hostinfo
             xml << @filesystems.to_xml if @filesystems
+            xml << @quotas.to_xml if @quotas
             xml << @sysctl.to_xml if @sysctl
             xml << @selinux.to_xml if @selinux
             xml << @sebool.to_xml if @sebool
@@ -124,6 +127,7 @@ module Libra
         }
         hash['hostinfo'] = @hostinfo.to_json if @hostinfo
         hash['filesystems'] = @filesystems.to_json if @filesystems
+        hash['quotas'] = @quotas.to_json if @quotas
         hash['sysctl'] = @sysctl.to_json if @sysctl
         hash['selinux'] = @selinux.to_json if @selinux
         hash['sebool'] = @sebool.to_json if @sebool
@@ -157,6 +161,8 @@ module Libra
             @hostinfo.check
           when :filesystems
             @filesystems.check
+          when :quotas
+            @quotas.check
           when :sysctl
             @sysctl.check
           when :selinux
@@ -896,7 +902,7 @@ module Libra
       def to_s
         out = "-- Filesystem Quotas --\n"
         if @filesystems.keys.length == 0 then
-          out += "  no quotas enabled"
+          out += "  no quotas enabled\n"
         else
           out += "  Filesystem     Device          Status\n"
           @filesystems.keys.sort.each do |fsname|
