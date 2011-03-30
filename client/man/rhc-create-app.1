@@ -29,7 +29,7 @@ created the application will be available at
 
 At the moment the only repo type supported is
 git.  Git pushes via ssh+git and uses
-.I ~/.ssh/id_rsa_libra
+.I ~/.ssh/libra_id_rsa
 which was created automatically when
 .I rhc-create-domain
 was run. Once an application has been created,
@@ -54,7 +54,7 @@ Name of application to create
 .IP "-r|--repo repo_path"
 Local repo to create (must be empty)
 .IP "-t|--type framework_type"
-Framework type to create.  Currently only php-5.3.2 is supported
+Framework type to create.  Currently php-5.3.2, wsgi-3.2.1 and rack-1.1.0 are supported
 .IP -b|--bypass
 Bypass any TOS/SLA warnings and notifications
 .IP -d|--debug
@@ -65,19 +65,19 @@ Display help menu
 .I /etc/libra/libra.conf
 .RS
 The system wide configuration file. See
-.BR client.conf (5)
+.BR libra.conf (5)
 for further details
 .RE
 .I ./libra.conf
 .RS
 Local configuration file. See
-.BR client.conf (5)
+.BR libra.conf (5)
 for further details.
 .RE
 .I ~/.li/libra.conf
 .RS
 Per user configuration file. See
-.BR client.conf (5)
+.BR libra.conf (5)
 for further details.
 .RE
 .I ~/.ssh/config
@@ -87,7 +87,7 @@ newly created libra hosts.  Should be harmless.  See
 .BR ssh_config (5)
 for more information.
 .RE
-.I ~/.ssh/id_rsa_libra
+.I ~/.ssh/libra_id_rsa
 .RS
 SSH key created by rhc-create-domain to interact with libra services
 see

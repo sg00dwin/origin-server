@@ -30,7 +30,7 @@ Bind a registered rhcloud user to a domain in rhcloud.
   NOTE: to change ssh key, please alter your ~/.ssh/libra_id_rsa and
         ~/.ssh/libra_id_rsa.pub key, then re-run with --alter
 
-  -n|--namespace   namespace   Libra namespace (alphanumeric) (required)
+  -n|--namespace   namespace   Libra namespace (alphanumeric - max #{RHC::Maxdlen} chars) (required)
   -l|--rhlogin     rhlogin     Red Hat login (often email) (required)
   -p|--password    password    RHLogin password (optional, will prompt)
   -a|--alter                   Alter existing namespace
@@ -71,13 +71,8 @@ if opt["debug"]
     debug = true
 end
 
-if opt["namespace"]
-    if opt["namespace"] =~ /[^0-9a-zA-Z]/
-        puts "namespace contains non-alphanumeric characters!"
-        p_usage
-    end
-else
-    puts "Namespace is required"
+if !RHC::check_namespace(opt['namespace'])
+    p_usage
 end
 
 if !RHC::check_rhlogin(opt['rhlogin'])
@@ -106,7 +101,7 @@ def add_rhlogin_config(rhlogin, uuid)
         f.puts("")
     end
     unless @local_config.get_value(rhlogin)
-        puts "Adding rhlogin to #{ENV['HOME']}/.li"
+        puts "Adding rhlogin to #{ENV['HOME']}/.li/libra.conf"
         f.puts("#{rhlogin}=#{uuid}")
     end
     f.close

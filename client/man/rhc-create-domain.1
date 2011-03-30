@@ -3,9 +3,9 @@
 .\"
 .TH CREATE_USER 1 "JANUARY 2011" Linux "User Manuals"
 .SH NAME
-rhc-create-user \- creates a new Libra user
+rhc-create-domain \- creates a new Libra domain namespace with a user
 .SH SYNOPSIS
-.B rhc-create-user [-l
+.B rhc-create-domain [-l
 .I rhlogin
 .B ]
 .B [-p
@@ -18,13 +18,13 @@ rhc-create-user \- creates a new Libra user
 .B rhc-create-domain
 create a new domain at rhcloud.com.  Once created
 this user will be able to create and control
-applications.
+applications under their domain namespace.
 
 Running
 .B rhc-create-domain
 will cause a new ssh key to be created in ssh
 dir at
-.I ~/.ssh/id_rsa_libra
+.I ~/.ssh/libra_id_rsa
 
 Once created run
 .BR rhc-create-app (1)
@@ -48,19 +48,19 @@ Display help menu
 .I /etc/libra/libra.conf
 .RS
 The system wide configuration file. See
-.BR client.conf (5)
+.BR libra.conf (5)
 for further details
 .RE
 .I ./libra.conf
 .RS
 Local configuration file. See
-.BR client.conf (5)
+.BR libra.conf (5)
 for further details.
 .RE
 .I ~/.li/libra.conf
 .RS
 Per user configuration file. See
-.BR client.conf (5)
+.BR libra.conf (5)
 for further details.
 .RE
 .SH BUGS

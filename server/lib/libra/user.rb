@@ -75,9 +75,10 @@ module Libra
             Libra.client_debug "Problem with server. Response code was #{response.code}"
             #Libra.client_debug "HTTP response from server is #{response.body}"      
           end
-        rescue Net::HTTPBadResponse => e
+        rescue Exception => e
+          Libra.logger_debug e
           Libra.client_debug e
-          #raise
+          raise UserValidationException.new(144), "Error communicating with user validation system.  If the problem persists please contact Red Hat support.", caller[0..5]
         end
         false
       elsif rhlogin == 'invalid_cred_user' #TODO remove fake user check before release

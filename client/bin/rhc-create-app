@@ -28,14 +28,14 @@ def hostexist?(host)
 end
 
 def p_usage
-    rhlogin = @local_config.get_value('default_rhlogin') ? "Default: #{@local_config.get_value('default_rhlogin')}" : "(required)"
+    rhlogin = get_var('default_rhlogin') ? "Default: #{get_var('default_rhlogin')}" : "(required)"
     type_keys = RHC::get_type_keys(', ')
     puts <<USAGE
 
 Usage: #{$0}
 Create a new app libra project.
 
-  -a|--app   application     Application name  (alphanumeric) (required)
+  -a|--app   application     Application name  (alphanumeric - max #{RHC::Maxdlen} chars) (required)
   -t|--type  type            Type of app to create (#{type_keys}) (required)
   -l|--rhlogin  rhlogin      RHCloud rhlogin  (alphanumeric) (#{rhlogin})
   -p|--password  password    RHLogin password  (alphanumeric) (optional, will prompt)
@@ -80,7 +80,7 @@ if opt["debug"]
     debug = true
 end
 
-opt["rhlogin"] = @local_config.get_value('default_rhlogin') unless opt["rhlogin"]
+opt["rhlogin"] = get_var('default_rhlogin') unless opt["rhlogin"]
 
 if !RHC::check_rhlogin(opt['rhlogin'])
     p_usage
@@ -108,7 +108,7 @@ end
 # Get UUID from file
 #
 
-uuid = @local_config.get_value(opt["rhlogin"])
+uuid = get_var(opt["rhlogin"])
 unless uuid
     puts "Could not find UUID for #{opt["rhlogin"]}"
     exit 99

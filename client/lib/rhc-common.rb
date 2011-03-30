@@ -1,18 +1,21 @@
-require "rubygems"
+require 'rubygems'
 require 'fileutils'
-require "getoptlong"
-require "json"
-require "net/http"
-require "net/https"
-require "parseconfig"
+require 'getoptlong'
+require 'json'
+require 'net/http'
+require 'net/https'
+require 'parseconfig'
 require 'resolv'
-require "uri"
+require 'uri'
+
 
 module RHC
+
+  Maxdlen = 16
   
-  TYPES = { "php-5.3.2" => :php,
-    "rack-1.1.0" => :rack,
-    "wsgi-3.2.1" => :wsgi
+  TYPES = { 'php-5.3.2' => :php,
+    'rack-1.1.0' => :rack,
+    'wsgi-3.2.1' => :wsgi
   }
   
   def self.get_type_keys(sep)
@@ -42,17 +45,21 @@ module RHC
   end
   
   def self.check_app(app)
-    check_field(app, 'application')
+    check_field(app, 'application', Maxdlen)
   end
   
   def self.check_namespace(namespace)
-    check_field(namespace, 'namespace')
+    check_field(namespace, 'namespace', Maxdlen)
   end
   
-  def self.check_field(field, type)
+  def self.check_field(field, type, max=0)
     if field
       if field =~ /[^0-9a-zA-Z]/
         puts "#{type} contains non-alphanumeric characters!"
+        return false
+      end
+      if max != 0 && field.length > Maxdlen
+        puts "maximum #{type} size is #{Maxdlen} characters"
         return false
       end
     else
@@ -250,7 +257,7 @@ else
 end
 
 #
-# Check for local var in ~/.li/libra.conf use it, else use /etc/libra/libra.conf
+# Check for local var in ~/.li/libra.conf use it, else use $GEM/../conf/libra.conf
 #
 def get_var(var)
   @local_config.get_value(var) ? @local_config.get_value(var) : @global_config.get_value(var)

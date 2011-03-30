@@ -22,7 +22,7 @@ require 'rhc-common'
 # print help
 #
 def p_usage
-    rhlogin = @local_config.get_value('default_rhlogin') ? "Default: #{@local_config.get_value('default_rhlogin')}" : "(required)"
+    rhlogin = get_var('default_rhlogin') ? "Default: #{get_var('default_rhlogin')}" : "(required)"
     puts <<USAGE
 
 Usage: rhc-snapshot
@@ -69,7 +69,7 @@ if opt["debug"]
     debug = true
 end
 
-opt["rhlogin"] = @local_config.get_value('default_rhlogin') unless opt["rhlogin"]
+opt["rhlogin"] = get_var('default_rhlogin') unless opt["rhlogin"]
 
 if !RHC::check_rhlogin(opt['rhlogin'])
     p_usage

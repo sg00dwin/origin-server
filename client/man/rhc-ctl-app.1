@@ -39,8 +39,6 @@ Red Hat login.  Alphanumeric
 RHLogin password.  Alphanumeric
 .IP "-a|--app application_name"
 Name of application to create
-.IP "-t|--type framework_type"
-Framework type to create.  Currently only php-5.3.2 is supported
 .IP "-c|--command command"
 The command to send to remote server (start|stop|restart|reload|status|destroy)
 .IP -b|--bypass
@@ -53,19 +51,19 @@ Display help menu
 .I /etc/libra/libra.conf
 .RS
 The system wide configuration file. See
-.BR client.conf (5)
+.BR libra.conf (5)
 for further details
 .RE
 .I ./libra.conf
 .RS
 Local configuration file. See
-.BR client.conf (5)
+.BR libra.conf (5)
 for further details.
 .RE
 .I ~/.li/libra.conf
 .RS
 Per user configuration file. See
-.BR client.conf (5)
+.BR libra.conf (5)
 for further details.
 .RE
 .SH BUGS
