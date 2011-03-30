@@ -879,22 +879,69 @@ module Libra
 #
 # ============================================================================
 
-    class FileSystemQuotas
+    class FilesystemQuotas
+
+      @fspattern = /user quota on ([^ ]+) \([^)]+\) is (on|off)/
+      @fsformat = "  %-15s%-15s %-3s\n"
+      class << self
+        attr_reader :fspattern, :fsformat
+      end
+
+      attr_reader :filesystems
 
       def initialize
-        
+        @filesystems = {}
       end
 
       def to_s
-
+        out = "-- Filesystem Quotas --\n"
+        if @filesystems.keys.length == 0 then
+          out += "  no quotas enabled"
+        else
+          out += "  Filesystem     Device          Status\n"
+          @filesystems.keys.sort.each do |fsname|
+            fs = @filesystems[fsname]
+            out += self.class.fsformat % [fsname, fs[:device], fs[:status]] 
+          end
+        end
+        out        
       end
 
       def to_xml
-
+        builder = Nokogiri::XML::Builder.new do |xml|
+          xml.quotas {
+            @filesystems.keys.sort.each do |fsname|
+              attrs = {
+                :name => fsname,
+                :device => @filesystems[fsname][:device],
+                :status => @filesystems[fsname][:status]
+              }
+              xml.filesystem(attrs)
+            end
+          }
+        end
+        builder.doc.root.to_xml
       end
 
       def to_json
+        fslist = []
+        
+        hash = {
+          :json_class => self.class.name,
+          :filesystems => fslist 
+        }
+        @filesystems.keys.sort.each do |fsname|
+          fs = @filesystems[fsname]
+          fslist << {
+            :name => fsname,
+            :device => fs[:device],
+            :status => fs[:status]
+          }
+        end
+        p self
 
+        json = JSON.generate(hash)
+        json
       end
 
       def self.json_create(o)
@@ -902,11 +949,24 @@ module Libra
       end
 
       def init(o)
-
+        p o
+        o[:filesystems].each do |fs|
+          @filesystems[fs[:name]] = {
+            :device => fs[:device],
+            :status => fs[:status]
+          }
+        end
+        self
       end
 
       def check
-
+        # list the filesystems with quotas and their initialzation status
+        response = `quotaon -u -p -a`
+        lines = response.split("\n")
+        lines.each do |line|
+          fs, dev, status = Regexp.last_match[1..3]
+          @filesystems[fs] = {:device => dev, :status => status }
+        end
       end
     end
 
