@@ -1,21 +1,21 @@
-require "rubygems"
+require 'rubygems'
 require 'fileutils'
-require "getoptlong"
-require "json"
-require "net/http"
-require "net/https"
-require "parseconfig"
+require 'getoptlong'
+require 'json'
+require 'net/http'
+require 'net/https'
+require 'parseconfig'
 require 'resolv'
-require "uri"
+require 'uri'
 
 
 module RHC
 
   Maxdlen = 16
   
-  TYPES = { "php-5.3.2" => :php,
-    "rack-1.1.0" => :rack,
-    "wsgi-3.2.1" => :wsgi
+  TYPES = { 'php-5.3.2' => :php,
+    'rack-1.1.0' => :rack,
+    'wsgi-3.2.1' => :wsgi
   }
   
   def self.get_type_keys(sep)
