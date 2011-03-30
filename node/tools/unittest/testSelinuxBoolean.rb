@@ -16,13 +16,13 @@ class TestSelinuxBoolean < Test::Unit::TestCase
   def testSelinuxBooleanToXml
     se0 = Libra::Node::SelinuxBoolean.new
     se0.check
-    puts sc0.to_xml
+    puts se0.to_xml
   end
 
   def testSelinuxBooleanToJson
     se0 = Libra::Node::SelinuxBoolean.new
     se0.check
-    puts sc0.to_json
+    puts se0.to_json
   end
 
   
