@@ -77,6 +77,11 @@ namespace :install do
       # Cartridge installation
       mkdir_p LIBEXEC_DIR
       cp_r "cartridges", LIBEXEC_DIR
+      Dir.glob("#{LIBEXEC_DIR}/cartridges/*").each do | dir |
+        chmod 0750, "#{dir}/info/hooks/"
+        chmod 0750, "#{dir}/info/data/"
+        chmod 0750, "#{dir}/info/build/"
+      end
       mkdir_p CONF_DIR
       sample_conf = Dir.glob("cartridges/li-controller*/**/node.conf-sample")[0]
       cp_r sample_conf, "#{CONF_DIR}/node.conf" unless File.exists? "#{CONF_DIR}/node.conf"
