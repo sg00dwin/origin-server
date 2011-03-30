@@ -117,7 +117,7 @@ module Libra
       # returns a non-zero error code, raise an exception
       #
       def run(cmd)
-          $logger.info("Running: #{cmd}")
+          $logger.info("(#{$$}) Running: #{cmd}")
 
           # Open up IO pipes for the sub process communication
           rd1, wr1 = IO.pipe
@@ -132,6 +132,7 @@ module Libra
             STDERR.reopen(wr2)
             STDOUT.sync = STDERR.sync = true
             exec(cmd)
+            $logger.error("(#{$$}) Execution failed #{cmd}")
             raise "Command execution failed - #{cmd}"
           end
 
@@ -143,13 +144,14 @@ module Libra
           Process.wait(pid)
           exit_code = $?.exitstatus
 
-          $logger.error("Standard Output:\n#{rd1.read}")
-          $logger.info("Standard Error:\n#{rd2.read}")
+          $logger.info("(#{$$}) Standard Output:\n#{rd1.read}")
+          $logger.info("(#{$$}) Standard Error:\n#{rd2.read}")
 
           # Close out the streams
           rd1.close
           rd2.close
 
+          $logger.error("(#{$$}): Execution failed #{cmd}") if exit_code != 0
           raise "ERROR - Non-zero (#{exit_code}) exit code for #{cmd}" if exit_code != 0
 
           return exit_code

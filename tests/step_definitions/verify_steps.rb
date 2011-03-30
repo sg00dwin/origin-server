@@ -168,3 +168,6 @@ Then /^they should be able to be changed$/ do
   uniq_responses.length.should == 1
   uniq_responses[0].should == "200"
 end
+
+Then /^no errors should be thrown$/ do
+end
