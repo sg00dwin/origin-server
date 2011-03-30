@@ -9,3 +9,4 @@ server/vendor/*
 server/.bundle
 server/log/*
 server/tmp/*
+Express.komodoproject

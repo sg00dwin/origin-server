@@ -8,7 +8,10 @@ require "parseconfig"
 require 'resolv'
 require "uri"
 
+
 module RHC
+
+  Maxdlen = 16
   
   TYPES = { "php-5.3.2" => :php,
     "rack-1.1.0" => :rack,
@@ -42,17 +45,21 @@ module RHC
   end
   
   def self.check_app(app)
-    check_field(app, 'application')
+    check_field(app, 'application', Maxdlen)
   end
   
   def self.check_namespace(namespace)
-    check_field(namespace, 'namespace')
+    check_field(namespace, 'namespace', Maxdlen)
   end
   
-  def self.check_field(field, type)
+  def self.check_field(field, type, max=0)
     if field
       if field =~ /[^0-9a-zA-Z]/
         puts "#{type} contains non-alphanumeric characters!"
+        return false
+      end
+      if max != 0 && field.length > Maxdlen
+        puts "maximum #{type} size is #{Maxdlen} characters"
         return false
       end
     else

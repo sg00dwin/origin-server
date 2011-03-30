@@ -35,7 +35,7 @@ def p_usage
 Usage: #{$0}
 Create a new app libra project.
 
-  -a|--app   application     Application name  (alphanumeric) (required)
+  -a|--app   application     Application name  (alphanumeric - max #{RHC::Maxdlen} chars) (required)
   -t|--type  type            Type of app to create (#{type_keys}) (required)
   -l|--rhlogin  rhlogin      RHCloud rhlogin  (alphanumeric) (#{rhlogin})
   -p|--password  password    RHLogin password  (alphanumeric) (optional, will prompt)
