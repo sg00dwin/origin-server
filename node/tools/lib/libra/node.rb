@@ -429,7 +429,7 @@ module Libra
       def to_s
         out = "-- Selinux --\n"
         out += "  Enabled = %s\n" % [ @enabled == nil ? "unknown" : @enabled.to_s ]
-        out += "  Enforcing = %s\n" % [ @enforcing = nil ? "unknown": @enforcing.to_s ]
+        out += "  Enforcing = %s\n" % [ @enforcing == nil ? "not applicable": @enforcing.to_s ] 
       end
 
       def to_xml
@@ -918,9 +918,9 @@ module Libra
           xml.quotas {
             @filesystems.keys.sort.each do |fsname|
               attrs = {
-                :name => fsname,
-                :device => @filesystems[fsname][:device],
-                :status => @filesystems[fsname][:status]
+                "name" => fsname,
+                "device" => @filesystems[fsname][:device],
+                "status" => @filesystems[fsname][:status]
               }
               xml.filesystem(attrs)
             end
@@ -933,15 +933,15 @@ module Libra
         fslist = []
         
         hash = {
-          :json_class => self.class.name,
-          :filesystems => fslist 
+          "json_class" => self.class.name,
+          "filesystems" => fslist 
         }
         @filesystems.keys.sort.each do |fsname|
           fs = @filesystems[fsname]
           fslist << {
-            :name => fsname,
-            :device => fs[:device],
-            :status => fs[:status]
+            "name" => fsname,
+            "device" => fs[:device],
+            "status" => fs[:status]
           }
         end
         p self
@@ -955,11 +955,10 @@ module Libra
       end
 
       def init(o)
-        p o
-        o[:filesystems].each do |fs|
-          @filesystems[fs[:name]] = {
-            :device => fs[:device],
-            :status => fs[:status]
+        o["filesystems"].each do |fs|
+          @filesystems[fs["name"]] = {
+            :device => fs["device"],
+            :status => fs["status"]
           }
         end
         self
@@ -1098,7 +1097,11 @@ module Libra
         out = "-- Selinux Booleans --\n"
         names = self.keys
         names.sort.each do |key|
-          out += "  #{key} = #{self[key]}\n"
+          if self[key] != nil then
+            out += "  #{key} = %s\n" % [self[key].to_s]
+          else
+            out += "  #{key} = unknown\n"
+          end
         end
         out
       end
@@ -1157,6 +1160,7 @@ module Libra
               
               self[key] = "error: " + error_message
             elsif disabled_pattern =~ line
+              self[key] = nil
               return nil
             else
               puts "Selinux: NO match for #{line}"
@@ -1173,6 +1177,9 @@ module Libra
               self[key] = value                          
             elsif error_pattern =~ line
               self[key] = error_pattern(1)
+            elsif disabled_pattern =~ line
+              self[key] = nil
+              return nil
             end
           end
         end
