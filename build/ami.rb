@@ -268,17 +268,6 @@ begin
         conn.terminate_instances([@instance])
       end
 
-      # A task to allow Jenkins to gracefully exit if the image is verified
-      task :already_verified => ["ami:prereqs"] do
-        # See if the current image is already verified
-        conn.describe_tags('Filter.1.Name' => 'resource-id', 'Filter.1.Value.1' => @ami).each do |tag|
-          if tag[:aws_key] == "Name" and tag[:aws_value] == VERIFIED_TAG
-            puts "EXITING - Image already verified"
-            exit 0
-          end
-        end
-      end
-
       # Make sure that an AMI is available to verify
       task :prereqs => ["ami:prereqs"] do
         # See if the image exists and is available
@@ -293,6 +282,17 @@ begin
           puts "EXITING - Image doesn't exist for current version"
         elsif images[0] != "available"
           puts "EXITING - Image exists but isn't available yet"
+        end
+      end
+
+      # A task to allow Jenkins to gracefully exit if the image is verified
+      task :already_verified => [:prereqs] do
+        # See if the current image is already verified
+        conn.describe_tags('Filter.1.Name' => 'resource-id', 'Filter.1.Value.1' => @ami).each do |tag|
+          if tag[:aws_key] == "Name" and tag[:aws_value] == VERIFIED_TAG
+            puts "EXITING - Image already verified"
+            exit 0
+          end
         end
       end
 

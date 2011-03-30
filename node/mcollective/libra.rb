@@ -1,7 +1,7 @@
 # = libra.rb: li integration for mcollective
 #
 # Author:: Mike McGrath
-# 
+#
 # Copyright © 2010 Mike McGrath All rights reserved
 # Copyright © 2010 Red Hat, Inc. All rights reserved
 #
@@ -19,7 +19,7 @@
 # permission of Red Hat, Inc.
 #
 # == Description
-# 
+#
 # libra.rb for mcollective does manipulation of libra services and customer
 # data.  This can start and stop services, create and destroy applications
 # as well as create new customers.
@@ -41,13 +41,13 @@ module MCollective
 
             #
             # Simple echo method
-            # 
+            #
             def echo_action
                 validate :msg, String
                 reply[:msg] = request[:msg]
             end
 
-            # 
+            #
             # Passes arguments to cartridge for use
             #
             def cartridge_do_action
@@ -59,7 +59,7 @@ module MCollective
                 args = request[:args]
                 reply[:output] = %x[/usr/bin/runcon -l s0-s0:c0.c1023 /usr/libexec/li/cartridges/#{cartridge}/info/hooks/#{action} #{args} 2>&1 ]
                 reply[:exitcode] = $?.exitstatus
-                reply.fail! "cartridge_action failed #{reply[:exitcode]}" unless reply[:exitcode] == 0
+                reply.fail! "cartridge_action failed #{reply[:exitcode]}.  Output #{reply[:output]}" unless reply[:exitcode] == 0
             end
             #
             # Creates a new customer.
@@ -97,7 +97,7 @@ module MCollective
             def create_git_action
                 execute_script('create_git')
             end
-            
+
             #
             # Executes an action
             #
