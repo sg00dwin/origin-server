@@ -128,8 +128,9 @@ module Libra
           pid = fork do
             rd1.close
             rd2.close
-            $stdout.reopen(wr1)
-            $stderr.reopen(wr2)
+            STDOUT.reopen(wr1)
+            STDERR.reopen(wr2)
+            STDOUT.sync = STDERR.sync = true
             exec(cmd)
             raise "Command execution failed - #{cmd}"
           end

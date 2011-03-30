@@ -78,7 +78,11 @@ Then /^they should all be accessible$/ do
         http.get("/health_check.php")
       end
       code = res.code
-    rescue Exception
+    rescue Exception => e
+      $logger.error "Exception trying to access #{host}"
+      $logger.error "Response code = #{code}"
+      $logger.error e.message
+      $logger.error e.backtrace
       code = -1
     end
 
@@ -88,7 +92,7 @@ Then /^they should all be accessible$/ do
 
   # Print out the results:
   #  Format = code - url
-  $logger.info("URL Results")
+  $logger.info("Accessibility Results")
   urls.each_pair do |url, code|
     $logger.info("#{code} - #{url}")
   end
@@ -130,7 +134,7 @@ Then /^they should be able to be changed$/ do
     $logger.info("host= #{host}")
     begin
       res = Net::HTTP.start(host, 80) do |http|
-        http.read_timeout = 60
+        http.read_timeout = 30
         http.get("/")
       end
 
@@ -138,8 +142,12 @@ Then /^they should be able to be changed$/ do
       code = res.code
 
       # Verify the content of the response
-      File.open(app_file, "rb") {|f| res.body.should == f.read}
-    rescue Exception
+      res.body.index("TEST").should_not == -1
+    rescue Exception => e
+      $logger.error "Exception trying to access #{host}"
+      $logger.error "Response code = #{code}"
+      $logger.error e.message
+      $logger.error e.backtrace
       code = -1
     end
 

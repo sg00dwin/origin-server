@@ -129,7 +129,7 @@ ssh_key = File.open(libra_kpfile).gets.chomp.split(' ')[1]
 
 puts "Contacting https://#{libra_server}"
 data = {'namespace' => opt['namespace'],
-                'rhlogin' => opt['rhlogin']
+                'rhlogin' => opt['rhlogin'],
                 'ssh' => ssh_key}
 if (opt['alter'])
   data['alter'] = "true"
