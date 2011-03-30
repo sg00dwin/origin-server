@@ -73,7 +73,7 @@ class EmailConfirmController < ApplicationController
         @errors[:unknown] = ERRORS[:unknown]
       end
 
-    rescue Net::HTTPBadResponse => e
+    rescue Exception => e
       logger.error e
       @errors[:unknown] = ERRORS[:unknown]
     ensure
