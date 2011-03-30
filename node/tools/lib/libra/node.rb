@@ -806,9 +806,22 @@ module Libra
 # ============================================================================
 
     class UserCgroups
+      #
+      # Check the initialization for User cgroups for libra:
+      #   1) cgroups mounted on /cgroup
+      #   2) all subsystems mounted on /cgroup/all (/)
+      #   3) all subsystems mounted on /cgroup/all/libra (/libra)
+      #   4) for each libra guest, /libra/<username> does not exist or
+      #      does not have the required subsystems
+      # 
 
       def initialize
-        
+        @enabled = nil
+        @mountpoint = nil
+        @root = nil
+        @libraroot = nil
+        @subsystems = nil
+        @usercount = nil
       end
 
       def to_s
@@ -844,10 +857,21 @@ module Libra
 
     class TrafficControl
       # check: enabled (true|false)
-      #        enforcing (true|false)
-      #        type (targeted|mls)
-      #        policy version
-      #        required booleans
+      # qdisc dev eth0
+      #
+      # from libra-tc
+      # USERNAME=$1
+      # Display status of traffic control status.
+      #if [ -z "$1" ]
+      #then
+      #  $TC -s qdisc ls dev $tc_if
+      #  $TC -s class ls dev $tc_if
+      #else
+      #  USERID=`uid $1`
+      #  NETCLASS=`netclass $USERID`
+      #  $TC -s class show dev $$tc_if classid 1:${NETCLASS}
+      #fi
+
 
       def initialize
         
