@@ -27,7 +27,7 @@
 # 3) place Libra service information: $HOME/etc/customer_info
 # 4) Place limits on user: number of processes
 
-# 
+#
 #
 # default values
 #
@@ -136,7 +136,7 @@ function home_filesystem {
 # Find the next available UID/GID pair
 function next_uid() {
 
-  # find the lowest number greater than or equal to 500 which is not used 
+  # find the lowest number greater than or equal to 500 which is not used
   # either as a UID or GID
   # Line 1: create a set of UID's from /etc/passwd
   # Line 2: create a set of GID's from /etc/group
@@ -156,30 +156,21 @@ print i
 # IN: username
 # IN: homeroot
 
-
 function create_user_account() {
     USERNAME=$1
 
-    # Don't depend on useradd to select the next UID/GID pair
-    NEXTUID=`next_uid`
-
     HOMEDIR=`homedir $USERNAME`
 
-    # check if the user can be identified already
-    id $USERNAME >/dev/null 2>&1
-    USEREXISTS=$?
+    (
+      flock -x -w 10 200
+      ${NOOP} useradd -u `next_uid` -d ${HOMEDIR} -s /usr/bin/trap-user -c 'libra guest' $USERNAME
 
-    if [ $USEREXISTS -ne 0 ]
-    then
-        ${NOOP} groupadd -g ${NEXTUID} ${USERNAME}
-
-	${NOOP} useradd -g ${USERNAME} -u ${NEXTUID} -d ${HOMEDIR} -s /usr/bin/trap-user -c "libra guest" $USERNAME
-	if [ $? -ne 0 ]
-        then
-	    echo "ERROR: unable to create user account $USERNAME"
-	    exit 1
-        fi
-    fi
+      if [ $? -ne 0 ]
+      then
+          echo "ERROR: unable to create user account $USERNAME"
+          exit 1
+      fi
+    ) 200>/var/lock/libra_create
     ${NOOP} chown "root.$USERNAME" "$HOMEDIR"
     ${NOOP} chmod 0750 "$HOMEDIR"
 }
@@ -233,7 +224,7 @@ function enable_user_ssh_access {
     USERNAME=$1
     USEREMAIL="$2"
     SSHKEY="$3"
-    
+
     USERHOME=`homedir $USERNAME`
     SSHDIR=${USERHOME}/.ssh
 
@@ -295,7 +286,7 @@ EOF
 #<domain>        <type>  <item>  <value>
 ${USERNAME}     hard    nproc   ${LIMITS_NPROC}
 EOF"
-	
+
     fi
 
     for KEY in $LIMITSVARS
@@ -340,8 +331,8 @@ function remove_pam_limits {
 #
 # If it is not, and the mount options contain 'bind' then search again using
 # dirname of the bind "device" path.
-# 
-# repeat until you find a terminal device 
+#
+# repeat until you find a terminal device
 #
 #function get_filesystem() {
 #    # $1=libra_dir
@@ -449,7 +440,7 @@ function set_fs_quotas {
     # USERNAME=$1
     # QUOTA_BLOCKS=${2:-$quota_blocks}
     # QUOTA_FILES=${3:-$quota_files}
-    
+
     # get the user home directory
     # get the quota mount point
     if quotas_configured
@@ -460,7 +451,7 @@ function set_fs_quotas {
 	else
 	    echo "WARNING: quotas not enabled on $libra_dir" >&2
 	fi
-	
+
     else
 	echo "WARNING: quotas not configured" >&2
     fi
@@ -518,6 +509,6 @@ else
     remove_fs_quotas $username
 
     remove_pam_limits $username
-    
+
     remove_user_account $username
 fi
