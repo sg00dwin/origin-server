@@ -257,7 +257,7 @@ else
 end
 
 #
-# Check for local var in ~/.li/libra.conf use it, else use /etc/libra/libra.conf
+# Check for local var in ~/.li/libra.conf use it, else use $GEM/../conf/libra.conf
 #
 def get_var(var)
   @local_config.get_value(var) ? @local_config.get_value(var) : @global_config.get_value(var)
