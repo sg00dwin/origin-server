@@ -277,13 +277,13 @@ File.chmod(0600, ssh_config)
 #
 # Confirm that the host exists in DNS
 #
-puts "Confirming that host exists..."
+puts "Confirming host exists..."
 loop = 0
 sleep_time = 2.5
 while loop < 5 && !hostexist?(my_url)
     sleep sleep_time *= 2
     loop+=1
-    puts "  retry # #{loop} - #{my_url}"
+    puts "  retry # #{loop} - Waiting for DNS: #{my_url}"
 end
 
 if loop == 5
