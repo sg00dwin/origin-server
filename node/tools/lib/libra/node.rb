@@ -49,11 +49,11 @@ module Libra
       end
 
       @checks = [ 
-                 :hostinfo, :sysctl, :selinux, :sebool, 
+                 :hostinfo, :filesystems, :sysctl, :selinux, :sebool, 
                  :ntpd, :qpidd, :mcollectived, :cgconfig, :cgred, :httpd 
                 ]
 
-      @sebooleans = ["httpd_can_network_connect"]
+      @sebooleans = ["httpd_can_network_relay"]
       @sysctl = ["kernel.sem"]
       
       attr_reader :hostinfo, :ntpd, :qppid, :mcollectived
@@ -61,6 +61,7 @@ module Libra
       def initialize(*checks)
         
         @hostinfo = Libra::Node::HostInfo.new
+        @filesystems = Libra::Node::Filesystems.new
         @sysctl = Libra::Node::Sysctl.new self.class.sysctl
         @selinux = Libra::Node::Selinux.new
         @sebool = Libra::Node::SelinuxBoolean.new self.class.sebooleans
@@ -83,6 +84,7 @@ module Libra
         out = "=" * fillcount + " " + title + " " + "=" * fillcount + "\n"
 
         out += @hostinfo.to_s + "\n" if @hostinfo
+        out += @filesystems.to_s + "\n" if @filesystems
         out += @sysctl.to_s + "\n" if @sysctl
         out += @selinux.to_s + "\n" if @selinux
         out += @sebool.to_s + "\n" if @sebool
@@ -101,6 +103,7 @@ module Libra
         builder = Nokogiri::XML::Builder.new do |xml|
           xml.status {
             xml << @hostinfo.to_xml if @hostinfo
+            xml << @filesystems.to_xml if @filesystems
             xml << @sysctl.to_xml if @sysctl
             xml << @selinux.to_xml if @selinux
             xml << @sebool.to_xml if @sebool
@@ -120,6 +123,7 @@ module Libra
           "json_class" => self.class.name
         }
         hash['hostinfo'] = @hostinfo.to_json if @hostinfo
+        hash['filesystems'] = @filesystems.to_json if @filesystems
         hash['sysctl'] = @sysctl.to_json if @sysctl
         hash['selinux'] = @selinux.to_json if @selinux
         hash['sebool'] = @sebool.to_json if @sebool
@@ -151,6 +155,8 @@ module Libra
           case csym
           when :hostinfo
             @hostinfo.check
+          when :filesystems
+            @filesystems.check
           when :sysctl
             @sysctl.check
           when :selinux
@@ -241,18 +247,18 @@ module Libra
 
 # ============================================================================
 #
-# Disk Usage
+# Filesystems
 #
 # ============================================================================
 
-    class DiskUsage
+    class Filesystems
 
       def initialize
         @filesystems = nil
       end
 
       def to_s
-        out = "-- Disk Usage --\n"
+        out = "-- File Systems --\n"
         out += "  Filesystem       1K-blocks     Used Available Use% Mounted on\n"
         @filesystems.keys.sort.each do |fsname|
           fs = @filesystems[fsname]
