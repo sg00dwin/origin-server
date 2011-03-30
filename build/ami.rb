@@ -18,6 +18,7 @@ begin
     BUILD_REGEX = /^builder-li-\d+\.\d+/
     PREFIX = ENV['LIBRA_DEV'] ? ENV['LIBRA_DEV'] + "-" : ""
     VERIFIER_REGEX = /^#{PREFIX}verifier-li-\d+\.\d+/
+    VERIFIED_TAG = "qe-ready"
     BREW_LI = "https://brewweb.devel.redhat.com/packageinfo?packageID=31345"
     GIT_REPO_PUPPET = "ssh://puppet1.ops.rhcloud.com/srv/git/puppet.git"
     CONTENT_TREE = {'puppet' => '/etc/puppet'}
@@ -271,7 +272,7 @@ begin
       task :already_verified => ["ami:prereqs"] do
         # See if the current image is already verified
         conn.describe_tags('Filter.1.Name' => 'resource-id', 'Filter.1.Value.1' => @ami).each do |tag|
-          if tag[:aws_key] == "Name" and tag[:aws_value] == "dev-verified"
+          if tag[:aws_key] == "Name" and tag[:aws_value] == VERIFIED_TAG
             puts "EXITING - Image already verified"
             exit 0
           end
@@ -367,8 +368,8 @@ begin
             fail "ERROR - Non-zero exit code from tests (exit: #{p.exitstatus})"
           end
 
-          print "Tagging image as 'qe-ready'..."
-          conn.create_tag(@ami, 'Name', "qe-ready") unless ENV['LIBRA_DEV']
+          print "Tagging image as '#{VERIFIED_TAG}'..."
+          conn.create_tag(@ami, 'Name', VERIFIED_TAG) unless ENV['LIBRA_DEV']
           puts "Done"
         ensure
           unless ENV['LIBRA_DEV']
