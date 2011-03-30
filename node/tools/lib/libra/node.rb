@@ -53,7 +53,7 @@ module Libra
                  :ntpd, :qpidd, :mcollectived, :cgconfig, :cgred, :httpd 
                 ]
 
-      @sebooleans = ["httpd_can_network_connect"]
+      @sebooleans = ["httpd_can_network_relay"]
       @sysctl = ["kernel.sem"]
       
       attr_reader :hostinfo, :ntpd, :qppid, :mcollectived
