@@ -78,7 +78,7 @@ Then /^they should all be accessible$/ do
         http.get("/health_check.php")
       end
       code = res.code
-    rescue Exception
+    rescue Exception => e
       $logger.error "Exception trying to access #{host}"
       $logger.error "Response code = #{code}"
       $logger.error e.message
