@@ -154,14 +154,19 @@ module RHC
       http.use_ssl = true
       http.verify_mode = OpenSSL::SSL::VERIFY_NONE
     end
-    response = http.start {|http| http.request(req)}
-    if response.code == '404' && response.content_type == 'text/html'
-      # TODO probably want to remove this at some point
-      puts "!!!! WARNING !!!! WARNING !!!! WARNING !!!!"
-      puts "RHCloud server not found.  You might want to try updating your rhc client tools."
-      exit 218
+    begin
+      response = http.start {|http| http.request(req)}
+      if response.code == '404' && response.content_type == 'text/html'
+        # TODO probably want to remove this at some point
+        puts "!!!! WARNING !!!! WARNING !!!! WARNING !!!!"
+        puts "RHCloud server not found.  You might want to try updating your rhc client tools."
+        exit 218
+      end
+      response
+    rescue Exception => e
+      puts "Unable to communicate with server. Response message: #{e.message}"
+      exit 219
     end
-    response
   end
   
   def self.print_response_err(response, debug)

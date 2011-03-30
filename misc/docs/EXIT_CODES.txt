@@ -15,6 +15,7 @@ User errors:
 216: Error in git pull
 217: Destroy aborted
 218: Not found response from request.  Possibly need to update client tools.
+219: Unable to communicate with server
 253: Could not open config file
 254: Unknown error
 255: Usage error
