@@ -101,7 +101,7 @@ def add_rhlogin_config(rhlogin, uuid)
         f.puts("")
     end
     unless @local_config.get_value(rhlogin)
-        puts "Adding rhlogin to #{ENV['HOME']}/.li"
+        puts "Adding rhlogin to #{ENV['HOME']}/.li/libra.conf"
         f.puts("#{rhlogin}=#{uuid}")
     end
     f.close
