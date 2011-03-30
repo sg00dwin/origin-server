@@ -9,4 +9,5 @@ module Libra
   class CartridgeException < LibraException; end
   class UserException < LibraException; end
   class NodeException < LibraException; end
+  class UserValidationException < LibraException; end
 end
