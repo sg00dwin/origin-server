@@ -5,6 +5,7 @@ require 'timeout'
 require 'logger'
 require 'fileutils'
 require 'open3'
+require 'pp'
 
 World(MCollective::RPC)
 
@@ -35,36 +36,6 @@ module Libra
   module Test
     module User
       #
-      # Obtain a unique namespace from S3.
-      #
-      #   reserved_namespace = A list of reserved namespaces that may
-      #     not be in the global store
-      #
-      def get_unique_namespace(reserved_namespaces=[])
-        result=nil
-
-        loop do
-          # Generate a random username
-          chars = ("1".."9").to_a
-          namespace = "sprint-ns-" + Array.new(5, '').collect{chars[rand(chars.size)]}.join
-          $logger.info("li - checking availability of namespace = #{namespace}")
-
-          records = Libra::Server.get_dns_txt(namespace)
-
-          $logger.info("li - namespace lookup result = #{records}")
-
-          unless !records.empty? or reserved_namespaces.index(namespace)
-            result = namespace
-            break
-          end
-        end
-
-        $logger.info("li - returning namespace = #{result}")
-
-        return result
-      end
-
-      #
       # Obtain a unique username from S3.
       #
       #   reserved_usernames = A list of reserved names that may
@@ -76,15 +47,18 @@ module Libra
         loop do
           # Generate a random username
           chars = ("1".."9").to_a
-          username = "sprint" + Array.new(5, '').collect{chars[rand(chars.size)]}.join
-          $logger.info("li - checking availability of username = #{username}")
+          namespace = "ci" + Array.new(8, '').collect{chars[rand(chars.size)]}.join
+          login = "libra-test+#{namespace}@redhat.com"
+          $logger.info("li - checking availability of namespace = #{namespace}")
+          records = Libra::Server.get_dns_txt(namespace)
+          $logger.info("li - records = #{records.pretty_inspect}")
 
-          user = Libra::User.find(username)
+          $logger.info("li - checking availability of login = #{login}")
+          user = Libra::User.find(login)
+          $logger.info("li - user = #{user.pretty_inspect}")
 
-          $logger.info("li - username lookup result = #{user}")
-
-          unless user or reserved_usernames.index(username)
-            result = username
+          unless user or !records.empty? or reserved_usernames.index(login)
+            result = login
             break
           end
         end

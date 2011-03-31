@@ -57,9 +57,12 @@ module MCollective
                 cartridge = request[:cartridge]
                 action = request[:action]
                 args = request[:args]
-                reply[:output] = %x[/usr/bin/runcon -l s0-s0:c0.c1023 /usr/libexec/li/cartridges/#{cartridge}/info/hooks/#{action} #{args} 2>&1 ]
-                reply[:exitcode] = $?.exitstatus
-                reply.fail! "cartridge_action failed #{reply[:exitcode]}.  Output #{reply[:output]}" unless reply[:exitcode] == 0
+                output = %x[/usr/bin/runcon -l s0-s0:c0.c1023 /usr/libexec/li/cartridges/#{cartridge}/info/hooks/#{action} #{args} 2>&1 ]
+                exitcode = $?.exitstatus
+                Log.instance.debug("cartridge_do_action (#{exitcode}\n------\n#{output}\n------)")
+                reply[:output] = output
+                reply[:exitcode] = exitcode
+                reply.fail! "cartridge_action failed #{exitcode}.  Output #{output}" unless exitcode == 0
             end
             #
             # Creates a new customer.

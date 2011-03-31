@@ -34,7 +34,7 @@ When /the applications are created$/ do
     # if at max, wait for some to finish and keep going
 
     processes << fork do
-      login = "libra-ci1+#{username}@redhat.com"
+      login = "libra-test+#{username}@redhat.com"
       # Create the user and the apps
       run("#{$create_domain_script} -n #{username} -l #{login} -p fakepw -d")
       @apps.each do |app|

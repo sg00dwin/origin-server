@@ -31,7 +31,7 @@ Display information about a user
   -l|--rhlogin   rhlogin    RHCloud rhlogin (alphanumeric) (#{rhlogin})
   -a|--app                  Target application to snapshot (required)
   -s|--save                 Local path to save tarball (default: ./$APPNAME.tar.gz)
-  -p|--password  password   RHLogin password (alphanumeric) (optional, will prompt)
+  -p|--password  password   RHLogin password (optional, will prompt)
   -d|--debug                Print Debug info
   -h|--help                 Show Usage info
 
@@ -39,14 +39,23 @@ USAGE
 exit 255
 end
 
-opts = GetoptLong.new(
-    ["--debug", "-d", GetoptLong::NO_ARGUMENT],
-    ["--help",  "-h", GetoptLong::NO_ARGUMENT],
-    ["--app",  "-a", GetoptLong::REQUIRED_ARGUMENT],
-    ["--save",  "-s", GetoptLong::OPTIONAL_ARGUMENT],
-    ["--rhlogin",  "-l", GetoptLong::REQUIRED_ARGUMENT],
-    ["--password",  "-p", GetoptLong::OPTIONAL_ARGUMENT]
-)
+begin
+    opts = GetoptLong.new(
+        ["--debug", "-d", GetoptLong::NO_ARGUMENT],
+        ["--help",  "-h", GetoptLong::NO_ARGUMENT],
+        ["--app",  "-a", GetoptLong::REQUIRED_ARGUMENT],
+        ["--save",  "-s", GetoptLong::OPTIONAL_ARGUMENT],
+        ["--rhlogin",  "-l", GetoptLong::REQUIRED_ARGUMENT],
+        ["--password",  "-p", GetoptLong::OPTIONAL_ARGUMENT]
+    )
+    opt = {}
+    opts.each do |o, a|
+        opt[o[2..-1]] = a.to_s
+    end
+rescue Exception => e
+  #puts e.message
+    p_usage
+end
 
 # Pull in configs from files
 libra_server = get_var('libra_server')
@@ -55,11 +64,6 @@ libra_domain = get_var('libra_domain')
 
 libra_kfile = "#{ENV['HOME']}/.ssh/libra_id_rsa"
 libra_kpfile = "#{ENV['HOME']}/.ssh/libra_id_rsa.pub"
-
-opt = {}
-opts.each do |o, a|
-    opt[o[2..-1]] = a.to_s
-end
 
 if opt["help"] || !opt['app']
     p_usage

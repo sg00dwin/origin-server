@@ -36,21 +36,6 @@ namespace :rpm do
       sh "rpmbuild -bs #{@buildroot}/SPECS/li.spec"
   end
 
-  task :test_srpm => [:buildroot, :commit_check] do
-      @version = "0.1"
-
-      # Archive the git repository and compress it for the SOURCES
-      src = "#{@buildroot}/SOURCES/li-tests-#{@version}.tar"
-      sh "git archive --prefix=li-tests-#{@version}/ #{TARGET_BRANCH} --output #{src}"
-      sh "gzip -f #{src}"
-
-      # Move the SPEC file out
-      cp File.dirname(File.expand_path(__FILE__)) + "/specs/li-tests.spec", "#{@buildroot}/SPECS"
-
-      # Build the source RPM
-      sh "rpmbuild -bs #{@buildroot}/SPECS/li-tests.spec"
-  end
-
   task :bump_release => [:version, :commit_check] do
       # Bump the version number
       @version = @version.succ
