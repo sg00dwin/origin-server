@@ -230,7 +230,7 @@ begin
       desc "Create a new AMI from the latest li build"
       task :new => [:exists, "ami:builder:start"] do
         tag = @existing ? "#{@version}-update" : "#{@version}-clean"
-        print "Registering AMI #{image}..."
+        print "Registering AMI #{@version}..."
         image = conn.create_image(@instance, tag)
         puts "Done"
       end
