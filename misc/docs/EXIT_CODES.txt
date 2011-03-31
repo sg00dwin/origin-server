@@ -23,6 +23,7 @@ User errors:
 Uncommon server errors:
 140: No nodes available.  If the problem persists please contact Red Hat support.
 141: Cartridge Exception.
+142: Application is registered to an invalid node.  If the problem persists please contact Red Hat support.
 143: Node execution failure.  If the problem persists please contact Red Hat support.
 144: Error communicating with user validation system.  If the problem persists please contact Red Hat support.
 
