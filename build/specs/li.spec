@@ -3,7 +3,7 @@
 
 Name: li
 Version: 0.61
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -394,6 +394,9 @@ chmod 0666 %{_localstatedir}/www/libra/log/production.log
 %{_libexecdir}/li/cartridges/wsgi-3.2.1/
 
 %changelog
+* Fri Mar 31 2011 Mike McGrath <mmcgrath@redhat.com> 0.62-2
+- Release bump
+
 * Thu Mar 30 2011 Mike McGrath <mmcgrath@redhat.com> 0.61-1
 - Prepping for tomorrows release
 
