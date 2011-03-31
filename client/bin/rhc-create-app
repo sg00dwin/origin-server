@@ -48,16 +48,25 @@ USAGE
 exit 255
 end
 
-opts = GetoptLong.new(
-    ["--debug", "-d", GetoptLong::NO_ARGUMENT],
-    ["--help",  "-h", GetoptLong::NO_ARGUMENT],
-    ["--nogit", "-n", GetoptLong::NO_ARGUMENT],
-    ["--rhlogin",  "-l", GetoptLong::OPTIONAL_ARGUMENT],
-    ["--password",  "-p", GetoptLong::OPTIONAL_ARGUMENT],
-    ["--app",   "-a", GetoptLong::REQUIRED_ARGUMENT],
-    ["--repo",  "-r", GetoptLong::OPTIONAL_ARGUMENT],
-    ["--type",  "-t", GetoptLong::REQUIRED_ARGUMENT]
-)
+begin
+    opts = GetoptLong.new(
+        ["--debug", "-d", GetoptLong::NO_ARGUMENT],
+        ["--help",  "-h", GetoptLong::NO_ARGUMENT],
+        ["--nogit", "-n", GetoptLong::NO_ARGUMENT],
+        ["--rhlogin",  "-l", GetoptLong::OPTIONAL_ARGUMENT],
+        ["--password",  "-p", GetoptLong::OPTIONAL_ARGUMENT],
+        ["--app",   "-a", GetoptLong::REQUIRED_ARGUMENT],
+        ["--repo",  "-r", GetoptLong::OPTIONAL_ARGUMENT],
+        ["--type",  "-t", GetoptLong::REQUIRED_ARGUMENT]
+    )
+    opt = {}
+    opts.each do |o, a|
+        opt[o[2..-1]] = a.to_s
+    end
+rescue Exception => e
+  #puts e.message
+    p_usage
+end
 
 # Pull in configs from files
 libra_domain = get_var('libra_domain')
@@ -66,11 +75,6 @@ debug = get_var('debug') == 'false' ? nil : get_var('debug')
 
 ssh_config = "#{ENV['HOME']}/.ssh/config"
 ssh_config_d = "#{ENV['HOME']}/.ssh/"
-
-opt = {}
-opts.each do |o, a|
-    opt[o[2..-1]] = a.to_s
-end
 
 if opt["help"]
     p_usage
