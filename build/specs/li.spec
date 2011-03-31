@@ -196,6 +196,8 @@ chkconfig qpidd on
 
 # mcollective
 /bin/cp -f /etc/libra/devenv/client.cfg /etc/libra/devenv/server.cfg /etc/mcollective
+/bin/touch /tmp/mcollective-client.log
+/bin/chmod 0666 /tmp/mcollective-client.log
 service mcollective start
 chkconfig mcollective on
 
@@ -240,6 +242,9 @@ crontab -u root /etc/libra/devenv/crontab
 
 # Libra
 /bin/cp -f /etc/libra/devenv/libra.conf /etc/libra/devenv/node.conf /etc/libra/devenv/controller.conf /etc/libra
+
+# Debugging utilities
+/bin/cp -f /etc/libra/devenv/li-log-util /usr/bin/li-log-util
 
 # enable disk quotas
 /usr/bin/rhc-init-quota
