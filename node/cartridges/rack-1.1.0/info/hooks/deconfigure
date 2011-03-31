@@ -97,6 +97,7 @@ destroy_repo $application $uuid
 #
 
 runuser --shell /bin/sh "$uuid" $APP_DIR/${application}_ctl.sh stop || echo "Failed to stop ${application}" 1>&2
+/usr/sbin/lsof -t "$APP_DIR/logs/error_log" | /usr/bin/xargs /bin/kill -9
 
 # Confirm pid is gone before removing apps
 i=0
