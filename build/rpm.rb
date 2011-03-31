@@ -81,8 +81,8 @@ namespace :rpm do
   end
 
   desc "Mash rhel-6-libra-candidate repo from brew"
-  task :mash-candidate do
-      if ! File.exists?("/etc/mash/li.mash")
+  task :mash_candidate do
+      if ! File.exists?("/etc/mash/rhel-6-libra-candidate.mash")
           puts
           puts "Please install and configure mash.  Read misc/BREW for setup steps"
           puts
@@ -92,8 +92,8 @@ namespace :rpm do
   end
 
   desc "Mash rhel-6-libra repo from brew"
-  task :mash-candidate do
-      if ! File.exists?("/etc/mash/li.mash")
+  task :mash_official do
+      if ! File.exists?("/etc/mash/rhel-6-libra.mash")
           puts
           puts "Please install and configure mash.  Read misc/BREW for setup steps"
           puts
