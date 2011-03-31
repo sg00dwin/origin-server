@@ -113,7 +113,7 @@ module Libra
     #
     def validate_app_limit
       num_apps = apps.length
-      Libra.client_debug "DEBUG: Validating application limit #{@rhlogin}: num of apps(#{num_apps.to_s}) must be < app limit (#{Libra.c[:per_user_app_limit]})" if Libra.c[:rpc_opts][:verbose]
+      Libra.client_debug "Validating application limit #{@rhlogin}: num of apps(#{num_apps.to_s}) must be < app limit (#{Libra.c[:per_user_app_limit]})" if Libra.c[:rpc_opts][:verbose]
       if (num_apps >= Libra.c[:per_user_app_limit])
         raise UserException.new(104), "#{@rhlogin} has already reached the application limit of #{Libra.c[:per_user_app_limit]}", caller[0..5]
       end
@@ -210,9 +210,10 @@ module Libra
     #
     # Create's an S3 cache of the app for easy tracking and verification
     #
-    def create_app(app_name, framework,
+    def create_app(app_name, framework, server,
                     creation_time=DateTime::now().strftime)
       json = JSON.generate({:framework => framework,
+                            :server_identity => server.name,
                             :creation_time => creation_time})
       Helper.s3.put(Libra.c[:s3_bucket],
                     "user_info/#{@rhlogin}/apps/#{app_name}.json", json)
