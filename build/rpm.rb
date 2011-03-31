@@ -80,14 +80,26 @@ namespace :rpm do
       sh "make build"
   end
 
-  desc "Build mash repo from latest li builds"
-  task :mash do
+  desc "Mash rhel-6-libra-candidate repo from brew"
+  task :mash-candidate do
       if ! File.exists?("/etc/mash/li.mash")
           puts
           puts "Please install and configure mash.  Read misc/BREW for setup steps"
           puts
           exit 222
       end
-      sh "/usr/bin/mash -o /tmp/li -c /etc/mash/li-mash.conf li"
+      sh "/usr/bin/mash -o /tmp/rhel-6-libra-candidate -c /etc/mash/li-mash.conf rhel-6-libra-candidate"
   end
+
+  desc "Mash rhel-6-libra repo from brew"
+  task :mash-candidate do
+      if ! File.exists?("/etc/mash/li.mash")
+          puts
+          puts "Please install and configure mash.  Read misc/BREW for setup steps"
+          puts
+          exit 222
+      end
+      sh "/usr/bin/mash -o /tmp/rhel-6-libra -c /etc/mash/li-mash.conf rhel-6-libra"
+  end
+
 end

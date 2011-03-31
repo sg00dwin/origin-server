@@ -1,13 +1,13 @@
 # mash config file
 
-[li]
+[rhel-6-libra]
 rpm_path = %(arch)s/Packages
 repodata_path = %(arch)s/
 source_path = source/SRPMS
 debuginfo = True
 #multilib = True
 #multilib_method = devel
-tag = rhel-6-libra-candidate
+tag = rhel-6-libra
 inherit = False
 strict_keys = True
 #keys = 97A1071F, E8E40FDE, 57BBCCBA, D22E77F2, 4EBFC273, 0B86274E, 6DF2196F, DF9B0AE9
