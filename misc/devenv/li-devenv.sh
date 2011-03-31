@@ -5,21 +5,21 @@ rpm -Uhv http://209.132.178.9/gpxe/trees/li/rhel/6/x86_64/rhel6-and-optional-0.1
 cat > /etc/yum.repos.d/li.repo <<EOF
 [li]
 name=Li repo for Enterprise Linux 6 - \$basearch
-baseurl=http://209.132.178.9/gpxe/trees/li-mash/\$basearch/
+baseurl=http://209.132.178.9/gpxe/trees/rhel-6-libra-candidate/\$basearch/
 failovermethod=priority
 enabled=1
-gpgcheck=1
+gpgcheck=0
 gpgkey=http://209.132.178.9/gpxe/trees/RPM-GPG-KEY-redhat-beta
 ggpkey=http://209.132.178.9/gpxe/trees/RPM-GPG-KEY-redhat-release
 
 [li-source]
 name=Li repo for Enterprise Linux 6 - Source
-baseurl=http://209.132.178.9/gpxe/trees/li-mash/source/SRPMS/
+baseurl=http://209.132.178.9/gpxe/trees/rhel-6-libra-candidate/source/SRPMS/
 failovermethod=priority
 enabled=0
 gpgkey=http://209.132.178.9/gpxe/trees/RPM-GPG-KEY-redhat-beta
 ggpkey=http://209.132.178.9/gpxe/trees/RPM-GPG-KEY-redhat-release
-gpgcheck=1
+gpgcheck=0
 
 [qpid]
 name=Qpid repo
