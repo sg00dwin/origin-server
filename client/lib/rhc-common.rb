@@ -164,7 +164,9 @@ module RHC
       end
       response
     rescue Exception => e
-      puts "Unable to communicate with server. Response message: #{e.message}"
+      puts "There was a problem communicating with the server. Response message: #{e.message}"
+      puts "If you were disconnected it is possible the operation finished without being able to report success."  
+      puts "You can use rhc-user-info and rhc-ctl-app to learn about the status of your user and application(s)."
       exit 219
     end
   end
