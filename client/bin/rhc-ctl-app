@@ -36,7 +36,7 @@ Control a libra app
 
   -a|--app   application   Application name  (alphanumeric) (required)
   -l|--rhlogin rhlogin     Red Hat login  (alphanumeric) (#{rhlogin})
-  -p|--password password   RHLogin password  (alphanumeric) (optional, will prompt)
+  -p|--password password   RHLogin password  (optional, will prompt)
   -c|--command command     (start|stop|restart|reload|status|destroy)
   -b|--bypass              Bypass warnings
   -d|--debug               Print Debug info

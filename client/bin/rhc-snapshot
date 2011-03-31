@@ -31,7 +31,7 @@ Display information about a user
   -l|--rhlogin   rhlogin    RHCloud rhlogin (alphanumeric) (#{rhlogin})
   -a|--app                  Target application to snapshot (required)
   -s|--save                 Local path to save tarball (default: ./$APPNAME.tar.gz)
-  -p|--password  password   RHLogin password (alphanumeric) (optional, will prompt)
+  -p|--password  password   RHLogin password (optional, will prompt)
   -d|--debug                Print Debug info
   -h|--help                 Show Usage info
 

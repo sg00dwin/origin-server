@@ -37,7 +37,7 @@ Usage: rhc-user-info
 Display information about a user
 
   -l|--rhlogin   rhlogin    RHCloud rhlogin (alphanumeric) (#{rhlogin})
-  -p|--password  password   RHLogin password (alphanumeric) (optional, will prompt)
+  -p|--password  password   RHLogin password (optional, will prompt)
   -a|--apps                 List applications for rhlogin
   -i|--info                 Show user info
   -d|--debug                Print Debug info
