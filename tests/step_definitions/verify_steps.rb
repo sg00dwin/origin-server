@@ -12,7 +12,7 @@ end
 Given /^the following test data$/ do |table|
   table.hashes.each do |row|
     @max_processes = row['processes'].to_i
-    @usernames = Array.new(row['users'].to_i)
+    @namespaces = Array.new(row['users'].to_i)
     @apps = (row['apps'].to_i).times.collect{|num| "app#{num}" }
     @type = row['type']
   end
@@ -21,24 +21,26 @@ end
 When /the applications are created$/ do
   processes = []
 
-  # Limit loop on the number of users established in a previous step
-  @usernames.each_with_index do |data, index|
-    # Get a unique username to create in the forked process
-    # and add it to the list of reserved usernames to avoid
+  # Limit loop on the number of namespaces established in a previous step
+  @namespaces.each_with_index do |data, index|
+    # Get a unique namespace to create in the forked process
+    # and add it to the list of reserved namespaces to avoid
     # race conditions of duplicate users
-    username = get_unique_username(@usernames)
-    @usernames[index] = username
+    info = get_unique_username(@namespaces)
+    namespace = info[:namespace]
+    login = info[:login]
+    @namespaces[index] = namespace
 
     # Create the users in subprocesses
     # Count the current sub processes
     # if at max, wait for some to finish and keep going
 
     processes << fork do
-      login = "libra-test+#{username}@redhat.com"
+      login = "libra-test+#{namespace}@redhat.com"
       # Create the user and the apps
-      run("#{$create_domain_script} -n #{username} -l #{login} -p fakepw -d")
+      run("#{$create_domain_script} -n #{namespace} -l #{login} -p fakepw -d")
       @apps.each do |app|
-        run("#{$create_app_script} -l #{login} -a #{app} -r #{$temp}/#{username}_#{app}_repo -t #{@type} -p fakepw -d")
+        run("#{$create_app_script} -l #{login} -a #{app} -r #{$temp}/#{namespace}_#{app}_repo -t #{@type} -p fakepw -d")
       end
     end
 
@@ -63,8 +65,8 @@ When /the applications are created$/ do
 end
 
 Then /^they should all be accessible$/ do
-  # Generate the 'product' of username / app combinations
-  user_apps = @usernames.product(@apps)
+  # Generate the 'product' of namespace / app combinations
+  user_apps = @namespaces.product(@apps)
 
   urls = {}
   # Hit the health check page for each app
@@ -106,8 +108,8 @@ end
 
 
 Then /^they should be able to be changed$/ do
-  # Generate the 'product' of username / app combinations
-  user_apps = @usernames.product(@apps)
+  # Generate the 'product' of namespace / app combinations
+  user_apps = @namespaces.product(@apps)
 
   # Make a change and push it
   urls = {}

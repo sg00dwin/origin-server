@@ -42,7 +42,7 @@ module Libra
       #     not be in the global store
       #
       def get_unique_username(reserved_usernames=[])
-        result=nil
+        result={}
 
         loop do
           # Generate a random username
@@ -58,7 +58,8 @@ module Libra
           $logger.info("li - user = #{user.pretty_inspect}")
 
           unless user or !records.empty? or reserved_usernames.index(login)
-            result = login
+            result[:login] = login
+            result[:namespace] = namespace
             break
           end
         end
