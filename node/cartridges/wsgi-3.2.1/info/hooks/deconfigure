@@ -96,9 +96,7 @@ destroy_repo $application $uuid
 [ ! -d "$APP_DIR" ] && echo "${application} does not exist" 1>&2
 
 runuser --shell /bin/sh "$uuid" $APP_DIR/${application}_ctl.sh stop || echo "Failed to stop ${application}" 1>&2
-
-range_one=$(echo $IP | awk -F\. '{ print $3 }')
-range_two=$(echo $IP | awk -F\. '{ print $4 }')
+/usr/sbin/lsof -t "$APP_DIR/logs/error_log" | /usr/bin/xargs /bin/kill -9
 
 
 # Confirm pid is gone before removing apps
@@ -108,7 +106,6 @@ while [ -f ${APP_DIR}/run/httpd.pid ] && [ $i -lt 30 ]
     sleep .1
     i=$(($i + 1))
 done
-#rm -rf "$APP_DIR"
 runcon -l s0-s0:c0.c1023 rm -rf "$APP_DIR"
 
 #
