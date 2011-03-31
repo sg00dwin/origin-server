@@ -113,13 +113,24 @@ EOF
       nsupdate_input_template = <<EOF
 "server #{Libra.c[:resolver]}
 zone #{Libra.c[:libra_domain]}
-update delete #{namespace}.#{Libra.c[:libra_domain]}
 update add #{namespace}.#{Libra.c[:libra_domain]} 60 TXT 'Text record for #{namespace}'
 send"
 EOF
-
       execute_nsupdate(nsupdate_input_template)
     end
+    
+    #
+    # Remove a DNS txt entry for new namespace
+    #
+    def self.nsupdate_delete_txt(namespace)
+      nsupdate_input_template = <<EOF
+"server #{Libra.c[:resolver]}
+zone #{Libra.c[:libra_domain]}
+update delete #{namespace}.#{Libra.c[:libra_domain]} TXT
+send"
+EOF
+      execute_nsupdate(nsupdate_input_template)
+    end    
 
     def self.execute_nsupdate(nsupdate_input_template)
       nsupdate_string = eval nsupdate_input_template

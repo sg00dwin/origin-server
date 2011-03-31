@@ -40,14 +40,34 @@ module Libra
     def self.create(rhlogin, ssh, namespace)
       raise UserException.new(102), "A user with RHLogin '#{rhlogin}' already exists", caller[0..5] if find(rhlogin)
       raise UserException.new(103), "A namespace with name '#{namespace}' already exists", caller[0..5] if Server.get_dns_txt(namespace).length > 0
+      Libra.client_debug "Creating user entry rhlogin:#{rhlogin} ssh:#{ssh} namespace:#{namespace}" if Libra.c[:rpc_opts][:verbose]
       # TODO bit of a race condition here (can nsupdate fail on exists?)
       Server.nsupdate_add_txt(namespace)
-      Libra.client_debug "DEBUG: Creating user entry rhlogin:#{rhlogin} ssh:#{ssh} namespace:#{namespace}" if Libra.c[:rpc_opts][:verbose]
-      uuid = gen_small_uuid()
-      user = new(rhlogin, ssh, namespace, uuid)
-      user.update
-      Nurture.libra_contact(rhlogin, uuid, namespace)
-      user
+      Libra.logger_debug "DEBUG: Attempting to add namespace '#{namespace}' for user '#{rhlogin}'"
+      Libra.client_debug "Creating user entry rhlogin:#{rhlogin} ssh:#{ssh} namespace:#{namespace}" if Libra.c[:rpc_opts][:verbose]
+      begin
+        uuid = gen_small_uuid()
+        user = new(rhlogin, ssh, namespace, uuid)
+        user.update
+        begin
+          Nurture.libra_contact(rhlogin, uuid, namespace)
+        rescue Exception => e
+          Libra.logger_debug "DEBUG: Attempting to delete user '#{rhlogin}' after failing to add nurture contact"
+          begin
+            user.delete
+          ensure
+            raise
+          end
+        end
+        return user
+      rescue Exception => e
+        Libra.logger_debug "DEBUG: Attempting to remove namespace '#{namespace}' after failure to add user '#{rhlogin}'"
+        begin
+          Server.nsupdate_delete_txt(namespace)
+        ensure
+          raise
+        end
+      end
     end
     
     #
@@ -138,8 +158,16 @@ module Libra
     #
     def update
       json = JSON.generate({:rhlogin => rhlogin, :namespace => namespace, :ssh => ssh, :uuid => uuid})
-      Libra.client_debug "DEBUG: Updating user json:#{json}" if Libra.c[:rpc_opts][:verbose]
+      Libra.logger_debug "Updating user json:#{json}" if Libra.c[:rpc_opts][:verbose]
       Helper.s3.put(Libra.c[:s3_bucket], "user_info/#{rhlogin}/user.json", json)
+    end
+    
+    #
+    # Deletes the user with the current information
+    #    
+    def delete
+      Libra.client_debug "DEBUG: Deleting user: #{rhlogin}" if Libra.c[:rpc_opts][:verbose]
+      Helper.s3.delete(Libra.c[:s3_bucket], "user_info/#{rhlogin}/user.json")
     end
 
     #
