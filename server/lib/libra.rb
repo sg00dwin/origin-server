@@ -95,8 +95,7 @@ module Libra
   end
   
   def self.configure_app(framework, action, app_name, user)
-    raise UserException.new(100), "An application named '#{app_name}' already exists", caller[0..5] if user.app_info(app_name)
-    user.validate_app_limit
+    raise UserException.new(100), "An application named '#{app_name}' already exists", caller[0..5] if user.app_info(app_name)    
         
     # Find the next available server
     Libra.c[:rpc_opts][:disctimeout] = 1
@@ -105,6 +104,7 @@ module Libra
     
     Libra.logger_debug "DEBUG: Performing configure on node: #{server.name} - #{server.repos} repos" if Libra.c[:rpc_opts][:verbose]
     
+    user.validate_app_limit # TODO there is a race condition here if two users get past here before creating the app and updating s3
     # Create S3 app entry on configure (one of the first things)
     user.create_app(app_name, framework, server)
     
