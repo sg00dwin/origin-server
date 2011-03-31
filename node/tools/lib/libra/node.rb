@@ -349,6 +349,13 @@ module Libra
 #
 # CPU Status
 #
+#  CPU count
+#  Thread count
+#  CPU Characteristics
+#  CPU Usage (current, dynamic)
+#  CPU Usage statistics: total
+#  CPU Usage statistics: All libra
+#
 # ============================================================================
 
     class CpuStatus
@@ -386,6 +393,12 @@ module Libra
 #
 # MemoryStatus
 #
+#   memory available
+#   memory used (total)
+#   memory used (libra cgroups?)
+#   swap available
+#   swap used (total)
+#   swap used (libra cgroups?)
 # ============================================================================
 
     class MemoryStatus
@@ -871,28 +884,70 @@ module Libra
 
     class TrafficControl
       # check: enabled (true|false)
-      # qdisc dev eth0
-      #
+      # qdisc dev eth0 
+      # class dev eth0 classid 1:1
+      # class dev eth0 parent classid 1:1 (count)
+
       # from libra-tc
       # USERNAME=$1
       # Display status of traffic control status.
       #if [ -z "$1" ]
       #then
-      #  $TC -s qdisc ls dev $tc_if
-      #  $TC -s class ls dev $tc_if
+      #  $TC -s qdisc show dev $tc_if
+      #  $TC -s class show dev $tc_if classid 1:1
       #else
       #  USERID=`uid $1`
       #  NETCLASS=`netclass $USERID`
       #  $TC -s class show dev $$tc_if classid 1:${NETCLASS}
       #fi
 
+      class << self
+        attr_accessor :tc, :interface, :classroot
+        attr_reader :qdisc_type_re
+        attr_reader :qdisc_htb_format, :qdisc_htb_re, :qdisc_htb_stats_re
+        attr_reader :htb_class_format, :htb_class_re, :htb_class_stats_re
+      end
+
+      @tc = "/sbin/tc"
+      @qdisc = "htb"
+      @interface = "eth0"
+      @classroot = "1:1"
+      @qdisc_type_re = /^qdisc (\S+)/
+      @qdisc_htb_format = "  qdisc htb %s %s refcnt %d r2q %d default %d direct_packets_stat %d\n"
+      @qdisc_htb_re = /qdisc (\S+) ([\da-f]+:[\da-f]*) (\S+) refcnt (\d+) r2q (\d+) default (\d+) direct_packets_stat (\d+)/
+      @qdisc_htb_stats_re = //
+      @htb_class_format = "class htb %s %s prio %d rate %s ceil %s burst %s cburst %s\n"
+      @htb_class_re = /class (\S+) ([\da-f]+:[\da-f]*) (root|parent ([\da-f]+:[\da-f]*))( prio (\d+))? rate (\S+) ceil (\S+) burst (\S+) cburst (\S+)/
+      @htb_class_stats_re = //
 
       def initialize
-        
+        @qdisc = nil
+        @rootclass = nil
+        @childclasses = nil
       end
 
       def to_s
+        out = "-- Traffic Control --\n"
 
+        # if we don't know, say so
+        if @qdisc == nil then
+          out += "  unknown\n"
+          return out
+        end
+
+        # if the qdisc is not htb, then bail
+        if @qdisc[:type] != "htb" then
+          out += "  qdisc #{@qdisc[:type]} - libra unsupported qdisc\n"
+          return out
+        end
+
+        out += self.class.qdisc_htb_format % [@qdisc[:classid],
+                                              @qdisc[:parent] == "root" ? "root" : "parent ${@qdisc[:parent]}",
+                                              @qdisc[:refcnt],
+                                              @qdisc[:r2q],
+                                              @qdisc[:default],
+                                              @qdisc[:direct_packets_stat]]
+        out
       end
 
       def to_xml
@@ -908,10 +963,85 @@ module Libra
       end
 
       def init(o)
-
+        @qdisc = o['qdisc']
+        @rootclass = o['rootclass']
+        @childclasses = o['childclasses']
       end
 
       def check
+        # check for the htb qdisc on eth0
+        tc_cmd = "%s qdisc show dev %s" % [self.class.tc, self.class.interface]
+        qdiscline = `#{tc_cmd}`.strip
+
+        # check the qdisc type
+        self.class.qdisc_type_re =~ qdiscline
+        qdisc_type = Regexp.last_match[1]
+        if qdisc_type != "htb" then
+          @qdisc = {:type => qdisc_type}
+          return self
+        end
+
+        # check for the root htb class on eth0
+        self.class.qdisc_re =~ qdiscline
+        matches = Regexp.last_match
+        if matches == nil
+          # no qdisc matching an htb format
+          return nil
+        end
+        qdisc = matches[1..-1]
+        if qdisc == nil
+          return nil
+        end
+        @qdisc = {
+          :type => qdisc[1], 
+          :classid => qdisc[2],
+          :parent => qdisc[3],
+          :refcnt => Integer(qdisc[4]),
+          :r2q => Integer(qdisc[5]),
+          :default => Integer(qdisc[6]),
+          :direct_packets_stat => Integer(qdisc[7]),
+        }
+
+        tc_cmd = "%s class show dev %s classid %s" % [self.class.tc,
+                                                      self.class.interface,
+                                                      self.class.classroot]
+        tcrootline = `#{tc_cmd}`.split
+        self.class.class_re =~ tcrootline
+        tcclass = Regexp.last_match[1..-1]
+        rootclass = {
+          :qdisc => tcclass[0],
+          :classid => tcclass[1],
+          :parent => tcclass[2] == "root" ? "root" : tcclass[3],
+          :prio => tcclass[5],
+          :rate => tcclass[6],
+          :ceil => tcclass[7],
+          :burst => tcclass[8],
+          :cburst => tcclass[9]
+        }
+
+        
+
+        tc_cmd = "%s class show dev %s parent %s" % [self.class.tc,
+                                                     self.class.interface,
+                                                     self.class.classroot]
+        tcclassout = `#{tc_cmd}`
+        tcclasslines = tcclassout.split("\n")
+        @childclasses = {}
+        tcclasslines.each do |line|
+          tcclass = Regexp.last_match[1..-1]
+          @childclasses[classid] = {
+            :qdisc => tcclass[0],
+            :classid => tcclass[1],
+            :parent => tcclass[2] == "root" ? "root" : tcclass[3],
+            :prio => Integer(tcclass[5]),
+            :rate => tcclass[6],
+            :ceil => tcclass[7],
+            :burst => tcclass[8],
+            :cburst => tcclass[9]
+          }
+        end
+        
+        # count the child htb classes on 
 
       end
     end
@@ -925,11 +1055,13 @@ module Libra
 
     class FilesystemQuotas
 
-      @fspattern = /user quota on ([^ ]+) \(([^)]+)\) is (on|off)/
-      @fsformat = "  %-15s%-15s %-3s\n"
       class << self
         attr_reader :fspattern, :fsformat
       end
+
+      @fspattern = /user quota on ([^ ]+) \(([^)]+)\) is (on|off)/
+      @fsformat = "  %-15s%-15s %-3s\n"
+
 
       attr_reader :filesystems
 
