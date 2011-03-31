@@ -113,6 +113,7 @@ EOF
       nsupdate_input_template = <<EOF
 "server #{Libra.c[:resolver]}
 zone #{Libra.c[:libra_domain]}
+update delete #{namespace}.#{Libra.c[:libra_domain]}
 update add #{namespace}.#{Libra.c[:libra_domain]} 60 TXT 'Text record for #{namespace}'
 send"
 EOF
