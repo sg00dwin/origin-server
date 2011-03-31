@@ -13,7 +13,7 @@ begin
     TYPE = "m1.large"
     KEY_PAIR = "libra"
     OPTIONS = {:key_name => KEY_PAIR, :instance_type => TYPE}
-    VERSION_REGEX = /li-\d+\.\d+\.\d*-\d+/
+    VERSION_REGEX = /li-\d+\.\d+\.?\d*-\d+/
     AMI_REGEX = /li-\d+\.\d+/
     BUILD_REGEX = /^builder-li-\d+\.\d+/
     PREFIX = ENV['LIBRA_DEV'] ? ENV['LIBRA_DEV'] + "-" : ""
