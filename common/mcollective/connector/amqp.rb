@@ -25,6 +25,8 @@ module MCollective
                   end
 		  @subscriptions = subscriptions_new
                   @sender = @session.createSender("amq.direct")
+                rescue SignalException
+                    @log.debug("Received signal exception, exiting...")
                 rescue Exception => e
                     @log.debug("Reconnect Exception #{e}")
                     sleep 1
@@ -71,6 +73,8 @@ module MCollective
 
                     @session.acknowledge
                     Request.new(msg.getContent)
+                rescue SignalException
+                    @log.debug("Received signal exception, exiting...")
                 rescue StandardError => e
                     @log.debug("Caught Exception #{e}")
                     reconnect
@@ -91,6 +95,8 @@ module MCollective
                   @message.setContentType("text/plain")
                   @sender.send(@message);
                   @log.debug("Message sent")
+                rescue SignalException
+                    @log.debug("Received signal exception, exiting...")
                 rescue StandardError => e
                     @log.debug("Caught Exception #{e}")
                     reconnect
