@@ -211,8 +211,17 @@ service libra-tc start
 /bin/cp -f /etc/libra/devenv/iptables /etc/sysconfig/iptables
 /etc/init.d/iptables restart
 
-# enable development environment
-/bin/sed -i 's/#RailsEnv/RailsEnv/g' /etc/httpd/conf.d/rails.conf
+# rails setup
+/bin/touch %{_localstatedir}/www/libra/log/development.log
+/bin/chmod 0666 %{_localstatedir}/www/libra/log/development.log
+/bin/mkdir -p /var/www/libra/httpd/logs
+/bin/mkdir -p /var/www/libra/httpd/run
+/bin/ln -s /usr/lib64/httpd/modules/ /var/www/libra/httpd/modules
+/bin/cp -f /etc/libra/devenv/httpd/000000_default.conf /etc/httpd/conf.d
+/bin/cp -f /etc/libra/devenv/httpd/broker.conf /var/www/libra/httpd
+/bin/cp -f /etc/libra/devenv/libra-site /etc/init.d
+/etc/init.d/libra-site restart
+chkconfig libra-site on
 
 # httpd
 /etc/init.d/httpd restart
@@ -347,7 +356,6 @@ fi
 %{_bindir}/rhc-cartridge-do
 %{_localstatedir}/www/libra
 %{_localstatedir}/www/html/app
-%{_sysconfdir}/httpd/conf.d/rails.conf
 %config(noreplace) %{_sysconfdir}/libra/controller.conf
 
 %post server

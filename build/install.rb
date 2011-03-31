@@ -100,10 +100,6 @@ namespace :install do
 
       cd SERVER_ROOT
 
-      # Apache setup
-      mkdir_p HTTP_CONF_DIR
-      cp "config/rails.conf", HTTP_CONF_DIR
-
       # Scripts setup
       mkdir_p BIN_DIR
       Dir.glob("script/rhc-*").each do |script|
