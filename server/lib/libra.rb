@@ -57,7 +57,6 @@ module Libra
           # Find the next available server
           Libra.c[:rpc_opts][:disctimeout] = 1
           Libra.c[:rpc_opts][:timeout] = 2
-          Libra.client_debug app_info 
           if app_info['server_identity']
             server = Server.new(app_info['server_identity'])
             if server
@@ -152,7 +151,7 @@ module Libra
     elsif action == 'status'
       Libra.client_result result.results[:data][:output]
     end    
-  end
+  end  
 
   #
   # Adjusts the capacity of the Libra cluster if

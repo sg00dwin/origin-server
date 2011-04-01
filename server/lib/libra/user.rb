@@ -128,9 +128,11 @@ module Libra
       rhlogins = []
 
       # Retrieve the current list of rhlogins
-      Helper.s3.incrementally_list_bucket(Libra.c[:s3_bucket], { 'prefix' => 'user_info'}) do |result|
+      Helper.s3.incrementally_list_bucket(Libra.c[:s3_bucket], { 'prefix' => 'user_info'}) do |result|         
         result[:contents].each do |bucket|
-          rhlogins << File.basename(bucket[:key], ".json")
+          if bucket[:key] =~ /\/user.json$/
+            rhlogins << File.basename(File.dirname(bucket[:key]))
+          end
         end
       end
       rhlogins
@@ -218,6 +220,41 @@ module Libra
       Helper.s3.put(Libra.c[:s3_bucket],
                     "user_info/#{@rhlogin}/apps/#{app_name}.json", json)
       JSON.parse(json)
+    end
+    
+    #
+    # Updates the S3 cache of the app
+    #
+    def update_app_server_identity(app_name, server)
+      app_info = app_info(app_name)
+      app_info['server_identity'] = server.name
+      json = JSON.generate(app_info)
+      Helper.s3.put(Libra.c[:s3_bucket],
+                    "user_info/#{@rhlogin}/apps/#{app_name}.json", json)
+      JSON.parse(json)
+    end
+    
+    #
+    # Update all app server identities to the current state
+    #
+    def self.update_all_app_server_identities
+      servers = Server.find_all
+      rhlogins = find_all_rhlogins
+      rhlogins.each do |rhlogin|
+        user = find(rhlogin)
+        if user
+          apps = user.apps
+          apps.each_key do |app_sym|
+            app_name = app_sym.to_s
+            servers.each do |server|
+              if server.has_app?(user, app_name)
+                update_app_server_identity(app_name, server)
+                break
+              end
+            end
+          end
+        end
+      end
     end
 
     #
