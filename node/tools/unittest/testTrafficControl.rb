@@ -138,7 +138,7 @@ class TestTrafficControl < Test::Unit::TestCase
   def testConstructor
     tc0 = Libra::Node::TrafficControl.new
     tc0.check
-    puts "\n" + tc0.to_s
+    #puts "\n" + tc0.to_s
     #p tc0
     tc0.init(@sample)
     #p tc0
@@ -147,13 +147,13 @@ class TestTrafficControl < Test::Unit::TestCase
   def testToString
     tc0 = Libra::Node::TrafficControl.new
     tc0.init(@sample)
-    puts tc0
+    #puts tc0
   end
 
   def testToXml
     tc0 = Libra::Node::TrafficControl.new
     tc0.init(@sample)
-    puts tc0.to_xml
+    #puts tc0.to_xml
   end
 
   def testToJson

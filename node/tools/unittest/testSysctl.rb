@@ -17,14 +17,14 @@ class TestSysCtl < Test::Unit::TestCase
     sc0 = Libra::Node::Sysctl.new ["kernel.sem", 
                                    "kernel.random.write_wakeup_threshold"]
     sc0.check
-    puts sc0
+    #puts sc0
   end
 
   def testSysCtlUnknown
     sc0 = Libra::Node::Sysctl.new ["kernel.sem", 
                                    "busted"]
     sc0.check
-    puts sc0
+    #puts sc0
   end
 
   def testSysctlXml

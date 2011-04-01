@@ -9,19 +9,19 @@ class TestSelinux < Test::Unit::TestCase
   def testSelinux
     se0 = Libra::Node::Selinux.new
     se0.check
-    puts se0
+    #puts se0
   end
 
   def testSelinuxToXml
     se0 = Libra::Node::Selinux.new
     se0.check
-    puts se0.to_xml
+    #puts se0.to_xml
   end
 
   def testSelinuxToJson
     se0 = Libra::Node::Selinux.new
     se0.check
-    puts se0.to_json
+    #puts se0.to_json
   end
 
   def testSelinuxParseJason

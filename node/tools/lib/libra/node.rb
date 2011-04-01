@@ -505,6 +505,103 @@ module Libra
     end
 
 
+# ============================================================================
+#
+# SoftwarePackages
+#
+# ============================================================================
+
+    class SoftwarePackages
+
+      class << self
+        attr_reader :rpm_query_format, :rpm_query_re, :rpm_not_installed_re
+        attr_reader :rpm_format
+      end
+
+      @rpm_query_format = "%{NAME} %{VERSION} %{RELEASE} %{ARCH} %{INSTALLTIME}\n"
+      @rpm_query_re = /([^\s]+) ([^\s]+) ([^\s]+) ([^\s]+) (\d+)/
+      @rpm_not_installed_re = /package (\w+) is not installed/
+      @rpm_format = "  %s-%s-%s.%s\n"
+
+      attr_reader :packages
+
+      def initialize(packages)
+        @packages = {}
+        packages.each do |name|
+          @packages[name] = nil
+        end
+      end
+
+      def to_s
+        out = "-- Software Packages --\n"
+        @packages.keys.sort.each do |name|
+          pkg = @packages[name]
+          if pkg['version'] then
+            out += "  #{name}-#{pkg['version']}-#{pkg['release']}.#{pkg['arch']}\n"
+          else
+            out += "  #{name} not installed\n"
+          end
+        end
+        out
+      end
+
+      def to_xml
+        builder = Nokogiri::XML::Builder.new do |xml|
+          xml.packages {
+            @packages.keys.sort.each do |name|
+              pkg = @packages[name]
+              xml.rpm pkg.merge({"name" => name})
+            end
+          }
+        end
+        builder.doc.root.to_xml        
+      end
+
+      def to_json
+        hash = {
+          "json_class" => self.class.name,
+          "packages" => @packages
+        }
+        JSON.generate(hash)
+      end
+
+      def json_create
+        new.init(o)
+      end
+
+      def init(o)
+        o['packages'].each do |pkg|
+          name = pkg["name"]
+          pkg.delete name
+          @packages[name] = pkg
+        end
+        self
+      end
+
+      def check
+        @packages.keys.sort.each do |name|
+          pkgline = `rpm -q --qf \"#{self.class.rpm_query_format}\" #{name}`.strip
+          self.class.rpm_query_re =~ pkgline
+          if Regexp.last_match != nil then
+            pkginfo = Regexp.last_match[1..-1]
+            pkg = {
+              "version" => pkginfo[1],
+              "release" => pkginfo[2],
+              "arch" => pkginfo[3],
+              # convert this to ruby date?
+              "installtime" => pkginfo[4]
+            }
+            @packages[name] = pkg
+          else
+            self.class.rpm_not_installed_re =~ pkgline
+            if Regexp.last_match != nil then
+              @packages[name] = {}
+            end
+          end
+        end
+      end
+    end
+
 # =============================================================================
 #
 #  Guest Account Class

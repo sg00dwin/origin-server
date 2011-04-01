@@ -29,6 +29,7 @@ Group: Development/Libraries
 Requires: li
 Requires: li-common
 Requires: li-node
+Requires: li-node-tools
 Requires: li-server
 Requires: li-cartridge-php-5.3.2
 Requires: li-cartridge-wsgi-3.2.1
@@ -214,6 +215,7 @@ service libra-tc start
 /etc/init.d/iptables restart
 
 # rails setup
+ln -s /var/www/libra/public/* /var/www/html/.
 /bin/touch %{_localstatedir}/www/libra/log/development.log
 /bin/chmod 0666 %{_localstatedir}/www/libra/log/development.log
 /bin/mkdir -p /var/www/libra/httpd/logs
