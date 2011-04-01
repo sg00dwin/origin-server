@@ -30,7 +30,7 @@ options = rpcoptions do |parser, options|
     end
 end
 
-unless options.include?(:namespace) or options[:namespace] =~ /^[a-zA-Z0-9]+$/
+unless options.include?(:namespace) or options[:namespace] =~ /^[a-zA-Z0-9]+$/ or options[:namespace].length > 16
     puts "The namespace is invalid."
     exit 254
 end

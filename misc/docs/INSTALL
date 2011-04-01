@@ -37,8 +37,6 @@ http://linux.yyz.us/nsupdate/
 
 DDNS is not required in a strict sense to get libra up and running.  When new
 applications are created, they are available at some localhost IP and a port.
-You can check the localhost IP and port numbers in /etc/libra/ip_db (which gets
-automatically generated)
 
 
 Prereqs

@@ -3,6 +3,7 @@ begin
   require 'fileutils'
   require 'aws'
   require 'right_http_connection'
+  require 'net/smtp'
   require 'pp'
 
   namespace :ami do
@@ -64,6 +65,20 @@ begin
         # Block until we can SSH to the instance
         until `#{SSH} #{@server} 'echo Success'`.split[-1] == "Success"
           sleep 5
+        end
+    end
+
+    def send_verified_email(version, ami)
+        msg = <<END_OF_MESSAGE
+From: Libra Jenkins <libra-express@redhat.com>
+To: Libra Express <libra-express@redhat.com>
+Subject: Build #{version} QE Ready
+
+The build #{version} (AMI #{ami}) is ready for QE.
+END_OF_MESSAGE
+
+        Net::SMTP.start('localhost') do |smtp|
+          smtp.send_message msg, "libra-express@redhat.com", "libra-express@redhat.com"
         end
     end
 
@@ -348,6 +363,10 @@ begin
           `#{SSH} #{@server} "/usr/bin/puppet /usr/libexec/mcollective/update_yaml.pp"`
           puts "Done"
 
+          print "Installing the mechanize gem..."
+          `#{SSH} #{@server} "gem install mechanize"`
+          puts "Done"
+
           print "Bounding Apache to pick up the change..."
           `#{SSH} #{@server} 'service httpd restart'`
           puts "Done"
@@ -369,9 +388,20 @@ begin
             fail "ERROR - Non-zero exit code from tests (exit: #{p.exitstatus})"
           end
 
-          print "Tagging image as '#{VERIFIED_TAG}'..."
-          conn.create_tag(@ami, 'Name', VERIFIED_TAG) unless ENV['LIBRA_DEV']
-          puts "Done"
+          # Only send email / tag if build hasn't be marked as verified yet
+          conn.describe_tags('Filter.1.Name' => 'resource-id', 'Filter.1.Value.1' => @ami).each do |tag|
+            if tag[:aws_key] == "Name" and tag[:aws_value] == VERIFIED_TAG
+              puts "Not tagging / sending email - already verified"
+            else
+              print "Tagging image as '#{VERIFIED_TAG}'..."
+              conn.create_tag(@ami, 'Name', VERIFIED_TAG) unless ENV['LIBRA_DEV']
+              puts "Done"
+
+              print "Sending QE ready email..."
+              send_verified_email(@version, @ami)
+              puts "Done"
+            end
+          end
         ensure
           unless ENV['LIBRA_DEV']
             print "Terminating instance..."
