@@ -923,7 +923,7 @@ module Libra
       def initialize
         @qdisc = nil
         @rootclass = nil
-        @childclasses = nil
+        #@childclasses = nil
       end
 
       def to_s
@@ -957,17 +957,23 @@ module Libra
                                               @rootclass["burst"],
                                               @rootclass["cburst"]
                                             ]
-        @childclasses.keys.sort.each do |clsid|
-          cls = @childclasses[clsid]
-          out += self.class.htb_class_format % [cls['qdisc'],
-                                                cls["classid"],
-                                                cls["parent"],
-                                                cls["prio"],
-                                                cls["rate"],
-                                                cls["ceil"],
-                                                cls["burst"],
-                                                cls["cburst"]
-                                            ]
+
+        return out
+
+        # no, don't report these
+        if @childclasses != nil then
+          @childclasses.keys.sort.each do |clsid|
+            cls = @childclasses[clsid]
+            out += self.class.htb_class_format % [cls['qdisc'],
+                                                  cls["classid"],
+                                                  cls["parent"],
+                                                  cls["prio"],
+                                                  cls["rate"],
+                                                  cls["ceil"],
+                                                  cls["burst"],
+                                                  cls["cburst"]
+                                                 ]
+          end
         end
         out
       end
@@ -987,10 +993,33 @@ module Libra
             xml.qdesc(attrs)
 
             attrs = {
-              
+              'qdisc' => @rootclass['qdisc'],
+              'classid' => @rootclass['classid'],
+              'parent' => @rootclass['parent'],
+              'prio' => @rootclass['prio'],
+              'rate' => @rootclass['rate'],
+              'ceil' => @rootclass['ceil'],
+              'burst' => @rootclass['burst'],
+              'cburst' => @rootclass['burst']
             }
             xml.rootclass(attrs)
 
+            if @childclasses != nil then
+              @childclasses.keys.sort.each do |clsid|
+                cls = @childclasses[clsid]
+                attrs = {
+                  'qdisc' => cls['qdisc'],
+                  'classid' => cls['classid'],
+                  'parent' => cls['parent'],
+                  'prio' => cls['prio'],
+                  'rate' => cls['rate'],
+                  'ceil' => cls['ceil'],
+                  'burst' => cls['burst'],
+                  'cburst' => cls['burst']
+                }
+                xml.class_(attrs)
+              end
+            end
           }
         end
         builder.doc.root.to_xml
@@ -1000,7 +1029,9 @@ module Libra
         hash = {"json_class" => self.class.name}
         hash["qdisc"] = @qdisc
         hash["rootclass"] = @rootclass
-        hash["childclasses"] = @childclasses
+        if @childclasses != nil then
+          hash["childclasses"] = @childclasses
+        end
         JSON.generate(hash)
       end
 
@@ -1066,8 +1097,6 @@ module Libra
           "burst" => tcclass[8],
           "cburst" => tcclass[9]
         }
-
-        
 
         tc_cmd = "%s class show dev %s parent %s" % [self.class.tc,
                                                      self.class.interface,
