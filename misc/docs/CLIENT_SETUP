@@ -4,20 +4,6 @@ Then, you can clone the git repositories with:
 
 git clone ssh://git1.ops.rhcloud.com/srv/git/li
 
-And the Rack broker application with:
-
-git clone ssh://git1.ops.rhcloud.com/srv/git/broker
-
-
-Add Li Repo at /etc/yum.repos.d/li.repo.  Example in li/misc/li.repo
-
-yum install mcollective-common mcollective-client li rubygem-stomp rubygem-right_aws rubygem-aws rubygem-cucumber
-
-cp /etc/libra/libra.conf ~/.li/libra.conf
-edit ~.li and point libra_server your broker system
-mkdir /etc/mcollective
-cp li/backend/controller/test/etc/client.cfg /etc/mcollective/client.cfg
-
 Example Usage:
 rhc-create-domain -n <namespace> -l <rhlogin>
 rhc-create-app -l <rhlogin> -a <appname> -r <Ex: /tmp/rhc/appname> -repo -t php-5.3.2 -b
@@ -30,3 +16,37 @@ The change should be seen at:  http://appname-namespace.rhcloud.com
 Running Test Cases:
 rake cuc_int sprint[1]
 tail -f /tmp/rhc/cucumber.log (To see log output)
+
+-----------
+OS X Notes:
+-----------
+
+To just run the client, you basically need:
+  ssh
+  git
+  ruby + gems
+
+OS X 10.6 comes w/ ssh, but not with git or ruby, unless you have
+Xcode 4.0.x installed (as a developer you should have Xcode anyway).
+Even so, we suggest using either MacPorts or HomeBrew to download
+and install git and ruby+gems.
+
+Now obtain the client code, either via 'git clone' as above
+or via the li-client gem. At this point, the 'Example
+Usage' follows exactly as indicated above.
+
+-------------
+broker notes:
+-------------
+Obtain the Rack broker application with:
+
+git clone ssh://git1.ops.rhcloud.com/srv/git/broker
+
+Add Li Repo at /etc/yum.repos.d/li.repo.  Example in li/misc/li.repo
+
+yum install mcollective-common mcollective-client li rubygem-stomp rubygem-right_aws rubygem-aws rubygem-cucumber
+
+cp /etc/libra/libra.conf ~/.li/libra.conf
+edit ~.li and point libra_server your broker system
+mkdir /etc/mcollective
+cp li/backend/controller/test/etc/client.cfg /etc/mcollective/client.cfg
