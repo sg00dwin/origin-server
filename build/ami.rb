@@ -363,6 +363,10 @@ END_OF_MESSAGE
           `#{SSH} #{@server} "/usr/bin/puppet /usr/libexec/mcollective/update_yaml.pp"`
           puts "Done"
 
+          print "Installing the mechanize gem..."
+          `#{SSH} #{@server} "gem install mechanize"`
+          puts "Done"
+
           print "Bounding Apache to pick up the change..."
           `#{SSH} #{@server} 'service httpd restart'`
           puts "Done"
@@ -388,7 +392,7 @@ END_OF_MESSAGE
           conn.create_tag(@ami, 'Name', VERIFIED_TAG) unless ENV['LIBRA_DEV']
           puts "Done"
 
-          print "Sending QE ready email"
+          print "Sending QE ready email..."
           send_qe_ready_email(@version, @ami)
           puts "Done"
         ensure
