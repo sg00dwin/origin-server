@@ -916,7 +916,7 @@ module Libra
       @qdisc_htb_format = "  qdisc htb %s %s refcnt %d r2q %d default %d direct_packets_stat %d\n"
       @qdisc_htb_re = /qdisc (\S+) ([\da-f]+:[\da-f]*) (\S+) refcnt (\d+) r2q (\d+) default (\d+) direct_packets_stat (\d+)/
       @qdisc_htb_stats_re = //
-      @htb_class_format = "class htb %s %s prio %d rate %s ceil %s burst %s cburst %s\n"
+      @htb_class_format = "  class %s %s %s prio %d rate %s ceil %s burst %s cburst %s\n"
       @htb_class_re = /class (\S+) ([\da-f]+:[\da-f]*) (root|parent ([\da-f]+:[\da-f]*))( prio (\d+))? rate (\S+) ceil (\S+) burst (\S+) cburst (\S+)/
       @htb_class_stats_re = //
 
@@ -936,26 +936,72 @@ module Libra
         end
 
         # if the qdisc is not htb, then bail
-        if @qdisc[:type] != "htb" then
-          out += "  qdisc #{@qdisc[:type]} - libra unsupported qdisc\n"
+        if @qdisc["type"] != "htb" then
+          out += "  qdisc #{@qdisc['type']} - libra unsupported qdisc\n"
           return out
         end
 
-        out += self.class.qdisc_htb_format % [@qdisc[:classid],
-                                              @qdisc[:parent] == "root" ? "root" : "parent ${@qdisc[:parent]}",
-                                              @qdisc[:refcnt],
-                                              @qdisc[:r2q],
-                                              @qdisc[:default],
-                                              @qdisc[:direct_packets_stat]]
+        out += self.class.qdisc_htb_format % [@qdisc["classid"],
+                                              @qdisc["parent"] == "root" ? "root" : "parent #{@qdisc['parent']}",
+                                              @qdisc["refcnt"],
+                                              @qdisc["r2q"],
+                                              @qdisc["default"],
+                                              @qdisc["direct_packets_stat"]]
+        
+        out += self.class.htb_class_format % [@rootclass["qdisc"],
+                                              @rootclass["classid"],
+                                              @rootclass["parent"],
+                                              @rootclass["prio"],
+                                              @rootclass["rate"],
+                                              @rootclass["ceil"],
+                                              @rootclass["burst"],
+                                              @rootclass["cburst"]
+                                            ]
+        @childclasses.keys.sort.each do |clsid|
+          cls = @childclasses[clsid]
+          out += self.class.htb_class_format % [cls['qdisc'],
+                                                cls["classid"],
+                                                cls["parent"],
+                                                cls["prio"],
+                                                cls["rate"],
+                                                cls["ceil"],
+                                                cls["burst"],
+                                                cls["cburst"]
+                                            ]
+        end
         out
       end
 
       def to_xml
+        builder = Nokogiri::XML::Builder.new do |xml|
+          xml.tc {
+            attrs = {
+              "type" => @qdisc["type"],
+              "classid" => @qdisc["classid"],
+              "parent" => @qdisc["parent"],
+              "refcnt" => @qdisc["refcnt"],
+              "r2q" => @qdisc["r2q"],
+              "default" => @qdisc["default"],
+              "direct_packets_stat" => @qdisc["direct_packets_stat"]
+            }
+            xml.qdesc(attrs)
 
+            attrs = {
+              
+            }
+            xml.rootclass(attrs)
+
+          }
+        end
+        builder.doc.root.to_xml
       end
 
       def to_json
-
+        hash = {"json_class" => self.class.name}
+        hash["qdisc"] = @qdisc
+        hash["rootclass"] = @rootclass
+        hash["childclasses"] = @childclasses
+        JSON.generate(hash)
       end
 
       def self.json_create(o)
@@ -963,9 +1009,11 @@ module Libra
       end
 
       def init(o)
+        # convert to symbols
         @qdisc = o['qdisc']
         @rootclass = o['rootclass']
         @childclasses = o['childclasses']
+        self
       end
 
       def check
@@ -977,7 +1025,7 @@ module Libra
         self.class.qdisc_type_re =~ qdiscline
         qdisc_type = Regexp.last_match[1]
         if qdisc_type != "htb" then
-          @qdisc = {:type => qdisc_type}
+          @qdisc = {"type" => qdisc_type}
           return self
         end
 
@@ -993,13 +1041,13 @@ module Libra
           return nil
         end
         @qdisc = {
-          :type => qdisc[1], 
-          :classid => qdisc[2],
-          :parent => qdisc[3],
-          :refcnt => Integer(qdisc[4]),
-          :r2q => Integer(qdisc[5]),
-          :default => Integer(qdisc[6]),
-          :direct_packets_stat => Integer(qdisc[7]),
+          "type" => qdisc[1], 
+          "classid" => qdisc[2],
+          "parent" => qdisc[3],
+          "refcnt" => Integer(qdisc[4]),
+          "r2q" => Integer(qdisc[5]),
+          "default" => Integer(qdisc[6]),
+          "direct_packets_stat" => Integer(qdisc[7]),
         }
 
         tc_cmd = "%s class show dev %s classid %s" % [self.class.tc,
@@ -1009,14 +1057,14 @@ module Libra
         self.class.class_re =~ tcrootline
         tcclass = Regexp.last_match[1..-1]
         rootclass = {
-          :qdisc => tcclass[0],
-          :classid => tcclass[1],
-          :parent => tcclass[2] == "root" ? "root" : tcclass[3],
-          :prio => tcclass[5],
-          :rate => tcclass[6],
-          :ceil => tcclass[7],
-          :burst => tcclass[8],
-          :cburst => tcclass[9]
+          "qdisc" => tcclass[0],
+          "classid" => tcclass[1],
+          "parent" => tcclass[2] == "root" ? "root" : tcclass[3],
+          "prio" => tcclass[5],
+          "rate" => tcclass[6],
+          "ceil" => tcclass[7],
+          "burst" => tcclass[8],
+          "cburst" => tcclass[9]
         }
 
         
@@ -1030,14 +1078,14 @@ module Libra
         tcclasslines.each do |line|
           tcclass = Regexp.last_match[1..-1]
           @childclasses[classid] = {
-            :qdisc => tcclass[0],
-            :classid => tcclass[1],
-            :parent => tcclass[2] == "root" ? "root" : tcclass[3],
-            :prio => Integer(tcclass[5]),
-            :rate => tcclass[6],
-            :ceil => tcclass[7],
-            :burst => tcclass[8],
-            :cburst => tcclass[9]
+            "qdisc" => tcclass[0],
+            "classid" => tcclass[1],
+            "parent" => tcclass[2] == "root" ? "root" : tcclass[3],
+            "prio" => Integer(tcclass[5]),
+            "rate" => tcclass[6],
+            "ceil" => tcclass[7],
+            "burst" => tcclass[8],
+            "cburst" => tcclass[9]
           }
         end
         
