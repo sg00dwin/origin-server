@@ -29,6 +29,7 @@ Group: Development/Libraries
 Requires: li
 Requires: li-common
 Requires: li-node
+Requires: li-node-tools
 Requires: li-server
 Requires: li-cartridge-php-5.3.2
 Requires: li-cartridge-wsgi-3.2.1
