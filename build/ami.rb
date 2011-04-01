@@ -345,6 +345,7 @@ begin
           private_ip = `#{SSH} #{@server} 'facter ipaddress'`.chomp
           print "Updating the controller to use the AMZ private IP '#{private_ip}'..."
           `#{SSH} #{@server} "sed -i \"s/public_ip.*/public_ip='#{private_ip}'/g\" /etc/libra/node_data.conf"`
+          `#{SSH} #{@server} "/usr/bin/puppet /usr/libexec/mcollective/update_yaml.pp"`
           puts "Done"
 
           print "Bounding Apache to pick up the change..."
