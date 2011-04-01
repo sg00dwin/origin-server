@@ -143,13 +143,18 @@ module Libra
   def self.server_execute_direct(framework, action, app_name, user, server)
     # Execute the action on the server using a framework cartridge
     Nurture.application(user.rhlogin, user.uuid, app_name, user.namespace, framework, action)
-    result = server.execute_direct(framework, action, "#{app_name} #{user.namespace} #{user.uuid}")[0]    
-    if result.results[:data][:exitcode] != 0
+    result = server.execute_direct(framework, action, "#{app_name} #{user.namespace} #{user.uuid}")[0]
+    if action == 'status'      
+      if result.results[:data][:exitcode] == 0
+        Libra.client_result result.results[:data][:output]
+      else
+        Libra.client_result "Application '#{app_name}' is either stopped or inaccessible"
+      end
+    elsif result.results[:data][:exitcode] != 0
+      Libra.client_debug result.results[:data][:exitcode]
       Libra.client_debug result.results[:data][:output]
       Libra.logger_debug "DEBUG: execute_direct results: " + result.results[:data][:output]
-      raise NodeException.new(143), "Node execution failure.  If the problem persists please contact Red Hat support.", caller[0..5]
-    elsif action == 'status'
-      Libra.client_result result.results[:data][:output]
+      raise NodeException.new(143), "Node execution failure.  If the problem persists please contact Red Hat support.", caller[0..5]    
     end    
   end  
 
