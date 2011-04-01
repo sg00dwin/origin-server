@@ -1,11 +1,11 @@
 User errors:
+97:  Invalid user credentials
+99:  User does not exist
+100: An application with specified name already exists
+101: An application with specified name does not exist and can not be operated on
 102: A user with login already exists
 103: The namespace already exists
 104: User's application limit has been reached
-100: An application with specified name already exists
-101: An application with specified name does not exist and can not be operated on
-97: Invalid user credentials
-99: User does not exist
 210: Can not override existing location for git repo
 211: Parent directory for git repo does not exist
 212: Could not find libra_id_rsa
