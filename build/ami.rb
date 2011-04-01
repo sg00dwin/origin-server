@@ -3,6 +3,7 @@ begin
   require 'fileutils'
   require 'aws'
   require 'right_http_connection'
+  require 'net/smtp'
   require 'pp'
 
   namespace :ami do
@@ -64,6 +65,20 @@ begin
         # Block until we can SSH to the instance
         until `#{SSH} #{@server} 'echo Success'`.split[-1] == "Success"
           sleep 5
+        end
+    end
+
+    def send_qe_ready_email(version, ami)
+        msg = <<END_OF_MESSAGE
+From: Libra Jenkins <libra-express@redhat.com>
+To: Libra Express <libra-express@redhat.com>
+Subject: Build #{version} QE Ready
+
+The build #{version} (AMI #{ami}) is ready for QE.
+END_OF_MESSAGE
+
+        Net::SMTP.start('localhost') do |smtp|
+          smtp.send_message msg, "libra-express@redhat.com", "libra-express@redhat.com"
         end
     end
 
@@ -371,6 +386,10 @@ begin
 
           print "Tagging image as '#{VERIFIED_TAG}'..."
           conn.create_tag(@ami, 'Name', VERIFIED_TAG) unless ENV['LIBRA_DEV']
+          puts "Done"
+
+          print "Sending QE ready email"
+          send_qe_ready_email(@version, @ami)
           puts "Done"
         ensure
           unless ENV['LIBRA_DEV']
