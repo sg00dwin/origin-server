@@ -87,6 +87,38 @@ action "create_customer", :description => "Creates a new customer" do
            :display_as => "Exit Code"
 end
 
+action "has_app", :description => "Does this server contain a specified app?" do
+    display :always
+
+    input :customer,
+        :prompt         => "Customer username",
+        :description    => "Customers desired username",
+        :type           => :string,
+        :validation     => '^[a-zA-Z0-9]+$',
+        :optional       => false,
+        :maxlength      => 32
+
+    input :application,
+        :prompt         => "Application Name",
+        :description    => "Name of an application to search for",
+        :type           => :string,
+        :validation     => '^[a-zA-Z0-9]+$',
+        :optional       => false,
+        :maxlength      => 32
+
+    output  :time,
+            :description => "The time as a message",
+            :display_as => "Time"
+
+    output  :output,
+            :description => "true or false",
+            :display_as => "Output"
+
+    output :exitcode,
+           :description => "Exit code",
+           :display_as => "Exit Code"
+end
+
 action "create_http", :description => "create an apache lamp stack" do
     display :always
 

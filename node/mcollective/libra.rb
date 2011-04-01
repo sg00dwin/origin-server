@@ -82,6 +82,25 @@ module MCollective
                 reply[:exitcode] = $?.exitstatus
                 reply.fail! "create_customer failed #{reply[:exitcode]}" unless reply[:exitcode] == 0
             end
+
+            #
+            # Returns whether an app is on a machine
+            #
+            def has_app_action
+                validate :customer, /^[a-zA-Z0-9]+$/
+                validate :application, /^[a-zA-Z0-9]+$/             
+                customer = request[:customer]
+                app_name = request[:application]
+                if File.exist?("/var/lib/libra/#{customer}/php/#{app_name}") ||
+                   File.exist?("/var/lib/libra/#{customer}/rack/#{app_name}") ||
+                   File.exist?("/var/lib/libra/#{customer}/wsgi/#{app_name}")
+                  reply[:output] = true
+                else
+                  reply[:output] = false
+                end
+                reply[:exitcode] = 0
+            end
+            
             #
             # Creates http environment for customer to use
             #

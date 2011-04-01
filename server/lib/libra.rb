@@ -57,7 +57,6 @@ module Libra
           # Find the next available server
           Libra.c[:rpc_opts][:disctimeout] = 1
           Libra.c[:rpc_opts][:timeout] = 2
-          Libra.client_debug app_info 
           if app_info['server_identity']
             server = Server.new(app_info['server_identity'])
             if server
@@ -95,8 +94,7 @@ module Libra
   end
   
   def self.configure_app(framework, action, app_name, user)
-    raise UserException.new(100), "An application named '#{app_name}' already exists", caller[0..5] if user.app_info(app_name)
-    user.validate_app_limit
+    raise UserException.new(100), "An application named '#{app_name}' already exists", caller[0..5] if user.app_info(app_name)    
         
     # Find the next available server
     Libra.c[:rpc_opts][:disctimeout] = 1
@@ -105,6 +103,7 @@ module Libra
     
     Libra.logger_debug "DEBUG: Performing configure on node: #{server.name} - #{server.repos} repos" if Libra.c[:rpc_opts][:verbose]
     
+    user.validate_app_limit # TODO there is a race condition here if two users get past here before creating the app and updating s3
     # Create S3 app entry on configure (one of the first things)
     user.create_app(app_name, framework, server)
     
@@ -144,15 +143,20 @@ module Libra
   def self.server_execute_direct(framework, action, app_name, user, server)
     # Execute the action on the server using a framework cartridge
     Nurture.application(user.rhlogin, user.uuid, app_name, user.namespace, framework, action)
-    result = server.execute_direct(framework, action, "#{app_name} #{user.namespace} #{user.uuid}")[0]    
-    if result.results[:data][:exitcode] != 0
+    result = server.execute_direct(framework, action, "#{app_name} #{user.namespace} #{user.uuid}")[0]
+    if action == 'status'      
+      if result.results[:data][:exitcode] == 0
+        Libra.client_result result.results[:data][:output]
+      else
+        Libra.client_result "Application '#{app_name}' is either stopped or inaccessible"
+      end
+    elsif result.results[:data][:exitcode] != 0
+      Libra.client_debug result.results[:data][:exitcode]
       Libra.client_debug result.results[:data][:output]
       Libra.logger_debug "DEBUG: execute_direct results: " + result.results[:data][:output]
-      raise NodeException.new(143), "Node execution failure.  If the problem persists please contact Red Hat support.", caller[0..5]
-    elsif action == 'status'
-      Libra.client_result result.results[:data][:output]
+      raise NodeException.new(143), "Node execution failure.  If the problem persists please contact Red Hat support.", caller[0..5]    
     end    
-  end
+  end  
 
   #
   # Adjusts the capacity of the Libra cluster if

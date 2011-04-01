@@ -113,6 +113,7 @@ EOF
       nsupdate_input_template = <<EOF
 "server #{Libra.c[:resolver]}
 zone #{Libra.c[:libra_domain]}
+update delete #{namespace}.#{Libra.c[:libra_domain]}
 update add #{namespace}.#{Libra.c[:libra_domain]} 60 TXT 'Text record for #{namespace}'
 send"
 EOF
@@ -157,6 +158,20 @@ EOF
     end
 
     #
+    # Returns whether this server has the specified app
+    #
+    def has_app?(user, app_name)
+      Helper.rpc_exec('libra') do |client|      
+        client.has_app(:customer => user.uuid,
+                        :application => app_name) do |response|
+          #return_code = response[:body][:data][:exitcode]
+          output = response[:body][:data][:output]
+          return output
+        end
+      end
+    end    
+
+    #
     # Configures the application for this user on this server
     #
     def execute(framework, action, app_name, user)
@@ -193,8 +208,8 @@ EOF
         options[:filter]['fact'] = [{:value=>value, :fact=>fact, :operator=>operator}]
         p options if Libra.c[:rpc_opts][:verbose]
         Helper.rpc_exec('libra') do |client|
-        cartridge_do(client, cartridge, action, args)
-      end
+          cartridge_do(client, cartridge, action, args)
+        end
     end
     
     def self.cartridge_do(client, cartridge, action, args)
@@ -207,7 +222,7 @@ EOF
         Libra.client_debug "DEBUG: Cartridge return code: #{return_code}" if Libra.c[:rpc_opts][:verbose]
         Libra.client_debug "DEBUG: Cartridge output: #{output}" if Libra.c[:rpc_opts][:verbose]
         raise CartridgeException.new(141), output, caller[0..5] if return_code != 0
-      end      
+      end
     end
 
     #
