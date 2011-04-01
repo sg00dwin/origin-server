@@ -2,7 +2,7 @@
 %define gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 
 Name: li
-Version: 0.61.1
+Version: 0.61.2
 Release: 1%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
@@ -396,6 +396,9 @@ chmod 0666 %{_localstatedir}/www/libra/log/production.log
 %{_libexecdir}/li/cartridges/wsgi-3.2.1/
 
 %changelog
+* Fri Apr 01 2011 Mike McGrath <mmcgrath@redhat.com> 0.61.2-1
+- Additional changes to site
+
 * Fri Apr 01 2011 Mike McGrath <mmcgrath@redhat.com> 0.61.1-1
 - Fixes for cartridge stopping and route
 
