@@ -214,6 +214,7 @@ service libra-tc start
 /etc/init.d/iptables restart
 
 # rails setup
+ln -s /var/www/libra/public/* /var/www/html/.
 /bin/touch %{_localstatedir}/www/libra/log/development.log
 /bin/chmod 0666 %{_localstatedir}/www/libra/log/development.log
 /bin/mkdir -p /var/www/libra/httpd/logs
