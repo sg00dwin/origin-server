@@ -329,7 +329,11 @@ module Libra
 
       def check
         @filesystems = {}
+
+        # check blocks used/free
         input = `df -k | tr -s ' ' 2>&1`
+        # unwrap lines that have wrapped
+        input.gsub(/\n\s/m, "")
         lines = input.split("\n")
         lines[1..-1].each do |line|
           parts = line.split(" ")
@@ -341,6 +345,16 @@ module Libra
             "percent" => parts[4],
             "mountpoint" => parts[5]
           }          
+        end
+
+        # check inodes used/free
+        input = `df -i | tr -s ' ' 2>&1`
+        input.gsub(/\n\s/m, "")
+        lines = input.split("\n")
+        lines[1..-1].each do |line|
+          parts = line.split(" ")
+          key = parts[0]
+          # set the inodes used and free for each key
         end
       end
     end
@@ -925,11 +939,11 @@ module Libra
 
 # ============================================================================
 #
-# Libra User cgroups
+# Libra Cgroups Configuration
 #
 # ============================================================================
 
-    class UserCgroups
+    class CgroupsConfiguration
       #
       # Check the initialization for User cgroups for libra:
       #   1) cgroups mounted on /cgroup
@@ -939,13 +953,28 @@ module Libra
       #      does not have the required subsystems
       # 
 
+      class << self
+        attr_reader :cgconfig_filename, :mountpoint, :subsystems
+        attr_reader :cgconfig_comment_re, :cgconfig_mount_re
+        attr_reader :cgconfig_subsystem_mount_re
+      end
+
+      @cgconfig_filename = "/etc/cgconfig.conf"
+      @cgconfig_comment_re = /#[^\n]*\n/m
+      @cgconfig_mount_re = /mount\s+\{([^}]+)\}/
+      @cgconfig_subsystem_mount_re = /(\S+) = (\S+);/
+      @mountpoint = "/cgroup/all"
+      @subsystems = ["cpu", "cpuacct", "memory", "freezer", "net_cls"]
+
+      attr_reader :configuration
+
       def initialize
-        @enabled = nil
-        @mountpoint = nil
-        @root = nil
-        @libraroot = nil
-        @subsystems = nil
-        @usercount = nil
+        @configuration = nil
+
+        # check that it's mounted properly
+        mountstatline = `grep cgroup /proc/mounts`.strip
+        #mountstats = mountstatsline.split("\n")
+
       end
 
       def to_s
@@ -969,7 +998,39 @@ module Libra
       end
 
       def check
+        @configuration = parse_config(self.class.cgconfig_filename)
+      end
 
+      #
+      # Determine the subsystems and their mount points
+      #
+      def parse_config(cgstring)
+        # remove comments
+        cgstring = cgstring.gsub(self.class.cgconfig_comment_re, "")
+
+        #
+        self.class.cgconfig_mount_re =~ cgstring
+        if Regexp.last_match == nil then
+          return {"subsystems" => nil}
+        end
+
+        # extract the mount string
+        mountstring = Regexp.last_match[1]
+        # remove leading spaces
+        mountstring = mountstring.gsub(/^\s+/, "")
+        # remove extra spaces
+        mountstring = mountstring.gsub(/[\t\r\f]+/, " ")
+        # split on newlines
+        mountlist = mountstring.split("\n")
+
+        # collect the subsystems and track where they're mounted.
+        subsystems = {}
+        mountlist.each do |line|
+          self.class.cgconfig_subsystem_mount_re =~ line
+          subsystem, mountpoint = Regexp.last_match[1..2]
+          subsystems[subsystem] = {"mountpoint" => mountpoint}
+        end
+        return {"subsystems" => subsystems}
       end
     end
 
