@@ -38,6 +38,7 @@ Requires: qpid-cpp-server
 Requires: puppet
 Requires: rubygem-cucumber
 Requires: rubygem-rspec
+Requires: rubygem-nokogiri
 BuildArch: noarch
 
 %description devenv

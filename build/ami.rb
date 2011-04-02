@@ -364,6 +364,7 @@ END_OF_MESSAGE
           puts "Done"
 
           print "Installing the mechanize gem..."
+          `#{SSH} #{@server} "yum -y install rubygem-nokogiri"`
           `#{SSH} #{@server} "gem install mechanize"`
           puts "Done"
 
