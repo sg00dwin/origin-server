@@ -390,7 +390,7 @@ END_OF_MESSAGE
           `#{SCP} -r #{@server}:/tmp/rhc .`
           `#{SCP} -r #{@server}:/var/www/libra/log/development.log rhc/development.log`
           `#{SCP} -r #{@server}:/var/log/mcollective.log rhc/mcollective.server.log`
-          `#{SCP} -r #{@server}:/tmp/mcollective.client rhc/mcollective.client.log`
+          `#{SCP} -r #{@server}:/tmp/mcollective-client.log rhc/mcollective.client.log`
           puts "Done"
 
           if p.exitstatus != 0
