@@ -369,7 +369,10 @@ END_OF_MESSAGE
           puts "Done"
 
           print "Applying hotfix to Rails site..."
-          `#{SCP} -r server/app/controllers/users_controller.rb #{@server}:/var/www/libra/app/controllers`
+          `#{SSH} #{@server} 'rm /var/www/libra/app/models/user.rb'`
+          `#{SCP} server/app/controllers/users_controller.rb #{@server}:/var/www/libra/app/controllers`
+          `#{SCP} server/app/models/web_user.rb #{@server}:/var/www/libra/app/models`
+          `#{SCP} server/config/routes.rb #{@server}:/var/www/libra/config`
           puts "Done"
 
           print "Bounding Apache to pick up the change..."
