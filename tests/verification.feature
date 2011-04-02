@@ -61,3 +61,14 @@ Feature: Verification Tests
       |     10    |   25  |  1   | wsgi-3.2.1 |
     When the applications are created
     Then they should all be accessible
+
+  Scenario: Website tests
+    Given the following website links
+      |         uri          |  protocol  |
+      | /                    |    http    |
+      | /app/index           |    http    |
+      | /app/getting_started |    http    |
+      | /app/users           |    https   |
+    When they are accessed
+    Then no errors should be thrown
+

@@ -1,5 +1,7 @@
+require 'rubygems'
 require 'net/http'
 require 'uri'
+require 'mechanize'
 include Libra::Test::User
 include Libra::Test::Util
 
@@ -18,7 +20,29 @@ Given /^the following test data$/ do |table|
   end
 end
 
-When /the applications are created$/ do
+Given /^the following website links$/ do |table|
+  @agent = Mechanize.new { |agent|
+    agent.user_agent_alias = 'Mac Safari'
+    if ENV['http_proxy']
+      print("(using proxy)")
+      uri = URI.parse(ENV['http_proxy'])
+      agent.set_proxy(uri.host, uri.port)
+    end
+  }
+
+  @urls = []
+  table.hashes.each do |row|
+    @urls << "#{row['protocol']}://localhost#{row['uri']}"
+  end
+end
+
+When /^they are accessed$/ do
+  @urls.each do |url|
+    @agent.get(url)
+  end
+end
+
+When /^the applications are created$/ do
   processes = []
 
   # Limit loop on the number of namespaces established in a previous step
