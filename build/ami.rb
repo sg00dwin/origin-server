@@ -368,13 +368,6 @@ END_OF_MESSAGE
           `#{SSH} #{@server} "gem install mechanize"`
           puts "Done"
 
-          print "Applying hotfix to Rails site..."
-          `#{SSH} #{@server} 'rm /var/www/libra/app/models/user.rb'`
-          `#{SCP} server/app/controllers/users_controller.rb #{@server}:/var/www/libra/app/controllers`
-          `#{SCP} server/app/models/web_user.rb #{@server}:/var/www/libra/app/models`
-          `#{SCP} server/config/routes.rb #{@server}:/var/www/libra/config`
-          puts "Done"
-
           print "Bounding Apache to pick up the change..."
           `#{SSH} #{@server} 'service httpd restart'`
           `#{SSH} #{@server} 'service libra-site restart'`
