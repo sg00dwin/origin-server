@@ -359,6 +359,16 @@ restart() {
 status() {
     echo "Checking Libra Services: "
 
+    lscgroup | grep -e  ":${LIBRA_CGROUP_ROOT}\$" >/dev/null 2>&1
+    if [ $? -ne 0 ]
+    then
+	echo "Libra cgroups uninitialized"
+	echo
+	return 1
+    else
+	echo "Libra cgroups initialized"
+    fi
+    
     if [ -z "$1" ]
     then
 	USERLIST=`libra_users`
