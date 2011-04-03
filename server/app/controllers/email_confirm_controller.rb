@@ -20,7 +20,7 @@ class EmailConfirmController < ApplicationController
       @errors[:invalidConfirmLinkMissingKey] = 'The confirmation link used is missing the key parameter.  Please check your link or try registering again.'    
     end
     if email == nil
-      @errors[:invalidConfirmLinkMissingEmail] = 'The confirmation link used is missing the email parameter.  Please check your link or try registering again.'    
+      @errors[:invalidConfirmLinkMissingEmail] = 'The confirmation link used is missing the emailAddress parameter.  Please check your link or try registering again.'    
     end
 
     # Run validations
