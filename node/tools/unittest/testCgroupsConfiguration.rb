@@ -6,41 +6,52 @@ require 'libra/node'
 class TestLibraCgroups < Test::Unit::TestCase
 
   def setup
-    
-    # a config for parse testing
-    @configfile = <<EOF
-# an initial comment
-# By default, mount all controllers to /cgroup/<controller>
-
-mount {
-#	cpuset	= /cgroup/all;
-	cpu	= /cgroup/all;
-	cpuacct	= /cgroup/all;
-	memory	= /cgroup/all;
-#	devices	= /cgroup/all;
-	freezer	= /cgroup/all;
-	net_cls	= /cgroup/all;
-#	blkio	= /cgroup/all;
-}
-EOF
-
-    #
-
+    @mounts = {"/cgroup/all" => ["cpu", "cpuacct", "freezer", "memory", "net_cls"]}
   end
+
   def testConstructor
     lc0 = Libra::Node::CgroupsConfiguration.new
   end
 
-  def testParseConfig
+  def testGetMounts
     lc0 = Libra::Node::CgroupsConfiguration.new
-    cfg = lc0.parse_config(@configfile)
-    assert_equal({"subsystems"=>
-                   {"memory"=>{"mountpoint"=>"/cgroup/all"},
-                     "freezer"=>{"mountpoint"=>"/cgroup/all"},
-                     "cpuacct"=>{"mountpoint"=>"/cgroup/all"},
-                     "net_cls"=>{"mountpoint"=>"/cgroup/all"},
-                     "cpu"=>{"mountpoint"=>"/cgroup/all"}}}, cfg)
+    cfg = lc0.get_mounts
+    assert_equal({"/cgroup/ns"=>["ns"],
+                   "/cgroup/cpuset"=>[],
+                   "/cgroup/freezer"=>["freezer"],
+                   "/cgroup/devices"=>["devices"],
+                   "/cgroup/cpuacct"=>["cpuacct"],
+                   "/cgroup/net_cls"=>["net_cls"],
+                   "/cgroup/blkio"=>["blkio"],
+                   "/cgroup/cpu"=>["cpu"],
+                   "/cgroup/memory"=>["memory"]},
+                 cfg)
+
+ end
+
+  def testToString
+    lc0 = Libra::Node::CgroupsConfiguration.new
+    lc0.init({"mounts" => @mounts})
+    puts lc0.to_s
   end
 
-  
+  def testToXml
+    lc0 = Libra::Node::CgroupsConfiguration.new
+    lc0.init({"mounts" => @mounts})
+    puts lc0.to_xml
+  end
+
+  def testToJson
+    lc0 = Libra::Node::CgroupsConfiguration.new
+    lc0.init({"mounts" => @mounts})
+    puts lc0.to_json
+  end
+
+  def testParseJson
+    lc0 = Libra::Node::CgroupsConfiguration.new
+    lc0.init({"mounts" => @mounts})
+    json0 = lc0.to_json
+    lc1 = JSON.parse(json0)
+    assert_equal(json0, lc1.to_json)
+  end
 end

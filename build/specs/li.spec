@@ -78,6 +78,7 @@ Group: Network/Daemons
 BuildRequires: rubygem-nokogiri
 BuildRequires: rubygem-json
 Requires: rubygem-nokogiri
+Requires: rubygem-json
 BuildArch: noarch
 
 %description node-tools

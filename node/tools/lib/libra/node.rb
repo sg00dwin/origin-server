@@ -64,7 +64,8 @@ module Libra
 
       @checks = [ 
                  :hostinfo, :filesystems, :quotas, :sysctl, :selinux, :sebool, 
-                 :ntpd, :qpidd, :mcollectived, :cgconfig, :cgred, :httpd 
+                 :ntpd, :qpidd, :mcollectived, :cgconfig, :cgred, :httpd,
+                 :cgroups, :tc
                 ]
 
       @sebooleans = ["httpd_can_network_relay"]
@@ -86,6 +87,8 @@ module Libra
         @cgconfig = Libra::Node::CgconfigService.new
         @cgred = Libra::Node::CgredService.new
         @httpd = Libra::Node::HttpdService.new
+        @cgroups = Libra::Node::CgroupsConfiguration.new
+        @tc = Libra::Node::TrafficControl.new
 
         checks = self.class.checks if checks.length == 1 and checks[0] == :all
         check(checks)
@@ -110,6 +113,8 @@ module Libra
         out += @cgconfig.to_s + "\n" if @cgconfig
         out += @cgred.to_s + "\n" if @cgred
         out += @httpd.to_s + "\n" if @httpd
+        out += @cgroups.to_s + "\n" if @cgroups
+        out += @tc.to_s + "\n" if @tc
 
         out += "=" * 80 + "\n"
 
@@ -130,6 +135,8 @@ module Libra
             xml << @cgconfig.to_xml if @cgconfig
             xml << @cgred.to_xml if @cgred
             xml << @httpd.to_xml if @httpd
+            xml << @cgroups.to_xml if @cgroups
+            xml << @tc.to_xml if @tc
           }
         end
         builder.doc.root.to_xml
@@ -151,6 +158,8 @@ module Libra
         hash['cgconfig'] = @cgconfig.to_json if @cgconfig
         hash['cgred'] = @cgred.to_json if @cgred
         hash['httpd'] = @qpidd.to_json if @httpd
+        hash['cgroups'] = @cgroups.to_json if @cgroups
+        hash['tc'] = @tc.to_json if @tc
         JSON.generate(hash)
       end
 
@@ -195,6 +204,10 @@ module Libra
             @cgred.check
           when :httpd
             @httpd.check
+          when :cgroups
+            @cgroups.check
+          when :tc
+            @tc.check
           end
         end
       end
@@ -954,39 +967,66 @@ module Libra
       # 
 
       class << self
-        attr_reader :cgconfig_filename, :mountpoint, :subsystems
-        attr_reader :cgconfig_comment_re, :cgconfig_mount_re
-        attr_reader :cgconfig_subsystem_mount_re
+        attr_reader :subsystems
       end
 
-      @cgconfig_filename = "/etc/cgconfig.conf"
-      @cgconfig_comment_re = /#[^\n]*\n/m
-      @cgconfig_mount_re = /mount\s+\{([^}]+)\}/
-      @cgconfig_subsystem_mount_re = /(\S+) = (\S+);/
-      @mountpoint = "/cgroup/all"
-      @subsystems = ["cpu", "cpuacct", "memory", "freezer", "net_cls"]
+      @subsystems = ["cpu", "cpuacct", "memory", "freezer", "net_cls", 
+                     "devices", "blkio" , "ns"]
 
-      attr_reader :configuration
+      attr_reader :mounts
 
       def initialize
-        @configuration = nil
-
-        # check that it's mounted properly
-        mountstatline = `grep cgroup /proc/mounts`.strip
-        #mountstats = mountstatsline.split("\n")
-
+        @mounts = nil
+        @libra_initialized = nil
+        @num_users = 0
       end
 
       def to_s
+        out = "-- Cgroup Configuration --\n"
 
+        # don't bother if there's nothing to report
+        return out += "  no subsystems mounted\n"  if mounts == nil
+        
+        @mounts.keys.sort.each do |mntpoint|
+          out += "  #{mntpoint} #{@mounts[mntpoint].sort!.join(',')}\n"
+        end
+
+        # check if libra is mounted
+        if @libra_initialized then
+          out += "\n  Libra cgroups initialized: #{@num_users} users\n"
+        else
+          out += "\n  Libra cgroups not initialized\n"
+        end
+        out
       end
 
       def to_xml
-
+        builder = Nokogiri::XML::Builder.new do |xml|
+          attrs = {
+            "libra_initialized" =>  @libra_initialized ? "true" : "false",
+            "num_users" => @num_users
+          }
+          xml.cgroups(attrs){
+            @mounts.keys.sort.each do |mtpoint|
+              xml.mount("mountpoint" => mtpoint) {
+                @mounts[mtpoint].sort.each do |subsystem|
+                  xml.subsystem {
+                    xml.text(subsystem)
+                  }
+                end
+              }
+            end
+          }
+        end
+        builder.doc.root.to_xml        
       end
 
       def to_json
-
+        hash = {"json_class" => self.class.name}
+        hash["mounts"] = @mounts
+        hash["libra_initialized"] = @libra_initialized ? "true" : "false"
+        hash["num_users"] = @num_users
+        JSON.generate(hash)
       end
 
       def self.json_create(o)
@@ -994,43 +1034,39 @@ module Libra
       end
 
       def init(o)
-
+        @mounts = o['mounts']
+        @libra_initialized = o['libra_initialized'] == "true"
+        @num_users = o['num_users']
+        self
       end
 
       def check
-        @configuration = parse_config(self.class.cgconfig_filename)
+        @mounts = get_mounts
+        status = `service libra-cgroups status | grep "Libra cgroups "`.strip
+        /Libra cgroups initialized/ =~ status
+        @libra_initialized = Regexp.last_match != nil
+        @num_users = Integer(`lscgroup | grep :/libra/ | wc -l`.strip)
       end
 
-      #
-      # Determine the subsystems and their mount points
-      #
-      def parse_config(cgstring)
-        # remove comments
-        cgstring = cgstring.gsub(self.class.cgconfig_comment_re, "")
-
-        #
-        self.class.cgconfig_mount_re =~ cgstring
-        if Regexp.last_match == nil then
-          return {"subsystems" => nil}
+      def get_mounts
+        # check that it's mounted properly
+        cgmounts = `grep cgroup /proc/mounts`
+        cgmountlines = cgmounts.split("\n")
+        mounts = {}
+        cgmountlines.each do |line|
+          # dev mtpoint type options dumpfreq fsckpass
+          dev, mtpoint, type, optstr, dumpfreq, fsckpass  = line.split(" ")
+          options = optstr.split(",")
+          subsystems = []
+          options.each do |name|
+            if self.class.subsystems.index(name) then
+              subsystems << name
+              options.delete(name)
+            end
+          end
+          mounts[mtpoint] = subsystems
         end
-
-        # extract the mount string
-        mountstring = Regexp.last_match[1]
-        # remove leading spaces
-        mountstring = mountstring.gsub(/^\s+/, "")
-        # remove extra spaces
-        mountstring = mountstring.gsub(/[\t\r\f]+/, " ")
-        # split on newlines
-        mountlist = mountstring.split("\n")
-
-        # collect the subsystems and track where they're mounted.
-        subsystems = {}
-        mountlist.each do |line|
-          self.class.cgconfig_subsystem_mount_re =~ line
-          subsystem, mountpoint = Regexp.last_match[1..2]
-          subsystems[subsystem] = {"mountpoint" => mountpoint}
-        end
-        return {"subsystems" => subsystems}
+        mounts
       end
     end
 
