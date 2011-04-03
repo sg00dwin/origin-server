@@ -6,7 +6,7 @@ require 'cgi'
 class EmailConfirmController < ApplicationController
 
   ERRORS = {'user_failed_confirmation' => "Email confirmation failed",
-            'user_email_failed_confirmation' => "Email confirmation failed due to invalid email address in url",
+            'user_email_failed_confirmation' => "Email confirmation failed",
             :unknown => "An unknown error has occurred"
   }  
 
