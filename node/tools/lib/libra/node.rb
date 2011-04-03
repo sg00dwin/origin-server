@@ -64,7 +64,8 @@ module Libra
 
       @checks = [ 
                  :hostinfo, :filesystems, :quotas, :sysctl, :selinux, :sebool, 
-                 :ntpd, :qpidd, :mcollectived, :cgconfig, :cgred, :httpd 
+                 :ntpd, :qpidd, :mcollectived, :cgconfig, :cgred, :httpd,
+                 :cgroups, :tc
                 ]
 
       @sebooleans = ["httpd_can_network_relay"]
@@ -86,6 +87,8 @@ module Libra
         @cgconfig = Libra::Node::CgconfigService.new
         @cgred = Libra::Node::CgredService.new
         @httpd = Libra::Node::HttpdService.new
+        @cgroups = Libra::Node::CgroupsConfiguration.new
+        @tc = Libra::Node::TrafficControl.new
 
         checks = self.class.checks if checks.length == 1 and checks[0] == :all
         check(checks)
@@ -110,6 +113,8 @@ module Libra
         out += @cgconfig.to_s + "\n" if @cgconfig
         out += @cgred.to_s + "\n" if @cgred
         out += @httpd.to_s + "\n" if @httpd
+        out += @cgroups.to_s + "\n" if @cgroups
+        out += @tc.to_s + "\n" if @tc
 
         out += "=" * 80 + "\n"
 
@@ -130,6 +135,8 @@ module Libra
             xml << @cgconfig.to_xml if @cgconfig
             xml << @cgred.to_xml if @cgred
             xml << @httpd.to_xml if @httpd
+            xml << @cgroups.to_xml if @cgroups
+            xml << @tc.to_xml if @tc
           }
         end
         builder.doc.root.to_xml
@@ -151,6 +158,8 @@ module Libra
         hash['cgconfig'] = @cgconfig.to_json if @cgconfig
         hash['cgred'] = @cgred.to_json if @cgred
         hash['httpd'] = @qpidd.to_json if @httpd
+        hash['cgroups'] = @cgroups.to_json if @cgroups
+        hash['tc'] = @tc.to_json if @tc
         JSON.generate(hash)
       end
 
@@ -195,6 +204,10 @@ module Libra
             @cgred.check
           when :httpd
             @httpd.check
+          when :cgroups
+            @cgroups.check
+          when :tc
+            @tc.check
           end
         end
       end
@@ -965,6 +978,7 @@ module Libra
       def initialize
         @mounts = nil
         @libra_initialized = nil
+        @num_users = 0
       end
 
       def to_s
@@ -979,16 +993,20 @@ module Libra
 
         # check if libra is mounted
         if @libra_initialized then
-          out += "Libra cgroups initialized\n"
+          out += "\n  Libra cgroups initialized: #{@num_users} users\n"
         else
-          out += "Libra cgroups not initialized\n"
+          out += "\n  Libra cgroups not initialized\n"
         end
         out
       end
 
       def to_xml
         builder = Nokogiri::XML::Builder.new do |xml|
-          xml.cgroups({"libra_initialized" =>  @libra_initialized ? "true" : "false"}){
+          attrs = {
+            "libra_initialized" =>  @libra_initialized ? "true" : "false",
+            "num_users" => @num_users
+          }
+          xml.cgroups(attrs){
             @mounts.keys.sort.each do |mtpoint|
               xml.mount("mountpoint" => mtpoint) {
                 @mounts[mtpoint].sort.each do |subsystem|
@@ -1007,6 +1025,7 @@ module Libra
         hash = {"json_class" => self.class.name}
         hash["mounts"] = @mounts
         hash["libra_initialized"] = @libra_initialized ? "true" : "false"
+        hash["num_users"] = @num_users
         JSON.generate(hash)
       end
 
@@ -1017,6 +1036,7 @@ module Libra
       def init(o)
         @mounts = o['mounts']
         @libra_initialized = o['libra_initialized'] == "true"
+        @num_users = o['num_users']
         self
       end
 
@@ -1024,7 +1044,8 @@ module Libra
         @mounts = get_mounts
         status = `service libra-cgroups status | grep "Libra cgroups "`.strip
         /Libra cgroups initialized/ =~ status
-        @libra = Regexp.last_match != nil
+        @libra_initialized = Regexp.last_match != nil
+        @num_users = Integer(`lscgroup | grep :/libra/ | wc -l`.strip)
       end
 
       def get_mounts
