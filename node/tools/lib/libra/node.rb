@@ -957,11 +957,6 @@ module Libra
         attr_reader :subsystems
       end
 
-      @cgconfig_filename = "/etc/cgconfig.conf"
-      @cgconfig_comment_re = /#[^\n]*\n/m
-      @cgconfig_mount_re = /mount\s+\{([^}]+)\}/
-      @cgconfig_subsystem_mount_re = /(\S+) = (\S+);/
-      @mountpoint = "/cgroup/all"
       @subsystems = ["cpu", "cpuacct", "memory", "freezer", "net_cls", 
                      "devices", "blkio" , "ns"]
 
@@ -969,6 +964,7 @@ module Libra
 
       def initialize
         @mounts = nil
+        @libra_initialized = nil
       end
 
       def to_s
@@ -980,12 +976,19 @@ module Libra
         @mounts.keys.sort.each do |mntpoint|
           out += "  #{mntpoint} #{@mounts[mntpoint].sort!.join(',')}\n"
         end
+
+        # check if libra is mounted
+        if @libra_initialized then
+          out += "Libra cgroups initialized\n"
+        else
+          out += "Libra cgroups not initialized\n"
+        end
         out
       end
 
       def to_xml
         builder = Nokogiri::XML::Builder.new do |xml|
-          xml.cgroups {
+          xml.cgroups({"libra_initialized" =>  @libra_initialized ? "true" : "false"}){
             @mounts.keys.sort.each do |mtpoint|
               xml.mount("mountpoint" => mtpoint) {
                 @mounts[mtpoint].sort.each do |subsystem|
@@ -1003,6 +1006,7 @@ module Libra
       def to_json
         hash = {"json_class" => self.class.name}
         hash["mounts"] = @mounts
+        hash["libra_initialized"] = @libra_initialized ? "true" : "false"
         JSON.generate(hash)
       end
 
@@ -1012,11 +1016,15 @@ module Libra
 
       def init(o)
         @mounts = o['mounts']
+        @libra_initialized = o['libra_initialized'] == "true"
         self
       end
 
       def check
         @mounts = get_mounts
+        status = `service libra-cgroups status | grep "Libra cgroups "`.strip
+        /Libra cgroups initialized/ =~ status
+        @libra = Regexp.last_match != nil
       end
 
       def get_mounts
