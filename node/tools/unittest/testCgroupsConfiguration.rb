@@ -32,19 +32,19 @@ class TestLibraCgroups < Test::Unit::TestCase
   def testToString
     lc0 = Libra::Node::CgroupsConfiguration.new
     lc0.init({"mounts" => @mounts})
-    puts lc0.to_s
+    #puts lc0.to_s
   end
 
   def testToXml
     lc0 = Libra::Node::CgroupsConfiguration.new
     lc0.init({"mounts" => @mounts})
-    puts lc0.to_xml
+    #puts lc0.to_xml
   end
 
   def testToJson
     lc0 = Libra::Node::CgroupsConfiguration.new
     lc0.init({"mounts" => @mounts})
-    puts lc0.to_json
+    #puts lc0.to_json
   end
 
   def testParseJson

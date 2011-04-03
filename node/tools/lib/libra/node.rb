@@ -59,17 +59,20 @@ module Libra
     class Status
 
       class << self
-        attr_reader :checks, :sebooleans, :sysctl
+        attr_reader :checks, :sebooleans, :sysctl, :packages
       end
 
       @checks = [ 
                  :hostinfo, :filesystems, :quotas, :sysctl, :selinux, :sebool, 
                  :ntpd, :qpidd, :mcollectived, :cgconfig, :cgred, :httpd,
-                 :cgroups, :tc
+                 :cgroups, :tc, :software
                 ]
 
       @sebooleans = ["httpd_can_network_relay"]
       @sysctl = ["kernel.sem"]
+      @packages = ["li", "li-common", "li-node", "li-node-tools", "li-server",
+                   "li-cartridge-php-5.3.2", "li-cartridge-wsgi-3.2.1", 
+                   "li-cartridge-rack-1.1.0"]
       
       attr_reader :hostinfo, :ntpd, :qppid, :mcollectived
 
@@ -89,6 +92,7 @@ module Libra
         @httpd = Libra::Node::HttpdService.new
         @cgroups = Libra::Node::CgroupsConfiguration.new
         @tc = Libra::Node::TrafficControl.new
+        @software = Libra::Node::SoftwarePackages.new self.class.packages
 
         checks = self.class.checks if checks.length == 1 and checks[0] == :all
         check(checks)
@@ -115,6 +119,7 @@ module Libra
         out += @httpd.to_s + "\n" if @httpd
         out += @cgroups.to_s + "\n" if @cgroups
         out += @tc.to_s + "\n" if @tc
+        out += @software.to_s + "\n" if @software
 
         out += "=" * 80 + "\n"
 
@@ -137,6 +142,7 @@ module Libra
             xml << @httpd.to_xml if @httpd
             xml << @cgroups.to_xml if @cgroups
             xml << @tc.to_xml if @tc
+            xml << @software.to_xml if @software
           }
         end
         builder.doc.root.to_xml
@@ -160,6 +166,7 @@ module Libra
         hash['httpd'] = @qpidd.to_json if @httpd
         hash['cgroups'] = @cgroups.to_json if @cgroups
         hash['tc'] = @tc.to_json if @tc
+        hash['software'] = @software.to_json if @software
         JSON.generate(hash)
       end
 
@@ -208,6 +215,8 @@ module Libra
             @cgroups.check
           when :tc
             @tc.check
+          when :software
+            @software.check
           end
         end
       end
@@ -563,7 +572,7 @@ module Libra
         out = "-- Software Packages --\n"
         @packages.keys.sort.each do |name|
           pkg = @packages[name]
-          if pkg['version'] then
+          if pkg and pkg['version'] then
             out += "  #{name}-#{pkg['version']}-#{pkg['release']}.#{pkg['arch']}\n"
           else
             out += "  #{name} not installed\n"
@@ -1042,7 +1051,7 @@ module Libra
 
       def check
         @mounts = get_mounts
-        status = `service libra-cgroups status | grep "Libra cgroups "`.strip
+        status = `service libra-cgroups status 2>&1 | grep "Libra cgroups "`.strip
         /Libra cgroups initialized/ =~ status
         @libra_initialized = Regexp.last_match != nil
         @num_users = Integer(`lscgroup | grep :/libra/ | wc -l`.strip)
@@ -1135,23 +1144,6 @@ module Libra
           return out
         end
 
-        out += self.class.qdisc_htb_format % [@qdisc["classid"],
-                                              @qdisc["parent"] == "root" ? "root" : "parent #{@qdisc['parent']}",
-                                              @qdisc["refcnt"],
-                                              @qdisc["r2q"],
-                                              @qdisc["default"],
-                                              @qdisc["direct_packets_stat"]]
-        
-        out += self.class.htb_class_format % [@rootclass["qdisc"],
-                                              @rootclass["classid"],
-                                              @rootclass["parent"],
-                                              @rootclass["prio"],
-                                              @rootclass["rate"],
-                                              @rootclass["ceil"],
-                                              @rootclass["burst"],
-                                              @rootclass["cburst"]
-                                            ]
-
         return out
 
         # no, don't report these
@@ -1176,14 +1168,18 @@ module Libra
         builder = Nokogiri::XML::Builder.new do |xml|
           xml.tc {
             attrs = {
-              "type" => @qdisc["type"],
-              "classid" => @qdisc["classid"],
-              "parent" => @qdisc["parent"],
-              "refcnt" => @qdisc["refcnt"],
-              "r2q" => @qdisc["r2q"],
-              "default" => @qdisc["default"],
-              "direct_packets_stat" => @qdisc["direct_packets_stat"]
+              "type" => @qdisc["type"]
             }
+            if @qdisc['type'] == "htb" then
+              attrs.merge({
+                "classid" => @qdisc["classid"],
+                "parent" => @qdisc["parent"],
+                "refcnt" => @qdisc["refcnt"],
+                "r2q" => @qdisc["r2q"],
+                "default" => @qdisc["default"],
+                "direct_packets_stat" => @qdisc["direct_packets_stat"]
+              })
+            end
             xml.qdesc(attrs)
 
             attrs = {
@@ -1195,8 +1191,8 @@ module Libra
               'ceil' => @rootclass['ceil'],
               'burst' => @rootclass['burst'],
               'cburst' => @rootclass['burst']
-            }
-            xml.rootclass(attrs)
+            } if @rootclass
+            xml.rootclass(attrs) if @rootclass
 
             if @childclasses != nil then
               @childclasses.keys.sort.each do |clsid|
