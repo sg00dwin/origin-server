@@ -14,7 +14,9 @@ then
     STATUS=$(($STATUS + 1))
 
 else
-    # check selinux booleans
+    #
+    # Check selinux booleans
+    #
     SEBOOLLIST=httpd_can_network_relay:on
     for SEBOOLSPEC in $SEBOOLLIST
     do
@@ -30,14 +32,18 @@ else
 fi
 
 #
-# Check selinux booleans
-#
-
-
-#
 # Check packages
 #
-
+PACKAGES="li li-common li-node li-node-tools li-server li-cartridge-rack-1.1.0 li-cartridge-wsgi-3.2.1 li-cartridge-php-5.3.2"
+for PKGNAME in $PACKAGES
+do
+    PKGSTATUS=`rpm -q $PKGNAME`
+    if echo $PKGSTATUS | grep "not installed" >/dev/null
+    then
+	echo "FAIL: package $PKGNAME is not installed"
+	STATUS=$(($STATUS + 1))
+    fi 
+done
 #
 # Check services
 #
