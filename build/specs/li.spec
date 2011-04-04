@@ -3,7 +3,7 @@
 
 Name: li
 Version: 0.61.3
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -326,24 +326,24 @@ fi
 %{_libexecdir}/mcollective/mcollective/connector/amqp.rb
 
 %files node
-%defattr(-,root,root,-)
+%defattr(0640,root,root,0740)
 %{_libexecdir}/mcollective/mcollective/agent/libra.ddl
 %{_libexecdir}/mcollective/mcollective/agent/libra.rb
 %{_libexecdir}/mcollective/update_yaml.pp
 %{ruby_sitelibdir}/facter/libra.rb
-%{_sysconfdir}/init.d/libra
-%{_sysconfdir}/init.d/libra-data
-%{_sysconfdir}/init.d/libra-cgroups
-%{_sysconfdir}/init.d/libra-tc
-%{_bindir}/rhc-ip-prep.sh
-%{_bindir}/trap-user
-%{_bindir}/rhc-restorecon
-%{_bindir}/rhc-init-quota
+%attr(0750) %{_sysconfdir}/init.d/libra
+%attr(0750) %{_sysconfdir}/init.d/libra-data
+%attr(0750) %{_sysconfdir}/init.d/libra-cgroups
+%attr(0750) %{_sysconfdir}/init.d/libra-tc
+%attr(0750) %{_bindir}/rhc-ip-prep.sh
+%attr(0750) %{_bindir}/trap-user
+%attr(0750) %{_bindir}/rhc-restorecon
+%attr(0750) %{_bindir}/rhc-init-quota
 %attr(0751,root,root) %{_localstatedir}/lib/libra
 %{_libexecdir}/li/cartridges/li-controller-0.1/
 %{_datadir}/selinux/packages/libra.pp
-%config(noreplace) %{_sysconfdir}/libra/node.conf
-%config(noreplace) %{_sysconfdir}/libra/resource_limits.conf
+%attr(0640) %config(noreplace) %{_sysconfdir}/libra/node.conf
+%attr(0640) %config(noreplace) %{_sysconfdir}/libra/resource_limits.conf
 %attr(0750,root,root) %{_sysconfdir}/httpd/conf.d/000000_default.conf
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
@@ -358,14 +358,14 @@ fi
 %{gemdir}/specifications/li-node-tools-%{version}.gemspec
 
 %files server
-%defattr(-,root,root,-)
-%{_bindir}/rhc-capacity
-%{_bindir}/rhc-new-user
-%{_bindir}/rhc-get-user-info
-%{_bindir}/rhc-cartridge-do
+%defattr(0640,root,libra_user,0750)
+%attr(0750) %{_bindir}/rhc-capacity
+%attr(0750) %{_bindir}/rhc-new-user
+%attr(0750) %{_bindir}/rhc-get-user-info
+%attr(0750) %{_bindir}/rhc-cartridge-do
 %{_localstatedir}/www/libra
 %{_localstatedir}/www/html/app
-%config(noreplace) %{_sysconfdir}/libra/controller.conf
+%attr(0640) %config(noreplace) %{_sysconfdir}/libra/controller.conf
 
 %post server
 # Adding passenger user
@@ -398,6 +398,9 @@ chmod 0666 %{_localstatedir}/www/libra/log/production.log
 %{_libexecdir}/li/cartridges/wsgi-3.2.1/
 
 %changelog
+* Sun Apr 03 2011 Mike McGrath <mmcgrath@redhat.com> 0.61.3-2
+- Securing bineries and other libra specific bins
+
 * Sat Apr 02 2011 Mike McGrath <mmcgrath@redhat.com> 0.61.3-1
 - Fixing dep loading issue from Matt
 
