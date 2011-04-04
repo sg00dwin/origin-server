@@ -324,7 +324,6 @@ END_OF_MESSAGE
       task :update => [:prereqs, :find] do
         print "Updating tests to remote instance..."
         `git archive --prefix li/ HEAD --output /tmp/li.tar`
-        scp()
         scp("/tmp/li.tar #{@server}:~/")
         ssh('rm -rf li; tar -xf li.tar')
         puts "Done"
