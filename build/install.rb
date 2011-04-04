@@ -48,25 +48,36 @@ namespace :install do
       # MCollective setup
       mkdir_p MCOLLECTIVE_DIR
       cp "mcollective/libra.ddl", MCOLLECTIVE_DIR
+      chmod 0640, "#{MCOLLECTIVE_DIR}/libra.ddl"
       cp "mcollective/libra.rb", MCOLLECTIVE_DIR
+      chmod 0640, "#{MCOLLECTIVE_DIR}/libra.rb"
       cp "mcollective/update_yaml.pp", "#{MCOLLECTIVE_DIR}/../../"
       mkdir_p FACTER_DIR
       cp "facter/libra.rb", FACTER_DIR
+      chmod 0640, "#{FACTER_DIR}/libra.rb"
 
       # Jailing setup
       mkdir_p INITRD_DIR
       cp "scripts/libra", INITRD_DIR
+      chmod 0750, "#{INITRD_DIR}/libra"
       cp "scripts/libra-data", INITRD_DIR
+      chmod 0750, "#{INITRD_DIR}/libra-data"
       cp "scripts/libra-cgroups", INITRD_DIR
+      chmod 0750, "#{INITRD_DIR}/libra-cgroups"
       cp "scripts/libra-tc", INITRD_DIR
+      chmod 0750, "#{INITRD_DIR}/libra-tc"
       mkdir_p BIN_DIR
       cp "scripts/trap-user", BIN_DIR
       cp "scripts/rhc-restorecon", BIN_DIR
+      chmod 0750, "#{BIN_DIR}/rhc-restorecon"
       cp "scripts/rhc-init-quota", BIN_DIR
+      chmod 0750, "#{BIN_DIR}/rhc-init-quota"
       mkdir_p LIBRA_DIR
       mkdir_p "#{DEST_DIR}/usr/share/selinux/packages"
       cp "selinux/libra.pp", "#{DEST_DIR}/usr/share/selinux/packages"
+      chmod 0640, "#{DEST_DIR}/usr/share/selinux/packages/libra.pp"
       cp "selinux/rhc-ip-prep.sh", "#{BIN_DIR}"
+      chmod 0750, "#{BIN_DIR}/rhc-ip-prep.sh"
 
       # Apache vhost fix
       mkdir_p "#{HTTP_CONF_DIR}/libra/"
@@ -104,11 +115,13 @@ namespace :install do
       mkdir_p BIN_DIR
       Dir.glob("script/rhc-*").each do |script|
         cp script, File.join(BIN_DIR, File.basename(script))
+        chmod 0750, File.join(BIN_DIR, File.basename(script))
       end
 
       # Config setup
       mkdir_p CONF_DIR
       cp "config/controller.conf", CONF_DIR unless File.exists? "#{CONF_DIR}/controller.conf"
+      chmod 0640, File.join(CONF_DIR, "controller.conf")
   end
 
   task :tests do
