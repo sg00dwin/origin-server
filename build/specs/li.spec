@@ -344,7 +344,7 @@ fi
 %{_datadir}/selinux/packages/libra.pp
 %attr(0640,-,-) %config(noreplace) %{_sysconfdir}/libra/node.conf
 %attr(0640,-,-) %config(noreplace) %{_sysconfdir}/libra/resource_limits.conf
-%attr(0750,root,root) %{_sysconfdir}/httpd/conf.d/000000_default.conf
+%attr(0750,root,root) %config(noreplace) %{_sysconfdir}/httpd/conf.d/000000_default.conf
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %files node-tools
