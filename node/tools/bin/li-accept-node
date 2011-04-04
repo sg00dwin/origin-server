@@ -51,6 +51,15 @@ done
 #
 # Check kernel settings
 #
+# Kernel semaphores
+MINSEM=512
+SEMCOUNT=`sysctl kernel.sem | cut -f4`
+if [ "$SEMCOUNT" -lt "$MINSEM" ]
+then
+    echo "ERROR: kernel.sem semaphores too low: $SEMCOUNT < $MINSEM"
+    STATUS=$(($STATUS + 1))
+fi
+
 
 #
 # Check cgroup config
