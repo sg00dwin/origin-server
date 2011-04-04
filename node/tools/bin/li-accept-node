@@ -1,0 +1,62 @@
+#!/bin/sh
+
+# Initial status is PASS (0)
+# each fail adds one
+STATUS=0
+
+#
+# Check selinux enabled
+#
+SELINUX=`getenforce`
+if [ "$SELINUX"  != "Enforcing" ]
+then
+    echo "FAIL: SELinux is not enabled" >&2
+    STATUS=$(($STATUS + 1))
+
+else
+    # check selinux booleans
+    SEBOOLLIST=httpd_can_network_relay:on
+    for SEBOOLSPEC in $SEBOOLLIST
+    do
+	NAME=`echo $SEBOOLSPEC | cut -d: -f1`
+	VALUE=`echo $SEBOOLSPEC | cut -d: -f2`
+	RESULT=`getsebool $NAME`
+	if [ "$RESULT" != "$NAME --> $VALUE" ]
+        then
+	    echo "FAIL: selinux boolean $NAME should be $VALUE"
+	    STATUS=$(($STATUS + 1))
+        fi
+    done
+fi
+
+#
+# Check selinux booleans
+#
+
+
+#
+# Check packages
+#
+
+#
+# Check services
+#
+
+#
+# Check kernel settings
+#
+
+#
+# Check cgroup config
+#
+
+#
+# Check tc config
+#
+
+#
+# Check quotas
+#
+
+echo $STATUS ERRORS
+exit $STATUS
