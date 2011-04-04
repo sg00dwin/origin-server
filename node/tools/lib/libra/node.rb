@@ -585,7 +585,7 @@ module Libra
         builder = Nokogiri::XML::Builder.new do |xml|
           xml.packages {
             @packages.keys.sort.each do |name|
-              pkg = @packages[name]
+              pkg = @packages[name] || {}
               xml.rpm pkg.merge({"name" => name})
             end
           }
