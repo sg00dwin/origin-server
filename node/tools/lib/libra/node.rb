@@ -1042,10 +1042,11 @@ module Libra
 
       def check
         @mounts = get_mounts
-        status = `service libra-cgroups status | grep "Libra cgroups "`.strip
+        status = `service libra-cgroups status 2>&1 | grep "Libra cgroups "`.strip
         /Libra cgroups initialized/ =~ status
         @libra_initialized = Regexp.last_match != nil
-        @num_users = Integer(`lscgroup | grep :/libra/ | wc -l`.strip)
+        
+        @num_users = Integer(`lscgroup 2>&1 | grep :/libra/ | wc -l`.strip) if @libra_initialized else nil
       end
 
       def get_mounts
