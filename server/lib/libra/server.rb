@@ -47,18 +47,25 @@ module Libra
     #
     def self.find_available
       # Defaults
+      current_server, current_repos = rpc_find_available
+      if !current_server
+        current_server, current_repos = rpc_find_available(true)
+      end
+      raise NodeException.new(140), "No nodes available.  If the problem persists please contact Red Hat support.", caller[0..5] unless current_server
+      Libra.logger_debug "DEBUG: server.rb:find_available #{current_server}: #{current_repos}" if Libra.c[:rpc_opts][:verbose]
+      new(current_server, current_repos)
+    end
+    
+    def self.rpc_find_available(forceRediscovery=false)
       current_server, current_repos = nil, 100000000
-
-      Helper.rpc_get_fact('git_repos') do |server, repos|
+      Helper.rpc_get_fact('git_repos', nil, forceRediscovery) do |server, repos|
         num_repos = repos.to_i
         if num_repos < current_repos
           current_server = server
           current_repos = num_repos
         end
       end
-      raise NodeException.new(140), "No nodes available.  If the problem persists please contact Red Hat support.", caller[0..5] unless current_server
-      Libra.logger_debug "DEBUG: server.rb:find_available #{current_server}: #{current_repos}" if Libra.c[:rpc_opts][:verbose]
-      new(current_server, current_repos)
+      return current_server, current_repos
     end
 
     #

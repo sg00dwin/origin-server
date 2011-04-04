@@ -1054,7 +1054,7 @@ module Libra
         status = `service libra-cgroups status 2>&1 | grep "Libra cgroups "`.strip
         /Libra cgroups initialized/ =~ status
         @libra_initialized = Regexp.last_match != nil
-        @num_users = Integer(`lscgroup | grep :/libra/ | wc -l`.strip)
+        @num_users = @libra_initialized ? Integer(`lscgroup 2>&1 | grep :/libra/ | wc -l`.strip) : nil  
       end
 
       def get_mounts
@@ -1170,6 +1170,7 @@ module Libra
             attrs = {
               "type" => @qdisc["type"]
             }
+
             if @qdisc['type'] == "htb" then
               attrs.merge({
                 "classid" => @qdisc["classid"],
@@ -1180,7 +1181,7 @@ module Libra
                 "direct_packets_stat" => @qdisc["direct_packets_stat"]
               })
             end
-            xml.qdesc(attrs)
+            xml.qdisc(attrs)
 
             attrs = {
               'qdisc' => @rootclass['qdisc'],
@@ -1238,6 +1239,7 @@ module Libra
       end
 
       def check
+
         # check for the htb qdisc on eth0
         tc_cmd = "%s qdisc show dev %s" % [self.class.tc, self.class.interface]
         qdiscline = `#{tc_cmd}`.strip
@@ -1251,7 +1253,7 @@ module Libra
         end
 
         # check for the root htb class on eth0
-        self.class.qdisc_re =~ qdiscline
+        self.class.qdisc_htb_re =~ qdiscline
         matches = Regexp.last_match
         if matches == nil
           # no qdisc matching an htb format
@@ -1262,22 +1264,22 @@ module Libra
           return nil
         end
         @qdisc = {
-          "type" => qdisc[1], 
-          "classid" => qdisc[2],
-          "parent" => qdisc[3],
-          "refcnt" => Integer(qdisc[4]),
-          "r2q" => Integer(qdisc[5]),
-          "default" => Integer(qdisc[6]),
-          "direct_packets_stat" => Integer(qdisc[7]),
+          "type" => qdisc[0], 
+          "classid" => qdisc[1],
+          "parent" => qdisc[2],
+          "refcnt" => Integer(qdisc[3]),
+          "r2q" => Integer(qdisc[4]),
+          "default" => Integer(qdisc[5]),
+          "direct_packets_stat" => Integer(qdisc[6]),
         }
 
         tc_cmd = "%s class show dev %s classid %s" % [self.class.tc,
                                                       self.class.interface,
                                                       self.class.classroot]
-        tcrootline = `#{tc_cmd}`.split
-        self.class.class_re =~ tcrootline
+        tcrootline = `#{tc_cmd}`.strip
+        self.class.htb_class_re =~ tcrootline
         tcclass = Regexp.last_match[1..-1]
-        rootclass = {
+        @rootclass = {
           "qdisc" => tcclass[0],
           "classid" => tcclass[1],
           "parent" => tcclass[2] == "root" ? "root" : tcclass[3],
@@ -1295,7 +1297,9 @@ module Libra
         tcclasslines = tcclassout.split("\n")
         @childclasses = {}
         tcclasslines.each do |line|
+          self.class.htb_class_re =~ line
           tcclass = Regexp.last_match[1..-1]
+          classid = tcclass[1]
           @childclasses[classid] = {
             "qdisc" => tcclass[0],
             "classid" => tcclass[1],

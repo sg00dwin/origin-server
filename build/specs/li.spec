@@ -331,27 +331,27 @@ fi
 %{_libexecdir}/mcollective/mcollective/agent/libra.rb
 %{_libexecdir}/mcollective/update_yaml.pp
 %{ruby_sitelibdir}/facter/libra.rb
-%attr(0750) %{_sysconfdir}/init.d/libra
-%attr(0750) %{_sysconfdir}/init.d/libra-data
-%attr(0750) %{_sysconfdir}/init.d/libra-cgroups
-%attr(0750) %{_sysconfdir}/init.d/libra-tc
-%attr(0750) %{_bindir}/rhc-ip-prep.sh
-%attr(0750) %{_bindir}/trap-user
-%attr(0750) %{_bindir}/rhc-restorecon
-%attr(0750) %{_bindir}/rhc-init-quota
+%attr(0750,-,-) %{_sysconfdir}/init.d/libra
+%attr(0750,-,-) %{_sysconfdir}/init.d/libra-data
+%attr(0750,-,-) %{_sysconfdir}/init.d/libra-cgroups
+%attr(0750,-,-) %{_sysconfdir}/init.d/libra-tc
+%attr(0750,-,-) %{_bindir}/rhc-ip-prep.sh
+%attr(0750,-,-) %{_bindir}/trap-user
+%attr(0750,-,-) %{_bindir}/rhc-restorecon
+%attr(0750,-,-) %{_bindir}/rhc-init-quota
 %attr(0751,root,root) %{_localstatedir}/lib/libra
 %{_libexecdir}/li/cartridges/li-controller-0.1/
 %{_datadir}/selinux/packages/libra.pp
-%attr(0640) %config(noreplace) %{_sysconfdir}/libra/node.conf
-%attr(0640) %config(noreplace) %{_sysconfdir}/libra/resource_limits.conf
+%attr(0640,-,-) %config(noreplace) %{_sysconfdir}/libra/node.conf
+%attr(0640,-,-) %config(noreplace) %{_sysconfdir}/libra/resource_limits.conf
 %attr(0750,root,root) %{_sysconfdir}/httpd/conf.d/000000_default.conf
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %files node-tools
 %defattr(-,root,root,-)
-%{_bindir}/li-accounts
-%{_bindir}/li-applications
-%{_bindir}/li-status
+%attr(0750,-,-) %{_bindir}/li-accounts
+%attr(0750,-,-) %{_bindir}/li-applications
+%attr(0750,-,-) %{_bindir}/li-status
 %{gemdir}/gems/li-node-tools-%{version}
 %{gemdir}/cache/li-node-tools-%{version}.gem
 %{gemdir}/doc/li-node-tools-%{version}
@@ -359,13 +359,13 @@ fi
 
 %files server
 %defattr(0640,root,libra_user,0750)
-%attr(0750) %{_bindir}/rhc-capacity
-%attr(0750) %{_bindir}/rhc-new-user
-%attr(0750) %{_bindir}/rhc-get-user-info
-%attr(0750) %{_bindir}/rhc-cartridge-do
+%attr(0750,-,-) %{_bindir}/rhc-capacity
+%attr(0750,-,-) %{_bindir}/rhc-new-user
+%attr(0750,-,-) %{_bindir}/rhc-get-user-info
+%attr(0750,-,-) %{_bindir}/rhc-cartridge-do
 %{_localstatedir}/www/libra
 %{_localstatedir}/www/html/app
-%attr(0640) %config(noreplace) %{_sysconfdir}/libra/controller.conf
+%attr(0640,-,-) %config(noreplace) %{_sysconfdir}/libra/controller.conf
 
 %post server
 # Adding passenger user
