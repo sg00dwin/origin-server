@@ -361,6 +361,11 @@ END_OF_MESSAGE
           print "Updating the controller to use the AMZ private IP '#{private_ip}'..."
           `#{SSH} #{@server} "sed -i \"s/public_ip.*/public_ip='#{private_ip}'/g\" /etc/libra/node_data.conf"`
           `#{SSH} #{@server} "/usr/bin/puppet /usr/libexec/mcollective/update_yaml.pp"`
+          `#{SSH} #{@server} "service mcollective restart"`
+          puts "Done"
+
+          print "Verifying fact for public_ip is '#{private_ip}'..."
+          `#{SSH} #{@server} "mc-facts public_ip | grep found"`.chomp.split[0] == private_ip
           puts "Done"
 
           print "Installing the mechanize gem..."
@@ -373,24 +378,39 @@ END_OF_MESSAGE
           `#{SSH} #{@server} 'service libra-site restart'`
           puts "Done"
 
+          print "Creating tests directories..."
+          `#{SSH} #{@server} 'mkdir -p /tmp/rhc/junit'`
+          puts "Done"
+
           # Update the test
           Rake::Task["ami:verify:update"].execute
 
-          # Run user tests
+          # Running unit tests
+          #print "Running unit tests..."
+          #`#{SSH} #{@server} 'cucumber --tags ~@verify --format junit -o /tmp/rhc/junit/ li/tests/'`
+          #p1 = $?
+          #puts "Done"
+
+          # Run verification tests
           print "Running verification tests..."
-          `#{SSH} #{@server} 'cucumber --tags @verify --format junit -o /tmp/rhc/ li/tests/'`
-          p = $?
+          `#{SSH} #{@server} 'cucumber --tags @verify --format junit -o /tmp/rhc/junit/ li/tests/'`
+          p2 = $?
           puts "Done"
 
           print "Downloading verification output..."
           `#{SCP} -r #{@server}:/tmp/rhc .`
-          `#{SCP} -r #{@server}:/var/www/libra/log/development.log rhc/development.log`
-          `#{SCP} -r #{@server}:/var/log/mcollective.log rhc/mcollective.server.log`
-          `#{SCP} -r #{@server}:/tmp/mcollective-client.log rhc/mcollective.client.log`
+          mkdir "rhc/log"
+          `#{SCP} -r #{@server}:/var/www/libra/log/development.log rhc/log/development.log`
+          `#{SCP} -r #{@server}:/var/log/mcollective.log rhc/log/mcollective.server.log`
+          `#{SCP} -r #{@server}:/tmp/mcollective-client.log rhc/log/mcollective.client.log`
           puts "Done"
 
-          if p.exitstatus != 0
-            fail "ERROR - Non-zero exit code from tests (exit: #{p.exitstatus})"
+          #if p1.exitstatus != 0
+          #  fail "ERROR - Non-zero exit code from unit tests (exit: #{p1.exitstatus})"
+          #end
+
+          if p2.exitstatus != 0
+            fail "ERROR - Non-zero exit code from verification tests (exit: #{p2.exitstatus})"
           end
 
           # Only send email / tag if build hasn't be marked as verified yet
