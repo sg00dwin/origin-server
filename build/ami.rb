@@ -400,9 +400,11 @@ END_OF_MESSAGE
           print "Downloading verification output..."
           `#{SCP} -r #{@server}:/tmp/rhc .`
           mkdir "rhc/log"
-          `#{SCP} -r #{@server}:/var/www/libra/log/development.log rhc/log/development.log`
-          `#{SCP} -r #{@server}:/var/log/mcollective.log rhc/log/mcollective.server.log`
-          `#{SCP} -r #{@server}:/tmp/mcollective-client.log rhc/log/mcollective.client.log`
+          `#{SCP} -r #{@server}:/var/log/httpd/access_log rhc/log`
+          `#{SCP} -r #{@server}:/var/log/httpd/error_log rhc/log`
+          `#{SCP} -r #{@server}:/var/www/libra/log/development.log rhc/log`
+          `#{SCP} -r #{@server}:/var/log/mcollective.log rhc/log`
+          `#{SCP} -r #{@server}:/tmp/mcollective-client.log rhc/log`
           puts "Done"
 
           #if p1.exitstatus != 0
