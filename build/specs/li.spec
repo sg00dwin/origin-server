@@ -349,9 +349,9 @@ fi
 
 %files node-tools
 %defattr(-,root,root,-)
-%{_bindir}/li-accounts
-%{_bindir}/li-applications
-%{_bindir}/li-status
+%attr(750) %{_bindir}/li-accounts
+%attr(750) %{_bindir}/li-applications
+%attr(750) %{_bindir}/li-status
 %{gemdir}/gems/li-node-tools-%{version}
 %{gemdir}/cache/li-node-tools-%{version}.gem
 %{gemdir}/doc/li-node-tools-%{version}
