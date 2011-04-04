@@ -4,6 +4,7 @@ begin
   require 'aws'
   require 'right_http_connection'
   require 'net/smtp'
+  require 'timeout'
   require 'pp'
 
   namespace :ami do
@@ -52,6 +53,14 @@ begin
       conn.describe_instances([@instance])[0][key]
     end
 
+    def ssh(cmd, timeout=60)
+      Timeout::timeout(timeout) { `#{SSH} #{@server} "#{cmd}"`.chomp }
+    end
+
+    def scp(cmd, timeout=60)
+      Timeout::timeout(timeout) { `#{SCP} #{cmd}` }
+    end
+
     # Blocks until the current instance is available
     def instance_available
         # Wait until the AWS state is running
@@ -63,7 +72,7 @@ begin
         @server = "root@" + @dns
 
         # Block until we can SSH to the instance
-        until `#{SSH} #{@server} 'echo Success'`.split[-1] == "Success"
+        until ssh('echo Success').split[-1] == "Success"
           sleep 5
         end
     end
@@ -189,24 +198,24 @@ END_OF_MESSAGE
       task :start => [:find] do
         if @existing
             print "Updating to latest code..."
-            `#{SSH} #{@server} 'yum clean all'`
-            `#{SSH} #{@server} 'yum update -y'`
+            ssh('yum clean all')
+            ssh('yum update -y', 600)
             puts "Done"
 
             # Make sure the right version is installed
             print "Verifying update..."
-            rpm = `#{SSH} #{@server} 'rpm -q li'`
+            rpm = ssh('rpm -q li')
             unless rpm.start_with?(@version)
               fail "Expected updated version to be #{@version}, actual was #{rpm}"
             end
             puts "Done"
         else
           print "Performing clean install with the latest code..."
-          `#{SSH} #{@server} 'wget http://209.132.178.9/gpxe/trees/li-devenv.sh'`
-          `#{SSH} #{@server} 'sh li-devenv.sh'`
+          ssh('wget http://209.132.178.9/gpxe/trees/li-devenv.sh')
+          ssh('sh li-devenv.sh', 600)
           puts "Done"
           print "Updating all packages on the system..."
-          `#{SSH} #{@server} 'yum update -y'`
+          ssh('yum update -y', 600)
           puts "Done"
           print "Rebooting instance to apply new kernel"
           conn.reboot_instances([@instance])
@@ -315,8 +324,9 @@ END_OF_MESSAGE
       task :update => [:prereqs, :find] do
         print "Updating tests to remote instance..."
         `git archive --prefix li/ HEAD --output /tmp/li.tar`
-        `#{SCP} /tmp/li.tar #{@server}:~/`
-        `#{SSH} #{@server} 'rm -rf li; tar -xf li.tar'`
+        scp()
+        scp("/tmp/li.tar #{@server}:~/")
+        ssh('rm -rf li; tar -xf li.tar')
         puts "Done"
       end
 
@@ -357,29 +367,29 @@ END_OF_MESSAGE
         puts "Done"
 
         begin
-          private_ip = `#{SSH} #{@server} 'facter ipaddress'`.chomp
+          private_ip = ssh("facter ipaddress")
           print "Updating the controller to use the AMZ private IP '#{private_ip}'..."
-          `#{SSH} #{@server} "sed -i \"s/public_ip.*/public_ip='#{private_ip}'/g\" /etc/libra/node_data.conf"`
-          `#{SSH} #{@server} "/usr/bin/puppet /usr/libexec/mcollective/update_yaml.pp"`
-          `#{SSH} #{@server} "service mcollective restart"`
+          ssh("sed -i \"s/public_ip.*/public_ip='#{private_ip}'/g\" /etc/libra/node_data.conf")
+          ssh("/usr/bin/puppet /usr/libexec/mcollective/update_yaml.pp")
+          ssh("service mcollective restart")
           puts "Done"
 
           print "Verifying fact for public_ip is '#{private_ip}'..."
-          `#{SSH} #{@server} "mc-facts public_ip | grep found"`.chomp.split[0] == private_ip
+          ssh("mc-facts public_ip | grep found").split[0] == private_ip
           puts "Done"
 
           print "Installing the mechanize gem..."
-          `#{SSH} #{@server} "yum -y install rubygem-nokogiri"`
-          `#{SSH} #{@server} "gem install mechanize"`
+          ssh("yum -y install rubygem-nokogiri")
+          ssh("gem install mechanize")
           puts "Done"
 
           print "Bounding Apache to pick up the change..."
-          `#{SSH} #{@server} 'service httpd restart'`
-          `#{SSH} #{@server} 'service libra-site restart'`
+          ssh("service httpd restart")
+          ssh("service libra-site restart")
           puts "Done"
 
           print "Creating tests directories..."
-          `#{SSH} #{@server} 'mkdir -p /tmp/rhc/junit'`
+          ssh("mkdir -p /tmp/rhc/junit")
           puts "Done"
 
           # Update the test
@@ -387,24 +397,24 @@ END_OF_MESSAGE
 
           # Running unit tests
           #print "Running unit tests..."
-          #`#{SSH} #{@server} 'cucumber --tags ~@verify --format junit -o /tmp/rhc/junit/ li/tests/'`
+          #ssh("cucumber --tags ~@verify --format junit -o /tmp/rhc/junit/ li/tests/")
           #p1 = $?
           #puts "Done"
 
           # Run verification tests
           print "Running verification tests..."
-          `#{SSH} #{@server} 'cucumber --tags @verify --format junit -o /tmp/rhc/junit/ li/tests/'`
+          ssh("cucumber --tags @verify --format junit -o /tmp/rhc/junit/ li/tests/", 600)
           p2 = $?
           puts "Done"
 
           print "Downloading verification output..."
-          `#{SCP} -r #{@server}:/tmp/rhc .`
+          scp("-r #{@server}:/tmp/rhc .")
           mkdir_p "rhc/log"
-          `#{SCP} -r #{@server}:/var/log/httpd/access_log rhc/log`
-          `#{SCP} -r #{@server}:/var/log/httpd/error_log rhc/log`
-          `#{SCP} -r #{@server}:/var/www/libra/log/development.log rhc/log`
-          `#{SCP} -r #{@server}:/var/log/mcollective.log rhc/log`
-          `#{SCP} -r #{@server}:/tmp/mcollective-client.log rhc/log`
+          scp("-r #{@server}:/var/log/httpd/access_log rhc/log")
+          scp("-r #{@server}:/var/log/httpd/error_log rhc/log")
+          scp("-r #{@server}:/var/www/libra/log/development.log rhc/log")
+          scp("-r #{@server}:/var/log/mcollective.log rhc/log")
+          scp("-r #{@server}:/tmp/mcollective-client.log rhc/log")
           puts "Done"
 
           #if p1.exitstatus != 0
