@@ -1,4 +1,4 @@
-policy_module(libra,1.0.5)
+policy_module(libra,1.0.6)
 
 ########################################
 #
@@ -146,4 +146,4 @@ corenet_udp_bind_generic_port(httpd_t)
 #################################
 
 # Allow users to execute files in their home dir
-allow libra_t libra_var_lib_t:file { execute execute_no_trans };
+# allow libra_t libra_var_lib_t:file { execute execute_no_trans };
