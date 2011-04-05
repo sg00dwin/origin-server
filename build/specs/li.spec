@@ -2,8 +2,8 @@
 %define gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 
 Name: li
-Version: 0.62.2
-Release: 2%{?dist}
+Version: 0.62.3
+Release: 3%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -403,6 +403,9 @@ chmod 0666 %{_localstatedir}/www/libra/log/production.log
 %{_libexecdir}/li/cartridges/wsgi-3.2.1/
 
 %changelog
+* Tue Apr 05 2011 Matt Hicks <mhicks@redhat.com> 0.62.3-3
+- Removed server rubygem-haml dep
+
 * Tue Apr 05 2011 Matt Hicks <mhicks@redhat.com> 0.62.2-2
 - More fixes (permissions and script tweaks)
 - Added server rubygem-haml dep
