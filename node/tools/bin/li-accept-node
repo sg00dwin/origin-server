@@ -102,12 +102,23 @@ fi
 #
 # Check tc config
 #
-QDISC=`tc qdisc show dev eth0`
 QDISCRESPONSE="qdisc htb 1: root refcnt 2 r2q 10 default 0 direct_packets_stat"
-#if 
+tc qdisc show dev eth0 | grep "$QDISCRESPONSE" >/dev/null
+if [ $? -ne 0 ]
+then
+    echo "FAIL: tc htb qdisc not configured"
+    STATUS=$(($STATUS + 1))
+else
+    CLASSRESPONSE="class htb 1:1 root prio 0 rate 8000Mbit ceil 8000Mbit burst 0b cburst 0b"
+    CLASSCOUNT=`tc class show dev eth0 | grep 'class htb' | wc -l`
+    if [ "$CLASSCOUNT" -lt 1 ]
+    then
+	echo "FAIL: no htb classes configured"
+	STATUS=$(($STATUS + 1))
+    fi
+fi
 
 CLASSLIST=`tc class show dev eth0`
-CLASSRESPONSE="class htb 1:1 root prio 0 rate 8000Mbit ceil 8000Mbit burst 0b cburst 0b"
 
 
 #
