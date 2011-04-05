@@ -2,8 +2,8 @@
 %define gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 
 Name: li
-Version: 0.62
-Release: 1%{?dist}
+Version: 0.62.3
+Release: 3%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -327,11 +327,11 @@ fi
 %{_libexecdir}/mcollective/mcollective/connector/amqp.rb
 
 %files node
-%defattr(0640,root,root,0740)
-%{_libexecdir}/mcollective/mcollective/agent/libra.ddl
-%{_libexecdir}/mcollective/mcollective/agent/libra.rb
-%{_libexecdir}/mcollective/update_yaml.pp
-%{ruby_sitelibdir}/facter/libra.rb
+%defattr(-,root,root,0740)
+%attr(0640,-,-) %{_libexecdir}/mcollective/mcollective/agent/libra.ddl
+%attr(0640,-,-) %{_libexecdir}/mcollective/mcollective/agent/libra.rb
+%attr(0640,-,-) %{_libexecdir}/mcollective/update_yaml.pp
+%attr(0640,-,-) %{ruby_sitelibdir}/facter/libra.rb
 %attr(0750,-,-) %{_sysconfdir}/init.d/libra
 %attr(0750,-,-) %{_sysconfdir}/init.d/libra-data
 %attr(0750,-,-) %{_sysconfdir}/init.d/libra-cgroups
@@ -340,10 +340,12 @@ fi
 %attr(0750,-,-) %{_bindir}/trap-user
 %attr(0750,-,-) %{_bindir}/rhc-restorecon
 %attr(0750,-,-) %{_bindir}/rhc-init-quota
-%attr(0750,-,-) %{_bindir}/rhc-accept-node
 %attr(0751,root,root) %{_localstatedir}/lib/libra
-%{_libexecdir}/li/cartridges/li-controller-0.1/
-%{_datadir}/selinux/packages/libra.pp
+%dir %attr(0750,root,root) %{_libexecdir}/li/cartridges/li-controller-0.1/
+%{_libexecdir}/li/cartridges/li-controller-0.1/README
+%{_libexecdir}/li/cartridges/li-controller-0.1/info
+%attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
+%attr(0750,-,-) %{_bindir}/rhc-accept-node
 %attr(0640,-,-) %config(noreplace) %{_sysconfdir}/libra/node.conf
 %attr(0640,-,-) %config(noreplace) %{_sysconfdir}/libra/resource_limits.conf
 %attr(0750,root,root) %config(noreplace) %{_sysconfdir}/httpd/conf.d/000000_default.conf
@@ -365,9 +367,9 @@ fi
 %attr(0750,-,-) %{_bindir}/rhc-new-user
 %attr(0750,-,-) %{_bindir}/rhc-get-user-info
 %attr(0750,-,-) %{_bindir}/rhc-cartridge-do
-%{_localstatedir}/www/libra
-%{_localstatedir}/www/html/app
-%attr(0640,-,-) %config(noreplace) %{_sysconfdir}/libra/controller.conf
+%attr(-,root,libra_user) %{_localstatedir}/www/libra
+%attr(-,root,libra_user) %{_localstatedir}/www/html/app
+%attr(0640,root,libra_user) %config(noreplace) %{_sysconfdir}/libra/controller.conf
 
 %post server
 # Adding passenger user
@@ -400,6 +402,16 @@ chmod 0666 %{_localstatedir}/www/libra/log/production.log
 %{_libexecdir}/li/cartridges/wsgi-3.2.1/
 
 %changelog
+* Tue Apr 05 2011 Matt Hicks <mhicks@redhat.com> 0.62.3-3
+- Removed server rubygem-haml dep
+
+* Tue Apr 05 2011 Matt Hicks <mhicks@redhat.com> 0.62.2-2
+- More fixes (permissions and script tweaks)
+- Added server rubygem-haml dep
+
+* Tue Apr 05 2011 Mike McGrath <mmcgrath@redhat.com> 0.62.1-1
+- Fixes from last nights breakage.
+
 * Mon Apr 04 2011 Mike McGrath <mmcgrath@redhat.com> 0.62-1
 - New nightly release for QE
 

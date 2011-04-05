@@ -72,7 +72,7 @@ begin
         @server = "root@" + @dns
 
         # Block until we can SSH to the instance
-        until ssh('echo Success').split[-1] == "Success"
+        until ssh('echo Success', 300).split[-1] == "Success"
           sleep 5
         end
     end

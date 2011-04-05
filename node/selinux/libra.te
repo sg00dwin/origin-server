@@ -47,8 +47,7 @@ corenet_tcp_connect_all_ports(libra_net_t)
 #
 # libra general local policy
 #
-allow libra_domain self:process { fork getpgid setrlimit setsched signal signull };
-allow libra_domain self:process { sigkill setpgid };
+allow libra_domain self:process { getattr fork getpgid setpgid setrlimit setsched signal_perms ptrace getsched };
 allow libra_domain self:sem create_sem_perms;
 allow libra_domain self:tcp_socket  create_stream_socket_perms;
 
@@ -65,7 +64,8 @@ manage_sock_files_pattern(libra_domain, libra_var_lib_t, libra_var_lib_t)
 manage_lnk_files_pattern(libra_domain, libra_var_lib_t, libra_var_lib_t)
 files_var_lib_filetrans(libra_domain, libra_var_lib_t, { dir file sock_file } )
 
-kernel_dontaudit_read_system_state(libra_domain)
+kernel_read_system_state(libra_domain)
+kernel_dontaudit_search_kernel_sysctl(libra_domain)
 
 dev_read_rand(libra_domain)
 
@@ -84,6 +84,8 @@ auth_use_nsswitch(libra_domain)
 logging_send_syslog_msg(libra_domain)
 
 miscfiles_read_localization(libra_domain)
+
+term_dontaudit_search_ptys(libra_domain)
 
 apache_exec(libra_domain)
 apache_exec_modules(libra_domain)

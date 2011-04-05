@@ -849,3 +849,7 @@ li.slide {
 #captcha {
   margin-bottom:20px;
 }
+
+fieldset ol {
+  list-style-type: none;
+}

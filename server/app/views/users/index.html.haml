@@ -1,0 +1,60 @@
+.container_24.express#pageheader
+  .grid_14#title
+    %h2 OpenShift <em>Express</em>
+    %p The Internal Beta...
+
+  .grid_10#title_accent
+
+  .clear
+
+.container_24#page
+
+  .prefix_1.grid_12.suffix_1#registration
+    %h3 "Register for access to Express"
+
+    - semantic_form_for @user do |form|
+      - form.inputs do
+        = form.input :emailAddress
+        = form.input :password, :input_html => { :autocomplete => 'off' }
+        = form.input :passwordConfirmation, :input_html => { :autocomplete => 'off' }
+
+        .grid_12#captcha
+          %label Prove You Are Human
+          = recaptcha_tags
+
+      - form.buttons do
+        = form.commit_button "Register User"
+    .clear
+
+  .grid_9.suffix_1#form_notes
+    %h4 Why do I have to register?
+
+    %p
+      We want your experience to be very similar to our users.  We have
+      streamlined the registration process for our users, so let us know
+      what you think.
+
+    %h4 Where is my data stored?
+
+    %p
+      Whatever you put in this form is safely stored away in our
+      corporate registration systems.  Your code will live in the
+      clouds - your identity will not.
+
+    %h4 Will my instance be internal-only?
+    %p
+      No! While the registration process is restricted to
+      internal systems, the instance you create will be fully
+      accessible outside the Red Hat network.  While this will allow
+      for more flexible testing, please do not put any sensitive or
+      confidential information on your instance.
+
+    .clear
+
+  .prefix_1.grid_22.suffix_1
+    %p#terms_and_conditions
+      By clicking on 'Register Now' above, you confirm your agreement with this site's <a href="#">Terms and Conditions</a>.
+
+    .clear
+
+  .clear

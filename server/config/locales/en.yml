@@ -11,3 +11,10 @@ en:
   password_match_failure: 'Passwords must match'
   terms_not_accepted: 'Terms must be accepted'
   unknown: 'An unknown error has occurred'
+
+  formtastic:
+    labels:
+      web_user:
+       emailAddress: "Email"
+       password: "Password"
+       passwordConfirmation: "Retype Password"

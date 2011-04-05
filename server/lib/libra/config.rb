@@ -44,6 +44,8 @@ module Libra
       bypass_user_reg = fs_config.get_value('bypass_user_reg')
       @@config[:bypass_user_reg] =  bypass_user_reg && bypass_user_reg.strip == 'true' ? true : false
       @@config[:user_reg_url] =  fs_config.get_value('user_reg_url').strip
+      use_dynect_dns = fs_config.get_value('use_dynect_dns')
+      @@config[:use_dynect_dns] =  use_dynect_dns && use_dynect_dns.strip == 'true' ? true : false
     rescue
       # Ignore as long as we have the values below
     ensure
