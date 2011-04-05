@@ -59,17 +59,20 @@ module Libra
     class Status
 
       class << self
-        attr_reader :checks, :sebooleans, :sysctl
+        attr_reader :checks, :sebooleans, :sysctl, :packages
       end
 
       @checks = [ 
                  :hostinfo, :filesystems, :quotas, :sysctl, :selinux, :sebool, 
                  :ntpd, :qpidd, :mcollectived, :cgconfig, :cgred, :httpd,
-                 :cgroups, :tc
+                 :cgroups, :tc, :software
                 ]
 
       @sebooleans = ["httpd_can_network_relay"]
       @sysctl = ["kernel.sem"]
+      @packages = ["li", "li-common", "li-node", "li-node-tools", "li-server",
+                   "li-cartridge-php-5.3.2", "li-cartridge-wsgi-3.2.1", 
+                   "li-cartridge-rack-1.1.0"]
       
       attr_reader :hostinfo, :ntpd, :qppid, :mcollectived
 
@@ -89,6 +92,7 @@ module Libra
         @httpd = Libra::Node::HttpdService.new
         @cgroups = Libra::Node::CgroupsConfiguration.new
         @tc = Libra::Node::TrafficControl.new
+        @software = Libra::Node::SoftwarePackages.new self.class.packages
 
         checks = self.class.checks if checks.length == 1 and checks[0] == :all
         check(checks)
@@ -115,6 +119,7 @@ module Libra
         out += @httpd.to_s + "\n" if @httpd
         out += @cgroups.to_s + "\n" if @cgroups
         out += @tc.to_s + "\n" if @tc
+        out += @software.to_s + "\n" if @software
 
         out += "=" * 80 + "\n"
 
@@ -137,6 +142,7 @@ module Libra
             xml << @httpd.to_xml if @httpd
             xml << @cgroups.to_xml if @cgroups
             xml << @tc.to_xml if @tc
+            xml << @software.to_xml if @software
           }
         end
         builder.doc.root.to_xml
@@ -160,6 +166,7 @@ module Libra
         hash['httpd'] = @qpidd.to_json if @httpd
         hash['cgroups'] = @cgroups.to_json if @cgroups
         hash['tc'] = @tc.to_json if @tc
+        hash['software'] = @software.to_json if @software
         JSON.generate(hash)
       end
 
@@ -208,6 +215,8 @@ module Libra
             @cgroups.check
           when :tc
             @tc.check
+          when :software
+            @software.check
           end
         end
       end
@@ -563,7 +572,7 @@ module Libra
         out = "-- Software Packages --\n"
         @packages.keys.sort.each do |name|
           pkg = @packages[name]
-          if pkg['version'] then
+          if pkg and pkg['version'] then
             out += "  #{name}-#{pkg['version']}-#{pkg['release']}.#{pkg['arch']}\n"
           else
             out += "  #{name} not installed\n"
@@ -576,7 +585,7 @@ module Libra
         builder = Nokogiri::XML::Builder.new do |xml|
           xml.packages {
             @packages.keys.sort.each do |name|
-              pkg = @packages[name]
+              pkg = @packages[name] || {}
               xml.rpm pkg.merge({"name" => name})
             end
           }
@@ -1045,8 +1054,7 @@ module Libra
         status = `service libra-cgroups status 2>&1 | grep "Libra cgroups "`.strip
         /Libra cgroups initialized/ =~ status
         @libra_initialized = Regexp.last_match != nil
-        
-        @num_users = Integer(`lscgroup 2>&1 | grep :/libra/ | wc -l`.strip) if @libra_initialized else nil
+        @num_users = @libra_initialized ? Integer(`lscgroup 2>&1 | grep :/libra/ | wc -l`.strip) : nil  
       end
 
       def get_mounts
@@ -1136,23 +1144,6 @@ module Libra
           return out
         end
 
-        out += self.class.qdisc_htb_format % [@qdisc["classid"],
-                                              @qdisc["parent"] == "root" ? "root" : "parent #{@qdisc['parent']}",
-                                              @qdisc["refcnt"],
-                                              @qdisc["r2q"],
-                                              @qdisc["default"],
-                                              @qdisc["direct_packets_stat"]]
-        
-        out += self.class.htb_class_format % [@rootclass["qdisc"],
-                                              @rootclass["classid"],
-                                              @rootclass["parent"],
-                                              @rootclass["prio"],
-                                              @rootclass["rate"],
-                                              @rootclass["ceil"],
-                                              @rootclass["burst"],
-                                              @rootclass["cburst"]
-                                            ]
-
         return out
 
         # no, don't report these
@@ -1177,15 +1168,20 @@ module Libra
         builder = Nokogiri::XML::Builder.new do |xml|
           xml.tc {
             attrs = {
-              "type" => @qdisc["type"],
-              "classid" => @qdisc["classid"],
-              "parent" => @qdisc["parent"],
-              "refcnt" => @qdisc["refcnt"],
-              "r2q" => @qdisc["r2q"],
-              "default" => @qdisc["default"],
-              "direct_packets_stat" => @qdisc["direct_packets_stat"]
+              "type" => @qdisc["type"]
             }
-            xml.qdesc(attrs)
+
+            if @qdisc['type'] == "htb" then
+              attrs.merge({
+                "classid" => @qdisc["classid"],
+                "parent" => @qdisc["parent"],
+                "refcnt" => @qdisc["refcnt"],
+                "r2q" => @qdisc["r2q"],
+                "default" => @qdisc["default"],
+                "direct_packets_stat" => @qdisc["direct_packets_stat"]
+              })
+            end
+            xml.qdisc(attrs)
 
             attrs = {
               'qdisc' => @rootclass['qdisc'],
@@ -1196,8 +1192,8 @@ module Libra
               'ceil' => @rootclass['ceil'],
               'burst' => @rootclass['burst'],
               'cburst' => @rootclass['burst']
-            }
-            xml.rootclass(attrs)
+            } if @rootclass
+            xml.rootclass(attrs) if @rootclass
 
             if @childclasses != nil then
               @childclasses.keys.sort.each do |clsid|
@@ -1243,6 +1239,7 @@ module Libra
       end
 
       def check
+
         # check for the htb qdisc on eth0
         tc_cmd = "%s qdisc show dev %s" % [self.class.tc, self.class.interface]
         qdiscline = `#{tc_cmd}`.strip
@@ -1256,7 +1253,7 @@ module Libra
         end
 
         # check for the root htb class on eth0
-        self.class.qdisc_re =~ qdiscline
+        self.class.qdisc_htb_re =~ qdiscline
         matches = Regexp.last_match
         if matches == nil
           # no qdisc matching an htb format
@@ -1267,22 +1264,22 @@ module Libra
           return nil
         end
         @qdisc = {
-          "type" => qdisc[1], 
-          "classid" => qdisc[2],
-          "parent" => qdisc[3],
-          "refcnt" => Integer(qdisc[4]),
-          "r2q" => Integer(qdisc[5]),
-          "default" => Integer(qdisc[6]),
-          "direct_packets_stat" => Integer(qdisc[7]),
+          "type" => qdisc[0], 
+          "classid" => qdisc[1],
+          "parent" => qdisc[2],
+          "refcnt" => Integer(qdisc[3]),
+          "r2q" => Integer(qdisc[4]),
+          "default" => Integer(qdisc[5]),
+          "direct_packets_stat" => Integer(qdisc[6]),
         }
 
         tc_cmd = "%s class show dev %s classid %s" % [self.class.tc,
                                                       self.class.interface,
                                                       self.class.classroot]
-        tcrootline = `#{tc_cmd}`.split
-        self.class.class_re =~ tcrootline
+        tcrootline = `#{tc_cmd}`.strip
+        self.class.htb_class_re =~ tcrootline
         tcclass = Regexp.last_match[1..-1]
-        rootclass = {
+        @rootclass = {
           "qdisc" => tcclass[0],
           "classid" => tcclass[1],
           "parent" => tcclass[2] == "root" ? "root" : tcclass[3],
@@ -1300,7 +1297,9 @@ module Libra
         tcclasslines = tcclassout.split("\n")
         @childclasses = {}
         tcclasslines.each do |line|
+          self.class.htb_class_re =~ line
           tcclass = Regexp.last_match[1..-1]
+          classid = tcclass[1]
           @childclasses[classid] = {
             "qdisc" => tcclass[0],
             "classid" => tcclass[1],

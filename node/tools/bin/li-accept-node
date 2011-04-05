@@ -1,0 +1,93 @@
+#!/bin/sh
+
+# Initial status is PASS (0)
+# each fail adds one
+STATUS=0
+
+#
+# Check selinux enabled
+#
+SELINUX=`getenforce`
+if [ "$SELINUX"  != "Enforcing" ]
+then
+    echo "FAIL: SELinux is not enabled" >&2
+    STATUS=$(($STATUS + 1))
+
+else
+    #
+    # Check selinux booleans
+    #
+    SEBOOLLIST=httpd_can_network_relay:on
+    for SEBOOLSPEC in $SEBOOLLIST
+    do
+	NAME=`echo $SEBOOLSPEC | cut -d: -f1`
+	VALUE=`echo $SEBOOLSPEC | cut -d: -f2`
+	RESULT=`getsebool $NAME`
+	if [ "$RESULT" != "$NAME --> $VALUE" ]
+        then
+	    echo "FAIL: selinux boolean $NAME should be $VALUE" >&2
+	    STATUS=$(($STATUS + 1))
+        fi
+    done
+fi
+
+#
+# Check packages
+#
+PACKAGES="li li-common li-node li-node-tools li-server li-cartridge-rack-1.1.0 li-cartridge-wsgi-3.2.1 li-cartridge-php-5.3.2"
+for PKGNAME in $PACKAGES
+do
+    PKGSTATUS=`rpm -q $PKGNAME`
+    if echo $PKGSTATUS | grep "not installed" >/dev/null
+    then
+	echo "FAIL: package $PKGNAME is not installed" >&2
+	STATUS=$(($STATUS + 1))
+    fi 
+done
+#
+# Check services
+#
+SERVICES="qppid mcollective cgconfig cgred httpd"
+for SVCNAME in $SERVICES
+do
+    service $SVCNAME status > /dev/null 2>&1
+    if [ $? != 0 ]
+    then
+	echo "FAIL: service $SVCNAME not running"
+	STATUS=$(($STATUS + 1))
+    fi
+done
+
+#
+# Check kernel settings
+#
+# Kernel semaphores
+MINSEM=512
+SEMCOUNT=`sysctl kernel.sem | cut -f4`
+if [ "$SEMCOUNT" -lt "$MINSEM" ]
+then
+    echo "FAIL: kernel.sem semaphores too low: $SEMCOUNT < $MINSEM" >&2
+    STATUS=$(($STATUS + 1))
+fi
+
+
+#
+# Check cgroup config
+#
+
+#
+# Check tc config
+#
+
+#
+# Check quotas
+#
+QUOTASTAT=`quotaon -u -p / 2>&1`
+if [ "$QUOTASTAT" != "user quota on / (/dev/xvda1) is on" ]
+then
+    echo "FAIL: quotas are not enabled on / (/dev/xvda)" >&2
+    STATUS=$(($STATUS + 1))
+fi
+
+echo $STATUS ERRORS
+exit $STATUS
