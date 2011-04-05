@@ -2,8 +2,8 @@
 %define gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 
 Name: li
-Version: 0.61.3
-Release: 2%{?dist}
+Version: 0.62
+Release: 1%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -398,6 +398,9 @@ chmod 0666 %{_localstatedir}/www/libra/log/production.log
 %{_libexecdir}/li/cartridges/wsgi-3.2.1/
 
 %changelog
+* Mon Apr 04 2011 Mike McGrath <mmcgrath@redhat.com> 0.62-1
+- New nightly release for QE
+
 * Sun Apr 03 2011 Mike McGrath <mmcgrath@redhat.com> 0.61.3-2
 - Securing bineries and other libra specific bins
 
