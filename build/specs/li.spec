@@ -3,7 +3,7 @@
 
 Name: li
 Version: 0.62.2
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -403,7 +403,7 @@ chmod 0666 %{_localstatedir}/www/libra/log/production.log
 %{_libexecdir}/li/cartridges/wsgi-3.2.1/
 
 %changelog
-* Tue Apr 05 2011 Mike McGrath <mmcgrath@redhat.com> 0.62.2-2
+* Tue Apr 05 2011 Matt Hicks <mhicks@redhat.com> 0.62.2-2
 - More fixes (permissions and script tweaks)
 - Added server rubygem-haml dep
 
