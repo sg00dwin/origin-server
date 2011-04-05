@@ -140,6 +140,7 @@ Requires: rubygem-passenger-native
 Requires: rubygem-passenger-native-libs
 Requires: mod_passenger
 Requires: rubygem-bundler
+Requires: rubygem-nokogiri
 Requires: rubygem-sqlite3-ruby
 Requires: ruby-sqlite3
 Requires: ruby-mysql
