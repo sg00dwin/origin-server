@@ -367,9 +367,9 @@ fi
 %attr(0750,-,-) %{_bindir}/rhc-new-user
 %attr(0750,-,-) %{_bindir}/rhc-get-user-info
 %attr(0750,-,-) %{_bindir}/rhc-cartridge-do
-%{_localstatedir}/www/libra
-%{_localstatedir}/www/html/app
-%attr(0640,-,-) %config(noreplace) %{_sysconfdir}/libra/controller.conf
+%attr(-,root,libra_user) %{_localstatedir}/www/libra
+%attr(-,root,libra_user) %{_localstatedir}/www/html/app
+%attr(0640,root,libra_user) %config(noreplace) %{_sysconfdir}/libra/controller.conf
 
 %post server
 # Adding passenger user
