@@ -340,6 +340,7 @@ fi
 %attr(0750,-,-) %{_bindir}/trap-user
 %attr(0750,-,-) %{_bindir}/rhc-restorecon
 %attr(0750,-,-) %{_bindir}/rhc-init-quota
+%attr(0750,-,-) %{_bindir}/rhc-accept-node
 %attr(0751,root,root) %{_localstatedir}/lib/libra
 %{_libexecdir}/li/cartridges/li-controller-0.1/
 %{_datadir}/selinux/packages/libra.pp
