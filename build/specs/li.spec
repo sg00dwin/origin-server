@@ -341,7 +341,9 @@ fi
 %attr(0750,-,-) %{_bindir}/rhc-restorecon
 %attr(0750,-,-) %{_bindir}/rhc-init-quota
 %attr(0751,root,root) %{_localstatedir}/lib/libra
-%{_libexecdir}/li/cartridges/li-controller-0.1/
+%dir %attr(0750) %{_libexecdir}/li/cartridges/li-controller-0.1/
+%{_libexecdir}/li/cartridges/li-controller-0.1/README
+%{_libexecdir}/li/cartridges/li-controller-0.1/info
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 %attr(0750,-,-) %{_bindir}/rhc-accept-node
 %attr(0640,-,-) %config(noreplace) %{_sysconfdir}/libra/node.conf
