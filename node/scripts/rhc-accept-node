@@ -74,7 +74,7 @@ fi
 #
 # Check cgroup config
 #
-LIBRALINES=`lscgroup cpu,cpuacct,memory,freezer,net_cls:/libra | wc -l`
+LIBRALINES=`lscgroup cpu,cpuacct,memory,freezer,net_cls:/libra 2>/dev/null | wc -l`
 if [ "$LIBRALINES" -lt 1 ]
 then
     echo "FAIL: lscgroup /libra path does not exist"
