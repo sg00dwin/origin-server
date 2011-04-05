@@ -165,7 +165,7 @@ EOF
       url = URI.parse('https://api2.dynect.net/REST/Session/') 
       headers = { "Content-Type" => 'application/json' } 
       http = Net::HTTP.new(url.host, url.port) 
-      http.set_debug_output $stderr 
+      #http.set_debug_output $stderr 
       http.use_ssl = true 
       # Login and get an authentication token that will be used for all subsequent requests. 
       session_data = { :customer_name => cn, :user_name => un, :password => pw }
@@ -248,7 +248,7 @@ EOF
       headers = { "Content-Type" => 'application/json', 'Auth-Token' => auth_token }
       url = URI.parse("https://api2.dynect.net/REST/#{path}")
       http = Net::HTTP.new(url.host, url.port) 
-      http.set_debug_output $stderr 
+      #http.set_debug_output $stderr 
       http.use_ssl = true
       has = false
       begin
@@ -283,7 +283,7 @@ EOF
       headers = { "Content-Type" => 'application/json', 'Auth-Token' => auth_token }
       resp, data = nil, nil      
       http = Net::HTTP.new(url.host, url.port) 
-      http.set_debug_output $stderr 
+      #http.set_debug_output $stderr 
       http.use_ssl = true
       json_data = JSON.generate(post_data);
       begin
@@ -303,7 +303,7 @@ EOF
       headers = { "Content-Type" => 'application/json', 'Auth-Token' => auth_token }
       url = URI.parse("https://api2.dynect.net/REST/#{path}")
       http = Net::HTTP.new(url.host, url.port) 
-      http.set_debug_output $stderr 
+      #http.set_debug_output $stderr 
       http.use_ssl = true
       resp, data = nil, nil
       begin
@@ -355,7 +355,7 @@ EOF
                     :action => action,
                     :args => args }
         rpc_client = Helper.rpc_exec_direct('libra')
-        rpc_client.custom_request('cartridge_do', mc_args, self.name, {'identity' => self.name})
+        rpc_client.custom_request('cartridge_do', mc_args, self.nameThere are currently no services for this node., {'identity' => self.name})
     end
 
     #
