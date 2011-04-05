@@ -70,7 +70,14 @@ module Libra
               # update DNS
               public_ip = server.get_fact_direct('public_ip')
               Libra.logger_debug "DEBUG: Public ip being deconfigured '#{public_ip}' from namespace '#{user.namespace}'"
-              Server.nsupdate_del(app_name, user.namespace, public_ip)
+              if Libra.c[:use_dynect_dns]
+                auth_token = Server.dyn_login
+                Server.dyn_delete_a_record(app_name, user.namespace, auth_token)
+                Server.dyn_publish(auth_token)
+                Server.dyn_logout(auth_token)
+              else
+                Server.nsupdate_del(app_name, user.namespace, public_ip)
+              end
             else
               if action == 'deconfigure'
                 Libra.client_debug "Application is registered to an invalid node, still attempting to remove everything else..."
@@ -96,7 +103,6 @@ module Libra
   
   def self.configure_app(framework, action, app_name, user)
     raise UserException.new(100), "An application named '#{app_name}' already exists", caller[0..5] if user.app_info(app_name)    
-        
     # Find the next available server
     Libra.c[:rpc_opts][:disctimeout] = 1
     Libra.c[:rpc_opts][:timeout] = 2
@@ -120,7 +126,14 @@ module Libra
         public_ip = server.get_fact_direct('public_ip')
         Libra.logger_debug "DEBUG: Public ip being configured '#{public_ip}' to namespace '#{user.namespace}'"
         sshfp = server.get_fact_direct('sshfp').split[-1]
-        Server.nsupdate_add(app_name, user.namespace, public_ip, sshfp)
+        if Libra.c[:use_dynect_dns]
+          auth_token = Server.dyn_login
+          Server.dyn_create_a_record(app_name, user.namespace, public_ip, sshfp, auth_token)
+          Server.dyn_publish(auth_token)
+          Server.dyn_logout(auth_token)
+        else
+          Server.nsupdate_add(app_name, user.namespace, public_ip, sshfp)
+        end
       rescue Exception => e
         begin
           Libra.logger_debug "DEBUG: Failed to register dns entry for app '#{app_name}' and user '#{user.rhlogin}' on node '#{server.name}'"

@@ -38,38 +38,62 @@ module Libra
     # if the user already exists or invalid chars are found.
     #
     def self.create(rhlogin, ssh, namespace)
-      raise UserException.new(107), "Invalid chars in RHlogin '#{rhlogin}' found", caller[0..5] if !Util.check_rhlogin(rhlogin)
-      raise UserException.new(102), "A user with RHLogin '#{rhlogin}' already exists", caller[0..5] if find(rhlogin)
 
-      raise UserException.new(106), "Invalid chars in namespace '#{namespace}' found", caller[0..5] if !Util.check_namespace(namespace)
-      raise UserException.new(103), "A namespace with name '#{namespace}' already exists", caller[0..5] if Server.get_dns_txt(namespace).length > 0
-
-      Libra.client_debug "Creating user entry rhlogin:#{rhlogin} ssh:#{ssh} namespace:#{namespace}" if Libra.c[:rpc_opts][:verbose]
-      # TODO bit of a race condition here (can nsupdate fail on exists?)
-      Server.nsupdate_add_txt(namespace)
-      Libra.logger_debug "DEBUG: Attempting to add namespace '#{namespace}' for user '#{rhlogin}'"
-      Libra.client_debug "Creating user entry rhlogin:#{rhlogin} ssh:#{ssh} namespace:#{namespace}" if Libra.c[:rpc_opts][:verbose]
+      auth_token = nil
       begin
-        uuid = gen_small_uuid()
-        user = new(rhlogin, ssh, namespace, uuid)
-        user.update
+        if Libra.c[:use_dynect_dns]
+          auth_token = Server.dyn_login
+        end
+        raise UserException.new(107), "Invalid chars in RHlogin '#{rhlogin}' found", caller[0..5] if !Util.check_rhlogin(rhlogin)
+        raise UserException.new(102), "A user with RHLogin '#{rhlogin}' already exists", caller[0..5] if find(rhlogin)
+  
+        raise UserException.new(106), "Invalid chars in namespace '#{namespace}' found", caller[0..5] if !Util.check_namespace(namespace)
+        has_txt_record = Libra.c[:use_dynect_dns] ? Server.dyn_has_txt_record?(namespace, auth_token) : Server.has_dns_txt?(namespace)
+        raise UserException.new(103), "A namespace with name '#{namespace}' already exists", caller[0..5] if has_txt_record        
+
+        Libra.client_debug "Creating user entry rhlogin:#{rhlogin} ssh:#{ssh} namespace:#{namespace}" if Libra.c[:rpc_opts][:verbose]
+        # TODO bit of a race condition here (can nsupdate fail on exists?)
+            
+        if Libra.c[:use_dynect_dns]
+          Server.dyn_create_txt_record(namespace, auth_token)
+          Server.dyn_publish(auth_token) # TODO should we publish on ensure?
+        else
+          Server.nsupdate_add_txt(namespace)
+        end
+        Libra.logger_debug "DEBUG: Attempting to add namespace '#{namespace}' for user '#{rhlogin}'"
+        Libra.client_debug "Creating user entry rhlogin:#{rhlogin} ssh:#{ssh} namespace:#{namespace}" if Libra.c[:rpc_opts][:verbose]
         begin
-          Nurture.libra_contact(rhlogin, uuid, namespace)
-        rescue Exception => e
-          Libra.logger_debug "DEBUG: Attempting to delete user '#{rhlogin}' after failing to add nurture contact"
+          uuid = gen_small_uuid()
+          user = new(rhlogin, ssh, namespace, uuid)
+          user.update
           begin
-            user.delete
+            Nurture.libra_contact(rhlogin, uuid, namespace)
+          rescue Exception => e
+            Libra.logger_debug "DEBUG: Attempting to delete user '#{rhlogin}' after failing to add nurture contact"
+            begin
+              user.delete
+            ensure
+              raise
+            end
+          end
+          return user
+        rescue Exception => e
+          Libra.logger_debug "DEBUG: Attempting to remove namespace '#{namespace}' after failure to add user '#{rhlogin}'"
+          begin
+            if Libra.c[:use_dynect_dns]
+              Server.dyn_login(auth_token)
+              Server.dyn_delete_txt_record(namespace, auth_token)
+              Server.dyn_publish(auth_token) # TODO should we publish on ensure?
+            else
+              Server.nsupdate_delete_txt(namespace)
+            end
           ensure
             raise
           end
         end
-        return user
-      rescue Exception => e
-        Libra.logger_debug "DEBUG: Attempting to remove namespace '#{namespace}' after failure to add user '#{rhlogin}'"
-        begin
-          Server.nsupdate_delete_txt(namespace)
-        ensure
-          raise
+      ensure
+        if Libra.c[:use_dynect_dns] && auth_token
+          Server.dyn_logout(auth_token)
         end
       end
     end

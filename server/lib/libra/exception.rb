@@ -10,4 +10,5 @@ module Libra
   class UserException < LibraException; end
   class NodeException < LibraException; end
   class UserValidationException < LibraException; end
+  class DNSException < LibraException; end
 end
