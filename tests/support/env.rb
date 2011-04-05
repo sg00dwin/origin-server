@@ -50,7 +50,7 @@ module Libra
           namespace = "ci" + Array.new(8, '').collect{chars[rand(chars.size)]}.join
           login = "libra-test+#{namespace}@redhat.com"
           $logger.info("li - checking availability of namespace = #{namespace}")
-          has_txt = Libra::Server.has_dns_txt!(namespace)
+          has_txt = Libra::Server.has_dns_txt?(namespace)
           $logger.info("li - has_txt = #{has_txt}")
 
           $logger.info("li - checking availability of login = #{login}")
