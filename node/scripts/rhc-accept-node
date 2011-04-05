@@ -1,6 +1,45 @@
 #!/bin/sh
-
+# ============================================================================
 #
+# Run a quick check of the required environment for an Openshift Express node
+# ready for users and applications.
+#
+# ============================================================================
+
+LIBRA_CONF_DIR=${LIBRA_CONF_DIR:=/etc/libra}
+NODE_CONF_FILE=${NODE_CONF_FILE:=${LIBRA_CONF_DIR}/node.conf}
+RESOURCE_LIMITS_FILE=${RESOURCE_LIMITS_FILE:=${LIBRA_CONF_DIR}/resource_limits.conf}
+
+function load_node_conf() {
+    if [ ! -f $NODE_CONF_FILE ]
+    then
+	echo "FAIL: No configuration file: $NODE_CONF_FILE" >&2
+	exit 1
+    fi
+
+    . $NODE_CONF_FILE
+
+    if [ -z "$libra_dir" ]
+    then
+	echo "FAIL: libra_dir is not set in the node configuration" >&1
+	STATUS=$(($STATUS + 1))
+    fi
+
+    if [ ! -d "$libra_dir" ]
+    then
+	echo "FAIL: libra_dir does not exist or is not a directory: $libra_dir" >&2
+	STATUS=$(($STATUS + 1))	
+    fi
+
+    if [ ! -f "$RESOURCE_LIMITS_FILE" ]
+    then
+	echo "FAIL: No resource limits file: $RESOURCE_LIMITS_FILE" >&2
+	STATUS=$(($STATUS + 1))	
+    fi
+
+    . $RESOURCE_LIMITS_FILE
+}
+
 # Check selinux enabled
 #
 function check_selinux() {
@@ -80,27 +119,32 @@ function check_semaphores() {
 # Check cgroup config
 #
 function check_cgroup_config() {
+    CGROUP_PASS="true"
     LIBRALINES=`lscgroup cpu,cpuacct,memory,freezer,net_cls:/libra 2>/dev/null | wc -l`
     if [ "$LIBRALINES" -lt 1 ]
     then
 	echo "FAIL: lscgroup /libra path does not exist"
 	STATUS=$(($STATUS + 1))
+	CGROUP_PASS="false"
     fi
 
     if [ ! -d /cgroup ]
     then
 	echo "FAIL: cgroup root /cgroup directory does not exist"
 	STATUS=$(($STATUS + 1))
+	CGROUP_PASS="false"
     else
 	if [ ! -d /cgroup/all ]
 	then
 	    echo "FAIL: cgroup /cgroup/all directory does not exist"
 	    STATUS=$(($STATUS + 1))	
+	    CGROUP_PASS="false"
 	else
 	    if [ ! -d /cgroup/all/libra ]
 	    then
 		echo "FAIL: libra cgroup /cgroup/all/libra directory does not exist"
 		STATUS=$(($STATUS + 1))	
+		CGROUP_PASS="false"
 	    fi
 	fi
     fi
@@ -110,12 +154,14 @@ function check_cgroup_config() {
 # Check tc config
 #
 function check_tc_config() {
+    TC_PASS="true"
     QDISCRESPONSE="qdisc htb 1: root refcnt 2 r2q 10 default 0 direct_packets_stat"
     tc qdisc show dev eth0 | grep "$QDISCRESPONSE" >/dev/null
     if [ $? -ne 0 ]
     then
 	echo "FAIL: tc htb qdisc not configured"
 	STATUS=$(($STATUS + 1))
+	TC_PASS="false"
     else
 	CLASSRESPONSE="class htb 1:1 root prio 0 rate 8000Mbit ceil 8000Mbit burst 0b cburst 0b"
 	CLASSCOUNT=`tc class show dev eth0 | grep 'class htb' | wc -l`
@@ -123,10 +169,9 @@ function check_tc_config() {
 	then
 	    echo "FAIL: no htb classes configured"
 	    STATUS=$(($STATUS + 1))
+	    TC_PASS="false"
 	fi
     fi
-
-    CLASSLIST=`tc class show dev eth0`
 }
 
 #
@@ -142,7 +187,7 @@ function check_quotas() {
 }
 
 function libra_users() {
-    `grep ":libra guest:" /etc/passwd | cut -d: -f1`
+    grep ":libra guest:" /etc/passwd | cut -d: -f1
 }
 
 function homedir() {
@@ -152,20 +197,95 @@ function homedir() {
 
 function uid() {
     # USERNAME=$1
-    `grep "^$1" /etc/passwd | cut -d: -f 3`
+    grep "^$1" /etc/passwd | cut -d: -f 3
 }
 
 function tc_classid() {
-    # USERID=$1
-    printf "1:%x\n" $1
+    # USERNAME=$1
+    printf "1:%x\n" `uid $1`
 }
 
+function check_users() {
 # for each user check
 # 1) ulimits (PAM) settings file: /etc/security/limits.d/84-<username>.conf
 # 2) ulimits value: nproc
 # 3) cgroup presence
 # 4) tc presence
 # 5) quota presence
+    for USERNAME in `libra_users`
+    do
+	check_user_limits $USERNAME
+	check_user_cgroup $USERNAME
+	check_user_tc $USERNAME
+	check_user_quota $USERNAME
+    done
+}
+
+LIMITS_CONF_DIR=${LIMITS_CONF_DIR:=/etc/security/limits.d}
+LIMITS_MAP="nproc:u"
+
+function check_user_limits() {
+    # USERNAME=$1
+    LIMITS_CONF_FILE=$LIMITS_CONF_DIR/84-${1}.conf
+    if [ ! -f "$LIMITS_CONF_FILE" ]
+    then
+	echo "FAIL: user $1 does not have a PAM limits file" >&2
+	STATUS=$(($STATUS + 1))
+    fi
+
+    LIMITS=`set | grep ^limits_`
+    for LIMIT in $LIMITS
+    do
+	NAME=`echo $LIMIT | cut -d= -f1 | sed -e 's/^limits_//'`
+	VALUE=`echo $LIMIT | cut -d= -f2`
+	
+    done
+}
+
+USER_CGROUP_ROOT=/cgroup/all/libra
+function check_user_cgroup() {
+    # USERNAME=$1
+
+    # Don't check if it already failed
+    if [ "$CGROUP_PASS" = "false" ]
+    then
+	return
+    fi
+    USER_CGROUP_DIR=$USER_CGROUP_ROOT/$1
+    if [ ! -d "$USER_CGROUP_DIR" ]
+    then
+	echo "FAIL: user $1 does not have a cgroup directory" >&2
+	STATUS=$(($STATUS + 1))
+    fi
+}
+
+function check_user_tc() {
+    # USERNAME=$1
+
+    # don't check if it already failed
+    if [ "$TC_PASS" = "false" ]
+    then
+	return
+    fi
+
+    TC_CLASSID=`tc_classid $1`
+    TC_CLASS_COUNT=`tc class show dev eth0 classid $TC_CLASSID 2>/dev/null | wc -l`
+    if [ "$TC_CLASS_COUNT" -ne 1 ]
+    then
+	echo "FAIL: user $1 must have 1 tc class entry: actual=$TC_CLASS_COUNT" >&2
+	STATUS=$(($STATUS + 1))	
+    fi
+}
+
+function check_user_quota() {
+    # USERNAME=$1
+    
+    # check the first line for the string "): none" at the EOL
+    if quota $1 | head -1 | grep '): none$' > /dev/null
+    then
+	echo "FAIL: user $1 does not have quotas imposed" >&2
+    fi
+}
 
 # =============================================================================
 #
@@ -177,13 +297,18 @@ function tc_classid() {
 # each fail adds one
 STATUS=0
 
+load_node_conf
+
 check_selinux
 check_packages
 check_services
 check_semaphores
+
 check_cgroup_config
 check_tc_config
 check_quotas
+
+check_users
 
 if [ "$STATUS" -eq 0 ]
 then
