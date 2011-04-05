@@ -143,6 +143,7 @@ Requires: rubygem-bundler
 Requires: rubygem-sqlite3-ruby
 Requires: ruby-sqlite3
 Requires: ruby-mysql
+Requires: ruby-nokogiri
 BuildArch: noarch
 
 %description cartridge-rack-1.1.0
