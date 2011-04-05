@@ -8,7 +8,7 @@ class EmailConfirmController < ApplicationController
   ERRORS = {'user_failed_confirmation' => "Email confirmation failed",
             'user_email_failed_confirmation' => "Email confirmation failed",
             :unknown => "An unknown error has occurred"
-  }  
+  }
 
   def confirm
 
@@ -17,20 +17,20 @@ class EmailConfirmController < ApplicationController
 
     @errors = {}
     if key == nil
-      @errors[:invalidConfirmLinkMissingKey] = 'The confirmation link used is missing the key parameter.  Please check your link or try registering again.'    
+      @errors[:invalidConfirmLinkMissingKey] = 'The confirmation link used is missing the key parameter.  Please check your link or try registering again.'
     end
     if email == nil
-      @errors[:invalidConfirmLinkMissingEmail] = 'The confirmation link used is missing the emailAddress parameter.  Please check your link or try registering again.'    
+      @errors[:invalidConfirmLinkMissingEmail] = 'The confirmation link used is missing the emailAddress parameter.  Please check your link or try registering again.'
     end
 
     # Run validations
-    valid = @errors.length == 0            
+    valid = @errors.length == 0
 
     # Stop if you have a validation error
     render :error and return unless valid
 
     begin
-      url = URI.parse(Rails.configuration.corp_server + '/confirm.html?key=' + key + '&emailAddress=' + CGI::escape(email))
+      url = URI.parse(Rails.configuration.streamline + '/confirm.html?key=' + key + '&emailAddress=' + CGI::escape(email))
       req = Net::HTTP::Get.new(url.path + '?' + url.query)
       http = Net::HTTP.new(url.host, url.port)
       if url.scheme == "https"
@@ -42,23 +42,23 @@ class EmailConfirmController < ApplicationController
       when Net::HTTPSuccess
         logger.debug "HTTP response from server is:"
         logger.debug "Response body: #{response.body}"
-        
+
         begin
           result = JSON.parse(response.body)
           if (result['errors'])
             errors = result['errors']
             if errors[0] == 'user_already_registered'
               #success
-            else         
+            else
               errors.each { |error|
-                if (ERRORS[error])                
+                if (ERRORS[error])
                   @errors[error] = ERRORS[error]
                 else
                   @errors[:unknown] = ERRORS[:unknown]
                 end
               }
             end
-          elsif result['emailAddress']        
+          elsif result['emailAddress']
             #success
           else
             @errors[:unknown] = ERRORS[:unknown]
@@ -66,7 +66,7 @@ class EmailConfirmController < ApplicationController
         rescue Exception => e
           logger.error e
           @errors[:unknown] = ERRORS[:unknown]
-        end        
+        end
       else
         logger.error "Problem with server. Response code was #{response.code}"
         logger.error "HTTP response from server is #{response.body}"
