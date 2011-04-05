@@ -35,11 +35,15 @@ module Libra
 
     #
     # Creates a new user, raising an exception
-    # if the user already exists.
+    # if the user already exists or invalid chars are found.
     #
     def self.create(rhlogin, ssh, namespace)
+      raise UserException.new(107), "Invalid chars in RHlogin '#{rhlogin}' found", caller[0..5] if !Util.check_rhlogin(rhlogin)
       raise UserException.new(102), "A user with RHLogin '#{rhlogin}' already exists", caller[0..5] if find(rhlogin)
+
+      raise UserException.new(106), "Invalid chars in namespace '#{namespace}' found", caller[0..5] if !Util.check_namespace(namespace)
       raise UserException.new(103), "A namespace with name '#{namespace}' already exists", caller[0..5] if Server.get_dns_txt(namespace).length > 0
+
       Libra.client_debug "Creating user entry rhlogin:#{rhlogin} ssh:#{ssh} namespace:#{namespace}" if Libra.c[:rpc_opts][:verbose]
       # TODO bit of a race condition here (can nsupdate fail on exists?)
       Server.nsupdate_add_txt(namespace)
@@ -77,6 +81,7 @@ module Libra
     #
     def self.valid_registration?(rhlogin, password)
       if !Libra.c[:bypass_user_reg]
+        raise UserException.new(107), "Invalid chars in RHlogin '#{rhlogin}' found", caller[0..5] if !Util.check_rhlogin(rhlogin)
         begin
           url = URI.parse(Libra.c[:user_reg_url])
           req = Net::HTTP::Post.new(url.path)
