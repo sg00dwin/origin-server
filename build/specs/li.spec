@@ -95,7 +95,6 @@ Requires: rubygems
 Requires: rubygem-abstract
 Requires: rubygem-aws
 Requires: rubygem-erubis
-Requires: rubygem-haml
 Requires: rubygem-mime-types
 Requires: rubygem-rack = 1:1.1.0
 Requires: rubygem-passenger
