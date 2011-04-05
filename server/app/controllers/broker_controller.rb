@@ -56,6 +56,9 @@ class BrokerController < ApplicationController
         action = data['action']
         app_name = data['app_name']
 
+        if !Libra::Util.check_app(app_name)
+          render :json => generate_result_json("appname invalid", 105), :status => :invalid and return
+        end
         # Execute a framework cartridge
         Libra.execute(data['cartridge'], action, app_name, data['rhlogin'])
         
@@ -124,6 +127,9 @@ class BrokerController < ApplicationController
                               
       if Libra::User.valid_registration?(data['rhlogin'], params['password'])
         user = Libra::User.find(data['rhlogin'])
+        if !Libra::Util.check_namespace(data['namespace'])
+          render :json => generate_result_json("namespace invalid", 106), :status => :invalid and return
+        end
         if user
           if data['alter']          
             if user.namespace != data['namespace']

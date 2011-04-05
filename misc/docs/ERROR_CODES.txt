@@ -6,6 +6,9 @@ User errors:
 102: A user with login already exists
 103: The namespace already exists
 104: User's application limit has been reached
+105: Invalid appname
+106: Invalid namespace
+107: Invalid rhlogin
 210: Can not override existing location for git repo
 211: Parent directory for git repo does not exist
 212: Could not find libra_id_rsa
