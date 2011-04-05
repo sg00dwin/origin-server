@@ -141,6 +141,32 @@ function check_quotas() {
     fi
 }
 
+function libra_users() {
+    `grep ":libra guest:" /etc/passwd | cut -d: -f1`
+}
+
+function homedir() {
+    # USERNAME=$1
+    `grep "^$1" /etc/passwd | cut -d: -f 6`
+}
+
+function uid() {
+    # USERNAME=$1
+    `grep "^$1" /etc/passwd | cut -d: -f 3`
+}
+
+function tc_classid() {
+    # USERID=$1
+    printf "1:%x\n" $1
+}
+
+# for each user check
+# 1) ulimits (PAM) settings file: /etc/security/limits.d/84-<username>.conf
+# 2) ulimits value: nproc
+# 3) cgroup presence
+# 4) tc presence
+# 5) quota presence
+
 # =============================================================================
 #
 # MAIN
