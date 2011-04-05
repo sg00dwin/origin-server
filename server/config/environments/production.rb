@@ -47,6 +47,11 @@ RedHatCloud::Application.configure do
   # Send deprecation notices to registered listeners
   config.active_support.deprecation = :notify
 
+  # Determines whether HTTPS constraints should be enforced for this
+  # environment - i.e. whether to enforce HTTPS for login, etc.
+  config.secure_protocol = "https"
+  config.app_scope = ""
+
   # Integration environment configuration
   config.integrated = false
   config.streamline = "https://www.redhat.com/wapps/streamline"

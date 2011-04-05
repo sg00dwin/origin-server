@@ -1,7 +1,6 @@
 RedHatCloud::Application.routes.draw do
-  app_scope = (Rails.env == 'production') ? "" : "app"
 
-  scope app_scope do
+  scope Rails.configuration.app_scope do
     # Map all the actions on the home controller
 
     # The priority is based upon order of creation:
@@ -26,8 +25,13 @@ RedHatCloud::Application.routes.draw do
     # This route can be invoked with purchase_url(:id => product.id)
 
     # Sample resource route (maps HTTP verbs to controller actions automatically):
-    resources :users, :as => "web_users", :constraints => { :protocol => "https" }
-    resources :access
+    resources :users,
+              :as => "web_users",
+              :constraints => { :protocol => Rails.configuration.secure_protocol }
+
+    namespace "access" do
+      resources :express
+    end
 
     # Sample resource route with options:
     #   resources :products do

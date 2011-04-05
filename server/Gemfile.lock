@@ -29,10 +29,15 @@ GEM
       activesupport (= 3.0.5)
     activesupport (3.0.5)
     arel (2.0.9)
-    aws (2.4.2)
+    aws (2.4.5)
     builder (2.1.2)
     erubis (2.6.6)
       abstract (>= 1.0.0)
+    formtastic (1.2.3)
+      actionpack (>= 2.3.7)
+      activesupport (>= 2.3.7)
+      i18n (~> 0.4)
+    haml (3.0.25)
     i18n (0.5.0)
     json (1.4.3)
     mail (2.2.15)
@@ -75,9 +80,12 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  aws
+  aws (~> 2.4.5)
+  formtastic (~> 1.2.3)
+  haml
   json
   parseconfig
+  rack (= 1.1.0)
   rails (= 3.0.5)
   recaptcha
   right_http_connection
