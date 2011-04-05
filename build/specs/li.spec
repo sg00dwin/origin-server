@@ -341,8 +341,9 @@ fi
 %attr(0750,-,-) %{_bindir}/rhc-restorecon
 %attr(0750,-,-) %{_bindir}/rhc-init-quota
 %attr(-,root,root,0751) %{_localstatedir}/lib/libra
-%attr(-,-,-,0750) %{_libexecdir}/li/cartridges/li-controller-0.1/
+%attr(-,root,root,0750) %{_libexecdir}/li/cartridges/li-controller-0.1/
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
+%attr(0750,-,-) %{_bindir}/rhc-accept-node
 %attr(0640,-,-) %config(noreplace) %{_sysconfdir}/libra/node.conf
 %attr(0640,-,-) %config(noreplace) %{_sysconfdir}/libra/resource_limits.conf
 %attr(0750,root,root) %config(noreplace) %{_sysconfdir}/httpd/conf.d/000000_default.conf
@@ -350,9 +351,9 @@ fi
 
 %files node-tools
 %defattr(-,root,root,-)
-%attr(0750,-,-) %{_bindir}/li-accounts
-%attr(0750,-,-) %{_bindir}/li-applications
-%attr(0750,-,-) %{_bindir}/li-status
+%attr(0750,-,-) %{_bindir}/rhc-node-accounts
+%attr(0750,-,-) %{_bindir}/rhc-node-apps
+%attr(0750,-,-) %{_bindir}/rhc-node-status
 %{gemdir}/gems/li-node-tools-%{version}
 %{gemdir}/cache/li-node-tools-%{version}.gem
 %{gemdir}/doc/li-node-tools-%{version}

@@ -1,0 +1,194 @@
+#!/bin/sh
+
+#
+# Check selinux enabled
+#
+function check_selinux() {
+    SELINUX=`getenforce`
+    if [ "$SELINUX"  != "Enforcing" ]
+    then
+	echo "FAIL: SELinux is not enabled" >&2
+	STATUS=$(($STATUS + 1))
+    else
+    #
+    # Check selinux booleans
+    #
+	SEBOOLLIST=httpd_can_network_relay:on
+	for SEBOOLSPEC in $SEBOOLLIST
+	do
+	    NAME=`echo $SEBOOLSPEC | cut -d: -f1`
+	    VALUE=`echo $SEBOOLSPEC | cut -d: -f2`
+	    RESULT=`getsebool $NAME`
+	    if [ "$RESULT" != "$NAME --> $VALUE" ]
+            then
+		echo "FAIL: selinux boolean $NAME should be $VALUE" >&2
+		STATUS=$(($STATUS + 1))
+            fi
+	done
+    fi
+}
+
+#
+# Check packages
+#
+PACKAGES="li li-common li-node li-node-tools li-server li-cartridge-rack-1.1.0 li-cartridge-wsgi-3.2.1 li-cartridge-php-5.3.2"
+
+function check_packages() {
+    for PKGNAME in $PACKAGES
+    do
+	PKGSTATUS=`rpm -q $PKGNAME`
+	if echo $PKGSTATUS | grep "not installed" >/dev/null
+	then
+	    echo "FAIL: package $PKGNAME is not installed" >&2
+	    STATUS=$(($STATUS + 1))
+	fi 
+    done
+}
+
+#
+# Check services
+#
+SERVICES="qpidd mcollective cgconfig cgred httpd"
+function check_services() {
+    for SVCNAME in $SERVICES
+    do
+	service $SVCNAME status > /dev/null 2>&1
+	if [ $? != 0 ]
+	then
+	    echo "FAIL: service $SVCNAME not running"
+	    STATUS=$(($STATUS + 1))
+	fi
+    done
+}
+
+#
+# Check kernel settings
+#
+# Kernel semaphores
+MINSEM=512
+function check_semaphores() {
+    SEMCOUNT=`sysctl kernel.sem | cut -f4`
+    if [ "$SEMCOUNT" -lt "$MINSEM" ]
+    then
+	echo "FAIL: kernel.sem semaphores too low: $SEMCOUNT < $MINSEM" >&2
+	STATUS=$(($STATUS + 1))
+    fi
+}
+
+
+#
+# Check cgroup config
+#
+function check_cgroup_config() {
+    LIBRALINES=`lscgroup cpu,cpuacct,memory,freezer,net_cls:/libra 2>/dev/null | wc -l`
+    if [ "$LIBRALINES" -lt 1 ]
+    then
+	echo "FAIL: lscgroup /libra path does not exist"
+	STATUS=$(($STATUS + 1))
+    fi
+
+    if [ ! -d /cgroup ]
+    then
+	echo "FAIL: cgroup root /cgroup directory does not exist"
+	STATUS=$(($STATUS + 1))
+    else
+	if [ ! -d /cgroup/all ]
+	then
+	    echo "FAIL: cgroup /cgroup/all directory does not exist"
+	    STATUS=$(($STATUS + 1))	
+	else
+	    if [ ! -d /cgroup/all/libra ]
+	    then
+		echo "FAIL: libra cgroup /cgroup/all/libra directory does not exist"
+		STATUS=$(($STATUS + 1))	
+	    fi
+	fi
+    fi
+}
+
+#
+# Check tc config
+#
+function check_tc_config() {
+    QDISCRESPONSE="qdisc htb 1: root refcnt 2 r2q 10 default 0 direct_packets_stat"
+    tc qdisc show dev eth0 | grep "$QDISCRESPONSE" >/dev/null
+    if [ $? -ne 0 ]
+    then
+	echo "FAIL: tc htb qdisc not configured"
+	STATUS=$(($STATUS + 1))
+    else
+	CLASSRESPONSE="class htb 1:1 root prio 0 rate 8000Mbit ceil 8000Mbit burst 0b cburst 0b"
+	CLASSCOUNT=`tc class show dev eth0 | grep 'class htb' | wc -l`
+	if [ "$CLASSCOUNT" -lt 1 ]
+	then
+	    echo "FAIL: no htb classes configured"
+	    STATUS=$(($STATUS + 1))
+	fi
+    fi
+
+    CLASSLIST=`tc class show dev eth0`
+}
+
+#
+# Check quotas
+#
+function check_quotas() {
+    QUOTASTAT=`quotaon -u -p / 2>&1`
+    if [ "$QUOTASTAT" != "user quota on / (/dev/xvda1) is on" ]
+    then
+	echo "FAIL: quotas are not enabled on / (/dev/xvda)" >&2
+	STATUS=$(($STATUS + 1))
+    fi
+}
+
+function libra_users() {
+    `grep ":libra guest:" /etc/passwd | cut -d: -f1`
+}
+
+function homedir() {
+    # USERNAME=$1
+    `grep "^$1" /etc/passwd | cut -d: -f 6`
+}
+
+function uid() {
+    # USERNAME=$1
+    `grep "^$1" /etc/passwd | cut -d: -f 3`
+}
+
+function tc_classid() {
+    # USERID=$1
+    printf "1:%x\n" $1
+}
+
+# for each user check
+# 1) ulimits (PAM) settings file: /etc/security/limits.d/84-<username>.conf
+# 2) ulimits value: nproc
+# 3) cgroup presence
+# 4) tc presence
+# 5) quota presence
+
+# =============================================================================
+#
+# MAIN
+#
+# =============================================================================
+
+# Initial status is PASS (0)
+# each fail adds one
+STATUS=0
+
+check_selinux
+check_packages
+check_services
+check_semaphores
+check_cgroup_config
+check_tc_config
+check_quotas
+
+if [ "$STATUS" -eq 0 ]
+then
+    echo PASS
+else
+    echo $STATUS ERRORS
+fi
+exit $STATUS

@@ -4,6 +4,7 @@ require 'libra/helper.rb'
 require 'libra/server.rb'
 require 'libra/user.rb'
 require 'libra/nurture.rb'
+require 'libra/util.rb'
 
 module Libra
   

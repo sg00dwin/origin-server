@@ -22,7 +22,7 @@ spec = Gem::Specification.new do |s|
   s.homepage = %q{https://engineering.redhat.com/trac/Libra}
   s.description = %q{Library and tools to view and manage a Libra node}
   s.files = FileList['lib/**/*.rb', 'bin/*'].to_a
-  s.executables = ['li-accounts', 'li-applications', 'li-status']
+  s.executables = ['rhc-node-accounts', 'rhc-node-apps', 'rhc-node-status']
   s.add_dependency('json')
   s.add_dependency('nokogiri')  # XML processing
   # MAL 20110323 - not sure what these are for.  Uncomment when you need them.

@@ -407,8 +407,8 @@ END_OF_MESSAGE
           puts "Done"
 
           print "Downloading verification output..."
-          scp("-r #{@server}:/tmp/rhc .")
           mkdir_p "rhc/log"
+          scp("-r #{@server}:/tmp/rhc/cucumber.log rhc/log")
           scp("-r #{@server}:/var/log/httpd/access_log rhc/log")
           scp("-r #{@server}:/var/log/httpd/error_log rhc/log")
           scp("-r #{@server}:/var/www/libra/log/development.log rhc/log")

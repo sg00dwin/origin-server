@@ -8,7 +8,7 @@ RedHatCloud::Application.configure do
 
   # Log error messages when you accidentally call methods on nil.
   config.whiny_nils = true
-  
+
   config.log_level = :debug
 
   # Show full error reports and disable caching
@@ -25,6 +25,9 @@ RedHatCloud::Application.configure do
   # Only use best-standards-support built into browsers
   config.action_dispatch.best_standards_support = :builtin
 
-  config.corp_server = "https://streamline.devlab.phx1.redhat.com/wapps/streamline"
+  # Integration environment constraints
+  config.integrated = false
+  config.streamline = "https://streamline.devlab.phx1.redhat.com/wapps/streamline"
+  config.streamline_secret = 'c0ldW1n3'
 end
 
