@@ -489,12 +489,12 @@ then
     then
       create_user_account $username
 
-      if (service cgconfig status > /dev/null )
+      if (service cgconfig status > /dev/null 2>&1)
       then
   	    service libra-cgroups startuser ${username} > /dev/null
       fi
 
-      if (test service libra-tc status > /dev/null)
+      if (test service libra-tc status > /dev/null 2>&1)
       then
 	  service libra-tc startuser ${username} > /dev/nul
       fi
