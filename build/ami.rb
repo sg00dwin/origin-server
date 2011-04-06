@@ -382,6 +382,11 @@ END_OF_MESSAGE
           ssh("gem install mechanize")
           puts "Done"
 
+          print "Installing rails for client testing..."
+          `#{SSH} #{@server} "gem install rails"`
+          `#{SSH} #{@server} "yum -y install sqlite*"`
+          puts "Done"
+
           print "Bounding Apache to pick up the change..."
           ssh("service httpd restart")
           ssh("service libra-site restart")
@@ -407,13 +412,17 @@ END_OF_MESSAGE
           puts "Done"
 
           print "Downloading verification output..."
-          mkdir_p "rhc/log"
+          `mkdir -p rhc/log`
           scp("-r #{@server}:/tmp/rhc/cucumber.log rhc/log")
           scp("-r #{@server}:/var/log/httpd/access_log rhc/log")
           scp("-r #{@server}:/var/log/httpd/error_log rhc/log")
           scp("-r #{@server}:/var/www/libra/log/development.log rhc/log")
           scp("-r #{@server}:/var/log/mcollective.log rhc/log")
           scp("-r #{@server}:/tmp/mcollective-client.log rhc/log")
+
+          `mkdir -p rhc/junit`
+          scp("-r #{@server}:/tmp/rhc/junit/* rhc/junit")
+
           puts "Done"
 
           #if p1.exitstatus != 0
@@ -424,20 +433,6 @@ END_OF_MESSAGE
             fail "ERROR - Non-zero exit code from verification tests (exit: #{p2.exitstatus})"
           end
 
-          # Only send email / tag if build hasn't be marked as verified yet
-          conn.describe_tags('Filter.1.Name' => 'resource-id', 'Filter.1.Value.1' => @ami).each do |tag|
-            if tag[:aws_key] == "Name" and tag[:aws_value] == VERIFIED_TAG
-              puts "Not tagging / sending email - already verified"
-            else
-              print "Tagging image as '#{VERIFIED_TAG}'..."
-              conn.create_tag(@ami, 'Name', VERIFIED_TAG) unless ENV['LIBRA_DEV']
-              puts "Done"
-
-              print "Sending QE ready email..."
-              send_verified_email(@version, @ami)
-              puts "Done"
-            end
-          end
         ensure
           unless ENV['LIBRA_DEV']
             print "Terminating instance..."
@@ -445,6 +440,24 @@ END_OF_MESSAGE
             puts "Done"
           end
         end
+      end
+
+      desc "Tag current ami as qe-ready and send a notification email"
+      task :qe_ready => :prereqs do
+        conn.describe_tags('Filter.1.Name' => 'resource-id', 'Filter.1.Value.1' => @ami).each do |tag|
+          if tag[:aws_key] == "Name" and tag[:aws_value] == VERIFIED_TAG
+            puts "Not tagging / sending email - already verified"
+            exit 0
+          end
+        end
+
+        print "Tagging image (#{@ami}) as '#{VERIFIED_TAG}'..."
+        conn.create_tag(@ami, 'Name', VERIFIED_TAG)
+        puts "Done"
+
+        print "Sending QE ready email..."
+        send_verified_email(@version, @ami)
+        puts "Done"
       end
     end
   end

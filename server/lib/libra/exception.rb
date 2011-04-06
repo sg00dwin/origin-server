@@ -7,8 +7,9 @@ module Libra
   end
   class ConfigureException < LibraException; end
   class CartridgeException < LibraException; end
-  class UserException < LibraException; end
   class NodeException < LibraException; end
+  class UserException < LibraException; end
+  class UserAuthException < LibraException; end
   class UserValidationException < LibraException; end
   class DNSException < LibraException; end
 end
