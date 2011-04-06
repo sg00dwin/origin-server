@@ -412,7 +412,7 @@ END_OF_MESSAGE
           puts "Done"
 
           print "Downloading verification output..."
-          mkdir_p "rhc/log"
+          `mkdir -p rhc/log`
           scp("-r #{@server}:/tmp/rhc/cucumber.log rhc/log")
           scp("-r #{@server}:/var/log/httpd/access_log rhc/log")
           scp("-r #{@server}:/var/log/httpd/error_log rhc/log")
@@ -420,7 +420,7 @@ END_OF_MESSAGE
           scp("-r #{@server}:/var/log/mcollective.log rhc/log")
           scp("-r #{@server}:/tmp/mcollective-client.log rhc/log")
 
-          mkdir_p "rhc/junit"
+          `mkdir -p rhc/junit`
           scp("-r #{@server}:/tmp/rhc/junit/* rhc/junit")
 
           puts "Done"
