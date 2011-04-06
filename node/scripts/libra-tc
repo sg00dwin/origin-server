@@ -163,15 +163,29 @@ restart() {
 
 status() {
     # USERNAME=$1
-    # Display status of traffic control status.
-    if [ -z "$1" ]
+
+    if $TC qdisc show dev eth0 | grep "qdisc htb 1:" > /dev/null
     then
-	$TC -s qdisc ls dev $tc_if
-	$TC -s class ls dev $tc_if
+        # Display status of traffic control status.
+	if [ -z "$1" ]
+	then
+	    $TC -s qdisc show dev $tc_if
+	    $TC -s class show dev $tc_if
+	else
+	    USERID=`uid $1`
+	    NETCLASS=`netclass $USERID`
+	    if test `$TC -s class show dev $tc_if classid 1:${NETCLASS} |  wc -l` -gt 0
+            then
+		$TC -s class show dev $tc_if classid 1:${NETCLASS}
+	    else
+		echo "tc not configured for user $1"
+		exit 1
+	    fi
+	fi
+	exit 0
     else
-	USERID=`uid $1`
-	NETCLASS=`netclass $USERID`
-	$TC -s class show dev $$tc_if classid 1:${NETCLASS}
+	echo "no htb qdisc on $tc_if" >&2
+	exit 1
     fi
 
 }
