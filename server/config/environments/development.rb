@@ -30,6 +30,10 @@ RedHatCloud::Application.configure do
   config.secure_protocol = "http"
   config.app_scope = "app"
 
+  ########################################################
+  # Integration Section - you can only select one
+  #
+
   #############################################
   # Integrated Streamline, on VPN Setup values
   #############################################
@@ -41,6 +45,15 @@ RedHatCloud::Application.configure do
   #############################################
   #config.login = "https://streamline.devlab.phx1.redhat.com/wapps/streamline/login.html"
   #config.streamline = "https://10.196.215.67/wapps/streamline"
+
+  ########################
+  # NON INTEGRATED VALUES
+  ########################
+  config.login = "/app/login"
+
+  #
+  # End Integration Section
+  #########################################################
 
   # Streamline secret - environment independent
   config.streamline_secret = 'c0ldW1n3'
