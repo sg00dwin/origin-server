@@ -367,17 +367,35 @@ body {
 /* Registration form */
 
 #registration input,
-#loginbox input {
+#login-form input,
+#loginbox input, {
 	border: 1px solid #aaa;
 	-moz-border-radius: 4px;
 	font-size: 14pt;
 	width: 200px;
 }
 
+#login-form input,
+#registration input {
+	float: left;
+	margin: 0 5px;
+	clear: right;
+}
+
+#login-form input.button,
+#registration input.button {
+	float: none;
+	clear: both;
+	width: auto;
+	margin: 0 145px;
+}
+
+
 #loginbox a {
 	font-family: Overpass;
 	font-size: 11pt;
 	text-decoration: none;
+	margin: 10px auto;
 }
 
 #registration form {
@@ -567,8 +585,8 @@ p, ul, ol, li, h1, h2, h3, h4, h5, h6, a { color: white; }
 
 /* Common non-typographic styles */
 
-a.button,
-#loginbox input.button {
+input.submit,
+input.button {
 	background: #555;
 	color: white !important;
 	font-weight: bold;
