@@ -116,46 +116,6 @@ log.level = Logger::DEBUG if opts[:debug]
 #
 # =============================================================================
 
-
-def report(accounts, format="text")
-  case format
-    when "text": report_text accounts
-    when "json": report_json accounts
-    when "xml": report_xml accounts
-  end
-end
-
-def report_text(accounts)
-  # write header
-  report = ""
-  report += "-" * 32 + " Libra Accounts " + "-" * 32 + "\n"
-
-  accounts.each {|a| report += a + "\n"}
-
-  report += "-" * 80 + "\n"
-end
-
-require 'rubygems'
-require 'json'
-def report_json(accounts)
-  accts = []
-  accounts.each do |username|
-    accts.push({"username" => username})
-  end
-  JSON.pretty_generate({"accounts" => accts})
-end
-
-require 'nokogiri'
-def report_xml(accounts)
-  xml = Nokogiri::XML::Builder.new
-  xml.accounts do |alist|
-    accounts.each do |username|
-      alist.account(:username => username)
-    end
-  end
-  xml.to_xml
-end
-
 # =============================================================================
 # =============================================================================
 #                                   MAIN
@@ -172,14 +132,3 @@ end
 # Open the password file, find all the entries with the marker in them
 # and create a data structure with the usernames of all matching accounts
 #
-accounts = []
-guest_re = Regexp.new(opts[:guest_marker])
-File.open(opts[:passwd_file], "r") do |f|
-  while line = f.gets
-    if guest_re =~ line
-      accounts.push(line.split(":")[0])
-    end
-  end
-end
-
-puts report accounts, opts[:format]
