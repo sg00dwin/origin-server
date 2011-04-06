@@ -139,7 +139,7 @@ class BrokerController < ApplicationController
               user.ssh=data['ssh']
               user.update
               Server.execute_many('li-controller-0.1', 'configure',
-                  "-c #{user.uuid} -e #{user.rhlogin} -s #{user.ssh}",
+                  "-c #{user.uuid} -e #{user.rhlogin} -s #{user.ssh} -a",
                   "customer_#{user.rhlogin}", user.rhlogin)
             end
           else
