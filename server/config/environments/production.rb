@@ -53,7 +53,7 @@ RedHatCloud::Application.configure do
   config.app_scope = ""
 
   # Integration environment configuration
-  config.integrated = false
+  config.login = "https://streamline.devlab.phx1.redhat.com/wapps/streamline/login.html"
   config.streamline = "https://www.redhat.com/wapps/streamline"
   config.streamline_secret = 'c0ldW1n3'
 end

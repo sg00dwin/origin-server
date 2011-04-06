@@ -160,10 +160,11 @@ class WebUser
   end
 
   def raise_client_error(e=nil)
-      Libra.logger_debug e if e
-      Libra.client_debug e if e
-      # TODO - Fix this
-      raise UserValidationException.new(144), I18n.t('client_error'), caller[0..5]
+      # TODO - Fix this, namespacing not working
+      #Libra.logger_debug e if e
+      #Libra.client_debug e if e
+      #raise UserValidationException.new(144), I18n.t('client_error'), caller[0..5]
+      raise I18n.t('client_error')
   end
 
   #

@@ -11,9 +11,8 @@ class ApplicationController < ActionController::Base
     if session[:login]
       Rails.logger.debug "User has an authenticated session"
       if session[:ticket] != rh_sso
-        Rails.logger.debug "Session ticket does not match current ticket - killing session"
-        reset_session
-        redirect_to login_index_path and return
+        Rails.logger.debug "Session ticket does not match current ticket - logging out"
+        redirect_to logout_index_path and return
       else
         Rails.logger.debug "Session ticket matches current ticket"
       end
