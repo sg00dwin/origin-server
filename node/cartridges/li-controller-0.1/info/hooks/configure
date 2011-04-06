@@ -494,6 +494,11 @@ then
   	    service libra-cgroups startuser ${username} > /dev/null
       fi
 
+      if (test service libra-tc status > /dev/null)
+      then
+	  service libra-tc startuser ${username} > /dev/nul
+      fi
+
       configure_user_account $username $email
 
       enable_user_ssh_access $username $email "$ssh_key"
