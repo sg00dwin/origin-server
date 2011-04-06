@@ -440,15 +440,14 @@ END_OF_MESSAGE
       desc "Tag current ami as qe-ready and send a notification email"
       task :qe_ready => :prereqs do
         conn.describe_tags('Filter.1.Name' => 'resource-id', 'Filter.1.Value.1' => @ami).each do |tag|
-          puts tag
           if tag[:aws_key] == "Name" and tag[:aws_value] == VERIFIED_TAG
             puts "Not tagging / sending email - already verified"
-            break
+            exit 0
           end
         end
 
-        print "Tagging image as '#{VERIFIED_TAG}'..."
-        conn.create_tag(@ami, 'Name', VERIFIED_TAG) unless ENV['LIBRA_DEV']
+        print "Tagging image (#{@ami}) as '#{VERIFIED_TAG}'..."
+        conn.create_tag(@ami, 'Name', VERIFIED_TAG)
         puts "Done"
 
         print "Sending QE ready email..."
