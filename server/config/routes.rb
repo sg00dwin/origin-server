@@ -14,6 +14,8 @@ RedHatCloud::Application.routes.draw do
     match 'broker/cartridge' => 'broker#cartridge_post', :via => [:post]
     match 'broker/domain' => 'broker#domain_post', :via => [:post]
     match 'broker/userinfo' => 'broker#user_info_post', :via => [:post]
+    match 'login' => 'login#index'
+    match 'index2' => 'home#index2'
 
     # Sample of named route:
     #   match 'products/:id/purchase' => 'catalog#purchase', :as => :purchase
