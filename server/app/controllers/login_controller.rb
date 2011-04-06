@@ -13,4 +13,12 @@ class LoginController < ApplicationController
     @user.errors[:error] << "- Invalid username or password"
     render :index
   end
+
+  def create
+    Rails.logger.warn "Non integrated environment - faking login"
+    session[:login] = params['login']
+    session[:ticket] = "test"
+
+    redirect_to protected_path
+  end
 end
