@@ -198,7 +198,17 @@ function check_quotas() {
     then
 	echo "FAIL: quotas are not enabled on $LIBRA_MOUNTPOINT ($LIBRA_DEVICE)" >&2
 	STATUS=$(($STATUS + 1))
+	
     fi
+
+    QUOTA_DB_FILE=$LIBRA_MOUNTPOINT/aquota.user
+    QUOTA_DB_TYPE=`secon -f $QUOTA_DB_FILE | grep type:`
+    if echo $QUOTA_DB_TYPE | grep -v 'quota_db_t' >/dev/null
+    then
+	echo "FAIL: quota db file: selinux type is incorrect: $QUOTA_DB_TYPE"
+	STATUS=$(($STATUS + 1))
+    fi
+
 }
 
 function libra_users() {
