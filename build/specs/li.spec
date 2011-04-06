@@ -3,7 +3,7 @@
 
 Name: li
 Version: 0.62.6
-Release: 3%{?dist}
+Release: 4%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -341,7 +341,7 @@ fi
 %attr(0750,-,-) %{_sysconfdir}/init.d/libra-cgroups
 %attr(0750,-,-) %{_sysconfdir}/init.d/libra-tc
 %attr(0750,-,-) %{_bindir}/rhc-ip-prep.sh
-%attr(0750,-,-) %{_bindir}/trap-user
+%attr(0755,-,-) %{_bindir}/trap-user
 %attr(0750,-,-) %{_bindir}/rhc-restorecon
 %attr(0750,-,-) %{_bindir}/rhc-init-quota
 %dir %attr(0751,root,root) %{_localstatedir}/lib/libra
@@ -403,8 +403,9 @@ chmod 0666 %{_localstatedir}/www/libra/log/production.log
 %{_libexecdir}/li/cartridges/wsgi-3.2.1/
 
 %changelog
-* Tue Apr 05 2011 Mike McGrath <mmcgrath@redhat.com> 0.62.6-3
+* Tue Apr 05 2011 Mike McGrath <mmcgrath@redhat.com> 0.62.6-4
 - Fixing /var/lib/libra permissions
+- Allowing execute to trap-user
 
 * Tue Apr 05 2011 Mike McGrath <mmcgrath@redhat.com> 0.62.6-2
 - Additional fixes
