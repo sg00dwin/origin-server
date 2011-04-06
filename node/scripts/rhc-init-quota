@@ -76,7 +76,7 @@ function init_quota_db() {
     chmod 600 $QUOTA_FILE
     #restorecon ${QUOTA_FILE}   
     # replace the restorecon when the libra rules allow it
-    chcon -t quota_db_t /var/lib/libra/aquota.user 
+    chcon -t quota_db_t ${QUOTA_FILE} 
 
 }
 
