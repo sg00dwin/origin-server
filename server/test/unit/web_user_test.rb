@@ -54,21 +54,21 @@ class WebUserTest < ActiveSupport::TestCase
     user.register("http://www.example.org")
   end
 
-  test "requesting Express access" do
-    #result = get_unique_username
+  test "find by ticket" do
+    user = WebUser.new(:emailAddress => RH_USER, :password => PWD)
 
-    # Note - the below code works but you can only request access once
-    # TODO - register a new user
-    # TODO - validate their email address (not sure how yet)
-    #user = WebUser.new(:emailAddress => result[:login], :password => PWD)
-    #user.login
-    #
-    #solution = CloudAccess::EXPRESS
-    #user.request_access(solution, AMZ_ACCT)
-    #assert user.is_auth?(solution) or user.has_requested?(solution)
+    user.login
+
+    user2 = WebUser.find_by_ticket(user.ticket)
+    assert user.emailAddress == user2.emailAddress
   end
 
-  test "request Express access twice" do
-    # TODO - test this and handle the 500
+  test "request express access" do
+    user = WebUser.new(:emailAddress => RH_USER, :password => PWD)
+    user.login
+
+    solution = CloudAccess::EXPRESS
+    user.request_access(solution, AMZ_ACCT)
+    assert user.has_access?(solution) or user.has_requested?(solution)
   end
 end

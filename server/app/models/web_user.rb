@@ -31,6 +31,12 @@ class WebUser
     false
   end
 
+  def self.find_by_ticket(ticket)
+    user = WebUser.new(:ticket => ticket)
+    user.establish
+    return user
+  end
+
   #
   # Register a new streamline user
   #
@@ -45,7 +51,7 @@ class WebUser
 
     http_post(Streamline.register_url, register_args) do |json|
       unless json['emailAddress']
-        @user.errors[:unknown] = I18n.t('unknown')
+        errors[:unknown] = I18n.t('unknown')
       end
     end
   end
@@ -76,20 +82,34 @@ class WebUser
   end
 
   #
+  # Establish the current user based on a ticket
+  #
+  def establish
+    http_post(Streamline.roles_url) do |json_res|
+      @emailAddress = json_res['username']
+      @roles = json_res['roles']
+    end
+  end
+
+  #
   # Request access to a cloud solution
   #
-  def request_access(solution, amz_acct)
-    access_args = {'solution' => solution,
-                   'amazon_account' => amz_acct}
+  def request_access(solution, amz_acct="")
+    if has_requested?(solution) or has_access?(solution)
+      Rails.logger.warn("User #{@emailAddress} already requested access - ignoring")
+    else
+      access_args = {'solution' => solution,
+                     'amazon_account' => amz_acct}
 
-    # Make the request for access
-    http_post(Streamline.request_access_url, access_args)
+      # Make the request for access
+      http_post(Streamline.request_access_url, access_args)
+    end
   end
 
   #
   # Whether the user is authorized for a given cloud solution
   #
-  def is_auth?(solution)
+  def has_access?(solution)
     @roles.index(CloudAccess.auth_role(solution)) != nil
   end
 
@@ -172,10 +192,10 @@ class WebUser
 
   def parse_json_errors(json)
     json['errors'].each do |error|
-      if Streamline.ERRORS.index(error)
-        @user.errors[error.to_sym] = I18n.t(error)
+      if Streamline::ERRORS.index(error)
+        errors[error.to_sym] = I18n.t(error)
       else
-        @user.errors[:unknown] = I18n.t('unknown')
+        errors[:unknown] = I18n.t('unknown')
       end
     end if json['errors']
   end

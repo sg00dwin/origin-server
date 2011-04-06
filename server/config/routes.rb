@@ -29,6 +29,9 @@ RedHatCloud::Application.routes.draw do
               :as => "web_users",
               :constraints => { :protocol => Rails.configuration.secure_protocol }
 
+    resources :login,
+              :constraints => { :protocol => Rails.configuration.secure_protocol }
+
     namespace "access" do
       resources :express
     end

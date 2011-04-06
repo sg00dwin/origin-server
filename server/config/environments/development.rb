@@ -32,8 +32,8 @@ RedHatCloud::Application.configure do
 
   # Integration environment constraints - uncommenting these will
   #   registrations, logins, and authorizations to hit the IT service
-  # config.streamline = "https://streamline.devlab.phx1.redhat.com/wapps/streamline"
-  # config.streamline_secret = 'c0ldW1n3'
+  config.streamline = "https://streamline.devlab.phx1.redhat.com/wapps/streamline"
+  config.streamline_secret = 'c0ldW1n3'
 
   # AWS configuration
   config.aws_key = "AKIAJMZR4X6F46UMXV6Q"
