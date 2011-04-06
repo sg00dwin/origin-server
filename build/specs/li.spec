@@ -2,8 +2,8 @@
 %define gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 
 Name: li
-Version: 0.62.3
-Release: 3%{?dist}
+Version: 0.62.5
+Release: 4%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -185,6 +185,10 @@ gem install --install-dir $RPM_BUILD_ROOT/%{gemdir} --bindir $RPM_BUILD_ROOT/%{_
 
 %clean
 rm -rf $RPM_BUILD_ROOT
+
+%pre server
+/usr/sbin/groupadd -r libra_user
+/usr/sbin/useradd libra_passenger -g libra_user -d /var/lib/passenger -r -s /sbin/nologin
 
 %post devenv
 
@@ -372,9 +376,6 @@ fi
 %attr(0640,root,libra_user) %config(noreplace) %{_sysconfdir}/libra/controller.conf
 
 %post server
-# Adding passenger user
-/usr/sbin/groupadd -r libra_user
-/usr/sbin/useradd libra_passenger -g libra_user -d /var/lib/passenger -r -s /sbin/nologin
 
 # Change group for mcollective client.cfg
 /bin/chgrp libra_user /etc/mcollective/client.cfg
@@ -402,6 +403,12 @@ chmod 0666 %{_localstatedir}/www/libra/log/production.log
 %{_libexecdir}/li/cartridges/wsgi-3.2.1/
 
 %changelog
+* Tue Apr 05 2011 Matt Hicks <mhicks@redhat.com> 0.62.5-4
+- server.rb typo fix
+
+* Tue Apr 05 2011 Matt Hicks <mhicks@redhat.com> 0.62.4-4
+- Moving user / group to %pre
+
 * Tue Apr 05 2011 Matt Hicks <mhicks@redhat.com> 0.62.3-3
 - Removed server rubygem-haml dep
 

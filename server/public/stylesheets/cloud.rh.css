@@ -15,7 +15,7 @@ body {
 /* Main nav */
 
 #nav {
-        background: url(../images/bg_mainnav.png) repeat-x red;
+        background: url(/app/images/bg_mainnav.png) repeat-x red;
         min-height: 20px;
         padding-top: 7px;
         padding-bottom: 7px;
@@ -47,12 +47,12 @@ body {
 #login {
 	width: 50px;
 	float: right;
-	background: url(../images/bg_login_button.png) repeat-x red;
+	background: url(/app/images/bg_login_button.png) repeat-x red;
 	padding: 6px 30px;
 }
 
 #loginbox {
- 	background: url(../images/bg_login_button.png) repeat-x red;
+ 	background: url(/app/images/bg_login_button.png) repeat-x red;
         padding: 16px;
 }
 
@@ -75,7 +75,7 @@ body {
 }
 
 #loginbox li  {
-	background: url(../images/bullet_triangle_yellow.png) no-repeat 0px 5px;
+	background: url(/app/images/bullet_triangle_yellow.png) no-repeat 0px 5px;
 	padding-left: 14px;
 }
 
@@ -133,9 +133,9 @@ body {
 #page #pageheader h2,
 #page #pageheader p { color: white; }
 
-#pageheader.express { background: url(../images/bg_express.png) repeat-x #6699cc; }
-#pageheader.appscale { background: url(../images/bg_appscale.png) repeat-x #c88fd7; }
-#pageheader.fabric { background: url(../images/bg_appscale.png) repeat-x #8dd35f; }
+#pageheader.express { background: url(/app/images/bg_express.png) repeat-x #6699cc; }
+#pageheader.appscale { background: url(/app/images/bg_appscale.png) repeat-x #c88fd7; }
+#pageheader.fabric { background: url(/app/images/bg_appscale.png) repeat-x #8dd35f; }
 
 #news_title {
         background: #333;
@@ -159,7 +159,7 @@ body {
 }
 
 #page {
-	background: white url(../images/bg_gradient.png) repeat-x;
+	background: white url(/app/images/bg_gradient.png) repeat-x;
         color: black;
 	padding-top: 0px;
 	padding-bottom: 5em;
@@ -326,15 +326,15 @@ body {
 /* App Promo Banners */
 
 #app_promos .express {
-	background: url(../images/banner_bg_express.png) white;
+	background: url(/app/images/banner_bg_express.png) white;
 }
 
 #app_promos .appscale {
-	background: url(../images/banner_bg_appscale.png) white;
+	background: url(/app/images/banner_bg_appscale.png) white;
 }
 
 #app_promos .fabric {
-	background: url(../images/banner_bg_fabric.png) white;
+	background: url(/app/images/banner_bg_fabric.png) white;
 }
 
 #app_promos h3,
@@ -779,8 +779,8 @@ li.slide {
 	display: block;
 }
 
-#slides #express { background: /*url(../images/slide_express.png) no-repeat*/ #6699cc; }
-#slides #appscale { background: /*url(../images/slide_appscale.png) repeat-x*/ #c88fd7; }
+#slides #express { background: /*url(/app/images/slide_express.png) no-repeat*/ #6699cc; }
+#slides #appscale { background: /*url(/app/images/slide_appscale.png) repeat-x*/ #c88fd7; }
 
 .slides li p {
 	font-size: 1.1em;
