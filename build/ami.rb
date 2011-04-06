@@ -414,6 +414,10 @@ END_OF_MESSAGE
           scp("-r #{@server}:/var/www/libra/log/development.log rhc/log")
           scp("-r #{@server}:/var/log/mcollective.log rhc/log")
           scp("-r #{@server}:/tmp/mcollective-client.log rhc/log")
+
+          mkdir_p "rhc/junit"
+          scp("-r #{@server}:/tmp/rhc/junit/* rhc/junit")
+
           puts "Done"
 
           #if p1.exitstatus != 0
