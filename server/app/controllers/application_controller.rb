@@ -3,6 +3,11 @@ class ApplicationController < ActionController::Base
   before_filter :check_credentials
 
   def check_credentials
+    # If this is a logout request, pass through
+    Rails.logger.debug "Checking for logout request"
+    return if request.path =~ /logout/
+
+    Rails.logger.debug "Not a logout request, checking for cookie"
     rh_sso = cookies[:rh_sso]
     Rails.logger.debug "rh_sso cookie = '#{rh_sso}'"
 

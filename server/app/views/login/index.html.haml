@@ -12,6 +12,16 @@
     %h3 Already Have a Login?
 
     #login-form
+      :erb
+        <% if @user and @user.errors.any? %>
+        <div id="errorExplanation">
+          <ul>
+          <% @user.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+          </ul>
+        </div>
+        <% end %>
 
       :erb
         <form action="<%= Rails.configuration.login %>" method="post">
@@ -22,7 +32,8 @@
             <label for="pwd_input">Password:</label><input id="pwd_input" type="password" name="password" autocomplete="off" />
           </div>
           <div>
-            <input type="hidden" name="redirectUrl" value="http://openshift.redhat.com/app/landing/index" />
+            <input type="hidden" name="redirectUrl" value="<%= @redirectUrl %>" />
+            <input type="hidden" name="errorUrl" value="<%= @errorUrl %>" />
             <input type="submit" value="Login" />
           </div>
         </form>
