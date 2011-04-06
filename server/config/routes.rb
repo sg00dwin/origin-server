@@ -24,16 +24,18 @@ RedHatCloud::Application.routes.draw do
     # Sample resource route (maps HTTP verbs to controller actions automatically):
     resources :users,
               :as => "web_users",
-              :constraints => { :protocol => Rails.configuration.secure_protocol }
+              :constraints => { :protocol => "https" }
 
-    resources :login,
-              :constraints => { :protocol => Rails.configuration.secure_protocol }
+    resources :login, :constraints => { :protocol => "https" }
 
-    resources :logout,
-              :constraints => { :protocol => Rails.configuration.secure_protocol }
+    resources :logout, :constraints => { :protocol => "https" }
 
     namespace "access" do
       resources :express
+    end
+
+    namespace "protected" do
+      match "/" => "home#index", :protocol => "https"
     end
 
     # Sample resource route with options:

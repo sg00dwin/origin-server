@@ -11,6 +11,7 @@
   .prefix_1.grid_22.suffix_1#intro
     %h4 Welcome
     %p
-      You are logged in - welcome.
+      :erb
+        You are logged in - welcome <%= session[:login] %>.
 
   .clear
