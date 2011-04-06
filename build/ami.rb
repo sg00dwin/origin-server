@@ -382,6 +382,11 @@ END_OF_MESSAGE
           ssh("gem install mechanize")
           puts "Done"
 
+          print "Installing rails for client testing..."
+          `#{SSH} #{@server} "gem install rails"`
+          `#{SSH} #{@server} "yum -y install sqlite*"`
+          puts "Done"
+
           print "Bounding Apache to pick up the change..."
           ssh("service httpd restart")
           ssh("service libra-site restart")
