@@ -35,6 +35,9 @@ RedHatCloud::Application.routes.draw do
     resources :landing,
               :constraints => { :protocol => Rails.configuration.secure_protocol }
 
+    resources :logout,
+              :constraints => { :protocol => Rails.configuration.secure_protocol }
+
     namespace "access" do
       resources :express
     end
