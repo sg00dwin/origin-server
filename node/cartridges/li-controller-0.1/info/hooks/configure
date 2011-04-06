@@ -81,7 +81,7 @@ function initialize {
 }
 
 function parse_options {
-    while getopts 'c:e:s:p:o:dnr' OPTION
+    while getopts 'c:e:s:p:o:dnra' OPTION
     do
 	case $OPTION in
             c) username=$OPTARG
@@ -96,9 +96,11 @@ function parse_options {
 		;;
             d) set -x
 		;;
-	    n) NOOP='echo'
+	          n) NOOP='echo'
 		;;
-	    r) REVERT="TRUE"
+	          r) REVERT="TRUE"
+    ;;
+            a) ALTER="TRUE"	          
 		;;
             ?) print_help
 		;;
@@ -240,9 +242,7 @@ EOF
 command=\\\"/usr/bin/trap-user\\\",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty ssh-rsa $SSHKEY Libra-$USERNAME-$USEREMAIL
 EOF\""
     fi
-
     ${NOOP} chmod 0440 ${SSHDIR}/authorized_keys
-
     # Give force ssh key to not change
     ${NOOP} chown -R "root.$USERNAME" ${SSHDIR}
     ${NOOP} restorecon -R ${SSHDIR}
@@ -485,21 +485,25 @@ parse_options $*
 
 if [ -z "$REVERT" ]
 then
-    create_user_account $username
-
-    if (service cgconfig status > /dev/null )
+    if [ -z "$ALTER" ]
     then
-	service libra-cgroups startuser ${username} > /dev/null
+      create_user_account $username
+
+      if (service cgconfig status > /dev/null )
+      then
+  	    service libra-cgroups startuser ${username} > /dev/null
+      fi
+
+      configure_user_account $username $email
+
+      enable_user_ssh_access $username $email "$ssh_key"
+
+      set_pam_limits $username
+  
+      set_fs_quotas $username $quota_blocks $quota_files
+    else
+      enable_user_ssh_access $username $email "$ssh_key"
     fi
-
-    configure_user_account $username $email
-
-    enable_user_ssh_access $username $email "$ssh_key"
-
-    set_pam_limits $username
-
-    set_fs_quotas $username $quota_blocks $quota_files
-
 else
     if (service cgconfig status > /dev/null)
     then
