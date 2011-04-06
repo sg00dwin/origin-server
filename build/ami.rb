@@ -428,20 +428,6 @@ END_OF_MESSAGE
             fail "ERROR - Non-zero exit code from verification tests (exit: #{p2.exitstatus})"
           end
 
-          # Only send email / tag if build hasn't be marked as verified yet
-          conn.describe_tags('Filter.1.Name' => 'resource-id', 'Filter.1.Value.1' => @ami).each do |tag|
-            if tag[:aws_key] == "Name" and tag[:aws_value] == VERIFIED_TAG
-              puts "Not tagging / sending email - already verified"
-            else
-              print "Tagging image as '#{VERIFIED_TAG}'..."
-              conn.create_tag(@ami, 'Name', VERIFIED_TAG) unless ENV['LIBRA_DEV']
-              puts "Done"
-
-              print "Sending QE ready email..."
-              send_verified_email(@version, @ami)
-              puts "Done"
-            end
-          end
         ensure
           unless ENV['LIBRA_DEV']
             print "Terminating instance..."
@@ -449,6 +435,25 @@ END_OF_MESSAGE
             puts "Done"
           end
         end
+      end
+
+      desc "Tag current ami as qe-ready and send a notification email"
+      task :qe_ready => :prereqs do
+        conn.describe_tags('Filter.1.Name' => 'resource-id', 'Filter.1.Value.1' => @ami).each do |tag|
+          puts tag
+          if tag[:aws_key] == "Name" and tag[:aws_value] == VERIFIED_TAG
+            puts "Not tagging / sending email - already verified"
+            break
+          end
+        end
+
+        print "Tagging image as '#{VERIFIED_TAG}'..."
+        conn.create_tag(@ami, 'Name', VERIFIED_TAG) unless ENV['LIBRA_DEV']
+        puts "Done"
+
+        print "Sending QE ready email..."
+        send_verified_email(@version, @ami)
+        puts "Done"
       end
     end
   end
