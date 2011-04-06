@@ -79,7 +79,7 @@ begin
 
     def send_verified_email(version, ami)
         msg = <<END_OF_MESSAGE
-From: Libra Jenkins <libra-express@redhat.com>
+From: Jenkins <noreply@redhat.com>
 To: Libra Express <libra-express@redhat.com>
 Subject: Build #{version} QE Ready
 
@@ -87,7 +87,7 @@ The build #{version} (AMI #{ami}) is ready for QE.
 END_OF_MESSAGE
 
         Net::SMTP.start('localhost') do |smtp|
-          smtp.send_message msg, "libra-express@redhat.com", "libra-express@redhat.com"
+          smtp.send_message msg, "noreply@redhat.com", "libra-express@redhat.com"
         end
     end
 
