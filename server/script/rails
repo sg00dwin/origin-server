@@ -1,6 +1,9 @@
 #!/usr/bin/env ruby
 # This command will automatically be run when you run "rails" with Rails 3 gems installed from the root of your application.
 
+# Note, you need to have mod_ssl installed. Also, you will need
+# to run this script as sudo to bind to 443
+#
 require 'rubygems'
 require 'rails/commands/server'
 require 'rack'
@@ -11,7 +14,7 @@ module Rails
     class Server < ::Rack::Server
         def default_options
             super.merge({
-                :Port => 3000,
+                :Port => 443,
                 :environment => (ENV['RAILS_ENV'] || "development").dup,
                 :daemonize => false,
                 :debugger => false,
@@ -20,9 +23,9 @@ module Rails
                 :SSLEnable => true,
                 :SSLVerifyClient => OpenSSL::SSL::VERIFY_NONE,
                 :SSLPrivateKey => OpenSSL::PKey::RSA.new(
-                       File.open("/etc/pki/tls/certs/localhost.crt").read),
-                :SSLCertificate => OpenSSL::X509::Certificate.new(
                        File.open("/etc/pki/tls/private/localhost.key").read),
+                :SSLCertificate => OpenSSL::X509::Certificate.new(
+                       File.open("/etc/pki/tls/certs/localhost.crt").read),
                 :SSLCertName => [["CN", WEBrick::Utils::getservername]]
             })
         end
