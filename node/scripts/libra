@@ -14,8 +14,44 @@
 # source function library
 . /etc/rc.d/init.d/functions
 id -Z
+#set -x
 
 lockfile=/var/lock/subsys/libra
+
+function libra_users() {
+    grep ":libra guest:" /etc/passwd | cut -d: -f1
+}
+
+#
+# Given a username, get the home directory
+#
+function homedir() {
+    # USERNAME=$1
+    grep "^$1:" /etc/passwd | cut -d: -f 6
+}
+
+function userapps() {
+    # USERNAME=$1
+    ls `homedir $1`/git | xargs -I{} basename {} .git
+}
+
+function apptype() {
+    # USERNAME=$1
+    # APPNAME=$2
+    cat `homedir $1`/git/${2}.git/description | cut -d' ' -f 1
+}
+
+function approot() {
+    # USERNAME=$1
+    # APPNAME=$2
+    echo `homedir $1`/`apptype $1 $2`/$2
+}
+
+function startscript() {
+    # USERNAME=$1
+    # APPNAME=$2
+    echo `approot $1 $2`/$2_ctl.sh
+}
 
 RETVAL=0
 GROUP_RETVAL=0
@@ -30,24 +66,63 @@ then
     exit 243
 fi
 
+startuser() {
+    # USERNAME=$1
+    for APPNAME in `userapps $1`
+    do
+	startapp $1 $APPNAME
+    done
+}
+
+stopuser() {
+    # USERNAME=$1
+    for APPNAME in `userapps $1`
+    do
+	stopapp $1 $APPNAME
+    done
+}
+
+
+startapp() {
+    # USERNAME=$1
+    # APPNAME=$2
+    STARTSCRIPT=`startscript $1 $2`
+    echo -n $"    Starting http for $1-$2"
+    daemon --user=$1 --pidfile=httpd_$2 $STARTSCRIPT start
+    RETVAL=$?
+    echo
+    if [ $RETVAL -eq 0 ]
+    then
+        echo_success
+    else
+        GROUP_RETVAL=$(($GROUP_RETVAL+1))
+        echo_failure
+    fi
+}
+
+stopapp() {
+    # USERNAME=$1
+    # APPNAME=$2
+    STARTSCRIPT=`startscript $1 $2`
+    echo -n $"    Stopping http for $1-$2"
+    daemon --user=$1 --pidfile=httpd_$2 $STARTSCRIPT stop
+    RETVAL=$?
+    echo
+    if [ $RETVAL -eq 0 ]
+    then
+        echo_success
+    else
+        GROUP_RETVAL=$(($GROUP_RETVAL+1))
+        echo_failure
+    fi
+}
+
 start() {
     echo "Starting Libra Services: "
-    # This won't scale forever, but works fine in the '100 or so' range
-    for ctl_script in `/bin/find /var/lib/libra/ -maxdepth 4 -mindepth 4 -type f -name "*_ctl.sh"`
+
+    for USERNAME in `libra_users`
     do
-        run_as=$( echo $ctl_script | awk -F/ '{print $5}')
-        script_name=$(basename $ctl_script)
-        echo -n $"    Starting http for $run_as-${script_name%_ctl.sh}"
-        daemon --user=$run_as --pidfile=httpd_${script_name} $ctl_script start
-        RETVAL=$?
-        echo
-        if [ $RETVAL -eq 0 ]
-        then
-            echo_success
-        else
-            GROUP_RETVAL=$(($GROUP_RETVAL+1))
-            echo_failure
-        fi
+	startuser $USERNAME
     done
     [ $GROUP_RETVAL -eq 0 ] && touch ${lockfile}
     [ $GROUP_RETVAL -eq 0 ] && success || failure
@@ -58,22 +133,9 @@ start() {
 
 stop() {
     echo "Stopping Libra Services: "
-    # This won't scale forever, but works fine in the '100 or so' range
-    for ctl_script in `/bin/find /var/lib/libra/ -maxdepth 4 -mindepth 4 -type f -name "*_ctl.sh"`
+    for USERNAME in `libra_users`
     do
-        run_as=$( echo $ctl_script | awk -F/ '{print $5}')
-        script_name=$(basename $ctl_script)
-        echo -n $"    Stopping http for $run_as-${script_name%_ctl.sh}"
-        daemon --user=$run_as --pidfile=httpd_${script_name} $ctl_script stop
-        RETVAL=$?
-        echo
-        if [ $RETVAL -eq 0 ]
-        then
-            echo_success
-        else
-            GROUP_RETVAL=$(($GROUP_RETVAL+1))
-            echo_failure
-        fi
+	stopuser $USERNAME
     done
     [ $GROUP_RETVAL -eq 0 ] && touch ${lockfile}
     echo -n $"Libra services stopped"
@@ -103,6 +165,8 @@ case "$1" in
     ;;
   status)
     echo "Checking Libra Services: "
+
+    # check for $1 (user) and $2 (appname)
     # This won't scale forever, but works fine in the '100 or so' range
     for ctl_script in `/bin/find /var/lib/libra/ -maxdepth 4 -mindepth 4 -type f -name "*_ctl.sh"`
     do
@@ -123,6 +187,33 @@ case "$1" in
     echo
     #return $GROUP_RETVAL
     ;;
+
+  startuser)
+    startuser $2
+    ;;
+
+  stopuser)
+    stopuser $2
+    ;;
+
+  restartuser)
+    stopuser $2
+    startuser $2
+    ;;
+
+  startapp)
+    startapp $2 $3 
+    ;;
+
+  stopapp)
+    stopapp $2 $3
+    ;;
+
+  restartapp)
+    stopapp $2 $3
+    startapp $2 $3
+    ;;
+
   *)
     echo $"Usage: $0 {start|stop|status|restart|reload|force-reload|condrestart}"
     exit 1
