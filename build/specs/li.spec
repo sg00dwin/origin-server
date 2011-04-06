@@ -3,7 +3,7 @@
 
 Name: li
 Version: 0.62.6
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -331,7 +331,7 @@ fi
 %{_libexecdir}/mcollective/mcollective/connector/amqp.rb
 
 %files node
-%defattr(-,root,root,0740)
+%defattr(-,root,root,-)
 %attr(0640,-,-) %{_libexecdir}/mcollective/mcollective/agent/libra.ddl
 %attr(0640,-,-) %{_libexecdir}/mcollective/mcollective/agent/libra.rb
 %attr(0640,-,-) %{_libexecdir}/mcollective/update_yaml.pp
@@ -344,7 +344,7 @@ fi
 %attr(0750,-,-) %{_bindir}/trap-user
 %attr(0750,-,-) %{_bindir}/rhc-restorecon
 %attr(0750,-,-) %{_bindir}/rhc-init-quota
-%attr(0751,root,root) %{_localstatedir}/lib/libra
+%dir %attr(0751,root,root) %{_localstatedir}/lib/libra
 %dir %attr(0750,root,root) %{_libexecdir}/li/cartridges/li-controller-0.1/
 %{_libexecdir}/li/cartridges/li-controller-0.1/README
 %{_libexecdir}/li/cartridges/li-controller-0.1/info
@@ -403,6 +403,9 @@ chmod 0666 %{_localstatedir}/www/libra/log/production.log
 %{_libexecdir}/li/cartridges/wsgi-3.2.1/
 
 %changelog
+* Tue Apr 05 2011 Mike McGrath <mmcgrath@redhat.com> 0.62.6-3
+- Fixing /var/lib/libra permissions
+
 * Tue Apr 05 2011 Mike McGrath <mmcgrath@redhat.com> 0.62.6-2
 - Additional fixes
 
