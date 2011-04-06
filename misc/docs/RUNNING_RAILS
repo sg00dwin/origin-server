@@ -1,0 +1,27 @@
+To develop on the Rails site locally, there are a couple of steps you need to
+do.
+
+First - decide if you are going to work with an integrated setup or not.  By
+default you will not be integrated with IT's corporate systems.  Any
+registrations will essentially be 'trusted'.  This is configurable though if
+you want to try logging in as real users.
+
+Developing on laptop - integrated
+1. edit development.rb and search for 'Integrated Streamline'.  Uncomment the
+appropriate section to enable integration testing.  If you are in AWS, you
+need to use the AWS settings to allow the calls to be routed over the reverse
+proxy.
+
+2. yum install mod_ssl
+This will install apache certs you will need
+
+3. you may need to 'gem update rack' to get rack-1.2.2 on your local system
+and then run 'bundle install' in server.  That will get rack upgraded.  Do NOT
+check in the Gemfile.lock
+
+3. cd server; sudo rails script/server s
+
+4. Set an entry in /etc/hosts for
+127.0.0.1 openshift.redhat.com
+
+This will get you setup pretty well to test the site locally.

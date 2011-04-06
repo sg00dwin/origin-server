@@ -11,6 +11,7 @@ class ApplicationController < ActionController::Base
     rh_sso = cookies[:rh_sso]
     Rails.logger.debug "rh_sso cookie = '#{rh_sso}'"
 
+    # TODO - what if you don't have the cookie, but have session?
     return unless rh_sso
 
     if session[:login]
@@ -25,9 +26,11 @@ class ApplicationController < ActionController::Base
       Rails.logger.debug "User does not have a authenticated session"
       Rails.logger.debug "Looking up user based on rh_sso ticket"
       user = WebUser.find_by_ticket(rh_sso)
-      Rails.logger.debug "Found #{user}. Authenticating session"
-      session[:login] = user.emailAddress
-      session[:ticket] = rh_sso
+      if user
+        Rails.logger.debug "Found #{user}. Authenticating session"
+        session[:login] = user.emailAddress
+        session[:ticket] = rh_sso
+      end
     end
   end
 end

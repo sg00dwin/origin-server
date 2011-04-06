@@ -10,7 +10,7 @@ gem 'right_http_connection'
 gem 'xml-simple'
 gem 'haml'
 gem 'formtastic', '~> 1.2.3'
-gem 'rack', '1.1.0'
+gem 'rack'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'

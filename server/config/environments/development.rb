@@ -30,12 +30,19 @@ RedHatCloud::Application.configure do
   config.secure_protocol = "http"
   config.app_scope = "app"
 
-  # Integration environment constraints - uncommenting these will
-  #   registrations, logins, and authorizations to hit the IT service
-  config.login = "https://streamline.devlab.phx1.redhat.com/wapps/streamline/login.html"
+  #############################################
+  # Integrated Streamline, on VPN Setup values
+  #############################################
+  #config.login = "https://streamline.devlab.phx1.redhat.com/wapps/streamline/login.html"
+  #config.streamline = "https://streamline.devlab.phx1.redhat.com/wapps/streamline"
 
-  # Note - this is using the reverse proxy in the shared development account
-  config.streamline = "https://10.196.215.67/wapps/streamline"
+  #############################################
+  # Integrated Streamline, in AWS Setup values
+  #############################################
+  #config.login = "https://streamline.devlab.phx1.redhat.com/wapps/streamline/login.html"
+  #config.streamline = "https://10.196.215.67/wapps/streamline"
+
+  # Streamline secret - environment independent
   config.streamline_secret = 'c0ldW1n3'
 
   # AWS configuration
