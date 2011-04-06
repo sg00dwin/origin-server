@@ -187,8 +187,8 @@ gem install --install-dir $RPM_BUILD_ROOT/%{gemdir} --bindir $RPM_BUILD_ROOT/%{_
 rm -rf $RPM_BUILD_ROOT
 
 %pre server
-/usr/sbin/groupadd -r libra_user
-/usr/sbin/useradd libra_passenger -g libra_user -d /var/lib/passenger -r -s /sbin/nologin
+/usr/sbin/groupadd -r libra_user 2>&1 || :
+/usr/sbin/useradd libra_passenger -g libra_user -d /var/lib/passenger -r -s /sbin/nologin 2>&1 > /dev/null || :
 
 %post devenv
 
