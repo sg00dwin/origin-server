@@ -3,6 +3,11 @@ class ApplicationController < ActionController::Base
   before_filter :check_credentials
 
   def check_credentials
+    # If this is a logout request, pass through
+    Rails.logger.debug "Checking for logout request"
+    return if request.path =~ /logout/
+
+    Rails.logger.debug "Not a logout request, checking for cookie"
     rh_sso = cookies[:rh_sso]
     Rails.logger.debug "rh_sso cookie = '#{rh_sso}'"
 
@@ -11,9 +16,8 @@ class ApplicationController < ActionController::Base
     if session[:login]
       Rails.logger.debug "User has an authenticated session"
       if session[:ticket] != rh_sso
-        Rails.logger.debug "Session ticket does not match current ticket - killing session"
-        reset_session
-        redirect_to login_index_path and return
+        Rails.logger.debug "Session ticket does not match current ticket - logging out"
+        redirect_to logout_index_path and return
       else
         Rails.logger.debug "Session ticket matches current ticket"
       end

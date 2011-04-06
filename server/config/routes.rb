@@ -9,13 +9,8 @@ RedHatCloud::Application.routes.draw do
     # Sample of regular route:
     #   match 'products/:id' => 'catalog#view'
     # Keep in mind you can assign values other than :controller and :action
-    match 'index' => 'home#index'
-    match 'index2' => 'home#index2'
-    match 'appscale' => 'home#appscale'
     match 'getting_started' => 'home#getting_started'
-
     match 'email_confirm' => 'email_confirm#confirm'
-
     match 'broker/cartridge' => 'broker#cartridge_post', :via => [:post]
     match 'broker/domain' => 'broker#domain_post', :via => [:post]
     match 'broker/userinfo' => 'broker#user_info_post', :via => [:post]
@@ -30,9 +25,6 @@ RedHatCloud::Application.routes.draw do
               :constraints => { :protocol => Rails.configuration.secure_protocol }
 
     resources :login,
-              :constraints => { :protocol => Rails.configuration.secure_protocol }
-
-    resources :landing,
               :constraints => { :protocol => Rails.configuration.secure_protocol }
 
     resources :logout,

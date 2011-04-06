@@ -67,16 +67,18 @@ module Libra
               Libra.c[:rpc_opts][:timeout] = 15
               server_execute_direct(framework, action, app_name, user, server)
               
-              # update DNS
-              public_ip = server.get_fact_direct('public_ip')
-              Libra.logger_debug "DEBUG: Public ip being deconfigured '#{public_ip}' from namespace '#{user.namespace}'"
-              if Libra.c[:use_dynect_dns]
-                auth_token = Server.dyn_login
-                Server.dyn_delete_a_record(app_name, user.namespace, auth_token)
-                Server.dyn_publish(auth_token)
-                Server.dyn_logout(auth_token)
-              else
-                Server.nsupdate_del(app_name, user.namespace, public_ip)
+              if action == 'deconfigure'
+                # update DNS
+                public_ip = server.get_fact_direct('public_ip')
+                Libra.logger_debug "DEBUG: Public ip being deconfigured '#{public_ip}' from namespace '#{user.namespace}'"
+                if Libra.c[:use_dynect_dns]
+                  auth_token = Server.dyn_login
+                  Server.dyn_delete_a_record(app_name, user.namespace, auth_token)
+                  Server.dyn_publish(auth_token)
+                  Server.dyn_logout(auth_token)
+                else
+                  Server.nsupdate_del(app_name, user.namespace, public_ip)
+                end
               end
             else
               if action == 'deconfigure'

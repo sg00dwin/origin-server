@@ -41,6 +41,12 @@ class WebUser
   # Register a new streamline user
   #
   def register(confirm_url)
+    # Check if this is an integrated environment
+    unless Rails.configuration.respond_to?(:streamline)
+      Rails.logger.warn("Non integrated environment - passing through")
+      return
+    end
+
     # First do the authentication
     register_args = {'emailAddress' => @emailAddress,
                      'password' => @password,
@@ -61,12 +67,25 @@ class WebUser
   # Login the current user, setting the roles and ticket
   #
   def login
+    # Check if this is an integrated environment
+    unless Rails.configuration.respond_to?(:streamline)
+      Rails.logger.warn("Non integrated environment - passing through")
+      @ticket = "test"
+      return
+    end
+
+    # Remove any ticket that might be present
+    @ticket = nil
+
     # First do the authentication
     login_args = {'login' => @emailAddress,
                   'password' => @password,
                   'redirectUrl' => '/noop'}
 
-    http_post(Streamline.login_url, login_args)
+    # Perform the authentication
+    http_post(Streamline.login_url, login_args) do |json_res|
+      # TODO - parse errors
+    end
 
     # Now retrieve the authorization roles
     http_post(Streamline.roles_url) do |json_res|
@@ -85,6 +104,12 @@ class WebUser
   # Establish the current user based on a ticket
   #
   def establish
+    # Check if this is an integrated environment
+    unless Rails.configuration.respond_to?(:streamline)
+      Rails.logger.warn("Non integrated environment - passing through")
+      return
+    end
+
     http_post(Streamline.roles_url) do |json_res|
       @emailAddress = json_res['username']
       @roles = json_res['roles']
@@ -95,6 +120,13 @@ class WebUser
   # Request access to a cloud solution
   #
   def request_access(solution, amz_acct="")
+    # Check if this is an integrated environment
+    unless Rails.configuration.respond_to?(:streamline)
+      Rails.logger.warn("Non integrated environment - adding role")
+      @roles << CloudAccess.auth_role(solution)
+      return
+    end
+
     if has_requested?(solution) or has_access?(solution)
       Rails.logger.warn("User #{@emailAddress} already requested access - ignoring")
     else
@@ -155,15 +187,17 @@ class WebUser
         Libra.client_debug "Problem with server. Response code was #{res.code}"
       end
     rescue Exception => e
+      Rails.logger.error e, e.backtrace
       raise_client_error(e)
     end
   end
 
   def raise_client_error(e=nil)
-      Libra.logger_debug e if e
-      Libra.client_debug e if e
-      # TODO - Fix this
-      raise UserValidationException.new(144), I18n.t('client_error'), caller[0..5]
+      # TODO - Fix this, namespacing not working
+      #Libra.logger_debug e if e
+      #Libra.client_debug e if e
+      #raise UserValidationException.new(144), I18n.t('client_error'), caller[0..5]
+      raise I18n.t('client_error')
   end
 
   #
