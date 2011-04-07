@@ -15,11 +15,10 @@ proxy.
 2. yum install mod_ssl
 This will install apache certs you will need
 
-3. you may need to 'gem update rack' to get rack-1.2.2 on your local system
-and then run 'bundle install' in server.  That will get rack upgraded.  Do NOT
-check in the Gemfile.lock
+3. cd server/public; mkdir app; cd app; ln ../* .
+This should link all the resources in public into /app/public
 
-3. cd server; sudo rails s
+4. cd server; sudo rails s
 
 4. Set an entry in /etc/hosts for
 127.0.0.1 openshift.redhat.com
