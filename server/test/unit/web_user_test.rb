@@ -1,7 +1,4 @@
 require 'test_helper'
-require 'rubygems'
-require 'net/http'
-require 'json'
 
 class WebUserTest < ActiveSupport::TestCase
   STREAMLINE_USER = "mhicks+login@redhat.com"
@@ -16,110 +13,13 @@ class WebUserTest < ActiveSupport::TestCase
     assert user1.emailAddress == user2.emailAddress
   end
 
-  test "streamline user login" do
-    user = WebUser.new(:emailAddress => STREAMLINE_USER, :password => PWD)
-    user.login
-
-    assert user.ticket
-  end
-
-  test "streamline user roles" do
-    user = WebUser.new(:emailAddress => STREAMLINE_USER, :password => PWD)
-    user.login
-
-    assert user.roles.length > 0
-    assert user.roles.index("simple_authenticated")
-    assert !user.roles.index("authenticated")
-  end
-
-  test "legacy user login" do
-    user = WebUser.new(:emailAddress => RH_USER, :password => PWD)
-
-    user.login
-
-    assert user.ticket
-  end
-
-  test "legacy user roles" do
-    user = WebUser.new(:emailAddress => RH_USER, :password => PWD)
-
-    user.login
-
-    assert user.roles.length > 0
-    assert user.roles.index("authenticated")
-    assert !user.roles.index("simple_authenticated")
-  end
-
-  test "registration" do
-    login = get_unique_username
-    user = WebUser.new(:emailAddress => login, :password => PWD)
-
-    user.register("http://www.example.org")
+  test "mixin" do
+    assert WebUser.new.respond_to?(:register)
   end
 
   test "find by ticket" do
-    assert WebUser.find_by_ticket("test")
-  end
-
-  test "request express access" do
-    user = WebUser.new(:emailAddress => RH_USER, :password => PWD)
-    user.login
-
-    solution = CloudAccess::EXPRESS
-    user.request_access(solution, AMZ_ACCT)
-    assert user.has_access?(solution) or user.has_requested?(solution)
-  end
-
-  test "register integrated" do
-    user = WebUser.new(:emailAddress => RH_USER, :password => PWD)
-
-    # Mock out the HTTP call
-    res_mock = mock('Net::HTTPResponse')
-    res_mock.stubs(:code => '200',
-                   :message => "OK",
-                   :content_type => "text/html",
-                   :body => nil)
-    Net::HTTP.any_instance.expects(:start).returns(res_mock)
-
-    user.register_integrated("test")
-  end
-
-  test "http call success" do
-    res = Net::HTTPSuccess.new('', '200', '')
-    res.expects(:body).returns(nil)
-    Net::HTTP.any_instance.expects(:start).returns(res)
-
-    WebUser.new.http_post(URI.parse("https://localhost/"))
-  end
-
-  test "http call redirect" do
-    res = Net::HTTPSuccess.new('', '302', '')
-    res.expects(:body).returns(nil)
-    Net::HTTP.any_instance.expects(:start).returns(res)
-
-    WebUser.new.http_post(URI.parse("https://localhost/"))
-  end
-
-  test "http call parsing ticket" do
-    ticket = "0|abcdefghijklmnop"
-    res = Net::HTTPSuccess.new('', '200', '')
-    res.expects(:get_fields).returns(["rh_sso=#{ticket}; Domain=.redhat.com; Path=/; Secure"])
-    res.expects(:body).returns(nil)
-    Net::HTTP.any_instance.expects(:start).returns(res)
-
-    user = WebUser.new
-    user.http_post(URI.parse("https://localhost/"))
-    assert user.ticket = ticket
-  end
-
-  test "http call with bad body" do
-    res = Net::HTTPSuccess.new('', '200', '')
-    res.expects(:body).at_least_once.returns("{corrupt??#")
-    Net::HTTP.any_instance.expects(:start).returns(res)
-
-    assert_raise(RuntimeError) {
-      WebUser.new.http_post(URI.parse("https://localhost/"))
-    }
-
+    login = "jdoe"
+    WebUser.any_instance.expects(:establish)
+    user = WebUser.find_by_ticket("1234")
   end
 end
