@@ -157,11 +157,6 @@ class WebUser
     @roles.index(CloudAccess.req_role(solution)) != nil
   end
 
-
-
-  private
-
-
   #
   # Setup a fake login in the disconnected use case
   #

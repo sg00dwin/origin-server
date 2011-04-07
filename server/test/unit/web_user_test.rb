@@ -1,6 +1,7 @@
 require 'test_helper'
-require 'mocha'
+require 'rubygems'
 require 'net/http'
+require 'json'
 
 class WebUserTest < ActiveSupport::TestCase
   STREAMLINE_USER = "mhicks+login@redhat.com"
@@ -71,9 +72,23 @@ class WebUserTest < ActiveSupport::TestCase
 
   test "register integrated" do
     user = WebUser.new(:emailAddress => RH_USER, :password => PWD)
+
+    # Mock out the HTTP call
+    res_mock = mock('Net::HTTPResponse')
+    res_mock.stubs(:code => '200',
+                   :message => "OK",
+                   :content_type => "text/html",
+                   :body => nil)
+    Net::HTTP.any_instance.expects(:start).returns(res_mock)
+
     user.register_integrated("test")
+  end
 
+  test "http call" do
+    res = Net::HTTPSuccess.new('1.1', '200', 'test')
+    res.expects(:body).returns(nil)
+    Net::HTTP.any_instance.expects(:start).returns(res)
 
-
+    WebUser.new.http_post(URI.parse("https://localhost/"))
   end
 end
