@@ -31,6 +31,7 @@ RedHatCloud::Application.routes.draw do
 
     namespace "access" do
       resources :express
+      resources :flex
     end
 
     namespace "protected" do
