@@ -115,8 +115,8 @@ user_info = RHC::get_user_info(libra_server, opt['rhlogin'], password, @http, de
 if user_info['user_info']['uuid'] != get_var(opt["rhlogin"])
     puts "!! WARNING !! WARNING !! WARNING !! WARNING !!"
     puts
-    puts "The UUID in your libra.conf file is either missing or incorrect."
-    puts "Please ensure the below line exists in ~/.li/libra.conf"
+    puts "The UUID in your #{_conf_name} file is either missing or incorrect."
+    puts "Please ensure the below line exists in #{@local_config_path}"
     puts
     puts "#{opt['rhlogin']}=#{user_info['user_info']['uuid']}"
     puts
