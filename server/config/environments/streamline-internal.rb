@@ -32,6 +32,7 @@ RedHatCloud::Application.configure do
 
   # Print deprecation notices to the stderr
   config.active_support.deprecation = :stderr
+  config.log_path = "log/development.log"
 
   ############################################
   # OpenShift Configuration Below this point #
@@ -39,6 +40,6 @@ RedHatCloud::Application.configure do
   config.app_scope = "app"
   config.integrated = true
   config.login = "https://streamline.devlab.phx1.redhat.com/wapps/streamline/login.html"
-  config.streamline = "https://10.196.215.67/wapps/streamline"
+  config.streamline = "https://streamline.devlab.phx1.redhat.com/wapps/streamline"
   config.streamline_secret = 'c0ldW1n3'
 end
