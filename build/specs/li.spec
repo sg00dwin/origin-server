@@ -316,12 +316,12 @@ fi
 %{_bindir}/rhc-ctl-app
 %{_bindir}/rhc-snapshot
 %{_mandir}/man1/rhc-*
-%{_mandir}/man5/libra*
+%{_mandir}/man5/express*
 %{gemdir}/gems/li-%{version}/
 %{gemdir}/cache/li-%{version}.gem
 %{gemdir}/doc/li-%{version}
 %{gemdir}/specifications/li-%{version}.gemspec
-%config(noreplace) %{_sysconfdir}/libra/libra.conf
+%config(noreplace) %{_sysconfdir}/libra/express.conf
 
 %files devenv
 %defattr(-,root,root,-)
