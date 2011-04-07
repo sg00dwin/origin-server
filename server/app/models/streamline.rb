@@ -39,13 +39,13 @@ module Streamline
   #
   # Login the current user, setting the roles and ticket
   #
-  def login(rhlogin, password)
+  def login
     # Clear out any existing ticket
     @ticket = nil
 
     # First do the authentication
-    login_args = {'login' => rhlogin,
-                  'password' => password,
+    login_args = {'login' => @rhlogin,
+                  'password' => @password,
                   'redirectUrl' => 'http://www.redhat.com'}
 
     # Establish the authentication ticket
@@ -53,8 +53,8 @@ module Streamline
 
     # Now retrieve the authorization roles
     http_post(@@roles_url) do |json|
-      Rails.logger.debug("Current login = #{rhlogin} / authenticated for #{json['username']}")
-      if rhlogin != json['username']
+      Rails.logger.debug("Current login = #{@rhlogin} / authenticated for #{json['username']}")
+      if @rhlogin != json['username']
         # We had a ticket collision - DO NOT proceed
         Rails.logger.error("Ticket collision - #{@ticket}")
         raise StreamlineException
@@ -67,10 +67,10 @@ module Streamline
   #
   # Register a new streamline user
   #
-  def register(emailAddress, password, confirm_url)
-    register_args = {'emailAddress' => emailAddress,
-                     'password' => password,
-                     'passwordConfirmation' => password,
+  def register(confirm_url)
+    register_args = {'emailAddress' => @emailAddress,
+                     'password' => @password,
+                     'passwordConfirmation' => @password,
                      'secretKey' => Rails.configuration.streamline_secret,
                      'termsAccepted' => 'true',
                      'confirmationUrl' => confirm_url}
