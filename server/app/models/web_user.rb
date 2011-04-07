@@ -8,7 +8,7 @@ class WebUser
   include ActiveModel::Serialization
   extend ActiveModel::Naming
 
-  attr_accessor :emailAddress, :password, :passwordConfirmation, :termsAccepted, :ticket, :roles
+  attr_accessor :rhlogin, :emailAddress, :password, :passwordConfirmation, :termsAccepted, :ticket, :roles, :desiredNamespace, :ec2AccountNumber
 
   validates_format_of :emailAddress, :with => /^[-a-z0-9_+\.]+\@([-a-z0-9]+\.)+[a-z0-9]{2,4}$/i, :message => 'Invalid email address'
   validates_length_of :password, :minimum => 6, :message => 'Passwords must be at least 6 characters'
@@ -21,6 +21,8 @@ class WebUser
     attributes.each do |name, value|
       send("#{name}=", value)
     end
+
+    @roles ||= []
   end
 
   def self.from_json(json)
@@ -31,6 +33,9 @@ class WebUser
     false
   end
 
+  #
+  # Lookup a user by the SSO ticket
+  #
   def self.find_by_ticket(ticket)
     user = WebUser.new(:ticket => ticket)
     user.establish
@@ -38,16 +43,35 @@ class WebUser
   end
 
   #
-  # Register a new streamline user
+  # Establish the current user based on a ticket
   #
-  def register(confirm_url)
+  def establish
     # Check if this is an integrated environment
-    unless Rails.configuration.respond_to?(:streamline)
+    unless Rails.configuration.integrated
       Rails.logger.warn("Non integrated environment - passing through")
       return
     end
 
-    # First do the authentication
+    http_post(Streamline.roles_url) do |json_res|
+      @emailAddress = json_res['username']
+      @roles = json_res['roles']
+    end
+  end
+
+  #
+  # Register a new streamline user
+  #
+  def register(confirm_url)
+    # Check if this is an integrated environment
+    unless Rails.configuration.integrated
+      Rails.logger.warn("Non integrated environment - passing through")
+      return
+    end
+
+    register_integrated(confirm_url)
+  end
+
+  def register_integrated(confirm_url)
     register_args = {'emailAddress' => @emailAddress,
                      'password' => @password,
                      'passwordConfirmation' => @password,
@@ -62,16 +86,13 @@ class WebUser
     end
   end
 
-
   #
   # Login the current user, setting the roles and ticket
   #
   def login
     # Check if this is an integrated environment
-    unless Rails.configuration.respond_to?(:streamline)
-      Rails.logger.warn("Non integrated environment - passing through")
-      @ticket = "test"
-      return
+    unless Rails.configuration.integrated
+      login_fake and return
     end
 
     # Remove any ticket that might be present
@@ -101,27 +122,11 @@ class WebUser
   end
 
   #
-  # Establish the current user based on a ticket
-  #
-  def establish
-    # Check if this is an integrated environment
-    unless Rails.configuration.respond_to?(:streamline)
-      Rails.logger.warn("Non integrated environment - passing through")
-      return
-    end
-
-    http_post(Streamline.roles_url) do |json_res|
-      @emailAddress = json_res['username']
-      @roles = json_res['roles']
-    end
-  end
-
-  #
   # Request access to a cloud solution
   #
   def request_access(solution, amz_acct="")
     # Check if this is an integrated environment
-    unless Rails.configuration.respond_to?(:streamline)
+    unless Rails.configuration.integrated
       Rails.logger.warn("Non integrated environment - adding role")
       @roles << CloudAccess.auth_role(solution)
       return
@@ -152,11 +157,22 @@ class WebUser
     @roles.index(CloudAccess.req_role(solution)) != nil
   end
 
+  #
+  # Setup a fake login in the disconnected use case
+  #
+  def login_fake
+    Rails.logger.warn("Non integrated environment - faking login")
+    if @emailAddress.index("@")
+      Rails.logger.debug("Fake streamline login")
+      @roles << "simple_authenticated"
+    else
+      Rails.logger.debug("Fake legacy login")
+      @roles << "authenticated"
+    end
 
-
-  private
-
-
+    # Set a fake ticket
+    @ticket = "test"
+  end
 
   def http_post(url, args={})
     begin

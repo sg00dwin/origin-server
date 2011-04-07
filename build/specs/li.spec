@@ -2,8 +2,8 @@
 %define gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 
 Name: li
-Version: 0.62.6
-Release: 4%{?dist}
+Version: 0.62.7
+Release: 1%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -37,6 +37,7 @@ Requires: li-cartridge-rack-1.1.0
 Requires: qpid-cpp-server
 Requires: puppet
 Requires: rubygem-cucumber
+Requires: rubygem-mocha
 Requires: rubygem-rspec
 Requires: rubygem-nokogiri
 BuildArch: noarch
@@ -403,6 +404,10 @@ chmod 0666 %{_localstatedir}/www/libra/log/production.log
 %{_libexecdir}/li/cartridges/wsgi-3.2.1/
 
 %changelog
+* Tue Apr 07 2011 Matt Hicks <mhicks@redhat.com> 0.62.7-1
+- Lots of site updates
+- Additional fixes
+
 * Tue Apr 05 2011 Mike McGrath <mmcgrath@redhat.com> 0.62.6-4
 - Fixing /var/lib/libra permissions
 - Allowing execute to trap-user

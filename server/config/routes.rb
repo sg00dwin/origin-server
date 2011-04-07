@@ -14,7 +14,6 @@ RedHatCloud::Application.routes.draw do
     match 'broker/cartridge' => 'broker#cartridge_post', :via => [:post]
     match 'broker/domain' => 'broker#domain_post', :via => [:post]
     match 'broker/userinfo' => 'broker#user_info_post', :via => [:post]
-    match 'login' => 'login#index'
     match 'index2' => 'home#index2'
 
     # Sample of named route:
@@ -32,6 +31,7 @@ RedHatCloud::Application.routes.draw do
 
     namespace "access" do
       resources :express
+      resources :flex
     end
 
     namespace "protected" do

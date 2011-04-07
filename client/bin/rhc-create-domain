@@ -111,7 +111,7 @@ def add_rhlogin_config(rhlogin, uuid)
         f.puts("")
     end
     unless @local_config.get_value(rhlogin)
-        puts "Adding rhlogin to #{ENV['HOME']}/.li/libra.conf"
+        puts "Adding rhlogin to #{@local_config_path}"
         f.puts("#{rhlogin}=#{uuid}")
     end
     f.close
@@ -159,7 +159,7 @@ if response.code == '200'
 Creation successful
 
 You may now create an application.  Please make note of your local config file
-in ~/.li/libra.conf which has been created and populated for you.
+in #{@local_config_path} which has been created and populated for you.
 
 EOF
     else
