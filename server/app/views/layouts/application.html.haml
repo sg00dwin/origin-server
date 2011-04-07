@@ -27,7 +27,10 @@
           %img(src="/app/images/logo.png" alt="OpenShift")
 
       #header_right.grid_18.omega
-        .clear
+        - unless session[:login]
+          #login
+            %a.iframe(href='#') Login
+          .clear
 
         %p#mainslug
           Free &amp; portable cloud services from the enterprise open source leader.
