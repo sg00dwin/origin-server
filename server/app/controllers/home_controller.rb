@@ -13,7 +13,10 @@ class HomeController < ApplicationController
     if session[:login]
       redirect_to protected_path
     else
-      render :index
+      #Assuming at some point news will come from a news source
+      @news = [ 'Lorem ipsum dolor si',
+                'Amet, consetetur sadipscing elitr, sed diam nonumyeirmod',
+                'Tempor invidunt ut labore et dolore magna aliquyam erat, sed' ]
     end
   end
 
