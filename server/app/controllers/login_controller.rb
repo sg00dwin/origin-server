@@ -5,6 +5,7 @@ class LoginController < ApplicationController
   def index
     @redirectUrl = "https://openshift.redhat.com/app"
     @errorUrl = "https://openshift.redhat.com/app/login/error"
+    Rails.logger.debug "Session workflow in LoginController#index: #{session[:workflow]}"
   end
 
   def show
@@ -18,7 +19,13 @@ class LoginController < ApplicationController
     Rails.logger.warn "Non integrated environment - faking login"
     session[:login] = params['login']
     session[:ticket] = "test"
+    cookies[:rh_sso] = {
+        :value => 'test',
+        :domain => '.redhat.com'
+    }
 
-    redirect_to protected_path
+    Rails.logger.debug "Session workflow in LoginController#create: #{session[:workflow]}"
+    Rails.logger.debug "Redirecting to home#index"    
+    redirect_to root_path
   end
 end

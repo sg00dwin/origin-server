@@ -1,14 +1,18 @@
-// this executes all the "window.onload" type events
+//JQuery will interfere with prototype unless
+$j = jQuery.noConflict();
 
-$(document).ready(function(){
+//JQuery can be referenced by $j from now on
+
+// this executes all the "window.onload" type events
+$j(function(){
 
 // slideshow
-	$('.simpleSlideShow').slideShow({
+	$j('.simpleSlideShow').slideShow({
 	interval: 6
 	});
 
 // slideshow
-	$('.newsTicker').slideShow({
+	$j('.newsTicker').slideShow({
 	interval: 2
 	});
 

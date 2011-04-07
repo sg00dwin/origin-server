@@ -4,31 +4,32 @@
  */
 
 body {
-        background:#444;
+    background:#444;
 }
 
 
 #header_right {
-        text-align: right;
+	text-align: right;
+	position: absolute;
 }
 
 /* Main nav */
 
 #nav {
-        background: url(/app/images/bg_mainnav.png) repeat-x red;
-        min-height: 20px;
-        padding-top: 7px;
-        padding-bottom: 7px;
+	background: url(/app/images/bg_mainnav.png) repeat-x red;
+	min-height: 20px;
+	padding-top: 7px;
+	padding-bottom: 7px;
 	border-top: 1px solid #fe7272;
 }
 
 #nav ul {
-        margin: 0px;
+	margin: 0px;
 }
 
 #nav li {
-        float: left;
-        list-style-type: none;
+	float: left;
+	list-style-type: none;
 	font-family: Overpass;
 	font-weight: normal;
 	font-size: 11pt;
@@ -46,9 +47,10 @@ body {
 
 #login {
 	width: 50px;
-	float: right;
 	background: url(/app/images/bg_login_button.png) repeat-x red;
 	padding: 6px 30px;
+	position: absolute;
+	right: 10px;
 }
 
 #loginbox {
@@ -112,8 +114,7 @@ body {
 
 
 #mainslug {
-	margin-top: 50px;
-	margin-bottom: .5em;
+	margin-top: 80px;
 }
 
 #login a {
@@ -134,8 +135,8 @@ body {
 #page #pageheader p { color: white; }
 
 #pageheader.express { background: url(/app/images/bg_express.png) repeat-x #6699cc; }
-#pageheader.appscale { background: url(/app/images/bg_appscale.png) repeat-x #c88fd7; }
-#pageheader.fabric { background: url(/app/images/bg_appscale.png) repeat-x #8dd35f; }
+#pageheader.flex { background: url(/app/images/bg_flex.png) repeat-x #c88fd7; }
+#pageheader.power { background: url(/app/images/bg_power.png) repeat-x #8dd35f; }
 
 #news_title {
         background: #333;
@@ -227,21 +228,21 @@ body {
   font-size: 20pt;
 }
 
-#appscale_steps h6 {
+#flex_steps h6 {
   font-weight: normal;
 }
 
-#appscale_steps h6 strong {
+#flex_steps h6 strong {
   text-transform: uppercase;
 }
 
-#appscale_steps p {
+#flex_steps p {
   font-size: 11pt;
   margin-bottom: 0px;
 }
 
-#appscale_steps a,
-#appscale_nowwhat a,
+#flex_steps a,
+#flex_nowwhat a,
 {
   font-size: 11pt;
   display: block;
@@ -252,11 +253,11 @@ body {
   color: #3C6EB4;
 }
 
-#sidenav div {
+#sidebar div {
   margin-left: 10px;
 }
 
-#sidenav a.readmore {
+#sidebar a.readmore {
   display: block;
   text-decoration: none;
   color: #3C6EB4;
@@ -266,23 +267,23 @@ body {
   margin-right: 10px;
 }
 
-.appscale_details #sidenav {
+.flex_details #sidebar {
   background: none;
 }
 
-#sidenav h2 {
+#sidebar h2 {
   padding-top: 1em;
   font-size: 10pt;
   text-transform: uppercase;
   color: #666;
 }
 
-#sidenav h3 {
+#sidebar h3 {
   font-size: 11pt;
   color: #111;
 }
 
-#sidenav ul {
+#sidebar ul {
   margin-bottom: 1em;
 }
 
@@ -290,19 +291,19 @@ body {
 
 }
 
-#sidenav {
+#sidebar {
 	background: #e6e6e6;
 }
 
-#sidenav div.grid_6 {
+#sidebar div.grid_6 {
 	border-bottom: 1px solid #ccc;
 	border-top: 1px solid white;
 	margin-top: 0px;
 	margin-bottom: 0px;
 }
 
-#sidenav div.omega { border-bottom: none; }
-#sidenav div.alpha { border-top: none; margin-left: 5px; }
+#sidebar div.omega { border-bottom: none; }
+#sidebar div.alpha { border-top: none; margin-left: 5px; }
 
 #app_promos {
 	background: #ececec;
@@ -329,12 +330,12 @@ body {
 	background: url(/app/images/banner_bg_express.png) white;
 }
 
-#app_promos .appscale {
-	background: url(/app/images/banner_bg_appscale.png) white;
+#app_promos .flex {
+	background: url(/app/images/banner_bg_flex.png) white;
 }
 
-#app_promos .fabric {
-	background: url(/app/images/banner_bg_fabric.png) white;
+#app_promos .power {
+	background: url(/app/images/banner_bg_power.png) white;
 }
 
 #app_promos h3,
@@ -383,7 +384,7 @@ body {
 }
 
 #login-form input.button,
-#registration input.button {
+#registration input.create {
 	float: none;
 	clear: both;
 	width: auto;
@@ -550,7 +551,7 @@ p, ul, ol, li, h1, h2, h3, h4, h5, h6, a { color: white; }
 	text-shadow: 0px 1px 0px #fff;
 }
 
-#sidenav h4 {
+#sidebar h4 {
 	font-size: 10pt;
 	margin-bottom: .5em;
 	margin-top: 1em;
@@ -586,7 +587,8 @@ p, ul, ol, li, h1, h2, h3, h4, h5, h6, a { color: white; }
 /* Common non-typographic styles */
 
 input.submit,
-input.button {
+input.button,
+input.create {
 	background: #555;
 	color: white !important;
 	font-weight: bold;
@@ -659,6 +661,14 @@ p images {
         color: #555;
 }
 
+#register {
+	margin-top: 15px;
+}
+
+	#register h4 {
+		display: inline;
+	}
+
 #form_notes h4 {
 	font-size: 11pt;
 	margin-bottom: .5em;
@@ -718,6 +728,11 @@ p images {
 	display: block;
 	height: 250px;
 }
+
+	li.slide {
+		position: absolute;
+		display: list-item;
+	}
 
 .newsTicker {
 	clear: auto;
@@ -797,8 +812,9 @@ li.slide {
 	display: block;
 }
 
-#slides #express { background: /*url(/app/images/slide_express.png) no-repeat*/ #6699cc; }
-#slides #appscale { background: /*url(/app/images/slide_appscale.png) repeat-x*/ #c88fd7; }
+#slides #express {
+	background: /*url(/app/images/slide_express.png) no-repeat*/ #6699cc; }
+#slides #flex { background: /*url(/app/images/slide_flex.png) repeat-x*/ #c88fd7; }
 
 .slides li p {
 	font-size: 1.1em;

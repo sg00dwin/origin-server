@@ -2,8 +2,8 @@
 %define gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 
 Name: li
-Version: 0.62.6
-Release: 4%{?dist}
+Version: 0.62.7
+Release: 1%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -37,6 +37,7 @@ Requires: li-cartridge-rack-1.1.0
 Requires: qpid-cpp-server
 Requires: puppet
 Requires: rubygem-cucumber
+Requires: rubygem-mocha
 Requires: rubygem-rspec
 Requires: rubygem-nokogiri
 BuildArch: noarch
@@ -315,12 +316,12 @@ fi
 %{_bindir}/rhc-ctl-app
 %{_bindir}/rhc-snapshot
 %{_mandir}/man1/rhc-*
-%{_mandir}/man5/libra*
+%{_mandir}/man5/express*
 %{gemdir}/gems/li-%{version}/
 %{gemdir}/cache/li-%{version}.gem
 %{gemdir}/doc/li-%{version}
 %{gemdir}/specifications/li-%{version}.gemspec
-%config(noreplace) %{_sysconfdir}/libra/libra.conf
+%config(noreplace) %{_sysconfdir}/libra/express.conf
 
 %files devenv
 %defattr(-,root,root,-)
@@ -350,6 +351,7 @@ fi
 %{_libexecdir}/li/cartridges/li-controller-0.1/info
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 %attr(0750,-,-) %{_bindir}/rhc-accept-node
+%attr(0750,-,-) %{_bindir}/rhc-node-account
 %attr(0640,-,-) %config(noreplace) %{_sysconfdir}/libra/node.conf
 %attr(0640,-,-) %config(noreplace) %{_sysconfdir}/libra/resource_limits.conf
 %attr(0750,root,root) %config(noreplace) %{_sysconfdir}/httpd/conf.d/000000_default.conf
@@ -403,6 +405,10 @@ chmod 0666 %{_localstatedir}/www/libra/log/production.log
 %{_libexecdir}/li/cartridges/wsgi-3.2.1/
 
 %changelog
+* Tue Apr 07 2011 Matt Hicks <mhicks@redhat.com> 0.62.7-1
+- Lots of site updates
+- Additional fixes
+
 * Tue Apr 05 2011 Mike McGrath <mmcgrath@redhat.com> 0.62.6-4
 - Fixing /var/lib/libra permissions
 - Allowing execute to trap-user
