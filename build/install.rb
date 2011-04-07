@@ -29,7 +29,7 @@ namespace :install do
       }
 
       mkdir_p CONF_DIR
-      cp "conf/libra.conf", CONF_DIR unless File.exists? CONF_DIR + "/libra.conf"
+      cp "conf/express.conf", CONF_DIR unless File.exists? CONF_DIR + "/express.conf"
 
       # Package the gem
       sh "rake", "package"
