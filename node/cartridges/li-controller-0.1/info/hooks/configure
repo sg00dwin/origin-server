@@ -494,7 +494,7 @@ then
   	    service libra-cgroups startuser ${username} > /dev/null
       fi
 
-      if (test service libra-tc status > /dev/null 2>&1)
+      if (service libra-tc status > /dev/null 2>&1)
       then
 	  service libra-tc startuser ${username} > /dev/nul
       fi
