@@ -37,6 +37,7 @@ Requires: li-cartridge-rack-1.1.0
 Requires: qpid-cpp-server
 Requires: puppet
 Requires: rubygem-cucumber
+Requires: rubygem-mocha
 Requires: rubygem-rspec
 Requires: rubygem-nokogiri
 BuildArch: noarch

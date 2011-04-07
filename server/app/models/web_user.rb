@@ -68,7 +68,10 @@ class WebUser
       return
     end
 
-    # First do the authentication
+    register_integrated(confirm_url)
+  end
+
+  def register_integrated(confirm_url)
     register_args = {'emailAddress' => @emailAddress,
                      'password' => @password,
                      'passwordConfirmation' => @password,

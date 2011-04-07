@@ -18,6 +18,7 @@ class LoginController < ApplicationController
     Rails.logger.warn "Non integrated environment - faking login"
     session[:login] = params['login']
     session[:ticket] = "test"
+    cookie[:rh_sso] = "test"
 
     redirect_to protected_path
   end

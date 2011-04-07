@@ -11,7 +11,6 @@ class EmailConfirmController < ApplicationController
   }
 
   def confirm
-
     key = params[:key]
     email = params[:emailAddress]
 

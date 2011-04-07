@@ -1,4 +1,6 @@
 require 'test_helper'
+require 'mocha'
+require 'net/http'
 
 class WebUserTest < ActiveSupport::TestCase
   STREAMLINE_USER = "mhicks+login@redhat.com"
@@ -65,5 +67,13 @@ class WebUserTest < ActiveSupport::TestCase
     solution = CloudAccess::EXPRESS
     user.request_access(solution, AMZ_ACCT)
     assert user.has_access?(solution) or user.has_requested?(solution)
+  end
+
+  test "register integrated" do
+    user = WebUser.new(:emailAddress => RH_USER, :password => PWD)
+    user.register_integrated("test")
+
+
+
   end
 end
