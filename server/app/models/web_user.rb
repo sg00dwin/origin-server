@@ -8,7 +8,7 @@ class WebUser
   include ActiveModel::Serialization
   extend ActiveModel::Naming
 
-  attr_accessor :rhlogin, :emailAddress, :password, :passwordConfirmation, :termsAccepted, :ticket, :roles, :desiredNamespace, :ec2AccountNumber
+  attr_accessor :emailAddress, :password, :passwordConfirmation, :termsAccepted, :ticket, :roles
 
   validates_format_of :emailAddress, :with => /^[-a-z0-9_+\.]+\@([-a-z0-9]+\.)+[a-z0-9]{2,4}$/i, :message => 'Invalid email address'
   validates_length_of :password, :minimum => 6, :message => 'Passwords must be at least 6 characters'

@@ -12,19 +12,12 @@
   .prefix_1.grid_12.suffix_1#registration
     %h3 Register for access to Flex
 
-    - semantic_form_for @user do |form|
+    - semantic_form_for @access_flex do |form|
       - form.inputs do
-        = form.input :rhlogin
-        = form.input :password, :input_html => { :autocomplete => 'off' }
-        = form.input :desiredNamespace
-        = form.input :ec2AccountNumber       
-
-        .grid_12#captcha
-          %label Prove You Are Human
-          = recaptcha_tags
+        = form.input :ec2AccountNumber 
 
       - form.buttons do
-        = form.commit_button "Register User", :input_html => { :class => 'button' }
+        = form.commit_button "Request Access", :input_html => { :class => 'button' }
     .clear
 
   .grid_9.suffix_1#form_notes

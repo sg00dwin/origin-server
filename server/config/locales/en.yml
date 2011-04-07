@@ -28,5 +28,5 @@ en:
        rhlogin: "Red Hat Login or Email Address"
        password: "Password"
        passwordConfirmation: "Retype Password"
-       desiredNamespace: "Desired Namespace"
-       ec2AccountNumber: "Amazon EC2 Account Number"
+      access/flex:
+       ec2AccountNumber: "Amazon AWS Account Number"
