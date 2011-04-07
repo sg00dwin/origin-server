@@ -10,7 +10,7 @@ body {
 
 #header_right {
 	text-align: right;
-	position: absolute;
+	position: relative;
 }
 
 /* Main nav */
@@ -114,7 +114,7 @@ body {
 
 
 #mainslug {
-	margin-top: 80px;
+	margin: 80px 0 .5em;
 }
 
 #login a {
@@ -813,8 +813,20 @@ li.slide {
 }
 
 #slides #express {
-	background: /*url(/app/images/slide_express.png) no-repeat*/ #6699cc; }
-#slides #flex { background: /*url(/app/images/slide_flex.png) repeat-x*/ #c88fd7; }
+	background: #6699cc;
+}
+	#slides #express .slide-canvas {
+		background: url(/app/images/slide_express.png) no-repeat;
+		opacity: .5;
+	}
+	
+#slides #flex {
+	background: #c88fd7;
+}
+	#slides #flex .slide-canvas {
+		background:  url(/app/images/slide_flex.png) repeat-x;
+		opacity: .5;
+	}
 
 .slides li p {
 	font-size: 1.1em;
@@ -848,7 +860,7 @@ li.slide {
 
 #slides .content p {
 	font-size: 13pt;
-	width: 600px;
+	width: 550px;
 	color: white;
 }
 
