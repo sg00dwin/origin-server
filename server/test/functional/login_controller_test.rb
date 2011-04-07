@@ -15,10 +15,10 @@ class LoginControllerTest < ActionController::TestCase
     assert_response :success
   end
 
-  test "should post login" do
+  test "should login without workflow" do
     post(:create, {'login' => "tester"})
     assert_equal session[:login], "tester"
     assert_not_nil session[:ticket]
-    assert_redirected_to protected_path
+    assert_redirected_to getting_started_path
   end
 end

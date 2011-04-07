@@ -5,6 +5,7 @@ class LoginController < ApplicationController
   def index
     @redirectUrl = "https://openshift.redhat.com/app"
     @errorUrl = "https://openshift.redhat.com/app/login/error"
+    Rails.logger.debug "Session workflow in LoginController#index: #{session[:workflow]}"
   end
 
   def show
@@ -23,7 +24,8 @@ class LoginController < ApplicationController
         :domain => '.redhat.com'
     }
 
-    Rails.logger.debug "Redirecting to #{protected_path}"
-    redirect_to protected_path
+    Rails.logger.debug "Session workflow in LoginController#create: #{session[:workflow]}"
+    Rails.logger.debug "Redirecting to home#index"    
+    redirect_to :controller => 'home', :action => 'index'
   end
 end
