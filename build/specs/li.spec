@@ -316,7 +316,7 @@ fi
 %{_bindir}/rhc-ctl-app
 %{_bindir}/rhc-snapshot
 %{_mandir}/man1/rhc-*
-%{_mandir}/man5/libra*
+%{_mandir}/man5/express*
 %{gemdir}/gems/li-%{version}/
 %{gemdir}/cache/li-%{version}.gem
 %{gemdir}/doc/li-%{version}
