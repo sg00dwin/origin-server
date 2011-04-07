@@ -10,6 +10,7 @@ body {
 
 #header_right {
 	text-align: right;
+	position: absolute;
 }
 
 /* Main nav */
@@ -46,9 +47,10 @@ body {
 
 #login {
 	width: 50px;
-	float: right;
 	background: url(/app/images/bg_login_button.png) repeat-x red;
 	padding: 6px 30px;
+	position: absolute;
+	right: 10px;
 }
 
 #loginbox {
@@ -112,8 +114,7 @@ body {
 
 
 #mainslug {
-	margin-top: 50px;
-	margin-bottom: .5em;
+	margin-top: 80px;
 }
 
 #login a {
