@@ -73,7 +73,8 @@ module Libra
                 Libra.logger_debug "DEBUG: Public ip being deconfigured '#{public_ip}' from namespace '#{user.namespace}'"
                 if Libra.c[:use_dynect_dns]
                   auth_token = Server.dyn_login
-                  Server.dyn_delete_a_record(app_name, user.namespace, auth_token)
+                  Server.dyn_delete_sshfp_record(app_name, user.namespace, auth_token)
+                  Server.dyn_delete_a_record(app_name, user.namespace, auth_token)                  
                   Server.dyn_publish(auth_token)
                   Server.dyn_logout(auth_token)
                 else
@@ -131,6 +132,7 @@ module Libra
         if Libra.c[:use_dynect_dns]
           auth_token = Server.dyn_login
           Server.dyn_create_a_record(app_name, user.namespace, public_ip, sshfp, auth_token)
+          Server.dyn_create_sshfp_record(app_name, user.namespace, sshfp, auth_token)
           Server.dyn_publish(auth_token)
           Server.dyn_logout(auth_token)
         else
