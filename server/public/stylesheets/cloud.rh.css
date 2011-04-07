@@ -4,31 +4,31 @@
  */
 
 body {
-        background:#444;
+    background:#444;
 }
 
 
 #header_right {
-        text-align: right;
+	text-align: right;
 }
 
 /* Main nav */
 
 #nav {
-        background: url(/app/images/bg_mainnav.png) repeat-x red;
-        min-height: 20px;
-        padding-top: 7px;
-        padding-bottom: 7px;
+	background: url(/app/images/bg_mainnav.png) repeat-x red;
+	min-height: 20px;
+	padding-top: 7px;
+	padding-bottom: 7px;
 	border-top: 1px solid #fe7272;
 }
 
 #nav ul {
-        margin: 0px;
+	margin: 0px;
 }
 
 #nav li {
-        float: left;
-        list-style-type: none;
+	float: left;
+	list-style-type: none;
 	font-family: Overpass;
 	font-weight: normal;
 	font-size: 11pt;
