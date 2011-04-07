@@ -26,6 +26,6 @@ class LoginController < ApplicationController
 
     Rails.logger.debug "Session workflow in LoginController#create: #{session[:workflow]}"
     Rails.logger.debug "Redirecting to home#index"    
-    redirect_to :controller => 'home', :action => 'index'
+    redirect_to root_path
   end
 end
