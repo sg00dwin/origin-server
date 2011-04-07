@@ -129,7 +129,16 @@ function user_apps() {
 function user_app_type() {
     # USERNAME=$1
     # APPNAME=$2
-    cat `homedir $1`/git/${2}.git/description | cut -d' ' -f1
+    _HOMEDIR=`homedir $1`
+    _APPTYPE=`cat ${_HOMEDIR}/git/${2}.git/description | cut -d' ' -f1`
+    if [ "$_APPTYPE" != "Unnamed" ]
+    then
+	echo $_APPTYPE
+    else
+	#echo "WARNING: Unnamed Application: update git description" >&2
+	_APPDIR=`dirname ${_HOMEDIR}/*/$2`
+	basename $_APPDIR
+    fi
 }
 
 function user_app_disk_space() {
