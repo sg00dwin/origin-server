@@ -3,6 +3,8 @@ require 'pp'
 class Access::FlexController < ApplicationController
 
   def index
+    @user = WebUser.new
+    
     Rails.logger.debug "Checking login status"
     login = session[:login]
 
