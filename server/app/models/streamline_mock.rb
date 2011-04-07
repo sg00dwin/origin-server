@@ -22,7 +22,7 @@ module StreamlineMock
   #
   # Login the current user, setting the roles and ticket
   #
-  def login(rhlogin, password)
+  def login
     Rails.logger.warn("Non integrated environment - faking login")
     if @emailAddress.index("@")
       Rails.logger.debug("Fake streamline login")
@@ -39,7 +39,7 @@ module StreamlineMock
   #
   # Register a new streamline user
   #
-  def register(emailAddress, password, confirm_url)
+  def register(confirm_url)
     Rails.logger.warn("Non integrated environment - passing through")
   end
 

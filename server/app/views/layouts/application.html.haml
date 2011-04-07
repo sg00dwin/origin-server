@@ -27,9 +27,13 @@
           %img(src="/app/images/logo.png" alt="OpenShift")
 
       #header_right.grid_18.omega
-        - unless session[:login]
+        - if session[:login]
+          #logout
+            %a(href='app/logout') Logout
+          .clear
+        - else
           #login
-            %a.iframe(href='#') Login
+            %a(href='app/login') Login
           .clear
 
         %p#mainslug
