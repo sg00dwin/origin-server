@@ -104,7 +104,7 @@ end
 #
 
 def add_rhlogin_config(rhlogin, uuid)
-    f = open(@local_config_path, 'a')
+    f = open(File.expand_path(@local_config_path), 'a')
     unless @local_config.get_value('default_rhlogin')
         f.puts("# Default rhlogin to use if none is specified")
         f.puts("default_rhlogin=#{rhlogin}")

@@ -253,24 +253,23 @@ end
 _conf_name = 'express.conf'
 _linux_cfg = '/etc/openshift/' + _conf_name
 _gem_cfg = File.join(File.expand_path(File.dirname(__FILE__) + "/../conf"), _conf_name)
-_home_conf = "#{ENV['HOME']}/.openshift"
-@local_config_path = _home_conf + "/" + _conf_name
-
+_home_conf = '~/.openshift'
+@local_config_path = File.join(_home_conf, _conf_name)
 @config_path = File.exists?(_linux_cfg) ? _linux_cfg : _gem_cfg
 
 FileUtils.mkdir_p _home_conf unless File.directory?(_home_conf)
-if !File.exists?(@local_config_path) && File.exists?("#{ENV['HOME']}/.li/libra.conf")
+if !File.exists?(File.expand_path(@local_config_path)) && File.exists?("#{ENV['HOME']}/.li/libra.conf")
     print "Moving old-style config file..."
-    FileUtils.cp "#{ENV['HOME']}/.li/libra.conf", @local_config_path
+    FileUtils.cp "#{ENV['HOME']}/.li/libra.conf", File.expand_path(@local_config_path)
     FileUtils.mv "#{ENV['HOME']}/.li/libra.conf", "#{ENV['HOME']}/.li/libra.conf.deprecated"
     puts " Done."
  end
 
-FileUtils.touch @local_config_path
+FileUtils.touch File.expand_path(@local_config_path)
 
 begin
   @global_config = ParseConfig.new(@config_path)
-  @local_config = ParseConfig.new(@local_config_path)
+  @local_config = ParseConfig.new(File.expand_path(@local_config_path))
 rescue Errno::EACCES => e
   puts "Could not open config file: #{e.message}"
   exit 253
