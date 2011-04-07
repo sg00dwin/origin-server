@@ -84,11 +84,42 @@ class WebUserTest < ActiveSupport::TestCase
     user.register_integrated("test")
   end
 
-  test "http call" do
-    res = Net::HTTPSuccess.new('1.1', '200', 'test')
+  test "http call success" do
+    res = Net::HTTPSuccess.new('', '200', '')
     res.expects(:body).returns(nil)
     Net::HTTP.any_instance.expects(:start).returns(res)
 
     WebUser.new.http_post(URI.parse("https://localhost/"))
+  end
+
+  test "http call redirect" do
+    res = Net::HTTPSuccess.new('', '302', '')
+    res.expects(:body).returns(nil)
+    Net::HTTP.any_instance.expects(:start).returns(res)
+
+    WebUser.new.http_post(URI.parse("https://localhost/"))
+  end
+
+  test "http call parsing ticket" do
+    ticket = "0|abcdefghijklmnop"
+    res = Net::HTTPSuccess.new('', '200', '')
+    res.expects(:get_fields).returns(["rh_sso=#{ticket}; Domain=.redhat.com; Path=/; Secure"])
+    res.expects(:body).returns(nil)
+    Net::HTTP.any_instance.expects(:start).returns(res)
+
+    user = WebUser.new
+    user.http_post(URI.parse("https://localhost/"))
+    assert user.ticket = ticket
+  end
+
+  test "http call with bad body" do
+    res = Net::HTTPSuccess.new('', '200', '')
+    res.expects(:body).at_least_once.returns("{corrupt??#")
+    Net::HTTP.any_instance.expects(:start).returns(res)
+
+    assert_raise(RuntimeError) {
+      WebUser.new.http_post(URI.parse("https://localhost/"))
+    }
+
   end
 end
