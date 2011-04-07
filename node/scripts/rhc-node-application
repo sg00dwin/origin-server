@@ -1,0 +1,134 @@
+#!/bin/sh
+#
+# Survey the character of an application
+#
+ETC_PASSWD=${ETC_PASSWD:=/etc/passwd}
+LIBRA_GUEST_MARKER=${LIBRA_GUEST_MARKER:="libra guest"}
+
+function valid_user() {
+    # USERNAME=$1
+    grep "^$1:" $ETC_PASSWD | grep ":${LIBRA_GUEST_MARKER}:" > /dev/null 2>&1
+}
+
+function homedir() {
+    # USERNAME=$1
+    grep "^${USERNAME}:" $ETC_PASSWD | cut -d: -f 6
+}
+
+function user_apps() {
+    # USERNAME=$1
+    ls -d `homedir $1`/git/*.git | xargs -I{} basename {} .git
+}
+
+function user_app_type() {
+    # USERNAME=$1
+    # APPNAME=$2
+    _HOMEDIR=`homedir $1`
+    _APPTYPE=`cat ${_HOMEDIR}/git/${2}.git/description | cut -d' ' -f1`
+    if [ "$_APPTYPE" != "Unnamed" ]
+    then
+	echo $_APPTYPE
+    else
+	#echo "WARNING: Unnamed Application: update git description" >&2
+	_APPDIR=`dirname ${_HOMEDIR}/*/$2`
+	basename $_APPDIR
+    fi
+}
+
+function user_app_git() {
+    # USERNAME=$1
+    # APPNAME=$2
+    echo `homedir $1`/git/${2}.git
+}
+
+function user_app_workspace() {
+    # USERNAME=$1
+    # APPNAME=$2
+    echo `homedir $1`/`user_app_type $1 $2`/${2}
+}
+
+function valid_app() {
+    # USERNAME=$1
+    # APPNAME=$2
+    
+    # Check that the app has a git directory, a valid type and an app
+    # directory
+    if [ ! -d `user_app_git $1 $2` ]
+    then
+	echo "ERROR: not a valid application: `user_app_git $1 $2` does not exist" >&2
+	return 1
+    fi
+
+    if [ ! -d `user_app_workspace $1 $2` ]
+    then
+	echo "ERROR: not a valid application: `user_app_workspace $1 $2` does not exist" >&2
+	return 1
+    fi
+
+    return 0
+}
+
+function user_app_disk_space() {
+    # USERNAME=$1
+    # APPNAME=$2
+    du -s `homedir $1`/`user_app_type $1 $2`/$2 | cut -f1
+}
+
+function user_app_git_disk_space() {
+    # USERNAME=$1
+    # APPNAME=$2
+    du -s `homedir $1`/git/${2}.git | cut -f1
+}
+
+function user_app_log_disk_space() {
+    # USERNAME=$1
+    # APPNAME=$2
+    du -s `homedir $1`/`user_app_type $1 $2`/$2/logs | cut -f1
+}
+
+# ============================================================================
+#
+# MAIN
+#
+# ============================================================================
+
+USERNAME=$1
+APPNAME=$2
+
+if [ -z "$USERNAME" ]
+then
+    echo "ERROR: missing required account name" >&2
+    exit 1
+fi
+
+valid_user $USERNAME
+if [ $? != 0 ]
+then
+    echo "Invalid user $USERNAME" >&2
+    exit 2
+fi
+
+if [ -z "$APPNAME" ]
+then
+    for APPNAME in `user_apps $USERNAME`
+    do
+	echo $APPNAME `user_app_type $USERNAME $APPNAME`
+    done
+    exit 0
+fi
+
+valid_app $$USERNAME $APPNAME
+if [ $? != 0 ]
+then
+    echo "Invalid app $APPNAME for account $USERNAME" >&2
+    exit 2    
+fi
+
+
+# size of git repo
+
+# size of workspace
+
+# size of data space
+
+# size of log space
