@@ -496,7 +496,7 @@ then
 
       if (service libra-tc status > /dev/null 2>&1)
       then
-	  service libra-tc startuser ${username} > /dev/nul
+	  service libra-tc startuser ${username} > /dev/null
       fi
 
       configure_user_account $username $email
