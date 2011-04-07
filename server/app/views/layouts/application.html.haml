@@ -29,11 +29,11 @@
       #header_right.grid_18.omega
         - if session[:login]
           #logout
-            %a(href='app/logout') Logout
+            %a(href='logout') Logout
           .clear
         - else
           #login
-            %a(href='app/login') Login
+            %a(href='login') Login
           .clear
 
         %p#mainslug
