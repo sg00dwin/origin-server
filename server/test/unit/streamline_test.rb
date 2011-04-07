@@ -10,24 +10,23 @@ class StreamlineTest < ActiveSupport::TestCase
   end
 
   test "streamline urls" do
-    assert Streamline.login_url.host
-    assert Streamline.request_access_url.host
-    assert Streamline.roles_url.host
     assert Streamline.email_confirm_url("abc123", "test@example.com").query
   end
 
   test "parse ticket nil" do
-    assert_nil = @streamline.parse_ticket(nil)
+    @streamline.parse_ticket(nil)
+    assert_nil @streamline.ticket
   end
 
   test "parse ticket empty" do
-    assert_nil = @streamline.parse_ticket([])
+    @streamline.parse_ticket([])
+    assert_nil @streamline.ticket
   end
 
   test "parse ticket" do
     cookies = ["rh_sso=#{@ticket}; Domain=.redhat.com; Path=/; Secure;"]
-    ticket = @streamline.parse_ticket(cookies)
-    assert_equal ticket, @ticket
+    @streamline.parse_ticket(cookies)
+    assert_equal @streamline.ticket, @ticket
   end
 
   test "parse body nil" do
@@ -74,7 +73,7 @@ class StreamlineTest < ActiveSupport::TestCase
     res.expects(:body).returns(nil)
     Net::HTTP.any_instance.expects(:start).returns(res)
 
-    @streamline.http_post(@ticket, URI.parse("https://localhost/"))
+    @streamline.http_post(@url)
   end
 
   test "http call redirect" do
@@ -82,7 +81,7 @@ class StreamlineTest < ActiveSupport::TestCase
     res.expects(:body).returns(nil)
     Net::HTTP.any_instance.expects(:start).returns(res)
 
-    @streamline.http_post(@ticket, @url)
+    @streamline.http_post(@url)
   end
 
   test "http call parsing ticket" do
@@ -91,9 +90,8 @@ class StreamlineTest < ActiveSupport::TestCase
     res.expects(:body).returns(nil)
     Net::HTTP.any_instance.expects(:start).returns(res)
 
-    @streamline.http_post(@ticket, @url) do |ticket, json|
-      assert ticket = @ticket
-    end
+    @streamline.http_post(@url)
+    assert_equal @streamline.ticket, @ticket
   end
 
   test "http call not found" do
@@ -101,7 +99,7 @@ class StreamlineTest < ActiveSupport::TestCase
     Net::HTTP.any_instance.expects(:start).returns(res)
 
     assert_raise(Libra::StreamlineException) {
-      @streamline.http_post(@ticket, @url)
+      @streamline.http_post(@url)
     }
   end
 
@@ -111,7 +109,7 @@ class StreamlineTest < ActiveSupport::TestCase
     Net::HTTP.any_instance.expects(:start).returns(res)
 
     assert_raise(Libra::StreamlineException) {
-      @streamline.http_post(@ticket, @url)
+      @streamline.http_post(@url)
     }
 
     # Make sure something was written to the client log
@@ -124,10 +122,78 @@ class StreamlineTest < ActiveSupport::TestCase
     Net::HTTP.any_instance.expects(:start).returns(res)
 
     assert_raise(Libra::StreamlineException) {
-      @streamline.http_post(@ticket, @url)
+      @streamline.http_post(@url)
     }
 
     # Make sure something was written to the client log
     assert !Thread.current[:debugIO].string.empty?
+  end
+
+  test "login valid" do
+    email = "test@example.com"
+    roles = ['authenticated']
+    json = {"username" => email, "roles" => roles}
+    @streamline.stubs(:http_post).yields(json)
+    @streamline.login(email, "password")
+    assert_equal roles, @streamline.roles
+    assert @streamline.errors.empty?
+  end
+
+  test "register valid" do
+    email = "test@example.com"
+    json = {"emailAddress" => email}
+    @streamline.expects(:http_post).once.yields(json)
+    @streamline.register(email, "test", @url)
+    assert @streamline.errors.empty?
+  end
+
+  test "register fail" do
+    email = "test@example.com"
+    json = {"bad" => "bad"}
+    @streamline.expects(:http_post).once.yields(json)
+    @streamline.register(email, "test", @url)
+    assert !@streamline.errors.empty?
+  end
+
+  test "role has access" do
+    @streamline.roles << CloudAccess.auth_role(CloudAccess::EXPRESS)
+    assert @streamline.has_access?(CloudAccess::EXPRESS)
+    assert !@streamline.has_requested?(CloudAccess::EXPRESS)
+  end
+
+  test "role requested access" do
+    @streamline.roles << CloudAccess.req_role(CloudAccess::EXPRESS)
+    assert !@streamline.has_access?(CloudAccess::EXPRESS)
+    assert @streamline.has_requested?(CloudAccess::EXPRESS)
+  end
+
+  test "request access" do
+    @streamline.expects(:http_post).once
+    @streamline.request_access(CloudAccess::EXPRESS, "1234")
+    assert @streamline.errors.empty?
+  end
+
+  test "request access multiple" do
+    @streamline.roles << CloudAccess.req_role(CloudAccess::EXPRESS)
+    @streamline.expects(:http_post).never
+    @streamline.request_access(CloudAccess::EXPRESS, "1234")
+    assert @streamline.errors.empty?
+  end
+
+  test "request access already has" do
+    @streamline.roles << CloudAccess.auth_role(CloudAccess::EXPRESS)
+    @streamline.expects(:http_post).never
+    @streamline.request_access(CloudAccess::EXPRESS, "1234")
+    assert @streamline.errors.empty?
+  end
+
+  test "establish user" do
+    login = "test@example.com"
+    roles = ['authenticated']
+    json = {"username" => login, "roles" => roles}
+    @streamline.expects(:http_post).once.yields(json)
+    est_login = @streamline.establish
+    assert_equal login, est_login
+    assert_equal roles, @streamline.roles
   end
 end

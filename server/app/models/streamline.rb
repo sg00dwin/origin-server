@@ -9,34 +9,116 @@ class Streamline
   include ActiveModel::Validations
   include ErrorCodes
 
-  def self.login_url
-    URI.parse(Rails.configuration.streamline + "/login.html")
-  end
+  attr_accessor :ticket, :roles
 
-  def self.register_url
-    URI.parse(Rails.configuration.streamline + "/registration.html")
-  end
-
-  def self.request_access_url
-    URI.parse(Rails.configuration.streamline + "/requestAccess.html")
-  end
-
-  def self.roles_url
-    URI.parse(Rails.configuration.streamline + "/cloudVerify.html")
-  end
+  @@login_url = Rails.configuration.streamline + "/login.html"
+  @@register_url = Rails.configuration.streamline + "/registration.html"
+  @@request_access_url = Rails.configuration.streamline + "/requestAccess.html"
+  @@roles_url = Rails.configuration.streamline + "/cloudVerify.html"
 
   def self.email_confirm_url(key, login)
     query = "key=#{key}&emailAddress=#{CGI::escape(login)}"
     URI.parse(Rails.configuration.streamline + "/confirm.html?#{query}")
   end
 
-  def http_post(ticket, url, args={})
+  def initialize
+    @roles = []
+  end
+
+  #
+  # Establish the user state based on the current ticket
+  #
+  # Returns the login
+  #
+  def establish
+    http_post(@@roles_url) do |json|
+      @roles = json['roles']
+      return json['username']
+    end
+  end
+
+  #
+  # Login the current user, setting the roles and ticket
+  #
+  def login(login, password)
+    # Clear out any existing ticket
+    @ticket = nil
+
+    # First do the authentication
+    login_args = {'login' => login,
+                  'password' => password,
+                  'redirectUrl' => 'http://www.redhat.com'}
+
+    # Establish the authentication ticket
+    http_post(@@login_url, login_args)
+
+    # Now retrieve the authorization roles
+    http_post(@@roles_url) do |json|
+      Rails.logger.debug("Current login = #{login} / authenticated for #{json['username']}")
+      if login != json['username']
+        # We had a ticket collision - DO NOT proceed
+        Rails.logger.error("Ticket collision - #{@ticket}")
+        raise StreamlineException
+      end
+
+      @roles = json['roles']
+    end
+  end
+
+  #
+  # Register a new streamline user
+  #
+  def register(emailAddress, password, confirm_url)
+    register_args = {'emailAddress' => emailAddress,
+                     'password' => password,
+                     'passwordConfirmation' => password,
+                     'secretKey' => Rails.configuration.streamline_secret,
+                     'termsAccepted' => 'true',
+                     'confirmationUrl' => confirm_url}
+
+    http_post(@@register_url, register_args) do |json|
+      unless json['emailAddress']
+        errors.add(:base, I18n.t(:unknown))
+      end
+    end
+  end
+
+  #
+  # Request access to a cloud solution
+  #
+  def request_access(solution, amz_acct="")
+    if has_requested?(solution) or has_access?(solution)
+      Rails.logger.warn("User #{@emailAddress} already requested access - ignoring")
+    else
+      access_args = {'solution' => solution,
+                     'amazon_account' => amz_acct}
+
+      # Make the request for access
+      http_post(@@request_access_url, access_args)
+    end
+  end
+
+  #
+  # Whether the user is authorized for a given cloud solution
+  #
+  def has_access?(solution)
+    @roles.index(CloudAccess.auth_role(solution)) != nil
+  end
+
+  #
+  # Whether the user has already requested access for a given cloud solution
+  #
+  def has_requested?(solution)
+    @roles.index(CloudAccess.req_role(solution)) != nil
+  end
+
+  def http_post(url, args={})
     begin
       req = Net::HTTP::Post.new(url.path)
       req.set_form_data(args)
 
       # Include the ticket as a cookie if present
-      req.add_field('Cookie', "rh_sso=#{ticket}") if ticket
+      req.add_field('Cookie', "rh_sso=#{@ticket}") if @ticket
 
       http = Net::HTTP.new(url.host, url.port)
       http.use_ssl = true
@@ -48,12 +130,12 @@ class Streamline
         Rails.logger.debug("POST Response code = #{res.code}")
 
         # Set the rh_sso cookie as the ticket
-        new_ticket = parse_ticket(res.get_fields('Set-Cookie'))
+        parse_ticket(res.get_fields('Set-Cookie'))
 
         # Parse and yield the body if a block is supplied
         if res.body and !res.body.empty?
           json = parse_body(res.body)
-          yield new_ticket, json if block_given?
+          yield json if block_given?
         end
       else
         log_error "Invalid HTTP response from streamline - #{res.code}"
@@ -77,15 +159,14 @@ class Streamline
   # and set it as the ticket
   #
   def parse_ticket(cookies)
-    ticket = nil
     if cookies
       cookies.each do |cookie|
         if cookie.index("rh_sso")
-          ticket = cookie.split('; ')[0].split("=")[1]
+          @ticket = cookie.split('; ')[0].split("=")[1]
+          break
         end
       end
     end
-    return ticket
   end
 
   #
