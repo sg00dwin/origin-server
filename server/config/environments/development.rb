@@ -25,38 +25,14 @@ RedHatCloud::Application.configure do
   # Only use best-standards-support built into browsers
   config.action_dispatch.best_standards_support = :builtin
 
-  # Determines whether HTTPS constraints should be enforced for this
-  # environment - i.e. whether to enforce HTTPS for login, etc.
-  config.secure_protocol = "http"
+  ############################################
+  # OpenShift Configuration Below this point #
+  ############################################
   config.app_scope = "app"
-
-  ########################################################
-  # Integration Section - you can only select one
-  #
-
-  #############################################
-  # Integrated Streamline, on VPN Setup values
-  #############################################
-  #config.login = "https://streamline.devlab.phx1.redhat.com/wapps/streamline/login.html"
-  #config.streamline = "https://streamline.devlab.phx1.redhat.com/wapps/streamline"
-
-  #############################################
-  # Integrated Streamline, in AWS Setup values
-  #############################################
-  #config.login = "https://streamline.devlab.phx1.redhat.com/wapps/streamline/login.html"
-  #config.streamline = "https://10.196.215.67/wapps/streamline"
-
-  ########################
-  # NON INTEGRATED VALUES
-  ########################
+  config.integrated = false
   config.login = "/app/login"
-
-  #
-  # End Integration Section
-  #########################################################
-
-  # Streamline secret - environment independent
-  config.streamline_secret = 'c0ldW1n3'
+  config.streamline = "http://localhost" # Non-integrated
+  config.streamline_secret = ''
 
   # AWS configuration
   config.aws_key = "AKIAJMZR4X6F46UMXV6Q"

@@ -1,5 +1,6 @@
 class HomeController < ApplicationController
   def index
+    Rails.logger.debug "Index controller"
     # Handle any workflow routing
     if session[:workflow]
       workflow = session[:workflow]

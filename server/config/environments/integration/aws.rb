@@ -37,8 +37,8 @@ RedHatCloud::Application.configure do
   # OpenShift Configuration Below this point #
   ############################################
   config.app_scope = "app"
-  config.integrated = false
-  config.login = "/app/login"
-  config.streamline = "http://localhost" # Not used
-  config.streamline_secret = ''
+  config.integrated = true
+  config.login = "https://streamline.devlab.phx1.redhat.com/wapps/streamline/login.html"
+  config.streamline = "https://10.196.215.67/wapps/streamline"
+  config.streamline_secret = 'c0ldW1n3'
 end

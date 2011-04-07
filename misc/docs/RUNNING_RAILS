@@ -19,9 +19,19 @@ This will install apache certs you will need
 and then run 'bundle install' in server.  That will get rack upgraded.  Do NOT
 check in the Gemfile.lock
 
-3. cd server; sudo rails script/server s
+3. cd server; sudo rails s
 
 4. Set an entry in /etc/hosts for
 127.0.0.1 openshift.redhat.com
 
 This will get you setup pretty well to test the site locally.
+
+Running the tests
+
+1. cp misc/devenv/controller.conf to /etc/libra/controller.conf
+2. cd server
+3. rake test
+
+Running a specific test
+
+1. ruby -Itest/ test/functional/home_controller_test.rb

@@ -55,12 +55,7 @@ class WebUserTest < ActiveSupport::TestCase
   end
 
   test "find by ticket" do
-    user = WebUser.new(:emailAddress => RH_USER, :password => PWD)
-
-    user.login
-
-    user2 = WebUser.find_by_ticket(user.ticket)
-    assert user.emailAddress == user2.emailAddress
+    assert WebUser.find_by_ticket("test")
   end
 
   test "request express access" do
