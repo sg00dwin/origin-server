@@ -12,14 +12,14 @@ class HomeControllerTest < ActionController::TestCase
   end
 
   test "should be workflow redirected" do
-    get(:index, {}, {:workflow => protected_path })
-    assert_redirected_to protected_path
+    get(:index, {}, {:workflow => getting_started_path })
+    assert_redirected_to getting_started_path
 
     assert_nil session[:workflow]
   end
 
   test "should get index authorized" do
     get(:index, {}, {:login => "test", :ticket => "test" })
-    assert_redirected_to protected_path
+    assert_redirected_to getting_started_path
   end
 end

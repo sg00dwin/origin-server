@@ -9,12 +9,11 @@ RedHatCloud::Application.routes.draw do
     # Sample of regular route:
     #   match 'products/:id' => 'catalog#view'
     # Keep in mind you can assign values other than :controller and :action
-    match 'getting_started' => 'home#getting_started'
+    match 'getting_started' => 'home#getting_started'    
     match 'email_confirm' => 'email_confirm#confirm'
     match 'broker/cartridge' => 'broker#cartridge_post', :via => [:post]
     match 'broker/domain' => 'broker#domain_post', :via => [:post]
     match 'broker/userinfo' => 'broker#user_info_post', :via => [:post]
-    match 'index2' => 'home#index2'
 
     # Sample of named route:
     #   match 'products/:id/purchase' => 'catalog#purchase', :as => :purchase
@@ -32,11 +31,7 @@ RedHatCloud::Application.routes.draw do
     namespace "access" do
       resources :express
       resources :flex, :as => "flexes"
-    end
-
-    namespace "protected" do
-      match "/" => "home#index", :protocol => "https"
-    end
+    end    
 
     # Sample resource route with options:
     #   resources :products do
@@ -71,7 +66,7 @@ RedHatCloud::Application.routes.draw do
     #     resources :products
     #   end
 
-    # You can have the root of your site routed with "root"
+    # You can have the root of your site routed with "root"getting_started
     # just remember to delete public/index.html.
     root :to => "home#index"
 

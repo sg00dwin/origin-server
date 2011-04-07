@@ -5,6 +5,7 @@ class StreamlineTester
   include ActiveModel::Naming
   include ActiveModel::Validations
   include Streamline
+  attr_accessor :emailAddress, :password, :passwordConfirmation, :termsAccepted
 end
 
 class StreamlineTest < ActiveSupport::TestCase
@@ -137,28 +138,31 @@ class StreamlineTest < ActiveSupport::TestCase
   end
 
   test "login valid" do
-    rhlogin = "test@example.com"
+    @streamline.rhlogin = "test@example.com"
+    @streamline.password = "password"
     roles = ['authenticated']
-    json = {"username" => rhlogin, "roles" => roles}
+    json = {"username" => @streamline.rhlogin, "roles" => roles}
     @streamline.stubs(:http_post).yields(json)
-    @streamline.login(rhlogin, "password")
+    @streamline.login
     assert_equal roles, @streamline.roles
     assert @streamline.errors.empty?
   end
 
   test "register valid" do
-    email = "test@example.com"
-    json = {"emailAddress" => email}
+    @streamline.emailAddress = "test@example.com"
+    @streamline.password = "password"
+    json = {"emailAddress" => @streamline.emailAddress}
     @streamline.expects(:http_post).once.yields(json)
-    @streamline.register(email, "test", @url)
+    @streamline.register(@url)
     assert @streamline.errors.empty?
   end
 
   test "register fail" do
-    email = "test@example.com"
+    @streamline.emailAddress = "test@example.com"
+    @streamline.password = "password"
     json = {"bad" => "bad"}
     @streamline.expects(:http_post).once.yields(json)
-    @streamline.register(email, "test", @url)
+    @streamline.register(@url)
     assert !@streamline.errors.empty?
   end
 

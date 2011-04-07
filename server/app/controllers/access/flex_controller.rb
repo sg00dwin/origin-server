@@ -4,7 +4,8 @@ class Access::FlexController < ApplicationController
 
   def index
     Rails.logger.debug "Checking login status"    
-    login = session[:login]
+    login = session[:login]    
+    
     if login      
       @access_flex = Access::Flex.new
     else
