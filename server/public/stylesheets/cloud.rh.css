@@ -45,7 +45,8 @@ body {
 
 /* Login stuff */
 
-#login {
+#login,
+#logout {
 	width: 50px;
 	background: url(/app/images/bg_login_button.png) repeat-x red;
 	padding: 6px 30px;
@@ -117,7 +118,8 @@ body {
 	margin: 80px 0 .5em;
 }
 
-#login a {
+#login a,
+#logout a {
 	display: block;
 	margin-left: auto;
 	margin-right: auto;
@@ -496,7 +498,8 @@ p, ul, ol, li, h1, h2, h3, h4, h5, h6, a { color: white; }
 
 #app_promos p, #app_promos ul, #app_promos ol, #app_promos li, #app_promos h1, #app_promos h2, #app_promos h3, #app_promos h4, #app_promos h5, #app_promos h6, #app_promos a { color: #777; }
 
-#login {
+#login,
+#logout {
 	font-family: 'Overpass';
 }
 
