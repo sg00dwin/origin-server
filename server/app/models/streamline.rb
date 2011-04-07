@@ -9,11 +9,11 @@ module Streamline
   include ErrorCodes
   attr_accessor :rhlogin, :ticket, :roles
 
-  @@login_url = Rails.configuration.streamline + "/login.html"
-  @@register_url = Rails.configuration.streamline + "/registration.html"
-  @@request_access_url = Rails.configuration.streamline + "/requestAccess.html"
-  @@roles_url = Rails.configuration.streamline + "/cloudVerify.html"
-  @@email_confirm_url = Rails.configuration.streamline + "/confirm.html"
+  @@login_url = URI.parse(Rails.configuration.streamline + "/login.html")
+  @@register_url = URI.parse(Rails.configuration.streamline + "/registration.html")
+  @@request_access_url = URI.parse(Rails.configuration.streamline + "/requestAccess.html")
+  @@roles_url = URI.parse(Rails.configuration.streamline + "/cloudVerify.html")
+  @@email_confirm_url = URI.parse(Rails.configuration.streamline + "/confirm.html")
 
   def initialize
     @roles = []
