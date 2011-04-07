@@ -28,7 +28,7 @@ class ApplicationController < ActionController::Base
       user = WebUser.find_by_ticket(rh_sso)
       if user
         Rails.logger.debug "Found #{user}. Authenticating session"
-        session[:login] = user.emailAddress
+        session[:login] = user.rhlogin
         session[:ticket] = rh_sso
       end
     end
