@@ -2,27 +2,26 @@ require 'cgi'
 require 'uri'
 
 #
-# This class encapsulates calls made back to the IT systems via
+# This mixin encapsulates calls made back to the IT systems via
 # the streamline REST service.
-class Streamline
-  include ActiveModel::Naming
-  include ActiveModel::Validations
+#
+module Streamline
   include ErrorCodes
-
-  attr_accessor :ticket, :roles
+  attr_accessor :rhlogin, :ticket, :roles
 
   @@login_url = Rails.configuration.streamline + "/login.html"
   @@register_url = Rails.configuration.streamline + "/registration.html"
   @@request_access_url = Rails.configuration.streamline + "/requestAccess.html"
   @@roles_url = Rails.configuration.streamline + "/cloudVerify.html"
-
-  def self.email_confirm_url(key, login)
-    query = "key=#{key}&emailAddress=#{CGI::escape(login)}"
-    URI.parse(Rails.configuration.streamline + "/confirm.html?#{query}")
-  end
+  @@email_confirm_url = Rails.configuration.streamline + "/confirm.html"
 
   def initialize
     @roles = []
+  end
+
+  def email_confirm_url(key, login)
+    query = "key=#{key}&emailAddress=#{CGI::escape(login)}"
+    URI.parse("#{@@email_confirm_url}?#{query}")
   end
 
   #
@@ -33,19 +32,19 @@ class Streamline
   def establish
     http_post(@@roles_url) do |json|
       @roles = json['roles']
-      return json['username']
+      @rhlogin = json['username']
     end
   end
 
   #
   # Login the current user, setting the roles and ticket
   #
-  def login(login, password)
+  def login(rhlogin, password)
     # Clear out any existing ticket
     @ticket = nil
 
     # First do the authentication
-    login_args = {'login' => login,
+    login_args = {'login' => rhlogin,
                   'password' => password,
                   'redirectUrl' => 'http://www.redhat.com'}
 
@@ -54,8 +53,8 @@ class Streamline
 
     # Now retrieve the authorization roles
     http_post(@@roles_url) do |json|
-      Rails.logger.debug("Current login = #{login} / authenticated for #{json['username']}")
-      if login != json['username']
+      Rails.logger.debug("Current login = #{rhlogin} / authenticated for #{json['username']}")
+      if rhlogin != json['username']
         # We had a ticket collision - DO NOT proceed
         Rails.logger.error("Ticket collision - #{@ticket}")
         raise StreamlineException

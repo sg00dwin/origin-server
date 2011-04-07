@@ -1,56 +1,154 @@
-.container_24.express#pageheader
-  .grid_14#title
-    %h2 OpenShift <em>Express</em>
-    %p The Internal Beta...
+-# file: Main site index
 
-  .grid_10#title_accent
+.simpleSlideShow.slideShow.container_24
+  #slides.grid_24
+    %ul
+
+      /Express slide
+      %li#express.slide
+        .slide-canvas
+        .content
+          %h2 Looking to develop for the cloud?
+          %p
+            Our platform lets you quickly develop, test, tweak and deploy your cloud-based application from a familiar development environment.
+
+      /Flex slide
+      %li#flex.slide
+        .slide-canvas
+          .content
+            %h2 Want to migrate apps to the cloud?
+            %p
+              Our platform provides end-to-end management from deploying, to monitoring, to log management, to auto-scaling, and more.
+
+    /Slide show navigation
+    %ul.navigation
+      %li
+        %a.page(href='#') 1
+      %li
+        %a.page(href='#') 2
 
   .clear
 
-.container_24#page
-  .prefix_1.grid_22.suffix_1#intro
-    %h4 Overview
-    %p
-      As of today, we are opening up an internal beta of one of the Libra
-      components:  Express.  This offering provides a free PHP, Ruby and
-      Python hosting environment for software developers, similar to the
-      Google App Engine or Heroku offerings.  At Summit, we will be
-      expanding Libra with additional cloud services based on the work being
-      done by the Makara team. But more on that as we get closer to
-      Summit.
+/News ticker
+.slideShow.newsTicker.container_24
+  #news_title.grid_4.alpha Recent News
 
-    %h4 Show Us Your Stuff!
-    %p
-      Now, we want to ask you for your talents.  We are opening an
-      internal competition to harness your innovation to build an externally
-      accessible application.  If you are a developer or designer, dust off
-      the PHP and Rails books and build something.  If you are a hacker,
-      breaking this stuff is in bounds, so give it your best shot.  Your
-      contributions will be showcased both internally and externally at
-      Summit to our customers.  But, in addition to fame, we will also be
-      offering the following prizes:
+  /Actual news
+  %ul#news.grid_20.omega
+  
+    - @news.each do |item|
+      %li.news_item.slide
+        =item
 
-    %p <strong>First Place:</strong>&nbsp;5 star Red Hat Reward + Libra T-Shirt
-    %p <strong>Second Place:</strong>&nbsp;4 star Red Hat Reward + Libra T-Shirt
-    %p <strong>Third Place:</strong>&nbsp;3 star Red Hat Reward + Libra T-Shirt
-    %p <strong>Honorable Mention:</strong>&nbsp;Eternal fame + Libra T-Shirt
-
-    %p
-      Just a reminder that this effort is still <strong>Red Hat
-      Confidential</strong>.  Your application will be public so please be
-      sensitive about what you deploy.
-
-    %h4 Contest Rules
-    %p
-      The rules are simple - send a quick write-up of what you have done
-      to <a href="mailto:libra-list@redhat.com">libra-list@redhat.com</a>.  As a
-      team, we will be voting on the submissions on April 15th and
-      announcing winners.  We can't wait to see what you come up with!
-
-    %h4 Enough Talk - Let's Get Started
-    %p
-      %em
-        %strong
-          = link_to("Click Here", :action => 'index', :controller => 'users', :only_path => false, :protocol => 'https')
-      to register a user and get started!
   .clear
+
+#pagetop.container_24
+  -# changed id to sidebar from sidenav
+  #sidebar.grid_7.push_17
+
+    .grid_6.alpha
+      %h4 Looking for on-premise or hybrid cloud solutions?
+      %p Check out redhat.com/cloud.
+    .clear
+
+    .grid_6
+      %h4 Pricing
+      %p &amp; subscription details
+    .clear
+
+    .grid_6.omega
+      %h4 FAQ
+      %p Your questions, answered
+    .clear
+
+  /Product slugs
+  #slugs.grid_17.pull_7
+
+    /Express slug
+    .slug.grid_8.suffix_1
+      %h3 Craft your cloudbased masterpiece without the hassle.
+      %p
+        You're a developer, not a sysadmin.
+        Focus on development, and we'll handle the rest
+      .icons
+        Icons go here - what icons?
+      %p
+        %a.learn(href='#') Learn more
+
+    /Flex slug
+    .slug.grid_8
+      %h3 Move your internally-deployed apps into the cloud, easily.
+      %p
+        We make it easy to deploy the apps you need, monitor them, control them, even scale them out when demand on them grows.
+
+      .grid_4.alpha
+        %ul
+          %li End-to-end monitoring
+          %li Auto-scaling
+          %li Log management
+
+      .grid_3.omega
+        %ul
+          %li EE6 Web
+          %li memcache
+          %li MySQL
+      .clear
+
+      %p
+        %a.learn(href='#') Learn more &gt;
+      .clear
+  /End slugs
+  .clear
+
+/App promo boxes
+#app_promos.container_24
+  /Express box
+  .express.grid_8
+    %h3 Looking to develop for the cloud? Check out waht our platform can do.
+    %h4 Express
+    %p
+      %a(href='#') Learn More
+
+  /Flex box
+  .flex.grid_8
+    %h3 Want to deploy and manage your production applications in the cloud?
+    %h4 Flex
+    %p
+      %a(href='#') Learn More
+
+  /Power box
+  .power.grid_8
+    %h3 Build and manage a cross-cloud infrastructure
+    %h4 Power
+    %p
+      %a(href='#') Learn More
+
+  .clear
+/End app promo boxes
+
+/Page columns
+#page.container_24
+
+  .prefix_1.grid_7
+    %p
+      Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diamvoluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diamvoluptua.
+    %p
+      At vero eos et accusam et justo duo dolores et ea rebum.
+    %p
+      Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diamvoluptua.
+
+  .grid_8
+    %p
+      At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diamvoluptua.
+    %p
+      At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diamvoluptua.
+    %p
+      At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.Lorem ipsum dolor sit amet, consete
+    
+  .grid_7.suffix_1
+    %p
+      Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diamvoluptua.
+    %p
+      At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diamvoluptua. At vero eos et accusam et justo duo dolores et ea reb
+  .clear
+/End page columns

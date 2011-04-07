@@ -1,16 +1,23 @@
 require 'test_helper'
 
+# Define a test class to mixin the module
+class StreamlineTester
+  include ActiveModel::Naming
+  include ActiveModel::Validations
+  include Streamline
+end
+
 class StreamlineTest < ActiveSupport::TestCase
 
   def setup
-    @streamline = Streamline.new
+    @streamline = StreamlineTester.new
     @url = URI.parse("https://localhost/")
     @ticket = "0|abcdefghijlkmnop"
     Thread.current[:debugIO] = StringIO.new
   end
 
   test "streamline urls" do
-    assert Streamline.email_confirm_url("abc123", "test@example.com").query
+    assert @streamline.email_confirm_url("abc123", "test@example.com").query
   end
 
   test "parse ticket nil" do
@@ -130,11 +137,11 @@ class StreamlineTest < ActiveSupport::TestCase
   end
 
   test "login valid" do
-    email = "test@example.com"
+    rhlogin = "test@example.com"
     roles = ['authenticated']
-    json = {"username" => email, "roles" => roles}
+    json = {"username" => rhlogin, "roles" => roles}
     @streamline.stubs(:http_post).yields(json)
-    @streamline.login(email, "password")
+    @streamline.login(rhlogin, "password")
     assert_equal roles, @streamline.roles
     assert @streamline.errors.empty?
   end
@@ -188,12 +195,12 @@ class StreamlineTest < ActiveSupport::TestCase
   end
 
   test "establish user" do
-    login = "test@example.com"
+    rhlogin = "test@example.com"
     roles = ['authenticated']
-    json = {"username" => login, "roles" => roles}
+    json = {"username" => rhlogin, "roles" => roles}
     @streamline.expects(:http_post).once.yields(json)
-    est_login = @streamline.establish
-    assert_equal login, est_login
+    @streamline.establish
+    assert_equal rhlogin, @streamline.rhlogin
     assert_equal roles, @streamline.roles
   end
 end
