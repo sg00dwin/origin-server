@@ -321,7 +321,7 @@ fi
 %{gemdir}/cache/li-%{version}.gem
 %{gemdir}/doc/li-%{version}
 %{gemdir}/specifications/li-%{version}.gemspec
-%config(noreplace) %{_sysconfdir}/libra/libra.conf
+%config(noreplace) %{_sysconfdir}/libra/express.conf
 
 %files devenv
 %defattr(-,root,root,-)
