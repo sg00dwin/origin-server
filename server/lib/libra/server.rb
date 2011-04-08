@@ -158,17 +158,14 @@ EOF
 
     def self.dyn_login
       # Set your customer name, username, and password on the command line
-      cn = 'demo-redhat'
-      un = 'dmcphers'
-      pw = 'Ond7Hekd75D'
       # Set up our HTTP object with the required host and path
-      url = URI.parse('https://api2.dynect.net/REST/Session/')
+      url = URI.parse("#{Libra.c[:dynect_url]}/REST/Session/")
       headers = { "Content-Type" => 'application/json' }
       http = Net::HTTP.new(url.host, url.port)
       #http.set_debug_output $stderr
       http.use_ssl = true
       # Login and get an authentication token that will be used for all subsequent requests.
-      session_data = { :customer_name => cn, :user_name => un, :password => pw }
+      session_data = { :customer_name => Libra.c[:dynect_customer_name], :user_name => Libra.c[:dynect_user_name], :password => Libra.c[:dynect_password] }
       auth_token = nil
       begin
         resp, data = http.post(url.path, JSON.generate(session_data), headers)
@@ -202,11 +199,26 @@ EOF
       record_data = { :rdata => { :address => public_ip }, :ttl => "60" }
       resp, data = dyn_post(path, record_data, auth_token)
     end
+    
+    def self.dyn_create_sshfp_record(application, namespace, sshfp, auth_token)
+      fqdn = "#{application}-#{namespace}.#{Libra.c[:libra_domain]}"
+      # Create the A record
+      path = "SSHFPRecord/#{Libra.c[:libra_domain]}/#{fqdn}/"
+      record_data = { :rdata => { :algorithm => '1',  :fptype => '1', :fingerprint => sshfp}, :ttl => "60" }
+      resp, data = dyn_post(path, record_data, auth_token)
+    end
 
     def self.dyn_delete_a_record(application, namespace, auth_token)
       fqdn = "#{application}-#{namespace}.#{Libra.c[:libra_domain]}"
       # Create the A record
       path = "ARecord/#{Libra.c[:libra_domain]}/#{fqdn}/"
+      resp, data = dyn_delete(path, auth_token)
+    end
+    
+    def self.dyn_delete_sshfp_record(application, namespace, auth_token)
+      fqdn = "#{application}-#{namespace}.#{Libra.c[:libra_domain]}"
+      # Create the SSHFP record
+      path = "SSHFPRecord/#{Libra.c[:libra_domain]}/#{fqdn}/"
       resp, data = dyn_delete(path, auth_token)
     end
 
@@ -246,7 +258,7 @@ EOF
 
     def self.dyn_has?(path, auth_token)
       headers = { "Content-Type" => 'application/json', 'Auth-Token' => auth_token }
-      url = URI.parse("https://api2.dynect.net/REST/#{path}")
+      url = URI.parse("#{Libra.c[:dynect_url]}/REST/#{path}")
       http = Net::HTTP.new(url.host, url.port)
       #http.set_debug_output $stderr
       http.use_ssl = true
@@ -279,7 +291,7 @@ EOF
     end
 
     def self.dyn_put_post(path, post_data, auth_token, put=false)
-      url = URI.parse("https://api2.dynect.net/REST/#{path}")
+      url = URI.parse("#{Libra.c[:dynect_url]}/REST/#{path}")
       headers = { "Content-Type" => 'application/json', 'Auth-Token' => auth_token }
       resp, data = nil, nil
       http = Net::HTTP.new(url.host, url.port)
@@ -301,7 +313,7 @@ EOF
 
     def self.dyn_delete(path, auth_token)
       headers = { "Content-Type" => 'application/json', 'Auth-Token' => auth_token }
-      url = URI.parse("https://api2.dynect.net/REST/#{path}")
+      url = URI.parse("#{Libra.c[:dynect_url]}/REST/#{path}")
       http = Net::HTTP.new(url.host, url.port)
       #http.set_debug_output $stderr
       http.use_ssl = true
