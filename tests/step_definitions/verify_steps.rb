@@ -139,7 +139,7 @@ end
 
 Then /^they should be able to be changed$/ do
   @data.each_pair do |url, value|
-    repo = "#{$temp}/#{value[:app]}_#{value[:namespace]}_repo"
+    repo = "#{$temp}/#{value[:namespace]}_#{value[:app]}_repo"
     $logger.info("Changing to dir=#{repo}")
     Dir.chdir(repo)
 
