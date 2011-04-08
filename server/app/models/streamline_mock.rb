@@ -18,6 +18,13 @@ module StreamlineMock
     @roles << "simple_authenticated"
     @rhlogin = "openshift@redhat.com"
   end
+  
+  #
+  # Get the user's email address
+  #
+  def email_address
+    return 'test@example.com'
+  end
 
   #
   # Login the current user, setting the roles and ticket
