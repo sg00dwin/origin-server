@@ -207,4 +207,11 @@ class StreamlineTest < ActiveSupport::TestCase
     assert_equal rhlogin, @streamline.rhlogin
     assert_equal roles, @streamline.roles
   end
+  
+  test "get email address for user" do
+    email_address = 'test@example.com'
+    json = {"emailAddress" => email_address}
+    @streamline.expects(:http_post).once.yields(json)
+    assert_equal email_address, @streamline.email_address
+  end
 end

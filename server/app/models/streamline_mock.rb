@@ -16,7 +16,14 @@ module StreamlineMock
   def establish
     Rails.logger.warn("Non integrated environment - passing through")
     @roles << "simple_authenticated"
-    @username = "openshift@redhat.com"
+    @rhlogin = "openshift@redhat.com"
+  end
+  
+  #
+  # Get the user's email address
+  #
+  def email_address
+    return 'test@example.com'
   end
 
   #

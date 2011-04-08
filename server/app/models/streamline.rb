@@ -14,6 +14,7 @@ module Streamline
   @@request_access_url = URI.parse(Rails.configuration.streamline + "/requestAccess.html")
   @@roles_url = URI.parse(Rails.configuration.streamline + "/cloudVerify.html")
   @@email_confirm_url = URI.parse(Rails.configuration.streamline + "/confirm.html")
+  @@user_info_url = URI.parse(Rails.configuration.streamline + "/userInfo.html")
 
   def initialize
     @roles = []
@@ -96,7 +97,19 @@ module Streamline
       http_post(@@request_access_url, access_args)
     end
   end
-
+  
+  #
+  # Get the user's email address
+  #
+  def email_address
+    if !@email_address
+      http_post(@@user_info_url) do |json|
+        @email_address = json['emailAddress']
+      end
+    end
+    return @email_address
+  end
+  
   #
   # Whether the user is authorized for a given cloud solution
   #
