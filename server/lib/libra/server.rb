@@ -187,7 +187,7 @@ EOF
       return auth_token
     end
 
-    def self.raise_dns_exception(e)
+    def self.raise_dns_exception(e=nil)
       if e
         Libra.logger_debug "DEBUG: Exception caught from DNS request: #{e.message}"
       end        
