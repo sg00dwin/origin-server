@@ -15,6 +15,12 @@ function homedir() {
     grep "^${USERNAME}:" $ETC_PASSWD | cut -d: -f 6
 }
 
+function bigfiles() {
+    # DIR=$1
+    # COUNT=$2 (Default = 10)
+    (cd $1 ; find -type f | xargs -I{} ls -l --time-style iso {}) | awk '{print $5, $8}' | sort -n -r | head $2
+}
+
 function user_apps() {
     # USERNAME=$1
     ls -d `homedir $1`/git/*.git | xargs -I{} basename {} .git
@@ -72,6 +78,12 @@ function user_app_disk_space() {
     # USERNAME=$1
     # APPNAME=$2
     du -s `homedir $1`/`user_app_type $1 $2`/$2 | cut -f1
+}
+
+function user_app_repo_disk_space() {
+    # USERNAME=$1
+    # APPNAME=$2
+    du -s `homedir $1`/`user_app_type $1 $2`/$2/repo | cut -f1
 }
 
 function user_app_git_disk_space() {
@@ -139,12 +151,46 @@ echo
 echo git repository size: `user_app_git_disk_space $USERNAME $APPNAME` kbytes
 
 # size of data space
-echo total data size: `user_app_data_disk_space $USERNAME $APPNAME` kbytes
+echo data size: `user_app_data_disk_space $USERNAME $APPNAME` kbytes
 
 # size of log space
-echo total log size: `user_app_log_disk_space $USERNAME $APPNAME` kbytes
+echo log size: `user_app_log_disk_space $USERNAME $APPNAME` kbytes
 
 # size of workspace
-echo total workspace size: `user_app_disk_space $USERNAME $APPNAME` kbytes
+echo repo size: `user_app_repo_disk_space $USERNAME $APPNAME` kbytes
+echo
+
+echo total app size `user_app_disk_space $USERNAME $APPNAME` kbytes
+echo
+
+# largest log files
+# insert an = to prevent splitting
+echo log file sizes 
+for FSPEC in `bigfiles \`user_app_workspace $USERNAME $APPNAME\`/logs | tr ' ' '='`
+do
+    # this is truely ugly.  It needs to be formatted
+    echo " " `echo '  ' $FSPEC | tr '=' ' '`
+done
+echo
+
+# largest log files
+# insert an = to prevent splitting
+echo data file sizes 
+for FSPEC in `bigfiles \`user_app_workspace $USERNAME $APPNAME\`/data | tr ' ' '='`
+do
+    # this is truely ugly.  It needs to be formatted
+    echo " " `echo '  ' $FSPEC | tr '=' ' '`
+done
+echo
+
+# largest log files
+# insert an = to prevent splitting
+echo app large files
+for FSPEC in `bigfiles \`user_app_workspace $USERNAME $APPNAME\`/repo | tr ' ' '='`
+do
+    # this is truely ugly.  It needs to be formatted
+    echo " " `echo '  ' $FSPEC | tr '=' ' '`
+done
+echo
 
 echo "==============================================================================="
