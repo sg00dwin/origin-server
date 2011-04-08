@@ -57,6 +57,13 @@ When /^the applications are created$/ do
       login = info[:login]
       namespaces[index] = namespace
 
+      # Store the data for the app (can't do this within the fork)
+      apps.each do |app|
+        # Store the generated data for the other tests to verify
+        url = "#{app}-#{namespace}.#{$domain}"
+        @data[url] = {:namespace => namespace, :app => app, :type => type}
+      end
+
       # Create the users in subprocesses
       # Count the current sub processes
       # if at max, wait for some to finish and keep going
@@ -66,12 +73,8 @@ When /^the applications are created$/ do
         # Create the user and the apps
         run("#{$create_domain_script} -n #{namespace} -l #{login} -p fakepw -d")
         apps.each do |app|
-          # Store the generated data for the other tests to verify
-          url = "#{app}-#{namespace}.#{$domain}"
-          @data[url] = {:namespace => namespace, :app => app, :type => type}
-
           # Now create the app
-          run("#{$create_app_script} -l #{login} -a #{app} -r #{$temp}/#{namespace}_#{app}_repo -t #{@type} -p fakepw -d")
+          run("#{$create_app_script} -l #{login} -a #{app} -r #{$temp}/#{namespace}_#{app}_repo -t #{type} -p fakepw -d")
         end
       end
 
@@ -140,7 +143,7 @@ Then /^they should be able to be changed$/ do
     $logger.info("Changing to dir=#{repo}")
     Dir.chdir(repo)
 
-    app_file = case @type
+    app_file = case value[:type]
       when "php-5.3.2" then "php/index.php"
       when "rack-1.1.0" then "config.ru"
       when "wsgi-3.2.1" then "wsgi/application"
