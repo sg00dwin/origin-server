@@ -2,7 +2,7 @@
 %define gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 
 Name: li
-Version: 0.62.8
+Version: 0.62.9
 Release: 1%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
@@ -251,7 +251,8 @@ sysctl kernel.sem="250	32000	32	4096"
 crontab -u root /etc/libra/devenv/crontab
 
 # Libra
-/bin/cp -f /etc/libra/devenv/libra.conf /etc/libra/devenv/node.conf /etc/libra/devenv/controller.conf /etc/libra
+/bin/cp -f /etc/libra/devenv/node.conf /etc/libra/devenv/controller.conf /etc/libra
+/bin/cp -f /etc/libra/devenv/express.conf /etc/openshift
 
 # Debugging utilities
 /bin/cp -f /etc/libra/devenv/li-log-util /usr/bin/li-log-util
@@ -405,6 +406,9 @@ chmod 0666 %{_localstatedir}/www/libra/log/production.log
 %{_libexecdir}/li/cartridges/wsgi-3.2.1/
 
 %changelog
+* Tue Apr 07 2011 Mike McGrath <mmcgrath@redhat.com> 0.62.9-1
+- Fixing openshift path in devenv
+
 * Tue Apr 07 2011 Matt Hicks <mhicks@redhat.com> 0.62.8-1
 - Site functioning with streamline
 - Additional fixes
