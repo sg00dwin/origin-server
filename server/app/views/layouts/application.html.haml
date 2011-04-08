@@ -29,8 +29,9 @@
   %body
     #head.container_24
       #logo.grid_6.alpha
-        %a(href="#")
-          %img(src="/app/images/logo.png" alt="OpenShift")
+        %a(href="home")
+          %img(src="/app/images/logo.png"
+               alt="OpenShift")
 
       #header_right.grid_18.omega
         - if session[:login]
@@ -82,7 +83,7 @@
             %a(href="#") Partner with Us
 
       .prefix_1.grid_3
-        %h5 Red Hat Cloud
+        %h5 OpenShift
         %ul
           %li
             %a(href="#") How it works
