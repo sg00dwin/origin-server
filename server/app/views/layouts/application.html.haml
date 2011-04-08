@@ -29,16 +29,16 @@
       #header_right.grid_18.omega
         - if session[:login]
           #logout
-            %a(href='logout') Logout
+            %a(href='/app/logout') Logout
           .clear
         - else
           #login
-            %a(href='login') Login
+            %a(href='/app/login') Login
           .clear
 
         %p#mainslug
           Free &amp; portable cloud services from the enterprise open source leader.
-		
+
       .clear
 
       #nav.grid_24.alpha.omega
