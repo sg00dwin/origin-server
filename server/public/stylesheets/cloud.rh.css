@@ -329,10 +329,10 @@ body {
 /* App Promo Banners */
 
 #app_promos .express {
-	background: url(/app/images/banner_bg_express.png) white;
+	background: url(/app/images/express-tile-trans.png) #ccc;
 }
   #app_promos .express.hover {
-    background: url(/app/images/banner_bg_express_hover.png) white;
+    background-color: #B8CFE6;
   }
   #app_promos .express.hover h4 {
     color: #6699cc;
@@ -342,10 +342,10 @@ body {
   }
 
 #app_promos .flex {
-	background: url(/app/images/banner_bg_flex.png) white;
+	background: url(/app/images/flex-tile-trans.png) #ccc;
 }
   #app_promos .flex.hover{
-    background: url(/app/images/banner_bg_flex_hover.png) white;
+    background-color: #DCB8E6;
   }
   #app_promos .flex.hover h4 {
     color: #c88fd7;
@@ -355,10 +355,10 @@ body {
   }
 
 #app_promos .power {
-	background: url(/app/images/banner_bg_power.png) white;
+	background: url(/app/images/power-tile-trans.png) #ccc;
 }
   #app_promos .power.hover {
-     background: url('/app/images/banner_bg_power_hover.png');
+     background-color: #C7E6B8;
   }
   #app_promos .power.hover h4{
     color: #87cc66;
