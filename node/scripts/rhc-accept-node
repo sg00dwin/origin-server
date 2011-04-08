@@ -13,7 +13,7 @@ RESOURCE_LIMITS_FILE=${RESOURCE_LIMITS_FILE:=${LIBRA_CONF_DIR}/resource_limits.c
 #
 # Control variables.  Override for testing
 #
-DEFAULT_SEBOOL_LIST="httpd_can_network_connect:on httpd_can_network_relay:on"
+DEFAULT_SEBOOL_LIST="httpd_can_network_connect:on"
 DEFAULT_PACKAGES="li-common li-node li-node-tools li-server 
                   li-cartridge-rack-1.1.0 
                   li-cartridge-wsgi-3.2.1
