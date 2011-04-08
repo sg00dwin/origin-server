@@ -32,14 +32,18 @@ def update_all_app_server_identities
             if server.has_app?(user, app_name)
               begin
                 puts "Updating app: #{app_name} to server identity: #{server.name}"
-                User.update_app_server_identity(app_name, server)
+                user.update_app_server_identity(app_name, server)
                 break
-              rescue Exception => e
+              rescue Exception => e                
                 puts "ERROR: Failed updating server identity for app: #{app_name} with server identity: #{server.name}"
+                puts e.message
+                puts e.backtrace
               end
             end
-          rescue
+          rescue Exception => e
             puts "WARNING: Failed checking for app: #{app_name} on server: #{server.name}"
+            puts e.message
+            puts e.backtrace
           end
         end
       end
