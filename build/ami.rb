@@ -304,8 +304,10 @@ END_OF_MESSAGE
 
         if images.empty?
           puts "EXITING - Image doesn't exist for current version"
+          exit 0
         elsif images[0] != "available"
           puts "EXITING - Image exists but isn't available yet"
+          exit 0
         end
       end
 
