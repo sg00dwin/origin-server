@@ -2,8 +2,8 @@
 %define gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 
 Name: li
-Version: 0.62.9
-Release: 2%{?dist}
+Version: 0.62.10
+Release: 1%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -407,17 +407,20 @@ chmod 0666 %{_localstatedir}/www/libra/log/production.log
 %{_libexecdir}/li/cartridges/wsgi-3.2.1/
 
 %changelog
+* Fri Apr 08 2011 Mike McGrath <mmcgrath@redhat.com> 0.62.10-1
+- New release
+
 * Tue Apr 07 2011 Mike McGrath <mmcgrath@redhat.com> 0.62.9-2
 - creating /etc/openshift
 
-* Tue Apr 07 2011 Mike McGrath <mmcgrath@redhat.com> 0.62.9-1
+* Thu Apr 07 2011 Mike McGrath <mmcgrath@redhat.com> 0.62.9-1
 - Fixing openshift path in devenv
 
-* Tue Apr 07 2011 Matt Hicks <mhicks@redhat.com> 0.62.8-1
+* Thu Apr 07 2011 Matt Hicks <mhicks@redhat.com> 0.62.8-1
 - Site functioning with streamline
 - Additional fixes
 
-* Tue Apr 07 2011 Matt Hicks <mhicks@redhat.com> 0.62.7-1
+* Thu Apr 07 2011 Matt Hicks <mhicks@redhat.com> 0.62.7-1
 - Lots of site updates
 - Additional fixes
 
