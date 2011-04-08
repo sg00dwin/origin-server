@@ -389,7 +389,11 @@ EOF
                     :action => action,
                     :args => args }
         rpc_client = Helper.rpc_exec_direct('libra')
-        rpc_client.custom_request('cartridge_do', mc_args, self.name, {'identity' => self.name})
+        begin
+          rpc_client.custom_request('cartridge_do', mc_args, self.name, {'identity' => self.name})
+        ensure
+          rpc_client.disconnect
+        end
     end
 
     #
