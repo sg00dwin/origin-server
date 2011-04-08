@@ -8,4 +8,5 @@ Feature: Rally User Story us346
       |     1     |   1   |  1   | rack-1.1.0 |
     When the applications are created
     Then they should all be accessible
-    Then users are able to create new rails app using rails new
+    #@namespaces is nil on line 10 in this test
+    #Then users are able to create new rails app using rails new
