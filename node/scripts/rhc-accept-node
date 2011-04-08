@@ -10,6 +10,43 @@ LIBRA_CONF_DIR=${LIBRA_CONF_DIR:=/etc/libra}
 NODE_CONF_FILE=${NODE_CONF_FILE:=${LIBRA_CONF_DIR}/node.conf}
 RESOURCE_LIMITS_FILE=${RESOURCE_LIMITS_FILE:=${LIBRA_CONF_DIR}/resource_limits.conf}
 
+DEFAULT_SEBOOL_LIST="httpd_can_network_connect:on httpd_can_network_relay:on"
+DEFAULT_PACKAGES="li-common li-node li-node-tools li-server 
+                  li-cartridge-rack-1.1.0 
+                  li-cartridge-wsgi-3.2.1
+                  li-cartridge-php-5.3.2"
+DEFAULT_SERVICES="qpidd mcollective cgconfig cgred httpd"
+DEFAULT_MINSEM=512
+
+# Control variables.  Override for testing
+if [ -z "$SEBOOL_LIST" ]
+then
+    SEBOOL_LIST=${SEBOOL_LIST:="$DEFAULT_SEBOOL_LIST"}
+else
+    echo WARNING: ENV overrides SEBOOL_LIST >&2
+fi
+
+if [ -z "$PACKAGES" ]
+then
+    PACKAGES=${PACKAGES:="$DEFAULT_PACKAGES"}
+else
+    echo WARNING: ENV overrides PACKAGES >&2
+fi
+
+if [ -z "$SERVICES" ]
+then
+    SERVICES=${SERVICES:="$DEFAULT_SERVICES"}
+else
+    echo WARNING: ENV overrides SERVICES >&2
+fi
+
+if [ -z "$MINSEM" ]
+then
+    MINSEM=${MINSEM:="$DEFAULT_MINSEM"}
+else
+    echo WARNING: ENV overrides MINSEM >&2
+fi
+
 function load_node_conf() {
     if [ ! -f $NODE_CONF_FILE ]
     then
@@ -53,8 +90,7 @@ function check_selinux() {
     #
     # Check selinux booleans
     #
-	SEBOOLLIST="httpd_can_network_connect:on httpd_can_network_relay:on"
-	for SEBOOLSPEC in $SEBOOLLIST
+	for SEBOOLSPEC in $SEBOOL_LIST
 	do
 	    NAME=`echo $SEBOOLSPEC | cut -d: -f1`
 	    VALUE=`echo $SEBOOLSPEC | cut -d: -f2`
@@ -71,8 +107,6 @@ function check_selinux() {
 #
 # Check packages
 #
-PACKAGES="li li-common li-node li-node-tools li-server li-cartridge-rack-1.1.0 li-cartridge-wsgi-3.2.1 li-cartridge-php-5.3.2"
-
 function check_packages() {
     for PKGNAME in $PACKAGES
     do
@@ -88,7 +122,6 @@ function check_packages() {
 #
 # Check services
 #
-SERVICES="qpidd mcollective cgconfig cgred httpd"
 function check_services() {
     for SVCNAME in $SERVICES
     do
@@ -105,7 +138,6 @@ function check_services() {
 # Check kernel settings
 #
 # Kernel semaphores
-MINSEM=512
 function check_semaphores() {
     SEMCOUNT=`sysctl kernel.sem | cut -f4`
     if [ "$SEMCOUNT" -lt "$MINSEM" ]
