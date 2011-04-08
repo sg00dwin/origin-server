@@ -6,13 +6,9 @@ include Libra::Test::User
 include Libra::Test::Util
 
 Then /^users are able to create new rails app using rails new$/ do
-  # Generate the 'product' of namespace / app combinations
-  user_apps = @namespaces.product(@apps)
-
-  # Make a change and push it
-  urls = {}
-  user_apps.each do |user_app|
-    repo = "#{$temp}/#{user_app[0]}_#{user_app[1]}_repo"
+  # Hit the health check page for each app
+  @data.each_pair do |url, value|
+    repo = "#{$temp}/#{value[:namespace]}_#{value[:app]}_repo"
     $logger.info("Changing to dir=#{repo}")
     Dir.chdir(repo)
 
@@ -39,8 +35,7 @@ Then /^users are able to create new rails app using rails new$/ do
     # Allow change to be loaded
     sleep 30
 
-    host = "#{user_app[1]}-#{user_app[0]}.#{$domain}"
-    $logger.info("host= #{host}")
+    $logger.info("host= #{url}")
     begin
       res = Net::HTTP.start(host, 80) do |http|
         http.read_timeout = 30
@@ -53,27 +48,28 @@ Then /^users are able to create new rails app using rails new$/ do
       # Verify the content of the response
       res.body.index("TEST").should_not == -1
     rescue Exception => e
-      $logger.error "Exception trying to access #{host}"
-      $logger.error "Response code = #{code}"
+      $logger.error "Exception trying to access #{url}"
       $logger.error e.message
       $logger.error e.backtrace
       code = -1
     end
 
     # Store the results
-    urls[host] = code
+    value[:change_code] = code
   end
 
   # Print out the results:
   #  Format = code - url
-  $logger.info("Change Results")
-  urls.each_pair do |url, code|
-    $logger.info("#{code} - #{url}")
+  $logger.info("Rails App Results")
+  results = []
+  @data.each_pair do |url, value|
+    $logger.info("#{value[:change_code]} - #{url} (#{value[:type]})")
+    results << value[:change_code]
   end
 
   # Get all the unique responses
   # There should only be 1 result ["200"]
-  uniq_responses = urls.values.uniq
+  uniq_responses = results.uniq
   uniq_responses.length.should == 1
   uniq_responses[0].should == "200"
 end

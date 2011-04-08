@@ -177,7 +177,7 @@ Then /^they should be able to be changed$/ do
     end
 
     # Store the results
-    value[:change_code] = res.code
+    value[:change_code] = code
   end
 
   # Print out the results:
