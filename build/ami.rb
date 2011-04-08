@@ -383,7 +383,7 @@ END_OF_MESSAGE
           puts "Done"
 
           print "Installing rails for client testing..."
-          `#{SSH} #{@server} "gem install rails"`
+          `#{SSH} #{@server} "gem install rails -d --no-rdoc --no-ri"`
           `#{SSH} #{@server} "yum -y install sqlite*"`
           puts "Done"
 
