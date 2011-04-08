@@ -10,6 +10,9 @@ LIBRA_CONF_DIR=${LIBRA_CONF_DIR:=/etc/libra}
 NODE_CONF_FILE=${NODE_CONF_FILE:=${LIBRA_CONF_DIR}/node.conf}
 RESOURCE_LIMITS_FILE=${RESOURCE_LIMITS_FILE:=${LIBRA_CONF_DIR}/resource_limits.conf}
 
+#
+# Control variables.  Override for testing
+#
 DEFAULT_SEBOOL_LIST="httpd_can_network_connect:on httpd_can_network_relay:on"
 DEFAULT_PACKAGES="li-common li-node li-node-tools li-server 
                   li-cartridge-rack-1.1.0 
@@ -18,36 +21,48 @@ DEFAULT_PACKAGES="li-common li-node li-node-tools li-server
 DEFAULT_SERVICES="qpidd mcollective cgconfig cgred httpd"
 DEFAULT_MINSEM=512
 
-# Control variables.  Override for testing
+#
+# Set defaults, warn on override
+#
 if [ -z "$SEBOOL_LIST" ]
 then
-    SEBOOL_LIST=${SEBOOL_LIST:="$DEFAULT_SEBOOL_LIST"}
+    SEBOOL_LIST="$DEFAULT_SEBOOL_LIST"
 else
     echo WARNING: ENV overrides SEBOOL_LIST >&2
 fi
 
 if [ -z "$PACKAGES" ]
 then
-    PACKAGES=${PACKAGES:="$DEFAULT_PACKAGES"}
+    PACKAGES="$DEFAULT_PACKAGES"
 else
     echo WARNING: ENV overrides PACKAGES >&2
 fi
 
 if [ -z "$SERVICES" ]
 then
-    SERVICES=${SERVICES:="$DEFAULT_SERVICES"}
+    SERVICES="$DEFAULT_SERVICES"
 else
     echo WARNING: ENV overrides SERVICES >&2
 fi
 
 if [ -z "$MINSEM" ]
 then
-    MINSEM=${MINSEM:="$DEFAULT_MINSEM"}
+    MINSEM="$DEFAULT_MINSEM"
 else
     echo WARNING: ENV overrides MINSEM >&2
 fi
 
+function verbose() {
+    # MESSAGE=$*
+
+    if [ -n "$VERBOSE" ]
+    then
+	echo "INFO: $*"
+    fi
+}
+
 function load_node_conf() {
+    verbose loading node configuration file $NODE_CONF_FILE
     if [ ! -f $NODE_CONF_FILE ]
     then
 	echo "FAIL: No configuration file: $NODE_CONF_FILE" >&2
@@ -68,6 +83,7 @@ function load_node_conf() {
 	STATUS=$(($STATUS + 1))	
     fi
 
+    verbose loading resource limit file $RESOURCE_LIMITS_FILE
     if [ ! -f "$RESOURCE_LIMITS_FILE" ]
     then
 	echo "FAIL: No resource limits file: $RESOURCE_LIMITS_FILE" >&2
@@ -81,6 +97,7 @@ function load_node_conf() {
 # Check selinux enabled
 #
 function check_selinux() {
+    verbose checking selinux status
     SELINUX=`getenforce`
     if [ "$SELINUX"  != "Enforcing" ]
     then
@@ -90,6 +107,7 @@ function check_selinux() {
     #
     # Check selinux booleans
     #
+	verbose checking selinux booleans
 	for SEBOOLSPEC in $SEBOOL_LIST
 	do
 	    NAME=`echo $SEBOOLSPEC | cut -d: -f1`
@@ -108,6 +126,7 @@ function check_selinux() {
 # Check packages
 #
 function check_packages() {
+    verbose checking package list
     for PKGNAME in $PACKAGES
     do
 	PKGSTATUS=`rpm -q $PKGNAME`
@@ -123,6 +142,7 @@ function check_packages() {
 # Check services
 #
 function check_services() {
+    verbose checking services
     for SVCNAME in $SERVICES
     do
 	service $SVCNAME status > /dev/null 2>&1
@@ -139,6 +159,7 @@ function check_services() {
 #
 # Kernel semaphores
 function check_semaphores() {
+    verbose checking kernel semaphores >= $MINSEM
     SEMCOUNT=`sysctl kernel.sem | cut -f4`
     if [ "$SEMCOUNT" -lt "$MINSEM" ]
     then
@@ -152,6 +173,7 @@ function check_semaphores() {
 # Check cgroup config
 #
 function check_cgroup_config() {
+    verbose checking cgroups configuration
     CGROUP_PASS="true"
     LIBRALINES=`lscgroup cpu,cpuacct,memory,freezer,net_cls:/libra 2>/dev/null | wc -l`
     if [ "$LIBRALINES" -lt 1 ]
@@ -161,18 +183,21 @@ function check_cgroup_config() {
 	CGROUP_PASS="false"
     fi
 
+    verbose checking presense of /cgroup
     if [ ! -d /cgroup ]
     then
 	echo "FAIL: cgroup root /cgroup directory does not exist"
 	STATUS=$(($STATUS + 1))
 	CGROUP_PASS="false"
     else
+	verbose checking presence of /cgroup/all
 	if [ ! -d /cgroup/all ]
 	then
 	    echo "FAIL: cgroup /cgroup/all directory does not exist"
 	    STATUS=$(($STATUS + 1))	
 	    CGROUP_PASS="false"
 	else
+	    verbose checking presence of /cgroup/all/libra
 	    if [ ! -d /cgroup/all/libra ]
 	    then
 		echo "FAIL: libra cgroup /cgroup/all/libra directory does not exist"
@@ -187,6 +212,7 @@ function check_cgroup_config() {
 # Check tc config
 #
 function check_tc_config() {
+    verbose checking presence of tc qdisc 
     TC_PASS="true"
     QDISCRESPONSE="qdisc htb 1: root"
     tc qdisc show dev eth0 | grep "$QDISCRESPONSE" >/dev/null
@@ -196,6 +222,7 @@ function check_tc_config() {
 	STATUS=$(($STATUS + 1))
 	TC_PASS="false"
     else
+	verbose checking presence of tc classes
 	CLASSRESPONSE="class htb 1:1 root prio 0 rate 8000Mbit ceil 8000Mbit burst 0b cburst 0b"
 	CLASSCOUNT=`tc class show dev eth0 | grep 'class htb' | wc -l`
 	if [ "$CLASSCOUNT" -lt 1 ]
@@ -223,6 +250,7 @@ function libra_mountpoint() {
 }
 
 function check_quotas() {
+    verbose checking filesystem quotas
     LIBRA_DEVICE=`libra_device $libra_dir`
     LIBRA_MOUNTPOINT=`libra_mountpoint $libra_dir`
     QUOTASTAT=`quotaon -u -p $LIBRA_MOUNTPOINT 2>&1`
@@ -233,6 +261,7 @@ function check_quotas() {
 	
     fi
 
+    verbose checking quota db file selinux label
     QUOTA_DB_FILE=$LIBRA_MOUNTPOINT/aquota.user
     QUOTA_DB_TYPE=`secon -f $QUOTA_DB_FILE | grep type:`
     if echo $QUOTA_DB_TYPE | grep -v 'quota_db_t' >/dev/null
@@ -269,6 +298,7 @@ function check_users() {
 # 3) cgroup presence
 # 4) tc presence
 # 5) quota presence
+    verbose checking `libra_users | wc -w` user accounts
     for USERNAME in `libra_users`
     do
 	check_user_limits $USERNAME
@@ -343,6 +373,42 @@ function check_user_quota() {
 	echo "FAIL: user $1 does not have quotas imposed" >&2
     fi
 }
+
+# ==========================================================================
+# Process CLI arguments
+# ==========================================================================
+
+function print_help() {
+    echo "usage: rhc-accept-node [-h] [-v]
+
+  -h) help (print this message)
+  -v) verbose - notify when each check begins
+"
+    exit 0
+}
+
+
+OPT_FORMAT="dhv"
+
+while getopts $OPT_FORMAT OPTION
+do
+    case $OPTION in
+        d) 
+	    set -x
+            ;;
+
+	h) 
+	    print_help
+	    ;;
+
+	v)
+	    VERBOSE="true"
+	    ;;
+
+        ?) print_help
+        ;;
+    esac
+done
 
 # =============================================================================
 #
