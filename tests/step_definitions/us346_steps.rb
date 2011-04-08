@@ -25,7 +25,7 @@ Then /^users are able to create new rails app using rails new$/ do
     run("sed -i 's/Welcome/TEST/' #{app_file}")
     run("bundle install")
     Dir.chdir(repo)
-    run("mv -f #{app_name}/* .")
+    run("cp -r #{app_name}/* .")
 
     run("rm -rf #{app_name}/")
 
