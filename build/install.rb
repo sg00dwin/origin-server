@@ -28,8 +28,8 @@ namespace :install do
           cp file_name, "#{MAN_DIR}/man#{man_section}/"
       }
 
-      mkdir_p CONF_DIR
-      cp "conf/express.conf", CONF_DIR unless File.exists? CONF_DIR + "/express.conf"
+      mkdir_p CLIENT_CONF_DIR
+      cp "conf/express.conf", CLIENT_CONF_DIR unless File.exists? CLIENT_CONF_DIR + "/express.conf"
 
       # Package the gem
       sh "rake", "package"

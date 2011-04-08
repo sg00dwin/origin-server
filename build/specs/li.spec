@@ -251,9 +251,8 @@ sysctl kernel.sem="250	32000	32	4096"
 crontab -u root /etc/libra/devenv/crontab
 
 # Libra
-/bin/cp -f /etc/libra/devenv/express.conf /etc/libra/devenv/node.conf /etc/libra/devenv/controller.conf /etc/libra
-
-ln -s /etc/libra /etc/openshift
+/bin/cp -f /etc/libra/devenv/node.conf /etc/libra/devenv/controller.conf /etc/libra
+/bin/cp -f /etc/libra/devenv/express.conf /etc/openshift
 
 # Debugging utilities
 /bin/cp -f /etc/libra/devenv/li-log-util /usr/bin/li-log-util
@@ -323,7 +322,7 @@ fi
 %{gemdir}/cache/li-%{version}.gem
 %{gemdir}/doc/li-%{version}
 %{gemdir}/specifications/li-%{version}.gemspec
-%config(noreplace) %{_sysconfdir}/libra/express.conf
+%config(noreplace) %{_sysconfdir}/openshift/express.conf
 
 %files devenv
 %defattr(-,root,root,-)
