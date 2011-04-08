@@ -76,6 +76,8 @@ namespace :install do
       chmod 0750, "#{BIN_DIR}/rhc-accept-node"
       cp "scripts/rhc-node-account", BIN_DIR
       chmod 0750, "#{BIN_DIR}/rhc-node-account"
+      cp "scripts/rhc-node-application", BIN_DIR
+      chmod 0750, "#{BIN_DIR}/rhc-node-application"
       mkdir_p LIBRA_DIR
       mkdir_p "#{DEST_DIR}/usr/share/selinux/packages"
       cp "selinux/libra.pp", "#{DEST_DIR}/usr/share/selinux/packages"
