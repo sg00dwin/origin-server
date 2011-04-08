@@ -15,9 +15,12 @@ proxy.
 2. yum install mod_ssl
 This will install apache certs you will need
 
-3. cd server; sudo rails s
+3. cd server/public; mkdir app; cd app; ln -s ../* .; rm app
+This should link all the resources in public into /app/public
 
-4. Set an entry in /etc/hosts for
+4. cd server; sudo rails s
+
+5. Set an entry in /etc/hosts for
 127.0.0.1 openshift.redhat.com
 
 This will get you setup pretty well to test the site locally.

@@ -304,8 +304,10 @@ END_OF_MESSAGE
 
         if images.empty?
           puts "EXITING - Image doesn't exist for current version"
+          exit 0
         elsif images[0] != "available"
           puts "EXITING - Image exists but isn't available yet"
+          exit 0
         end
       end
 
@@ -383,7 +385,7 @@ END_OF_MESSAGE
           puts "Done"
 
           print "Installing rails for client testing..."
-          `#{SSH} #{@server} "gem install rails"`
+          `#{SSH} #{@server} "gem install rails -d --no-rdoc --no-ri"`
           `#{SSH} #{@server} "yum -y install sqlite*"`
           puts "Done"
 

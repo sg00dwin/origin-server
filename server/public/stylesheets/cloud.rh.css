@@ -10,7 +10,7 @@ body {
 
 #header_right {
 	text-align: right;
-	position: absolute;
+	position: relative;
 }
 
 /* Main nav */
@@ -45,7 +45,8 @@ body {
 
 /* Login stuff */
 
-#login {
+#login,
+#logout {
 	width: 50px;
 	background: url(/app/images/bg_login_button.png) repeat-x red;
 	padding: 6px 30px;
@@ -114,10 +115,11 @@ body {
 
 
 #mainslug {
-	margin-top: 80px;
+	margin: 80px 0 .5em;
 }
 
-#login a {
+#login a,
+#logout a {
 	display: block;
 	margin-left: auto;
 	margin-right: auto;
@@ -310,7 +312,7 @@ body {
 }
 
 #app_promos > div {
-	background: white;
+	background: #d0d1d0;
 }
 
 #footer {
@@ -329,14 +331,41 @@ body {
 #app_promos .express {
 	background: url(/app/images/banner_bg_express.png) white;
 }
+  #app_promos .express.hover {
+    background: url(/app/images/banner_bg_express_hover.png) white;
+  }
+  #app_promos .express.hover h4 {
+    color: #6699cc;
+  }
+  #app_promos .express.hover a {
+    background-color: #6699cc;
+  }
 
 #app_promos .flex {
 	background: url(/app/images/banner_bg_flex.png) white;
 }
+  #app_promos .flex.hover{
+    background: url(/app/images/banner_bg_flex_hover.png) white;
+  }
+  #app_promos .flex.hover h4 {
+    color: #c88fd7;
+  }
+  #app_promos .flex.hover a {
+    background-color: #c88fd7;
+  }
 
 #app_promos .power {
 	background: url(/app/images/banner_bg_power.png) white;
 }
+  #app_promos .power.hover {
+     background: url('/app/images/banner_bg_power_hover.png');
+  }
+  #app_promos .power.hover h4{
+    color: #87cc66;
+  }
+  #app_promos .power.hover a {
+    background-color: #87cc66;
+  }
 
 #app_promos h3,
 #app_promos h4,
@@ -496,7 +525,8 @@ p, ul, ol, li, h1, h2, h3, h4, h5, h6, a { color: white; }
 
 #app_promos p, #app_promos ul, #app_promos ol, #app_promos li, #app_promos h1, #app_promos h2, #app_promos h3, #app_promos h4, #app_promos h5, #app_promos h6, #app_promos a { color: #777; }
 
-#login {
+#login,
+#logout {
 	font-family: 'Overpass';
 }
 
@@ -813,8 +843,20 @@ li.slide {
 }
 
 #slides #express {
-	background: /*url(/app/images/slide_express.png) no-repeat*/ #6699cc; }
-#slides #flex { background: /*url(/app/images/slide_flex.png) repeat-x*/ #c88fd7; }
+	background: #6699cc;
+}
+	#slides #express .slide-canvas {
+		background: url(/app/images/slide_express.png) no-repeat;
+		opacity: .5;
+	}
+	
+#slides #flex {
+	background: #c88fd7;
+}
+	#slides #flex .slide-canvas {
+		background:  url(/app/images/slide_flex.png) repeat-x;
+		opacity: .5;
+	}
 
 .slides li p {
 	font-size: 1.1em;
@@ -848,7 +890,7 @@ li.slide {
 
 #slides .content p {
 	font-size: 13pt;
-	width: 600px;
+	width: 550px;
 	color: white;
 }
 

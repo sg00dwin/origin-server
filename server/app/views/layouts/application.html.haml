@@ -9,13 +9,19 @@
     %link{"rel" => "stylesheet", "href" => "/app/stylesheets/cloud.rh.css", "type" => "text/css"}
     %link{"rel" => "stylesheet", "href" => "/app/stylesheets/960_24_col.css", "type" => "text/css"}
 
+    %script{:type => "text/javascript", :src  => "/app/javascripts/jquery-1.5.1.min.js"}
+
+    %script{:type => "text/javascript"}
+      //JQuery will interfere with prototype unless
+      $j = jQuery.noConflict();
+      //JQuery can be referenced by $j from now on
+
+    %script{:type => "text/javascript", :src  => "/app/javascripts/prototype.js"}
     %script{:type => "text/javascript", :src  => "/app/javascripts/application.js"}
+    %script{:type => "text/javascript", :src  => "/app/javascripts/effects.js"}
     %script{:type => "text/javascript", :src  => "/app/javascripts/controls.js"}
     %script{:type => "text/javascript", :src  => "/app/javascripts/dragdrop.js"}
-    %script{:type => "text/javascript", :src  => "/app/javascripts/effects.js"}
-    %script{:type => "text/javascript", :src  => "/app/javascripts/jquery-1.5.1.min.js"}
     %script{:type => "text/javascript", :src  => "/app/javascripts/jquery.slideshow.minified.js"}
-    %script{:type => "text/javascript", :src  => "/app/javascripts/prototype.js"}
     %script{:type => "text/javascript", :src  => "/app/javascripts/rails.js"}
     %script{:type => "text/javascript", :src  => "/app/javascripts/init.js"}
     = csrf_meta_tag
@@ -23,18 +29,23 @@
   %body
     #head.container_24
       #logo.grid_6.alpha
-        %a(href="#")
-          %img(src="/app/images/logo.png" alt="OpenShift")
+        %a(href="home")
+          %img(src="/app/images/logo.png"
+               alt="OpenShift")
 
       #header_right.grid_18.omega
-        - unless session[:login]
+        - if session[:login]
+          #logout
+            %a(href='/app/logout') Logout
+          .clear
+        - else
           #login
-            %a.iframe(href='#') Login
+            %a(href='/app/login') Login
           .clear
 
         %p#mainslug
           Free &amp; portable cloud services from the enterprise open source leader.
-		
+
       .clear
 
       #nav.grid_24.alpha.omega
@@ -72,7 +83,7 @@
             %a(href="#") Partner with Us
 
       .prefix_1.grid_3
-        %h5 Red Hat Cloud
+        %h5 OpenShift
         %ul
           %li
             %a(href="#") How it works

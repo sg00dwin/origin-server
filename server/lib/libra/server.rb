@@ -158,23 +158,25 @@ EOF
 
     def self.dyn_login
       # Set your customer name, username, and password on the command line
-      cn = 'demo-redhat'
-      un = 'dmcphers'
-      pw = 'Ond7Hekd75D'
       # Set up our HTTP object with the required host and path
-      url = URI.parse('https://api2.dynect.net/REST/Session/')
+      url = URI.parse("#{Libra.c[:dynect_url]}/REST/Session/")
       headers = { "Content-Type" => 'application/json' }
       http = Net::HTTP.new(url.host, url.port)
       #http.set_debug_output $stderr
       http.use_ssl = true
       # Login and get an authentication token that will be used for all subsequent requests.
-      session_data = { :customer_name => cn, :user_name => un, :password => pw }
+      session_data = { :customer_name => Libra.c[:dynect_customer_name], :user_name => Libra.c[:dynect_user_name], :password => Libra.c[:dynect_password] }
       auth_token = nil
       begin
         resp, data = http.post(url.path, JSON.generate(session_data), headers)
-        Libra.logger_debug "POST Session Response: #{data}"
-        result = JSON.parse(data)
-        auth_token = result['data']['token']
+        case resp
+        when Net::HTTPSuccess
+          Libra.logger_debug "POST Session Response: #{data}"
+          result = JSON.parse(data)
+          auth_token = result['data']['token']
+        else
+          raise_dns_exception
+        end
       rescue Exception => e
         raise_dns_exception(e)
       end
@@ -186,7 +188,9 @@ EOF
     end
 
     def self.raise_dns_exception(e)
-      Libra.logger_debug "DEBUG: Exception caught from DNS request: #{e.message}"
+      if e
+        Libra.logger_debug "DEBUG: Exception caught from DNS request: #{e.message}"
+      end        
       raise DNSException.new(145), "Error communicating with DNS system.  If the problem persists please contact Red Hat support.", caller[0..5]
     end
 
@@ -202,11 +206,26 @@ EOF
       record_data = { :rdata => { :address => public_ip }, :ttl => "60" }
       resp, data = dyn_post(path, record_data, auth_token)
     end
+    
+    def self.dyn_create_sshfp_record(application, namespace, sshfp, auth_token)
+      fqdn = "#{application}-#{namespace}.#{Libra.c[:libra_domain]}"
+      # Create the A record
+      path = "SSHFPRecord/#{Libra.c[:libra_domain]}/#{fqdn}/"
+      record_data = { :rdata => { :algorithm => '1',  :fptype => '1', :fingerprint => sshfp}, :ttl => "60" }
+      resp, data = dyn_post(path, record_data, auth_token)
+    end
 
     def self.dyn_delete_a_record(application, namespace, auth_token)
       fqdn = "#{application}-#{namespace}.#{Libra.c[:libra_domain]}"
       # Create the A record
       path = "ARecord/#{Libra.c[:libra_domain]}/#{fqdn}/"
+      resp, data = dyn_delete(path, auth_token)
+    end
+    
+    def self.dyn_delete_sshfp_record(application, namespace, auth_token)
+      fqdn = "#{application}-#{namespace}.#{Libra.c[:libra_domain]}"
+      # Create the SSHFP record
+      path = "SSHFPRecord/#{Libra.c[:libra_domain]}/#{fqdn}/"
       resp, data = dyn_delete(path, auth_token)
     end
 
@@ -246,23 +265,28 @@ EOF
 
     def self.dyn_has?(path, auth_token)
       headers = { "Content-Type" => 'application/json', 'Auth-Token' => auth_token }
-      url = URI.parse("https://api2.dynect.net/REST/#{path}")
+      url = URI.parse("#{Libra.c[:dynect_url]}/REST/#{path}")
       http = Net::HTTP.new(url.host, url.port)
       #http.set_debug_output $stderr
       http.use_ssl = true
       has = false
       begin
         resp, data = http.get(url.path, headers)
-        Libra.client_debug "DEBUG: DYNECT GET Response: #{data}"
-        if data
-          data = JSON.parse(data)
-          if data && data['status'] && data['status'] == 'failure'
-            Libra.logger_debug "DEBUG: DYNECT GET Response status: #{data['status']}"
-          elsif data && data['status'] == 'success'
-            Libra.logger_debug "DEBUG: DYNECT GET Response data: #{data['data']}"
-            #has = data['data'][0].length > 0
-            has = true
+        case resp
+        when Net::HTTPSuccess
+          Libra.client_debug "DEBUG: DYNECT GET Response: #{data}"
+          if data
+            data = JSON.parse(data)
+            if data && data['status'] && data['status'] == 'failure'
+              Libra.logger_debug "DEBUG: DYNECT GET Response status: #{data['status']}"
+            elsif data && data['status'] == 'success'
+              Libra.logger_debug "DEBUG: DYNECT GET Response data: #{data['data']}"
+              #has = data['data'][0].length > 0
+              has = true
+            end
           end
+        else
+          raise_dns_exception
         end
       rescue Exception => e
         raise_dns_exception(e)
@@ -279,7 +303,7 @@ EOF
     end
 
     def self.dyn_put_post(path, post_data, auth_token, put=false)
-      url = URI.parse("https://api2.dynect.net/REST/#{path}")
+      url = URI.parse("#{Libra.c[:dynect_url]}/REST/#{path}")
       headers = { "Content-Type" => 'application/json', 'Auth-Token' => auth_token }
       resp, data = nil, nil
       http = Net::HTTP.new(url.host, url.port)
@@ -292,7 +316,12 @@ EOF
         else
           resp, data = http.post(url.path, json_data, headers)
         end
-        Libra.logger_debug "DEBUG: DYNECT PUT/POST Response: #{data}"
+        case resp
+        when Net::HTTPSuccess
+          Libra.logger_debug "DEBUG: DYNECT PUT/POST Response: #{data}"
+        else
+          raise_dns_exception
+        end
       rescue Exception => e
         raise_dns_exception(e)
       end
@@ -301,14 +330,19 @@ EOF
 
     def self.dyn_delete(path, auth_token)
       headers = { "Content-Type" => 'application/json', 'Auth-Token' => auth_token }
-      url = URI.parse("https://api2.dynect.net/REST/#{path}")
+      url = URI.parse("#{Libra.c[:dynect_url]}/REST/#{path}")
       http = Net::HTTP.new(url.host, url.port)
       #http.set_debug_output $stderr
       http.use_ssl = true
       resp, data = nil, nil
       begin
         resp, data = http.delete(url.path, headers)
-        Libra.logger_debug "DEBUG: DYNECT DELETE Response: #{data}"
+        case resp
+        when Net::HTTPSuccess
+          Libra.logger_debug "DEBUG: DYNECT DELETE Response: #{data}"
+        else
+          raise_dns_exception
+        end
       rescue Exception => e
         raise_dns_exception(e)
       end
