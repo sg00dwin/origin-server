@@ -136,7 +136,7 @@ module Libra
 end
 
 # Global, one time setup
-$logger = Logger.new(File.join($temp, "cucumber-#{$$}.log"))
+$logger = Logger.new(File.join($temp, "cucumber.log"))
 $logger.level = Logger::DEBUG
 Libra.c[:logger] = $logger
 Libra.c[:bypass_user_reg] = true

@@ -1,4 +1,3 @@
-@verify
 Feature: Rally User Story us346
 
   Scenario: Rack modification tests
