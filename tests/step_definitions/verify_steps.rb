@@ -16,6 +16,14 @@ Given /^the following test data$/ do |table|
   @data = {}
 end
 
+Given /^a \d+ second command timeout$/ do |timeout|
+  @cmd_timeout = timeout.to_i
+end
+
+Given /^a \d+ second http request timeout$/ do |timeout|
+  @http_timeout = timeout.to_i
+end
+
 Given /^the following website links$/ do |table|
   @agent = Mechanize.new { |agent|
     agent.user_agent_alias = 'Mac Safari'
@@ -79,7 +87,7 @@ When /^the applications are created$/ do
       end
 
       # Wait for some process to complete if necessary
-      Timeout::timeout(300) do
+      Timeout::timeout(@cmd_timeout || 300) do
         pid = processes.shift
         Process.wait(pid)
         $logger.error("Process #{pid} failed") if $?.exitstatus != 0
@@ -92,7 +100,7 @@ When /^the applications are created$/ do
 
   # Wait for the remaining processes
   processes.reverse.each do |pid|
-    Timeout::timeout(300) do
+    Timeout::timeout(@cmd_timeout || 300) do
       Process.wait(pid)
       $logger.error("Process #{pid} failed") if $?.exitstatus != 0
     end
@@ -105,7 +113,7 @@ Then /^they should all be accessible$/ do
     begin
       $logger.info("Checking host #{url}")
       res = Net::HTTP.start(url, 80) do |http|
-        http.read_timeout = 60
+        http.read_timeout = @http_timeout || 60
         http.get("/health_check.php")
       end
       code = res.code
@@ -160,7 +168,7 @@ Then /^they should be able to be changed$/ do
     $logger.info("host= #{url}")
     begin
       res = Net::HTTP.start(url, 80) do |http|
-        http.read_timeout = 30
+        http.read_timeout = @http_timeout || 60
         http.get("/")
       end
 
