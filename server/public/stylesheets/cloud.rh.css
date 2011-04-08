@@ -312,7 +312,7 @@ body {
 }
 
 #app_promos > div {
-	background: white;
+	background: #d0d1d0;
 }
 
 #footer {
@@ -331,14 +331,41 @@ body {
 #app_promos .express {
 	background: url(/app/images/banner_bg_express.png) white;
 }
+  #app_promos .express.hover {
+    background: url(/app/images/banner_bg_express_hover.png) white;
+  }
+  #app_promos .express.hover h4 {
+    color: #6699cc;
+  }
+  #app_promos .express.hover a {
+    background-color: #6699cc;
+  }
 
 #app_promos .flex {
 	background: url(/app/images/banner_bg_flex.png) white;
 }
+  #app_promos .flex.hover{
+    background: url(/app/images/banner_bg_flex_hover.png) white;
+  }
+  #app_promos .flex.hover h4 {
+    color: #c88fd7;
+  }
+  #app_promos .flex.hover a {
+    background-color: #c88fd7;
+  }
 
 #app_promos .power {
 	background: url(/app/images/banner_bg_power.png) white;
 }
+  #app_promos .power.hover {
+     background: url('/app/images/banner_bg_power_hover.png');
+  }
+  #app_promos .power.hover h4{
+    color: #87cc66;
+  }
+  #app_promos .power.hover a {
+    background-color: #87cc66;
+  }
 
 #app_promos h3,
 #app_promos h4,

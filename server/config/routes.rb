@@ -15,6 +15,9 @@ RedHatCloud::Application.routes.draw do
     match 'broker/domain' => 'broker#domain_post', :via => [:post]
     match 'broker/userinfo' => 'broker#user_info_post', :via => [:post]
 
+    #Alias for home page so we can link to it
+    match 'home' => 'home#index'
+
     # Sample of named route:
     #   match 'products/:id/purchase' => 'catalog#purchase', :as => :purchase
     # This route can be invoked with purchase_url(:id => product.id)
