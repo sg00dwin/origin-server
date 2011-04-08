@@ -307,7 +307,6 @@ END_OF_MESSAGE
           exit 0
         elsif images[0] != "available"
           puts "EXITING - Image exists but isn't available yet"
-          exit 0
         end
       end
 
@@ -415,7 +414,7 @@ END_OF_MESSAGE
 
           print "Downloading verification output..."
           `mkdir -p rhc/log`
-          scp("-r #{@server}:/tmp/rhc/cucumber.log rhc/log")
+          scp("-r #{@server}:/tmp/rhc/cucumber*.log rhc/log")
           scp("-r #{@server}:/var/log/httpd/access_log rhc/log")
           scp("-r #{@server}:/var/log/httpd/error_log rhc/log")
           scp("-r #{@server}:/var/www/libra/log/development.log rhc/log")
