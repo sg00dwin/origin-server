@@ -86,6 +86,12 @@ function user_app_log_disk_space() {
     du -s `homedir $1`/`user_app_type $1 $2`/$2/logs | cut -f1
 }
 
+function user_app_data_disk_space() {
+    # USERNAME=$1
+    # APPNAME=$2
+    du -s `homedir $1`/`user_app_type $1 $2`/$2/data | cut -f1
+}
+
 # ============================================================================
 #
 # MAIN
@@ -124,11 +130,21 @@ then
     exit 2    
 fi
 
+echo "==============================================================================="
+echo "Account: $USERNAME"
+echo "Application: $APPNAME"
+echo
 
 # size of git repo
-
-# size of workspace
+echo git repository size: `user_app_git_disk_space $USERNAME $APPNAME` kbytes
 
 # size of data space
+echo total data size: `user_app_data_disk_space $USERNAME $APPNAME` kbytes
 
 # size of log space
+echo total log size: `user_app_log_disk_space $USERNAME $APPNAME` kbytes
+
+# size of workspace
+echo total workspace size: `user_app_disk_space $USERNAME $APPNAME` kbytes
+
+echo "==============================================================================="
