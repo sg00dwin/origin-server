@@ -169,9 +169,14 @@ EOF
       auth_token = nil
       begin
         resp, data = http.post(url.path, JSON.generate(session_data), headers)
-        Libra.logger_debug "POST Session Response: #{data}"
-        result = JSON.parse(data)
-        auth_token = result['data']['token']
+        case resp
+        when Net::HTTPSuccess
+          Libra.logger_debug "POST Session Response: #{data}"
+          result = JSON.parse(data)
+          auth_token = result['data']['token']
+        else
+          raise_dns_exception
+        end
       rescue Exception => e
         raise_dns_exception(e)
       end
@@ -183,7 +188,9 @@ EOF
     end
 
     def self.raise_dns_exception(e)
-      Libra.logger_debug "DEBUG: Exception caught from DNS request: #{e.message}"
+      if e
+        Libra.logger_debug "DEBUG: Exception caught from DNS request: #{e.message}"
+      end        
       raise DNSException.new(145), "Error communicating with DNS system.  If the problem persists please contact Red Hat support.", caller[0..5]
     end
 
@@ -265,16 +272,21 @@ EOF
       has = false
       begin
         resp, data = http.get(url.path, headers)
-        Libra.client_debug "DEBUG: DYNECT GET Response: #{data}"
-        if data
-          data = JSON.parse(data)
-          if data && data['status'] && data['status'] == 'failure'
-            Libra.logger_debug "DEBUG: DYNECT GET Response status: #{data['status']}"
-          elsif data && data['status'] == 'success'
-            Libra.logger_debug "DEBUG: DYNECT GET Response data: #{data['data']}"
-            #has = data['data'][0].length > 0
-            has = true
+        case resp
+        when Net::HTTPSuccess
+          Libra.client_debug "DEBUG: DYNECT GET Response: #{data}"
+          if data
+            data = JSON.parse(data)
+            if data && data['status'] && data['status'] == 'failure'
+              Libra.logger_debug "DEBUG: DYNECT GET Response status: #{data['status']}"
+            elsif data && data['status'] == 'success'
+              Libra.logger_debug "DEBUG: DYNECT GET Response data: #{data['data']}"
+              #has = data['data'][0].length > 0
+              has = true
+            end
           end
+        else
+          raise_dns_exception
         end
       rescue Exception => e
         raise_dns_exception(e)
@@ -304,7 +316,12 @@ EOF
         else
           resp, data = http.post(url.path, json_data, headers)
         end
-        Libra.logger_debug "DEBUG: DYNECT PUT/POST Response: #{data}"
+        case resp
+        when Net::HTTPSuccess
+          Libra.logger_debug "DEBUG: DYNECT PUT/POST Response: #{data}"
+        else
+          raise_dns_exception
+        end
       rescue Exception => e
         raise_dns_exception(e)
       end
@@ -320,7 +337,12 @@ EOF
       resp, data = nil, nil
       begin
         resp, data = http.delete(url.path, headers)
-        Libra.logger_debug "DEBUG: DYNECT DELETE Response: #{data}"
+        case resp
+        when Net::HTTPSuccess
+          Libra.logger_debug "DEBUG: DYNECT DELETE Response: #{data}"
+        else
+          raise_dns_exception
+        end
       rescue Exception => e
         raise_dns_exception(e)
       end
