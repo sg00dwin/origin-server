@@ -367,7 +367,7 @@ EOF
                         :application => app_name) do |response|
           #return_code = response[:body][:data][:exitcode]
           output = response[:body][:data][:output]
-          return output
+          return output == true
         end
       end
     end
