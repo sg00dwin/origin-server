@@ -1,0 +1,328 @@
+#!/bin/sh
+
+# Copyright 2011 Red Hat, Inc.
+#
+# Permission is hereby granted, free of charge, to any person
+# obtaining a copy of this software and associated documentation files
+# (the "Software"), to deal in the Software without restriction,
+# including without limitation the rights to use, copy, modify, merge,
+# publish, distribute, sublicense, and/or sell copies of the Software,
+# and to permit persons to whom the Software is furnished to do so,
+# subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT.  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+# BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+# ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+# CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+ETC_PASSWD=${ETC_PASSWD:=/etc/passwd}
+LIBRA_GUEST_MARKER=${LIBRA_GUEST_MARKER:="libra guest"}
+LIBRA_CGROUPS_ROOT=${LIBRA_CGROUPS_ROOT:="/cgroup/all/libra"}
+LIBRA_CGROUPS_MEMORY_STATS="failcnt limit_in_bytes max_usage_in_bytes usage_in_bytes
+memsw.failcnt memsw.limit_in_bytes memsw.max_usage_in_bytes memsw.usage_in_bytes"
+LIBRA_CGROUPS_CPUACCT_STATUS="stat usage"
+# LIBRA_CGROUP_PROCS
+# LIBRA_CGROUP_FREEZER_STATE
+
+
+TC_DEVICE=eth0
+
+# 
+function libra_users() {
+    grep ":${LIBRA_GUEST_MARKER}:" $ETC_PASSWD | cut -d: -f 1
+}
+
+function valid_user() {
+    # USERNAME=$1
+    grep "^$1:" $ETC_PASSWD | grep ":${LIBRA_GUEST_MARKER}:" > /dev/null 2>&1
+}
+
+function homedir() {
+    # USERNAME=$1
+    grep "^${USERNAME}:" $ETC_PASSWD | cut -d: -f 6
+}
+
+function user_processes() {
+    # USERNAME=$1
+    find /proc -maxdepth 1 -user $USERNAME | xargs -I{} basename {}
+}
+
+function user_process_stats() {
+    # PID=$1
+    # name, start time, cpu (system, user) RSS
+    echo nothing > /dev/null
+}
+
+function user_quota() {
+    # USERNAME=$1
+    # get the last line of output.  Strip leading and duplicate spaces
+    # returns "block used, block limit, inode used, inode limit
+    quota $1 | tail -1 | awk '{print $2, $4, $5, $7}'
+}
+
+function user_disk_used() {
+    # USERNAME=$1
+    # return homedir size in KB
+    du -s -k `homedir $1` | cut -f1
+}
+
+function user_cgroup_dir() {
+    # USERNAME=$1
+    echo $LIBRA_CGROUPS_ROOT/$1
+}
+
+function user_cgroup_memory_usage() {
+    # USERNAME=$1
+    _CGDIR=`user_cgroup_dir $1`
+
+    # get limit_in_bytes, usage_in_bytes, max_usage_in_bytes and failcnt    
+    MEMKEYS='memory.limit_in_bytes 
+             memory.usage_in_bytes
+             memory.max_usage_in_bytes
+             memory.failcnt'
+
+    (cd $_CGDIR ; cat $MEMKEYS)
+}
+
+function user_cgroup_memsw_usage() {
+    # USERNAME=$1
+    _CGDIR=`user_cgroup_dir $1`
+        
+    MEMSWKEYS='memory.memsw.limit_in_bytes 
+               memory.memsw.usage_in_bytes
+               memory.memsw.max_usage_in_bytes
+               memory.memsw.failcnt'
+
+    (cd $_CGDIR ; cat $MEMSWKEYS)
+}
+
+function user_cgroup_memory_status() {
+    # USERNAME=$1
+    _CGROUPDIR=`user_cgroup_dir $1`
+    cat $_CGROUPDIR/memory.stat | tr ' ' =
+}
+
+function user_cgroup_cpu_status() {
+    # USERNAME=$1
+
+    # get the cpuacct.stat values for user and system
+    _CGROUPDIR=`user_cgroup_dir $1`
+    # $1 = user ticks
+    # $2 = system ticks
+    cat $_CGROUPDIR/cpuacct.stat| cut -d' ' -f 2 | tr '\n' ' '
+    # $3 = usec consumed
+    cat $_CGROUPDIR/cpuacct.usage
+}
+
+function user_apps() {
+    # USERNAME=$1
+    ls -d `homedir $1`/git/*.git | xargs -I{} basename {} .git
+}
+
+function user_app_type() {
+    # USERNAME=$1
+    # APPNAME=$2
+    _HOMEDIR=`homedir $1`
+    _APPTYPE=`cat ${_HOMEDIR}/git/${2}.git/description | cut -d' ' -f1`
+    if [ "$_APPTYPE" != "Unnamed" ]
+    then
+	echo $_APPTYPE
+    else
+	#echo "WARNING: Unnamed Application: update git description" >&2
+	_APPDIR=`dirname ${_HOMEDIR}/*/$2`
+	basename $_APPDIR
+    fi
+}
+
+function user_app_disk_space() {
+    # USERNAME=$1
+    # APPNAME=$2
+    du -s `homedir $1`/`user_app_type $1 $2`/$2 | cut -f1
+}
+
+function user_app_git_disk_space() {
+    # USERNAME=$1
+    # APPNAME=$2
+    du -s `homedir $1`/git/${2}.git | cut -f1
+}
+
+function user_app_log_disk_space() {
+    # USERNAME=$1
+    # APPNAME=$2
+    du -s `homedir $1`/`user_app_type $1 $2`/$2/logs | cut -f1
+}
+# disk use categories:
+# total
+# per application:
+#     git
+#     app
+#     logs
+# 
+# top N files
+#   total
+#   per app
+
+#
+# traffic control
+# 
+function user_uid() {
+    # USERNAME=$1
+    grep "^$1:" $ETC_PASSWD | cut -d: -f3
+}
+
+function user_tc_classid() {
+    # USERNAME=$1
+    printf "1:%x\n" `user_uid $1`
+}
+
+# Units:
+# see tc(8) man page UNITS section
+# class T X:X parent X:X|root prio N rate Nunit ceil Nunit burst Nunit cburst Nunit
+# ' 'Sent N bytes N pkt (dropped N, overlimits N requeues N)
+# ' 'rate Nunit Nunit backlog Nunit Nunit requeues N
+# ' 'lended: N borrowed: N giants: N
+# ' 'tokens: N ctokens: N
+
+# 
+# CLASS_TYPE=2
+# CLASS_ID=3
+# CLASS_PARENT=5
+# CLASS_PRIORITY=7
+# CLASS_LIMIT_RATE=9
+# CLASS_LIMIT_CEIL=11
+# CLASS_LIMIT_BURST=13
+# CLASS_LIMIT_CBURST=15
+# SENT_BYTES=17
+# SENT_PACKETS=19
+# DROPPED=22
+# OVERLIMITS=24
+# REQUEUES=26
+# RATE_BITS=28
+# RATE_PACKETS=29
+# BACKLOG_BITS=31
+# BACKLOG_PACKETS=32
+# REQUEUES2=34
+# LENDED=36
+# BORROWED=38
+# GIANTS=40
+# TOKENS=42
+# CTOKENS=44
+
+function user_tc() {
+    # USERNAME=$1
+    _TCID=`user_tc_classid $1`
+
+    RESULT=`tc -s class show dev $TC_DEVICE classid $_TCID | tr '\n' ' '  | tr -d '(),' | tr -s ' '`
+    #
+}
+
+#
+# Find the top N files by size in a given directory
+#   
+#function top_files() {
+#    # DIR=$1
+#    # COUNT=$2 (default: 10)
+#    #find DIR -type f | xargs -I{} ls -lG --time-style iso {} | 
+#}
+
+
+# ============================================================================
+# 
+#
+#
+# ============================================================================
+
+USERNAME=$1
+
+if [ -z "$1" ]
+then
+    libra_users
+    exit 0
+fi
+
+valid_user $USERNAME
+if [ $? != 0 ]
+then
+    echo "Invalid user $USERNAME" >&2
+    exit 2
+fi
+
+echo "-------------------------------------------------------------------------------"
+echo User Account: $USERNAME
+echo
+
+PROCESSES=`user_processes $USERNAME`
+NPROC=`echo $PROCESSES | wc -w`
+echo "-- processes ( total: $NPROC ) --"
+for PROC in `user_processes $USERNAME`
+do
+    echo "  $PROC"
+done
+echo
+
+CPUSTATS=`user_cgroup_cpu_status`
+echo "-- CPU Usage Status --"
+echo "  User Ticks  : " `echo $CPUSTATS | cut -d' ' -f1`
+echo "  System Ticks: " `echo $CPUSTATS | cut -d' ' -f2`
+echo "  CPU usec    : " `echo $CPUSTATS | cut -d' ' -f3`
+echo
+
+MEMORYUSE=`user_cgroup_memory_usage $USERNAME`
+MEMSWUSE=`user_cgroup_memsw_usage $USERNAME`
+echo "-- Memory and Swap Usage --"
+printf "  Memory Limit             : %s bytes\n" `echo $MEMORYUSE | cut -d' ' -f 1`
+printf "  Memory In Use            : %s bytes\n" `echo $MEMORYUSE | cut -d' ' -f 2`
+printf "  Memory Max Used          : %s bytes\n" `echo $MEMORYUSE | cut -d' ' -f 3`
+printf "  Memory Request Fails     : %s\n" `echo $MEMORYUSE | cut -d' ' -f 4`
+echo
+printf "  Memory+Swap Limit        : %s bytes\n" `echo $MEMSWUSE | cut -d' ' -f 1`
+printf "  Memory+Swap In Use       : %s bytes\n" `echo $MEMSWUSE | cut -d' ' -f 2`
+printf "  Memory+Swap Max Used     : %s bytes\n" `echo $MEMSWUSE | cut -d' ' -f 3`
+printf "  Memory+Swap Request Fails: %s\n" `echo $MEMSWUSE | cut -d' ' -f 4`
+echo
+
+for ENTRY in `user_cgroup_memory_status`
+do
+    echo "  $ENTRY"
+done
+
+echo
+
+QUOTAS=`user_quota $USERNAME`
+echo "-- filesystem quotas --"
+BLOCK_LIMIT=`echo $QUOTAS | cut -d' ' -f 2`
+BLOCK_USED=`echo $QUOTAS | cut -d' ' -f 1`
+INODE_LIMIT=`echo $QUOTAS | cut -d' ' -f 4`
+INODE_USED=`echo $QUOTAS | cut -d' ' -f 3`
+printf "  blocks: limit = %8d used = %8d\n" $BLOCK_LIMIT $BLOCK_USED
+printf "  inodes: limit = %8d used = %8d\n" $INODE_LIMIT $INODE_USED
+echo
+
+echo "-- homedir filespace --"
+echo " " `user_disk_used` kbytes
+echo
+
+APPLIST=`user_apps`
+APPCOUNT=`echo $APPLIST | wc -w`
+echo "-- applications ( total = $APPCOUNT )"
+for APPNAME in $APPLIST
+do
+    APPTYPE=`user_app_type $USERNAME $APPNAME`
+    WORKDISK=`user_app_disk_space $USERNAME $APPNAME`
+    GITDISK=`user_app_git_disk_space $USERNAME $APPNAME`
+    LOGDISK=`user_app_log_disk_space $USERNAME $APPNAME`
+    echo -n "  ${APPNAME} ($APPTYPE):" workspace = $WORKDISK kbytes, git = $GITDISK kbytes, logs = $LOGDISK kbytes
+done
+echo
+
+echo "-------------------------------------------------------------------------------"
+
+
+exit 0

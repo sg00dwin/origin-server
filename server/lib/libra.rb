@@ -7,7 +7,7 @@ require 'libra/nurture.rb'
 require 'libra/util.rb'
 
 module Libra
-  
+
   def self.client_debug(str)
     debugIO = Thread.current[:debugIO]
     if debugIO
@@ -16,7 +16,7 @@ module Libra
       puts str
     end
   end
-  
+
   def self.client_result(str)
     resultIO = Thread.current[:resultIO]
     if resultIO
@@ -25,21 +25,21 @@ module Libra
       puts str
     end
   end
-  
-  def self.logger_debug(str)    
+
+  def self.logger_debug(str)
     if defined? Rails
       Rails.logger.debug str
     else
       puts str
     end
-  end  
-  
+  end
+
   #
   # Executes
   #
   def self.execute(framework, action, app_name, rhlogin)
     # Lookup the user
-    user = User.find(rhlogin)        
+    user = User.find(rhlogin)
 
     if user
       # App exists check
@@ -62,21 +62,24 @@ module Libra
             server = Server.new(app_info['server_identity'])
             if server
               Libra.logger_debug "DEBUG: Performing action '#{action}' on node: #{server.name} - #{server.repos} repos" if Libra.c[:rpc_opts][:verbose]
-      
+
               Libra.c[:rpc_opts][:disctimeout] = 1
               Libra.c[:rpc_opts][:timeout] = 15
               server_execute_direct(framework, action, app_name, user, server)
-              
-              # update DNS
-              public_ip = server.get_fact_direct('public_ip')
-              Libra.logger_debug "DEBUG: Public ip being deconfigured '#{public_ip}' from namespace '#{user.namespace}'"
-              if Libra.c[:use_dynect_dns]
-                auth_token = Server.dyn_login
-                Server.dyn_delete_a_record(app_name, user.namespace, auth_token)
-                Server.dyn_publish(auth_token)
-                Server.dyn_logout(auth_token)
-              else
-                Server.nsupdate_del(app_name, user.namespace, public_ip)
+
+              if action == 'deconfigure'
+                # update DNS
+                public_ip = server.get_fact_direct('public_ip')
+                Libra.logger_debug "DEBUG: Public ip being deconfigured '#{public_ip}' from namespace '#{user.namespace}'"
+                if Libra.c[:use_dynect_dns]
+                  auth_token = Server.dyn_login
+                  Server.dyn_delete_sshfp_record(app_name, user.namespace, auth_token)
+                  Server.dyn_delete_a_record(app_name, user.namespace, auth_token)                  
+                  Server.dyn_publish(auth_token)
+                  Server.dyn_logout(auth_token)
+                else
+                  Server.nsupdate_del(app_name, user.namespace, public_ip)
+                end
               end
             else
               if action == 'deconfigure'
@@ -90,7 +93,7 @@ module Libra
             raise NodeException.new(254), "The application #{app_name} is registered without a specified node.", caller[0..5]
           end
         end
-        if action == 'deconfigure'            
+        if action == 'deconfigure'
           # Remove S3 app on deconfigure (one of the last things)
           user.delete_app(app_name)
         end
@@ -100,26 +103,26 @@ module Libra
       raise UserException.new(254), "User '#{rhlogin}' not found", caller[0..5]
     end
   end
-  
+
   def self.configure_app(framework, action, app_name, user)
-    raise UserException.new(100), "An application named '#{app_name}' already exists", caller[0..5] if user.app_info(app_name)    
+    raise UserException.new(100), "An application named '#{app_name}' already exists", caller[0..5] if user.app_info(app_name)
     # Find the next available server
     Libra.c[:rpc_opts][:disctimeout] = 1
     Libra.c[:rpc_opts][:timeout] = 2
     server = Server.find_available
-    
+
     Libra.logger_debug "DEBUG: Performing configure on node: #{server.name} - #{server.repos} repos" if Libra.c[:rpc_opts][:verbose]
-    
+
     user.validate_app_limit # TODO there is a race condition here if two users get past here before creating the app and updating s3
     # Create S3 app entry on configure (one of the first things)
     user.create_app(app_name, framework, server)
-    
-    begin            
+
+    begin
       # Configure the user on this server if necessary
       Libra.c[:rpc_opts][:disctimeout] = 1
       Libra.c[:rpc_opts][:timeout] = 15
       server.create_user(user) # not cleaned up on failure
-            
+
       server_execute_direct(framework, action, app_name, user, server)
       begin
         # update DNS
@@ -129,6 +132,7 @@ module Libra
         if Libra.c[:use_dynect_dns]
           auth_token = Server.dyn_login
           Server.dyn_create_a_record(app_name, user.namespace, public_ip, sshfp, auth_token)
+          Server.dyn_create_sshfp_record(app_name, user.namespace, sshfp, auth_token)
           Server.dyn_publish(auth_token)
           Server.dyn_logout(auth_token)
         else
@@ -137,7 +141,7 @@ module Libra
       rescue Exception => e
         begin
           Libra.logger_debug "DEBUG: Failed to register dns entry for app '#{app_name}' and user '#{user.rhlogin}' on node '#{server.name}'"
-          Libra.client_debug "Failed to register dns entry for: '#{app_name}'"          
+          Libra.client_debug "Failed to register dns entry for: '#{app_name}'"
           server_execute_direct(framework, 'deconfigure', app_name, user, server)
         ensure
           raise
@@ -146,31 +150,37 @@ module Libra
     rescue Exception => e
       begin
         Libra.logger_debug "DEBUG: Failed to create application '#{app_name}' for user '#{user.rhlogin}' on node '#{server.name}'"
-        Libra.client_debug "Failed to create application: '#{app_name}'"    
+        Libra.client_debug "Failed to create application: '#{app_name}'"
         user.delete_app(app_name)
       ensure
         raise
       end
     end
   end
-  
+
   def self.server_execute_direct(framework, action, app_name, user, server)
     # Execute the action on the server using a framework cartridge
     Nurture.application(user.rhlogin, user.uuid, app_name, user.namespace, framework, action)
     result = server.execute_direct(framework, action, "#{app_name} #{user.namespace} #{user.uuid}")[0]
-    if action == 'status'      
-      if result.results[:data][:exitcode] == 0
-        Libra.client_result result.results[:data][:output]
-      else
-        Libra.client_result "Application '#{app_name}' is either stopped or inaccessible"
+    if (result && defined? result.results)
+      output = result.results[:data][:output]
+      exitcode = result.results[:data][:exitcode]
+      if action == 'status'
+        if exitcode == 0
+          Libra.client_result output
+        else
+          Libra.client_result "Application '#{app_name}' is either stopped or inaccessible"
+        end
+      elsif exitcode != 0
+        Libra.client_debug exitcode
+        Libra.client_debug output
+        Libra.logger_debug "DEBUG: execute_direct results: " + output
+        raise NodeException.new(143), "Node execution failure (invalid exit code from execute direct).  If the problem persists please contact Red Hat support.", caller[0..5]
       end
-    elsif result.results[:data][:exitcode] != 0
-      Libra.client_debug result.results[:data][:exitcode]
-      Libra.client_debug result.results[:data][:output]
-      Libra.logger_debug "DEBUG: execute_direct results: " + result.results[:data][:output]
-      raise NodeException.new(143), "Node execution failure.  If the problem persists please contact Red Hat support.", caller[0..5]    
-    end    
-  end  
+    else
+      raise NodeException.new(143), "Node execution failure (error getting result from execute direct).  If the problem persists please contact Red Hat support.", caller[0..5]
+    end
+  end
 
   #
   # Adjusts the capacity of the Libra cluster if

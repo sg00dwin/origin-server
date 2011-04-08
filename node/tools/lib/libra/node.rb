@@ -1144,8 +1144,13 @@ module Libra
           return out
         end
 
-        return out
-
+        out += self.class.qdisc_htb_format % [
+                                              @qdisc['classid'],
+                                              @qdisc['parent'],
+                                              @qdisc['refcnt'],
+                                              @qdisc['r2q'],
+                                              @qdisc['default'],
+                                              @qdisc['direct_packets_stat']                                              ]
         # no, don't report these
         if @childclasses != nil then
           @childclasses.keys.sort.each do |clsid|

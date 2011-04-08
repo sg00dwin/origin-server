@@ -62,5 +62,5 @@ APP_DIR="$CUSTOMER_HOME/wsgi/$application"
 #
 # Start application
 #
-
+rm -f "$APP_DIR/run/stop_lock"
 runuser --shell /bin/sh "$customer_id" "$APP_DIR/${application}_ctl.sh" restart

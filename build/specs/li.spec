@@ -2,8 +2,8 @@
 %define gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 
 Name: li
-Version: 0.62.3
-Release: 3%{?dist}
+Version: 0.62.9
+Release: 2%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -37,6 +37,7 @@ Requires: li-cartridge-rack-1.1.0
 Requires: qpid-cpp-server
 Requires: puppet
 Requires: rubygem-cucumber
+Requires: rubygem-mocha
 Requires: rubygem-rspec
 Requires: rubygem-nokogiri
 BuildArch: noarch
@@ -186,6 +187,10 @@ gem install --install-dir $RPM_BUILD_ROOT/%{gemdir} --bindir $RPM_BUILD_ROOT/%{_
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%pre server
+/usr/sbin/groupadd -r libra_user 2>&1 || :
+/usr/sbin/useradd libra_passenger -g libra_user -d /var/lib/passenger -r -s /sbin/nologin 2>&1 > /dev/null || :
+
 %post devenv
 
 # ntp is not needed in para-virtualized systems
@@ -246,7 +251,9 @@ sysctl kernel.sem="250	32000	32	4096"
 crontab -u root /etc/libra/devenv/crontab
 
 # Libra
-/bin/cp -f /etc/libra/devenv/libra.conf /etc/libra/devenv/node.conf /etc/libra/devenv/controller.conf /etc/libra
+/bin/cp -f /etc/libra/devenv/express.conf /etc/libra/devenv/node.conf /etc/libra/devenv/controller.conf /etc/libra
+
+ln -s /etc/libra /etc/openshift
 
 # Debugging utilities
 /bin/cp -f /etc/libra/devenv/li-log-util /usr/bin/li-log-util
@@ -311,12 +318,12 @@ fi
 %{_bindir}/rhc-ctl-app
 %{_bindir}/rhc-snapshot
 %{_mandir}/man1/rhc-*
-%{_mandir}/man5/libra*
+%{_mandir}/man5/express*
 %{gemdir}/gems/li-%{version}/
 %{gemdir}/cache/li-%{version}.gem
 %{gemdir}/doc/li-%{version}
 %{gemdir}/specifications/li-%{version}.gemspec
-%config(noreplace) %{_sysconfdir}/libra/libra.conf
+%config(noreplace) %{_sysconfdir}/libra/express.conf
 
 %files devenv
 %defattr(-,root,root,-)
@@ -327,7 +334,7 @@ fi
 %{_libexecdir}/mcollective/mcollective/connector/amqp.rb
 
 %files node
-%defattr(-,root,root,0740)
+%defattr(-,root,root,-)
 %attr(0640,-,-) %{_libexecdir}/mcollective/mcollective/agent/libra.ddl
 %attr(0640,-,-) %{_libexecdir}/mcollective/mcollective/agent/libra.rb
 %attr(0640,-,-) %{_libexecdir}/mcollective/update_yaml.pp
@@ -337,15 +344,17 @@ fi
 %attr(0750,-,-) %{_sysconfdir}/init.d/libra-cgroups
 %attr(0750,-,-) %{_sysconfdir}/init.d/libra-tc
 %attr(0750,-,-) %{_bindir}/rhc-ip-prep.sh
-%attr(0750,-,-) %{_bindir}/trap-user
+%attr(0755,-,-) %{_bindir}/trap-user
 %attr(0750,-,-) %{_bindir}/rhc-restorecon
 %attr(0750,-,-) %{_bindir}/rhc-init-quota
-%attr(0751,root,root) %{_localstatedir}/lib/libra
+%dir %attr(0751,root,root) %{_localstatedir}/lib/libra
 %dir %attr(0750,root,root) %{_libexecdir}/li/cartridges/li-controller-0.1/
 %{_libexecdir}/li/cartridges/li-controller-0.1/README
 %{_libexecdir}/li/cartridges/li-controller-0.1/info
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 %attr(0750,-,-) %{_bindir}/rhc-accept-node
+%attr(0750,-,-) %{_bindir}/rhc-node-account
+%attr(0750,-,-) %{_bindir}/rhc-node-application
 %attr(0640,-,-) %config(noreplace) %{_sysconfdir}/libra/node.conf
 %attr(0640,-,-) %config(noreplace) %{_sysconfdir}/libra/resource_limits.conf
 %attr(0750,root,root) %config(noreplace) %{_sysconfdir}/httpd/conf.d/000000_default.conf
@@ -372,9 +381,6 @@ fi
 %attr(0640,root,libra_user) %config(noreplace) %{_sysconfdir}/libra/controller.conf
 
 %post server
-# Adding passenger user
-/usr/sbin/groupadd -r libra_user
-/usr/sbin/useradd libra_passenger -g libra_user -d /var/lib/passenger -r -s /sbin/nologin
 
 # Change group for mcollective client.cfg
 /bin/chgrp libra_user /etc/mcollective/client.cfg
@@ -402,6 +408,33 @@ chmod 0666 %{_localstatedir}/www/libra/log/production.log
 %{_libexecdir}/li/cartridges/wsgi-3.2.1/
 
 %changelog
+* Tue Apr 07 2011 Mike McGrath <mmcgrath@redhat.com> 0.62.9-2
+- creating /etc/openshift
+
+* Tue Apr 07 2011 Mike McGrath <mmcgrath@redhat.com> 0.62.9-1
+- Fixing openshift path in devenv
+
+* Tue Apr 07 2011 Matt Hicks <mhicks@redhat.com> 0.62.8-1
+- Site functioning with streamline
+- Additional fixes
+
+* Tue Apr 07 2011 Matt Hicks <mhicks@redhat.com> 0.62.7-1
+- Lots of site updates
+- Additional fixes
+
+* Tue Apr 05 2011 Mike McGrath <mmcgrath@redhat.com> 0.62.6-4
+- Fixing /var/lib/libra permissions
+- Allowing execute to trap-user
+
+* Tue Apr 05 2011 Mike McGrath <mmcgrath@redhat.com> 0.62.6-2
+- Additional fixes
+
+* Tue Apr 05 2011 Matt Hicks <mhicks@redhat.com> 0.62.5-4
+- server.rb typo fix
+
+* Tue Apr 05 2011 Matt Hicks <mhicks@redhat.com> 0.62.4-4
+- Moving user / group to %pre
+
 * Tue Apr 05 2011 Matt Hicks <mhicks@redhat.com> 0.62.3-3
 - Removed server rubygem-haml dep
 

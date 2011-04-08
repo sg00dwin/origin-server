@@ -56,18 +56,18 @@ Feature: Verification Tests
     Given the libra client tools
     And the following test data
       | processes | users | apps |    type    |
-      |     10    |   25  |  1   | php-5.3.2  |
-      |     10    |   25  |  1   | rack-1.1.0 |
-      |     10    |   25  |  1   | wsgi-3.2.1 |
+      |     10    |   50  |  1   | php-5.3.2  |
+      |     10    |   50  |  1   | rack-1.1.0 |
+      |     10    |   50  |  1   | wsgi-3.2.1 |
     When the applications are created
     Then they should all be accessible
 
   Scenario: Website tests
     Given the following website links
       |         uri          |  protocol  |
-      | /                    |    http    |
-      | /app/index           |    http    |
-      | /app/getting_started |    http    |
+      | /                    |    https   |
+      | /app                 |    https   |
+      | /app/getting_started |    https   |
       | /app/users           |    https   |
     When they are accessed
     Then no errors should be thrown

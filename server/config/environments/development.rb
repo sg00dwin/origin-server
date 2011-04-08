@@ -25,15 +25,14 @@ RedHatCloud::Application.configure do
   # Only use best-standards-support built into browsers
   config.action_dispatch.best_standards_support = :builtin
 
-  # Determines whether HTTPS constraints should be enforced for this
-  # environment - i.e. whether to enforce HTTPS for login, etc.
-  config.secure_protocol = "http"
+  ############################################
+  # OpenShift Configuration Below this point #
+  ############################################
   config.app_scope = "app"
-
-  # Integration environment constraints - uncommenting these will
-  #   registrations, logins, and authorizations to hit the IT service
-  # config.streamline = "https://streamline.devlab.phx1.redhat.com/wapps/streamline"
-  # config.streamline_secret = 'c0ldW1n3'
+  config.integrated = false
+  config.login = "/app/login"
+  config.streamline = "http://localhost" # Non-integrated
+  config.streamline_secret = ''
 
   # AWS configuration
   config.aws_key = "AKIAJMZR4X6F46UMXV6Q"

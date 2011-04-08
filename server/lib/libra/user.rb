@@ -260,30 +260,6 @@ module Libra
       json = JSON.generate(app_info)
       Helper.s3.put(Libra.c[:s3_bucket],
                     "user_info/#{@rhlogin}/apps/#{app_name}.json", json)
-      JSON.parse(json)
-    end
-    
-    #
-    # Update all app server identities to the current state
-    #
-    def self.update_all_app_server_identities
-      servers = Server.find_all
-      rhlogins = find_all_rhlogins
-      rhlogins.each do |rhlogin|
-        user = find(rhlogin)
-        if user
-          apps = user.apps
-          apps.each_key do |app_sym|
-            app_name = app_sym.to_s
-            servers.each do |server|
-              if server.has_app?(user, app_name)
-                update_app_server_identity(app_name, server)
-                break
-              end
-            end
-          end
-        end
-      end
     end
 
     #

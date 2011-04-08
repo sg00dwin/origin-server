@@ -18,7 +18,7 @@ $domain = "rhcloud.com"
 $temp = "/tmp/rhc"
 $create_app_script = "/usr/bin/rhc-create-app"
 $create_domain_script = "/usr/bin/rhc-create-domain"
-$client_config = "/etc/libra/libra.conf"
+$client_config = "/etc/libra/express.conf"
 
 # RSA Key constants
 $libra_pub_key = File.expand_path("~/.ssh/libra_id_rsa.pub")
@@ -50,14 +50,14 @@ module Libra
           namespace = "ci" + Array.new(8, '').collect{chars[rand(chars.size)]}.join
           login = "libra-test+#{namespace}@redhat.com"
           $logger.info("li - checking availability of namespace = #{namespace}")
-          records = Libra::Server.get_dns_txt(namespace)
-          $logger.info("li - records = #{records.pretty_inspect}")
+          has_txt = Libra::Server.has_dns_txt?(namespace)
+          $logger.info("li - has_txt = #{has_txt}")
 
           $logger.info("li - checking availability of login = #{login}")
           user = Libra::User.find(login)
           $logger.info("li - user = #{user.pretty_inspect}")
 
-          unless user or !records.empty? or reserved_usernames.index(login)
+          unless user or has_txt or reserved_usernames.index(login)
             result[:login] = login
             result[:namespace] = namespace
             break

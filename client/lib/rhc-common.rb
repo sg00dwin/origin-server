@@ -1,3 +1,25 @@
+# Copyright 2010 Red Hat, Inc.
+#
+# Permission is hereby granted, free of charge, to any person
+# obtaining a copy of this software and associated documentation files
+# (the "Software"), to deal in the Software without restriction,
+# including without limitation the rights to use, copy, modify, merge,
+# publish, distribute, sublicense, and/or sell copies of the Software,
+# and to permit persons to whom the Software is furnished to do so,
+# subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT.  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+# BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+# ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+# CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 require 'rubygems'
 require 'fileutils'
 require 'getoptlong'
@@ -225,29 +247,29 @@ module RHC
 end
 
 #
-# Config paths... /etc/libra/libra.conf or $GEM/conf/libra.conf -> ~/.li/libra.conf
+# Config paths... /etc/openshift/express.conf or $GEM/conf/express.conf -> ~/.openshift/express.conf
 #
-linux_cfg = '/etc/libra/libra.conf'
-gem_cfg = File.join(File.expand_path(File.dirname(__FILE__) + "/../conf"), 'libra.conf')
-@config_path = File.exists?(linux_cfg) ? linux_cfg : gem_cfg
-if File.exists?("#{ENV['HOME']}/.li")
-  if !File.directory?("#{ENV['HOME']}/.li")
-    print "Moving old-style config file..."
-    FileUtils.mv "#{ENV['HOME']}/.li", "#{ENV['HOME']}/.li.bak"
-    FileUtils.mkdir_p "#{ENV['HOME']}/.li"
-    FileUtils.mv "#{ENV['HOME']}/.li.bak", "#{ENV['HOME']}/.li/libra.conf"
-    puts " Done."
-  end
-else
-  FileUtils.mkdir_p "#{ENV['HOME']}/.li"
-end
-@local_config_path = "#{ENV['HOME']}/.li/libra.conf"
+# semi-private: Just in case we rename again :)
+_conf_name = 'express.conf'
+_linux_cfg = '/etc/openshift/' + _conf_name
+_gem_cfg = File.join(File.expand_path(File.dirname(__FILE__) + "/../conf"), _conf_name)
+_home_conf = File.expand_path('~/.openshift')
+@local_config_path = File.join(_home_conf, _conf_name)
+@config_path = File.exists?(_linux_cfg) ? _linux_cfg : _gem_cfg
 
-FileUtils.touch @local_config_path
+FileUtils.mkdir_p _home_conf unless File.directory?(_home_conf)
+if !File.exists?(File.expand_path(@local_config_path)) && File.exists?("#{ENV['HOME']}/.li/libra.conf")
+    print "Moving old-style config file..."
+    FileUtils.cp "#{ENV['HOME']}/.li/libra.conf", File.expand_path(@local_config_path)
+    FileUtils.mv "#{ENV['HOME']}/.li/libra.conf", "#{ENV['HOME']}/.li/libra.conf.deprecated"
+    puts " Done."
+ end
+
+FileUtils.touch File.expand_path(@local_config_path)
 
 begin
   @global_config = ParseConfig.new(@config_path)
-  @local_config = ParseConfig.new(@local_config_path)
+  @local_config = ParseConfig.new(File.expand_path(@local_config_path))
 rescue Errno::EACCES => e
   puts "Could not open config file: #{e.message}"
   exit 253

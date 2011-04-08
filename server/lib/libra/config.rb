@@ -36,6 +36,12 @@ module Libra
       @@config[:resolver] = fs_config.get_value('resolver')
       @@config[:secret] = fs_config.get_value('secret')
 
+      # Nurture configuration
+      @@config[:nurture_enabled] = fs_config.get_value('nurture_enabled')
+      @@config[:nurture_username] = fs_config.get_value('nurture_username')
+      @@config[:nurture_password] = fs_config.get_value('nurture_password')
+      @@config[:nurture_url] = fs_config.get_value('nurture_url')
+
       # Optional configuration
       @@config[:aws_name] = fs_config.get_value('aws_name')
       @@config[:aws_environment] = fs_config.get_value('aws_environment')
@@ -46,6 +52,10 @@ module Libra
       @@config[:user_reg_url] =  fs_config.get_value('user_reg_url').strip
       use_dynect_dns = fs_config.get_value('use_dynect_dns')
       @@config[:use_dynect_dns] =  use_dynect_dns && use_dynect_dns.strip == 'true' ? true : false
+      @@config[:dynect_customer_name] =  fs_config.get_value('dynect_customer_name').strip
+      @@config[:dynect_user_name] =  fs_config.get_value('dynect_user_name').strip
+      @@config[:dynect_password] =  fs_config.get_value('dynect_password').strip
+      @@config[:dynect_url] =  fs_config.get_value('dynect_url').strip      
     rescue
       # Ignore as long as we have the values below
     ensure

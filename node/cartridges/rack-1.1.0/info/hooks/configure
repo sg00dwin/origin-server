@@ -114,8 +114,6 @@ function create_repo {
     echo "rack 1.1.0 application '$application'" > $GIT_DIR/description
     cat <<EOF > $GIT_DIR/hooks/post-receive
 rm -rf $APP_DIR/deploy/*
-mkdir $APP_DIR/deploy/public
-mkdir $APP_DIR/deploy/tmp
 git archive --format=tar HEAD | (cd $APP_DIR/deploy && tar xf -)
 
 # Reload passenger

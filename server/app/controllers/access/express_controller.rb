@@ -3,43 +3,38 @@ require 'pp'
 class Access::ExpressController < ApplicationController
 
   def index
-    puts "Session = #{session[:login]}"
-    unless session[:login]
-      @user = WebUser.new
-      render :template => 'users/index'
+    Rails.logger.debug "Checking login status"
+    login = session[:login]
+
+    if login
+      #Rails.logger.debug "User is logged in"
+      #user = WebUser.find_by_ticket(session[:ticket])
+      #Rails.logger.debug "Requesting Express access for user #{user}"
+      #user.request_access(CloudAccess::EXPRESS)
+    else
+      Rails.logger.debug "User is not logged in - rerouting to login / register"
+      session[:workflow] = access_express_index_path
+      redirect_to login_index_path, :notice => "You'll need to login / register before asking for access"
     end
   end
 
+  def new
+    create
+  end
+
   def create
-    # Check whether user is logged in
-    unless session[:login]
-      render 'users/index'
+    Rails.logger.debug "Checking login status"
+    login = session[:login]
+
+    if login
+      Rails.logger.debug "User is logged in"
+      user = WebUser.find_by_ticket(session[:ticket])
+      Rails.logger.debug "Requesting Express access for user #{user}"
+      user.request_access(CloudAccess::EXPRESS)
+    else
+      Rails.logger.debug "User is not logged in - rerouting to login / register"
+      session[:workflow] = new_access_express_path
+      redirect_to login_index_path
     end
-
-    # If not logged in, redirect to login / register
-
-    # If logged in, request access
-
-    @user = WebUser.new(params[:web_user])
-
-    # TODO - Remove
-    # Only applicable for the beta registration process
-    @user.termsAccepted = '1'
-
-    # Run validations
-    valid = @user.valid?
-
-    # Verify the captcha
-    unless verify_recaptcha
-      valid = false
-      @user.errors[:captcha] = "Captcha text didn't match"
-      pp @user.errors
-    end unless Rails.env == "development"
-
-    # Stop if you have a validation error
-    render :index and return unless valid
-
-    # Only register the user if in a non-development environment
-    full_register unless Rails.env == "development"
   end
 end

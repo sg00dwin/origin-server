@@ -1,0 +1,57 @@
+#pageheader.express.container_24
+  .grid_14#title
+    %h2 OpenShift <em>Express</em>
+    %p The Internal Beta...
+
+  .grid_10#title_accent
+
+  .clear
+
+.container_24#page
+  .prefix_1.grid_22.suffix_1#login-page
+    %h3 Already Have a Login?
+
+    #login-form
+      :erb
+        <% if @user and @user.errors.any? %>
+        <div id="errorExplanation">
+          <ul>
+          <% @user.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+          </ul>
+        </div>
+        <% end %>
+
+      :erb
+        <% if flash[:notice] %>
+          <p class="flash-notice"><%= flash[:notice] %></p>
+        <% end %>
+
+      :erb
+        <form action="<%= Rails.configuration.login %>" method="post">
+          <div style="margin: 0pt; padding: 0pt; display: inline;">
+            <input type="hidden" value="✓" name="utf8">
+            <input type="hidden" value="<%= form_authenticity_token %>" name="authenticity_token">
+          </div>
+          <div>
+            <label for="login_input">Login:</label><input id="login_input" type="text" name="login" />
+          </div>
+          <div>
+            <label for="pwd_input">Password:</label><input id="pwd_input" type="password" name="password" autocomplete="off" />
+          </div>
+          <div>
+            <input type="hidden" name="redirectUrl" value="<%= @redirectUrl %>" />
+            <input type="hidden" name="errorUrl" value="<%= @errorUrl %>" />
+            
+            <input type="submit" value="Login" class="button"/>
+          </div>
+        </form>
+    .clear
+
+
+    #register
+      %h4 Need to Register instead?
+      %p
+        %a(href="/app/users") Click here to register
+  .clear

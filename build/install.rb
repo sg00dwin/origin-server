@@ -29,7 +29,7 @@ namespace :install do
       }
 
       mkdir_p CONF_DIR
-      cp "conf/libra.conf", CONF_DIR unless File.exists? CONF_DIR + "/libra.conf"
+      cp "conf/express.conf", CONF_DIR unless File.exists? CONF_DIR + "/express.conf"
 
       # Package the gem
       sh "rake", "package"
@@ -74,6 +74,10 @@ namespace :install do
       chmod 0750, "#{BIN_DIR}/rhc-init-quota"
       cp "scripts/rhc-accept-node", BIN_DIR
       chmod 0750, "#{BIN_DIR}/rhc-accept-node"
+      cp "scripts/rhc-node-account", BIN_DIR
+      chmod 0750, "#{BIN_DIR}/rhc-node-account"
+      cp "scripts/rhc-node-application", BIN_DIR
+      chmod 0750, "#{BIN_DIR}/rhc-node-application"
       mkdir_p LIBRA_DIR
       mkdir_p "#{DEST_DIR}/usr/share/selinux/packages"
       cp "selinux/libra.pp", "#{DEST_DIR}/usr/share/selinux/packages"

@@ -9,16 +9,14 @@ RedHatCloud::Application.routes.draw do
     # Sample of regular route:
     #   match 'products/:id' => 'catalog#view'
     # Keep in mind you can assign values other than :controller and :action
-    match 'index' => 'home#index'
-    match 'index2' => 'home#index2'
-    match 'appscale' => 'home#appscale'
-    match 'getting_started' => 'home#getting_started'
-
+    match 'getting_started' => 'home#getting_started'    
     match 'email_confirm' => 'email_confirm#confirm'
-
     match 'broker/cartridge' => 'broker#cartridge_post', :via => [:post]
     match 'broker/domain' => 'broker#domain_post', :via => [:post]
     match 'broker/userinfo' => 'broker#user_info_post', :via => [:post]
+
+    #Alias for home page so we can link to it
+    match 'home' => 'home#index'
 
     # Sample of named route:
     #   match 'products/:id/purchase' => 'catalog#purchase', :as => :purchase
@@ -27,11 +25,16 @@ RedHatCloud::Application.routes.draw do
     # Sample resource route (maps HTTP verbs to controller actions automatically):
     resources :users,
               :as => "web_users",
-              :constraints => { :protocol => Rails.configuration.secure_protocol }
+              :constraints => { :protocol => "https" }
+
+    resources :login, :constraints => { :protocol => "https" }
+
+    resources :logout, :constraints => { :protocol => "https" }
 
     namespace "access" do
       resources :express
-    end
+      resources :flex, :as => "flexes"
+    end    
 
     # Sample resource route with options:
     #   resources :products do
@@ -66,7 +69,7 @@ RedHatCloud::Application.routes.draw do
     #     resources :products
     #   end
 
-    # You can have the root of your site routed with "root"
+    # You can have the root of your site routed with "root"getting_started
     # just remember to delete public/index.html.
     root :to => "home#index"
 

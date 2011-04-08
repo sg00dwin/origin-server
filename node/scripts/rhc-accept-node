@@ -40,6 +40,7 @@ function load_node_conf() {
     . $RESOURCE_LIMITS_FILE
 }
 
+
 # Check selinux enabled
 #
 function check_selinux() {
@@ -52,7 +53,7 @@ function check_selinux() {
     #
     # Check selinux booleans
     #
-	SEBOOLLIST=httpd_can_network_relay:on
+	SEBOOLLIST="httpd_can_network_connect:on httpd_can_network_relay:on"
 	for SEBOOLSPEC in $SEBOOLLIST
 	do
 	    NAME=`echo $SEBOOLSPEC | cut -d: -f1`
@@ -155,7 +156,7 @@ function check_cgroup_config() {
 #
 function check_tc_config() {
     TC_PASS="true"
-    QDISCRESPONSE="qdisc htb 1: root refcnt 2 r2q 10 default 0 direct_packets_stat"
+    QDISCRESPONSE="qdisc htb 1: root"
     tc qdisc show dev eth0 | grep "$QDISCRESPONSE" >/dev/null
     if [ $? -ne 0 ]
     then
@@ -177,13 +178,37 @@ function check_tc_config() {
 #
 # Check quotas
 #
+
+# Determine where the file system containing the users is mounted
+function libra_device() {
+    # LIBRA_DIR=$1
+    df -k $1 | tail -1 | cut -d' ' -f1
+}
+
+function libra_mountpoint() {
+    # LIBRA_DIR=$1
+    df -k $1 | tail -1 | tr -s ' ' | cut -d ' ' -f 6
+}
+
 function check_quotas() {
-    QUOTASTAT=`quotaon -u -p / 2>&1`
-    if [ "$QUOTASTAT" != "user quota on / (/dev/xvda1) is on" ]
+    LIBRA_DEVICE=`libra_device $libra_dir`
+    LIBRA_MOUNTPOINT=`libra_mountpoint $libra_dir`
+    QUOTASTAT=`quotaon -u -p $LIBRA_MOUNTPOINT 2>&1`
+    if [ "$QUOTASTAT" != "user quota on $LIBRA_MOUNTPOINT ($LIBRA_DEVICE) is on" ]
     then
-	echo "FAIL: quotas are not enabled on / (/dev/xvda)" >&2
+	echo "FAIL: quotas are not enabled on $LIBRA_MOUNTPOINT ($LIBRA_DEVICE)" >&2
+	STATUS=$(($STATUS + 1))
+	
+    fi
+
+    QUOTA_DB_FILE=$LIBRA_MOUNTPOINT/aquota.user
+    QUOTA_DB_TYPE=`secon -f $QUOTA_DB_FILE | grep type:`
+    if echo $QUOTA_DB_TYPE | grep -v 'quota_db_t' >/dev/null
+    then
+	echo "FAIL: quota db file: selinux type is incorrect: $QUOTA_DB_TYPE"
 	STATUS=$(($STATUS + 1))
     fi
+
 }
 
 function libra_users() {
@@ -222,7 +247,7 @@ function check_users() {
 }
 
 LIMITS_CONF_DIR=${LIMITS_CONF_DIR:=/etc/security/limits.d}
-LIMITS_MAP="nproc:u"
+#LIMITS_MAP="nproc:u"
 
 function check_user_limits() {
     # USERNAME=$1
@@ -233,13 +258,13 @@ function check_user_limits() {
 	STATUS=$(($STATUS + 1))
     fi
 
-    LIMITS=`set | grep ^limits_`
-    for LIMIT in $LIMITS
-    do
-	NAME=`echo $LIMIT | cut -d= -f1 | sed -e 's/^limits_//'`
-	VALUE=`echo $LIMIT | cut -d= -f2`
-	
-    done
+    #LIMITS=`set | grep ^limits_`
+    #for LIMIT in $LIMITS
+    #do
+    #	NAME=`echo $LIMIT | cut -d= -f1 | sed -e 's/^limits_//'`
+    #   VALUE=`echo $LIMIT | cut -d= -f2`
+    #
+    #done
 }
 
 USER_CGROUP_ROOT=/cgroup/all/libra
