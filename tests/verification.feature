@@ -65,9 +65,9 @@ Feature: Verification Tests
   Scenario: Website tests
     Given the following website links
       |         uri          |  protocol  |
-      | /                    |    http    |
-      | /app/index           |    http    |
-      | /app/getting_started |    http    |
+      | /                    |    https   |
+      | /app                 |    https   |
+      | /app/getting_started |    https   |
       | /app/users           |    https   |
     When they are accessed
     Then no errors should be thrown
