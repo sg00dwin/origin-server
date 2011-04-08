@@ -12,12 +12,8 @@ Given /^the libra client tools$/ do
 end
 
 Given /^the following test data$/ do |table|
-  table.hashes.each do |row|
-    @max_processes = row['processes'].to_i
-    @namespaces = Array.new(row['users'].to_i)
-    @apps = (row['apps'].to_i).times.collect{|num| "app#{num}" }
-    @type = row['type']
-  end
+  @table = table
+  @data = {}
 end
 
 Given /^the following website links$/ do |table|
@@ -45,38 +41,53 @@ end
 When /^the applications are created$/ do
   processes = []
 
-  # Limit loop on the number of namespaces established in a previous step
-  @namespaces.each_with_index do |data, index|
-    # Get a unique namespace to create in the forked process
-    # and add it to the list of reserved namespaces to avoid
-    # race conditions of duplicate users
-    info = get_unique_username(@namespaces)
-    namespace = info[:namespace]
-    login = info[:login]
-    @namespaces[index] = namespace
+  @table.hashes.each do |row|
+    max_processes = row['processes'].to_i
+    namespaces = Array.new(row['users'].to_i)
+    apps = (row['apps'].to_i).times.collect{|num| "app#{num}" }
+    type = row['type']
 
-    # Create the users in subprocesses
-    # Count the current sub processes
-    # if at max, wait for some to finish and keep going
+    # Limit loop on the number of namespaces established in a previous step
+    namespaces.each_with_index do |data, index|
+      # Get a unique namespace to create in the forked process
+      # and add it to the list of reserved namespaces to avoid
+      # race conditions of duplicate users
+      info = get_unique_username(namespaces)
+      namespace = info[:namespace]
+      login = info[:login]
+      namespaces[index] = namespace
 
-    processes << fork do
-      login = "libra-test+#{namespace}@redhat.com"
-      # Create the user and the apps
-      run("#{$create_domain_script} -n #{namespace} -l #{login} -p fakepw -d")
-      @apps.each do |app|
-        run("#{$create_app_script} -l #{login} -a #{app} -r #{$temp}/#{namespace}_#{app}_repo -t #{@type} -p fakepw -d")
+      # Store the data for the app (can't do this within the fork)
+      apps.each do |app|
+        # Store the generated data for the other tests to verify
+        url = "#{app}-#{namespace}.#{$domain}"
+        @data[url] = {:namespace => namespace, :app => app, :type => type}
       end
+
+      # Create the users in subprocesses
+      # Count the current sub processes
+      # if at max, wait for some to finish and keep going
+
+      processes << fork do
+        login = "libra-test+#{namespace}@redhat.com"
+        # Create the user and the apps
+        run("#{$create_domain_script} -n #{namespace} -l #{login} -p fakepw -d")
+        apps.each do |app|
+          # Now create the app
+          run("#{$create_app_script} -l #{login} -a #{app} -r #{$temp}/#{namespace}_#{app}_repo -t #{type} -p fakepw -d")
+        end
+      end
+
+      # Wait for some process to complete if necessary
+      Timeout::timeout(300) do
+        pid = processes.shift
+        Process.wait(pid)
+        $logger.error("Process #{pid} failed") if $?.exitstatus != 0
+      end if processes.length >= max_processes
+
+      # sleep a little to randomize forks
+      sleep rand
     end
-
-    # Wait for some process to complete if necessary
-    Timeout::timeout(300) do
-      pid = processes.shift
-      Process.wait(pid)
-      $logger.error("Process #{pid} failed") if $?.exitstatus != 0
-    end if processes.length >= @max_processes
-
-    # sleep a little to randomize forks
-    sleep rand
   end
 
   # Wait for the remaining processes
@@ -89,60 +100,50 @@ When /^the applications are created$/ do
 end
 
 Then /^they should all be accessible$/ do
-  # Generate the 'product' of namespace / app combinations
-  user_apps = @namespaces.product(@apps)
-
-  urls = {}
   # Hit the health check page for each app
-  user_apps.each do |user_app|
-    # Make sure to handle timeouts
-    host = "#{user_app[1]}-#{user_app[0]}.#{$domain}"
+  @data.each_pair do |url, value|
     begin
-      $logger.info("Checking host #{host}")
-      res = Net::HTTP.start(host, 80) do |http|
+      $logger.info("Checking host #{url}")
+      res = Net::HTTP.start(url, 80) do |http|
         http.read_timeout = 60
         http.get("/health_check.php")
       end
       code = res.code
     rescue Exception => e
-      $logger.error "Exception trying to access #{host}"
-      $logger.error "Response code = #{code}"
+      $logger.error "Exception trying to access #{url}"
       $logger.error e.message
       $logger.error e.backtrace
       code = -1
     end
 
     # Store the results
-    urls[host] = code
+    value[:code] = code
   end
 
   # Print out the results:
   #  Format = code - url
   $logger.info("Accessibility Results")
-  urls.each_pair do |url, code|
-    $logger.info("#{code} - #{url}")
+  results = []
+  @data.each_pair do |url, value|
+    $logger.info("#{value[:code]} - #{url} (#{value[:type]})")
+    results << value[:code]
   end
 
   # Get all the unique responses
   # There should only be 1 result ["200"]
-  uniq_responses = urls.values.uniq
+  uniq_responses = results.uniq
   uniq_responses.length.should == 1
   uniq_responses[0].should == "200"
 end
 
 
 Then /^they should be able to be changed$/ do
-  # Generate the 'product' of namespace / app combinations
-  user_apps = @namespaces.product(@apps)
-
-  # Make a change and push it
-  urls = {}
-  user_apps.each do |user_app|
-    repo = "#{$temp}/#{user_app[0]}_#{user_app[1]}_repo"
+  @data.each_pair do |url, value|
+    repo = "#{$temp}/#{value[:namespace]}_#{value[:app]}_repo"
     $logger.info("Changing to dir=#{repo}")
     Dir.chdir(repo)
 
-    app_file = case @type
+    app_file = case value[:type]
       when "php-5.3.2" then "php/index.php"
       when "rack-1.1.0" then "config.ru"
       when "wsgi-3.2.1" then "wsgi/application"
@@ -156,10 +157,9 @@ Then /^they should be able to be changed$/ do
     # Allow change to be loaded
     sleep 30
 
-    host = "#{user_app[1]}-#{user_app[0]}.#{$domain}"
-    $logger.info("host= #{host}")
+    $logger.info("host= #{url}")
     begin
-      res = Net::HTTP.start(host, 80) do |http|
+      res = Net::HTTP.start(url, 80) do |http|
         http.read_timeout = 30
         http.get("/")
       end
@@ -170,27 +170,28 @@ Then /^they should be able to be changed$/ do
       # Verify the content of the response
       res.body.index("TEST").should_not == -1
     rescue Exception => e
-      $logger.error "Exception trying to access #{host}"
-      $logger.error "Response code = #{code}"
+      $logger.error "Exception trying to access #{url}"
       $logger.error e.message
       $logger.error e.backtrace
       code = -1
     end
 
     # Store the results
-    urls[host] = code
+    value[:change_code] = res.code
   end
 
   # Print out the results:
   #  Format = code - url
-  $logger.info("Change Results")
-  urls.each_pair do |url, code|
-    $logger.info("#{code} - #{url}")
+  $logger.info("Accessibility Results")
+  results = []
+  @data.each_pair do |url, value|
+    $logger.info("#{value[:change_code]} - #{url} (#{value[:type]})")
+    results << value[:change_code]
   end
 
   # Get all the unique responses
   # There should only be 1 result ["200"]
-  uniq_responses = urls.values.uniq
+  uniq_responses = results.uniq
   uniq_responses.length.should == 1
   uniq_responses[0].should == "200"
 end

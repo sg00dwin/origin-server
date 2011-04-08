@@ -209,7 +209,7 @@ EOF
     
     def self.dyn_create_sshfp_record(application, namespace, sshfp, auth_token)
       fqdn = "#{application}-#{namespace}.#{Libra.c[:libra_domain]}"
-      # Create the A record
+      # Create the SSHFP record
       path = "SSHFPRecord/#{Libra.c[:libra_domain]}/#{fqdn}/"
       record_data = { :rdata => { :algorithm => '1',  :fptype => '1', :fingerprint => sshfp}, :ttl => "60" }
       resp, data = dyn_post(path, record_data, auth_token)
@@ -217,14 +217,14 @@ EOF
 
     def self.dyn_delete_a_record(application, namespace, auth_token)
       fqdn = "#{application}-#{namespace}.#{Libra.c[:libra_domain]}"
-      # Create the A record
+      # Delete the A record
       path = "ARecord/#{Libra.c[:libra_domain]}/#{fqdn}/"
       resp, data = dyn_delete(path, auth_token)
     end
     
     def self.dyn_delete_sshfp_record(application, namespace, auth_token)
       fqdn = "#{application}-#{namespace}.#{Libra.c[:libra_domain]}"
-      # Create the SSHFP record
+      # Delete the SSHFP record
       path = "SSHFPRecord/#{Libra.c[:libra_domain]}/#{fqdn}/"
       resp, data = dyn_delete(path, auth_token)
     end
@@ -389,7 +389,11 @@ EOF
                     :action => action,
                     :args => args }
         rpc_client = Helper.rpc_exec_direct('libra')
-        rpc_client.custom_request('cartridge_do', mc_args, self.name, {'identity' => self.name})
+        begin
+          rpc_client.custom_request('cartridge_do', mc_args, self.name, {'identity' => self.name})
+        ensure
+          rpc_client.disconnect
+        end
     end
 
     #
