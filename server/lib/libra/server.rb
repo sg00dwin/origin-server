@@ -285,6 +285,8 @@ EOF
               has = true
             end
           end
+        when Net::HTTPNotFound
+          Libra.logger_debug "DEBUG: DYNECT returned 404 for: #{url.path}"
         else
           raise_dns_exception
         end
