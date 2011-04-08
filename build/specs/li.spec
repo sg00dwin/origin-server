@@ -2,8 +2,8 @@
 %define gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 
 Name: li
-Version: 0.62.8
-Release: 1%{?dist}
+Version: 0.62.9
+Release: 2%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -251,7 +251,9 @@ sysctl kernel.sem="250	32000	32	4096"
 crontab -u root /etc/libra/devenv/crontab
 
 # Libra
-/bin/cp -f /etc/libra/devenv/libra.conf /etc/libra/devenv/node.conf /etc/libra/devenv/controller.conf /etc/libra
+/bin/cp -f /etc/libra/devenv/express.conf /etc/libra/devenv/node.conf /etc/libra/devenv/controller.conf /etc/libra
+
+ln -s /etc/libra /etc/openshift
 
 # Debugging utilities
 /bin/cp -f /etc/libra/devenv/li-log-util /usr/bin/li-log-util
@@ -352,6 +354,7 @@ fi
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 %attr(0750,-,-) %{_bindir}/rhc-accept-node
 %attr(0750,-,-) %{_bindir}/rhc-node-account
+%attr(0750,-,-) %{_bindir}/rhc-node-application
 %attr(0640,-,-) %config(noreplace) %{_sysconfdir}/libra/node.conf
 %attr(0640,-,-) %config(noreplace) %{_sysconfdir}/libra/resource_limits.conf
 %attr(0750,root,root) %config(noreplace) %{_sysconfdir}/httpd/conf.d/000000_default.conf
@@ -405,6 +408,12 @@ chmod 0666 %{_localstatedir}/www/libra/log/production.log
 %{_libexecdir}/li/cartridges/wsgi-3.2.1/
 
 %changelog
+* Tue Apr 07 2011 Mike McGrath <mmcgrath@redhat.com> 0.62.9-2
+- creating /etc/openshift
+
+* Tue Apr 07 2011 Mike McGrath <mmcgrath@redhat.com> 0.62.9-1
+- Fixing openshift path in devenv
+
 * Tue Apr 07 2011 Matt Hicks <mhicks@redhat.com> 0.62.8-1
 - Site functioning with streamline
 - Additional fixes

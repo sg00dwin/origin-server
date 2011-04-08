@@ -83,12 +83,17 @@ module Libra
 
         rpc_client = rpcclient("rpcutil", :options => options)
         begin
-          result = rpc_client.custom_request('get_fact', {:fact => fact}, node, {'identity' => node})[0].results[:data][:value]
+          result = rpc_client.custom_request('get_fact', {:fact => fact}, node, {'identity' => node})[0]
+          if (result && defined? result.results)  
+            value = result.results[:data][:value]
+          else
+            raise NodeException.new(143), "Node execution failure (error getting fact).  If the problem persists please contact Red Hat support.", caller[0..5]
+          end
         ensure
           rpc_client.disconnect
         end
 
-        return result
+        return value
     end
 
     #

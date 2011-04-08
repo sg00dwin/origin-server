@@ -169,9 +169,14 @@ EOF
       auth_token = nil
       begin
         resp, data = http.post(url.path, JSON.generate(session_data), headers)
-        Libra.logger_debug "POST Session Response: #{data}"
-        result = JSON.parse(data)
-        auth_token = result['data']['token']
+        case resp
+        when Net::HTTPSuccess
+          Libra.logger_debug "POST Session Response: #{data}"
+          result = JSON.parse(data)
+          auth_token = result['data']['token']
+        else
+          raise_dns_exception
+        end
       rescue Exception => e
         raise_dns_exception(e)
       end
@@ -183,7 +188,9 @@ EOF
     end
 
     def self.raise_dns_exception(e)
-      Libra.logger_debug "DEBUG: Exception caught from DNS request: #{e.message}"
+      if e
+        Libra.logger_debug "DEBUG: Exception caught from DNS request: #{e.message}"
+      end        
       raise DNSException.new(145), "Error communicating with DNS system.  If the problem persists please contact Red Hat support.", caller[0..5]
     end
 
@@ -202,7 +209,7 @@ EOF
     
     def self.dyn_create_sshfp_record(application, namespace, sshfp, auth_token)
       fqdn = "#{application}-#{namespace}.#{Libra.c[:libra_domain]}"
-      # Create the A record
+      # Create the SSHFP record
       path = "SSHFPRecord/#{Libra.c[:libra_domain]}/#{fqdn}/"
       record_data = { :rdata => { :algorithm => '1',  :fptype => '1', :fingerprint => sshfp}, :ttl => "60" }
       resp, data = dyn_post(path, record_data, auth_token)
@@ -210,14 +217,14 @@ EOF
 
     def self.dyn_delete_a_record(application, namespace, auth_token)
       fqdn = "#{application}-#{namespace}.#{Libra.c[:libra_domain]}"
-      # Create the A record
+      # Delete the A record
       path = "ARecord/#{Libra.c[:libra_domain]}/#{fqdn}/"
       resp, data = dyn_delete(path, auth_token)
     end
     
     def self.dyn_delete_sshfp_record(application, namespace, auth_token)
       fqdn = "#{application}-#{namespace}.#{Libra.c[:libra_domain]}"
-      # Create the SSHFP record
+      # Delete the SSHFP record
       path = "SSHFPRecord/#{Libra.c[:libra_domain]}/#{fqdn}/"
       resp, data = dyn_delete(path, auth_token)
     end
@@ -265,16 +272,21 @@ EOF
       has = false
       begin
         resp, data = http.get(url.path, headers)
-        Libra.client_debug "DEBUG: DYNECT GET Response: #{data}"
-        if data
-          data = JSON.parse(data)
-          if data && data['status'] && data['status'] == 'failure'
-            Libra.logger_debug "DEBUG: DYNECT GET Response status: #{data['status']}"
-          elsif data && data['status'] == 'success'
-            Libra.logger_debug "DEBUG: DYNECT GET Response data: #{data['data']}"
-            #has = data['data'][0].length > 0
-            has = true
+        case resp
+        when Net::HTTPSuccess
+          Libra.client_debug "DEBUG: DYNECT GET Response: #{data}"
+          if data
+            data = JSON.parse(data)
+            if data && data['status'] && data['status'] == 'failure'
+              Libra.logger_debug "DEBUG: DYNECT GET Response status: #{data['status']}"
+            elsif data && data['status'] == 'success'
+              Libra.logger_debug "DEBUG: DYNECT GET Response data: #{data['data']}"
+              #has = data['data'][0].length > 0
+              has = true
+            end
           end
+        else
+          raise_dns_exception
         end
       rescue Exception => e
         raise_dns_exception(e)
@@ -304,7 +316,12 @@ EOF
         else
           resp, data = http.post(url.path, json_data, headers)
         end
-        Libra.logger_debug "DEBUG: DYNECT PUT/POST Response: #{data}"
+        case resp
+        when Net::HTTPSuccess
+          Libra.logger_debug "DEBUG: DYNECT PUT/POST Response: #{data}"
+        else
+          raise_dns_exception
+        end
       rescue Exception => e
         raise_dns_exception(e)
       end
@@ -320,7 +337,12 @@ EOF
       resp, data = nil, nil
       begin
         resp, data = http.delete(url.path, headers)
-        Libra.logger_debug "DEBUG: DYNECT DELETE Response: #{data}"
+        case resp
+        when Net::HTTPSuccess
+          Libra.logger_debug "DEBUG: DYNECT DELETE Response: #{data}"
+        else
+          raise_dns_exception
+        end
       rescue Exception => e
         raise_dns_exception(e)
       end
@@ -345,7 +367,7 @@ EOF
                         :application => app_name) do |response|
           #return_code = response[:body][:data][:exitcode]
           output = response[:body][:data][:output]
-          return output
+          return output == true
         end
       end
     end
@@ -367,7 +389,11 @@ EOF
                     :action => action,
                     :args => args }
         rpc_client = Helper.rpc_exec_direct('libra')
-        rpc_client.custom_request('cartridge_do', mc_args, self.name, {'identity' => self.name})
+        begin
+          rpc_client.custom_request('cartridge_do', mc_args, self.name, {'identity' => self.name})
+        ensure
+          rpc_client.disconnect
+        end
     end
 
     #

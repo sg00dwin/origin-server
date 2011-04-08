@@ -36,6 +36,12 @@ module Libra
       @@config[:resolver] = fs_config.get_value('resolver')
       @@config[:secret] = fs_config.get_value('secret')
 
+      # Nurture configuration
+      @@config[:nurture_enabled] = fs_config.get_value('nurture_enabled')
+      @@config[:nurture_username] = fs_config.get_value('nurture_username')
+      @@config[:nurture_password] = fs_config.get_value('nurture_password')
+      @@config[:nurture_url] = fs_config.get_value('nurture_url')
+
       # Optional configuration
       @@config[:aws_name] = fs_config.get_value('aws_name')
       @@config[:aws_environment] = fs_config.get_value('aws_environment')

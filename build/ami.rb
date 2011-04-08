@@ -307,7 +307,6 @@ END_OF_MESSAGE
           exit 0
         elsif images[0] != "available"
           puts "EXITING - Image exists but isn't available yet"
-          exit 0
         end
       end
 
@@ -408,14 +407,14 @@ END_OF_MESSAGE
           #puts "Done"
 
           # Run verification tests
-          print "Running verification tests..."
-          ssh("cucumber --tags @verify --format junit -o /tmp/rhc/junit/ li/tests/", 600)
+          print "Running verification tests (30 minute timeout enforced)..."
+          ssh("cucumber --tags @verify --format junit -o /tmp/rhc/junit/ li/tests/", 1800)
           p2 = $?
           puts "Done"
 
           print "Downloading verification output..."
           `mkdir -p rhc/log`
-          scp("-r #{@server}:/tmp/rhc/cucumber.log rhc/log")
+          scp("-r #{@server}:/tmp/rhc/cucumber*.log rhc/log")
           scp("-r #{@server}:/var/log/httpd/access_log rhc/log")
           scp("-r #{@server}:/var/log/httpd/error_log rhc/log")
           scp("-r #{@server}:/var/www/libra/log/development.log rhc/log")
