@@ -58,9 +58,9 @@ Feature: Verification Tests
     And a 120 second http request timeout
     And the following test data
       | processes | users | apps |    type    |
-      |     3     |   50  |  1   | php-5.3.2  |
-      |     3     |   50  |  1   | rack-1.1.0 |
-      |     3     |   50  |  1   | wsgi-3.2.1 |
+      |     3     |   25  |  1   | php-5.3.2  |
+      |     3     |   25  |  1   | rack-1.1.0 |
+      |     3     |   25  |  1   | wsgi-3.2.1 |
     When the applications are created
     Then they should all be accessible
 
