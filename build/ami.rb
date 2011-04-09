@@ -388,6 +388,10 @@ END_OF_MESSAGE
           `#{SSH} #{@server} "yum -y install sqlite*"`
           puts "Done"
 
+          print "Test - disabling SELinux"
+          `#{SSH} #{@server} "setenforce 0"`
+          puts "Done"
+
           print "Bounding Apache to pick up the change..."
           ssh("service httpd restart")
           ssh("service libra-site restart")
