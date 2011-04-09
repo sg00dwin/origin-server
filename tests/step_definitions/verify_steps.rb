@@ -16,11 +16,11 @@ Given /^the following test data$/ do |table|
   @data = {}
 end
 
-Given /^a \d+ second command timeout$/ do |timeout|
+Given /^a (\d+) second command timeout$/ do |timeout|
   @cmd_timeout = timeout.to_i
 end
 
-Given /^a \d+ second http request timeout$/ do |timeout|
+Given /^a (\d+) second http request timeout$/ do |timeout|
   @http_timeout = timeout.to_i
 end
 
