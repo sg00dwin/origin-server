@@ -142,9 +142,6 @@ WARNING
         exit 217
     end
 end
-puts ""
-puts "Remember: this is pre-alpha destructionware.  Let #libra know of any bugs you find."
-puts ""
 
 data = {:cartridge => framework,
                 :action => opt['command'],
