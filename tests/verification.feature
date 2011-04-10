@@ -54,8 +54,8 @@ Feature: Verification Tests
 
   Scenario: Creation load tests
     Given the libra client tools
-    And a 300 second command timeout
-    And a 120 second http request timeout
+    And a 600 second command timeout
+    And a 600 second http request timeout
     And the following test data
       | processes | users | apps |    type    |
       |     3     |   25  |  1   | php-5.3.2  |
