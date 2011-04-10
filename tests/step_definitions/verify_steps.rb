@@ -113,6 +113,7 @@ Then /^they should all be accessible$/ do
     begin
       $logger.info("Checking host #{url}")
       res = Net::HTTP.start(url, 80) do |http|
+        http.open_timeout = @http_timeout || 60
         http.read_timeout = @http_timeout || 60
         http.get("/health_check.php")
       end
@@ -168,6 +169,7 @@ Then /^they should be able to be changed$/ do
     $logger.info("host= #{url}")
     begin
       res = Net::HTTP.start(url, 80) do |http|
+        http.open_timeout = @http_timeout || 60
         http.read_timeout = @http_timeout || 60
         http.get("/")
       end
