@@ -1,0 +1,5 @@
+A derivitive of the php cartridge for jbossas7 that configures a standalone
+jbossas7 instance per application.
+
+Scott Stark
+sstark@redhat.com

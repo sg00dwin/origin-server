@@ -1,0 +1,6 @@
+jbossas-7.0.0 cartridge build notes.
+
+This cartridge is a collection of bash scripts under the info/hooks directory, along
+with default configuration overrides for the standalone.xml and logging.properties.
+
+It expects to have the jbossas-7.x application server installed under /opt/

@@ -93,7 +93,8 @@ module MCollective
                 app_name = request[:application]
                 if File.exist?("/var/lib/libra/#{customer}/php/#{app_name}") ||
                    File.exist?("/var/lib/libra/#{customer}/rack/#{app_name}") ||
-                   File.exist?("/var/lib/libra/#{customer}/wsgi/#{app_name}")
+                   File.exist?("/var/lib/libra/#{customer}/wsgi/#{app_name}") ||
+                   File.exist?("/var/lib/libra/#{customer}/jbossas/#{app_name}")
                   reply[:output] = true
                 else
                   reply[:output] = false

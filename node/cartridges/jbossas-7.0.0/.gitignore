@@ -1,0 +1,4 @@
+# Ignore intellij project files/eclipse project files
+*.iml
+*.project
+*.classpath
