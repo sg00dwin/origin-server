@@ -223,6 +223,7 @@ Group $uuid
 PassengerUser $uuid
 PassengerTempDir "$APP_DIR_TEMP_SHORT"
 PassengerAnalyticsLogDir "$APP_DIR_TEMP_SHORT"
+PassengerPreStart http://$IP:8080/
 <Directory $APP_DIR/deploy/public>
   AllowOverride all
   Options -MultiViews
