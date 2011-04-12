@@ -315,6 +315,15 @@ background: black;
   }
   
   .navigation{
+    width: 950px;
+    margin: 0 auto;
+    display: block;
+    position: relative;
+    clear: both;
+    z-index: 998 !important;
+    padding-left: 10px;
+    margin-top: 200px;
+    
     li {
       display: inline;
     }

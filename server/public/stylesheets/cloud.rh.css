@@ -122,24 +122,33 @@ body {
     display: block; }
     .slideShow .slide-canvas div {
       display: block; }
-  .slideShow .navigation li {
-    display: inline; }
-  .slideShow .navigation a {
-    background: white;
-    margin: 0 2px 0 0;
-    padding: 3px 8px;
-    display: inline-block;
-    color: #3C6EB4;
-    font-size: .8em;
-    font-weight: bold;
-    font-family: Overpass;
-    text-decoration: none;
-    border: 1px solid #3c6eb4; }
-    .slideShow .navigation a:hover, .slideShow .navigation a.selected {
-      background: #3c6eb4;
-      color: white !important;
+  .slideShow .navigation {
+    width: 950px;
+    margin: 0 auto;
+    display: block;
+    position: relative;
+    clear: both;
+    z-index: 998 !important;
+    padding-left: 10px;
+    margin-top: 200px; }
+    .slideShow .navigation li {
+      display: inline; }
+    .slideShow .navigation a {
+      background: white;
+      margin: 0 2px 0 0;
+      padding: 3px 8px;
+      display: inline-block;
+      color: #3C6EB4;
+      font-size: .8em;
       font-weight: bold;
-      border: 1px solid white; }
+      font-family: Overpass;
+      text-decoration: none;
+      border: 1px solid #3c6eb4; }
+      .slideShow .navigation a:hover, .slideShow .navigation a.selected {
+        background: #3c6eb4;
+        color: white !important;
+        font-weight: bold;
+        border: 1px solid white; }
 
 .simpleSlideShow {
   width: 960px; }
