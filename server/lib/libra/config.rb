@@ -69,7 +69,7 @@ module Libra
     end
 
     # Now, initialize the MCollective options
-    @@config[:rpc_opts] = {:disctimeout => 10,
+    @@config[:rpc_opts] = {:disctimeout => 1,
                            :timeout     => 10,
                            :verbose     => false,
                            :progress_bar=> false,

@@ -56,15 +56,11 @@ module Libra
         end
         if app_info
           # Find the next available server
-          Libra.c[:rpc_opts][:disctimeout] = 1
-          Libra.c[:rpc_opts][:timeout] = 2
           if app_info['server_identity']
             server = Server.new(app_info['server_identity'])
             if server
               Libra.logger_debug "DEBUG: Performing action '#{action}' on node: #{server.name} - #{server.repos} repos" if Libra.c[:rpc_opts][:verbose]
 
-              Libra.c[:rpc_opts][:disctimeout] = 1
-              Libra.c[:rpc_opts][:timeout] = 15
               server_execute_direct(framework, action, app_name, user, server)
 
               if action == 'deconfigure'
@@ -107,8 +103,6 @@ module Libra
   def self.configure_app(framework, action, app_name, user)
     raise UserException.new(100), "An application named '#{app_name}' already exists", caller[0..5] if user.app_info(app_name)
     # Find the next available server
-    Libra.c[:rpc_opts][:disctimeout] = 1
-    Libra.c[:rpc_opts][:timeout] = 2
     server = Server.find_available
 
     Libra.logger_debug "DEBUG: Performing configure on node: #{server.name} - #{server.repos} repos" if Libra.c[:rpc_opts][:verbose]
@@ -119,8 +113,6 @@ module Libra
 
     begin
       # Configure the user on this server if necessary
-      Libra.c[:rpc_opts][:disctimeout] = 1
-      Libra.c[:rpc_opts][:timeout] = 15
       server.create_user(user) # not cleaned up on failure
 
       server_execute_direct(framework, action, app_name, user, server)

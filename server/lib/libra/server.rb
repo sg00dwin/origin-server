@@ -364,7 +364,7 @@ EOF
     # Returns whether this server has the specified app
     #
     def has_app?(user, app_name)
-      Helper.rpc_exec('libra') do |client|
+      Helper.rpc_exec('libra', @name) do |client|
         client.has_app(:customer => user.uuid,
                         :application => app_name) do |response|
           #return_code = response[:body][:data][:exitcode]
