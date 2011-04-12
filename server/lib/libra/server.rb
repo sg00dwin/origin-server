@@ -411,7 +411,7 @@ EOF
     # Execute an action on many nodes based by fact
     #
     def self.execute_many(cartridge, action, args, fact, value, operator="==")
-        options = Libra.c[:rpc_opts]
+        options = Helper.rpc_options
         options[:filter]['fact'] = [{:value=>value, :fact=>fact, :operator=>operator}]
         p options if Libra.c[:rpc_opts][:verbose]
         Helper.rpc_exec('libra') do |client|
