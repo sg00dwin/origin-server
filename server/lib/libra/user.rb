@@ -121,12 +121,11 @@ module Libra
           when Net::HTTPSuccess, Net::HTTPRedirection
             return true
           else
-            Libra.client_debug "Problem with server. Response code was #{response.code}"
-            #Libra.client_debug "HTTP response from server is #{response.body}"      
+            Libra.client_debug "Response code from authentication: #{response.code}"
+            #Libra.client_debug "HTTP response from server is #{response.body}"
           end
         rescue Exception => e
-          Libra.logger_debug e
-          Libra.client_debug e
+          Libra.logger_debug "Error message from authentication exception: #{e.message}"
           raise UserValidationException.new(144), "Error communicating with user validation system.  If the problem persists please contact Red Hat support.", caller[0..5]
         end
         false

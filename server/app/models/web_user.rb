@@ -24,6 +24,9 @@ class WebUser
   validates_length_of :password,
                       :minimum => 6,
                       :message => 'Passwords must be at least 6 characters'
+                      
+  validates_confirmation_of :password,
+                            :message => 'Passwords must match'
 
   validates_each :termsAccepted do |record, attr, value|
     record.errors.add attr, 'Terms must be accepted' if value != '1'

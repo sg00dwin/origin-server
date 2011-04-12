@@ -364,7 +364,7 @@ EOF
     # Returns whether this server has the specified app
     #
     def has_app?(user, app_name)
-      Helper.rpc_exec('libra') do |client|
+      Helper.rpc_exec('libra', @name) do |client|
         client.has_app(:customer => user.uuid,
                         :application => app_name) do |response|
           #return_code = response[:body][:data][:exitcode]
@@ -411,7 +411,7 @@ EOF
     # Execute an action on many nodes based by fact
     #
     def self.execute_many(cartridge, action, args, fact, value, operator="==")
-        options = Libra.c[:rpc_opts]
+        options = Helper.rpc_options
         options[:filter]['fact'] = [{:value=>value, :fact=>fact, :operator=>operator}]
         p options if Libra.c[:rpc_opts][:verbose]
         Helper.rpc_exec('libra') do |client|
