@@ -1,0 +1,903 @@
+$text_elements: p, a;
+$header_elements: h1, h2, h3, h4, h5, h6;
+$list_elements: ul, ol, li;
+
+@mixin gradient ($first_color, $last_color) {
+  background: $first_color;
+  /* Mozilla */
+  background: -moz-linear-gradient(
+    top,
+    $first_color,
+    $last_color
+  );
+  /* Old webkit */
+  background: -webkit-gradient(
+    linear,
+    top center,
+    from($first_color),
+    to($last_color)
+  );
+  /* New webkit */
+  background: -webkit-linear-gradient(
+    top,
+    $first_color,
+    $last_color
+  );
+  /* IE <= 7 */
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=$first_color, endColorStr=$last_color);
+  /* IE 8 */
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=$first_color, endColorstr=$last_color)";
+  /* Spec */
+  background: linear-gradient(
+    top,
+    $first_color,
+    $last_color
+  );
+}
+
+@mixin login_link {
+  margin: 0 auto;
+  display: block;
+  font-weight: bold;
+  text: {
+    align: center;
+    decoration: none;
+    transform: uppercase;
+  }
+}
+
+@mixin app_promo_text {
+  margin: 0 auto {
+    top: 1em !important;
+  }
+  text-align: center;
+  font-family: 'Overpass';
+}
+
+@mixin form_label {
+  width: 140px;
+  margin: 0 0 16px;
+	float: left;
+  clear: left;
+	font {
+    size: 10pt;
+    weight: bold;
+  }
+	line-height: 30px;
+	text-align: right;
+  color: #777;
+}
+
+@mixin form_input {
+	width: 200px;
+	margin: 0 5px;
+  float: left;
+	clear: right;
+  border: 1px solid #aaa;
+	-moz-border-radius: 4px;
+	font-size: 14pt;
+}
+
+@mixin form_text_input {
+  @include form_input;
+  width: 250px !important;
+  height: 24px;
+  margin: 0 0 16px 16px;
+	float: left;
+	clear: right;
+}
+
+@mixin form_button {
+  background: #555;
+	width: auto;
+	margin: 0 auto;
+	padding: 5px 10px;
+	display: block;
+  float: none;
+	clear: both;
+	color: white !important;
+	font-weight: bold;
+	text-decoration: none;
+	text-transform: uppercase;
+	text-align: center;
+	border: 0px;
+  cursor: pointer;
+}
+
+@mixin form_link {
+  color: #3771c8;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+@mixin footer_list {
+	margin: .5em 0 0 -2.2em;
+	list-style-type: none;
+}
+
+body {
+    background:#444;
+    
+    #{$list_elements}, #{$text_elements}, #{$header_elements} { 
+      color: white; 
+    } 
+}
+
+#horrible_wrapper {
+background: black;
+  /* Mozilla */
+  background: -moz-linear-gradient(
+    top,
+    black,
+    white,
+    black
+  );
+  /* Old webkit */
+  background: -webkit-gradient(
+    linear,
+    top center,
+    from(black),
+    color-stop(50%, white),
+    to(black)
+  );
+  /* New webkit */
+  background: -webkit-linear-gradient(
+    top,
+    black,
+    white,
+    black
+  );
+  /* IE <= 7 */
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=#000, endColorStr=#fff);
+  /* IE 8 */
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#000, endColorstr=#fff)";
+  /* Spec */
+  background: linear-gradient(
+    top,
+    black,
+    white,
+    black
+  );
+}
+
+#head {
+  > div.omega {
+    padding-left: 10px; 
+  }
+}
+
+#logo {
+  margin: 1em 0;
+}
+
+#header_right {
+	text-align: right;
+	position: relative;
+}
+
+#login{
+	background: url(/app/images/bg_login_button.png) repeat-x red;
+	width: 50px;
+	padding: 6px 30px;
+	position: absolute;
+	right: 10px;
+  font-family: Overpass;
+  
+  a { @include login_link; }
+}
+
+#logout {
+  @extend #login;
+  
+  a { @include login_link; }
+}
+
+#mainslug {
+  margin: 80px 0 .5em;
+  font-size: 12pt;
+  color: #ccc;
+  font-family: Overpass;
+}
+
+#nav {
+	background: url(/app/images/bg_mainnav.png) repeat-x red;
+	min-height: 20px;
+	padding: 7px 0;
+	border: {
+    top: 1px solid #fe7272;
+  }
+  font-weight: bold;
+  
+  ul {
+    margin: 0px;
+  }
+  
+  li {
+    float: left;
+    list-style-type: none;
+    font: {
+      weight: normal;
+      size: 11pt;
+      family: Overpass;
+    }
+    a {
+      text-decoration: none;
+      &:hover {
+        color: black;
+      }
+    }
+  }
+}
+
+#pageheader {
+  
+  .express {
+    
+  }
+  
+  .flex {
+  
+  }
+  
+  .power {
+  
+  }
+}
+
+#title {
+  h2 {
+    margin: 5px 0 0 10px {
+      bottom: -10px !important;
+    }
+    font: {
+      size: 38pt;
+      weight: normal;
+      family: 'Overpass';
+    }
+    text-transform: uppercase;
+  }
+  
+  p {
+    margin: 0 0 0 10px {
+      bottom: 15px !important;
+    }
+    font: {
+      size: 12pt;
+      weight: bold;
+    }
+    text-transform: uppercase;
+  }
+}
+
+.slideShow {
+  clear: both;
+  position: table;
+  display: block;
+  height: 250px;
+  
+  ul, li {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+  }
+  
+  .slide {
+    position: absolute;
+    display: list-item;
+    width: 960px !important;
+    
+    div a {
+      color: white;
+    }
+    
+    .content {
+      background: none;
+      padding: 0.2em 10px;
+      width: 960px;
+      height: 245px;
+      position: absolute;
+      top: 5px;
+      z-index: 980;
+      font-family: Overpass;
+    }
+  }
+  
+  .slide-canvas {
+    width: 960px !important;
+    height: 250px !important;
+    margin: 0 auto;
+    position: relative;
+    display: block;
+    
+    div {
+      display: block;
+    }
+  }
+  
+  .navigation{
+    li {
+      display: inline;
+    }
+    
+    a {
+      background: white;
+      margin: 0 2px 0 0;
+      padding: 3px 8px;
+      display: inline-block;
+      color: #3C6EB4;
+      font: {
+        size: .8em;
+        weight: bold;
+        family: Overpass;
+      }
+      text-decoration: none;
+      border: 1px solid #3c6eb4;
+      
+      &:hover, &.selected {
+        background: #3c6eb4;
+        color: white !important;
+        font-weight: bold;
+        border: 1px solid white;
+      }
+    }
+  }
+}
+
+.simpleSlideShow {
+  width: 960px;
+}
+
+#slides {
+
+  ul {
+    width: 960px;
+    margin-left: -5px;
+  }
+
+  #express { 
+    background: #6699cc; 
+    
+    .slide-canvas {
+      background: url(/app/images/slide_express.png) no-repeat;
+      opacity: .6;
+    }
+  }
+  
+  #flex {
+    background: #c88fd7;
+    
+    .slide-canvas {
+      background: url(/app/images/slide_flex.png) no-repeat;
+      opacity: .6;
+    }
+  }
+  
+  .content {
+    h2 {
+      margin: 0;
+      color: white;
+      font: {
+        size: 25pt;
+        weight: normal;
+        family: Overpass;
+      }
+      text-transform: none;
+    }
+    
+    p {
+      width: 550px;
+      color: white;
+      font-size: 13pt;
+    }
+  }
+}
+
+#news_title {
+  background: #333;
+  height: 30px;
+  
+  h4 {
+    padding: 4px 0 4px 10px;
+    color: white !important;
+    font-size: 12pt;
+  }
+}
+
+#news {
+  padding: 5px 0;
+  max-height: 20px;
+}
+
+.newsTicker {
+  background: black;
+  height: 30px;
+  clear: auto;
+  font-family: Overpass;
+
+  li {
+    color: white !important;
+    width: 800px !important;
+  }
+}
+
+#breadcrumb {
+	margin: 0 0 1em;
+	color: #aaa;
+  a {
+    text-decoration: none;
+    color: #aaa !important;
+  }
+}
+
+#sidebar_slugs_container {
+    background: #ECECEC;
+    overflow: hidden;
+
+   #{$text_elements}, #{$list_elements}, #{$header_elements} {
+    color: #777;
+  }
+  
+  #{$header_elements} {
+    font-family: Overpass;
+  }
+  
+  h3 {
+    font-size: 13pt/16pt;
+    color: #444;
+  }
+  
+}
+
+#sidebar {
+  background: #e6e6e6;
+  margin: 0;
+  width: 280px;
+  border: {
+    left: 1px solid white;
+  }
+  
+  div.grid_7 {
+    margin: 0;
+    padding-left: 10px;
+    border: {
+      top: 1px solid white;
+      bottom: 1px solid #ccc;
+    }
+    
+    &.alpha {
+      border: {
+        top: none;
+      }
+    }
+    
+    &.omega {
+      border: {
+        bottom: none;
+      }
+    }
+  }
+  
+  a.readmore {
+    display: block;
+    margin: 0 10px 0 0;
+    color: #3C6EB4;
+    text: {
+      decoration: none;
+      align: right;
+    }
+  }
+  
+  h2 {
+    padding: 1em 0 0;
+    font-size: 10pt;
+    text-transform: uppercase;
+    color: #666;
+  }
+  
+  h3 {
+    font-size: 11pt;
+    color: #111;
+  }
+  
+  h4 {
+    margin: 1em 0 .5em;
+    font: {
+      size: 10pt;
+      family: Overpass;
+    }
+    line-height: 12pt;
+    text-transform: uppercase;
+  }
+  
+  .flex_details & {
+    background: none;
+  }
+  
+  ul {
+    margin: 0 0 1em;
+  }
+ 
+}
+
+#slugs {
+	background: #ececec;
+	margin: 0;
+	padding: 12px 0 1em 5px;
+  
+  .suffix_1 {
+    padding: 0 0 15px 0;
+    margin: 0 -15px 0 0;
+  }
+  
+  ul {
+    width: 100%;
+    list-style-position: outside;
+  }
+  
+  li {
+    margin-left: 10px;
+  }
+}
+
+.slug {
+	margin: 0;
+	padding: 0 0 5px 0;
+  
+  a {
+    color: #3771c8;
+    
+    .learn {
+      float: right;
+      margin: 0 12px 0 0;
+    }
+  }
+  
+  h3 {
+    margin: .5em 0;
+    font-size: 13pt;
+    color: #555;
+    text-shadow: 0 1px 0 #fff;
+  }
+  
+  .container_24 &.grid_9.last {
+    width: 353px;
+    margin-right: 0;
+    border: {
+      right: 1px solid #ccc;
+    }
+  }
+}
+
+
+/*
+ * Trick to make equal-height columns
+ */
+#sidebar_slugs_container > div {
+  padding-bottom: 100%;
+  margin-bottom: -100%;
+}
+
+
+#flex_steps {
+  
+  h6 {
+    font-weight: normal;
+    
+    strong {
+      text-transform: uppercase;
+    }
+  }
+  
+  p {
+    font-size: 11pt;
+    margin: 0;
+  }
+  
+  a {
+    display: block;
+    margin: 0 0 1em;
+    font: {
+      weight: bold;
+      size: 11pt;
+    }
+    text: {
+      decoration: none;
+      align: right;
+    }
+    color: #3C6EB4;
+  }
+}
+
+#flex_nowwhat {
+  @extend #flex_steps;
+}
+
+#app_promos {
+	background: #ececec;
+  
+  #{$text_elements}, #{$header_elements}, #{$list_elements} {
+    color: #777;
+  }
+  
+  > div {
+    background: #d0d1d0;
+  }
+  
+  p {
+    @include app_promo_text;
+  }
+  
+  h3 {
+    @include app_promo_text;
+    font-size: 10pt;
+  }
+  
+  h4 {
+    @include app_promo_text;
+    font-size: 14pt;
+    text-transform: uppercase;
+  }
+  
+  a {
+    background: #777;
+    padding: 5px 10px;
+    color: white !important;
+    font-weight: bold;
+    text: {
+      decoration: none;
+      transform: uppercase;
+    }
+  }
+  
+  .grid_8 {
+    min-height: 170px;
+  }
+  
+  .express {
+    background: url(/app/images/express-tile-trans.png) #ccc;
+    
+    &.hover {
+      background-color: #B8CFE6;
+      
+      h4 {
+        color: #6699cc;
+      }
+      
+      a {
+        background-color: #6699cc;
+      }
+    }
+  }
+  
+  .flex {
+    background: url(/app/images/flex-tile-trans.png) #ccc;
+  
+    &.hover{
+      background-color: #DCB8E6;
+      
+      h4 {
+        color: #c88fd7;
+      }
+      
+      a {
+        background-color: #c88fd7;
+      }
+    }
+  }
+  
+  .power {
+    background: url(/app/images/power-tile-trans.png) #ccc;
+
+    &.hover {
+      background-color: #C7E6B8;
+      
+      h4 {
+        color: #87cc66;
+      }
+      
+      a {
+        background-color: #87cc66;
+      }
+    }
+  }
+}
+
+#page {
+	background: white url(/app/images/bg_gradient.png) repeat-x;
+  color: black;
+	padding: 2em 0 5em;
+  
+  #{$text_elements}, #{$header_elements}, #{$list_elements} {
+    color: #777;
+  }
+  
+  #{$header_elements} {
+    font_family: Overpass;
+  }
+  
+  h2 {
+    margin: 0;
+    color: #222;
+    font: {
+      weight: normal;
+      size: 13pt;
+    }
+  }
+  
+  h3 {
+    margin: 0;
+    font: {
+      size: 22pt;
+      family: Overpass;
+      weight: normal;
+    }
+  }
+  
+  h4 {
+    font-weight: normal;
+  }
+  
+  h5 {
+    margin: 0 0 1em;
+    color: #555;
+    font: {
+      size: 9pt;
+      weight: normal;
+    }
+    text-transform: uppercase;
+  }
+}
+
+#registration input {
+  @include form_input;
+  
+  &.create {
+    @include form_button;
+  }
+  
+  form {
+    width: 500px;
+  }
+  
+  th {
+    padding: 0 1em 0 0;
+    color: #777;
+    font: {
+      weight: bold;
+      size: 10pt;
+    }
+    line-height: 1.2em;
+    text-align: right;
+  }
+  
+  td, th {
+    padding-top: 1.5em;
+  }
+  
+  table {
+    margin-bottom: 40px;
+  }
+}
+
+#login-form input {
+  @include form_input;
+  
+  &.create {
+    @include form_button;
+  }
+  
+  &.button {
+    @include form_button;
+  }
+}
+
+label {
+  @include form_label;
+}
+
+.recaptcha_input_area label {
+	line-height: inherit;
+}
+
+input#user_emailAddress {
+  @include form_text_input;
+}
+
+input#user_password {
+  @include form_text_input;
+}
+
+input#user_passwordConfirmation {
+  @include form_text_input;
+}
+
+input.submit, input.button, input.create {
+  @include form_button;
+}
+
+form p {
+	clear: left;
+}
+
+#captcha {
+  th {
+    vertical-align: top;
+  }
+}
+
+#recaptcha_area {
+	margin: 0 0 0 10px;
+	float: left;
+	clear: right;
+}
+
+#register {
+  margin: 15px 0 0;
+  
+  h4 {
+    display: inline;
+  }
+  
+  a { @include form_link; }
+}
+
+#form_notes {
+  
+  h4 {
+    margin: 0 0 .5em;
+    font: {
+      size: 11pt;
+      family: Overpass;
+      weight: normal;
+    }
+  }
+  
+  p, ul {
+    margin: 0 0 .75em;
+    font-size: 9pt;
+  }
+  
+  a { @include form_link; }
+
+}
+
+#terms_and_conditions {
+  margin: 2em 0 0;
+  padding: .5em 0 0;
+  color: #bbb !important;
+  border: {
+    top: 1px solid #dedede;
+  }
+}
+
+#footer {
+	background: black;
+	padding: 1.5em 0 1em;
+  
+  ul {
+    @include footer_list;
+  }
+  
+  h5 {
+    margin: 0 0 .5em;
+    color: #ccc;
+    font-size: 8pt;
+    text-transform: uppercase;
+  }
+  
+  a { text-decoration: none; }
+}
+
+#subfooter {
+	padding-top: 2em 0 4em;
+  
+  ul {
+    @include footer_list;
+  }  
+  
+   li {
+    float: left;
+  }
+
+  a { text-decoration: none; }
+}

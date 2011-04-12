@@ -1,15 +1,15 @@
-.container_24.express#pageheader
-  .grid_14#title
+#pageheader.container_24.express
+  #title.grid_14
     %h2 OpenShift <em>Express</em>
     %p The Internal Beta...
 
-  .grid_10#title_accent
+  #title_accent.grid_10
 
   .clear
 
-.container_24#page
+#page.container_24
 
-  .prefix_1.grid_12.suffix_1#registration
+  #registration.prefix_1.grid_12.suffix_1
     %h3 Register for access to Express
 
     - semantic_form_for @user do |form|
@@ -18,7 +18,7 @@
         = form.input :password, :input_html => { :autocomplete => 'off' }
         = form.input :passwordConfirmation, :input_html => { :autocomplete => 'off' }
 
-        .grid_12#captcha
+        #captcha.grid_12
           %label Prove You Are Human
           = recaptcha_tags
 
@@ -26,7 +26,7 @@
         = form.commit_button "Register User"
     .clear
 
-  .grid_9.suffix_1#form_notes
+  #form_notes.grid_9.suffix_1
     %h4 Why do I have to register?
 
     %p

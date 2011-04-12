@@ -27,129 +27,130 @@
     = csrf_meta_tag
 
   %body
-    #head.container_24
-      #logo.grid_6.alpha
-        %a(href="home")
-          %img(src="/app/images/logo.png"
-               alt="OpenShift")
+    #horrible_wrapper
+      #head.container_24
+        #logo.grid_6.alpha
+          %a(href="home")
+            %img(src="/app/images/logo-blue.png"
+                 alt="OpenShift")
 
-      #header_right.grid_18.omega
-        - if session[:login]
-          #logout
-            %a(href='/app/logout') Logout
-          .clear
-        - else
-          #login
-            %a(href='/app/login') Login
-          .clear
+        #header_right.grid_18.omega
+          - if session[:login]
+            #logout
+              %a(href='/app/logout') Logout
+            .clear
+          - else
+            #login
+              %a(href='/app/login') Login
+            .clear
 
-        %p#mainslug
-          Free &amp; portable cloud services from the enterprise open source leader.
+          %p#mainslug
+            Free &amp; portable cloud services from the enterprise open source leader.
 
-      .clear
+        .clear
 
-      #nav.grid_24.alpha.omega
-        %ul
-          %li
-            %a(href="#") About OpenShift
-          %li
-            %a(href="#") Express
-          %li
-            %a(href="#") Flex
-          %li
-            %a(href="#") Power
-          %li
-            %a(href="#") Community
-          %li
-            %a(href="#") FAQ
-          %li
-            %a(href="#") Help
+        #nav.grid_24.alpha.omega
+          %ul
+            %li
+              %a(href="#") About OpenShift
+            %li
+              %a(href="#") Express
+            %li
+              %a(href="#") Flex
+            %li
+              %a(href="#") Power
+            %li
+              %a(href="#") Community
+            %li
+              %a(href="#") FAQ
+            %li
+              %a(href="#") Help
 
-      .clear
+        .clear
 
-    = yield
+      = yield
 
-    .container_24#footer
-      .prefix_1.grid_3
-        %h5 Red Hat
-        %ul
-          %li
-            %a(href="#") About
-          %li
-            %a(href="#") Legal
-          %li
-            %a(href="#") Privacy Policy
-          %li
-            %a(href="#") Partner with Us
+      .container_24#footer
+        .prefix_1.grid_3
+          %h5 Red Hat
+          %ul
+            %li
+              %a(href="#") About
+            %li
+              %a(href="#") Legal
+            %li
+              %a(href="#") Privacy Policy
+            %li
+              %a(href="#") Partner with Us
 
-      .prefix_1.grid_3
-        %h5 OpenShift
-        %ul
-          %li
-            %a(href="#") How it works
-          %li
-            %a(href="#") Pricing
-          %li
-            %a(href="#") News &amp; Events
-          %li
-            %a(href="#") Blog
+        .prefix_1.grid_3
+          %h5 OpenShift
+          %ul
+            %li
+              %a(href="#") How it works
+            %li
+              %a(href="#") Pricing
+            %li
+              %a(href="#") News &amp; Events
+            %li
+              %a(href="#") Blog
 
-      .prefix_1.grid_3
-        %h5 Solutions
-        %ul
-          %li
-            %a(href="#") Express
-          %li
-            %a(href="#") Flex
-          %li
-            %a(href="#") Power
+        .prefix_1.grid_3
+          %h5 Solutions
+          %ul
+            %li
+              %a(href="#") Express
+            %li
+              %a(href="#") Flex
+            %li
+              %a(href="#") Power
 
-      .prefix_1.grid_3
-        %h5 Resources
-        %ul
-          %li
-            %a(href="#") Community
-          %li
-            %a(href="#") Documentation
-          %li
-            %a(href="#") Tutorials
-          %li
-            %a(href="#") Videos
+        .prefix_1.grid_3
+          %h5 Resources
+          %ul
+            %li
+              %a(href="#") Community
+            %li
+              %a(href="#") Documentation
+            %li
+              %a(href="#") Tutorials
+            %li
+              %a(href="#") Videos
 
-      .prefix_1.grid_7
-        %h5 Powered By:
+        .prefix_1.grid_7
+          %h5 Powered By:
 
-      .clear
+        .clear
 
-    .container_24#subfooter
-      .grid_1.suffix_1
-        %img(src="/app/images/shadowman.png" alt="Red Hat Logo")
+      .container_24#subfooter
+        .grid_1.suffix_1
+          %img(src="/app/images/shadowman.png" alt="Red Hat Logo")
 
-      .grid_21.suffix_1
-        %p Copyright &copy; 2011 Red Hat, Inc.
-        %ul
-          %li
-            %a(href="#") Accessibility Statement
-          %li
-            %a(href="#") Privacy Policy
-          %li
-            %a(href="#") Terms of Use
-          %li
-            %a(href="#") Patent Promise
-          %li
-            %a(href="#") Trademark Guidelines
+        .grid_21.suffix_1
+          %p Copyright &copy; 2011 Red Hat, Inc.
+          %ul
+            %li
+              %a(href="#") Accessibility Statement
+            %li
+              %a(href="#") Privacy Policy
+            %li
+              %a(href="#") Terms of Use
+            %li
+              %a(href="#") Patent Promise
+            %li
+              %a(href="#") Trademark Guidelines
 
-        %ul
-          %li
-            %a(href="#") About Red Hat
-          %li
-            %a(href="#") Contact Us
-          %li
-            %a(href="#") Careers
-          %li
-            %a(href="#") Site Map
-          %li
-            %a(href="#") FAQs
-          %li
-            %a(href="#") System Requirements
-      .clear
+          %ul
+            %li
+              %a(href="#") About Red Hat
+            %li
+              %a(href="#") Contact Us
+            %li
+              %a(href="#") Careers
+            %li
+              %a(href="#") Site Map
+            %li
+              %a(href="#") FAQs
+            %li
+              %a(href="#") System Requirements
+        .clear
