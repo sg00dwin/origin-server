@@ -16,6 +16,10 @@ class WebUser
   validates_format_of :emailAddress,
                       :with => /^[-a-z0-9_+\.]+\@([-a-z0-9]+\.)+[a-z0-9]{2,4}$/i,
                       :message => 'Invalid email address'
+                      
+  validates_format_of :emailAddress,
+                      :with => /^[-a-z0-9_+\.]+\@([-a-z0-9]+\.)+(?!((ir$)|(cu$)|(kp$)|(sd$)|(sy$)))/i,
+                      :message => 'We can not accept emails from the following top level domains: .ir, .cu, .kp, .sd, .sy'                      
 
   validates_length_of :password,
                       :minimum => 6,
