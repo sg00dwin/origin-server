@@ -12,11 +12,11 @@
   .prefix_1.grid_12.suffix_1#registration
     %h3 Register for access to Flex
 
-    - semantic_form_for @access_flex do |form|
-      - form.inputs do
+    = semantic_form_for @access_flex do |form|
+      = form.inputs do
         = form.input :ec2AccountNumber 
 
-      - form.buttons do
+      = form.buttons do
         = form.commit_button "Request Access", :input_html => { :class => 'button' }
     .clear
 
