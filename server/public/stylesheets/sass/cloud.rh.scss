@@ -1,27 +1,41 @@
+//Element groups for convenience
+
 $text_elements: p, a;
 $header_elements: h1, h2, h3, h4, h5, h6;
 $list_elements: ul, ol, li;
 
-@mixin gradient ($first_color, $last_color) {
+//Colors
+  //Brand
+  $rh_red: #cc0000;
+  $bright_blue: #4e9fdd;
+  $light_blue: #bfdce8;
+
+  //Products
+  $express: #6699cc;
+  $flex: #c88fd7;
+  $power: #87cc66;
+
+//Cross-browser vertical linear gradient
+@mixin gradient_bg($first_color, $last_color, $last_stop) {
   background: $first_color;
   /* Mozilla */
   background: -moz-linear-gradient(
     top,
     $first_color,
-    $last_color
+    $last_color $last_stop
   );
   /* Old webkit */
   background: -webkit-gradient(
     linear,
     top center,
     from($first_color),
-    to($last_color)
+    color-stop($last_stop, $last_color)
   );
   /* New webkit */
   background: -webkit-linear-gradient(
     top,
     $first_color,
-    $last_color
+    $last_color $last_stop
   );
   /* IE <= 7 */
   filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=$first_color, endColorStr=$last_color);
@@ -31,27 +45,15 @@ $list_elements: ul, ol, li;
   background: linear-gradient(
     top,
     $first_color,
-    $last_color
+    $last_color $last_stop
   );
 }
 
-@mixin login_link {
-  margin: 0 auto;
-  display: block;
-  font-weight: bold;
-  text: {
-    align: center;
-    decoration: none;
-    transform: uppercase;
-  }
-}
-
-@mixin app_promo_text {
-  margin: 0 auto {
-    top: 1em !important;
-  }
-  text-align: center;
-  font-family: 'Overpass';
+//Cross-browser border radius
+@mixin border_radius($radius) {
+  -moz-border-radius: #{$radius}px;
+  -webkit-border-radius: #{$radius}px;
+  border-radius: #{$radius}px;
 }
 
 @mixin form_label {
@@ -74,7 +76,7 @@ $list_elements: ul, ol, li;
   float: left;
 	clear: right;
   border: 1px solid #aaa;
-	-moz-border-radius: 4px;
+	@include border_radius(4);
 	font-size: 14pt;
 }
 
@@ -105,7 +107,7 @@ $list_elements: ul, ol, li;
 }
 
 @mixin form_link {
-  color: #3771c8;
+  color: $bright_blue;
   text-decoration: none;
   font-weight: bold;
 }
@@ -115,16 +117,41 @@ $list_elements: ul, ol, li;
 	list-style-type: none;
 }
 
+//Start actual styles
+
 body {
-    background:#444;
+    background: black;
     
     #{$list_elements}, #{$text_elements}, #{$header_elements} { 
       color: white; 
-    } 
+    }
+    
+    #{$header_elements} {
+      font: {
+        family: OverpassBold;
+        weight: normal;
+      }
+    }
+}
+
+a {
+  &:hover {
+    color: $light_blue;
+  }
+  &.express:hover {
+    color: $express;
+  }
+  &.flex:hover {
+    color: $flex;
+  }
+  &.power:hover {
+    color: $power;
+  }
+  
 }
 
 #horrible_wrapper {
-background: black;
+  background: black;
   /* Mozilla */
   background: -moz-linear-gradient(
     top,
@@ -147,10 +174,6 @@ background: black;
     white,
     black
   );
-  /* IE <= 7 */
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=#000, endColorStr=#fff);
-  /* IE 8 */
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#000, endColorstr=#fff)";
   /* Spec */
   background: linear-gradient(
     top,
@@ -176,37 +199,53 @@ background: black;
 }
 
 #login{
-	background: url(/app/images/bg_login_button.png) repeat-x red;
+	@include gradient_bg(darken($rh_red, 5%), $rh_red, 100%);
 	width: 50px;
 	padding: 6px 30px;
 	position: absolute;
-	right: 10px;
+	right: 0;
   font-family: Overpass;
   
-  a { @include login_link; }
+  a {
+    margin: 0 auto;
+    display: block;
+    font-weight: bold;
+    text: {
+      align: center;
+      decoration: none;
+      transform: uppercase;
+    }
+    &:hover { color: $bright_blue; }
+  }
 }
 
 #logout {
   @extend #login;
-  
-  a { @include login_link; }
 }
 
 #mainslug {
-  margin: 80px 0 .5em;
-  font-size: 12pt;
-  color: #ccc;
+  margin: 48px 0 .5em;
   font-family: Overpass;
+  
+  img {
+    float: right;
+  }
+  
+  p {
+    font-size: 10pt;
+    color: $light_blue;
+    clear: right;
+  }
 }
 
 #nav {
-	background: url(/app/images/bg_mainnav.png) repeat-x red;
+	@include gradient_bg($rh_red, darken($rh_red, 10%), 100%);
 	min-height: 20px;
 	padding: 7px 0;
 	border: {
     top: 1px solid #fe7272;
-  }
-  font-weight: bold;
+  }  
+  font-family: OverpassBold;
   
   ul {
     margin: 0px;
@@ -215,16 +254,13 @@ background: black;
   li {
     float: left;
     list-style-type: none;
+    
     font: {
-      weight: normal;
-      size: 11pt;
-      family: Overpass;
+      size: 10pt;
     }
     a {
       text-decoration: none;
-      &:hover {
-        color: black;
-      }
+      text-transform: uppercase;
     }
   }
 }
@@ -252,7 +288,6 @@ background: black;
     font: {
       size: 38pt;
       weight: normal;
-      family: 'Overpass';
     }
     text-transform: uppercase;
   }
@@ -316,13 +351,12 @@ background: black;
   
   .navigation{
     width: 950px;
-    margin: 0 auto;
+    margin: 200px auto 0;
+    padding: 0 0 0 10px;
     display: block;
     position: relative;
     clear: both;
     z-index: 998 !important;
-    padding-left: 10px;
-    margin-top: 200px;
     
     li {
       display: inline;
@@ -341,6 +375,7 @@ background: black;
       }
       text-decoration: none;
       border: 1px solid #3c6eb4;
+      @include border_radius(12);
       
       &:hover, &.selected {
         background: #3c6eb4;
@@ -388,7 +423,6 @@ background: black;
       font: {
         size: 25pt;
         weight: normal;
-        family: Overpass;
       }
       text-transform: none;
     }
@@ -442,17 +476,14 @@ background: black;
     background: #ECECEC;
     overflow: hidden;
 
-   #{$text_elements}, #{$list_elements}, #{$header_elements} {
+   p, #{$list_elements}, #{$header_elements} {
     color: #777;
   }
   
   #{$header_elements} {
-    font-family: Overpass;
-  }
-  
-  h3 {
-    font-size: 13pt/16pt;
-    color: #444;
+    font-family: OverpassBold;
+    font-weight: normal;
+    color: black;
   }
   
 }
@@ -466,6 +497,7 @@ background: black;
   }
   
   div.grid_7 {
+    background: url('/app/images/arrow.png') no-repeat 90% center;
     margin: 0;
     padding-left: 10px;
     border: {
@@ -486,6 +518,20 @@ background: black;
     }
   }
   
+  a {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    display: inline-block;
+    text-decoration: none;
+    
+    &:hover {
+      h4 {
+        color: $rh_red;
+      }
+    }
+  }
+/*
   a.readmore {
     display: block;
     margin: 0 10px 0 0;
@@ -495,7 +541,7 @@ background: black;
       align: right;
     }
   }
-  
+*/
   h2 {
     padding: 1em 0 0;
     font-size: 10pt;
@@ -509,12 +555,14 @@ background: black;
   }
   
   h4 {
-    margin: 1em 0 .5em;
+    margin: 1em 10px .25em 0;
+    color: black;
     font: {
-      size: 10pt;
+      size: 11pt;
       family: Overpass;
+      weight: normal;
     }
-    line-height: 12pt;
+    line-height: 10pt;
     text-transform: uppercase;
   }
   
@@ -524,6 +572,14 @@ background: black;
   
   ul {
     margin: 0 0 1em;
+  }
+  
+  #pricing h4 {
+    font-size: 22pt;
+  }
+  
+  #faq h4 {
+    font-size: 32pt; 
   }
  
 }
@@ -552,8 +608,15 @@ background: black;
 	margin: 0;
 	padding: 0 0 5px 0;
   
+  p.link {
+    padding-right: 10px;
+    text-align: right;
+    clear: both;
+  }
+  
   a {
-    color: #3771c8;
+    color: $bright_blue;
+    text-decoration: none;
     
     .learn {
       float: right;
@@ -564,8 +627,6 @@ background: black;
   h3 {
     margin: .5em 0;
     font-size: 13pt;
-    color: #555;
-    text-shadow: 0 1px 0 #fff;
   }
   
   .container_24 &.grid_9.last {
@@ -574,6 +635,11 @@ background: black;
     border: {
       right: 1px solid #ccc;
     }
+  }
+  
+  .icons img {
+    float: right;
+    margin: 10px;
   }
 }
 
@@ -625,25 +691,32 @@ background: black;
 	background: #ececec;
   
   #{$text_elements}, #{$header_elements}, #{$list_elements} {
+    margin: 0 auto {
+      top: 1em !important;
+    }
+    text-align: center;
+    font-family: Overpass;
     color: #777;
+  }
+  
+  #{$header_elements} {
+    font-family: OverpassBold;
   }
   
   > div {
     background: #d0d1d0;
   }
-  
-  p {
-    @include app_promo_text;
-  }
-  
+
   h3 {
-    @include app_promo_text;
-    font-size: 10pt;
+    font: {
+      size: 10pt;
+    }
   }
   
   h4 {
-    @include app_promo_text;
-    font-size: 14pt;
+    font: {
+      size: 14pt;
+    }
     text-transform: uppercase;
   }
   
@@ -666,14 +739,14 @@ background: black;
     background: url(/app/images/express-tile-trans.png) #ccc;
     
     &.hover {
-      background-color: #B8CFE6;
+      background-color: lighten($express, 20%);
       
       h4 {
-        color: #6699cc;
+        color: $express;
       }
       
       a {
-        background-color: #6699cc;
+        background-color: $express;
       }
     }
   }
@@ -682,14 +755,14 @@ background: black;
     background: url(/app/images/flex-tile-trans.png) #ccc;
   
     &.hover{
-      background-color: #DCB8E6;
+      background-color: lighten($flex, 20%);
       
       h4 {
-        color: #c88fd7;
+        color: $flex;
       }
       
       a {
-        background-color: #c88fd7;
+        background-color: $flex;
       }
     }
   }
@@ -698,21 +771,21 @@ background: black;
     background: url(/app/images/power-tile-trans.png) #ccc;
 
     &.hover {
-      background-color: #C7E6B8;
+      background-color: lighten($power, 20%);
       
       h4 {
-        color: #87cc66;
+        color: $power;
       }
       
       a {
-        background-color: #87cc66;
+        background-color: $power;
       }
     }
   }
 }
 
 #page {
-	background: white url(/app/images/bg_gradient.png) repeat-x;
+	@include gradient_bg(#ECECEC, white, 10%);
   color: black;
 	padding: 2em 0 5em;
   
@@ -728,7 +801,6 @@ background: black;
     margin: 0;
     color: #222;
     font: {
-      weight: normal;
       size: 13pt;
     }
   }
@@ -737,21 +809,14 @@ background: black;
     margin: 0;
     font: {
       size: 22pt;
-      family: Overpass;
-      weight: normal;
     }
   }
-  
-  h4 {
-    font-weight: normal;
-  }
-  
+    
   h5 {
     margin: 0 0 1em;
     color: #555;
     font: {
       size: 9pt;
-      weight: normal;
     }
     text-transform: uppercase;
   }
@@ -856,8 +921,6 @@ form p {
     margin: 0 0 .5em;
     font: {
       size: 11pt;
-      family: Overpass;
-      weight: normal;
     }
   }
   
@@ -881,24 +944,27 @@ form p {
 
 #footer {
 	background: black;
-	padding: 1.5em 0 1em;
+	padding: 1.5em 0;
   
   ul {
     @include footer_list;
   }
   
   h5 {
-    margin: 0 0 .5em;
-    color: #ccc;
-    font-size: 8pt;
+    margin: 0;
+    color: $bright_blue;
+    font-size: 10pt;
     text-transform: uppercase;
+    font-family: Overpass;
   }
   
   a { text-decoration: none; }
 }
 
 #subfooter {
-	padding-top: 2em 0 4em;
+	padding: 2em 0 4em;
+  color: #ccc;
+  font-size: 8pt;
   
   ul {
     @include footer_list;
