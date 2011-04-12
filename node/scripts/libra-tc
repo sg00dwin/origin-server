@@ -114,16 +114,8 @@ start() {
 	startuser $USERNAME
     done
 
-    # 
-
-# The first line creates the root qdisc, and the next two lines
-# create two child qdisc that are to be used to shape download 
-# and upload bandwidth.
-#
-# The 4th and 5th line creates the filter to match the interface.
-# The 'dst' IP address is used to limit download speed, and the 
-# 'src' IP address is used to limit upload speed.
-
+    # add the filter line to put cgroup tagged traffic into the correct class
+    ${NOOP} $TC filter add dev $tc_if parent 1: protocol ip prio 10 handle 1: cgroup
 }
 
 stop() {
