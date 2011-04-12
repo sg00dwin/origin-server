@@ -6,9 +6,17 @@ class Access::FlexControllerTest < ActionController::TestCase
     assert_redirected_to login_index_path
   end
   
-  test "should redirect to login" do
+  test "should get error with invalid ec2 account number" do
+    session[:login] = 'tester'
+    post(:create, {:access_flex => {:ec2AccountNumber => '123-123-123'}})
+    assert assigns(:access_flex)
+    assert assigns(:access_flex).errors.has_key?(:ec2AccountNumber)
+    assert_response :success
+  end
+  
+  test "should get success on post" do
     session[:login] = 'tester'
     post(:create, {:access_flex => {:ec2AccountNumber => '1234-1234-1234'}})
-    # TODO
+    assert_response :success
   end
 end

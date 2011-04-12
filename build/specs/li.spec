@@ -232,6 +232,7 @@ ln -s /var/www/libra/public/* /var/www/html/.
 /bin/cp -f /etc/libra/devenv/httpd/000000_default.conf /etc/httpd/conf.d
 /bin/cp -f /etc/libra/devenv/httpd/broker.conf /var/www/libra/httpd
 /bin/cp -f /etc/libra/devenv/libra-site /etc/init.d
+/bin/cp -f /etc/libra/devenv/robots.txt /var/www/libra/public
 /etc/init.d/libra-site restart
 chkconfig libra-site on
 
