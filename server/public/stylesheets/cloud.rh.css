@@ -15,6 +15,9 @@ a.flex:hover {
 a.power:hover {
   color: #87cc66; }
 
+form ul, form ol, form li {
+  list-style-type: none; }
+
 #horrible_wrapper {
   background: black;
   /* Mozilla */
@@ -54,11 +57,11 @@ a.power:hover {
   padding: 6px 30px;
   position: absolute;
   right: 0;
-  font-family: Overpass; }
+  font-family: OverpassBold; }
   #login a, #logout a {
     margin: 0 auto;
     display: block;
-    font-weight: bold;
+    font-weight: normal;
     text-align: center;
     text-decoration: none;
     text-transform: uppercase; }
@@ -102,6 +105,63 @@ a.power:hover {
     #nav li a {
       text-decoration: none;
       text-transform: uppercase; }
+
+#pageheader {
+  background: #555555;
+  /* Mozilla */
+  background: -moz-linear-gradient(top, #555555, #d4d4d4 100%);
+  /* Old webkit */
+  background: -webkit-gradient(linear, top center, from(#555555), color-stop(100%, #d4d4d4));
+  /* New webkit */
+  background: -webkit-linear-gradient(top, #555555, #d4d4d4 100%);
+  /* IE <= 7 */
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=$first_color, endColorStr=$last_color);
+  /* IE 8 */
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=$first_color, endColorstr=$last_color)";
+  /* Spec */
+  background: linear-gradient(top, #555555, #d4d4d4 100%); }
+  #pageheader.express {
+    background: #336699;
+    /* Mozilla */
+    background: -moz-linear-gradient(top, #336699, #6699cc 100%);
+    /* Old webkit */
+    background: -webkit-gradient(linear, top center, from(#336699), color-stop(100%, #6699cc));
+    /* New webkit */
+    background: -webkit-linear-gradient(top, #336699, #6699cc 100%);
+    /* IE <= 7 */
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=$first_color, endColorStr=$last_color);
+    /* IE 8 */
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=$first_color, endColorstr=$last_color)";
+    /* Spec */
+    background: linear-gradient(top, #336699, #6699cc 100%); }
+  #pageheader.flex {
+    background: #a344bc;
+    /* Mozilla */
+    background: -moz-linear-gradient(top, #a344bc, #c88fd7 100%);
+    /* Old webkit */
+    background: -webkit-gradient(linear, top center, from(#a344bc), color-stop(100%, #c88fd7));
+    /* New webkit */
+    background: -webkit-linear-gradient(top, #a344bc, #c88fd7 100%);
+    /* IE <= 7 */
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=$first_color, endColorStr=$last_color);
+    /* IE 8 */
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=$first_color, endColorstr=$last_color)";
+    /* Spec */
+    background: linear-gradient(top, #a344bc, #c88fd7 100%); }
+  #pageheader.power {
+    background: #549933;
+    /* Mozilla */
+    background: -moz-linear-gradient(top, #549933, #87cc66 100%);
+    /* Old webkit */
+    background: -webkit-gradient(linear, top center, from(#549933), color-stop(100%, #87cc66));
+    /* New webkit */
+    background: -webkit-linear-gradient(top, #549933, #87cc66 100%);
+    /* IE <= 7 */
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=$first_color, endColorStr=$last_color);
+    /* IE 8 */
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=$first_color, endColorstr=$last_color)";
+    /* Spec */
+    background: linear-gradient(top, #549933, #87cc66 100%); }
 
 #title h2 {
   margin: 5px 0 0 10px;
@@ -237,7 +297,7 @@ a.power:hover {
   background: #ECECEC;
   overflow: hidden; }
   #sidebar_slugs_container p, #sidebar_slugs_container ul, #sidebar_slugs_container ol, #sidebar_slugs_container li, #sidebar_slugs_container h1, #sidebar_slugs_container h2, #sidebar_slugs_container h3, #sidebar_slugs_container h4, #sidebar_slugs_container h5, #sidebar_slugs_container h6 {
-    color: #777; }
+    color: #555555; }
   #sidebar_slugs_container h1, #sidebar_slugs_container h2, #sidebar_slugs_container h3, #sidebar_slugs_container h4, #sidebar_slugs_container h5, #sidebar_slugs_container h6 {
     font-family: OverpassBold;
     font-weight: normal;
@@ -369,7 +429,7 @@ a.power:hover {
       margin-top: 1em !important;
     text-align: center;
     font-family: Overpass;
-    color: #777; }
+    color: #555555; }
   #app_promos h1, #app_promos h2, #app_promos h3, #app_promos h4, #app_promos h5, #app_promos h6 {
     font-family: OverpassBold; }
   #app_promos > div {
@@ -430,7 +490,7 @@ a.power:hover {
   color: black;
   padding: 2em 0 5em; }
   #page p, #page a, #page h1, #page h2, #page h3, #page h4, #page h5, #page h6, #page ul, #page ol, #page li {
-    color: #777; }
+    color: #555555; }
   #page h1, #page h2, #page h3, #page h4, #page h5, #page h6 {
     font_family: Overpass; }
   #page h2 {
@@ -438,7 +498,6 @@ a.power:hover {
     color: #222;
     font-size: 13pt; }
   #page h3 {
-    margin: 0;
     font-size: 22pt; }
   #page h5 {
     margin: 0 0 1em;
@@ -455,27 +514,27 @@ a.power:hover {
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   border-radius: 4px;
-  font-size: 14pt; }
+  font-size: 13pt; }
   #registration input.create {
     background: #555;
     width: auto;
-    margin: 0 auto;
+    margin: 0 0 0 145px;
     padding: 5px 10px;
     display: block;
     float: none;
     clear: both;
     color: white !important;
-    font-weight: bold;
+    font-family: OverpassBold;
     text-decoration: none;
-    text-transform: uppercase;
     text-align: center;
     border: 0px;
+    box-shadow: 1px 1px 1px #ccc;
     cursor: pointer; }
   #registration input form {
     width: 500px; }
   #registration input th {
     padding: 0 1em 0 0;
-    color: #777;
+    color: #555555;
     font-weight: bold;
     font-size: 10pt;
     line-height: 1.2em;
@@ -494,36 +553,36 @@ a.power:hover {
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   border-radius: 4px;
-  font-size: 14pt; }
+  font-size: 13pt; }
   #login-form input.create {
     background: #555;
     width: auto;
-    margin: 0 auto;
+    margin: 0 0 0 145px;
     padding: 5px 10px;
     display: block;
     float: none;
     clear: both;
     color: white !important;
-    font-weight: bold;
+    font-family: OverpassBold;
     text-decoration: none;
-    text-transform: uppercase;
     text-align: center;
     border: 0px;
+    box-shadow: 1px 1px 1px #ccc;
     cursor: pointer; }
   #login-form input.button {
     background: #555;
     width: auto;
-    margin: 0 auto;
+    margin: 0 0 0 145px;
     padding: 5px 10px;
     display: block;
     float: none;
     clear: both;
     color: white !important;
-    font-weight: bold;
+    font-family: OverpassBold;
     text-decoration: none;
-    text-transform: uppercase;
     text-align: center;
     border: 0px;
+    box-shadow: 1px 1px 1px #ccc;
     cursor: pointer; }
 
 label {
@@ -533,7 +592,7 @@ label {
   clear: left;
   line-height: 30px;
   text-align: right;
-  color: #777; }
+  color: #555555; }
   label font {
     size: 10pt;
     weight: bold; }
@@ -550,12 +609,11 @@ input#user_emailAddress {
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   border-radius: 4px;
-  font-size: 14pt;
+  font-size: 13pt;
   width: 250px !important;
   height: 24px;
   margin: 0 0 16px 16px;
-  float: left;
-  clear: right; }
+  padding: 2px 4px; }
 
 input#user_password {
   width: 200px;
@@ -566,12 +624,11 @@ input#user_password {
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   border-radius: 4px;
-  font-size: 14pt;
+  font-size: 13pt;
   width: 250px !important;
   height: 24px;
   margin: 0 0 16px 16px;
-  float: left;
-  clear: right; }
+  padding: 2px 4px; }
 
 input#user_passwordConfirmation {
   width: 200px;
@@ -582,27 +639,26 @@ input#user_passwordConfirmation {
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   border-radius: 4px;
-  font-size: 14pt;
+  font-size: 13pt;
   width: 250px !important;
   height: 24px;
   margin: 0 0 16px 16px;
-  float: left;
-  clear: right; }
+  padding: 2px 4px; }
 
 input.submit, input.button, input.create {
   background: #555;
   width: auto;
-  margin: 0 auto;
+  margin: 0 0 0 145px;
   padding: 5px 10px;
   display: block;
   float: none;
   clear: both;
   color: white !important;
-  font-weight: bold;
+  font-family: OverpassBold;
   text-decoration: none;
-  text-transform: uppercase;
   text-align: center;
   border: 0px;
+  box-shadow: 1px 1px 1px #ccc;
   cursor: pointer; }
 
 form p {

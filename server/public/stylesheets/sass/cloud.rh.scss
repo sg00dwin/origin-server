@@ -14,6 +14,9 @@ $list_elements: ul, ol, li;
   $express: #6699cc;
   $flex: #c88fd7;
   $power: #87cc66;
+  
+  //Elements
+  $text_color: #555;
 
 //Cross-browser vertical linear gradient
 @mixin gradient_bg($first_color, $last_color, $last_stop) {
@@ -67,7 +70,7 @@ $list_elements: ul, ol, li;
   }
 	line-height: 30px;
 	text-align: right;
-  color: #777;
+  color: $text_color;
 }
 
 @mixin form_input {
@@ -77,7 +80,7 @@ $list_elements: ul, ol, li;
 	clear: right;
   border: 1px solid #aaa;
 	@include border_radius(4);
-	font-size: 14pt;
+	font-size: 13pt;
 }
 
 @mixin form_text_input {
@@ -85,24 +88,26 @@ $list_elements: ul, ol, li;
   width: 250px !important;
   height: 24px;
   margin: 0 0 16px 16px;
-	float: left;
-	clear: right;
+	padding: 2px 4px;
 }
 
 @mixin form_button {
   background: #555;
 	width: auto;
-	margin: 0 auto;
+	margin: 0 0 0 145px;
 	padding: 5px 10px;
 	display: block;
   float: none;
 	clear: both;
 	color: white !important;
-	font-weight: bold;
-	text-decoration: none;
-	text-transform: uppercase;
-	text-align: center;
+  font-family: OverpassBold;
+	text: {
+    decoration: none;
+    //transform: uppercase;
+    align: center;
+  }
 	border: 0px;
+  box-shadow: 1px 1px 1px #ccc;
   cursor: pointer;
 }
 
@@ -148,6 +153,12 @@ a {
     color: $power;
   }
   
+}
+
+form {
+  #{$list_elements} {
+    list-style-type: none;
+  }
 }
 
 #horrible_wrapper {
@@ -204,12 +215,12 @@ a {
 	padding: 6px 30px;
 	position: absolute;
 	right: 0;
-  font-family: Overpass;
+  font-family: OverpassBold;
   
   a {
     margin: 0 auto;
     display: block;
-    font-weight: bold;
+    font-weight: normal;
     text: {
       align: center;
       decoration: none;
@@ -266,17 +277,18 @@ a {
 }
 
 #pageheader {
+  @include gradient_bg($text_color, lighten($text_color, 50%), 100%);
   
-  .express {
-    
+  &.express {
+    @include gradient_bg(darken($express, 20%), $express, 100%);
   }
   
-  .flex {
-  
+  &.flex {
+   @include gradient_bg(darken($flex, 20%), $flex, 100%);
   }
   
-  .power {
-  
+  &.power {
+   @include gradient_bg(darken($power, 20%), $power, 100%);
   }
 }
 
@@ -477,7 +489,7 @@ a {
     overflow: hidden;
 
    p, #{$list_elements}, #{$header_elements} {
-    color: #777;
+    color: $text_color;
   }
   
   #{$header_elements} {
@@ -696,7 +708,7 @@ a {
     }
     text-align: center;
     font-family: Overpass;
-    color: #777;
+    color: $text_color;
   }
   
   #{$header_elements} {
@@ -790,7 +802,7 @@ a {
 	padding: 2em 0 5em;
   
   #{$text_elements}, #{$header_elements}, #{$list_elements} {
-    color: #777;
+    color: $text_color;
   }
   
   #{$header_elements} {
@@ -806,7 +818,6 @@ a {
   }
   
   h3 {
-    margin: 0;
     font: {
       size: 22pt;
     }
@@ -835,7 +846,7 @@ a {
   
   th {
     padding: 0 1em 0 0;
-    color: #777;
+    color: $text_color;
     font: {
       weight: bold;
       size: 10pt;
