@@ -10,7 +10,7 @@ class Access::FlexControllerTest < ActionController::TestCase
     session[:login] = 'tester'
     post(:create, {:access_flex => {:ec2AccountNumber => '123-123-123'}})
     assert assigns(:access_flex)
-    assert assigns(:access_flex).errors.has_key?(:ec2AccountNumber)
+    assert assigns(:access_flex).errors[:ec2AccountNumber].length > 0
     assert_response :success
   end
   

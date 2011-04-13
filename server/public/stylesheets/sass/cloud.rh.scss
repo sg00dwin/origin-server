@@ -884,7 +884,7 @@ label {
 	line-height: inherit;
 }
 
-input#user_emailAddress {
+input#user_email_address {
   @include form_text_input;
 }
 
@@ -892,7 +892,7 @@ input#user_password {
   @include form_text_input;
 }
 
-input#user_passwordConfirmation {
+input#user_password_confirmation {
   @include form_text_input;
 }
 

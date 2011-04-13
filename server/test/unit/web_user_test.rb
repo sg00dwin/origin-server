@@ -7,10 +7,10 @@ class WebUserTest < ActiveSupport::TestCase
   AMZ_ACCT = "5314-1588-3065"  # mmcgrath@redhat.com account
 
   test "serialization" do
-    user1 = WebUser.new(:emailAddress => STREAMLINE_USER, :password => PWD)
+    user1 = WebUser.new(:email_address => STREAMLINE_USER, :password => PWD)
     str = user1.to_json
     user2 = WebUser.from_json(str)
-    assert user1.emailAddress == user2.emailAddress
+    assert user1.email_address == user2.email_address
   end
 
   test "mixin" do

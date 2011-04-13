@@ -5,7 +5,7 @@ class StreamlineTester
   include ActiveModel::Naming
   include ActiveModel::Validations
   include Streamline
-  attr_accessor :emailAddress, :password, :passwordConfirmation, :termsAccepted
+  attr_accessor :email_address, :password, :password_confirmation, :terms_accepted
 end
 
 class StreamlineTest < ActiveSupport::TestCase
@@ -149,16 +149,16 @@ class StreamlineTest < ActiveSupport::TestCase
   end
 
   test "register valid" do
-    @streamline.emailAddress = "test@example.com"
+    @streamline.email_address = "test@example.com"
     @streamline.password = "password"
-    json = {"emailAddress" => @streamline.emailAddress}
+    json = {"emailAddress" => @streamline.email_address}
     @streamline.expects(:http_post).once.yields(json)
     @streamline.register(@url)
     assert @streamline.errors.empty?
   end
 
   test "register fail" do
-    @streamline.emailAddress = "test@example.com"
+    @streamline.email_address = "test@example.com"
     @streamline.password = "password"
     json = {"bad" => "bad"}
     @streamline.expects(:http_post).once.yields(json)
@@ -212,6 +212,7 @@ class StreamlineTest < ActiveSupport::TestCase
     email_address = 'test@example.com'
     json = {"emailAddress" => email_address}
     @streamline.expects(:http_post).once.yields(json)
+    @streamline.establish_email_address
     assert_equal email_address, @streamline.email_address
   end
 end
