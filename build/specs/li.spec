@@ -273,6 +273,10 @@ crontab -u root /etc/libra/devenv/crontab
 # secure remounts of special filesystems
 #/usr/libexec/li/devenv/remount-secure.sh
 
+# Increase max SSH connections and tries to 40
+perl -p -i -e "s/^#MaxSessions .*$/MaxSessions 40/" /etc/ssh/sshd_config
+perl -p -i -e "s/^#MaxStartups .*$/MaxStartups 40/" /etc/ssh/sshd_config
+
 %post node
 # mount all desired cgroups under a single root
 perl -p -i -e 's:/cgroup/[^\s]+;:/cgroup/all;:; /blkio|cpuset|devices/ && ($_ = "#$_")' /etc/cgconfig.conf
