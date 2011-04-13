@@ -149,24 +149,29 @@ url = URI.parse("https://#{libra_server}/app/broker/domain")
 response = RHC::http_post(@http, url, json_data, password)
 
 if response.code == '200'
-    RHC::print_response_success(response, debug)
-    json_resp = JSON.parse(response.body);
-    json_rhlogininfo = JSON.parse(json_resp['result'])
-    add_rhlogin_config(json_rhlogininfo['rhlogin'], json_rhlogininfo['uuid'])
-
-    if opt['alter'] != ''
-        puts <<EOF
+    begin
+        RHC::print_response_success(response, debug)
+        json_resp = JSON.parse(response.body);
+        json_rhlogininfo = JSON.parse(json_resp['result'])
+        add_rhlogin_config(json_rhlogininfo['rhlogin'], json_rhlogininfo['uuid'])
+    
+        if opt['alter'] != ''
+            puts <<EOF
 Creation successful
 
 You may now create an application.  Please make note of your local config file
 in #{@local_config_path} which has been created and populated for you.
 
 EOF
-    else
-        puts "RHLogin alteration successful."
-        puts
+        else
+            puts "RHLogin alteration successful."
+            puts
+        end
+        exit 0
+    rescue JSON::ParserError
+        RHC::print_response_err(response, debug)
     end
-    exit 0
 else
     RHC::print_response_err(response, debug)
 end
+exit 254

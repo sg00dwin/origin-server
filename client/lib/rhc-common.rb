@@ -151,8 +151,12 @@ module RHC
     if print_result
       print_response_success(response, debug)
     end
-    json_resp = JSON.parse(response.body)
-    user_info = JSON.parse(json_resp['result'].to_s)
+    begin
+      json_resp = JSON.parse(response.body)
+      user_info = JSON.parse(json_resp['result'].to_s)
+    rescue JSON::ParserError
+      exit 254
+    end
     user_info
   end
   
