@@ -3,7 +3,7 @@
 
 Name: li
 Version: 0.63.1
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -162,6 +162,15 @@ BuildArch: noarch
 
 %description cartridge-wsgi-3.2.1
 Provides wsgi support to li
+
+%package cartridge-jbossas-7.0.0
+Summary: Provides java-jbossas-7.0.0 support
+Group: Development/Languages
+Requires: li-node
+BuildArch: noarch
+
+%description cartridge-jbossas-7.0.0
+Provides jbossas support to li
 
 %prep
 %setup -q
@@ -407,7 +416,14 @@ chmod 0666 %{_localstatedir}/www/libra/log/production.log
 %defattr(-,root,root,-)
 %{_libexecdir}/li/cartridges/wsgi-3.2.1/
 
+%files cartridge-jbossas-7.0.0
+%defattr(-,root,root,-)
+%{_libexecdir}/li/cartridges/jbossas-7.0.0/
+
 %changelog
+* Tue Apr 10 2011 Mike McGrath <mmcgrath@redhat.com> 0.63.1-2
+- Added jbossas-7.0.0
+
 * Tue Apr 10 2011 Mike McGrath <mmcgrath@redhat.com> 0.63.1-1
 - New week, new version
 
