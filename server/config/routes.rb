@@ -32,7 +32,7 @@ RedHatCloud::Application.routes.draw do
     resources :logout, :constraints => { :protocol => "https" }
 
     namespace "access" do
-      resources :express
+      resources :express, :as => "express"
       resources :flex, :as => "flexes"
     end    
 

@@ -36,7 +36,7 @@ class WebUser
                             :message => 'Passwords must match'  
 
   validates_each :terms_accepted do |record, attr, value|
-    record.errors.add attr, 'Terms must be accepted' if value != '1'
+    record.errors.add attr, 'Terms must be accepted' if !value || value == 'off'
   end
 
   def initialize(attributes = {})

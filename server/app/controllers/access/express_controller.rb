@@ -7,10 +7,7 @@ class Access::ExpressController < ApplicationController
     login = session[:login]
 
     if login
-      #Rails.logger.debug "User is logged in"
-      #user = WebUser.find_by_ticket(session[:ticket])
-      #Rails.logger.debug "Requesting Express access for user #{user}"
-      #user.request_access(CloudAccess::EXPRESS)
+      @access_express = Access::Express.new
     else
       Rails.logger.debug "User is not logged in - rerouting to login / register"
       session[:workflow] = access_express_index_path
@@ -28,6 +25,9 @@ class Access::ExpressController < ApplicationController
 
     if login
       Rails.logger.debug "User is logged in"
+      ae = params[:access_express]
+      @access_express = Access::Express.new(ae ? ae : {})
+      render :index and return unless @access_express.valid?
       user = WebUser.find_by_ticket(session[:ticket])
       Rails.logger.debug "Requesting Express access for user #{user}"
       user.request_access(CloudAccess::EXPRESS)

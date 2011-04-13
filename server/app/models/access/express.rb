@@ -1,12 +1,10 @@
-class Access::Flex
+class Access::Express
   include ActiveModel::Validations
   include ActiveModel::Conversion
   include ActiveModel::Serialization
   extend ActiveModel::Naming
 
-  attr_accessor :ec2_account_number, :terms_accepted
-  
-  validates_format_of :ec2_account_number, :with => /\d{4}-\d{4}-\d{4}/, :message => 'Account numbers are a 12 digit number separated by - Ex: 1234-1234-1234'
+  attr_accessor :terms_accepted  
   
   validates_each :terms_accepted do |record, attr, value|
     record.errors.add attr, 'Terms must be accepted' if !value || value == 'off'

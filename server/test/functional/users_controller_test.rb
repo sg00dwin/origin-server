@@ -62,6 +62,6 @@ class UsersControllerTest < ActionController::TestCase
   end
   
   def get_post_form
-    {:email_address => 'tester@example.com', :password => 'pw1234', :password_confirmation => 'pw1234', :terms_accepted => '1'}
+    {:email_address => 'tester@example.com', :password => 'pw1234', :password_confirmation => 'pw1234', :terms_accepted => 'on'}
   end
 end

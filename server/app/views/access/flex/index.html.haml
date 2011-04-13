@@ -10,18 +10,19 @@
 .container_24#page
 
   .prefix_1.grid_12.suffix_1#registration
-    %h3 Register for access to Flex
+    %h3 Request access to Flex
 
     = semantic_form_for @access_flex do |form|
-      = form.inputs do
-        = form.input :ec2AccountNumber 
+      = form.inputs do        
+        = form.input :ec2_account_number
+        = form.input :terms_accepted, :input_html => { :type=>'checkbox' }
 
       = form.buttons do
         = form.commit_button "Request Access", :input_html => { :class => 'button' }
     .clear
 
   .grid_9.suffix_1#form_notes
-    %h4 Why do I have to register?
+    %h4 Why do I have to request access?
 
     %p
       We want your experience to be very similar to our users.  We have
@@ -47,7 +48,7 @@
 
   .prefix_1.grid_22.suffix_1
     %p#terms_and_conditions
-      By clicking on 'Register Now' above, you confirm your agreement with this site's <a href="#">Terms and Conditions</a>.
+      By clicking on 'Request Access' above, you confirm your agreement with this site's <a href="#">Terms and Conditions</a>.
 
     .clear
 
