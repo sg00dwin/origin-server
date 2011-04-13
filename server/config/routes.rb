@@ -9,36 +9,58 @@ RedHatCloud::Application.routes.draw do
     # Sample of regular route:
     #   match 'products/:id' => 'catalog#view'
     # Keep in mind you can assign values other than :controller and :action
-    match 'getting_started' => 'home#getting_started'    
-    match 'email_confirm' => 'email_confirm#confirm'
-    match 'broker/cartridge' => 'broker#cartridge_post', :via => [:post]
-    match 'broker/domain' => 'broker#domain_post', :via => [:post]
-    match 'broker/userinfo' => 'broker#user_info_post', :via => [:post]
-    match 'express' => 'product#express'
-    match 'flex' => 'product#flex'
-    match 'power' => 'product#power'
+    match 'getting_started' => 'home#getting_started', :constraints => { :protocol => "https" }
+    match 'email_confirm' => 'email_confirm#confirm', :constraints => { :protocol => "https" }
+    match 'email_confirm_flex' => 'email_confirm#confirm_flex', :constraints => { :protocol => "https" }
+    match 'email_confirm_express' => 'email_confirm#confirm_express', :constraints => { :protocol => "https" }
+    match 'broker/cartridge' => 'broker#cartridge_post', :via => [:post], :constraints => { :protocol => "https" }
+    match 'broker/domain' => 'broker#domain_post', :via => [:post], :constraints => { :protocol => "https" }
+    match 'broker/userinfo' => 'broker#user_info_post', :via => [:post], :constraints => { :protocol => "https" }
+    match 'express' => 'product#express', :constraints => { :protocol => "https" }
+    match 'flex' => 'product#flex', :constraints => { :protocol => "https" }
+    match 'power' => 'product#power', :constraints => { :protocol => "https" }
 
     #Alias for home page so we can link to it
-    match 'home' => 'home#index'
+    match 'home' => 'home#index', :constraints => { :protocol => "https" }
 
     # Sample of named route:
     #   match 'products/:id/purchase' => 'catalog#purchase', :as => :purchase
     # This route can be invoked with purchase_url(:id => product.id)
 
     # Sample resource route (maps HTTP verbs to controller actions automatically):
-    resources :users,
-              :as => "web_users",
-              :constraints => { :protocol => "https" }
+    resource :user,
+             :controller => "user",
+             :as => "web_users",
+             :constraints => { :protocol => "https" },
+             :only => [:new, :create]
+              
+    match 'user/new/flex' => 'user#new_flex', :via => [:get], :constraints => { :protocol => "https" }
+    match 'user/new/express' => 'user#new_express', :via => [:get], :constraints => { :protocol => "https" }
 
-    resources :login, :constraints => { :protocol => "https" }
+    resource :login,
+             :controller => "login",
+             :only => [:show, :create],
+             :constraints => { :protocol => "https" }
+    match 'login/error' => 'login#error', :via => [:get], :constraints => { :protocol => "https" }
 
-    resources :logout, :constraints => { :protocol => "https" }
+    resource :logout,
+             :controller => "logout",
+             :only => [:show],
+             :constraints => { :protocol => "https" }
 
     namespace "access" do
-      resources :express, :as => "express"
-      resources :flex, :as => "flexes"
-    end    
-
+      resource :flex,
+               :controller => "flex_request",
+               :as => "flex_requests",
+               :only => [:new, :create],
+               :constraints => { :protocol => "https" }
+      resource :express,
+               :controller => "express_request",
+               :as => "express_requests",
+               :only => [:new, :create],
+               :constraints => { :protocol => "https" }
+    end
+    
     # Sample resource route with options:
     #   resources :products do
     #     member do
@@ -49,7 +71,7 @@ RedHatCloud::Application.routes.draw do
     #     collection do
     #       get 'sold'
     #     end
-    #   end
+    #   end 
 
     # Sample resource route with sub-resources:
     #   resources :products do

@@ -1,9 +1,9 @@
 require 'test_helper'
 
-class Access::FlexControllerTest < ActionController::TestCase
+class Access::FlexRequestControllerTest < ActionController::TestCase
   test "should get index" do
-    get :index
-    assert_redirected_to login_index_path
+    get :new
+    assert_redirected_to login_path
   end
   
   test "should get error with invalid ec2 account number" do

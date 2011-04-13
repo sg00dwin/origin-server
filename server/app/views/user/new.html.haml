@@ -17,6 +17,7 @@
         = form.input :email_address
         = form.input :password, :input_html => { :autocomplete => 'off' }
         = form.input :password_confirmation, :input_html => { :autocomplete => 'off' }
+        = form.hidden_field :cloud_access_choice
 
         #captcha.grid_12
           %label Prove You Are Human

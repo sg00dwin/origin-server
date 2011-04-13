@@ -19,7 +19,7 @@ class HomeController < ApplicationController
   def getting_started
     if !session[:login]
       session[:workflow] = getting_started_path
-      redirect_to login_index_path and return
+      redirect_to login_path and return
     end
   end
 end

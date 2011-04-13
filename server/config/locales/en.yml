@@ -31,3 +31,5 @@ en:
       access/flex:
        ec2_account_number: "Amazon AWS Account Number"
        terms_accepted: "Accept Terms?"
+      access/express:
+       terms_accepted: "Accept Terms?"

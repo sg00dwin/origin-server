@@ -1,9 +1,9 @@
 require 'test_helper'
 
-class Access::ExpressControllerTest < ActionController::TestCase
+class Access::ExpressRequestControllerTest < ActionController::TestCase
   test "should get index" do
-    get :index
-    assert_redirected_to login_index_path
+    get :new
+    assert_redirected_to login_path
   end
 
   test "should get success on post" do

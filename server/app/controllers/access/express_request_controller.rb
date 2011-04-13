@@ -1,22 +1,17 @@
 require 'pp'
 
-class Access::ExpressController < ApplicationController
-
-  def index
-    Rails.logger.debug "Checking login status"
-    login = session[:login]
-
-    if login
-      @access_express = Access::Express.new
-    else
-      Rails.logger.debug "User is not logged in - rerouting to login / register"
-      session[:workflow] = access_express_index_path
-      redirect_to login_index_path, :notice => "You'll need to login / register before asking for access"
-    end
-  end
+class Access::ExpressRequestController < ApplicationController
 
   def new
-    create
+    Rails.logger.debug "Checking login status"
+    login = session[:login]
+    if login
+      @access_express = Access::ExpressRequest.new
+    else
+      Rails.logger.debug "User is not logged in - rerouting to login / register"
+      session[:workflow] = access_express_requests_path
+      redirect_to login_path, :notice => "You'll need to login / register before asking for access"
+    end
   end
 
   def create
@@ -26,15 +21,15 @@ class Access::ExpressController < ApplicationController
     if login
       Rails.logger.debug "User is logged in"
       ae = params[:access_express]
-      @access_express = Access::Express.new(ae ? ae : {})
-      render :index and return unless @access_express.valid?
+      @access_express = Access::ExpressRequest.new(ae ? ae : {})
+      render :new and return unless @access_express.valid?
       user = WebUser.find_by_ticket(session[:ticket])
       Rails.logger.debug "Requesting Express access for user #{user}"
       user.request_access(CloudAccess::EXPRESS)
     else
       Rails.logger.debug "User is not logged in - rerouting to login / register"
       session[:workflow] = new_access_express_path
-      redirect_to login_index_path
+      redirect_to login_path
     end
   end
 end

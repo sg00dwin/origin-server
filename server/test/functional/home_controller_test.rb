@@ -8,7 +8,7 @@ class HomeControllerTest < ActionController::TestCase
 
   test "should get getting_started" do
     get :getting_started
-    assert_redirected_to login_index_path
+    assert_redirected_to login_path
   end
 
   test "should be workflow redirected" do

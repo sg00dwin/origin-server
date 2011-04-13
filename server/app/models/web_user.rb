@@ -11,7 +11,7 @@ class WebUser
     include StreamlineMock
   end
 
-  attr_accessor :email_address, :password, :terms_accepted
+  attr_accessor :email_address, :password, :terms_accepted, :cloud_access_choice
 
   validates_format_of :email_address,
                       :with => /^[-a-z0-9_+\.]+\@([-a-z0-9]+\.)+[a-z0-9]{2,4}$/i,
