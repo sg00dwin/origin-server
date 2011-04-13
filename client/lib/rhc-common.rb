@@ -35,7 +35,8 @@ module RHC
 
   Maxdlen = 16
   
-  TYPES = { 'php-5.3.2' => :php,
+  TYPES = {
+    'php-5.3.2' => :php,
     'rack-1.1.0' => :rack,
     'wsgi-3.2.1' => :wsgi,
     'jbossas-7.0.0' => :jbossas

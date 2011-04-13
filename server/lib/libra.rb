@@ -85,7 +85,7 @@ module Libra
                 raise NodeException.new(142), "The application #{app_name} is registered to an invalid node.  If the problem persists please contact Red Hat support.", caller[0..5]
               end
             end
-          else
+          elsif action != 'deconfigure'
             raise NodeException.new(254), "The application #{app_name} is registered without a specified node.", caller[0..5]
           end
         end
