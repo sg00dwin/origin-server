@@ -35,6 +35,7 @@ Requires: li-cartridge-php-5.3.2
 Requires: li-cartridge-wsgi-3.2.1
 Requires: li-cartridge-rack-1.1.0
 Requires: qpid-cpp-server
+Requires: qpid-cpp-server-ssl
 Requires: puppet
 Requires: rubygem-cucumber
 Requires: rubygem-mocha
@@ -50,6 +51,7 @@ Summary: Common dependencies of the libra server and node
 Group: Network/Daemons
 Requires: mcollective-client
 Requires: qpid-cpp-client
+Requires: qpid-cpp-client-ssl
 Requires: ruby-qmf
 BuildArch: noarch
 
@@ -207,8 +209,9 @@ rm -rf $RPM_BUILD_ROOT
 #service ntpd start
 #chkconfig ntpd on
 
-# qpid
-/bin/cp -f /etc/libra/devenv/qpidd.conf /etc/qpidd.conf
+# qpid - configuring SSL
+/bin/cp -rf /etc/libra/devenv/qpid/etc/* /etc/
+/sbin/restorecon -R /etc/qpid/pki
 service qpidd restart
 chkconfig qpidd on
 
