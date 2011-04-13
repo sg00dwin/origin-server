@@ -69,7 +69,7 @@ module Streamline
   # Register a new streamline user
   #
   def register(confirm_url)
-    register_args = {'emailAddress' => @emailAddress,
+    register_args = {'emailAddress' => @email_address,
                      'password' => @password,
                      'passwordConfirmation' => @password,
                      'secretKey' => Rails.configuration.streamline_secret,
@@ -88,7 +88,7 @@ module Streamline
   #
   def request_access(solution, amz_acct="")
     if has_requested?(solution) or has_access?(solution)
-      Rails.logger.warn("User #{@emailAddress} already requested access - ignoring")
+      Rails.logger.warn("User #{@email_address} already requested access - ignoring")
     else
       access_args = {'solution' => solution,
                      'amazon_account' => amz_acct}
@@ -101,13 +101,12 @@ module Streamline
   #
   # Get the user's email address
   #
-  def email_address
+  def establish_email_address
     if !@email_address
       http_post(@@user_info_url) do |json|
         @email_address = json['emailAddress']
       end
     end
-    return @email_address
   end
   
   #

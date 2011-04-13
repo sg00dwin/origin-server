@@ -3,8 +3,8 @@ require 'pp'
 class LoginController < ApplicationController
 
   def index
-    @redirectUrl = "https://openshift.redhat.com/app"
-    @errorUrl = "https://openshift.redhat.com/app/login/error"
+    @redirectUrl = "https://#{Rails.configuration.site_domain}/app"
+    @errorUrl = "https://#{Rails.configuration.site_domain}/app/login/error"
     Rails.logger.debug "Session workflow in LoginController#index: #{session[:workflow]}"
   end
 

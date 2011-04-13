@@ -123,7 +123,10 @@ function user_cgroup_cpu_status() {
 
 function user_apps() {
     # USERNAME=$1
-    ls -d `homedir $1`/git/*.git | xargs -I{} basename {} .git
+    if [ -d `homedir $1`/git ]
+    then
+	ls -d `homedir $1`/git/*.git | xargs -I{} basename {} .git
+    fi
 }
 
 function user_app_type() {
@@ -221,6 +224,7 @@ function user_tc() {
 
     RESULT=`tc -s class show dev $TC_DEVICE classid $_TCID | tr '\n' ' '  | tr -d '(),' | tr -s ' '`
     #
+    echo $RESULT
 }
 
 #
@@ -292,7 +296,11 @@ for ENTRY in `user_cgroup_memory_status`
 do
     echo "  $ENTRY"
 done
+echo
 
+TC_STATUS=`user_tc $USERNAME`
+echo "-- network status (non-httpd) --"
+echo $TC_STATUS
 echo
 
 QUOTAS=`user_quota $USERNAME`

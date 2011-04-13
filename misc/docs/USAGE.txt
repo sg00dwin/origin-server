@@ -20,7 +20,7 @@ applications.
 
 This command must be run before running any other commands and it's typical to
 only run it once.  This command also creates and populates your
-~/.li/libra.conf file.  This file is used to track user uuid's and which
+~/.openshift/express.conf file.  This file is used to track user uuid's and which
 default user to use (so other rhc-* commands don't have to explicitly specify
 username)
 

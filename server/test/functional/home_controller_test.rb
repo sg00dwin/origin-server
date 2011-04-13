@@ -8,7 +8,7 @@ class HomeControllerTest < ActionController::TestCase
 
   test "should get getting_started" do
     get :getting_started
-    assert_response :success
+    assert_redirected_to login_index_path
   end
 
   test "should be workflow redirected" do
@@ -20,6 +20,6 @@ class HomeControllerTest < ActionController::TestCase
 
   test "should get index authorized" do
     get(:index, {}, {:login => "test", :ticket => "test" })
-    assert_redirected_to getting_started_path
+    assert :success
   end
 end

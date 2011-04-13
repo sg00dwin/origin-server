@@ -432,9 +432,9 @@ body {
 	width: 500px;
 }
 
-input#user_emailAddress,
+input#user_email_address,
 input#user_password,
-input#user_passwordConfirmation,
+input#user_password_confirmation,
 input#user_password {
 	width: 250px !important;
 	float: left;

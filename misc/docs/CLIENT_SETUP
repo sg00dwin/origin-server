@@ -46,7 +46,7 @@ Add Li Repo at /etc/yum.repos.d/li.repo.  Example in li/misc/li.repo
 
 yum install mcollective-common mcollective-client li rubygem-stomp rubygem-right_aws rubygem-aws rubygem-cucumber
 
-cp /etc/libra/libra.conf ~/.li/libra.conf
-edit ~.li and point libra_server your broker system
+cp /etc/openshift/express.conf ~/.openshift/express.conf
+edit ~/.openshift/express.conf and point libra_server your broker system
 mkdir /etc/mcollective
 cp li/backend/controller/test/etc/client.cfg /etc/mcollective/client.cfg

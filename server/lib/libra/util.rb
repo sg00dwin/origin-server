@@ -1,3 +1,4 @@
+require 'libra/blacklist'
 
 
 module Libra
@@ -5,7 +6,9 @@ module Libra
 
     Maxdlen = 16
     
-    TYPES = { 'php-5.3.2' => :php,
+    TYPES = {
+      'jbossas-7.0.0' => :jbossas,
+      'php-5.3.2' => :php,
       'rack-1.1.0' => :rack,
       'wsgi-3.2.1' => :wsgi
     }
@@ -50,6 +53,9 @@ module Libra
           #puts "#{type} contains non-alphanumeric characters!"
           return false
         end
+        if Blacklist.in_blacklist?(field)
+          return false
+        end
         if max != 0 && field.length > Maxdlen
           #puts "maximum #{type} size is #{Maxdlen} characters"
           return false
@@ -63,10 +69,10 @@ module Libra
     
     def self.get_type(type)
       if type
-        if !(RHC::TYPES.has_key?(type))
+        if !(TYPES.has_key?(type))
           #puts 'type must be ' << RHC::get_type_keys(' or ')
         else
-          return RHC::TYPES[type]
+          return TYPES[type]
         end
       else
         #puts "Type is required"

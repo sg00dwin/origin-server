@@ -22,8 +22,8 @@ module StreamlineMock
   #
   # Get the user's email address
   #
-  def email_address
-    return 'test@example.com'
+  def establish_email_address    
+    @email_address = 'test@example.com'
   end
 
   #
@@ -31,7 +31,7 @@ module StreamlineMock
   #
   def login
     Rails.logger.warn("Non integrated environment - faking login")
-    if @emailAddress.index("@")
+    if @email_address.index("@")
       Rails.logger.debug("Fake streamline login")
       @roles << "simple_authenticated"
     else

@@ -93,7 +93,7 @@ tc_user_limit=${tc_user_limit:=$OVERSUBSCRIBE}
 # tc quantum is rate / r2q
 # r2q is 10 by default
 # r2q will generate a warning if 1500 > quantum > 60000 
-tc_rate_to_quantum_ratio=10
+tc_rate_to_quantum_ratio=200
 
 start() {
 

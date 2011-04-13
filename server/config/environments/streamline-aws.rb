@@ -28,6 +28,7 @@ RedHatCloud::Application.configure do
   ############################################
   # OpenShift Configuration Below this point #
   ############################################
+  config.site_domain = "openshift.redhat.com"
   config.app_scope = "app"
   config.integrated = true
   config.login = "https://streamline.devlab.phx1.redhat.com/wapps/streamline/login.html"
