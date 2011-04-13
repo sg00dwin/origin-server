@@ -47,19 +47,22 @@
   -# changed id to sidebar from sidenav
   #sidebar.grid_7.push_17
 
-    .grid_7.alpha
-      %h4 Looking for on-premise or hybrid cloud solutions?
-      %p Check out redhat.com/cloud.
+    #redhat_cloud.grid_7.alpha
+      %a(href='#')
+        %h4 Looking for on-premise or hybrid cloud solutions?
+        %p Check out redhat.com/cloud.
     .clear
 
-    .grid_7
-      %h4 Pricing
-      %p &amp; subscription details
+    #pricing.grid_7
+      %a(href='#')
+        %h4 Pricing
+        %p &amp; subscription details
     .clear
 
-    .grid_7.omega
-      %h4 FAQ
-      %p Your questions, answered
+    #faq.grid_7.omega
+      %a(href='#')
+        %h4 FAQ
+        %p Your questions, answered
     .clear
 
   /Product slugs
@@ -72,8 +75,12 @@
       You're a developer, not a sysadmin.
       Focus on development, and we'll handle the rest
     .icons
-      Icons go here - what icons?
-    %p
+      %img(src='/app/images/git_logo_gs.png'
+           alt='git')
+      %img(src='/app/images/php_logo_gs.png'
+           alt='PHP')
+      
+    %p.link
       %a.learn(href='#') Learn more &gt;
 
   /Flex slug
@@ -95,7 +102,7 @@
         %li MySQL
     .clear
 
-    %p
+    %p.link
       %a.learn(href='#') Learn more &gt;
     .clear
   /End slugs
@@ -119,7 +126,10 @@
 
   /Power box
   .power.promo.grid_8
-    %h3 Build and manage a cross-cloud infrastructure
+    %h3 
+      Build and manage a 
+      %br
+      cross-cloud infrastructure
     %h4 Power
     %p
       %a(href='#') Learn More

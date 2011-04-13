@@ -11,21 +11,31 @@ class WebUser
     include StreamlineMock
   end
 
-  attr_accessor :emailAddress, :password, :passwordConfirmation, :termsAccepted
+  attr_accessor :email_address, :password, :terms_accepted
 
-  validates_format_of :emailAddress,
+  validates_format_of :email_address,
                       :with => /^[-a-z0-9_+\.]+\@([-a-z0-9]+\.)+[a-z0-9]{2,4}$/i,
                       :message => 'Invalid email address'
+  
+  # Requires Ruby 1.9 for lookbehind
+  #validates_format_of :email_address,
+  #                    :with => /(?<!(ir|cu|kp|sd|sy))$/i,
+  #                    :message => 'We can not accept emails from the following top level domains: .ir, .cu, .kp, .sd, .sy'
                       
-  validates_format_of :emailAddress,
-                      :with => /^[-a-z0-9_+\.]+\@([-a-z0-9]+\.)+(?!((ir$)|(cu$)|(kp$)|(sd$)|(sy$)))/i,
-                      :message => 'We can not accept emails from the following top level domains: .ir, .cu, .kp, .sd, .sy'                      
+  validates_each :email_address do |record, attr, value|
+    if value =~ /\.(ir|cu|kp|sd|sy)$/i
+      record.errors.add attr, 'We can not accept emails from the following top level domains: .ir, .cu, .kp, .sd, .sy'
+    end
+  end
 
   validates_length_of :password,
                       :minimum => 6,
                       :message => 'Passwords must be at least 6 characters'
+                      
+  validates_confirmation_of :password,
+                            :message => 'Passwords must match'  
 
-  validates_each :termsAccepted do |record, attr, value|
+  validates_each :terms_accepted do |record, attr, value|
     record.errors.add attr, 'Terms must be accepted' if value != '1'
   end
 

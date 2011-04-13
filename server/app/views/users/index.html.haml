@@ -12,18 +12,18 @@
   #registration.prefix_1.grid_12.suffix_1
     %h3 Register for access to Express
 
-    - semantic_form_for @user do |form|
-      - form.inputs do
-        = form.input :emailAddress
+    = semantic_form_for @user do |form|
+      = form.inputs do
+        = form.input :email_address
         = form.input :password, :input_html => { :autocomplete => 'off' }
-        = form.input :passwordConfirmation, :input_html => { :autocomplete => 'off' }
+        = form.input :password_confirmation, :input_html => { :autocomplete => 'off' }
 
         #captcha.grid_12
           %label Prove You Are Human
           = recaptcha_tags
 
-      - form.buttons do
-        = form.commit_button "Register User"
+      = form.buttons do
+        = form.commit_button "Register Now"
     .clear
 
   #form_notes.grid_9.suffix_1

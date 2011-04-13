@@ -2,8 +2,8 @@
 %define gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 
 Name: li
-Version: 0.62.14
-Release: 1%{?dist}
+Version: 0.63.1
+Release: 2%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -163,6 +163,15 @@ BuildArch: noarch
 %description cartridge-wsgi-3.2.1
 Provides wsgi support to li
 
+%package cartridge-jbossas-7.0.0
+Summary: Provides java-jbossas-7.0.0 support
+Group: Development/Languages
+Requires: li-node
+BuildArch: noarch
+
+%description cartridge-jbossas-7.0.0
+Provides jbossas support to li
+
 %prep
 %setup -q
 
@@ -232,6 +241,7 @@ ln -s /var/www/libra/public/* /var/www/html/.
 /bin/cp -f /etc/libra/devenv/httpd/000000_default.conf /etc/httpd/conf.d
 /bin/cp -f /etc/libra/devenv/httpd/broker.conf /var/www/libra/httpd
 /bin/cp -f /etc/libra/devenv/libra-site /etc/init.d
+/bin/cp -f /etc/libra/devenv/robots.txt /var/www/libra/public
 /etc/init.d/libra-site restart
 chkconfig libra-site on
 
@@ -406,7 +416,17 @@ chmod 0666 %{_localstatedir}/www/libra/log/production.log
 %defattr(-,root,root,-)
 %{_libexecdir}/li/cartridges/wsgi-3.2.1/
 
+%files cartridge-jbossas-7.0.0
+%defattr(-,root,root,-)
+%{_libexecdir}/li/cartridges/jbossas-7.0.0/
+
 %changelog
+* Tue Apr 10 2011 Mike McGrath <mmcgrath@redhat.com> 0.63.1-2
+- Added jbossas-7.0.0
+
+* Tue Apr 10 2011 Mike McGrath <mmcgrath@redhat.com> 0.63.1-1
+- New week, new version
+
 * Sun Apr 10 2011 Mike McGrath <mmcgrath@redhat.com> 0.62.14-1
 - Update to make rack operational
 

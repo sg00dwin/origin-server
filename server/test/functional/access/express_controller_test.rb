@@ -5,4 +5,10 @@ class Access::ExpressControllerTest < ActionController::TestCase
     get :index
     assert_redirected_to login_index_path
   end
+
+  test "should get success on post" do
+    session[:login] = 'tester'
+    post(:create, {})
+    assert_response :success
+  end
 end
