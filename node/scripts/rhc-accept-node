@@ -159,7 +159,7 @@ function check_services() {
 #
 # Kernel semaphores
 function check_semaphores() {
-    verbose checking kernel semaphores >= $MINSEM
+    verbose checking kernel semaphores > $MINSEM
     SEMCOUNT=`sysctl kernel.sem | cut -f4`
     if [ "$SEMCOUNT" -lt "$MINSEM" ]
     then
