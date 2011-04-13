@@ -1,3 +1,4 @@
+require 'libra/blacklist'
 
 
 module Libra
@@ -48,6 +49,9 @@ module Libra
       if field
         if field =~ /[^0-9a-zA-Z]/
           #puts "#{type} contains non-alphanumeric characters!"
+          return false
+        end
+        if Blacklist.in_blacklist?(field)
           return false
         end
         if max != 0 && field.length > Maxdlen
