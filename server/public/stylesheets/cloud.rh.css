@@ -1,5 +1,5 @@
 body {
-  background: black; }
+  background: #ccc; }
   body ul, body ol, body li, body p, body a, body h1, body h2, body h3, body h4, body h5, body h6 {
     color: white; }
   body h1, body h2, body h3, body h4, body h5, body h6 {
@@ -19,7 +19,7 @@ form ul, form ol, form li {
   list-style-type: none; }
 
 #horrible_wrapper {
-  background: black;
+  background: #ccc;
   /* Mozilla */
   background: -moz-linear-gradient(top, black, white, black);
   /* Old webkit */
@@ -47,6 +47,8 @@ form ul, form ol, form li {
   background: -webkit-gradient(linear, top center, from(#b30000), color-stop(100%, #cc0000));
   /* New webkit */
   background: -webkit-linear-gradient(top, #b30000, #cc0000 100%);
+  /* Opera */
+  background: -o-linear-gradient(top, #b30000, #cc0000 100%);
   /* IE <= 7 */
   filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=$first_color, endColorStr=$last_color);
   /* IE 8 */
@@ -86,6 +88,8 @@ form ul, form ol, form li {
   background: -webkit-gradient(linear, top center, from(#cc0000), color-stop(100%, #990000));
   /* New webkit */
   background: -webkit-linear-gradient(top, #cc0000, #990000 100%);
+  /* Opera */
+  background: -o-linear-gradient(top, #cc0000, #990000 100%);
   /* IE <= 7 */
   filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=$first_color, endColorStr=$last_color);
   /* IE 8 */
@@ -114,6 +118,8 @@ form ul, form ol, form li {
   background: -webkit-gradient(linear, top center, from(#555555), color-stop(100%, #d4d4d4));
   /* New webkit */
   background: -webkit-linear-gradient(top, #555555, #d4d4d4 100%);
+  /* Opera */
+  background: -o-linear-gradient(top, #555555, #d4d4d4 100%);
   /* IE <= 7 */
   filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=$first_color, endColorStr=$last_color);
   /* IE 8 */
@@ -128,6 +134,8 @@ form ul, form ol, form li {
     background: -webkit-gradient(linear, top center, from(#336699), color-stop(100%, #6699cc));
     /* New webkit */
     background: -webkit-linear-gradient(top, #336699, #6699cc 100%);
+    /* Opera */
+    background: -o-linear-gradient(top, #336699, #6699cc 100%);
     /* IE <= 7 */
     filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=$first_color, endColorStr=$last_color);
     /* IE 8 */
@@ -142,6 +150,8 @@ form ul, form ol, form li {
     background: -webkit-gradient(linear, top center, from(#a344bc), color-stop(100%, #c88fd7));
     /* New webkit */
     background: -webkit-linear-gradient(top, #a344bc, #c88fd7 100%);
+    /* Opera */
+    background: -o-linear-gradient(top, #a344bc, #c88fd7 100%);
     /* IE <= 7 */
     filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=$first_color, endColorStr=$last_color);
     /* IE 8 */
@@ -156,6 +166,8 @@ form ul, form ol, form li {
     background: -webkit-gradient(linear, top center, from(#549933), color-stop(100%, #87cc66));
     /* New webkit */
     background: -webkit-linear-gradient(top, #549933, #87cc66 100%);
+    /* Opera */
+    background: -o-linear-gradient(top, #549933, #87cc66 100%);
     /* IE <= 7 */
     filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=$first_color, endColorStr=$last_color);
     /* IE 8 */
@@ -481,6 +493,8 @@ form ul, form ol, form li {
   background: -webkit-gradient(linear, top center, from(#ececec), color-stop(10%, white));
   /* New webkit */
   background: -webkit-linear-gradient(top, #ececec, white 10%);
+  /* Opera */
+  background: -o-linear-gradient(top, #ececec, white 10%);
   /* IE <= 7 */
   filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=$first_color, endColorStr=$last_color);
   /* IE 8 */

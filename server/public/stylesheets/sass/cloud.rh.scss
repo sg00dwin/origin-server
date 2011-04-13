@@ -40,6 +40,12 @@ $list_elements: ul, ol, li;
     $first_color,
     $last_color $last_stop
   );
+  /* Opera */
+  background: -o-linear-gradient(
+    top,
+    $first_color,
+    $last_color $last_stop
+  );
   /* IE <= 7 */
   filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=$first_color, endColorStr=$last_color);
   /* IE 8 */
@@ -125,7 +131,7 @@ $list_elements: ul, ol, li;
 //Start actual styles
 
 body {
-    background: black;
+    background: #ccc;
     
     #{$list_elements}, #{$text_elements}, #{$header_elements} { 
       color: white; 
@@ -162,7 +168,7 @@ form {
 }
 
 #horrible_wrapper {
-  background: black;
+  background: #ccc;
   /* Mozilla */
   background: -moz-linear-gradient(
     top,
