@@ -256,11 +256,11 @@ end
 # Config paths... /etc/openshift/express.conf or $GEM/conf/express.conf -> ~/.openshift/express.conf
 #
 # semi-private: Just in case we rename again :)
-_conf_name = 'express.conf'
-_linux_cfg = '/etc/openshift/' + _conf_name
-_gem_cfg = File.join(File.expand_path(File.dirname(__FILE__) + "/../conf"), _conf_name)
+@conf_name = 'express.conf'
+_linux_cfg = '/etc/openshift/' + @conf_name
+_gem_cfg = File.join(File.expand_path(File.dirname(__FILE__) + "/../conf"), @conf_name)
 _home_conf = File.expand_path('~/.openshift')
-@local_config_path = File.join(_home_conf, _conf_name)
+@local_config_path = File.join(_home_conf, @conf_name)
 @config_path = File.exists?(_linux_cfg) ? _linux_cfg : _gem_cfg
 
 FileUtils.mkdir_p _home_conf unless File.directory?(_home_conf)
