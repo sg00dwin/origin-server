@@ -14,9 +14,9 @@ RedHatCloud::Application.routes.draw do
     match 'broker/cartridge' => 'broker#cartridge_post', :via => [:post]
     match 'broker/domain' => 'broker#domain_post', :via => [:post]
     match 'broker/userinfo' => 'broker#user_info_post', :via => [:post]
-    match 'express' => 'express#index'
-    match 'flex' => 'flex#index'
-    match 'power' => 'power#index'
+    match 'express' => 'product#express'
+    match 'flex' => 'product#flex'
+    match 'power' => 'product#power'
 
     #Alias for home page so we can link to it
     match 'home' => 'home#index'
