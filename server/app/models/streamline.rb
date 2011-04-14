@@ -76,9 +76,11 @@ module Streamline
                      'termsAccepted' => 'true',
                      'confirmationUrl' => confirm_url}
 
-    http_post(@@register_url, register_args) do |json|
+    http_post(@@register_url, register_args, false) do |json|
       unless json['emailAddress']
-        errors.add(:base, I18n.t(:unknown))
+        if errors.length == 0
+          errors.add(:base, I18n.t(:unknown))
+        end
       end
     end
   end
@@ -123,7 +125,7 @@ module Streamline
     @roles.index(CloudAccess.req_role(solution)) != nil
   end
 
-  def http_post(url, args={})
+  def http_post(url, args={}, raise_exception_on_error=true)
     begin
       req = Net::HTTP::Post.new(url.path)
       req.set_form_data(args)
@@ -151,18 +153,26 @@ module Streamline
       else
         log_error "Invalid HTTP response from streamline - #{res.code}"
         log_error "Response body:\n#{res.body}"
-        raise StreamlineException
+        if raise_exception_on_error
+          raise StreamlineException
+        else
+          errors.add(:base, I18n.t(:unknown))
+        end
       end
     rescue Exception => e
       log_error "Exception occurred while calling streamline - #{e.message}"
       Rails.logger.error e, e.backtrace
-      raise StreamlineException
+      if raise_exception_on_error
+        raise StreamlineException
+      else
+        errors.add(:base, I18n.t(:unknown))
+      end
     end
   end
 
   def log_error(msg)
     Rails.logger.error msg
-    Libra.client_debug msg
+    #Libra.client_debug msg
   end
 
   #
