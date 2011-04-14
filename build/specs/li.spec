@@ -2,7 +2,7 @@
 %define gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 
 Name: li
-Version: 0.63.4
+Version: 0.63.5
 Release: 1%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
@@ -429,6 +429,9 @@ chmod 0666 %{_localstatedir}/www/libra/log/production.log
 %{_libexecdir}/li/cartridges/jbossas-7.0.0/
 
 %changelog
+* Thu Apr 14 2011 Matt Hicks <mhicks@redhat.com> 0.63.5-1
+- SELinux policy fix and qpid over SSL
+
 * Thu Apr 14 2011 Mike McGrath <mmcgrath@redhat.com> 0.63.4-1
 - New site release
 
