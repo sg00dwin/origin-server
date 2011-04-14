@@ -93,10 +93,10 @@ module Streamline
       Rails.logger.warn("User #{@email_address} already requested access - ignoring")
     else
       access_args = {'solution' => solution,
-                     'amazon_account' => amz_acct}
+                     'amazonAccount' => amz_acct}
 
       # Make the request for access
-      http_post(@@request_access_url, access_args)
+      http_post(@@request_access_url, access_args, false)
     end
   end
   
