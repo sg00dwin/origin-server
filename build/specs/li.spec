@@ -2,8 +2,8 @@
 %define gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 
 Name: li
-Version: 0.63.1
-Release: 2%{?dist}
+Version: 0.63.4
+Release: 1%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -425,6 +425,9 @@ chmod 0666 %{_localstatedir}/www/libra/log/production.log
 %{_libexecdir}/li/cartridges/jbossas-7.0.0/
 
 %changelog
+* Thu Apr 14 2011 Mike McGrath <mmcgrath@redhat.com> 0.63.4-1
+- New site release
+
 * Tue Apr 10 2011 Mike McGrath <mmcgrath@redhat.com> 0.63.1-2
 - Added jbossas-7.0.0
 
