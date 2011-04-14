@@ -1,7 +1,7 @@
 require 'test_helper'
 
 class Access::FlexRequestControllerTest < ActionController::TestCase
-  test "should get index" do
+  test "should get new" do
     get :new
     assert_redirected_to login_path
   end
