@@ -1,4 +1,4 @@
-class Access::Flex
+class Access::FlexRequest
   include ActiveModel::Validations
   include ActiveModel::Conversion
   include ActiveModel::Serialization

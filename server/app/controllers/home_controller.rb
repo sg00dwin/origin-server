@@ -1,4 +1,6 @@
 class HomeController < ApplicationController
+  before_filter :set_no_cache
+
   def index
     Rails.logger.debug "Index controller"
     # Handle any workflow routing
@@ -19,7 +21,7 @@ class HomeController < ApplicationController
   def getting_started
     if !session[:login]
       session[:workflow] = getting_started_path
-      redirect_to login_index_path and return
+      redirect_to login_path and return
     end
   end
 end

@@ -1,8 +1,8 @@
 require 'test_helper'
 
-class UsersControllerTest < ActionController::TestCase
-  test "should get index unauthorized" do
-    get :index
+class UserControllerTest < ActionController::TestCase
+  test "should get new unauthorized" do
+    get :new
     assert_response :success
   end
 

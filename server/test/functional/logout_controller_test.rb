@@ -3,8 +3,8 @@ require 'cgi'
 
 class LogoutControllerTest < ActionController::TestCase
   test "should get index" do
-    get :index
-    assert_redirected_to login_index_path
+    get :show
+    assert_redirected_to login_path
   end
 
   test "should clear session and cookies" do
@@ -19,8 +19,8 @@ class LogoutControllerTest < ActionController::TestCase
     @request.cookies['keep'] = CGI::Cookie.new('keep', 'me')
 
     # Hit logout with some session data as well
-    get(:index, {}, {:test => "value"})
-    assert_redirected_to login_index_path
+    get(:show, {}, {:test => "value"})
+    assert_redirected_to login_path
 
     # Make sure the cookie is gone and the session is empty
     assert session.empty?

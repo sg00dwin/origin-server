@@ -1,4 +1,4 @@
-class Access::Express
+class Access::ExpressRequest
   include ActiveModel::Validations
   include ActiveModel::Conversion
   include ActiveModel::Serialization

@@ -9,8 +9,16 @@ class EmailConfirmController < ApplicationController
             'user_email_failed_confirmation' => "Email confirmation failed",
             :unknown => "An unknown error has occurred"
   }
+  
+  def confirm_flex
+    confirm(new_access_flex_requests_path)
+  end
+  
+  def confirm_express
+    confirm(new_access_express_requests_path)
+  end
 
-  def confirm
+  def confirm(redirect_path=getting_started_path)
     key = params[:key]
     email = params[:emailAddress]
 
@@ -79,7 +87,7 @@ class EmailConfirmController < ApplicationController
       if (@errors.length > 0)
         render :error and return
       else
-        redirect_to :controller => 'home', :action => 'getting_started' and return
+        redirect_to redirect_path and return
       end
     end
   end
