@@ -22,7 +22,7 @@ class Access::FlexRequestController < ApplicationController
     
     if login
       Rails.logger.debug "User is logged in"
-      @access_flex = Access::FlexRequest.new(params[:access_flex])
+      @access_flex = Access::FlexRequest.new(params[:access_flex_request])
       render :new and return unless @access_flex.valid?
       user = WebUser.find_by_ticket(session[:ticket])
       Rails.logger.debug "Requesting Flex access for user #{user}"

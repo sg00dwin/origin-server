@@ -21,7 +21,8 @@ class Access::ExpressRequestController < ApplicationController
 
     if login
       Rails.logger.debug "User is logged in"
-      ae = params[:access_express]
+      puts params
+      ae = params[:access_express_request]
       @access_express = Access::ExpressRequest.new(ae ? ae : {})
       render :new and return unless @access_express.valid?
       user = WebUser.find_by_ticket(session[:ticket])

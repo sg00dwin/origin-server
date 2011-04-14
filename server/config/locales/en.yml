@@ -28,8 +28,8 @@ en:
        rhlogin: "Red Hat Login or Email Address"
        password: "Password"
        password_confirmation: "Retype Password"
-      access/flex:
+      access/flex_request:
        ec2_account_number: "Amazon AWS Account Number"
        terms_accepted: "Accept Terms?"
-      access/express:
+      access/express_request:
        terms_accepted: "Accept Terms?"
