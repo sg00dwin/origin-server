@@ -20,6 +20,8 @@ en:
     service_error: 'A system error has occurred.  If the problem persists, please contact Red Hat support.'
     user_not_found: 'A system error has occurred.  If the problem persists, please contact Red Hat support.'
     email_service_error: 'A system error has occurred.  If the problem persists, please contact Red Hat support.'
+    already_requested_access: 'You have already requested access to this service.  You should expect an email when access is granted.'
+    already_granted_access: 'You have already been granted access to this service.'
 
   formtastic:
     labels:

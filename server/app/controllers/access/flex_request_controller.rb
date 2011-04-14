@@ -27,7 +27,8 @@ class Access::FlexRequestController < ApplicationController
       user = WebUser.find_by_ticket(session[:ticket])
       Rails.logger.debug "Requesting Flex access for user #{user}"
       user.request_access(CloudAccess::FLEX, @access_flex.ec2_account_number)
-      #render :new and return unless user.errors.length == 0
+      @access_flex.errors.update(user.errors)
+      render :new and return unless @access_flex.errors.length == 0
     else
       Rails.logger.debug "User is not logged in - rerouting to login / register"
       session[:workflow] = new_access_flex_requests_path

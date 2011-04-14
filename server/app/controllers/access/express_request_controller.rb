@@ -25,9 +25,10 @@ class Access::ExpressRequestController < ApplicationController
       @access_express = Access::ExpressRequest.new(ae ? ae : {})
       render :new and return unless @access_express.valid?
       user = WebUser.find_by_ticket(session[:ticket])
-      Rails.logger.debug "Requesting Express access for user #{user}"
+      Rails.logger.debug "Requesting Express access for user #{user}"      
       user.request_access(CloudAccess::EXPRESS)
-      #render :new and return unless user.errors.length == 0
+      @access_express.errors.update(user.errors)
+      render :new and return unless @access_express.errors.length == 0
     else
       Rails.logger.debug "User is not logged in - rerouting to login / register"
       session[:workflow] = new_access_express_path
