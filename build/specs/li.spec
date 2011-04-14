@@ -64,6 +64,7 @@ Requires: mcollective
 Requires: rubygem-parseconfig
 Requires: libcgroup
 Requires: git
+Requires: selinux-policy-targeted >= 3.7.19
 Requires(post): /usr/sbin/semodule
 Requires(post): /usr/sbin/semanage
 Requires(postun): /usr/sbin/semodule
