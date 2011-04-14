@@ -1,0 +1,73 @@
+- content_for :sub_layout do
+  %div{:id => 'pageheader', 
+       :class => params[:action] + ' container_24'}
+    #title.grid_14
+      = yield :title
+
+    #title_accent.grid_10
+        
+    .clear
+
+  #page.container_24
+    / Main page content
+    #main_content.grid_17
+      
+      /About the product
+      #product_information.grid_8
+        = yield :about
+        
+      #product_screenshot.grid_8
+        = yield :screenshot
+      
+      .clear
+          
+      / Product instructions
+      #product_tabs.grid_16
+        = yield :tabs
+      
+          
+      / Videos
+      #product_videos.grid_8
+        %h2 Videos
+        = yield :videos
+
+      / Featured community content
+      #product_community.grid_8
+        %h2 Community Highlights
+        = yield :community
+        
+      .clear
+        
+    
+    / Sidebar
+    %div{:id => 'supplemental_content',
+         :class => params[:action] + ' grid_6' }
+      
+      /Try it button
+      %a.try_it(href="#") Try it now!
+      
+      /Resource links
+      #resources
+        %h3 Resources
+        = yield :resources
+        
+      /Tour box
+      #tour
+        = yield :tour_link
+      
+      /Platforms
+      #platforms
+        %h3 Supported Platforms
+        = yield :platforms
+      
+      /Top video
+      #top_video
+        %h3 Today's Top Video
+        = yield :top_video
+            
+      /Promos
+      = yield :promos
+
+    .clear
+    
+= render :file => 'layouts/application'

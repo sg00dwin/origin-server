@@ -22,17 +22,18 @@
     %script{:type => "text/javascript", :src  => "/app/javascripts/controls.js"}
     %script{:type => "text/javascript", :src  => "/app/javascripts/dragdrop.js"}
     %script{:type => "text/javascript", :src  => "/app/javascripts/jquery.slideshow.minified.js"}
+    %script{:type => "text/javascript", :src => "http://cdn.jquerytools.org/1.2.5/tiny/jquery.tools.min.js"}
     %script{:type => "text/javascript", :src  => "/app/javascripts/rails.js"}
     %script{:type => "text/javascript", :src  => "/app/javascripts/init.js"}
     = csrf_meta_tag
 
-  %body
+  %body(class="#{controller.controller_name} #{controller.action_name}")
     #horrible_wrapper
       #head.container_24
         #logo.grid_6.alpha
           %a(href="home")
-            %img(src="/app/images/logo-blue.png"
-                 alt="OpenShift")
+          = image_tag "/app/images/logo-blue.png",
+                        :alt => "OpenShift"
 
         #header_right.grid_18.omega
           - if session[:login]
@@ -45,8 +46,8 @@
             .clear
           
           #mainslug
-            %img(src='/app/images/shadowman.png'
-                 alt='Red Hat, the Open Source Leader')
+            = image_tag '/app/images/shadowman.png',
+                        :alt => 'Red Hat, the Open Source Leader'
             %p
               Free &amp; portable cloud services from the enterprise open source leader.
 
@@ -71,7 +72,7 @@
 
         .clear
 
-      = yield
+      = content_for?(:sub_layout) ? yield(:sub_layout) : yield
 
       .container_24#footer
         .prefix_1.grid_3

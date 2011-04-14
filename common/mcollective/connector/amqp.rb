@@ -20,13 +20,13 @@ module MCollective
                 begin
 		  subscriptions_new = {}
                   @subscriptions.each_key do |source|
+                    @log.debug("Creating receiver #{source}")
                     receiver = @session.createReceiver("amq.direct#{source}")
+                    receiver.setCapacity(10)
                     subscriptions_new[source] = receiver
                   end
 		  @subscriptions = subscriptions_new
                   @sender = @session.createSender("amq.direct")
-                rescue SignalException
-                    @log.debug("Received signal exception, exiting...")
                 rescue Exception => e
                     @log.debug("Reconnect Exception #{e}")
                     sleep 1
@@ -38,17 +38,51 @@ module MCollective
            def connect
                @log.debug("Connection attempt to qpidd")
                if @connection
-                   @log.debug("Already connection, not re-initializing connection")
+                   @log.debug("Already connected. Not re-initializing connection")
                    return
                end
 
                # Parse out the config info
-               url = "amqp:tcp:" + get_option("amqp.url")
-               ha_url = "amqp:tcp:" + get_option("amqp.ha-url")
-               reconnect_url = "{reconnect-urls: '#{ha_url}', reconnect:true, heartbeat:1}"
+               host = get_option("amqp.host")
+               host_port = get_option("amqp.host.port", nil)
+               ha_host = get_option("amqp.host.ha", nil)
+               ha_host_port = get_option("amqp.host.ha.port", nil)
 
-               @log.debug("Connecting to #{url}, #{reconnect_url}")
-               @connection = Cqpid::Connection.new(url, reconnect_url)
+               secure = (get_option("amqp.secure", "false") == "true")
+
+               # Default ports as necessary
+               if secure
+                 host_port ||= 5671
+                 ha_host_port ||= 5671
+               else
+                 host_port ||= 5672
+                 ha_host_port ||= 5672
+	       end
+
+               url = "#{host}:#{host_port}"
+
+               timeout = get_option("amqp.timeout", 5).to_i
+               args = []
+               if ha_host
+                 args << "reconnect-urls: '#{ha_host}:#{ha_host_port}'"
+               end
+
+	       if secure
+                  args << "transport:ssl"
+               end
+
+               args << "reconnect:true"
+
+               if timeout
+                 args << "reconnect-timeout:#{timeout}"
+               end
+
+               args << "heartbeat:1"
+
+               amqp_options = "{" + args.join(", ") + "}"
+
+               @log.debug("Connecting to #{url},  #{amqp_options}")
+               @connection = Cqpid::Connection.new(url, amqp_options)
                @connection.open
                @session = @connection.createSession
 
@@ -64,6 +98,7 @@ module MCollective
 	            receiver = Cqpid::Receiver.new
 		    while 1 do
                       break if @session.nextReceiver(receiver,Cqpid::Duration.IMMEDIATE)
+                      raise "Need to reconnect" unless @session.getConnection().isOpen()
                       sleep 0.01
                     end
                     msg = receiver.fetch()
@@ -73,11 +108,10 @@ module MCollective
 
                     @session.acknowledge
                     Request.new(msg.getContent)
-                rescue SignalException
-                    @log.debug("Received signal exception, exiting...")
                 rescue StandardError => e
                     @log.debug("Caught Exception #{e}")
-                    reconnect
+                    @session.sync
+                    #reconnect
                     retry
                 end
             end
@@ -95,8 +129,6 @@ module MCollective
                   @message.setContentType("text/plain")
                   @sender.send(@message);
                   @log.debug("Message sent")
-                rescue SignalException
-                    @log.debug("Received signal exception, exiting...")
                 rescue StandardError => e
                     @log.debug("Caught Exception #{e}")
                     reconnect
@@ -152,13 +184,13 @@ module MCollective
             end
 
             private
+
             # looks for a config option, accepts an optional default
             #
             # raises an exception when it cant find a value anywhere
-            def get_option(opt, default=nil)
+            def get_option(opt, default=nil, allow_nil=true)
                 return @config.pluginconf[opt] if @config.pluginconf.include?(opt)
-                return default if default
-
+                return default if (default or allow_nil)
                 raise("No plugin.#{opt} configuration option given")
             end
         end
