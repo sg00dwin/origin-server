@@ -1,4 +1,6 @@
 class HomeController < ApplicationController
+  before_filter :set_no_cache
+
   def index
     Rails.logger.debug "Index controller"
     # Handle any workflow routing

@@ -1,6 +1,7 @@
 require 'pp'
 
 class Access::FlexRequestController < ApplicationController
+  before_filter :set_no_cache
 
   def new
     Rails.logger.debug "Checking login status"    
