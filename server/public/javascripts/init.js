@@ -22,5 +22,8 @@ $j(function(){
       $j('.promo').removeClass('hover');
     }
   );
+  
+// Tabs on product pages
+  $j('#tab_navigation').tabs('.tab');
 
 });

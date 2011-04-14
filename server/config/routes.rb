@@ -9,6 +9,7 @@ RedHatCloud::Application.routes.draw do
     # Sample of regular route:
     #   match 'products/:id' => 'catalog#view'
     # Keep in mind you can assign values other than :controller and :action
+    #match ':controller/:action'
     match 'getting_started' => 'home#getting_started'    
     match 'email_confirm' => 'email_confirm#confirm'
     match 'broker/cartridge' => 'broker#cartridge_post', :via => [:post]
