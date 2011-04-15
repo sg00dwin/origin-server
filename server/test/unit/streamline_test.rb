@@ -121,7 +121,7 @@ class StreamlineTest < ActiveSupport::TestCase
     }
 
     # Make sure something was written to the client log
-    assert !Thread.current[:debugIO].string.empty?
+    #assert !Thread.current[:debugIO].string.empty?
   end
 
   test "http call with exception" do
@@ -180,22 +180,22 @@ class StreamlineTest < ActiveSupport::TestCase
 
   test "request access" do
     @streamline.expects(:http_post).once
-    @streamline.request_access(CloudAccess::EXPRESS, "1234")
+    @streamline.request_access(CloudAccess::EXPRESS)
     assert @streamline.errors.empty?
   end
 
   test "request access multiple" do
     @streamline.roles << CloudAccess.req_role(CloudAccess::EXPRESS)
     @streamline.expects(:http_post).never
-    @streamline.request_access(CloudAccess::EXPRESS, "1234")
-    assert @streamline.errors.empty?
+    @streamline.request_access(CloudAccess::EXPRESS)
+    assert @streamline.errors.length == 1
   end
 
   test "request access already has" do
     @streamline.roles << CloudAccess.auth_role(CloudAccess::EXPRESS)
     @streamline.expects(:http_post).never
-    @streamline.request_access(CloudAccess::EXPRESS, "1234")
-    assert @streamline.errors.empty?
+    @streamline.request_access(CloudAccess::EXPRESS)
+    assert @streamline.errors.length == 1
   end
 
   test "establish user" do
