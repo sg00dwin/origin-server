@@ -2,8 +2,8 @@
 %define gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 
 Name: li
-Version: 0.63.5
-Release: 2%{?dist}
+Version: 0.64.1
+Release: 1%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -434,6 +434,9 @@ chmod 0666 %{_localstatedir}/www/libra/log/production.log
 %{_libexecdir}/li/cartridges/jbossas-7.0.0/
 
 %changelog
+* Fri Apr 15 2011 Matt Hicks <mhicks@redhat.com> 0.64.1-1
+- Prepping new release
+
 * Fri Apr 15 2011 Mike McGrath <mmcgrath@redhat.com> 0.63.5-2
 - Added postgres deps
 
