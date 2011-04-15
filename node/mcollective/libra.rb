@@ -24,6 +24,8 @@
 # data.  This can start and stop services, create and destroy applications
 # as well as create new customers.
 #
+require 'rubygems'
+require 'open4'
 
 module MCollective
     #
@@ -57,8 +59,21 @@ module MCollective
                 cartridge = request[:cartridge]
                 action = request[:action]
                 args = request[:args]
-                output = %x[/usr/bin/runcon -l s0-s0:c0.c1023 /usr/libexec/li/cartridges/#{cartridge}/info/hooks/#{action} #{args} 2>&1 ]
-                exitcode = $?.exitstatus
+                pid, stdin, stdout, stderr = Open4::popen4("/usr/bin/runcon -l s0-s0:c0.c1023 /usr/libexec/li/cartridges/#{cartridge}/info/hooks/#{action} #{args} 2>&1")
+                stdin.close
+                ignored, status = Process::waitpid2 pid
+                exitcode = status.exitstatus
+                # Do this to avoid cartridges that might hold open stdout
+                output = ""
+                begin
+                  Timeout::timeout(5) do
+                    while (line = stdout.gets)
+                      output << line
+                    end
+                  end
+                rescue Timeout::Error
+                  Log.instance.debug("cartridge_do_action WARNING - stdout read timed out")
+                end
                 Log.instance.debug("cartridge_do_action (#{exitcode}\n------\n#{output}\n------)")
                 reply[:output] = output
                 reply[:exitcode] = exitcode
@@ -88,7 +103,7 @@ module MCollective
             #
             def has_app_action
                 validate :customer, /^[a-zA-Z0-9]+$/
-                validate :application, /^[a-zA-Z0-9]+$/             
+                validate :application, /^[a-zA-Z0-9]+$/
                 customer = request[:customer]
                 app_name = request[:application]
                 if File.exist?("/var/lib/libra/#{customer}/php/#{app_name}") ||
@@ -101,7 +116,7 @@ module MCollective
                 end
                 reply[:exitcode] = 0
             end
-            
+
             #
             # Creates http environment for customer to use
             #
