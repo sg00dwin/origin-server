@@ -31,7 +31,7 @@ def p_usage
     puts <<USAGE
 
 Usage: rhc-snapshot
-Display information about a user
+Pull down application snapshot for a user
 
   -l|--rhlogin   rhlogin    RHCloud rhlogin (#{rhlogin})
   -a|--app                  Target application to snapshot (required)
