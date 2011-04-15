@@ -211,7 +211,10 @@ a {
   &.power:hover {
     color: $power;
   }
-  
+  &:active,
+  &:focus {
+    outline: none;
+  }
 }
 
 form {
@@ -1170,7 +1173,7 @@ form p {
   
   .meta {
     p{
-      color: #999;
+      color: #666;
       margin: 0;
     }
   }
@@ -1196,8 +1199,12 @@ form p {
     padding-left: 20px;
   }
   
-  .meta .author {
-    color: black;
+  .meta {
+    font-size: 12pt;
+    .author {
+      font-size: 12pt;
+      color: black;
+    }
   }
 }
 
@@ -1205,7 +1212,7 @@ form p {
   
   a.try_it {
     width: inherit;
-    margin: 0 0 20px;
+    margin: 0 0 30px;
     padding: 5px 0;
     display: block;
     color: white;
@@ -1235,11 +1242,11 @@ form p {
   
   #resources {  
     h3 {
-      margin: 0;
+      margin: 0 0 10px;
       color: #666;
       font: {
         family: 'Liberation Sans', Sans-serif;
-        size: 14pt;
+        size: 12pt;
         weight: bold;
       }
       text-transform: uppercase;
@@ -1247,6 +1254,10 @@ form p {
     
     ul {
       list-style-image: url(/app/images/doc.png);
+    }
+    
+    li {
+      margin-bottom: 5px;
     }
     
     a {
@@ -1258,6 +1269,7 @@ form p {
     a.more {
       display: block;
       font: {
+        size: 11pt;
         weight: bold;
       }
       text-align: right;
@@ -1270,7 +1282,7 @@ form p {
       display: block;
       color: white;
       text-decoration: none;
-      margin: 20px 0;
+      margin: 30px 0;
       padding: 5px 10px;
       
       h3 {
@@ -1301,6 +1313,84 @@ form p {
     
     .power & a {
       @include gradient_bg_horizontal(darken($power, 30%), $power, 100%);
+    }
+  }
+  
+  #platforms {
+    @extend #resources;
+    
+    h4 {
+      margin: 0;
+      color: black;
+      font: {
+        family: 'Liberation Sans', Sans-serif;
+        weight: bold;
+        size: 12pt;
+      }
+    }
+    
+    ul {
+      list-style-type: none;
+      list-style-image: none;
+    }
+    
+    li {
+      margin-left: 0;
+      font-size: 11pt;
+    }
+  }
+  
+  #top_video {
+    @extend #resources;
+    margin-bottom: 30px;
+    
+    h4, .author {
+      margin: 0;
+      color: black;
+      font: {
+        family: 'Liberation Sans', Sans-serif;
+        weight: bold;
+        size: 12pt;
+      }
+    }
+    
+    h4 {
+      margin-top: 10px;
+    }
+    
+    p {
+      margin-bottom: 5px;
+    }
+    
+    a.more {
+      text-align: left;
+    }
+  }
+  
+  .sidebar-promo {
+    @include gradient_bg_horizontal(#7f7f7f, #5b5b5b, 100%);
+    display: block;
+    width: inherit;
+    margin: 0 0 30px;
+    padding: 15px 0;
+    border-bottom: 6px solid $rh_red;
+    
+    h3 {
+      margin: 0 0 0 15px;
+      color: white;
+      font: {
+        size: 18pt;
+        family: Overpass;
+      }
+      text-transform: uppercase;
+    }
+    p {
+      margin: 0 0 0 15px;
+      color: white;
+      font: {
+        family: Overpass;
+        size: 12pt;
+      }
     }
   }
 }

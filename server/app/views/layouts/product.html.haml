@@ -45,7 +45,7 @@
          :class => params[:action] + ' grid_6' }
       
       /Try it button
-      %a.try_it(href="#") Try it now!
+      %a.try_it{:href => 'user/new/' + params[:action]} Try it now!
       
       /Resource links
       #resources
