@@ -1,16 +1,14 @@
-#pageheader.container_24.express
-  #title.grid_14
-    %h2 OpenShift <em>Express</em>
-    %p The Internal Beta...
-
-  #title_accent.grid_10
-
-  .clear
+- if @product == 'openshift'
+  - subtitle = 'Register for an account'
+- else
+  - subtitle = 'Register for access to ' + @product
+    
+=render 'shared/pageheader', :product => @product, :title => 'Try ' + @product.capitalize, :subtitle => subtitle
 
 #page.container_24
 
   #registration.prefix_1.grid_12.suffix_1
-    %h3 Register for access to Express
+    %h3 Register for access to #{@product.capitalize}
     
     - @user.errors.each do |key, value|
       - if key == :base || key == :captcha

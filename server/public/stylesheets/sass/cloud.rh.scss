@@ -343,6 +343,7 @@ form {
   position: relative;
   
   #title_accent {
+    background: url(/app/images/openshift_title_accent.png) no-repeat right bottom;
     height: 109px;
     position: absolute;
     bottom: 0;
@@ -354,7 +355,7 @@ form {
     @include gradient_bg(darken($express, 20%), $express, 100%);
     
     #title_accent {
-      background: url(/app/images/express_title_accent.png) no-repeat right bottom;
+      background-image: url(/app/images/express_title_accent.png);
       margin-right: 10px;
     }
   }
@@ -363,7 +364,7 @@ form {
    @include gradient_bg(darken($flex, 20%), $flex, 100%);
    
     #title_accent {
-      background: url(/app/images/flex_title_accent.png) no-repeat right bottom;
+      background-image: url(/app/images/flex_title_accent.png);
     }
   }
   
@@ -371,7 +372,7 @@ form {
    @include gradient_bg(darken($power, 20%), $power, 100%);
    
     #title_accent {
-      background: url(/app/images/power_title_accent.png) no-repeat right bottom;
+      background-image: url(/app/images/power_title_accent.png);
     }
   }
   
