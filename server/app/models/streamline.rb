@@ -89,10 +89,10 @@ module Streamline
   # Request access to a cloud solution
   #
   def request_access(solution, amz_acct="")
-    if has_requested?(solution)
+    if false and has_requested?(solution)
       Rails.logger.warn("User already requested access")
       errors.add(:base, I18n.t(:already_requested_access, :scope => :streamline))
-    elsif has_access?(solution)
+    elsif false and has_access?(solution)
       Rails.logger.warn("User already granted access")
       errors.add(:base, I18n.t(:already_granted_access, :scope => :streamline))
     else
@@ -100,15 +100,8 @@ module Streamline
                      'amazonAccount' => amz_acct}
       # Make the request for access
       http_post(@@request_access_url, access_args, false) do |json|
-        if json['username'] && json['roles']
-          roles = json['roles']
-          if roles.index(CloudAccess.req_role(solution))
-            errors.add(:base, I18n.t(:already_requested_access, :scope => :streamline))
-          elsif roles.index(CloudAccess.auth_role(solution))
-            errors.add(:base, I18n.t(:already_granted_access, :scope => :streamline))
-          else
-            # success
-          end
+        if json['solution']
+          # success
         else
           if errors.length == 0
             errors.add(:base, I18n.t(:unknown))
