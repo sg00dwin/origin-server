@@ -10,7 +10,7 @@ class Access::ExpressRequestController < ApplicationController
       @access_express = Access::ExpressRequest.new
     else
       Rails.logger.debug "User is not logged in - rerouting to login / register"
-      session[:workflow] = access_express_requests_path
+      session[:workflow] = new_access_express_requests_path
       redirect_to login_path, :notice => "You'll need to login / register before asking for access"
     end
   end
