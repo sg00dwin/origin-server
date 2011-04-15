@@ -1,14 +1,43 @@
-#pageheader.power.container_24
-  #title_wrapper
-    #title.grid_14
-      %h2 Power
-      %h4#subtitle Customized App Deployments for the Cloud
+= render 'shared/pageheader', :product => 'power', :title => 'Power', :subtitle => 'Customized App Deployments for the Cloud'
 
-    #title_accent.grid_10
-        
-    .clear
-  
 #page.container_24
   
-  
-  
+  #main_content.grid_22
+    %h2 What is Power?
+    
+    %p 
+      Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diamvoluptua. 
+    
+    %p
+      Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diamvoluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diamvoluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diamvoluptua.
+      
+    %h4 What kind of applications can you deploy?
+    
+    %table#applications_table
+      %tr
+        %td.product-name.express
+          Express
+        %td.application-description
+          Written to web frameworks using Ruby, PHP, Python; have web front-end
+      
+      %tr
+        %td.product-name.flex
+          Flex
+        %td.application-description
+          Written to web frameworks using Ruby, PHP, Python; have web front-end
+      
+      %tr
+        %td.product-name.power
+          Power
+        %td.application-description
+          Written to Linux (Using C or binary components)l do not need web front-end
+    
+    %h4 Preview Power
+    
+    %p
+      Power is still under development, but you can preview our on-premise and hybrid cloud solution system at:
+      
+    = link_to 'http://redhat.com/cloud', 'http://redhat.com/cloud',  :class => 'cloud-link'
+    
+    .clear
+  .clear

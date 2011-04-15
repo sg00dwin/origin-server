@@ -89,10 +89,10 @@ module Streamline
   # Request access to a cloud solution
   #
   def request_access(solution, amz_acct="")
-    if false and has_requested?(solution)
+    if has_requested?(solution)
       Rails.logger.warn("User already requested access")
       errors.add(:base, I18n.t(:already_requested_access, :scope => :streamline))
-    elsif false and has_access?(solution)
+    elsif has_access?(solution)
       Rails.logger.warn("User already granted access")
       errors.add(:base, I18n.t(:already_granted_access, :scope => :streamline))
     else
@@ -183,7 +183,9 @@ module Streamline
 
   def log_error(msg)
     Rails.logger.error msg
-    #Libra.client_debug msg
+    if defined? Libra
+      Libra.client_debug msg
+    end
   end
 
   #

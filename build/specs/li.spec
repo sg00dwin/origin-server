@@ -61,6 +61,7 @@ Provides the common dependencies for the libra server and nodes
 %package node
 Summary: Multi-tenant cloud management system node tools
 Group: Network/Daemons
+Requires: quota
 Requires: li-common
 Requires: mcollective
 Requires: rubygem-parseconfig

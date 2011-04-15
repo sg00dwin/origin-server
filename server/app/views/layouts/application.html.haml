@@ -31,9 +31,7 @@
     #horrible_wrapper
       #head.container_24
         #logo.grid_6.alpha
-          %a(href="home")
-            = image_tag "/app/images/logo-blue.png",
-                        :alt => "OpenShift"
+          = link_to image_tag("/app/images/logo-blue.png", :alt => "OpenShift"), home_url
 
         #header_right.grid_18.omega
           - if session[:login]
@@ -58,11 +56,11 @@
             %li
               %a(href="#") About OpenShift
             %li
-              %a.express(href="express") Express
+              = link_to 'Express', express_url, :class => 'express'
             %li
-              %a.flex(href="flex") Flex
+              = link_to 'Flex', flex_url, :class => 'flex'
             %li
-              %a.power(href="power") Power
+              = link_to 'Power', power_url, :class => 'power'
             %li
               %a(href="#") Community
             %li
@@ -103,11 +101,11 @@
           %h5 Solutions
           %ul
             %li
-              %a.express(href="express") Express
+              = link_to 'Express', express_url, :class => 'express'
             %li
-              %a.flex(href="flex") Flex
+              = link_to 'Flex', flex_url, :class => 'flex'
             %li
-              %a.power(href="power") Power
+              = link_to 'Power', power_url, :class => 'power'
 
         .prefix_1.grid_3
           %h5 Resources

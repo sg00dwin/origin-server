@@ -3,7 +3,7 @@ require 'pp'
 class LoginController < ApplicationController
 
   def show
-    @redirectUrl = "https://#{Rails.configuration.site_domain}/app"
+    @redirectUrl = "https://#{Rails.configuration.site_domain}/app/getting_started"
     @errorUrl = "https://#{Rails.configuration.site_domain}/app/login/error"
     Rails.logger.debug "Session workflow in LoginController#index: #{session[:workflow]}"
     render :index
@@ -13,7 +13,7 @@ class LoginController < ApplicationController
     #TODO - better error handling
     @user = WebUser.new
     @user.errors[:error] << "- Invalid username or password"
-    render :index
+    show
   end
 
   def create

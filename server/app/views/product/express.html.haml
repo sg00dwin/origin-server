@@ -4,9 +4,8 @@
   TODO: at some point, we should be using partials for some of this content
 
 -# Express title
-- content_for :title do
-  %h2 Express
-  %h4.subtitle Free and Easy Cloud Depolyments
+- content_for :pageheader do
+  = render 'shared/pageheader', :product => 'express', :title => 'Express', :subtitle => 'Free and Easy Cloud Deployments'
   
 -# About Express
 - content_for :about do
@@ -192,6 +191,7 @@
                 :alt => "Today's top video"
   %h4 Video Title
   %p.video-author.author
+    Author, Author title
   %p.video-description
     Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumyeirmod tempor invidunt ut.
   

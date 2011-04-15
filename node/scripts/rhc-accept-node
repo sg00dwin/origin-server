@@ -101,9 +101,20 @@ function check_selinux() {
     SELINUX=`getenforce`
     if [ "$SELINUX"  != "Enforcing" ]
     then
-	echo "FAIL: SELinux is not enabled" >&2
+	echo "FAIL: selinux is not enabled" >&2
 	STATUS=$(($STATUS + 1))
     else
+
+    #
+    # check selinux libra policy is loaded
+    #
+	verbose checking selinux libra policy
+	POLICY=`semodule -l | grep libra`
+	if [ -z "$POLICY" ]
+	then
+	    echo "FAIL: selinux libra policy is not loaded" >&2
+	    STATUS=$(($STATUS + 1))
+        fi  
     #
     # Check selinux booleans
     #
