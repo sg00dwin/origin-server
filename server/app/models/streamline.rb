@@ -183,7 +183,7 @@ module Streamline
 
   def log_error(msg)
     Rails.logger.error msg
-    if Libra
+    if defined? Libra
       Libra.client_debug msg
     end
   end
