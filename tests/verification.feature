@@ -70,7 +70,7 @@ Feature: Verification Tests
       | /                    |    https   |
       | /app                 |    https   |
       | /app/getting_started |    https   |
-      | /app/users           |    https   |
+      | /app/user/new        |    https   |
     When they are accessed
     Then no errors should be thrown
 
