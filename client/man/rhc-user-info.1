@@ -1,0 +1,58 @@
+.\" Process this file with
+.\" groff -man -Tascii rhc-user-info.1
+.\"
+.TH RHC_USER_INFO 1 "JANUARY 2011" Linux "User Manuals"
+.SH NAME
+rhc-user-info \- Control an existing rhcloud.com application
+.SH SYNOPSIS
+.B rhc-user-info [-p
+.I password
+.B ] [-a] [-i] [-d] [-h]
+.B -l
+.I rhlogin
+.SH DESCRIPTION
+.B rhc-user-info
+displays information about a user on the rhcloud.com system.
+.SH OPTIONS
+.IP "-l|--rhlogin login"
+Red Hat login.  Alphanumeric
+.IP "-p|--password password"
+RHLogin password.
+.IP "-a|--apps"
+List applications
+.IP "-i|--info"
+Show user information
+.IP -d|--debug
+Enable debugging / verbose output
+.IP -h|--help
+Display help menu
+.SH FILES
+.I /etc/openshift/express.conf
+.RS
+The system wide configuration file. See
+.BR express.conf (5)
+for further details
+.RE
+.I ./express.conf
+.RS
+Local configuration file. See
+.BR express.conf (5)
+for further details.
+.RE
+.I ~/.openshift/express.conf
+.RS
+Per user configuration file. See
+.BR express.conf (5)
+for further details.
+.RE
+.SH BUGS
+Please contact the Red Hat Libra team.
+TODO: ADD EXTERNAL BUG TRACKER OR LIBRA TEAM CONTACT EMAIL
+.SH AUTHOR
+Mike McGrath <mmcgrath@redhat.com>, Jim Jagielski <jimjag@redhat.com>
+.SH "SEE ALSO"
+.BR rhc-create-user (1),
+.BR rhc-ctl-app (1),
+.BR rhc-snapshot(1),
+.BR rhc-create-domain(1),
+.BR express.conf (5)
