@@ -555,6 +555,11 @@ form ul, form ol, form li {
     font-size: 22pt;
     font-weight: normal;
     color: #4d4d4d; }
+  .product #page h4 {
+    color: #666;
+    font-family: 'Liberation Sans', Sans-serif;
+    font-size: 13pt;
+    font-weight: bold; }
 
 #registration input {
   width: 200px;
@@ -848,9 +853,11 @@ form p {
     color: black; }
   #product_videos img, #product_community img {
     float: right; }
-  #product_videos .meta p, #product_community .meta p {
-    color: #666;
-    margin: 0; }
+  #product_videos .meta, #product_community .meta {
+    font-size: 11pt; }
+    #product_videos .meta p, #product_community .meta p {
+      color: #666;
+      margin: 0; }
   #product_videos a.more, #product_community a.more {
     display: block;
     color: #4e9fdd;
@@ -861,11 +868,9 @@ form p {
 
 #product_community .post {
   padding-left: 20px; }
-#product_community .meta {
-  font-size: 12pt; }
-  #product_community .meta .author {
-    font-size: 12pt;
-    color: black; }
+#product_community .meta .author {
+  font-size: 12pt;
+  color: black; }
 
 #supplemental_content a.try_it {
   width: inherit;
@@ -1032,6 +1037,36 @@ form p {
     color: white;
     font-family: Overpass;
     font-size: 12pt; }
+
+#applications_table {
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 5px solid #ececec; }
+  #applications_table td {
+    padding: 5px 10px;
+    border: 5px solid #ececec; }
+  #applications_table td.product-name {
+    color: white;
+    font-family: Overpass;
+    font-size: 18pt;
+    font-weight: normal; }
+    #applications_table td.product-name.express {
+      background: #8cb2d9; }
+    #applications_table td.product-name.flex {
+      background: #dab5e4; }
+    #applications_table td.product-name.power {
+      background: #a5d98c; }
+  #applications_table td.application-description {
+    background: white;
+    color: black;
+    font-size: 11pt;
+    vertical-align: middle; }
+
+.product #page a.cloud-link {
+  color: #4e9fdd;
+  font-size: 20pt;
+  font-family: Overpass;
+  text-decoration: none; }
 
 #footer {
   background: black;

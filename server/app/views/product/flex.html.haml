@@ -4,9 +4,8 @@
   TODO: at some point, we should be using partials for some of this content
 
 -# Flex title
-- content_for :title do
-  %h2 Flex
-  %h4.subtitle Free, Auto-scaling Platform as a Service
+- content_for :pageheader do
+  = render 'shared/pageheader', :product => 'flex', :title => 'Flex', :subtitle => 'Free, Auto-scaling Platform as a Service'
   
 -# About Flex
 - content_for :about do

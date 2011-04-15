@@ -17,12 +17,12 @@ RedHatCloud::Application.routes.draw do
       match 'broker/cartridge' => 'broker#cartridge_post', :via => [:post], :constraints => { :protocol => "https" }
       match 'broker/domain' => 'broker#domain_post', :via => [:post], :constraints => { :protocol => "https" }
       match 'broker/userinfo' => 'broker#user_info_post', :via => [:post], :constraints => { :protocol => "https" }
-      match 'express' => 'product#express'
-      match 'flex' => 'product#flex'
-      match 'power' => 'product#power'
+      match 'express' => 'product#express', :as => 'express'
+      match 'flex' => 'product#flex', :as => 'flex'
+      match 'power' => 'product#power', :as => 'power'
   
       #Alias for home page so we can link to it
-      match 'home' => 'home#index'
+      #match 'home' => 'home#index'
   
       # Sample of named route:
       #   match 'products/:id/purchase' => 'catalog#purchase', :as => :purchase
@@ -97,7 +97,7 @@ RedHatCloud::Application.routes.draw do
   
       # You can have the root of your site routed with "root"getting_started
       # just remember to delete public/index.html.
-      root :to => "home#index"
+      root :to => "home#index", :as => 'home' 
   
       # See how all your routes lay out with "rake routes"
   

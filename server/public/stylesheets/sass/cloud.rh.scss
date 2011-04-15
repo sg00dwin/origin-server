@@ -942,6 +942,15 @@ form {
     }
     color: #4d4d4d;
   }
+  
+  .product & h4 {
+    color: #666;
+    font: {
+      family: 'Liberation Sans', Sans-serif;
+      size: 13pt;
+      weight: bold;
+    }
+  }
 }
 
 #registration input {
@@ -1172,6 +1181,7 @@ form p {
   }
   
   .meta {
+    font-size: 11pt;
     p{
       color: #666;
       margin: 0;
@@ -1200,7 +1210,6 @@ form p {
   }
   
   .meta {
-    font-size: 12pt;
     .author {
       font-size: 12pt;
       color: black;
@@ -1393,6 +1402,47 @@ form p {
       }
     }
   }
+}
+
+#applications_table {
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 5px solid #ececec;
+  
+  td { 
+    padding: 5px 10px; 
+    border: 5px solid #ececec;
+  }
+  
+  td.product-name {
+    color: white;
+    font: {
+      family: Overpass;
+      size: 18pt;
+      weight: normal;
+    }
+    
+    &.express { background: lighten($express, 10%) }
+    &.flex { background: lighten($flex, 10%) }
+    &.power { background: lighten($power, 10%) }
+    
+  }
+  
+  td.application-description {
+    background: white;
+    color: black;
+    font-size: 11pt;
+    vertical-align: middle;
+  }
+}
+
+.product #page a.cloud-link {
+  color: $bright_blue;
+  font: {
+    size: 20pt;
+    family: Overpass;
+  }
+  text-decoration: none;
 }
 
 #footer {

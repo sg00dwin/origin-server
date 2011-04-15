@@ -1,13 +1,5 @@
 - content_for :sub_layout do
-  %div{:id => 'pageheader', 
-       :class => params[:action] + ' container_24'}
-    #title_wrapper
-      #title.grid_14
-        = yield :title
-
-      #title_accent.grid_10
-          
-      .clear
+  = yield :pageheader
 
   #page.container_24
     / Main page content

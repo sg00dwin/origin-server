@@ -10,7 +10,7 @@ class Access::FlexRequestControllerTest < ActionController::TestCase
     session[:login] = 'tester'
     form = get_post_form
     form[:ec2_account_number] = '123-123-123'
-    post(:create, {:access_flex => form})
+    post(:create, {:access_flex_request => form})
     assert assigns(:access_flex)
     assert assigns(:access_flex).errors[:ec2_account_number].length > 0
     assert_response :success
@@ -20,7 +20,7 @@ class Access::FlexRequestControllerTest < ActionController::TestCase
     session[:login] = 'tester'
     form = get_post_form
     form[:terms_accepted] = nil
-    post(:create, {:access_flex => form})
+    post(:create, {:access_flex_request => form})
     assert assigns(:access_flex)
     assert assigns(:access_flex).errors[:terms_accepted].length > 0
     assert_response :success
@@ -29,7 +29,7 @@ class Access::FlexRequestControllerTest < ActionController::TestCase
   test "should get success on post" do
     session[:login] = 'tester'
     form = get_post_form
-    post(:create, {:access_flex => form})
+    post(:create, {:access_flex_request => form})
     assert_response :success
   end
   
