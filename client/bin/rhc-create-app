@@ -42,7 +42,7 @@ Create a new app libra project.
 
   -a|--app   application     Application name  (alphanumeric - max #{RHC::Maxdlen} chars) (required)
   -t|--type  type            Type of app to create (#{type_keys}) (required)
-  -l|--rhlogin  rhlogin      RHCloud rhlogin  (alphanumeric) (#{rhlogin})
+  -l|--rhlogin  rhlogin      RHCloud rhlogin (#{rhlogin})
   -p|--password  password    RHLogin password  (optional, will prompt)
   -r|--repo  path            Git Repo path (defaults to ./$app_name)
   -n|--nogit                 Only create remote space, don't pull it locally

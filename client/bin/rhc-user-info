@@ -41,7 +41,7 @@ def p_usage
 Usage: rhc-user-info
 Display information about a user
 
-  -l|--rhlogin   rhlogin    RHCloud rhlogin (alphanumeric) (#{rhlogin})
+  -l|--rhlogin   rhlogin    RHCloud rhlogin (#{rhlogin})
   -p|--password  password   RHLogin password (optional, will prompt)
   -a|--apps                 List applications for rhlogin
   -i|--info                 Show user info

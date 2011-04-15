@@ -36,7 +36,7 @@ Bind a registered rhcloud user to a domain in rhcloud.
         ~/.ssh/libra_id_rsa.pub key, then re-run with --alter
 
   -n|--namespace   namespace   Libra namespace (alphanumeric - max #{RHC::Maxdlen} chars) (required)
-  -l|--rhlogin     rhlogin     Red Hat login (often email) (required)
+  -l|--rhlogin     rhlogin     Red Hat login (required)
   -p|--password    password    RHLogin password (optional, will prompt)
   -a|--alter                   Alter existing namespace
   -d|--debug                   Print Debug info
