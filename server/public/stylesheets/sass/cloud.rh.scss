@@ -1001,6 +1001,11 @@ label {
   @include form_label;
 }
 
+#captcha label {
+  width: 165px;
+  margin-right: -8px;
+}
+
 .recaptcha_input_area label {
 	line-height: inherit;
 }

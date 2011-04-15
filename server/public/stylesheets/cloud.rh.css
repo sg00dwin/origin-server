@@ -654,6 +654,10 @@ label {
     size: 10pt;
     weight: bold; }
 
+#captcha label {
+  width: 165px;
+  margin-right: -5px; }
+
 .recaptcha_input_area label {
   line-height: inherit; }
 
