@@ -24,11 +24,11 @@
 - content_for :tabs do
   %ul#tab_navigation
     %li
-      %a(href="#step_1") Step 1
+      %a.step-one(href="#step_1") Step 1
     %li
-      %a(href="#step_2") Step 2
+      %a.step-two(href="#step_2") Step 2
     %li
-      %a(href="#step_3") Step 3
+      %a.step-three(href="#step_3") Step 3
   
   #step_1.tab
     %h3 Step One Title
@@ -82,10 +82,10 @@
 - content_for :videos do
   .product-video 
     %h3 Video Title
-    %p.video-author
+    %p.video-author.author
       Author, Author description
     
-    .video-thumb
+    .video-thumb.thumb
       %a(href="#")
         %img(src="http://placekitten.com/g/150/100"
              title="Replace with actual video thumbnail"
@@ -94,7 +94,7 @@
     %p.video-description
       Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diamvoluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
     
-    .video-meta
+    .video-meta.meta
       %p.video-length
         3 min, 27 seconds
       %p.video-postdate

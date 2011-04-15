@@ -24,6 +24,6 @@ $j(function(){
   );
   
 // Tabs on product pages
-  $j('#tab_navigation').tabs('.tab');
+  $j('#tab_navigation').tabs('.tab', {'tabs':'li'});
 
 });

@@ -56,6 +56,48 @@ $list_elements: ul, ol, li;
     $first_color,
     $last_color $last_stop
   );
+  zoom: 1;
+}
+
+//Cross-browser horizontal linear gradient
+@mixin gradient_bg_horizontal($first_color, $last_color, $last_stop) {
+  background: $first_color;
+  /* Mozilla */
+  background: -moz-linear-gradient(
+    left,
+    $first_color,
+    $last_color $last_stop
+  );
+  /* Old webkit */
+  background: -webkit-gradient(
+    linear,
+    left center,
+    from($first_color),
+    color-stop($last_stop, $last_color)
+  );
+  /* New webkit */
+  background: -webkit-linear-gradient(
+    left,
+    $first_color,
+    $last_color $last_stop
+  );
+  /* Opera */
+  background: -o-linear-gradient(
+    left,
+    $first_color,
+    $last_color $last_stop
+  );
+  /* IE <= 7 */
+  filter: progid:DXImageTransform.Microsoft.gradient(GradientType=1,startColorStr=$first_color, endColorStr=$last_color);
+  /* IE 8 */
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=1,startColorstr=$first_color, endColorstr=$last_color)";
+  /* Spec */
+  background: linear-gradient(
+    left,
+    $first_color,
+    $last_color $last_stop
+  );
+  zoom: 1;
 }
 
 //Cross-browser border radius
@@ -63,6 +105,17 @@ $list_elements: ul, ol, li;
   -moz-border-radius: #{$radius}px;
   -webkit-border-radius: #{$radius}px;
   border-radius: #{$radius}px;
+}
+
+//Tab number
+@mixin tab_number($number, $border_color) {
+  content: $number;
+  background: white;
+  width: 12px;
+  height: 12px;
+  color: darken($border_color, 20%);
+  border: 2px solid $border_color;
+  @include border_radius(6);
 }
 
 @mixin form_label {
@@ -284,17 +337,50 @@ form {
 
 #pageheader {
   @include gradient_bg($text_color, lighten($text_color, 50%), 100%);
+  position: relative;
+  
+  #title_accent {
+    height: 109px;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    margin: 0;
+  }
   
   &.express {
     @include gradient_bg(darken($express, 20%), $express, 100%);
+    
+    #title_accent {
+      background: url(/app/images/express_title_accent.png) no-repeat right bottom;
+      margin-right: 10px;
+    }
   }
   
   &.flex {
    @include gradient_bg(darken($flex, 20%), $flex, 100%);
+   
+    #title_accent {
+      background: url(/app/images/flex_title_accent.png) no-repeat right bottom;
+    }
   }
   
   &.power {
    @include gradient_bg(darken($power, 20%), $power, 100%);
+   
+    #title_accent {
+      background: url(/app/images/power_title_accent.png) no-repeat right bottom;
+    }
+  }
+  
+  #{$header_elements} {
+    font: {
+      family: Overpass;
+      weight: normal;
+    }
+  }
+  
+  #title_wrapper {
+    background: url(/app/images/bubbles.png);
   }
 }
 
@@ -305,7 +391,14 @@ form {
     }
     font: {
       size: 38pt;
-      weight: normal;
+    }
+    text-transform: uppercase;
+  }
+  
+  h4 {
+    margin-left: 10px;
+    font {
+      size: 16pt;
     }
     text-transform: uppercase;
   }
@@ -810,12 +903,8 @@ form {
   #{$text_elements}, #{$header_elements}, #{$list_elements} {
     color: $text_color;
   }
-  
-  #{$header_elements} {
-    font_family: Overpass;
-  }
-  
-  h2 {
+
+  .home.index & h2 {
     margin: 0;
     color: #222;
     font: {
@@ -823,7 +912,7 @@ form {
     }
   }
   
-  h3 {
+  .home.index & h3 {
     font: {
       size: 22pt;
     }
@@ -836,6 +925,19 @@ form {
       size: 9pt;
     }
     text-transform: uppercase;
+  }
+  
+  .product & #{$text_elements} {
+    color: black;
+  }
+  
+  .product & h2 {
+    font: {
+      family: Overpass;
+      size: 22pt;
+      weight: normal;
+    }
+    color: #4d4d4d;
   }
 }
 
@@ -956,6 +1058,250 @@ form p {
   color: #bbb !important;
   border: {
     top: 1px solid #dedede;
+  }
+}
+
+#main_content {
+  padding-left: 30px;
+}
+
+#product_tabs {
+  ul#tab_navigation {
+    list-style-type: none;
+    margin-bottom: 0px;
+    li { 
+      @include gradient_bg(#ececec, darken(#ececec, 10%), 100%);
+      display: inline-block;
+      width: 150px;
+      padding: 2px 0;   
+      margin: 0 10px 0 0;
+    }
+    li.current {
+      @include gradient_bg($rh_red, darken($rh_red, 10%), 100%);
+      a {
+        color: white;
+      }
+      a.step-one {
+        background-position: 10px -25px;
+      }
+      a.step-two {
+        background-position: 10px -75px;
+      }
+      a.step-three {
+        background-position: 10px -125px;
+      }
+    }
+    a {
+      display: inline-block;
+      width: inherit;
+      height: 25px;
+      text-align: center;
+      font: {
+        family: Overpass;
+        size: 10pt;
+      }
+      line-height: 25px;
+      text: {
+        transform: uppercase;
+        decoration: none;
+      }
+    }
+    a.step-one {
+      background: url(/app/images/tab_numbers.png) no-repeat 10px 0;
+    }
+    a.step-two {
+      background: url(/app/images/tab_numbers.png) no-repeat 10px -50px;
+    }
+    a.step-three {
+      background: url(/app/images/tab_numbers.png) no-repeat 10px -100px;
+    }
+  }
+  
+  .tab {
+    background: #ececec;
+    padding: 20px;
+    margin-bottom: 20px;
+    img {
+      float: right;
+    }
+    h3, h4 {
+      font: {
+        family: 'Liberation Sans', Sans-serif;
+        weight: bold;
+      }
+    }
+    
+    h3 {
+      margin-bottom: 0px;
+      color: $text_color;
+      font-size: 16pt;
+    }
+    
+    h4 {
+      color: black;
+      font-size: 14pt;
+    }
+  }
+}
+
+#product_videos {
+  color: $text_color;
+  h3 {
+    margin: 20px 0 0;
+    font: {
+      family: 'Liberation Sans', Sans;
+      weight: bold;
+      size: 16pt
+    }
+    color: #666;
+  }
+  
+  .author {
+    font: {
+      weight: bold;
+      size: 14pt;
+    }
+    color: black;
+  }
+  
+  img {
+    float: right;
+  }
+  
+  .meta {
+    p{
+      color: #999;
+      margin: 0;
+    }
+  }
+  
+  a.more {
+    display: block;
+    color: $bright_blue;
+    font: {
+      weight: bold;
+      size: 14;
+    }
+    text: {
+      align: right;
+      decoration: none;
+    }      
+  }
+}
+
+#product_community {
+  @extend  #product_videos;
+  
+  .post {
+    padding-left: 20px;
+  }
+  
+  .meta .author {
+    color: black;
+  }
+}
+
+#supplemental_content {
+  
+  a.try_it {
+    width: inherit;
+    margin: 0 0 20px;
+    padding: 5px 0;
+    display: block;
+    color: white;
+    font: {
+      family: Overpass;
+      size: 24pt;
+    }
+    text: {
+      align: center;
+      transform: uppercase;
+      decoration: none;
+    }
+    box-shadow: 2px 2px 2px #999;
+  }
+  
+  &.express a.try_it {
+    background: darken($express, 30%);
+  }
+
+  &.flex a.try_it {
+    background: darken($flex, 30%);
+  }
+
+  &.power a.try_it {
+    background: darken($power, 30%);
+  }
+  
+  #resources {  
+    h3 {
+      margin: 0;
+      color: #666;
+      font: {
+        family: 'Liberation Sans', Sans-serif;
+        size: 14pt;
+        weight: bold;
+      }
+      text-transform: uppercase;
+    }
+    
+    ul {
+      list-style-image: url(/app/images/doc.png);
+    }
+    
+    a {
+      color: $bright_blue;
+      font-size: 12pt;
+      text-decoration: none;
+    }
+    
+    a.more {
+      display: block;
+      font: {
+        weight: bold;
+      }
+      text-align: right;
+    }
+  }
+  
+  #tour {
+    a {
+      width: inherit;
+      display: block;
+      color: white;
+      text-decoration: none;
+      margin: 20px 0;
+      padding: 5px 10px;
+      
+      h3 {
+        margin-bottom: 0;
+        color: white;
+        font: {
+          size: 18pt;
+          family: Overpass;
+        }
+        text-transform: uppercase;
+      }
+      p {
+        color: white;
+        font: {
+          family: Overpass;
+          size: 12pt;
+        }
+      }
+    }
+    
+    .express & a {
+      @include gradient_bg_horizontal(darken($express, 30%), $express, 100%);
+    }
+    
+    .flex & a {
+      @include gradient_bg_horizontal(darken($flex, 30%), $flex, 100%);
+    }
+    
+    .power & a {
+      @include gradient_bg_horizontal(darken($power, 30%), $power, 100%);
+    }
   }
 }
 
