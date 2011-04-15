@@ -1,19 +1,17 @@
 .\" Process this file with
-.\" groff -man -Tascii rhc-create-user.1
+.\" groff -man -Tascii rhc-create-domain.1
 .\"
-.TH CREATE_USER 1 "JANUARY 2011" Linux "User Manuals"
+.TH RHC_CREATE_DOMAIN 1 "JANUARY 2011" Linux "User Manuals"
 .SH NAME
 rhc-create-domain \- creates a new Libra domain namespace with a user
 .SH SYNOPSIS
-.B rhc-create-domain [-l
-.I rhlogin
-.B ]
-.B [-p
+.B rhc-create-domain [-p
 .I password
-.B ]
-.B [-n
+.B ] [-a] [-d] [-h]
+.B -l
+.I rhlogin
+.B -n
 .I namespace
-.B ] [-d] [-h]
 .SH DESCRIPTION
 .B rhc-create-domain
 create a new domain at rhcloud.com.  Once created
@@ -35,9 +33,9 @@ to control created applications.
 .IP "-n|--namespace namespace"
 Desired namespace to create.  Alphanumeric
 .IP "-l|--rhlogin login"
-Red Hat login (often email) to use
+Red Hat login
 .IP "-p|--password password"
-RHLogin password (often email)
+RHLogin password
 .IP "-a|--alter"
 Alter an existing user (change email or ssh key)
 .IP -d|--debug
@@ -65,9 +63,12 @@ for further details.
 .RE
 .SH BUGS
 Please contact the Red Hat Libra team.
+TODO: ADD EXTERNAL BUG TRACKER OR LIBRA TEAM CONTACT EMAIL
 .SH AUTHOR
-Mike McGrath <mmcgrath@redhat.com>
+Mike McGrath <mmcgrath@redhat.com>, Jim Jagielski <jimjag@redhat.com>
 .SH "SEE ALSO"
-.BR rhc-create-app (1),
+.BR rhc-create-user (1),
 .BR rhc-ctl-app (1),
-.BR express.conf (5),
+.BR rhc-snapshot(1),
+.BR rhc-user-info(1),
+.BR express.conf (5)
