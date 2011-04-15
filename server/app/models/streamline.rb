@@ -76,9 +76,11 @@ module Streamline
                      'termsAccepted' => 'true',
                      'confirmationUrl' => confirm_url}
 
-    http_post(@@register_url, register_args) do |json|
+    http_post(@@register_url, register_args, false) do |json|
       unless json['emailAddress']
-        errors.add(:base, I18n.t(:unknown))
+        if errors.length == 0
+          errors.add(:base, I18n.t(:unknown))
+        end
       end
     end
   end
@@ -87,14 +89,32 @@ module Streamline
   # Request access to a cloud solution
   #
   def request_access(solution, amz_acct="")
-    if has_requested?(solution) or has_access?(solution)
-      Rails.logger.warn("User #{@email_address} already requested access - ignoring")
+    if has_requested?(solution)
+      Rails.logger.warn("User already requested access")
+      errors.add(:base, I18n.t(:already_requested_access, :scope => :streamline))
+    elsif has_access?(solution)
+      Rails.logger.warn("User already granted access")
+      errors.add(:base, I18n.t(:already_granted_access, :scope => :streamline))
     else
       access_args = {'solution' => solution,
-                     'amazon_account' => amz_acct}
-
+                     'amazonAccount' => amz_acct}
       # Make the request for access
-      http_post(@@request_access_url, access_args)
+      http_post(@@request_access_url, access_args, false) do |json|
+        if json['username'] && json['roles']
+          roles = json['roles']
+          if roles.index(CloudAccess.req_role(solution))
+            errors.add(:base, I18n.t(:already_requested_access, :scope => :streamline))
+          elsif roles.index(CloudAccess.auth_role(solution))
+            errors.add(:base, I18n.t(:already_granted_access, :scope => :streamline))
+          else
+            # success
+          end
+        else
+          if errors.length == 0
+            errors.add(:base, I18n.t(:unknown))
+          end
+        end
+      end
     end
   end
   
@@ -123,7 +143,7 @@ module Streamline
     @roles.index(CloudAccess.req_role(solution)) != nil
   end
 
-  def http_post(url, args={})
+  def http_post(url, args={}, raise_exception_on_error=true)
     begin
       req = Net::HTTP::Post.new(url.path)
       req.set_form_data(args)
@@ -151,18 +171,26 @@ module Streamline
       else
         log_error "Invalid HTTP response from streamline - #{res.code}"
         log_error "Response body:\n#{res.body}"
-        raise StreamlineException
+        if raise_exception_on_error
+          raise StreamlineException
+        else
+          errors.add(:base, I18n.t(:unknown))
+        end
       end
     rescue Exception => e
       log_error "Exception occurred while calling streamline - #{e.message}"
       Rails.logger.error e, e.backtrace
-      raise StreamlineException
+      if raise_exception_on_error
+        raise StreamlineException
+      else
+        errors.add(:base, I18n.t(:unknown))
+      end
     end
   end
 
   def log_error(msg)
     Rails.logger.error msg
-    Libra.client_debug msg
+    #Libra.client_debug msg
   end
 
   #

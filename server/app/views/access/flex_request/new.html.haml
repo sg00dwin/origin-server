@@ -11,6 +11,11 @@
 
   .prefix_1.grid_12.suffix_1#registration
     %h3 Request access to Flex
+    
+    - @access_flex.errors.each do |key, value|
+      - if key == :base
+        %div
+        %strong #{value}
 
     = semantic_form_for @access_flex do |form|
       = form.inputs do        

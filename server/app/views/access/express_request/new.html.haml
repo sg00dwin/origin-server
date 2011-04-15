@@ -11,6 +11,11 @@
 
   .prefix_1.grid_12.suffix_1#registration
     %h3 Request access to Express
+    
+    - @access_express.errors.each do |key, value|
+      - if key == :base
+        %div
+        %strong #{value}
 
     = semantic_form_for @access_express do |form|
       = form.inputs do

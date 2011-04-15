@@ -15,7 +15,8 @@ module Libra
         `curl -s -O /dev/null -X POST -u '#{Libra.c[:nurture_username]}:#{Libra.c[:nurture_password]}' '#{Libra.c[:nurture_url]}applications' \
     -d 'application[action]=#{action}' \
     -d 'application[user_name]=#{rhlogin}' \
-    -d 'application[guid]=#{uuid}' \
+    -d 'application[guid]=#{app_name}-#{user_namespace}' \
+    -d 'application[uuid]=#{uuid}' \
     -d 'application[name]=#{app_name}' \
     -d 'application[version]=na' \
     -d 'application[components]=#{type}' \

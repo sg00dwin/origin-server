@@ -2,8 +2,8 @@
 %define gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 
 Name: li
-Version: 0.63.1
-Release: 2%{?dist}
+Version: 0.63.5
+Release: 1%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -35,6 +35,7 @@ Requires: li-cartridge-php-5.3.2
 Requires: li-cartridge-wsgi-3.2.1
 Requires: li-cartridge-rack-1.1.0
 Requires: qpid-cpp-server
+Requires: qpid-cpp-server-ssl
 Requires: puppet
 Requires: rubygem-cucumber
 Requires: rubygem-mocha
@@ -50,6 +51,7 @@ Summary: Common dependencies of the libra server and node
 Group: Network/Daemons
 Requires: mcollective-client
 Requires: qpid-cpp-client
+Requires: qpid-cpp-client-ssl
 Requires: ruby-qmf
 BuildArch: noarch
 
@@ -64,6 +66,7 @@ Requires: mcollective
 Requires: rubygem-parseconfig
 Requires: libcgroup
 Requires: git
+Requires: selinux-policy-targeted >= 3.7.19
 Requires(post): /usr/sbin/semodule
 Requires(post): /usr/sbin/semanage
 Requires(postun): /usr/sbin/semodule
@@ -207,8 +210,9 @@ rm -rf $RPM_BUILD_ROOT
 #service ntpd start
 #chkconfig ntpd on
 
-# qpid
-/bin/cp -f /etc/libra/devenv/qpidd.conf /etc/qpidd.conf
+# qpid - configuring SSL
+/bin/cp -rf /etc/libra/devenv/qpid/etc/* /etc/
+/sbin/restorecon -R /etc/qpid/pki
 service qpidd restart
 chkconfig qpidd on
 
@@ -425,6 +429,12 @@ chmod 0666 %{_localstatedir}/www/libra/log/production.log
 %{_libexecdir}/li/cartridges/jbossas-7.0.0/
 
 %changelog
+* Thu Apr 14 2011 Matt Hicks <mhicks@redhat.com> 0.63.5-1
+- SELinux policy fix and qpid over SSL
+
+* Thu Apr 14 2011 Mike McGrath <mmcgrath@redhat.com> 0.63.4-1
+- New site release
+
 * Tue Apr 10 2011 Mike McGrath <mmcgrath@redhat.com> 0.63.1-2
 - Added jbossas-7.0.0
 
