@@ -3,7 +3,7 @@
 
 Name: li
 Version: 0.63.5
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -61,6 +61,7 @@ Provides the common dependencies for the libra server and nodes
 %package node
 Summary: Multi-tenant cloud management system node tools
 Group: Network/Daemons
+Requires: quota
 Requires: li-common
 Requires: mcollective
 Requires: rubygem-parseconfig
@@ -125,6 +126,7 @@ Requires: php-pdo
 Requires: php-gd
 Requires: php-xml
 Requires: php-mysql
+Requires: php-pgsql
 BuildArch: noarch
 
 %description cartridge-php-5.3.2
@@ -161,6 +163,8 @@ Requires: httpd
 Requires: mod_bw
 Requires: python
 Requires: mod_wsgi = 3.2
+Requires: MySQL-python
+Requires: python-psycopg2
 BuildArch: noarch
 
 %description cartridge-wsgi-3.2.1
@@ -429,6 +433,9 @@ chmod 0666 %{_localstatedir}/www/libra/log/production.log
 %{_libexecdir}/li/cartridges/jbossas-7.0.0/
 
 %changelog
+* Fri Apr 15 2011 Mike McGrath <mmcgrath@redhat.com> 0.63.5-2
+- Added postgres deps
+
 * Thu Apr 14 2011 Matt Hicks <mhicks@redhat.com> 0.63.5-1
 - SELinux policy fix and qpid over SSL
 

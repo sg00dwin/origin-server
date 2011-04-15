@@ -9,7 +9,7 @@ class Access::ExpressRequestControllerTest < ActionController::TestCase
   test "should get success on post" do
     session[:login] = 'tester'
     form = get_post_form
-    post(:create, {:access_express => form})
+    post(:create, {:access_express_request => form})
     assert assigns(:access_express)
     assert_response :success
   end
@@ -18,7 +18,7 @@ class Access::ExpressRequestControllerTest < ActionController::TestCase
     session[:login] = 'tester'
     form = get_post_form
     form[:terms_accepted] = nil
-    post(:create, {:access_express => form})
+    post(:create, {:access_express_request => form})
     assert assigns(:access_express)
     assert assigns(:access_express).errors[:terms_accepted].length > 0
     assert_response :success
