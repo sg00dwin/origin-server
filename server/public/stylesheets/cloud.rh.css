@@ -133,6 +133,7 @@ form ul, form ol, form li {
   zoom: 1;
   position: relative; }
   #pageheader #title_accent {
+    background: url(/app/images/openshift_title_accent.png) no-repeat right bottom;
     height: 109px;
     position: absolute;
     bottom: 0;
@@ -156,7 +157,7 @@ form ul, form ol, form li {
     background: linear-gradient(top, #336699, #6699cc 100%);
     zoom: 1; }
     #pageheader.express #title_accent {
-      background: url(/app/images/express_title_accent.png) no-repeat right bottom;
+      background-image: url(/app/images/express_title_accent.png);
       margin-right: 10px; }
   #pageheader.flex {
     background: #a344bc;
@@ -176,7 +177,7 @@ form ul, form ol, form li {
     background: linear-gradient(top, #a344bc, #c88fd7 100%);
     zoom: 1; }
     #pageheader.flex #title_accent {
-      background: url(/app/images/flex_title_accent.png) no-repeat right bottom; }
+      background-image: url(/app/images/flex_title_accent.png); }
   #pageheader.power {
     background: #549933;
     /* Mozilla */
@@ -195,7 +196,7 @@ form ul, form ol, form li {
     background: linear-gradient(top, #549933, #87cc66 100%);
     zoom: 1; }
     #pageheader.power #title_accent {
-      background: url(/app/images/power_title_accent.png) no-repeat right bottom; }
+      background-image: url(/app/images/power_title_accent.png); }
   #pageheader h1, #pageheader h2, #pageheader h3, #pageheader h4, #pageheader h5, #pageheader h6 {
     font-family: Overpass;
     font-weight: normal; }

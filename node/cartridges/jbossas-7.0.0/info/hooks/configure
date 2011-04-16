@@ -331,9 +331,9 @@ fi
 #
 
 echo "Creating ${uuid}_${namespace}_${application}.conf..."
-cat <<EOF > "/etc/httpd/conf.d/${uuid}_${namespace}_${application}.conf"
+cat <<EOF > "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}.conf"
 <VirtualHost *:80>
-  ServerName ${application}.${namespace}.${libra_domain}
+  ServerName ${application}-${namespace}.${libra_domain}
   ServerAdmin mmcgrath@redhat.com
 
   ProxyPass / http://$IP:8080/
