@@ -131,7 +131,7 @@ function homedir {
 
 # Find the filesystem which holds a user's home directory
 function home_filesystem {
-    df ${libra_dir} | tail -1 | cut -d' ' -f1
+    df -P ${libra_dir} | tail -1 | cut -d' ' -f1
 }
 
 
@@ -336,15 +336,15 @@ function remove_pam_limits {
 #
 #function get_filesystem() {
 #    # $1=libra_dir
-#    df $1 | tail -1 | tr -s ' ' | cut -d' ' -f 1
+#    df -P $1 | tail -1 | tr -s ' ' | cut -d' ' -f 1
 #}
 
 function get_mountpoint() {
-    df $1 | tail -1 | tr -s ' ' | cut -d' ' -f 6 | sort -u
+    df -P $1 | tail -1 | tr -s ' ' | cut -d' ' -f 6 | sort -u
 }
 
 function get_mount_device() {
-    df $1 | tail -1 | tr -s ' ' | cut -d' ' -f 1 | sort -u
+    df -P $1 | tail -1 | tr -s ' ' | cut -d' ' -f 1 | sort -u
 }
 
 function get_mount_options() {
