@@ -160,7 +160,7 @@ class BrokerController < ApplicationController
       # Just return a 200 success
       render :json => generate_result_json(json_data) and return
     rescue Exception => e
-      render_internal_server_error(e, 'user_info_post') and return
+      render_internal_server_error(e, 'domain_post') and return
     end
   end
 end
