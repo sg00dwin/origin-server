@@ -88,7 +88,7 @@ namespace :install do
       # Apache vhost fix
       mkdir_p "#{HTTP_CONF_DIR}/libra/"
       chmod 0750, "#{HTTP_CONF_DIR}/libra/"
-      cp "conf/000000_default.conf", HTTP_CONF_DIR
+      cp "conf/000000_default.conf", HTTP_CONF_DIR unless File.exists? "#{HTTP_CONF_DIR}/000000_default.conf"
       chmod 0640, "#{HTTP_CONF_DIR}/000000_default.conf"
 
       # Cartridge installation
