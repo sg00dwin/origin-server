@@ -24,8 +24,7 @@
 #
 # 1) create a local user account: username, home directory
 # 2) enable login via SSH using RSA key: trap user
-# 3) place Libra service information: $HOME/etc/customer_info
-# 4) Place limits on user: number of processes
+# 3) Place limits on user: number of processes
 
 #
 #
@@ -131,7 +130,7 @@ function homedir {
 
 # Find the filesystem which holds a user's home directory
 function home_filesystem {
-    df ${libra_dir} | tail -1 | cut -d' ' -f1
+    df -P ${libra_dir} | tail -1 | cut -d' ' -f1
 }
 
 
@@ -181,35 +180,6 @@ function remove_user_account {
     USERNAME=$1
 
     ${NOOP} userdel -f -r ${USERNAME}
-}
-
-#
-# Configure Libra application information
-#
-# IN: username
-# IN: user home directory
-# IN: email
-function configure_user_account {
-    USERNAME=$1
-    EMAIL="$2"
-
-    USERHOME=`homedir $USERNAME`
-    USERETC=$USERHOME/etc
-
-    ${NOOP} mkdir -p $USERETC
-    if [ -z "${NOOP}" ]
-    then
-	${NOOP} cat <<EOF >${USERETC}/customer_info
-CUSTOMER_ID=\"${USERNAME}\"
-EMAIL=\"${EMAIL}\"
-EOF
-    else
-        echo "cat <<EOF > ${USERETC}/customer_info
-EOF"
-    fi
-
-    # Ensure the new directory is root protected
-    ${NOOP} chown -R root.root $USERETC
 }
 
 
@@ -336,15 +306,15 @@ function remove_pam_limits {
 #
 #function get_filesystem() {
 #    # $1=libra_dir
-#    df $1 | tail -1 | tr -s ' ' | cut -d' ' -f 1
+#    df -P $1 | tail -1 | tr -s ' ' | cut -d' ' -f 1
 #}
 
 function get_mountpoint() {
-    df $1 | tail -1 | tr -s ' ' | cut -d' ' -f 6 | sort -u
+    df -P $1 | tail -1 | tr -s ' ' | cut -d' ' -f 6 | sort -u
 }
 
 function get_mount_device() {
-    df $1 | tail -1 | tr -s ' ' | cut -d' ' -f 1 | sort -u
+    df -P $1 | tail -1 | tr -s ' ' | cut -d' ' -f 1 | sort -u
 }
 
 function get_mount_options() {

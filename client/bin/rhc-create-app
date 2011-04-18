@@ -350,13 +350,9 @@ puts "Confirming application #{opt['app']} is available"
 while sleep_time < 65
     attempt+=1
     puts "  Attempt # #{attempt}"
-    page = ''
+    page = 'health'
     if (type == :php)
       page = 'health_check.php'
-    elsif (type == :rack)
-      page = 'health'
-    elsif (type == :wsgi)
-      page = 'health'
     end
     url = URI.parse("http://#{my_url}/#{page}")
     response = @http.get_response(url)

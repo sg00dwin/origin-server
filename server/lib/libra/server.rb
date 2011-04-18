@@ -175,8 +175,10 @@ EOF
           result = JSON.parse(data)
           auth_token = result['data']['token']
         else
-          raise_dns_exception
+          raise_dns_exception(nil, resp)
         end
+      rescue DNSException => e
+        raise
       rescue Exception => e
         raise_dns_exception(e)
       end
@@ -187,10 +189,15 @@ EOF
       return auth_token
     end
 
-    def self.raise_dns_exception(e=nil)
+    def self.raise_dns_exception(e=nil, resp=nil)
       if e
         Libra.logger_debug "DEBUG: Exception caught from DNS request: #{e.message}"
-      end        
+        Libra.logger_debug e.backtrace        
+      end
+      if resp
+        Libra.logger_debug "DEBUG: Response code: #{resp.code}"
+        Libra.logger_debug "DEBUG: Response body: #{resp.body}"
+      end
       raise DNSException.new(145), "Error communicating with DNS system.  If the problem persists please contact Red Hat support.", caller[0..5]
     end
 
@@ -202,7 +209,7 @@ EOF
     def self.dyn_create_a_record(application, namespace, public_ip, sshfp, auth_token)
       fqdn = "#{application}-#{namespace}.#{Libra.c[:libra_domain]}"
       # Create the A record
-      path = "ARecord/#{Libra.c[:libra_domain]}/#{fqdn}/"
+      path = "ARecord/#{Libra.c[:libra_zone]}/#{fqdn}/"
       record_data = { :rdata => { :address => public_ip }, :ttl => "60" }
       resp, data = dyn_post(path, record_data, auth_token)
     end
@@ -210,7 +217,7 @@ EOF
     def self.dyn_create_sshfp_record(application, namespace, sshfp, auth_token)
       fqdn = "#{application}-#{namespace}.#{Libra.c[:libra_domain]}"
       # Create the SSHFP record
-      path = "SSHFPRecord/#{Libra.c[:libra_domain]}/#{fqdn}/"
+      path = "SSHFPRecord/#{Libra.c[:libra_zone]}/#{fqdn}/"
       record_data = { :rdata => { :algorithm => '1',  :fptype => '1', :fingerprint => sshfp}, :ttl => "60" }
       resp, data = dyn_post(path, record_data, auth_token)
     end
@@ -218,21 +225,21 @@ EOF
     def self.dyn_delete_a_record(application, namespace, auth_token)
       fqdn = "#{application}-#{namespace}.#{Libra.c[:libra_domain]}"
       # Delete the A record
-      path = "ARecord/#{Libra.c[:libra_domain]}/#{fqdn}/"
+      path = "ARecord/#{Libra.c[:libra_zone]}/#{fqdn}/"
       resp, data = dyn_delete(path, auth_token)
     end
     
     def self.dyn_delete_sshfp_record(application, namespace, auth_token)
       fqdn = "#{application}-#{namespace}.#{Libra.c[:libra_domain]}"
       # Delete the SSHFP record
-      path = "SSHFPRecord/#{Libra.c[:libra_domain]}/#{fqdn}/"
+      path = "SSHFPRecord/#{Libra.c[:libra_zone]}/#{fqdn}/"
       resp, data = dyn_delete(path, auth_token)
     end
 
     def self.dyn_create_txt_record(namespace, auth_token)
       fqdn = "#{namespace}.#{Libra.c[:libra_domain]}"
       # Create the TXT record
-      path = "TXTRecord/#{Libra.c[:libra_domain]}/#{fqdn}/"
+      path = "TXTRecord/#{Libra.c[:libra_zone]}/#{fqdn}/"
       record_data = { :rdata => { :txtdata => "Text record for #{namespace}"}, :ttl => "60" }
       resp, data = dyn_post(path, record_data, auth_token)
     end
@@ -240,26 +247,26 @@ EOF
     def self.dyn_delete_txt_record(namespace, auth_token)
       fqdn = "#{namespace}.#{Libra.c[:libra_domain]}"
       # Delete the TXT record
-      path = "TXTRecord/#{Libra.c[:libra_domain]}/#{fqdn}/"
+      path = "TXTRecord/#{Libra.c[:libra_zone]}/#{fqdn}/"
       resp, data = dyn_delete(path, auth_token)
     end
 
     def self.dyn_publish(auth_token)
       # Publish the changes
-      path = "Zone/#{Libra.c[:libra_domain]}/"
+      path = "Zone/#{Libra.c[:libra_zone]}/"
       publish_data = { "publish" => "true" }
       resp, data = dyn_put(path, publish_data, auth_token)
     end
 
     def self.dyn_has_txt_record?(namespace, auth_token)
       fqdn = "#{namespace}.#{Libra.c[:libra_domain]}"
-      path = "TXTRecord/#{Libra.c[:libra_domain]}/#{fqdn}/"
+      path = "TXTRecord/#{Libra.c[:libra_zone]}/#{fqdn}/"
       return dyn_has?(path, auth_token)
     end
 
     def self.dyn_has_a_record?(application, namespace, auth_token)
       fqdn = "#{application}-#{namespace}.#{Libra.c[:libra_domain]}"
-      path = "ARecord/#{Libra.c[:libra_domain]}/#{fqdn}/"
+      path = "ARecord/#{Libra.c[:libra_zone]}/#{fqdn}/"
       return dyn_has?(path, auth_token)
     end
 
@@ -288,8 +295,10 @@ EOF
         when Net::HTTPNotFound
           Libra.logger_debug "DEBUG: DYNECT returned 404 for: #{url.path}"
         else
-          raise_dns_exception
+          raise_dns_exception(nil, resp)
         end
+      rescue DNSException => e
+        raise
       rescue Exception => e
         raise_dns_exception(e)
       end
@@ -322,8 +331,10 @@ EOF
         when Net::HTTPSuccess
           Libra.logger_debug "DEBUG: DYNECT PUT/POST Response: #{data}"
         else
-          raise_dns_exception
+          raise_dns_exception(nil, resp)
         end
+      rescue DNSException => e
+        raise
       rescue Exception => e
         raise_dns_exception(e)
       end
@@ -343,8 +354,10 @@ EOF
         when Net::HTTPSuccess
           Libra.logger_debug "DEBUG: DYNECT DELETE Response: #{data}"
         else
-          raise_dns_exception
+          raise_dns_exception(nil, resp)
         end
+      rescue DNSException => e
+        raise
       rescue Exception => e
         raise_dns_exception(e)
       end
