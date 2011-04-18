@@ -540,19 +540,19 @@ form {
   
   .content {
     h2 {
-      margin: 0;
+      margin: 5px 0 12px;
       color: white;
       font: {
-        size: 25pt;
+        size: 23pt;
         weight: normal;
       }
+      line-height: 23pt;
       text-transform: none;
     }
     
     p {
-      width: 550px;
       color: white;
-      font-size: 13pt;
+      font-size: 12pt;
     }
   }
 }
@@ -696,8 +696,9 @@ form {
     margin: 0 0 1em;
   }
   
-  #pricing h4 {
-    font-size: 22pt;
+  .home & #resources h4 {
+    font-size: 14pt;
+    line-height: 14pt;
   }
   
   #faq h4 {
@@ -955,6 +956,16 @@ form {
       family: 'Liberation Sans', Sans-serif;
       size: 13pt;
       weight: bold;
+    }
+  }
+  
+  a.learn {
+    display: block;
+    width: 100%;
+    color: $bright_blue;
+    text: {
+      align: right;
+      decoration: none;
     }
   }
 }

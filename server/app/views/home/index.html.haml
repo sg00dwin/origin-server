@@ -8,17 +8,20 @@
       %li#express.slide
         .slide-canvas
         .content
-          %h2 Looking to develop for the cloud?
+          %h2 Looking for a fast on-ramp to the Cloud?
           %p
-            Quickly develop, test, tweak and deploy your cloud-based application from a familiar development environment.
+            Get Ruby, PHP and Python apps in the cloud with just a few lines of code.
 
       /Flex slide
       %li#flex.slide
         .slide-canvas
         .content
-          %h2 Want to migrate apps to the cloud?
+          %h2 
+            Need to auto-scale new and existing 
+            %br
+            apps in the Cloud?
           %p
-            Enjoy end-to-end management from deploying, to monitoring, to log management, to auto-scaling, and more.
+            Provision, deploy, monitor and auto-scale JBoss, Java EE6 and PHP apps
 
     /Slide show navigation
     %ul.navigation
@@ -48,21 +51,21 @@
   #sidebar.grid_7.push_17
 
     #redhat_cloud.grid_7.alpha
-      %a(href='#')
-        %h4 Looking for on-premise or hybrid cloud solutions?
+      %a(href='http://redhat.com/cloud')
+        %h4 Looking for Private or Hybrid Cloud Solutions?
         %p Check out redhat.com/cloud.
     .clear
 
-    #pricing.grid_7
+    #resources.grid_7
       %a(href='#')
-        %h4 Pricing
-        %p &amp; subscription details
+        %h4 Resources for Cloud Developers
+        %p Forums, Eval Guides, How-To's & Videos
     .clear
 
     #faq.grid_7.omega
       %a(href='#')
         %h4 FAQ
-        %p Your questions, answered
+        %p Got questions? We have answers
     .clear
 
   /Product slugs
@@ -70,10 +73,10 @@
 
   /Express slug
   .slug.grid_8.pull_7
-    %h3 Craft your cloudbased masterpiece without the hassle.
+    %h3 Leave application management and auto-scaling to us.
     %p
-      You're a developer, not a sysadmin.
-      Focus on development, and we'll handle the rest
+      Spend more time on what really matters, customers and developing new features.
+      
     .icons
       %img(src='/app/images/git_logo_gs.png'
            alt='git')
@@ -81,13 +84,13 @@
            alt='PHP')
       
     %p.link
-      %a.learn(href='#') Learn more &gt;
+      = link_to 'Learn more >', express_url, :class => 'learn'
 
   /Flex slug
   .slug.grid_9.pull_7.last
-    %h3 Move your internally-deployed apps into the cloud, easily.
+    %h3 Develop anywhere, deploy to the Cloud
     %p
-      We make it easy to deploy the apps you need, monitor them, control them, even scale them out when demand on them grows.
+      Red Hat allows you to deploy and migrate your application across clouds, both public and private.
 
     .grid_4.alpha
       %ul
@@ -103,7 +106,7 @@
     .clear
 
     %p.link
-      %a.learn(href='#') Learn more &gt;
+      = link_to 'Learn more >', flex_url, :class => 'learn'
     .clear
   /End slugs
   .clear
@@ -112,14 +115,20 @@
 #app_promos.container_24
   /Express box
   .express.promo.grid_8
-    %h3 Looking to develop for the cloud? Check out what our platform can do.
+    %h3 
+      Deploy to the Cloud today...
+      %br
+      it's Free and Easy
     %h4 Express
     %p
       = link_to 'Learn More', express_url
 
   /Flex box
   .flex.promo.grid_8
-    %h3 Want to deploy and manage your production applications in the cloud?
+    %h3 
+      Auto-scaling PaaS for JBoss, 
+      %br
+      Java EE6 and PHP apps
     %h4 Flex
     %p
       = link_to 'Learn More', flex_url
@@ -127,9 +136,9 @@
   /Power box
   .power.promo.grid_8
     %h3 
-      Build and manage a 
+      Tools for custom cloud 
       %br
-      cross-cloud infrastructure
+      application deployments
     %h4 Power
     %p
       = link_to 'Learn More', power_url
@@ -141,25 +150,19 @@
 #page.container_24
 
   .prefix_1.grid_7
+    %h4 Featured Video Title
     %p
-      Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diamvoluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diamvoluptua.
-    %p
-      At vero eos et accusam et justo duo dolores et ea rebum.
-    %p
-      Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diamvoluptua.
+      Video goes here
 
   .grid_8
+    %h4 Featured Video Title
     %p
-      At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diamvoluptua.
-    %p
-      At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diamvoluptua.
-    %p
-      At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.Lorem ipsum dolor sit amet, consete
+      Video goes here
     
   .grid_7.suffix_1
-    %p
-      Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diamvoluptua.
-    %p
-      At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diamvoluptua. At vero eos et accusam et justo duo dolores et ea reb
+    %h2 Join the Discussion
+    %p 
+      We are here to help.
+      = link_to 'OpenShift Forums >',          'http://openshift.redhat.com/forums', :class => 'learn'
   .clear
 /End page columns

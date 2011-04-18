@@ -300,15 +300,15 @@ form ul, form ol, form li {
     background: url(/app/images/slide_flex.png) no-repeat;
     opacity: .6; }
 #slides .content h2 {
-  margin: 0;
+  margin: 5px 0 12px;
   color: white;
-  font-size: 25pt;
+  font-size: 23pt;
   font-weight: normal;
+  line-height: 23pt;
   text-transform: none; }
 #slides .content p {
-  width: 550px;
   color: white;
-  font-size: 13pt; }
+  font-size: 12pt; }
 
 #news_title {
   background: #333;
@@ -402,8 +402,9 @@ form ul, form ol, form li {
     background: none; }
   #sidebar ul {
     margin: 0 0 1em; }
-  #sidebar #pricing h4 {
-    font-size: 22pt; }
+  .home #sidebar #resources h4, .home #sidebar #supplemental_content #platforms h4, #supplemental_content .home #sidebar #platforms h4, .home #sidebar #supplemental_content #top_video h4, #supplemental_content .home #sidebar #top_video h4 {
+    font-size: 14pt;
+    line-height: 14pt; }
   #sidebar #faq h4 {
     font-size: 32pt; }
 
@@ -559,6 +560,12 @@ form ul, form ol, form li {
     font-family: 'Liberation Sans', Sans-serif;
     font-size: 13pt;
     font-weight: bold; }
+  #page a.learn {
+    display: block;
+    width: 100%;
+    color: #4e9fdd;
+    text-align: right;
+    text-decoration: none; }
 
 #registration input {
   width: 200px;
