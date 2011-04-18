@@ -4,25 +4,25 @@
     %title Red Hat OpenShift
     %meta{"http-equiv" => "Content-Type", :content => "text/html; charset=utf-8"}
 
-    = stylesheet_link_tag :all
+    = stylesheet_link_tag "/app/stylesheets/1_reset", "/app/stylesheets/2_960_24_col", "/app/stylesheets/3_text", "/app/stylesheets/cloud.rh.css"
 
-    = javascript_include_tag "jquery-1.5.1.min"
+    = javascript_include_tag "/app/javascripts/jquery-1.5.1.min.js"
 
     %script{:type => "text/javascript"}
       /* JQuery will interfere with prototype unless */
       $j = jQuery.noConflict();
       /* JQuery can be referenced by $j from now on */
 
-    = javascript_include_tag "prototype"
-    = javascript_include_tag "application"
-    = javascript_include_tag "effects"
-    = javascript_include_tag "controls"
-    = javascript_include_tag "dragdrop"
-    = javascript_include_tag "jquery.slideshow.minified"
+    = javascript_include_tag "/app/javascripts/prototype"
+    = javascript_include_tag "/app/javascripts/application"
+    = javascript_include_tag "/app/javascripts/effects"
+    = javascript_include_tag "/app/javascripts/controls"
+    = javascript_include_tag "/app/javascripts/dragdrop"
+    = javascript_include_tag "/app/javascripts/jquery.slideshow.minified.js"
     = javascript_include_tag "http://cdn.jquerytools.org/1.2.5/tiny/jquery.tools.min.js"
-    = javascript_include_tag 'jquery.validate.min'
-    = javascript_include_tag "rails"
-    = javascript_include_tag "init"
+    = javascript_include_tag '/app/javascripts/jquery.validate.min.js'
+    = javascript_include_tag "/app/javascripts/rails"
+    = javascript_include_tag "/app/javascripts/init"
     = csrf_meta_tag
 
   %body(class="#{controller.controller_name} #{controller.action_name}")
