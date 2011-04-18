@@ -3,8 +3,12 @@ require 'pp'
 class LoginController < ApplicationController
 
   def show
-    @redirectUrl = "https://#{Rails.configuration.site_domain}/app"
-    @errorUrl = "https://#{Rails.configuration.site_domain}/app/login/error"
+    # Is there a reason we're not using the built-in 
+    # rails url helper functions?
+    #@redirectUrl = "https://#{Rails.configuration.site_domain}/app"
+    @redirectUrl = root_url
+    #@errorUrl = "https://#{Rails.configuration.site_domain}/app/login/error"
+    @errorUrl = login_error_url
     Rails.logger.debug "Session workflow in LoginController#index: #{session[:workflow]}"
     render :index
   end
@@ -28,5 +32,6 @@ class LoginController < ApplicationController
     Rails.logger.debug "Session workflow in LoginController#create: #{session[:workflow]}"
     Rails.logger.debug "Redirecting to home#index"    
     redirect_to root_path
+    #redirect_to login_error_path
   end
 end

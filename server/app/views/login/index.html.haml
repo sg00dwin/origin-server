@@ -5,46 +5,47 @@
     %h3 Already Have a Login?
 
     #login-form
-      :erb
-        <% if @user and @user.errors.any? %>
-        <div id="errorExplanation">
-          <ul>
-          <% @user.errors.full_messages.each do |msg| %>
-            <li><%= msg %></li>
-          <% end %>
-          </ul>
-        </div>
-        <% end %>
+      - if @user and @user.errors.any?
+        %ul#error_explanation
+          - @user.errors.full_messages.each do |msg| 
+            %li
+              = msg
 
-      :erb
-        <% if flash[:notice] %>
-          <p class="flash-notice"><%= flash[:notice] %></p>
-        <% end %>
-
-      :erb
-        <form action="<%= Rails.configuration.login %>" method="post">
-          <div style="margin: 0pt; padding: 0pt; display: inline;">
-            <input type="hidden" value="✓" name="utf8">
-            <input type="hidden" value="<%= form_authenticity_token %>" name="authenticity_token">
-          </div>
-          <div>
-            <label for="login_input">Login:</label><input id="login_input" type="text" name="login" />
-          </div>
-          <div>
-            <label for="pwd_input">Password:</label><input id="pwd_input" type="password" name="password" autocomplete="off" />
-          </div>
-          <div>
-            <input type="hidden" name="redirectUrl" value="<%= @redirectUrl %>" />
-            <input type="hidden" name="errorUrl" value="<%= @errorUrl %>" />
-            
-            <input type="submit" value="Login" class="button"/>
-          </div>
-        </form>
+      - if flash[:notice]
+        %p.flash-notice
+          = flash[:notice]
+      
+    
+      %form{:action => Rails.configuration.login,     
+            :method => "post"}
+        %input(type="hidden" value="✓" name="utf8")
+        %input{:type => "hidden", :value => form_authenticity_token, :name => "authenticity_token"}
+        
+        %label(for="login_input")
+          Login:
+        %input(id="login_input"
+               type="text" 
+               name="login")
+        
+        
+        %label(for="pwd_input")
+          Password:
+        %input(id="pwd_input"
+               type="password" 
+               name="password" 
+               autocomplete="off")
+               
+        %input{:type => "hidden", :name => "redirectUrl", :value => @redirectUrl}
+        %input{:type => "hidden", :name => "errorUrl",  :value => @errorUrl}
+        
+        %input(type="submit" 
+               value="Login" 
+               class="button")
     .clear
 
 
     #register
       %h4 Need to Register instead?
       %p
-        %a(href="/app/user/new") Click here to register
+        =link_to "Click here to register", new_web_users_url
   .clear

@@ -17,6 +17,7 @@ $list_elements: ul, ol, li;
   
   //Elements
   $text_color: #555;
+  $error: #FF3333;
 
 //Cross-browser vertical linear gradient
 @mixin gradient_bg($first_color, $last_color, $last_stop) {
@@ -119,7 +120,7 @@ $list_elements: ul, ol, li;
 }
 
 @mixin form_label {
-  width: 140px;
+  width: 160px;
   margin: 0 0 16px;
 	float: left;
   clear: left;
@@ -153,7 +154,7 @@ $list_elements: ul, ol, li;
 @mixin form_button {
   background: #555;
 	width: auto;
-	margin: 0 0 0 145px;
+	margin: 0 0 0 165px;
 	padding: 5px 10px;
 	display: block;
   float: none;
@@ -179,6 +180,11 @@ $list_elements: ul, ol, li;
 @mixin footer_list {
 	margin: .5em 0 0 -2.2em;
 	list-style-type: none;
+}
+
+@mixin error_styling {
+  color: $error !important;
+  background: lighten($error, 40%%);
 }
 
 //Start actual styles
@@ -220,6 +226,7 @@ a {
 form {
   #{$list_elements} {
     list-style-type: none;
+    margin: 0;
   }
 }
 
@@ -720,8 +727,6 @@ form {
 }
 
 .slug {
-	margin: 0;
-	padding: 0 0 5px 0;
   
   p.link {
     padding-right: 10px;
@@ -1001,6 +1006,11 @@ label {
   @include form_label;
 }
 
+#captcha label {
+  width: 154px;
+  margin-right: -8px;
+}
+
 .recaptcha_input_area label {
 	line-height: inherit;
 }
@@ -1023,6 +1033,81 @@ input.submit, input.button, input.create {
 
 form p {
 	clear: left;
+}
+
+/** 
+ * let form li elements enclose their floated children
+ * from: http://www.quirksmode.org/css/clearing.html
+ **/
+form li {
+  overflow: auto;
+  width: 100%;
+}
+
+/*
+ * Form error handling
+ */
+#page form li.error {
+  @include error_styling;
+  padding: 5px 0;
+  margin: 5px 0;
+  
+  input{
+    border: 2px solid lighten($error, 10%);
+  }
+  
+  label {
+    margin-bottom: 6px;
+  }
+}
+
+p.inline-errors {
+  color: $error !important;
+  font: {
+    weight: bold;
+    size: 11pt;
+  }
+  margin: 0 0 0 165px;
+}
+
+#error_explanation {
+  @include error_styling;
+  
+  padding: 5px 0;
+  list-style-type: none;
+  
+  li {
+    color: inherit;
+    font-weight: bold;
+  }
+}
+
+.error #page form {
+  input[type=text],
+  input[type=password] {
+    border: 2px solid lighten($error, 10%);
+  }
+  
+  label {
+    color: $error !important;
+  }
+}
+
+/** Specific to client-side validation errors **/
+input.error {
+  border: 2px solid lighten($error, 10%) !important;
+}
+
+label.error {
+  clear: both;
+  width: auto;
+  margin: -10px 0 16px 165px;
+  color: $error;
+  font: {
+    size: 11pt;
+    weight: bold;
+  }
+  line-height: 10pt;
 }
 
 #captcha {
