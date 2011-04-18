@@ -7,7 +7,7 @@
 
 #page.container_24
 
-  #registration.prefix_1.grid_12.suffix_1
+  #registration.prefix_1.grid_13.suffix_1
     %h3 Register for access to #{@product.capitalize}
     
     - @user.errors.each do |key, value|
@@ -22,15 +22,15 @@
         = form.input :password_confirmation, :input_html => { :autocomplete => 'off' }
         = form.hidden_field :cloud_access_choice
         
-        #captcha.grid_12
-          %label Prove You Are Human
+        #captcha.grid_13
+          %label(for="recaptcha_response_field") Prove You Are Human
           = recaptcha_tags
 
       = form.buttons do
         = form.commit_button "Register Now"
     .clear
 
-  #form_notes.grid_9.suffix_1
+  #form_notes.grid_8.suffix_1
     %h4 Why do I have to register?
 
     %p

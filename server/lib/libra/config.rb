@@ -32,7 +32,9 @@ module Libra
       @@config[:s3_bucket] = fs_config.get_value('s3_bucket')
 
       # DDNS configuration
-      @@config[:libra_domain] = fs_config.get_value('libra_domain')
+      @@config[:libra_zone] = fs_config.get_value('libra_zone')
+      @@config[:libra_child_zone] = fs_config.get_value('libra_child_zone')
+      @@config[:libra_domain] = @@config[:libra_child_zone] + '.' + @@config[:libra_zone]
       @@config[:resolver] = fs_config.get_value('resolver')
       @@config[:secret] = fs_config.get_value('secret')
 
