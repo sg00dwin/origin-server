@@ -85,7 +85,7 @@ tc_if=${tc_if:="eth0"}             # Interface
 # max apps = 400
 # bandwidth/app = 200mbit
 # oversubscribe=??
-tc_max_libra=${tc_max_libra:=8000}
+tc_max_libra=${tc_max_libra:=800}
 tc_user_share=${tc_user_share:=2}
 tc_oversubscribe=${tc_oversubscribe:=10}
 OVERSUBSCRIBE=$(expr $tc_user_share \* $tc_oversubscribe)
