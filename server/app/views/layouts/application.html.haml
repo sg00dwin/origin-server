@@ -4,27 +4,25 @@
     %title Red Hat OpenShift
     %meta{"http-equiv" => "Content-Type", :content => "text/html; charset=utf-8"}
 
-    %link{"rel" => "stylesheet", "href" => "/app/stylesheets/reset.css", "type" => "text/css"}
-    %link{"rel" => "stylesheet", "href" => "/app/stylesheets/text.css", "type" => "text/css"}
-    %link{"rel" => "stylesheet", "href" => "/app/stylesheets/cloud.rh.css", "type" => "text/css"}
-    %link{"rel" => "stylesheet", "href" => "/app/stylesheets/960_24_col.css", "type" => "text/css"}
+    = stylesheet_link_tag :all
 
-    %script{:type => "text/javascript", :src  => "/app/javascripts/jquery-1.5.1.min.js"}
+    = javascript_include_tag "jquery-1.5.1.min"
 
     %script{:type => "text/javascript"}
       /* JQuery will interfere with prototype unless */
       $j = jQuery.noConflict();
       /* JQuery can be referenced by $j from now on */
 
-    %script{:type => "text/javascript", :src  => "/app/javascripts/prototype.js"}
-    %script{:type => "text/javascript", :src  => "/app/javascripts/application.js"}
-    %script{:type => "text/javascript", :src  => "/app/javascripts/effects.js"}
-    %script{:type => "text/javascript", :src  => "/app/javascripts/controls.js"}
-    %script{:type => "text/javascript", :src  => "/app/javascripts/dragdrop.js"}
-    %script{:type => "text/javascript", :src  => "/app/javascripts/jquery.slideshow.minified.js"}
-    %script{:type => "text/javascript", :src => "http://cdn.jquerytools.org/1.2.5/tiny/jquery.tools.min.js"}
-    %script{:type => "text/javascript", :src  => "/app/javascripts/rails.js"}
-    %script{:type => "text/javascript", :src  => "/app/javascripts/init.js"}
+    = javascript_include_tag "prototype"
+    = javascript_include_tag "application"
+    = javascript_include_tag "effects"
+    = javascript_include_tag "controls"
+    = javascript_include_tag "dragdrop"
+    = javascript_include_tag "jquery.slideshow.minified"
+    = javascript_include_tag "http://cdn.jquerytools.org/1.2.5/tiny/jquery.tools.min.js"
+    = javascript_include_tag 'jquery.validate.min'
+    = javascript_include_tag "rails"
+    = javascript_include_tag "init"
     = csrf_meta_tag
 
   %body(class="#{controller.controller_name} #{controller.action_name}")

@@ -18,7 +18,8 @@ a:active, a:focus {
   outline: none; }
 
 form ul, form ol, form li {
-  list-style-type: none; }
+  list-style-type: none;
+  margin: 0; }
 
 #horrible_wrapper {
   background: #ccc;
@@ -419,29 +420,26 @@ form ul, form ol, form li {
   #slugs li {
     margin-left: 10px; }
 
-.slug {
-  margin: 0;
-  padding: 0 0 5px 0; }
-  .slug p.link {
-    padding-right: 10px;
-    text-align: right;
-    clear: both; }
-  .slug a {
-    color: #4e9fdd;
-    text-decoration: none; }
-    .slug a .learn {
-      float: right;
-      margin: 0 12px 0 0; }
-  .slug h3 {
-    margin: .5em 0;
-    font-size: 13pt; }
-  .container_24 .slug.grid_9.last {
-    width: 353px;
-    margin-right: 0;
-    border-right: 1px solid #ccc; }
-  .slug .icons img {
+.slug p.link {
+  padding-right: 10px;
+  text-align: right;
+  clear: both; }
+.slug a {
+  color: #4e9fdd;
+  text-decoration: none; }
+  .slug a .learn {
     float: right;
-    margin: 10px; }
+    margin: 0 12px 0 0; }
+.slug h3 {
+  margin: .5em 0;
+  font-size: 13pt; }
+.container_24 .slug.grid_9.last {
+  width: 353px;
+  margin-right: 0;
+  border-right: 1px solid #ccc; }
+.slug .icons img {
+  float: right;
+  margin: 10px; }
 
 /*
  * Trick to make equal-height columns
@@ -575,7 +573,7 @@ form ul, form ol, form li {
   #registration input.create {
     background: #555;
     width: auto;
-    margin: 0 0 0 145px;
+    margin: 0 0 0 165px;
     padding: 5px 10px;
     display: block;
     float: none;
@@ -614,7 +612,7 @@ form ul, form ol, form li {
   #login-form input.create {
     background: #555;
     width: auto;
-    margin: 0 0 0 145px;
+    margin: 0 0 0 165px;
     padding: 5px 10px;
     display: block;
     float: none;
@@ -629,7 +627,7 @@ form ul, form ol, form li {
   #login-form input.button {
     background: #555;
     width: auto;
-    margin: 0 0 0 145px;
+    margin: 0 0 0 165px;
     padding: 5px 10px;
     display: block;
     float: none;
@@ -643,7 +641,7 @@ form ul, form ol, form li {
     cursor: pointer; }
 
 label {
-  width: 140px;
+  width: 160px;
   margin: 0 0 16px;
   float: left;
   clear: left;
@@ -655,8 +653,8 @@ label {
     weight: bold; }
 
 #captcha label {
-  width: 165px;
-  margin-right: -5px; }
+  width: 154px;
+  margin-right: -8px; }
 
 .recaptcha_input_area label {
   line-height: inherit; }
@@ -709,7 +707,7 @@ input#user_password_confirmation {
 input.submit, input.button, input.create {
   background: #555;
   width: auto;
-  margin: 0 0 0 145px;
+  margin: 0 0 0 165px;
   padding: 5px 10px;
   display: block;
   float: none;
@@ -724,6 +722,61 @@ input.submit, input.button, input.create {
 
 form p {
   clear: left; }
+
+/** 
+ * let form li elements enclose their floated children
+ * from: http://www.quirksmode.org/css/clearing.html
+ **/
+form li {
+  overflow: auto;
+  width: 100%; }
+
+/*
+ * Form error handling
+ */
+#page form li.error {
+  color: #ff3333 !important;
+  background: white;
+  padding: 5px 0;
+  margin: 5px 0; }
+  #page form li.error input {
+    border: 2px solid #ff6666; }
+  #page form li.error label {
+    margin-bottom: 6px; }
+
+p.inline-errors {
+  color: #ff3333 !important;
+  font-weight: bold;
+  font-size: 11pt;
+  margin: 0 0 0 165px; }
+
+#error_explanation {
+  color: #ff3333 !important;
+  background: white;
+  padding: 5px 0;
+  list-style-type: none; }
+  #error_explanation li {
+    color: inherit;
+    font-weight: bold; }
+
+.error #page form input[type=text],
+.error #page form input[type=password] {
+  border: 2px solid #ff6666; }
+.error #page form label {
+  color: #ff3333 !important; }
+
+/** Specific to client-side validation errors **/
+input.error {
+  border: 2px solid #ff6666 !important; }
+
+label.error {
+  clear: both;
+  width: auto;
+  margin: -10px 0 16px 165px;
+  color: #ff3333;
+  font-size: 11pt;
+  font-weight: bold;
+  line-height: 10pt; }
 
 #captcha th {
   vertical-align: top; }
