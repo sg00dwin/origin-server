@@ -190,7 +190,7 @@ $list_elements: ul, ol, li;
 //Start actual styles
 
 body {
-    background: #ccc;
+    background: #333;
     
     #{$list_elements}, #{$text_elements}, #{$header_elements} { 
       color: white; 
@@ -231,7 +231,7 @@ form {
 }
 
 #horrible_wrapper {
-  background: #ccc;
+  background: #333;
   /* Mozilla */
   background: -moz-linear-gradient(
     top,

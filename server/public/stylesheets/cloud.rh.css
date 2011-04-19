@@ -1,5 +1,5 @@
 body {
-  background: #ccc; }
+  background: #333; }
   body ul, body ol, body li, body p, body a, body h1, body h2, body h3, body h4, body h5, body h6 {
     color: white; }
   body h1, body h2, body h3, body h4, body h5, body h6 {
@@ -22,7 +22,7 @@ form ul, form ol, form li {
   margin: 0; }
 
 #horrible_wrapper {
-  background: #ccc;
+  background: #333;
   /* Mozilla */
   background: -moz-linear-gradient(top, black, white, black);
   /* Old webkit */
