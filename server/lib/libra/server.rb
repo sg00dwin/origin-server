@@ -362,20 +362,9 @@ EOF
         resp, data = http.delete(url.path, headers)
         case resp
         when Net::HTTPSuccess
-          success = dyn_success?(data)          
-          if !success
-            if data && data['msgs'] && data['msgs'].length > 0
-              msgs = data['msgs']
-              msgs.each do |msg|
-                if msg['ERR_CD'] == 'NOT_FOUND'
-                  Libra.logger_debug "DEBUG: DYNECT: Could not find #{url.path} to delete"
-                  success = true
-                  break
-                end
-              end
-            end
-          end
-          raise_dns_exception(nil, resp) unless success
+          raise_dns_exception(nil, resp) unless dyn_success?(data)
+        when Net::HTTPNotFound
+          Libra.logger_debug "DEBUG: DYNECT: Could not find #{url.path} to delete"
         else
           raise_dns_exception(nil, resp)
         end
