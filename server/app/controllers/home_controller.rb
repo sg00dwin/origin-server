@@ -1,7 +1,6 @@
 # file: Serves home + static pages
 
-class HomeController < ApplicationController
-  before_filter :set_no_cache
+class HomeController < ApplicationController  
 
   def index
     Rails.logger.debug "Index controller"

@@ -7,7 +7,7 @@ require 'uri'
 #
 module Streamline
   include ErrorCodes
-  attr_accessor :rhlogin, :ticket, :roles
+  attr_accessor :rhlogin, :ticket, :roles, :terms
 
   @@login_url = URI.parse(Rails.configuration.streamline + "/login.html")
   @@register_url = URI.parse(Rails.configuration.streamline + "/registration.html")
@@ -15,6 +15,7 @@ module Streamline
   @@roles_url = URI.parse(Rails.configuration.streamline + "/cloudVerify.html")
   @@email_confirm_url = URI.parse(Rails.configuration.streamline + "/confirm.html")
   @@user_info_url = URI.parse(Rails.configuration.streamline + "/userInfo.html")
+  @@unacknowledged_terms_url = URI.parse(Rails.configuration.streamline + "/protected/findUnacknowledgedTerms.html?hostname=openshift.redhat.com&context=OPENSHIFT&locale=en")  
 
   def initialize
     @roles = []
@@ -34,6 +35,50 @@ module Streamline
     http_post(@@roles_url) do |json|
       @roles = json['roles']
       @rhlogin = json['username']
+    end
+  end
+  
+  def establish_terms
+    http_post(@@unacknowledged_terms_url) do |json|
+      @terms = json['unacknowledgedTerms']
+    end
+  end
+  
+  def accept_terms(accepted_terms_list)
+    accepted_terms = JSON.parse(accepted_terms_list)
+    query = ''
+    
+    @terms.each do |term|  
+      if !accepted_terms.index(term['termId'])
+        errors.add(:base, I18n.t(:terms_error, :scope => :streamline))
+        return
+      end
+    end
+    
+    accepted_terms.each_with_index do |termId, i|      
+      query += "termIds=#{termId}"
+      if i < accepted_terms.length - 1
+        query += '&'
+      end
+    end
+    acknowledge_terms_url = URI.parse(Rails.configuration.streamline + "/protected/acknowledgeTerms.html?" + query)
+    http_post(acknowledge_terms_url, {}, false) do |json|
+      if json['term']
+        terms = json['term']
+        accepted_terms.each do |termId|
+          if !terms.index(termId.to_s)
+            errors.add(:base, I18n.t(:terms_error, :scope => :streamline))
+            break
+          end
+        end
+        if errors.length == 0
+          @terms = []
+        end
+      else
+        if errors.length == 0
+          errors.add(:base, I18n.t(:unknown))
+        end
+      end
     end
   end
 
@@ -134,11 +179,11 @@ module Streamline
   #
   def has_requested?(solution)
     @roles.index(CloudAccess.req_role(solution)) != nil
-  end
+  end  
 
   def http_post(url, args={}, raise_exception_on_error=true)
     begin
-      req = Net::HTTP::Post.new(url.path)
+      req = Net::HTTP::Post.new(url.path + (url.query ? ('?' + url.query) : ''))
       req.set_form_data(args)
 
       # Include the ticket as a cookie if present

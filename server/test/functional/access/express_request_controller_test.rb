@@ -10,7 +10,7 @@ class Access::ExpressRequestControllerTest < ActionController::TestCase
     session[:login] = 'tester'
     form = get_post_form
     post(:create, {:access_express_request => form})
-    assert assigns(:access_express)
+    assert assigns(:access)
     assert_response :success
   end
   
@@ -19,12 +19,12 @@ class Access::ExpressRequestControllerTest < ActionController::TestCase
     form = get_post_form
     form[:terms_accepted] = nil
     post(:create, {:access_express_request => form})
-    assert assigns(:access_express)
-    assert assigns(:access_express).errors[:terms_accepted].length > 0
+    assert assigns(:access)
+    assert assigns(:access).errors[:terms_accepted].length > 0
     assert_response :success
   end  
   
   def get_post_form
-    {:terms_accepted => 'on'}
+    {:terms_accepted => 'on', :accepted_terms_list => {'1','2','3','4'}}
   end
 end
