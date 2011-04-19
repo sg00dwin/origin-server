@@ -288,11 +288,12 @@ File.chmod(0600, ssh_config)
 #
 puts "Confirming host exists..."
 loop = 0
-sleep_time = 2.5
+sleep_time = 2
 while loop < RHC::Maxretries && !hostexist?(my_url)
-    sleep sleep_time *= 2
+    sleep sleep_time
     loop+=1
     puts "  retry # #{loop} - Waiting for DNS: #{my_url}"
+    sleep_time *= 2
 end
 
 if loop >= RHC::Maxretries
