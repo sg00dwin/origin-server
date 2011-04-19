@@ -22,6 +22,7 @@ en:
     email_service_error: 'A system error has occurred.  If the problem persists, please contact Red Hat support.'
     already_requested_access: 'You have already requested access to this service.  You should expect an email when access is granted.'
     already_granted_access: 'You have already been granted access to this service.'
+    terms_error: 'An error occurred accepting terms.  If the problem persists, please contact Red Hat support.'
 
   formtastic:
     labels:

@@ -407,8 +407,8 @@ END_OF_MESSAGE
           #puts "Done"
 
           # Run verification tests
-          print "Running verification tests (30 minute timeout enforced)..."
-          ssh("cucumber --tags @verify --format junit -o /tmp/rhc/junit/ li/tests/", 1800)
+          print "Running verification tests (60 minute timeout enforced)..."
+          ssh("cucumber --tags @verify --format junit -o /tmp/rhc/junit/ li/tests/", 3600)
           p2 = $?
           puts "Done"
 

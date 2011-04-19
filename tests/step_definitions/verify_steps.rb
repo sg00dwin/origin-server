@@ -110,23 +110,10 @@ end
 Then /^they should all be accessible$/ do
   # Hit the health check page for each app
   @data.each_pair do |url, value|
-    begin
-      $logger.info("Checking host #{url}")
-      res = Net::HTTP.start(url, 80) do |http|
-        http.open_timeout = @http_timeout || 60
-        http.read_timeout = @http_timeout || 60
-        http.get("/health_check.php")
-      end
-      code = res.code
-    rescue Exception => e
-      $logger.error "Exception trying to access #{url}"
-      $logger.error e.message
-      $logger.error e.backtrace
-      code = -1
+    connect(url, "/health_check.php", @http_timeout) do |code, time, body|
+      value[:code] = code
+      value[:time] = time
     end
-
-    # Store the results
-    value[:code] = code
   end
 
   # Print out the results:
@@ -134,7 +121,7 @@ Then /^they should all be accessible$/ do
   $logger.info("Accessibility Results")
   results = []
   @data.each_pair do |url, value|
-    $logger.info("#{value[:code]} - #{url} (#{value[:type]})")
+    $logger.info("#{value[:code]} / #{value[:time]} - #{url} (#{value[:type]})")
     results << value[:code]
   end
 
@@ -166,28 +153,12 @@ Then /^they should be able to be changed$/ do
     # Allow change to be loaded
     sleep 30
 
-    $logger.info("host= #{url}")
-    begin
-      res = Net::HTTP.start(url, 80) do |http|
-        http.open_timeout = @http_timeout || 60
-        http.read_timeout = @http_timeout || 60
-        http.get("/")
+    connect(url, "/", @http_timeout) do |code, time, body|
+      value[:change_code] = code
+      if body
+        body.index("TEST").should_not == -1
       end
-
-      # Store the response code for later use
-      code = res.code
-
-      # Verify the content of the response
-      res.body.index("TEST").should_not == -1
-    rescue Exception => e
-      $logger.error "Exception trying to access #{url}"
-      $logger.error e.message
-      $logger.error e.backtrace
-      code = -1
     end
-
-    # Store the results
-    value[:change_code] = code
   end
 
   # Print out the results:
@@ -195,7 +166,7 @@ Then /^they should be able to be changed$/ do
   $logger.info("Accessibility Results")
   results = []
   @data.each_pair do |url, value|
-    $logger.info("#{value[:change_code]} - #{url} (#{value[:type]})")
+    $logger.info("#{value[:change_code]} / #{value[:time]} - #{url} (#{value[:type]})")
     results << value[:change_code]
   end
 

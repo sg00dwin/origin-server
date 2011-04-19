@@ -87,7 +87,7 @@ class EmailConfirmController < ApplicationController
       if (@errors.length > 0)
         render :error and return
       else
-        redirect_to redirect_path and return
+        redirect_to redirect_path, :notice => "Almost there!  You'll need to login before requesting access." and return
       end
     end
   end

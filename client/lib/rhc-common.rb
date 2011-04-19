@@ -34,6 +34,7 @@ require 'uri'
 module RHC
 
   Maxdlen = 16
+  Maxretries = 10
   
   TYPES = {
     'php-5.3.2' => :php,
@@ -182,6 +183,7 @@ module RHC
     
     req.set_form_data({'json_data' => json_data, 'password' => password})
     http = http.new(url.host, url.port)
+    http.open_timeout = 10
     if url.scheme == "https"
       http.use_ssl = true
       http.verify_mode = OpenSSL::SSL::VERIFY_NONE

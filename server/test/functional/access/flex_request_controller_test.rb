@@ -11,8 +11,8 @@ class Access::FlexRequestControllerTest < ActionController::TestCase
     form = get_post_form
     form[:ec2_account_number] = '123-123-123'
     post(:create, {:access_flex_request => form})
-    assert assigns(:access_flex)
-    assert assigns(:access_flex).errors[:ec2_account_number].length > 0
+    assert assigns(:access)
+    assert assigns(:access).errors[:ec2_account_number].length > 0
     assert_response :success
   end
   
@@ -21,8 +21,8 @@ class Access::FlexRequestControllerTest < ActionController::TestCase
     form = get_post_form
     form[:terms_accepted] = nil
     post(:create, {:access_flex_request => form})
-    assert assigns(:access_flex)
-    assert assigns(:access_flex).errors[:terms_accepted].length > 0
+    assert assigns(:access)
+    assert assigns(:access).errors[:terms_accepted].length > 0
     assert_response :success
   end
   
@@ -34,7 +34,7 @@ class Access::FlexRequestControllerTest < ActionController::TestCase
   end
   
   def get_post_form
-    {:ec2_account_number => '1234-1234-1234', :terms_accepted => 'on'}
+    {:ec2_account_number => '1234-1234-1234', :terms_accepted => 'on', :accepted_terms_list => {'1','2','3','4'}}
   end
   
 end

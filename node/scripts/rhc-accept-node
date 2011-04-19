@@ -170,7 +170,7 @@ function check_services() {
 #
 # Kernel semaphores
 function check_semaphores() {
-    verbose checking kernel semaphores > $MINSEM
+    verbose "checking kernel semaphores >= $MINSEM"
     SEMCOUNT=`sysctl kernel.sem | cut -f4`
     if [ "$SEMCOUNT" -lt "$MINSEM" ]
     then
@@ -233,6 +233,16 @@ function check_tc_config() {
 	STATUS=$(($STATUS + 1))
 	TC_PASS="false"
     else
+	verbose checking for cgroup filter
+	FILTERRESPONSE="filter parent 1: protocol ip pref 10 cgroup handle 0x1"
+	FILTERCOUNT=`tc filter show dev eth0 | grep 'cgroup handle' | sort -u | wc -l`
+	if [ "$FILTERCOUNT" -lt 1 ]
+        then
+	    echo "FAIL: no cgroup filter configured"
+	    STATUS=$(($STATUS + 1))
+	    TC_PASS="false"
+	fi
+
 	verbose checking presence of tc classes
 	CLASSRESPONSE="class htb 1:1 root prio 0 rate 8000Mbit ceil 8000Mbit burst 0b cburst 0b"
 	CLASSCOUNT=`tc class show dev eth0 | grep 'class htb' | wc -l`
