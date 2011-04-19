@@ -1,3 +1,4 @@
+-# file: Universal site layout with header/footer/main nav
 !!! Strict
 %html{ :xmlns => "http://www.w3.org/1999/xhtml", :lang => "en", "xml:lang" => "en"}
   %head
@@ -55,7 +56,7 @@
         #nav.grid_24.alpha.omega
           %ul
             %li
-              %a(href="#") About OpenShift
+              = link_to 'About OpenShift', about_url
             %li
               = link_to 'Express', express_url, :class => 'express'
             %li

@@ -1,3 +1,5 @@
+# file: Serves home + static pages
+
 class HomeController < ApplicationController
   before_filter :set_no_cache
 
@@ -24,4 +26,8 @@ class HomeController < ApplicationController
       redirect_to login_path and return
     end
   end
+  
+  # Hijacking home controller
+  # for general static page serving
+  def about; end
 end

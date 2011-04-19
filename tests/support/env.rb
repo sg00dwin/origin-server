@@ -14,7 +14,7 @@ World(MCollective::RPC)
 #
 $curr_dir = File.expand_path(File.dirname(__FILE__))
 $mc_client_cfg = File.expand_path("#{$curr_dir}/../misc/mcollective-client.cfg")
-$domain = "rhcloud.com"
+$domain = "dev.rhcloud.com"
 $temp = "/tmp/rhc"
 $create_app_script = "/usr/bin/rhc-create-app"
 $create_domain_script = "/usr/bin/rhc-create-domain"
