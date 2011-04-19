@@ -64,7 +64,8 @@ function user_quota() {
     # USERNAME=$1
     # get the last line of output.  Strip leading and duplicate spaces
     # returns "block used, block limit, inode used, inode limit
-    quota $1 | tail -1 | awk '{print $2, $4, $5, $7}'
+    
+    quota $1 | tail -1 | awk '{if ($8 == "none") print "none" ; else print $2, $4, $5, $7}'
 }
 
 function user_disk_used() {
@@ -305,12 +306,18 @@ echo
 
 QUOTAS=`user_quota $USERNAME`
 echo "-- filesystem quotas --"
-BLOCK_LIMIT=`echo $QUOTAS | cut -d' ' -f 2`
-BLOCK_USED=`echo $QUOTAS | cut -d' ' -f 1`
-INODE_LIMIT=`echo $QUOTAS | cut -d' ' -f 4`
-INODE_USED=`echo $QUOTAS | cut -d' ' -f 3`
-printf "  blocks: limit = %8d used = %8d\n" $BLOCK_LIMIT $BLOCK_USED
-printf "  inodes: limit = %8d used = %8d\n" $INODE_LIMIT $INODE_USED
+if [ "$QUOTAS" = "none" ]
+then
+    echo "  no quotas set"
+else
+    BLOCK_LIMIT=`echo $QUOTAS | cut -d' ' -f 2`
+    BLOCK_USED=`echo $QUOTAS | cut -d' ' -f 1`
+    INODE_LIMIT=`echo $QUOTAS | cut -d' ' -f 4`
+    INODE_USED=`echo $QUOTAS | cut -d' ' -f 3`
+    printf "  blocks: limit = %8d used = %8d\n" $BLOCK_LIMIT $BLOCK_USED
+    printf "  inodes: limit = %8d used = %8d\n" $INODE_LIMIT $INODE_USED
+fi
+
 echo
 
 echo "-- homedir filespace --"
