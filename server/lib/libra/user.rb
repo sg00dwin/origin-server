@@ -141,10 +141,9 @@ module Libra
           end
         rescue UserValidationException => e
           raise
-        rescue Exception => e
-          Libra.client_debug e.message 
-          Libra.client_debug e.backtrace
+        rescue Exception => e          
           Libra.logger_debug "Error message from authentication exception: #{e.message}"
+          Libra.logger_debug e.backtrace
           raise UserValidationException.new(144), "Error communicating with user validation system.  If the problem persists please contact Red Hat support.", caller[0..5]
         end
         false

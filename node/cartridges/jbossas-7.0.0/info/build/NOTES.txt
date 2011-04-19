@@ -4,3 +4,11 @@ This cartridge is a collection of bash scripts under the info/hooks directory, a
 with default configuration overrides for the standalone.xml and logging.properties.
 
 It expects to have the jbossas-7.x application server installed under /opt/
+
+The jbossas7.spec file can be used to create a source rpm from the jboss-as7 installation
+tarball. Place the jboss-7.0.0.Beta2.tar.gz archive into the ~/rpmbuild/SOURCES directory,
+the jbossas7.spec into ~/rpmbuild/SPECS, and run:
+
+rpmbuild -bs jbossas7.spec
+
+to create a ~/rpmbuild/SRPMS/jboss-as7-7.0.0.Beta2-1.src.rpm source rpm.
