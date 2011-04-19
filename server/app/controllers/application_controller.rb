@@ -7,6 +7,11 @@ class ApplicationController < ActionController::Base
     response.headers["Pragma"] = "no-cache"
     response.headers["Expires"] = "Fri, 01 Jan 1990 00:00:00 GMT"
   end
+  
+  def setup_user_session(user)
+    session[:login] = user.rhlogin
+    session[:roles] = user.roles
+  end
 
   def check_credentials
     # If this is a logout request, pass through
@@ -34,7 +39,7 @@ class ApplicationController < ActionController::Base
       user = WebUser.find_by_ticket(rh_sso)
       if user
         Rails.logger.debug "Found #{user}. Authenticating session"
-        session[:login] = user.rhlogin
+        setup_user_session(user)
         session[:ticket] = rh_sso
       end
     end
