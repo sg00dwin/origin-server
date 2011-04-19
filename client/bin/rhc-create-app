@@ -289,13 +289,13 @@ File.chmod(0600, ssh_config)
 puts "Confirming host exists..."
 loop = 0
 sleep_time = 2.5
-while loop < 5 && !hostexist?(my_url)
+while loop < RHC::Maxretries && !hostexist?(my_url)
     sleep sleep_time *= 2
     loop+=1
     puts "  retry # #{loop} - Waiting for DNS: #{my_url}"
 end
 
-if loop == 5
+if loop >= RHC::Maxretries
     puts "Host could not be created and/or found..."
     exit 215
 end
@@ -347,7 +347,7 @@ end
 #
 
 puts "Confirming application #{opt['app']} is available"
-while sleep_time < 65
+while attempt < RHC::Maxretries
     attempt+=1
     puts "  Attempt # #{attempt}"
     page = 'health'

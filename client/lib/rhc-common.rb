@@ -34,6 +34,7 @@ require 'uri'
 module RHC
 
   Maxdlen = 16
+  Maxretries = 10
   
   TYPES = {
     'php-5.3.2' => :php,
