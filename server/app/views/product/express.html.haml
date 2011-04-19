@@ -11,7 +11,7 @@
 - content_for :about do
   %h2 What is Express?
   %p
-    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diamvoluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diamvoluptua. 
+    Express is a free cloud-based platform for deploying new and existing Ruby, PHP and Python applications in the cloud with just a few lines of code.
 
 -# Screenshot
 - content_for :screenshot do
@@ -23,59 +23,50 @@
 - content_for :tabs do
   %ul#tab_navigation
     %li
-      %a.step-one(href="#step_1") Step 1
+      %a.step-one(href="#step_1") Download
     %li
-      %a.step-two(href="#step_2") Step 2
+      %a.step-two(href="#step_2") Create
     %li
-      %a.step-three(href="#step_3") Step 3
+      %a.step-three(href="#step_3") Deploy
   
   #step_1.tab
-    %h3 Step One Title
+    %h3 Download the Express Client Tools
     
     .tab_illustration
       = image_tag "http://placekitten.com/g/300/200",
               :title => "Replace withillustration of some sort", 
               :alt => "Step one illustration"
     
-    %h4 First do this
     %p
-      Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diamvoluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+      Download and install the Express client tools to manage your application in the Cloud
     
-    %h4 Then do this
-    %p
-      Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diamvoluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+    = link_to 'Watch the video >>>', '#', :class => 'watch'
 
   #step_2.tab
-    %h3 Step Two Title
+    %h3 Create and Define your Application Workspace
 
     .tab_illustration
       = image_tag "http://placekitten.com/g/300/200",
               :title => "Replace withillustration of some sort", 
               :alt => "Step two illustration"
-
-    %h4 First do this
     %p
-      Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diamvoluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+      Create a sub-domain for your application and clone the Git master repository from the Cloud.
     
-    %h4 Then do this
-    %p
-      Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diamvoluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+    = link_to 'Watch the video >>>', '#', :class => 'watch'
 
   #step_3.tab
-    %h3 Step Three Title
+    %h3 Deploy to the Cloud
 
     .tab_illustration
       = image_tag "http://placekitten.com/g/300/200",
               :title => "Replace withillustration of some sort", 
               :alt => "Step three illustration"
 
-    %h4 First do this
     %p
-      Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diamvoluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+      Add your application code to the Git repository and push to the cloud. Congrats, you're live!
     
-    %h4 Then do this
-    %p
-      Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diamvoluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+    = link_to 'Watch the video >>>', '#', :class => 'watch'
+      
 
 -# Video section
 - content_for :videos do
@@ -153,20 +144,23 @@
 - content_for :resources do
   %ul
     %li
-      %a(href="#") Quickstart Guide
+      = link_to 'Express Evaluation Guide', '#'
     
     %li
-      %a(href="#") Frequently-Asked Questions
+      = link_to 'Deploying Drupal on Express', '#'
     
     %li
-      %a(href="#") API Documentation
+      = link_to 'Deploying Wordpress on Express', '#'
+      
+    %li
+      = link_to 'Deploying MediaWiki on Express', '#'
     
   
-  %a.more(href="#") More documentation &gt;
+  = link_to 'More Documentation>', '/documents', :class => 'more'
   
 -# Tour link
 - content_for :tour_link do
-  %a(href="#")
+  - link_to('#') do
     %h3 Take the Tour!
     %p 
       Check it out and see how cool it is!
@@ -176,12 +170,14 @@
   %h4 Clouds
   %ul
     %li Amazon EC2
-    %li Rackspace Cloud
-
+ 
   %h4 Languages
   %ul
     %li PHP
     %li Ruby
+    %li Python
+  
+  = link_to 'More information >', '#', :class => 'more' 
 
 -# Top Video
 - content_for :top_video do

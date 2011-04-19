@@ -11,7 +11,7 @@
 - content_for :about do
   %h2 What is Flex?
   %p
-    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diamvoluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diamvoluptua. 
+    Flex is a free platform-as-a-service for new and existing JBoss, Java EE6 and PHP applications. Provision cloud resources, deploy, manage, monitor and auto-scale applications from a single, easy-to-use interface.
 
 -# Screenshot
 - content_for :screenshot do
@@ -23,59 +23,81 @@
 - content_for :tabs do
   %ul#tab_navigation
     %li
-      %a.step-one(href="#step_1") Step 1
+      %a.step-one(href="#step_1") Provision
     %li
-      %a.step-two(href="#step_2") Step 2
+      %a.step-two(href="#step_2") Middleware
     %li
-      %a.step-three(href="#step_3") Step 3
+      %a.step-three(href="#step_3") Upload
+    %li
+      %a.step-four(href="#step_4") Tweak
+    %li
+      %a.step-five(href="#step_5") Deploy
   
   #step_1.tab
-    %h3 Step One Title
+    %h3 Provision Cloud Resources
     
     .tab_illustration
       = image_tag "http://placekitten.com/g/300/200",
               :title => "Replace withillustration of some sort", 
               :alt => "Step one illustration"
     
-    %h4 First do this
     %p
-      Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diamvoluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+      Plug your AWS credentials into the wizard; then define the memory and CPU characteristics of your cluster.
     
-    %h4 Then do this
-    %p
-      Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diamvoluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+    = link_to 'Watch the video >>>', '#', :class => 'watch'
 
   #step_2.tab
-    %h3 Step Two Title
+    %h3 Select Middleware Components
 
     .tab_illustration
       = image_tag "http://placekitten.com/g/300/200",
               :title => "Replace withillustration of some sort", 
               :alt => "Step two illustration"
 
-    %h4 First do this
     %p
-      Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diamvoluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+      Build your stack by selecting language, web, application, database, and caching server components.
     
-    %h4 Then do this
-    %p
-      Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diamvoluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+    = link_to 'Watch the video >>>', '#', :class => 'watch'
 
   #step_3.tab
-    %h3 Step Three Title
+    %h3 Upload the Application Code
 
     .tab_illustration
       = image_tag "http://placekitten.com/g/300/200",
               :title => "Replace withillustration of some sort", 
               :alt => "Step three illustration"
 
-    %h4 First do this
     %p
-      Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diamvoluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+      Upload your application code in a variety of different ways depending on what works for you.
     
-    %h4 Then do this
+    = link_to 'Watch the video >>>', '#', :class => 'watch'
+
+  #step_4.tab
+    %h3 Tweak Configuration Files
+
+    .tab_illustration
+      = image_tag "http://placekitten.com/g/300/200",
+              :title => "Replace withillustration of some sort", 
+              :alt => "Step four illustration"
+
     %p
-      Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diamvoluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+      You'll probably want to make changes to the standard configuration files. No problem, Flex makes it easy.
+    
+    = link_to 'Watch the video >>>', '#', :class => 'watch'
+
+  #step_5.tab
+    %h3 Deploy Your Application
+
+    .tab_illustration
+      = image_tag "http://placekitten.com/g/300/200",
+              :title => "Replace withillustration of some sort", 
+              :alt => "Step five illustration"
+
+    %p
+      Click "Deploy", you are now running in the cloud!
+    
+    = link_to 'Watch the video >>>', '#', :class => 'watch'
+    
 
 -# Video section
 - content_for :videos do
@@ -153,16 +175,18 @@
 - content_for :resources do
   %ul
     %li
-      %a(href="#") Quickstart Guide
+      = link_to "Flex Evaluation Guide", "#"
     
     %li
-      %a(href="#") Frequently-Asked Questions
+      = link_to "Deploying Drupal on Flex", "#"
     
     %li
-      %a(href="#") API Documentation
+      = link_to "Deploying Wordpress on Flex", "#"
     
+    %li
+      = link_to "Deploying JBoss Applications on Flex", "#" 
   
-  %a.more(href="#") More documentation &gt;
+  = link_to 'More Documentation >', '/documents', :class => 'more'
   
 -# Tour link
 - content_for :tour_link do
@@ -176,12 +200,29 @@
   %h4 Clouds
   %ul
     %li Amazon EC2
-    %li Rackspace Cloud
-
-  %h4 Languages
+    
+  %h4 Application Types
   %ul
+    %li Java
     %li PHP
-    %li Ruby
+  
+  %h4 Web Servers
+  %ul
+    %li Apache
+  
+  %h4 App Servers
+  %ul
+    %li JBoss AS
+    %li Tomcat
+    %li Apache
+  
+  %h4 Database
+  %ul
+    %li MySQL
+    %li MongoDB
+    %li Memcached
+    
+  = link_to 'More information >', '#', :class => 'more'
 
 -# Top Video
 - content_for :top_video do
