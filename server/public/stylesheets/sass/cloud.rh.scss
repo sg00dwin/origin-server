@@ -108,17 +108,6 @@ $list_elements: ul, ol, li;
   border-radius: #{$radius}px;
 }
 
-//Tab number
-@mixin tab_number($number, $border_color) {
-  content: $number;
-  background: white;
-  width: 12px;
-  height: 12px;
-  color: darken($border_color, 20%);
-  border: 2px solid $border_color;
-  @include border_radius(6);
-}
-
 @mixin form_label {
   width: 160px;
   margin: 0 0 16px;
@@ -187,6 +176,15 @@ $list_elements: ul, ol, li;
   background: lighten($error, 40%%);
 }
 
+/** 
+ * let elements enclose their floated children
+ * from: http://www.quirksmode.org/css/clearing.html
+ **/
+@mixin clearfix {
+  overflow: auto;
+  width: 100%;
+}
+
 //Start actual styles
 
 body {
@@ -220,6 +218,11 @@ a {
   &:active,
   &:focus {
     outline: none;
+  }
+  &.more {
+    color: $bright_blue;
+    font-weight: bold;
+    text-decoration: none;
   }
 }
 
@@ -910,7 +913,7 @@ form {
   color: black;
 	padding: 2em 0 5em;
   
-  #{$text_elements}, #{$header_elements}, #{$list_elements} {
+  p, #{$header_elements}, #{$list_elements} {
     color: $text_color;
   }
 
@@ -937,11 +940,13 @@ form {
     text-transform: uppercase;
   }
   
-  .product & #{$text_elements} {
+  .product & p,
+  .product & a {
     color: black;
   }
   
-  .product & h2 {
+  .product & h2,
+  .about & h2 {
     font: {
       family: Overpass;
       size: 22pt;
@@ -1046,13 +1051,9 @@ form p {
 	clear: left;
 }
 
-/** 
- * let form li elements enclose their floated children
- * from: http://www.quirksmode.org/css/clearing.html
- **/
+
 form li {
-  overflow: auto;
-  width: 100%;
+  @include clearfix;
 }
 
 /*
@@ -1175,15 +1176,17 @@ label.error {
 }
 
 #product_tabs {
+  margin-top: 30px;
+
   ul#tab_navigation {
     list-style-type: none;
     margin-bottom: 0px;
     li { 
       @include gradient_bg(#ececec, darken(#ececec, 10%), 100%);
       display: inline-block;
-      width: 150px;
+      width: 117px;
       padding: 2px 0;   
-      margin: 0 10px 0 0;
+      margin: 0 5px 0 0;
     }
     li.current {
       @include gradient_bg($rh_red, darken($rh_red, 10%), 100%);
@@ -1191,23 +1194,30 @@ label.error {
         color: white;
       }
       a.step-one {
-        background-position: 10px -25px;
+        background-position: 5px -25px;
       }
       a.step-two {
-        background-position: 10px -75px;
+        background-position: 5px -75px;
       }
       a.step-three {
-        background-position: 10px -125px;
+        background-position: 5px -125px;
+      }
+      a.step-four {
+        background-position: 5px -175px;
+      }
+      a.step-five {
+        background-position: 5px -225px;
       }
     }
     a {
       display: inline-block;
       width: inherit;
       height: 25px;
-      text-align: center;
+      padding-left: 32px;
+      text-align: left;
       font: {
         family: Overpass;
-        size: 10pt;
+        size: 9pt;
       }
       line-height: 25px;
       text: {
@@ -1216,22 +1226,31 @@ label.error {
       }
     }
     a.step-one {
-      background: url(/app/images/tab_numbers.png) no-repeat 10px 0;
+      background: url(/app/images/tab_numbers.png) no-repeat 5px 0;
     }
     a.step-two {
-      background: url(/app/images/tab_numbers.png) no-repeat 10px -50px;
+      background: url(/app/images/tab_numbers.png) no-repeat 5px -50px;
     }
     a.step-three {
-      background: url(/app/images/tab_numbers.png) no-repeat 10px -100px;
+      background: url(/app/images/tab_numbers.png) no-repeat 5px -100px;
+    }
+    a.step-four {
+      background: url(/app/images/tab_numbers.png) no-repeat 5px -150px;
+    }
+    a.step-five {
+      background: url(/app/images/tab_numbers.png) no-repeat 5px -200px;
     }
   }
   
   .tab {
+    @include clearfix;
+    width: 590px;
     background: #ececec;
     padding: 20px;
     margin-bottom: 20px;
     img {
       float: right;
+      margin-left: 20px;
     }
     h3, h4 {
       font: {
@@ -1241,14 +1260,24 @@ label.error {
     }
     
     h3 {
-      margin-bottom: 0px;
+      margin-bottom: 16pt;
       color: $text_color;
-      font-size: 16pt;
+      font-size: 18pt;
     }
     
     h4 {
       color: black;
       font-size: 14pt;
+    }
+    
+    a.watch {
+      display: block;
+      color: $bright_blue;
+      text: {
+        align: right;
+        decoration: none;
+      }
+      font-weight: bold;
     }
   }
 }
@@ -1287,14 +1316,11 @@ label.error {
   
   a.more {
     display: block;
-    color: $bright_blue;
     font: {
-      weight: bold;
       size: 14;
     }
     text: {
       align: right;
-      decoration: none;
     }      
   }
 }
@@ -1347,6 +1373,8 @@ label.error {
   }
   
   #resources {  
+    margin-bottom: 30px;
+    
     h3 {
       margin: 0 0 10px;
       color: #666;
@@ -1368,15 +1396,16 @@ label.error {
     
     a {
       color: $bright_blue;
-      font-size: 12pt;
+      font-size: 11pt;
       text-decoration: none;
+      line-height: 11pt;
     }
     
     a.more {
       display: block;
+      margin-top: -10px;
       font: {
         size: 11pt;
-        weight: bold;
       }
       text-align: right;
     }
@@ -1470,6 +1499,7 @@ label.error {
     
     a.more {
       text-align: left;
+      margin-top: 0;
     }
   }
   
