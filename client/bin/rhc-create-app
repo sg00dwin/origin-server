@@ -355,8 +355,12 @@ while sleep_time < 65
       page = 'health_check.php'
     end
     url = URI.parse("http://#{my_url}/#{page}")
-    response = @http.get_response(url)
-    if response.code == "200" && response.body[0,1] == "1"
+    begin
+      response = @http.get_response(url)
+    rescue Exception => e
+      response = nil
+    end
+    if !response.nil? && response.code == "200" && response.body[0,1] == "1"
         puts <<LOOKSGOOD
 
 Success!  Your application is now published here:
@@ -373,8 +377,10 @@ Then run 'git push' to update your libra space
 LOOKSGOOD
         exit 0
     end
-    puts "Server responded with #{response.code}"
-    puts response.body
+    if !response.nil?
+      puts "Server responded with #{response.code}"
+      puts response.body
+    end
     puts
     puts "    sleeping #{sleep_time} seconds"
     sleep sleep_time
