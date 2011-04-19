@@ -220,7 +220,7 @@ a {
     outline: none;
   }
   &.more {
-    color: $bright_blue;
+    color: $bright_blue !important;
     font-weight: bold;
     text-decoration: none;
   }
@@ -307,6 +307,7 @@ form {
 }
 
 #mainslug {
+/*
   margin: 48px 0 .5em;
   font-family: Overpass;
   
@@ -318,6 +319,12 @@ form {
     font-size: 10pt;
     color: $light_blue;
     clear: right;
+  }
+*/
+
+  img {
+    float: right;
+    margin: 80px 0 0;
   }
 }
 
@@ -913,7 +920,7 @@ form {
   color: black;
 	padding: 2em 0 5em;
   
-  p, #{$header_elements}, #{$list_elements} {
+  #{$text_elements}, #{$header_elements}, #{$list_elements} {
     color: $text_color;
   }
 

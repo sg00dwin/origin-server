@@ -4,6 +4,7 @@
   %head
     %title Red Hat OpenShift
     %meta{"http-equiv" => "Content-Type", :content => "text/html; charset=utf-8"}
+    %link(rel="shortcut icon" href="/app/images/favicon.ico")
 
     = stylesheet_link_tag "/app/stylesheets/1_reset", "/app/stylesheets/2_960_24_col", "/app/stylesheets/3_text", "/app/stylesheets/cloud.rh.css"
 
@@ -20,7 +21,7 @@
     = javascript_include_tag "/app/javascripts/controls"
     = javascript_include_tag "/app/javascripts/dragdrop"
     = javascript_include_tag "/app/javascripts/jquery.slideshow.minified.js"
-    = javascript_include_tag "http://cdn.jquerytools.org/1.2.5/tiny/jquery.tools.min.js"
+    = javascript_include_tag "/app/javascripts/jquery.tools.min.js"
     = javascript_include_tag '/app/javascripts/jquery.validate.min.js'
     = javascript_include_tag "/app/javascripts/rails"
     = javascript_include_tag "/app/javascripts/init"
@@ -32,10 +33,10 @@
     
     #horrible_wrapper
       #head.container_24
-        #logo.grid_6.alpha
-          = link_to image_tag("/app/images/logo-blue.png", :alt => "OpenShift"), root_path
+        #logo.grid_18.alpha
+          = link_to image_tag("/app/images/logo.png", :alt => "OpenShift"), root_path
 
-        #header_right.grid_18.omega
+        #header_right.grid_6.omega
           - if session[:login]
             #logout
               %a(href='/app/logout') Logout
@@ -48,9 +49,7 @@
           #mainslug
             = image_tag '/app/images/shadowman.png',
                         :alt => 'Red Hat, the Open Source Leader'
-            %p
-              Free, Portable Cloud Services from the Enterprise Open Source Leader
-
+           
         .clear
 
         #nav.grid_24.alpha.omega

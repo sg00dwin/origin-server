@@ -4,7 +4,6 @@
   #page.container_24
     / Main page content
     #main_content.grid_17
-      
       /About the product
       #product_information.grid_8
         = yield :about
@@ -37,7 +36,10 @@
          :class => params[:action] + ' grid_6' }
       
       /Try it button
-      %a.try_it{:href => 'user/new/' + params[:action]} Try it now!
+      - if session[:login]
+        = link_to 'Try it now!', 'access/' + params[:action] + '/new', :class => 'try_it'
+      - else
+        = link_to 'Try it now!', 'user/new/' + params[:action], :class => 'try_it'
       
       /Resource links
       #resources

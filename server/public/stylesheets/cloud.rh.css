@@ -21,7 +21,7 @@ a.power:hover {
 a:active, a:focus {
   outline: none; }
 a.more {
-  color: #4e9fdd;
+  color: #4e9fdd !important;
   font-weight: bold;
   text-decoration: none; }
 
@@ -83,14 +83,23 @@ form ul, form ol, form li {
       color: #4e9fdd; }
 
 #mainslug {
-  margin: 48px 0 .5em;
-  font-family: Overpass; }
+  /*
+    margin: 48px 0 .5em;
+    font-family: Overpass;
+    
+    img {
+      float: right;
+    }
+    
+    p {
+      font-size: 10pt;
+      color: $light_blue;
+      clear: right;
+    }
+  */ }
   #mainslug img {
-    float: right; }
-  #mainslug p {
-    font-size: 10pt;
-    color: #bfdce8;
-    clear: right; }
+    float: right;
+    margin: 80px 0 0; }
 
 #nav {
   background: #cc0000;
@@ -543,7 +552,7 @@ form ul, form ol, form li {
   zoom: 1;
   color: black;
   padding: 2em 0 5em; }
-  #page p, #page h1, #page h2, #page h3, #page h4, #page h5, #page h6, #page ul, #page ol, #page li {
+  #page p, #page a, #page h1, #page h2, #page h3, #page h4, #page h5, #page h6, #page ul, #page ol, #page li {
     color: #555555; }
   .home.index #page h2 {
     margin: 0;
