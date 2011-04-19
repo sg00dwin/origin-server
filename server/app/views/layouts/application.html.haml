@@ -8,7 +8,7 @@
 
     = javascript_include_tag "/app/javascripts/jquery-1.5.1.min.js"
 
-    %script{:type => "text/javascript"}
+    :javascript
       /* JQuery will interfere with prototype unless */
       $j = jQuery.noConflict();
       /* JQuery can be referenced by $j from now on */
@@ -26,6 +26,9 @@
     = csrf_meta_tag
 
   %body(class="#{controller.controller_name} #{controller.action_name}")
+    
+    = render 'shared/omniture_code'
+    
     #horrible_wrapper
       #head.container_24
         #logo.grid_6.alpha
@@ -45,7 +48,7 @@
             = image_tag '/app/images/shadowman.png',
                         :alt => 'Red Hat, the Open Source Leader'
             %p
-              Free &amp; portable cloud services from the enterprise open source leader.
+              Free, Portable Cloud Services from the Enterprise Open Source Leader
 
         .clear
 
@@ -60,11 +63,11 @@
             %li
               = link_to 'Power', power_url, :class => 'power'
             %li
-              %a(href="#") Community
+              = link_to 'Community', '/community'
             %li
-              %a(href="#") FAQ
+              = link_to 'FAQ', '/faq'
             %li
-              %a(href="#") Help
+              = link_to 'Help', '/forums'
 
         .clear
 

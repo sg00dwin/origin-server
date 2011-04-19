@@ -168,10 +168,11 @@ EOF
       session_data = { :customer_name => Libra.c[:dynect_customer_name], :user_name => Libra.c[:dynect_user_name], :password => Libra.c[:dynect_password] }
       auth_token = nil
       begin
+        Libra.logger_debug "DEBUG: DYNECT Login with path: #{url.path}"
         resp, data = http.post(url.path, JSON.generate(session_data), headers)
         case resp
         when Net::HTTPSuccess
-          Libra.logger_debug "POST Session Response: #{data}"
+          raise_dns_exception(nil, resp) unless dyn_success?(data)
           result = JSON.parse(data)
           auth_token = result['data']['token']
         else
@@ -278,20 +279,11 @@ EOF
       http.use_ssl = true
       has = false
       begin
+        Libra.logger_debug "DEBUG: DYNECT has? with path: #{url.path} and headers: #{headers}"
         resp, data = http.get(url.path, headers)
         case resp
         when Net::HTTPSuccess
-          Libra.client_debug "DEBUG: DYNECT GET Response: #{data}"
-          if data
-            data = JSON.parse(data)
-            if data && data['status'] && data['status'] == 'failure'
-              Libra.logger_debug "DEBUG: DYNECT GET Response status: #{data['status']}"
-            elsif data && data['status'] == 'success'
-              Libra.logger_debug "DEBUG: DYNECT GET Response data: #{data['data']}"
-              #has = data['data'][0].length > 0
-              has = true
-            end
-          end
+          has = dyn_success?(data)
         when Net::HTTPNotFound
           Libra.logger_debug "DEBUG: DYNECT returned 404 for: #{url.path}"
         else
@@ -322,6 +314,7 @@ EOF
       http.use_ssl = true
       json_data = JSON.generate(post_data);
       begin
+        Libra.logger_debug "DEBUG: DYNECT put/post with path: #{url.path} json data: #{json_data} and headers: #{headers}"
         if put
           resp, data = http.put(url.path, json_data, headers)
         else
@@ -329,7 +322,7 @@ EOF
         end
         case resp
         when Net::HTTPSuccess
-          Libra.logger_debug "DEBUG: DYNECT PUT/POST Response: #{data}"
+          raise_dns_exception(nil, resp) unless dyn_success?(data)
         else
           raise_dns_exception(nil, resp)
         end
@@ -340,6 +333,22 @@ EOF
       end
       return resp, data
     end
+    
+    def self.dyn_success?(data)
+      Libra.logger_debug "DEBUG: DYNECT Response: #{data}"
+      success = false
+      if data
+        data = JSON.parse(data)
+        if data && data['status'] && data['status'] == 'failure'
+          Libra.logger_debug "DEBUG: DYNECT Response status: #{data['status']}"
+        elsif data && data['status'] == 'success'
+          Libra.logger_debug "DEBUG: DYNECT Response data: #{data['data']}"
+          #has = data['data'][0].length > 0
+          success = true
+        end
+      end
+      success
+    end
 
     def self.dyn_delete(path, auth_token)
       headers = { "Content-Type" => 'application/json', 'Auth-Token' => auth_token }
@@ -349,10 +358,24 @@ EOF
       http.use_ssl = true
       resp, data = nil, nil
       begin
+        Libra.logger_debug "DEBUG: DYNECT delete with path: #{url.path} and headers: #{headers}"
         resp, data = http.delete(url.path, headers)
         case resp
         when Net::HTTPSuccess
-          Libra.logger_debug "DEBUG: DYNECT DELETE Response: #{data}"
+          success = dyn_success?(data)          
+          if !success
+            if data && data['msgs'] && data['msgs'].length > 0
+              msgs = data['msgs']
+              msgs.each do |msg|
+                if msg['ERR_CD'] == 'NOT_FOUND'
+                  Libra.logger_debug "DEBUG: DYNECT: Could not find #{url.path} to delete"
+                  success = true
+                  break
+                end
+              end
+            end
+          end
+          raise_dns_exception(nil, resp) unless success
         else
           raise_dns_exception(nil, resp)
         end
