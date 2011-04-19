@@ -26,6 +26,7 @@
 #
 require 'rubygems'
 require 'open4'
+require 'pp'
 
 module MCollective
     #
@@ -53,6 +54,7 @@ module MCollective
             # Passes arguments to cartridge for use
             #
             def cartridge_do_action
+                Log.instance.debug("cartridge_do_action call / request = #{request.pretty_inspect}")
                 validate :cartridge, /^[a-zA-Z0-9\.\-]+$/
                 validate :action, /^(configure|deconfigure|info|post-install|post_remove|pre-install|reload|restart|start|status|stop)$/
                 validate :args, /^.+$/
@@ -74,7 +76,13 @@ module MCollective
                 rescue Timeout::Error
                   Log.instance.debug("cartridge_do_action WARNING - stdout read timed out")
                 end
-                Log.instance.debug("cartridge_do_action (#{exitcode}\n------\n#{output}\n------)")
+
+                if exitcode == 0
+                  Log.instance.debug("cartridge_do_action (#{exitcode})\n------\n#{output}\n------)")
+                else
+                  Log.instance.debug("cartridge_do_action ERROR (#{exitcode})\n------\n#{output}\n------)")
+                end
+
                 reply[:output] = output
                 reply[:exitcode] = exitcode
                 reply.fail! "cartridge_action failed #{exitcode}.  Output #{output}" unless exitcode == 0
