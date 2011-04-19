@@ -469,8 +469,6 @@ then
 	  service libra-tc startuser ${username} > /dev/null
       fi
 
-      configure_user_account $username $email
-
       enable_user_ssh_access $username $email "$ssh_key"
 
       set_pam_limits $username
