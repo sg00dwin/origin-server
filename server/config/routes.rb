@@ -20,6 +20,7 @@ RedHatCloud::Application.routes.draw do
       match 'express' => 'product#express', :as => 'express'
       match 'flex' => 'product#flex', :as => 'flex'
       match 'power' => 'product#power', :as => 'power'
+      match 'about' => 'home#about', :as => 'about'
   
       #Alias for home page so we can link to it
       #match 'home' => 'home#index'
