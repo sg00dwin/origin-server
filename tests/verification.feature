@@ -52,17 +52,17 @@ Feature: Verification Tests
     Then they should all be accessible
     And they should be able to be changed
 
-#  Scenario: Creation load tests
-#    Given the libra client tools
-#    And a 600 second command timeout
-#    And a 600 second http request timeout
-#    And the following test data
-#      | processes | users | apps |    type    |
-#      |     3     |   25  |  1   | php-5.3.2  |
-#      |     3     |   25  |  1   | rack-1.1.0 |
-#      |     3     |   25  |  1   | wsgi-3.2.1 |
-#    When the applications are created
-#    Then they should all be accessible
+  Scenario: Creation load tests
+    Given the libra client tools
+    And a 600 second command timeout
+    And a 600 second http request timeout
+    And the following test data
+      | processes | users | apps |    type    |
+      |     3     |   25  |  1   | php-5.3.2  |
+      |     3     |   25  |  1   | rack-1.1.0 |
+      |     3     |   25  |  1   | wsgi-3.2.1 |
+    When the applications are created
+    Then they should all be accessible
 
   Scenario: Website tests
     Given the following website links

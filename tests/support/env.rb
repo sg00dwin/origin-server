@@ -4,7 +4,7 @@ require 'libra'
 require 'timeout'
 require 'logger'
 require 'fileutils'
-require 'open3'
+require 'open4'
 require 'pp'
 
 World(MCollective::RPC)
@@ -94,42 +94,58 @@ module Libra
       def run(cmd)
           $logger.info("(#{$$}) Running: #{cmd}")
 
-          # Open up IO pipes for the sub process communication
-          rd1, wr1 = IO.pipe
-          rd2, wr2 = IO.pipe
+          pid, stdin, stdout, stderr = Open4::popen4(cmd)
 
-          # Fork a subprocess so we can get an accurate return code
-          # In Ruby 1.9, we can replace this with Process.spawn
-          pid = fork do
-            rd1.close
-            rd2.close
-            STDOUT.reopen(wr1)
-            STDERR.reopen(wr2)
-            STDOUT.sync = STDERR.sync = true
-            exec(cmd)
-            $logger.error("(#{$$}) Execution failed #{cmd}")
-            raise "Command execution failed - #{cmd}"
-          end
+          stdin.close
+          ignored, status = Process::waitpid2 pid
+          exit_code = status.exitstatus
 
-          # Close the end of the pipe we aren't using
-          wr1.close
-          wr2.close
-
-          # Wait for the process to complete and get the exit code
-          Process.wait(pid)
-          exit_code = $?.exitstatus
-
-          $logger.info("(#{$$}) Standard Output:\n#{rd1.read}")
-          $logger.info("(#{$$}) Standard Error:\n#{rd2.read}")
-
-          # Close out the streams
-          rd1.close
-          rd2.close
+          $logger.info("(#{$$}) Standard Output:\n#{stdout.read}")
+          $logger.info("(#{$$}) Standard Error:\n#{stderr.read}")
 
           $logger.error("(#{$$}): Execution failed #{cmd}") if exit_code != 0
           raise "ERROR - Non-zero (#{exit_code}) exit code for #{cmd}" if exit_code != 0
 
           return exit_code
+      end
+
+      def connect(host, uri, max_retries=30)
+          max_retries = 30 unless max_retries
+
+          url = "http://#{host}/#{uri}"
+          $logger.info("(#{$$}) Connecting to #{url}")
+          beginning_time = Time.now
+          begin
+            retries = 1
+            while retries < max_retries do
+              begin
+                # Since sockets will try and connect forever, timeout
+                # after 1 second and retry until the max retries
+                h = Net::HTTP.new(host, 80)
+		h.open_timeout = 1
+		h.read_timeout = 1
+                res = h.start() {|http| http.get(uri) }
+                code = res.code
+                body = res.body
+                break
+              rescue Timeout::Error
+		retries += 1
+                raise "Timeout #{url}" unless retries < max_retries
+                $logger.info("(#{$$}) Timeout on attempt #{retries} to #{url}")
+              end
+            end
+          rescue Exception => e
+            $logger.error "(#{$$}) Exception trying to access #{url}"
+            $logger.error e.message
+            $logger.error e.backtrace
+            code = -1
+            body = nil
+          end
+          response_time = Time.now - beginning_time
+          $logger.info("(#{$$}) Response time of #{url} = #{response_time}")
+
+          # Yield the response code, time
+          yield code, response_time, body if block_given?
       end
     end
   end
