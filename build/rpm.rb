@@ -25,15 +25,15 @@ namespace :rpm do
   desc "Build the Libra SRPM"
   task :srpm => [:version, :buildroot, :commit_check] do
       # Archive the git repository and compress it for the SOURCES
-      src = "#{@buildroot}/SOURCES/li-#{@version}.tar"
-      sh "git archive --prefix=li-#{@version}/ #{TARGET_BRANCH} --output #{src}"
+      src = "#{@buildroot}/SOURCES/rhc-#{@version}.tar"
+      sh "git archive --prefix=rhc-#{@version}/ #{TARGET_BRANCH} --output #{src}"
       sh "gzip -f #{src}"
 
       # Move the SPEC file out
-      cp File.dirname(File.expand_path(__FILE__)) + "/specs/li.spec", "#{@buildroot}/SPECS"
+      cp File.dirname(File.expand_path(__FILE__)) + "/specs/rhc.spec", "#{@buildroot}/SPECS"
 
       # Build the source RPM
-      sh "rpmbuild -bs #{@buildroot}/SPECS/li.spec"
+      sh "rpmbuild -bs #{@buildroot}/SPECS/rhc.spec"
   end
 
   task :bump_release => [:version, :commit_check] do
@@ -63,7 +63,7 @@ namespace :rpm do
 
   desc "Create a brew build based on current info"
   task :brew => [:version, :buildroot, :srpm] do
-      srpm = Dir.glob("#{@buildroot}/SRPMS/li-#{@version}*.rpm")[0]
+      srpm = Dir.glob("#{@buildroot}/SRPMS/rhc-#{@version}*.rpm")[0]
       if ! File.exists?("#{ENV['HOME']}/cvs/li/RHEL-6-LIBRA")
           puts "Please check out the li cvs root:"
           puts
@@ -71,10 +71,10 @@ namespace :rpm do
           puts "cvs -d :gserver:cvs.devel.redhat.com:/cvs/dist co li"
           exit 206
       end
-      cp "build/specs/li.spec", "#{ENV['HOME']}/cvs/li/RHEL-6-LIBRA"
+      cp "build/specs/rhc.spec", "#{ENV['HOME']}/cvs/li/RHEL-6-LIBRA"
       cd "#{ENV['HOME']}/cvs/li/RHEL-6-LIBRA"
       sh "cvs up -d"
-      sh "make new-source FILES='#{@buildroot}/SOURCES/li-#{@version}.tar.gz'"
+      sh "make new-source FILES='#{@buildroot}/SOURCES/rhc-#{@version}.tar.gz'"
       sh "cvs commit -m 'Updating to most recent li build #{@version}'"
       sh "make tag"
       sh "make build"

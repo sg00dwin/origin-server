@@ -1,8 +1,8 @@
 %{!?ruby_sitelibdir: %global ruby_sitelibdir %(ruby -rrbconfig -e 'puts Config::CONFIG["sitelibdir"]')}
 %define gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 
-Name: li
-Version: 0.65.5
+Name: rhc 
+Version: 0.66.1
 Release: 1%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
@@ -26,14 +26,14 @@ Provides Li client libraries
 %package devenv
 Summary: Dependencies for Libra development
 Group: Development/Libraries
-Requires: li
-Requires: li-common
-Requires: li-node
-Requires: li-node-tools
-Requires: li-server
-Requires: li-cartridge-php-5.3.2
-Requires: li-cartridge-wsgi-3.2.1
-Requires: li-cartridge-rack-1.1.0
+Requires: rhc
+Requires: rhc-common
+Requires: rhc-node
+Requires: rhc-node-tools
+Requires: rhc-server
+Requires: rhc-cartridge-php-5.3.2
+Requires: rhc-cartridge-wsgi-3.2.1
+Requires: rhc-cartridge-rack-1.1.0
 Requires: qpid-cpp-server
 Requires: qpid-cpp-server-ssl
 Requires: puppet
@@ -62,7 +62,7 @@ Provides the common dependencies for the libra server and nodes
 Summary: Multi-tenant cloud management system node tools
 Group: Network/Daemons
 Requires: quota
-Requires: li-common
+Requires: rhc-common
 Requires: mcollective
 Requires: rubygem-parseconfig
 Requires: libcgroup
@@ -93,7 +93,7 @@ Status and control tools for Libra Nodes
 %package server
 Summary: Li server components
 Group: Network/Daemons
-Requires: li-common
+Requires: rhc-common
 BuildArch: noarch
 Requires: httpd
 Requires: ruby
@@ -119,7 +119,7 @@ to be the same host as the server.  It is the 'qpid-cpp-server' package.
 %package cartridge-php-5.3.2
 Summary: Provides php-5.3.2 support
 Group: Development/Languages
-Requires: li-node
+Requires: rhc-node
 Requires: php = 5.3.2
 Requires: mod_bw
 Requires: rubygem-builder
@@ -131,12 +131,12 @@ Requires: php-pgsql
 BuildArch: noarch
 
 %description cartridge-php-5.3.2
-Provides php support to li
+Provides php support to rhc
 
 %package cartridge-rack-1.1.0
 Summary: Provides ruby rack support running on Phusion Passenger
 Group: Development/Languages
-Requires: li-node
+Requires: rhc-node
 Requires: httpd
 Requires: mod_bw
 Requires: ruby
@@ -154,12 +154,12 @@ Requires: ruby-nokogiri
 BuildArch: noarch
 
 %description cartridge-rack-1.1.0
-Provides rack support to li
+Provides rack support to rhc
 
 %package cartridge-wsgi-3.2.1
 Summary: Provides python-wsgi-3.2.1 support
 Group: Development/Languages
-Requires: li-node
+Requires: rhc-node
 Requires: httpd
 Requires: mod_bw
 Requires: python
@@ -169,16 +169,16 @@ Requires: python-psycopg2
 BuildArch: noarch
 
 %description cartridge-wsgi-3.2.1
-Provides wsgi support to li
+Provides wsgi support to rhc
 
 %package cartridge-jbossas-7.0.0
 Summary: Provides java-jbossas-7.0.0 support
 Group: Development/Languages
-Requires: li-node
+Requires: rhc-node
 BuildArch: noarch
 
 %description cartridge-jbossas-7.0.0
-Provides jbossas support to li
+Provides jbossas support to rhc
 
 %prep
 %setup -q
@@ -434,6 +434,9 @@ chmod 0666 %{_localstatedir}/www/libra/log/production.log
 %{_libexecdir}/li/cartridges/jbossas-7.0.0/
 
 %changelog
+* Wed Apr 20 2011 Mike McGrath <mmcgrath@redhat.com> 0.66.1-1
+- Renaming to rhc
+
 * Mon Apr 19 2011 Matt Hicks <mhicks@redhat.com> 0.65.5-1
 - Removing passenger conservative spawning
 

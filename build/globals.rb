@@ -20,6 +20,6 @@ COMMON_ROOT = ROOT + "/common"
 NODE_ROOT = ROOT + "/node"
 TESTS_ROOT = ROOT + "/tests"
 SERVER_ROOT = ROOT + "/server"
-RPM_SPEC = ROOT + "/build/specs/li.spec"
+RPM_SPEC = ROOT + "/build/specs/rhc.spec"
 RPM_REGEX = /(Version: )(.*)/
 RPM_REL_REGEX = /(Release: )(\d)(.*)/
