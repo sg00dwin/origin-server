@@ -2,7 +2,14 @@
 !!! Strict
 %html{ :xmlns => "http://www.w3.org/1999/xhtml", :lang => "en", "xml:lang" => "en"}
   %head
-    %title Red Hat OpenShift
+  
+    -# Allow views to modify title if desired
+    %title 
+      OpenShift by Red Hat
+      - if content_for?(:page_title)
+        |
+        = yield :page_title
+
     %meta{"http-equiv" => "Content-Type", :content => "text/html; charset=utf-8"}
     %link(rel="shortcut icon" href="/app/images/favicon.ico")
 
