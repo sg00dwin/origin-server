@@ -19,10 +19,10 @@ class ProductController < ApplicationController
   def try_it_destination(product_number)
     return 'register' unless session[:login]
     
-    if session[:roles]
-      return 'getting_started' if session[:roles].include? "cloud_access_#{product_number}"
+    if session[:user]
+      return 'getting_started' if session[:user].has_access?(product_number)
       
-      return 'queue' if session[:roles].include? "cloud_access_request_#{product_number}"
+      return 'queue' if session[:user].has_requested?(product_number)
     end
     return 'request'
 
