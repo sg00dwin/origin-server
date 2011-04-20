@@ -176,7 +176,7 @@ puts "Creating remote application space: " + opt['app']
 data = {:cartridge => opt['type'],
                 :action => 'configure',
                 :app_name => opt['app'],
-                :rhlogin => opt['rhlogin']                
+                :rhlogin => opt['rhlogin']
                 }
 if debug
   data['debug'] = "true"
@@ -287,6 +287,11 @@ File.chmod(0600, ssh_config)
 # Confirm that the host exists in DNS
 #
 puts "Confirming host exists..."
+
+# Allow DNS to propogate
+sleep 15
+
+# Now start checking for DNS
 loop = 0
 sleep_time = 2
 while loop < RHC::Maxretries && !hostexist?(my_url)
