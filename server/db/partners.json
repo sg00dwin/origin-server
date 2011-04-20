@@ -1,18 +1,18 @@
-[
-{"name": "Appcelerator", 
+{
+"1": {"name": "Appcelerator", 
 "url": "http://www.appcelerator.com", 
 "logo": "appcelerator.png", 
 "blurb": "Use Appcelerator's Titanium platform to create, deploy, and manage mobile applications, then push them to a Red Hat-certified Cloud Provider with just one click."},
-{"name": "BitNami",
+"2": {"name": "BitNami",
 "url": "http://www.bitnami.com", 
 "logo": "bitnami.png", 
 "blurb": "The BitNami cartridges for the OpenShift Platform enable developers to get up and running with their favorite open source applications such as SugarCRM, Alfresco, Drupal, Wordpress, JasperServer, and more in one click."},
-{"name": "",
+"3": {"name": "",
 "url": "http://www..com", 
 "logo": ".png", 
 "blurb": ""},
-{"name": "",
+"4": {"name": "",
 "url": "http://www..com", 
-"logo": ".png", 
+"logo": ".png",
 "blurb": ""}
-]
+}
