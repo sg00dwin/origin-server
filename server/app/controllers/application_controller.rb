@@ -8,7 +8,7 @@ class ApplicationController < ActionController::Base
     response.headers["Expires"] = "Fri, 01 Jan 1990 00:00:00 GMT"
   end
   
-  def setup_user_session(user)
+  def setup_user_session(user)    
     session[:login] = user.rhlogin
     session[:user] = user
   end
@@ -16,7 +16,7 @@ class ApplicationController < ActionController::Base
   def session_user
     user = session[:user]
     if user
-      user.errors.clear      
+      user.errors.clear
     end
     return user
   end
@@ -48,7 +48,11 @@ class ApplicationController < ActionController::Base
       if user
         Rails.logger.debug "Found #{user}. Authenticating session"
         setup_user_session(user)
+        user.establish_terms
         session[:ticket] = rh_sso
+        if user.terms.length > 0
+          redirect_to new_terms_path and return
+        end
       end
     end
   end

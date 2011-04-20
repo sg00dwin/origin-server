@@ -1,0 +1,35 @@
+.container_24.express#pageheader
+  .grid_14#title
+    %h2 OpenShift
+
+  .grid_10#title_accent
+
+  .clear
+
+.container_24#page
+
+  .prefix_1.grid_12.suffix_1#registration
+    %h3 Terms
+    
+    - @term.errors.each do |key, value|
+      - if key == :base
+        %div
+          %strong #{value}
+    
+    = semantic_form_for @term do |form|
+      = form.inputs do
+        - accepted_terms_list = Array.new(@user.site_terms.length)
+        - if @user.site_terms.length > 0
+          - @user.site_terms.each_with_index do |value, i|
+            - accepted_terms_list[i] = value['termId']
+            %div
+              %a{:title => value['termTitle'], :href => value['termUrl']} #{value['termTitle']}           
+          = form.hidden_field :accepted_terms_list, :value => JSON.generate(accepted_terms_list)
+          = form.input :terms_accepted, :input_html => { :type=>'checkbox' }
+      = form.buttons do
+        = form.commit_button "Accept Terms", :input_html => { :class => 'button' }
+    .clear
+
+  .prefix_1.grid_22.suffix_1
+
+  .clear
