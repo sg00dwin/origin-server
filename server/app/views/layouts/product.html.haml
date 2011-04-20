@@ -36,10 +36,7 @@
          :class => params[:action] + ' grid_6' }
       
       /Try it button
-      - if session[:login]
-        = link_to 'Try it now!', 'access/' + params[:action] + '/new', :class => 'try_it'
-      - else
-        = link_to 'Try it now!', 'user/new/' + params[:action], :class => 'try_it'
+      = yield :try_it_button
       
       /Resource links
       #resources

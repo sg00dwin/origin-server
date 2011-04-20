@@ -171,6 +171,21 @@
         
     %a.more(href="#") Read more &gt;
 
+-# Try it button
+- content_for :try_it_button do
+  - case @try_link_points_to  
+  - when 'request'
+    = link_to 'Try it now!', '/app/access/flex/new', :class => 'try_it'
+  
+  - when 'queue'
+    = link_to 'Try it now!', '#', :class => 'try_it'
+  
+  - when 'getting_started'
+    = link_to 'Get Started!', '/app/getting_started/flex', :class => 'try_it'
+    
+  - else
+    = link_to 'Try it now!', '/app/user/new/flex', :class => 'try_it'
+
 -# Resource links
 - content_for :resources do
   %ul
