@@ -145,12 +145,15 @@ module Libra
               begin
                 Timeout::timeout(1) do
                   code, body = curl(url)
-                  success = true
+
+                  # Only break if the code is 0
+                  success = true if code == 0
                 end
               rescue Timeout::Error
-		retries += 1
                 raise "Timeout #{url}" unless retries < max_retries
                 $logger.info("(#{$$}) Timeout on attempt #{retries} to #{url}")
+              ensure
+                retries += 1
               end
             end
           rescue Exception => e
