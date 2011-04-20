@@ -75,28 +75,25 @@
 
       .container_24#footer
         .prefix_1.grid_3
-          %h5 Red Hat
+          %h5 Fine Print
           %ul
             %li
-              %a(href="#") About
+              = link_to 'Terms', service_terms_path
             %li
-              %a(href="#") Legal
+              = link_to 'Website Terms', site_terms_path
             %li
-              %a(href="#") Privacy Policy
-            %li
-              %a(href="#") Partner with Us
+              = link_to 'Privacy Policy', 'http://www.redhat.com/legal/privacy_statement.html'
+
 
         .prefix_1.grid_3
           %h5 OpenShift
           %ul
             %li
-              %a(href="#") How it works
+              = link_to 'News and Events', '/news'
             %li
-              %a(href="#") Pricing
+              = link_to 'Blog', '/blogs'
             %li
-              %a(href="#") News &amp; Events
-            %li
-              %a(href="#") Blog
+              = link_to 'Partners', '#'
 
         .prefix_1.grid_3
           %h5 Solutions
@@ -112,13 +109,13 @@
           %h5 Resources
           %ul
             %li
-              %a(href="#") Community
+              = link_to 'Community', '/community'
             %li
-              %a(href="#") Documentation
+              = link_to 'Documentation', '/documents'
             %li
-              %a(href="#") Tutorials
+              = link_to 'Videos', '/videos'
             %li
-              %a(href="#") Videos
+              = link_to 'Forums', '/forums'
 
         .prefix_1.grid_7
           %h5 Powered By:
@@ -133,27 +130,10 @@
           %p Copyright &copy; 2011 Red Hat, Inc.
           %ul
             %li
-              %a(href="#") Accessibility Statement
-            %li
-              %a(href="#") Privacy Policy
-            %li
-              %a(href="#") Terms of Use
-            %li
-              %a(href="#") Patent Promise
-            %li
-              %a(href="#") Trademark Guidelines
-
-          %ul
-            %li
-              %a(href="#") About Red Hat
+              = link_to 'About Red Hat', 'http://www.redhat.com/about/'
             %li
               %a(href="#") Contact Us
             %li
-              %a(href="#") Careers
-            %li
               %a(href="#") Site Map
-            %li
-              %a(href="#") FAQs
-            %li
-              %a(href="#") System Requirements
+
         .clear
