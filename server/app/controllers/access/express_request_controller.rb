@@ -11,6 +11,10 @@ class Access::ExpressRequestController < Access::AccessRequestController
     new_access_express_requests_path
   end
   
+  def getting_started_path
+    getting_started_express_path
+  end
+  
   def setup_create_model(params)
     ae = params[:access_express_request]
     @access = Access::ExpressRequest.new(ae ? ae : {})

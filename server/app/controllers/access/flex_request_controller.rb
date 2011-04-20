@@ -11,6 +11,10 @@ class Access::FlexRequestController < Access::AccessRequestController
     new_access_flex_requests_path
   end
   
+  def getting_started_path
+    getting_started_flex_path
+  end
+  
   def setup_create_model(params)
     @access = Access::FlexRequest.new(params[:access_flex_request])
   end
