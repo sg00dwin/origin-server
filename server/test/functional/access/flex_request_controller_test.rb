@@ -7,7 +7,7 @@ class Access::FlexRequestControllerTest < ActionController::TestCase
   end
   
   test "should get error with invalid ec2 account number" do
-    session[:login] = 'tester'
+    setup_session
     form = get_post_form
     form[:ec2_account_number] = '123-123-123'
     post(:create, {:access_flex_request => form})
@@ -17,7 +17,7 @@ class Access::FlexRequestControllerTest < ActionController::TestCase
   end
   
   test "should get error without accepting terms" do
-    session[:login] = 'tester'
+    setup_session
     form = get_post_form
     form[:terms_accepted] = nil
     post(:create, {:access_flex_request => form})
@@ -27,10 +27,15 @@ class Access::FlexRequestControllerTest < ActionController::TestCase
   end
   
   test "should get success on post" do
-    session[:login] = 'tester'
+    setup_session
     form = get_post_form
     post(:create, {:access_flex_request => form})
     assert_response :success
+  end
+  
+  def setup_session
+    session[:login] = 'tester'
+    session[:user] = WebUser.new
   end
   
   def get_post_form
