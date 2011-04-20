@@ -1,10 +1,12 @@
 {
 "10gen": {
   "name": "MongoDB by 10gen",
-  "url": "http://www.mongodb.com",
-  "logo": "mongodb.png",
+  "url": "http://www.mongodb.com"
   "contact":
-    "10gen, Inc. <br/> 134 5th Avenue 3rd Floor <br/> New York, NY 10011 <br/> www.10gen.com",
+    "10gen, Inc. <br/>
+    134 5th Avenue 3rd Floor <br/>
+    New York, NY 10011 <br/> 
+    www.10gen.com",
   "summary":
     "MongoDB is a non-relational, open source database, combining scalability, performance and ease of use, with traditional relational database features such as dynamic queries and indexes. It has become the leading NoSQL database choice, with downloads exceeding 100,000 per month. 10gen develops MongoDB, and offers production support, training, and consulting for the database.",
   "quote": 
@@ -17,7 +19,7 @@
       "The power of NoSQL databases in an enterprise-ready open source platform",
       "Rapidly develop and iterate applications in any programming language", 
       "Scale data storage needs quickly and safely"
-    ],
+    ]
   "availability": "Coming soon"
   },
 "appcelerator": {
@@ -33,13 +35,13 @@
   "quote_attr":
     "Jeff Haynie, CEO of Appcelerator",
   "description":
-    "<p>Developers can use Titanium to create, deploy, and manage mobile applications then push them to the RedHat cloud with just one click. The only platform to enable fully native, cross-device development from a single codebase for iOS, Android, and Blackberry, Appcelerator’s customers include NBC, PayPal, eBay, Orange, and Cisco. These companies develop their mobile applications on Appcelerator products so they can decrease time-to-market and development costs, increase customer adoption and revenues, and enjoy greater flexibility and control. For more information, please visit <a href=\"http://www.appcelerator.com\">www.appcelerator.com.</a></p>",
+    "<p>Developers can use Titanium to create, deploy, and manage mobile applications then push them to the RedHat cloud with just one click. The only platform to enable fully native, cross-device development from a single codebase for iOS, Android, and Blackberry, Appcelerator’s customers include NBC, PayPal, eBay, Orange, and Cisco. These companies develop their mobile applications on Appcelerator products so they can decrease time-to-market and development costs, increase customer adoption and revenues, and enjoy greater flexibility and control. For more information, please visit <a href="http://www.appcelerator.com">www.appcelerator.com.</a></p>",
   "advantage":
     [ "Integrated solution for building, managing, and deploying cloud-connected mobile applications",
     "Familiar Eclipse-based IDE enables developers to create mobile cloud applications for Ruby, PHP, or Java",
     "One-click deployment to the Red Hat certified Cloud Provider Clouds"],
   "availability":
-    "Coming Soon"
+    "Coming Soon",
   },
 "bitnami": {
   "name": "BitNami",
@@ -50,16 +52,16 @@
   "summary": 
     "BitNami simplifies the deployment of open source and other applications natively, virtually and in the cloud. Applications such as Alfresco, Drupal, SugarCRM, Wordpress, JasperServer and more can be deployed in minutes using BitNami’s ready-to-run packages.",
   "quote":
-    "We are excited to be partnering with RedHat to enable developers to quickly deploy their favorite open source applications to the OpenShift Platform. Our BitNami-packaged applications give developers a head start so they can be productive with the OpenShift Platform in minutes.",
+    “We are excited to be partnering with RedHat to enable developers to quickly deploy their favorite open source applications to the OpenShift Platform. Our BitNami-packaged applications give developers a head start so they can be productive with the OpenShift Platform in minutes.”,
   "quote_attr":
     "Erica Brescia, CEO, BitRock (developer of BitNami)",
   "description":
     "<p>The BitNami cartridges for the OpenShift Platform enable developers to get up and running with their favorite open source applications in one click. Combined with OpenShift, the BitNami cartridges provide a complete, ready-to-run application stack and runtime environment. The growing BitNami application library includes SugarCRM, Alfresco, Drupal, Wordpress, JasperServer, Redmine, Joomla! and many others.</p>",
   "advantage": [
-    "BitNami application cartridges enable 1 click deployment of open source software on OpenShift.",
-    "Choose from a library of popular applications for CRM, content management, blogging and more."
+    "BitNami application cartridges 	enable 1 click deployment of open source software on OpenShift.",
+    "Choose from a library of popular applications for CRM, content management, blogging and more.",
   ],
-  "availability": "Coming Soon"
+  "availability": "Coming Soon",
   },
 "cotendo" : {
   "name": "Cotendo",
@@ -74,7 +76,11 @@
   "quote_attr":
     "Ronni Zehavi, CEO, Cotendo",
   "description":
-    "<p>Cotendo delivers CDN and Site Acceleration through a services suite integrating dynamic and static content acceleration, SSL, CDN load-balancing, performance monitoring, real-time reporting, and more. Unified on a single platform, the superior performance and functionality of the Cotendo services suite enables clients like to drive user engagement, conversions and maximize monetization. </p><p> Cotendo's customer base includes Fortune 500 enterprises, Tier 1 telecommunications providers, the world's largest social networks, eCommerce sites, advertising networks, and online gaming companies.</p>",
+    "<p>
+      Cotendo delivers CDN and Site Acceleration through a services suite integrating dynamic and static content acceleration, SSL, CDN load-balancing, performance monitoring, real-time reporting, and more. Unified on a single platform, the superior performance and functionality of the Cotendo services suite enables clients like to drive user engagement, conversions and maximize monetization. 
+    </p><p>
+      Cotendo's customer base includes Fortune 500 enterprises, Tier 1 telecommunications providers, the world's largest social networks, eCommerce sites, advertising networks, and online gaming companies.
+    </p>",
   "advantage":
     ["2x-10x faster performance than origin without the need for application architecture changes.",
     "Scale applications with demand without any additional infrastructure",
@@ -219,7 +225,32 @@
   "advantage":
     ["Elasticity and high availability for PHP applications",
     "Portability across different clouds and flexibility to customize your environment",
-    "Early problem detection and swift root cause analysis through PHP monitoring and code tracing"],
+    "Early problem detection and swift root cause analysis through PHP 	monitoring and code tracing"],
   "availability": "Coming Soon"
   }
 }
+
+/**
+  Boilerplate:
+
+"" : {
+  "name": "",
+  "url": "http://",
+  "logo": "",
+  "contact": 
+    "",
+  "summary":
+    "",
+  "quote":
+    "",
+  "quote_attr":
+    "",
+  "description":
+    "",
+  "advantage":
+    ["",
+    "",
+    ""],
+  "availability": "Coming Soon"
+  },
+**/
