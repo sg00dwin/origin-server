@@ -46,6 +46,19 @@ module Streamline
     end
   end
   
+  def refresh_roles(force=false)
+    has_requested = force
+    CloudAccess.ids.each do |id|
+      if has_requested?(id)
+        has_requested = true
+        break
+      end
+    end unless has_requested
+    if has_requested
+      establish
+    end
+  end
+  
   def accept_terms(accepted_terms_list)
     accepted_terms = JSON.parse(accepted_terms_list)
     query = ''
