@@ -123,7 +123,7 @@ module Libra
           $logger.info("(#{$$}) Exit code: #{exit_code}")
           $logger.info("(#{$$}) Body:\n#{stdout.read}")
           $logger.info("(#{$$}) Standard Error:\n#{stderr.read}")
-          $logger.error("(#{$$}) Access failed #{cmd}") if exit_code != 0
+          $logger.error("(#{$$}) Access failed #{url}") if exit_code != 0
 
           return exit_code, body
       end
