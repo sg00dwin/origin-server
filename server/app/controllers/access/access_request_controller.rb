@@ -5,13 +5,14 @@ class Access::AccessRequestController < ApplicationController
     Rails.logger.debug "Checking login status"
     login = session[:login]
     if login
-      setup_user      
+      @user = session_user      
       if @user.has_requested?(access_type)
         render :already_requested and return
       elsif @user.has_access?(access_type)
         redirect_to getting_started_path and return
       end
       @user.establish_terms
+      @user.refresh_roles
       setup_new_model
     else
       Rails.logger.debug "User is not logged in - rerouting to login / register"
@@ -20,18 +21,13 @@ class Access::AccessRequestController < ApplicationController
     end
   end
   
-  def setup_user
-    @user = session[:user]
-    @user.errors.clear
-  end
-  
   def create
     Rails.logger.debug "Checking login status"
     login = session[:login]    
     if login
       Rails.logger.debug "User is logged in"
       setup_create_model(params)
-      setup_user
+      @user = session_user
       @user.establish_terms
       if !@access.valid?
         render :new and return
@@ -41,11 +37,13 @@ class Access::AccessRequestController < ApplicationController
           @user.accept_terms(@access.accepted_terms_list)
         end
         if @user.errors.length == 0
-          request_access
+          request_access          
         end
         if @user.errors.length > 0
           @access.errors.update(@user.errors)          
           render :new and return
+        else
+          @user.refresh_roles(true)
         end
       end
     else

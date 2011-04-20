@@ -12,6 +12,14 @@ class ApplicationController < ActionController::Base
     session[:login] = user.rhlogin
     session[:user] = user
   end
+  
+  def session_user
+    user = session[:user]
+    if user
+      user.errors.clear      
+    end
+    return user
+  end
 
   def check_credentials
     # If this is a logout request, pass through
