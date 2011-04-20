@@ -120,13 +120,13 @@ END_OF_MESSAGE
 
     # Ensure we can parse the current version
     task :version do
-      yum_output = `yum info li`
+      yum_output = `yum info rhc`
       p = $?
 
       if p.exitstatus != 0
-        puts "WARNING - yum error getting li info, cleaning metadata and trying again"
+        puts "WARNING - yum error getting rhc info, cleaning metadata and trying again"
         `yum clean metadata`
-        yum_output = `yum info li`
+        yum_output = `yum info rhc`
         p = $?
         if p.exitstatus != 0
           puts "EXITING - Error cleaning yum state"
@@ -204,7 +204,7 @@ END_OF_MESSAGE
 
             # Make sure the right version is installed
             print "Verifying update..."
-            rpm = ssh('rpm -q li')
+            rpm = ssh('rpm -q rhc')
             unless rpm.start_with?(@version)
               fail "Expected updated version to be #{@version}, actual was #{rpm}"
             end
