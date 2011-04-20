@@ -57,7 +57,7 @@ module Libra
       @@config[:dynect_customer_name] =  fs_config.get_value('dynect_customer_name').strip
       @@config[:dynect_user_name] =  fs_config.get_value('dynect_user_name').strip
       @@config[:dynect_password] =  fs_config.get_value('dynect_password').strip
-      @@config[:dynect_url] =  fs_config.get_value('dynect_url').strip      
+      @@config[:dynect_url] =  fs_config.get_value('dynect_url').strip
     rescue
       # Ignore as long as we have the values below
     ensure
@@ -71,7 +71,7 @@ module Libra
     end
 
     # Now, initialize the MCollective options
-    @@config[:rpc_opts] = {:disctimeout => 1,
+    @@config[:rpc_opts] = {:disctimeout => 3,
                            :timeout     => 10,
                            :verbose     => false,
                            :progress_bar=> false,

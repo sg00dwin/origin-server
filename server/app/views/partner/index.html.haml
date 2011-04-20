@@ -1,0 +1,29 @@
+-# file: Partner index page - shows all the partners!
+
+= render 'shared/pageheader', :product => 'openshift', :title => 'Partners', :subtitle => 'A Strong Ecosystem of Technologies'
+
+#page.container_24
+  #main_content.grid_22
+    
+    %h2 Meet Our Partners
+    
+    %p.intro
+      %em
+        To be replaced: 
+      
+      Red Hat works with an ecosystem of partners to build, optimize, and deliver complete solustions to our customers. Through our global network of leading hardware, software, and service provider vendors, Red Hat offers customers a wealth of proven technology solutions that solve real-world business challenges.
+      
+            
+      
+    #join
+      %p
+        %strong Want to integrate with the open Paas
+        that provides you the broadest audience with the best potential for monetization, requiring the least effort from you?
+      
+      = link_to 'Join our partner program.', '#', :class => 'join'
+      
+    /Start list of partners
+    %ul.partners
+      = render 'partner_list', :collection => @partners
+    
+  .clear

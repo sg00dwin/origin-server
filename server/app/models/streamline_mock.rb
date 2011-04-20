@@ -36,6 +36,9 @@ module StreamlineMock
   def accept_terms(accepted_terms_list)
   end
 
+  def refresh_roles(force=false)  
+  end
+
   #
   # Login the current user, setting the roles and ticket
   #

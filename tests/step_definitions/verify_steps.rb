@@ -126,10 +126,10 @@ Then /^they should all be accessible$/ do
   end
 
   # Get all the unique responses
-  # There should only be 1 result ["200"]
+  # There should only be 1 result [0]
   uniq_responses = results.uniq
   uniq_responses.length.should == 1
-  uniq_responses[0].should == "200"
+  uniq_responses[0].should == 0
 end
 
 
@@ -171,10 +171,10 @@ Then /^they should be able to be changed$/ do
   end
 
   # Get all the unique responses
-  # There should only be 1 result ["200"]
+  # There should only be 1 result [0]
   uniq_responses = results.uniq
   uniq_responses.length.should == 1
-  uniq_responses[0].should == "200"
+  uniq_responses[0].should == 0
 end
 
 Then /^no errors should be thrown$/ do

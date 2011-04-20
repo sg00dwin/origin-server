@@ -35,27 +35,12 @@ Then /^users are able to create new rails app using rails new$/ do
     # Allow change to be loaded
     sleep 30
 
-    $logger.info("host= #{url}")
-    begin
-      res = Net::HTTP.start(host, 80) do |http|
-        http.read_timeout = 30
-        http.get("/")
+    connect(url, "/", @http_timeout) do |code, time, body|
+      value[:change_code] = code
+      if body
+        body.index("TEST").should_not == -1
       end
-
-      # Store the response code for later use
-      code = res.code
-
-      # Verify the content of the response
-      res.body.index("TEST").should_not == -1
-    rescue Exception => e
-      $logger.error "Exception trying to access #{url}"
-      $logger.error e.message
-      $logger.error e.backtrace
-      code = -1
     end
-
-    # Store the results
-    value[:change_code] = code
   end
 
   # Print out the results:
@@ -68,9 +53,9 @@ Then /^users are able to create new rails app using rails new$/ do
   end
 
   # Get all the unique responses
-  # There should only be 1 result ["200"]
+  # There should only be 1 result [0]
   uniq_responses = results.uniq
   uniq_responses.length.should == 1
-  uniq_responses[0].should == "200"
+  uniq_responses[0].should == 0
 end
 
