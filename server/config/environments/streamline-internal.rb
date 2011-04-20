@@ -33,4 +33,5 @@ RedHatCloud::Application.configure do
   config.login = "https://streamline.devlab.phx1.redhat.com/wapps/streamline/login.html"
   config.streamline = "https://streamline.devlab.phx1.redhat.com/wapps/streamline"
   config.streamline_secret = 'c0ldW1n3'
+  config.captcha_secret = 'zvw5LiixMB0I4mjk06aR'
 end

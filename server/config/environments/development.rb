@@ -33,6 +33,7 @@ RedHatCloud::Application.configure do
   config.login = "/app/login"
   config.streamline = "http://localhost" # Non-integrated
   config.streamline_secret = ''
+  config.captcha_secret = 'zvw5LiixMB0I4mjk06aR'
 
   # AWS configuration
   config.aws_key = "AKIAJMZR4X6F46UMXV6Q"
