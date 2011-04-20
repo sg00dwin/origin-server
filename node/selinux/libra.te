@@ -37,6 +37,8 @@ corenet_tcp_connect_amqp_port(libra_t)
 corenet_tcp_connect_generic_port(libra_t)
 corenet_udp_bind_generic_port(libra_t)
 
+sendmail_domtrans(libra_t)
+
 ########################################
 #
 # libra net local policy
@@ -47,7 +49,7 @@ corenet_tcp_connect_all_ports(libra_net_t)
 #
 # libra general local policy
 #
-allow libra_domain self:process { getattr fork getpgid setpgid setrlimit setsched signal_perms ptrace getsched };
+allow libra_domain self:process { getattr fork getpgid setpgid setrlimit setsched signal_perms ptrace getsched execmem };
 allow libra_domain self:sem create_sem_perms;
 allow libra_domain self:tcp_socket  create_stream_socket_perms;
 
@@ -63,11 +65,16 @@ manage_files_pattern(libra_domain, libra_var_lib_t, libra_var_lib_t)
 manage_sock_files_pattern(libra_domain, libra_var_lib_t, libra_var_lib_t)
 manage_lnk_files_pattern(libra_domain, libra_var_lib_t, libra_var_lib_t)
 files_var_lib_filetrans(libra_domain, libra_var_lib_t, { dir file sock_file } )
+allow libra_domain libra_var_lib_t:file entrypoint;
 
 kernel_read_system_state(libra_domain)
+kernel_read_network_state(libra_domain)
 kernel_dontaudit_search_kernel_sysctl(libra_domain)
 
+dev_list_sysfs(libra_domain)
 dev_read_rand(libra_domain)
+dev_dontaudit_append_rand(libra_domain)
+fs_dontaudit_rw_anon_inodefs_files(libra_domain)
 
 files_read_usr_files(libra_domain)
 
@@ -95,6 +102,8 @@ apache_search_config(libra_domain)
 apache_read_sys_content(libra_domain)
 corenet_tcp_bind_http_cache_port(libra_domain)
 
+java_exec(libra_domain)
+
 ########################################
 #
 # libra initrc local policy
@@ -115,6 +124,8 @@ allow libra_initrc_t libra_domain:process { getattr getsched setsched transition
 allow libra_domain libra_initrc_t:fd use;
 allow libra_domain libra_initrc_t:fifo_file rw_inherited_fifo_file_perms;
 allow libra_domain libra_initrc_t:process sigchld;
+
+apache_exec_rotatelogs(libra_domain)
 
 ########################################
 #
@@ -147,3 +158,4 @@ corenet_udp_bind_generic_port(httpd_t)
 
 # Allow users to execute files in their home dir
 # allow libra_t libra_var_lib_t:file { execute execute_no_trans };
+
