@@ -64,18 +64,18 @@ namespace :rpm do
   desc "Create a brew build based on current info"
   task :brew => [:version, :buildroot, :srpm] do
       srpm = Dir.glob("#{@buildroot}/SRPMS/rhc-#{@version}*.rpm")[0]
-      if ! File.exists?("#{ENV['HOME']}/cvs/li/RHEL-6-LIBRA")
-          puts "Please check out the li cvs root:"
+      if ! File.exists?("#{ENV['HOME']}/cvs/rhc/RHEL-6-LIBRA")
+          puts "Please check out the rhc cvs root:"
           puts
           puts "mkdir -p #{ENV['HOME']}/cvs; cd #{ENV['HOME']}/cvs"
-          puts "cvs -d :gserver:cvs.devel.redhat.com:/cvs/dist co li"
+          puts "cvs -d :gserver:cvs.devel.redhat.com:/cvs/dist co rhc"
           exit 206
       end
-      cp "build/specs/rhc.spec", "#{ENV['HOME']}/cvs/li/RHEL-6-LIBRA"
-      cd "#{ENV['HOME']}/cvs/li/RHEL-6-LIBRA"
+      cp "build/specs/rhc.spec", "#{ENV['HOME']}/cvs/rhc/RHEL-6-LIBRA"
+      cd "#{ENV['HOME']}/cvs/rhc/RHEL-6-LIBRA"
       sh "cvs up -d"
       sh "make new-source FILES='#{@buildroot}/SOURCES/rhc-#{@version}.tar.gz'"
-      sh "cvs commit -m 'Updating to most recent li build #{@version}'"
+      sh "cvs commit -m 'Updating to most recent rhc build #{@version}'"
       sh "make tag"
       sh "make build"
   end
