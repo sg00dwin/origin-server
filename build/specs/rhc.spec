@@ -3,7 +3,7 @@
 
 Name: rhc 
 Version: 0.66.3
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -197,7 +197,7 @@ cp -adv misc/devenv/* $RPM_BUILD_ROOT/etc/libra/devenv/
 
 mkdir -p .%{gemdir}
 gem install --install-dir $RPM_BUILD_ROOT/%{gemdir} --bindir $RPM_BUILD_ROOT/%{_bindir} --local -V --force --rdoc \
-     client/pkg/li-%{version}.gem
+     client/pkg/rhc-%{version}.gem
 gem install --install-dir $RPM_BUILD_ROOT/%{gemdir} --bindir $RPM_BUILD_ROOT/%{_bindir} --local -V --force --rdoc \
      node/tools/pkg/li-node-tools-%{version}.gem
 
@@ -341,10 +341,10 @@ fi
 %{_bindir}/rhc-snapshot
 %{_mandir}/man1/rhc-*
 %{_mandir}/man5/express*
-%{gemdir}/gems/li-%{version}/
-%{gemdir}/cache/li-%{version}.gem
-%{gemdir}/doc/li-%{version}
-%{gemdir}/specifications/li-%{version}.gemspec
+%{gemdir}/gems/rhc-%{version}/
+%{gemdir}/cache/rhc-%{version}.gem
+%{gemdir}/doc/rhc-%{version}
+%{gemdir}/specifications/rhc-%{version}.gemspec
 %config(noreplace) %{_sysconfdir}/openshift/express.conf
 
 %files devenv
@@ -434,6 +434,9 @@ chmod 0666 %{_localstatedir}/www/libra/log/production.log
 %{_libexecdir}/li/cartridges/jbossas-7.0.0/
 
 %changelog
+* Wed Apr 20 2011 Mike McGrath <mmcgrath@redhat.com> 0.66.3-2
+- Fixed gem names
+
 * Wed Apr 20 2011 Mike McGrath <mmcgrath@redhat.com> 0.66.3-1
 - More updates for release
 
