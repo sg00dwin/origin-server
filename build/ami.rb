@@ -212,10 +212,10 @@ END_OF_MESSAGE
         else
           print "Performing clean install with the latest code..."
           ssh('wget http://209.132.178.9/gpxe/trees/li-devenv.sh')
-          ssh('sh li-devenv.sh', 600)
+          ssh('sh li-devenv.sh', 1800)
           puts "Done"
           print "Updating all packages on the system..."
-          ssh('yum update -y', 600)
+          ssh('yum update -y', 1800)
           puts "Done"
           print "Rebooting instance to apply new kernel"
           conn.reboot_instances([@instance])

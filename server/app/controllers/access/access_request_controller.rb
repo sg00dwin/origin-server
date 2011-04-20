@@ -6,13 +6,7 @@ class Access::AccessRequestController < ApplicationController
     login = session[:login]
     if login
       setup_new_model
-      @user = WebUser.find_by_ticket(session[:ticket])
-      if @user
-        setup_user_session(@user)
-        @user.establish_terms
-      else
-        #
-      end
+      setup_user
     else
       Rails.logger.debug "User is not logged in - rerouting to login / register"
       session[:workflow] = new_path
@@ -20,20 +14,19 @@ class Access::AccessRequestController < ApplicationController
     end
   end
   
+  def setup_user
+    @user = session[:user]
+    @user.errors.clear
+    @user.establish_terms
+  end
+  
   def create
     Rails.logger.debug "Checking login status"
-    login = session[:login]
-
+    login = session[:login]    
     if login
       Rails.logger.debug "User is logged in"
       setup_create_model(params)
-      @user = WebUser.find_by_ticket(session[:ticket])
-      if @user
-        setup_user_session(@user)
-        @user.establish_terms
-      else
-        #
-      end
+      setup_user    
       if !@access.valid?
         render :new and return
       else

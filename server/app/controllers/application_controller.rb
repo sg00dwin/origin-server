@@ -10,7 +10,7 @@ class ApplicationController < ActionController::Base
   
   def setup_user_session(user)
     session[:login] = user.rhlogin
-    session[:roles] = user.roles
+    session[:user] = user
   end
 
   def check_credentials

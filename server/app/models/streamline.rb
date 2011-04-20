@@ -39,8 +39,10 @@ module Streamline
   end
   
   def establish_terms
-    http_post(@@unacknowledged_terms_url) do |json|
-      @terms = json['unacknowledgedTerms']
+    if !@terms
+      http_post(@@unacknowledged_terms_url) do |json|
+        @terms = json['unacknowledgedTerms']
+      end
     end
   end
   
