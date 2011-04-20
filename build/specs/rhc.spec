@@ -9,7 +9,7 @@ Summary: Multi-tenant cloud management system client tools
 Group: Network/Daemons
 License: GPLv2
 URL: https://engineering.redhat.com/trac/Libra
-Source0: li-%{version}.tar.gz
+Source0: rhc-%{version}.tar.gz
 BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildArch: noarch
 
