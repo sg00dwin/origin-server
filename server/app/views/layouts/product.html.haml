@@ -37,7 +37,10 @@
       
       /Try it button
       - if session[:login]
-        = link_to 'Try it now!', 'access/' + params[:action] + '/new', :class => 'try_it'
+        - if session[:user].has_access?(CloudAccess.access_id(params[:action]))
+          = link_to 'Get Started!', 'getting_started/' + params[:action], :class => 'try_it'
+        - else# session[:user].has_requested?(CloudAccess.access_id(params[:action]))
+          = link_to 'Try it now!', 'access/' + params[:action] + '/new', :class => 'try_it'
       - else
         = link_to 'Try it now!', 'user/new/' + params[:action], :class => 'try_it'
       

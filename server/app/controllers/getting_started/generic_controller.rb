@@ -4,7 +4,7 @@ class GettingStarted::GenericController < ApplicationController
   def show
     if !session[:login]
       session[:workflow] = getting_started_path
-      redirect_to login_path and return
+      redirect_to login_path, :notice => flash[:notice] and return
     end
   end
 end
