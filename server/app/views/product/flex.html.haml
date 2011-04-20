@@ -3,6 +3,10 @@
 -# 
   TODO: at some point, we should be using partials for some of this content
   
+- content_for :scripts do
+  = javascript_include_tag "/app/javascripts/jquery.tools.min.js"
+  = javascript_include_tag "/app/javascripts/products"
+  
 - content_for :page_title do
   Flex
 

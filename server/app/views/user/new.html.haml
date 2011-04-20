@@ -1,3 +1,9 @@
+-# file: Registration page
+
+- content_for :scripts do
+  = javascript_include_tag "/app/javascripts/jquery.validate.min.js"
+  = javascript_include_tag "/app/javascripts/form"
+
 - if @product == 'openshift'
   - subtitle = 'Register for an account'
 - else

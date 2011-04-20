@@ -1,4 +1,9 @@
 -# file: Login form
+
+- content_for :scripts do
+  = javascript_include_tag "/app/javascripts/jquery.validate.min.js"
+  = javascript_include_tag "/app/javascripts/form"
+
 = render 'shared/pageheader', :product => 'openshift', :title => 'Login to OpenShift', :subtitle => 'Access Your OpenShift Account'
 
 .container_24#page
