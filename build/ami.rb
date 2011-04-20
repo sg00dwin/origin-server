@@ -252,7 +252,7 @@ END_OF_MESSAGE
       end
 
       desc "Create a new AMI from the latest li build"
-      task :new => [:exists, "ami:builder:start"] do
+      task :new => [:exists, "ami:builder:clean", "ami:builder:start"] do
         tag = @existing ? "#{@version}-update" : "#{@version}-clean"
         print "Registering AMI #{@version}..."
         image = conn.create_image(@instance, tag)
