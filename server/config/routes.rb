@@ -42,11 +42,15 @@ RedHatCloud::Application.routes.draw do
     resource :login,
              :controller => "login",
              :only => [:show, :create]
-    match 'login/error' => 'login#error', :via => [:get]
+    match 'login/error' => 'login#error', :via => [:get]        
 
     resource :logout,
              :controller => "logout",
              :only => [:show]
+             
+    resources :partners,
+              :controller => "partner",
+              :only => [:show, :index]
 
     namespace "access" do
       resource :flex,
