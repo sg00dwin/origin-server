@@ -8,6 +8,7 @@ require 'hpricot'
 require 'net/https'
 require 'uri'
 require 'ping'
+require 'logger'
 
 # Synchronize output
 $stdout.sync = true
@@ -25,12 +26,13 @@ Batch register users for testing
   -h|--help                 Show Usage info
 
 USAGE
-exit 255
+  exit 255
 end
 
 begin
     opts = GetoptLong.new(
         ["--help",  "-h", GetoptLong::NO_ARGUMENT],
+        ["--debug", "-d", GetoptLong::NO_ARGUMENT],
         ["--host",  "-o", GetoptLong::REQUIRED_ARGUMENT],
         ["--id",    "-i", GetoptLong::REQUIRED_ARGUMENT],
         ["--num",   "-n", GetoptLong::REQUIRED_ARGUMENT]
@@ -39,34 +41,48 @@ begin
     opts.each do |o, a|
         opt[o[2..-1]] = a.to_s
     end
+
 rescue Exception => e
   puts e.message
+  p_usage
+end
+
+if opt["help"] or (!opt["host"] || !opt["id"] || !opt["num"])
     p_usage
 end
 
 proxy = ['squid.corp.redhat.com', '8080']
 password = "redhat"
-openshift_host = "http://#{opt['host']}"
+host = opt['host']
+openshift_host = "https://#{opt['host']}/app"
 identifier = opt['id']
 num_users = opt['num'].to_i
+debug = opt['debug']
+
+# Determine if we need to proxy
+proxy = opt['host'] =~ /amazonaws/
 
 # Verify proxy connectivity
-print "Verifying proxy connectivity..."
-unless Ping.pingecho('squid.corp.redhat.com', 2)
-  puts "ERROR - Could not connect to squid.corp.redhat.com."
-  puts "You must be on the RH network or VPN to run this script."
-  exit 1
+if proxy
+  print "Verifying proxy connectivity..."
+  unless Ping.pingecho('squid.corp.redhat.com', 2)
+    puts "ERROR - Could not connect to squid.corp.redhat.com."
+    puts "You must be on the RH network or VPN to run this script."
+    exit 1
+  end
+  puts "Done"
 end
-puts "Done"
 
 # Setup the internal proxy
 a = Mechanize.new { |agent|
   agent.user_agent_alias = 'Mac Safari'
-  agent.set_proxy(proxy[0], proxy[1])
+  agent.set_proxy(proxy[0], proxy[1]) if proxy
+  agent.log = Logger.new(STDOUT) if debug
 }
 
 # Register a new user
 print "Registering users (#{num_users} in total)"
+
 a.get(openshift_host) do |page|
   login_page = page.link_with(:text => /Login/).click
   register_page = login_page.link_with(:text => /Click here to register/).click
@@ -76,10 +92,14 @@ a.get(openshift_host) do |page|
       form['web_user[email_address]'] = "libra-test+#{identifier}#{num}@redhat.com"
       form['web_user[password]'] = password
       form['web_user[password_confirmation]'] = password
+      form.add_field!('captcha_secret', 'zvw5LiixMB0I4mjk06aR')
     end.submit
 
     if result_page.body =~ /Check your email/
       print "."
+    else
+      puts "ERROR - Registration failed"
+      exit 1
     end
   end
 end
