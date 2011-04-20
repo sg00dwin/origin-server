@@ -368,6 +368,10 @@ END_OF_MESSAGE
 
         begin
           private_ip = ssh("facter ipaddress")
+          if !private_ip or private_ip.strip.empty?
+            puts "EXITING - AMZ instance didn't return ipaddress fact"
+            exit 0
+          end
           print "Updating the controller to use the AMZ private IP '#{private_ip}'..."
           ssh("sed -i \"s/public_ip.*/public_ip='#{private_ip}'/g\" /etc/libra/node_data.conf")
           ssh("/usr/bin/puppet /usr/libexec/mcollective/update_yaml.pp")
@@ -415,8 +419,8 @@ END_OF_MESSAGE
           print "Downloading verification output..."
           `mkdir -p rhc/log`
           scp("-r #{@server}:/tmp/rhc/cucumber*.log rhc/log")
-          scp("-r #{@server}:/var/log/httpd/access_log rhc/log")
-          scp("-r #{@server}:/var/log/httpd/error_log rhc/log")
+          scp("-r #{@server}:/var/www/libra/httpd/logs/access_log rhc/log")
+          scp("-r #{@server}:/var/www/libra/httpd/logs/error_log rhc/log")
           scp("-r #{@server}:/var/www/libra/log/development.log rhc/log")
           scp("-r #{@server}:/var/log/mcollective.log rhc/log")
           scp("-r #{@server}:/tmp/mcollective-client.log rhc/log")

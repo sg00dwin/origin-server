@@ -1,5 +1,6 @@
 $LOAD_PATH << File.expand_path('../../../server/lib', __FILE__)
 require 'mcollective'
+require 'logger'
 require 'libra'
 require 'timeout'
 require 'logger'
@@ -109,25 +110,43 @@ module Libra
           return exit_code
       end
 
+      def curl(url)
+          $logger.info("(#{$$}) Accessing: #{url}")
+
+          pid, stdin, stdout, stderr = Open4::popen4("curl -s #{url}")
+
+          stdin.close
+          ignored, status = Process::waitpid2 pid
+          exit_code = status.exitstatus
+          body = stdout.read
+
+          $logger.info("(#{$$}) Exit code: #{exit_code}")
+          $logger.info("(#{$$}) Body:\n#{stdout.read}")
+          $logger.info("(#{$$}) Standard Error:\n#{stderr.read}")
+          $logger.error("(#{$$}) Access failed #{cmd}") if exit_code != 0
+
+          return exit_code, body
+      end
+
       def connect(host, uri, max_retries=30)
           max_retries = 30 unless max_retries
+
+          # Defaults
+          code = -1
+          body = nil
 
           url = "http://#{host}/#{uri}"
           $logger.info("(#{$$}) Connecting to #{url}")
           beginning_time = Time.now
           begin
             retries = 1
-            while retries < max_retries do
+            success = false
+            while retries < max_retries and !success do
               begin
-                # Since sockets will try and connect forever, timeout
-                # after 1 second and retry until the max retries
-                h = Net::HTTP.new(host, 80)
-		h.open_timeout = 1
-		h.read_timeout = 1
-                res = h.start() {|http| http.get(uri) }
-                code = res.code
-                body = res.body
-                break
+                Timeout::timeout(1) do
+                  code, body = curl(url)
+                  success = true
+                end
               rescue Timeout::Error
 		retries += 1
                 raise "Timeout #{url}" unless retries < max_retries
@@ -138,10 +157,9 @@ module Libra
             $logger.error "(#{$$}) Exception trying to access #{url}"
             $logger.error e.message
             $logger.error e.backtrace
-            code = -1
-            body = nil
           end
           response_time = Time.now - beginning_time
+          $logger.info("(#{$$}) Exit code of #{url} = #{code}")
           $logger.info("(#{$$}) Response time of #{url} = #{response_time}")
 
           # Yield the response code, time
@@ -154,6 +172,9 @@ end
 # Global, one time setup
 $logger = Logger.new(File.join($temp, "cucumber.log"))
 $logger.level = Logger::DEBUG
+$logger.formatter = proc { |severity, datetime, progname, msg|
+    "#{$$} #{severity} #{datetime}: #{msg}\n"
+}
 Libra.c[:logger] = $logger
 Libra.c[:bypass_user_reg] = true
 #Libra.c[:rpc_opts][:verbose] = true
