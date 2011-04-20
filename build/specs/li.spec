@@ -2,7 +2,7 @@
 %define gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 
 Name: li
-Version: 0.65.3
+Version: 0.65.4
 Release: 1%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
@@ -434,6 +434,9 @@ chmod 0666 %{_localstatedir}/www/libra/log/production.log
 %{_libexecdir}/li/cartridges/jbossas-7.0.0/
 
 %changelog
+* Mon Apr 19 2011 Matt Hicks <mhicks@redhat.com> 0.65.4-1
+- More site flows
+
 * Mon Apr 19 2011 Matt Hicks <mhicks@redhat.com> 0.65.3-1
 - Client error handling improvements and timeout increases
 - Test framework improvements on HTTP connections
