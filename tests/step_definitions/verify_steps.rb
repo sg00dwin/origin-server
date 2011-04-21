@@ -47,6 +47,7 @@ When /^they are accessed$/ do
 end
 
 When /^the applications are created$/ do
+  urls_by_pid = {}
   processes = []
 
   @table.hashes.each do |row|
@@ -64,51 +65,44 @@ When /^the applications are created$/ do
       namespace = info[:namespace]
       login = info[:login]
       namespaces[index] = namespace
+      urls = []
 
       # Store the data for the app (can't do this within the fork)
       apps.each do |app|
         # Store the generated data for the other tests to verify
         url = "#{app}-#{namespace}.#{$domain}"
+        urls << url
         @data[url] = {:namespace => namespace, :app => app, :type => type}
       end
 
       # Create the users in subprocesses
       # Count the current sub processes
       # if at max, wait for some to finish and keep going
-
       processes << fork do
         login = "libra-test+#{namespace}@redhat.com"
         # Create the user and the apps
         run("#{$create_domain_script} -n #{namespace} -l #{login} -p fakepw -d")
         apps.each do |app|
           # Now create the app
-          exit_code = run("#{$create_app_script} -l #{login} -a #{app} -r #{$temp}/#{namespace}_#{app}_repo -t #{type} -p fakepw -d")
+          repo = "#{$temp}/#{namespace}_#{app}_repo"
+          exit_code = run("#{$create_app_script} -l #{login} -a #{app} -r #{repo} -t #{type} -p fakepw -d")
 
-          # Safely append to a file all the url's that failed
+          # Safely append to a file all the url's that failed and succeeded
+          url = "#{app}-#{namespace}.#{$domain}"
           if exit_code != 0
-            system("flock /tmp/rhc/lock echo '#{app}-#{namespace}.#{$domain}' >> #{$temp}/failures.log")
+            add_failure(url)
           else
-            system("echo '#{app}-#{namespace}.#{$domain}' >> #{$temp}/#{namespace}-success.log")
+            add_success(url)
           end
         end
       end
 
+      # Store the urls for the process
+      urls_by_pid[processes.last] = urls
+
       # Wait for some process to complete if necessary
-      begin
-        Timeout::timeout(@cmd_timeout || 300) do
-          pid = processes.shift
-          Process.wait(pid)
-          $logger.error("Process #{pid} failed") if $?.exitstatus != 0
-        end if processes.length >= max_processes
-      rescue Timeout::Error
-        # Read the successes out
-        successes = File.new("#{$temp}/failures.log", "r").collect {|line| line.chomp}
-        total = apps.collect {|app| "#{app}-#{namespace}.#{$domain}"}
-        failures = total - successes
-        $logger.info("Logging failures = #{failures.pretty_inspect}")
-        failures.each do |url|
-          system("flock /tmp/rhc/lock echo '#{app}-#{namespace}.#{$domain}' >> #{$temp}/failures.log")
-        end
+      if processes.length >= max_processes
+        wait(processes.pop, urls, @cmd_timeout)
       end
 
       # sleep a little to randomize forks
@@ -118,15 +112,11 @@ When /^the applications are created$/ do
 
   # Wait for the remaining processes
   processes.reverse.each do |pid|
-    Timeout::timeout(@cmd_timeout || 300) do
-      Process.wait(pid)
-      $logger.error("Process #{pid} failed") if $?.exitstatus != 0
-    end
+    wait(pid, urls_by_pid[pid], @cmd_timeout)
   end
 
-  # Read the failures into the data structure
-  File.new("#{$temp}/failures.log", "r").each do |line|
-    url = line.chomp
+  # Fill out the data structure for all failures
+  failures.each do |url|
     @data[url][:failed] = true
     @data[url][:code] = -1
     @data[url][:time] = -1
