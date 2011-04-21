@@ -18,6 +18,7 @@ begin
     VERSION_REGEX = /li-\d+\.\d+\.?\d*-\d+/
     AMI_REGEX = /li-\d+\.\d+/
     BUILD_REGEX = /^builder-li-\d+\.\d+/
+    TERMINATE_REGEX = /terminate/
     PREFIX = ENV['LIBRA_DEV'] ? ENV['LIBRA_DEV'] + "-" : ""
     VERIFIER_REGEX = /^#{PREFIX}verifier-li-\d+\.\d+/
     VERIFIED_TAG = "qe-ready"
@@ -89,6 +90,21 @@ END_OF_MESSAGE
         Net::SMTP.start('localhost') do |smtp|
           smtp.send_message msg, "noreply@redhat.com", "libra-express@redhat.com"
         end
+    end
+
+    # Delete all images with terminated in them
+    desc "Terminate all tagged images"
+    task :prune => ["ami:prereqs"] do
+      # Terminate any tagged instances
+      instances = conn.describe_instances.collect do |i|
+        if (i[:aws_state] == "stopped") and (i[:tags]["Name"] =~ TERMINATE_REGEX)
+          i[:aws_instance_id]
+        end
+      end.compact
+
+      puts "Terminating #{instances.pretty_inspect}"
+
+      conn.terminate_instances(instances) unless instances.empty?
     end
 
     # Ensure AMZ and RSA credentials exist
@@ -268,8 +284,8 @@ END_OF_MESSAGE
           end
         end
 
-        # Keep the 10 most recent images
-        images.sort!.pop(10)
+        # Keep the 5 most recent images
+        images.sort!.reverse!.pop(5)
 
         # Prune the rest
         images.each do |i|

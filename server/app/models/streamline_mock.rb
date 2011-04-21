@@ -33,6 +33,7 @@ module StreamlineMock
   end
   
   def accept_terms(accepted_terms_list, terms)
+    terms.clear
   end
 
   def refresh_roles(force=false)  
