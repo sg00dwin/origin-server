@@ -82,7 +82,12 @@ When /^the applications are created$/ do
         run("#{$create_domain_script} -n #{namespace} -l #{login} -p fakepw -d")
         apps.each do |app|
           # Now create the app
-          run("#{$create_app_script} -l #{login} -a #{app} -r #{$temp}/#{namespace}_#{app}_repo -t #{type} -p fakepw -d")
+          exit_code = run("#{$create_app_script} -l #{login} -a #{app} -r #{$temp}/#{namespace}_#{app}_repo -t #{type} -p fakepw -d")
+
+          # Safely append to a file all the url's that failed
+          if exit_code != 0
+            system("flock /tmp/rhc/lock echo '#{app}-#{namespace}.#{$domain}' >> #{$temp}/failures.log")
+          end
         end
       end
 
@@ -105,6 +110,14 @@ When /^the applications are created$/ do
       $logger.error("Process #{pid} failed") if $?.exitstatus != 0
     end
   end
+
+  # Read the failures into the data structure
+  File.new("#{$temp}/failures.log", "r").each do |line|
+    url = line.chomp
+    @data[url][:failed] = true
+    @data[url][:code] = -1
+    @data[url][:time] = -1
+  end
 end
 
 Then /^they should all be accessible$/ do
@@ -113,7 +126,7 @@ Then /^they should all be accessible$/ do
     connect(url, "/health_check.php", @http_timeout) do |code, time, body|
       value[:code] = code
       value[:time] = time
-    end
+    end unless value[:failed]
   end
 
   # Print out the results:
