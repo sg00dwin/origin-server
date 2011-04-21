@@ -80,7 +80,7 @@ begin
     def send_verified_email(version, ami)
         msg = <<END_OF_MESSAGE
 From: Jenkins <noreply@redhat.com>
-To: Libra Express <libra-express@redhat.com>
+To: Matt Hicks <mhicks@redhat.com>
 Subject: Build #{version} QE Ready
 
 The build #{version} (AMI #{ami}) is ready for QE.
