@@ -23,15 +23,6 @@
 
 require 'rhc-common'
 
-#
-# Check if host exists
-#
-def hostexist?(host)
-    dns = Resolv::DNS.new
-    resp = dns.getresources(host, Resolv::DNS::Resource::IN::A)
-    return resp.any?
-end
-
 def p_usage
     rhlogin = get_var('default_rhlogin') ? "Default: #{get_var('default_rhlogin')}" : "(required)"
     type_keys = RHC::get_type_keys(', ')
@@ -295,7 +286,7 @@ sleep 15
 # Now start checking for DNS
 loop = 0
 sleep_time = 2
-while loop < RHC::Maxretries && !hostexist?(my_url)
+while loop < RHC::Maxretries && !RHC::hostexist?(my_url)
     sleep sleep_time
     loop+=1
     puts "  retry # #{loop} - Waiting for DNS: #{my_url}"

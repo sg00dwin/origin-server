@@ -260,7 +260,16 @@ module RHC
     end
     exit_code
   end
-  
+
+  #
+  # Check if host exists
+  #
+  def self.hostexist?(host)
+      dns = Resolv::DNS.new
+      resp = dns.getresources(host, Resolv::DNS::Resource::IN::A)
+      return resp.any?
+  end
+
 end
 
 #
