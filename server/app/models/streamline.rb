@@ -96,7 +96,7 @@ module Streamline
           end
         end
         if errors.length == 0
-          @terms = []
+          terms.clear
         end
       else
         if errors.length == 0
