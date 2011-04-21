@@ -2,19 +2,24 @@ require 'pp'
 require 'json'
 
 class TermsController < ApplicationController
-  
+
   def new
-    @user = session_user
+    @user = session_user    
     if @user
-      @term = Term.new
+      @user.establish_terms    
+      if @user.site_terms.length > 0
+        @term = Term.new
+      else
+        render :site_terms and return
+      end
     else
       Rails.logger.debug "User is not logged in - rerouting to login / register"
-      session[:workflow] = new_path
+      session[:workflow] = new_terms_path
       redirect_to login_path
     end
   end
-  
-  def create    
+
+  def create
     @user = session_user
     if @user
       term = params[:term]
@@ -43,12 +48,12 @@ class TermsController < ApplicationController
       end
     else
       Rails.logger.debug "User is not logged in - rerouting to login / register"
-      session[:workflow] = new_path
+      session[:workflow] = new_terms_path
       redirect_to login_path
     end
   end
-  
+
   def site_terms; end
-  def service_terms; end
-  
+  def services_agreement; end
+
 end
