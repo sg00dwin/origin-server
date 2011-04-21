@@ -8,7 +8,7 @@ class ApplicationController < ActionController::Base
     response.headers["Expires"] = "Fri, 01 Jan 1990 00:00:00 GMT"
   end
   
-  def setup_user_session(user)
+  def setup_user_session(user)    
     session[:login] = user.rhlogin
     session[:user] = user
   end
@@ -16,7 +16,7 @@ class ApplicationController < ActionController::Base
   def session_user
     user = session[:user]
     if user
-      user.errors.clear      
+      user.errors.clear
     end
     return user
   end
@@ -32,8 +32,7 @@ class ApplicationController < ActionController::Base
 
     # TODO - what if you don't have the cookie, but have session?
     return unless rh_sso
-
-    if session[:login]
+    if session[:login] || (session[:user] && params[:controller] == 'terms') 
       Rails.logger.debug "User has an authenticated session"
       if session[:ticket] != rh_sso
         Rails.logger.debug "Session ticket does not match current ticket - logging out"
@@ -46,9 +45,15 @@ class ApplicationController < ActionController::Base
       Rails.logger.debug "Looking up user based on rh_sso ticket"
       user = WebUser.find_by_ticket(rh_sso)
       if user
-        Rails.logger.debug "Found #{user}. Authenticating session"
-        setup_user_session(user)
+        Rails.logger.debug "Found #{user}. Authenticating session"        
+        session[:user] = user
+        user.establish_terms
         session[:ticket] = rh_sso
+        if user.site_terms.length > 0
+          redirect_to new_terms_path and return
+        else
+          session[:login] = user.rhlogin
+        end
       end
     end
   end

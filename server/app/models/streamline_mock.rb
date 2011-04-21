@@ -2,7 +2,7 @@
 # This mixin module mocks the calls that are used
 # for the IT streamline application
 module StreamlineMock
-  attr_accessor :rhlogin, :ticket, :roles, :terms
+  attr_accessor :rhlogin, :ticket, :roles, :terms, :site_terms
 
   def initialize
     @roles = []
@@ -27,9 +27,8 @@ module StreamlineMock
   end
   
   def establish_terms
-    @terms = [{"termId"=>1046, "termUrl"=>"http://www.redhat.com/legal/cloud_terms.html", "termTitle"=>"OpenShift Site Terms"},
-     {"termId"=>1048, "termUrl"=>"http://www.redhat.com/legal/cloud_eula.html", "termTitle"=>"OpenShift EULA Terms"},
-     {"termId"=>1, "termUrl"=>"http://www.redhat.com/legal/legal_statement.html", "termTitle"=>"Red Hat Site Terms"},
+    @terms = [{"termId"=>1046, "termUrl"=>"http://openshift.redhat.com/app/legal/pdf/services_agreement.pdf", "termTitle"=>"OpenShift Site Terms"}]
+    @site_terms = [{"termId"=>1, "termUrl"=>"http://www.redhat.com/legal/legal_statement.html", "termTitle"=>"Red Hat Site Terms"},
      {"termId"=>1010, "termUrl"=>"https://access.redhat.com/help/terms_conditions.html", "termTitle"=>"Red Hat Portals Terms of Use"}]    
   end
   

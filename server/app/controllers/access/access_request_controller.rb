@@ -34,7 +34,7 @@ class Access::AccessRequestController < ApplicationController
       else
         Rails.logger.debug "Requesting access #{CloudAccess.access_name(access_type)} for user #{@user}"
         if @user.terms.length > 0
-          @user.accept_terms(@access.accepted_terms_list)
+          @user.accept_terms(@access.accepted_terms_list, @user.terms)
         end
         if @user.errors.length == 0
           request_access          

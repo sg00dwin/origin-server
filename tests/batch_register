@@ -54,7 +54,8 @@ end
 proxy = ['squid.corp.redhat.com', '8080']
 password = "redhat"
 host = opt['host']
-openshift_host = "https://#{opt['host']}/app"
+main_page = "https://#{opt['host']}/app"
+express_access_page = "https://#{opt['host']}/app/access/express/request"
 identifier = opt['id']
 num_users = opt['num'].to_i
 debug = opt['debug']
@@ -83,7 +84,7 @@ a = Mechanize.new { |agent|
 # Register a new user
 print "Registering users (#{num_users} in total)"
 
-a.get(openshift_host) do |page|
+a.get(main_page) do |page|
   login_page = page.link_with(:text => /Login/).click
   register_page = login_page.link_with(:text => /Click here to register/).click
 
@@ -137,6 +138,32 @@ a.get('http://post-office.corp.redhat.com/archives/libra-test/') do |page|
           end
         end
       end
+    end
+  end
+end
+puts "Done"
+
+# Now request access
+print "Requesting access (#{num_users} in total)"
+
+a.get(express_access_page) do |page|
+  num_users.times do |num|
+
+    # Should be prompted to login
+    access_page = page.form_with(:action => '/app/login') do |form|
+      form['login'] = "libra-test+#{identifier}#{num}@redhat.com"
+      form['password'] = password
+    end.submit
+
+    result_page = access_page.form_with(:action => '/app/access/express') do |form|
+      form['access_express_request[terms_accepted]'].checked = true
+    end.submit
+
+    if result_page.body =~ /Check your email/
+      print "."
+    else
+      puts "ERROR - Registration failed"
+      exit 1
     end
   end
 end

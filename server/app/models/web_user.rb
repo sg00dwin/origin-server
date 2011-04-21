@@ -11,7 +11,7 @@ class WebUser
     include StreamlineMock
   end
 
-  attr_accessor :email_address, :password, :terms_accepted, :cloud_access_choice
+  attr_accessor :email_address, :password, :terms_accepted, :cloud_access_choice, :accepted_terms_list
 
   validates_format_of :email_address,
                       :with => /^[-a-z0-9_+\.]+\@([-a-z0-9]+\.)+[a-z0-9]{2,4}$/i,
@@ -34,7 +34,7 @@ class WebUser
                       
   validates_confirmation_of :password,
                             :message => 'Passwords must match'  
-
+  
   validates_each :terms_accepted do |record, attr, value|
     record.errors.add attr, 'Terms must be accepted' if !value || value == 'off'
   end

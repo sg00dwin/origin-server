@@ -1,25 +1,25 @@
 -# file: Express request access page
 
-= render 'shared/pageheader', :product => 'express', :title => 'Try Express', 
+= render 'shared/pageheader', :product => 'express', :title => 'Try Express', :subtitle => 'Request Access to Express'
 
 .container_24#page
 
   .prefix_1.grid_12.suffix_1#registration
     %h3 Request access to Express
-    
+
     - @access.errors.each do |key, value|
       - if key == :base
         %div
-          %strong #{value}                   
-    
+          %strong #{value}
+
     = semantic_form_for @access do |form|
       = form.inputs do
         - accepted_terms_list = Array.new(@user.terms.length)
         - if @user.terms.length > 0
           - @user.terms.each_with_index do |value, i|
-            - accepted_terms_list[i] = value['termId']          
+            - accepted_terms_list[i] = value['termId']
             %div
-              %a{:title => value['termTitle'], :href => value['termUrl']} #{value['termTitle']}           
+              %a{:title => value['termTitle'], :href => value['termUrl']} #{value['termTitle']}
           = form.hidden_field :accepted_terms_list, :value => JSON.generate(accepted_terms_list)
           = form.input :terms_accepted, :input_html => { :type=>'checkbox' }
         - else
