@@ -87,16 +87,29 @@ When /^the applications are created$/ do
           # Safely append to a file all the url's that failed
           if exit_code != 0
             system("flock /tmp/rhc/lock echo '#{app}-#{namespace}.#{$domain}' >> #{$temp}/failures.log")
+          else
+            system("echo '#{app}-#{namespace}.#{$domain}' >> #{$temp}/#{namespace}-success.log")
           end
         end
       end
 
       # Wait for some process to complete if necessary
-      Timeout::timeout(@cmd_timeout || 300) do
-        pid = processes.shift
-        Process.wait(pid)
-        $logger.error("Process #{pid} failed") if $?.exitstatus != 0
-      end if processes.length >= max_processes
+      begin
+        Timeout::timeout(@cmd_timeout || 300) do
+          pid = processes.shift
+          Process.wait(pid)
+          $logger.error("Process #{pid} failed") if $?.exitstatus != 0
+        end if processes.length >= max_processes
+      rescue Timeout::Error
+        # Read the successes out
+        successes = File.new("#{$temp}/failures.log", "r").collect {|line| line.chomp}
+        total = apps.collect {|app| "#{app}-#{namespace}.#{$domain}"}
+        failures = total - successes
+        $logger.info("Logging failures = #{failures.pretty_inspect}")
+        failures.each do |url|
+          system("flock /tmp/rhc/lock echo '#{app}-#{namespace}.#{$domain}' >> #{$temp}/failures.log")
+        end
+      end
 
       # sleep a little to randomize forks
       sleep rand
