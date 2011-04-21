@@ -299,7 +299,7 @@ while loop < RHC::Maxretries && !hostexist?(my_url)
     sleep sleep_time
     loop+=1
     puts "  retry # #{loop} - Waiting for DNS: #{my_url}"
-    sleep_time *= 2
+    sleep_time = RHC::delay(sleep_time)
 end
 
 if loop >= RHC::Maxretries
@@ -309,7 +309,6 @@ end
 
 sleep_time = 2
 attempt = 0
-
 #
 # Pull new repo locally
 #
@@ -352,7 +351,8 @@ end
 #
 # Test several times, doubling sleep time between attempts.
 #
-
+sleep_time = 2
+attempt = 0
 puts "Confirming application #{opt['app']} is available"
 while attempt < RHC::Maxretries
     attempt+=1
@@ -391,7 +391,7 @@ LOOKSGOOD
     puts
     puts "    sleeping #{sleep_time} seconds"
     sleep sleep_time
-    sleep_time *= 2
+    sleep_time = RHC::delay(sleep_time)
 end
 puts "Unable to find or access the site... problems"
 exit 254
