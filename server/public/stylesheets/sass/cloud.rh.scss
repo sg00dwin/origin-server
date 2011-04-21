@@ -4,6 +4,9 @@ $text_elements: p, a;
 $header_elements: h1, h2, h3, h4, h5, h6;
 $list_elements: ul, ol, li;
 
+//Fonts
+$sans: 'Liberation Sans','Helvetica Neue',Arial,FreeSans,sans-serif;
+
 //Colors
   //Brand
   $rh_red: #cc0000;
@@ -953,7 +956,7 @@ form {
   }
   
   .product & h2,
-  .about & h2 {
+  .partner & h2 {
     font: {
       family: Overpass;
       size: 22pt;
@@ -965,7 +968,7 @@ form {
   .product & h4 {
     color: #666;
     font: {
-      family: 'Liberation Sans', Sans-serif;
+      family: $sans;
       size: 13pt;
       weight: bold;
     }
@@ -1261,7 +1264,7 @@ label.error {
     }
     h3, h4 {
       font: {
-        family: 'Liberation Sans', Sans-serif;
+        family: $sans;
         weight: bold;
       }
     }
@@ -1294,7 +1297,7 @@ label.error {
   h3 {
     margin: 20px 0 0;
     font: {
-      family: 'Liberation Sans', Sans;
+      family: $sans;
       weight: bold;
       size: 16pt
     }
@@ -1386,7 +1389,7 @@ label.error {
       margin: 0 0 10px;
       color: #666;
       font: {
-        family: 'Liberation Sans', Sans-serif;
+        family: $sans;
         size: 12pt;
         weight: bold;
       }
@@ -1465,7 +1468,7 @@ label.error {
       margin: 0;
       color: black;
       font: {
-        family: 'Liberation Sans', Sans-serif;
+        family: $sans;
         weight: bold;
         size: 12pt;
       }
@@ -1490,7 +1493,7 @@ label.error {
       margin: 0;
       color: black;
       font: {
-        family: 'Liberation Sans', Sans-serif;
+        family: $sans;
         weight: bold;
         size: 12pt;
       }
@@ -1578,6 +1581,138 @@ label.error {
   }
   text-decoration: none;
 }
+
+/**
+ * Partner styles
+ */
+
+#join {
+  @include clearfix;
+  background: #ececec url('/app/images/cloud_partnership.png') no-repeat 10px center;
+  width: 810px;
+  margin: 10px 0 30px;
+  padding: 10px {
+    left: 50px;
+  }
+  @include border_radius(4);
+  
+  p {
+    float: left;
+    width: 60%;
+    margin: 0;
+  }
+  
+  a.join {
+    width: 40%;
+    float: right;
+    color: $bright-blue;
+    font: {
+      family: Overpass;
+      size: 20pt;
+    }
+    text: {
+      align: right;
+      decoration: none;
+    }
+  }
+}
+
+.partner {
+  
+  ul.partners {
+    list-style-type: none;
+    
+    li {
+      display: inline-block;
+      width: 255px;
+      margin-bottom: 50px;
+      vertical-align: top;
+      
+      img {
+        float: left;
+        margin: 0 20px 10px 0;
+      }
+      
+      a.learn-more {
+        @include gradient_bg(lighten($text_color, 20%), darken($text_color, 20%), 100%);
+        padding: 5px 10px;
+        color: white !important;
+        font: {
+          family: Overpass;
+          size: 12pt;
+        }
+        text: {
+          align: right;
+          decoration: none;
+          transform: uppercase;
+        }
+      }
+    }
+  }
+  
+  #partner_information {
+    font-size: 10pt;
+    color: lighten($text_color, 15%);
+    
+    div, p {
+      margin: 0 0 40px;
+    }
+  }
+  
+  #solution_information {
+    div { margin-top: 20px; }
+  
+    h4 {
+      margin: 0 0 5px;
+      color: $rh_red;
+      font: {
+        size: 12pt;
+        family: Overpass;
+      }
+      text-transform: uppercase;
+    }
+  
+    #quote {
+      margin: 0 0 10px;
+      
+      blockquote {
+        color: lighten($text_color, 20%);
+        font: {
+          size: 12pt;
+          style: oblique;
+        }
+      }
+      
+      cite {
+        display: block;
+        color: black;
+        font: {
+          weight: bold;
+          style: normal;
+        }
+        
+        &:before {
+          content: '- ';
+        }
+      }
+    }
+    
+    #partner_overview {
+      border-top: 1px solid #ececec;
+      
+      p {
+        margin: 0;
+      }
+      
+      a {
+        color: $bright_blue;
+        font-weight: bold;
+        text-decoration: none;
+      }
+    }
+  }
+}
+
 
 #footer {
 	background: black;

@@ -81,6 +81,26 @@
     "Direct, granular control with full transparency enable real-time adjustments to your content delivery"],
   "availability": "Coming Soon"
   },
+"couchbase" : {
+  "name": "Couchbase",
+  "url": "http://www.couchbase.com",
+  "logo": "couchbase.png",
+  "contact": 
+    "200 West Evelyn Avenue <br/> Suite 110 <br/> Mountain View, CA 94041",
+  "summary":
+    "Couchbase products, which are built on Apache CouchDB, Membase, and memcached open source software, represent the most comprehensive family of NoSQL solutions for building scalable web and mobile applications.",
+  "quote":
+    "With the OpenShift Platform, Red Hat has created a uniquely attractive PaaS offering that pairs choice with unified simplicity. Couch and memcached are two of the most prevalent open source technologies on the Web, and Couchbase is excited to deliver them as OpenShift cartridges, joining other best-of-breed open source technologies.",
+  "quote_attr":
+    "James Phillips, Co-founder, Couchbase",
+  "description":
+    "<p>Couchbase is a high-performance, elastic, key-value (NoSQL) database management system. Organizations including Zynga, AOL, the BBC and thousands of others power their interactive web applications with Couchbase. Because Couchbase supports the memcached protocol, mature and easy-to-use drivers are available for practically every programming language and environment including PHP, Ruby, Python, Perl, Java and probably any other you can name.</p>",
+  "advantage":
+    ["Extremely easy to use and works out of the box with the most popular open source development stacks",
+    "Highest-performance database technology with sub-millisecond latency keeps applications “snappy”",
+    "Production-proven, zero-downtime design means your application is always online even through cluster maintenance"],
+  "availability": "Coming Soon"
+  },
 "dyn" : {
   "name": "Dyn",
   "url": "http://www.dyn.com",
@@ -94,7 +114,7 @@
   "quote_attr":
     "Jeremy Hitchcock, CEO, Dyn",
   "description":
-    "Together, Red Hat and Dyn offer a one-stop solution for deploying your Open Shift based projects to a truly enterprise platform for DNS and email. Dyn provides enterprise class technology (ECT) including a globally redundant 17 data-center managed anycast DNS service with active failover and elegant traffic management as well as an intelligent MTA platform for email delivery and inbox monitoring. With Red Hat and Dyn, uptime is the bottom line.",
+    "<p>Together, Red Hat and Dyn offer a one-stop solution for deploying your Open Shift based projects to a truly enterprise platform for DNS and email. Dyn provides enterprise class technology (ECT) including a globally redundant 17 data-center managed anycast DNS service with active failover and elegant traffic management as well as an intelligent MTA platform for email delivery and inbox monitoring. With Red Hat and Dyn, uptime is the bottom line.",
   "advantage":
     ["Seamless management of mission critical DNS and email services.",
     "Enterprise power and rock-solid scalability from day one.",
@@ -114,7 +134,7 @@
   "quote_attr":
     "Ed Boyajin, CEO, EnterpriseDB",
   "description":
-    "EnterpriseDB’s Postgres Plus Cloud Server allows developers to create, implement, and maintain scalable cloud database systems with point-and-click ease. Developers will enjoy the flexibility of being able to utilize all their favorite development languages with Postgres Plus Cloud Server, including Oracle PL/SQL. Developers can move existing Oracle applications to the cloud with little to no development changes and they can save up to 80% of their Oracle cost. Postgres Plus Cloud Server will be generally available this Fall.",
+    "<p>EnterpriseDB’s Postgres Plus Cloud Server allows developers to create, implement, and maintain scalable cloud database systems with point-and-click ease. Developers will enjoy the flexibility of being able to utilize all their favorite development languages with Postgres Plus Cloud Server, including Oracle PL/SQL. Developers can move existing Oracle applications to the cloud with little to no development changes and they can save up to 80% of their Oracle cost. Postgres Plus Cloud Server will be generally available this Fall.</p>",
   "advantage":
     ["Build scalable cloud database systems",
     "Supports all popular developer languages",
@@ -134,7 +154,7 @@
   "quote_attr":
     "Benjamin Mestrallet, CEO",
   "description":
-    "eXo Cloud IDE is a hosted development environment that enhances PaaS development by facilitating social coding--the collaborative development of gadgets, mashups, HTML5 and content apps. Git support allows a native integration with OpenShift. Developers can pull an application from Github, edit, test, and with a simple push of the app source code, automatically (re)deploy to the OpenShift PaaS. eXo Cloud IDE is a free service, available now; developers can create their own domains and invite others to collaborate.",
+    "<p>eXo Cloud IDE is a hosted development environment that enhances PaaS development by facilitating social coding--the collaborative development of gadgets, mashups, HTML5 and content apps. Git support allows a native integration with OpenShift. Developers can pull an application from Github, edit, test, and with a simple push of the app source code, automatically (re)deploy to the OpenShift PaaS. eXo Cloud IDE is a free service, available now; developers can create their own domains and invite others to collaborate.</p>",
   "advantage":
     ["OpenShift’s easy on-ramp and eXo Cloud IDE’s collaborative development approach are ideal for open source developers.",
     "Developing mashups in eXo Cloud IDE is easier with OpenShift’s choice of frameworks, languages and APIs.",
@@ -154,7 +174,7 @@
   "quote_attr":
     "Kowsik Guruswamy, CTO/Co-Founder",
   "description":
-    "blitz.io, from Mu Dynamics, is a fully cloud-enabled load and performance testing solution. With an interface that resembles cURL, blitz.io makes it very easy for developers to deploy with the OpenShift Platform and instantly determine the scalability of their apps. The chrome extension and the RESTful API further enable developers to easily integrate load and performance testing into the development cycle. ",
+    "<p>blitz.io, from Mu Dynamics, is a fully cloud-enabled load and performance testing solution. With an interface that resembles cURL, blitz.io makes it very easy for developers to deploy with the OpenShift Platform and instantly determine the scalability of their apps. The chrome extension and the RESTful API further enable developers to easily integrate load and performance testing into the development cycle. </p>",
   "advantage":
     ["blitz.io adapts common dev tools to make load and performance testing simple and easy",
     "The RESTful API allow developers to integrate performance testing into their development cycle",
@@ -174,7 +194,7 @@
   "quote_attr":
     "Sushil Prabhu - CEO, OpenCrowd",
   "description":
-    "OpenCrowd’s Collaboration Application Builder (CAB) integrated with RedHat’s OpenShift platform, will provide a comprehensive environment to rapidly build and launch a variety of collaboration centric applications in weeks. The CAB environment will include an extended set of prefabricated  plug-ins that will have features like rich data visualization, workspace creation, on demand OLAP, video, chat, search, and more. The CAB environment leverages Django, a python based web framework. The product will be officially launched for public use in July.",
+    "<p>OpenCrowd’s Collaboration Application Builder (CAB) integrated with RedHat’s OpenShift platform, will provide a comprehensive environment to rapidly build and launch a variety of collaboration centric applications in weeks. The CAB environment will include an extended set of prefabricated  plug-ins that will have features like rich data visualization, workspace creation, on demand OLAP, video, chat, search, and more. The CAB environment leverages Django, a python based web framework. The product will be officially launched for public use in July.</p>",
   "advantage":
     ["Build collaboration centric apps in weeks and launch in production ready environment in hours",
     "Provide enterprise grade reliability and security to your business intelligence and enterprise collaboration applications",
@@ -195,7 +215,7 @@
   "quote_attr":
     "John Rowell, CTO, OpSource",
   "description":
-    "OpSource is the only enterprise cloud IaaS offering that includes hardware-based security and scalability, complete customization and control, easy integration, 24x7 live support and 100% availability guaranteed. Developers select OpSource as the IaaS layer for OpenShift to get pay-as-you-go compute power with enterprise-class security, performance and control, for their Red Hat environments. The OpenShift platform will be available on the OpSource Cloud Q3 2011.",
+    "<p>OpSource is the only enterprise cloud IaaS offering that includes hardware-based security and scalability, complete customization and control, easy integration, 24x7 live support and 100% availability guaranteed. Developers select OpSource as the IaaS layer for OpenShift to get pay-as-you-go compute power with enterprise-class security, performance and control, for their Red Hat environments. The OpenShift platform will be available on the OpSource Cloud Q3 2011.</p>",
   "advantage":
     ["Infrastructure built on enterprise grade technology and carrier class networks",
     "Best in class physical, network and end user security technology and policy rules controls",
@@ -215,7 +235,7 @@
   "quote_attr":
     "Andi Gutmans, CEO and Co-founder, Zend Technologies",
   "description":
-    "The Zend PHP cloud application platform offers rapid development and deployment of business-critical PHP applications with high availability, massive scalability and portability in the cloud. The platform includes the open source Zend Framework for accessing cloud services and writing portable code using the SimpleCloud API; an enterprise-grade, optimized PHP stack, application monitoring, root cause diagnostics, and resource management.",
+    "<p>The Zend PHP cloud application platform offers rapid development and deployment of business-critical PHP applications with high availability, massive scalability and portability in the cloud. The platform includes the open source Zend Framework for accessing cloud services and writing portable code using the SimpleCloud API; an enterprise-grade, optimized PHP stack, application monitoring, root cause diagnostics, and resource management.</p>",
   "advantage":
     ["Elasticity and high availability for PHP applications",
     "Portability across different clouds and flexibility to customize your environment",
