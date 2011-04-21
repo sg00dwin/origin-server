@@ -4,16 +4,21 @@ require 'json'
 class TermsController < ApplicationController
   
   def new
-    @user = session[:user]
-    @term = Term.new
+    @user = session_user
+    if @user
+      @term = Term.new
+    else
+      Rails.logger.debug "User is not logged in - rerouting to login / register"
+      session[:workflow] = new_path
+      redirect_to login_path
+    end
   end
   
   def create
-    login = session[:login]    
-    if login
+    @user = session_user
+    if @user
         term = params[:term]
         @term = Access::ExpressRequest.new(term ? term : {})
-        @user = session_user
         @user.establish_terms
       if !@term.valid?
         render :new and return
@@ -24,6 +29,8 @@ class TermsController < ApplicationController
         if @user.errors.length > 0
           @term.errors.update(@user.errors)
           render :new and return
+        else
+          session[:login] = user.rhlogin
         end
       end
       workflow = session[:workflow]
