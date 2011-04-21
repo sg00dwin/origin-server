@@ -29,7 +29,7 @@ def p_usage
     puts <<USAGE
 
 Usage: #{$0}
-Create a new app libra project.
+Create a new app Openshift Express project.
 
   -a|--app   application     Application name  (alphanumeric - max #{RHC::Maxdlen} chars) (required)
   -t|--type  type            Type of app to create (#{type_keys}) (required)
@@ -244,7 +244,7 @@ else
         f = File.open(ssh_config, "a")
         f.puts <<SSH
 
-# Added by libra app on #{`date`}
+# Added by rhc-create-app app on #{`date`}
 Host *.#{libra_domain}
     IdentityFile ~/.ssh/libra_id_rsa
     VerifyHostKeyDNS yes
@@ -370,7 +370,7 @@ The remote repository is located here:
     #{git_url}
 
 To make changes to your application, commit to #{opt['repo']}/.
-Then run 'git push' to update your libra space
+Then run 'git push' to update your Openshift Express space
 
 LOOKSGOOD
         exit 0
