@@ -384,9 +384,9 @@ Then run 'git push' to update your libra space
 LOOKSGOOD
         exit 0
     end
-    if !response.nil?
+    if !response.nil? && debug
       puts "Server responded with #{response.code}"
-      puts response.body
+      puts response.body unless response.code == '503'
     end
     puts
     puts "    sleeping #{sleep_time} seconds"
