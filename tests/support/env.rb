@@ -105,8 +105,6 @@ module Libra
           $logger.info("Standard Error:\n#{stderr.read}")
 
           $logger.error("(#{$$}): Execution failed #{cmd}") if exit_code != 0
-          raise "ERROR - Non-zero (#{exit_code}) exit code for #{cmd}" if exit_code != 0
-
           return exit_code
       end
 
@@ -144,6 +142,7 @@ module Libra
                     success = true
                   else
                     $logger.info("Connection failed / retry #{retries} / #{url}")
+                    sleep 1
                   end
                 end
               rescue Timeout::Error
