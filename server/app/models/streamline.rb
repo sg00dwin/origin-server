@@ -15,10 +15,12 @@ module Streamline
   @@roles_url = URI.parse(Rails.configuration.streamline + "/cloudVerify.html")
   @@email_confirm_url = URI.parse(Rails.configuration.streamline + "/confirm.html")
   @@user_info_url = URI.parse(Rails.configuration.streamline + "/userInfo.html")
-  @@unacknowledged_terms_url = URI.parse(Rails.configuration.streamline + "/protected/findUnacknowledgedTerms.html?hostname=openshift.redhat.com&context=OPENSHIFT&locale=en")  
+  @@unacknowledged_terms_url = URI.parse(Rails.configuration.streamline + "/protected/findUnacknowledgedTerms.html?hostname=openshift.redhat.com&context=OPENSHIFT&locale=en")
 
   def initialize
     @roles = []
+    @terms = []
+    @site_terms = []
   end
 
   def email_confirm_url(key, login)
@@ -37,13 +39,13 @@ module Streamline
       @rhlogin = json['username']
     end
   end
-  
+
   def establish_terms
     if !@terms
       @terms = []
       @site_terms = []
       http_post(@@unacknowledged_terms_url) do |json|
-        terms = json['unacknowledgedTerms']        
+        terms = json['unacknowledgedTerms']
         terms.each do |term|
           if term['termUrl'] =~ /^http(s)?:\/\/openshift\.redhat\.com/
             @terms.push(term)
@@ -54,7 +56,7 @@ module Streamline
       end
     end
   end
-  
+
   def refresh_roles(force=false)
     has_requested = force
     CloudAccess.ids.each do |id|
@@ -67,19 +69,19 @@ module Streamline
       establish
     end
   end
-  
+
   def accept_terms(accepted_terms_list, terms)
     accepted_terms = JSON.parse(accepted_terms_list)
     query = ''
-    
-    terms.each do |term|  
+
+    terms.each do |term|
       if !accepted_terms.index(term['termId'])
         errors.add(:base, I18n.t(:terms_error, :scope => :streamline))
         return
       end
     end
-    
-    accepted_terms.each_with_index do |termId, i|      
+
+    accepted_terms.each_with_index do |termId, i|
       query += "termIds=#{termId}"
       if i < accepted_terms.length - 1
         query += '&'
@@ -179,7 +181,7 @@ module Streamline
       end
     end
   end
-  
+
   #
   # Get the user's email address
   #
@@ -190,7 +192,7 @@ module Streamline
       end
     end
   end
-  
+
   #
   # Whether the user is authorized for a given cloud solution
   #
@@ -203,7 +205,7 @@ module Streamline
   #
   def has_requested?(solution)
     @roles.index(CloudAccess.req_role(solution)) != nil
-  end  
+  end
 
   def http_post(url, args={}, raise_exception_on_error=true)
     begin
@@ -230,7 +232,7 @@ module Streamline
           json = parse_body(res.body)
           yield json if block_given?
         end
-      else       
+      else
         log_error "Invalid HTTP response from streamline - #{res.code}"
         log_error "Response body:\n#{res.body}"
         if raise_exception_on_error
