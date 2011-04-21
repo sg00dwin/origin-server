@@ -20,8 +20,6 @@ RedHatCloud::Application.routes.draw do
     match 'flex' => 'product#flex', :as => 'flex'
     match 'power' => 'product#power', :as => 'power'
     match 'about' => 'home#about', :as => 'about'
-    match 'site_terms' => 'home#site_terms', :as => 'site_terms'
-    match 'terms' => 'home#service_terms', :as => 'service_terms'
     
     #Alias for home page so we can link to it
     #match 'home' => 'home#index'
@@ -38,11 +36,20 @@ RedHatCloud::Application.routes.draw do
 
     match 'user/new/flex' => 'user#new_flex', :via => [:get]
     match 'user/new/express' => 'user#new_express', :via => [:get]
+    
+    resource :terms,
+             :as => "terms",
+             :controller => "terms",
+             :path_names => { :new => 'accept' },
+             :only => [:new, :create]
+             
+    match 'site_terms' => 'term#site_terms', :as => 'site_terms'
+    match 'service_terms' => 'term#service_terms', :as => 'service_terms'
 
     resource :login,
              :controller => "login",
              :only => [:show, :create]
-    match 'login/error' => 'login#error', :via => [:get]        
+    match 'login/error' => 'login#error', :via => [:get]
 
     resource :logout,
              :controller => "logout",
@@ -56,10 +63,12 @@ RedHatCloud::Application.routes.draw do
       resource :flex,
                :controller => "flex_request",
                :as => "flex_requests",
+               :path_names => { :new => 'request' },
                :only => [:new, :create]
       resource :express,
                :controller => "express_request",
                :as => "express_requests",
+               :path_names => { :new => 'request' },
                :only => [:new, :create]
     end
 

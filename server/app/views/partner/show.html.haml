@@ -1,6 +1,6 @@
 -# file: Partner detail page
 
-= render 'shared/pageheader', :product => 'openshift', :title => 'Partners, :subtitle => 'A Strong Ecosystem of Technologies'
+= render 'shared/pageheader', :product => 'openshift', :title => 'Partners', :subtitle => 'A Strong Ecosystem of Technologies'
 
 #page.container_24
   #main_content.grid_22
@@ -11,24 +11,30 @@
     #partner_information.grid_5
       /Logo
       #logo
-        = image_tag @partner.logo
+        = image_tag "partners/#{@partner.logo}"
       
       /Contact information
       #contact
-        = @partner.contact
+        :plain
+          #{@partner.contact}
       
       /Summary
       #summary
         = @partner.summary
         
     
-    #solution_information.grid_16
+    #solution_information.grid_16.push_1
       /Quote
       #quote
-        = @partner.quote
+        %blockquote
+          = @partner.quote
+        %cite
+          = @partner.quote_attr
+      
+      .clear
       
       /Ecosystem Diagram
-      #diagram.grid_7
+      #diagram.grid_8
         -#
           This is going to be a diagram showing
           how this particular partner fits into
@@ -39,37 +45,36 @@
       /List of advantages
       #advantage.grid_7
         %h4 The Openshift Advantage
-        = @partner.advantage
+        %ul
+          - @partner.advantage.each do |adv|
+            %li
+              = adv
       
       .clear
       
       /Solution description
       #description
         %h4 Solution Description
-        %p
-          = @partner.description
+        :plain
+          #{@partner.description}
         
       /Availability
       #availability
         %h4 Availability
         %p
           = @partner.availability
+    
+      .clear
+        
+      /Link back to overview page
+      #partner_overview
+        %p
+          Want to learn about more OpenShift partners?
+        = link_to 'Return to the OpenShift Partners overview >', partners_path
       
-    /Link back to overview page
-    #partner_overview
-      %p
-        Want to learn about more OpenShift partners?
-      = link_to 'Return to the OpenShift Partners overview >', partners_path
+      .clear
     
-    .clear
+    = render 'join'
     
-  -# note: make into partial at some point
-  / Join partner program plug
-  #join
-    %p
-      %strong Want to integrate with the open Paas
-      that provides you the broadest audience with the best potential for monetization, requiring the least effort from you?
-    
-    = link_to 'Join our partner program.', '#', :class => 'join'
   
   .clear

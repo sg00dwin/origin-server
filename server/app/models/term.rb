@@ -1,4 +1,4 @@
-class Access::AccessRequest
+class Term
   include ActiveModel::Validations
   include ActiveModel::Conversion
   include ActiveModel::Serialization
@@ -19,5 +19,5 @@ class Access::AccessRequest
   def persisted?
     false
   end
-  
+
 end

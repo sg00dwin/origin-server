@@ -15,15 +15,11 @@
       
             
       
-    #join
-      %p
-        %strong Want to integrate with the open Paas
-        that provides you the broadest audience with the best potential for monetization, requiring the least effort from you?
-      
-      = link_to 'Join our partner program.', '#', :class => 'join'
+    = render 'join'
       
     /Start list of partners
     %ul.partners
-      = render 'partner_list', :collection => @partners
+      - @partners.each do |partner|
+        = render 'partner_list', :partner => partner
     
   .clear

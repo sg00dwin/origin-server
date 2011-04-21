@@ -4,11 +4,11 @@
 
 %li
   /Logo
-  = image_tag partner.logo
+  = image_tag "partners/#{partner.logo}"
   
   /Summary
   %p.summary
-    = partner.blurb
+    = partner.summary
   
   /Learn more link
   = link_to 'Learn More', url_for(:controller => 'partner', :action => 'show', :id => partner.id), :class => 'learn-more' 

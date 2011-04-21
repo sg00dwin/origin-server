@@ -567,14 +567,14 @@ form ul, form ol, form li {
     text-transform: uppercase; }
   .product #page p, .product #page a {
     color: black; }
-  .product #page h2, .about #page h2 {
+  .product #page h2, .partner #page h2 {
     font-family: Overpass;
     font-size: 22pt;
     font-weight: normal;
     color: #4d4d4d; }
   .product #page h4 {
     color: #666;
-    font-family: 'Liberation Sans', Sans-serif;
+    font-family: "Liberation Sans", "Helvetica Neue", Arial, FreeSans, sans-serif;
     font-size: 13pt;
     font-weight: bold; }
   #page a.learn {
@@ -922,7 +922,7 @@ label.error {
       float: right;
       margin-left: 20px; }
     #product_tabs .tab h3, #product_tabs .tab h4 {
-      font-family: 'Liberation Sans', Sans-serif;
+      font-family: "Liberation Sans", "Helvetica Neue", Arial, FreeSans, sans-serif;
       font-weight: bold; }
     #product_tabs .tab h3 {
       margin-bottom: 16pt;
@@ -942,7 +942,7 @@ label.error {
   color: #555555; }
   #product_videos h3, #product_community h3 {
     margin: 20px 0 0;
-    font-family: 'Liberation Sans', Sans;
+    font-family: "Liberation Sans", "Helvetica Neue", Arial, FreeSans, sans-serif;
     font-weight: bold;
     font-size: 16pt;
     color: #666; }
@@ -991,7 +991,7 @@ label.error {
   #supplemental_content #resources h3, #supplemental_content #platforms h3, #supplemental_content #top_video h3 {
     margin: 0 0 10px;
     color: #666;
-    font-family: 'Liberation Sans', Sans-serif;
+    font-family: "Liberation Sans", "Helvetica Neue", Arial, FreeSans, sans-serif;
     font-size: 12pt;
     font-weight: bold;
     text-transform: uppercase; }
@@ -1080,7 +1080,7 @@ label.error {
 #supplemental_content #platforms h4 {
   margin: 0;
   color: black;
-  font-family: 'Liberation Sans', Sans-serif;
+  font-family: "Liberation Sans", "Helvetica Neue", Arial, FreeSans, sans-serif;
   font-weight: bold;
   font-size: 12pt; }
 #supplemental_content #platforms ul {
@@ -1094,7 +1094,7 @@ label.error {
   #supplemental_content #top_video h4, #supplemental_content #top_video .author {
     margin: 0;
     color: black;
-    font-family: 'Liberation Sans', Sans-serif;
+    font-family: "Liberation Sans", "Helvetica Neue", Arial, FreeSans, sans-serif;
     font-weight: bold;
     font-size: 12pt; }
   #supplemental_content #top_video h4 {
@@ -1167,6 +1167,102 @@ label.error {
   font-size: 20pt;
   font-family: Overpass;
   text-decoration: none; }
+
+/**
+ * Partner styles
+ */
+#join {
+  overflow: auto;
+  width: 100%;
+  background: #ececec url("/app/images/cloud_partnership.png") no-repeat 10px center;
+  width: 810px;
+  margin: 10px 0 30px;
+  padding: 10px;
+    padding-left: 50px;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px; }
+  #join p {
+    float: left;
+    width: 60%;
+    margin: 0; }
+  #join a.join {
+    width: 40%;
+    float: right;
+    color: #4e9fdd;
+    font-family: Overpass;
+    font-size: 20pt;
+    text-align: right;
+    text-decoration: none; }
+
+.partner ul.partners {
+  list-style-type: none; }
+  .partner ul.partners li {
+    display: inline-block;
+    width: 255px;
+    margin-bottom: 50px;
+    vertical-align: top; }
+    .partner ul.partners li img {
+      float: left;
+      margin: 0 20px 10px 0; }
+    .partner ul.partners li a.learn-more {
+      background: #888888;
+      /* Mozilla */
+      background: -moz-linear-gradient(top, #888888, #222222 100%);
+      /* Old webkit */
+      background: -webkit-gradient(linear, top center, from(#888888), color-stop(100%, #222222));
+      /* New webkit */
+      background: -webkit-linear-gradient(top, #888888, #222222 100%);
+      /* Opera */
+      background: -o-linear-gradient(top, #888888, #222222 100%);
+      /* IE <= 7 */
+      filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=$first_color, endColorStr=$last_color);
+      /* IE 8 */
+      -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=$first_color, endColorstr=$last_color)";
+      /* Spec */
+      background: linear-gradient(top, #888888, #222222 100%);
+      zoom: 1;
+      padding: 5px 10px;
+      color: white !important;
+      font-family: Overpass;
+      font-size: 12pt;
+      text-align: right;
+      text-decoration: none;
+      text-transform: uppercase; }
+.partner #partner_information {
+  font-size: 10pt;
+  color: #7b7b7b; }
+  .partner #partner_information div, .partner #partner_information p {
+    margin: 0 0 40px; }
+.partner #solution_information div {
+  margin-top: 20px; }
+.partner #solution_information h4 {
+  margin: 0 0 5px;
+  color: #cc0000;
+  font-size: 12pt;
+  font-family: Overpass;
+  text-transform: uppercase; }
+.partner #solution_information #quote {
+  margin: 0 0 10px; }
+  .partner #solution_information #quote blockquote {
+    color: #888888;
+    font-size: 12pt;
+    font-style: oblique; }
+  .partner #solution_information #quote cite {
+    display: block;
+    color: black;
+    font-weight: bold;
+    font-style: normal; }
+    .partner #solution_information #quote cite:before {
+      content: '- '; }
+.partner #solution_information #partner_overview {
+  border-top: 1px solid #ececec; }
+  .partner #solution_information #partner_overview p {
+    margin: 0; }
+  .partner #solution_information #partner_overview a {
+    color: #4e9fdd;
+    font-weight: bold;
+    text-decoration: none; }
 
 #footer {
   background: black;

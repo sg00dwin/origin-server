@@ -1,13 +1,13 @@
-// File: Front page slideshow script initialization
+// File: Front page javascripts
 
 $(function() {
   // slideshow
 	$('.simpleSlideShow').slideShow({
-	interval: 6
+    interval: 6
 	});
 // slideshow
 	$('.newsTicker').slideShow({
-	interval: 2
+    interval: 5
 	});
   
   // Trigger "advanced" hover action

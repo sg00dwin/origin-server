@@ -7,7 +7,7 @@ require 'uri'
 #
 module Streamline
   include ErrorCodes
-  attr_accessor :rhlogin, :ticket, :roles, :terms
+  attr_accessor :rhlogin, :ticket, :roles, :terms, :site_terms
 
   @@login_url = URI.parse(Rails.configuration.streamline + "/login.html")
   @@register_url = URI.parse(Rails.configuration.streamline + "/registration.html")
@@ -40,8 +40,17 @@ module Streamline
   
   def establish_terms
     if !@terms
+      @terms = []
+      @site_terms = []
       http_post(@@unacknowledged_terms_url) do |json|
-        @terms = json['unacknowledgedTerms']
+        terms = json['unacknowledgedTerms']        
+        terms.each do |term|
+          if term['termUrl'] =~ /^http(s)?:\/\/openshift\.redhat\.com/
+            @terms.push(term)
+          else
+            @site_terms.push(term)
+          end
+        end
       end
     end
   end
@@ -59,11 +68,11 @@ module Streamline
     end
   end
   
-  def accept_terms(accepted_terms_list)
+  def accept_terms(accepted_terms_list, terms)
     accepted_terms = JSON.parse(accepted_terms_list)
     query = ''
     
-    @terms.each do |term|  
+    terms.each do |term|  
       if !accepted_terms.index(term['termId'])
         errors.add(:base, I18n.t(:terms_error, :scope => :streamline))
         return
@@ -79,15 +88,15 @@ module Streamline
     acknowledge_terms_url = URI.parse(Rails.configuration.streamline + "/protected/acknowledgeTerms.html?" + query)
     http_post(acknowledge_terms_url, {}, false) do |json|
       if json['term']
-        terms = json['term']
+        terms_resp = json['term']
         accepted_terms.each do |termId|
-          if !terms.index(termId.to_s)
+          if !terms_resp.index(termId.to_s)
             errors.add(:base, I18n.t(:terms_error, :scope => :streamline))
             break
           end
         end
         if errors.length == 0
-          @terms = []
+          terms.clear
         end
       else
         if errors.length == 0
@@ -221,7 +230,7 @@ module Streamline
           json = parse_body(res.body)
           yield json if block_given?
         end
-      else
+      else       
         log_error "Invalid HTTP response from streamline - #{res.code}"
         log_error "Response body:\n#{res.body}"
         if raise_exception_on_error

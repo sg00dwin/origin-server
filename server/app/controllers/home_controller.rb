@@ -22,6 +22,4 @@ class HomeController < ApplicationController
   # Hijacking home controller
   # for general static page serving
   def about; end
-  def site_terms; end
-  def service_terms; end
 end
