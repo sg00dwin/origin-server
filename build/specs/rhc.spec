@@ -249,6 +249,7 @@ ln -s /var/www/libra/public/* /var/www/html/.
 /bin/ln -s /usr/lib64/httpd/modules/ /var/www/libra/httpd/modules
 /bin/cp -f /etc/libra/devenv/httpd/000000_default.conf /etc/httpd/conf.d
 /bin/cp -f /etc/libra/devenv/httpd/broker.conf /var/www/libra/httpd
+/bin/cp -f /etc/libra/devenv/httpd/httpd.conf /var/www/libra/httpd
 /bin/cp -f /etc/libra/devenv/libra-site /etc/init.d
 /bin/cp -f /etc/libra/devenv/robots.txt /var/www/libra/public
 /etc/init.d/libra-site restart
