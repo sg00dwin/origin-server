@@ -31,7 +31,7 @@
           = link_to image_tag("/app/images/logo.png", :alt => "OpenShift"), root_path
 
         #header_right.grid_6.omega
-          - if session[:login]
+          - if session[:login] || session[:user]
             #logout
               %a(href='/app/logout') Logout
             .clear
