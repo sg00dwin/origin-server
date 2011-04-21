@@ -269,7 +269,7 @@ END_OF_MESSAGE
         end
 
         # Keep the 5 most recent images
-        images.sort!.pop(5)
+        images.sort!.reverse!.pop(5)
 
         # Prune the rest
         images.each do |i|
