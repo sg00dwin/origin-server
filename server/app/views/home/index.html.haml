@@ -8,24 +8,24 @@
   #slides.grid_24
     %ul
 
-      /Express slide
-      %li#express.slide
+      /Promo banners
+      %li.slide
         .slide-canvas
         .content
-          %h2 Looking for a fast on-ramp to the Cloud?
-          %p
-            Get Ruby, PHP and Python apps in the cloud with just a few lines of code.
-
-      /Flex slide
-      %li#flex.slide
+          %h2 Free espresso and tech help at the OpenShift Cafe
+          
+      %li.slide
         .slide-canvas
         .content
           %h2 
-            Need to auto-scale new and existing 
-            %br
-            apps in the Cloud?
-          %p
-            Provision, deploy, monitor and auto-scale JBoss, Java EE6 and PHP apps
+            Win a Xoom at the OpenShift Cafe
+      
+      %li.slide
+        .slide-canvas
+        .content
+          %h2
+            Sign up for the OpenShift Webcast
+
 
     /Slide show navigation
     %ul.navigation
@@ -33,20 +33,8 @@
         %a.page(href='#') 1
       %li
         %a.page(href='#') 2
-
-  .clear
-
-/News ticker
-.slideShow.newsTicker.container_24
-  #news_title.grid_4.alpha
-    %h4 Recent News
-
-  /Actual news
-  %ul#news.grid_20.omega
-  
-    - @news.each do |item|
-      %li.news_item.slide
-        =item
+      %li
+        %a.page(href='#') 3
 
   .clear
 
@@ -54,15 +42,9 @@
   -# changed id to sidebar from sidenav
   #sidebar.grid_7.push_17
 
-    #redhat_cloud.grid_7.alpha
-      = link_to('http://redhat.com/cloud') do
-        %h4 Looking for Private or Hybrid Cloud Solutions?
-        %p Check out redhat.com/cloud.
-    .clear
-
-    #resources.grid_7
+    #resources.grid_7.alpha
       = link_to('/community') do
-        %h4 Resources for Cloud Developers
+        %h4 Resources
         %p Forums, Eval Guides, How-To's & Videos
     .clear
 
@@ -77,41 +59,15 @@
 
   /Express slug
   .slug.grid_8.pull_7
-    %h3 Leave application management and auto-scaling to us.
     %p
-      Spend more time on what really matters, customers and developing new features.
-      
-    .icons
-      %img(src='/app/images/git_logo_gs.png'
-           alt='git')
-      %img(src='/app/images/php_logo_gs.png'
-           alt='PHP')
-      
-    %p.link
-      = link_to 'Learn more >', express_url, :class => 'learn'
+      OpenShift is for developers who love to build on open source software, but who don't want the hassle of building and maintaining their own infrastructure.
+
 
   /Flex slug
   .slug.grid_9.pull_7.last
-    %h3 Develop anywhere, deploy to the Cloud
     %p
-      Red Hat allows you to deploy and migrate your application across clouds, both public and private.
+      Supports all the coolest languages and frameworks, along with PaaS automation features like auto-scaling and built-in monitoring.
 
-    .grid_4.alpha
-      %ul
-        %li End-to-end monitoring
-        %li Auto-scaling
-        %li Log management
-
-    .grid_4.omega
-      %ul
-        %li EE6 Web
-        %li memcache
-        %li MySQL
-    .clear
-
-    %p.link
-      = link_to 'Learn more >', flex_url, :class => 'learn'
-    .clear
   /End slugs
   .clear
 
@@ -120,9 +76,9 @@
   /Express box
   .express.promo.grid_8
     %h3 
-      Deploy to the Cloud today...
+      Deploy to the Cloud in Minutes,
       %br
-      it's Free and Easy
+      it's Free and Easy!
     %h4 Express
     %p
       = link_to 'Learn More', express_url
@@ -130,9 +86,9 @@
   /Flex box
   .flex.promo.grid_8
     %h3 
-      Auto-scaling PaaS for JBoss, 
+      Auto-scaling PaaS for 
       %br
-      Java EE6 and PHP apps
+      JBoss, Java, and PHP
     %h4 Flex
     %p
       = link_to 'Learn More', flex_url
@@ -149,24 +105,3 @@
 
   .clear
 /End app promo boxes
-
-/Page columns
-#page.container_24
-
-  .prefix_1.grid_7
-    %h4 Featured Video Title
-    %p
-      Video goes here
-
-  .grid_8
-    %h4 Featured Video Title
-    %p
-      Video goes here
-    
-  .grid_7.suffix_1
-    %h2 Join the Discussion
-    %p 
-      We are here to help.
-      = link_to 'OpenShift Forums >',          'http://openshift.redhat.com/forums', :class => 'learn'
-  .clear
-/End page columns

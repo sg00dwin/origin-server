@@ -48,7 +48,15 @@ form ul, form ol, form li {
 
 #header_right {
   text-align: right;
-  position: relative; }
+  position: relative;
+  height: 120px; }
+  #header_right #mainslug {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    color: #bfdce8;
+    font-size: 14pt;
+    font-family: Overpass; }
 
 #login, #logout {
   background: #b30000;
@@ -102,6 +110,8 @@ form ul, form ol, form li {
     margin: 80px 0 0; }
 
 #nav {
+  overflow: auto;
+  width: 100%;
   background: #cc0000;
   /* Mozilla */
   background: -moz-linear-gradient(top, #cc0000, #990000 100%);
@@ -118,8 +128,6 @@ form ul, form ol, form li {
   /* Spec */
   background: linear-gradient(top, #cc0000, #990000 100%);
   zoom: 1;
-  min-height: 20px;
-  padding: 7px 0;
   border-top: 1px solid #fe7272;
   font-family: OverpassBold; }
   #nav ul {
@@ -127,10 +135,33 @@ form ul, form ol, form li {
   #nav li {
     float: left;
     list-style-type: none;
+    display: inline-block;
+    margin: 0;
+    padding: 0;
     font-size: 10pt; }
     #nav li a {
+      margin: 0;
+      min-height: 20px;
+      padding: 7px 10px;
+      display: inline-block;
       text-decoration: none;
-      text-transform: uppercase; }
+      text-transform: uppercase;
+      border-left: 1px solid #cc0000;
+      border-right: 1px solid #990000; }
+  #nav li.category {
+    background: url("/app/images/nav_category.png") no-repeat right center;
+    color: #ccc;
+    padding: 7px 17px 7px 15px; }
+  #nav li.after_category a {
+    border-left: none; }
+  #nav li.partners {
+    float: right; }
+    #nav li.partners a {
+      border: none;
+      float: right;
+      color: #4e9fdd; }
+      #nav li.partners a:hover {
+        color: #bfdce8; }
 
 #pageheader {
   background: #555555;
@@ -242,7 +273,7 @@ form ul, form ol, form li {
   clear: both;
   position: table;
   display: block;
-  height: 250px; }
+  height: 125px; }
   .slideShow ul, .slideShow li {
     margin: 0;
     padding: 0;
@@ -257,14 +288,14 @@ form ul, form ol, form li {
       background: none;
       padding: 0.2em 10px;
       width: 960px;
-      height: 245px;
+      height: 120px;
       position: absolute;
       top: 5px;
       z-index: 980;
       font-family: Overpass; }
   .slideShow .slide-canvas {
     width: 960px !important;
-    height: 250px !important;
+    height: 125px !important;
     margin: 0 auto;
     position: relative;
     display: block; }
@@ -272,7 +303,7 @@ form ul, form ol, form li {
       display: block; }
   .slideShow .navigation {
     width: 950px;
-    margin: 200px auto 0;
+    margin: 90px auto 0;
     padding: 0 0 0 10px;
     display: block;
     position: relative;
@@ -306,16 +337,12 @@ form ul, form ol, form li {
 #slides ul {
   width: 960px;
   margin-left: -5px; }
-#slides #express {
+#slides li.slide:nth-of-type(1) {
   background: #6699cc; }
-  #slides #express .slide-canvas {
-    background: url(/app/images/slide_express.png) no-repeat;
-    opacity: .6; }
-#slides #flex {
+#slides li.slide:nth-of-type(2) {
   background: #c88fd7; }
-  #slides #flex .slide-canvas {
-    background: url(/app/images/slide_flex.png) no-repeat;
-    opacity: .6; }
+#slides li.slide:nth-of-type(3) {
+  background: #87cc66; }
 #slides .content h2 {
   margin: 5px 0 12px;
   color: white;
@@ -326,27 +353,6 @@ form ul, form ol, form li {
 #slides .content p {
   color: white;
   font-size: 12pt; }
-
-#news_title {
-  background: #333;
-  height: 30px; }
-  #news_title h4 {
-    padding: 4px 0 4px 10px;
-    color: white !important;
-    font-size: 12pt; }
-
-#news {
-  padding: 5px 0;
-  max-height: 20px; }
-
-.newsTicker {
-  background: black;
-  height: 30px;
-  clear: auto;
-  font-family: Overpass; }
-  .newsTicker li {
-    color: white !important;
-    width: 800px !important; }
 
 #breadcrumb {
   margin: 0 0 1em;
@@ -393,6 +399,7 @@ form ul, form ol, form li {
       border-bottom: none; }
   #sidebar a {
     width: 100%;
+    height: 50%;
     margin: 0;
     padding: 0;
     display: inline-block;
@@ -420,8 +427,7 @@ form ul, form ol, form li {
   #sidebar ul {
     margin: 0 0 1em; }
   .home #sidebar #resources h4, .home #sidebar #supplemental_content #platforms h4, #supplemental_content .home #sidebar #platforms h4, .home #sidebar #supplemental_content #top_video h4, #supplemental_content .home #sidebar #top_video h4 {
-    font-size: 14pt;
-    line-height: 14pt; }
+    font-size: 22pt; }
   #sidebar #faq h4 {
     font-size: 32pt; }
 
@@ -483,7 +489,8 @@ form ul, form ol, form li {
   color: #3C6EB4; }
 
 #app_promos {
-  background: #ececec; }
+  background: #ececec;
+  padding-bottom: 15px; }
   #app_promos p, #app_promos a, #app_promos h1, #app_promos h2, #app_promos h3, #app_promos h4, #app_promos h5, #app_promos h6, #app_promos ul, #app_promos ol, #app_promos li {
     margin: 0 auto;
       margin-top: 1em !important;
@@ -500,7 +507,7 @@ form ul, form ol, form li {
     font-size: 14pt;
     text-transform: uppercase; }
   #app_promos a {
-    background: #777;
+    background: #cc0000;
     padding: 5px 10px;
     color: white !important;
     font-weight: bold;
@@ -511,27 +518,36 @@ form ul, form ol, form li {
   #app_promos .express {
     background: url(/app/images/express-tile-trans.png) #cccccc; }
     #app_promos .express.hover {
-      background-color: #b3cce6; }
+      background-color: #6699cc;
+      /*
+            a {
+              background-color: $express;
+            }
+      */ }
       #app_promos .express.hover h4 {
         color: #6699cc; }
-      #app_promos .express.hover a {
-        background-color: #6699cc; }
   #app_promos .flex {
     background: url(/app/images/flex-tile-trans.png) #cccccc; }
     #app_promos .flex.hover {
-      background-color: #eddaf2; }
+      background-color: #c88fd7;
+      /*
+            a {
+              background-color: $flex;
+            }
+      */ }
       #app_promos .flex.hover h4 {
         color: #c88fd7; }
-      #app_promos .flex.hover a {
-        background-color: #c88fd7; }
   #app_promos .power {
     background: url(/app/images/power-tile-trans.png) #cccccc; }
     #app_promos .power.hover {
-      background-color: #c3e6b3; }
+      background-color: #87cc66;
+      /*
+            a {
+              background-color: $power;
+            }
+      */ }
       #app_promos .power.hover h4 {
         color: #87cc66; }
-      #app_promos .power.hover a {
-        background-color: #87cc66; }
 
 #page {
   background: #ececec;
@@ -1273,28 +1289,14 @@ label.error {
     text-decoration: none; }
 
 #footer {
-  background: black;
-  padding: 1.5em 0; }
+  border-top: 60px solid black;
+  padding: 3em 0; }
+  #footer img, #footer p, #footer ul {
+    float: left;
+    margin-right: 20px; }
+  #footer img {
+    margin-left: 100px; }
   #footer ul {
-    margin: 0.5em 0 0 -2.2em;
     list-style-type: none; }
-  #footer h5 {
-    margin: 0;
-    color: #4e9fdd;
-    font-size: 10pt;
-    text-transform: uppercase;
-    font-family: Overpass; }
-  #footer a {
-    text-decoration: none; }
-
-#subfooter {
-  padding: 2em 0 4em;
-  color: #ccc;
-  font-size: 8pt; }
-  #subfooter ul {
-    margin: 0.5em 0 0 -2.2em;
-    list-style-type: none; }
-  #subfooter li {
-    float: left; }
-  #subfooter a {
-    text-decoration: none; }
+  #footer li {
+    display: inline; }

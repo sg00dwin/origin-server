@@ -41,93 +41,56 @@
             .clear
           
           #mainslug
-            = image_tag '/app/images/shadowman.png',
-                        :alt => 'Red Hat, the Open Source Leader'
+            Platform at your Service
            
         .clear
 
-        #nav.grid_24.alpha.omega
+        #nav.container_24
           %ul
-            %li
-              = link_to 'About OpenShift', about_path
-            %li
+            %li.category
+              Products
+            %li.after_category
               = link_to 'Express', express_path, :class => 'express'
             %li
               = link_to 'Flex', flex_path, :class => 'flex'
             %li
               = link_to 'Power', power_path, :class => 'power'
+              
+            %li.category
+              Community
+            %li.after_category
+              = link_to 'Forums', '/forums'
             %li
-              = link_to 'Community', '/community'
+              = link_to 'Blog', '/blog'
             %li
-              = link_to 'FAQ', '/faq'
-            %li
-              = link_to 'Help', '/forums'
-
-        .clear
-
-      = content_for?(:sub_layout) ? yield(:sub_layout) : yield
-
-      .container_24#footer
-        .prefix_1.grid_3
-          %h5 Fine Print
-          %ul
-            %li
-              = link_to 'Terms', service_terms_path
-            %li
-              = link_to 'Website Terms', site_terms_path
-            %li
-              = link_to 'Privacy Policy', 'http://www.redhat.com/legal/privacy_statement.html'
-
-
-        .prefix_1.grid_3
-          %h5 OpenShift
-          %ul
-            %li
-              = link_to 'News and Events', '/news'
-            %li
-              = link_to 'Blog', '/blogs'
-            %li
-              = link_to 'Partners', partners_path
-
-        .prefix_1.grid_3
-          %h5 Solutions
-          %ul
-            %li
-              = link_to 'Express', express_path, :class => 'express'
-            %li
-              = link_to 'Flex', flex_path, :class => 'flex'
-            %li
-              = link_to 'Power', power_path, :class => 'power'
-
-        .prefix_1.grid_3
-          %h5 Resources
-          %ul
-            %li
-              = link_to 'Community', '/community'
-            %li
-              = link_to 'Documentation', '/documents'
+              = link_to 'Events', '/events'
+            
+            %li.category
+              Help
+            %li.after_category
+              = link_to 'Docs', '/documents'
             %li
               = link_to 'Videos', '/videos'
             %li
-              = link_to 'Forums', '/forums'
+              = link_to 'FAQ', '/faq'
+              
+            %li.partners
+              = link_to 'Partners', url_for(:controller => 'partner', :action => 'index')
+          .clear
 
-        .prefix_1.grid_7
-          %h5 Powered By:
+      = content_for?(:sub_layout) ? yield(:sub_layout) : yield
 
-        .clear
-
-      .container_24#subfooter
-        .grid_1.suffix_1
-          %img(src="/app/images/shadowman.png" alt="Red Hat Logo")
-
-        .grid_21.suffix_1
-          %p Copyright &copy; 2011 Red Hat, Inc.
-          %ul
-            %li
-              = link_to 'About Red Hat', 'http://www.redhat.com/about/'
-            %li
-              %a(href="#") Contact Us
-            %li
-              %a(href="#") Site Map
-
+      #footer.container_24
+        = image_tag "/app/images/shadowman.png", :alt => "Red Hat"
+        
+        %p Copyright &copy; 2011 Red Hat, Inc. 
+        
+        %ul
+          %li
+            = link_to 'Site Terms', url_for(:controller => 'terms', :action => 'site_terms')
+          %li
+            = link_to 'Privacy Policy', 'http://www.redhat.com/legal/privacy_statement.html'
+          %li
+            = link_to 'Contact Us', 'mailto:openshift@redhat.com'
+              
         .clear
