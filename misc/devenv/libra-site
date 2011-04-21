@@ -32,7 +32,7 @@ pidfile=${PIDFILE-/var/www/libra/httpd/run/httpd.pid}
 lockfile=${LOCKFILE-/var/lock/subsys/libra-site}
 RETVAL=0
 
-OPTIONS="-C 'Include /var/www/libra/httpd/broker.conf' -f /usr/libexec/li/cartridges/rack-1.1.0/info/configuration/etc/conf/httpd.conf"
+OPTIONS="-C 'Include /var/www/libra/httpd/broker.conf' -f /var/www/libra/httpd/httpd.conf"
 
 # The semantics of these two functions differ from the way apachectl does
 # things -- attempting to start while running is a failure, and shutdown

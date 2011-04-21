@@ -2,7 +2,7 @@
 %define gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 
 Name: rhc
-Version: 0.66.4
+Version: 0.66.5
 Release: 1%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
@@ -249,6 +249,7 @@ ln -s /var/www/libra/public/* /var/www/html/.
 /bin/ln -s /usr/lib64/httpd/modules/ /var/www/libra/httpd/modules
 /bin/cp -f /etc/libra/devenv/httpd/000000_default.conf /etc/httpd/conf.d
 /bin/cp -f /etc/libra/devenv/httpd/broker.conf /var/www/libra/httpd
+/bin/cp -f /etc/libra/devenv/httpd/httpd.conf /var/www/libra/httpd
 /bin/cp -f /etc/libra/devenv/libra-site /etc/init.d
 /bin/cp -f /etc/libra/devenv/robots.txt /var/www/libra/public
 /etc/init.d/libra-site restart
@@ -434,6 +435,10 @@ chmod 0666 %{_localstatedir}/www/libra/log/production.log
 %{_libexecdir}/li/cartridges/jbossas-7.0.0/
 
 %changelog
+* Thu Apr 21 2011 Matt Hicks <mhicks@redhat.com> 0.66.5-1
+- Improved broker httpd.conf file
+- Increase mcollective command timeout
+
 * Wed Apr 20 2011 Matt Hicks <mhicks@redhat.com> 0.66.4-1
 - Terms flows and getting started pages
 
