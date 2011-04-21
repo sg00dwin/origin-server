@@ -1263,6 +1263,14 @@ label.error {
     color: #4e9fdd;
     font-weight: bold;
     text-decoration: none; }
+.partner.join #main_content {
+  background: url("/app/images/cloud_partnership_large.png") no-repeat left center;
+  padding: 100px 30px 100px 320px; }
+  .partner.join #main_content a {
+    color: #4e9fdd;
+    font-size: 20pt;
+    font-family: Overpass;
+    text-decoration: none; }
 
 #footer {
   background: black;

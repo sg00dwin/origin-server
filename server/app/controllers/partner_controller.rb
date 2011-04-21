@@ -17,6 +17,8 @@ class PartnerController < ApplicationController
     @partner = Partner.new(partners[id])
   end
   
+  def join; end
+  
   def get_partners
     file = File.open(@@data, "rb")
     contents = file.read

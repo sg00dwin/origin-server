@@ -1711,6 +1711,22 @@ label.error {
       }
     }
   }
+  
+  &.join {
+    #main_content {
+      background: url('/app/images/cloud_partnership_large.png') no-repeat left center;
+      padding: 100px 30px 100px 320px;
+      
+      a {
+        color: $bright_blue;
+        font: {
+          size: 20pt;
+          family: Overpass;
+        }
+        text-decoration: none;
+      }
+    }
+  }
 }
 
 
