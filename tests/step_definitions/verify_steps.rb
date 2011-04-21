@@ -112,7 +112,8 @@ When /^the applications are created$/ do
   end
 
   # Read the failures into the data structure
-  File.new("#{$temp}/failures.log", "r").each do |url|
+  File.new("#{$temp}/failures.log", "r").each do |line|
+    url = line.chomp
     @data[url][:failed] = true
     @data[url][:code] = -1
     @data[url][:time] = -1
