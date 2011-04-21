@@ -42,7 +42,6 @@ class WebUser
 
     # Make sure to initialize the array values
     @roles ||= []
-    @terms ||= []
     @site_terms ||= []
   end
 

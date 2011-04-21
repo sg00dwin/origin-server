@@ -19,7 +19,6 @@ module Streamline
 
   def initialize
     @roles = []
-    @terms = []
     @site_terms = []
   end
 
