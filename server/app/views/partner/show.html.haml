@@ -1,5 +1,8 @@
 -# file: Partner detail page
 
+- content_for :page_title do
+  Partnership with #{@partner.name}
+
 = render 'shared/pageheader', :product => 'openshift', :title => 'Partners', :subtitle => 'A Strong Ecosystem of Technologies'
 
 #page.container_24
