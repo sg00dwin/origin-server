@@ -72,7 +72,7 @@ module Libra
 
     # Now, initialize the MCollective options
     @@config[:rpc_opts] = {:disctimeout => 3,
-                           :timeout     => 10,
+                           :timeout     => 20,
                            :verbose     => false,
                            :progress_bar=> false,
                            :filter      => {"identity"=>[], "fact"=>[], "agent"=>[], "cf_class"=>[]},
