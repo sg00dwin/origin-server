@@ -1,9 +1,9 @@
 %{!?ruby_sitelibdir: %global ruby_sitelibdir %(ruby -rrbconfig -e 'puts Config::CONFIG["sitelibdir"]')}
 %define gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 
-Name: rhc 
-Version: 0.66.3
-Release: 2%{?dist}
+Name: rhc
+Version: 0.66.4
+Release: 1%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -435,6 +435,9 @@ chmod 0666 %{_localstatedir}/www/libra/log/production.log
 %{_libexecdir}/li/cartridges/jbossas-7.0.0/
 
 %changelog
+* Wed Apr 20 2011 Matt Hicks <mhicks@redhat.com> 0.66.4-1
+- Terms flows and getting started pages
+
 * Wed Apr 20 2011 Mike McGrath <mmcgrath@redhat.com> 0.66.3-2
 - Fixed gem names
 
