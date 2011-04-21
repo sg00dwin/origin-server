@@ -132,26 +132,27 @@ puts ""
 #
 # Confirm local git repo exists
 #
-
-if File.exists?(opt['repo'])
-    puts "We will not overwrite an existing git repo. Please remove:"
-    puts "  #{File.expand_path(opt['repo'])}"
-    puts "Then try again."
-    puts
-    exit 210
-else
-    begin
-        # Create the parent directory for the git repo
-        @git_parent = File.expand_path(opt['repo'] + "/../")
-        FileUtils.mkdir_p(@git_parent)
-    rescue Errno::EACCES
-        puts "Could not write to #{@git_parent}"
-        puts "Reason: " + $!
+unless opt['nogit']
+    if File.exists?(opt['repo'])
+        puts "We will not overwrite an existing git repo. Please remove:"
+        puts "  #{File.expand_path(opt['repo'])}"
+        puts "Then try again."
         puts
-        puts "Please re-run from a directory you have write access to or specify -r with a"
-        puts "path you have write access to"
-        puts
-        exit 211
+        exit 210
+    else
+        begin
+            # Create the parent directory for the git repo
+            @git_parent = File.expand_path(opt['repo'] + "/../")
+            FileUtils.mkdir_p(@git_parent)
+        rescue Errno::EACCES
+            puts "Could not write to #{@git_parent}"
+            puts "Reason: " + $!
+            puts
+            puts "Please re-run from a directory you have write access to or specify -r with a"
+            puts "path you have write access to"
+            puts
+            exit 211
+        end
     end
 end
 
