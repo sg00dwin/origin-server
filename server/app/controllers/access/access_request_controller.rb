@@ -40,7 +40,7 @@ class Access::AccessRequestController < ApplicationController
           request_access          
         end
         if @user.errors.length > 0
-          @access.errors.update(@user.errors)          
+          @access.errors.update(@user.errors)
           render :new and return
         else
           @user.refresh_roles(true)

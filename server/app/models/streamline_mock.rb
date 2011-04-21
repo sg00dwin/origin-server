@@ -32,7 +32,7 @@ module StreamlineMock
      {"termId"=>1010, "termUrl"=>"https://access.redhat.com/help/terms_conditions.html", "termTitle"=>"Red Hat Portals Terms of Use"}]    
   end
   
-  def accept_terms(accepted_terms_list)
+  def accept_terms(accepted_terms_list, terms)
   end
 
   def refresh_roles(force=false)  
