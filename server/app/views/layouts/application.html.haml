@@ -2,9 +2,9 @@
 !!! Strict
 %html{ :xmlns => "http://www.w3.org/1999/xhtml", :lang => "en", "xml:lang" => "en"}
   %head
-  
+
     -# Allow views to modify title if desired
-    %title 
+    %title
       OpenShift by Red Hat
       - if content_for?(:page_title)
         |
@@ -18,13 +18,13 @@
     - if content_for?(:scripts)
       = javascript_include_tag "/app/javascripts/jquery-1.5.1.min.js"
       = yield :scripts
-    
+
     = csrf_meta_tag
 
   %body(class="#{controller.controller_name} #{controller.action_name}")
-    
+
     = render 'shared/omniture_code'
-    
+
     #horrible_wrapper
       #head.container_24
         #logo.grid_18.alpha
@@ -39,10 +39,10 @@
             #login
               %a(href='/app/login') Login
             .clear
-          
+
           #mainslug
             Platform at your Service
-           
+
         .clear
 
         #nav.container_24
@@ -55,7 +55,7 @@
               = link_to 'Flex', flex_path, :class => 'flex'
             %li
               = link_to 'Power', power_path, :class => 'power'
-              
+
             %li.category
               Community
             %li.after_category
@@ -64,7 +64,7 @@
               = link_to 'Blog', '/blog'
             %li
               = link_to 'Events', '/events'
-            
+
             %li.category
               Help
             %li.after_category
@@ -73,24 +73,24 @@
               = link_to 'Videos', '/videos'
             %li
               = link_to 'FAQ', '/faq'
-              
+
             %li.partners
-              = link_to 'Partners', url_for(:controller => 'partner', :action => 'index')
+              = link_to 'Partners', partners_path
           .clear
 
       = content_for?(:sub_layout) ? yield(:sub_layout) : yield
 
       #footer.container_24
         = image_tag "/app/images/shadowman.png", :alt => "Red Hat"
-        
-        %p Copyright &copy; 2011 Red Hat, Inc. 
-        
+
+        %p Copyright &copy; 2011 Red Hat, Inc.
+
         %ul
           %li
-            = link_to 'Site Terms', url_for(:controller => 'terms', :action => 'site_terms')
+            = link_to 'Site Terms', site_terms_path
           %li
             = link_to 'Privacy Policy', 'http://www.redhat.com/legal/privacy_statement.html'
           %li
             = link_to 'Contact Us', 'mailto:openshift@redhat.com'
-              
+
         .clear
