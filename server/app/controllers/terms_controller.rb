@@ -4,9 +4,14 @@ require 'json'
 class TermsController < ApplicationController
   
   def new
-    @user = session_user
+    @user = session_user    
     if @user
-      @term = Term.new
+      @user.establish_terms    
+      if @user.site_terms.length > 0
+        @term = Term.new
+      else
+        render :site_terms and return
+      end
     else
       Rails.logger.debug "User is not logged in - rerouting to login / register"
       session[:workflow] = new_path
