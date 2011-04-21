@@ -14,12 +14,12 @@ class TermsController < ApplicationController
     end
   end
   
-  def create
+  def create    
     @user = session_user
     if @user
-        term = params[:term]
-        @term = Term.new(term ? term : {})
-        @user.establish_terms
+      term = params[:term]
+      @term = Term.new(term ? term : {})
+      @user.establish_terms
       if !@term.valid?
         render :new and return
       else
@@ -30,8 +30,8 @@ class TermsController < ApplicationController
           @term.errors.update(@user.errors)
           render :new and return
         else
-          # This is the key to get past terms checking
-          session[:login] = user.rhlogin
+          # This is the key to get past terms checking in application controller
+          session[:login] = @user.rhlogin
         end
       end
       workflow = session[:workflow]
