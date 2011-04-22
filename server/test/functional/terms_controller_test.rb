@@ -72,14 +72,4 @@ class TermsControllerTest < ActionController::TestCase
     assert_equal 0, assigns(:term).errors.length
     assert_response :success
   end
-
-  test "show site terms" do
-    get :site_terms
-    assert_response :success
-  end
-
-  test "show service agreement" do
-    get :services_agreement
-    assert_response :success
-  end
 end

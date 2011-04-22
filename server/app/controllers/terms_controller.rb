@@ -65,9 +65,4 @@ class TermsController < ApplicationController
       redirect_to login_path
     end
   end
-
-  def site_terms; end
-
-  def services_agreement; end
-
 end
