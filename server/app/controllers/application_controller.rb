@@ -42,7 +42,7 @@ class ApplicationController < ActionController::Base
     
     if logged_in?
       Rails.logger.debug "User has an authenticated session"
-      if session[:ticket] != rh_sso.value[0]
+      if session[:ticket] != rh_sso
         Rails.logger.debug "Session ticket does not match current ticket - logging out"
         redirect_to logout_path and return
       else
@@ -56,7 +56,7 @@ class ApplicationController < ActionController::Base
         Rails.logger.debug "Found #{user}. Authenticating session"        
         session[:user] = user
         user.establish_terms
-        session[:ticket] = rh_sso.value[0]
+        session[:ticket] = rh_sso
         if user.site_terms.length > 0
           redirect_to new_terms_path and return
         else
