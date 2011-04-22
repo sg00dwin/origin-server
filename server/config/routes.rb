@@ -47,6 +47,8 @@ RedHatCloud::Application.routes.draw do
     match 'legal/site_terms' => 'terms#site_terms', :as => 'site_terms'
     match 'legal/acceptance_terms' => 'terms#acceptance_terms', :as => 'acceptance_terms'
     match 'legal/services_agreement' => 'terms#services_agreement', :as => 'services_agreement'
+    
+    match 'video/:name' => 'video#show', :as => 'video'
 
     resource :login,
              :controller => "login",
