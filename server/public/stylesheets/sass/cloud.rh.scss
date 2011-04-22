@@ -622,6 +622,47 @@ form {
   }
 }
 
+#intro {
+  @include gradient_bg(#333, #666, 100%);
+  width: 900px;
+  padding: 30px;
+  border: 1px solid #ccc {
+    right: none;
+    left: none;
+  }
+  
+  img {
+    float: left;
+    margin: 50px 30px;
+  }
+  
+  h3 {
+    font-family: Overpass;
+    font-size: 26pt;
+    line-height: 20pt;
+  }
+  
+  p {
+    font-size: 12pt;
+  }
+  
+  a.try_it {
+    @include gradient_bg($rh_red, darken($rh_red, 10%), 100%);
+    display: inline-block;
+    padding: 5px 10px;
+    font: {
+      family: Overpass;
+      size: 20pt;
+    }
+    text: {
+      decoration: none;
+      transform: uppercase;
+    }
+    border: 2px solid $rh_red;
+    @include border_radius(8);
+  }
+}
+
 #sidebar_slugs_container {
     @include gradient_bg(white, #ececec, 100%);
     overflow: hidden;
@@ -1121,6 +1162,15 @@ form {
 
 label {
   @include form_label;
+}
+
+input {
+  @include form_input;
+}
+
+input[type=text],
+input[type=password] {
+  @include form_text_input;
 }
 
 #captcha label {
@@ -1842,6 +1892,15 @@ label.error {
           transform: uppercase;
         }
       }
+    }
+    h4 {
+      margin: 0;
+      color: $rh_red !important;
+      font: {
+        size: 12pt;
+        family: Overpass;
+      }
+      text-transform: uppercase;
     }
   }
 

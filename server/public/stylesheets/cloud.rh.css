@@ -358,6 +358,65 @@ form ul, form ol, form li {
     text-decoration: none;
     color: #aaa !important; }
 
+#intro {
+  background: #333333;
+  /* Mozilla */
+  background: -moz-linear-gradient(top, #333333, #666666 100%);
+  /* Old webkit */
+  background: -webkit-gradient(linear, top center, from(#333333), color-stop(100%, #666666));
+  /* New webkit */
+  background: -webkit-linear-gradient(top, #333333, #666666 100%);
+  /* Opera */
+  background: -o-linear-gradient(top, #333333, #666666 100%);
+  /* IE <= 7 */
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=$first_color, endColorStr=$last_color);
+  /* IE 8 */
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=$first_color, endColorstr=$last_color)";
+  /* Spec */
+  background: linear-gradient(top, #333333, #666666 100%);
+  zoom: 1;
+  width: 900px;
+  padding: 30px;
+  border: 1px solid #cccccc;
+    border-right: none;
+    border-left: none; }
+  #intro img {
+    float: left;
+    margin: 50px 30px; }
+  #intro h3 {
+    font-family: Overpass;
+    font-size: 26pt;
+    line-height: 20pt; }
+  #intro p {
+    font-size: 12pt; }
+  #intro a.try_it {
+    background: #cc0000;
+    /* Mozilla */
+    background: -moz-linear-gradient(top, #cc0000, #990000 100%);
+    /* Old webkit */
+    background: -webkit-gradient(linear, top center, from(#cc0000), color-stop(100%, #990000));
+    /* New webkit */
+    background: -webkit-linear-gradient(top, #cc0000, #990000 100%);
+    /* Opera */
+    background: -o-linear-gradient(top, #cc0000, #990000 100%);
+    /* IE <= 7 */
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=$first_color, endColorStr=$last_color);
+    /* IE 8 */
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=$first_color, endColorstr=$last_color)";
+    /* Spec */
+    background: linear-gradient(top, #cc0000, #990000 100%);
+    zoom: 1;
+    display: inline-block;
+    padding: 5px 10px;
+    font-family: Overpass;
+    font-size: 20pt;
+    text-decoration: none;
+    text-transform: uppercase;
+    border: 2px solid #cc0000;
+    -moz-border-radius: 8px;
+    -webkit-border-radius: 8px;
+    border-radius: 8px; }
+
 #sidebar_slugs_container {
   background: white;
   /* Mozilla */
@@ -742,6 +801,33 @@ label {
   label font {
     size: 10pt;
     weight: bold; }
+
+input {
+  width: 200px;
+  margin: 0 5px;
+  float: left;
+  clear: right;
+  border: 1px solid #aaa;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+  font-size: 13pt; }
+
+input[type=text],
+input[type=password] {
+  width: 200px;
+  margin: 0 5px;
+  float: left;
+  clear: right;
+  border: 1px solid #aaa;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+  font-size: 13pt;
+  width: 250px !important;
+  height: 24px;
+  margin: 0 0 16px 16px;
+  padding: 2px 4px; }
 
 #captcha label {
   width: 154px;
@@ -1380,6 +1466,12 @@ label.error {
       text-align: right;
       text-decoration: none;
       text-transform: uppercase; }
+  .partner ul.partners h4 {
+    margin: 0;
+    color: #cc0000 !important;
+    font-size: 12pt;
+    font-family: Overpass;
+    text-transform: uppercase; }
 .partner #partner_information {
   font-size: 10pt;
   color: #7b7b7b; }
