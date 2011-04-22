@@ -8,7 +8,7 @@ class ApplicationController < ActionController::Base
     response.headers["Expires"] = "Fri, 01 Jan 1990 00:00:00 GMT"
   end
   
-  def setup_user_session(user)    
+  def setup_user_session(user)
     session[:login] = user.rhlogin
     session[:user] = user
   end
@@ -20,6 +20,10 @@ class ApplicationController < ActionController::Base
     end
     return user
   end
+  
+  def logged_in?
+    return session[:login] || (session[:user] && params[:controller] == 'terms')
+  end
 
   def check_credentials
     # If this is a logout request, pass through
@@ -29,10 +33,14 @@ class ApplicationController < ActionController::Base
     Rails.logger.debug "Not a logout request, checking for cookie"
     rh_sso = cookies[:rh_sso]
     Rails.logger.debug "rh_sso cookie = '#{rh_sso}'"
-
-    # TODO - what if you don't have the cookie, but have session?
-    return unless rh_sso
-    if session[:login] || (session[:user] && params[:controller] == 'terms') 
+    
+    if logged_in?
+      redirect_to logout_path and return
+    else
+      return
+    end unless rh_sso
+    
+    if logged_in?
       Rails.logger.debug "User has an authenticated session"
       if session[:ticket] != rh_sso
         Rails.logger.debug "Session ticket does not match current ticket - logging out"

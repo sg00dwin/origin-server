@@ -33,11 +33,6 @@ class Access::FlexRequestControllerTest < ActionController::TestCase
     assert_response :success
   end
   
-  def setup_session
-    session[:login] = 'tester'
-    session[:user] = WebUser.new
-  end
-  
   def get_post_form
     {:ec2_account_number => '1234-1234-1234', :terms_accepted => 'on', :accepted_terms_list => {'1','2','3','4'}}
   end
