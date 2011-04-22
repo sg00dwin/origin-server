@@ -19,19 +19,20 @@
         %div
           %strong #{value}
 
-    %p#explanation
-      Red Hat will grant access to the OpenShift Service subject to the terms and conditions listed in the following documents:
-
     = semantic_form_for @access do |form|
-      %ul.terms
-        - unless @user.terms.empty?
+      - unless @user.terms.empty?
+        %p#explanation
+          Red Hat will grant access to the OpenShift Service subject to the terms and conditions listed in the following documents:
+
+        %ul.terms
           - @user.terms.each_with_index do |value, i|
             %li.terms-link
               %a{:title => value['termTitle'], :href => value['termUrl'], :target => '_blank'} #{value['termTitle']}
-        - else
-          %p.notice <strong>Note:</strong> You have previously accepted all applicable terms
-      %p#explanation
-        Clicking <strong>Request Access</strong> means that you agree to the above terms.
+
+        %p#explanation
+          Clicking <strong>Request Access</strong> means that you agree to the above terms.
+      - else
+        %p <strong>Note:</strong> You have previously accepted all applicable terms
       = form.buttons do
         = form.commit_button "Request Access", :input_html => { :class => 'button' }
     .clear

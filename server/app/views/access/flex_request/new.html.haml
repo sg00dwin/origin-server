@@ -28,17 +28,21 @@
           First, we'll need your Amazon account number (e.g. 1234-1234-1234).  Your account number will allow us to share the Flex Amazon Machine Images with your account.
         = form.input :ec2_account_number
 
-      %p
-        Next, we will need you to read and agree to the following terms.  Red Hat will grant access to the OpenShift Service subject to the terms and conditions listed in the following documents:
-      %ul.terms
-        - unless @user.terms.empty?
+      - unless @user.terms.empty?
+        %p
+          Next, we will need you to read and agree to the following terms.  Red Hat will grant access to the OpenShift Service subject to the terms and conditions listed in the following documents:
+
+        %ul.terms
           - @user.terms.each_with_index do |value, i|
             %li.terms-link
               %a{:title => value['termTitle'], :href => value['termUrl'], :target => '_blank'} #{value['termTitle']}
-        - else
-          %p.notice <strong>Note:</strong> You have previously accepted all applicable terms
-      %p
-        Clicking <strong>Request Access</strong> means that you agree to the above terms.
+
+        %p
+          Clicking <strong>Request Access</strong> means that you agree to the above terms.
+
+      - else
+        %p <strong>Note:</strong> You have previously accepted all applicable terms
+
       = form.buttons do
         = form.commit_button "Request Access", :input_html => { :class => 'button' }
     .clear
