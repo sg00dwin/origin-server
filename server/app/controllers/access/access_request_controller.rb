@@ -5,7 +5,7 @@ class Access::AccessRequestController < ApplicationController
     Rails.logger.debug "Checking login status"
     login = session[:login]
     if login
-      @user = session_user      
+      @user = session_user
       if @user.has_requested?(access_type)
         render :already_requested and return
       elsif @user.has_access?(access_type)
@@ -20,10 +20,10 @@ class Access::AccessRequestController < ApplicationController
       redirect_to login_path, :notice => flash[:notice] ? flash[:notice] : "You'll need to login / register before asking for access"
     end
   end
-  
+
   def create
     Rails.logger.debug "Checking login status"
-    login = session[:login]    
+    login = session[:login]
     if login
       Rails.logger.debug "User is logged in"
       setup_create_model(params)
@@ -34,10 +34,10 @@ class Access::AccessRequestController < ApplicationController
       else
         Rails.logger.debug "Requesting access #{CloudAccess.access_name(access_type)} for user #{@user}"
         if @user.terms.length > 0
-          @user.accept_terms(@access.accepted_terms_list, @user.terms)
+          @user.accept_subscription_terms(@access.accepted_terms_list)
         end
         if @user.errors.length == 0
-          request_access          
+          request_access
         end
         if @user.errors.length > 0
           @access.errors.update(@user.errors)
@@ -52,5 +52,5 @@ class Access::AccessRequestController < ApplicationController
       redirect_to login_path
     end
   end
-  
+
 end
