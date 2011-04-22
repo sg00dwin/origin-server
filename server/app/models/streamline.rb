@@ -80,7 +80,6 @@ module Streamline
 
   def accept_subscription_terms(accepted_terms_json)
     Rails.logger.debug("Accepting subscription terms = #{accepted_terms_json}")
-    establish_terms
     accepted_terms = parse_terms(accepted_terms_json)
     accept_terms(@terms, accepted_terms)
     @terms.clear if errors.empty?
@@ -119,9 +118,9 @@ module Streamline
 
       # Convert the accepted ids to strings to comparison
       # normally they are integers
-      required_conv = required.map{|v| v.to_s}
+      required_conv = required.map{|hash| hash['termId'].to_s}
       unless (required_conv - json['term']).empty?
-        Rails.logger.error("Streamline partial terms acceptance")
+        Rails.logger.error("Streamline partial terms acceptance. Expected #{required_conv} got #{json['term']}")
         errors.add(:base, I18n.t(:terms_error, :scope => :streamline))
       end
     end
@@ -321,7 +320,7 @@ module Streamline
   end
 
   def build_terms_query(terms)
-    terms.collect {|id| "termIds=#{id}"}.join('&') if terms
+    terms.collect {|hash| "termIds=#{hash['termId']}"}.join('&') if terms
   end
 
   def build_terms_url(terms)

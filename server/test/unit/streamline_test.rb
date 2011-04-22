@@ -56,7 +56,7 @@ class StreamlineTest < ActiveSupport::TestCase
   end
 
   test "build terms query" do
-    terms = ['1', '2']
+    terms = [{'termId' => 1, 'termUrl' => 'http://test'}, {'termId' => 2, 'termUrl' => 'http://test2'}]
     assert_equal 'termIds=1&termIds=2', @streamline.build_terms_query(terms)
   end
 
@@ -327,34 +327,27 @@ class StreamlineTest < ActiveSupport::TestCase
   end
 
   test "all terms not accepted subset" do
-    required = [{"termId" => 'a', "termUrl" => 'url'},
-                {"termId" => 'b', "termUrl" => 'url'}]
+    terms = [{"termId" => 'a', "termUrl" => 'url'},
+             {"termId" => 'b', "termUrl" => 'url'}]
     accepted = ['b']
 
-    assert !@streamline.all_terms_accepted?(required, accepted)
+    assert !@streamline.all_terms_accepted?(terms, accepted)
     assert_equal 1, @streamline.errors.length
   end
 
   test "accept terms" do
-    accepted = ['a', 'b']
+    terms = [{"termId" => 'a', "termUrl" => 'url'},
+             {"termId" => 'b', "termUrl" => 'url'}]
     json = {"term" => ['a', 'b']}
     @streamline.expects(:all_terms_accepted?).once.returns(true)
     @streamline.expects(:http_post).once.yields(json)
-    @streamline.accept_terms([], accepted)
+    @streamline.accept_terms(terms, [])
     assert_equal 0, @streamline.errors.length
   end
 
-  test "accept partial terms" do
-    terms = ['a', 'b']
-    json = {"term" => ['a']}
-    @streamline.expects(:all_terms_accepted?).once.returns(true)
-    @streamline.expects(:http_post).once.yields(json)
-    @streamline.accept_terms(terms, terms)
-    assert_equal 1, @streamline.errors.length
-  end
-
   test "accept terms with partial streamline result" do
-    terms = ['a', 'b']
+    terms = [{"termId" => 'a', "termUrl" => 'url'},
+             {"termId" => 'b', "termUrl" => 'url'}]
     json = {"term" => ['a']}
     @streamline.expects(:all_terms_accepted?).once.returns(true)
     @streamline.expects(:http_post).once.yields(json)
