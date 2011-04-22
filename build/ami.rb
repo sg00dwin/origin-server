@@ -14,7 +14,8 @@ begin
     AMI = "ami-6a897e03"
     TYPE = "m1.large"
     KEY_PAIR = "libra"
-    OPTIONS = {:key_name => KEY_PAIR, :instance_type => TYPE}
+    ZONE = 'us-east-1c'
+    OPTIONS = {:key_name => KEY_PAIR, :instance_type => TYPE, :availability_zone => ZONE}
     VERSION_REGEX = /rhc-\d+\.\d+\.?\d*-\d+/
     AMI_REGEX = /rhc-\d+\.\d+/
     BUILD_REGEX = /^builder-rhc-\d+\.\d+/
