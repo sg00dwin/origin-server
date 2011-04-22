@@ -231,8 +231,12 @@ END_OF_MESSAGE
           puts "Done"
 
           print "Performing clean install with the latest code..."
-          ssh('sh li-devenv.sh', 1800)
+          output = ssh('sh li-devenv.sh', 1800)
           puts "Done"
+
+          puts "----------------- Install Output ------------------------"
+          puts output
+          puts "---------------------------------------------------------"
 
           print "Verifying installation..."
           rpm = ssh('rpm -q rhc')
