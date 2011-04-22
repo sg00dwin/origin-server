@@ -15,12 +15,12 @@ begin
     TYPE = "m1.large"
     KEY_PAIR = "libra"
     OPTIONS = {:key_name => KEY_PAIR, :instance_type => TYPE}
-    VERSION_REGEX = /li-\d+\.\d+\.?\d*-\d+/
-    AMI_REGEX = /li-\d+\.\d+/
-    BUILD_REGEX = /^builder-li-\d+\.\d+/
+    VERSION_REGEX = /rhc-\d+\.\d+\.?\d*-\d+/
+    AMI_REGEX = /rhc-\d+\.\d+/
+    BUILD_REGEX = /^builder-rhc-\d+\.\d+/
     TERMINATE_REGEX = /terminate/
     PREFIX = ENV['LIBRA_DEV'] ? ENV['LIBRA_DEV'] + "-" : ""
-    VERIFIER_REGEX = /^#{PREFIX}verifier-li-\d+\.\d+/
+    VERIFIER_REGEX = /^#{PREFIX}verifier-rhc-\d+\.\d+/
     VERIFIED_TAG = "qe-ready"
     BREW_LI = "https://brewweb.devel.redhat.com/packageinfo?packageID=31345"
     GIT_REPO_PUPPET = "ssh://puppet1.ops.rhcloud.com/srv/git/puppet.git"
@@ -160,7 +160,7 @@ END_OF_MESSAGE
         line.split(":")[1].strip if line.start_with?("Release")
       end.compact[-1]
 
-      @version = "li-#{version}-#{release.split('.')[0]}"
+      @version = "rhc-#{version}-#{release.split('.')[0]}"
 
       raise "Invalid version format" unless @version =~ VERSION_REGEX
 
@@ -222,7 +222,7 @@ END_OF_MESSAGE
             print "Verifying update..."
             rpm = ssh('rpm -q rhc')
             unless rpm.start_with?(@version)
-              fail "Expected updated version to be #{@version}, actual was #{rpm}"
+              fail "Expected updated version to start with #{@version}, actual was #{rpm}"
             end
             puts "Done"
         else
@@ -234,7 +234,7 @@ END_OF_MESSAGE
           print "Verifying installation..."
           rpm = ssh('rpm -q rhc')
           unless rpm.start_with?(@version)
-            fail "Expected updated version to be #{@version}, actual was #{rpm}"
+            fail "Expected updated version to start with #{@version}, actual was #{rpm}"
           end
           puts "Done"
 
