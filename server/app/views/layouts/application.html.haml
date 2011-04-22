@@ -68,14 +68,16 @@
             %li.category
               Help
             %li.after_category
+              = link_to 'KB', '/kb'
+            %li
+              = link_to 'Guides', '/guides'
+            %li
               = link_to 'Docs', '/documents'
             %li
               = link_to 'Videos', '/videos'
             %li
               = link_to 'FAQ', '/faq'
 
-            %li.partners
-              = link_to 'Partners', partners_path
           .clear
 
       = content_for?(:sub_layout) ? yield(:sub_layout) : yield
@@ -92,5 +94,8 @@
             = link_to 'Privacy Policy', 'http://www.redhat.com/legal/privacy_statement.html'
           %li
             = link_to 'Contact Us', 'mailto:openshift@redhat.com'
+          
+          %li
+            = link_to 'OpenShift Partners', url_for(:controller => 'partner', :action => 'index')
 
         .clear

@@ -47,6 +47,7 @@ form ul, form ol, form li {
   margin: 1em 0; }
 
 #header_right {
+  background: url("/app/images/misty-cloud.png") no-repeat right 50px;
   text-align: right;
   position: relative;
   height: 120px; }
@@ -89,25 +90,6 @@ form ul, form ol, form li {
     text-transform: uppercase; }
     #login a:hover, #logout a:hover {
       color: #4e9fdd; }
-
-#mainslug {
-  /*
-    margin: 48px 0 .5em;
-    font-family: Overpass;
-    
-    img {
-      float: right;
-    }
-    
-    p {
-      font-size: 10pt;
-      color: $light_blue;
-      clear: right;
-    }
-  */ }
-  #mainslug img {
-    float: right;
-    margin: 80px 0 0; }
 
 #nav {
   overflow: auto;
@@ -445,6 +427,8 @@ form ul, form ol, form li {
     font-size: 22pt; }
   #sidebar #faq h4 {
     font-size: 32pt; }
+  #sidebar #partners h4 {
+    font-size: 22pt; }
 
 #slugs {
   background: #ececec;
@@ -1121,13 +1105,13 @@ label.error {
   #supplemental_content #doc_link a h3 {
     margin-bottom: 0;
     color: white;
-    font-size: 18pt;
+    font-size: 16pt;
     font-family: Overpass;
     text-transform: uppercase; }
   #supplemental_content #doc_link a p {
     color: white;
     font-family: Overpass;
-    font-size: 12pt; }
+    font-size: 11pt; }
 .express #supplemental_content #doc_link a {
   background: #264c73;
   /* Mozilla */

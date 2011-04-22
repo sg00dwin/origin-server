@@ -1,6 +1,9 @@
 -# file: Main site index
 
+-# Add javascripts here - jquery is added automatically
 - content_for :scripts do
+  = stylesheet_link_tag '/app/stylesheets/fancybox.css'
+  = javascript_include_tag '/app/javascripts/fancybox.js'
   = javascript_include_tag "/app/javascripts/jquery.slideshow.minified.js"
   = javascript_include_tag "/app/javascripts/home"
   
@@ -43,16 +46,21 @@
   #sidebar.grid_7.push_17
 
     #resources.grid_7.alpha
-      = link_to('/community') do
+      = link_to('http://redhat.com/openshift/community') do
         %h4 Resources
         %p Forums, Eval Guides, How-To's & Videos
     .clear
 
-    #faq.grid_7.omega
-      = link_to('/faq') do
+    #faq.grid_7
+      = link_to('http://redhat.com/openshift/faq') do
         %h4 FAQ
         %p Got questions? We have answers
     .clear
+    
+    #partners.grid_7.omega
+      = link_to :controller => 'partner', :action => :index do
+        %h4 Our Partners
+        %p A Strong Ecosystem of Technologies
 
   /Product slugs
   
@@ -63,7 +71,8 @@
     %p
       OpenShift is for developers who love to build on open source software, but who don't want the hassle of building and maintaining their own infrastructure.
     
-    = image_tag '/app/images/rocket-dude.png'
+    %a.fancybox(href='/app/images/rocket-dude-big.png')
+      = image_tag '/app/images/rocket-dude.png'
 
 
   /Flex slug
@@ -72,7 +81,9 @@
     %h3 OpenShift is Current
     %p
       Supports all the coolest languages and frameworks, along with PaaS automation features like auto-scaling and built-in monitoring.
-    = image_tag '/app/images/layer-cake.png'
+    
+    %a.fancybox(href='app/images/layer-cake-big.jpg')
+      = image_tag '/app/images/layer-cake.png'
    
 
   /End slugs

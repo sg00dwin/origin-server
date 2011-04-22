@@ -22,4 +22,7 @@ $(function() {
       $('.promo').removeClass('hover');
     }
   );
+  
+  // Fancybox
+  $('.fancybox').fancybox();
 });
