@@ -2,9 +2,9 @@
 
 = render 'shared/pageheader', :product => 'openshift', :title => 'Terms Acceptance', :subtitle => 'Open Shift Site Usage Terms'
 
-.container_24#page
+#page.container_24
 
-  .prefix_1.grid_16.suffix_1#terms_page
+  #terms.grid_13.push_6
     - @term.errors.each do |key, value|
       - if key == :base
         #errors
@@ -14,7 +14,7 @@
     %h3 Please Accept the Following Terms
 
     %p Before accessing our online properties, you need to accept the site terms and conditions.  Click on the link below for a description of these terms:
-    %p
+    %p.terms-link
       = link_to 'OpenShift Site Terms', acceptance_terms_path, :class => 'more'
 
     = semantic_form_for @term do |form|
@@ -23,7 +23,7 @@
           %p
             Clicking <strong>I accept</strong> means that you agree to the site usage terms.
       = form.buttons do
-        = form.commit_button "I accept", :input_html => { :class => 'button' }
+        = form.commit_button "I Accept", :input_html => { :class => 'button' }
     .clear
 
   .clear
