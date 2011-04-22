@@ -20,9 +20,10 @@ def p_usage
 Usage: batch_register
 Batch register users for testing
 
-  -o|--host    devenv_host  DevEnv host to use for registering
+  -o|--host    devenv_host  DevEnv host to use for registering (e.g. stg.openshift.redhat.com)
   -i|--id      identifier   Namespace / email identifier (e.g. libra-test+ID@redhat.com)
   -n|--num     number_users Number of users to create (e.g. libra-test+ID1@redhat.com)
+  -p|--proxy                Use a proxy
   -h|--help                 Show Usage info
 
 USAGE
@@ -33,6 +34,7 @@ begin
     opts = GetoptLong.new(
         ["--help",  "-h", GetoptLong::NO_ARGUMENT],
         ["--debug", "-d", GetoptLong::NO_ARGUMENT],
+        ["--proxy", "-p", GetoptLong::NO_ARGUMENT],
         ["--host",  "-o", GetoptLong::REQUIRED_ARGUMENT],
         ["--id",    "-i", GetoptLong::REQUIRED_ARGUMENT],
         ["--num",   "-n", GetoptLong::REQUIRED_ARGUMENT]
@@ -61,7 +63,7 @@ num_users = opt['num'].to_i
 debug = opt['debug']
 
 # Determine if we need to proxy
-proxy = opt['host'] =~ /amazonaws/
+proxy = opt['p']
 
 # Verify proxy connectivity
 if proxy
@@ -96,10 +98,10 @@ a.get(main_page) do |page|
       form.add_field!('captcha_secret', 'zvw5LiixMB0I4mjk06aR')
     end.submit
 
-    if result_page.body =~ /Check your email/
+    if result_page.body =~ /What's Next/
       print "."
     else
-      puts "ERROR - Registration failed"
+      puts "\nERROR - Registration failed"
       exit 1
     end
   end
@@ -155,11 +157,9 @@ a.get(express_access_page) do |page|
       form['password'] = password
     end.submit
 
-    result_page = access_page.form_with(:action => '/app/access/express') do |form|
-      form['access_express_request[terms_accepted]'].checked = true
-    end.submit
+    result_page = access_page.form_with(:action => '/app/access/express').submit
 
-    if result_page.body =~ /Check your email/
+    if result_page.body =~ /What's Next/
       print "."
     else
       puts "ERROR - Registration failed"
