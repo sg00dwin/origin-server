@@ -51,6 +51,30 @@ class StreamlineTest < ActiveSupport::TestCase
     @streamline.parse_body(body)
   end
 
+  test "build terms query nil" do
+    assert_nil @streamline.build_terms_query(nil)
+  end
+
+  test "build terms query" do
+    terms = ['1', '2']
+    assert_equal 'termIds=1&termIds=2', @streamline.build_terms_query(terms)
+  end
+
+  test "build terms url" do
+    terms = ['1', '2']
+    url = @streamline.build_terms_url(terms)
+    assert url.to_s =~ /^http.*\?termIds=/
+  end
+
+  test "parse terms nil" do
+    assert_equal [], @streamline.parse_terms(nil)
+  end
+
+  test "parse terms" do
+    json_str = "[{\"termId\":\"1\",\"termUrl\":\"test\"}]"
+    assert_equal 1, @streamline.parse_terms(json_str).length
+  end
+
   test "parse errors nil" do
     @streamline.parse_json_errors(nil)
     assert @streamline.errors.empty?
@@ -207,12 +231,135 @@ class StreamlineTest < ActiveSupport::TestCase
     assert_equal rhlogin, @streamline.rhlogin
     assert_equal roles, @streamline.roles
   end
-  
+
   test "get email address for user" do
     email_address = 'test@example.com'
     json = {"emailAddress" => email_address}
     @streamline.expects(:http_post).once.yields(json)
     @streamline.establish_email_address
     assert_equal email_address, @streamline.email_address
+  end
+
+  test "establish terms existing" do
+    @streamline.terms = {}
+    @streamline.expects(:http_post).never
+    @streamline.establish_terms
+  end
+
+  test "establish terms" do
+    terms = [{"termId" => 1, "termUrl" => "http://www.redhat.com/term1"}]
+    json = {"unacknowledgedTerms" => terms}
+    @streamline.expects(:http_post).once.yields(json)
+    @streamline.establish_terms
+    assert_equal 1, @streamline.site_terms.length
+    assert_equal 0, @streamline.terms.length
+  end
+
+  test "establish site terms" do
+    terms = [{"termId" => 1, "termUrl" => "http://openshift.redhat.com/term1"}]
+    json = {"unacknowledgedTerms" => terms}
+    @streamline.expects(:http_post).once.yields(json)
+    @streamline.establish_terms
+    assert_equal 0, @streamline.site_terms.length
+    assert_equal 1, @streamline.terms.length
+  end
+
+  test "establish both terms" do
+    terms = [{"termId" => 1, "termUrl" => "http://openshift.redhat.com/term1"},
+             {"termId" => 2, "termUrl" => "http://www.redhat.com/term1"}]
+    json = {"unacknowledgedTerms" => terms}
+    @streamline.expects(:http_post).once.yields(json)
+    @streamline.establish_terms
+    assert_equal 1, @streamline.site_terms.length
+    assert_equal 1, @streamline.terms.length
+  end
+
+  test "accept site terms" do
+    @streamline.terms = ['test1']
+    @streamline.site_terms = ['test2']
+    @streamline.expects(:parse_terms).once
+    @streamline.expects(:accept_terms).once
+    @streamline.accept_site_terms([])
+    assert_equal 0, @streamline.site_terms.length
+    assert_equal 1, @streamline.terms.length
+  end
+
+  test "accept subscription terms" do
+    @streamline.terms = ['test1']
+    @streamline.site_terms = ['test2']
+    @streamline.expects(:parse_terms).once
+    @streamline.expects(:accept_terms).once
+    @streamline.accept_subscription_terms([])
+    assert_equal 0, @streamline.terms.length
+    assert_equal 1, @streamline.site_terms.length
+  end
+
+  test "all terms accepted" do
+    required = [{"termId" => 'a', "termUrl" => 'url'}]
+    accepted = ['a']
+
+    assert @streamline.all_terms_accepted?(required, accepted)
+    assert_equal 0, @streamline.errors.length
+  end
+
+  test "all terms accepted multiple" do
+    required = [{"termId" => 'a', "termUrl" => 'url'},
+                {"termId" => 'b', "termUrl" => 'url'}]
+    accepted = ['a', 'b']
+
+    assert @streamline.all_terms_accepted?(required, accepted)
+    assert_equal 0, @streamline.errors.length
+  end
+
+  test "all terms not accepted" do
+    required = [{"termId" => 'a', "termUrl" => 'url'}]
+    accepted = []
+
+    assert !@streamline.all_terms_accepted?(required, accepted)
+    assert_equal 1, @streamline.errors.length
+  end
+
+  test "all terms not accepted mismatch" do
+    required = [{"termId" => 'a', "termUrl" => 'url'}]
+    accepted = ['b']
+
+    assert !@streamline.all_terms_accepted?(required, accepted)
+    assert_equal 1, @streamline.errors.length
+  end
+
+  test "all terms not accepted subset" do
+    required = [{"termId" => 'a', "termUrl" => 'url'},
+                {"termId" => 'b', "termUrl" => 'url'}]
+    accepted = ['b']
+
+    assert !@streamline.all_terms_accepted?(required, accepted)
+    assert_equal 1, @streamline.errors.length
+  end
+
+  test "accept terms" do
+    accepted = ['a', 'b']
+    json = {"term" => ['a', 'b']}
+    @streamline.expects(:all_terms_accepted?).once.returns(true)
+    @streamline.expects(:http_post).once.yields(json)
+    @streamline.accept_terms([], accepted)
+    assert_equal 0, @streamline.errors.length
+  end
+
+  test "accept partial terms" do
+    accepted = ['a', 'b']
+    json = {"term" => ['a']}
+    @streamline.expects(:all_terms_accepted?).once.returns(true)
+    @streamline.expects(:http_post).once.yields(json)
+    @streamline.accept_terms([], accepted)
+    assert_equal 1, @streamline.errors.length
+  end
+
+  test "accept terms streamline nil" do
+    accepted = ['a', 'b']
+    json = {"term" => nil}
+    @streamline.expects(:all_terms_accepted?).once.returns(true)
+    @streamline.expects(:http_post).once.yields(json)
+    @streamline.accept_terms([], accepted)
+    assert_equal 1, @streamline.errors.length
   end
 end
