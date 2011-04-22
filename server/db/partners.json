@@ -3,6 +3,7 @@
   "name": "MongoDB by 10gen",
   "url": "http://www.mongodb.com",
   "logo": "mongodb.png",
+  "category": "data-store",
   "contact":
     "10gen, Inc. <br/> 134 5th Avenue 3rd Floor <br/> New York, NY 10011 <br/> www.10gen.com",
   "summary":
@@ -24,6 +25,7 @@
   "name": "Appcelerator", 
   "url": "http://www.appcelerator.com", 
   "logo": "appcelerator.png",
+  "category": "ide",
   "contact":
     "Appcelerator <br/> 440 Bernardo Dr. <br/> Mountain View CA 94043",
   "summary": 
@@ -45,6 +47,7 @@
   "name": "BitNami",
   "url": "http://www.bitnami.com", 
   "logo": "bitnami.png",
+  "category": "framework",
   "contact":
     "BitRock Inc. <br/> 1151 Marina Village Pkwy, Ste 101 <br/> Alameda, CA 94501",
   "summary": 
@@ -65,6 +68,7 @@
   "name": "Cotendo",
   "url": "http://www.cotendo.com",
   "logo": "cotendo.png",
+  "category": "op-service",
   "contact": 
     "Cotendo inc. <br/> 530 Lakeside Drive <br/> Sunnyvale, CA 94085, USA",
   "summary":
@@ -85,6 +89,7 @@
   "name": "Couchbase",
   "url": "http://www.couchbase.com",
   "logo": "couchbase.png",
+  "category": "data-store",
   "contact": 
     "200 West Evelyn Avenue <br/> Suite 110 <br/> Mountain View, CA 94041",
   "summary":
@@ -105,6 +110,7 @@
   "name": "Dyn",
   "url": "http://www.dyn.com",
   "logo": "dyn.png",
+  "category": "op-service",
   "contact": 
     "150 Dow Street <br/> Manchester, NH 03101, USA",
   "summary":
@@ -125,6 +131,7 @@
   "name": "EnterpriseDB",
   "url": "http://www.enterprisedb.com",
   "logo": "enterprisedb.png",
+  "category": "data-store",
   "contact": 
     "34 Crosby Drive <br/> Suite 100 <br/> Bedford, MA 01730, USA",
   "summary":
@@ -145,6 +152,7 @@
   "name": "eXo",
   "url": "http://www.cloud-ide.com",
   "logo": "exo.png",
+  "category": "ide",
   "contact": 
     "eXo <br/> 51 Federal Street, Suite 305 <br/> San Francisco CA 94107, USA",
   "summary":
@@ -165,6 +173,7 @@
   "name": "Mu Dynamics",
   "url": "http://blitz.io",
   "logo": "mudynamics.png",
+  "category": "op-service",
   "contact": 
     "686 W Maude Avenue, Ste 104 <br/> Sunnyvale, CA 94085, USA",
   "summary":
@@ -185,6 +194,7 @@
   "name": "Opencrowd",
   "url": "http://www.opencrowd.com",
   "logo": "opencrowd.png",
+  "category": "data-store",
   "contact": 
     "41 East 11th Street, 11th Floor <br/> New York, NY 10003",
   "summary":
@@ -206,6 +216,7 @@
   "name": "OpSource",
   "url": "http://www.opsource.net",
   "logo": "opsource.png",
+  "category": "cloud-provider",
   "contact": 
     "5201 Great America Pkwy, Suite 120 <br/> Santa Clara, CA 95112, USA",
   "summary":
@@ -226,6 +237,7 @@
   "name": "Zend",
   "url": "http://www.zend.com",
   "logo": "zend.png",
+  "category": "framework",
   "contact": 
     "Zend Technologies, Inc. <br/> 19200 Stevens Creek Blvd., Suite 100 <br/> Cupertino, CA  95014",
   "summary":
@@ -235,7 +247,7 @@
   "quote_attr":
     "Andi Gutmans, CEO and Co-founder, Zend Technologies",
   "description":
-    "<p>The Zend PHP cloud application platform offers rapid development and deployment of business-critical PHP applications with high availability, massive scalability and portability in the cloud. The platform includes the open source Zend Framework for accessing cloud services and writing portable code using the SimpleCloud API; an enterprise-grade, optimized PHP stack, application monitoring, root cause diagnostics, and resource management.</p>",
+    "<p>The Zend PHP cloud application platform offers rapid development and deployment of business-critical PHP applications with high availability, massive scalability and portability in the cloud. The platform includes the open source Zend framework for accessing cloud services and writing portable code using the SimpleCloud API; an enterprise-grade, optimized PHP stack, application monitoring, root cause diagnostics, and resource management.</p>",
   "advantage":
     ["Elasticity and high availability for PHP applications",
     "Portability across different clouds and flexibility to customize your environment",
