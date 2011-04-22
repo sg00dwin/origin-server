@@ -1,14 +1,18 @@
 -# file: Express request access page
 
 - content_for :page_title do
-  Get access to OpenShift Express!
+  Get Access to OpenShift Express!
+  
+- content_for :scripts do
+  = javascript_include_tag "/app/javascripts/jquery.validate.min.js"
+  = javascript_include_tag "/app/javascripts/form"
 
 = render 'shared/pageheader', :product => 'express', :title => 'Try Express', :subtitle => 'Request Access to OpenShift Express'
 
 .container_24#page
 
   #access.express.grid_13.push_5
-    %h3 Request access to OpenShift Express
+    %h3 Request Access to OpenShift Express
 
     - @access.errors.each do |key, value|
       - if key == :base
@@ -24,7 +28,7 @@
         - if @user.terms.length > 0
           - @user.terms.each_with_index do |value, i|
             - accepted_terms_list[i] = value['termId']
-            .terms_link
+            .terms-link
               %a{:title => value['termTitle'], :href => value['termUrl'], :target => '_blank'} #{value['termTitle']}
           = form.hidden_field :accepted_terms_list, :value => JSON.generate(accepted_terms_list)
           = form.input :terms_accepted, :input_html => { :type=>'checkbox' }

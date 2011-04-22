@@ -1248,6 +1248,29 @@ label.error {
   }
 }
 
+
+/* Access request forms */
+#access {
+  h3 {
+    margin-left: 100px;
+    font-size: 20pt;
+  }
+  label {
+    line-height: 15px;
+    margin-right: 5px;
+  }
+  p#explanation {
+    margin-left: 120px;
+  }
+  .terms-link {
+    margin-left: 165px;
+    a {
+      color: $bright_blue !important;
+      text-decoration: none;
+    }
+  } 
+}
+
 /**
  * Product page styles
  */

@@ -884,6 +884,21 @@ label.error {
   color: #bbb !important;
   border-top: 1px solid #dedede; }
 
+/* Access request forms */
+#access h3 {
+  margin-left: 100px;
+  font-size: 20pt; }
+#access label {
+  line-height: 15px;
+  margin-right: 5px; }
+#access p#explanation {
+  margin-left: 120px; }
+#access .terms-link {
+  margin-left: 165px; }
+  #access .terms-link a {
+    color: #4e9fdd !important;
+    text-decoration: none; }
+
 /**
  * Product page styles
  */
