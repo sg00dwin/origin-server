@@ -277,9 +277,8 @@ class StreamlineTest < ActiveSupport::TestCase
   test "accept site terms" do
     @streamline.terms = ['test1']
     @streamline.site_terms = ['test2']
-    @streamline.expects(:parse_terms).once
     @streamline.expects(:accept_terms).once
-    @streamline.accept_site_terms([])
+    @streamline.accept_site_terms
     assert_equal 0, @streamline.site_terms.length
     assert_equal 1, @streamline.terms.length
   end
@@ -346,20 +345,20 @@ class StreamlineTest < ActiveSupport::TestCase
   end
 
   test "accept partial terms" do
-    accepted = ['a', 'b']
+    terms = ['a', 'b']
     json = {"term" => ['a']}
     @streamline.expects(:all_terms_accepted?).once.returns(true)
     @streamline.expects(:http_post).once.yields(json)
-    @streamline.accept_terms([], accepted)
+    @streamline.accept_terms(terms, terms)
     assert_equal 1, @streamline.errors.length
   end
 
-  test "accept terms more" do
-    accepted = ['a', 'b']
+  test "accept terms with partial streamline result" do
+    terms = ['a', 'b']
     json = {"term" => ['a']}
     @streamline.expects(:all_terms_accepted?).once.returns(true)
     @streamline.expects(:http_post).once.yields(json)
-    @streamline.accept_terms([], accepted)
+    @streamline.accept_terms(terms, terms)
     assert_equal 1, @streamline.errors.length
   end
 end

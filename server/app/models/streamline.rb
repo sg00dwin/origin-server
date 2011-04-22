@@ -72,15 +72,15 @@ module Streamline
     end
   end
 
-  def accept_site_terms(accepted_terms_json)
-    Rails.logger.debug("Accepting site terms = #{accepted_terms_json}")
-    accepted_terms = parse_terms(accepted_terms_json)
-    accept_terms(@site_terms, accepted_terms)
+  def accept_site_terms
+    establish_terms
+    accept_terms(@site_terms)
     @site_terms.clear if errors.empty?
   end
 
   def accept_subscription_terms(accepted_terms_json)
     Rails.logger.debug("Accepting subscription terms = #{accepted_terms_json}")
+    establish_terms
     accepted_terms = parse_terms(accepted_terms_json)
     accept_terms(@terms, accepted_terms)
     @terms.clear if errors.empty?
@@ -103,12 +103,14 @@ module Streamline
     return errors.empty?
   end
 
-  def accept_terms(required, accepted)
+  def accept_terms(required, accepted=nil)
     # Sanity check that all the terms made it back from the client
-    return unless all_terms_accepted?(required, accepted)
+    if accepted
+      return unless all_terms_accepted?(required, accepted)
+    end
 
     Rails.logger.debug("Calling streamling to accept terms")
-    http_post(build_terms_url(accepted), {}, false) do |json|
+    http_post(build_terms_url(required), {}, false) do |json|
       # Log error on unknown result
       Rails.logger.error("Streamline accept terms failed") unless json['term']
 
@@ -117,8 +119,8 @@ module Streamline
 
       # Convert the accepted ids to strings to comparison
       # normally they are integers
-      accepted_conv = accepted.map{|v| v.to_s}
-      unless (accepted_conv - json['term']).empty?
+      required_conv = required.map{|v| v.to_s}
+      unless (required_conv - json['term']).empty?
         Rails.logger.error("Streamline partial terms acceptance")
         errors.add(:base, I18n.t(:terms_error, :scope => :streamline))
       end

@@ -21,23 +21,10 @@ class TermsController < ApplicationController
 
   def create
     @user = session_user
+    @term = Term.new
     if @user
       logger.debug "Accepting terms for user #{@user.pretty_inspect}"
-
-      term = params[:term]
-      @term = Term.new(term ? term : {})
-      logger.debug "Terms to accept #{@term.pretty_inspect}"
-
-      @user.establish_terms
-      logger.debug "Established user terms #{@user.site_terms.pretty_inspect}"
-      if !@term.valid?
-        logger.debug "Terms validation failed - redirecting"
-        render :new and return
-      end
-
-      unless @user.site_terms.empty?
-        @user.accept_site_terms(@term.accepted_terms_list)
-      end
+      @user.accept_site_terms unless @user.site_terms.empty?
 
       logger.debug "Errors: #{@user.errors}"
       if @user.errors.length > 0
@@ -63,7 +50,24 @@ class TermsController < ApplicationController
     end
   end
 
+  def acceptance_terms
+    @user = session_user
+    if @user
+      @user.establish_terms
+      if @user.site_terms.length > 0
+        @term = Term.new
+      else
+        render :site_terms and return
+      end
+    else
+      Rails.logger.debug "User is not logged in - rerouting to login / register"
+      session[:workflow] = new_terms_path
+      redirect_to login_path
+    end
+  end
+
   def site_terms; end
+
   def services_agreement; end
 
 end

@@ -28,7 +28,7 @@ module StreamlineMock
      {"termId"=>1010, "termUrl"=>"https://access.redhat.com/help/terms_conditions.html", "termTitle"=>"Red Hat Portals Terms of Use"}]
   end
 
-  def accept_site_terms(accepted_terms_json)
+  def accept_site_terms
     site_terms.clear
   end
 
