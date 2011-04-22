@@ -886,13 +886,13 @@ label.error {
 
 /* Access request forms */
 #access h3 {
-  margin-left: 100px;
+  margin-left: 60px;
   font-size: 20pt; }
 #access label {
   line-height: 15px;
   margin-right: 5px; }
 #access p#explanation {
-  margin-left: 120px; }
+  margin-left: 60px; }
 #access .terms-link {
   margin-left: 165px; }
   #access .terms-link a {

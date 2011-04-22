@@ -46,19 +46,19 @@
   #sidebar.grid_7.push_17
 
     #resources.grid_7.alpha
-      = link_to('http://redhat.com/openshift/community') do
+      = link_to('http://www.redhat.com/openshift/community') do
         %h4 Resources
         %p Forums, Eval Guides, How-To's & Videos
     .clear
 
     #faq.grid_7
-      = link_to('http://redhat.com/openshift/faq') do
+      = link_to('http://www.redhat.com/openshift/faq') do
         %h4 FAQ
         %p Got questions? We have answers
     .clear
     
     #partners.grid_7.omega
-      = link_to :controller => 'partner', :action => :index do
+      = link_to partners_path do
         %h4 Our Partners
         %p A Strong Ecosystem of Technologies
 
