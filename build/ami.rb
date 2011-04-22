@@ -226,10 +226,17 @@ END_OF_MESSAGE
             end
             puts "Done"
         else
-          print "Performing clean install with the latest code..."
-          ssh('wget http://209.132.178.9/gpxe/trees/li-devenv.sh')
-          ssh('sh li-devenv.sh', 1800)
+          print "Downloading the devenv script"
+          debug = ssh('wget http://209.132.178.9/gpxe/trees/li-devenv.sh')
           puts "Done"
+
+          puts "Debug: #{debug}"
+
+          print "Performing clean install with the latest code..."
+          debug = ssh('sh li-devenv.sh', 1800)
+          puts "Done"
+
+          puts "Debug: #{debug}"
 
           print "Verifying installation..."
           rpm = ssh('rpm -q rhc')
