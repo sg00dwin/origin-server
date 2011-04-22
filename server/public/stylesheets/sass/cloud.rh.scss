@@ -624,8 +624,7 @@ form {
 
 #intro {
   @include gradient_bg(#333, #666, 100%);
-  width: 900px;
-  padding: 30px;
+  padding-top: 20px;
   border: 1px solid #ccc {
     right: none;
     left: none;
@@ -638,8 +637,9 @@ form {
   
   h3 {
     font-family: Overpass;
-    font-size: 26pt;
-    line-height: 20pt;
+    font-size: 30pt;
+    line-height: 28pt;
+    margin-left: 20px;
   }
   
   p {

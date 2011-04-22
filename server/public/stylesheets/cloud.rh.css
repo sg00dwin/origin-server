@@ -375,8 +375,7 @@ form ul, form ol, form li {
   /* Spec */
   background: linear-gradient(top, #333333, #666666 100%);
   zoom: 1;
-  width: 900px;
-  padding: 30px;
+  padding-top: 20px;
   border: 1px solid #cccccc;
     border-right: none;
     border-left: none; }
@@ -385,8 +384,9 @@ form ul, form ol, form li {
     margin: 50px 30px; }
   #intro h3 {
     font-family: Overpass;
-    font-size: 26pt;
-    line-height: 20pt; }
+    font-size: 30pt;
+    line-height: 28pt;
+    margin-left: 20px; }
   #intro p {
     font-size: 12pt; }
   #intro a.try_it {
