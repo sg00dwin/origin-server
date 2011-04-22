@@ -4,19 +4,19 @@
   %div{:id => 'banner',
        :class => params[:action] + ' container_24' }
     = yield :banner
-  
+
   .clear
 
   #page.container_24
-    
+
     / Main page content
     #main_content.grid_17
-     
+
       / Product instructions
       #product_tabs.grid_16
         = yield :tabs
-      
-          
+
+
       / Videos
       #product_videos.grid_8
         %h2 Videos
@@ -26,30 +26,30 @@
       #product_community.grid_8
         %h2 Community Highlights
         = yield :community
-        
+
       .clear
-        
-    
+
+
     / Sidebar
     %div{:id => 'supplemental_content',
          :class => params[:action] + ' grid_6' }
-      
+
       /Resource links
       #resources
         %h3 Resources
         = yield :resources
-        
+
       /Platforms
       #platforms
         %h3 Supported Platforms
         = yield :platforms
-      
+
       /Supplementary documentation links
       = yield :doc_links
-      
+
       /Promos
       = yield :promos
 
     .clear
-    
+
 = render :file => 'layouts/application'

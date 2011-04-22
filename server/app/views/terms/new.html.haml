@@ -15,7 +15,7 @@
 
     %p Before accessing our online properties, you need to accept the site terms and conditions.  Click on the link below for a description of these terms:
     %p.terms-link
-      = link_to 'OpenShift Site Terms', acceptance_terms_path, :class => 'more'
+      = link_to 'Red Hat & OpenShift Terms of Use', acceptance_terms_path, :class => 'more', :target => "_blank"
 
     = semantic_form_for @term do |form|
       = form.inputs do

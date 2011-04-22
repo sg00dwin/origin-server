@@ -32,28 +32,28 @@
           - if session[:login] || session[:user]
             #messages
               #welcome
-              
+
               -# show informational message as needed
               - [CloudAccess::EXPRESS, CloudAccess::FLEX].each do |product|
                 - name = CloudAccess.access_name(product)
                 - if session[:user].has_access? product
                   .info
                     = link_to "Get started with #{name}", "/app/getting_started/#{name}", :class => name
-                
+
                 - elsif session[:user].has_requested? product
                   .info
-                    You're in the queue to access #{name}.                  
-          
+                    You're in the queue to access #{name}.
+
             #logout
               %a(href='/app/logout') Logout
-          
+
           - else
             #login
               %a(href='/app/login') Login
-          
+
           #logo
             = link_to image_tag("/app/images/logo.png", :alt => "OpenShift"), root_path
-          
+
           #mainslug
             - if session[:login] || session[:user]
               .welcome
@@ -107,7 +107,7 @@
 
         %ul
           %li
-            = link_to 'Terms of Use', acceptance_terms_path
+            = link_to 'Terms of Use', legal_site_terms_path
           %li
             = link_to 'Privacy Policy', 'http://www.redhat.com/legal/privacy_statement.html'
           %li

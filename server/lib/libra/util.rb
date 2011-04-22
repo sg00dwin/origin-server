@@ -13,7 +13,7 @@ module Libra
       'wsgi-3.2.1' => :wsgi
     }
     
-    def self.get_type_keys(sep)
+    def self.get_cartridge_types(sep=', ')
       i = 1
       type_keys = ''
       TYPES.each_key do |key|
@@ -67,17 +67,12 @@ module Libra
       true
     end
     
-    def self.get_type(type)
-      if type
-        if !(TYPES.has_key?(type))
-          #puts 'type must be ' << RHC::get_type_keys(' or ')
-        else
-          return TYPES[type]
-        end
-      else
-        #puts "Type is required"
+    def self.get_cartridge(type)
+      if type && TYPES.has_key?(type)
+        return TYPES[type]
       end
       nil
     end
+
   end
 end

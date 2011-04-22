@@ -340,6 +340,7 @@ END_OF_MESSAGE
           exit 0
         elsif images[0] != "available"
           puts "EXITING - Image exists but isn't available yet"
+          exit 0
         end
       end
 

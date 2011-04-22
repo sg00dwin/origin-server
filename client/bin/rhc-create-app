@@ -25,7 +25,7 @@ require 'rhc-common'
 
 def p_usage
     rhlogin = get_var('default_rhlogin') ? "Default: #{get_var('default_rhlogin')}" : "(required)"
-    type_keys = RHC::get_type_keys(', ')
+    type_keys = RHC::get_cartridge_types(', ')
     puts <<USAGE
 
 Usage: #{$0}
@@ -90,7 +90,7 @@ if !RHC::check_app(opt['app'])
     p_usage
 end
 
-type = RHC::get_type(opt['type'])
+type = RHC::get_cartridge(opt['type'])
 if !type
     p_usage
 end

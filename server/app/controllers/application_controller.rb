@@ -1,18 +1,18 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery
   before_filter :check_credentials
-  
+
   def set_no_cache
     response.headers["Cache-Control"] = "no-cache, no-store, max-age=0, must-revalidate"
     response.headers["Pragma"] = "no-cache"
     response.headers["Expires"] = "Fri, 01 Jan 1990 00:00:00 GMT"
   end
-  
+
   def setup_user_session(user)
     session[:login] = user.rhlogin
     session[:user] = user
   end
-  
+
   def session_user
     user = session[:user]
     if user
@@ -20,9 +20,11 @@ class ApplicationController < ActionController::Base
     end
     return user
   end
-  
+
   def logged_in?
-    return session[:login] || (session[:user] && params[:controller] == 'terms')
+    return session[:login] ||
+          (session[:user] && params[:controller] == 'terms') ||
+          (session[:user] && params[:controller] == 'legal')
   end
 
   def check_credentials
@@ -33,13 +35,13 @@ class ApplicationController < ActionController::Base
     Rails.logger.debug "Not a logout request, checking for cookie"
     rh_sso = cookies[:rh_sso]
     Rails.logger.debug "rh_sso cookie = '#{rh_sso}'"
-    
+
     if logged_in?
       redirect_to logout_path and return
     else
       return
     end unless rh_sso
-    
+
     if logged_in?
       Rails.logger.debug "User has an authenticated session"
       if session[:ticket] != rh_sso
@@ -53,7 +55,7 @@ class ApplicationController < ActionController::Base
       Rails.logger.debug "Looking up user based on rh_sso ticket"
       user = WebUser.find_by_ticket(rh_sso)
       if user
-        Rails.logger.debug "Found #{user}. Authenticating session"        
+        Rails.logger.debug "Found #{user}. Authenticating session"
         session[:user] = user
         user.establish_terms
         session[:ticket] = rh_sso
