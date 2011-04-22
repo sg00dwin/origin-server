@@ -230,10 +230,19 @@ END_OF_MESSAGE
           ssh('wget http://209.132.178.9/gpxe/trees/li-devenv.sh')
           ssh('sh li-devenv.sh', 1800)
           puts "Done"
+
+          print "Verifying installation..."
+          rpm = ssh('rpm -q rhc')
+          unless rpm.start_with?(@version)
+            fail "Expected updated version to be #{@version}, actual was #{rpm}"
+          end
+          puts "Done"
+
           print "Updating all packages on the system..."
           ssh('yum update -y', 1800)
           puts "Done"
-          print "Rebooting instance to apply new kernel"
+
+          print "Rebooting instance to apply new kernel..."
           conn.reboot_instances([@instance])
           sleep 10
           instance_available
