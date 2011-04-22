@@ -48,7 +48,7 @@ module RHC
     (time*=adj).to_int
   end
 
-  def self.get_type_keys(sep)
+  def self.get_cartridge_types(sep=', ')
     i = 1
     type_keys = ''
     TYPES.each_key do |key|
@@ -103,10 +103,10 @@ module RHC
     true
   end
   
-  def self.get_type(type)
+  def self.get_cartridge(type)
     if type
       if !(RHC::TYPES.has_key?(type))
-        puts 'type must be ' << RHC::get_type_keys(' or ')
+        puts 'type must be ' << get_cartridge_types(' or ')
       else
         return RHC::TYPES[type]
       end
