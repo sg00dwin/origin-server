@@ -46,18 +46,33 @@ form ul, form ol, form li {
 #logo {
   margin: 1em 0; }
 
-#header_right {
-  background: url("/app/images/misty-cloud.png") no-repeat right 50px;
-  text-align: right;
+#top_head {
+  background: url("/app/images/misty-cloud.png") no-repeat right 55px;
   position: relative;
-  height: 120px; }
-  #header_right #mainslug {
+  height: 130px; }
+  #top_head #mainslug {
     position: absolute;
-    bottom: 0;
+    bottom: 7px;
     right: 0;
     color: #bfdce8;
     font-size: 14pt;
     font-family: Overpass; }
+  #top_head > div {
+    float: left; }
+  #top_head #logo {
+    position: absolute;
+    bottom: -20px;
+    left: 0; }
+  #top_head #messages {
+    width: 840px;
+    text-align: right; }
+    #top_head #messages .info {
+      color: white;
+      display: inline;
+      margin-left: 10px; }
+      #top_head #messages .info a {
+        font-size: 11pt;
+        text-decoration: none; }
 
 #login, #logout {
   background: #b30000;

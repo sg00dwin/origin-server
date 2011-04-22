@@ -27,21 +27,39 @@
 
     #horrible_wrapper
       #head.container_24
-        #logo.grid_18.alpha
-          = link_to image_tag("/app/images/logo.png", :alt => "OpenShift"), root_path
+        #top_head
 
-        #header_right.grid_6.omega
           - if session[:login] || session[:user]
+            #messages
+              #welcome
+              
+              -# show informational message as needed
+              - [CloudAccess::EXPRESS, CloudAccess::FLEX].each do |product|
+                - name = CloudAccess.access_name(product)
+                - if session[:user].has_access? product
+                  .info
+                    = link_to "Get started with #{name}", "/app/getting_started/#{name}", :class => name
+                
+                - elsif session[:user].has_requested? product
+                  .info
+                    You're in the queue to access #{name}.                  
+          
             #logout
               %a(href='/app/logout') Logout
-            .clear
+          
           - else
             #login
               %a(href='/app/login') Login
-            .clear
-
+          
+          #logo
+            = link_to image_tag("/app/images/logo.png", :alt => "OpenShift"), root_path
+          
           #mainslug
-            Platform at your Service
+            - if session[:login] || session[:user]
+              .welcome
+                Welcome, #{session[:login]}!
+            - else
+              Platform at your Service
 
         .clear
 

@@ -279,15 +279,14 @@ form {
   margin: 1em 0;
 }
 
-#header_right {
-  background: url('/app/images/misty-cloud.png') no-repeat right 50px;
-	text-align: right;
+#top_head {
+  background: url('/app/images/misty-cloud.png') no-repeat right 55px;
 	position: relative;
-  height: 120px;
+  height: 130px;
   
   #mainslug {
     position: absolute;
-    bottom: 0;
+    bottom: 7px;
     right: 0;
     color: $light_blue;
     font: {
@@ -295,6 +294,31 @@ form {
       family: Overpass;
     }
   }
+  
+  > div { float: left; }
+  
+  #logo {
+    position: absolute;
+    bottom: -20px;
+    left: 0;
+  }
+  
+  #messages {
+    width: 840px;
+    text-align: right;
+    
+    .info {
+      color: white;
+      display: inline;
+      margin-left: 10px;
+      
+      a {
+        font-size: 11pt;
+        text-decoration: none;
+      }
+    }
+  }
+  
 }
 
 #login{
