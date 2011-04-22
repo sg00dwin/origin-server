@@ -61,7 +61,7 @@ module Streamline
 
   def refresh_roles(force=false)
     has_requested = force
-    CloudAccess.ids.each do |id|
+    CloudAccess::IDS.each do |id|
       if has_requested?(id)
         has_requested = true
         break
