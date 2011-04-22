@@ -3,6 +3,7 @@ require 'pp'
 class LoginController < ApplicationController
 
   def show
+    
     @redirectUrl = root_url
     @errorUrl = login_error_url
     Rails.logger.debug "Session workflow in LoginController#index: #{session[:workflow]}"
@@ -21,10 +22,7 @@ class LoginController < ApplicationController
     session[:login] = params['login']
     session[:ticket] = "test"
     session[:user] = WebUser.new(:email_address => params['login'])
-    cookies[:rh_sso] = {
-        :value => 'test',
-        :domain => '.redhat.com'
-    }
+    cookies[:rh_sso] = 'test'
 
     Rails.logger.debug "Session workflow in LoginController#create: #{session[:workflow]}"
     Rails.logger.debug "Redirecting to home#index"    

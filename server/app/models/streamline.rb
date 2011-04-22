@@ -15,10 +15,12 @@ module Streamline
   @@roles_url = URI.parse(Rails.configuration.streamline + "/cloudVerify.html")
   @@email_confirm_url = URI.parse(Rails.configuration.streamline + "/confirm.html")
   @@user_info_url = URI.parse(Rails.configuration.streamline + "/userInfo.html")
-  @@unacknowledged_terms_url = URI.parse(Rails.configuration.streamline + "/protected/findUnacknowledgedTerms.html?hostname=openshift.redhat.com&context=OPENSHIFT&locale=en")  
+  @@acknowledge_terms_url = URI.parse(Rails.configuration.streamline + "/protected/acknowledgeTerms.html")
+  @@unacknowledged_terms_url = URI.parse(Rails.configuration.streamline + "/protected/findUnacknowledgedTerms.html?hostname=openshift.redhat.com&context=OPENSHIFT&locale=en")
 
   def initialize
     @roles = []
+    @site_terms = []
   end
 
   def email_confirm_url(key, login)
@@ -37,24 +39,26 @@ module Streamline
       @rhlogin = json['username']
     end
   end
-  
+
   def establish_terms
-    if !@terms
-      @terms = []
-      @site_terms = []
-      http_post(@@unacknowledged_terms_url) do |json|
-        terms = json['unacknowledgedTerms']        
-        terms.each do |term|
-          if term['termUrl'] =~ /^http(s)?:\/\/openshift\.redhat\.com/
-            @terms.push(term)
-          else
-            @site_terms.push(term)
-          end
+    # If established, just return
+    return if @terms
+
+    # Otherwise, look them up
+    @terms = []
+    @site_terms = []
+    http_post(@@unacknowledged_terms_url) do |json|
+      terms = json['unacknowledgedTerms']
+      terms.each do |term|
+        if term['termUrl'] =~ /^http(s)?:\/\/openshift\.redhat\.com/
+          @terms.push(term)
+        else
+          @site_terms.push(term)
         end
       end
     end
   end
-  
+
   def refresh_roles(force=false)
     has_requested = force
     CloudAccess.ids.each do |id|
@@ -67,41 +71,57 @@ module Streamline
       establish
     end
   end
-  
-  def accept_terms(accepted_terms_list, terms)
-    accepted_terms = JSON.parse(accepted_terms_list)
-    query = ''
-    
-    terms.each do |term|  
+
+  def accept_site_terms
+    establish_terms
+    accept_terms(@site_terms)
+    @site_terms.clear if errors.empty?
+  end
+
+  def accept_subscription_terms(accepted_terms_json)
+    Rails.logger.debug("Accepting subscription terms = #{accepted_terms_json}")
+    accepted_terms = parse_terms(accepted_terms_json)
+    accept_terms(@terms, accepted_terms)
+    @terms.clear if errors.empty?
+  end
+
+  def all_terms_accepted?(required_terms, accepted_terms)
+    # Make sure that all the required terms are accepted
+    required_terms.each do |term|
       if !accepted_terms.index(term['termId'])
         errors.add(:base, I18n.t(:terms_error, :scope => :streamline))
-        return
+        Rails.logger.warn("Not all required terms accepted / \
+                          req = #{required_terms.pretty_inspect} / \
+                          accepted = #{accepted_terms.pretty_inspect}")
+        break
       end
     end
-    
-    accepted_terms.each_with_index do |termId, i|      
-      query += "termIds=#{termId}"
-      if i < accepted_terms.length - 1
-        query += '&'
-      end
+
+    Rails.logger.debug("All terms accepted") if errors.empty?
+
+    return errors.empty?
+  end
+
+  def accept_terms(required, accepted=nil)
+    # Sanity check that all the terms made it back from the client
+    if accepted
+      return unless all_terms_accepted?(required, accepted)
     end
-    acknowledge_terms_url = URI.parse(Rails.configuration.streamline + "/protected/acknowledgeTerms.html?" + query)
-    http_post(acknowledge_terms_url, {}, false) do |json|
-      if json['term']
-        terms_resp = json['term']
-        accepted_terms.each do |termId|
-          if !terms_resp.index(termId.to_s)
-            errors.add(:base, I18n.t(:terms_error, :scope => :streamline))
-            break
-          end
-        end
-        if errors.length == 0
-          terms.clear
-        end
-      else
-        if errors.length == 0
-          errors.add(:base, I18n.t(:unknown))
-        end
+
+    Rails.logger.debug("Calling streamling to accept terms")
+    http_post(build_terms_url(required), {}, false) do |json|
+      # Log error on unknown result
+      Rails.logger.error("Streamline accept terms failed") unless json['term']
+
+      # Unless everything was accepted, put an error on the user object
+      json['term'] ||= []
+
+      # Convert the accepted ids to strings to comparison
+      # normally they are integers
+      required_conv = required.map{|hash| hash['termId'].to_s}
+      unless (required_conv - json['term']).empty?
+        Rails.logger.error("Streamline partial terms acceptance. Expected #{required_conv} got #{json['term']}")
+        errors.add(:base, I18n.t(:terms_error, :scope => :streamline))
       end
     end
   end
@@ -179,7 +199,7 @@ module Streamline
       end
     end
   end
-  
+
   #
   # Get the user's email address
   #
@@ -190,7 +210,7 @@ module Streamline
       end
     end
   end
-  
+
   #
   # Whether the user is authorized for a given cloud solution
   #
@@ -203,7 +223,7 @@ module Streamline
   #
   def has_requested?(solution)
     @roles.index(CloudAccess.req_role(solution)) != nil
-  end  
+  end
 
   def http_post(url, args={}, raise_exception_on_error=true)
     begin
@@ -230,7 +250,7 @@ module Streamline
           json = parse_body(res.body)
           yield json if block_given?
         end
-      else       
+      else
         log_error "Invalid HTTP response from streamline - #{res.code}"
         log_error "Response body:\n#{res.body}"
         if raise_exception_on_error
@@ -293,5 +313,19 @@ module Streamline
         errors.add(:base, msg)
       end
     end
+  end
+
+  def parse_terms(terms_json)
+    terms_json ? JSON.parse(terms_json) : []
+  end
+
+  def build_terms_query(terms)
+    terms.collect {|hash| "termIds=#{hash['termId']}"}.join('&') if terms
+  end
+
+  def build_terms_url(terms)
+    url = @@acknowledge_terms_url.clone
+    url.query = build_terms_query(terms)
+    url
   end
 end

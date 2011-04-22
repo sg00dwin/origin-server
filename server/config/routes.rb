@@ -20,7 +20,8 @@ RedHatCloud::Application.routes.draw do
     match 'flex' => 'product#flex', :as => 'flex'
     match 'power' => 'product#power', :as => 'power'
     match 'about' => 'home#about', :as => 'about'
-    
+    match 'partners/join' => 'partner#join', :as=> 'join_partner'
+
     #Alias for home page so we can link to it
     #match 'home' => 'home#index'
 
@@ -36,15 +37,18 @@ RedHatCloud::Application.routes.draw do
 
     match 'user/new/flex' => 'user#new_flex', :via => [:get]
     match 'user/new/express' => 'user#new_express', :via => [:get]
-    
+
     resource :terms,
              :as => "terms",
              :controller => "terms",
              :path_names => { :new => 'accept' },
              :only => [:new, :create]
-             
-    match 'site_terms' => 'term#site_terms', :as => 'site_terms'
-    match 'service_terms' => 'term#service_terms', :as => 'service_terms'
+
+    match 'legal/site_terms' => 'terms#site_terms', :as => 'site_terms'
+    match 'legal/acceptance_terms' => 'terms#acceptance_terms', :as => 'acceptance_terms'
+    match 'legal/services_agreement' => 'terms#services_agreement', :as => 'services_agreement'
+    
+    match 'video/:name' => 'video#show', :as => 'video'
 
     resource :login,
              :controller => "login",
@@ -54,7 +58,7 @@ RedHatCloud::Application.routes.draw do
     resource :logout,
              :controller => "logout",
              :only => [:show]
-             
+
     resources :partners,
               :controller => "partner",
               :only => [:show, :index]

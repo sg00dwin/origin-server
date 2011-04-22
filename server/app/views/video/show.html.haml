@@ -1,0 +1,25 @@
+-# file: Video embedding page
+
+- content_for :page_title do
+  Watch #{@filename}
+  
+- content_for :scripts do
+  = stylesheet_link_tag '/app/stylesheets/projekktor_maccaco.css'
+  = javascript_include_tag '/app/javascripts/projekktor.min.js'
+  = javascript_include_tag '/app/javascripts/video.js'
+
+= render 'shared/pageheader', :product => 'openshift', :title => 'OpenShift Videos', :subtitle => 'Edutainment!'
+
+#page.container_24
+  
+  #main_content.grid_22
+    %h2 
+      = @filename
+    
+    %video.projekktor{ :poster => "http://www.redhat.com/g/video_stills/#{@filename}.png"}
+    
+      %source{ :src => "http://www.redhat.com/v/ogg/#{@filename}.ogg"}
+      
+      %source{ :src => "http://www.redhat.com/v/swf/#{@filename}.mp4"}
+
+  .clear

@@ -1,11 +1,18 @@
 -# file: Flex request page
 
-= render 'shared/pageheader', :product => 'flex', :title => 'Try Flex', :subtitle => 'Request Access to Flex'
+- content_for :page_title do
+  Get Access to OpenShift Flex!
+
+- content_for :scripts do
+  = javascript_include_tag "/app/javascripts/jquery.validate.min.js"
+  = javascript_include_tag "/app/javascripts/form"
+
+= render 'shared/pageheader', :product => 'flex', :title => 'Try Flex', :subtitle => 'Request Access to OpenShift Flex'
 
 .container_24#page
 
-  .prefix_1.grid_12.suffix_1#registration
-    %h3 Request access to Flex
+  #access.grid_13.push_5
+    %h3 Request Access to OpenShift Flex
     
     - @access.errors.each do |key, value|
       - if key == :base
@@ -19,46 +26,14 @@
         - if @user.terms.length > 0
           - @user.terms.each_with_index do |value, i|
             - accepted_terms_list[i] = value['termId']          
-            %div
+            .terms-link
               %a{:title => value['termTitle'], :href => value['termUrl'], :target => '_blank'} #{value['termTitle']}           
           = form.hidden_field :accepted_terms_list, :value => JSON.generate(accepted_terms_list)
           = form.input :terms_accepted, :input_html => { :type=>'checkbox' }
         - else
-          %div Note:  You have previously accepted the applicable terms
+          .note Note:  You have previously accepted the applicable terms
           = form.hidden_field :terms_accepted, :value => "on"
       = form.buttons do
         = form.commit_button "Request Access", :input_html => { :class => 'button' }        
     .clear
-
-  .grid_9.suffix_1#form_notes
-    %h4 Why do I have to request access?
-
-    %p
-      We want your experience to be very similar to our users.  We have
-      streamlined the registration process for our users, so let us know
-      what you think.
-
-    %h4 Where is my data stored?
-
-    %p
-      Whatever you put in this form is safely stored away in our
-      corporate registration systems.  Your code will live in the
-      clouds - your identity will not.
-
-    %h4 Will my instance be internal-only?
-    %p
-      No! While the registration process is restricted to
-      internal systems, the instance you create will be fully
-      accessible outside the Red Hat network.  While this will allow
-      for more flexible testing, please do not put any sensitive or
-      confidential information on your instance.
-
-    .clear
-
-  .prefix_1.grid_22.suffix_1
-    %p#terms_and_conditions
-      By clicking on 'Request Access' above, you confirm your agreement with this site's <a href="#">Terms and Conditions</a>.
-
-    .clear
-
   .clear

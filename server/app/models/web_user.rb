@@ -11,17 +11,17 @@ class WebUser
     include StreamlineMock
   end
 
-  attr_accessor :email_address, :password, :terms_accepted, :cloud_access_choice, :accepted_terms_list
+  attr_accessor :email_address, :password, :cloud_access_choice
 
   validates_format_of :email_address,
                       :with => /^[-a-z0-9_+\.]+\@([-a-z0-9]+\.)+[a-z0-9]{2,4}$/i,
                       :message => 'Invalid email address'
-  
+
   # Requires Ruby 1.9 for lookbehind
   #validates_format_of :email_address,
   #                    :with => /(?<!(ir|cu|kp|sd|sy))$/i,
   #                    :message => 'We can not accept emails from the following top level domains: .ir, .cu, .kp, .sd, .sy'
-                      
+
   validates_each :email_address do |record, attr, value|
     if value =~ /\.(ir|cu|kp|sd|sy)$/i
       record.errors.add attr, 'We can not accept emails from the following top level domains: .ir, .cu, .kp, .sd, .sy'
@@ -31,20 +31,18 @@ class WebUser
   validates_length_of :password,
                       :minimum => 6,
                       :message => 'Passwords must be at least 6 characters'
-                      
+
   validates_confirmation_of :password,
-                            :message => 'Passwords must match'  
-  
-  validates_each :terms_accepted do |record, attr, value|
-    record.errors.add attr, 'Terms must be accepted' if !value || value == 'off'
-  end
+                            :message => 'Passwords must match'
 
   def initialize(attributes = {})
     attributes.each do |name, value|
       send("#{name}=", value)
     end
 
+    # Make sure to initialize the array values
     @roles ||= []
+    @site_terms ||= []
   end
 
   def self.from_json(json)

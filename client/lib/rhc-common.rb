@@ -35,6 +35,7 @@ module RHC
 
   Maxdlen = 16
   Maxretries = 10
+  Defaultdelay = 2
   
   TYPES = {
     'php-5.3.2' => :php,
@@ -43,6 +44,10 @@ module RHC
     'jbossas-7.0.0' => :jbossas
   }
   
+  def self.delay(time, adj=Defaultdelay)
+    (time*=adj).to_int
+  end
+
   def self.get_type_keys(sep)
     i = 1
     type_keys = ''
@@ -255,7 +260,16 @@ module RHC
     end
     exit_code
   end
-  
+
+  #
+  # Check if host exists
+  #
+  def self.hostexist?(host)
+      dns = Resolv::DNS.new
+      resp = dns.getresources(host, Resolv::DNS::Resource::IN::A)
+      return resp.any?
+  end
+
 end
 
 #

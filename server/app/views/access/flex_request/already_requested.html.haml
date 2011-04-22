@@ -1,12 +1,15 @@
 -# file: Flex request error page
 
-= render 'shared/pageheader', :product => 'flex', :title => 'Try Flex', :subtitle => 'Request Access to Flex'
+- content_for :page_title do
+  Get Access to OpenShift Flex!
+
+= render 'shared/pageheader', :product => 'flex', :title => 'Try Flex', :subtitle => 'Request Access to OpenShift Flex'
 
 .container_24#page
   .prefix_1.grid_22.suffix_1#errors
     .grid_12#errors_div
       %p
-        You have already requested access to Flex.  Once you have access you can
+        You have already requested access to OpenShift Flex.  Once you have access you can
         = link_to("click here", :action => 'show', :controller => 'getting_started/flex', :only_path => false, :protocol => 'https')
         to get started.
   .clear

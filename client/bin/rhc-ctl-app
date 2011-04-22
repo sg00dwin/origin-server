@@ -23,15 +23,6 @@
 
 require 'rhc-common'
 
-#
-# Check if host exists
-#
-def hostexist?(host)
-    dns = Resolv::DNS.new
-    resp = dns.getresources(host, Resolv::DNS::Resource::IN::A)
-    return resp.any?
-end
-
 def p_usage
     rhlogin = get_var('default_rhlogin') ? "Default: #{get_var('default_rhlogin')}" : "(required)"
     puts <<USAGE

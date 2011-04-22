@@ -7,8 +7,11 @@
 = render 'shared/pageheader', :product => 'openshift', :title => 'Login to OpenShift', :subtitle => 'Access Your OpenShift Account'
 
 .container_24#page
-  .prefix_1.grid_22.suffix_1#login-page
+  #login-page.grid_13.push_5
     %h3 Already Have a Login?
+    
+    %p#lost_password
+      = link_to 'Lost your password?',  'https://www.redhat.com/wapps/sso/lostPassword.html'
 
     #login-form
       - if @user and @user.errors.any?

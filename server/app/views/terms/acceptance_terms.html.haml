@@ -1,0 +1,26 @@
+-# file: Site terms
+
+- content_for :page_title do
+  Website Terms
+
+= render 'shared/pageheader', :product => 'openshift', :title => 'Terms of Use', :subtitle => 'Legal Terms and Conditions'
+
+#page.container_24
+
+  #main_content.grid_22
+    %h2 Terms of Use
+
+    %p
+      OpenShift is one of several online properties operating under Red Hat.  The following terms explain the terms associated with all of the Red Hat properties that you may interact with as part of your usage of OpenShift.  Your acceptance of the OpenShift terms, includes accepting the following terms as well.
+
+    #terms
+      %ul
+      - accepted_terms_list = Array.new(@user.site_terms.length)
+      - if @user.site_terms.length > 0
+        - @user.site_terms.each_with_index do |value, i|
+          - accepted_terms_list[i] = value['termId']
+          %li
+            %a{:title => value['termTitle'], :href => value['termUrl'], :target => '_blank'} #{value['termTitle']}
+    .clear
+
+  .clear

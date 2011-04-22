@@ -1,5 +1,8 @@
 -# file: Partner detail page
 
+- content_for :page_title do
+  Partnership with #{@partner.name}
+
 = render 'shared/pageheader', :product => 'openshift', :title => 'Partners', :subtitle => 'A Strong Ecosystem of Technologies'
 
 #page.container_24
@@ -11,7 +14,7 @@
     #partner_information.grid_5
       /Logo
       #logo
-        = image_tag "partners/#{@partner.logo}"
+        = image_tag "/app/images/partners/#{@partner.logo}"
       
       /Contact information
       #contact
@@ -35,12 +38,7 @@
       
       /Ecosystem Diagram
       #diagram.grid_8
-        -#
-          This is going to be a diagram showing
-          how this particular partner fits into
-          the ecosystem
-          -
-          Still working out details
+        = image_tag "/app/images/partners/ecosystem/#{@partner.category}.png"
       
       /List of advantages
       #advantage.grid_7

@@ -1,18 +1,17 @@
 - content_for :sub_layout do
-  = yield :pageheader
+
+  / Product banner
+  %div{:id => 'banner',
+       :class => params[:action] + ' container_24' }
+    = yield :banner
+  
+  .clear
 
   #page.container_24
+    
     / Main page content
     #main_content.grid_17
-      /About the product
-      #product_information.grid_8
-        = yield :about
-        
-      #product_screenshot.grid_8
-        = yield :screenshot
-      
-      .clear
-          
+     
       / Product instructions
       #product_tabs.grid_16
         = yield :tabs
@@ -35,28 +34,19 @@
     %div{:id => 'supplemental_content',
          :class => params[:action] + ' grid_6' }
       
-      /Try it button
-      = yield :try_it_button
-      
       /Resource links
       #resources
         %h3 Resources
         = yield :resources
         
-      /Tour box
-      #tour
-        = yield :tour_link
-      
       /Platforms
       #platforms
         %h3 Supported Platforms
         = yield :platforms
       
-      /Top video
-      #top_video
-        %h3 Today's Top Video
-        = yield :top_video
-            
+      /Supplementary documentation links
+      = yield :doc_links
+      
       /Promos
       = yield :promos
 

@@ -1,6 +1,6 @@
 class Partner
   
-  attr_accessor :name, :id, :summary, :url, :logo, :contact, :quote, :quote_attr, :description, :advantage, :availability
+  attr_accessor :name, :id, :summary, :url, :logo, :contact, :quote, :quote_attr, :description, :advantage, :availability, :category
   
   def initialize(attributes = {})
     attributes.each do |name, value|

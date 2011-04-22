@@ -35,7 +35,7 @@ Bind a registered rhcloud user to a domain in rhcloud.
   NOTE: to change ssh key, please alter your ~/.ssh/libra_id_rsa and
         ~/.ssh/libra_id_rsa.pub key, then re-run with --alter
 
-  -n|--namespace   namespace   Libra namespace (alphanumeric - max #{RHC::Maxdlen} chars) (required)
+  -n|--namespace   namespace   Opensift Express namespace (alphanumeric - max #{RHC::Maxdlen} chars) (required)
   -l|--rhlogin     rhlogin     Red Hat login (required)
   -p|--password    password    RHLogin password (optional, will prompt)
   -a|--alter                   Alter existing namespace
@@ -123,9 +123,9 @@ end
 #
 
 if File.readable?(libra_kfile)
-    puts "Libra key found at #{libra_kfile}.  Reusing..."
+    puts "Openshift Express Libra key found at #{libra_kfile}.  Reusing..."
 else
-    puts "Generating libra ssh key to #{libra_kfile}"
+    puts "Generating Openshift Express libra ssh key to #{libra_kfile}"
     # Use system for interaction
     system("ssh-keygen -t rsa -f #{libra_kfile}")
 end

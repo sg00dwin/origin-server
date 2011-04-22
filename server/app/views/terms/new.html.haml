@@ -1,36 +1,29 @@
-.container_24.express#pageheader
-  .grid_14#title
-    %h2 OpenShift
+-# file: Require users to agree to any terms they haven't seen yet
 
-  .grid_10#title_accent
+= render 'shared/pageheader', :product => 'openshift', :title => 'Terms Acceptance', :subtitle => 'Open Shift Site Usage Terms'
 
-  .clear
+#page.container_24
 
-.container_24#page
-
-  .prefix_1.grid_12.suffix_1#registration
-    %h3 Site Terms
-    %p Before proceeding, you must accept the site terms.
-    
+  #terms.grid_13.push_6
     - @term.errors.each do |key, value|
       - if key == :base
-        %div
-          %strong #{value}
-    
+        #errors
+          %p.inline-errors #{value}
+          %br
+
+    %h3 Please Accept the Following Terms
+
+    %p Before accessing our online properties, you need to accept the site terms and conditions.  Click on the link below for a description of these terms:
+    %p.terms-link
+      = link_to 'OpenShift Site Terms', acceptance_terms_path, :class => 'more'
+
     = semantic_form_for @term do |form|
       = form.inputs do
-        - accepted_terms_list = Array.new(@user.site_terms.length)
-        - if @user.site_terms.length > 0
-          - @user.site_terms.each_with_index do |value, i|
-            - accepted_terms_list[i] = value['termId']
-            %div
-              %a{:title => value['termTitle'], :href => value['termUrl'], :target => '_blank'} #{value['termTitle']}           
-          = form.hidden_field :accepted_terms_list, :value => JSON.generate(accepted_terms_list)
-          = form.input :terms_accepted, :input_html => { :type=>'checkbox' }
+        %div
+          %p
+            Clicking <strong>I accept</strong> means that you agree to the site usage terms.
       = form.buttons do
-        = form.commit_button "Proceed", :input_html => { :class => 'button' }
+        = form.commit_button "I Accept", :input_html => { :class => 'button' }
     .clear
-
-  .prefix_1.grid_22.suffix_1
 
   .clear

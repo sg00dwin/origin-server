@@ -242,7 +242,7 @@ form {
   background: -moz-linear-gradient(
     top,
     black,
-    white,
+    #ececec,
     black
   );
   /* Old webkit */
@@ -250,21 +250,21 @@ form {
     linear,
     top center,
     from(black),
-    color-stop(50%, white),
+    color-stop(50%, #ececec),
     to(black)
   );
   /* New webkit */
   background: -webkit-linear-gradient(
     top,
     black,
-    white,
+    #ececec,
     black
   );
   /* Spec */
   background: linear-gradient(
     top,
     black,
-    white,
+    #ececec,
     black
   );
 }
@@ -279,9 +279,46 @@ form {
   margin: 1em 0;
 }
 
-#header_right {
-	text-align: right;
+#top_head {
+  background: url('/app/images/misty-cloud.png') no-repeat right 55px;
 	position: relative;
+  height: 130px;
+  
+  #mainslug {
+    position: absolute;
+    bottom: 7px;
+    right: 0;
+    color: $light_blue;
+    font: {
+      size: 14pt;
+      family: Overpass;
+    }
+  }
+  
+  > div { float: left; }
+  
+  #logo {
+    position: absolute;
+    bottom: -20px;
+    left: 0;
+  }
+  
+  #messages {
+    width: 840px;
+    text-align: right;
+    
+    .info {
+      color: white;
+      display: inline;
+      margin-left: 10px;
+      
+      a {
+        font-size: 11pt;
+        text-decoration: none;
+      }
+    }
+  }
+  
 }
 
 #login{
@@ -309,32 +346,9 @@ form {
   @extend #login;
 }
 
-#mainslug {
-/*
-  margin: 48px 0 .5em;
-  font-family: Overpass;
-  
-  img {
-    float: right;
-  }
-  
-  p {
-    font-size: 10pt;
-    color: $light_blue;
-    clear: right;
-  }
-*/
-
-  img {
-    float: right;
-    margin: 80px 0 0;
-  }
-}
-
 #nav {
+  @include clearfix;
 	@include gradient_bg($rh_red, darken($rh_red, 10%), 100%);
-	min-height: 20px;
-	padding: 7px 0;
 	border: {
     top: 1px solid #fe7272;
   }  
@@ -347,13 +361,48 @@ form {
   li {
     float: left;
     list-style-type: none;
+    display: inline-block;
+    margin: 0;
+    padding: 0;
     
     font: {
       size: 10pt;
     }
+    
     a {
+      margin: 0;
+      min-height: 20px;
+      padding: 7px 10px;
+      display: inline-block;
       text-decoration: none;
       text-transform: uppercase;
+      border-left: 1px solid $rh_red;
+      border-right: 1px solid darken($rh_red, 10%);
+    }
+  }
+  
+  li.category {
+    background: url('/app/images/nav_category.png') no-repeat right center;
+    color: #ccc;
+    padding: 7px 17px 7px 15px;
+  }
+  
+  li.after_category {
+    a {
+      border-left: none;
+    }
+  }
+  
+  li.partners {
+    float: right;
+    a {
+      border: none;
+      float: right;
+      color: $bright_blue;
+      
+      &:hover {
+        color: $light_blue;
+      }
     }
   }
 }
@@ -443,7 +492,7 @@ form {
   clear: both;
   position: table;
   display: block;
-  height: 250px;
+  height: 125px;
   
   ul, li {
     margin: 0;
@@ -464,7 +513,7 @@ form {
       background: none;
       padding: 0.2em 10px;
       width: 960px;
-      height: 245px;
+      height: 120px;
       position: absolute;
       top: 5px;
       z-index: 980;
@@ -474,7 +523,7 @@ form {
   
   .slide-canvas {
     width: 960px !important;
-    height: 250px !important;
+    height: 125px !important;
     margin: 0 auto;
     position: relative;
     display: block;
@@ -486,7 +535,7 @@ form {
   
   .navigation{
     width: 950px;
-    margin: 200px auto 0;
+    margin: 90px auto 0;
     padding: 0 0 0 10px;
     display: block;
     position: relative;
@@ -533,22 +582,16 @@ form {
     margin-left: -5px;
   }
 
-  #express { 
-    background: #6699cc; 
-    
-    .slide-canvas {
-      background: url(/app/images/slide_express.png) no-repeat;
-      opacity: .6;
-    }
+  li.slide:nth-of-type(1) { 
+    background: $express; 
   }
   
-  #flex {
-    background: #c88fd7;
-    
-    .slide-canvas {
-      background: url(/app/images/slide_flex.png) no-repeat;
-      opacity: .6;
-    }
+  li.slide:nth-of-type(2) {
+    background: $flex;
+  }
+  
+  li.slide:nth-of-type(3) {
+    background: $power;
   }
   
   .content {
@@ -570,34 +613,6 @@ form {
   }
 }
 
-#news_title {
-  background: #333;
-  height: 30px;
-  
-  h4 {
-    padding: 4px 0 4px 10px;
-    color: white !important;
-    font-size: 12pt;
-  }
-}
-
-#news {
-  padding: 5px 0;
-  max-height: 20px;
-}
-
-.newsTicker {
-  background: black;
-  height: 30px;
-  clear: auto;
-  font-family: Overpass;
-
-  li {
-    color: white !important;
-    width: 800px !important;
-  }
-}
-
 #breadcrumb {
 	margin: 0 0 1em;
 	color: #aaa;
@@ -608,7 +623,7 @@ form {
 }
 
 #sidebar_slugs_container {
-    background: #ECECEC;
+    @include gradient_bg(white, #ececec, 100%);
     overflow: hidden;
 
    p, #{$list_elements}, #{$header_elements} {
@@ -655,6 +670,7 @@ form {
   
   a {
     width: 100%;
+    height: 50%;
     margin: 0;
     padding: 0;
     display: inline-block;
@@ -710,12 +726,15 @@ form {
   }
   
   .home & #resources h4 {
-    font-size: 14pt;
-    line-height: 14pt;
+    font-size: 22pt;
   }
   
   #faq h4 {
     font-size: 32pt; 
+  }
+  
+  #partners h4 {
+    font-size: 22pt;
   }
  
 }
@@ -741,6 +760,28 @@ form {
 }
 
 .slug {
+
+  h3 {
+    padding: 10px 10px 0;
+    margin: 0;
+    font: {
+      size: 13pt;
+      weight: normal;
+    }
+    font-family: Overpass !important;
+  }
+  
+  p {
+    padding: 10px;
+    margin-bottom: 10px;
+    font: {
+      size: 11pt;
+    }
+  }
+  
+  img {
+    padding: 10px;
+  }
   
   p.link {
     padding-right: 10px;
@@ -756,11 +797,6 @@ form {
       float: right;
       margin: 0 12px 0 0;
     }
-  }
-  
-  h3 {
-    margin: .5em 0;
-    font-size: 13pt;
   }
   
   .container_24 &.grid_9.last {
@@ -823,6 +859,7 @@ form {
 
 #app_promos {
 	background: #ececec;
+  padding-bottom: 15px;
   
   #{$text_elements}, #{$header_elements}, #{$list_elements} {
     margin: 0 auto {
@@ -855,7 +892,7 @@ form {
   }
   
   a {
-    background: #777;
+    background: $rh_red;
     padding: 5px 10px;
     color: white !important;
     font-weight: bold;
@@ -873,15 +910,17 @@ form {
     background: url(/app/images/express-tile-trans.png) #ccc;
     
     &.hover {
-      background-color: lighten($express, 20%);
+      background-color: $express;
       
       h4 {
         color: $express;
       }
       
+/*
       a {
         background-color: $express;
       }
+*/
     }
   }
   
@@ -889,15 +928,17 @@ form {
     background: url(/app/images/flex-tile-trans.png) #ccc;
   
     &.hover{
-      background-color: lighten($flex, 20%);
+      background-color: $flex;
       
       h4 {
         color: $flex;
       }
       
+/*
       a {
         background-color: $flex;
       }
+*/
     }
   }
   
@@ -905,15 +946,17 @@ form {
     background: url(/app/images/power-tile-trans.png) #ccc;
 
     &.hover {
-      background-color: lighten($power, 20%);
+      background-color: $power;
       
       h4 {
         color: $power;
       }
       
+/*
       a {
         background-color: $power;
       }
+*/
     }
   }
 }
@@ -983,13 +1026,42 @@ form {
       decoration: none;
     }
   }
+  
+  p.flash-notice {
+    background: #ffb url('/app/images/exclam.png') no-repeat 10px center;
+    padding: 10px;
+    padding-left: 35px;
+    color: black;
+    font-size: 12pt;
+    border: 2px solid #ff6;
+  }
 }
 
-#registration input {
-  @include form_input;
+#login_instead {
+  margin: 0 0 15px 165px;
+  a {
+    display: block;
+    color: $bright_blue;
+    font-family: Overpass;
+    text: {
+      decoration: none;
+    }
+  }
+}
+
+#registration {
+
+  h3 { 
+    font-size: 20pt;
+    margin-left: 120px; 
+  }
+
+  input {
+    @include form_input;
   
-  &.create {
-    @include form_button;
+    &.create {
+      @include form_button;
+    }
   }
   
   form {
@@ -1016,15 +1088,34 @@ form {
   }
 }
 
-#login-form input {
-  @include form_input;
-  
-  &.create {
-    @include form_button;
+#login-page {
+  h3 {
+    font-size: 20pt;
+    margin: 0;
+    margin-left: 120px;
   }
   
-  &.button {
-    @include form_button;
+  p#lost_password {
+    margin: 0 0 30px 120px;
+    
+    a {
+      color: $bright_blue !important;text-decoration: none;
+    }
+  }
+}
+
+#login-form {
+
+  input {
+    @include form_input;
+    
+    &.create {
+      @include form_button;
+    }
+    
+    &.button {
+      @include form_button;
+    }
   }
 }
 
@@ -1145,7 +1236,7 @@ label.error {
 }
 
 #register {
-  margin:30px 0 0;
+  margin:30px 0 0 120px;
   
   h4 {
     display: inline;
@@ -1181,6 +1272,94 @@ label.error {
   }
 }
 
+
+/* Access request forms */
+#access {
+  h3 {
+    margin-left: 60px;
+    font-size: 20pt;
+  }
+  label {
+    line-height: 15px;
+    margin-right: 5px;
+  }
+  p#explanation {
+    margin-left: 60px;
+  }
+  .terms-link {
+    margin-left: 165px;
+    a {
+      color: $bright_blue !important;
+      text-decoration: none;
+    }
+  } 
+}
+
+/**
+ * Product page styles
+ */
+ 
+#banner {
+  margin-top: 0; padding: 0;
+  height: 250px !important;
+  background-repeat: none;
+  
+  color: white;
+  font-family: Overpass;
+  
+  h2 {
+    margin: 0;
+    padding: 0 10px;
+    font: {
+      family: Overpass;
+      size: 32pt;
+    }
+    text-shadow: 2px 2px 2px #333;
+  }
+  
+  h3 {
+    margin: 0;
+    padding-left: 10px;
+    font-size: 16pt;
+    line-height: 16pt;
+  }
+    
+  p {
+    width: 550px;
+    padding-left: 10px;
+    font: {
+      size: 11pt;
+    }
+  }
+  
+  a.try_it {
+   @include gradient_bg($rh_red, darken($rh_red, 10%), 100%);
+    
+    display: inline-block;
+    margin-left: 300px;
+    padding: 10px 25px;
+    color: white;
+    font: {
+      family: Overpass;
+      size: 18pt;
+    }
+    text: {
+      decoration: none;
+      transform: uppercase;
+    }
+    box-shadow: 2px 2px 2px #333; 
+    @include border_radius(8);   
+  }
+  
+  &.express {
+    background-image: url('/app/images/express-banner.png');
+  }
+  
+  &.flex {
+    background-image: url('/app/images/flex-banner.png');
+  }
+}
+
 #main_content {
   padding-left: 30px;
 }
@@ -1194,7 +1373,7 @@ label.error {
     li { 
       @include gradient_bg(#ececec, darken(#ececec, 10%), 100%);
       display: inline-block;
-      width: 117px;
+      width: 170px;
       padding: 2px 0;   
       margin: 0 5px 0 0;
     }
@@ -1223,8 +1402,7 @@ label.error {
       display: inline-block;
       width: inherit;
       height: 25px;
-      padding-left: 32px;
-      text-align: left;
+      text-align: center;
       font: {
         family: Overpass;
         size: 9pt;
@@ -1296,24 +1474,26 @@ label.error {
   color: $text_color;
   h3 {
     margin: 20px 0 0;
+    color: #666;
     font: {
       family: $sans;
       weight: bold;
-      size: 16pt
+      size: 14pt;
     }
-    color: #666;
+    line-height: 16pt;
   }
   
   .author {
     font: {
       weight: bold;
-      size: 14pt;
+      size: 11pt;
     }
     color: black;
   }
   
-  img {
+  .thumb {
     float: right;
+    margin: 0 0 5px 5px;
   }
   
   .meta {
@@ -1337,6 +1517,10 @@ label.error {
 
 #product_community {
   @extend  #product_videos;
+  
+  h3 {
+    margin-bottom: 20px;
+  }
   
   .post {
     padding-left: 20px;
@@ -1421,7 +1605,7 @@ label.error {
     }
   }
   
-  #tour {
+  #doc_link {
     a {
       width: inherit;
       display: block;
@@ -1434,7 +1618,7 @@ label.error {
         margin-bottom: 0;
         color: white;
         font: {
-          size: 18pt;
+          size: 16pt;
           family: Overpass;
         }
         text-transform: uppercase;
@@ -1443,7 +1627,7 @@ label.error {
         color: white;
         font: {
           family: Overpass;
-          size: 12pt;
+          size: 11pt;
         }
       }
     }
@@ -1711,40 +1895,53 @@ label.error {
       }
     }
   }
+  
+  &.join {
+    #main_content {
+      background: url('/app/images/cloud_partnership_large.png') no-repeat left center;
+      padding: 100px 30px 100px 320px;
+      
+      a {
+        color: $bright_blue;
+        font: {
+          size: 20pt;
+          family: Overpass;
+        }
+        text-decoration: none;
+      }
+    }
+  }
 }
 
 
 #footer {
-	background: black;
-	padding: 1.5em 0;
+  border-top: 60px solid black;
+  -moz-border-top-colors: 
+    #666
+    #555 
+    #444 
+    #333 
+    #222 
+    #111 
+    #000;
+	padding: 3em 0;
   
-  ul {
-    @include footer_list;
-  }
-  
-  h5 {
-    margin: 0;
-    color: $bright_blue;
-    font-size: 10pt;
-    text-transform: uppercase;
-    font-family: Overpass;
-  }
-  
-  a { text-decoration: none; }
-}
-
-#subfooter {
-	padding: 2em 0 4em;
-  color: #ccc;
-  font-size: 8pt;
-  
-  ul {
-    @include footer_list;
-  }  
-  
-   li {
+  img, p, ul {
     float: left;
+    margin-right: 20px;
   }
-
-  a { text-decoration: none; }
+  
+  img {
+    margin-left: 100px;
+  }
+  
+  ul {
+    list-style-type: none;
+  }
+  
+  li {
+    display: inline;
+  }
+  
 }
+

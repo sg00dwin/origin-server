@@ -5,7 +5,7 @@ class Access::AccessRequestController < ApplicationController
     Rails.logger.debug "Checking login status"
     login = session[:login]
     if login
-      @user = session_user      
+      @user = session_user
       if @user.has_requested?(access_type)
         render :already_requested and return
       elsif @user.has_access?(access_type)
@@ -20,31 +20,31 @@ class Access::AccessRequestController < ApplicationController
       redirect_to login_path, :notice => flash[:notice] ? flash[:notice] : "You'll need to login / register before asking for access"
     end
   end
-  
+
   def create
     Rails.logger.debug "Checking login status"
-    login = session[:login]    
+    login = session[:login]
     if login
       Rails.logger.debug "User is logged in"
       setup_create_model(params)
       @user = session_user
       @user.establish_terms
-      if !@access.valid?
+
+      # Run validations
+      render :new and return if !@access.valid?
+
+      Rails.logger.debug "Requesting access #{CloudAccess.access_name(access_type)} for user #{@user}"
+      if @user.terms.length > 0
+        @user.accept_subscription_terms(@access.accepted_terms_list)
+      end
+      if @user.errors.length == 0
+        request_access
+      end
+      if @user.errors.length > 0
+        @access.errors.update(@user.errors)
         render :new and return
       else
-        Rails.logger.debug "Requesting access #{CloudAccess.access_name(access_type)} for user #{@user}"
-        if @user.terms.length > 0
-          @user.accept_terms(@access.accepted_terms_list, @user.terms)
-        end
-        if @user.errors.length == 0
-          request_access          
-        end
-        if @user.errors.length > 0
-          @access.errors.update(@user.errors)
-          render :new and return
-        else
-          @user.refresh_roles(true)
-        end
+        @user.refresh_roles(true)
       end
     else
       Rails.logger.debug "User is not logged in - rerouting to login / register"
@@ -52,5 +52,5 @@ class Access::AccessRequestController < ApplicationController
       redirect_to login_path
     end
   end
-  
+
 end
