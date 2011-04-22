@@ -29,7 +29,7 @@ class TermsController < ApplicationController
       logger.debug "Terms to accept #{@term.pretty_inspect}"
 
       @user.establish_terms
-      logger.debug "Established user terms #{@user.site_terms}"
+      logger.debug "Established user terms #{@user.site_terms.pretty_inspect}"
       if !@term.valid?
         logger.debug "Terms validation failed - redirecting"
         render :new and return

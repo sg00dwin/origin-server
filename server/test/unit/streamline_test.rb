@@ -354,9 +354,9 @@ class StreamlineTest < ActiveSupport::TestCase
     assert_equal 1, @streamline.errors.length
   end
 
-  test "accept terms streamline nil" do
+  test "accept terms more" do
     accepted = ['a', 'b']
-    json = {"term" => nil}
+    json = {"term" => ['a']}
     @streamline.expects(:all_terms_accepted?).once.returns(true)
     @streamline.expects(:http_post).once.yields(json)
     @streamline.accept_terms([], accepted)

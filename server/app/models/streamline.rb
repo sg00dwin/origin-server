@@ -114,7 +114,11 @@ module Streamline
 
       # Unless everything was accepted, put an error on the user object
       json['term'] ||= []
-      unless (accepted - json['term']).empty?
+
+      # Convert the accepted ids to strings to comparison
+      # normally they are integers
+      accepted_conv = accepted.map{|v| v.to_s}
+      unless (accepted_conv - json['term']).empty?
         Rails.logger.error("Streamline partial terms acceptance")
         errors.add(:base, I18n.t(:terms_error, :scope => :streamline))
       end
