@@ -13,8 +13,11 @@
 
 #page.container_24
 
-  #registration.prefix_1.grid_13.suffix_1
+  #registration.push_4.grid_13
     %h3 Register for access to #{@product.capitalize}
+    
+    #login_instead
+      = link_to 'Already have a redhat.com or RHN account?', login_path
     
     - @user.errors.each do |key, value|
       - if key == :base || key == :captcha
@@ -36,29 +39,5 @@
         = form.commit_button "Register Now"
     .clear
 
-  #form_notes.grid_8.suffix_1
-    %h4 Why do I have to register?
-
-    %p
-      We want your experience to be very similar to our users.  We have
-      streamlined the registration process for our users, so let us know
-      what you think.
-
-    %h4 Where is my data stored?
-
-    %p
-      Whatever you put in this form is safely stored away in our
-      corporate registration systems.  Your code will live in the
-      clouds - your identity will not.
-
-    %h4 Will my instance be internal-only?
-    %p
-      No! While the registration process is restricted to
-      internal systems, the instance you create will be fully
-      accessible outside the Red Hat network.  While this will allow
-      for more flexible testing, please do not put any sensitive or
-      confidential information on your instance.
-
-    .clear
-
+ 
   .clear

@@ -1004,11 +1004,31 @@ form {
   }
 }
 
-#registration input {
-  @include form_input;
+#login_instead {
+  margin: 0 0 15px 165px;
+  a {
+    display: block;
+    color: $bright_blue;
+    font-family: Overpass;
+    text: {
+      decoration: none;
+    }
+  }
+}
+
+#registration {
+
+  h3 { 
+    font-size: 20pt;
+    margin-left: 120px; 
+  }
+
+  input {
+    @include form_input;
   
-  &.create {
-    @include form_button;
+    &.create {
+      @include form_button;
+    }
   }
   
   form {

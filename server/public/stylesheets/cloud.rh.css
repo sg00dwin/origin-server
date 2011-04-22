@@ -608,6 +608,17 @@ form ul, form ol, form li {
     text-align: right;
     text-decoration: none; }
 
+#login_instead {
+  margin: 0 0 15px 165px; }
+  #login_instead a {
+    display: block;
+    color: #4e9fdd;
+    font-family: Overpass;
+    text-decoration: none; }
+
+#registration h3 {
+  font-size: 20pt;
+  margin-left: 120px; }
 #registration input {
   width: 200px;
   margin: 0 5px;
@@ -633,19 +644,19 @@ form ul, form ol, form li {
     border: 0px;
     box-shadow: 1px 1px 1px #ccc;
     cursor: pointer; }
-  #registration input form {
-    width: 500px; }
-  #registration input th {
-    padding: 0 1em 0 0;
-    color: #555555;
-    font-weight: bold;
-    font-size: 10pt;
-    line-height: 1.2em;
-    text-align: right; }
-  #registration input td, #registration input th {
-    padding-top: 1.5em; }
-  #registration input table {
-    margin-bottom: 40px; }
+#registration form {
+  width: 500px; }
+#registration th {
+  padding: 0 1em 0 0;
+  color: #555555;
+  font-weight: bold;
+  font-size: 10pt;
+  line-height: 1.2em;
+  text-align: right; }
+#registration td, #registration th {
+  padding-top: 1.5em; }
+#registration table {
+  margin-bottom: 40px; }
 
 #login-form input {
   width: 200px;
