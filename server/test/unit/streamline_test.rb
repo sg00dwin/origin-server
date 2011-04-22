@@ -66,15 +66,6 @@ class StreamlineTest < ActiveSupport::TestCase
     assert url.to_s =~ /^http.*\?termIds=/
   end
 
-  test "parse terms nil" do
-    assert_equal [], @streamline.parse_terms(nil)
-  end
-
-  test "parse terms" do
-    json_str = "[{\"termId\":\"1\",\"termUrl\":\"test\"}]"
-    assert_equal 1, @streamline.parse_terms(json_str).length
-  end
-
   test "parse errors nil" do
     @streamline.parse_json_errors(nil)
     assert @streamline.errors.empty?
@@ -286,62 +277,18 @@ class StreamlineTest < ActiveSupport::TestCase
   test "accept subscription terms" do
     @streamline.terms = ['test1']
     @streamline.site_terms = ['test2']
-    @streamline.expects(:parse_terms).once
     @streamline.expects(:accept_terms).once
-    @streamline.accept_subscription_terms([])
+    @streamline.accept_subscription_terms
     assert_equal 0, @streamline.terms.length
     assert_equal 1, @streamline.site_terms.length
-  end
-
-  test "all terms accepted" do
-    required = [{"termId" => 'a', "termUrl" => 'url'}]
-    accepted = ['a']
-
-    assert @streamline.all_terms_accepted?(required, accepted)
-    assert_equal 0, @streamline.errors.length
-  end
-
-  test "all terms accepted multiple" do
-    required = [{"termId" => 'a', "termUrl" => 'url'},
-                {"termId" => 'b', "termUrl" => 'url'}]
-    accepted = ['a', 'b']
-
-    assert @streamline.all_terms_accepted?(required, accepted)
-    assert_equal 0, @streamline.errors.length
-  end
-
-  test "all terms not accepted" do
-    required = [{"termId" => 'a', "termUrl" => 'url'}]
-    accepted = []
-
-    assert !@streamline.all_terms_accepted?(required, accepted)
-    assert_equal 1, @streamline.errors.length
-  end
-
-  test "all terms not accepted mismatch" do
-    required = [{"termId" => 'a', "termUrl" => 'url'}]
-    accepted = ['b']
-
-    assert !@streamline.all_terms_accepted?(required, accepted)
-    assert_equal 1, @streamline.errors.length
-  end
-
-  test "all terms not accepted subset" do
-    terms = [{"termId" => 'a', "termUrl" => 'url'},
-             {"termId" => 'b', "termUrl" => 'url'}]
-    accepted = ['b']
-
-    assert !@streamline.all_terms_accepted?(terms, accepted)
-    assert_equal 1, @streamline.errors.length
   end
 
   test "accept terms" do
     terms = [{"termId" => 'a', "termUrl" => 'url'},
              {"termId" => 'b', "termUrl" => 'url'}]
     json = {"term" => ['a', 'b']}
-    @streamline.expects(:all_terms_accepted?).once.returns(true)
     @streamline.expects(:http_post).once.yields(json)
-    @streamline.accept_terms(terms, [])
+    @streamline.accept_terms(terms)
     assert_equal 0, @streamline.errors.length
   end
 
@@ -349,9 +296,8 @@ class StreamlineTest < ActiveSupport::TestCase
     terms = [{"termId" => 'a', "termUrl" => 'url'},
              {"termId" => 'b', "termUrl" => 'url'}]
     json = {"term" => ['a']}
-    @streamline.expects(:all_terms_accepted?).once.returns(true)
     @streamline.expects(:http_post).once.yields(json)
-    @streamline.accept_terms(terms, terms)
+    @streamline.accept_terms(terms)
     assert_equal 1, @streamline.errors.length
   end
 end

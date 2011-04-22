@@ -1,4 +1,4 @@
-/** 
+/**
  * let elements enclose their floated children
  * from: http://www.quirksmode.org/css/clearing.html
  **/
@@ -906,8 +906,15 @@ label.error {
 #access label {
   line-height: 15px;
   margin-right: 5px; }
-#access p#explanation {
+#access p {
   margin-left: 60px; }
+#access .notice {
+  margin-left: 80px; }
+#access ul.terms {
+  margin-bottom: 15px; }
+  #access ul.terms li {
+    overflow: visible;
+    list-style-type: circle; }
 #access .terms-link {
   margin-left: 165px; }
   #access .terms-link a {
@@ -1418,7 +1425,7 @@ label.error {
 
 #footer {
   border-top: 60px solid black;
-  -moz-border-top-colors: #666     #555      #444      #333      #222      #111      #000;
+  -moz-border-top-colors: #666     #555     #444     #333     #222     #111     #000;
   padding: 3em 0; }
   #footer img, #footer p, #footer ul {
     float: left;

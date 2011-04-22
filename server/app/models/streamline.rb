@@ -78,38 +78,15 @@ module Streamline
     @site_terms.clear if errors.empty?
   end
 
-  def accept_subscription_terms(accepted_terms_json)
-    Rails.logger.debug("Accepting subscription terms = #{accepted_terms_json}")
-    accepted_terms = parse_terms(accepted_terms_json)
-    accept_terms(@terms, accepted_terms)
+  def accept_subscription_terms
+    establish_terms
+    accept_terms(@terms)
     @terms.clear if errors.empty?
   end
 
-  def all_terms_accepted?(required_terms, accepted_terms)
-    # Make sure that all the required terms are accepted
-    required_terms.each do |term|
-      if !accepted_terms.index(term['termId'])
-        errors.add(:base, I18n.t(:terms_error, :scope => :streamline))
-        Rails.logger.warn("Not all required terms accepted / \
-                          req = #{required_terms.pretty_inspect} / \
-                          accepted = #{accepted_terms.pretty_inspect}")
-        break
-      end
-    end
-
-    Rails.logger.debug("All terms accepted") if errors.empty?
-
-    return errors.empty?
-  end
-
-  def accept_terms(required, accepted=nil)
-    # Sanity check that all the terms made it back from the client
-    if accepted
-      return unless all_terms_accepted?(required, accepted)
-    end
-
+  def accept_terms(terms)
     Rails.logger.debug("Calling streamling to accept terms")
-    http_post(build_terms_url(required), {}, false) do |json|
+    http_post(build_terms_url(terms), {}, false) do |json|
       # Log error on unknown result
       Rails.logger.error("Streamline accept terms failed") unless json['term']
 
@@ -118,9 +95,9 @@ module Streamline
 
       # Convert the accepted ids to strings to comparison
       # normally they are integers
-      required_conv = required.map{|hash| hash['termId'].to_s}
-      unless (required_conv - json['term']).empty?
-        Rails.logger.error("Streamline partial terms acceptance. Expected #{required_conv} got #{json['term']}")
+      terms_ids = terms.map{|hash| hash['termId'].to_s}
+      unless (terms_ids - json['term']).empty?
+        Rails.logger.error("Streamline partial terms acceptance. Expected #{terms_ids} got #{json['term']}")
         errors.add(:base, I18n.t(:terms_error, :scope => :streamline))
       end
     end
@@ -313,10 +290,6 @@ module Streamline
         errors.add(:base, msg)
       end
     end
-  end
-
-  def parse_terms(terms_json)
-    terms_json ? JSON.parse(terms_json) : []
   end
 
   def build_terms_query(terms)

@@ -33,13 +33,13 @@ class Access::AccessRequestController < ApplicationController
       # Run validations
       render :new and return if !@access.valid?
 
-      Rails.logger.debug "Requesting access #{CloudAccess.access_name(access_type)} for user #{@user}"
-      if @user.terms.length > 0
-        @user.accept_subscription_terms(@access.accepted_terms_list)
-      end
-      if @user.errors.length == 0
-        request_access
-      end
+      # Accept the subscription terms
+      Rails.logger.debug "Requesting access #{CloudAccess.access_name(access_type)} for user #{@user.pretty_inspect}"
+      @user.accept_subscription_terms
+
+      # Now request access to the developer preview
+      request_access if @user.errors.empty?
+
       if @user.errors.length > 0
         @access.errors.update(@user.errors)
         render :new and return
