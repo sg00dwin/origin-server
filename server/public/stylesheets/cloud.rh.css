@@ -607,6 +607,13 @@ form ul, form ol, form li {
     color: #4e9fdd;
     text-align: right;
     text-decoration: none; }
+  #page p.flash-notice {
+    background: #ffffbb url("/app/images/exclam.png") no-repeat 10px center;
+    padding: 10px;
+    padding-left: 35px;
+    color: black;
+    font-size: 12pt;
+    border: 2px solid #ff6; }
 
 #login_instead {
   margin: 0 0 15px 165px; }
@@ -657,6 +664,16 @@ form ul, form ol, form li {
   padding-top: 1.5em; }
 #registration table {
   margin-bottom: 40px; }
+
+#login-page h3 {
+  font-size: 20pt;
+  margin: 0;
+  margin-left: 120px; }
+#login-page p#lost_password {
+  margin: 0 0 30px 120px; }
+  #login-page p#lost_password a {
+    color: #4e9fdd !important;
+    text-decoration: none; }
 
 #login-form input {
   width: 200px;
@@ -842,7 +859,7 @@ label.error {
   clear: right; }
 
 #register {
-  margin: 30px 0 0; }
+  margin: 30px 0 0 120px; }
   #register h4 {
     display: inline; }
   #register a {
