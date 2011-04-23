@@ -9,6 +9,11 @@
   /Summary
   %p.summary
     = partner.summary
+    
+  .availability
+    %h4 Availability
+    %p
+      = partner.availability
   
   /Learn more link
   = link_to 'Learn More', url_for(:controller => 'partner', :action => 'show', :id => partner.id), :class => 'learn-more' 

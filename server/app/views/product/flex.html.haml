@@ -42,7 +42,7 @@
       %a.step-three(href="#step_3") Monitor &amp; Scale
   
   #step_1.tab
-    %h3 Build your Server Custer and Application Stack
+    %h3 Build your Server Cluster and Application Stack
     
     .tab_illustration
       = image_tag "http://placekitten.com/g/300/200",
@@ -110,10 +110,11 @@
       Developers, ISVs, customers and partners
     
     .video-thumb.thumb
-      %a(href="#")
+      /http://www.redhat.com/g/video_stills/openshiftmontage.png      
+      %a(href="video/openshiftmontage")
         %img(src="http://placekitten.com/g/150/100"
-             title="Replace with actual video thumbnail"
-             alt="Video title")
+             title="Developers, ISVs, customers and partners"
+             alt="Developers, ISVs, customers and partners")
   
     %p.video-description
       This video shows you what developers, ISVs, customers and partners are saying about Red Hat's exciting new OpenShift PaaS.
@@ -125,7 +126,7 @@
         %p.video-date.date
           Posted May 5, 2011
         
-  %a.more(href="/videos") More Videos &gt;
+  %a.more(href="http://www.redhat.com/openshift/videos") More Videos &gt;
   
 -# Community section
 - content_for :community do
@@ -170,7 +171,7 @@
     %li
       = link_to "Deploying JBoss Applications on OpenShift Flex", "#" 
   
-  = link_to 'More Documentation >', '/documents', :class => 'more'
+  = link_to 'More Documentation >', 'http://www.redhat.com/openshift/documents', :class => 'more'
   
 -# Tour link
 - content_for :tour_link do

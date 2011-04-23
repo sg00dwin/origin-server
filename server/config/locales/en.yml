@@ -34,7 +34,7 @@ en:
       term:
        terms_accepted: "Accept Terms?"
       access/flex_request:
-       ec2_account_number: "Amazon AWS Account Number"
+       ec2_account_number: "Account Number:"
        terms_accepted: "Accept Terms?"
       access/express_request:
        terms_accepted: "Accept Terms?"

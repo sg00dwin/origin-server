@@ -4,6 +4,12 @@
 module StreamlineMock
   attr_accessor :rhlogin, :ticket, :roles, :terms, :site_terms
 
+  def initialize
+    @roles = []
+    @terms = []
+    @site_terms = []
+  end
+
   #
   # Establish the user state based on the current ticket
   #
@@ -29,11 +35,11 @@ module StreamlineMock
   end
 
   def accept_site_terms
-    site_terms.clear
+    @site_terms = []
   end
 
-  def accept_subscription_terms(accepted_terms_json)
-    terms.clear
+  def accept_subscription_terms
+    @terms = []
   end
 
   def refresh_roles(force=false)
