@@ -297,7 +297,7 @@ chkconfig cgconfig && /sbin/service cgconfig restart >/dev/null 2>&1 || :
 /sbin/chkconfig --add libra-data || :
 /sbin/chkconfig --add libra-cgroups || :
 /sbin/chkconfig --add libra-tc || :
-/sbin/service mcollective restart > /dev/null 2>&1 || :
+#/sbin/service mcollective restart > /dev/null 2>&1 || :
 /usr/sbin/semodule -i %_datadir/selinux/packages/libra.pp
 /sbin/restorecon /etc/init.d/libra || :
 /usr/bin/rhc-restorecon || :
