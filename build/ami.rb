@@ -60,6 +60,7 @@ begin
       output = ""
       Timeout::timeout(timeout) { output = `#{SSH} #{@server} "#{cmd}"`.chomp }
       puts "  --------------------\n#{output}\n----------------------------"
+      return output
     end
 
     def scp(cmd, timeout=60)
@@ -67,6 +68,7 @@ begin
       output = ""
       Timeout::timeout(timeout) { output = `#{SCP} #{cmd}` }
       puts "  --------------------\n#{output}\n----------------------------"
+      return output
     end
 
     # Blocks until the current instance is available
