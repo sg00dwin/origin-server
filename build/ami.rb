@@ -56,11 +56,17 @@ begin
     end
 
     def ssh(cmd, timeout=60)
-      Timeout::timeout(timeout) { `#{SSH} #{@server} "#{cmd}"`.chomp }
+      puts "(ssh command / timeout = #{timeout}) / #{cmd}"
+      output = ""
+      Timeout::timeout(timeout) { output = `#{SSH} #{@server} "#{cmd}"`.chomp }
+      puts "  --------------------\n#{output}\n----------------------------"
     end
 
     def scp(cmd, timeout=60)
-      Timeout::timeout(timeout) { `#{SCP} #{cmd}` }
+      puts "(scp command / timeout = #{timeout}) / #{cmd}"
+      output = ""
+      Timeout::timeout(timeout) { output = `#{SCP} #{cmd}` }
+      puts "  --------------------\n#{output}\n----------------------------"
     end
 
     # Blocks until the current instance is available
@@ -445,7 +451,7 @@ END_OF_MESSAGE
           #puts "Done"
 
           # Run verification tests
-          print "Running verification tests (60 minute timeout enforced)..."
+          print "Running verification tests..."
           ssh("cucumber --tags @verify --format junit -o /tmp/rhc/junit/ li/tests/", 3600)
           p2 = $?
           puts "Done"
