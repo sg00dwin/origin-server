@@ -73,18 +73,37 @@ begin
 
     # Blocks until the current instance is available
     def instance_available
+        max_retries = 15
+
         # Wait until the AWS state is running
-        until instance_value(:aws_state) == "running"
+        count = 0
+        until (instance_value(:aws_state) == "running") or (count == max_retries)
+          puts "System not available yet... retrying"
           sleep 5
+          count += 1
+        end
+
+        if count == max_retries
+          puts "EXITING - Took too long for instance state to be 'running'"
+          exit 0
         end
 
         @dns = instance_value(:dns_name)
         @server = "root@" + @dns
 
-        # Block until we can SSH to the instance
-        until ssh('echo Success', 300).split[-1] == "Success"
+        # Wait until we can SSH into the instance
+        count = 0
+        until (ssh('echo Success', 5).split[-1] == "Success") or (count == max_retries)
+          puts "SSH timed out... retrying"
           sleep 5
+          count += 1
         end
+
+        if count == max_retries
+          puts "EXITING - Took too long for instance to be SSH available"
+          exit 0
+        end
+
     end
 
     def send_verified_email(version, ami)
