@@ -67,7 +67,7 @@ begin
       puts "(scp command / timeout = #{timeout}) / #{cmd}"
       output = ""
       Timeout::timeout(timeout) { output = `#{SCP} #{cmd}` }
-      puts "----------------------------\n#{output}\n----------------------------"
+      puts "begin output ----------------------------\n#{output}\nend output ------------------------------\n"
       return output
     end
 
