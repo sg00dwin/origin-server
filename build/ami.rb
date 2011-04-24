@@ -417,13 +417,13 @@ END_OF_MESSAGE
           puts "Done"
 
           print "Installing the mechanize gem..."
-          ssh("yum -y install rubygem-nokogiri")
-          ssh("gem install mechanize")
+          ssh("yum -y install rubygem-nokogiri", 120)
+          ssh("gem install mechanize", 120)
           puts "Done"
 
           print "Installing rails for client testing..."
-          `#{SSH} #{@server} "gem install rails -d --no-rdoc --no-ri"`
-          `#{SSH} #{@server} "yum -y install sqlite*"`
+          ssh("gem install rails -d --no-rdoc --no-ri", 120)
+          ssh("yum -y install sqlite*", 120)
           puts "Done"
 
           print "Bounding Apache to pick up the change..."
