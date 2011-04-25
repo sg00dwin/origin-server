@@ -174,7 +174,7 @@ EOF
         when Net::HTTPSuccess
           raise_dns_exception(nil, resp) unless dyn_success?(data)
           result = JSON.parse(data)
-          auth_token = result['data']['token']
+          auth_token = result['data']['token']         
         else
           raise_dns_exception(nil, resp)
         end
@@ -270,6 +270,54 @@ EOF
       path = "ARecord/#{Libra.c[:libra_zone]}/#{fqdn}/"
       return dyn_has?(path, auth_token)
     end
+    
+    def handle_temp_redirect(resp, auth_token)
+      if resp.body =~ /^\/REST\//
+        headers = { "Content-Type" => 'application/json', 'Auth-Token' => auth_token }
+        url = URI.parse("#{Libra.c[:dynect_url]}#{resp.body}")
+        http = Net::HTTP.new(url.host, url.port)
+        #http.set_debug_output $stderr
+        http.use_ssl = true
+        sleep_time = 2
+        success = false
+        retries = 0
+        while !success && retries < 5
+          retries += 1
+          begin
+            Libra.logger_debug "DEBUG: DYNECT handle temp redirect with path: #{url.path} and headers: #{headers} attempt: #{retries} sleep_time: #{sleep_time}"
+            resp, data = http.get(url.path, headers)
+            case resp
+            when Net::HTTPSuccess, Net::HTTPTemporaryRedirect
+              data = JSON.parse(data)
+              if data && data['status']
+                Libra.logger_debug "DEBUG: DYNECT Response data: #{data['data']}"
+                status = data['status']
+                if status == 'success'
+                  success = true
+                elsif status == 'incomplete'
+                  sleep sleep_time
+                  sleep_time *= 2
+                else #if status == 'failure'                  
+                  Libra.logger_debug "DEBUG: DYNECT Response status: #{data['status']}"
+                  raise_dns_exception(nil, resp)
+                end
+              end
+            else
+              raise_dns_exception(nil, resp)
+            end
+          rescue DNSException => e
+            raise
+          rescue Exception => e
+            raise_dns_exception(e)
+          end
+        end
+        if !success
+          raise_dns_exception(nil, resp)
+        end
+      else
+        raise_dns_exception(nil, resp)
+      end
+    end
 
     def self.dyn_has?(path, auth_token)
       headers = { "Content-Type" => 'application/json', 'Auth-Token' => auth_token }
@@ -323,6 +371,8 @@ EOF
         case resp
         when Net::HTTPSuccess
           raise_dns_exception(nil, resp) unless dyn_success?(data)
+        when Net::HTTPTemporaryRedirect
+          handle_temp_redirect(resp)
         else
           raise_dns_exception(nil, resp)
         end
@@ -365,6 +415,8 @@ EOF
           raise_dns_exception(nil, resp) unless dyn_success?(data)
         when Net::HTTPNotFound
           Libra.logger_debug "DEBUG: DYNECT: Could not find #{url.path} to delete"
+        when Net::HTTPTemporaryRedirect
+          handle_temp_redirect(resp)
         else
           raise_dns_exception(nil, resp)
         end
