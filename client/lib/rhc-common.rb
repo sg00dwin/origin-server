@@ -36,14 +36,13 @@ module RHC
   Maxdlen = 16
   Maxretries = 10
   Defaultdelay = 2
-  
+
   TYPES = {
     'php-5.3.2' => :php,
     'rack-1.1.0' => :rack,
-    'wsgi-3.2.1' => :wsgi,
-    'jbossas-7.0.0' => :jbossas
+    'wsgi-3.2.1' => :wsgi
   }
-  
+
   def self.delay(time, adj=Defaultdelay)
     (time*=adj).to_int
   end
@@ -60,7 +59,7 @@ module RHC
     end
     type_keys
   end
-  
+
   # Invalid chars (") ($) (^) (<) (>) (|) (%) (/) (;) (:) (,) (\) (*) (=) (~)
   def self.check_rhlogin(rhlogin)
     if rhlogin
@@ -77,15 +76,15 @@ module RHC
     end
     true
   end
-  
+
   def self.check_app(app)
     check_field(app, 'application', Maxdlen)
   end
-  
+
   def self.check_namespace(namespace)
     check_field(namespace, 'namespace', Maxdlen)
   end
-  
+
   def self.check_field(field, type, max=0)
     if field
       if field =~ /[^0-9a-zA-Z]/
@@ -102,7 +101,7 @@ module RHC
     end
     true
   end
-  
+
   def self.get_cartridge(type)
     if type
       if !(RHC::TYPES.has_key?(type))
@@ -115,7 +114,7 @@ module RHC
     end
     nil
   end
-  
+
   def self.print_post_data(h, debug)
     if (debug)
       puts 'DEBUG: Submitting form:'
@@ -132,9 +131,9 @@ module RHC
       end
     end
   end
-  
+
   def self.get_user_info(libra_server, rhlogin, password, net_http, debug, print_result)
-    
+
     puts "Contacting https://#{libra_server}"
     data = {'rhlogin' => rhlogin}
     if debug
@@ -142,10 +141,10 @@ module RHC
     end
     print_post_data(data, debug)
     json_data = JSON.generate(data)
-    
+
     url = URI.parse("https://#{libra_server}/app/broker/userinfo")
     response = http_post(net_http, url, json_data, password)
-    
+
     unless response.code == '200'
       if response.code == '404'
         puts "A user with rhlogin '#{rhlogin}' does not have a registered domain.  Be sure to run rhc-create-domain before using the other rhc tools."
@@ -169,7 +168,7 @@ module RHC
     end
     user_info
   end
-  
+
   def self.get_password
     password = nil
     begin
@@ -182,10 +181,10 @@ module RHC
     puts "\n"
     password
   end
-  
+
   def self.http_post(http, url, json_data, password)
     req = http::Post.new(url.path)
-    
+
     req.set_form_data({'json_data' => json_data, 'password' => password})
     http = http.new(url.host, url.port)
     http.open_timeout = 10
@@ -204,12 +203,12 @@ module RHC
       response
     rescue Exception => e
       puts "There was a problem communicating with the server. Response message: #{e.message}"
-      puts "If you were disconnected it is possible the operation finished without being able to report success."  
+      puts "If you were disconnected it is possible the operation finished without being able to report success."
       puts "You can use rhc-user-info and rhc-ctl-app to learn about the status of your user and application(s)."
       exit 219
     end
   end
-  
+
   def self.print_response_err(response, debug)
     puts "Problem reported from server. Response code was #{response.code}."
     if (!debug)
@@ -223,7 +222,7 @@ module RHC
     end
     exit exit_code.nil? ? 666 : exit_code
   end
-  
+
   def self.print_response_success(response, debug, always_print_result=false)
     if debug
       puts "Response from server:"
@@ -232,7 +231,7 @@ module RHC
       print_json_body(response, debug)
     end
   end
-  
+
   def self.print_json_body(response, debug)
     json_resp = JSON.parse(response.body);
     exit_code = json_resp['exit_code']

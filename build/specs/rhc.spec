@@ -2,7 +2,7 @@
 %define gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 
 Name: rhc
-Version: 0.67.1
+Version: 0.67.4
 Release: 1%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
@@ -297,7 +297,7 @@ chkconfig cgconfig && /sbin/service cgconfig restart >/dev/null 2>&1 || :
 /sbin/chkconfig --add libra-data || :
 /sbin/chkconfig --add libra-cgroups || :
 /sbin/chkconfig --add libra-tc || :
-/sbin/service mcollective restart > /dev/null 2>&1 || :
+#/sbin/service mcollective restart > /dev/null 2>&1 || :
 /usr/sbin/semodule -i %_datadir/selinux/packages/libra.pp
 /sbin/restorecon /etc/init.d/libra || :
 /usr/bin/rhc-restorecon || :
@@ -435,6 +435,15 @@ chmod 0666 %{_localstatedir}/www/libra/log/production.log
 %{_libexecdir}/li/cartridges/jbossas-7.0.0/
 
 %changelog
+* Fri Apr 22 2011 Matt Hicks <mhicks@redhat.com> 0.67.4-1
+- Site improvements
+
+* Fri Apr 22 2011 Matt Hicks <mhicks@redhat.com> 0.67.3-1
+- Site improvements
+
+* Fri Apr 22 2011 Matt Hicks <mhicks@redhat.com> 0.67.2-1
+- Major site improvements
+
 * Fri Apr 22 2011 Matt Hicks <mhicks@redhat.com> 0.67.1-1
 - Major site improvements
 

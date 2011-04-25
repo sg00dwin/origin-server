@@ -5,14 +5,13 @@ module Libra
   module Util
 
     Maxdlen = 16
-    
+
     TYPES = {
-      'jbossas-7.0.0' => :jbossas,
       'php-5.3.2' => :php,
       'rack-1.1.0' => :rack,
       'wsgi-3.2.1' => :wsgi
     }
-    
+
     def self.get_cartridge_types(sep=', ')
       i = 1
       type_keys = ''
@@ -25,7 +24,7 @@ module Libra
       end
       type_keys
     end
-    
+
     # Invalid chars (") ($) (^) (<) (>) (|) (%) (/) (;) (:) (,) (\) (*) (=) (~)
     def self.check_rhlogin(rhlogin)
       if rhlogin && rhlogin.length < 6
@@ -38,15 +37,15 @@ module Libra
         return true
       end
     end
-    
+
     def self.check_app(app)
       check_field(app, 'application', Maxdlen)
     end
-    
+
     def self.check_namespace(namespace)
       check_field(namespace, 'namespace', Maxdlen)
     end
-    
+
     def self.check_field(field, type, max=0)
       if field
         if field =~ /[^0-9a-zA-Z]/
@@ -66,7 +65,7 @@ module Libra
       end
       true
     end
-    
+
     def self.get_cartridge(type)
       if type && TYPES.has_key?(type)
         return TYPES[type]

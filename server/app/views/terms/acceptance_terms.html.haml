@@ -18,7 +18,7 @@
         - accepted_terms_list = Array.new(@user.site_terms.length)
         - if @user.site_terms.length > 0
           %li
-            = link_to 'OpenShift Terms of Use', legal_site_terms_path
+            = link_to 'OpenShift Terms of Use', legal_site_terms_path, {:target => '_blank'}
           - @user.site_terms.each_with_index do |value, i|
             - accepted_terms_list[i] = value['termId']
             %li

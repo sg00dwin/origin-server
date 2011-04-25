@@ -10,7 +10,8 @@ class TermsController < ApplicationController
       if @user.site_terms.length > 0
         @term = Term.new
       else
-        render :site_terms and return
+        #TODO would like this to show the terms they have already accepted
+        redirect_to legal_site_terms_path and return
       end
     else
       Rails.logger.debug "User is not logged in - rerouting to login / register"
@@ -57,7 +58,8 @@ class TermsController < ApplicationController
       if @user.site_terms.length > 0
         @term = Term.new
       else
-        render :site_terms and return
+        #TODO would like this to show the terms they have already accepted
+        redirect_to legal_site_terms_path and return
       end
     else
       Rails.logger.debug "User is not logged in - rerouting to login / register"
