@@ -58,7 +58,11 @@ begin
     def ssh(cmd, timeout=60)
       puts "(ssh command / timeout = #{timeout} / cmd = #{cmd})"
       output = ""
-      Timeout::timeout(timeout) { output = `#{SSH} #{@server} "#{cmd}"`.chomp }
+      begin
+        Timeout::timeout(timeout) { output = `#{SSH} #{@server} "#{cmd}"`.chomp }
+      rescue Timeout::Error
+        puts "SSH command '#{cmd}' timed out"
+      end
       puts "----------------------------\n#{output}\n----------------------------"
       return output
     end
@@ -66,7 +70,11 @@ begin
     def scp(cmd, timeout=60)
       puts "(scp command / timeout = #{timeout}) / #{cmd}"
       output = ""
-      Timeout::timeout(timeout) { output = `#{SCP} #{cmd}` }
+      begin
+        Timeout::timeout(timeout) { output = `#{SCP} #{cmd}` }
+      rescue Timeout::Error
+        puts "SCP command '#{cmd}' timed out"
+      end
       puts "begin output ----------------------------\n#{output}\nend output ------------------------------\n"
       return output
     end
