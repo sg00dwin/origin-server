@@ -196,26 +196,30 @@ function enable_user_ssh_access {
     USERNAME=$1
     USEREMAIL="$2"
     SSHKEY="$3"
-
-    USERHOME=`homedir $USERNAME`
-    SSHDIR=${USERHOME}/.ssh
-
-    ${NOOP} mkdir -p ${SSHDIR}
-    ${NOOP} chmod 0750 ${SSHDIR}
-    if [ -z "${NOOP}" ]
+    
+    id ${USERNAME}
+    if [ $? -eq 0 ]
     then
+      USERHOME=`homedir $USERNAME`
+      SSHDIR=${USERHOME}/.ssh
+  
+      ${NOOP} mkdir -p ${SSHDIR}
+      ${NOOP} chmod 0750 ${SSHDIR}
+      if [ -z "${NOOP}" ]
+      then
 	cat <<EOF > ${SSHDIR}/authorized_keys
 command="/usr/bin/trap-user",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty ssh-rsa $SSHKEY Libra-$USERNAME-$USEREMAIL
 EOF
-    else
+      else
 	echo "cat <<EOF > $SSHDIR/authorized_keys
 command=\\\"/usr/bin/trap-user\\\",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty ssh-rsa $SSHKEY Libra-$USERNAME-$USEREMAIL
 EOF\""
+      fi
+      ${NOOP} chmod 0440 ${SSHDIR}/authorized_keys
+      # Give force ssh key to not change
+      ${NOOP} chown -R "root.$USERNAME" ${SSHDIR}
+      ${NOOP} restorecon -R ${SSHDIR}
     fi
-    ${NOOP} chmod 0440 ${SSHDIR}/authorized_keys
-    # Give force ssh key to not change
-    ${NOOP} chown -R "root.$USERNAME" ${SSHDIR}
-    ${NOOP} restorecon -R ${SSHDIR}
 }
 
 
