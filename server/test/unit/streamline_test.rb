@@ -242,16 +242,14 @@ class StreamlineTest < ActiveSupport::TestCase
     json = {"unacknowledgedTerms" => terms}
     @streamline.expects(:http_post).once.yields(json)
     @streamline.establish_terms
-    assert_equal 1, @streamline.site_terms.length
-    assert_equal 0, @streamline.terms.length
+    assert_equal 1, @streamline.terms.length
   end
 
   test "establish site terms" do
     terms = [{"termId" => 1, "termUrl" => "http://openshift.redhat.com/term1"}]
     json = {"unacknowledgedTerms" => terms}
     @streamline.expects(:http_post).once.yields(json)
-    @streamline.establish_terms
-    assert_equal 0, @streamline.site_terms.length
+    @streamline.establish_terms    
     assert_equal 1, @streamline.terms.length
   end
 
@@ -261,43 +259,24 @@ class StreamlineTest < ActiveSupport::TestCase
     json = {"unacknowledgedTerms" => terms}
     @streamline.expects(:http_post).once.yields(json)
     @streamline.establish_terms
-    assert_equal 1, @streamline.site_terms.length
-    assert_equal 1, @streamline.terms.length
-  end
-
-  test "accept site terms" do
-    @streamline.terms = ['test1']
-    @streamline.site_terms = ['test2']
-    @streamline.expects(:accept_terms).once
-    @streamline.accept_site_terms
-    assert_equal 0, @streamline.site_terms.length
-    assert_equal 1, @streamline.terms.length
-  end
-
-  test "accept subscription terms" do
-    @streamline.terms = ['test1']
-    @streamline.site_terms = ['test2']
-    @streamline.expects(:accept_terms).once
-    @streamline.accept_subscription_terms
-    assert_equal 0, @streamline.terms.length
-    assert_equal 1, @streamline.site_terms.length
+    assert_equal 2, @streamline.terms.length
   end
 
   test "accept terms" do
-    terms = [{"termId" => 'a', "termUrl" => 'url'},
+    @streamline.terms = [{"termId" => 'a', "termUrl" => 'url'},
              {"termId" => 'b', "termUrl" => 'url'}]
     json = {"term" => ['a', 'b']}
     @streamline.expects(:http_post).once.yields(json)
-    @streamline.accept_terms(terms)
+    @streamline.accept_terms
     assert_equal 0, @streamline.errors.length
   end
 
   test "accept terms with partial streamline result" do
-    terms = [{"termId" => 'a', "termUrl" => 'url'},
+    @streamline.terms = [{"termId" => 'a', "termUrl" => 'url'},
              {"termId" => 'b', "termUrl" => 'url'}]
     json = {"term" => ['a']}
     @streamline.expects(:http_post).once.yields(json)
-    @streamline.accept_terms(terms)
+    @streamline.accept_terms
     assert_equal 1, @streamline.errors.length
   end
 end

@@ -73,7 +73,7 @@ class ApplicationController < ActionController::Base
         session[:user] = user
         user.establish_terms
         session[:ticket] = rh_sso
-        if user.site_terms.length > 0
+        if user.terms.length > 0
           redirect_to new_terms_path and return
         else
           session[:login] = user.rhlogin

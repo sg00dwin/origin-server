@@ -15,11 +15,11 @@
 
     #terms
       %ul
-        - accepted_terms_list = Array.new(@user.site_terms.length)
-        - if @user.site_terms.length > 0
+        - accepted_terms_list = Array.new(@user.terms.length)
+        - if @user.terms.length > 0
           %li
             = link_to 'OpenShift Terms of Use', legal_site_terms_path, {:target => '_blank'}
-          - @user.site_terms.each_with_index do |value, i|
+          - @user.terms.each_with_index do |value, i|
             - accepted_terms_list[i] = value['termId']
             %li
               %a{:title => value['termTitle'], :href => value['termUrl'], :target => '_blank'} #{value['termTitle']}

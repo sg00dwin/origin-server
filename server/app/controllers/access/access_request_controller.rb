@@ -35,7 +35,7 @@ class Access::AccessRequestController < ApplicationController
 
       # Accept the subscription terms
       Rails.logger.debug "Requesting access #{CloudAccess.access_name(access_type)} for user #{@user.pretty_inspect}"
-      @user.accept_subscription_terms unless @user.terms.empty?
+      @user.accept_terms unless @user.terms.empty?
 
       # Now request access to the developer preview
       request_access if @user.errors.empty?

@@ -25,7 +25,7 @@ class TermsControllerTest < ActionController::TestCase
     # Override the returned user with one that has errors
     # to simulate a failure
     user = WebUser.new
-    user.site_terms = ['1']
+    user.terms = ['1']
     user.errors.add(:base, "test")
     @controller.expects(:session_user).returns(user)
 
@@ -37,7 +37,8 @@ class TermsControllerTest < ActionController::TestCase
   test "accept terms but already accepted" do
     setup_session
     user = session[:user]
-    user.expects(:accept_site_terms).never
+    user.terms=[]
+    user.expects(:accept_terms).never    
     post :create
     assert_equal 0, assigns(:term).errors.length
     assert_redirected_to root_path
@@ -46,8 +47,8 @@ class TermsControllerTest < ActionController::TestCase
   test "accept terms successfully" do
     setup_session
     user = session[:user]
-    user.site_terms = [{'termId' => '1', 'termUrl' => 'localhost'}]
-    user.expects(:accept_site_terms).once
+    user.terms = [{'termId' => '1', 'termUrl' => 'localhost'}]
+    user.expects(:accept_terms).once
     post :create
     assert_equal 0, assigns(:term).errors.length
     assert_redirected_to root_path
@@ -57,8 +58,8 @@ class TermsControllerTest < ActionController::TestCase
     setup_session
     session[:workflow] = login_path
     user = session[:user]
-    user.site_terms = [{'termId' => '1', 'termUrl' => 'localhost'}]
-    user.expects(:accept_site_terms).once
+    user.terms = [{'termId' => '1', 'termUrl' => 'localhost'}]
+    user.expects(:accept_terms).once
     post :create
     assert_equal 0, assigns(:term).errors.length
     assert_redirected_to login_path
@@ -67,7 +68,7 @@ class TermsControllerTest < ActionController::TestCase
   test "show acceptance terms" do
     setup_session
     user = session[:user]
-    user.site_terms = [{'termId' => '1', 'termUrl' => 'localhost'}]
+    user.terms = [{'termId' => '1', 'termUrl' => 'localhost'}]
     get :acceptance_terms
     assert_equal 0, assigns(:term).errors.length
     assert_response :success

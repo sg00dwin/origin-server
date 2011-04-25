@@ -7,7 +7,7 @@ class TermsController < ApplicationController
     @user = session_user
     if @user
       @user.establish_terms
-      if @user.site_terms.length > 0
+      if @user.terms.length > 0
         @term = Term.new
       else
         #TODO would like this to show the terms they have already accepted
@@ -25,7 +25,7 @@ class TermsController < ApplicationController
     @term = Term.new
     if @user
       logger.debug "Accepting terms for user #{@user.pretty_inspect}"
-      @user.accept_site_terms unless @user.site_terms.empty?
+      @user.accept_terms unless @user.terms.empty?
 
       logger.debug "Errors: #{@user.errors}"
       if @user.errors.length > 0
@@ -55,7 +55,7 @@ class TermsController < ApplicationController
     @user = session_user
     if @user
       @user.establish_terms
-      if @user.site_terms.length > 0
+      if @user.terms.length > 0
         @term = Term.new
       else
         #TODO would like this to show the terms they have already accepted
