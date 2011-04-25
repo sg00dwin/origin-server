@@ -356,6 +356,9 @@ form {
 
   ul {
     margin: 0px;
+    display: block;
+    float: left;
+    overflow: hidden;
   }
 
   li {
@@ -381,15 +384,35 @@ form {
     }
   }
 
-  li.category {
+  .category {
     background: url('/app/images/nav_category.png') no-repeat right center;
-    color: #ccc;
+    display: inline;
+    float: left;
+    margin: 0;
+    color: white;
     padding: 7px 17px 7px 15px;
+    font-size: 10pt;
+    cursor: pointer;
+    
+    &.collapsed {
+    background-color: #900;
+    }
+    &.expanded {
+      background-color: transparent;
+    }
+    &.last.collapsed {
+      background-color: transparent;
+    }
   }
 
-  li.after_category {
+  li.first {
     a {
       border-left: none;
+    }
+  }
+  li.last {
+    a {
+      border-right: none;
     }
   }
 

@@ -17,6 +17,7 @@
 
     - if content_for?(:scripts)
       = javascript_include_tag "/app/javascripts/jquery-1.5.1.min.js"
+      = javascript_include_tag "/app/javascripts/universal.js"
       = yield :scripts
 
     = csrf_meta_tag
@@ -64,28 +65,30 @@
         .clear
 
         #nav.container_24
-          %ul
-            %li.category
-              Products
-            %li.after_category
+          %h5.category.expanded(data-category='products')
+            Products
+          %ul#products.expanded
+            %li.first
               = link_to 'Express', express_path, :class => 'express'
             %li
               = link_to 'Flex', flex_path, :class => 'flex'
-            %li
+            %li.last
               = link_to 'Power', power_path, :class => 'power'
-
-            %li.category
-              Community
-            %li.after_category
+          
+          %h5.category.collapsed(data-category='community')
+            Community
+          %ul#community.collapsed
+            %li.first
               = link_to 'Forums', 'http://www.redhat.com/openshift/forums'
             %li
               = link_to 'Blog', 'http://www.redhat.com/openshift/blogs'
-            %li
+            %li.last
               = link_to 'News', 'http://www.redhat.com/openshift/news-and-announcements'
-
-            %li.category
-              Help
-            %li.after_category
+          
+          %h5.category.collapsed.last(data-category='help')
+            Help
+          %ul#help.collapsed
+            %li.first
               = link_to 'KB', 'http://www.redhat.com/openshift/kb'
             %li
               = link_to 'Guides', 'http://docs.redhat.com/docs/en-US/OpenShift/'
@@ -93,7 +96,7 @@
               = link_to 'Docs', 'http://www.redhat.com/openshift/documents'
             %li
               = link_to 'Videos', 'http://www.redhat.com/openshift/videos'
-            %li
+            %li.last
               = link_to 'FAQ', 'http://www.redhat.com/openshift/faq'
 
           .clear
