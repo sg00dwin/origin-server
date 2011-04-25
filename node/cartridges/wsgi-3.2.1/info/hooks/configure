@@ -48,9 +48,6 @@ apache_bandwidth="all 100000"
 apache_maxconnection="all 20"
 apache_bandwidtherror="510"
 
-rotatelogs_interval=86400
-rotatelogs_format="-%Y%m%d-%H%M%S-%Z"
-
 if [ -f '/etc/libra/resource_limits.conf' ]
 then
     . /etc/libra/resource_limits.conf
@@ -68,31 +65,13 @@ function error {
     exit "$2"
 }
 
-# create an IP address as an 32 bit unsigned integer
-function address() {
-    # uid=$1
-    # final=$2
-    printf "0x%08x\n" "$((0x7f000000 + $(($1<<7)) + $2))"
-}
-
-# convert an integer IP address to dotted quad format
-function dotted_quad() {
-    # ADDR=$1
-    q3=$(($1 >> 24))
-    q2=$(($1 >> 16 & 0xff))
-    q1=$(($1 >> 8 & 0xff))
-    q0=$(($1 & 0xff))
-    echo "$q3.$q2.$q1.$q0"
-    # echo $(($(($1 >> 24)).$(($1 >> 16 & 0xff)).$(($1 >> 8 & 0xff)).$(($1 & 0xff))))
-}
-
 function find_open_ip {
     uid=$1
     uuid=$2
     for host_ip in `seq 1 127`
     do
-	a=`address $uid $host_ip`
-	new_ip=`dotted_quad $a`
+        a=$(($uid*128+2130706432 + $host_ip))
+        new_ip=$(($a>>24 )).$(($(($a%16777216))<<8>>24)).$(($(($a%65536))<<16>>24)).$(($(($a%256))<<24>>24))
         if ! grep -qe '^Listen '$new_ip':8080$' $(find /var/lib/libra/$uuid/ -maxdepth 4 -mindepth 4 -name libra.conf) /etc/sysconfig/network
         then
             echo $new_ip
@@ -126,7 +105,7 @@ function create_repo {
     user_id=$2
     group_id=$3
     c_val=$4
-    CUSTOMER_HOME=` echo ${libra_dir}/${uuid} | tr -s /`
+    CUSTOMER_HOME="${libra_dir}/${uuid}"
 
     if [ ! -d $CUSTOMER_HOME ]; then echo "ERROR: Customer ${uuid} not found!  Please create." 1>&2; exit 2; fi
 
@@ -163,8 +142,8 @@ namespace=`basename $2`
 application="$1"
 uuid=$3
 
-CUSTOMER_HOME=`echo "$libra_dir/$uuid/" | tr -s /`
-APP_DIR=`echo "$CUSTOMER_HOME/wsgi/$application" | tr -s /`
+CUSTOMER_HOME="$libra_dir/$uuid/"
+APP_DIR="$CUSTOMER_HOME/wsgi/$application"
 
 unobfuscate $uuid $namespace
 
@@ -220,9 +199,6 @@ Listen $IP:8080
 User $uuid
 Group $uuid
 
-ErrorLog "|/usr/sbin/rotatelogs $APP_DIR/logs/error_log$rotatelogs_format $rotatelogs_interval"
-CustomLog "|/usr/sbin/rotatelogs $APP_DIR/logs/access_log$rotatelogs_format $rotatelogs_interval" combined
- 
 <IfModule !mod_bw.c>
     LoadModule bw_module    modules/mod_bw.so
 </IfModule>
@@ -272,11 +248,11 @@ case "\$1" in
             echo -n " - Application is disabled" 1>&2
             exit 0
         else
-            runcon -t libra_t -l s0:$c_val /usr/sbin/httpd -C 'Include $APP_DIR/conf.d/*.conf' -f /usr/libexec/li/cartridges/wsgi-3.2.1/info/configuration/etc/conf/httpd_nolog.conf -k \$1
+            runcon -t libra_t -l s0:$c_val /usr/sbin/httpd -C 'Include $APP_DIR/conf.d/*.conf' -f /usr/libexec/li/cartridges/wsgi-3.2.1/info/configuration/etc/conf/httpd.conf -k \$1
         fi
     ;;
     restart|graceful|graceful-stop|stop)
-        runcon -t libra_t -l s0:$c_val /usr/sbin/httpd -C 'Include $APP_DIR/conf.d/*.conf' -f /usr/libexec/li/cartridges/wsgi-3.2.1/info/configuration/etc/conf/httpd_nolog.conf -k \$1
+        runcon -t libra_t -l s0:$c_val /usr/sbin/httpd -C 'Include $APP_DIR/conf.d/*.conf' -f /usr/libexec/li/cartridges/wsgi-3.2.1/info/configuration/etc/conf/httpd.conf -k \$1
     ;;
     status)
         echo "Coming soon"
