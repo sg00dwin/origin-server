@@ -40,39 +40,10 @@ form ul, form ol, form li {
   /* Spec */
   background: linear-gradient(top, black, #ececec, black); }
 
-#head > div.omega {
-  padding-left: 10px; }
-
-#logo {
-  margin: 1em 0; }
-
-#top_head {
-  background: url("/app/images/misty-cloud.png") no-repeat right 55px;
-  position: relative;
-  height: 130px; }
-  #top_head #mainslug {
-    position: absolute;
-    bottom: 7px;
-    right: 0;
-    color: #bfdce8;
-    font-size: 14pt;
-    font-family: Overpass; }
-  #top_head > div {
-    float: left; }
-  #top_head #logo {
-    position: absolute;
-    bottom: -20px;
-    left: 0; }
-  #top_head #messages {
-    width: 840px;
-    text-align: right; }
-    #top_head #messages .info {
-      color: white;
-      display: inline;
-      margin-left: 10px; }
-      #top_head #messages .info a {
-        font-size: 11pt;
-        text-decoration: none; }
+#head {
+  padding-top: 20px; }
+  #head > div.omega {
+    padding-left: 10px; }
 
 #login, #logout {
   background: #b30000;
@@ -95,6 +66,7 @@ form ul, form ol, form li {
   padding: 6px 30px;
   position: absolute;
   right: 0;
+  z-index: 1000;
   font-family: OverpassBold; }
   #login a, #logout a {
     margin: 0 auto;
@@ -105,6 +77,64 @@ form ul, form ol, form li {
     text-transform: uppercase; }
     #login a:hover, #logout a:hover {
       color: #4e9fdd; }
+
+#top_head {
+  background: url("/app/images/cloud-bg.png") no-repeat right bottom;
+  position: relative;
+  height: 130px; }
+  #top_head #mainslug {
+    position: absolute;
+    bottom: 7px;
+    right: 0;
+    color: #bfdce8;
+    font-size: 14pt;
+    font-family: Overpass; }
+  #top_head #messages {
+    width: 840px;
+    text-align: right; }
+    #top_head #messages .info {
+      color: white;
+      display: inline;
+      margin-left: 10px; }
+      #top_head #messages .info a {
+        font-size: 11pt;
+        text-decoration: none; }
+  #top_head #logo {
+    margin-top: 15px; }
+  #top_head p {
+    margin-top: 20px;
+    font-size: 13pt;
+    font-family: Overpass; }
+  #top_head a.try_it {
+    background: #cc0000;
+    /* Mozilla */
+    background: -moz-linear-gradient(top, #cc0000, #990000 100%);
+    /* Old webkit */
+    background: -webkit-gradient(linear, top center, from(#cc0000), color-stop(100%, #990000));
+    /* New webkit */
+    background: -webkit-linear-gradient(top, #cc0000, #990000 100%);
+    /* Opera */
+    background: -o-linear-gradient(top, #cc0000, #990000 100%);
+    /* IE <= 7 */
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=$first_color, endColorStr=$last_color);
+    /* IE 8 */
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=$first_color, endColorstr=$last_color)";
+    /* Spec */
+    background: linear-gradient(top, #cc0000, #990000 100%);
+    zoom: 1;
+    display: inline-block;
+    margin: 40px 0 0 40px;
+    padding: 5px 10px;
+    font-family: Overpass;
+    font-size: 20pt;
+    text-decoration: none;
+    text-transform: uppercase;
+    border: 2px solid #cc0000;
+    -moz-border-radius: 8px;
+    -webkit-border-radius: 8px;
+    border-radius: 8px; }
+    .product #top_head a.try_it {
+      display: none; }
 
 #nav {
   overflow: auto;

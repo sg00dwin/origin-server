@@ -270,55 +270,11 @@ form {
 }
 
 #head {
+  padding-top: 20px;
+
   > div.omega {
     padding-left: 10px;
   }
-}
-
-#logo {
-  margin: 1em 0;
-}
-
-#top_head {
-  background: url('/app/images/misty-cloud.png') no-repeat right 55px;
-	position: relative;
-  height: 130px;
-
-  #mainslug {
-    position: absolute;
-    bottom: 7px;
-    right: 0;
-    color: $light_blue;
-    font: {
-      size: 14pt;
-      family: Overpass;
-    }
-  }
-
-  > div { float: left; }
-
-  #logo {
-    position: absolute;
-    bottom: -20px;
-    left: 0;
-  }
-
-  #messages {
-    width: 840px;
-    text-align: right;
-
-    .info {
-      color: white;
-      display: inline;
-      margin-left: 10px;
-
-      a {
-        font-size: 11pt;
-        text-decoration: none;
-      }
-    }
-  }
-
 }
 
 #login{
@@ -327,6 +283,7 @@ form {
 	padding: 6px 30px;
 	position: absolute;
 	right: 0;
+  z-index: 1000;
   font-family: OverpassBold;
 
   a {
@@ -344,6 +301,73 @@ form {
 
 #logout {
   @extend #login;
+}
+
+#top_head {
+  background: url('/app/images/cloud-bg.png') no-repeat right bottom;
+	position: relative;
+  height: 130px;
+  
+  #mainslug {
+    position: absolute;
+    bottom: 7px;
+    right: 0;
+    color: $light_blue;
+    font: {
+      size: 14pt;
+      family: Overpass;
+    }
+  }
+
+  #messages {
+    width: 840px;
+    text-align: right;
+
+    .info {
+      color: white;
+      display: inline;
+      margin-left: 10px;
+
+      a {
+        font-size: 11pt;
+        text-decoration: none;
+      }
+    }
+  }
+  
+  #logo {
+    margin-top: 15px;
+  }
+  
+  p {
+    margin-top: 20px;
+    font: {
+      size: 13pt;
+      family: Overpass;
+    }
+  }
+  
+  a.try_it {
+    @include gradient_bg($rh_red, darken($rh_red, 10%), 100%);
+    display: inline-block;
+    margin: 40px 0 0 40px;
+    padding: 5px 10px;
+    font: {
+      family: Overpass;
+      size: 20pt;
+    }
+    text: {
+      decoration: none;
+      transform: uppercase;
+    }
+    border: 2px solid $rh_red;
+    @include border_radius(8);
+  
+    .product & {
+      display: none;
+    }
+  }
+  
 }
 
 #nav {

@@ -40,27 +40,6 @@
         %a.page(href='#') 3
 
   .clear
-  
-#intro.container_24
-  #question.grid_6
-    %h3 What is OpenShift?
-  
-  #answer.grid_12
-    %p
-      OpenShift Express and Flex are free, leading-edge cloud services that enable developers to deploy applications written in multiple frameworks and languages across clouds.
-    
-  #action.grid_5
-    - case @try_link_points_to
-    - when 'register'
-      = link_to 'Try it now!', '/app/user/new/express', :class => 'try_it'
-    
-    - when 'queue', 'request'
-      = link_to 'Try it now!', '/app/access/express/request', :class => 'try_it'
-    
-    - when 'getting_started'
-      = link_to 'Get Started!', '/app/getting_started/express', :class => 'try_it'
-  
-  .clear
 
 #sidebar_slugs_container.container_24
   -# changed id to sidebar from sidenav
