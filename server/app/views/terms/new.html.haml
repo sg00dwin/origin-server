@@ -1,6 +1,6 @@
 -# file: Require users to agree to any terms they haven't seen yet
 
-= render 'shared/pageheader', :product => 'openshift', :title => 'Legal Terms', :subtitle => 'Legal Terms and Conditions'
+= render 'shared/pageheader', :product => 'openshift', :title => 'Legal Terms', :subtitle => ''
 
 #page.container_24
 
@@ -15,13 +15,13 @@
 
     %p Before participating in the OpenShift Preview Program and receiving the Preview Services, Preview Software and access to online properties, you need to accept certain terms and conditions. The link below contains a list of the terms that will apply to your use.
     %p.terms-link
-      = link_to 'Red Hat & OpenShift Terms of Use', acceptance_terms_path, :class => 'more', :target => "_blank"
+      = link_to 'OpenShift Legal Terms and Conditions', acceptance_terms_path, :class => 'more', :target => "_blank"
 
     = semantic_form_for @term do |form|
       = form.inputs do
         %div
           %p
-            Clicking <strong>I accept</strong> means that you agree to the site usage terms.
+            Clicking <strong>I accept</strong> means that you agree to the above terms.
       = form.buttons do
         = form.commit_button "I Accept", :input_html => { :class => 'button' }
     .clear
