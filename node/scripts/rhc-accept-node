@@ -13,7 +13,7 @@ RESOURCE_LIMITS_FILE=${RESOURCE_LIMITS_FILE:=${LIBRA_CONF_DIR}/resource_limits.c
 #
 # Control variables.  Override for testing
 #
-DEFAULT_SEBOOL_LIST="httpd_can_network_connect:on"
+DEFAULT_SEBOOL_LIST="httpd_can_network_relay:on"
 DEFAULT_PACKAGES="rhc-common rhc-node rhc-node-tools rhc-server 
                   rhc-cartridge-rack-1.1.0 
                   rhc-cartridge-wsgi-3.2.1
@@ -130,6 +130,16 @@ function check_selinux() {
 		STATUS=$(($STATUS + 1))
             fi
 	done
+    #
+    # Check standard file/directory labeling
+    # 
+	RELABELS=`restorecon -n -v /var/lib/libra`
+	RELABEL_COUNT=`echo "$RELABELS" | wc -l`
+	if [ "$RELABEL_COUNT" -ne 0 ]
+	then
+	    echo "FAIL: invalid selinux labels in /var/lib/libra" >&2
+	    STATUS=$(($STATUS + 1))
+	fi
     fi
 }
 
@@ -282,12 +292,18 @@ function check_quotas() {
 	
     fi
 
-    verbose checking quota db file selinux label
-    QUOTA_DB_FILE=$LIBRA_MOUNTPOINT/aquota.user
-    QUOTA_DB_TYPE=`secon -f $QUOTA_DB_FILE | grep type:`
-    if echo $QUOTA_DB_TYPE | grep -v 'quota_db_t' >/dev/null
+    if [ -f $LIBRA_MOUNTPOINT ]
     then
-	echo "FAIL: quota db file: selinux type is incorrect: $QUOTA_DB_TYPE"
+	verbose checking quota db file selinux label
+	QUOTA_DB_FILE=$LIBRA_MOUNTPOINT/aquota.user
+	QUOTA_DB_TYPE=`secon -f $QUOTA_DB_FILE | grep type:`
+	if echo $QUOTA_DB_TYPE | grep -v 'quota_db_t' >/dev/null
+	then
+	    echo "FAIL: quota db file: selinux type is incorrect: $QUOTA_DB_TYPE"
+	    STATUS=$(($STATUS + 1))
+	fi
+    else
+	echo "FAIL: quota db file $LIBRA_MOUNTPOINT/aquota.user does not exist" >&2
 	STATUS=$(($STATUS + 1))
     fi
 
