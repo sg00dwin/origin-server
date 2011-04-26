@@ -15,7 +15,7 @@ class EmailConfirmController < ApplicationController
   end
   
   def confirm_express
-    confirm(new_access_express_requests_path)
+    confirm(access_express_request_direct_path)
   end
 
   def confirm(redirect_path=getting_started_path)

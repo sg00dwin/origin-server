@@ -76,6 +76,7 @@ RedHatCloud::Application.routes.draw do
                :as => "express_requests",
                :path_names => { :new => 'request' },
                :only => [:new, :create]
+      match 'express/request_direct' => 'express_request#request_direct', :via => [:get]
     end
 
     namespace "getting_started" do

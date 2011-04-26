@@ -34,7 +34,7 @@ module Streamline
   #
   def establish
     http_post(@@roles_url) do |json|
-      @roles = json['roles']
+      @roles = json['roles']      
       @rhlogin = json['username']
     end
   end
@@ -65,7 +65,7 @@ module Streamline
 
   def accept_terms
     establish_terms
-    Rails.logger.debug("Calling streamling to accept terms")
+    Rails.logger.debug("Calling streamline to accept terms")
     http_post(build_terms_url(@terms), {}, false) do |json|
       # Log error on unknown result
       Rails.logger.error("Streamline accept terms failed") unless json['term']

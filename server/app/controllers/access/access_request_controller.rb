@@ -6,14 +6,15 @@ class Access::AccessRequestController < ApplicationController
     login = session[:login]
     if login
       @user = session_user
+      @user.refresh_roles
       if @user.has_requested?(access_type)
         render :already_requested and return
       elsif @user.has_access?(access_type)
         redirect_to getting_started_path and return
       end
-      @user.establish_terms
-      @user.refresh_roles
+      @user.establish_terms      
       setup_new_model
+      yield if block_given?
     else
       Rails.logger.debug "User is not logged in - rerouting to login / register"
       session[:workflow] = new_path
@@ -38,18 +39,23 @@ class Access::AccessRequestController < ApplicationController
       @user.accept_terms unless @user.terms.empty?
 
       # Now request access to the developer preview
-      request_access if @user.errors.empty?
-
-      if @user.errors.length > 0
-        @access.errors.update(@user.errors)
-        render :new and return
-      else
-        @user.refresh_roles(true)
-      end
+      execute_request_access
     else
       Rails.logger.debug "User is not logged in - rerouting to login / register"
       session[:workflow] = new_path
-      redirect_to login_path
+      redirect_to login_path and return
+    end
+  end
+  
+  def execute_request_access
+    # Now request access to the developer preview
+    request_access if @user.errors.empty?
+    if @user.errors.length > 0
+      @access.errors.update(@user.errors)
+      render :new and return
+    else
+      @user.refresh_roles(true)
+      yield if block_given?
     end
   end
 
