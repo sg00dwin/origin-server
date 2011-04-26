@@ -7,7 +7,7 @@ require 'uri'
 #
 module Streamline
   include ErrorCodes
-  attr_accessor :rhlogin, :ticket, :roles, :terms, :site_terms
+  attr_accessor :rhlogin, :ticket, :roles, :terms
 
   @@login_url = URI.parse(Rails.configuration.streamline + "/login.html")
   @@register_url = URI.parse(Rails.configuration.streamline + "/registration.html")
@@ -20,7 +20,6 @@ module Streamline
 
   def initialize
     @roles = []
-    @site_terms = []
   end
 
   def email_confirm_url(key, login)
@@ -35,7 +34,7 @@ module Streamline
   #
   def establish
     http_post(@@roles_url) do |json|
-      @roles = json['roles']
+      @roles = json['roles']      
       @rhlogin = json['username']
     end
   end
@@ -46,16 +45,8 @@ module Streamline
 
     # Otherwise, look them up
     @terms = []
-    @site_terms = []
     http_post(@@unacknowledged_terms_url) do |json|
-      terms = json['unacknowledgedTerms']
-      terms.each do |term|
-        if term['termUrl'] =~ /^http(s)?:\/\/openshift\.redhat\.com/
-          @terms.push(term)
-        else
-          @site_terms.push(term)
-        end
-      end
+      @terms = json['unacknowledgedTerms']
     end
   end
 
@@ -72,21 +63,10 @@ module Streamline
     end
   end
 
-  def accept_site_terms
+  def accept_terms
     establish_terms
-    accept_terms(@site_terms)
-    @site_terms.clear if errors.empty?
-  end
-
-  def accept_subscription_terms
-    establish_terms
-    accept_terms(@terms)
-    @terms.clear if errors.empty?
-  end
-
-  def accept_terms(terms)
-    Rails.logger.debug("Calling streamling to accept terms")
-    http_post(build_terms_url(terms), {}, false) do |json|
+    Rails.logger.debug("Calling streamline to accept terms")
+    http_post(build_terms_url(@terms), {}, false) do |json|
       # Log error on unknown result
       Rails.logger.error("Streamline accept terms failed") unless json['term']
 
@@ -95,12 +75,13 @@ module Streamline
 
       # Convert the accepted ids to strings to comparison
       # normally they are integers
-      terms_ids = terms.map{|hash| hash['termId'].to_s}
+      terms_ids = @terms.map{|hash| hash['termId'].to_s}
       unless (terms_ids - json['term']).empty?
         Rails.logger.error("Streamline partial terms acceptance. Expected #{terms_ids} got #{json['term']}")
         errors.add(:base, I18n.t(:terms_error, :scope => :streamline))
       end
     end
+    @terms.clear if errors.empty?
   end
 
   #

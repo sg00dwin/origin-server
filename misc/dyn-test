@@ -1,0 +1,128 @@
+#!/usr/bin/env ruby
+# Copyright © 2010 Jim Jagielski All rights reserved
+# Copyright © 2010 Mike McGrath All rights reserved
+# Copyright © 2010 Red Hat, Inc. All rights reserved
+
+# This copyrighted material is made available to anyone wishing to use, modify,
+# copy, or redistribute it subject to the terms and conditions of the GNU
+# General Public License v.2.  This program is distributed in the hope that it
+# will be useful, but WITHOUT ANY WARRANTY expressed or implied, including the
+# implied warranties of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.  You should have
+# received a copy of the GNU General Public License along with this program;
+# if not, write to the Free Software Foundation, Inc., 51 Franklin Street,
+# Fifth Floor, Boston, MA 02110-1301, USA. Any Red Hat trademarks that are
+# incorporated in the source code or documentation are not subject to the GNU
+# General Public License and may only be used or replicated with the express
+# permission of Red Hat, Inc.
+
+require 'rubygems'
+require 'net/https'
+require 'uri'
+require 'json'
+require 'pp'
+
+def dyn_success?(data)
+  success = false
+  if data
+    data = JSON.parse(data)
+    if data && data['status'] && data['status'] == 'failure'
+      puts "Request failed: #{data['status']}"
+    elsif data && data['status'] == 'success'
+      success = true
+    end
+  end
+  success
+end
+
+def dyn_http(method, url_str, headers, post_data=nil)
+  url = URI.parse(url_str)
+
+  http = Net::HTTP.new(url.host, url.port)
+  http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+  http.use_ssl = true
+  data = post_data ? JSON.generate(post_data) : ""
+ 
+  if method == :post or method == :put
+    resp, data = http.send(method, url.path, data, headers)
+  else
+    resp, data = http.send(method, url.path, headers)
+  end 
+
+  case resp
+  when Net::HTTPSuccess
+    exit 1 unless dyn_success?(data)
+
+    yield JSON.parse(resp.body) if block_given?
+  when Net::HTTPTemporaryRedirect
+    puts "ERROR - Job redirected"
+    exit 1
+  else
+    puts resp.body
+    puts "ERROR - DYN returned code #{resp.code} on #{method} to #{url}"
+    exit 1
+  end
+end
+
+
+def run_test(cn, un, pw, zone, fqdn)
+  # Login and update the authentication token
+  #puts "Logging in"
+  headers = { "Content-Type" => 'application/json' }
+  session_data = { :customer_name => cn, :user_name => un, :password => pw }
+  dyn_http(:post, 'https://api2.dynect.net/REST/Session/', headers, session_data) do |result|
+    headers['Auth-Token'] = result['data']['token']
+  end
+
+  # Create the A record
+  #puts "Creating A record"
+  record_data = { :rdata => { :address => "10.10.10.10" }, :ttl => "30" }
+  dyn_http(:post, "https://api2.dynect.net/REST/ARecord/#{zone}/#{fqdn}/", headers, record_data)
+
+  # Publish the changes
+  #puts "Publishing"
+  publish_data = { "publish" => "true" }
+  dyn_http(:put, "https://api2.dynect.net/REST/Zone/#{zone}/", headers, publish_data)
+
+  # Get the A record
+  #puts "Verifying A record"
+  dyn_http(:get, "https://api2.dynect.net/REST/ARecord/#{zone}/#{fqdn}/", headers)
+
+  # Dig the result
+  #puts "Looking up the result"
+  start = Time.now.to_i
+  until `dig @ns1.p23.dynect.net #{fqdn} | grep 10.10.10.10 | wc -l`.chomp.to_i > 0 do
+    sleep 1
+  end
+  finish = Time.now.to_i
+  total = finish-start
+
+  # Now, cleanup
+  #puts "Cleaning up A record"
+  dyn_http(:delete, "https://api2.dynect.net/REST/ARecord/#{zone}/#{fqdn}/", headers)
+
+  # Publish the changes
+  #puts "Publishing"
+  publish_data = { "publish" => "true" }
+  dyn_http(:put, "https://api2.dynect.net/REST/Zone/#{zone}/", headers, publish_data)
+
+  # Logout
+  #puts "Logging out"
+  dyn_http(:delete, 'https://api2.dynect.net/REST/Session/', headers)
+
+  return total
+end
+
+if __FILE__ == $0
+  # Set the desired parameters on the command line
+  cn = ARGV[0]
+  un = ARGV[1]
+  pw = ARGV[2]
+  zone = ARGV[3]
+  puts "Attempt:      Time for update to complete in seconds:"
+  for i in 1..50
+    fqdn = "test" + Time.now.to_i.to_s + i.to_s + "." + zone
+    total_time = run_test(cn, un, pw, zone, fqdn)
+    puts "#{i}                  #{total_time}"
+  end
+end

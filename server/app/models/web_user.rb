@@ -42,7 +42,6 @@ class WebUser
 
     # Make sure to initialize the array values
     @roles ||= []
-    @site_terms ||= []
   end
 
   def self.from_json(json)

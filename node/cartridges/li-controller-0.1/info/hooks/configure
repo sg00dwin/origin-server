@@ -196,7 +196,7 @@ function enable_user_ssh_access {
     USERNAME=$1
     USEREMAIL="$2"
     SSHKEY="$3"
-
+    
     USERHOME=`homedir $USERNAME`
     SSHDIR=${USERHOME}/.ssh
 
@@ -475,7 +475,11 @@ then
   
       set_fs_quotas $username $quota_blocks $quota_files
     else
-      enable_user_ssh_access $username $email "$ssh_key"
+      # just reset the key, per "ALTER", only if the account exists on this node
+      if id $username >/dev/null 2>&1
+      then
+        enable_user_ssh_access $username $email "$ssh_key"
+      fi      
     fi
 else
     if (service cgconfig status > /dev/null)

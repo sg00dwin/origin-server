@@ -14,7 +14,7 @@ begin
     AMI = "ami-6a897e03"
     TYPE = "m1.large"
     KEY_PAIR = "libra"
-    ZONE = 'us-east-1c'
+    ZONE = 'us-east-1d'
     OPTIONS = {:key_name => KEY_PAIR, :instance_type => TYPE, :availability_zone => ZONE}
     VERSION_REGEX = /rhc-\d+\.\d+\.?\d*-\d+/
     AMI_REGEX = /rhc-\d+\.\d+/
@@ -56,27 +56,62 @@ begin
     end
 
     def ssh(cmd, timeout=60)
-      Timeout::timeout(timeout) { `#{SSH} #{@server} "#{cmd}"`.chomp }
+      puts "(ssh command / timeout = #{timeout} / cmd = #{cmd})"
+      output = ""
+      begin
+        Timeout::timeout(timeout) { output = `#{SSH} #{@server} "#{cmd}"`.chomp }
+      rescue Timeout::Error
+        puts "SSH command '#{cmd}' timed out"
+      end
+      puts "----------------------------\n#{output}\n----------------------------"
+      return output
     end
 
     def scp(cmd, timeout=60)
-      Timeout::timeout(timeout) { `#{SCP} #{cmd}` }
+      puts "(scp command / timeout = #{timeout}) / #{cmd}"
+      output = ""
+      begin
+        Timeout::timeout(timeout) { output = `#{SCP} #{cmd}` }
+      rescue Timeout::Error
+        puts "SCP command '#{cmd}' timed out"
+      end
+      puts "begin output ----------------------------\n#{output}\nend output ------------------------------\n"
+      return output
     end
 
     # Blocks until the current instance is available
     def instance_available
+        max_retries = 15
+
         # Wait until the AWS state is running
-        until instance_value(:aws_state) == "running"
+        count = 0
+        until (instance_value(:aws_state) == "running") or (count == max_retries)
+          puts "System not available yet... retrying"
           sleep 5
+          count += 1
+        end
+
+        if count == max_retries
+          puts "EXITING - Took too long for instance state to be 'running'"
+          exit 0
         end
 
         @dns = instance_value(:dns_name)
         @server = "root@" + @dns
 
-        # Block until we can SSH to the instance
-        until ssh('echo Success', 300).split[-1] == "Success"
+        # Wait until we can SSH into the instance
+        count = 0
+        until (ssh('echo Success', 5).split[-1] == "Success") or (count == max_retries)
+          puts "SSH timed out... retrying"
           sleep 5
+          count += 1
         end
+
+        if count == max_retries
+          puts "EXITING - Took too long for instance to be SSH available"
+          exit 0
+        end
+
     end
 
     def send_verified_email(version, ami)
@@ -417,13 +452,13 @@ END_OF_MESSAGE
           puts "Done"
 
           print "Installing the mechanize gem..."
-          ssh("yum -y install rubygem-nokogiri")
-          ssh("gem install mechanize")
+          ssh("yum -y install rubygem-nokogiri", 120)
+          ssh("gem install mechanize", 120)
           puts "Done"
 
           print "Installing rails for client testing..."
-          `#{SSH} #{@server} "gem install rails -d --no-rdoc --no-ri"`
-          `#{SSH} #{@server} "yum -y install sqlite*"`
+          ssh("gem install rails -d --no-rdoc --no-ri", 120)
+          ssh("yum -y install sqlite*", 120)
           puts "Done"
 
           print "Bounding Apache to pick up the change..."
@@ -445,9 +480,13 @@ END_OF_MESSAGE
           #puts "Done"
 
           # Run verification tests
-          print "Running verification tests (60 minute timeout enforced)..."
+          print "Running verification tests..."
           ssh("cucumber --tags @verify --format junit -o /tmp/rhc/junit/ li/tests/", 3600)
           p2 = $?
+          puts "Done"
+
+          print "Checking mcollective status..."
+          ssh("service mcollective status")
           puts "Done"
 
           print "Downloading verification output..."
