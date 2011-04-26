@@ -106,7 +106,7 @@ When /^the applications are created$/ do
       end
 
       # sleep a little to randomize forks
-      sleep rand * 10
+      sleep rand
     end
   end
 
