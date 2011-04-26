@@ -271,7 +271,7 @@ EOF
       return dyn_has?(path, auth_token)
     end
     
-    def handle_temp_redirect(resp, auth_token)
+    def self.handle_temp_redirect(resp, auth_token)
       if resp.body =~ /^\/REST\//
         headers = { "Content-Type" => 'application/json', 'Auth-Token' => auth_token }
         url = URI.parse("#{Libra.c[:dynect_url]}#{resp.body}")
@@ -372,7 +372,7 @@ EOF
         when Net::HTTPSuccess
           raise_dns_exception(nil, resp) unless dyn_success?(data)
         when Net::HTTPTemporaryRedirect
-          handle_temp_redirect(resp)
+          handle_temp_redirect(resp, auth_token)
         else
           raise_dns_exception(nil, resp)
         end
