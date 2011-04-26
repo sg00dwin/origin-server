@@ -5,6 +5,7 @@
   = stylesheet_link_tag '/app/stylesheets/fancybox.css'
   = javascript_include_tag '/app/javascripts/fancybox.js'
   = javascript_include_tag "/app/javascripts/jquery.slideshow.minified.js"
+  = javascript_include_tag "/app/javascripts/jquery.tools.min.js"
   = javascript_include_tag "/app/javascripts/home"
   
 .simpleSlideShow.slideShow.container_24
@@ -41,84 +42,65 @@
 
   .clear
 
-#sidebar_slugs_container.container_24
-  -# changed id to sidebar from sidenav
-  #sidebar.grid_7.push_17
+/High-level information
+#info.container_24
 
-    #resources.grid_7.alpha
-      = link_to('http://www.redhat.com/openshift/community') do
-        %h4 Resources
-        %p Forums, Eval Guides, How-To's & Videos
-    .clear
-
-    #faq.grid_7
-      = link_to('http://www.redhat.com/openshift/faq') do
-        %h4 FAQ
-        %p Got questions? We have answers
-    .clear
-    
-    #partners.grid_7.omega
-      = link_to partners_path do
-        %h4 Our Partners
-        %p A Strong Ecosystem of Technologies
-
-  /Product slugs
-  
-  /Express slug
-  .slug.grid_8.pull_7
-    %h3 OpenShift is for Developers
-    %p
+  /For Developers
+  %h3.section-header OpenShift is for Developers
+  #for_developers.section.container_24
+    %p.grid_3.push_1
       OpenShift is for developers who love to build on open source software, but who don't want the hassle of building and maintaining their own infrastructure.
     
-    %a.fancybox(href='/app/images/rocket-dude-big.png')
+    %a.fancybox.grid_20.push_1(href='/app/images/rocket-dude-big.png')
       = image_tag '/app/images/rocket-dude.png'
 
-
-  /Flex slug
-  .slug.grid_9.pull_7.last 
+  .clear
   
-    %h3 OpenShift is Cutting-Edge
-    %p
+  /Cutting-Edge
+  %h3.section-header OpenShift is Cutting-Edge
+  #cutting_edge.section.container_24
+    %p.grid_3.push_1
       Supports all the coolest languages and frameworks, along with PaaS automation features like auto-scaling and built-in monitoring.
     
-    %a.fancybox(href='app/images/layer-cake-big.jpg')
+    %a.fancybox.grid_20.push_1(href='app/images/layer-cake-big.jpg')
       = image_tag '/app/images/layer-cake.png'
-   
-
-  /End slugs
+     
   .clear
 
-/App promo boxes
-#app_promos.container_24
-  /Express box
-  .express.promo.grid_8
-    %h3 
-      Deploy to the Cloud in Minutes,
-      %br
-      it's Free and Easy!
-    %h4 Express
-    %p
-      = link_to 'Learn More', express_url
+  /App promo boxes
+  %h3.section-header OpenShift Products  
+  #app_promos.section.container_24
 
-  /Flex box
-  .flex.promo.grid_8
-    %h3 
-      Auto-scaling PaaS for 
-      %br
-      JBoss, Java, and PHP
-    %h4 Flex
-    %p
-      = link_to 'Learn More', flex_url
+    /Express box
+    .express.promo.grid_8
+      %h3 
+        Deploy to the Cloud in Minutes,
+        %br
+        it's Free and Easy!
+      %h4 Express
+      %p
+        = link_to 'Learn More', express_url
 
-  /Power box
-  .power.promo.grid_8
-    %h3 
-      Tools for custom cloud 
-      %br
-      application deployments
-    %h4 Power
-    %p
-      = link_to 'Learn More', power_url
+    /Flex box
+    .flex.promo.grid_8
+      %h3 
+        Auto-scaling PaaS for 
+        %br
+        JBoss, Java, and PHP
+      %h4 Flex
+      %p
+        = link_to 'Learn More', flex_url
+
+    /Power box
+    .power.promo.grid_8
+      %h3 
+        Tools for custom cloud 
+        %br
+        application deployments
+      %h4 Power
+      %p
+        = link_to 'Learn More', power_url
+
+    .clear
 
   .clear
-/End app promo boxes
