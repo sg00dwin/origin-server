@@ -19,17 +19,9 @@
   %h2 OpenShift Flex
   %h3 Need to auto-scale new and existing apps in the Cloud?
   %p
-    Provision, deploy, monitor and auto-scale JBoss, Java EE6 and PHP apps
+    Provision, deploy, monitor and auto-scale JBoss, Java EE6 and PHP apps    
     
-  - case @try_link_points_to  
-  - when 'register'
-    = link_to 'Try it now!', '/app/user/new/flex', :class => 'try_it'
-  
-  - when 'queue', 'request'
-    = link_to 'Try it now!', '/app/access/flex/request', :class => 'try_it'
-  
-  - when 'getting_started'
-    = link_to 'Get Started!', '/app/getting_started/flex', :class => 'try_it'
+  = link_to 'Try it now!', '/app/flex_redirect', :class => 'try_it'     
 
 -# Tabs
 - content_for :tabs do

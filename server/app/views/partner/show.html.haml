@@ -14,7 +14,8 @@
     #partner_information.grid_5
       /Logo
       #logo
-        = image_tag "/app/images/partners/#{@partner.logo}"
+        = link_to @partner.url do
+          = image_tag "/app/images/partners/#{@partner.logo}"
       
       /Contact information
       #contact

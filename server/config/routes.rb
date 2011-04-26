@@ -19,6 +19,7 @@ RedHatCloud::Application.routes.draw do
     match 'express' => 'product#express', :as => 'express'
     match 'flex' => 'product#flex', :as => 'flex'
     match 'power' => 'product#power', :as => 'power'
+    match 'flex_redirect' => 'product#flex_redirect', :as => 'flex_redirect'
     match 'about' => 'home#about', :as => 'about'
     match 'partners/join' => 'partner#join', :as=> 'join_partner'
 

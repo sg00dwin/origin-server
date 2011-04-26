@@ -19,7 +19,8 @@
       "Rapidly develop and iterate applications in any programming language", 
       "Scale data storage needs quickly and safely"
     ],
-  "availability": "Coming soon"
+  "availability": "Available now in developer preview",
+  "availability_category": "now"
   },
 "appcelerator": {
   "name": "Appcelerator", 
@@ -41,7 +42,8 @@
     "Familiar Eclipse-based IDE enables developers to create mobile cloud applications for Ruby, PHP, or Java",
     "One-click deployment to the Red Hat certified Cloud Provider Clouds"],
   "availability":
-    "Coming Soon"
+    "Available now in developer preview",
+  "availability_category": "now"
   },
 "bitnami": {
   "name": "BitNami",
@@ -62,7 +64,8 @@
     "BitNami application cartridges enable 1 click deployment of open source software on OpenShift.",
     "Choose from a library of popular applications for CRM, content management, blogging and more."
   ],
-  "availability": "Coming Soon"
+  "availability": "Coming Soon",
+  "availability_category": "eventually"
   },
 "cotendo" : {
   "name": "Cotendo",
@@ -83,7 +86,8 @@
     ["2x-10x faster performance than origin without the need for application architecture changes.",
     "Scale applications with demand without any additional infrastructure",
     "Direct, granular control with full transparency enable real-time adjustments to your content delivery"],
-  "availability": "Coming Soon"
+  "availability": "Available now in developer preview",
+  "availability_category": "now"
   },
 "couchbase" : {
   "name": "Couchbase",
@@ -104,7 +108,8 @@
     ["Extremely easy to use and works out of the box with the most popular open source development stacks",
     "Highest-performance database technology with sub-millisecond latency keeps applications “snappy”",
     "Production-proven, zero-downtime design means your application is always online even through cluster maintenance"],
-  "availability": "Coming Soon"
+  "availability": "Available now in developer preview",
+  "availability_category": "now"
   },
 "dyn" : {
   "name": "Dyn",
@@ -125,7 +130,8 @@
     ["Seamless management of mission critical DNS and email services.",
     "Enterprise power and rock-solid scalability from day one.",
     "Reliability and peace of mind in using industry leading software, service, and support."],
-  "availability": "Coming Soon"
+  "availability": "Coming Soon",
+  "availability_category": "eventually"
   },
 "enterprisedb" : {
   "name": "EnterpriseDB",
@@ -146,7 +152,8 @@
     ["Build scalable cloud database systems",
     "Supports all popular developer languages",
     "Move Oracle applications to the Cloud"],
-  "availability": "Coming Soon"
+  "availability": "Coming Soon",
+  "availability_category": "eventually"
   },
 "exo" : {
   "name": "eXo",
@@ -167,7 +174,8 @@
     ["OpenShift’s easy on-ramp and eXo Cloud IDE’s collaborative development approach are ideal for open source developers.",
     "Developing mashups in eXo Cloud IDE is easier with OpenShift’s choice of frameworks, languages and APIs.",
     "Because deployment to OpenShift is automatic via Git, developers can test as they code, speeding development."],
-  "availability": "Coming Soon"
+  "availability": "Available now in developer preview",
+  "availability_category": "now"
   },
 "mu-dynamics" : {
   "name": "Mu Dynamics",
@@ -188,7 +196,8 @@
     ["blitz.io adapts common dev tools to make load and performance testing simple and easy",
     "The RESTful API allow developers to integrate performance testing into their development cycle",
     "By automatically recreating production workloads, blitz.io eliminates complex test scripts"],
-  "availability": "Coming Soon"
+  "availability": "Available now in developer preview",
+  "availability_category": "now"
   },
 "opencrowd" : {
   "name": "Opencrowd",
@@ -210,7 +219,8 @@
     "Provide enterprise grade reliability and security to your business intelligence and enterprise collaboration applications",
     "Scale instantly on demand to support your social media applications",
     "Enrich and extend your application environment by leveraging OpenShift services like CDN, Caching, Bigdata"],
-  "availability": "Coming Soon"
+  "availability": "Coming Soon",
+  "availability_category": "eventually"
   },
 "opsource" : {
   "name": "OpSource",
@@ -231,7 +241,8 @@
     ["Infrastructure built on enterprise grade technology and carrier class networks",
     "Best in class physical, network and end user security technology and policy rules controls",
     "Pay only for what you use; scale up and down in minutes based on application demand, workload and dev cycle"],
-  "availability": "Coming Soon"
+  "availability": "Coming Q3, 2011",
+  "availability_category": "soon"
   },
 "zend" : {
   "name": "Zend",
@@ -252,6 +263,7 @@
     ["Elasticity and high availability for PHP applications",
     "Portability across different clouds and flexibility to customize your environment",
     "Early problem detection and swift root cause analysis through PHP monitoring and code tracing"],
-  "availability": "Coming Soon"
+  "availability": "Available now in developer preview",
+  "availability_category": "now"
   }
 }
