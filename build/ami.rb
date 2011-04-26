@@ -485,6 +485,10 @@ END_OF_MESSAGE
           p2 = $?
           puts "Done"
 
+          print "Checking mcollective status..."
+          ssh("service mcollective status")
+          puts "Done"
+
           print "Downloading verification output..."
           `mkdir -p rhc/log`
           scp("-r #{@server}:/tmp/rhc/cucumber*.log rhc/log")
