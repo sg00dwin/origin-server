@@ -278,7 +278,7 @@ File.chmod(0600, ssh_config)
 #
 # Confirm that the host exists in DNS
 #
-puts "Confirming host exists..."
+puts "Now your new domain name is populated worldwide (this might take a minute)..."
 
 # Allow DNS to propogate
 sleep 15
