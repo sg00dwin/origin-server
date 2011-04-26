@@ -26,7 +26,8 @@ class LoginController < ApplicationController
 
     Rails.logger.debug "Session workflow in LoginController#create: #{session[:workflow]}"
     Rails.logger.debug "Redirecting to home#index"    
-    redirect_to root_path
-    #redirect_to login_error_path
+    #redirect_to root_path
+    flash[:notice] = 'This is a test notice.'
+    redirect_to login_error_path
   end
 end

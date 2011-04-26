@@ -175,8 +175,9 @@ $sans: 'Liberation Sans','Helvetica Neue',Arial,FreeSans,sans-serif;
 }
 
 @mixin error_styling {
+  background-color: #FFF3F3;
   color: $error !important;
-  background: lighten($error, 40%%);
+  border-color: #FFD9D9;
 }
 
 /**
@@ -233,6 +234,39 @@ form {
   #{$list_elements} {
     list-style-type: none;
     margin: 0;
+  }
+}
+
+/**
+ * Styling for site messages
+ */
+.message {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  background-repeat: no-repeat;
+  background-position: 10px center;
+  padding: 5px 0 5px 40px;
+  margin: 0 0 10px;
+  font: {
+    size: 11pt;
+    weight: bold;
+  }
+  text-align: center;
+  border: 1px solid;
+  
+  &.error {
+    /* Red text / pink bg */
+    @include error_styling;
+    background-image: url('/app/images/icons/error.png');
+  }
+  
+  &.notice {
+    /* bright orange text / pale orange bg */
+    background-color: #FFFBCC;
+    background-image: url('/app/images/icons/important.png');
+    color: #FF8000;
+    border-color: #F2ED85;
   }
 }
 
@@ -1068,14 +1102,6 @@ form {
     }
   }
 
-  p.flash-notice {
-    background: #ffb url('/app/images/exclam.png') no-repeat 10px center;
-    padding: 10px;
-    padding-left: 35px;
-    color: black;
-    font-size: 12pt;
-    border: 2px solid #ff6;
-  }
 }
 
 #login_instead {
@@ -1231,6 +1257,15 @@ p.inline-errors {
     size: 11pt;
   }
   margin: 0 0 0 165px;
+}
+
+#error {
+  @extend p.inline-errors;
+  margin: 5px 0;
+  padding: 5px 0;
+  text-align: center;
+  background: #FFF3F3;
+  border: 1px solid #FFD9D9;
 }
 
 #error_explanation {

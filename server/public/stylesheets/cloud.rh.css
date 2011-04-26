@@ -29,6 +29,34 @@ form ul, form ol, form li {
   list-style-type: none;
   margin: 0; }
 
+/**
+ * Styling for site messages
+ */
+.message {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  background-repeat: no-repeat;
+  background-position: 10px center;
+  padding: 5px 0 5px 40px;
+  margin: 0 0 10px;
+  font-size: 11pt;
+  font-weight: bold;
+  text-align: center;
+  border: 1px solid; }
+  .message.error {
+    /* Red text / pink bg */
+    background-color: #FFF3F3;
+    color: #ff3333 !important;
+    border-color: #FFD9D9;
+    background-image: url("/app/images/icons/error.png"); }
+  .message.notice {
+    /* bright orange text / pale orange bg */
+    background-color: #FFFBCC;
+    background-image: url("/app/images/icons/important.png");
+    color: #FF8000;
+    border-color: #F2ED85; }
+
 #horrible_wrapper {
   background: #333;
   /* Mozilla */
@@ -681,13 +709,6 @@ form ul, form ol, form li {
     color: #4e9fdd;
     text-align: right;
     text-decoration: none; }
-  #page p.flash-notice {
-    background: #ffffbb url("/app/images/exclam.png") no-repeat 10px center;
-    padding: 10px;
-    padding-left: 35px;
-    color: black;
-    font-size: 12pt;
-    border: 2px solid #ff6; }
 
 #login_instead {
   margin: 0 0 15px 165px; }
@@ -908,8 +929,9 @@ form li {
  * Form error handling
  */
 #page form li.error {
+  background-color: #FFF3F3;
   color: #ff3333 !important;
-  background: white;
+  border-color: #FFD9D9;
   padding: 5px 0;
   margin: 5px 0; }
   #page form li.error input {
@@ -917,15 +939,23 @@ form li {
   #page form li.error label {
     margin-bottom: 6px; }
 
-p.inline-errors {
+p.inline-errors, #error {
   color: #ff3333 !important;
   font-weight: bold;
   font-size: 11pt;
   margin: 0 0 0 165px; }
 
+#error {
+  margin: 5px 0;
+  padding: 5px 0;
+  text-align: center;
+  background: #FFF3F3;
+  border: 1px solid #FFD9D9; }
+
 #error_explanation {
+  background-color: #FFF3F3;
   color: #ff3333 !important;
-  background: white;
+  border-color: #FFD9D9;
   padding: 5px 0;
   list-style-type: none; }
   #error_explanation li {

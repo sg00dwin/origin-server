@@ -15,13 +15,12 @@
 
     #login-form
       - if @user and @user.errors.any?
-        %ul#error_explanation
-          - @user.errors.full_messages.each do |msg| 
-            %li
-              = msg
+        - @user.errors.full_messages.each do |msg| 
+          .message.error
+            = msg
 
       - if flash[:notice]
-        %p.flash-notice
+        .message.notice
           = flash[:notice]
       
     

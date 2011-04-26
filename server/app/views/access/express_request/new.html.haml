@@ -16,8 +16,8 @@
 
     - @access.errors.each do |key, value|
       - if key == :base
-        %div
-          %strong #{value}
+        .message.error
+          #{value}
 
     = semantic_form_for @access do |form|
       - unless @user.terms.empty?

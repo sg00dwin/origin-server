@@ -4,11 +4,11 @@ class ProductController < ApplicationController
 
   def express
     @product = 'express'
-    @try_link_points_to = try_it_destination(1)
+    @try_link_points_to = try_it_destination(CloudAccess::EXPRESS)
   end
   
   def flex_redirect
-    case try_it_destination(1)
+    case try_it_destination(CloudAccess::FLEX)
     when 'register'
       session[:workflow] = '/app/user/new/flex'
     when 'queue', 'request'
@@ -29,7 +29,7 @@ class ProductController < ApplicationController
     end
     
     @product = 'flex'
-    @try_link_points_to = try_it_destination(2)
+    @try_link_points_to = try_it_destination(CloudAccess::FLEX)
     return
   end
 

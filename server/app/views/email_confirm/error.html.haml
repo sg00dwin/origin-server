@@ -9,9 +9,9 @@
 .clear
 
 .container_24#page
-  .prefix_1.grid_22.suffix_1#errors
-    .grid_12#errors_div
+  #errors.prefix_1.grid_22.suffix_1
+    #errors_div.grid_12
       - @errors.each do |field, msg|
-        %p
+        .message.error
           = msg
   .clear

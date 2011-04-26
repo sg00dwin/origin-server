@@ -7,7 +7,7 @@
 - if @product == 'openshift'
   - subtitle = 'Register for an account'
 - else
-  - subtitle = 'Register for access to ' + @product
+  - subtitle = 'Register for access to OpenShift ' + @product
     
 =render 'shared/pageheader', :product => @product, :title => 'Try ' + @product.capitalize, :subtitle => subtitle
 
@@ -21,8 +21,8 @@
     
     - @user.errors.each do |key, value|
       - if key == :base || key == :captcha
-        %div
-        %strong #{value}
+        .message.error
+          #{value}
             
     = semantic_form_for @user do |form|
       = form.inputs do
