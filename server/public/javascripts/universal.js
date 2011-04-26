@@ -14,7 +14,7 @@ $(function(){
   //Initialize menus
   menu_widths = {};
   menus.each(function(){
-    console.log($(this).attr('id'));
+    //console.log($(this).attr('id'));
     //Record width
     menu_widths[$(this).attr('id')] = $(this).width();
     //Restrict height
@@ -25,7 +25,7 @@ $(function(){
       $(this).css({width:0});
     }
   });
-  console.log(menu_widths);
+  //console.log(menu_widths);
   
   labels.click(function(){
     var id, menu;
