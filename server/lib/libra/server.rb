@@ -416,7 +416,7 @@ EOF
         when Net::HTTPNotFound
           Libra.logger_debug "DEBUG: DYNECT: Could not find #{url.path} to delete"
         when Net::HTTPTemporaryRedirect
-          handle_temp_redirect(resp)
+          handle_temp_redirect(resp, auth_token)
         else
           raise_dns_exception(nil, resp)
         end
