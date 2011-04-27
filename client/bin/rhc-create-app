@@ -117,7 +117,8 @@ end
 opt["repo"] = opt["app"] unless opt["repo"]
 
 puts ""
-puts "Please support the beta - let #libra know of any bugs you find"
+puts "Please support the developer preview - let #openshift on freenode know of any"
+puts "bugs you find"
 puts ""
 
 #

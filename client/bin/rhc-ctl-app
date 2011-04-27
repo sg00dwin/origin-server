@@ -28,7 +28,7 @@ def p_usage
     puts <<USAGE
 
 Usage: #{$0}
-Control a libra app
+Control an OpenShift express app
 
   -a|--app   application   Application name  (alphanumeric) (required)
   -l|--rhlogin rhlogin     Red Hat login (#{rhlogin})

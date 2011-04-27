@@ -123,9 +123,9 @@ end
 #
 
 if File.readable?(libra_kfile)
-    puts "Openshift Express Libra key found at #{libra_kfile}.  Reusing..."
+    puts "Openshift Express key found at #{libra_kfile}.  Reusing..."
 else
-    puts "Generating Openshift Express libra ssh key to #{libra_kfile}"
+    puts "Generating Openshift Express ssh key to #{libra_kfile}"
     # Use system for interaction
     system("ssh-keygen -t rsa -f #{libra_kfile}")
 end
