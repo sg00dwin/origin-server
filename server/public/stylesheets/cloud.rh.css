@@ -1,7 +1,3 @@
-/**
- * let elements enclose their floated children
- * from: http://www.quirksmode.org/css/clearing.html
- **/
 body {
   background: #333; }
   body ul, body ol, body li, body p, body a, body h1, body h2, body h3, body h4, body h5, body h6 {
@@ -135,6 +131,10 @@ form ul, form ol, form li {
       color: #4e9fdd; }
 
 #nav {
+  /**
+   * let elements enclose their floated children
+   * from: http://www.quirksmode.org/css/clearing.html
+   **/
   overflow: auto;
   width: 100%;
   background: #cc0000;
@@ -441,10 +441,27 @@ form ul, form ol, form li {
     font-size: 20pt;
     text-decoration: none;
     text-transform: uppercase;
-    border: 2px solid #cc0000;
     -moz-border-radius: 8px;
     -webkit-border-radius: 8px;
     border-radius: 8px; }
+    #intro a.try_it:hover {
+      background: #990000;
+      /* Mozilla */
+      background: -moz-linear-gradient(top, #990000, #cc0000 100%);
+      /* Old webkit */
+      background: -webkit-gradient(linear, top center, from(#990000), color-stop(100%, #cc0000));
+      /* New webkit */
+      background: -webkit-linear-gradient(top, #990000, #cc0000 100%);
+      /* Opera */
+      background: -o-linear-gradient(top, #990000, #cc0000 100%);
+      /* IE <= 7 */
+      filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=$first_color, endColorStr=$last_color);
+      /* IE 8 */
+      -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=$first_color, endColorstr=$last_color)";
+      /* Spec */
+      background: linear-gradient(top, #990000, #cc0000 100%);
+      zoom: 1;
+      color: white; }
 
 #sidebar_slugs_container {
   background: white;
@@ -923,6 +940,10 @@ form p {
   clear: left; }
 
 form li {
+  /**
+   * let elements enclose their floated children
+   * from: http://www.quirksmode.org/css/clearing.html
+   **/
   overflow: auto;
   width: 100%; }
 
@@ -1064,34 +1085,51 @@ label.error {
     padding-left: 10px;
     font-size: 11pt; }
   #banner a.try_it {
-    background: #cc0000;
+    background: #76bc48;
     /* Mozilla */
-    background: -moz-linear-gradient(top, #cc0000, #990000 100%);
+    background: -moz-linear-gradient(top, #76bc48, #5e9938 100%);
     /* Old webkit */
-    background: -webkit-gradient(linear, top center, from(#cc0000), color-stop(100%, #990000));
+    background: -webkit-gradient(linear, top center, from(#76bc48), color-stop(100%, #5e9938));
     /* New webkit */
-    background: -webkit-linear-gradient(top, #cc0000, #990000 100%);
+    background: -webkit-linear-gradient(top, #76bc48, #5e9938 100%);
     /* Opera */
-    background: -o-linear-gradient(top, #cc0000, #990000 100%);
+    background: -o-linear-gradient(top, #76bc48, #5e9938 100%);
     /* IE <= 7 */
     filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=$first_color, endColorStr=$last_color);
     /* IE 8 */
     -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=$first_color, endColorstr=$last_color)";
     /* Spec */
-    background: linear-gradient(top, #cc0000, #990000 100%);
+    background: linear-gradient(top, #76bc48, #5e9938 100%);
     zoom: 1;
     display: inline-block;
-    margin-left: 300px;
-    padding: 10px 25px;
-    color: white;
+    padding: 5px 10px;
     font-family: Overpass;
-    font-size: 18pt;
+    font-size: 20pt;
     text-decoration: none;
     text-transform: uppercase;
-    box-shadow: 2px 2px 2px #333;
     -moz-border-radius: 8px;
     -webkit-border-radius: 8px;
-    border-radius: 8px; }
+    border-radius: 8px;
+    margin-left: 300px;
+    box-shadow: 2px 2px 2px #333; }
+    #banner a.try_it:hover {
+      background: #5e9938;
+      /* Mozilla */
+      background: -moz-linear-gradient(top, #5e9938, #76bc48 100%);
+      /* Old webkit */
+      background: -webkit-gradient(linear, top center, from(#5e9938), color-stop(100%, #76bc48));
+      /* New webkit */
+      background: -webkit-linear-gradient(top, #5e9938, #76bc48 100%);
+      /* Opera */
+      background: -o-linear-gradient(top, #5e9938, #76bc48 100%);
+      /* IE <= 7 */
+      filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=$first_color, endColorStr=$last_color);
+      /* IE 8 */
+      -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=$first_color, endColorstr=$last_color)";
+      /* Spec */
+      background: linear-gradient(top, #5e9938, #76bc48 100%);
+      zoom: 1;
+      color: white; }
   #banner.express {
     background-image: url("/app/images/express-banner.png"); }
   #banner.flex {
@@ -1176,6 +1214,10 @@ label.error {
     #product_tabs ul#tab_navigation a.step-five {
       background: url(/app/images/tab_numbers.png) no-repeat 5px -200px; }
   #product_tabs .tab {
+    /**
+     * let elements enclose their floated children
+     * from: http://www.quirksmode.org/css/clearing.html
+     **/
     overflow: auto;
     width: 100%;
     width: 590px;
@@ -1236,24 +1278,6 @@ label.error {
   font-size: 12pt;
   color: black; }
 
-#supplemental_content a.try_it {
-  width: inherit;
-  margin: 0 0 30px;
-  padding: 5px 0;
-  display: block;
-  color: white;
-  font-family: Overpass;
-  font-size: 24pt;
-  text-align: center;
-  text-transform: uppercase;
-  text-decoration: none;
-  box-shadow: 2px 2px 2px #999; }
-#supplemental_content.express a.try_it {
-  background: #264c73; }
-#supplemental_content.flex a.try_it {
-  background: #833697; }
-#supplemental_content.power a.try_it {
-  background: #3f7326; }
 #supplemental_content #resources, #supplemental_content #platforms, #supplemental_content #top_video {
   margin-bottom: 30px; }
   #supplemental_content #resources h3, #supplemental_content #platforms h3, #supplemental_content #top_video h3 {
@@ -1440,6 +1464,10 @@ label.error {
  * Partner styles
  */
 #join {
+  /**
+   * let elements enclose their floated children
+   * from: http://www.quirksmode.org/css/clearing.html
+   **/
   overflow: auto;
   width: 100%;
   background: #ececec url("/app/images/cloud_partnership.png") no-repeat 10px center;

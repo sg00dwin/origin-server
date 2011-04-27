@@ -180,11 +180,33 @@ $sans: 'Liberation Sans','Helvetica Neue',Arial,FreeSans,sans-serif;
   border-color: #FFD9D9;
 }
 
+@mixin try_it_button($bg_color) {
+  @include gradient_bg($bg_color, darken($bg_color, 10%), 100%);
+    display: inline-block;
+    padding: 5px 10px;
+    font: {
+      family: Overpass;
+      size: 20pt;
+    }
+    text: {
+      decoration: none;
+      transform: uppercase;
+    }
+    @include border_radius(8);
+}
+
+// Reverses background gradient
+@mixin try_it_hover($bg_color) {
+  @include gradient_bg(darken($bg_color, 10%), $bg_color, 100%);
+  color: white;
+}
+
+
+@mixin clearfix {
 /**
  * let elements enclose their floated children
  * from: http://www.quirksmode.org/css/clearing.html
  **/
-@mixin clearfix {
   overflow: auto;
   width: 100%;
 }
@@ -682,19 +704,11 @@ form {
   }
   
   a.try_it {
-    @include gradient_bg($rh_red, darken($rh_red, 10%), 100%);
-    display: inline-block;
-    padding: 5px 10px;
-    font: {
-      family: Overpass;
-      size: 20pt;
+    @include try_it_button($rh_red);
+    
+    &:hover {
+      @include try_it_hover($rh_red);
     }
-    text: {
-      decoration: none;
-      transform: uppercase;
-    }
-    border: 2px solid $rh_red;
-    @include border_radius(8);
   }
 }
 
@@ -1430,22 +1444,13 @@ label.error {
   }
 
   a.try_it {
-   @include gradient_bg($rh_red, darken($rh_red, 10%), 100%);
-
-    display: inline-block;
+    @include try_it_button(#76BC48);
     margin-left: 300px;
-    padding: 10px 25px;
-    color: white;
-    font: {
-      family: Overpass;
-      size: 18pt;
-    }
-    text: {
-      decoration: none;
-      transform: uppercase;
-    }
     box-shadow: 2px 2px 2px #333;
-    @include border_radius(8);
+    
+    &:hover {
+      @include try_it_hover(#76BC48) ;
+    }
   }
 
   &.express {
@@ -1632,36 +1637,6 @@ label.error {
 }
 
 #supplemental_content {
-
-  a.try_it {
-    width: inherit;
-    margin: 0 0 30px;
-    padding: 5px 0;
-    display: block;
-    color: white;
-    font: {
-      family: Overpass;
-      size: 24pt;
-    }
-    text: {
-      align: center;
-      transform: uppercase;
-      decoration: none;
-    }
-    box-shadow: 2px 2px 2px #999;
-  }
-
-  &.express a.try_it {
-    background: darken($express, 30%);
-  }
-
-  &.flex a.try_it {
-    background: darken($flex, 30%);
-  }
-
-  &.power a.try_it {
-    background: darken($power, 30%);
-  }
 
   #resources {
     margin-bottom: 30px;
