@@ -2,7 +2,7 @@
 %define gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 
 Name: rhc
-Version: 0.67.9
+Version: 0.67.10
 Release: 1%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
@@ -435,6 +435,11 @@ chmod 0666 %{_localstatedir}/www/libra/log/production.log
 %{_libexecdir}/li/cartridges/jbossas-7.0.0/
 
 %changelog
+* Wed Apr 27 2011 Matt Hicks <mhicks@redhat.com> 0.67.10-1
+- Prod fix for DYN DNS handling
+- Legal terms update
+- Adding parseconfig gem client dependency
+
 * Tue Apr 26 2011 Mike McGrath <mmcgrath@redhat.com> 0.67.9-1
 - Fix from DAN for legal changes
 
