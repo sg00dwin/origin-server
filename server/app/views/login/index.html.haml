@@ -31,7 +31,7 @@
         
         %label(for="login_input")
           Login:
-        %input{:type => "text", :value => session[:confirm_login] ? session[:confirm_login] : '', :name => "login", :name => "login_input"}        
+        %input{:type => "text", :value => session[:confirm_login] ? session[:confirm_login] : '', :name => "login", :id => "login_input"}        
         
         %label(for="pwd_input")
           Password:
