@@ -205,7 +205,8 @@ form ul, form ol, form li {
   /* Spec */
   background: linear-gradient(top, #555555, #d4d4d4 100%);
   zoom: 1;
-  position: relative; }
+  position: relative;
+  overflow: hidden; }
   #pageheader #title_accent {
     background: url(/app/images/openshift_title_accent.png) no-repeat right bottom;
     height: 109px;

@@ -52,6 +52,7 @@ RedHatCloud::Application.routes.draw do
     match 'legal' => 'legal#show'
     match 'legal/site_terms' => 'legal#site_terms'
     match 'legal/services_agreement' => 'legal#services_agreement'
+    match 'legal/acceptable_use' => 'legal#acceptable_use'
 
     resource :login,
              :controller => "login",

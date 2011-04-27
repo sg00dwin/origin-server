@@ -444,6 +444,7 @@ form {
 #pageheader {
   @include gradient_bg($text_color, lighten($text_color, 50%), 100%);
   position: relative;
+  overflow: hidden;
 
   #title_accent {
     background: url(/app/images/openshift_title_accent.png) no-repeat right bottom;
