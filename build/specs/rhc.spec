@@ -96,18 +96,46 @@ Group: Network/Daemons
 Requires: rhc-common
 BuildArch: noarch
 Requires: httpd
+Requires: mod_passenger
 Requires: ruby
 Requires: rubygems
-Requires: rubygem-abstract
-Requires: rubygem-aws
-Requires: rubygem-erubis
-Requires: rubygem-mime-types
-Requires: rubygem-rack = 1:1.1.0
 Requires: rubygem-passenger
 Requires: rubygem-passenger-native
 Requires: rubygem-passenger-native-libs
-Requires: mod_passenger
+Requires: rubygem-abstract
+Requires: rubygem-actionmailer
+Requires: rubygem-activemodel
+Requires: rubygem-activerecord
+Requires: rubygem-activeresource
+Requires: rubygem-activesupport
+Requires: rubygem-arel
+Requires: rubygem-aws
+Requires: rubygem-builder
 Requires: rubygem-bundler
+Requires: rubygem-erubis
+Requires: rubygem-formtastic
+Requires: rubygem-haml
+Requires: rubygem-i18n
+Requires: rubygem-json
+Requires: rubygem-mail
+Requires: rubygem-mime-types
+Requires: rubygem-multimap
+Requires: rubygem-open4
+Requires: rubygem-polyglot
+Requires: rubygem-rack = 1:1.1.0
+Requires: rubygem-rack-mount
+Requires: rubygem-rack-test
+Requires: rubygem-rails
+Requires: rubygem-railties
+Requires: rubygem-rake-compiler
+Requires: rubygem-regin
+Requires: rubygem-recaptcha
+Requires: rubygem-thor 
+Requires: rubygem-treetop
+Requires: rubygem-tzinfo
+Requires: rubygem-xml-simple
+
+
 
 %description server
 This contains the server 'controlling' components of Li.  This can be on the
@@ -409,9 +437,6 @@ fi
 /bin/chgrp libra_user /etc/mcollective/client.cfg
 
 # Install any Rails dependencies
-pushd %{_localstatedir}/www/libra > /dev/null
-bundle install --deployment
-popd > /dev/null
 mkdir -p %{_localstatedir}/www/libra/log
 touch %{_localstatedir}/www/libra/log/production.log
 chmod 0666 %{_localstatedir}/www/libra/log/production.log
