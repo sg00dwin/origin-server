@@ -39,7 +39,16 @@
         #top_head.container_24
           #logo.grid_6
             = link_to image_tag("/app/images/logo.png", :alt => "OpenShift by Red Hat Cloud"), root_path
-          
+<<<<<<< HEAD
+
+          #mainslug
+            - if session[:login]
+              .welcome
+                Welcome, #{session[:login]}!
+            - else
+              Platform at your Service
+=======
+          - if session[:login] || session[:user]
           
           #plug.grid_11
             %p
@@ -55,6 +64,7 @@
             
             - when 'getting_started'
               = link_to 'Get Started!', '/app/getting_started/express', :class => 'try_it'
+>>>>>>> em-dev
 
         .clear
 

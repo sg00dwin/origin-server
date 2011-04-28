@@ -5,6 +5,7 @@
   = stylesheet_link_tag '/app/stylesheets/fancybox.css'
   = javascript_include_tag '/app/javascripts/fancybox.js'
   = javascript_include_tag "/app/javascripts/jquery.slideshow.minified.js"
+  = javascript_include_tag "/app/javascripts/jquery.tools.min.js"
   = javascript_include_tag "/app/javascripts/home"
   
 .simpleSlideShow.slideShow.container_24
@@ -48,9 +49,30 @@
       
       = link_to 'Learn More >', flex_path, :class => 'learn-more flex'
 
+<<<<<<< HEAD
+  /Product slugs
+  
+  /Express slug
+  .slug.grid_8.pull_7
+    %h3 OpenShift is for Developers
+    %p
+      OpenShift is for developers who love to build on open source, but don't need the hassle of building and maintaining infrastructure.
+    
+    %a.fancybox(href='/app/images/rocket-dude-big.png')
+      = image_tag '/app/images/rocket-dude.png'
+
+
+  /Flex slug
+  .slug.grid_9.pull_7.last 
+  
+    %h3 OpenShift is Cutting-Edge
+    %p
+      Supports all the coolest languages and frameworks, plus PaaS automation features like auto-scaling and performance monitoring.
+=======
     .clear
     
     = image_tag "/app/images/PaaS.png", :id => 'front_image'
+>>>>>>> em-dev
     
     .clear
 
@@ -90,4 +112,3 @@
     .clear
 
   .clear
-/End app promo boxes

@@ -201,6 +201,7 @@ $sans: 'Liberation Sans','Helvetica Neue',Arial,FreeSans,sans-serif;
   color: white;
 }
 
+
 @mixin clearfix {
 /**
  * let elements enclose their floated children
@@ -333,10 +334,10 @@ form {
 }
 
 #login{
-  @include gradient_bg(darken($rh_red, 10%), $rh_red, 100%);
-  padding: 6px 30px;
-  position: absolute;
-  right: 0;
+	@include gradient_bg(darken($rh_red, 10%), $rh_red, 100%);
+	padding: 6px 30px;
+	position: absolute;
+	right: 0;
   z-index: 1000;
   font-family: OverpassBold;
 
@@ -706,7 +707,55 @@ form {
   }
 }
 
+<<<<<<< HEAD
+#breadcrumb {
+	margin: 0 0 1em;
+	color: #aaa;
+  a {
+    text-decoration: none;
+    color: #aaa !important;
+  }
+}
+
+#intro {
+  @include gradient_bg(#333, #666, 100%);
+  padding-top: 20px;
+  border: 1px solid #ccc {
+    right: none;
+    left: none;
+  }
+  
+  img {
+    float: left;
+    margin: 50px 30px;
+  }
+  
+  h3 {
+    font-family: Overpass;
+    font-size: 30pt;
+    line-height: 28pt;
+    margin-left: 20px;
+  }
+  
+  p {
+    font-size: 12pt;
+  }
+  
+  a.try_it {
+    @include try_it_button($rh_red);
+    
+    &:hover {
+      @include try_it_hover($rh_red);
+    }
+  }
+}
+
+#sidebar_slugs_container {
+    @include gradient_bg(white, #ececec, 100%);
+    overflow: hidden;
+=======
 #info {
+>>>>>>> em-dev
 
    p, #{$list_elements}, #{$header_elements} {
     color: $text_color;

@@ -5,10 +5,6 @@ $(function() {
 	$('.simpleSlideShow').slideShow({
     interval: 6
 	});
-// slideshow
-	$('.newsTicker').slideShow({
-    interval: 5
-	});
   
   // Trigger "advanced" hover action
   // in product promo boxes
@@ -25,4 +21,11 @@ $(function() {
   
   // Fancybox
   $('.fancybox').fancybox();
+  
+  //Accordians
+  $('#info').tabs('#info .section', {
+    tabs: 'h3.section-header',
+    effect: 'slide',
+    initialIndex: 0
+  });
 });

@@ -80,7 +80,7 @@ module StreamlineMock
   # Whether the user is authorized for a given cloud solution
   #
   def has_access?(solution)
-    false
+    true
   end
 
   #
