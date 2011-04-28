@@ -86,7 +86,6 @@ form ul, form ol, form li {
   /* Spec */
   background: linear-gradient(top, #990000, #cc0000 100%);
   zoom: 1;
-  width: 50px;
   padding: 6px 30px;
   position: absolute;
   right: 0;
@@ -136,16 +135,15 @@ form ul, form ol, form li {
     background: linear-gradient(top, #4e9fdd, #2887d0 100%);
     zoom: 1;
     display: inline-block;
-    margin: 40px 0 0 40px;
     padding: 5px 10px;
     font-family: Overpass;
     font-size: 20pt;
     text-decoration: none;
     text-transform: uppercase;
-    border: 2px solid #4e9fdd;
     -moz-border-radius: 8px;
     -webkit-border-radius: 8px;
-    border-radius: 8px; }
+    border-radius: 8px;
+    margin: 40px 0 0 40px; }
     #top_head a.try_it:hover {
       background: #2887d0;
       /* Mozilla */
@@ -460,8 +458,7 @@ form ul, form ol, form li {
       color: #a344bc; }
 
 #app_promos {
-  background: #ececec;
-  padding-bottom: 15px; }
+  padding: 0 13px; }
   #app_promos p, #app_promos a, #app_promos h1, #app_promos h2, #app_promos h3, #app_promos h4, #app_promos h5, #app_promos h6, #app_promos ul, #app_promos ol, #app_promos li {
     margin: 0 auto;
       margin-top: 1em !important;
@@ -484,13 +481,16 @@ form ul, form ol, form li {
     font-weight: bold;
     text-decoration: none;
     text-transform: uppercase; }
-  #app_promos .grid_8 {
+  #app_promos .promo {
     background: #ccc;
-    width: 305px;
+    width: 310px;
     min-height: 170px;
-    border: 1px solid #ccc; }
+    margin: 0;
+    border: 1px solid #ccc;
+    border-left-width: 0; }
   #app_promos .express {
-    background-image: url(/app/images/express-tile-trans.png); }
+    background-image: url(/app/images/express-tile-trans.png);
+    border-left-width: 1px; }
     #app_promos .express.hover {
       background-color: #6699cc;
       /*

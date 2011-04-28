@@ -387,24 +387,11 @@ form {
   }
   
   a.try_it {
-    @include gradient_bg($bright_blue, darken($bright_blue, 10%), 100%);
-    display: inline-block;
+    @include try_it_button($bright_blue);
     margin: 40px 0 0 40px;
-    padding: 5px 10px;
-    font: {
-      family: Overpass;
-      size: 20pt;
-    }
-    text: {
-      decoration: none;
-      transform: uppercase;
-    }
-    border: 2px solid $bright_blue;
-    @include border_radius(8);
   
     &:hover {
-      @include gradient_bg(darken($bright_blue, 10%),$bright_blue, 100%);
-      color: white;
+      @include try_it_hover($bright_blue);
     }
     
     .product & {
@@ -755,7 +742,7 @@ form {
 }
 
 #app_promos {
-  padding-bottom: 15px;
+  padding: 0 13px;
 
   #{$text_elements}, #{$header_elements}, #{$list_elements} {
     margin: 0 auto {
@@ -798,15 +785,18 @@ form {
     }
   }
 
-  .grid_8 {
+  .promo {
     background: #ccc;
-    width: 305px;
+    width: 310px;
     min-height: 170px;
+    margin: 0;
     border: 1px solid #ccc;
+    border-left-width: 0;
   }
 
   .express {
     background-image: url(/app/images/express-tile-trans.png);
+    border-left-width: 1px;
 
     &.hover {
       background-color: $express;

@@ -23,9 +23,9 @@ $(function() {
   $('.fancybox').fancybox();
   
   //Accordians
-  $('#info').tabs('#info .section', {
-    tabs: 'h3.section-header',
-    effect: 'slide',
-    initialIndex: 0
-  });
+  //$('#info').tabs('#info .section', {
+    //tabs: 'h3.section-header',
+    //effect: 'slide',
+    //initialIndex: 0
+  //});
 });
