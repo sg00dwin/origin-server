@@ -29,7 +29,7 @@
     #horrible_wrapper
       - if session[:login]
         #user_controls
-          - if session[:user].has_access?(2)
+          - if session[:user].has_access?(CloudAccess::FLEX)
             = link_to 'Flex Console', '/flex', :id => 'flex_console_link', :class => 'flex'
           =link_to 'Logout', '/app/logout'
       - else
@@ -107,8 +107,5 @@
             = link_to 'Privacy Policy', 'http://www.redhat.com/legal/privacy_statement.html'
           %li
             = link_to 'Contact Us', 'mailto:openshift@redhat.com'
-
-          %li
-            = link_to 'OpenShift Partners', partners_path
 
         .clear

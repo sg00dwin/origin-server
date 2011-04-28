@@ -1162,16 +1162,6 @@ label.error {
 
 }
 
-#terms_and_conditions {
-  margin: 2em 0 0;
-  padding: .5em 0 0;
-  color: #bbb !important;
-  border: {
-    top: 1px solid #dedede;
-  }
-}
-
-
 /* Access request forms */
 #access {
   h3 {
@@ -1793,6 +1783,23 @@ label.error {
   }
 }
 
+/**
+ * Legal page styling
+ */
+.legal {
+  
+  li { margin-bottom: 10px; }
+  
+  #page ol ul {
+    list-style-type: none;
+    
+    .section-number {
+      float: left;
+      margin-left: -2.25em;
+    }
+  }
+  
+}
 
 #footer {
 	padding: 3em 0;

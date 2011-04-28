@@ -877,12 +877,6 @@ label.error {
   text-decoration: none;
   font-weight: bold; }
 
-#terms_and_conditions {
-  margin: 2em 0 0;
-  padding: .5em 0 0;
-  color: #bbb !important;
-  border-top: 1px solid #dedede; }
-
 /* Access request forms */
 #access h3 {
   margin-left: 60px;
@@ -1419,6 +1413,17 @@ label.error {
     font-size: 20pt;
     font-family: Overpass;
     text-decoration: none; }
+
+/**
+ * Legal page styling
+ */
+.legal li {
+  margin-bottom: 10px; }
+.legal #page ol ul {
+  list-style-type: none; }
+  .legal #page ol ul .section-number {
+    float: left;
+    margin-left: -2.25em; }
 
 #footer {
   padding: 3em 0; }
