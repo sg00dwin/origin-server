@@ -79,13 +79,13 @@ form ul, form ol, form li {
   background: -webkit-linear-gradient(top, #990000, #cc0000 100%);
   /* Opera */
   background: -o-linear-gradient(top, #990000, #cc0000 100%);
-  /* IE <= 7 */
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=$first_color, endColorStr=$last_color);
-  /* IE 8 */
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=$first_color, endColorstr=$last_color)";
+  /* IE */
+  -pie-background: linear-gradient(top, #990000, #cc0000 100%);
   /* Spec */
   background: linear-gradient(top, #990000, #cc0000 100%);
   zoom: 1;
+  behavior: "/app/stylesheets/PIE.htc";
+  /* For IE */
   padding: 6px 30px;
   position: absolute;
   right: 0;
@@ -127,13 +127,13 @@ form ul, form ol, form li {
     background: -webkit-linear-gradient(top, #4e9fdd, #2887d0 100%);
     /* Opera */
     background: -o-linear-gradient(top, #4e9fdd, #2887d0 100%);
-    /* IE <= 7 */
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=$first_color, endColorStr=$last_color);
-    /* IE 8 */
-    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=$first_color, endColorstr=$last_color)";
+    /* IE */
+    -pie-background: linear-gradient(top, #4e9fdd, #2887d0 100%);
     /* Spec */
     background: linear-gradient(top, #4e9fdd, #2887d0 100%);
     zoom: 1;
+    behavior: "/app/stylesheets/PIE.htc";
+    /* For IE */
     display: inline-block;
     padding: 5px 10px;
     font-family: Overpass;
@@ -143,6 +143,8 @@ form ul, form ol, form li {
     -moz-border-radius: 8px;
     -webkit-border-radius: 8px;
     border-radius: 8px;
+    behavior: url("/app/stylesheets/PIE.htc");
+    /* For IE */
     margin: 40px 0 0 40px; }
     #top_head a.try_it:hover {
       background: #2887d0;
@@ -154,13 +156,13 @@ form ul, form ol, form li {
       background: -webkit-linear-gradient(top, #2887d0, #4e9fdd 100%);
       /* Opera */
       background: -o-linear-gradient(top, #2887d0, #4e9fdd 100%);
-      /* IE <= 7 */
-      filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=$first_color, endColorStr=$last_color);
-      /* IE 8 */
-      -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=$first_color, endColorstr=$last_color)";
+      /* IE */
+      -pie-background: linear-gradient(top, #2887d0, #4e9fdd 100%);
       /* Spec */
       background: linear-gradient(top, #2887d0, #4e9fdd 100%);
       zoom: 1;
+      behavior: "/app/stylesheets/PIE.htc";
+      /* For IE */
       color: white; }
     .product #top_head a.try_it {
       display: none; }
@@ -181,13 +183,13 @@ form ul, form ol, form li {
   background: -webkit-linear-gradient(top, #cc0000, #990000 100%);
   /* Opera */
   background: -o-linear-gradient(top, #cc0000, #990000 100%);
-  /* IE <= 7 */
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=$first_color, endColorStr=$last_color);
-  /* IE 8 */
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=$first_color, endColorstr=$last_color)";
+  /* IE */
+  -pie-background: linear-gradient(top, #cc0000, #990000 100%);
   /* Spec */
   background: linear-gradient(top, #cc0000, #990000 100%);
   zoom: 1;
+  behavior: "/app/stylesheets/PIE.htc";
+  /* For IE */
   border-top: 1px solid #fe7272;
   font-family: OverpassBold; }
   #nav ul {
@@ -249,13 +251,13 @@ form ul, form ol, form li {
   background: -webkit-linear-gradient(top, #555555, #d4d4d4 100%);
   /* Opera */
   background: -o-linear-gradient(top, #555555, #d4d4d4 100%);
-  /* IE <= 7 */
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=$first_color, endColorStr=$last_color);
-  /* IE 8 */
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=$first_color, endColorstr=$last_color)";
+  /* IE */
+  -pie-background: linear-gradient(top, #555555, #d4d4d4 100%);
   /* Spec */
   background: linear-gradient(top, #555555, #d4d4d4 100%);
   zoom: 1;
+  behavior: "/app/stylesheets/PIE.htc";
+  /* For IE */
   position: relative;
   overflow: hidden; }
   #pageheader #title_accent {
@@ -275,13 +277,13 @@ form ul, form ol, form li {
     background: -webkit-linear-gradient(top, #336699, #6699cc 100%);
     /* Opera */
     background: -o-linear-gradient(top, #336699, #6699cc 100%);
-    /* IE <= 7 */
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=$first_color, endColorStr=$last_color);
-    /* IE 8 */
-    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=$first_color, endColorstr=$last_color)";
+    /* IE */
+    -pie-background: linear-gradient(top, #336699, #6699cc 100%);
     /* Spec */
     background: linear-gradient(top, #336699, #6699cc 100%);
-    zoom: 1; }
+    zoom: 1;
+    behavior: "/app/stylesheets/PIE.htc";
+    /* For IE */ }
     #pageheader.express #title_accent {
       background-image: url(/app/images/express_title_accent.png);
       margin-right: 10px; }
@@ -295,13 +297,13 @@ form ul, form ol, form li {
     background: -webkit-linear-gradient(top, #a344bc, #c88fd7 100%);
     /* Opera */
     background: -o-linear-gradient(top, #a344bc, #c88fd7 100%);
-    /* IE <= 7 */
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=$first_color, endColorStr=$last_color);
-    /* IE 8 */
-    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=$first_color, endColorstr=$last_color)";
+    /* IE */
+    -pie-background: linear-gradient(top, #a344bc, #c88fd7 100%);
     /* Spec */
     background: linear-gradient(top, #a344bc, #c88fd7 100%);
-    zoom: 1; }
+    zoom: 1;
+    behavior: "/app/stylesheets/PIE.htc";
+    /* For IE */ }
     #pageheader.flex #title_accent {
       background-image: url(/app/images/flex_title_accent.png); }
   #pageheader.power {
@@ -314,13 +316,13 @@ form ul, form ol, form li {
     background: -webkit-linear-gradient(top, #549933, #87cc66 100%);
     /* Opera */
     background: -o-linear-gradient(top, #549933, #87cc66 100%);
-    /* IE <= 7 */
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=$first_color, endColorStr=$last_color);
-    /* IE 8 */
-    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=$first_color, endColorstr=$last_color)";
+    /* IE */
+    -pie-background: linear-gradient(top, #549933, #87cc66 100%);
     /* Spec */
     background: linear-gradient(top, #549933, #87cc66 100%);
-    zoom: 1; }
+    zoom: 1;
+    behavior: "/app/stylesheets/PIE.htc";
+    /* For IE */ }
     #pageheader.power #title_accent {
       background-image: url(/app/images/power_title_accent.png); }
   #pageheader h1, #pageheader h2, #pageheader h3, #pageheader h4, #pageheader h5, #pageheader h6 {
@@ -401,7 +403,9 @@ form ul, form ol, form li {
       border: 1px solid #3c6eb4;
       -moz-border-radius: 12px;
       -webkit-border-radius: 12px;
-      border-radius: 12px; }
+      border-radius: 12px;
+      behavior: url("/app/stylesheets/PIE.htc");
+      /* For IE */ }
       .slideShow .navigation a:hover, .slideShow .navigation a.selected {
         background: #3c6eb4;
         color: white !important;
@@ -533,13 +537,13 @@ form ul, form ol, form li {
   background: -webkit-linear-gradient(top, #ececec, white 10%);
   /* Opera */
   background: -o-linear-gradient(top, #ececec, white 10%);
-  /* IE <= 7 */
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=$first_color, endColorStr=$last_color);
-  /* IE 8 */
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=$first_color, endColorstr=$last_color)";
+  /* IE */
+  -pie-background: linear-gradient(top, #ececec, white 10%);
   /* Spec */
   background: linear-gradient(top, #ececec, white 10%);
   zoom: 1;
+  behavior: "/app/stylesheets/PIE.htc";
+  /* For IE */
   color: black;
   padding: 2em 0 5em; }
   #page p, #page a, #page h1, #page h2, #page h3, #page h4, #page h5, #page h6, #page ul, #page ol, #page li {
@@ -594,6 +598,8 @@ form ul, form ol, form li {
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   border-radius: 4px;
+  behavior: url("/app/stylesheets/PIE.htc");
+  /* For IE */
   font-size: 13pt; }
   #registration input.create {
     background: #555;
@@ -608,8 +614,10 @@ form ul, form ol, form li {
     text-decoration: none;
     text-align: center;
     border: 0px;
-    box-shadow: 1px 1px 1px #ccc;
-    cursor: pointer; }
+    zzzz: 1px 1px 1px #ccc;
+    cursor: pointer;
+    behavior: url("/app/stylesheets/PIE.htc");
+    /* For IE */ }
 #registration form {
   width: 500px; }
 #registration th {
@@ -643,6 +651,8 @@ form ul, form ol, form li {
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   border-radius: 4px;
+  behavior: url("/app/stylesheets/PIE.htc");
+  /* For IE */
   font-size: 13pt; }
   #login-form input.create {
     background: #555;
@@ -657,8 +667,10 @@ form ul, form ol, form li {
     text-decoration: none;
     text-align: center;
     border: 0px;
-    box-shadow: 1px 1px 1px #ccc;
-    cursor: pointer; }
+    zzzz: 1px 1px 1px #ccc;
+    cursor: pointer;
+    behavior: url("/app/stylesheets/PIE.htc");
+    /* For IE */ }
   #login-form input.button {
     background: #555;
     width: auto;
@@ -672,8 +684,10 @@ form ul, form ol, form li {
     text-decoration: none;
     text-align: center;
     border: 0px;
-    box-shadow: 1px 1px 1px #ccc;
-    cursor: pointer; }
+    zzzz: 1px 1px 1px #ccc;
+    cursor: pointer;
+    behavior: url("/app/stylesheets/PIE.htc");
+    /* For IE */ }
 
 label {
   width: 160px;
@@ -696,6 +710,8 @@ input {
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   border-radius: 4px;
+  behavior: url("/app/stylesheets/PIE.htc");
+  /* For IE */
   font-size: 13pt; }
 
 input[type=text],
@@ -708,6 +724,8 @@ input[type=password] {
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   border-radius: 4px;
+  behavior: url("/app/stylesheets/PIE.htc");
+  /* For IE */
   font-size: 13pt;
   width: 250px !important;
   height: 24px;
@@ -730,6 +748,8 @@ input#user_email_address {
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   border-radius: 4px;
+  behavior: url("/app/stylesheets/PIE.htc");
+  /* For IE */
   font-size: 13pt;
   width: 250px !important;
   height: 24px;
@@ -745,6 +765,8 @@ input#user_password {
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   border-radius: 4px;
+  behavior: url("/app/stylesheets/PIE.htc");
+  /* For IE */
   font-size: 13pt;
   width: 250px !important;
   height: 24px;
@@ -760,6 +782,8 @@ input#user_password_confirmation {
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   border-radius: 4px;
+  behavior: url("/app/stylesheets/PIE.htc");
+  /* For IE */
   font-size: 13pt;
   width: 250px !important;
   height: 24px;
@@ -779,8 +803,10 @@ input.submit, input.button, input.create {
   text-decoration: none;
   text-align: center;
   border: 0px;
-  box-shadow: 1px 1px 1px #ccc;
-  cursor: pointer; }
+  zzzz: 1px 1px 1px #ccc;
+  cursor: pointer;
+  behavior: url("/app/stylesheets/PIE.htc");
+  /* For IE */ }
 
 form p {
   clear: left; }
@@ -934,13 +960,13 @@ label.error {
     background: -webkit-linear-gradient(top, #76bc48, #5e9938 100%);
     /* Opera */
     background: -o-linear-gradient(top, #76bc48, #5e9938 100%);
-    /* IE <= 7 */
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=$first_color, endColorStr=$last_color);
-    /* IE 8 */
-    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=$first_color, endColorstr=$last_color)";
+    /* IE */
+    -pie-background: linear-gradient(top, #76bc48, #5e9938 100%);
     /* Spec */
     background: linear-gradient(top, #76bc48, #5e9938 100%);
     zoom: 1;
+    behavior: "/app/stylesheets/PIE.htc";
+    /* For IE */
     display: inline-block;
     padding: 5px 10px;
     font-family: Overpass;
@@ -950,8 +976,12 @@ label.error {
     -moz-border-radius: 8px;
     -webkit-border-radius: 8px;
     border-radius: 8px;
+    behavior: url("/app/stylesheets/PIE.htc");
+    /* For IE */
     margin-left: 300px;
-    box-shadow: 2px 2px 2px #333; }
+    box-shadow: 2px 2px 2px #333;
+    behavior: url("/app/stylesheets/PIE.htc");
+    /* For IE */ }
     #banner a.try_it:hover {
       background: #5e9938;
       /* Mozilla */
@@ -962,13 +992,13 @@ label.error {
       background: -webkit-linear-gradient(top, #5e9938, #76bc48 100%);
       /* Opera */
       background: -o-linear-gradient(top, #5e9938, #76bc48 100%);
-      /* IE <= 7 */
-      filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=$first_color, endColorStr=$last_color);
-      /* IE 8 */
-      -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=$first_color, endColorstr=$last_color)";
+      /* IE */
+      -pie-background: linear-gradient(top, #5e9938, #76bc48 100%);
       /* Spec */
       background: linear-gradient(top, #5e9938, #76bc48 100%);
       zoom: 1;
+      behavior: "/app/stylesheets/PIE.htc";
+      /* For IE */
       color: white; }
   #banner.express {
     background-image: url("/app/images/express-banner.png"); }
@@ -993,13 +1023,13 @@ label.error {
       background: -webkit-linear-gradient(top, #ececec, #d3d3d3 100%);
       /* Opera */
       background: -o-linear-gradient(top, #ececec, #d3d3d3 100%);
-      /* IE <= 7 */
-      filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=$first_color, endColorStr=$last_color);
-      /* IE 8 */
-      -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=$first_color, endColorstr=$last_color)";
+      /* IE */
+      -pie-background: linear-gradient(top, #ececec, #d3d3d3 100%);
       /* Spec */
       background: linear-gradient(top, #ececec, #d3d3d3 100%);
       zoom: 1;
+      behavior: "/app/stylesheets/PIE.htc";
+      /* For IE */
       display: inline-block;
       width: 170px;
       padding: 2px 0;
@@ -1014,13 +1044,13 @@ label.error {
       background: -webkit-linear-gradient(top, #cc0000, #990000 100%);
       /* Opera */
       background: -o-linear-gradient(top, #cc0000, #990000 100%);
-      /* IE <= 7 */
-      filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=$first_color, endColorStr=$last_color);
-      /* IE 8 */
-      -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=$first_color, endColorstr=$last_color)";
+      /* IE */
+      -pie-background: linear-gradient(top, #cc0000, #990000 100%);
       /* Spec */
       background: linear-gradient(top, #cc0000, #990000 100%);
-      zoom: 1; }
+      zoom: 1;
+      behavior: "/app/stylesheets/PIE.htc";
+      /* For IE */ }
       #product_tabs ul#tab_navigation li.current a {
         color: white; }
       #product_tabs ul#tab_navigation li.current a.step-one {
@@ -1168,13 +1198,13 @@ label.error {
   background: -webkit-linear-gradient(left, #264c73, #6699cc 100%);
   /* Opera */
   background: -o-linear-gradient(left, #264c73, #6699cc 100%);
-  /* IE <= 7 */
-  filter: progid:DXImageTransform.Microsoft.gradient(GradientType=1,startColorStr=$first_color, endColorStr=$last_color);
-  /* IE 8 */
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=1,startColorstr=$first_color, endColorstr=$last_color)";
+  /* IE */
+  -pie-background: linear-gradient(left, #264c73, #6699cc 100%);
   /* Spec */
   background: linear-gradient(left, #264c73, #6699cc 100%);
-  zoom: 1; }
+  zoom: 1;
+  behavior: url("/app/stylesheets/PIE.htc");
+  /* For IE */ }
 .flex #supplemental_content #doc_link a {
   background: #833697;
   /* Mozilla */
@@ -1185,13 +1215,13 @@ label.error {
   background: -webkit-linear-gradient(left, #833697, #c88fd7 100%);
   /* Opera */
   background: -o-linear-gradient(left, #833697, #c88fd7 100%);
-  /* IE <= 7 */
-  filter: progid:DXImageTransform.Microsoft.gradient(GradientType=1,startColorStr=$first_color, endColorStr=$last_color);
-  /* IE 8 */
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=1,startColorstr=$first_color, endColorstr=$last_color)";
+  /* IE */
+  -pie-background: linear-gradient(left, #833697, #c88fd7 100%);
   /* Spec */
   background: linear-gradient(left, #833697, #c88fd7 100%);
-  zoom: 1; }
+  zoom: 1;
+  behavior: url("/app/stylesheets/PIE.htc");
+  /* For IE */ }
 .power #supplemental_content #doc_link a {
   background: #3f7326;
   /* Mozilla */
@@ -1202,13 +1232,13 @@ label.error {
   background: -webkit-linear-gradient(left, #3f7326, #87cc66 100%);
   /* Opera */
   background: -o-linear-gradient(left, #3f7326, #87cc66 100%);
-  /* IE <= 7 */
-  filter: progid:DXImageTransform.Microsoft.gradient(GradientType=1,startColorStr=$first_color, endColorStr=$last_color);
-  /* IE 8 */
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=1,startColorstr=$first_color, endColorstr=$last_color)";
+  /* IE */
+  -pie-background: linear-gradient(left, #3f7326, #87cc66 100%);
   /* Spec */
   background: linear-gradient(left, #3f7326, #87cc66 100%);
-  zoom: 1; }
+  zoom: 1;
+  behavior: url("/app/stylesheets/PIE.htc");
+  /* For IE */ }
 #supplemental_content #platforms h4 {
   margin: 0;
   color: black;
@@ -1246,13 +1276,13 @@ label.error {
   background: -webkit-linear-gradient(left, #7f7f7f, #5b5b5b 100%);
   /* Opera */
   background: -o-linear-gradient(left, #7f7f7f, #5b5b5b 100%);
-  /* IE <= 7 */
-  filter: progid:DXImageTransform.Microsoft.gradient(GradientType=1,startColorStr=$first_color, endColorStr=$last_color);
-  /* IE 8 */
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=1,startColorstr=$first_color, endColorstr=$last_color)";
+  /* IE */
+  -pie-background: linear-gradient(left, #7f7f7f, #5b5b5b 100%);
   /* Spec */
   background: linear-gradient(left, #7f7f7f, #5b5b5b 100%);
   zoom: 1;
+  behavior: url("/app/stylesheets/PIE.htc");
+  /* For IE */
   display: block;
   width: inherit;
   margin: 0 0 30px;
@@ -1317,7 +1347,9 @@ label.error {
     padding-left: 50px;
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
-  border-radius: 4px; }
+  border-radius: 4px;
+  behavior: url("/app/stylesheets/PIE.htc");
+  /* For IE */ }
   #join p {
     float: left;
     width: 60%;
@@ -1351,13 +1383,13 @@ label.error {
       background: -webkit-linear-gradient(top, #888888, #222222 100%);
       /* Opera */
       background: -o-linear-gradient(top, #888888, #222222 100%);
-      /* IE <= 7 */
-      filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=$first_color, endColorStr=$last_color);
-      /* IE 8 */
-      -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=$first_color, endColorstr=$last_color)";
+      /* IE */
+      -pie-background: linear-gradient(top, #888888, #222222 100%);
       /* Spec */
       background: linear-gradient(top, #888888, #222222 100%);
       zoom: 1;
+      behavior: "/app/stylesheets/PIE.htc";
+      /* For IE */
       padding: 5px 10px;
       color: white !important;
       font-family: Overpass;
