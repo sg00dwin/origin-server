@@ -23,7 +23,7 @@ class TermsController < ApplicationController
       end
     else
       Rails.logger.debug "User is not logged in - rerouting to login / register"
-      session[:workflow] = new_terms_path
+      session[:login_workflow] = new_terms_path
       redirect_to login_path
     end
   end
@@ -44,16 +44,14 @@ class TermsController < ApplicationController
         session[:login] = @user.rhlogin
       end
 
-      workflow = session[:workflow]
-      if (workflow)
-        session[:workflow] = nil
-        redirect_to workflow and return
+      if workflow_redirect
+        return
       else
         redirect_to root_path and return
       end
     else
       Rails.logger.debug "User is not logged in - rerouting to login / register"
-      session[:workflow] = new_terms_path
+      session[:login_workflow] = new_terms_path
       redirect_to login_path
     end
   end

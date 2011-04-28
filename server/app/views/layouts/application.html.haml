@@ -27,7 +27,7 @@
     = render 'shared/omniture_code'
 
     #horrible_wrapper
-      - if session[:login]
+      - if session[:login] || session[:user]
         #user_controls
           - if session[:user].has_access?(CloudAccess::FLEX)
             = link_to 'Flex Console', '/flex', :id => 'flex_console_link', :class => 'flex'

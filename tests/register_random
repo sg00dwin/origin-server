@@ -85,7 +85,7 @@ def find_confirmation
   @agent.get('http://post-office.corp.redhat.com/archives/libra-test/') do |page|
     # Get the current page of archives
     archive_page = page.link_with(:text => /Thread/).click
-    confirmation_links = archive_page.links_with(:text => /^Confirm/).reverse
+    confirmation_links = archive_page.links_with(:text => /^Confirm/).reverse[0..9]
     return check_emails(confirmation_links)
   end
 end
