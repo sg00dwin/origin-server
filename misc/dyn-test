@@ -111,6 +111,7 @@ def run_test(cn, un, pw, zone, fqdn)
   dyn_http(:delete, 'https://api2.dynect.net/REST/Session/', headers)
 
   return total
+#  return -1
 end
 
 if __FILE__ == $0
