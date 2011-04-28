@@ -278,8 +278,7 @@ form {
 }
 
 #login{
-	@include gradient_bg(darken($rh_red, 5%), $rh_red, 100%);
-	width: 50px;
+	@include gradient_bg(darken($rh_red, 10%), $rh_red, 100%);
 	padding: 6px 30px;
 	position: absolute;
 	right: 0;
@@ -288,7 +287,7 @@ form {
 
   a {
     margin: 0 auto;
-    display: block;
+    display: inline-block;
     font-weight: normal;
     text: {
       align: center;
@@ -299,8 +298,20 @@ form {
   }
 }
 
-#logout {
+#user_controls {
   @extend #login;
+  
+  a {
+  
+    &#flex_console_link {
+      margin-right: 20px;
+      text-transform: none;
+    
+      &:hover {
+        color: $flex;
+      }
+    }
+  }
 }
 
 #top_head {
@@ -640,11 +651,11 @@ form {
 }
 
 #info {
-    @include gradient_bg(white, #ececec, 100%);
-    overflow: hidden;
 
    p, #{$list_elements}, #{$header_elements} {
     color: $text_color;
+    font-size: 11pt;
+    margin-bottom: 5px;
   }
 
   #{$header_elements} {
@@ -653,29 +664,41 @@ form {
     color: black;
   }
   
-  h3.section-header {
-    @include gradient_bg(#ececec, #ccc, 100%);
+  #front_image {
+    display: block;
+    margin: 20px auto;
+  }
+  
+  a.learn-more {
+    display: inline-block;
     margin: 0;
-    padding: 5px 20px;
-    color: darken($bright_blue, 10%);
-    font: {
-      family: Overpass;
-      size: 20pt;
+    font-family: OverpassBold;
+    text: {
+      decoration: none;
+      transform: uppercase;
     }
-    border-bottom: 1px solid white;
-    cursor: pointer;
     
-    &.current {
-      background-image: none;
-      color: black;
-      cursor: auto;
+    
+    &.express {
+      color: darken($express, 10%);
+      
+      &:hover {
+        color: darken($express, 20%);
+      }
+    }
+    
+    &.flex {
+      color: darken($flex, 10%);
+      
+      &:hover {
+        color: darken($flex, 20%);
+      }
     }
   }
 
 }
 
 #app_promos {
-	background: #ececec;
   padding-bottom: 15px;
 
   #{$text_elements}, #{$header_elements}, #{$list_elements} {
@@ -695,9 +718,9 @@ form {
     background: #d0d1d0;
   }
 
-  h3 {
+  #page & h3 {
     font: {
-      size: 10pt;
+      size: 11pt;
     }
   }
 
@@ -720,11 +743,14 @@ form {
   }
 
   .grid_8 {
+    background: #ccc;
+    width: 305px;
     min-height: 170px;
+    border: 1px solid #ccc;
   }
 
   .express {
-    background: url(/app/images/express-tile-trans.png) #ccc;
+    background-image: url(/app/images/express-tile-trans.png);
 
     &.hover {
       background-color: $express;
@@ -742,7 +768,7 @@ form {
   }
 
   .flex {
-    background: url(/app/images/flex-tile-trans.png) #ccc;
+    background-image: url(/app/images/flex-tile-trans.png);
 
     &.hover{
       background-color: $flex;
@@ -760,7 +786,7 @@ form {
   }
 
   .power {
-    background: url(/app/images/power-tile-trans.png) #ccc;
+    background-image: url(/app/images/power-tile-trans.png);
 
     &.hover {
       background-color: $power;

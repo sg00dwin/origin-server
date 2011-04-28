@@ -45,38 +45,43 @@ form ul, form ol, form li {
   #head > div.omega {
     padding-left: 10px; }
 
-#login, #logout {
-  background: #b30000;
+#login, #user_controls {
+  background: #990000;
   /* Mozilla */
-  background: -moz-linear-gradient(top, #b30000, #cc0000 100%);
+  background: -moz-linear-gradient(top, #990000, #cc0000 100%);
   /* Old webkit */
-  background: -webkit-gradient(linear, top center, from(#b30000), color-stop(100%, #cc0000));
+  background: -webkit-gradient(linear, top center, from(#990000), color-stop(100%, #cc0000));
   /* New webkit */
-  background: -webkit-linear-gradient(top, #b30000, #cc0000 100%);
+  background: -webkit-linear-gradient(top, #990000, #cc0000 100%);
   /* Opera */
-  background: -o-linear-gradient(top, #b30000, #cc0000 100%);
+  background: -o-linear-gradient(top, #990000, #cc0000 100%);
   /* IE <= 7 */
   filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=$first_color, endColorStr=$last_color);
   /* IE 8 */
   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=$first_color, endColorstr=$last_color)";
   /* Spec */
-  background: linear-gradient(top, #b30000, #cc0000 100%);
+  background: linear-gradient(top, #990000, #cc0000 100%);
   zoom: 1;
-  width: 50px;
   padding: 6px 30px;
   position: absolute;
   right: 0;
   z-index: 1000;
   font-family: OverpassBold; }
-  #login a, #logout a {
+  #login a, #user_controls a {
     margin: 0 auto;
-    display: block;
+    display: inline-block;
     font-weight: normal;
     text-align: center;
     text-decoration: none;
     text-transform: uppercase; }
-    #login a:hover, #logout a:hover {
+    #login a:hover, #user_controls a:hover {
       color: #4e9fdd; }
+
+#user_controls a#flex_console_link {
+  margin-right: 20px;
+  text-transform: none; }
+  #user_controls a#flex_console_link:hover {
+    color: #c88fd7; }
 
 #top_head {
   background: url("/app/images/cloud-bg.png") no-repeat right bottom;
@@ -398,61 +403,33 @@ form ul, form ol, form li {
   color: white;
   font-size: 12pt; }
 
-#info {
-  background: white;
-  /* Mozilla */
-  background: -moz-linear-gradient(top, white, #ececec 100%);
-  /* Old webkit */
-  background: -webkit-gradient(linear, top center, from(white), color-stop(100%, #ececec));
-  /* New webkit */
-  background: -webkit-linear-gradient(top, white, #ececec 100%);
-  /* Opera */
-  background: -o-linear-gradient(top, white, #ececec 100%);
-  /* IE <= 7 */
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=$first_color, endColorStr=$last_color);
-  /* IE 8 */
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=$first_color, endColorstr=$last_color)";
-  /* Spec */
-  background: linear-gradient(top, white, #ececec 100%);
-  zoom: 1;
-  overflow: hidden; }
-  #info p, #info ul, #info ol, #info li, #info h1, #info h2, #info h3, #info h4, #info h5, #info h6 {
-    color: #555555; }
-  #info h1, #info h2, #info h3, #info h4, #info h5, #info h6 {
-    font-family: Overpass;
-    font-weight: normal;
-    color: black; }
-  #info h3.section-header {
-    background: #ececec;
-    /* Mozilla */
-    background: -moz-linear-gradient(top, #ececec, #cccccc 100%);
-    /* Old webkit */
-    background: -webkit-gradient(linear, top center, from(#ececec), color-stop(100%, #cccccc));
-    /* New webkit */
-    background: -webkit-linear-gradient(top, #ececec, #cccccc 100%);
-    /* Opera */
-    background: -o-linear-gradient(top, #ececec, #cccccc 100%);
-    /* IE <= 7 */
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=$first_color, endColorStr=$last_color);
-    /* IE 8 */
-    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=$first_color, endColorstr=$last_color)";
-    /* Spec */
-    background: linear-gradient(top, #ececec, #cccccc 100%);
-    zoom: 1;
-    margin: 0;
-    padding: 5px 20px;
-    color: #2887d0;
-    font-family: Overpass;
-    font-size: 20pt;
-    border-bottom: 1px solid white;
-    cursor: pointer; }
-    #info h3.section-header.current {
-      background-image: none;
-      color: black;
-      cursor: auto; }
+#info p, #info ul, #info ol, #info li, #info h1, #info h2, #info h3, #info h4, #info h5, #info h6 {
+  color: #555555;
+  font-size: 11pt;
+  margin-bottom: 5px; }
+#info h1, #info h2, #info h3, #info h4, #info h5, #info h6 {
+  font-family: Overpass;
+  font-weight: normal;
+  color: black; }
+#info #front_image {
+  display: block;
+  margin: 20px auto; }
+#info a.learn-more {
+  display: inline-block;
+  margin: 0;
+  font-family: OverpassBold;
+  text-decoration: none;
+  text-transform: uppercase; }
+  #info a.learn-more.express {
+    color: #407fbf; }
+    #info a.learn-more.express:hover {
+      color: #336699; }
+  #info a.learn-more.flex {
+    color: #b669ca; }
+    #info a.learn-more.flex:hover {
+      color: #a344bc; }
 
 #app_promos {
-  background: #ececec;
   padding-bottom: 15px; }
   #app_promos p, #app_promos a, #app_promos h1, #app_promos h2, #app_promos h3, #app_promos h4, #app_promos h5, #app_promos h6, #app_promos ul, #app_promos ol, #app_promos li {
     margin: 0 auto;
@@ -464,8 +441,8 @@ form ul, form ol, form li {
     font-family: OverpassBold; }
   #app_promos > div {
     background: #d0d1d0; }
-  #app_promos h3 {
-    font-size: 10pt; }
+  #page #app_promos h3 {
+    font-size: 11pt; }
   #app_promos h4 {
     font-size: 14pt;
     text-transform: uppercase; }
@@ -477,9 +454,12 @@ form ul, form ol, form li {
     text-decoration: none;
     text-transform: uppercase; }
   #app_promos .grid_8 {
-    min-height: 170px; }
+    background: #ccc;
+    width: 305px;
+    min-height: 170px;
+    border: 1px solid #ccc; }
   #app_promos .express {
-    background: url(/app/images/express-tile-trans.png) #cccccc; }
+    background-image: url(/app/images/express-tile-trans.png); }
     #app_promos .express.hover {
       background-color: #6699cc;
       /*
@@ -490,7 +470,7 @@ form ul, form ol, form li {
       #app_promos .express.hover h4 {
         color: #6699cc; }
   #app_promos .flex {
-    background: url(/app/images/flex-tile-trans.png) #cccccc; }
+    background-image: url(/app/images/flex-tile-trans.png); }
     #app_promos .flex.hover {
       background-color: #c88fd7;
       /*
@@ -501,7 +481,7 @@ form ul, form ol, form li {
       #app_promos .flex.hover h4 {
         color: #c88fd7; }
   #app_promos .power {
-    background: url(/app/images/power-tile-trans.png) #cccccc; }
+    background-image: url(/app/images/power-tile-trans.png); }
     #app_promos .power.hover {
       background-color: #87cc66;
       /*

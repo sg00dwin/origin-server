@@ -28,11 +28,13 @@
 
     #horrible_wrapper
       - if session[:login]
-        #logout
-          %a(href='/app/logout') Logout
+        #user_controls
+          - if session[:user].has_access?(2)
+            = link_to 'Flex Console', '/flex', :id => 'flex_console_link', :class => 'flex'
+          =link_to 'Logout', '/app/logout'
       - else
         #login
-          %a(href='/app/login') Login
+          = link_to 'Login', login_path
       #head.container_24
         #top_head.container_24
           #logo.grid_6
@@ -75,15 +77,13 @@
             %li
               = link_to 'Blog', 'http://www.redhat.com/openshift/blogs'
             %li.last
-              = link_to 'News', 'http://www.redhat.com/openshift/news-and-announcements'
+              = link_to 'Partners', partners_path
           
           %h5.category.collapsed.last(data-category='help')
             Help
           %ul#help.collapsed
             %li.first
               = link_to 'KB', 'http://www.redhat.com/openshift/kb'
-            %li
-              = link_to 'Guides', 'http://docs.redhat.com/docs/en-US/OpenShift/'
             %li
               = link_to 'Docs', 'http://www.redhat.com/openshift/documents'
             %li
