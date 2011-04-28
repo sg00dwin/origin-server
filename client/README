@@ -1,10 +1,6 @@
 Openshift Express (RHC)
 ========
 
-Thank you for helping test Express.  This is all non-production and still just a
-proof of concept.  It could vanish at any time or possibly get merged into
-another project.
-
 Please stop by #openshift on irc.freenode.net if you have any questions or
 comments.  Another good resource are the blogs and forums at
 http://openshift.redhat.com
@@ -15,12 +11,10 @@ Quickstart
 
 DEPENDENCIES: git
               openssh-clients
-              ruby (1.8.6 or later)
+              ruby (1.8.7 or later)
               rubygems
               json gem
               parseconfig gem
-
-Step 0:  export http_proxy=file.rdu.redhat.com:3128
 
 Step 1:  Create an rhc domain:
 
@@ -28,7 +22,7 @@ $ ./rhc-create-domain -n desirednamespace -l rhlogin
 
 Step 2: Create an rhc application:
 
-$ ./rhc-create-app -l rhlogin -a appname -r /path/to/new/git/repo
+$ ./rhc-create-app -l rhlogin -a appname -r /path/to/new/git/repo -t <framework Ex: php-5.3.2>
 
 Once that's complete, follow the directions printed at the end of running
 rhc-create-app
@@ -45,4 +39,3 @@ $ git commit -a -m "what I did"
 $ git push
 
 Then just reload your web page to see the changes
-
