@@ -7,6 +7,7 @@ module Libra
     Maxdlen = 16
 
     TYPES = {
+      'jbossas-7.0.0' => :jbossas,
       'php-5.3.2' => :php,
       'rack-1.1.0' => :rack,
       'wsgi-3.2.1' => :wsgi
