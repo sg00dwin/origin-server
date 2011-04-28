@@ -62,8 +62,9 @@ $sans: 'Liberation Sans','Helvetica Neue',Arial,FreeSans,sans-serif;
     $first_color,
     $last_color $last_stop
   );
+  /* For IE */
   zoom: 1;
-  behavior: ('/app/stylesheets/PIE.htc'); /* For IE */
+  behavior: url('/app/stylesheets/PIE.htc'); 
 }
 
 //Cross-browser horizontal linear gradient
@@ -106,8 +107,9 @@ $sans: 'Liberation Sans','Helvetica Neue',Arial,FreeSans,sans-serif;
     $first_color,
     $last_color $last_stop
   );
+  /* For IE */
   zoom: 1;
-  behavior: url('/app/stylesheets/PIE.htc'); /* For IE */
+  behavior: url('/app/stylesheets/PIE.htc');
 }
 
 //Cross-browser border radius
@@ -115,7 +117,8 @@ $sans: 'Liberation Sans','Helvetica Neue',Arial,FreeSans,sans-serif;
   -moz-border-radius: #{$radius}px;
   -webkit-border-radius: #{$radius}px;
   border-radius: #{$radius}px;
-  behavior: url('/app/stylesheets/PIE.htc'); /* For IE */
+  /* For IE */
+  behavior: url('/app/stylesheets/PIE.htc'); 
 }
 
 @mixin form_label {
@@ -168,7 +171,8 @@ $sans: 'Liberation Sans','Helvetica Neue',Arial,FreeSans,sans-serif;
 	border: 0px;
   zzzz: 1px 1px 1px #ccc;
   cursor: pointer;
-  behavior: url('/app/stylesheets/PIE.htc'); /* For IE */
+  /* For IE */
+  behavior: url('/app/stylesheets/PIE.htc'); 
 }
 
 @mixin form_link {
@@ -1233,7 +1237,8 @@ label.error {
     @include try_it_button(#76BC48);
     margin-left: 300px;
     box-shadow: 2px 2px 2px #333;
-    behavior: url('/app/stylesheets/PIE.htc'); /* For IE */
+    /* For IE */
+    behavior: url('/app/stylesheets/PIE.htc'); 
     
     &:hover {
       @include try_it_hover(#76BC48) ;
