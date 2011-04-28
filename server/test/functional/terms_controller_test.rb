@@ -56,7 +56,7 @@ class TermsControllerTest < ActionController::TestCase
 
   test "accept terms successfully with workflow" do
     setup_session
-    session[:workflow] = login_path
+    session[:login_workflow] = login_path
     user = session[:user]
     user.terms = [{'termId' => '1', 'termUrl' => 'localhost'}]
     user.expects(:accept_terms).once
