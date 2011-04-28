@@ -12,47 +12,45 @@ $stdout.sync = true
 $stderr.sync = true
 
 def complete(pid, status)
-  process = @processes[pid]
+  @logger.debug("Process #{pid} finished.")
+  @logger.debug("Process status = #{status.exitstatus}")
 
-  begin
-    # Write the username if successful
-    if status.exitstatus == 0
-      return process[:stdout].read.chomp
-    else
-      @logger.error(process[:stderr].read)
-    end
-  ensure
-    # Clean out the process entry
-    @processes.delete(pid)
+  # Lookup the process data
+  data = @processes[pid]
+
+  if status.exitstatus == 0
+    puts "App created for #{data[:login]}"
+    @logger.debug(data[:stdout].read)
+  else
+    @logger.error(data[:stdout].read)
+    @logger.error(data[:stderr].read)
   end
+
+  # Clean out the process entry
+  @processes.delete(pid)
 end
 
 def wait_for_processes(blocking=true)
-  result = []
-
   if blocking
     @logger.debug("Blocking until next process finishes...")
     pid, status = Process::waitpid2
-    result << complete(pid, status)
+    complete(pid, status)
   else
     until @processes.empty?
       @logger.debug("Non-blocking check for processes...")
       pid, status = Process::waitpid2(-1, Process::WNOHANG)
       break unless status
-      result << complete(pid, status)
+      complete(pid, status)
     end
   end
-
-  return result
 end
 
 def p_usage
     puts <<USAGE
 
-Usage: batch_register
-Batch register users for testing
+Usage: batch_apps input_file
+Batch application creation given an input file or stdin
 
-  -n|--num       num_users     Number of users to create
   -c|--processes num_processes The number of parallel processes to run
   -p|--proxy                   Use a proxy
   -d|--debug                   Show debug info
@@ -64,7 +62,6 @@ end
 
 begin
     opts = GetoptLong.new(
-        ["--num",   "-n", GetoptLong::REQUIRED_ARGUMENT],
         ["--processes", "-c", GetoptLong::REQUIRED_ARGUMENT],
         ["--debug", "-d", GetoptLong::NO_ARGUMENT],
         ["--proxy", "-p", GetoptLong::NO_ARGUMENT],
@@ -79,7 +76,7 @@ rescue Exception => e
   p_usage
 end
 
-if opt["help"] or !opt["num"]
+if opt["help"]
     p_usage
 end
 
@@ -101,29 +98,32 @@ end
 @logger = Logger.new(STDERR)
 @logger.level = @debug ? Logger::DEBUG : Logger::ERROR
 
-# Clear out the multi-process log
-`rm -rf /tmp/reg`
-`mkdir -p /tmp/reg`
-
-@logger.debug("Creating users with #{@num_processes} processes")
-
-# Create the users
-users = []
+# Read the users
 @processes = {}
-@num_users.times do |i|
+ARGF.read.each do |login|
+  login.chomp!
+
+  # Parse out the namespace
+  login =~ /libra\-test\+(.*)@redhat.com/
+  namespace = $1
+  @logger.debug("Login = #{login}")
+  @logger.debug("Namespace = #{namespace}")
+
   # If we are at the max processes, start waiting for results
   if @processes.length == @num_processes
-    users += wait_for_processes
+    wait_for_processes
   end
 
   # Clean out any other processes that might have completed
-  users += wait_for_processes(false)
+  wait_for_processes(false)
 
   # Kick off a new process
-  pid, stdin, stdout, stderr = Open4::popen4("./register_random" + @options + " 2> /tmp/output#{i}")
+  cmd1 = "rhc-create-domain -n #{namespace} -l #{login} -p redhat"
+  cmd2 = "rhc-create-app -a test -t php-5.3.2 -l #{login} -p redhat -n"
+  pid, stdin, stdout, stderr = Open4::popen4(cmd1 + ";" + cmd2)
 
   stdin.close
-  @processes[pid] = {:stdout => stdout, :stderr => stderr}
+  @processes[pid] = {:stdout => stdout, :stderr => stderr, :login => login}
   @logger.debug("Starting process #{pid}")
 
   sleep rand
@@ -131,8 +131,5 @@ end
 
 # Wait for the rest of them
 until @processes.empty?
-  users += wait_for_processes
+  wait_for_processes
 end
-
-# Output the results
-puts users.join("\n")
