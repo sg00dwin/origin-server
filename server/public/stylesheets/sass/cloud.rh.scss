@@ -750,8 +750,8 @@ form {
 }
 
 #app_promos {
-  padding: 0 13px;
-
+  margin: 0 13px;
+  
   #{$text_elements}, #{$header_elements}, #{$list_elements} {
     margin: 0 auto {
       top: 1em !important;
@@ -782,6 +782,7 @@ form {
     text-transform: uppercase;
   }
 
+/*
   a {
     background: $rh_red;
     padding: 5px 10px;
@@ -792,35 +793,33 @@ form {
       transform: uppercase;
     }
   }
+*/
 
   .promo {
     background: #ccc;
     width: 310px;
     min-height: 170px;
     margin: 0;
-    border: 1px solid #ccc;
+    border: 1px solid #666;
     border-left-width: 0;
   }
 
+
   .express {
-    background-image: url(/app/images/express-tile-trans.png);
+    //background-image: url(/app/images/express-tile-trans.png);
     border-left-width: 1px;
 
+/*
     &.hover {
       background-color: $express;
 
       h4 {
         color: $express;
       }
-
-/*
-      a {
-        background-color: $express;
-      }
-*/
     }
+*/
   }
-
+/*
   .flex {
     background-image: url(/app/images/flex-tile-trans.png);
 
@@ -831,11 +830,6 @@ form {
         color: $flex;
       }
 
-/*
-      a {
-        background-color: $flex;
-      }
-*/
     }
   }
 
@@ -848,14 +842,9 @@ form {
       h4 {
         color: $power;
       }
-
-/*
-      a {
-        background-color: $power;
-      }
-*/
     }
   }
+*/
 }
 
 #page {

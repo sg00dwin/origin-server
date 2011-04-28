@@ -59,33 +59,18 @@
 
     /Express box
     .express.promo.grid_8
-      %h3 
-        Deploy to the Cloud in Minutes,
-        %br
-        it's Free and Easy!
-      %h4 Express
-      %p
-        = link_to 'Learn More', express_url
+      = link_to express_path do
+        = image_tag '/app/images/promo_box_express.png'
 
     /Flex box
     .flex.promo.grid_8
-      %h3 
-        Auto-scaling PaaS for 
-        %br
-        JBoss, Java, and PHP
-      %h4 Flex
-      %p
-        = link_to 'Learn More', flex_url
+      = link_to flex_path do
+        = image_tag '/app/images/promo_box_flex.png'
 
     /Power box
     .power.promo.grid_8
-      %h3 
-        Tools for custom cloud 
-        %br
-        application deployments
-      %h4 Power
-      %p
-        = link_to 'Learn More', power_url
+      = link_to power_path do
+        = image_tag '/app/images/promo_box_power.png'
 
     .clear
 

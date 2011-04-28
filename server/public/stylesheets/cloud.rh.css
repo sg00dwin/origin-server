@@ -462,7 +462,45 @@ form ul, form ol, form li {
       color: #a344bc; }
 
 #app_promos {
-  padding: 0 13px; }
+  margin: 0 13px;
+  /*
+    a {
+      background: $rh_red;
+      padding: 5px 10px;
+      color: white !important;
+      font-weight: bold;
+      text: {
+        decoration: none;
+        transform: uppercase;
+      }
+    }
+  */
+  /*
+    .flex {
+      background-image: url(/app/images/flex-tile-trans.png);
+  
+      &.hover{
+        background-color: $flex;
+  
+        h4 {
+          color: $flex;
+        }
+  
+      }
+    }
+  
+    .power {
+      background-image: url(/app/images/power-tile-trans.png);
+  
+      &.hover {
+        background-color: $power;
+  
+        h4 {
+          color: $power;
+        }
+      }
+    }
+  */ }
   #app_promos p, #app_promos a, #app_promos h1, #app_promos h2, #app_promos h3, #app_promos h4, #app_promos h5, #app_promos h6, #app_promos ul, #app_promos ol, #app_promos li {
     margin: 0 auto;
       margin-top: 1em !important;
@@ -478,54 +516,24 @@ form ul, form ol, form li {
   #app_promos h4 {
     font-size: 14pt;
     text-transform: uppercase; }
-  #app_promos a {
-    background: #cc0000;
-    padding: 5px 10px;
-    color: white !important;
-    font-weight: bold;
-    text-decoration: none;
-    text-transform: uppercase; }
   #app_promos .promo {
     background: #ccc;
     width: 310px;
     min-height: 170px;
     margin: 0;
-    border: 1px solid #ccc;
+    border: 1px solid #666;
     border-left-width: 0; }
   #app_promos .express {
-    background-image: url(/app/images/express-tile-trans.png);
-    border-left-width: 1px; }
-    #app_promos .express.hover {
-      background-color: #6699cc;
-      /*
-            a {
-              background-color: $express;
-            }
-      */ }
-      #app_promos .express.hover h4 {
-        color: #6699cc; }
-  #app_promos .flex {
-    background-image: url(/app/images/flex-tile-trans.png); }
-    #app_promos .flex.hover {
-      background-color: #c88fd7;
-      /*
-            a {
-              background-color: $flex;
-            }
-      */ }
-      #app_promos .flex.hover h4 {
-        color: #c88fd7; }
-  #app_promos .power {
-    background-image: url(/app/images/power-tile-trans.png); }
-    #app_promos .power.hover {
-      background-color: #87cc66;
-      /*
-            a {
-              background-color: $power;
-            }
-      */ }
-      #app_promos .power.hover h4 {
-        color: #87cc66; }
+    border-left-width: 1px;
+    /*
+        &.hover {
+          background-color: $express;
+    
+          h4 {
+            color: $express;
+          }
+        }
+    */ }
 
 #page {
   background: #ececec;
