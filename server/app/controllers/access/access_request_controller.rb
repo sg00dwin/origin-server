@@ -17,7 +17,7 @@ class Access::AccessRequestController < ApplicationController
       yield if block_given?
     else
       Rails.logger.debug "User is not logged in - rerouting to login / register"
-      session[:workflow] = new_path
+      session[:login_workflow] = new_path
       redirect_to login_path, :notice => flash[:notice] ? flash[:notice] : "You'll need to login / register before asking for access"
     end
   end
@@ -42,7 +42,7 @@ class Access::AccessRequestController < ApplicationController
       execute_request_access
     else
       Rails.logger.debug "User is not logged in - rerouting to login / register"
-      session[:workflow] = new_path
+      session[:login_workflow] = new_path
       redirect_to login_path and return
     end
   end

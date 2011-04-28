@@ -4,7 +4,7 @@ class TermsControllerTest < ActionController::TestCase
   test "show accept terms unauthenticated" do
     get :new
     assert_redirected_to login_path
-    assert_equal new_terms_path, session[:workflow]
+    assert_equal new_terms_path, session[:login_workflow]
   end
 
   test "show accept terms" do
@@ -16,7 +16,7 @@ class TermsControllerTest < ActionController::TestCase
   test "accept terms unauthenticated" do
     post :create
     assert_redirected_to login_path
-    assert_equal new_terms_path, session[:workflow]
+    assert_equal new_terms_path, session[:login_workflow]
   end
 
   test "accept terms with streamline errors" do

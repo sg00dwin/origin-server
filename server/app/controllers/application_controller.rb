@@ -23,8 +23,30 @@ class ApplicationController < ActionController::Base
 
   def logged_in?
     return session[:login] ||
-          (session[:user] && params[:controller] == 'terms') ||
-          (session[:user] && params[:controller] == 'legal')
+          (session[:user] && (params[:controller] == 'terms' || params[:controller] == 'legal'))
+  end
+  
+  def workflow_redirect    
+    wf = nil
+    # login_workflow is only honored if you are logged in
+    if logged_in?
+      wf = session[:login_workflow]
+    else
+      wf = session[:workflow]
+    end
+    # Clear out workflow even if nothing happens.  Otherwise might get pushed into a workflow on later login.
+    session[:login_workflow] = nil
+    session[:workflow] = nil
+    if (wf)
+      Rails.logger.debug "Redirecting to workflow: #{wf}"
+      redirect_to wf and return true
+    else
+      return false
+    end
+  end
+  
+  def workflow
+    return session[:workflow] || session[:login_workflow]
   end
   
   def try_it_destination(product_number)

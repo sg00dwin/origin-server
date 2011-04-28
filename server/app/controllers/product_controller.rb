@@ -12,20 +12,17 @@ class ProductController < ApplicationController
     when 'register'
       session[:workflow] = '/app/user/new/flex'
     when 'queue', 'request'
-      session[:workflow] = '/app/access/flex/request'
+      session[:login_workflow] = '/app/access/flex/request'
     when 'getting_started'
-      session[:workflow] = '/app/getting_started/flex'
+      session[:login_workflow] = '/app/getting_started/flex'
     end
     redirect_to '/flex' and return
   end
   
   def flex
-    # Hack for the flex authentication handling
-    workflow = session[:workflow]
-    logger.debug "Flex workflow = #{workflow}"
-    if workflow
-      session[:workflow] = nil
-      redirect_to workflow and return
+    # Handles flex redirecting back to /app/flex
+    if workflow_redirect
+      return
     end
     
     @product = 'flex'
