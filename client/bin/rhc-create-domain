@@ -38,7 +38,7 @@ Bind a registered rhcloud user to a domain in rhcloud.
   -n|--namespace   namespace   Opensift Express namespace (alphanumeric - max #{RHC::Maxdlen} chars) (required)
   -l|--rhlogin     rhlogin     Red Hat login (required)
   -p|--password    password    RHLogin password (optional, will prompt)
-  -a|--alter                   Alter existing namespace
+  -a|--alter                   Alter ssh key
   -d|--debug                   Print Debug info
   -h|--help                    Show Usage info
 
