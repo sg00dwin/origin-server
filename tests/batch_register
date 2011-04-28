@@ -11,22 +11,39 @@ require 'open4'
 $stdout.sync = true
 $stderr.sync = true
 
-def wait_for_process(pid, data)
-  begin
-    @logger.debug("Waiting on next process #{pid}...")
-    ignored, status = Process::waitpid2 pid
-    @logger.debug("Process #{pid} finished.")
-    @logger.debug("Process status = #{status}")
+def complete(pid, status)
+  process = @processes[pid]
 
+  begin
     # Write the username if successful
     if status.exitstatus == 0
-      return data[:stdout].read.chomp
+      return process[:stdout].read.chomp
     else
-      @logger.error(data[:stderr].read)
+      @logger.error(process[:stderr].read)
     end
-  rescue
-    @logger.error("Exception")
+  ensure
+    # Clean out the process entry
+    @processes.delete(pid)
   end
+end
+
+def wait_for_processes(blocking=true)
+  result = []
+
+  if blocking
+    @logger.debug("Blocking until next process finishes...")
+    pid, status = Process::waitpid2
+    result << complete(pid, status)
+  else
+    until @processes.empty?
+      @logger.debug("Non-blocking check for processes...")
+      pid, status = Process::waitpid2(-1, Process::WNOHANG)
+      break unless status
+      result << complete(pid, status)
+    end
+  end
+
+  return result
 end
 
 def p_usage
@@ -92,30 +109,29 @@ end
 
 # Create the users
 users = []
-processes = {}
+@processes = {}
 @num_users.times do |i|
   # If we are at the max processes, start waiting for results
-  if processes.length == @num_processes
-    # Pull a process out to wait for
-    process = processes.shift
-    @logger.debug("Waiting on process #{process.pretty_inspect}")
-    @logger.debug("Remaining processes #{processes.pretty_inspect}")
-    users << wait_for_process(process[0], process[1])
+  if @processes.length == @num_processes
+    users += wait_for_processes
   end
+
+  # Clean out any other processes that might have completed
+  users += wait_for_processes(false)
 
   # Kick off a new process
   pid, stdin, stdout, stderr = Open4::popen4("./register_random" + @options + " 2> /tmp/output#{i}")
 
   stdin.close
-  processes[pid] = {:stdout => stdout, :stderr => stderr}
+  @processes[pid] = {:stdout => stdout, :stderr => stderr}
   @logger.debug("Starting process #{pid}")
 
   sleep rand
 end
 
 # Wait for the rest of them
-processes.each do |pid, data|
- users << wait_for_process(pid, data)
+until @processes.empty?
+  users += wait_for_processes
 end
 
 # Output the results
