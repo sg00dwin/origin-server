@@ -15,11 +15,14 @@ def complete(pid, status)
   process = @processes[pid]
 
   begin
-    # Write the username if successful
-    if status.exitstatus == 0
-      return process[:stdout].read.chomp
-    else
-      @logger.error(process[:stderr].read)
+    if process
+      # Write the username if successful
+      if status.exitstatus == 0
+        return process[:stdout].read.chomp
+      else
+        @logger.error(process[:stderr].read)
+        return nil
+      end
     end
   ensure
     # Clean out the process entry
@@ -32,8 +35,18 @@ def wait_for_processes(blocking=true)
 
   if blocking
     @logger.debug("Blocking until next process finishes...")
-    pid, status = Process::waitpid2
-    result << complete(pid, status)
+    begin
+      Timeout::timeout(60) do
+        pid, status = Process::waitpid2
+        result << complete(pid, status)
+      end
+    rescue Timeout::Error
+      # Kill a process and try again
+      @logger.warn("Killing random process to get things moving...")
+      process = @processes.shift
+      `kill #{process[0]}`
+      retry
+    end
   else
     until @processes.empty?
       @logger.debug("Non-blocking check for processes...")
@@ -43,7 +56,7 @@ def wait_for_processes(blocking=true)
     end
   end
 
-  return result
+  return result.compact
 end
 
 def p_usage
