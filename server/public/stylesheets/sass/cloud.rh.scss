@@ -753,104 +753,6 @@ form {
 
 }
 
-#app_promos {
-  margin: 0 13px;
-  
-  #{$text_elements}, #{$header_elements}, #{$list_elements} {
-    margin: 0 auto {
-      top: 1em !important;
-    }
-    text-align: center;
-    font-family: Overpass;
-    color: $text_color;
-  }
-
-  #{$header_elements} {
-    font-family: OverpassBold;
-  }
-
-  > div {
-    background: #d0d1d0;
-  }
-
-  #page & h3 {
-    font: {
-      size: 11pt;
-    }
-  }
-
-  h4 {
-    font: {
-      size: 14pt;
-    }
-    text-transform: uppercase;
-  }
-
-/*
-  a {
-    background: $rh_red;
-    padding: 5px 10px;
-    color: white !important;
-    font-weight: bold;
-    text: {
-      decoration: none;
-      transform: uppercase;
-    }
-  }
-*/
-
-  .promo {
-    background: #ccc;
-    width: 310px;
-    min-height: 170px;
-    margin: 0;
-    border: 1px solid #666;
-    border-left-width: 0;
-  }
-
-
-  .express {
-    //background-image: url(/app/images/express-tile-trans.png);
-    border-left-width: 1px;
-
-/*
-    &.hover {
-      background-color: $express;
-
-      h4 {
-        color: $express;
-      }
-    }
-*/
-  }
-/*
-  .flex {
-    background-image: url(/app/images/flex-tile-trans.png);
-
-    &.hover{
-      background-color: $flex;
-
-      h4 {
-        color: $flex;
-      }
-
-    }
-  }
-
-  .power {
-    background-image: url(/app/images/power-tile-trans.png);
-
-    &.hover {
-      background-color: $power;
-
-      h4 {
-        color: $power;
-      }
-    }
-  }
-*/
-}
-
 #page {
 	@include gradient_bg(#ECECEC, white, 10%);
   color: black;
@@ -859,6 +761,8 @@ form {
   #{$text_elements}, #{$header_elements}, #{$list_elements} {
     color: $text_color;
   }
+
+  .home.index & { margin-bottom: 0; padding-bottom: 0; }
 
   .home.index & h2 {
     margin: 0;
@@ -917,6 +821,133 @@ form {
     }
   }
 
+}
+
+#app_promos {
+  /* Fallback background */
+  background: #ccc url('/app/images/xl_cloud.png') repeat-x bottom;
+  
+  /* 
+   * Multiple backgrounds for 
+   * browsers that support them
+   */
+  /* Mozilla */
+  background-image: 
+    url('/app/images/sm_cloud.png'),
+    url('/app/images/md_cloud.png'),
+    url('/app/images/lg_cloud.png'),
+    url('/app/images/xl_cloud.png'),
+    -moz-linear-gradient(top, white, #ccc 50%);
+  /* Older Webkit */
+  background-image: 
+    url('/app/images/sm_cloud.png'),
+    url('/app/images/md_cloud.png'),
+    url('/app/images/lg_cloud.png'),
+    url('/app/images/xl_cloud.png'),
+    -webkit-gradient(
+      linear,
+      top center, 
+      from(white), 
+      color-stop(#ccc, 50%));
+  /* New Webkit */
+  background-image: 
+    url('/app/images/sm_cloud.png'),
+    url('/app/images/md_cloud.png'),
+    url('/app/images/lg_cloud.png'),
+    url('/app/images/xl_cloud.png'),
+    -webkit-linear-gradient(top, white, #ccc 50%);
+  /* Opera */
+  background-image: 
+    url('/app/images/sm_cloud.png'),
+    url('/app/images/md_cloud.png'),
+    url('/app/images/lg_cloud.png'),
+    url('/app/images/xl_cloud.png'),
+    -o-linear-gradient(top, white, #ccc 50%);
+  /* IE */
+  -pie-background: 
+    url('/app/images/sm_cloud.png') repeat-x bottom,
+    url('/app/images/md_cloud.png') repeat-x bottom,
+    url('/app/images/lg_cloud.png') repeat-x bottom,
+    url('/app/images/xl_cloud.png') repeat-x bottom,
+    linear-gradient(top, white, #ccc 50%);
+  /* Spec */
+  background-image: 
+    url('/app/images/sm_cloud.png'),
+    url('/app/images/md_cloud.png'),
+    url('/app/images/lg_cloud.png'),
+    url('/app/images/xl_cloud.png'),
+    linear-gradient(top, white, #ccc 50%);
+  
+  background-repeat: repeat-x, repeat-x, repeat-x, repeat-x;
+  background-position: bottom, bottom, bottom, bottom;
+  
+  margin: 0;
+  padding: 20px 0 45px;
+  
+  /* For IE */
+  zoom: 1;
+  behavior: url('/app/stylesheets/PIE.htc');
+  
+  #{$text_elements}, #{$header_elements}, #{$list_elements} {
+    margin: 0 auto {
+      top: 1em !important;
+    }
+    text-align: center;
+    font-family: Overpass;
+    color: white;
+  }
+
+  .promo {
+    width: 320px;
+    margin: 0;
+    position: relative;
+    overflow: hidden;
+    
+    .home.index #page & h3 {
+      width: 100%;
+      position: absolute;
+      top: 120px;
+      margin: 0;
+      font: {
+        size: 30pt;
+        family: OverpassBold;
+      }
+      text: {
+        transform: uppercase;
+        shadow: 1px 1px 0 #333;
+      }
+    }
+    
+    &.express h3 { color: saturate($express, 20%); }
+    &.flex h3 { color: saturate($flex, 20%); }
+    &.power h3 { color: saturate($power, 20%); }
+    
+    img {
+      display: block;
+      margin: 0 auto;
+    }
+    
+    .description {
+      background: #333;
+      display: block;
+      width: 190px;
+      margin: 0 auto;
+      padding: 10px;
+      
+      ul { list-style-type: none; }
+      
+      a {
+        font-size: 12pt;
+        text: {
+          decoration: none;
+          transform: uppercase;
+        }
+      }
+      &.express a { color: $express; }
+      &.flex a { color: $flex; }
+      &.power a { color: $power; }
+    }
+  }
 }
 
 #login_instead {

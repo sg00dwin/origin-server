@@ -461,80 +461,6 @@ form ul, form ol, form li {
     #info a.learn-more.flex:hover {
       color: #a344bc; }
 
-#app_promos {
-  margin: 0 13px;
-  /*
-    a {
-      background: $rh_red;
-      padding: 5px 10px;
-      color: white !important;
-      font-weight: bold;
-      text: {
-        decoration: none;
-        transform: uppercase;
-      }
-    }
-  */
-  /*
-    .flex {
-      background-image: url(/app/images/flex-tile-trans.png);
-  
-      &.hover{
-        background-color: $flex;
-  
-        h4 {
-          color: $flex;
-        }
-  
-      }
-    }
-  
-    .power {
-      background-image: url(/app/images/power-tile-trans.png);
-  
-      &.hover {
-        background-color: $power;
-  
-        h4 {
-          color: $power;
-        }
-      }
-    }
-  */ }
-  #app_promos p, #app_promos a, #app_promos h1, #app_promos h2, #app_promos h3, #app_promos h4, #app_promos h5, #app_promos h6, #app_promos ul, #app_promos ol, #app_promos li {
-    margin: 0 auto;
-      margin-top: 1em !important;
-    text-align: center;
-    font-family: Overpass;
-    color: #555555; }
-  #app_promos h1, #app_promos h2, #app_promos h3, #app_promos h4, #app_promos h5, #app_promos h6 {
-    font-family: OverpassBold; }
-  #app_promos > div {
-    background: #d0d1d0; }
-  #page #app_promos h3 {
-    font-size: 11pt; }
-  #app_promos h4 {
-    font-size: 14pt;
-    text-transform: uppercase; }
-  #app_promos .promo {
-    background: #ccc;
-    width: 310px;
-    min-height: 170px;
-    margin: 0;
-    border: 1px solid #666;
-    border-left-width: 0; }
-  #app_promos .express {
-    border-left-width: 1px;
-    /*
-        &.hover {
-          background-color: $express;
-    
-          h4 {
-            color: $express;
-          }
-        }
-    */ }
-
 #page {
   background: #ececec;
   /* Mozilla */
@@ -556,6 +482,9 @@ form ul, form ol, form li {
   padding: 2em 0 5em; }
   #page p, #page a, #page h1, #page h2, #page h3, #page h4, #page h5, #page h6, #page ul, #page ol, #page li {
     color: #555555; }
+  .home.index #page {
+    margin-bottom: 0;
+    padding-bottom: 0; }
   .home.index #page h2 {
     margin: 0;
     color: #222;
@@ -585,6 +514,80 @@ form ul, form ol, form li {
     color: #4e9fdd;
     text-align: right;
     text-decoration: none; }
+
+#app_promos {
+  /* Fallback background */
+  background: #cccccc url("/app/images/xl_cloud.png") repeat-x bottom;
+  /* 
+   * Multiple backgrounds for 
+   * browsers that support them
+   */
+  /* Mozilla */
+  background-image: url("/app/images/sm_cloud.png"), url("/app/images/md_cloud.png"), url("/app/images/lg_cloud.png"), url("/app/images/xl_cloud.png"), -moz-linear-gradient(top, white, #cccccc 50%);
+  /* Older Webkit */
+  background-image: url("/app/images/sm_cloud.png"), url("/app/images/md_cloud.png"), url("/app/images/lg_cloud.png"), url("/app/images/xl_cloud.png"), -webkit-gradient(linear, top center, from(white), color-stop(#cccccc, 50%));
+  /* New Webkit */
+  background-image: url("/app/images/sm_cloud.png"), url("/app/images/md_cloud.png"), url("/app/images/lg_cloud.png"), url("/app/images/xl_cloud.png"), -webkit-linear-gradient(top, white, #cccccc 50%);
+  /* Opera */
+  background-image: url("/app/images/sm_cloud.png"), url("/app/images/md_cloud.png"), url("/app/images/lg_cloud.png"), url("/app/images/xl_cloud.png"), -o-linear-gradient(top, white, #cccccc 50%);
+  /* IE */
+  -pie-background: url("/app/images/sm_cloud.png") repeat-x bottom, url("/app/images/md_cloud.png") repeat-x bottom, url("/app/images/lg_cloud.png") repeat-x bottom, url("/app/images/xl_cloud.png") repeat-x bottom, linear-gradient(top, white, #cccccc 50%);
+  /* Spec */
+  background-image: url("/app/images/sm_cloud.png"), url("/app/images/md_cloud.png"), url("/app/images/lg_cloud.png"), url("/app/images/xl_cloud.png"), linear-gradient(top, white, #cccccc 50%);
+  background-repeat: repeat-x, repeat-x, repeat-x, repeat-x;
+  background-position: bottom, bottom, bottom, bottom;
+  margin: 0;
+  padding: 20px 0 45px;
+  /* For IE */
+  zoom: 1;
+  behavior: url("/app/stylesheets/PIE.htc"); }
+  #app_promos p, #app_promos a, #app_promos h1, #app_promos h2, #app_promos h3, #app_promos h4, #app_promos h5, #app_promos h6, #app_promos ul, #app_promos ol, #app_promos li {
+    margin: 0 auto;
+      margin-top: 1em !important;
+    text-align: center;
+    font-family: Overpass;
+    color: white; }
+  #app_promos .promo {
+    width: 320px;
+    margin: 0;
+    position: relative;
+    overflow: hidden; }
+    .home.index #page #app_promos .promo h3 {
+      width: 100%;
+      position: absolute;
+      top: 120px;
+      margin: 0;
+      font-size: 30pt;
+      font-family: OverpassBold;
+      text-transform: uppercase;
+      text-shadow: 1px 1px 0 #333; }
+    #app_promos .promo.express h3 {
+      color: #5299e0; }
+    #app_promos .promo.flex h3 {
+      color: #d180e6; }
+    #app_promos .promo.power h3 {
+      color: #80e052; }
+    #app_promos .promo img {
+      display: block;
+      margin: 0 auto; }
+    #app_promos .promo .description {
+      background: #333;
+      display: block;
+      width: 190px;
+      margin: 0 auto;
+      padding: 10px; }
+      #app_promos .promo .description ul {
+        list-style-type: none; }
+      #app_promos .promo .description a {
+        font-size: 12pt;
+        text-decoration: none;
+        text-transform: uppercase; }
+      #app_promos .promo .description.express a {
+        color: #6699cc; }
+      #app_promos .promo .description.flex a {
+        color: #c88fd7; }
+      #app_promos .promo .description.power a {
+        color: #87cc66; }
 
 #login_instead {
   margin: 0 0 15px 165px; }
