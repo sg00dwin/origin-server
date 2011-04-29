@@ -30,7 +30,7 @@ class TermsController < ApplicationController
     @term_description = {           
       'OpenShift Service Agreement' => 'This agreement contains the terms and conditions that apply to your access and use of the Openshift Preview Services and Software. The Agreement also incorporates the Acceptable Use Policy which can be reviewed at http://openshift.redhat.com/app/legal.',   
       'Red Hat Site Terms' => 'These terms apply to use of Red Hat’s websites, including this OpenShift site.', 
-      'Red Hat Portals Terms of Use' => 'These terms apply to the extent you use the Red Hat Customer Portal website.', 
+      'Red Hat Portals Terms of Use' => 'These terms apply to the extent you use the Red Hat Customer Portal website.' 
     }
   end
 

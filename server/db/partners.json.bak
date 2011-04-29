@@ -41,7 +41,7 @@
     "Familiar Eclipse-based IDE enables developers to create mobile cloud applications for Ruby, PHP, or Java",
     "One-click deployment to the Red Hat certified Cloud Provider Clouds"],
   "availability":
-    "Coming Soon",
+    "Coming Soon"
   },
 "bitnami": {
   "name": "BitNami",

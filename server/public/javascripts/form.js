@@ -15,7 +15,7 @@ $(function() {
   $('#login-form form').validate({
     rules: {
       login: {
-        required: true,
+        required: true
       },
       password: {
         required: true
