@@ -53,6 +53,7 @@ RedHatCloud::Application.routes.draw do
     match 'legal/site_terms' => 'legal#site_terms'
     match 'legal/services_agreement' => 'legal#services_agreement'
     match 'legal/acceptable_use' => 'legal#acceptable_use'
+    match 'legal/openshift_privacy' => 'legal#openshift_privacy'
 
     resource :login,
              :controller => "login",
