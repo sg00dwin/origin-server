@@ -66,7 +66,7 @@
       Use the email address and password you register with in the steps below.
       The domain name will need to be unique across all users so get the cool ones while you can...
 
-      %pre $ rhc-create-domain -n dns_nick -l email@address
+      %pre $ rhc-create-domain -n mynamespace -l email@address
       %pre Password: (type... type... type...)
 
     %h4 Step 3 - Create your first application
@@ -75,7 +75,7 @@
       Now you can create your application.  For the preview period, you are
       only allowed to create one application.
 
-      %pre $ rhc-create-app -a MY_APP -t php-5.3.2
+      %pre $ rhc-create-app -a myapp -t php-5.3.2
       %pre Password: (type... type... type...)
 
       This will clone the git repository locally and tell you your domain name.  Making
@@ -88,10 +88,10 @@
       Now you are on the road to making it your own.  Here's an example for
       the php framework.
 
-      %pre $ cd MY_APP
+      %pre $ cd myapp
       %pre $ vim php/index.php
       %pre (Make a change...  :wq)
-      %pre $ git commit -a -m "My first change!"
+      %pre $ git commit -a -m "My first change"
       %pre $ git push
 
       Now, check your URL - your change will be live.
