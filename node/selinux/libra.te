@@ -113,12 +113,16 @@ gen_require(`
     role system_r;
     role unconfined_r;
     type unconfined_t;
+    type rpm_script_t;
+    type puppet_t;
 ')
  
 role_transition unconfined_r libra_initrc_exec_t system_r;
 unconfined_domain_noaudit(libra_initrc_t)
 
 domtrans_pattern(unconfined_t, libra_initrc_exec_t, libra_initrc_t)
+domtrans_pattern(rpm_script_t, libra_initrc_exec_t, libra_initrc_t)
+domtrans_pattern(puppet_t, libra_initrc_exec_t, libra_initrc_t)
 
 allow libra_initrc_t libra_domain:process { getattr getsched setsched transition signal signull sigkill };
 allow libra_domain libra_initrc_t:fd use;

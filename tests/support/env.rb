@@ -20,6 +20,7 @@ $temp = "/tmp/rhc"
 $create_app_script = "/usr/bin/rhc-create-app"
 $create_domain_script = "/usr/bin/rhc-create-domain"
 $client_config = "/etc/openshift/express.conf"
+$ctl_app_script = "/usr/bin/rhc-ctl-app"
 
 # RSA Key constants
 $libra_pub_key = File.expand_path("~/.ssh/libra_id_rsa.pub")
