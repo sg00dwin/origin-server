@@ -31,7 +31,8 @@
         
         %label(for="login_input")
           Login:
-        %input{:type => "text", :value => session[:confirm_login] ? session[:confirm_login] : '', :name => "login", :id => "login_input"}        
+        %input{:type => "text", :value => session[:confirm_login] ? session[:confirm_login] : '', :name => "login", :id => "login_input"}
+        %br        
         
         %label(for="pwd_input")
           Password:
@@ -39,6 +40,7 @@
                type="password" 
                name="password" 
                autocomplete="off")
+        %br
                
         %input{:type => "hidden", :name => "redirectUrl", :value => @redirectUrl}
         %input{:type => "hidden", :name => "errorUrl",  :value => @errorUrl}
