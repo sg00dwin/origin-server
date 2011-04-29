@@ -9,6 +9,7 @@ Given /^the libra client tools$/ do
   File.exists?($create_app_script).should be_true
   File.exists?($create_domain_script).should be_true
   File.exists?($client_config).should be_true
+  File.exists?($ctl_app_script).should be_true
 end
 
 Given /^the following test data$/ do |table|
