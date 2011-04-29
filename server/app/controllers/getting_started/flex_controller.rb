@@ -3,7 +3,7 @@ class GettingStarted::FlexController < ApplicationController
   
   def show
     if !session[:login]
-      session[:workflow] = getting_started_flex_path
+      session[:login_workflow] = getting_started_flex_path
       redirect_to login_path and return
     else
       user = session_user

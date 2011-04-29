@@ -29,12 +29,36 @@
           %pre $ sudo yum install rhc
 
     #other.install
-      %h6 Mac / Windows Instructions
+      %h6 Mac Instructions
 
       %p
         Install the gem from our site:
         :erb
-          <pre> $ sudo gem install --source <%= "#{root_url}/repo/gems" %> rhc</pre>
+          <pre>$ sudo gem install --source <%= "#{root_url}/repo/gems" %> rhc</pre>
+
+    #other.install
+      %h6 Windows Instructions (requires cygwin)
+
+      %p
+        Download and install cygwin from 
+        %a(href="http://www.cygwin.com") http://www.cygwin.com
+        %br Be sure to include these optional cygwin components:
+        %ul
+          %li openssh
+          %li ruby
+          %li make
+          %li gcc
+          %li git
+      %p
+        Download and extract rubygems from
+        %a(href="http://rubyforge.org/projects/rubygems") http://rubyforge.org/projects/rubygems
+      %p
+        From within cygwin run:
+        %pre $ ruby &lt;path_to_extracted_rubygems&gt;/setup.rb install
+      %p
+        Install the gem from our site:
+        :erb
+          <pre>$ gem install --source <%= "#{root_url}/repo/gems" %> rhc</pre>
 
     %h4 Step 2 - Create a domain name
 

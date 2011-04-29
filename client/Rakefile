@@ -20,6 +20,7 @@ spec = Gem::Specification.new do |s|
     s.files += %w(LICENSE README Rakefile)
     s.executables = ['rhc-create-app', 'rhc-create-domain', 'rhc-ctl-app', 'rhc-snapshot', 'rhc-user-info']
     s.add_dependency('json')
+    s.add_dependency('parseconfig')
 end
 
 # Define a :package task that bundles the gem

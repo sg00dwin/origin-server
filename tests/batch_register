@@ -3,62 +3,48 @@
 require 'rubygems'
 require 'parseconfig'
 require 'getoptlong'
-require 'mechanize'
-require 'hpricot'
-require 'net/https'
-require 'uri'
-require 'ping'
 require 'logger'
-
-@@login_action = "https://streamline.devlab.phx1.redhat.com/wapps/streamline/login.html"
-
-def matches?(line)
-  if line.inner_html =~ /To/
-    email = line.inner_html.split("</em>:")[1].strip
-    return email =~ /libra\-test\+#{@identifier}/
-  end
-
-  return false
-end
-
-def click_validation_link(body)
-  link = body.at("pre/a")
-  if link
-    @agent.get(link.attributes['href'])
-    return true
-  end
-
-  return false
-end
-
-def check_emails(links)
-  # Get the confirmation emails
-  links.each do |link|
-    email_body = Hpricot.parse(link.click.body)
-
-    # See if this email was to our account
-    email_body.at("ul").search("li").each do |line|
-      if matches?(line)
-        return click_validation_link(email_body)
-      end
-    end
-  end
-
-  return false
-end
-
-def find_confirmation
-  @agent.get('http://post-office.corp.redhat.com/archives/libra-test/') do |page|
-    # Get the current page of archives
-    archive_page = page.link_with(:text => /Thread/).click
-    confirmation_links = archive_page.links_with(:text => /^Confirm/).reverse
-    return check_emails(confirmation_links)
-  end
-end
+require 'pp'
+require 'open4'
 
 # Synchronize output
 $stdout.sync = true
 $stderr.sync = true
+
+def complete(pid, status)
+  process = @processes[pid]
+
+  begin
+    # Write the username if successful
+    if status.exitstatus == 0
+      return process[:stdout].read.chomp
+    else
+      @logger.error(process[:stderr].read)
+    end
+  ensure
+    # Clean out the process entry
+    @processes.delete(pid)
+  end
+end
+
+def wait_for_processes(blocking=true)
+  result = []
+
+  if blocking
+    @logger.debug("Blocking until next process finishes...")
+    pid, status = Process::waitpid2
+    result << complete(pid, status)
+  else
+    until @processes.empty?
+      @logger.debug("Non-blocking check for processes...")
+      pid, status = Process::waitpid2(-1, Process::WNOHANG)
+      break unless status
+      result << complete(pid, status)
+    end
+  end
+
+  return result
+end
 
 def p_usage
     puts <<USAGE
@@ -66,11 +52,11 @@ def p_usage
 Usage: batch_register
 Batch register users for testing
 
-  -o|--host    devenv_host  DevEnv host to use for registering (e.g. stg.openshift.redhat.com)
-  -i|--id      identifier   Namespace / email identifier (e.g. libra-test+ID@redhat.com)
-  -n|--num     number_users Number of users to create (e.g. libra-test+ID1@redhat.com)
-  -p|--proxy                Use a proxy
-  -h|--help                 Show Usage info
+  -n|--num       num_users     Number of users to create
+  -c|--processes num_processes The number of parallel processes to run
+  -p|--proxy                   Use a proxy
+  -d|--debug                   Show debug info
+  -h|--help                    Show Usage info
 
 USAGE
   exit 255
@@ -78,114 +64,75 @@ end
 
 begin
     opts = GetoptLong.new(
-        ["--help",  "-h", GetoptLong::NO_ARGUMENT],
+        ["--num",   "-n", GetoptLong::REQUIRED_ARGUMENT],
+        ["--processes", "-c", GetoptLong::REQUIRED_ARGUMENT],
         ["--debug", "-d", GetoptLong::NO_ARGUMENT],
         ["--proxy", "-p", GetoptLong::NO_ARGUMENT],
-        ["--host",  "-o", GetoptLong::REQUIRED_ARGUMENT],
-        ["--id",    "-i", GetoptLong::REQUIRED_ARGUMENT],
-        ["--num",   "-n", GetoptLong::REQUIRED_ARGUMENT]
+        ["--help",  "-h", GetoptLong::NO_ARGUMENT]
     )
     opt = {}
     opts.each do |o, a|
         opt[o[2..-1]] = a.to_s
     end
-
 rescue Exception => e
   puts e.message
   p_usage
 end
 
-if opt["help"] or (!opt["host"] || !opt["id"] || !opt["num"])
+if opt["help"] or !opt["num"]
     p_usage
 end
 
-proxy = ['squid.corp.redhat.com', '8080']
-password = "redhat"
-host = opt['host']
-main_page = "https://#{opt['host']}/app"
-express_access_page = "https://#{opt['host']}/app/access/express/request"
-@identifier = opt['id']
-num_users = opt['num'].to_i
-debug = opt['debug']
+@num_users = opt['num'].to_i
+@num_processes = opt['processes'].to_i
 
-# Determine if we need to proxy
-proxy = opt['p']
+# Default if necessary
+if @num_processes == 0
+  @num_processes = 10
+end
 
-# Verify proxy connectivity
-if proxy
-  print "Verifying proxy connectivity..."
-  unless Ping.pingecho('squid.corp.redhat.com', 2)
-    puts "ERROR - Could not connect to squid.corp.redhat.com."
-    puts "You must be on the RH network or VPN to run this script."
-    exit 1
+@debug = opt['debug']
+
+@options = ""
+@options << " -p" if opt['proxy']
+@options << " -d" if opt['debug']
+
+# Setup logger
+@logger = Logger.new(STDERR)
+@logger.level = @debug ? Logger::DEBUG : Logger::ERROR
+
+# Clear out the multi-process log
+`rm -rf /tmp/reg`
+`mkdir -p /tmp/reg`
+
+@logger.debug("Creating users with #{@num_processes} processes")
+
+# Create the users
+users = []
+@processes = {}
+@num_users.times do |i|
+  # If we are at the max processes, start waiting for results
+  if @processes.length == @num_processes
+    users += wait_for_processes
   end
-  puts "Done"
+
+  # Clean out any other processes that might have completed
+  users += wait_for_processes(false)
+
+  # Kick off a new process
+  pid, stdin, stdout, stderr = Open4::popen4("./register_random" + @options + " 2> /tmp/output#{i}")
+
+  stdin.close
+  @processes[pid] = {:stdout => stdout, :stderr => stderr}
+  @logger.debug("Starting process #{pid}")
+
+  sleep rand
 end
 
-# Setup the internal proxy
-@agent = Mechanize.new { |agent|
-  agent.user_agent_alias = 'Mac Safari'
-  agent.set_proxy(proxy[0], proxy[1]) if proxy
-  agent.log = Logger.new(STDOUT) if debug
-}
-
-# Register a new user
-print "Registering users (#{num_users} in total)"
-
-@agent.get(main_page) do |page|
-  login_page = page.link_with(:text => /Login/).click
-  register_page = login_page.link_with(:text => /Click here to register/).click
-
-  num_users.times do |num|
-    result_page = register_page.form_with(:action => '/app/user') do |form|
-      form['web_user[email_address]'] = "libra-test+#{@identifier}#{num}@redhat.com"
-      form['web_user[password]'] = password
-      form['web_user[password_confirmation]'] = password
-      form.add_field!('captcha_secret', 'zvw5LiixMB0I4mjk06aR')
-    end.submit
-
-    if result_page.body =~ /What's Next/
-      print "."
-    else
-      puts "\nERROR - Registration failed"
-      exit 1
-    end
-  end
+# Wait for the rest of them
+until @processes.empty?
+  users += wait_for_processes
 end
-puts "Done"
 
-print "Waiting to let the archives refresh..."
-sleep 15
-puts "Done"
-
-# Verify the email
-print "Now verifying emails"
-until find_confirmation
-  sleep 15
-end
-puts "Done"
-
-# Now request access
-print "Requesting access (#{num_users} in total)"
-
-@agent.get(express_access_page) do |page|
-  num_users.times do |num|
-
-    # Should be prompted to login
-    terms_page = page.form_with(:action => @@login_action) do |form|
-      form['login'] = "libra-test+#{@identifier}#{num}@redhat.com"
-      form['password'] = password
-    end.submit
-
-    access_page = terms_page.form_with(:action => '/app/terms').submit
-    result_page = access_page.form_with(:action => '/app/access/express').submit
-
-    if result_page.body =~ /What's Next/
-      print "."
-    else
-      puts "ERROR - Access failed"
-      exit 1
-    end
-  end
-end
-puts "Done"
+# Output the results
+puts users.join("\n")

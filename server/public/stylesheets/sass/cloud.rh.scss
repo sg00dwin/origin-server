@@ -50,17 +50,21 @@ $sans: 'Liberation Sans','Helvetica Neue',Arial,FreeSans,sans-serif;
     $first_color,
     $last_color $last_stop
   );
-  /* IE <= 7 */
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorStr=$first_color, endColorStr=$last_color);
-  /* IE 8 */
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=$first_color, endColorstr=$last_color)";
+  /* IE */
+  -pie-background: linear-gradient(
+    top,
+    $first_color,
+    $last_color $last_stop
+  );
   /* Spec */
   background: linear-gradient(
     top,
     $first_color,
     $last_color $last_stop
   );
+  /* For IE */
   zoom: 1;
+  behavior: url('/app/stylesheets/PIE.htc'); 
 }
 
 //Cross-browser horizontal linear gradient
@@ -91,17 +95,21 @@ $sans: 'Liberation Sans','Helvetica Neue',Arial,FreeSans,sans-serif;
     $first_color,
     $last_color $last_stop
   );
-  /* IE <= 7 */
-  filter: progid:DXImageTransform.Microsoft.gradient(GradientType=1,startColorStr=$first_color, endColorStr=$last_color);
-  /* IE 8 */
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=1,startColorstr=$first_color, endColorstr=$last_color)";
+  /* IE */
+  -pie-background: linear-gradient(
+    left,
+    $first_color,
+    $last_color $last_stop
+  );
   /* Spec */
   background: linear-gradient(
     left,
     $first_color,
     $last_color $last_stop
   );
+  /* For IE */
   zoom: 1;
+  behavior: url('/app/stylesheets/PIE.htc');
 }
 
 //Cross-browser border radius
@@ -109,6 +117,8 @@ $sans: 'Liberation Sans','Helvetica Neue',Arial,FreeSans,sans-serif;
   -moz-border-radius: #{$radius}px;
   -webkit-border-radius: #{$radius}px;
   border-radius: #{$radius}px;
+  /* For IE */
+  behavior: url('/app/stylesheets/PIE.htc'); 
 }
 
 @mixin form_label {
@@ -159,8 +169,10 @@ $sans: 'Liberation Sans','Helvetica Neue',Arial,FreeSans,sans-serif;
     align: center;
   }
 	border: 0px;
-  box-shadow: 1px 1px 1px #ccc;
+  zzzz: 1px 1px 1px #ccc;
   cursor: pointer;
+  /* For IE */
+  behavior: url('/app/stylesheets/PIE.htc'); 
 }
 
 @mixin form_link {
@@ -200,7 +212,6 @@ $sans: 'Liberation Sans','Helvetica Neue',Arial,FreeSans,sans-serif;
   @include gradient_bg(darken($bg_color, 10%), $bg_color, 100%);
   color: white;
 }
-
 
 @mixin clearfix {
 /**
@@ -326,68 +337,24 @@ form {
 }
 
 #head {
+  padding-top: 20px;
+
   > div.omega {
     padding-left: 10px;
   }
 }
 
-#logo {
-  margin: 1em 0;
-}
-
-#top_head {
-  background: url('/app/images/misty-cloud.png') no-repeat right 55px;
-	position: relative;
-  height: 130px;
-
-  #mainslug {
-    position: absolute;
-    bottom: 7px;
-    right: 0;
-    color: $light_blue;
-    font: {
-      size: 14pt;
-      family: Overpass;
-    }
-  }
-
-  > div { float: left; }
-
-  #logo {
-    position: absolute;
-    bottom: -20px;
-    left: 0;
-  }
-
-  #messages {
-    width: 840px;
-    text-align: right;
-
-    .info {
-      color: white;
-      display: inline;
-      margin-left: 10px;
-
-      a {
-        font-size: 11pt;
-        text-decoration: none;
-      }
-    }
-  }
-
-}
-
 #login{
-	@include gradient_bg(darken($rh_red, 5%), $rh_red, 100%);
-	width: 50px;
-	padding: 6px 30px;
-	position: absolute;
-	right: 0;
+  @include gradient_bg(darken($rh_red, 10%), $rh_red, 100%);
+  padding: 6px 30px;
+  position: absolute;
+  right: 0;
+  z-index: 1000;
   font-family: OverpassBold;
 
   a {
     margin: 0 auto;
-    display: block;
+    display: inline-block;
     font-weight: normal;
     text: {
       align: center;
@@ -398,8 +365,53 @@ form {
   }
 }
 
-#logout {
+#user_controls {
   @extend #login;
+  
+  a {
+  
+    &#flex_console_link {
+      margin-right: 20px;
+      text-transform: none;
+    
+      &:hover {
+        color: $flex;
+      }
+    }
+  }
+}
+
+#top_head {
+  background: url('/app/images/cloud-bg.png') no-repeat right bottom;
+	position: relative;
+  height: 130px;
+
+  #logo {
+    margin-top: 15px;
+  }
+  
+  p {
+    margin-top: 20px;
+    font: {
+      size: 13pt;
+      family: Overpass;
+    }
+  }
+  
+  a.try_it {
+    @include try_it_button($bright_blue);
+    margin: 40px 0 0 40px;
+  
+    &:hover {
+      @include try_it_hover($bright_blue);
+    }
+    
+    .product & {
+      display: none;
+    }
+    
+  }
+  
 }
 
 #nav {
@@ -412,6 +424,9 @@ form {
 
   ul {
     margin: 0px;
+    display: block;
+    float: left;
+    overflow: hidden;
   }
 
   li {
@@ -437,15 +452,35 @@ form {
     }
   }
 
-  li.category {
+  .category {
     background: url('/app/images/nav_category.png') no-repeat right center;
-    color: #ccc;
+    display: inline;
+    float: left;
+    margin: 0;
+    color: white;
     padding: 7px 17px 7px 15px;
+    font-size: 10pt;
+    cursor: pointer;
+    
+    &.collapsed {
+    background-color: #900;
+    }
+    &.expanded {
+      background-color: transparent;
+    }
+    &.last.collapsed {
+      background-color: transparent;
+    }
   }
 
-  li.after_category {
+  li.first {
     a {
       border-left: none;
+    }
+  }
+  li.last {
+    a {
+      border-right: none;
     }
   }
 
@@ -670,287 +705,57 @@ form {
   }
 }
 
-#breadcrumb {
-	margin: 0 0 1em;
-	color: #aaa;
-  a {
-    text-decoration: none;
-    color: #aaa !important;
-  }
-}
-
-#intro {
-  @include gradient_bg(#333, #666, 100%);
-  padding-top: 20px;
-  border: 1px solid #ccc {
-    right: none;
-    left: none;
-  }
-  
-  img {
-    float: left;
-    margin: 50px 30px;
-  }
-  
-  h3 {
-    font-family: Overpass;
-    font-size: 30pt;
-    line-height: 28pt;
-    margin-left: 20px;
-  }
-  
-  p {
-    font-size: 12pt;
-  }
-  
-  a.try_it {
-    @include try_it_button($rh_red);
-    
-    &:hover {
-      @include try_it_hover($rh_red);
-    }
-  }
-}
-
-#sidebar_slugs_container {
-    @include gradient_bg(white, #ececec, 100%);
-    overflow: hidden;
+#info {
 
    p, #{$list_elements}, #{$header_elements} {
     color: $text_color;
+    font-size: 11pt;
+    margin-bottom: 5px;
   }
 
   #{$header_elements} {
-    font-family: OverpassBold;
+    font-family: Overpass;
     font-weight: normal;
     color: black;
   }
-
-}
-
-#sidebar {
-  background: #e6e6e6;
-  margin: 0;
-  width: 280px;
-  border: {
-    left: 1px solid white;
+  
+  #front_image {
+    display: block;
+    margin: 20px auto;
   }
-
-  div.grid_7 {
-    background: url('/app/images/arrow.png') no-repeat 90% center;
-    margin: 0;
-    padding-left: 10px;
-    border: {
-      top: 1px solid white;
-      bottom: 1px solid #ccc;
-    }
-
-    &.alpha {
-      border: {
-        top: none;
-      }
-    }
-
-    &.omega {
-      border: {
-        bottom: none;
-      }
-    }
-  }
-
-  a {
-    width: 100%;
-    height: 50%;
-    margin: 0;
-    padding: 0;
+  
+  a.learn-more {
     display: inline-block;
-    text-decoration: none;
-
-    &:hover {
-      h4 {
-        color: $rh_red;
+    margin: 0;
+    font-family: OverpassBold;
+    text: {
+      decoration: none;
+      transform: uppercase;
+    }
+    
+    
+    &.express {
+      color: darken($express, 10%);
+      
+      &:hover {
+        color: darken($express, 20%);
+      }
+    }
+    
+    &.flex {
+      color: darken($flex, 10%);
+      
+      &:hover {
+        color: darken($flex, 20%);
       }
     }
   }
-/*
-  a.readmore {
-    display: block;
-    margin: 0 10px 0 0;
-    color: #3C6EB4;
-    text: {
-      decoration: none;
-      align: right;
-    }
-  }
-*/
-  h2 {
-    padding: 1em 0 0;
-    font-size: 10pt;
-    text-transform: uppercase;
-    color: #666;
-  }
 
-  h3 {
-    font-size: 11pt;
-    color: #111;
-  }
-
-  h4 {
-    margin: 1em 10px .25em 0;
-    color: black;
-    font: {
-      size: 11pt;
-      family: Overpass;
-      weight: normal;
-    }
-    line-height: 10pt;
-    text-transform: uppercase;
-  }
-
-  .flex_details & {
-    background: none;
-  }
-
-  ul {
-    margin: 0 0 1em;
-  }
-
-  .home & #resources h4 {
-    font-size: 22pt;
-  }
-
-  #faq h4 {
-    font-size: 32pt;
-  }
-
-  #partners h4 {
-    font-size: 22pt;
-  }
-
-}
-
-#slugs {
-	background: #ececec;
-	margin: 0;
-	padding: 12px 0 1em 5px;
-
-  .suffix_1 {
-    padding: 0 0 15px 0;
-    margin: 0 -15px 0 0;
-  }
-
-  ul {
-    width: 100%;
-    list-style-position: outside;
-  }
-
-  li {
-    margin-left: 10px;
-  }
-}
-
-.slug {
-
-  h3 {
-    padding: 10px 10px 0;
-    margin: 0;
-    font: {
-      size: 13pt;
-      weight: normal;
-    }
-    font-family: Overpass !important;
-  }
-
-  p {
-    padding: 10px;
-    margin-bottom: 10px;
-    font: {
-      size: 11pt;
-    }
-  }
-
-  img {
-    padding: 10px;
-  }
-
-  p.link {
-    padding-right: 10px;
-    text-align: right;
-    clear: both;
-  }
-
-  a {
-    color: $bright_blue;
-    text-decoration: none;
-
-    .learn {
-      float: right;
-      margin: 0 12px 0 0;
-    }
-  }
-
-  .container_24 &.grid_9.last {
-    width: 353px;
-    margin-right: 0;
-    border: {
-      right: 1px solid #ccc;
-    }
-  }
-
-  .icons img {
-    float: right;
-    margin: 10px;
-  }
-}
-
-
-/*
- * Trick to make equal-height columns
- */
-#sidebar_slugs_container > div {
-  padding-bottom: 100%;
-  margin-bottom: -100%;
-}
-
-
-#flex_steps {
-
-  h6 {
-    font-weight: normal;
-
-    strong {
-      text-transform: uppercase;
-    }
-  }
-
-  p {
-    font-size: 11pt;
-    margin: 0;
-  }
-
-  a {
-    display: block;
-    margin: 0 0 1em;
-    font: {
-      weight: bold;
-      size: 11pt;
-    }
-    text: {
-      decoration: none;
-      align: right;
-    }
-    color: #3C6EB4;
-  }
-}
-
-#flex_nowwhat {
-  @extend #flex_steps;
 }
 
 #app_promos {
-	background: #ececec;
-  padding-bottom: 15px;
-
+  margin: 0 13px;
+  
   #{$text_elements}, #{$header_elements}, #{$list_elements} {
     margin: 0 auto {
       top: 1em !important;
@@ -968,9 +773,9 @@ form {
     background: #d0d1d0;
   }
 
-  h3 {
+  #page & h3 {
     font: {
-      size: 10pt;
+      size: 11pt;
     }
   }
 
@@ -981,6 +786,7 @@ form {
     text-transform: uppercase;
   }
 
+/*
   a {
     background: $rh_red;
     padding: 5px 10px;
@@ -991,31 +797,35 @@ form {
       transform: uppercase;
     }
   }
+*/
 
-  .grid_8 {
+  .promo {
+    background: #ccc;
+    width: 310px;
     min-height: 170px;
+    margin: 0;
+    border: 1px solid #666;
+    border-left-width: 0;
   }
 
-  .express {
-    background: url(/app/images/express-tile-trans.png) #ccc;
 
+  .express {
+    //background-image: url(/app/images/express-tile-trans.png);
+    border-left-width: 1px;
+
+/*
     &.hover {
       background-color: $express;
 
       h4 {
         color: $express;
       }
-
-/*
-      a {
-        background-color: $express;
-      }
-*/
     }
+*/
   }
-
+/*
   .flex {
-    background: url(/app/images/flex-tile-trans.png) #ccc;
+    background-image: url(/app/images/flex-tile-trans.png);
 
     &.hover{
       background-color: $flex;
@@ -1024,16 +834,11 @@ form {
         color: $flex;
       }
 
-/*
-      a {
-        background-color: $flex;
-      }
-*/
     }
   }
 
   .power {
-    background: url(/app/images/power-tile-trans.png) #ccc;
+    background-image: url(/app/images/power-tile-trans.png);
 
     &.hover {
       background-color: $power;
@@ -1041,14 +846,9 @@ form {
       h4 {
         color: $power;
       }
-
-/*
-      a {
-        background-color: $power;
-      }
-*/
     }
   }
+*/
 }
 
 #page {
@@ -1363,16 +1163,6 @@ label.error {
 
 }
 
-#terms_and_conditions {
-  margin: 2em 0 0;
-  padding: .5em 0 0;
-  color: #bbb !important;
-  border: {
-    top: 1px solid #dedede;
-  }
-}
-
-
 /* Access request forms */
 #access {
   h3 {
@@ -1447,6 +1237,8 @@ label.error {
     @include try_it_button(#76BC48);
     margin-left: 300px;
     box-shadow: 2px 2px 2px #333;
+    /* For IE */
+    behavior: url('/app/stylesheets/PIE.htc'); 
     
     &:hover {
       @include try_it_hover(#76BC48) ;
@@ -1994,17 +1786,25 @@ label.error {
   }
 }
 
+/**
+ * Legal page styling
+ */
+.legal {
+  
+  li { margin-bottom: 10px; }
+  
+  #page ol ul {
+    list-style-type: none;
+    
+    .section-number {
+      float: left;
+      margin-left: -2.25em;
+    }
+  }
+  
+}
 
 #footer {
-  border-top: 60px solid black;
-  -moz-border-top-colors:
-    #666
-    #555
-    #444
-    #333
-    #222
-    #111
-    #000;
 	padding: 3em 0;
 
   img, p, ul {

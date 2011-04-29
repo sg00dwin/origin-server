@@ -33,8 +33,9 @@ module Libra
 
       # DDNS configuration
       @@config[:libra_zone] = fs_config.get_value('libra_zone')
-      @@config[:libra_child_zone] = fs_config.get_value('libra_child_zone')
-      @@config[:libra_domain] = @@config[:libra_child_zone] + '.' + @@config[:libra_zone]
+      child_zone = fs_config.get_value('libra_child_zone')
+      @@config[:libra_child_zone] = child_zone
+      @@config[:libra_domain] = (child_zone.empty? ? '' : child_zone + '.') + @@config[:libra_zone]
       @@config[:resolver] = fs_config.get_value('resolver')
       @@config[:secret] = fs_config.get_value('secret')
 

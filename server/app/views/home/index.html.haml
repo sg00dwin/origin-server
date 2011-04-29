@@ -13,21 +13,10 @@
 
       /Promo banners
       %li.slide
-        .slide-canvas
-        .content
-          %h2 Free espresso and tech help at the OpenShift Cafe
+        = image_tag "/app/images/promo_banner_free_espresso.png"
           
       %li.slide
-        .slide-canvas
-        .content
-          %h2 
-            Win a Xoom at the OpenShift Cafe
-      
-      %li.slide
-        .slide-canvas
-        .content
-          %h2
-            Sign up for the OpenShift Webcast
+        = image_tag "/app/images/promo_banner_win_xoom.png"
 
 
     /Slide show navigation
@@ -36,110 +25,54 @@
         %a.page(href='#') 1
       %li
         %a.page(href='#') 2
-      %li
-        %a.page(href='#') 3
 
   .clear
-  
-#intro.container_24
-  #question.grid_6
-    %h3 What is OpenShift?
-  
-  #answer.grid_12
-    %p
-      OpenShift Express and Flex are free, leading-edge cloud services that enable developers to deploy applications written in multiple frameworks and languages across clouds.
-    
-  #action.grid_5
-    - case @try_link_points_to
-    - when 'register'
-      = link_to 'Try it now!', '/app/user/new/express', :class => 'try_it'
-    
-    - when 'queue', 'request'
-      = link_to 'Try it now!', '/app/access/express/request', :class => 'try_it'
-    
-    - when 'getting_started'
-      = link_to 'Get Started!', '/app/getting_started/express', :class => 'try_it'
-  
-  .clear
 
-#sidebar_slugs_container.container_24
-  -# changed id to sidebar from sidenav
-  #sidebar.grid_7.push_17
+#page.container_24
+  /High-level information
+  #info.container_24
 
-    #resources.grid_7.alpha
-      = link_to('http://www.redhat.com/openshift/community') do
-        %h4 Resources
-        %p Forums, Eval Guides, How-To's & Videos
-    .clear
+    /For Developers
+    #for_developers.grid_11.prefix_1
+      %h3 OpenShift is for Developers
+      %p
+        OpenShift is for developers who love to build on open source, but don't need the hassle of building and maintaining infrastructure. 
+      
+      = link_to 'Learn More >', express_path, :class => 'learn-more express'
+    
+    /Cutting-Edge
+    #cutting_edge.grid_11
+      %h3 OpenShift is Cutting-Edge
+      %p
+        Supports all the coolest languages and frameworks, plus PaaS automation features like auto-scaling and performance monitoring. 
+      
+      = link_to 'Learn More >', flex_path, :class => 'learn-more flex'
 
-    #faq.grid_7
-      = link_to('http://www.redhat.com/openshift/faq') do
-        %h4 FAQ
-        %p Got questions? We have answers
     .clear
     
-    #partners.grid_7.omega
-      = link_to partners_path do
-        %h4 Our Partners
-        %p A Strong Ecosystem of Technologies
-
-  /Product slugs
-  
-  /Express slug
-  .slug.grid_8.pull_7
-    %h3 OpenShift is for Developers
-    %p
-      OpenShift is for developers who love to build on open source, but don't need the hassle of building and maintaining infrastructure.
+    = image_tag "/app/images/PaaS.png", :id => 'front_image'
     
-    %a.fancybox(href='/app/images/rocket-dude-big.png')
-      = image_tag '/app/images/rocket-dude.png'
+    .clear
 
+  /App promo boxes
+  #app_promos.container_24
 
-  /Flex slug
-  .slug.grid_9.pull_7.last 
-  
-    %h3 OpenShift is Cutting-Edge
-    %p
-      Supports all the coolest languages and frameworks, plus PaaS automation features like auto-scaling and performance monitoring.
-    
-    %a.fancybox(href='app/images/layer-cake-big.jpg')
-      = image_tag '/app/images/layer-cake.png'
-   
+    /Express box
+    .express.promo.grid_8
+      = link_to express_path do
+        = image_tag '/app/images/promo_box_express.png'
 
-  /End slugs
-  .clear
+    /Flex box
+    .flex.promo.grid_8
+      = link_to flex_path do
+        = image_tag '/app/images/promo_box_flex.png'
 
-/App promo boxes
-#app_promos.container_24
-  /Express box
-  .express.promo.grid_8
-    %h3 
-      Deploy to the Cloud in Minutes,
-      %br
-      it's Free and Easy!
-    %h4 Express
-    %p
-      = link_to 'Learn More', express_url
+    /Power box
+    .power.promo.grid_8
+      = link_to power_path do
+        = image_tag '/app/images/promo_box_power.png'
 
-  /Flex box
-  .flex.promo.grid_8
-    %h3 
-      Auto-scaling PaaS for 
-      %br
-      JBoss, Java, and PHP
-    %h4 Flex
-    %p
-      = link_to 'Learn More', flex_url
-
-  /Power box
-  .power.promo.grid_8
-    %h3 
-      Tools for custom cloud 
-      %br
-      application deployments
-    %h4 Power
-    %p
-      = link_to 'Learn More', power_url
+    .clear
 
   .clear
 /End app promo boxes

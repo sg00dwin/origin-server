@@ -14,9 +14,10 @@
     %link(rel="shortcut icon" href="/app/images/favicon.ico")
 
     = stylesheet_link_tag "/app/stylesheets/1_reset", "/app/stylesheets/2_960_24_col", "/app/stylesheets/3_text", "/app/stylesheets/cloud.rh.css"
-
+    
+    = javascript_include_tag "/app/javascripts/jquery-1.5.1.min.js"
+    = javascript_include_tag "/app/javascripts/universal.js"
     - if content_for?(:scripts)
-      = javascript_include_tag "/app/javascripts/jquery-1.5.1.min.js"
       = yield :scripts
 
     = csrf_meta_tag
@@ -26,74 +27,68 @@
     = render 'shared/omniture_code'
 
     #horrible_wrapper
+      - if session[:login] || session[:user]
+        #user_controls
+          - if session[:user].has_access?(CloudAccess::FLEX)
+            = link_to 'Flex Console', '/flex', :id => 'flex_console_link', :class => 'flex'
+          =link_to 'Logout', '/app/logout'
+      - else
+        #login
+          = link_to 'Login', login_path
       #head.container_24
-        #top_head
-
-          - if session[:login] || session[:user]
-            #messages
-              #welcome
-
-              -# show informational message as needed
-              - [CloudAccess::EXPRESS, CloudAccess::FLEX].each do |product|
-                - name = CloudAccess.access_name(product)
-                - if session[:user].has_access? product
-                  .info
-                    = link_to "Get started with #{name}", "/app/getting_started/#{name}", :class => name
-
-                - elsif session[:user].has_requested? product
-                  .info
-                    You're in the queue to access #{name}.
-
-            #logout
-              %a(href='/app/logout') Logout
-
-          - else
-            #login
-              %a(href='/app/login') Login
-
-          #logo
+        #top_head.container_24
+          #logo.grid_6
             = link_to image_tag("/app/images/logo.png", :alt => "OpenShift by Red Hat Cloud"), root_path
-
-          #mainslug
-            - if session[:login] || session[:user]
-              .welcome
-                Welcome, #{session[:login]}!
-            - else
-              Platform at your Service
+          
+          
+          #plug.grid_11
+            %p
+              Free, leading-edge cloud services that enable developers to deploy applications written in multiple frameworks and languages across clouds.
+          
+          #button.grid_7
+            - case @try_link_points_to
+            - when 'register'
+              = link_to 'Try it now!', '/app/user/new/express', :class => 'try_it'
+            
+            - when 'queue', 'request'
+              = link_to 'Try it now!', '/app/access/express/request', :class => 'try_it'
+            
+            - when 'getting_started'
+              = link_to 'Get Started!', '/app/getting_started/express', :class => 'try_it'
 
         .clear
 
         #nav.container_24
-          %ul
-            %li.category
-              Products
-            %li.after_category
+          %h5.category.expanded(data-category='products')
+            Products
+          %ul#products.expanded
+            %li.first
               = link_to 'Express', express_path, :class => 'express'
             %li
               = link_to 'Flex', flex_path, :class => 'flex'
-            %li
+            %li.last
               = link_to 'Power', power_path, :class => 'power'
-
-            %li.category
-              Community
-            %li.after_category
+          
+          %h5.category.collapsed(data-category='community')
+            Community
+          %ul#community.collapsed
+            %li.first
               = link_to 'Forums', 'http://www.redhat.com/openshift/forums'
             %li
               = link_to 'Blog', 'http://www.redhat.com/openshift/blogs'
-            %li
-              = link_to 'News', 'http://www.redhat.com/openshift/news-and-announcements'
-
-            %li.category
-              Help
-            %li.after_category
+            %li.last
+              = link_to 'Partners', partners_path
+          
+          %h5.category.collapsed.last(data-category='help')
+            Help
+          %ul#help.collapsed
+            %li.first
               = link_to 'KB', 'http://www.redhat.com/openshift/kb'
-            %li
-              = link_to 'Guides', 'http://docs.redhat.com/docs/en-US/OpenShift/'
             %li
               = link_to 'Docs', 'http://www.redhat.com/openshift/documents'
             %li
               = link_to 'Videos', 'http://www.redhat.com/openshift/videos'
-            %li
+            %li.last
               = link_to 'FAQ', 'http://www.redhat.com/openshift/faq'
 
           .clear
@@ -112,8 +107,5 @@
             = link_to 'Privacy Policy', 'http://www.redhat.com/legal/privacy_statement.html'
           %li
             = link_to 'Contact Us', 'mailto:openshift@redhat.com'
-
-          %li
-            = link_to 'OpenShift Partners', partners_path
 
         .clear
