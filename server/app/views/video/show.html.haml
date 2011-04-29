@@ -1,7 +1,7 @@
 -# file: Video embedding page
 
 - content_for :page_title do
-  Watch #{@filename}
+  Watch #{@title}
   
 - content_for :scripts do
   = stylesheet_link_tag '/app/stylesheets/projekktor_maccaco.css'
@@ -14,7 +14,7 @@
   
   #main_content.grid_22
     %h2 
-      = @filename
+      = @title
     
     %video.projekktor{ :poster => "http://www.redhat.com/g/video_stills/#{@filename}.png", :height => "385px", :width => "640px"}
     
