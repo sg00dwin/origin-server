@@ -12,36 +12,29 @@
 
 -# Flex title
 - content_for :pageheader do
-  = render 'shared/pageheader', :product => 'flex', :title => 'Flex', :subtitle => 'Free, Auto-scaling Platform as a Service'
+  = render 'shared/pageheader', :product => 'flex', :title => 'OpenShift Flex', :subtitle => 'Auto-scaling PaaS for JBoss, Java, and PHP'
   
 -# About Flex
-- content_for :about do
-  %h2 What is Flex?
+- content_for :banner do
+  %h2 OpenShift Flex
+  %h3 Need to auto-scale new and existing apps in the Cloud?
   %p
-    Flex is a free platform-as-a-service for new and existing JBoss, Java EE6 and PHP applications. Provision cloud resources, deploy, manage, monitor and auto-scale applications from a single, easy-to-use interface.
-
--# Screenshot
-- content_for :screenshot do
-  = image_tag "http://placekitten.com/g/300/250",
-              :title => "Replace with actual screenshot", 
-              :alt => "Screenshot"
+    Provision, deploy, monitor and auto-scale JBoss, Java EE6 and PHP apps    
+    
+  = link_to 'Try it now!', '/app/flex_redirect', :class => 'try_it'     
 
 -# Tabs
 - content_for :tabs do
   %ul#tab_navigation
     %li
-      %a.step-one(href="#step_1") Provision
+      %a.step-one(href="#step_1") Build
     %li
-      %a.step-two(href="#step_2") Middleware
+      %a.step-two(href="#step_2") Deploy
     %li
-      %a.step-three(href="#step_3") Upload
-    %li
-      %a.step-four(href="#step_4") Tweak
-    %li
-      %a.step-five(href="#step_5") Deploy
+      %a.step-three(href="#step_3") Monitor &amp; Scale
   
   #step_1.tab
-    %h3 Provision Cloud Resources
+    %h3 Build your Server Cluster and Application Stack
     
     .tab_illustration
       = image_tag "http://placekitten.com/g/300/200",
@@ -49,12 +42,12 @@
               :alt => "Step one illustration"
     
     %p
-      Plug your AWS credentials into the wizard; then define the memory and CPU characteristics of your cluster.
-    
+      OpenShift Flex's wizard driven interface makes it easy to provision resources and build integrated application stacks.
+      
     = link_to 'Watch the video >>>', '#', :class => 'watch'
 
   #step_2.tab
-    %h3 Select Middleware Components
+    %h3 Deploy, Modify, Rollback and Restart Applications
 
     .tab_illustration
       = image_tag "http://placekitten.com/g/300/200",
@@ -62,12 +55,12 @@
               :alt => "Step two illustration"
 
     %p
-      Build your stack by selecting language, web, application, database, and caching server components.
+      OpenShift Flex makes it easy to deploy your application, make modifications to code and components, version your changes and redeploy.
     
     = link_to 'Watch the video >>>', '#', :class => 'watch'
 
   #step_3.tab
-    %h3 Upload the Application Code
+    %h3 Monitoring and Auto-Scaling Built-in
 
     .tab_illustration
       = image_tag "http://placekitten.com/g/300/200",
@@ -75,80 +68,57 @@
               :alt => "Step three illustration"
 
     %p
-      Upload your application code in a variety of different ways depending on what works for you.
+      Without the use of agents or scripts, OpenShift Flex gives you end-to-end monitoring straight-out-of-box with configurable auto-scaling that lets you decide when and how to scale your application.
     
     = link_to 'Watch the video >>>', '#', :class => 'watch'
-
-  #step_4.tab
-    %h3 Tweak Configuration Files
-
-    .tab_illustration
-      = image_tag "http://placekitten.com/g/300/200",
-              :title => "Replace withillustration of some sort", 
-              :alt => "Step four illustration"
-
-    %p
-      You'll probably want to make changes to the standard configuration files. No problem, Flex makes it easy.
-    
-    = link_to 'Watch the video >>>', '#', :class => 'watch'
-
-  #step_5.tab
-    %h3 Deploy Your Application
-
-    .tab_illustration
-      = image_tag "http://placekitten.com/g/300/200",
-              :title => "Replace withillustration of some sort", 
-              :alt => "Step five illustration"
-
-    %p
-      Click "Deploy", you are now running in the cloud!
-    
-    = link_to 'Watch the video >>>', '#', :class => 'watch'
-    
 
 -# Video section
 - content_for :videos do
   .product-video 
-    %h3 Video Title
+    %h3 OpenShift Flex Product Tour
     %p.video-author.author
-      Author, Author description
+      Issac Roth,  PaaS Master - Red Hat
     
     .video-thumb.thumb
-      %a(href="#")
+      /http://www.redhat.com/g/video_stills/flexproddemo.png      
+      %a(href="video/flexproddemo")
         %img(src="http://placekitten.com/g/150/100"
-             title="Replace with actual video thumbnail"
-             alt="Video title")
+             title="OpenShift Flex Product Tour"
+             alt="OpenShift Flex Product Tour")
   
     %p.video-description
-      Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diamvoluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+      This video walks you through the high level functionality of OpenShift Flex, covering provisioning, deploying, monitoring and scaling applications in the cloud.
     
-    .video-meta.meta
-      %p.video-length
-        3 min, 27 seconds
-      %p.video-postdate
-        Posted May 5, 2011
+    /
+      .video-meta.meta
+        %p.video-length
+          3 min, 27 seconds
+        %p.video-postdate
+          Posted May 5, 2011
 
   .product-video 
-    %h3 Video Title
+    %h3 What are people saying about OpenShift?
     %p.video-author.author
-      Author, Author description
+      Developers, ISVs, customers and partners
     
     .video-thumb.thumb
-      %a(href="#")
+      /http://www.redhat.com/g/video_stills/openshiftmontage.png      
+      %a(href="video/openshiftmontage")
         %img(src="http://placekitten.com/g/150/100"
-             title="Replace with actual video thumbnail"
-             alt="Video title")
+             title="Developers, ISVs, customers and partners"
+             alt="Developers, ISVs, customers and partners")
   
     %p.video-description
-      Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diamvoluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+      This video shows you what developers, ISVs, customers and partners are saying about Red Hat's exciting new OpenShift PaaS.
     
-    .video-meta.meta
-      %p.video-length
-        3 min, 27 seconds
-      %p.video-date.date
-        Posted May 5, 2011
+    /
+      .video-meta.meta
+        %p.video-length
+          3 min, 27 seconds
+        %p.video-date.date
+          Posted May 5, 2011
         
-  %a.more(href="#") More documentation &gt;
+  %a.more(href="http://www.redhat.com/openshift/videos") More Videos &gt;
   
 -# Community section
 - content_for :community do
@@ -178,34 +148,22 @@
         
     %a.more(href="#") Read more &gt;
 
--# Try it button
-- content_for :try_it_button do
-  - case @try_link_points_to  
-  - when 'register'
-    = link_to 'Try it now!', '/app/user/new/flex', :class => 'try_it'
-  
-  - when 'queue', 'request'
-    = link_to 'Try it now!', '/app/access/flex/new', :class => 'try_it'
-  
-  - when 'getting_started'
-    = link_to 'Get Started!', '/app/getting_started/flex', :class => 'try_it'
-
 -# Resource links
 - content_for :resources do
   %ul
     %li
-      = link_to "Flex Evaluation Guide", "#"
+      = link_to "OpenShift Flex Evaluation Guide", "#"
     
     %li
-      = link_to "Deploying Drupal on Flex", "#"
+      = link_to "Deploying Drupal on OpenShift Flex", "#"
     
     %li
-      = link_to "Deploying Wordpress on Flex", "#"
+      = link_to "Deploying Wordpress on OpenShift Flex", "#"
     
     %li
-      = link_to "Deploying JBoss Applications on Flex", "#" 
+      = link_to "Deploying JBoss Applications on OpenShift Flex", "#" 
   
-  = link_to 'More Documentation >', '/documents', :class => 'more'
+  = link_to 'More Documentation >', 'http://www.redhat.com/openshift/documents', :class => 'more'
   
 -# Tour link
 - content_for :tour_link do
@@ -216,9 +174,6 @@
 
 -# Platforms
 - content_for :platforms do
-  %h4 Clouds
-  %ul
-    %li Amazon EC2
     
   %h4 Application Types
   %ul
@@ -235,7 +190,7 @@
     %li Tomcat
     %li Apache
   
-  %h4 Database
+  %h4 Databases
   %ul
     %li MySQL
     %li MongoDB
@@ -243,22 +198,24 @@
     
   = link_to 'More information >', '#', :class => 'more'
 
--# Top Video
-- content_for :top_video do
-  #top_video_thumb
-    = image_tag "http://placekitten.com/g/150/100",
-                :title => "Replace with actual video thumbnail",
-                :alt => "Today's top video"
-  %h4 Video Title
-  %p.video-author.author
-  %p.video-description
-    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumyeirmod tempor invidunt ut.
-  
-  %a.more(href="#") Read more &gt;
-  
+-# Supplementary documentation links
+- content_for :doc_links do
+  #doc_link
+    = link_to 'http://www.redhat.com/openshift/kb' do
+      %h3
+        Knowledge Base
+      %p
+        Get schooled! &gt;
+    
+    = link_to 'http://www.redhat.com/openshift/documents' do
+      %h3 Docs
+      %p
+        For those who want to RTFM! &gt;
+
 -# Promos
 - content_for :promos do
-  .sidebar-promo
-    %h3 Promo title
-    %p
-      This is an example promo.
+  /
+    .sidebar-promo
+      %h3 Promo title
+      %p
+        This is an example promo.

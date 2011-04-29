@@ -1,12 +1,15 @@
 -# file: Flex request check email page
 
-= render 'shared/pageheader', :product => 'flex', :title => 'Try Flex', :subtitle => 'Request Access to Flex'
+- content_for :page_title do
+  Get Access to OpenShift Flex!
+
+= render 'shared/pageheader', :product => 'flex', :title => 'Try Flex', :subtitle => 'Request Access to OpenShift Flex'
 
 .container_24#page
 
   .prefix_1.grid_22.suffix_1
-    %h4 "Check your inbox..."
+    %h2 What's Next?
     %p
-      Check your email and you should see an email addressed from us once you have been granted access.
+      Check your inbox for an email letting you know you have been granted access.
 
   .clear

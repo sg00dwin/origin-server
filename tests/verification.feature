@@ -1,35 +1,11 @@
 @verify
 Feature: Verification Tests
 
-  Scenario: PHP creation tests
-    Given the libra client tools
-    And the following test data
-      | processes | users | apps |    type   |
-      |     1     |   2   |  1   | php-5.3.2 |
-    When the applications are created
-    Then they should all be accessible
-
-  Scenario: Rack creation tests
-    Given the libra client tools
-    And the following test data
-      | processes | users | apps |    type    |
-      |     1     |   2   |  1   | rack-1.1.0 |
-    When the applications are created
-    Then they should all be accessible
-
-  Scenario: WSGI creation tests
-    Given the libra client tools
-    And the following test data
-      | processes | users | apps |    type    |
-      |     1     |   2   |  1   | wsgi-3.2.1 |
-    When the applications are created
-    Then they should all be accessible
-
   Scenario: PHP modification tests
     Given the libra client tools
     And the following test data
       | processes | users | apps |    type   |
-      |     1     |   2   |  1   | php-5.3.2 |
+      |     1     |   1   |  1   | php-5.3.2 |
     When the applications are created
     Then they should all be accessible
     And they should be able to be changed
@@ -38,7 +14,7 @@ Feature: Verification Tests
     Given the libra client tools
     And the following test data
       | processes | users | apps |    type    |
-      |     1     |   2   |  1   | rack-1.1.0 |
+      |     1     |   1   |  1   | rack-1.1.0 |
     When the applications are created
     Then they should all be accessible
     And they should be able to be changed
@@ -47,20 +23,18 @@ Feature: Verification Tests
     Given the libra client tools
     And the following test data
       | processes | users | apps |    type    |
-      |     1     |   2   |  1   | wsgi-3.2.1 |
+      |     1     |   1   |  1   | wsgi-3.2.1 |
     When the applications are created
     Then they should all be accessible
     And they should be able to be changed
 
   Scenario: Creation load tests
     Given the libra client tools
-    And a 1200 second command timeout
+    And a 300 second command timeout
     And a 60 second http request timeout
     And the following test data
       | processes | users | apps |    type    |
       |     10    |   10  |  1   | php-5.3.2  |
-      |     10    |   10  |  1   | rack-1.1.0 |
-      |     10    |   10  |  1   | wsgi-3.2.1 |
     When the applications are created
     Then they should all be accessible
 

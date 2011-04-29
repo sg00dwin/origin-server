@@ -37,4 +37,4 @@ enabled=1
 gpgcheck=0
 EOF
 
-yum -y install li-devenv
+yum -y install rhc-devenv

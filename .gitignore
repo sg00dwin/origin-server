@@ -5,4 +5,6 @@
 #*#
 .project
 .loadpath
-Express.komodoproject
+.idea
+*.komodoproject
+*.iml

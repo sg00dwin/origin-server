@@ -14,12 +14,14 @@ begin
     AMI = "ami-6a897e03"
     TYPE = "m1.large"
     KEY_PAIR = "libra"
-    OPTIONS = {:key_name => KEY_PAIR, :instance_type => TYPE}
-    VERSION_REGEX = /li-\d+\.\d+\.?\d*-\d+/
-    AMI_REGEX = /li-\d+\.\d+/
-    BUILD_REGEX = /^builder-li-\d+\.\d+/
+    ZONE = 'us-east-1d'
+    OPTIONS = {:key_name => KEY_PAIR, :instance_type => TYPE, :availability_zone => ZONE}
+    VERSION_REGEX = /rhc-\d+\.\d+\.?\d*-\d+/
+    AMI_REGEX = /rhc-\d+\.\d+/
+    BUILD_REGEX = /^builder-rhc-\d+\.\d+/
+    TERMINATE_REGEX = /terminate/
     PREFIX = ENV['LIBRA_DEV'] ? ENV['LIBRA_DEV'] + "-" : ""
-    VERIFIER_REGEX = /^#{PREFIX}verifier-li-\d+\.\d+/
+    VERIFIER_REGEX = /^#{PREFIX}verifier-rhc-\d+\.\d+/
     VERIFIED_TAG = "qe-ready"
     BREW_LI = "https://brewweb.devel.redhat.com/packageinfo?packageID=31345"
     GIT_REPO_PUPPET = "ssh://puppet1.ops.rhcloud.com/srv/git/puppet.git"
@@ -54,33 +56,68 @@ begin
     end
 
     def ssh(cmd, timeout=60)
-      Timeout::timeout(timeout) { `#{SSH} #{@server} "#{cmd}"`.chomp }
+      puts "(ssh command / timeout = #{timeout} / cmd = #{cmd})"
+      output = ""
+      begin
+        Timeout::timeout(timeout) { output = `#{SSH} #{@server} "#{cmd}"`.chomp }
+      rescue Timeout::Error
+        puts "SSH command '#{cmd}' timed out"
+      end
+      puts "----------------------------\n#{output}\n----------------------------"
+      return output
     end
 
     def scp(cmd, timeout=60)
-      Timeout::timeout(timeout) { `#{SCP} #{cmd}` }
+      puts "(scp command / timeout = #{timeout}) / #{cmd}"
+      output = ""
+      begin
+        Timeout::timeout(timeout) { output = `#{SCP} #{cmd}` }
+      rescue Timeout::Error
+        puts "SCP command '#{cmd}' timed out"
+      end
+      puts "begin output ----------------------------\n#{output}\nend output ------------------------------\n"
+      return output
     end
 
     # Blocks until the current instance is available
     def instance_available
+        max_retries = 15
+
         # Wait until the AWS state is running
-        until instance_value(:aws_state) == "running"
+        count = 0
+        until (instance_value(:aws_state) == "running") or (count == max_retries)
+          puts "System not available yet... retrying"
           sleep 5
+          count += 1
+        end
+
+        if count == max_retries
+          puts "EXITING - Took too long for instance state to be 'running'"
+          exit 0
         end
 
         @dns = instance_value(:dns_name)
         @server = "root@" + @dns
 
-        # Block until we can SSH to the instance
-        until ssh('echo Success', 300).split[-1] == "Success"
+        # Wait until we can SSH into the instance
+        count = 0
+        until (ssh('echo Success', 5).split[-1] == "Success") or (count == max_retries)
+          puts "SSH timed out... retrying"
           sleep 5
+          count += 1
         end
+
+        if count == max_retries
+          puts "EXITING - Took too long for instance to be SSH available"
+          exit 0
+        end
+
     end
 
     def send_verified_email(version, ami)
         msg = <<END_OF_MESSAGE
 From: Jenkins <noreply@redhat.com>
-To: Libra Express <libra-express@redhat.com>
+To: Matt Hicks <mhicks@redhat.com>
 Subject: Build #{version} QE Ready
 
 The build #{version} (AMI #{ami}) is ready for QE.
@@ -89,6 +126,21 @@ END_OF_MESSAGE
         Net::SMTP.start('localhost') do |smtp|
           smtp.send_message msg, "noreply@redhat.com", "libra-express@redhat.com"
         end
+    end
+
+    # Delete all images with terminated in them
+    desc "Terminate all tagged images"
+    task :prune => ["ami:prereqs"] do
+      # Terminate any tagged instances
+      instances = conn.describe_instances.collect do |i|
+        if (i[:aws_state] == "stopped") and (i[:tags]["Name"] =~ TERMINATE_REGEX)
+          i[:aws_instance_id]
+        end
+      end.compact
+
+      puts "Terminating #{instances.pretty_inspect}"
+
+      conn.terminate_instances(instances) unless instances.empty?
     end
 
     # Ensure AMZ and RSA credentials exist
@@ -120,13 +172,13 @@ END_OF_MESSAGE
 
     # Ensure we can parse the current version
     task :version do
-      yum_output = `yum info li`
+      yum_output = `yum info rhc`
       p = $?
 
       if p.exitstatus != 0
-        puts "WARNING - yum error getting li info, cleaning metadata and trying again"
+        puts "WARNING - yum error getting rhc info, cleaning metadata and trying again"
         `yum clean metadata`
-        yum_output = `yum info li`
+        yum_output = `yum info rhc`
         p = $?
         if p.exitstatus != 0
           puts "EXITING - Error cleaning yum state"
@@ -144,7 +196,7 @@ END_OF_MESSAGE
         line.split(":")[1].strip if line.start_with?("Release")
       end.compact[-1]
 
-      @version = "li-#{version}-#{release.split('.')[0]}"
+      @version = "rhc-#{version}-#{release.split('.')[0]}"
 
       raise "Invalid version format" unless @version =~ VERSION_REGEX
 
@@ -204,20 +256,36 @@ END_OF_MESSAGE
 
             # Make sure the right version is installed
             print "Verifying update..."
-            rpm = ssh('rpm -q li')
+            rpm = ssh('rpm -q rhc')
             unless rpm.start_with?(@version)
-              fail "Expected updated version to be #{@version}, actual was #{rpm}"
+              fail "Expected updated version to start with #{@version}, actual was #{rpm}"
             end
             puts "Done"
         else
-          print "Performing clean install with the latest code..."
+          print "Downloading the devenv script..."
           ssh('wget http://209.132.178.9/gpxe/trees/li-devenv.sh')
-          ssh('sh li-devenv.sh', 1800)
           puts "Done"
+
+          print "Performing clean install with the latest code..."
+          output = ssh('sh li-devenv.sh', 1800)
+          puts "Done"
+
+          puts "----------------- Install Output ------------------------"
+          puts output
+          puts "---------------------------------------------------------"
+
+          print "Verifying installation..."
+          rpm = ssh('rpm -q rhc')
+          unless rpm.start_with?(@version)
+            fail "Expected updated version to start with #{@version}, actual was #{rpm}"
+          end
+          puts "Done"
+
           print "Updating all packages on the system..."
           ssh('yum update -y', 1800)
           puts "Done"
-          print "Rebooting instance to apply new kernel"
+
+          print "Rebooting instance to apply new kernel..."
           conn.reboot_instances([@instance])
           sleep 10
           instance_available
@@ -252,7 +320,7 @@ END_OF_MESSAGE
       end
 
       desc "Create a new AMI from the latest li build"
-      task :new => [:exists, "ami:builder:start"] do
+      task :new => [:exists, "ami:builder:clean", "ami:builder:start"] do
         tag = @existing ? "#{@version}-update" : "#{@version}-clean"
         print "Registering AMI #{@version}..."
         image = conn.create_image(@instance, tag)
@@ -268,8 +336,8 @@ END_OF_MESSAGE
           end
         end
 
-        # Keep the 10 most recent images
-        images.sort!.pop(10)
+        # Keep the 5 most recent images
+        images.sort!.reverse!.pop(5)
 
         # Prune the rest
         images.each do |i|
@@ -307,6 +375,7 @@ END_OF_MESSAGE
           exit 0
         elsif images[0] != "available"
           puts "EXITING - Image exists but isn't available yet"
+          exit 0
         end
       end
 
@@ -383,13 +452,13 @@ END_OF_MESSAGE
           puts "Done"
 
           print "Installing the mechanize gem..."
-          ssh("yum -y install rubygem-nokogiri")
-          ssh("gem install mechanize")
+          ssh("yum -y install rubygem-nokogiri", 120)
+          ssh("gem install mechanize", 120)
           puts "Done"
 
           print "Installing rails for client testing..."
-          `#{SSH} #{@server} "gem install rails -d --no-rdoc --no-ri"`
-          `#{SSH} #{@server} "yum -y install sqlite*"`
+          ssh("gem install rails -d --no-rdoc --no-ri", 120)
+          ssh("yum -y install sqlite*", 120)
           puts "Done"
 
           print "Bounding Apache to pick up the change..."
@@ -411,14 +480,19 @@ END_OF_MESSAGE
           #puts "Done"
 
           # Run verification tests
-          print "Running verification tests (60 minute timeout enforced)..."
+          print "Running verification tests..."
           ssh("cucumber --tags @verify --format junit -o /tmp/rhc/junit/ li/tests/", 3600)
           p2 = $?
+          puts "Done"
+
+          print "Checking mcollective status..."
+          ssh("service mcollective status")
           puts "Done"
 
           print "Downloading verification output..."
           `mkdir -p rhc/log`
           scp("-r #{@server}:/tmp/rhc/cucumber*.log rhc/log")
+          scp("-r #{@server}:/tmp/rhc/failures.log rhc/log")
           scp("-r #{@server}:/var/www/libra/httpd/logs/access_log rhc/log")
           scp("-r #{@server}:/var/www/libra/httpd/logs/error_log rhc/log")
           scp("-r #{@server}:/var/www/libra/log/development.log rhc/log")

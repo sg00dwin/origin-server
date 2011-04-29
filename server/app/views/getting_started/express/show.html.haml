@@ -5,7 +5,110 @@
 
 = render 'shared/pageheader', :product => 'express', :title => 'Using Express', :subtitle => 'Get started with Express'
 
-.container_24#page
-  .prefix_1.grid_22.suffix_1#registered
-    %h3 Express Getting Started View
+#page.container_24
+  #main_content.grid_22
+
+    %h2 Getting Started
+    %p
+      Congratulations, your Express account is now activated!  Now it's time to start creating applications.
+
+    %h4 Step 1 - Install the client tools
+
+    #rhel.install
+      %h6 Red Hat Enterprise Linux / Fedora Instructions
+      %p
+        %strong Note:
+        Red Hat Enterprise Linux 6 and above are required for the client tools.
+
+        %p
+          Download the express repo file
+          %a(href="/app/repo/openshift.repo") openshift.repo
+          and place it in your /etc/yum.repos.d/ directory
+        %p
+          Install the client tools:
+          %pre $ sudo yum install rhc
+
+    #other.install
+      %h6 Mac Instructions
+
+      %p
+        Install the gem from our site:
+        :erb
+          <pre>$ sudo gem install --source <%= "#{root_url}/repo/gems" %> rhc</pre>
+
+    #other.install
+      %h6 Windows Instructions (requires cygwin)
+
+      %p
+        Download and install cygwin from 
+        %a(href="http://www.cygwin.com") http://www.cygwin.com
+        %br Be sure to include these optional cygwin components:
+        %ul
+          %li openssh
+          %li ruby
+          %li make
+          %li gcc
+          %li git
+      %p
+        Download and extract rubygems from
+        %a(href="http://rubyforge.org/projects/rubygems") http://rubyforge.org/projects/rubygems
+      %p
+        From within cygwin run:
+        %pre $ ruby &lt;path_to_extracted_rubygems&gt;/setup.rb install
+      %p
+        Install the gem from our site:
+        :erb
+          <pre>$ gem install --source <%= "#{root_url}/repo/gems" %> rhc</pre>
+
+    %h4 Step 2 - Create a domain name
+
+    %p
+      Use the email address and password you register with in the steps below.
+      The domain name will need to be unique across all users so get the cool ones while you can...
+
+      %pre $ rhc-create-domain -n dns_nick -l email@address
+      %pre Password: (type... type... type...)
+
+    %h4 Step 3 - Create your first application
+
+    %p
+      Now you can create your application.  For the preview period, you are
+      only allowed to create one application.
+
+      %pre $ rhc-create-app -a MY_APP -t php-5.3.2
+      %pre Password: (type... type... type...)
+
+      This will clone the git repository locally and tell you your domain name.  Making
+      a change is as simple as making and change and git pushing.
+
+    %h4 Step 4 - Make a change, publish
+
+    %p
+      As we all know, getting an application running is only the first step.
+      Now you are on the road to making it your own.  Here's an example for
+      the php framework.
+
+      %pre $ cd MY_APP
+      %pre $ vim php/index.php
+      %pre (Make a change...  :wq)
+      %pre $ git commit -a -m "My first change!"
+      %pre $ git push
+
+      Now, check your URL - your change will be live.
+
+    %h4 Step 5 - Next steps
+
+    %p
+      While this has gotten you started, there is a lot more information out there
+      to really get you going.  Check out the following pages for videos, blogs, and
+      tutorials:
+
+      %ul
+        %li
+          = link_to 'Videos, Tutorials', '/app/express', :class => 'more'
+        %li
+          = link_to 'Technical Documentation', '/app/express', :class => 'more'
+        %li
+          = link_to 'Community Documentation', '/app/express', :class => 'more'
+
   .clear

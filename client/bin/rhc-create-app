@@ -23,22 +23,13 @@
 
 require 'rhc-common'
 
-#
-# Check if host exists
-#
-def hostexist?(host)
-    dns = Resolv::DNS.new
-    resp = dns.getresources(host, Resolv::DNS::Resource::IN::A)
-    return resp.any?
-end
-
 def p_usage
     rhlogin = get_var('default_rhlogin') ? "Default: #{get_var('default_rhlogin')}" : "(required)"
-    type_keys = RHC::get_type_keys(', ')
+    type_keys = RHC::get_cartridge_types(', ')
     puts <<USAGE
 
 Usage: #{$0}
-Create a new app libra project.
+Create a new app Openshift Express project.
 
   -a|--app   application     Application name  (alphanumeric - max #{RHC::Maxdlen} chars) (required)
   -t|--type  type            Type of app to create (#{type_keys}) (required)
@@ -99,7 +90,7 @@ if !RHC::check_app(opt['app'])
     p_usage
 end
 
-type = RHC::get_type(opt['type'])
+type = RHC::get_cartridge(opt['type'])
 if !type
     p_usage
 end
@@ -126,32 +117,34 @@ end
 opt["repo"] = opt["app"] unless opt["repo"]
 
 puts ""
-puts "Please support the beta - let #libra know of any bugs you find"
+puts "Please support the developer preview - let #openshift on freenode know of any"
+puts "bugs you find"
 puts ""
 
 #
 # Confirm local git repo exists
 #
-
-if File.exists?(opt['repo'])
-    puts "We will not overwrite an existing git repo. Please remove:"
-    puts "  #{File.expand_path(opt['repo'])}"
-    puts "Then try again."
-    puts
-    exit 210
-else
-    begin
-        # Create the parent directory for the git repo
-        @git_parent = File.expand_path(opt['repo'] + "/../")
-        FileUtils.mkdir_p(@git_parent)
-    rescue Errno::EACCES
-        puts "Could not write to #{@git_parent}"
-        puts "Reason: " + $!
+unless opt['nogit']
+    if File.exists?(opt['repo'])
+        puts "We will not overwrite an existing git repo. Please remove:"
+        puts "  #{File.expand_path(opt['repo'])}"
+        puts "Then try again."
         puts
-        puts "Please re-run from a directory you have write access to or specify -r with a"
-        puts "path you have write access to"
-        puts
-        exit 211
+        exit 210
+    else
+        begin
+            # Create the parent directory for the git repo
+            @git_parent = File.expand_path(opt['repo'] + "/../")
+            FileUtils.mkdir_p(@git_parent)
+        rescue Errno::EACCES
+            puts "Could not write to #{@git_parent}"
+            puts "Reason: " + $!
+            puts
+            puts "Please re-run from a directory you have write access to or specify -r with a"
+            puts "path you have write access to"
+            puts
+            exit 211
+        end
     end
 end
 
@@ -252,7 +245,7 @@ else
         f = File.open(ssh_config, "a")
         f.puts <<SSH
 
-# Added by libra app on #{`date`}
+# Added by rhc-create-app app on #{`date`}
 Host *.#{libra_domain}
     IdentityFile ~/.ssh/libra_id_rsa
     VerifyHostKeyDNS yes
@@ -286,7 +279,7 @@ File.chmod(0600, ssh_config)
 #
 # Confirm that the host exists in DNS
 #
-puts "Confirming host exists..."
+puts "Now your new domain name is being populated worldwide (this might take a minute)..."
 
 # Allow DNS to propogate
 sleep 15
@@ -294,11 +287,11 @@ sleep 15
 # Now start checking for DNS
 loop = 0
 sleep_time = 2
-while loop < RHC::Maxretries && !hostexist?(my_url)
+while loop < RHC::Maxretries && !RHC::hostexist?(my_url)
     sleep sleep_time
     loop+=1
     puts "  retry # #{loop} - Waiting for DNS: #{my_url}"
-    sleep_time *= 2
+    sleep_time = RHC::delay(sleep_time)
 end
 
 if loop >= RHC::Maxretries
@@ -308,7 +301,6 @@ end
 
 sleep_time = 2
 attempt = 0
-
 #
 # Pull new repo locally
 #
@@ -351,7 +343,8 @@ end
 #
 # Test several times, doubling sleep time between attempts.
 #
-
+sleep_time = 2
+attempt = 0
 puts "Confirming application #{opt['app']} is available"
 while attempt < RHC::Maxretries
     attempt+=1
@@ -378,19 +371,19 @@ The remote repository is located here:
     #{git_url}
 
 To make changes to your application, commit to #{opt['repo']}/.
-Then run 'git push' to update your libra space
+Then run 'git push' to update your Openshift Express space
 
 LOOKSGOOD
         exit 0
     end
-    if !response.nil?
+    if !response.nil? && debug
       puts "Server responded with #{response.code}"
-      puts response.body
+      puts response.body unless response.code == '503'
     end
     puts
     puts "    sleeping #{sleep_time} seconds"
     sleep sleep_time
-    sleep_time *= 2
+    sleep_time = RHC::delay(sleep_time)
 end
 puts "Unable to find or access the site... problems"
 exit 254

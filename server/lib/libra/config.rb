@@ -33,8 +33,9 @@ module Libra
 
       # DDNS configuration
       @@config[:libra_zone] = fs_config.get_value('libra_zone')
-      @@config[:libra_child_zone] = fs_config.get_value('libra_child_zone')
-      @@config[:libra_domain] = @@config[:libra_child_zone] + '.' + @@config[:libra_zone]
+      child_zone = fs_config.get_value('libra_child_zone')
+      @@config[:libra_child_zone] = child_zone
+      @@config[:libra_domain] = (child_zone.empty? ? '' : child_zone + '.') + @@config[:libra_zone]
       @@config[:resolver] = fs_config.get_value('resolver')
       @@config[:secret] = fs_config.get_value('secret')
 
@@ -72,7 +73,7 @@ module Libra
 
     # Now, initialize the MCollective options
     @@config[:rpc_opts] = {:disctimeout => 3,
-                           :timeout     => 10,
+                           :timeout     => 20,
                            :verbose     => false,
                            :progress_bar=> false,
                            :filter      => {"identity"=>[], "fact"=>[], "agent"=>[], "cf_class"=>[]},

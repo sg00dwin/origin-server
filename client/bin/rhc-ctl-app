@@ -23,21 +23,12 @@
 
 require 'rhc-common'
 
-#
-# Check if host exists
-#
-def hostexist?(host)
-    dns = Resolv::DNS.new
-    resp = dns.getresources(host, Resolv::DNS::Resource::IN::A)
-    return resp.any?
-end
-
 def p_usage
     rhlogin = get_var('default_rhlogin') ? "Default: #{get_var('default_rhlogin')}" : "(required)"
     puts <<USAGE
 
 Usage: #{$0}
-Control a libra app
+Control an OpenShift express app
 
   -a|--app   application   Application name  (alphanumeric) (required)
   -l|--rhlogin rhlogin     Red Hat login (#{rhlogin})

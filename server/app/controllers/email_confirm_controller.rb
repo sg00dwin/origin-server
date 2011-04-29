@@ -15,7 +15,7 @@ class EmailConfirmController < ApplicationController
   end
   
   def confirm_express
-    confirm(new_access_express_requests_path)
+    confirm(access_express_request_direct_path)
   end
 
   def confirm(redirect_path=getting_started_path)
@@ -87,6 +87,7 @@ class EmailConfirmController < ApplicationController
       if (@errors.length > 0)
         render :error and return
       else
+        session[:confirm_login] = email
         redirect_to redirect_path, :notice => "Almost there!  You'll need to login before requesting access." and return
       end
     end

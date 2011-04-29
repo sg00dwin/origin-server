@@ -1,3 +1,3 @@
-class Access::ExpressRequest < Access::AccessRequest
+class Access::ExpressRequest < Term
  
 end

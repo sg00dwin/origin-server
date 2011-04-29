@@ -3,16 +3,48 @@
 require 'rubygems'
 require 'parseconfig'
 require 'getoptlong'
-require 'mechanize'
-require 'hpricot'
-require 'net/https'
-require 'uri'
-require 'ping'
 require 'logger'
+require 'pp'
+require 'open4'
 
 # Synchronize output
 $stdout.sync = true
 $stderr.sync = true
+
+def complete(pid, status)
+  process = @processes[pid]
+
+  begin
+    # Write the username if successful
+    if status.exitstatus == 0
+      return process[:stdout].read.chomp
+    else
+      @logger.error(process[:stderr].read)
+    end
+  ensure
+    # Clean out the process entry
+    @processes.delete(pid)
+  end
+end
+
+def wait_for_processes(blocking=true)
+  result = []
+
+  if blocking
+    @logger.debug("Blocking until next process finishes...")
+    pid, status = Process::waitpid2
+    result << complete(pid, status)
+  else
+    until @processes.empty?
+      @logger.debug("Non-blocking check for processes...")
+      pid, status = Process::waitpid2(-1, Process::WNOHANG)
+      break unless status
+      result << complete(pid, status)
+    end
+  end
+
+  return result
+end
 
 def p_usage
     puts <<USAGE
@@ -20,10 +52,11 @@ def p_usage
 Usage: batch_register
 Batch register users for testing
 
-  -o|--host    devenv_host  DevEnv host to use for registering
-  -i|--id      identifier   Namespace / email identifier (e.g. libra-test+ID@redhat.com)
-  -n|--num     number_users Number of users to create (e.g. libra-test+ID1@redhat.com)
-  -h|--help                 Show Usage info
+  -n|--num       num_users     Number of users to create
+  -c|--processes num_processes The number of parallel processes to run
+  -p|--proxy                   Use a proxy
+  -d|--debug                   Show debug info
+  -h|--help                    Show Usage info
 
 USAGE
   exit 255
@@ -31,113 +64,75 @@ end
 
 begin
     opts = GetoptLong.new(
-        ["--help",  "-h", GetoptLong::NO_ARGUMENT],
+        ["--num",   "-n", GetoptLong::REQUIRED_ARGUMENT],
+        ["--processes", "-c", GetoptLong::REQUIRED_ARGUMENT],
         ["--debug", "-d", GetoptLong::NO_ARGUMENT],
-        ["--host",  "-o", GetoptLong::REQUIRED_ARGUMENT],
-        ["--id",    "-i", GetoptLong::REQUIRED_ARGUMENT],
-        ["--num",   "-n", GetoptLong::REQUIRED_ARGUMENT]
+        ["--proxy", "-p", GetoptLong::NO_ARGUMENT],
+        ["--help",  "-h", GetoptLong::NO_ARGUMENT]
     )
     opt = {}
     opts.each do |o, a|
         opt[o[2..-1]] = a.to_s
     end
-
 rescue Exception => e
   puts e.message
   p_usage
 end
 
-if opt["help"] or (!opt["host"] || !opt["id"] || !opt["num"])
+if opt["help"] or !opt["num"]
     p_usage
 end
 
-proxy = ['squid.corp.redhat.com', '8080']
-password = "redhat"
-host = opt['host']
-openshift_host = "https://#{opt['host']}/app"
-identifier = opt['id']
-num_users = opt['num'].to_i
-debug = opt['debug']
+@num_users = opt['num'].to_i
+@num_processes = opt['processes'].to_i
 
-# Determine if we need to proxy
-proxy = opt['host'] =~ /amazonaws/
-
-# Verify proxy connectivity
-if proxy
-  print "Verifying proxy connectivity..."
-  unless Ping.pingecho('squid.corp.redhat.com', 2)
-    puts "ERROR - Could not connect to squid.corp.redhat.com."
-    puts "You must be on the RH network or VPN to run this script."
-    exit 1
-  end
-  puts "Done"
+# Default if necessary
+if @num_processes == 0
+  @num_processes = 10
 end
 
-# Setup the internal proxy
-a = Mechanize.new { |agent|
-  agent.user_agent_alias = 'Mac Safari'
-  agent.set_proxy(proxy[0], proxy[1]) if proxy
-  agent.log = Logger.new(STDOUT) if debug
-}
+@debug = opt['debug']
 
-# Register a new user
-print "Registering users (#{num_users} in total)"
+@options = ""
+@options << " -p" if opt['proxy']
+@options << " -d" if opt['debug']
 
-a.get(openshift_host) do |page|
-  login_page = page.link_with(:text => /Login/).click
-  register_page = login_page.link_with(:text => /Click here to register/).click
+# Setup logger
+@logger = Logger.new(STDERR)
+@logger.level = @debug ? Logger::DEBUG : Logger::ERROR
 
-  num_users.times do |num|
-    result_page = register_page.form_with(:action => '/app/user') do |form|
-      form['web_user[email_address]'] = "libra-test+#{identifier}#{num}@redhat.com"
-      form['web_user[password]'] = password
-      form['web_user[password_confirmation]'] = password
-      form.add_field!('captcha_secret', 'zvw5LiixMB0I4mjk06aR')
-    end.submit
+# Clear out the multi-process log
+`rm -rf /tmp/reg`
+`mkdir -p /tmp/reg`
 
-    if result_page.body =~ /Check your email/
-      print "."
-    else
-      puts "ERROR - Registration failed"
-      exit 1
-    end
+@logger.debug("Creating users with #{@num_processes} processes")
+
+# Create the users
+users = []
+@processes = {}
+@num_users.times do |i|
+  # If we are at the max processes, start waiting for results
+  if @processes.length == @num_processes
+    users += wait_for_processes
   end
+
+  # Clean out any other processes that might have completed
+  users += wait_for_processes(false)
+
+  # Kick off a new process
+  pid, stdin, stdout, stderr = Open4::popen4("./register_random" + @options + " 2> /tmp/output#{i}")
+
+  stdin.close
+  @processes[pid] = {:stdout => stdout, :stderr => stderr}
+  @logger.debug("Starting process #{pid}")
+
+  sleep rand
 end
-puts "Done"
 
-print "Waiting for two minutes to let the archives refresh..."
-sleep 120
-puts "Done"
-
-# Verify the email
-print "Now verifying emails"
-a.get('http://post-office.corp.redhat.com/archives/libra-test/') do |page|
-  # Get the current page of archives
-  archive_page = page.link_with(:text => /Thread/).click
-
-  # Get the confirmation emails
-  archive_page.links_with(:text => /^Confirm/).each do |link|
-    email_body = Hpricot.parse(link.click.body)
-
-    # Parse out the date of the email
-    email_body.at("ul").search("li").each do |li|
-      if li.inner_html =~ /Date/
-        date_str = li.inner_html.split("</em>:")[1].strip
-        date = DateTime.parse(date_str)
-        # Subtracting date time yields the numbers of days in between
-        # Convert days to minutes for the comparison
-        # If within 30 minutes, click the links
-        if (((DateTime.now - date) * 24 * 60).to_i <= 30)
-          # Found a recent link - submit the link
-          link = email_body.at("pre/a")
-          if link
-            # Valid the email address
-            a.get(link.attributes['href'])
-            print "."
-          end
-        end
-      end
-    end
-  end
+# Wait for the rest of them
+until @processes.empty?
+  users += wait_for_processes
 end
-puts "Done"
+
+# Output the results
+puts users.join("\n")

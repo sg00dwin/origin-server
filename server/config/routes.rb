@@ -19,10 +19,10 @@ RedHatCloud::Application.routes.draw do
     match 'express' => 'product#express', :as => 'express'
     match 'flex' => 'product#flex', :as => 'flex'
     match 'power' => 'product#power', :as => 'power'
+    match 'flex_redirect' => 'product#flex_redirect', :as => 'flex_redirect'
     match 'about' => 'home#about', :as => 'about'
-    match 'site_terms' => 'home#site_terms', :as => 'site_terms'
-    match 'terms' => 'home#service_terms', :as => 'service_terms'
-    
+    match 'partners/join' => 'partner#join', :as=> 'join_partner'
+
     #Alias for home page so we can link to it
     #match 'home' => 'home#index'
 
@@ -39,6 +39,21 @@ RedHatCloud::Application.routes.draw do
     match 'user/new/flex' => 'user#new_flex', :via => [:get]
     match 'user/new/express' => 'user#new_express', :via => [:get]
 
+    resource :terms,
+             :as => "terms",
+             :controller => "terms",
+             :path_names => { :new => 'accept' },
+             :only => [:new, :create]
+
+    match 'legal/acceptance_terms' => 'terms#acceptance_terms', :as => 'acceptance_terms'
+
+    match 'video/:name' => 'video#show', :as => 'video'
+
+    match 'legal' => 'legal#show'
+    match 'legal/site_terms' => 'legal#site_terms'
+    match 'legal/services_agreement' => 'legal#services_agreement'
+    match 'legal/acceptable_use' => 'legal#acceptable_use'
+
     resource :login,
              :controller => "login",
              :only => [:show, :create]
@@ -48,15 +63,22 @@ RedHatCloud::Application.routes.draw do
              :controller => "logout",
              :only => [:show]
 
+    resources :partners,
+              :controller => "partner",
+              :only => [:show, :index]
+
     namespace "access" do
       resource :flex,
                :controller => "flex_request",
                :as => "flex_requests",
+               :path_names => { :new => 'request' },
                :only => [:new, :create]
       resource :express,
                :controller => "express_request",
                :as => "express_requests",
+               :path_names => { :new => 'request' },
                :only => [:new, :create]
+      match 'express/request_direct' => 'express_request#request_direct', :via => [:get]
     end
 
     namespace "getting_started" do

@@ -1,6 +1,9 @@
 -# file: Main site index
 
+-# Add javascripts here - jquery is added automatically
 - content_for :scripts do
+  = stylesheet_link_tag '/app/stylesheets/fancybox.css'
+  = javascript_include_tag '/app/javascripts/fancybox.js'
   = javascript_include_tag "/app/javascripts/jquery.slideshow.minified.js"
   = javascript_include_tag "/app/javascripts/home"
   
@@ -8,24 +11,13 @@
   #slides.grid_24
     %ul
 
-      /Express slide
-      %li#express.slide
-        .slide-canvas
-        .content
-          %h2 Looking for a fast on-ramp to the Cloud?
-          %p
-            Get Ruby, PHP and Python apps in the cloud with just a few lines of code.
+      /Promo banners
+      %li.slide
+        = image_tag "/app/images/promo_banner_free_espresso.png"
+          
+      %li.slide
+        = image_tag "/app/images/promo_banner_win_xoom.png"
 
-      /Flex slide
-      %li#flex.slide
-        .slide-canvas
-        .content
-          %h2 
-            Need to auto-scale new and existing 
-            %br
-            apps in the Cloud?
-          %p
-            Provision, deploy, monitor and auto-scale JBoss, Java EE6 and PHP apps
 
     /Slide show navigation
     %ul.navigation
@@ -36,137 +28,51 @@
 
   .clear
 
-/News ticker
-.slideShow.newsTicker.container_24
-  #news_title.grid_4.alpha
-    %h4 Recent News
+#page.container_24
+  /High-level information
+  #info.container_24
 
-  /Actual news
-  %ul#news.grid_20.omega
-  
-    - @news.each do |item|
-      %li.news_item.slide
-        =item
-
-  .clear
-
-#sidebar_slugs_container.container_24
-  -# changed id to sidebar from sidenav
-  #sidebar.grid_7.push_17
-
-    #redhat_cloud.grid_7.alpha
-      = link_to('http://redhat.com/cloud') do
-        %h4 Looking for Private or Hybrid Cloud Solutions?
-        %p Check out redhat.com/cloud.
-    .clear
-
-    #resources.grid_7
-      = link_to('/community') do
-        %h4 Resources for Cloud Developers
-        %p Forums, Eval Guides, How-To's & Videos
-    .clear
-
-    #faq.grid_7.omega
-      = link_to('/faq') do
-        %h4 FAQ
-        %p Got questions? We have answers
-    .clear
-
-  /Product slugs
-  
-
-  /Express slug
-  .slug.grid_8.pull_7
-    %h3 Leave application management and auto-scaling to us.
-    %p
-      Spend more time on what really matters, customers and developing new features.
+    /For Developers
+    #for_developers.grid_11.prefix_1
+      %h3 OpenShift is for Developers
+      %p
+        OpenShift is for developers who love to build on open source, but don't need the hassle of building and maintaining infrastructure. 
       
-    .icons
-      %img(src='/app/images/git_logo_gs.png'
-           alt='git')
-      %img(src='/app/images/php_logo_gs.png'
-           alt='PHP')
+      = link_to 'Learn More >', express_path, :class => 'learn-more express'
+    
+    /Cutting-Edge
+    #cutting_edge.grid_11
+      %h3 OpenShift is Cutting-Edge
+      %p
+        Supports all the coolest languages and frameworks, plus PaaS automation features like auto-scaling and performance monitoring. 
       
-    %p.link
-      = link_to 'Learn more >', express_url, :class => 'learn'
+      = link_to 'Learn More >', flex_path, :class => 'learn-more flex'
 
-  /Flex slug
-  .slug.grid_9.pull_7.last
-    %h3 Develop anywhere, deploy to the Cloud
-    %p
-      Red Hat allows you to deploy and migrate your application across clouds, both public and private.
-
-    .grid_4.alpha
-      %ul
-        %li End-to-end monitoring
-        %li Auto-scaling
-        %li Log management
-
-    .grid_4.omega
-      %ul
-        %li EE6 Web
-        %li memcache
-        %li MySQL
+    .clear
+    
+    = image_tag "/app/images/PaaS.png", :id => 'front_image'
+    
     .clear
 
-    %p.link
-      = link_to 'Learn more >', flex_url, :class => 'learn'
+  /App promo boxes
+  #app_promos.container_24
+
+    /Express box
+    .express.promo.grid_8
+      = link_to express_path do
+        = image_tag '/app/images/promo_box_express.png'
+
+    /Flex box
+    .flex.promo.grid_8
+      = link_to flex_path do
+        = image_tag '/app/images/promo_box_flex.png'
+
+    /Power box
+    .power.promo.grid_8
+      = link_to power_path do
+        = image_tag '/app/images/promo_box_power.png'
+
     .clear
-  /End slugs
-  .clear
-
-/App promo boxes
-#app_promos.container_24
-  /Express box
-  .express.promo.grid_8
-    %h3 
-      Deploy to the Cloud today...
-      %br
-      it's Free and Easy
-    %h4 Express
-    %p
-      = link_to 'Learn More', express_url
-
-  /Flex box
-  .flex.promo.grid_8
-    %h3 
-      Auto-scaling PaaS for JBoss, 
-      %br
-      Java EE6 and PHP apps
-    %h4 Flex
-    %p
-      = link_to 'Learn More', flex_url
-
-  /Power box
-  .power.promo.grid_8
-    %h3 
-      Tools for custom cloud 
-      %br
-      application deployments
-    %h4 Power
-    %p
-      = link_to 'Learn More', power_url
 
   .clear
 /End app promo boxes
-
-/Page columns
-#page.container_24
-
-  .prefix_1.grid_7
-    %h4 Featured Video Title
-    %p
-      Video goes here
-
-  .grid_8
-    %h4 Featured Video Title
-    %p
-      Video goes here
-    
-  .grid_7.suffix_1
-    %h2 Join the Discussion
-    %p 
-      We are here to help.
-      = link_to 'OpenShift Forums >',          'http://openshift.redhat.com/forums', :class => 'learn'
-  .clear
-/End page columns

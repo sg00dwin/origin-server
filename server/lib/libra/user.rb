@@ -81,7 +81,6 @@ module Libra
           Libra.logger_debug "DEBUG: Attempting to remove namespace '#{namespace}' after failure to add user '#{rhlogin}'"
           begin
             if Libra.c[:use_dynect_dns]
-              Server.dyn_login(auth_token)
               Server.dyn_delete_txt_record(namespace, auth_token)
               Server.dyn_publish(auth_token) # TODO should we publish on ensure?
             else

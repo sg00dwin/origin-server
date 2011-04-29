@@ -1,4 +1,4 @@
-class Access::FlexRequest < Access::AccessRequest  
+class Access::FlexRequest < Term
 
   attr_accessor :ec2_account_number
   

@@ -3,8 +3,12 @@ class GettingStarted::ExpressController < ApplicationController
   
   def show
     if !session[:login]
-      session[:workflow] = getting_started_express_path
+      session[:login_workflow] = getting_started_express_path
       redirect_to login_path and return
+    else
+      user = session_user
+      user.refresh_roles
+      redirect_to new_access_express_requests_path unless user.has_access?(CloudAccess::EXPRESS)
     end
   end
 end

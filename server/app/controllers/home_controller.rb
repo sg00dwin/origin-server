@@ -5,23 +5,17 @@ class HomeController < ApplicationController
   def index
     Rails.logger.debug "Index controller"
     # Handle any workflow routing
-    Rails.logger.debug "Session workflow in HomeController#index: #{session[:workflow]}"
-    if session[:workflow]
-      workflow = session[:workflow]
-      session[:workflow] = nil
-      redirect_to workflow and return
+    Rails.logger.debug "Session workflow in HomeController#index: #{workflow}"
+    if workflow_redirect
+      return
     else
       # If workflow didn't send them elsewhere then they go to the index.
-      # Assuming at some point news will come from a news source
-      @news = [ 'Lorem ipsum dolor si',
-                'Amet, consetetur sadipscing elitr, sed diam nonumyeirmod',
-                'Tempor invidunt ut labore et dolore magna aliquyam erat, sed' ]
+      # How to present the try it link on the home page
+      @try_link_points_to = try_it_destination(CloudAccess::EXPRESS)
     end
   end
 
   # Hijacking home controller
   # for general static page serving
   def about; end
-  def site_terms; end
-  def service_terms; end
 end

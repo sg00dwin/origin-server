@@ -20,6 +20,7 @@ $temp = "/tmp/rhc"
 $create_app_script = "/usr/bin/rhc-create-app"
 $create_domain_script = "/usr/bin/rhc-create-domain"
 $client_config = "/etc/openshift/express.conf"
+$ctl_app_script = "/usr/bin/rhc-ctl-app"
 
 # RSA Key constants
 $libra_pub_key = File.expand_path("~/.ssh/libra_id_rsa.pub")
@@ -93,7 +94,7 @@ module Libra
       # returns a non-zero error code, raise an exception
       #
       def run(cmd)
-          $logger.info("(#{$$}) Running: #{cmd}")
+          $logger.info("Running: #{cmd}")
 
           pid, stdin, stdout, stderr = Open4::popen4(cmd)
 
@@ -101,18 +102,14 @@ module Libra
           ignored, status = Process::waitpid2 pid
           exit_code = status.exitstatus
 
-          $logger.info("(#{$$}) Standard Output:\n#{stdout.read}")
-          $logger.info("(#{$$}) Standard Error:\n#{stderr.read}")
+          $logger.info("Standard Output:\n#{stdout.read}")
+          $logger.info("Standard Error:\n#{stderr.read}")
 
           $logger.error("(#{$$}): Execution failed #{cmd}") if exit_code != 0
-          raise "ERROR - Non-zero (#{exit_code}) exit code for #{cmd}" if exit_code != 0
-
           return exit_code
       end
 
       def curl(url)
-          $logger.info("(#{$$}) Accessing: #{url}")
-
           pid, stdin, stdout, stderr = Open4::popen4("curl -s #{url}")
 
           stdin.close
@@ -120,12 +117,46 @@ module Libra
           exit_code = status.exitstatus
           body = stdout.read
 
-          $logger.info("(#{$$}) Exit code: #{exit_code}")
-          $logger.info("(#{$$}) Body:\n#{stdout.read}")
-          $logger.info("(#{$$}) Standard Error:\n#{stderr.read}")
-          $logger.error("(#{$$}) Access failed #{cmd}") if exit_code != 0
-
           return exit_code, body
+      end
+
+      def add_failure(url, pid=$$)
+        system("flock /tmp/rhc/lock echo '#{url}' >> #{$temp}/#{pid}-failures.log")
+      end
+
+      def urls_from_files(pattern)
+        results = []
+        Dir.glob(pattern).each do |file|
+          File.new(file, "r").each {|line| results << line.chomp}
+        end
+        results
+      end
+
+      def failures
+        urls_from_files("#{$temp}/*-failures.log")
+      end
+
+      def add_success(url, pid=$$)
+        system("echo '#{url}' >> #{$temp}/#{pid}-success.log")
+      end
+
+      def successes(pattern="*")
+        urls_from_files("#{$temp}/#{pattern.to_s}-success.log")
+      end
+
+      def wait(pid, expected_urls, timeout=300)
+        begin
+          Timeout::timeout(timeout) do
+            Process.wait(pid)
+            $logger.error("Process #{pid} failed") if $?.exitstatus != 0
+          end
+        rescue Timeout::Error
+          $logger.error("Process #{pid} timed out")
+          # Log the remaining url's as failures
+          failed_urls = expected_urls - successes(pid)
+          $logger.error("Recording the following urls as failed = #{failed_urls.pretty_inspect}")
+          failed_urls.each {|url| add_failure(url, pid)}
+        end
       end
 
       def connect(host, uri, max_retries=30)
@@ -136,7 +167,7 @@ module Libra
           body = nil
 
           url = "http://#{host}/#{uri}"
-          $logger.info("(#{$$}) Connecting to #{url}")
+          $logger.info("Connecting to #{url}")
           beginning_time = Time.now
           begin
             retries = 1
@@ -145,22 +176,30 @@ module Libra
               begin
                 Timeout::timeout(1) do
                   code, body = curl(url)
-                  success = true
+
+                  # Only break if the code is 0
+                  if code == 0
+                    success = true
+                  else
+                    $logger.info("Connection failed / retry #{retries} / #{url}")
+                    sleep 1
+                  end
                 end
               rescue Timeout::Error
-		retries += 1
                 raise "Timeout #{url}" unless retries < max_retries
-                $logger.info("(#{$$}) Timeout on attempt #{retries} to #{url}")
+                $logger.info("Connection timed out / retry #{retries} / #{url}")
+              ensure
+                retries += 1
               end
             end
           rescue Exception => e
-            $logger.error "(#{$$}) Exception trying to access #{url}"
+            $logger.error "Connection exception / #{url}"
             $logger.error e.message
             $logger.error e.backtrace
           end
           response_time = Time.now - beginning_time
-          $logger.info("(#{$$}) Exit code of #{url} = #{code}")
-          $logger.info("(#{$$}) Response time of #{url} = #{response_time}")
+          $logger.info("Connection result = #{code} / #{url}")
+          $logger.info("Connection response time = #{response_time} / #{url}")
 
           # Yield the response code, time
           yield code, response_time, body if block_given?

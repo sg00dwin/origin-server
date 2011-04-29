@@ -27,10 +27,6 @@ class UserController < ApplicationController
 
     @user = WebUser.new(params[:web_user])
 
-    # TODO - Remove
-    # Only applicable for the beta registration process
-    @user.terms_accepted = '1'
-
     # Run validations
     valid = @user.valid?
 
@@ -50,18 +46,18 @@ class UserController < ApplicationController
     else
       Rails.logger.warn "Non-integrated environment - ignoring captcha"
     end
-
+    
     # Verify product choice if any
     @product = 'openshift'
     action = 'confirm'
     if @user.cloud_access_choice
       case @user.cloud_access_choice.to_i
-      when CloudAccess::EXPRESS
-        action = 'confirm_express'
-        @product = 'express'
       when CloudAccess::FLEX
         action = 'confirm_flex'
         @product = 'flex'
+      when CloudAccess::EXPRESS
+        action = 'confirm_express'
+        @product = 'express'
       end
     end
 
@@ -78,6 +74,6 @@ class UserController < ApplicationController
     render :new and return unless @user.errors.length == 0
 
     # Redirect to a running workflow if it exists
-    redirect_to session[:workflow] if session[:workflow]
+    workflow_redirect    
   end
 end

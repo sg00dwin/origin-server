@@ -1,0 +1,79 @@
+-# file: Partner detail page
+
+- content_for :page_title do
+  Partnership with #{@partner.name}
+
+= render 'shared/pageheader', :product => 'openshift', :title => 'Partners', :subtitle => 'A Strong Ecosystem of Technologies'
+
+#page.container_24
+  #main_content.grid_22
+    
+    %h2 
+      = @partner.name
+    
+    #partner_information.grid_5
+      /Logo
+      #logo
+        = link_to @partner.url do
+          = image_tag "/app/images/partners/#{@partner.logo}"
+      
+      /Contact information
+      #contact
+        :plain
+          #{@partner.contact}
+      
+      /Summary
+      #summary
+        = @partner.summary
+        
+    
+    #solution_information.grid_16.push_1
+      /Quote
+      #quote
+        %blockquote
+          = @partner.quote
+        %cite
+          = @partner.quote_attr
+      
+      .clear
+      
+      /Ecosystem Diagram
+      #diagram.grid_8
+        = image_tag "/app/images/partners/ecosystem/#{@partner.category}.png"
+      
+      /List of advantages
+      #advantage.grid_7
+        %h4 The Openshift Advantage
+        %ul
+          - @partner.advantage.each do |adv|
+            %li
+              = adv
+      
+      .clear
+      
+      /Solution description
+      #description
+        %h4 Solution Description
+        :plain
+          #{@partner.description}
+        
+      /Availability
+      #availability
+        %h4 Availability
+        %p
+          = @partner.availability
+    
+      .clear
+        
+      /Link back to overview page
+      #partner_overview
+        %p
+          Want to learn about more OpenShift partners?
+        = link_to 'Return to the OpenShift Partners overview >', partners_path
+      
+      .clear
+    
+    = render 'join'
+    
+  
+  .clear

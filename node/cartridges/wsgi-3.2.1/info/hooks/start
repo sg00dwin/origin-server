@@ -64,4 +64,4 @@ APP_DIR="$CUSTOMER_HOME/wsgi/$application"
 #
 
 rm -f "$APP_DIR/run/stop_lock"
-runcon -t initrc_t -r system_r runuser --shell /bin/sh "$customer_id" "$APP_DIR/${application}_ctl.sh" start
+runuser --shell /bin/sh "$customer_id" "$APP_DIR/${application}_ctl.sh" start

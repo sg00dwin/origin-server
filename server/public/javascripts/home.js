@@ -1,13 +1,9 @@
-// File: Front page slideshow script initialization
+// File: Front page javascripts
 
 $(function() {
   // slideshow
 	$('.simpleSlideShow').slideShow({
-	interval: 6
-	});
-// slideshow
-	$('.newsTicker').slideShow({
-	interval: 2
+    interval: 6
 	});
   
   // Trigger "advanced" hover action
@@ -22,4 +18,14 @@ $(function() {
       $('.promo').removeClass('hover');
     }
   );
+  
+  // Fancybox
+  $('.fancybox').fancybox();
+  
+  //Accordians
+  //$('#info').tabs('#info .section', {
+    //tabs: 'h3.section-header',
+    //effect: 'slide',
+    //initialIndex: 0
+  //});
 });

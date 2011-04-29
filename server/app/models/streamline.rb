@@ -15,7 +15,8 @@ module Streamline
   @@roles_url = URI.parse(Rails.configuration.streamline + "/cloudVerify.html")
   @@email_confirm_url = URI.parse(Rails.configuration.streamline + "/confirm.html")
   @@user_info_url = URI.parse(Rails.configuration.streamline + "/userInfo.html")
-  @@unacknowledged_terms_url = URI.parse(Rails.configuration.streamline + "/protected/findUnacknowledgedTerms.html?hostname=openshift.redhat.com&context=OPENSHIFT&locale=en")  
+  @@acknowledge_terms_url = URI.parse(Rails.configuration.streamline + "/protected/acknowledgeTerms.html")
+  @@unacknowledged_terms_url = URI.parse(Rails.configuration.streamline + "/protected/findUnacknowledgedTerms.html?hostname=openshift.redhat.com&context=OPENSHIFT&locale=en")
 
   def initialize
     @roles = []
@@ -33,22 +34,25 @@ module Streamline
   #
   def establish
     http_post(@@roles_url) do |json|
-      @roles = json['roles']
+      @roles = json['roles']      
       @rhlogin = json['username']
     end
   end
-  
+
   def establish_terms
-    if !@terms
-      http_post(@@unacknowledged_terms_url) do |json|
-        @terms = json['unacknowledgedTerms']
-      end
+    # If established, just return
+    return if @terms
+
+    # Otherwise, look them up
+    @terms = []
+    http_post(@@unacknowledged_terms_url) do |json|
+      @terms = json['unacknowledgedTerms']
     end
   end
-  
+
   def refresh_roles(force=false)
     has_requested = force
-    CloudAccess.ids.each do |id|
+    CloudAccess::IDS.each do |id|
       if has_requested?(id)
         has_requested = true
         break
@@ -58,43 +62,26 @@ module Streamline
       establish
     end
   end
-  
-  def accept_terms(accepted_terms_list)
-    accepted_terms = JSON.parse(accepted_terms_list)
-    query = ''
-    
-    @terms.each do |term|  
-      if !accepted_terms.index(term['termId'])
+
+  def accept_terms
+    establish_terms
+    Rails.logger.debug("Calling streamline to accept terms")
+    http_post(build_terms_url(@terms), {}, false) do |json|
+      # Log error on unknown result
+      Rails.logger.error("Streamline accept terms failed") unless json['term']
+
+      # Unless everything was accepted, put an error on the user object
+      json['term'] ||= []
+
+      # Convert the accepted ids to strings to comparison
+      # normally they are integers
+      terms_ids = @terms.map{|hash| hash['termId'].to_s}
+      unless (terms_ids - json['term']).empty?
+        Rails.logger.error("Streamline partial terms acceptance. Expected #{terms_ids} got #{json['term']}")
         errors.add(:base, I18n.t(:terms_error, :scope => :streamline))
-        return
       end
     end
-    
-    accepted_terms.each_with_index do |termId, i|      
-      query += "termIds=#{termId}"
-      if i < accepted_terms.length - 1
-        query += '&'
-      end
-    end
-    acknowledge_terms_url = URI.parse(Rails.configuration.streamline + "/protected/acknowledgeTerms.html?" + query)
-    http_post(acknowledge_terms_url, {}, false) do |json|
-      if json['term']
-        terms = json['term']
-        accepted_terms.each do |termId|
-          if !terms.index(termId.to_s)
-            errors.add(:base, I18n.t(:terms_error, :scope => :streamline))
-            break
-          end
-        end
-        if errors.length == 0
-          @terms = []
-        end
-      else
-        if errors.length == 0
-          errors.add(:base, I18n.t(:unknown))
-        end
-      end
-    end
+    @terms.clear if errors.empty?
   end
 
   #
@@ -170,7 +157,7 @@ module Streamline
       end
     end
   end
-  
+
   #
   # Get the user's email address
   #
@@ -181,7 +168,7 @@ module Streamline
       end
     end
   end
-  
+
   #
   # Whether the user is authorized for a given cloud solution
   #
@@ -194,7 +181,7 @@ module Streamline
   #
   def has_requested?(solution)
     @roles.index(CloudAccess.req_role(solution)) != nil
-  end  
+  end
 
   def http_post(url, args={}, raise_exception_on_error=true)
     begin
@@ -284,5 +271,15 @@ module Streamline
         errors.add(:base, msg)
       end
     end
+  end
+
+  def build_terms_query(terms)
+    terms.collect {|hash| "termIds=#{hash['termId']}"}.join('&') if terms
+  end
+
+  def build_terms_url(terms)
+    url = @@acknowledge_terms_url.clone
+    url.query = build_terms_query(terms)
+    url
   end
 end

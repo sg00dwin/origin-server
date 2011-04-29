@@ -6,6 +6,7 @@ module StreamlineMock
 
   def initialize
     @roles = []
+    @terms = []
   end
 
   #
@@ -18,25 +19,25 @@ module StreamlineMock
     @roles << "simple_authenticated"
     @rhlogin = "openshift@redhat.com"
   end
-  
+
   #
   # Get the user's email address
   #
-  def establish_email_address    
+  def establish_email_address
     @email_address = 'test@example.com'
   end
-  
+
   def establish_terms
-    @terms = [{"termId"=>1046, "termUrl"=>"http://www.redhat.com/legal/cloud_terms.html", "termTitle"=>"OpenShift Site Terms"},
-     {"termId"=>1048, "termUrl"=>"http://www.redhat.com/legal/cloud_eula.html", "termTitle"=>"OpenShift EULA Terms"},
-     {"termId"=>1, "termUrl"=>"http://www.redhat.com/legal/legal_statement.html", "termTitle"=>"Red Hat Site Terms"},
-     {"termId"=>1010, "termUrl"=>"https://access.redhat.com/help/terms_conditions.html", "termTitle"=>"Red Hat Portals Terms of Use"}]    
-  end
-  
-  def accept_terms(accepted_terms_list)
+    @terms = [{"termId"=>1046, "termUrl"=>"http://openshift.redhat.com/app/legal/pdf/services_agreement.pdf", "termTitle"=>"OpenShift Site Terms"},
+              {"termId"=>1, "termUrl"=>"http://www.redhat.com/legal/legal_statement.html", "termTitle"=>"Red Hat Site Terms"},
+              {"termId"=>1010, "termUrl"=>"https://access.redhat.com/help/terms_conditions.html", "termTitle"=>"Red Hat Portals Terms of Use"}]
   end
 
-  def refresh_roles(force=false)  
+  def accept_terms
+    @terms = []
+  end
+
+  def refresh_roles(force=false)
   end
 
   #
@@ -86,6 +87,6 @@ module StreamlineMock
   # Whether the user has already requested access for a given cloud solution
   #
   def has_requested?(solution)
-    true
+    false
   end
 end

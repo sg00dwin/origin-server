@@ -1,13 +1,32 @@
+require 'uri'
+
 class ProductController < ApplicationController
 
   def express
     @product = 'express'
-    @try_link_points_to = try_it_destination(1)
+    @try_link_points_to = try_it_destination(CloudAccess::EXPRESS)
+  end
+  
+  def flex_redirect
+    case try_it_destination(CloudAccess::FLEX)
+    when 'register'
+      session[:workflow] = '/app/user/new/flex'
+    when 'queue', 'request'
+      session[:login_workflow] = '/app/access/flex/request'
+    when 'getting_started'
+      session[:login_workflow] = '/app/getting_started/flex'
+    end
+    redirect_to '/flex' and return
   end
   
   def flex
+    # Handles flex redirecting back to /app/flex
+    if workflow_redirect
+      return
+    end
+    
     @product = 'flex'
-    @try_link_points_to = try_it_destination(2)
+    @try_link_points_to = try_it_destination(CloudAccess::FLEX)
     return
   end
 
@@ -16,18 +35,5 @@ class ProductController < ApplicationController
     render :layout => 'application'
   end
   
-  def try_it_destination(product_number)
-    return 'register' unless session[:login]
-    
-    user = session_user
-    if user
-      user.refresh_roles
-      return 'getting_started' if user.has_access?(product_number)
-      
-      return 'queue' if user.has_requested?(product_number)
-    end
-    return 'request'
-
-  end
   
 end

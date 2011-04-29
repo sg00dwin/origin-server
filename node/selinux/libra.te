@@ -1,4 +1,4 @@
-policy_module(libra,1.0.7)
+policy_module(libra,1.0.8)
 
 ########################################
 #
@@ -129,7 +129,8 @@ allow libra_domain libra_initrc_t:fd use;
 allow libra_domain libra_initrc_t:fifo_file rw_inherited_fifo_file_perms;
 allow libra_domain libra_initrc_t:process sigchld;
 
-apache_exec_rotatelogs(libra_domain)
+# use this when available, see can_exec below MAL 20110422
+#apache_exec_rotatelogs(libra_domain)
 
 ########################################
 #
@@ -138,6 +139,7 @@ apache_exec_rotatelogs(libra_domain)
 
 require {
 	type httpd_exec_t;
+	type httpd_rotatelogs_exec_t;
 	attribute exec_type;
 	type sshd_t;
 	type httpd_t;
@@ -163,3 +165,9 @@ corenet_udp_bind_generic_port(httpd_t)
 # Allow users to execute files in their home dir
 # allow libra_t libra_var_lib_t:file { execute execute_no_trans };
 
+#################################
+# Allow Log Rotation            #
+#################################
+# Allow libra users to run apache rotatelogs
+# replace with apache_exec_rotatelogs(libra_domain) when available MAL 20110422
+can_exec(libra_t, httpd_rotatelogs_exec_t)

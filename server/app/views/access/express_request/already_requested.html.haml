@@ -1,18 +1,14 @@
-.container_24.express#pageheader
-  .grid_14#title
-    %h2 OpenShift <em>Express</em>
-    %p The Internal Beta...
+-# file: Already requested
 
-  .grid_10#title_accent
+- content_for :page_title do
+  Get access to OpenShift Express!
 
-  .clear
-.clear
+= render 'shared/pageheader', :product => 'express', :title => 'Try Express', :subtitle => 'Request Access to OpenShift Express'
 
 .container_24#page
-  .prefix_1.grid_22.suffix_1#errors
-    .grid_12#errors_div
+  #errors.prefix_1.grid_22.suffix_1
+    #errors_div.grid_12
+      %h2 "You're in the queue!"
       %p 
-        You have already requested access to Express.  Once you have access you can
-        = link_to("click here", :action => 'show', :controller => 'getting_started/express', :only_path => false, :protocol => 'https')
-        to get started.
+        You have already requested access to OpenShift Express.  Once you have been granted access you'll get an email indicating the next steps.
   .clear
