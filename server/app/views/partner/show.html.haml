@@ -43,7 +43,10 @@
       
       /List of advantages
       #advantage.grid_7
-        %h4 The Openshift Advantage
+        %h4 
+          Advantages of #{@partner.name}
+          %br
+          for OpenShift Developers
         %ul
           - @partner.advantage.each do |adv|
             %li

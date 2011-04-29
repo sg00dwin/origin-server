@@ -1426,7 +1426,8 @@ label.error {
   color: #cc0000;
   font-size: 12pt;
   font-family: Overpass;
-  text-transform: uppercase; }
+  text-transform: uppercase;
+  white-space: nowrap; }
 .partner #solution_information #quote {
   margin: 0 0 10px; }
   .partner #solution_information #quote blockquote {
