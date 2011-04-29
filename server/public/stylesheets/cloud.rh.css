@@ -537,7 +537,7 @@ form ul, form ol, form li {
   background-repeat: repeat-x, repeat-x, repeat-x, repeat-x;
   background-position: bottom, bottom, bottom, bottom;
   margin: 0;
-  padding: 20px 0 45px;
+  padding: 20px 0 55px;
   /* For IE */
   zoom: 1;
   behavior: url("/app/stylesheets/PIE.htc"); }
