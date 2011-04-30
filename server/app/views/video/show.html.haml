@@ -16,10 +16,10 @@
     %h2 
       = @title
     
-    %video.projekktor{ :poster => "http://www.redhat.com/g/video_stills/#{@filename}.png", :height => "385px", :width => "640px"}
+    %video.projekktor{ :poster => "#{request.protocol}www.redhat.com/g/video_stills/#{@filename}.png", :height => "385px", :width => "640px"}
     
-      %source{ :src => "http://www.redhat.com/v/ogg/#{@filename}.ogg", :type=>"video/ogg"}
+      %source{ :src => "#{request.protocol}www.redhat.com/v/ogg/#{@filename}.ogg", :type=>"video/ogg"}
       
-      %source{ :src => "http://www.redhat.com/v/swf/#{@filename}.mp4", :type=>"video/mp4"}
+      %source{ :src => "#{request.protocol}www.redhat.com/v/swf/#{@filename}.mp4", :type=>"video/mp4"}
 
   .clear
