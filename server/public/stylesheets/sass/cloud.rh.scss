@@ -50,12 +50,6 @@ $sans: 'Liberation Sans','Helvetica Neue',Arial,FreeSans,sans-serif;
     $first_color,
     $last_color $last_stop
   );
-  /* IE */
-  -pie-background: linear-gradient(
-    top,
-    $first_color,
-    $last_color $last_stop
-  );
   /* Spec */
   background: linear-gradient(
     top,
@@ -63,8 +57,7 @@ $sans: 'Liberation Sans','Helvetica Neue',Arial,FreeSans,sans-serif;
     $last_color $last_stop
   );
   /* For IE */
-  zoom: 1;
-  behavior: url('/app/stylesheets/PIE.htc'); 
+  zoom: 1; 
 }
 
 //Cross-browser horizontal linear gradient
@@ -95,12 +88,6 @@ $sans: 'Liberation Sans','Helvetica Neue',Arial,FreeSans,sans-serif;
     $first_color,
     $last_color $last_stop
   );
-  /* IE */
-  -pie-background: linear-gradient(
-    left,
-    $first_color,
-    $last_color $last_stop
-  );
   /* Spec */
   background: linear-gradient(
     left,
@@ -109,16 +96,13 @@ $sans: 'Liberation Sans','Helvetica Neue',Arial,FreeSans,sans-serif;
   );
   /* For IE */
   zoom: 1;
-  behavior: url('/app/stylesheets/PIE.htc');
 }
 
 //Cross-browser border radius
 @mixin border_radius($radius) {
   -moz-border-radius: #{$radius}px;
   -webkit-border-radius: #{$radius}px;
-  border-radius: #{$radius}px;
-  /* For IE */
-  behavior: url('/app/stylesheets/PIE.htc'); 
+  border-radius: #{$radius}px; 
 }
 
 @mixin form_label {
@@ -170,9 +154,7 @@ $sans: 'Liberation Sans','Helvetica Neue',Arial,FreeSans,sans-serif;
   }
 	border: 0px;
   zzzz: 1px 1px 1px #ccc;
-  cursor: pointer;
-  /* For IE */
-  behavior: url('/app/stylesheets/PIE.htc'); 
+  cursor: pointer; 
 }
 
 @mixin form_link {
@@ -863,13 +845,6 @@ form {
     url('/app/images/lg_cloud.png'),
     url('/app/images/xl_cloud.png'),
     -o-linear-gradient(top, white, #ccc 50%);
-  /* IE */
-  -pie-background: 
-    url('/app/images/sm_cloud.png') repeat-x bottom,
-    url('/app/images/md_cloud.png') repeat-x bottom,
-    url('/app/images/lg_cloud.png') repeat-x bottom,
-    url('/app/images/xl_cloud.png') repeat-x bottom,
-    linear-gradient(top, white, #ccc 50%);
   /* Spec */
   background-image: 
     url('/app/images/sm_cloud.png'),
@@ -886,7 +861,6 @@ form {
   
   /* For IE */
   zoom: 1;
-  behavior: url('/app/stylesheets/PIE.htc');
   
   #{$text_elements}, #{$header_elements}, #{$list_elements} {
     margin: 0 auto {
@@ -1271,9 +1245,7 @@ li.captcha {
   a.try_it {
     @include try_it_button(#76BC48);
     margin-left: 300px;
-    box-shadow: 2px 2px 2px #333;
-    /* For IE */
-    behavior: url('/app/stylesheets/PIE.htc'); 
+    box-shadow: 2px 2px 2px #333; 
     
     &:hover {
       @include try_it_hover(#76BC48) ;

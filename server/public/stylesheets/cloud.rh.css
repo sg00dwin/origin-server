@@ -79,13 +79,10 @@ form ul, form ol, form li {
   background: -webkit-linear-gradient(top, #990000, #cc0000 100%);
   /* Opera */
   background: -o-linear-gradient(top, #990000, #cc0000 100%);
-  /* IE */
-  -pie-background: linear-gradient(top, #990000, #cc0000 100%);
   /* Spec */
   background: linear-gradient(top, #990000, #cc0000 100%);
   /* For IE */
   zoom: 1;
-  behavior: url("/app/stylesheets/PIE.htc");
   padding: 6px 30px;
   position: absolute;
   right: 0;
@@ -127,13 +124,10 @@ form ul, form ol, form li {
     background: -webkit-linear-gradient(top, #4e9fdd, #2887d0 100%);
     /* Opera */
     background: -o-linear-gradient(top, #4e9fdd, #2887d0 100%);
-    /* IE */
-    -pie-background: linear-gradient(top, #4e9fdd, #2887d0 100%);
     /* Spec */
     background: linear-gradient(top, #4e9fdd, #2887d0 100%);
     /* For IE */
     zoom: 1;
-    behavior: url("/app/stylesheets/PIE.htc");
     display: inline-block;
     padding: 5px 10px;
     font-family: Overpass;
@@ -143,8 +137,6 @@ form ul, form ol, form li {
     -moz-border-radius: 8px;
     -webkit-border-radius: 8px;
     border-radius: 8px;
-    /* For IE */
-    behavior: url("/app/stylesheets/PIE.htc");
     margin: 40px 0 0 40px; }
     #top_head a.try_it:hover {
       background: #2887d0;
@@ -156,13 +148,10 @@ form ul, form ol, form li {
       background: -webkit-linear-gradient(top, #2887d0, #4e9fdd 100%);
       /* Opera */
       background: -o-linear-gradient(top, #2887d0, #4e9fdd 100%);
-      /* IE */
-      -pie-background: linear-gradient(top, #2887d0, #4e9fdd 100%);
       /* Spec */
       background: linear-gradient(top, #2887d0, #4e9fdd 100%);
       /* For IE */
       zoom: 1;
-      behavior: url("/app/stylesheets/PIE.htc");
       color: white; }
     .product #top_head a.try_it {
       display: none; }
@@ -183,13 +172,10 @@ form ul, form ol, form li {
   background: -webkit-linear-gradient(top, #cc0000, #990000 100%);
   /* Opera */
   background: -o-linear-gradient(top, #cc0000, #990000 100%);
-  /* IE */
-  -pie-background: linear-gradient(top, #cc0000, #990000 100%);
   /* Spec */
   background: linear-gradient(top, #cc0000, #990000 100%);
   /* For IE */
   zoom: 1;
-  behavior: url("/app/stylesheets/PIE.htc");
   border-top: 1px solid #fe7272;
   font-family: OverpassBold; }
   #nav ul {
@@ -251,13 +237,10 @@ form ul, form ol, form li {
   background: -webkit-linear-gradient(top, #555555, #d4d4d4 100%);
   /* Opera */
   background: -o-linear-gradient(top, #555555, #d4d4d4 100%);
-  /* IE */
-  -pie-background: linear-gradient(top, #555555, #d4d4d4 100%);
   /* Spec */
   background: linear-gradient(top, #555555, #d4d4d4 100%);
   /* For IE */
   zoom: 1;
-  behavior: url("/app/stylesheets/PIE.htc");
   position: relative;
   overflow: hidden; }
   #pageheader #title_accent {
@@ -277,13 +260,10 @@ form ul, form ol, form li {
     background: -webkit-linear-gradient(top, #336699, #6699cc 100%);
     /* Opera */
     background: -o-linear-gradient(top, #336699, #6699cc 100%);
-    /* IE */
-    -pie-background: linear-gradient(top, #336699, #6699cc 100%);
     /* Spec */
     background: linear-gradient(top, #336699, #6699cc 100%);
     /* For IE */
-    zoom: 1;
-    behavior: url("/app/stylesheets/PIE.htc"); }
+    zoom: 1; }
     #pageheader.express #title_accent {
       background-image: url(/app/images/express_title_accent.png);
       margin-right: 10px; }
@@ -297,13 +277,10 @@ form ul, form ol, form li {
     background: -webkit-linear-gradient(top, #a344bc, #c88fd7 100%);
     /* Opera */
     background: -o-linear-gradient(top, #a344bc, #c88fd7 100%);
-    /* IE */
-    -pie-background: linear-gradient(top, #a344bc, #c88fd7 100%);
     /* Spec */
     background: linear-gradient(top, #a344bc, #c88fd7 100%);
     /* For IE */
-    zoom: 1;
-    behavior: url("/app/stylesheets/PIE.htc"); }
+    zoom: 1; }
     #pageheader.flex #title_accent {
       background-image: url(/app/images/flex_title_accent.png); }
   #pageheader.power {
@@ -316,13 +293,10 @@ form ul, form ol, form li {
     background: -webkit-linear-gradient(top, #549933, #87cc66 100%);
     /* Opera */
     background: -o-linear-gradient(top, #549933, #87cc66 100%);
-    /* IE */
-    -pie-background: linear-gradient(top, #549933, #87cc66 100%);
     /* Spec */
     background: linear-gradient(top, #549933, #87cc66 100%);
     /* For IE */
-    zoom: 1;
-    behavior: url("/app/stylesheets/PIE.htc"); }
+    zoom: 1; }
     #pageheader.power #title_accent {
       background-image: url(/app/images/power_title_accent.png); }
   #pageheader h1, #pageheader h2, #pageheader h3, #pageheader h4, #pageheader h5, #pageheader h6 {
@@ -403,9 +377,7 @@ form ul, form ol, form li {
       border: 1px solid #3c6eb4;
       -moz-border-radius: 12px;
       -webkit-border-radius: 12px;
-      border-radius: 12px;
-      /* For IE */
-      behavior: url("/app/stylesheets/PIE.htc"); }
+      border-radius: 12px; }
       .slideShow .navigation a:hover, .slideShow .navigation a.selected {
         background: #3c6eb4;
         color: white !important;
@@ -471,13 +443,10 @@ form ul, form ol, form li {
   background: -webkit-linear-gradient(top, #ececec, white 10%);
   /* Opera */
   background: -o-linear-gradient(top, #ececec, white 10%);
-  /* IE */
-  -pie-background: linear-gradient(top, #ececec, white 10%);
   /* Spec */
   background: linear-gradient(top, #ececec, white 10%);
   /* For IE */
   zoom: 1;
-  behavior: url("/app/stylesheets/PIE.htc");
   color: black;
   padding: 2em 0 5em; }
   #page p, #page a, #page h1, #page h2, #page h3, #page h4, #page h5, #page h6, #page ul, #page ol, #page li {
@@ -530,8 +499,6 @@ form ul, form ol, form li {
   background-image: url("/app/images/sm_cloud.png"), url("/app/images/md_cloud.png"), url("/app/images/lg_cloud.png"), url("/app/images/xl_cloud.png"), -webkit-linear-gradient(top, white, #cccccc 50%);
   /* Opera */
   background-image: url("/app/images/sm_cloud.png"), url("/app/images/md_cloud.png"), url("/app/images/lg_cloud.png"), url("/app/images/xl_cloud.png"), -o-linear-gradient(top, white, #cccccc 50%);
-  /* IE */
-  -pie-background: url("/app/images/sm_cloud.png") repeat-x bottom, url("/app/images/md_cloud.png") repeat-x bottom, url("/app/images/lg_cloud.png") repeat-x bottom, url("/app/images/xl_cloud.png") repeat-x bottom, linear-gradient(top, white, #cccccc 50%);
   /* Spec */
   background-image: url("/app/images/sm_cloud.png"), url("/app/images/md_cloud.png"), url("/app/images/lg_cloud.png"), url("/app/images/xl_cloud.png"), linear-gradient(top, white, #cccccc 50%);
   background-repeat: repeat-x, repeat-x, repeat-x, repeat-x;
@@ -539,8 +506,7 @@ form ul, form ol, form li {
   margin: 0;
   padding: 20px 0 55px;
   /* For IE */
-  zoom: 1;
-  behavior: url("/app/stylesheets/PIE.htc"); }
+  zoom: 1; }
   #app_promos p, #app_promos a, #app_promos h1, #app_promos h2, #app_promos h3, #app_promos h4, #app_promos h5, #app_promos h6, #app_promos ul, #app_promos ol, #app_promos li {
     margin: 0 auto;
       margin-top: 1em !important;
@@ -609,8 +575,6 @@ form ul, form ol, form li {
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   border-radius: 4px;
-  /* For IE */
-  behavior: url("/app/stylesheets/PIE.htc");
   font-size: 13pt; }
   #registration input.create {
     background: #555;
@@ -626,9 +590,7 @@ form ul, form ol, form li {
     text-align: center;
     border: 0px;
     zzzz: 1px 1px 1px #ccc;
-    cursor: pointer;
-    /* For IE */
-    behavior: url("/app/stylesheets/PIE.htc"); }
+    cursor: pointer; }
 #registration form {
   width: 500px; }
 #registration th {
@@ -662,8 +624,6 @@ form ul, form ol, form li {
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   border-radius: 4px;
-  /* For IE */
-  behavior: url("/app/stylesheets/PIE.htc");
   font-size: 13pt; }
   #login-form input.create {
     background: #555;
@@ -679,9 +639,7 @@ form ul, form ol, form li {
     text-align: center;
     border: 0px;
     zzzz: 1px 1px 1px #ccc;
-    cursor: pointer;
-    /* For IE */
-    behavior: url("/app/stylesheets/PIE.htc"); }
+    cursor: pointer; }
   #login-form input.button {
     background: #555;
     width: auto;
@@ -696,9 +654,7 @@ form ul, form ol, form li {
     text-align: center;
     border: 0px;
     zzzz: 1px 1px 1px #ccc;
-    cursor: pointer;
-    /* For IE */
-    behavior: url("/app/stylesheets/PIE.htc"); }
+    cursor: pointer; }
 
 label {
   width: 160px;
@@ -721,8 +677,6 @@ input {
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   border-radius: 4px;
-  /* For IE */
-  behavior: url("/app/stylesheets/PIE.htc");
   font-size: 13pt; }
 
 input[type=text],
@@ -735,8 +689,6 @@ input[type=password] {
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   border-radius: 4px;
-  /* For IE */
-  behavior: url("/app/stylesheets/PIE.htc");
   font-size: 13pt;
   width: 250px !important;
   height: 24px;
@@ -759,8 +711,6 @@ input#user_email_address {
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   border-radius: 4px;
-  /* For IE */
-  behavior: url("/app/stylesheets/PIE.htc");
   font-size: 13pt;
   width: 250px !important;
   height: 24px;
@@ -776,8 +726,6 @@ input#user_password {
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   border-radius: 4px;
-  /* For IE */
-  behavior: url("/app/stylesheets/PIE.htc");
   font-size: 13pt;
   width: 250px !important;
   height: 24px;
@@ -793,8 +741,6 @@ input#user_password_confirmation {
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   border-radius: 4px;
-  /* For IE */
-  behavior: url("/app/stylesheets/PIE.htc");
   font-size: 13pt;
   width: 250px !important;
   height: 24px;
@@ -815,9 +761,7 @@ input.submit, input.button, input.create {
   text-align: center;
   border: 0px;
   zzzz: 1px 1px 1px #ccc;
-  cursor: pointer;
-  /* For IE */
-  behavior: url("/app/stylesheets/PIE.htc"); }
+  cursor: pointer; }
 
 form p {
   clear: left; }
@@ -974,13 +918,10 @@ li.captcha {
     background: -webkit-linear-gradient(top, #76bc48, #5e9938 100%);
     /* Opera */
     background: -o-linear-gradient(top, #76bc48, #5e9938 100%);
-    /* IE */
-    -pie-background: linear-gradient(top, #76bc48, #5e9938 100%);
     /* Spec */
     background: linear-gradient(top, #76bc48, #5e9938 100%);
     /* For IE */
     zoom: 1;
-    behavior: url("/app/stylesheets/PIE.htc");
     display: inline-block;
     padding: 5px 10px;
     font-family: Overpass;
@@ -990,12 +931,8 @@ li.captcha {
     -moz-border-radius: 8px;
     -webkit-border-radius: 8px;
     border-radius: 8px;
-    /* For IE */
-    behavior: url("/app/stylesheets/PIE.htc");
     margin-left: 300px;
-    box-shadow: 2px 2px 2px #333;
-    /* For IE */
-    behavior: url("/app/stylesheets/PIE.htc"); }
+    box-shadow: 2px 2px 2px #333; }
     #banner a.try_it:hover {
       background: #5e9938;
       /* Mozilla */
@@ -1006,13 +943,10 @@ li.captcha {
       background: -webkit-linear-gradient(top, #5e9938, #76bc48 100%);
       /* Opera */
       background: -o-linear-gradient(top, #5e9938, #76bc48 100%);
-      /* IE */
-      -pie-background: linear-gradient(top, #5e9938, #76bc48 100%);
       /* Spec */
       background: linear-gradient(top, #5e9938, #76bc48 100%);
       /* For IE */
       zoom: 1;
-      behavior: url("/app/stylesheets/PIE.htc");
       color: white; }
   #banner.express {
     background-image: url("/app/images/express-banner.png"); }
@@ -1037,13 +971,10 @@ li.captcha {
       background: -webkit-linear-gradient(top, #ececec, #d3d3d3 100%);
       /* Opera */
       background: -o-linear-gradient(top, #ececec, #d3d3d3 100%);
-      /* IE */
-      -pie-background: linear-gradient(top, #ececec, #d3d3d3 100%);
       /* Spec */
       background: linear-gradient(top, #ececec, #d3d3d3 100%);
       /* For IE */
       zoom: 1;
-      behavior: url("/app/stylesheets/PIE.htc");
       display: inline-block;
       width: 170px;
       padding: 2px 0;
@@ -1058,13 +989,10 @@ li.captcha {
       background: -webkit-linear-gradient(top, #cc0000, #990000 100%);
       /* Opera */
       background: -o-linear-gradient(top, #cc0000, #990000 100%);
-      /* IE */
-      -pie-background: linear-gradient(top, #cc0000, #990000 100%);
       /* Spec */
       background: linear-gradient(top, #cc0000, #990000 100%);
       /* For IE */
-      zoom: 1;
-      behavior: url("/app/stylesheets/PIE.htc"); }
+      zoom: 1; }
       #product_tabs ul#tab_navigation li.current a {
         color: white; }
       #product_tabs ul#tab_navigation li.current a.step-one {
@@ -1212,13 +1140,10 @@ li.captcha {
   background: -webkit-linear-gradient(left, #264c73, #6699cc 100%);
   /* Opera */
   background: -o-linear-gradient(left, #264c73, #6699cc 100%);
-  /* IE */
-  -pie-background: linear-gradient(left, #264c73, #6699cc 100%);
   /* Spec */
   background: linear-gradient(left, #264c73, #6699cc 100%);
   /* For IE */
-  zoom: 1;
-  behavior: url("/app/stylesheets/PIE.htc"); }
+  zoom: 1; }
 .flex #supplemental_content #doc_link a {
   background: #833697;
   /* Mozilla */
@@ -1229,13 +1154,10 @@ li.captcha {
   background: -webkit-linear-gradient(left, #833697, #c88fd7 100%);
   /* Opera */
   background: -o-linear-gradient(left, #833697, #c88fd7 100%);
-  /* IE */
-  -pie-background: linear-gradient(left, #833697, #c88fd7 100%);
   /* Spec */
   background: linear-gradient(left, #833697, #c88fd7 100%);
   /* For IE */
-  zoom: 1;
-  behavior: url("/app/stylesheets/PIE.htc"); }
+  zoom: 1; }
 .power #supplemental_content #doc_link a {
   background: #3f7326;
   /* Mozilla */
@@ -1246,13 +1168,10 @@ li.captcha {
   background: -webkit-linear-gradient(left, #3f7326, #87cc66 100%);
   /* Opera */
   background: -o-linear-gradient(left, #3f7326, #87cc66 100%);
-  /* IE */
-  -pie-background: linear-gradient(left, #3f7326, #87cc66 100%);
   /* Spec */
   background: linear-gradient(left, #3f7326, #87cc66 100%);
   /* For IE */
-  zoom: 1;
-  behavior: url("/app/stylesheets/PIE.htc"); }
+  zoom: 1; }
 #supplemental_content #platforms h4 {
   margin: 0;
   color: black;
@@ -1290,13 +1209,10 @@ li.captcha {
   background: -webkit-linear-gradient(left, #7f7f7f, #5b5b5b 100%);
   /* Opera */
   background: -o-linear-gradient(left, #7f7f7f, #5b5b5b 100%);
-  /* IE */
-  -pie-background: linear-gradient(left, #7f7f7f, #5b5b5b 100%);
   /* Spec */
   background: linear-gradient(left, #7f7f7f, #5b5b5b 100%);
   /* For IE */
   zoom: 1;
-  behavior: url("/app/stylesheets/PIE.htc");
   display: block;
   width: inherit;
   margin: 0 0 30px;
@@ -1361,9 +1277,7 @@ li.captcha {
     padding-left: 50px;
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
-  border-radius: 4px;
-  /* For IE */
-  behavior: url("/app/stylesheets/PIE.htc"); }
+  border-radius: 4px; }
   #join p {
     float: left;
     width: 60%;
@@ -1397,13 +1311,10 @@ li.captcha {
       background: -webkit-linear-gradient(top, #888888, #222222 100%);
       /* Opera */
       background: -o-linear-gradient(top, #888888, #222222 100%);
-      /* IE */
-      -pie-background: linear-gradient(top, #888888, #222222 100%);
       /* Spec */
       background: linear-gradient(top, #888888, #222222 100%);
       /* For IE */
       zoom: 1;
-      behavior: url("/app/stylesheets/PIE.htc");
       padding: 5px 10px;
       color: white !important;
       font-family: Overpass;
