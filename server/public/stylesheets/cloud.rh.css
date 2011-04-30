@@ -748,7 +748,7 @@ input[type=password] {
   margin-right: -8px; }
 
 .recaptcha_input_area label {
-  line-height: inherit; }
+  line-height: 1em; }
 
 input#user_email_address {
   width: 200px;
