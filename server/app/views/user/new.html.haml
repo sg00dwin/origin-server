@@ -32,7 +32,8 @@
         = form.input :password_confirmation, :input_html => { :autocomplete => 'off' }                
         %li.captcha
           %label(for="recaptcha_response_field") Prove You Are Human
-          = recaptcha_tags
+          = recaptcha_tags :ssl => true
+          
 
       = form.buttons do
         = form.commit_button "Register Now"
