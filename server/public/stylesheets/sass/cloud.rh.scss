@@ -1154,14 +1154,18 @@ label.error {
   line-height: 10pt;
 }
 
-#captcha {
+#captcha {  
   th {
     vertical-align: top;
   }
 }
 
+li.captcha {
+  overflow: visible;
+}
+
 #recaptcha_area {
-	margin: 0 0 0 10px;
+	margin: 0 0 0 5px;
 	float: left;
 	clear: right;
 }
