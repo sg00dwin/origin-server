@@ -1,0 +1,15 @@
+/* IE 7 specific styles */
+#page {
+  background-color: white; }
+
+#pageheader #title_wrapper {
+  background-image: none; }
+#pageheader #title_accent {
+  display: none; }
+
+#product_tabs ul#tab_navigation li {
+  background-color: #ccc; }
+
+.partner ul.partners li {
+  zoom: 1;
+  display: inline; }
