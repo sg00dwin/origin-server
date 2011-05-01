@@ -807,7 +807,10 @@ form {
 
 #app_promos {
   /* Fallback background */
-  background: #ccc url('/app/images/xl_cloud.png') repeat-x bottom;
+  background-color: white;
+  background-image: url('/app/images/fallback_cloud.png');
+  background-repeat: repeat-x;
+  background-position: bottom;
   
   /* 
    * Multiple backgrounds for 
