@@ -13,7 +13,7 @@
   "quote_attr":
     "Roger Bodamer, EVP Products and Technology at 10gen",
   "description":
-    "<p>The MongoDB cartridge for OpenShift enables developers to store their application data in MongoDB, the NoSQL database of choice for thousands of Web 2.0 and Fortune 500 companies. MongoDB’s JSON-like document format with dynamic schemas simplifies application development, while its horizontal scalability allows for large-scale data storage and ‘big data’ analytics in cloud environments. The cartridge gives developer the power to quickly deploy, manage, and monitor high performance, highly-available clusters of the MongoDB database.</p>",
+    "<p>The MongoDB cartridge for OpenShift enables developers to store their application data in MongoDB, the NoSQL database of choice for thousands of Web 2.0 and Fortune 500 companies. MongoDB’s JSON-like document format with dynamic schemas simplifies application development, while its horizontal scalability allows for large-scale data storage and ‘big data’ analytics in cloud environments. The cartridge gives developers the power to quickly deploy, manage, and monitor high performance, highly-available clusters of the MongoDB database.</p>",
   "advantage": [
       "The power of NoSQL databases in an enterprise-ready open source platform",
       "Rapidly develop and iterate applications in many programming languages", 
@@ -36,7 +36,7 @@
   "quote_attr":
     "Jeff Haynie, CEO of Appcelerator",
   "description":
-    "<p>Developers can use Titanium to create, deploy, and manage mobile applications then push them to the Red Hat cloud with just one click. The only platform to enable fully native, cross-device development from a single codebase for iOS, Android, and Blackberry, Appcelerator’s customers include NBC, PayPal, eBay, Orange, and Cisco. These companies develop their mobile applications on Appcelerator products so they can decrease time-to-market and development costs, increase customer adoption and revenues, and enjoy greater flexibility and control. For more information, please visit <a href=\"http://www.appcelerator.com\">www.appcelerator.com.</a></p>",
+    "<p>Developers can use Titanium to create, deploy, and manage mobile applications then push them to the Red Hat cloud with just one click. The only platform to enable fully native, cross-device development from a single code base for iOS, Android, and Blackberry, Appcelerator’s customers include NBC, PayPal, eBay, Orange, and Cisco. These companies develop their mobile applications on Appcelerator products so they can decrease time-to-market and development costs, increase customer adoption and revenues, and enjoy greater flexibility and control. For more information, please visit <a href=\"http://www.appcelerator.com\">www.appcelerator.com.</a></p>",
   "advantage":
     [ "Integrated solution for building, managing, and deploying cloud-connected mobile applications",
     "Familiar Eclipse-based IDE enables developers to create mobile cloud applications for Ruby, PHP, or Java",
@@ -53,16 +53,16 @@
   "contact":
     "BitRock Inc. <br/> 1151 Marina Village Pkwy, Ste 101 <br/> Alameda, CA 94501",
   "summary": 
-    "BitNami simplifies the deployment of open source and other applications natively, virtually and in the cloud. Applications such as Alfresco, Drupal, SugarCRM, Wordpress, JasperServer and more can be deployed in minutes using BitNami’s ready-to-run packages.",
+    "BitNami simplifies the deployment of open source and other applications natively, virtually, and in the cloud. Applications such as Alfresco, Drupal, SugarCRM, Wordpress, JasperServer, and more can be deployed in minutes using BitNami’s ready-to-run packages.",
   "quote":
     "We are excited to be partnering with Red Hat to enable developers to quickly deploy their favorite open source applications to the OpenShift Platform. Our BitNami-packaged applications give developers a head start so they can be productive with the OpenShift Platform in minutes.",
   "quote_attr":
     "Erica Brescia, CEO, BitRock (developer of BitNami)",
   "description":
-    "<p>The BitNami cartridges for the OpenShift Platform enable developers to get up and running with their favorite open source applications in one click. Combined with OpenShift, the BitNami cartridges provide a complete, ready-to-run application stack and runtime environment. The growing BitNami application library includes SugarCRM, Alfresco, Drupal, Wordpress, JasperServer, Redmine, Joomla! and many others.</p>",
+    "<p>The BitNami cartridges for the OpenShift Platform enable developers to get up and running with their favorite open source applications in one click. Combined with OpenShift, the BitNami cartridges provide a complete, ready-to-run application stack and runtime environment. The growing BitNami application library includes SugarCRM, Alfresco, Drupal, Wordpress, JasperServer, Redmine, Joomla!, and many others.</p>",
   "advantage": [
     "BitNami application cartridges enable 1 click deployment of open source software on OpenShift.",
-    "Choose from a library of popular applications for CRM, content management, blogging and more."
+    "Choose from a library of popular applications for CRM, content management, blogging, and more."
   ],
   "availability": "Coming Soon",
   "availability_category": "eventually"
@@ -75,7 +75,7 @@
   "contact": 
     "Cotendo inc. <br/> 530 Lakeside Drive <br/> Sunnyvale, CA 94085, USA",
   "summary":
-    "Cotendo is a fast growing innovative provider of CDN and Site Acceleration services and a leader in creation of technologies that allow website operators and large enterprises to significantly improve web performance and simplify content delivery management.",
+    "Cotendo is a fast growing innovative provider of CDN and Site Acceleration services and a leader in the creation of technologies that allow website operators and large enterprises to significantly improve web performance and simplify content delivery management.",
   "quote":
     "At Cotendo we are obsessed with speed. We are excited to be the CDN and Site acceleration partner as part of Red Hat’s OpenShift ecosystem helping developers accelerate and scale their applications with demand.",
   "quote_attr":
@@ -119,17 +119,17 @@
   "contact": 
     "150 Dow Street <br/> Manchester, NH 03101, USA",
   "summary":
-    "Dyn Inc. is an Infrastructure as a Service (IaaS) provider for everyone from home users to the biggest online brands. With a range of innovative technology, Dyn Inc. is a world leader in managed DNS and email delivery services providing “rock-solid” solutions on its three core brands, DynDNS.com, Dynect Platform and SendLabs.",
+    "Dyn Inc. is an Infrastructure as a Service (IaaS) provider for everyone from home users to the biggest online brands. With a range of innovative technologies, Dyn Inc. is a world leader in managed DNS and email delivery services providing “rock-solid” solutions on its three core brands, DynDNS.com, Dynect Platform and SendLabs.",
   "quote":
-    "Dyn is very excited to be serving the Red Hat developer community with rock-solid, enterprise DNS and email delivery solutions for the Open Shift platform. As an official launch partner, we look forward to continuing our support for the open source community, as we have for more than 10 years.",
+    "Dyn is very excited to be serving the Red Hat developer community with rock-solid, enterprise DNS and email delivery solutions for the OpenShift platform. As an official launch partner, we look forward to continuing our support for the open source community, as we have for more than 10 years.",
   "quote_attr":
     "Jeremy Hitchcock, CEO, Dyn",
   "description":
-    "<p>Together, Red Hat and Dyn offer a one-stop solution for deploying your Open Shift based projects to a truly enterprise platform for DNS and email. Dyn provides enterprise class technology (ECT) including a globally redundant 17 data-center managed anycast DNS service with active failover and elegant traffic management as well as an intelligent MTA platform for email delivery and inbox monitoring. With Red Hat and Dyn, uptime is the bottom line.",
+    "<p>Together, Red Hat and Dyn offer a one-stop solution for deploying your OpenShift based projects to a truly enterprise platform for DNS and email. Dyn provides enterprise class technology (ECT) including a globally redundant 17 datacenter managed anycast DNS service with active failover and elegant traffic management as well as an intelligent MTA platform for email delivery and inbox monitoring. With Red Hat and Dyn, uptime is the bottom line.",
   "advantage":
     ["Seamless management of mission critical DNS and email services.",
     "Enterprise power and rock-solid scalability from day one.",
-    "Reliability and peace of mind in using industry leading software, service, and support."],
+    "Reliability and peace of mind in using industry-leading software, service, and support."],
   "availability": "Coming Soon",
   "availability_category": "eventually"
   },
@@ -141,9 +141,9 @@
   "contact": 
     "34 Crosby Drive <br/> Suite 100 <br/> Bedford, MA 01730, USA",
   "summary":
-    "EnterpriseDB, the enterprise PostgreSQL company, is a worldwide provider of database software, professional services, and production support for the world’s most advanced open source database--PostgreSQL. EnterpriseDB is also an industry leader in Oracle compatibility, providing  customers with an Oracle class database for up to 80% less cost. ",
+    "EnterpriseDB, the enterprise PostgreSQL company, is a worldwide provider of database software, professional services, and production support for the world’s most advanced open source database--PostgreSQL. EnterpriseDB is also an industry leader in Oracle compatibility, providing customers with an Oracle-class database for up to 80% less cost. ",
   "quote":
-    "EnterpriseDB is proud to be part of Red Hat’s OpenShift Platform, and is pleased to provide the open source developer with an enterprise-class, Oracle compatible cloud database built and maintained through the proven open source development model.",
+    "EnterpriseDB is proud to be part of Red Hat’s OpenShift Platform, and is pleased to provide the open source developer with an enterprise-class, Oracle-compatible cloud database built and maintained through the proven open source development model.",
   "quote_attr":
     "Ed Boyajin, CEO, EnterpriseDB",
   "description":
@@ -163,9 +163,9 @@
   "contact": 
     "eXo <br/> 51 Federal Street, Suite 305 <br/> San Francisco CA 94107, USA",
   "summary":
-    "eXo offers a set of user experience services for building and deploying transactional websites, managing web and social content and creating gadgets and dashboards for deployment on-premise, to mobile devices, or in cloud computing environments.",
+    "eXo offers a set of user experience services for building and deploying transactional websites, managing web and social content, and creating gadgets and dashboards for deployment on-premise, to mobile devices, or in cloud computing environments.",
   "quote":
-    "eXo is pleased to expand our partnership with Red Hat to OpenShift. Our eXo Cloud Services provide a natural onramp for developers to OpenShift, offering an enhanced PaaS experience with the addition of rich social and collaborative development services.",
+    "eXo is pleased to expand our partnership with Red Hat to OpenShift. Our eXo Cloud Services provide a natural on-ramp for developers to OpenShift, offering an enhanced PaaS experience with the addition of rich social and collaborative development services.",
   "quote_attr":
     "Benjamin Mestrallet, CEO, eXo",
   "description":
@@ -185,7 +185,7 @@
   "contact": 
     "686 W Maude Avenue, Ste 104 <br/> Sunnyvale, CA 94085, USA",
   "summary":
-    "Mu Dynamics is a leader in load and performance testing cloud infrastructure and apps. Our innovative solutions enable customers to rapidly address application performance and ensure that their cloud infrastructure and applications are functional, scalable and secure.",
+    "Mu Dynamics is a leader in load and performance testing for cloud infrastructure and apps. Our innovative solutions enable customers to rapidly address application performance and ensure that their cloud infrastructure and applications are functional, scalable and secure.",
   "quote":
     "We are excited to be a provider of application acceleration and performance testing for the Red Hat OpenShift Platform. With open source making cloud deployments incredibly agile, blitz.io from Mu Dynamics helps scale these apps by bringing load and performance testing into the development cycle to deliver a better user experience while simultaneously speeding time to deployment.",
   "quote_attr":
@@ -207,18 +207,18 @@
   "contact": 
     "41 East 11th Street, 11th Floor <br/> New York, NY 10003",
   "summary":
-    "OpenCrowd is a user experience and technology services firm that builds Collaboration centric applications. OpenCrowd’s primary focus is building custom Collaborative Dashboards, Business-Social Media and Mobile applications on cloud platforms. OpenCrowd has delivered solutions across a wide spectrum of firms ranging from IBM and premium investment banks to early start-ups like PlumLife.",
+    "OpenCrowd is a user experience and technology services firm that builds Collaboration-centric applications. OpenCrowd’s primary focus is building custom Collaborative Dashboards, Business-Social Media, and Mobile applications on cloud platforms. OpenCrowd has delivered solutions across a wide spectrum of firms ranging from IBM and premium investment banks to early start-ups like PlumLife.",
   "quote":
-    "By integrating our python based product with the OpenShift platform our clients can now benefit from a ready made enterprise class environment for their custom solutions",
+    "By integrating our python-based product with the OpenShift platform our clients can now benefit from a ready-made, enterprise-class environment for their custom solutions",
   "quote_attr":
     "Sushil Prabhu - CEO, OpenCrowd",
   "description":
-    "<p>OpenCrowd’s Collaboration Application Builder (CAB) integrated with Red Hat’s OpenShift platform, will provide a comprehensive environment to rapidly build and launch a variety of collaboration centric applications in weeks. The CAB environment will include an extended set of prefabricated  plug-ins that will have features like rich data visualization, workspace creation, on demand OLAP, video, chat, search, and more. The CAB environment leverages Django, a python based web framework. The product will be officially launched for public use in July.</p>",
+    "<p>OpenCrowd’s Collaboration Application Builder (CAB) integrated with Red Hat’s OpenShift platform, will provide a comprehensive environment to rapidly build and launch a variety of collaboration-centric applications in weeks. The CAB environment will include an extended set of prefabricated  plug-ins that will have features like rich data visualization, workspace creation, on-demand OLAP, video, chat, search, and more. The CAB environment leverages Django, a python-based web framework. The product will be officially launched for public use in July.</p>",
   "advantage":
-    ["Build collaboration centric apps in weeks and launch in production ready environment in hours",
-    "Provide enterprise grade reliability and security to your business intelligence and enterprise collaboration applications",
-    "Scale quickly on demand to support your social media applications",
-    "Enrich and extend your application environment by leveraging OpenShift services like CDN, Caching, Bigdata"],
+    ["Build collaboration-centric apps in weeks and launch in a production-ready environment in hours",
+    "Provide enterprise-grade reliability and security to your business intelligence and enterprise collaboration applications",
+    "Scale quickly on-demand to support your social media applications",
+    "Enrich and extend your application environment by leveraging OpenShift services like CDN, Caching, and Bigdata"],
   "availability": "Coming Soon",
   "availability_category": "eventually"
   },
@@ -236,10 +236,10 @@
   "quote_attr":
     "John Rowell, CTO, OpSource",
   "description":
-    "<p>OpSource is the only enterprise cloud IaaS offering that includes hardware-based security and scalability, complete customization and control, easy integration, 24x7 live support and 100% availability guaranteed. Developers select OpSource as the IaaS layer for OpenShift to get pay-as-you-go compute power with enterprise-class security, performance and control, for their Red Hat environments. The OpenShift platform should be available on the OpSource Cloud Q3 2011.</p>",
+    "<p>OpSource is the only enterprise cloud IaaS offering that includes hardware-based security and scalability, complete customization and control, easy integration, 24x7 live support and 100% availability guaranteed. Developers select OpSource as the IaaS layer for OpenShift to get pay-as-you-go compute power with enterprise-class security, performance, and control for their Red Hat environments. The OpenShift platform should be available on the OpSource Cloud Q3 2011.</p>",
   "advantage":
-    ["Infrastructure built on enterprise grade technology and carrier class networks",
-    "Best in class physical, network and end user security technology and policy rules controls",
+    ["Infrastructure built on enterprise-grade technology and carrier-class networks",
+    "Best-in-class physical, network, and end user security technology and policy rules controls",
     "Pay only for what you use; scale up and down in minutes based on application demand, workload and dev cycle"],
   "availability": "Expected Q3, 2011",
   "availability_category": "soon"
@@ -252,13 +252,13 @@
   "contact": 
     "Zend Technologies, Inc. <br/> 19200 Stevens Creek Blvd., Suite 100 <br/> Cupertino, CA  95014",
   "summary":
-    "Zend is a leading provider of software solutions for developing and managing business-critical PHP applications. The Zend PHP Cloud Platform is an elastic, manageable, cloud-portable platform that offers fast onboarding, scalability and high availability.",
+    "Zend is a leading provider of software solutions for developing and managing business-critical PHP applications. The Zend PHP Cloud Platform is an elastic, manageable, cloud-portable platform that offers fast on-boarding, scalability, and high availability.",
   "quote":
     "We are excited to be part of the Red Hat OpenShift ecosystem, and enable PHP developers to get the full benefits of the Zend PHP Cloud Platform through the Red Hat OpenShift Platform.",
   "quote_attr":
     "Andi Gutmans, CEO and Co-founder, Zend Technologies",
   "description":
-    "<p>The Zend PHP cloud application platform offers rapid development and deployment of business-critical PHP applications with high availability, massive scalability and portability in the cloud. The platform includes the open source Zend framework for accessing cloud services and writing portable code using the SimpleCloud API; an enterprise-grade, optimized PHP stack, application monitoring, root cause diagnostics, and resource management.</p>",
+    "<p>The Zend PHP cloud application platform offers rapid development and deployment of business-critical PHP applications with high availability, massive scalability, and portability in the cloud. The platform includes the open source Zend framework for accessing cloud services and writing portable code using the SimpleCloud API; an enterprise-grade, optimized PHP stack, application monitoring, root cause diagnostics, and resource management.</p>",
   "advantage":
     ["Elasticity and high availability for PHP applications",
     "Portability across different clouds and flexibility to customize your environment",
@@ -266,4 +266,4 @@
   "availability": "Available now in developer preview",
   "availability_category": "now"
   }
-}
+} 

@@ -1,14 +1,8 @@
-.container_24.express#pageheader
-  .grid_14#title
-    %h2 OpenShift Error
-    %p We're sorry...
+-# file: Email confirmation errors page
 
-  .grid_10#title_accent
+= render 'shared/pageheader', :product => 'openshift', :title => 'OpenShift Error', :subtitle => "We're sorry…"
 
-  .clear
-.clear
-
-.container_24#page
+#page.container_24
   #errors.prefix_1.grid_22.suffix_1
     #errors_div.grid_12
       - @errors.each do |field, msg|

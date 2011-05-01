@@ -124,45 +124,28 @@
 -# Community section
 - content_for :community do
   .post
-    %h3 Post title
+    %h3 Getting Started with JBoss
     %p
-      Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diamvoluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+      This comprehensive guide walks you through deploying, monitoring, managing, and auto-scaling a JBoss application on OpenShift Flex.
     
     .post-meta.meta
-      %p.post-author.author
-        Posted by Author
       %p.post-date.date
-        Posted on June 8, 2011 13:21
+        Posted on April 29, 2011
         
-    %a.more(href="#") Read more &gt;
-  
-  .post
-    %h3 Post title
-    %p
-      Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diamvoluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
-    
-    .post-meta.meta
-      %p.post-author.author
-        Posted by Author
-      %p.post-date.date
-        Posted on June 8, 2011 13:21
-        
-    %a.more(href="#") Read more &gt;
+    = link_to 'Read this >', 'https://www.redhat.com/openshift/sites/default/files/documents/RHOS_Flex_Getting_Started_w_JBoss.pdf', :class => 'more'
 
 -# Resource links
 - content_for :resources do
+
   %ul
     %li
-      = link_to "OpenShift Flex Evaluation Guide", "#"
+      = link_to "OpenShift Flex Evaluation Guide", "https://www.redhat.com/openshift/sites/default/files/documents/RHOS_Flex_Eval_Guide.pdf"
     
     %li
-      = link_to "Deploying Drupal on OpenShift Flex", "#"
+      = link_to "Deploying Drupal on OpenShift Flex", "https://www.redhat.com/openshift/sites/default/files/documents/RHOS_Flex_Getting_Started_w_Drupal_1.pdf"
     
     %li
-      = link_to "Deploying Wordpress on OpenShift Flex", "#"
-    
-    %li
-      = link_to "Deploying JBoss Applications on OpenShift Flex", "#" 
+      = link_to "Deploying JBoss Applications on OpenShift Flex", "https://www.redhat.com/openshift/sites/default/files/documents/RHOS_Flex_Getting_Started_w_JBoss.pdf" 
   
   = link_to 'More Documentation >', 'http://www.redhat.com/openshift/documents', :class => 'more'
   
@@ -197,7 +180,7 @@
     %li MongoDB
     %li Memcached
     
-  = link_to 'More information >', 'http://www.redhat.com/openshift/', :class => 'more'
+  = link_to 'More information >', 'http://www.redhat.com/openshift/faq', :class => 'more'
 
 -# Supplementary documentation links
 - content_for :doc_links do

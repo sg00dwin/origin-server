@@ -127,45 +127,46 @@
 -# Community section
 - content_for :community do
   .post
-    %h3 Post title
+    %h3 Getting Started with Drupal
     %p
-      Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diamvoluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+      Follow along as David deploys Drupal on OpenShift Express in this fun, informative screencast. 
     
     .post-meta.meta
       %p.post-author.author
-        Posted by Author
+        Posted by DavidB
       %p.post-date.date
-        Posted on June 8, 2011 13:21
+        Posted on May 4, 2011
         
-    %a.more(href="#") Read more &gt;
+    = link_to 'Watch this >', 'https://www.redhat.com/openshift/videos/openshift-express-getting-started-with-drupal', :class => 'more'
   
   .post
-    %h3 Post title
+    %h3 
+      Installing Express client tools 
+      %br
+      on non RPM based systems
     %p
-      Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diamvoluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+      This knowledge base article walks you through installing the OpenShift Express client tools on Windows, Mac, and Debian-based Linux systems
     
     .post-meta.meta
       %p.post-author.author
-        Posted by Author
+        Posted by admin
       %p.post-date.date
-        Posted on June 8, 2011 13:21
+        Posted on April 15, 2011
         
-    %a.more(href="#") Read more &gt;
+    = link_to 'Read this >', 'https://www.redhat.com/openshift/kb/kb-e1000/installing-openshift-express-client-tools-on-non-rpm-based-systems', :class => 'more'
     
 -# Resource links
 - content_for :resources do
+
   %ul
     %li
-      = link_to 'OpenShift Express Evaluation Guide', '#'
+      = link_to 'OpenShift Express Evaluation Guide', 'https://www.redhat.com/openshift/sites/default/files/documents/RHOS_Express_Eval_Guide.pdf'
     
     %li
-      = link_to 'Deploying Drupal on OpenShift Express', '#'
-    
-    %li
-      = link_to 'Deploying Wordpress on OpenShift Express', '#'
+      = link_to 'Deploying Drupal on OpenShift Express', 'https://www.redhat.com/openshift/sites/default/files/documents/RHOS_Express_Getting_Started_w_Drupal.pdf'
       
     %li
-      = link_to 'Deploying MediaWiki on OpenShift Express', '#'
+      = link_to 'Deploying MediaWiki on OpenShift Express', 'https://www.redhat.com/openshift/sites/default/files/documents/RHOS_Express_Getting_Started_w_MediaWiki.pdf'
     
   
   = link_to 'More Documentation>', 'http://www.redhat.com/openshift/documents', :class => 'more'
