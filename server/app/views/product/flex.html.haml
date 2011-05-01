@@ -124,6 +124,13 @@
 -# Community section
 - content_for :community do
   .post
+    %h3 News from Summit
+    %p
+      This thread tracks all the latest news from Red Hat Summit/JBoss World 2011.
+      
+    = link_to 'Read more >', 'https://www.redhat.com/openshift/forums/news-and-announcements/news-from-summit', :class => 'more'
+    
+  .post
     %h3 Getting Started with JBoss
     %p
       This comprehensive guide walks you through deploying, monitoring, managing, and auto-scaling a JBoss application on OpenShift Flex.
