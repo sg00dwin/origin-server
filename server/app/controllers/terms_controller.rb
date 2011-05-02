@@ -1,5 +1,6 @@
 require 'pp'
 require 'json'
+require 'recaptcha'
 
 class TermsController < ApplicationController
 
@@ -39,6 +40,29 @@ class TermsController < ApplicationController
     @term = Term.new
     if @user
       logger.debug "Accepting terms for user #{@user.pretty_inspect}"
+      
+      # See if the captcha secret was provided
+      if Rails.configuration.integrated
+        if !@user.roles.index('simple_authenticated')
+          if params[:captcha_secret] == Rails.configuration.captcha_secret
+            Rails.logger.warn "Captcha secret provided - ignoring captcha"
+          else
+            Rails.logger.debug "Checking captcha"
+            # Verify the captcha
+            unless verify_recaptcha
+              Rails.logger.debug "Captcha check failed"
+              @term.errors[:captcha] = "Captcha text didn't match"
+              # Stop if you have a validation error
+              render :new and return            
+            end
+          end
+        else
+          Rails.logger.warn "Simple user - no captcha"
+        end
+      else
+        Rails.logger.warn "Non-integrated environment - ignoring captcha"
+      end
+      
       @user.accept_terms unless @user.terms.empty?
       
       if @user.errors.length > 0

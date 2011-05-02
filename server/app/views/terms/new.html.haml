@@ -16,9 +16,16 @@
     %p Before participating in the OpenShift Preview Program and receiving the Preview Services, Preview Software and access to online properties, you need to accept certain terms and conditions. The link below contains a list of the terms that will apply to your use.
     %p.terms-link
       = link_to 'OpenShift Legal Terms and Conditions', acceptance_terms_path, :class => 'more', :target => "_blank"
+      
+    - @term.errors.each do |key, value|
+      .message.error
+        #{value}
 
     = semantic_form_for @term do |form|
       = form.inputs do
+        - if !@user.roles.index('simple_authenticated')
+          %li.captcha
+            = recaptcha_tags :ssl => true
         %div
           %p
             Clicking <strong>I accept</strong> means that you agree to the above terms.
