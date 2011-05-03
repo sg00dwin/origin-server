@@ -6,10 +6,23 @@ class TermsController < ApplicationController
 
   def new
     new_terms
+    if !@user.roles.index('simple_authenticated')
+    #if true
+      @show_captcha = true
+      @button_class = 'captcha'
+    else
+      @show_captcha = false
+      @button_class = 'no-captcha'
+    end
   end
 
   def acceptance_terms
     new_terms
+    @term_description = {           
+      'OpenShift Service Agreement' => 'This agreement contains the terms and conditions that apply to your access and use of the Openshift Preview Services and Software. The Agreement also incorporates the Acceptable Use Policy which can be reviewed at http://openshift.redhat.com/app/legal.',   
+      'Red Hat Site Terms' => 'These terms apply to use of Red Hat’s websites, including this OpenShift site.', 
+      'Red Hat Portals Terms of Use' => 'These terms apply to the extent you use the Red Hat Customer Portal website.' 
+    }
   end
   
   def new_terms
@@ -27,12 +40,6 @@ class TermsController < ApplicationController
       session[:login_workflow] = new_terms_path
       redirect_to login_path
     end
-    
-    @term_description = {           
-      'OpenShift Service Agreement' => 'This agreement contains the terms and conditions that apply to your access and use of the Openshift Preview Services and Software. The Agreement also incorporates the Acceptable Use Policy which can be reviewed at http://openshift.redhat.com/app/legal.',   
-      'Red Hat Site Terms' => 'These terms apply to use of Red Hat’s websites, including this OpenShift site.', 
-      'Red Hat Portals Terms of Use' => 'These terms apply to the extent you use the Red Hat Customer Portal website.' 
-    }
   end
 
   def create

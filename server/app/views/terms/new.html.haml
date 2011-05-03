@@ -9,28 +9,29 @@
       - if key == :base
         #errors
           %p.inline-errors #{value}
-          %br
 
     %h3 Please Accept the Following Terms
 
     %p Before participating in the OpenShift Preview Program and receiving the Preview Services, Preview Software and access to online properties, you need to accept certain terms and conditions. The link below contains a list of the terms that will apply to your use.
     %p.terms-link
       = link_to 'OpenShift Legal Terms and Conditions', acceptance_terms_path, :class => 'more', :target => "_blank"
-      
+    %p
+      Clicking <strong>I accept</strong> means that you agree to the above terms.
+    
     - @term.errors.each do |key, value|
       .message.error
         #{value}
 
     = semantic_form_for @term do |form|
       = form.inputs do
-        - if !@user.roles.index('simple_authenticated')
+        - if @show_captcha
           %li.captcha
+            %p 
+              Please verify that you are human:
             = recaptcha_tags :ssl => true
-        %div
-          %p
-            Clicking <strong>I accept</strong> means that you agree to the above terms.
+          
       = form.buttons do
-        = form.commit_button "I Accept", :input_html => { :class => 'button' }
+        = form.commit_button "I Accept", :button_html => { :class => @button_class }
     .clear
 
   .clear
