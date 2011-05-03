@@ -6,14 +6,6 @@ class TermsController < ApplicationController
 
   def new
     new_terms
-    if !@user.roles.index('simple_authenticated')
-    #if true
-      @show_captcha = true
-      @button_class = 'captcha'
-    else
-      @show_captcha = false
-      @button_class = 'no-captcha'
-    end
   end
 
   def acceptance_terms
@@ -35,6 +27,14 @@ class TermsController < ApplicationController
         #TODO would like this to show the terms they have already accepted
         redirect_to legal_site_terms_path and return
       end
+      if !@user.roles.index('simple_authenticated')
+      #if true
+        @show_captcha = true
+        @button_class = 'captcha'
+      else
+        @show_captcha = false
+        @button_class = 'no-captcha'
+      end
     else
       Rails.logger.debug "User is not logged in - rerouting to login / register"
       session[:login_workflow] = new_terms_path
@@ -51,6 +51,9 @@ class TermsController < ApplicationController
       # See if the captcha secret was provided
       if Rails.configuration.integrated
         if !@user.roles.index('simple_authenticated')
+          @show_captcha = true
+          @button_class = 'captcha'
+        
           if params[:captcha_secret] == Rails.configuration.captcha_secret
             Rails.logger.warn "Captcha secret provided - ignoring captcha"
           else
@@ -64,7 +67,9 @@ class TermsController < ApplicationController
             end
           end
         else
-          Rails.logger.warn "Simple user - no captcha"
+          Rails.logger.warn "Simple user - no captcha" 
+          @show_captcha = false
+          @button_class = 'no-captcha'
         end
       else
         Rails.logger.warn "Non-integrated environment - ignoring captcha"
