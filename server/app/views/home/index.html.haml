@@ -3,7 +3,7 @@
 -# Add javascripts here - jquery is added automatically
 - content_for :scripts do
   = javascript_include_tag "/app/javascripts/jquery.slideshow.minified.js"
-  = javascript_include_tag "/app/javascripts/home"
+  = javascript_include_tag "/app/javascripts/home.src.js"
   
 .simpleSlideShow.slideShow.container_24
   #slides.grid_24
@@ -58,7 +58,7 @@
     /Express box
     .express.promo.grid_8
       %h3 Express
-      = link_to express_path do
+      = link_to express_path, :class => 'img_link' do
         = image_tag '/app/images/gearshift_express_dev_preview.png'
       
       .description.express
@@ -67,12 +67,12 @@
           %li PHP, Python, Ruby
           %li Git push  and leave the rest to us!
           %li 
-            = link_to 'Learn more >', express_path
+            = link_to 'Learn more >', express_path, :class => 'list_link'
 
     /Flex box
     .flex.promo.grid_8
       %h3 Flex
-      = link_to flex_path do
+      = link_to flex_path, :class => 'img_link' do
         = image_tag '/app/images/gearshift_flex_dev_preview.png'
       
       .description.flex
@@ -81,13 +81,13 @@
           %li PHP, Java EE, MySQL, MongoDB, Memcache, DFS
           %li Full control over configuration & Built-in monitoring
           %li
-            = link_to 'Learn more >', flex_path
+            = link_to 'Learn more >', flex_path, :class => 'list_link'
             
 
     /Power box
     .power.promo.grid_8
       %h3 Power
-      = link_to power_path do
+      = link_to power_path, :class => 'img_link' do
         = image_tag '/app/images/gearshift_power_coming_soon.png'
       
       .description.power
@@ -96,7 +96,7 @@
           %li Custom typologies, root access, multi-tier dependencies
           %li Turn any application into a cloud deployment template
           %li 
-            = link_to 'Learn more >', power_path
+            = link_to 'Learn more >', power_path, :class => 'list_link'
 
     .clear
 
