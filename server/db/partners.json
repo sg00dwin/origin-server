@@ -2,7 +2,7 @@
 "10gen": {
   "name": "MongoDB by 10gen",
   "url": "http://www.mongodb.com",
-  "logo": "mongodb.png",
+  "logo": "10gen.png",
   "category": "data-store",
   "contact":
     "10gen, Inc. <br/> 134 5th Avenue 3rd Floor <br/> New York, NY 10011 <br/> www.10gen.com",
