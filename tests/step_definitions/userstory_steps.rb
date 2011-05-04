@@ -104,7 +104,8 @@ When /^check the status of this app using rhc-ctl-app$/ do
 end
 Then /^Exit Code is 0$/ do
   @sfile = "#{$temp}/#{@app_php}"
-  File.open(@sfile).gets.index("Exit Code: 0").should_not == -1
+  print_file @sfile
+  check_file_has_string(@sfile,"Exit Code: 0").should == true
   run("rm -rf #{@sfile}")
 end
 
@@ -120,7 +121,7 @@ end
 
 Then /^Exit Code is not 0$/ do
   @sfile = "#{$temp}/#{@app_php}"
-  File.open(@sfile).gets.index("Exit Code: 0").should == nil
+  check_file_has_string(@sfile,"Exit Code: 0").should == false
   #clean running log
   run("rm -rf #{@sfile}")
 end
@@ -192,7 +193,7 @@ When /^create an app without -a$/ do
 end
 
 Then /^throw out an error application is required$/ do
-  File.open(@sfile).gets.index("application is required").should_not == -1
+  check_file_has_string(@sfile,"application is required").should == true
   #clean running log
   run("rm -f #{@sfile}")
 end
@@ -214,7 +215,7 @@ When /^create an app without -t$/ do
   end
 end
 Then /^throw out an error Type is required$/ do
-  File.open(@sfile).gets.index("Type is required").should_not == -1
+  check_file_has_string(@sfile,"Type is required").should == true
   #clean running log
   run("rm -f #{@sfile}")
 end
@@ -247,7 +248,7 @@ And /^using rhc-ctl-app without -c$/ do
   end
 end
 Then /^throw out an error Command is required$/ do
-  File.open(@sfile).gets.index("Command is required").should_not == -1
+  check_file_has_string(@sfile,"Command is required").should == true
   #clean running log
   run("rm -f #{@sfile}")
 end
@@ -271,21 +272,28 @@ When /^check SELinux status$/ do
   run("sestatus > #{@tfile}")
 end
 Then /^SELinux is running in enforcing mode$/ do
-  File.open(@tfile).gets.index("enforcing").should_not == -1
+  check_file_has_string(@tfile,"enforcing").should == true
   run("rm -f #{@tfile}")
 end
 When /^check whether SELinux module for Libra is installed$/ do
   run("semodule -l | grep libra > #{@tfile}")
 end
 Then /^Selinux for Libra is installed$/ do
-  File.open(@tfile).gets.index("libra").should_not == -1
+  check_file_has_string(@tfile,"libra").should == true
   run("rm -f #{@tfile}")
 end
 When /^check whether SELinux audit service is running on the node$/ do
   run("service auditd status > #{@tfile}")
 end
+And /^start SELinux audit service if it is stopped$/ do
+  if !check_file_has_string(@tfile,"is running")
+    run("service auditd start")
+    run("rm -f #{@tfile}")
+    run("service auditd status > #{@tfile}")
+  end
+end
 Then /^SELinux audit service is running$/ do
-  File.open(@tfile).gets.index("is running").should_not == -1
+  check_file_has_string(@tfile,"is running").should == true
   run("rm -f #{@tfile}")
 end
 When /^clean old audit.log$/ do
@@ -368,6 +376,75 @@ When /^destroy the rack-1.1.0 app$/ do
 end
 
 
+#US280 - TC19
+Given /^a Mechanize agent$/ do
+  run("export http_proxy='file.rdu.redhat.com:3128'")
+  @agent = Mechanize.new { |agent|
+    agent.user_agent_alias = 'Mac Safari'
+    if ENV['http_proxy']
+      print("(using proxy)")
+      uri = URI.parse(ENV['http_proxy'])
+      agent.set_proxy(uri.host, uri.port)
+    end
+  }
+end
+
+Then /^can access our cloud website$/ do
+  page= @agent.get('https://stg.openshift.redhat.com/app/login/')
+  page.body.index("Already Have a Login").should_not == -1
+end
+
+Then /^can login our cloud website$/ do
+  @agent.get('https://stg.openshift.redhat.com/app/login/') do |page|
+    login_result = page.form_with(:action => 'https://streamline1.stg.openshift.redhat.com/wapps/streamline/login.html') do |log_in|
+      log_in.login = 'xuliu+test@redhat.com'
+      log_in.password = 'redhat'
+    end.submit
+    login_result.links.each do |link|
+      #puts link.text
+      link.text.index("Want to migrate apps to the cloud").should_not == -1
+    end
+  end
+end
+
+
+#US414
+Given /^the libra controller configuration$/ do
+  @c_file = "/etc/libra/controller.conf"
+  File.exists?(@c_file).should be_true
+end
+Then /^the number of apps per user is 1$/ do  
+  check_file_has_string("/etc/libra/controller.conf", "per_user_app_limit=1").should == true
+end
+
+
+
+private
+#check if a given file contains a given string
+def check_file_has_string(file_name,string)
+  all_content = ""
+  if !File.exist?(file_name)
+    return false
+  end
+  File.open(file_name) do |file|
+      file.each_line do |line|
+        all_content << line
+     end
+  end
+  if !all_content.nil? && !all_content.index(string).nil? && all_content.index(string) > -1
+    return true
+  end
+  return false
+end
+
+
+def print_file(file_name)
+    File.open(file_name) do |file|
+      file.each_line do |line|
+        $logger.info line
+      end
+    end
+end
 
 
 

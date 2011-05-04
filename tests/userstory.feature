@@ -57,6 +57,7 @@ Feature: Rally User Stories
     When check whether SELinux module for Libra is installed
     Then Selinux for Libra is installed
     When check whether SELinux audit service is running on the node
+    And start SELinux audit service if it is stopped
     Then SELinux audit service is running
     When clean old audit.log
     And create an rack-1.1.0 app
@@ -77,8 +78,19 @@ Feature: Rally User Stories
     When destroy the rack-1.1.0 app
     And check audit.log for AVC denials
     Then no AVC denials
-    
 
+
+    
+#US280 - TC19
+  Scenario: Log in cloud website
+    Given a Mechanize agent
+    Then can access our cloud website
+    Then can login our cloud website
+
+#US414 - Reduce number of apps per user to be 1
+  Scenario: the number of apps per user is 1
+    Given the libra controller configuration
+    Then the number of apps per user is 1
 
 
 
