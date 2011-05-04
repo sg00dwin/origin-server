@@ -419,6 +419,21 @@ end
 
 
 
+#US27
+Then /^would fail to create the second '(\w+)' application for 'php\-(\d+)\.(\d+)\.(\d+)'$/ do |app, arg1, arg2, arg3|
+  
+  framework = 'php-'+arg1+'.'+arg2+'.'+arg3
+  begin
+    Libra.execute(framework, 'configure', app, @login).should raise_error(Exception)
+  rescue Exception=>e
+    #handle e
+    puts "    Exception:" +e
+  end
+  
+end
+
+
+
 private
 #check if a given file contains a given string
 def check_file_has_string(file_name,string)

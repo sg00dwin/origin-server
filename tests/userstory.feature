@@ -92,6 +92,12 @@ Feature: Rally User Stories
     Given the libra controller configuration
     Then the number of apps per user is 1
 
+#US27
+  Scenario: per user app limit
+    When create a new php-5.3.2 app 'appphp3'
+    Then the PHP app can be accessible
+    Then would fail to create the second 'appphp4' application for 'php-5.3.2'
+
 
 
     
