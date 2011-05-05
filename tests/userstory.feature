@@ -21,19 +21,18 @@ Feature: Rally User Stories
     When create a new php-5.3.2 app 'appphp2'
     Then the PHP app can be accessible
     When check the status of this app using rhc-ctl-app
-    Then Exit Code is 0
+    Then this PHP app is running
     When stop this PHP app
     And check the status of this app using rhc-ctl-app
-    Then Exit Code is not 0
+    Then this PHP app is stopped
     When start this PHP app
     And check the status of this app using rhc-ctl-app
-    Then Exit Code is 0
+    Then this PHP app is running
     When restart this PHP app
-    And check the status of this app using rhc-ctl-app
-    Then Exit Code is 0
+    Then this PHP app is restarted
     When reload this PHP app
-    And check the status of this app using rhc-ctl-app
-    Then Exit Code is 0
+    Then this PHP app is reloaded
+    
     
 #US362 - TC115
   Scenario: negative testing of client command(TC115)
@@ -83,7 +82,7 @@ Feature: Rally User Stories
     
 #US280 - TC19
   Scenario: Log in cloud website
-    Given a Mechanize agent
+    Given a Mechanize agent and a registered user
     Then can access our cloud website
     Then can login our cloud website
 
@@ -97,6 +96,14 @@ Feature: Rally User Stories
     When create a new php-5.3.2 app 'appphp3'
     Then the PHP app can be accessible
     Then would fail to create the second 'appphp4' application for 'php-5.3.2'
+
+#US84 - TC39
+  Scenario: Alter existing namespace
+    Given a user
+    Then could create a namespace
+    When alter the namespace
+    Then clould not alter the namespace
+
 
 
 
