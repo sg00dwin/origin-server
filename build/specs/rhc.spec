@@ -2,7 +2,7 @@
 %define gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 
 Name: rhc
-Version: 0.68.6
+Version: 0.69.1
 Release: 1%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
@@ -435,6 +435,9 @@ chmod 0666 %{_localstatedir}/www/libra/log/production.log
 %{_libexecdir}/li/cartridges/jbossas-7.0.0/
 
 %changelog
+* Fri May 6 2011 Matt Hicks <mhicks@redhat.com> 0.69.1-1
+- Added jboss cartridge
+
 * Wed May 4 2011 Mike McGrath <mmcgrath@redhat.com> 0.68.6-1
 - Fixes for summit / video launch tomorrow
 
