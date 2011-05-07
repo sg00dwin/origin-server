@@ -110,7 +110,7 @@ end
 
 uuid = get_var(opt["rhlogin"])
 unless uuid
-    puts "Could not find UUID for #{opt["rhlogin"]}"
+    puts "Could not find UUID for '#{opt["rhlogin"]}' in express.conf.  Be sure you have successfully ran rhc-create-domain before running rhc-create-app."
     exit 99
 end
 
