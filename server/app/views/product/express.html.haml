@@ -82,15 +82,12 @@
       Mike McGrath,  Cloud Architect - Red Hat
     
     .video-thumb.thumb
-      -#
-        %a(href="video/expressproddemo") 
-          %img(src="#{request.protocol}www.redhat.com/g/video_stills/expressproddemo.png" title="OpenShift Express Product Tour" alt="OpenShift Express Product Tour")
-               
-      %img(src="/app/images/temp_video_thumb.png" title="Stay Tuned! This video is coming soon!" alt="This video is coming soon!")
+      %a(href="video/expressproddemo") 
+        %img(src="/app/images/video_stills/expressproddemo.png" 
+          title="OpenShift Express Product Tour" 
+          alt="OpenShift Express Product Tour")
   
     %p.video-description
-      %strong
-        This video is coming soon! Stay Tuned!
       This video walks you through the high level functionality of OpenShift Express, from installing the client tools, creating a subdomain to deploying your app onto the cloud.
         
     /
@@ -166,6 +163,8 @@
 - content_for :resources do
 
   %ul
+    %li
+      = link_to 'OpenShift Express User Guide', 'http://docs.redhat.com/docs/en-US/OpenShift/1.0/html/OpenShift_Express_User_Guide/index.html'
     %li
       = link_to 'OpenShift Express Evaluation Guide', 'https://www.redhat.com/openshift/sites/default/files/documents/RHOS_Express_Eval_Guide.pdf'
     

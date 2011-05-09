@@ -74,17 +74,12 @@
       Issac Roth,  PaaS Master - Red Hat
     
     .video-thumb.thumb
-      -# 
-        %a(href="video/flexproddemo")
-          %img(src="#{request.protocol}www.redhat.com/g/video_stills/flexproddemo.png" title="OpenShift Flex Product Tour" alt="OpenShift Flex Product Tour")
-      
-      %img(src="/app/images/temp_video_thumb.png"
-           title="Stay Tuned! This video is coming soon!"
-           alt="This video is coming soon!")
+      %a(href="video/flexproddemo")
+        %img(src="/app/images/video_stills/flexproddemo.png" 
+          title="OpenShift Flex Product Tour" 
+          alt="OpenShift Flex Product Tour")
   
     %p.video-description
-      %strong
-        This video is coming soon! Stay Tuned!
       This video walks you through the high level functionality of OpenShift Flex, covering provisioning, deploying, monitoring and scaling applications in the cloud.
     
     /
@@ -100,14 +95,11 @@
       Developers, ISVs, customers and partners
     
     .video-thumb.thumb
-      -# 
-        %a(href="video/openshiftmontage")
-          %img(src="#{request.protocol}www.redhat.com/g/video_stills/openshiftmontage.png" title="Developers, ISVs, customers and partners" alt="Developers, ISVs, customers and partners")
+      %a(href="video/openshiftmontage")
+        %img(src="/app/images/video_stills/openshiftmontage.png" 
+          title="Developers, ISVs, customers and partners" 
+          alt="Developers, ISVs, customers and partners")
       
-      %img(src="/app/images/temp_video_thumb.png"
-           title="Stay Tuned! This video is coming soon!"
-           alt="This video is coming soon!")
-  
     %p.video-description
       
       This video shows you what developers, ISVs, customers and partners are saying about Red Hat's exciting new OpenShift PaaS.
@@ -145,6 +137,8 @@
 - content_for :resources do
 
   %ul
+    %li
+      = link_to "OpenShift Flex User Guide", "http://docs.redhat.com/docs/en-US/OpenShift/1.0/html/OpenShift_Flex_User_Guide/index.html"
     %li
       = link_to "OpenShift Flex Evaluation Guide", "https://www.redhat.com/openshift/sites/default/files/documents/RHOS_Flex_Eval_Guide.pdf"
     
