@@ -116,10 +116,11 @@ end
 
 opt["repo"] = opt["app"] unless opt["repo"]
 
-puts ""
-puts "Please support the developer preview - let #openshift on freenode know of any"
-puts "bugs you find"
-puts ""
+puts "
+Found a bug? Post to the forum and we'll get right on it.
+    IRC: #openshift on freenode
+    Forums: https://www.redhat.com/openshift/forums
+"
 
 #
 # Confirm local git repo exists
