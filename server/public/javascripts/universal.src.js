@@ -91,7 +91,7 @@ $(function(){
           // since some menus are already collapsed
           total_width += $(this).width();
         });
-        menu_widths[$(this).attr('id')] = total_width;
+        menu_widths[$(this).attr('id')] = total_width + 1; // IE 9 needs this for some reason
       });
       //console.log(menu_widths);
     }
