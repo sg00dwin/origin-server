@@ -93,7 +93,7 @@ $(function(){
         });
         menu_widths[$(this).attr('id')] = total_width;
       });
-      console.log(menu_widths);
+      //console.log(menu_widths);
     }
     menu_width = menu_widths[id];
     //Set cookie to remember which menu was last expanded
