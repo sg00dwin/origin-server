@@ -411,8 +411,10 @@ form {
   }
   font-family: OverpassBold;
 
+
   ul {
-    margin: 0px;
+    margin: 0;
+    padding: 0;
     display: block;
     float: left;
     overflow: hidden;
@@ -421,7 +423,9 @@ form {
   li {
     float: left;
     list-style-type: none;
+/*
     display: inline-block;
+*/
     margin: 0;
     padding: 0;
 
