@@ -208,6 +208,8 @@ module Streamline
           json = parse_body(res.body)
           yield json if block_given?
         end
+      when Net::HTTPForbidden, Net::HTTPUnauthorized
+        raise AccessDeniedException
       else
         log_error "Invalid HTTP response from streamline - #{res.code}"
         log_error "Response body:\n#{res.body}"
@@ -217,6 +219,8 @@ module Streamline
           errors.add(:base, I18n.t(:unknown))
         end
       end
+    rescue AccessDeniedException => e
+      raise
     rescue Exception => e
       log_error "Exception occurred while calling streamline - #{e.message}"
       Rails.logger.error e, e.backtrace

@@ -21,19 +21,18 @@ Feature: Rally User Stories
     When create a new php-5.3.2 app 'appphp2'
     Then the PHP app can be accessible
     When check the status of this app using rhc-ctl-app
-    Then Exit Code is 0
+    Then this PHP app is running
     When stop this PHP app
     And check the status of this app using rhc-ctl-app
-    Then Exit Code is not 0
+    Then this PHP app is stopped
     When start this PHP app
     And check the status of this app using rhc-ctl-app
-    Then Exit Code is 0
+    Then this PHP app is running
     When restart this PHP app
-    And check the status of this app using rhc-ctl-app
-    Then Exit Code is 0
+    Then this PHP app is restarted
     When reload this PHP app
-    And check the status of this app using rhc-ctl-app
-    Then Exit Code is 0
+    Then this PHP app is reloaded
+    
     
 #US362 - TC115
   Scenario: negative testing of client command(TC115)
@@ -57,6 +56,7 @@ Feature: Rally User Stories
     When check whether SELinux module for Libra is installed
     Then Selinux for Libra is installed
     When check whether SELinux audit service is running on the node
+    And start SELinux audit service if it is stopped
     Then SELinux audit service is running
     When clean old audit.log
     And create an rack-1.1.0 app
@@ -77,7 +77,32 @@ Feature: Rally User Stories
     When destroy the rack-1.1.0 app
     And check audit.log for AVC denials
     Then no AVC denials
+
+
     
+#US280 - TC19
+  Scenario: Log in cloud website
+    Given a Mechanize agent and a registered user
+    Then can access our cloud website
+    Then can login our cloud website
+
+#US414 - Reduce number of apps per user to be 1
+  Scenario: the number of apps per user is 1
+    Given the libra controller configuration
+    Then the number of apps per user is 1
+
+#US27
+  Scenario: per user app limit
+    When create a new php-5.3.2 app 'appphp3'
+    Then the PHP app can be accessible
+    Then would fail to create the second 'appphp4' application for 'php-5.3.2'
+
+#US84 - TC39
+  Scenario: Alter existing namespace
+    Given a user
+    Then could create a namespace
+    When alter the namespace
+    Then clould not alter the namespace
 
 
 

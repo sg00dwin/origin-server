@@ -27,15 +27,30 @@
         %p
           Install the client tools:
           %pre $ sudo yum install rhc
-
+    %br
+    #other.install
+      %h6 Debian based Linux
+      %p
+        Switch to root:
+        %pre $ su -
+      %p
+        Install prerequisites:
+        %pre $ apt-get install ruby rubygems ruby1.8-dev
+      %p
+        Install the gem from our site:
+        %pre $ gem install --source http://gems.rubyforge.org --source https://openshift.redhat.com/app/repo/ rhc 
+    %br
     #other.install
       %h6 Mac Instructions
 
       %p
+        Ruby is a prerequisite and can be met by installing Xcode:
+        %a(href="http://developer.apple.com/xcode") http://developer.apple.com/xcode        
+      %p
         Install the gem from our site:
         :erb
           <pre>$ sudo gem install --source http://gems.rubyforge.org --source <%= "#{root_url}repo/" %> rhc</pre>
-
+    %br
     #other.install
       %h6 Windows Instructions (requires cygwin)
 
@@ -59,7 +74,7 @@
         Install the gem from our site:
         :erb
           <pre>$ gem install --source http://gems.rubyforge.org --source <%= "#{root_url}repo/" %> rhc</pre>
-
+    %br
     %h4 Step 2 - Create a domain name
 
     %p

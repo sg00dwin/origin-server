@@ -127,7 +127,7 @@ if File.readable?(libra_kfile)
 else
     puts "Generating Openshift Express ssh key to #{libra_kfile}"
     # Use system for interaction
-    system("ssh-keygen -t rsa -f #{libra_kfile}")
+    system("ssh-keygen -t rsa -f '#{libra_kfile}'")
 end
 
 ssh_key = File.open(libra_kpfile).gets.chomp.split(' ')[1]

@@ -6,7 +6,8 @@ require 'libra'
 
 include Libra
 
-class BrokerController < ApplicationController  
+class BrokerController < ApplicationController
+  layout nil
   
   def generate_result_json(result, exit_code=0)      
       json = JSON.generate({

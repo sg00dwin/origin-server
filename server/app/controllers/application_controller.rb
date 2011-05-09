@@ -1,6 +1,7 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery
   before_filter :check_credentials
+  rescue_from AccessDeniedException, :with => :logout
   
   def set_no_cache
     response.headers["Cache-Control"] = "no-cache, no-store, max-age=0, must-revalidate"
@@ -39,7 +40,8 @@ class ApplicationController < ActionController::Base
     session[:workflow] = nil
     if (wf)
       Rails.logger.debug "Redirecting to workflow: #{wf}"
-      redirect_to wf and return true
+      redirect_to wf
+      return true
     else
       return false
     end
@@ -62,6 +64,10 @@ class ApplicationController < ActionController::Base
     return 'request'
 
   end
+  
+  def logout
+    redirect_to logout_path and return
+  end
 
   def check_credentials
     # If this is a logout request, pass through
@@ -72,8 +78,9 @@ class ApplicationController < ActionController::Base
     rh_sso = cookies[:rh_sso]
     Rails.logger.debug "rh_sso cookie = '#{rh_sso}'"
 
-    if logged_in?
-      redirect_to logout_path and return
+    if logged_in?      
+      logout
+      return
     else
       return
     end unless rh_sso
@@ -82,7 +89,8 @@ class ApplicationController < ActionController::Base
       Rails.logger.debug "User has an authenticated session"
       if session[:ticket] != rh_sso
         Rails.logger.debug "Session ticket does not match current ticket - logging out"
-        redirect_to logout_path and return
+        logout 
+        return
       else
         Rails.logger.debug "Session ticket matches current ticket"
       end
