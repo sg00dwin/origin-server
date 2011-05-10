@@ -546,9 +546,10 @@ form ul, form ol, form li {
       #app_promos .promo .description ul {
         list-style-type: none; }
       #app_promos .promo .description a {
-        font-size: 12pt;
+        font-size: 14pt;
         text-decoration: none;
-        text-transform: uppercase; }
+        text-transform: uppercase;
+        text-shadow: 1px 1px 1px black; }
       #app_promos .promo .description.express a {
         color: #6699cc; }
       #app_promos .promo .description.flex a {

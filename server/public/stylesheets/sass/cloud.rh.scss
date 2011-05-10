@@ -919,10 +919,11 @@ form {
       ul { list-style-type: none; }
       
       a {
-        font-size: 12pt;
+        font-size: 14pt;
         text: {
           decoration: none;
           transform: uppercase;
+          shadow: 1px 1px 1px black;
         }
       }
       &.express a { color: $express; }

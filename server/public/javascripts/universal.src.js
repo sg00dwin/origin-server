@@ -70,7 +70,7 @@ $(function(){
   
   function collapseMenu(menu, label) {
     menu.removeClass('expanded').addClass('collapsed');
-    menu.stop().animate({width: 0}, 300,
+    menu.stop().animate({width: 0}, 300, 'easeInQuint',
     function(){
       label.removeClass('expanded').addClass('collapsed');
     });
@@ -109,7 +109,7 @@ $(function(){
     //console.log(document.cookie);
     label.removeClass('collapsed').addClass('expanded');
     menu.removeClass('collapsed').addClass('expanded');
-    menu.stop().animate({width: menu_width}, 300);
+    menu.stop().animate({width: menu_width}, 300, 'easeInQuint');
   }
 });
 
