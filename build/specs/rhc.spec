@@ -34,6 +34,7 @@ Requires: rhc-server
 Requires: rhc-cartridge-php-5.3.2
 Requires: rhc-cartridge-wsgi-3.2.1
 Requires: rhc-cartridge-rack-1.1.0
+Requires: rhc-cartridge-jbossas-7.0.0
 Requires: qpid-cpp-server
 Requires: qpid-cpp-server-ssl
 Requires: puppet
@@ -130,7 +131,7 @@ Requires: rubygem-railties
 Requires: rubygem-rake-compiler
 Requires: rubygem-regin
 Requires: rubygem-recaptcha
-Requires: rubygem-thor 
+Requires: rubygem-thor
 Requires: rubygem-treetop
 Requires: rubygem-tzinfo
 Requires: rubygem-xml-simple
