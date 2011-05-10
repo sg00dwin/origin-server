@@ -192,6 +192,7 @@ $sans: 'Liberation Sans','Helvetica Neue',Arial,FreeSans,sans-serif;
     text: {
       decoration: none;
       transform: uppercase;
+      shadow: 1px 1px 1px darken($bg_color, 25%);
     }
     @include border_radius(8);
 }
@@ -446,17 +447,23 @@ form {
   }
 
   .category {
-    background: url('/app/images/nav_category.png') no-repeat right center;
+    background: url('/app/images/nav_category_shadow.png') no-repeat right center;
     display: inline;
     float: left;
     margin: 0;
     color: white;
-    padding: 7px 17px 7px 15px;
+    padding: 7px 24px 7px 10px;
     font-size: 10pt;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, .5);
     cursor: pointer;
     
+    &.hover {
+      color: $light_blue;
+      text-shadow: -1px -1px 1px rgba(0, 0, 0, .4);
+    }
+    
     &.collapsed {
-    background-color: #900;
+    background-color: #cc0000;
     }
     &.expanded {
       background-color: transparent;
@@ -473,20 +480,7 @@ form {
   }
   li.last {
     a {
-      border-right: none;
-    }
-  }
-
-  li.partners {
-    float: right;
-    a {
-      border: none;
-      float: right;
-      color: $bright_blue;
-
-      &:hover {
-        color: $light_blue;
-      }
+      //border-right: none;
     }
   }
 }

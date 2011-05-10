@@ -61,6 +61,13 @@ $(function(){
     }
   });
   
+  //Add hover class to labels
+  labels.hover(function() {
+    $(this).addClass('hover');
+  }, function(){
+    $(this).removeClass('hover');
+  });
+  
   function collapseMenu(menu, label) {
     menu.removeClass('expanded').addClass('collapsed');
     menu.stop().animate({width: 0}, 300,
@@ -91,7 +98,7 @@ $(function(){
           // since some menus are already collapsed
           total_width += $(this).width();
         });
-        menu_widths[$(this).attr('id')] = total_width + 1; // IE 9 needs this for some reason
+        menu_widths[$(this).attr('id')] = total_width + 1; // IE 9 needs this +1 for some reason
       });
       //console.log(menu_widths);
     }
