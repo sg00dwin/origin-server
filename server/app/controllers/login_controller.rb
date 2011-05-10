@@ -17,7 +17,12 @@ class LoginController < ApplicationController
     if params[:redirectUrl]
       session[:login_workflow] = params[:redirectUrl]
     end
-    @redirectUrl = root_url
+    puts request.referer
+    if !workflow && request.referer != '/'
+      @redirectUrl = request.referer
+    else
+      @redirectUrl = root_url
+    end
     @errorUrl = login_error_url
     Rails.logger.debug "Session workflow in LoginController#show: #{workflow}"
     render :show
