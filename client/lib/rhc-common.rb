@@ -223,6 +223,16 @@ module RHC
     end
     exit exit_code.nil? ? 666 : exit_code
   end
+  
+  def self.print_response_messages(json_resp)    
+    messages = json_resp['messages']
+    if (messages && !messages.empty?)
+      puts ''
+      puts 'MESSAGES:'
+      puts messages
+      puts ''
+    end
+  end
 
   def self.print_response_success(response, debug, always_print_result=false)
     if debug
@@ -230,11 +240,15 @@ module RHC
       print_json_body(response, debug)
     elsif always_print_result
       print_json_body(response, debug)
+    else
+      json_resp = JSON.parse(response.body)
+      print_response_messages(json_resp)
     end
   end
 
   def self.print_json_body(response, debug)
-    json_resp = JSON.parse(response.body);
+    json_resp = JSON.parse(response.body)
+    print_response_messages(json_resp)
     exit_code = json_resp['exit_code']
     if debug
       if json_resp['debug']

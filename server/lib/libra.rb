@@ -16,6 +16,15 @@ module Libra
       puts str
     end
   end
+  
+  def self.client_message(str)
+    messageIO = Thread.current[:messageIO]
+    if messageIO
+      messageIO.puts str
+    else
+      puts str
+    end
+  end
 
   def self.client_result(str)
     resultIO = Thread.current[:resultIO]
