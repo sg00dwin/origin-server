@@ -284,18 +284,19 @@ function check_quotas() {
     verbose checking filesystem quotas
     LIBRA_DEVICE=`libra_device $libra_dir`
     LIBRA_MOUNTPOINT=`libra_mountpoint $libra_dir`
-    QUOTASTAT=`quotaon -u -p $LIBRA_MOUNTPOINT 2>&1`
-    if [ "$QUOTASTAT" != "user quota on $LIBRA_MOUNTPOINT ($LIBRA_DEVICE) is on" ]
+    # get the last word on the line and remove the trialing newline
+    QUOTASTAT=`quotaon -u -p $LIBRA_MOUNTPOINT 2>&1 | awk '{print $NF}' | tr -d '\n'`
+    if [ "$QUOTASTAT" != "on"]
     then
 	echo "FAIL: quotas are not enabled on $LIBRA_MOUNTPOINT ($LIBRA_DEVICE)" >&2
 	STATUS=$(($STATUS + 1))
 	
     fi
 
-    if [ -f $LIBRA_MOUNTPOINT ]
+    QUOTA_DB_FILE=$LIBRA_MOUNTPOINT/aquota.user
+    if [ -f $QUOTA_DB_FILE ]
     then
 	verbose checking quota db file selinux label
-	QUOTA_DB_FILE=$LIBRA_MOUNTPOINT/aquota.user
 	QUOTA_DB_TYPE=`secon -f $QUOTA_DB_FILE | grep type:`
 	if echo $QUOTA_DB_TYPE | grep -v 'quota_db_t' >/dev/null
 	then
