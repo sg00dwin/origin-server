@@ -144,7 +144,7 @@ class BrokerController < ApplicationController
                   "customer_#{user.rhlogin}", user.rhlogin)
             end
           else
-            render :json => generate_result_json("User already has a registered namespace.  To overwrite or change, use --alter", 97), :status => :conflict and return
+            render :json => generate_result_json("User already has a registered namespace.  To modify related properties, use --alter", 97), :status => :conflict and return
           end
         else        
           user = Libra::User.create(data['rhlogin'], data['ssh'], data['namespace'])
