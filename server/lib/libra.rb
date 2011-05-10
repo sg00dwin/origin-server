@@ -76,15 +76,11 @@ module Libra
                 # update DNS
                 public_ip = server.get_fact_direct('public_ip')
                 Libra.logger_debug "DEBUG: Public ip being deconfigured '#{public_ip}' from namespace '#{user.namespace}'"
-                if Libra.c[:use_dynect_dns]
-                  auth_token = Server.dyn_login
-                  Server.dyn_delete_sshfp_record(app_name, user.namespace, auth_token)
-                  Server.dyn_delete_a_record(app_name, user.namespace, auth_token)                  
-                  Server.dyn_publish(auth_token)
-                  Server.dyn_logout(auth_token)
-                else
-                  Server.nsupdate_del(app_name, user.namespace, public_ip)
-                end
+                auth_token = Server.dyn_login
+                Server.dyn_delete_sshfp_record(app_name, user.namespace, auth_token)
+                Server.dyn_delete_a_record(app_name, user.namespace, auth_token)                  
+                Server.dyn_publish(auth_token)
+                Server.dyn_logout(auth_token)
               end
             else
               if action == 'deconfigure'
@@ -130,15 +126,11 @@ module Libra
         public_ip = server.get_fact_direct('public_ip')
         Libra.logger_debug "DEBUG: Public ip being configured '#{public_ip}' to namespace '#{user.namespace}'"
         sshfp = server.get_fact_direct('sshfp').split[-1]
-        if Libra.c[:use_dynect_dns]
-          auth_token = Server.dyn_login
-          Server.dyn_create_a_record(app_name, user.namespace, public_ip, sshfp, auth_token)
-          Server.dyn_create_sshfp_record(app_name, user.namespace, sshfp, auth_token)
-          Server.dyn_publish(auth_token)
-          Server.dyn_logout(auth_token)
-        else
-          Server.nsupdate_add(app_name, user.namespace, public_ip, sshfp)
-        end
+        auth_token = Server.dyn_login
+        Server.dyn_create_a_record(app_name, user.namespace, public_ip, sshfp, auth_token)
+        Server.dyn_create_sshfp_record(app_name, user.namespace, sshfp, auth_token)
+        Server.dyn_publish(auth_token)
+        Server.dyn_logout(auth_token)
       rescue Exception => e
         begin
           Libra.logger_debug "DEBUG: Failed to register dns entry for app '#{app_name}' and user '#{user.rhlogin}' on node '#{server.name}'"
