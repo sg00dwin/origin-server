@@ -311,8 +311,8 @@ git_url = "ssh://#{uuid}@#{opt['app']}-#{user_info['user_info']['namespace']}.#{
 unless opt['nogit']
     puts "Pulling new repo down"
 
-    puts "git clone #{git_url} #{opt['repo']}" if debug
-    git_pull = `git clone #{git_url} #{opt['repo']}`
+    puts "git clone --quiet #{git_url} #{opt['repo']}" if debug
+    git_pull = `git clone #{debug ? ' ' : '--quiet '}#{git_url} #{opt['repo']}`
     if $?.exitstatus != 0
         puts "Error in git pull"
         puts git_pull
