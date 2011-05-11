@@ -132,9 +132,9 @@ function check_selinux() {
 	done
     #
     # Check standard file/directory labeling
-    # 
+    #
 	RELABELS=`restorecon -n -v /var/lib/libra`
-	RELABEL_COUNT=`echo "$RELABELS" | wc -l`
+	RELABEL_COUNT=`echo -n "$RELABELS" | wc -l`
 	if [ "$RELABEL_COUNT" -ne 0 ]
 	then
 	    echo "FAIL: invalid selinux labels in /var/lib/libra" >&2
@@ -284,19 +284,18 @@ function check_quotas() {
     verbose checking filesystem quotas
     LIBRA_DEVICE=`libra_device $libra_dir`
     LIBRA_MOUNTPOINT=`libra_mountpoint $libra_dir`
-    # get the last word on the line and remove the trialing newline
-    QUOTASTAT=`quotaon -u -p $LIBRA_MOUNTPOINT 2>&1 | awk '{print $NF}' | tr -d '\n'`
-    if [ "$QUOTASTAT" != "on"]
+    QUOTASTAT=`quotaon -u -p $LIBRA_MOUNTPOINT 2>&1`
+    if [ "$QUOTASTAT" != "user quota on $LIBRA_MOUNTPOINT ($LIBRA_DEVICE) is on" ]
     then
 	echo "FAIL: quotas are not enabled on $LIBRA_MOUNTPOINT ($LIBRA_DEVICE)" >&2
 	STATUS=$(($STATUS + 1))
 	
     fi
 
-    QUOTA_DB_FILE=$LIBRA_MOUNTPOINT/aquota.user
-    if [ -f $QUOTA_DB_FILE ]
+    if [ -f $LIBRA_MOUNTPOINT ]
     then
 	verbose checking quota db file selinux label
+	QUOTA_DB_FILE=$LIBRA_MOUNTPOINT/aquota.user
 	QUOTA_DB_TYPE=`secon -f $QUOTA_DB_FILE | grep type:`
 	if echo $QUOTA_DB_TYPE | grep -v 'quota_db_t' >/dev/null
 	then
