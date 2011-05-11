@@ -292,10 +292,10 @@ function check_quotas() {
 	
     fi
 
-    if [ -f $LIBRA_MOUNTPOINT ]
+    QUOTA_DB_FILE=$LIBRA_MOUNTPOINT/aquota.user
+    if [ -f $QUOTA_DB_FILE ]
     then
 	verbose checking quota db file selinux label
-	QUOTA_DB_FILE=$LIBRA_MOUNTPOINT/aquota.user
 	QUOTA_DB_TYPE=`secon -f $QUOTA_DB_FILE | grep type:`
 	if echo $QUOTA_DB_TYPE | grep -v 'quota_db_t' >/dev/null
 	then
@@ -303,7 +303,7 @@ function check_quotas() {
 	    STATUS=$(($STATUS + 1))
 	fi
     else
-	echo "FAIL: quota db file $LIBRA_MOUNTPOINT/aquota.user does not exist" >&2
+	echo "FAIL: quota db file $QUOTA_DB_FILE does not exist" >&2
 	STATUS=$(($STATUS + 1))
     fi
 
