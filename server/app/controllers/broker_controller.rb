@@ -22,8 +22,13 @@ class BrokerController < ApplicationController
   
   def check_outage_notification    
     if File.exists?(@@outage_notification_file)
-      file = File.open(@@outage_notification_file, "rb")
-      details = file.read
+      file = File.open(@@outage_notification_file, "r")
+      details = nil
+      begin
+        details = file.read
+      ensure
+        file.close
+      end
       if details
         Libra.client_message details
       end
