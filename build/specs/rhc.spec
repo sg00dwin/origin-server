@@ -204,6 +204,7 @@ Provides wsgi support to rhc
 Summary: Provides java-jbossas-7.0.0 support
 Group: Development/Languages
 Requires: rhc-node
+Requires: jboss-as7
 BuildArch: noarch
 
 %description cartridge-jbossas-7.0.0
