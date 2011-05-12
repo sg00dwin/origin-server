@@ -4,11 +4,13 @@ import sys, os
 import syslog
 import pwd
 import syslog
+import glob
 
 commands = {
     "git-receive-pack": "/usr/bin/git-receive-pack",
     "git-upload-pack": "/usr/bin/git-upload-pack",
-    "snapshot": "/bin/tar",
+    "snapshot": "/usr/bin/tar",
+    "tail": "/usr/bin/tail",
 }
 
 #
@@ -79,6 +81,20 @@ if __name__ == '__main__':
         else:
             print "Failed sanitization"
             sys.exit(35)
+    elif basecmd in ('tail'):
+        files = []
+        for glob_list in allargs[1:]:
+            for f in glob.glob(glob_list):
+                try:
+                    if os.getuid() != os.stat(f).st_uid:
+                        print "Not your file"
+                        sys.exit(87)
+                    else:
+                        files.append(f)
+                except OSError, e:
+                    print "Error: %s" % e.strerror
+                    sys.exit(91)
+        allargs = ['-f'] + files
     elif basecmd in ('git-receive-pack', 'git-upload-pack'):
         # git repositories need to be parsed specially
         thearg = ' '.join(allargs[1:])
