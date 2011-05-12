@@ -326,7 +326,7 @@ else
 end
 
 #
-# Check for local var in ~/.li/libra.conf use it, else use $GEM/../conf/libra.conf
+# Check for local var in ~/.openshift/express.conf use it, else use $GEM/../conf/express.conf
 #
 def get_var(var)
   @local_config.get_value(var) ? @local_config.get_value(var) : @global_config.get_value(var)
