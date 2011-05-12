@@ -120,6 +120,7 @@ puts "
 Found a bug? Post to the forum and we'll get right on it.
     IRC: #openshift on freenode
     Forums: https://www.redhat.com/openshift/forums
+
 "
 
 #

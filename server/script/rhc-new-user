@@ -52,6 +52,9 @@ Libra.c[:rpc_opts] = options
 user = User.find(options[:rhlogin])
 if user
   if options[:alter]
+    if user.namespace != options[:namespace]
+      user.update_namespace(options[:namespace])
+    end
     user.namespace=options[:namespace]
     user.ssh=options[:ssh]
     user.update

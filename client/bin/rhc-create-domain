@@ -38,7 +38,7 @@ Bind a registered rhcloud user to a domain in rhcloud.
   -n|--namespace   namespace   Opensift Express namespace (alphanumeric - max #{RHC::Maxdlen} chars) (required)
   -l|--rhlogin     rhlogin     Red Hat login (required)
   -p|--password    password    RHLogin password (optional, will prompt)
-  -a|--alter                   Alter ssh key
+  -a|--alter                   Alter namespace (will change urls) and/or ssh key
   -d|--debug                   Print Debug info
   -h|--help                    Show Usage info
 
@@ -164,7 +164,7 @@ in #{@local_config_path} which has been created and populated for you.
 
 EOF
         else
-            puts "RHLogin alteration successful."
+            puts "Alteration successful.  You can use rhc-user-info to view any url changes."
             puts
         end
         exit 0

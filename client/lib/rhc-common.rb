@@ -259,7 +259,7 @@ module RHC
         puts "Exit Code: #{exit_code}"
         if (json_resp.length > 3)
           json_resp.each do |k,v|
-            if (k != 'results' && k != 'debug' && k != 'exit_code')
+            if (k != 'result' && k != 'debug' && k != 'exit_code' && k != 'messages')
               puts "#{k.to_s}: #{v.to_s}"
             end
           end

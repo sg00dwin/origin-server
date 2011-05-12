@@ -2,7 +2,7 @@
 %define gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 
 Name: rhc
-Version: 0.69.2
+Version: 0.69.3
 Release: 1%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
@@ -462,6 +462,9 @@ chmod 0666 %{_localstatedir}/www/libra/log/production.log
 %{_libexecdir}/li/cartridges/jbossas-7.0.0/
 
 %changelog
+* Wed May 11 2011 Matt Hicks <mhicks@redhat.com> 0.69.3-1
+- Adding jbossas dependency
+
 * Tue May 10 2011 Matt Hicks <mhicks@redhat.com> 0.69.2-1
 - Fixing devenv jboss dependency
 - Bug fixes
