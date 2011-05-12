@@ -3,7 +3,7 @@
 
 Name: rhc
 Version: 0.69.3
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -370,6 +370,7 @@ fi
 %{_bindir}/rhc-user-info
 %{_bindir}/rhc-ctl-app
 %{_bindir}/rhc-snapshot
+%{_bindir}/rhc-tail-files
 %{_mandir}/man1/rhc-*
 %{_mandir}/man5/express*
 %{gemdir}/gems/rhc-%{version}/
@@ -462,6 +463,9 @@ chmod 0666 %{_localstatedir}/www/libra/log/production.log
 %{_libexecdir}/li/cartridges/jbossas-7.0.0/
 
 %changelog
+* Thu May 12 2011 Mike McGrath <mmcgrath@redhat.com> 0.69.3-2
+- Added tail-files
+
 * Wed May 11 2011 Matt Hicks <mhicks@redhat.com> 0.69.3-1
 - Adding jbossas dependency
 
