@@ -86,7 +86,13 @@ if __name__ == '__main__':
         for glob_list in allargs[1:]:
             for f in glob.glob(glob_list):
                 try:
-                    if os.getuid() != os.stat(f).st_uid:
+                    if f.find('..') != -1 or f.startswith('/'):
+                        print "invalid character"
+                        sys.exit(91)
+                    elif os.path.islink(f):
+                        print "Links not supported"
+                        sys.exit(94)
+                    elif os.getuid() != os.stat(f).st_uid:
                         print "Not your file"
                         sys.exit(87)
                     else:
@@ -94,6 +100,9 @@ if __name__ == '__main__':
                 except OSError, e:
                     print "Error: %s" % e.strerror
                     sys.exit(91)
+        if len(files) == 0:
+            print "Could not find any files matching glob"
+            sys.exit(32)
         allargs = ['-f'] + files
     elif basecmd in ('git-receive-pack', 'git-upload-pack'):
         # git repositories need to be parsed specially
