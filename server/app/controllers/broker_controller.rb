@@ -151,21 +151,21 @@ class BrokerController < ApplicationController
           render :json => generate_result_json("namespace invalid", 106), :status => :invalid and return
         end
         if user
-          if data['alter']          
+          if data['alter']
             if user.namespace != data['namespace']
-              render :json => generate_result_json("You may not change your registered namespace of: #{user.namespace}", 98), :status => :conflict and return  
-            else
-              user.namespace=data['namespace']
-              user.ssh=data['ssh']
-              user.update
-              Server.execute_many('li-controller-0.1', 'configure',
-                  "-c #{user.uuid} -e #{user.rhlogin} -s #{user.ssh} -a",
-                  "customer_#{user.rhlogin}", user.rhlogin)
+              #render :json => generate_result_json("You may not change your registered namespace of: #{user.namespace}", 98), :status => :conflict and return
+              user.update_namespace(data['namespace'])
             end
+            user.namespace=data['namespace']
+            user.ssh=data['ssh']
+            user.update
+            Server.execute_many('li-controller-0.1', 'configure',
+                "-c #{user.uuid} -e #{user.rhlogin} -s #{user.ssh} -a",
+                "customer_#{user.rhlogin}", user.rhlogin)
           else
             render :json => generate_result_json("User already has a registered namespace.  To modify related properties, use --alter", 97), :status => :conflict and return
           end
-        else        
+        else   
           user = Libra::User.create(data['rhlogin'], data['ssh'], data['namespace'])
         end
       else

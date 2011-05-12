@@ -6,6 +6,7 @@ require 'json'
 require 'date'
 require 'net/http'
 require 'net/https'
+require 'pp'
 
 def gen_small_uuid()
     # Put config option for rhlogin here so we can ignore uuid for dev environments
@@ -46,8 +47,7 @@ module Libra
         raise UserException.new(102), "A user with RHLogin '#{rhlogin}' already exists", caller[0..5] if find(rhlogin)
   
         raise UserException.new(106), "Invalid chars in namespace '#{namespace}' found", caller[0..5] if !Util.check_namespace(namespace)
-        has_txt_record = Server.dyn_has_txt_record?(namespace, auth_token)
-        raise UserException.new(103), "A namespace with name '#{namespace}' already exists", caller[0..5] if has_txt_record        
+        Server.dyn_has_txt_record?(namespace, auth_token, true)
 
         Libra.client_debug "Creating user entry rhlogin:#{rhlogin} ssh:#{ssh} namespace:#{namespace}" if Libra.c[:rpc_opts][:verbose]
 
@@ -208,6 +208,73 @@ module Libra
       json = JSON.generate({:rhlogin => rhlogin, :namespace => namespace, :ssh => ssh, :uuid => uuid})
       Libra.logger_debug "Updating user json:#{json}" if Libra.c[:rpc_opts][:verbose]
       Helper.s3.put(Libra.c[:s3_bucket], "user_info/#{rhlogin}/user.json", json)
+    end
+    
+    #
+    # Updates the user's namespace for txt and full app domains
+    #
+    def update_namespace(new_namespace)
+      auth_token = Server.dyn_login
+      begin        
+        Server.dyn_has_txt_record?(new_namespace, auth_token, true) 
+        Server.dyn_create_txt_record(new_namespace, auth_token)
+        Server.dyn_delete_txt_record(@namespace, auth_token)
+        apps.each do |app_sym, app_info|
+          app_name = app_sym.to_s
+          Libra.logger_debug "Updating namespaces for app: #{app_name}" if Libra.c[:rpc_opts][:verbose]
+          server = Server.new(app_info['server_identity'])
+          public_ip = server.get_fact_direct('public_ip')
+          sshfp = server.get_fact_direct('sshfp').split[-1]
+          
+          # Cleanup the previous records 
+          Server.dyn_delete_sshfp_record(app_name, @namespace, auth_token)            
+          Server.dyn_delete_a_record(app_name, @namespace, auth_token)     
+          
+          # add the new entries          
+          Server.dyn_create_a_record(app_name, new_namespace, public_ip, sshfp, auth_token)         
+          Server.dyn_create_sshfp_record(app_name, new_namespace, sshfp, auth_token)
+        end
+        
+        update_virtualhost_failures = []
+        apps.each do |app_sym, app_info|
+          app_name = app_sym.to_s
+          begin
+            Libra.logger_debug "Updating virtualhost for app: #{app_name}" if Libra.c[:rpc_opts][:verbose]
+            server = Server.new(app_info['server_identity'])
+            result = server.execute_direct(app_info['framework'], 'update_virtualhost', "#{app_name} #{new_namespace} #{@namespace} #{@uuid}")[0]
+            if (result && defined? result.results)            
+              exitcode = result.results[:data][:exitcode]
+              if exitcode != 0
+                update_virtualhost_failures.push(app_name)
+                output = result.results[:data][:output]
+                Libra.client_debug "Cartridge return code: " + exitcode
+                Libra.client_debug "Cartridge output: " + output
+                Libra.logger_debug "DEBUG: execute_direct results: " + output                
+              end
+            else
+              update_virtualhost_failures.push(app_name)
+            end
+          rescue Exception => e
+            Libra.client_debug "Exception caught updating virtualhost: #{e.message}"
+            Libra.logger_debug "DEBUG: Exception caught updating virtualhost: #{e.message}"
+            Libra.logger_debug e.backtrace     
+            update_virtualhost_failures.push(app_name)
+          end
+        end
+        
+        raise NodeException.new(143), "Error updating apps: #{update_virtualhost_failures.pretty_inspect.chomp}.  Updates will not be completed until all apps can be updated successfully.  If the problem persists please contact Red Hat support.", caller[0..5] if !update_virtualhost_failures.empty?
+        
+        Server.dyn_publish(auth_token)
+      rescue LibraException => e
+        raise
+      rescue Exception => e
+        Libra.client_debug "Exception caught updating namespace: #{e.message}"
+        Libra.logger_debug "DEBUG: Exception caught updating namespace: #{e.message}"
+        Libra.logger_debug e.backtrace
+        raise LibraException.new(254), "An error occurred updating the namespace.  If the problem persists please contact Red Hat support.", caller[0..5]
+      ensure
+        Server.dyn_logout(auth_token)
+      end
     end
     
     #
