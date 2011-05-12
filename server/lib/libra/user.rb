@@ -43,10 +43,9 @@ module Libra
       auth_token = nil
       begin
         auth_token = Server.dyn_login
-        raise UserException.new(107), "Invalid chars in RHlogin '#{rhlogin}' found", caller[0..5] if !Util.check_rhlogin(rhlogin)
+        raise UserException.new(107), "Invalid characters in RHlogin '#{rhlogin}' found", caller[0..5] if !Util.check_rhlogin(rhlogin)
         raise UserException.new(102), "A user with RHLogin '#{rhlogin}' already exists", caller[0..5] if find(rhlogin)
-  
-        raise UserException.new(106), "Invalid chars in namespace '#{namespace}' found", caller[0..5] if !Util.check_namespace(namespace)
+
         Server.dyn_has_txt_record?(namespace, auth_token, true)
 
         Libra.client_debug "Creating user entry rhlogin:#{rhlogin} ssh:#{ssh} namespace:#{namespace}" if Libra.c[:rpc_opts][:verbose]
@@ -91,7 +90,7 @@ module Libra
     #
     def self.valid_registration?(rhlogin, password)
       if !Libra.c[:bypass_user_reg]
-        raise UserException.new(107), "Invalid chars in RHlogin '#{rhlogin}' found", caller[0..5] if !Util.check_rhlogin(rhlogin)
+        raise UserException.new(107), "Invalid characters in RHlogin '#{rhlogin}' found", caller[0..5] if !Util.check_rhlogin(rhlogin)
         begin
           url = URI.parse(Libra.c[:streamline_url] + '/wapps/streamline/login.html')
           req = Net::HTTP::Post.new(url.path)
@@ -215,7 +214,7 @@ module Libra
     #
     def update_namespace(new_namespace)
       auth_token = Server.dyn_login
-      begin        
+      begin
         Server.dyn_has_txt_record?(new_namespace, auth_token, true) 
         Server.dyn_create_txt_record(new_namespace, auth_token)
         Server.dyn_delete_txt_record(@namespace, auth_token)

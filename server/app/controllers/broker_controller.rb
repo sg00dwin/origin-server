@@ -147,26 +147,27 @@ class BrokerController < ApplicationController
                               
       if Libra::User.valid_registration?(data['rhlogin'], params['password'])        
         user = Libra::User.find(data['rhlogin'])
-        if !Libra::Util.check_namespace(data['namespace'])
-          render :json => generate_result_json("namespace invalid", 106), :status => :invalid and return
+        ns = data['namespace']
+        if !Libra::Util.check_namespace(ns)
+          render :json => generate_result_json("Invalid characters in namespace '#{ns}' found", 106), :status => :invalid and return
         end
         if user
           if data['alter']
-            if user.namespace != data['namespace']
+            if user.namespace != ns
               #render :json => generate_result_json("You may not change your registered namespace of: #{user.namespace}", 98), :status => :conflict and return
-              user.update_namespace(data['namespace'])
+              user.update_namespace(ns)
             end
-            user.namespace=data['namespace']
+            user.namespace=ns
             user.ssh=data['ssh']
             user.update
             Server.execute_many('li-controller-0.1', 'configure',
                 "-c #{user.uuid} -e #{user.rhlogin} -s #{user.ssh} -a",
                 "customer_#{user.rhlogin}", user.rhlogin)
           else
-            render :json => generate_result_json("User already has a registered namespace.  To modify related properties, use --alter", 97), :status => :conflict and return
+            render :json => generate_result_json("User already has a registered namespace.  To modify, use --alter", 97), :status => :conflict and return
           end
         else   
-          user = Libra::User.create(data['rhlogin'], data['ssh'], data['namespace'])
+          user = Libra::User.create(data['rhlogin'], data['ssh'], ns)
         end
       else
         render_unauthorized and return
