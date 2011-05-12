@@ -1,4 +1,25 @@
 namespace :rpm do
+  def bump_release(commit_msg)
+    # Bump the version number
+    @version = @version.succ
+
+    # Get the RPM version and reset the release number to 1
+    replace = File.read(RPM_SPEC).gsub(RPM_REGEX, "\\1#{@version}")
+    replace = replace.gsub(RPM_REL_REGEX, "\\1" + "1" + "\\3")
+
+    # Add a comment to the RPM log
+    comment = "* " + Time.now.strftime("%a %b %d %Y")
+    comment << " " + `git config --get user.name`.chomp
+    comment << " <" + `git config --get user.email`.chomp + ">"
+    comment << " " + @version + "-1"
+    comment << "\n- #{commit_msg}\n"
+    replace = replace.gsub(/(%changelog.*)/, "\\1\n#{comment}")
+
+    # Write out and commit the new spec file
+    File.open(RPM_SPEC, "w") {|file| file.puts replace}
+    sh "git commit -a -m 'Prepping new release'"
+  end
+
   task :version do
       @version = RPM_REGEX.match(File.read(RPM_SPEC))[2]
       puts "Current Version is #{@version}"
@@ -50,16 +71,13 @@ namespace :rpm do
       comment << " " + `git config --get user.name`.chomp
       comment << " <" + `git config --get user.email`.chomp + ">"
       comment << " " + @version + "-1"
-      comment << "\n- Upstream released new version\n"
+      comment << "\n- #{@comment}\n"
       replace = replace.gsub(/(%changelog.*)/, "\\1\n#{comment}")
 
       # Write out and commit the new spec file
       File.open(RPM_SPEC, "w") {|file| file.puts replace}
       sh "git commit -a -m 'Upstream released new version'"
   end
-
-  desc "Increment release number and build Libra RPMs"
-  task :release => [:bump_release, :rpm]
 
   desc "Create a brew build based on current info"
   task :brew => [:version, :buildroot, :srpm] do
@@ -102,4 +120,45 @@ namespace :rpm do
       sh "/usr/bin/mash -o /tmp/rhel-6-libra -c /etc/mash/li-mash.conf rhel-6-libra"
   end
 
+  desc "Run the brew build and publish the RPMs"
+  task :release, :comment, :needs => [:version] do |t, args|
+    print "Updating current code..."
+    sh "git pull"
+    puts "Done"
+
+    print "Updating the spec file..."
+    bump_release(args[:comment])
+    puts "Done"
+
+    exit 0
+    print "Pushing git update..."
+    sh "git push"
+    puts "Done"
+
+    print "Tagging..."
+    sh "git tag #{@version}"
+    sh "git push --tags"
+    puts "Done"
+
+    print "Building RPMs..."
+    Rake::Task["brew"].invoke
+    puts "Done"
+
+    print "Building client gem..."
+    sh "rake", "client:gem"
+    puts "Done"
+
+    print "Syncing RPMs and gems to repo..."
+    sh "rsync -avz -e ssh /tmp/rhel-6-libra-candidate/rhel-6-libra-candidate/* root@dhcp1:/srv/web/gpxe/trees/rhel-6-libra-candidate/"
+    sh "rsync -avz -e ssh client/pkg/* root@dhcp1:/srv/web/gpxe/trees/client/gems/"
+    puts "Done"
+
+    print "Updating gem indexes..."
+    sh "ssh dhcp1 'gem generate_index -d /srv/web/gpxe/trees/client'"
+    puts "Done"
+
+    print "Kicking off AMI build"
+    sh "curl --insecure https://ci.dev.openshift.redhat.com/jenkins/job/libra_ami/build?token=libra1"
+    puts "Done"
+  end
 end
