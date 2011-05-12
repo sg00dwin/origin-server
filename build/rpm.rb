@@ -122,6 +122,12 @@ namespace :rpm do
 
   desc "Run the brew build and publish the RPMs"
   task :release, :comment, :needs => [:version] do |t, args|
+    if ENV['http_proxy']
+        puts "Brew doesn't work with proxies enabled.  Please unset shell variables."
+        puts "For example, unset 'http_proxy' and 'https_proxy'"
+        exit 1
+    end
+
     print "Updating current code..."
     sh "git pull"
     puts "Done"
@@ -130,7 +136,6 @@ namespace :rpm do
     bump_release(args[:comment])
     puts "Done"
 
-    exit 0
     print "Pushing git update..."
     sh "git push"
     puts "Done"
@@ -141,7 +146,7 @@ namespace :rpm do
     puts "Done"
 
     print "Building RPMs..."
-    Rake::Task["brew"].invoke
+    Rake::Task["rpm:brew"].invoke
     puts "Done"
 
     print "Building client gem..."
