@@ -112,6 +112,13 @@ $sans: 'Liberation Sans','Helvetica Neue',Arial,FreeSans,sans-serif;
   box-shadow: $properties;
 }
 
+//Cross-browser text-shadow
+@mixin text_shadow($properties) {
+  -moz-text-shadow: $properties;
+  -webkit-text-shadow: $properties;
+  text-shadow: $properties;
+}
+
 @mixin form_label {
   width: 160px;
   margin: 0 0 16px;
@@ -323,6 +330,33 @@ form {
     #ececec,
     black
   );
+}
+
+#outage_notification {
+  background: #FFDC4C;
+  width: 100%;
+  margin: 0;
+  padding: 0 0 5px;
+  font-size: 11pt;
+
+  p {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 10px 0;
+    color: black;
+    text-align: center;
+    border-top: 1px solid white;
+  }
+  h2 {
+    margin: 0;
+    padding: 10px 10px 5px;
+    color: #333;
+    text: {
+      transform: uppercase;
+      align: center;
+    }
+    @include text_shadow(1px 1px 1px white);
+  }
 }
 
 #head {
@@ -1257,7 +1291,7 @@ li.captcha {
       family: Overpass;
       size: 32pt;
     }
-    text-shadow: 2px 2px 2px #333;
+    @include text_shadow(2px 2px 2px #333);
   }
 
   h3 {

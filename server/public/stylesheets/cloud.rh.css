@@ -64,6 +64,29 @@ form ul, form ol, form li {
   /* Spec */
   background: linear-gradient(top, black, #ececec, black); }
 
+#outage_notification {
+  background: #FFDC4C;
+  width: 100%;
+  margin: 0;
+  padding: 0 0 5px;
+  font-size: 11pt; }
+  #outage_notification p {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 10px 0;
+    color: black;
+    text-align: center;
+    border-top: 1px solid white; }
+  #outage_notification h2 {
+    margin: 0;
+    padding: 10px 10px 5px;
+    color: #333;
+    text-transform: uppercase;
+    text-align: center;
+    -moz-text-shadow: 1px 1px 1px white;
+    -webkit-text-shadow: 1px 1px 1px white;
+    text-shadow: 1px 1px 1px white; }
+
 #head {
   padding-top: 20px; }
   #head > div.omega {
@@ -925,7 +948,9 @@ li.captcha {
     padding: 0 10px;
     font-family: Overpass;
     font-size: 32pt;
-    text-shadow: 2px 2px 2px #333; }
+    -moz-text-shadow: 2px 2px 2px #333333;
+    -webkit-text-shadow: 2px 2px 2px #333333;
+    text-shadow: 2px 2px 2px #333333; }
   #banner h3 {
     margin: 0;
     padding-left: 10px;

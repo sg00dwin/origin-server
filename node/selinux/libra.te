@@ -26,6 +26,9 @@ libra_service_domain(libra_net_t)
 type libra_min_t;
 libra_service_domain(libra_min_t)
 
+type libra_log_t;
+logging_log_file(libra_log_t)
+
 ########################################
 #
 # libra standard local policy
@@ -55,6 +58,8 @@ allow libra_domain self:tcp_socket  create_stream_socket_perms;
 
 allow libra_domain self:fifo_file rw_fifo_file_perms;
 allow libra_domain self:unix_stream_socket { create_stream_socket_perms connectto };
+
+allow libra_domain libra_log_t:file { getattr append lock ioctl };
 
 manage_dirs_pattern(libra_domain, libra_tmp_t, libra_tmp_t)
 manage_files_pattern(libra_domain, libra_tmp_t, libra_tmp_t)
@@ -125,6 +130,10 @@ domtrans_pattern(unconfined_t, libra_initrc_exec_t, libra_initrc_t)
 domtrans_pattern(rpm_script_t, libra_initrc_exec_t, libra_initrc_t)
 domtrans_pattern(puppet_t, libra_initrc_exec_t, libra_initrc_t)
 
+manage_dirs_pattern(libra_initrc_t, libra_log_t, libra_log_t)
+manage_files_pattern(libra_initrc_t, libra_log_t, libra_log_t)
+logging_log_filetrans(libra_initrc_t, libra_log_t, { file dir })
+
 allow libra_initrc_t libra_domain:process { getattr getsched setsched transition signal signull sigkill };
 allow libra_domain libra_initrc_t:fd use;
 allow libra_domain libra_initrc_t:fifo_file rw_inherited_fifo_file_perms;
@@ -145,13 +154,18 @@ require {
 	attribute exec_type;
 	type sshd_t;
 	type httpd_t;
+	type sendmail_t;
 }
 
 allow libra_domain httpd_exec_t:file entrypoint;
 dontaudit libra_domain exec_type:file getattr;
 
 libra_search_lib(sshd_t)
+dontaudit sshd_t self:capability sys_admin;
+
 allow httpd_t libra_var_lib_t:dir search;
+dontaudit sendmail_t libra_initrc_t:fifo_file { read write };
+append_files_pattern(sendmail_t, libra_var_lib_t, libra_var_lib_t)
 
 ##########
 # Used for development or when the li controller is running outside
