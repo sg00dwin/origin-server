@@ -81,6 +81,12 @@ namespace :rpm do
 
   desc "Create a brew build based on current info"
   task :brew => [:version, :buildroot, :srpm] do
+      # Unset any proxy variables - brew doesn't like proxies
+      ENV['http_proxy'] = nil
+      ENV['HTTP_PROXY'] = nil
+      ENV['https_proxy'] = nil
+      ENV['HTTPS_PROXY'] = nil
+
       srpm = Dir.glob("#{@buildroot}/SRPMS/rhc-#{@version}*.rpm")[0]
       if ! File.exists?("#{ENV['HOME']}/cvs/rhc/RHEL-6-LIBRA")
           puts "Please check out the rhc cvs root:"
@@ -97,6 +103,31 @@ namespace :rpm do
       sh "make tag"
       sh "make build"
   end
+
+  task :gem do
+    puts "Building client gem..."
+    cd CLIENT_ROOT
+    sh "rake", "package"
+    cd ".."
+    puts "Done"
+  end
+
+  task :sync do
+    puts "Syncing RPMs and gems to repo..."
+    sh "rsync -avz -e ssh /tmp/rhel-6-libra-candidate/rhel-6-libra-candidate/* root@dhcp1:/srv/web/gpxe/trees/rhel-6-libra-candidate/"
+    sh "rsync -avz -e ssh client/pkg/* root@dhcp1:/srv/web/gpxe/trees/client/gems/"
+    puts "Done"
+
+    puts "Updating gem indexes..."
+    sh "ssh dhcp1 'gem generate_index -d /srv/web/gpxe/trees/client'"
+    puts "Done"
+
+    puts "Kicking off AMI build..."
+    sh "curl --insecure --proxy squid.corp.redhat.com:8080 https://ci.dev.openshift.redhat.com/jenkins/job/libra_ami/build?token=libra1"
+    puts "Done"
+  end
+
+  task :build => [:brew, :gem, :sync]
 
   desc "Mash rhel-6-libra-candidate repo from brew"
   task :mash_candidate do
@@ -122,48 +153,25 @@ namespace :rpm do
 
   desc "Run the brew build and publish the RPMs"
   task :release, :comment, :needs => [:version] do |t, args|
-    if ENV['http_proxy']
-        puts "Brew doesn't work with proxies enabled.  Please unset shell variables."
-        puts "For example, unset 'http_proxy' and 'https_proxy'"
-        exit 1
-    end
-
-    print "Updating current code..."
+    puts "Updating current code..."
     sh "git pull"
     puts "Done"
 
-    print "Updating the spec file..."
+    puts "Updating the spec file..."
     bump_release(args[:comment])
     puts "Done"
 
-    print "Pushing git update..."
+    puts "Pushing git update..."
     sh "git push"
     puts "Done"
 
-    print "Tagging..."
+    puts "Tagging..."
     sh "git tag #{@version}"
     sh "git push --tags"
     puts "Done"
 
-    print "Building RPMs..."
-    Rake::Task["rpm:brew"].invoke
-    puts "Done"
-
-    print "Building client gem..."
-    sh "rake", "client:gem"
-    puts "Done"
-
-    print "Syncing RPMs and gems to repo..."
-    sh "rsync -avz -e ssh /tmp/rhel-6-libra-candidate/rhel-6-libra-candidate/* root@dhcp1:/srv/web/gpxe/trees/rhel-6-libra-candidate/"
-    sh "rsync -avz -e ssh client/pkg/* root@dhcp1:/srv/web/gpxe/trees/client/gems/"
-    puts "Done"
-
-    print "Updating gem indexes..."
-    sh "ssh dhcp1 'gem generate_index -d /srv/web/gpxe/trees/client'"
-    puts "Done"
-
-    print "Kicking off AMI build"
-    sh "curl --insecure https://ci.dev.openshift.redhat.com/jenkins/job/libra_ami/build?token=libra1"
+    puts "Building..."
+    Rake::Task["rpm:build"].invoke
     puts "Done"
   end
 end
