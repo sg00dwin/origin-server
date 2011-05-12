@@ -2,12 +2,30 @@ require 'pp'
 
 class LoginController < ApplicationController
 
+  def show_flex    
+    @register_url = user_new_flex_url
+    show
+  end
+  
+  def show_express
+    @register_url = user_new_express_url
+    show
+  end
+
   def show
-    
-    @redirectUrl = root_url
+    @register_url = @register_url ? @register_url :  user_new_express_url
+    if params[:redirectUrl]
+      session[:login_workflow] = params[:redirectUrl]
+    end
+    puts request.referer
+    if !workflow && request.referer != '/'
+      @redirectUrl = request.referer
+    else
+      @redirectUrl = root_url
+    end
     @errorUrl = login_error_url
-    Rails.logger.debug "Session workflow in LoginController#index: #{workflow}"
-    render :index
+    Rails.logger.debug "Session workflow in LoginController#show: #{workflow}"
+    render :show
   end
 
   def error

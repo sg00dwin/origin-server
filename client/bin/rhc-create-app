@@ -116,10 +116,12 @@ end
 
 opt["repo"] = opt["app"] unless opt["repo"]
 
-puts ""
-puts "Please support the developer preview - let #openshift on freenode know of any"
-puts "bugs you find"
-puts ""
+puts "
+Found a bug? Post to the forum and we'll get right on it.
+    IRC: #openshift on freenode
+    Forums: https://www.redhat.com/openshift/forums
+
+"
 
 #
 # Confirm local git repo exists
@@ -310,8 +312,8 @@ git_url = "ssh://#{uuid}@#{opt['app']}-#{user_info['user_info']['namespace']}.#{
 unless opt['nogit']
     puts "Pulling new repo down"
 
-    puts "git clone #{git_url} #{opt['repo']}" if debug
-    git_pull = `git clone #{git_url} #{opt['repo']}`
+    puts "git clone --quiet #{git_url} #{opt['repo']}" if debug
+    git_pull = `git clone #{debug ? ' ' : '--quiet '}#{git_url} #{opt['repo']}`
     if $?.exitstatus != 0
         puts "Error in git pull"
         puts git_pull

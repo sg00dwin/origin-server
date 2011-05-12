@@ -15,6 +15,7 @@ class StreamlineTest < ActiveSupport::TestCase
     @url = URI.parse("https://localhost/")
     @ticket = "0|abcdefghijlkmnop"
     Thread.current[:debugIO] = StringIO.new
+    Thread.current[:messageIO] = StringIO.new
   end
 
   test "streamline urls" do

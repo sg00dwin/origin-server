@@ -1,0 +1,19 @@
+#!/bin/sh
+#
+# To keep users from seeing our git history in the cartridge templates
+# you can use this to reset the template to a single commit.  Run from
+# the current git repo:
+#
+# cd li/node/cartridges/<cartridge>/info/data/git_template.git
+#
+
+git archive --format=tar --prefix=git_template_new/ HEAD | (cd .. && tar xf -)
+cd ../git_template_new
+git init
+git add *
+git commit -m 'Creating template'
+cd ..
+git rm -rf git_template.git
+git clone --bare git_template_new git_template.git
+rm -rf git_template_new
+touch git_template.git/refs/heads/.gitignore

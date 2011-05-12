@@ -56,7 +56,7 @@ module MCollective
             def cartridge_do_action
                 Log.instance.debug("cartridge_do_action call / request = #{request.pretty_inspect}")
                 validate :cartridge, /^[a-zA-Z0-9\.\-]+$/
-                validate :action, /^(configure|deconfigure|info|post-install|post_remove|pre-install|reload|restart|start|status|stop)$/
+                validate :action, /^(configure|deconfigure|update_virtualhost|info|post-install|post_remove|pre-install|reload|restart|start|status|stop)$/
                 validate :args, /^.+$/
                 cartridge = request[:cartridge]
                 action = request[:action]

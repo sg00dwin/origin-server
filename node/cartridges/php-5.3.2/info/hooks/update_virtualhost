@@ -1,0 +1,44 @@
+#!/bin/bash
+
+# Copyright © 2010 Mike McGrath All rights reserved
+# Copyright © 2010 Red Hat, Inc. All rights reserved
+
+# This copyrighted material is made available to anyone wishing to use, modify,
+# copy, or redistribute it subject to the terms and conditions of the GNU
+# General Public License v.2.  This program is distributed in the hope that it
+# will be useful, but WITHOUT ANY WARRANTY expressed or implied, including the
+# implied warranties of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.  You should have
+# received a copy of the GNU General Public License along with this program;
+# if not, write to the Free Software Foundation, Inc., 51 Franklin Street,
+# Fifth Floor, Boston, MA 02110-1301, USA. Any Red Hat trademarks that are
+# incorporated in the source code or documentation are not subject to the GNU
+# General Public License and may only be used or replicated with the express
+# permission of Red Hat, Inc.
+
+# Creates a per customer httpd instance
+
+# Exit on any errors
+set -e
+#set -x
+
+function print_help {
+    echo "Usage: $0 app-name new_namespace old_namespace uuid"
+
+    echo "$0 $@" | logger -p local0.notice -t libra_http_create
+    exit 1
+}
+
+[ $# -eq 4 ] || print_help
+
+new_namespace=`basename $2`
+old_namespace=`basename $3`
+application="$1"
+uuid=$4
+
+if [ -f "/etc/httpd/conf.d/libra/${uuid}_${old_namespace}_${application}.conf" ]
+then
+sed -i "s/ServerName ${application}-${old_namespace}./ServerName ${application}-${new_namespace}./" /etc/httpd/conf.d/libra/${uuid}_${old_namespace}_${application}.conf
+mv /etc/httpd/conf.d/libra/${uuid}_${old_namespace}_${application}.conf /etc/httpd/conf.d/libra/${uuid}_${new_namespace}_${application}.conf
+/sbin/service httpd configtest 2> /dev/null && /sbin/service httpd graceful || error "Failed to restart master httpd, please contact support" 120
+fi

@@ -21,7 +21,7 @@ action "cartridge_do", :description => "run a cartridge action" do
         :prompt         => "Action",
         :description    => "Cartridge hook to run",
         :type           => :string,
-        :validation     => '^(configure|deconfigure|info|post-install|post_remove|pre-install|reload|restart|start|status|stop)$',
+        :validation     => '^(configure|deconfigure|update_virtualhost|info|post-install|post_remove|pre-install|reload|restart|start|status|stop)$',
         :optional       => false,
         :maxlength      => 64
 

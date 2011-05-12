@@ -53,8 +53,6 @@ module Libra
       bypass_user_reg = fs_config.get_value('bypass_user_reg')
       @@config[:bypass_user_reg] =  bypass_user_reg && bypass_user_reg.strip == 'true' ? true : false
       @@config[:streamline_url] =  fs_config.get_value('streamline_url').strip
-      use_dynect_dns = fs_config.get_value('use_dynect_dns')
-      @@config[:use_dynect_dns] =  use_dynect_dns && use_dynect_dns.strip == 'true' ? true : false
       @@config[:dynect_customer_name] =  fs_config.get_value('dynect_customer_name').strip
       @@config[:dynect_user_name] =  fs_config.get_value('dynect_user_name').strip
       @@config[:dynect_password] =  fs_config.get_value('dynect_password').strip
