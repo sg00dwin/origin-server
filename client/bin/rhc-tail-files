@@ -35,7 +35,7 @@ Pull down application snapshot for a user
 
   -l|--rhlogin   rhlogin    RHCloud rhlogin (#{rhlogin})
   -a|--app                  Target application to snapshot (required)
-  -f|--file                 File location relative to app (default ./logs/*) (optional)
+  -f|--files                File glob relative to app (default ./logs/*) (optional)
   -p|--password  password   RHLogin password (optional, will prompt)
   -d|--debug                Print Debug info
   -h|--help                 Show Usage info
@@ -49,7 +49,7 @@ begin
         ["--debug", "-d", GetoptLong::NO_ARGUMENT],
         ["--help",  "-h", GetoptLong::NO_ARGUMENT],
         ["--app",  "-a", GetoptLong::REQUIRED_ARGUMENT],
-        ["--file",  "-f", GetoptLong::OPTIONAL_ARGUMENT],
+        ["--files",  "-f", GetoptLong::OPTIONAL_ARGUMENT],
         ["--rhlogin",  "-l", GetoptLong::REQUIRED_ARGUMENT],
         ["--password",  "-p", GetoptLong::OPTIONAL_ARGUMENT]
     )
@@ -103,8 +103,8 @@ rescue NoMethodError
     exit 101
 end
 
-opt['file'] = "logs/*" unless opt['file']
-file_glob = "#{framework}/#{opt['app']}/#{opt['file']}"
+opt['files'] = "logs/*" unless opt['files']
+file_glob = "#{framework}/#{opt['app']}/#{opt['files']}"
 
 puts "Attempting to tail files: #{file_glob}"
 puts "Use ctl + c to stop"
