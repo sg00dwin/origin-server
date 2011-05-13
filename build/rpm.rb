@@ -127,7 +127,7 @@ namespace :rpm do
     puts "Done"
   end
 
-  task :build => [:brew, :gem, :sync]
+  task :build => [:brew, :mash_candidate, :gem, :sync]
 
   desc "Mash rhel-6-libra-candidate repo from brew"
   task :mash_candidate do
@@ -137,6 +137,9 @@ namespace :rpm do
           puts
           exit 222
       end
+
+      # Run mash twice to make sure the download works
+      sh "/usr/bin/mash -o /tmp/rhel-6-libra-candidate -c /etc/mash/li-mash.conf rhel-6-libra-candidate"
       sh "/usr/bin/mash -o /tmp/rhel-6-libra-candidate -c /etc/mash/li-mash.conf rhel-6-libra-candidate"
   end
 
@@ -148,6 +151,9 @@ namespace :rpm do
           puts
           exit 222
       end
+
+      # Run mash twice to make sure the download works
+      sh "/usr/bin/mash -o /tmp/rhel-6-libra -c /etc/mash/li-mash.conf rhel-6-libra"
       sh "/usr/bin/mash -o /tmp/rhel-6-libra -c /etc/mash/li-mash.conf rhel-6-libra"
   end
 
