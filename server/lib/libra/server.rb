@@ -135,6 +135,22 @@ module Libra
       end
       raise DNSException.new(145), "Error communicating with DNS system.  If the problem persists please contact Red Hat support.", caller[0..5]
     end
+    
+    def self.delete_app_dns_entries(app_name, namespace)
+      auth_token = dyn_login
+      dyn_delete_sshfp_record(app_name, namespace, auth_token)
+      dyn_delete_a_record(app_name, namespace, auth_token)
+      dyn_publish(auth_token)
+      dyn_logout(auth_token)
+    end
+    
+    def self.create_app_dns_entries(app_name, namespace, public_ip, sshfp)
+      auth_token = dyn_login
+      dyn_create_a_record(app_name, namespace, public_ip, sshfp, auth_token)
+      dyn_create_sshfp_record(app_name, namespace, sshfp, auth_token)
+      dyn_publish(auth_token)
+      dyn_logout(auth_token)
+    end
 
     def self.dyn_logout(auth_token)
       # Logout
@@ -193,10 +209,15 @@ module Libra
       resp, data = dyn_put(path, publish_data, auth_token)
     end
 
-    def self.dyn_has_txt_record?(namespace, auth_token)
+    def self.dyn_has_txt_record?(namespace, auth_token, raise_exception_on_exists=false)
       fqdn = "#{namespace}.#{Libra.c[:libra_domain]}"
-      path = "TXTRecord/#{Libra.c[:libra_zone]}/#{fqdn}/"
-      return dyn_has?(path, auth_token)
+      path = "TXTRecord/#{Libra.c[:libra_zone]}/#{fqdn}/"      
+      dyn_has = dyn_has?(path, auth_token)
+      if dyn_has && raise_exception_on_exists
+        raise UserException.new(103), "A namespace with name '#{namespace}' already exists", caller[0..5]
+      else
+        return dyn_has
+      end
     end
 
     def self.dyn_has_a_record?(application, namespace, auth_token)
