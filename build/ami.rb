@@ -83,7 +83,7 @@ begin
 
     # Blocks until the current instance is available
     def instance_available
-        max_retries = 30
+        max_retries = 15
 
         # Wait until the AWS state is running
         count = 0
@@ -95,6 +95,9 @@ begin
 
         if count == max_retries
           puts "EXITING - Took too long for instance state to be 'running'"
+          print "Terminating instance..."
+          conn.terminate_instances([@instance])
+          puts "Done"
           exit 0
         end
 
