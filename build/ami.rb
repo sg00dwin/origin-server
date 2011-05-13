@@ -83,7 +83,7 @@ begin
 
     # Blocks until the current instance is available
     def instance_available
-        max_retries = 15
+        max_retries = 30
 
         # Wait until the AWS state is running
         count = 0
