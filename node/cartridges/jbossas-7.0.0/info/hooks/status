@@ -61,7 +61,7 @@ CUSTOMER_HOME="$libra_dir/$customer_id/"
 APP_DIR="$CUSTOMER_HOME/jbossas/$application"
 
 #
-# Start application
+# Check application status
 #
 
-"$APP_DIR/${application}_ctl.sh" status
+runuser --shell /bin/sh "$customer_id" "$APP_DIR/${application}_ctl.sh" status

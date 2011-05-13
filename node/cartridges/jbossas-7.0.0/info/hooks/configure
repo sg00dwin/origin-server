@@ -22,6 +22,9 @@
 # Exit on any errors
 set -e
 set -x
+# Redirect the configure script output for debugging
+logfile=/tmp/jbossas7-configure-$$.log
+exec > $logfile 2>&1
 
 # The name of the jbossas cartridge dir under /usr/libexec/li/cartridges
 jboss_version=jbossas-7.0.0
@@ -123,8 +126,7 @@ function create_repo {
     echo "jbossas 7.x application '$application'" > $GIT_DIR/description
     cat <<__EOF__ > $CUSTOMER_HOME/git/$application.git/hooks/post-receive
 rm -rf $APP_DIR/repo/*
-cd $APP_DIR/repo
-git clone $CUSTOMER_HOME/git/$application.git HEAD
+git archive --format=tar HEAD | (cd $APP_DIR/repo && tar xf -)
 # Reload httpd here maybe?
 __EOF__
 
@@ -138,6 +140,8 @@ while getopts 'd' OPTION
 do
     case $OPTION in
         d) set -x
+        logfile=/tmp/jbossas7-$$.log
+        exec > $logfile 2>&1
         ;;
         ?) print_help
         ;;
@@ -191,8 +195,10 @@ mkdir -p repo run ${jboss_version}/{bin,standalone/configuration}
 JBOSS_BIN_DIR="$APP_DIR"/${jboss_version}/bin
 
 cd ${jboss_version}
+# Create a link to the jboss server modules jar and modules directory
 ln -s ${jboss_home}/jboss-modules.jar
 ln -s ${jboss_home}/modules
+# Create the 
 ln -s "$APP_DIR"/repo/deployments "$APP_DIR"/${jboss_version}/standalone
 ls -l "$APP_DIR"/${jboss_version}/standalone/deployments
 
@@ -206,9 +212,6 @@ fi
 if [ -f /usr/libexec/li/cartridges/${jboss_version}/info/configuration/logging.properties ]
 then
     cp /usr/libexec/li/cartridges/${jboss_version}/info/configuration/logging.properties "$APP_DIR"/${jboss_version}/standalone/configuration
-else
-    echo "node_data.conf not found.  Cannot continue" 1>&2
-    exit 3
 fi
 ls -l "$APP_DIR"/${jboss_version}/standalone/configuration
 
@@ -238,10 +241,7 @@ EOF
 #
 # Populate repo dir
 #
-GIT_DIR="$GIT_DIR" git archive -o ${APP_DIR}/repo/x.tar HEAD
-cd "${APP_DIR}/repo"
-tar xf x.tar
-rm x.tar
+GIT_DIR="$GIT_DIR" git archive --format=tar HEAD | (cd "${APP_DIR}/repo" && tar xf -)
 
 #
 # Create simple application start / stop script
@@ -249,6 +249,9 @@ rm x.tar
 echo "Creating ${application}_ctl.sh..."
 cat <<__EOF__ > "$APP_DIR/${application}_ctl.sh"
 #/bin/bash
+
+ctlfile=/tmp/jbossas7-${application}_ctl-$$.log
+exec > $ctlfile 2>&1
 
 if ! [ \$# -eq 1 ]
 then
@@ -300,8 +303,8 @@ case "\$1" in
         fi
     ;;
     restart|graceful)
-        stop
-        start
+        $APP_DIR/${application}_ctl.sh stop
+        $APP_DIR/${application}_ctl.sh start
     ;;
     status)
         tail "$APP_DIR"/${jboss_version}/standalone/log/server.log
@@ -318,6 +321,7 @@ chown $user_id.$group_id -R $APP_DIR || error "Failed to chown new application s
 chown root.root -R "$APP_DIR/${application}_ctl.sh"
 chown $user_id.$group_id -R "$APP_DIR/${jboss_version}/standalone"
 chcon -t libra_var_lib_t -l s0:$c_val -R "$APP_DIR"
+cd $APP_DIR
 # Check if the incoming contex is correct. Useful for running script directly for testing.
 if ! ( runcon | grep -q system_r:libra_initrc_t )
 then
