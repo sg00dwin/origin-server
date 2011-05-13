@@ -27,15 +27,15 @@ Enable debugging / verbose output
 .IP -h|--help
 Display help menu
 .SH FILES
+.I <ruby_gem_dir>/gems/rhc-<version>/conf/express.conf
+.RS
+The RubyGem system wide configuration file. See
+.BR express.conf (5)
+for further details.
+.RE
 .I /etc/openshift/express.conf
 .RS
 The system wide configuration file. See
-.BR express.conf (5)
-for further details
-.RE
-.I ./express.conf
-.RS
-Local configuration file. See
 .BR express.conf (5)
 for further details.
 .RE
@@ -56,4 +56,5 @@ Mike McGrath <mmcgrath@redhat.com>, Jim Jagielski <jimjag@redhat.com>
 .BR rhc-ctl-app (1),
 .BR rhc-snapshot(1),
 .BR rhc-create-domain(1),
+.BR rhc-tail-files(1),
 .BR express.conf (5)

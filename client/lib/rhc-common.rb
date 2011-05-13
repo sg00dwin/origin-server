@@ -298,14 +298,18 @@ _home_conf = File.expand_path('~/.openshift')
 @config_path = File.exists?(_linux_cfg) ? _linux_cfg : _gem_cfg
 
 FileUtils.mkdir_p _home_conf unless File.directory?(_home_conf)
-if !File.exists?(File.expand_path(@local_config_path)) && File.exists?("#{ENV['HOME']}/.li/libra.conf")
-    print "Moving old-style config file..."
-    FileUtils.cp "#{ENV['HOME']}/.li/libra.conf", File.expand_path(@local_config_path)
-    FileUtils.mv "#{ENV['HOME']}/.li/libra.conf", "#{ENV['HOME']}/.li/libra.conf.deprecated"
-    puts " Done."
- end
-
-FileUtils.touch File.expand_path(@local_config_path)
+local_config_path = File.expand_path(@local_config_path)
+if !File.exists? local_config_path
+  FileUtils.touch local_config_path
+  puts ""
+  puts "Created empty local express.conf config file: " + local_config_path
+  puts "You can use this file to modify config for the current system user (modifying the default rhlogin for example)."  
+  puts "Search order (on a per variable basis):"
+  puts "  1) ~/.openshift/express.conf"
+  puts "  2) /etc/openshift/express.conf (RPM install path)"
+  puts "  3) <ruby_gem_dir>/gems/rhc-<version>/conf/express.conf (RubyGem install path)"
+  puts ""
+end
 
 begin
   @global_config = ParseConfig.new(@config_path)
@@ -326,7 +330,10 @@ else
 end
 
 #
-# Check for local var in ~/.openshift/express.conf use it, else use $GEM/../conf/express.conf
+# Check for local var in 
+#   1) ~/.openshift/express.conf
+#   2) /etc/openshift/express.conf
+#   3) $GEM/../conf/express.conf
 #
 def get_var(var)
   @local_config.get_value(var) ? @local_config.get_value(var) : @global_config.get_value(var)

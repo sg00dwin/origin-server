@@ -78,6 +78,10 @@
 
       %pre $ rhc-create-domain -n mynamespace -l email@address
       %pre Password: (type... type... type...)
+    %p
+      %strong Note:
+      This process will create a file ~/.openshift/express.conf which contains your default 
+      rhlogin (used to avoid passing the -l argument to rhc commands) and a &lt;rhlogin&gt;=&lt;uuid&gt; mapping.
     %br
     %h4 Step 3 - Create your first application
 
