@@ -3,6 +3,7 @@ Feature: Verification Tests
 
   Scenario: PHP modification tests
     Given the libra client tools
+    And an accepted node
     And the following test data
       | processes | users | apps |    type   |
       |     1     |   1   |  1   | php-5.3.2 |
@@ -12,6 +13,7 @@ Feature: Verification Tests
 
   Scenario: Rack modification tests
     Given the libra client tools
+    And an accepted node
     And the following test data
       | processes | users | apps |    type    |
       |     1     |   1   |  1   | rack-1.1.0 |
@@ -21,6 +23,7 @@ Feature: Verification Tests
 
   Scenario: WSGI modification tests
     Given the libra client tools
+    And an accepted node
     And the following test data
       | processes | users | apps |    type    |
       |     1     |   1   |  1   | wsgi-3.2.1 |
@@ -30,6 +33,7 @@ Feature: Verification Tests
 
   Scenario: Creation load tests
     Given the libra client tools
+    And an accepted node
     And a 300 second command timeout
     And a 60 second http request timeout
     And the following test data
