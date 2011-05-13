@@ -303,7 +303,7 @@ if !File.exists? local_config_path
   FileUtils.touch local_config_path
   puts ""
   puts "Created empty local express.conf config file: " + local_config_path
-  puts "You can use this file to modify config for the current system user (you probably won't need to do this)."  
+  puts "You can use this file to modify config for the current system user (modifying the default rhlogin for example)."  
   puts "Search order (on a per variable basis):"
   puts "  1) ~/.openshift/express.conf"
   puts "  2) /etc/openshift/express.conf (RPM install path)"
