@@ -246,7 +246,7 @@ module Libra
               if exitcode != 0
                 update_virtualhost_failures.push(app_name)
                 output = result.results[:data][:output]
-                Libra.client_debug "Cartridge return code: " + exitcode
+                Libra.client_debug "Cartridge return code: " + exitcode.to_s
                 Libra.client_debug "Cartridge output: " + output
                 Libra.logger_debug "DEBUG: execute_direct results: " + output                
               end

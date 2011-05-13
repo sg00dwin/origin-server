@@ -135,7 +135,7 @@ module Libra
       begin
         Libra.logger_debug "DEBUG: Failed to create application '#{app_name}' for user '#{user.rhlogin}' on node '#{server.name}'"
         Libra.client_debug "Failed to create application: '#{app_name}'"
-        user.delete_app(app_name)
+        server_execute_direct(framework, 'deconfigure', app_name, user, server)        
       ensure
         raise
       end
@@ -156,7 +156,7 @@ module Libra
           Libra.client_result "Application '#{app_name}' is either stopped or inaccessible"
         end
       elsif exitcode != 0
-        Libra.client_debug "Cartridge return code: " + exitcode
+        Libra.client_debug "Cartridge return code: " + exitcode.to_s
         Libra.client_debug "Cartridge output: " + output
         Libra.logger_debug "DEBUG: execute_direct results: " + output
         raise NodeException.new(143), "Node execution failure (invalid exit code from execute direct).  If the problem persists please contact Red Hat support.", caller[0..5]

@@ -241,6 +241,7 @@ CustomLog "|/usr/sbin/rotatelogs $APP_DIR/logs/access_log$rotatelogs_format $rot
 </Directory>
 
 WSGIScriptAlias / "$APP_DIR/repo/wsgi/application"
+WSGIPythonPath "$APP_DIR/repo/libs"
 
 EOF
 
