@@ -298,12 +298,6 @@ _home_conf = File.expand_path('~/.openshift')
 @config_path = File.exists?(_linux_cfg) ? _linux_cfg : _gem_cfg
 
 FileUtils.mkdir_p _home_conf unless File.directory?(_home_conf)
-if !File.exists?(File.expand_path(@local_config_path)) && File.exists?("#{ENV['HOME']}/.li/libra.conf")
-    print "Moving old-style config file..."
-    FileUtils.cp "#{ENV['HOME']}/.li/libra.conf", File.expand_path(@local_config_path)
-    FileUtils.mv "#{ENV['HOME']}/.li/libra.conf", "#{ENV['HOME']}/.li/libra.conf.deprecated"
-    puts " Done."
- end
 
 FileUtils.touch File.expand_path(@local_config_path)
 

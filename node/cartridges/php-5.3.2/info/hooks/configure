@@ -58,7 +58,7 @@ CART_INFO_DIR=/usr/libexec/li/cartridges/php-5.3.2/info
 CART_CONF_DIR=$CART_INFO_DIR/configuration/etc/conf
 
 function print_help {
-    echo "Usage: $0 app-name username uuid"
+    echo "Usage: $0 app-name namespace uuid"
 
     echo "$0 $@" | logger -p local0.notice -t libra_http_create
     exit 1

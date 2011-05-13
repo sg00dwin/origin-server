@@ -41,7 +41,7 @@ else
 fi
 
 function print_help {
-    echo "Usage: $0 app-name username"
+    echo "Usage: $0 app-name namespace"
 
     echo "$0 $@" | logger -p local0.notice -t libra_http_create
     exit 1
