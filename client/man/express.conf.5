@@ -5,13 +5,13 @@
 .SH NAME
 express.conf \- configuration file for OpenShift Express
 .SH SYNOPSIS
-Search order:
+Search order (on a per variable basis):
 
-1) ~/.openshift/express.conf
+1) ~/.openshift/express.conf (Created on first usage of rhc client tools and can be customized per system user)
 
-2) /etc/openshift/express.conf
+2) /etc/openshift/express.conf (RPM install path)
 
-3) <ruby_gem_dir>/gems/rhc-<version>/conf/express.conf
+3) <ruby_gem_dir>/gems/rhc-<version>/conf/express.conf (RubyGem install path)
 .SH DESCRIPTION
 .B express.conf
 contains the following configuration params:
@@ -28,6 +28,10 @@ The server the rhc client tools communicate with i.e.
 Boolean indicating whether debug should always be enabled for the rhc client tools
 
 .SH FILES
+.I <ruby_gem_dir>/gems/rhc-<version>/conf/express.conf
+.RS
+The RubyGem system wide configuration file.
+.RE
 .I /etc/openshift/express.conf
 .RS
 The system wide configuration file.
