@@ -302,12 +302,8 @@ local_config_path = File.expand_path(@local_config_path)
 if !File.exists? local_config_path
   FileUtils.touch local_config_path
   puts ""
-  puts "Created empty local express.conf config file: " + local_config_path
-  puts "You can use this file to modify config for the current system user (modifying the default rhlogin for example)."  
-  puts "Search order (on a per variable basis):"
-  puts "  1) ~/.openshift/express.conf"
-  puts "  2) /etc/openshift/express.conf (RPM install path)"
-  puts "  3) <ruby_gem_dir>/gems/rhc-<version>/conf/express.conf (RubyGem install path)"
+  puts "Created local config file: " + local_config_path
+  puts "express.conf contains user configuration and can be transferred across clients."  
   puts ""
 end
 
