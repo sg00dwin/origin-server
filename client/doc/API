@@ -41,7 +41,7 @@ Action types include:
     status: Get basic status information about an application
 
 Submit via POST to: {openshift.express.server}/app/broker/cartridge
-    Encode josn string as http variable: 'json_data',
+    Encode json string as http variable: 'json_data',
     Include your password as http variable 'password'
 
 JSON String:
