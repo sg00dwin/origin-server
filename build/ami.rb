@@ -483,6 +483,15 @@ END_OF_MESSAGE
           #ssh("cucumber --tags ~@verify --format junit -o /tmp/rhc/junit/ li/tests/")
           #p1 = $?
           #puts "Done"
+          
+          # Check node status before attempting to run tests
+          print "Checking node status"
+          ssh("rhc-accept-node", 30)
+          accepted = $?
+          puts "Done"
+          if accepted.exitstatus != 0
+            fail "ERROR - RHC node not accepted (exit: #{accepted.exitstatus})"
+          end
 
           # Run verification tests
           print "Running verification tests..."
