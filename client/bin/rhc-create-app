@@ -354,6 +354,9 @@ while attempt < RHC::Maxretries
     if (type == :php)
       page = 'health_check.php'
     end
+    if (type == :perl)
+      page = 'health_check.pl'
+    end
     url = URI.parse("http://#{my_url}/#{page}")
     begin
       response = @http.get_response(url)

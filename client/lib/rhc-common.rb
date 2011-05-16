@@ -39,6 +39,7 @@ module RHC
 
   TYPES = {
     'php-5.3.2' => :php,
+    'perl-5.10.1' => :perl,
     'rack-1.1.0' => :rack,
     'wsgi-3.2.1' => :wsgi,
     'jbossas-7.0.0' => :jbossas
