@@ -102,7 +102,7 @@ Feature: Rally User Stories
     Given a user
     Then could create a namespace
     When alter the namespace
-    Then clould not alter the namespace
+    Then could alter the namespace
 
 
 

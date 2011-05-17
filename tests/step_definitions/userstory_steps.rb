@@ -463,8 +463,8 @@ When /^alter the namespace$/ do
   run("#{$create_domain_script} -n newnamespace -l #{@rhc_login} -p fakepw --alter > #{@tfile}")
 end
 
-Then /^clould not alter the namespace$/ do
-  check_file_has_string(@tfile, "You may not change your registered namespace of: #{@namespace}").should == true
+Then /^could alter the namespace$/ do
+  check_file_has_string(@tfile, "Alteration successful").should == true
   run("rm -f #{@tfile}")
 end
 
