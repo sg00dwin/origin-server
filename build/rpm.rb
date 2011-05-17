@@ -81,14 +81,8 @@ namespace :rpm do
 
   desc "Create a brew build based on current info"
   task :brew => [:version, :buildroot, :srpm] do
-      # Unset any proxy variables - brew doesn't like proxies
-      ENV['http_proxy'] = nil
-      ENV['HTTP_PROXY'] = nil
-      ENV['https_proxy'] = nil
-      ENV['HTTPS_PROXY'] = nil
-
       srpm = Dir.glob("#{@buildroot}/SRPMS/rhc-#{@version}*.rpm")[0]
-      if ! File.exists?("#{ENV['HOME']}/cvs/rhc/RHEL-6-LIBRA")
+      if !File.exists?("#{ENV['HOME']}/cvs/rhc/RHEL-6-LIBRA")
           puts "Please check out the rhc cvs root:"
           puts
           puts "mkdir -p #{ENV['HOME']}/cvs; cd #{ENV['HOME']}/cvs"
@@ -127,19 +121,30 @@ namespace :rpm do
     puts "Done"
   end
 
-  task :build => [:brew, :mash_candidate, :gem, :sync]
+  task :build => [:brew, :gem, :mash_candidate, :sync]
 
   desc "Mash rhel-6-libra-candidate repo from brew"
   task :mash_candidate do
-      if ! File.exists?("/etc/mash/rhel-6-libra-candidate.mash")
+      if !File.exists?("/etc/mash/rhel-6-libra-candidate.mash")
           puts
           puts "Please install and configure mash.  Read misc/BREW for setup steps"
           puts
           exit 222
       end
 
-      # Run mash twice to make sure the download works
-      sh "/usr/bin/mash -o /tmp/rhel-6-libra-candidate -c /etc/mash/li-mash.conf rhel-6-libra-candidate"
+      # Make sure we have write access to /var/cache/mash
+      begin
+        File.new("/var/cache/mash/.rhcignore", "w")
+        File.delete("/var/cache/mash/.rhcignore")
+      rescue Errno::EACCES
+        puts "ERROR - user doesn't have write access to /var/cache/mash"
+        exit 1
+      end
+
+      # Run mash twice since it usually fails the first time
+      `/usr/bin/mash -o /tmp/rhel-6-libra-candidate -c /etc/mash/li-mash.conf rhel-6-libra-candidate`
+
+      # This time, use 'sh' to fail the build if it fails
       sh "/usr/bin/mash -o /tmp/rhel-6-libra-candidate -c /etc/mash/li-mash.conf rhel-6-libra-candidate"
   end
 
@@ -159,6 +164,13 @@ namespace :rpm do
 
   desc "Run the brew build and publish the RPMs"
   task :release, :comment, :needs => [:version] do |t, args|
+    # Unset any proxy variables - brew doesn't like proxies
+    if ENV['http_proxy'] or ENV['https_proxy']
+      puts "Please unset any proxy environment variables before running the build"
+      puts "e.g. unset http_proxy https_proxy HTTP_PROXY HTTPS_PROXY"
+      exit 1
+    end
+
     puts "Updating current code..."
     sh "git pull"
     puts "Done"
