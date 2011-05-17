@@ -22,9 +22,6 @@
 # Exit on any errors
 set -e
 set -x
-# Redirect the configure script output for debugging
-logfile=/tmp/jbossas7-configure-$$.log
-exec > $logfile 2>&1
 
 # The name of the jbossas cartridge dir under /usr/libexec/li/cartridges
 jboss_version=jbossas-7.0.0
@@ -70,6 +67,23 @@ function print_help {
     echo "$0 $@" | logger -p local0.notice -t libra_jboss_create
     exit 1
 }
+
+[ $# -eq 3 ] || print_help
+
+namespace=`basename $2`
+application="$1"
+uuid=$3
+
+CUSTOMER_HOME="$libra_dir/$uuid/"
+# The location of the application jboss setup
+APP_DIR="$CUSTOMER_HOME/jbossas/$application"
+[ -d "$APP_DIR" ] && error "${application}.  Please destroy then recreate, or pick a new name" 132
+
+# Redirect the configure script output for debugging
+TMP_DIR="$APP_DIR"/${jboss_version}/standalone/tmp
+mkdir -p ${TMP_DIR}
+logfile=${TMP_DIR}/jbossas7-configure-$$.log
+exec > $logfile 2>&1
 
 function error {
     echo "$1" 1>&2
@@ -140,24 +154,11 @@ while getopts 'd' OPTION
 do
     case $OPTION in
         d) set -x
-        logfile=/tmp/jbossas7-$$.log
-        exec > $logfile 2>&1
         ;;
         ?) print_help
         ;;
     esac
 done
-
-
-[ $# -eq 3 ] || print_help
-
-namespace=`basename $2`
-application="$1"
-uuid=$3
-
-CUSTOMER_HOME="$libra_dir/$uuid/"
-# The location of the application jboss setup
-APP_DIR="$CUSTOMER_HOME/jbossas/$application"
 
 unobfuscate $uuid $namespace
 
@@ -186,8 +187,6 @@ IP=$(find_open_ip $uid $uuid)
 #
 # Create jbossas7 base for application, every app gets its own jboss instance
 #
-
-[ -d "$APP_DIR" ] && error "${application}.  Please destroy then recreate, or pick a new name" 132
 
 mkdir -p "$APP_DIR"
 pushd "$APP_DIR" > /dev/null
@@ -218,8 +217,8 @@ ls -l "$APP_DIR"/${jboss_version}/standalone/configuration
 # Get the standalone.sh script
 cp ${jboss_home}/bin/standalone.sh "$APP_DIR"/${jboss_version}/bin
 # Update the standalone.xml for the application IP
-sed 's/loopback-address value="127.0.0.1"/loopback-address value="'$IP'"/g' "$APP_DIR"/${jboss_version}/standalone/configuration/standalone.xml >/tmp/standalone.xml
-cp /tmp/standalone.xml "$APP_DIR"/${jboss_version}/standalone/configuration
+sed 's/loopback-address value="127.*"/loopback-address value="'$IP'"/g' "$APP_DIR"/${jboss_version}/standalone/configuration/standalone.xml >${TMP_DIR}/standalone.xml
+cp ${TMP_DIR}/standalone.xml "$APP_DIR"/${jboss_version}/standalone/configuration
 popd > /dev/null
 
 # Build the standalone.conf file
@@ -250,8 +249,7 @@ echo "Creating ${application}_ctl.sh..."
 cat <<__EOF__ > "$APP_DIR/${application}_ctl.sh"
 #/bin/bash
 
-ctlfile=/tmp/jbossas7-${application}_ctl-$$.log
-exec > $ctlfile 2>&1
+exec > $TMP_DIR/jbossas7-${application}_ctl-$$.log 2>&1
 
 if ! [ \$# -eq 1 ]
 then
@@ -287,7 +285,7 @@ case "\$1" in
             echo -n " - Application is disabled" 1>&2
             exit 0
         else
-            runcon -t libra_t -l s0:$c_val $JBOSS_BIN_DIR/standalone.sh 1>&2 >/tmp/${application}.log &
+            runcon -t libra_t -l s0:$c_val $JBOSS_BIN_DIR/standalone.sh 1>&2 >${TMP_DIR}/${application}.log &
             PROCESS_ID=\$!
             echo \$PROCESS_ID > \$JBOSS_PID_FILE
         fi
