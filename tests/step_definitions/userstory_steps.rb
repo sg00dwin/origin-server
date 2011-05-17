@@ -447,29 +447,6 @@ Then /^would fail to create the second '(\w+)' application for 'php\-(\d+)\.(\d+
   end  
 end
 
-#US84 - TC39
-Given /^a user$/ do
-  namespaces = Array.new(1.to_i)
-  @info = get_unique_username(namespaces)
-  @rhc_login = @info[:login]  
-end
-Then /^could create a namespace$/ do
-  @namespace = @info[:namespace]
-  run("#{$create_domain_script} -n #{@namespace} -l #{@rhc_login} -p fakepw -d")
-end
-
-When /^alter the namespace$/ do
-  @tfile="#{$temp}/libralog"
-  run("#{$create_domain_script} -n newnamespace -l #{@rhc_login} -p fakepw --alter > #{@tfile}")
-end
-
-Then /^could alter the namespace$/ do
-  check_file_has_string(@tfile, "Alteration successful").should == true
-  run("rm -f #{@tfile}")
-end
-
-
-
 
 private
 #check if a given file contains a given string

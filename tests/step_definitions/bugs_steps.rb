@@ -21,11 +21,11 @@ Then /^he could create a namespace and app$/ do
 end
 
 When /^he alter the namespace$/ do
+  @tfile="#{$temp}/libralog"
   run("#{$create_domain_script} -n newnamespace -l #{@rhc_login} -p fakepw --alter > #{@tfile}")
 end
 
 Then /^the new namespace is enabled$/ do
-  @tfile="#{$temp}/libralog"
   run("#{$user_info_script} -l #{@rhc_login} -p fakepw -i > #{@tfile}")
   check_file_has_string(@tfile, "newnamespace").should be_true
   run("rm -f #{@tfile}")
