@@ -32,7 +32,7 @@ else
 
    echo "Start to test"
 
-   python ./test_web.py  --host=$1 --url=$2 --port=$3 --browser=$4 --confirm_url=$confirm_link --new_userlist="${New_userlist[*]}"
+   python ./test_web.py  --host=$1 --url=$2 --port=$3 --browser="$4" --confirm_url=$confirm_link --new_userlist="${New_userlist[*]}"
 fi
 
 
