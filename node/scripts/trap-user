@@ -9,7 +9,7 @@ import glob
 commands = {
     "git-receive-pack": "/usr/bin/git-receive-pack",
     "git-upload-pack": "/usr/bin/git-upload-pack",
-    "snapshot": "/usr/bin/tar",
+    "snapshot": "/bin/tar",
     "tail": "/usr/bin/tail",
 }
 

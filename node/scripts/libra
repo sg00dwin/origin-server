@@ -42,9 +42,9 @@ function apptype() {
     _APP_TYPE=`cat $_HOMEDIR/git/${2}.git/description | cut -d' ' -f 1`
     if [ $_APP_TYPE = "Unnamed" ]
     then
-	_APP_DIR=`ls -d $_HOMEDIR/*/$2`
-	_APP_TYPE_DIR=`dirname $_APP_DIR`
-	_APP_TYPE=`basename $_APP_TYPE_DIR`
+        _APP_DIR=`ls -d $_HOMEDIR/*/$2`
+        _APP_TYPE_DIR=`dirname $_APP_DIR`
+        _APP_TYPE=`basename $_APP_TYPE_DIR`
     fi
     echo $_APP_TYPE
 }
@@ -78,7 +78,7 @@ startuser() {
     # USERNAME=$1
     for APPNAME in `userapps $1`
     do
-	startapp $1 $APPNAME
+        startapp $1 $APPNAME
     done
 }
 
@@ -86,7 +86,7 @@ stopuser() {
     # USERNAME=$1
     for APPNAME in `userapps $1`
     do
-	stopapp $1 $APPNAME
+        stopapp $1 $APPNAME
     done
 }
 
@@ -130,7 +130,7 @@ start() {
 
     for USERNAME in `libra_users`
     do
-	startuser $USERNAME
+        startuser $USERNAME
     done
     [ $GROUP_RETVAL -eq 0 ] && touch ${lockfile}
     [ $GROUP_RETVAL -eq 0 ] && success || failure
@@ -143,7 +143,7 @@ stop() {
     echo "Stopping Libra Services: "
     for USERNAME in `libra_users`
     do
-	stopuser $USERNAME
+        stopuser $USERNAME
     done
     [ $GROUP_RETVAL -eq 0 ] && touch ${lockfile}
     echo -n $"Libra services stopped"
@@ -179,7 +179,7 @@ case "$1" in
     for ctl_script in `/bin/find /var/lib/libra/ -maxdepth 4 -mindepth 4 -type f -name "*_ctl.sh"`
     do
         script_name=$(basename $ctl_script)
-	run_as=$( echo $ctl_script | awk -F/ '{print $5}')
+        run_as=$( echo $ctl_script | awk -F/ '{print $5}')
         echo -n $"    Checking http for ${script_name%_ctl.sh}"
         daemon --user=$run_as --pidfile=httpd_${script_name} $ctl_script status
         RETVAL=$?

@@ -38,7 +38,7 @@ def p_usage
     rhlogin = get_var('default_rhlogin') ? "Default: #{get_var('default_rhlogin')}" : "(required)"
     puts <<USAGE
 
-Usage: rhc-user-info
+Usage: #{$0}
 Display information about a user
 
   -l|--rhlogin   rhlogin    RHCloud rhlogin (#{rhlogin})
