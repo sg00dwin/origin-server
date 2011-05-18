@@ -65,20 +65,21 @@ form ul, form ol, form li {
   background: linear-gradient(top, black, #ececec, black); }
 
 #outage_notification {
-  background: #FFDC4C;
+  background: #ffdc4c;
   width: 100%;
+  min-width: 960px;
   margin: 0;
   padding: 0 0 5px;
-  font-size: 11pt; }
-  #outage_notification p {
-    max-width: 960px;
+  font-size: 9.5pt; }
+  #outage_notification pre {
+    width: 940px;
     margin: 0 auto;
     padding: 10px 0;
     color: black;
-    text-align: center;
     border-top: 1px solid white; }
   #outage_notification h2 {
-    margin: 0;
+    width: 960px;
+    margin: 0 auto;
     padding: 10px 10px 5px;
     color: #333;
     text-transform: uppercase;
@@ -86,6 +87,30 @@ form ul, form ol, form li {
     -moz-text-shadow: 1px 1px 1px white;
     -webkit-text-shadow: 1px 1px 1px white;
     text-shadow: 1px 1px 1px white; }
+
+#overlay {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: #333;
+  background-color: rgba(51, 51, 51, 0.75);
+  z-index: 1500; }
+
+#outage_toggle {
+  background: #ffdc4c;
+  position: absolute;
+  padding: 11px 30px 6px;
+  color: black;
+  font-family: OverpassBold;
+  font-size: 10pt;
+  text-decoration: none;
+  text-transform: uppercase;
+  -moz-text-shadow: 1px 1px 1px white;
+  -webkit-text-shadow: 1px 1px 1px white;
+  text-shadow: 1px 1px 1px white;
+  cursor: pointer; }
 
 #head {
   padding-top: 20px; }
@@ -109,7 +134,7 @@ form ul, form ol, form li {
   padding: 6px 30px;
   position: absolute;
   right: 0;
-  z-index: 1000;
+  z-index: 1500;
   font-family: OverpassBold; }
   #login a, #user_controls a {
     margin: 0 auto;

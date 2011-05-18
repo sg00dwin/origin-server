@@ -1,4 +1,6 @@
 module ApplicationHelper
+
+  # Checks for an outage notification
   def outage_notification
     notification = ''
     ['/etc/libra/outage_notification.txt', '/etc/libra/express_outage_notification.txt'].each do |file|
@@ -10,7 +12,7 @@ module ApplicationHelper
         ensure
           f.close
         end
-        notification << content_tag(:p,contents) unless contents.nil?
+        notification << content_tag(:pre,contents) unless contents.nil?
       end
     end
     
@@ -20,4 +22,5 @@ module ApplicationHelper
       nil
     end
   end
+  
 end
