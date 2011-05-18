@@ -1,0 +1,218 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'parseconfig'
+require 'getoptlong'
+require 'mechanize'
+require 'hpricot'
+require 'net/https'
+require 'uri'
+require 'ping'
+require 'logger'
+require 'resolv'
+
+def get_unique_username()
+  result={}
+
+  loop do
+    # Generate a random username
+    chars = ("1".."9").to_a
+    namespace = "stage" + Array.new(8, '').collect{chars[rand(chars.size)]}.join
+    @logger.debug("checking availability of namespace = #{namespace}")
+
+    # Check DNS
+    dns = Resolv::DNS.new
+    resp = dns.getresources("#{namespace}.stg.rhcloud.com", Resolv::DNS::Resource::IN::TXT)
+    reserved = resp.length > 0
+    login = "libra-test+#{namespace}@redhat.com"
+    @logger.info("reserved = #{reserved}")
+
+    unless reserved
+      result[:login] = login
+      result[:namespace] = namespace
+      break
+    end
+  end
+  
+  @logger.info("returning = #{result.pretty_inspect}")
+
+  return result
+end
+
+def matches?(line)
+  if line.inner_html =~ /To/
+    email = line.inner_html.split("</em>:")[1].strip
+    return email =~ /libra\-test\+#{@username[:namespace]}/
+  end
+
+  return false
+end
+
+def click_validation_link(body)
+  link = body.at("pre/a")
+  if link
+     if @click
+      puts link.attributes['href']
+      return true
+     else
+      login_page = @agent.get(link.attributes['href'])
+      login_form = login_page.forms[0]
+      return true
+     end
+    # Should be prompted to login
+   #  login_form = login_page.forms[0]
+  #  login_form['password'] = @password
+  #  terms_page = login_form.submit
+
+    # Now submit terms
+  #  return terms_page.forms[0].submit.body =~ /Getting Started/
+  end
+
+  return false
+end
+
+def check_emails(links)
+  # Get the confirmation emails
+  links.each do |link|
+    email_body = Hpricot.parse(link.click.body)
+
+    # See if this email was to our account
+    email_body.at("ul").search("li").each do |line|
+      if matches?(line)
+        return click_validation_link(email_body)
+      end
+    end
+  end
+
+  return false
+end
+
+def find_confirmation
+  @agent.get('http://post-office.corp.redhat.com/archives/libra-test/') do |page|
+    # Get the current page of archives
+    archive_page = page.link_with(:text => /Thread/).click
+    confirmation_links = archive_page.links_with(:text => /^Confirm/).reverse[0..15]
+    return check_emails(confirmation_links)
+  end
+end
+
+def register
+  @agent.get(@main_page) do |page|
+    login_page = page.link_with(:text => /Login/).click
+    register_page = login_page.link_with(:text => /Click here to register/).click
+
+    result_page = register_page.form_with(:action => '/app/user') do |form|
+      form['web_user[email_address]'] = @username[:login]
+      form['web_user[password]'] = @password
+      form['web_user[password_confirmation]'] = @password
+      form.add_field!('captcha_secret', 'zvw5LiixMB0I4mjk06aR')
+    end.submit
+
+    if result_page.body =~ /What's Next/
+      @logger.debug("Got the what's next page")
+    else
+      @logger.error("Registration failed")
+      @logger.debug(result_page.body)
+      exit 1
+   end
+  end
+end
+
+# Synchronize output
+$stdout.sync = true
+$stderr.sync = true
+
+def p_usage
+    puts <<USAGE
+
+Usage: batch_register
+Batch register users for testing
+  
+  -c|--click    ifclick     1 notclick 0  click
+  -p|--proxy                Use a proxy
+  -d|--debug                Show debug info
+  -h|--help                 Show Usage info
+
+USAGE
+  exit 255
+end
+
+begin
+    opts = GetoptLong.new(
+        ["--click", "-c", GetoptLong::NO_ARGUMENT],
+        ["--proxy", "-p", GetoptLong::NO_ARGUMENT],
+        ["--debug", "-d", GetoptLong::NO_ARGUMENT]
+        )
+    opt = {}
+    opts.each do |o, a|
+        opt[o[2..-1]] = a.to_s
+    end
+
+rescue Exception => e
+  puts e.message
+  p_usage
+end
+
+if opt["help"]
+    p_usage
+end
+
+@proxy = ['squid.corp.redhat.com', '8080']
+@password = "redhat"
+@host = "stg.openshift.redhat.com"
+@main_page = "https://#{@host}/app"
+
+# Setup flags
+@use_proxy = opt['proxy']
+@debug = opt['debug']
+@click=opt['click']
+# Setup logger
+@logger = Logger.new(STDERR)
+@logger.level = @debug ? Logger::DEBUG : Logger::ERROR
+
+# Verify proxy connectivity
+if @use_proxy
+  @logger.debug("Verifying proxy connectivity...")
+  unless Ping.pingecho('squid.corp.redhat.com', 2)
+    @logger.error("ERROR - Could not connect to squid.corp.redhat.com.")
+    @logger.error("You must be on the RH network or VPN to use a proxy")
+    exit 1
+  end
+  @logger.debug("Done")
+end
+
+# Setup the HTTP agent
+@agent = Mechanize.new { |agent|
+  agent.user_agent_alias = 'Mac Safari'
+  agent.set_proxy(@proxy[0], @proxy[1]) if @use_proxy
+  agent.log = @logger
+}
+
+# Get a username
+@logger.debug("Get the username")
+@username = get_unique_username
+puts @username[:login]
+
+# Register a new user
+@logger.debug("Registering user")
+register
+@logger.debug("Done")
+
+@logger.debug("Waiting to let the archives refresh...")
+sleep 15
+@logger.debug("Done")
+
+#@logger.debug("Output the username")
+#puts @username[:login]
+# Verify the email
+@logger.debug("Now verifying emails")
+until find_confirmation
+  sleep 15
+end
+@logger.debug("Done")
+
+# Output the login
+@logger.debug("Output the username")
+#puts @username[:login]
+@logger.debug(@username[:login])
+

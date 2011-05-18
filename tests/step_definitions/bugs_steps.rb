@@ -13,19 +13,21 @@ Given /^an end user$/ do
   @rhc_login = @info[:login]
 end
 
-Then /^he could create a namespace$/ do
+Then /^he could create a namespace and app$/ do
   @namespace = @info[:namespace]
-  temp_text = run("#{$create_domain_script} -n #{@namespace} -l #{@rhc_login} -p fakepw -d")  
+  @repo_path="#{$temp}/#{@namespace}_#{@namespace}_repo"
+  temp_text = run("#{$create_domain_script} -n #{@namespace} -l #{@rhc_login} -p fakepw -d")
+  temp_text = run("#{$create_app_script} -a #{@namespace} -l #{@rhc_login} -r #{@repo_path} -t php-5.3.2 -p fakepw -d")
 end
 
 When /^he alter the namespace$/ do
-  run("#{$create_domain_script} -n newnamespace -l #{@rhc_login} -p fakepw --alter > #{@tfile}")
+  @tfile="#{$temp}/libralog"
+  run("#{$create_domain_script} -n #{@namespace + "2"} -l #{@rhc_login} -p fakepw --alter > #{@tfile}")
 end
 
 Then /^the new namespace is enabled$/ do
-  @tfile="#{$temp}/libralog"
   run("#{$user_info_script} -l #{@rhc_login} -p fakepw -i > #{@tfile}")
-  check_file_has_string(@tfile, "newnamespace").should be_true
+  check_file_has_string(@tfile, @namespace + "2").should be_true
   run("rm -f #{@tfile}")
 end
 
@@ -47,7 +49,7 @@ Then /^come into an error when they are accessed$/ do
 end
 
 #bug 700941
-Then /^no READEME under misc and libs$/ do  
+Then /^no README under misc and libs$/ do  
   File.exist?("#{@repo_path}/misc/README").should_not be_true
   File.exist?("#{@repo_path}/libs/README").should_not be_true
 end

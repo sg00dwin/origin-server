@@ -11,10 +11,12 @@
 
       /Promo banners
       %li.slide
-        = image_tag "/app/images/promo_banner_free_espresso.png"
+        = link_to 'http://gluecon.com/2011/' do
+          = image_tag "/app/images/promo_banner_gluecon.png"
           
       %li.slide
-        = image_tag "/app/images/promo_banner_win_xoom.png"
+        = link_to '#' do 
+          = image_tag "/app/images/promo_banner_webcast.png"
 
 
     /Slide show navigation
