@@ -457,7 +457,7 @@ module Libra
                           :args => args) do |response|
         return_code = response[:body][:data][:exitcode]
         output = response[:body][:data][:output]
-        if true || return_code != 0
+        if return_code != 0
           Libra.logger_debug "DEBUG: Non-zero exit code detected for cartridge: #{cartridge} action: #{action} args: #{args} with response:"
           Libra.logger_debug response.pretty_inspect
           if Libra.c[:rpc_opts][:verbose]
