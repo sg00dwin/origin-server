@@ -457,10 +457,20 @@ module Libra
                           :args => args) do |response|
         return_code = response[:body][:data][:exitcode]
         output = response[:body][:data][:output]
-
-        Libra.client_debug "DEBUG: Cartridge return code: #{return_code}" if Libra.c[:rpc_opts][:verbose]
-        Libra.client_debug "DEBUG: Cartridge output: #{output}" if Libra.c[:rpc_opts][:verbose]
-        raise CartridgeException.new(141), output, caller[0..5] if return_code != 0
+        if true || return_code != 0
+          Libra.logger_debug "DEBUG: Non-zero exit code detected for cartridge: #{cartridge} action: #{action} args: #{args} with response:"
+          Libra.logger_debug response.pretty_inspect
+          if Libra.c[:rpc_opts][:verbose]
+            Libra.client_debug "Cartridge return code: #{return_code}"
+            Libra.client_debug "Cartridge node: #{response[:senderid]}"
+            Libra.client_debug "Cartridge output: #{output}"
+          end
+          raise CartridgeException.new(141), output, caller[0..5]
+        else
+          if output && !output.empty?
+            Libra.client_debug "Cartridge output: #{output}" if Libra.c[:rpc_opts][:verbose]
+          end
+        end
       end
     end
 
