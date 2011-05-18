@@ -33,6 +33,8 @@
     = render 'shared/omniture_code'
 
     #horrible_wrapper
+      = outage_notification
+      
       - if session[:login] || session[:user]
         #user_controls
           - if session[:user].has_access?(CloudAccess::FLEX)
