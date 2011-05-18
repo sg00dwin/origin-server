@@ -31,7 +31,7 @@ def p_usage
     puts <<USAGE
 
 Usage: #{$0}
-Create a new app Openshift Express project.
+Create an Openshift Express app.
 
   -a|--app   application     Application name  (alphanumeric - max #{RHC::Maxdlen} chars) (required)
   -t|--type  type            Type of app to create (php-5.3.2, wsgi-3.2.1, rack-1.1.0) (required)
