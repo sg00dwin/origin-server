@@ -249,7 +249,7 @@ else
         f = File.open(ssh_config, "a")
         f.puts <<SSH
 
-# Added by rhc-create-app app on #{`date`}
+# Added by rhc-create-app on #{`date`}
 Host *.#{libra_domain}
     IdentityFile ~/.ssh/libra_id_rsa
     VerifyHostKeyDNS yes
