@@ -445,7 +445,7 @@ module Libra
     def self.execute_many(cartridge, action, args, fact, value, operator="==")
         options = Helper.rpc_options
         options[:filter]['fact'] = [{:value=>value, :fact=>fact, :operator=>operator}]
-        p options if Libra.c[:rpc_opts][:verbose]
+        #Libra.logger_debug "DEBUG: Options for cartridge: #{cartridge} action: #{action} args: #{args}: #{options.pretty_inspect}" if Libra.c[:rpc_opts][:verbose]
         Helper.rpc_exec('libra') do |client|
           cartridge_do(client, cartridge, action, args)
         end
