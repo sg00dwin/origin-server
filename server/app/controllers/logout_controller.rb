@@ -12,13 +12,11 @@ class LogoutController < ApplicationController
   end
   
   def show
-    reset_session
+    clear_session
     if params[:redirectUrl]
       session[:login_workflow] = params[:redirectUrl]
     end
     @redirect_path = @redirect_path ? @redirect_path : login_path
-    Rails.logger.debug "Removing current SSO cookie value of '#{cookies[:rh_sso]}'"
-    cookies.delete :rh_sso, :domain => '.redhat.com'
     redirect_to @redirect_path
   end
 end

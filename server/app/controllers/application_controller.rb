@@ -65,7 +65,13 @@ class ApplicationController < ActionController::Base
 
   end
   
-  def logout
+  def clear_session
+    reset_session    
+    Rails.logger.debug "Removing current SSO cookie value of '#{cookies[:rh_sso]}'"
+    cookies.delete :rh_sso, :domain => '.redhat.com'
+  end
+  
+  def redirect_to_logout
     redirect_to logout_path and return
   end
 
@@ -79,7 +85,7 @@ class ApplicationController < ActionController::Base
     Rails.logger.debug "rh_sso cookie = '#{rh_sso}'"
 
     if logged_in?      
-      logout
+      redirect_to_logout
       return
     else
       return
@@ -89,7 +95,7 @@ class ApplicationController < ActionController::Base
       Rails.logger.debug "User has an authenticated session"
       if session[:ticket] != rh_sso
         Rails.logger.debug "Session ticket does not match current ticket - logging out"
-        logout 
+        redirect_to_logout 
         return
       else
         Rails.logger.debug "Session ticket matches current ticket"
