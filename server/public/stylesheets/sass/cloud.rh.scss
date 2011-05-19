@@ -678,10 +678,9 @@ form {
   }
 
   .navigation{
-    width: 950px;
     margin: 90px auto 0;
     padding: 0 0 0 10px;
-    display: block;
+    display: inline-block;
     position: relative;
     clear: both;
     z-index: 998 !important;
@@ -725,6 +724,8 @@ form {
     width: 960px;
     margin-left: -5px;
   }
+  
+  ul.navigation { width: auto; }
 
   li.slide:nth-of-type(1) {
     background: $express;
