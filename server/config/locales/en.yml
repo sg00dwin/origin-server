@@ -2,7 +2,7 @@
 # See http://github.com/svenfuchs/rails-i18n/tree/master/rails%2Flocale for starting points.
 
 en:
-  unknown: 'A system error has occurred.  It is possible relogin may help.  If the problem persists, please contact Red Hat support.'
+  unknown: 'A system error has occurred.  If the problem persists, please contact Red Hat support.'
 
   streamline:
     user_already_registered: 'A user with the same email is already registered'
