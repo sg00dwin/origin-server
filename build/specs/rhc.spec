@@ -2,7 +2,7 @@
 %define gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 
 Name: rhc
-Version: 0.69.6
+Version: 0.70.1
 Release: 1%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
@@ -463,33 +463,8 @@ chmod 0666 %{_localstatedir}/www/libra/log/production.log
 %{_libexecdir}/li/cartridges/jbossas-7.0.0/
 
 %changelog
-* Mon May 16 2011 Matt Hicks <mhicks@redhat.com> 0.69.6-1
-- New SELinux policy
-
-* Mon May 16 2011 Matt Hicks <mhicks@redhat.com> 0.69.5-1
-- More bugfixes
-
-* Sat May 14 2011 Matt Hicks <mhicks@redhat.com> 0.69.4-1
-- Bugfixes and jboss update
-
-* Thu May 12 2011 Mike McGrath <mmcgrath@redhat.com> 0.69.3-2
-- Added tail-files
-
-* Wed May 11 2011 Matt Hicks <mhicks@redhat.com> 0.69.3-1
-- Adding jbossas dependency
-
-* Tue May 10 2011 Matt Hicks <mhicks@redhat.com> 0.69.2-1
-- Fixing devenv jboss dependency
-- Bug fixes
-
-* Fri May 6 2011 Matt Hicks <mhicks@redhat.com> 0.69.1-1
-- Added jboss cartridge
-
-* Wed May 4 2011 Mike McGrath <mmcgrath@redhat.com> 0.68.6-1
-- Fixes for summit / video launch tomorrow
-
-* Mon May 2 2011 Mike McGrath <mmcgrath@redhat.com> 0.68.5-1
-- Another RC, simple fix involving gem installation for site
+* Thu May 19 2011 Matt Hicks <mhicks@redhat.com> 0.70.1-1
+- Release candidate
 
 * Sun May 1 2011 Matt Hicks <mhicks@redhat.com> 0.68.4-1
 - Release candidate
