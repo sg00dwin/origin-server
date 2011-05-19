@@ -65,7 +65,13 @@ class ApplicationController < ActionController::Base
 
   end
   
-  def logout
+  def clear_session
+    reset_session    
+    Rails.logger.debug "Removing current SSO cookie value of '#{cookies[:rh_sso]}'"
+    cookies.delete :rh_sso, :domain => '.redhat.com'
+  end
+  
+  def redirect_to_logout
     redirect_to logout_path and return
   end
 
@@ -79,7 +85,12 @@ class ApplicationController < ActionController::Base
     Rails.logger.debug "rh_sso cookie = '#{rh_sso}'"
 
     if logged_in?      
-      logout
+      redirect_to_logout
+      return
+    elsif params[:controller] != 'login'
+      # Clear out login workflow since they didn't login.  Otherwise might get pushed into a workflow on later login.
+      #Rails.logger.debug "Clearing out login_workflow since user didn't actually login"
+      session[:login_workflow] = nil
       return
     else
       return
@@ -89,7 +100,7 @@ class ApplicationController < ActionController::Base
       Rails.logger.debug "User has an authenticated session"
       if session[:ticket] != rh_sso
         Rails.logger.debug "Session ticket does not match current ticket - logging out"
-        logout 
+        redirect_to_logout 
         return
       else
         Rails.logger.debug "Session ticket matches current ticket"
@@ -107,7 +118,7 @@ class ApplicationController < ActionController::Base
           redirect_to new_terms_path and return
         else
           session[:login] = user.rhlogin
-        end
+        end      
       end
     end
   end

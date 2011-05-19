@@ -30,11 +30,11 @@ def p_usage
     rhlogin = get_var('default_rhlogin') ? "Default: #{get_var('default_rhlogin')}" : "(required)"
     puts <<USAGE
 
-Usage: rhc-tail-file
-Pull down application snapshot for a user
+Usage: #{$0}
+Tail the logs of an application
 
   -l|--rhlogin   rhlogin    RHCloud rhlogin (#{rhlogin})
-  -a|--app                  Target application to snapshot (required)
+  -a|--app                  Target application (required)
   -f|--files                File glob relative to app (default ./logs/*) (optional)
   -p|--password  password   RHLogin password (optional, will prompt)
   -d|--debug                Print Debug info

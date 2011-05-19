@@ -1,4 +1,7 @@
+#!/usr/bin/python
+
 import sys
+import subprocess
 from optparse import OptionParser
 import commands
 
@@ -8,7 +11,7 @@ port="5557"
 browser="firefox /usr/lib64/firefox-3.6/firefox"
 confirm_url="https://stg.openshift.redhat.com/app/email_confirm_express?key=sB4oQyylcO7pREpvnxQH34yeuz17l4cLberX1xUh&emailAddress=xtian%2B161%40redhat.com"
 toregister_userlist=['xtian+cc0@redhat.com']
-new_userlist=['xtian+c157@redhat.com','xtian+c158@redhat.com','xtian+c159@redhat.com','xtian+c160@redhat.com','xtian+c161@redhat.com']
+new_userlist=['libra-test+stage93915447@redhat.com', 'libra-test+stage76127332@redhat.com', 'libra-test+stage53991273@redhat.com', 'libra-test+stage41844479@redhat.com', 'libra-test+stage19243334@redhat.com']
 old_userlist=['xtian+1@redhat.com']
 
 def conf_file_parser(conf_file):
@@ -33,6 +36,23 @@ def conf_file_parser(conf_file):
 
 
 if __name__ == "__main__":
+    
+    cmd="./register_random  -p -d 2>debug1.log"
+    (ret,output)=commands.getstatusoutput(cmd)
+    print output
+    new_userlist = [output]
+    for i in range(3):
+        (ret,output)=commands.getstatusoutput(cmd)
+        print output
+        new_userlist = new_userlist + [output]
+
+    cmd="./register_random  -c -p -d 2>debug2.log"
+    (ret,output)=commands.getstatusoutput(cmd)
+    print output
+    new_userlist = new_userlist + [output.split("\n")[0]]
+    confirm_url = output.split("\n")[1]
+    
+    '''
     print "----------Default value---------"
     print "host=%s" %(host)
     print "url=%s" %(url)
@@ -43,7 +63,7 @@ if __name__ == "__main__":
     print "new_userlist=%s" %(new_userlist)
     print "old_userlist=%s" %(old_userlist)
     print ""
-
+    '''
     if len(sys.argv) < 1:
         print """usage: --host=<ip_address> --url=<url> --port=<port> --browser=<browser> --confirm_url=<confirm_url> --toregister_userlist=<"item1,item2,...,itemN"> --new_userlist=<"item1,item2,...,itemN"> --old_userlist=<"item1,item2,...,itemN">"""
         sys.exit(1)
@@ -112,9 +132,7 @@ old_userlist=%s
     f.close()
 
     my_conf = conf_file_parser(tmp_file_name)
-    my_log = my_conf + ".log"
-    cmd="sh run_scripts.sh %s 1>%s 2>&1" %(my_conf, my_log)
-    (ret,output)=commands.getstatusoutput(cmd)
-
+    ret=subprocess.call(["sh","run_scripts.sh", my_conf])
+    
     sys.exit(0)
 

@@ -13,11 +13,15 @@ class LoginController < ApplicationController
   end
 
   def show
-    @register_url = @register_url ? @register_url :  user_new_express_url
+    referrer = URI.parse(request.referer)
+    if referrer.host && request.host != referrer.host
+      Rails.logger.debug "Logging out user referred from: #{request.referer}"
+      clear_session
+    end
+    @register_url = @register_url ? @register_url : user_new_express_url
     if params[:redirectUrl]
       session[:login_workflow] = params[:redirectUrl]
     end
-    puts request.referer
     if !workflow && request.referer != '/'
       @redirectUrl = request.referer
     else
