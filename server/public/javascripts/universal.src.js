@@ -1,7 +1,7 @@
+
 // File: site-wide js functionality
 
-$(function(){
-  
+$(function(){  
   var navigation, menus, labels, menu_widths, outage_notification, outage_notification_height;
   
   /**
