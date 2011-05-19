@@ -84,11 +84,12 @@ module Libra
     end
     
     #
-    # Returns whether rhlogin with pw are registered
+    # Returns username if a valid user, nil if not found, and raises an exception if user hasn't requested/been granted access. 
     #
-    #   User.valid_registration?
+    #   User.login
     #
-    def self.valid_registration?(rhlogin, password)
+    def self.login(rhlogin, password)
+      username = nil
       if !Libra.c[:bypass_user_reg]
         raise UserException.new(107), "Invalid characters in RHlogin '#{rhlogin}' found", caller[0..5] if !Util.check_rhlogin(rhlogin)
         begin
@@ -114,12 +115,12 @@ module Libra
             json = JSON.parse(response.body)
             roles = json['roles']
             if roles.index('cloud_access_1')
-              return true
+              username = json['username']
             elsif roles.index('cloud_access_request_1')
               raise UserValidationException.new(146), "Found valid credentials but you haven't been granted access to Express yet", caller[0..5]
             else
               raise UserValidationException.new(147), "Found valid credentials but you haven't requested access to Express yet", caller[0..5]
-            end
+            end            
           else
             Libra.client_debug "Response code from authentication: #{response.code}"
             #Libra.client_debug "HTTP response from server is #{response.body}"
@@ -131,11 +132,9 @@ module Libra
           Libra.logger_debug e.backtrace
           raise UserValidationException.new(144), "Error communicating with user validation system.  If the problem persists please contact Red Hat support.", caller[0..5]
         end
-        false
-      elsif rhlogin == 'invalid_cred_user' #TODO remove fake user check before release
-        false
+        return username
       else
-        true
+        return rhlogin
       end
     end
     

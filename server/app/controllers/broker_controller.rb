@@ -71,8 +71,8 @@ class BrokerController < ApplicationController
     begin
       # Parse the incoming data
       data = parse_json_data(params['json_data'])
-      
-      if Libra::User.valid_registration?(data['rhlogin'], params['password'])
+      username = Libra::User.login(data['rhlogin'], params['password'])
+      if username
         action = data['action']
         app_name = data['app_name']
 
@@ -80,7 +80,7 @@ class BrokerController < ApplicationController
           render :json => generate_result_json("The supplied application name is it not allowed", 105), :status => :invalid and return
         end
         # Execute a framework cartridge
-        Libra.execute(data['cartridge'], action, app_name, data['rhlogin'])
+        Libra.execute(data['cartridge'], action, app_name, username)
         
         message = 'Success'
         if action == 'configure'
@@ -106,15 +106,16 @@ class BrokerController < ApplicationController
       data = parse_json_data(params['json_data'])
   
       # Check if user already exists
-      if Libra::User.valid_registration?(data['rhlogin'], params['password'])        
-        user = Libra::User.find(data['rhlogin'])
+      username = Libra::User.login(data['rhlogin'], params['password'])
+      if username
+        user = Libra::User.find(username)
         if user
           user_info = {
               :rhlogin => user.rhlogin,
               :uuid => user.uuid,
               :namespace => user.namespace,
               :ssh_key => user.ssh
-              }                
+              }
           app_info = {}
           
           user.apps.each do |key, app|
@@ -144,9 +145,9 @@ class BrokerController < ApplicationController
     begin      
       # Parse the incoming data
       data = parse_json_data(params['json_data'])
-                              
-      if Libra::User.valid_registration?(data['rhlogin'], params['password'])        
-        user = Libra::User.find(data['rhlogin'])
+      username = Libra::User.login(data['rhlogin'], params['password'])                         
+      if username
+        user = Libra::User.find(username)
         ns = data['namespace']
         if !Libra::Util.check_namespace(ns)
           render :json => generate_result_json("Invalid characters in namespace '#{ns}' found", 106), :status => :invalid and return
@@ -167,7 +168,7 @@ class BrokerController < ApplicationController
             render :json => generate_result_json("User already has a registered namespace.  To modify, use --alter", 97), :status => :conflict and return
           end
         else   
-          user = Libra::User.create(data['rhlogin'], data['ssh'], ns)
+          user = Libra::User.create(username, data['ssh'], ns)
         end
       else
         render_unauthorized and return
