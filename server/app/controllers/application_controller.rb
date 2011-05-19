@@ -89,7 +89,7 @@ class ApplicationController < ActionController::Base
       return
     elsif params[:controller] != 'login'
       # Clear out login workflow since they didn't login.  Otherwise might get pushed into a workflow on later login.
-      Rails.logger.debug "Clearing out login_workflow since user didn't actually login"
+      #Rails.logger.debug "Clearing out login_workflow since user didn't actually login"
       session[:login_workflow] = nil
       return
     else
