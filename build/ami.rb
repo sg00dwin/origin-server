@@ -478,7 +478,7 @@ END_OF_MESSAGE
           ssh("yum -y install sqlite*", 120)
           puts "Done"
 
-          print "Bounding Apache to pick up the change..."
+          print "Bouncing Apache to pick up the change..."
           ssh("service httpd restart")
           ssh("service libra-site restart")
           puts "Done"
