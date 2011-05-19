@@ -41,7 +41,7 @@ if __name__ == "__main__":
     (ret,output)=commands.getstatusoutput(cmd)
     print output
     new_userlist = [output]
-    for i in range(2):
+    for i in range(3):
         (ret,output)=commands.getstatusoutput(cmd)
         print output
         new_userlist = new_userlist + [output]
