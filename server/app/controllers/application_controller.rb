@@ -87,6 +87,11 @@ class ApplicationController < ActionController::Base
     if logged_in?      
       redirect_to_logout
       return
+    elsif params[:controller] != 'login'
+      # Clear out login workflow since they didn't login.  Otherwise might get pushed into a workflow on later login.
+      Rails.logger.debug "Clearing out login_workflow since user didn't actually login"
+      session[:login_workflow] = nil
+      return
     else
       return
     end unless rh_sso
@@ -113,7 +118,7 @@ class ApplicationController < ActionController::Base
           redirect_to new_terms_path and return
         else
           session[:login] = user.rhlogin
-        end
+        end      
       end
     end
   end
