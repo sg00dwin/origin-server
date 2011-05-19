@@ -94,7 +94,6 @@ form ul, form ol, form li {
   position: fixed;
   top: 0;
   left: 0;
-  background-color: #333;
   background-color: rgba(51, 51, 51, 0.75);
   z-index: 1500; }
 
@@ -109,8 +108,7 @@ form ul, form ol, form li {
   text-transform: uppercase;
   -moz-text-shadow: 1px 1px 1px white;
   -webkit-text-shadow: 1px 1px 1px white;
-  text-shadow: 1px 1px 1px white;
-  cursor: pointer; }
+  text-shadow: 1px 1px 1px white; }
 
 #head {
   padding-top: 20px; }

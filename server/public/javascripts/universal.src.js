@@ -21,6 +21,7 @@ $(function(){
     outage_notification.css({
       'position': 'absolute',
       'top': outage_notification_neg_height,
+      'left': '0',
       'z-index': '1000'
     });
     
@@ -78,9 +79,8 @@ $(function(){
       // Display notification in 
       // an initially intrusive way 
       // so it can't be missed!
-      outage_notification.css({'top': 0});
-      outage_toggle.text(hide_outage_txt);
-      outage_toggle_state = 'shown';
+      show_notification();
+
       
       //Set cookie
       $.cookie('outage_notification_displayed', 'true', {'expires': 14, 'path': '/app'});
