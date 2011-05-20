@@ -3,7 +3,7 @@
 
 Name: rhc
 Version: 0.70.1
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -149,7 +149,7 @@ to be the same host as the server.  It is the 'qpid-cpp-server' package.
 Summary: Provides php-5.3.2 support
 Group: Development/Languages
 Requires: rhc-node
-Requires: php = 5.3.2
+Requires: php >= 5.3.2
 Requires: mod_bw
 Requires: rubygem-builder
 Requires: php-pdo
@@ -176,7 +176,7 @@ Requires: rubygem-passenger-native
 Requires: rubygem-passenger-native-libs
 Requires: mod_passenger
 Requires: rubygem-bundler
-Requires: rubygem-sqlite3-ruby
+Requires: rubygem-sqlite3
 Requires: ruby-sqlite3
 Requires: ruby-mysql
 Requires: ruby-nokogiri
@@ -463,6 +463,9 @@ chmod 0666 %{_localstatedir}/www/libra/log/production.log
 %{_libexecdir}/li/cartridges/jbossas-7.0.0/
 
 %changelog
+* Fri May 20 2011 Mike McGrath <mmcgrath@redhat.com> 0.70.1-2
+- Rebuilding for RHEL6.1
+
 * Thu May 19 2011 Matt Hicks <mhicks@redhat.com> 0.70.1-1
 - Release candidate
 
