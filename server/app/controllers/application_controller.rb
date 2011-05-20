@@ -84,17 +84,24 @@ class ApplicationController < ActionController::Base
     rh_sso = cookies[:rh_sso]
     Rails.logger.debug "rh_sso cookie = '#{rh_sso}'"
 
-    if logged_in?      
-      redirect_to_logout
-      return
-    elsif params[:controller] != 'login'
-      # Clear out login workflow since they didn't login.  Otherwise might get pushed into a workflow on later login.
-      #Rails.logger.debug "Clearing out login_workflow since user didn't actually login"
-      session[:login_workflow] = nil
-      return
+    if rh_sso
+      # redirect to https if they have rh_sso but are on http:// for some reason
+      if request.protocol == 'http://'
+        redirect_to 'https://' + request.url['http://'.length, request.url.length]
+      end
     else
-      return
-    end unless rh_sso
+      if logged_in?
+        redirect_to_logout
+        return
+      elsif params[:controller] != 'login'
+        # Clear out login workflow since they didn't login.  Otherwise might get pushed into a workflow on later login.
+        #Rails.logger.debug "Clearing out login_workflow since user didn't actually login"
+        session[:login_workflow] = nil
+        return
+      else
+        return
+      end
+    end
 
     if logged_in?
       Rails.logger.debug "User has an authenticated session"
