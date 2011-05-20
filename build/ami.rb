@@ -11,7 +11,7 @@ begin
     #
     # Global definitions
     #
-    AMI = "ami-3c39c755"
+    AMI = "ami-6a897e03"
     TYPE = "m1.large"
     KEY_PAIR = "libra"
     ZONE = 'us-east-1d'
@@ -222,9 +222,9 @@ END_OF_MESSAGE
         release = yum_output.split("\n").collect do |line|
           line.split(":")[1].strip if line.start_with?("Release")
         end.compact[-1]
-
+        
         @version = "rhc-#{version}-#{release.split('.')[0]}"
-
+          
         puts "Current version: #{@version}"
       end
 
@@ -241,7 +241,7 @@ END_OF_MESSAGE
       end
       #p all_images
     end
-
+      
     # Grouping of common prereqs
     task :prereqs => [:creds, :version]
 
