@@ -28,6 +28,10 @@ Feature: cucumber tests for reported bugs
     And create a new php-5.3.2 app 'phphost'
     Then can get host name using php script
 
+  Scenario: (libra-qe) Bug 695586 - man page of express.conf is empty
+    Given the libra client tools
+    And the manpage of express.conf
+    Then the manpage of express.conf should not be empty
 
 
 

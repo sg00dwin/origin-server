@@ -49,7 +49,7 @@ Then /^come into an error when they are accessed$/ do
 end
 
 #bug 700941
-Then /^no README under misc and libs$/ do  
+Then /^no README under misc and libs$/ do
   File.exist?("#{@repo_path}/misc/README").should_not be_true
   File.exist?("#{@repo_path}/libs/README").should_not be_true
 end
@@ -82,5 +82,14 @@ Then /^can get host name using php script$/ do
   page.body.index(host_name).should > -1
 
 end
-  
+
+Given /^the manpage of express.conf$/ do
+    @man_express="/usr/share/man/man5/express.conf.5.gz"
+    File.exist?(@man_express).should be_true
+end
+
+Then /^the manpage of express.conf should not be empty$/ do
+    arr = File.open(@man_express).readlines
+    arr.size.should_not == 0
+end
 
