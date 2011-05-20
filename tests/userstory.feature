@@ -2,21 +2,21 @@
 Feature: Rally User Stories
 
 #US37 - TC21, TC29, TC3
-  Scenario: Destroy PHP Application through rhc-ctl-app by user(TC21)
+  Scenario: (libra-qe) Destroy PHP Application through rhc-ctl-app by user(TC21)
     Given the libra client tools
     When create a new php-5.3.2 app 'appphp0'
     Then the PHP app can be accessible
     When destroy this PHP app using rhc-ctl-app
     Then the PHP app should not be accessible
 
-  Scenario: libra app environment can be customized(TC29)
+  Scenario: (libra-qe) libra app environment can be customized(TC29)
     Given the libra client tools
     When create a new php-5.3.2 app 'appphp1'
     Then new app created under the generated git repo path
     When create app with -n option
     Then only create remote space and do not pull it locally
 
-  Scenario: Destroy PHP Application through rhc-ctl-app by user(TC3)
+  Scenario: (libra-qe) Destroy PHP Application through rhc-ctl-app by user(TC3)
     Given the libra client tools
     When create a new php-5.3.2 app 'appphp2'
     Then the PHP app can be accessible
@@ -32,10 +32,9 @@ Feature: Rally User Stories
     Then this PHP app is restarted
     When reload this PHP app
     Then this PHP app is reloaded
-    
-    
+
 #US362 - TC115
-  Scenario: negative testing of client command(TC115)
+  Scenario: (libra-qe) negative testing of client command(TC115)
     Given the libra client tools
     And create a domain
     When create an app without -a
@@ -49,7 +48,7 @@ Feature: Rally User Stories
     Then throw out an error application is required
 
 #US59 - TC18, TC52, TC54, TC55, TC56
-  Scenario: SELinux separation - Create app(TC18)
+  Scenario: (libra-qe) SELinux separation - Create app(TC18)
     Given the libra client tools
     When check SELinux status
     Then SELinux is running in enforcing mode
@@ -79,26 +78,22 @@ Feature: Rally User Stories
     Then no AVC denials
 
 
-    
 #US280 - TC19
-  Scenario: Log in cloud website
+  Scenario: (libra-qe) Log in cloud website
     Given a Mechanize agent and a registered user
     Then can access our cloud website
     Then can login our cloud website
 
 #US414 - Reduce number of apps per user to be 1
-  Scenario: the number of apps per user is 1
+  Scenario: (libra-qe) the number of apps per user is 1
     Given the libra controller configuration
     Then the number of apps per user is 1
 
 #US27
-  Scenario: per user app limit
+  Scenario: (libra-qe) per user app limit
     When create a new php-5.3.2 app 'appphp3'
     Then the PHP app can be accessible
     Then would fail to create the second 'appphp4' application for 'php-5.3.2'
 
 
 
-
-    
-    
