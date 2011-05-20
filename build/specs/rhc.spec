@@ -2,8 +2,8 @@
 %define gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 
 Name: rhc
-Version: 0.70.1
-Release: 2%{?dist}
+Version: 0.70.2
+Release: 1%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -463,8 +463,9 @@ chmod 0666 %{_localstatedir}/www/libra/log/production.log
 %{_libexecdir}/li/cartridges/jbossas-7.0.0/
 
 %changelog
-* Fri May 20 2011 Mike McGrath <mmcgrath@redhat.com> 0.70.1-2
+* Fri May 20 2011 Mike McGrath <mmcgrath@redhat.com> 0.70.2-1
 - Rebuilding for RHEL6.1
+- New version
 
 * Thu May 19 2011 Matt Hicks <mhicks@redhat.com> 0.70.1-1
 - Release candidate
