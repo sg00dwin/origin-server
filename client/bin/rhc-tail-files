@@ -65,7 +65,6 @@ end
 # Pull in configs from files
 libra_server = get_var('libra_server')
 debug = get_var('debug') == 'false' ? nil : get_var('debug')
-libra_domain = get_var('libra_domain')
 
 libra_kfile = "#{ENV['HOME']}/.ssh/libra_id_rsa"
 libra_kpfile = "#{ENV['HOME']}/.ssh/libra_id_rsa.pub"
@@ -109,13 +108,13 @@ file_glob = "#{framework}/#{opt['app']}/#{opt['files']}"
 puts "Attempting to tail files: #{file_glob}"
 puts "Use ctl + c to stop"
 puts 
-puts "ssh #{user_info['user_info']['uuid']}@#{app}-#{user_info['user_info']['namespace']}.#{libra_domain} 'tail #{file_glob}'" if debug
-system("ssh #{user_info['user_info']['uuid']}@#{app}-#{user_info['user_info']['namespace']}.#{libra_domain} 'tail #{file_glob}'")
+puts "ssh #{user_info['user_info']['uuid']}@#{app}-#{user_info['user_info']['namespace']}.#{user_info['user_info']['rhc_domain']} 'tail #{file_glob}'" if debug
+system("ssh #{user_info['user_info']['uuid']}@#{app}-#{user_info['user_info']['namespace']}.#{user_info['user_info']['rhc_domain']} 'tail #{file_glob}'")
 if $?.exitstatus != 0 and $?.exitstatus != 255
     puts
     puts "Error in trying to tail files.  You can tail manually by running:"
     puts
-    puts "ssh #{user_info['user_info']['uuid']}@#{app}-#{user_info['user_info']['namespace']}.#{libra_domain} 'tail #{file_glob}'`"
+    puts "ssh #{user_info['user_info']['uuid']}@#{app}-#{user_info['user_info']['namespace']}.#{user_info['user_info']['rhc_domain']} 'tail #{file_glob}'`"
     puts
     exit 254
 end

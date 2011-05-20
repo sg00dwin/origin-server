@@ -114,7 +114,8 @@ class BrokerController < ApplicationController
               :rhlogin => user.rhlogin,
               :uuid => user.uuid,
               :namespace => user.namespace,
-              :ssh_key => user.ssh
+              :ssh_key => user.ssh,
+              :rhc_domain => Libra.c[:libra_domain]
               }
           app_info = {}
           

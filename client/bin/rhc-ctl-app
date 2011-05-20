@@ -62,7 +62,6 @@ rescue Exception => e
 end
 
 # Pull in configs from files
-libra_domain = get_var('libra_domain')
 libra_server = get_var('libra_server')
 debug = get_var('debug') == 'false' ? nil : get_var('debug')
 ssh_config = "#{ENV['HOME']}/.ssh/config"
@@ -123,7 +122,7 @@ if !opt["bypass"] and opt["command"] == "deconfigure"
 !!!! WARNING !!!! WARNING !!!! WARNING !!!!
 You are about to destroy the #{opt['app']} application.
 
-This is NOT reversable, all remote data for this application will be removed.
+This is NOT reversible, all remote data for this application will be removed.
 WARNING
 
     print "Do you want to destroy this application (y/n): "

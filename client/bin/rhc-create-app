@@ -67,7 +67,6 @@ rescue Exception => e
 end
 
 # Pull in configs from files
-libra_domain = get_var('libra_domain')
 libra_server = get_var('libra_server')
 debug = get_var('debug') == 'false' ? nil : get_var('debug')
 
@@ -218,14 +217,14 @@ puts "Checking ~/.ssh/config"
 
 user_info = RHC::get_user_info(libra_server, opt['rhlogin'], password, @http, debug, false)
 
-my_url = "#{opt['app']}-#{user_info['user_info']['namespace']}.#{libra_domain}"
+my_url = "#{opt['app']}-#{user_info['user_info']['namespace']}.#{user_info['user_info']['rhc_domain']}"
 
 found = false
 
 begin
     File.open(ssh_config, "r") do |sline|
         while(line = sline.gets)
-            if line.to_s.start_with? "Host *.#{libra_domain}"
+            if line.to_s.start_with? "Host *.#{user_info['user_info']['rhc_domain']}"
                 found = true
                 break
             end
@@ -242,15 +241,15 @@ rescue Errno::ENOENT
     puts "Could not find #{ssh_config}.  This is ok, continuing"
 end
 if found
-    puts "Found #{libra_domain} in ~/.ssh/config... No need to adjust"
+    puts "Found #{user_info['user_info']['rhc_domain']} in ~/.ssh/config... No need to adjust"
 else
-    puts "    Adding #{libra_domain} to ~/.ssh/config"
+    puts "    Adding #{user_info['user_info']['rhc_domain']} to ~/.ssh/config"
     begin
         f = File.open(ssh_config, "a")
         f.puts <<SSH
 
 # Added by rhc-create-app on #{`date`}
-Host *.#{libra_domain}
+Host *.#{user_info['user_info']['rhc_domain']}
     IdentityFile ~/.ssh/libra_id_rsa
     VerifyHostKeyDNS yes
     StrictHostKeyChecking no
@@ -308,7 +307,7 @@ attempt = 0
 # Pull new repo locally
 #
 
-git_url = "ssh://#{uuid}@#{opt['app']}-#{user_info['user_info']['namespace']}.#{libra_domain}/~/git/#{opt['app']}.git/"
+git_url = "ssh://#{uuid}@#{opt['app']}-#{user_info['user_info']['namespace']}.#{user_info['user_info']['rhc_domain']}/~/git/#{opt['app']}.git/"
 
 unless opt['nogit']
     puts "Pulling new repo down"

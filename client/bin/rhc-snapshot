@@ -65,7 +65,6 @@ end
 # Pull in configs from files
 libra_server = get_var('libra_server')
 debug = get_var('debug') == 'false' ? nil : get_var('debug')
-libra_domain = get_var('libra_domain')
 
 libra_kfile = "#{ENV['HOME']}/.ssh/libra_id_rsa"
 libra_kpfile = "#{ENV['HOME']}/.ssh/libra_id_rsa.pub"
@@ -106,13 +105,13 @@ end
 
 puts "Pulling down a snapshot to #{opt['save']}"
 puts 
-puts "ssh #{user_info['user_info']['uuid']}@#{app}-#{user_info['user_info']['namespace']}.#{libra_domain} 'snapshot #{framework} #{app}' > #{opt['save']}" if debug
-git_pull = `ssh #{user_info['user_info']['uuid']}@#{app}-#{user_info['user_info']['namespace']}.#{libra_domain} 'snapshot #{framework} #{app}' > #{opt['save']}`
+puts "ssh #{user_info['user_info']['uuid']}@#{app}-#{user_info['user_info']['namespace']}.#{user_info['user_info']['rhc_domain']} 'snapshot #{framework} #{app}' > #{opt['save']}" if debug
+git_pull = `ssh #{user_info['user_info']['uuid']}@#{app}-#{user_info['user_info']['namespace']}.#{user_info['user_info']['rhc_domain']} 'snapshot #{framework} #{app}' > #{opt['save']}`
 if $?.exitstatus != 0
     puts
     puts "Error in trying to save snapshot.  You can try to save manually by running:"
     puts
-    puts "ssh #{user_info['user_info']['uuid']}@#{app}-#{user_info['user_info']['namespace']}.#{libra_domain} 'snapshot #{framework} #{app}' > #{opt['save']}"
+    puts "ssh #{user_info['user_info']['uuid']}@#{app}-#{user_info['user_info']['namespace']}.#{user_info['user_info']['rhc_domain']} 'snapshot #{framework} #{app}' > #{opt['save']}"
     puts
     exit 254
 end
