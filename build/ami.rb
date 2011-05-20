@@ -195,37 +195,53 @@ END_OF_MESSAGE
 
     # Ensure we can parse the current version
     task :version do
-      yum_output = `yum info rhc`
-      p = $?
-
-      if p.exitstatus != 0
-        puts "WARNING - yum error getting rhc info, cleaning metadata and trying again"
-        `yum clean metadata`
+      if ENV['version'] then
+        @version = ENV['version']
+        puts "Using version: #{@version}"
+      else
         yum_output = `yum info rhc`
         p = $?
+
         if p.exitstatus != 0
-          puts "EXITING - Error cleaning yum state"
-          exit 0
+          puts "WARNING - yum error getting rhc info, cleaning metadata and trying again"
+          `yum clean metadata`
+          yum_output = `yum info rhc`
+          p = $?
+          if p.exitstatus != 0
+            puts "EXITING - Error cleaning yum state"
+            exit 0
+          end
         end
+
+        # Process the yum output to get a version
+        version = yum_output.split("\n").collect do |line|
+          line.split(":")[1].strip if line.start_with?("Version")
+        end.compact[-1]
+
+        # Process the yum output to get a release
+        release = yum_output.split("\n").collect do |line|
+          line.split(":")[1].strip if line.start_with?("Release")
+        end.compact[-1]
+        
+        @version = "rhc-#{version}-#{release.split('.')[0]}"
+          
+        puts "Current version: #{@version}"
       end
-
-      # Process the yum output to get a version
-      version = yum_output.split("\n").collect do |line|
-        line.split(":")[1].strip if line.start_with?("Version")
-      end.compact[-1]
-
-      # Process the yum output to get a release
-      release = yum_output.split("\n").collect do |line|
-        line.split(":")[1].strip if line.start_with?("Release")
-      end.compact[-1]
-
-      @version = "rhc-#{version}-#{release.split('.')[0]}"
 
       raise "Invalid version format" unless @version =~ VERSION_REGEX
 
-      puts "Current version: #{@version}"
     end
 
+    desc "List the available registered AMIs"
+    task :list => [:creds] do
+      all_images = conn.describe_images_by_owner
+      puts "name\t ami_id\t state\n-------------------------"
+      all_images.collect do |i|
+        puts "#{i[:aws_name]}\t #{i[:aws_id]}\t #{i[:aws_state]}"
+      end
+      #p all_images
+    end
+      
     # Grouping of common prereqs
     task :prereqs => [:creds, :version]
 
@@ -386,7 +402,8 @@ END_OF_MESSAGE
       # Make sure that an AMI is available to verify
       task :prereqs => ["ami:prereqs"] do
         # See if the image exists and is available
-        images = conn.describe_images_by_owner.collect do |i|
+        all_images = conn.describe_images_by_owner
+        images = all_images.collect do |i|
           if i[:aws_name] and i[:aws_name].start_with?(@version)
             @ami = i[:aws_id]
             i[:aws_state]
@@ -452,8 +469,8 @@ END_OF_MESSAGE
         puts "Done (#{@dns})"
       end
 
-      desc "Run verification tests on the current version"
-      task :start => [:find] do
+      desc "Prepare verification environment"
+      task :prepare => [:find] do
         print "Updating verifier tag..."
         conn.create_tag(@instance, 'Name', PREFIX + "verifier-#{@version}")
         puts "Done"
@@ -511,6 +528,14 @@ END_OF_MESSAGE
             fail "ERROR - RHC node not accepted (exit: #{accepted.exitstatus})"
           end
 
+        end
+
+      end
+
+      desc "Run verification tests on the current version"
+      task :start => [:prepare] do
+
+        begin
           # Run verification tests
           print "Running verification tests..."
           ssh("cucumber --tags @verify --format junit -o /tmp/rhc/junit/ li/tests/", 3600)
