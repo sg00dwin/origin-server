@@ -11,11 +11,14 @@
 
       /Promo banners
       %li.slide
-        = image_tag "/app/images/promo_banner_free_espresso.png"
-          
+        = link_to 'http://gluecon.com/2011/', :target => '_blank' do
+          = image_tag "/app/images/promo_banner_gluecon.png",
+            :alt => 'Drop by the OpenShift booth at GlueCon 2011'
+      
       %li.slide
-        = image_tag "/app/images/promo_banner_win_xoom.png"
-
+        = link_to 'http://www.10gen.com/events', :target => '_blank' do
+          = image_tag "/app/images/promo_banner_mongodb.png",
+            :alt => 'Cruise on by the OpenShift booth at MongoSF and MongoNYC 2011'
 
     /Slide show navigation
     %ul.navigation
@@ -48,7 +51,9 @@
 
     .clear
     
-    = image_tag "/app/images/PaaS.png", :id => 'front_image'
+    = image_tag "/app/images/PaaS.png", 
+      :id => 'front_image',
+      :alt => 'OpenShift takes care of management, scaling, security and configuration, so that developers can focus on, well, development.'
     
     .clear
 
@@ -58,8 +63,9 @@
     /Express box
     .express.promo.grid_8
       %h3 Express
-      = link_to express_path, :class => 'img_link' do
-        = image_tag '/app/images/gearshift_express_dev_preview.png'
+      = link_to express_path do
+        = image_tag '/app/images/gearshift_express_dev_preview.png',
+          :alt => 'Simple, automatic gearshift'
       
       .description.express
         %ul
@@ -72,8 +78,9 @@
     /Flex box
     .flex.promo.grid_8
       %h3 Flex
-      = link_to flex_path, :class => 'img_link' do
-        = image_tag '/app/images/gearshift_flex_dev_preview.png'
+      = link_to flex_path do
+        = image_tag '/app/images/gearshift_flex_dev_preview.png',
+          :alt => 'Automatic gearshift with a few more options'
       
       .description.flex
         %ul
@@ -87,8 +94,9 @@
     /Power box
     .power.promo.grid_8
       %h3 Power
-      = link_to power_path, :class => 'img_link' do
-        = image_tag '/app/images/gearshift_power_coming_soon.png'
+      = link_to power_path do
+        = image_tag '/app/images/gearshift_power_coming_soon.png',
+          :alt => 'Powerful, dual stick gearshift with lots of options'
       
       .description.power
         %ul

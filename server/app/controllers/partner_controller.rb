@@ -21,9 +21,15 @@ class PartnerController < ApplicationController
   def join; end
   
   def get_partners
-    file = File.open(@@data, "rb")
-    contents = file.read
-    partners = JSON.parse(contents)
+    file = File.open(@@data, "r")
+    partners = nil
+    begin
+      contents = file.read
+      partners = JSON.parse(contents)
+    ensure
+      file.close
+    end
+    return partners
   end
   
   def partners_array

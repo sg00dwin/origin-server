@@ -82,72 +82,6 @@ module Libra
     end
 
     #
-    # Add a DNS entry for new app
-    #
-    def self.nsupdate_add(application, namespace, public_ip, sshfp)
-      host = "#{application}-#{namespace}"
-      nsupdate_input_template = <<EOF
-"server #{Libra.c[:resolver]}
-zone #{Libra.c[:libra_domain]}
-update delete #{host}.#{Libra.c[:libra_domain]}
-update add #{host}.#{Libra.c[:libra_domain]} 60 A #{public_ip}
-update add #{host}.#{Libra.c[:libra_domain]} 60 SSHFP 1 1 #{sshfp}
-send"
-EOF
-
-      execute_nsupdate(nsupdate_input_template)
-    end
-
-    #
-    # Remove a DNS entry for a deleted app
-    #
-    def self.nsupdate_del(application, namespace, public_ip)
-      host = "#{application}-#{namespace}"
-      nsupdate_input_template = <<EOF
-"server #{Libra.c[:resolver]}
-zone #{Libra.c[:libra_domain]}
-update delete #{host}.#{Libra.c[:libra_domain]}
-send"
-EOF
-
-      execute_nsupdate(nsupdate_input_template)
-    end
-
-    #
-    # Add a DNS txt entry for new namespace
-    #
-    def self.nsupdate_add_txt(namespace)
-      nsupdate_input_template = <<EOF
-"server #{Libra.c[:resolver]}
-zone #{Libra.c[:libra_domain]}
-update delete #{namespace}.#{Libra.c[:libra_domain]}
-update add #{namespace}.#{Libra.c[:libra_domain]} 60 TXT 'Text record for #{namespace}'
-send"
-EOF
-      execute_nsupdate(nsupdate_input_template)
-    end
-
-    #
-    # Remove a DNS txt entry for new namespace
-    #
-    def self.nsupdate_delete_txt(namespace)
-      nsupdate_input_template = <<EOF
-"server #{Libra.c[:resolver]}
-zone #{Libra.c[:libra_domain]}
-update delete #{namespace}.#{Libra.c[:libra_domain]} TXT
-send"
-EOF
-      execute_nsupdate(nsupdate_input_template)
-    end
-
-    def self.execute_nsupdate(nsupdate_input_template)
-      nsupdate_string = eval nsupdate_input_template
-      Libra.logger_debug "DEBUG: server.rb:self.execute_nsupdate nsupdate_input_template: #{nsupdate_input_template}" if Libra.c[:rpc_opts][:verbose]
-
-      IO.popen("/usr/bin/nsupdate -L0 -v -y '#{Libra.c[:secret]}'", 'w'){ |io| io.puts nsupdate_string }
-    end
-
-    #
     # Get a DNS txt entry
     #
     def self.has_dns_txt?(namespace)
@@ -200,6 +134,22 @@ EOF
         Libra.logger_debug "DEBUG: Response body: #{resp.body}"
       end
       raise DNSException.new(145), "Error communicating with DNS system.  If the problem persists please contact Red Hat support.", caller[0..5]
+    end
+    
+    def self.delete_app_dns_entries(app_name, namespace)
+      auth_token = dyn_login
+      dyn_delete_sshfp_record(app_name, namespace, auth_token)
+      dyn_delete_a_record(app_name, namespace, auth_token)
+      dyn_publish(auth_token)
+      dyn_logout(auth_token)
+    end
+    
+    def self.create_app_dns_entries(app_name, namespace, public_ip, sshfp)
+      auth_token = dyn_login
+      dyn_create_a_record(app_name, namespace, public_ip, sshfp, auth_token)
+      dyn_create_sshfp_record(app_name, namespace, sshfp, auth_token)
+      dyn_publish(auth_token)
+      dyn_logout(auth_token)
     end
 
     def self.dyn_logout(auth_token)
@@ -259,10 +209,15 @@ EOF
       resp, data = dyn_put(path, publish_data, auth_token)
     end
 
-    def self.dyn_has_txt_record?(namespace, auth_token)
+    def self.dyn_has_txt_record?(namespace, auth_token, raise_exception_on_exists=false)
       fqdn = "#{namespace}.#{Libra.c[:libra_domain]}"
-      path = "TXTRecord/#{Libra.c[:libra_zone]}/#{fqdn}/"
-      return dyn_has?(path, auth_token)
+      path = "TXTRecord/#{Libra.c[:libra_zone]}/#{fqdn}/"      
+      dyn_has = dyn_has?(path, auth_token)
+      if dyn_has && raise_exception_on_exists
+        raise UserException.new(103), "A namespace with name '#{namespace}' already exists", caller[0..5]
+      else
+        return dyn_has
+      end
     end
 
     def self.dyn_has_a_record?(application, namespace, auth_token)
@@ -490,7 +445,7 @@ EOF
     def self.execute_many(cartridge, action, args, fact, value, operator="==")
         options = Helper.rpc_options
         options[:filter]['fact'] = [{:value=>value, :fact=>fact, :operator=>operator}]
-        p options if Libra.c[:rpc_opts][:verbose]
+        #Libra.logger_debug "DEBUG: Options for cartridge: #{cartridge} action: #{action} args: #{args}: #{options.pretty_inspect}" if Libra.c[:rpc_opts][:verbose]
         Helper.rpc_exec('libra') do |client|
           cartridge_do(client, cartridge, action, args)
         end
@@ -502,10 +457,20 @@ EOF
                           :args => args) do |response|
         return_code = response[:body][:data][:exitcode]
         output = response[:body][:data][:output]
-
-        Libra.client_debug "DEBUG: Cartridge return code: #{return_code}" if Libra.c[:rpc_opts][:verbose]
-        Libra.client_debug "DEBUG: Cartridge output: #{output}" if Libra.c[:rpc_opts][:verbose]
-        raise CartridgeException.new(141), output, caller[0..5] if return_code != 0
+        if return_code != 0
+          Libra.logger_debug "DEBUG: Non-zero exit code detected for cartridge: #{cartridge} action: #{action} args: #{args} with response:"
+          Libra.logger_debug response.pretty_inspect
+          if Libra.c[:rpc_opts][:verbose]
+            Libra.client_debug "Cartridge return code: #{return_code}"
+            Libra.client_debug "Cartridge node: #{response[:senderid]}"
+            Libra.client_debug "Cartridge output: #{output}"
+          end
+          raise CartridgeException.new(141), output, caller[0..5]
+        else
+          if output && !output.empty?
+            Libra.client_debug "Cartridge output: #{output}" if Libra.c[:rpc_opts][:verbose]
+          end
+        end
       end
     end
 

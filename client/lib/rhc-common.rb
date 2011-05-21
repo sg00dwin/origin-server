@@ -39,8 +39,10 @@ module RHC
 
   TYPES = {
     'php-5.3.2' => :php,
+    'perl-5.10.1' => :perl,
     'rack-1.1.0' => :rack,
-    'wsgi-3.2.1' => :wsgi
+    'wsgi-3.2.1' => :wsgi,
+    'jbossas-7.0.0' => :jbossas
   }
 
   def self.delay(time, adj=Defaultdelay)
@@ -222,6 +224,16 @@ module RHC
     end
     exit exit_code.nil? ? 666 : exit_code
   end
+  
+  def self.print_response_messages(json_resp)    
+    messages = json_resp['messages']
+    if (messages && !messages.empty?)
+      puts ''
+      puts 'MESSAGES:'
+      puts messages
+      puts ''
+    end
+  end
 
   def self.print_response_success(response, debug, always_print_result=false)
     if debug
@@ -229,11 +241,15 @@ module RHC
       print_json_body(response, debug)
     elsif always_print_result
       print_json_body(response, debug)
+    else
+      json_resp = JSON.parse(response.body)
+      print_response_messages(json_resp)
     end
   end
 
   def self.print_json_body(response, debug)
-    json_resp = JSON.parse(response.body);
+    json_resp = JSON.parse(response.body)
+    print_response_messages(json_resp)
     exit_code = json_resp['exit_code']
     if debug
       if json_resp['debug']
@@ -244,7 +260,7 @@ module RHC
         puts "Exit Code: #{exit_code}"
         if (json_resp.length > 3)
           json_resp.each do |k,v|
-            if (k != 'results' && k != 'debug' && k != 'exit_code')
+            if (k != 'result' && k != 'debug' && k != 'exit_code' && k != 'messages')
               puts "#{k.to_s}: #{v.to_s}"
             end
           end
@@ -283,14 +299,14 @@ _home_conf = File.expand_path('~/.openshift')
 @config_path = File.exists?(_linux_cfg) ? _linux_cfg : _gem_cfg
 
 FileUtils.mkdir_p _home_conf unless File.directory?(_home_conf)
-if !File.exists?(File.expand_path(@local_config_path)) && File.exists?("#{ENV['HOME']}/.li/libra.conf")
-    print "Moving old-style config file..."
-    FileUtils.cp "#{ENV['HOME']}/.li/libra.conf", File.expand_path(@local_config_path)
-    FileUtils.mv "#{ENV['HOME']}/.li/libra.conf", "#{ENV['HOME']}/.li/libra.conf.deprecated"
-    puts " Done."
- end
-
-FileUtils.touch File.expand_path(@local_config_path)
+local_config_path = File.expand_path(@local_config_path)
+if !File.exists? local_config_path
+  FileUtils.touch local_config_path
+  puts ""
+  puts "Created local config file: " + local_config_path
+  puts "express.conf contains user configuration and can be transferred across clients."  
+  puts ""
+end
 
 begin
   @global_config = ParseConfig.new(@config_path)
@@ -311,7 +327,10 @@ else
 end
 
 #
-# Check for local var in ~/.li/libra.conf use it, else use $GEM/../conf/libra.conf
+# Check for local var in 
+#   1) ~/.openshift/express.conf
+#   2) /etc/openshift/express.conf
+#   3) $GEM/../conf/express.conf
 #
 def get_var(var)
   @local_config.get_value(var) ? @local_config.get_value(var) : @global_config.get_value(var)

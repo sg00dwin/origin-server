@@ -17,7 +17,7 @@ JSON String:
     'namespace': 'string',
     'rhlogin': 'login',
     'ssh': 'the key portion of an rsa key (excluding ssh-rsa and coment)',
-    'alter': 'true - An optional flag to alter ssh key after creation',
+    'alter': 'true - An optional flag to alter namespace and/or ssh key after creation',
     'debug': 'true - An optional flag to get debug information returned'
 }
 
@@ -41,7 +41,7 @@ Action types include:
     status: Get basic status information about an application
 
 Submit via POST to: {openshift.express.server}/app/broker/cartridge
-    Encode josn string as http variable: 'json_data',
+    Encode json string as http variable: 'json_data',
     Include your password as http variable 'password'
 
 JSON String:

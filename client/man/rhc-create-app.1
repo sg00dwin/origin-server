@@ -53,7 +53,7 @@ Name of application to create
 .IP "-r|--repo repo_path"
 Local repo to create (must be empty)
 .IP "-t|--type framework_type"
-Framework type to create.  Currently php-5.3.2, wsgi-3.2.1, rack-1.1.0 and jbossas-7.0.0 are supported
+Framework type to create.  Currently php-5.3.2, wsgi-3.2.1, and rack-1.1.0 are supported
 .IP -d|--debug
 Enable debugging / verbose output
 .IP -h|--help
@@ -61,15 +61,15 @@ Display help menu
 .IP -n|--nogit
 Do not 'git pull' default git repo from server
 .SH FILES
+.I <ruby_gem_dir>/gems/rhc-<version>/conf/express.conf
+.RS
+The RubyGem system wide configuration file. See
+.BR express.conf (5)
+for further details.
+.RE
 .I /etc/openshift/express.conf
 .RS
 The system wide configuration file. See
-.BR express.conf (5)
-for further details
-.RE
-.I ./express.conf
-.RS
-Local configuration file. See
 .BR express.conf (5)
 for further details.
 .RE
@@ -95,7 +95,8 @@ for more information
 .RE
 .SH BUGS
 Please contact the Red Hat Openshift team.
-TODO: ADD EXTERNAL BUG TRACKER OR OPENSHIFT TEAM CONTACT EMAIL
+Forums: http://www.redhat.com/openshift/
+IRC: #openshift on irc.freenode.net
 .SH AUTHOR
 Mike McGrath <mmcgrath@redhat.com>, Jim Jagielski <jimjag@redhat.com>
 .SH "SEE ALSO"
@@ -103,4 +104,5 @@ Mike McGrath <mmcgrath@redhat.com>, Jim Jagielski <jimjag@redhat.com>
 .BR rhc-ctl-app (1),
 .BR rhc-snapshot(1),
 .BR rhc-user-info(1),
+.BR rhc-tail-files (1),
 .BR express.conf (5)

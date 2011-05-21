@@ -16,6 +16,15 @@ module Libra
       puts str
     end
   end
+  
+  def self.client_message(str)
+    messageIO = Thread.current[:messageIO]
+    if messageIO
+      messageIO.puts str
+    else
+      puts str
+    end
+  end
 
   def self.client_result(str)
     resultIO = Thread.current[:resultIO]
@@ -65,17 +74,8 @@ module Libra
 
               if action == 'deconfigure'
                 # update DNS
-                public_ip = server.get_fact_direct('public_ip')
-                Libra.logger_debug "DEBUG: Public ip being deconfigured '#{public_ip}' from namespace '#{user.namespace}'"
-                if Libra.c[:use_dynect_dns]
-                  auth_token = Server.dyn_login
-                  Server.dyn_delete_sshfp_record(app_name, user.namespace, auth_token)
-                  Server.dyn_delete_a_record(app_name, user.namespace, auth_token)                  
-                  Server.dyn_publish(auth_token)
-                  Server.dyn_logout(auth_token)
-                else
-                  Server.nsupdate_del(app_name, user.namespace, public_ip)
-                end
+                Libra.logger_debug "DEBUG: Public ip being deconfigured from namespace '#{user.namespace}'"
+                Server.delete_app_dns_entries(app_name, user.namespace)
               end
             else
               if action == 'deconfigure'
@@ -121,15 +121,7 @@ module Libra
         public_ip = server.get_fact_direct('public_ip')
         Libra.logger_debug "DEBUG: Public ip being configured '#{public_ip}' to namespace '#{user.namespace}'"
         sshfp = server.get_fact_direct('sshfp').split[-1]
-        if Libra.c[:use_dynect_dns]
-          auth_token = Server.dyn_login
-          Server.dyn_create_a_record(app_name, user.namespace, public_ip, sshfp, auth_token)
-          Server.dyn_create_sshfp_record(app_name, user.namespace, sshfp, auth_token)
-          Server.dyn_publish(auth_token)
-          Server.dyn_logout(auth_token)
-        else
-          Server.nsupdate_add(app_name, user.namespace, public_ip, sshfp)
-        end
+        Server.create_app_dns_entries(app_name, user.namespace, public_ip, sshfp)
       rescue Exception => e
         begin
           Libra.logger_debug "DEBUG: Failed to register dns entry for app '#{app_name}' and user '#{user.rhlogin}' on node '#{server.name}'"
@@ -143,7 +135,7 @@ module Libra
       begin
         Libra.logger_debug "DEBUG: Failed to create application '#{app_name}' for user '#{user.rhlogin}' on node '#{server.name}'"
         Libra.client_debug "Failed to create application: '#{app_name}'"
-        user.delete_app(app_name)
+        server_execute_direct(framework, 'deconfigure', app_name, user, server)        
       ensure
         raise
       end
@@ -164,8 +156,8 @@ module Libra
           Libra.client_result "Application '#{app_name}' is either stopped or inaccessible"
         end
       elsif exitcode != 0
-        Libra.client_debug exitcode
-        Libra.client_debug output
+        Libra.client_debug "Cartridge return code: " + exitcode.to_s
+        Libra.client_debug "Cartridge output: " + output
         Libra.logger_debug "DEBUG: execute_direct results: " + output
         raise NodeException.new(143), "Node execution failure (invalid exit code from execute direct).  If the problem persists please contact Red Hat support.", caller[0..5]
       end

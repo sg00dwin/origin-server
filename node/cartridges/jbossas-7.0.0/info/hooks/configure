@@ -62,11 +62,28 @@ then
 fi
 
 function print_help {
-    echo "Usage: $0 app-name username uuid"
+    echo "Usage: $0 app-name namespace uuid"
 
     echo "$0 $@" | logger -p local0.notice -t libra_jboss_create
     exit 1
 }
+
+[ $# -eq 3 ] || print_help
+
+namespace=`basename $2`
+application="$1"
+uuid=$3
+
+CUSTOMER_HOME="$libra_dir/$uuid/"
+# The location of the application jboss setup
+APP_DIR="$CUSTOMER_HOME/jbossas/$application"
+[ -d "$APP_DIR" ] && error "${application}.  Please destroy then recreate, or pick a new name" 132
+
+# Redirect the configure script output for debugging
+TMP_DIR="$APP_DIR"/${jboss_version}/standalone/tmp
+mkdir -p ${TMP_DIR}
+logfile=${TMP_DIR}/jbossas7-configure-$$.log
+exec > $logfile 2>&1
 
 function error {
     echo "$1" 1>&2
@@ -119,12 +136,11 @@ function create_repo {
 
     GIT_DIR=$CUSTOMER_HOME/git/$application.git
     mkdir -p "$CUSTOMER_HOME/git"
-    cp -ad /usr/libexec/li/cartridges/${jboss_version}/info/data/default.git $GIT_DIR
+    cp -ad /usr/libexec/li/cartridges/${jboss_version}/info/data/git_template.git $GIT_DIR
     echo "jbossas 7.x application '$application'" > $GIT_DIR/description
     cat <<__EOF__ > $CUSTOMER_HOME/git/$application.git/hooks/post-receive
 rm -rf $APP_DIR/repo/*
-cd $APP_DIR/repo
-git clone $CUSTOMER_HOME/git/$application.git HEAD
+git archive --format=tar HEAD | (cd $APP_DIR/repo && tar xf -)
 # Reload httpd here maybe?
 __EOF__
 
@@ -143,17 +159,6 @@ do
         ;;
     esac
 done
-
-
-[ $# -eq 3 ] || print_help
-
-namespace=`basename $2`
-application="$1"
-uuid=$3
-
-CUSTOMER_HOME="$libra_dir/$uuid/"
-# The location of the application jboss setup
-APP_DIR="$CUSTOMER_HOME/jbossas/$application"
 
 unobfuscate $uuid $namespace
 
@@ -183,16 +188,16 @@ IP=$(find_open_ip $uid $uuid)
 # Create jbossas7 base for application, every app gets its own jboss instance
 #
 
-[ -d "$APP_DIR" ] && error "${application}.  Please destroy then recreate, or pick a new name" 132
-
 mkdir -p "$APP_DIR"
 pushd "$APP_DIR" > /dev/null
 mkdir -p repo run ${jboss_version}/{bin,standalone/configuration}
 JBOSS_BIN_DIR="$APP_DIR"/${jboss_version}/bin
 
 cd ${jboss_version}
+# Create a link to the jboss server modules jar and modules directory
 ln -s ${jboss_home}/jboss-modules.jar
 ln -s ${jboss_home}/modules
+# Create the 
 ln -s "$APP_DIR"/repo/deployments "$APP_DIR"/${jboss_version}/standalone
 ls -l "$APP_DIR"/${jboss_version}/standalone/deployments
 
@@ -206,17 +211,14 @@ fi
 if [ -f /usr/libexec/li/cartridges/${jboss_version}/info/configuration/logging.properties ]
 then
     cp /usr/libexec/li/cartridges/${jboss_version}/info/configuration/logging.properties "$APP_DIR"/${jboss_version}/standalone/configuration
-else
-    echo "node_data.conf not found.  Cannot continue" 1>&2
-    exit 3
 fi
 ls -l "$APP_DIR"/${jboss_version}/standalone/configuration
 
 # Get the standalone.sh script
 cp ${jboss_home}/bin/standalone.sh "$APP_DIR"/${jboss_version}/bin
 # Update the standalone.xml for the application IP
-sed 's/loopback-address value="127.0.0.1"/loopback-address value="'$IP'"/g' "$APP_DIR"/${jboss_version}/standalone/configuration/standalone.xml >/tmp/standalone.xml
-cp /tmp/standalone.xml "$APP_DIR"/${jboss_version}/standalone/configuration
+sed 's/loopback-address value="127.*"/loopback-address value="'$IP'"/g' "$APP_DIR"/${jboss_version}/standalone/configuration/standalone.xml >${TMP_DIR}/standalone.xml
+cp ${TMP_DIR}/standalone.xml "$APP_DIR"/${jboss_version}/standalone/configuration
 popd > /dev/null
 
 # Build the standalone.conf file
@@ -238,10 +240,7 @@ EOF
 #
 # Populate repo dir
 #
-GIT_DIR="$GIT_DIR" git archive -o ${APP_DIR}/repo/x.tar HEAD
-cd "${APP_DIR}/repo"
-tar xf x.tar
-rm x.tar
+GIT_DIR="$GIT_DIR" git archive --format=tar HEAD | (cd "${APP_DIR}/repo" && tar xf -)
 
 #
 # Create simple application start / stop script
@@ -249,6 +248,8 @@ rm x.tar
 echo "Creating ${application}_ctl.sh..."
 cat <<__EOF__ > "$APP_DIR/${application}_ctl.sh"
 #/bin/bash
+
+exec > $TMP_DIR/jbossas7-${application}_ctl-$$.log 2>&1
 
 if ! [ \$# -eq 1 ]
 then
@@ -284,7 +285,7 @@ case "\$1" in
             echo -n " - Application is disabled" 1>&2
             exit 0
         else
-            runcon -t libra_t -l s0:$c_val $JBOSS_BIN_DIR/standalone.sh 1>&2 >/tmp/${application}.log &
+            runcon -t libra_t -l s0:$c_val $JBOSS_BIN_DIR/standalone.sh 1>&2 >${TMP_DIR}/${application}.log &
             PROCESS_ID=\$!
             echo \$PROCESS_ID > \$JBOSS_PID_FILE
         fi
@@ -300,8 +301,8 @@ case "\$1" in
         fi
     ;;
     restart|graceful)
-        stop
-        start
+        $APP_DIR/${application}_ctl.sh stop
+        $APP_DIR/${application}_ctl.sh start
     ;;
     status)
         tail "$APP_DIR"/${jboss_version}/standalone/log/server.log
@@ -318,6 +319,7 @@ chown $user_id.$group_id -R $APP_DIR || error "Failed to chown new application s
 chown root.root -R "$APP_DIR/${application}_ctl.sh"
 chown $user_id.$group_id -R "$APP_DIR/${jboss_version}/standalone"
 chcon -t libra_var_lib_t -l s0:$c_val -R "$APP_DIR"
+cd $APP_DIR
 # Check if the incoming contex is correct. Useful for running script directly for testing.
 if ! ( runcon | grep -q system_r:libra_initrc_t )
 then

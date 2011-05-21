@@ -34,7 +34,7 @@ else
 fi
 
 function print_help {
-    echo "Usage: $0 app-name username uuid"
+    echo "Usage: $0 app-name namespace uuid"
     echo "Start a running application"
 
     echo "$0 $@" | logger -p local0.notice -t libra_jboss_create

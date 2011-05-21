@@ -97,13 +97,6 @@ Feature: Rally User Stories
     Then the PHP app can be accessible
     Then would fail to create the second 'appphp4' application for 'php-5.3.2'
 
-#US84 - TC39
-  Scenario: Alter existing namespace
-    Given a user
-    Then could create a namespace
-    When alter the namespace
-    Then clould not alter the namespace
-
 
 
 

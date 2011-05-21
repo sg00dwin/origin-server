@@ -6,24 +6,44 @@ require 'libra'
 
 include Libra
 
-class BrokerController < ApplicationController  
+class BrokerController < ApplicationController
+  layout nil
+  @@outage_notification_file = '/etc/libra/express_outage_notification.txt'
   
   def generate_result_json(result, exit_code=0)      
       json = JSON.generate({
                   :debug => Thread.current[:debugIO] ? Thread.current[:debugIO].string : '',
+                  :messages => Thread.current[:messageIO] ? Thread.current[:messageIO].string : '',
                   :result => result,
                   :exit_code => exit_code
                   })
       json
   end
   
+  def check_outage_notification    
+    if File.exists?(@@outage_notification_file)
+      file = File.open(@@outage_notification_file, "r")
+      details = nil
+      begin
+        details = file.read
+      ensure
+        file.close
+      end
+      if details
+        Libra.client_message details
+      end
+    end
+  end
+  
   def parse_json_data(json_data)
     thread = Thread.current # Need to find a better way to do this.  Object structure for request would work.  Perhaps there is something more elegant built into rails?
     thread[:debugIO] = StringIO.new
     thread[:resultIO] = StringIO.new
-    data = JSON.parse(json_data)    
+    thread[:messageIO] = StringIO.new
+    check_outage_notification
+    data = JSON.parse(json_data)
     if (data['debug'])
-      Libra.c[:rpc_opts][:verbose] = true       
+      Libra.c[:rpc_opts][:verbose] = true    
     end
     data
   end
@@ -51,13 +71,13 @@ class BrokerController < ApplicationController
     begin
       # Parse the incoming data
       data = parse_json_data(params['json_data'])
+      
       if Libra::User.valid_registration?(data['rhlogin'], params['password'])
-
         action = data['action']
         app_name = data['app_name']
 
         if !Libra::Util.check_app(app_name)
-          render :json => generate_result_json("appname invalid", 105), :status => :invalid and return
+          render :json => generate_result_json("The supplied application name is it not allowed", 105), :status => :invalid and return
         end
         # Execute a framework cartridge
         Libra.execute(data['cartridge'], action, app_name, data['rhlogin'])
@@ -81,12 +101,12 @@ class BrokerController < ApplicationController
   end
   
   def user_info_post
-    begin
+    begin      
       # Parse the incoming data
       data = parse_json_data(params['json_data'])
   
       # Check if user already exists
-      if Libra::User.valid_registration?(data['rhlogin'], params['password'])
+      if Libra::User.valid_registration?(data['rhlogin'], params['password'])        
         user = Libra::User.find(data['rhlogin'])
         if user
           user_info = {
@@ -120,33 +140,34 @@ class BrokerController < ApplicationController
     end
   end
   
-  def domain_post 
-    begin
+  def domain_post    
+    begin      
       # Parse the incoming data
       data = parse_json_data(params['json_data'])
                               
-      if Libra::User.valid_registration?(data['rhlogin'], params['password'])
+      if Libra::User.valid_registration?(data['rhlogin'], params['password'])        
         user = Libra::User.find(data['rhlogin'])
-        if !Libra::Util.check_namespace(data['namespace'])
-          render :json => generate_result_json("namespace invalid", 106), :status => :invalid and return
+        ns = data['namespace']
+        if !Libra::Util.check_namespace(ns)
+          render :json => generate_result_json("Invalid characters in namespace '#{ns}' found", 106), :status => :invalid and return
         end
         if user
-          if data['alter']          
-            if user.namespace != data['namespace']
-              render :json => generate_result_json("You may not change your registered namespace of: #{user.namespace}", 98), :status => :conflict and return  
-            else
-              user.namespace=data['namespace']
-              user.ssh=data['ssh']
-              user.update
-              Server.execute_many('li-controller-0.1', 'configure',
-                  "-c #{user.uuid} -e #{user.rhlogin} -s #{user.ssh} -a",
-                  "customer_#{user.rhlogin}", user.rhlogin)
+          if data['alter']
+            if user.namespace != ns
+              #render :json => generate_result_json("You may not change your registered namespace of: #{user.namespace}", 98), :status => :conflict and return
+              user.update_namespace(ns)
             end
+            user.namespace=ns
+            user.ssh=data['ssh']
+            user.update
+            Server.execute_many('li-controller-0.1', 'configure',
+                "-c #{user.uuid} -e #{user.rhlogin} -s #{user.ssh} -a",
+                "customer_#{user.rhlogin}", user.rhlogin)
           else
-            render :json => generate_result_json("User already has a registered namespace.  To overwrite or change, use --alter", 97), :status => :conflict and return
+            render :json => generate_result_json("User already has a registered namespace.  To modify, use --alter", 97), :status => :conflict and return
           end
-        else        
-          user = Libra::User.create(data['rhlogin'], data['ssh'], data['namespace'])
+        else   
+          user = Libra::User.create(data['rhlogin'], data['ssh'], ns)
         end
       else
         render_unauthorized and return
@@ -156,7 +177,7 @@ class BrokerController < ApplicationController
                               :rhlogin => user.rhlogin,
                               :uuid => user.uuid
                               })
-                                                                  
+
       # Just return a 200 success
       render :json => generate_result_json(json_data) and return
     rescue Exception => e

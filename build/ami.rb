@@ -27,8 +27,8 @@ begin
     GIT_REPO_PUPPET = "ssh://puppet1.ops.rhcloud.com/srv/git/puppet.git"
     CONTENT_TREE = {'puppet' => '/etc/puppet'}
     RSA = File.expand_path("~/.ssh/libra.pem")
-    SSH = "ssh 2> /dev/null -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PasswordAuthentication=no -i " + RSA
-    SCP = "scp 2> /dev/null -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PasswordAuthentication=no -i " + RSA
+    SSH = "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PasswordAuthentication=no -i " + RSA
+    SCP = "scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PasswordAuthentication=no -i " + RSA
 
     # Force synchronous stdout
     STDOUT.sync, STDERR.sync = true
@@ -59,9 +59,11 @@ begin
       puts "(ssh command / timeout = #{timeout} / cmd = #{cmd})"
       output = ""
       begin
-        Timeout::timeout(timeout) { output = `#{SSH} #{@server} "#{cmd}"`.chomp }
+        ssh_cmd = "#{SSH} #{@server} '#{cmd}'"
+        puts ssh_cmd
+        Timeout::timeout(timeout) { output = `#{ssh_cmd}`.chomp }
       rescue Timeout::Error
-        puts "SSH command '#{cmd}' timed out"
+        puts "SSH command timed out"
       end
       puts "----------------------------\n#{output}\n----------------------------"
       return output
@@ -93,6 +95,9 @@ begin
 
         if count == max_retries
           puts "EXITING - Took too long for instance state to be 'running'"
+          print "Terminating instance..."
+          conn.terminate_instances([@instance])
+          puts "Done"
           exit 0
         end
 
@@ -141,6 +146,18 @@ END_OF_MESSAGE
       puts "Terminating #{instances.pretty_inspect}"
 
       conn.terminate_instances(instances) unless instances.empty?
+
+      # Stop an untagged instances and tag them as 'will-terminate'
+      instances = conn.describe_instances.collect do |i|
+        unless i[:tags]["Name"]
+          conn.create_tag(i[:aws_instance_id], 'Name', "will-terminate")
+          i[:aws_instance_id]
+        end
+      end.compact
+
+      puts "Stopping untagged instances #{instances.pretty_inspect}"
+
+      conn.stop_instances(instances) unless instances.empty?
     end
 
     # Ensure AMZ and RSA credentials exist
@@ -478,6 +495,15 @@ END_OF_MESSAGE
           #ssh("cucumber --tags ~@verify --format junit -o /tmp/rhc/junit/ li/tests/")
           #p1 = $?
           #puts "Done"
+
+          # Check node status before attempting to run tests
+          print "Checking node status"
+          ssh("rhc-accept-node", 30)
+          accepted = $?
+          puts "Done"
+          if accepted.exitstatus != 0
+            fail "ERROR - RHC node not accepted (exit: #{accepted.exitstatus})"
+          end
 
           # Run verification tests
           print "Running verification tests..."

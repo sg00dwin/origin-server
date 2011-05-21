@@ -106,7 +106,7 @@ module Libra
           $logger.info("Standard Output:\n#{stdout.read}")
           $logger.info("Standard Error:\n#{stderr.read}")
 
-          $logger.error("(#{$$}): Execution failed #{cmd}") if exit_code != 0
+          $logger.error("(#{$$}): Execution failed #{cmd} with exit_code: #{exit_code.to_s}") if exit_code != 0
           return exit_code
       end
 

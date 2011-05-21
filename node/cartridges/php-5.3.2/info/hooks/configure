@@ -44,17 +44,21 @@ else
     exit 3
 fi
 
-apache_bandwidth="all 100000"
-apache_maxconnection="all 20"
-apache_bandwidtherror="510"
+rotatelogs_interval="86400"
+rotatelogs_format="-%Y%m%d-%H%M%S-%Z"
 
 if [ -f '/etc/libra/resource_limits.conf' ]
 then
     . /etc/libra/resource_limits.conf
 fi
 
+
+
+CART_INFO_DIR=/usr/libexec/li/cartridges/php-5.3.2/info
+CART_CONF_DIR=$CART_INFO_DIR/configuration/etc/conf
+
 function print_help {
-    echo "Usage: $0 app-name username uuid"
+    echo "Usage: $0 app-name namespace uuid"
 
     echo "$0 $@" | logger -p local0.notice -t libra_http_create
     exit 1
@@ -80,7 +84,6 @@ function dotted_quad() {
     q1=$(($1 >> 8 & 0xff))
     q0=$(($1 & 0xff))
     echo "$q3.$q2.$q1.$q0"
-    # echo $(($(($1 >> 24)).$(($1 >> 16 & 0xff)).$(($1 >> 8 & 0xff)).$(($1 & 0xff))))
 }
 
 function find_open_ip {
@@ -129,7 +132,7 @@ function create_repo {
 
     GIT_DIR=$CUSTOMER_HOME/git/$application.git
     mkdir -p "$CUSTOMER_HOME/git"
-    cp -ad /usr/libexec/li/cartridges/php-5.3.2/info/data/git_template.git $GIT_DIR
+    cp -ad $CART_INFO_DIR/data/git_template.git $GIT_DIR
     echo "php 5.3.2 application '$application'" > $GIT_DIR/description
     cat <<EOF > $GIT_DIR/hooks/post-receive
 rm -rf $APP_DIR/repo/*
@@ -161,8 +164,8 @@ namespace=`basename $2`
 application="$1"
 uuid=$3
 
-CUSTOMER_HOME="$libra_dir/$uuid/"
-APP_DIR="$CUSTOMER_HOME/php/$application"
+CUSTOMER_HOME="$libra_dir/$uuid"
+APP_DIR=`echo $CUSTOMER_HOME/php/$application | tr -s /`
 
 unobfuscate $uuid $namespace
 
@@ -193,7 +196,7 @@ pushd "$APP_DIR" > /dev/null
 mkdir conf conf.d logs run repo sessions data tmp
 ln -s /usr/lib64/httpd/modules modules
 ln -s /etc/httpd/conf/magic conf/magic
-sed "s,TEMPLATE_SET_ME_SESSION_SAVE_PATH,$APP_DIR/sessions/," /usr/libexec/li/cartridges/php-5.3.2/info/configuration/etc/conf/php.ini > $APP_DIR/conf/php.ini
+sed "s,TEMPLATE_SET_ME_SESSION_SAVE_PATH,$APP_DIR/sessions/," $CART_CONF_DIR/php.ini > $APP_DIR/conf/php.ini 
 popd > /dev/null
 
 #
@@ -218,6 +221,9 @@ DocumentRoot "$APP_DIR/repo/php"
 Listen $IP:8080
 User $uuid
 Group $uuid
+ErrorLog "|/usr/sbin/rotatelogs $APP_DIR/logs/error_log$rotatelogs_format $rotatelogs_interval"
+CustomLog "|/usr/sbin/rotatelogs $APP_DIR/logs/access_log$rotatelogs_format $rotatelogs_interval" combined
+php_value include_path ".:$APP_DIR/repo/libs/"
 
 <IfModule !mod_bw.c>
     LoadModule bw_module    modules/mod_bw.so
@@ -264,11 +270,11 @@ case "\$1" in
             echo -n " - Application is disabled" 1>&2
             exit 0
         else
-            runcon -t libra_t -l s0:$c_val /usr/sbin/httpd -C 'Include $APP_DIR/conf.d/*.conf' -f /usr/libexec/li/cartridges/php-5.3.2/info/configuration/etc/conf/httpd.conf -k \$1
+            runcon -t libra_t -l s0:$c_val /usr/sbin/httpd -C 'Include $APP_DIR/conf.d/*.conf' -f $CART_CONF_DIR/httpd_nolog.conf -k \$1
         fi
     ;;
     restart|graceful|graceful-stop|stop)
-        runcon -t libra_t -l s0:$c_val /usr/sbin/httpd -C 'Include $APP_DIR/conf.d/*.conf' -f /usr/libexec/li/cartridges/php-5.3.2/info/configuration/etc/conf/httpd.conf -k \$1
+        runcon -t libra_t -l s0:$c_val /usr/sbin/httpd -C 'Include $APP_DIR/conf.d/*.conf' -f $CART_CONF_DIR/httpd_nolog.conf -k \$1
     ;;
     status)
         echo " Coming soon"

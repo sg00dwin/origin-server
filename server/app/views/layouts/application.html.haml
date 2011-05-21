@@ -34,6 +34,9 @@
     = render 'shared/omniture_code'
 
     #horrible_wrapper
+      
+      = outage_notification
+      
       - if session[:login] || session[:user]
         #user_controls
           - if session[:user].has_access?(CloudAccess::FLEX)
@@ -114,5 +117,7 @@
             = link_to 'Privacy Policy', legal_openshift_privacy_path
           %li
             = link_to 'Contact Us', 'mailto:openshift@redhat.com'
+          %li
+            = link_to 'Security', 'https://access.redhat.com/security/team/contact/'
 
         .clear

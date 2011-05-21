@@ -37,21 +37,21 @@ Red Hat login
 .IP "-p|--password password"
 RHLogin password
 .IP "-a|--alter"
-Alter an existing user (change ssh key)
+Alter namespace (will change urls) and/or ssh key
 .IP -d|--debug
 Enable debugging / verbose output
 .IP -h|--help
 Display help menu
 .SH FILES
+.I <ruby_gem_dir>/gems/rhc-<version>/conf/express.conf
+.RS
+The RubyGem system wide configuration file. See
+.BR express.conf (5)
+for further details.
+.RE
 .I /etc/openshift/express.conf
 .RS
 The system wide configuration file. See
-.BR express.conf (5)
-for further details
-.RE
-.I ./express.conf
-.RS
-Local configuration file. See
 .BR express.conf (5)
 for further details.
 .RE
@@ -63,11 +63,14 @@ for further details.
 .RE
 .SH BUGS
 Please contact the Red Hat OpenShift team.
-TODO: ADD EXTERNAL BUG TRACKER OR OPENSHIFT TEAM CONTACT EMAIL
+Forums: http://www.redhat.com/openshift/
+IRC: #openshift on irc.freenode.net
 .SH AUTHOR
 Mike McGrath <mmcgrath@redhat.com>, Jim Jagielski <jimjag@redhat.com>
 .SH "SEE ALSO"
 .BR rhc-ctl-app (1),
+.BR rhc-create-app (1),
 .BR rhc-snapshot(1),
 .BR rhc-user-info(1),
+.BR rhc-tail-files(1),
 .BR express.conf (5)

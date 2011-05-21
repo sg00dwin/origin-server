@@ -59,10 +59,14 @@ RedHatCloud::Application.routes.draw do
              :controller => "login",
              :only => [:show, :create]
     match 'login/error' => 'login#error', :via => [:get]
+    match 'login/flex' => 'login#show_flex', :via => [:get]
+    match 'login/express' => 'login#show_express', :via => [:get]
 
     resource :logout,
              :controller => "logout",
              :only => [:show]
+    match 'logout/flex' => 'logout#show_flex', :via => [:get]
+    match 'logout/express' => 'logout#show_express', :via => [:get]
 
     resources :partners,
               :controller => "partner",

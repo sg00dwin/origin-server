@@ -27,15 +27,26 @@
         %p
           Install the client tools:
           %pre $ sudo yum install rhc
-
+    %br
+    #other.install
+      %h6 Debian based Linux
+      %p
+        Install prerequisites:
+        %pre $ su -c 'apt-get install ruby rubygems ruby1.8-dev'
+      %p
+        Install the gem from our site:
+        %pre $ su -c 'gem install rhc' 
+    %br
     #other.install
       %h6 Mac Instructions
 
       %p
+        Ruby is a prerequisite and can be met by installing Xcode:
+        %a(href="http://developer.apple.com/xcode") http://developer.apple.com/xcode        
+      %p
         Install the gem from our site:
-        :erb
-          <pre>$ sudo gem install --source http://gems.rubyforge.org --source <%= "#{root_url}repo/" %> rhc</pre>
-
+        %pre $ sudo gem install rhc
+    %br
     #other.install
       %h6 Windows Instructions (requires cygwin)
 
@@ -57,9 +68,8 @@
         %pre $ ruby &lt;path_to_extracted_rubygems&gt;/setup.rb install
       %p
         Install the gem from our site:
-        :erb
-          <pre>$ gem install --source http://gems.rubyforge.org --source <%= "#{root_url}repo/" %> rhc</pre>
-
+        %pre $ gem install rhc
+    %br
     %h4 Step 2 - Create a domain name
 
     %p
@@ -68,7 +78,11 @@
 
       %pre $ rhc-create-domain -n mynamespace -l email@address
       %pre Password: (type... type... type...)
-
+    %p
+      %strong Note:
+      This process will create a file ~/.openshift/express.conf which contains your default 
+      rhlogin (used to avoid passing the -l argument to rhc commands) and a &lt;rhlogin&gt;=&lt;uuid&gt; mapping.
+    %br
     %h4 Step 3 - Create your first application
 
     %p
@@ -77,10 +91,10 @@
 
       %pre $ rhc-create-app -a myapp -t php-5.3.2
       %pre Password: (type... type... type...)
-
+    %p
       This will clone the git repository locally and tell you your domain name.  Making
       a change is as simple as making and change and git pushing.
-
+    %br
     %h4 Step 4 - Make a change, publish
 
     %p
@@ -93,9 +107,9 @@
       %pre (Make a change...  :wq)
       %pre $ git commit -a -m "My first change"
       %pre $ git push
-
+    %p  
       Now, check your URL - your change will be live.
-
+    %br
     %h4 Step 5 - Next steps
 
     %p

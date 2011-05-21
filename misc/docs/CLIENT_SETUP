@@ -6,7 +6,7 @@ git clone ssh://git1.ops.rhcloud.com/srv/git/li
 
 Example Usage:
 rhc-create-domain -n <namespace> -l <rhlogin>
-rhc-create-app -l <rhlogin> -a <appname> -r <Ex: /tmp/rhc/appname> -repo -t php-5.3.2 -b
+rhc-create-app -l <rhlogin> -a <appname> -r <Ex: /tmp/rhc/appname> -t php-5.3.2 -b
 You should now be able to browse to:  http://appname-userid.rhcloud.com
 Now make a change under /tmp/rhc/appname
 git commit -a -m "Test commit"
@@ -47,6 +47,4 @@ Add Li Repo at /etc/yum.repos.d/li.repo.  Example in li/misc/li.repo
 yum install mcollective-common mcollective-client li rubygem-stomp rubygem-right_aws rubygem-aws rubygem-cucumber
 
 cp /etc/openshift/express.conf ~/.openshift/express.conf
-edit ~/.openshift/express.conf and point libra_server your broker system
-mkdir /etc/mcollective
-cp li/backend/controller/test/etc/client.cfg /etc/mcollective/client.cfg
+edit ~/.openshift/express.conf and point libra_server your broker system and libra_domain to dev.rhcloud.com
