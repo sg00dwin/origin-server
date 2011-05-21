@@ -27,8 +27,8 @@ begin
     GIT_REPO_PUPPET = "ssh://puppet1.ops.rhcloud.com/srv/git/puppet.git"
     CONTENT_TREE = {'puppet' => '/etc/puppet'}
     RSA = File.expand_path("~/.ssh/libra.pem")
-    SSH = "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PasswordAuthentication=no -i " + RSA
-    SCP = "scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PasswordAuthentication=no -i " + RSA
+    SSH = "ssh 2> /dev/null -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PasswordAuthentication=no -i " + RSA
+    SCP = "scp 2> /dev/null -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PasswordAuthentication=no -i " + RSA
 
     # Force synchronous stdout
     STDOUT.sync, STDERR.sync = true
@@ -56,11 +56,11 @@ begin
     end
 
     def ssh(cmd, timeout=60)
-      puts "(ssh command / timeout = #{timeout} / cmd = #{cmd})"
+      puts "(ssh / timeout = #{timeout} / cmd = #{cmd})"
       output = ""
       begin
-        ssh_cmd = "#{SSH} #{@server} '#{cmd}'"
-        puts ssh_cmd
+        #ssh_cmd = "#{SSH} #{@server} '#{cmd}'"
+        #puts ssh_cmd
         Timeout::timeout(timeout) { output = `#{ssh_cmd}`.chomp }
       rescue Timeout::Error
         puts "SSH command timed out"
@@ -94,11 +94,7 @@ begin
         end
 
         if count == max_retries
-          puts "EXITING - Took too long for instance state to be 'running'"
-          print "Terminating instance..."
-          conn.terminate_instances([@instance])
-          puts "Done"
-          exit 0
+          exit_and_terminate "EXITING - Took too long for instance state to be 'running'"
         end
 
         @dns = instance_value(:dns_name)
@@ -113,8 +109,7 @@ begin
         end
 
         if count == max_retries
-          puts "EXITING - Took too long for instance to be SSH available"
-          exit 0
+          exit_and_terminate "EXITING - Took too long for instance to be SSH available"
         end
 
     end
@@ -123,7 +118,7 @@ begin
         msg = <<END_OF_MESSAGE
 From: Jenkins <noreply@redhat.com>
 To: Matt Hicks <mhicks@redhat.com>
-Subject: Build #{version} QE Ready
+Subject: Jenkins Build #{version} QE Ready
 
 The build #{version} (AMI #{ami}) is ready for QE.
 END_OF_MESSAGE
@@ -131,6 +126,17 @@ END_OF_MESSAGE
         Net::SMTP.start('localhost') do |smtp|
           smtp.send_message msg, "noreply@redhat.com", "libra-express@redhat.com"
         end
+    end
+
+    def fail_and_terminate(msg)
+      conn.terminate_instances([@instance])
+      fail msg
+    end
+
+    def exit_and_terminate(msg)
+      puts msg
+      conn.terminate_instances([@instance])
+      exit 0
     end
 
     # Delete all images with terminated in them
@@ -222,9 +228,9 @@ END_OF_MESSAGE
         release = yum_output.split("\n").collect do |line|
           line.split(":")[1].strip if line.start_with?("Release")
         end.compact[-1]
-        
+
         @version = "rhc-#{version}-#{release.split('.')[0]}"
-          
+
         puts "Current version: #{@version}"
       end
 
@@ -241,7 +247,7 @@ END_OF_MESSAGE
       end
       #p all_images
     end
-      
+
     # Grouping of common prereqs
     task :prereqs => [:creds, :version]
 
@@ -297,7 +303,7 @@ END_OF_MESSAGE
             print "Verifying update..."
             rpm = ssh('rpm -q rhc')
             unless rpm.start_with?(@version)
-              fail "Expected updated version to start with #{@version}, actual was #{rpm}"
+              fail_and_terminate "Expected updated version to start with #{@version}, actual was #{rpm}"
             end
             puts "Done"
         else
@@ -316,7 +322,7 @@ END_OF_MESSAGE
           print "Verifying installation..."
           rpm = ssh('rpm -q rhc')
           unless rpm.start_with?(@version)
-            fail "Expected updated version to start with #{@version}, actual was #{rpm}"
+            fail_and_terminate "Expected updated version to start with #{@version}, actual was #{rpm}"
           end
           puts "Done"
 
