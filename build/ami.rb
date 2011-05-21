@@ -59,7 +59,7 @@ begin
       puts "(ssh / timeout = #{timeout} / cmd = #{cmd})"
       output = ""
       begin
-        #ssh_cmd = "#{SSH} #{@server} '#{cmd}'"
+        ssh_cmd = "#{SSH} #{@server} '#{cmd}'"
         #puts ssh_cmd
         Timeout::timeout(timeout) { output = `#{ssh_cmd}`.chomp }
       rescue Timeout::Error
