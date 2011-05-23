@@ -44,8 +44,9 @@ archive = opt["archive"]
 if clean
     `echo > /tmp/mcollective-client.log`
     `echo > /var/log/mcollective.log`
-    `echo > /var/www/libra/log/development.log`
+    `echo > /var/www/libra/site/log/development.log`
+    `echo > /var/www/libra/broker/log/development.log`    
     `echo > /tmp/rhc/cucumber.log`
 else
-    `tar -cf #{opt["archive"]}.tar.gz -z /tmp/mcollective-client.log /var/log/mcollective.log /var/www/libra/log/development.log /tmp/rhc/cucumber.log`
+    `tar -cf #{opt["archive"]}.tar.gz -z /tmp/mcollective-client.log /var/log/mcollective.log /var/www/libra/site/log/development.log /var/www/libra/broker/log/development.log /tmp/rhc/cucumber.log`
 end

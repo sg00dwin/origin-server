@@ -38,11 +38,6 @@ Usage' follows exactly as indicated above.
 -------------
 broker notes:
 -------------
-Obtain the Rack broker application with:
-
-git clone ssh://git1.ops.rhcloud.com/srv/git/broker
-
-Add Li Repo at /etc/yum.repos.d/li.repo.  Example in li/misc/li.repo
 
 yum install mcollective-common mcollective-client li rubygem-stomp rubygem-right_aws rubygem-aws rubygem-cucumber
 

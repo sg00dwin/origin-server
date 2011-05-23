@@ -221,7 +221,8 @@ rake install:test:all
 %install
 rm -rf $RPM_BUILD_ROOT
 rake DESTDIR="$RPM_BUILD_ROOT" install:all
-ln -s %{_localstatedir}/www/libra/public $RPM_BUILD_ROOT/%{_localstatedir}/www/html/app
+ln -s %{_localstatedir}/www/libra/site/public $RPM_BUILD_ROOT/%{_localstatedir}/www/html/app
+ln -s %{_localstatedir}/www/libra/broker/public $RPM_BUILD_ROOT/%{_localstatedir}/www/html/broker
 
 mkdir $RPM_BUILD_ROOT/etc/libra/devenv/
 cp -adv misc/devenv/* $RPM_BUILD_ROOT/etc/libra/devenv/
@@ -272,19 +273,29 @@ service libra-tc start
 /etc/init.d/iptables restart
 
 # rails setup
-ln -s /var/www/libra/public/* /var/www/html/.
-/bin/touch %{_localstatedir}/www/libra/log/development.log
-/bin/chmod 0666 %{_localstatedir}/www/libra/log/development.log
-/bin/mkdir -p /var/www/libra/httpd/logs
-/bin/mkdir -p /var/www/libra/httpd/run
-/bin/ln -s /usr/lib64/httpd/modules/ /var/www/libra/httpd/modules
+ln -s /var/www/libra/site/public/* /var/www/html/.
+/bin/touch %{_localstatedir}/www/libra/site/log/development.log
+/bin/chmod 0666 %{_localstatedir}/www/libra/site/log/development.log
+/bin/touch %{_localstatedir}/www/libra/broker/log/development.log
+/bin/chmod 0666 %{_localstatedir}/www/libra/broker/log/development.log
+/bin/mkdir -p /var/www/libra/site/httpd/logs
+/bin/mkdir -p /var/www/libra/site/httpd/run
+/bin/mkdir -p /var/www/libra/broker/httpd/logs
+/bin/mkdir -p /var/www/libra/broker/httpd/run
+/bin/ln -s /usr/lib64/httpd/modules/ /var/www/libra/site/httpd/modules
+/bin/ln -s /usr/lib64/httpd/modules/ /var/www/libra/broker/httpd/modules
 /bin/cp -f /etc/libra/devenv/httpd/000000_default.conf /etc/httpd/conf.d
-/bin/cp -f /etc/libra/devenv/httpd/broker.conf /var/www/libra/httpd
-/bin/cp -f /etc/libra/devenv/httpd/httpd.conf /var/www/libra/httpd
+/bin/cp -f /etc/libra/devenv/httpd/site.conf /var/www/libra/site/httpd
+/bin/cp -f /etc/libra/devenv/httpd/httpd.conf /var/www/libra/site/httpd
+/bin/cp -f /etc/libra/devenv/httpd/broker.conf /var/www/libra/broker/httpd
+/bin/cp -f /etc/libra/devenv/httpd/httpd.conf /var/www/libra/broker/httpd
 /bin/cp -f /etc/libra/devenv/libra-site /etc/init.d
-/bin/cp -f /etc/libra/devenv/robots.txt /var/www/libra/public
+/bin/cp -f /etc/libra/devenv/libra-broker /etc/init.d
+/bin/cp -f /etc/libra/devenv/robots.txt /var/www/libra/site/public
 /etc/init.d/libra-site restart
+/etc/init.d/libra-broker restart
 chkconfig libra-site on
+chkconfig libra-broker on
 
 # httpd
 /etc/init.d/httpd restart
@@ -433,6 +444,7 @@ fi
 %attr(0750,-,-) %{_bindir}/rhc-cartridge-do
 %attr(-,root,libra_user) %{_localstatedir}/www/libra
 %attr(-,root,libra_user) %{_localstatedir}/www/html/app
+%attr(-,root,libra_user) %{_localstatedir}/www/html/broker
 %attr(0640,root,libra_user) %config(noreplace) %{_sysconfdir}/libra/controller.conf
 
 %post server
@@ -440,10 +452,14 @@ fi
 # Change group for mcollective client.cfg
 /bin/chgrp libra_user /etc/mcollective/client.cfg
 
-# Install any Rails dependencies
-mkdir -p %{_localstatedir}/www/libra/log
-touch %{_localstatedir}/www/libra/log/production.log
-chmod 0666 %{_localstatedir}/www/libra/log/production.log
+# Rails setup
+mkdir -p %{_localstatedir}/www/libra/site/log
+touch %{_localstatedir}/www/libra/site/log/production.log
+chmod 0666 %{_localstatedir}/www/libra/site/log/production.log
+mkdir -p %{_localstatedir}/www/libra/broker/log
+touch %{_localstatedir}/www/libra/broker/log/production.log
+chmod 0666 %{_localstatedir}/www/libra/broker/log/production.log
+
 
 /etc/init.d/httpd restart
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'rubygems'
-$:.unshift('/var/www/libra/lib')
+$:.unshift('/var/www/libra/broker/lib')
 require 'libra'
 
 include Libra

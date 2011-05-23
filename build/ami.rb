@@ -550,9 +550,12 @@ END_OF_MESSAGE
           `mkdir -p rhc/log`
           scp("-r #{@server}:/tmp/rhc/cucumber*.log rhc/log")
           scp("-r #{@server}:/tmp/rhc/failures.log rhc/log")
-          scp("-r #{@server}:/var/www/libra/httpd/logs/access_log rhc/log")
-          scp("-r #{@server}:/var/www/libra/httpd/logs/error_log rhc/log")
-          scp("-r #{@server}:/var/www/libra/log/development.log rhc/log")
+          scp("-r #{@server}:/var/www/libra/site/httpd/logs/access_log rhc/log")
+          scp("-r #{@server}:/var/www/libra/site/httpd/logs/error_log rhc/log")
+          scp("-r #{@server}:/var/www/libra/site/log/development.log rhc/log")
+          scp("-r #{@server}:/var/www/libra/broker/httpd/logs/access_log rhc/log")
+          scp("-r #{@server}:/var/www/libra/broker/httpd/logs/error_log rhc/log")
+          scp("-r #{@server}:/var/www/libra/broker/log/development.log rhc/log")          
           scp("-r #{@server}:/var/log/mcollective.log rhc/log")
           scp("-r #{@server}:/tmp/mcollective-client.log rhc/log")
 

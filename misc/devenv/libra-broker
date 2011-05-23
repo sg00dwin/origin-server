@@ -1,21 +1,21 @@
 #!/bin/bash
 #
-# libra-site        Startup script for the Libra site
+# libra-broker        Startup script for the Libra broker
 #
 # chkconfig: - 85 15
-# description: The Libra site
+# description: The Libra broker
 # processname: httpd
-# config: /var/www/libra/site/httpd/site.conf
-# config: /var/www/libra/site/httpd
-# pidfile: /var/www/libra/site/httpd/run/httpd.pid
+# config: /var/www/libra/broker/httpd/broker.conf
+# config: /var/www/libra/broker/httpd
+# pidfile: /var/www/libra/broker/httpd/run/httpd.pid
 #
 ### BEGIN INIT INFO
 # Provides: httpd
 # Required-Start: $local_fs $remote_fs $network $named
 # Required-Stop: $local_fs $remote_fs $network
 # Should-Start: distcache
-# Short-Description: start and stop Libra site
-# Description: The Libra site
+# Short-Description: start and stop Libra broker
+# Description: The Libra broker
 ### END INIT INFO
 
 # Source function library.
@@ -27,12 +27,12 @@ HTTPD_LANG=${HTTPD_LANG-"C"}
 # Path to the apachectl script, server binary, and short-form for messages.
 apachectl=/usr/sbin/apachectl
 httpd=${HTTPD-/usr/sbin/httpd}
-prog=libra-site
-pidfile=${PIDFILE-/var/www/libra/site/httpd/run/httpd.pid}
-lockfile=${LOCKFILE-/var/lock/subsys/libra-site}
+prog=libra-broker
+pidfile=${PIDFILE-/var/www/libra/broker/httpd/run/httpd.pid}
+lockfile=${LOCKFILE-/var/lock/subsys/libra-broker}
 RETVAL=0
 
-OPTIONS="-C 'Include /var/www/libra/site/httpd/site.conf' -f /var/www/libra/site/httpd/httpd.conf"
+OPTIONS="-C 'Include /var/www/libra/broker/httpd/broker.conf' -f /var/www/libra/broker/httpd/httpd.conf"
 
 # The semantics of these two functions differ from the way apachectl does
 # things -- attempting to start while running is a failure, and shutdown

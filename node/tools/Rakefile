@@ -15,7 +15,7 @@ task :default => [:package]
 # Create the gem specification for packaging
 spec = Gem::Specification.new do |s|
   s.name = %q{li-node-tools}
-  s.version = /(Version: )(.*)/.match(File.read("../../build/specs/rhc.spec"))[2]
+  s.version = /(Version: )(.*)/.match(File.read("../node.spec"))[2]
   s.author = "Mark lamourine"
   s.email = %q{markllama@redhat.com}
   s.summary = %q{Libra node management tools}

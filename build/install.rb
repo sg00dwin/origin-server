@@ -113,7 +113,8 @@ namespace :install do
       # Rails app setup
       cd ROOT
       mkdir_p HTML_DIR
-      cp_r "server/.", HTML_DIR + "/../libra"
+      cp_r "site/.", HTML_DIR + "/../libra/site"
+      cp_r "broker/.", HTML_DIR + "/../libra/broker"
 
       cd SERVER_ROOT
 
