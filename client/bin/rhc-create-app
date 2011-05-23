@@ -25,16 +25,14 @@ require 'rhc-common'
 
 def p_usage
     rhlogin = get_var('default_rhlogin') ? "Default: #{get_var('default_rhlogin')}" : "(required)"
-    type_keys = RHC::get_cartridge_types(', ')
-# Commented out until we find a better way to hide stuff
-# -t|--type  type            Type of app to create (#{type_keys}) (required)
+    type_keys = RHC::get_supported_cartridge_types(', ')
     puts <<USAGE
 
 Usage: #{$0}
 Create an Openshift Express app.
 
   -a|--app   application     Application name  (alphanumeric - max #{RHC::Maxdlen} chars) (required)
-  -t|--type  type            Type of app to create (php-5.3.2, wsgi-3.2.1, rack-1.1.0) (required)
+  -t|--type  type            Type of app to create (#{type_keys}) (required)
   -l|--rhlogin  rhlogin      RHCloud rhlogin (#{rhlogin})
   -p|--password  password    RHLogin password  (optional, will prompt)
   -r|--repo  path            Git Repo path (defaults to ./$app_name)

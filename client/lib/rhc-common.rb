@@ -44,17 +44,27 @@ module RHC
     'wsgi-3.2.1' => :wsgi,
     'jbossas-7.0.0' => :jbossas
   }
+  
+  SUPPORTED_TYPES = {
+    'php-5.3.2' => :php,
+    'rack-1.1.0' => :rack,
+    'wsgi-3.2.1' => :wsgi
+  }
 
   def self.delay(time, adj=Defaultdelay)
     (time*=adj).to_int
   end
+  
+  def self.get_supported_cartridge_types(sep=', ')
+    return get_cartridge_types(SUPPORTED_TYPES)
+  end
 
-  def self.get_cartridge_types(sep=', ')
+  def self.get_cartridge_types(types=TYPES, sep=', ')
     i = 1
     type_keys = ''
-    TYPES.each_key do |key|
+    types.each_key do |key|
       type_keys += key
-      if i < TYPES.size
+      if i < types.size
         type_keys += sep
       end
       i += 1
@@ -107,7 +117,7 @@ module RHC
   def self.get_cartridge(type)
     if type
       if !(RHC::TYPES.has_key?(type))
-        puts 'type must be ' << get_cartridge_types(' or ')
+        puts 'type must be ' << get_supported_cartridge_types(' or ')
       else
         return RHC::TYPES[type]
       end
