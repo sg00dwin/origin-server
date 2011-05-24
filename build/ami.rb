@@ -498,12 +498,7 @@ END_OF_MESSAGE
           puts "Done"
 
           print "Installing the mechanize gem..."
-          ssh("yum -y install mechanize", 120)
-          puts "Done"
-
-          print "Installing rails for client testing..."
-          ssh("yum -y install sqlite*", 120)
-          ssh("yum -y install rubygem-rails", 120)
+          ssh("yum -y install rubygem-mechanize", 120)
           puts "Done"
 
           print "Bouncing Apache to pick up the change..."
