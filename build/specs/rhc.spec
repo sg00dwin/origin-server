@@ -3,7 +3,7 @@
 
 Name: rhc
 Version: 0.71.1
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Multi-tenant cloud management system client tools
 
 Group: Network/Daemons
@@ -62,6 +62,7 @@ Provides the common dependencies for the libra server and nodes
 %package node
 Summary: Multi-tenant cloud management system node tools
 Group: Network/Daemons
+Requires: mod_ssl
 Requires: quota
 Requires: rhc-common
 Requires: mcollective
@@ -463,6 +464,9 @@ chmod 0666 %{_localstatedir}/www/libra/log/production.log
 %{_libexecdir}/li/cartridges/jbossas-7.0.0/
 
 %changelog
+* Tue May 24 2011 Matt Hicks <mhicks@redhat.com> 0.71-2
+- Adding SSL dependency
+
 * Tue May 24 2011 Matt Hicks <mhicks@redhat.com> 0.71-1
 - Release candidate
 
