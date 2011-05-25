@@ -3,14 +3,14 @@
 Summary:       Common dependencies of the OpenShift broker and site
 Name:          rhc-server-common
 Version:       0.72.1
-Release:       2%{?dist}
+Release:       3%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
 URL:           http://openshift.redhat.com
 Source0:       rhc-server-common-%{version}.tar.gz
 
 BuildRoot:     %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
-BuildRequires: ruby(abi)
+BuildRequires: ruby
 Requires:      ruby >= 1.8.7
 Requires:      rubygem-parseconfig
 Requires:      rubygem-json
@@ -45,6 +45,9 @@ rm -rf $RPM_BUILD_ROOT
 %{ruby_sitelibdir}/openshift.rb
 
 %changelog
+* Wed May 25 2011 Matt Hicks <mhicks@redhat.com> 0.72.1-3
+- Fixing ruby build requirement
+
 * Wed May 25 2011 Matt Hicks <mhicks@redhat.com> 0.72.1-2
 - Fixing ruby version
 
