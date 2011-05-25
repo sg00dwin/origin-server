@@ -2,7 +2,7 @@
 
 Name: rhc-cartridge-php5
 Version: 0.72.1
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2
 URL: https://engineering.redhat.com/trac/Libra
 Source0: rhc-cartridge-php5-%{version}.tar.gz
@@ -32,6 +32,7 @@ Provides php support to OpenShift
 rm -rf %{buildroot}
 mkdir -p %{buildroot}%{cartridgedir}
 cp -r . %{buildroot}%{cartridgedir}
+rm %{buildroot}%{cartridgedir}/php5.spec
 
 %clean
 rm -rf %{buildroot}
@@ -46,5 +47,8 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Tue May 25 2011 Matt Hicks <mhicks@redhat.com> 0.72.1-2
+- Removing spec from the installation
+
 * Tue May 25 2011 Matt Hicks <mhicks@redhat.com> 0.72.1-1
 - Initial refactoring
