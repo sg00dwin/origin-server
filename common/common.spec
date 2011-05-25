@@ -1,17 +1,19 @@
-Name: rhc-common
-Version: 0.72.1
-Release: 1%{?dist}
-Group: Network/Daemons
-License: GPLv2
-URL: https://engineering.redhat.com/trac/Libra
-Source0: rhc-common-%{version}.tar.gz
-BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
+Summary:   Common dependencies of the libra server and node
+Name:      rhc-common
+Version:   0.72.1
+Release:   1%{?dist}
+Group:     Network/Daemons
+License:   GPLv2
+URL:       http://openshift.redhat.com
+Source0:   rhc-common-%{version}.tar.gz
+
+BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
+Requires:  mcollective-client
+Requires:  qpid-cpp-client
+Requires:  qpid-cpp-client-ssl
+Requires:  ruby-qmf
+
 BuildArch: noarch
-Summary: Common dependencies of the libra server and node
-Requires: mcollective-client
-Requires: qpid-cpp-client
-Requires: qpid-cpp-client-ssl
-Requires: ruby-qmf
 
 %description
 Provides the common dependencies for the OpenShift server and nodes
@@ -32,6 +34,5 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root,-)
-%ghost %{_sysconfdir}/mcollective/client.cfg
-%attr(-,-,libra_user) %{_sysconfdir}/mcollective/client.cfg
+%ghost %attr(-,-,libra_user) %{_sysconfdir}/mcollective/client.cfg
 %{_libexecdir}/mcollective/mcollective/connector/amqp.rb
