@@ -36,7 +36,6 @@ mkdir -p %{buildroot}%{ruby_sitelibdir}
 cp -r openshift %{buildroot}%{ruby_sitelibdir}
 cp openshift.rb %{buildroot}%{ruby_sitelibdir}
 
-
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -44,3 +43,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %{ruby_sitelibdir}/openshift
 %{ruby_sitelibdir}/openshift.rb
+
+%changelog
+* Wed May 25 2011 Matt Hicks <mhicks@redhat.com> 0.72.1-1
+- Initial refactoring
