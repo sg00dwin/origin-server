@@ -3,7 +3,7 @@
 
 Name: rhc-broker
 Version: 0.72.1
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2
 URL: https://engineering.redhat.com/trac/Libra
 Source0: rhc-broker-%{version}.tar.gz
