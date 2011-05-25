@@ -1,48 +1,51 @@
-%{!?ruby_sitelibdir: %global ruby_sitelibdir %(ruby -rrbconfig -e 'puts Config::CONFIG["sitelibdir"]')}
-%define gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
+%define ruby_sitelibdir            %(ruby -rrbconfig -e "puts Config::CONFIG['sitelibdir']")
+%define gemdir                     %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 
-Name: rhc-node
-Version: 0.72.1
-Release: 1%{?dist}
-Summary: Multi-tenant cloud management system node tools
-Group: Network/Daemons
-License: GPLv2
-URL: https://engineering.redhat.com/trac/Libra
-Source0: rhc-node-%{version}.tar.gz
-BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
-BuildArch: noarch
+Summary:       Multi-tenant cloud management system node tools
+Name:          rhc-node
+Version:       0.72.1
+Release:       1%{?dist}
+Group:         Network/Daemons
+License:       GPLv2
+URL:           http://openshift.redhat.com
+Source0:       rhc-node-%{version}.tar.gz
 
-Requires: quota
-Requires: rhc-common
-Requires: mcollective
-Requires: rubygem-parseconfig
-Requires: libcgroup
-Requires: git
-Requires: selinux-policy-targeted >= 3.7.19-83
-Requires: rubygem-open4
-Requires(post): /usr/sbin/semodule
-Requires(post): /usr/sbin/semanage
+BuildRoot:     %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
+BuildRequires: ruby(abi)
+Requires:      quota
+Requires:      rhc-common
+Requires:      mcollective
+Requires:      rubygem-parseconfig
+Requires:      libcgroup
+Requires:      git
+Requires:      selinux-policy-targeted >= 3.7.19-83
+Requires:         rubygem-open4
+Requires(post):   /usr/sbin/semodule
+Requires(post):   /usr/sbin/semanage
 Requires(postun): /usr/sbin/semodule
 Requires(postun): /usr/sbin/semanage
+
+BuildArch: noarch
 
 %description
 Turns current host into a OpenShift managed node
 
 %package tools
-Summary: Utilities to help monitor and manage a OpenShift node
-Group: Network/Daemons
+Summary:       Utilities to help monitor and manage a OpenShift node
+Group:         Network/Daemons
+
 BuildRequires: rubygem-nokogiri
 BuildRequires: rubygem-json
-Requires: rubygem-nokogiri
-Requires: rubygem-json
-BuildArch: noarch
+Requires:      rubygem-nokogiri
+Requires:      rubygem-json
+
+BuildArch:     noarch
 
 %description tools
 Status and control tools for Libra Nodes
 
 %prep
 %setup -q
-
 
 %build
 for f in **/*.rb
@@ -53,82 +56,21 @@ done
 %install
 rm -rf $RPM_BUILD_ROOT
 
-# MCollective setup
-MCOLLECTIVE_DIR=$RPM_BUILD_ROOT/usr/libexec/mcollective/mcollective/agent
-mkdir -p $MCOLLECTIVE_DIR
-cp mcollective/libra.ddl $MCOLLECTIVE_DIR
-chmod 0640 $MCOLLECTIVE_DIR/libra.ddl
-cp mcollective/libra.rb $MCOLLECTIVE_DIR
-chmod 0640 $MCOLLECTIVE_DIR/libra.rb
-cp mcollective/update_yaml.pp $MCOLLECTIVE_DIR/../../
-FACTER_DIR=$RPM_BUILD_ROOT/%{ruby_sitelibdir}/facter
-mkdir -p $FACTER_DIR
-cp "facter/libra.rb" $FACTER_DIR
-chmod 0640 $FACTER_DIR/libra.rb
+mkdir -p %{buildroot}/var/lib/libra
+mkdir -p %{buildroot}%{_libexecdir}/li
+mkdir -p %{buildroot}%{_sysconfdir}/libra
+mkdir -p %{buildroot}%{_sysconfdir}/httpd/conf.d/libra
+mkdir -p %{buildroot}/usr/share/selinux/packages
 
-# Jailing setup
-INITRD_DIR=$RPM_BUILD_ROOT/etc/init.d
-mkdir -p $INITRD_DIR
-cp scripts/libra $INITRD_DIR
-chmod 0750 $INITRD_DIR/libra
-cp scripts/libra-data $INITRD_DIR
-chmod 0750 $INITRD_DIR/libra-data
-cp scripts/libra-cgroups $INITRD_DIR
-chmod 0750 $INITRD_DIR/libra-cgroups
-cp scripts/libra-tc $INITRD_DIR
-chmod 0750 $INITRD_DIR/libra-tc
-BIN_DIR=$RPM_BUILD_ROOT/usr/bin
-mkdir -p $BIN_DIR
-cp scripts/trap-user $BIN_DIR
-cp scripts/rhc-restorecon $BIN_DIR
-chmod 0750 $BIN_DIR/rhc-restorecon
-cp scripts/rhc-init-quota $BIN_DIR
-chmod 0750 $BIN_DIR/rhc-init-quota
-cp scripts/rhc-accept-node $BIN_DIR
-chmod 0750 $BIN_DIR/rhc-accept-node
-cp scripts/rhc-node-account $BIN_DIR
-chmod 0750 $BIN_DIR/rhc-node-account
-cp scripts/rhc-node-application $BIN_DIR
-chmod 0750 $BIN_DIR/rhc-node-application
-LIBRA_DIR=$RPM_BUILD_ROOT/var/lib/libra
-mkdir -p $LIBRA_DIR
-mkdir -p $RPM_BUILD_ROOT/usr/share/selinux/packages
-cp selinux/libra.pp $RPM_BUILD_ROOT/usr/share/selinux/packages
-chmod 0640 $RPM_BUILD_ROOT/usr/share/selinux/packages/libra.pp
-cp selinux/rhc-ip-prep.sh $BIN_DIR
-chmod 0750 $BIN_DIR/rhc-ip-prep.sh
-
-# Apache vhost fix
-HTTP_CONF_DIR=$RPM_BUILD_ROOT/etc/httpd/conf.d
-mkdir -p $HTTP_CONF_DIR/libra/
-chmod 0750 $HTTP_CONF_DIR/libra/
-if [ ! -f "$HTTP_CONF_DIR/conf/000000_default.conf" ]
-then
-  cp conf/000000_default.conf $HTTP_CONF_DIR
-fi
-chmod 0640 $HTTP_CONF_DIR/000000_default.conf
-
-# Cartridge installation
-LIBEXEC_DIR=$RPM_BUILD_ROOT/usr/libexec/li
-mkdir -p $LIBEXEC_DIR
-cp -r cartridges $LIBEXEC_DIR
-for dir in $LIBEXEC_DIR/cartridges/*
-do
-  chmod 0750 $dir/info/hooks/
-  chmod 0750 $dir/info/data/
-  chmod 0750 $dir/info/build/
-done
-CONF_DIR=$RPM_BUILD_ROOT/etc/libra
-mkdir -p $CONF_DIR
-SAMPLE_CONF=cartridges/li-controller-*/info/configuration/node.conf-sample
-if [ ! -f "$CONF_DIR/node.conf" ]
-then
-  cp $SAMPLE_CONF $CONF_DIR/node.conf
-fi
-if [ ! -f "$CONF_DIR/resource_limits.conf" ]
-then
-  cp conf/resource_limits.conf $CONF_DIR
-fi
+cp -r cartridges %{buildroot}%{_libexecdir}/li
+cp conf/000000_default.conf %{buildroot}%{_sysconfdir}/httpd/conf.d
+cp conf/resource_limits.conf %{buildroot}%{_sysconfdir}/libra
+cp -r facter %{buildroot}%{ruby_sitelibdir}/facter
+cp -r mcollective %{buildroot}%{_libexecdir}
+cp scripts/bin/* %{buildroot}%{_bindir}
+cp scripts/init/* %{buildroot}%{_initddir}
+cp selinux/libra.pp %{buildroot}/usr/share/selinux/packages
+cp selinux/rhc-ip-prep.sh %{buildroot}%{_bindir}
 
 # Tools installation
 cd tools
