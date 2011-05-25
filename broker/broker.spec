@@ -67,5 +67,5 @@ rm -rf $RPM_BUILD_ROOT
 * Wed May 25 2011 Matt Hicks <mhicks@redhat.com> 0.72.1-2
 - Fixing sym link to buildroot (mhicks@redhat.com)
 
-* Tue May 25 2011 Matt Hicks <mhicks@redhat.com> 0.72-1
+* Tue May 25 2011 Matt Hicks <mhicks@redhat.com> 0.72.1-1
 - Initial refactoring
