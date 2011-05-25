@@ -1,12 +1,14 @@
-Name: rhc-cartridge-php-5.3.2
+%define cartridgedir %{_libexecdir}/li/cartridges/php5
+
+Name: rhc-cartridge-php5
 Version: 0.72.1
 Release: 1%{?dist}
 License: GPLv2
 URL: https://engineering.redhat.com/trac/Libra
-Source0: rhc-cartridge-php-5.3.2-%{version}.tar.gz
+Source0: rhc-cartridge-php5-%{version}.tar.gz
 BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildArch: noarch
-Summary: Provides php-5.3.2 support
+Summary: Provides php5 support
 Group: Development/Languages
 Requires: rhc-node
 Requires: php >= 5.3.2
@@ -28,19 +30,20 @@ Provides php support to OpenShift
 
 %install
 rm -rf %{buildroot}
-CARTRIDGE_DIR=$RPM_BUILD_ROOT/usr/libexec/li/cartridges/php-5.3.2
-mkdir -p $CARTRIDGE_DIR
-cp -r . $CARTRIDGE_DIR
-chmod 0750 $CARTRIDGE_DIR/info/hooks/
-chmod 0750 $CARTRIDGE_DIR/info/data/
-chmod 0750 $CARTRIDGE_DIR/info/build/
+mkdir -p %{buildroot}%{cartridgedir}
+cp -r . %{buildroot}%{cartridgedir}
 
 %clean
 rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root,-)
-%{_libexecdir}/li/cartridges/php-5.3.2/
+%attr(0750,-,-) %{cartridgedir}/info/hooks/
+%attr(0750,-,-) %{cartridgedir}/info/data/
+%attr(0750,-,-) %{cartridgedir}/info/build/
+%{cartridgedir}/info/configuration/
+%{cartridgedir}/info/changelog
+%{cartridgedir}/info/control
 
 %changelog
 * Tue May 25 2011 Matt Hicks <mhicks@redhat.com> 0.72.1-1
