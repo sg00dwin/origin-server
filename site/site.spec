@@ -2,7 +2,7 @@
 %define sitedir %{_localstatedir}/www/libra/site
 
 Name: rhc-site
-Version: 0.70.2
+Version: 0.72.1
 Release: 1%{?dist}
 License: GPLv2
 URL: https://engineering.redhat.com/trac/Libra
@@ -38,7 +38,7 @@ rm -rf %{buildroot}
 mkdir -p %{buildroot}%{htmldir}
 mkdir -p %{buildroot}%{sitedir}
 cp -r . %{buildroot}%{sitedir}
-ln -s %{buildroot}%{sitedir}/public %{buildroot}%{htmldir}/site
+ln -s %{sitedir}/public %{buildroot}%{htmldir}/site
 
 mkdir -p %{buildroot}%{sitedir}/log
 touch %{buildroot}%{sitedir}/log/production.log
@@ -65,3 +65,5 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Tue May 25 2011 Matt Hicks <mhicks@redhat.com> 0.72.1-1
+- Initial refactoring
