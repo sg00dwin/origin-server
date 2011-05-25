@@ -8,7 +8,7 @@ Before performing any other express operations, users need to bind their login
 with a domain.  To create a domain users need an ssh RSA key, available domain
 name and their RHN login.
 
-Submit via POST to: {openshift.express.server}/app/broker/domain
+Submit via POST to: {openshift.express.server}/broker/domain
     Encode json string as http variable 'json_data',
     Include your password as http variable 'password'.
 
@@ -27,7 +27,7 @@ Returns:
 Application Control
 ===================
 
-All application control is done via /app/broker/cartridge.  The below
+All application control is done via /broker/cartridge.  The below
 documentation demonstrates how to create, destroy, start, restart, reload and
 get basic status information about Express applications.
 
@@ -40,7 +40,7 @@ Action types include:
     restart: Restart a running application
     status: Get basic status information about an application
 
-Submit via POST to: {openshift.express.server}/app/broker/cartridge
+Submit via POST to: {openshift.express.server}/broker/cartridge
     Encode json string as http variable: 'json_data',
     Include your password as http variable 'password'
 
@@ -58,9 +58,9 @@ User and Application Info
 =========================
 
 A list of running applications as well as basic user information is available
-via /app/broker/userinfo.
+via /broker/userinfo.
 
-Submit via POST to: {openshift.express.server}/app/broker/userinfo
+Submit via POST to: {openshift.express.server}/broker/userinfo
     Encode json string as http variable 'json_data'
     Include your password as http variable 'password'
 

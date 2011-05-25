@@ -27,13 +27,11 @@ Broker::Application.configure do
 
   ############################################
   # OpenShift Configuration Below this point #
-  ############################################
-  config.app_scope = "app"
+  ############################################  
   config.integrated = false
   config.login = "/app/login"
   config.streamline = "http://localhost" # Non-integrated
   config.streamline_secret = ''
-  config.captcha_secret = 'zvw5LiixMB0I4mjk06aR'
 
   # AWS configuration
   config.aws_key = "AKIAJMZR4X6F46UMXV6Q"
