@@ -2,7 +2,7 @@
 %define brokerdir %{_localstatedir}/www/libra/broker
 
 Name: rhc-broker
-Version: 0.70.2
+Version: 0.72.1
 Release: 1%{?dist}
 License: GPLv2
 URL: https://engineering.redhat.com/trac/Libra
@@ -64,3 +64,5 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Tue May 25 2011 Matt Hicks <mhicks@redhat.com> 0.72-1
+- Initial refactoring
