@@ -83,7 +83,7 @@ Then /^can get host name using php script$/ do
 
 end
 
-Given /^the manpage of express.conf$/ do
+When /^the manpage of express.conf exists$/ do
     @man_express="/usr/share/man/man5/express.conf.5.gz"
     File.exist?(@man_express).should be_true
 end

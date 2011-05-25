@@ -1,11 +1,11 @@
 @verify
 Feature: cucumber tests for reported bugs
 
-  #bug 701676, already has cucumber test, see userstory_steps:#US280 - TC19 
+  #Bug 701676 covered by Scenario in  "userstory.feature: #US280 - TC19"
 
-  Scenario: (libra-qe) bug 693951: rhc-create-domain suggests --alter can be used to rename domain
+  Scenario: (libra-qe) Bug 693951 - rhc-create-domain suggests --alter can be used to rename domain
     Given an end user
-    Then he could create a namespace and app
+    And he could create a namespace and app
     When he alter the namespace
     Then the new namespace is enabled
 
@@ -18,19 +18,19 @@ Feature: cucumber tests for reported bugs
 #      | /app/user/new        |    http    |
 #    Then come into an error when they are accessed
 
-  Scenario: (libra-qe) bug 700941: Express client installation has empty README files under AppName/misc and AppName/libs
+  Scenario: (libra-qe) Bug 700941 - Express client installation has empty README files under AppName/misc and AppName/libs
     Given the libra client tools
-    And create a new php-5.3.2 app 'phpbug'
+    When create a new php-5.3.2 app 'phpbug'
     Then no README under misc and libs
 
-  Scenario: (libra-qe) bug 699887: PHP $_SERVER["HTTP_HOST"] returns wrong value
+  Scenario: (libra-qe) Bug 699887 - PHP $_SERVER["HTTP_HOST"] returns wrong value
     Given the libra client tools
-    And create a new php-5.3.2 app 'phphost'
+    When create a new php-5.3.2 app 'phphost'
     Then can get host name using php script
 
   Scenario: (libra-qe) Bug 695586 - man page of express.conf is empty
     Given the libra client tools
-    And the manpage of express.conf
+    When the manpage of express.conf exists
     Then the manpage of express.conf should not be empty
 
 

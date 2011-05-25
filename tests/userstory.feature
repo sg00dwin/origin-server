@@ -91,9 +91,7 @@ Feature: Rally User Stories
 
 #US27
   Scenario: (libra-qe) per user app limit
+    Given the libra client tools
     When create a new php-5.3.2 app 'appphp3'
     Then the PHP app can be accessible
     Then would fail to create the second 'appphp4' application for 'php-5.3.2'
-
-
-
