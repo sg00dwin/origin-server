@@ -20,9 +20,6 @@ Requires: libcgroup
 Requires: git
 Requires: selinux-policy-targeted >= 3.7.19-83
 Requires: rubygem-open4
-Requires: rhc-cartridge-php-5.3.2
-Requires: rhc-cartridge-wsgi-3.2.1
-Requires: rhc-cartridge-rack-1.1.0
 Requires(post): /usr/sbin/semodule
 Requires(post): /usr/sbin/semanage
 Requires(postun): /usr/sbin/semodule
