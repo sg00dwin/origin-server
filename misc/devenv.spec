@@ -13,8 +13,9 @@ Requires: rhc
 Requires: rhc-common
 Requires: rhc-node
 Requires: rhc-node-tools
-Requires: rhc-server
-Requires: rhc-cartridge-php-5.3.2
+Requires: rhc-site
+Requires: rhc-broker
+Requires: rhc-cartridge-php5
 Requires: rhc-cartridge-wsgi-3.2.1
 Requires: rhc-cartridge-rack-1.1.0
 Requires: rhc-cartridge-jbossas-7.0.0
