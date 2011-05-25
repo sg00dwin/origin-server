@@ -97,6 +97,7 @@ logging_send_syslog_msg(libra_domain)
 logging_inherit_append_all_logs(libra_domain)
 
 miscfiles_read_localization(libra_domain)
+miscfiles_read_fonts(libra_domain)
 
 term_dontaudit_search_ptys(libra_domain)
 
@@ -138,7 +139,7 @@ allow libra_initrc_t libra_domain:process { getattr getsched setsched transition
 allow libra_domain libra_initrc_t:fd use;
 allow libra_domain libra_initrc_t:fifo_file rw_inherited_fifo_file_perms;
 allow libra_domain libra_initrc_t:process sigchld;
-dontaudit libra_initrc_t libra_domain:socket_class_set { read write };
+dontaudit libra_domain libra_initrc_t:socket_class_set { read write };
 
 # use this when available, see can_exec below MAL 20110422
 #apache_exec_rotatelogs(libra_domain)
@@ -179,7 +180,7 @@ corenet_udp_bind_generic_port(httpd_t)
 #################################
 
 # Allow users to execute files in their home dir
-# allow libra_t libra_var_lib_t:file { execute execute_no_trans };
+allow libra_t libra_var_lib_t:file { execute execute_no_trans };
 
 #################################
 # Allow Log Rotation            #
