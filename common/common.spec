@@ -1,7 +1,7 @@
 Summary:   Common dependencies of the libra server and node
 Name:      rhc-common
 Version:   0.72.1
-Release:   1%{?dist}
+Release:   2%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
 URL:       http://openshift.redhat.com
@@ -37,3 +37,10 @@ rm -rf %{buildroot}
 %defattr(-,root,root,-)
 %ghost %attr(-,-,libra_user) %{_sysconfdir}/mcollective/client.cfg
 %{_libexecdir}/mcollective/mcollective/connector/amqp.rb
+
+%changelog
+* Wed May 25 2011 Matt Hicks <mhicks@redhat.com> 0.72.1-2
+- Fixing build root dirs
+
+* Tue May 25 2011 Matt Hicks <mhicks@redhat.com> 0.72.1-1
+- Initial refactoring
