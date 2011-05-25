@@ -36,7 +36,7 @@ rm -rf %{buildroot}
 mkdir -p %{buildroot}%{htmldir}
 mkdir -p %{buildroot}%{brokerdir}
 cp -r . %{buildroot}%{brokerdir}
-ln -s %{buildroot}%{brokerdir}/public %{buildroot}%{htmldir}/broker
+ln -s %{brokerdir}/public %{buildroot}%{htmldir}/broker
 
 mkdir -p %{buildroot}%{brokerdir}/log
 touch %{buildroot}%{brokerdir}/log/production.log
