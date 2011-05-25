@@ -23,7 +23,7 @@ Provides jbossas support to OpenShift
 %install
 rm -rf %{buildroot}
 
-CARTRIDGE_DIR=$RPM_BUILD_ROOT/usr/libexec/li/cartridges/jbossas-7.0.0
+CARTRIDGE_DIR=$RPM_BUILD_ROOT/usr/libexec/li/cartridges/jbossas7
 mkdir -p $CARTRIDGE_DIR
 cp -r . $CARTRIDGE_DIR
 chmod 0750 $CARTRIDGE_DIR/info/hooks/
@@ -36,8 +36,12 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root,-)
-%{_libexecdir}/li/cartridges/jbossas-7.0.0/
+%{_libexecdir}/li/cartridges/jbossas7/
 
 %changelog
+*
+* Tue May 25 2011 Scott Stark sstark@redhat.com
+- change cartridge location to cartridges/jbossas7
+
 * Tue May 25 2011 Matt Hicks <mhicks@redhat.com> 0.72.1-1
 - Initial refactoring

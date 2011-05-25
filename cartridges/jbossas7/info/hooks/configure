@@ -24,7 +24,7 @@ set -e
 set -x
 
 # The name of the jbossas cartridge dir under /usr/libexec/li/cartridges
-jboss_version=jbossas-7.0.0
+jboss_version=jbossas7
 # The location of jbossas server installation
 jboss_home=/opt/jboss-7.0.0.Beta2
 
