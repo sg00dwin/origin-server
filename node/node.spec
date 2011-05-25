@@ -2,7 +2,7 @@
 %define gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 
 Name: rhc-node
-Version: 0.70.2
+Version: 0.72.1
 Release: 1%{?dist}
 Summary: Multi-tenant cloud management system node tools
 Group: Network/Daemons

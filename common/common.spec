@@ -1,5 +1,5 @@
 Name: rhc-common
-Version: 0.70.2
+Version: 0.72.1
 Release: 1%{?dist}
 Group: Network/Daemons
 License: GPLv2

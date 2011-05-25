@@ -1,7 +1,7 @@
 %{!?ruby_sitelibdir: %global ruby_sitelibdir %(ruby -rrbconfig -e 'puts Config::CONFIG["sitelibdir"]')}
 
 Name: rhc-server-common
-Version: 0.70.2
+Version: 0.72.1
 Release: 1%{?dist}
 Group: Network/Daemons
 License: GPLv2

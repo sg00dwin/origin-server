@@ -1,5 +1,5 @@
 Name: rhc-devenv
-Version: 0.70.2
+Version: 0.72.1
 Release: 1%{?dist}
 License: GPLv2
 URL: https://engineering.redhat.com/trac/Libra
