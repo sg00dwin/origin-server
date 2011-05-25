@@ -1,13 +1,13 @@
-Name: rhc-cartridge-jbossas-7.0.0
+Name: rhc-cartridge-jbossas7
 Version: 0.72.1
 Release: 1%{?dist}
 Group: Network/Daemons
 License: GPLv2
 URL: https://engineering.redhat.com/trac/Libra
-Source0: rhc-cartridge-jbossas-7.0.0-%{version}.tar.gz
+Source0: rhc-cartridge-jbossas7-%{version}.tar.gz
 BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildArch: noarch
-Summary: Provides java-jbossas-7.0.0 support
+Summary: Provides java-jbossas7 support
 Group: Development/Languages
 Requires: rhc-node
 Requires: jboss-as7

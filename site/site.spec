@@ -59,7 +59,7 @@ rm -rf %{buildroot}
 %ghost %{sitedir}/log/production.log
 %config %{sitedir}/config/environments/production.rb
 %{sitedir}
-%{htmldir}/site
+%{htmldir}/app
 
 %post
 /bin/touch %{sitedir}/log/production.log
