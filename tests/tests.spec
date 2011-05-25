@@ -6,7 +6,6 @@ URL: https://engineering.redhat.com/trac/Libra
 Source0: rhc-tests-%{version}.tar.gz
 BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildArch: noarch
-
 Summary: Dependencies for OpenShift tests
 Group: Development/Libraries
 Requires: rhc-devenv
@@ -27,3 +26,7 @@ cp -r . $TEST_DIR
 
 %clean
 rm -rf $RPM_BUILD_ROOT
+
+%files
+%defattr(-,root,root,-)
+/root

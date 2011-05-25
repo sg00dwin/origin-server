@@ -1,3 +1,5 @@
+%{!?ruby_sitelibdir: %global ruby_sitelibdir %(ruby -rrbconfig -e 'puts Config::CONFIG["sitelibdir"]')}
+
 Name: rhc-server-common
 Version: 0.70.2
 Release: 1%{?dist}
@@ -27,9 +29,14 @@ done
 
 %install
 rm -rf $RPM_BUILD_ROOT
+SITE_LIB_DIR=$RPM_BUILD_ROOT/%{ruby_sitelibdir}/openshift
+mkdir -p $SITE_LIB_DIR
+cp -r lib/* $SITE_LIB_DIR
 
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %files
+%defattr(-,root,root,-)
+%{ruby_sitelibdir}/openshift

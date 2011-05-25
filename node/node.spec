@@ -20,6 +20,9 @@ Requires: libcgroup
 Requires: git
 Requires: selinux-policy-targeted >= 3.7.19-83
 Requires: rubygem-open4
+Requires: rhc-cartridge-php-5.3.2
+Requires: rhc-cartridge-wsgi-3.2.1
+Requires: rhc-cartridge-rack-1.1.0
 Requires(post): /usr/sbin/semodule
 Requires(post): /usr/sbin/semanage
 Requires(postun): /usr/sbin/semodule
@@ -39,71 +42,6 @@ BuildArch: noarch
 
 %description tools
 Status and control tools for Libra Nodes
-
-%package cartridge-php-5.3.2
-Summary: Provides php-5.3.2 support
-Group: Development/Languages
-Requires: rhc-node
-Requires: php >= 5.3.2
-Requires: mod_bw
-Requires: rubygem-builder
-Requires: php-pdo
-Requires: php-gd
-Requires: php-xml
-Requires: php-mysql
-Requires: php-pgsql
-BuildArch: noarch
-
-%description cartridge-php-5.3.2
-Provides php support to rhc
-
-%package cartridge-rack-1.1.0
-Summary: Provides ruby rack support running on Phusion Passenger
-Group: Development/Languages
-Requires: rhc-node
-Requires: httpd
-Requires: mod_bw
-Requires: ruby
-Requires: rubygems
-Requires: rubygem-rack = 1:1.1.0
-Requires: rubygem-passenger
-Requires: rubygem-passenger-native
-Requires: rubygem-passenger-native-libs
-Requires: mod_passenger
-Requires: rubygem-bundler
-Requires: rubygem-sqlite3
-Requires: ruby-sqlite3
-Requires: ruby-mysql
-Requires: ruby-nokogiri
-BuildArch: noarch
-
-%description cartridge-rack-1.1.0
-Provides rack support to rhc
-
-%package cartridge-wsgi-3.2.1
-Summary: Provides python-wsgi-3.2.1 support
-Group: Development/Languages
-Requires: rhc-node
-Requires: httpd
-Requires: mod_bw
-Requires: python
-Requires: mod_wsgi = 3.2
-Requires: MySQL-python
-Requires: python-psycopg2
-BuildArch: noarch
-
-%description cartridge-wsgi-3.2.1
-Provides wsgi support to rhc
-
-%package cartridge-jbossas-7.0.0
-Summary: Provides java-jbossas-7.0.0 support
-Group: Development/Languages
-Requires: rhc-node
-Requires: jboss-as7
-BuildArch: noarch
-
-%description cartridge-jbossas-7.0.0
-Provides jbossas support to rhc
 
 %prep
 %setup -q
@@ -288,19 +226,3 @@ fi
 %{gemdir}/cache/li-node-tools-%{version}.gem
 %{gemdir}/doc/li-node-tools-%{version}
 %{gemdir}/specifications/li-node-tools-%{version}.gemspec
-
-%files cartridge-php-5.3.2
-%defattr(-,root,root,-)
-%{_libexecdir}/li/cartridges/php-5.3.2/
-
-%files cartridge-rack-1.1.0
-%defattr(-,root,root,-)
-%{_libexecdir}/li/cartridges/rack-1.1.0/
-
-%files cartridge-wsgi-3.2.1
-%defattr(-,root,root,-)
-%{_libexecdir}/li/cartridges/wsgi-3.2.1/
-
-%files cartridge-jbossas-7.0.0
-%defattr(-,root,root,-)
-%{_libexecdir}/li/cartridges/jbossas-7.0.0/

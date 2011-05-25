@@ -12,6 +12,7 @@ Summary: Li broker components
 Group: Network/Daemons
 BuildArch: noarch
 Requires: rhc-common
+Requires: rhc-server-common
 Requires: httpd
 Requires: mod_passenger
 Requires: rubygem-passenger-native-libs
