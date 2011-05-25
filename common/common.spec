@@ -25,6 +25,7 @@ Provides the common dependencies for the OpenShift server and nodes
 
 %install
 rm -rf %{buildroot}
+mkdir -p %{buildroot}%{_sysconfdir}/mcollective
 mkdir -p %{buildroot}%{_libexecdir}/mcollective/mcollective/connector
 cp mcollective/connector/amqp.rb %{buildroot}%{_libexecdir}/mcollective/mcollective/connector
 touch %{buildroot}%{_sysconfdir}/mcollective/client.cfg
