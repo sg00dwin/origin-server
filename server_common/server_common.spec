@@ -22,16 +22,17 @@ Provides the common dependencies for the OpenShift broker and site
 
 
 %build
-for f in lib/**/*.rb
+for f in openshift/**/*.rb
 do
   ruby -c $f
 done
 
 %install
 rm -rf $RPM_BUILD_ROOT
-SITE_LIB_DIR=$RPM_BUILD_ROOT/%{ruby_sitelibdir}/openshift
-mkdir -p $SITE_LIB_DIR
-cp -r lib/* $SITE_LIB_DIR
+SITE_LIB_DIR=$RPM_BUILD_ROOT/%{ruby_sitelibdir}
+mkdir -p $SITE_LIB_DIR 
+cp -r openshift $SITE_LIB_DIR
+cp openshift.rb $SITE_LIB_DIR
 
 
 %clean
@@ -40,3 +41,4 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-,root,root,-)
 %{ruby_sitelibdir}/openshift
+%{ruby_sitelibdir}/openshift.rb
