@@ -18,7 +18,7 @@ Requires: rhc-broker
 Requires: rhc-cartridge-php5
 Requires: rhc-cartridge-wsgi-3.2.1
 Requires: rhc-cartridge-rack-1.1.0
-Requires: rhc-cartridge-jbossas-7.0.0
+Requires: rhc-cartridge-jbossas7
 Requires: qpid-cpp-server
 Requires: qpid-cpp-server-ssl
 Requires: puppet
