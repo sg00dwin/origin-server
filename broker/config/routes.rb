@@ -1,6 +1,4 @@
 Broker::Application.routes.draw do
-
-  scope Rails.configuration.app_scope do
     # Map all the actions on the home controller
 
     # The priority is based upon order of creation:
@@ -9,9 +7,9 @@ Broker::Application.routes.draw do
     # Sample of regular route:
     #   match 'products/:id' => 'catalog#view'
     # Keep in mind you can assign values other than :controller and :action
-    match 'broker/cartridge' => 'broker#cartridge_post', :via => [:post]
-    match 'broker/domain' => 'broker#domain_post', :via => [:post]
-    match 'broker/userinfo' => 'broker#user_info_post', :via => [:post]
+    match 'cartridge' => 'broker#cartridge_post', :via => [:post]
+    match 'domain' => 'broker#domain_post', :via => [:post]
+    match 'userinfo' => 'broker#user_info_post', :via => [:post]
 
     # Sample resource route with options:
     #   resources :products do
@@ -55,5 +53,4 @@ Broker::Application.routes.draw do
     # This is a legacy wild controller route that's not recommended for RESTful applications.
     # Note: This route will make all actions in every controller accessible via GET requests.
     # match ':controller(/:action(/:id(.:format)))'
-  end
 end

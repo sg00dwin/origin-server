@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 #
-# You can execute this script from within the 'server' directory using:
+# You can execute this script from within the 'site' directory using:
 #   script/rails runner script/sample
 #
 require 'pp'

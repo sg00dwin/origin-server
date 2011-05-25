@@ -23,7 +23,8 @@ namespace :deploy do
     rm_rf "#{tmpname}/docs"
     rm_rf "#{tmpname}/build"
     rm_rf "#{tmpname}/tests"
-    rm_rf "#{tmpname}/server/log"
+    rm_rf "#{tmpname}/site/log"
+    rm_rf "#{tmpname}/broker/log"
     rm_rf "#{tmpname}/node/tools"    
     rm_rf "#{tmpname}/node/scripts"
     rm_rf "#{tmpname}/node/conf"
@@ -37,7 +38,7 @@ namespace :deploy do
     rm_rf tmpname
     remote_dir = "/var/www"
     sh "scp -i ~/.ssh/libra.pem /tmp/li.tar.gz verifier:#{remote_dir}"
-    sh "ssh -i ~/.ssh/libra.pem root@verifier \"cd #{remote_dir}; gunzip li.tar.gz; tar -xf li.tar; rm -rf /usr/libexec/li/cartridges/*; cp -R li/node/cartridges/* /usr/libexec/li/cartridges; cp -R li/node/mcollective/* /usr/libexec/mcollective/mcollective/agent; cp li/node/facter/libra.rb /usr/lib/ruby/site_ruby/1.8/facter/libra.rb; mv libra/httpd httpd; rm -rf libra; mv li/server libra; mv httpd libra/httpd; mkdir -p libra/tmp; mkdir -p libra/log; touch libra/log/development.log; chmod 0666 libra/log/development.log; touch libra/log/production.log; chmod 0666 libra/log/production.log; chmod 755 libra/Gemfile.lock; service libra-site restart; rm -rf li; rm li.tar\""
+    sh "ssh -i ~/.ssh/libra.pem root@verifier \"cd #{remote_dir}; gunzip li.tar.gz; tar -xf li.tar; rm -rf /usr/libexec/li/cartridges/*; cp -R li/node/cartridges/* /usr/libexec/li/cartridges; cp -R li/cartridges/* /usr/libexec/li/cartridges; cp -R li/node/mcollective/* /usr/libexec/mcollective/mcollective/agent; cp li/node/facter/libra.rb /usr/lib/ruby/site_ruby/1.8/facter/libra.rb; cp -r li/server_common/* /usr/lib/ruby/site_ruby/1.8/; mv libra/site/httpd site_httpd; mv libra/broker/httpd broker_httpd; rm -rf libra; mv li/site libra/site; mv li/broker libra/broker; mv site_httpd libra/site/httpd; mkdir -p libra/site/tmp; mkdir -p libra/site/log; touch libra/site/log/development.log; chmod 0666 libra/site/log/development.log; touch libra/site/log/production.log; chmod 0666 libra/site/log/production.log; chmod 755 libra/site/Gemfile.lock; service libra-site restart; mv broker_httpd libra/broker/httpd; mkdir -p libra/broker/tmp; mkdir -p libra/broker/log; touch libra/broker/log/development.log; chmod 0666 libra/broker/log/development.log; touch libra/broker/log/production.log; chmod 0666 libra/broker/log/production.log; chmod 755 libra/broker/Gemfile.lock; service libra-broker restart; rm -rf li; rm li.tar\""
     rm "/tmp/li.tar.gz"
   end
 

@@ -154,7 +154,7 @@ module RHC
     print_post_data(data, debug)
     json_data = JSON.generate(data)
 
-    url = URI.parse("https://#{libra_server}/app/broker/userinfo")
+    url = URI.parse("https://#{libra_server}/broker/userinfo")
     response = http_post(net_http, url, json_data, password)
 
     unless response.code == '200'

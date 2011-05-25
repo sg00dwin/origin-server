@@ -15,13 +15,13 @@ proxy.
 2. yum install mod_ssl
 This will install apache certs you will need
 
-3. cd server/public; mkdir app; cd app; ln -s ../* .; rm app
+3. cd site/public; mkdir app; cd app; ln -s ../* .; rm app
 This should link all the resources in public into /app/public
 
-4. cd server; cp Gemfile.lock.dev Gemfile.lock; sudo rails s
+4. cd site; cp Gemfile.lock.dev Gemfile.lock; sudo rails s
 
 4b. To run against streamline in rails production mode with captcha enabled, you can use:
-cd server; cp config/environments/streamline-internal.rb config/environments/production.rb; cp Gemfile.lock.dev Gemfile.lock; sudo rails s -e production
+cd site; cp config/environments/streamline-internal.rb config/environments/production.rb; cp Gemfile.lock.dev Gemfile.lock; sudo rails s -e production
 
 5. Set an entry in /etc/hosts for
 127.0.0.1 openshift.redhat.com
@@ -31,7 +31,7 @@ This will get you setup pretty well to test the site locally.
 Running the tests
 
 1. cp misc/devenv/controller.conf to /etc/libra/controller.conf
-2. cd server
+2. cd site
 3. rake test
 
 Running a specific test

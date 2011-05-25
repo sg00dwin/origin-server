@@ -145,7 +145,7 @@ end
 RHC::print_post_data(data, debug)
 json_data = JSON.generate(data)
 
-url = URI.parse("https://#{libra_server}/app/broker/domain")
+url = URI.parse("https://#{libra_server}/broker/domain")
 response = RHC::http_post(@http, url, json_data, password)
 
 if response.code == '200'

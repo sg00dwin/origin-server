@@ -179,7 +179,7 @@ json_data = JSON.generate(data)
 
 puts "Contacting https://#{libra_server}"
 
-url = URI.parse("https://#{libra_server}/app/broker/cartridge")
+url = URI.parse("https://#{libra_server}/broker/cartridge")
 response = RHC::http_post(@http, url, json_data, password)
 
 if response.code == '200'
@@ -202,7 +202,7 @@ at_exit do
                     :password => password
                     })
         puts "Cleaning up application"
-        url = URI.parse("https://#{libra_server}/app/broker/cartridge")
+        url = URI.parse("https://#{libra_server}/broker/cartridge")
         RHC::http_post(@http, url, json_data, password)
     end
 end
