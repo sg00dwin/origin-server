@@ -38,7 +38,7 @@ rm -rf %{buildroot}
 mkdir -p %{buildroot}%{htmldir}
 mkdir -p %{buildroot}%{sitedir}
 cp -r . %{buildroot}%{sitedir}
-ln -s %{sitedir}/public %{buildroot}%{htmldir}/site
+ln -s %{sitedir}/public %{buildroot}%{htmldir}/app
 
 mkdir -p %{buildroot}%{sitedir}/log
 touch %{buildroot}%{sitedir}/log/production.log
