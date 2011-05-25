@@ -4,7 +4,7 @@
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
 Version:       0.72.1
-Release:       1%{?dist}
+Release:       2%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
 URL:           http://openshift.redhat.com
@@ -56,15 +56,18 @@ done
 %install
 rm -rf $RPM_BUILD_ROOT
 
+mkdir -p %{buildroot}%{_bindir}
+mkdir -p %{buildroot}%{_libexecdir}
+mkdir -p %{buildroot}%{_initddir}
+mkdir -p %{buildroot}%{ruby_sitelibdir}
 mkdir -p %{buildroot}/var/lib/libra
 mkdir -p %{buildroot}%{_libexecdir}/li
-mkdir -p %{buildroot}%{_sysconfdir}/libra
 mkdir -p %{buildroot}%{_sysconfdir}/httpd/conf.d/libra
 mkdir -p %{buildroot}/usr/share/selinux/packages
 
 cp -r cartridges %{buildroot}%{_libexecdir}/li
-cp conf/000000_default.conf %{buildroot}%{_sysconfdir}/httpd/conf.d
-cp conf/resource_limits.conf %{buildroot}%{_sysconfdir}/libra
+cp -r conf/httpd %{buildroot}%{_sysconfdir}
+cp -r conf/libra %{buildroot}%{_sysconfdir}
 cp -r facter %{buildroot}%{ruby_sitelibdir}/facter
 cp -r mcollective %{buildroot}%{_libexecdir}
 cp scripts/bin/* %{buildroot}%{_bindir}
@@ -135,14 +138,16 @@ fi
 %attr(0640,-,-) %{_libexecdir}/mcollective/mcollective/agent/libra.rb
 %attr(0640,-,-) %{_libexecdir}/mcollective/update_yaml.pp
 %attr(0640,-,-) %{ruby_sitelibdir}/facter/libra.rb
-%attr(0750,-,-) %{_sysconfdir}/init.d/libra
-%attr(0750,-,-) %{_sysconfdir}/init.d/libra-data
-%attr(0750,-,-) %{_sysconfdir}/init.d/libra-cgroups
-%attr(0750,-,-) %{_sysconfdir}/init.d/libra-tc
-%attr(0750,-,-) %{_bindir}/rhc-ip-prep.sh
+%attr(0750,-,-) %{_initddir}/libra
+%attr(0750,-,-) %{_initddir}/libra-data
+%attr(0750,-,-) %{_initddir}/libra-cgroups
+%attr(0750,-,-) %{_initddir}/libra-tc
 %attr(0755,-,-) %{_bindir}/trap-user
+%attr(0750,-,-) %{_bindir}/rhc-ip-prep.sh
 %attr(0750,-,-) %{_bindir}/rhc-restorecon
 %attr(0750,-,-) %{_bindir}/rhc-init-quota
+%attr(0750,-,-) %{_bindir}/ec2-prep.sh
+%attr(0750,-,-) %{_bindir}/remount-secure.sh
 %dir %attr(0751,root,root) %{_localstatedir}/lib/libra
 %dir %attr(0750,root,root) %{_libexecdir}/li/cartridges/li-controller-0.1/
 %{_libexecdir}/li/cartridges/li-controller-0.1/README
@@ -165,3 +170,10 @@ fi
 %{gemdir}/cache/li-node-tools-%{version}.gem
 %{gemdir}/doc/li-node-tools-%{version}
 %{gemdir}/specifications/li-node-tools-%{version}.gemspec
+
+%changelog
+* Wed May 25 2011 Matt Hicks <mhicks@redhat.com> 0.72.1-2
+- Fixing build root dirs
+
+* Tue May 25 2011 Matt Hicks <mhicks@redhat.com> 0.72.1-1
+- Initial refactoring
