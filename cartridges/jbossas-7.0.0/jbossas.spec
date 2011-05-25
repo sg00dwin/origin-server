@@ -37,3 +37,7 @@ rm -rf %{buildroot}
 %files
 %defattr(-,root,root,-)
 %{_libexecdir}/li/cartridges/jbossas-7.0.0/
+
+%changelog
+* Tue May 25 2011 Matt Hicks <mhicks@redhat.com> 0.72.1-1
+- Initial refactoring

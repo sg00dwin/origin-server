@@ -1,5 +1,5 @@
 Name: rhc-cartridge-php-5.3.2
-Version: 0.70.2
+Version: 0.72.1
 Release: 1%{?dist}
 License: GPLv2
 URL: https://engineering.redhat.com/trac/Libra
@@ -41,3 +41,7 @@ rm -rf %{buildroot}
 %files
 %defattr(-,root,root,-)
 %{_libexecdir}/li/cartridges/php-5.3.2/
+
+%changelog
+* Tue May 25 2011 Matt Hicks <mhicks@redhat.com> 0.72.1-1
+- Initial refactoring
