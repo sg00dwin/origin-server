@@ -72,8 +72,8 @@ module Libra
       @sysctl = ["kernel.sem"]
       @packages = ["rhc", "rhc-common", "rhc-node", "rhc-node-tools", 
                    "rhc-server",
-                   "rhc-cartridge-php-5.3.2", "rhc-cartridge-wsgi-3.2.1", 
-                   "rhc-cartridge-rack-1.1.0"]
+                   "rhc-cartridge-php-5.3", "rhc-cartridge-wsgi-3.2", 
+                   "rhc-cartridge-rack-1.1"]
       
       attr_reader :hostinfo, :ntpd, :qppid, :mcollectived
 

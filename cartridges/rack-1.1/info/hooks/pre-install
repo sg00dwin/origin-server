@@ -31,7 +31,7 @@ else
     exit 3
 fi
 
-[ -z "$CARTRIDGE_DIR" ] && CARTRIDGE_DIR="/usr/libexec/li/cartridges/php-5.3.2/"
+[ -z "$CARTRIDGE_DIR" ] && CARTRIDGE_DIR="/usr/libexec/li/cartridges/rack-1.1/"
 
 function print_help {
     echo "Usage: customername"

@@ -11,7 +11,7 @@ class LibraApplicationTest < Test::Unit::TestCase
     @username = ""
     @appname = "myapp0"
     @acct = Libra::Node::GuestAccount.new(@username)
-    @apptype = "php-5.3.2"
+    @apptype = "php-5.3"
     @app0 = Libra::Node::Application.new(@appname, nil, @apptype)
     #@app1 = Libra::Node::Application.new(@appname, @acct)
   end

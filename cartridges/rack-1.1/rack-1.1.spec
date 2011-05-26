@@ -14,7 +14,7 @@ Requires:  rhc-node
 Requires:  mod_bw
 Requires:  rubygems
 Requires:  rubygem-rack >= 1.1.0
-Requires:  rubygem-rack < 1.2
+#Requires:  rubygem-rack < 1.2.0
 Requires:  rubygem-passenger
 Requires:  rubygem-passenger-native
 Requires:  rubygem-passenger-native-libs

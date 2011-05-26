@@ -17,7 +17,7 @@ Then /^he could create a namespace and app$/ do
   @namespace = @info[:namespace]
   @repo_path="#{$temp}/#{@namespace}_#{@namespace}_repo"
   temp_text = run("#{$create_domain_script} -n #{@namespace} -l #{@rhc_login} -p fakepw -d")
-  temp_text = run("#{$create_app_script} -a #{@namespace} -l #{@rhc_login} -r #{@repo_path} -t php-5.3.2 -p fakepw -d")
+  temp_text = run("#{$create_app_script} -a #{@namespace} -l #{@rhc_login} -r #{@repo_path} -t php-5.3 -p fakepw -d")
 end
 
 When /^he alter the namespace$/ do

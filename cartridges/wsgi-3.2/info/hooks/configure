@@ -132,7 +132,7 @@ function create_repo {
 
     GIT_DIR=$CUSTOMER_HOME/git/$application.git
     mkdir -p "$CUSTOMER_HOME/git"
-    cp -ad /usr/libexec/li/cartridges/wsgi-3.2.1/info/data/git_template.git $GIT_DIR
+    cp -ad /usr/libexec/li/cartridges/wsgi-3.2/info/data/git_template.git $GIT_DIR
     echo "wsgi 3.2.1 application '$application'" > $GIT_DIR/description
     cat <<EOF > $GIT_DIR/hooks/post-receive
 rm -rf $APP_DIR/repo/*
@@ -273,11 +273,11 @@ case "\$1" in
             echo -n " - Application is disabled" 1>&2
             exit 0
         else
-            runcon -t libra_t -l s0:$c_val /usr/sbin/httpd -C 'Include $APP_DIR/conf.d/*.conf' -f /usr/libexec/li/cartridges/wsgi-3.2.1/info/configuration/etc/conf/httpd_nolog.conf -k \$1
+            runcon -t libra_t -l s0:$c_val /usr/sbin/httpd -C 'Include $APP_DIR/conf.d/*.conf' -f /usr/libexec/li/cartridges/wsgi-3.2/info/configuration/etc/conf/httpd_nolog.conf -k \$1
         fi
     ;;
     restart|graceful|graceful-stop|stop)
-        runcon -t libra_t -l s0:$c_val /usr/sbin/httpd -C 'Include $APP_DIR/conf.d/*.conf' -f /usr/libexec/li/cartridges/wsgi-3.2.1/info/configuration/etc/conf/httpd_nolog.conf -k \$1
+        runcon -t libra_t -l s0:$c_val /usr/sbin/httpd -C 'Include $APP_DIR/conf.d/*.conf' -f /usr/libexec/li/cartridges/wsgi-3.2/info/configuration/etc/conf/httpd_nolog.conf -k \$1
     ;;
     status)
         echo "Coming soon"

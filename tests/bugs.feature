@@ -20,12 +20,12 @@ Feature: cucumber tests for reported bugs
 
   Scenario: (libra-qe) Bug 700941 - Express client installation has empty README files under AppName/misc and AppName/libs
     Given the libra client tools
-    When create a new php-5.3.2 app 'phpbug'
+    When create a new php-5.3 app 'phpbug'
     Then no README under misc and libs
 
   Scenario: (libra-qe) Bug 699887 - PHP $_SERVER["HTTP_HOST"] returns wrong value
     Given the libra client tools
-    When create a new php-5.3.2 app 'phphost'
+    When create a new php-5.3 app 'phphost'
     Then can get host name using php script
 
   Scenario: (libra-qe) Bug 695586 - man page of express.conf is empty

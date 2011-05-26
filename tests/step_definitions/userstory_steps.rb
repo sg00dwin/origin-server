@@ -7,13 +7,13 @@ include Libra::Test::Util
 
 
 #US37 - TC21
-When /^create a new php-5.3.2 app '(\w+)'$/ do |app_php|
+When /^create a new php-5.3 app '(\w+)'$/ do |app_php|
   @namespaces = Array.new(1.to_i)
   info = get_unique_username(@namespaces)
   @namespace = info[:namespace]
   @login = info[:login]
   @app_php = app_php
-  framework="php-5.3.2"
+  framework="php-5.3"
   @repo_path="#{$temp}/#{@namespace}_#{@app_php}_repo"
 
   begin
@@ -82,7 +82,7 @@ When /^create app with -n option$/ do
   namespace = info[:namespace]
   login = info[:login]
   @app_php = "phpapp"
-  framework="php-5.3.2"
+  framework="php-5.3"
   begin
     run("#{$create_domain_script} -n #{namespace} -l #{login} -p fakepw -d")
     run("#{$create_app_script} -l #{login} -a #{@app_php} -n -t #{framework} -p fakepw -d")
@@ -188,7 +188,7 @@ end
 
 When /^create an app without -a$/ do
   @app_name = "app"
-  framework="rack-1.1.0"
+  framework="rack-1.1"
   @repo_path="#{$temp}/#{@namespace}_#{@app_name}_repo"
   @create_error_lack_param = 0
   @sfile = "#{$temp}/#{@app_name}_1"
@@ -211,7 +211,7 @@ end
 
 When /^create an app without -t$/ do
   @app_name = "app"
-  framework="rack-1.1.0"
+  framework="rack-1.1"
   @repo_path="#{$temp}/#{@namespace}_#{@app_name}_repo"
   @create_error_lack_param = 0
   @sfile = "#{$temp}/#{@app_name}_2"
@@ -231,9 +231,9 @@ Then /^throw out an error Type is required$/ do
   run("rm -f #{@sfile}")
 end
 
-When /^create a new rack-1.1.0 app '(\w+)'$/ do |app_rack|
+When /^create a new rack-1.1 app '(\w+)'$/ do |app_rack|
   @app_rack = app_rack
-  framework="rack-1.1.0"
+  framework="rack-1.1"
   @repo_path="#{$temp}/#{@namespace}_#{@app_rack}_repo"
   begin
     run("#{$create_domain_script} -n #{@namespace} -l #{@login} -p fakepw -d")
@@ -307,13 +307,13 @@ When /^clean old audit.log$/ do
   @audit_file = "/var/log/audit/audit.log"
   run("rm -f #{@audit_file}")
 end
-And /^create an rack-1.1.0 app$/ do
+And /^create an rack-1.1 app$/ do
   @namespaces = Array.new(1.to_i)
   info = get_unique_username(@namespaces)
   @namespace = info[:namespace]
   @login = info[:login]
   @app_rails = "railsapplication"
-  framework="rack-1.1.0"
+  framework="rack-1.1"
   @repo_path="#{$temp}/#{@namespace}_#{@app_rails}_repo"
   begin
     run("#{$create_domain_script} -n #{@namespace} -l #{@login} -p fakepw -d")
@@ -332,7 +332,7 @@ Then /^no AVC denials$/ do
   run("rm -f #{@tfile}")
 end
 
-When /^stop the rack-1.1.0 app$/ do
+When /^stop the rack-1.1 app$/ do
   begin
     run("#{$ctl_app_script} -a #{@app_rails} -l #{@login} -p fakepw -c stop -d")
   rescue Exception => e
@@ -342,7 +342,7 @@ When /^stop the rack-1.1.0 app$/ do
   end
 end
 
-When /^start the rack-1.1.0 app$/ do
+When /^start the rack-1.1 app$/ do
   begin
     run("#{$ctl_app_script} -a #{@app_rails} -l #{@login} -p fakepw -c start -d")
   rescue Exception => e
@@ -352,7 +352,7 @@ When /^start the rack-1.1.0 app$/ do
   end
 end
 
-When /^restart the rack-1.1.0 app$/ do
+When /^restart the rack-1.1 app$/ do
   begin
     run("#{$ctl_app_script} -a #{@app_rails} -l #{@login} -p fakepw -c restart -d")
   rescue Exception => e
@@ -362,7 +362,7 @@ When /^restart the rack-1.1.0 app$/ do
   end
 end
 
-When /^reload the rack-1.1.0 app$/ do
+When /^reload the rack-1.1 app$/ do
   begin
     run("#{$ctl_app_script} -a #{@app_rails} -l #{@login} -p fakepw -c reload -d")
   rescue Exception => e
@@ -372,7 +372,7 @@ When /^reload the rack-1.1.0 app$/ do
   end
 end
 
-When /^destroy the rack-1.1.0 app$/ do
+When /^destroy the rack-1.1 app$/ do
   begin
     run("#{$ctl_app_script} -a #{@app_rails} -l #{@login} -p fakepw -c destroy -d")
   rescue Exception => e

@@ -54,7 +54,7 @@ fi
 
 
 
-CART_INFO_DIR=/usr/libexec/li/cartridges/php-5.3.2/info
+CART_INFO_DIR=/usr/libexec/li/cartridges/php-5.3/info
 CART_CONF_DIR=$CART_INFO_DIR/configuration/etc/conf
 
 function print_help {

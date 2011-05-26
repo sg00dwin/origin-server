@@ -22,7 +22,7 @@ $ ./rhc-create-domain -n desirednamespace -l rhlogin
 
 Step 2: Create an rhc application:
 
-$ ./rhc-create-app -l rhlogin -a appname -r /path/to/new/git/repo -t <framework Ex: php-5.3.2>
+$ ./rhc-create-app -l rhlogin -a appname -r /path/to/new/git/repo -t <framework Ex: php-5.3>
 
 Once that's complete, follow the directions printed at the end of running
 rhc-create-app
