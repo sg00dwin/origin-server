@@ -124,8 +124,27 @@ chkconfig libra-tc on
 %attr(0666,-,-) %{_tmppath}/mcollective-client.log
 %attr(0666,-,-) %{brokerdir}/log/development.log
 %attr(0666,-,-) %{sitedir}/log/development.log
+/etc/qpidd.conf
 /etc/qpid/pki
+/etc/qpid/qpidc.conf
+/etc/httpd/conf.d/000000_default.conf
+/etc/init.d/libra-broker
+/etc/init.d/libra-site
+/etc/libra/controller.conf
+/etc/libra/node.conf
+/etc/openshift/express.conf
+/etc/sysconfig/iptables
+/usr/bin/li-log-util
+/var/www/html
+/var/www/libra/broker/httpd.conf
+/var/www/libra/broker/httpd/broker.conf
+/var/www/libra/broker/httpd/modules
+/var/www/libra/httpd.conf
+/var/www/libra/site/httpd.conf
+/var/www/libra/site/httpd/modules
+/var/www/libra/site/httpd/site.conf
+/var/www/libra/site/public/robots.txt
 
 %changelog
-* Thu May 26 2011 Matt Hicks <mhicks@redhat.com> 0.72.1-3
+* Thu May 26 2011 Matt Hicks <mhicks@redhat.com> 0.72.1-2
 - Spec cleanup
