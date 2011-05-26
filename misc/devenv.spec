@@ -52,7 +52,7 @@ mkdir -p %{buildroot}%{sitedir}
 
 # Move over all configs and scripts
 cp -rf devenv/etc/* %{buildroot}%{_sysconfdir}
-cp -rf bin/* %{buildroot}%{_bindir}
+cp -rf devenv/bin/* %{buildroot}%{_bindir}
 
 # Move over new http configurations
 cp -rf devenv/httpd/* %{buildroot}%{libradir}
