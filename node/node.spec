@@ -3,7 +3,7 @@
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
 Version:       0.72.2
-Release:       1%{?dist}
+Release:       2%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
 URL:           http://openshift.redhat.com
@@ -58,7 +58,6 @@ cp -r facter %{buildroot}%{ruby_sitelibdir}/facter
 cp -r mcollective %{buildroot}%{_libexecdir}
 cp scripts/bin/* %{buildroot}%{_bindir}
 cp scripts/init/* %{buildroot}%{_initddir}
-cp selinux/rhc-ip-prep.sh %{buildroot}%{_bindir}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -139,6 +138,7 @@ fi
 * Thu May 26 2011 Matt Hicks <mhicks@redhat.com> 0.72.2-1
 - Readding semanage requirements (mhicks@redhat.com)
 - Pulling SELinux RPM out of node (mhicks@redhat.com)
+
 * Thu May 26 2011 Matt Hicks <mhicks@redhat.com> 0.72.1-3
 - Adding rake build dep
 
