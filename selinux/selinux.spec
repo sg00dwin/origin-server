@@ -1,7 +1,7 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
 Version:       0.72.2
-Release:       2%{?dist}
+Release:       3%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
 URL:           http://openshift.redhat.com
@@ -24,7 +24,7 @@ make -f /usr/share/selinux/devel/Makefile
 
 %install
 rm -rf %{_buildroot}
-cp libra.pp %{_datadir}/selinux/packages/libra.pp
+cp libra.pp %{buildroot}%{_datadir}/selinux/packages/libra.pp
 
 %clean
 rm -rf %{_buildroot}
