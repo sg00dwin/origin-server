@@ -4,7 +4,7 @@
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
 Version:       0.72.1
-Release:       2%{?dist}
+Release:       3%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
 URL:           http://openshift.redhat.com
@@ -12,6 +12,7 @@ Source0:       rhc-node-%{version}.tar.gz
 
 BuildRoot:     %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires: ruby(abi)
+BuildRequires: rubygem-rake
 Requires:      quota
 Requires:      rhc-common
 Requires:      mcollective
@@ -172,6 +173,9 @@ fi
 %{gemdir}/specifications/li-node-tools-%{version}.gemspec
 
 %changelog
+* Thu May 26 2011 Matt Hicks <mhicks@redhat.com> 0.72.1-3
+- Adding rake build dep
+
 * Wed May 25 2011 Matt Hicks <mhicks@redhat.com> 0.72.1-2
 - Fixing build root dirs
 
