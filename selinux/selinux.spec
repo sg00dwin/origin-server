@@ -37,7 +37,7 @@ rm -rf %{_buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
-* Thu May 26 2011 Matt Hicks <mhicks@redhat.com> 0.72.2-2
+* Thu May 26 2011 Matt Hicks <mhicks@redhat.com> 0.72.2-3
 - Adding selinux policy to build requires
 
 * Thu May 26 2011 Matt Hicks <mhicks@redhat.com> 0.72.2-1
