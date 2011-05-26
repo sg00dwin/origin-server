@@ -17,6 +17,7 @@ Requires:      git
 Requires:      libcgroup
 Requires:      mcollective
 Requires:      perl
+Requires:      ruby(abi)
 Requires:      rubygem-open4
 Requires:      rubygem-parseconfig
 Requires:      quota
