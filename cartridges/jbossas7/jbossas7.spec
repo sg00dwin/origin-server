@@ -1,9 +1,9 @@
-%define cartridgedir %{_libexecdir}/li/cartridges/php-5.3
+%define cartridgedir %{_libexecdir}/li/cartridges/jbossas7
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas7
 Version:   0.72.1
-Release:   1%{?dist}
+Release:   2%{?dist}
 Group:     Development/Languages
 License:   GPLv2
 URL:       http://openshift.redhat.com
@@ -27,6 +27,7 @@ Provides JBossAS7 support to OpenShift
 rm -rf %{buildroot}
 mkdir -p %{buildroot}%{cartridgedir}
 cp -r . %{buildroot}%{cartridgedir}
+rm %{buildroot}%{cartridgedir}/.gitignore
 rm %{buildroot}%{cartridgedir}/jbossas7.spec
 
 %clean
@@ -43,6 +44,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Tue May 25 2011 Matt Hicks <mhicks@redhat.com> 0.72.1-2
+- Minor spec cleanup
+
 * Tue May 25 2011 Scott Stark sstark@redhat.com
 - change cartridge location to cartridges/jbossas7
 
