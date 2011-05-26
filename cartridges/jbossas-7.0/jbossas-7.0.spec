@@ -1,13 +1,13 @@
-%define cartridgedir %{_libexecdir}/li/cartridges/jbossas7
+%define cartridgedir %{_libexecdir}/li/cartridges/jbossas-7.0
 
 Summary:   Provides JBossAS7 support
-Name:      rhc-cartridge-jbossas7
-Version:   0.72.1
-Release:   2%{?dist}
+Name:      rhc-cartridge-jbossas-7.0
+Version:   0.72.2
+Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
 URL:       http://openshift.redhat.com
-Source0:   rhc-cartridge-jbossas7-%{version}.tar.gz
+Source0:   rhc-cartridge-jbossas-7.0-%{version}.tar.gz
 
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 Requires:  rhc-node
@@ -28,7 +28,7 @@ rm -rf %{buildroot}
 mkdir -p %{buildroot}%{cartridgedir}
 cp -r . %{buildroot}%{cartridgedir}
 rm %{buildroot}%{cartridgedir}/.gitignore
-rm %{buildroot}%{cartridgedir}/jbossas7.spec
+rm %{buildroot}%{cartridgedir}/jbossas-7.0.spec
 
 %clean
 rm -rf %{buildroot}
@@ -44,6 +44,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Tue May 25 2011 Matt Hicks <mhicks@redhat.com> 0.72.2-1
+- Another cartridge rename to include minor version
+
 * Tue May 25 2011 Matt Hicks <mhicks@redhat.com> 0.72.1-2
 - Minor spec cleanup
 
