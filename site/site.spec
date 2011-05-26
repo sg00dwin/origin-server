@@ -40,7 +40,7 @@ rm -rf %{buildroot}
 mkdir -p %{buildroot}%{htmldir}
 mkdir -p %{buildroot}%{sitedir}
 cp -r . %{buildroot}%{sitedir}
-ln -s %{sitedir}/public %{buildroot}%{htmldir}/site
+ln -s %{sitedir}/public %{buildroot}%{htmldir}/app
 
 mkdir -p %{buildroot}%{sitedir}/log
 touch %{buildroot}%{sitedir}/log/production.log
@@ -61,7 +61,7 @@ rm -rf %{buildroot}
 %ghost %{sitedir}/log/production.log
 %config %{sitedir}/config/environments/production.rb
 %{sitedir}
-%{htmldir}/site
+%{htmldir}/app
 
 %post
 /bin/touch %{sitedir}/log/production.log
