@@ -2,8 +2,8 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.72.1
-Release:       3%{?dist}
+Version:       0.72.2
+Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
 URL:           http://openshift.redhat.com
@@ -137,6 +137,9 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Thu May 26 2011 Matt Hicks <mhicks@redhat.com> 0.72.2-1
+- Readding semanage requirements (mhicks@redhat.com)
+- Pulling SELinux RPM out of node (mhicks@redhat.com)
 * Thu May 26 2011 Matt Hicks <mhicks@redhat.com> 0.72.1-3
 - Adding rake build dep
 
