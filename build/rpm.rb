@@ -1,4 +1,27 @@
 namespace :rpm do
+  
+  BUILD_DIRS=['cartridges/*', 'broker', 'client', 'common', 'misc/devenv', 'node', 'server-common', 'site']
+  
+  task :devbuild do
+    source_cmd = 'tito build --srpm --test -o /tmp/tito'
+    build_cmd = 'tito build --rpm --test -o /tmp/tito'
+    rm_rf '/tmp/tito/rhc-*'
+    BUILD_DIRS.each do |build_dir|
+      Dir.glob(build_dir).each {|dir|
+        sh "cd #{dir} && #{source_cmd}"
+        sh "cd #{dir} && #{build_cmd}"
+      }
+    end
+  end
+  
+  task :publishdevenv do
+    sh 'scp /tmp/tito/noarch/rhc-*.rpm root@verifier:~'
+  end
+  
+  task :installdevenv => [:devbuild, :publishdevenv] do    
+    sh "ssh root@verifier \"rpm -Uvh rhc-*.rpm\""
+  end
+  
   def bump_release(commit_msg)
     # Bump the version number
     @version = @version.succ
