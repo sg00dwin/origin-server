@@ -555,9 +555,9 @@ END_OF_MESSAGE
           scp("-r #{@server}:/var/www/libra/site/log/development.log rhc/log")
           scp("-r #{@server}:/var/www/libra/broker/httpd/logs/access_log rhc/log")
           scp("-r #{@server}:/var/www/libra/broker/httpd/logs/error_log rhc/log")
-          scp("-r #{@server}:/var/www/libra/broker/log/development.log rhc/log")          
+          scp("-r #{@server}:/var/www/libra/broker/log/development.log rhc/log")
           scp("-r #{@server}:/var/log/mcollective.log rhc/log")
-          scp("-r #{@server}:/tmp/mcollective-client.log rhc/log")
+          scp("-r #{@server}:/var/tmp/mcollective-client.log rhc/log")
 
           `mkdir -p rhc/junit`
           scp("-r #{@server}:/tmp/rhc/junit/* rhc/junit")
