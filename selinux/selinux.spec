@@ -1,18 +1,15 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
 Version:       0.72.2
-Release:       1%{?dist}
+Release:       2%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
 URL:           http://openshift.redhat.com
 Source0:       rhc-selinux-%{version}.tar.gz
 
 BuildRoot:     %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
+BuildRequires: selinux-policy
 Requires:      selinux-policy-targeted >= 3.7.19-94
-Requires(post):   /usr/sbin/semodule
-Requires(post):   /usr/sbin/semanage
-Requires(postun): /usr/sbin/semodule
-Requires(postun): /usr/sbin/semanage
 
 BuildArch: noarch
 
@@ -40,6 +37,9 @@ rm -rf %{_buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Thu May 26 2011 Matt Hicks <mhicks@redhat.com> 0.72.2-2
+- Adding selinux policy to build requires
+
 * Thu May 26 2011 Matt Hicks <mhicks@redhat.com> 0.72.2-1
 - More SELinux file reshuffling (mhicks@redhat.com)
 
