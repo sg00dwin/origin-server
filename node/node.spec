@@ -58,7 +58,6 @@ cp -r facter %{buildroot}%{ruby_sitelibdir}/facter
 cp -r mcollective %{buildroot}%{_libexecdir}
 cp scripts/bin/* %{buildroot}%{_bindir}
 cp scripts/init/* %{buildroot}%{_initddir}
-cp selinux/libra.pp %{buildroot}/usr/share/selinux/packages
 cp selinux/rhc-ip-prep.sh %{buildroot}%{_bindir}
 
 %clean
