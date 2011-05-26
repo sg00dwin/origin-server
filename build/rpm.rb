@@ -3,6 +3,11 @@ namespace :rpm do
   BUILD_DIRS=['cartridges/*', 'broker', 'client', 'common', 'misc/devenv', 'node', 'server-common', 'site']
   
   task :devbuild do
+    sh("git diff-index --quiet HEAD") do |ok, res|
+      if !ok
+        puts "WARNING - Uncommitted repository changes"
+      end
+    end
     source_cmd = 'tito build --srpm --test -o /tmp/tito'
     build_cmd = 'tito build --rpm --test -o /tmp/tito'
     rm_rf '/tmp/tito/rhc-*'
