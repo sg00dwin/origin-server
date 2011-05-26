@@ -1,9 +1,9 @@
-%define cartridgedir %{_libexecdir}/li/cartridges/php5
+%define cartridgedir %{_libexecdir}/li/cartridges/php-5.3
 
-Summary:   Provides php5 support
-Name:      rhc-cartridge-php5
+Summary:   Provides php-5.3 support
+Name:      rhc-cartridge-php-5.3
 Version:   0.72.1
-Release:   2%{?dist}
+Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
 URL:       http://openshift.redhat.com
@@ -50,8 +50,5 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
-* Tue May 25 2011 Matt Hicks <mhicks@redhat.com> 0.72.1-2
-- Removing spec from the installation
-
 * Tue May 25 2011 Matt Hicks <mhicks@redhat.com> 0.72.1-1
 - Initial refactoring
