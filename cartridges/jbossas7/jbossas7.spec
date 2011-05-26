@@ -1,19 +1,22 @@
-Name: rhc-cartridge-jbossas7
-Version: 0.72.1
-Release: 1%{?dist}
-Group: Network/Daemons
-License: GPLv2
-URL: https://engineering.redhat.com/trac/Libra
-Source0: rhc-cartridge-jbossas7-%{version}.tar.gz
-BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
+%define cartridgedir %{_libexecdir}/li/cartridges/php-5.3
+
+Summary:   Provides JBossAS7 support
+Name:      rhc-cartridge-jbossas7
+Version:   0.72.1
+Release:   1%{?dist}
+Group:     Development/Languages
+License:   GPLv2
+URL:       http://openshift.redhat.com
+Source0:   rhc-cartridge-jbossas7-%{version}.tar.gz
+
+BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
+Requires:  rhc-node
+Requires:  jboss-as7
+
 BuildArch: noarch
-Summary: Provides java-jbossas7 support
-Group: Development/Languages
-Requires: rhc-node
-Requires: jboss-as7
 
 %description
-Provides jbossas support to OpenShift
+Provides JBossAS7 support to OpenShift
 
 %prep
 %setup -q
@@ -22,24 +25,24 @@ Provides jbossas support to OpenShift
 
 %install
 rm -rf %{buildroot}
-
-CARTRIDGE_DIR=$RPM_BUILD_ROOT/usr/libexec/li/cartridges/jbossas7
-mkdir -p $CARTRIDGE_DIR
-cp -r . $CARTRIDGE_DIR
-chmod 0750 $CARTRIDGE_DIR/info/hooks/
-chmod 0750 $CARTRIDGE_DIR/info/data/
-chmod 0750 $CARTRIDGE_DIR/info/build/
-
+mkdir -p %{buildroot}%{cartridgedir}
+cp -r . %{buildroot}%{cartridgedir}
+rm %{buildroot}%{cartridgedir}/jbossas7.spec
 
 %clean
 rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root,-)
-%{_libexecdir}/li/cartridges/jbossas7/
+%attr(0750,-,-) %{cartridgedir}/info/hooks/
+%attr(0750,-,-) %{cartridgedir}/info/data/
+%attr(0750,-,-) %{cartridgedir}/info/build/
+%{cartridgedir}/info/configuration/
+%{cartridgedir}/info/changelog
+%{cartridgedir}/info/control
+%{cartridgedir}/README
 
 %changelog
-
 * Tue May 25 2011 Scott Stark sstark@redhat.com
 - change cartridge location to cartridges/jbossas7
 
