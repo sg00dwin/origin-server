@@ -6,7 +6,7 @@
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
 Version:   0.72.1
-Release:   2%{?dist}
+Release:   3%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
 URL:       http://openshift.redhat.com
@@ -51,13 +51,13 @@ mkdir -p %{buildroot}%{brokerdir}/log
 mkdir -p %{buildroot}%{sitedir}/log
 
 # Move over all configs and scripts
-cp -rf devenv/etc/* %{buildroot}%{_sysconfdir}
-cp -rf devenv/bin/* %{buildroot}%{_bindir}
+cp -rf etc/* %{buildroot}%{_sysconfdir}
+cp -rf bin/* %{buildroot}%{_bindir}
 
 # Move over new http configurations
-cp -rf devenv/httpd/* %{buildroot}%{libradir}
-cp -rf devenv/httpd/httpd.conf %{buildroot}%{sitedir}
-cp -rf devenv/httpd/httpd.conf %{buildroot}%{brokerdir}
+cp -rf httpd/* %{buildroot}%{libradir}
+cp -rf httpd/httpd.conf %{buildroot}%{sitedir}
+cp -rf httpd/httpd.conf %{buildroot}%{brokerdir}
 ln -s %{sitedir}/public/* %{buildroot}%{htmldir}
 ln -s %{_libdir}/httpd/modules/ %{buildroot}%{sitedir}/httpd/modules
 ln -s %{_libdir}/httpd/modules/ %{buildroot}%{brokerdir}/httpd/modules
@@ -146,5 +146,11 @@ chkconfig libra-tc on
 /var/www/libra/site/public/robots.txt
 
 %changelog
+* Thu May 26 2011 Matt Hicks <mhicks@redhat.com> 0.72.1-3
+- Changed source file structure to remove 'devenv' dir
+
 * Thu May 26 2011 Matt Hicks <mhicks@redhat.com> 0.72.1-2
 - Spec cleanup
+
+* Thu May 26 2011 Matt Hicks <mhicks@redhat.com> 0.72.1-1
+- Initial restructuring
