@@ -1,4 +1,4 @@
-require 'libra/blacklist'
+require 'openshift/blacklist'
 
 
 module Libra

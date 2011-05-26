@@ -24,7 +24,7 @@ Provides the common dependencies for the OpenShift broker and site
 %setup -q
 
 %build
-for f in openshift/**/*.rb
+for f in openshift/*.rb
 do
   ruby -c $f
 done

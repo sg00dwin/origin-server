@@ -7,9 +7,9 @@ Broker::Application.routes.draw do
     # Sample of regular route:
     #   match 'products/:id' => 'catalog#view'
     # Keep in mind you can assign values other than :controller and :action
-    match 'cartridge' => 'broker#cartridge_post', :via => [:post]
-    match 'domain' => 'broker#domain_post', :via => [:post]
-    match 'userinfo' => 'broker#user_info_post', :via => [:post]
+    match '/broker/cartridge' => 'broker#cartridge_post', :via => [:post]
+    match '/broker/domain' => 'broker#domain_post', :via => [:post]
+    match '/broker/userinfo' => 'broker#user_info_post', :via => [:post]
 
     # Sample resource route with options:
     #   resources :products do

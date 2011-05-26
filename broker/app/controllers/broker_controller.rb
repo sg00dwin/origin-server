@@ -2,7 +2,7 @@ require 'rubygems'
 require 'rack'
 require 'json'
 require 'stringio'
-require 'libra'
+require 'openshift'
 
 include Libra
 

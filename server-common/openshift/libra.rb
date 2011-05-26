@@ -1,10 +1,10 @@
-require 'libra/exception.rb'
-require 'libra/config.rb'
-require 'libra/helper.rb'
-require 'libra/server.rb'
-require 'libra/user.rb'
-require 'libra/nurture.rb'
-require 'libra/util.rb'
+require 'openshift/exception.rb'
+require 'openshift/config.rb'
+require 'openshift/helper.rb'
+require 'openshift/server.rb'
+require 'openshift/user.rb'
+require 'openshift/nurture.rb'
+require 'openshift/util.rb'
 
 module Libra
 

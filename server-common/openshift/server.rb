@@ -1,4 +1,4 @@
-require 'libra/helper'
+require 'openshift/helper'
 require 'aws'
 require 'json'
 require 'resolv'
