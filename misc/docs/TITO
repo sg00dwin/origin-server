@@ -1,0 +1,23 @@
+Tito (https://github.com/dgoodwin/tito) is the tool that we use to coordinate
+our RPM build strategy with git tagging.  Tito supports local builds to ease
+development usage of RPMs as well as automatic submission to Brew / Koji.
+
+Here is how you would use tito to build and release the 'broker' project.
+
+# Get into the directory that has the appropriate spec
+cd broker
+
+# Make your changes
+...
+
+# Commit your changes
+git commit -a -m "My changes"
+
+# If you want to get an RPM built with your changes
+# use the --test flag to build off the latest
+tito build --rpm --test
+
+# If your changes look good and you want to release
+tito build --cvs-release
+
+That's it!
