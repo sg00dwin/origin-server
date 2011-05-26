@@ -39,7 +39,7 @@ rm -rf %{buildroot}
 %{_libexecdir}/li/cartridges/jbossas7/
 
 %changelog
-*
+
 * Tue May 25 2011 Scott Stark sstark@redhat.com
 - change cartridge location to cartridges/jbossas7
 
