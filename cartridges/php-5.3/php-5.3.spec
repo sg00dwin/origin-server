@@ -3,7 +3,7 @@
 Summary:   Provides php-5.3 support
 Name:      rhc-cartridge-php-5.3
 Version:   0.72.1
-Release:   2%{?dist}
+Release:   3%{?dist}
 Group:     Development/Languages
 License:   GPLv2
 URL:       http://openshift.redhat.com
@@ -35,7 +35,7 @@ Provides php support to OpenShift
 rm -rf %{buildroot}
 mkdir -p %{buildroot}%{cartridgedir}
 cp -r . %{buildroot}%{cartridgedir}
-rm %{buildroot}%{cartridgedir}/php5.spec
+rm %{buildroot}%{cartridgedir}/php-5.3.spec
 
 %clean
 rm -rf %{buildroot}
@@ -50,6 +50,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Tue May 25 2011 Matt Hicks <mhicks@redhat.com> 0.72.1-3
+- Removing spec from install
+
 * Tue May 25 2011 Matt Hicks <mhicks@redhat.com> 0.72.1-2
 - Source location fix
 
