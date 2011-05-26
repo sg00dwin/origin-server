@@ -135,7 +135,7 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
-* Thu May 26 2011 Matt Hicks <mhicks@redhat.com> 0.72.2-1
+* Thu May 26 2011 Matt Hicks <mhicks@redhat.com> 0.72.2-2
 - Readding semanage requirements (mhicks@redhat.com)
 - Pulling SELinux RPM out of node (mhicks@redhat.com)
 
