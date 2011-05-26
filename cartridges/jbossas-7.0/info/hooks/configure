@@ -23,10 +23,8 @@
 set -e
 set -x
 
-# The name of the jbossas cartridge dir under /usr/libexec/li/cartridges
-jboss_version=jbossas7
-# The location of jbossas server installation
-jboss_home=/opt/jboss-7.0.0.Beta2
+# Load the jboss_version and jboss_home settings
+. `dirname $0`/jboss.version
 
 echo "Running ${jboss_version} configure script "
 
@@ -197,9 +195,6 @@ cd ${jboss_version}
 # Create a link to the jboss server modules jar and modules directory
 ln -s ${jboss_home}/jboss-modules.jar
 ln -s ${jboss_home}/modules
-# Create the 
-ln -s "$APP_DIR"/repo/deployments "$APP_DIR"/${jboss_version}/standalone
-ls -l "$APP_DIR"/${jboss_version}/standalone/deployments
 
 # Copy the jbossas server install standalone configuration files
 cp ${jboss_home}/standalone/configuration/{standalone.xml,logging.properties} "$APP_DIR"/${jboss_version}/standalone/configuration
@@ -241,6 +236,12 @@ EOF
 # Populate repo dir
 #
 GIT_DIR="$GIT_DIR" git archive --format=tar HEAD | (cd "${APP_DIR}/repo" && tar xf -)
+
+# Create a link from the standalone/deployments directory to the repo/deployments content
+ln -s "$APP_DIR"/repo/deployments "$APP_DIR"/${jboss_version}/standalone
+ls -l "$APP_DIR"/${jboss_version}/standalone/deployments
+# Copy the samples into the ROOT.war
+cp -pr /usr/libexec/li/cartridges/${jboss_version}/info/data/samples "$APP_DIR"/${jboss_version}/standalone/deployments/ROOT.war
 
 #
 # Create simple application start / stop script

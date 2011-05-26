@@ -233,34 +233,34 @@ module Libra
           Server.dyn_create_sshfp_record(app_name, new_namespace, sshfp, auth_token)
         end
         
-        update_virtualhost_failures = []
+        update_namespace_failures = []
         apps.each do |app_sym, app_info|
           app_name = app_sym.to_s
           begin
-            Libra.logger_debug "Updating virtualhost for app: #{app_name}" if Libra.c[:rpc_opts][:verbose]
+            Libra.logger_debug "Updating namespace for app: #{app_name}" if Libra.c[:rpc_opts][:verbose]
             server = Server.new(app_info['server_identity'])
-            result = server.execute_direct(app_info['framework'], 'update_virtualhost', "#{app_name} #{new_namespace} #{@namespace} #{@uuid}")[0]
+            result = server.execute_direct(app_info['framework'], 'update_namespace', "#{app_name} #{new_namespace} #{@namespace} #{@uuid}")[0]
             if (result && defined? result.results)            
               exitcode = result.results[:data][:exitcode]
               if exitcode != 0
-                update_virtualhost_failures.push(app_name)
+                update_namespace_failures.push(app_name)
                 output = result.results[:data][:output]
                 Libra.client_debug "Cartridge return code: " + exitcode.to_s
                 Libra.client_debug "Cartridge output: " + output
                 Libra.logger_debug "DEBUG: execute_direct results: " + output                
               end
             else
-              update_virtualhost_failures.push(app_name)
+              update_namespace_failures.push(app_name)
             end
           rescue Exception => e
-            Libra.client_debug "Exception caught updating virtualhost: #{e.message}"
-            Libra.logger_debug "DEBUG: Exception caught updating virtualhost: #{e.message}"
+            Libra.client_debug "Exception caught updating namespace #{e.message}"
+            Libra.logger_debug "DEBUG: Exception caught updating namespace #{e.message}"
             Libra.logger_debug e.backtrace     
-            update_virtualhost_failures.push(app_name)
+            update_namespace_failures.push(app_name)
           end
         end
         
-        raise NodeException.new(143), "Error updating apps: #{update_virtualhost_failures.pretty_inspect.chomp}.  Updates will not be completed until all apps can be updated successfully.  If the problem persists please contact Red Hat support.", caller[0..5] if !update_virtualhost_failures.empty?
+        raise NodeException.new(143), "Error updating apps: #{update_namespace_failures.pretty_inspect.chomp}.  Updates will not be completed until all apps can be updated successfully.  If the problem persists please contact Red Hat support.", caller[0..5] if !update_namespace_failures.empty?
         
         Server.dyn_publish(auth_token)
       rescue LibraException => e

@@ -29,12 +29,38 @@ function print_help {
     exit 1
 }
 
+function mv_symlink {
+    # Check if unobfuscate is set in /etc/libra/node.conf
+    # If it is set, remove symlink
+
+    old_namespace=$1
+    new_namespace=$2
+
+    if [ $unobfuscate -eq 1 ]
+    then
+        mv "${libra_dir}/${old_namespace}" "${libra_dir}/${new_namespace}"
+    fi
+}
+
 [ $# -eq 4 ] || print_help
 
 new_namespace=`basename $2`
 old_namespace=`basename $3`
 application="$1"
 uuid=$4
+
+if [ -f '/etc/libra/node.conf' ]
+then
+    . /etc/libra/node.conf
+elif [ -f 'node.conf' ]
+then
+    . node.conf
+else
+    echo "node.conf not found.  Cannot continue" 1>&2
+    exit 3
+fi
+
+mv_symlink $old_namespace $new_namespace
 
 if [ -f "/etc/httpd/conf.d/libra/${uuid}_${old_namespace}_${application}.conf" ]
 then
