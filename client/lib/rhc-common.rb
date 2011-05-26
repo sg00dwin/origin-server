@@ -38,17 +38,17 @@ module RHC
   Defaultdelay = 2
 
   TYPES = {
-    'php-5.3.2' => :php,
-    'perl-5.10.1' => :perl,
-    'rack-1.1.0' => :rack,
-    'wsgi-3.2.1' => :wsgi,
-    'jbossas-7.0.0' => :jbossas
+    'php-5.3' => :php,
+    'perl-5.10' => :perl,
+    'rack-1.1' => :rack,
+    'wsgi-3.2' => :wsgi,
+    'jbossas-7.0' => :jbossas
   }
   
   SUPPORTED_TYPES = {
-    'php-5.3.2' => :php,
-    'rack-1.1.0' => :rack,
-    'wsgi-3.2.1' => :wsgi
+    'php-5.3' => :php,
+    'rack-1.1' => :rack,
+    'wsgi-3.2' => :wsgi
   }
 
   def self.delay(time, adj=Defaultdelay)
