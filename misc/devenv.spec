@@ -1,31 +1,33 @@
-Name: rhc-devenv
-Version: 0.72.1
-Release: 1%{?dist}
-License: GPLv2
-URL: https://engineering.redhat.com/trac/Libra
-Source0: rhc-devenv-%{version}.tar.gz
-BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
-BuildArch: noarch
+%define libradir %{_sysconfdir}/libra/devenv
 
-Summary: Dependencies for OpenShift development
-Group: Development/Libraries
-Requires: rhc
-Requires: rhc-common
-Requires: rhc-node
-Requires: rhc-node-tools
-Requires: rhc-site
-Requires: rhc-broker
-Requires: rhc-cartridge-php-5.3
-Requires: rhc-cartridge-wsgi-3.2
-Requires: rhc-cartridge-rack-1.1
-Requires: rhc-cartridge-jbossas-7.0
-Requires: qpid-cpp-server
-Requires: qpid-cpp-server-ssl
-Requires: puppet
-Requires: rubygem-cucumber
-Requires: rubygem-mocha
-Requires: rubygem-rspec
-Requires: rubygem-nokogiri
+Summary:   Dependencies for OpenShift development
+Name:      rhc-devenv
+Version:   0.72.1
+Release:   1%{?dist}
+Group:     Development/Libraries
+License:   GPLv2
+URL:       http://openshift.redhat.com
+Source0:   rhc-devenv-%{version}.tar.gz
+
+BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
+Requires:  rhc
+Requires:  rhc-node
+Requires:  rhc-node-tools
+Requires:  rhc-site
+Requires:  rhc-broker
+Requires:  rhc-cartridge-php-5.3
+Requires:  rhc-cartridge-wsgi-3.2
+Requires:  rhc-cartridge-rack-1.1
+Requires:  rhc-cartridge-jbossas-7.0
+Requires:  qpid-cpp-server
+Requires:  qpid-cpp-server-ssl
+Requires:  puppet
+Requires:  rubygem-cucumber
+Requires:  rubygem-mocha
+Requires:  rubygem-rspec
+Requires:  rubygem-nokogiri
+
+BuildArch: noarch
 
 %description
 Provides all the development dependencies to be able to run the OpenShift tests
@@ -36,13 +38,13 @@ Provides all the development dependencies to be able to run the OpenShift tests
 %build
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %{buildroot}
 
-mkdir -p $RPM_BUILD_ROOT/etc/libra/devenv/
-cp -adv devenv/* $RPM_BUILD_ROOT/etc/libra/devenv/
+mkdir -p %{buildroot}%{libradir}
+cp -adv devenv/* %{buildroot}%{libradir}
 
 %clean
-rm -rf $RPM_BUILD_ROOT
+rm -rf %{buildroot}
 
 %post
 
@@ -52,13 +54,13 @@ rm -rf $RPM_BUILD_ROOT
 #chkconfig ntpd on
 
 # qpid - configuring SSL
-/bin/cp -rf /etc/libra/devenv/qpid/etc/* /etc/
-/sbin/restorecon -R /etc/qpid/pki
+/bin/cp -rf %{libradir}/qpid/etc/* %{_sysconfdir}
+/sbin/restorecon -R %{_sysconfdir}/qpid/pki
 service qpidd restart
 chkconfig qpidd on
 
 # mcollective
-/bin/cp -f /etc/libra/devenv/client.cfg /etc/libra/devenv/server.cfg /etc/mcollective
+/bin/cp -f %{libradir}/client.cfg %{libradir}/server.cfg /etc/mcollective
 /bin/touch /tmp/mcollective-client.log
 /bin/chmod 0666 /tmp/mcollective-client.log
 service mcollective start
@@ -73,8 +75,8 @@ service libra-cgroups start
 service libra-tc start
 
 # iptables
-/bin/cp -f /etc/libra/devenv/iptables /etc/sysconfig/iptables
-/etc/init.d/iptables restart
+/bin/cp -f %{libradir}/iptables %{_sysconfdir}/sysconfig/iptables
+%{_initddir}/iptables restart
 
 # rails setup
 ln -s /var/www/libra/site/public/* /var/www/html/.
@@ -102,7 +104,7 @@ chkconfig libra-site on
 chkconfig libra-broker on
 
 # httpd
-/etc/init.d/httpd restart
+%{_initddir}/httpd restart
 chkconfig httpd on
 
 # Allow httpd to relay
@@ -125,9 +127,6 @@ crontab -u root /etc/libra/devenv/crontab
 
 # enable disk quotas
 /usr/bin/rhc-init-quota
-
-# secure remounts of special filesystems
-#/usr/libexec/li/devenv/remount-secure.sh
 
 # Increase max SSH connections and tries to 40
 perl -p -i -e "s/^#MaxSessions .*$/MaxSessions 40/" /etc/ssh/sshd_config

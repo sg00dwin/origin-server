@@ -132,7 +132,7 @@ function create_repo {
 
     GIT_DIR=$CUSTOMER_HOME/git/$application.git
     mkdir -p "$CUSTOMER_HOME/git"
-    cp -ad $CART_INFO_DIR/data/git_template.git $GIT_DIR
+    git clone --bare $CART_INFO_DIR/data/git_template.git $GIT_DIR
     echo "php 5.3.2 application '$application'" > $GIT_DIR/description
     cat <<EOF > $GIT_DIR/hooks/post-receive
 rm -rf $APP_DIR/repo/*
