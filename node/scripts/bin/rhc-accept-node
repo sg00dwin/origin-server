@@ -1,7 +1,7 @@
 #!/bin/sh
 # ============================================================================
 #
-# Run a quick check of the required environment for an Openshift Express node
+# Run a quick check of the required environment for an OpenShift Express node
 # ready for users and applications.
 #
 # ============================================================================
