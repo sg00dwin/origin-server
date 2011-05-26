@@ -43,20 +43,27 @@ Provides all the development dependencies to be able to run the OpenShift tests
 %install
 rm -rf %{buildroot}
 
+mkdir -p %{buildroot}%{_bindir}
+mkdir -p %{buildroot}%{_sysconfdir}
+mkdir -p %{buildroot}%{_tmppath}
+mkdir -p %{buildroot}%{brokerdir}
+mkdir -p %{buildroot}%{libradir}
+mkdir -p %{buildroot}%{sitedir}
+
 # Move over all configs and scripts
 cp -rf devenv/etc/* %{buildroot}%{_sysconfdir}
 cp -rf bin/* %{buildroot}%{_bindir}
 
 # Move over new http configurations
-cp -rf devenv/httpd/* %{libradir}
-cp -rf devenv/httpd/httpd.conf %{sitedir}
-cp -rf devenv/httpd/httpd.conf %{brokerdir}
+cp -rf devenv/httpd/* %{buildroot}%{libradir}
+cp -rf devenv/httpd/httpd.conf %{buildroot}%{sitedir}
+cp -rf devenv/httpd/httpd.conf %{buildroot}%{brokerdir}
 ln -s %{sitedir}/public/* %{buildroot}%{htmldir}
 ln -s %{_libdir}/httpd/modules/ %{buildroot}%{sitedir}/httpd/modules
 ln -s %{_libdir}/httpd/modules/ %{buildroot}%{brokerdir}/httpd/modules
 
 # Setup mcollective client log
-touch %{_tmppath}/mcollective-client.log
+touch %{buildroot}%{_tmppath}/mcollective-client.log
 
 # Setup rails development logs
 touch %{buildroot}%{brokerdir}/log/development.log
