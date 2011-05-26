@@ -1,26 +1,28 @@
 %define htmldir %{_localstatedir}/www/html
 %define brokerdir %{_localstatedir}/www/libra/broker
 
-Name: rhc-broker
-Version: 0.72.1
-Release: 2%{?dist}
-License: GPLv2
-URL: https://engineering.redhat.com/trac/Libra
-Source0: rhc-broker-%{version}.tar.gz
-BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
-Summary: Li broker components
-Group: Network/Daemons
+Summary:   Li broker components
+Name:      rhc-broker
+Version:   0.72.1
+Release:   2%{?dist}
+Group:     Network/Daemons
+License:   GPLv2
+URL:       http://openshift.redhat.com
+Source0:   rhc-broker-%{version}.tar.gz
+
+BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
+Requires:  rhc-common
+Requires:  rhc-server-common
+Requires:  httpd
+Requires:  mod_passenger
+Requires:  rubygem-aws
+Requires:  rubygem-json
+Requires:  rubygem-parseconfig
+Requires:  rubygem-passenger-native-libs
+Requires:  rubygem-rails
+Requires:  rubygem-xml-simple
+
 BuildArch: noarch
-Requires: rhc-common
-Requires: rhc-server-common
-Requires: httpd
-Requires: mod_passenger
-Requires: rubygem-passenger-native-libs
-Requires: rubygem-rails
-Requires: rubygem-json
-Requires: rubygem-parseconfig
-Requires: rubygem-aws
-Requires: rubygem-xml-simple
 
 %description
 This contains the broker 'controlling' components of OpenShift.

@@ -1,24 +1,27 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/php5
 
-Name: rhc-cartridge-php5
-Version: 0.72.1
-Release: 2%{?dist}
-License: GPLv2
-URL: https://engineering.redhat.com/trac/Libra
-Source0: rhc-cartridge-php5-%{version}.tar.gz
-BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
+Summary:   Provides php5 support
+Name:      rhc-cartridge-php5
+Version:   0.72.1
+Release:   2%{?dist}
+Group:     Development/Languages
+License:   GPLv2
+URL:       http://openshift.redhat.com
+Source0:   rhc-cartridge-php5-%{version}.tar.gz
+
+BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
+Requires:  rhc-node
+Requires:  php >= 5.3.2
+Requires:  php < 5.4.0
+Requires:  mod_bw
+Requires:  rubygem-builder
+Requires:  php-pdo
+Requires:  php-gd
+Requires:  php-xml
+Requires:  php-mysql
+Requires:  php-pgsql
+
 BuildArch: noarch
-Summary: Provides php5 support
-Group: Development/Languages
-Requires: rhc-node
-Requires: php >= 5.3.2
-Requires: mod_bw
-Requires: rubygem-builder
-Requires: php-pdo
-Requires: php-gd
-Requires: php-xml
-Requires: php-mysql
-Requires: php-pgsql
 
 %description
 Provides php support to OpenShift

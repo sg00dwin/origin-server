@@ -1,28 +1,30 @@
 %define htmldir %{_localstatedir}/www/html
 %define sitedir %{_localstatedir}/www/libra/site
 
-Name: rhc-site
-Version: 0.72.1
-Release: 1%{?dist}
-License: GPLv2
-URL: https://engineering.redhat.com/trac/Libra
-Source0: rhc-site-%{version}.tar.gz
-BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
-Summary: Li site components
-Group: Network/Daemons
+Summary:   Li site components
+Name:      rhc-site
+Version:   0.72.1
+Release:   1%{?dist}
+Group:     Network/Daemons
+License:   GPLv2
+URL:       http://openshift.redhat.com
+Source0:   rhc-site-%{version}.tar.gz
+
+BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
+Requires:  rhc-common
+Requires:  rhc-server-common
+Requires:  httpd
+Requires:  mod_passenger
+Requires:  rubygem-passenger-native-libs
+Requires:  rubygem-rails
+Requires:  rubygem-json
+Requires:  rubygem-parseconfig
+Requires:  rubygem-aws
+Requires:  rubygem-xml-simple
+Requires:  rubygem-formtastic
+Requires:  rubygem-haml
+
 BuildArch: noarch
-Requires: rhc-common
-Requires: rhc-server-common
-Requires: httpd
-Requires: mod_passenger
-Requires: rubygem-passenger-native-libs
-Requires: rubygem-rails
-Requires: rubygem-json
-Requires: rubygem-parseconfig
-Requires: rubygem-aws
-Requires: rubygem-xml-simple
-Requires: rubygem-formtastic
-Requires: rubygem-haml
 
 %description
 This contains the OpenShift website which manages user authentication,
