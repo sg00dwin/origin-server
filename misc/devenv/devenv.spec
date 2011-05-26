@@ -2,6 +2,7 @@
 %define libradir %{_localstatedir}/www/libra
 %define brokerdir %{_localstatedir}/www/libra/broker
 %define sitedir %{_localstatedir}/www/libra/site
+%define devenvdir %{_sysconfdir}/libra/devenv
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
@@ -43,27 +44,15 @@ Provides all the development dependencies to be able to run the OpenShift tests
 %install
 rm -rf %{buildroot}
 
-mkdir -p %{buildroot}%{_bindir}
-mkdir -p %{buildroot}%{_sysconfdir}
-mkdir -p %{buildroot}%{_tmppath}
-mkdir -p %{buildroot}%{libradir}
-mkdir -p %{buildroot}%{brokerdir}/log
-mkdir -p %{buildroot}%{sitedir}/log
-
-# Move over all configs and scripts
-cp -rf etc/* %{buildroot}%{_sysconfdir}
-cp -rf bin/* %{buildroot}%{_bindir}
-
-# Move over new http configurations
-cp -rf httpd/* %{buildroot}%{libradir}
-cp -rf httpd/httpd.conf %{buildroot}%{sitedir}
-cp -rf httpd/httpd.conf %{buildroot}%{brokerdir}
-ln -s %{sitedir}/public/* %{buildroot}%{htmldir}
-ln -s %{_libdir}/httpd/modules/ %{buildroot}%{sitedir}/httpd/modules
-ln -s %{_libdir}/httpd/modules/ %{buildroot}%{brokerdir}/httpd/modules
+mkdir -p %{buildroot}%{devenvdir}
+cp -adv * %{buildroot}%{devenvdir}
 
 # Setup mcollective client log
+mkdir -p %{buildroot}%{_tmppath}/log
 touch %{buildroot}%{_tmppath}/mcollective-client.log
+
+mkdir -p %{buildroot}%{brokerdir}/log
+mkdir -p %{buildroot}%{sitedir}/log
 
 # Setup rails development logs
 touch %{buildroot}%{brokerdir}/log/development.log
@@ -73,6 +62,25 @@ touch %{buildroot}%{sitedir}/log/development.log
 rm -rf %{buildroot}
 
 %post
+
+# Move over all configs and scripts
+cp %{devenvdir}/init.d/* %{_initddir}
+cp -rf %{devenvdir}/etc/* %{_sysconfdir}
+cp -rf %{devenvdir}/bin/* %{_bindir}
+
+# Move over new http configurations
+cp -rf %{devenvdir}/httpd/* %{libradir}
+cp -rf %{devenvdir}/httpd.conf %{sitedir}/httpd/
+cp -rf %{devenvdir}/httpd.conf %{brokerdir}/httpd/
+cp -f %{devenvdir}/client.cfg %{devenvdir}/server.cfg /etc/mcollective
+mkdir -p %{sitedir}/httpd/logs
+mkdir -p %{sitedir}/httpd/run
+mkdir -p %{brokerdir}/httpd/logs
+mkdir -p %{brokerdir}/httpd/run
+ln -s %{sitedir}/public/* %{htmldir}
+ln -s /usr/lib64/httpd/modules/ %{sitedir}/httpd/modules
+ln -s /usr/lib64/httpd/modules/ %{brokerdir}/httpd/modules
+
 # Allow httpd to relay
 /usr/sbin/setsebool -P httpd_can_network_relay=on || :
 
@@ -82,7 +90,7 @@ sysctl kernel.sem="250  32000 32  4096"
 
 # Setup facts
 /usr/bin/puppet /usr/libexec/mcollective/update_yaml.pp
-crontab -u root /etc/libra/devenv/crontab
+crontab -u root %{devenvdir}/crontab
 
 # enable disk quotas
 /usr/bin/rhc-init-quota
@@ -124,26 +132,28 @@ chkconfig libra-tc on
 %attr(0666,-,-) %{_tmppath}/mcollective-client.log
 %attr(0666,-,-) %{brokerdir}/log/development.log
 %attr(0666,-,-) %{sitedir}/log/development.log
-/etc/qpidd.conf
-/etc/qpid/pki
-/etc/qpid/qpidc.conf
-/etc/httpd/conf.d/000000_default.conf
-/etc/init.d/libra-broker
-/etc/init.d/libra-site
-/etc/libra/controller.conf
-/etc/libra/node.conf
-/etc/openshift/express.conf
-/etc/sysconfig/iptables
-/usr/bin/li-log-util
-/var/www/html
-/var/www/libra/broker/httpd.conf
-/var/www/libra/broker/httpd/broker.conf
-/var/www/libra/broker/httpd/modules
-/var/www/libra/httpd.conf
-/var/www/libra/site/httpd.conf
-/var/www/libra/site/httpd/modules
-/var/www/libra/site/httpd/site.conf
-/var/www/libra/site/public/robots.txt
+%{devenvdir}/etc/qpidd.conf
+%{devenvdir}/etc/qpid/pki
+%{devenvdir}/etc/qpid/qpidc.conf
+%{devenvdir}/etc/httpd/conf.d/000000_default.conf
+%{devenvdir}/init.d/libra-broker
+%{devenvdir}/init.d/libra-site
+%{devenvdir}/etc/libra/controller.conf
+%{devenvdir}/etc/libra/node.conf
+%{devenvdir}/etc/openshift/express.conf
+%{devenvdir}/etc/sysconfig/iptables
+%{devenvdir}/bin/li-log-util
+%{devenvdir}/client.cfg
+%{devenvdir}/crontab
+%{devenvdir}/devenv.spec
+%{devenvdir}/httpd/broker/httpd/broker.conf
+%{devenvdir}/httpd.conf
+%{devenvdir}/httpd/site/httpd/site.conf
+%{devenvdir}/httpd/site/public/robots.txt
+%{devenvdir}/li-devenv.sh
+%{devenvdir}/qpid/make-certs.sh
+%{devenvdir}/server.cfg
+
 
 %changelog
 * Thu May 26 2011 Matt Hicks <mhicks@redhat.com> 0.72.1-3

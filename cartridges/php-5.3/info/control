@@ -1,5 +1,5 @@
-Name: php-5.3.2
-Version: 5.3.2
+Name: php-5.3
+Version: 5.3.x
 Architecture: i686/x86_64
 Provides: php
 Depends:
@@ -7,8 +7,8 @@ Conflicts:
 Type: Cartridge
 Role: misc
 Vendor: www.php.net
-DisplayName: PHP-5.3.2
-Bundles:  php-5.3.2-bundle.tar.gz
+DisplayName: PHP-5.3
+Bundles:  php-5.3-bundle.tar.gz
 Description: 
 PHP is an HTML-embedded scripting language. PHP attempts to make it
 easy for developers to write dynamically generated webpages. PHP also
