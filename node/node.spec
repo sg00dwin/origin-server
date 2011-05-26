@@ -20,6 +20,10 @@ Requires:      perl
 Requires:      rubygem-open4
 Requires:      rubygem-parseconfig
 Requires:      quota
+Requires(post):   /usr/sbin/semodule
+Requires(post):   /usr/sbin/semanage
+Requires(postun): /usr/sbin/semodule
+Requires(postun): /usr/sbin/semanage
 
 BuildArch: noarch
 
