@@ -124,6 +124,7 @@ chkconfig libra-tc on
 %attr(0666,-,-) %{_tmppath}/mcollective-client.log
 %attr(0666,-,-) %{brokerdir}/log/development.log
 %attr(0666,-,-) %{sitedir}/log/development.log
+/etc/qpid/pki
 
 %changelog
 * Thu May 26 2011 Matt Hicks <mhicks@redhat.com> 0.72.1-3
