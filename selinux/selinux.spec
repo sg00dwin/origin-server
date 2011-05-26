@@ -8,7 +8,7 @@ URL:           http://openshift.redhat.com
 Source0:       rhc-selinux-%{version}.tar.gz
 
 BuildRoot:     %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
-Requires:      selinux-policy-targeted >= 3.7.19-83
+Requires:      selinux-policy-targeted >= 3.7.19-94
 Requires(post):   /usr/sbin/semodule
 Requires(post):   /usr/sbin/semanage
 Requires(postun): /usr/sbin/semodule
@@ -23,6 +23,7 @@ Supplies the SELinux policy for the OpenShift nodes
 %setup -q
 
 %build
+make -f /usr/share/selinux/devel/Makefile
 
 %install
 rm -rf %{_buildroot}
