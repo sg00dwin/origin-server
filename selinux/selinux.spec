@@ -23,12 +23,12 @@ Supplies the SELinux policy for the OpenShift nodes
 make -f /usr/share/selinux/devel/Makefile
 
 %install
-rm -rf %{_buildroot}
-mkdir -p %{_buildroot}%{_datadir}/selinux/packages
+rm -rf %{buildroot}
+mkdir -p %{buildroot}%{_datadir}/selinux/packages
 cp libra.pp %{buildroot}%{_datadir}/selinux/packages/libra.pp
 
 %clean
-rm -rf %{_buildroot}
+rm -rf %{buildroot}
 
 %post
 /usr/sbin/semodule -i %{_datadir}/selinux/packages/libra.pp
