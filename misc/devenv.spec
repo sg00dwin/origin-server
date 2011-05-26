@@ -46,9 +46,9 @@ rm -rf %{buildroot}
 mkdir -p %{buildroot}%{_bindir}
 mkdir -p %{buildroot}%{_sysconfdir}
 mkdir -p %{buildroot}%{_tmppath}
-mkdir -p %{buildroot}%{brokerdir}
 mkdir -p %{buildroot}%{libradir}
-mkdir -p %{buildroot}%{sitedir}
+mkdir -p %{buildroot}%{brokerdir}/log
+mkdir -p %{buildroot}%{sitedir}/log
 
 # Move over all configs and scripts
 cp -rf devenv/etc/* %{buildroot}%{_sysconfdir}
