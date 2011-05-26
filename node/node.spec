@@ -3,21 +3,21 @@
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
 Version:       0.72.2
-Release:       2%{?dist}
+Release:       3%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
 URL:           http://openshift.redhat.com
 Source0:       rhc-node-%{version}.tar.gz
 
 BuildRoot:     %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
-BuildRequires: ruby(abi)
+BuildRequires: ruby
 Requires:      rhc-common
 Requires:      rhc-selinux
 Requires:      git
 Requires:      libcgroup
 Requires:      mcollective
 Requires:      perl
-Requires:      ruby(abi)
+Requires:      ruby
 Requires:      rubygem-open4
 Requires:      rubygem-parseconfig
 Requires:      quota
@@ -136,6 +136,9 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Thu May 26 2011 Matt Hicks <mhicks@redhat.com> 0.72.2-3
+- Adding ruby as runtime dependency
+
 * Thu May 26 2011 Matt Hicks <mhicks@redhat.com> 0.72.2-2
 - Readding semanage requirements (mhicks@redhat.com)
 - Pulling SELinux RPM out of node (mhicks@redhat.com)
