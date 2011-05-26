@@ -1,34 +1,26 @@
-%define cartridgedir %{_libexecdir}/li/cartridges/rack-1.1
+%define cartridgedir %{_libexecdir}/li/cartridges/wsgi-3.2
 
-Summary:   Provides ruby rack support running on Phusion Passenger
-Name:      rhc-cartridge-rack-1.1
+Summary: Provides python-wsgi-3.2.1 support
+Name:      rhc-cartridge-wsgi-3.2
 Version:   0.72.1
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
 URL:       http://openshift.redhat.com
-Source0:   rhc-cartridge-rack-1.1-%{version}.tar.gz
+Source0:   rhc-cartridge-wsgi-3.2-%{version}.tar.gz
 
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 Requires:  rhc-node
 Requires:  mod_bw
-Requires:  rubygems
-Requires:  rubygem-rack >= 1.1.0
-Requires:  rubygem-rack < 1.2
-Requires:  rubygem-passenger
-Requires:  rubygem-passenger-native
-Requires:  rubygem-passenger-native-libs
-Requires:  mod_passenger
-Requires:  rubygem-bundler
-Requires:  rubygem-sqlite3
-Requires:  ruby-sqlite3
-Requires:  ruby-mysql
-Requires:  ruby-nokogiri
+Requires:  python
+Requires:  mod_wsgi = 3.2
+Requires:  MySQL-python
+Requires:  python-psycopg2
 
 BuildArch: noarch
 
 %description
-Provides rack support to OpenShift
+Provides wsgi support to OpenShift
 
 %prep
 %setup -q
@@ -39,7 +31,7 @@ Provides rack support to OpenShift
 rm -rf %{buildroot}
 mkdir -p %{buildroot}%{cartridgedir}
 cp -r . %{buildroot}%{cartridgedir}
-rm %{buildroot}%{cartridgedir}/rack-1.1.spec
+rm %{buildroot}%{cartridgedir}/wsgi-3.2.spec
 
 %clean
 rm -rf %{buildroot}
