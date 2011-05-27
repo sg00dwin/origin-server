@@ -87,6 +87,8 @@ class EmailConfirmController < ApplicationController
       if (@errors.length > 0)
         render :error and return
       else
+        reset_sso
+        reset_session
         session[:confirm_login] = email
         redirect_to redirect_path, :notice => "Almost there!  You'll need to login before requesting access." and return
       end

@@ -106,7 +106,7 @@ module Streamline
       if @rhlogin != json['username']
         # We had a ticket collision - DO NOT proceed
         Rails.logger.error("Ticket collision - #{@ticket}")
-        raise StreamlineException
+        raise Libra::StreamlineException
       end
 
       @roles = json['roles']
@@ -226,7 +226,7 @@ module Streamline
       log_error "Exception occurred while calling streamline - #{e.message}"
       Rails.logger.error e, e.backtrace
       if raise_exception_on_error
-        raise StreamlineException
+        raise Libra::StreamlineException
       else
         errors.add(:base, I18n.t(:unknown))
       end
