@@ -10,7 +10,7 @@ namespace :rpm do
     end
     source_cmd = 'tito build --srpm --test -o /tmp/tito'
     build_cmd = 'tito build --rpm --test -o /tmp/tito'
-    rm_rf '/tmp/tito/rhc-*'
+    rm_rf '/tmp/tito/noarch/rhc-*'
     BUILD_DIRS.each do |build_dir|
       Dir.glob(build_dir).each {|dir|
         sh "cd #{dir} && #{source_cmd}"
