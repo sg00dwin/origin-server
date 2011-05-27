@@ -166,9 +166,9 @@ Then /^they should be able to be changed$/ do
     Dir.chdir(repo)
 
     app_file = case value[:type]
-      when "php-5.3.2" then "php/index.php"
-      when "rack-1.1.0" then "config.ru"
-      when "wsgi-3.2.1" then "wsgi/application"
+      when "php-5.3" then "php/index.php"
+      when "rack-1.1" then "config.ru"
+      when "wsgi-3.2" then "wsgi/application"
     end
 
     # Make a change to the app

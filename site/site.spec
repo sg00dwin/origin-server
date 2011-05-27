@@ -4,7 +4,7 @@
 Summary:   Li site components
 Name:      rhc-site
 Version:   0.72.1
-Release:   1%{?dist}
+Release:   2%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
 URL:       http://openshift.redhat.com
@@ -43,6 +43,7 @@ mkdir -p %{buildroot}%{sitedir}
 cp -r . %{buildroot}%{sitedir}
 ln -s %{sitedir}/public %{buildroot}%{htmldir}/app
 
+mkdir -p %{buildroot}%{sitedir}/run
 mkdir -p %{buildroot}%{sitedir}/log
 touch %{buildroot}%{sitedir}/log/production.log
 
@@ -59,8 +60,7 @@ rm -rf %{buildroot}
 %files
 %defattr(0640,root,libra_user,0750)
 %attr(0666,root,libra_user) %{sitedir}/log/production.log
-%ghost %{sitedir}/log/production.log
-%config %{sitedir}/config/environments/production.rb
+%config(noreplace) %{sitedir}/config/environments/production.rb
 %{sitedir}
 %{htmldir}/app
 
@@ -68,5 +68,10 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Thu May 26 2011 Matt Hicks <mhicks@redhat.com> 0.72.1-2
+- Reducing duplicate listing in %files
+- Marking config as no-replace
+- Creating run directory on installation
+
 * Tue May 25 2011 Matt Hicks <mhicks@redhat.com> 0.72.1-1
 - Initial refactoring

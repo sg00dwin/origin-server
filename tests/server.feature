@@ -8,5 +8,5 @@ Feature: Setup a new application
   Scenario:
     Given an available server
     And a newly created user
-    When I create a 'test' app for 'php-5.3.2'
+    When I create a 'test' app for 'php-5.3'
     Then the user should have the app on one server

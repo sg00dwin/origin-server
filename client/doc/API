@@ -46,7 +46,7 @@ Submit via POST to: {openshift.express.server}/broker/cartridge
 
 JSON String:
 {
-    'cartridge': 'framework-type, ex: php-5.3.2',
+    'cartridge': 'framework-type, ex: php-5.3',
     'action': 'configure, start, stop, restart, reload, status, deconfigure',
     'rhlogin': 'login'
 }

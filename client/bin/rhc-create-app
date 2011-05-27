@@ -29,7 +29,7 @@ def p_usage
     puts <<USAGE
 
 Usage: #{$0}
-Create an Openshift Express app.
+Create an OpenShift Express app.
 
   -a|--app   application     Application name  (alphanumeric - max #{RHC::Maxdlen} chars) (required)
   -t|--type  type            Type of app to create (#{type_keys}) (required)
@@ -374,7 +374,7 @@ The remote repository is located here:
     #{git_url}
 
 To make changes to your application, commit to #{opt['repo']}/.
-Then run 'git push' to update your Openshift Express space
+Then run 'git push' to update your OpenShift Express space
 
 LOOKSGOOD
         exit 0

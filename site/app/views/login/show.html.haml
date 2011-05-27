@@ -11,7 +11,7 @@
     %h3 Already Have a Login?
     
     %p#lost_password
-      = link_to 'Lost your password?',  'https://www.redhat.com/wapps/sso/lostPassword.html'
+      = link_to 'Lost your password?', "#{Rails.configuration.streamline}/wapps/sso/lostPassword.html"
 
     #login-form
       - if @user and @user.errors.any?

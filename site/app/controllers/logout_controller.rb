@@ -12,7 +12,8 @@ class LogoutController < ApplicationController
   end
   
   def show
-    clear_session
+    reset_sso
+    reset_session
     if params[:redirectUrl]
       session[:login_workflow] = params[:redirectUrl]
     end

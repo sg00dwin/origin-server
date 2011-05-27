@@ -37,7 +37,7 @@ class EmailConfirmController < ApplicationController
     render :error and return unless valid
 
     begin
-      url = URI.parse(Rails.configuration.streamline + '/confirm.html?key=' + key + '&emailAddress=' + CGI::escape(email))
+      url = URI.parse(Rails.configuration.streamline + Rails.configuration.streamline_service_base_url + '/confirm.html?key=' + key + '&emailAddress=' + CGI::escape(email))
       req = Net::HTTP::Get.new(url.path + '?' + url.query)
       http = Net::HTTP.new(url.host, url.port)
       if url.scheme == "https"
@@ -87,6 +87,8 @@ class EmailConfirmController < ApplicationController
       if (@errors.length > 0)
         render :error and return
       else
+        reset_sso
+        reset_session
         session[:confirm_login] = email
         redirect_to redirect_path, :notice => "Almost there!  You'll need to login before requesting access." and return
       end

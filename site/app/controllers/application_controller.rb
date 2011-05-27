@@ -1,7 +1,7 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery
   before_filter :check_credentials
-  rescue_from AccessDeniedException, :with => :logout
+  rescue_from AccessDeniedException, :with => :redirect_to_logout
   
   def set_no_cache
     response.headers["Cache-Control"] = "no-cache, no-store, max-age=0, must-revalidate"
@@ -65,8 +65,7 @@ class ApplicationController < ActionController::Base
 
   end
   
-  def clear_session
-    reset_session    
+  def reset_sso       
     Rails.logger.debug "Removing current SSO cookie value of '#{cookies[:rh_sso]}'"
     cookies.delete :rh_sso, :domain => '.redhat.com'
   end

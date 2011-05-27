@@ -9,14 +9,15 @@ module Streamline
   include ErrorCodes
   attr_accessor :rhlogin, :ticket, :roles, :terms
 
-  @@login_url = URI.parse(Rails.configuration.streamline + "/login.html")
-  @@register_url = URI.parse(Rails.configuration.streamline + "/registration.html")
-  @@request_access_url = URI.parse(Rails.configuration.streamline + "/requestAccess.html")
-  @@roles_url = URI.parse(Rails.configuration.streamline + "/cloudVerify.html")
-  @@email_confirm_url = URI.parse(Rails.configuration.streamline + "/confirm.html")
-  @@user_info_url = URI.parse(Rails.configuration.streamline + "/userInfo.html")
-  @@acknowledge_terms_url = URI.parse(Rails.configuration.streamline + "/protected/acknowledgeTerms.html")
-  @@unacknowledged_terms_url = URI.parse(Rails.configuration.streamline + "/protected/findUnacknowledgedTerms.html?hostname=openshift.redhat.com&context=OPENSHIFT&locale=en")
+  service_base_url = Rails.configuration.streamline + Rails.configuration.streamline_service_base_url 
+  @@login_url = URI.parse(service_base_url + "/login.html")
+  @@register_url = URI.parse(service_base_url + "/registration.html")
+  @@request_access_url = URI.parse(service_base_url + "/requestAccess.html")
+  @@roles_url = URI.parse(service_base_url + "/cloudVerify.html")
+  @@email_confirm_url = URI.parse(service_base_url + "/confirm.html")
+  @@user_info_url = URI.parse(service_base_url + "/userInfo.html")
+  @@acknowledge_terms_url = URI.parse(service_base_url + "/protected/acknowledgeTerms.html")
+  @@unacknowledged_terms_url = URI.parse(service_base_url + "/protected/findUnacknowledgedTerms.html?hostname=openshift.redhat.com&context=OPENSHIFT&locale=en")
 
   def initialize
     @roles = []
@@ -105,7 +106,7 @@ module Streamline
       if @rhlogin != json['username']
         # We had a ticket collision - DO NOT proceed
         Rails.logger.error("Ticket collision - #{@ticket}")
-        raise StreamlineException
+        raise Libra::StreamlineException
       end
 
       @roles = json['roles']
@@ -225,7 +226,7 @@ module Streamline
       log_error "Exception occurred while calling streamline - #{e.message}"
       Rails.logger.error e, e.backtrace
       if raise_exception_on_error
-        raise StreamlineException
+        raise Libra::StreamlineException
       else
         errors.add(:base, I18n.t(:unknown))
       end

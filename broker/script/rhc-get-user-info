@@ -1,10 +1,9 @@
 #!/usr/bin/ruby
 
-$:.unshift(File.dirname(__FILE__) + '/../lib')
 require 'rubygems'
 require 'mcollective'
 require 'fileutils'
-require 'libra'
+require 'openshift'
 
 
 include MCollective::RPC

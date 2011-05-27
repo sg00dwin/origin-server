@@ -40,9 +40,9 @@ rhc-create-app
 rhc-create-app creates an application.  rhc-create-app --help to see a list of
 available frameworks.  The example below creates a new application called "eat"
 and assumes the domain example "foodie" from above is being used.  This example
-is specifying to use php-5.3.2 as the target framework.
+is specifying to use php-5.3 as the target framework.
 
-    rhc-create-app -a eat -t php-5.3.2
+    rhc-create-app -a eat -t php-5.3
 
 Once successful, this command will have created a local git repo in ./eat as
 well as a remote applciation at eat-foodie.rhcloud.com.  To make changes to

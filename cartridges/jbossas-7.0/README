@@ -2,7 +2,9 @@ A derivitive of the php cartridge for jbossas7 that configures a standalone
 jbossas7 instance per application.
 
 The jbossas7 server rpm can be obtained from:
-https://github.com/starksm64/jboss-as/blob/JBAS-9225/rpm/jboss-as7-7.0.0.Beta2-1.noarch.rpm
+Task Info: https://brewweb.devel.redhat.com//taskinfo?taskID=3352289
+Build Info: https://brewweb.devel.redhat.com//buildinfo?buildID=165565
+http://download.devel.redhat.com/brewroot/packages/jboss-as7/7.0.0.Beta5OS/2/noarch/jboss-as7-7.0.0.Beta5OS-2.noarch.rpm
 
 Scott Stark
 sstark@redhat.com

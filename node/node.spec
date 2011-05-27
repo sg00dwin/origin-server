@@ -1,25 +1,26 @@
 %define ruby_sitelibdir            %(ruby -rrbconfig -e "puts Config::CONFIG['sitelibdir']")
-%define gemdir                     %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.72.1
-Release:       2%{?dist}
+Version:       0.72.2
+Release:       3%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
 URL:           http://openshift.redhat.com
 Source0:       rhc-node-%{version}.tar.gz
 
 BuildRoot:     %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
-BuildRequires: ruby(abi)
-Requires:      quota
+BuildRequires: ruby
 Requires:      rhc-common
-Requires:      mcollective
-Requires:      rubygem-parseconfig
-Requires:      libcgroup
+Requires:      rhc-selinux
 Requires:      git
-Requires:      selinux-policy-targeted >= 3.7.19-83
-Requires:         rubygem-open4
+Requires:      libcgroup
+Requires:      mcollective
+Requires:      perl
+Requires:      ruby
+Requires:      rubygem-open4
+Requires:      rubygem-parseconfig
+Requires:      quota
 Requires(post):   /usr/sbin/semodule
 Requires(post):   /usr/sbin/semanage
 Requires(postun): /usr/sbin/semodule
@@ -29,20 +30,6 @@ BuildArch: noarch
 
 %description
 Turns current host into a OpenShift managed node
-
-%package tools
-Summary:       Utilities to help monitor and manage a OpenShift node
-Group:         Network/Daemons
-
-BuildRequires: rubygem-nokogiri
-BuildRequires: rubygem-json
-Requires:      rubygem-nokogiri
-Requires:      rubygem-json
-
-BuildArch:     noarch
-
-%description tools
-Status and control tools for Libra Nodes
 
 %prep
 %setup -q
@@ -72,17 +59,6 @@ cp -r facter %{buildroot}%{ruby_sitelibdir}/facter
 cp -r mcollective %{buildroot}%{_libexecdir}
 cp scripts/bin/* %{buildroot}%{_bindir}
 cp scripts/init/* %{buildroot}%{_initddir}
-cp selinux/libra.pp %{buildroot}/usr/share/selinux/packages
-cp selinux/rhc-ip-prep.sh %{buildroot}%{_bindir}
-
-# Tools installation
-cd tools
-rake package
-
-
-mkdir -p .%{gemdir}
-gem install --install-dir $RPM_BUILD_ROOT/%{gemdir} --bindir $RPM_BUILD_ROOT/%{_bindir} --local -V --force --rdoc \
-     pkg/li-node-tools-%{version}.gem
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -98,7 +74,6 @@ chkconfig cgconfig && /sbin/service cgconfig restart >/dev/null 2>&1 || :
 /sbin/chkconfig --add libra-cgroups || :
 /sbin/chkconfig --add libra-tc || :
 #/sbin/service mcollective restart > /dev/null 2>&1 || :
-/usr/sbin/semodule -i %_datadir/selinux/packages/libra.pp
 /sbin/restorecon /etc/init.d/libra || :
 /usr/bin/rhc-restorecon || :
 # only enable if cgconfig is
@@ -152,7 +127,6 @@ fi
 %dir %attr(0750,root,root) %{_libexecdir}/li/cartridges/li-controller-0.1/
 %{_libexecdir}/li/cartridges/li-controller-0.1/README
 %{_libexecdir}/li/cartridges/li-controller-0.1/info
-%attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 %attr(0750,-,-) %{_bindir}/rhc-accept-node
 %attr(0750,-,-) %{_bindir}/rhc-node-account
 %attr(0750,-,-) %{_bindir}/rhc-node-application
@@ -161,17 +135,17 @@ fi
 %attr(0750,root,root) %config(noreplace) %{_sysconfdir}/httpd/conf.d/000000_default.conf
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
-%files tools
-%defattr(-,root,root,-)
-%attr(0750,-,-) %{_bindir}/rhc-node-accounts
-%attr(0750,-,-) %{_bindir}/rhc-node-apps
-%attr(0750,-,-) %{_bindir}/rhc-node-status
-%{gemdir}/gems/li-node-tools-%{version}
-%{gemdir}/cache/li-node-tools-%{version}.gem
-%{gemdir}/doc/li-node-tools-%{version}
-%{gemdir}/specifications/li-node-tools-%{version}.gemspec
-
 %changelog
+* Thu May 26 2011 Matt Hicks <mhicks@redhat.com> 0.72.2-3
+- Adding ruby as runtime dependency
+
+* Thu May 26 2011 Matt Hicks <mhicks@redhat.com> 0.72.2-2
+- Readding semanage requirements (mhicks@redhat.com)
+- Pulling SELinux RPM out of node (mhicks@redhat.com)
+
+* Thu May 26 2011 Matt Hicks <mhicks@redhat.com> 0.72.1-3
+- Adding rake build dep
+
 * Wed May 25 2011 Matt Hicks <mhicks@redhat.com> 0.72.1-2
 - Fixing build root dirs
 

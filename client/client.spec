@@ -1,23 +1,23 @@
 %define gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 
-Name: rhc
-Version: 0.72.1
-Release: 1%{?dist}
-Summary: Multi-tenant cloud management system client tools
+Summary:       Multi-tenant cloud management system client tools
+Name:          rhc
+Version:       0.72.1
+Release:       1%{?dist}
+Group:         Network/Daemons
+License:       MIT
+URL:           http://openshift.redhat.com
+Source0:       rhc-%{version}.tar.gz
 
-Group: Network/Daemons
-License: GPLv2
-URL: https://engineering.redhat.com/trac/Libra
-Source0: rhc-%{version}.tar.gz
-BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
-BuildArch: noarch
-
+BuildRoot:     %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires: rubygem-rake
 BuildRequires: rubygem-rspec
-Requires: ruby >= 1.8.7
-Requires: rubygem-parseconfig
-Requires: rubygem-json
-Requires: git
+Requires:      ruby >= 1.8.7
+Requires:      rubygem-parseconfig
+Requires:      rubygem-json
+Requires:      git
+
+BuildArch:     noarch
 
 %description
 Provides OpenShift client libraries
