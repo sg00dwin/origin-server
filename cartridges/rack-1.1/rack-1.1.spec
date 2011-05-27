@@ -25,6 +25,9 @@ Requires:  ruby-sqlite3
 Requires:  ruby-mysql
 Requires:  ruby-nokogiri
 
+# Deps for users
+Requires: ruby-RMagick
+
 BuildArch: noarch
 
 %description
