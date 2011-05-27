@@ -37,7 +37,7 @@ def conf_file_parser(conf_file):
 
 if __name__ == "__main__":
     
-    cmd="./register_random  -p -d 2>debug1.log"
+    cmd="./register_random  -d 2>debug1.log"
     (ret,output)=commands.getstatusoutput(cmd)
     print output
     new_userlist = [output]
@@ -46,7 +46,7 @@ if __name__ == "__main__":
         print output
         new_userlist = new_userlist + [output]
 
-    cmd="./register_random  -c -p -d 2>debug2.log"
+    cmd="./register_random  -c  -d 2>debug2.log"
     (ret,output)=commands.getstatusoutput(cmd)
     print output
     new_userlist = new_userlist + [output.split("\n")[0]]

@@ -1048,6 +1048,8 @@ class a_Home(unittest.TestCase):
         except AssertionError, e: self.verificationErrors.append(str(e))
         try: self.failUnless(sel.is_element_present("link=Partners"))
         except AssertionError, e: self.verificationErrors.append(str(e))
+        try: self.failUnless(sel.is_element_present("link=Forums"))
+        except AssertionError, e: self.verificationErrors.append(str(e))
         sel.click("link=Forums")
         sel.wait_for_page_to_load("30000")
         for i in range(60):
@@ -1296,11 +1298,11 @@ class a_Home(unittest.TestCase):
         except AssertionError, e: self.verificationErrors.append(str(e))
         for i in range(60):
             try:
-                if sel.is_element_present("//img[@alt='Gearshift_express_dev_preview']"): break
+                if sel.is_element_present("//img[@alt='Simple, automatic gearshift']"): break
             except: pass
             time.sleep(1)
         else: self.fail("time out")
-        sel.mouse_over("//img[@alt='Gearshift_express_dev_preview']")
+        sel.mouse_over("//img[@alt='Simple, automatic gearshift']")
         try: self.assertEqual("Free and easy cloud deployments", sel.get_text("//div[@id='app_promos']/div[1]/div/ul/li[1]"))
         except AssertionError, e: self.verificationErrors.append(str(e))
         try: self.assertEqual("PHP, Python, Ruby", sel.get_text("//div[@id='app_promos']/div[1]/div/ul/li[2]"))
@@ -1309,11 +1311,11 @@ class a_Home(unittest.TestCase):
         except AssertionError, e: self.verificationErrors.append(str(e))
         for i in range(60):
             try:
-                if sel.is_element_present("//img[@alt='Gearshift_flex_dev_preview']"): break
+                if sel.is_element_present("//img[@alt='Automatic gearshift with a few more options']"): break
             except: pass
             time.sleep(1)
         else: self.fail("time out")
-        sel.mouse_over("//img[@alt='Gearshift_flex_dev_preview']")
+        sel.mouse_over("//img[@alt='Automatic gearshift with a few more options']")
         try: self.failUnless(sel.is_text_present("Auto-scale new and existing apps in the cloud"))
         except AssertionError, e: self.verificationErrors.append(str(e))
         try: self.failUnless(sel.is_text_present("PHP, Java EE, MySQL, MongoDB, Memcache, DFS"))
@@ -1322,11 +1324,11 @@ class a_Home(unittest.TestCase):
         except AssertionError, e: self.verificationErrors.append(str(e))
         for i in range(60):
             try:
-                if sel.is_element_present("//img[@alt='Gearshift_power_coming_soon']"): break
+                if sel.is_element_present("//img[@alt='Powerful, dual stick gearshift with lots of options']"): break
             except: pass
             time.sleep(1)
         else: self.fail("time out")
-        sel.mouse_over("//img[@alt='Gearshift_power_coming_soon']")
+        sel.mouse_over("//img[@alt='Powerful, dual stick gearshift with lots of options']")
         try: self.failUnless(sel.is_text_present("Complete control over cloud deployments"))
         except AssertionError, e: self.verificationErrors.append(str(e))
         try: self.failUnless(sel.is_text_present("Custom topologies, root access, multi-tier dependencies"))
@@ -1878,6 +1880,7 @@ class f_Express(unittest.TestCase):
         else: self.fail("time out")
         try: self.failUnless(sel.is_text_present("Congratulations, your Express account is now activated! Now it's time to start creating applications."))
         except AssertionError, e: self.verificationErrors.append(str(e))
+        '''
         try: self.failUnless(sel.is_text_present("Step 1 - Install the client tools"))
         except AssertionError, e: self.verificationErrors.append(str(e))
         try: self.failUnless(sel.is_text_present("Red Hat Enterprise Linux / Fedora Instructions"))
@@ -1957,6 +1960,7 @@ class f_Express(unittest.TestCase):
         sel.click("link=Technical Documentation")
         sel.wait_for_page_to_load("30000")
         sel.go_back()
+        '''
         for i in range(60):
             try:
                 if sel.is_element_present("link=Logout"): break
@@ -1967,7 +1971,7 @@ class f_Express(unittest.TestCase):
         except AssertionError, e: self.verificationErrors.append(str(e))
         sel.click("link=Logout")
         sel.wait_for_page_to_load("30000")
-    
+        
     def tearDown(self):
         self.selenium.stop()
         self.assertEqual([], self.verificationErrors)
