@@ -1,4 +1,4 @@
-require 'libra'
+require 'openshift'
 include Libra
 include Libra::Test::User
 include Libra::Test::Util

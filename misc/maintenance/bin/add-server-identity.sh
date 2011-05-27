@@ -1,8 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'rubygems'
-$:.unshift('/var/www/libra/broker/lib')
-require 'libra'
+require 'openshift'
 
 include Libra
 

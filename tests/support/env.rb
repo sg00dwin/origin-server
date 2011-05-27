@@ -1,7 +1,6 @@
-$LOAD_PATH << File.expand_path('../../../server/lib', __FILE__)
 require 'mcollective'
 require 'logger'
-require 'libra'
+require 'openshift'
 require 'timeout'
 require 'logger'
 require 'fileutils'

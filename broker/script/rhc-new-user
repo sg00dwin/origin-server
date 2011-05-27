@@ -1,8 +1,8 @@
 #!/usr/bin/ruby
 
-$:.unshift(File.dirname(__FILE__) + '/../lib')
+
 require 'rubygems'
-require 'libra'
+require 'openshift'
 require 'mcollective'
 require 'json'
 
