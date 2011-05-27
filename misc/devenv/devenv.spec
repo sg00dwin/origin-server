@@ -16,7 +16,6 @@ Source0:   rhc-devenv-%{version}.tar.gz
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 Requires:  rhc
 Requires:  rhc-node
-Requires:  rhc-node-tools
 Requires:  rhc-site
 Requires:  rhc-broker
 Requires:  rhc-cartridge-php-5.3

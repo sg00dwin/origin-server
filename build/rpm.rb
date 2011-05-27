@@ -1,6 +1,6 @@
 namespace :rpm do
   
-  BUILD_DIRS=['cartridges/*', 'broker', 'client', 'common', 'misc/devenv', 'node', 'server-common', 'site']
+  BUILD_DIRS=['cartridges/*', 'broker', 'client', 'common', 'misc/devenv', 'node', 'server-common', 'site', 'selinux']
   
   task :devbuild do
     sh("git diff-index --quiet HEAD") do |ok, res|
