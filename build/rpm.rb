@@ -10,7 +10,7 @@ namespace :rpm do
     end
     source_cmd = 'tito build --srpm --test -o /tmp/tito'
     build_cmd = 'tito build --rpm --test -o /tmp/tito'
-    rm_rf '/tmp/tito/noarch/rhc-*'
+    rm_rf '/tmp/tito/'
     BUILD_DIRS.each do |build_dir|
       Dir.glob(build_dir).each {|dir|
         sh "cd #{dir} && #{source_cmd}"
@@ -20,11 +20,12 @@ namespace :rpm do
   end
   
   task :publishdevenv do
+    sh "ssh root@verifier \"rm -rf ~/rhc-*.rpm\""
     sh 'scp /tmp/tito/noarch/rhc-*.rpm root@verifier:~'
   end
   
   task :installdevenv => [:devbuild, :publishdevenv] do    
-    sh "ssh root@verifier \"rpm -Uvh rhc-*.rpm\""
+    sh "ssh root@verifier \"rpm -Uvh ~/rhc-*.rpm\""
   end
   
   def bump_release(commit_msg)
