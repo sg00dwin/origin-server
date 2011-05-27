@@ -39,6 +39,7 @@ RedHatCloud::Application.configure do
   config.app_scope = "app"
   config.integrated = false
   config.login = "/app/login"
+  config.streamline_service_base_url = ''
   config.streamline = "http://localhost" # Not used
   config.streamline_secret = ''
   config.captcha_secret = 'secret'

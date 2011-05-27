@@ -4,7 +4,7 @@
 Summary:   Li broker components
 Name:      rhc-broker
 Version:   0.72.1
-Release:   2%{?dist}
+Release:   3%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
 URL:       http://openshift.redhat.com
@@ -40,6 +40,7 @@ mkdir -p %{buildroot}%{brokerdir}
 cp -r . %{buildroot}%{brokerdir}
 ln -s %{brokerdir}/public %{buildroot}%{htmldir}/broker
 
+mkdir -p %{buildroot}%{brokerdir}/run
 mkdir -p %{buildroot}%{brokerdir}/log
 touch %{buildroot}%{brokerdir}/log/production.log
 
@@ -57,8 +58,7 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(0640,root,libra_user,0750)
 %attr(0666,-,-) %{brokerdir}/log/production.log
-%ghost %{brokerdir}/log/production.log
-%config %{brokerdir}/config/environments/production.rb
+%config(noreplace) %{brokerdir}/config/environments/production.rb
 %{brokerdir}
 %{htmldir}/broker
 
@@ -66,8 +66,13 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Thu May 26 2011 Matt Hicks <mhicks@redhat.com> 0.72.1-3
+- Reducing duplicate listing in %files
+- Marking config as no-replace
+- Creating run directory on installation
+
 * Wed May 25 2011 Matt Hicks <mhicks@redhat.com> 0.72.1-2
-- Fixing sym link to buildroot (mhicks@redhat.com)
+- Fixing sym link to buildroot
 
 * Tue May 25 2011 Matt Hicks <mhicks@redhat.com> 0.72.1-1
 - Initial refactoring

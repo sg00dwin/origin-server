@@ -50,8 +50,4 @@ Broker::Application.configure do
   ############################################
   # OpenShift Configuration Below this point #
   ############################################
-  config.integrated = true
-  config.login = "https://www.redhat.com/wapps/streamline/login.html"
-  config.streamline = "https://www.redhat.com/wapps/streamline"
-  config.streamline_secret = 'c0ldW1n3'
 end

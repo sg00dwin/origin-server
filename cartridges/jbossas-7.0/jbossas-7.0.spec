@@ -28,6 +28,7 @@ rm -rf %{buildroot}
 mkdir -p %{buildroot}%{cartridgedir}
 cp -r . %{buildroot}%{cartridgedir}
 rm %{buildroot}%{cartridgedir}/jbossas-7.0.spec
+rm %{buildroot}%{cartridgedir}/.gitignore
 
 %clean
 rm -rf %{buildroot}

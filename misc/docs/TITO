@@ -17,7 +17,14 @@ git commit -a -m "My changes"
 # use the --test flag to build off the latest
 tito build --rpm --test
 
-# If your changes look good and you want to release
+# Now, you'll want to tag your work and bump the RPM version
+tito tag
+
+# Usually after this you need to push your tags live
+git pull
+git push && git push --tags
+
+# Lastly, do your build in Brew
 tito build --cvs-release
 
 That's it!
