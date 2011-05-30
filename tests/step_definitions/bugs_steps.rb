@@ -13,14 +13,14 @@ Given /^an end user$/ do
   @rhc_login = @info[:login]
 end
 
-Then /^he could create a namespace and app$/ do
+Then /^he can create a namespace and app$/ do
   @namespace = @info[:namespace]
   @repo_path="#{$temp}/#{@namespace}_#{@namespace}_repo"
   temp_text = run("#{$create_domain_script} -n #{@namespace} -l #{@rhc_login} -p fakepw -d")
   temp_text = run("#{$create_app_script} -a #{@namespace} -l #{@rhc_login} -r #{@repo_path} -t php-5.3 -p fakepw -d")
 end
 
-When /^he alter the namespace$/ do
+When /^he alters the namespace$/ do
   @tfile="#{$temp}/libralog"
   run("#{$create_domain_script} -n #{@namespace + "2"} -l #{@rhc_login} -p fakepw --alter > #{@tfile}")
 end
@@ -32,30 +32,14 @@ Then /^the new namespace is enabled$/ do
 end
 
 
-#bug 701159
-Then /^come into an error when they are accessed$/ do
-  @error_code = 0
-  begin
-    @urls.each do |url|
-      @agent.get(url)
-    end
-  rescue Exception => e
-    @error_code = 1
-    $logger.error "Exception trying to access to url"
-    $logger.error e.message
-    $logger.error e.backtrace
-  end
-  @error_code.should == 1
-end
-
 #bug 700941
-Then /^no README under misc and libs$/ do
+Then /^there is no README file under misc or libs$/ do
   File.exist?("#{@repo_path}/misc/README").should_not be_true
   File.exist?("#{@repo_path}/libs/README").should_not be_true
 end
 
 #bug 699887
-Then /^can get host name using php script$/ do
+Then /^the host name can be obtained using php script$/ do
   Dir.chdir(@repo_path)
   app_file = "php/index.php"    
   
@@ -83,6 +67,7 @@ Then /^can get host name using php script$/ do
 
 end
 
+#bug 695586
 When /^the manpage of express.conf exists$/ do
     @man_express="/usr/share/man/man5/express.conf.5.gz"
     File.exist?(@man_express).should be_true
