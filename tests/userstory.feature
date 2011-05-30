@@ -94,10 +94,10 @@ Feature: Rally User Stories
     Given the libra client tools
     When a new php-5.3 app 'appphp1' is created
     Then the PHP app is accessible
-    Then a second 'appphp2' application for 'php-5.3.2' fails to be created
+    Then a second 'appphp2' application for 'php-5.3' fails to be created
 
 #US346
-  Scenario: Rack/Rails Framework Support
+  Scenario: (libra-qe) Rack/Rails Framework Support
     Given the libra client tools
     And the following test data
       | processes | users | apps |    type    |
