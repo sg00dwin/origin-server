@@ -192,7 +192,7 @@ namespace :rpm do
   end
 
   desc "Run the brew build and publish the RPMs"
-  task :release, :comment, :needs => [:version] do |t, args|
+  task :release, [:comment] => [:version] do |t, args|
     # Unset any proxy variables - brew doesn't like proxies
     if ENV['http_proxy'] or ENV['https_proxy']
       puts "Please unset any proxy environment variables before running the build"
