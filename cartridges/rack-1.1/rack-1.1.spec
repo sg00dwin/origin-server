@@ -2,7 +2,7 @@
 
 Summary:   Provides ruby rack support running on Phusion Passenger
 Name:      rhc-cartridge-rack-1.1
-Version:   0.72.1
+Version:   0.72.2
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -57,5 +57,10 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Tue May 31 2011 Matt Hicks <mhicks@redhat.com> 0.72.2-1
+- Adding ruby-RMagick requirement (mmcgrath@redhat.com)
+- Bug 707108 (dmcphers@redhat.com)
+- fix issue after refactor with remote clone (dmcphers@redhat.com)
+
 * Tue May 25 2011 Matt Hicks <mhicks@redhat.com> 0.72.1-1
 - Initial refactoring
