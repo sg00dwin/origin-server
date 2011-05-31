@@ -6,8 +6,8 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.72.1
-Release:   3%{?dist}
+Version:   0.72.2
+Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
 URL:       http://openshift.redhat.com
@@ -155,6 +155,10 @@ chkconfig libra-tc on
 
 
 %changelog
+* Tue May 31 2011 Matt Hicks <mhicks@redhat.com> 0.72.2-1
+- dep updates (dmcphers@redhat.com)
+- fix devenv build (dmcphers@redhat.com)
+
 * Thu May 26 2011 Matt Hicks <mhicks@redhat.com> 0.72.1-3
 - Changed source file structure to remove 'devenv' dir
 
