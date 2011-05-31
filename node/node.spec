@@ -2,8 +2,8 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.72.2
-Release:       3%{?dist}
+Version:       0.72.3
+Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
 URL:           http://openshift.redhat.com
@@ -136,6 +136,9 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Tue May 31 2011 Matt Hicks <mhicks@redhat.com> 0.72.3-1
+- updated package list for node acceptance (markllama@redhat.com)
+
 * Thu May 26 2011 Matt Hicks <mhicks@redhat.com> 0.72.2-3
 - Adding ruby as runtime dependency
 
