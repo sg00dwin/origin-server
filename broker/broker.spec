@@ -3,8 +3,8 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.72.1
-Release:   3%{?dist}
+Version:   0.72.2
+Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
 URL:       http://openshift.redhat.com
@@ -66,6 +66,12 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Tue May 31 2011 Matt Hicks <mhicks@redhat.com> 0.72.2-1
+- Bug 707745 (dmcphers@redhat.com)
+- get site and broker working on restructure (dmcphers@redhat.com)
+- Spec commit history fix (mhicks@redhat.com)
+- refactoring changes (dmcphers@redhat.com)
+
 * Thu May 26 2011 Matt Hicks <mhicks@redhat.com> 0.72.1-3
 - Reducing duplicate listing in %files
 - Marking config as no-replace
