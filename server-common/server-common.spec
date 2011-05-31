@@ -2,8 +2,8 @@
 
 Summary:       Common dependencies of the OpenShift broker and site
 Name:          rhc-server-common
-Version:       0.72.1
-Release:       3%{?dist}
+Version:       0.72.2
+Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
 URL:           http://openshift.redhat.com
@@ -45,6 +45,10 @@ rm -rf $RPM_BUILD_ROOT
 %{ruby_sitelibdir}/openshift.rb
 
 %changelog
+* Tue May 31 2011 Matt Hicks <mhicks@redhat.com> 0.72.2-1
+- Bug 707108 (dmcphers@redhat.com)
+- get site and broker working on restructure (dmcphers@redhat.com)
+
 * Wed May 25 2011 Matt Hicks <mhicks@redhat.com> 0.72.1-3
 - Fixing ruby build requirement
 
