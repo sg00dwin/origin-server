@@ -14,7 +14,7 @@ RESOURCE_LIMITS_FILE=${RESOURCE_LIMITS_FILE:=${LIBRA_CONF_DIR}/resource_limits.c
 # Control variables.  Override for testing
 #
 DEFAULT_SEBOOL_LIST="httpd_can_network_relay:on"
-DEFAULT_PACKAGES="rhc-common rhc-node rhc-node-tools rhc-server 
+DEFAULT_PACKAGES="rhc-common rhc-node rhc-selinux 
                   rhc-cartridge-rack-1.1 
                   rhc-cartridge-wsgi-3.2
                   rhc-cartridge-php-5.3"
