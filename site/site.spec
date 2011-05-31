@@ -3,8 +3,8 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.72.1
-Release:   2%{?dist}
+Version:   0.72.2
+Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
 URL:       http://openshift.redhat.com
@@ -68,6 +68,16 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Tue May 31 2011 Matt Hicks <mhicks@redhat.com> 0.72.2-1
+- fix site tests (dmcphers@redhat.com)
+- fix broken access denied case (dmcphers@redhat.com)
+- Bug 708244 (dmcphers@redhat.com)
+- Bug 707745 (dmcphers@redhat.com)
+- Bug 707488 (dmcphers@redhat.com)
+- fix site dep list (dmcphers@redhat.com)
+- more jboss renaming changes (dmcphers@redhat.com)
+- fix app link (dmcphers@redhat.com)
+
 * Thu May 26 2011 Matt Hicks <mhicks@redhat.com> 0.72.1-2
 - Reducing duplicate listing in %files
 - Marking config as no-replace
