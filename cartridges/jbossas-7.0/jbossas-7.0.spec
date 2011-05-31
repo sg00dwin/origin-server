@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.72.2
+Version:   0.72.3
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -44,6 +44,14 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Tue May 31 2011 Matt Hicks <mhicks@redhat.com> 0.72.3-1
+- Update the README with the new brew build task info for jboss-as7 rpm
+  (scott.stark@jboss.org)
+- Bug 707108 (dmcphers@redhat.com)
+- Update the jboss cartridge to use jboss-as7-7.0.0.Beta5OS
+  https://brewweb.devel.redhat.com//buildinfo?buildID=165385
+  (scott.stark@jboss.org)
+- fix issue after refactor with remote clone (dmcphers@redhat.com)
 * Tue May 25 2011 Matt Hicks <mhicks@redhat.com> 0.72.2-1
 - Another cartridge rename to include minor version
 
