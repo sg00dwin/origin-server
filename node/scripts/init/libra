@@ -42,7 +42,7 @@ function apptype() {
     _APP_TYPE=`cat $_HOMEDIR/git/${2}.git/description | cut -d' ' -f 1`
     if [ $_APP_TYPE = "Unnamed" ]
     then
-        _APP_DIR=`ls -d $_HOMEDIR/*/$2`
+        _APP_DIR=`ls -d $_HOMEDIR/$2`
         _APP_TYPE_DIR=`dirname $_APP_DIR`
         _APP_TYPE=`basename $_APP_TYPE_DIR`
     fi
