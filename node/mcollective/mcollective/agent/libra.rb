@@ -61,7 +61,11 @@ module MCollective
                 cartridge = request[:cartridge]
                 action = request[:action]
                 args = request[:args]
-                pid, stdin, stdout, stderr = Open4::popen4("/usr/bin/runcon -l s0-s0:c0.c1023 /usr/libexec/li/cartridges/#{cartridge}/info/hooks/#{action} #{args} 2>&1")
+                if File.exists? "/usr/libexec/li/cartridges/#{cartridge}/info/hooks/#{action}"                
+                  pid, stdin, stdout, stderr = Open4::popen4("/usr/bin/runcon -l s0-s0:c0.c1023 /usr/libexec/li/cartridges/#{cartridge}/info/hooks/#{action} #{args} 2>&1")
+                else
+                  pid, stdin, stdout, stderr = Open4::popen4("/usr/bin/runcon -l s0-s0:c0.c1023 /usr/libexec/li/cartridges/abstract-httpd/info/hooks/#{action} #{args} 2>&1")
+                end
                 stdin.close
                 ignored, status = Process::waitpid2 pid
                 exitcode = status.exitstatus
@@ -87,24 +91,6 @@ module MCollective
                 reply[:exitcode] = exitcode
                 reply.fail! "cartridge_action failed #{exitcode}.  Output #{output}" unless exitcode == 0
             end
-            #
-            # Creates a new customer.
-            # Creates username.
-            # Creates home dir structure.
-            # Adds ssh key.
-            #
-            def create_customer_action
-                validate :customer, /^[a-zA-Z0-9]+$/
-                validate :email, /^[a-zA-Z][\w\.-]*[a-zA-Z0-9]@[a-zA-Z0-9][\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]$/
-                validate :ssh_key, String
-                customer = request[:customer]
-                email = request[:email]
-                ssh_key = request[:ssh_key]
-                reply.fail! "#{customer} Already exists" if File.exist?("/var/lib/libra/#{customer}")
-                reply[:output] = %x[/usr/local/bin/libra/create_customer.sh -c #{customer} -e #{email} -s #{ssh_key} 2>&1]
-                reply[:exitcode] = $?.exitstatus
-                reply.fail! "create_customer failed #{reply[:exitcode]}" unless reply[:exitcode] == 0
-            end
 
             #
             # Returns whether an app is on a machine
@@ -114,10 +100,7 @@ module MCollective
                 validate :application, /^[a-zA-Z0-9]+$/
                 customer = request[:customer]
                 app_name = request[:application]
-                if File.exist?("/var/lib/libra/#{customer}/php/#{app_name}") ||
-                   File.exist?("/var/lib/libra/#{customer}/rack/#{app_name}") ||
-                   File.exist?("/var/lib/libra/#{customer}/wsgi/#{app_name}") ||
-                   File.exist?("/var/lib/libra/#{customer}/jbossas/#{app_name}")
+                if File.exist?("/var/lib/libra/#{customer}/#{app_name}")
                   reply[:output] = true
                 else
                   reply[:output] = false
@@ -125,39 +108,6 @@ module MCollective
                 reply[:exitcode] = 0
             end
 
-            #
-            # Creates http environment for customer to use
-            #
-            def create_http_action
-                execute_script('create_http')
-            end
-            #
-            # Destroys (deletes) http environment
-            #
-            def destroy_http_action
-                execute_script('destroy_http')
-            end
-            #
-            # Creates git repo for a customer
-            #
-            def create_git_action
-                execute_script('create_git')
-            end
-
-            #
-            # Executes an action
-            #
-            def execute_script(script)
-                validate :customer, /^[a-zA-Z0-9]+$/
-                validate :application, /^[a-zA-Z0-9]+$/
-                customer = request[:customer]
-                application = request[:application]
-
-                reply.fail! "Cannot find #{script}.sh" unless File.exist?("/usr/local/bin/libra/#{script}.sh")
-                reply[:output] = %x[/usr/local/bin/libra/#{script}.sh -c #{customer} -a #{application} 2>&1]
-                reply[:exitcode] = $?.exitstatus
-                reply.fail! "#{script} failed #{reply[:exitcode]}" unless reply[:exitcode] == 0
-            end
         end
     end
 end

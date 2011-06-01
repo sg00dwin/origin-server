@@ -14,6 +14,7 @@ BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 Requires:  rhc-common
 Requires:  rhc-server-common
 Requires:  httpd
+Requires:  mod_ssl
 Requires:  mod_passenger
 Requires:  rubygem-aws
 Requires:  rubygem-json

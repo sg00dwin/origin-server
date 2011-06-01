@@ -12,9 +12,12 @@ FRAMEWORKS = {'php-5.3.2' => 'php-5.3',
               'perl-5.10.1' => 'perl-5.10'}
 
 #
-# Migrate application types as given in the FRAMEWORKS map
+# Migrate applications between release 2 and 3
+# Remove framework patchlevel from s3 and apps
+# Migration fix of UUID from user_info.json to application json
+# Migration of remove top level app dir (TA460)
 #
-def migrate_app_types
+def migrate_rel3
   start_time = Time.now.to_i
   rhlogins = User.find_all_rhlogins
   user_count = rhlogins.length
@@ -52,4 +55,4 @@ def migrate_app_types
   puts "Total execution time: #{total_time.to_s}s"
 end
 
-migrate_app_types
+migrate_rel3
