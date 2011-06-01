@@ -63,9 +63,9 @@ def reboot(conn, instance)
   block_until_available(conn, instance)
 end
 
-def register(conn, instance, name)
+def register(conn, instance, name, desc = "")
   print "Registering AMI based on instance (#{instance})..."
-  image = conn.create_image(instance, name)
+  image = conn.create_image(instance, name, desc)
 
   (0..30).each do
     break if get_image_value(conn, image, :aws_state) == 'available'
@@ -143,7 +143,7 @@ def block_until_available(conn, instance)
   return server
 end
 
-def validate(server)
+def validate(conn, instance, server)
   print "Validating instance..."
   output = ssh(server, '/usr/bin/rhc-accept-node')
   unless output == "PASS"

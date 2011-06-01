@@ -22,7 +22,8 @@ class DevEnv < Thor
     instance, server = create_instance(conn, 'builder')
 
     print "Downloading the devenv script..."
-    scp("misc/devenv/li-devenv.sh #{server}:~/")
+    script_path = File.expand_path(File.dirname(__FILE__) + "/../misc/devenv/li-devenv.sh")
+    scp("#{script_path} #{server}:~/")
     puts "Done"
 
     print "Performing clean install with the latest code..."
@@ -42,10 +43,15 @@ class DevEnv < Thor
     puts "Done"
 
     # Validate the node installation
-    validate(server)
+    validate(conn, instance, server)
+
+    print "Retrieving RPM manifest"
+    manifest = ssh(server, 'rpm -qa | grep rhc-')
+    manifest = manifest.split("\n").join(" / ")
+    puts "Done"
 
     print "Registering AMI..."
-    image = register(conn, instance, options[:name])
+    image = register(conn, instance, options[:name], manifest)
     puts "Done"
 
     terminate(conn, instance)
