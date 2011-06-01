@@ -46,53 +46,12 @@ action "cartridge_do", :description => "run a cartridge action" do
            :display_as => "Exit Code"
 end
 
-
-action "create_customer", :description => "Creates a new customer" do
-    display :always
-
-    input :customer,
-        :prompt         => "Customer username",
-        :description    => "Customers desired username",
-        :type           => :string,
-        :validation     => '^[a-zA-Z0-9]+$',
-        :optional       => false,
-        :maxlength      => 32
-
-    input :email,
-        :prompt         => "Email",
-        :description    => "Customers email address",
-        :type           => :string,
-        :validation     => '^[a-zA-Z][\w\.-]*[a-zA-Z0-9]@[a-zA-Z0-9][\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]$',
-        :optional       => false,
-        :maxlength      => 254
-       
-    input :ssh_key,
-        :prompt         => "Email",
-        :description    => "Customers email address",
-        :type           => :string,
-        :validation     => '^.+$',
-        :optional       => false,
-        :maxlength      => 1000
-
-    output  :time,
-            :description => "The time as a message",
-            :display_as => "Time"
-
-    output  :output,
-            :description => "Output from creation script",
-            :display_as => "Output"
-
-    output :exitcode,
-           :description => "Exit code",
-           :display_as => "Exit Code"
-end
-
 action "has_app", :description => "Does this server contain a specified app?" do
     display :always
 
     input :customer,
         :prompt         => "Customer username",
-        :description    => "Customers desired username",
+        :description    => "Customers username",
         :type           => :string,
         :validation     => '^[a-zA-Z0-9]+$',
         :optional       => false,
@@ -118,71 +77,6 @@ action "has_app", :description => "Does this server contain a specified app?" do
            :description => "Exit code",
            :display_as => "Exit Code"
 end
-
-action "create_http", :description => "create an apache lamp stack" do
-    display :always
-
-    input :customer,
-        :prompt         => "Customer username",
-        :description    => "Username of customer creating http instance",
-        :type           => :string,
-        :validation     => '^[a-zA-Z0-9]+$',
-        :optional       => false,
-        :maxlength      => 32
-
-    input :application,
-        :prompt         => "Application Name",
-        :description    => "Name of http instance",
-        :type           => :string,
-        :validation     => '^[a-zA-Z0-9]+$',
-        :optional       => false,
-        :maxlength      => 32
-
-    output  :time,
-            :description => "The time as a message",
-            :display_as => "Time"
-
-    output  :output,
-            :description => "Output from creation script",
-            :display_as => "Output"
-
-    output :exitcode,
-           :description => "Exit code",
-           :display_as => "Exit Code"
-end
-
-action "destroy_http", :description => "destroy an apache lamp stack" do
-    display :always
-
-    input :customer,
-        :prompt         => "Customer username",
-        :description    => "Username of customer creating http instance",
-        :type           => :string,
-        :validation     => '^[a-zA-Z0-9]+$',
-        :optional       => false,
-        :maxlength      => 32
-
-    input :application,
-        :prompt         => "Application Name",
-        :description    => "Name of http instance",
-        :type           => :string,
-        :validation     => '^[a-zA-Z0-9]+$',
-        :optional       => false,
-        :maxlength      => 32
-
-    output  :time,
-            :description => "The time as a message",
-            :display_as => "Time"
-
-    output  :output,
-            :description => "Output from creation script",
-            :display_as => "Output"
-
-    output :exitcode,
-           :description => "Exit code",
-           :display_as => "Exit Code"
-end
-
 
 
 action "echo", :description => "echo's a string back" do
