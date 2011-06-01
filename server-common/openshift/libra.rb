@@ -69,8 +69,7 @@ module Libra
             server = Server.new(app_info['server_identity'])
             if server
               Libra.logger_debug "DEBUG: Performing action '#{action}' on node: #{server.name} - #{server.repos} repos" if Libra.c[:rpc_opts][:verbose]
-
-              server_execute_direct(framework, action, app_name, user, server)
+              server_execute_direct(framework, action, app_name, user, server, app_info)
 
               if action == 'deconfigure'
                 # update DNS
@@ -80,7 +79,7 @@ module Libra
             else
               if action == 'deconfigure'
                 Libra.client_debug "Application is registered to an invalid node, still attempting to remove everything else..."
-                Libra.logger_debug "DEBUG: Application '#{app_name}' is registered by user '#{rhlogin}(#{user.uuid})' to an invalid node '#{app_info.server_identity}', application will be destroyed but some space may still be consumed for app on the node..."
+                Libra.logger_debug "DEBUG: Application '#{app_name}' is registered by user '#{rhlogin}(#{app_info['uuid']})' to an invalid node '#{app_info.server_identity}', application will be destroyed but some space may still be consumed for app on the node..."
               else
                 raise NodeException.new(142), "The application #{app_name} is registered to an invalid node.  If the problem persists please contact Red Hat support.", caller[0..5]
               end
@@ -109,13 +108,13 @@ module Libra
 
     user.validate_app_limit # TODO there is a race condition here if two users get past here before creating the app and updating s3
     # Create S3 app entry on configure (one of the first things)
-    user.create_app(app_name, framework, server)
+    app_info  = user.create_app(app_name, framework, server)
 
     begin
       # Configure the user on this server if necessary
-      server.create_user(user) # not cleaned up on failure
+      server.create_user(user, app_info) # not cleaned up on failure
 
-      server_execute_direct(framework, action, app_name, user, server)
+      server_execute_direct(framework, action, app_name, user, server, app_info)
       begin
         # update DNS
         public_ip = server.get_fact_direct('public_ip')
@@ -126,7 +125,7 @@ module Libra
         begin
           Libra.logger_debug "DEBUG: Failed to register dns entry for app '#{app_name}' and user '#{user.rhlogin}' on node '#{server.name}'"
           Libra.client_debug "Failed to register dns entry for: '#{app_name}'"
-          server_execute_direct(framework, 'deconfigure', app_name, user, server)
+          server_execute_direct(framework, 'deconfigure', app_name, user, server, app_info)
         ensure
           raise
         end
@@ -135,17 +134,17 @@ module Libra
       begin
         Libra.logger_debug "DEBUG: Failed to create application '#{app_name}' for user '#{user.rhlogin}' on node '#{server.name}'"
         Libra.client_debug "Failed to create application: '#{app_name}'"
-        server_execute_direct(framework, 'deconfigure', app_name, user, server)        
+        server_execute_direct(framework, 'deconfigure', app_name, user, server, app_info)        
       ensure
         raise
       end
     end
   end
 
-  def self.server_execute_direct(framework, action, app_name, user, server)
+  def self.server_execute_direct(framework, action, app_name, user, server, app_info)
     # Execute the action on the server using a framework cartridge
-    Nurture.application(user.rhlogin, user.uuid, app_name, user.namespace, framework, action)
-    result = server.execute_direct(framework, action, "#{app_name} #{user.namespace} #{user.uuid}")[0]
+    Nurture.application(user.rhlogin, app_info['uuid'], app_name, user.namespace, framework, action)
+    result = server.execute_direct(framework, action, "#{app_name} #{user.namespace} #{app_info['uuid']}")[0]
     if (result && defined? result.results)
       output = result.results[:data][:output]
       exitcode = result.results[:data][:exitcode]

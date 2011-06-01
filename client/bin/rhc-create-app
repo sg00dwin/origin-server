@@ -103,16 +103,6 @@ if !password
   password = RHC::get_password
 end
 
-#
-# Get UUID from file
-#
-
-uuid = get_var(opt["rhlogin"])
-unless uuid
-    puts "Could not find UUID for '#{opt["rhlogin"]}' in express.conf.  Be sure you have successfully ran rhc-create-domain before running rhc-create-app."
-    exit 99
-end
-
 opt["repo"] = opt["app"] unless opt["repo"]
 
 puts "
@@ -305,7 +295,12 @@ attempt = 0
 # Pull new repo locally
 #
 
-git_url = "ssh://#{uuid}@#{opt['app']}-#{user_info['user_info']['namespace']}.#{user_info['user_info']['rhc_domain']}/~/git/#{opt['app']}.git/"
+app_name = opt['app']
+namespace = user_info['user_info']['namespace']
+rhc_domain = user_info['user_info']['rhc_domain']
+app_uuid = user_info['app_info'][app_name]['uuid']
+
+git_url = "ssh://#{app_uuid}@#{app_name}-#{namespace}.#{rhc_domain}/~/git/#{app_name}.git/"
 
 unless opt['nogit']
     puts "Pulling new repo down"
@@ -352,8 +347,7 @@ while attempt < RHC::Maxretries
     page = 'health'
     if (type == :php)
       page = 'health_check.php'
-    end
-    if (type == :perl)
+    elsif (type == :perl)
       page = 'health_check.pl'
     end
     url = URI.parse("http://#{my_url}/#{page}")

@@ -105,18 +105,19 @@ function find_open_ip {
 }
 
 function unobfuscate {
-    # Check if unobfuscate is set in /etc/libra/node
-    # If it is set, symlink /var/lib/libra/uuid to /var/lib/libra/namespace
+    # Check if unobfuscate is set in /etc/libra/node.conf
+    # If it is set, symlink /var/lib/libra/uuid to /var/lib/libra/appname-namespace
     # This will allow easier debugging.
 
     uuid=$1
     namespace=$2
+    appname=$3
 
     if [ $unobfuscate -eq 1 ]
     then
-        if [ ! -f "${libra_dir}/$namespace" ] && [ ! -d "${libra_dir}/$namespace" ]
+        if [ ! -f "${libra_dir}/$appname-$namespace" ] && [ ! -d "${libra_dir}/$appname-$namespace" ]
         then
-            /bin/ln -sf "${libra_dir}/${uuid}" "${libra_dir}/${namespace}"
+            /bin/ln -sf "${libra_dir}/${uuid}" "${libra_dir}/${appname}-${namespace}"
         fi
     fi
 }
@@ -166,7 +167,7 @@ uuid=$3
 CUSTOMER_HOME=`echo "$libra_dir/$uuid/" | tr -s /`
 APP_DIR=`echo "$CUSTOMER_HOME/wsgi/$application" | tr -s /`
 
-unobfuscate $uuid $namespace
+unobfuscate $uuid $namespace $application
 
 #
 # Get user id info

@@ -58,9 +58,11 @@ if user
     user.namespace=options[:namespace]
     user.ssh=options[:ssh]
     user.update
-    Server.execute_many('li-controller-0.1', 'configure',
-        "-c #{user.uuid} -e #{user.rhlogin} -s #{user.ssh}",
-        "customer_#{user.rhlogin}", user.rhlogin)
+    user.apps.each do |appname, app|
+      server = Libra::Server.new app['server_identity']
+      cfgstring = "-c #{app['uuid']} -e #{user.rhlogin} -s #{user.ssh} -a"
+      server.execute_direct('li-controller-0.1', 'configure', cfgstring)
+    end
   else
     puts "User already has a registered namespace.  To modify related properties, use --alter"
     exit 254

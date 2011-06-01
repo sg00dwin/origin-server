@@ -119,10 +119,11 @@ class BrokerController < ApplicationController
               }
           app_info = {}
           
-          user.apps.each do |key, app|
-              app_info[key] = {
+          user.apps.each do |appname, app|
+              app_info[appname] = {
                   :framework => app['framework'],
-                  :creation_time => app['creation_time']
+                  :creation_time => app['creation_time'],
+                  :uuid => app['uuid']
               }
           end
           
@@ -162,9 +163,13 @@ class BrokerController < ApplicationController
             user.namespace=ns
             user.ssh=data['ssh']
             user.update
-            Server.execute_many('li-controller-0.1', 'configure',
-                "-c #{user.uuid} -e #{user.rhlogin} -s #{user.ssh} -a",
-                "customer_#{user.rhlogin}", user.rhlogin)
+
+            # update each node account for this user's applications
+            user.apps.each do |appname, app|
+              server = Libra::Server.new app['server_identity']
+              cfgstring = "-c #{app['uuid']} -e #{user.rhlogin} -s #{user.ssh} -a"
+              server.execute_direct('li-controller-0.1', 'configure', cfgstring)
+            end
           else
             render :json => generate_result_json("User already has a registered namespace.  To modify, use --alter", 97), :status => :conflict and return
           end

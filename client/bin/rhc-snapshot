@@ -103,15 +103,20 @@ rescue NoMethodError
     exit 101
 end
 
+app_uuid = user_info['app_info'][app]['uuid']
+namespace = user_info['user_info']['namespace']
+rhc_domain = user_info['user_info']['rhc_domain']
+ssh_cmd = "ssh #{app_uuid}@#{app}-#{namespace}.#{rhc_domain} 'snapshot #{framework} #{app}' > #{opt['save']}"
+
 puts "Pulling down a snapshot to #{opt['save']}"
 puts 
-puts "ssh #{user_info['user_info']['uuid']}@#{app}-#{user_info['user_info']['namespace']}.#{user_info['user_info']['rhc_domain']} 'snapshot #{framework} #{app}' > #{opt['save']}" if debug
-git_pull = `ssh #{user_info['user_info']['uuid']}@#{app}-#{user_info['user_info']['namespace']}.#{user_info['user_info']['rhc_domain']} 'snapshot #{framework} #{app}' > #{opt['save']}`
+puts ssh_cmd if debug
+git_pull = `#{ssh_cmd}`
 if $?.exitstatus != 0
     puts
     puts "Error in trying to save snapshot.  You can try to save manually by running:"
     puts
-    puts "ssh #{user_info['user_info']['uuid']}@#{app}-#{user_info['user_info']['namespace']}.#{user_info['user_info']['rhc_domain']} 'snapshot #{framework} #{app}' > #{opt['save']}"
+    puts ssh_cmd
     puts
     exit 254
 end

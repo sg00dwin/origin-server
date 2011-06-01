@@ -110,10 +110,6 @@ def add_rhlogin_config(rhlogin, uuid)
         f.puts("default_rhlogin=#{rhlogin}")
         f.puts("")
     end
-    unless @local_config.get_value(rhlogin)
-        puts "Adding rhlogin to #{@local_config_path}"
-        f.puts("#{rhlogin}=#{uuid}")
-    end
     f.close
 end
 
