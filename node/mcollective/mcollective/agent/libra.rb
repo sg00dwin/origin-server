@@ -29,86 +29,98 @@ require 'open4'
 require 'pp'
 
 module MCollective
-    #
-    # Li mcollective agent
-    #
-    module Agent
-        class Libra<RPC::Agent
-            metadata    :name        => "Libra Management",
-                        :description => "Agent to manage Libra services",
-                        :author      => "Mike McGrath",
-                        :license     => "GPLv2",
-                        :version     => "0.1",
-                        :url         => "https://engineering.redhat.com/trac/Libra",
-                        :timeout     => 60
+  #
+  # Li mcollective agent
+  #
+  module Agent
+  
+    class Libra<RPC::Agent
+        metadata    :name        => "Libra Management",
+                    :description => "Agent to manage Libra services",
+                    :author      => "Mike McGrath",
+                    :license     => "GPLv2",
+                    :version     => "0.1",
+                    :url         => "https://engineering.redhat.com/trac/Libra",
+                    :timeout     => 60
 
-            #
-            # Simple echo method
-            #
-            def echo_action
-                validate :msg, String
-                reply[:msg] = request[:msg]
-            end
-
-            #
-            # Passes arguments to cartridge for use
-            #
-            def cartridge_do_action
-                Log.instance.debug("cartridge_do_action call / request = #{request.pretty_inspect}")
-                validate :cartridge, /^[a-zA-Z0-9\.\-]+$/
-                validate :action, /^(configure|deconfigure|update_namespace|info|post-install|post_remove|pre-install|reload|restart|start|status|stop)$/
-                validate :args, /^.+$/
-                cartridge = request[:cartridge]
-                action = request[:action]
-                args = request[:args]
-                if File.exists? "/usr/libexec/li/cartridges/#{cartridge}/info/hooks/#{action}"                
-                  pid, stdin, stdout, stderr = Open4::popen4("/usr/bin/runcon -l s0-s0:c0.c1023 /usr/libexec/li/cartridges/#{cartridge}/info/hooks/#{action} #{args} 2>&1")
-                else
-                  pid, stdin, stdout, stderr = Open4::popen4("/usr/bin/runcon -l s0-s0:c0.c1023 /usr/libexec/li/cartridges/abstract-httpd/info/hooks/#{action} #{args} 2>&1")
-                end
-                stdin.close
-                ignored, status = Process::waitpid2 pid
-                exitcode = status.exitstatus
-                # Do this to avoid cartridges that might hold open stdout
-                output = ""
-                begin
-                  Timeout::timeout(5) do
-                    while (line = stdout.gets)
-                      output << line
-                    end
-                  end
-                rescue Timeout::Error
-                  Log.instance.debug("cartridge_do_action WARNING - stdout read timed out")
-                end
-
-                if exitcode == 0
-                  Log.instance.debug("cartridge_do_action (#{exitcode})\n------\n#{output}\n------)")
-                else
-                  Log.instance.debug("cartridge_do_action ERROR (#{exitcode})\n------\n#{output}\n------)")
-                end
-
-                reply[:output] = output
-                reply[:exitcode] = exitcode
-                reply.fail! "cartridge_action failed #{exitcode}.  Output #{output}" unless exitcode == 0
-            end
-
-            #
-            # Returns whether an app is on a machine
-            #
-            def has_app_action
-                validate :customer, /^[a-zA-Z0-9]+$/
-                validate :application, /^[a-zA-Z0-9]+$/
-                customer = request[:customer]
-                app_name = request[:application]
-                if File.exist?("/var/lib/libra/#{customer}/#{app_name}")
-                  reply[:output] = true
-                else
-                  reply[:output] = false
-                end
-                reply[:exitcode] = 0
-            end
-
+        #
+        # Simple echo method
+        #
+        def echo_action
+          validate :msg, String
+          reply[:msg] = request[:msg]
         end
+        
+        # Not sure yet where this should go long term.
+        CARTRIDGE_HIERARCHY = { 'php-5.3' => 'abstract-httpd',
+                                'wsgi-3.2' => 'abstract-httpd',
+                                'rack-1.1' => 'abstract-httpd',
+                                'jbossas-7.0' => 'abstract-httpd',
+                                'perl-5.10' => 'abstract-httpd'}
+
+        #
+        # Passes arguments to cartridge for use
+        #
+        def cartridge_do_action
+          Log.instance.debug("cartridge_do_action call / request = #{request.pretty_inspect}")
+          validate :cartridge, /^[a-zA-Z0-9\.\-]+$/
+          validate :action, /^(configure|deconfigure|update_namespace|info|post-install|post_remove|pre-install|reload|restart|start|status|stop)$/
+          validate :args, /^.+$/
+          cartridge = request[:cartridge]
+          action = request[:action]
+          args = request[:args]
+          if File.exists? "/usr/libexec/li/cartridges/#{cartridge}/info/hooks/#{action}"                
+            pid, stdin, stdout, stderr = Open4::popen4("/usr/bin/runcon -l s0-s0:c0.c1023 /usr/libexec/li/cartridges/#{cartridge}/info/hooks/#{action} #{args} 2>&1")
+          elsif CARTRIDGE_HIERARCHY[cartridge]
+            parent_cartridge = CARTRIDGE_HIERARCHY[cartridge]
+            pid, stdin, stdout, stderr = Open4::popen4("/usr/bin/runcon -l s0-s0:c0.c1023 /usr/libexec/li/cartridges/#{parent_cartridge}/info/hooks/#{action} #{args} 2>&1")
+          else
+            reply[:exitcode] = 127
+            reply.fail! "cartridge_do_action ERROR action '#{action}' not found."
+          end
+          stdin.close
+          ignored, status = Process::waitpid2 pid
+          exitcode = status.exitstatus
+          # Do this to avoid cartridges that might hold open stdout
+          output = ""
+          begin
+            Timeout::timeout(5) do
+              while (line = stdout.gets)
+                output << line
+              end
+            end
+          rescue Timeout::Error
+            Log.instance.debug("cartridge_do_action WARNING - stdout read timed out")
+          end
+
+          if exitcode == 0
+            Log.instance.debug("cartridge_do_action (#{exitcode})\n------\n#{output}\n------)")
+          else
+            Log.instance.debug("cartridge_do_action ERROR (#{exitcode})\n------\n#{output}\n------)")
+          end
+
+          reply[:output] = output
+          reply[:exitcode] = exitcode
+          reply.fail! "cartridge_do_action failed #{exitcode}.  Output #{output}" unless exitcode == 0
+        end
+
+        #
+        # Returns whether an app is on a machine
+        #
+        def has_app_action
+          validate :customer, /^[a-zA-Z0-9]+$/
+          validate :application, /^[a-zA-Z0-9]+$/
+          customer = request[:customer]
+          app_name = request[:application]
+          if File.exist?("/var/lib/libra/#{customer}/#{app_name}")
+            reply[:output] = true
+          else
+            reply[:output] = false
+          end
+          reply[:exitcode] = 0
+        end
+
     end
+  end
 end
 
