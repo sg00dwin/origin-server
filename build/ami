@@ -24,7 +24,7 @@ class DevEnv < Thor
     instance = Instance.new(conn, options[:name])
 
     begin
-      print "Downloading the devenv script..."
+      print "Uploading devenv script..."
       script_path = File.expand_path(File.dirname(__FILE__) + "/../misc/devenv/li-devenv.sh")
       instance.scp(script_path, "~/")
       puts "Done"
