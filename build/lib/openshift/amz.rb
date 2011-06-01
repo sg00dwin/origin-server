@@ -64,7 +64,7 @@ def register(conn, instance, name)
   print "Registering AMI based on instance (#{instance})..."
   image = conn.create_image(instance, name)
 
-  (0..30) do
+  (0..30).each do
     break if get_image_value(conn, image, :aws_state) == 'available'
     puts "Image not available yet"
     sleep 60
@@ -119,7 +119,7 @@ def can_ssh?(server)
 end
 
 def retry_block(conn, instance, retry_msg, max_retries = 15)
-  (0..max_retries) do
+  (0..max_retries).each do
     break if yield
     puts retry_msg + "... retrying"
     sleep 5
