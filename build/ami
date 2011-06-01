@@ -21,7 +21,7 @@ class DevEnv < Thor
     conn = connect
 
     # Create a new builder instance
-    instance = Instance.new(conn, 'builder')
+    instance = Instance.new(conn, options[:name])
 
     begin
       print "Downloading the devenv script..."
