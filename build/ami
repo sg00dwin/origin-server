@@ -7,6 +7,8 @@ require 'thor'
 require 'lib/openshift'
 require 'pp'
 
+include OpenShift::AWS
+
 class DevEnv < Thor
   desc "build", "build a new devenv AMI"
   method_option :name, :required => true, :desc => "The unique AMI name"
@@ -16,45 +18,52 @@ class DevEnv < Thor
     exit_msg "Nothing to update" if pkgs.empty?
 
     # Establish a new connection
-    conn = aws_conn
+    conn = connect
 
     # Create a new builder instance
-    instance, server = create_instance(conn, 'builder')
+    instance = Instance.new(conn, 'builder')
 
-    print "Downloading the devenv script..."
-    script_path = File.expand_path(File.dirname(__FILE__) + "/../misc/devenv/li-devenv.sh")
-    scp("#{script_path} #{server}:~/")
-    puts "Done"
+    begin
+      print "Downloading the devenv script..."
+      script_path = File.expand_path(File.dirname(__FILE__) + "/../misc/devenv/li-devenv.sh")
+      instance.scp(script_path, "~/")
+      puts "Done"
 
-    print "Performing clean install with the latest code..."
-    output = ssh(server, 'sh li-devenv.sh', 1800)
-    puts "Done"
+      print "Performing clean install with the latest code..."
+      output = instance.ssh('sh li-devenv.sh', 1800)
+      puts "Done"
 
-    puts "----------------- Install Output ------------------------"
-    puts output
-    puts "---------------------------------------------------------"
+      puts "----------------- Install Output ------------------------"
+      puts output
+      puts "---------------------------------------------------------"
 
-    print "Updating all packages on the system..."
-    ssh(server, 'yum update -y', 1800)
-    puts "Done"
+      print "Updating all packages on the system..."
+      instance.ssh('yum update -y', 1800)
+      puts "Done"
 
-    print "Rebooting instance to apply new kernel..."
-    reboot(conn, instance)
-    puts "Done"
+      print "Rebooting instance to apply new kernel..."
+      instance.reboot
+      puts "Done"
 
-    # Validate the node installation
-    validate(conn, instance, server)
+      # Validate the node installation
+      print "Validating instance..."
+      unless instance.valid?
+        puts "ERROR - instance is not valid"
+        exit 1
+      end
+      puts "Done"
 
-    print "Retrieving RPM manifest"
-    manifest = ssh(server, 'rpm -qa | grep rhc-')
-    manifest = manifest.split("\n").join(" / ")
-    puts "Done"
+      print "Retrieving RPM manifest"
+      manifest = instance.ssh('rpm -qa | grep rhc-')
+      manifest = manifest.split("\n").join(" / ")
+      puts "Done"
 
-    print "Registering AMI..."
-    image = register(conn, instance, options[:name], manifest)
-    puts "Done"
-
-    terminate(conn, instance)
+      print "Registering AMI..."
+      image = Image.new(conn, instance, options[:name], manifest)
+      puts "Done"
+    ensure
+      instance.terminate
+    end
   end
 end
 
