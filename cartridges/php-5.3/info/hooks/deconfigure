@@ -62,6 +62,19 @@ function destroy_repo {
     rm -rf $GIT_DIR || error "Could not remove ${application}" 108
 }
 
+function rm_symlink {
+    # Check if unobfuscate is set in /etc/libra/node.conf
+    # If it is set, remove symlink
+
+    namespace=$1
+    appname=$2
+
+    if [ $unobfuscate -eq 1 ]
+    then        
+        rm "${libra_dir}/${appname}-${namespace}"
+    fi
+}
+
 while getopts 'd' OPTION
 do
     case $OPTION in
@@ -104,6 +117,8 @@ while [ -f ${APP_DIR}/run/httpd.pid ] && [ $i -lt 30 ]
 done
 #rm -rf "$APP_DIR"
 runcon -l s0-s0:c0.c1023 rm -rf "$APP_DIR"
+
+rm_symlink $namespace $application
 
 #
 # Remove virtualhost definition for apache

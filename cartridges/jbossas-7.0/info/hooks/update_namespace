@@ -31,14 +31,15 @@ function print_help {
 
 function mv_symlink {
     # Check if unobfuscate is set in /etc/libra/node.conf
-    # If it is set, remove symlink
+    # If it is set, move symlink
 
     old_namespace=$1
     new_namespace=$2
+    appname=$3
 
     if [ $unobfuscate -eq 1 ]
     then
-        mv "${libra_dir}/${old_namespace}" "${libra_dir}/${new_namespace}"
+        mv "${libra_dir}/${appname}-${old_namespace}" "${libra_dir}/${appname}-${new_namespace}"
     fi
 }
 
@@ -60,7 +61,7 @@ else
     exit 3
 fi
 
-mv_symlink $old_namespace $new_namespace
+mv_symlink $old_namespace $new_namespace $application
 
 if [ -f "/etc/httpd/conf.d/libra/${uuid}_${old_namespace}_${application}.conf" ]
 then

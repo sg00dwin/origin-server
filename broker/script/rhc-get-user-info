@@ -36,8 +36,8 @@ user_info = {
 
 app_info = {}
 
-user.apps.each do |key, app|
-    app_info[key] = {
+user.apps.each do |appname, app|
+    app_info[appname] = {
         :framework => app['framework'],
         :creation_time => app['creation_time']
     }

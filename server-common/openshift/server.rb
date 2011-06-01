@@ -386,10 +386,10 @@ module Libra
     #
     # Configures the user on this server
     #
-    def create_user(user)
+    def create_user(user, app_info)
       # Make the call to configure the user
       #execute_internal(@@C_CONTROLLER, 'configure', "-c #{user.uuid} -e #{user.rhlogin} -s #{user.ssh}")
-      execute_direct(@@C_CONTROLLER, 'configure', "-c #{user.uuid} -e #{user.rhlogin} -s #{user.ssh}")
+      execute_direct(@@C_CONTROLLER, 'configure', "-c #{app_info['uuid']} -e #{user.rhlogin} -s #{user.ssh}")
     end
 
     #

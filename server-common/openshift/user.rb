@@ -239,7 +239,7 @@ module Libra
           begin
             Libra.logger_debug "Updating namespace for app: #{app_name}" if Libra.c[:rpc_opts][:verbose]
             server = Server.new(app_info['server_identity'])
-            result = server.execute_direct(app_info['framework'], 'update_namespace', "#{app_name} #{new_namespace} #{@namespace} #{@uuid}")[0]
+            result = server.execute_direct(app_info['framework'], 'update_namespace', "#{app_name} #{new_namespace} #{@namespace} #{app_info['uuid']}")[0]
             if (result && defined? result.results)            
               exitcode = result.results[:data][:exitcode]
               if exitcode != 0
@@ -324,13 +324,19 @@ module Libra
     # Create's an S3 cache of the app for easy tracking and verification
     #
     def create_app(app_name, framework, server,
-                    creation_time=DateTime::now().strftime)
-      json = JSON.generate({:framework => framework,
-                            :server_identity => server.name,
-                            :creation_time => creation_time})
+                   creation_time=DateTime::now().strftime,
+                   uuid=nil
+                   )
+      h = {
+        'framework' => framework,
+        'server_identity' => server.name,
+        'creation_time' => creation_time,
+        'uuid' => uuid || gen_small_uuid
+      }
+      json = JSON.generate h
       Helper.s3.put(Libra.c[:s3_bucket],
                     "user_info/#{@rhlogin}/apps/#{app_name}.json", json)
-      JSON.parse(json)
+      h
     end
     
     #
