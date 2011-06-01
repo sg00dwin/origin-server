@@ -56,6 +56,9 @@ def reboot(conn, instance)
   conn.reboot_instances([instance])
   puts "Done"
 
+  # Allow time for the instance to actually shutdown
+  sleep 10
+
   # Block until the instance is SSH available
   block_until_available(conn, instance)
 end
@@ -131,13 +134,22 @@ def retry_block(conn, instance, retry_msg, max_retries = 15)
 end
 
 def block_until_available(conn, instance)
-  print "Waiting for instance to be available..."
+  puts "Waiting for instance to be available..."
   retry_block(conn, instance, "Instance isn't running yet") { is_running?(conn, instance)}
   server = get_value(conn, instance, :dns_name)
   retry_block(conn, instance, "SSH timed out") { can_ssh?(server)}
   puts "Done"
 
   return server
+end
+
+def validate(server)
+  print "Validating instance..."
+  output = ssh(server, '/usr/bin/rhc-accept-node')
+  unless output == "PASS"
+    exit_and_terminate(conn, instance, "Node acceptance failed: #{output}")
+  end
+  puts "Done"
 end
 
 def send_verified_email(version, ami)

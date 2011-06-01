@@ -9,6 +9,7 @@ require 'pp'
 
 class DevEnv < Thor
   desc "build", "build a new devenv AMI"
+  method_option :name, :required => true, :desc => "The unique AMI name"
   def build
     # See if any updates are needed
     pkgs = check_update
@@ -21,7 +22,7 @@ class DevEnv < Thor
     instance, server = create_instance(conn, 'builder')
 
     print "Downloading the devenv script..."
-    ssh(server, 'wget http://209.132.178.9/gpxe/trees/li-devenv.sh')
+    scp("misc/devenv/li-devenv.sh #{server}:~/")
     puts "Done"
 
     print "Performing clean install with the latest code..."
@@ -38,9 +39,13 @@ class DevEnv < Thor
 
     print "Rebooting instance to apply new kernel..."
     reboot(conn, instance)
+    puts "Done"
+
+    # Validate the node installation
+    validate(server)
 
     print "Registering AMI..."
-    image = register(conn, instance, "devenv-release-2")
+    image = register(conn, instance, options[:name])
     puts "Done"
 
     terminate(conn, instance)
