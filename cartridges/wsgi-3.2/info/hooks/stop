@@ -16,7 +16,7 @@
 # General Public License and may only be used or replicated with the express
 # permission of Red Hat, Inc.
 
-# Creates a per customer httpd instance
+# Stop the application httpd instance
 
 # Exit on any errors
 set -e
@@ -57,7 +57,7 @@ customer_id=`basename $3`
 application="$1"
 
 CUSTOMER_HOME="$libra_dir/$customer_id/"
-APP_DIR="$CUSTOMER_HOME/wsgi/$application"
+APP_DIR="$CUSTOMER_HOME/$application"
 
 #
 # Start application

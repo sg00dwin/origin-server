@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # Copyright © 2010 Mike McGrath All rights reserved
-# Copyright © 2011 Scott Stark All rights reserved
 # Copyright © 2010 Red Hat, Inc. All rights reserved
 
 # This copyrighted material is made available to anyone wishing to use, modify,
@@ -17,11 +16,10 @@
 # General Public License and may only be used or replicated with the express
 # permission of Red Hat, Inc.
 
-# Reload the customer jboss application
+# Stop the httpd instance
 
 # Exit on any errors
 set -e
-
 
 if [ -f '/etc/libra/node.conf' ]
 then
@@ -34,12 +32,11 @@ else
     exit 3
 fi
 
-
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
-    echo "Get application status"
+    echo "Stop a running application and disable it"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_jboss_create
+    echo "$0 $@" | logger -p local0.notice -t libra_http_create
     exit 1
 }
 
@@ -56,7 +53,7 @@ done
 
 [ $# -eq 3 ] || print_help
 
-customer_id=$3
+customer_id=`basename $3`
 application="$1"
 
 CUSTOMER_HOME="$libra_dir/$customer_id/"
@@ -66,4 +63,5 @@ APP_DIR="$CUSTOMER_HOME/$application"
 # Start application
 #
 
-runuser --shell /bin/sh "$customer_id" "$APP_DIR/${application}_ctl.sh" reload
+runuser --shell /bin/sh "$customer_id" "$APP_DIR/${application}_ctl.sh" stop
+touch "$APP_DIR/run/stop_lock"

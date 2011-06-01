@@ -166,7 +166,7 @@ application="$1"
 uuid=$3
 
 CUSTOMER_HOME="$libra_dir/$uuid"
-APP_DIR=`echo $CUSTOMER_HOME/php/$application | tr -s /`
+APP_DIR=`echo $CUSTOMER_HOME/$application | tr -s /`
 
 unobfuscate $uuid $namespace $application
 

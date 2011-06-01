@@ -74,7 +74,7 @@ uuid=$3
 
 CUSTOMER_HOME="$libra_dir/$uuid/"
 # The location of the application jboss setup
-APP_DIR="$CUSTOMER_HOME/jbossas/$application"
+APP_DIR="$CUSTOMER_HOME/$application"
 [ -d "$APP_DIR" ] && error "${application}.  Please destroy then recreate, or pick a new name" 132
 
 # Redirect the configure script output for debugging

@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # Copyright © 2010 Mike McGrath All rights reserved
-# Copyright © 2011 Scott Stark All rights reserved
 # Copyright © 2010 Red Hat, Inc. All rights reserved
 
 # This copyrighted material is made available to anyone wishing to use, modify,
@@ -58,7 +57,7 @@ customer_id=`basename $3`
 application="$1"
 
 CUSTOMER_HOME="$libra_dir/$customer_id/"
-APP_DIR="$CUSTOMER_HOME/jbossas/$application"
+APP_DIR="$CUSTOMER_HOME/$application"
 
 #
 # Start application
