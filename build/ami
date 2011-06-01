@@ -1,0 +1,48 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'thor'
+require 'lib/openshift'
+require 'pp'
+
+class DevEnv < Thor
+  desc "build", "build a new devenv AMI"
+  def build
+    # See if any updates are needed
+    pkgs = check_update
+    exit_msg "Nothing to update" if pkgs.empty?
+
+    # Establish a new connection
+    conn = aws_conn
+
+    # Create a new builder instance
+    instance, server = create_instance(conn, 'builder')
+
+    print "Downloading the devenv script..."
+    ssh(server, 'wget http://209.132.178.9/gpxe/trees/li-devenv.sh')
+    puts "Done"
+
+    print "Performing clean install with the latest code..."
+    output = ssh(server, 'sh li-devenv.sh', 1800)
+    puts "Done"
+
+    puts "----------------- Install Output ------------------------"
+    puts output
+    puts "---------------------------------------------------------"
+
+    print "Updating all packages on the system..."
+    ssh(server, 'yum update -y', 1800)
+    puts "Done"
+
+    print "Rebooting instance to apply new kernel..."
+    reboot(conn, instance)
+
+    print "Registering AMI..."
+    image = register(conn, instance, "devenv-release-2")
+    puts "Done"
+
+    terminate(conn, instance)
+  end
+end
+
+DevEnv.start
