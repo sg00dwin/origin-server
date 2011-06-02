@@ -79,6 +79,7 @@ class DevEnv < Thor
   end
 
   desc "update", "Update a DevEnv environment with local RPM installations"
+  method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   def update
     # Warn on uncommitted changes
     `git diff-index --quiet HEAD` 
@@ -100,11 +101,13 @@ class DevEnv < Thor
       end
     end
 
+    puts "Changes detected in the following directories: #{build_dirs.pretty_inspect}"
+
     # Build and install them
     build_dirs.each do |build_dir|
       Dir.glob(build_dir).each do |dir|
         inside(dir) do
-          exit 1 unless run('tito build --rpm --test --install')
+          exit 1 unless run('tito build --rpm --test --install', :verbose => options.verbose?)
         end
       end
     end
