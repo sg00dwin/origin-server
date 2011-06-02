@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.72.4
+Version:   0.72.5
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -44,6 +44,10 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Wed Jun 01 2011 Dan McPherson <dmcphers@redhat.com> 0.72.5-1
+- Automatic commit of package [rhc-cartridge-jbossas-7.0] release [0.72.4-1].
+  (dmcphers@redhat.com)
+
 * Wed Jun 01 2011 Dan McPherson <dmcphers@redhat.com> 0.72.4-1
 - move common files to abstract httpd (dmcphers@redhat.com)
 - remove apptype dir part 1 (dmcphers@redhat.com)
