@@ -59,7 +59,12 @@ class DevEnv < Thor
 
       print "Retrieving RPM manifest"
       manifest = instance.ssh('rpm -qa | grep rhc-')
-      manifest = manifest.split("\n").join(" / ")
+      manifest = manifest.split("\n").sort.join(" / ")
+      # Trim down the output to 255 characters
+      manifest.gsub!(/rhc-([a-z])/, '\1')
+      manifest.gsub!('.el6.noarch', '')
+      manifest.gsub!('cartridge', 'c-')
+      manifest = manifest[0..254]
       puts "Done"
 
       print "Registering AMI..."
