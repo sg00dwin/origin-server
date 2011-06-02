@@ -27,4 +27,10 @@ git push && git push --tags
 # Lastly, do your build in Brew
 tito build --cvs-release
 
+Now, if you know that there are lots of changes, you can use tito to figure
+out which packages have committed changes since their last tag.  To do this
+run:
+
+tito report --untagged-commits | grep rhc-
+
 That's it!
