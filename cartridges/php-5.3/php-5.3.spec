@@ -2,7 +2,7 @@
 
 Summary:   Provides php-5.3 support
 Name:      rhc-cartridge-php-5.3
-Version:   0.72.3
+Version:   0.72.4
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -50,6 +50,10 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Wed Jun 01 2011 Dan McPherson <dmcphers@redhat.com> 0.72.4-1
+- Automatic commit of package [rhc-cartridge-php-5.3] release [0.72.3-1].
+  (dmcphers@redhat.com)
+
 * Wed Jun 01 2011 Dan McPherson <dmcphers@redhat.com> 0.72.3-1
 - move common files to abstract httpd (dmcphers@redhat.com)
 - remove apptype dir part 1 (dmcphers@redhat.com)
