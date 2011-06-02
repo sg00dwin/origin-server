@@ -53,14 +53,14 @@ done
 
 [ $# -eq 3 ] || print_help
 
-customer_id=`basename $3`
+app_id=`basename $3`
 application="$1"
 
-CUSTOMER_HOME="$libra_dir/$customer_id/"
-APP_DIR="$CUSTOMER_HOME/$application"
+APP_HOME="$libra_dir/$app_id/"
+APP_DIR="$APP_HOME/$application"
 
 #
 # Start application
 #
 
-runuser --shell /bin/sh "$customer_id" "$APP_DIR/${application}_ctl.sh" restart
+runuser --shell /bin/sh "$app_id" "$APP_DIR/${application}_ctl.sh" restart
