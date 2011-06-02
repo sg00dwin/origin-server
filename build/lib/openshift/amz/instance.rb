@@ -69,6 +69,7 @@ module OpenShift
         output = ""
         begin
           ssh_cmd = "#{SSH} root@#{@dns} '#{cmd} 2>&1'"
+          log.debug ssh_cmd
           Timeout::timeout(timeout) { output = `#{ssh_cmd}`.chomp }
         rescue Timeout::Error
           log.error "SSH command timed out"

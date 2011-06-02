@@ -12,6 +12,8 @@ include OpenShift::AWS
 class DevEnv < Thor
   desc "build", "build a new devenv AMI"
   method_option :name, :required => true, :desc => "The unique AMI name"
+  method_option :terminate, :type => :boolean, :desc => "Terminate the instance when finished"
+  method_option :reboot, :type => :boolean, :desc => "Reboot the instance after updating"
   def build
     # See if any updates are needed
     pkgs = check_update
@@ -41,9 +43,11 @@ class DevEnv < Thor
       instance.ssh('yum update -y', 1800)
       puts "Done"
 
-      print "Rebooting instance to apply new kernel..."
-      instance.reboot
-      puts "Done"
+      if options.reboot?
+        print "Rebooting instance to apply new kernel..."
+        instance.reboot
+        puts "Done"
+      end
 
       # Validate the node installation
       print "Validating instance..."
@@ -62,7 +66,7 @@ class DevEnv < Thor
       Image.register(conn, instance, options[:name], manifest)
       puts "Done"
     ensure
-      #instance.terminate
+      instance.terminate if options.terminate?
     end
   end
 end
