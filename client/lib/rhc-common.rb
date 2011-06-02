@@ -23,7 +23,7 @@
 require 'rubygems'
 require 'fileutils'
 require 'getoptlong'
-require 'json/pure'
+require 'json'
 require 'net/http'
 require 'net/https'
 require 'parseconfig'
