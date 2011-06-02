@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.72.3
+Version:       0.72.4
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -127,6 +127,8 @@ fi
 %dir %attr(0750,root,root) %{_libexecdir}/li/cartridges/li-controller-0.1/
 %{_libexecdir}/li/cartridges/li-controller-0.1/README
 %{_libexecdir}/li/cartridges/li-controller-0.1/info
+%dir %attr(0750,root,root) %{_libexecdir}/li/cartridges/abstract-httpd/
+%{_libexecdir}/li/cartridges/abstract-httpd/info
 %attr(0750,-,-) %{_bindir}/rhc-accept-node
 %attr(0750,-,-) %{_bindir}/rhc-node-account
 %attr(0750,-,-) %{_bindir}/rhc-node-application
@@ -136,6 +138,16 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Wed Jun 01 2011 Dan McPherson <dmcphers@redhat.com> 0.72.4-1
+- rpm build issues 3 (dmcphers@redhat.com)
+- rpm build issues 2 (dmcphers@redhat.com)
+- rpm build issues (dmcphers@redhat.com)
+- fix node build (dmcphers@redhat.com)
+- move common files to abstract httpd (dmcphers@redhat.com)
+- remove apptype dir part 1 (dmcphers@redhat.com)
+- add base concept of parent cartridge - work in progress (dmcphers@redhat.com)
+- add mod_ssl to site and broker (dmcphers@redhat.com)
+
 * Tue May 31 2011 Matt Hicks <mhicks@redhat.com> 0.72.3-1
 - updated package list for node acceptance (markllama@redhat.com)
 
