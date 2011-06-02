@@ -16,7 +16,7 @@ module OpenShift
       end
 
       def self.register(conn, instance_id, name, desc = "")
-        log.info "Registering AMI based on instance (#{instance})..."
+        log.info "Registering AMI based on instance (#{instance_id})..."
         image = Image.new(conn, name, desc)
         image.amz_image_id = conn.create_image(instance_id, name, desc)
 
