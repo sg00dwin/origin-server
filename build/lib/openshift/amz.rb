@@ -15,6 +15,10 @@ module OpenShift
     @@log = Logger.new(STDOUT)
     @@log.level = Logger::DEBUG
 
+    def log
+      @@log
+    end
+
     def setup_rsa_key
       unless File.exists?(RSA)
         log.info "Setting up RSA key..."

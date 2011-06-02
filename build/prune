@@ -5,6 +5,7 @@ $: << File.expand_path(File.dirname(__FILE__))
 require 'rubygems'
 require 'thor'
 require 'lib/openshift'
+require 'pp'
 
 include OpenShift::AWS
 
@@ -19,15 +20,17 @@ class Prune < Thor
   desc "amis", "prune old AMIs"
   def amis
     # Get current AMIs
-    images = get_amis(conn)
+    images = get_amis(connect)
 
     # Keep the 5 most recent images
     images.sort!.reverse!.pop(5)
 
+    puts "Removing AMI's #{images.pretty_inspect}"
+
     # Prune the rest
     images.each do |i|
       puts "Removing AMI #{i}"
-#      conn.deregister_image(i)
+      conn.deregister_image(i)
     end
   end
 end

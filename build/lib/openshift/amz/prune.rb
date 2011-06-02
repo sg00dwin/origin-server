@@ -12,7 +12,7 @@ module OpenShift
       end.compact
 
       log.info "Terminating #{instances.pretty_inspect}"
-      #conn.terminate_instances(instances) unless instances.empty?
+      conn.terminate_instances(instances) unless instances.empty?
     end
 
     def stop_untagged_instances(conn)
@@ -31,7 +31,7 @@ module OpenShift
       end.compact
 
       log.info "Stopping untagged instances #{instances.pretty_inspect}"
-      #conn.stop_instances(instances) unless instances.empty?
+      conn.stop_instances(instances) unless instances.empty?
     end
 
     def get_amis(conn)
