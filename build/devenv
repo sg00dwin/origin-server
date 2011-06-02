@@ -62,7 +62,7 @@ class DevEnv < Thor
       Image.register(conn, instance, options[:name], manifest)
       puts "Done"
     ensure
-      instance.terminate
+      #instance.terminate
     end
   end
 end
