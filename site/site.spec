@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.72.2
+Version:   0.72.3
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -69,6 +69,9 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Wed Jun 01 2011 Dan McPherson <dmcphers@redhat.com> 0.72.3-1
+- add mod_ssl to site and broker (dmcphers@redhat.com)
+
 * Tue May 31 2011 Matt Hicks <mhicks@redhat.com> 0.72.2-1
 - fix site tests (dmcphers@redhat.com)
 - fix broken access denied case (dmcphers@redhat.com)
