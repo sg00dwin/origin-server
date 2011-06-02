@@ -21,12 +21,12 @@ module OpenShift
         image.amz_image_id = conn.create_image(instance_id, name, desc)
 
         (0..30).each do
-          break if get_value(:aws_state) == 'available'
+          break if image.get_value(:aws_state) == 'available'
           log.info "Image not available yet..."
           sleep 60
         end
 
-        unless get_value(:aws_state) == 'available'
+        unless image.get_value(:aws_state) == 'available'
           raise "Operation Timed Out"
         end
 
