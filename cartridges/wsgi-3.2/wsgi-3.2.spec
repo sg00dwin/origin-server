@@ -2,7 +2,7 @@
 
 Summary: Provides python-wsgi-3.2 support
 Name:      rhc-cartridge-wsgi-3.2
-Version:   0.72.2
+Version:   0.72.3
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -46,6 +46,13 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Wed Jun 01 2011 Dan McPherson <dmcphers@redhat.com> 0.72.3-1
+- move common files to abstract httpd (dmcphers@redhat.com)
+- remove apptype dir part 1 (dmcphers@redhat.com)
+- add base concept of parent cartridge - work in progress (dmcphers@redhat.com)
+- app-uuid patch from dev/markllama/app-uuid
+  69b077104e3227a73cbf101def9279fe1131025e (markllama@gmail.com)
+
 * Tue May 31 2011 Matt Hicks <mhicks@redhat.com> 0.72.2-1
 - Bug 707108 (dmcphers@redhat.com)
 - fix issue after refactor with remote clone (dmcphers@redhat.com)
