@@ -17,6 +17,8 @@ Requires:  mod_wsgi = 3.2
 Requires:  MySQL-python
 Requires:  python-psycopg2
 
+Obsoletes: rhc-cartridge-wsgi-3.2.1
+
 BuildArch: noarch
 
 %description

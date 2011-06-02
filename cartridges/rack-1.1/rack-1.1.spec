@@ -25,6 +25,8 @@ Requires:  ruby-sqlite3
 Requires:  ruby-mysql
 Requires:  ruby-nokogiri
 
+Obsoletes: rhc-cartridge-rack-1.1.0
+
 # Deps for users
 Requires: ruby-RMagick
 

@@ -26,6 +26,8 @@ Requires:  rubygem-formtastic
 Requires:  rubygem-haml
 Requires:  rubygem-recaptcha
 
+Obsoletes: rhc-server
+
 BuildArch: noarch
 
 %description

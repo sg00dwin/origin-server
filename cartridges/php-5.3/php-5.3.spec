@@ -21,6 +21,8 @@ Requires:  php-xml
 Requires:  php-mysql
 Requires:  php-pgsql
 
+Obsoletes: rhc-cartridge-php-5.3.2
+
 BuildArch: noarch
 
 %description

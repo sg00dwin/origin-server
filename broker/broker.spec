@@ -23,6 +23,8 @@ Requires:  rubygem-passenger-native-libs
 Requires:  rubygem-rails
 Requires:  rubygem-xml-simple
 
+Obsoletes: rhc-server
+
 BuildArch: noarch
 
 %description
