@@ -92,7 +92,6 @@ module OpenShift
         output = ""
         begin
           ssh_cmd = "#{SSH} root@#{@dns} '#{cmd}'"
-          log.debug ssh_cmd
           Timeout::timeout(timeout) { output = `#{ssh_cmd}`.chomp }
         rescue Timeout::Error
           log.error "SSH command timed out"
@@ -102,10 +101,10 @@ module OpenShift
       end
 
       def scp(from, to, timeout=60)
-        log.debug "(scp: timeout = #{timeout}) / from = #{from} / to = #{to}"
+        log.debug "(scp: timeout = #{timeout}) / from = '#{from}' to = '#{to}'"
         output = ""
         begin
-          scp_cmd = "#{SCP} -r #{from} #{@dns}:#{to}"
+          scp_cmd = "#{SCP} -r #{from} root@#{@dns}:#{to}"
           Timeout::timeout(timeout) { output = `#{scp_cmd}`.chomp }
         rescue Timeout::Error
           log.error "SCP command '#{scp_cmd}' timed out"

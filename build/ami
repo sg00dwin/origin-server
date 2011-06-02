@@ -47,7 +47,7 @@ class DevEnv < Thor
 
       # Validate the node installation
       print "Validating instance..."
-      unless instance.valid?
+      unless instance.is_valid?
         puts "ERROR - instance is not valid"
         exit 1
       end
