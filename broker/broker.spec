@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.72.2
+Version:   0.72.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -67,6 +67,14 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Wed Jun 01 2011 Dan McPherson <dmcphers@redhat.com> 0.72.4-1
+- 
+
+* Wed Jun 01 2011 Dan McPherson <dmcphers@redhat.com> 0.72.3-1
+- app-uuid patch from dev/markllama/app-uuid
+  69b077104e3227a73cbf101def9279fe1131025e (markllama@gmail.com)
+- add mod_ssl to site and broker (dmcphers@redhat.com)
+
 * Tue May 31 2011 Matt Hicks <mhicks@redhat.com> 0.72.2-1
 - Bug 707745 (dmcphers@redhat.com)
 - get site and broker working on restructure (dmcphers@redhat.com)
