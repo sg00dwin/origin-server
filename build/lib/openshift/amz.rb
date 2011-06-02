@@ -52,9 +52,8 @@ module OpenShift
       end
     end
 
-
     def send_verified_email(version, ami)
-        msg = <<END_OF_MESSAGE
+      msg = <<END_OF_MESSAGE
 From: Jenkins <noreply@redhat.com>
 To: Matt Hicks <mhicks@redhat.com>
 Subject: Jenkins Build #{version} QE Ready
@@ -62,9 +61,8 @@ Subject: Jenkins Build #{version} QE Ready
 The build #{version} (AMI #{ami}) is ready for QE.
 END_OF_MESSAGE
 
-        Net::SMTP.start('localhost') do |smtp|
-          smtp.send_message msg, "noreply@redhat.com", "libra-express@redhat.com"
-        end
+      Net::SMTP.start('localhost') do |smtp|
+        smtp.send_message msg, "noreply@redhat.com", "libra-express@redhat.com"
       end
     end
 
@@ -100,5 +98,15 @@ END_OF_MESSAGE
 
       packages
     end
-end
 
+    def get_amis(conn, filter = DEVENV_REGEX)
+      images = []
+      conn.describe_images_by_owner.each do |i|
+        if i[:aws_name] and i[:aws_name] =~ filter
+          images << i[:aws_id]
+        end
+      end
+      return images
+    end
+  end
+end

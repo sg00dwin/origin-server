@@ -33,15 +33,5 @@ module OpenShift
       log.info "Stopping untagged instances #{instances.pretty_inspect}"
       conn.stop_instances(instances) unless instances.empty?
     end
-
-    def get_amis(conn)
-      images = []
-      conn.describe_images_by_owner.each do |i|
-        if i[:aws_name] and i[:aws_name] =~ AMI_REGEX
-          images << i[:aws_id]
-        end
-      end
-      return images
-    end
   end
 end

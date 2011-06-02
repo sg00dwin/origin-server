@@ -9,13 +9,13 @@ module OpenShift
         @@log
       end
 
-      def initialize(conn, name)
+      def initialize(conn, name, ami = AMI)
         @conn, @name = conn, name
 
         log.info "Creating new instance..."
 
         # Launch a new instance
-        @amz_id = @conn.launch_instances(AMI, OPTIONS)[0][:aws_instance_id]
+        @amz_id = @conn.launch_instances(ami, OPTIONS)[0][:aws_instance_id]
 
         # Small sleep to avoid exceptions in AMZ call
         sleep 2

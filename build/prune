@@ -17,7 +17,7 @@ class Prune < Thor
     stop_untagged_instances(conn)
   end
 
-  desc "amis", "prune old AMIs"
+  desc "amis", "prune old devenv AMIs"
   def amis
     # Get current AMIs
     images = get_amis(connect)
