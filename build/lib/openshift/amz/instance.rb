@@ -3,7 +3,7 @@ require 'aws'
 module OpenShift
   module AWS
     class Instance
-      attr_accessor :conn, :amz_id, :name, :dns
+      attr_accessor :conn, :amz_id, :amz_image_id, :name, :dns
 
       def log
         @@log
@@ -15,6 +15,7 @@ module OpenShift
           if (i[:tags]["Name"] == name)
             instance = Instance.new(conn, name)
             instance.amz_id = i[:aws_instance_id]
+            instance.amz_image_id = i[:aws_image_id]
             instance.block_until_available
             return instance
           end
@@ -27,7 +28,9 @@ module OpenShift
         instance = Instance.new(conn, name)
 
         # Launch a new instance
-        instance.amz_id = conn.launch_instances(ami, OPTIONS)[0][:aws_instance_id]
+        amz_data = conn.launch_instances(ami, OPTIONS)[0]
+        instance.amz_id = amz_data[:aws_instance_id]
+        instance.amz_image_id = amz_data[:aws_image_id]
 
         # Small sleep to avoid exceptions in AMZ call
         sleep 2

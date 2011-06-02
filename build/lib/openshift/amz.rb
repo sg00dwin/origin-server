@@ -3,6 +3,7 @@ require 'aws'
 require 'lib/openshift/amz/image'
 require 'lib/openshift/amz/instance'
 require 'lib/openshift/amz/prune'
+require 'lib/openshift/amz/verifier'
 
 # Force synchronous stdout
 STDOUT.sync, STDERR.sync = true
@@ -49,20 +50,6 @@ module OpenShift
             AWSSecretKey=<SECRET_KEY>
         eos
         raise "Error - no credentials"
-      end
-    end
-
-    def send_verified_email(version, ami)
-      msg = <<END_OF_MESSAGE
-From: Jenkins <noreply@redhat.com>
-To: Matt Hicks <mhicks@redhat.com>
-Subject: Jenkins Build #{version} QE Ready
-
-The build #{version} (AMI #{ami}) is ready for QE.
-END_OF_MESSAGE
-
-      Net::SMTP.start('localhost') do |smtp|
-        smtp.send_message msg, "noreply@redhat.com", "libra-express@redhat.com"
       end
     end
 

@@ -102,6 +102,14 @@ class Verifier < Thor
         puts "ERROR - Non-zero exit code from verification tests (exit: #{p.exitstatus})"
         exit p.exitstatus
       end
+
+      # Mark the image as verified
+      Image.find(instance.amz_image_id).verify
+      
+      print "Sending QE ready email..."
+      send_verified_email(@version, @ami)
+      puts "Done"
+
     ensure
       instance.terminate
     end

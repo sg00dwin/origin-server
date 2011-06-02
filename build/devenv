@@ -59,7 +59,7 @@ class DevEnv < Thor
       puts "Done"
 
       print "Registering AMI..."
-      image = Image.new(conn, instance, options[:name], manifest)
+      Image.register(conn, instance, options[:name], manifest)
       puts "Done"
     ensure
       instance.terminate
