@@ -21,7 +21,11 @@ JSON String:
     'debug': 'true - An optional flag to get debug information returned'
 }
 
-Returns:
+Return JSON String:
+{
+    'rhlogin': 'Red Hat Login',
+    'uuid': "User UUID"
+}
 
 
 Application Control
@@ -44,14 +48,20 @@ Submit via POST to: {openshift.express.server}/broker/cartridge
     Encode json string as http variable: 'json_data',
     Include your password as http variable 'password'
 
-JSON String:
+Submit JSON String:
 {
     'cartridge': 'framework-type, ex: php-5.3',
     'action': 'configure, start, stop, restart, reload, status, deconfigure',
     'rhlogin': 'login'
 }
 
-Returns:
+Return JSON String (exit_code non-zero is failure):
+{
+    "debug":"Debug Output",
+    "messages":"Other messages",
+    "result":"Result messages"
+    "exit_code": 0
+}
 
 
 User and Application Info
@@ -69,4 +79,22 @@ JSON String:
     'rhlogin': 'rhlogin'
 }
 
-Returns:
+Return JSON String:
+
+{
+    "app_info":{
+        "newapp":{
+            "framework":"<FRAMEWORK_TYPE>",
+            "creation_time":"<CREATION_TIME>",
+            "uuid":"<APPLICATION_UUID"
+        }
+    },
+    "user_info":{
+        "rhlogin":"<RHN_LOGIN>",
+        "uuid":"<USER_UUID>",
+        "ssh_key":"<PUB_SSH_KEY>",
+        "rhc_domain":"<RHC_DOMAIN>",
+        "namespace":"<DOMAIN_NAMESPACE>"
+    }
+}
+
