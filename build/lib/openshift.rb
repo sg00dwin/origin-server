@@ -1,5 +1,5 @@
 require 'lib/openshift/constants'
-require 'lib/openshift/amz'
+require 'lib/openshift/aws'
 
 puts "loaded parent"
 

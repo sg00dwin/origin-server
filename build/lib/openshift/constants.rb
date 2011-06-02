@@ -7,7 +7,7 @@ KEY_PAIR = "libra"
 ZONE = 'us-east-1d'
 OPTIONS = {:key_name => KEY_PAIR, :instance_type => TYPE, :availability_zone => ZONE}
 VERSION_REGEX = /rhc-\d+\.\d+\.?\d*-\d+/
-AMI_REGEX = /rhc-\d+\.\d+/
+AMI_REGEX = /devenv-\d+\.\d+/
 BUILD_REGEX = /^builder-rhc-\d+\.\d+/
 TERMINATE_REGEX = /terminate/
 PREFIX = ENV['LIBRA_DEV'] ? ENV['LIBRA_DEV'] + "-" : ""
