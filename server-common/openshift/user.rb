@@ -217,8 +217,7 @@ module Libra
         Server.dyn_has_txt_record?(new_namespace, auth_token, true) 
         Server.dyn_create_txt_record(new_namespace, auth_token)
         Server.dyn_delete_txt_record(@namespace, auth_token)
-        apps.each do |app_sym, app_info|
-          app_name = app_sym.to_s
+        apps.each do |app_name, app_info|
           Libra.logger_debug "Updating namespaces for app: #{app_name}" if Libra.c[:rpc_opts][:verbose]
           server = Server.new(app_info['server_identity'])
           public_ip = server.get_fact_direct('public_ip')
@@ -234,8 +233,7 @@ module Libra
         end
         
         update_namespace_failures = []
-        apps.each do |app_sym, app_info|
-          app_name = app_sym.to_s
+        apps.each do |app_name, app_info|
           begin
             Libra.logger_debug "Updating namespace for app: #{app_name}" if Libra.c[:rpc_opts][:verbose]
             server = Server.new(app_info['server_identity'])
@@ -314,7 +312,7 @@ module Libra
         app_list.each do |key|
           json = Helper.s3.get(Libra.c[:s3_bucket], key[:key])
           app_name = key[:key].sub("user_info/#{@rhlogin}/apps/", "").sub(".json", "")
-          @apps[app_name.to_sym] = app_info(app_name)
+          @apps[app_name] = app_info(app_name)
         end
       end
       @apps

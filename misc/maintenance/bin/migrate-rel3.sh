@@ -28,7 +28,6 @@ def migrate_rel3
       puts "Updating apps for user: #{user.rhlogin}(#{user_count.to_s}) with uuid: #{user.uuid}"
       apps = user.apps
       apps.each do |app_name, app|
-        app_name = app_name.to_s
         from_type = app['framework']
         to_type = FRAMEWORKS[from_type]
         begin
