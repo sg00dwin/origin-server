@@ -27,7 +27,7 @@ class Prune < Thor
     # Prune the rest
     images.each do |i|
       puts "Removing AMI #{i}"
-      conn.deregister_image(i)
+#      conn.deregister_image(i)
     end
   end
 end
