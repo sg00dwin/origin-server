@@ -31,18 +31,20 @@ done
 
 %install
 rm -rf %{buildroot}
-SITE_LIB_DIR=$RPM_BUILD_ROOT/%{ruby_sitelibdir}
 mkdir -p %{buildroot}%{ruby_sitelibdir}
 cp -r openshift %{buildroot}%{ruby_sitelibdir}
 cp openshift.rb %{buildroot}%{ruby_sitelibdir}
+mkdir -p %{buildroot}%{_sysconfdir}/libra
+cp conf/libra/* %{buildroot}%{_sysconfdir}/libra/
 
 %clean
-rm -rf $RPM_BUILD_ROOT
+rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root,-)
 %{ruby_sitelibdir}/openshift
 %{ruby_sitelibdir}/openshift.rb
+%attr(0640,root,libra_user) %config(noreplace) %{_sysconfdir}/libra/controller.conf
 
 %changelog
 * Wed Jun 01 2011 Dan McPherson <dmcphers@redhat.com> 0.72.3-1
