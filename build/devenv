@@ -79,6 +79,7 @@ class DevEnv < Thor
   end
 
   desc "update", "Update a DevEnv environment with local RPM installations"
+  method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   def update
     # Warn on uncommitted changes
     `git diff-index --quiet HEAD` 
@@ -86,12 +87,27 @@ class DevEnv < Thor
 
     remove_dir '/tmp/tito/'
 
-    build_dirs = ['cartridges/*', 'broker', 'client', 'common', 'misc/devenv', 'node', 'server-common', 'site', 'selinux']
+    # Figure out what needs to be built
+    packages = `tito report --untagged-commits | grep rhc`
+    build_dirs = packages.split("\n").collect do |package|
+      if package =~ /rhc-(devenv-.*)-0/
+        "misc/devenv/" + $1
+      elsif package =~ /rhc-(cartridge-.*)-0/
+        "cartridges/" + $1
+      elsif package =~ /rhc-(.*)-0/
+        $1
+      else
+        "client"
+      end
+    end
+
+    puts "Changes detected in the following directories: #{build_dirs.pretty_inspect}"
+
+    # Build and install them
     build_dirs.each do |build_dir|
       Dir.glob(build_dir).each do |dir|
         inside(dir) do
-          puts run('tito build --srpm --test --install')
-          puts run('tito build --rpm --test --install')
+          exit 1 unless run('tito build --rpm --test --install', :verbose => options.verbose?)
         end
       end
     end
