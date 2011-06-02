@@ -14,8 +14,9 @@ class Verifier < Thor
   method_option :name, :required => true, :desc => "The unique verifier name"
   def setup
     # Get the latest devenv image and create a new instance
-    latest = get_amis(connect).sort[-1]
-    instance = Instance.new(conn, options[:name], latest)
+    conn = connect
+    latest = get_amis(conn).sort[-1]
+    instance = Instance.create(conn, options[:name], latest)
 
     private_ip = instance.ssh("facter ipaddress")
     if !private_ip or private_ip.strip.empty?
@@ -47,7 +48,7 @@ class Verifier < Thor
 
     print "Updating tests to remote instance..."
     `git archive --prefix li/ HEAD --output /tmp/li.tar`
-    instance.scp("/tmp/li.tar", "~/")
+    instance.scp_to("/tmp/li.tar", "~/")
     instance.ssh('rm -rf li; tar -xf li.tar')
     puts "Done"
 
@@ -57,6 +58,46 @@ class Verifier < Thor
       exit 1
     end
     puts "Done"
+  end
+
+  desc "test", "runs the tests on a specified verifier instance"
+  method_option :name, :required => true, :desc => "The unique verifier name"
+  def test
+    conn = connect
+    instance = Instance.find(conn, options[:name])
+
+    # Run verification tests
+    print "Running verification tests..."
+    instance.ssh("cucumber --tags @verify --format junit -o /tmp/rhc/junit/ li/tests/", 3600)
+    p = $?
+    puts "Done"
+
+    print "Checking mcollective status..."
+    instance.ssh("service mcollective status")
+    puts "Done"
+
+    print "Downloading verification output..."
+    `mkdir -p rhc/log`
+    instance.scp_from("/tmp/rhc/cucumber*.log", "rhc/log")
+    instance.scp_from("/tmp/rhc/failures.log", "rhc/log")
+    instance.scp_from("/var/www/libra/site/httpd/logs/access_log", "rhc/log")
+    instance.scp_from("/var/www/libra/site/httpd/logs/error_log", "rhc/log")
+    instance.scp_from("/var/www/libra/site/log/development.log", "rhc/log")
+    instance.scp_from("/var/www/libra/broker/httpd/logs/access_log", "rhc/log")
+    instance.scp_from("/var/www/libra/broker/httpd/logs/error_log", "rhc/log")
+    instance.scp_from("/var/www/libra/broker/log/development.log", "rhc/log")
+    instance.scp_from("/var/log/mcollective.log", "rhc/log")
+    instance.scp_from("/var/tmp/mcollective-client.log", "rhc/log")
+
+    `mkdir -p rhc/junit`
+    instance.scp_from("/tmp/rhc/junit/*", "rhc/junit")
+
+    puts "Done"
+
+    if p.exitstatus != 0
+      puts "ERROR - Non-zero exit code from verification tests (exit: #{p.exitstatus})"
+      exit p.exitstatus
+    end
   end
 end
 

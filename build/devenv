@@ -21,12 +21,12 @@ class DevEnv < Thor
     conn = connect
 
     # Create a new builder instance
-    instance = Instance.new(conn, options[:name])
+    instance = Instance.create(conn, options[:name])
 
     begin
       print "Uploading devenv script..."
       script_path = File.expand_path(File.dirname(__FILE__) + "/../misc/devenv/li-devenv.sh")
-      instance.scp(script_path, "~/")
+      instance.scp_to(script_path, "~/")
       puts "Done"
 
       print "Performing clean install with the latest code..."

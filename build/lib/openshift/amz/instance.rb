@@ -9,22 +9,40 @@ module OpenShift
         @@log
       end
 
-      def initialize(conn, name, ami = AMI)
-        @conn, @name = conn, name
+      def self.find(conn, name)
+        # Look up any tagged instances
+        conn.describe_instances.each do |i|
+          if (i[:tags]["Name"] == name)
+            instance = Instance.new(conn, name)
+            instance.amz_id = i[:aws_instance_id]
+            instance.block_until_available
+            return instance
+          end
+        end
+      end
 
+      def self.create(conn, name, ami = AMI)
         log.info "Creating new instance..."
 
+        instance = Instance.new(conn, name)
+
         # Launch a new instance
-        @amz_id = @conn.launch_instances(ami, OPTIONS)[0][:aws_instance_id]
+        instance.amz_id = conn.launch_instances(ami, OPTIONS)[0][:aws_instance_id]
 
         # Small sleep to avoid exceptions in AMZ call
         sleep 2
 
         # Tag the instance
-        @conn.create_tag(@amz_id, 'Name', @name)
+        conn.create_tag(@amz_id, 'Name', @name)
 
         # Block until the instance is accessible
-        block_until_available
+        instance.block_until_available
+
+        return instance
+      end
+
+      def initialize(conn, name)
+        @conn, @name = conn, name
       end
 
       def terminate
@@ -56,11 +74,24 @@ module OpenShift
         return output
       end
 
-      def scp(from, to, timeout=60)
-        log.debug "(scp: timeout = #{timeout}) / from = '#{from}' to = '#{to}'"
+      def scp_from(remote, local, timeout=60)
+        log.debug "(scp_from: timeout = #{timeout}) / local = '#{local}' remote = '#{remote}'"
         output = ""
         begin
-          scp_cmd = "#{SCP} -r #{from} root@#{@dns}:#{to}"
+          scp_cmd = "#{SCP} -r root@#{@dns}:#{remote} #{local}"
+          Timeout::timeout(timeout) { output = `#{scp_cmd}`.chomp }
+        rescue Timeout::Error
+          log.error "SCP command '#{scp_cmd}' timed out"
+        end
+        log.debug "----------------------------\n#{output}\n------------------------------"
+        return output
+      end
+
+      def scp_to(local, remote, timeout=60)
+        log.debug "(scp_to: timeout = #{timeout}) / local = '#{local}' remote = '#{remote}'"
+        output = ""
+        begin
+          scp_cmd = "#{SCP} -r #{local} root@#{@dns}:#{remote}"
           Timeout::timeout(timeout) { output = `#{scp_cmd}`.chomp }
         rescue Timeout::Error
           log.error "SCP command '#{scp_cmd}' timed out"
