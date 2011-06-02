@@ -127,7 +127,7 @@ fi
 %dir %attr(0750,root,root) %{_libexecdir}/li/cartridges/li-controller-0.1/
 %{_libexecdir}/li/cartridges/li-controller-0.1/README
 %{_libexecdir}/li/cartridges/li-controller-0.1/info
-%dir %attr(0750,root,root) %{_libexecdir}/li/cartridges/abstract-httpd/
+%dir %attr(0750,root,root) %{_libexecdir}/li/cartridges/abstract-httpd
 %attr(0750,-,-) %{_bindir}/rhc-accept-node
 %attr(0750,-,-) %{_bindir}/rhc-node-account
 %attr(0750,-,-) %{_bindir}/rhc-node-application
