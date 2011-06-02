@@ -9,10 +9,10 @@ module OpenShift
         @@log
       end
 
-      def self.find(conn, amz_image_id)
-        image = Image.new(conn, nil, nil)
-        image.amz_image_id = amz_image_id
-        return image
+      def self.verify(conn, amz_image_id)
+        log.info "Tagging image (#{amz_image_id}) as '#{VERIFIED_TAG}'..."
+        conn.create_tag(amz_image_id, 'Name', VERIFIED_TAG)
+        puts "Done"
       end
 
       def self.register(conn, instance_id, name, desc = "")
@@ -37,12 +37,6 @@ module OpenShift
 
       def initialize(conn, instance_id, name, desc = "")
         @conn, @name, @desc = conn, name, desc
-      end
-
-      def verify
-        log.info "Tagging image (#{@amz_image_id}) as '#{VERIFIED_TAG}'..."
-        conn.create_tag(@amz_image_id, 'Name', VERIFIED_TAG)
-        puts "Done"
       end
 
       def get_value(key)

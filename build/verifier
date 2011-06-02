@@ -62,6 +62,7 @@ class Verifier < Thor
 
   desc "test", "runs the tests and terminates instance"
   method_option :name, :required => true, :desc => "The unique verifier name"
+  method_option :terminate, :type => :boolean, :desc => "Terminate the instance when finished"
   def test
     conn = connect
     instance = Instance.find(conn, options[:name])
@@ -104,14 +105,14 @@ class Verifier < Thor
       end
 
       # Mark the image as verified
-      Image.find(instance.amz_image_id).verify
+      Image.verify(conn, instance.amz_image_id)
       
       print "Sending QE ready email..."
-      send_verified_email(@version, @ami)
+      send_verified_email(instance.amz_image_id)
       puts "Done"
 
     ensure
-      instance.terminate
+      instance.terminate if options.terminate?
     end
   end
 end
