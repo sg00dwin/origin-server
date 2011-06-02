@@ -21,14 +21,6 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-require "rubygems"
-require "uri"
-require "net/http"
-require "net/https"
-require "getoptlong"
-require "json"
-require 'parseconfig'
-require 'fileutils'
 require 'rhc-common'
 
 #
