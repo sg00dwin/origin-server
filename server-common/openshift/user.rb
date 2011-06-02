@@ -314,7 +314,7 @@ module Libra
         app_list.each do |key|
           json = Helper.s3.get(Libra.c[:s3_bucket], key[:key])
           app_name = key[:key].sub("user_info/#{@rhlogin}/apps/", "").sub(".json", "")
-          @apps[app_name.to_sym] = app_info(app_name)
+          @apps[app_name] = app_info(app_name)
         end
       end
       @apps
