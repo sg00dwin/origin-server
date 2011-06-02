@@ -19,7 +19,7 @@ spec = Gem::Specification.new do |s|
     s.files = FileList['lib/**/*.rb', 'bin/*', 'conf/*'].to_a
     s.files += %w(LICENSE README Rakefile)
     s.executables = ['rhc-create-app', 'rhc-create-domain', 'rhc-ctl-app', 'rhc-snapshot', 'rhc-user-info', 'rhc-tail-files']
-    s.add_dependency('json_pure')
+    s.add_dependency('json')
     s.add_dependency('parseconfig')
 end
 
