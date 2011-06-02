@@ -7,7 +7,7 @@ module Libra
     #
     # Send application data (start, stop, etc)
     #
-    def self.application(rhlogin, uuid, app_name, user_namespace, type, action)
+    def self.application(rhlogin, user_uuid, app_name, user_namespace, type, action, app_uuid)
         return unless (Libra.c[:nurture_enabled].to_s.downcase == 'true')
         Libra.logger_debug "Sending to Nurture:application"
         # Why curl?  So I could & at the end.  We don't want this blocking requests
@@ -15,8 +15,8 @@ module Libra
         `curl -s -O /dev/null -X POST -u '#{Libra.c[:nurture_username]}:#{Libra.c[:nurture_password]}' '#{Libra.c[:nurture_url]}applications' \
     --data-urlencode 'application[action]=#{action}' \
     --data-urlencode 'application[user_name]=#{rhlogin}' \
-    --data-urlencode 'application[guid]=#{app_name}-#{user_namespace}' \
-    --data-urlencode 'application[uuid]=#{uuid}' \
+    --data-urlencode 'application[guid]=#{app_uuid}' \
+    --data-urlencode 'application[uuid]=#{user_uuid}' \
     --data-urlencode 'application[name]=#{app_name}' \
     --data-urlencode 'application[version]=na' \
     --data-urlencode 'application[components]=#{type}' \
