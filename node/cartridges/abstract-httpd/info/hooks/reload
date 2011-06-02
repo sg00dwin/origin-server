@@ -16,7 +16,7 @@
 # General Public License and may only be used or replicated with the express
 # permission of Red Hat, Inc.
 
-# Creates a per customer httpd instance
+# Reload the application httpd instance
 
 # Exit on any errors
 set -e
@@ -32,9 +32,10 @@ else
     exit 3
 fi
 
+
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
-    echo "Start a running application"
+    echo "Get application status"
 
     echo "$0 $@" | logger -p local0.notice -t libra_http_create
     exit 1
@@ -53,7 +54,7 @@ done
 
 [ $# -eq 3 ] || print_help
 
-customer_id=`basename $3`
+customer_id=$3
 application="$1"
 
 CUSTOMER_HOME="$libra_dir/$customer_id/"
@@ -63,5 +64,4 @@ APP_DIR="$CUSTOMER_HOME/$application"
 # Start application
 #
 
-rm -f "$APP_DIR/run/stop_lock"
-runuser --shell /bin/sh "$customer_id" "$APP_DIR/${application}_ctl.sh" start
+runuser --shell /bin/sh "$customer_id" "$APP_DIR/${application}_ctl.sh" reload
