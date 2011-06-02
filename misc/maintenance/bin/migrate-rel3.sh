@@ -19,14 +19,19 @@ FRAMEWORKS = {'php-5.3.2' => 'php-5.3',
 #
 def migrate_rel3
   start_time = Time.now.to_i
+  puts "Getting all RHLogins..." 
   rhlogins = User.find_all_rhlogins
   user_count = rhlogins.length
   puts "RHLogins.length: #{user_count.to_s}"  
-  rhlogins.each do |rhlogin|    
+  rhlogins.each do |rhlogin|
     user = User.find(rhlogin)
     if user
       puts "Updating apps for user: #{user.rhlogin}(#{user_count.to_s}) with uuid: #{user.uuid}"
       apps = user.apps
+      if apps.length > 1
+        puts "WARNING: Application length > 1 #{apps.pretty_inspect} for user: #{rhlogin}"
+        puts "WARNING: Will only migrate the first application"
+      end
       apps.each do |app_name, app|
         from_type = app['framework']
         to_type = FRAMEWORKS[from_type]
@@ -34,15 +39,21 @@ def migrate_rel3
           if to_type
             puts "Migrating app: #{app_name} to type: #{to_type}"
             app['framework'] = to_type
-            user.update_app(app)
+            if !app['uuid']     
+              app['uuid'] = user.uuid
+            else
+              puts "WARNING: Application already has uuid: #{app_name} uuid: #{app['uuid']}"
+            end
+            #user.update_app(app)
           else
             puts "ERROR: Failed migrating app: #{app_name} missing from_type: #{from_type}"
           end
-        rescue Exception => e           
+        rescue Exception => e
           puts "ERROR: Failed migrating app: #{app_name} to type: #{to_type}"
           puts e.message
           puts e.backtrace
         end
+        break # Only handle the first app
       end
     else
       puts "WARNING:  Couldn't find user: #{rhlogin}"

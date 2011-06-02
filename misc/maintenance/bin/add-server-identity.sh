@@ -23,7 +23,7 @@ def update_all_app_server_identities
     if user
       puts "Updating apps for user: #{user.rhlogin}(#{user_count.to_s}) with uuid: #{user.uuid}"
       apps = user.apps
-      apps.each_key do |app_name|
+      apps.each do |app_name, app|
         puts "Searching for app on known servers: #{app_name}"
         found = false        
         servers.each do |server|
@@ -31,7 +31,8 @@ def update_all_app_server_identities
             if server.has_app?(user, app_name)
               begin
                 puts "Updating app: #{app_name} to server identity: #{server.name}"
-                user.update_app_server_identity(app_name, server)
+                app['server_identity'] = server.name
+                user.update_app(app)
                 found = true
                 break
               rescue Exception => e                
