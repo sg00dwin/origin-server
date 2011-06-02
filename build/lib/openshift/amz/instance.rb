@@ -33,7 +33,7 @@ module OpenShift
         sleep 2
 
         # Tag the instance
-        conn.create_tag(@amz_id, 'Name', @name)
+        conn.create_tag(instance.amz_id, 'Name', instance.name)
 
         # Block until the instance is accessible
         instance.block_until_available
