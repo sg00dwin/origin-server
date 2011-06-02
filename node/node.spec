@@ -124,6 +124,7 @@ fi
 %attr(0750,-,-) %{_bindir}/ec2-prep.sh
 %attr(0750,-,-) %{_bindir}/remount-secure.sh
 %dir %attr(0751,root,root) %{_localstatedir}/lib/libra
+%dir %attr(0750,root,root) %{_libexecdir}/li/cartridges/abstract-httpd/
 %dir %attr(0750,root,root) %{_libexecdir}/li/cartridges/li-controller-0.1/
 %{_libexecdir}/li/cartridges/li-controller-0.1/README
 %{_libexecdir}/li/cartridges/li-controller-0.1/info
