@@ -63,7 +63,7 @@ class DevEnv < Thor
       puts "Done"
 
       print "Registering AMI..."
-      Image.register(conn, instance, options[:name], manifest)
+      Image.register(conn, instance.amz_id, options[:name], manifest)
       puts "Done"
     ensure
       instance.terminate if options.terminate?
