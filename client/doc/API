@@ -55,7 +55,14 @@ Submit JSON String:
     'rhlogin': 'login'
 }
 
-Return String: 1 = success.   Anything else = failure.
+Return JSON String (exit_code non-zero is failure):
+{
+    "debug":"Debug Output",
+    "messages":"Other messages",
+    "result":"Result messages"
+    "exit_code": 0
+}
+
 
 User and Application Info
 =========================
@@ -78,7 +85,8 @@ Return JSON String:
     "app_info":{
         "newapp":{
             "framework":"<FRAMEWORK_TYPE>",
-            "creation_time":"<CREATION_TIME>"
+            "creation_time":"<CREATION_TIME>",
+            "uuid":"<APPLICATION_UUID"
         }
     },
     "user_info":{
