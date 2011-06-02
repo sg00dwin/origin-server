@@ -96,7 +96,7 @@ module Libra
           url = URI.parse(Libra.c[:streamline_url] + '/wapps/streamline/login.html')
           req = Net::HTTP::Post.new(url.path)
           
-          req.set_form_data({ 'login' => rhlogin, 'password' => password, 'redirectUrl' => '/wapps/streamline/cloudVerify.html' })
+          req.set_form_data({ 'login' => rhlogin, 'password' => password })
           http = Net::HTTP.new(url.host, url.port)
           if url.scheme == "https"
             http.use_ssl = true
@@ -104,26 +104,21 @@ module Libra
           end
           response = http.start {|http| http.request(req)}
           
-          #TODO IT is looking at returning the same thing as cloudVerify when no redirectUrl is passed
-          cookie = response.response['set-cookie']
-          while response.kind_of?(Net::HTTPRedirection)
-            response = follow_redirect(response, cookie)
-          end
-          
           case response
           when Net::HTTPSuccess
             json = JSON.parse(response.body)
             roles = json['roles']
             if roles.index('cloud_access_1')
-              username = json['username']
+              username = json['username'] || json['login'] # remove 'login' if/once streamline changes to username like cloudVerify
             elsif roles.index('cloud_access_request_1')
               raise UserValidationException.new(146), "Found valid credentials but you haven't been granted access to Express yet", caller[0..5]
             else
               raise UserValidationException.new(147), "Found valid credentials but you haven't requested access to Express yet", caller[0..5]
-            end            
+            end
           else
             Libra.client_debug "Response code from authentication: #{response.code}"
-            #Libra.client_debug "HTTP response from server is #{response.body}"
+            Libra.logger_debug "Response code from authentication: #{response.code}"
+            Libra.logger_debug "HTTP response from server is #{response.body}"
           end
         rescue UserValidationException => e
           raise
@@ -136,20 +131,6 @@ module Libra
       else
         return rhlogin
       end
-    end
-    
-    def self.follow_redirect(response, cookie)           
-      headers = { "Cookie" => cookie }     
-      url = URI.parse(response.header['location'])
-      host = URI.parse(Libra.c[:streamline_url]).host
-      port = url.port if url.port
-      http = Net::HTTP.new(host, port)
-      if url.scheme == "https"
-        http.use_ssl = true
-        http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-      end
-      response = http.get(url.path, headers)
-      return response
     end
     
     #
