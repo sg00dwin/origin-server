@@ -4,12 +4,15 @@ $: << File.expand_path(File.dirname(__FILE__))
 
 require 'rubygems'
 require 'thor'
+require 'fileutils'
 require 'lib/openshift'
 require 'pp'
 
 include OpenShift::AWS
 
 class DevEnv < Thor
+  include Thor::Actions
+
   desc "build", "build a new devenv AMI"
   method_option :name, :required => true, :desc => "The unique AMI name"
   method_option :terminate, :type => :boolean, :desc => "Terminate the instance when finished"
@@ -72,6 +75,25 @@ class DevEnv < Thor
       puts "Done"
     ensure
       instance.terminate if options.terminate?
+    end
+  end
+
+  desc "update", "Update a DevEnv environment with local RPM installations"
+  def update
+    # Warn on uncommitted changes
+    `git diff-index --quiet HEAD` 
+    puts "WARNING - Uncommitted repository changes" if $? != 0
+
+    remove_dir '/tmp/tito/'
+
+    build_dirs = ['cartridges/*', 'broker', 'client', 'common', 'misc/devenv', 'node', 'server-common', 'site', 'selinux']
+    build_dirs.each do |build_dir|
+      Dir.glob(build_dir).each do |dir|
+        inside(dir) do
+          puts run('tito build --srpm --test --install')
+          puts run('tito build --rpm --test --install')
+        end
+      end
     end
   end
 end

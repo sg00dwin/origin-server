@@ -30,6 +30,17 @@ Requires:  rubygem-mocha
 Requires:  rubygem-rspec
 Requires:  rubygem-nokogiri
 
+# CI Requirements
+Requires:  jenkins
+Requires:  tito
+
+# Selenium Requirements
+Requires:  firefox
+Requires:  ImageMagick
+Requires:  tigervnc-server
+Requires:  xorg-x11-server-utils
+Requires:  xorg-x11-twm
+
 BuildArch: noarch
 
 %description
