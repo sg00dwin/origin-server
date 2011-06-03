@@ -53,5 +53,8 @@ RedHatCloud::Application.configure do
 
   # Broker configuration
   config.per_user_app_limit = 1
+  
+  # API configuration
+  config.express_api_server = 'https://stg.openshift.redhat.com'
 end
 

@@ -6,12 +6,5 @@ class ControlPanelController < ApplicationController
   def create_domain(data) 
     
   end
-  
-  # Make an openshift api post
-  def http_post(url, data)
-    
-  end
-
-  # i think i need a model....
 
 end

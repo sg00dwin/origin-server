@@ -35,4 +35,6 @@ RedHatCloud::Application.configure do
   config.streamline = "https://streamline.devlab.phx1.redhat.com"
   config.streamline_secret = 'c0ldW1n3'
   config.captcha_secret = 'zvw5LiixMB0I4mjk06aR'
+  
+  config.express_api_server = 'https://openshift.redhat.com'
 end
