@@ -1,4 +1,4 @@
-policy_module(libra,1.0.9)
+policy_module(libra,1.0.10)
 
 ########################################
 #
@@ -156,6 +156,7 @@ require {
 	type sshd_t;
 	type httpd_t;
 	type sendmail_t;
+	attribute domain;
 }
 
 allow libra_domain httpd_exec_t:file entrypoint;
@@ -166,7 +167,7 @@ dontaudit sshd_t self:capability sys_admin;
 
 allow httpd_t libra_var_lib_t:dir search;
 dontaudit sendmail_t libra_initrc_t:fifo_file { read write };
-append_files_pattern(sendmail_t, libra_var_lib_t, libra_var_lib_t)
+append_files_pattern(domain, libra_var_lib_t, libra_var_lib_t)
 
 ##########
 # Used for development or when the li controller is running outside
