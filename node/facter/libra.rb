@@ -73,6 +73,7 @@ if File.exists?("/var/lib/libra")
     end
 end
 
+=begin
 #
 # List cartridges on the host
 #   Convert from name-m.n.p to name-m.n
@@ -90,3 +91,4 @@ Facter.add(:carts) do
     end
     setcode { acarts }
 end
+=end
