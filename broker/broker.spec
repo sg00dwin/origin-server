@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.72.5
+Version:   0.72.6
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -69,6 +69,10 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Fri Jun 03 2011 Matt Hicks <mhicks@redhat.com> 0.72.6-1
+- Adding RPM Obsoletes to make upgrade cleaner (mhicks@redhat.com)
+- controller.conf install fixup (dmcphers@redhat.com)
+
 * Wed Jun 01 2011 Dan McPherson <dmcphers@redhat.com> 0.72.5-1
 - Automatic commit of package [rhc-broker] release [0.72.4-1].
   (dmcphers@redhat.com)
