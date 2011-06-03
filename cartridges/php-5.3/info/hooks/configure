@@ -135,7 +135,7 @@ function create_repo {
     mkdir -p "$APP_HOME/git"
     #git clone --bare $CART_INFO_DIR/data/git_template.git $GIT_DIR
     cp -ad $CART_INFO_DIR/data/git_template.git $GIT_DIR
-    echo "php 5.3.2 application '$application'" > $GIT_DIR/description
+    echo "php 5.3 application '$application'" > $GIT_DIR/description
     cat <<EOF > $GIT_DIR/hooks/post-receive
 rm -rf $APP_DIR/repo/*
 git archive --format=tar HEAD | (cd $APP_DIR/repo && tar xf -)
