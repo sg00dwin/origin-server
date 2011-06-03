@@ -2,8 +2,8 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.72.6
-Release:   2%{?dist}
+Version:   0.72.7
+Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
 URL:       http://openshift.redhat.com
@@ -49,6 +49,10 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Fri Jun 03 2011 Matt Hicks <mhicks@redhat.com> 0.72.7-1
+- Fixing jboss selinux issues (mmcgrath@redhat.com)
+- customer -> application rename in cartridges (dmcphers@redhat.com)
+
 * Fri Jun 03 2011 Mike McGrath <mmcgrath@redhat.com> 0.72.6-2
 - Added semanage bits
 
