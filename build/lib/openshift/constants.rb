@@ -6,7 +6,7 @@ TYPE = "m1.large"
 KEY_PAIR = "libra"
 ZONE = 'us-east-1d'
 OPTIONS = {:key_name => KEY_PAIR, :instance_type => TYPE, :availability_zone => ZONE}
-DEVENV_REGEX = /devenv/
+DEVENV_REGEX = /devenv\_/
 TERMINATE_REGEX = /terminate/
 VERIFIED_TAG = "qe-ready"
 RSA = File.expand_path("~/.ssh/libra.pem")
