@@ -1,7 +1,7 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.72.2
-Release:       4%{?dist}
+Version:       0.72.3
+Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
 URL:           http://openshift.redhat.com
@@ -38,6 +38,12 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Fri Jun 03 2011 Matt Hicks <mhicks@redhat.com> 0.72.3-1
+- Tighten up security on append, so only inherited files can be appended.
+  (dwalsh@redhat.com)
+- Allow all domains to append to librar_var_lib_t, Log Files
+  (dwalsh@redhat.com)
+
 * Thu May 26 2011 Matt Hicks <mhicks@redhat.com> 0.72.2-4
 - Creating necessary buildroot dirs
 
