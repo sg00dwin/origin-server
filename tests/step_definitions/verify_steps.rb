@@ -101,7 +101,6 @@ When /^the applications are created$/ do
           # Safely append to a file all the url's that failed and succeeded
           url = "#{app}-#{namespace}.#{$domain}"
           if exit_code != 0
-            $logger.info("command: #{command}  url: #{url}  exit_code: #{exit_code}")
             add_failure(url)
           else
             add_success(url)
@@ -126,17 +125,18 @@ When /^the applications are created$/ do
   processes.reverse.each do |pid|
     wait(pid, urls_by_pid[pid], @cmd_timeout)
   end
-
-  if failures.length > 0
-    $logger.info("Failures: #{failures}")
-  end
+  
   # Fill out the data structure for all failures
   unless failures.nil?
-  failures.each do |url|
-    @data[url][:failed] = true
-    @data[url][:code] = -1
-    @data[url][:time] = -1
-  end
+    failures.each do |url|
+      if @data[url]
+        @data[url][:failed] = true
+        @data[url][:code] = -1
+        @data[url][:time] = -1
+      else
+        $logger.info("Failure url not found: #{url}")
+      end  
+    end
   end
 end
 
