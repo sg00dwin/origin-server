@@ -50,7 +50,7 @@ function user_app_git() {
 function user_app_workspace() {
     # USERNAME=$1
     # APPNAME=$2
-    echo `homedir $1`/`user_app_type $1 $2`/${2}
+    echo `homedir $1`/${2}
 }
 
 function valid_app() {
@@ -77,13 +77,13 @@ function valid_app() {
 function user_app_disk_space() {
     # USERNAME=$1
     # APPNAME=$2
-    du -s `homedir $1`/`user_app_type $1 $2`/$2 | cut -f1
+    du -s `homedir $1`/$2 | cut -f1
 }
 
 function user_app_repo_disk_space() {
     # USERNAME=$1
     # APPNAME=$2
-    du -s `homedir $1`/`user_app_type $1 $2`/$2/repo | cut -f1
+    du -s `homedir $1`/$2/repo | cut -f1
 }
 
 function user_app_git_disk_space() {
@@ -95,13 +95,13 @@ function user_app_git_disk_space() {
 function user_app_log_disk_space() {
     # USERNAME=$1
     # APPNAME=$2
-    du -s `homedir $1`/`user_app_type $1 $2`/$2/logs | cut -f1
+    du -s `homedir $1`/$2/logs | cut -f1
 }
 
 function user_app_data_disk_space() {
     # USERNAME=$1
     # APPNAME=$2
-    du -s `homedir $1`/`user_app_type $1 $2`/$2/data | cut -f1
+    du -s `homedir $1`/$2/data | cut -f1
 }
 
 # ============================================================================
