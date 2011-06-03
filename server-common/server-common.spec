@@ -2,7 +2,7 @@
 
 Summary:       Common dependencies of the OpenShift broker and site
 Name:          rhc-server-common
-Version:       0.72.3
+Version:       0.72.4
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -47,6 +47,15 @@ rm -rf %{buildroot}
 %attr(0640,root,libra_user) %config(noreplace) %{_sysconfdir}/libra/controller.conf
 
 %changelog
+* Fri Jun 03 2011 Matt Hicks <mhicks@redhat.com> 0.72.4-1
+- using app_uuid instead of user uuid, making user_uuid more obvious
+  (mmcgrath@redhat.com)
+- remove redirects on login to broker thx to streamline change
+  (dmcphers@redhat.com)
+- migration updates (dmcphers@redhat.com)
+- controller.conf install fixup (dmcphers@redhat.com)
+- remove to_sym from appname (dmcphers@redhat.com)
+
 * Wed Jun 01 2011 Dan McPherson <dmcphers@redhat.com> 0.72.3-1
 - app-uuid patch from dev/markllama/app-uuid
   69b077104e3227a73cbf101def9279fe1131025e (markllama@gmail.com)
