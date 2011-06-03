@@ -95,11 +95,13 @@ When /^the applications are created$/ do
         apps.each do |app|
           # Now create the app
           repo = "#{$temp}/#{namespace}_#{app}_repo"
-          exit_code = run("#{$create_app_script} -l #{login} -a #{app} -r #{repo} -t #{type} -p fakepw -d")
+          command = "#{$create_app_script} -l #{login} -a #{app} -r #{repo} -t #{type} -p fakepw -d"
+          exit_code = run(command)
 
           # Safely append to a file all the url's that failed and succeeded
           url = "#{app}-#{namespace}.#{$domain}"
           if exit_code != 0
+            $logger.info("command: #{command}  url: #{url}  exit_code: #{exit_code}")
             add_failure(url)
           else
             add_success(url)
