@@ -59,7 +59,7 @@ cp -adv * %{buildroot}%{devenvdir}
 
 # Move over the init scripts so they get the right context
 mkdir -p %{buildroot}%{_initddir}
-mv %{devenvdir}/init.d/* %{buildroot}%{_initddir}
+mv %{buildroot}%{devenvdir}/init.d/* %{buildroot}%{_initddir}
 
 # Setup mcollective client log
 mkdir -p %{buildroot}%{_tmppath}/log
