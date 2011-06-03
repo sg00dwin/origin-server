@@ -126,10 +126,12 @@ When /^the applications are created$/ do
   end
 
   # Fill out the data structure for all failures
+  unless failures.nil?
   failures.each do |url|
     @data[url][:failed] = true
     @data[url][:code] = -1
     @data[url][:time] = -1
+  end
   end
 end
 
