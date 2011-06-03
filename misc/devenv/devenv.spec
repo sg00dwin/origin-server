@@ -57,6 +57,9 @@ rm -rf %{buildroot}
 mkdir -p %{buildroot}%{devenvdir}
 cp -adv * %{buildroot}%{devenvdir}
 
+# Move over the init scripts so they get the right context
+mv %{devenvdir}/init.d/* %{_initddir}
+
 # Setup mcollective client log
 mkdir -p %{buildroot}%{_tmppath}/log
 touch %{buildroot}%{_tmppath}/mcollective-client.log
@@ -74,7 +77,6 @@ rm -rf %{buildroot}
 %post
 
 # Move over all configs and scripts
-cp %{devenvdir}/init.d/* %{_initddir}
 cp -rf %{devenvdir}/etc/* %{_sysconfdir}
 cp -rf %{devenvdir}/bin/* %{_bindir}
 
@@ -142,28 +144,9 @@ chkconfig libra-tc on
 %attr(0666,-,-) %{_tmppath}/mcollective-client.log
 %attr(0666,-,-) %{brokerdir}/log/development.log
 %attr(0666,-,-) %{sitedir}/log/development.log
-%{devenvdir}/etc/qpidd.conf
-%{devenvdir}/etc/qpid/pki
-%{devenvdir}/etc/qpid/qpidc.conf
-%{devenvdir}/etc/httpd/conf.d/000000_default.conf
-%{devenvdir}/init.d/libra-broker
-%{devenvdir}/init.d/libra-site
-%{devenvdir}/etc/libra/controller.conf
-%{devenvdir}/etc/libra/node.conf
-%{devenvdir}/etc/openshift/express.conf
-%{devenvdir}/etc/sysconfig/iptables
-%{devenvdir}/bin/li-log-util
-%{devenvdir}/client.cfg
-%{devenvdir}/crontab
-%{devenvdir}/devenv.spec
-%{devenvdir}/httpd/broker/httpd/broker.conf
-%{devenvdir}/httpd.conf
-%{devenvdir}/httpd/site/httpd/site.conf
-%{devenvdir}/httpd/site/public/robots.txt
-%{devenvdir}/li-devenv.sh
-%{devenvdir}/qpid/make-certs.sh
-%{devenvdir}/server.cfg
-
+%{devenvdir}
+%{_initddir}/libra-broker
+%{_initddir}/libra-site
 
 %changelog
 * Wed Jun 01 2011 Dan McPherson <dmcphers@redhat.com> 0.72.4-1
