@@ -4,7 +4,7 @@
 # you can use this to reset the template to a single commit.  Run from
 # the current git repo:
 #
-# cd li/node/cartridges/<cartridge>/info/data/git_template.git
+# cd li/cartridges/<cartridge>/info/data/git_template.git
 #
 
 git archive --format=tar --prefix=git_template_new/ HEAD | (cd .. && tar xf -)
