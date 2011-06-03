@@ -128,11 +128,15 @@ When /^the applications are created$/ do
   
   # Fill out the data structure for all failures
   unless failures.nil?
-  failures.each do |url|
-    @data[url][:failed] = true
-    @data[url][:code] = -1
-    @data[url][:time] = -1
-  end
+    failures.each do |url|
+      if @data[url]
+        @data[url][:failed] = true
+        @data[url][:code] = -1
+        @data[url][:time] = -1
+      else
+        $logger.info("Failure url not found: #{url}")
+      end  
+    end
   end
 end
 
