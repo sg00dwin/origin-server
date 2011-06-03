@@ -3,7 +3,7 @@
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
 Version:   0.72.6
-Release:   1%{?dist}
+Release:   2%{?dist}
 Group:     Development/Languages
 License:   GPLv2
 URL:       http://openshift.redhat.com
@@ -22,6 +22,11 @@ Provides JBossAS7 support to OpenShift
 %setup -q
 
 %build
+
+%post
+# This is a hack until the selinux policy gets updated with the jboss bits
+# Email mmcgrath@redhat.com about questions
+/usr/sbin/semanage port -l | /bin/grep -e 'http_cache_port_t.*4712' > /dev/null || /usr/sbin/semanage port -a -t http_cache_port_t -p tcp 4712
 
 %install
 rm -rf %{buildroot}
@@ -44,6 +49,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Fri Jun 03 2011 Mike McGrath <mmcgrath@redhat.com> 0.72.6-2
+- Added semanage bits
+
 * Wed Jun 01 2011 Dan McPherson <dmcphers@redhat.com> 0.72.6-1
 - 
 
