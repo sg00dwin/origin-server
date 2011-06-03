@@ -73,3 +73,19 @@ if File.exists?("/var/lib/libra")
     end
 end
 
+#
+# List cartridges on the host
+#   Convert from name-m.n.p to name-m.n
+#
+carts = []
+Dir.entries('/usr/libexec/li/cartridges/').each do |cart|
+    # we know this is private...
+    unless cart =~ /li-controller-/
+        cart = cart.sub(/^(.*)-(\d+)\.(\d+)\.?.*$/, '\1-\2.\3')
+        carts << cart unless cart.nil?
+    end
+end if File.exists?("/usr/libexec/li/cartridges")
+
+Facter.add(:carts) do
+    setcode { carts }
+end
