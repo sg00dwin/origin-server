@@ -125,6 +125,9 @@ When /^the applications are created$/ do
     wait(pid, urls_by_pid[pid], @cmd_timeout)
   end
 
+  if failures.length > 0
+    $logger.info("Failures: #{failures}")
+  end
   # Fill out the data structure for all failures
   failures.each do |url|
     @data[url][:failed] = true
