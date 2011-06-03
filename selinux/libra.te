@@ -167,7 +167,8 @@ dontaudit sshd_t self:capability sys_admin;
 
 allow httpd_t libra_var_lib_t:dir search;
 dontaudit sendmail_t libra_initrc_t:fifo_file { read write };
-append_files_pattern(domain, libra_var_lib_t, libra_var_lib_t)
+append_files_pattern(sendmail_t, libra_var_lib_t, libra_var_lib_t)
+allow domain libra_var_lib_t:file { append getattr };
 
 ##########
 # Used for development or when the li controller is running outside
