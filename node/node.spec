@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.72.5
+Version:       0.72.6
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -138,6 +138,9 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Fri Jun 03 2011 Dan McPherson <dmcphers@redhat.com> 0.72.6-1
+- remove apptype dir cleanup (dmcphers@redhat.com)
+
 * Fri Jun 03 2011 Matt Hicks <mhicks@redhat.com> 0.72.5-1
 - readjust logic for consistency (jimjag@redhat.com)
 - keep carts private/local/static (jimjag@redhat.com)
