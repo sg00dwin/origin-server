@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system client tools
 Name:          rhc
-Version:       0.72.3
+Version:       0.72.4
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       MIT
@@ -84,6 +84,14 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_sysconfdir}/openshift/express.conf
 
 %changelog
+* Fri Jun 03 2011 Matt Hicks <mhicks@redhat.com> 0.72.4-1
+- fix breakge no mo pure (jimjag@redhat.com)
+- revert (jimjag@redhat.com)
+- Move to json/pure for client side (jimjag@redhat.com)
+- Adding json string (mmcgrath@redhat.com)
+- Added API returns (mmcgrath@redhat.com)
+- Switching to json_pure for Mac / Windows (mhicks@redhat.com)
+
 * Wed Jun 01 2011 Dan McPherson <dmcphers@redhat.com> 0.72.3-1
 - app-uuid patch from dev/markllama/app-uuid
   69b077104e3227a73cbf101def9279fe1131025e (markllama@gmail.com)
