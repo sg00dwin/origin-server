@@ -53,7 +53,7 @@ end
 #
 # Lists customers on the host as well as what what git repos they currently own
 #
-if File.exists?("/var/lib/libra") && File.directory?("/var/lib/libra")
+if File.exists?("/var/lib/libra")
     # Determine customers on host and hosted info
     Dir.entries('/var/lib/libra/').each do |customer|
     
