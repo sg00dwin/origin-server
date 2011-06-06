@@ -53,9 +53,6 @@ rm -rf %{buildroot}
                                   -r \
                                   -s /sbin/nologin 2>&1 > /dev/null || :
 
-%post
-/bin/chgrp libra_user /etc/mcollective/client.cfg
-
 %changelog
 * Mon Jun 06 2011 Dan McPherson <dmcphers@redhat.com> 0.72.5-1
 - build fixes (dmcphers@redhat.com)

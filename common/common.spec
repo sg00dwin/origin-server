@@ -38,6 +38,9 @@ rm -rf %{buildroot}
 %ghost %attr(-,-,libra_user) %{_sysconfdir}/mcollective/client.cfg
 %{_libexecdir}/mcollective/mcollective/connector/amqp.rb
 
+%post
+/bin/chgrp libra_user /etc/mcollective/client.cfg
+
 %changelog
 * Wed May 25 2011 Matt Hicks <mhicks@redhat.com> 0.72.1-2
 - Fixing build root dirs
