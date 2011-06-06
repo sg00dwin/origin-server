@@ -39,7 +39,7 @@ Usage' follows exactly as indicated above.
 broker notes:
 -------------
 
-yum install mcollective-common mcollective-client li rubygem-stomp rubygem-right_aws rubygem-aws rubygem-cucumber
+yum install mcollective-common mcollective-client rhc rubygem-right_aws rubygem-aws rubygem-cucumber
 
 cp /etc/openshift/express.conf ~/.openshift/express.conf
 edit ~/.openshift/express.conf and point libra_server your broker system
