@@ -1,4 +1,4 @@
-php 5.3.2
+php 5.3
 
 BUILD: Using standard RHEL RPM
 (Installed and updated via yum)

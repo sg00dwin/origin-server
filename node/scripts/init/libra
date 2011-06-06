@@ -40,19 +40,13 @@ function apptype() {
     # APPNAME=$2
     _HOMEDIR=`homedir $1`
     _APP_TYPE=`cat $_HOMEDIR/git/${2}.git/description | cut -d' ' -f 1`
-    if [ $_APP_TYPE = "Unnamed" ]
-    then
-        _APP_DIR=`ls -d $_HOMEDIR/$2`
-        _APP_TYPE_DIR=`dirname $_APP_DIR`
-        _APP_TYPE=`basename $_APP_TYPE_DIR`
-    fi
     echo $_APP_TYPE
 }
 
 function approot() {
     # USERNAME=$1
     # APPNAME=$2
-    echo `homedir $1`/`apptype $1 $2`/$2
+    echo `homedir $1`/$2
 }
 
 function startscript() {

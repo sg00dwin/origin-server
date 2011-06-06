@@ -95,7 +95,8 @@ When /^the applications are created$/ do
         apps.each do |app|
           # Now create the app
           repo = "#{$temp}/#{namespace}_#{app}_repo"
-          exit_code = run("#{$create_app_script} -l #{login} -a #{app} -r #{repo} -t #{type} -p fakepw -d")
+          command = "#{$create_app_script} -l #{login} -a #{app} -r #{repo} -t #{type} -p fakepw -d"
+          exit_code = run(command)
 
           # Safely append to a file all the url's that failed and succeeded
           url = "#{app}-#{namespace}.#{$domain}"
@@ -124,12 +125,18 @@ When /^the applications are created$/ do
   processes.reverse.each do |pid|
     wait(pid, urls_by_pid[pid], @cmd_timeout)
   end
-
+  
   # Fill out the data structure for all failures
-  failures.each do |url|
-    @data[url][:failed] = true
-    @data[url][:code] = -1
-    @data[url][:time] = -1
+  unless failures.nil?
+    failures.each do |url|
+      if @data[url]
+        @data[url][:failed] = true
+        @data[url][:code] = -1
+        @data[url][:time] = -1
+      else
+        $logger.info("Failure url not found: #{url}")
+      end  
+    end
   end
 end
 

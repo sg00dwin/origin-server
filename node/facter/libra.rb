@@ -53,7 +53,7 @@ end
 #
 # Lists customers on the host as well as what what git repos they currently own
 #
-if File.exists?("/var/lib/libra")
+if File.exists?("/var/lib/libra") && File.directory?("/var/lib/libra")
     # Determine customers on host and hosted info
     Dir.entries('/var/lib/libra/').each do |customer|
     
@@ -73,3 +73,20 @@ if File.exists?("/var/lib/libra")
     end
 end
 
+#
+# List cartridges on the host
+#   Convert from name-m.n.p to name-m.n
+#
+Facter.add(:carts) do
+    acarts = []
+    if File.exists?("/usr/libexec/li/cartridges") && File.directory?("/usr/libexec/li/cartridges")
+        Dir.entries('/usr/libexec/li/cartridges/').each do |cart|
+            # we know this is private...
+            unless cart =~ /li-controller-/
+                cart = cart.sub(/^(.*)-(\d+)\.(\d+)\.?.*$/, '\1-\2.\3')
+                acarts << cart unless cart.nil?
+            end
+        end
+    end
+    setcode { acarts }
+end

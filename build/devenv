@@ -90,10 +90,10 @@ class DevEnv < Thor
     # Figure out what needs to be built
     packages = `tito report --untagged-commits | grep rhc`
     build_dirs = packages.split("\n").collect do |package|
-      if package =~ /rhc-(devenv-.*)-0/
-        "misc/devenv/" + $1
+      if package =~ /rhc-devenv-0/
+        "misc/devenv/"
       elsif package =~ /rhc-(cartridge-.*)-0/
-        "cartridges/" + $1
+        "cartridges/" + $1['cartridge-'.length, $1.length]
       elsif package =~ /rhc-(.*)-0/
         $1
       else
