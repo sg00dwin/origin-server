@@ -1,7 +1,7 @@
 Summary:   Common dependencies of the libra server and node
 Name:      rhc-common
-Version:   0.72.1
-Release:   2%{?dist}
+Version:   0.72.2
+Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
 URL:       http://openshift.redhat.com
@@ -42,6 +42,9 @@ rm -rf %{buildroot}
 /bin/chgrp libra_user /etc/mcollective/client.cfg
 
 %changelog
+* Mon Jun 06 2011 Dan McPherson <dmcphers@redhat.com> 0.72.2-1
+- move client.cfg update to the right place (dmcphers@redhat.com)
+
 * Wed May 25 2011 Matt Hicks <mhicks@redhat.com> 0.72.1-2
 - Fixing build root dirs
 
