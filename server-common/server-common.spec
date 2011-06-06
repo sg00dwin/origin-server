@@ -2,7 +2,7 @@
 
 Summary:       Common dependencies of the OpenShift broker and site
 Name:          rhc-server-common
-Version:       0.72.4
+Version:       0.72.5
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -57,6 +57,10 @@ rm -rf %{buildroot}
 /bin/chgrp libra_user /etc/mcollective/client.cfg
 
 %changelog
+* Mon Jun 06 2011 Dan McPherson <dmcphers@redhat.com> 0.72.5-1
+- build fixes (dmcphers@redhat.com)
+- Bug 706329 (dmcphers@redhat.com)
+
 * Fri Jun 03 2011 Matt Hicks <mhicks@redhat.com> 0.72.4-1
 - using app_uuid instead of user uuid, making user_uuid more obvious
   (mmcgrath@redhat.com)
