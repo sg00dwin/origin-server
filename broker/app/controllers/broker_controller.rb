@@ -43,7 +43,7 @@ class BrokerController < ApplicationController
     check_outage_notification
     data = JSON.parse(json_data)
     if (data['debug'])
-      Libra.c[:rpc_opts][:verbose] = true    
+      Libra.c[:rpc_opts][:verbose] = true
     end
     data
   end
