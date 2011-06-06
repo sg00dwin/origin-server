@@ -46,6 +46,16 @@ rm -rf %{buildroot}
 %{ruby_sitelibdir}/openshift.rb
 %attr(0640,root,libra_user) %config(noreplace) %{_sysconfdir}/libra/controller.conf
 
+%pre
+/usr/sbin/groupadd -r libra_user 2>&1 || :
+/usr/sbin/useradd libra_passenger -g libra_user \
+                                  -d /var/lib/passenger \
+                                  -r \
+                                  -s /sbin/nologin 2>&1 > /dev/null || :
+
+%post
+/bin/chgrp libra_user /etc/mcollective/client.cfg
+
 %changelog
 * Fri Jun 03 2011 Matt Hicks <mhicks@redhat.com> 0.72.4-1
 - using app_uuid instead of user uuid, making user_uuid more obvious

@@ -51,14 +51,7 @@ mkdir -p %{buildroot}%{sitedir}/log
 touch %{buildroot}%{sitedir}/log/production.log
 
 %clean
-rm -rf %{buildroot}
-
-%pre
-/usr/sbin/groupadd -r libra_user 2>&1 || :
-/usr/sbin/useradd libra_passenger -g libra_user \
-                                  -d /var/lib/passenger \
-                                  -r \
-                                  -s /sbin/nologin 2>&1 > /dev/null || :
+rm -rf %{buildroot}                                
 
 %files
 %defattr(0640,root,libra_user,0750)

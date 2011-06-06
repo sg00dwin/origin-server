@@ -51,13 +51,6 @@ touch %{buildroot}%{brokerdir}/log/production.log
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%pre
-/usr/sbin/groupadd -r libra_user 2>&1 || :
-/usr/sbin/useradd libra_passenger -g libra_user \
-                                  -d /var/lib/passenger \
-                                  -r \
-                                  -s /sbin/nologin 2>&1 > /dev/null || :
-
 %files
 %defattr(0640,root,libra_user,0750)
 %attr(0666,-,-) %{brokerdir}/log/production.log
