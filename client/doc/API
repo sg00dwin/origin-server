@@ -1,6 +1,12 @@
 API Documentation
 =================
 
+To hit the officially running site use https://openshift.redhat.com/.  For
+a broker domain example:
+
+https://openshift.redhat.com/broker/domain
+
+
 Create Domain
 =============
 
