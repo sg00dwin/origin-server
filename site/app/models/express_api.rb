@@ -19,17 +19,18 @@ module ExpressApi
       http.verify_mode = OpenSSL::SSL::VERIFY_NONE
       res = http.start {|http| http.request(req)}
 
-      case res
-      when Net::HTTPSuccess, Net::HTTPRedirection
+      if res.is_a? Net::HTTPSuccess
         Rails.logger.debug("POST Response code = #{res.code}")
 
         # Parse and yield the body if a block is supplied
         if res.body and !res.body.empty?
-          json = parse_body(res.body)
+          json = ActiveSupport::JSON.decode(res.body)
           yield json if block_given?
         end
-      when Net::HTTPForbidden, Net::HTTPUnauthorized
+      elsif res.is_a? Net::HTTPClientError
         errors.add(:base, I18n.t('express_api.errors.unauthorized'))
+      else
+        errors.add(:base, I18n.t(:unknown))
       end
     rescue Exception => e
       Rails.logger.error "Exception occurred while calling Express API - #{e.message}"

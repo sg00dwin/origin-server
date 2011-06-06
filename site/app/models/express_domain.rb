@@ -35,7 +35,9 @@ class ExpressDomain
   protected 
   def save!
     json_data = self.to_json(:except => :password)
+    Rails.logger.info(json_data)
     http_post(@@domain_url) do |json_response|
+      Rails.logger.info(json_response)
       yield json_response if block_given?
     end
   end
