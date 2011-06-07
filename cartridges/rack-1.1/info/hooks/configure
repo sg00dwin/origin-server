@@ -332,7 +332,7 @@ cat <<EOF > "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}.conf"
   ServerName ssltest-ssltest.dev.rhcloud.com
   ServerAdmin mmcgrath@redhat.com
 
-$(/bin/cat $CART_CONF_DIR/node_ssl_template.conf)
+$(/bin/cat /usr/libexec/li/cartridges/rack-1.1/info/configuration/node_ssl_template.conf)
 
   ProxyPass / http://$IP:8080/
   ProxyPassReverse / http://$IP:8080/
