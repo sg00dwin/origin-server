@@ -28,7 +28,7 @@ def update_all_app_server_identities
         found = false        
         servers.each do |server|
           begin            
-            if server.has_app?(user, app_name)
+            if server.has_app?(app, app_name)
               begin
                 puts "Updating app: #{app_name} to server identity: #{server.name}"
                 app['server_identity'] = server.name

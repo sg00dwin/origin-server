@@ -38,7 +38,55 @@ action "cartridge_do", :description => "run a cartridge action" do
             :display_as => "Time"
 
     output  :output,
-            :description => "Output from creation script",
+            :description => "Output from script",
+            :display_as => "Output"
+
+    output :exitcode,
+           :description => "Exit code",
+           :display_as => "Exit Code"
+end
+
+action "migrate", :description => "run a cartridge action" do
+    display :always
+
+    input :uuid,
+        :prompt         => "Application uuid",
+        :description    => "Application uuid",
+        :type           => :string,
+        :validation     => '^[a-zA-Z0-9]+$',
+        :optional       => false,
+        :maxlength      => 32
+
+    input :application,
+        :prompt         => "Application Name",
+        :description    => "Name of an application",
+        :type           => :string,
+        :validation     => '^[a-zA-Z0-9]+$',
+        :optional       => false,
+        :maxlength      => 32
+        
+    input :app_type,
+        :prompt         => "Application Type",
+        :description    => "Type of application",
+        :type           => :string,
+        :validation     => '^[a-zA-Z0-9]+$',
+        :optional       => false,
+        :maxlength      => 32
+
+    input :version,
+        :prompt         => "Target Version",
+        :description    => "Target version",
+        :type           => :string,
+        :validation     => '^[a-zA-Z0-9]+$',
+        :optional       => false,
+        :maxlength      => 32
+
+    output  :time,
+            :description => "The time as a message",
+            :display_as => "Time"
+
+    output  :output,
+            :description => "Output from script",
             :display_as => "Output"
 
     output :exitcode,
@@ -49,9 +97,9 @@ end
 action "has_app", :description => "Does this server contain a specified app?" do
     display :always
 
-    input :customer,
-        :prompt         => "Customer username",
-        :description    => "Customers username",
+    input :uuid,
+        :prompt         => "Application uuid",
+        :description    => "Application uuid",
         :type           => :string,
         :validation     => '^[a-zA-Z0-9]+$',
         :optional       => false,

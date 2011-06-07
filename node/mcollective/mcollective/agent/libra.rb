@@ -26,6 +26,7 @@
 #
 require 'rubygems'
 require 'open4'
+require 'fileutils'
 require 'pp'
 
 module MCollective
@@ -35,80 +36,115 @@ module MCollective
   module Agent
   
     class Libra<RPC::Agent
-        metadata    :name        => "Libra Management",
-                    :description => "Agent to manage Libra services",
-                    :author      => "Mike McGrath",
-                    :license     => "GPLv2",
-                    :version     => "0.1",
-                    :url         => "https://engineering.redhat.com/trac/Libra",
-                    :timeout     => 60
+      metadata    :name        => "Libra Management",
+                  :description => "Agent to manage Libra services",
+                  :author      => "Mike McGrath",
+                  :license     => "GPLv2",
+                  :version     => "0.1",
+                  :url         => "https://engineering.redhat.com/trac/Libra",
+                  :timeout     => 60
 
-        #
-        # Simple echo method
-        #
-        def echo_action
-          validate :msg, String
-          reply[:msg] = request[:msg]
+      #
+      # Simple echo method
+      #
+      def echo_action
+        validate :msg, String
+        reply[:msg] = request[:msg]
+      end
+
+      #
+      # Passes arguments to cartridge for use
+      #
+      def cartridge_do_action
+        Log.instance.debug("cartridge_do_action call / request = #{request.pretty_inspect}")
+        validate :cartridge, /^[a-zA-Z0-9\.\-]+$/
+        validate :action, /^(configure|deconfigure|update_namespace|info|post-install|post_remove|pre-install|reload|restart|start|status|stop)$/
+        validate :args, /^.+$/
+        cartridge = request[:cartridge]
+        action = request[:action]
+        args = request[:args]
+        if File.exists? "/usr/libexec/li/cartridges/#{cartridge}/info/hooks/#{action}"                
+          pid, stdin, stdout, stderr = Open4::popen4("/usr/bin/runcon -l s0-s0:c0.c1023 /usr/libexec/li/cartridges/#{cartridge}/info/hooks/#{action} #{args} 2>&1")
+        else
+          reply[:exitcode] = 127
+          reply.fail! "cartridge_do_action ERROR action '#{action}' not found."
         end
-
-        #
-        # Passes arguments to cartridge for use
-        #
-        def cartridge_do_action
-          Log.instance.debug("cartridge_do_action call / request = #{request.pretty_inspect}")
-          validate :cartridge, /^[a-zA-Z0-9\.\-]+$/
-          validate :action, /^(configure|deconfigure|update_namespace|info|post-install|post_remove|pre-install|reload|restart|start|status|stop)$/
-          validate :args, /^.+$/
-          cartridge = request[:cartridge]
-          action = request[:action]
-          args = request[:args]
-          if File.exists? "/usr/libexec/li/cartridges/#{cartridge}/info/hooks/#{action}"                
-            pid, stdin, stdout, stderr = Open4::popen4("/usr/bin/runcon -l s0-s0:c0.c1023 /usr/libexec/li/cartridges/#{cartridge}/info/hooks/#{action} #{args} 2>&1")
-          else
-            reply[:exitcode] = 127
-            reply.fail! "cartridge_do_action ERROR action '#{action}' not found."
-          end
-          stdin.close
-          ignored, status = Process::waitpid2 pid
-          exitcode = status.exitstatus
-          # Do this to avoid cartridges that might hold open stdout
-          output = ""
-          begin
-            Timeout::timeout(5) do
-              while (line = stdout.gets)
-                output << line
-              end
+        stdin.close
+        ignored, status = Process::waitpid2 pid
+        exitcode = status.exitstatus
+        # Do this to avoid cartridges that might hold open stdout
+        output = ""
+        begin
+          Timeout::timeout(5) do
+            while (line = stdout.gets)
+              output << line
             end
-          rescue Timeout::Error
-            Log.instance.debug("cartridge_do_action WARNING - stdout read timed out")
           end
-
-          if exitcode == 0
-            Log.instance.debug("cartridge_do_action (#{exitcode})\n------\n#{output}\n------)")
-          else
-            Log.instance.debug("cartridge_do_action ERROR (#{exitcode})\n------\n#{output}\n------)")
-          end
-
-          reply[:output] = output
-          reply[:exitcode] = exitcode
-          reply.fail! "cartridge_do_action failed #{exitcode}.  Output #{output}" unless exitcode == 0
+        rescue Timeout::Error
+          Log.instance.debug("cartridge_do_action WARNING - stdout read timed out")
         end
 
-        #
-        # Returns whether an app is on a machine
-        #
-        def has_app_action
-          validate :customer, /^[a-zA-Z0-9]+$/
-          validate :application, /^[a-zA-Z0-9]+$/
-          customer = request[:customer]
-          app_name = request[:application]
-          if File.exist?("/var/lib/libra/#{customer}/#{app_name}")
-            reply[:output] = true
-          else
-            reply[:output] = false
-          end
-          reply[:exitcode] = 0
+        if exitcode == 0
+          Log.instance.debug("cartridge_do_action (#{exitcode})\n------\n#{output}\n------)")
+        else
+          Log.instance.debug("cartridge_do_action ERROR (#{exitcode})\n------\n#{output}\n------)")
         end
+
+        reply[:output] = output
+        reply[:exitcode] = exitcode
+        reply.fail! "cartridge_do_action failed #{exitcode}.  Output #{output}" unless exitcode == 0
+      end
+        
+      #
+      # Migrate between versions
+      #
+      def migrate_action
+        Log.instance.debug("migrate_action call / request = #{request.pretty_inspect}")
+        validate :uuid, /^[a-zA-Z0-9]+$/
+        validate :application, /^[a-zA-Z0-9]+$/
+        validate :app_type, /^[a-zA-Z0-9]+$/
+        validate :version, /^[a-zA-Z0-9]+$/        
+        uuid = request[:uuid]
+        app_name = request[:application]
+        app_type = request[:app_type]
+        version = request[:version]
+        libra_home = '/var/lib/libra'
+        output = ""
+        exitcode = 0
+        if (version == '3')
+          app_type = app_type.split('-')[0]
+          if File.exists? "#{libra_home}/#{uuid}/#{app_type}/#{app_name}"
+            mv "#{libra_home}/#{uuid}/#{app_type}/#{app_name}", "#{libra_home}/#{uuid}/#{app_type}/#{app_name}"
+          else
+            exitcode = 127
+            output += "Application not found to migrate: #{uuid}/#{app_type}/#{app_name}\n"
+          end
+        else
+          exitcode = 127
+          output += "Migration version not supported: #{version}\n"
+        end
+        Log.instance.debug("migrate_action (#{exitcode})\n------\n#{output}\n------)")
+
+        reply[:output] = output
+        reply[:exitcode] = exitcode
+        reply.fail! "migrate_action failed #{exitcode}.  Output #{output}" unless exitcode == 0
+      end
+
+      #
+      # Returns whether an app is on a server
+      #
+      def has_app_action
+        validate :uuid, /^[a-zA-Z0-9]+$/
+        validate :application, /^[a-zA-Z0-9]+$/
+        uuid = request[:uuid]
+        app_name = request[:application]
+        if File.exist?("/var/lib/libra/#{uuid}/#{app_name}")
+          reply[:output] = true
+        else
+          reply[:output] = false
+        end
+        reply[:exitcode] = 0
+      end
 
     end
   end

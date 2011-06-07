@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-
+# Usage: ./migrate-rel3.sh > out.txt
 require 'rubygems'
 require 'openshift'
 
@@ -10,6 +10,25 @@ FRAMEWORKS = {'php-5.3.2' => 'php-5.3',
               'wsgi-3.2.1' => 'wsgi-3.2',
               'jbossas-7.0.0' => 'jbossas-7.0',
               'perl-5.10.1' => 'perl-5.10'}
+              
+#
+#  Migrate the specified app on the node
+#
+def migrate_app_on_node(user, server_name, app, app_name, app_type)
+  Helper.rpc_exec('libra', server_name) do |client|
+    client.migrate(:uuid => app['uuid'],
+                   :application => app_name,
+                   :app_type => app_type,
+                   :version => '3') do |response|
+      exit_code = response[:body][:data][:exitcode]  
+      puts "Exit code: #{exit_code}"      
+      output = response[:body][:data][:output]
+      if exit_code != 0
+        raise "Failed migrating app '#{app_name}' with uuid '#{app['uuid']}' on node '#{server_name}'"
+      end
+    end
+  end
+end
 
 #
 # Migrate applications between release 2 and 3
@@ -39,17 +58,25 @@ def migrate_rel3
           if to_type
             puts "Migrating app: #{app_name} to type: #{to_type}"
             app['framework'] = to_type
-            if !app['uuid']     
-              app['uuid'] = user.uuid
-            else
-              puts "WARNING: Application already has uuid: #{app_name} uuid: #{app['uuid']}"
-            end
-            #user.update_app(app)
           else
-            puts "ERROR: Failed migrating app: #{app_name} missing from_type: #{from_type}"
+            puts "WARNING: From type '#{from_type}' not found migrating app: #{app_name}"
+          end
+          if !app['uuid']
+            puts "Adding uuid to app: #{app_name} to type: #{user.uuid}"
+            app['uuid'] = user.uuid
+          else
+            puts "WARNING: Application '#{app_name}' already has uuid: #{app['uuid']}"
+          end
+          puts "Migrating app in s3 '#{app_name}' with uuid '#{app['uuid']}' for user: #{rhlogin}"            
+          #user.update_app(app)
+          if app['server_identity']
+            puts "Migrating app '#{app_name}' with uuid '#{app['uuid']}' on node '#{app['server_identity']}' for user: #{rhlogin}"
+            migrate_app_on_node(user, app['server_identity'], app, app_name, app['framework'])
+          else            
+            puts "Missing server identity for app '#{app_name}' with uuid '#{app['uuid']}' for user: #{rhlogin}"            
           end
         rescue Exception => e
-          puts "ERROR: Failed migrating app: #{app_name} to type: #{to_type}"
+          puts "ERROR: Failed migrating app: #{app_name} to type: #{to_type} for user: #{rhlogin}"
           puts e.message
           puts e.backtrace
         end

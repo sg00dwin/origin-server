@@ -25,7 +25,7 @@ class LoginController < ApplicationController
     end
     if !workflow && request.referer != '/'
       if remote_request
-        @redirectUrl = request.referer
+        session[:login_workflow] = request.referer
       else
         if request.protocol == 'http://'
           session[:login_workflow] = 'https://' + request.url[request.protocol.length, request.url.length]                 
@@ -33,9 +33,8 @@ class LoginController < ApplicationController
           session[:login_workflow] = request.referer
         end
       end
-    else
-      @redirectUrl = root_url
     end
+    @redirectUrl = root_url
     @errorUrl = login_error_url
     Rails.logger.debug "Session workflow in LoginController#show: #{workflow}"
     render :show
