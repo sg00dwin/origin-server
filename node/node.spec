@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.72.5
+Version:       0.72.9
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -138,6 +138,21 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Mon Jun 06 2011 Dan McPherson <dmcphers@redhat.com> 0.72.9-1
+- 
+
+* Mon Jun 06 2011 Dan McPherson <dmcphers@redhat.com> 0.72.8-1
+- moving to sym links for actions (dmcphers@redhat.com)
+
+* Mon Jun 06 2011 Dan McPherson <dmcphers@redhat.com> 0.72.7-1
+- OK, so the build failures aren't me. So fold back in (jimjag@redhat.com)
+- nother test (jimjag@redhat.com)
+- comment out (jimjag@redhat.com)
+- fold back in cart factor (jimjag@redhat.com)
+
+* Fri Jun 03 2011 Dan McPherson <dmcphers@redhat.com> 0.72.6-1
+- remove apptype dir cleanup (dmcphers@redhat.com)
+
 * Fri Jun 03 2011 Matt Hicks <mhicks@redhat.com> 0.72.5-1
 - readjust logic for consistency (jimjag@redhat.com)
 - keep carts private/local/static (jimjag@redhat.com)

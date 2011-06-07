@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.72.4
+Version:   0.72.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -51,14 +51,7 @@ mkdir -p %{buildroot}%{sitedir}/log
 touch %{buildroot}%{sitedir}/log/production.log
 
 %clean
-rm -rf %{buildroot}
-
-%pre
-/usr/sbin/groupadd -r libra_user 2>&1 || :
-/usr/sbin/useradd libra_passenger -g libra_user \
-                                  -d /var/lib/passenger \
-                                  -r \
-                                  -s /sbin/nologin 2>&1 > /dev/null || :
+rm -rf %{buildroot}                                
 
 %files
 %defattr(0640,root,libra_user,0750)
@@ -71,6 +64,10 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Mon Jun 06 2011 Dan McPherson <dmcphers@redhat.com> 0.72.5-1
+- build fixes (dmcphers@redhat.com)
+- Bug 710244 (dmcphers@redhat.com)
+
 * Fri Jun 03 2011 Matt Hicks <mhicks@redhat.com> 0.72.4-1
 - Adding RPM Obsoletes to make upgrade cleaner (mhicks@redhat.com)
 - controller.conf install fixup (dmcphers@redhat.com)

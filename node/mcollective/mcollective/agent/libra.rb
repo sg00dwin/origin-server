@@ -50,13 +50,6 @@ module MCollective
           validate :msg, String
           reply[:msg] = request[:msg]
         end
-        
-        # Not sure yet where this should go long term.
-        CARTRIDGE_HIERARCHY = { 'php-5.3' => 'abstract-httpd',
-                                'wsgi-3.2' => 'abstract-httpd',
-                                'rack-1.1' => 'abstract-httpd',
-                                'jbossas-7.0' => 'abstract-httpd',
-                                'perl-5.10' => 'abstract-httpd'}
 
         #
         # Passes arguments to cartridge for use
@@ -71,9 +64,6 @@ module MCollective
           args = request[:args]
           if File.exists? "/usr/libexec/li/cartridges/#{cartridge}/info/hooks/#{action}"                
             pid, stdin, stdout, stderr = Open4::popen4("/usr/bin/runcon -l s0-s0:c0.c1023 /usr/libexec/li/cartridges/#{cartridge}/info/hooks/#{action} #{args} 2>&1")
-          elsif CARTRIDGE_HIERARCHY[cartridge]
-            parent_cartridge = CARTRIDGE_HIERARCHY[cartridge]
-            pid, stdin, stdout, stderr = Open4::popen4("/usr/bin/runcon -l s0-s0:c0.c1023 /usr/libexec/li/cartridges/#{parent_cartridge}/info/hooks/#{action} #{args} 2>&1")
           else
             reply[:exitcode] = 127
             reply.fail! "cartridge_do_action ERROR action '#{action}' not found."

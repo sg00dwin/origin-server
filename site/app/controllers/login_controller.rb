@@ -14,7 +14,8 @@ class LoginController < ApplicationController
 
   def show
     referrer = URI.parse(request.referer)
-    if referrer.host && request.host != referrer.host
+    remote_request = referrer.host && request.host != referrer.host
+    if remote_request
       Rails.logger.debug "Logging out user referred from: #{request.referer}"
       reset_sso
     end
@@ -23,7 +24,15 @@ class LoginController < ApplicationController
       session[:login_workflow] = params[:redirectUrl]
     end
     if !workflow && request.referer != '/'
-      @redirectUrl = request.referer
+      if remote_request
+        @redirectUrl = request.referer
+      else
+        if request.protocol == 'http://'
+          session[:login_workflow] = 'https://' + request.url[request.protocol.length, request.url.length]                 
+        else
+          session[:login_workflow] = request.referer
+        end
+      end
     else
       @redirectUrl = root_url
     end

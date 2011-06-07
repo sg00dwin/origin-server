@@ -68,9 +68,21 @@ module Libra
           if app_info['server_identity']
             server = Server.new(app_info['server_identity'])
             if server
-              Libra.logger_debug "DEBUG: Performing action '#{action}' on node: #{server.name} - #{server.repos} repos" if Libra.c[:rpc_opts][:verbose]
-              server_execute_direct(framework, action, app_name, user, server, app_info)
-
+              Libra.logger_debug "DEBUG: Performing action '#{action}' on node: #{server.name} - #{server.repos} repos" if Libra.c[:rpc_opts][:verbose]              
+              begin
+                server_execute_direct(framework, action, app_name, user, server, app_info)
+              rescue Exception => e
+                if action == 'deconfigure'
+                  if server.has_app?(user, app_name)
+                    raise
+                  else
+                    Libra.logger_debug "Application '#{app_name}' not found on node #{server.name}.  Continuing with deconfigure."
+                    Libra.logger_debug "Error from cartridge on deconfigure: #{e.message}"
+                  end
+                else
+                  raise
+                end
+              end              
               if action == 'deconfigure'
                 # update DNS
                 Libra.logger_debug "DEBUG: Public ip being deconfigured from namespace '#{user.namespace}'"

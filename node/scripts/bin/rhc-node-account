@@ -148,7 +148,7 @@ function user_app_type() {
 function user_app_disk_space() {
     # USERNAME=$1
     # APPNAME=$2
-    du -s `homedir $1`/`user_app_type $1 $2`/$2 | cut -f1
+    du -s `homedir $1`/$2 | cut -f1
 }
 
 function user_app_git_disk_space() {
@@ -160,7 +160,7 @@ function user_app_git_disk_space() {
 function user_app_log_disk_space() {
     # USERNAME=$1
     # APPNAME=$2
-    du -s `homedir $1`/`user_app_type $1 $2`/$2/logs | cut -f1
+    du -s `homedir $1`/$2/logs | cut -f1
 }
 # disk use categories:
 # total

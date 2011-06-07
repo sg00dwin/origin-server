@@ -6,7 +6,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.72.5
+Version:   0.72.6
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -150,6 +150,9 @@ chkconfig libra-tc on
 %{_initddir}/libra-site
 
 %changelog
+* Mon Jun 06 2011 Dan McPherson <dmcphers@redhat.com> 0.72.6-1
+- adding jenkins to li-devenv (dmcphers@redhat.com)
+
 * Fri Jun 03 2011 Matt Hicks <mhicks@redhat.com> 0.72.5-1
 - Installation fix (mhicks@redhat.com)
 - Fixing SELinux context on init scripts (mhicks@redhat.com)
