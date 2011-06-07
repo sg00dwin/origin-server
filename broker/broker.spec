@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.72.6
+Version:   0.72.7
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -51,13 +51,6 @@ touch %{buildroot}%{brokerdir}/log/production.log
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%pre
-/usr/sbin/groupadd -r libra_user 2>&1 || :
-/usr/sbin/useradd libra_passenger -g libra_user \
-                                  -d /var/lib/passenger \
-                                  -r \
-                                  -s /sbin/nologin 2>&1 > /dev/null || :
-
 %files
 %defattr(0640,root,libra_user,0750)
 %attr(0666,-,-) %{brokerdir}/log/production.log
@@ -69,6 +62,10 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Mon Jun 06 2011 Dan McPherson <dmcphers@redhat.com> 0.72.7-1
+- build fixes (dmcphers@redhat.com)
+- Bug 706329 (dmcphers@redhat.com)
+
 * Fri Jun 03 2011 Matt Hicks <mhicks@redhat.com> 0.72.6-1
 - Adding RPM Obsoletes to make upgrade cleaner (mhicks@redhat.com)
 - controller.conf install fixup (dmcphers@redhat.com)

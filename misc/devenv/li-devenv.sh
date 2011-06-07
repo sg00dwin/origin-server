@@ -35,6 +35,14 @@ baseurl=http://209.132.178.9/gpxe/trees/passenger
 failovermethod=priority
 enabled=1
 gpgcheck=0
+
+[jenkins]
+name=Jenkins repo for Enterprise Linux 6
+baseurl=http://209.132.178.9/gpxe/trees/jenkins/
+failovermethod=priority
+enabled=1
+gpgcheck=0
+
 EOF
 
 yum -y install rhc-devenv
