@@ -5,6 +5,8 @@ require 'openshift'
 
 include Libra
 
+RHLOGINS=['danmcp1223']
+
 FRAMEWORKS = {'php-5.3.2' => 'php-5.3', 
               'rack-1.1.0' => 'rack-1.0', 
               'wsgi-3.2.1' => 'wsgi-3.2',
@@ -39,9 +41,9 @@ end
 def migrate_rel3
   start_time = Time.now.to_i
   puts "Getting all RHLogins..." 
-  rhlogins = User.find_all_rhlogins
+  rhlogins = RHLOGINS || User.find_all_rhlogins
   user_count = rhlogins.length
-  puts "RHLogins.length: #{user_count.to_s}"  
+  puts "RHLogins.length: #{user_count.to_s}"
   rhlogins.each do |rhlogin|
     user = User.find(rhlogin)
     if user
