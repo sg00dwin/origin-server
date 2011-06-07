@@ -6,6 +6,10 @@ a broker domain example:
 
 https://openshift.redhat.com/broker/domain
 
+Or for a full curl example:
+
+curl https://openshift.redhat.com/app/broker/userinfo -d "password=mypass" -d 'json_data={ "rhlogin":"your_rh_login"}'
+
 
 Create Domain
 =============
