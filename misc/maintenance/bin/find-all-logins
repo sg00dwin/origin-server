@@ -36,12 +36,20 @@ class Accounts < Thor
     end
 
     # Return the AMZ connection
-    s3 = Aws::S3.new(config.get_value("AWSAccessKeyId"), 
+    s3 = Aws::S3Interface.new(config.get_value("AWSAccessKeyId"), 
                  config.get_value("AWSSecretKey"), 
                  params = {:logger => Logger.new('/dev/null')})
 
-    bucket = s3.bucket('libra_dev')
-    pp bucket.keys
+    rhlogins = []
+    s3.incrementally_list_bucket('libra_dev', {'prefix' => 'user_info'}) do |result|
+      result[:contents].each do |bucket|  
+        if bucket[:key] =~ /\/user.json$/
+          rhlogins << File.basename(File.dirname(bucket[:key]))                                                                
+        end
+      end
+    end
+
+    pp rhlogins
   end
 end
 

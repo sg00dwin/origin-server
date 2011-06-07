@@ -171,10 +171,10 @@ namespace :rpm do
       end
 
       # Run mash twice since it usually fails the first time
-      `/usr/bin/mash -o /tmp/rhel-6.1-libra-candidate -c /etc/mash/li-mash.conf libra-rhel-6.1-candidate`
+      `/usr/bin/mash -o /tmp/libra-rhel-6.1-candidate -c /etc/mash/li-mash.conf libra-rhel-6.1-candidate`
 
       # This time, use 'sh' to fail the build if it fails
-      sh "/usr/bin/mash -o /tmp/rhel-6.1-libra-candidate -c /etc/mash/li-mash.conf libra-rhel-6.1-candidate"
+      sh "/usr/bin/mash -o /tmp/libra-rhel-6.1-candidate -c /etc/mash/li-mash.conf libra-rhel-6.1-candidate"
   end
 
   desc "Mash rhel-6-libra repo from brew"
