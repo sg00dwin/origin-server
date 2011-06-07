@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system client tools
 Name:          rhc
-Version:       0.72.4
+Version:       0.72.5
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       MIT
@@ -84,6 +84,10 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_sysconfdir}/openshift/express.conf
 
 %changelog
+* Tue Jun 07 2011 Matt Hicks <mhicks@redhat.com> 0.72.5-1
+- Added a curl example (mmcgrath@redhat.com)
+- Adding more explicit references in API doc (mmcgrath@redhat.com)
+
 * Fri Jun 03 2011 Matt Hicks <mhicks@redhat.com> 0.72.4-1
 - fix breakge no mo pure (jimjag@redhat.com)
 - revert (jimjag@redhat.com)
