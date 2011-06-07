@@ -1,0 +1,48 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'parseconfig'
+require 'thor'
+require 'fileutils'
+require 'aws'
+require 'pp'
+
+class Accounts < Thor
+  include Thor::Actions
+
+  desc "list", "list all OpenShift accounts"
+  method_option :bucket, :required => true, :desc => "The S3 bucket (e.g. libra_dev, rhc_prod)"
+  def list
+
+    config = nil
+    begin
+      # Parse the credentials
+      puts ParseConfig.new(File.expand_path("~/.awscred"))
+
+      puts "Reading config for permissions"
+      puts "Read it"
+      config = ParseConfig.new(File.expand_path("~/.awscred"))
+      puts "Done"
+
+    rescue StandardError => e
+      puts <<-eos
+        Couldn't access credentials in ~/.awscred
+
+        Please create a file with the following format:
+          AWSAccessKeyId=<ACCESS_KEY>
+          AWSSecretKey=<SECRET_KEY>
+      eos
+      raise "Error - no credentials"
+    end
+
+    # Return the AMZ connection
+    s3 = Aws::S3.new(config.get_value("AWSAccessKeyId"), 
+                 config.get_value("AWSSecretKey"), 
+                 params = {:logger => Logger.new('/dev/null')})
+
+    bucket = s3.bucket('libra_dev')
+    pp bucket.keys
+  end
+end
+
+Accounts.start
