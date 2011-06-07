@@ -101,6 +101,9 @@ module Libra
           end
         end
         if action == 'deconfigure'
+          # remove the node account from the server node.
+          server.delete_account(app_info[:uuid])
+
           # Remove S3 app on deconfigure (one of the last things)
           user.delete_app(app_name)
         end

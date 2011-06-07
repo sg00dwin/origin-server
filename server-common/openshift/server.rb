@@ -392,6 +392,11 @@ module Libra
       execute_direct(@@C_CONTROLLER, 'configure', "-c #{app_info['uuid']} -e #{user.rhlogin} -s #{user.ssh}")
     end
 
+    def delete_account(accountname)
+      # Make the call to configure the user
+      execute_direct(@@C_CONTROLLER, 'deconfigure', "-c #{accountname}")
+    end
+
     #
     # Returns whether this server has the specified app
     #
