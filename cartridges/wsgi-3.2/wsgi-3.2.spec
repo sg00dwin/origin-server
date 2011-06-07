@@ -2,7 +2,7 @@
 
 Summary: Provides python-wsgi-3.2 support
 Name:      rhc-cartridge-wsgi-3.2
-Version:   0.72.5
+Version:   0.72.6
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -59,6 +59,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Mon Jun 06 2011 Dan McPherson <dmcphers@redhat.com> 0.72.6-1
+- moving to sym links for actions (dmcphers@redhat.com)
+
 * Fri Jun 03 2011 Matt Hicks <mhicks@redhat.com> 0.72.5-1
 - version cleanup (dmcphers@redhat.com)
 - customer -> application rename in cartridges (dmcphers@redhat.com)
