@@ -29,21 +29,31 @@ for line in fileinput.input():
     logins.append(line.rstrip())
 
 # Query each of those logins to look for one that isn't found
+valid_logins = []
 invalid_logins = []
+invalid_actual_logins = []
 for login in logins:
     print "Looking up user: " + login
     if user.service.getUserIdByLogin(login):
         print "Found login for user"
+        valid_logins.append(login)
     else:
         print "Didn't find the user login, looking up by email"
         try:
-            if user.service.findByEmail(login):
+            result = user.service.findByEmail(login)
+            if result:
                 print "Not good - found an invalid login: " + login
                 invalid_logins.append(login)
+                invalid_actual_logins.append(result[0].login)
             else:
                 print "No email, we're safe"
         except WebFault, e:
             print "No email, we're safe"
+
+# Find the intersection
+print
+print "Conflicts:"
+print list(set(valid_logins) & set(invalid_actual_logins))
 
 print
 print "Invalid logins:"
