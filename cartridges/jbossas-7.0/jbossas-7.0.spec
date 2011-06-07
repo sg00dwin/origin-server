@@ -3,7 +3,7 @@
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
 Version:   0.72.7
-Release:   1%{?dist}
+Release:   2%{?dist}
 Group:     Development/Languages
 License:   GPLv2
 URL:       http://openshift.redhat.com
@@ -31,6 +31,8 @@ Provides JBossAS7 support to OpenShift
 %install
 rm -rf %{buildroot}
 mkdir -p %{buildroot}%{cartridgedir}
+mkdir -p %{buildroot}/%{_sysconfdir}/libra/cartridges
+ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/libra/cartridges/%{name}
 cp -r . %{buildroot}%{cartridgedir}
 rm %{buildroot}%{cartridgedir}/jbossas-7.0.spec
 rm %{buildroot}%{cartridgedir}/.gitignore
@@ -43,12 +45,15 @@ rm -rf %{buildroot}
 %attr(0750,-,-) %{cartridgedir}/info/hooks/
 %attr(0750,-,-) %{cartridgedir}/info/data/
 %attr(0750,-,-) %{cartridgedir}/info/build/
-%{cartridgedir}/info/configuration/
+%config(noreplace) %{cartridgedir}/info/configuration/
 %{cartridgedir}/info/changelog
 %{cartridgedir}/info/control
 %{cartridgedir}/README
 
 %changelog
+* Mon Jun 06 2011 Mike McGrath <mmcgrath@redhat.com> 0.72.7-2
+- Added config dir symlink and config(noreplace)
+
 * Fri Jun 03 2011 Matt Hicks <mhicks@redhat.com> 0.72.7-1
 - Fixing jboss selinux issues (mmcgrath@redhat.com)
 - customer -> application rename in cartridges (dmcphers@redhat.com)
