@@ -1,3 +1,5 @@
+require 'net/smtp'
+
 module OpenShift
   module AWS
     def send_verified_email(amz_image_id)

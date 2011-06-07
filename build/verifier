@@ -15,7 +15,7 @@ class Verifier < Thor
   def setup
     # Get the latest devenv image and create a new instance
     conn = connect
-    latest = get_amis(conn).sort[-1]
+    latest = get_latest_ami(conn)
     instance = Instance.create(conn, options[:name], latest)
 
     private_ip = instance.ssh("facter ipaddress")

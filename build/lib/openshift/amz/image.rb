@@ -21,6 +21,15 @@ module OpenShift
         image.amz_image_id = conn.create_image(instance_id, name, desc)
 
         (0..30).each do
+          begin
+            break if image.get_value(:aws_state)
+            log.info "Image not yet registered..."
+          rescue Aws::AwsError
+            sleep 60
+          end
+        end
+
+        (0..30).each do
           break if image.get_value(:aws_state) == 'available'
           log.info "Image not available yet..."
           sleep 60
