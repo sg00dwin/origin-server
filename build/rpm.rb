@@ -154,7 +154,7 @@ namespace :rpm do
 
   desc "Mash rhel-6-libra-candidate repo from brew"
   task :mash_candidate do
-      if !File.exists?("/etc/mash/rhel-6-libra-candidate.mash")
+      if !File.exists?("/etc/mash/libra-rhel-6.1-candidate.mash")
           puts
           puts "Please install and configure mash.  Read misc/BREW for setup steps"
           puts
@@ -171,10 +171,10 @@ namespace :rpm do
       end
 
       # Run mash twice since it usually fails the first time
-      `/usr/bin/mash -o /tmp/rhel-6-libra-candidate -c /etc/mash/li-mash.conf rhel-6-libra-candidate`
+      `/usr/bin/mash -o /tmp/rhel-6.1-libra-candidate -c /etc/mash/li-mash.conf libra-rhel-6.1-candidate`
 
       # This time, use 'sh' to fail the build if it fails
-      sh "/usr/bin/mash -o /tmp/rhel-6-libra-candidate -c /etc/mash/li-mash.conf rhel-6-libra-candidate"
+      sh "/usr/bin/mash -o /tmp/rhel-6.1-libra-candidate -c /etc/mash/li-mash.conf libra-rhel-6.1-candidate"
   end
 
   desc "Mash rhel-6-libra repo from brew"
