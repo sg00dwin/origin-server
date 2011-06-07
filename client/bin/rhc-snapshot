@@ -93,11 +93,9 @@ user_info = RHC::get_user_info(libra_server, opt['rhlogin'], password, @http, de
 app = opt['app']
 opt['save'] = "#{opt['app']}.tar.gz" unless opt['save']
 
-begin
-    framework = user_info['app_info'][app]['framework'].split('-')[0]
-rescue NoMethodError
+unless user_info['app_info'][app]
     puts
-    puts "Could not find app '#{opt['app']}'.  Please run rhc-user-info to get a list"
+    puts "Could not find app '#{app}'.  Please run rhc-user-info to get a list"
     puts "of your current running applications"
     puts
     exit 101
@@ -106,7 +104,7 @@ end
 app_uuid = user_info['app_info'][app]['uuid']
 namespace = user_info['user_info']['namespace']
 rhc_domain = user_info['user_info']['rhc_domain']
-ssh_cmd = "ssh #{app_uuid}@#{app}-#{namespace}.#{rhc_domain} 'snapshot #{framework} #{app}' > #{opt['save']}"
+ssh_cmd = "ssh #{app_uuid}@#{app}-#{namespace}.#{rhc_domain} 'snapshot #{app}' > #{opt['save']}"
 
 puts "Pulling down a snapshot to #{opt['save']}"
 puts 

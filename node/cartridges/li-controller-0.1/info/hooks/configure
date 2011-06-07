@@ -77,6 +77,11 @@ function initialize {
     then
 	libra_dir=$DEFAULT_LIBRA_DIR
     fi
+
+    SCRIPTNAME=`basename $0`
+    if [ $SCRIPTNAME -eq 'deconfigure' ] ; then
+       REVERT='TRUE'
+    fi 
 }
 
 function parse_options {
