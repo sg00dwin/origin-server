@@ -319,7 +319,7 @@ cat <<EOF > "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}.conf"
 </VirtualHost>
 
 <VirtualHost *:443>
-  ServerName ssltest-ssltest.dev.rhcloud.com
+  ServerName ${application}-${namespace}.${libra_domain}
   ServerAdmin mmcgrath@redhat.com
 
 $(/bin/cat $CART_CONF_DIR/node_ssl_template.conf)
