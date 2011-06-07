@@ -121,7 +121,7 @@ function parse_options {
     fi
 
     # email and ssh_key are only needed for configure, not deconfigure
-    if ( [ -z "$REVERT"] && ([ -z "$email" ] || [ -z "$ssh_key" ]) )
+    if ( [ -z "$REVERT" ] && ([ -z "$email" ] || [ -z "$ssh_key" ]) )
     then
 	print_help
     fi
