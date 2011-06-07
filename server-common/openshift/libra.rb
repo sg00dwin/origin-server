@@ -87,6 +87,13 @@ module Libra
                 # update DNS
                 Libra.logger_debug "DEBUG: Public ip being deconfigured from namespace '#{user.namespace}'"
                 Server.delete_app_dns_entries(app_name, user.namespace)
+                # remove the node account from the server node.
+                Libra.logger_debug "Removing app account from server node: #{app_info}"
+                server.delete_account(app_info['uuid'])
+
+                # Remove S3 app on deconfigure (one of the last things)
+                Libra.logger_debug "Removing app info from persistant storage: #{app_name}"
+                user.delete_app(app_name)
               end
             else
               if action == 'deconfigure'
@@ -99,13 +106,13 @@ module Libra
           elsif action != 'deconfigure'
             raise NodeException.new(254), "The application #{app_name} is registered without a specified node.", caller[0..5]
           end
-        end
-        if action == 'deconfigure'
-          # remove the node account from the server node.
-          server.delete_account(app_info[:uuid])
+          if action == 'deconfigure'
+            # remove the node account from the server node.
+            server.delete_account(app_info[:uuid])
 
-          # Remove S3 app on deconfigure (one of the last things)
-          user.delete_app(app_name)
+            # Remove S3 app on deconfigure (one of the last things)
+            user.delete_app(app_name)
+          end
         end
       end
     else
