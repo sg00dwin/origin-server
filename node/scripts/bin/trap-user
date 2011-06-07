@@ -67,16 +67,12 @@ if __name__ == '__main__':
         sys.stderr.write("Invalid command %s" % orig_cmd)
         sys.exit(2)
     if basecmd in ('snapshot'):
-        # This gets called with "snapshot $TYPE $APP_NAME"
-        type = allargs[1]
-        name = allargs[2]
-        if not type in ('php', 'rack', 'git', 'wsgi', 'jbossas'):
-            print "unknown type: %s" % type
-            sys.exit(73)
+        # This gets called with "snapshot $APP_NAME"
+        name = allargs[1]
 
-        if type.isalnum() and name.isalnum():
+        if name.isalnum():
             path = os.path.expanduser('~')
-            allargs = "-czf - -C %s/%s/ --exclude=./%s/%s_ctl.sh --exclude=./%s/conf.d/libra.conf --exclude=./%s/run/httpd.pid ./%s/" % (path, type, name, name, name, name, name)
+            allargs = "-czf - -C %s/ --exclude=./%s/%s_ctl.sh --exclude=./%s/conf.d/libra.conf --exclude=./%s/run/httpd.pid ./%s/" % (path, name, name, name, name, name)
             allargs = allargs.split()
         else:
             print "Failed sanitization"
