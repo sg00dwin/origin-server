@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.72.7
+Version:   0.72.8
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -59,6 +59,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Mon Jun 06 2011 Dan McPherson <dmcphers@redhat.com> 0.72.8-1
+- moving to sym links for actions (dmcphers@redhat.com)
+
 * Fri Jun 03 2011 Matt Hicks <mhicks@redhat.com> 0.72.7-1
 - Fixing jboss selinux issues (mmcgrath@redhat.com)
 - customer -> application rename in cartridges (dmcphers@redhat.com)
