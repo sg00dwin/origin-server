@@ -1,7 +1,7 @@
 #
 # Global definitions
 #
-AMI = "ami-3239c75b"
+AMI = "ami-3c39c755"
 TYPE = "m1.large"
 KEY_PAIR = "libra"
 ZONE = 'us-east-1d'

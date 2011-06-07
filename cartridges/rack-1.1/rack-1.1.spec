@@ -2,7 +2,7 @@
 
 Summary:   Provides ruby rack support running on Phusion Passenger
 Name:      rhc-cartridge-rack-1.1
-Version:   0.72.7
+Version:   0.72.8
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -73,6 +73,13 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Tue Jun 07 2011 Matt Hicks <mhicks@redhat.com> 0.72.8-1
+- Fixing git clone to repack after cloning (mhicks@redhat.com)
+- tracking symlink dir (mmcgrath@redhat.com)
+- Changing config dir to an actual config.  Also symlinking changes into the
+  /etc/libra dir (mmcgrath@redhat.com)
+- adding node_ssl_template (mmcgrath@redhat.com)
+
 * Mon Jun 06 2011 Dan McPherson <dmcphers@redhat.com> 0.72.7-1
 - moving to sym links for actions (dmcphers@redhat.com)
 
