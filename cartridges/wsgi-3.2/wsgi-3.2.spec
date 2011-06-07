@@ -32,6 +32,8 @@ Provides wsgi support to OpenShift
 %install
 rm -rf %{buildroot}
 mkdir -p %{buildroot}%{cartridgedir}
+mkdir -p %{buildroot}/%{_sysconfdir}/libra/cartridges
+ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/libra/cartridges/%{name}
 cp -r . %{buildroot}%{cartridgedir}
 rm %{buildroot}%{cartridgedir}/wsgi-3.2.spec
 ln -s %{cartridgedir}/../abstract-httpd/info/hooks/add-module %{buildroot}%{cartridgedir}/info/hooks/add-module
@@ -54,13 +56,17 @@ rm -rf %{buildroot}
 %attr(0750,-,-) %{cartridgedir}/info/hooks/
 %attr(0750,-,-) %{cartridgedir}/info/data/
 %attr(0750,-,-) %{cartridgedir}/info/build/
-%{cartridgedir}/info/configuration/
+%config(noreplace) %{cartridgedir}/info/configuration/
+%{_sysconfdir}/libra/cartridges/%{name}
 %{cartridgedir}/info/changelog
 %{cartridgedir}/info/control
 
 %changelog
 * Mon Jun 06 2011 Dan McPherson <dmcphers@redhat.com> 0.72.6-1
 - moving to sym links for actions (dmcphers@redhat.com)
+
+* Mon Jun 06 2011 Mike McGrath <mmcgrath@redhat.com> 0.72.5-2
+- Added config dir symlink and config(noreplace)
 
 * Fri Jun 03 2011 Matt Hicks <mhicks@redhat.com> 0.72.5-1
 - version cleanup (dmcphers@redhat.com)
