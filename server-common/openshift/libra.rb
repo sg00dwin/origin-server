@@ -73,7 +73,7 @@ module Libra
                 server_execute_direct(framework, action, app_name, user, server, app_info)
               rescue Exception => e
                 if action == 'deconfigure'
-                  if server.has_app?(user, app_name)
+                  if server.has_app?(app_info, app_name)
                     raise
                   else
                     Libra.logger_debug "Application '#{app_name}' not found on node #{server.name}.  Continuing with deconfigure."

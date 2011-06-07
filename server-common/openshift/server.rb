@@ -395,10 +395,10 @@ module Libra
     #
     # Returns whether this server has the specified app
     #
-    def has_app?(user, app_name)
+    def has_app?(app, app_name)
       Helper.rpc_exec('libra', @name) do |client|
-        client.has_app(:customer => user.uuid,
-                        :application => app_name) do |response|
+        client.has_app(:uuid => app['uuid'],
+                       :application => app_name) do |response|
           #return_code = response[:body][:data][:exitcode]
           output = response[:body][:data][:output]
           return output == true
