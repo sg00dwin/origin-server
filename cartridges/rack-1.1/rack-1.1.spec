@@ -2,7 +2,7 @@
 
 Summary:   Provides ruby rack support running on Phusion Passenger
 Name:      rhc-cartridge-rack-1.1
-Version:   0.72.8
+Version:   0.72.9
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -73,6 +73,10 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Tue Jun 07 2011 Matt Hicks <mhicks@redhat.com> 0.72.9-1
+- Fixing servername to remove the debug server (mmcgrath@redhat.com)
+- specifying full path for rack apps (mmcgrath@redhat.com)
+
 * Tue Jun 07 2011 Matt Hicks <mhicks@redhat.com> 0.72.8-1
 - Fixing git clone to repack after cloning (mhicks@redhat.com)
 - tracking symlink dir (mmcgrath@redhat.com)
