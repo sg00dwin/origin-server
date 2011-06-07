@@ -102,8 +102,8 @@ module MCollective
         Log.instance.debug("migrate_action call / request = #{request.pretty_inspect}")
         validate :uuid, /^[a-zA-Z0-9]+$/
         validate :application, /^[a-zA-Z0-9]+$/
-        validate :app_type, /^[a-zA-Z0-9]+$/
-        validate :version, /^[a-zA-Z0-9]+$/        
+        validate :app_type, /^.+$/
+        validate :version, /^.+$/  
         uuid = request[:uuid]
         app_name = request[:application]
         app_type = request[:app_type]
