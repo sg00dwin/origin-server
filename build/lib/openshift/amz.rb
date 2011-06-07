@@ -87,13 +87,23 @@ module OpenShift
     end
 
     def get_amis(conn, filter = DEVENV_REGEX)
-      images = []
+      images = {}
       conn.describe_images_by_owner.each do |i|
         if i[:aws_name] and i[:aws_name] =~ filter
-          images << i[:aws_id]
+          images[i[:aws_name]] = i[:aws_id]
         end
       end
       return images
+    end
+
+    def get_latest_ami(conn, filter = DEVENV_REGEX)
+      amis = get_amis(conn, filter)
+
+      sorted_keys = amis.keys.sort do |x,y|
+        x.split("_")[1].to_i <=> y.split("_")[1].to_i
+      end
+
+      return amis[sorted_keys[-1]]
     end
   end
 end
