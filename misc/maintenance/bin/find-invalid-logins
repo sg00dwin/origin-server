@@ -32,6 +32,7 @@ for line in fileinput.input():
 valid_logins = []
 invalid_logins = []
 invalid_actual_logins = []
+multiple_emails = []
 for login in logins:
     print "Looking up user: " + login
     if user.service.getUserIdByLogin(login):
@@ -43,8 +44,12 @@ for login in logins:
             result = user.service.findByEmail(login)
             if result:
                 print "Not good - found an invalid login: " + login
-                invalid_logins.append(login)
-                invalid_actual_logins.append(result[0].login)
+                if len(result) > 1:
+                    print "Really bad, more than one account with this email..."
+                    multiple_emails.append(login)
+                else:
+                    invalid_logins.append(login)
+                    invalid_actual_logins.append(result[0].login)
             else:
                 print "No email, we're safe"
         except WebFault, e:
@@ -54,6 +59,9 @@ for login in logins:
 print
 print "Conflicts:"
 print list(set(valid_logins) & set(invalid_actual_logins))
+
+print "Multiple Emails:"
+print multiple_emails
 
 print
 print "Invalid logins:"

@@ -1,0 +1,63 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'parseconfig'
+require 'thor'
+require 'fileutils'
+require 'aws'
+require 'pp'
+
+class Accounts < Thor
+  include Thor::Actions
+
+  desc "migrate", "Migrate an S3 entry from one key name to another"
+  method_option :bucket, :required => true, :desc => "The S3 bucket (e.g. libra_dev, rhc_prod)"
+  method_option :from, :required => true, :desc => "The S3 user_info/key to rename (e.g. mhicks@redhat.com)"
+  method_option :to, :required => true, :desc => "The new S3 user_info/key name (e.g. matthicksj)"
+  method_option :dryrun, :type => :boolean, :desc => "Don't actually perform any changes"
+  def list
+    # This will verify the Amazon SSL connection
+    Rightscale::HttpConnection.params[:ca_file] = "/etc/pki/tls/certs/ca-bundle.trust.crt"
+
+    config = nil
+    begin
+      config = ParseConfig.new(File.expand_path("~/.awscred"))
+    rescue StandardError => e
+      puts <<-eos
+        Couldn't access credentials in ~/.awscred
+
+        Please create a file with the following format:
+          AWSAccessKeyId=<ACCESS_KEY>
+          AWSSecretKey=<SECRET_KEY>
+      eos
+      raise "Error - no credentials"
+    end
+
+    # Return the AMZ connection
+    s3 = Aws::S3Interface.new(config.get_value("AWSAccessKeyId"), 
+                 config.get_value("AWSSecretKey"), 
+                 params = {:logger => Logger.new('/dev/null')})
+
+    bucket = options[:bucket]
+
+    # Make sure we can access the 'from' key
+    from_key = 'user_info/' + options[:from]
+    from_result = s3.head(bucket, from_key)
+    raise "Couldn't find 'from' key" unless from_result
+    puts from_result
+
+    # Make sure the 'to' key doesn't already exist
+    to_key = 'user_info/' + options[:to]
+    to_result = s3.head(bucket, to_key)
+    raise "'to' key already exists" if to_result
+
+    puts "Moving from #{from_key} to #{to_key}"
+    unless options.dryrun?
+      puts "Moving..."
+      #s3.move(bucket, from_key, bucket, to_key)
+      puts "Done."
+    end
+  end
+end
+
+Accounts.start
