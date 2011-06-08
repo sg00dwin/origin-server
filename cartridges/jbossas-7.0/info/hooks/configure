@@ -359,7 +359,7 @@ cat <<EOF > "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}.conf"
   ServerName ${application}-${namespace}.${libra_domain}
   ServerAdmin mmcgrath@redhat.com
 
-$(/bin/cat $CART_CONF_DIR/node_ssl_template.conf)
+$(/bin/cat /usr/libexec/li/cartridges/${jboss_version}/info/configuration/node_ssl_template.conf)
 
   ProxyPass / http://$IP:8080/
   ProxyPassReverse / http://$IP:8080/
