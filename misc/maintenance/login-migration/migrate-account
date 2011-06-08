@@ -11,12 +11,7 @@ require 'pp'
 class Accounts < Thor
   include Thor::Actions
 
-  desc "migrate", "Migrate an S3 entry from one key name to another"
-  method_option :bucket, :required => true, :desc => "The S3 bucket (e.g. libra_dev, rhc_prod)"
-  method_option :from, :required => true, :desc => "The S3 user_info/key to rename (e.g. mhicks@redhat.com)"
-  method_option :to, :required => true, :desc => "The new S3 user_info/key name (e.g. matthicksj)"
-  method_option :dryrun, :type => :boolean, :desc => "Don't actually perform any changes"
-  def migrate
+  def connect
     # This will verify the Amazon SSL connection
     Rightscale::HttpConnection.params[:ca_file] = "/etc/pki/tls/certs/ca-bundle.trust.crt"
 
@@ -35,12 +30,21 @@ class Accounts < Thor
     end
 
     # Return the AMZ connection
-    s3 = Aws::S3Interface.new(config.get_value("AWSAccessKeyId"), 
-                 config.get_value("AWSSecretKey"), 
-                 params = {:logger => Logger.new('/dev/null')})
+    Aws::S3Interface.new(config.get_value("AWSAccessKeyId"), 
+                         config.get_value("AWSSecretKey"), 
+                         params = {:logger => Logger.new('/dev/null')})
+  end
 
+  desc "migrate", "Migrate an S3 entry from one key name to another"
+  method_option :bucket, :required => true, :desc => "The S3 bucket (e.g. libra_dev, rhc_prod)"
+  method_option :from, :required => true, :desc => "The S3 user_info/key to rename (e.g. mhicks@redhat.com)"
+  method_option :to, :required => true, :desc => "The new S3 user_info/key name (e.g. matthicksj)"
+  method_option :dryrun, :type => :boolean, :desc => "Don't actually perform any changes"
+  def migrate
+    s3 = connect
     bucket = options[:bucket]
 
+    puts "Dryrun: #{options.dryrun?}"
     # Make sure we can access the 'from' key
     from_key = 'user_info/' + options[:from]
     user_key = from_key + "/user.json"
@@ -91,6 +95,22 @@ class Accounts < Thor
       json['rhlogin'] = options[:to]
       s3.put(bucket, to_user_key, JSON.generate(json))
       puts "Done."
+    end
+  end
+
+  desc "bulk", "Migrate a list of accounts in 'from/to' format"
+  method_option :bucket, :required => true, :desc => "The S3 bucket (e.g. libra_dev, rhc_prod)"
+  method_option :input_file, :required => true, :desc => "The input file in 'from/to' format"
+  method_option :dryrun, :type => :boolean, :desc => "Don't actually perform any changes"
+  def bulk
+    s3 = connect
+    bucket = options[:bucket]
+    File.open(File.expand_path(options[:input_file], "r")) do |file|
+      file.readlines.each do |line|
+        from, to = line.split("/")
+        puts "Migrating user: #{from} to #{to}"
+        invoke :migrate, [], :from => from, :to => to, :dryrun => true
+      end
     end
   end
 end

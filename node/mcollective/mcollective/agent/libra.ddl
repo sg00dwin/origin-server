@@ -63,7 +63,7 @@ action "migrate", :description => "run a cartridge action" do
         :type           => :string,
         :validation     => '^[a-zA-Z0-9]+$',
         :optional       => false,
-        :maxlength      => 32
+        :maxlength      => 128
         
     input :app_type,
         :prompt         => "Application Type",
@@ -72,6 +72,14 @@ action "migrate", :description => "run a cartridge action" do
         :validation     => '^.+$',
         :optional       => false,
         :maxlength      => 32
+        
+    input :namespace,
+        :prompt         => "Namespace",
+        :description    => "Namespace",
+        :type           => :string,
+        :validation     => '^.+$',
+        :optional       => false,
+        :maxlength      => 128
 
     input :version,
         :prompt         => "Target Version",
@@ -79,7 +87,7 @@ action "migrate", :description => "run a cartridge action" do
         :type           => :string,
         :validation     => '^.+$',
         :optional       => false,
-        :maxlength      => 32
+        :maxlength      => 64
 
     output  :time,
             :description => "The time as a message",
@@ -111,7 +119,7 @@ action "has_app", :description => "Does this server contain a specified app?" do
         :type           => :string,
         :validation     => '^[a-zA-Z0-9]+$',
         :optional       => false,
-        :maxlength      => 32
+        :maxlength      => 128
 
     output  :time,
             :description => "The time as a message",
