@@ -1,10 +1,7 @@
 class ControlPanelController < ApplicationController
 
-  def index; end
-  
-  # Call create domain api
-  def create_domain(data) 
-    
+  def index
+    @domain = ExpressDomain.new()
   end
 
 end
