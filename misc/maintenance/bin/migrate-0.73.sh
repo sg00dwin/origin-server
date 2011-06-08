@@ -22,7 +22,7 @@ def migrate_app_on_node(user, app, app_name, app_type)
                    :application => app_name,
                    :app_type => app_type,
                    :namespace => user.namespace,
-                   :version => '0.72.9') do |response|
+                   :version => '0.73') do |response|
       exit_code = response[:body][:data][:exitcode]        
       output = response[:body][:data][:output]
       if (output.length > 0)      
@@ -37,12 +37,12 @@ def migrate_app_on_node(user, app, app_name, app_type)
 end
 
 #
-# Migrate applications between release 2 and 3
+# Migrate applications between release launch and 0.73
 # Remove framework patchlevel from s3 and apps
 # Migration fix of UUID from user_info.json to application json
 # Migration of remove top level app dir (TA460)
 #
-def migrate_rel3
+def migrate
   start_time = Time.now.to_i
   puts "Getting all RHLogins..." 
   rhlogins = RHLOGINS || User.find_all_rhlogins
@@ -51,6 +51,7 @@ def migrate_rel3
   rhlogins.each do |rhlogin|
     user = User.find(rhlogin)
     if user
+      puts "######################################################"
       puts "Updating apps for user: #{user.rhlogin}(#{user_count.to_s}) with uuid: #{user.uuid}"
       apps = user.apps
       if apps.length > 1
@@ -74,7 +75,7 @@ def migrate_rel3
             puts "WARNING: Application '#{app_name}' already has uuid: #{app['uuid']}"
           end
           puts "Migrating app in s3 '#{app_name}' with uuid '#{app['uuid']}' for user: #{rhlogin}"            
-          #user.update_app(app)
+          user.update_app(app, app_name)
           if app['server_identity']
             puts "Migrating app '#{app_name}' with uuid '#{app['uuid']}' on node '#{app['server_identity']}' for user: #{rhlogin}"
             migrate_app_on_node(user, app, app_name, from_type)
@@ -82,7 +83,7 @@ def migrate_rel3
             puts "Missing server identity for app '#{app_name}' with uuid '#{app['uuid']}' for user: #{rhlogin}"            
           end
         rescue Exception => e
-          puts "ERROR: Failed migrating app: #{app_name} to type: #{to_type} for user: #{rhlogin}"
+          puts "ERROR: Failed migrating app: #{app_name} to type: #{to_type} and uuid: #{user.uuid} for user: #{rhlogin}"
           puts e.message
           puts e.backtrace
         end
@@ -98,4 +99,4 @@ def migrate_rel3
   puts "Total execution time: #{total_time.to_s}s"
 end
 
-migrate_rel3
+migrate

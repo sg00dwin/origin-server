@@ -32,7 +32,7 @@ def update_all_app_server_identities
               begin
                 puts "Updating app: #{app_name} to server identity: #{server.name}"
                 app['server_identity'] = server.name
-                user.update_app(app)
+                user.update_app(app, app_name)
                 found = true
                 break
               rescue Exception => e                
