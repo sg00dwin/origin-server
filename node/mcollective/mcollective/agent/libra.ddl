@@ -69,7 +69,7 @@ action "migrate", :description => "run a cartridge action" do
         :prompt         => "Application Type",
         :description    => "Type of application",
         :type           => :string,
-        :validation     => '^[a-zA-Z0-9]+$',
+        :validation     => '^.+$',
         :optional       => false,
         :maxlength      => 32
 
@@ -77,7 +77,7 @@ action "migrate", :description => "run a cartridge action" do
         :prompt         => "Target Version",
         :description    => "Target version",
         :type           => :string,
-        :validation     => '^[a-zA-Z0-9]+$',
+        :validation     => '^.+$',
         :optional       => false,
         :maxlength      => 32
 

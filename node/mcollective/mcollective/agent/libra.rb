@@ -106,18 +106,44 @@ module MCollective
         validate :version, /^.+$/  
         uuid = request[:uuid]
         app_name = request[:application]
-        app_type = request[:app_type]
+        old_app_type = request[:app_type]
         version = request[:version]
         libra_home = '/var/lib/libra'
+        cartridge_dir = "/usr/libexec/li/cartridges"
         output = ""
         exitcode = 0
-        if (version == '3')
-          app_type = app_type.split('-')[0]
-          if File.exists? "#{libra_home}/#{uuid}/#{app_type}/#{app_name}"
-            mv "#{libra_home}/#{uuid}/#{app_type}/#{app_name}", "#{libra_home}/#{uuid}/#{app_type}/#{app_name}"
+        app_types = {'php-5.3.2' => 'php-5.3', 
+                     'rack-1.1.0' => 'rack-1.0', 
+                     'wsgi-3.2.1' => 'wsgi-3.2',
+                     'jbossas-7.0.0' => 'jbossas-7.0',
+                     'perl-5.10.1' => 'perl-5.10'}
+        new_app_type = app_types[old_app_type]
+        if (version == '0.72.9')
+          framework = old_app_type.split('-')[0]
+          app_home = "#{libra_home}/#{uuid}"
+          framework_dir = "#{app_home}/#{framework}"
+          old_app_dir = "#{framework_dir}/#{app_name}"
+          new_app_dir = "#{app_home}/#{app_name}"
+          if File.exists? old_app_dir
+            output += "Moving '#{old_app_dir}' to '#{new_app_dir}'\n"
+            FileUtils.mv old_app_dir, new_app_dir
+            if Dir["#{framework_dir}/*"].empty?
+              output += "Removing empty app type dir '#{framework_dir}'\n"
+              FileUtils.remove_dir framework_dir
+            end
+            ctl_script = "#{new_app_dir}/#{app_name}_ctl.sh"
+            replace_in_file(ctl_script, old_app_dir, new_app_dir)
+            output += "Updating '#{ctl_script}' from #{old_app_type} to #{new_app_type}\n"
+            system("sed -i \"s,#{cartridge_dir}/#{old_app_type},#{cartridge_dir}/#{new_app_type},g\" #{ctl_script}")
+            replace_in_file(ctl_script, "#{cartridge_dir}/#{old_app_type}", "#{cartridge_dir}/#{new_app_type}")
+            replace_in_file("#{new_app_dir}/conf.d/libra.conf", old_app_dir, new_app_dir)
+            replace_in_file("#{app_home}/git/#{app_name}.git/hooks/post-receive", old_app_dir, new_app_dir)
+            if framework == 'php'
+              replace_in_file("#{new_app_dir}/conf/php.ini", old_app_dir, new_app_dir)
+            end
           else
             exitcode = 127
-            output += "Application not found to migrate: #{uuid}/#{app_type}/#{app_name}\n"
+            output += "Application not found to migrate: #{uuid}/#{framework}/#{app_name}\n"
           end
         else
           exitcode = 127
@@ -128,6 +154,11 @@ module MCollective
         reply[:output] = output
         reply[:exitcode] = exitcode
         reply.fail! "migrate_action failed #{exitcode}.  Output #{output}" unless exitcode == 0
+      end
+      
+      def replace_in_file(file, old_value, new_value)
+        output += "Updating '#{file}' changing '#{old_value}' to '#{new_value}'\n"
+        system("sed -i \"s,#{old_value},#{new_value},g\" #{file}")
       end
 
       #
