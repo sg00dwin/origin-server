@@ -122,7 +122,7 @@ module MCollective
                      'wsgi-3.2.1' => 'wsgi-3.2',
                      'jbossas-7.0.0' => 'jbossas-7.0',
                      'perl-5.10.1' => 'perl-5.10'}
-        new_app_type = app_types[old_app_type]
+        new_app_type = app_types[old_app_type] ? app_types[old_app_type] : old_app_type 
         old_cartridge_dir = "#{cartridge_dir}/#{old_app_type}"
         new_cartridge_dir = "#{cartridge_dir}/#{new_app_type}"
         framework = old_app_type.split('-')[0]
@@ -139,18 +139,28 @@ module MCollective
               FileUtils.remove_dir framework_dir
             end
             ctl_script = "#{new_app_dir}/#{app_name}_ctl.sh"
-            output += replace_in_file(ctl_script, old_app_dir, new_app_dir)
+            output += replace_in_file(ctl_script, '//', '/')
+            output += replace_in_file(ctl_script, old_app_dir, new_app_dir)            
             output += replace_in_file(ctl_script, old_cartridge_dir, new_cartridge_dir)
             httpd_conf = "/etc/httpd/conf.d/libra/#{uuid}_#{namespace}_#{app_name}.conf"
+            # can't replace // blindly because of http://
             output += replace_in_file(httpd_conf, old_cartridge_dir, new_cartridge_dir)
-            output += replace_in_file("#{new_app_dir}/conf.d/libra.conf", old_app_dir, new_app_dir)
-            output += replace_in_file("#{app_home}/git/#{app_name}.git/hooks/post-receive", old_app_dir, new_app_dir)
+            libra_conf = "#{new_app_dir}/conf.d/libra.conf"
+            output += replace_in_file(libra_conf, '//', '/')
+            output += replace_in_file(libra_conf, old_app_dir, new_app_dir)
+            post_receive = "#{app_home}/git/#{app_name}.git/hooks/post-receive"
+            output += replace_in_file(post_receive, '//', '/')
+            output += replace_in_file(post_receive, old_app_dir, new_app_dir)
             if framework == 'php'
+              # can't replace // blindly because of http://
               output += replace_in_file("#{new_app_dir}/conf/php.ini", old_app_dir, new_app_dir)
             end
 
-=begin
+
             # add ssl support
+            grep_output, grep_exitcode = execute_script("grep 'ProxyPass / http://' #{httpd_conf} 2>&1")
+            ip = grep_output[grep_output.index('http://') + 'http://'.length..-1]
+            ip = ip[0..ip.index(':')-1]
             
             file = File.open("#{new_cartridge_dir}/info/configuration/node_ssl_template.conf", "r")
             ssl_template = nil
@@ -159,24 +169,26 @@ module MCollective
             ensure
               file.close
             end
-                            
+
+            output += "Adding ssl support to #{httpd_conf} using ip: #{ip}\n"
             file = File.open(httpd_conf, 'a')
             begin
-file << EOF
+              file.puts <<EOF
+              
 <VirtualHost *:443>
   ServerName #{app_name}-#{namespace}.#{libra_domain}
   ServerAdmin mmcgrath@redhat.com
 
   #{ssl_template}
 
-  ProxyPass / http://$IP:8080/
-  ProxyPassReverse / http://$IP:8080/
+  ProxyPass / http://#{ip}:8080/
+  ProxyPassReverse / http://#{ip}:8080/
 </VirtualHost>
 EOF
+
             ensure
               file.close
             end
-=end
           else
             exitcode = 127
             output += "Application not found to migrate: #{uuid}/#{framework}/#{app_name}\n"
@@ -193,8 +205,27 @@ EOF
       end
       
       def replace_in_file(file, old_value, new_value)
-        system("sed -i \"s,#{old_value},#{new_value},g\" #{file}")
-        return "Updated '#{file}' changed '#{old_value}' to '#{new_value}'\n"
+        output, exitcode = execute_script("sed -i \"s,#{old_value},#{new_value},g\" #{file} 2>&1")
+        #TODO handle exitcode
+        return "Updated '#{file}' changed '#{old_value}' to '#{new_value}'.  output: #{output}  exitcode: #{exitcode}\n"
+      end
+      
+      def execute_script(cmd)
+        pid, stdin, stdout, stderr = Open4::popen4(cmd)
+        stdin.close
+        ignored, status = Process::waitpid2 pid
+        exitcode = status.exitstatus
+        output = ''
+        begin
+          Timeout::timeout(5) do
+            while (line = stdout.gets)
+              output << line
+            end
+          end
+        rescue Timeout::Error
+          Log.instance.debug("execute_script WARNING - stdout read timed out")
+        end
+        return output, exitcode
       end
 
       #

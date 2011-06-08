@@ -2,7 +2,7 @@
 
 Summary:   Provides php-5.3 support
 Name:      rhc-cartridge-php-5.3
-Version:   0.72.9
+Version:   0.72.10
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -66,6 +66,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Wed Jun 08 2011 Dan McPherson <dmcphers@redhat.com> 0.72.10-1
+- fixing configuration dir (mmcgrath@redhat.com)
+
 * Tue Jun 07 2011 Matt Hicks <mhicks@redhat.com> 0.72.9-1
 - Fixing servername to remove the debug server (mmcgrath@redhat.com)
 
