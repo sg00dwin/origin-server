@@ -58,11 +58,16 @@ for login in logins:
 # Find the intersection
 print
 print "Conflicts:"
-print list(set(valid_logins) & set(invalid_actual_logins))
-
-print "Multiple Emails:"
-print multiple_emails
+intersection = list(set(valid_logins) & set(invalid_actual_logins))
+for login in intersection:
+  print login
 
 print
-print "Invalid logins:"
-print invalid_logins
+print "Multiple Emails:"
+for login in multiple_emails:
+  print login
+
+print
+print "Safe to migrate:"
+for i in range(len(invalid_logins)):
+  print invalid_logins[i] + "/" + invalid_actual_logins[i]
