@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.72.3
+Version:       0.72.4
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -38,6 +38,11 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Wed Jun 08 2011 Matt Hicks <mhicks@redhat.com> 0.72.4-1
+- adding libra.te (mmcgrath@redhat.com)
+- Adding back local install script (mhicks@redhat.com)
+- Allow unconfined_t to become libra_t (dwalsh@redhat.com)
+
 * Fri Jun 03 2011 Matt Hicks <mhicks@redhat.com> 0.72.3-1
 - Tighten up security on append, so only inherited files can be appended.
   (dwalsh@redhat.com)
