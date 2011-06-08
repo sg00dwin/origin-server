@@ -137,7 +137,7 @@ namespace :rpm do
 
   task :sync do
     puts "Syncing RPMs and gems to repo..."
-    sh "rsync -avz -e ssh /tmp/rhel-6-libra-candidate/rhel-6-libra-candidate/* root@dhcp1:/srv/web/gpxe/trees/rhel-6-libra-candidate/"
+    sh "rsync -avz -e ssh /tmp/libra-rhel-6.1-candidate/libra-rhel-6.1-candidate/* root@dhcp1:/srv/web/gpxe/trees/rhel-6-libra-candidate/"
     sh "rsync -avz -e ssh client/pkg/* root@dhcp1:/srv/web/gpxe/trees/client/gems/"
     puts "Done"
 
