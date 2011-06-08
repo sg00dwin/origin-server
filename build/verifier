@@ -106,9 +106,10 @@ class Verifier < Thor
 
       # Mark the image as verified
       Image.verify(conn, instance.amz_image_id)
+      amz_image_name = Image.get_name(conn, instance.amz_image_id)
       
       print "Sending QE ready email..."
-      send_verified_email(instance.amz_image_id)
+      send_verified_email(instance.amz_image_id, amz_image_name)
       puts "Done"
 
     ensure
