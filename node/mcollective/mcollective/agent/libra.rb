@@ -113,7 +113,7 @@ module MCollective
         exitcode = 0
         begin
           require "#{File.dirname(__FILE__)}/migrate-#{version}"
-          output, exitcode = Migration::migrate(uuid, app_name, old_app_type, namespace, version)
+          output, exitcode = LibraMigration::migrate(uuid, app_name, old_app_type, namespace, version)
         rescue LoadError => e
           exitcode = 127
           output += "Migration version not supported: #{version}\n"

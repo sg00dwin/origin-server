@@ -4,7 +4,7 @@ require 'fileutils'
 require 'parseconfig'
 require 'pp'
 
-module Migration
+module LibraMigration
 
   def self.migrate(uuid, app_name, old_app_type, namespace, version)
     node_config = ParseConfig.new('/etc/libra/node.conf')
@@ -89,8 +89,7 @@ EOF
     end
     return output, exitcode
   end
-  
-  
+
   def self.replace_in_file(file, old_value, new_value)
     output, exitcode = execute_script("sed -i \"s,#{old_value},#{new_value},g\" #{file} 2>&1")
     #TODO handle exitcode
@@ -114,5 +113,4 @@ EOF
     end
     return output, exitcode
   end
-
 end
