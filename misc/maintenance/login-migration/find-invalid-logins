@@ -61,6 +61,7 @@ for line in text_file.readlines():
 migrate = []
 conflict = []
 ignore = []
+unknown = []
 
 for login in logins:
     # See if the user is a simple user
@@ -68,10 +69,11 @@ for login in logins:
         simple_express_logins.index(login)
 
         # User is a simple user - skip them
+        ignore.append(login)
         continue
     except ValueError, e:
         # User is not a simple user - continue
-        ignore.append(login)
+        pass
 
     # User is not a simple user - look them up by login
     if user.service.getUserIdByLogin(login):
@@ -84,12 +86,11 @@ for login in logins:
 
             # See how many matches were returned on the email match
             if len(result) == 0:
-                print "ERROR - User is not a simple user and can't be found by login or email - " + login
-                exit(1)
+                unknown.append(login)
             elif len(result) == 1:
                 # There is only a single matching login for this account
                 # Migrate if the migration target doesn't exist
-                migration_str = login + "/" + result[0].login)
+                migration_str = login + "/" + result[0].login
                 try:
                     logins.index(result[0].login)
                     conflict.append(migration_str)
@@ -108,13 +109,17 @@ for login in logins:
                 # Only migrate if there is a single resolved match
                 if len(express_login_matches) == 1:
                     migrate.append(login + "/" + express_login_matches[0])
-                else
+                else:
                     conflict.append(login + "/" + ",".join(express_login_matches))
         except WebFault, e:
-            print "ERROR - User is not a simple user and can't be found by login or email - " + login
-            exit(1)
+            unknown.append(login)
 
 # Find the intersection
+print
+print "No Action:"
+for value in ignore:
+  print value
+
 print
 print "Migrate:"
 for value in migrate:
@@ -126,6 +131,6 @@ for value in conflict:
   print value
 
 print
-print "Not Action:"
-for value in ignore:
+print "Unknown:"
+for value in unknown:
   print value
