@@ -34,7 +34,7 @@ webqa_url = 'http://proxyjavavip.web.qa.ext.intdev.redhat.com/svc/UserService/1?
 access_list = '~/Desktop/migration/users_with_express_access.txt'
 
 # A list of simple user accounts that have access to express
-simple_access_list = '~/Desktop/migration/simple_users_with_express.txt'
+simple_access_list = '~/Desktop/migration/simple_users_with_express_access.txt'
 
 #
 # The program - no changes needed below this point
@@ -64,7 +64,7 @@ ignore = []
 unknown = []
 
 for login in logins:
-    # See if the user is a simple user
+    # See if the user is a simple user by checking the simple access list
     try:
         simple_express_logins.index(login)
 
@@ -73,6 +73,17 @@ for login in logins:
         continue
     except ValueError, e:
         # User is not a simple user - continue
+        pass
+
+    # See if the user is a full user by checking the full access list
+    try:
+        express_logins.index(login)
+
+        # User is a full user - skip them
+        ignore.append(login)
+        continue
+    except ValueError, e:
+        # User is not a full user - continue
         pass
 
     # User is not a simple user - look them up by login
@@ -108,7 +119,12 @@ for login in logins:
 
                 # Only migrate if there is a single resolved match
                 if len(express_login_matches) == 1:
-                    migrate.append(login + "/" + express_login_matches[0])
+                    # Make sure there isn't a conflict with an existing login
+                    try:
+                        logins.index(express_login_matches[0])
+                        conflict.append(login + "/" + express_login_matches[0])
+                    except ValueError, e:
+                        migrate.append(login + "/" + express_login_matches[0])
                 else:
                     conflict.append(login + "/" + ",".join(express_login_matches))
         except WebFault, e:
