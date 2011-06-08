@@ -32,6 +32,8 @@ module LibraMigration
       if Dir["#{framework_dir}/*"].empty?
         output += "Removing empty app type dir '#{framework_dir}'\n"
         FileUtils.remove_dir framework_dir
+        output += "Linking old framework dir '#{framework_dir}' to app home '#{app_home}'\n"
+        FileUtils.ln_s app_home, framework_dir
       end
       ctl_script = "#{new_app_dir}/#{app_name}_ctl.sh"
       output += replace_in_file(ctl_script, '//', '/')
