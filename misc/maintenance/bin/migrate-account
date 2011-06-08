@@ -5,6 +5,7 @@ require 'parseconfig'
 require 'thor'
 require 'fileutils'
 require 'aws'
+require 'json'
 require 'pp'
 
 class Accounts < Thor
@@ -15,7 +16,7 @@ class Accounts < Thor
   method_option :from, :required => true, :desc => "The S3 user_info/key to rename (e.g. mhicks@redhat.com)"
   method_option :to, :required => true, :desc => "The new S3 user_info/key name (e.g. matthicksj)"
   method_option :dryrun, :type => :boolean, :desc => "Don't actually perform any changes"
-  def list
+  def migrate
     # This will verify the Amazon SSL connection
     Rightscale::HttpConnection.params[:ca_file] = "/etc/pki/tls/certs/ca-bundle.trust.crt"
 
@@ -42,19 +43,53 @@ class Accounts < Thor
 
     # Make sure we can access the 'from' key
     from_key = 'user_info/' + options[:from]
-    from_result = s3.head(bucket, from_key)
-    raise "Couldn't find 'from' key" unless from_result
-    puts from_result
+    user_key = from_key + "/user.json"
+    user_result = s3.head(bucket, user_key)
+    raise "Couldn't find 'from' key" unless user_result
+
+    # Now make sure we have an app to migrate
+    apps = s3.list_bucket(bucket, {'prefix' => from_key + "/apps"})
+    raise "No apps to migrate" if apps.empty?
+    raise "Expected single app" if apps.length > 1
+    app_key = apps[0][:key]
+    app_name = app_key.split("/")[-1]
+
+    puts "Source locations:"
+    puts user_key
+    puts app_key
 
     # Make sure the 'to' key doesn't already exist
     to_key = 'user_info/' + options[:to]
-    to_result = s3.head(bucket, to_key)
-    raise "'to' key already exists" if to_result
+    to_user_key = to_key + "/user.json"
+    to_app_key = to_key + "/apps/" + app_name
+    begin
+      to_user_result = s3.head(bucket, to_user_key)
+      raise "'to' user already exists" if to_user_result
+    rescue Aws::AwsError
+      # Ignore - we don't want the target to already exist
+    end
 
+    puts
+    puts "Target locations:"
+    puts to_user_key
+    puts to_app_key
+
+    puts
     puts "Moving from #{from_key} to #{to_key}"
     unless options.dryrun?
       puts "Moving..."
-      #s3.move(bucket, from_key, bucket, to_key)
+      s3.move(bucket, user_key, bucket, to_user_key)
+      s3.move(bucket, app_key, bucket, to_app_key)
+      puts "Done."
+
+      puts "Sleeping to allow S3 to sync..."
+      sleep 1
+
+      puts "Updating rhlogin in json file"
+      json = JSON.parse(s3.get(bucket, to_user_key)[:object])
+      puts "Updating rhlogin from '#{json['rhlogin']}' to '#{options[:to]}'"
+      json['rhlogin'] = options[:to]
+      s3.put(bucket, to_user_key, JSON.generate(json))
       puts "Done."
     end
   end
