@@ -112,7 +112,7 @@ module MCollective
         namespace = request[:namespace]
         version = request[:version]
         node_config = ParseConfig.new('/etc/libra/node.conf')
-        libra_home = node_config.get_value('libra_dir')
+        libra_home = '/var/lib/libra' #node_config.get_value('libra_dir')
         libra_domain = node_config.get_value('libra_domain')
         cartridge_dir = "/usr/libexec/li/cartridges"
         output = ""
