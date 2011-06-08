@@ -26,7 +26,9 @@ module OpenShift
         libra_key = File.expand_path("../../../../misc/libra.pem", File.expand_path(__FILE__))
         log.info "Key location = " + libra_key
         log.info "Destination = " + RSA
-        FileUtils.cp(libra_key, RSA)
+        FileUtils.mkdir_p File.dirname(RSA)
+        FileUtils.chmod 0700, File.dirname(RSA)
+        FileUtils.cp libra_key, RSA
         FileUtils.chmod 0600, RSA
       end
     end
