@@ -22,15 +22,20 @@ class Prune < Thor
     # Get current AMIs
     images = get_amis(connect)
 
-    # Keep the 5 most recent images
-    images.sort!.reverse!.pop(5)
+    # Sort the images by name
+    sorted_keys = images.keys.sort do |x,y|
+      x.split("_")[1].to_i <=> y.split("_")[1].to_i
+    end
 
-    puts "Removing AMI's #{images.pretty_inspect}"
+    # Keep the 5 most recent images
+    sorted_keys.pop(5)
+
+    puts "Removing AMI's #{sorted_keys.pretty_inspect}"
 
     # Prune the rest
-    images.each do |i|
-      puts "Removing AMI #{i}"
-      conn.deregister_image(i)
+    sorted_keys.each do |i|
+      puts "Removing AMI #{images[i]}"
+      #conn.deregister_image(i)
     end
   end
 end
