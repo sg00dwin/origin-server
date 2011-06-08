@@ -1,0 +1,112 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'parseconfig'
+require 'thor'
+require 'fileutils'
+require 'aws'
+require 'json'
+require 'pp'
+
+class Accounts < Thor
+  include Thor::Actions
+
+  no_tasks do
+    def connect
+      # This will verify the Amazon SSL connection
+      Rightscale::HttpConnection.params[:ca_file] = "/etc/pki/tls/certs/ca-bundle.trust.crt"
+
+      config = nil
+      begin
+        config = ParseConfig.new(File.expand_path("~/.awscred"))
+      rescue StandardError => e
+        puts <<-eos
+          Couldn't access credentials in ~/.awscred
+
+          Please create a file with the following format:
+            AWSAccessKeyId=<ACCESS_KEY>
+            AWSSecretKey=<SECRET_KEY>
+        eos
+        raise "Error - no credentials"
+      end
+
+      # Return the AMZ connection
+      Aws::S3Interface.new(config.get_value("AWSAccessKeyId"), 
+                           config.get_value("AWSSecretKey"), 
+                           params = {:logger => Logger.new('/dev/null')})
+    end
+  end
+
+  desc "migrate BUCKET FROM TO", "Migrate an S3 entry from one key name to another"
+  method_option :dryrun, :type => :boolean, :desc => "Don't actually perform any changes"
+  def migrate(bucket, from, to)
+    s3 = connect
+
+    # Make sure we can access the 'from' key
+    from_key = 'user_info/' + from
+    user_key = from_key + "/user.json"
+    user_result = s3.head(bucket, user_key)
+    raise "Couldn't find 'from' key" unless user_result
+
+    # Now make sure we have an app to migrate
+    apps = s3.list_bucket(bucket, {'prefix' => from_key + "/apps"})
+    raise "No apps to migrate" if apps.empty?
+    raise "Expected single app" if apps.length > 1
+    app_key = apps[0][:key]
+    app_name = app_key.split("/")[-1]
+
+    puts "Source locations:"
+    puts user_key
+    puts app_key
+
+    # Make sure the 'to' key doesn't already exist
+    to_key = 'user_info/' + to
+    to_user_key = to_key + "/user.json"
+    to_app_key = to_key + "/apps/" + app_name
+    begin
+      to_user_result = s3.head(bucket, to_user_key)
+      raise "'to' user already exists" if to_user_result
+    rescue Aws::AwsError
+      # Ignore - we don't want the target to already exist
+    end
+
+    puts
+    puts "Target locations:"
+    puts to_user_key
+    puts to_app_key
+
+    puts
+    puts "Moving from #{from_key} to #{to_key}"
+    unless options.dryrun?
+      puts "Moving..."
+      s3.move(bucket, user_key, bucket, to_user_key)
+      s3.move(bucket, app_key, bucket, to_app_key)
+      puts "Done."
+
+      puts "Sleeping to allow S3 to sync..."
+      sleep 1
+
+      puts "Updating rhlogin in json file"
+      json = JSON.parse(s3.get(bucket, to_user_key)[:object])
+      puts "Updating rhlogin from '#{json['rhlogin']}' to '#{to}'"
+      json['rhlogin'] = to
+      s3.put(bucket, to_user_key, JSON.generate(json))
+      puts "Done."
+    end
+  end
+
+  desc "bulk BUCKET INPUT_FILE", "Migrate a list of accounts in 'from/to' format"
+  method_option :dryrun, :type => :boolean, :desc => "Don't actually perform any changes"
+  def bulk(bucket, input_file)
+    s3 = connect
+    File.open(File.expand_path(input_file, "r")) do |file|
+      file.readlines.each do |line|
+        from, to = line.chomp.split("/")
+        puts "Migrating user: #{from} to #{to}"
+        migrate(bucket, from, to)
+      end
+    end
+  end
+end
+
+Accounts.start

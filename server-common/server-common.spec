@@ -2,7 +2,7 @@
 
 Summary:       Common dependencies of the OpenShift broker and site
 Name:          rhc-server-common
-Version:       0.72.4
+Version:       0.72.7
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -46,7 +46,24 @@ rm -rf %{buildroot}
 %{ruby_sitelibdir}/openshift.rb
 %attr(0640,root,libra_user) %config(noreplace) %{_sysconfdir}/libra/controller.conf
 
+%pre
+/usr/sbin/groupadd -r libra_user 2>&1 || :
+/usr/sbin/useradd libra_passenger -g libra_user \
+                                  -d /var/lib/passenger \
+                                  -r \
+                                  -s /sbin/nologin 2>&1 > /dev/null || :
+
 %changelog
+* Mon Jun 06 2011 Dan McPherson <dmcphers@redhat.com> 0.72.7-1
+- 
+
+* Mon Jun 06 2011 Dan McPherson <dmcphers@redhat.com> 0.72.6-1
+- move client.cfg update to the right place (dmcphers@redhat.com)
+
+* Mon Jun 06 2011 Dan McPherson <dmcphers@redhat.com> 0.72.5-1
+- build fixes (dmcphers@redhat.com)
+- Bug 706329 (dmcphers@redhat.com)
+
 * Fri Jun 03 2011 Matt Hicks <mhicks@redhat.com> 0.72.4-1
 - using app_uuid instead of user uuid, making user_uuid more obvious
   (mmcgrath@redhat.com)

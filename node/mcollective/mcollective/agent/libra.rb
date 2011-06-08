@@ -26,6 +26,8 @@
 #
 require 'rubygems'
 require 'open4'
+require 'fileutils'
+require 'parseconfig'
 require 'pp'
 
 module MCollective
@@ -35,90 +37,212 @@ module MCollective
   module Agent
   
     class Libra<RPC::Agent
-        metadata    :name        => "Libra Management",
-                    :description => "Agent to manage Libra services",
-                    :author      => "Mike McGrath",
-                    :license     => "GPLv2",
-                    :version     => "0.1",
-                    :url         => "https://engineering.redhat.com/trac/Libra",
-                    :timeout     => 60
+      metadata    :name        => "Libra Management",
+                  :description => "Agent to manage Libra services",
+                  :author      => "Mike McGrath",
+                  :license     => "GPLv2",
+                  :version     => "0.1",
+                  :url         => "https://engineering.redhat.com/trac/Libra",
+                  :timeout     => 60
 
-        #
-        # Simple echo method
-        #
-        def echo_action
-          validate :msg, String
-          reply[:msg] = request[:msg]
+      #
+      # Simple echo method
+      #
+      def echo_action
+        validate :msg, String
+        reply[:msg] = request[:msg]
+      end
+
+      #
+      # Passes arguments to cartridge for use
+      #
+      def cartridge_do_action
+        Log.instance.debug("cartridge_do_action call / request = #{request.pretty_inspect}")
+        validate :cartridge, /^[a-zA-Z0-9\.\-]+$/
+        validate :action, /^(configure|deconfigure|update_namespace|info|post-install|post_remove|pre-install|reload|restart|start|status|stop)$/
+        validate :args, /^.+$/
+        cartridge = request[:cartridge]
+        action = request[:action]
+        args = request[:args]
+        if File.exists? "/usr/libexec/li/cartridges/#{cartridge}/info/hooks/#{action}"                
+          pid, stdin, stdout, stderr = Open4::popen4("/usr/bin/runcon -l s0-s0:c0.c1023 /usr/libexec/li/cartridges/#{cartridge}/info/hooks/#{action} #{args} 2>&1")
+        else
+          reply[:exitcode] = 127
+          reply.fail! "cartridge_do_action ERROR action '#{action}' not found."
         end
-        
-        # Not sure yet where this should go long term.
-        CARTRIDGE_HIERARCHY = { 'php-5.3' => 'abstract-httpd',
-                                'wsgi-3.2' => 'abstract-httpd',
-                                'rack-1.1' => 'abstract-httpd',
-                                'jbossas-7.0' => 'abstract-httpd',
-                                'perl-5.10' => 'abstract-httpd'}
-
-        #
-        # Passes arguments to cartridge for use
-        #
-        def cartridge_do_action
-          Log.instance.debug("cartridge_do_action call / request = #{request.pretty_inspect}")
-          validate :cartridge, /^[a-zA-Z0-9\.\-]+$/
-          validate :action, /^(configure|deconfigure|update_namespace|info|post-install|post_remove|pre-install|reload|restart|start|status|stop)$/
-          validate :args, /^.+$/
-          cartridge = request[:cartridge]
-          action = request[:action]
-          args = request[:args]
-          if File.exists? "/usr/libexec/li/cartridges/#{cartridge}/info/hooks/#{action}"                
-            pid, stdin, stdout, stderr = Open4::popen4("/usr/bin/runcon -l s0-s0:c0.c1023 /usr/libexec/li/cartridges/#{cartridge}/info/hooks/#{action} #{args} 2>&1")
-          elsif CARTRIDGE_HIERARCHY[cartridge]
-            parent_cartridge = CARTRIDGE_HIERARCHY[cartridge]
-            pid, stdin, stdout, stderr = Open4::popen4("/usr/bin/runcon -l s0-s0:c0.c1023 /usr/libexec/li/cartridges/#{parent_cartridge}/info/hooks/#{action} #{args} 2>&1")
-          else
-            reply[:exitcode] = 127
-            reply.fail! "cartridge_do_action ERROR action '#{action}' not found."
-          end
-          stdin.close
-          ignored, status = Process::waitpid2 pid
-          exitcode = status.exitstatus
-          # Do this to avoid cartridges that might hold open stdout
-          output = ""
-          begin
-            Timeout::timeout(5) do
-              while (line = stdout.gets)
-                output << line
-              end
+        stdin.close
+        ignored, status = Process::waitpid2 pid
+        exitcode = status.exitstatus
+        # Do this to avoid cartridges that might hold open stdout
+        output = ""
+        begin
+          Timeout::timeout(5) do
+            while (line = stdout.gets)
+              output << line
             end
-          rescue Timeout::Error
-            Log.instance.debug("cartridge_do_action WARNING - stdout read timed out")
           end
-
-          if exitcode == 0
-            Log.instance.debug("cartridge_do_action (#{exitcode})\n------\n#{output}\n------)")
-          else
-            Log.instance.debug("cartridge_do_action ERROR (#{exitcode})\n------\n#{output}\n------)")
-          end
-
-          reply[:output] = output
-          reply[:exitcode] = exitcode
-          reply.fail! "cartridge_do_action failed #{exitcode}.  Output #{output}" unless exitcode == 0
+        rescue Timeout::Error
+          Log.instance.debug("cartridge_do_action WARNING - stdout read timed out")
         end
 
-        #
-        # Returns whether an app is on a machine
-        #
-        def has_app_action
-          validate :customer, /^[a-zA-Z0-9]+$/
-          validate :application, /^[a-zA-Z0-9]+$/
-          customer = request[:customer]
-          app_name = request[:application]
-          if File.exist?("/var/lib/libra/#{customer}/#{app_name}")
-            reply[:output] = true
-          else
-            reply[:output] = false
-          end
-          reply[:exitcode] = 0
+        if exitcode == 0
+          Log.instance.debug("cartridge_do_action (#{exitcode})\n------\n#{output}\n------)")
+        else
+          Log.instance.debug("cartridge_do_action ERROR (#{exitcode})\n------\n#{output}\n------)")
         end
+
+        reply[:output] = output
+        reply[:exitcode] = exitcode
+        reply.fail! "cartridge_do_action failed #{exitcode}.  Output #{output}" unless exitcode == 0
+      end
+        
+      #
+      # Migrate between versions
+      #
+      def migrate_action
+        Log.instance.debug("migrate_action call / request = #{request.pretty_inspect}")
+        validate :uuid, /^[a-zA-Z0-9]+$/
+        validate :application, /^[a-zA-Z0-9]+$/
+        validate :app_type, /^.+$/
+        validate :version, /^.+$/
+        validate :namespace, /^.+$/  
+        uuid = request[:uuid]
+        app_name = request[:application]
+        old_app_type = request[:app_type]
+        namespace = request[:namespace]
+        version = request[:version]
+        node_config = ParseConfig.new('/etc/libra/node.conf')
+        libra_home = '/var/lib/libra' #node_config.get_value('libra_dir')
+        libra_domain = node_config.get_value('libra_domain')
+        cartridge_dir = "/usr/libexec/li/cartridges"
+        output = ""
+        exitcode = 0
+        app_types = {'php-5.3.2' => 'php-5.3', 
+                     'rack-1.1.0' => 'rack-1.0', 
+                     'wsgi-3.2.1' => 'wsgi-3.2',
+                     'jbossas-7.0.0' => 'jbossas-7.0',
+                     'perl-5.10.1' => 'perl-5.10'}
+        new_app_type = app_types[old_app_type] ? app_types[old_app_type] : old_app_type 
+        old_cartridge_dir = "#{cartridge_dir}/#{old_app_type}"
+        new_cartridge_dir = "#{cartridge_dir}/#{new_app_type}"
+        framework = old_app_type.split('-')[0]
+        app_home = "#{libra_home}/#{uuid}"               
+        if (version == '0.72.9')
+          framework_dir = "#{app_home}/#{framework}"
+          old_app_dir = "#{framework_dir}/#{app_name}"
+          new_app_dir = "#{app_home}/#{app_name}"
+          if File.exists? old_app_dir
+            output += "Moving '#{old_app_dir}' to '#{new_app_dir}'\n"
+            FileUtils.mv old_app_dir, new_app_dir
+            if Dir["#{framework_dir}/*"].empty?
+              output += "Removing empty app type dir '#{framework_dir}'\n"
+              FileUtils.remove_dir framework_dir
+            end
+            ctl_script = "#{new_app_dir}/#{app_name}_ctl.sh"
+            output += replace_in_file(ctl_script, '//', '/')
+            output += replace_in_file(ctl_script, old_app_dir, new_app_dir)            
+            output += replace_in_file(ctl_script, old_cartridge_dir, new_cartridge_dir)
+            httpd_conf = "/etc/httpd/conf.d/libra/#{uuid}_#{namespace}_#{app_name}.conf"
+            # can't replace // blindly because of http://
+            output += replace_in_file(httpd_conf, old_cartridge_dir, new_cartridge_dir)
+            libra_conf = "#{new_app_dir}/conf.d/libra.conf"
+            output += replace_in_file(libra_conf, '//', '/')
+            output += replace_in_file(libra_conf, old_app_dir, new_app_dir)
+            post_receive = "#{app_home}/git/#{app_name}.git/hooks/post-receive"
+            output += replace_in_file(post_receive, '//', '/')
+            output += replace_in_file(post_receive, old_app_dir, new_app_dir)
+            if framework == 'php'
+              # can't replace // blindly because of http://
+              output += replace_in_file("#{new_app_dir}/conf/php.ini", old_app_dir, new_app_dir)
+            end
+
+
+            # add ssl support
+            grep_output, grep_exitcode = execute_script("grep 'ProxyPass / http://' #{httpd_conf} 2>&1")
+            ip = grep_output[grep_output.index('http://') + 'http://'.length..-1]
+            ip = ip[0..ip.index(':')-1]
+            
+            file = File.open("#{new_cartridge_dir}/info/configuration/node_ssl_template.conf", "r")
+            ssl_template = nil
+            begin
+              ssl_template = file.read
+            ensure
+              file.close
+            end
+
+            output += "Adding ssl support to #{httpd_conf} using ip: #{ip}\n"
+            file = File.open(httpd_conf, 'a')
+            begin
+              file.puts <<EOF
+              
+<VirtualHost *:443>
+  ServerName #{app_name}-#{namespace}.#{libra_domain}
+  ServerAdmin mmcgrath@redhat.com
+
+  #{ssl_template}
+
+  ProxyPass / http://#{ip}:8080/
+  ProxyPassReverse / http://#{ip}:8080/
+</VirtualHost>
+EOF
+
+            ensure
+              file.close
+            end
+          else
+            exitcode = 127
+            output += "Application not found to migrate: #{uuid}/#{framework}/#{app_name}\n"
+          end
+        else
+          exitcode = 127
+          output += "Migration version not supported: #{version}\n"
+        end
+        Log.instance.debug("migrate_action (#{exitcode})\n------\n#{output}\n------)")
+
+        reply[:output] = output
+        reply[:exitcode] = exitcode
+        reply.fail! "migrate_action failed #{exitcode}.  Output #{output}" unless exitcode == 0
+      end
+      
+      def replace_in_file(file, old_value, new_value)
+        output, exitcode = execute_script("sed -i \"s,#{old_value},#{new_value},g\" #{file} 2>&1")
+        #TODO handle exitcode
+        return "Updated '#{file}' changed '#{old_value}' to '#{new_value}'.  output: #{output}  exitcode: #{exitcode}\n"
+      end
+      
+      def execute_script(cmd)
+        pid, stdin, stdout, stderr = Open4::popen4(cmd)
+        stdin.close
+        ignored, status = Process::waitpid2 pid
+        exitcode = status.exitstatus
+        output = ''
+        begin
+          Timeout::timeout(5) do
+            while (line = stdout.gets)
+              output << line
+            end
+          end
+        rescue Timeout::Error
+          Log.instance.debug("execute_script WARNING - stdout read timed out")
+        end
+        return output, exitcode
+      end
+
+      #
+      # Returns whether an app is on a server
+      #
+      def has_app_action
+        validate :uuid, /^[a-zA-Z0-9]+$/
+        validate :application, /^[a-zA-Z0-9]+$/
+        uuid = request[:uuid]
+        app_name = request[:application]
+        if File.exist?("/var/lib/libra/#{uuid}/#{app_name}")
+          reply[:output] = true
+        else
+          reply[:output] = false
+        end
+        reply[:exitcode] = 0
+      end
 
     end
   end

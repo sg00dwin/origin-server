@@ -68,13 +68,32 @@ module Libra
           if app_info['server_identity']
             server = Server.new(app_info['server_identity'])
             if server
-              Libra.logger_debug "DEBUG: Performing action '#{action}' on node: #{server.name} - #{server.repos} repos" if Libra.c[:rpc_opts][:verbose]
-              server_execute_direct(framework, action, app_name, user, server, app_info)
-
+              Libra.logger_debug "DEBUG: Performing action '#{action}' on node: #{server.name} - #{server.repos} repos" if Libra.c[:rpc_opts][:verbose]              
+              begin
+                server_execute_direct(framework, action, app_name, user, server, app_info)
+              rescue Exception => e
+                if action == 'deconfigure'
+                  if server.has_app?(app_info, app_name)
+                    raise
+                  else
+                    Libra.logger_debug "Application '#{app_name}' not found on node #{server.name}.  Continuing with deconfigure."
+                    Libra.logger_debug "Error from cartridge on deconfigure: #{e.message}"
+                  end
+                else
+                  raise
+                end
+              end              
               if action == 'deconfigure'
                 # update DNS
                 Libra.logger_debug "DEBUG: Public ip being deconfigured from namespace '#{user.namespace}'"
                 Server.delete_app_dns_entries(app_name, user.namespace)
+                # remove the node account from the server node.
+                Libra.logger_debug "Removing app account from server node: #{app_info}"
+                server.delete_account(app_info['uuid'])
+
+                # Remove S3 app on deconfigure (one of the last things)
+                Libra.logger_debug "Removing app info from persistant storage: #{app_name}"
+                user.delete_app(app_name)
               end
             else
               if action == 'deconfigure'
@@ -87,10 +106,13 @@ module Libra
           elsif action != 'deconfigure'
             raise NodeException.new(254), "The application #{app_name} is registered without a specified node.", caller[0..5]
           end
-        end
-        if action == 'deconfigure'
-          # Remove S3 app on deconfigure (one of the last things)
-          user.delete_app(app_name)
+          if action == 'deconfigure'
+            # remove the node account from the server node.
+            server.delete_account(app_info[:uuid])
+
+            # Remove S3 app on deconfigure (one of the last things)
+            user.delete_app(app_name)
+          end
         end
       end
     else

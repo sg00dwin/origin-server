@@ -85,9 +85,10 @@ class ApplicationController < ActionController::Base
 
     if rh_sso
       # redirect to https if they have rh_sso but are on http:// for some reason
-      if request.protocol == 'http://'
-        redirect_to 'https://' + request.url['http://'.length, request.url.length]
-      end
+      # Note: doesn't work because rh_sso is a secure cookie
+      #if request.protocol == 'http://'
+      #  redirect_to 'https://' + request.url[request.protocol.length..-1]
+      #end
     else
       if logged_in?
         redirect_to_logout

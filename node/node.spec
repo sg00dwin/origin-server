@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.72.6
+Version:       0.72.10
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -138,6 +138,33 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Wed Jun 08 2011 Dan McPherson <dmcphers@redhat.com> 0.72.10-1
+- functioning migration (dmcphers@redhat.com)
+- minor change (dmcphers@redhat.com)
+- migration progress (dmcphers@redhat.com)
+- migration updates (dmcphers@redhat.com)
+- fixed test bracket typo (markllama@redhat.com)
+- fixed shell equality test typo, and made deconfigure require only the account
+  name (markllama@redhat.com)
+- remove accidentially checked in file (dmcphers@redhat.com)
+- fix rhc-snapshot (dmcphers@redhat.com)
+- added deconfigure as a symlink to configure (markllama@redhat.com)
+- configure reverts if called as deconfigure (markllama@redhat.com)
+- removed empty deconfigure script (markllama@redhat.com)
+- migration progress (dmcphers@redhat.com)
+
+* Mon Jun 06 2011 Dan McPherson <dmcphers@redhat.com> 0.72.9-1
+- 
+
+* Mon Jun 06 2011 Dan McPherson <dmcphers@redhat.com> 0.72.8-1
+- moving to sym links for actions (dmcphers@redhat.com)
+
+* Mon Jun 06 2011 Dan McPherson <dmcphers@redhat.com> 0.72.7-1
+- OK, so the build failures aren't me. So fold back in (jimjag@redhat.com)
+- nother test (jimjag@redhat.com)
+- comment out (jimjag@redhat.com)
+- fold back in cart factor (jimjag@redhat.com)
+
 * Fri Jun 03 2011 Dan McPherson <dmcphers@redhat.com> 0.72.6-1
 - remove apptype dir cleanup (dmcphers@redhat.com)
 

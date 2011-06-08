@@ -2,7 +2,7 @@
 
 Summary:   Provides php-5.3 support
 Name:      rhc-cartridge-php-5.3
-Version:   0.72.6
+Version:   0.72.9
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -36,8 +36,21 @@ Provides php support to OpenShift
 %install
 rm -rf %{buildroot}
 mkdir -p %{buildroot}%{cartridgedir}
+mkdir -p %{buildroot}/%{_sysconfdir}/libra/cartridges
+ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/libra/cartridges/%{name}
 cp -r . %{buildroot}%{cartridgedir}
 rm %{buildroot}%{cartridgedir}/php-5.3.spec
+ln -s %{cartridgedir}/../abstract-httpd/info/hooks/add-module %{buildroot}%{cartridgedir}/info/hooks/add-module
+ln -s %{cartridgedir}/../abstract-httpd/info/hooks/info %{buildroot}%{cartridgedir}/info/hooks/info
+ln -s %{cartridgedir}/../abstract-httpd/info/hooks/post-install %{buildroot}%{cartridgedir}/info/hooks/post-install
+ln -s %{cartridgedir}/../abstract-httpd/info/hooks/post-remove %{buildroot}%{cartridgedir}/info/hooks/post-remove
+ln -s %{cartridgedir}/../abstract-httpd/info/hooks/reload %{buildroot}%{cartridgedir}/info/hooks/reload
+ln -s %{cartridgedir}/../abstract-httpd/info/hooks/remove-module %{buildroot}%{cartridgedir}/info/hooks/remove-module
+ln -s %{cartridgedir}/../abstract-httpd/info/hooks/restart %{buildroot}%{cartridgedir}/info/hooks/restart
+ln -s %{cartridgedir}/../abstract-httpd/info/hooks/start %{buildroot}%{cartridgedir}/info/hooks/start
+ln -s %{cartridgedir}/../abstract-httpd/info/hooks/status %{buildroot}%{cartridgedir}/info/hooks/status
+ln -s %{cartridgedir}/../abstract-httpd/info/hooks/stop %{buildroot}%{cartridgedir}/info/hooks/stop
+ln -s %{cartridgedir}/../abstract-httpd/info/hooks/update_namespace %{buildroot}%{cartridgedir}/info/hooks/update_namespace
 
 %clean
 rm -rf %{buildroot}
@@ -47,11 +60,28 @@ rm -rf %{buildroot}
 %attr(0750,-,-) %{cartridgedir}/info/hooks/
 %attr(0750,-,-) %{cartridgedir}/info/data/
 %attr(0750,-,-) %{cartridgedir}/info/build/
-%{cartridgedir}/info/configuration/
+%config(noreplace) %{cartridgedir}/info/configuration/
+%{_sysconfdir}/libra/cartridges/%{name}
 %{cartridgedir}/info/changelog
 %{cartridgedir}/info/control
 
 %changelog
+* Tue Jun 07 2011 Matt Hicks <mhicks@redhat.com> 0.72.9-1
+- Fixing servername to remove the debug server (mmcgrath@redhat.com)
+
+* Tue Jun 07 2011 Matt Hicks <mhicks@redhat.com> 0.72.8-1
+- Fixing git clone to repack after cloning (mhicks@redhat.com)
+- tracking symlink dir (mmcgrath@redhat.com)
+- merging conflicg (mmcgrath@redhat.com)
+- Changing config dir to an actual config.  Also symlinking changes into the
+  /etc/libra dir (mmcgrath@redhat.com)
+- adding node_ssl_template (mmcgrath@redhat.com)
+* Mon Jun 06 2011 Dan McPherson <dmcphers@redhat.com> 0.72.7-1
+- moving to sym links for actions (dmcphers@redhat.com)
+
+* Mon Jun 06 2011 Mike McGrath <mmcgrath@redhat.com> 0.72.6-2
+- Added config dir symlink and config(noreplace)
+
 * Fri Jun 03 2011 Matt Hicks <mhicks@redhat.com> 0.72.6-1
 - trying a recommit of php repo (dmcphers@redhat.com)
 - version cleanup (dmcphers@redhat.com)

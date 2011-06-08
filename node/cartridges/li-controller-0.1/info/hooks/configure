@@ -49,9 +49,12 @@ quota_blocks=`expr 1024 \* 128` # 128MB
 function print_help {
     echo "Usage: $0"
     echo "  -c customer_uuid"
-    echo "  -e email"
-    echo "  -s ssh_pub_key"
-    echo "  -d (optional: debug)"
+    if [ -z "$REVERT" ]
+    then
+        echo "  -e customer_username"
+        echo "  -s ssh_pub_key"
+        echo "  -d (optional: debug)"
+    fi
     exit 1
 }
 
@@ -77,6 +80,11 @@ function initialize {
     then
 	libra_dir=$DEFAULT_LIBRA_DIR
     fi
+
+    SCRIPTNAME=`basename $0`
+    if [ $SCRIPTNAME = 'deconfigure' ] ; then
+       REVERT='TRUE'
+    fi 
 }
 
 function parse_options {
@@ -106,7 +114,14 @@ function parse_options {
 	esac
     done
 
-    if ( [ -z "$username" ] || [ -z "$email" ] || [ -z "$ssh_key" ] )
+    # username is always required
+    if ( [ -z "$username" ])
+    then
+	print_help
+    fi
+
+    # email and ssh_key are only needed for configure, not deconfigure
+    if ( [ -z "$REVERT" ] && ([ -z "$email" ] || [ -z "$ssh_key" ]) )
     then
 	print_help
     fi
