@@ -200,3 +200,15 @@ allow unconfined_t libra_t:process sigchld;
 dontaudit unconfined_t libra_t:socket_class_set { read write };
 corecmd_shell_entry_type(libra_domain)
 allow libra_t user_devpts_t:chr_file { getattr read write append ioctl lock };
+
+
+# Silence passenger
+files_dontaudit_getattr_all_files(httpd_t)
+domain_dontaudit_read_all_domains_state(httpd_t)
+require {
+        type httpd_t;
+        class capability sys_ptrace;
+}
+
+#============= httpd_t ==============
+allow httpd_t self:capability sys_ptrace;
