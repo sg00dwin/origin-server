@@ -28,7 +28,7 @@ class LoginController < ApplicationController
         session[:login_workflow] = request.referer
       else
         if request.protocol == 'http://'
-          session[:login_workflow] = 'https://' + request.url[request.protocol.length, request.url.length]                 
+          session[:login_workflow] = 'https://' + request.url[request.protocol.length..-1]                 
         else
           session[:login_workflow] = request.referer
         end
