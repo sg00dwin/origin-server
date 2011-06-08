@@ -16,11 +16,12 @@ FRAMEWORKS = {'php-5.3.2' => 'php-5.3',
 #
 #  Migrate the specified app on the node
 #
-def migrate_app_on_node(user, server_name, app, app_name, app_type)
-  Helper.rpc_exec('libra', server_name) do |client|
+def migrate_app_on_node(user, app, app_name, app_type)
+  Helper.rpc_exec('libra', app['server_identity']) do |client|
     client.migrate(:uuid => app['uuid'],
                    :application => app_name,
                    :app_type => app_type,
+                   :namespace => user.namespace,
                    :version => '0.72.9') do |response|
       exit_code = response[:body][:data][:exitcode]        
       output = response[:body][:data][:output]
@@ -29,7 +30,7 @@ def migrate_app_on_node(user, server_name, app, app_name, app_type)
       end
       if exit_code != 0
         puts "Migrate on node exit code: #{exit_code}"
-        raise "Failed migrating app '#{app_name}' with uuid '#{app['uuid']}' on node '#{server_name}'"
+        raise "Failed migrating app '#{app_name}' with uuid '#{app['uuid']}' on node '#{app['server_identity']}'"
       end
     end
   end
@@ -76,7 +77,7 @@ def migrate_rel3
           #user.update_app(app)
           if app['server_identity']
             puts "Migrating app '#{app_name}' with uuid '#{app['uuid']}' on node '#{app['server_identity']}' for user: #{rhlogin}"
-            migrate_app_on_node(user, app['server_identity'], app, app_name, from_type)
+            migrate_app_on_node(user, app, app_name, from_type)
           else        
             puts "Missing server identity for app '#{app_name}' with uuid '#{app['uuid']}' for user: #{rhlogin}"            
           end

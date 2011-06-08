@@ -27,6 +27,7 @@
 require 'rubygems'
 require 'open4'
 require 'fileutils'
+require 'parseconfig'
 require 'pp'
 
 module MCollective
@@ -103,12 +104,16 @@ module MCollective
         validate :uuid, /^[a-zA-Z0-9]+$/
         validate :application, /^[a-zA-Z0-9]+$/
         validate :app_type, /^.+$/
-        validate :version, /^.+$/  
+        validate :version, /^.+$/
+        validate :namespace, /^.+$/  
         uuid = request[:uuid]
         app_name = request[:application]
         old_app_type = request[:app_type]
+        namespace = request[:namespace]
         version = request[:version]
-        libra_home = '/var/lib/libra'
+        node_config = ParseConfig.new('/etc/libra/node.conf')
+        libra_home = '/var/lib/libra' #node_config.get_value('libra_dir')
+        libra_domain = node_config.get_value('libra_domain')
         cartridge_dir = "/usr/libexec/li/cartridges"
         output = ""
         exitcode = 0
@@ -118,9 +123,11 @@ module MCollective
                      'jbossas-7.0.0' => 'jbossas-7.0',
                      'perl-5.10.1' => 'perl-5.10'}
         new_app_type = app_types[old_app_type]
+        old_cartridge_dir = "#{cartridge_dir}/#{old_app_type}"
+        new_cartridge_dir = "#{cartridge_dir}/#{new_app_type}"
+        framework = old_app_type.split('-')[0]
+        app_home = "#{libra_home}/#{uuid}"               
         if (version == '0.72.9')
-          framework = old_app_type.split('-')[0]
-          app_home = "#{libra_home}/#{uuid}"
           framework_dir = "#{app_home}/#{framework}"
           old_app_dir = "#{framework_dir}/#{app_name}"
           new_app_dir = "#{app_home}/#{app_name}"
@@ -132,15 +139,44 @@ module MCollective
               FileUtils.remove_dir framework_dir
             end
             ctl_script = "#{new_app_dir}/#{app_name}_ctl.sh"
-            replace_in_file(ctl_script, old_app_dir, new_app_dir)
-            output += "Updating '#{ctl_script}' from #{old_app_type} to #{new_app_type}\n"
-            system("sed -i \"s,#{cartridge_dir}/#{old_app_type},#{cartridge_dir}/#{new_app_type},g\" #{ctl_script}")
-            replace_in_file(ctl_script, "#{cartridge_dir}/#{old_app_type}", "#{cartridge_dir}/#{new_app_type}")
-            replace_in_file("#{new_app_dir}/conf.d/libra.conf", old_app_dir, new_app_dir)
-            replace_in_file("#{app_home}/git/#{app_name}.git/hooks/post-receive", old_app_dir, new_app_dir)
+            output += replace_in_file(ctl_script, old_app_dir, new_app_dir)
+            output += replace_in_file(ctl_script, old_cartridge_dir, new_cartridge_dir)
+            httpd_conf = "/etc/httpd/conf.d/libra/#{uuid}_#{namespace}_#{app_name}.conf"
+            output += replace_in_file(httpd_conf, old_cartridge_dir, new_cartridge_dir)
+            output += replace_in_file("#{new_app_dir}/conf.d/libra.conf", old_app_dir, new_app_dir)
+            output += replace_in_file("#{app_home}/git/#{app_name}.git/hooks/post-receive", old_app_dir, new_app_dir)
             if framework == 'php'
-              replace_in_file("#{new_app_dir}/conf/php.ini", old_app_dir, new_app_dir)
+              output += replace_in_file("#{new_app_dir}/conf/php.ini", old_app_dir, new_app_dir)
             end
+
+=begin
+            # add ssl support
+            
+            file = File.open("#{new_cartridge_dir}/info/configuration/node_ssl_template.conf", "r")
+            ssl_template = nil
+            begin
+              ssl_template = file.read
+            ensure
+              file.close
+            end
+                            
+            file = File.open(httpd_conf, 'a')
+            begin
+file << EOF
+<VirtualHost *:443>
+  ServerName #{app_name}-#{namespace}.#{libra_domain}
+  ServerAdmin mmcgrath@redhat.com
+
+  #{ssl_template}
+
+  ProxyPass / http://$IP:8080/
+  ProxyPassReverse / http://$IP:8080/
+</VirtualHost>
+EOF
+            ensure
+              file.close
+            end
+=end
           else
             exitcode = 127
             output += "Application not found to migrate: #{uuid}/#{framework}/#{app_name}\n"
@@ -157,8 +193,8 @@ module MCollective
       end
       
       def replace_in_file(file, old_value, new_value)
-        output += "Updating '#{file}' changing '#{old_value}' to '#{new_value}'\n"
         system("sed -i \"s,#{old_value},#{new_value},g\" #{file}")
+        return "Updated '#{file}' changed '#{old_value}' to '#{new_value}'\n"
       end
 
       #
