@@ -5,7 +5,7 @@ require 'openshift'
 
 include Libra
 
-RHLOGINS=['danmcp1223']
+RHLOGINS=nil #['danmcp1230']
 
 FRAMEWORKS = {'php-5.3.2' => 'php-5.3', 
               'rack-1.1.0' => 'rack-1.0', 
@@ -16,21 +16,36 @@ FRAMEWORKS = {'php-5.3.2' => 'php-5.3',
 #
 #  Migrate the specified app on the node
 #
-def migrate_app_on_node(user, app, app_name, app_type)
+def migrate_app_on_node(user, app, app_name, old_app_type, new_app_type)
   Helper.rpc_exec('libra', app['server_identity']) do |client|
     client.migrate(:uuid => app['uuid'],
                    :application => app_name,
-                   :app_type => app_type,
+                   :app_type => old_app_type,
                    :namespace => user.namespace,
                    :version => '0.73') do |response|
       exit_code = response[:body][:data][:exitcode]        
       output = response[:body][:data][:output]
-      if (output.length > 0)      
+      if (output.length > 0)
         puts "Migrate on node output: #{output}"
       end
       if exit_code != 0
         puts "Migrate on node exit code: #{exit_code}"
         raise "Failed migrating app '#{app_name}' with uuid '#{app['uuid']}' on node '#{app['server_identity']}'"
+      else
+        puts "Restarting app '#{app_name}' on node '#{app['server_identity']}'"
+        server = Server.new(app['server_identity'])
+        result = server.execute_direct(new_app_type, 'restart', "#{app_name} #{user.namespace} #{app['uuid']}")[0]
+        if (result && defined? result.results)
+          output = result.results[:data][:output]
+          exit_code = result.results[:data][:exitcode]
+          if (output.length > 0)
+            puts "Restart on node output: #{output}"
+          end
+          if exit_code != 0
+            puts "Restart on node exit code: #{exit_code}"
+            raise "Failed restarting app '#{app_name}' with uuid '#{app['uuid']}' on node '#{app['server_identity']}'"
+          end
+        end
       end
     end
   end
@@ -51,6 +66,7 @@ def migrate
   rhlogins.each do |rhlogin|
     user = User.find(rhlogin)
     if user
+      puts ""
       puts "######################################################"
       puts "Updating apps for user: #{user.rhlogin}(#{user_count.to_s}) with uuid: #{user.uuid}"
       apps = user.apps
@@ -78,7 +94,7 @@ def migrate
           user.update_app(app, app_name)
           if app['server_identity']
             puts "Migrating app '#{app_name}' with uuid '#{app['uuid']}' on node '#{app['server_identity']}' for user: #{rhlogin}"
-            migrate_app_on_node(user, app, app_name, from_type)
+            migrate_app_on_node(user, app, app_name, from_type, to_type)
           else        
             puts "Missing server identity for app '#{app_name}' with uuid '#{app['uuid']}' for user: #{rhlogin}"            
           end

@@ -37,9 +37,6 @@ module LibraMigration
       output += replace_in_file(ctl_script, '//', '/')
       output += replace_in_file(ctl_script, old_app_dir, new_app_dir)            
       output += replace_in_file(ctl_script, old_cartridge_dir, new_cartridge_dir)
-      httpd_conf = "/etc/httpd/conf.d/libra/#{uuid}_#{namespace}_#{app_name}.conf"
-      # can't replace // blindly because of http://
-      output += replace_in_file(httpd_conf, old_cartridge_dir, new_cartridge_dir)
       libra_conf = "#{new_app_dir}/conf.d/libra.conf"
       output += replace_in_file(libra_conf, '//', '/')
       output += replace_in_file(libra_conf, old_app_dir, new_app_dir)
@@ -52,6 +49,7 @@ module LibraMigration
       end
   
       # add ssl support
+      httpd_conf = "/etc/httpd/conf.d/libra/#{uuid}_#{namespace}_#{app_name}.conf"
       grep_output, grep_exitcode = execute_script("grep 'ProxyPass / http://' #{httpd_conf} 2>&1")
       ip = grep_output[grep_output.index('http://') + 'http://'.length..-1]
       ip = ip[0..ip.index(':')-1]
