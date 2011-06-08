@@ -45,7 +45,7 @@ module StreamlineMock
   #
   def login
     Rails.logger.warn("Non integrated environment - faking login")
-    if @email_address.index("@")
+    if @email_address and @email_address.index("@")
       Rails.logger.debug("Fake streamline login")
       @roles << "simple_authenticated"
     else
@@ -55,6 +55,9 @@ module StreamlineMock
 
     # Set a fake ticket
     @ticket = "test"
+
+    # Return the login
+    return @rhlogin
   end
 
   #

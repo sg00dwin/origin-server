@@ -1,3 +1,5 @@
+require 'openshift'
+
 class WebUser
   include ActiveModel::Validations
   include ActiveModel::Conversion
