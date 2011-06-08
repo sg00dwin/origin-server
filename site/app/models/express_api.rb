@@ -38,4 +38,9 @@ module ExpressApi
       errors.add(:base, I18n.t(:unknown))
     end
   end
+  
+  def persisted?
+    false
+  end
+
 end

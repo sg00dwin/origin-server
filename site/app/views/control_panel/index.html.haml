@@ -1,5 +1,14 @@
 -# file: Control Panel index
 
-%h1 Control Panel
+= render 'shared/pageheader', :product => 'express', :title => 'Control Panel', :subtitle => ''
 
-  = form_for @domain
+#page.container_24
+  #main_content.grid_22
+
+    %h2 Create a domain
+    = semantic_form_for @domain do |form|
+      = form.input :namespace
+      = form.input :ssh
+      = form.buttons
+      
+  .clear
