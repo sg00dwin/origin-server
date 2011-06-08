@@ -101,7 +101,7 @@ class Accounts < Thor
     s3 = connect
     File.open(File.expand_path(input_file, "r")) do |file|
       file.readlines.each do |line|
-        from, to = line.split("/")
+        from, to = line.chomp.split("/")
         puts "Migrating user: #{from} to #{to}"
         migrate(bucket, from, to)
       end
