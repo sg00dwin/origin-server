@@ -132,7 +132,7 @@ class DevEnv < Thor
       conn = connect
 
       # Create a new builder instance
-      instance = Instance.create(conn, options[:remote])
+      instance = Instance.find(conn, options[:remote])
       instance.ssh('mkdir -p /tmp/upload')
       instance.ssh('rm -rf /tmp/upload/*')
 
