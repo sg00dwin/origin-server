@@ -26,7 +26,7 @@ module LibraMigration
     new_app_dir = "#{app_home}/#{app_name}"
     output = ''
     exitcode = 0
-    if File.exists? old_app_dir
+    if (File.exists?(old_app_dir) && !File.symlink?(framework_dir))
       output += "Moving '#{old_app_dir}' to '#{new_app_dir}'\n"
       FileUtils.mv old_app_dir, new_app_dir
       if Dir["#{framework_dir}/*"].empty?
