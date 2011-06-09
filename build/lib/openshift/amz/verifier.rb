@@ -6,7 +6,7 @@ module OpenShift
       msg = <<END_OF_MESSAGE
 From: Jenkins <noreply@redhat.com>
 To: Libra Team <libra-express@redhat.com>
-Subject: DevEnv Image #{amz_image_name} (#{amz_image_id}) is QE Ready
+Subject: [Jenkins] DevEnv Image #{amz_image_name} (#{amz_image_id}) is QE Ready
 
 Image #{amz_image_name} (#{amz_image_id}) has passed validation tests and is ready for QE.
 

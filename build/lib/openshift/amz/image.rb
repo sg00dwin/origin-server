@@ -17,8 +17,9 @@ module OpenShift
 
       def self.get_name(conn, amz_image_id)
         log.info "Getting image name for #{amz_image_id}..."
-        conn.describe_images([amz_image_id])[0][:aws_location].split("/")[-1] 
+        name = conn.describe_images([amz_image_id])[0][:aws_location].split("/")[-1] 
         log.info "Done"
+        return name
       end
 
       def self.register(conn, instance_id, name, desc = "")

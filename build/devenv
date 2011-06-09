@@ -69,6 +69,7 @@ class DevEnv < Thor
       # Trim down the output to 255 characters
       manifest.gsub!(/rhc-([a-z])/, '\1')
       manifest.gsub!('.el6.noarch', '')
+      manifest.gsub!('.el6_1.noarch', '')
       manifest.gsub!('cartridge', 'c-')
       manifest = manifest[0..254]
       puts "Done"
