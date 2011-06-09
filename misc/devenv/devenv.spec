@@ -108,6 +108,9 @@ chown -R jenkins:jenkins /var/lib/jenkins
 # However, without doing this, rake test fails for the rails sites
 chmod a+r /etc/libra/controller.conf
 
+# Allow Apache to connect to Jenkins port 8081
+/usr/sbin/setsebool -P httpd_can_network_connect=on || :
+
 # Allow httpd to relay
 /usr/sbin/setsebool -P httpd_can_network_relay=on || :
 
