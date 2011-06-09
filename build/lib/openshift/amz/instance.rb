@@ -152,11 +152,17 @@ module OpenShift
       end
 
       def is_running?
-        get_value(:aws_state) == "running"
+        unless @is_running
+          @is_running = get_value(:aws_state) == "running"
+        end
+        return @is_running
       end
 
       def can_ssh?
-        ssh('echo Success', 10).split[-1] == "Success"
+        unless @can_ssh
+          @can_ssh = ssh('echo Success', 10).split[-1] == "Success"
+        end
+        return @can_ssh 
       end
 
       def is_valid?

@@ -87,7 +87,6 @@ class DevEnv < Thor
 
   desc "update", "Update a DevEnv environment with local RPM installations"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
-  method_option :remote, :desc => "The remote SSH machine name with which to synchronize"
   def update
     # Warn on uncommitted changes
     `git diff-index --quiet HEAD` 
@@ -113,35 +112,30 @@ class DevEnv < Thor
 
     # Build and install them
     build_dirs.each do |build_dir|
-      Dir.glob(build_dir).each do |dir|
-        inside(dir) do
-          unless options[:remote]
-            # Build and install the RPM's locally
-            exit 1 unless run('tito build --rpm --test --install', :verbose => options.verbose?)
-          else
-            # Build the RPMs and install remotely
-            exit 1 unless run('tito build --rpm --test', :verbose => options.verbose?)
-          end
-        end
+      puts "Building in #{build_dir}"
+      inside(File.expand_path("../#{build_dir}", File.dirname(__FILE__))) do
+        # Build and install the RPM's locally
+        exit 1 unless run('tito build --rpm --test --install', :verbose => options.verbose?)
       end
     end
+  end
 
-    # If a remote machine was specified, install the RPMs remotely
-    if options[:remote]
-      # Establish a new connection
-      conn = connect
+  desc "sync TAG", "Synchronize a local git repo with a DevEnv instance"
+  method_option :branch, :default => "master", :desc => "The branch to synchronize"
+  method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
+  def sync(tag)
+    # Warn on uncommitted changes
+    `git diff-index --quiet HEAD` 
+    puts "WARNING - Uncommitted repository changes" if $? != 0
 
-      # Create a new builder instance
-      instance = Instance.find(conn, options[:remote])
-      instance.ssh('mkdir -p /tmp/upload')
-      instance.ssh('rm -rf /tmp/upload/*')
+    instance = Instance.find(connect, tag)
+    puts "Synchronizing local changes..."
+    run("git push root@#{instance.dns}:/root/li #{options[:branch]}:master --tags")
+    puts "Done"
 
-      # Find all the tito output and scp it to machine
-      Dir.glob('/tmp/tito/**/*.rpm').each do |rpm|
-        instance.scp_to(rpm, "/tmp/upload")
-        instance.ssh('rpm -Uvh --force /tmp/upload/*.rpm')
-      end
-    end
+    puts "Performing remote install..."
+    instance.ssh("git clone li li-working; li-working/build/devenv update; rm -rf li-working")
+    puts "Done"
   end
 end
 
