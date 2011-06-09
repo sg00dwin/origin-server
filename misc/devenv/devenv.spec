@@ -3,6 +3,7 @@
 %define brokerdir %{_localstatedir}/www/libra/broker
 %define sitedir %{_localstatedir}/www/libra/site
 %define devenvdir %{_sysconfdir}/libra/devenv
+%define jenkins %{_sharedstatedir}/jenkins
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
@@ -71,6 +72,10 @@ mkdir -p %{buildroot}%{sitedir}/log
 # Setup rails development logs
 touch %{buildroot}%{brokerdir}/log/development.log
 touch %{buildroot}%{sitedir}/log/development.log
+
+# Setup the jenkins jobs
+mkdir -p %{buildroot}%{jenkins}/jobs
+mv %{buildroot}%{devenvdir}%{jenkins}/jobs/* %{buildroot}%{jenkins}/jobs
 
 %clean
 rm -rf %{buildroot}
@@ -156,6 +161,13 @@ chkconfig libra-tc on
 %attr(0666,-,-) %{_tmppath}/mcollective-client.log
 %attr(0666,-,-) %{brokerdir}/log/development.log
 %attr(0666,-,-) %{sitedir}/log/development.log
+%config(noreplace) %{jenkins}/jobs/jenkins_update/config.xml
+%config(noreplace) %{jenkins}/jobs/libra_ami/config.xml
+%config(noreplace) %{jenkins}/jobs/libra_ami_verify/config.xml
+%config(noreplace) %{jenkins}/jobs/libra_check/config.xml
+%config(noreplace) %{jenkins}/jobs/libra_prune/config.xml
+%config(noreplace) %{jenkins}/jobs/libra_selenium/config.xml
+%config(noreplace) %{jenkins}/jobs/libra_web/config.xml
 %{devenvdir}
 %{_initddir}/libra-broker
 %{_initddir}/libra-site
