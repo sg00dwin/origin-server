@@ -2,7 +2,7 @@
 
 Summary:       Common dependencies of the OpenShift broker and site
 Name:          rhc-server-common
-Version:       0.72.8
+Version:       0.72.9
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -54,6 +54,9 @@ rm -rf %{buildroot}
                                   -s /sbin/nologin 2>&1 > /dev/null || :
 
 %changelog
+* Wed Jun 08 2011 Matt Hicks <mhicks@redhat.com> 0.72.9-1
+- move migration to separate file (dmcphers@redhat.com)
+
 * Wed Jun 08 2011 Dan McPherson <dmcphers@redhat.com> 0.72.8-1
 - moved account and S3 record delete to the right places in Libra.execute
   (markllama@redhat.com)
