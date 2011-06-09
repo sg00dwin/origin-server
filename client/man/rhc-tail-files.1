@@ -9,7 +9,7 @@ rhc-tail-files \- Tail files from remote running applications in real-time
 .I password
 .B ]
 .B [-f
-.I pathanme
+.I pathname
 .B ] [-d] [-h]
 .B -l
 .I rhlogin
@@ -21,7 +21,7 @@ connects to a remote running application and tail's files in
 real-time.  This is very useful for watching logs.
 .SH OPTIONS
 .IP "-l|--rhlogin login"
-Red Hat login.
+Red Hat login (RHN or OpenShift login with OpenShift Express access).
 .IP "-p|--password password"
 RHLogin password.
 .IP "-a|--app application_name"

@@ -33,7 +33,7 @@ def p_usage
 Usage: #{$0}
 Display information about a user
 
-  -l|--rhlogin   rhlogin    RHCloud rhlogin (#{rhlogin})
+  -l|--rhlogin   rhlogin    Red Hat login (RHN or OpenShift login with OpenShift Express access) (#{rhlogin})
   -p|--password  password   RHLogin password (optional, will prompt)
   -a|--apps                 List applications for rhlogin
   -i|--info                 Show user info

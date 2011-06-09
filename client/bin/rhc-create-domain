@@ -36,7 +36,7 @@ Bind a registered rhcloud user to a domain in rhcloud.
         ~/.ssh/libra_id_rsa.pub key, then re-run with --alter
 
   -n|--namespace   namespace   OpenShift Express namespace (alphanumeric - max #{RHC::Maxdlen} chars) (required)
-  -l|--rhlogin     rhlogin     Red Hat login (required)
+  -l|--rhlogin     rhlogin     Red Hat login (RHN or OpenShift login with OpenShift Express access) (required)
   -p|--password    password    RHLogin password (optional, will prompt)
   -a|--alter                   Alter namespace (will change urls) and/or ssh key
   -d|--debug                   Print Debug info
