@@ -5,10 +5,10 @@ require 'openshift'
 
 include Libra
 
-RHLOGINS=nil #['danmcp1230']
+RHLOGINS=nil #['appname']
 
 FRAMEWORKS = {'php-5.3.2' => 'php-5.3', 
-              'rack-1.1.0' => 'rack-1.0', 
+              'rack-1.1.0' => 'rack-1.1', 
               'wsgi-3.2.1' => 'wsgi-3.2',
               'jbossas-7.0.0' => 'jbossas-7.0',
               'perl-5.10.1' => 'perl-5.10'}
@@ -23,7 +23,7 @@ def migrate_app_on_node(user, app, app_name, old_app_type, new_app_type)
                    :app_type => old_app_type,
                    :namespace => user.namespace,
                    :version => '0.73') do |response|
-      exit_code = response[:body][:data][:exitcode]        
+      exit_code = response[:body][:data][:exitcode]
       output = response[:body][:data][:output]
       if (output.length > 0)
         puts "Migrate on node output: #{output}"
@@ -34,7 +34,10 @@ def migrate_app_on_node(user, app, app_name, old_app_type, new_app_type)
       else
         puts "Restarting app '#{app_name}' on node '#{app['server_identity']}'"
         server = Server.new(app['server_identity'])
-        result = server.execute_direct(new_app_type, 'restart', "#{app_name} #{user.namespace} #{app['uuid']}")[0]
+        result = nil
+        (1..2).each do
+          result = server.execute_direct(new_app_type, 'restart', "#{app_name} #{user.namespace} #{app['uuid']}")[0]
+        end
         if (result && defined? result.results)
           output = result.results[:data][:output]
           exit_code = result.results[:data][:exitcode]
@@ -82,6 +85,7 @@ def migrate
             puts "Migrating app: #{app_name} to type: #{to_type}"
             app['framework'] = to_type
           else
+            to_type = from_type
             puts "WARNING: From type '#{from_type}' not found migrating app: #{app_name}"
           end
           if !app['uuid']

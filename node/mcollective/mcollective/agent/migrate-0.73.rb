@@ -12,7 +12,7 @@ module LibraMigration
     libra_domain = node_config.get_value('libra_domain')
     cartridge_dir = "/usr/libexec/li/cartridges"
     app_types = {'php-5.3.2' => 'php-5.3',
-                 'rack-1.1.0' => 'rack-1.0', 
+                 'rack-1.1.0' => 'rack-1.1', 
                  'wsgi-3.2.1' => 'wsgi-3.2',
                  'jbossas-7.0.0' => 'jbossas-7.0',
                  'perl-5.10.1' => 'perl-5.10'}
@@ -79,7 +79,7 @@ ProxyPass / http://#{ip}:8080/
 ProxyPassReverse / http://#{ip}:8080/
 </VirtualHost>
 EOF
-    
+
       ensure
         file.close
       end
