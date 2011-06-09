@@ -23,6 +23,7 @@ namespace :deploy do
     rm_rf "#{tmpname}/docs"
     rm_rf "#{tmpname}/build"
     rm_rf "#{tmpname}/tests"
+    rm_rf "#{tmpname}/misc"
     rm_rf "#{tmpname}/site/log"
     rm_rf "#{tmpname}/broker/log"
     rm_rf "#{tmpname}/node/tools"    
