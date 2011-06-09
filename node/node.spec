@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.72.10
+Version:       0.72.11
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -139,6 +139,13 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Wed Jun 08 2011 Matt Hicks <mhicks@redhat.com> 0.72.11-1
+- handle new symlink on rerun (dmcphers@redhat.com)
+- migration bug fixes (dmcphers@redhat.com)
+- add link from old apptype to new app home (dmcphers@redhat.com)
+- add restart to migration (dmcphers@redhat.com)
+- move migration to separate file (dmcphers@redhat.com)
+
 * Wed Jun 08 2011 Dan McPherson <dmcphers@redhat.com> 0.72.10-1
 - functioning migration (dmcphers@redhat.com)
 - minor change (dmcphers@redhat.com)
