@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.72.9
+Version:   0.72.10
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -182,6 +182,9 @@ chkconfig libra-tc on
 %{_initddir}/libra-site
 
 %changelog
+* Thu Jun 09 2011 Matt Hicks <mhicks@redhat.com> 0.72.10-1
+- Moving binary selenium content to the devenv RPM structure
+  (mhicks@redhat.com)
 * Wed Jun 08 2011 Matt Hicks <mhicks@redhat.com> 0.72.9-1
 - Allowing Apache to connect to non-standard port for Jenkins
   (mhicks@redhat.com)
