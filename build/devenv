@@ -134,7 +134,7 @@ class DevEnv < Thor
     puts "Done"
 
     puts "Performing remote install..."
-    instance.ssh("git clone li li-working; pushd li-working; build/devenv update; popd; rm -rf li-working")
+    instance.ssh("git clone li li-working; pushd li-working; build/devenv update; popd; rm -rf li-working", 600)
     puts "Done"
   end
 end
