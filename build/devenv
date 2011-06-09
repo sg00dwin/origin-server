@@ -18,6 +18,7 @@ class DevEnv < Thor
   method_option :terminate, :type => :boolean, :desc => "Terminate the instance when finished"
   method_option :reboot, :type => :boolean, :desc => "Reboot the instance after updating"
   method_option :force, :type => :boolean, :desc => "Build even if no package updates are detected"
+  method_option :skip_register, :type => :boolean, :desc => "Do not register AMI"
   def build
     # See if any updates are needed
     unless options[:force]
@@ -74,9 +75,11 @@ class DevEnv < Thor
       manifest = manifest[0..254]
       puts "Done"
 
-      print "Registering AMI..."
-      Image.register(conn, instance.amz_id, options[:name], manifest)
-      puts "Done"
+      unless options.skip_register?
+        print "Registering AMI..."
+        Image.register(conn, instance.amz_id, options[:name], manifest)
+        puts "Done"
+      end
     ensure
       instance.terminate if options.terminate?
     end
@@ -84,6 +87,7 @@ class DevEnv < Thor
 
   desc "update", "Update a DevEnv environment with local RPM installations"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
+  method_option :remote, :desc => "The remote SSH machine name with which to synchronize"
   def update
     # Warn on uncommitted changes
     `git diff-index --quiet HEAD` 
@@ -111,8 +115,31 @@ class DevEnv < Thor
     build_dirs.each do |build_dir|
       Dir.glob(build_dir).each do |dir|
         inside(dir) do
-          exit 1 unless run('tito build --rpm --test --install', :verbose => options.verbose?)
+          unless options[:remote]
+            # Build and install the RPM's locally
+            exit 1 unless run('tito build --rpm --test --install', :verbose => options.verbose?)
+          else
+            # Build the RPMs and install remotely
+            exit 1 unless run('tito build --rpm --test', :verbose => options.verbose?)
+          end
         end
+      end
+    end
+
+    # If a remote machine was specified, install the RPMs remotely
+    if options[:remote]
+      # Establish a new connection
+      conn = connect
+
+      # Create a new builder instance
+      instance = Instance.create(conn, options[:remote])
+      instance.ssh('mkdir -p /tmp/upload')
+      instance.ssh('rm -rf /tmp/upload/*')
+
+      # Find all the tito output and scp it to machine
+      Dir.glob('/tmp/tito/**/*.rpm').each do |rpm|
+        instance.scp_to(rpm, "/tmp/upload")
+        instance.ssh('rpm -Uvh --force /tmp/upload/*.rpm')
       end
     end
   end
