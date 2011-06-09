@@ -12,7 +12,7 @@ module LibraMigration
     libra_domain = node_config.get_value('libra_domain')
     cartridge_dir = "/usr/libexec/li/cartridges"
     app_types = {'php-5.3.2' => 'php-5.3',
-                 'rack-1.1.0' => 'rack-1.0', 
+                 'rack-1.1.0' => 'rack-1.1', 
                  'wsgi-3.2.1' => 'wsgi-3.2',
                  'jbossas-7.0.0' => 'jbossas-7.0',
                  'perl-5.10.1' => 'perl-5.10'}
@@ -26,20 +26,19 @@ module LibraMigration
     new_app_dir = "#{app_home}/#{app_name}"
     output = ''
     exitcode = 0
-    if File.exists? old_app_dir
+    if (File.exists?(old_app_dir) && !File.symlink?(framework_dir))
       output += "Moving '#{old_app_dir}' to '#{new_app_dir}'\n"
       FileUtils.mv old_app_dir, new_app_dir
       if Dir["#{framework_dir}/*"].empty?
         output += "Removing empty app type dir '#{framework_dir}'\n"
         FileUtils.remove_dir framework_dir
+        output += "Linking old framework dir '#{framework_dir}' to app home '#{app_home}'\n"
+        FileUtils.ln_s app_home, framework_dir
       end
       ctl_script = "#{new_app_dir}/#{app_name}_ctl.sh"
       output += replace_in_file(ctl_script, '//', '/')
       output += replace_in_file(ctl_script, old_app_dir, new_app_dir)            
       output += replace_in_file(ctl_script, old_cartridge_dir, new_cartridge_dir)
-      httpd_conf = "/etc/httpd/conf.d/libra/#{uuid}_#{namespace}_#{app_name}.conf"
-      # can't replace // blindly because of http://
-      output += replace_in_file(httpd_conf, old_cartridge_dir, new_cartridge_dir)
       libra_conf = "#{new_app_dir}/conf.d/libra.conf"
       output += replace_in_file(libra_conf, '//', '/')
       output += replace_in_file(libra_conf, old_app_dir, new_app_dir)
@@ -52,6 +51,7 @@ module LibraMigration
       end
   
       # add ssl support
+      httpd_conf = "/etc/httpd/conf.d/libra/#{uuid}_#{namespace}_#{app_name}.conf"
       grep_output, grep_exitcode = execute_script("grep 'ProxyPass / http://' #{httpd_conf} 2>&1")
       ip = grep_output[grep_output.index('http://') + 'http://'.length..-1]
       ip = ip[0..ip.index(':')-1]
@@ -79,7 +79,7 @@ ProxyPass / http://#{ip}:8080/
 ProxyPassReverse / http://#{ip}:8080/
 </VirtualHost>
 EOF
-    
+
       ensure
         file.close
       end
