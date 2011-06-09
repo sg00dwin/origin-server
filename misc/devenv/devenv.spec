@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.72.8
+Version:   0.72.9
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -177,6 +177,10 @@ chkconfig libra-tc on
 %{_initddir}/libra-site
 
 %changelog
+* Wed Jun 08 2011 Matt Hicks <mhicks@redhat.com> 0.72.9-1
+- Allowing Apache to connect to non-standard port for Jenkins
+  (mhicks@redhat.com)
+
 * Wed Jun 08 2011 Matt Hicks <mhicks@redhat.com> 0.72.8-1
 - Adding firefox profile to spec (mhicks@redhat.com)
 - Job renaming and spec config cleanup (mhicks@redhat.com)
