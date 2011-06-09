@@ -80,6 +80,7 @@ rm -rf %{buildroot}
 # Move over all configs and scripts
 cp -rf %{devenvdir}/etc/* %{_sysconfdir}
 cp -rf %{devenvdir}/bin/* %{_bindir}
+cp -rf %{devenvdir}/var/* %{_localstatedir}
 
 # Move over new http configurations
 cp -rf %{devenvdir}/httpd/* %{libradir}
@@ -93,6 +94,13 @@ mkdir -p %{brokerdir}/httpd/run
 ln -s %{sitedir}/public/* %{htmldir}
 ln -s /usr/lib64/httpd/modules/ %{sitedir}/httpd/modules
 ln -s /usr/lib64/httpd/modules/ %{brokerdir}/httpd/modules
+
+# Jenkins specific setup
+usermod -G libra_user jenkins
+
+# TODO - fix this because having jenkins in libra_user should correct this
+# However, without doing this, rake test fails for the rails sites
+chmod a+r /etc/libra/controller.conf
 
 # Allow httpd to relay
 /usr/sbin/setsebool -P httpd_can_network_relay=on || :
@@ -122,12 +130,14 @@ service qpidd restart
 service mcollective start
 service libra-site restart
 service libra-broker restart
+service jenkins restart
 service httpd restart
 chkconfig iptables on
 chkconfig qpidd on
 chkconfig mcollective on
 chkconfig libra-site on
 chkconfig libra-broker on
+chkconfig jenkins on
 chkconfig httpd on
 
 # CGroup services

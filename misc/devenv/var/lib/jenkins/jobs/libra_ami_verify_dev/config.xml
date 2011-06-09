@@ -1,0 +1,87 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description></description>
+  <logRotator>
+    <daysToKeep>14</daysToKeep>
+    <numToKeep>-1</numToKeep>
+    <artifactDaysToKeep>3</artifactDaysToKeep>
+    <artifactNumToKeep>-1</artifactNumToKeep>
+  </logRotator>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <scm class="hudson.plugins.git.GitSCM">
+    <configVersion>1</configVersion>
+    <remoteRepositories>
+      <org.spearce.jgit.transport.RemoteConfig>
+        <string>origin</string>
+        <int>5</int>
+        <string>fetch</string>
+        <string>+refs/heads/*:refs/remotes/origin/*</string>
+        <string>receivepack</string>
+        <string>git-upload-pack</string>
+        <string>uploadpack</string>
+        <string>git-upload-pack</string>
+        <string>url</string>
+        <string>git://10.244.46.66/li.git/</string>
+        <string>tagopt</string>
+        <string></string>
+      </org.spearce.jgit.transport.RemoteConfig>
+    </remoteRepositories>
+    <branches>
+      <hudson.plugins.git.BranchSpec>
+        <name>master</name>
+      </hudson.plugins.git.BranchSpec>
+    </branches>
+    <mergeOptions/>
+    <recursiveSubmodules>false</recursiveSubmodules>
+    <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+    <authorOrCommitter>false</authorOrCommitter>
+    <clean>false</clean>
+    <wipeOutWorkspace>false</wipeOutWorkspace>
+    <pruneBranches>false</pruneBranches>
+    <buildChooser class="hudson.plugins.git.util.DefaultBuildChooser"/>
+    <gitTool>Default</gitTool>
+    <submoduleCfg class="list"/>
+    <relativeTargetDir></relativeTargetDir>
+    <excludedRegions></excludedRegions>
+    <excludedUsers></excludedUsers>
+    <skipTag>false</skipTag>
+  </scm>
+  <canRoam>true</canRoam>
+  <disabled>true</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers class="vector"/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>sudo yum clean metadata</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>build/verifier setup --name=devenv_verifier_${BUILD_NUMBER}
+build/verifier test --name=devenv_verifier_${BUILD_NUMBER} --terminate</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command># Don&apos;t fail on non-test runs
+find rhc/junit/ | xargs touch</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers>
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>rhc/log/*</artifacts>
+      <latestOnly>false</latestOnly>
+    </hudson.tasks.ArtifactArchiver>
+    <hudson.tasks.junit.JUnitResultArchiver>
+      <testResults>rhc/junit/*</testResults>
+      <keepLongStdio>false</keepLongStdio>
+      <testDataPublishers/>
+    </hudson.tasks.junit.JUnitResultArchiver>
+    <hudson.tasks.Mailer>
+      <recipients>mhicks@redhat.com</recipients>
+      <dontNotifyEveryUnstableBuild>true</dontNotifyEveryUnstableBuild>
+      <sendToIndividuals>false</sendToIndividuals>
+    </hudson.tasks.Mailer>
+  </publishers>
+  <buildWrappers/>
+</project>

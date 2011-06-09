@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <scm class="hudson.scm.NullSCM"/>
+  <canRoam>true</canRoam>
+  <disabled>true</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers class="vector"/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>echo &quot;Display is $DISPLAY&quot;;
+
+cd tests/Selenium_test/NoStreamlineCases;
+./test_web.py --host=&quot;localhost&quot; --url=&quot;https://ec2-50-19-14-234.compute-1.amazonaws.com&quot; --port=54847 --browser=&quot;*firefox /usr/lib64/firefox-3.6/firefox&quot; --resultfile=&quot;./testresult.html&quot;
+
+</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers/>
+  <buildWrappers>
+    <hudson.plugins.xvnc.Xvnc>
+      <takeScreenshot>true</takeScreenshot>
+    </hudson.plugins.xvnc.Xvnc>
+  </buildWrappers>
+</project>
