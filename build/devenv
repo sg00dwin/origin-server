@@ -13,6 +13,7 @@ include OpenShift::AWS
 class DevEnv < Thor
   include Thor::Actions
 
+  # test2
   desc "build", "build a new devenv AMI"
   method_option :name, :required => true, :desc => "The unique AMI name"
   method_option :terminate, :type => :boolean, :desc => "Terminate the instance when finished"
@@ -123,7 +124,7 @@ class DevEnv < Thor
   end
 
   desc "sync TAG", "Synchronize a local git repo with a DevEnv instance"
-  method_option :branch, :default => "master", :desc => "The branch to synchronize"
+  method_option :alias, :aliases => "-a", :type => :boolean, :desc => "TAG is actually a SSH alias"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   def sync(tag)
     # Warn on uncommitted changes
@@ -137,9 +138,14 @@ class DevEnv < Thor
       puts "Done."
     end      
 
-    instance = Instance.find(connect, tag)
+    if options.dns?
+      instance = Instance.new(nil, nil)
+      instance.dns = tag
+    else
+      instance = Instance.find(connect, tag)
+    end
     puts "Synchronizing local changes..."
-    run("git push root@#{instance.dns}:/root/li #{options[:branch]}:master --tags --force")
+    run("git push root@#{instance.dns}:/root/li master --tags --force")
     puts "Done"
 
     if @temp_commit
@@ -148,7 +154,7 @@ class DevEnv < Thor
       puts "Done."
     end
 
-    puts "Performing remote install..."
+    puts "Performing remote install...."
     instance.ssh("rm -rf li-working; git clone li li-working; pushd li-working; build/devenv update; popd; rm -rf li-working", 600)
     puts "Done"
   end
