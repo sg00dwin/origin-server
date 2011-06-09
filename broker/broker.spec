@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.72.7
+Version:   0.72.8
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -62,6 +62,9 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Thu Jun 09 2011 Matt Hicks <mhicks@redhat.com> 0.72.8-1
+- Adding validation for our various vars (mmcgrath@redhat.com)
+
 * Mon Jun 06 2011 Dan McPherson <dmcphers@redhat.com> 0.72.7-1
 - build fixes (dmcphers@redhat.com)
 - Bug 706329 (dmcphers@redhat.com)
