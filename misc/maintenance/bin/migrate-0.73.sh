@@ -5,7 +5,7 @@ require 'openshift'
 
 include Libra
 
-RHLOGINS=nil #['appname']
+RHLOGINS=nil #['username']
 
 FRAMEWORKS = {'php-5.3.2' => 'php-5.3', 
               'rack-1.1.0' => 'rack-1.1', 
