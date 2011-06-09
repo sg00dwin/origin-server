@@ -176,6 +176,7 @@ chkconfig libra-tc on
 %config(noreplace) %{jenkins}/jobs/libra_selenium/config.xml
 %config(noreplace) %{jenkins}/jobs/libra_web/config.xml
 %{jenkins}/jobs/libra_web/firefoxprofile_test
+%{jenkins}/jobs/libra_selenium/selenium-2.0b3-python
 %{devenvdir}
 %{_initddir}/libra-broker
 %{_initddir}/libra-site
