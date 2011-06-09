@@ -60,7 +60,7 @@ module MCollective
         validate :cartridge, :shellsafe
         validate :action, /\A(configure|deconfigure|update_namespace|info|post-install|post_remove|pre-install|reload|restart|start|status|stop)\Z/
         validate :action, :shellsafe
-        validate :args, /\A[\w\+\/= @\-]+\z/
+        validate :args, /\A[\w\+\/= @\-\.]+\z/
         validate :args, :shellsafe
         cartridge = request[:cartridge]
         action = request[:action]
