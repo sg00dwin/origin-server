@@ -43,85 +43,50 @@ module Libra
     end
   end
 
-  #
-  # Executes
-  #
   def self.execute(framework, action, app_name, rhlogin)
-    # Lookup the user
+    # get user
     user = User.find(rhlogin)
-
-    if user
-      # App exists check
-      if action == 'configure'
-        configure_app(framework, action, app_name, user)
-      else
-        app_info = user.app_info(app_name)
-        if !app_info
-          if action == 'deconfigure'
-            Libra.client_debug "Application not found, attempting to remove anyway..."
-          else
-            raise UserException.new(101), "An application named '#{app_name}' does not exist", caller[0..5]
-          end
-        end
-        if app_info
-          # Find the next available server
-          if app_info['server_identity']
-            server = Server.new(app_info['server_identity'])
-            if server
-              Libra.logger_debug "DEBUG: Performing action '#{action}' on node: #{server.name} - #{server.repos} repos" if Libra.c[:rpc_opts][:verbose]              
-              begin
-                server_execute_direct(framework, action, app_name, user, server, app_info)
-              rescue Exception => e
-                if action == 'deconfigure'
-                  if server.has_app?(app_info, app_name)
-                    raise
-                  else
-                    Libra.logger_debug "Application '#{app_name}' not found on node #{server.name}.  Continuing with deconfigure."
-                    Libra.logger_debug "Error from cartridge on deconfigure: #{e.message}"
-                  end
-                else
-                  raise
-                end
-              end              
-              if action == 'deconfigure'
-                # update DNS
-                Libra.logger_debug "DEBUG: Public ip being deconfigured from namespace '#{user.namespace}'"
-                Server.delete_app_dns_entries(app_name, user.namespace)
-                # remove the node account from the server node.
-                Libra.logger_debug "Removing app account from server node: #{app_info}"
-                server.delete_account(app_info['uuid'])
-
-                # Remove S3 app on deconfigure (one of the last things)
-                Libra.logger_debug "Removing app info from persistant storage: #{app_name}"
-                user.delete_app(app_name)
-              end
-            else
-              if action == 'deconfigure'
-                Libra.client_debug "Application is registered to an invalid node, still attempting to remove everything else..."
-                Libra.logger_debug "DEBUG: Application '#{app_name}' is registered by user '#{rhlogin}(#{app_info['uuid']})' to an invalid node '#{app_info.server_identity}', application will be destroyed but some space may still be consumed for app on the node..."
-              else
-                raise NodeException.new(142), "The application #{app_name} is registered to an invalid node.  If the problem persists please contact Red Hat support.", caller[0..5]
-              end
-            end
-          elsif action != 'deconfigure'
-            raise NodeException.new(254), "The application #{app_name} is registered without a specified node.", caller[0..5]
-          end
-          if action == 'deconfigure'
-            # remove the node account from the server node.
-            server.delete_account(app_info[:uuid])
-
-            # Remove S3 app on deconfigure (one of the last things)
-            user.delete_app(app_name)
-          end
-        end
-      end
-    else
-      # shouldn't really happen
+    if not user
       raise UserException.new(254), "User '#{rhlogin}' not found", caller[0..5]
+    end
+
+    # process actions
+
+    case action
+    when 'configure'
+      # create a new app.  Don't expect it to exist
+      configure_app(framework, app_name, user)
+
+    when 'deconfigure'
+      # destroy an app.  It must exists, but won't at the end
+      # get the app object
+      # get the server
+      # send the command to the server
+      # remove the app object from persistant storage
+      deconfigure_app(framework, app_name, user)
+
+    else
+      # send a command to an app.  It must exist and will afterwards
+      # get the app object
+      # get the server
+      # send the command
+      app_info = user.app_info(app_name)
+      if not app_info
+        raise UserException.new(101), "An application named '#{app_name}' does not exist", caller[0..5]
+      end
+
+      server = Server.new(app_info['server_identity'])
+      if not server
+        raise NodeException.new(142), "The application #{app_name} is registered to an invalid node.  If the problem persists please contact Red Hat support.", caller[0..5]
+      end
+
+      Libra.logger_debug "DEBUG: Performing action '#{action}' on node: #{server.name} - #{server.repos} repos" if Libra.c[:rpc_opts][:verbose]
+      server_execute_direct(framework, action, app_name, user, server, app_info)
     end
   end
 
-  def self.configure_app(framework, action, app_name, user)
+
+  def self.configure_app(framework, app_name, user)
     raise UserException.new(100), "An application named '#{app_name}' already exists", caller[0..5] if user.app_info(app_name)
     # Find the next available server
     server = Server.find_available
@@ -136,7 +101,7 @@ module Libra
       # Configure the user on this server if necessary
       server.create_user(user, app_info) # not cleaned up on failure
 
-      server_execute_direct(framework, action, app_name, user, server, app_info)
+      server_execute_direct(framework, 'configure', app_name, user, server, app_info)
       begin
         # update DNS
         public_ip = server.get_fact_direct('public_ip')
@@ -161,6 +126,56 @@ module Libra
         raise
       end
     end
+  end
+
+  # remove an application from server and persistant storage
+  def self.deconfigure_app(framework, app_name, user)
+    # get the application details
+    app_info = user.app_info(app_name)
+    if not app_info
+      raise UserException.new(101), "An application named '#{app_name}' does not exist", caller[0..5]
+    end
+    
+    # Remove the application and account from the server
+    server = Server.new(app_info['server_identity'])    
+    if server
+      
+      # first, remove the application
+      Libra.logger_debug "DEBUG: deconfiguring app #{app_name} on node: #{server.name} - #{server.repos} repos" if Libra.c[:rpc_opts][:verbose]
+      begin
+        server_execute_direct(framework, 'deconfigure', app_name, user, server, app_info)
+      rescue
+        if server.has_app?(app_info, app_name)
+          raise
+        else
+          Libra.logger_debug "Application '#{app_name}' not found on node #{server.name}.  Continuing with deconfigure."
+          Libra.logger_debug "Error from cartridge on deconfigure: #{e.message}"
+        end
+      end
+
+      # then remove the account
+
+      # remove the node account from the server node.
+      begin
+        Libra.logger_debug "Removing app account from server node: #{app_info}"
+        server.delete_account(app_info['uuid'])
+      rescue
+        # check if the user account is still there
+      end
+    else # NO SERVER
+      Libra.client_debug "Application is registered to an invalid node, still attempting to remove everything else..."
+      Libra.logger_debug "DEBUG: Application '#{app_name}' is registered by user '#{rhlogin}(#{app_info['uuid']})' to an invalid node '#{app_info.server_identity}', application will be destroyed but some space may still be consumed for app on the node..."
+    end
+
+    # remove the DNS entries
+    Libra.logger_debug "DEBUG: Public ip being deconfigured from namespace '#{user.namespace}'"
+    Server.delete_app_dns_entries(app_name, user.namespace)
+
+    # remove the app record from the user object
+    # Remove S3 app on deconfigure (one of the last things)
+    Libra.logger_debug "Removing app info from persistant storage: #{app_name}"
+    user.delete_app(app_name)
+
   end
 
   def self.server_execute_direct(framework, action, app_name, user, server, app_info)
