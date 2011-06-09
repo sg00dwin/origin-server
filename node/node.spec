@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.72.11
+Version:       0.72.12
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -139,6 +139,10 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Thu Jun 09 2011 Matt Hicks <mhicks@redhat.com> 0.72.12-1
+- Correcting mcollective check to allow periods (mmcgrath@redhat.com)
+- Adding shell safe and other checks (mmcgrath@redhat.com)
+
 * Wed Jun 08 2011 Matt Hicks <mhicks@redhat.com> 0.72.11-1
 - handle new symlink on rerun (dmcphers@redhat.com)
 - migration bug fixes (dmcphers@redhat.com)
