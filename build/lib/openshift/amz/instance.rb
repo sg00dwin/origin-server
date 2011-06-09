@@ -10,9 +10,11 @@ module OpenShift
       end
 
       def self.find(conn, name)
-        # Look up any tagged instances
+        # Look up any tagged instances that aren't terminated
         conn.describe_instances.each do |i|
-          if (i[:tags]["Name"] == name)
+          if ((i[:tags]["Name"] == name) and
+              (i[:aws_state] != "terminated"))
+            puts "Found instance #{i[:aws_instance_id]}"
             instance = Instance.new(conn, name)
             instance.amz_id = i[:aws_instance_id]
             instance.amz_image_id = i[:aws_image_id]
