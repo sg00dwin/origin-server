@@ -97,6 +97,7 @@ ln -s /usr/lib64/httpd/modules/ %{brokerdir}/httpd/modules
 
 # Jenkins specific setup
 usermod -G libra_user jenkins
+chown -R jenkins:jenkins /var/lib/jenkins
 
 # TODO - fix this because having jenkins in libra_user should correct this
 # However, without doing this, rake test fails for the rails sites
