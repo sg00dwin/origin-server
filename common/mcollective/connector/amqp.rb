@@ -2,9 +2,7 @@ require 'cqpid'
 require 'pp'
 
 module MCollective
-
     module Connector
-
        class Amqp<Base
            attr_reader :connection
 
@@ -80,10 +78,19 @@ module MCollective
                args << "heartbeat:1"
 
                amqp_options = "{" + args.join(", ") + "}"
+              
+               @connection = nil
 
-               @log.debug("Connecting to #{url},  #{amqp_options}")
-               @connection = Cqpid::Connection.new(url, amqp_options)
-               @connection.open
+               begin
+                 @log.debug("Connecting to #{url},  #{amqp_options}")
+                 @connection = Cqpid::Connection.new(url, amqp_options)
+                 @connection.open
+               rescue StandardError => e
+                 @log.error("Initial connection failed... retrying")
+                 sleep 5
+                 retry
+               end
+
                @session = @connection.createSession
 
                # Set up the topic change
