@@ -100,7 +100,7 @@ Return JSON String:
         }
     },
     "user_info":{
-        "rhlogin":"<RHN_LOGIN>",
+        "rhlogin":"<RH_LOGIN>",
         "uuid":"<USER_UUID>",
         "ssh_key":"<PUB_SSH_KEY>",
         "rhc_domain":"<RHC_DOMAIN>",
