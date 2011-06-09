@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.72.7
+Version:   0.72.8
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -174,6 +174,10 @@ chkconfig libra-tc on
 %{_initddir}/libra-site
 
 %changelog
+* Wed Jun 08 2011 Matt Hicks <mhicks@redhat.com> 0.72.8-1
+- Adding firefox profile to spec (mhicks@redhat.com)
+- Job renaming and spec config cleanup (mhicks@redhat.com)
+
 * Wed Jun 08 2011 Matt Hicks <mhicks@redhat.com> 0.72.7-1
 - Making sure the permissions are set for jenkins dir (mhicks@redhat.com)
 - Adding jenkins setup to devenv (mhicks@redhat.com)
