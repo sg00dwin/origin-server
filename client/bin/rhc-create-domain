@@ -134,7 +134,8 @@ data = {'namespace' => opt['namespace'],
                 'ssh' => ssh_key}
 if (opt['alter'])
   data['alter'] = "true"
-  user_info = RHC::get_user_info(libra_server, opt['rhlogin'], password, @http, debug, true)
+  not_found_message = "A user with rhlogin '#{opt['rhlogin']}' does not have a registered domain.  Be sure to run rhc-create-domain without -a|--alter first."
+  user_info = RHC::get_user_info(libra_server, opt['rhlogin'], password, @http, debug, true, not_found_message)
 end
 if debug
   data['debug'] = "true"
