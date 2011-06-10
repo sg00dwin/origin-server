@@ -17,15 +17,8 @@ class DevEnv < Thor
   method_option :register, :type => :boolean, :desc => "Register the instance"
   method_option :terminate, :type => :boolean, :desc => "Terminate the instance on exit"
   method_option :reboot, :type => :boolean, :desc => "Reboot the instance after updating"
-  method_option :force, :type => :boolean, :desc => "Build even if package updates aren't detected"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   def build(name)
-    # See if any updates are needed
-    unless options.force?
-      pkgs = check_update
-      exit_msg "Nothing to update" if pkgs.empty?
-    end
-
     # Establish a new connection
     conn = connect
 
