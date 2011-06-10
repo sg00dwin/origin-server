@@ -51,30 +51,30 @@ class BrokerController < ApplicationController
       case key
         when 'namespace'
           if !(val =~ /\A[A-Za-z0-9]+\z/)
-            render :json => generate_result_json("Invalid namespace: #{val}", 109), :status => :invalid and return nil
+            render :json => generate_result_json("Invalid namespace: #{val}", 106), :status => :invalid and return nil
           end
         when 'rhlogin'
           if !Util.check_rhlogin(val)
-            render :json => generate_result_json("Invalid rhlogin: #{val}", 109), :status => :invalid and return nil
+            render :json => generate_result_json("Invalid rhlogin: #{val}", 107), :status => :invalid and return nil
           end
         when 'ssh'
          if !(val =~ /\A[A-Za-z0-9\+\/=]+\z/)
-            render :json => generate_result_json("Invalid ssh key: #{val}", 109), :status => :invalid and return nil
+            render :json => generate_result_json("Invalid ssh key: #{val}", 108), :status => :invalid and return nil
          end
         when 'debug', 'alter'
           if !(val =~ /\A(true|false)\z/)
-            render :json => generate_result_json("Invalid value for #{key}:#{val} specified", 109), :status => :invalid and return nil
+            render :json => generate_result_json("Invalid value for #{key}:#{val} specified", 254), :status => :invalid and return nil
           end
         when 'cartridge'
           if !(val =~ /\A[\w\-\.]+\z/)
-            render :json => generate_result_json("Invalid cartridge: #{val} specified", 109), :status => :invalid and return nil
+            render :json => generate_result_json("Invalid cartridge: #{val} specified", 254), :status => :invalid and return nil
           end
         when 'action', 'app_name'
           if !(val =~ /\A[\w]+\z/) and val.to_s.length < 24
-            render :json => generate_result_json("Invalid #{key} specified: #{val}", 109), :status => :invalid and return nil
+            render :json => generate_result_json("Invalid #{key} specified: #{val}", 105), :status => :invalid and return nil
           end
         else
-            render :json => generate_result_json("Unknown json key found: #{key}", 109), :status => :invalid and return nil
+          render :json => generate_result_json("Unknown json key found: #{key}", 254), :status => :invalid and return nil
       end
     end
     data
