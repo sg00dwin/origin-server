@@ -4,6 +4,7 @@
 %define sitedir %{_localstatedir}/www/libra/site
 %define devenvdir %{_sysconfdir}/libra/devenv
 %define jenkins %{_sharedstatedir}/jenkins
+%define selenium %{_lib}/python2.6/selenium-2.0b3-python
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
@@ -77,6 +78,10 @@ touch %{buildroot}%{sitedir}/log/development.log
 # Setup the jenkins jobs
 mkdir -p %{buildroot}%{jenkins}/jobs
 mv %{buildroot}%{devenvdir}%{jenkins}/jobs/* %{buildroot}%{jenkins}/jobs
+
+# Setup the Selenium libraries
+mkdir -p %{buildroot}%{selenium}
+mv %{buildroot}%{devenvdir}%{selenium} %{buildroot}%{selenium}
 
 %clean
 rm -rf %{buildroot}
@@ -181,6 +186,7 @@ chkconfig libra-tc on
 %{devenvdir}
 %{_initddir}/libra-broker
 %{_initddir}/libra-site
+%{selenium}
 
 %changelog
 * Thu Jun 09 2011 Matt Hicks <mhicks@redhat.com> 0.72.12-1
