@@ -15,7 +15,7 @@
   <builders>
     <hudson.tasks.Shell>
       <command>sudo yum clean metadata
-sudo yum update -y --nogpgcheck</command>
+sudo yum update -y --nogpgcheck --exclude=rhc-devenv</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers/>
