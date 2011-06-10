@@ -182,9 +182,9 @@ class DevEnv < Thor
       puts "Done"
 
       print "Updating tests to remote instance..."
-      `git archive --prefix li/ HEAD --output /tmp/li.tar`
-      instance.scp_to("/tmp/li.tar", "~/")
-      instance.ssh('rm -rf li; tar -xf li.tar; mkdir -p /tmp/rhc/junit')
+      `git archive --prefix li-test/ HEAD --output /tmp/li-test.tar`
+      instance.scp_to("/tmp/li-test.tar", "~/")
+      instance.ssh('rm -rf li-test; tar -xf li-test.tar; mkdir -p /tmp/rhc/junit')
       puts "Done"
     end
 
@@ -206,7 +206,7 @@ class DevEnv < Thor
     begin
       # Run verification tests
       print "Running verification tests..."
-      instance.ssh("cucumber --tags @verify --format junit -o /tmp/rhc/junit/ li/tests/", 3600)
+      instance.ssh("cucumber --tags @verify --format junit -o /tmp/rhc/junit/ li-test/tests/", 3600)
       p = $?
       puts "Done"
 
