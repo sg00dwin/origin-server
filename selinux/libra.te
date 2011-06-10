@@ -58,6 +58,7 @@ allow libra_domain self:tcp_socket  create_stream_socket_perms;
 
 allow libra_domain self:fifo_file rw_fifo_file_perms;
 allow libra_domain self:unix_stream_socket { create_stream_socket_perms connectto };
+dontaudit libra_domain self:netlink_audit_socket create_socket_perms;
 
 allow libra_domain libra_log_t:file { getattr append lock ioctl };
 
@@ -80,6 +81,7 @@ dev_list_sysfs(libra_domain)
 dev_read_rand(libra_domain)
 dev_dontaudit_append_rand(libra_domain)
 fs_dontaudit_rw_anon_inodefs_files(libra_domain)
+fs_search_tmpfs(libra_domain)
 
 files_read_usr_files(libra_domain)
 
@@ -168,9 +170,9 @@ dontaudit libra_domain exec_type:file getattr;
 libra_search_lib(sshd_t)
 dontaudit sshd_t self:capability sys_admin;
 
-allow httpd_t libra_var_lib_t:dir search;
 dontaudit sendmail_t libra_initrc_t:fifo_file { read write };
 append_files_pattern(sendmail_t, libra_var_lib_t, libra_var_lib_t)
+allow domain libra_var_lib_t:dir search_dir_perms;
 allow domain libra_var_lib_t:file { append getattr };
 
 ##########
