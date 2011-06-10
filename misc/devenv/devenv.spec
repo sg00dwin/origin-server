@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.72.12
+Version:   0.72.13
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -187,6 +187,12 @@ chkconfig libra-tc on
 %{selenium}
 
 %changelog
+* Fri Jun 10 2011 Matt Hicks <mhicks@redhat.com> 0.72.13-1
+- Cleanup of old job (mhicks@redhat.com)
+- lib macro fix (mhicks@redhat.com)
+- Selenium DevEnv setup / cleanup (mhicks@redhat.com)
+- Updating Jenkins config not to install devenv on update (mhicks@redhat.com)
+
 * Thu Jun 09 2011 Matt Hicks <mhicks@redhat.com> 0.72.12-1
 - Switching build notifications to the list (mhicks@redhat.com)
 
