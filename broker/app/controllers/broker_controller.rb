@@ -238,35 +238,14 @@ class BrokerController < ApplicationController
         if !Libra::Util.check_namespace(ns)
           render :json => generate_result_json("Invalid characters in namespace '#{ns}' found", 106), :status => :invalid and return
         end
-        if user
-          if data['alter']
-            if user.namespace != ns
-              #render :json => generate_result_json("You may not change your registered namespace of: #{user.namespace}", 98), :status => :conflict and return
-              user.update_namespace(ns)
-            end
-            user.namespace=ns
-            user.ssh=data['ssh']
-            user.update
-
-            # update each node account for this user's applications
-            user.apps.each do |appname, app|
-              server = Libra::Server.new app['server_identity']
-              cfgstring = "-c #{app['uuid']} -e #{user.rhlogin} -s #{user.ssh} -a"
-              server.execute_direct('li-controller-0.1', 'configure', cfgstring)
-            end
-          else
-            render :json => generate_result_json("User already has a registered namespace.  To modify, use --alter", 97), :status => :conflict and return
-          end
-        else
-          user = Libra::User.create(username, data['ssh'], ns)
-        end
       else
         render_unauthorized and return
       end
 
+      carts = Libra::Util.get_cartridges
       json_data = JSON.generate({
                               :rhlogin => user.rhlogin,
-                              :uuid => user.uuid
+                              :carts => carts
                               })
 
       # Just return a 200 success
