@@ -227,49 +227,6 @@ class BrokerController < ApplicationController
     end
   end
 
-   def user_info_post
-    begin
-      # Parse the incoming data
-      data = parse_json_data(params['json_data'])
-
-      # Check if user already exists
-      username = Libra::User.login(data['rhlogin'], params['password'])
-      if username
-        user = Libra::User.find(username)
-        if user
-          user_info = {
-              :rhlogin => user.rhlogin,
-              :uuid => user.uuid,
-              :namespace => user.namespace,
-              :ssh_key => user.ssh,
-              :rhc_domain => Libra.c[:libra_domain]
-              }
-          app_info = {}
-
-          user.apps.each do |appname, app|
-              app_info[appname] = {
-                  :framework => app['framework'],
-                  :creation_time => app['creation_time'],
-                  :uuid => app['uuid']
-              }
-          end
-
-          json_data = JSON.generate({:user_info => user_info,
-             :app_info => app_info})
-
-          render :json => generate_result_json(json_data) and return
-        else
-          # Return a 404 to denote the user doesn't exist
-          render :json => generate_result_json("User does not exist", 99), :status => :not_found and return
-        end
-      else
-        render_unauthorized and return
-      end
-    rescue Exception => e
-      render_internal_server_error(e, 'user_info_post') and return
-    end
-  end
-
   def cart_list_post
     begin
       # Parse the incoming data
