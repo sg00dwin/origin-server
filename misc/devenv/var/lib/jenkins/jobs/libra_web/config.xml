@@ -6,15 +6,30 @@
   <properties/>
   <scm class="hudson.scm.NullSCM"/>
   <canRoam>true</canRoam>
-  <disabled>true</disabled>
+  <disabled>false</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
-  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>true</blockBuildWhenUpstreamBuilding>
   <triggers class="vector"/>
   <concurrentBuild>false</concurrentBuild>
+  <customWorkspace>jobs/libra_check/workspace</customWorkspace>
   <builders>
     <hudson.tasks.Shell>
-      <command>tests/selenium/example.rb</command>
+      <command>tests/selenium/example.rb
+
+# Generate an artifact if necessary
+# This keeps Jenkins happy
+ls -1 *.png > /dev/null 2>&1
+if [ "$?" != "0" ]; then
+touch none.png
+fi
+</command>
     </hudson.tasks.Shell>
   </builders>
-  <publishers/>
+  <publishers>
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>*.png</artifacts>
+      <latestOnly>false</latestOnly>
+    </hudson.tasks.ArtifactArchiver>
+  </publishers>
+  <buildWrappers/>
 </project>
