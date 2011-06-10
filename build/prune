@@ -20,7 +20,8 @@ class Prune < Thor
   desc "amis", "prune old devenv AMIs"
   def amis
     # Get current AMIs
-    images = get_amis(connect)
+    conn = connect
+    images = get_amis(conn)
 
     # Sort the images by name
     sorted_keys = images.keys.sort do |x,y|
