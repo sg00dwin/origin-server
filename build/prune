@@ -36,7 +36,7 @@ class Prune < Thor
     # Prune the rest
     sorted_keys.each do |i|
       puts "Removing AMI #{images[i]}"
-      conn.deregister_image(i)
+      conn.deregister_image(images[i])
     end
   end
 end
