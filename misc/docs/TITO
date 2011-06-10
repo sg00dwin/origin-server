@@ -51,5 +51,7 @@ rm -rf /tmp/tito/cvswork/rhc*
 # Tag a package with no prompt
 tito tag --accept-auto-changelog
 
+git pull && git push && git push --tags
+
 # To build the package
 tito build --cvs-release < /tmp/answerfile
