@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.72.13
+Version:   0.72.14
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -187,6 +187,9 @@ chkconfig libra-tc on
 %{selenium}
 
 %changelog
+* Fri Jun 10 2011 Matt Hicks <mhicks@redhat.com> 0.72.14-1
+- Removing file that failed RPM build (mhicks@redhat.com)
+
 * Fri Jun 10 2011 Matt Hicks <mhicks@redhat.com> 0.72.13-1
 - Cleanup of old job (mhicks@redhat.com)
 - lib macro fix (mhicks@redhat.com)
