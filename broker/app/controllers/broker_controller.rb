@@ -58,9 +58,9 @@ class BrokerController < ApplicationController
             render :json => generate_result_json("Invalid rhlogin: #{val}", 107), :status => :invalid and return nil
           end
         when 'ssh'
-         if !(val =~ /\A[A-Za-z0-9\+\/=]+\z/)
+          if !(val =~ /\A[A-Za-z0-9\+\/=]+\z/)
             render :json => generate_result_json("Invalid ssh key: #{val}", 108), :status => :invalid and return nil
-         end
+          end
         when 'debug', 'alter'
           if !(val =~ /\A(true|false)\z/)
             render :json => generate_result_json("Invalid value for #{key}:#{val} specified", 254), :status => :invalid and return nil
