@@ -62,6 +62,7 @@ Submit JSON String:
 {
     'cartridge': 'framework-type, ex: php-5.3',
     'action': 'configure, start, stop, restart, reload, status, deconfigure',
+    'app_name': 'Application_name',
     'rhlogin': 'login'
 }
 
