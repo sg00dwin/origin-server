@@ -10,7 +10,6 @@ User errors:
 106: Invalid namespace
 107: Invalid rhlogin
 108: Invalid ssh key
-
 146: User has valid credentials but hasn't been granted access to Express yet.
 147: User has valid credentials but hasn't requested access to Express yet.
 210: Can not override existing location for git repo
