@@ -56,7 +56,7 @@
   </builders>
   <publishers>
     <hudson.tasks.BuildTrigger>
-      <childProjects>jenkins_update</childProjects>
+      <childProjects>jenkins_update, libra_ami_verify</childProjects>
       <threshold>
         <name>SUCCESS</name>
         <ordinal>0</ordinal>
