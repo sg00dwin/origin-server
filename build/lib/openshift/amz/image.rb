@@ -12,7 +12,14 @@ module OpenShift
       def self.verify(conn, amz_image_id)
         log.info "Tagging image (#{amz_image_id}) as '#{VERIFIED_TAG}'..."
         conn.create_tag(amz_image_id, 'Name', VERIFIED_TAG)
-        puts "Done"
+        log.info "Done"
+      end
+
+      def self.get_name(conn, amz_image_id)
+        log.info "Getting image name for #{amz_image_id}..."
+        name = conn.describe_images([amz_image_id])[0][:aws_location].split("/")[-1] 
+        log.info "Done"
+        return name
       end
 
       def self.register(conn, instance_id, name, desc = "")

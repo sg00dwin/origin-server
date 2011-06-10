@@ -5,10 +5,10 @@ require 'openshift'
 
 include Libra
 
-RHLOGINS=['danmcp1223']
+RHLOGINS=nil #['username']
 
 FRAMEWORKS = {'php-5.3.2' => 'php-5.3', 
-              'rack-1.1.0' => 'rack-1.0', 
+              'rack-1.1.0' => 'rack-1.1', 
               'wsgi-3.2.1' => 'wsgi-3.2',
               'jbossas-7.0.0' => 'jbossas-7.0',
               'perl-5.10.1' => 'perl-5.10'}
@@ -16,33 +16,51 @@ FRAMEWORKS = {'php-5.3.2' => 'php-5.3',
 #
 #  Migrate the specified app on the node
 #
-def migrate_app_on_node(user, app, app_name, app_type)
+def migrate_app_on_node(user, app, app_name, old_app_type, new_app_type)
   Helper.rpc_exec('libra', app['server_identity']) do |client|
     client.migrate(:uuid => app['uuid'],
                    :application => app_name,
-                   :app_type => app_type,
+                   :app_type => old_app_type,
                    :namespace => user.namespace,
-                   :version => '0.72.9') do |response|
-      exit_code = response[:body][:data][:exitcode]        
+                   :version => '0.73') do |response|
+      exit_code = response[:body][:data][:exitcode]
       output = response[:body][:data][:output]
-      if (output.length > 0)      
+      if (output.length > 0)
         puts "Migrate on node output: #{output}"
       end
       if exit_code != 0
         puts "Migrate on node exit code: #{exit_code}"
         raise "Failed migrating app '#{app_name}' with uuid '#{app['uuid']}' on node '#{app['server_identity']}'"
+      else
+        puts "Restarting app '#{app_name}' on node '#{app['server_identity']}'"
+        server = Server.new(app['server_identity'])
+        result = nil
+        (1..2).each do
+          result = server.execute_direct(new_app_type, 'restart', "#{app_name} #{user.namespace} #{app['uuid']}")[0]
+        end
+        if (result && defined? result.results)
+          output = result.results[:data][:output]
+          exit_code = result.results[:data][:exitcode]
+          if (output.length > 0)
+            puts "Restart on node output: #{output}"
+          end
+          if exit_code != 0
+            puts "Restart on node exit code: #{exit_code}"
+            raise "Failed restarting app '#{app_name}' with uuid '#{app['uuid']}' on node '#{app['server_identity']}'"
+          end
+        end
       end
     end
   end
 end
 
 #
-# Migrate applications between release 2 and 3
+# Migrate applications between release launch and 0.73
 # Remove framework patchlevel from s3 and apps
 # Migration fix of UUID from user_info.json to application json
 # Migration of remove top level app dir (TA460)
 #
-def migrate_rel3
+def migrate
   start_time = Time.now.to_i
   puts "Getting all RHLogins..." 
   rhlogins = RHLOGINS || User.find_all_rhlogins
@@ -51,6 +69,8 @@ def migrate_rel3
   rhlogins.each do |rhlogin|
     user = User.find(rhlogin)
     if user
+      puts ""
+      puts "######################################################"
       puts "Updating apps for user: #{user.rhlogin}(#{user_count.to_s}) with uuid: #{user.uuid}"
       apps = user.apps
       if apps.length > 1
@@ -65,6 +85,7 @@ def migrate_rel3
             puts "Migrating app: #{app_name} to type: #{to_type}"
             app['framework'] = to_type
           else
+            to_type = from_type
             puts "WARNING: From type '#{from_type}' not found migrating app: #{app_name}"
           end
           if !app['uuid']
@@ -74,15 +95,15 @@ def migrate_rel3
             puts "WARNING: Application '#{app_name}' already has uuid: #{app['uuid']}"
           end
           puts "Migrating app in s3 '#{app_name}' with uuid '#{app['uuid']}' for user: #{rhlogin}"            
-          #user.update_app(app)
+          user.update_app(app, app_name)
           if app['server_identity']
             puts "Migrating app '#{app_name}' with uuid '#{app['uuid']}' on node '#{app['server_identity']}' for user: #{rhlogin}"
-            migrate_app_on_node(user, app, app_name, from_type)
+            migrate_app_on_node(user, app, app_name, from_type, to_type)
           else        
             puts "Missing server identity for app '#{app_name}' with uuid '#{app['uuid']}' for user: #{rhlogin}"            
           end
         rescue Exception => e
-          puts "ERROR: Failed migrating app: #{app_name} to type: #{to_type} for user: #{rhlogin}"
+          puts "ERROR: Failed migrating app: #{app_name} to type: #{to_type} and uuid: #{user.uuid} for user: #{rhlogin}"
           puts e.message
           puts e.backtrace
         end
@@ -98,4 +119,4 @@ def migrate_rel3
   puts "Total execution time: #{total_time.to_s}s"
 end
 
-migrate_rel3
+migrate

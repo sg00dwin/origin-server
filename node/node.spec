@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.72.10
+Version:       0.72.12
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -111,6 +111,7 @@ fi
 %defattr(-,root,root,-)
 %attr(0640,-,-) %{_libexecdir}/mcollective/mcollective/agent/libra.ddl
 %attr(0640,-,-) %{_libexecdir}/mcollective/mcollective/agent/libra.rb
+%attr(0640,-,-) %{_libexecdir}/mcollective/mcollective/agent/migrate-0.73.rb
 %attr(0640,-,-) %{_libexecdir}/mcollective/update_yaml.pp
 %attr(0640,-,-) %{ruby_sitelibdir}/facter/libra.rb
 %attr(0750,-,-) %{_initddir}/libra
@@ -138,6 +139,17 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Thu Jun 09 2011 Matt Hicks <mhicks@redhat.com> 0.72.12-1
+- Correcting mcollective check to allow periods (mmcgrath@redhat.com)
+- Adding shell safe and other checks (mmcgrath@redhat.com)
+
+* Wed Jun 08 2011 Matt Hicks <mhicks@redhat.com> 0.72.11-1
+- handle new symlink on rerun (dmcphers@redhat.com)
+- migration bug fixes (dmcphers@redhat.com)
+- add link from old apptype to new app home (dmcphers@redhat.com)
+- add restart to migration (dmcphers@redhat.com)
+- move migration to separate file (dmcphers@redhat.com)
+
 * Wed Jun 08 2011 Dan McPherson <dmcphers@redhat.com> 0.72.10-1
 - functioning migration (dmcphers@redhat.com)
 - minor change (dmcphers@redhat.com)

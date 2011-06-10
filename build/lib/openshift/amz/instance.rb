@@ -10,9 +10,11 @@ module OpenShift
       end
 
       def self.find(conn, name)
-        # Look up any tagged instances
+        # Look up any tagged instances that aren't terminated
         conn.describe_instances.each do |i|
-          if (i[:tags]["Name"] == name)
+          if ((i[:tags]["Name"] == name) and
+              (i[:aws_state] != "terminated"))
+            puts "Found instance #{i[:aws_instance_id]}"
             instance = Instance.new(conn, name)
             instance.amz_id = i[:aws_instance_id]
             instance.amz_image_id = i[:aws_image_id]
@@ -152,11 +154,17 @@ module OpenShift
       end
 
       def is_running?
-        get_value(:aws_state) == "running"
+        unless @is_running
+          @is_running = get_value(:aws_state) == "running"
+        end
+        return @is_running
       end
 
       def can_ssh?
-        ssh('echo Success', 10).split[-1] == "Success"
+        unless @can_ssh
+          @can_ssh = ssh('echo Success', 10).split[-1] == "Success"
+        end
+        return @can_ssh 
       end
 
       def is_valid?
