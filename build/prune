@@ -27,15 +27,15 @@ class Prune < Thor
       x.split("_")[1].to_i <=> y.split("_")[1].to_i
     end
 
-    # Keep the 5 most recent images
-    sorted_keys.pop(5)
+    # Keep the 10 most recent images
+    sorted_keys.pop(10)
 
     puts "Removing AMI's #{sorted_keys.pretty_inspect}"
 
     # Prune the rest
     sorted_keys.each do |i|
       puts "Removing AMI #{images[i]}"
-      #conn.deregister_image(i)
+      conn.deregister_image(i)
     end
   end
 end
