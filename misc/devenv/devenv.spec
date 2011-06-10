@@ -75,14 +75,14 @@ touch %{buildroot}%{sitedir}/log/development.log
 mkdir -p %{buildroot}%{jenkins}/jobs
 mv %{buildroot}%{devenvdir}%{jenkins}/jobs/* %{buildroot}%{jenkins}/jobs
 
-# Install the Selenium gems
-gem install selenium-webdriver
-gem install headless
-
 %clean
 rm -rf %{buildroot}
 
 %post
+
+# Install the Selenium gems
+gem install selenium-webdriver
+gem install headless
 
 # Move over all configs and scripts
 cp -rf %{devenvdir}/etc/* %{_sysconfdir}
