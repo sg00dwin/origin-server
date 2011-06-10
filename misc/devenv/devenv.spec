@@ -4,11 +4,10 @@
 %define sitedir %{_localstatedir}/www/libra/site
 %define devenvdir %{_sysconfdir}/libra/devenv
 %define jenkins %{_sharedstatedir}/jenkins
-%define selenium %{_libdir}/python2.6/selenium-2.0b3-python
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.72.14
+Version:   0.72.15
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -39,10 +38,7 @@ Requires:  tito
 
 # Selenium Requirements
 Requires:  firefox
-Requires:  ImageMagick
-Requires:  tigervnc-server
-Requires:  xorg-x11-server-utils
-Requires:  xorg-x11-twm
+Requires:  xorg-x11-server-Xvfb
 
 BuildArch: noarch
 
@@ -79,14 +75,14 @@ touch %{buildroot}%{sitedir}/log/development.log
 mkdir -p %{buildroot}%{jenkins}/jobs
 mv %{buildroot}%{devenvdir}%{jenkins}/jobs/* %{buildroot}%{jenkins}/jobs
 
-# Setup the Selenium libraries
-mkdir -p %{buildroot}%{selenium}
-mv %{buildroot}%{devenvdir}%{selenium} %{buildroot}%{selenium}
-
 %clean
 rm -rf %{buildroot}
 
 %post
+
+# Install the Selenium gems
+gem install selenium-webdriver
+gem install headless
 
 # Move over all configs and scripts
 cp -rf %{devenvdir}/etc/* %{_sysconfdir}
@@ -180,13 +176,14 @@ chkconfig libra-tc on
 %config(noreplace) %{jenkins}/jobs/libra_check/config.xml
 %config(noreplace) %{jenkins}/jobs/libra_prune/config.xml
 %config(noreplace) %{jenkins}/jobs/libra_web/config.xml
-%{jenkins}/jobs/libra_web/firefoxprofile_test
 %{devenvdir}
 %{_initddir}/libra-broker
 %{_initddir}/libra-site
-%{selenium}
 
 %changelog
+* Fri Jun 10 2011 Matt Hicks <mhicks@redhat.com> 0.72.15-1
+- DevEnv Selenium Cleanup (mhicks@redhat.com)
+
 * Fri Jun 10 2011 Matt Hicks <mhicks@redhat.com> 0.72.14-1
 - Removing file that failed RPM build (mhicks@redhat.com)
 

@@ -144,7 +144,7 @@ module RHC
     end
   end
 
-  def self.get_user_info(libra_server, rhlogin, password, net_http, debug, print_result)
+  def self.get_user_info(libra_server, rhlogin, password, net_http, debug, print_result, not_found_message=nil)
 
     puts "Contacting https://#{libra_server}"
     data = {'rhlogin' => rhlogin}
@@ -159,7 +159,11 @@ module RHC
 
     unless response.code == '200'
       if response.code == '404'
-        puts "A user with rhlogin '#{rhlogin}' does not have a registered domain.  Be sure to run rhc-create-domain before using the other rhc tools."
+        if not_found_message
+          puts not_found_message
+        else
+          puts "A user with rhlogin '#{rhlogin}' does not have a registered domain.  Be sure to run rhc-create-domain before using the other rhc tools."
+        end
         exit 99
       elsif response.code == '401'
         puts "Invalid user credentials"
