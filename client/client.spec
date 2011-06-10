@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system client tools
 Name:          rhc
-Version:       0.72.6
+Version:       0.72.10
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       MIT
@@ -84,6 +84,23 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_sysconfdir}/openshift/express.conf
 
 %changelog
+* Thu Jun 09 2011 Dan McPherson <dmcphers@redhat.com> 0.72.10-1
+- bug 707857 (dmcphers@redhat.com)
+
+* Thu Jun 09 2011 Matt Hicks <mhicks@redhat.com> 0.72.9-1
+- Bug 706353 (dmcphers@redhat.com)
+- cleanup (dmcphers@redhat.com)
+- Bug 707857 (dmcphers@redhat.com)
+- Bug 705703 (dmcphers@redhat.com)
+- improve terminology with rhlogin in usage and man pages (dmcphers@redhat.com)
+
+* Wed Jun 08 2011 Dan McPherson <dmcphers@redhat.com> 0.72.8-1
+- 
+
+* Wed Jun 08 2011 Dan McPherson <dmcphers@redhat.com> 0.72.7-1
+- Bug 711685 (dmcphers@redhat.com)
+- fix rhc-snapshot (dmcphers@redhat.com)
+
 * Tue Jun 07 2011 Matt Hicks <mhicks@redhat.com> 0.72.6-1
 - Added a curl example (mmcgrath@redhat.com)
 - Adding more explicit references in API doc (mmcgrath@redhat.com)

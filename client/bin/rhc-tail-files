@@ -33,7 +33,7 @@ def p_usage
 Usage: #{$0}
 Tail the logs of an application
 
-  -l|--rhlogin   rhlogin    RHCloud rhlogin (#{rhlogin})
+  -l|--rhlogin   rhlogin    Red Hat login (RHN or OpenShift login with OpenShift Express access) (#{rhlogin})
   -a|--app                  Target application (required)
   -f|--files                File glob relative to app (default ./logs/*) (optional)
   -p|--password  password   RHLogin password (optional, will prompt)
@@ -92,9 +92,7 @@ user_info = RHC::get_user_info(libra_server, opt['rhlogin'], password, @http, de
 
 app = opt['app']
 
-begin
-    framework = user_info['app_info'][app]['framework'].split('-')[0]
-rescue NoMethodError
+unless user_info['app_info'][app]
     puts
     puts "Could not find app '#{opt['app']}'.  Please run rhc-user-info to get a list"
     puts "of your current running applications"
@@ -103,7 +101,7 @@ rescue NoMethodError
 end
 
 opt['files'] = "logs/*" unless opt['files']
-file_glob = "#{framework}/#{opt['app']}/#{opt['files']}"
+file_glob = "#{opt['app']}/#{opt['files']}"
 app_uuid = user_info['app_info'][app]['uuid']
 namespace = user_info['user_info']['namespace']
 rhc_domain = user_info['user_info']['rhc_domain']

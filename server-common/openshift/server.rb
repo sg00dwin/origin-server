@@ -2,6 +2,7 @@ require 'openshift/helper'
 require 'aws'
 require 'json'
 require 'resolv'
+require 'pp'
 
 module Libra
   class Server
@@ -239,7 +240,7 @@ module Libra
         while !success && retries < 5
           retries += 1
           begin
-            Libra.logger_debug "DEBUG: DYNECT handle temp redirect with path: #{url.path} and headers: #{headers} attempt: #{retries} sleep_time: #{sleep_time}"
+            Libra.logger_debug "DEBUG: DYNECT handle temp redirect with path: #{url.path} and headers: #{headers.pretty_inspect} attempt: #{retries} sleep_time: #{sleep_time}"
             resp, data = http.get(url.path, headers)
             case resp
             when Net::HTTPSuccess, Net::HTTPTemporaryRedirect
@@ -282,7 +283,7 @@ module Libra
       http.use_ssl = true
       has = false
       begin
-        Libra.logger_debug "DEBUG: DYNECT has? with path: #{url.path} and headers: #{headers}"
+        Libra.logger_debug "DEBUG: DYNECT has? with path: #{url.path} and headers: #{headers.pretty_inspect}"
         resp, data = http.get(url.path, headers)
         case resp
         when Net::HTTPSuccess
@@ -317,7 +318,7 @@ module Libra
       http.use_ssl = true
       json_data = JSON.generate(post_data);
       begin
-        Libra.logger_debug "DEBUG: DYNECT put/post with path: #{url.path} json data: #{json_data} and headers: #{headers}"
+        Libra.logger_debug "DEBUG: DYNECT put/post with path: #{url.path} json data: #{json_data} and headers: #{headers.pretty_inspect}"
         if put
           resp, data = http.put(url.path, json_data, headers)
         else
@@ -363,7 +364,7 @@ module Libra
       http.use_ssl = true
       resp, data = nil, nil
       begin
-        Libra.logger_debug "DEBUG: DYNECT delete with path: #{url.path} and headers: #{headers}"
+        Libra.logger_debug "DEBUG: DYNECT delete with path: #{url.path} and headers: #{headers.pretty_inspect}"
         resp, data = http.delete(url.path, headers)
         case resp
         when Net::HTTPSuccess

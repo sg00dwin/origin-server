@@ -13,17 +13,12 @@ class Accounts < Thor
   desc "list", "list all OpenShift accounts"
   method_option :bucket, :required => true, :desc => "The S3 bucket (e.g. libra_dev, rhc_prod)"
   def list
+    # This will verify the Amazon SSL connection
+    Rightscale::HttpConnection.params[:ca_file] = "/etc/pki/tls/certs/ca-bundle.trust.crt"
 
     config = nil
     begin
-      # Parse the credentials
-      puts ParseConfig.new(File.expand_path("~/.awscred"))
-
-      puts "Reading config for permissions"
-      puts "Read it"
       config = ParseConfig.new(File.expand_path("~/.awscred"))
-      puts "Done"
-
     rescue StandardError => e
       puts <<-eos
         Couldn't access credentials in ~/.awscred
@@ -40,16 +35,13 @@ class Accounts < Thor
                  config.get_value("AWSSecretKey"), 
                  params = {:logger => Logger.new('/dev/null')})
 
-    rhlogins = []
-    s3.incrementally_list_bucket('libra_dev', {'prefix' => 'user_info'}) do |result|
+    s3.incrementally_list_bucket(options[:bucket], {'prefix' => 'user_info'}) do |result|
       result[:contents].each do |bucket|  
         if bucket[:key] =~ /\/user.json$/
-          rhlogins << File.basename(File.dirname(bucket[:key]))                                                                
+          puts File.basename(File.dirname(bucket[:key]))
         end
       end
     end
-
-    pp rhlogins
   end
 end
 

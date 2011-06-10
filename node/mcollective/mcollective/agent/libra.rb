@@ -26,7 +26,6 @@
 #
 require 'rubygems'
 require 'open4'
-require 'fileutils'
 require 'pp'
 
 module MCollective
@@ -57,9 +56,12 @@ module MCollective
       #
       def cartridge_do_action
         Log.instance.debug("cartridge_do_action call / request = #{request.pretty_inspect}")
-        validate :cartridge, /^[a-zA-Z0-9\.\-]+$/
-        validate :action, /^(configure|deconfigure|update_namespace|info|post-install|post_remove|pre-install|reload|restart|start|status|stop)$/
-        validate :args, /^.+$/
+        validate :cartridge, /\A[a-zA-Z0-9\.\-]+\z/
+        validate :cartridge, :shellsafe
+        validate :action, /\A(configure|deconfigure|update_namespace|info|post-install|post_remove|pre-install|reload|restart|start|status|stop)\Z/
+        validate :action, :shellsafe
+        validate :args, /\A[\w\+\/= @\-\.]+\z/
+        validate :args, :shellsafe
         cartridge = request[:cartridge]
         action = request[:action]
         args = request[:args]
@@ -103,25 +105,24 @@ module MCollective
         validate :uuid, /^[a-zA-Z0-9]+$/
         validate :application, /^[a-zA-Z0-9]+$/
         validate :app_type, /^.+$/
-        validate :version, /^.+$/  
+        validate :version, /^.+$/
+        validate :namespace, /^.+$/  
         uuid = request[:uuid]
         app_name = request[:application]
-        app_type = request[:app_type]
+        old_app_type = request[:app_type]
+        namespace = request[:namespace]
         version = request[:version]
-        libra_home = '/var/lib/libra'
         output = ""
         exitcode = 0
-        if (version == '3')
-          app_type = app_type.split('-')[0]
-          if File.exists? "#{libra_home}/#{uuid}/#{app_type}/#{app_name}"
-            mv "#{libra_home}/#{uuid}/#{app_type}/#{app_name}", "#{libra_home}/#{uuid}/#{app_type}/#{app_name}"
-          else
-            exitcode = 127
-            output += "Application not found to migrate: #{uuid}/#{app_type}/#{app_name}\n"
-          end
-        else
+        begin
+          require "#{File.dirname(__FILE__)}/migrate-#{version}"
+          output, exitcode = LibraMigration::migrate(uuid, app_name, old_app_type, namespace, version)
+        rescue LoadError => e
           exitcode = 127
           output += "Migration version not supported: #{version}\n"
+        rescue Exception => e
+          exitcode = 1
+          output += "Application failed to migrate with exception: #{e.message}\n#{e.backtrace}\n"
         end
         Log.instance.debug("migrate_action (#{exitcode})\n------\n#{output}\n------)")
 

@@ -6,6 +6,7 @@ metadata    :name        => "Libra Management",
             :url         => "https://engineering.redhat.com/trac/Libra",
             :timeout     => 60
 
+
 action "cartridge_do", :description => "run a cartridge action" do
     display :always
 
@@ -63,23 +64,31 @@ action "migrate", :description => "run a cartridge action" do
         :type           => :string,
         :validation     => '^[a-zA-Z0-9]+$',
         :optional       => false,
-        :maxlength      => 32
+        :maxlength      => 128
         
     input :app_type,
         :prompt         => "Application Type",
         :description    => "Type of application",
         :type           => :string,
-        :validation     => '^[a-zA-Z0-9]+$',
+        :validation     => '^.+$',
         :optional       => false,
         :maxlength      => 32
+        
+    input :namespace,
+        :prompt         => "Namespace",
+        :description    => "Namespace",
+        :type           => :string,
+        :validation     => '^.+$',
+        :optional       => false,
+        :maxlength      => 128
 
     input :version,
         :prompt         => "Target Version",
         :description    => "Target version",
         :type           => :string,
-        :validation     => '^[a-zA-Z0-9]+$',
+        :validation     => '^.+$',
         :optional       => false,
-        :maxlength      => 32
+        :maxlength      => 64
 
     output  :time,
             :description => "The time as a message",
@@ -111,7 +120,7 @@ action "has_app", :description => "Does this server contain a specified app?" do
         :type           => :string,
         :validation     => '^[a-zA-Z0-9]+$',
         :optional       => false,
-        :maxlength      => 32
+        :maxlength      => 128
 
     output  :time,
             :description => "The time as a message",

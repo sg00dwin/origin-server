@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.72.11
+Version:   0.72.12
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -62,6 +62,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Wed Jun 08 2011 Dan McPherson <dmcphers@redhat.com> 0.72.12-1
+- fixing configuration dir (mmcgrath@redhat.com)
+
 * Tue Jun 07 2011 Matt Hicks <mhicks@redhat.com> 0.72.11-1
 - Fixing servername to remove the debug server (mmcgrath@redhat.com)
 

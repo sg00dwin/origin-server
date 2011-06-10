@@ -31,7 +31,8 @@ module OpenShift
       end.compact
 
       log.info "Stopping untagged instances #{instances.pretty_inspect}"
-      conn.stop_instances(instances) unless instances.empty?
+      # TODO - Enable with new gem
+      #conn.stop_instances(instances) unless instances.empty?
     end
   end
 end
