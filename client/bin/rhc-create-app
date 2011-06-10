@@ -33,7 +33,7 @@ Create an OpenShift Express app.
 
   -a|--app   application     Application name  (alphanumeric - max #{RHC::Maxdlen} chars) (required)
   -t|--type  type            Type of app to create (#{type_keys}) (required)
-  -l|--rhlogin  rhlogin      RHCloud rhlogin (#{rhlogin})
+  -l|--rhlogin  rhlogin      Red Hat login (RHN or OpenShift login with OpenShift Express access) (#{rhlogin})
   -p|--password  password    RHLogin password  (optional, will prompt)
   -r|--repo  path            Git Repo path (defaults to ./$app_name)
   -n|--nogit                 Only create remote space, don't pull it locally
@@ -205,7 +205,7 @@ puts "Checking ~/.ssh/config"
 
 user_info = RHC::get_user_info(libra_server, opt['rhlogin'], password, @http, debug, false)
 
-my_url = "#{opt['app']}-#{user_info['user_info']['namespace']}.#{user_info['user_info']['rhc_domain']}"
+fqdn = "#{opt['app']}-#{user_info['user_info']['namespace']}.#{user_info['user_info']['rhc_domain']}"
 
 found = false
 
@@ -277,10 +277,10 @@ sleep 15
 # Now start checking for DNS
 loop = 0
 sleep_time = 2
-while loop < RHC::Maxretries && !RHC::hostexist?(my_url)
+while loop < RHC::Maxretries && !RHC::hostexist?(fqdn)
     sleep sleep_time
     loop+=1
-    puts "  retry # #{loop} - Waiting for DNS: #{my_url}"
+    puts "  retry # #{loop} - Waiting for DNS: #{fqdn}"
     sleep_time = RHC::delay(sleep_time)
 end
 
@@ -350,7 +350,7 @@ while attempt < RHC::Maxretries
     elsif (type == :perl)
       page = 'health_check.pl'
     end
-    url = URI.parse("http://#{my_url}/#{page}")
+    url = URI.parse("http://#{fqdn}/#{page}")
     begin
       response = @http.get_response(url)
     rescue Exception => e
@@ -361,7 +361,7 @@ while attempt < RHC::Maxretries
 
 Success!  Your application is now published here:
 
-      http://#{my_url}/
+      http://#{fqdn}/
 
 The remote repository is located here:
 

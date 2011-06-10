@@ -76,9 +76,6 @@ module Libra
       end
 
       server = Server.new(app_info['server_identity'])
-      if not server
-        raise NodeException.new(142), "The application #{app_name} is registered to an invalid node.  If the problem persists please contact Red Hat support.", caller[0..5]
-      end
 
       Libra.logger_debug "DEBUG: Performing action '#{action}' on node: #{server.name} - #{server.repos} repos" if Libra.c[:rpc_opts][:verbose]
       server_execute_direct(framework, action, app_name, user, server, app_info)
@@ -112,7 +109,6 @@ module Libra
         begin
           Libra.logger_debug "DEBUG: Failed to register dns entry for app '#{app_name}' and user '#{user.rhlogin}' on node '#{server.name}'"
           Libra.client_debug "Failed to register dns entry for: '#{app_name}'"
-          server_execute_direct(framework, 'deconfigure', app_name, user, server, app_info)
         ensure
           raise
         end
@@ -137,34 +133,30 @@ module Libra
     end
     
     # Remove the application and account from the server
-    server = Server.new(app_info['server_identity'])    
-    if server
+    server = Server.new(app_info['server_identity'])
       
-      # first, remove the application
-      Libra.logger_debug "DEBUG: deconfiguring app #{app_name} on node: #{server.name} - #{server.repos} repos" if Libra.c[:rpc_opts][:verbose]
-      begin
-        server_execute_direct(framework, 'deconfigure', app_name, user, server, app_info)
-      rescue
-        if server.has_app?(app_info, app_name)
-          raise
-        else
-          Libra.logger_debug "Application '#{app_name}' not found on node #{server.name}.  Continuing with deconfigure."
-          Libra.logger_debug "Error from cartridge on deconfigure: #{e.message}"
-        end
+    # first, remove the application
+    Libra.logger_debug "DEBUG: deconfiguring app #{app_name} on node: #{server.name} - #{server.repos} repos" if Libra.c[:rpc_opts][:verbose]
+    begin
+      server_execute_direct(framework, 'deconfigure', app_name, user, server, app_info)
+    rescue Exception => e
+      if server.has_app?(app_info, app_name)
+        raise
+      else
+        Libra.logger_debug "Application '#{app_name}' not found on node #{server.name}.  Continuing with deconfigure."
+        Libra.logger_debug "Error from cartridge on deconfigure: #{e.message}"
       end
+    end
 
-      # then remove the account
+    # then remove the account
 
-      # remove the node account from the server node.
-      begin
-        Libra.logger_debug "Removing app account from server node: #{app_info}"
-        server.delete_account(app_info['uuid'])
-      rescue
-        # check if the user account is still there
-      end
-    else # NO SERVER
-      Libra.client_debug "Application is registered to an invalid node, still attempting to remove everything else..."
-      Libra.logger_debug "DEBUG: Application '#{app_name}' is registered by user '#{rhlogin}(#{app_info['uuid']})' to an invalid node '#{app_info.server_identity}', application will be destroyed but some space may still be consumed for app on the node..."
+    # remove the node account from the server node.
+    begin
+      Libra.logger_debug "Removing app account from server node: #{app_info.pretty_inspect}"
+      server.delete_account(app_info['uuid'])
+    rescue Exception => e
+      Libra.logger_debug "WARNING: Error removing account '#{app_info['uuid']}' from node '#{app_info['server_identity']}' with message: #{e.message}"
+      #TODO check if the user account is still there and raise exception if it is or even better roll this in with deconfigure app
     end
 
     # remove the DNS entries
@@ -193,12 +185,14 @@ module Libra
         end
       elsif exitcode != 0
         Libra.client_debug "Cartridge return code: " + exitcode.to_s
-        Libra.client_debug "Cartridge output: " + output
-        Libra.logger_debug "DEBUG: execute_direct results: " + output
-        raise NodeException.new(143), "Node execution failure (invalid exit code from execute direct).  If the problem persists please contact Red Hat support.", caller[0..5]
+        if output
+          Libra.client_debug "Cartridge output: " + output
+          Libra.logger_debug "DEBUG: execute_direct results: " + output
+        end
+        raise NodeException.new(143), "Node execution failure (invalid exit code from node).  If the problem persists please contact Red Hat support.", caller[0..5]
       end
     else
-      raise NodeException.new(143), "Node execution failure (error getting result from execute direct).  If the problem persists please contact Red Hat support.", caller[0..5]
+      raise NodeException.new(143), "Node execution failure (error getting result from node).  If the problem persists please contact Red Hat support.", caller[0..5]
     end
   end
 

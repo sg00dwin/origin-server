@@ -52,7 +52,7 @@ the application, just cd eat/, make your changes, then run:
     git push
 
 Once the git push completes successfully, the application at
-http://eat.foodie.rhcloud.com/ will automatically see those changes.
+http://eat-foodie.rhcloud.com/ will automatically see those changes.
 
 
 rhc-ctl-app

@@ -4,10 +4,11 @@
 %define sitedir %{_localstatedir}/www/libra/site
 %define devenvdir %{_sysconfdir}/libra/devenv
 %define jenkins %{_sharedstatedir}/jenkins
+%define selenium %{_libdir}/python2.6/selenium-2.0b3-python
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.72.10
+Version:   0.72.14
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -27,6 +28,7 @@ Requires:  qpid-cpp-server
 Requires:  qpid-cpp-server-ssl
 Requires:  puppet
 Requires:  rubygem-cucumber
+Requires:  rubygem-mechanize
 Requires:  rubygem-mocha
 Requires:  rubygem-rspec
 Requires:  rubygem-nokogiri
@@ -76,6 +78,10 @@ touch %{buildroot}%{sitedir}/log/development.log
 # Setup the jenkins jobs
 mkdir -p %{buildroot}%{jenkins}/jobs
 mv %{buildroot}%{devenvdir}%{jenkins}/jobs/* %{buildroot}%{jenkins}/jobs
+
+# Setup the Selenium libraries
+mkdir -p %{buildroot}%{selenium}
+mv %{buildroot}%{devenvdir}%{selenium} %{buildroot}%{selenium}
 
 %clean
 rm -rf %{buildroot}
@@ -173,15 +179,29 @@ chkconfig libra-tc on
 %config(noreplace) %{jenkins}/jobs/libra_ami_verify/config.xml
 %config(noreplace) %{jenkins}/jobs/libra_check/config.xml
 %config(noreplace) %{jenkins}/jobs/libra_prune/config.xml
-%config(noreplace) %{jenkins}/jobs/libra_selenium/config.xml
 %config(noreplace) %{jenkins}/jobs/libra_web/config.xml
 %{jenkins}/jobs/libra_web/firefoxprofile_test
-%{jenkins}/jobs/libra_selenium/selenium-2.0b3-python
 %{devenvdir}
 %{_initddir}/libra-broker
 %{_initddir}/libra-site
+%{selenium}
 
 %changelog
+* Fri Jun 10 2011 Matt Hicks <mhicks@redhat.com> 0.72.14-1
+- Removing file that failed RPM build (mhicks@redhat.com)
+
+* Fri Jun 10 2011 Matt Hicks <mhicks@redhat.com> 0.72.13-1
+- Cleanup of old job (mhicks@redhat.com)
+- lib macro fix (mhicks@redhat.com)
+- Selenium DevEnv setup / cleanup (mhicks@redhat.com)
+- Updating Jenkins config not to install devenv on update (mhicks@redhat.com)
+
+* Thu Jun 09 2011 Matt Hicks <mhicks@redhat.com> 0.72.12-1
+- Switching build notifications to the list (mhicks@redhat.com)
+
+* Thu Jun 09 2011 Matt Hicks <mhicks@redhat.com> 0.72.11-1
+- DevEnv enhancements (mhicks@redhat.com)
+
 * Thu Jun 09 2011 Matt Hicks <mhicks@redhat.com> 0.72.10-1
 - Moving binary selenium content to the devenv RPM structure
   (mhicks@redhat.com)

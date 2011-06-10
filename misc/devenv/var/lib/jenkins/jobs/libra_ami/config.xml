@@ -58,7 +58,7 @@
       <command>yum clean metadata</command>
     </hudson.tasks.Shell>
     <hudson.tasks.Shell>
-      <command>build/devenv build --name=devenv_${BUILD_NUMBER} --terminate</command>
+      <command>build/devenv build devenv_${BUILD_NUMBER} --register --terminate</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
@@ -71,8 +71,8 @@
       </threshold>
     </hudson.tasks.BuildTrigger>
     <hudson.tasks.Mailer>
-      <recipients>mhicks@redhat.com</recipients>
-      <dontNotifyEveryUnstableBuild>false</dontNotifyEveryUnstableBuild>
+      <recipients>libra-express@redhat.com</recipients>
+      <dontNotifyEveryUnstableBuild>true</dontNotifyEveryUnstableBuild>
       <sendToIndividuals>false</sendToIndividuals>
     </hudson.tasks.Mailer>
   </publishers>

@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.72.11
+Version:       0.72.13
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -102,7 +102,7 @@ if [ "$1" -eq "0" ]; then
 fi
 
 %postun
-if [ "$1" -eq 1 ]; then
+if [ "$1" -eq 0 ]; then
     /sbin/service mcollective restart > /dev/null 2>&1 || :
 fi
 #/usr/sbin/semodule -r libra
@@ -139,6 +139,14 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Fri Jun 10 2011 Matt Hicks <mhicks@redhat.com> 0.72.13-1
+- only restart mcollective on _uninstall_ not upgrade (mmcgrath@redhat.com)
+- Creating test commits, this is for jenkins (mmcgrath@redhat.com)
+
+* Thu Jun 09 2011 Matt Hicks <mhicks@redhat.com> 0.72.12-1
+- Correcting mcollective check to allow periods (mmcgrath@redhat.com)
+- Adding shell safe and other checks (mmcgrath@redhat.com)
+
 * Wed Jun 08 2011 Matt Hicks <mhicks@redhat.com> 0.72.11-1
 - handle new symlink on rerun (dmcphers@redhat.com)
 - migration bug fixes (dmcphers@redhat.com)

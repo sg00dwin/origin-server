@@ -35,8 +35,8 @@ Bind a registered rhcloud user to a domain in rhcloud.
   NOTE: to change ssh key, please alter your ~/.ssh/libra_id_rsa and
         ~/.ssh/libra_id_rsa.pub key, then re-run with --alter
 
-  -n|--namespace   namespace   OpenShift Express namespace (alphanumeric - max #{RHC::Maxdlen} chars) (required)
-  -l|--rhlogin     rhlogin     Red Hat login (required)
+  -n|--namespace   namespace   Namespace for your application(s) (alphanumeric - max #{RHC::Maxdlen} chars) (required)
+  -l|--rhlogin     rhlogin     Red Hat login (RHN or OpenShift login with OpenShift Express access) (required)
   -p|--password    password    RHLogin password (optional, will prompt)
   -a|--alter                   Alter namespace (will change urls) and/or ssh key
   -d|--debug                   Print Debug info
@@ -134,6 +134,7 @@ data = {'namespace' => opt['namespace'],
                 'ssh' => ssh_key}
 if (opt['alter'])
   data['alter'] = "true"
+  user_info = RHC::get_user_info(libra_server, opt['rhlogin'], password, @http, debug, true)
 end
 if debug
   data['debug'] = "true"
@@ -160,8 +161,40 @@ in #{@local_config_path} which has been created and populated for you.
 
 EOF
         else
-            puts "Alteration successful.  You can use rhc-user-info to view any url changes."
-            puts
+            app_info = user_info['app_info']
+            dns_success = true
+            if !app_info.empty? && opt['namespace'] != user_info['user_info']['namespace']
+              #
+              # Confirm that the host(s) exist in DNS
+              #
+              puts "Now your new domain name(s) are being populated worldwide (this might take a minute)..."
+              # Allow DNS to propogate
+              sleep 15
+              app_info.each_key do |appname|
+                  fqdn = "#{appname}-#{opt['namespace']}.#{user_info['user_info']['rhc_domain']}"
+                  
+                  # Now start checking for DNS
+                  loop = 0
+                  sleep_time = 2
+                  while loop < RHC::Maxretries && !RHC::hostexist?(fqdn)
+                      sleep sleep_time
+                      loop+=1
+                      puts "  retry # #{loop} - Waiting for DNS: #{fqdn}"
+                      sleep_time = RHC::delay(sleep_time)
+                  end
+                  
+                  if loop >= RHC::Maxretries
+                      puts "Host could not be found: #{fqdn}"
+                      dns_success = false
+                  end
+              end
+            end
+            if dns_success
+              puts "Alteration successful.  You can use rhc-user-info to view any url changes."
+            else
+              puts "Alteration successful but at least one of the urls is still updating in DNS.  You can use rhc-user-info to view any url changes."
+            end
+            puts ""
         end
         exit 0
     rescue JSON::ParserError
