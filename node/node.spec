@@ -102,7 +102,7 @@ if [ "$1" -eq "0" ]; then
 fi
 
 %postun
-if [ "$1" -eq 1 ]; then
+if [ "$1" -eq 0 ]; then
     /sbin/service mcollective restart > /dev/null 2>&1 || :
 fi
 #/usr/sbin/semodule -r libra
