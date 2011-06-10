@@ -177,8 +177,8 @@ class BrokerController < ApplicationController
     end
   end
   
-  def domain_post    
-    begin      
+  def domain_post
+    begin
       # Parse the incoming data
       data = parse_json_data(params['json_data'])
       return unless data
@@ -208,13 +208,13 @@ class BrokerController < ApplicationController
           else
             render :json => generate_result_json("User already has a registered namespace.  To modify, use --alter", 97), :status => :conflict and return
           end
-        else   
+        else
           user = Libra::User.create(username, data['ssh'], ns)
         end
       else
         render_unauthorized and return
       end
-  
+
       json_data = JSON.generate({
                               :rhlogin => user.rhlogin,
                               :uuid => user.uuid
@@ -226,4 +226,97 @@ class BrokerController < ApplicationController
       render_internal_server_error(e, 'domain_post') and return
     end
   end
+
+   def user_info_post
+    begin
+      # Parse the incoming data
+      data = parse_json_data(params['json_data'])
+
+      # Check if user already exists
+      username = Libra::User.login(data['rhlogin'], params['password'])
+      if username
+        user = Libra::User.find(username)
+        if user
+          user_info = {
+              :rhlogin => user.rhlogin,
+              :uuid => user.uuid,
+              :namespace => user.namespace,
+              :ssh_key => user.ssh,
+              :rhc_domain => Libra.c[:libra_domain]
+              }
+          app_info = {}
+
+          user.apps.each do |appname, app|
+              app_info[appname] = {
+                  :framework => app['framework'],
+                  :creation_time => app['creation_time'],
+                  :uuid => app['uuid']
+              }
+          end
+
+          json_data = JSON.generate({:user_info => user_info,
+             :app_info => app_info})
+
+          render :json => generate_result_json(json_data) and return
+        else
+          # Return a 404 to denote the user doesn't exist
+          render :json => generate_result_json("User does not exist", 99), :status => :not_found and return
+        end
+      else
+        render_unauthorized and return
+      end
+    rescue Exception => e
+      render_internal_server_error(e, 'user_info_post') and return
+    end
+  end
+
+  def cart_list_post
+    begin
+      # Parse the incoming data
+      data = parse_json_data(params['json_data'])
+      username = Libra::User.login(data['rhlogin'], params['password'])
+      if username
+        user = Libra::User.find(username)
+        ns = data['namespace']
+        if !Libra::Util.check_namespace(ns)
+          render :json => generate_result_json("Invalid characters in namespace '#{ns}' found", 106), :status => :invalid and return
+        end
+        if user
+          if data['alter']
+            if user.namespace != ns
+              #render :json => generate_result_json("You may not change your registered namespace of: #{user.namespace}", 98), :status => :conflict and return
+              user.update_namespace(ns)
+            end
+            user.namespace=ns
+            user.ssh=data['ssh']
+            user.update
+
+            # update each node account for this user's applications
+            user.apps.each do |appname, app|
+              server = Libra::Server.new app['server_identity']
+              cfgstring = "-c #{app['uuid']} -e #{user.rhlogin} -s #{user.ssh} -a"
+              server.execute_direct('li-controller-0.1', 'configure', cfgstring)
+            end
+          else
+            render :json => generate_result_json("User already has a registered namespace.  To modify, use --alter", 97), :status => :conflict and return
+          end
+        else
+          user = Libra::User.create(username, data['ssh'], ns)
+        end
+      else
+        render_unauthorized and return
+      end
+
+      json_data = JSON.generate({
+                              :rhlogin => user.rhlogin,
+                              :uuid => user.uuid
+                              })
+
+      # Just return a 200 success
+      render :json => generate_result_json(json_data) and return
+    rescue Exception => e
+      render_internal_server_error(e, 'domain_post') and return
+    end
+  end
+
 end
