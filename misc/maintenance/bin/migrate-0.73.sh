@@ -81,21 +81,31 @@ def migrate
         from_type = app['framework']
         to_type = FRAMEWORKS[from_type]
         begin
+          s3_change = false
           if to_type
             puts "Migrating app: #{app_name} to type: #{to_type}"
             app['framework'] = to_type
+            s3_change = true
           else
             to_type = from_type
             puts "WARNING: From type '#{from_type}' not found migrating app: #{app_name}"
           end
+          
           if !app['uuid']
             puts "Adding uuid to app: #{app_name} to type: #{user.uuid}"
             app['uuid'] = user.uuid
+            s3_change = true
           else
             puts "WARNING: Application '#{app_name}' already has uuid: #{app['uuid']}"
           end
-          puts "Migrating app in s3 '#{app_name}' with uuid '#{app['uuid']}' for user: #{rhlogin}"            
-          user.update_app(app, app_name)
+          
+          if s3_change
+            puts "Migrating app in s3 '#{app_name}' with uuid '#{app['uuid']}' for user: #{rhlogin}"            
+            user.update_app(app, app_name)
+          else
+            puts "No change for app in s3 '#{app_name}' with uuid '#{app['uuid']}' for user: #{rhlogin}"
+          end
+          
           if app['server_identity']
             puts "Migrating app '#{app_name}' with uuid '#{app['uuid']}' on node '#{app['server_identity']}' for user: #{rhlogin}"
             migrate_app_on_node(user, app, app_name, from_type, to_type)
