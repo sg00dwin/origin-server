@@ -4,7 +4,7 @@
 %define sitedir %{_localstatedir}/www/libra/site
 %define devenvdir %{_sysconfdir}/libra/devenv
 %define jenkins %{_sharedstatedir}/jenkins
-%define selenium %{_lib}/python2.6/selenium-2.0b3-python
+%define selenium %{_libdir}/python2.6/selenium-2.0b3-python
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
