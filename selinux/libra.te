@@ -93,6 +93,8 @@ files_read_etc_files(libra_domain)
 
 auth_use_nsswitch(libra_domain)
 
+libs_exec_lib_files(libra_domain)
+
 logging_send_syslog_msg(libra_domain)
 logging_inherit_append_all_logs(libra_domain)
 
