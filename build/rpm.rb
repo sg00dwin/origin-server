@@ -1,7 +1,7 @@
 namespace :rpm do
   task :gem do
     puts "Building client gem..."
-    cd CLIENT_ROOT
+    cd File.expand_path(File.expand_path(__FILE__) + "/../../") + "/client"
     sh "rake", "package"
     cd ".."
     puts "Done"
