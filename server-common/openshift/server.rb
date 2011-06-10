@@ -9,11 +9,12 @@ module Libra
     # Cartridge definitions
     @@C_CONTROLLER = 'li-controller-0.1'
 
-    attr_reader :name, :repos
+    attr_reader :name, :repos, :carts
 
-    def initialize(name, repos=nil)
+    def initialize(name, repos=nil, carts=[])
       @name = name
       @repos = repos.to_i if repos
+      @carts = carts
     end
 
     def self.create(opts={})
@@ -478,6 +479,20 @@ module Libra
           end
         end
       end
+    end
+
+    #
+    # Returns the list/array of cartridges that the server has
+    # looking it up if needed. This returns the full list, including
+    # cartridges we may wish to keep private!
+    #
+    def carts
+      # Only call out to MCollective if the value isn't set
+      Helper.rpc_get_fact('carts', name) do |server, carts|
+        @carts = carts
+      end unless @carts
+
+      @carts
     end
 
     #
