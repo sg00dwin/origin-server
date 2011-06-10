@@ -44,18 +44,6 @@ USAGE
 exit 255
 end
 
-def validate_email(email)
-    if email =~ /([^@]+)@([a-zA-Z0-9\.])+\.([a-zA-Z]{2,3})/
-        if $1 =~ /[^a-zA-Z0-9\.]/
-            return false
-        else
-            return true
-        end
-    else
-        return false
-    end
-end
-
 begin
     opts = GetoptLong.new(
         ["--debug", "-d", GetoptLong::NO_ARGUMENT],
