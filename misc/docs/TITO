@@ -34,3 +34,22 @@ run:
 tito report --untagged-commits | grep rhc-
 
 That's it!
+
+
+Power Users:
+
+If you know you don't want to get prompted, here is a simple script to tag and release a package:
+
+#!/bin/bash
+
+# Setup an answer file
+echo -e "y\nn" > /tmp/answerfile
+
+# Remove your workdir
+rm -rf /tmp/tito/cvswork/rhc*
+
+# Tag a package with no prompt
+tito tag --accept-auto-changelog
+
+# To build the package
+tito build --cvs-release < /tmp/answerfile
