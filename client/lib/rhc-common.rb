@@ -37,36 +37,53 @@ module RHC
   Maxretries = 10
   Defaultdelay = 2
 
-  TYPES = {
-    'php-5.3' => :php,
-    'perl-5.10' => :perl,
-    'rack-1.1' => :rack,
-    'wsgi-3.2' => :wsgi,
-    'jbossas-7.0' => :jbossas
-  }
-  
-  SUPPORTED_TYPES = {
-    'php-5.3' => :php,
-    'rack-1.1' => :rack,
-    'wsgi-3.2' => :wsgi
-  }
-
   def self.delay(time, adj=Defaultdelay)
     (time*=adj).to_int
   end
   
-  def self.get_supported_cartridge_types(sep=', ')
-    return get_cartridge_types(SUPPORTED_TYPES)
+  def self.get_cartridges(libra_server, net_http, debug=nil, print_result=nil)
+    puts "Contacting https://#{libra_server}"
+    data = {'cartinfo' => "true"}
+    if debug
+      data['debug'] = "true"
+    end
+    print_post_data(data, debug)
+    json_data = JSON.generate(data)
+
+    url = URI.parse("https://#{libra_server}/broker/cartinfo")
+    response = http_post(net_http, url, json_data, password)
+
+    unless response.code == '200'
+      if response.code == '404'
+        puts "Not found"
+        exit 99
+      elsif response.code == '401'
+        puts "Invalid credentials"
+        exit 97
+      else
+        print_response_err(response, debug)
+      end
+      exit 254
+    end
+    if print_result
+      print_response_success(response, debug)
+    end
+    begin
+      json_resp = JSON.parse(response.body)
+      carts = JSON.parse(json_resp['carts'])
+    rescue JSON::ParserError
+      exit 254
+    end
+    carts
   end
 
-  def self.get_cartridge_types(types=TYPES, sep=', ')
+  def self.get_cartridge_types(carts, sep, libra_server, net_http, debug=nil, print_result=nil)
+    carts = get_cartridges(libra_server, net_http, debug, print_result) if carts.nil?
     i = 1
     type_keys = ''
-    types.each_key do |key|
-      type_keys += key
-      if i < types.size
-        type_keys += sep
-      end
+    carts.each_key do |key|
+      type_keys << key
+      type_keys << sep if i < carts.size
       i += 1
     end
     type_keys
@@ -114,12 +131,13 @@ module RHC
     true
   end
 
-  def self.get_cartridge(type)
+  def self.get_cartridge(type, libra_server, net_http)
+    carts = get_cartridges(libra_server, net_http)
     if type
-      if !(RHC::TYPES.has_key?(type))
-        puts 'type must be ' << get_supported_cartridge_types(' or ')
+      if !(carts.includes?(type))
+        puts 'type must be ' << get_cartridge_types(carts, ' or ', nil, nil)
       else
-        return RHC::TYPES[type]
+        return type
       end
     else
       puts "Type is required"

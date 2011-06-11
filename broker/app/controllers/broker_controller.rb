@@ -231,27 +231,21 @@ class BrokerController < ApplicationController
     begin
       # Parse the incoming data
       data = parse_json_data(params['json_data'])
-      username = Libra::User.login(data['rhlogin'], params['password'])
-      if username
-        user = Libra::User.find(username)
-        ns = data['namespace']
-        if !Libra::Util.check_namespace(ns)
-          render :json => generate_result_json("Invalid characters in namespace '#{ns}' found", 106), :status => :invalid and return
-        end
-      else
+      cart_info = data['cartinfo']
+      if cart_info != "true"
         render_unauthorized and return
       end
 
       carts = Libra::Util.get_cartridges
       json_data = JSON.generate({
-                              :rhlogin => user.rhlogin,
+                              :cartinfo => "true",
                               :carts => carts
                               })
 
       # Just return a 200 success
       render :json => generate_result_json(json_data) and return
     rescue Exception => e
-      render_internal_server_error(e, 'domain_post') and return
+      render_internal_server_error(e, 'cart_list_post') and return
     end
   end
 
