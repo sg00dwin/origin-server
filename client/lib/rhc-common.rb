@@ -51,7 +51,7 @@ module RHC
     json_data = JSON.generate(data)
 
     url = URI.parse("https://#{libra_server}/broker/cartinfo")
-    response = http_post(net_http, url, json_data, password)
+    response = http_post(net_http, url, json_data, "password")
 
     unless response.code == '200'
       if response.code == '404'
