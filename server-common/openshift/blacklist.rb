@@ -25,6 +25,7 @@ module Libra
     end
 
     def self.ignore_cart?(name)
+      return false #debug
       IGNORE_CARTS.each do |regex|
           if name =~ /#{regex}/
               return true

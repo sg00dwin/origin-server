@@ -78,7 +78,7 @@ end
 #   Convert from name-m.n.p to name-m.n
 #
 Facter.add(:carts) do
-    acarts = []
+    acarts = [ "debug-1.0.1" ]
     Dir.glob('/usr/libexec/li/cartridges/*/').each do |cart|
         # we know this is private...
         unless cart =~ /li-controller-/

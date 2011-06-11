@@ -14,7 +14,7 @@ module Libra
     def initialize(name, repos=nil, carts=nil)
       @name = name
       @repos = repos.to_i if repos
-      @carts = carts
+      @carts = carts if carts
     end
 
     def self.create(opts={})
