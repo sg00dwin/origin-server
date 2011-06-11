@@ -11,7 +11,7 @@ module Libra
 
     attr_reader :name, :repos, :carts
 
-    def initialize(name, repos=nil, carts=[])
+    def initialize(name, repos=nil, carts=nil)
       @name = name
       @repos = repos.to_i if repos
       @carts = carts
