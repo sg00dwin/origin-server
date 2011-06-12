@@ -7,14 +7,6 @@ module Libra
 
     Maxdlen = 16
 
-    def self.get_cartridges
-        server = Server.find_available
-        carts = []
-        server.carts.each do |cart|
-            carts << cart unless Blacklist.ignore_cart?(cart)
-        end
-        carts
-    end
 
     def self.get_cartridge_types(sep=', ')
       i = 0
@@ -26,6 +18,23 @@ module Libra
         i += 1
       end
       type_keys
+    end
+
+    def self.get_cartridge(type)
+      carts = get_cartridges
+      if carts.include?(type)
+        return type
+      end
+      nil
+    end
+
+    def self.get_cartridges
+        server = Server.find_available
+        carts = []
+        server.carts.each do |cart|
+            carts << cart unless Blacklist.ignore_cart?(cart)
+        end
+        carts
     end
 
     # Invalid chars (") ($) (^) (<) (>) (|) (%) (/) (;) (:) (,) (\) (*) (=) (~)
@@ -67,14 +76,6 @@ module Libra
         return false
       end
       true
-    end
-
-    def self.get_cartridge(type)
-      carts = get_cartridges
-      if carts.include?(type)
-        return type
-      end
-      nil
     end
 
   end
