@@ -7,10 +7,9 @@ module Libra
 
     Maxdlen = 16
 
-
     def self.get_cartridge_types(sep=', ')
       i = 0
-      carts = get_cartridges
+      carts = self.get_cartridges()
       type_keys = ''
       carts.each do |key|
         type_keys << key
@@ -21,14 +20,14 @@ module Libra
     end
 
     def self.get_cartridge(type)
-      carts = get_cartridges
+      carts = self.get_cartridges()
       if carts.include?(type)
         return type
       end
-      nil
+      return nil
     end
 
-    def self.get_cartridges
+    def self.get_cartridges()
         server = Server.find_available
         carts = []
         server.carts.each do |cart|
