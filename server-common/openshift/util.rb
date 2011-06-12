@@ -3,7 +3,7 @@ require 'openshift/server'
 
 
 module Libra
-  class Util
+  module Util
 
     Maxdlen = 16
 
@@ -28,12 +28,12 @@ module Libra
     end
 
     def self.get_cartridges
-        server = Server.find_available
-        carts = []
-        server.carts.each do |cart|
-            carts << cart unless Blacklist.ignore_cart?(cart)
-        end
-        carts
+      server = Server.find_available
+      carts = []
+      server.carts.each do |cart|
+          carts << cart unless Blacklist.ignore_cart?(cart)
+      end
+      carts
     end
 
     # Invalid chars (") ($) (^) (<) (>) (|) (%) (/) (;) (:) (,) (\) (*) (=) (~)
