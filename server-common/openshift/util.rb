@@ -9,7 +9,7 @@ module Libra
 
     def self.get_cartridge_types(sep=', ')
       i = 0
-      carts = get_cartridges
+      carts = get_cart_list
       type_keys = ''
       carts.each do |key|
         type_keys << key
@@ -20,14 +20,14 @@ module Libra
     end
 
     def self.get_cartridge(type)
-      carts = get_cartridges
+      carts = get_cart_list
       if carts.include?(type)
         return type
       end
       return nil
     end
 
-    def self.get_cartridges
+    def self.get_cart_list
       server = Server.find_available
       carts = []
       server.carts.each do |cart|

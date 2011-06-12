@@ -236,7 +236,7 @@ class BrokerController < ApplicationController
         render_unauthorized and return
       end
 
-      carts = Util.get_cartridges
+      carts = Util.get_cart_list
       json_data = JSON.generate({
                               :cartlist => "true",
                               :carts => carts

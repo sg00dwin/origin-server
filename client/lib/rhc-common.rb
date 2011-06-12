@@ -41,7 +41,7 @@ module RHC
     (time*=adj).to_int
   end
   
-  def self.get_cartridges(libra_server, net_http, debug=nil, print_result=nil)
+  def self.get_cart_list(libra_server, net_http, debug=nil, print_result=nil)
     puts "Contacting https://#{libra_server}"
     data = {'cartlist' => "true"}
     if debug
@@ -78,7 +78,7 @@ module RHC
   end
 
   def self.get_cartridge_types(carts, sep, libra_server, net_http, debug=nil, print_result=nil)
-    carts = get_cartridges(libra_server, net_http, debug, print_result) if carts.nil?
+    carts = get_cart_list(libra_server, net_http, debug, print_result) if carts.nil?
     i = 1
     type_keys = ''
     carts.each_key do |key|
@@ -132,7 +132,7 @@ module RHC
   end
 
   def self.get_cartridge(type, libra_server, net_http, debug)
-    carts = get_cartridges(libra_server, net_http, debug)
+    carts = get_cart_list(libra_server, net_http, debug)
     if type
       if !(carts.includes?(type))
         puts 'type must be ' << get_cartridge_types(carts, ' or ', nil, nil)
