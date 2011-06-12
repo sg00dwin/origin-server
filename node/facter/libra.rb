@@ -77,7 +77,7 @@ end
 # List cartridges on the host
 #   Convert from name-m.n.p to name-m.n
 #
-Facter.add(:carts) do
+Facter.add(:cart_list) do
     acarts = [ "debug-1.0.1" ]
     Dir.glob('/usr/libexec/li/cartridges/*/').each do |cart|
         # we know this is private...

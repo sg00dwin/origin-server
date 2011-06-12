@@ -488,7 +488,7 @@ module Libra
     #
     def carts
       # Only call out to MCollective if the value isn't set
-      Helper.rpc_get_fact('carts', name) do |server, carts|
+      Helper.rpc_get_fact('cart_list', name) do |server, carts|
         @carts = carts
       end unless @carts
 
