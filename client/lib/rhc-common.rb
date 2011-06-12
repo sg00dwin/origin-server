@@ -51,7 +51,7 @@ module RHC
     json_data = JSON.generate(data)
 
     url = URI.parse("https://#{libra_server}/broker/cartinfo")
-    response = http_post(net_http, url, json_data, "password")
+    response = http_post(net_http, url, json_data, "none")
 
     unless response.code == '200'
       if response.code == '404'
@@ -131,8 +131,8 @@ module RHC
     true
   end
 
-  def self.get_cartridge(type, libra_server, net_http)
-    carts = get_cartridges(libra_server, net_http)
+  def self.get_cartridge(type, libra_server, net_http, debug)
+    carts = get_cartridges(libra_server, net_http, debug)
     if type
       if !(carts.includes?(type))
         puts 'type must be ' << get_cartridge_types(carts, ' or ', nil, nil)
