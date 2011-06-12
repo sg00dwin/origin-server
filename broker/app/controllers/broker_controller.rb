@@ -231,14 +231,14 @@ class BrokerController < ApplicationController
     begin
       # Parse the incoming data
       data = parse_json_data(params['json_data'])
-      cart_info = data['cartinfo']
+      cart_info = data['cartlist']
       if cart_info != "true"
         render_unauthorized and return
       end
 
       carts = Libra::Util.get_cartridges
       json_data = JSON.generate({
-                              :cartinfo => "true",
+                              :cartlist => "true",
                               :carts => carts
                               })
 
