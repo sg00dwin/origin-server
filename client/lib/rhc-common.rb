@@ -43,14 +43,14 @@ module RHC
   
   def self.get_cartridges(libra_server, net_http, debug=nil, print_result=nil)
     puts "Contacting https://#{libra_server}"
-    data = {'cartinfo' => "true"}
+    data = {'cartlist' => "true"}
     if debug
       data['debug'] = "true"
     end
     print_post_data(data, debug)
     json_data = JSON.generate(data)
 
-    url = URI.parse("https://#{libra_server}/broker/cartinfo")
+    url = URI.parse("https://#{libra_server}/broker/cartlist")
     response = http_post(net_http, url, json_data, "none")
 
     unless response.code == '200'
