@@ -236,7 +236,7 @@ class BrokerController < ApplicationController
         render_unauthorized and return
       end
 
-      carts = Libra::Util.get_cartridges
+      carts = Util.get_cartridges
       json_data = JSON.generate({
                               :cartlist => "true",
                               :carts => carts
