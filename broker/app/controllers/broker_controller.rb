@@ -61,7 +61,7 @@ class BrokerController < ApplicationController
           if !(val =~ /\A[A-Za-z0-9\+\/=]+\z/)
             render :json => generate_result_json("Invalid ssh key: #{val}", 108), :status => :invalid and return nil
           end
-        when 'debug', 'alter'
+        when 'debug', 'alter', 'cartlist'
           if !(val =~ /\A(true|false)\z/)
             render :json => generate_result_json("Invalid value for #{key}:#{val} specified", 254), :status => :invalid and return nil
           end
@@ -177,8 +177,8 @@ class BrokerController < ApplicationController
     end
   end
   
-  def domain_post    
-    begin      
+  def domain_post
+    begin
       # Parse the incoming data
       data = parse_json_data(params['json_data'])
       return unless data
@@ -208,13 +208,13 @@ class BrokerController < ApplicationController
           else
             render :json => generate_result_json("User already has a registered namespace.  To modify, use --alter", 97), :status => :conflict and return
           end
-        else   
+        else
           user = Libra::User.create(username, data['ssh'], ns)
         end
       else
         render_unauthorized and return
       end
-  
+
       json_data = JSON.generate({
                               :rhlogin => user.rhlogin,
                               :uuid => user.uuid
@@ -226,4 +226,30 @@ class BrokerController < ApplicationController
       render_internal_server_error(e, 'domain_post') and return
     end
   end
+
+  def cart_list_post
+    begin
+      # Parse the incoming data
+      data = parse_json_data(params['json_data'])
+      cart_info = data['cartlist']
+      if cart_info != "true"
+        render_unauthorized and return
+      end
+
+      carts = Libra::Util.get_cart_list
+      if carts.nil? || carts.empty?
+        render_internal_server_error(e, 'cart_list_post nil') and return
+      end
+      json_data = JSON.generate({
+                              :cartlist => "true",
+                              :carts => carts #.join('|')
+                              })
+
+      # Just return a 200 success
+      render :json => generate_result_json(json_data) and return
+    rescue Exception => e
+      render_internal_server_error(e, 'cart_list_post') and return
+    end
+  end
+
 end

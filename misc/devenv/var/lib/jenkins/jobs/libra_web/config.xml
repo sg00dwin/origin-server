@@ -2,29 +2,39 @@
 <project>
   <actions/>
   <description></description>
+  <logRotator>
+    <daysToKeep>-1</daysToKeep>
+    <numToKeep>-1</numToKeep>
+    <artifactDaysToKeep>-1</artifactDaysToKeep>
+    <artifactNumToKeep>10</artifactNumToKeep>
+  </logRotator>
   <keepDependencies>false</keepDependencies>
   <properties/>
   <scm class="hudson.scm.NullSCM"/>
   <canRoam>true</canRoam>
   <disabled>true</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
-  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>true</blockBuildWhenUpstreamBuilding>
   <triggers class="vector"/>
   <concurrentBuild>false</concurrentBuild>
+  <customWorkspace>jobs/libra_check/workspace</customWorkspace>
   <builders>
     <hudson.tasks.Shell>
-      <command>echo &quot;Display is $DISPLAY&quot;;
+      <command>tests/selenium/login_test
 
-cd tests/Selenium_test/NoStreamlineCases;
-./test_web.py --host=&quot;localhost&quot; --url=&quot;https://ec2-50-19-14-234.compute-1.amazonaws.com&quot; --port=54847 --browser=&quot;*firefox /usr/lib64/firefox-3.6/firefox&quot; --resultfile=&quot;./testresult.html&quot;
-
-</command>
+# Generate an artifact if necessary
+# This keeps Jenkins happy
+ls -1 *.png &gt; /dev/null 2&gt;&amp;1
+if [ &quot;$?&quot; != &quot;0&quot; ]; then
+touch none.png
+fi</command>
     </hudson.tasks.Shell>
   </builders>
-  <publishers/>
-  <buildWrappers>
-    <hudson.plugins.xvnc.Xvnc>
-      <takeScreenshot>true</takeScreenshot>
-    </hudson.plugins.xvnc.Xvnc>
-  </buildWrappers>
+  <publishers>
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>*.png</artifacts>
+      <latestOnly>false</latestOnly>
+    </hudson.tasks.ArtifactArchiver>
+  </publishers>
+  <buildWrappers/>
 </project>

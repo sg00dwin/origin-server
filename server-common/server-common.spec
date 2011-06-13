@@ -2,7 +2,7 @@
 
 Summary:       Common dependencies of the OpenShift broker and site
 Name:          rhc-server-common
-Version:       0.72.10
+Version:       0.72.11
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -54,6 +54,9 @@ rm -rf %{buildroot}
                                   -s /sbin/nologin 2>&1 > /dev/null || :
 
 %changelog
+* Fri Jun 10 2011 Matt Hicks <mhicks@redhat.com> 0.72.11-1
+- Move along to more dynamic using :carts factor (jimjag@redhat.com)
+
 * Thu Jun 09 2011 Matt Hicks <mhicks@redhat.com> 0.72.10-1
 - fixup minor issues with refactor plus debugging (dmcphers@redhat.com)
 - refactored logic of Libra.execute for clarity (markllama@redhat.com)

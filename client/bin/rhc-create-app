@@ -24,8 +24,9 @@
 require 'rhc-common'
 
 def p_usage
+    libra_server = get_var('libra_server')
     rhlogin = get_var('default_rhlogin') ? "Default: #{get_var('default_rhlogin')}" : "(required)"
-    type_keys = RHC::get_supported_cartridge_types(', ')
+    type_keys = RHC::get_cartridge_types(nil, ', ', libra_server, @http, false)
     puts <<USAGE
 
 Usage: #{$0}
@@ -89,7 +90,7 @@ if !RHC::check_app(opt['app'])
     p_usage
 end
 
-type = RHC::get_cartridge(opt['type'])
+type = RHC::get_cartridge_type(opt['type'], libra_server, @http, debug)
 if !type
     p_usage
 end
@@ -188,8 +189,7 @@ at_exit do
                    {:cartridge => opt['type'],
                     :action => 'deconfigure',
                     :app_name => opt['app'],
-                    :rhlogin => opt['rhlogin'],
-                    :password => password
+                    :rhlogin => opt['rhlogin']
                     })
         puts "Cleaning up application"
         url = URI.parse("https://#{libra_server}/broker/cartridge")
