@@ -237,12 +237,12 @@ class BrokerController < ApplicationController
       end
 
       carts = Libra::Util.get_cart_list
-      if carts.nil?
+      if carts.nil? || carts.empty?
         render_internal_server_error(e, 'cart_list_post nil') and return
       end
       json_data = JSON.generate({
                               :cartlist => "true",
-                              :carts => carts
+                              :carts => carts.join('|')
                               })
 
       # Just return a 200 success

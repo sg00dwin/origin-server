@@ -75,7 +75,7 @@ module RHC
     rescue JSON::ParserError
       exit 254
     end
-    carts
+    carts.split('|')
   end
 
   def self.get_cartridge_types(carts, sep, libra_server, net_http, debug=true, print_result=nil)
