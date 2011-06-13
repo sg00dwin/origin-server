@@ -82,7 +82,7 @@ module RHC
     carts = get_cart_list(libra_server, net_http, debug, print_result) if carts.nil?
     i = 1
     type_keys = ''
-    carts.each_key do |key|
+    carts.each do |key|
       type_keys << key
       type_keys << sep if i < carts.size
       i += 1
