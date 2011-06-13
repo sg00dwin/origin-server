@@ -9,11 +9,12 @@ module Libra
     # Cartridge definitions
     @@C_CONTROLLER = 'li-controller-0.1'
 
-    attr_reader :name, :repos
+    attr_reader :name, :repos, :carts
 
-    def initialize(name, repos=nil)
+    def initialize(name, repos=nil, carts=[])
       @name = name
       @repos = repos.to_i if repos
+      @carts = carts unless carts.empty?
     end
 
     def self.create(opts={})
@@ -486,11 +487,10 @@ module Libra
     # cartridges we may wish to keep private!
     #
     def carts
-      acarts = []
       Helper.rpc_get_fact('cart_list', name) do |server, carts|
-        acarts = carts
-      end
-      acarts
+          @carts = carts.split('|')
+      end unless !@carts.empty?
+      @carts
     end
 
     #

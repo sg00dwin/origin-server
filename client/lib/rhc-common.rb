@@ -80,14 +80,7 @@ module RHC
 
   def self.get_cartridge_types(carts, sep, libra_server, net_http, debug=true, print_result=nil)
     carts = get_cart_list(libra_server, net_http, debug, print_result) if carts.nil?
-    i = 1
-    type_keys = ''
-    carts.each do |key|
-      type_keys << key
-      type_keys << sep if i < carts.size
-      i += 1
-    end
-    type_keys
+    carts.join(sep)
   end
 
   def self.get_cartridge(type, libra_server, net_http, debug)

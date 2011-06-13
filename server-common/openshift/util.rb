@@ -10,13 +10,7 @@ module Libra
     def self.get_cartridge_types(sep=', ')
       i = 0
       carts = get_cart_list
-      type_keys = ''
-      carts.each do |key|
-        type_keys << key
-        type_keys << sep unless i >= carts.size
-        i += 1
-      end
-      return type_keys
+      carts.join(sep)
     end
 
     def self.get_cartridge(type)
