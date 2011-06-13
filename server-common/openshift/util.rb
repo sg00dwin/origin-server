@@ -8,7 +8,6 @@ module Libra
     Maxdlen = 16
 
     def self.get_cartridge_types(sep=', ')
-      i = 0
       carts = get_cart_list
       carts.join(sep)
     end

@@ -44,7 +44,6 @@ module RHC
   def self.get_cart_list(libra_server, net_http, debug=true, print_result=nil)
     puts "Contacting https://#{libra_server}"
     data = {'cartlist' => "true"}
-    debug = true
     if debug
       data['debug'] = "true"
     end
