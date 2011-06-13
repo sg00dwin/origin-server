@@ -76,15 +76,14 @@ end
 #
 # List cartridges on the host
 #   Convert from name-m.n.p to name-m.n
+#   This is the *full* list. Public version is
+#   obtained via Libra::Util.get_cart_list
 #
 Facter.add(:cart_list) do
-    acarts = []
+    carts = []
     Dir.glob('/usr/libexec/li/cartridges/*/').each do |cart|
-        # we know this is private...
-        unless cart =~ /li-controller-/
-            cart = File.basename(cart).sub(/^(.*)-(\d+)\.(\d+)\.?.*$/, '\1-\2.\3')
-            acarts << cart unless cart.nil?
-        end
+        cart = File.basename(cart).sub(/^(.*)-(\d+)\.(\d+)\.?.*$/, '\1-\2.\3')
+        carts << cart unless cart.nil?
     end
-    setcode { acarts.join('|') }
+    setcode { carts.join('|') }
 end

@@ -236,13 +236,13 @@ class BrokerController < ApplicationController
         render_unauthorized and return
       end
 
-      acarts = Libra::Util.get_cart_list
-      if acarts.nil?
+      carts = Libra::Util.get_cart_list
+      if carts.nil?
         render_internal_server_error(e, 'cart_list_post nil') and return
       end
       json_data = JSON.generate({
                               :cartlist => "true",
-                              :carts => acarts
+                              :carts => carts
                               })
 
       # Just return a 200 success

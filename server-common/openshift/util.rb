@@ -24,7 +24,7 @@ module Libra
     def self.get_cart_list
       server = Server.find_available
       carts = []
-      server.carts.each do |cart|
+      server.carts.split('|').each do |cart|
           carts << cart unless Blacklist.ignore_cart?(cart)
       end
       return carts

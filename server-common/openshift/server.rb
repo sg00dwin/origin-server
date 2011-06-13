@@ -11,10 +11,10 @@ module Libra
 
     attr_reader :name, :repos, :carts
 
-    def initialize(name, repos=nil, carts=[])
+    def initialize(name, repos=nil, carts=nil)
       @name = name
       @repos = repos.to_i if repos
-      @carts = carts unless carts.empty?
+      @carts = carts if carts
     end
 
     def self.create(opts={})
@@ -482,14 +482,14 @@ module Libra
     end
 
     #
-    # Returns the list/array of cartridges that the server has
+    # Returns the list of cartridges that the server has (sep w/ |)
     # looking it up as needed. This returns the full list, including
     # cartridges we may wish to keep private!
     #
     def carts
       Helper.rpc_get_fact('cart_list', name) do |server, carts|
-          @carts = carts.split('|')
-      end unless !@carts.empty?
+          @carts = carts
+      end unless @carts
       @carts
     end
 
