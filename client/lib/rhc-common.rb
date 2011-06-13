@@ -87,7 +87,7 @@ module RHC
   def self.get_cartridge(type, libra_server, net_http, debug)
     carts = get_cart_list(libra_server, net_http, debug)
     if type
-      if !(carts.includes?(type))
+      if !carts.include?(type)
         puts 'type must be ' << get_cartridge_types(carts, ' or ', nil, nil)
       else
         return type
