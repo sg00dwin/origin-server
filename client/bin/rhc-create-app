@@ -189,8 +189,7 @@ at_exit do
                    {:cartridge => opt['type'],
                     :action => 'deconfigure',
                     :app_name => opt['app'],
-                    :rhlogin => opt['rhlogin'],
-                    :password => password
+                    :rhlogin => opt['rhlogin']
                     })
         puts "Cleaning up application"
         url = URI.parse("https://#{libra_server}/broker/cartridge")
