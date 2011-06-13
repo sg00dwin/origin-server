@@ -237,6 +237,9 @@ class BrokerController < ApplicationController
       end
 
       acarts = Libra::Util.get_cart_list
+      if acarts.nil?
+        render_internal_server_error(e, 'cart_list_post nil') and return
+      end
       json_data = JSON.generate({
                               :cartlist => "true",
                               :carts => acarts

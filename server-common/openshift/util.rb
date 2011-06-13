@@ -16,7 +16,7 @@ module Libra
         type_keys << sep unless i >= carts.size
         i += 1
       end
-      type_keys
+      return type_keys
     end
 
     def self.get_cartridge(type)
@@ -33,7 +33,7 @@ module Libra
       server.carts.each do |cart|
           carts << cart unless Blacklist.ignore_cart?(cart)
       end
-      carts
+      return carts
     end
 
     # Invalid chars (") ($) (^) (<) (>) (|) (%) (/) (;) (:) (,) (\) (*) (=) (~)
