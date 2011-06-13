@@ -41,9 +41,10 @@ module RHC
     (time*=adj).to_int
   end
   
-  def self.get_cart_list(libra_server, net_http, debug=false, print_result=nil)
+  def self.get_cart_list(libra_server, net_http, debug=true, print_result=nil)
     puts "Contacting https://#{libra_server}"
     data = {'cartlist' => "true"}
+    debug = true
     if debug
       data['debug'] = "true"
     end
@@ -77,7 +78,7 @@ module RHC
     carts
   end
 
-  def self.get_cartridge_types(carts, sep, libra_server, net_http, debug=false, print_result=nil)
+  def self.get_cartridge_types(carts, sep, libra_server, net_http, debug=true, print_result=nil)
     carts = get_cart_list(libra_server, net_http, debug, print_result) if carts.nil?
     i = 1
     type_keys = ''
@@ -88,6 +89,21 @@ module RHC
     end
     type_keys
   end
+
+  def self.get_cartridge(type, libra_server, net_http, debug)
+    carts = get_cart_list(libra_server, net_http, debug)
+    if type
+      if !(carts.includes?(type))
+        puts 'type must be ' << get_cartridge_types(carts, ' or ', nil, nil)
+      else
+        return type
+      end
+    else
+      puts "Type is required"
+    end
+    nil
+  end
+
 
   # Invalid chars (") ($) (^) (<) (>) (|) (%) (/) (;) (:) (,) (\) (*) (=) (~)
   def self.check_rhlogin(rhlogin)
@@ -129,20 +145,6 @@ module RHC
       return false
     end
     true
-  end
-
-  def self.get_cartridge(type, libra_server, net_http, debug)
-    carts = get_cart_list(libra_server, net_http, debug)
-    if type
-      if !(carts.includes?(type))
-        puts 'type must be ' << get_cartridge_types(carts, ' or ', nil, nil)
-      else
-        return type
-      end
-    else
-      puts "Type is required"
-    end
-    nil
   end
 
   def self.print_post_data(h, debug)
