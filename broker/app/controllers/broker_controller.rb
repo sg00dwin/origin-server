@@ -236,10 +236,10 @@ class BrokerController < ApplicationController
         render_unauthorized and return
       end
 
-      carts = Libra::Util.get_cart_list
+      acarts = Libra::Util.get_cart_list
       json_data = JSON.generate({
                               :cartlist => "true",
-                              :carts => carts
+                              :carts => acarts
                               })
 
       # Just return a 200 success
