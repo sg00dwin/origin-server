@@ -31,7 +31,7 @@ module Libra
       server = Server.find_available
       carts = []
       server.carts.each do |cart|
-          carts += cart unless Blacklist.ignore_cart?(cart)
+          carts << cart unless Blacklist.ignore_cart?(cart)
       end
       return carts
     end

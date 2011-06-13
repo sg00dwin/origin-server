@@ -490,7 +490,6 @@ module Libra
       Helper.rpc_get_fact('cart_list', name) do |server, carts|
         acarts = carts
       end
-
       acarts
     end
 
