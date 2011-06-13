@@ -71,11 +71,12 @@ module RHC
     end
     begin
       json_resp = JSON.parse(response.body)
-      carts = (JSON.parse(json_resp['result'])['carts'])
+      carts = (JSON.parse(json_resp['result']))['carts']
     rescue JSON::ParserError
       exit 254
     end
-    carts.split('|')
+#    carts.split('|')
+    carts
   end
 
   def self.get_cartridge_types(carts, sep, libra_server, net_http, debug=true, print_result=nil)

@@ -242,7 +242,7 @@ class BrokerController < ApplicationController
       end
       json_data = JSON.generate({
                               :cartlist => "true",
-                              :carts => carts.join('|')
+                              :carts => carts #.join('|')
                               })
 
       # Just return a 200 success
