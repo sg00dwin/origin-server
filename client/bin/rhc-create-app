@@ -346,9 +346,9 @@ while attempt < RHC::Maxretries
     attempt+=1
     puts "  Attempt # #{attempt}"
     page = 'health'
-    if (type == 'php')
+    if (type == :php)
       page = 'health_check.php'
-    elsif (type == 'perl')
+    elsif (type == :perl)
       page = 'health_check.pl'
     end
     url = URI.parse("http://#{fqdn}/#{page}")

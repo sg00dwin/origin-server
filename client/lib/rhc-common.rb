@@ -90,7 +90,7 @@ module RHC
         puts 'type must be ' << get_cartridge_types(carts, ' or ', nil, nil)
       else
         type = type.split('-')[0]
-        return type
+        return type.to_sym
       end
     else
       puts "Type is required"
