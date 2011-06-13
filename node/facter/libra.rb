@@ -83,7 +83,7 @@ Facter.add(:cart_list) do
         # we know this is private...
         unless cart =~ /li-controller-/
             cart = File.basename(cart).sub(/^(.*)-(\d+)\.(\d+)\.?.*$/, '\1-\2.\3')
-            acarts << cart unless cart.nil?
+            acarts += cart unless cart.nil?
         end
     end
     setcode { acarts }
