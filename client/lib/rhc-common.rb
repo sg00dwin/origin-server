@@ -71,7 +71,7 @@ module RHC
     end
     begin
       json_resp = JSON.parse(response.body)
-      carts = JSON.parse(json_resp['result']['carts'])
+      carts = (JSON.parse(json_resp['result'])['carts'])
     rescue JSON::ParserError
       exit 254
     end
