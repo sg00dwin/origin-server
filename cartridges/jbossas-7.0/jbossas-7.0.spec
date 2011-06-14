@@ -23,11 +23,6 @@ Provides JBossAS7 support to OpenShift
 
 %build
 
-%post
-# This is a hack until the selinux policy gets updated with the jboss bits
-# Email mmcgrath@redhat.com about questions
-/usr/sbin/semanage port -l | /bin/grep -e 'http_cache_port_t.*4712' > /dev/null || /usr/sbin/semanage port -a -t http_cache_port_t -p tcp 4712
-
 %install
 rm -rf %{buildroot}
 mkdir -p %{buildroot}%{cartridgedir}
