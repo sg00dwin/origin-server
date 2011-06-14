@@ -1,0 +1,5 @@
+This is a work in progress and doesn't actually work.
+
+I'm trying to format our stack-types in cartridge form similar to how makara
+is setup.  This should make it easy to convert.
+ -mmcgrath
