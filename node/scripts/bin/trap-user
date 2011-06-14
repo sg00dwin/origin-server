@@ -11,6 +11,7 @@ commands = {
     "git-upload-pack": "/usr/bin/git-upload-pack",
     "snapshot": "/bin/tar",
     "tail": "/usr/bin/tail",
+#    "rhcsh": "/usr/local/bin/trap/trap_bash"
 }
 
 #
@@ -77,6 +78,9 @@ if __name__ == '__main__':
         else:
             print "Failed sanitization"
             sys.exit(35)
+    elif basecmd in ('rhcsh'):
+        os.environ["PS1"] = "rhcsh> "
+        allargs = ['-r', '-i']
     elif basecmd in ('tail'):
         files = []
         for glob_list in allargs[1:]:
@@ -124,6 +128,9 @@ if __name__ == '__main__':
 
 
         allargs = [thearg]
-    os.execv(cmd, [cmd] + allargs)
+    runcon = '/usr/bin/runcon'
+    mcs = divmod(os.getuid(), 1023)
+    context = 'unconfined_u:system_r:libra_t:s0:c%i,c%i' % mcs
+    os.execv(runcon, [runcon, context, cmd] + allargs)
     sys.exit(1)
 
