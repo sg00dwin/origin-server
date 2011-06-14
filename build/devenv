@@ -251,6 +251,31 @@ class DevEnv < Thor
       instance.terminate if options.terminate?
     end
   end
+  
+  desc "install_local_client", "Builds and installs the local client rpm (Run with sudo)"
+  method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
+  def install_local_client
+    # Warn on uncommitted changes
+    `git diff-index --quiet HEAD`
+
+    if $? != 0
+      # Perform a temporary commit to build client
+      @temp_commit = true
+      puts "Creating temporary commit to build client"
+      `git commit -a -m "Temporary commit to build client"`
+      puts "Done."
+    end
+    
+    `rm -rf /tmp/tito/; pushd client; tito build --rpm --test; popd; rpm -Uvh /tmp/tito/noarch/rhc-*`
+
+    if @temp_commit
+      puts "Undoing temporary commit..."
+      `git reset HEAD^`
+      puts "Done."
+    end
+
+    puts "Done"
+  end  
 end
 
 DevEnv.start
