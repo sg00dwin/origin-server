@@ -2,7 +2,7 @@
 
 Summary:   Provides mod_perl support
 Name:      rhc-cartridge-perl-5.10
-Version:   0.3.2
+Version:   0.3.3
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -55,6 +55,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Tue Jun 14 2011 Matt Hicks <mhicks@redhat.com> 0.3.3-1
+- 
+
 * Tue Jun 14 2011 Matt Hicks <mhicks@redhat.com> 0.3.2-1
 - removing minor version release reference (mmcgrath@redhat.com)
 - Spec cleanup (mhicks@redhat.com)
