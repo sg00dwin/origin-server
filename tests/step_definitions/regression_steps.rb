@@ -31,13 +31,6 @@ Then /^the new namespace is enabled$/ do
   run("rm -f #{@tfile}")
 end
 
-
-#bug 700941
-Then /^there is no README file under misc or libs$/ do
-  File.exist?("#{@repo_path}/misc/README").should_not be_true
-  File.exist?("#{@repo_path}/libs/README").should_not be_true
-end
-
 #bug 699887
 Then /^the host name can be obtained using php script$/ do
   Dir.chdir(@repo_path)
@@ -66,15 +59,3 @@ Then /^the host name can be obtained using php script$/ do
   page.body.index(host_name).should > -1
 
 end
-
-#bug 695586
-When /^the manpage of express.conf exists$/ do
-    @man_express="/usr/share/man/man5/express.conf.5.gz"
-    File.exist?(@man_express).should be_true
-end
-
-Then /^the manpage of express.conf should not be empty$/ do
-    arr = File.open(@man_express).readlines
-    arr.size.should_not == 0
-end
-
