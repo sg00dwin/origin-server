@@ -206,6 +206,7 @@ allow unconfined_t libra_t:fifo_file rw_inherited_fifo_file_perms;
 allow unconfined_t libra_t:process sigchld;
 dontaudit unconfined_t libra_t:socket_class_set { read write };
 corecmd_shell_entry_type(libra_domain)
+corecmd_bin_entry_type(libra_domain)
 allow libra_t user_devpts_t:chr_file { getattr read write append ioctl lock };
 
 
