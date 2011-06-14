@@ -3,7 +3,7 @@
 Summary:   Provides php-5.3 support
 Name:      rhc-cartridge-php-5.3
 Version:   0.72.11
-Release:   1%{?dist}
+Release:   2%{?dist}
 Group:     Development/Languages
 License:   GPLv2
 URL:       http://openshift.redhat.com
@@ -20,6 +20,7 @@ Requires:  php-gd
 Requires:  php-xml
 Requires:  php-mysql
 Requires:  php-pgsql
+Requires:  php-mbstring
 
 Obsoletes: rhc-cartridge-php-5.3.2
 
@@ -66,6 +67,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Tue Jun 14 2011 Mike McGrath <mmcgrath@redhat.com> 0.72.11-1
+- Added mbstring
+
 * Tue Jun 14 2011 Matt Hicks <mhicks@redhat.com> 0.72.11-1
 - Spec cleanup (mhicks@redhat.com)
 
