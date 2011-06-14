@@ -136,8 +136,14 @@ class DevEnv < Thor
       instance = Instance.new(nil, nil)
       instance.dns = name
     end
-    puts "Synchronizing local changes..."
-    run("git push root@#{instance.dns}:/root/li master --tags --force", :verbose => options.verbose?)
+
+    # Get the current branch
+    branch_str = `git status | head -n1`.chomp
+    branch_str =~ /.*branch (.*)/
+    branch = $1
+
+    puts "Synchronizing local changes from branch #{branch}..."
+    run("git push root@#{instance.dns}:/root/li #{branch}:master --tags --force", :verbose => options.verbose?)
     puts "Done"
 
     if @temp_commit

@@ -1,4 +1,4 @@
-policy_module(libra,1.0.10)
+policy_module(libra,1.0.12)
 
 ########################################
 #
@@ -35,10 +35,12 @@ logging_log_file(libra_log_t)
 #
 corenet_tcp_connect_mysqld_port(libra_t)
 corenet_tcp_connect_http_port(libra_t)
+corenet_tcp_connect_jboss_management_port(libra_t)
 corenet_tcp_connect_http_cache_port(libra_t)
 corenet_tcp_connect_amqp_port(libra_t)
 corenet_tcp_connect_generic_port(libra_t)
 corenet_udp_bind_generic_port(libra_t)
+corenet_tcp_bind_jboss_management_port(libra_t)
 
 sendmail_domtrans(libra_t)
 

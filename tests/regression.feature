@@ -1,4 +1,4 @@
-@verify
+@regression
 Feature: Cucumber tests for reported bugs
 
   Scenario: (libra-qe) Bug 693951 - Command 'rhc-create-domain --alter' can not be used to rename domain

@@ -53,7 +53,7 @@ Feature: Rally User Stories
     When SELinux status is checked
     Then SELinux is running in enforcing mode
     When SELinux module for Libra is checked to see if it is installed
-    Then Selinux for Libra is installed
+    Then SELinux for Libra is installed
     When SELinux audit service is checked to see if it is running on the node
     And SELinux audit service is started if it is stopped
     Then SELinux audit service is running

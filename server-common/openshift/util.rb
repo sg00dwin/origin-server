@@ -7,20 +7,21 @@ module Libra
 
     Maxdlen = 16
 
-    def self.get_cartridge_types(sep=', ')
-      carts = get_cart_list
+    def self.get_cartridge_list(sep=', ')
+      carts = get_cartridges_tbl
       carts.join(sep)
     end
 
-    def self.get_cartridge(type)
-      carts = get_cart_list
+    def self.get_cartridge_type(type)
+      carts = get_cartridges_tbl
       if carts.include?(type)
-        return type
+        type = type.split('-')[0]
+        return type.to_sym
       end
       return nil
     end
 
-    def self.get_cart_list
+    def self.get_cartridges_tbl
       server = Server.find_available
       carts = []
       server.carts.split('|').each do |cart|

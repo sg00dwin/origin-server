@@ -236,7 +236,7 @@ class BrokerController < ApplicationController
         render_unauthorized and return
       end
 
-      carts = Libra::Util.get_cart_list
+      carts = Libra::Util.get_cartridges_tbl
       if carts.nil? || carts.empty?
         render_internal_server_error(e, 'cart_list_post nil') and return
       end

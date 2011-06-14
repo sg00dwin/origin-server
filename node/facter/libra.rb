@@ -77,7 +77,7 @@ end
 # List cartridges on the host
 #   Convert from name-m.n.p to name-m.n
 #   This is the *full* list. Public version is
-#   obtained via Libra::Util.get_cart_list
+#   obtained via Libra::Util.get_cartridges_tbl
 #
 Facter.add(:cart_list) do
     carts = []

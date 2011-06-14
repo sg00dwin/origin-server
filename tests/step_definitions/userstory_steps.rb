@@ -285,7 +285,7 @@ end
 When /^SELinux module for Libra is checked to see if it is installed$/ do
   run("semodule -l | grep libra > #{@tfile}")
 end
-Then /^Selinux for Libra is installed$/ do
+Then /^SELinux for Libra is installed$/ do
   check_file_has_string(@tfile,"libra").should == true
   run("rm -f #{@tfile}")
 end
