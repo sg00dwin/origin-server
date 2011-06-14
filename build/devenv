@@ -98,11 +98,9 @@ class DevEnv < Thor
         "cartridges/" + $1['cartridge-'.length..-1]
       elsif package =~ /rhc-(.*)-0/
         $1
-      else
-        "client"
       end
     end.compact
-
+    build_dirs << "client"
     puts "Changes detected in the following directories: #{build_dirs.pretty_inspect}"
 
     # Build and install them
