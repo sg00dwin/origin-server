@@ -2,7 +2,7 @@
 
 Summary:       Common dependencies of the OpenShift broker and site
 Name:          rhc-server-common
-Version:       0.72.11
+Version:       0.72.12
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -54,6 +54,31 @@ rm -rf %{buildroot}
                                   -s /sbin/nologin 2>&1 > /dev/null || :
 
 %changelog
+* Tue Jun 14 2011 Matt Hicks <mhicks@redhat.com> 0.72.12-1
+- rename to make more sense... (jimjag@redhat.com)
+- minor fixes (dmcphers@redhat.com)
+- minor fixes (dmcphers@redhat.com)
+- Force list to be a string... xfer to array when conv (jimjag@redhat.com)
+- cart_list factor returns a string now, with cartridges sep by '|'
+  (jimjag@redhat.com)
+- /usr/lib/ruby/site_ruby/1.8/facter/libra.rb:86:in `+': can't convert String
+  into Array (TypeError) (jimjag@redhat.com)
+- Force check each time (jimjag@redhat.com)
+- Don't use '<<' (which should work) (jimjag@redhat.com)
+- nil is an error... but no idea how we are getting it (at the worst, we should
+  get an empty list) (jimjag@redhat.com)
+- force usage of blacklist (jimjag@redhat.com)
+- revert... I am stumped. (jimjag@redhat.com)
+- force usage of dummy arg (jimjag@redhat.com)
+- simple name change (jimjag@redhat.com)
+- until (jimjag@redhat.com)
+- use class (jimjag@redhat.com)
+- weird... why can't the server find this? (jimjag@redhat.com)
+- 'self.get_cartridges' not found?? (jimjag@redhat.com)
+- Adjust for permissions (jimjag@redhat.com)
+- debug devenv (jimjag@redhat.com)
+- Init to nil (jimjag@redhat.com)
+
 * Fri Jun 10 2011 Matt Hicks <mhicks@redhat.com> 0.72.11-1
 - Move along to more dynamic using :carts factor (jimjag@redhat.com)
 
