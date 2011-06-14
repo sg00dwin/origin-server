@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.72.5
+Version:       0.72.6
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -38,6 +38,20 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Tue Jun 14 2011 Matt Hicks <mhicks@redhat.com> 0.72.6-1
+- Allow sshd_t to interact with libra_domains (dwalsh@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (dwalsh@redhat.com)
+- Allow libra domain to be entered from bin_t types (dwalsh@redhat.com)
+- removing dup bind (mmcgrath@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (dwalsh@redhat.com)
+- Allow libra to bind to jboss_management port (dwalsh@redhat.com)
+- Adding bind for jboss (mmcgrath@redhat.com)
+- Permanent jboss fix now in place (mmcgrath@redhat.com)
+- Allow libra_t to connect to jboss_management port (dwalsh@redhat.com)
+- Adjust for permissions (jimjag@redhat.com)
+
 * Fri Jun 10 2011 Matt Hicks <mhicks@redhat.com> 0.72.5-1
 - Allow domains to search through libra_var_lib_t, allow libra domains to
   search tmpfs, dontaudit libra_domains trying to create audit sockets, this
