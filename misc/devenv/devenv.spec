@@ -23,6 +23,7 @@ Requires:  rhc-cartridge-php-5.3
 Requires:  rhc-cartridge-wsgi-3.2
 Requires:  rhc-cartridge-rack-1.1
 Requires:  rhc-cartridge-jbossas-7.0
+Requires:  rhc-cartridge-perl-5.10
 Requires:  qpid-cpp-server
 Requires:  qpid-cpp-server-ssl
 Requires:  puppet
