@@ -114,7 +114,6 @@ apache_read_config(libra_domain)
 apache_search_config(libra_domain)
 apache_read_sys_content(libra_domain)
 corenet_tcp_bind_http_cache_port(libra_domain)
-corenet_tcp_bind_jboss_management_port(libra_t)
 
 java_exec(libra_domain)
 

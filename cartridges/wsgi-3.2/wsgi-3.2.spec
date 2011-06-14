@@ -1,13 +1,13 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/wsgi-3.2
 
-Summary: Provides python-wsgi-3.2 support
+Summary:   Provides python-wsgi-3.2 support
 Name:      rhc-cartridge-wsgi-3.2
 Version:   0.72.9
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
 URL:       http://openshift.redhat.com
-Source0:   rhc-cartridge-wsgi-3.2-%{version}.tar.gz
+Source0:   %{name}-%{version}.tar.gz
 
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 Requires:  rhc-node

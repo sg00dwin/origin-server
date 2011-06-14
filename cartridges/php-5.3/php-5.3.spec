@@ -7,7 +7,7 @@ Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
 URL:       http://openshift.redhat.com
-Source0:   rhc-cartridge-php-5.3-%{version}.tar.gz
+Source0:   %{name}-%{version}.tar.gz
 
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 Requires:  rhc-node
