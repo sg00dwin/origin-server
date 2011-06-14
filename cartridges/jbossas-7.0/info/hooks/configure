@@ -259,7 +259,10 @@ echo "Creating ${application}_ctl.sh..."
 cat <<__EOF__ > "$APP_DIR/${application}_ctl.sh"
 #/bin/bash
 
-exec > $TMP_DIR/jbossas7-${application}_ctl-$$.log 2>&1
+# For debugging, capture script output into app tmp dir
+pid=\$\$
+exec 4>&1   # Link file descriptor #4 with stdout, saves stdout.
+exec > "$TMP_DIR/jbossas7-${application}_ctl-\$1.\${pid}.log" 2>&1
 
 if ! [ \$# -eq 1 ]
 then
@@ -269,10 +272,9 @@ fi
 
 if whoami | grep -q root
 then
-    echo 1>&2
-    echo "Please don't run script as root, try:" 1>&2
-    echo "runuser --shell /bin/sh $uuid $APP_DIR/${application}_ctl.sh" 1>&2
-    echo 2>&1
+    echo "Please don't run script as root, try:"
+    echo "runuser --shell /bin/sh $uuid $APP_DIR/${application}_ctl.sh"
+    echo
     exit 15
 fi
 
@@ -292,7 +294,7 @@ case "\$1" in
     start)
         if [ -f $APP_DIR/run/stop_lock ]
         then
-            echo -n " - Application is disabled" 1>&2
+            echo -n " - Application is disabled"
             exit 0
         else
             runcon -t libra_t -l s0:$c_val $JBOSS_BIN_DIR/standalone.sh 1>&2 >${TMP_DIR}/${application}.log &
@@ -315,7 +317,11 @@ case "\$1" in
         $APP_DIR/${application}_ctl.sh start
     ;;
     status)
-        tail "$APP_DIR"/${jboss_version}/standalone/log/server.log
+        echo tailing "$APP_DIR/${jboss_version}/standalone/log/server.log"
+        # Restore stdout and close file descriptor #4
+        exec 1>&4 4>&-
+        echo "------ Tail of ${application} application server.log ------"
+        tail "$APP_DIR/${jboss_version}/standalone/log/server.log"
         exit 0
     ;;
 esac

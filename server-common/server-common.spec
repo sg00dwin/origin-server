@@ -2,7 +2,7 @@
 
 Summary:       Common dependencies of the OpenShift broker and site
 Name:          rhc-server-common
-Version:       0.72.7
+Version:       0.72.11
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -54,6 +54,23 @@ rm -rf %{buildroot}
                                   -s /sbin/nologin 2>&1 > /dev/null || :
 
 %changelog
+* Fri Jun 10 2011 Matt Hicks <mhicks@redhat.com> 0.72.11-1
+- Move along to more dynamic using :carts factor (jimjag@redhat.com)
+
+* Thu Jun 09 2011 Matt Hicks <mhicks@redhat.com> 0.72.10-1
+- fixup minor issues with refactor plus debugging (dmcphers@redhat.com)
+- refactored logic of Libra.execute for clarity (markllama@redhat.com)
+
+* Wed Jun 08 2011 Matt Hicks <mhicks@redhat.com> 0.72.9-1
+- move migration to separate file (dmcphers@redhat.com)
+
+* Wed Jun 08 2011 Dan McPherson <dmcphers@redhat.com> 0.72.8-1
+- moved account and S3 record delete to the right places in Libra.execute
+  (markllama@redhat.com)
+- added a server method to delete and account, and call it when deleting an app
+  (markllama@redhat.com)
+- migration progress (dmcphers@redhat.com)
+
 * Mon Jun 06 2011 Dan McPherson <dmcphers@redhat.com> 0.72.7-1
 - 
 

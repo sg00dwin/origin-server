@@ -13,23 +13,17 @@ include OpenShift::AWS
 class DevEnv < Thor
   include Thor::Actions
 
-  desc "build", "build a new devenv AMI"
-  method_option :name, :required => true, :desc => "The unique AMI name"
-  method_option :terminate, :type => :boolean, :desc => "Terminate the instance when finished"
+  desc "build NAME", "Build a new devenv AMI with the given NAME"
+  method_option :register, :type => :boolean, :desc => "Register the instance"
+  method_option :terminate, :type => :boolean, :desc => "Terminate the instance on exit"
   method_option :reboot, :type => :boolean, :desc => "Reboot the instance after updating"
-  method_option :force, :type => :boolean, :desc => "Build even if no package updates are detected"
-  def build
-    # See if any updates are needed
-    unless options[:force]
-      pkgs = check_update
-      exit_msg "Nothing to update" if pkgs.empty?
-    end
-
+  method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
+  def build(name)
     # Establish a new connection
     conn = connect
 
     # Create a new builder instance
-    instance = Instance.create(conn, options[:name])
+    instance = Instance.create(conn, name)
 
     begin
       print "Uploading devenv script..."
@@ -69,19 +63,22 @@ class DevEnv < Thor
       # Trim down the output to 255 characters
       manifest.gsub!(/rhc-([a-z])/, '\1')
       manifest.gsub!('.el6.noarch', '')
+      manifest.gsub!('.el6_1.noarch', '')
       manifest.gsub!('cartridge', 'c-')
       manifest = manifest[0..254]
       puts "Done"
 
-      print "Registering AMI..."
-      Image.register(conn, instance.amz_id, options[:name], manifest)
-      puts "Done"
+      if options.register?
+        print "Registering AMI..."
+        Image.register(conn, instance.amz_id, name, manifest)
+        puts "Done"
+      end
     ensure
       instance.terminate if options.terminate?
     end
   end
 
-  desc "update", "Update a DevEnv environment with local RPM installations"
+  desc "update", "Update current instance by installing RPMs from local git tree"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   def update
     # Warn on uncommitted changes
@@ -94,7 +91,9 @@ class DevEnv < Thor
     packages = `tito report --untagged-commits | grep rhc`
     build_dirs = packages.split("\n").collect do |package|
       if package =~ /rhc-devenv-0/
-        "misc/devenv/"
+        #"misc/devenv/"
+        # Ignore devenv installs for right now
+        nil
       elsif package =~ /rhc-(cartridge-.*)-0/
         "cartridges/" + $1['cartridge-'.length..-1]
       elsif package =~ /rhc-(.*)-0/
@@ -102,17 +101,148 @@ class DevEnv < Thor
       else
         "client"
       end
-    end
+    end.compact
 
     puts "Changes detected in the following directories: #{build_dirs.pretty_inspect}"
 
     # Build and install them
     build_dirs.each do |build_dir|
-      Dir.glob(build_dir).each do |dir|
-        inside(dir) do
-          exit 1 unless run('tito build --rpm --test --install', :verbose => options.verbose?)
-        end
+      puts "Building in #{build_dir}"
+      inside(File.expand_path("../#{build_dir}", File.dirname(__FILE__))) do
+        # Build and install the RPM's locally
+        exit 1 unless run('tito build --rpm --test --install', :verbose => options.verbose?)
       end
+    end
+  end
+
+  desc "sync NAME", "Synchronize a local git repo with a remote DevEnv instance.  NAME should be ssh resolvable."
+  method_option :tag, :type => :boolean, :desc => "NAME is an Amazon tag"
+  method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
+  def sync(name)
+    # Warn on uncommitted changes
+    `git diff-index --quiet HEAD`
+
+    if $? != 0
+      # Perform a temporary commit to sync
+      @temp_commit = true
+      puts "Creating temporary commit to sync"
+      `git commit -a -m "Temporary commit to sync"`
+      puts "Done."
+    end      
+
+    if options.tag?
+      instance = Instance.find(connect, name)
+    else
+      instance = Instance.new(nil, nil)
+      instance.dns = name
+    end
+    puts "Synchronizing local changes..."
+    run("git push root@#{instance.dns}:/root/li master --tags --force", :verbose => options.verbose?)
+    puts "Done"
+
+    if @temp_commit
+      puts "Undoing temporary commit..."
+      `git reset HEAD^`
+      puts "Done."
+    end
+
+    puts "Performing remote install...."
+    instance.ssh("rm -rf li-working; git clone li li-working; pushd li-working; build/devenv update; popd; rm -rf li-working", 600)
+    puts "Done"
+  end
+
+  desc "launch NAME", "Launches the latest DevEnv instance, tagging with NAME"
+  method_option :verifier, :type => :boolean, :desc => "Add verifier functionality (private IP setup and local tests)"
+  method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
+  def launch(name)
+    # Get the latest devenv image and create a new instance
+    conn = connect
+    latest = get_latest_ami(conn)
+    puts "Launching latest DevEnv instance #{latest}"
+    instance = Instance.create(conn, name, latest)
+    puts "Done"
+
+    if options.verifier?
+      private_ip = instance.ssh("facter ipaddress")
+      if !private_ip or private_ip.strip.empty?
+        puts "EXITING - AMZ instance didn't return ipaddress fact"
+        exit 0
+      end
+      print "Updating the controller to use the AMZ private IP '#{private_ip}'..."
+      cmd1 = "sed -i \"s/public_ip.*/public_ip='#{private_ip}'/g\" /etc/libra/node_data.conf"
+      cmd2 = "/usr/bin/puppet /usr/libexec/mcollective/update_yaml.pp"
+      instance.ssh(cmd1 + ";" + cmd2)
+      puts "Done"
+
+      print "Updating tests to remote instance..."
+      `git archive --prefix li-test/ HEAD --output /tmp/li-test.tar`
+      instance.scp_to("/tmp/li-test.tar", "~/")
+      instance.ssh('rm -rf li-test; tar -xf li-test.tar; mkdir -p /tmp/rhc/junit')
+      puts "Done"
+    end
+
+    print "Validating instance..."
+    unless instance.is_valid?
+      puts "ERROR - instance is not valid"
+      exit 1
+    end
+    puts "Done"
+  end
+
+  desc "test TAG", "Runs the tests on a tagged instance and downloads the results"
+  method_option :terminate, :type => :boolean, :desc => "Terminate the instance when finished"
+  method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
+  def test(tag)
+    conn = connect
+    instance = Instance.find(conn, tag)
+
+    begin
+      # Run verification tests
+      print "Running verification tests..."
+      instance.ssh("cucumber --tags @verify --format junit -o /tmp/rhc/junit/ li-test/tests/", 3600)
+      p = $?
+      puts "Done"
+
+      print "Validating instance..."
+      unless instance.is_valid?
+        puts "ERROR - instance is not valid"
+        exit 1
+      end
+      puts "Done"
+
+      print "Downloading verification output..."
+      `mkdir -p rhc/log`
+      instance.scp_from("/tmp/rhc/cucumber*.log", "rhc/log")
+      instance.scp_from("/tmp/rhc/failures.log", "rhc/log")
+      instance.scp_from("/var/www/libra/site/httpd/logs/access_log", "rhc/log")
+      instance.scp_from("/var/www/libra/site/httpd/logs/error_log", "rhc/log")
+      instance.scp_from("/var/www/libra/site/log/development.log", "rhc/log")
+      instance.scp_from("/var/www/libra/broker/httpd/logs/access_log", "rhc/log")
+      instance.scp_from("/var/www/libra/broker/httpd/logs/error_log", "rhc/log")
+      instance.scp_from("/var/www/libra/broker/log/development.log", "rhc/log")
+      instance.scp_from("/var/log/mcollective.log", "rhc/log")
+      instance.scp_from("/var/tmp/mcollective-client.log", "rhc/log")
+
+      `mkdir -p rhc/junit`
+      instance.scp_from("/tmp/rhc/junit/*", "rhc/junit")
+
+      puts "Done"
+
+      if p.exitstatus != 0
+        puts "ERROR - Non-zero exit code from verification tests (exit: #{p.exitstatus})"
+        exit p.exitstatus
+      end
+
+      # Mark the image as verified
+      Image.verify(conn, instance.amz_image_id)
+      amz_image_name = Image.get_name(conn, instance.amz_image_id)
+      
+      print "Sending QE ready email..."
+      send_verified_email(instance.amz_image_id, amz_image_name)
+      puts "Done"
+
+    ensure
+      instance.terminate if options.terminate?
     end
   end
 end

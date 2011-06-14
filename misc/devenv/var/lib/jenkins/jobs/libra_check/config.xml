@@ -1,0 +1,138 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <scm class="hudson.plugins.git.GitSCM">
+    <configVersion>1</configVersion>
+    <remoteRepositories>
+      <org.spearce.jgit.transport.RemoteConfig>
+        <string>origin</string>
+        <int>5</int>
+        <string>fetch</string>
+        <string>+refs/heads/*:refs/remotes/origin/*</string>
+        <string>receivepack</string>
+        <string>git-upload-pack</string>
+        <string>uploadpack</string>
+        <string>git-upload-pack</string>
+        <string>url</string>
+        <string>git://10.244.46.66/li.git/</string>
+        <string>tagopt</string>
+        <string></string>
+      </org.spearce.jgit.transport.RemoteConfig>
+    </remoteRepositories>
+    <branches>
+      <hudson.plugins.git.BranchSpec>
+        <name>master</name>
+      </hudson.plugins.git.BranchSpec>
+    </branches>
+    <mergeOptions/>
+    <recursiveSubmodules>false</recursiveSubmodules>
+    <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+    <authorOrCommitter>false</authorOrCommitter>
+    <clean>false</clean>
+    <wipeOutWorkspace>false</wipeOutWorkspace>
+    <pruneBranches>false</pruneBranches>
+    <buildChooser class="hudson.plugins.git.util.DefaultBuildChooser"/>
+    <gitTool>Default</gitTool>
+    <submoduleCfg class="list"/>
+    <relativeTargetDir></relativeTargetDir>
+    <excludedRegions></excludedRegions>
+    <excludedUsers></excludedUsers>
+    <skipTag>false</skipTag>
+  </scm>
+  <canRoam>true</canRoam>
+  <disabled>true</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers class="vector">
+    <hudson.triggers.SCMTrigger>
+      <spec>*/15 * * * *</spec>
+    </hudson.triggers.SCMTrigger>
+  </triggers>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command># Run the unit tests
+cd $WORKSPACE/broker
+rake test
+
+cd $WORKSPACE/site
+rake test</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command># Build and install HEAD for the integration tests
+build/devenv update
+
+sudo sed -i &quot;s/public_ip.*/public_ip=`sudo facter ipaddress`/g&quot; /etc/libra/node_data.conf
+sudo /usr/bin/puppet /usr/libexec/mcollective/update_yaml.pp</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command># Test user info
+set -e
+# Confirm uuid:
+rhc-user-info -p &apos; &apos; -i | grep &apos;be245214b32d48aba980cfa2ab1ded97&apos;
+
+# Confirm RHLogin
+rhc-user-info -p &apos; &apos; -i | grep &apos;mmcgrath+jenkins@redhat.com&apos;
+
+# Confirm SSH KEY
+rhc-user-info -p &apos; &apos; -i | grep &apos;AAAAB3NzaC1yc2EAAAABIwAAAQEA7KXgxv3uDLS22FOfpTZVBDxbQjGls/dy00SrLZ0zekgq3rhiDtSBKLeIqPD+apN0h9LJJmsFf7+IfPkhY2ZiryJB1Y4QFUzGxxGlBq2OorvTVB0LLLcI0DDHWiRnnN3laNDtWcHztROLZNN+FO9OioloDjpLYnfC5tSRcyTzzkxTihARQZD14RFJinJ289IrbYqMd7nAbpXK2s7o0H4bJy6K/5vqB0k37sfgT7CExnCmRbwi3X5JPBNAS9VCfPsK0kO/68kvbFMksmMROmLOj76jqBGOisjRSAYcPDs8TVwjrmg7qE85SDb2zQufd31BmOUpj02YeTNromIHVDEMSQ==&apos;</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command># TEST PHP CARTRIDGE
+set -e
+
+# Clean up any previous failures.
+rm -rf testapp
+rhc-ctl-app -a testapp -c destroy -b -p none || :
+
+# Create app
+rhc-create-app -t php-5.3 -a testapp -p none
+
+# Confirm app is up
+wget -qO- http://testapp-jenkins.dev.rhcloud.com/health_check.php | grep 1
+
+# Stop app and confirm
+rhc-ctl-app -a testapp -c stop -p none
+wget -SO- http://testapp-jenkins.dev.rhcloud.com/health_check.php || echo &quot;Failed, good (it&apos;s stopped)&quot;
+
+# Start app and confirm
+rhc-ctl-app -a testapp -c start -p none
+sleep 60
+wget -qO- http://testapp-jenkins.dev.rhcloud.com/health_check.php | grep 1
+
+# Restart application
+rhc-ctl-app -a testapp -c restart -p none
+sleep 5
+wget -qO- http://testapp-jenkins.dev.rhcloud.com/health_check.php | grep 1
+
+# Reload application
+rhc-ctl-app -a testapp -c reload -p none
+sleep 5
+
+# Confirm app is still running
+wget -qO- http://testapp-jenkins.dev.rhcloud.com/health_check.php | grep 1
+
+# Confirm rhc-user-info via user-info
+rhc-user-info -a -p none | grep -e ^testapp$
+
+# Destroy destroy app and confirm
+rhc-ctl-app -a testapp -c destroy -b -p none
+wget -SO- http://testapp-jenkins.dev.rhcloud.com/health_check.php || echo &quot;Failed, good (it&apos;s gone)&quot;
+
+# sleep, then test DNS test.
+sleep 120
+if host testapp-jenkins.dev.rhcloud.com; then echo &quot;Bad, lookup found&quot;; exit 254; else echo &quot;Good, failed to look up&quot;; fi</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers>
+    <hudson.tasks.Mailer>
+      <recipients>libra-express@redhat.com</recipients>
+      <dontNotifyEveryUnstableBuild>true</dontNotifyEveryUnstableBuild>
+      <sendToIndividuals>true</sendToIndividuals>
+    </hudson.tasks.Mailer>
+  </publishers>
+  <buildWrappers/>
+</project>

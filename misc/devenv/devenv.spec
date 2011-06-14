@@ -3,10 +3,11 @@
 %define brokerdir %{_localstatedir}/www/libra/broker
 %define sitedir %{_localstatedir}/www/libra/site
 %define devenvdir %{_sysconfdir}/libra/devenv
+%define jenkins %{_sharedstatedir}/jenkins
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.72.6
+Version:   0.72.19
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -26,6 +27,7 @@ Requires:  qpid-cpp-server
 Requires:  qpid-cpp-server-ssl
 Requires:  puppet
 Requires:  rubygem-cucumber
+Requires:  rubygem-mechanize
 Requires:  rubygem-mocha
 Requires:  rubygem-rspec
 Requires:  rubygem-nokogiri
@@ -36,10 +38,7 @@ Requires:  tito
 
 # Selenium Requirements
 Requires:  firefox
-Requires:  ImageMagick
-Requires:  tigervnc-server
-Requires:  xorg-x11-server-utils
-Requires:  xorg-x11-twm
+Requires:  xorg-x11-server-Xvfb
 
 BuildArch: noarch
 
@@ -72,14 +71,23 @@ mkdir -p %{buildroot}%{sitedir}/log
 touch %{buildroot}%{brokerdir}/log/development.log
 touch %{buildroot}%{sitedir}/log/development.log
 
+# Setup the jenkins jobs
+mkdir -p %{buildroot}%{jenkins}/jobs
+mv %{buildroot}%{devenvdir}%{jenkins}/jobs/* %{buildroot}%{jenkins}/jobs
+
 %clean
 rm -rf %{buildroot}
 
 %post
 
+# Install the Selenium gems
+gem install selenium-webdriver
+gem install headless
+
 # Move over all configs and scripts
 cp -rf %{devenvdir}/etc/* %{_sysconfdir}
 cp -rf %{devenvdir}/bin/* %{_bindir}
+cp -rf %{devenvdir}/var/* %{_localstatedir}
 
 # Move over new http configurations
 cp -rf %{devenvdir}/httpd/* %{libradir}
@@ -93,6 +101,17 @@ mkdir -p %{brokerdir}/httpd/run
 ln -s %{sitedir}/public/* %{htmldir}
 ln -s /usr/lib64/httpd/modules/ %{sitedir}/httpd/modules
 ln -s /usr/lib64/httpd/modules/ %{brokerdir}/httpd/modules
+
+# Jenkins specific setup
+usermod -G libra_user jenkins
+chown -R jenkins:jenkins /var/lib/jenkins
+
+# TODO - fix this because having jenkins in libra_user should correct this
+# However, without doing this, rake test fails for the rails sites
+chmod a+r /etc/libra/controller.conf
+
+# Allow Apache to connect to Jenkins port 8081
+/usr/sbin/setsebool -P httpd_can_network_connect=on || :
 
 # Allow httpd to relay
 /usr/sbin/setsebool -P httpd_can_network_relay=on || :
@@ -112,6 +131,10 @@ crontab -u root %{devenvdir}/crontab
 perl -p -i -e "s/^#MaxSessions .*$/MaxSessions 40/" /etc/ssh/sshd_config
 perl -p -i -e "s/^#MaxStartups .*$/MaxStartups 40/" /etc/ssh/sshd_config
 
+# Setup an empty git repository to allow code transfer
+mkdir -p /root/li
+git init --bare /root/li
+
 # Restore permissions
 /sbin/restorecon -R %{_sysconfdir}/qpid/pki
 /sbin/restorecon -R %{libradir}
@@ -122,12 +145,14 @@ service qpidd restart
 service mcollective start
 service libra-site restart
 service libra-broker restart
+service jenkins restart
 service httpd restart
 chkconfig iptables on
 chkconfig qpidd on
 chkconfig mcollective on
 chkconfig libra-site on
 chkconfig libra-broker on
+chkconfig jenkins on
 chkconfig httpd on
 
 # CGroup services
@@ -145,11 +170,63 @@ chkconfig libra-tc on
 %attr(0666,-,-) %{_tmppath}/mcollective-client.log
 %attr(0666,-,-) %{brokerdir}/log/development.log
 %attr(0666,-,-) %{sitedir}/log/development.log
+%config(noreplace) %{jenkins}/jobs/jenkins_update/config.xml
+%config(noreplace) %{jenkins}/jobs/libra_ami/config.xml
+%config(noreplace) %{jenkins}/jobs/libra_ami_verify/config.xml
+%config(noreplace) %{jenkins}/jobs/libra_check/config.xml
+%config(noreplace) %{jenkins}/jobs/libra_prune/config.xml
+%config(noreplace) %{jenkins}/jobs/libra_web/config.xml
 %{devenvdir}
 %{_initddir}/libra-broker
 %{_initddir}/libra-site
 
 %changelog
+* Fri Jun 10 2011 Matt Hicks <mhicks@redhat.com> 0.72.19-1
+- More jenkins job updates (mhicks@redhat.com)
+
+* Fri Jun 10 2011 Matt Hicks <mhicks@redhat.com> 0.72.18-1
+- Artifact retention tuning for Jenkins (mhicks@redhat.com)
+
+* Fri Jun 10 2011 Matt Hicks <mhicks@redhat.com> 0.72.17-1
+- Jenkins job definition updates (mhicks@redhat.com)
+
+* Fri Jun 10 2011 Matt Hicks <mhicks@redhat.com> 0.72.16-1
+- Updating Jenkins libra_web config (mhicks@redhat.com)
+- Selenium test cleanup (mhicks@redhat.com)
+
+* Fri Jun 10 2011 Matt Hicks <mhicks@redhat.com> 0.72.15-1
+- DevEnv Selenium Cleanup (mhicks@redhat.com)
+
+* Fri Jun 10 2011 Matt Hicks <mhicks@redhat.com> 0.72.14-1
+- Removing file that failed RPM build (mhicks@redhat.com)
+
+* Fri Jun 10 2011 Matt Hicks <mhicks@redhat.com> 0.72.13-1
+- Cleanup of old job (mhicks@redhat.com)
+- lib macro fix (mhicks@redhat.com)
+- Selenium DevEnv setup / cleanup (mhicks@redhat.com)
+- Updating Jenkins config not to install devenv on update (mhicks@redhat.com)
+
+* Thu Jun 09 2011 Matt Hicks <mhicks@redhat.com> 0.72.12-1
+- Switching build notifications to the list (mhicks@redhat.com)
+
+* Thu Jun 09 2011 Matt Hicks <mhicks@redhat.com> 0.72.11-1
+- DevEnv enhancements (mhicks@redhat.com)
+
+* Thu Jun 09 2011 Matt Hicks <mhicks@redhat.com> 0.72.10-1
+- Moving binary selenium content to the devenv RPM structure
+  (mhicks@redhat.com)
+* Wed Jun 08 2011 Matt Hicks <mhicks@redhat.com> 0.72.9-1
+- Allowing Apache to connect to non-standard port for Jenkins
+  (mhicks@redhat.com)
+
+* Wed Jun 08 2011 Matt Hicks <mhicks@redhat.com> 0.72.8-1
+- Adding firefox profile to spec (mhicks@redhat.com)
+- Job renaming and spec config cleanup (mhicks@redhat.com)
+
+* Wed Jun 08 2011 Matt Hicks <mhicks@redhat.com> 0.72.7-1
+- Making sure the permissions are set for jenkins dir (mhicks@redhat.com)
+- Adding jenkins setup to devenv (mhicks@redhat.com)
+
 * Mon Jun 06 2011 Dan McPherson <dmcphers@redhat.com> 0.72.6-1
 - adding jenkins to li-devenv (dmcphers@redhat.com)
 

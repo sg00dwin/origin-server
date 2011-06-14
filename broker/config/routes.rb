@@ -10,6 +10,7 @@ Broker::Application.routes.draw do
     match '/broker/cartridge' => 'broker#cartridge_post', :via => [:post]
     match '/broker/domain' => 'broker#domain_post', :via => [:post]
     match '/broker/userinfo' => 'broker#user_info_post', :via => [:post]
+    match '/broker/cartlist' => 'broker#cart_list_post', :via => [:post]
 
     # Sample resource route with options:
     #   resources :products do

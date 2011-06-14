@@ -1,4 +1,5 @@
 require 'openshift/blacklist'
+require 'openshift/server'
 
 
 module Libra
@@ -6,25 +7,26 @@ module Libra
 
     Maxdlen = 16
 
-    TYPES = {
-      'jbossas-7.0' => :jbossas,
-      'php-5.3' => :php,
-      'perl-5.10' => :perl,
-      'rack-1.1' => :rack,
-      'wsgi-3.2' => :wsgi
-    }
-
     def self.get_cartridge_types(sep=', ')
-      i = 1
-      type_keys = ''
-      TYPES.each_key do |key|
-        type_keys += key
-        if i < TYPES.size
-          type_keys += sep
-        end
-        i += 1
+      carts = get_cart_list
+      carts.join(sep)
+    end
+
+    def self.get_cartridge(type)
+      carts = get_cart_list
+      if carts.include?(type)
+        return type
       end
-      type_keys
+      return nil
+    end
+
+    def self.get_cart_list
+      server = Server.find_available
+      carts = []
+      server.carts.split('|').each do |cart|
+        carts << cart unless Blacklist.ignore_cart?(cart)
+      end
+      return carts
     end
 
     # Invalid chars (") ($) (^) (<) (>) (|) (%) (/) (;) (:) (,) (\) (*) (=) (~)
@@ -66,13 +68,6 @@ module Libra
         return false
       end
       true
-    end
-
-    def self.get_cartridge(type)
-      if type && TYPES.has_key?(type)
-        return TYPES[type]
-      end
-      nil
     end
 
   end

@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.72.5
+Version:   0.72.9
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -64,6 +64,19 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Fri Jun 10 2011 Matt Hicks <mhicks@redhat.com> 0.72.9-1
+- doc fix (dmcphers@redhat.com)
+
+* Wed Jun 08 2011 Matt Hicks <mhicks@redhat.com> 0.72.8-1
+- 
+
+* Wed Jun 08 2011 Matt Hicks <mhicks@redhat.com> 0.72.7-1
+- Minor updates
+
+* Wed Jun 08 2011 Dan McPherson <dmcphers@redhat.com> 0.72.6-1
+- functioning migration (dmcphers@redhat.com)
+- migration progress (dmcphers@redhat.com)
+
 * Mon Jun 06 2011 Dan McPherson <dmcphers@redhat.com> 0.72.5-1
 - build fixes (dmcphers@redhat.com)
 - Bug 710244 (dmcphers@redhat.com)

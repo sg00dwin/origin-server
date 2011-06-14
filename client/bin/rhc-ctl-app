@@ -31,7 +31,7 @@ Usage: #{$0}
 Control an OpenShift express app
 
   -a|--app   application   Application name  (alphanumeric) (required)
-  -l|--rhlogin rhlogin     Red Hat login (#{rhlogin})
+  -l|--rhlogin rhlogin     Red Hat login (RHN or OpenShift login with OpenShift Express access) (#{rhlogin})
   -p|--password password   RHLogin password  (optional, will prompt)
   -c|--command command     (start|stop|restart|reload|status|destroy)
   -b|--bypass              Bypass warnings

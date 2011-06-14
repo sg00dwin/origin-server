@@ -58,4 +58,8 @@ $(function() {
       'access_flex_request[terms_accepted]' : 'required'
     }
   });
+  
+  //Focus first non-hidden form field on page
+  $('input').not('[type=hidden]').first().focus();
+      
 });

@@ -37,40 +37,67 @@ module RHC
   Maxretries = 10
   Defaultdelay = 2
 
-  TYPES = {
-    'php-5.3' => :php,
-    'perl-5.10' => :perl,
-    'rack-1.1' => :rack,
-    'wsgi-3.2' => :wsgi,
-    'jbossas-7.0' => :jbossas
-  }
-  
-  SUPPORTED_TYPES = {
-    'php-5.3' => :php,
-    'rack-1.1' => :rack,
-    'wsgi-3.2' => :wsgi
-  }
-
   def self.delay(time, adj=Defaultdelay)
     (time*=adj).to_int
   end
   
-  def self.get_supported_cartridge_types(sep=', ')
-    return get_cartridge_types(SUPPORTED_TYPES)
+  def self.get_cart_list(libra_server, net_http, debug=true, print_result=nil)
+    puts "Contacting https://#{libra_server}"
+    data = {'cartlist' => "true"}
+    if debug
+      data['debug'] = "true"
+    end
+    print_post_data(data, debug)
+    json_data = JSON.generate(data)
+
+    url = URI.parse("https://#{libra_server}/broker/cartlist")
+    response = http_post(net_http, url, json_data, "none")
+
+    unless response.code == '200'
+      if response.code == '404'
+        puts "Not found"
+        exit 99
+      elsif response.code == '401'
+        puts "Invalid credentials"
+        exit 97
+      else
+        print_response_err(response, debug)
+      end
+      exit 254
+    end
+    if print_result
+      print_response_success(response, debug)
+    end
+    begin
+      json_resp = JSON.parse(response.body)
+      carts = (JSON.parse(json_resp['result']))['carts']
+    rescue JSON::ParserError
+      exit 254
+    end
+#    carts.split('|')
+    carts
   end
 
-  def self.get_cartridge_types(types=TYPES, sep=', ')
-    i = 1
-    type_keys = ''
-    types.each_key do |key|
-      type_keys += key
-      if i < types.size
-        type_keys += sep
-      end
-      i += 1
-    end
-    type_keys
+  def self.get_cartridge_types(carts, sep, libra_server, net_http, debug=true, print_result=nil)
+    carts = get_cart_list(libra_server, net_http, debug, print_result) if carts.nil?
+    carts.join(sep)
   end
+
+  def self.get_cartridge_type(type, libra_server, net_http, debug)
+    carts = get_cart_list(libra_server, net_http, debug)
+    if type
+      if !carts.include?(type)
+        puts 'type must be ' << get_cartridge_types(carts, ' or ', nil, nil)
+      else
+        type = type.split('-')[0]
+        return type.to_sym
+      end
+    else
+      puts "Type is required"
+    end
+    nil
+  end
+
 
   # Invalid chars (") ($) (^) (<) (>) (|) (%) (/) (;) (:) (,) (\) (*) (=) (~)
   def self.check_rhlogin(rhlogin)
@@ -114,19 +141,6 @@ module RHC
     true
   end
 
-  def self.get_cartridge(type)
-    if type
-      if !(RHC::TYPES.has_key?(type))
-        puts 'type must be ' << get_supported_cartridge_types(' or ')
-      else
-        return RHC::TYPES[type]
-      end
-    else
-      puts "Type is required"
-    end
-    nil
-  end
-
   def self.print_post_data(h, debug)
     if (debug)
       puts 'DEBUG: Submitting form:'
@@ -144,7 +158,7 @@ module RHC
     end
   end
 
-  def self.get_user_info(libra_server, rhlogin, password, net_http, debug, print_result)
+  def self.get_user_info(libra_server, rhlogin, password, net_http, debug, print_result, not_found_message=nil)
 
     puts "Contacting https://#{libra_server}"
     data = {'rhlogin' => rhlogin}
@@ -159,7 +173,11 @@ module RHC
 
     unless response.code == '200'
       if response.code == '404'
-        puts "A user with rhlogin '#{rhlogin}' does not have a registered domain.  Be sure to run rhc-create-domain before using the other rhc tools."
+        if not_found_message
+          puts not_found_message
+        else
+          puts "A user with rhlogin '#{rhlogin}' does not have a registered domain.  Be sure to run rhc-create-domain before using the other rhc tools."
+        end
         exit 99
       elsif response.code == '401'
         puts "Invalid user credentials"

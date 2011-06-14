@@ -2,17 +2,19 @@ require 'openshift/helper'
 require 'aws'
 require 'json'
 require 'resolv'
+require 'pp'
 
 module Libra
   class Server
     # Cartridge definitions
     @@C_CONTROLLER = 'li-controller-0.1'
 
-    attr_reader :name, :repos
+    attr_reader :name, :repos, :carts
 
-    def initialize(name, repos=nil)
+    def initialize(name, repos=nil, carts=nil)
       @name = name
       @repos = repos.to_i if repos
+      @carts = carts if carts
     end
 
     def self.create(opts={})
@@ -239,7 +241,7 @@ module Libra
         while !success && retries < 5
           retries += 1
           begin
-            Libra.logger_debug "DEBUG: DYNECT handle temp redirect with path: #{url.path} and headers: #{headers} attempt: #{retries} sleep_time: #{sleep_time}"
+            Libra.logger_debug "DEBUG: DYNECT handle temp redirect with path: #{url.path} and headers: #{headers.pretty_inspect} attempt: #{retries} sleep_time: #{sleep_time}"
             resp, data = http.get(url.path, headers)
             case resp
             when Net::HTTPSuccess, Net::HTTPTemporaryRedirect
@@ -282,7 +284,7 @@ module Libra
       http.use_ssl = true
       has = false
       begin
-        Libra.logger_debug "DEBUG: DYNECT has? with path: #{url.path} and headers: #{headers}"
+        Libra.logger_debug "DEBUG: DYNECT has? with path: #{url.path} and headers: #{headers.pretty_inspect}"
         resp, data = http.get(url.path, headers)
         case resp
         when Net::HTTPSuccess
@@ -317,7 +319,7 @@ module Libra
       http.use_ssl = true
       json_data = JSON.generate(post_data);
       begin
-        Libra.logger_debug "DEBUG: DYNECT put/post with path: #{url.path} json data: #{json_data} and headers: #{headers}"
+        Libra.logger_debug "DEBUG: DYNECT put/post with path: #{url.path} json data: #{json_data} and headers: #{headers.pretty_inspect}"
         if put
           resp, data = http.put(url.path, json_data, headers)
         else
@@ -363,7 +365,7 @@ module Libra
       http.use_ssl = true
       resp, data = nil, nil
       begin
-        Libra.logger_debug "DEBUG: DYNECT delete with path: #{url.path} and headers: #{headers}"
+        Libra.logger_debug "DEBUG: DYNECT delete with path: #{url.path} and headers: #{headers.pretty_inspect}"
         resp, data = http.delete(url.path, headers)
         case resp
         when Net::HTTPSuccess
@@ -477,6 +479,18 @@ module Libra
           end
         end
       end
+    end
+
+    #
+    # Returns the list of cartridges that the server has (sep w/ |)
+    # looking it up as needed. This returns the full list, including
+    # cartridges we may wish to keep private!
+    #
+    def carts
+      Helper.rpc_get_fact('cart_list', name) do |server, carts|
+          @carts = carts
+      end unless @carts
+      @carts
     end
 
     #

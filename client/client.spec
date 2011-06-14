@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system client tools
 Name:          rhc
-Version:       0.72.8
+Version:       0.72.13
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       MIT
@@ -84,6 +84,26 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_sysconfdir}/openshift/express.conf
 
 %changelog
+* Fri Jun 10 2011 Matt Hicks <mhicks@redhat.com> 0.72.13-1
+- give better message when running rhc-create-domain with alter first
+  (dmcphers@redhat.com)
+
+* Fri Jun 10 2011 Matt Hicks <mhicks@redhat.com> 0.72.12-1
+- bug 712276 (dmcphers@redhat.com)
+
+* Fri Jun 10 2011 Matt Hicks <mhicks@redhat.com> 0.72.11-1
+- Added applicatino name (mmcgrath@redhat.com)
+
+* Thu Jun 09 2011 Dan McPherson <dmcphers@redhat.com> 0.72.10-1
+- bug 707857 (dmcphers@redhat.com)
+
+* Thu Jun 09 2011 Matt Hicks <mhicks@redhat.com> 0.72.9-1
+- Bug 706353 (dmcphers@redhat.com)
+- cleanup (dmcphers@redhat.com)
+- Bug 707857 (dmcphers@redhat.com)
+- Bug 705703 (dmcphers@redhat.com)
+- improve terminology with rhlogin in usage and man pages (dmcphers@redhat.com)
+
 * Wed Jun 08 2011 Dan McPherson <dmcphers@redhat.com> 0.72.8-1
 - 
 

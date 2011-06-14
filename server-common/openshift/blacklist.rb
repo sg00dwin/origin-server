@@ -17,8 +17,20 @@ module Libra
             wise xnio
     )
 
+    IGNORE_CARTS = %w(abstract-httpd li-controller
+    )
+
     def self.in_blacklist?(field)
       NONO.include?(field.to_str.downcase)
+    end
+
+    def self.ignore_cart?(name)
+      IGNORE_CARTS.each do |regex|
+          if name =~ /#{regex}/
+              return true
+          end
+      end
+      return false
     end
   end
 end

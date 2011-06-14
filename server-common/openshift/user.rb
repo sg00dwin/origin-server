@@ -321,7 +321,7 @@ module Libra
     #
     # Updates the S3 cache of the app
     #
-    def update_app(app)
+    def update_app(app, app_name)
       json = JSON.generate(app)
       Helper.s3.put(Libra.c[:s3_bucket],
                     "user_info/#{@rhlogin}/apps/#{app_name}.json", json)

@@ -1,4 +1,15 @@
 #!/usr/bin/env python
+
+#
+# Usage:
+#   ./find-invalid-logins account_list.txt
+# or
+#   cat account_list.txt | ./find-invalid-logins
+#
+# Where account_list contains a list of logins on separate lines.
+#
+
+import os
 import sys
 import fileinput
 import logging
@@ -12,62 +23,130 @@ except:
     print "Take a look at https://fedorahosted.org/suds/"
     sys.exit()
 
+#
+# Configuration data - you might need to change thse values
+#
+
+# The IT web service URL to access
 webqa_url = 'http://proxyjavavip.web.qa.ext.intdev.redhat.com/svc/UserService/1?wsdl'
 
-user = Client(webqa_url)
+# A list of legacy or full accounts that have access to express
+access_list = '~/Desktop/migration/users_with_express_access.txt'
 
-# from here we can do two main things:
-# 1) to create complex data types that the server requires: 
-#   user.factory.create('complexDataType')
-# 2) to call a method defined in the above wsdl:
-#   user.service.methodName(params)
-# You'll probably never need to do 1, but it's available
+# A list of simple user accounts that have access to express
+simple_access_list = '~/Desktop/migration/simple_users_with_express_access.txt'
+
+#
+# The program - no changes needed below this point
+#
+user = Client(webqa_url)
 
 # Read in the logins to check from a file or stdin
 logins = []
 for line in fileinput.input():
     logins.append(line.rstrip())
 
-# Query each of those logins to look for one that isn't found
-valid_logins = []
-invalid_logins = []
-invalid_actual_logins = []
-multiple_emails = []
+# Read in the list of full users that have access to Express
+text_file = open(os.path.expanduser(access_list), "r")
+express_logins = []
+for line in text_file.readlines():
+  express_logins.append(line.rstrip())
+
+# Read in the list of simple users that have access to Express
+text_file = open(os.path.expanduser(simple_access_list), "r")
+simple_express_logins = []
+for line in text_file.readlines():
+  simple_express_logins.append(line.rstrip())
+
+migrate = []
+conflict = []
+ignore = []
+unknown = []
+
 for login in logins:
-    print "Looking up user: " + login
+    # See if the user is a simple user by checking the simple access list
+    try:
+        simple_express_logins.index(login)
+
+        # User is a simple user - skip them
+        ignore.append(login)
+        continue
+    except ValueError, e:
+        # User is not a simple user - continue
+        pass
+
+    # See if the user is a full user by checking the full access list
+    try:
+        express_logins.index(login)
+
+        # User is a full user - skip them
+        ignore.append(login)
+        continue
+    except ValueError, e:
+        # User is not a full user - continue
+        pass
+
+    # User is not a simple user - look them up by login
     if user.service.getUserIdByLogin(login):
-        print "Found login for user"
-        valid_logins.append(login)
+        # Login is an actual login - ignore
+        ignore.append(login)
     else:
-        print "Didn't find the user login, looking up by email"
         try:
+            # User was not found by login - check by email
             result = user.service.findByEmail(login)
-            if result:
-                print "Not good - found an invalid login: " + login
-                if len(result) > 1:
-                    print "Really bad, more than one account with this email..."
-                    multiple_emails.append(login)
+
+            # See how many matches were returned on the email match
+            if len(result) == 0:
+                unknown.append(login)
+            elif len(result) == 1:
+                # There is only a single matching login for this account
+                # Migrate if the migration target doesn't exist
+                migration_str = login + "/" + result[0].login
+                try:
+                    logins.index(result[0].login)
+                    conflict.append(migration_str)
+                except ValueError, e:
+                    migrate.append(migration_str)
+            elif len(result) > 1:
+                # There are multiple accounts matching this email - refine the list 
+                express_login_matches = []
+                for user_result in result:
+                    # Check the logins in the express access list for a match
+                    try:
+                        express_login_matches.append(express_logins[express_logins.index(user_result.login)])
+                    except ValueError, e:
+                        pass
+
+                # Only migrate if there is a single resolved match
+                if len(express_login_matches) == 1:
+                    # Make sure there isn't a conflict with an existing login
+                    try:
+                        logins.index(express_login_matches[0])
+                        conflict.append(login + "/" + express_login_matches[0])
+                    except ValueError, e:
+                        migrate.append(login + "/" + express_login_matches[0])
                 else:
-                    invalid_logins.append(login)
-                    invalid_actual_logins.append(result[0].login)
-            else:
-                print "No email, we're safe"
+                    conflict.append(login + "/" + ",".join(express_login_matches))
         except WebFault, e:
-            print "No email, we're safe"
+            unknown.append(login)
 
 # Find the intersection
 print
+print "No Action:"
+for value in ignore:
+  print value
+
+print
+print "Migrate:"
+for value in migrate:
+  print value
+
+print
 print "Conflicts:"
-intersection = list(set(valid_logins) & set(invalid_actual_logins))
-for login in intersection:
-  print login
+for value in conflict:
+  print value
 
 print
-print "Multiple Emails:"
-for login in multiple_emails:
-  print login
-
-print
-print "Safe to migrate:"
-for i in range(len(invalid_logins)):
-  print invalid_logins[i] + "/" + invalid_actual_logins[i]
+print "Unknown:"
+for value in unknown:
+  print value
