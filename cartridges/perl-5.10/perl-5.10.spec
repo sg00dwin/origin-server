@@ -1,22 +1,20 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/perl-5.10
 
-Name: rhc-cartridge-perl-5.10
-Version: 0.3
-Release: 1%{?dist}
-Summary: mod_perl support for express
+Summary:   Provides mod_perl support
+Name:      rhc-cartridge-perl-5.10
+Version:   0.3.1
+Release:   1%{?dist}
+Group:     Development/Languages
+License:   GPLv2
+URL:       http://openshift.redhat.com
+Source0:   %{name}-%{version}.tar.gz
 
-Group: Network/Daemons
-License: GPLv2
-URL: https://engineering.redhat.com/trac/Libra
-Source0: %{name}-%{version}.tar.gz
-BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
+BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
+Requires:  rhc-node >= 0.69.4
+Requires:  mod_perl
+Requires:  ImageMagick-perl
+
 BuildArch: noarch
-
-BuildRequires: rubygem-rake
-
-Requires: rhc-node >= 0.69.4
-Requires: mod_perl
-Requires: ImageMagick-perl
 
 %description
 Provides rhc perl cartridge support
@@ -42,7 +40,6 @@ ln -s %{cartridgedir}/../abstract-httpd/info/hooks/start %{buildroot}%{cartridge
 ln -s %{cartridgedir}/../abstract-httpd/info/hooks/status %{buildroot}%{cartridgedir}/info/hooks/status
 ln -s %{cartridgedir}/../abstract-httpd/info/hooks/stop %{buildroot}%{cartridgedir}/info/hooks/stop
 ln -s %{cartridgedir}/../abstract-httpd/info/hooks/update_namespace %{buildroot}%{cartridgedir}/info/hooks/update_namespace
-
 
 %clean
 rm -rf $RPM_BUILD_ROOT
