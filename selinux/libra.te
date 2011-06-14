@@ -171,6 +171,8 @@ dontaudit libra_domain exec_type:file getattr;
 
 libra_search_lib(sshd_t)
 dontaudit sshd_t self:capability sys_admin;
+allow libra_domain sshd_t:process sigchld;
+allow sshd_t libra_domain:process { rlimitinh signal };
 
 dontaudit sendmail_t libra_initrc_t:fifo_file { read write };
 append_files_pattern(sendmail_t, libra_var_lib_t, libra_var_lib_t)
