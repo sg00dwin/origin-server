@@ -154,6 +154,49 @@ class DevEnv < Thor
     instance.ssh("rm -rf li-working; git clone li li-working; pushd li-working; build/devenv update; popd; rm -rf li-working", 600)
     puts "Done"
   end
+  
+  desc "sync_tests NAME", "Synchronize a local git repo's tests with a remote DevEnv instance.  NAME should be ssh resolvable."
+  method_option :tag, :type => :boolean, :desc => "NAME is an Amazon tag"
+  method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
+  def sync_tests(name)
+    # Warn on uncommitted changes
+    `git diff-index --quiet HEAD`
+
+    if $? != 0
+      # Perform a temporary commit to sync
+      @temp_commit = true
+      puts "Creating temporary commit to sync"
+      `git commit -a -m "Temporary commit to sync"`
+      puts "Done."
+    end      
+
+    if options.tag?
+      instance = Instance.find(connect, name)
+    else
+      instance = Instance.new(nil, nil)
+      instance.dns = name
+    end
+
+    # Get the current branch
+    branch_str = `git status | head -n1`.chomp
+    branch_str =~ /.*branch (.*)/
+    branch = $1
+
+    puts "Archiving local changes from branch #{branch}..."
+    `git archive --prefix li-test/ HEAD --output /tmp/li-test.tar`
+    puts "Done"
+
+    if @temp_commit
+      puts "Undoing temporary commit..."
+      `git reset HEAD^`
+      puts "Done."
+    end
+
+    puts "Updating remote tests...."
+    instance.scp_to("/tmp/li-test.tar", "~/")
+    instance.ssh("rm -rf li-test; tar -xf li-test.tar")
+    puts "Done"
+  end
 
   desc "launch NAME", "Launches the latest DevEnv instance, tagging with NAME"
   method_option :verifier, :type => :boolean, :desc => "Add verifier functionality (private IP setup and local tests)"
