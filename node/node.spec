@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.72.14
+Version:       0.72.15
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -139,6 +139,18 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Tue Jun 14 2011 Matt Hicks <mhicks@redhat.com> 0.72.15-1
+- Adding mcs changes (mmcgrath@redhat.com)
+- rename to make more sense... (jimjag@redhat.com)
+- Force list to be a string... xfer to array when conv (jimjag@redhat.com)
+- cart_list factor returns a string now, with cartridges sep by '|'
+  (jimjag@redhat.com)
+- /usr/lib/ruby/site_ruby/1.8/facter/libra.rb:86:in `+': can't convert String
+  into Array (TypeError) (jimjag@redhat.com)
+- force array append (jimjag@redhat.com)
+- Adjust for permissions (jimjag@redhat.com)
+- debug devenv (jimjag@redhat.com)
+
 * Fri Jun 10 2011 Matt Hicks <mhicks@redhat.com> 0.72.14-1
 - Be faster (jimjag@redhat.com)
 
