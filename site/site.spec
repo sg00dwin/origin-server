@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.72.9
+Version:   0.72.10
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -64,6 +64,11 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Tue Jun 14 2011 Matt Hicks <mhicks@redhat.com> 0.72.10-1
+- Bug 707402 - First form field is focused on page load with javascript
+  (edirsh@redhat.com)
+- Bug 712173 / US553 - Added new omniture code to site (edirsh@redhat.com)
+
 * Fri Jun 10 2011 Matt Hicks <mhicks@redhat.com> 0.72.9-1
 - doc fix (dmcphers@redhat.com)
 
