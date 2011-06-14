@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.72.13
+Version:   0.72.14
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -57,6 +57,14 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Tue Jun 14 2011 Matt Hicks <mhicks@redhat.com> 0.72.14-1
+- Spec cleanup (mhicks@redhat.com)
+- Permanent jboss fix now in place (mmcgrath@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (scott.stark@jboss.org)
+- Improve the way the control script is generated and correct the output of the
+  status command. (scott.stark@jboss.org)
+
 * Fri Jun 10 2011 Matt Hicks <mhicks@redhat.com> 0.72.13-1
 - Add link to sample source Update H2DS to have local file store under
   jboss.server.data.dir (scott.stark@jboss.org)
