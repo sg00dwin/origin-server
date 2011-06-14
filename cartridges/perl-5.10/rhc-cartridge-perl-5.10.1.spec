@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/perl-5.10
 
 Name: rhc-cartridge-perl-5.10
-Version: 0.2
+Version: 0.3
 Release: 1%{?dist}
 Summary: mod_perl support for express
 
@@ -58,6 +58,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Tue Jun 14 2011 Mike McGrath <mmcgrath@redhat.com> 0.3-1
+- new package built with tito
+
 * Tue Jun 14 2011 Mike McGrath <mmcgrath@redhat.com> 0.2-1
 - Starting repackaging for main repo
 
