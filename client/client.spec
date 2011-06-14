@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system client tools
 Name:          rhc
-Version:       0.72.13
+Version:       0.72.14
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       MIT
@@ -84,6 +84,34 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_sysconfdir}/openshift/express.conf
 
 %changelog
+* Tue Jun 14 2011 Matt Hicks <mhicks@redhat.com> 0.72.14-1
+- rename to make more sense... (jimjag@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (jimjag@redhat.com)
+- remove pw from deconfigure on error call (dmcphers@redhat.com)
+- Use as symbols (jimjag@redhat.com)
+- minor fixes (dmcphers@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (jimjag@redhat.com)
+- method name (jimjag@redhat.com)
+- minor fixes (dmcphers@redhat.com)
+- parse from array (jimjag@redhat.com)
+- Pass string (jimjag@redhat.com)
+- No more convert (jimjag@redhat.com)
+- cart_list factor returns a string now, with cartridges sep by '|'
+  (jimjag@redhat.com)
+- Adjust for JSON (jimjag@redhat.com)
+- past one level (jimjag@redhat.com)
+- and not a key (jimjag@redhat.com)
+- pull in carts from result (jimjag@redhat.com)
+- force debug for now (jimjag@redhat.com)
+- use as boolean (jimjag@redhat.com)
+- simple name change (jimjag@redhat.com)
+- be consistent (jimjag@redhat.com)
+- Pass debug flag (jimjag@redhat.com)
+- Scoping issues (jimjag@redhat.com)
+- pull into client tools cartinfo (jimjag@redhat.com)
+
 * Fri Jun 10 2011 Matt Hicks <mhicks@redhat.com> 0.72.13-1
 - give better message when running rhc-create-domain with alter first
   (dmcphers@redhat.com)
