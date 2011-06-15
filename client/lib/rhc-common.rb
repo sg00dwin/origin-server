@@ -44,7 +44,7 @@ module RHC
   def self.get_cartridges_tbl(libra_server, net_http, debug=true, print_result=nil)
     puts "Contacting https://#{libra_server} to obtain list of cartridges..."
     puts " (please excuse the delay)"
-    data = {'cartlist' => "true"}
+    data = {'cart_types' => "standalone"}
     if debug
       data['debug'] = "true"
     end
