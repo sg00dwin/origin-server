@@ -307,6 +307,7 @@ fi
 
 if whoami | grep -q root || ! runcon | grep 'system_r:libra_t:s0:$c_val'
 then
+runcon
     echo 1>&2
     echo "Please run script in the correct context, try:" 1>&2
     echo "runuser --shell /bin/sh \"$uuid\" -c \"runcon -t libra_t -l s0:$c_val $APP_DIR/${application}_ctl.sh\"" 1>&2

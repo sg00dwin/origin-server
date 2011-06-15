@@ -100,13 +100,16 @@ uuid=$3
 APP_HOME="$libra_dir/$uuid/"
 APP_DIR="$APP_HOME/$application"
 
+uid=$(id -u "$uuid")
+c_val="c$(($uid/1023)),c$(($uid%1023))"
+
 #
 # Destroy git app repo
 #
 
 destroy_repo $application $uuid
 
-runuser --shell /bin/sh "$uuid" $APP_DIR/${application}_ctl.sh stop || echo "Failed to stop ${application}" 1>&2
+runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l s0:$c_val $APP_DIR/${application}_ctl.sh stop" || echo "Failed to stop ${application}" 1>&2
 
 IP=$(awk -F, "/$uuid,$application,/"'{ print $1 }' /etc/libra/ip_db | head -n1)
 range_one=$(echo $IP | awk -F\. '{ print $3 }')
