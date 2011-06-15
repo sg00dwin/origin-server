@@ -57,6 +57,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Tue Jun 14 2011 Scott Stark <sstark@redhat.com> 0.72.15-1
+- Update standalone.xml configuration for jbossas-7.0.0.Beta6OS
+
 * Tue Jun 14 2011 Matt Hicks <mhicks@redhat.com> 0.72.14-1
 - Spec cleanup (mhicks@redhat.com)
 - Permanent jboss fix now in place (mmcgrath@redhat.com)
