@@ -219,7 +219,7 @@ APP_DIR_TEMP_SHORT=$(echo $(mktemp -d -p /s))
 #"/s/$(echo \"${uuid}_${application}\" | md5sum | cut -d ' ' -f1)"
 ln -s $APP_DIR/rack/tmp $APP_DIR_TEMP_SHORT
 pushd "$APP_DIR" > /dev/null
-mkdir conf conf.d logs run deploy deploy/public deploy/tmp data
+mkdir conf conf.d logs run deploy deploy/public deploy/tmp data tmp
 ln -s /usr/lib64/httpd/modules modules
 ln -s /etc/httpd/conf/magic conf/magic
 
