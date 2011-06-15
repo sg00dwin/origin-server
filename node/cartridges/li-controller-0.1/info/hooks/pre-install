@@ -49,4 +49,4 @@ then
     print_help
 fi
 
-groups "$uuid" > /dev/null 2>&1 && quit "App $uuid already exists"
+groups "$uuid" > /dev/null 2>&1 && quit "User $uuid already exists"
