@@ -84,6 +84,7 @@ dev_read_rand(libra_domain)
 dev_dontaudit_append_rand(libra_domain)
 fs_dontaudit_rw_anon_inodefs_files(libra_domain)
 fs_search_tmpfs(libra_domain)
+fs_getattr_xattr_fs(libra_t)
 
 files_read_usr_files(libra_domain)
 
