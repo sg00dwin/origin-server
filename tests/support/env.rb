@@ -83,8 +83,10 @@ module Libra
       # Create a user with the supplied username and a testing
       # email and ssh key
       #
-      def create_test_user(rhlogin)
-        Libra::User.create(rhlogin, $test_ssh_key, get_unique_namespace)
+      def create_test_user(user_spec)
+        Libra::User.create(user_spec[:login], 
+                           $test_ssh_key, 
+                           user_spec[:namespace])
       end
     end
 
