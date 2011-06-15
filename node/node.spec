@@ -75,6 +75,7 @@ chkconfig cgconfig && /sbin/service cgconfig restart >/dev/null 2>&1 || :
 /sbin/chkconfig --add libra-tc || :
 #/sbin/service mcollective restart > /dev/null 2>&1 || :
 /sbin/restorecon /etc/init.d/libra || :
+/sbin/restorecon /var/lib/libra || :
 /usr/bin/rhc-restorecon || :
 # only enable if cgconfig is
 chkconfig cgconfig && /sbin/service libra-cgroups start > /dev/null 2>&1 || :
