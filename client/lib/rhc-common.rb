@@ -76,17 +76,10 @@ module RHC
     carts.join(sep)
   end
 
-  def self.get_cartridge_type(type, libra_server, net_http, debug)
-    carts = get_cartridges_tbl(libra_server, net_http, debug)
+  def self.get_cartridge_type(type)
     if type
-      if !carts.include?(type)
-        puts 'type must be ' << get_cartridge_list(carts, ' or ', nil, nil)
-      else
-        type = type.split('-')[0]
-        return type.to_sym
-      end
-    else
-      puts "Type is required"
+      type = type.split('-')[0]
+      return type.to_sym
     end
     nil
   end

@@ -90,7 +90,7 @@ if !RHC::check_app(opt['app'])
     p_usage
 end
 
-type = RHC::get_cartridge_type(opt['type'], libra_server, @http, debug)
+type = RHC::get_cartridge_type(opt['type'])
 if !type
     p_usage
 end
