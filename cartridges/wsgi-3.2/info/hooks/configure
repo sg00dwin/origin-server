@@ -265,11 +265,11 @@ then
     exit 1
 fi
 
-if whoami | grep -q root
+if whoami | grep -q root || ! runcon | grep 'system_r:libra_t:s0:$c_val'
 then
     echo 1>&2
-    echo "Please don't run script as root, try:" 1>&2
-    echo "runuser --shell /bin/sh $uuid $APP_DIR/${application}_ctl.sh" 1>&2
+    echo "Please run script in the correct context, try:" 1>&2
+    echo "runuser --shell /bin/sh \"$uuid\" -c \"runcon -t libra_t -l s0:$c_val $APP_DIR/${application}_ctl.sh\"" 1>&2
     echo 2>&1
     exit 15
 fi
@@ -282,11 +282,11 @@ case "\$1" in
             echo -n " - Application is disabled" 1>&2
             exit 0
         else
-            runcon -t libra_t -l s0:$c_val /usr/sbin/httpd -C 'Include $APP_DIR/conf.d/*.conf' -f /usr/libexec/li/cartridges/wsgi-3.2/info/configuration/etc/conf/httpd_nolog.conf -k \$1
+            /usr/sbin/httpd -C 'Include $APP_DIR/conf.d/*.conf' -f /usr/libexec/li/cartridges/wsgi-3.2/info/configuration/etc/conf/httpd_nolog.conf -k \$1
         fi
     ;;
     restart|graceful|graceful-stop|stop)
-        runcon -t libra_t -l s0:$c_val /usr/sbin/httpd -C 'Include $APP_DIR/conf.d/*.conf' -f /usr/libexec/li/cartridges/wsgi-3.2/info/configuration/etc/conf/httpd_nolog.conf -k \$1
+        /usr/sbin/httpd -C 'Include $APP_DIR/conf.d/*.conf' -f /usr/libexec/li/cartridges/wsgi-3.2/info/configuration/etc/conf/httpd_nolog.conf -k \$1
     ;;
     status)
         echo "Coming soon"
@@ -301,7 +301,7 @@ chown $user_id.$group_id -R $APP_DIR || error "Failed to chown new application s
 chown root:root -R "$APP_DIR/${application}_ctl.sh" "$APP_DIR/conf" "$APP_DIR/conf.d"
 chown root:root "$APP_DIR"
 chcon -t libra_var_lib_t -l s0:$c_val -R "$APP_DIR"
-runuser --shell /bin/sh "$uuid" "$APP_DIR/${application}_ctl.sh" start || error "Failed to start ${application}" 121
+runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l s0:$c_val $APP_DIR/${application}_ctl.sh start" || error "Failed to start ${application}" 121
 
 #
 # Create virtualhost definition for apache

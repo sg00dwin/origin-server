@@ -270,11 +270,12 @@ then
     exit 1
 fi
 
-if whoami | grep -q root
+if whoami | grep -q root || ! runcon | grep 'system_r:libra_t:s0:$c_val'
 then
-    echo "Please don't run script as root, try:"
-    echo "runuser --shell /bin/sh $uuid $APP_DIR/${application}_ctl.sh"
-    echo
+    echo 1>&2
+    echo "Please run script in the correct context, try:" 1>&2
+    echo "runuser --shell /bin/sh \"$uuid\" -c \"runcon -t libra_t -l s0:$c_val $APP_DIR/${application}_ctl.sh\"" 1>&2
+    echo 2>&1
     exit 15
 fi
 
@@ -297,7 +298,7 @@ case "\$1" in
             echo -n " - Application is disabled"
             exit 0
         else
-            runcon -t libra_t -l s0:$c_val $JBOSS_BIN_DIR/standalone.sh 1>&2 >${TMP_DIR}/${application}.log &
+            $JBOSS_BIN_DIR/standalone.sh 1>&2 >${TMP_DIR}/${application}.log &
             PROCESS_ID=\$!
             echo \$PROCESS_ID > \$JBOSS_PID_FILE
         fi
@@ -336,13 +337,8 @@ chown root.root -R "$APP_DIR/${application}_ctl.sh"
 chown $user_id.$group_id -R "$APP_DIR/${jboss_version}/standalone"
 chcon -t libra_var_lib_t -l s0:$c_val -R "$APP_DIR"
 cd $APP_DIR
-# Check if the incoming contex is correct. Useful for running script directly for testing.
-if ! ( runcon | grep -q system_r:libra_initrc_t )
-then
-    runcon -r system_r -t libra_initrc_t runuser --shell /bin/sh "$uuid" "$APP_DIR/${application}_ctl.sh" start || error "Failed to start ${application}" 121
-else
-    runuser --shell /bin/sh "$uuid" "$APP_DIR/${application}_ctl.sh" start || error "Failed to start ${application}" 121
-fi
+# Check if the incoming context is correct. Useful for running script directly for testing.
+runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l s0:$c_val $APP_DIR/${application}_ctl.sh start" || error "Failed to start ${application}" 121
 
 #
 # Create virtualhost definition for apache
