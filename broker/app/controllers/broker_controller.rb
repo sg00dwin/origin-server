@@ -238,7 +238,7 @@ class BrokerController < ApplicationController
 
       carts = Libra::Util.get_cartridges_tbl
       if carts.nil? || carts.empty?
-        render_internal_server_error(e, 'cart_list_post nil') and return
+        carts = ["unknown"]
       end
       json_data = JSON.generate({
                               :cartlist => "true",
