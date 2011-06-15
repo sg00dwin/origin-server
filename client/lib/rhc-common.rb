@@ -42,7 +42,8 @@ module RHC
   end
   
   def self.get_cartridges_tbl(libra_server, net_http, debug=true, print_result=nil)
-    puts "Contacting https://#{libra_server}"
+    puts "Contacting https://#{libra_server} to obtain list of cartridges..."
+    puts " (please excuse the delay)"
     data = {'cartlist' => "true"}
     if debug
       data['debug'] = "true"
@@ -54,16 +55,8 @@ module RHC
     response = http_post(net_http, url, json_data, "none")
 
     unless response.code == '200'
-      if response.code == '404'
-        puts "Not found"
-        exit 99
-      elsif response.code == '401'
-        puts "Invalid credentials"
-        exit 97
-      else
-        print_response_err(response, debug)
-      end
-      exit 254
+      print_response_err(response, debug)
+      return ["unknown"]
     end
     if print_result
       print_response_success(response, debug)
