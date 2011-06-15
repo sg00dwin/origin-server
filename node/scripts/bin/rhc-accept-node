@@ -134,7 +134,7 @@ function check_selinux() {
     # Check standard file/directory labeling
     #
 	RELABELS=`restorecon -n -v /var/lib/libra`
-	RELABEL_COUNT=`echo -n "$RELABELS" | wc -l`
+	RELABEL_COUNT=`echo "$RELABELS" | wc -l`
 	if [ "$RELABEL_COUNT" -ne 0 ]
 	then
 	    echo "FAIL: invalid selinux labels in /var/lib/libra" >&2
