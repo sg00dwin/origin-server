@@ -295,7 +295,7 @@ runcon
     exit 15
 fi
 
-export TMPDIR=$APP_DIR/rack/rack/tmp
+export TMPDIR=$APP_DIR/rack/tmp
 
 case "\$1" in
     start)
