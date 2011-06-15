@@ -142,43 +142,23 @@ function create_repo {
     popd
 
     echo "rack 1.1 application '$application'" > $GIT_DIR/description
+
     cat <<EOF > $GIT_DIR/hooks/pre-receive
 # Stop the app
+echo "Stopping application..."
 $APP_DIR/${application}_ctl.sh stop
 EOF
 
     cat <<EOF > $GIT_DIR/hooks/post-receive
-USING_BUNDLER=false
-if [ -d '$APP_DIR/tmp/.bundle' ]
-then
-  USING_BUNDLER=true
-  rm -rf '$APP_DIR/tmp/.bundle' '$APP_DIR/tmp/vendor'
-  mv '$APP_DIR/deploy/.bundle' '$APP_DIR/tmp/.bundle'
-  mv '$APP_DIR/deploy/vendor' '$APP_DIR/tmp/vendor'
-fi
-
 rm -rf $APP_DIR/deploy/*
 git archive --format=tar HEAD | (cd $APP_DIR/deploy && tar xf -)
 
-if \$USING_BUNDLER
-then
-  mv '$APP_DIR/tmp/.bundle' '$APP_DIR/deploy/.bundle'
-  mv '$APP_DIR/tmp/vendor' '$APP_DIR/deploy/vendor'
-fi
-
-if [ -f '$APP_DIR/deploy/Gemfile.lock' ]
-then
-  # Update/install necessary rubygems
-  pushd $APP_DIR/deploy > /dev/null
-  bundle install --deployment
-  popd > /dev/null
-fi
-
 # Start the app
+echo "Starting application..."
 $APP_DIR/${application}_ctl.sh start
 EOF
 
-    chmod 0755 $APP_HOME/git/$application.git/hooks/post-receive $APP_HOME/git/$application.git/hooks/pre-receive
+    chmod 0755 $GIT_DIR/hooks/post-receive $GIT_DIR/hooks/pre-receive
     chown $user_id.$group_id -R $GIT_DIR
     # Secure the hooks dir
     chown root.root -R $GIT_DIR/hooks
@@ -305,7 +285,7 @@ then
     exit 1
 fi
 
-if whoami | grep -q root || ! runcon | grep 'system_r:libra_t:s0:$c_val'
+if whoami | grep -q root || ! runcon | grep 'system_r:libra_t:s0:$c_val' > /dev/null
 then
 runcon
     echo 1>&2

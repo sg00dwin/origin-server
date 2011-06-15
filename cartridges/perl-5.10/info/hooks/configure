@@ -58,7 +58,7 @@ CART_INFO_DIR=/usr/libexec/li/cartridges/perl-5.10/info
 CART_CONF_DIR=$CART_INFO_DIR/configuration/etc/conf
 
 function print_help {
-    echo "Usage: $0 app-name username uuid"
+    echo "Usage: $0 app-name namespace uuid"
 
     echo "$0 $@" | logger -p local0.notice -t libra_http_create
     exit 1
@@ -126,21 +126,31 @@ function create_repo {
     user_id=$2
     group_id=$3
     c_val=$4
-    CUSTOMER_HOME="${libra_dir}/${uuid}"
+    APP_HOME="${libra_dir}/${uuid}"
 
-    if [ ! -d $CUSTOMER_HOME ]; then echo "ERROR: Customer ${uuid} not found!  Please create." 1>&2; exit 2; fi
+    if [ ! -d $APP_HOME ]; then echo "ERROR: Customer ${uuid} not found!  Please create." 1>&2; exit 2; fi
 
-    GIT_DIR=$CUSTOMER_HOME/git/$application.git
-    mkdir -p "$CUSTOMER_HOME/git"
+    GIT_DIR=$APP_HOME/git/$application.git
+    mkdir -p "$APP_HOME/git"
     cp -ad $CART_INFO_DIR/data/git_template.git $GIT_DIR
     echo "perl 5.10.1 application '$application'" > $GIT_DIR/description
+
+    cat <<EOF > $GIT_DIR/hooks/pre-receive
+# Stop the app
+echo "Stopping application..."
+$APP_DIR/${application}_ctl.sh stop
+EOF
+
     cat <<EOF > $GIT_DIR/hooks/post-receive
 rm -rf $APP_DIR/repo/*
 git archive --format=tar HEAD | (cd $APP_DIR/repo && tar xf -)
-# Reload httpd here maybe?
+
+# Start the app
+echo "Starting application..."
+$APP_DIR/${application}_ctl.sh start
 EOF
 
-    chmod 0755 $CUSTOMER_HOME/git/$application.git/hooks/post-receive
+    chmod 0755 $GIT_DIR/hooks/post-receive $GIT_DIR/hooks/pre-receive
     chown $user_id.$group_id -R $GIT_DIR
     # Secure the hooks dir
     chown root.root -R $GIT_DIR/hooks
@@ -164,8 +174,8 @@ namespace=`basename $2`
 application="$1"
 uuid=$3
 
-CUSTOMER_HOME="$libra_dir/$uuid"
-APP_DIR=`echo $CUSTOMER_HOME/perl/$application | tr -s /`
+APP_HOME="$libra_dir/$uuid"
+APP_DIR=`echo $APP_HOME/perl/$application | tr -s /`
 
 unobfuscate $uuid $namespace
 
@@ -258,7 +268,7 @@ then
     exit 1
 fi
 
-if whoami | grep -q root || ! runcon | grep 'system_r:libra_t:s0:$c_val'
+if whoami | grep -q root || ! runcon | grep 'system_r:libra_t:s0:$c_val' > /dev/null
 then
     echo 1>&2
     echo "Please run script in the correct context, try:" 1>&2
