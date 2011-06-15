@@ -234,6 +234,10 @@ Group $uuid
 ErrorLog "|/usr/sbin/rotatelogs $APP_DIR/logs/error_log$rotatelogs_format $rotatelogs_interval"
 CustomLog "|/usr/sbin/rotatelogs $APP_DIR/logs/access_log$rotatelogs_format $rotatelogs_interval" combined
 php_value include_path ".:$APP_DIR/repo/libs/"
+# TODO: Adjust from ALL to more conservative values
+<Directory "$APP_DIR/repo/php">
+  AllowOverride All
+</Directory>
 
 <IfModule !mod_bw.c>
     LoadModule bw_module    modules/mod_bw.so
