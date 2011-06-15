@@ -143,13 +143,23 @@ function create_repo {
     popd
 
     echo "wsgi 3.2 application '$application'" > $GIT_DIR/description
+
+    cat <<EOF > $GIT_DIR/hooks/pre-receive
+# Stop the app
+echo "Stopping application..."
+$APP_DIR/${application}_ctl.sh stop
+EOF
+
     cat <<EOF > $GIT_DIR/hooks/post-receive
 rm -rf $APP_DIR/repo/*
 git archive --format=tar HEAD | (cd $APP_DIR/repo && tar xf -)
-# Reload httpd here maybe?
+
+# Start the app
+echo "Starting application..."
+$APP_DIR/${application}_ctl.sh start
 EOF
 
-    chmod 0755 $APP_HOME/git/$application.git/hooks/post-receive
+    chmod 0755 $GIT_DIR/hooks/post-receive $GIT_DIR/hooks/pre-receive
     chown $user_id.$group_id -R $GIT_DIR
     # Secure the hooks dir
     chown root:root -R $GIT_DIR/hooks
@@ -265,7 +275,7 @@ then
     exit 1
 fi
 
-if whoami | grep -q root || ! runcon | grep 'system_r:libra_t:s0:$c_val'
+if whoami | grep -q root || ! runcon | grep 'system_r:libra_t:s0:$c_val' > /dev/null
 then
     echo 1>&2
     echo "Please run script in the correct context, try:" 1>&2
