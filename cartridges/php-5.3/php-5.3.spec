@@ -2,8 +2,8 @@
 
 Summary:   Provides php-5.3 support
 Name:      rhc-cartridge-php-5.3
-Version:   0.72.11
-Release:   2%{?dist}
+Version:   0.72.12
+Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
 URL:       http://openshift.redhat.com
@@ -67,6 +67,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Tue Jun 14 2011 Matt Hicks <mhicks@redhat.com> 0.72.12-1
+- Added mbstring (mmcgrath@redhat.com)
+
 * Tue Jun 14 2011 Mike McGrath <mmcgrath@redhat.com> 0.72.11-1
 - Added mbstring
 
