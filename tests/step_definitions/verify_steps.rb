@@ -176,6 +176,7 @@ Then /^they should be able to be changed$/ do
       when "php-5.3" then "php/index.php"
       when "rack-1.1" then "config.ru"
       when "wsgi-3.2" then "wsgi/application"
+      when "perl-5.10" then "perl/index.pl"
     end
 
     # Make a change to the app
