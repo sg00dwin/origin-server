@@ -16,7 +16,7 @@ end
 module Libra
   class User
     # Include the correct streamline implementation
-    if Rails.configuration.integrated
+    if defined?(Rails) and Rails.configuration.integrated
       include Streamline
     else
       include StreamlineMock

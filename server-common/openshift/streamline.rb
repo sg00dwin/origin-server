@@ -9,7 +9,7 @@ module Streamline
   include ErrorCodes
   attr_accessor :rhlogin, :ticket, :roles, :terms
 
-  service_base_url = Rails.configuration.streamline + Rails.configuration.streamline_service_base_url 
+  service_base_url = defined?(Rails) ? Rails.configuration.streamline + Rails.configuration.streamline_service_base_url : ""
   @@login_url = URI.parse(service_base_url + "/login.html")
   @@register_url = URI.parse(service_base_url + "/registration.html")
   @@request_access_url = URI.parse(service_base_url + "/requestAccess.html")
