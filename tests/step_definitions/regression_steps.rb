@@ -87,3 +87,20 @@ end
 And /^the second one adds 2$/ do
   @git_repos.should == @git_repos_org+2
 end
+
+When /^create two domains with same namespace$/ do
+  namespaces = Array.new(1)
+  info = get_unique_username(namespaces)
+  namespace = info[:namespace]
+  login = info[:login]
+  exit_code = run("#{$create_domain_script} -n #{namespace} -l #{login} -p fakepw -d")
+  exit_code.should == 0
+  namespaces = Array.new(1)
+  info = get_unique_username(namespaces)
+  login = info[:login]
+  @exit_code = run("#{$create_domain_script} -n #{namespace} -l #{login} -p fakepw -d")
+end
+
+Then /^the second domain cannot be created$/ do
+  @exit_code.should_not == 0
+end

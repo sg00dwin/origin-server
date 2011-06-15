@@ -27,3 +27,9 @@ Feature: Cucumber tests for reported bugs
     And check the number of git repos by mc-facts
     Then the second one adds 2
     And the first number is twice the second one
+
+  Scenario: (libra-qe) Bug 688820 - create more than one domain with same namespace
+    Given the libra client tools
+    And an accepted node
+    When create two domains with same namespace
+    Then the second domain cannot be created
