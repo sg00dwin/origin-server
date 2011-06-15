@@ -49,6 +49,11 @@ module LibraMigration
         # can't replace // blindly because of http://
         output += replace_in_file("#{new_app_dir}/conf/php.ini", old_app_dir, new_app_dir)
       end
+      
+      # {application}_ctl.sh runcon changes
+      grep_output, grep_exitcode = execute_script("grep 'runcon' #{ctl_script} 2>&1")
+      runcon_str = grep_output[grep_output.index('runcon')..grep_output.index('/usr/sbin/httpd')-1]
+      output += replace_in_file(ctl_script, runcon_str, '', '/')
   
       # add ssl support
       httpd_conf = "/etc/httpd/conf.d/libra/#{uuid}_#{namespace}_#{app_name}.conf"
@@ -90,8 +95,8 @@ EOF
     return output, exitcode
   end
 
-  def self.replace_in_file(file, old_value, new_value)
-    output, exitcode = execute_script("sed -i \"s,#{old_value},#{new_value},g\" #{file} 2>&1")
+  def self.replace_in_file(file, old_value, new_value, sep=',')
+    output, exitcode = execute_script("sed -i \"s#{sep}#{old_value}#{sep}#{new_value}#{sep}g\" #{file} 2>&1")
     #TODO handle exitcode
     return "Updated '#{file}' changed '#{old_value}' to '#{new_value}'.  output: #{output}  exitcode: #{exitcode}\n"
   end
