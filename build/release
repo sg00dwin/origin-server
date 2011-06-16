@@ -14,12 +14,16 @@ class Release < Thor
 
   desc "check", "Check the directories that need to be released"
   def check
+    run("git pull", :verbose => options.verbose?)
     puts "Changes detected in the following directories: #{get_build_dirs.pretty_inspect}"
   end
 
   desc "build", "Tag and build new RPMs for any changes"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   def build
+    # Update the repo
+    run("git pull", :verbose => options.verbose?)
+
     get_build_dirs.each do |build_dir|
       inside(File.expand_path("../#{build_dir}", File.dirname(__FILE__))) do
         puts "Releasing #{build_dir}"
@@ -71,12 +75,10 @@ class Release < Thor
     end
 
     # Make sure we have write access to /var/cache/mash
-    begin
-      File.new("/var/cache/mash/.rhcignore", "w")
-      File.delete("/var/cache/mash/.rhcignore")
-    rescue Errno::EACCES
+    `touch /var/cache/mash/.rhcignore`
+    if $?.exitstatus != 0
       puts "ERROR - user doesn't have write access to /var/cache/mash - mash needs write access to this directory"
-      exit 2
+      exit 1
     end
 
     # Run mash twice since it usually fails the first time
@@ -89,7 +91,7 @@ class Release < Thor
     end
 
     puts "Building client gem..."
-    inside(File.expand_path(File.expand_path(__FILE__) + "../../client")) do
+    inside(File.expand_path(File.dirname(File.expand_path(__FILE__)) + "../client")) do
       unless run('rake package', :verbose => options.verbose?)
         puts "ERROR - client gem building failed"
         exit 1
