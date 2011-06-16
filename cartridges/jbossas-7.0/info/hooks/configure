@@ -153,7 +153,7 @@ $APP_DIR/${application}_ctl.sh stop
 __EOF__
 
     cat <<__EOF__ > $GIT_DIR/hooks/post-receive
-rm -rf $APP_DIR/repo/*
+rm -rf $APP_DIR/repo/* $APP_DIR/repo/.[^.]*
 git archive --format=tar HEAD | (cd $APP_DIR/repo && tar xf -)
 
 # Start the app
