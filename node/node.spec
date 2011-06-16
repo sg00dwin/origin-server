@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.72.15
+Version:       0.72.18
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -75,6 +75,7 @@ chkconfig cgconfig && /sbin/service cgconfig restart >/dev/null 2>&1 || :
 /sbin/chkconfig --add libra-tc || :
 #/sbin/service mcollective restart > /dev/null 2>&1 || :
 /sbin/restorecon /etc/init.d/libra || :
+/sbin/restorecon /var/lib/libra || :
 /usr/bin/rhc-restorecon || :
 # only enable if cgconfig is
 chkconfig cgconfig && /sbin/service libra-cgroups start > /dev/null 2>&1 || :
@@ -139,6 +140,25 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Thu Jun 16 2011 Dan McPherson <dmcphers@redhat.com> 0.72.18-1
+- 
+
+* Thu Jun 16 2011 Dan McPherson <dmcphers@redhat.com> 0.72.17-1
+- counting newlines fails with only one line and nl suppressed
+  (markllama@redhat.com)
+
+* Wed Jun 15 2011 Dan McPherson <dmcphers@redhat.com> 0.72.16-1
+- Update to jboss-as7 7.0.0.Beta6OS, brew buildID=167639
+  (scott.stark@jboss.org)
+- remove tc entries when deconfiguring an account (markllama@redhat.com)
+- add runcon changes for ctl.sh to migration (dmcphers@redhat.com)
+- fail selinux checks if even one matches (markllama@redhat.com)
+- set Selinux label on Express account root directory (markllama@redhat.com)
+- li-controller cleanup (dmcphers@redhat.com)
+- move context to libra service and configure Part 3 (dmcphers@redhat.com)
+- move context to libra service and configure Part 2 (dmcphers@redhat.com)
+- move context to libra service and configure (dmcphers@redhat.com)
+
 * Tue Jun 14 2011 Matt Hicks <mhicks@redhat.com> 0.72.15-1
 - Adding mcs changes (mmcgrath@redhat.com)
 - rename to make more sense... (jimjag@redhat.com)

@@ -88,9 +88,11 @@ stopuser() {
 startapp() {
     # USERNAME=$1
     # APPNAME=$2
+    uid=$(id -u "$1")
+    c_val="c$(($uid/1023)),c$(($uid%1023))"
     STARTSCRIPT=`startscript $1 $2`
     echo -n $"    Starting http for $1-$2"
-    daemon --user=$1 --pidfile=httpd_$2 $STARTSCRIPT start
+    daemon --user=$1 --pidfile=httpd_$2 runcon -t libra_t -l s0:$c_val $STARTSCRIPT start
     RETVAL=$?
     echo
     if [ $RETVAL -eq 0 ]
@@ -105,9 +107,11 @@ startapp() {
 stopapp() {
     # USERNAME=$1
     # APPNAME=$2
+    uid=$(id -u "$1")
+    c_val="c$(($uid/1023)),c$(($uid%1023))"
     STARTSCRIPT=`startscript $1 $2`
     echo -n $"    Stopping http for $1-$2"
-    daemon --user=$1 --pidfile=httpd_$2 $STARTSCRIPT stop
+    daemon --user=$1 --pidfile=httpd_$2 runcon -t libra_t -l s0:$c_val $STARTSCRIPT stop
     RETVAL=$?
     echo
     if [ $RETVAL -eq 0 ]
@@ -170,12 +174,14 @@ case "$1" in
 
     # check for $1 (user) and $2 (appname)
     # This won't scale forever, but works fine in the '100 or so' range
-    for ctl_script in `/bin/find /var/lib/libra/ -maxdepth 4 -mindepth 4 -type f -name "*_ctl.sh"`
+    for ctl_script in `/bin/find /var/lib/libra/ -maxdepth 3 -mindepth 3 -type f -name "*_ctl.sh"`
     do
         script_name=$(basename $ctl_script)
         run_as=$( echo $ctl_script | awk -F/ '{print $5}')
         echo -n $"    Checking http for ${script_name%_ctl.sh}"
-        daemon --user=$run_as --pidfile=httpd_${script_name} $ctl_script status
+        uid=$(id -u "$run_as")
+        c_val="c$(($uid/1023)),c$(($uid%1023))"
+        daemon --user=$run_as --pidfile=httpd_${script_name} runcon -t libra_t -l s0:$c_val $ctl_script status
         RETVAL=$?
         echo
         if [ $RETVAL -eq 0 ]

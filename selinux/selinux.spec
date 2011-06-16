@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.72.7
+Version:       0.72.8
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -38,6 +38,9 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Wed Jun 15 2011 Dan McPherson <dmcphers@redhat.com> 0.72.8-1
+- Allow tail to run in a libra domain (dwalsh@redhat.com)
+
 * Tue Jun 14 2011 Matt Hicks <mhicks@redhat.com> 0.72.7-1
 - Removing fc list for testing (mmcgrath@redhat.com)
 

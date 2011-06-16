@@ -61,13 +61,17 @@ class BrokerController < ApplicationController
           if !(val =~ /\A[A-Za-z0-9\+\/=]+\z/)
             render :json => generate_result_json("Invalid ssh key: #{val}", 108), :status => :invalid and return nil
           end
-        when 'debug', 'alter', 'cartlist'
+        when 'debug', 'alter'
           if !(val =~ /\A(true|false)\z/)
             render :json => generate_result_json("Invalid value for #{key}:#{val} specified", 254), :status => :invalid and return nil
           end
         when 'cartridge'
           if !(val =~ /\A[\w\-\.]+\z/)
             render :json => generate_result_json("Invalid cartridge: #{val} specified", 254), :status => :invalid and return nil
+          end
+        when 'cart_types'
+          if !(val =~ /\A[\w\-\.]+\z/)
+            render :json => generate_result_json("Invalid cart_types: #{val} specified", 109), :status => :invalid and return nil
           end
         when 'action', 'app_name'
           if !(val =~ /\A[\w]+\z/) and val.to_s.length < 24
@@ -231,18 +235,18 @@ class BrokerController < ApplicationController
     begin
       # Parse the incoming data
       data = parse_json_data(params['json_data'])
-      cart_info = data['cartlist']
-      if cart_info != "true"
-        render_unauthorized and return
+      cart_types = data['cart_types']
+      if cart_types != 'standalone'
+        render :json => generate_result_json("Invalid cartridge types: #{cart_types} specified", 109), :status => :invalid and return
+        #TODO handle embedded and subsets (Ex: all php)
       end
 
       carts = Libra::Util.get_cartridges_tbl
       if carts.nil? || carts.empty?
-        render_internal_server_error(e, 'cart_list_post nil') and return
+        carts = ["unknown"]
       end
       json_data = JSON.generate({
-                              :cartlist => "true",
-                              :carts => carts #.join('|')
+                              :carts => carts
                               })
 
       # Just return a 200 success

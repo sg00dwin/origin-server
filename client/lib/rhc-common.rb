@@ -42,8 +42,9 @@ module RHC
   end
   
   def self.get_cartridges_tbl(libra_server, net_http, debug=true, print_result=nil)
-    puts "Contacting https://#{libra_server}"
-    data = {'cartlist' => "true"}
+    puts "Contacting https://#{libra_server} to obtain list of cartridges..."
+    puts " (please excuse the delay)"
+    data = {'cart_types' => "standalone"}
     if debug
       data['debug'] = "true"
     end
@@ -54,16 +55,8 @@ module RHC
     response = http_post(net_http, url, json_data, "none")
 
     unless response.code == '200'
-      if response.code == '404'
-        puts "Not found"
-        exit 99
-      elsif response.code == '401'
-        puts "Invalid credentials"
-        exit 97
-      else
-        print_response_err(response, debug)
-      end
-      exit 254
+      print_response_err(response, debug)
+      return ["unknown"]
     end
     if print_result
       print_response_success(response, debug)
@@ -83,17 +76,10 @@ module RHC
     carts.join(sep)
   end
 
-  def self.get_cartridge_type(type, libra_server, net_http, debug)
-    carts = get_cartridges_tbl(libra_server, net_http, debug)
+  def self.get_cartridge_type(type)
     if type
-      if !carts.include?(type)
-        puts 'type must be ' << get_cartridge_list(carts, ' or ', nil, nil)
-      else
-        type = type.split('-')[0]
-        return type.to_sym
-      end
-    else
-      puts "Type is required"
+      type = type.split('-')[0]
+      return type.to_sym
     end
     nil
   end

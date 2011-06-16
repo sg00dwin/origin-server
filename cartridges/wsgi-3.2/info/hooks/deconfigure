@@ -96,19 +96,18 @@ uuid=$3
 APP_HOME="$libra_dir/$uuid/"
 APP_DIR="$APP_HOME/$application"
 
+uid=$(id -u "$uuid")
+c_val="c$(($uid/1023)),c$(($uid%1023))"
+
 #
 # Destroy git app repo
 #
 
 destroy_repo $application $uuid
 
-#
-# Create http base for application, every app gets its own apache instance
-#
-
 [ ! -d "$APP_DIR" ] && echo "${application} does not exist" 1>&2
 
-runuser --shell /bin/sh "$uuid" $APP_DIR/${application}_ctl.sh stop || echo "Failed to stop ${application}" 1>&2
+runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l s0:$c_val $APP_DIR/${application}_ctl.sh stop" || echo "Failed to stop ${application}" 1>&2
 /usr/sbin/lsof -t "$APP_DIR/logs/error_log" | /usr/bin/xargs /bin/kill -9
 
 

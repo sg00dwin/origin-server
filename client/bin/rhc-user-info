@@ -27,7 +27,7 @@ require 'rhc-common'
 # print help
 #
 def p_usage
-    rhlogin = get_var('default_rhlogin') ? "Default: #{get_var('default_rhlogin')}" : "(required)"
+    rhlogin = get_var('default_rhlogin') ? "Default: #{get_var('default_rhlogin')}" : "required"
     puts <<USAGE
 
 Usage: #{$0}
