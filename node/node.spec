@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.72.16
+Version:       0.72.17
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -140,6 +140,10 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Thu Jun 16 2011 Dan McPherson <dmcphers@redhat.com> 0.72.17-1
+- counting newlines fails with only one line and nl suppressed
+  (markllama@redhat.com)
+
 * Wed Jun 15 2011 Dan McPherson <dmcphers@redhat.com> 0.72.16-1
 - Update to jboss-as7 7.0.0.Beta6OS, brew buildID=167639
   (scott.stark@jboss.org)
