@@ -14,7 +14,6 @@ module OpenShift
           $1
         end
       end.compact
-      puts "Changes detected in the following directories: #{build_dirs.pretty_inspect}"
     end
   end
 end

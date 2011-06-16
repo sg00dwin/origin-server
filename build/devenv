@@ -239,8 +239,7 @@ class DevEnv < Thor
     begin
       # Run verification tests
       print "Running verification tests..."
-      instance.ssh("cucumber --tags @verify --format junit -o /tmp/rhc/junit/ li-test/tests/", 3600)
-      p = $?
+      output, test_result = instance.ssh("cucumber --tags @verify --format junit -o /tmp/rhc/junit/ li-test/tests/", 3600, true)
       puts "Done"
 
       print "Validating instance..."
@@ -268,9 +267,9 @@ class DevEnv < Thor
 
       puts "Done"
 
-      if p.exitstatus != 0
-        puts "ERROR - Non-zero exit code from verification tests (exit: #{p.exitstatus})"
-        exit p.exitstatus
+      if test_result != 0
+        puts "ERROR - Non-zero exit code from verification tests (exit: #{test_result})"
+        exit test_result
       end
 
       # Mark the image as verified

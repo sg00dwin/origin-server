@@ -12,11 +12,18 @@ class Release < Thor
   include Thor::Actions
   include OpenShift::Tito
 
+  desc "check", "Check the directories that need to be released"
+  def check
+    puts "Changes detected in the following directories: #{get_build_dirs.pretty_inspect}"
+  end
+
   desc "build", "Tag and build new RPMs for any changes"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   def build
     get_build_dirs.each do |build_dir|
       inside(File.expand_path("../#{build_dir}", File.dirname(__FILE__))) do
+        puts "Releasing #{build_dir}"
+
         # Cleanup any tito data
         unless run("rm -rf /tmp/tito/cvswork/rhc*", :verbose => options.verbose?)
           puts "ERROR - tito temp cleanup failed"; exit 1
@@ -33,10 +40,11 @@ class Release < Thor
         end
 
         # Build the RPM in brew
-        run("echo -e "y\nn" > /tmp/answerfile", :verbose => options.verbose?)
+        run('echo -e "y\nn" > /tmp/answerfile', :verbose => options.verbose?)
         unless run("tito build --cvs-release < /tmp/answerfile", :verbose => options.verbose?)
           puts "ERROR - tito cvs release failed"
         end
+        puts "Done"
       end
     end
   end
