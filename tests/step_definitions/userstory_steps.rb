@@ -45,7 +45,7 @@ Then /^the PHP app is accessible$/ do
 end
 
 When /^the PHP app is destroyed using rhc-ctl-app$/ do
-  run("#{$ctl_app_script} -a #{@app_php} -l #{@login} -p fakepw -c destroy -d")
+  run("#{$ctl_app_script} -a #{@app_php} -l #{@login} -p fakepw -c destroy -d -b")
 end
 
 Then /^the PHP app is not accessible$/ do
@@ -374,7 +374,7 @@ end
 
 When /^the rack-1.1 app is destroyed$/ do
   begin
-    run("#{$ctl_app_script} -a #{@app_rails} -l #{@login} -p fakepw -c destroy -d")
+    run("#{$ctl_app_script} -a #{@app_rails} -l #{@login} -p fakepw -c destroy -d -b")
   rescue Exception => e
     $logger.error "Exception trying to destroy #{@app_rails}"
     $logger.error e.message
