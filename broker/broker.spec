@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.72.11
+Version:   0.72.12
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -62,6 +62,10 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Wed Jun 15 2011 Dan McPherson <dmcphers@redhat.com> 0.72.12-1
+- add cart_types param to cartlist call (dmcphers@redhat.com)
+- Don't render error (jimjag@redhat.com)
+
 * Tue Jun 14 2011 Matt Hicks <mhicks@redhat.com> 0.72.11-1
 - rename to make more sense... (jimjag@redhat.com)
 - parse from array (jimjag@redhat.com)
