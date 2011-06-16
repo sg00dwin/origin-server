@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.72.13
+Version:   0.72.14
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -62,6 +62,11 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Thu Jun 16 2011 Matt Hicks <mhicks@redhat.com> 0.72.14-1
+- Merge branch 'master' into streamline (mhicks@redhat.com)
+- Merge branch 'master' into streamline (mhicks@redhat.com)
+- Refactoring the streamline modules (mhicks@redhat.com)
+
 * Thu Jun 16 2011 Dan McPherson <dmcphers@redhat.com> 0.72.13-1
 - add error if invalid cart sent to server (dmcphers@redhat.com)
 - update gem deps for site (dmcphers@redhat.com)
