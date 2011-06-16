@@ -28,7 +28,7 @@ class Login < Test::Unit::TestCase
   end
 
 
-  def test_check_home_navigationbar
+  def test_normal_login
     puts "start to test login"
     driver.navigate.to 'http://localhost'
     driver.find_element(:link_text, 'LOGIN').click()
