@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system client tools
 Name:          rhc
-Version:       0.72.14
+Version:       0.72.15
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       MIT
@@ -84,6 +84,16 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_sysconfdir}/openshift/express.conf
 
 %changelog
+* Wed Jun 15 2011 Dan McPherson <dmcphers@redhat.com> 0.72.15-1
+- api doc updates (dmcphers@redhat.com)
+- api doc updates (dmcphers@redhat.com)
+- add cart_types param to cartlist call (dmcphers@redhat.com)
+- No need for roundtrip if they provided cartridge.. the server will let us
+  know if not accepted. (jimjag@redhat.com)
+- Inform user that we need to contact the RHCloud server Handle errors from
+  server in a somewhat more user-friendly way (jimjag@redhat.com)
+- simple prettyfication -> ((required)) --> (required) (jimjag@redhat.com)
+
 * Tue Jun 14 2011 Matt Hicks <mhicks@redhat.com> 0.72.14-1
 - rename to make more sense... (jimjag@redhat.com)
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
