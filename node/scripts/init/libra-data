@@ -54,7 +54,7 @@ case "$1" in
   status)
     echo "Checking Libra Services: "
     # This won't scale forever, but works fine in the '100 or so' range
-    for ctl_script in /var/lib/libra/*/httpd/*/*_ctl.sh
+    for ctl_script in /var/lib/libra/*/*/*_ctl.sh
     do
         script_name=$(basename $ctl_script)
         echo -n $"    Checking http for ${script_name%_ctl.sh}"
