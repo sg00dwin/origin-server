@@ -91,7 +91,7 @@ class Release < Thor
     end
 
     puts "Building client gem..."
-    inside(File.expand_path(File.dirname(File.expand_path(__FILE__)) + "../client")) do
+    inside(File.expand_path(File.dirname(File.expand_path(__FILE__)) + "/../client")) do
       unless run('rake package', :verbose => options.verbose?)
         puts "ERROR - client gem building failed"
         exit 1
