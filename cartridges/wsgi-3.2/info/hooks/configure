@@ -147,16 +147,25 @@ function create_repo {
     cat <<EOF > $GIT_DIR/hooks/pre-receive
 # Stop the app
 echo "Stopping application..."
-$APP_DIR/${application}_ctl.sh stop
+~/${application}/${application}_ctl.sh stop
 EOF
 
     cat <<EOF > $GIT_DIR/hooks/post-receive
-rm -rf $APP_DIR/repo/* $APP_DIR/repo/.[^.]*
-git archive --format=tar HEAD | (cd $APP_DIR/repo && tar xf -)
+rm -rf ~/${application}/repo/*
+git archive --format=tar HEAD | (cd ~/${application}/repo && tar xf -)
+
+if [ -f ~/${application}/repo/setup.py ]
+then
+    echo "setup.py found.  Setting up virtualenv"
+    virtualenv ~/virtenv
+    cd ~/virtenv
+    . ./bin/activate
+    python ../${application}/repo/setup.py develop
+fi
 
 # Start the app
 echo "Starting application..."
-$APP_DIR/${application}_ctl.sh start
+~/$application/${application}_ctl.sh start
 EOF
 
     chmod 0755 $GIT_DIR/hooks/post-receive $GIT_DIR/hooks/pre-receive
@@ -211,7 +220,7 @@ create_repo $application $user_id $group_id $c_val
 
 mkdir -p "$APP_DIR"
 pushd "$APP_DIR" > /dev/null
-mkdir conf conf.d logs run repo sessions data tmp
+mkdir conf conf.d logs run repo sessions data tmp ../virtenv
 ln -s /usr/lib64/httpd/modules modules
 ln -s /etc/httpd/conf/magic conf/magic
 popd > /dev/null
@@ -260,7 +269,8 @@ CustomLog "|/usr/sbin/rotatelogs $APP_DIR/logs/access_log$rotatelogs_format $rot
 </Directory>
 
 WSGIScriptAlias / "$APP_DIR/repo/wsgi/application"
-WSGIPythonPath "$APP_DIR/repo/libs"
+WSGIPythonPath "$APP_DIR/repo/libs:$APP_DIR/repo/wsgi:$APP_DIR/../virtenv/lib/python2.6/"
+
 
 EOF
 
@@ -307,6 +317,7 @@ EOF
 
 chmod +x "$APP_DIR/${application}_ctl.sh" || error "Failed to chmod new application scripts" 122
 chown $user_id.$group_id -R $APP_DIR || error "Failed to chown new application space.  Please contact support" 123
+chown $user_id.$group_id -R $APP_DIR/../virtenv || error "Failed to chown new virtenv space.  Please contact support" 124
 # Secure script and config dirs.
 chown root:root -R "$APP_DIR/${application}_ctl.sh" "$APP_DIR/conf" "$APP_DIR/conf.d"
 chown root:root "$APP_DIR"

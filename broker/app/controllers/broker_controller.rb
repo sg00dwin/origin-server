@@ -116,6 +116,11 @@ class BrokerController < ApplicationController
         if !Libra::Util.check_app(app_name)
           render :json => generate_result_json("The supplied application name is it not allowed", 105), :status => :invalid and return
         end
+        
+        if !Libra::Util.get_cartridge_type(data['cartridge'])
+          render :json => generate_result_json("Invalid application type (-t|--type) specified: '#{data['cartridge']}'.  Valid application types are (#{Libra::Util.get_cartridge_list}).", 110), :status => :invalid and return
+        end
+        
         # Execute a framework cartridge
         Libra.execute(data['cartridge'], action, app_name, username)
         
@@ -242,9 +247,6 @@ class BrokerController < ApplicationController
       end
 
       carts = Libra::Util.get_cartridges_tbl
-      if carts.nil? || carts.empty?
-        carts = ["unknown"]
-      end
       json_data = JSON.generate({
                               :carts => carts
                               })

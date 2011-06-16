@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.72.12
+Version:   0.72.13
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -62,6 +62,10 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Thu Jun 16 2011 Dan McPherson <dmcphers@redhat.com> 0.72.13-1
+- add error if invalid cart sent to server (dmcphers@redhat.com)
+- update gem deps for site (dmcphers@redhat.com)
+
 * Wed Jun 15 2011 Dan McPherson <dmcphers@redhat.com> 0.72.12-1
 - add cart_types param to cartlist call (dmcphers@redhat.com)
 - Don't render error (jimjag@redhat.com)

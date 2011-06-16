@@ -66,18 +66,26 @@ module OpenShift
         block_until_available
       end
 
-      def ssh(cmd, timeout=60)
+      def ssh(cmd, timeout=60, return_exit_code=false)
         log.debug "(ssh: server = #{@dns} / timeout = #{timeout} / cmd = #{cmd})"
         output = ""
+        exit_code = 1
         begin
           ssh_cmd = "#{SSH} root@#{@dns} '#{cmd} 2>&1'"
-          #log.debug ssh_cmd
-          Timeout::timeout(timeout) { output = `#{ssh_cmd}`.chomp }
+          Timeout::timeout(timeout) do
+            output = `#{ssh_cmd}`.chomp
+            exit_code = $?.exitstatus
+          end
         rescue Timeout::Error
           log.error "SSH command timed out"
         end
         log.debug "----------------------------\n#{output}\n----------------------------"
-        return output
+
+        if return_exit_code
+          return output, exit_code
+        else
+          return output
+        end
       end
 
       def scp_from(remote, local, timeout=60)
