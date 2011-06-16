@@ -32,7 +32,7 @@ end
 unless options.include?(:cartridge) or Util.get_cartridge_type(options[:cartridge])
     puts "You need to specify a proper cartridge:"
     puts Util.get_cartridge_list()
-    exit 254
+    exit 110
 end
 
 unless options.include?(:action) or options[:action] =~ /^(configure|deconfigure|info|post-install|post_remove|pre-install|reload|restart|start|status|stop)$/
