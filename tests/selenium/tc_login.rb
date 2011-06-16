@@ -30,14 +30,14 @@ class Login < Test::Unit::TestCase
 
   def test_normal_login
     puts "start to test login"
-    driver.navigate.to 'http://localhost'
-    driver.find_element(:link_text, 'LOGIN').click()
-    driver.find_element(:id, 'login_input').send_keys('test@redhat.com')
-    pwd = driver.find_element(:id, 'pwd_input')
-    pwd.send_keys('none')
-    pwd.submit()
+   @driver.navigate.to @url+"/app"
+   @driver.find_element(:id, 'login').click()
+   @driver.find_element(:id, 'login_input').send_keys('test@redhat.com')
+   @pwd =@driver.find_element(:id, 'pwd_input')
+   @pwd.send_keys('none')
+   @pwd.submit()
     puts "Saving a screenshot"
-    driver.save_screenshot('logged_in.png')
+   @driver.save_screenshot('logged_in.png')
   end
 end
 

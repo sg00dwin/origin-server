@@ -1,5 +1,4 @@
 #!/usr/bin/env ruby
-
 require "test/unit"
 require "rubygems"
 require 'selenium-webdriver'
