@@ -2,7 +2,7 @@
 
 Summary:   Provides ruby rack support running on Phusion Passenger
 Name:      rhc-cartridge-rack-1.1
-Version:   0.72.13
+Version:   0.72.14
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -74,6 +74,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Thu Jun 16 2011 Dan McPherson <dmcphers@redhat.com> 0.72.14-1
+- add sqlitedevel to spec (dmcphers@redhat.com)
+
 * Thu Jun 16 2011 Dan McPherson <dmcphers@redhat.com> 0.72.13-1
 - better messaging for bundling process (dmcphers@redhat.com)
 
