@@ -2,8 +2,8 @@
 
 Summary:   Provides python-wsgi-3.2 support
 Name:      rhc-cartridge-wsgi-3.2
-Version:   0.72.12
-Release:   2%{?dist}
+Version:   0.72.13
+Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
 URL:       http://openshift.redhat.com
@@ -63,6 +63,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Thu Jun 16 2011 Dan McPherson <dmcphers@redhat.com> 0.72.13-1
+- added virtualenv dep (mmcgrath@redhat.com)
+
 * Thu Jun 16 2011 Mike McGrath <mmcgrath@redhat.com> 0.72.12-2
 - Added python-virtualenv dep
 
