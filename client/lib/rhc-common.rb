@@ -56,7 +56,7 @@ module RHC
 
     unless response.code == '200'
       print_response_err(response, debug)
-      return ["unknown"]
+      return []
     end
     if print_result
       print_response_success(response, debug)
@@ -67,7 +67,6 @@ module RHC
     rescue JSON::ParserError
       exit 254
     end
-#    carts.split('|')
     carts
   end
 
