@@ -12,6 +12,7 @@ include OpenShift::AWS
 
 class DevEnv < Thor
   include Thor::Actions
+  include OpenShift::Tito
 
   desc "build NAME", "Build a new devenv AMI with the given NAME"
   method_option :register, :type => :boolean, :desc => "Register the instance"
@@ -87,21 +88,8 @@ class DevEnv < Thor
 
     remove_dir '/tmp/tito/'
 
-    # Figure out what needs to be built
-    packages = `tito report --untagged-commits | grep rhc`
-    build_dirs = packages.split("\n").collect do |package|
-      if package =~ /rhc-devenv-0/
-        #"misc/devenv/"
-        # Ignore devenv installs for right now
-        nil
-      elsif package =~ /rhc-(cartridge-.*)-0/
-        "cartridges/" + $1['cartridge-'.length..-1]
-      elsif package =~ /rhc-(.*)-0/
-        $1
-      end
-    end.compact
-    build_dirs << "client"
-    puts "Changes detected in the following directories: #{build_dirs.pretty_inspect}"
+    # Figure out what needs to be built - exclude devenv for syncs
+    build_dirs = get_build_dirs - ['misc/devenv']
 
     # Build and install them
     build_dirs.each do |build_dir|
@@ -152,7 +140,7 @@ class DevEnv < Thor
     end
 
     puts "Performing remote install...."
-    instance.ssh("rm -rf li-working; git clone li li-working; pushd li-working; build/devenv update; popd; rm -rf li-working", 600)
+    instance.ssh("yum update -y rhc-*; rm -rf li-working; git clone li li-working; pushd li-working; build/devenv update; popd; rm -rf li-working", 600)
     puts "Done"
 
     # If this is a verifier, you'll need to reset the private ip setup on each sync
@@ -251,8 +239,7 @@ class DevEnv < Thor
     begin
       # Run verification tests
       print "Running verification tests..."
-      instance.ssh("cucumber --tags @verify --format junit -o /tmp/rhc/junit/ li-test/tests/", 3600)
-      p = $?
+      output, test_result = instance.ssh("cucumber --tags @verify --format junit -o /tmp/rhc/junit/ li-test/tests/", 3600, true)
       puts "Done"
 
       print "Validating instance..."
@@ -280,9 +267,9 @@ class DevEnv < Thor
 
       puts "Done"
 
-      if p.exitstatus != 0
-        puts "ERROR - Non-zero exit code from verification tests (exit: #{p.exitstatus})"
-        exit p.exitstatus
+      if test_result != 0
+        puts "ERROR - Non-zero exit code from verification tests (exit: #{test_result})"
+        exit test_result
       end
 
       # Mark the image as verified
