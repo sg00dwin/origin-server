@@ -94,8 +94,10 @@ module OpenShift
     def get_amis(conn, filter = DEVENV_REGEX)
       images = {}
       conn.describe_images_by_owner.each do |i|
-        if i[:aws_name] and i[:aws_name] =~ filter
-          images[i[:aws_name]] = i[:aws_id]
+        if i[:aws_state] == "available"
+          if i[:aws_name] and i[:aws_name] =~ filter
+            images[i[:aws_name]] = i[:aws_id]
+          end
         end
       end
       return images
