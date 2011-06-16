@@ -9,7 +9,7 @@ module Streamline
   include ErrorCodes
   attr_accessor :rhlogin, :ticket, :roles, :terms
 
-  service_base_url = Rails.configuration.streamline + Rails.configuration.streamline_service_base_url 
+  service_base_url = defined?(Rails) ? Rails.configuration.streamline + Rails.configuration.streamline_service_base_url : ""
   @@login_url = URI.parse(service_base_url + "/login.html")
   @@register_url = URI.parse(service_base_url + "/registration.html")
   @@request_access_url = URI.parse(service_base_url + "/requestAccess.html")
@@ -89,28 +89,38 @@ module Streamline
   # Login the current user, setting the roles and ticket
   #
   def login
-    # Clear out any existing ticket
-    @ticket = nil
+    raise UserException.new(107), "Invalid characters in RHlogin '#{@rhlogin}' found", caller[0..5] if !Util.check_rhlogin(@rhlogin)
 
     # First do the authentication
     login_args = {'login' => @rhlogin,
                   'password' => @password,
                   'redirectUrl' => 'http://www.redhat.com'}
 
-    # Establish the authentication ticket
-    http_post(@@login_url, login_args)
+    result = nil
 
-    # Now retrieve the authorization roles
-    http_post(@@roles_url) do |json|
-      Rails.logger.debug("Current login = #{@rhlogin} / authenticated for #{json['username']}")
-      if @rhlogin != json['username']
-        # We had a ticket collision - DO NOT proceed
-        Rails.logger.error("Ticket collision - #{@ticket}")
-        raise Libra::StreamlineException
+    begin
+      # Establish the authentication ticket
+      http_post(@@login_url, login_args)
+
+      # Now retrieve the authorization roles
+      http_post(@@roles_url) do |json|
+        Rails.logger.debug("Current login = #{@rhlogin} / authenticated for #{json['username']}")
+        @rhlogin = json['username']
+        @roles = json['roles']
+        unless roles.index('cloud_access_1')
+          if roles.index('cloud_access_request_1')
+            raise UserValidationException.new(146), "Found valid credentials but you haven't been granted access to Express yet", caller[0..5]
+          else
+            raise UserValidationException.new(147), "Found valid credentials but you haven't requested access to Express yet", caller[0..5]
+          end
+        end
       end
 
-      @roles = json['roles']
+      result = @rhlogin
+    rescue AccessDeniedException
     end
+
+    return result
   end
 
   #

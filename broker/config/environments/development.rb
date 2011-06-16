@@ -28,6 +28,10 @@ Broker::Application.configure do
   ############################################
   # OpenShift Configuration Below this point #
   ############################################  
+  config.integrated = false
+  config.streamline_service_base_url = ''
+  config.streamline = "http://localhost" # Non-integrated 
+  config.streamline_secret = ''
 
   # AWS configuration
   config.aws_key = "AKIAJMZR4X6F46UMXV6Q"

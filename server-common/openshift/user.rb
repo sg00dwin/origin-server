@@ -15,11 +15,19 @@ end
 
 module Libra
   class User
-    attr_reader :rhlogin
+    # Include the correct streamline implementation
+    if defined?(Rails) and Rails.configuration.integrated
+      include Streamline
+    else
+      include StreamlineMock
+    end
+
+    attr_reader :rhlogin, :password
     attr_accessor :ssh, :namespace, :uuid
 
-    def initialize(rhlogin, ssh, namespace, uuid)
-      @rhlogin, @ssh, @namespace, @uuid = rhlogin, ssh, namespace, uuid
+    def initialize(rhlogin, ssh, namespace, uuid, password=nil)
+      @rhlogin, @ssh, @namespace, @uuid, @password = rhlogin, ssh, namespace, uuid, password
+      @roles = []
     end
 
     def self.from_json(json)
@@ -39,7 +47,6 @@ module Libra
     # if the user already exists or invalid chars are found.
     #
     def self.create(rhlogin, ssh, namespace)
-
       auth_token = nil
       begin
         auth_token = Server.dyn_login
@@ -80,56 +87,6 @@ module Libra
         end
       ensure
         Server.dyn_logout(auth_token)
-      end
-    end
-    
-    #
-    # Returns username if a valid user, nil if not found, and raises an exception if user hasn't requested/been granted access. 
-    #
-    #   User.login
-    #
-    def self.login(rhlogin, password)
-      username = nil
-      if !Libra.c[:bypass_user_reg]
-        raise UserException.new(107), "Invalid characters in RHlogin '#{rhlogin}' found", caller[0..5] if !Util.check_rhlogin(rhlogin)
-        begin
-          url = URI.parse(Libra.c[:streamline_url] + '/wapps/streamline/login.html')
-          req = Net::HTTP::Post.new(url.path)
-          
-          req.set_form_data({ 'login' => rhlogin, 'password' => password })
-          http = Net::HTTP.new(url.host, url.port)
-          if url.scheme == "https"
-            http.use_ssl = true
-            http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-          end
-          response = http.start {|http| http.request(req)}
-          
-          case response
-          when Net::HTTPSuccess
-            json = JSON.parse(response.body)
-            roles = json['roles']
-            if roles.index('cloud_access_1')
-              username = json['username'] || json['login'] # remove 'login' if/once streamline changes to username like cloudVerify
-            elsif roles.index('cloud_access_request_1')
-              raise UserValidationException.new(146), "Found valid credentials but you haven't been granted access to Express yet", caller[0..5]
-            else
-              raise UserValidationException.new(147), "Found valid credentials but you haven't requested access to Express yet", caller[0..5]
-            end
-          else
-            Libra.client_debug "Response code from authentication: #{response.code}"
-            Libra.logger_debug "Response code from authentication: #{response.code}"
-            Libra.logger_debug "HTTP response from server is #{response.body}"
-          end
-        rescue UserValidationException => e
-          raise
-        rescue Exception => e          
-          Libra.logger_debug "Error message from authentication exception: #{e.message}"
-          Libra.logger_debug e.backtrace
-          raise UserValidationException.new(144), "Error communicating with user validation system.  If the problem persists please contact Red Hat support.", caller[0..5]
-        end
-        return username
-      else
-        return rhlogin
       end
     end
     

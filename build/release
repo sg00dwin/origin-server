@@ -75,10 +75,12 @@ class Release < Thor
     end
 
     # Make sure we have write access to /var/cache/mash
-    `touch /var/cache/mash/.rhcignore`
-    if $?.exitstatus != 0
+    begin
+      File.new("/var/cache/mash/.rhcignore", "w")
+      File.delete("/var/cache/mash/.rhcignore")
+    rescue Errno::EACCES
       puts "ERROR - user doesn't have write access to /var/cache/mash - mash needs write access to this directory"
-      exit 1
+      exit 2
     end
 
     # Run mash twice since it usually fails the first time
