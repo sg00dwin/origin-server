@@ -12,6 +12,7 @@ Source0:   %{name}-%{version}.tar.gz
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 Requires:  rhc-node
 Requires:  mod_bw
+Requires:  sqlite-devel
 Requires:  rubygems
 Requires:  rubygem-rack >= 1.1.0
 #Requires:  rubygem-rack < 1.2.0
