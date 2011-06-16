@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.72.12
+Version:   0.72.13
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -64,6 +64,11 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Thu Jun 16 2011 Matt Hicks <mhicks@redhat.com> 0.72.13-1
+- Merge branch 'master' into streamline (mhicks@redhat.com)
+- Merge branch 'master' into streamline (mhicks@redhat.com)
+- Refactoring the streamline modules (mhicks@redhat.com)
+
 * Thu Jun 16 2011 Dan McPherson <dmcphers@redhat.com> 0.72.12-1
 - update gem deps for site (dmcphers@redhat.com)
 
