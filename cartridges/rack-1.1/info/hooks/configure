@@ -156,16 +156,20 @@ USED_BUNDLER=false
 if ! git show master:.force_clean_build > /dev/null 2>&1 && ! git show master:.bundle > /dev/null 2>&1 && ! git show master~1:.bundle > /dev/null 2>&1 && [ -d '$APP_DIR/deploy/.bundle' ] && [ -d '$APP_DIR/deploy/vendor/bundle' ]
 then
   USED_BUNDLER=true
+  echo 'Saving away previously bundled RubyGems'
   rm -rf '$APP_DIR/tmp/.bundle' '$APP_DIR/tmp/vendor'
   mv '$APP_DIR/deploy/.bundle' '$APP_DIR/tmp/'
   mv '$APP_DIR/deploy/vendor' '$APP_DIR/tmp/'
 fi
 
+echo 'Cleaning out deploy/*'
 rm -rf $APP_DIR/deploy/* $APP_DIR/deploy/.[^.]*
+echo 'Deploying application from git repo to deploy/'
 git archive --format=tar HEAD | (cd $APP_DIR/deploy && tar xf -)
 
 if \$USED_BUNDLER
 then
+  echo 'Restoring previously bundled RubyGems (note: you can commit .force_clean_build at the root of your repo to force a clean bundle)'
   mv '$APP_DIR/tmp/.bundle' '$APP_DIR/deploy/'
   if [ -d '$APP_DIR/deploy/vendor' ]
   then
@@ -179,7 +183,7 @@ fi
 # If .bundle isn't currently committed and a Gemfile is then bundle install
 if ! git show master:.bundle > /dev/null 2>&1 && [ -f '$APP_DIR/deploy/Gemfile' ] 
 then
-  # Update/install necessary rubygems
+  echo 'Bundling RubyGems based on Gemfile/Gemfile.lock to deploy/vendor/bundle'
   pushd $APP_DIR/deploy > /dev/null
   bundle install --deployment
   popd > /dev/null
