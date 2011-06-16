@@ -144,14 +144,24 @@ function create_repo {
     git repack
     popd
 
-    echo "jbossas 7.x application '$application'" > $GIT_DIR/description
-    cat <<__EOF__ > $APP_HOME/git/$application.git/hooks/post-receive
-rm -rf $APP_DIR/repo/*
-git archive --format=tar HEAD | (cd $APP_DIR/repo && tar xf -)
-# Reload httpd here maybe?
+    echo "jbossas 7.0 application '$application'" > $GIT_DIR/description
+    
+    cat <<__EOF__ > $GIT_DIR/hooks/pre-receive
+# Stop the app
+echo "Stopping application..."
+$APP_DIR/${application}_ctl.sh stop
 __EOF__
 
-    chmod 0755 $APP_HOME/git/$application.git/hooks/post-receive
+    cat <<__EOF__ > $GIT_DIR/hooks/post-receive
+rm -rf $APP_DIR/repo/* $APP_DIR/repo/.[^.]*
+git archive --format=tar HEAD | (cd $APP_DIR/repo && tar xf -)
+
+# Start the app
+echo "Starting application..."
+$APP_DIR/${application}_ctl.sh start
+__EOF__
+
+    chmod 0755 $GIT_DIR/hooks/post-receive $GIT_DIR/hooks/pre-receive
     chown $user_id.$group_id -R $GIT_DIR
     # Secure the hooks dir
     chown root.root -R $GIT_DIR/hooks
@@ -270,11 +280,12 @@ then
     exit 1
 fi
 
-if whoami | grep -q root
+if whoami | grep -q root || ! runcon | grep 'system_r:libra_t:s0:$c_val' > /dev/null
 then
-    echo "Please don't run script as root, try:"
-    echo "runuser --shell /bin/sh $uuid $APP_DIR/${application}_ctl.sh"
-    echo
+    echo 1>&2
+    echo "Please run script in the correct context, try:" 1>&2
+    echo "runuser --shell /bin/sh \"$uuid\" -c \"runcon -t libra_t -l s0:$c_val $APP_DIR/${application}_ctl.sh\"" 1>&2
+    echo 2>&1
     exit 15
 fi
 
@@ -297,7 +308,7 @@ case "\$1" in
             echo -n " - Application is disabled"
             exit 0
         else
-            runcon -t libra_t -l s0:$c_val $JBOSS_BIN_DIR/standalone.sh 1>&2 >${TMP_DIR}/${application}.log &
+            $JBOSS_BIN_DIR/standalone.sh 1>&2 >${TMP_DIR}/${application}.log &
             PROCESS_ID=\$!
             echo \$PROCESS_ID > \$JBOSS_PID_FILE
         fi
@@ -336,13 +347,8 @@ chown root.root -R "$APP_DIR/${application}_ctl.sh"
 chown $user_id.$group_id -R "$APP_DIR/${jboss_version}/standalone"
 chcon -t libra_var_lib_t -l s0:$c_val -R "$APP_DIR"
 cd $APP_DIR
-# Check if the incoming contex is correct. Useful for running script directly for testing.
-if ! ( runcon | grep -q system_r:libra_initrc_t )
-then
-    runcon -r system_r -t libra_initrc_t runuser --shell /bin/sh "$uuid" "$APP_DIR/${application}_ctl.sh" start || error "Failed to start ${application}" 121
-else
-    runuser --shell /bin/sh "$uuid" "$APP_DIR/${application}_ctl.sh" start || error "Failed to start ${application}" 121
-fi
+# Check if the incoming context is correct. Useful for running script directly for testing.
+runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l s0:$c_val $APP_DIR/${application}_ctl.sh start" || error "Failed to start ${application}" 121
 
 #
 # Create virtualhost definition for apache

@@ -8,7 +8,7 @@ https://openshift.redhat.com/broker/domain
 
 Or for a full curl example:
 
-curl https://openshift.redhat.com/app/broker/userinfo -d "password=mypass" -d 'json_data={ "rhlogin":"your_rh_login"}'
+curl https://openshift.redhat.com/broker/userinfo -d "password=mypass" -d 'json_data={ "rhlogin":"your_rh_login"}'
 
 
 Create Domain
@@ -31,7 +31,15 @@ JSON String:
     'debug': 'true - An optional flag to get debug information returned'
 }
 
-Return JSON String:
+Return JSON String (exit_code non-zero is failure):
+{
+    "debug":"Debug Output",
+    "messages":"Other messages (outage notifications for example)",
+    "result":<result_json_ex_below>
+    "exit_code": 0
+}
+
+Result JSON String:
 {
     'rhlogin': 'Red Hat Login',
     'uuid': "User UUID"
@@ -63,13 +71,14 @@ Submit JSON String:
     'cartridge': 'framework-type, ex: php-5.3',
     'action': 'configure, start, stop, restart, reload, status, deconfigure',
     'app_name': 'Application_name',
-    'rhlogin': 'login'
+    'rhlogin': 'login',
+    'debug': 'true - An optional flag to get debug information returned'
 }
 
 Return JSON String (exit_code non-zero is failure):
 {
     "debug":"Debug Output",
-    "messages":"Other messages",
+    "messages":"Other messages (outage notifications for example)",
     "result":"Result messages"
     "exit_code": 0
 }
@@ -87,11 +96,19 @@ Submit via POST to: {openshift.express.server}/broker/userinfo
 
 JSON String:
 {
-    'rhlogin': 'rhlogin'
+    'rhlogin': 'rhlogin',
+    'debug': 'true - An optional flag to get debug information returned'
 }
 
-Return JSON String:
+Return JSON String (exit_code non-zero is failure):
+{
+    "debug":"Debug Output",
+    "messages":"Other messages (outage notifications for example)",
+    "result":<result_json_ex_below>
+    "exit_code": 0
+}
 
+Result JSON:
 {
     "app_info":{
         "newapp":{
@@ -107,5 +124,33 @@ Return JSON String:
         "rhc_domain":"<RHC_DOMAIN>",
         "namespace":"<DOMAIN_NAMESPACE>"
     }
+}
+
+Cartridge List
+=========================
+
+A list of available cartridges is available
+via /broker/cartlist.
+
+Submit via POST to: {openshift.express.server}/broker/cartlist
+    Encode json string as http variable 'json_data'
+
+JSON String:
+{
+    'cart_types': 'standalone',
+    'debug': 'true - An optional flag to get debug information returned'
+}
+
+Return JSON String (exit_code non-zero is failure):
+{
+    "debug":"Debug Output",
+    "messages":"Other messages (outage notifications for example)",
+    "result":<result_json_ex_below>
+    "exit_code": 0
+}
+
+Result JSON:
+{
+    "carts":["php-5.3", "rack-1.1", "wsgi-3.2"]
 }
 

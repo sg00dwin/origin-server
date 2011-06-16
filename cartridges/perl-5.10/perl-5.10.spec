@@ -2,7 +2,7 @@
 
 Summary:   Provides mod_perl support
 Name:      rhc-cartridge-perl-5.10
-Version:   0.3.3
+Version:   0.3.4
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -55,6 +55,18 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Wed Jun 15 2011 Dan McPherson <dmcphers@redhat.com> 0.3.4-1
+- server side bundling for rails 3 (dmcphers@redhat.com)
+- use git clone for perl cart (dmcphers@redhat.com)
+- Fixed git creation (mmcgrath@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- removing old repo (mmcgrath@redhat.com)
+- added perl repo (mmcgrath@redhat.com)
+- add stop/start to git push (dmcphers@redhat.com)
+- move context to libra service and configure Part 2 (dmcphers@redhat.com)
+- move context to libra service and configure (dmcphers@redhat.com)
+
 * Tue Jun 14 2011 Matt Hicks <mhicks@redhat.com> 0.3.3-1
 - 
 

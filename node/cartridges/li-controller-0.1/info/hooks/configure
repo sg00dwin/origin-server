@@ -18,11 +18,11 @@
 
 # Creates a libra user
 #
-# IN: username
-#     email address
+# IN: app_id
+#     rhlogin
 #     SSH RSA public key
 #
-# 1) create a local user account: username, home directory
+# 1) create a local user account: app_id, home directory
 # 2) enable login via SSH using RSA key: trap user
 # 3) Place limits on user: number of processes
 
@@ -48,10 +48,10 @@ quota_blocks=`expr 1024 \* 128` # 128MB
 #
 function print_help {
     echo "Usage: $0"
-    echo "  -c customer_uuid"
+    echo "  -c app_id"
     if [ -z "$REVERT" ]
     then
-        echo "  -e customer_username"
+        echo "  -e rhlogin"
         echo "  -s ssh_pub_key"
         echo "  -d (optional: debug)"
     fi
@@ -91,9 +91,9 @@ function parse_options {
     while getopts 'c:e:s:p:o:dnra' OPTION
     do
 	case $OPTION in
-            c) username=$OPTARG
+            c) app_id=$OPTARG
 		;;
-            e) email=$OPTARG
+            e) rhlogin=$OPTARG
 		;;
             s) ssh_key=$OPTARG
 		;;
@@ -114,36 +114,36 @@ function parse_options {
 	esac
     done
 
-    # username is always required
-    if ( [ -z "$username" ])
+    # app_id is always required
+    if ( [ -z "$app_id" ])
     then
 	print_help
     fi
 
-    # email and ssh_key are only needed for configure, not deconfigure
-    if ( [ -z "$REVERT" ] && ([ -z "$email" ] || [ -z "$ssh_key" ]) )
+    # rhlogin and ssh_key are only needed for configure, not deconfigure
+    if ( [ -z "$REVERT" ] && ([ -z "$rhlogin" ] || [ -z "$ssh_key" ]) )
     then
 	print_help
     fi
 }
 
 #
-# Generate a user's home directory from their username
+# Generate an app's home directory from their app_id
 #
 function homedir {
-    USERNAME=$1
-    USERHOME=`grep $USERNAME /etc/passwd | cut -d: -f6`
+    APPID=$1
+    USERHOME=`grep $APPID /etc/passwd | cut -d: -f6`
 
     if [ -n "${USERHOME}" ]
     then
         echo $USERHOME
     else
         # remove duplicate slashes (/) and return the result
-	echo ${libra_dir}/${USERNAME} | tr -s '/'
+	echo ${libra_dir}/${APPID} | tr -s '/'
     fi
 }
 
-# Find the filesystem which holds a user's home directory
+# Find the filesystem which holds an app's home directory
 function home_filesystem {
     df -P ${libra_dir} | tail -1 | cut -d' ' -f1
 }
@@ -169,50 +169,49 @@ print i
 #
 # Create a local user account
 #
-# IN: username
+# IN: app_id
 # IN: homeroot
 
 function create_user_account() {
-    USERNAME=$1
+    APPID=$1
 
-    HOMEDIR=`homedir $USERNAME`
+    HOMEDIR=`homedir $APPID`
 
     (
       flock -x -w 10 200
-      ${NOOP} useradd -u `next_uid` -d ${HOMEDIR} -s /usr/bin/trap-user -c 'libra guest' $USERNAME
+      ${NOOP} useradd -u `next_uid` -d ${HOMEDIR} -s /usr/bin/trap-user -c 'libra guest' $APPID
 
       if [ $? -ne 0 ]
       then
-          echo "ERROR: unable to create user account $USERNAME"
+          echo "ERROR: unable to create user account $APPID"
           exit 1
       fi
     ) 200>/var/lock/libra_create
-    ${NOOP} chown "root.$USERNAME" "$HOMEDIR"
+    ${NOOP} chown "root.$APPID" "$HOMEDIR"
     ${NOOP} chmod 0750 "$HOMEDIR"
 }
 
 function remove_user_account {
-    USERNAME=$1
+    APPID=$1
 
-    ${NOOP} userdel -f -r ${USERNAME}
+    ${NOOP} userdel -f -r ${APPID}
 }
 
 
 #
 # Enable SSH RSA access for a user
 #
-# ASSUME: local user with username exists
-# IN: username
-# IN: user home directory
-# IN: user email address
+# ASSUME: local user with app_id exists
+# IN: app_id
+# IN: rhlogin
 # IN: SSH RSA key string
 #
 function enable_user_ssh_access {
-    USERNAME=$1
-    USEREMAIL="$2"
+    APPID=$1
+    RHLOGIN="$2"
     SSHKEY="$3"
     
-    USERHOME=`homedir $USERNAME`
+    USERHOME=`homedir $APPID`
     SSHDIR=${USERHOME}/.ssh
 
     ${NOOP} mkdir -p ${SSHDIR}
@@ -220,16 +219,16 @@ function enable_user_ssh_access {
     if [ -z "${NOOP}" ]
     then
 	cat <<EOF > ${SSHDIR}/authorized_keys
-command="/usr/bin/trap-user",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty ssh-rsa $SSHKEY Libra-$USERNAME-$USEREMAIL
+command="/usr/bin/trap-user",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty ssh-rsa $SSHKEY Libra-$APPID-$RHLOGIN
 EOF
     else
 	echo "cat <<EOF > $SSHDIR/authorized_keys
-command=\\\"/usr/bin/trap-user\\\",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty ssh-rsa $SSHKEY Libra-$USERNAME-$USEREMAIL
+command=\\\"/usr/bin/trap-user\\\",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty ssh-rsa $SSHKEY Libra-$APPID-$RHLOGIN
 EOF\""
     fi
     ${NOOP} chmod 0440 ${SSHDIR}/authorized_keys
     # Give force ssh key to not change
-    ${NOOP} chown -R "root.$USERNAME" ${SSHDIR}
+    ${NOOP} chown -R "root.$APPID" ${SSHDIR}
     ${NOOP} restorecon -R ${SSHDIR}
 }
 
@@ -237,7 +236,7 @@ EOF\""
 #
 # Add a PAM limit set to the user
 #
-# IN: username
+# IN: app_id
 # IN: limits_order
 # IN: limits_nproc
 #
@@ -246,17 +245,17 @@ LIMITSVARS="core data fsize memlock nofile rss stack cpu nproc as maxlogins prio
 
 # TODO: check if file already exists
 function set_pam_limits {
-    USERNAME=$1
+    APPID=$1
     #assume these come from sourced config file into environment
     #LIMITS_ORDER=${2:-$limits_order}
     #LIMITS_NPROC=${3:-$limits_nproc}
 
-    LIMITSFILE=/etc/security/limits.d/${limits_order}-${USERNAME}.conf
+    LIMITSFILE=/etc/security/limits.d/${limits_order}-${APPID}.conf
 
     if [ -z "${NOOP}" ]
     then
 	cat <<EOF > ${LIMITSFILE}
-# PAM process limits for guest $customer_id
+# PAM process limits for guest $app_id
 # see limits.conf(5) for details
 #Each line describes a limit for a user in the form:
 #
@@ -264,12 +263,12 @@ function set_pam_limits {
 EOF
     else
 	echo "cat <<EOF > ${LIMITSFILE}
-# PAM process limits for guest $customer_id
+# PAM process limits for guest $app_id
 # see limits.conf(5) for details
 #Each line describes a limit for a user in the form:
 #
 #<domain>        <type>  <item>  <value>
-${USERNAME}     hard    nproc   ${LIMITS_NPROC}
+${APPID}     hard    nproc   ${LIMITS_NPROC}
 EOF"
 
     fi
@@ -281,9 +280,9 @@ EOF"
 	then
 	    if [ -z "${NOOP}" ]
             then
-		echo "${USERNAME} hard $KEY $VALUE" >> ${LIMITSFILE}
+		echo "${APPID} hard $KEY $VALUE" >> ${LIMITSFILE}
             else
-		echo "echo \"${USERNAME} hard $KEY $VALUE\" >> ${LIMITSFILE}"
+		echo "echo \"${APPID} hard $KEY $VALUE\" >> ${LIMITSFILE}"
 	    fi
 	fi
     done
@@ -291,10 +290,10 @@ EOF"
 }
 
 function remove_pam_limits {
-    USERNAME=$1
+    APPID=$1
     LIMITS_ORDER=${2:-$limits_order}
 
-    LIMITSFILE=/etc/security/limits.d/${LIMITS_ORDER}-${USERNAME}.conf
+    LIMITSFILE=/etc/security/limits.d/${LIMITS_ORDER}-${APPID}.conf
 
 
     ${NOOP} rm -f ${LIMITSFILE}
@@ -413,16 +412,16 @@ function quotas_enabled {
 # empty string means "no quotas set"
 #
 function user_quotas {
-    # USERNAME=$1
+    # APPID=$1
     FS=`get_quota_root $libra_dir`
     quota -w -u $1 | grep $FS | tr -s ' ' | sed 's/^ //'
 }
 
 #
 # Set a user's inode and block quotas on the home file system
-# usage: set_fs_quota <username> <inodes> <blocks>
+# usage: set_fs_quota <app_id> <inodes> <blocks>
 function set_fs_quotas {
-    # USERNAME=$1
+    # APPID=$1
     # QUOTA_BLOCKS=${2:-$quota_blocks}
     # QUOTA_FILES=${3:-$quota_files}
 
@@ -444,7 +443,7 @@ function set_fs_quotas {
 
 # Remove filesystem quota limits for the user
 function remove_fs_quotas {
-    USERNAME=$1
+    APPID=$1
     if quotas_configured
     then
 	if quotas_enabled $libra_dir
@@ -465,46 +464,51 @@ function remove_fs_quotas {
 # get configuration values from libra configuration files or defaults
 initialize
 
-# provides values for username, email and ssh_key
+# provides values for app_id, rhlogin and ssh_key
 parse_options $*
 
 if [ -z "$REVERT" ]
 then
     if [ -z "$ALTER" ]
     then
-      create_user_account $username
+      create_user_account $app_id
 
       if (service cgconfig status > /dev/null 2>&1)
       then
-  	    service libra-cgroups startuser ${username} > /dev/null
+  	    service libra-cgroups startuser ${app_id} > /dev/null
       fi
 
       if (service libra-tc status > /dev/null 2>&1)
       then
-	  service libra-tc startuser ${username} > /dev/null
+	  service libra-tc startuser ${app_id} > /dev/null
       fi
 
-      enable_user_ssh_access $username $email "$ssh_key"
+      enable_user_ssh_access $app_id $rhlogin "$ssh_key"
 
-      set_pam_limits $username
+      set_pam_limits $app_id
   
-      set_fs_quotas $username $quota_blocks $quota_files
+      set_fs_quotas $app_id $quota_blocks $quota_files
     else
       # just reset the key, per "ALTER", only if the account exists on this node
-      if id $username >/dev/null 2>&1
+      if id $app_id >/dev/null 2>&1
       then
-        enable_user_ssh_access $username $email "$ssh_key"
+        enable_user_ssh_access $app_id $rhlogin "$ssh_key"
       fi      
     fi
 else
     if (service cgconfig status > /dev/null)
     then
-	service libra-cgroups stopuser ${username} > /dev/null
+	service libra-cgroups stopuser ${app_id} > /dev/null
     fi
 
-    remove_fs_quotas $username
+    if (service libra-tc status > /dev/null 2>&1)
+    then
+	service libra-tc stopuser ${app_id} > /dev/null
+    fi
 
-    remove_pam_limits $username
+    remove_fs_quotas $app_id
 
-    remove_user_account $username
+    remove_pam_limits $app_id
+
+    remove_user_account $app_id
 fi

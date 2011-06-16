@@ -312,7 +312,7 @@ class DevEnv < Thor
       puts "Done."
     end
     
-    `rm -rf /tmp/tito/; pushd client; tito build --rpm --test; popd; rpm -Uvh /tmp/tito/noarch/rhc-*`
+    `rm -rf /tmp/tito/; pushd client; tito build --rpm --test; popd; rpm -Uvh /tmp/tito/noarch/rhc-*;rm -rf /tmp/tito/`
 
     if @temp_commit
       puts "Undoing temporary commit..."

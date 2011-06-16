@@ -2,7 +2,7 @@
 
 Summary:   Provides ruby rack support running on Phusion Passenger
 Name:      rhc-cartridge-rack-1.1
-Version:   0.72.10
+Version:   0.72.14
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -12,6 +12,7 @@ Source0:   %{name}-%{version}.tar.gz
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 Requires:  rhc-node
 Requires:  mod_bw
+Requires:  sqlite-devel
 Requires:  rubygems
 Requires:  rubygem-rack >= 1.1.0
 #Requires:  rubygem-rack < 1.2.0
@@ -73,6 +74,23 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Thu Jun 16 2011 Dan McPherson <dmcphers@redhat.com> 0.72.14-1
+- add sqlitedevel to spec (dmcphers@redhat.com)
+
+* Thu Jun 16 2011 Dan McPherson <dmcphers@redhat.com> 0.72.13-1
+- better messaging for bundling process (dmcphers@redhat.com)
+
+* Thu Jun 16 2011 Dan McPherson <dmcphers@redhat.com> 0.72.12-1
+- allow .force_clean_build (dmcphers@redhat.com)
+
+* Wed Jun 15 2011 Dan McPherson <dmcphers@redhat.com> 0.72.11-1
+- server side bundling for rails 3 (dmcphers@redhat.com)
+- fix tmpdir (dmcphers@redhat.com)
+- add tmp dir to rack apps (dmcphers@redhat.com)
+- add stop/start to git push (dmcphers@redhat.com)
+- move context to libra service and configure Part 2 (dmcphers@redhat.com)
+- move context to libra service and configure (dmcphers@redhat.com)
+
 * Tue Jun 14 2011 Matt Hicks <mhicks@redhat.com> 0.72.10-1
 - Spec cleanup (mhicks@redhat.com)
 
