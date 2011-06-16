@@ -2,7 +2,7 @@
 
 Summary:   Provides ruby rack support running on Phusion Passenger
 Name:      rhc-cartridge-rack-1.1
-Version:   0.72.11
+Version:   0.72.12
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -73,6 +73,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Thu Jun 16 2011 Dan McPherson <dmcphers@redhat.com> 0.72.12-1
+- allow .force_clean_build (dmcphers@redhat.com)
+
 * Wed Jun 15 2011 Dan McPherson <dmcphers@redhat.com> 0.72.11-1
 - server side bundling for rails 3 (dmcphers@redhat.com)
 - fix tmpdir (dmcphers@redhat.com)
