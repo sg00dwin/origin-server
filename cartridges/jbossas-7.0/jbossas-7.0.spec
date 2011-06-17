@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.72.15
+Version:   0.72.16
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -11,7 +11,7 @@ Source0:   %{name}-%{version}.tar.gz
 
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 Requires:  rhc-node
-Requires:  jboss-as7
+Requires:  jboss-as7 = jboss-7.0.0.Beta6OS
 
 BuildArch: noarch
 
@@ -57,6 +57,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Thu Jun 16 2011 Scott Stark <sstark@redhat.com> 0.72.16-1
+- Explicity declare dependency on version jboss-7.0.0.Beta6OS of jboss-as7
+
 * Wed Jun 15 2011 Dan McPherson <dmcphers@redhat.com> 0.72.15-1
 - server side bundling for rails 3 (dmcphers@redhat.com)
 - Update to jboss-as7 7.0.0.Beta6OS, brew buildID=167639
