@@ -90,16 +90,10 @@ if !RHC::check_app(opt['app'])
     p_usage
 end
 
-=begin
-# We don't worry about this now, but allow
-# the attempt below to tell us whether we have
-# a valid cartridge or not to save on some
-# network traffic
 type = RHC::get_cartridge_type(opt['type'])
 if !type
     p_usage
 end
-=end
 
 if !opt["rhlogin"] || !opt["app"] || !opt["type"]
     p_usage
