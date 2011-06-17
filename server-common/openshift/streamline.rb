@@ -89,7 +89,7 @@ module Streamline
   # Login the current user, setting the roles and ticket
   #
   def login
-    raise UserException.new(107), "Invalid characters in RHlogin '#{@rhlogin}' found", caller[0..5] if !Util.check_rhlogin(@rhlogin)
+    raise UserException.new(107), "Invalid characters in RHlogin '#{@rhlogin}' found", caller[0..5] if !Libra::Util.check_rhlogin(@rhlogin)
 
     # First do the authentication
     login_args = {'login' => @rhlogin,
@@ -109,9 +109,9 @@ module Streamline
         @roles = json['roles']
         unless roles.index('cloud_access_1')
           if roles.index('cloud_access_request_1')
-            raise UserValidationException.new(146), "Found valid credentials but you haven't been granted access to Express yet", caller[0..5]
+            raise Libra::UserValidationException.new(146), "Found valid credentials but you haven't been granted access to Express yet", caller[0..5]
           else
-            raise UserValidationException.new(147), "Found valid credentials but you haven't requested access to Express yet", caller[0..5]
+            raise Libra::UserValidationException.new(147), "Found valid credentials but you haven't requested access to Express yet", caller[0..5]
           end
         end
       end
