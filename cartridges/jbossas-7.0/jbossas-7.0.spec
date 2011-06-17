@@ -59,6 +59,7 @@ rm -rf %{buildroot}
 %changelog
 * Thu Jun 16 2011 Scott Stark <sstark@redhat.com> 0.72.16-1
 - Explicity declare dependency on version jboss-7.0.0.Beta6OS of jboss-as7
+- Create a link from the standalone/log directory to ${APP_DIR}/logs for rhc-tail-files
 
 * Wed Jun 15 2011 Dan McPherson <dmcphers@redhat.com> 0.72.15-1
 - server side bundling for rails 3 (dmcphers@redhat.com)
