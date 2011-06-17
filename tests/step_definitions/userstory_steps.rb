@@ -226,7 +226,7 @@ When /^an app is created without -t$/ do
   end
 end
 Then /^display an error that the type is required$/ do
-  check_file_has_string(@sfile,"Type is required").should == true
+  check_file_has_string(@sfile,"Invalid application type").should == true
   #clean running log
   run("rm -f #{@sfile}")
 end
