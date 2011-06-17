@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.72.16
+Version:   0.72.17
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -57,6 +57,13 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Thu Jun 16 2011 Dan McPherson <dmcphers@redhat.com> 0.72.17-1
+- Add comment about logs link (scott.stark@jboss.org)
+- Create a link from the standalone/log directory to ${APP_DIR}/logs for rhc-
+  tail-files (scott.stark@jboss.org)
+- Explicity declare dependency on version jboss-7.0.0.Beta6OS of jboss-as7
+  (scott.stark@jboss.org)
+
 * Thu Jun 16 2011 Scott Stark <sstark@redhat.com> 0.72.16-1
 - Explicity declare dependency on version jboss-7.0.0.Beta6OS of jboss-as7
 - Create a link from the standalone/log directory to ${APP_DIR}/logs for rhc-tail-files
