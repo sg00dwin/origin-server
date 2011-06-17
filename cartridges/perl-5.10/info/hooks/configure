@@ -288,7 +288,7 @@ cat <<EOF > "$APP_DIR/${application}_ctl.sh"
 # Setup ENV vars
 export REPOLIB="$APP_DIR/repo/libs/"
 export LOCALSITELIB="$APP_DIR/perl5lib/lib/perl5/"
-export PERL5LIB="$REPOLIB:$LOCALSITELIB"
+export PERL5LIB="\$REPOLIB:\$LOCALSITELIB"
 
 if ! [ \$# -eq 1 ]
 then
