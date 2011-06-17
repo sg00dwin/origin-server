@@ -162,7 +162,7 @@ end
 # Create remote application space
 #
 
-puts "Creating remote application space: " + opt['app']
+puts "Attempting to create remote application space: " + opt['app']
 
 data = {:cartridge => opt['type'],
                 :action => 'configure',
