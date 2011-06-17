@@ -251,6 +251,7 @@ CustomLog "|/usr/sbin/rotatelogs $APP_DIR/logs/access_log$rotatelogs_format $rot
     PerlOptions +ParseHeaders
     Options +ExecCGI
     DirectoryIndex index.pl
+    AllowOverride All
 </Directory>
 
 
