@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.72.21
+Version:       0.72.22
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -140,6 +140,9 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Thu Jun 16 2011 Dan McPherson <dmcphers@redhat.com> 0.72.22-1
+- 
+
 * Thu Jun 16 2011 Dan McPherson <dmcphers@redhat.com> 0.72.21-1
 - trying a longer sleep (dmcphers@redhat.com)
 
