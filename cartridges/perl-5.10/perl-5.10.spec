@@ -13,6 +13,7 @@ BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 Requires:  rhc-node >= 0.69.4
 Requires:  mod_perl
 Requires:  ImageMagick-perl
+Requires:  perl-App-cpanminus
 
 BuildArch: noarch
 
