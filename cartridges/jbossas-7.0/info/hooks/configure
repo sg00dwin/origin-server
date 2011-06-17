@@ -256,11 +256,14 @@ EOF
 #
 GIT_DIR="$GIT_DIR" git archive --format=tar HEAD | (cd "${APP_DIR}/repo" && tar xf -)
 
-# Create a link from the standalone/deployments directory to the repo/deployments content
+# Create a link from the repo/deployments directory to the standalone/deployments content
 ln -s "$APP_DIR"/repo/deployments "$APP_DIR"/${jboss_version}/standalone
 ls -l "$APP_DIR"/${jboss_version}/standalone/deployments
 # Copy the samples into the ROOT.war
 cp -pr /usr/libexec/li/cartridges/${jboss_version}/info/data/samples "$APP_DIR"/${jboss_version}/standalone/deployments/ROOT.war
+
+# Create a link from the standalone/log directory to ${APP_DIR}/logs for rhc-tail-files
+ln -s "$APP_DIR"/${jboss_version}/standalone/log "$APP_DIR"/logs
 
 #
 # Create simple application start / stop script
