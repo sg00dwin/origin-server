@@ -145,8 +145,13 @@ class DevEnv < Thor
 
     # If this is a verifier, you'll need to reset the private ip setup on each sync
     if options.verifier?
-      print "Updating the controller to use the AMZ private IP..."
-      cmd1 = "IP=$(facter ipaddress); sed -i \"s/public_ip.*/public_ip='\$IP'/g\" /etc/libra/node_data.conf"
+      private_ip = instance.ssh("facter ipaddress")
+      if !private_ip or private_ip.strip.empty?
+        puts "EXITING - AMZ instance didn't return ipaddress fact"
+        exit 0
+      end
+      print "Updating the controller to use the AMZ private IP '#{private_ip}'..."
+      cmd1 = "sed -i \"s/public_ip.*/public_ip='#{private_ip}'/g\" /etc/libra/node_data.conf"
       cmd2 = "/usr/bin/puppet /usr/libexec/mcollective/update_yaml.pp"
       instance.ssh(cmd1 + ";" + cmd2)
       puts "Done"
@@ -208,8 +213,13 @@ class DevEnv < Thor
     puts "Done"
 
     if options.verifier?
-      print "Updating the controller to use the AMZ private IP..."
-      cmd1 = "IP=$(facter ipaddress); sed -i \"s/public_ip.*/public_ip='\$IP'/g\" /etc/libra/node_data.conf"
+      private_ip = instance.ssh("facter ipaddress")
+      if !private_ip or private_ip.strip.empty?
+        puts "EXITING - AMZ instance didn't return ipaddress fact"
+        exit 0
+      end
+      print "Updating the controller to use the AMZ private IP '#{private_ip}'..."
+      cmd1 = "sed -i \"s/public_ip.*/public_ip='#{private_ip}'/g\" /etc/libra/node_data.conf"
       cmd2 = "/usr/bin/puppet /usr/libexec/mcollective/update_yaml.pp"
       instance.ssh(cmd1 + ";" + cmd2)
       puts "Done"
