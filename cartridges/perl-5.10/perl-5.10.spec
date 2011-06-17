@@ -2,7 +2,7 @@
 
 Summary:   Provides mod_perl support
 Name:      rhc-cartridge-perl-5.10
-Version:   0.3.5
+Version:   0.3.6
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -55,6 +55,11 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Fri Jun 17 2011 Dan McPherson <dmcphers@redhat.com> 0.3.6-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- removing /perl/ from app dir (mmcgrath@redhat.com)
+
 * Fri Jun 17 2011 Dan McPherson <dmcphers@redhat.com> 0.3.5-1
 - Removing /perl/ from app path (mmcgrath@redhat.com)
 - fixing GIT_DIR perms (mmcgrath@redhat.com)

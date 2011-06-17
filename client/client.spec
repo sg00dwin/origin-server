@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system client tools
 Name:          rhc
-Version:       0.72.20
+Version:       0.72.22
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       MIT
@@ -84,6 +84,15 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_sysconfdir}/openshift/express.conf
 
 %changelog
+* Fri Jun 17 2011 Dan McPherson <dmcphers@redhat.com> 0.72.22-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (jimjag@redhat.com)
+- wrong commit/revert (jimjag@redhat.com)
+
+* Fri Jun 17 2011 Dan McPherson <dmcphers@redhat.com> 0.72.21-1
+- userland info message update... (jimjag@redhat.com)
+- Allow the cartridge_post to handle invalid carts for us. (jimjag@redhat.com)
+
 * Thu Jun 16 2011 Dan McPherson <dmcphers@redhat.com> 0.72.20-1
 - add error if invalid cart sent to server (dmcphers@redhat.com)
 
