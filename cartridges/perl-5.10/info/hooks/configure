@@ -159,7 +159,7 @@ if [ -f ~/${application}/repo/deplist.txt ]
 then
     for f in \$(cat ~/${application}/repo/deplist.txt)
     do
-        cpanm -L ~/${application}/perl5lib "$f"
+        cpanm -L ~/${application}/perl5lib "\$f"
     done
 fi
 
