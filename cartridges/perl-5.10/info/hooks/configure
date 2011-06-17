@@ -153,6 +153,16 @@ EOF
 rm -rf $APP_DIR/repo/* $APP_DIR/repo/.[^.]*
 git archive --format=tar HEAD | (cd $APP_DIR/repo && tar xf -)
 
+export PERL5LIB="~/${application}/repo/libs:~/${application}/perl5lib"
+
+if [ -f ~/${application}/repo/deplist.txt ]
+then
+    for f in `cat ~/${application}/repo/deplist.txt`
+    do
+        cpanm -L ~/${application}/perl5lib "$f"
+    done
+fi
+
 # Start the app
 echo "Starting application..."
 $APP_DIR/${application}_ctl.sh start
@@ -215,7 +225,7 @@ create_repo $application $user_id $group_id $c_val
 
 mkdir -p "$APP_DIR"
 pushd "$APP_DIR" > /dev/null
-mkdir conf conf.d logs run repo sessions data tmp
+mkdir conf conf.d logs run repo sessions data tmp perl5lib ../.cpanm
 ln -s /usr/lib64/httpd/modules modules
 ln -s /etc/httpd/conf/magic conf/magic
 popd > /dev/null
@@ -275,6 +285,11 @@ EOF
 cat <<EOF > "$APP_DIR/${application}_ctl.sh"
 #/bin/bash
 
+# Setup ENV vars
+export REPOLIB="$APP_DIR/repo/libs/"
+export LOCALSITELIB="$APP_DIR/perl5lib/lib/perl5/"
+export PERL5LIB="$REPOLIB:$LOCALSITELIB"
+
 if ! [ \$# -eq 1 ]
 then
     echo "Usage: \$0 [start|restart|graceful|graceful-stop|stop]"
@@ -312,7 +327,7 @@ esac
 EOF
 
 chmod +x "$APP_DIR/${application}_ctl.sh" || error "Failed to chmod new application scripts" 122
-chown $user_id.$group_id -R $APP_DIR || error "Failed to chown new application space.  Please contact support" 123
+chown $user_id.$group_id -R $APP_DIR $APP_DIR/../.cpanm/ || error "Failed to chown new application space.  Please contact support" 123
 # Secure script and config dirs.
 chown root.root -R "$APP_DIR/${application}_ctl.sh" "$APP_DIR/conf" "$APP_DIR/conf.d"
 chown root.root "$APP_DIR"
