@@ -92,6 +92,7 @@ end
 
 type = RHC::get_cartridge_type(opt['type'])
 if !type
+    puts 'Type is required'
     p_usage
 end
 
