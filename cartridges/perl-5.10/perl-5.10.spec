@@ -2,7 +2,7 @@
 
 Summary:   Provides mod_perl support
 Name:      rhc-cartridge-perl-5.10
-Version:   0.3.6
+Version:   0.3.7
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -56,6 +56,19 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Sat Jun 18 2011 Dan McPherson <dmcphers@redhat.com> 0.3.7-1
+- Added cpanminus (mmcgrath@redhat.com)
+- Properly escaping var (mmcgrath@redhat.com)
+- Fixing syntax error (mmcgrath@redhat.com)
+- Correcting shell out escaping call (mmcgrath@redhat.com)
+- creating new perl repo with the deplist.txt file (mmcgrath@redhat.com)
+- Adding repolib (mmcgrath@redhat.com)
+- escaping some bash bits (mmcgrath@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- Adding env vars and new perl5 and cpanm bits (mmcgrath@redhat.com)
+- Enabling htaccess (mmcgrath@redhat.com)
+
 * Fri Jun 17 2011 Dan McPherson <dmcphers@redhat.com> 0.3.6-1
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
   (mmcgrath@redhat.com)
