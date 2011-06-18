@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system client tools
 Name:          rhc
-Version:       0.72.22
+Version:       0.72.23
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       MIT
@@ -84,6 +84,9 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_sysconfdir}/openshift/express.conf
 
 %changelog
+* Sat Jun 18 2011 Dan McPherson <dmcphers@redhat.com> 0.72.23-1
+- test case fix (dmcphers@redhat.com)
+
 * Fri Jun 17 2011 Dan McPherson <dmcphers@redhat.com> 0.72.22-1
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
   (jimjag@redhat.com)
