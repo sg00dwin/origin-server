@@ -2,7 +2,7 @@
 
 Summary:   Provides php-5.3 support
 Name:      rhc-cartridge-php-5.3
-Version:   0.72.13
+Version:   0.72.14
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -67,6 +67,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Sat Jun 18 2011 Dan McPherson <dmcphers@redhat.com> 0.72.14-1
+- Added lib dirs and dep list (mmcgrath@redhat.com)
+
 * Wed Jun 15 2011 Dan McPherson <dmcphers@redhat.com> 0.72.13-1
 - server side bundling for rails 3 (dmcphers@redhat.com)
 - add stop/start to git push (dmcphers@redhat.com)
