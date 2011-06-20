@@ -21,12 +21,13 @@ class DevEnv < Thor
         puts "EXITING - AMZ instance didn't return ipaddress fact"
         exit 0
       end
-      print "Updating the controller to use the AMZ private IP '#{private_ip}'..."
       set_instance_ip(instance, private_ip)
     end
     
     def set_instance_ip(instance, ip)
+      print "Updating the controller to use the ip '#{ip}'..."
       instance.ssh("sed -i \"s/public_ip.*/public_ip='#{ip}'/g\" /etc/libra/node_data.conf")
+      puts 'Done'
     end
     
     def get_branch
@@ -186,7 +187,9 @@ class DevEnv < Thor
     if options.verifier?
       set_private_ip(instance)
       instance.ssh("/usr/bin/puppet /usr/libexec/mcollective/update_yaml.pp")
-      puts "Done"
+    else
+      public_ip = instance.ssh("wget -qO- http://169.254.169.254/latest/meta-data/public-ipv4")
+      set_instance_ip(instance, public_ip)
     end
   end
   

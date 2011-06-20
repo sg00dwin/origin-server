@@ -45,6 +45,8 @@ module LibraMigration
       post_receive = "#{app_home}/git/#{app_name}.git/hooks/post-receive"
       output += replace_in_file(post_receive, '//', '/')
       output += replace_in_file(post_receive, old_app_dir, new_app_dir)
+      # add no-timestamp to tar command
+      output += replace_in_file(post_receive, 'tar xf -', 'tar --warning=no-timestamp -xf -')
       if framework == 'php'
         # can't replace // blindly because of http://
         output += replace_in_file("#{new_app_dir}/conf/php.ini", old_app_dir, new_app_dir)
