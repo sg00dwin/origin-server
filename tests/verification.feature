@@ -40,6 +40,16 @@ Feature: Verification Tests
     When the applications are created
     Then they should all be accessible
     And they should be able to be changed
+    
+  Scenario: JBossAS modification tests
+    Given the libra client tools
+    And an accepted node
+    And the following test data
+      | processes | users | apps |    type    |
+      |     1     |   1   |  1   | jbossas-7.0 |
+    When the applications are created
+    Then they should all be accessible
+    And they should be able to be changed
 
   Scenario: Creation load tests
     Given the libra client tools

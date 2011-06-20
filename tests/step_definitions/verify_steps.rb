@@ -177,6 +177,7 @@ Then /^they should be able to be changed$/ do
       when "rack-1.1" then "config.ru"
       when "wsgi-3.2" then "wsgi/application"
       when "perl-5.10" then "perl/index.pl"
+      when "jbossas-7.10" then "ROOT.war/index.html"
     end
 
     # Make a change to the app
