@@ -165,7 +165,7 @@ then
         then
             pear upgrade "\$f"
         else
-            pear install -s "\$f"
+            pear install "\$f"
         fi
     done
 fi
