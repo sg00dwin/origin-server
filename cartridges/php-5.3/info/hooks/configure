@@ -151,6 +151,7 @@ $APP_DIR/${application}_ctl.sh stop
 EOF
 
     cat <<EOF > $GIT_DIR/hooks/post-receive
+#!/bin/bash
 rm -rf $APP_DIR/repo/* $APP_DIR/repo/.[^.]*
 git archive --format=tar HEAD | (cd $APP_DIR/repo && tar xf -)
 
@@ -158,7 +159,14 @@ if [ -f ~/${application}/repo/deplist.txt ]
 then
     for f in \$(cat ~/${application}/repo/deplist.txt)
     do
-        pear install -s "\$f"
+        echo "Checking pear: \$f"
+        echo
+        if pear list "\$f" > /dev/null
+        then
+            pear upgrade "\$f"
+        else
+            pear install -s "\$f"
+        fi
     done
 fi
 
