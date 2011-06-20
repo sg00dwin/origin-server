@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.72.24
+Version:       0.72.25
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -140,6 +140,9 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Mon Jun 20 2011 Dan McPherson <dmcphers@redhat.com> 0.72.25-1
+- add no-timestamp to archive tar command (dmcphers@redhat.com)
+
 * Fri Jun 17 2011 Dan McPherson <dmcphers@redhat.com> 0.72.24-1
 - missed an if (dmcphers@redhat.com)
 
