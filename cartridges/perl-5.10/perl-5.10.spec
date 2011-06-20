@@ -2,7 +2,7 @@
 
 Summary:   Provides mod_perl support
 Name:      rhc-cartridge-perl-5.10
-Version:   0.3.7
+Version:   0.3.8
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -70,6 +70,13 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Mon Jun 20 2011 Dan McPherson <dmcphers@redhat.com> 0.3.8-1
+- adding template files (dmcphers@redhat.com)
+- Temporary commit to build client (dmcphers@redhat.com)
+- supressing timestamp warnings (mmcgrath@redhat.com)
+- Bug 714575 (dmcphers@redhat.com)
+- Bug 714582 (dmcphers@redhat.com)
+
 * Sat Jun 18 2011 Dan McPherson <dmcphers@redhat.com> 0.3.7-1
 - Added cpanminus (mmcgrath@redhat.com)
 - Properly escaping var (mmcgrath@redhat.com)
