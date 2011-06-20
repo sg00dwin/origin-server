@@ -196,7 +196,7 @@ class DevEnv < Thor
     end
 
     puts "Updating remote tests...."
-    instance.scp_to("/tmp/li-test.tar", "~/")
+    instance.scp_to("/tmp/li-test.tar", "~/", 360)
     instance.ssh("rm -rf li-test; tar -xf li-test.tar")
     puts "Done"
   end
@@ -204,6 +204,8 @@ class DevEnv < Thor
   desc "launch NAME", "Launches the latest DevEnv instance, tagging with NAME"
   method_option :verifier, :type => :boolean, :desc => "Add verifier functionality (private IP setup and local tests)"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
+  method_option :express_server, :type => :boolean, :desc => "Set as express server in express.conf and leave on public_ip"
+  method_option :ssh_config_verifier, :type => :boolean, :desc => "Set as verifier in .ssh/config"
   def launch(name)
     # Get the latest devenv image and create a new instance
     conn = connect
@@ -226,7 +228,7 @@ class DevEnv < Thor
 
       print "Updating tests to remote instance..."
       `git archive --prefix li-test/ HEAD --output /tmp/li-test.tar`
-      instance.scp_to("/tmp/li-test.tar", "~/")
+      instance.scp_to("/tmp/li-test.tar", "~/", 360)
       instance.ssh('rm -rf li-test; tar -xf li-test.tar; mkdir -p /tmp/rhc/junit')
       puts "Done"
     end
@@ -236,20 +238,49 @@ class DevEnv < Thor
       puts "ERROR - instance is not valid"
       exit 1
     end
+    
+    if options.ssh_config_verifier?
+      public_ip = instance.ssh("wget -qO- http://169.254.169.254/latest/meta-data/public-ipv4")
+      
+      line_num = `grep -n -c 'Host verifier' ~/.ssh/config`.chomp
+      puts "Updating ~/.ssh/config verifier entry with public ip = #{public_ip}"
+      (1..4).each do |i|
+        `sed -i '#{line_num.to_i + i}s,HostName.*,HostName #{public_ip},' ~/.ssh/config`
+      end
+    end
+    
+    if options.express_server?
+      public_ip = instance.ssh("wget -qO- http://169.254.169.254/latest/meta-data/public-ipv4")
+      puts "Updating ~/.openshift/express.conf libra_server entry with public ip = #{public_ip}"
+      `sed -i 's,^libra_server.*,libra_server=#{public_ip},' ~/.openshift/express.conf`
+      instance.ssh"sed -i \"s/public_ip.*/public_ip='#{public_ip}'/g\" /etc/libra/node_data.conf"
+    end
+    
     puts "Done"
   end
 
   desc "test TAG", "Runs the tests on a tagged instance and downloads the results"
   method_option :terminate, :type => :boolean, :desc => "Terminate the instance when finished"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
+  method_option :unofficial, :type => :boolean, :desc => "For unofficial use.  Do not send emails, etc."
   def test(tag)
     conn = connect
     instance = Instance.find(conn, tag)
 
     begin
+      if options.unofficial?
+        private_ip = instance.ssh("facter ipaddress")
+        if !private_ip or private_ip.strip.empty?
+          puts "EXITING - AMZ instance didn't return ipaddress fact"
+          exit 0
+        end
+        print "Updating the controller to use the AMZ private IP '#{private_ip}'..."
+        instance.ssh"sed -i \"s/public_ip.*/public_ip='#{private_ip}'/g\" /etc/libra/node_data.conf"
+      end
+    
       # Run verification tests
       print "Running verification tests..."
-      output, test_result = instance.ssh("cucumber --tags @verify --format junit -o /tmp/rhc/junit/ li-test/tests/", 3600, true)
+      output, test_result = instance.ssh("cucumber -t @verify -f junit -o /tmp/rhc/junit/ li-test/tests/", 4800, true)
       puts "Done"
 
       print "Validating instance..."
@@ -282,12 +313,15 @@ class DevEnv < Thor
         exit test_result
       end
 
-      # Mark the image as verified
-      Image.verify(conn, instance.amz_image_id)
-      amz_image_name = Image.get_name(conn, instance.amz_image_id)
+      if !options.unofficial?
+        # Mark the image as verified
+        Image.verify(conn, instance.amz_image_id)
+        amz_image_name = Image.get_name(conn, instance.amz_image_id)
+        
+        print "Sending QE ready email..."
+        send_verified_email(instance.amz_image_id, amz_image_name)
+      end
       
-      print "Sending QE ready email..."
-      send_verified_email(instance.amz_image_id, amz_image_name)
       puts "Done"
 
     ensure
