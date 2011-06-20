@@ -337,12 +337,25 @@ runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l s0:$c_val $APP_DIR/${ap
 #
 # Create virtualhost definition for apache
 #
+# node_ssl_template.conf gets copied in unaltered and should contain
+# all of the configuration bits required for ssl to work including key location
+#
 
 cat <<EOF > "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}.conf"
 <VirtualHost *:80>
   ServerName ${application}-${namespace}.${libra_domain}
   ServerAdmin mmcgrath@redhat.com
   DocumentRoot /var/www/html
+
+  ProxyPass / http://$IP:8080/
+  ProxyPassReverse / http://$IP:8080/
+</VirtualHost>
+
+<VirtualHost *:443>
+  ServerName ${application}-${namespace}.${libra_domain}
+  ServerAdmin mmcgrath@redhat.com
+
+$(/bin/cat $CART_INFO_DIR/configuration/node_ssl_template.conf)
 
   ProxyPass / http://$IP:8080/
   ProxyPassReverse / http://$IP:8080/

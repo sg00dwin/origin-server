@@ -204,7 +204,7 @@ class DevEnv < Thor
   desc "launch NAME", "Launches the latest DevEnv instance, tagging with NAME"
   method_option :verifier, :type => :boolean, :desc => "Add verifier functionality (private IP setup and local tests)"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
-  method_option :express_server, :type => :boolean, :desc => "Set as express server in express.conf"
+  method_option :express_server, :type => :boolean, :desc => "Set as express server in express.conf and leave on public_ip"
   method_option :ssh_config_verifier, :type => :boolean, :desc => "Set as verifier in .ssh/config"
   def launch(name)
     # Get the latest devenv image and create a new instance
@@ -253,6 +253,7 @@ class DevEnv < Thor
       public_ip = instance.ssh("wget -qO- http://169.254.169.254/latest/meta-data/public-ipv4")
       puts "Updating ~/.openshift/express.conf libra_server entry with public ip = #{public_ip}"
       `sed -i 's,^libra_server.*,libra_server=#{public_ip},' ~/.openshift/express.conf`
+      instance.ssh"sed -i \"s/public_ip.*/public_ip='#{public_ip}'/g\" /etc/libra/node_data.conf"
     end
     
     puts "Done"
@@ -267,6 +268,16 @@ class DevEnv < Thor
     instance = Instance.find(conn, tag)
 
     begin
+      if options.unofficial?
+        private_ip = instance.ssh("facter ipaddress")
+        if !private_ip or private_ip.strip.empty?
+          puts "EXITING - AMZ instance didn't return ipaddress fact"
+          exit 0
+        end
+        print "Updating the controller to use the AMZ private IP '#{private_ip}'..."
+        instance.ssh"sed -i \"s/public_ip.*/public_ip='#{private_ip}'/g\" /etc/libra/node_data.conf"
+      end
+    
       # Run verification tests
       print "Running verification tests..."
       output, test_result = instance.ssh("cucumber -t @verify -f junit -o /tmp/rhc/junit/ li-test/tests/", 4800, true)
