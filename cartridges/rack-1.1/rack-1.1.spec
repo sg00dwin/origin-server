@@ -10,6 +10,7 @@ URL:       http://openshift.redhat.com
 Source0:   %{name}-%{version}.tar.gz
 
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
+BuildRequires: git
 Requires:  rhc-node
 Requires:  mod_bw
 Requires:  sqlite-devel
@@ -40,14 +41,25 @@ Provides rack support to OpenShift
 %setup -q
 
 %build
+rm -rf git_template
+cp -r template/ git_template/
+cd git_template
+git init
+git add *
+git commit -m 'Creating template'
+cd ..
+git clone --bare git_template git_template.git
+rm -rf git_template
+touch git_template.git/refs/heads/.gitignore
 
 %install
 rm -rf %{buildroot}
 mkdir -p %{buildroot}%{cartridgedir}
 mkdir -p %{buildroot}/%{_sysconfdir}/libra/cartridges
 ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/libra/cartridges/%{name}
-cp -r . %{buildroot}%{cartridgedir}
-rm %{buildroot}%{cartridgedir}/rack-1.1.spec
+cp -r info %{buildroot}%{cartridgedir}/
+mkdir -p %{buildroot}%{cartridgedir}/info/data/
+cp -r git_template.git %{buildroot}%{cartridgedir}/info/data/
 ln -s %{cartridgedir}/../abstract-httpd/info/hooks/add-module %{buildroot}%{cartridgedir}/info/hooks/add-module
 ln -s %{cartridgedir}/../abstract-httpd/info/hooks/info %{buildroot}%{cartridgedir}/info/hooks/info
 ln -s %{cartridgedir}/../abstract-httpd/info/hooks/post-install %{buildroot}%{cartridgedir}/info/hooks/post-install
