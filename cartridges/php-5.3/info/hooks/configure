@@ -229,7 +229,7 @@ create_repo $application $user_id $group_id $c_val
 mkdir -p "$APP_DIR"
 pushd "$APP_DIR" > /dev/null
 mkdir conf conf.d logs run repo sessions data tmp
-mkdir -p phplib/pear/doc phplib/pear/test
+mkdir -p phplib/pear/{docs,ext,php,cache,cfg,data,download,temp,tests,www}
 ln -s /usr/lib64/httpd/modules modules
 ln -s /etc/httpd/conf/magic conf/magic
 sed "s,TEMPLATE_SET_ME_SESSION_SAVE_PATH,$APP_DIR/sessions/," $CART_CONF_DIR/php.ini > $APP_DIR/conf/php.ini 
@@ -334,10 +334,7 @@ chcon -t libra_var_lib_t -l s0:$c_val -R "$APP_DIR"
 runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l s0:$c_val $APP_DIR/${application}_ctl.sh start" || error "Failed to start ${application}" 121
 
 # Pear requires a special pearrc file, this is that file:
-cat <<EOF > $APP_DIR/../.pearrc
-#PEAR_Config 0.9
-a:7:{s:10:"__channels";a:2:{s:12:"pecl.php.net";a:0:{}s:5:"__uri";a:0:{}}s:9:"cache_dir";s:67:"$APP_DIR/tmp/pear-cache/";s:12:"download_dir";s:70:"$APP_DIR/tmp/pear-download/";s:8:"data_dir";s:59:"$APP_DIR/phplib/";s:7:"php_dir";s:64:"$APP_DIR/phplib/pear/";s:7:"doc_dir";s:67:"$APP_DIR/phplib/pear/doc";s:8:"test_dir";s:69:"$APP_DIR/phplib/pear/test/";}
-EOF
+pear config-create "$APP_DIR"/phplib/pear/ "$APP_HOME"/.pearrc
 
 #
 # Create virtualhost definition for apache
