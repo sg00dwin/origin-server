@@ -2,7 +2,7 @@
 
 Summary:   Provides php-5.3 support
 Name:      rhc-cartridge-php-5.3
-Version:   0.72.14
+Version:   0.72.15
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -80,6 +80,23 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Mon Jun 20 2011 Dan McPherson <dmcphers@redhat.com> 0.72.15-1
+- Temporary commit to build client (dmcphers@redhat.com)
+- move template out of repo (dmcphers@redhat.com)
+- supressing timestamp warnings (mmcgrath@redhat.com)
+- Fixing pear creation and ownership (mmcgrath@redhat.com)
+- removing silence flag (mmcgrath@redhat.com)
+- Specifying timezone (mmcgrath@redhat.com)
+- correcting include path (mmcgrath@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- Adding smarter pear check (mmcgrath@redhat.com)
+- Adding pear (mmcgrath@redhat.com)
+- Correcting mkdir path (mmcgrath@redhat.com)
+- Adding pear dir layout and new pear config (mmcgrath@redhat.com)
+
 * Sat Jun 18 2011 Dan McPherson <dmcphers@redhat.com> 0.72.14-1
 - Added lib dirs and dep list (mmcgrath@redhat.com)
 
