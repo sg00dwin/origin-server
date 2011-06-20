@@ -43,7 +43,6 @@ cp -r info %{buildroot}%{cartridgedir}/
 mkdir -p %{buildroot}%{cartridgedir}/info/data/
 cp -r git_template.git %{buildroot}%{cartridgedir}/info/data/
 cp README %{buildroot}%{cartridgedir}/
-rm %{buildroot}%{cartridgedir}/.gitignore
 ln -s %{cartridgedir}/../abstract-httpd/info/hooks/add-module %{buildroot}%{cartridgedir}/info/hooks/add-module
 ln -s %{cartridgedir}/../abstract-httpd/info/hooks/info %{buildroot}%{cartridgedir}/info/hooks/info
 ln -s %{cartridgedir}/../abstract-httpd/info/hooks/post-install %{buildroot}%{cartridgedir}/info/hooks/post-install
