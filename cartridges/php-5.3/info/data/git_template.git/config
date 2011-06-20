@@ -1,6 +1,0 @@
-[core]
-	repositoryformatversion = 0
-	filemode = true
-	bare = true
-[remote "origin"]
-	url = /home/dmcphers/code/li/cartridges/php-5.3/info/data/git_template_new/
