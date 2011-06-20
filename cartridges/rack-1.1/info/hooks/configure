@@ -165,7 +165,7 @@ fi
 echo 'Cleaning out deploy/*'
 rm -rf $APP_DIR/deploy/* $APP_DIR/deploy/.[^.]*
 echo 'Deploying application from git repo to deploy/'
-git archive --format=tar HEAD | (cd $APP_DIR/deploy && tar xf -)
+git archive --format=tar HEAD | (cd $APP_DIR/deploy && tar --warning=no-timestamp -xf -)
 
 if \$USED_BUNDLER
 then
@@ -264,7 +264,7 @@ popd > /dev/null
 #
 # Populate deploy dir
 #
-GIT_DIR="$GIT_DIR" git archive --format=tar HEAD | (cd "${APP_DIR}/deploy" && tar xf -)
+GIT_DIR="$GIT_DIR" git archive --format=tar HEAD | (cd "${APP_DIR}/deploy" && tar --warning=no-timestamp -xf -)
 
 #
 # Find an open localhost IP

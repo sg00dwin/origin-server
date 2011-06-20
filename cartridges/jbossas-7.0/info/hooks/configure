@@ -154,7 +154,7 @@ __EOF__
 
     cat <<__EOF__ > $GIT_DIR/hooks/post-receive
 rm -rf $APP_DIR/repo/* $APP_DIR/repo/.[^.]*
-git archive --format=tar HEAD | (cd $APP_DIR/repo && tar xf -)
+git archive --format=tar HEAD | (cd $APP_DIR/repo && tar --warning=no-timestamp -xf -)
 
 # Start the app
 echo "Starting application..."
@@ -254,7 +254,7 @@ EOF
 #
 # Populate repo dir
 #
-GIT_DIR="$GIT_DIR" git archive --format=tar HEAD | (cd "${APP_DIR}/repo" && tar xf -)
+GIT_DIR="$GIT_DIR" git archive --format=tar HEAD | (cd "${APP_DIR}/repo" && tar --warning=no-timestamp -xf -)
 
 # Create a link from the repo/deployments directory to the standalone/deployments content
 ln -s "$APP_DIR"/repo/deployments "$APP_DIR"/${jboss_version}/standalone

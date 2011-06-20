@@ -153,7 +153,7 @@ EOF
     cat <<EOF > $GIT_DIR/hooks/post-receive
 #!/bin/bash
 rm -rf $APP_DIR/repo/* $APP_DIR/repo/.[^.]*
-git archive --format=tar HEAD | (cd $APP_DIR/repo && tar xf -)
+git archive --format=tar HEAD | (cd $APP_DIR/repo && tar --warning=no-timestamp -xf -)
 
 if [ -f ~/${application}/repo/deplist.txt ]
 then
@@ -239,7 +239,7 @@ popd > /dev/null
 #
 # Populate repo dir
 #
-GIT_DIR="$GIT_DIR" git archive --format=tar HEAD | (cd "${APP_DIR}/repo" && tar xf -)
+GIT_DIR="$GIT_DIR" git archive --format=tar HEAD | (cd "${APP_DIR}/repo" && tar --warning=no-timestamp -xf -)
 
 #
 # Find an open localhost IP
