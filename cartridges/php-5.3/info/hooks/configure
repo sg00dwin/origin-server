@@ -324,6 +324,10 @@ case "\$1" in
 esac
 EOF
 
+# Pear requires a special pearrc file, this is that file:
+pear config-create "$APP_DIR"/phplib/pear/ "$APP_HOME"/.pearrc
+pear -c "$APP_HOME"/.pearrc config-set php_ini "$APP_DIR"/conf/php.ini
+
 chmod +x "$APP_DIR/${application}_ctl.sh" || error "Failed to chmod new application scripts" 122
 chown $user_id.$group_id -R $APP_DIR || error "Failed to chown new application space.  Please contact support" 123
 # Secure script and config dirs.
@@ -331,9 +335,6 @@ chown root.root -R "$APP_DIR/${application}_ctl.sh" "$APP_DIR/conf" "$APP_DIR/co
 chown root.root "$APP_DIR"
 chcon -t libra_var_lib_t -l s0:$c_val -R "$APP_DIR"
 runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l s0:$c_val $APP_DIR/${application}_ctl.sh start" || error "Failed to start ${application}" 121
-
-# Pear requires a special pearrc file, this is that file:
-pear config-create "$APP_DIR"/phplib/pear/ "$APP_HOME"/.pearrc
 
 #
 # Create virtualhost definition for apache
