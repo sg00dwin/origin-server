@@ -1,0 +1,48 @@
+#!/usr/bin/env python
+
+#
+# Usage:
+#   ./lookup_emails account_list.txt
+# or
+#   cat account_list.txt | ./lookup_emails
+#
+# Lookup email addresses for a list of supplied ids
+#
+
+import os
+import sys
+import fileinput
+import logging
+logging.basicConfig(level=logging.CRITICAL)
+
+try:
+    from suds.client import Client
+    from suds import WebFault
+except:
+    print "Error: Requires python-suds to be installed"
+    print "Take a look at https://fedorahosted.org/suds/"
+    sys.exit()
+
+#
+# Configuration data - you might need to change thse values
+#
+
+# The IT web service URL to access
+webqa_url = 'http://proxyjavavip.web.qa.ext.intdev.redhat.com/svc/UserService/1?wsdl'
+
+#
+# The program - no changes needed below this point
+#
+user = Client(webqa_url)
+
+# Read in the logins to check from a file or stdin
+logins = []
+for line in fileinput.input():
+    logins.append(line.rstrip().lstrip())
+
+for login in logins:
+    result = user.service.findUsersByLogin(login)
+    try:
+      print login + "," + result[0].personalInfo.email
+    except:
+      pass

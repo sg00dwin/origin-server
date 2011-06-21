@@ -36,4 +36,8 @@ Broker::Application.configure do
   ############################################
   # OpenShift Configuration Below this point #
   ############################################
+  config.integrated = false
+  config.streamline_service_base_url = ''
+  config.streamline = "http://localhost" # Not used
+  config.streamline_secret = ''
 end

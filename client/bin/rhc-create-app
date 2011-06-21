@@ -25,7 +25,7 @@ require 'rhc-common'
 
 def p_usage
     libra_server = get_var('libra_server')
-    rhlogin = get_var('default_rhlogin') ? "Default: #{get_var('default_rhlogin')}" : "(required)"
+    rhlogin = get_var('default_rhlogin') ? "Default: #{get_var('default_rhlogin')}" : "required"
     type_keys = RHC::get_cartridge_list(nil, ', ', libra_server, @http, false)
     puts <<USAGE
 
@@ -90,8 +90,9 @@ if !RHC::check_app(opt['app'])
     p_usage
 end
 
-type = RHC::get_cartridge_type(opt['type'], libra_server, @http, debug)
+type = RHC::get_cartridge_type(opt['type'])
 if !type
+    puts 'Type is required'
     p_usage
 end
 
@@ -156,7 +157,7 @@ end
 # Create remote application space
 #
 
-puts "Creating remote application space: " + opt['app']
+puts "Attempting to create remote application space: " + opt['app']
 
 data = {:cartridge => opt['type'],
                 :action => 'configure',

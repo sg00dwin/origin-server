@@ -54,14 +54,18 @@ done
 
 [ $# -eq 3 ] || print_help
 
-customer_id=$3
+app_id=$3
 application="$1"
 
-CUSTOMER_HOME="$libra_dir/$customer_id/"
+CUSTOMER_HOME="$libra_dir/$app_id/"
 APP_DIR="$CUSTOMER_HOME/$application"
+
+uid=$(id -u "$app_id")
+c_val="c$(($uid/1023)),c$(($uid%1023))"
 
 #
 # Start application
 #
 
-runuser --shell /bin/sh "$customer_id" "$APP_DIR/${application}_ctl.sh" reload
+runuser --shell /bin/sh "$app_id" -c "runcon -t libra_t -l s0:$c_val $APP_DIR/${application}_ctl.sh reload"
+

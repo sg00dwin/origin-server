@@ -16,7 +16,7 @@ module Libra
       carts = get_cartridges_tbl
       if carts.include?(type)
         type = type.split('-')[0]
-        return type.to_sym
+        return type
       end
       return nil
     end

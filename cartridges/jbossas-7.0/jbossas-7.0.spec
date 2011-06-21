@@ -2,16 +2,17 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.72.13
+Version:   0.72.23
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
 URL:       http://openshift.redhat.com
-Source0:   rhc-cartridge-jbossas-7.0-%{version}.tar.gz
+Source0:   %{name}-%{version}.tar.gz
 
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
+BuildRequires: git
 Requires:  rhc-node
-Requires:  jboss-as7
+Requires:  jboss-as7 = 7.0.0.Beta6OS
 
 BuildArch: noarch
 
@@ -22,15 +23,26 @@ Provides JBossAS7 support to OpenShift
 %setup -q
 
 %build
+rm -rf git_template
+cp -r template/ git_template/
+cd git_template
+git init
+git add *
+git commit -m 'Creating template'
+cd ..
+git clone --bare git_template git_template.git
+rm -rf git_template
+touch git_template.git/refs/heads/.gitignore
 
 %install
 rm -rf %{buildroot}
 mkdir -p %{buildroot}%{cartridgedir}
 mkdir -p %{buildroot}/%{_sysconfdir}/libra/cartridges
 ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/libra/cartridges/%{name}
-cp -r . %{buildroot}%{cartridgedir}
-rm %{buildroot}%{cartridgedir}/jbossas-7.0.spec
-rm %{buildroot}%{cartridgedir}/.gitignore
+cp -r info %{buildroot}%{cartridgedir}/
+mkdir -p %{buildroot}%{cartridgedir}/info/data/
+cp -r git_template.git %{buildroot}%{cartridgedir}/info/data/
+cp README %{buildroot}%{cartridgedir}/
 ln -s %{cartridgedir}/../abstract-httpd/info/hooks/add-module %{buildroot}%{cartridgedir}/info/hooks/add-module
 ln -s %{cartridgedir}/../abstract-httpd/info/hooks/info %{buildroot}%{cartridgedir}/info/hooks/info
 ln -s %{cartridgedir}/../abstract-httpd/info/hooks/post-install %{buildroot}%{cartridgedir}/info/hooks/post-install
@@ -57,6 +69,59 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Tue Jun 21 2011 Dan McPherson <dmcphers@redhat.com> 0.72.23-1
+- Bug 714868 (dmcphers@redhat.com)
+
+* Mon Jun 20 2011 Dan McPherson <dmcphers@redhat.com> 0.72.22-1
+- 
+
+* Mon Jun 20 2011 Dan McPherson <dmcphers@redhat.com> 0.72.21-1
+- install fixup (dmcphers@redhat.com)
+- adding template files (dmcphers@redhat.com)
+- Temporary commit to build client (dmcphers@redhat.com)
+- move template out of repo (dmcphers@redhat.com)
+- remove old comment (dmcphers@redhat.com)
+- supressing timestamp warnings (mmcgrath@redhat.com)
+
+* Fri Jun 17 2011 Dan McPherson <dmcphers@redhat.com> 0.72.20-1
+- trying version again (dmcphers@redhat.com)
+
+* Fri Jun 17 2011 Dan McPherson <dmcphers@redhat.com> 0.72.19-1
+- fixup dep version (dmcphers@redhat.com)
+
+* Thu Jun 16 2011 Dan McPherson <dmcphers@redhat.com> 0.72.18-1
+- 
+
+* Thu Jun 16 2011 Dan McPherson <dmcphers@redhat.com> 0.72.17-1
+- Add comment about logs link (scott.stark@jboss.org)
+- Create a link from the standalone/log directory to ${APP_DIR}/logs for rhc-
+  tail-files (scott.stark@jboss.org)
+- Explicity declare dependency on version jboss-7.0.0.Beta6OS of jboss-as7
+  (scott.stark@jboss.org)
+
+* Thu Jun 16 2011 Scott Stark <sstark@redhat.com> 0.72.16-1
+- Explicity declare dependency on version jboss-7.0.0.Beta6OS of jboss-as7
+- Create a link from the standalone/log directory to ${APP_DIR}/logs for rhc-tail-files
+
+* Wed Jun 15 2011 Dan McPherson <dmcphers@redhat.com> 0.72.15-1
+- server side bundling for rails 3 (dmcphers@redhat.com)
+- Update to jboss-as7 7.0.0.Beta6OS, brew buildID=167639
+  (scott.stark@jboss.org)
+- add stop/start to git push (dmcphers@redhat.com)
+- move context to libra service and configure Part 2 (dmcphers@redhat.com)
+- move context to libra service and configure (dmcphers@redhat.com)
+
+* Tue Jun 14 2011 Scott Stark <sstark@redhat.com> 0.72.15-1
+- Update standalone.xml configuration for jbossas-7.0.0.Beta6OS
+
+* Tue Jun 14 2011 Matt Hicks <mhicks@redhat.com> 0.72.14-1
+- Spec cleanup (mhicks@redhat.com)
+- Permanent jboss fix now in place (mmcgrath@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (scott.stark@jboss.org)
+- Improve the way the control script is generated and correct the output of the
+  status command. (scott.stark@jboss.org)
+
 * Fri Jun 10 2011 Matt Hicks <mhicks@redhat.com> 0.72.13-1
 - Add link to sample source Update H2DS to have local file store under
   jboss.server.data.dir (scott.stark@jboss.org)

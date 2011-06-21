@@ -91,9 +91,9 @@ function find_open_ip {
     uuid=$2
     for host_ip in `seq 1 127`
     do
-	a=`address $uid $host_ip`
-	new_ip=`dotted_quad $a`
-        if ! grep -qe '^Listen '$new_ip':8080$' $(find /var/lib/libra/$uuid/ -maxdepth 4 -mindepth 4 -name libra.conf) /etc/sysconfig/network
+        a=`address $uid $host_ip`
+        new_ip=`dotted_quad $a`
+        if ! grep -qe '^Listen '$new_ip':8080$' $(find /var/lib/libra/$uuid/ -maxdepth 3 -mindepth 3 -name libra.conf) /etc/sysconfig/network
         then
             echo $new_ip
             exit
@@ -143,13 +143,39 @@ function create_repo {
     popd
 
     echo "php 5.3 application '$application'" > $GIT_DIR/description
-    cat <<EOF > $GIT_DIR/hooks/post-receive
-rm -rf $APP_DIR/repo/*
-git archive --format=tar HEAD | (cd $APP_DIR/repo && tar xf -)
-# Reload httpd here maybe?
+
+    cat <<EOF > $GIT_DIR/hooks/pre-receive
+# Stop the app
+echo "Stopping application..."
+$APP_DIR/${application}_ctl.sh stop
 EOF
 
-    chmod 0755 $APP_HOME/git/$application.git/hooks/post-receive
+    cat <<EOF > $GIT_DIR/hooks/post-receive
+#!/bin/bash
+rm -rf $APP_DIR/repo/* $APP_DIR/repo/.[^.]*
+git archive --format=tar HEAD | (cd $APP_DIR/repo && tar --warning=no-timestamp -xf -)
+
+if [ -f ~/${application}/repo/deplist.txt ]
+then
+    for f in \$(cat ~/${application}/repo/deplist.txt)
+    do
+        echo "Checking pear: \$f"
+        echo
+        if pear list "\$f" > /dev/null
+        then
+            pear upgrade "\$f"
+        else
+            pear install "\$f"
+        fi
+    done
+fi
+
+# Start the app
+echo "Starting application..."
+$APP_DIR/${application}_ctl.sh start
+EOF
+
+    chmod 0755 $GIT_DIR/hooks/post-receive $GIT_DIR/hooks/pre-receive
     chown $user_id.$group_id -R $GIT_DIR
     # Secure the hooks dir
     chown root.root -R $GIT_DIR/hooks
@@ -203,6 +229,7 @@ create_repo $application $user_id $group_id $c_val
 mkdir -p "$APP_DIR"
 pushd "$APP_DIR" > /dev/null
 mkdir conf conf.d logs run repo sessions data tmp
+mkdir -p phplib/pear/{docs,ext,php,cache,cfg,data,download,temp,tests,www}
 ln -s /usr/lib64/httpd/modules modules
 ln -s /etc/httpd/conf/magic conf/magic
 sed "s,TEMPLATE_SET_ME_SESSION_SAVE_PATH,$APP_DIR/sessions/," $CART_CONF_DIR/php.ini > $APP_DIR/conf/php.ini 
@@ -212,7 +239,7 @@ popd > /dev/null
 #
 # Populate repo dir
 #
-GIT_DIR="$GIT_DIR" git archive --format=tar HEAD | (cd "${APP_DIR}/repo" && tar xf -)
+GIT_DIR="$GIT_DIR" git archive --format=tar HEAD | (cd "${APP_DIR}/repo" && tar --warning=no-timestamp -xf -)
 
 #
 # Find an open localhost IP
@@ -233,7 +260,11 @@ User $uuid
 Group $uuid
 ErrorLog "|/usr/sbin/rotatelogs $APP_DIR/logs/error_log$rotatelogs_format $rotatelogs_interval"
 CustomLog "|/usr/sbin/rotatelogs $APP_DIR/logs/access_log$rotatelogs_format $rotatelogs_interval" combined
-php_value include_path ".:$APP_DIR/repo/libs/"
+php_value include_path ".:$APP_DIR/repo/libs/:$APP_DIR/phplib/pear/pear/php/:/usr/share/pear/"
+# TODO: Adjust from ALL to more conservative values
+<Directory "$APP_DIR/repo/php">
+  AllowOverride All
+</Directory>
 
 <IfModule !mod_bw.c>
     LoadModule bw_module    modules/mod_bw.so
@@ -263,11 +294,11 @@ then
     exit 1
 fi
 
-if whoami | grep -q root
+if whoami | grep -q root || ! runcon | grep 'system_r:libra_t:s0:$c_val' > /dev/null
 then
     echo 1>&2
-    echo "Please don't run script as root, try:" 1>&2
-    echo "runuser --shell /bin/sh $uuid $APP_DIR/${application}_ctl.sh" 1>&2
+    echo "Please run script in the correct context, try:" 1>&2
+    echo "runuser --shell /bin/sh \"$uuid\" -c \"runcon -t libra_t -l s0:$c_val $APP_DIR/${application}_ctl.sh\"" 1>&2
     echo 2>&1
     exit 15
 fi
@@ -280,11 +311,11 @@ case "\$1" in
             echo -n " - Application is disabled" 1>&2
             exit 0
         else
-            runcon -t libra_t -l s0:$c_val /usr/sbin/httpd -C 'Include $APP_DIR/conf.d/*.conf' -f $CART_CONF_DIR/httpd_nolog.conf -k \$1
+            /usr/sbin/httpd -C 'Include $APP_DIR/conf.d/*.conf' -f $CART_CONF_DIR/httpd_nolog.conf -k \$1
         fi
     ;;
     restart|graceful|graceful-stop|stop)
-        runcon -t libra_t -l s0:$c_val /usr/sbin/httpd -C 'Include $APP_DIR/conf.d/*.conf' -f $CART_CONF_DIR/httpd_nolog.conf -k \$1
+        /usr/sbin/httpd -C 'Include $APP_DIR/conf.d/*.conf' -f $CART_CONF_DIR/httpd_nolog.conf -k \$1
     ;;
     status)
         echo " Coming soon"
@@ -293,13 +324,17 @@ case "\$1" in
 esac
 EOF
 
+# Pear requires a special pearrc file, this is that file:
+pear config-create "$APP_DIR"/phplib/pear/ "$APP_HOME"/.pearrc
+pear -c "$APP_HOME"/.pearrc config-set php_ini "$APP_DIR"/conf/php.ini
+
 chmod +x "$APP_DIR/${application}_ctl.sh" || error "Failed to chmod new application scripts" 122
 chown $user_id.$group_id -R $APP_DIR || error "Failed to chown new application space.  Please contact support" 123
 # Secure script and config dirs.
 chown root.root -R "$APP_DIR/${application}_ctl.sh" "$APP_DIR/conf" "$APP_DIR/conf.d"
 chown root.root "$APP_DIR"
 chcon -t libra_var_lib_t -l s0:$c_val -R "$APP_DIR"
-runuser --shell /bin/sh "$uuid" "$APP_DIR/${application}_ctl.sh" start || error "Failed to start ${application}" 121
+runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l s0:$c_val $APP_DIR/${application}_ctl.sh start" || error "Failed to start ${application}" 121
 
 #
 # Create virtualhost definition for apache

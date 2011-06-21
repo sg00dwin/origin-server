@@ -25,6 +25,7 @@
 # be queried by facter (and mcollective).  Examples include the number of git
 # repositories on the host, customer information, etc.
 
+require 'rubygems'
 require 'parseconfig'
 
 #

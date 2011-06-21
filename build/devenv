@@ -12,6 +12,67 @@ include OpenShift::AWS
 
 class DevEnv < Thor
   include Thor::Actions
+  include OpenShift::Tito
+  
+  no_tasks do
+    def set_private_ip(instance)
+      private_ip = instance.ssh("facter ipaddress")
+      if !private_ip or private_ip.strip.empty?
+        puts "EXITING - AMZ instance didn't return ipaddress fact"
+        exit 0
+      end
+      set_instance_ip(instance, private_ip)
+    end
+    
+    def set_public_ip(instance)
+      public_ip = instance.ssh("wget -qO- http://169.254.169.254/latest/meta-data/public-ipv4")
+      set_instance_ip(instance, public_ip)
+    end
+    
+    def set_instance_ip(instance, ip)
+      print "Updating the controller to use the ip '#{ip}'..."
+      instance.ssh("sed -i \"s/public_ip.*/public_ip='#{ip}'/g\" /etc/libra/node_data.conf")
+      puts 'Done'
+    end
+    
+    def get_branch
+      branch_str = `git status | head -n1`.chomp
+      branch_str =~ /.*branch (.*)/
+      branch = $1
+      return branch
+    end
+    
+    def temp_commit
+      # Warn on uncommitted changes
+      `git diff-index --quiet HEAD`
+  
+      if $? != 0
+        # Perform a temporary commit to build client
+        @temp_commit = true
+        puts "Creating temporary commit to build client"
+        `git commit -a -m "Temporary commit to build client"`
+        puts "Done."
+      end
+    end
+    
+    def reset_temp_commit
+      if @temp_commit
+        puts "Undoing temporary commit..."
+        `git reset HEAD^`
+        puts "Done."
+      end
+    end
+    
+    def archive_tests
+      puts "Archiving local changes..."
+      `git archive --prefix li-test/ HEAD --output /tmp/li-test.tar`
+    end
+    
+    def update_remote_tests(instance)
+      instance.scp_to("/tmp/li-test.tar", "~/", 360)
+      instance.ssh('rm -rf li-test; tar -xf li-test.tar; mkdir -p /tmp/rhc/junit')
+    end
+  end
 
   desc "build NAME", "Build a new devenv AMI with the given NAME"
   method_option :register, :type => :boolean, :desc => "Register the instance"
@@ -87,23 +148,8 @@ class DevEnv < Thor
 
     remove_dir '/tmp/tito/'
 
-    # Figure out what needs to be built
-    packages = `tito report --untagged-commits | grep rhc`
-    build_dirs = packages.split("\n").collect do |package|
-      if package =~ /rhc-devenv-0/
-        #"misc/devenv/"
-        # Ignore devenv installs for right now
-        nil
-      elsif package =~ /rhc-(cartridge-.*)-0/
-        "cartridges/" + $1['cartridge-'.length..-1]
-      elsif package =~ /rhc-(.*)-0/
-        $1
-      else
-        "client"
-      end
-    end.compact
-
-    puts "Changes detected in the following directories: #{build_dirs.pretty_inspect}"
+    # Figure out what needs to be built - exclude devenv for syncs
+    build_dirs = get_build_dirs - ['misc/devenv']
 
     # Build and install them
     build_dirs.each do |build_dir|
@@ -118,17 +164,9 @@ class DevEnv < Thor
   desc "sync NAME", "Synchronize a local git repo with a remote DevEnv instance.  NAME should be ssh resolvable."
   method_option :tag, :type => :boolean, :desc => "NAME is an Amazon tag"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
+  method_option :verifier, :type => :boolean, :desc => "Maintain verifier functionality (private IP setup)"
   def sync(name)
-    # Warn on uncommitted changes
-    `git diff-index --quiet HEAD`
-
-    if $? != 0
-      # Perform a temporary commit to sync
-      @temp_commit = true
-      puts "Creating temporary commit to sync"
-      `git commit -a -m "Temporary commit to sync"`
-      puts "Done."
-    end      
+    temp_commit
 
     if options.tag?
       instance = Instance.find(connect, name)
@@ -138,28 +176,59 @@ class DevEnv < Thor
     end
 
     # Get the current branch
-    branch_str = `git status | head -n1`.chomp
-    branch_str =~ /.*branch (.*)/
-    branch = $1
+    branch = get_branch
 
     puts "Synchronizing local changes from branch #{branch}..."
     run("git push root@#{instance.dns}:/root/li #{branch}:master --tags --force", :verbose => options.verbose?)
     puts "Done"
 
-    if @temp_commit
-      puts "Undoing temporary commit..."
-      `git reset HEAD^`
-      puts "Done."
-    end
+    reset_temp_commit
 
     puts "Performing remote install...."
-    instance.ssh("rm -rf li-working; git clone li li-working; pushd li-working; build/devenv update; popd; rm -rf li-working", 600)
+    instance.ssh("yum update -y rhc-*; rm -rf li-working; git clone li li-working; pushd li-working; build/devenv update; popd; rm -rf li-working", 600)
+    puts "Done"
+
+    # If this is a verifier, you'll need to reset the private ip setup on each sync
+    if options.verifier?
+      set_private_ip(instance)
+      instance.ssh("/usr/bin/puppet /usr/libexec/mcollective/update_yaml.pp")
+    else
+      set_public_ip(instance)
+    end
+  end
+  
+  desc "sync_tests NAME", "Synchronize a local git repo's tests with a remote DevEnv instance.  NAME should be ssh resolvable."
+  method_option :tag, :type => :boolean, :desc => "NAME is an Amazon tag"
+  method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
+  def sync_tests(name)
+    temp_commit
+
+    if options.tag?
+      instance = Instance.find(connect, name)
+    else
+      instance = Instance.new(nil, nil)
+      instance.dns = name
+    end
+
+    # Get the current branch
+    branch = get_branch
+
+    puts "Archiving local changes from branch #{branch}..."
+    archive_tests
+    puts "Done"
+
+    reset_temp_commit
+
+    puts "Updating remote tests...."
+    update_remote_tests(instance)
     puts "Done"
   end
 
   desc "launch NAME", "Launches the latest DevEnv instance, tagging with NAME"
   method_option :verifier, :type => :boolean, :desc => "Add verifier functionality (private IP setup and local tests)"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
+  method_option :express_server, :type => :boolean, :desc => "Set as express server in express.conf and leave on public_ip"
+  method_option :ssh_config_verifier, :type => :boolean, :desc => "Set as verifier in .ssh/config"
   def launch(name)
     # Get the latest devenv image and create a new instance
     conn = connect
@@ -169,21 +238,12 @@ class DevEnv < Thor
     puts "Done"
 
     if options.verifier?
-      private_ip = instance.ssh("facter ipaddress")
-      if !private_ip or private_ip.strip.empty?
-        puts "EXITING - AMZ instance didn't return ipaddress fact"
-        exit 0
-      end
-      print "Updating the controller to use the AMZ private IP '#{private_ip}'..."
-      cmd1 = "sed -i \"s/public_ip.*/public_ip='#{private_ip}'/g\" /etc/libra/node_data.conf"
-      cmd2 = "/usr/bin/puppet /usr/libexec/mcollective/update_yaml.pp"
-      instance.ssh(cmd1 + ";" + cmd2)
-      puts "Done"
+      set_private_ip(instance)
+      instance.ssh("/usr/bin/puppet /usr/libexec/mcollective/update_yaml.pp")
 
       print "Updating tests to remote instance..."
-      `git archive --prefix li-test/ HEAD --output /tmp/li-test.tar`
-      instance.scp_to("/tmp/li-test.tar", "~/")
-      instance.ssh('rm -rf li-test; tar -xf li-test.tar; mkdir -p /tmp/rhc/junit')
+      archive_tests
+      update_remote_tests(instance)
       puts "Done"
     end
 
@@ -192,21 +252,43 @@ class DevEnv < Thor
       puts "ERROR - instance is not valid"
       exit 1
     end
+    
+    if options.ssh_config_verifier?
+      public_ip = instance.ssh("wget -qO- http://169.254.169.254/latest/meta-data/public-ipv4")
+      
+      line_num = `grep -n -c 'Host verifier' ~/.ssh/config`.chomp
+      puts "Updating ~/.ssh/config verifier entry with public ip = #{public_ip}"
+      (1..4).each do |i|
+        `sed -i '#{line_num.to_i + i}s,HostName.*,HostName #{public_ip},' ~/.ssh/config`
+      end
+    end
+    
+    if options.express_server?
+      public_ip = instance.ssh("wget -qO- http://169.254.169.254/latest/meta-data/public-ipv4")
+      puts "Updating ~/.openshift/express.conf libra_server entry with public ip = #{public_ip}"
+      `sed -i 's,^libra_server.*,libra_server=#{public_ip},' ~/.openshift/express.conf`
+      set_instance_ip(instance, public_ip)
+    end
+    
     puts "Done"
   end
 
   desc "test TAG", "Runs the tests on a tagged instance and downloads the results"
   method_option :terminate, :type => :boolean, :desc => "Terminate the instance when finished"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
+  method_option :unofficial, :type => :boolean, :desc => "For unofficial use.  Do not send emails, etc."
   def test(tag)
     conn = connect
     instance = Instance.find(conn, tag)
 
     begin
+      if options.unofficial?
+        set_private_ip(instance)
+      end
+    
       # Run verification tests
       print "Running verification tests..."
-      instance.ssh("cucumber --tags @verify --format junit -o /tmp/rhc/junit/ li-test/tests/", 3600)
-      p = $?
+      output, test_result = instance.ssh("cucumber -t @verify -f junit -o /tmp/rhc/junit/ li-test/tests/", 4800, true)
       puts "Done"
 
       print "Validating instance..."
@@ -234,23 +316,41 @@ class DevEnv < Thor
 
       puts "Done"
 
-      if p.exitstatus != 0
-        puts "ERROR - Non-zero exit code from verification tests (exit: #{p.exitstatus})"
-        exit p.exitstatus
+      if test_result != 0
+        puts "ERROR - Non-zero exit code from verification tests (exit: #{test_result})"
+        exit test_result
       end
 
-      # Mark the image as verified
-      Image.verify(conn, instance.amz_image_id)
-      amz_image_name = Image.get_name(conn, instance.amz_image_id)
+      if !options.unofficial?
+        # Mark the image as verified
+        Image.verify(conn, instance.amz_image_id)
+        amz_image_name = Image.get_name(conn, instance.amz_image_id)
+        
+        print "Sending QE ready email..."
+        send_verified_email(instance.amz_image_id, amz_image_name)
+      else
+        set_public_ip(instance)
+      end
       
-      print "Sending QE ready email..."
-      send_verified_email(instance.amz_image_id, amz_image_name)
       puts "Done"
 
     ensure
       instance.terminate if options.terminate?
     end
   end
+  
+  desc "install_local_client", "Builds and installs the local client rpm (Run with sudo)"
+  method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
+  def install_local_client
+    # Warn on uncommitted changes
+    temp_commit
+    
+    `rm -rf /tmp/tito/; pushd client; tito build --rpm --test; popd; rpm -Uvh /tmp/tito/noarch/rhc-*;rm -rf /tmp/tito/`
+
+    reset_temp_commit
+
+    puts "Done"
+  end  
 end
 
 DevEnv.start

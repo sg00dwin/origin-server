@@ -1,4 +1,4 @@
-policy_module(libra,1.0.12)
+policy_module(libra,1.0.13)
 
 ########################################
 #
@@ -84,6 +84,8 @@ dev_read_rand(libra_domain)
 dev_dontaudit_append_rand(libra_domain)
 fs_dontaudit_rw_anon_inodefs_files(libra_domain)
 fs_search_tmpfs(libra_domain)
+fs_getattr_xattr_fs(libra_domain)
+fs_list_inotifyfs(libra_domain)
 
 files_read_usr_files(libra_domain)
 
@@ -171,6 +173,8 @@ dontaudit libra_domain exec_type:file getattr;
 
 libra_search_lib(sshd_t)
 dontaudit sshd_t self:capability sys_admin;
+allow libra_domain sshd_t:process sigchld;
+allow sshd_t libra_domain:process { rlimitinh signal };
 
 dontaudit sendmail_t libra_initrc_t:fifo_file { read write };
 append_files_pattern(sendmail_t, libra_var_lib_t, libra_var_lib_t)
@@ -205,6 +209,7 @@ allow unconfined_t libra_t:fifo_file rw_inherited_fifo_file_perms;
 allow unconfined_t libra_t:process sigchld;
 dontaudit unconfined_t libra_t:socket_class_set { read write };
 corecmd_shell_entry_type(libra_domain)
+corecmd_bin_entry_type(libra_domain)
 allow libra_t user_devpts_t:chr_file { getattr read write append ioctl lock };
 
 

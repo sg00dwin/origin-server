@@ -1,0 +1,132 @@
+#!/usr/bin/env ruby
+
+$: << File.expand_path(File.dirname(__FILE__))
+
+require 'rubygems'
+require 'thor'
+require 'lib/openshift'
+
+include OpenShift::AWS
+
+class Release < Thor
+  include Thor::Actions
+  include OpenShift::Tito
+
+  desc "check", "Check the directories that need to be released"
+  def check
+    run("git pull", :verbose => options.verbose?)
+    puts "Changes detected in the following directories: #{get_build_dirs.pretty_inspect}"
+  end
+
+  desc "build", "Tag and build new RPMs for any changes"
+  method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
+  def build
+    # Update the repo
+    run("git pull", :verbose => options.verbose?)
+
+    get_build_dirs.each do |build_dir|
+      inside(File.expand_path("../#{build_dir}", File.dirname(__FILE__))) do
+        puts "Releasing #{build_dir}"
+
+        # Cleanup any tito data
+        unless run("rm -rf /tmp/tito/cvswork/rhc*", :verbose => options.verbose?)
+          puts "ERROR - tito temp cleanup failed"; exit 1
+        end
+
+        # Tag the package and push the tags
+        unless run("tito tag --accept-auto-changelog", :verbose => options.verbose?)
+          puts "ERROR - tito tagging failed"; exit 1
+          exit 1
+        end
+
+        unless run("git pull && git push && git push --tags", :verbose => options.verbose?)
+          puts "ERROR - tito tag push failed"; exit 1
+        end
+
+        # Build the RPM in brew
+        run('echo -e "y\nn" > /tmp/answerfile', :verbose => options.verbose?)
+        unless run("tito build --cvs-release < /tmp/answerfile", :verbose => options.verbose?)
+          puts "ERROR - tito cvs release failed"
+        end
+        puts "Done"
+      end
+    end
+  end
+
+  desc "sync", "Download a build from Brew (using Mash) and sync it to the OpenShift repos"
+  def sync
+    # Mash / RSync parameters
+    mash_config =  "libra-rhel-6.1-candidate"
+    repo_host = "209.132.178.9"
+    repo_dir = "/srv/web/gpxe/trees"
+    repo = "root@#{repo_host}:#{repo_dir}"
+    rsync = "rsync -avz -e ssh"
+
+    # Jenkins parameters
+    proxy = "squid.corp.redhat.com:8080"
+    jenkins = "https://ci.dev.openshift.redhat.com/jenkins"
+    token = "libra1"
+
+
+    # Check the mash installation
+    unless File.exists?("/etc/mash/#{mash_config}.mash")
+      puts "ERROR - Mash configuration missing.  Read misc/docs/BREW for setup steps"
+      exit 2
+    end
+
+    # Make sure we have write access to /var/cache/mash
+    begin
+      File.new("/var/cache/mash/.rhcignore", "w")
+      File.delete("/var/cache/mash/.rhcignore")
+    rescue Errno::EACCES
+      puts "ERROR - user doesn't have write access to /var/cache/mash - mash needs write access to this directory"
+      exit 2
+    end
+
+    # Run mash twice since it usually fails the first time
+    puts "Running mash sync"
+    mash_cmd = "/usr/bin/mash -o /tmp/#{mash_config} -c /etc/mash/li-mash.conf #{mash_config}"
+    run(mash_cmd, :verbose => options.verbose?)
+    unless run(mash_cmd, :verbose => options.verbose?)
+      puts "ERROR - mash sync failed"
+      exit 1
+    end
+
+    puts "Building client gem..."
+    inside(File.expand_path(File.dirname(File.expand_path(__FILE__)) + "/../client")) do
+      unless run('rake package', :verbose => options.verbose?)
+        puts "ERROR - client gem building failed"
+        exit 1
+      end
+    end
+    puts "Done"
+
+    puts "Syncing RPMs and gems to repo..."
+    unless run("#{rsync} /tmp/#{mash_config}/#{mash_config}/* #{repo}/rhel-6-libra-candidate/", :verbose => options.verbose?)
+      puts "ERROR - RPM sync failed.  Make sure you have root access on #{repo_host}"
+      exit 1
+    end
+
+    unless run("#{rsync} client/pkg/*.gem #{repo}/client/gems/", :verbose => options.verbose?)
+      puts "ERROR - Gem sync failed.  Make sure you have root access on #{repo_host}"
+      exit 1
+    end
+    puts "Done"
+
+    puts "Updating gem indexes..."
+    unless run("ssh root@#{repo_host} 'gem generate_index -d #{repo_dir}/client'", :verbose => options.verbose?)
+      puts "ERROR - Gem index update failed."
+      exit 1
+    end
+    puts "Done"
+
+    puts "Kicking off AMI build..."
+    unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/libra_ami/build?token=#{token}", :verbose => options.verbose?)
+      puts "ERROR - Jenkins remote job invocation failed."
+      exit 1
+    end
+    puts "Done"
+  end
+end
+
+Release.start

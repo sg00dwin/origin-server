@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.72.10
+Version:   0.72.14
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -62,6 +62,38 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Thu Jun 16 2011 Matt Hicks <mhicks@redhat.com> 0.72.14-1
+- Merge branch 'master' into streamline (mhicks@redhat.com)
+- Merge branch 'master' into streamline (mhicks@redhat.com)
+- Refactoring the streamline modules (mhicks@redhat.com)
+
+* Thu Jun 16 2011 Dan McPherson <dmcphers@redhat.com> 0.72.13-1
+- add error if invalid cart sent to server (dmcphers@redhat.com)
+- update gem deps for site (dmcphers@redhat.com)
+
+* Wed Jun 15 2011 Dan McPherson <dmcphers@redhat.com> 0.72.12-1
+- add cart_types param to cartlist call (dmcphers@redhat.com)
+- Don't render error (jimjag@redhat.com)
+
+* Tue Jun 14 2011 Matt Hicks <mhicks@redhat.com> 0.72.11-1
+- rename to make more sense... (jimjag@redhat.com)
+- parse from array (jimjag@redhat.com)
+- Pass string (jimjag@redhat.com)
+- Force list to be a string... xfer to array when conv (jimjag@redhat.com)
+- nil is an error... but no idea how we are getting it (at the worst, we should
+  get an empty list) (jimjag@redhat.com)
+- naming (jimjag@redhat.com)
+- revert... I am stumped. (jimjag@redhat.com)
+- force usage of dummy arg (jimjag@redhat.com)
+- simple name change (jimjag@redhat.com)
+- scoping (jimjag@redhat.com)
+- use class (jimjag@redhat.com)
+- force method (jimjag@redhat.com)
+- and allow req to be accepted (jimjag@redhat.com)
+- be consistent (jimjag@redhat.com)
+- Pass debug flag (jimjag@redhat.com)
+- pull into client tools cartinfo (jimjag@redhat.com)
+
 * Fri Jun 10 2011 Matt Hicks <mhicks@redhat.com> 0.72.10-1
 - Move along to more dynamic using :carts factor (jimjag@redhat.com)
 

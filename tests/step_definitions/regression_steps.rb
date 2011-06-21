@@ -31,13 +31,6 @@ Then /^the new namespace is enabled$/ do
   run("rm -f #{@tfile}")
 end
 
-
-#bug 700941
-Then /^there is no README file under misc or libs$/ do
-  File.exist?("#{@repo_path}/misc/README").should_not be_true
-  File.exist?("#{@repo_path}/libs/README").should_not be_true
-end
-
 #bug 699887
 Then /^the host name can be obtained using php script$/ do
   Dir.chdir(@repo_path)
@@ -67,14 +60,47 @@ Then /^the host name can be obtained using php script$/ do
 
 end
 
-#bug 695586
-When /^the manpage of express.conf exists$/ do
-    @man_express="/usr/share/man/man5/express.conf.5.gz"
-    File.exist?(@man_express).should be_true
+When /^check the number of the git files in libra dir$/ do
+  @sfile = "#{$temp}/sfile"
+  run("ls -d /var/lib/libra/*/git/*.git | wc -l > #{@sfile}")
+  @git_files = File.open(@sfile,"r").readline
+  @git_files = @git_files.to_i
+  puts "first number: "+@git_files
 end
 
-Then /^the manpage of express.conf should not be empty$/ do
-    arr = File.open(@man_express).readlines
-    arr.size.should_not == 0
+And /^check the number of git repos by mc-facts$/ do
+  run("mc-facts git_repos > #{@sfile}")
+  File.open(@sfile,"r").each_line do |line|
+    if line.include?"found"
+      @git_repos = line.split[0]
+    end
+  end
+  @git_repos = @git_repos.to_i
+  puts "second number: "+@git_repos
 end
 
+Then /^the first number is twice the second one$/ do
+  @git_repos_org = @git_repos
+  @git_files.should == @git_repos*2
+end
+
+And /^the second one adds 2$/ do
+  @git_repos.should == @git_repos_org+2
+end
+
+When /^create two domains with same namespace$/ do
+  namespaces = Array.new(1)
+  info = get_unique_username(namespaces)
+  namespace = info[:namespace]
+  login = info[:login]
+  exit_code = run("#{$create_domain_script} -n #{namespace} -l #{login} -p fakepw -d")
+  exit_code.should == 0
+  namespaces = Array.new(1)
+  info = get_unique_username(namespaces)
+  login = info[:login]
+  @exit_code = run("#{$create_domain_script} -n #{namespace} -l #{login} -p fakepw -d")
+end
+
+Then /^the second domain cannot be created$/ do
+  @exit_code.should_not == 0
+end

@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.72.19
+Version:   0.72.20
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -23,6 +23,7 @@ Requires:  rhc-cartridge-php-5.3
 Requires:  rhc-cartridge-wsgi-3.2
 Requires:  rhc-cartridge-rack-1.1
 Requires:  rhc-cartridge-jbossas-7.0
+Requires:  rhc-cartridge-perl-5.10
 Requires:  qpid-cpp-server
 Requires:  qpid-cpp-server-ssl
 Requires:  puppet
@@ -181,6 +182,9 @@ chkconfig libra-tc on
 %{_initddir}/libra-site
 
 %changelog
+* Tue Jun 14 2011 Matt Hicks <mhicks@redhat.com> 0.72.20-1
+- Adding perl to devenv (mmcgrath@redhat.com)
+
 * Fri Jun 10 2011 Matt Hicks <mhicks@redhat.com> 0.72.19-1
 - More jenkins job updates (mhicks@redhat.com)
 

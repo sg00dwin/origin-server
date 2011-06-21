@@ -1,0 +1,25 @@
+Feel free to change or remove this file, it is informational only.
+
+Repo layout
+===========
+wsgi/ - Externally exposed wsgi code goes
+libs/ - Additional libraries
+data/ - For not-externally exposed wsgi code
+setup.py - Standard setup.py, specify deps here
+
+
+Notes about layout
+==================
+Please leave wsgi, libs and data directories but feel free to create additional
+directories if needed.
+
+Note: Every time you push, everything in your remote repo dir gets recreated
+please store long term items (like an sqlite database) in ../data which will
+persist between pushes of your repo.
+
+setup.py
+========
+
+By adding dependencies to setup.py, OpenShift Express will automatically
+download any libraries it cannot find in repo in libs/ (listed above in Repo
+layout)

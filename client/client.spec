@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system client tools
 Name:          rhc
-Version:       0.72.13
+Version:       0.72.24
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       MIT
@@ -84,6 +84,74 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_sysconfdir}/openshift/express.conf
 
 %changelog
+* Tue Jun 21 2011 Dan McPherson <dmcphers@redhat.com> 0.72.24-1
+- fix typo (dmcphers@redhat.com)
+
+* Sat Jun 18 2011 Dan McPherson <dmcphers@redhat.com> 0.72.23-1
+- test case fix (dmcphers@redhat.com)
+
+* Fri Jun 17 2011 Dan McPherson <dmcphers@redhat.com> 0.72.22-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (jimjag@redhat.com)
+- wrong commit/revert (jimjag@redhat.com)
+
+* Fri Jun 17 2011 Dan McPherson <dmcphers@redhat.com> 0.72.21-1
+- userland info message update... (jimjag@redhat.com)
+- Allow the cartridge_post to handle invalid carts for us. (jimjag@redhat.com)
+
+* Thu Jun 16 2011 Dan McPherson <dmcphers@redhat.com> 0.72.20-1
+- add error if invalid cart sent to server (dmcphers@redhat.com)
+
+* Wed Jun 15 2011 Dan McPherson <dmcphers@redhat.com> 0.72.19-1
+- 
+
+* Wed Jun 15 2011 Dan McPherson <dmcphers@redhat.com> 0.72.18-1
+- 
+
+* Wed Jun 15 2011 Dan McPherson <dmcphers@redhat.com> 0.72.17-1
+- 
+
+* Wed Jun 15 2011 Dan McPherson <dmcphers@redhat.com> 0.72.16-1
+- 
+
+* Wed Jun 15 2011 Dan McPherson <dmcphers@redhat.com> 0.72.15-1
+- api doc updates (dmcphers@redhat.com)
+- api doc updates (dmcphers@redhat.com)
+- add cart_types param to cartlist call (dmcphers@redhat.com)
+- No need for roundtrip if they provided cartridge.. the server will let us
+  know if not accepted. (jimjag@redhat.com)
+- Inform user that we need to contact the RHCloud server Handle errors from
+  server in a somewhat more user-friendly way (jimjag@redhat.com)
+- simple prettyfication -> ((required)) --> (required) (jimjag@redhat.com)
+
+* Tue Jun 14 2011 Matt Hicks <mhicks@redhat.com> 0.72.14-1
+- rename to make more sense... (jimjag@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (jimjag@redhat.com)
+- remove pw from deconfigure on error call (dmcphers@redhat.com)
+- Use as symbols (jimjag@redhat.com)
+- minor fixes (dmcphers@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (jimjag@redhat.com)
+- method name (jimjag@redhat.com)
+- minor fixes (dmcphers@redhat.com)
+- parse from array (jimjag@redhat.com)
+- Pass string (jimjag@redhat.com)
+- No more convert (jimjag@redhat.com)
+- cart_list factor returns a string now, with cartridges sep by '|'
+  (jimjag@redhat.com)
+- Adjust for JSON (jimjag@redhat.com)
+- past one level (jimjag@redhat.com)
+- and not a key (jimjag@redhat.com)
+- pull in carts from result (jimjag@redhat.com)
+- force debug for now (jimjag@redhat.com)
+- use as boolean (jimjag@redhat.com)
+- simple name change (jimjag@redhat.com)
+- be consistent (jimjag@redhat.com)
+- Pass debug flag (jimjag@redhat.com)
+- Scoping issues (jimjag@redhat.com)
+- pull into client tools cartinfo (jimjag@redhat.com)
+
 * Fri Jun 10 2011 Matt Hicks <mhicks@redhat.com> 0.72.13-1
 - give better message when running rhc-create-domain with alter first
   (dmcphers@redhat.com)
