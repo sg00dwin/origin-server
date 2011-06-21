@@ -25,6 +25,7 @@
 # be queried by facter (and mcollective).  Examples include the number of git
 # repositories on the host, customer information, etc.
 
+require 'rubygems'
 require 'parseconfig'
 
 #
@@ -53,7 +54,7 @@ end
 #
 # Lists customers on the host as well as what what git repos they currently own
 #
-if File.exists?("/var/lib/libra")
+if File.exists?("/var/lib/libra") && File.directory?("/var/lib/libra")
     # Determine customers on host and hosted info
     Dir.entries('/var/lib/libra/').each do |customer|
     
@@ -73,3 +74,17 @@ if File.exists?("/var/lib/libra")
     end
 end
 
+#
+# List cartridges on the host
+#   Convert from name-m.n.p to name-m.n
+#   This is the *full* list. Public version is
+#   obtained via Libra::Util.get_cartridges_tbl
+#
+Facter.add(:cart_list) do
+    carts = []
+    Dir.glob('/usr/libexec/li/cartridges/*/').each do |cart|
+        cart = File.basename(cart).sub(/^(.*)-(\d+)\.(\d+)\.?.*$/, '\1-\2.\3')
+        carts << cart unless cart.nil?
+    end
+    setcode { carts.join('|') }
+end

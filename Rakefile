@@ -1,6 +1,0 @@
-require 'build/globals'
-require 'build/ami'
-require 'build/install'
-require 'build/rpm'
-require 'build/client'
-require 'build/test'

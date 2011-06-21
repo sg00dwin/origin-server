@@ -1,6 +1,0 @@
-[core]
-	repositoryformatversion = 0
-	filemode = true
-	bare = true
-[remote "origin"]
-	url = /home/dmcphers/code/li/node/cartridges/rack-1.1.0/info/data/git_template_new

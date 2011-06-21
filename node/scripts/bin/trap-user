@@ -1,0 +1,136 @@
+#!/usr/bin/python -tt
+
+import sys, os
+import syslog
+import pwd
+import syslog
+import glob
+
+commands = {
+    "git-receive-pack": "/usr/bin/git-receive-pack",
+    "git-upload-pack": "/usr/bin/git-upload-pack",
+    "snapshot": "/bin/tar",
+    "tail": "/usr/bin/tail",
+#    "rhcsh": "/usr/local/bin/trap/trap_bash"
+}
+
+#
+# Join the user's cgroup if available
+#
+def join_cgroup():
+    """
+    Determine a user's cgroup and join it if possible
+    """
+
+    username = pwd.getpwuid(os.getuid())[0]
+    pid = os.getpid()
+
+    cgroup_root = "/cgroup/all/libra"
+    cgroup_user = os.path.join(cgroup_root, username)
+    cgroup_tasks = os.path.join(cgroup_user, "tasks")
+
+    syslog.syslog("user %s: putting process %d in cgroup %s" % (username, pid, cgroup_root))
+
+    if not os.path.isdir(cgroup_root):
+        # raise an exception
+        return
+
+    if not os.path.isdir(cgroup_user):
+        # raise an exception
+        return
+
+    if not os.path.isfile(cgroup_tasks):
+        # raise an exception
+        return 
+
+    # try:
+    taskfile = open(cgroup_tasks, 'w')
+    taskfile.write(str(pid) + "\n")
+    taskfile.flush()
+    taskfile.close()
+    # except IOError, e:
+    #    write "can't join cgroup" message
+
+if __name__ == '__main__':
+    # first self-apply restrictions
+    join_cgroup()
+
+    orig_cmd = os.environ.get('SSH_ORIGINAL_COMMAND')
+    if not orig_cmd:
+        print "Need a command"
+        sys.exit(1)
+    allargs = orig_cmd.split()
+    try:
+        basecmd = os.path.basename(allargs[0])
+        cmd = commands[basecmd]
+    except:
+        syslog.syslog("Invalid command %s" % orig_cmd)
+        sys.stderr.write("Invalid command %s" % orig_cmd)
+        sys.exit(2)
+    if basecmd in ('snapshot'):
+        # This gets called with "snapshot $APP_NAME"
+        name = allargs[1]
+
+        if name.isalnum():
+            path = os.path.expanduser('~')
+            allargs = "-czf - -C %s/ --exclude=./%s/%s_ctl.sh --exclude=./%s/conf.d/libra.conf --exclude=./%s/run/httpd.pid ./%s/" % (path, name, name, name, name, name)
+            allargs = allargs.split()
+        else:
+            print "Failed sanitization"
+            sys.exit(35)
+    elif basecmd in ('rhcsh'):
+        os.environ["PS1"] = "rhcsh> "
+        allargs = ['-r', '-i']
+    elif basecmd in ('tail'):
+        files = []
+        for glob_list in allargs[1:]:
+            for f in glob.glob(glob_list):
+                try:
+                    if f.find('..') != -1 or f.startswith('/'):
+                        print "invalid character"
+                        sys.exit(91)
+                    elif os.path.islink(f):
+                        print "Links not supported"
+                        sys.exit(94)
+                    elif os.getuid() != os.stat(f).st_uid:
+                        print "Not your file"
+                        sys.exit(87)
+                    else:
+                        files.append(f)
+                except OSError, e:
+                    print "Error: %s" % e.strerror
+                    sys.exit(91)
+        if len(files) == 0:
+            print "Could not find any files matching glob"
+            sys.exit(32)
+        allargs = ['-f'] + files
+    elif basecmd in ('git-receive-pack', 'git-upload-pack'):
+        # git repositories need to be parsed specially
+        thearg = ' '.join(allargs[1:])
+        if thearg[0] == "'" and thearg[-1] == "'":
+            thearg = thearg.replace("'","")
+        thearg = thearg.replace("\\'", "")
+        thearg = thearg.replace("//", "/")
+
+        # replace leading tilde (~) with user's home path
+        realpath = os.path.expanduser(thearg)
+        if not realpath.startswith('/var/lib/libra/'):
+            syslog.syslog("Invalid repository: not in libra_root - %s: (%s)" % 
+                          (thearg, realpath))
+            print "Invalid repository %s: not in libra_root" % thearg
+            sys.exit(3)
+
+        if not os.path.isdir(realpath):
+            syslog.syslog("Invalid repository %s (%s)" % 
+                          (thearg, realpath))
+            print "Invalid repository %s: not a directory" % thearg
+            sys.exit(3)
+
+
+        allargs = [thearg]
+    runcon = '/usr/bin/runcon'
+    mcs = divmod(os.getuid(), 1023)
+    context = 'unconfined_u:system_r:libra_t:s0:c%i,c%i' % mcs
+    os.execv(runcon, [runcon, context, cmd] + allargs)
+    sys.exit(1)
+

@@ -1,8 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'rubygems'
-$:.unshift('/var/www/libra/lib')
-require 'libra'
+require 'openshift'
 
 include Libra
 
@@ -24,16 +23,16 @@ def update_all_app_server_identities
     if user
       puts "Updating apps for user: #{user.rhlogin}(#{user_count.to_s}) with uuid: #{user.uuid}"
       apps = user.apps
-      apps.each_key do |app_sym|
-        app_name = app_sym.to_s
+      apps.each do |app_name, app|
         puts "Searching for app on known servers: #{app_name}"
         found = false        
         servers.each do |server|
           begin            
-            if server.has_app?(user, app_name)
+            if server.has_app?(app, app_name)
               begin
                 puts "Updating app: #{app_name} to server identity: #{server.name}"
-                user.update_app_server_identity(app_name, server)
+                app['server_identity'] = server.name
+                user.update_app(app, app_name)
                 found = true
                 break
               rescue Exception => e                

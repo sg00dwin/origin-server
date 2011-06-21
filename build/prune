@@ -1,0 +1,44 @@
+#!/usr/bin/env ruby
+
+$: << File.expand_path(File.dirname(__FILE__))
+
+require 'rubygems'
+require 'thor'
+require 'lib/openshift'
+require 'pp'
+
+include OpenShift::AWS
+
+class Prune < Thor
+  desc "instances", "prune untagged and instances marked terminate"
+  def instances
+    conn = connect
+    terminate_flagged_instances(conn)
+    stop_untagged_instances(conn)
+  end
+
+  desc "amis", "prune old devenv AMIs"
+  def amis
+    # Get current AMIs
+    conn = connect
+    images = get_amis(conn)
+
+    # Sort the images by name
+    sorted_keys = images.keys.sort do |x,y|
+      x.split("_")[1].to_i <=> y.split("_")[1].to_i
+    end
+
+    # Keep the 10 most recent images
+    sorted_keys.pop(10)
+
+    puts "Removing AMI's #{sorted_keys.pretty_inspect}"
+
+    # Prune the rest
+    sorted_keys.each do |i|
+      puts "Removing AMI #{images[i]}"
+      conn.deregister_image(images[i])
+    end
+  end
+end
+
+Prune.start

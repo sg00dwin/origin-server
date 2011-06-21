@@ -24,18 +24,17 @@
 require 'rhc-common'
 
 def p_usage
-    rhlogin = get_var('default_rhlogin') ? "Default: #{get_var('default_rhlogin')}" : "(required)"
-    type_keys = RHC::get_cartridge_types(', ')
-# Commented out until we find a better way to hide stuff
-# -t|--type  type            Type of app to create (#{type_keys}) (required)
+    libra_server = get_var('libra_server')
+    rhlogin = get_var('default_rhlogin') ? "Default: #{get_var('default_rhlogin')}" : "required"
+    type_keys = RHC::get_cartridge_list(nil, ', ', libra_server, @http, false)
     puts <<USAGE
 
 Usage: #{$0}
-Create an Openshift Express app.
+Create an OpenShift Express app.
 
   -a|--app   application     Application name  (alphanumeric - max #{RHC::Maxdlen} chars) (required)
-  -t|--type  type            Type of app to create (php-5.3.2, wsgi-3.2.1, rack-1.1.0) (required)
-  -l|--rhlogin  rhlogin      RHCloud rhlogin (#{rhlogin})
+  -t|--type  type            Type of app to create (#{type_keys}) (required)
+  -l|--rhlogin  rhlogin      Red Hat login (RHN or OpenShift login with OpenShift Express access) (#{rhlogin})
   -p|--password  password    RHLogin password  (optional, will prompt)
   -r|--repo  path            Git Repo path (defaults to ./$app_name)
   -n|--nogit                 Only create remote space, don't pull it locally
@@ -67,7 +66,6 @@ rescue Exception => e
 end
 
 # Pull in configs from files
-libra_domain = get_var('libra_domain')
 libra_server = get_var('libra_server')
 debug = get_var('debug') == 'false' ? nil : get_var('debug')
 
@@ -92,8 +90,9 @@ if !RHC::check_app(opt['app'])
     p_usage
 end
 
-type = RHC::get_cartridge(opt['type'])
+type = RHC::get_cartridge_type(opt['type'])
 if !type
+    puts 'Type is required'
     p_usage
 end
 
@@ -104,16 +103,6 @@ end
 password = opt['password']
 if !password
   password = RHC::get_password
-end
-
-#
-# Get UUID from file
-#
-
-uuid = get_var(opt["rhlogin"])
-unless uuid
-    puts "Could not find UUID for '#{opt["rhlogin"]}' in express.conf.  Be sure you have successfully ran rhc-create-domain before running rhc-create-app."
-    exit 99
 end
 
 opt["repo"] = opt["app"] unless opt["repo"]
@@ -168,7 +157,7 @@ end
 # Create remote application space
 #
 
-puts "Creating remote application space: " + opt['app']
+puts "Attempting to create remote application space: " + opt['app']
 
 data = {:cartridge => opt['type'],
                 :action => 'configure',
@@ -182,7 +171,7 @@ json_data = JSON.generate(data)
 
 puts "Contacting https://#{libra_server}"
 
-url = URI.parse("https://#{libra_server}/app/broker/cartridge")
+url = URI.parse("https://#{libra_server}/broker/cartridge")
 response = RHC::http_post(@http, url, json_data, password)
 
 if response.code == '200'
@@ -201,11 +190,10 @@ at_exit do
                    {:cartridge => opt['type'],
                     :action => 'deconfigure',
                     :app_name => opt['app'],
-                    :rhlogin => opt['rhlogin'],
-                    :password => password
+                    :rhlogin => opt['rhlogin']
                     })
         puts "Cleaning up application"
-        url = URI.parse("https://#{libra_server}/app/broker/cartridge")
+        url = URI.parse("https://#{libra_server}/broker/cartridge")
         RHC::http_post(@http, url, json_data, password)
     end
 end
@@ -218,14 +206,14 @@ puts "Checking ~/.ssh/config"
 
 user_info = RHC::get_user_info(libra_server, opt['rhlogin'], password, @http, debug, false)
 
-my_url = "#{opt['app']}-#{user_info['user_info']['namespace']}.#{libra_domain}"
+fqdn = "#{opt['app']}-#{user_info['user_info']['namespace']}.#{user_info['user_info']['rhc_domain']}"
 
 found = false
 
 begin
     File.open(ssh_config, "r") do |sline|
         while(line = sline.gets)
-            if line.to_s.start_with? "Host *.#{libra_domain}"
+            if line.to_s.start_with? "Host *.#{user_info['user_info']['rhc_domain']}"
                 found = true
                 break
             end
@@ -242,15 +230,15 @@ rescue Errno::ENOENT
     puts "Could not find #{ssh_config}.  This is ok, continuing"
 end
 if found
-    puts "Found #{libra_domain} in ~/.ssh/config... No need to adjust"
+    puts "Found #{user_info['user_info']['rhc_domain']} in ~/.ssh/config... No need to adjust"
 else
-    puts "    Adding #{libra_domain} to ~/.ssh/config"
+    puts "    Adding #{user_info['user_info']['rhc_domain']} to ~/.ssh/config"
     begin
         f = File.open(ssh_config, "a")
         f.puts <<SSH
 
 # Added by rhc-create-app on #{`date`}
-Host *.#{libra_domain}
+Host *.#{user_info['user_info']['rhc_domain']}
     IdentityFile ~/.ssh/libra_id_rsa
     VerifyHostKeyDNS yes
     StrictHostKeyChecking no
@@ -290,10 +278,10 @@ sleep 15
 # Now start checking for DNS
 loop = 0
 sleep_time = 2
-while loop < RHC::Maxretries && !RHC::hostexist?(my_url)
+while loop < RHC::Maxretries && !RHC::hostexist?(fqdn)
     sleep sleep_time
     loop+=1
-    puts "  retry # #{loop} - Waiting for DNS: #{my_url}"
+    puts "  retry # #{loop} - Waiting for DNS: #{fqdn}"
     sleep_time = RHC::delay(sleep_time)
 end
 
@@ -308,7 +296,12 @@ attempt = 0
 # Pull new repo locally
 #
 
-git_url = "ssh://#{uuid}@#{opt['app']}-#{user_info['user_info']['namespace']}.#{libra_domain}/~/git/#{opt['app']}.git/"
+app_name = opt['app']
+namespace = user_info['user_info']['namespace']
+rhc_domain = user_info['user_info']['rhc_domain']
+app_uuid = user_info['app_info'][app_name]['uuid']
+
+git_url = "ssh://#{app_uuid}@#{app_name}-#{namespace}.#{rhc_domain}/~/git/#{app_name}.git/"
 
 unless opt['nogit']
     puts "Pulling new repo down"
@@ -355,11 +348,10 @@ while attempt < RHC::Maxretries
     page = 'health'
     if (type == :php)
       page = 'health_check.php'
-    end
-    if (type == :perl)
+    elsif (type == :perl)
       page = 'health_check.pl'
     end
-    url = URI.parse("http://#{my_url}/#{page}")
+    url = URI.parse("http://#{fqdn}/#{page}")
     begin
       response = @http.get_response(url)
     rescue Exception => e
@@ -370,14 +362,14 @@ while attempt < RHC::Maxretries
 
 Success!  Your application is now published here:
 
-      http://#{my_url}/
+      http://#{fqdn}/
 
 The remote repository is located here:
 
     #{git_url}
 
 To make changes to your application, commit to #{opt['repo']}/.
-Then run 'git push' to update your Openshift Express space
+Then run 'git push' to update your OpenShift Express space
 
 LOOKSGOOD
         exit 0

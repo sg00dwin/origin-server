@@ -1,9 +1,0 @@
-/etc/rc\.d/init\.d/libra		gen_context(system_u:object_r:libra_initrc_exec_t,s0)
-/etc/rc\.d/init\.d/mcollective		gen_context(system_u:object_r:libra_initrc_exec_t,s0)
-
-/var/lib/libra(/.*)?			gen_context(system_u:object_r:libra_var_lib_t,s0)
-#/var/lib/libra/.*			<<none>>
-/var/lib/libra/.*/\.ssh(/.*)?		gen_context(system_u:object_r:ssh_home_t,s0)
-/var/lib/libra/a?quota\.(user|group)	--	gen_context(system_u:object_r:quota_db_t,s0)
-
-/var/log/mcollective\.log		--	gen_context(system_u:object_r:libra_log_t,s0)

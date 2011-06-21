@@ -1,0 +1,40 @@
+# Sample localization file for English. Add more files in this directory for other locales.
+# See http://github.com/svenfuchs/rails-i18n/tree/master/rails%2Flocale for starting points.
+
+en:
+  unknown: 'A system error has occurred.  If the problem persists, please contact Red Hat support.'
+
+  streamline:
+    user_already_registered: 'A user with the same email is already registered'
+    contact_customer_service: 'Please contact customer service.  This login has attempted to register more than five times without verifying the associated email address.'
+    login_required: 'Login / email address is required'
+    login_error: 'The supplied login or password was invalid.'
+    login_disabled: 'This account has been disabled.  Please contact customer service.'
+    email_required: 'Email address is required'
+    email_invalid: 'The given email address is not a valid email format'
+    email_not_verified: 'The given email address is not a valid email format'
+    password_invalid: 'Password format invalid'
+    password_required: 'Password is required'
+    password_match_failure: 'Passwords must match'
+    terms_not_accepted: 'Terms must be accepted'
+    service_error: 'A system error has occurred.  If the problem persists, please contact Red Hat support.'
+    user_not_found: 'A system error has occurred.  If the problem persists, please contact Red Hat support.'
+    email_service_error: 'A system error has occurred.  If the problem persists, please contact Red Hat support.'
+    already_requested_access: 'You have already requested access to this service.  You should expect an email when access is granted.'
+    already_granted_access: 'You have already been granted access to this service.'
+    terms_error: 'An error occurred accepting terms.  If the problem persists, please contact Red Hat support.'
+
+  formtastic:
+    labels:
+      web_user:
+       email_address: "Email"
+       rhlogin: "Red Hat Login or Email Address"
+       password: "Password"
+       password_confirmation: "Retype Password"
+      term:
+       terms_accepted: "Accept Terms?"
+      access/flex_request:
+       ec2_account_number: "Account Number:"
+       terms_accepted: "Accept Terms?"
+      access/express_request:
+       terms_accepted: "Accept Terms?"

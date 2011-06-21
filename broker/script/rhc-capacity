@@ -1,0 +1,15 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'openshift'
+
+include Libra
+
+options = {}
+OptionParser.new do |opts|
+    opts.define_head "Adjust libra cluster capacity"
+    opts.banner = "Usage: li-capacity"
+end.parse!
+
+# Adjust the capacity of the libra cluster if needed
+Libra.adjust_capacity

@@ -1,0 +1,478 @@
+#!/bin/sh
+# ============================================================================
+#
+# Run a quick check of the required environment for an OpenShift Express node
+# ready for users and applications.
+#
+# ============================================================================
+
+LIBRA_CONF_DIR=${LIBRA_CONF_DIR:=/etc/libra}
+NODE_CONF_FILE=${NODE_CONF_FILE:=${LIBRA_CONF_DIR}/node.conf}
+RESOURCE_LIMITS_FILE=${RESOURCE_LIMITS_FILE:=${LIBRA_CONF_DIR}/resource_limits.conf}
+
+#
+# Control variables.  Override for testing
+#
+DEFAULT_SEBOOL_LIST="httpd_can_network_relay:on"
+DEFAULT_PACKAGES="rhc-common rhc-node rhc-selinux 
+                  rhc-cartridge-rack-1.1 
+                  rhc-cartridge-wsgi-3.2
+                  rhc-cartridge-php-5.3"
+DEFAULT_SERVICES="qpidd mcollective cgconfig cgred httpd"
+DEFAULT_MINSEM=512
+
+#
+# Set defaults, warn on override
+#
+if [ -z "$SEBOOL_LIST" ]
+then
+    SEBOOL_LIST="$DEFAULT_SEBOOL_LIST"
+else
+    echo WARNING: ENV overrides SEBOOL_LIST >&2
+fi
+
+if [ -z "$PACKAGES" ]
+then
+    PACKAGES="$DEFAULT_PACKAGES"
+else
+    echo WARNING: ENV overrides PACKAGES >&2
+fi
+
+if [ -z "$SERVICES" ]
+then
+    SERVICES="$DEFAULT_SERVICES"
+else
+    echo WARNING: ENV overrides SERVICES >&2
+fi
+
+if [ -z "$MINSEM" ]
+then
+    MINSEM="$DEFAULT_MINSEM"
+else
+    echo WARNING: ENV overrides MINSEM >&2
+fi
+
+function verbose() {
+    # MESSAGE=$*
+
+    if [ -n "$VERBOSE" ]
+    then
+	echo "INFO: $*"
+    fi
+}
+
+function load_node_conf() {
+    verbose loading node configuration file $NODE_CONF_FILE
+    if [ ! -f $NODE_CONF_FILE ]
+    then
+	echo "FAIL: No configuration file: $NODE_CONF_FILE" >&2
+	exit 1
+    fi
+
+    . $NODE_CONF_FILE
+
+    if [ -z "$libra_dir" ]
+    then
+	echo "FAIL: libra_dir is not set in the node configuration" >&1
+	STATUS=$(($STATUS + 1))
+    fi
+
+    if [ ! -d "$libra_dir" ]
+    then
+	echo "FAIL: libra_dir does not exist or is not a directory: $libra_dir" >&2
+	STATUS=$(($STATUS + 1))	
+    fi
+
+    verbose loading resource limit file $RESOURCE_LIMITS_FILE
+    if [ ! -f "$RESOURCE_LIMITS_FILE" ]
+    then
+	echo "FAIL: No resource limits file: $RESOURCE_LIMITS_FILE" >&2
+	STATUS=$(($STATUS + 1))	
+    fi
+
+    . $RESOURCE_LIMITS_FILE
+}
+
+
+# Check selinux enabled
+#
+function check_selinux() {
+    verbose checking selinux status
+    SELINUX=`getenforce`
+    if [ "$SELINUX"  != "Enforcing" ]
+    then
+	echo "FAIL: selinux is not enabled" >&2
+	STATUS=$(($STATUS + 1))
+    else
+
+    #
+    # check selinux libra policy is loaded
+    #
+	verbose checking selinux libra policy
+	POLICY=`semodule -l | grep libra`
+	if [ -z "$POLICY" ]
+	then
+	    echo "FAIL: selinux libra policy is not loaded" >&2
+	    STATUS=$(($STATUS + 1))
+        fi  
+    #
+    # Check selinux booleans
+    #
+	verbose checking selinux booleans
+	for SEBOOLSPEC in $SEBOOL_LIST
+	do
+	    NAME=`echo $SEBOOLSPEC | cut -d: -f1`
+	    VALUE=`echo $SEBOOLSPEC | cut -d: -f2`
+	    RESULT=`getsebool $NAME`
+	    if [ "$RESULT" != "$NAME --> $VALUE" ]
+            then
+		echo "FAIL: selinux boolean $NAME should be $VALUE" >&2
+		STATUS=$(($STATUS + 1))
+            fi
+	done
+    #
+    # Check standard file/directory labeling
+    #
+	RELABELS=`restorecon -n -v $libra_dir`
+        if [ "$RELABELS" != "" ]
+        then
+            echo "FAIL: invalid selinux labels in LIBRA_DIR $libra_dir" >&2
+            STATUS=$(($STATUS + 1))
+        fi
+    fi
+}
+
+#
+# Check packages
+#
+function check_packages() {
+    verbose checking package list
+    for PKGNAME in $PACKAGES
+    do
+	PKGSTATUS=`rpm -q $PKGNAME`
+	if echo $PKGSTATUS | grep "not installed" >/dev/null
+	then
+	    echo "FAIL: package $PKGNAME is not installed" >&2
+	    STATUS=$(($STATUS + 1))
+	fi 
+    done
+}
+
+#
+# Check services
+#
+function check_services() {
+    verbose checking services
+    for SVCNAME in $SERVICES
+    do
+	service $SVCNAME status > /dev/null 2>&1
+	if [ $? != 0 ]
+	then
+	    echo "FAIL: service $SVCNAME not running"
+	    STATUS=$(($STATUS + 1))
+	fi
+    done
+}
+
+#
+# Check kernel settings
+#
+# Kernel semaphores
+function check_semaphores() {
+    verbose "checking kernel semaphores >= $MINSEM"
+    SEMCOUNT=`sysctl kernel.sem | cut -f4`
+    if [ "$SEMCOUNT" -lt "$MINSEM" ]
+    then
+	echo "FAIL: kernel.sem semaphores too low: $SEMCOUNT < $MINSEM" >&2
+	STATUS=$(($STATUS + 1))
+    fi
+}
+
+
+#
+# Check cgroup config
+#
+function check_cgroup_config() {
+    verbose checking cgroups configuration
+    CGROUP_PASS="true"
+    LIBRALINES=`lscgroup cpu,cpuacct,memory,freezer,net_cls:/libra 2>/dev/null | wc -l`
+    if [ "$LIBRALINES" -lt 1 ]
+    then
+	echo "FAIL: lscgroup /libra path does not exist"
+	STATUS=$(($STATUS + 1))
+	CGROUP_PASS="false"
+    fi
+
+    verbose checking presense of /cgroup
+    if [ ! -d /cgroup ]
+    then
+	echo "FAIL: cgroup root /cgroup directory does not exist"
+	STATUS=$(($STATUS + 1))
+	CGROUP_PASS="false"
+    else
+	verbose checking presence of /cgroup/all
+	if [ ! -d /cgroup/all ]
+	then
+	    echo "FAIL: cgroup /cgroup/all directory does not exist"
+	    STATUS=$(($STATUS + 1))	
+	    CGROUP_PASS="false"
+	else
+	    verbose checking presence of /cgroup/all/libra
+	    if [ ! -d /cgroup/all/libra ]
+	    then
+		echo "FAIL: libra cgroup /cgroup/all/libra directory does not exist"
+		STATUS=$(($STATUS + 1))	
+		CGROUP_PASS="false"
+	    fi
+	fi
+    fi
+}
+
+#
+# Check tc config
+#
+function check_tc_config() {
+    verbose checking presence of tc qdisc 
+    TC_PASS="true"
+    QDISCRESPONSE="qdisc htb 1: root"
+    tc qdisc show dev eth0 | grep "$QDISCRESPONSE" >/dev/null
+    if [ $? -ne 0 ]
+    then
+	echo "FAIL: tc htb qdisc not configured"
+	STATUS=$(($STATUS + 1))
+	TC_PASS="false"
+    else
+	verbose checking for cgroup filter
+	FILTERRESPONSE="filter parent 1: protocol ip pref 10 cgroup handle 0x1"
+	FILTERCOUNT=`tc filter show dev eth0 | grep 'cgroup handle' | sort -u | wc -l`
+	if [ "$FILTERCOUNT" -lt 1 ]
+        then
+	    echo "FAIL: no cgroup filter configured"
+	    STATUS=$(($STATUS + 1))
+	    TC_PASS="false"
+	fi
+
+	verbose checking presence of tc classes
+	CLASSRESPONSE="class htb 1:1 root prio 0 rate 8000Mbit ceil 8000Mbit burst 0b cburst 0b"
+	CLASSCOUNT=`tc class show dev eth0 | grep 'class htb' | wc -l`
+	if [ "$CLASSCOUNT" -lt 1 ]
+	then
+	    echo "FAIL: no htb classes configured"
+	    STATUS=$(($STATUS + 1))
+	    TC_PASS="false"
+	fi
+    fi
+}
+
+#
+# Check quotas
+#
+
+# Determine where the file system containing the users is mounted
+function libra_device() {
+    # LIBRA_DIR=$1
+    df -k $1 | tail -1 | cut -d' ' -f1
+}
+
+function libra_mountpoint() {
+    # LIBRA_DIR=$1
+    df -k $1 | tail -1 | tr -s ' ' | cut -d ' ' -f 6
+}
+
+function check_quotas() {
+    verbose checking filesystem quotas
+    LIBRA_DEVICE=`libra_device $libra_dir`
+    LIBRA_MOUNTPOINT=`libra_mountpoint $libra_dir`
+    QUOTASTAT=`quotaon -u -p $LIBRA_MOUNTPOINT 2>&1`
+    if [ "$QUOTASTAT" != "user quota on $LIBRA_MOUNTPOINT ($LIBRA_DEVICE) is on" ]
+    then
+	echo "FAIL: quotas are not enabled on $LIBRA_MOUNTPOINT ($LIBRA_DEVICE)" >&2
+	STATUS=$(($STATUS + 1))
+	
+    fi
+
+    QUOTA_DB_FILE=$LIBRA_MOUNTPOINT/aquota.user
+    if [ -f $QUOTA_DB_FILE ]
+    then
+	verbose checking quota db file selinux label
+	QUOTA_DB_TYPE=`secon -f $QUOTA_DB_FILE | grep type:`
+	if echo $QUOTA_DB_TYPE | grep -v 'quota_db_t' >/dev/null
+	then
+	    echo "FAIL: quota db file: selinux type is incorrect: $QUOTA_DB_TYPE"
+	    STATUS=$(($STATUS + 1))
+	fi
+    else
+	echo "FAIL: quota db file $QUOTA_DB_FILE does not exist" >&2
+	STATUS=$(($STATUS + 1))
+    fi
+
+}
+
+function libra_users() {
+    grep ":libra guest:" /etc/passwd | cut -d: -f1
+}
+
+function homedir() {
+    # USERNAME=$1
+    `grep "^$1" /etc/passwd | cut -d: -f 6`
+}
+
+function uid() {
+    # USERNAME=$1
+    grep "^$1" /etc/passwd | cut -d: -f 3
+}
+
+function tc_classid() {
+    # USERNAME=$1
+    printf "1:%x\n" `uid $1`
+}
+
+function check_users() {
+# for each user check
+# 1) ulimits (PAM) settings file: /etc/security/limits.d/84-<username>.conf
+# 2) ulimits value: nproc
+# 3) cgroup presence
+# 4) tc presence
+# 5) quota presence
+    verbose checking `libra_users | wc -w` user accounts
+    for USERNAME in `libra_users`
+    do
+	check_user_limits $USERNAME
+	check_user_cgroup $USERNAME
+	check_user_tc $USERNAME
+	check_user_quota $USERNAME
+    done
+}
+
+LIMITS_CONF_DIR=${LIMITS_CONF_DIR:=/etc/security/limits.d}
+#LIMITS_MAP="nproc:u"
+
+function check_user_limits() {
+    # USERNAME=$1
+    LIMITS_CONF_FILE=$LIMITS_CONF_DIR/84-${1}.conf
+    if [ ! -f "$LIMITS_CONF_FILE" ]
+    then
+	echo "FAIL: user $1 does not have a PAM limits file" >&2
+	STATUS=$(($STATUS + 1))
+    fi
+
+    #LIMITS=`set | grep ^limits_`
+    #for LIMIT in $LIMITS
+    #do
+    #	NAME=`echo $LIMIT | cut -d= -f1 | sed -e 's/^limits_//'`
+    #   VALUE=`echo $LIMIT | cut -d= -f2`
+    #
+    #done
+}
+
+USER_CGROUP_ROOT=/cgroup/all/libra
+function check_user_cgroup() {
+    # USERNAME=$1
+
+    # Don't check if it already failed
+    if [ "$CGROUP_PASS" = "false" ]
+    then
+	return
+    fi
+    USER_CGROUP_DIR=$USER_CGROUP_ROOT/$1
+    if [ ! -d "$USER_CGROUP_DIR" ]
+    then
+	echo "FAIL: user $1 does not have a cgroup directory" >&2
+	STATUS=$(($STATUS + 1))
+    fi
+}
+
+function check_user_tc() {
+    # USERNAME=$1
+
+    # don't check if it already failed
+    if [ "$TC_PASS" = "false" ]
+    then
+	return
+    fi
+
+    TC_CLASSID=`tc_classid $1`
+    TC_CLASS_COUNT=`tc class show dev eth0 classid $TC_CLASSID 2>/dev/null | wc -l`
+    if [ "$TC_CLASS_COUNT" -ne 1 ]
+    then
+	echo "FAIL: user $1 must have 1 tc class entry: actual=$TC_CLASS_COUNT" >&2
+	STATUS=$(($STATUS + 1))	
+    fi
+}
+
+function check_user_quota() {
+    # USERNAME=$1
+    
+    # check the first line for the string "): none" at the EOL
+    if quota $1 | head -1 | grep '): none$' > /dev/null
+    then
+	echo "FAIL: user $1 does not have quotas imposed" >&2
+    fi
+}
+
+# ==========================================================================
+# Process CLI arguments
+# ==========================================================================
+
+function print_help() {
+    echo "usage: rhc-accept-node [-h] [-v]
+
+  -h) help (print this message)
+  -v) verbose - notify when each check begins
+"
+    exit 0
+}
+
+
+OPT_FORMAT="dhv"
+
+while getopts $OPT_FORMAT OPTION
+do
+    case $OPTION in
+        d) 
+	    set -x
+            ;;
+
+	h) 
+	    print_help
+	    ;;
+
+	v)
+	    VERBOSE="true"
+	    ;;
+
+        ?) print_help
+        ;;
+    esac
+done
+
+# =============================================================================
+#
+# MAIN
+#
+# =============================================================================
+
+# Initial status is PASS (0)
+# each fail adds one
+STATUS=0
+
+load_node_conf
+
+check_selinux
+check_packages
+check_services
+check_semaphores
+
+check_cgroup_config
+check_tc_config
+check_quotas
+
+check_users
+
+if [ "$STATUS" -eq 0 ]
+then
+    echo PASS
+else
+    echo $STATUS ERRORS
+fi
+exit $STATUS

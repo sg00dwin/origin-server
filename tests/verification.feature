@@ -6,7 +6,17 @@ Feature: Verification Tests
     And an accepted node
     And the following test data
       | processes | users | apps |    type   |
-      |     1     |   1   |  1   | php-5.3.2 |
+      |     1     |   1   |  1   | php-5.3 |
+    When the applications are created
+    Then they should all be accessible
+    And they should be able to be changed
+
+  Scenario: Perl modification tests
+    Given the libra client tools
+    And an accepted node
+    And the following test data
+      | processes | users | apps |    type   |
+      |     1     |   1   |  1   | perl-5.10 |
     When the applications are created
     Then they should all be accessible
     And they should be able to be changed
@@ -16,7 +26,7 @@ Feature: Verification Tests
     And an accepted node
     And the following test data
       | processes | users | apps |    type    |
-      |     1     |   1   |  1   | rack-1.1.0 |
+      |     1     |   1   |  1   | rack-1.1 |
     When the applications are created
     Then they should all be accessible
     And they should be able to be changed
@@ -26,7 +36,17 @@ Feature: Verification Tests
     And an accepted node
     And the following test data
       | processes | users | apps |    type    |
-      |     1     |   1   |  1   | wsgi-3.2.1 |
+      |     1     |   1   |  1   | wsgi-3.2 |
+    When the applications are created
+    Then they should all be accessible
+    And they should be able to be changed
+    
+  Scenario: JBossAS modification tests
+    Given the libra client tools
+    And an accepted node
+    And the following test data
+      | processes | users | apps |    type    |
+      |     1     |   1   |  1   | jbossas-7.0 |
     When the applications are created
     Then they should all be accessible
     And they should be able to be changed
@@ -38,7 +58,7 @@ Feature: Verification Tests
     And a 60 second http request timeout
     And the following test data
       | processes | users | apps |    type    |
-      |     10    |   10  |  1   | php-5.3.2  |
+      |     10    |   10  |  1   | php-5.3  |
     When the applications are created
     Then they should all be accessible
 

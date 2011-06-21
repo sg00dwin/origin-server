@@ -1,0 +1,9 @@
+#!/usr/bin/env ruby
+#
+# You can execute this script from within the 'site' directory using:
+#   script/rails runner script/sample
+#
+require 'pp'
+
+u = WebUser.new
+puts "Test Web User: #{u}"

@@ -45,15 +45,15 @@ created repo directory (specified by
 .BR master
 .SH OPTIONS
 .IP "-l|--rhlogin login"
-Red Hat login.
+Red Hat login (RHN or OpenShift login with OpenShift Express access)
 .IP "-p|--password password"
-RHLogin password.
+RHLogin password
 .IP "-a|--app application_name"
-Name of application to create
+Name of application to create.  Applications will be created as <application_name>-<namespace>.rhcloud.com (alphanumeric - max 16 chars)
 .IP "-r|--repo repo_path"
 Local repo to create (must be empty)
 .IP "-t|--type framework_type"
-Framework type to create.  Currently php-5.3.2, wsgi-3.2.1, and rack-1.1.0 are supported
+Framework type to create.  Currently php-5.3, wsgi-3.2, and rack-1.1 are supported.
 .IP -d|--debug
 Enable debugging / verbose output
 .IP -h|--help
@@ -88,13 +88,13 @@ for more information.
 .RE
 .I ~/.ssh/libra_id_rsa
 .RS
-SSH key created by rhc-create-domain to interact with Openshift Express services
+SSH key created by rhc-create-domain to interact with OpenShift Express services
 see
 .BR ssh-keygen (1)
 for more information
 .RE
 .SH BUGS
-Please contact the Red Hat Openshift team.
+Please contact the Red Hat OpenShift team.
 Forums: http://www.redhat.com/openshift/
 IRC: #openshift on irc.freenode.net
 .SH AUTHOR

@@ -1,6 +1,16 @@
 API Documentation
 =================
 
+To hit the officially running site use https://openshift.redhat.com/.  For
+a broker domain example:
+
+https://openshift.redhat.com/broker/domain
+
+Or for a full curl example:
+
+curl https://openshift.redhat.com/broker/userinfo -d "password=mypass" -d 'json_data={ "rhlogin":"your_rh_login"}'
+
+
 Create Domain
 =============
 
@@ -8,7 +18,7 @@ Before performing any other express operations, users need to bind their login
 with a domain.  To create a domain users need an ssh RSA key, available domain
 name and their RHN login.
 
-Submit via POST to: {openshift.express.server}/app/broker/domain
+Submit via POST to: {openshift.express.server}/broker/domain
     Encode json string as http variable 'json_data',
     Include your password as http variable 'password'.
 
@@ -21,13 +31,25 @@ JSON String:
     'debug': 'true - An optional flag to get debug information returned'
 }
 
-Returns:
+Return JSON String (exit_code non-zero is failure):
+{
+    "debug":"Debug Output",
+    "messages":"Other messages (outage notifications for example)",
+    "result":<result_json_ex_below>
+    "exit_code": 0
+}
+
+Result JSON String:
+{
+    'rhlogin': 'Red Hat Login',
+    'uuid': "User UUID"
+}
 
 
 Application Control
 ===================
 
-All application control is done via /app/broker/cartridge.  The below
+All application control is done via /broker/cartridge.  The below
 documentation demonstrates how to create, destroy, start, restart, reload and
 get basic status information about Express applications.
 
@@ -40,33 +62,95 @@ Action types include:
     restart: Restart a running application
     status: Get basic status information about an application
 
-Submit via POST to: {openshift.express.server}/app/broker/cartridge
+Submit via POST to: {openshift.express.server}/broker/cartridge
     Encode json string as http variable: 'json_data',
     Include your password as http variable 'password'
 
-JSON String:
+Submit JSON String:
 {
-    'cartridge': 'framework-type, ex: php-5.3.2',
+    'cartridge': 'framework-type, ex: php-5.3',
     'action': 'configure, start, stop, restart, reload, status, deconfigure',
-    'rhlogin': 'login'
+    'app_name': 'Application_name',
+    'rhlogin': 'login',
+    'debug': 'true - An optional flag to get debug information returned'
 }
 
-Returns:
+Return JSON String (exit_code non-zero is failure):
+{
+    "debug":"Debug Output",
+    "messages":"Other messages (outage notifications for example)",
+    "result":"Result messages"
+    "exit_code": 0
+}
 
 
 User and Application Info
 =========================
 
 A list of running applications as well as basic user information is available
-via /app/broker/userinfo.
+via /broker/userinfo.
 
-Submit via POST to: {openshift.express.server}/app/broker/userinfo
+Submit via POST to: {openshift.express.server}/broker/userinfo
     Encode json string as http variable 'json_data'
     Include your password as http variable 'password'
 
 JSON String:
 {
-    'rhlogin': 'rhlogin'
+    'rhlogin': 'rhlogin',
+    'debug': 'true - An optional flag to get debug information returned'
 }
 
-Returns:
+Return JSON String (exit_code non-zero is failure):
+{
+    "debug":"Debug Output",
+    "messages":"Other messages (outage notifications for example)",
+    "result":<result_json_ex_below>
+    "exit_code": 0
+}
+
+Result JSON:
+{
+    "app_info":{
+        "newapp":{
+            "framework":"<FRAMEWORK_TYPE>",
+            "creation_time":"<CREATION_TIME>",
+            "uuid":"<APPLICATION_UUID>"
+        }
+    },
+    "user_info":{
+        "rhlogin":"<RH_LOGIN>",
+        "uuid":"<USER_UUID>",
+        "ssh_key":"<PUB_SSH_KEY>",
+        "rhc_domain":"<RHC_DOMAIN>",
+        "namespace":"<DOMAIN_NAMESPACE>"
+    }
+}
+
+Cartridge List
+=========================
+
+A list of available cartridges is available
+via /broker/cartlist.
+
+Submit via POST to: {openshift.express.server}/broker/cartlist
+    Encode json string as http variable 'json_data'
+
+JSON String:
+{
+    'cart_types': 'standalone',
+    'debug': 'true - An optional flag to get debug information returned'
+}
+
+Return JSON String (exit_code non-zero is failure):
+{
+    "debug":"Debug Output",
+    "messages":"Other messages (outage notifications for example)",
+    "result":<result_json_ex_below>
+    "exit_code": 0
+}
+
+Result JSON:
+{
+    "carts":["php-5.3", "rack-1.1", "wsgi-3.2"]
+}
+

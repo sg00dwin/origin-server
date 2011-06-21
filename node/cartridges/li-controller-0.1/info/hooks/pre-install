@@ -33,7 +33,7 @@ else
 fi
 
 function print_help {
-    echo "Usage: $0 customername"
+    echo "Usage: $0 uuid"
     exit 1
 }
 
@@ -42,12 +42,11 @@ function quit {
     exit 5
 }
 
-customer_id=$1
+uuid=$1
 
-if ( [ -z "$customer_id" ])
+if ( [ -z "$uuid" ])
 then
     print_help
 fi
 
-groups "$customer_id" > /dev/null 2>&1 && quit "Customer $customer_id already exists"
-[ -d "$libra_dir/${customer}" ] || quit "Customer namespace already exists!"
+groups "$uuid" > /dev/null 2>&1 && quit "User $uuid already exists"

@@ -16,10 +16,6 @@ Search order (on a per variable basis):
 .B express.conf
 contains the following configuration params:
 
-.I libra_domain
-The predefined domain of the applications you will create i.e. 
-.B appname-namespace.<libra_domain>
-
 .I libra_server
 The server the rhc client tools communicate with i.e. 
 .B https://openshift.redhat.com
@@ -29,9 +25,6 @@ Boolean indicating whether debug should always be enabled for the rhc client too
 
 .I default_rhlogin
 The default rhc client tools rhlogin.  Used as the default when the -l argument is not passed to each of the client tools.
-
-.I <rhlogin>
-The uuid for a given rhlogin.  Created by rhc-create-domain and can be copied across clients.
 
 .SH FILES
 .I <ruby_gem_dir>/gems/rhc-<version>/conf/express.conf
@@ -55,13 +48,13 @@ for more information.
 .RE
 .I ~/.ssh/libra_id_rsa
 .RS
-SSH key created by rhc-create-domain to interact with Openshift Express services
+SSH key created by rhc-create-domain to interact with OpenShift Express services
 see
 .BR ssh-keygen (1)
 for more information
 .RE
 .SH BUGS
-Please contact the Red Hat Openshift team.
+Please contact the Red Hat OpenShift team.
 Forums: http://www.redhat.com/openshift/
 IRC: #openshift on irc.freenode.net
 .SH AUTHOR

@@ -1,0 +1,136 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'parseconfig'
+require 'getoptlong'
+require 'logger'
+require 'pp'
+require 'open4'
+
+# Synchronize output
+$stdout.sync = true
+$stderr.sync = true
+
+def complete(pid, status)
+  @logger.debug("Process #{pid} finished.")
+  @logger.debug("Process status = #{status.exitstatus}")
+
+  # Lookup the process data
+  data = @processes[pid]
+
+  if status.exitstatus == 0
+    puts "App created for #{data[:login]}"
+    @logger.debug(data[:stdout].read)
+  else
+    puts "App failed for #{data[:login]}"
+    @logger.error(data[:stdout].read)
+    @logger.error(data[:stderr].read)
+  end
+
+  # Clean out the process entry
+  @processes.delete(pid)
+end
+
+def wait_for_processes(blocking=true)
+  if blocking
+    @logger.debug("Blocking until next process finishes...")
+    pid, status = Process::waitpid2
+    complete(pid, status)
+  else
+    until @processes.empty?
+      @logger.debug("Non-blocking check for processes...")
+      pid, status = Process::waitpid2(-1, Process::WNOHANG)
+      break unless status
+      complete(pid, status)
+    end
+  end
+end
+
+def p_usage
+    puts <<USAGE
+
+Usage: batch_apps input_file
+Batch application creation given an input file or stdin
+
+  -c|--processes num_processes The number of parallel processes to run
+  -p|--proxy                   Use a proxy
+  -d|--debug                   Show debug info
+  -h|--help                    Show Usage info
+
+USAGE
+  exit 255
+end
+
+begin
+    opts = GetoptLong.new(
+        ["--processes", "-c", GetoptLong::REQUIRED_ARGUMENT],
+        ["--debug", "-d", GetoptLong::NO_ARGUMENT],
+        ["--proxy", "-p", GetoptLong::NO_ARGUMENT],
+        ["--help",  "-h", GetoptLong::NO_ARGUMENT]
+    )
+    opt = {}
+    opts.each do |o, a|
+        opt[o[2..-1]] = a.to_s
+    end
+rescue Exception => e
+  puts e.message
+  p_usage
+end
+
+if opt["help"]
+    p_usage
+end
+
+@num_users = opt['num'].to_i
+@num_processes = opt['processes'].to_i
+
+# Default if necessary
+if @num_processes == 0
+  @num_processes = 10
+end
+
+@debug = opt['debug']
+
+@options = ""
+@options << " -p" if opt['proxy']
+@options << " -d" if opt['debug']
+
+# Setup logger
+@logger = Logger.new(STDERR)
+@logger.level = @debug ? Logger::DEBUG : Logger::ERROR
+
+# Read the users
+@processes = {}
+ARGF.read.each do |login|
+  login.chomp!
+
+  # Parse out the namespace
+  login =~ /libra\-test\+(.*)@redhat.com/
+  namespace = $1
+  @logger.debug("Login = #{login}")
+  @logger.debug("Namespace = #{namespace}")
+
+  # If we are at the max processes, start waiting for results
+  if @processes.length == @num_processes
+    wait_for_processes
+  end
+
+  # Clean out any other processes that might have completed
+  wait_for_processes(false)
+
+  # Kick off a new process
+  cmd1 = "rhc-create-domain -n #{namespace} -l #{login} -p redhat"
+  cmd2 = "rhc-create-app -a test -t php-5.3 -l #{login} -p redhat -n"
+  pid, stdin, stdout, stderr = Open4::popen4(cmd1 + ";" + cmd2)
+
+  stdin.close
+  @processes[pid] = {:stdout => stdout, :stderr => stderr, :login => login}
+  @logger.debug("Starting process #{pid}")
+
+  sleep rand
+end
+
+# Wait for the rest of them
+until @processes.empty?
+  wait_for_processes
+end

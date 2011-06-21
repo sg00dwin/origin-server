@@ -24,14 +24,14 @@
 require 'rhc-common'
 
 def p_usage
-    rhlogin = get_var('default_rhlogin') ? "Default: #{get_var('default_rhlogin')}" : "(required)"
+    rhlogin = get_var('default_rhlogin') ? "Default: #{get_var('default_rhlogin')}" : "required"
     puts <<USAGE
 
 Usage: #{$0}
 Control an OpenShift express app
 
   -a|--app   application   Application name  (alphanumeric) (required)
-  -l|--rhlogin rhlogin     Red Hat login (#{rhlogin})
+  -l|--rhlogin rhlogin     Red Hat login (RHN or OpenShift login with OpenShift Express access) (#{rhlogin})
   -p|--password password   RHLogin password  (optional, will prompt)
   -c|--command command     (start|stop|restart|reload|status|destroy)
   -b|--bypass              Bypass warnings
@@ -62,7 +62,6 @@ rescue Exception => e
 end
 
 # Pull in configs from files
-libra_domain = get_var('libra_domain')
 libra_server = get_var('libra_server')
 debug = get_var('debug') == 'false' ? nil : get_var('debug')
 ssh_config = "#{ENV['HOME']}/.ssh/config"
@@ -123,7 +122,7 @@ if !opt["bypass"] and opt["command"] == "deconfigure"
 !!!! WARNING !!!! WARNING !!!! WARNING !!!!
 You are about to destroy the #{opt['app']} application.
 
-This is NOT reversable, all remote data for this application will be removed.
+This is NOT reversible, all remote data for this application will be removed.
 WARNING
 
     print "Do you want to destroy this application (y/n): "
@@ -147,7 +146,7 @@ json_data = JSON.generate(data)
 
 puts "Contacting https://#{libra_server}"
 
-url = URI.parse("https://#{libra_server}/app/broker/cartridge")
+url = URI.parse("https://#{libra_server}/broker/cartridge")
 response = RHC::http_post(@http, url, json_data, password)
 
 if response.code == '200'

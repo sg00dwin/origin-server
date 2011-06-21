@@ -70,8 +70,8 @@ li-express by running this command: brew list-pkgs --tag rhel-6-libra
 Mash
 ====
 In order to pull the files out of brew you'll need to yum install mash, then
-copy misc/li-mash.conf and misc/li.mash to /etc/mash/.  Then run:
+copy misc/li-mash.conf and misc/libra-rhel-* to /etc/mash/.  Then run:
 
-mash -o /tmp/li -c /etc/mash/li-mash.conf li
+mash -o /tmp/li -c /etc/mash/li-mash.conf libra-rhel-6.1-candidate
 
 Make sure you have write access to /var/cache/mash

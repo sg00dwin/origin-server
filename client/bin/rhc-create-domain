@@ -35,8 +35,8 @@ Bind a registered rhcloud user to a domain in rhcloud.
   NOTE: to change ssh key, please alter your ~/.ssh/libra_id_rsa and
         ~/.ssh/libra_id_rsa.pub key, then re-run with --alter
 
-  -n|--namespace   namespace   Opensift Express namespace (alphanumeric - max #{RHC::Maxdlen} chars) (required)
-  -l|--rhlogin     rhlogin     Red Hat login (required)
+  -n|--namespace   namespace   Namespace for your application(s) (alphanumeric - max #{RHC::Maxdlen} chars) (required)
+  -l|--rhlogin     rhlogin     Red Hat login (RHN or OpenShift login with OpenShift Express access) (required)
   -p|--password    password    RHLogin password (optional, will prompt)
   -a|--alter                   Alter namespace (will change urls) and/or ssh key
   -d|--debug                   Print Debug info
@@ -110,10 +110,6 @@ def add_rhlogin_config(rhlogin, uuid)
         f.puts("default_rhlogin=#{rhlogin}")
         f.puts("")
     end
-    unless @local_config.get_value(rhlogin)
-        puts "Adding rhlogin to #{@local_config_path}"
-        f.puts("#{rhlogin}=#{uuid}")
-    end
     f.close
 end
 
@@ -123,9 +119,9 @@ end
 #
 
 if File.readable?(libra_kfile)
-    puts "Openshift Express key found at #{libra_kfile}.  Reusing..."
+    puts "OpenShift Express key found at #{libra_kfile}.  Reusing..."
 else
-    puts "Generating Openshift Express ssh key to #{libra_kfile}"
+    puts "Generating OpenShift Express ssh key to #{libra_kfile}"
     # Use system for interaction
     system("ssh-keygen -t rsa -f '#{libra_kfile}'")
 end
@@ -138,6 +134,8 @@ data = {'namespace' => opt['namespace'],
                 'ssh' => ssh_key}
 if (opt['alter'])
   data['alter'] = "true"
+  not_found_message = "A user with rhlogin '#{opt['rhlogin']}' does not have a registered domain.  Be sure to run rhc-create-domain without -a|--alter first."
+  user_info = RHC::get_user_info(libra_server, opt['rhlogin'], password, @http, debug, true, not_found_message)
 end
 if debug
   data['debug'] = "true"
@@ -145,7 +143,7 @@ end
 RHC::print_post_data(data, debug)
 json_data = JSON.generate(data)
 
-url = URI.parse("https://#{libra_server}/app/broker/domain")
+url = URI.parse("https://#{libra_server}/broker/domain")
 response = RHC::http_post(@http, url, json_data, password)
 
 if response.code == '200'
@@ -164,8 +162,40 @@ in #{@local_config_path} which has been created and populated for you.
 
 EOF
         else
-            puts "Alteration successful.  You can use rhc-user-info to view any url changes."
-            puts
+            app_info = user_info['app_info']
+            dns_success = true
+            if !app_info.empty? && opt['namespace'] != user_info['user_info']['namespace']
+              #
+              # Confirm that the host(s) exist in DNS
+              #
+              puts "Now your new domain name(s) are being populated worldwide (this might take a minute)..."
+              # Allow DNS to propogate
+              sleep 15
+              app_info.each_key do |appname|
+                  fqdn = "#{appname}-#{opt['namespace']}.#{user_info['user_info']['rhc_domain']}"
+                  
+                  # Now start checking for DNS
+                  loop = 0
+                  sleep_time = 2
+                  while loop < RHC::Maxretries && !RHC::hostexist?(fqdn)
+                      sleep sleep_time
+                      loop+=1
+                      puts "  retry # #{loop} - Waiting for DNS: #{fqdn}"
+                      sleep_time = RHC::delay(sleep_time)
+                  end
+                  
+                  if loop >= RHC::Maxretries
+                      puts "Host could not be found: #{fqdn}"
+                      dns_success = false
+                  end
+              end
+            end
+            if dns_success
+              puts "Alteration successful.  You can use rhc-user-info to view any url changes."
+            else
+              puts "Alteration successful but at least one of the urls is still updating in DNS.  You can use rhc-user-info to view any url changes."
+            end
+            puts ""
         end
         exit 0
     rescue JSON::ParserError

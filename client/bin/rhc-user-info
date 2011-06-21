@@ -21,27 +21,19 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-require "rubygems"
-require "uri"
-require "net/http"
-require "net/https"
-require "getoptlong"
-require "json"
-require 'parseconfig'
-require 'fileutils'
 require 'rhc-common'
 
 #
 # print help
 #
 def p_usage
-    rhlogin = get_var('default_rhlogin') ? "Default: #{get_var('default_rhlogin')}" : "(required)"
+    rhlogin = get_var('default_rhlogin') ? "Default: #{get_var('default_rhlogin')}" : "required"
     puts <<USAGE
 
 Usage: #{$0}
 Display information about a user
 
-  -l|--rhlogin   rhlogin    RHCloud rhlogin (#{rhlogin})
+  -l|--rhlogin   rhlogin    Red Hat login (RHN or OpenShift login with OpenShift Express access) (#{rhlogin})
   -p|--password  password   RHLogin password (optional, will prompt)
   -a|--apps                 List applications for rhlogin
   -i|--info                 Show user info
@@ -50,18 +42,6 @@ Display information about a user
 
 USAGE
 exit 255
-end
-
-def validate_email(email)
-    if email =~ /([^@]+)@([a-zA-Z0-9\.])+\.([a-zA-Z]{2,3})/
-        if $1 =~ /[^a-zA-Z0-9\.]/
-            return false
-        else
-            return true
-        end
-    else
-        return false
-    end
 end
 
 begin
@@ -85,7 +65,6 @@ end
 # Pull in configs from files
 libra_server = get_var('libra_server')
 debug = get_var('debug') == 'false' ? nil : get_var('debug')
-libra_domain = get_var('libra_domain')
 
 libra_kfile = "#{ENV['HOME']}/.ssh/libra_id_rsa"
 libra_kpfile = "#{ENV['HOME']}/.ssh/libra_id_rsa.pub"
@@ -112,17 +91,6 @@ end
 opt['apps'] = true if not opt['info'] and not opt['apps']
 user_info = RHC::get_user_info(libra_server, opt['rhlogin'], password, @http, debug, true)
 
-if user_info['user_info']['uuid'] != get_var(opt["rhlogin"])
-    puts "!! WARNING !! WARNING !! WARNING !! WARNING !!"
-    puts
-    puts "The UUID in your #{@conf_name} file is either missing or incorrect."
-    puts "Please ensure the below line exists in #{@local_config_path}"
-    puts
-    puts "#{opt['rhlogin']}=#{user_info['user_info']['uuid']}"
-    puts
-    puts "!! WARNING !! WARNING !! WARNING !! WARNING !!"
-end
-
 if opt['info']
     puts "User Info"
     puts "========="
@@ -141,8 +109,9 @@ if opt['apps']
         puts key
         puts "  Framework: #{val['framework']}"
         puts "   Creation: #{val['creation_time']}"
-        puts "    Git URL: ssh://#{user_info['user_info']['uuid']}@#{key}-#{user_info['user_info']['namespace']}.#{libra_domain}/~/git/#{key}.git/"
-        puts " Public URL: http://#{key}-#{user_info['user_info']['namespace']}.#{libra_domain}/"
+        puts "   UUID: #{val['uuid']}"
+        puts "    Git URL: ssh://#{val['uuid']}@#{key}-#{user_info['user_info']['namespace']}.#{user_info['user_info']['rhc_domain']}/~/git/#{key}.git/"
+        puts " Public URL: http://#{key}-#{user_info['user_info']['namespace']}.#{user_info['user_info']['rhc_domain']}/"
         puts ""
     end
 

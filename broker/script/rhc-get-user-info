@@ -1,0 +1,50 @@
+#!/usr/bin/ruby
+
+require 'rubygems'
+require 'mcollective'
+require 'fileutils'
+require 'openshift'
+
+
+include MCollective::RPC
+include Libra
+
+options = rpcoptions do |parser, options|
+    parser.define_head "Get info about a user"
+    parser.banner = "Usage: rhc-get-user-info [options]"
+
+    parser.on('-l', '--rhlogin RHLOGIN', "The unique rhlogin") do |rhlogin|
+      options[:rhlogin] = rhlogin
+    end
+end
+
+# Set the MCollective options
+Libra.c[:rpc_opts] = options
+
+# Check if rhlogin already exists
+user = User.find(options[:rhlogin])
+unless user
+    puts "Could not find user with rhlogin #{options[:rhlogin]}"
+    exit 5
+end
+user_info = {
+    :rhlogin => user.rhlogin,
+    :uuid => user.uuid,
+    :namespace => user.namespace,
+    :ssh_key => user.ssh
+    }
+
+app_info = {}
+
+user.apps.each do |appname, app|
+    app_info[appname] = {
+        :framework => app['framework'],
+        :creation_time => app['creation_time']
+    }
+end
+
+json_result = JSON.generate(
+                {:user_info => user_info,
+                 :app_info => app_info})
+
+puts json_result

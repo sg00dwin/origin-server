@@ -1,0 +1,79 @@
+#!/usr/bin/ruby
+
+
+require 'rubygems'
+require 'openshift'
+require 'mcollective'
+require 'json'
+
+include MCollective::RPC
+include Libra
+
+options = rpcoptions do |parser, options|
+    parser.define_head "Create a new user"
+    parser.banner = "Usage: rhc-new-user [options]"
+
+    parser.on('-l', '--rhlogin RHLOGIN', "The Red Hat login") do |rhlogin|
+      options[:rhlogin] = rhlogin
+    end
+
+    parser.on('-n', '--namespace NAMESPACE', 'The unique namespace') do |namespace|
+      options[:namespace] = namespace
+    end
+
+    parser.on('-s', '--ssh SSH_KEY', 'The user public SSH key') do |ssh|
+      options[:ssh] = ssh
+    end
+
+    parser.on('-a', '--alter', 'Alter / Update user info') do
+      options[:alter] = true
+    end
+end
+
+unless options.include?(:namespace) or options[:namespace] =~ /^[a-zA-Z0-9]+$/ or options[:namespace].length > 16
+    puts "The namespace is invalid."
+    exit 254
+end
+
+unless options.include?(:rhlogin) or !(options[:rhlogin] =~ /["\$\^<>\|%\/;:,\\\*=~]/)
+    puts "The rhlogin is invalid."
+    exit 253
+end
+
+unless options.include?(:ssh) or options[:ssh] =~ (options[:ssh] == Base64.encode64(Base64.decode64(options[:ssh])).gsub(/\n/, ''))
+    puts "The ssh key is invalid."
+    exit 252
+end
+
+# Set the MCollective options
+Libra.c[:rpc_opts] = options
+
+# Check if user already exists
+user = User.find(options[:rhlogin])
+if user
+  if options[:alter]
+    if user.namespace != options[:namespace]
+      user.update_namespace(options[:namespace])
+    end
+    user.namespace=options[:namespace]
+    user.ssh=options[:ssh]
+    user.update
+    user.apps.each do |appname, app|
+      server = Libra::Server.new app['server_identity']
+      cfgstring = "-c #{app['uuid']} -e #{user.rhlogin} -s #{user.ssh} -a"
+      server.execute_direct('li-controller-0.1', 'configure', cfgstring)
+    end
+  else
+    puts "User already has a registered namespace.  To modify related properties, use --alter"
+    exit 254
+  end
+else  
+  user = User.create(options[:rhlogin], options[:ssh], options[:namespace])
+end
+
+json_return = JSON.generate({
+                        :rhlogin => user.rhlogin,
+                        :uuid => user.uuid
+                        })
+
+puts json_return

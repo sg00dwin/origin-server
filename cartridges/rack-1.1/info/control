@@ -1,0 +1,13 @@
+Name: rack-1.1
+Version: 1.1.x
+Architecture: i686/x86_64
+Provides: rack
+Depends:
+Conflicts:
+Type: Cartridge
+Role: misc
+Vendor: rack.rubyforge.org/
+DisplayName: RACK-1.1
+Bundles:  rack-1.1-bundle.tar.gz
+Description: 
+Rack provides a minimal interface between webservers supporting Ruby and Ruby frameworks.

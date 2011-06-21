@@ -1,0 +1,52 @@
+#!/usr/bin/env ruby
+require 'rubygems'
+require 'fileutils'
+require 'getoptlong'
+require 'parseconfig'
+
+def p_usage
+  puts <<USAGE
+
+Usage: #{$0}
+Clean debugging logs or archive them
+
+  -c|--clean                 Clean out all debugging log files
+  -a|--archive file          Archive all debug logs to the specified file (e.g. /tmp/debug-logs)
+  -h|--help                  Show Usage info
+
+USAGE
+  exit 255
+end
+
+opts = GetoptLong.new(
+    ["--clean",  "-c", GetoptLong::NO_ARGUMENT],
+    ["--archive",  "-a", GetoptLong::REQUIRED_ARGUMENT],
+    ["--help",  "-h", GetoptLong::NO_ARGUMENT]
+)
+
+opt = {}
+opts.each do |o, a|
+    opt[o[2..-1]] = a.to_s
+end
+
+if opt["help"] or (!opt["clean"] and !opt["archive"])
+    p_usage
+end
+
+if opt["clean"] and opt["archive"]
+    puts "ERROR - can't clean and archive logs"
+    exit 1
+end
+
+clean = opt["clean"]
+archive = opt["archive"]
+
+if clean
+    `echo > /tmp/mcollective-client.log`
+    `echo > /var/log/mcollective.log`
+    `echo > /var/www/libra/site/log/development.log`
+    `echo > /var/www/libra/broker/log/development.log`    
+    `echo > /tmp/rhc/cucumber.log`
+else
+    `tar -cf #{opt["archive"]}.tar.gz -z /tmp/mcollective-client.log /var/log/mcollective.log /var/www/libra/site/log/development.log /var/www/libra/broker/log/development.log /tmp/rhc/cucumber.log`
+end
