@@ -114,7 +114,7 @@ Result JSON:
         "newapp":{
             "framework":"<FRAMEWORK_TYPE>",
             "creation_time":"<CREATION_TIME>",
-            "uuid":"<APPLICATION_UUID"
+            "uuid":"<APPLICATION_UUID>"
         }
     },
     "user_info":{
