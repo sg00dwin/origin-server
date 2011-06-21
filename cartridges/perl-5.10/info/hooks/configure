@@ -91,9 +91,9 @@ function find_open_ip {
     uuid=$2
     for host_ip in `seq 1 127`
     do
-	a=`address $uid $host_ip`
-	new_ip=`dotted_quad $a`
-        if ! grep -qe '^Listen '$new_ip':8080$' $(find /var/lib/libra/$uuid/ -maxdepth 4 -mindepth 4 -name libra.conf) /etc/sysconfig/network
+        a=`address $uid $host_ip`
+        new_ip=`dotted_quad $a`
+        if ! grep -qe '^Listen '$new_ip':8080$' $(find /var/lib/libra/$uuid/ -maxdepth 3 -mindepth 3 -name libra.conf) /etc/sysconfig/network
         then
             echo $new_ip
             exit
