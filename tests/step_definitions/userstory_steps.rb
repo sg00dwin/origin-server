@@ -427,7 +427,7 @@ Given /^the libra controller configuration$/ do
   File.exists?(@c_file).should be_true
 end
 Then /^the number of apps per user is 1$/ do  
-  check_file_has_string("/etc/libra/controller.conf", "per_user_app_limit=1").should == true
+  check_file_has_string("/etc/libra/controller.conf", "per_user_app_limit=5").should == true
 end
 
 

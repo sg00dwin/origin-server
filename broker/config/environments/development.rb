@@ -50,6 +50,6 @@ Broker::Application.configure do
   config.secret = "hmac-md5:dhcpupdate:fzAvGcKPZWiFgmF8qmNUaA=="
 
   # Broker configuration
-  config.per_user_app_limit = 1
+  config.per_user_app_limit = 5
 end
 

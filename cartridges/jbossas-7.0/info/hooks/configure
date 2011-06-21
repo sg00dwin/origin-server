@@ -35,6 +35,7 @@ JBOSS_CARTRIDGE_ROOT=/usr/libexec/li/cartridges/${jboss_version}
 APP_HOME = ${libra_dir}/${uuid} # the root directory for application contents
 APP_DIR = $APP_HOME/$application # The location of the application jboss setup
 GIT_DIR = $APP_HOME/git/$application.git
+M2_DIR = $APP_HOME/.m2 # maven dir
 APP_JBOSS = $APP_DIR/${jboss_version} # the application jbossas root
 APP_JBOSS_BIN_DIR = $APP_DIR/${jboss_version}/bin
 APP_JBOSS_TMP_DIR = $APP_DIR/${jboss_version}/standalone/tmp # application jbossas tmp dir
@@ -100,6 +101,9 @@ APP_DIR=`echo $APP_HOME/$application | tr -s /`
 [ -d "$APP_DIR" ] && error "${application}.  Please destroy then recreate, or pick a new name" 132
 # The root of the application jbossas contents
 APP_JBOSS="$APP_DIR"/${jboss_version}
+# Maven dir
+M2_DIR=`echo $APP_HOME/.m2 | tr -s /`
+mkdir -p $M2_DIR
 
 # Redirect the configure script output for debugging
 APP_JBOSS_TMP_DIR="$APP_JBOSS"/standalone/tmp
@@ -197,6 +201,19 @@ __EOF__
     cat <<__EOF__ > $GIT_DIR/hooks/post-receive
 rm -rf $APP_DIR/repo/* $APP_DIR/repo/.[^.]*
 git archive --format=tar HEAD | (cd $APP_DIR/repo && tar --warning=no-timestamp -xf -)
+
+if [ -f '$APP_DIR/repo/pom.xml' ]
+then
+  echo "Found pom.xml attempting to build with 'mvn clean package -Dtest.skip=true'" 
+  export JAVA_HOME=/usr/lib/jvm/jre-1.6.0
+  export M2_HOME=/usr/libexec/li/cartridges/${jboss_version}/maven-2.2
+  export M2=\$M2_HOME/bin
+  export PATH=\$M2:\$PATH
+  pushd ~/${application}/repo > /dev/null
+  mvn --version
+  mvn clean package -Dtest.skip=true
+  popd
+fi
 
 # Start the app
 echo -n "Starting application..."
@@ -428,6 +445,7 @@ chown $user_id.$group_id -R $APP_DIR || error "Failed to chown new application s
 # Secure script and config dirs.
 chown root.root -R "$APP_DIR/${application}_ctl.sh"
 chown $user_id.$group_id -R "$APP_DIR/${jboss_version}/standalone"
+chown $user_id.$group_id $M2_DIR
 chcon -t libra_var_lib_t -l s0:$c_val -R "$APP_DIR"
 cd $APP_DIR
 runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l s0:$c_val $APP_DIR/${application}_ctl.sh start" || error "Failed to start ${application}" 121
