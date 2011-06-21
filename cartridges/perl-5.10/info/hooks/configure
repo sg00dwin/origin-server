@@ -158,7 +158,7 @@ export PERL5LIB="~/${application}/repo/libs:~/${application}/perl5lib"
 
 if [ -f ~/${application}/repo/deplist.txt ]
 then
-    for f in \$(cat ~/${application}/repo/deplist.txt)
+    for f in \$( (find ~/${application}/repo/ -type f | grep -e "\\.pm\$\\|.pl\$" | xargs /usr/lib/rpm/perl.req | awk '{ print \$1 }' | sed 's/^perl(\\(.*\\))\$/\1/'; cat ~/${application}/repo/deplist.txt ) | sort | uniq)
     do
         cpanm -L ~/${application}/perl5lib "\$f"
     done
