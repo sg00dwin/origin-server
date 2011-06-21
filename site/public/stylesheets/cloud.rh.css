@@ -180,6 +180,7 @@ form ul, form ol, form li {
     font-size: 20pt;
     text-decoration: none;
     text-transform: uppercase;
+    text-shadow: 1px 1px 1px #1c5d90;
     -moz-border-radius: 8px;
     -webkit-border-radius: 8px;
     border-radius: 8px;
@@ -225,14 +226,17 @@ form ul, form ol, form li {
   border-top: 1px solid #fe7272;
   font-family: OverpassBold; }
   #nav ul {
-    margin: 0px;
+    margin: 0;
+    padding: 0;
     display: block;
     float: left;
     overflow: hidden; }
   #nav li {
     float: left;
     list-style-type: none;
-    display: inline-block;
+    /*
+        display: inline-block;
+    */
     margin: 0;
     padding: 0;
     font-size: 10pt; }
@@ -246,32 +250,26 @@ form ul, form ol, form li {
       border-left: 1px solid #cc0000;
       border-right: 1px solid #990000; }
   #nav .category {
-    background: url("/app/images/nav_category.png") no-repeat right center;
+    background: url("/app/images/nav_category_shadow.png") no-repeat right center;
     display: inline;
     float: left;
     margin: 0;
     color: white;
-    padding: 7px 17px 7px 15px;
+    padding: 7px 24px 7px 10px;
     font-size: 10pt;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
     cursor: pointer; }
+    #nav .category.hover {
+      color: #bfdce8;
+      text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.4); }
     #nav .category.collapsed {
-      background-color: #900; }
+      background-color: #cc0000; }
     #nav .category.expanded {
       background-color: transparent; }
     #nav .category.last.collapsed {
       background-color: transparent; }
   #nav li.first a {
     border-left: none; }
-  #nav li.last a {
-    border-right: none; }
-  #nav li.partners {
-    float: right; }
-    #nav li.partners a {
-      border: none;
-      float: right;
-      color: #4e9fdd; }
-      #nav li.partners a:hover {
-        color: #bfdce8; }
 
 #pageheader {
   background: #555555;
@@ -595,9 +593,10 @@ form ul, form ol, form li {
       #app_promos .promo .description ul {
         list-style-type: none; }
       #app_promos .promo .description a {
-        font-size: 12pt;
+        font-size: 14pt;
         text-decoration: none;
-        text-transform: uppercase; }
+        text-transform: uppercase;
+        text-shadow: 1px 1px 1px black; }
       #app_promos .promo .description.express a {
         color: #6699cc; }
       #app_promos .promo .description.flex a {
@@ -1004,6 +1003,7 @@ li.captcha {
     font-size: 20pt;
     text-decoration: none;
     text-transform: uppercase;
+    text-shadow: 1px 1px 1px #3c6124;
     -moz-border-radius: 8px;
     -webkit-border-radius: 8px;
     border-radius: 8px;
