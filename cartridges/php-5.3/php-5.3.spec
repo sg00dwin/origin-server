@@ -2,7 +2,7 @@
 
 Summary:   Provides php-5.3 support
 Name:      rhc-cartridge-php-5.3
-Version:   0.72.16
+Version:   0.72.17
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -80,6 +80,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Tue Jun 21 2011 Dan McPherson <dmcphers@redhat.com> 0.72.17-1
+- Bug 714868 (dmcphers@redhat.com)
+
 * Mon Jun 20 2011 Dan McPherson <dmcphers@redhat.com> 0.72.16-1
 - 
 
