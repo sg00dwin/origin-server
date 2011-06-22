@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.72.17
+Version:   0.72.18
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -64,6 +64,9 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Wed Jun 22 2011 Dan McPherson <dmcphers@redhat.com> 0.72.18-1
+- 
+
 * Wed Jun 22 2011 Dan McPherson <dmcphers@redhat.com> 0.72.17-1
 - going back to aws 2.4.5 (dmcphers@redhat.com)
 - Added new conference banners (edirsh@redhat.com)
