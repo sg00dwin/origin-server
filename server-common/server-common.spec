@@ -2,7 +2,7 @@
 
 Summary:       Common dependencies of the OpenShift broker and site
 Name:          rhc-server-common
-Version:       0.72.12
+Version:       0.72.18
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -54,6 +54,26 @@ rm -rf %{buildroot}
                                   -s /sbin/nologin 2>&1 > /dev/null || :
 
 %changelog
+* Wed Jun 22 2011 Dan McPherson <dmcphers@redhat.com> 0.72.18-1
+- changing require back to right_http_connection (dmcphers@redhat.com)
+
+* Wed Jun 22 2011 Dan McPherson <dmcphers@redhat.com> 0.72.17-1
+- right_http_connection -> http_connection (dmcphers@redhat.com)
+
+* Sat Jun 18 2011 Dan McPherson <dmcphers@redhat.com> 0.72.16-1
+- nurture updates, namespace + action (dmcphers@redhat.com)
+
+* Fri Jun 17 2011 Dan McPherson <dmcphers@redhat.com> 0.72.15-1
+- get tests running again (dmcphers@redhat.com)
+
+* Thu Jun 16 2011 Matt Hicks <mhicks@redhat.com> 0.72.14-1
+- Merge branch 'master' into streamline (mhicks@redhat.com)
+- Gracefully handling Rails dep (mhicks@redhat.com)
+- Refactoring the streamline modules (mhicks@redhat.com)
+
+* Thu Jun 16 2011 Matt Hicks <mhicks@redhat.com> 0.72.13-1
+- add error if invalid cart sent to server (dmcphers@redhat.com)
+
 * Tue Jun 14 2011 Matt Hicks <mhicks@redhat.com> 0.72.12-1
 - rename to make more sense... (jimjag@redhat.com)
 - minor fixes (dmcphers@redhat.com)

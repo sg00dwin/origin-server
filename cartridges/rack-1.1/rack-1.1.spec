@@ -2,7 +2,7 @@
 
 Summary:   Provides ruby rack support running on Phusion Passenger
 Name:      rhc-cartridge-rack-1.1
-Version:   0.72.10
+Version:   0.72.18
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -10,8 +10,10 @@ URL:       http://openshift.redhat.com
 Source0:   %{name}-%{version}.tar.gz
 
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
+BuildRequires: git
 Requires:  rhc-node
 Requires:  mod_bw
+Requires:  sqlite-devel
 Requires:  rubygems
 Requires:  rubygem-rack >= 1.1.0
 #Requires:  rubygem-rack < 1.2.0
@@ -39,14 +41,25 @@ Provides rack support to OpenShift
 %setup -q
 
 %build
+rm -rf git_template
+cp -r template/ git_template/
+cd git_template
+git init
+git add *
+git commit -m 'Creating template'
+cd ..
+git clone --bare git_template git_template.git
+rm -rf git_template
+touch git_template.git/refs/heads/.gitignore
 
 %install
 rm -rf %{buildroot}
 mkdir -p %{buildroot}%{cartridgedir}
 mkdir -p %{buildroot}/%{_sysconfdir}/libra/cartridges
 ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/libra/cartridges/%{name}
-cp -r . %{buildroot}%{cartridgedir}
-rm %{buildroot}%{cartridgedir}/rack-1.1.spec
+cp -r info %{buildroot}%{cartridgedir}/
+mkdir -p %{buildroot}%{cartridgedir}/info/data/
+cp -r git_template.git %{buildroot}%{cartridgedir}/info/data/
 ln -s %{cartridgedir}/../abstract-httpd/info/hooks/add-module %{buildroot}%{cartridgedir}/info/hooks/add-module
 ln -s %{cartridgedir}/../abstract-httpd/info/hooks/info %{buildroot}%{cartridgedir}/info/hooks/info
 ln -s %{cartridgedir}/../abstract-httpd/info/hooks/post-install %{buildroot}%{cartridgedir}/info/hooks/post-install
@@ -73,6 +86,37 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Tue Jun 21 2011 Dan McPherson <dmcphers@redhat.com> 0.72.18-1
+- remove rails bundling until next iteration (dmcphers@redhat.com)
+
+* Tue Jun 21 2011 Dan McPherson <dmcphers@redhat.com> 0.72.17-1
+- Bug 714868 (dmcphers@redhat.com)
+
+* Mon Jun 20 2011 Dan McPherson <dmcphers@redhat.com> 0.72.16-1
+- 
+
+* Mon Jun 20 2011 Dan McPherson <dmcphers@redhat.com> 0.72.15-1
+- adding template files (dmcphers@redhat.com)
+- Temporary commit to build client (dmcphers@redhat.com)
+- supressing timestamp warnings (mmcgrath@redhat.com)
+
+* Thu Jun 16 2011 Dan McPherson <dmcphers@redhat.com> 0.72.14-1
+- add sqlitedevel to spec (dmcphers@redhat.com)
+
+* Thu Jun 16 2011 Dan McPherson <dmcphers@redhat.com> 0.72.13-1
+- better messaging for bundling process (dmcphers@redhat.com)
+
+* Thu Jun 16 2011 Dan McPherson <dmcphers@redhat.com> 0.72.12-1
+- allow .force_clean_build (dmcphers@redhat.com)
+
+* Wed Jun 15 2011 Dan McPherson <dmcphers@redhat.com> 0.72.11-1
+- server side bundling for rails 3 (dmcphers@redhat.com)
+- fix tmpdir (dmcphers@redhat.com)
+- add tmp dir to rack apps (dmcphers@redhat.com)
+- add stop/start to git push (dmcphers@redhat.com)
+- move context to libra service and configure Part 2 (dmcphers@redhat.com)
+- move context to libra service and configure (dmcphers@redhat.com)
+
 * Tue Jun 14 2011 Matt Hicks <mhicks@redhat.com> 0.72.10-1
 - Spec cleanup (mhicks@redhat.com)
 

@@ -156,7 +156,7 @@ class StreamlineTest < ActiveSupport::TestCase
   test "login valid" do
     @streamline.rhlogin = "test@example.com"
     @streamline.password = "password"
-    roles = ['authenticated']
+    roles = ['authenticated', 'cloud_access_1']
     json = {"username" => @streamline.rhlogin, "roles" => roles}
     @streamline.stubs(:http_post).yields(json)
     @streamline.login

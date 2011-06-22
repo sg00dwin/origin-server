@@ -82,7 +82,6 @@ function dotted_quad() {
     q1=$(($1 >> 8 & 0xff))
     q0=$(($1 & 0xff))
     echo "$q3.$q2.$q1.$q0"
-    # echo $(($(($1 >> 24)).$(($1 >> 16 & 0xff)).$(($1 >> 8 & 0xff)).$(($1 & 0xff))))
 }
 
 function find_open_ip {
@@ -90,9 +89,9 @@ function find_open_ip {
     uuid=$2
     for host_ip in `seq 1 127`
     do
-  a=`address $uid $host_ip`
-  new_ip=`dotted_quad $a`
-        if ! grep -qe '^Listen '$new_ip':8080$' $(find /var/lib/libra/$uuid/ -maxdepth 4 -mindepth 4 -name libra.conf) /etc/sysconfig/network
+        a=`address $uid $host_ip`
+        new_ip=`dotted_quad $a`
+        if ! grep -qe '^Listen '$new_ip':8080$' $(find /var/lib/libra/$uuid/ -maxdepth 3 -mindepth 3 -name libra.conf) /etc/sysconfig/network
         then
             echo $new_ip
             exit
@@ -142,43 +141,25 @@ function create_repo {
     popd
 
     echo "rack 1.1 application '$application'" > $GIT_DIR/description
+
     cat <<EOF > $GIT_DIR/hooks/pre-receive
 # Stop the app
+echo "Stopping application..."
 $APP_DIR/${application}_ctl.sh stop
 EOF
 
     cat <<EOF > $GIT_DIR/hooks/post-receive
-USING_BUNDLER=false
-if [ -d '$APP_DIR/tmp/.bundle' ]
-then
-  USING_BUNDLER=true
-  rm -rf '$APP_DIR/tmp/.bundle' '$APP_DIR/tmp/vendor'
-  mv '$APP_DIR/deploy/.bundle' '$APP_DIR/tmp/.bundle'
-  mv '$APP_DIR/deploy/vendor' '$APP_DIR/tmp/vendor'
-fi
-
-rm -rf $APP_DIR/deploy/*
-git archive --format=tar HEAD | (cd $APP_DIR/deploy && tar xf -)
-
-if \$USING_BUNDLER
-then
-  mv '$APP_DIR/tmp/.bundle' '$APP_DIR/deploy/.bundle'
-  mv '$APP_DIR/tmp/vendor' '$APP_DIR/deploy/vendor'
-fi
-
-if [ -f '$APP_DIR/deploy/Gemfile.lock' ]
-then
-  # Update/install necessary rubygems
-  pushd $APP_DIR/deploy > /dev/null
-  bundle install --deployment
-  popd > /dev/null
-fi
+echo 'Cleaning out deploy/*'
+rm -rf $APP_DIR/deploy/* $APP_DIR/deploy/.[^.]*
+echo 'Deploying application from git repo to deploy/'
+git archive --format=tar HEAD | (cd $APP_DIR/deploy && tar --warning=no-timestamp -xf -)
 
 # Start the app
+echo "Starting application..."
 $APP_DIR/${application}_ctl.sh start
 EOF
 
-    chmod 0755 $APP_HOME/git/$application.git/hooks/post-receive $APP_HOME/git/$application.git/hooks/pre-receive
+    chmod 0755 $GIT_DIR/hooks/post-receive $GIT_DIR/hooks/pre-receive
     chown $user_id.$group_id -R $GIT_DIR
     # Secure the hooks dir
     chown root.root -R $GIT_DIR/hooks
@@ -239,7 +220,7 @@ APP_DIR_TEMP_SHORT=$(echo $(mktemp -d -p /s))
 #"/s/$(echo \"${uuid}_${application}\" | md5sum | cut -d ' ' -f1)"
 ln -s $APP_DIR/rack/tmp $APP_DIR_TEMP_SHORT
 pushd "$APP_DIR" > /dev/null
-mkdir conf conf.d logs run deploy deploy/public deploy/tmp data
+mkdir conf conf.d logs run deploy deploy/public deploy/tmp data tmp
 ln -s /usr/lib64/httpd/modules modules
 ln -s /etc/httpd/conf/magic conf/magic
 
@@ -248,7 +229,7 @@ popd > /dev/null
 #
 # Populate deploy dir
 #
-GIT_DIR="$GIT_DIR" git archive --format=tar HEAD | (cd "${APP_DIR}/deploy" && tar xf -)
+GIT_DIR="$GIT_DIR" git archive --format=tar HEAD | (cd "${APP_DIR}/deploy" && tar --warning=no-timestamp -xf -)
 
 #
 # Find an open localhost IP
@@ -305,7 +286,7 @@ then
     exit 1
 fi
 
-if whoami | grep -q root || ! runcon | grep 'system_r:libra_t:s0:$c_val'
+if whoami | grep -q root || ! runcon | grep 'system_r:libra_t:s0:$c_val' > /dev/null
 then
 runcon
     echo 1>&2
@@ -315,7 +296,7 @@ runcon
     exit 15
 fi
 
-export TMPDIR=$APP_DIR/rack/rack/tmp
+export TMPDIR=$APP_DIR/rack/tmp
 
 case "\$1" in
     start)

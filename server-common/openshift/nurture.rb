@@ -27,14 +27,15 @@ module Libra
     #
     # Send account data (actual username)
     #
-    def self.libra_contact(rhlogin, uuid, user_namespace)
+    def self.libra_contact(rhlogin, uuid, user_namespace, action)
         return unless (Libra.c[:nurture_enabled].to_s.downcase == 'true')
         Libra.logger_debug "Sending to Nurture:libra_contact"
         `curl -s -O /dev/null -X POST -u '#{Libra.c[:nurture_username]}:#{Libra.c[:nurture_password]}' '#{Libra.c[:nurture_url]}/libra_contact' \
      --data-urlencode "user_type=express" \
      --data-urlencode "user[uuid]=#{uuid}" \
+     --data-urlencode "user[action]=#{action}" \
      --data-urlencode "user[user_name]=#{rhlogin}" \
-     --data-urlencode "user[comments]=#{user_namespace}" &`
+     --data-urlencode "user[namespace]=#{user_namespace}" &`
     end
   end
 end

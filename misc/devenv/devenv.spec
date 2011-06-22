@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.72.20
+Version:   0.72.21
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -103,6 +103,11 @@ ln -s %{sitedir}/public/* %{htmldir}
 ln -s /usr/lib64/httpd/modules/ %{sitedir}/httpd/modules
 ln -s /usr/lib64/httpd/modules/ %{brokerdir}/httpd/modules
 
+# Ensure /tmp and /var/tmp aren't world usable
+
+chmod o-rwX /tmp /var/tmp
+setfacl -m u:libra_passenger:rwx /tmp
+
 # Jenkins specific setup
 usermod -G libra_user jenkins
 chown -R jenkins:jenkins /var/lib/jenkins
@@ -182,6 +187,10 @@ chkconfig libra-tc on
 %{_initddir}/libra-site
 
 %changelog
+* Tue Jun 21 2011 Dan McPherson <dmcphers@redhat.com> 0.72.21-1
+- adding setfacl (mmcgrath@redhat.com)
+- chmoding (mmcgrath@redhat.com)
+
 * Tue Jun 14 2011 Matt Hicks <mhicks@redhat.com> 0.72.20-1
 - Adding perl to devenv (mmcgrath@redhat.com)
 

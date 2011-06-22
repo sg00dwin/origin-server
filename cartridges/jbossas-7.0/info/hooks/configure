@@ -74,7 +74,7 @@ uuid=$3
 
 APP_HOME="$libra_dir/$uuid/"
 # The location of the application jboss setup
-APP_DIR="$APP_HOME/$application"
+APP_DIR=`echo $APP_HOME/$application | tr -s /`
 [ -d "$APP_DIR" ] && error "${application}.  Please destroy then recreate, or pick a new name" 132
 
 # Redirect the configure script output for debugging
@@ -88,14 +88,31 @@ function error {
     exit "$2"
 }
 
+# create an IP address as an 32 bit unsigned integer
+function address() {
+    # uid=$1
+    # final=$2
+    printf "0x%08x\n" "$((0x7f000000 + $(($1<<7)) + $2))"
+}
+
+# convert an integer IP address to dotted quad format
+function dotted_quad() {
+    # ADDR=$1
+    q3=$(($1 >> 24))
+    q2=$(($1 >> 16 & 0xff))
+    q1=$(($1 >> 8 & 0xff))
+    q0=$(($1 & 0xff))
+    echo "$q3.$q2.$q1.$q0"
+}
+
 function find_open_ip {
     uid=$1
     uuid=$2
     for host_ip in `seq 1 127`
     do
-        a=$(($uid*128+2130706432 + $host_ip))
-        new_ip=$(($a>>24 )).$(($(($a%16777216))<<8>>24)).$(($(($a%65536))<<16>>24)).$(($(($a%256))<<24>>24))
-        if ! grep -qe '^Listen '$new_ip':8080$' $(find /var/lib/libra/$uuid/ -maxdepth 4 -mindepth 4 -name libra.conf) /etc/sysconfig/network
+        a=`address $uid $host_ip`
+        new_ip=`dotted_quad $a`
+        if ! grep -qe '^Listen '$new_ip':8080$' $(find /var/lib/libra/$uuid/ -maxdepth 3 -mindepth 3 -name libra.conf) /etc/sysconfig/network
         then
             echo $new_ip
             exit
@@ -144,14 +161,27 @@ function create_repo {
     git repack
     popd
 
-    echo "jbossas 7.x application '$application'" > $GIT_DIR/description
-    cat <<__EOF__ > $APP_HOME/git/$application.git/hooks/post-receive
-rm -rf $APP_DIR/repo/*
-git archive --format=tar HEAD | (cd $APP_DIR/repo && tar xf -)
-# Reload httpd here maybe?
+    echo "jbossas 7.0 application '$application'" > $GIT_DIR/description
+    
+    cat <<__EOF__ > $GIT_DIR/hooks/pre-receive
+# Stop the app
+echo "Stopping application..."
+$APP_DIR/${application}_ctl.sh stop
 __EOF__
 
-    chmod 0755 $APP_HOME/git/$application.git/hooks/post-receive
+    cat <<__EOF__ > $GIT_DIR/hooks/post-receive
+rm -rf $APP_DIR/repo/* $APP_DIR/repo/.[^.]*
+git archive --format=tar HEAD | (cd $APP_DIR/repo && tar --warning=no-timestamp -xf -)
+
+# Start the app
+echo -n "Starting application..."
+exec 1>&- # close stdout
+$APP_DIR/${application}_ctl.sh start
+exec 1>&2 # redirect stdout to stderr
+echo done
+__EOF__
+
+    chmod 0755 $GIT_DIR/hooks/post-receive $GIT_DIR/hooks/pre-receive
     chown $user_id.$group_id -R $GIT_DIR
     # Secure the hooks dir
     chown root.root -R $GIT_DIR/hooks
@@ -244,13 +274,16 @@ EOF
 #
 # Populate repo dir
 #
-GIT_DIR="$GIT_DIR" git archive --format=tar HEAD | (cd "${APP_DIR}/repo" && tar xf -)
+GIT_DIR="$GIT_DIR" git archive --format=tar HEAD | (cd "${APP_DIR}/repo" && tar --warning=no-timestamp -xf -)
 
-# Create a link from the standalone/deployments directory to the repo/deployments content
+# Create a link from the repo/deployments directory to the standalone/deployments content
 ln -s "$APP_DIR"/repo/deployments "$APP_DIR"/${jboss_version}/standalone
 ls -l "$APP_DIR"/${jboss_version}/standalone/deployments
 # Copy the samples into the ROOT.war
 cp -pr /usr/libexec/li/cartridges/${jboss_version}/info/data/samples "$APP_DIR"/${jboss_version}/standalone/deployments/ROOT.war
+
+# Create a link from the standalone/log directory to ${APP_DIR}/logs for rhc-tail-files
+ln -s "$APP_DIR"/${jboss_version}/standalone/log "$APP_DIR"/logs
 
 #
 # Create simple application start / stop script
@@ -270,7 +303,7 @@ then
     exit 1
 fi
 
-if whoami | grep -q root || ! runcon | grep 'system_r:libra_t:s0:$c_val'
+if whoami | grep -q root || ! runcon | grep 'system_r:libra_t:s0:$c_val' > /dev/null
 then
     echo 1>&2
     echo "Please run script in the correct context, try:" 1>&2
@@ -337,7 +370,6 @@ chown root.root -R "$APP_DIR/${application}_ctl.sh"
 chown $user_id.$group_id -R "$APP_DIR/${jboss_version}/standalone"
 chcon -t libra_var_lib_t -l s0:$c_val -R "$APP_DIR"
 cd $APP_DIR
-# Check if the incoming context is correct. Useful for running script directly for testing.
 runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l s0:$c_val $APP_DIR/${application}_ctl.sh start" || error "Failed to start ${application}" 121
 
 #

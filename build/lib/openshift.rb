@@ -1,7 +1,6 @@
 require 'lib/openshift/constants'
 require 'lib/openshift/amz'
-
-puts "loaded parent"
+require 'lib/openshift/tito'
 
 def exit_msg(msg)
   puts msg

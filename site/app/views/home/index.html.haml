@@ -11,14 +11,22 @@
 
       /Promo banners
       %li.slide
-        = link_to 'http://gluecon.com/2011/', :target => '_blank' do
-          = image_tag "/app/images/promo_banner_gluecon.png",
-            :alt => 'Drop by the OpenShift booth at GlueCon 2011'
+        = link_to 'http://makara.nurturehq.com/makara/newsletter_signup.html', :target => '_blank' do
+          = image_tag "/app/images/promo_banner_newsletter.png",
+            :alt => 'Sign up for the official OpenShift newsletter!'
       
       %li.slide
-        = link_to 'http://www.10gen.com/events', :target => '_blank' do
-          = image_tag "/app/images/promo_banner_mongodb.png",
-            :alt => 'Cruise on by the OpenShift booth at MongoSF and MongoNYC 2011'
+        = link_to 'http://twitter.com/#!/openshift', :target => '_blank' do
+          = image_tag "/app/images/promo_banner_twitter.png",
+            :alt => 'Don\'t get left behind, follow us on twitter @openshift'
+      
+      %li.slide
+        = link_to 'http://www.oscon.com/oscon2011/public/content/java', :target => '_blank' do
+          = image_tag "/app/images/promo_banner_oscon.png", :alt => 'Choose your framework. Choose your cloud. We\'re at OSCON Java - July 25-29'
+      
+      %li.slide
+        = link_to 'http://www.couchbase.com/couchconf', :target => '_blank' do
+          = image_tag "/app/images/promo_banner_couchconf.png", :alt => 'Our Paas is taking a seat at CouchConf. San Fransisco, July 29'
 
     /Slide show navigation
     %ul.navigation
@@ -26,6 +34,10 @@
         %a.page(href='#') 1
       %li
         %a.page(href='#') 2
+      %li
+        %a.page(href='#') 3
+      %li
+        %a.page(href='#') 4
 
   .clear
 
@@ -33,21 +45,23 @@
   /High-level information
   #info.container_24
 
-    /For Developers
-    #for_developers.grid_11.prefix_1
-      %h3 OpenShift is for Developers
+    /Deploy in Minutes
+    #deploy_in_minutes.grid_7.prefix_1
+      %h3 Deploy in Minutes
       %p
         OpenShift is for developers who love to build on open source, but don't need the hassle of building and maintaining infrastructure. 
-      
-      = link_to 'Learn More >', express_path, :class => 'learn-more express'
     
-    /Cutting-Edge
-    #cutting_edge.grid_11
-      %h3 OpenShift is Cutting-Edge
+    /Focus on your App
+    #focus_on_your_app.grid_8
+      %h3 Focus on your App, <br/> not the Stack
       %p
-        Supports all the coolest languages and frameworks, plus PaaS automation features like auto-scaling and performance monitoring. 
-      
-      = link_to 'Learn More >', flex_path, :class => 'learn-more flex'
+        OpenShift supports and manages multiple frameworks, languages, middleware and clouds so you don't have to.
+    
+    /Auto-scale
+    #auto_scale.grid_7
+      %h3 Auto-scale
+      %p
+        Take advantage of the elasticity of the cloud, regardless if your app was designed for it or not.
 
     .clear
     

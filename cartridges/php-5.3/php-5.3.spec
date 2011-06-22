@@ -2,7 +2,7 @@
 
 Summary:   Provides php-5.3 support
 Name:      rhc-cartridge-php-5.3
-Version:   0.72.12
+Version:   0.72.18
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -10,6 +10,7 @@ URL:       http://openshift.redhat.com
 Source0:   %{name}-%{version}.tar.gz
 
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
+BuildRequires: git
 Requires:  rhc-node
 Requires:  php >= 5.3.2
 Requires:  php < 5.4.0
@@ -21,6 +22,7 @@ Requires:  php-xml
 Requires:  php-mysql
 Requires:  php-pgsql
 Requires:  php-mbstring
+Requires:  php-pear
 
 Obsoletes: rhc-cartridge-php-5.3.2
 
@@ -33,14 +35,25 @@ Provides php support to OpenShift
 %setup -q
 
 %build
+rm -rf git_template
+cp -r template/ git_template/
+cd git_template
+git init
+git add *
+git commit -m 'Creating template'
+cd ..
+git clone --bare git_template git_template.git
+rm -rf git_template
+touch git_template.git/refs/heads/.gitignore
 
 %install
 rm -rf %{buildroot}
 mkdir -p %{buildroot}%{cartridgedir}
 mkdir -p %{buildroot}/%{_sysconfdir}/libra/cartridges
 ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/libra/cartridges/%{name}
-cp -r . %{buildroot}%{cartridgedir}
-rm %{buildroot}%{cartridgedir}/php-5.3.spec
+cp -r info %{buildroot}%{cartridgedir}/
+mkdir -p %{buildroot}%{cartridgedir}/info/data/
+cp -r git_template.git %{buildroot}%{cartridgedir}/info/data/
 ln -s %{cartridgedir}/../abstract-httpd/info/hooks/add-module %{buildroot}%{cartridgedir}/info/hooks/add-module
 ln -s %{cartridgedir}/../abstract-httpd/info/hooks/info %{buildroot}%{cartridgedir}/info/hooks/info
 ln -s %{cartridgedir}/../abstract-httpd/info/hooks/post-install %{buildroot}%{cartridgedir}/info/hooks/post-install
@@ -67,6 +80,42 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Tue Jun 21 2011 Dan McPherson <dmcphers@redhat.com> 0.72.18-1
+- disabling php commit hook (mmcgrath@redhat.com)
+
+* Tue Jun 21 2011 Dan McPherson <dmcphers@redhat.com> 0.72.17-1
+- Bug 714868 (dmcphers@redhat.com)
+
+* Mon Jun 20 2011 Dan McPherson <dmcphers@redhat.com> 0.72.16-1
+- 
+
+* Mon Jun 20 2011 Dan McPherson <dmcphers@redhat.com> 0.72.15-1
+- Temporary commit to build client (dmcphers@redhat.com)
+- move template out of repo (dmcphers@redhat.com)
+- supressing timestamp warnings (mmcgrath@redhat.com)
+- Fixing pear creation and ownership (mmcgrath@redhat.com)
+- removing silence flag (mmcgrath@redhat.com)
+- Specifying timezone (mmcgrath@redhat.com)
+- correcting include path (mmcgrath@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- Adding smarter pear check (mmcgrath@redhat.com)
+- Adding pear (mmcgrath@redhat.com)
+- Correcting mkdir path (mmcgrath@redhat.com)
+- Adding pear dir layout and new pear config (mmcgrath@redhat.com)
+
+* Sat Jun 18 2011 Dan McPherson <dmcphers@redhat.com> 0.72.14-1
+- Added lib dirs and dep list (mmcgrath@redhat.com)
+
+* Wed Jun 15 2011 Dan McPherson <dmcphers@redhat.com> 0.72.13-1
+- server side bundling for rails 3 (dmcphers@redhat.com)
+- add stop/start to git push (dmcphers@redhat.com)
+- Allow .htaccess files for PHP apps (jimjag@redhat.com)
+- move context to libra service and configure Part 2 (dmcphers@redhat.com)
+- move context to libra service and configure (dmcphers@redhat.com)
+
 * Tue Jun 14 2011 Matt Hicks <mhicks@redhat.com> 0.72.12-1
 - Added mbstring (mmcgrath@redhat.com)
 

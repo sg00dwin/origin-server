@@ -13,6 +13,7 @@ class Access::AccessRequestController < ApplicationController
         redirect_to getting_started_path and return
       end
       @user.establish_terms      
+      @event = event_id(:tryit)
       setup_new_model
       yield if block_given?
     else

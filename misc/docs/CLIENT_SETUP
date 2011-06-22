@@ -1,21 +1,6 @@
 Clone the git repos:
 
-Then, you can clone the git repositories with:
-
 git clone ssh://git1.ops.rhcloud.com/srv/git/li
-
-Example Usage:
-rhc-create-domain -n <namespace> -l <rhlogin>
-rhc-create-app -l <rhlogin> -a <appname> -r <Ex: /tmp/rhc/appname> -t php-5.3 -b
-You should now be able to browse to:  http://appname-userid.rhcloud.com
-Now make a change under /tmp/rhc/appname
-git commit -a -m "Test commit"
-git push
-The change should be seen at:  http://appname-namespace.rhcloud.com
-
-Running Test Cases:
-rake cuc_int sprint[1]
-tail -f /tmp/rhc/cucumber.log (To see log output)
 
 -----------
 OS X Notes:
@@ -32,14 +17,19 @@ Even so, we suggest using either MacPorts or HomeBrew to download
 and install git and ruby+gems.
 
 Now obtain the client code, either via 'git clone' as above
-or via the li-client gem. At this point, the 'Example
-Usage' follows exactly as indicated above.
+or via the rhc gem.
 
 -------------
-broker notes:
+More Setup:
 -------------
 
-yum install mcollective-common mcollective-client rhc rubygem-right_aws rubygem-aws rubygem-cucumber
+yum install mcollective-common mcollective-client rhc rubygem-right_aws rubygem-aws
 
-cp /etc/openshift/express.conf ~/.openshift/express.conf
 edit ~/.openshift/express.conf and point libra_server your broker system
+
+sudo mkdir /etc/libra
+sudo cp server-common/conf/libra/controller.conf  /etc/libra
+
+Running Test Cases:
+
+https://engineering.redhat.com/trac/Libra/wiki/SOP/Running_Tests

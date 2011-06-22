@@ -10,7 +10,7 @@ GEM
       activesupport (= 3.0.5)
       builder (~> 2.1.2)
       erubis (~> 2.6.6)
-      i18n (~> 0.4)
+      i18n (>= 0.4)
       multimap (>= 1.1.2)
       rack (~> 1.2.0)
       rack-mount (~> 0.6.13)
@@ -20,7 +20,7 @@ GEM
     activemodel (3.0.5)
       activesupport (= 3.0.5)
       builder (~> 2.1.2)
-      i18n (~> 0.4)
+      i18n (>= 0.4)
     activerecord (3.0.5)
       activemodel (= 3.0.5)
       activesupport (= 3.0.5)
@@ -38,9 +38,9 @@ GEM
     formtastic (1.2.3)
       actionpack (>= 2.3.7)
       activesupport (>= 2.3.7)
-      i18n (~> 0.4)
+      i18n (>= 0.4)
     haml (3.0.18)
-    i18n (0.5.0)
+    i18n (0.6.0)
     json (1.4.3)
     mail (2.2.15)
       activesupport (>= 2.3.6)
@@ -52,7 +52,7 @@ GEM
     multimap (1.1.2)
     parseconfig (0.5.2)
     polyglot (0.2.5)
-    rack (1.2.2)
+    rack (1.2.3)
     rack-mount (0.6.13)
       rack (>= 1.0.0)
     rack-test (0.5.7)
@@ -70,10 +70,10 @@ GEM
       activesupport (= 3.0.5)
       rake (>= 0.8.7)
       thor (~> 0.14.4)
-    rake (0.8.7)
+    rake (0.9.2)
     recaptcha (0.3.1)
     regin (0.3.7)
-    right_http_connection (1.2.4)
+    http_connection (1.4.1)
     stomp (1.1.8)
     thor (0.14.6)
     treetop (1.4.9)
@@ -94,6 +94,6 @@ DEPENDENCIES
   rack
   rails (= 3.0.5)
   recaptcha
-  right_http_connection
+  http_connection
   stomp
   xml-simple

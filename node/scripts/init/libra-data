@@ -22,6 +22,18 @@ start() {
     echo "Getting Libra info "
     instance_id=$(wget -qO- http://169.254.169.254/latest/meta-data/instance-id)
     public_ip=$(wget -qO- http://169.254.169.254/latest/meta-data/public-ipv4)
+    if [ ! "$public_ip" ]; then
+      for i in {1..60}
+      do
+        # Sometimes it takes a while for the public ip to be published
+        sleep 10
+        public_ip=$(wget -qO- http://169.254.169.254/latest/meta-data/public-ipv4)
+        if [ "$public_ip" ]; then
+          break
+        fi
+      done
+    fi
+
     echo_success
     cat <<EOF > /etc/libra/node_data.conf
 instance_id="$instance_id"
@@ -54,7 +66,7 @@ case "$1" in
   status)
     echo "Checking Libra Services: "
     # This won't scale forever, but works fine in the '100 or so' range
-    for ctl_script in /var/lib/libra/*/httpd/*/*_ctl.sh
+    for ctl_script in /var/lib/libra/*/*/*_ctl.sh
     do
         script_name=$(basename $ctl_script)
         echo -n $"    Checking http for ${script_name%_ctl.sh}"

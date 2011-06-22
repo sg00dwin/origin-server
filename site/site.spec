@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.72.10
+Version:   0.72.18
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -64,6 +64,36 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Wed Jun 22 2011 Dan McPherson <dmcphers@redhat.com> 0.72.18-1
+- 
+
+* Wed Jun 22 2011 Dan McPherson <dmcphers@redhat.com> 0.72.17-1
+- going back to aws 2.4.5 (dmcphers@redhat.com)
+- Added new conference banners (edirsh@redhat.com)
+- Omniture tracking variables added (edirsh@redhat.com)
+
+* Wed Jun 22 2011 Dan McPherson <dmcphers@redhat.com> 0.72.16-1
+- aws 2.4.5 -> aws 2.5.5 (dmcphers@redhat.com)
+- right_http_connection -> http_connection (dmcphers@redhat.com)
+
+* Tue Jun 21 2011 Dan McPherson <dmcphers@redhat.com> 0.72.15-1
+- New banners (edirsh@redhat.com)
+
+* Fri Jun 17 2011 Dan McPherson <dmcphers@redhat.com> 0.72.14-1
+- get tests running again (dmcphers@redhat.com)
+- Gemfile dev updates (dmcphers@redhat.com)
+
+* Thu Jun 16 2011 Matt Hicks <mhicks@redhat.com> 0.72.13-1
+- Merge branch 'master' into streamline (mhicks@redhat.com)
+- Merge branch 'master' into streamline (mhicks@redhat.com)
+- Refactoring the streamline modules (mhicks@redhat.com)
+
+* Thu Jun 16 2011 Dan McPherson <dmcphers@redhat.com> 0.72.12-1
+- update gem deps for site (dmcphers@redhat.com)
+
+* Wed Jun 15 2011 Dan McPherson <dmcphers@redhat.com> 0.72.11-1
+- 
+
 * Tue Jun 14 2011 Matt Hicks <mhicks@redhat.com> 0.72.10-1
 - Bug 707402 - First form field is focused on page load with javascript
   (edirsh@redhat.com)
