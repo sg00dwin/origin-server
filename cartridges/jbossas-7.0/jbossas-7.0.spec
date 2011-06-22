@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.72.23
+Version:   0.72.24
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -69,6 +69,11 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Tue Jun 21 2011 Dan McPherson <dmcphers@redhat.com> 0.72.24-1
+- Close stdout before calling app_ctl.sh start to fix git hang
+  (scott.stark@jboss.org)
+- remove dup / from jboss app dir (dmcphers@redhat.com)
+
 * Tue Jun 21 2011 Dan McPherson <dmcphers@redhat.com> 0.72.23-1
 - Bug 714868 (dmcphers@redhat.com)
 
