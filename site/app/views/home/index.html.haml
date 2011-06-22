@@ -19,6 +19,14 @@
         = link_to 'http://twitter.com/#!/openshift', :target => '_blank' do
           = image_tag "/app/images/promo_banner_twitter.png",
             :alt => 'Don\'t get left behind, follow us on twitter @openshift'
+      
+      %li.slide
+        = link_to 'http://www.oscon.com/oscon2011/public/content/java', :target => '_blank' do
+          = image_tag "/app/images/promo_banner_oscon.png", :alt => 'Choose your framework. Choose your cloud. We\'re at OSCON Java - July 25-29'
+      
+      %li.slide
+        = link_to 'http://www.couchbase.com/couchconf', :target => '_blank' do
+          = image_tag "/app/images/promo_banner_couchconf.png", :alt => 'Our Paas is taking a seat at CouchConf. San Fransisco, July 29'
 
     /Slide show navigation
     %ul.navigation
@@ -26,6 +34,10 @@
         %a.page(href='#') 1
       %li
         %a.page(href='#') 2
+      %li
+        %a.page(href='#') 3
+      %li
+        %a.page(href='#') 4
 
   .clear
 
