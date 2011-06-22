@@ -30,8 +30,8 @@
     = csrf_meta_tag
 
   %body(class="#{controller.controller_name} #{controller.action_name}")
-
-    = render 'shared/omniture_code'
+    
+    = render 'shared/omniture_code', :controller => controller.controller_name, :action => controller.action_name, :event => @event ||= ''
 
     #horrible_wrapper
       
