@@ -21,6 +21,15 @@ class Release < Thor
   desc "build", "Tag and build new RPMs for any changes"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   def build
+  
+    unless run("if [ -n \"${http_proxy+x}\" ]; then exit 1; fi", :verbose => options.verbose?)
+      puts "ERROR - you need to unset http_proxy first"; exit 1
+    end
+
+    unless run("klist | grep REDHAT.COM@REDHAT.COM", :verbose => options.verbose?)
+      puts "ERROR - you need to kinit first"; exit 1
+    end
+     
     # Update the repo
     run("git pull", :verbose => options.verbose?)
 
