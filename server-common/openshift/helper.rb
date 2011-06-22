@@ -1,7 +1,7 @@
 require 'rubygems'
 require 'mcollective'
 require 'aws'
-require 'http_connection'
+require 'right_http_connection'
 
 include MCollective::RPC
 
