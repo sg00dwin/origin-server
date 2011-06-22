@@ -2,3 +2,4 @@
 require "test/unit"
 require "tc_home"
 require "tc_register"
+require "tc_login"

@@ -24,7 +24,7 @@ class Register < Test::Unit::TestCase
   def get_unique_username()
     chars =("1".."9").to_a
     useremail=  "libra-test+"+ Array.new(8, '').collect{chars[rand(chars.size)]}.join+"@redhat.com"
-    puts useremail
+ #   puts useremail
     return useremail
   end
 
