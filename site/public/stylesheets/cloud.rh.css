@@ -462,6 +462,8 @@ form ul, form ol, form li {
   font-family: Overpass;
   font-weight: normal;
   color: black; }
+#info #focus_on_your_app h3 {
+  line-height: 24pt; }
 #info #front_image {
   display: block;
   margin: 20px auto; }
