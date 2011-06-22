@@ -16,10 +16,3 @@ directories if needed.
 Note: Every time you push, everything in your remote repo dir gets recreated
 please store long term items (like an sqlite database) in ../data which will
 persist between pushes of your repo.
-
-setup.py
-========
-
-By adding dependencies to setup.py, OpenShift Express will automatically
-download any libraries it cannot find in repo in libs/ (listed above in Repo
-layout)
