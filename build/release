@@ -86,6 +86,7 @@ class Release < Thor
     # Run mash twice since it usually fails the first time
     puts "Running mash sync"
     mash_cmd = "/usr/bin/mash -o /tmp/#{mash_config} -c /etc/mash/li-mash.conf #{mash_config}"
+    puts mash_cmd
     run(mash_cmd, :verbose => options.verbose?)
     unless run(mash_cmd, :verbose => options.verbose?)
       puts "ERROR - mash sync failed"
