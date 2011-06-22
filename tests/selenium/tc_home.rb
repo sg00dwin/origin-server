@@ -128,7 +128,7 @@ class Home < Test::Unit::TestCase
         @verification_errors << $!
     end
     @driver.navigate.back
-    puts "Saving a screenshot"
+#    puts "Saving a screenshot"
     @driver.save_screenshot('navigation.png')
   end
 #
@@ -165,7 +165,7 @@ class Home < Test::Unit::TestCase
     @driver.find_element(:xpath,".//div[@id='app_promos']").click()
     @driver.find_element(:xpath,".//div[@id='app_promos']/div[3]/div/ul/li[4]/a").click()
     @driver.navigate.back
-    puts "Saving a screenshot"
+#    puts "Saving a screenshot"
     @driver.save_screenshot('home_link.png')
   end
 #

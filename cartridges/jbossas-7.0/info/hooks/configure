@@ -174,8 +174,11 @@ rm -rf $APP_DIR/repo/* $APP_DIR/repo/.[^.]*
 git archive --format=tar HEAD | (cd $APP_DIR/repo && tar --warning=no-timestamp -xf -)
 
 # Start the app
-echo "Starting application..."
+echo -n "Starting application..."
+exec 1>&- # close stdout
 $APP_DIR/${application}_ctl.sh start
+exec 1>&2 # redirect stdout to stderr
+echo done
 __EOF__
 
     chmod 0755 $GIT_DIR/hooks/post-receive $GIT_DIR/hooks/pre-receive

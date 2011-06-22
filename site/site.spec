@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.72.14
+Version:   0.72.18
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -64,6 +64,21 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Wed Jun 22 2011 Dan McPherson <dmcphers@redhat.com> 0.72.18-1
+- 
+
+* Wed Jun 22 2011 Dan McPherson <dmcphers@redhat.com> 0.72.17-1
+- going back to aws 2.4.5 (dmcphers@redhat.com)
+- Added new conference banners (edirsh@redhat.com)
+- Omniture tracking variables added (edirsh@redhat.com)
+
+* Wed Jun 22 2011 Dan McPherson <dmcphers@redhat.com> 0.72.16-1
+- aws 2.4.5 -> aws 2.5.5 (dmcphers@redhat.com)
+- right_http_connection -> http_connection (dmcphers@redhat.com)
+
+* Tue Jun 21 2011 Dan McPherson <dmcphers@redhat.com> 0.72.15-1
+- New banners (edirsh@redhat.com)
+
 * Fri Jun 17 2011 Dan McPherson <dmcphers@redhat.com> 0.72.14-1
 - get tests running again (dmcphers@redhat.com)
 - Gemfile dev updates (dmcphers@redhat.com)
