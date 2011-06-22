@@ -2,7 +2,7 @@
 
 Summary:   Provides mod_perl support
 Name:      rhc-cartridge-perl-5.10
-Version:   0.3.10
+Version:   0.3.11
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -70,6 +70,10 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Tue Jun 21 2011 Dan McPherson <dmcphers@redhat.com> 0.3.11-1
+- disabling hooks for perl (mmcgrath@redhat.com)
+- Auto finding deps (mmcgrath@redhat.com)
+
 * Tue Jun 21 2011 Dan McPherson <dmcphers@redhat.com> 0.3.10-1
 - Bug 714868 (dmcphers@redhat.com)
 
