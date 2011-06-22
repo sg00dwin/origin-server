@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.72.26
+Version:       0.72.27
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -140,6 +140,9 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Tue Jun 21 2011 Dan McPherson <dmcphers@redhat.com> 0.72.27-1
+- Adding 256M as default quota type (mmcgrath@redhat.com)
+
 * Mon Jun 20 2011 Dan McPherson <dmcphers@redhat.com> 0.72.26-1
 - 
 
