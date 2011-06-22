@@ -67,7 +67,7 @@ GEM
       thor (~> 0.14.4)
     rake (0.8.7)
     regin (0.3.7)
-    right_http_connection (1.2.4)
+    http_connection (1.4.1)
     stomp (1.1.8)
     thor (0.14.6)
     treetop (1.4.9)
@@ -85,6 +85,6 @@ DEPENDENCIES
   parseconfig
   rack
   rails (= 3.0.5)
-  right_http_connection
+  http_connection
   stomp
   xml-simple
