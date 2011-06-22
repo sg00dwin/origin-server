@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.72.16
+Version:   0.72.17
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -62,6 +62,9 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Wed Jun 22 2011 Dan McPherson <dmcphers@redhat.com> 0.72.17-1
+- 
+
 * Wed Jun 22 2011 Dan McPherson <dmcphers@redhat.com> 0.72.16-1
 - going back to aws 2.4.5 (dmcphers@redhat.com)
 
