@@ -111,10 +111,11 @@
                         %a(href="http://code.google.com/p/git-osx-installer/") git for OS X
               %li
                 Install the gem:
-                %pre 
-                  $ sudo gem install json_pure
-                  $ sudo gem install rhc
-        
+                %pre
+                  :preserve
+                    $ sudo gem install json_pure
+                    $ sudo gem install rhc
+
           %li#win.install
             %h4 Windows
 
@@ -149,9 +150,10 @@
         %p
           Using your OpenShift login and password, call rhc-create-domain to create a unique domain name for your applications.
 
-          %pre 
-            $ rhc-create-domain -n mydomain -l email@address
-            Password: (type... type... type...)
+          %pre
+            :preserve
+              $ rhc-create-domain -n mydomain -l email@address
+              Password: (type... type... type...)
 
           
         %aside
@@ -168,9 +170,10 @@
         %p
           Now you can create your application.  During the preview period, you are only allowed to create one application.
 
-          %pre 
-            $ rhc-create-app -a myapp -t php-5.3
-            Password: (type... type... type...)
+          %pre
+            :preserve
+              $ rhc-create-app -a myapp -t php-5.3
+              Password: (type... type... type...)
         
         %p
           This will create a remote git repository for your application, and clone it locally in your current directory.
@@ -193,12 +196,13 @@
           As we all know, getting an application running is only the first step. Now you are on the road to making it your own.  Here's an example for
           the php framework.
 
-          %pre 
-            $ cd myapp
-            $ vim php/index.php
-            (Make a change...  :wq)
-            $ git commit -a -m "My first change"
-            $ git push
+          %pre
+            :preserve
+              $ cd myapp
+              $ vim php/index.php
+              (Make a change...  :wq)
+              $ git commit -a -m "My first change"
+              $ git push
         %p  
           Now, check your URL - your change will be live.
         
