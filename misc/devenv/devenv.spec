@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.72.21
+Version:   0.72.24
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -61,12 +61,11 @@ cp -adv * %{buildroot}%{devenvdir}
 mkdir -p %{buildroot}%{_initddir}
 mv %{buildroot}%{devenvdir}/init.d/* %{buildroot}%{_initddir}
 
-# Setup mcollective client log
-mkdir -p %{buildroot}%{_tmppath}/log
-touch %{buildroot}%{_tmppath}/mcollective-client.log
-
 mkdir -p %{buildroot}%{brokerdir}/log
 mkdir -p %{buildroot}%{sitedir}/log
+
+# Setup mcollective client log
+touch %{buildroot}%{brokerdir}/log/mcollective-client.log
 
 # Setup rails development logs
 touch %{buildroot}%{brokerdir}/log/development.log
@@ -173,7 +172,7 @@ chkconfig libra-tc on
 
 %files
 %defattr(-,root,root,-)
-%attr(0666,-,-) %{_tmppath}/mcollective-client.log
+%attr(0666,-,-) %{brokerdir}/log/mcollective-client.log
 %attr(0666,-,-) %{brokerdir}/log/development.log
 %attr(0666,-,-) %{sitedir}/log/development.log
 %config(noreplace) %{jenkins}/jobs/jenkins_update/config.xml
@@ -187,6 +186,17 @@ chkconfig libra-tc on
 %{_initddir}/libra-site
 
 %changelog
+* Thu Jun 23 2011 Dan McPherson <dmcphers@redhat.com> 0.72.24-1
+- 
+
+* Thu Jun 23 2011 Dan McPherson <dmcphers@redhat.com> 0.72.23-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- allow for forcing of IP (mmcgrath@redhat.com)
+
+* Wed Jun 22 2011 Dan McPherson <dmcphers@redhat.com> 0.72.22-1
+- move mcollective client log (dmcphers@redhat.com)
+
 * Tue Jun 21 2011 Dan McPherson <dmcphers@redhat.com> 0.72.21-1
 - adding setfacl (mmcgrath@redhat.com)
 - chmoding (mmcgrath@redhat.com)

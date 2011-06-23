@@ -153,18 +153,9 @@ EOF
 rm -rf ~/${application}/repo/*
 git archive --format=tar HEAD | (cd ~/${application}/repo && tar --warning=no-timestamp -xf -)
 
-#if [ -f ~/${application}/repo/setup.py ]
-#then
-#    echo "setup.py found.  Setting up virtualenv"
-#    cd ~/${application}/virtenv
-#    virtualenv ~/${application}/virtenv
-#    . ./bin/activate
-#    python ~/${application}/repo/setup.py develop
-#fi
-
 # Start the app
 echo "Starting application..."
-~/$application/${application}_ctl.sh start
+~/${application}/${application}_ctl.sh start
 EOF
 
     chmod 0755 $GIT_DIR/hooks/post-receive $GIT_DIR/hooks/pre-receive

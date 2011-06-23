@@ -145,7 +145,7 @@ function create_repo {
     cat <<EOF > $GIT_DIR/hooks/pre-receive
 # Stop the app
 echo "Stopping application..."
-$APP_DIR/${application}_ctl.sh stop
+~/${application}/${application}_ctl.sh stop
 EOF
 
     cat <<EOF > $GIT_DIR/hooks/post-receive
@@ -156,7 +156,7 @@ git archive --format=tar HEAD | (cd $APP_DIR/deploy && tar --warning=no-timestam
 
 # Start the app
 echo "Starting application..."
-$APP_DIR/${application}_ctl.sh start
+~/${application}/${application}_ctl.sh start
 EOF
 
     chmod 0755 $GIT_DIR/hooks/post-receive $GIT_DIR/hooks/pre-receive

@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.72.18
+Version:   0.72.19
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -64,6 +64,13 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Wed Jun 22 2011 Dan McPherson <dmcphers@redhat.com> 0.72.19-1
+- deps in right order (dmcphers@redhat.com)
+- Content updates on express page (edirsh@redhat.com)
+- Content updates for flex page (edirsh@redhat.com)
+- Merge branch 'master' of ssh://libragit/srv/git/li (edirsh@redhat.com)
+- Content update for home page (edirsh@redhat.com)
+
 * Wed Jun 22 2011 Dan McPherson <dmcphers@redhat.com> 0.72.18-1
 - 
 
