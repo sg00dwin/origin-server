@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.72.20
+Version:   0.72.21
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -64,6 +64,16 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Thu Jun 23 2011 Dan McPherson <dmcphers@redhat.com> 0.72.21-1
+- fix indention within pre (dmcphers@redhat.com)
+- fix haml syntax issue (dmcphers@redhat.com)
+- better version of guide (jimjag@redhat.com)
+- 2 spaces (jimjag@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (jimjag@redhat.com)
+- Update site w/ OS X guide (jimjag@redhat.com)
+- Made requested changes to omniture code (edirsh@redhat.com)
+
 * Thu Jun 23 2011 Dan McPherson <dmcphers@redhat.com> 0.72.20-1
 - Bug 715510 - fixed broken link on product pages (edirsh@redhat.com)
 - Merge branch 'master' of ssh://libragit/srv/git/li (edirsh@redhat.com)
