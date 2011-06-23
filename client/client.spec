@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system client tools
 Name:          rhc
-Version:       0.72.27
+Version:       0.72.28
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       MIT
@@ -84,6 +84,9 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_sysconfdir}/openshift/express.conf
 
 %changelog
+* Thu Jun 23 2011 Dan McPherson <dmcphers@redhat.com> 0.72.28-1
+- 
+
 * Thu Jun 23 2011 Dan McPherson <dmcphers@redhat.com> 0.72.27-1
 - switch timeout back to 10s (dmcphers@redhat.com)
 
