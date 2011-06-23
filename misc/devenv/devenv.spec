@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.72.21
+Version:   0.72.22
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -186,6 +186,9 @@ chkconfig libra-tc on
 %{_initddir}/libra-site
 
 %changelog
+* Wed Jun 22 2011 Dan McPherson <dmcphers@redhat.com> 0.72.22-1
+- move mcollective client log (dmcphers@redhat.com)
+
 * Tue Jun 21 2011 Dan McPherson <dmcphers@redhat.com> 0.72.21-1
 - adding setfacl (mmcgrath@redhat.com)
 - chmoding (mmcgrath@redhat.com)
