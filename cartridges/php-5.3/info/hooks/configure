@@ -168,7 +168,7 @@ git archive --format=tar HEAD | (cd $APP_DIR/repo && tar --warning=no-timestamp 
 #            pear install "\$f"
 #        fi
 #    done
-fi
+#fi
 
 # Start the app
 echo "Starting application..."
