@@ -294,7 +294,7 @@ cat <<__EOF__ > "$APP_DIR/${application}_ctl.sh"
 
 # For debugging, capture script output into app tmp dir
 pid=\$\$
-exec 4>&1   # Link file descriptor #4 with stdout, saves stdout.
+#exec 4>&1   # Link file descriptor #4 with stdout, saves stdout.
 exec > "$TMP_DIR/jbossas7-${application}_ctl-\$1.\${pid}.log" 2>&1
 
 if ! [ \$# -eq 1 ]
