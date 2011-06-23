@@ -309,7 +309,7 @@ class DevEnv < Thor
       instance.scp_from("/var/www/libra/broker/httpd/logs/error_log", "rhc/log")
       instance.scp_from("/var/www/libra/broker/log/development.log", "rhc/log")
       instance.scp_from("/var/log/mcollective.log", "rhc/log")
-      instance.scp_from("/var/tmp/mcollective-client.log", "rhc/log")
+      instance.scp_from("/var/www/libra/broker/log/mcollective-client.log", "rhc/log")
 
       `mkdir -p rhc/junit`
       instance.scp_from("/tmp/rhc/junit/*", "rhc/junit")
