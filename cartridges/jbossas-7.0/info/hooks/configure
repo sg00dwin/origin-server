@@ -345,6 +345,7 @@ case "\$1" in
         else
           echo "Failed to locate JBOSS PID File"
         fi
+        exit 0
     ;;
     restart|graceful)
         $APP_DIR/${application}_ctl.sh stop
