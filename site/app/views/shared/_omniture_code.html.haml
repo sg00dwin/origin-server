@@ -8,8 +8,8 @@
   the next lines. */
   s.pageName="rh | #{controller} | #{action}"
   s.server=""
-  s.channel="#{controller}"
-  s.heir1="#{controller},#{action}"
+  s.channel="#{get_product(controller, action).empty? ? '' : 'OpenShift | Product | ' + get_product(controller, action).capitalize}"
+  s.heir1=""
   s.pageType=""
   s.prop1=""
   s.prop2=""
@@ -29,7 +29,7 @@
   s.eVar4=""
   s.eVar5=""
   s.eVar51="#{get_product(controller, action).capitalize}"
-  s.eVar27="#{action.capitalize}"
+  s.eVar27=""
   s.eVar28=""
   s.eVar29=""
   /************* DO NOT ALTER ANYTHING BELOW THIS LINE ! **************/
