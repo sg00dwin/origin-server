@@ -151,11 +151,6 @@ class Home < Test::Unit::TestCase
     end
     @driver.navigate.back
     sleep 1
-    @driver.find_element(:xpath,".//div[@id='for_developers']/a").click()
-    sleep 1
-    @driver.navigate.back
-    @driver.find_element(:xpath,".//div[@id='cutting_edge']/a").click()
-    @driver.navigate.back
     @driver.find_element(:xpath,".//div[@id='app_promos']").click()
     @driver.find_element(:xpath,".//div[@id='app_promos']/div[1]/div/ul/li[4]/a").click()
     @driver.navigate.back
@@ -189,27 +184,32 @@ class Home < Test::Unit::TestCase
         @verification_errors << $!
     end
     begin
-        assert_equal "OpenShift is for Developers", @driver.find_element(:xpath,".//div[@id='for_developers']/h3").text
+        assert_equal "Deploy in Minutes", @driver.find_element(:xpath,".//div[@id='deploy_in_minutes']/h3").text
     rescue Test::Unit::AssertionFailedError
         @verification_errors << $!
     end
     begin
-        assert_equal "OpenShift is for developers who love to build on open source, but don't need the hassle of building and maintaining infrastructure.", @driver.find_element(:xpath,".//div[@id='for_developers']/p").text
+        assert_equal "OpenShift is for developers who love to build on open source, but don't need the hassle of building and maintaining infrastructure.", @driver.find_element(:xpath,".//div[@id='deploy_in_minutes']/p").text
     rescue Test::Unit::AssertionFailedError
         @verification_errors << $!
     end
     begin
-        assert_equal "OpenShift is Cutting-Edge", @driver.find_element(:xpath,".//div[@id='cutting_edge']/h3").text
+        assert_equal "Focus on your App,\nnot the Stack", @driver.find_element(:xpath,".//div[@id='focus_on_your_app']/h3").text
     rescue Test::Unit::AssertionFailedError
         @verification_errors << $!
     end
     begin
-        assert_equal "Supports all the coolest languages and frameworks, plus PaaS automation features like auto-scaling and performance monitoring.", @driver.find_element(:xpath,".//div[@id='cutting_edge']/p").text
+        assert_equal "OpenShift supports and manages multiple frameworks, languages, middleware and clouds so you don't have to.", @driver.find_element(:xpath,".//div[@id='focus_on_your_app']/p").text
     rescue Test::Unit::AssertionFailedError
         @verification_errors << $!
     end
     begin
-        assert @driver.find_element(:class,"learn-more express").displayed?
+        assert_equal "Auto-scale", @driver.find_element(:xpath,".//div[@id='auto_scale']/h3").text
+    rescue Test::Unit::AssertionFailedError
+        @verification_errors << $!
+    end
+    begin
+        assert_equal "Take advantage of the elasticity of the cloud, regardless if your app was designed for it or not.", @driver.find_element(:xpath,".//div[@id='auto_scale']/p").text
     rescue Test::Unit::AssertionFailedError
         @verification_errors << $!
     end

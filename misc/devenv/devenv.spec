@@ -61,12 +61,11 @@ cp -adv * %{buildroot}%{devenvdir}
 mkdir -p %{buildroot}%{_initddir}
 mv %{buildroot}%{devenvdir}/init.d/* %{buildroot}%{_initddir}
 
-# Setup mcollective client log
-mkdir -p %{buildroot}%{_tmppath}/log
-touch %{buildroot}%{_tmppath}/mcollective-client.log
-
 mkdir -p %{buildroot}%{brokerdir}/log
 mkdir -p %{buildroot}%{sitedir}/log
+
+# Setup mcollective client log
+touch %{buildroot}%{brokerdir}/log/mcollective-client.log
 
 # Setup rails development logs
 touch %{buildroot}%{brokerdir}/log/development.log
@@ -173,7 +172,7 @@ chkconfig libra-tc on
 
 %files
 %defattr(-,root,root,-)
-%attr(0666,-,-) %{_tmppath}/mcollective-client.log
+%attr(0666,-,-) %{brokerdir}/log/mcollective-client.log
 %attr(0666,-,-) %{brokerdir}/log/development.log
 %attr(0666,-,-) %{sitedir}/log/development.log
 %config(noreplace) %{jenkins}/jobs/jenkins_update/config.xml
