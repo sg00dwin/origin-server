@@ -31,6 +31,8 @@ class DevEnv < Thor
     
     def set_instance_ip(instance, ip)
       print "Updating the controller to use the ip '#{ip}'..."
+      # Both calls below are needed to fix a race condition between ssh and libra-data start times
+      instance.ssh("echo public_ip='#{ip}' >> /etc/libra/node.conf")
       instance.ssh("sed -i \"s/public_ip.*/public_ip='#{ip}'/g\" /etc/libra/node_data.conf")
       puts 'Done'
     end
