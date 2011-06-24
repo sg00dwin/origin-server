@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.72.21
+Version:   0.72.22
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -64,6 +64,9 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Fri Jun 24 2011 Dan McPherson <dmcphers@redhat.com> 0.72.22-1
+- Updated omniture account information (edirsh@redhat.com)
+
 * Thu Jun 23 2011 Dan McPherson <dmcphers@redhat.com> 0.72.21-1
 - fix indention within pre (dmcphers@redhat.com)
 - fix haml syntax issue (dmcphers@redhat.com)
