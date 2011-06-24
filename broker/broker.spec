@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.72.18
+Version:   0.72.19
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -62,6 +62,9 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Fri Jun 24 2011 Dan McPherson <dmcphers@redhat.com> 0.72.19-1
+- add app_scope to broker (dmcphers@redhat.com)
+
 * Wed Jun 22 2011 Dan McPherson <dmcphers@redhat.com> 0.72.18-1
 - Merging for alpha order (mmcgrath@redhat.com)
 - trying this out (mmcgrath@redhat.com)
