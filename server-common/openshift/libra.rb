@@ -50,7 +50,7 @@ module Libra
     # get user
     user = User.find(rhlogin)
     if not user
-      raise UserException.new(254), "User '#{rhlogin}' not found", caller[0..5]
+      raise UserException.new(254), "A user with rhlogin '#{rhlogin}' does not have a registered domain.  Be sure to run rhc-create-domain without -a|--alter first.", caller[0..5]
     end
 
     # process actions
