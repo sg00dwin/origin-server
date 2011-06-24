@@ -50,6 +50,7 @@ Broker::Application.configure do
   ############################################
   # OpenShift Configuration Below this point #
   ############################################
+  config.app_scope = ""
   config.integrated = true
   config.streamline_service_base_url = "/wapps/streamline"
   config.streamline = "https://www.redhat.com"

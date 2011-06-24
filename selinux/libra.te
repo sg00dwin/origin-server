@@ -166,6 +166,7 @@ require {
 	type httpd_t;
 	type sendmail_t;
 	attribute domain;
+	type ssh_home_t;
 }
 
 allow libra_domain httpd_exec_t:file entrypoint;
@@ -175,6 +176,7 @@ libra_search_lib(sshd_t)
 dontaudit sshd_t self:capability sys_admin;
 allow libra_domain sshd_t:process sigchld;
 allow sshd_t libra_domain:process { rlimitinh signal };
+dontaudit libra_domain ssh_home_t:dir search_dir_perms;
 
 dontaudit sendmail_t libra_initrc_t:fifo_file { read write };
 append_files_pattern(sendmail_t, libra_var_lib_t, libra_var_lib_t)

@@ -26,7 +26,7 @@ JSON String:
 {
     'namespace': 'string',
     'rhlogin': 'login',
-    'ssh': 'the key portion of an rsa key (excluding ssh-rsa and coment)',
+    'ssh': 'the key portion of an rsa key (excluding ssh-rsa and comment)',
     'alter': 'true - An optional flag to alter namespace and/or ssh key after creation',
     'debug': 'true - An optional flag to get debug information returned'
 }
@@ -35,7 +35,7 @@ Return JSON String (exit_code non-zero is failure):
 {
     "debug":"Debug Output",
     "messages":"Other messages (outage notifications for example)",
-    "result":<result_json_ex_below>
+    "result":<result_json_ex_below>,
     "exit_code": 0
 }
 
@@ -79,7 +79,7 @@ Return JSON String (exit_code non-zero is failure):
 {
     "debug":"Debug Output",
     "messages":"Other messages (outage notifications for example)",
-    "result":"Result messages"
+    "result":"Result messages",
     "exit_code": 0
 }
 
@@ -104,7 +104,7 @@ Return JSON String (exit_code non-zero is failure):
 {
     "debug":"Debug Output",
     "messages":"Other messages (outage notifications for example)",
-    "result":<result_json_ex_below>
+    "result":<result_json_ex_below>,
     "exit_code": 0
 }
 
@@ -145,7 +145,7 @@ Return JSON String (exit_code non-zero is failure):
 {
     "debug":"Debug Output",
     "messages":"Other messages (outage notifications for example)",
-    "result":<result_json_ex_below>
+    "result":<result_json_ex_below>,
     "exit_code": 0
 }
 

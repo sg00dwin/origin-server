@@ -74,8 +74,8 @@
       Issac Roth,  PaaS Master - Red Hat
     
     .video-thumb.thumb
-      %a(href="video/flexproddemo")
-        %img(src="/app/images/video_stills/flexproddemo.png" 
+      %a(href="video/OpenShift-Flex-demo")
+        %img(src="/app/images/video_stills/OpenShift-Flex-demo.png" 
           title="OpenShift Flex Product Tour" 
           alt="OpenShift Flex Product Tour")
   
@@ -95,8 +95,8 @@
       Developers, ISVs, customers and partners
     
     .video-thumb.thumb
-      %a(href="video/openshiftmontage")
-        %img(src="/app/images/video_stills/openshiftmontage.png" 
+      %a(href="video/OpenShift-Ecosystem")
+        %img(src="/app/images/video_stills/OpenShift-Ecosystem.png" 
           title="Developers, ISVs, customers and partners" 
           alt="Developers, ISVs, customers and partners")
       
@@ -110,17 +110,77 @@
           3 min, 27 seconds
         %p.video-date.date
           Posted May 5, 2011
-        
+    
+  .product-video
+    %h3 Deploying a Mongo Driven Application on OpenShift Flex
+    %p.video-author.author
+      David Blado
+      
+    .video-thumb.thumb
+      <iframe width="300" height="200" src="http://www.youtube.com/embed/tGOUo3_I8pQ" frameborder="0" allowfullscreen></iframe>
+    
+    %p.video-description
+      This video walks a user through deploying an application on OpenShift Flex that uses MongoDB as its database backend. Complete with performance and log management demo!
+    
+      .video-meta.meta
+        %p.video-length
+          3 min, 3 seconds
+        %p.video-date.date
+          Posted June 21, 2011
+    
+  .product-video
+    %h3 Deploying a Seam Application on OpenShift Flex
+    %p.video-author.author
+      David Blado
+      
+    .video-thumb.thumb
+      <iframe width="300" height="200" src="http://www.youtube.com/embed/axH_XNGhr08" frameborder="0" allowfullscreen></iframe>
+    
+    %p.video-description
+      This video walks a user through deploying a Seam application on OpenShift Flex. Complete with a performance and log management demo!
+    
+      .video-meta.meta
+        %p.video-length
+          2 min, 33 seconds
+        %p.video-date.date
+          Posted June 21, 2011
   %a.more(href="http://www.redhat.com/openshift/videos") More Videos &gt;
   
 -# Community section
 - content_for :community do
   .post
-    %h3 News from Summit
+    %h3 Announcements
+    
     %p
-      This thread tracks all the latest news from Red Hat Summit/JBoss World 2011.
+      Subscribe to <a href="https://www.redhat.com/openshift/forums/news-and-announcements">Annoucements</a> to get product release notifications.
+    
+    = link_to 'Subscribe >', 'https://www.redhat.com/openshift/forums/news-and-announcements', :class => 'more'
+    
+  .post
+    %h3 Django Application in OpenShift Flex - Workaround
+    %p.post-author.author
+      by Attila Nagy, OpenShift Community Member
+    %p
+      Currently OpenShift Flex doesn't support Python / Django based applications, but there is a workaround. The solution is to use Jython - which generates Java bytecode from Python code. With project Django on Jython you will be able to generate a WAR file from your Django project and you can easily deploy it as a Tomcat application in OpenShift Flex.
+    
+    .post-meta.meta
+      %p.post-date.date
+        Posted on May 27, 2011
+    
+    = link_to 'Read more >', 'https://www.redhat.com/openshift/forums/flex/django-application-in-openshift-flex-workaround', :class => 'more'
       
-    = link_to 'Read more >', 'https://www.redhat.com/openshift/forums/news-and-announcements/news-from-summit', :class => 'more'
+  .post
+    %h3 NoSQL in the Cloud? No Problem - Deploying MongoDB on OpenShift Flex
+    %p.post-author.author
+      by Nosh Petigara, Director of Product Strategy at 10gen
+    
+    %p
+      MongoDB is an open source document-oriented database designed with scalability and developer agility in mind. Instead of storing your data in tables and rows as you would with a relational database, with MongoDB you store (JSON-like) documents with dynamic schemas. The goal of MongoDB is to bridge the gap between key-value stores (which are fast and scalable) and relational databases (which have rich functionality). 10gen develops MongoDB, and offers production support, training, and consulting for the open source database
+    
+    %p
+      Red Hat recently announced OpenShift, a PaaS from which you can use the available MongoDB cartridge to easily deploy and manage applications with a MongoDB backend.
+    
+    = link_to 'Read more >', 'https://www.redhat.com/openshift/blogs/nosql-in-the-cloud-no-problem-deploying-mongodb-on-openshift-flex', :class => 'more'
     
   .post
     %h3 Getting Started with JBoss
@@ -131,7 +191,7 @@
       %p.post-date.date
         Posted on April 29, 2011
         
-    = link_to 'Read this >', 'https://www.redhat.com/openshift/sites/default/files/documents/RHOS_Flex_Getting_Started_w_JBoss.pdf', :class => 'more'
+    = link_to 'Read more >', 'https://www.redhat.com/openshift/sites/default/files/documents/RHOS_Flex_Getting_Started_w_JBoss.pdf', :class => 'more'
 
 -# Resource links
 - content_for :resources do

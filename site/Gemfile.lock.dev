@@ -40,6 +40,7 @@ GEM
       activesupport (>= 2.3.7)
       i18n (>= 0.4)
     haml (3.0.18)
+    http_connection (1.4.1)
     i18n (0.6.0)
     json (1.4.3)
     mail (2.2.15)
@@ -73,7 +74,6 @@ GEM
     rake (0.9.2)
     recaptcha (0.3.1)
     regin (0.3.7)
-    right_http_connection (1.2.4)
     stomp (1.1.8)
     thor (0.14.6)
     treetop (1.4.9)
@@ -88,12 +88,12 @@ DEPENDENCIES
   aws (~> 2.4.5)
   formtastic (~> 1.2.3)
   haml
+  http_connection
   json
   mocha
   parseconfig
   rack
   rails (= 3.0.5)
   recaptcha
-  right_http_connection
   stomp
   xml-simple

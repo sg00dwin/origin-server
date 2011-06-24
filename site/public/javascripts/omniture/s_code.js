@@ -2,7 +2,7 @@
 Copyright 1996-2011 Adobe, Inc. All Rights Reserved
 More info available at http://www.omniture.com */
 
-var s_account="redhatopenshift"
+var s_account="redhatopenshift, redhatcom, redhatglobal"
 var s=s_gi(s_account)
 /************************** CONFIG SECTION **************************/
 /* You may add or alter any code config here. */
