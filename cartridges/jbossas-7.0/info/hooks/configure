@@ -191,6 +191,7 @@ function create_repo {
 # Stop the app
 echo "Stopping application..."
 $APP_DIR/${application}_ctl.sh stop
+echo done
 __EOF__
 
     cat <<__EOF__ > $GIT_DIR/hooks/post-receive
@@ -200,7 +201,7 @@ git archive --format=tar HEAD | (cd $APP_DIR/repo && tar --warning=no-timestamp 
 # Start the app
 echo -n "Starting application..."
 exec 1>&- # close stdout
-$APP_DIR/${application}_ctl.sh start
+$APP_DIR/${application}_ctl.sh start >/dev/null 2>&1
 exec 1>&2 # redirect stdout to stderr
 echo done
 __EOF__
@@ -319,7 +320,7 @@ cat <<__EOF__ > "$APP_DIR/${application}_ctl.sh"
 
 # For debugging, capture script output into app tmp dir
 pid=\$\$
-exec 4>&1   # Link file descriptor #4 with stdout, saves stdout.
+exec 4>&1 > /dev/null 2>&1  # Link file descriptor 4 with stdout, saves stdout.
 exec > "$APP_JBOSS_TMP_DIR/jbossas7-${application}_ctl-\$1.\${pid}.log" 2>&1
 
 if ! [ \$# -eq 1 ]
