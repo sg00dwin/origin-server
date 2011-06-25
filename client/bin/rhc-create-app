@@ -213,7 +213,7 @@ found = false
 begin
     File.open(ssh_config, "r") do |sline|
         while(line = sline.gets)
-            if line.to_s.start_with? "Host *.#{user_info['user_info']['rhc_domain']}"
+            if line.to_s.index("Host *.#{user_info['user_info']['rhc_domain']}") == 0
                 found = true
                 break
             end
