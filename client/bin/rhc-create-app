@@ -307,7 +307,8 @@ unless opt['nogit']
     puts "Pulling new repo down"
 
     puts "git clone --quiet #{git_url} #{opt['repo']}" if debug
-    git_pull = `git clone #{debug ? ' ' : '--quiet '}#{git_url} #{opt['repo']}`
+    quiet = (debug ? ' ' : '--quiet ')
+    git_pull = %x<git clone #{quiet} #{git_url} #{opt['repo']}>
     if $?.exitstatus != 0
         puts "Error in git pull"
         puts git_pull
