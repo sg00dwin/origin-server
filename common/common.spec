@@ -1,6 +1,6 @@
 Summary:   Common dependencies of the libra server and node
 Name:      rhc-common
-Version:   0.73.1
+Version:   0.73.2
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -42,6 +42,9 @@ rm -rf %{buildroot}
 /bin/chgrp libra_user /etc/mcollective/client.cfg
 
 %changelog
+* Mon Jun 27 2011 Dan McPherson <dmcphers@redhat.com> 0.73.2-1
+- 
+
 * Mon Jun 27 2011 Dan McPherson <dmcphers@redhat.com> 0.73.1-1
 - bump spec numbers (dmcphers@redhat.com)
 
