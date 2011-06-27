@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.73.0
+Version:       0.73.1
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -38,6 +38,9 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Mon Jun 27 2011 Dan McPherson <dmcphers@redhat.com> 0.73.1-1
+- bump spec numbers (dmcphers@redhat.com)
+
 * Wed Jun 22 2011 Dan McPherson <dmcphers@redhat.com> 0.72.9-1
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
   (dwalsh@redhat.com)
