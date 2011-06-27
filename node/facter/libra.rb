@@ -63,7 +63,7 @@ if File.exists?("/var/lib/libra") && File.directory?("/var/lib/libra")
                 setcode do customer end
             end
         end
-
+=begin
         # Repo counts for a customer
         if File.exists?("/var/lib/libra/#{customer}/git/")
             git_repos = Dir.glob("/var/lib/libra/#{customer}/git/*.git")
@@ -71,6 +71,7 @@ if File.exists?("/var/lib/libra") && File.directory?("/var/lib/libra")
                 setcode do git_repos.size end
             end
         end
+=end
     end
 end
 
