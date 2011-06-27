@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.73.0
+Version:   0.73.1
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -64,6 +64,9 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Mon Jun 27 2011 Dan McPherson <dmcphers@redhat.com> 0.73.1-1
+- bump spec numbers (dmcphers@redhat.com)
+
 * Fri Jun 24 2011 Dan McPherson <dmcphers@redhat.com> 0.72.22-1
 - Updated omniture account information (edirsh@redhat.com)
 
