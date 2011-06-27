@@ -146,6 +146,16 @@ function create_repo {
 # Stop the app
 echo "Stopping application..."
 ~/${application}/${application}_ctl.sh stop
+for i in {1..60}
+do
+    if \`pgrep -P \$(cat ~/${application}/run/httpd.pid 2> /dev/null) > /dev/null 2>&1\`
+    then
+        echo "Waiting for stop to finish"
+        sleep .5
+    else
+        break
+    fi
+done
 EOF
 
     cat <<EOF > $GIT_DIR/hooks/post-receive
