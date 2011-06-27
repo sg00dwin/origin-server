@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system client tools
 Name:          rhc
-Version:       0.73.1
+Version:       0.73.2
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       MIT
@@ -94,6 +94,11 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_sysconfdir}/openshift/express.conf
 
 %changelog
+* Mon Jun 27 2011 Dan McPherson <dmcphers@redhat.com> 0.73.2-1
+- force evaluation (jimjag@redhat.com)
+- better structure... (jimjag@redhat.com)
+- adjust for Fed13 and RHEL5 (no elsif?) (jimjag@redhat.com)
+
 * Mon Jun 27 2011 Dan McPherson <dmcphers@redhat.com> 0.73.1-1
 - Fed13 and RHEL5 use json_pure
 - bump spec numbers (dmcphers@redhat.com)
