@@ -15,13 +15,15 @@ BuildRequires: rubygem-rspec
 Requires:      ruby >= 1.8.6
 Requires:      rubygem-parseconfig
 %if 0%{?fedora} == 13
-Requires:      rubygem-json_pure
-%else
+%define jpure 1
+%endif
 %if 0%{?rhel} == 5
+%define jpure 1
+%endif
+%if %{jpure}
 Requires:      rubygem-json_pure
 %else
 Requires:      rubygem-json
-%endif
 %endif
 Requires:      git
 
