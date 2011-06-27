@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.72.28
+Version:   0.72.29
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -68,6 +68,17 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Mon Jun 27 2011 Dan McPherson <dmcphers@redhat.com> 0.72.29-1
+- fix jboss spec (dmcphers@redhat.com)
+- Bug 716362, restore server stop/start hooks and update to
+  jbossas-7.0.0Beta7OS to address app removal error (scott.stark@jboss.org)
+- Bug 716362, don't restart server on git push as it is not needed
+  (scott.stark@jboss.org)
+- Version 0.72.27 (scott.stark@jboss.org)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (scott.stark@jboss.org)
+- 715135, fix multiple start/stop errors (scott.stark@jboss.org)
+
 * Thu Jun 24 2011 Scott Stark <sstark@redhat.com> 0.72.28-1
 - Bug 716362, don't restart server on git push as it is not needed
 
