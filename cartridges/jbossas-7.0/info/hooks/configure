@@ -190,7 +190,7 @@ function create_repo {
     cat <<__EOF__ > $GIT_DIR/hooks/pre-receive
 # Stop the app
 echo "Stopping application..."
-$APP_DIR/${application}_ctl.sh stop
+~/${application}/${application}_ctl.sh stop
 echo done
 __EOF__
 
@@ -201,7 +201,7 @@ git archive --format=tar HEAD | (cd $APP_DIR/repo && tar --warning=no-timestamp 
 # Start the app
 echo -n "Starting application..."
 exec 1>&- # close stdout
-$APP_DIR/${application}_ctl.sh start >/dev/null 2>&1
+~/${application}/${application}_ctl.sh start >/dev/null 2>&1
 exec 1>&2 # redirect stdout to stderr
 echo done
 __EOF__
