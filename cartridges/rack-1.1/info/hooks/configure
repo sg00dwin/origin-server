@@ -149,10 +149,44 @@ echo "Stopping application..."
 EOF
 
     cat <<EOF > $GIT_DIR/hooks/post-receive
+USED_BUNDLER=false 
+# If the previous and current commits didn't upload .bundle and you have .bundle and vendor/bundle already deployed then store away for redeploy
+# Also adding .force_clean_build at the root of the repo will trigger a clean rebundle
+if ! git show master:.force_clean_build > /dev/null 2>&1 && ! git show master:.bundle > /dev/null 2>&1 && ! git show master~1:.bundle > /dev/null 2>&1 && [ -d '$APP_DIR/deploy/.bundle' ] && [ -d '$APP_DIR/deploy/vendor/bundle' ]
+then
+  USED_BUNDLER=true
+  echo 'Saving away previously bundled RubyGems'
+  rm -rf '$APP_DIR/tmp/.bundle' '$APP_DIR/tmp/vendor'
+  mv '$APP_DIR/deploy/.bundle' '$APP_DIR/tmp/'
+  mv '$APP_DIR/deploy/vendor' '$APP_DIR/tmp/'
+fi
+
 echo 'Cleaning out deploy/*'
 rm -rf $APP_DIR/deploy/* $APP_DIR/deploy/.[^.]*
 echo 'Deploying application from git repo to deploy/'
 git archive --format=tar HEAD | (cd $APP_DIR/deploy && tar --warning=no-timestamp -xf -)
+
+if \$USED_BUNDLER
+then
+  echo 'Restoring previously bundled RubyGems (note: you can commit .force_clean_build at the root of your repo to force a clean bundle)'
+  mv '$APP_DIR/tmp/.bundle' '$APP_DIR/deploy/'
+  if [ -d '$APP_DIR/deploy/vendor' ]
+  then
+    mv '$APP_DIR/tmp/vendor/bundle' '$APP_DIR/deploy/vendor/'
+  else
+    mv '$APP_DIR/tmp/vendor' '$APP_DIR/deploy/'
+  fi
+  rm -rf '$APP_DIR/tmp/.bundle' '$APP_DIR/tmp/vendor'
+fi
+
+# If .bundle isn't currently committed and a Gemfile is then bundle install
+if ! git show master:.bundle > /dev/null 2>&1 && [ -f '$APP_DIR/deploy/Gemfile' ] 
+then
+  echo 'Bundling RubyGems based on Gemfile/Gemfile.lock to deploy/vendor/bundle'
+  pushd $APP_DIR/deploy > /dev/null
+  bundle install --deployment
+  popd > /dev/null
+fi
 
 # Start the app
 echo "Starting application..."
