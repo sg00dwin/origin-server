@@ -20,7 +20,7 @@ Requires:      rubygem-parseconfig
 %if 0%{?rhel} == 5
 %define jpure 1
 %endif
-%if %{jpure}
+%if 0%{?jpure} == 1
 Requires:      rubygem-json_pure
 %else
 Requires:      rubygem-json
