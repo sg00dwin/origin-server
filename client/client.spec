@@ -12,9 +12,17 @@ Source0:       rhc-%{version}.tar.gz
 BuildRoot:     %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires: rubygem-rake
 BuildRequires: rubygem-rspec
-Requires:      ruby >= 1.8.7
+Requires:      ruby >= 1.8.6
 Requires:      rubygem-parseconfig
+%if 0%{?fedora} == 13
+Requires:      rubygem-json_pure
+%else
+%if 0%{?rhel} == 5
+Requires:      rubygem-json_pure
+%else
 Requires:      rubygem-json
+%endif
+%endif
 Requires:      git
 
 BuildArch:     noarch
@@ -85,6 +93,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Mon Jun 27 2011 Dan McPherson <dmcphers@redhat.com> 0.73.1-1
+- Fed13 and RHEL5 use json_pure
 - bump spec numbers (dmcphers@redhat.com)
 - json_pure for 1.8.6, Darwin and Windows. Thx mhicks for the pointer!
   (jimjag@redhat.com)
