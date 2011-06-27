@@ -10,14 +10,9 @@ class Express < Test::Unit::TestCase
     @verification_errors = []
     @headless = Headless.new
     @headless.start
-    @profile = Selenium::WebDriver::Firefox::Profile.new
-    @proxy = Selenium::WebDriver::Proxy.new(:ssl => "file.sjc.redhat.com:3128")
-    @profile.proxy =@proxy
-    @driver=Selenium::WebDriver.for :firefox, :profile =>@profile
     @driver=Selenium::WebDriver.for :firefox
     @driver.manage.timeouts.implicit_wait = 5
-#    @url="http://localhost"
-    @url="https://ci.dev.openshift.redhat.com/"
+    @url="http://localhost"
   end
   
   def teardown
@@ -190,14 +185,6 @@ class Express < Test::Unit::TestCase
     rescue Test::Unit::AssertionFailedError
         @verification_errors << $!
     end
-    @driver.find_element(:xpath,".//a[contains(text(),'OpenShift Express User Guide')]").click()
-    sleep 4
-    begin
-    assert_equal "OpenShift Express User Guide",@driver.title
-    rescue Test::Unit::AssertionFailedError
-        @verification_errors << $!
-    end
-    @driver.navigate.back
     sleep 2
     begin
         assert @driver.find_element(:xpath,".//a[contains(@href, 'https://www.redhat.com/openshift/sites/default/files/documents/RHOS_Express_Eval_Guide.pdf')]").displayed?
