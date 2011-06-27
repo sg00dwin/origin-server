@@ -12,7 +12,7 @@ Source0:   %{name}-%{version}.tar.gz
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires: git
 Requires:  rhc-node
-Requires:  jboss-as7 = 7.0.0.Beta6OS
+Requires:  jboss-as7 = 7.0.0.Beta7OS
 
 BuildArch: noarch
 
