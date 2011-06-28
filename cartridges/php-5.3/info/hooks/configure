@@ -165,6 +165,21 @@ EOF
 rm -rf $APP_DIR/repo/* $APP_DIR/repo/.[^.]*
 git archive --format=tar HEAD | (cd $APP_DIR/repo && tar --warning=no-timestamp -xf -)
 
+if [ -f ~/${application}/repo/deplist.txt ]
+then
+    for f in \$(cat ~/${application}/repo/deplist.txt)
+    do
+        echo "Checking pear: \$f"
+        echo
+        if pear list "\$f" > /dev/null
+        then
+            pear upgrade "\$f"
+        else
+            pear install "\$f"
+        fi
+    done
+fi
+
 # Start the app
 echo "Starting application..."
 ~/${application}/${application}_ctl.sh start
