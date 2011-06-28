@@ -73,7 +73,7 @@ if __name__ == '__main__':
 
         if name.isalnum():
             path = os.path.expanduser('~')
-            allargs = "-czf - -C %s/ --exclude=./%s/%s_ctl.sh --exclude=./%s/conf.d/libra.conf --exclude=./%s/run/httpd.pid ./%s/" % (path, name, name, name, name, name)
+            allargs = "-chzf - -C %s/ --exclude=./%s/%s_ctl.sh --exclude=./%s/conf.d/libra.conf --exclude=./%s/run/httpd.pid ./%s/" % (path, name, name, name, name, name)
             allargs = allargs.split()
         else:
             print "Failed sanitization"

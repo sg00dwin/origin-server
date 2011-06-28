@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.73.3
+Version:   0.73.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -64,6 +64,11 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Tue Jun 28 2011 Dan McPherson <dmcphers@redhat.com> 0.73.4-1
+- Fixed broken documentation link (edirsh@redhat.com)
+- cleanup (dmcphers@redhat.com)
+- cleanup (dmcphers@redhat.com)
+
 * Tue Jun 28 2011 Dan McPherson <dmcphers@redhat.com> 0.73.3-1
 - maven support (dmcphers@redhat.com)
 
