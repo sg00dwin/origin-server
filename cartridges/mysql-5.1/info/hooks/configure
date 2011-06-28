@@ -1,0 +1,186 @@
+#!/bin/bash
+
+# Copyright © 2010 Mike McGrath All rights reserved
+# Copyright © 2010 Red Hat, Inc. All rights reserved
+
+# This copyrighted material is made available to anyone wishing to use, modify,
+# copy, or redistribute it subject to the terms and conditions of the GNU
+# General Public License v.2.  This program is distributed in the hope that it
+# will be useful, but WITHOUT ANY WARRANTY expressed or implied, including the
+# implied warranties of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.  You should have
+# received a copy of the GNU General Public License along with this program;
+# if not, write to the Free Software Foundation, Inc., 51 Franklin Street,
+# Fifth Floor, Boston, MA 02110-1301, USA. Any Red Hat trademarks that are
+# incorporated in the source code or documentation are not subject to the GNU
+# General Public License and may only be used or replicated with the express
+# permission of Red Hat, Inc.
+
+# Creates a per customer httpd instance
+
+# Exit on any errors
+set -e
+set -x
+
+if [ -f '/etc/libra/node.conf' ]
+then
+    . /etc/libra/node.conf
+elif [ -f 'node.conf' ]
+then
+    . node.conf
+else
+    echo "node.conf not found.  Cannot continue" 1>&2
+    exit 3
+fi
+
+if [ -f '/etc/libra/node_data.conf' ]
+then
+    . /etc/libra/node_data.conf
+elif [ -f 'node_data.conf' ]
+then
+    . node_data.conf
+else
+    echo "node_data.conf not found.  Cannot continue" 1>&2
+    exit 3
+fi
+
+rotatelogs_interval="86400"
+rotatelogs_format="-%Y%m%d-%H%M%S-%Z"
+
+if [ -f '/etc/libra/resource_limits.conf' ]
+then
+    . /etc/libra/resource_limits.conf
+fi
+
+CART_INFO_DIR=/usr/libexec/li/cartridges/embedded/mysql-5.1/info
+CART_CONF_DIR=$CART_INFO_DIR/configuration/etc
+
+function print_help {
+    echo "Usage: $0 app-name namespace uuid"
+
+    echo "$0 $@" | logger -p local0.notice -t libra_http_create
+    exit 1
+}
+
+function error {
+    echo "$1" 1>&2
+    exit "$2"
+}
+
+while getopts 'd' OPTION
+do
+    case $OPTION in
+        d) set -x
+        ;;
+        ?) print_help
+        ;;
+    esac
+done
+
+
+[ $# -eq 3 ] || print_help
+
+application="$1"
+namespace=$2 # Not used
+uuid=$3
+
+CUSTOMER_HOME="$libra_dir/$uuid"
+APP_DIR=`echo $CUSTOMER_HOME/$application | tr -s /`
+
+#
+# Detect IP
+# 
+IP=$(/bin/awk '/Listen/{ print $2 }' $APP_DIR/conf.d/libra.conf | /bin/sed 's/\:8080$//')
+
+#
+# Get user id info
+# Not caching this information caused some early chowns to work but some later
+# chowns to fail with a user not found error
+
+user_id=$(id -u "$uuid") || error "Could not find user $uuid" 134
+group_id=$(id -g "$uuid") || error "Could not find user $uuid" 135
+
+#
+# Get UID information and CVAL
+#
+uid=$(id -u "$uuid")
+c_val="c$(($uid/1023)),c$(($uid%1023))"
+
+#
+# Create http base for application, every app gets its own apache instance
+#
+
+[ -d "$APP_DIR/mysql/" ] && error "${application}.  Embedded MySQL already attached to $application" 132
+[ -d "$APP_DIR/" ] || error "${APP_DIR} Not found!  Aborting." 133
+mkdir -p "$APP_DIR/mysql/"
+pushd "$APP_DIR/mysql" > /dev/null
+mkdir -p log etc data socket pid
+sed "s,RHC_MYSQLDIR,$APP_DIR/mysql/," $CART_CONF_DIR/my.cnf > $APP_DIR/mysql/etc/my.cnf
+sed -i "s,RHC_BIND_ADDR,$IP," $APP_DIR/mysql/etc/my.cnf
+popd > /dev/null
+# Create mysql database
+/usr/bin/mysql_install_db --defaults-file=$APP_DIR/mysql/etc/my.cnf > /dev/null 2>&1 || error "Failed to create mysqldb" 119
+
+#
+# Create simple mysql start / stop script
+#
+cat <<EOF > "$APP_DIR/${application}_mysql_ctl.sh"
+#/bin/bash
+if ! [ \$# -eq 1 ]
+then
+    echo "Usage: \$0 [start|restart|stop]"
+    exit 1
+fi
+
+STOPTIMEOUT=5
+
+if whoami | grep -q root
+then
+    echo 1>&2
+    echo "Please don't run script as root, try:" 1>&2
+    echo "runuser --shell /bin/sh $uuid $APP_DIR/${application}_mysql_ctl.sh" 1>&2
+    echo 2>&1
+    exit 15
+fi
+
+case "\$1" in
+    start)
+        runcon -t libra_t -l s0:$c_val /usr/bin/mysqld_safe --defaults-file=$APP_DIR/mysql/etc/my.cnf >/dev/null 2>&1 &
+    ;;
+    stop)
+        if [ -f $APP_DIR/mysql/pid/mysql.pid ]; then
+            runcon -t libra_t -l s0:$c_val /bin/kill \$( /bin/cat $APP_DIR/mysql/pid/mysql.pid )
+        fi
+    ;;
+    restart)
+        runcon -t libra_t -l s0:$c_val /bin/kill \$( /bin/cat $APP_DIR/mysql/pid/mysql.pid )
+        if [ $ret -eq 0 ]; then
+            TIMEOUT="$STOPTIMEOUT"
+            while [ $TIMEOUT -gt 0 ]; do
+                /bin/kill -0 "\$( /bin/cat $APP_DIR/mysql/pid/mysql.pid )" >/dev/null 2>&1 || break
+                sleep 1
+                let TIMEOUT=${TIMEOUT}-1
+            done
+        fi
+    ;;
+    status)
+        echo " Coming soon"
+        exit 0
+    ;;
+esac
+EOF
+
+chmod +x "$APP_DIR/${application}_mysql_ctl.sh" || error "Failed to chmod new application scripts" 122
+chown $user_id.$group_id -R $APP_DIR/mysql || error "Failed to chown new application space.  Please contact support" 123
+# Secure script and config dirs.
+chown root.root -R "$APP_DIR/${application}_mysql_ctl.sh"
+chcon -t libra_var_lib_t -l s0:$c_val -R "$APP_DIR/mysql"
+runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l s0:$c_val '$APP_DIR/${application}_mysql_ctl.sh' start" || error "Failed to start ${application}:mysql" 121
+
+sleep 3
+
+# Setup user
+echo "                                  
+delete from user;
+grant all on *.* to 'root'@'$IP' with grant option;
+flush privileges;" | mysql -u root -S $APP_DIR/mysql/socket/mysql.sock mysql > /dev/null || error "Failed to setup initial root user" 187
