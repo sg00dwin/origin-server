@@ -21,11 +21,17 @@ module Libra
       return nil
     end
 
-    def self.get_cartridges_tbl
+    def self.get_cartridges_tbl(type)
       server = Server.find_available
       carts = []
-      server.carts.split('|').each do |cart|
-        carts << cart unless Blacklist.ignore_cart?(cart)
+      if type == 'standalone'
+        server.carts.split('|').each do |cart|
+          carts << cart unless Blacklist.ignore_cart?(cart)
+        end
+      elsif type == 'embedded'
+        server.embedcarts.split('|').each do |cart|
+          carts << cart unless Blacklist.ignore_cart?(cart)
+        end
       end
       return carts
     end

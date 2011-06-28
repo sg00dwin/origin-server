@@ -41,10 +41,10 @@ module RHC
     (time*=adj).to_int
   end
   
-  def self.get_cartridges_tbl(libra_server, net_http, debug=true, print_result=nil)
+  def self.get_cartridges_tbl(libra_server, net_http, cart_types="standalone", debug=true, print_result=nil)
     puts "Contacting https://#{libra_server} to obtain list of cartridges..."
     puts " (please excuse the delay)"
-    data = {'cart_types' => "standalone"}
+    data = {'cart_types' => cart_types}
     if debug
       data['debug'] = "true"
     end
@@ -70,8 +70,8 @@ module RHC
     carts
   end
 
-  def self.get_cartridge_list(carts, sep, libra_server, net_http, debug=true, print_result=nil)
-    carts = get_cartridges_tbl(libra_server, net_http, debug, print_result) if carts.nil?
+  def self.get_cartridge_list(carts, sep, libra_server, net_http, cart_types="standalone", debug=true, print_result=nil)
+    carts = get_cartridges_tbl(libra_server, net_http, cart_types, debug, print_result) if carts.nil?
     carts.join(sep)
   end
 

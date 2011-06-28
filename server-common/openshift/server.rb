@@ -9,12 +9,13 @@ module Libra
     # Cartridge definitions
     @@C_CONTROLLER = 'li-controller-0.1'
 
-    attr_reader :name, :repos, :carts
+    attr_reader :name, :repos, :carts, :embedcarts
 
-    def initialize(name, repos=nil, carts=nil)
+    def initialize(name, repos=nil, carts=nil, embedcarts=nil)
       @name = name
       @repos = repos.to_i if repos
       @carts = carts if carts
+      @embedcarts = embedcarts if embedcarts
     end
 
     def self.create(opts={})
@@ -492,6 +493,19 @@ module Libra
       end unless @carts
       @carts
     end
+
+    #
+    # Returns the list of embed cartridges that the server has (sep w/ |)
+    # looking it up as needed. This returns the full list, including
+    # cartridges we may wish to keep private!
+    #
+    def embedcarts
+      Helper.rpc_get_fact('embed_cart_list', name) do |server, embedcarts|
+          @embedcarts = embedcarts
+      end unless @embedcarts
+      @embedcarts
+    end
+
 
     #
     # Returns the number of repos that the server has

@@ -34,6 +34,7 @@ Control an OpenShift express app
   -l|--rhlogin rhlogin     Red Hat login (RHN or OpenShift login with OpenShift Express access) (#{rhlogin})
   -p|--password password   RHLogin password  (optional, will prompt)
   -c|--command command     (start|stop|restart|reload|status|destroy)
+  -e|--embedded-list       List supported embedded cartridges
   -b|--bypass              Bypass warnings
   -d|--debug               Print Debug info
   -h|--help                Show Usage info
@@ -42,11 +43,23 @@ USAGE
 exit 255
 end
 
+def p_embedded_list
+    libra_server = get_var('libra_server')
+    puts ""
+    puts "List of supported embedded cartridges:"
+    puts ""
+    type_keys = RHC::get_cartridge_list(nil, ', ', libra_server, @http, 'embedded', false)
+    puts type_keys
+    puts ""
+    exit 255
+end
+
 begin
     opts = GetoptLong.new(
         ["--debug",     "-d", GetoptLong::NO_ARGUMENT],
         ["--help",      "-h", GetoptLong::NO_ARGUMENT],
         ["--bypass",    "-b", GetoptLong::NO_ARGUMENT],
+        ["--embedded-list",   "-e", GetoptLong::NO_ARGUMENT],
         ["--rhlogin",   "-l", GetoptLong::OPTIONAL_ARGUMENT],
         ["--password",   "-p", GetoptLong::OPTIONAL_ARGUMENT],
         ["--app",       "-a", GetoptLong::REQUIRED_ARGUMENT],
@@ -67,6 +80,9 @@ debug = get_var('debug') == 'false' ? nil : get_var('debug')
 ssh_config = "#{ENV['HOME']}/.ssh/config"
 ssh_config_d = "#{ENV['HOME']}/.ssh/"
 
+if opt["embedded-list"]
+     p_embedded_list
+end
 if opt["help"]
     p_usage
 end

@@ -240,13 +240,13 @@ class BrokerController < ApplicationController
     begin
       # Parse the incoming data
       data = parse_json_data(params['json_data'])
-      cart_types = data['cart_types']
-      if cart_types != 'standalone'
-        render :json => generate_result_json("Invalid cartridge types: #{cart_types} specified", 109), :status => :invalid and return
+      cart_type = data['cart_types']
+      if cart_type != 'standalone' and cart_type != 'embedded'
+        render :json => generate_result_json("Invalid cartridge types: #{cart_type} specified", 109), :status => :invalid and return
         #TODO handle embedded and subsets (Ex: all php)
       end
 
-      carts = Libra::Util.get_cartridges_tbl
+      carts = Libra::Util.get_cartridges_tbl(cart_type)
       json_data = JSON.generate({
                               :carts => carts
                               })
