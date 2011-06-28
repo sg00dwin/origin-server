@@ -79,6 +79,7 @@ class DevEnv < Thor
   desc "build NAME", "Build a new devenv AMI with the given NAME"
   method_option :register, :type => :boolean, :desc => "Register the instance"
   method_option :terminate, :type => :boolean, :desc => "Terminate the instance on exit"
+  method_option :use_stage_repo, :type => :boolean, :desc => "Build instance off the stage repository"
   method_option :reboot, :type => :boolean, :desc => "Reboot the instance after updating"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   def build(name)
@@ -95,7 +96,9 @@ class DevEnv < Thor
       puts "Done"
 
       print "Performing clean install with the latest code..."
-      output = instance.ssh('sh li-devenv.sh', 1800)
+      cmd = 'sh li-devenv.sh'
+      cmd += ' stage' if options.use_stage_repo?
+      output = instance.ssh(cmd, 1800)
       puts "Done"
 
       puts "----------------- Install Output ------------------------"
@@ -228,13 +231,15 @@ class DevEnv < Thor
 
   desc "launch NAME", "Launches the latest DevEnv instance, tagging with NAME"
   method_option :verifier, :type => :boolean, :desc => "Add verifier functionality (private IP setup and local tests)"
+  method_option :use_stage_image, :type => :boolean, :desc => "Launch a stage DevEnv image"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   method_option :express_server, :type => :boolean, :desc => "Set as express server in express.conf and leave on public_ip"
   method_option :ssh_config_verifier, :type => :boolean, :desc => "Set as verifier in .ssh/config"
   def launch(name)
     # Get the latest devenv image and create a new instance
     conn = connect
-    latest = get_latest_ami(conn)
+    filter = options.use_stage_image? ? DEVENV_STAGE_REGEX : DEVENV_REGEX
+    latest = get_latest_ami(conn, filter)
     puts "Launching latest DevEnv instance #{latest}"
     instance = Instance.create(conn, name, latest)
     puts "Done"
