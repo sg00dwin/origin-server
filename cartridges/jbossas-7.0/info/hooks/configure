@@ -206,8 +206,9 @@ if [ -f '$APP_DIR/repo/pom.xml' ]
 then
   echo "Found pom.xml attempting to build with 'mvn clean package -Dtest.skip=true'" 
   export JAVA_HOME=/usr/lib/jvm/jre-1.6.0
-  export M2_HOME=/usr/libexec/li/cartridges/${jboss_version}/maven-2.2
+  export M2_HOME=/usr/share/java/apache-maven-3.0.3
   export M2=\$M2_HOME/bin
+  export MAVEN_OPTS="-Xmx208m"
   export PATH=\$M2:\$PATH
   pushd ~/${application}/repo > /dev/null
   mvn --version

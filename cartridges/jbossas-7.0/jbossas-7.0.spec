@@ -13,6 +13,7 @@ BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires: git
 Requires:  rhc-node
 Requires:  jboss-as7 = 7.0.0.Beta7OS
+Requires:  maven3
 
 BuildArch: noarch
 
@@ -53,10 +54,7 @@ ln -s %{cartridgedir}/../abstract-httpd/info/hooks/restart %{buildroot}%{cartrid
 ln -s %{cartridgedir}/../abstract-httpd/info/hooks/start %{buildroot}%{cartridgedir}/info/hooks/start
 ln -s %{cartridgedir}/../abstract-httpd/info/hooks/stop %{buildroot}%{cartridgedir}/info/hooks/stop
 ln -s %{cartridgedir}/../abstract-httpd/info/hooks/update_namespace %{buildroot}%{cartridgedir}/info/hooks/update_namespace
-# maven
-mkdir -p %{buildroot}%{cartridgedir}/maven-2.2
-tar -xf apache-maven-2.2.1-bin.tar.gz
-mv apache-maven-2.2.1/* %{buildroot}%{cartridgedir}/maven-2.2
+
 
 %clean
 rm -rf %{buildroot}
@@ -65,7 +63,6 @@ rm -rf %{buildroot}
 %defattr(-,root,root,-)
 %attr(0750,-,-) %{cartridgedir}/info/hooks/
 %attr(0750,-,-) %{cartridgedir}/info/data/
-%{cartridgedir}/maven-2.2
 %config(noreplace) %{cartridgedir}/info/configuration/
 %{_sysconfdir}/libra/cartridges/%{name}
 %{cartridgedir}/info/changelog
