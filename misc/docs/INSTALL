@@ -102,17 +102,6 @@ Prep Host for httpd access
 3) Uncomment the line in /etc/httpd/conf/httpd.conf that starts with "NameVirtualHost"
 4) start httpd and make sure it starts on reboot "service httpd start; chkconfig httpd on"
 
-Install a cartridge
-===================
-
-1) run "yum install rhc-cartridge-php-5.3"
-2) run "rhc-cartridge-do -a configure -n li -l $rhlogin --cartridge php-5.3" -p <password>
-    Note: "rhlogin" should be the same rhlogin you used earlier
-    Note: "uuid" is the uuid you got from step 5) in "install and configure controller"
-3) Confirm the site comes up at li.namespace.domain_specified earlier
-    Note: If you do not have ddns setup, you can check /etc/libra/id_db for the
-    localhost and port number.
-
 
 Non-ec2
 =======
