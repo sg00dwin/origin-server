@@ -50,8 +50,5 @@ RedHatCloud::Application.configure do
   config.libra_domain = "rhcloud.com"
   config.resolver = "209.132.178.9"
   config.secret = "hmac-md5:dhcpupdate:fzAvGcKPZWiFgmF8qmNUaA=="
-
-  # Broker configuration
-  config.per_user_app_limit = 5
 end
 
