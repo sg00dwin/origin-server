@@ -46,6 +46,48 @@ module Libra
     end
   end
 
+  # Execute a cartridge type (embedded)
+  def self.embed_execute(framework, action, app_name, rhlogin)
+    # get user
+    user = User.find(rhlogin)
+    if not user
+      raise UserException.new(254), "A user with rhlogin '#{rhlogin}' does not have a registered domain.  Be sure to run rhc-create-domain without -a|--alter first.", caller[0..5]
+    end
+
+    # process actions
+
+    case action
+    when 'configure'
+      # create a new app.  Don't expect it to exist
+      embed_configure(framework, app_name, user)
+
+    when 'deconfigure'
+      # destroy an app.  It must exists, but won't at the end
+      # get the app object
+      # get the server
+      # send the command to the server
+      # remove the app object from persistant storage
+      embed_deconfigure(framework, app_name, user)
+
+    else
+      # send a command to an app.  It must exist and will afterwards
+      # get the app object
+      # get the server
+      # send the command
+      app_info = user.app_info(app_name)
+      if not app_info
+        raise UserException.new(101), "An application named '#{app_name}' does not exist", caller[0..5]
+      end
+
+      server = Server.new(app_info['server_identity'])
+
+      Libra.logger_debug "DEBUG: Performing action '#{action}' on node: #{server.name} - #{server.repos} repos" if Libra.c[:rpc_opts][:verbose]
+      server_execute_direct('embed/' + framework, action, app_name, user, server, app_info)
+    end
+  end
+
+
+  # Execute a cartridge type (standalone)
   def self.execute(framework, action, app_name, rhlogin)
     # get user
     user = User.find(rhlogin)
@@ -85,6 +127,54 @@ module Libra
     end
   end
 
+  def self.embed_configure(framework, app_name, user)
+    raise UserException.new(100), "An application '#{app_name}' does not exist", caller[0..5] unless user.app_info(app_name)
+    # Find the next available server
+    server = Server.find_available
+
+    Libra.logger_debug "DEBUG: Performing configure on node: #{server.name} - #{server.repos} repos" if Libra.c[:rpc_opts][:verbose]
+
+    # Create S3 app entry on configure (one of the first things)
+    #app_info  = user.create_app(app_name, framework, server)
+    app_info = user.app_info(app_name)
+
+    begin
+      server_execute_direct('embedded/' + framework, 'configure', app_name, user, server, app_info)
+    rescue Exception => e
+      begin
+        Libra.logger_debug "DEBUG: Failed to embed '#{framework}' in '#{app_name}' for user '#{user.rhlogin}' on node '#{server.name}'"
+        Libra.client_debug "Failed to embed '#{framework} in '#{app_name}'"
+        server_execute_direct(framework, 'deconfigure', app_name, user, server, app_info)        
+      ensure
+        raise
+      end
+    end
+  end
+
+  # remove an application from server and persistant storage
+  def self.embed_deconfigure(framework, app_name, user)
+    # get the application details
+    app_info = user.app_info(app_name)
+    if not app_info
+      raise UserException.new(101), "An application named '#{app_name}' does not exist", caller[0..5]
+    end
+    
+    # Remove the application and account from the server
+    server = Server.new(app_info['server_identity'])
+      
+    # first, remove the application
+    Libra.logger_debug "DEBUG: deconfiguring app #{app_name} on node: #{server.name} - #{server.repos} repos" if Libra.c[:rpc_opts][:verbose]
+    begin
+      server_execute_direct('embedded/' + framework, 'deconfigure', app_name, user, server, app_info)
+    rescue Exception => e
+      if server.has_app?(app_info, app_name)
+        raise
+      else
+        Libra.logger_debug "Application '#{app_name}' not found on node #{server.name}.  Continuing with deconfigure."
+        Libra.logger_debug "Error from cartridge on deconfigure: #{e.message}"
+      end
+    end
+  end
 
   def self.configure_app(framework, app_name, user)
     raise UserException.new(100), "An application named '#{app_name}' already exists", caller[0..5] if user.app_info(app_name)

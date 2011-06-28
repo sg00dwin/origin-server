@@ -61,7 +61,7 @@ class BrokerController < ApplicationController
           if !(val =~ /\A[A-Za-z0-9\+\/=]+\z/)
             render :json => generate_result_json("Invalid ssh key: #{val}", 108), :status => :invalid and return nil
           end
-        when 'debug', 'alter'
+        when 'debug', 'alter', 'embed'
           if !(val =~ /\A(true|false)\z/)
             render :json => generate_result_json("Invalid value for #{key}:#{val} specified", 254), :status => :invalid and return nil
           end
@@ -73,7 +73,11 @@ class BrokerController < ApplicationController
           if !(val =~ /\A[\w\-\.]+\z/)
             render :json => generate_result_json("Invalid cart_types: #{val} specified", 109), :status => :invalid and return nil
           end
-        when 'action', 'app_name'
+        when 'action'
+          if !(val =~ /\A[\w\-\.]+\z/) and val.to_s.length < 24
+            render :json => generate_result_json("Invalid #{key} specified: #{val}", 105), :status => :invalid and return nil
+          end
+        when 'app_name'
           if !(val =~ /\A[\w]+\z/) and val.to_s.length < 24
             render :json => generate_result_json("Invalid #{key} specified: #{val}", 105), :status => :invalid and return nil
           end
@@ -103,6 +107,40 @@ class BrokerController < ApplicationController
     render :json => generate_result_json(e.message, e.respond_to?('exit_code') ? e.exit_code : 254), :status => :internal_server_error
   end
 
+  def embed_cartridge_post
+    begin
+      # Parse the incoming data
+      data = parse_json_data(params['json_data'])
+      return unless data
+      username = Libra::User.new(data['rhlogin'], nil, nil, nil, params['password']).login()
+      if username
+        action = data['action']
+        app_name = data['app_name']
+
+        if !Libra::Util.check_app(app_name)
+          render :json => generate_result_json("The supplied application name is it not allowed", 105), :status => :invalid and return
+        end
+        
+        cartridge_type = 'embedded'
+
+        if !Libra::Util.get_cartridge_type(data['cartridge'], cartridge_type)
+          render :json => generate_result_json("Invalid application type (-t|--type) specified: '#{data['cartridge']}'.  Valid application types are (#{Libra::Util.get_cartridge_list(cartridge_type)}).", 110), :status => :invalid and return
+        end
+        
+        # Execute a framework cartridge
+        Libra.embed_execute(data['cartridge'], action, app_name, username)
+        
+        message = Thread.current[:resultIO].string
+
+        render :json => generate_result_json(message) and return
+      else
+        render_unauthorized and return
+      end
+    rescue Exception => e
+      render_internal_server_error(e, 'cartridge_post') and return
+    end
+  end
+
   def cartridge_post
     begin
       # Parse the incoming data
@@ -117,8 +155,10 @@ class BrokerController < ApplicationController
           render :json => generate_result_json("The supplied application name is it not allowed", 105), :status => :invalid and return
         end
         
-        if !Libra::Util.get_cartridge_type(data['cartridge'])
-          render :json => generate_result_json("Invalid application type (-t|--type) specified: '#{data['cartridge']}'.  Valid application types are (#{Libra::Util.get_cartridge_list}).", 110), :status => :invalid and return
+        cartridge_type = 'standalone'
+
+        if !Libra::Util.get_cartridge_type(data['cartridge'], cartridge_type)
+          render :json => generate_result_json("Invalid application type (-t|--type) specified: '#{data['cartridge']}'.  Valid application types are (#{Libra::Util.get_cartridge_list(cartridge_type)}).", 110), :status => :invalid and return
         end
         
         # Execute a framework cartridge
