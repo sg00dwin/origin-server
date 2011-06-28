@@ -55,3 +55,9 @@ git pull && git push && git push --tags
 
 # To build the package
 tito build --cvs-release < /tmp/answerfile
+
+Building an older build:
+
+If you hit the case where you need to build something that has already been tagged and built, you'll need to manually untag stuff before it.  Mash uses the latest tagged NVR, so use this command to untag the more recent versions:
+
+brew untag-pkg libra-rhel-6.1-candidate $nvr

@@ -18,6 +18,28 @@
 # permission of Red Hat, Inc.
 
 # Creates a per customer jboss-as7 instance
+# Variables used in this script:
+: << --COMMENT--
+# jboss.version
+jboss_home = the location where the jbossas server is installed
+jboss_version = the name/type of the jbossas cartridge, e.g., jbossas-7.0
+# /etc/libra/node.conf
+unobfuscate = Enable user-unobfuscate to create ~/rhlogin in addition to ~/uuid
+libra_dir=Users home dirs (where customer data ends up)
+# Script arguments
+namespace=basename $2
+application=$1
+uuid=$3
+# Script local
+JBOSS_CARTRIDGE_ROOT=/usr/libexec/li/cartridges/${jboss_version}
+APP_HOME = ${libra_dir}/${uuid} # the root directory for application contents
+APP_DIR = $APP_HOME/$application # The location of the application jboss setup
+GIT_DIR = $APP_HOME/git/$application.git
+M2_DIR = $APP_HOME/.m2 # maven dir
+APP_JBOSS = $APP_DIR/${jboss_version} # the application jbossas root
+APP_JBOSS_BIN_DIR = $APP_DIR/${jboss_version}/bin
+APP_JBOSS_TMP_DIR = $APP_DIR/${jboss_version}/standalone/tmp # application jbossas tmp dir
+--COMMENT--
 
 # Exit on any errors
 set -e
@@ -27,6 +49,7 @@ set -x
 . `dirname $0`/jboss.version
 
 echo "Running ${jboss_version} configure script "
+JBOSS_CARTRIDGE_ROOT=/usr/libexec/li/cartridges/${jboss_version}
 
 if [ -f '/etc/libra/node.conf' ]
 then
@@ -74,15 +97,21 @@ uuid=$3
 
 APP_HOME="$libra_dir/$uuid/"
 # The location of the application jboss setup
-APP_DIR="$APP_HOME/$application"
+APP_DIR=`echo $APP_HOME/$application | tr -s /`
 [ -d "$APP_DIR" ] && error "${application}.  Please destroy then recreate, or pick a new name" 132
+# The root of the application jbossas contents
+APP_JBOSS="$APP_DIR"/${jboss_version}
+# Maven dir
+M2_DIR=`echo $APP_HOME/.m2 | tr -s /`
+mkdir -p $M2_DIR
 
 # Redirect the configure script output for debugging
-TMP_DIR="$APP_DIR"/${jboss_version}/standalone/tmp
-mkdir -p ${TMP_DIR}
-logfile=${TMP_DIR}/jbossas7-configure-$$.log
+APP_JBOSS_TMP_DIR="$APP_JBOSS"/standalone/tmp
+mkdir -p ${APP_JBOSS_TMP_DIR}
+logfile=${APP_JBOSS_TMP_DIR}/jbossas7-configure-$$.log
 exec > $logfile 2>&1
 
+# Report an error msg $1 and exit with code $2
 function error {
     echo "$1" 1>&2
     exit "$2"
@@ -146,13 +175,12 @@ function create_repo {
     user_id=$2
     group_id=$3
     c_val=$4
-    APP_HOME="${libra_dir}/${uuid}"
 
     if [ ! -d $APP_HOME ]; then echo "ERROR: Application ${uuid} not found!  Please create." 1>&2; exit 2; fi
 
     GIT_DIR=$APP_HOME/git/$application.git
     mkdir -p "$APP_HOME/git"
-    git clone --bare /usr/libexec/li/cartridges/${jboss_version}/info/data/git_template.git $GIT_DIR
+    git clone --bare ${JBOSS_CARTRIDGE_ROOT}/info/data/git_template.git $GIT_DIR
 
     # Repacking is needed to handle a bug with running multiple
     # git clone operations under concurrency.  The cloned repos
@@ -162,20 +190,37 @@ function create_repo {
     popd
 
     echo "jbossas 7.0 application '$application'" > $GIT_DIR/description
-    
+
     cat <<__EOF__ > $GIT_DIR/hooks/pre-receive
 # Stop the app
 echo "Stopping application..."
-$APP_DIR/${application}_ctl.sh stop
+~/${application}/${application}_ctl.sh stop
+echo done
 __EOF__
 
     cat <<__EOF__ > $GIT_DIR/hooks/post-receive
 rm -rf $APP_DIR/repo/* $APP_DIR/repo/.[^.]*
 git archive --format=tar HEAD | (cd $APP_DIR/repo && tar --warning=no-timestamp -xf -)
 
+if [ -f '$APP_DIR/repo/pom.xml' ]
+then
+  echo "Found pom.xml attempting to build with 'mvn clean package -Dtest.skip=true'" 
+  export JAVA_HOME=/usr/lib/jvm/jre-1.6.0
+  export M2_HOME=/usr/libexec/li/cartridges/${jboss_version}/maven-2.2
+  export M2=\$M2_HOME/bin
+  export PATH=\$M2:\$PATH
+  pushd ~/${application}/repo > /dev/null
+  mvn --version
+  mvn clean package -Dtest.skip=true
+  popd
+fi
+
 # Start the app
-echo "Starting application..."
-$APP_DIR/${application}_ctl.sh start
+echo -n "Starting application..."
+exec 1>&- # close stdout
+~/${application}/${application}_ctl.sh start >/dev/null 2>&1
+exec 1>&2 # redirect stdout to stderr
+echo done
 __EOF__
 
     chmod 0755 $GIT_DIR/hooks/post-receive $GIT_DIR/hooks/pre-receive
@@ -225,7 +270,8 @@ IP=$(find_open_ip $uid $uuid)
 mkdir -p "$APP_DIR"
 pushd "$APP_DIR" > /dev/null
 mkdir -p repo run ${jboss_version}/{bin,standalone/configuration}
-JBOSS_BIN_DIR="$APP_DIR"/${jboss_version}/bin
+# application jbossas bin directory
+APP_JBOSS_BIN_DIR="$APP_JBOSS"/bin
 
 cd ${jboss_version}
 # Create a link to the jboss server modules jar and modules directory
@@ -233,28 +279,28 @@ ln -s ${jboss_home}/jboss-modules.jar
 ln -s ${jboss_home}/modules
 
 # Copy the jbossas server install standalone configuration files
-cp ${jboss_home}/standalone/configuration/{standalone.xml,logging.properties} "$APP_DIR"/${jboss_version}/standalone/configuration
+cp ${jboss_home}/standalone/configuration/{standalone.xml,logging.properties} "$APP_JBOSS"/standalone/configuration
 # Look for cartridge overrides of the configuration/{standalone.xml,logging.properties}
-if [ -f /usr/libexec/li/cartridges/${jboss_version}/info/configuration/standalone.xml ]
+if [ -f ${JBOSS_CARTRIDGE_ROOT}/info/configuration/standalone.xml ]
 then
-    cp /usr/libexec/li/cartridges/${jboss_version}/info/configuration/standalone.xml "$APP_DIR"/${jboss_version}/standalone/configuration
+    cp ${JBOSS_CARTRIDGE_ROOT}/info/configuration/standalone.xml "$APP_JBOSS"/standalone/configuration
 fi
-if [ -f /usr/libexec/li/cartridges/${jboss_version}/info/configuration/logging.properties ]
+if [ -f ${JBOSS_CARTRIDGE_ROOT}/info/configuration/logging.properties ]
 then
-    cp /usr/libexec/li/cartridges/${jboss_version}/info/configuration/logging.properties "$APP_DIR"/${jboss_version}/standalone/configuration
+    cp ${JBOSS_CARTRIDGE_ROOT}/info/configuration/logging.properties "$APP_JBOSS"/standalone/configuration
 fi
-ls -l "$APP_DIR"/${jboss_version}/standalone/configuration
+ls -l "$APP_JBOSS"/standalone/configuration
 
 # Get the standalone.sh script
-cp ${jboss_home}/bin/standalone.sh "$APP_DIR"/${jboss_version}/bin
+cp ${jboss_home}/bin/standalone.sh "$APP_JBOSS_BIN_DIR"
 # Update the standalone.xml for the application IP
-sed 's/loopback-address value="127.*"/loopback-address value="'$IP'"/g' "$APP_DIR"/${jboss_version}/standalone/configuration/standalone.xml >${TMP_DIR}/standalone.xml
-cp ${TMP_DIR}/standalone.xml "$APP_DIR"/${jboss_version}/standalone/configuration
+sed 's/loopback-address value="127.*"/loopback-address value="'$IP'"/g' "$APP_JBOSS"/standalone/configuration/standalone.xml >${APP_JBOSS_TMP_DIR}/standalone.xml
+cp ${APP_JBOSS_TMP_DIR}/standalone.xml "$APP_JBOSS"/standalone/configuration
 popd > /dev/null
 
 # Build the standalone.conf file
 echo "Creating standalone.conf..."
-cat <<EOF > "$APP_DIR"/${jboss_version}/bin/standalone.conf
+cat <<EOF > "$APP_JBOSS"/bin/standalone.conf
 # This uses the sun jdk install since the current open-jdk version has a bug
 # Once this has been upgrade to something based on 1.6.0_20 or higher,
 # such as java-1.6.0-openjdk-1.6.0.0-1.39.1.9.7.el6, require the sun jdk.
@@ -274,13 +320,13 @@ EOF
 GIT_DIR="$GIT_DIR" git archive --format=tar HEAD | (cd "${APP_DIR}/repo" && tar --warning=no-timestamp -xf -)
 
 # Create a link from the repo/deployments directory to the standalone/deployments content
-ln -s "$APP_DIR"/repo/deployments "$APP_DIR"/${jboss_version}/standalone
-ls -l "$APP_DIR"/${jboss_version}/standalone/deployments
+ln -s "$APP_DIR"/repo/deployments "$APP_JBOSS"/standalone
+ls -l "$APP_JBOSS"/standalone/deployments
 # Copy the samples into the ROOT.war
-cp -pr /usr/libexec/li/cartridges/${jboss_version}/info/data/samples "$APP_DIR"/${jboss_version}/standalone/deployments/ROOT.war
+cp -pr ${JBOSS_CARTRIDGE_ROOT}/info/data/samples "$APP_JBOSS"/standalone/deployments/ROOT.war
 
 # Create a link from the standalone/log directory to ${APP_DIR}/logs for rhc-tail-files
-ln -s "$APP_DIR"/${jboss_version}/standalone/log "$APP_DIR"/logs
+ln -s "$APP_JBOSS"/standalone/log "$APP_DIR"/logs
 
 #
 # Create simple application start / stop script
@@ -291,8 +337,8 @@ cat <<__EOF__ > "$APP_DIR/${application}_ctl.sh"
 
 # For debugging, capture script output into app tmp dir
 pid=\$\$
-exec 4>&1   # Link file descriptor #4 with stdout, saves stdout.
-exec > "$TMP_DIR/jbossas7-${application}_ctl-\$1.\${pid}.log" 2>&1
+exec 4>&1 > /dev/null 2>&1  # Link file descriptor 4 with stdout, saves stdout.
+exec > "$APP_JBOSS_TMP_DIR/jbossas7-${application}_ctl-\$1.\${pid}.log" 2>&1
 
 if ! [ \$# -eq 1 ]
 then
@@ -300,6 +346,30 @@ then
     exit 1
 fi
 
+# Kill the process given by $1 and its children
+killtree() {
+    local _pid=\$1
+    for _child in \$(ps -o pid --no-headers --ppid \${_pid}); do
+        killtree \${_child}
+    done
+    echo kill -TERM \${_pid}
+    kill -TERM \${_pid}
+}
+# Check if the jbossas process is running
+isrunning() {
+    # Check for running app
+    if [ -f "\$JBOSS_PID_FILE" ]; then
+      jbpid=\$(cat \$JBOSS_PID_FILE);
+      if /bin/ps --pid \$jbpid 1>&2 >/dev/null;
+      then
+        return 0
+      fi
+    fi
+    # not running
+    return 1
+}
+
+# Validate the runcon
 if whoami | grep -q root || ! runcon | grep 'system_r:libra_t:s0:$c_val' > /dev/null
 then
     echo 1>&2
@@ -309,15 +379,6 @@ then
     exit 15
 fi
 
-killtree() {
-    local _pid=\$1
-    local _sig=\${2-TERM}
-    for _child in \$(ps -o pid --no-headers --ppid \${_pid}); do
-        killtree \${_child} \${_sig}
-    done
-    echo kill -\${_sig} \${_pid}
-    kill -\${_sig} \${_pid}
-}
 
 JBOSS_PID_FILE="$APP_DIR/run/jboss.pid"
 
@@ -325,16 +386,29 @@ case "\$1" in
     start)
         if [ -f $APP_DIR/run/stop_lock ]
         then
-            echo -n " - Application is disabled"
+            echo " - Application is disabled" 1>&2
             exit 0
         else
-            $JBOSS_BIN_DIR/standalone.sh 1>&2 >${TMP_DIR}/${application}.log &
+            # Check for running app
+            if isrunning; then
+                jbpid=\$(cat \$JBOSS_PID_FILE);
+                echo " - Application(\$jbpid) is already running" 1>&2
+                exit 0
+            fi
+            # Start
+            $APP_JBOSS_BIN_DIR/standalone.sh 1>&2 >${APP_JBOSS_TMP_DIR}/${application}.log &
             PROCESS_ID=\$!
             echo \$PROCESS_ID > \$JBOSS_PID_FILE
         fi
     ;;
     graceful-stop|stop)
         echo "JBOSS PID FILE:" \$JBOSS_PID_FILE
+        if ! isrunning; then
+            jbpid=\$(cat \$JBOSS_PID_FILE);
+            echo " - Application(\$jbpid) is already running" 1>&2
+            exit 0
+        fi
+        # kill the process tree
         if [ -f "\$JBOSS_PID_FILE" ]; then
           pid=\$(cat \$JBOSS_PID_FILE);
           echo "Sending SIGTERM to jboss:\$pid ...";
@@ -342,17 +416,23 @@ case "\$1" in
         else
           echo "Failed to locate JBOSS PID File"
         fi
+        exit 0
     ;;
     restart|graceful)
         $APP_DIR/${application}_ctl.sh stop
         $APP_DIR/${application}_ctl.sh start
     ;;
     status)
-        echo tailing "$APP_DIR/${jboss_version}/standalone/log/server.log"
         # Restore stdout and close file descriptor #4
         exec 1>&4 4>&-
+        if ! isrunning; then
+            echo " - Application is NOT running"
+            exit 0
+        fi
+
+        echo tailing "$APP_JBOSS/standalone/log/server.log"
         echo "------ Tail of ${application} application server.log ------"
-        tail "$APP_DIR/${jboss_version}/standalone/log/server.log"
+        tail "$APP_JBOSS/standalone/log/server.log"
         exit 0
     ;;
 esac
@@ -365,6 +445,7 @@ chown $user_id.$group_id -R $APP_DIR || error "Failed to chown new application s
 # Secure script and config dirs.
 chown root.root -R "$APP_DIR/${application}_ctl.sh"
 chown $user_id.$group_id -R "$APP_DIR/${jboss_version}/standalone"
+chown $user_id.$group_id $M2_DIR
 chcon -t libra_var_lib_t -l s0:$c_val -R "$APP_DIR"
 cd $APP_DIR
 runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l s0:$c_val $APP_DIR/${application}_ctl.sh start" || error "Failed to start ${application}" 121
@@ -390,7 +471,7 @@ cat <<EOF > "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}.conf"
   ServerName ${application}-${namespace}.${libra_domain}
   ServerAdmin mmcgrath@redhat.com
 
-$(/bin/cat /usr/libexec/li/cartridges/${jboss_version}/info/configuration/node_ssl_template.conf)
+$(/bin/cat ${JBOSS_CARTRIDGE_ROOT}/info/configuration/node_ssl_template.conf)
 
   ProxyPass / http://$IP:8080/
   ProxyPassReverse / http://$IP:8080/

@@ -221,6 +221,7 @@ module Libra
       Helper.s3.delete(Libra.c[:s3_bucket], "user_info/#{rhlogin}/user.json")
     end
 
+=begin
     #
     # Returns the servers that this user exists on
     #
@@ -239,6 +240,7 @@ module Libra
 
       return @servers.keys
     end
+=end
 
     #
     # Returns the applications that this user has running
@@ -313,7 +315,8 @@ module Libra
     # Clears out any cached data
     #
     def reload
-      @servers, @apps = nil
+      @apps = nil
+      ##@servers = nil
     end
 
     #

@@ -147,7 +147,17 @@ function create_repo {
     cat <<EOF > $GIT_DIR/hooks/pre-receive
 # Stop the app
 echo "Stopping application..."
-$APP_DIR/${application}_ctl.sh stop
+~/${application}/${application}_ctl.sh stop
+for i in {1..60}
+do
+    if \`pgrep -P \$(cat ~/${application}/run/httpd.pid 2> /dev/null) > /dev/null 2>&1\`
+    then
+        echo "Waiting for stop to finish"
+        sleep .5
+    else
+        break
+    fi
+done
 EOF
 
     cat <<EOF > $GIT_DIR/hooks/post-receive
@@ -158,7 +168,7 @@ export PERL5LIB="~/${application}/repo/libs:~/${application}/perl5lib"
 
 if [ -f ~/${application}/repo/deplist.txt ]
 then
-    for f in \$(cat ~/${application}/repo/deplist.txt)
+    for f in \$( (find ~/${application}/repo/ -type f | grep -e "\\.pm\$\\|.pl\$" | xargs /usr/lib/rpm/perl.req | awk '{ print \$1 }' | sed 's/^perl(\\(.*\\))\$/\1/'; cat ~/${application}/repo/deplist.txt ) | sort | uniq)
     do
         cpanm -L ~/${application}/perl5lib "\$f"
     done
@@ -166,7 +176,7 @@ fi
 
 # Start the app
 echo "Starting application..."
-$APP_DIR/${application}_ctl.sh start
+~/${application}/${application}_ctl.sh start
 EOF
     pushd $GIT_DIR
     git repack

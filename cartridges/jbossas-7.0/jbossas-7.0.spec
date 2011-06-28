@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.72.23
+Version:   0.73.3
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -12,7 +12,7 @@ Source0:   %{name}-%{version}.tar.gz
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires: git
 Requires:  rhc-node
-Requires:  jboss-as7 = 7.0.0.Beta6OS
+Requires:  jboss-as7 = 7.0.0.Beta7OS
 
 BuildArch: noarch
 
@@ -53,6 +53,10 @@ ln -s %{cartridgedir}/../abstract-httpd/info/hooks/restart %{buildroot}%{cartrid
 ln -s %{cartridgedir}/../abstract-httpd/info/hooks/start %{buildroot}%{cartridgedir}/info/hooks/start
 ln -s %{cartridgedir}/../abstract-httpd/info/hooks/stop %{buildroot}%{cartridgedir}/info/hooks/stop
 ln -s %{cartridgedir}/../abstract-httpd/info/hooks/update_namespace %{buildroot}%{cartridgedir}/info/hooks/update_namespace
+# maven
+mkdir -p %{buildroot}%{cartridgedir}/maven-2.2
+tar -xf apache-maven-2.2.1-bin.tar.gz
+mv apache-maven-2.2.1/* %{buildroot}%{cartridgedir}/maven-2.2
 
 %clean
 rm -rf %{buildroot}
@@ -61,7 +65,7 @@ rm -rf %{buildroot}
 %defattr(-,root,root,-)
 %attr(0750,-,-) %{cartridgedir}/info/hooks/
 %attr(0750,-,-) %{cartridgedir}/info/data/
-%attr(0750,-,-) %{cartridgedir}/info/build/
+%{cartridgedir}/maven-2.2
 %config(noreplace) %{cartridgedir}/info/configuration/
 %{_sysconfdir}/libra/cartridges/%{name}
 %{cartridgedir}/info/changelog
@@ -69,6 +73,44 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Tue Jun 28 2011 Dan McPherson <dmcphers@redhat.com> 0.73.3-1
+- maven support (dmcphers@redhat.com)
+
+* Mon Jun 27 2011 Dan McPherson <dmcphers@redhat.com> 0.73.2-1
+- make appl dir ref rel (dmcphers@redhat.com)
+
+* Mon Jun 27 2011 Dan McPherson <dmcphers@redhat.com> 0.73.1-1
+- bump spec numbers (dmcphers@redhat.com)
+
+* Mon Jun 27 2011 Dan McPherson <dmcphers@redhat.com> 0.72.29-1
+- fix jboss spec (dmcphers@redhat.com)
+- Bug 716362, restore server stop/start hooks and update to
+  jbossas-7.0.0Beta7OS to address app removal error (scott.stark@jboss.org)
+- Bug 716362, don't restart server on git push as it is not needed
+  (scott.stark@jboss.org)
+- Version 0.72.27 (scott.stark@jboss.org)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (scott.stark@jboss.org)
+- 715135, fix multiple start/stop errors (scott.stark@jboss.org)
+
+* Thu Jun 24 2011 Scott Stark <sstark@redhat.com> 0.72.28-1
+- Bug 716362, don't restart server on git push as it is not needed
+
+* Thu Jun 23 2011 Scott Stark <sstark@redhat.com> 0.72.27-1
+- Bug 715135
+
+* Thu Jun 23 2011 Dan McPherson <dmcphers@redhat.com> 0.72.26-1
+- exiting 0 even on failure (mmcgrath@redhat.com)
+- Disabling this, it's causing errors on git push (mmcgrath@redhat.com)
+
+* Thu Jun 23 2011 Dan McPherson <dmcphers@redhat.com> 0.72.25-1
+- Bug 715525 (dmcphers@redhat.com)
+
+* Tue Jun 21 2011 Dan McPherson <dmcphers@redhat.com> 0.72.24-1
+- Close stdout before calling app_ctl.sh start to fix git hang
+  (scott.stark@jboss.org)
+- remove dup / from jboss app dir (dmcphers@redhat.com)
+
 * Tue Jun 21 2011 Dan McPherson <dmcphers@redhat.com> 0.72.23-1
 - Bug 714868 (dmcphers@redhat.com)
 

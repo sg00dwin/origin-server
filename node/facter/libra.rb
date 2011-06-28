@@ -51,6 +51,7 @@ Facter.add(:sshfp) do
     setcode { %x[/usr/bin/ssh-keygen -r $(hostname) -f /etc/ssh/ssh_host_rsa_key]}
 end
 
+=begin
 #
 # Lists customers on the host as well as what what git repos they currently own
 #
@@ -63,7 +64,6 @@ if File.exists?("/var/lib/libra") && File.directory?("/var/lib/libra")
                 setcode do customer end
             end
         end
-
         # Repo counts for a customer
         if File.exists?("/var/lib/libra/#{customer}/git/")
             git_repos = Dir.glob("/var/lib/libra/#{customer}/git/*.git")
@@ -73,6 +73,7 @@ if File.exists?("/var/lib/libra") && File.directory?("/var/lib/libra")
         end
     end
 end
+=end
 
 #
 # List cartridges on the host

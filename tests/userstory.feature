@@ -84,10 +84,10 @@ Feature: Rally User Stories
     Then the user can access our cloud website
     Then the user can log in to our cloud website
 
-#US414 - Reduce the number of apps per user to 1
-  Scenario: (libra-qe) The number of apps per user is 1
+#US568 - The number of apps per user to 5
+  Scenario: (libra-qe) The number of apps per user is 5
     Given the libra controller configuration
-    Then the number of apps per user is 1
+    Then the number of apps per user is 5
 
 #US27
   Scenario: (libra-qe) Per user app limit

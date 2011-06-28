@@ -30,8 +30,8 @@
     = csrf_meta_tag
 
   %body(class="#{controller.controller_name} #{controller.action_name}")
-
-    = render 'shared/omniture_code'
+    
+    = render 'shared/omniture_code', :controller => controller.controller_name, :action => controller.action_name, :event => @event ||= ''
 
     #horrible_wrapper
       
@@ -53,7 +53,7 @@
 
           #plug.grid_11
             %p
-              Free, leading-edge cloud services that enable developers to deploy applications written in multiple frameworks and languages across clouds.
+              A free Platform-as-a-Service that enables developers to deploy apps written in multiple frameworks and languages across clouds.
 
           #button.grid_7
             - case @try_link_points_to

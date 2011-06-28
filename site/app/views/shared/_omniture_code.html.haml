@@ -6,9 +6,10 @@
   <script language="JavaScript" type="text/javascript"><!--
   /* You may give each page an identifying name, server, and channel on
   the next lines. */
-  s.pageName=""
+  s.pageName="rh | #{controller} | #{action}"
   s.server=""
-  s.channel=""
+  s.channel="#{get_product(controller, action).empty? ? '' : 'OpenShift | Product | ' + get_product(controller, action).capitalize}"
+  s.heir1=""
   s.pageType=""
   s.prop1=""
   s.prop2=""
@@ -19,7 +20,7 @@
   s.campaign=""
   s.state=""
   s.zip=""
-  s.events=""
+  s.events="#{event}"
   s.products=""
   s.purchaseID=""
   s.eVar1=""
@@ -27,6 +28,10 @@
   s.eVar3=""
   s.eVar4=""
   s.eVar5=""
+  s.eVar51="#{get_product(controller, action).capitalize}"
+  s.eVar27=""
+  s.eVar28=""
+  s.eVar29=""
   /************* DO NOT ALTER ANYTHING BELOW THIS LINE ! **************/
   var s_code=s.t();if(s_code)document.write(s_code)//--></script>
   <script language="JavaScript" type="text/javascript"><!--

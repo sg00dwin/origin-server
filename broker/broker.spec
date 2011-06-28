@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.72.14
+Version:   0.73.3
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -62,6 +62,32 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Tue Jun 28 2011 Dan McPherson <dmcphers@redhat.com> 0.73.3-1
+- maven support (dmcphers@redhat.com)
+
+* Mon Jun 27 2011 Dan McPherson <dmcphers@redhat.com> 0.73.2-1
+- workaround for mcollective taking options (dmcphers@redhat.com)
+
+* Mon Jun 27 2011 Dan McPherson <dmcphers@redhat.com> 0.73.1-1
+- bump spec numbers (dmcphers@redhat.com)
+
+* Fri Jun 24 2011 Dan McPherson <dmcphers@redhat.com> 0.72.19-1
+- add app_scope to broker (dmcphers@redhat.com)
+
+* Wed Jun 22 2011 Dan McPherson <dmcphers@redhat.com> 0.72.18-1
+- Merging for alpha order (mmcgrath@redhat.com)
+- trying this out (mmcgrath@redhat.com)
+
+* Wed Jun 22 2011 Dan McPherson <dmcphers@redhat.com> 0.72.17-1
+- 
+
+* Wed Jun 22 2011 Dan McPherson <dmcphers@redhat.com> 0.72.16-1
+- going back to aws 2.4.5 (dmcphers@redhat.com)
+
+* Wed Jun 22 2011 Dan McPherson <dmcphers@redhat.com> 0.72.15-1
+- aws 2.4.5 -> aws 2.5.5 (dmcphers@redhat.com)
+- right_http_connection -> http_connection (dmcphers@redhat.com)
+
 * Thu Jun 16 2011 Matt Hicks <mhicks@redhat.com> 0.72.14-1
 - Merge branch 'master' into streamline (mhicks@redhat.com)
 - Merge branch 'master' into streamline (mhicks@redhat.com)

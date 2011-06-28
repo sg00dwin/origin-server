@@ -28,12 +28,19 @@ module LibraMigration
     exitcode = 0
     if (File.exists?(old_app_dir) && !File.symlink?(framework_dir))
       output += "Moving '#{old_app_dir}' to '#{new_app_dir}'\n"
-      FileUtils.mv old_app_dir, new_app_dir
-      if Dir["#{framework_dir}/*"].empty?
-        output += "Removing empty app type dir '#{framework_dir}'\n"
+      if app_name == framework
+        FileUtils.mv old_app_dir, new_app_dir + '_tmp'
+        output += "Removing app type dir '#{framework_dir}'\n"
         FileUtils.remove_dir framework_dir
-        output += "Linking old framework dir '#{framework_dir}' to app home '#{app_home}'\n"
-        FileUtils.ln_s app_home, framework_dir
+        FileUtils.mv new_app_dir + '_tmp', new_app_dir
+      else
+        FileUtils.mv old_app_dir, new_app_dir
+        if Dir["#{framework_dir}/*"].empty?
+          output += "Removing empty app type dir '#{framework_dir}'\n"
+          FileUtils.remove_dir framework_dir
+          output += "Linking old framework dir '#{framework_dir}' to app home '#{app_home}'\n"
+          FileUtils.ln_s app_home, framework_dir
+        end
       end
       ctl_script = "#{new_app_dir}/#{app_name}_ctl.sh"
       output += replace_in_file(ctl_script, '//', '/')

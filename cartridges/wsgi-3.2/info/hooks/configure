@@ -147,6 +147,16 @@ function create_repo {
 # Stop the app
 echo "Stopping application..."
 ~/${application}/${application}_ctl.sh stop
+for i in {1..60}
+do
+    if \`pgrep -P \$(cat ~/${application}/run/httpd.pid 2> /dev/null) > /dev/null 2>&1\`
+    then
+        echo "Waiting for stop to finish"
+        sleep .5
+    else
+        break
+    fi
+done
 EOF
 
     cat <<EOF > $GIT_DIR/hooks/post-receive
@@ -156,15 +166,15 @@ git archive --format=tar HEAD | (cd ~/${application}/repo && tar --warning=no-ti
 if [ -f ~/${application}/repo/setup.py ]
 then
     echo "setup.py found.  Setting up virtualenv"
-    virtualenv ~/virtenv
-    cd ~/virtenv
+    cd ~/${application}/virtenv
+    virtualenv ~/${application}/virtenv
     . ./bin/activate
-    python ../${application}/repo/setup.py develop
+    python ~/${application}/repo/setup.py develop
 fi
 
 # Start the app
 echo "Starting application..."
-~/$application/${application}_ctl.sh start
+~/${application}/${application}_ctl.sh start
 EOF
 
     chmod 0755 $GIT_DIR/hooks/post-receive $GIT_DIR/hooks/pre-receive
@@ -219,7 +229,7 @@ create_repo $application $user_id $group_id $c_val
 
 mkdir -p "$APP_DIR"
 pushd "$APP_DIR" > /dev/null
-mkdir conf conf.d logs run repo sessions data tmp ../virtenv
+mkdir conf conf.d logs run repo sessions data tmp virtenv
 ln -s /usr/lib64/httpd/modules modules
 ln -s /etc/httpd/conf/magic conf/magic
 popd > /dev/null
@@ -268,7 +278,7 @@ CustomLog "|/usr/sbin/rotatelogs $APP_DIR/logs/access_log$rotatelogs_format $rot
 </Directory>
 
 WSGIScriptAlias / "$APP_DIR/repo/wsgi/application"
-WSGIPythonPath "$APP_DIR/repo/libs:$APP_DIR/repo/wsgi:$APP_DIR/../virtenv/lib/python2.6/"
+WSGIPythonPath "$APP_DIR/repo/libs:$APP_DIR/repo/wsgi:$APP_DIR/virtenv/lib/python2.6/"
 
 
 EOF
@@ -283,6 +293,8 @@ then
     echo "Usage: \$0 [start|restart|graceful|graceful-stop|stop]"
     exit 1
 fi
+
+export APPDIR="$APP_DIR"
 
 if whoami | grep -q root || ! runcon | grep 'system_r:libra_t:s0:$c_val' > /dev/null
 then
@@ -316,7 +328,7 @@ EOF
 
 chmod +x "$APP_DIR/${application}_ctl.sh" || error "Failed to chmod new application scripts" 122
 chown $user_id.$group_id -R $APP_DIR || error "Failed to chown new application space.  Please contact support" 123
-chown $user_id.$group_id -R $APP_DIR/../virtenv || error "Failed to chown new virtenv space.  Please contact support" 124
+chown $user_id.$group_id -R $APP_DIR/virtenv || error "Failed to chown new virtenv space.  Please contact support" 124
 # Secure script and config dirs.
 chown root:root -R "$APP_DIR/${application}_ctl.sh" "$APP_DIR/conf" "$APP_DIR/conf.d"
 chown root:root "$APP_DIR"

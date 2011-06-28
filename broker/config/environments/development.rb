@@ -27,7 +27,8 @@ Broker::Application.configure do
 
   ############################################
   # OpenShift Configuration Below this point #
-  ############################################  
+  ############################################
+  config.app_scope = "broker"
   config.integrated = false
   config.streamline_service_base_url = ''
   config.streamline = "http://localhost" # Non-integrated 
@@ -49,6 +50,6 @@ Broker::Application.configure do
   config.secret = "hmac-md5:dhcpupdate:fzAvGcKPZWiFgmF8qmNUaA=="
 
   # Broker configuration
-  config.per_user_app_limit = 1
+  config.per_user_app_limit = 5
 end
 

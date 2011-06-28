@@ -2,7 +2,7 @@
 
 Summary:       Common dependencies of the OpenShift broker and site
 Name:          rhc-server-common
-Version:       0.72.16
+Version:       0.73.3
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -54,6 +54,28 @@ rm -rf %{buildroot}
                                   -s /sbin/nologin 2>&1 > /dev/null || :
 
 %changelog
+* Mon Jun 27 2011 Dan McPherson <dmcphers@redhat.com> 0.73.3-1
+- set default apps to 5 (mmcgrath@redhat.com)
+
+* Mon Jun 27 2011 Dan McPherson <dmcphers@redhat.com> 0.73.2-1
+- 
+
+* Mon Jun 27 2011 Dan McPherson <dmcphers@redhat.com> 0.73.1-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (jimjag@redhat.com)
+- bump spec numbers (dmcphers@redhat.com)
+- User.servers not used... clean up factor customer_* and git_cnt_* (US554)
+  (jimjag@redhat.com)
+- change how we would get email address (dmcphers@redhat.com)
+- better message when running create app before create domain
+  (dmcphers@redhat.com)
+
+* Wed Jun 22 2011 Dan McPherson <dmcphers@redhat.com> 0.72.18-1
+- changing require back to right_http_connection (dmcphers@redhat.com)
+
+* Wed Jun 22 2011 Dan McPherson <dmcphers@redhat.com> 0.72.17-1
+- right_http_connection -> http_connection (dmcphers@redhat.com)
+
 * Sat Jun 18 2011 Dan McPherson <dmcphers@redhat.com> 0.72.16-1
 - nurture updates, namespace + action (dmcphers@redhat.com)
 

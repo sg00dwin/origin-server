@@ -2,7 +2,7 @@
 
 Summary:   Provides python-wsgi-3.2 support
 Name:      rhc-cartridge-wsgi-3.2
-Version:   0.72.16
+Version:   0.73.3
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -75,6 +75,23 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Mon Jun 27 2011 Dan McPherson <dmcphers@redhat.com> 0.73.3-1
+- add back bundling (dmcphers@redhat.com)
+
+* Mon Jun 27 2011 Dan McPherson <dmcphers@redhat.com> 0.73.2-1
+- add wait for stop to finish (dmcphers@redhat.com)
+
+* Mon Jun 27 2011 Dan McPherson <dmcphers@redhat.com> 0.73.1-1
+- bump spec numbers (dmcphers@redhat.com)
+
+* Thu Jun 23 2011 Dan McPherson <dmcphers@redhat.com> 0.72.18-1
+- remove comments for bundling code (dmcphers@redhat.com)
+
+* Tue Jun 21 2011 Dan McPherson <dmcphers@redhat.com> 0.72.17-1
+- disabling dep resolving for wsgi (mmcgrath@redhat.com)
+- Moving virtenv into app dir (mmcgrath@redhat.com)
+- Adding 256M as default quota type (mmcgrath@redhat.com)
+
 * Tue Jun 21 2011 Dan McPherson <dmcphers@redhat.com> 0.72.16-1
 - Bug 714868 (dmcphers@redhat.com)
 

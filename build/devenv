@@ -31,6 +31,8 @@ class DevEnv < Thor
     
     def set_instance_ip(instance, ip)
       print "Updating the controller to use the ip '#{ip}'..."
+      # Both calls below are needed to fix a race condition between ssh and libra-data start times
+      instance.ssh("sed -i \"s/.*public_ip.*/public_ip='#{ip}'/g\" /etc/libra/node.conf")
       instance.ssh("sed -i \"s/public_ip.*/public_ip='#{ip}'/g\" /etc/libra/node_data.conf")
       puts 'Done'
     end
@@ -302,14 +304,18 @@ class DevEnv < Thor
       `mkdir -p rhc/log`
       instance.scp_from("/tmp/rhc/cucumber*.log", "rhc/log")
       instance.scp_from("/tmp/rhc/failures.log", "rhc/log")
-      instance.scp_from("/var/www/libra/site/httpd/logs/access_log", "rhc/log")
-      instance.scp_from("/var/www/libra/site/httpd/logs/error_log", "rhc/log")
+      instance.scp_from("/var/www/libra/site/httpd/logs/access_log", "rhc/log/site_access_log.txt")
+      instance.scp_from("/var/www/libra/site/httpd/logs/error_log", "rhc/log/site_error_log.txt")
       instance.scp_from("/var/www/libra/site/log/development.log", "rhc/log")
-      instance.scp_from("/var/www/libra/broker/httpd/logs/access_log", "rhc/log")
-      instance.scp_from("/var/www/libra/broker/httpd/logs/error_log", "rhc/log")
+      instance.scp_from("/var/www/libra/broker/httpd/logs/access_log", "rhc/log/broker_access_log.log")
+      instance.scp_from("/var/www/libra/broker/httpd/logs/error_log", "rhc/log/broker_error_log.log")
       instance.scp_from("/var/www/libra/broker/log/development.log", "rhc/log")
       instance.scp_from("/var/log/mcollective.log", "rhc/log")
-      instance.scp_from("/var/tmp/mcollective-client.log", "rhc/log")
+      instance.scp_from("/var/www/libra/broker/log/mcollective-client.log", "rhc/log")
+      instance.scp_from("/var/log/httpd/access_log", "rhc/log/system_access_log.log")
+      instance.scp_from("/var/log/httpd/error_log", "rhc/log/system_error_log.log")
+      instance.scp_from("/var/log/messages", "rhc/log/messages.log")
+      instance.scp_from("/var/log/dmesg", "rhc/log/messages.log")
 
       `mkdir -p rhc/junit`
       instance.scp_from("/tmp/rhc/junit/*", "rhc/junit")

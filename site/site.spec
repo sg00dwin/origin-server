@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.72.14
+Version:   0.73.3
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -64,6 +64,55 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Tue Jun 28 2011 Dan McPherson <dmcphers@redhat.com> 0.73.3-1
+- maven support (dmcphers@redhat.com)
+
+* Mon Jun 27 2011 Dan McPherson <dmcphers@redhat.com> 0.73.2-1
+- 
+
+* Mon Jun 27 2011 Dan McPherson <dmcphers@redhat.com> 0.73.1-1
+- bump spec numbers (dmcphers@redhat.com)
+
+* Fri Jun 24 2011 Dan McPherson <dmcphers@redhat.com> 0.72.22-1
+- Updated omniture account information (edirsh@redhat.com)
+
+* Thu Jun 23 2011 Dan McPherson <dmcphers@redhat.com> 0.72.21-1
+- fix indention within pre (dmcphers@redhat.com)
+- fix haml syntax issue (dmcphers@redhat.com)
+- better version of guide (jimjag@redhat.com)
+- 2 spaces (jimjag@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (jimjag@redhat.com)
+- Update site w/ OS X guide (jimjag@redhat.com)
+- Made requested changes to omniture code (edirsh@redhat.com)
+
+* Thu Jun 23 2011 Dan McPherson <dmcphers@redhat.com> 0.72.20-1
+- Bug 715510 - fixed broken link on product pages (edirsh@redhat.com)
+- Merge branch 'master' of ssh://libragit/srv/git/li (edirsh@redhat.com)
+- link naming consistency improvements (edirsh@redhat.com)
+
+* Wed Jun 22 2011 Dan McPherson <dmcphers@redhat.com> 0.72.19-1
+- deps in right order (dmcphers@redhat.com)
+- Content updates on express page (edirsh@redhat.com)
+- Content updates for flex page (edirsh@redhat.com)
+- Merge branch 'master' of ssh://libragit/srv/git/li (edirsh@redhat.com)
+- Content update for home page (edirsh@redhat.com)
+
+* Wed Jun 22 2011 Dan McPherson <dmcphers@redhat.com> 0.72.18-1
+- 
+
+* Wed Jun 22 2011 Dan McPherson <dmcphers@redhat.com> 0.72.17-1
+- going back to aws 2.4.5 (dmcphers@redhat.com)
+- Added new conference banners (edirsh@redhat.com)
+- Omniture tracking variables added (edirsh@redhat.com)
+
+* Wed Jun 22 2011 Dan McPherson <dmcphers@redhat.com> 0.72.16-1
+- aws 2.4.5 -> aws 2.5.5 (dmcphers@redhat.com)
+- right_http_connection -> http_connection (dmcphers@redhat.com)
+
+* Tue Jun 21 2011 Dan McPherson <dmcphers@redhat.com> 0.72.15-1
+- New banners (edirsh@redhat.com)
+
 * Fri Jun 17 2011 Dan McPherson <dmcphers@redhat.com> 0.72.14-1
 - get tests running again (dmcphers@redhat.com)
 - Gemfile dev updates (dmcphers@redhat.com)

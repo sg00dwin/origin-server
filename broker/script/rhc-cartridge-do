@@ -9,13 +9,13 @@ include Libra
 
 options = rpcoptions do |parser, options|
     parser.define_head "Control libra agent"
-    parser.banner = "Usage: mc-rhc-cartridge-do [options]"
+    parser.banner = "Usage: rhc-cartridge-do [options]"
 
     parser.on('-a', '--action ACTION', 'Action to call') do |action|
       options[:action] = action
     end
 
-    parser.on('-c', '--cartridge CARTRIDGE', "Cartridge (e.g. #{Util.get_cartridge_list()})") do |cartridge|
+    parser.on('-f', '--cartridge CARTRIDGE', "Cartridge (e.g. #{Util.get_cartridge_list()})") do |cartridge|
       options[:cartridge] = cartridge
     end
 

@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system client tools
 Name:          rhc
-Version:       0.72.24
+Version:       0.73.2
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       MIT
@@ -12,9 +12,19 @@ Source0:       rhc-%{version}.tar.gz
 BuildRoot:     %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires: rubygem-rake
 BuildRequires: rubygem-rspec
-Requires:      ruby >= 1.8.7
+Requires:      ruby >= 1.8.6
 Requires:      rubygem-parseconfig
+%if 0%{?fedora} == 13
+%define jpure 1
+%endif
+%if 0%{?rhel} == 5
+%define jpure 1
+%endif
+%if 0%{?jpure} == 1
+Requires:      rubygem-json_pure
+%else
 Requires:      rubygem-json
+%endif
 Requires:      git
 
 BuildArch:     noarch
@@ -84,6 +94,35 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_sysconfdir}/openshift/express.conf
 
 %changelog
+* Mon Jun 27 2011 Dan McPherson <dmcphers@redhat.com> 0.73.2-1
+- force evaluation (jimjag@redhat.com)
+- better structure... (jimjag@redhat.com)
+- adjust for Fed13 and RHEL5 (no elsif?) (jimjag@redhat.com)
+
+* Mon Jun 27 2011 Dan McPherson <dmcphers@redhat.com> 0.73.1-1
+- Fed13 and RHEL5 use json_pure
+- bump spec numbers (dmcphers@redhat.com)
+- json_pure for 1.8.6, Darwin and Windows. Thx mhicks for the pointer!
+  (jimjag@redhat.com)
+- Note that others may exist... suggest -h (jimjag@redhat.com)
+- cleanup for 1.8.6 (jimjag@redhat.com)
+- 1.8.6 no have start_with (jimjag@redhat.com)
+
+* Thu Jun 23 2011 Dan McPherson <dmcphers@redhat.com> 0.72.29-1
+- no more need Xcode... show how (jimjag@redhat.com)
+
+* Thu Jun 23 2011 Dan McPherson <dmcphers@redhat.com> 0.72.28-1
+- 
+
+* Thu Jun 23 2011 Dan McPherson <dmcphers@redhat.com> 0.72.27-1
+- switch timeout back to 10s (dmcphers@redhat.com)
+
+* Wed Jun 22 2011 Dan McPherson <dmcphers@redhat.com> 0.72.26-1
+- trying a larger timeout (dmcphers@redhat.com)
+
+* Wed Jun 22 2011 Dan McPherson <dmcphers@redhat.com> 0.72.25-1
+- API cleanup (dmcphers@redhat.com)
+
 * Tue Jun 21 2011 Dan McPherson <dmcphers@redhat.com> 0.72.24-1
 - fix typo (dmcphers@redhat.com)
 

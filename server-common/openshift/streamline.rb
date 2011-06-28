@@ -174,7 +174,9 @@ module Streamline
   #
   def establish_email_address
     if !@email_address
-      http_post(@@user_info_url) do |json|
+      user_info_args = {'login' => @rhlogin,
+                        'secretKey' => Rails.configuration.streamline_secret}
+      http_post(@@user_info_url, user_info_args) do |json|
         @email_address = json['emailAddress']
       end
     end

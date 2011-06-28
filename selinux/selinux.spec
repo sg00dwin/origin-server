@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.72.8
+Version:       0.73.2
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -38,6 +38,18 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Mon Jun 27 2011 Dan McPherson <dmcphers@redhat.com> 0.73.2-1
+- 
+
+* Mon Jun 27 2011 Dan McPherson <dmcphers@redhat.com> 0.73.1-1
+- bump spec numbers (dmcphers@redhat.com)
+
+* Wed Jun 22 2011 Dan McPherson <dmcphers@redhat.com> 0.72.9-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (dwalsh@redhat.com)
+- Dontaudit libra domains from search of getattr on ssh_home_t
+  (dwalsh@redhat.com)
+
 * Wed Jun 15 2011 Dan McPherson <dmcphers@redhat.com> 0.72.8-1
 - Allow tail to run in a libra domain (dwalsh@redhat.com)
 
