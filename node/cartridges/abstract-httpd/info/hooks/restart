@@ -33,10 +33,10 @@ else
 fi
 
 function print_help {
-    echo "Usage: $0 app-name namespace uuid"
+    echo "Usage: $0 app-name namespace uuid rhlogin"
     echo "Get application status"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_http_create
+    echo "$0 $@" | logger -p local0.notice -t libra_httpd_restart
     exit 1
 }
 
@@ -51,7 +51,7 @@ do
 done
 
 
-[ $# -eq 3 ] || print_help
+[ $# -eq 4 ] || print_help
 
 app_id=`basename $3`
 application="$1"

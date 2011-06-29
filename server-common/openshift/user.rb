@@ -95,7 +95,7 @@ module Libra
     #
     def validate_app_limit
       num_apps = apps.length
-      Libra.client_debug "Validating application limit #{@rhlogin}: num of apps(#{num_apps.to_s}) must be < app limit (#{Libra.c[:per_user_app_limit]})" if Libra.c[:rpc_opts][:verbose]
+      Libra.client_debug "Validating application limit #{@rhlogin}: num of apps(#{num_apps.to_s}) must be < app limit(#{Libra.c[:per_user_app_limit]})" if Libra.c[:rpc_opts][:verbose]
       if (num_apps >= Libra.c[:per_user_app_limit])
         raise UserException.new(104), "#{@rhlogin} has already reached the application limit of #{Libra.c[:per_user_app_limit]}", caller[0..5]
       end

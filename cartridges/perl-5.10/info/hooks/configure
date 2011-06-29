@@ -58,9 +58,9 @@ CART_INFO_DIR=/usr/libexec/li/cartridges/perl-5.10/info
 CART_CONF_DIR=$CART_INFO_DIR/configuration/etc/conf
 
 function print_help {
-    echo "Usage: $0 app-name namespace uuid"
+    echo "Usage: $0 app-name namespace uuid rhlogin"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_http_create
+    echo "$0 $@" | logger -p local0.notice -t libra_perl_configure
     exit 1
 }
 
@@ -177,6 +177,8 @@ fi
 # Start the app
 echo "Starting application..."
 ~/${application}/${application}_ctl.sh start
+
+curl -s -O /dev/null -d "json_data=\"{\"rhlogin\":\"${rhlogin}\",\"app_name\":\"${application}\",\"app_uuid\":\"${uuid}\",\"action\":\"push\"}\"" https://${libra_server}/broker/nurture >/dev/null 2>&1 &
 EOF
     pushd $GIT_DIR
     git repack
@@ -201,11 +203,12 @@ do
 done
 
 
-[ $# -eq 3 ] || print_help
+[ $# -eq 4 ] || print_help
 
 namespace=`basename $2`
 application="$1"
 uuid=$3
+rhlogin=$4
 
 APP_HOME="$libra_dir/$uuid"
 APP_DIR=`echo $APP_HOME/$application | tr -s /`

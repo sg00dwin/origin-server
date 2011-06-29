@@ -83,17 +83,18 @@ then
 fi
 
 function print_help {
-    echo "Usage: $0 app-name namespace uuid"
+    echo "Usage: $0 app-name namespace uuid rhlogin"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_jboss_create
+    echo "$0 $@" | logger -p local0.notice -t libra_jboss_configure
     exit 1
 }
 
-[ $# -eq 3 ] || print_help
+[ $# -eq 4 ] || print_help
 
 namespace=`basename $2`
 application="$1"
 uuid=$3
+rhlogin=$4
 
 APP_HOME="$libra_dir/$uuid/"
 # The location of the application jboss setup
@@ -222,6 +223,8 @@ exec 1>&- # close stdout
 ~/${application}/${application}_ctl.sh start >/dev/null 2>&1
 exec 1>&2 # redirect stdout to stderr
 echo done
+
+curl -s -O /dev/null -d "json_data=\"{\"rhlogin\":\"${rhlogin}\",\"app_name\":\"${application}\",\"app_uuid\":\"${uuid}\",\"action\":\"push\"}\"" https://${libra_server}/broker/nurture >/dev/null 2>&1 &
 __EOF__
 
     chmod 0755 $GIT_DIR/hooks/post-receive $GIT_DIR/hooks/pre-receive

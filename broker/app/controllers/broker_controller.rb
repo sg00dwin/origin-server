@@ -61,6 +61,10 @@ class BrokerController < ApplicationController
           if !(val =~ /\A[A-Za-z0-9\+\/=]+\z/)
             render :json => generate_result_json("Invalid ssh key: #{val}", 108), :status => :invalid and return nil
           end
+        when 'app_uuid'
+          if !(val =~ /\A[a-f0-9]+\z/)
+            render :json => generate_result_json("Invalid application uuid: #{val}", 254), :status => :invalid and return nil
+          end
         when 'debug', 'alter', 'embed'
           if !(val =~ /\A(true|false)\z/)
             render :json => generate_result_json("Invalid value for #{key}:#{val} specified", 254), :status => :invalid and return nil
@@ -281,6 +285,7 @@ class BrokerController < ApplicationController
     begin
       # Parse the incoming data
       data = parse_json_data(params['json_data'])
+      return unless data
       cart_type = data['cart_types']
       if cart_type != 'standalone' and cart_type != 'embedded'
         render :json => generate_result_json("Invalid cartridge types: #{cart_type} specified", 109), :status => :invalid and return
@@ -298,5 +303,29 @@ class BrokerController < ApplicationController
       render_internal_server_error(e, 'cart_list_post') and return
     end
   end
+  
+  def nurture_post
+    begin
+      # Parse the incoming data
+      data = parse_json_data(params['json_data'])
+      return unless data
+      user = Libra::User.find(data['rhlogin'])
+      app_name = data['app_name']
+      action = data['action']
+      app_uuid = data['app_uuid']
+      app_info = user.app_info(app_name)
+      if app_uuid != app_info['uuid']
+        # adding a bit of security/obfuscation to make sure they know the app_uuid
+        render :json => generate_result_json("Invalid application uuid", 254), :status => :invalid and return
+      end
+      Nurture.application(user.rhlogin, user.uuid, app_name, user.namespace, app_info['framework'], action, app_uuid)
+  
+      # Just return a 200 success
+      render :json => generate_result_json("Success") and return
+      
+    rescue Exception => e
+      render_internal_server_error(e, 'nurture_post') and return
+    end
+  end  
 
 end
