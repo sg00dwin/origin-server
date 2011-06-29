@@ -177,7 +177,7 @@ module Libra
   end
 
   def self.configure_app(framework, app_name, user)
-    raise UserException.new(100), "An application named '#{app_name}' already exists", caller[0..5] if user.app_info(app_name)
+    raise UserException.new(100), "An application named '#{app_name}' in namespace '#{user.namespace}' already exists", caller[0..5] if user.app_info(app_name)
     # Find the next available server
     server = Server.find_available
 
