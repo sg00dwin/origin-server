@@ -44,7 +44,7 @@ else
 fi
 
 function print_help {
-    echo "Usage: $0 app-name namespace uuid rhlogin"
+    echo "Usage: $0 app-name namespace uuid"
 
     echo "$0 $@" | logger -p local0.notice -t libra_rack_deconfigure
     exit 1
@@ -90,12 +90,11 @@ do
 done
 
 
-[ $# -eq 4 ] || print_help
+[ $# -eq 3 ] || print_help
 
 namespace=`basename $2`
 application="$1"
 uuid=$3
-rhlogin=$4
 
 APP_HOME="$libra_dir/$uuid/"
 APP_DIR="$APP_HOME/$application"

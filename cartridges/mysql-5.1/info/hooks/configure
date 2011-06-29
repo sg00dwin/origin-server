@@ -55,7 +55,7 @@ CART_INFO_DIR=/usr/libexec/li/cartridges/embedded/mysql-5.1/info
 CART_CONF_DIR=$CART_INFO_DIR/configuration/etc
 
 function print_help {
-    echo "Usage: $0 app-name namespace uuid rhlogin"
+    echo "Usage: $0 app-name namespace uuid"
 
     echo "$0 $@" | logger -p local0.notice -t libra_mysql_configure
     exit 1
@@ -77,12 +77,11 @@ do
 done
 
 
-[ $# -eq 4 ] || print_help
+[ $# -eq 3 ] || print_help
 
 application="$1"
 namespace=$2 # Not used
 uuid=$3
-rhlogin=$4 # Not used
 
 CUSTOMER_HOME="$libra_dir/$uuid/"
 APP_DIR=`echo $CUSTOMER_HOME/$application | tr -s /`

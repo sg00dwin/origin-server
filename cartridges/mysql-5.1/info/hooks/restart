@@ -33,7 +33,7 @@ else
 fi
 
 function print_help {
-    echo "Usage: $0 app-name namespace uuid rhlogin"
+    echo "Usage: $0 app-name namespace uuid"
     echo "Get application status"
 
     echo "$0 $@" | logger -p local0.notice -t libra_mysql_restart
@@ -51,7 +51,7 @@ do
 done
 
 
-[ $# -eq 4 ] || print_help
+[ $# -eq 3 ] || print_help
 
 customer_id=`basename $3`
 application="$1"

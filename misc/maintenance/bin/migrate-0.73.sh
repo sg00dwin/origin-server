@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-# Usage: ./migrate-rel3.sh > out.txt
+# Usage: ./migrate-0.73.sh > out.txt
 require 'rubygems'
 require 'openshift'
 
@@ -36,7 +36,7 @@ def migrate_app_on_node(user, app, app_name, old_app_type, new_app_type)
         server = Server.new(app['server_identity'])
         result = nil
         (1..2).each do
-          result = server.execute_direct(new_app_type, 'restart', "#{app_name} #{user.namespace} #{app['uuid']} #{user.rhlogin}")[0]
+          result = server.execute_direct(new_app_type, 'restart', "#{app_name} #{user.namespace} #{app['uuid']}")[0]
         end
         if (result && defined? result.results)
           output = result.results[:data][:output]
