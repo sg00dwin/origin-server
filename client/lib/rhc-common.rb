@@ -128,7 +128,7 @@ module RHC
 
   def self.print_post_data(h, debug)
     if (debug)
-      puts 'DEBUG: Submitting form:'
+      puts 'Submitting form:'
       h.each do |k,v|
         if k.to_s != 'password'
           puts "#{k.to_s}: #{v.to_s}"
