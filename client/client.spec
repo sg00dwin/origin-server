@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system client tools
 Name:          rhc
-Version:       0.73.4
+Version:       0.73.5
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       MIT
@@ -94,6 +94,11 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_sysconfdir}/openshift/express.conf
 
 %changelog
+* Wed Jun 29 2011 Dan McPherson <dmcphers@redhat.com> 0.73.5-1
+- fixing merge from Dan (mmcgrath@redhat.com)
+- fixed formatting and embedded display (mmcgrath@redhat.com)
+- Adding embedded list support (mmcgrath@redhat.com)
+
 * Wed Jun 29 2011 Dan McPherson <dmcphers@redhat.com> 0.73.4-1
 - handle embed or command not passed (dmcphers@redhat.com)
 
