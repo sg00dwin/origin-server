@@ -17,7 +17,7 @@ module Libra
             wise xnio
     )
 
-    IGNORE_CARTS = %w(abstract-httpd li-controller
+    IGNORE_CARTS = %w(abstract-httpd li-controller embedded
     )
 
     def self.in_blacklist?(field)
