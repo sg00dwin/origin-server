@@ -113,6 +113,7 @@ fi
 %attr(0640,-,-) %{_libexecdir}/mcollective/mcollective/agent/libra.ddl
 %attr(0640,-,-) %{_libexecdir}/mcollective/mcollective/agent/libra.rb
 %attr(0640,-,-) %{_libexecdir}/mcollective/mcollective/agent/migrate-0.73.rb
+%attr(0640,-,-) %{_libexecdir}/mcollective/mcollective/agent/migrate-0.74.rb
 %attr(0640,-,-) %{_libexecdir}/mcollective/update_yaml.pp
 %attr(0640,-,-) %{ruby_sitelibdir}/facter/libra.rb
 %attr(0750,-,-) %{_initddir}/libra
