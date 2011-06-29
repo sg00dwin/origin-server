@@ -80,7 +80,8 @@ class Release < Thor
     token = "libra1"
 
     # Check the Brew installation
-    unless File.exists?("/usr/bin/brew")
+    `brew --help`
+    unless $? == 0
       puts "ERROR - Brew not installed.  Read misc/docs/BREW for setup steps"
       exit 2
     end
