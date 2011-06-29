@@ -21,6 +21,7 @@ class DevEnv < Thor
         puts "EXITING - AMZ instance didn't return ipaddress fact"
         exit 0
       end
+      private_ip
     end
     
     def set_private_ip(instance)
