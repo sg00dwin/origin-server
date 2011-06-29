@@ -189,7 +189,7 @@ class Home < Test::Unit::TestCase
         @verification_errors << $!
     end
     begin
-        assert_equal "OpenShift is for developers who love to build on open source, but don't need the hassle of building and maintaining infrastructure.", @driver.find_element(:xpath,".//div[@id='deploy_in_minutes']/p").text
+        assert_equal "Upload code and go! Whether you prefer a CLI or browser-based UI, OpenShift provides the fastest and easiest on-ramp to the cloud.", @driver.find_element(:xpath,".//div[@id='deploy_in_minutes']/p").text
     rescue Test::Unit::AssertionFailedError
         @verification_errors << $!
     end
