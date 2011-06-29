@@ -204,7 +204,7 @@ git archive --format=tar HEAD | (cd $APP_DIR/repo && tar --warning=no-timestamp 
 
 if [ -f '$APP_DIR/repo/pom.xml' ]
 then
-  echo "Found pom.xml attempting to build with 'mvn clean package -Dtest.skip=true'" 
+  echo "Found pom.xml attempting to build with 'mvn clean package -DskipTests'" 
   export JAVA_HOME=/usr/lib/jvm/jre-1.6.0
   export M2_HOME=/etc/alternatives/maven-3.0
   export M2=\$M2_HOME/bin
@@ -212,7 +212,7 @@ then
   export PATH=\$M2:\$PATH
   pushd ~/${application}/repo > /dev/null
   mvn --version
-  mvn clean package -Dtest.skip=true
+  mvn clean package -DskipTests
   popd
 fi
 
