@@ -105,7 +105,7 @@ if !RHC::check_app(opt['app'])
     p_usage
 end
 
-unless defined? opt["embed"] or (opt["command"] and opt["command"] =~ /(start|stop|restart|reload|status|destroy)/)
+unless opt["embed"] or (opt["command"] and opt["command"] =~ /(start|stop|restart|reload|status|destroy)/)
     puts "Command or embed is required"
     p_usage
 end
