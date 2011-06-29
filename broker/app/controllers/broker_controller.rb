@@ -206,7 +206,8 @@ class BrokerController < ApplicationController
               app_info[appname] = {
                   :framework => app['framework'],
                   :creation_time => app['creation_time'],
-                  :uuid => app['uuid']
+                  :uuid => app['uuid'],
+                  :embedded => app['embedded']
               }
           end
           

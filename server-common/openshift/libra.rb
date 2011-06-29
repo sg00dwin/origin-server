@@ -134,9 +134,14 @@ module Libra
 
     Libra.logger_debug "DEBUG: Performing configure on node: #{server.name} - #{server.repos} repos" if Libra.c[:rpc_opts][:verbose]
 
-    # Create S3 app entry on configure (one of the first things)
+    # Create persistent storage app entry on configure (one of the first things)
     #app_info  = user.create_app(app_name, framework, server)
+    Libra.logger_debug "Adding embedded app info from persistant storage: #{app_name}:#{framework}"
     app_info = user.app_info(app_name)
+    Libra.logger_debug app_info
+    app_info['embedded'] = {} unless app_info['embedded']
+    app_info['embedded'][framework] = {'info' => 'myinfo'}
+    user.update_app(app_info, app_name)
 
     begin
       server_execute_direct('embedded/' + framework, 'configure', app_name, user, server, app_info)
@@ -155,6 +160,7 @@ module Libra
   def self.embed_deconfigure(framework, app_name, user)
     # get the application details
     app_info = user.app_info(app_name)
+
     if not app_info
       raise UserException.new(101), "An application named '#{app_name}' does not exist", caller[0..5]
     end
@@ -174,6 +180,10 @@ module Libra
         Libra.logger_debug "Error from cartridge on deconfigure: #{e.message}"
       end
     end
+
+    Libra.logger_debug "Removing embedded app info from persistant storage: #{app_name}:#{framework}"
+    app_info['embedded'].delete(framework)
+    user.update_app(app_info, app_name)
   end
 
   def self.configure_app(framework, app_name, user)
