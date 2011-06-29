@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.73.3
+Version:   0.73.4
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -186,6 +186,9 @@ chkconfig libra-tc on
 %{_initddir}/libra-site
 
 %changelog
+* Tue Jun 28 2011 Matt Hicks <mhicks@redhat.com> 0.73.4-1
+- Adding support for staging releases on the new tag (mhicks@redhat.com)
+
 * Mon Jun 27 2011 Dan McPherson <dmcphers@redhat.com> 0.73.3-1
 - set default apps to 5 (mmcgrath@redhat.com)
 

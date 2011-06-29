@@ -75,14 +75,24 @@ module Libra
       # get the server
       # send the command
       app_info = user.app_info(app_name)
+
+      check_app_exists(app_info)
+
       if not app_info['embedded'] or app_info['embedded'][framework]
-        raise UserException.new(101), "An application named '#{app_name}' does not exist", caller[0..5]
+        raise UserException.new(101), "#{framework} is not embedded in '#{app_name}'", caller[0..5]
       end
 
       server = Server.new(app_info['server_identity'])
 
       Libra.logger_debug "DEBUG: Performing action '#{action}' on node: #{server.name} - #{server.repos} repos" if Libra.c[:rpc_opts][:verbose]
       server_execute_direct('embed/' + framework, action, app_name, user, server, app_info)
+    end
+  end
+  
+  # Raise an exception if app doesn't exist
+  def check_app_exists(app_info)
+    if not app_info
+      raise UserException.new(101), "An application named '#{app_name}' does not exist", caller[0..5]
     end
   end
 
@@ -116,9 +126,7 @@ module Libra
       # get the server
       # send the command
       app_info = user.app_info(app_name)
-      if not app_info
-        raise UserException.new(101), "An application named '#{app_name}' does not exist", caller[0..5]
-      end
+      check_app_exists(app_info)
 
       server = Server.new(app_info['server_identity'])
 
@@ -163,15 +171,12 @@ module Libra
     # get the application details
     app_info = user.app_info(app_name)
 
-    if not app_info
-      raise UserException.new(101), "An application named '#{app_name}' does not exist", caller[0..5]
-    end
+    check_app_exists(app_info)
 
     if not app_info['embedded'][framework]
       raise UserException.new(101), "#{framework} not embedded in '#{app_name}', try adding it first", caller[0..5]
     end
 
-    
     # Remove the application and account from the server
     server = Server.new(app_info['server_identity'])
       
@@ -194,7 +199,7 @@ module Libra
   end
 
   def self.configure_app(framework, app_name, user)
-    raise UserException.new(100), "An application named '#{app_name}' already exists", caller[0..5] if user.app_info(app_name)
+    raise UserException.new(100), "An application named '#{app_name}' in namespace '#{user.namespace}' already exists", caller[0..5] if user.app_info(app_name)
     # Find the next available server
     server = Server.find_available
 
@@ -238,9 +243,7 @@ module Libra
   def self.deconfigure_app(framework, app_name, user)
     # get the application details
     app_info = user.app_info(app_name)
-    if not app_info
-      raise UserException.new(101), "An application named '#{app_name}' does not exist", caller[0..5]
-    end
+    check_app_exists(app_info)
     
     # Remove the application and account from the server
     server = Server.new(app_info['server_identity'])
@@ -293,13 +296,27 @@ module Libra
         else
           Libra.client_result "Application '#{app_name}' is either stopped or inaccessible"
         end
-      elsif exitcode != 0
-        Libra.client_debug "Cartridge return code: " + exitcode.to_s
-        if output
-          Libra.client_debug "Cartridge output: " + output
-          Libra.logger_debug "DEBUG: execute_direct results: " + output
+      else
+        if output.length > 0
+          output.each_line do |line|
+            if line =~ /^CLIENT_(MESSAGE|RESULT|DEBUG): /
+              if line =~ /^CLIENT_MESSAGE: /
+                Libra.client_message line['CLIENT_MESSAGE: '.length..-1]
+              elsif line =~ /^CLIENT_RESULT: /
+                Libra.client_result line['CLIENT_RESULT: '.length..-1]
+              else
+                Libra.client_debug line['CLIENT_DEBUG: '.length..-1]
+              end
+            elsif exitcode != 0
+              Libra.client_debug line
+              Libra.logger_debug "DEBUG: server_execute_direct results: " + line
+            end
+          end
         end
-        raise NodeException.new(143), "Node execution failure (invalid exit code from node).  If the problem persists please contact Red Hat support.", caller[0..5]
+        if exitcode != 0
+          Libra.client_debug "Cartridge return code: " + exitcode.to_s
+          raise NodeException.new(143), "Node execution failure (invalid exit code from node).  If the problem persists please contact Red Hat support.", caller[0..5]
+        end
       end
     else
       raise NodeException.new(143), "Node execution failure (error getting result from node).  If the problem persists please contact Red Hat support.", caller[0..5]

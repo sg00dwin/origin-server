@@ -169,8 +169,8 @@ class BrokerController < ApplicationController
           message = "Successfully created application: #{app_name}"
         elsif action == 'deconfigure'
           message = "Successfully destroyed application: #{app_name}"
-        elsif action == 'status'
-          message = Thread.current[:resultIO].string
+        elsif action == 'status' || (Thread.current[:resultIO] && !Thread.current[:resultIO].string.empty?)
+          message = Thread.current[:resultIO].string 
         end
   
         render :json => generate_result_json(message) and return
