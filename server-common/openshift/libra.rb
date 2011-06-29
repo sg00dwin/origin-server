@@ -291,7 +291,7 @@ module Libra
   def self.server_execute_direct(framework, action, app_name, user, server, app_info)
     # Execute the action on the server using a framework cartridge
     Nurture.application(user.rhlogin, user.uuid, app_name, user.namespace, framework, action, app_info['uuid'])
-    result = server.execute_direct(framework, action, "#{app_name} #{user.namespace} #{app_info['uuid']}")[0]
+    result = server.execute_direct(framework, action, "#{app_name} #{user.namespace} #{app_info['uuid']} #{user.rhlogin}")[0]
     if (result && defined? result.results)
       output = result.results[:data][:output]
       exitcode = result.results[:data][:exitcode]

@@ -15,12 +15,16 @@ class DevEnv < Thor
   include OpenShift::Tito
   
   no_tasks do
-    def set_private_ip(instance)
+    def get_private_ip(instance)
       private_ip = instance.ssh("facter ipaddress")
       if !private_ip or private_ip.strip.empty?
         puts "EXITING - AMZ instance didn't return ipaddress fact"
         exit 0
       end
+    end
+    
+    def set_private_ip(instance)
+      private_ip = get_private_ip(instance)
       set_instance_ip(instance, private_ip)
     end
     
@@ -243,9 +247,15 @@ class DevEnv < Thor
     puts "Launching latest DevEnv instance #{latest}"
     instance = Instance.create(conn, name, latest)
     puts "Done"
+    
+    private_ip = get_private_ip(instance)
+    
+    print "Updating the node to use the ip '#{private_ip}' for internal communication..."
+    instance.ssh("sed -i \"s/.*libra_server.*/libra_server='#{private_ip}'/g\" /etc/libra/node.conf")
+    puts 'Done'
 
     if options.verifier?
-      set_private_ip(instance)
+      set_instance_ip(instance, private_ip)
       instance.ssh("/usr/bin/puppet /usr/libexec/mcollective/update_yaml.pp")
 
       print "Updating tests to remote instance..."
