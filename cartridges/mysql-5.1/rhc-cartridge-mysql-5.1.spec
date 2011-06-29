@@ -1,5 +1,5 @@
 Name: rhc-cartridge-mysql-5.1
-Version: 0.1
+Version: 0.2
 Release: 1%{?dist}
 Summary: Embedded mysql support for express
 
@@ -34,5 +34,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_libexecdir}/li/cartridges/embedded/mysql-5.1/
 
 %changelog
+* Wed Jun 29 2011 Mike McGrath <mmcgrath@redhat.com> 0.2-1
+- new package built with tito
+
 * Mon May 16 2011 Mike McGrath <mmcgrath@redhat.com> 0.1-1
 - Initial packaging
