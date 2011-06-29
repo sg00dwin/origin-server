@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/mysql-5.1
 
 Name: rhc-cartridge-mysql-5.1
-Version: 0.3
+Version: 0.4
 Release: 1%{?dist}
 Summary: Embedded mysql support for express
 
@@ -37,9 +37,17 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root,-)
-%{_libexecdir}/li/cartridges/embedded/mysql-5.1/
+%attr(0750,-,-) %{cartridgedir}/info/hooks/
+%attr(0750,-,-) %{cartridgedir}/info/build/
+%config(noreplace) %{cartridgedir}/info/configuration/
+%{_sysconfdir}/libra/cartridges/%{name}
+%{cartridgedir}/info/changelog
+%{cartridgedir}/info/control
 
 %changelog
+* Wed Jun 29 2011 Mike McGrath <mmcgrath@redhat.com> 0.4-1
+- 
+
 * Wed Jun 29 2011 Mike McGrath <mmcgrath@redhat.com> 0.3-1
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
   (mmcgrath@redhat.com)
