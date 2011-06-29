@@ -20,7 +20,6 @@
 
 # Exit on any errors
 set -e
-set -x
 
 if [ -f '/etc/libra/node.conf' ]
 then
@@ -84,12 +83,13 @@ application="$1"
 namespace=$2 # Not used
 uuid=$3
 
-CUSTOMER_HOME="$libra_dir/$uuid"
+CUSTOMER_HOME="$libra_dir/$uuid/"
 APP_DIR=`echo $CUSTOMER_HOME/$application | tr -s /`
+MYSQL_DIR="$CUSTOMER_HOME/mysql-5.1/"
 
 #
 # Detect IP
-# 
+
 IP=$(/bin/awk '/Listen/{ print $2 }' $APP_DIR/conf.d/libra.conf | /bin/sed 's/\:8080$//')
 
 #
@@ -110,21 +110,21 @@ c_val="c$(($uid/1023)),c$(($uid%1023))"
 # Create http base for application, every app gets its own apache instance
 #
 
-[ -d "$APP_DIR/mysql/" ] && error "${application}.  Embedded MySQL already attached to $application" 132
+[ -d "$MYSQL_DIR" ] && error "${application}.  Embedded MySQL-5.1 already attached to $application" 132
 [ -d "$APP_DIR/" ] || error "${APP_DIR} Not found!  Aborting." 133
-mkdir -p "$APP_DIR/mysql/"
-pushd "$APP_DIR/mysql" > /dev/null
+mkdir -p "$MYSQL_DIR"
+pushd "$MYSQL_DIR" > /dev/null
 mkdir -p log etc data socket pid
-sed "s,RHC_MYSQLDIR,$APP_DIR/mysql/," $CART_CONF_DIR/my.cnf > $APP_DIR/mysql/etc/my.cnf
-sed -i "s,RHC_BIND_ADDR,$IP," $APP_DIR/mysql/etc/my.cnf
+sed "s,RHC_MYSQLDIR,$MYSQL_DIR," $CART_CONF_DIR/my.cnf > $MYSQL_DIR/etc/my.cnf
+sed -i "s,RHC_BIND_ADDR,$IP," $MYSQL_DIR/etc/my.cnf
 popd > /dev/null
 # Create mysql database
-/usr/bin/mysql_install_db --defaults-file=$APP_DIR/mysql/etc/my.cnf > /dev/null 2>&1 || error "Failed to create mysqldb" 119
+/usr/bin/mysql_install_db --defaults-file=$MYSQL_DIR/etc/my.cnf > /dev/null 2>&1 || error "Failed to create mysqldb" 119
 
 #
 # Create simple mysql start / stop script
 #
-cat <<EOF > "$APP_DIR/${application}_mysql_ctl.sh"
+cat <<EOF > "$MYSQL_DIR/${application}_mysql_ctl.sh"
 #/bin/bash
 if ! [ \$# -eq 1 ]
 then
@@ -138,26 +138,26 @@ if whoami | grep -q root
 then
     echo 1>&2
     echo "Please don't run script as root, try:" 1>&2
-    echo "runuser --shell /bin/sh $uuid $APP_DIR/${application}_mysql_ctl.sh" 1>&2
+    echo "runuser --shell /bin/sh $uuid $MYSQL_DIR/${application}_mysql_ctl.sh" 1>&2
     echo 2>&1
     exit 15
 fi
 
 case "\$1" in
     start)
-        runcon -t libra_t -l s0:$c_val /usr/bin/mysqld_safe --defaults-file=$APP_DIR/mysql/etc/my.cnf >/dev/null 2>&1 &
+        runcon -t libra_t -l s0:$c_val /usr/bin/mysqld_safe --defaults-file=$MYSQL_DIR/etc/my.cnf >/dev/null 2>&1 &
     ;;
     stop)
-        if [ -f $APP_DIR/mysql/pid/mysql.pid ]; then
-            runcon -t libra_t -l s0:$c_val /bin/kill \$( /bin/cat $APP_DIR/mysql/pid/mysql.pid )
+        if [ -f $MYSQL_DIR/pid/mysql.pid ]; then
+            runcon -t libra_t -l s0:$c_val /bin/kill \$( /bin/cat $MYSQL_DIR/pid/mysql.pid )
         fi
     ;;
     restart)
-        runcon -t libra_t -l s0:$c_val /bin/kill \$( /bin/cat $APP_DIR/mysql/pid/mysql.pid )
+        runcon -t libra_t -l s0:$c_val /bin/kill \$( /bin/cat $MYSQL_DIR/pid/mysql.pid )
         if [ $ret -eq 0 ]; then
             TIMEOUT="$STOPTIMEOUT"
             while [ $TIMEOUT -gt 0 ]; do
-                /bin/kill -0 "\$( /bin/cat $APP_DIR/mysql/pid/mysql.pid )" >/dev/null 2>&1 || break
+                /bin/kill -0 "\$( /bin/cat $MYSQL_DIR/pid/mysql.pid )" >/dev/null 2>&1 || break
                 sleep 1
                 let TIMEOUT=${TIMEOUT}-1
             done
@@ -170,17 +170,33 @@ case "\$1" in
 esac
 EOF
 
-chmod +x "$APP_DIR/${application}_mysql_ctl.sh" || error "Failed to chmod new application scripts" 122
-chown $user_id.$group_id -R $APP_DIR/mysql || error "Failed to chown new application space.  Please contact support" 123
-# Secure script and config dirs.
-chown root.root -R "$APP_DIR/${application}_mysql_ctl.sh"
-chcon -t libra_var_lib_t -l s0:$c_val -R "$APP_DIR/mysql"
-runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l s0:$c_val '$APP_DIR/${application}_mysql_ctl.sh' start" || error "Failed to start ${application}:mysql" 121
+chmod +x "$MYSQL_DIR/${application}_mysql_ctl.sh" || error "Failed to chmod new application scripts" 122
+chown $user_id.$group_id -R $MYSQL_DIR/ || error "Failed to chown new application space.  Please contact support" 123
+# Secure script and root dir (so they can't chown the script"
+chown root.root "$MYSQL_DIR" "$MYSQL_DIR/${application}_mysql_ctl.sh"
+chcon -t libra_var_lib_t -l s0:$c_val -R "$MYSQL_DIR"
+runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l s0:$c_val '$MYSQL_DIR/${application}_mysql_ctl.sh' start" || error "Failed to start ${application}:mysql" 121
 
-sleep 3
+i=0
+while [ ! -f "${MYSQL_DIR}/pid/mysql.pid" ] && [ $i -lt 30 ]
+    do
+    sleep .3
+    i=$(($i + 1))
+done
+
+# Generate a password with no o's O's or 0's
+password=$(head -n 500 /dev/urandom|tr -dc "a-np-zA-NP-Z1-9-_"|fold -w 12 | head | head -n1)
 
 # Setup user
 echo "                                  
 delete from user;
-grant all on *.* to 'root'@'$IP' with grant option;
-flush privileges;" | mysql -u root -S $APP_DIR/mysql/socket/mysql.sock mysql > /dev/null || error "Failed to setup initial root user" 187
+grant all on *.* to 'admin'@'$IP' identified by '$password' with grant option;
+flush privileges;" | mysql -u root -S "${MYSQL_DIR}/socket/mysql.sock" mysql > /dev/null || error "Failed to setup initial root user" 187
+
+echo "CLIENT_RESULT: "
+echo "CLIENT_RESULT: Mysql 5.1 database added.  Please make note of these credentials:"
+echo "CLIENT_RESULT: "
+echo "CLIENT_RESULT:    Root User: admin"
+echo "CLIENT_RESULT:    Root Password: $password"
+echo "CLIENT_RESULT: "
+echo "CLIENT_RESULT: Connection URL: mysql://$IP:3306/"

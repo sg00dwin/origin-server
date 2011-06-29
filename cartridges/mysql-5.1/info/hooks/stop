@@ -58,10 +58,11 @@ application="$1"
 
 CUSTOMER_HOME="$libra_dir/$customer_id/"
 APP_DIR="$CUSTOMER_HOME/php/$application"
+MYSQL_DIR="$CUSTOMER_HOME/mysql-5.1/"
 
 #
 # Start application
 #
 
-runuser --shell /bin/sh "$customer_id" "$APP_DIR/${application}_ctl.sh" stop
-touch "$APP_DIR/run/stop_lock"
+runuser --shell /bin/sh "$customer_id" "$MYSQL_DIR/${application}_ctl.sh" stop
+touch "$MYSQL_DIR/run/stop_lock"
