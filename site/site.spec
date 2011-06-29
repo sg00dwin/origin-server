@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.73.4
+Version:   0.73.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -64,6 +64,13 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Wed Jun 29 2011 Dan McPherson <dmcphers@redhat.com> 0.73.5-1
+- Updated text under "Deploy in Minutes" headline on front page
+  (edirsh@redhat.com)
+- Bug 716885 - Added perl to lists of supported Express platforms
+  (edirsh@redhat.com)
+- Fixed broken video links and added correct video titles (edirsh@redhat.com)
+
 * Tue Jun 28 2011 Dan McPherson <dmcphers@redhat.com> 0.73.4-1
 - Fixed broken documentation link (edirsh@redhat.com)
 - cleanup (dmcphers@redhat.com)
