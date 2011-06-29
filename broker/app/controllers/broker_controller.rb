@@ -309,16 +309,9 @@ class BrokerController < ApplicationController
       # Parse the incoming data
       data = parse_json_data(params['json_data'])
       return unless data
-      user = Libra::User.find(data['rhlogin'])
-      app_name = data['app_name']
       action = data['action']
       app_uuid = data['app_uuid']
-      app_info = user.app_info(app_name)
-      if app_uuid != app_info['uuid']
-        # adding a bit of security/obfuscation to make sure they know the app_uuid
-        render :json => generate_result_json("Invalid application uuid", 254), :status => :invalid and return
-      end
-      Nurture.application(user.rhlogin, user.uuid, app_name, user.namespace, app_info['framework'], action, app_uuid)
+      Nurture.application_update(action, app_uuid)
   
       # Just return a 200 success
       render :json => generate_result_json("Success") and return

@@ -33,7 +33,7 @@ else
 fi
 
 function print_help {
-    echo "Usage: $0 app-name namespace uuid rhlogin"
+    echo "Usage: $0 app-name namespace uuid"
     echo "Stop a running application and disable it"
 
     echo "$0 $@" | logger -p local0.notice -t libra_httpd_stop
@@ -51,7 +51,7 @@ do
 done
 
 
-[ $# -eq 4 ] || print_help
+[ $# -eq 3 ] || print_help
 
 app_id=`basename $3`
 application="$1"

@@ -56,7 +56,7 @@ then
 fi
 
 function print_help {
-    echo "Usage: $0 app-name namespace uuid rhlogin"
+    echo "Usage: $0 app-name namespace uuid"
 
     echo "$0 $@" | logger -p local0.notice -t libra_rack_configure
     exit 1
@@ -202,7 +202,7 @@ fi
 echo "Starting application..."
 ~/${application}/${application}_ctl.sh start
 
-curl -s -O /dev/null -d "json_data=\"{\"rhlogin\":\"${rhlogin}\",\"app_name\":\"${application}\",\"app_uuid\":\"${uuid}\",\"action\":\"push\"}\"" https://${libra_server}/broker/nurture >/dev/null 2>&1 &
+curl -s -O /dev/null -d "json_data=\"{\"app_uuid\":\"${uuid}\",\"action\":\"push\"}\"" https://${libra_server}/broker/nurture >/dev/null 2>&1 &
 EOF
 
     chmod 0755 $GIT_DIR/hooks/post-receive $GIT_DIR/hooks/pre-receive
@@ -223,12 +223,11 @@ do
 done
 
 
-[ $# -eq 4 ] || print_help
+[ $# -eq 3 ] || print_help
 
 namespace=`basename $2`
 application="$1"
 uuid=$3
-rhlogin=$4
 
 APP_HOME=`echo "$libra_dir/$uuid/" | tr -s /`
 APP_DIR=`echo "$APP_HOME/$application" | tr -s /`
