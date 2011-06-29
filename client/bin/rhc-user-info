@@ -113,6 +113,11 @@ if opt['apps']
         puts "    Git URL: ssh://#{val['uuid']}@#{key}-#{user_info['user_info']['namespace']}.#{user_info['user_info']['rhc_domain']}/~/git/#{key}.git/"
         puts " Public URL: http://#{key}-#{user_info['user_info']['namespace']}.#{user_info['user_info']['rhc_domain']}/"
         puts ""
+        puts " Embedded: "
+        val['embedded'].each do |embed_key, embed_val|
+            puts "      #{embed_key} - #{embed_val['info']}"
+        end
+        puts ""
     end
 
 end
