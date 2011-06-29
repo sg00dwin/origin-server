@@ -442,7 +442,7 @@ class Express < Test::Unit::TestCase
         @verification_errors << $!
     end
     begin
-        assert @driver.find_element(:xpath,".//a[@href='http://docs.redhat.com/docs/en-US/OpenShift/1.0/html/OpenShift_Express_User_Guide/index.html']").displayed?
+        assert @driver.find_element(:xpath,".//a[@href='http://docs.redhat.com/docs/en-US/OpenShift_Express/1.0/html/User_Guide/index.html']").displayed?
     rescue Test::Unit::AssertionFailedError
         @verification_errors << $!
     end
