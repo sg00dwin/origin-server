@@ -75,7 +75,7 @@ module Libra
       # get the server
       # send the command
       app_info = user.app_info(app_name)
-      if not app_info
+      if not app_info['embedded'] or app_info['embedded'][framework]
         raise UserException.new(101), "An application named '#{app_name}' does not exist", caller[0..5]
       end
 
@@ -129,27 +129,29 @@ module Libra
 
   def self.embed_configure(framework, app_name, user)
     raise UserException.new(100), "An application '#{app_name}' does not exist", caller[0..5] unless user.app_info(app_name)
-    # Find the next available server
-    server = Server.find_available
-
-    Libra.logger_debug "DEBUG: Performing configure on node: #{server.name} - #{server.repos} repos" if Libra.c[:rpc_opts][:verbose]
 
     # Create persistent storage app entry on configure (one of the first things)
-    #app_info  = user.create_app(app_name, framework, server)
     Libra.logger_debug "Adding embedded app info from persistant storage: #{app_name}:#{framework}"
     app_info = user.app_info(app_name)
-    Libra.logger_debug app_info
     app_info['embedded'] = {} unless app_info['embedded']
+    Libra.client_debug "debugline: #{app_info['embedded'][framework]}"
+
+    if app_info['embedded'][framework]
+      raise UserException.new(101), "#{framework} already embedded in '#{app_name}'", caller[0..5]
+    end
+
     app_info['embedded'][framework] = {'info' => 'myinfo'}
     user.update_app(app_info, app_name)
+
+    server = Server.new(app_info['server_identity'])
 
     begin
       server_execute_direct('embedded/' + framework, 'configure', app_name, user, server, app_info)
     rescue Exception => e
       begin
-        Libra.logger_debug "DEBUG: Failed to embed '#{framework}' in '#{app_name}' for user '#{user.rhlogin}' on node '#{server.name}'"
+        Libra.logger_debug "DEBUG: Failed to embed '#{framework}' in '#{app_name}' for user '#{user.rhlogin}'"
         Libra.client_debug "Failed to embed '#{framework} in '#{app_name}'"
-        server_execute_direct(framework, 'deconfigure', app_name, user, server, app_info)        
+        server_execute_direct('embedded/' + framework, 'deconfigure', app_name, user, server, app_info)        
       ensure
         raise
       end
@@ -164,6 +166,11 @@ module Libra
     if not app_info
       raise UserException.new(101), "An application named '#{app_name}' does not exist", caller[0..5]
     end
+
+    if not app_info['embedded'][framework]
+      raise UserException.new(101), "#{framework} not embedded in '#{app_name}', try adding it first", caller[0..5]
+    end
+
     
     # Remove the application and account from the server
     server = Server.new(app_info['server_identity'])
