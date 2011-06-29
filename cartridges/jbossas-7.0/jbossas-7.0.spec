@@ -55,6 +55,10 @@ ln -s %{cartridgedir}/../abstract-httpd/info/hooks/start %{buildroot}%{cartridge
 ln -s %{cartridgedir}/../abstract-httpd/info/hooks/stop %{buildroot}%{cartridgedir}/info/hooks/stop
 ln -s %{cartridgedir}/../abstract-httpd/info/hooks/update_namespace %{buildroot}%{cartridgedir}/info/hooks/update_namespace
 
+%post
+#maven
+alternatives --install /etc/alternatives/maven-3.0 maven-3.0 /usr/share/java/apache-maven-3.0.3 100
+
 
 %clean
 rm -rf %{buildroot}
