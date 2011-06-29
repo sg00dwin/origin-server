@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.73.3
+Version:       0.73.4
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -140,6 +140,12 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Tue Jun 28 2011 Matt Hicks <mhicks@redhat.com> 0.73.4-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- Added support to call embedded cartridges (mmcgrath@redhat.com)
+- Added embedded list (mmcgrath@redhat.com)
+
 * Tue Jun 28 2011 Dan McPherson <dmcphers@redhat.com> 0.73.3-1
 - Bug 717168 (dmcphers@redhat.com)
 
