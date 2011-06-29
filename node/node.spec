@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.73.4
+Version:       0.73.5
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -141,6 +141,13 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Wed Jun 29 2011 Dan McPherson <dmcphers@redhat.com> 0.73.5-1
+- add nurture migration for existing apps (dmcphers@redhat.com)
+- undo passing rhlogin to cart (dmcphers@redhat.com)
+- add nurture call for git push (dmcphers@redhat.com)
+- fixing merge from Dan (mmcgrath@redhat.com)
+- proper error handling for embedded cases (mmcgrath@redhat.com)
+
 * Tue Jun 28 2011 Matt Hicks <mhicks@redhat.com> 0.73.4-1
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
   (mmcgrath@redhat.com)
