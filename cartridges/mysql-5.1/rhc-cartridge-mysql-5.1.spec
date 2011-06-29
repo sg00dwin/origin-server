@@ -1,5 +1,7 @@
+%define cartridgedir %{_libexecdir}/li/cartridges/embedded/mysql-5.1
+
 Name: rhc-cartridge-mysql-5.1
-Version: 0.1
+Version: 0.4
 Release: 1%{?dist}
 Summary: Embedded mysql support for express
 
@@ -10,7 +12,7 @@ Source0: %{name}-%{version}.tar.gz
 BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildArch: noarch
 
-Requires: rhc-node >= 0.69.4
+Requires: rhc-broker >= 0.73.4
 Requires: mysql-server
 
 %description
@@ -20,19 +22,41 @@ Provides rhc perl cartridge support
 %setup -q
 
 %build
-rake install:test
 
 %install
 rm -rf $RPM_BUILD_ROOT
-rake DESTDIR="$RPM_BUILD_ROOT" install:all
+rm -rf %{buildroot}
+mkdir -p %{buildroot}%{cartridgedir}
+mkdir -p %{buildroot}/%{_sysconfdir}/libra/cartridges
+ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/libra/cartridges/%{name}
+cp -r info %{buildroot}%{cartridgedir}/
+
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root,-)
-%{_libexecdir}/li/cartridges/embedded/mysql-5.1/
+%attr(0750,-,-) %{cartridgedir}/info/hooks/
+%attr(0750,-,-) %{cartridgedir}/info/build/
+%config(noreplace) %{cartridgedir}/info/configuration/
+%{_sysconfdir}/libra/cartridges/%{name}
+%{cartridgedir}/info/changelog
+%{cartridgedir}/info/control
 
 %changelog
-* Mon May 16 2011 Mike McGrath <mmcgrath@redhat.com> 0.1-1
+* Wed Jun 29 2011 Mike McGrath <mmcgrath@redhat.com> 0.4-1
+- 
+
+* Wed Jun 29 2011 Mike McGrath <mmcgrath@redhat.com> 0.3-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- undo passing rhlogin to cart (dmcphers@redhat.com)
+- merged (mmcgrath@redhat.com)
+- Adding mysql (mmcgrath@redhat.com)
+
+* Wed Jun 29 2011 Mike McGrath <mmcgrath@redhat.com> 0.2-1
+- new package built with tito
+
+* Wed Jun 29 2011 Mike McGrath <mmcgrath@redhat.com> 0.1-1
 - Initial packaging

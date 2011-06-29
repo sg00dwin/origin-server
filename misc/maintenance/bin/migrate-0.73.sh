@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-# Usage: ./migrate-rel3.sh > out.txt
+# Usage: ./migrate-0.73.sh > out.txt
 require 'rubygems'
 require 'openshift'
 

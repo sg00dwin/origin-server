@@ -24,7 +24,7 @@
 jboss_home = the location where the jbossas server is installed
 jboss_version = the name/type of the jbossas cartridge, e.g., jbossas-7.0
 # /etc/libra/node.conf
-unobfuscate = Enable user-unobfuscate to create ~/rhlogin in addition to ~/uuid
+unobfuscate = Enable user-unobfuscate to create ~/appname-namespace in addition to ~/uuid
 libra_dir=Users home dirs (where customer data ends up)
 # Script arguments
 namespace=basename $2
@@ -85,7 +85,7 @@ fi
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_jboss_create
+    echo "$0 $@" | logger -p local0.notice -t libra_jboss_configure
     exit 1
 }
 
@@ -222,6 +222,8 @@ exec 1>&- # close stdout
 ~/${application}/${application}_ctl.sh start >/dev/null 2>&1
 exec 1>&2 # redirect stdout to stderr
 echo done
+
+curl -s -O /dev/null -d "json_data=\"{\"app_uuid\":\"${uuid}\",\"action\":\"push\"}\"" https://${libra_server}/broker/nurture >/dev/null 2>&1 &
 __EOF__
 
     chmod 0755 $GIT_DIR/hooks/post-receive $GIT_DIR/hooks/pre-receive

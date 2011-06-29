@@ -59,7 +59,7 @@ fi
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_http_create
+    echo "$0 $@" | logger -p local0.notice -t libra_wsgi_configure
     exit 1
 }
 
@@ -175,6 +175,8 @@ fi
 # Start the app
 echo "Starting application..."
 ~/${application}/${application}_ctl.sh start
+
+curl -s -O /dev/null -d "json_data=\"{\"app_uuid\":\"${uuid}\",\"action\":\"push\"}\"" https://${libra_server}/broker/nurture >/dev/null 2>&1 &
 EOF
 
     chmod 0755 $GIT_DIR/hooks/post-receive $GIT_DIR/hooks/pre-receive

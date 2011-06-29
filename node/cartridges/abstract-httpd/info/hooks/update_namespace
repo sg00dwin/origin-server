@@ -25,7 +25,7 @@ set -e
 function print_help {
     echo "Usage: $0 app-name new_namespace old_namespace uuid"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_http_create
+    echo "$0 $@" | logger -p local0.notice -t libra_httpd_update_namespace
     exit 1
 }
 

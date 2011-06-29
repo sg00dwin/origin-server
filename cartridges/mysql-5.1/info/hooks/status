@@ -36,7 +36,7 @@ function print_help {
     echo "Usage: $0 app-name namespace uuid"
     echo "Get application status"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_http_create
+    echo "$0 $@" | logger -p local0.notice -t libra_mysql_status
     exit 1
 }
 
@@ -57,10 +57,11 @@ customer_id=`basename $3`
 application="$1"
 
 CUSTOMER_HOME="$libra_dir/$customer_id/"
-APP_DIR="$CUSTOMER_HOME/php/$application"
+APP_DIR="$CUSTOMER_HOME/$application"
+MYSQL_DIR="$CUSTOMER_HOME/mysql-5.1/"
 
 #
 # Get the status of the application
 #
 
-runuser --shell /bin/sh "$customer_id" -c "/usr/bin/wget -qO- http://$(awk '/Listen/{ print $2 }' $APP_DIR/conf.d/libra.conf)/server-status?auto"
+runuser --shell /bin/sh "$customer_id" "$MYSQL_DIR/${application}_ctl.sh" status

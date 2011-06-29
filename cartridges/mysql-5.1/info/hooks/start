@@ -36,7 +36,7 @@ function print_help {
     echo "Usage: $0 app-name namespace uuid"
     echo "Start a running application"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_http_create
+    echo "$0 $@" | logger -p local0.notice -t libra_mysql_start
     exit 1
 }
 
@@ -57,11 +57,12 @@ customer_id=`basename $3`
 application="$1"
 
 CUSTOMER_HOME="$libra_dir/$customer_id/"
-APP_DIR="$CUSTOMER_HOME/php/$application"
+APP_DIR="$CUSTOMER_HOME/$application"
+MYSQL_DIR="$CUSTOMER_HOME/mysql-5.1/"
 
 #
 # Start application
 #
 
 rm -f "$APP_DIR/run/stop_lock"
-runuser --shell /bin/sh "$customer_id" "$APP_DIR/${application}_ctl.sh" start
+runuser --shell /bin/sh "$customer_id" "$MYSQL_DIR/${application}_ctl.sh" start

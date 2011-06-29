@@ -43,7 +43,7 @@ fi
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_http_create
+    echo "$0 $@" | logger -p local0.notice -t libra_mysql_deconfigure
     exit 1
 }
 
@@ -65,23 +65,24 @@ done
 [ $# -eq 3 ] || print_help
 
 application="$1"
-namespace=$2 # Unused
+namespace=$2 # Not used
 uuid=$3
 
 CUSTOMER_HOME="$libra_dir/$uuid/"
 APP_DIR="$CUSTOMER_HOME/$application"
+MYSQL_DIR="$CUSTOMER_HOME/mysql-5.1/"
 
 #
 # Stop app
 #
 
-runuser --shell /bin/sh "$uuid" $APP_DIR/${application}_mysql_ctl.sh stop || echo "Failed to stop ${application}:mysql" 1>&2
+runuser --shell /bin/sh "$uuid" $MYSQL_DIR/${application}_mysql_ctl.sh stop || echo "Failed to stop ${application}:mysql" 1>&2
 
 # Confirm pid is gone before removing apps
 i=0
-while [ -f ${APP_DIR}/mysql/pid/mysql.pid ] && [ $i -lt 30 ]
+while [ -f ${MYSQL_DIR}/pid/mysql.pid ] && [ $i -lt 30 ]
     do
-    sleep .1
+    sleep .2
     i=$(($i + 1))
 done
-runcon -l s0-s0:c0.c1023 rm -rf "$APP_DIR/mysql" "$APP_DIR/${application}_mysql_ctl.sh"
+runcon -l s0-s0:c0.c1023 rm -rf "$MYSQL_DIR" "$MYSQL_DIR/${application}_mysql_ctl.sh"
