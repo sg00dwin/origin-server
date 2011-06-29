@@ -75,14 +75,19 @@ module Libra
       # get the server
       # send the command
       app_info = user.app_info(app_name)
-      if not app_info
-        raise UserException.new(101), "An application named '#{app_name}' does not exist", caller[0..5]
-      end
+      check_app_exists(app_info)
 
       server = Server.new(app_info['server_identity'])
 
       Libra.logger_debug "DEBUG: Performing action '#{action}' on node: #{server.name} - #{server.repos} repos" if Libra.c[:rpc_opts][:verbose]
       server_execute_direct('embed/' + framework, action, app_name, user, server, app_info)
+    end
+  end
+  
+  # Raise an exception if app doesn't exist
+  def check_app_exists(app_info)
+    if not app_info
+      raise UserException.new(101), "An application named '#{app_name}' does not exist", caller[0..5]
     end
   end
 
@@ -116,9 +121,7 @@ module Libra
       # get the server
       # send the command
       app_info = user.app_info(app_name)
-      if not app_info
-        raise UserException.new(101), "An application named '#{app_name}' does not exist", caller[0..5]
-      end
+      check_app_exists(app_info)
 
       server = Server.new(app_info['server_identity'])
 
@@ -155,9 +158,7 @@ module Libra
   def self.embed_deconfigure(framework, app_name, user)
     # get the application details
     app_info = user.app_info(app_name)
-    if not app_info
-      raise UserException.new(101), "An application named '#{app_name}' does not exist", caller[0..5]
-    end
+    check_app_exists(app_info)
     
     # Remove the application and account from the server
     server = Server.new(app_info['server_identity'])
@@ -221,9 +222,7 @@ module Libra
   def self.deconfigure_app(framework, app_name, user)
     # get the application details
     app_info = user.app_info(app_name)
-    if not app_info
-      raise UserException.new(101), "An application named '#{app_name}' does not exist", caller[0..5]
-    end
+    check_app_exists(app_info)
     
     # Remove the application and account from the server
     server = Server.new(app_info['server_identity'])
