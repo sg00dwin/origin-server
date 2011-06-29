@@ -31,7 +31,7 @@ The relevant marker file types are:
                  deploying the content. This marker file will be deleted when 
                  the deployment process completes.
               
-.deployed   -- Placed by the deployment scanner service to indicate that the 
+.deployed     -- Placed by the deployment scanner service to indicate that the 
                  given content has been deployed into the runtime. If an end 
                  user deletes this file, the content will be undeployed.
                
