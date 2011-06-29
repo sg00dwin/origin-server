@@ -276,13 +276,27 @@ module Libra
         else
           Libra.client_result "Application '#{app_name}' is either stopped or inaccessible"
         end
-      elsif exitcode != 0
-        Libra.client_debug "Cartridge return code: " + exitcode.to_s
-        if output
-          Libra.client_debug "Cartridge output: " + output
-          Libra.logger_debug "DEBUG: execute_direct results: " + output
+      else
+        if output.length > 0
+          output.each_line do |line|
+            if line =~ /^CLIENT_(MESSAGE|RESULT|DEBUG): /
+              if line =~ /^CLIENT_MESSAGE: /
+                Libra.client_message line['CLIENT_MESSAGE: '.length..-1]
+              elsif line =~ /^CLIENT_RESULT: /
+                Libra.client_result line['CLIENT_RESULT: '.length..-1]
+              else
+                Libra.client_debug line['CLIENT_DEBUG: '.length..-1]
+              end
+            elsif exitcode != 0
+              Libra.client_debug line
+              Libra.logger_debug "DEBUG: server_execute_direct results: " + line
+            end
+          end
         end
-        raise NodeException.new(143), "Node execution failure (invalid exit code from node).  If the problem persists please contact Red Hat support.", caller[0..5]
+        if exitcode != 0
+          Libra.client_debug "Cartridge return code: " + exitcode.to_s
+          raise NodeException.new(143), "Node execution failure (invalid exit code from node).  If the problem persists please contact Red Hat support.", caller[0..5]
+        end
       end
     else
       raise NodeException.new(143), "Node execution failure (error getting result from node).  If the problem persists please contact Red Hat support.", caller[0..5]
