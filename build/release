@@ -101,7 +101,7 @@ class Release < Thor
     end
 
     # See if we are doing a stage sync - if so, tag the packages listed
-    if options[:stage]
+    if options[:stage] and !options[:stage].empty?
       options[:stage].split(",").each do |package|
         package.strip!
 
