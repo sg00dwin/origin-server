@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/mysql-5.1
 
 Name: rhc-cartridge-mysql-5.1
-Version: 0.2
+Version: 0.3
 Release: 1%{?dist}
 Summary: Embedded mysql support for express
 
@@ -40,6 +40,13 @@ rm -rf $RPM_BUILD_ROOT
 %{_libexecdir}/li/cartridges/embedded/mysql-5.1/
 
 %changelog
+* Wed Jun 29 2011 Mike McGrath <mmcgrath@redhat.com> 0.3-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- undo passing rhlogin to cart (dmcphers@redhat.com)
+- merged (mmcgrath@redhat.com)
+- Adding mysql (mmcgrath@redhat.com)
+
 * Wed Jun 29 2011 Mike McGrath <mmcgrath@redhat.com> 0.2-1
 - new package built with tito
 
