@@ -273,9 +273,7 @@ module Libra
         'creation_time' => creation_time,
         'uuid' => uuid || gen_small_uuid
       }
-      json = JSON.generate h
-      Helper.s3.put(Libra.c[:s3_bucket],
-                    "user_info/#{@rhlogin}/apps/#{app_name}.json", json)
+      update_app(h, app_name)
       h
     end
     
