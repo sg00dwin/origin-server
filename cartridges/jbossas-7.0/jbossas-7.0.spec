@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.73.3
+Version:   0.73.4
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -70,6 +70,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Tue Jun 28 2011 Matt Hicks <mhicks@redhat.com> 0.73.4-1
+- switch to use rpm for maven (dmcphers@redhat.com)
+
 * Tue Jun 28 2011 Dan McPherson <dmcphers@redhat.com> 0.73.3-1
 - maven support (dmcphers@redhat.com)
 
