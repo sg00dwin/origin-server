@@ -1,3 +1,5 @@
+%define cartridgedir %{_libexecdir}/li/cartridges/embedded/mysql-5.1
+
 Name: rhc-cartridge-mysql-5.1
 Version: 0.1
 Release: 1%{?dist}
@@ -10,7 +12,7 @@ Source0: %{name}-%{version}.tar.gz
 BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildArch: noarch
 
-Requires: rhc-node >= 0.69.4
+Requires: rhc-broker >= 0.73.4
 Requires: mysql-server
 
 %description
@@ -20,11 +22,15 @@ Provides rhc perl cartridge support
 %setup -q
 
 %build
-rake install:test
 
 %install
 rm -rf $RPM_BUILD_ROOT
-rake DESTDIR="$RPM_BUILD_ROOT" install:all
+rm -rf %{buildroot}
+mkdir -p %{buildroot}%{cartridgedir}
+mkdir -p %{buildroot}/%{_sysconfdir}/libra/cartridges
+ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/libra/cartridges/%{name}
+cp -r info %{buildroot}%{cartridgedir}/
+
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -34,5 +40,5 @@ rm -rf $RPM_BUILD_ROOT
 %{_libexecdir}/li/cartridges/embedded/mysql-5.1/
 
 %changelog
-* Mon May 16 2011 Mike McGrath <mmcgrath@redhat.com> 0.1-1
+* Wed Jun 29 2011 Mike McGrath <mmcgrath@redhat.com> 0.1-1
 - Initial packaging
