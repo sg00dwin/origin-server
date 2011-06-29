@@ -2,7 +2,7 @@
 
 Summary:   Provides ruby rack support running on Phusion Passenger
 Name:      rhc-cartridge-rack-1.1
-Version:   0.73.3
+Version:   0.73.4
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -86,6 +86,10 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Wed Jun 29 2011 Dan McPherson <dmcphers@redhat.com> 0.73.4-1
+- undo passing rhlogin to cart (dmcphers@redhat.com)
+- add nurture call for git push (dmcphers@redhat.com)
+
 * Mon Jun 27 2011 Dan McPherson <dmcphers@redhat.com> 0.73.3-1
 - add wait for stop to finish (dmcphers@redhat.com)
 - add back gem bundling (dmcphers@redhat.com)
