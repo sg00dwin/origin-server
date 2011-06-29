@@ -78,7 +78,7 @@ module Libra
 
       check_app_exists(app_info)
 
-      if not app_info['embedded'] or app_info['embedded'][framework]
+      if not app_info['embedded'] or not app_info['embedded'][framework]
         raise UserException.new(101), "#{framework} is not embedded in '#{app_name}'", caller[0..5]
       end
 
@@ -148,8 +148,6 @@ module Libra
       raise UserException.new(101), "#{framework} already embedded in '#{app_name}'", caller[0..5]
     end
 
-    app_info['embedded'][framework] = {'info' => 'myinfo'}
-    user.update_app(app_info, app_name)
 
     server = Server.new(app_info['server_identity'])
 
@@ -164,6 +162,13 @@ module Libra
         raise
       end
     end
+
+    # Put the last line of output from the embedded cartridge into s3, should be a connection string or
+    # other useful thing
+    if Thread.current[:resultIO].string
+        app_info['embedded'][framework] = {'info' => Thread.current[:resultIO].string.split("\n")[-1]}
+    end
+    user.update_app(app_info, app_name)
   end
 
   # remove an application from server and persistant storage
