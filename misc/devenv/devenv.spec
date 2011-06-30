@@ -108,6 +108,7 @@ ln -s /usr/lib64/httpd/modules/ %{brokerdir}/httpd/modules
 
 chmod o-rwX /tmp /var/tmp
 setfacl -m u:libra_passenger:rwx /tmp
+setfacl -m u:jenkins:rwx /tmp
 
 # Jenkins specific setup
 usermod -G libra_user jenkins
