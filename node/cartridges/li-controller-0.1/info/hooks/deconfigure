@@ -191,6 +191,22 @@ function create_user_account() {
     ${NOOP} chmod 0750 "$HOMEDIR"
 }
 
+function kill_running_apps {
+    USERNAME=$1
+
+    # Destroy all running apps still going from the user.
+    /usr/sbin/lsof -u $username | /usr/bin/xargs /bin/kill -9
+    for f in `seq 1 30`
+    do
+        if lsof -u $username -t > /dev/null
+        then
+            /usr/sbin/lsof -u $username | /usr/bin/xargs /bin/kill -9
+        else
+            break
+        fi
+    done
+}
+
 function remove_user_account {
     USERNAME=$1
 
@@ -505,6 +521,8 @@ else
     remove_fs_quotas $username
 
     remove_pam_limits $username
+
+    kill_running_apps $username
 
     remove_user_account $username
 fi
