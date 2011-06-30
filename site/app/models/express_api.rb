@@ -7,6 +7,7 @@ module ExpressApi
   # API URLs
   base_url = Rails.configuration.express_api_server
   @@domain_url = URI.parse(base_url + '/broker/domain')
+  @@userinfo_url = URI.parse(base_url + '/broker/userinfo')
   
   # Post to an api url
   def http_post(url, json_data={})

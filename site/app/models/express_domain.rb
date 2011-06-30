@@ -9,8 +9,7 @@ class ExpressDomain
   attr_accessor :namespace, :ssh, :alter
   
   validates_presence_of :rhlogin
-  validates :password, :presence => true,
-                       :length => {:minimum => 6} 
+  validates :password, :length => {:minimum => 6} 
   
   validates :namespace, :presence => true,
                         :length => {:maximum => 16},
@@ -22,18 +21,18 @@ class ExpressDomain
     end
   end
   
-  def create!
+  def create
     @alter = false
-    self.save!
+    save
   end
   
-  def update!
+  def update
     @alter = true
-    self.save!
+    save
   end
   
-  protected 
-  def save!
+  private
+  def save
     json_data = self.to_json(:except => :password)
     Rails.logger.info(json_data)
     http_post(@@domain_url) do |json_response|
