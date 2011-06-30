@@ -181,6 +181,8 @@ chkconfig libra-tc on
 %config(noreplace) %{jenkins}/jobs/jenkins_update/config.xml
 %config(noreplace) %{jenkins}/jobs/libra_ami/config.xml
 %config(noreplace) %{jenkins}/jobs/libra_ami_verify/config.xml
+%config(noreplace) %{jenkins}/jobs/libra_ami_stage/config.xml
+%config(noreplace) %{jenkins}/jobs/libra_ami_verify_stage/config.xml
 %config(noreplace) %{jenkins}/jobs/libra_check/config.xml
 %config(noreplace) %{jenkins}/jobs/libra_prune/config.xml
 %config(noreplace) %{jenkins}/jobs/libra_web/config.xml
