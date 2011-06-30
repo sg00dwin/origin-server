@@ -243,7 +243,7 @@ module Streamline
           errors.add(:base, I18n.t(:unknown))
         end
       end
-    rescue AccessDeniedException => e
+    rescue AccessDeniedException, Libra::UserValidationException
       raise
     rescue Exception => e
       log_error "Exception occurred while calling streamline - #{e.message}"
