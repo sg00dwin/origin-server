@@ -1,6 +1,5 @@
 class ControlPanelController < ApplicationController
-
-  #todo - check for logged in/ out status
+  before_filter :require_login
 
   def index
     @domain = ExpressDomain.new()

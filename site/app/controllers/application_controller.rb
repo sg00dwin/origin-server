@@ -141,4 +141,13 @@ class ApplicationController < ActionController::Base
       end
     end
   end
+  
+  private
+  def require_login
+    if !session[:login]
+      session[:login_workflow] = url_for :controller => self.controller_name, 
+                                         :action => self.action_name
+      redirect_to login_path
+    end
+  end
 end
