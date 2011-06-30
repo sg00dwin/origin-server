@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.73.5
+Version:   0.73.6
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -189,6 +189,11 @@ chkconfig libra-tc on
 %{_initddir}/libra-site
 
 %changelog
+* Thu Jun 30 2011 Dan McPherson <dmcphers@redhat.com> 0.73.6-1
+- let jenkins use tmp (dmcphers@redhat.com)
+- Added mysql and charlie (mmcgrath@redhat.com)
+- cleanup unused vars (dmcphers@redhat.com)
+
 * Wed Jun 29 2011 Dan McPherson <dmcphers@redhat.com> 0.73.5-1
 - removing mysql until it is available (mmcgrath@redhat.com)
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
