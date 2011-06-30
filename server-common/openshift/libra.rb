@@ -302,7 +302,7 @@ module Libra
           Libra.client_result "Application '#{app_name}' is either stopped or inaccessible"
         end
       else
-        if output.length > 0
+        if output && !output.empty?
           output.each_line do |line|
             if line =~ /^CLIENT_(MESSAGE|RESULT|DEBUG): /
               if line =~ /^CLIENT_MESSAGE: /
