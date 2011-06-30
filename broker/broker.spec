@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.73.5
+Version:   0.73.6
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -62,6 +62,9 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Thu Jun 30 2011 Dan McPherson <dmcphers@redhat.com> 0.73.6-1
+- sso support for broker (dmcphers@redhat.com)
+
 * Wed Jun 29 2011 Dan McPherson <dmcphers@redhat.com> 0.73.5-1
 - undo passing rhlogin to cart (dmcphers@redhat.com)
 - add nurture call for git push (dmcphers@redhat.com)
