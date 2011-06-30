@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system client tools
 Name:          rhc
-Version:       0.73.5
+Version:       0.73.6
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       MIT
@@ -94,6 +94,12 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_sysconfdir}/openshift/express.conf
 
 %changelog
+* Thu Jun 30 2011 Dan McPherson <dmcphers@redhat.com> 0.73.6-1
+- cleanup (dmcphers@redhat.com)
+- perf improvements for how/when we look up the valid cart types on the server
+  (dmcphers@redhat.com)
+- move health check path to server (dmcphers@redhat.com)
+
 * Wed Jun 29 2011 Dan McPherson <dmcphers@redhat.com> 0.73.5-1
 - fixing merge from Dan (mmcgrath@redhat.com)
 - fixed formatting and embedded display (mmcgrath@redhat.com)
