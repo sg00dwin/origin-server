@@ -85,7 +85,7 @@ class Flex < Test::Unit::TestCase
         @verification_errors << $!
     end
     begin
-        assert_equal "Subscribe to Annoucements to get product release notifications.", @driver.find_element(:xpath,".//div[@id='product_community']/div/p").text
+        assert_equal "Subscribe to Announcements to get product release notifications.", @driver.find_element(:xpath,".//div[@id='product_community']/div/p").text
     rescue Test::Unit::AssertionFailedError
         @verification_errors << $!
     end
@@ -212,7 +212,7 @@ class Flex < Test::Unit::TestCase
     sleep 2
     assert !10.times{ break if ("News and Announcements | Red Hat Openshift Forum" == @driver.title rescue false); sleep 1 }
     @driver.navigate.back
-    @driver.find_element(:xpath,".//a[contains(text(),'Annoucements')]").click()
+    @driver.find_element(:xpath,".//a[contains(text(),'Announcements')]").click()
     sleep 2
     assert !10.times{ break if ("News and Announcements | Red Hat Openshift Forum" == @driver.title rescue false); sleep 1 }
     @driver.navigate.back

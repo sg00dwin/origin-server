@@ -2,7 +2,7 @@
 
 Summary:   Provides mod_perl support
 Name:      rhc-cartridge-perl-5.10
-Version:   0.4.3
+Version:   0.4.5
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -70,6 +70,15 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Wed Jun 29 2011 Dan McPherson <dmcphers@redhat.com> 0.4.5-1
+- undo passing rhlogin to cart (dmcphers@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- add nurture call for git push (dmcphers@redhat.com)
+
+* Wed Jun 29 2011 Mike McGrath <mmcgrath@redhat.com> 0.4.4-1
+- 
+
 * Mon Jun 27 2011 Dan McPherson <dmcphers@redhat.com> 0.4.3-1
 - add back bundling (dmcphers@redhat.com)
 

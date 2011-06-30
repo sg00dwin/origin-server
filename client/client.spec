@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system client tools
 Name:          rhc
-Version:       0.73.2
+Version:       0.73.5
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       MIT
@@ -94,6 +94,21 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_sysconfdir}/openshift/express.conf
 
 %changelog
+* Wed Jun 29 2011 Dan McPherson <dmcphers@redhat.com> 0.73.5-1
+- fixing merge from Dan (mmcgrath@redhat.com)
+- fixed formatting and embedded display (mmcgrath@redhat.com)
+- Adding embedded list support (mmcgrath@redhat.com)
+
+* Wed Jun 29 2011 Dan McPherson <dmcphers@redhat.com> 0.73.4-1
+- handle embed or command not passed (dmcphers@redhat.com)
+
+* Tue Jun 28 2011 Matt Hicks <mhicks@redhat.com> 0.73.3-1
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (mhicks@redhat.com)
+- allow messsages from cart to client (dmcphers@redhat.com)
+- Updating to new Rake tasks to avoid deprecation warning (mhicks@redhat.com)
+- Adding embed support (mmcgrath@redhat.com)
+- Added embedded list (mmcgrath@redhat.com)
+
 * Mon Jun 27 2011 Dan McPherson <dmcphers@redhat.com> 0.73.2-1
 - force evaluation (jimjag@redhat.com)
 - better structure... (jimjag@redhat.com)

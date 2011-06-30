@@ -61,7 +61,11 @@ class BrokerController < ApplicationController
           if !(val =~ /\A[A-Za-z0-9\+\/=]+\z/)
             render :json => generate_result_json("Invalid ssh key: #{val}", 108), :status => :invalid and return nil
           end
-        when 'debug', 'alter'
+        when 'app_uuid'
+          if !(val =~ /\A[a-f0-9]+\z/)
+            render :json => generate_result_json("Invalid application uuid: #{val}", 254), :status => :invalid and return nil
+          end
+        when 'debug', 'alter', 'embed'
           if !(val =~ /\A(true|false)\z/)
             render :json => generate_result_json("Invalid value for #{key}:#{val} specified", 254), :status => :invalid and return nil
           end
@@ -73,7 +77,11 @@ class BrokerController < ApplicationController
           if !(val =~ /\A[\w\-\.]+\z/)
             render :json => generate_result_json("Invalid cart_types: #{val} specified", 109), :status => :invalid and return nil
           end
-        when 'action', 'app_name'
+        when 'action'
+          if !(val =~ /\A[\w\-\.]+\z/) and val.to_s.length < 24
+            render :json => generate_result_json("Invalid #{key} specified: #{val}", 105), :status => :invalid and return nil
+          end
+        when 'app_name'
           if !(val =~ /\A[\w]+\z/) and val.to_s.length < 24
             render :json => generate_result_json("Invalid #{key} specified: #{val}", 105), :status => :invalid and return nil
           end
@@ -103,12 +111,12 @@ class BrokerController < ApplicationController
     render :json => generate_result_json(e.message, e.respond_to?('exit_code') ? e.exit_code : 254), :status => :internal_server_error
   end
 
-  def cartridge_post
+  def embed_cartridge_post
     begin
       # Parse the incoming data
       data = parse_json_data(params['json_data'])
       return unless data
-      username = Libra::User.new(data['rhlogin'], nil, nil, nil, params['password']).login()
+      username = Libra::User.new(data['rhlogin'], nil, nil, nil, params['password'], ticket).login()
       if username
         action = data['action']
         app_name = data['app_name']
@@ -117,8 +125,44 @@ class BrokerController < ApplicationController
           render :json => generate_result_json("The supplied application name is it not allowed", 105), :status => :invalid and return
         end
         
-        if !Libra::Util.get_cartridge_type(data['cartridge'])
-          render :json => generate_result_json("Invalid application type (-t|--type) specified: '#{data['cartridge']}'.  Valid application types are (#{Libra::Util.get_cartridge_list}).", 110), :status => :invalid and return
+        cartridge_type = 'embedded'
+
+        if !Libra::Util.get_cartridge_type(data['cartridge'], cartridge_type)
+          render :json => generate_result_json("Invalid application type (-t|--type) specified: '#{data['cartridge']}'.  Valid application types are (#{Libra::Util.get_cartridge_list(cartridge_type)}).", 110), :status => :invalid and return
+        end
+        
+        # Execute a framework cartridge
+        Libra.embed_execute(data['cartridge'], action, app_name, username)
+        
+        message = Thread.current[:resultIO].string
+
+        render :json => generate_result_json(message) and return
+      else
+        render_unauthorized and return
+      end
+    rescue Exception => e
+      render_internal_server_error(e, 'cartridge_post') and return
+    end
+  end
+
+  def cartridge_post
+    begin
+      # Parse the incoming data
+      data = parse_json_data(params['json_data'])
+      return unless data
+      username = Libra::User.new(data['rhlogin'], nil, nil, nil, params['password'], ticket).login()
+      if username
+        action = data['action']
+        app_name = data['app_name']
+
+        if !Libra::Util.check_app(app_name)
+          render :json => generate_result_json("The supplied application name is it not allowed", 105), :status => :invalid and return
+        end
+        
+        cartridge_type = 'standalone'
+
+        if !Libra::Util.get_cartridge_type(data['cartridge'], cartridge_type)
+          render :json => generate_result_json("Invalid application type (-t|--type) specified: '#{data['cartridge']}'.  Valid application types are (#{Libra::Util.get_cartridge_list(cartridge_type)}).", 110), :status => :invalid and return
         end
         
         # Execute a framework cartridge
@@ -129,8 +173,8 @@ class BrokerController < ApplicationController
           message = "Successfully created application: #{app_name}"
         elsif action == 'deconfigure'
           message = "Successfully destroyed application: #{app_name}"
-        elsif action == 'status'
-          message = Thread.current[:resultIO].string
+        elsif action == 'status' || (Thread.current[:resultIO] && !Thread.current[:resultIO].string.empty?)
+          message = Thread.current[:resultIO].string 
         end
   
         render :json => generate_result_json(message) and return
@@ -149,7 +193,7 @@ class BrokerController < ApplicationController
       return unless data
   
       # Check if user already exists
-      username = Libra::User.new(data['rhlogin'], nil, nil, nil, params['password']).login()
+      username = Libra::User.new(data['rhlogin'], nil, nil, nil, params['password'], ticket).login()
       if username
         user = Libra::User.find(username)
         if user
@@ -166,7 +210,8 @@ class BrokerController < ApplicationController
               app_info[appname] = {
                   :framework => app['framework'],
                   :creation_time => app['creation_time'],
-                  :uuid => app['uuid']
+                  :uuid => app['uuid'],
+                  :embedded => app['embedded']
               }
           end
           
@@ -191,7 +236,7 @@ class BrokerController < ApplicationController
       # Parse the incoming data
       data = parse_json_data(params['json_data'])
       return unless data
-      username = Libra::User.new(data['rhlogin'], nil, nil, nil, params['password']).login()
+      username = Libra::User.new(data['rhlogin'], nil, nil, nil, params['password'], ticket).login()
       if username
         user = Libra::User.find(username)
         ns = data['namespace']
@@ -240,13 +285,14 @@ class BrokerController < ApplicationController
     begin
       # Parse the incoming data
       data = parse_json_data(params['json_data'])
-      cart_types = data['cart_types']
-      if cart_types != 'standalone'
-        render :json => generate_result_json("Invalid cartridge types: #{cart_types} specified", 109), :status => :invalid and return
+      return unless data
+      cart_type = data['cart_types']
+      if cart_type != 'standalone' and cart_type != 'embedded'
+        render :json => generate_result_json("Invalid cartridge types: #{cart_type} specified", 109), :status => :invalid and return
         #TODO handle embedded and subsets (Ex: all php)
       end
 
-      carts = Libra::Util.get_cartridges_tbl
+      carts = Libra::Util.get_cartridges_tbl(cart_type)
       json_data = JSON.generate({
                               :carts => carts
                               })
@@ -257,5 +303,22 @@ class BrokerController < ApplicationController
       render_internal_server_error(e, 'cart_list_post') and return
     end
   end
+  
+  def nurture_post
+    begin
+      # Parse the incoming data
+      data = parse_json_data(params['json_data'])
+      return unless data
+      action = data['action']
+      app_uuid = data['app_uuid']
+      Nurture.application_update(action, app_uuid)
+  
+      # Just return a 200 success
+      render :json => generate_result_json("Success") and return
+      
+    rescue Exception => e
+      render_internal_server_error(e, 'nurture_post') and return
+    end
+  end  
 
 end

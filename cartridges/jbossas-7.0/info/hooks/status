@@ -37,7 +37,7 @@ function print_help {
     echo "Usage: $0 app-name namespace uuid"
     echo "Get application status"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_jboss_create
+    echo "$0 $@" | logger -p local0.notice -t libra_jboss_status
     exit 1
 }
 

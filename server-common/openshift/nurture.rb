@@ -23,6 +23,22 @@ module Libra
     --data-urlencode 'application[user_type]=express' &`
         Libra.logger_debug $?.exitstatus
     end
+    
+    #
+    # Send application data (git push, etc)
+    #
+    def self.application_update(action, app_uuid)
+        return unless (Libra.c[:nurture_enabled].to_s.downcase == 'true')
+        Libra.logger_debug "Sending to Nurture:application_update"
+        # Why curl?  So I could & at the end.  We don't want this blocking requests
+        # Please fix if you can :)  - mmcgrath
+        `curl -s -O /dev/null -X POST -u '#{Libra.c[:nurture_username]}:#{Libra.c[:nurture_password]}' '#{Libra.c[:nurture_url]}applications' \
+    --data-urlencode 'application[action]=#{action}' \
+    --data-urlencode 'application[guid]=#{app_uuid}' \
+    --data-urlencode 'application[version]=na' \
+    --data-urlencode 'application[user_type]=express' &`
+        Libra.logger_debug $?.exitstatus
+    end
  
     #
     # Send account data (actual username)

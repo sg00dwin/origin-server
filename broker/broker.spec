@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.73.3
+Version:   0.73.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -62,6 +62,17 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Wed Jun 29 2011 Dan McPherson <dmcphers@redhat.com> 0.73.5-1
+- undo passing rhlogin to cart (dmcphers@redhat.com)
+- add nurture call for git push (dmcphers@redhat.com)
+- fixing merge from Dan (mmcgrath@redhat.com)
+- Added initial S3 bits (mmcgrath@redhat.com)
+
+* Tue Jun 28 2011 Matt Hicks <mhicks@redhat.com> 0.73.4-1
+- allow messsages from cart to client (dmcphers@redhat.com)
+- Added support to call embedded cartridges (mmcgrath@redhat.com)
+- Added embedded list (mmcgrath@redhat.com)
+
 * Tue Jun 28 2011 Dan McPherson <dmcphers@redhat.com> 0.73.3-1
 - maven support (dmcphers@redhat.com)
 

@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.73.3
+Version:   0.73.6
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -13,6 +13,7 @@ BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires: git
 Requires:  rhc-node
 Requires:  jboss-as7 = 7.0.0.Beta7OS
+Requires:  maven3
 
 BuildArch: noarch
 
@@ -53,10 +54,11 @@ ln -s %{cartridgedir}/../abstract-httpd/info/hooks/restart %{buildroot}%{cartrid
 ln -s %{cartridgedir}/../abstract-httpd/info/hooks/start %{buildroot}%{cartridgedir}/info/hooks/start
 ln -s %{cartridgedir}/../abstract-httpd/info/hooks/stop %{buildroot}%{cartridgedir}/info/hooks/stop
 ln -s %{cartridgedir}/../abstract-httpd/info/hooks/update_namespace %{buildroot}%{cartridgedir}/info/hooks/update_namespace
-# maven
-mkdir -p %{buildroot}%{cartridgedir}/maven-2.2
-tar -xf apache-maven-2.2.1-bin.tar.gz
-mv apache-maven-2.2.1/* %{buildroot}%{cartridgedir}/maven-2.2
+
+%post
+#maven
+alternatives --install /etc/alternatives/maven-3.0 maven-3.0 /usr/share/java/apache-maven-3.0.3 100
+
 
 %clean
 rm -rf %{buildroot}
@@ -65,7 +67,6 @@ rm -rf %{buildroot}
 %defattr(-,root,root,-)
 %attr(0750,-,-) %{cartridgedir}/info/hooks/
 %attr(0750,-,-) %{cartridgedir}/info/data/
-%{cartridgedir}/maven-2.2
 %config(noreplace) %{cartridgedir}/info/configuration/
 %{_sysconfdir}/libra/cartridges/%{name}
 %{cartridgedir}/info/changelog
@@ -73,6 +74,20 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Wed Jun 29 2011 Dan McPherson <dmcphers@redhat.com> 0.73.6-1
+- undo passing rhlogin to cart (dmcphers@redhat.com)
+- add nurture call for git push (dmcphers@redhat.com)
+- fix formatting in README (dmcphers@redhat.com)
+
+* Wed Jun 29 2011 Dan McPherson <dmcphers@redhat.com> 0.73.5-1
+- handle embed or command not passed (dmcphers@redhat.com)
+- fix typo in README (dmcphers@redhat.com)
+- fix skip tests (dmcphers@redhat.com)
+- use alternative for maven-3.0 (dmcphers@redhat.com)
+
+* Tue Jun 28 2011 Matt Hicks <mhicks@redhat.com> 0.73.4-1
+- switch to use rpm for maven (dmcphers@redhat.com)
+
 * Tue Jun 28 2011 Dan McPherson <dmcphers@redhat.com> 0.73.3-1
 - maven support (dmcphers@redhat.com)
 

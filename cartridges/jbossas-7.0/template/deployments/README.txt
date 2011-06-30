@@ -1,6 +1,6 @@
 The standalone/deployments directory in the JBoss Application Server 
 distribution is the location end users can place their deployment content 
-(e.g. war, ear, jar, sar files) to have it automically deployed into the server 
+(e.g. war, ear, jar, sar files) to have it automatically deployed into the server 
 runtime.
 
 Users, particularly those running production systems, are encouraged to use the 
@@ -31,7 +31,7 @@ The relevant marker file types are:
                  deploying the content. This marker file will be deleted when 
                  the deployment process completes.
               
-.isdeployed   -- Placed by the deployment scanner service to indicate that the 
+.deployed     -- Placed by the deployment scanner service to indicate that the 
                  given content has been deployed into the runtime. If an end 
                  user deletes this file, the content will be undeployed.
                

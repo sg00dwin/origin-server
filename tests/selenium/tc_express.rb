@@ -127,7 +127,7 @@ class Express < Test::Unit::TestCase
         @verification_errors << $!
     end
     begin
-        assert_equal "Subscribe to Annoucements to get product release notifications.", @driver.find_element(:xpath,".//div[@id='product_community']/div/p").text
+        assert_equal "Subscribe to Announcements to get product release notifications.", @driver.find_element(:xpath,".//div[@id='product_community']/div/p").text
     rescue Test::Unit::AssertionFailedError
         @verification_errors << $!
     end
@@ -232,7 +232,7 @@ class Express < Test::Unit::TestCase
         @verification_errors << $!
     end  
     @driver.navigate.back
-    @driver.find_element(:xpath,".//a[contains(text(),'Annoucements')]").click()
+    @driver.find_element(:xpath,".//a[contains(text(),'Announcements')]").click()
     sleep 2
     begin
     assert_equal "News and Announcements | Red Hat Openshift Forum",@driver.title
@@ -442,7 +442,7 @@ class Express < Test::Unit::TestCase
         @verification_errors << $!
     end
     begin
-        assert @driver.find_element(:xpath,".//a[@href='http://docs.redhat.com/docs/en-US/OpenShift/1.0/html/OpenShift_Express_User_Guide/index.html']").displayed?
+        assert @driver.find_element(:xpath,".//a[@href='http://docs.redhat.com/docs/en-US/OpenShift_Express/1.0/html/User_Guide/index.html']").displayed?
     rescue Test::Unit::AssertionFailedError
         @verification_errors << $!
     end

@@ -41,9 +41,9 @@ else
 fi
 
 function print_help {
-    echo "Usage: $0 app-name namespace"
+    echo "Usage: $0 app-name namespace uuid"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_http_create
+    echo "$0 $@" | logger -p local0.notice -t libra_php_deconfigure
     exit 1
 }
 

@@ -257,7 +257,7 @@ And /^rhc-ctl-app is run without -c$/ do
   end
 end
 Then /^display an error that the command is required$/ do
-  check_file_has_string(@sfile,"Command is required").should == true
+  check_file_has_string(@sfile,"Command or embed is required").should == true
   #clean running log
   run("rm -f #{@sfile}")
 end

@@ -63,9 +63,12 @@ class Release < Thor
   end
 
   desc "sync", "Download a build from Brew (using Mash) and sync it to the OpenShift repos"
+  method_option :stage, :type => :string, :desc => "Comma-delimited list of packages to sync.  Exclude NVR for latest versions.  (e.g. --stage='rhc, rhc-site-0.73.3-1')"
   def sync
+
     # Mash / RSync parameters
-    mash_config =  "libra-rhel-6.1-candidate"
+    pkg_suffix = "el6_1"
+    mash_config = options[:stage] ? "libra-rhel-6.1-stage" : "libra-rhel-6.1-candidate"
     repo_host = "209.132.178.9"
     repo_dir = "/srv/web/gpxe/trees"
     repo = "root@#{repo_host}:#{repo_dir}"
@@ -76,6 +79,12 @@ class Release < Thor
     jenkins = "https://ci.dev.openshift.redhat.com/jenkins"
     token = "libra1"
 
+    # Check the Brew installation
+    `brew --help`
+    unless $? == 0
+      puts "ERROR - Brew not installed.  Read misc/docs/BREW for setup steps"
+      exit 2
+    end
 
     # Check the mash installation
     unless File.exists?("/etc/mash/#{mash_config}.mash")
@@ -92,6 +101,41 @@ class Release < Thor
       exit 2
     end
 
+    # See if we are doing a stage sync - if so, tag the packages listed
+    if options[:stage] and !options[:stage].empty?
+      options[:stage].split(",").each do |package|
+        package.strip!
+
+        nvr_regex = /(.*)-(\d+)\.(\d+)\.(\d+)-?(\d)?/
+
+        # Check for the supplied NVR value (e.g. 0.45.1)
+        if nvr_regex.match(package)
+          # Confirm the package is valid
+          nvr_package = `git tag | grep #{package} | tail -n1`.chomp
+
+          unless nvr_package.empty?
+            package = nvr_package
+          else
+            puts "ERROR - invalid package supplied #{package}"
+            exit 1
+          end
+        else
+          # No NVR was specified - lookup the latest
+          if package == 'rhc'
+            tags = `git tag | grep -e rhc-[0-9]`.chomp.split("\n")
+          else
+            tags = `git tag | grep #{package}`.chomp.split("\n")
+          end
+
+          # Sort the tags by NVR and take the last entry
+          package = tags.sort_by {|tag| nvr_regex.match(tag); [$1, $2.to_i, $3.to_i, $4.to_i, $5.to_i]}[-1]
+        end
+
+        puts "Tagging package #{package}..."
+        puts `brew tag-pkg #{mash_config} #{package}.#{pkg_suffix}`
+      end
+    end
+
     # Run mash twice since it usually fails the first time
     puts "Running mash sync"
     mash_cmd = "/usr/bin/mash -o /tmp/#{mash_config} -c /etc/mash/li-mash.conf #{mash_config}"
@@ -102,9 +146,10 @@ class Release < Thor
       exit 1
     end
 
+    # Build the gem locally since it's not stored centrally like RPMs in Brew
     puts "Building client gem..."
     inside(File.expand_path(File.dirname(File.expand_path(__FILE__)) + "/../client")) do
-      unless run('rake package', :verbose => options.verbose?)
+      unless run('rake clean package', :verbose => options.verbose?)
         puts "ERROR - client gem building failed"
         exit 1
       end
@@ -112,30 +157,39 @@ class Release < Thor
     puts "Done"
 
     puts "Syncing RPMs and gems to repo..."
-    unless run("#{rsync} /tmp/#{mash_config}/#{mash_config}/* #{repo}/rhel-6-libra-candidate/", :verbose => options.verbose?)
+    unless run("#{rsync} /tmp/#{mash_config}/#{mash_config}/* #{repo}/#{mash_config}/", :verbose => options.verbose?)
       puts "ERROR - RPM sync failed.  Make sure you have root access on #{repo_host}"
       exit 1
     end
 
-    unless run("#{rsync} client/pkg/*.gem #{repo}/client/gems/", :verbose => options.verbose?)
+    unless run("#{rsync} client/pkg/*.gem #{repo}/#{mash_config}/client/gems/", :verbose => options.verbose?)
       puts "ERROR - Gem sync failed.  Make sure you have root access on #{repo_host}"
       exit 1
     end
     puts "Done"
 
     puts "Updating gem indexes..."
-    unless run("ssh root@#{repo_host} 'gem generate_index -d #{repo_dir}/client'", :verbose => options.verbose?)
+    unless run("ssh root@#{repo_host} 'gem generate_index -d #{repo_dir}/#{mash_config}/client'", :verbose => options.verbose?)
       puts "ERROR - Gem index update failed."
       exit 1
     end
     puts "Done"
 
-    puts "Kicking off AMI build..."
-    unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/libra_ami/build?token=#{token}", :verbose => options.verbose?)
-      puts "ERROR - Jenkins remote job invocation failed."
-      exit 1
+    if options[:stage]
+      puts "Kicking off stage verification..."
+      unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/libra_ami_stage/build?token=#{token}", :verbose => options.verbose?)
+        puts "ERROR - Jenkins remote job invocation failed."
+        exit 1
+      end
+      puts "Done"
+    else
+      puts "Kicking off AMI build..."
+      unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/libra_ami/build?token=#{token}", :verbose => options.verbose?)
+        puts "ERROR - Jenkins remote job invocation failed."
+        exit 1
+      end
+      puts "Done"
     end
-    puts "Done"
   end
 end
 

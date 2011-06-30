@@ -7,25 +7,33 @@ module Libra
 
     Maxdlen = 16
 
-    def self.get_cartridge_list(sep=', ')
-      carts = get_cartridges_tbl
+    def self.get_cartridge_list(type, sep=', ')
+      carts = get_cartridges_tbl(type)
       carts.join(sep)
     end
 
-    def self.get_cartridge_type(type)
-      carts = get_cartridges_tbl
-      if carts.include?(type)
-        type = type.split('-')[0]
-        return type
+    def self.get_cartridge_type(cartridge_name, type='standalone')
+      carts = get_cartridges_tbl(type)
+      if carts.include?(cartridge_name)
+        cartridge_name = cartridge_name.split('-')[0]
+        return cartridge_name
       end
       return nil
     end
 
-    def self.get_cartridges_tbl
+
+    # Type - standalone or embedded
+    def self.get_cartridges_tbl(type)
       server = Server.find_available
       carts = []
-      server.carts.split('|').each do |cart|
-        carts << cart unless Blacklist.ignore_cart?(cart)
+      if type == 'standalone'
+        server.carts.split('|').each do |cart|
+          carts << cart unless Blacklist.ignore_cart?(cart)
+        end
+      elsif type == 'embedded'
+        server.embedcarts.split('|').each do |cart|
+          carts << cart unless Blacklist.ignore_cart?(cart)
+        end
       end
       return carts
     end

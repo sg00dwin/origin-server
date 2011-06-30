@@ -9,9 +9,11 @@ Broker::Application.routes.draw do
     #   match 'products/:id' => 'catalog#view'
     # Keep in mind you can assign values other than :controller and :action
     match 'cartridge' => 'broker#cartridge_post', :via => [:post]
+    match 'embed_cartridge' => 'broker#embed_cartridge_post', :via => [:post]
     match 'domain' => 'broker#domain_post', :via => [:post]
     match 'userinfo' => 'broker#user_info_post', :via => [:post]
     match 'cartlist' => 'broker#cart_list_post', :via => [:post]
+    match 'nurture' => 'broker#nurture_post', :via => [:post]
 
     # Sample resource route with options:
     #   resources :products do

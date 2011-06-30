@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.73.3
+Version:   0.73.5
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -24,6 +24,7 @@ Requires:  rhc-cartridge-wsgi-3.2
 Requires:  rhc-cartridge-rack-1.1
 Requires:  rhc-cartridge-jbossas-7.0
 Requires:  rhc-cartridge-perl-5.10
+Requires:  rhc-cartridge-mysql-5.1
 Requires:  qpid-cpp-server
 Requires:  qpid-cpp-server-ssl
 Requires:  puppet
@@ -32,6 +33,7 @@ Requires:  rubygem-mechanize
 Requires:  rubygem-mocha
 Requires:  rubygem-rspec
 Requires:  rubygem-nokogiri
+Requires:  charlie
 
 # CI Requirements
 Requires:  jenkins
@@ -186,6 +188,17 @@ chkconfig libra-tc on
 %{_initddir}/libra-site
 
 %changelog
+* Wed Jun 29 2011 Dan McPherson <dmcphers@redhat.com> 0.73.5-1
+- removing mysql until it is available (mmcgrath@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- add nurture call for git push (dmcphers@redhat.com)
+- Added mysql (mmcgrath@redhat.com)
+- Switching the stage build to use the stage branch (mhicks@redhat.com)
+
+* Tue Jun 28 2011 Matt Hicks <mhicks@redhat.com> 0.73.4-1
+- Adding support for staging releases on the new tag (mhicks@redhat.com)
+
 * Mon Jun 27 2011 Dan McPherson <dmcphers@redhat.com> 0.73.3-1
 - set default apps to 5 (mmcgrath@redhat.com)
 

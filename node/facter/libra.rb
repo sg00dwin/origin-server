@@ -89,3 +89,18 @@ Facter.add(:cart_list) do
     end
     setcode { carts.join('|') }
 end
+
+#
+# List embedded cartridges on the host
+#   Convert from name-m.n.p to name-m.n
+#   This is the *full* list. Public version is
+#   obtained via Libra::Util.get_embedded_cartridges_tbl
+#
+Facter.add(:embed_cart_list) do
+    carts = []
+    Dir.glob('/usr/libexec/li/cartridges/embedded/*/').each do |cart|
+        cart = File.basename(cart).sub(/^(.*)-(\d+)\.(\d+)\.?.*$/, '\1-\2.\3')
+        carts << cart unless cart.nil?
+    end
+    setcode { carts.join('|') }
+end

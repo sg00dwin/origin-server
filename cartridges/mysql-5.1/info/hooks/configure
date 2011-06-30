@@ -1,0 +1,202 @@
+#!/bin/bash
+
+# Copyright © 2010 Mike McGrath All rights reserved
+# Copyright © 2010 Red Hat, Inc. All rights reserved
+
+# This copyrighted material is made available to anyone wishing to use, modify,
+# copy, or redistribute it subject to the terms and conditions of the GNU
+# General Public License v.2.  This program is distributed in the hope that it
+# will be useful, but WITHOUT ANY WARRANTY expressed or implied, including the
+# implied warranties of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.  You should have
+# received a copy of the GNU General Public License along with this program;
+# if not, write to the Free Software Foundation, Inc., 51 Franklin Street,
+# Fifth Floor, Boston, MA 02110-1301, USA. Any Red Hat trademarks that are
+# incorporated in the source code or documentation are not subject to the GNU
+# General Public License and may only be used or replicated with the express
+# permission of Red Hat, Inc.
+
+# Creates a per customer httpd instance
+
+# Exit on any errors
+set -e
+
+if [ -f '/etc/libra/node.conf' ]
+then
+    . /etc/libra/node.conf
+elif [ -f 'node.conf' ]
+then
+    . node.conf
+else
+    echo "node.conf not found.  Cannot continue" 1>&2
+    exit 3
+fi
+
+if [ -f '/etc/libra/node_data.conf' ]
+then
+    . /etc/libra/node_data.conf
+elif [ -f 'node_data.conf' ]
+then
+    . node_data.conf
+else
+    echo "node_data.conf not found.  Cannot continue" 1>&2
+    exit 3
+fi
+
+rotatelogs_interval="86400"
+rotatelogs_format="-%Y%m%d-%H%M%S-%Z"
+
+if [ -f '/etc/libra/resource_limits.conf' ]
+then
+    . /etc/libra/resource_limits.conf
+fi
+
+CART_INFO_DIR=/usr/libexec/li/cartridges/embedded/mysql-5.1/info
+CART_CONF_DIR=$CART_INFO_DIR/configuration/etc
+
+function print_help {
+    echo "Usage: $0 app-name namespace uuid"
+
+    echo "$0 $@" | logger -p local0.notice -t libra_mysql_configure
+    exit 1
+}
+
+function error {
+    echo "$1" 1>&2
+    exit "$2"
+}
+
+while getopts 'd' OPTION
+do
+    case $OPTION in
+        d) set -x
+        ;;
+        ?) print_help
+        ;;
+    esac
+done
+
+
+[ $# -eq 3 ] || print_help
+
+application="$1"
+namespace=$2 # Not used
+uuid=$3
+
+CUSTOMER_HOME="$libra_dir/$uuid/"
+APP_DIR=`echo $CUSTOMER_HOME/$application | tr -s /`
+MYSQL_DIR="$CUSTOMER_HOME/mysql-5.1/"
+
+#
+# Detect IP
+
+IP=$(/bin/awk '/Listen/{ print $2 }' $APP_DIR/conf.d/libra.conf | /bin/sed 's/\:8080$//')
+
+#
+# Get user id info
+# Not caching this information caused some early chowns to work but some later
+# chowns to fail with a user not found error
+
+user_id=$(id -u "$uuid") || error "Could not find user $uuid" 134
+group_id=$(id -g "$uuid") || error "Could not find user $uuid" 135
+
+#
+# Get UID information and CVAL
+#
+uid=$(id -u "$uuid")
+c_val="c$(($uid/1023)),c$(($uid%1023))"
+
+#
+# Create http base for application, every app gets its own apache instance
+#
+
+[ -d "$MYSQL_DIR" ] && error "${application}.  Embedded MySQL-5.1 already attached to $application" 132
+[ -d "$APP_DIR/" ] || error "${APP_DIR} Not found!  Aborting." 133
+mkdir -p "$MYSQL_DIR"
+pushd "$MYSQL_DIR" > /dev/null
+mkdir -p log etc data socket pid
+sed "s,RHC_MYSQLDIR,$MYSQL_DIR," $CART_CONF_DIR/my.cnf > $MYSQL_DIR/etc/my.cnf
+sed -i "s,RHC_BIND_ADDR,$IP," $MYSQL_DIR/etc/my.cnf
+popd > /dev/null
+# Create mysql database
+/usr/bin/mysql_install_db --defaults-file=$MYSQL_DIR/etc/my.cnf > /dev/null 2>&1 || error "Failed to create mysqldb" 119
+
+#
+# Create simple mysql start / stop script
+#
+cat <<EOF > "$MYSQL_DIR/${application}_mysql_ctl.sh"
+#/bin/bash
+if ! [ \$# -eq 1 ]
+then
+    echo "Usage: \$0 [start|restart|stop]"
+    exit 1
+fi
+
+STOPTIMEOUT=5
+
+if whoami | grep -q root
+then
+    echo 1>&2
+    echo "Please don't run script as root, try:" 1>&2
+    echo "runuser --shell /bin/sh $uuid $MYSQL_DIR/${application}_mysql_ctl.sh" 1>&2
+    echo 2>&1
+    exit 15
+fi
+
+case "\$1" in
+    start)
+        runcon -t libra_t -l s0:$c_val /usr/bin/mysqld_safe --defaults-file=$MYSQL_DIR/etc/my.cnf >/dev/null 2>&1 &
+    ;;
+    stop)
+        if [ -f $MYSQL_DIR/pid/mysql.pid ]; then
+            runcon -t libra_t -l s0:$c_val /bin/kill \$( /bin/cat $MYSQL_DIR/pid/mysql.pid )
+        fi
+    ;;
+    restart)
+        runcon -t libra_t -l s0:$c_val /bin/kill \$( /bin/cat $MYSQL_DIR/pid/mysql.pid )
+        if [ $ret -eq 0 ]; then
+            TIMEOUT="$STOPTIMEOUT"
+            while [ $TIMEOUT -gt 0 ]; do
+                /bin/kill -0 "\$( /bin/cat $MYSQL_DIR/pid/mysql.pid )" >/dev/null 2>&1 || break
+                sleep 1
+                let TIMEOUT=${TIMEOUT}-1
+            done
+        fi
+    ;;
+    status)
+        echo " Coming soon"
+        exit 0
+    ;;
+esac
+EOF
+
+chmod +x "$MYSQL_DIR/${application}_mysql_ctl.sh" || error "Failed to chmod new application scripts" 122
+chown $user_id.$group_id -R $MYSQL_DIR/ || error "Failed to chown new application space.  Please contact support" 123
+# Secure script and root dir (so they can't chown the script"
+chown root.root "$MYSQL_DIR" "$MYSQL_DIR/${application}_mysql_ctl.sh"
+chcon -t libra_var_lib_t -l s0:$c_val -R "$MYSQL_DIR"
+runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l s0:$c_val '$MYSQL_DIR/${application}_mysql_ctl.sh' start" || error "Failed to start ${application}:mysql" 121
+
+i=0
+while [ ! -f "${MYSQL_DIR}/pid/mysql.pid" ] && [ $i -lt 30 ]
+    do
+    sleep .3
+    i=$(($i + 1))
+done
+
+# Generate a password with no o's O's or 0's
+password=$(head -n 500 /dev/urandom|tr -dc "a-np-zA-NP-Z1-9-_"|fold -w 12 | head | head -n1)
+
+# Setup user
+echo "                                  
+delete from user;
+grant all on *.* to 'admin'@'$IP' identified by '$password' with grant option;
+flush privileges;" | mysql -u root -S "${MYSQL_DIR}/socket/mysql.sock" mysql > /dev/null || error "Failed to setup initial root user" 187
+
+echo "CLIENT_RESULT: "
+echo "CLIENT_RESULT: Mysql 5.1 database added.  Please make note of these credentials:"
+echo "CLIENT_RESULT: "
+echo "CLIENT_RESULT:    Root User: admin"
+echo "CLIENT_RESULT:    Root Password: $password"
+echo "CLIENT_RESULT: "
+echo "CLIENT_RESULT: Connection URL: mysql://$IP:3306/"

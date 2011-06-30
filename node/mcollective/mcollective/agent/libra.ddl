@@ -14,7 +14,7 @@ action "cartridge_do", :description => "run a cartridge action" do
         :prompt         => "Cartridge",
         :description    => "Full name and version of the cartridge to run an action on",
         :type           => :string,
-        :validation     => '^[a-zA-Z0-9\.\-]+$',
+        :validation     => '^[a-zA-Z0-9\.\-\/]+$',
         :optional       => false,
         :maxlength      => 64
 
