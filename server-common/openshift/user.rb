@@ -25,8 +25,8 @@ module Libra
     attr_reader :rhlogin, :password
     attr_accessor :ssh, :namespace, :uuid
 
-    def initialize(rhlogin, ssh, namespace, uuid, password=nil)
-      @rhlogin, @ssh, @namespace, @uuid, @password = rhlogin, ssh, namespace, uuid, password
+    def initialize(rhlogin, ssh, namespace, uuid, password=nil, ticket=nil)
+      @rhlogin, @ssh, @namespace, @uuid, @password, @ticket = rhlogin, ssh, namespace, uuid, password, ticket
       @roles = []
     end
 
