@@ -64,4 +64,4 @@ MYSQL_DIR="$CUSTOMER_HOME/mysql-5.1/"
 # Get the status of the application
 #
 
-runuser --shell /bin/sh "$customer_id" "$MYSQL_DIR/${application}_ctl.sh" status
+runuser --shell /bin/sh "$customer_id" "$MYSQL_DIR/${application}_mysql_ctl.sh" status

@@ -114,7 +114,7 @@ c_val="c$(($uid/1023)),c$(($uid%1023))"
 [ -d "$APP_DIR/" ] || error "${APP_DIR} Not found!  Aborting." 133
 mkdir -p "$MYSQL_DIR"
 pushd "$MYSQL_DIR" > /dev/null
-mkdir -p log etc data socket pid
+mkdir -p log etc data socket pid run
 sed "s,RHC_MYSQLDIR,$MYSQL_DIR," $CART_CONF_DIR/my.cnf > $MYSQL_DIR/etc/my.cnf
 sed -i "s,RHC_BIND_ADDR,$IP," $MYSQL_DIR/etc/my.cnf
 popd > /dev/null
@@ -143,25 +143,38 @@ then
     exit 15
 fi
 
-case "\$1" in
-    start)
+start(){
+
         runcon -t libra_t -l s0:$c_val /usr/bin/mysqld_safe --defaults-file=$MYSQL_DIR/etc/my.cnf >/dev/null 2>&1 &
-    ;;
-    stop)
-        if [ -f $MYSQL_DIR/pid/mysql.pid ]; then
-            runcon -t libra_t -l s0:$c_val /bin/kill \$( /bin/cat $MYSQL_DIR/pid/mysql.pid )
-        fi
-    ;;
-    restart)
-        runcon -t libra_t -l s0:$c_val /bin/kill \$( /bin/cat $MYSQL_DIR/pid/mysql.pid )
-        if [ $ret -eq 0 ]; then
-            TIMEOUT="$STOPTIMEOUT"
-            while [ $TIMEOUT -gt 0 ]; do
+}
+
+stop(){
+    if [ -f $MYSQL_DIR/pid/mysql.pid ]; then
+        runcon -t libra_t -l s0:c0,c504 /bin/kill \$( /bin/cat $MYSQL_DIR/pid/mysql.pid )
+        ret=\$?
+        if [ \$ret -eq 0 ]; then
+            TIMEOUT="\$STOPTIMEOUT"
+            while [ \$TIMEOUT -gt 0 ] && [ ! -f $MYSQL_DIR/pid/mysql.pid ]; do
                 /bin/kill -0 "\$( /bin/cat $MYSQL_DIR/pid/mysql.pid )" >/dev/null 2>&1 || break
                 sleep 1
-                let TIMEOUT=${TIMEOUT}-1
+                let TIMEOUT=\${TIMEOUT}-1
             done
         fi
+    else
+        echo "Mysql already stopped"
+    fi
+}
+
+case "\$1" in
+    start)
+        start
+    ;;
+    stop)
+        stop
+    ;;
+    restart)
+        stop
+        start
     ;;
     status)
         echo " Coming soon"

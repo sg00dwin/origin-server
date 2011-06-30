@@ -65,4 +65,4 @@ MYSQL_DIR="$CUSTOMER_HOME/mysql-5.1/"
 #
 
 rm -f "$APP_DIR/run/stop_lock"
-runuser --shell /bin/sh "$customer_id" "$MYSQL_DIR/${application}_ctl.sh" start
+runuser --shell /bin/sh "$customer_id" "$MYSQL_DIR/${application}_mysql_ctl.sh" start
