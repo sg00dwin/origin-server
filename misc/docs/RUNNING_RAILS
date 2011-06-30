@@ -18,12 +18,15 @@ This will install apache certs you will need
 3. cd site/public; mkdir app; cd app; ln -s ../* .; rm app
 This should link all the resources in public into /app/public
 
-4. cd site; cp Gemfile.lock.dev Gemfile.lock; sudo rails s
+4. cd server-common; sudo cp -R openshift* /usr/lib/ruby/site_ruby/1.8/
+You'll have to do this any time you modify files in server-common
 
-4b. To run against streamline in rails production mode with captcha enabled, you can use:
+5. cd site; cp Gemfile.lock.dev Gemfile.lock; sudo rails s
+
+5b. To run against streamline in rails production mode with captcha enabled, you can use:
 cd site; cp config/environments/streamline-internal.rb config/environments/production.rb; cp Gemfile.lock.dev Gemfile.lock; sudo rails s -e production
 
-5. Set an entry in /etc/hosts for
+6. Set an entry in /etc/hosts for
 127.0.0.1 openshift.redhat.com
 
 This will get you setup pretty well to test the site locally.

@@ -217,7 +217,6 @@ $logger.formatter = proc { |severity, datetime, progname, msg|
     "#{$$} #{severity} #{datetime}: #{msg}\n"
 }
 Libra.c[:logger] = $logger
-Libra.c[:bypass_user_reg] = true
 #Libra.c[:rpc_opts][:verbose] = true
 
 # Setup the MCollective options
