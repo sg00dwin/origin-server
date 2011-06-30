@@ -2,7 +2,7 @@
 
 Summary:       Common dependencies of the OpenShift broker and site
 Name:          rhc-server-common
-Version:       0.73.7
+Version:       0.73.8
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -54,6 +54,15 @@ rm -rf %{buildroot}
                                   -s /sbin/nologin 2>&1 > /dev/null || :
 
 %changelog
+* Thu Jun 30 2011 Dan McPherson <dmcphers@redhat.com> 0.73.8-1
+- cleanup (dmcphers@redhat.com)
+- perf improvements for how/when we look up the valid cart types on the server
+  (dmcphers@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- fixing embedded call and adding debug (mmcgrath@redhat.com)
+- handle nil output (dmcphers@redhat.com)
+
 * Thu Jun 30 2011 Dan McPherson <dmcphers@redhat.com> 0.73.7-1
 - fix error message when havent requested access yet (dmcphers@redhat.com)
 - sso support for broker (dmcphers@redhat.com)
