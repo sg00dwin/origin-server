@@ -501,7 +501,7 @@ else
 	service libra-cgroups stopuser ${app_id} > /dev/null
     fi
 
-    if (service libra-tc status > /dev/null 2>&1)
+    if (service libra-tc status ${app_id} > /dev/null 2>&1)
     then
 	service libra-tc stopuser ${app_id} > /dev/null
     fi

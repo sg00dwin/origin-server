@@ -497,6 +497,11 @@ then
       fi      
     fi
 else
+    if (service libra-tc status ${username} > /dev/null 2>&1)
+    then
+	service libra-tc stopuser ${username} > /dev/null
+    fi
+
     if (service cgconfig status > /dev/null)
     then
 	service libra-cgroups stopuser ${username} > /dev/null
