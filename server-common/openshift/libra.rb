@@ -85,7 +85,7 @@ module Libra
       server = Server.new(app_info['server_identity'])
 
       Libra.logger_debug "DEBUG: Performing action '#{action}' on node: #{server.name} - #{server.repos} repos" if Libra.c[:rpc_opts][:verbose]
-      server_execute_direct('embed/' + framework, action, app_name, user, server, app_info)
+      server_execute_direct('embedded/' + framework, action, app_name, user, server, app_info)
     end
   end
   
@@ -302,7 +302,7 @@ module Libra
           Libra.client_result "Application '#{app_name}' is either stopped or inaccessible"
         end
       else
-        if output.length > 0
+        if output && !output.empty?
           output.each_line do |line|
             if line =~ /^CLIENT_(MESSAGE|RESULT|DEBUG): /
               if line =~ /^CLIENT_MESSAGE: /

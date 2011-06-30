@@ -64,4 +64,4 @@ MYSQL_DIR="$CUSTOMER_HOME/mysql-5.1/"
 # Start application
 #
 
-runuser --shell /bin/sh "$customer_id" "$MYSQL_DIR/${application}_ctl.sh" restart
+runuser --shell /bin/sh "$customer_id" "$MYSQL_DIR/${application}_mysql_ctl.sh" restart
