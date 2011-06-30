@@ -1,14 +1,18 @@
 -# file: Control Panel index
 
+- content_for :scripts do
+  = javascript_include_tag "/app/javascripts/jquery_ujs.js"
+
 = render 'shared/pageheader', :product => 'express', :title => 'Control Panel', :subtitle => ''
 
 #page.container_24
   #main_content.grid_22
 
-    %h2 Create a domain
-    = semantic_form_for @domain do |form|
-      = form.input :namespace
-      = form.input :ssh
-      = form.buttons
+    #domain_form
+      %h2 Create a domain
+      = semantic_form_for @domain, :remote => true do |form|
+        = form.input :namespace
+        = form.input :ssh, :as => :file
+        = form.buttons
       
   .clear
