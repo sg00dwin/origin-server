@@ -90,8 +90,7 @@ if !RHC::check_app(opt['app'])
     p_usage
 end
 
-type = RHC::get_cartridge_type(opt['type'])
-if !type
+if !opt['type']
     puts 'Type is required'
     p_usage
 end
@@ -175,7 +174,10 @@ url = URI.parse("https://#{libra_server}/broker/cartridge")
 response = RHC::http_post(@http, url, json_data, password)
 
 if response.code == '200'
-    RHC::print_response_success(response, debug, true)
+    json_resp = JSON.parse(response.body)
+    RHC::print_response_success(json_resp, debug, true)
+    json_data = JSON.parse(json_resp['data'])
+    health_check_path = json_data['health_check_path']
 else
     RHC::print_response_err(response, debug)
 end
@@ -346,13 +348,7 @@ puts "Confirming application #{opt['app']} is available"
 while attempt < RHC::Maxretries
     attempt+=1
     puts "  Attempt # #{attempt}"
-    page = 'health'
-    if (type == :php)
-      page = 'health_check.php'
-    elsif (type == :perl)
-      page = 'health_check.pl'
-    end
-    url = URI.parse("http://#{fqdn}/#{page}")
+    url = URI.parse("http://#{fqdn}/#{health_check_path}")
     begin
       response = @http.get_response(url)
     rescue Exception => e

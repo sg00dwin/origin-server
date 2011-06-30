@@ -184,7 +184,8 @@ puts "Contacting https://#{libra_server}"
 response = RHC::http_post(@http, url, json_data, password)
 
 if response.code == '200'
-    RHC::print_response_success(response, debug, true)
+    json_resp = JSON.parse(response.body)
+    RHC::print_response_success(json_resp, debug, true)
 else
     RHC::print_response_err(response, debug)
 end

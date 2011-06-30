@@ -58,12 +58,12 @@ module RHC
       print_response_err(response, debug)
       return []
     end
+    json_resp = JSON.parse(response.body)
     if print_result
-      print_response_success(response, debug)
+      print_response_success(json_resp, debug)
     end
     begin
-      json_resp = JSON.parse(response.body)
-      carts = (JSON.parse(json_resp['result']))['carts']
+      carts = (JSON.parse(json_resp['data']))['carts']
     rescue JSON::ParserError
       exit 254
     end
@@ -73,14 +73,6 @@ module RHC
   def self.get_cartridge_list(carts, sep, libra_server, net_http, cart_types="standalone", debug=true, print_result=nil)
     carts = get_cartridges_tbl(libra_server, net_http, cart_types, debug, print_result) if carts.nil?
     carts.join(sep)
-  end
-
-  def self.get_cartridge_type(type)
-    if type
-      type = type.split('-')[0]
-      return type.to_sym
-    end
-    nil
   end
 
 
@@ -172,12 +164,12 @@ module RHC
       end
       exit 254
     end
+    json_resp = JSON.parse(response.body)
     if print_result
-      print_response_success(response, debug)
+      print_response_success(json_resp, debug)
     end
     begin
-      json_resp = JSON.parse(response.body)
-      user_info = JSON.parse(json_resp['result'].to_s)
+      user_info = JSON.parse(json_resp['data'].to_s)
     rescue JSON::ParserError
       exit 254
     end
@@ -231,7 +223,8 @@ module RHC
     end
     exit_code = 254
     if response.content_type == 'application/json'
-      exit_code = print_json_body(response, debug)
+      json_resp = JSON.parse(response.body)
+      exit_code = print_json_body(json_resp, debug)
     elsif debug
       puts "HTTP response from server is #{response.body}"
     end
@@ -248,20 +241,18 @@ module RHC
     end
   end
 
-  def self.print_response_success(response, debug, always_print_result=false)
+  def self.print_response_success(json_resp, debug, always_print_result=false)
     if debug
       puts "Response from server:"
-      print_json_body(response, debug)
+      print_json_body(json_resp, debug)
     elsif always_print_result
-      print_json_body(response, debug)
+      print_json_body(json_resp, debug)
     else
-      json_resp = JSON.parse(response.body)
       print_response_messages(json_resp)
     end
   end
 
-  def self.print_json_body(response, debug)
-    json_resp = JSON.parse(response.body)
+  def self.print_json_body(json_resp, debug)
     print_response_messages(json_resp)
     exit_code = json_resp['exit_code']
     if debug
@@ -273,7 +264,7 @@ module RHC
         puts "Exit Code: #{exit_code}"
         if (json_resp.length > 3)
           json_resp.each do |k,v|
-            if (k != 'result' && k != 'debug' && k != 'exit_code' && k != 'messages')
+            if (k != 'result' && k != 'debug' && k != 'exit_code' && k != 'messages' && k != 'data')
               puts "#{k.to_s}: #{v.to_s}"
             end
           end

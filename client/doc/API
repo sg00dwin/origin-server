@@ -35,11 +35,12 @@ Return JSON String (exit_code non-zero is failure):
 {
     "debug":"Debug Output",
     "messages":"Other messages (outage notifications for example)",
-    "result":<result_json_ex_below>,
+    "result":"Result message",
+    "data":<data_json_ex_below>,
     "exit_code": 0
 }
 
-Result JSON String:
+Data JSON:
 {
     'rhlogin': 'Red Hat Login',
     'uuid': "User UUID"
@@ -68,21 +69,26 @@ Submit via POST to: {openshift.express.server}/broker/cartridge
 
 Submit JSON String:
 {
-    'cartridge': 'framework-type, ex: php-5.3',
+    'cartridge': 'framework-type, ex: php-5.3 - Valid types determined from /broker/cartlist',
     'action': 'configure, start, stop, restart, reload, status, deconfigure',
     'app_name': 'Application_name',
     'rhlogin': 'login',
     'debug': 'true - An optional flag to get debug information returned'
 }
 
-Return JSON String (exit_code non-zero is failure):
+Return JSON (exit_code non-zero is failure):
 {
     "debug":"Debug Output",
     "messages":"Other messages (outage notifications for example)",
-    "result":"Result messages",
+    "result":"Result message",
+    "data":<data_json_ex_below>,
     "exit_code": 0
 }
 
+Configure Data JSON (only returned for action=configure):
+{
+    'health_check_path': 'health'
+}
 
 User and Application Info
 =========================
@@ -104,11 +110,12 @@ Return JSON String (exit_code non-zero is failure):
 {
     "debug":"Debug Output",
     "messages":"Other messages (outage notifications for example)",
-    "result":<result_json_ex_below>,
+    "result":"Result message",
+    "data":<data_json_ex_below>,
     "exit_code": 0
 }
 
-Result JSON:
+Data JSON:
 {
     "app_info":{
         "newapp":{
@@ -137,7 +144,7 @@ Submit via POST to: {openshift.express.server}/broker/cartlist
 
 JSON String:
 {
-    'cart_types': 'standalone',
+    'cart_types': 'standalone|embedded',
     'debug': 'true - An optional flag to get debug information returned'
 }
 
@@ -145,12 +152,13 @@ Return JSON String (exit_code non-zero is failure):
 {
     "debug":"Debug Output",
     "messages":"Other messages (outage notifications for example)",
-    "result":<result_json_ex_below>,
+    "result":"Result message",
+    "data":<data_json_ex_below>,
     "exit_code": 0
 }
 
-Result JSON:
+Data JSON:
 {
-    "carts":["php-5.3", "rack-1.1", "wsgi-3.2"]
+    "carts":["php-5.3", "rack-1.1", "wsgi-3.2", "perl-5.10"]
 }
 
