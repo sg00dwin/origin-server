@@ -90,14 +90,14 @@ module Libra
   end
   
   # Raise an exception if cartridge type isn't supported
-  def check_cartridge_type(cartridge, server, type)
-    carts = Util.get_cartridges_list(type, server)
-    cart_type = Util.get_cartridge_type(cartridge, type, carts, server)
-    if !cart_type
+  def check_cartridge_type(cartridge, server, cart_type)
+    carts = Util.get_cartridges_list(cart_type, server)
+    cart_framework = Util.get_cartridge_framework(cartridge, cart_type, carts, server)
+    if !cart_framework
       if type == 'standalone'
-        raise UserException.new(110), "Invalid application type (-t|--type) specified: '#{cartridge}'.  Valid application types are (#{Util.get_cartridge_listing(type, carts, server)}).", caller[0..5]
+        raise UserException.new(110), "Invalid application type (-t|--type) specified: '#{cartridge}'.  Valid application types are (#{Util.get_cartridge_listing(cart_type, carts, server)}).", caller[0..5]
       else
-        raise UserException.new(110), "Invalid type (-e|--embed) specified: '#{cartridge}'.  Valid embedded types are (#{Util.get_cartridge_listing(type, carts, server)}).", caller[0..5]
+        raise UserException.new(110), "Invalid type (-e|--embed) specified: '#{cartridge}'.  Valid embedded types are (#{Util.get_cartridge_listing(cart_type, carts, server)}).", caller[0..5]
       end
     end
   end

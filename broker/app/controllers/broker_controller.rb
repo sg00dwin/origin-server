@@ -74,9 +74,9 @@ class BrokerController < ApplicationController
           if !(val =~ /\A[\w\-\.]+\z/)
             render :json => generate_result_json("Invalid cartridge: #{val} specified", nil, 254), :status => :invalid and return nil
           end
-        when 'cart_types'
+        when 'cart_type'
           if !(val =~ /\A[\w\-\.]+\z/)
-            render :json => generate_result_json("Invalid cart_types: #{val} specified", nil, 109), :status => :invalid and return nil
+            render :json => generate_result_json("Invalid cart_type: #{val} specified", nil, 109), :status => :invalid and return nil
           end
         when 'action'
           if !(val =~ /\A[\w\-\.]+\z/) and val.to_s.length < 24
@@ -290,10 +290,10 @@ class BrokerController < ApplicationController
       # Parse the incoming data
       data = parse_json_data(params['json_data'])
       return unless data
-      cart_type = data['cart_types']
+      cart_type = data['cart_type']
       if cart_type != 'standalone' and cart_type != 'embedded'
         render :json => generate_result_json("Invalid cartridge types: #{cart_type} specified", nil, 109), :status => :invalid and return
-        #TODO handle embedded and subsets (Ex: all php)
+        #TODO handle subsets (Ex: all php)
       end
 
       carts = Libra::Util.get_cartridges_list(cart_type)

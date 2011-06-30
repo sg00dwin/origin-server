@@ -144,7 +144,7 @@ Submit via POST to: {openshift.express.server}/broker/cartlist
 
 JSON String:
 {
-    'cart_types': 'standalone|embedded',
+    'cart_type': 'Exs: standalone, embedded',
     'debug': 'true - An optional flag to get debug information returned'
 }
 

@@ -85,7 +85,7 @@ ssh_config = "#{ENV['HOME']}/.ssh/config"
 ssh_config_d = "#{ENV['HOME']}/.ssh/"
 
 if opt["embedded-list"]
-     p_embedded_list
+    p_embedded_list
 end
 if opt["help"]
     p_usage
