@@ -1,4 +1,4 @@
-policy_module(libra,1.0.13)
+policy_module(libra,1.0.14)
 
 ########################################
 #
@@ -28,6 +28,7 @@ libra_service_domain(libra_min_t)
 
 type libra_log_t;
 logging_log_file(libra_log_t)
+
 
 ########################################
 #
@@ -182,6 +183,24 @@ dontaudit sendmail_t libra_initrc_t:fifo_file { read write };
 append_files_pattern(sendmail_t, libra_var_lib_t, libra_var_lib_t)
 allow domain libra_var_lib_t:dir search_dir_perms;
 allow domain libra_var_lib_t:file { append getattr };
+
+########################################
+#
+# Mysql support
+#
+
+require {
+    type mysqld_exec_t;
+    type mysqld_safe_exec_t;
+}
+can_exec(libra_t, mysqld_exec_t)
+can_exec(libra_t, mysqld_safe_exec_t)
+corenet_tcp_bind_mysqld_port(libra_t)
+mysql_search_db(libra_t)
+allow libra_t self:process setexec;
+allow libra_t mysqld_safe_exec_t:file entrypoint;
+
+
 
 ##########
 # Used for development or when the li controller is running outside
