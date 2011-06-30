@@ -26,7 +26,7 @@ require 'rhc-common'
 def p_usage
     libra_server = get_var('libra_server')
     rhlogin = get_var('default_rhlogin') ? "Default: #{get_var('default_rhlogin')}" : "required"
-    type_keys = RHC::get_cartridge_list(nil, ', ', libra_server, @http, false)
+    type_keys = RHC::get_cartridge_listing(nil, ', ', libra_server, @http, false)
     puts <<USAGE
 
 Usage: #{$0}

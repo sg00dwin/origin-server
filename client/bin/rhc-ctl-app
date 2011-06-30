@@ -51,7 +51,7 @@ def p_embedded_list
     puts ""
     puts "List of supported embedded cartridges:"
     puts ""
-    type_keys = RHC::get_cartridge_list(nil, ', ', libra_server, @http, 'embedded', false)
+    type_keys = RHC::get_cartridge_listing(nil, ', ', libra_server, @http, 'embedded', false)
     puts type_keys
     puts ""
     exit 255

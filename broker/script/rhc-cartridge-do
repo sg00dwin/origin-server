@@ -15,7 +15,7 @@ options = rpcoptions do |parser, options|
       options[:action] = action
     end
 
-    parser.on('-f', '--cartridge CARTRIDGE', "Cartridge (e.g. #{Util.get_cartridge_list()})") do |cartridge|
+    parser.on('-f', '--cartridge CARTRIDGE', "Cartridge (e.g. php-5.3)") do |cartridge|
       options[:cartridge] = cartridge
     end
 
@@ -29,9 +29,8 @@ options = rpcoptions do |parser, options|
 
 end
 
-unless options.include?(:cartridge) or Util.get_cartridge_type(options[:cartridge])
-    puts "You need to specify a proper cartridge:"
-    puts Util.get_cartridge_list()
+unless options.include?(:cartridge)
+    puts "You need to specify a cartridge:"
     exit 110
 end
 

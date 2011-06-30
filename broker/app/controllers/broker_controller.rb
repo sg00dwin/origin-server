@@ -127,10 +127,6 @@ class BrokerController < ApplicationController
         end
         
         cartridge_type = 'embedded'
-
-        if !Libra::Util.get_cartridge_type(data['cartridge'], cartridge_type)
-          render :json => generate_result_json("Invalid application type (-t|--type) specified: '#{data['cartridge']}'.  Valid application types are (#{Libra::Util.get_cartridge_list(cartridge_type)}).", nil, 110), :status => :invalid and return
-        end
         
         # Execute a framework cartridge
         Libra.embed_execute(data['cartridge'], action, app_name, username)
@@ -162,10 +158,6 @@ class BrokerController < ApplicationController
         end
         
         cartridge_type = 'standalone'
-
-        if !Libra::Util.get_cartridge_type(cartridge, cartridge_type)
-          render :json => generate_result_json("Invalid application type (-t|--type) specified: '#{cartridge}'.  Valid application types are (#{Libra::Util.get_cartridge_list(cartridge_type)}).", nil, 110), :status => :invalid and return
-        end
         
         # Execute a framework cartridge
         Libra.execute(cartridge, action, app_name, username)
@@ -304,7 +296,7 @@ class BrokerController < ApplicationController
         #TODO handle embedded and subsets (Ex: all php)
       end
 
-      carts = Libra::Util.get_cartridges_tbl(cart_type)
+      carts = Libra::Util.get_cartridges_list(cart_type)
       json_data = JSON.generate({
                               :carts => carts
                               })

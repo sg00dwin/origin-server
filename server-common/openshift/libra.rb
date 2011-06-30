@@ -89,6 +89,19 @@ module Libra
     end
   end
   
+  # Raise an exception if cartridge type isn't supported
+  def check_cartridge_type(cartridge, server, type)
+    carts = Util.get_cartridges_list(type, server)
+    cart_type = Util.get_cartridge_type(cartridge, type, carts, server)
+    if !cart_type
+      if type == 'standalone'
+        raise UserException.new(110), "Invalid application type (-t|--type) specified: '#{cartridge}'.  Valid application types are (#{Util.get_cartridge_listing(type, carts, server)}).", caller[0..5]
+      else
+        raise UserException.new(110), "Invalid type (-e|--embed) specified: '#{cartridge}'.  Valid embedded types are (#{Util.get_cartridge_listing(type, carts, server)}).", caller[0..5]
+      end
+    end
+  end
+  
   # Raise an exception if app doesn't exist
   def check_app_exists(app_info)
     if not app_info
@@ -150,6 +163,8 @@ module Libra
 
 
     server = Server.new(app_info['server_identity'])
+      
+    check_cartridge_type(framework, server, 'embedded')
 
     begin
       server_execute_direct('embedded/' + framework, 'configure', app_name, user, server, app_info)
@@ -207,6 +222,8 @@ module Libra
     raise UserException.new(100), "An application named '#{app_name}' in namespace '#{user.namespace}' already exists", caller[0..5] if user.app_info(app_name)
     # Find the next available server
     server = Server.find_available
+    
+    check_cartridge_type(framework, server, 'standalone')
 
     Libra.logger_debug "DEBUG: Performing configure on node: #{server.name} - #{server.repos} repos" if Libra.c[:rpc_opts][:verbose]
 
