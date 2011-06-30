@@ -145,12 +145,12 @@ fi
 
 start(){
 
-        runcon -t libra_t -l s0:$c_val /usr/bin/mysqld_safe --defaults-file=$MYSQL_DIR/etc/my.cnf >/dev/null 2>&1 &
+        /usr/bin/mysqld_safe --defaults-file=$MYSQL_DIR/etc/my.cnf >/dev/null 2>&1 &
 }
 
 stop(){
     if [ -f $MYSQL_DIR/pid/mysql.pid ]; then
-        runcon -t libra_t -l s0:c0,c504 /bin/kill \$( /bin/cat $MYSQL_DIR/pid/mysql.pid )
+        /bin/kill \$( /bin/cat $MYSQL_DIR/pid/mysql.pid )
         ret=\$?
         if [ \$ret -eq 0 ]; then
             TIMEOUT="\$STOPTIMEOUT"
@@ -188,7 +188,7 @@ chown $user_id.$group_id -R $MYSQL_DIR/ || error "Failed to chown new applicatio
 # Secure script and root dir (so they can't chown the script"
 chown root.root "$MYSQL_DIR" "$MYSQL_DIR/${application}_mysql_ctl.sh"
 chcon -t libra_var_lib_t -l s0:$c_val -R "$MYSQL_DIR"
-runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l s0:$c_val '$MYSQL_DIR/${application}_mysql_ctl.sh' start" || error "Failed to start ${application}:mysql" 121
+runuser --shell /bin/sh "$uuid" "$MYSQL_DIR/${application}_mysql_ctl.sh" start
 
 i=0
 while [ ! -f "${MYSQL_DIR}/pid/mysql.pid" ] && [ $i -lt 30 ]
