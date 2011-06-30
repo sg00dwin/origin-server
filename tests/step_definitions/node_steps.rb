@@ -34,37 +34,79 @@ def netclass uid
   "%04x" % uid
 end
 
+# copied from server-common/openshift/user.rb 20110630
+def gen_small_uuid()
+    # Put config option for rhlogin here so we can ignore uuid for dev environments
+    %x[/usr/bin/uuidgen].gsub('-', '').strip
+end
+
+def parse_ssh_pub_key filename
+  key_pattern = /^ssh-rsa (\S+) (\S+)\n$/
+  key_string = File.open(filename, &:readline)  
+  key_match = key_string.match key_pattern
+  key_match[1..2] if key_match
+end
+
 Given /^a new guest account$/ do
   # call /usr/libexec/li/cartridges/li-controller-0.1/info/hooks/configure
+  # generate a random account name and use the stock SSH keys
   @accounts = []
   @uid = {}
-  @table.hashes.each do |row|
-    @accounts << row
-    acctname = row['accountname']
-    command = $configure_format % row.values
-    run command
-    # get and store the account UID's by name
-    @uid[acctname] = Etc.getpwnam(acctname).uid
+  if @table
+    @table.hashes.each do |row|
+      @accounts << row
+      acctname = row['accountname']
+      command = $configure_format % row.values
+    end
+  else
+    # generate a random UUID and use the stock keys
+    acctname = gen_small_uuid
+    ssh_key_string, ssh_key_name = parse_ssh_pub_key $test_pub_key
+    @accounts << {
+      'accountname' => acctname,
+      'ssh_key_string' => ssh_key_string,
+      'ssh_key_name' => ssh_key_name
+    }
+    command = $configure_format % [acctname, ssh_key_name, ssh_key_string]
   end
+
+  run command
+  # get and store the account UID's by name
+  @uid[acctname] = Etc.getpwnam(acctname).uid
+
 end
 
 When /^I create a guest account$/ do
   # call /usr/libexec/li/cartridges  @table.hashes.each do |row|
+  # generate a random account name and use the stock SSH keys
   @accounts = []
   @uid = {}
-  @table.hashes.each do |row|
-    @accounts << row
-    acctname = row['accountname']
-    command = $configure_format % row.values
-    run command
-    # get and store the account UID's by name
-    @uid[acctname] = Etc.getpwnam(acctname).uid
-  end  
+  if @table
+    @table.hashes.each do |row|
+      @accounts << row
+      acctname = row['accountname']
+      command = $configure_format % row.values
+    end
+
+  else
+    # generate a random UUID and use the stock keys
+    acctname = gen_small_uuid
+    ssh_key_string, ssh_key_name = parse_ssh_pub_key $test_pub_key
+    @accounts << {
+      'accountname' => acctname,
+      'ssh_key_string' => ssh_key_string,
+      'ssh_key_name' => ssh_key_name
+    }
+    command = $configure_format % [acctname, ssh_key_name, ssh_key_string]
+  end
+  run command
+  # get and store the account UID's by name
+  @uid[acctname] = Etc.getpwnam(acctname).uid
 end
 
 When /^I delete the guest account$/ do
   # call /usr/libexec/li/cartridges  @table.hashes.each do |row|
-  @table.hashes.each do |row|
+  @accounts.each do |row|
     command = $deconfigure_format % row.values
     run command
   end  
