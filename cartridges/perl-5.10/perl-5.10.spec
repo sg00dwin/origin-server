@@ -2,7 +2,7 @@
 
 Summary:   Provides mod_perl support
 Name:      rhc-cartridge-perl-5.10
-Version:   0.4.5
+Version:   0.4.6
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -70,6 +70,11 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Fri Jul 01 2011 Emily Dirsh <edirsh@redhat.com> 0.4.6-1
+- Added deplist info (mmcgrath@redhat.com)
+- Adding deplist (mmcgrath@redhat.com)
+- call post-receive from configure instead of start (dmcphers@redhat.com)
+
 * Wed Jun 29 2011 Dan McPherson <dmcphers@redhat.com> 0.4.5-1
 - undo passing rhlogin to cart (dmcphers@redhat.com)
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
