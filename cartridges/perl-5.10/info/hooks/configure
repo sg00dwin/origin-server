@@ -244,11 +244,6 @@ ln -s /etc/httpd/conf/magic conf/magic
 popd > /dev/null
 
 #
-# Populate repo dir
-#
-GIT_DIR="$GIT_DIR" git archive --format=tar HEAD | (cd "${APP_DIR}/repo" && tar --warning=no-timestamp -xf -)
-
-#
 # Find an open localhost IP
 #
 
@@ -345,7 +340,10 @@ chown $user_id.$group_id -R $APP_DIR $APP_DIR/../.cpanm/ || error "Failed to cho
 chown root.root -R "$APP_DIR/${application}_ctl.sh" "$APP_DIR/conf" "$APP_DIR/conf.d"
 chown root.root "$APP_DIR"
 chcon -t libra_var_lib_t -l s0:$c_val -R "$APP_DIR"
-runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l s0:$c_val $APP_DIR/${application}_ctl.sh start" || error "Failed to start ${application}" 121
+#
+# Populate repo and start the server
+#
+GIT_DIR="$GIT_DIR" runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l s0:$c_val $GIT_DIR/hooks/post-receive" || error "Failed to start ${application}" 121
 
 #
 # Create virtualhost definition for apache

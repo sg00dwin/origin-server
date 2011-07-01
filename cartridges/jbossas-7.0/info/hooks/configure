@@ -316,17 +316,9 @@ if [ "x\$JAVA_OPTS" = "x" ]; then
 fi
 EOF
 
-
-#
-# Populate repo dir
-#
-GIT_DIR="$GIT_DIR" git archive --format=tar HEAD | (cd "${APP_DIR}/repo" && tar --warning=no-timestamp -xf -)
-
 # Create a link from the repo/deployments directory to the standalone/deployments content
+mkdir -p "$APP_DIR"/repo/deployments
 ln -s "$APP_DIR"/repo/deployments "$APP_JBOSS"/standalone
-ls -l "$APP_JBOSS"/standalone/deployments
-# Copy the samples into the ROOT.war
-cp -pr ${JBOSS_CARTRIDGE_ROOT}/info/data/samples "$APP_JBOSS"/standalone/deployments/ROOT.war
 
 # Create a link from the standalone/log directory to ${APP_DIR}/logs for rhc-tail-files
 ln -s "$APP_JBOSS"/standalone/log "$APP_DIR"/logs
@@ -451,7 +443,10 @@ chown $user_id.$group_id -R "$APP_DIR/${jboss_version}/standalone"
 chown $user_id.$group_id $M2_DIR
 chcon -t libra_var_lib_t -l s0:$c_val -R "$APP_DIR"
 cd $APP_DIR
-runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l s0:$c_val $APP_DIR/${application}_ctl.sh start" || error "Failed to start ${application}" 121
+#
+# Populate repo and start the server
+#
+GIT_DIR="$GIT_DIR" runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l s0:$c_val $GIT_DIR/hooks/post-receive" || error "Failed to start ${application}" 121
 
 #
 # Create virtualhost definition for apache
