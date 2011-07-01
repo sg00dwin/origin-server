@@ -59,7 +59,7 @@ module Libra
     def self.rpc_get_fact(fact, server=nil, forceRediscovery=false)
       result = nil
 
-      Libra.logger_debug("rpc_get_fact: fact=#{fact}")
+      Libra.logger_debug("DEBUG: rpc_get_fact: fact=#{fact}")
       rpc_exec('rpcutil', server, forceRediscovery) do |client|
         client.get_fact(:fact => fact) do |response|
           next unless Integer(response[:body][:statuscode]) == 0
@@ -104,7 +104,7 @@ module Libra
       options = rpc_options
 
       if server
-        Libra.logger_debug("rpc_exec: Filtering rpc_exec to server #{server}")
+        Libra.logger_debug("DEBUG: rpc_exec: Filtering rpc_exec to server #{server}")
         # Filter to the specified server
         options[:filter]["identity"] = server
         options[:mcollective_limit_targets] = "1"
@@ -115,7 +115,7 @@ module Libra
       if forceRediscovery
         rpc_client.reset
       end
-      Libra.logger_debug("rpc_exec: rpc_client=#{rpc_client}")
+      Libra.logger_debug("DEBUG: rpc_exec: rpc_client=#{rpc_client}")
 
       # Execute a block and make sure we disconnect the client
       begin
@@ -133,7 +133,7 @@ module Libra
     def self.rpc_exec_direct(agent)
         options = rpc_options
         rpc_client = rpcclient(agent, :options => options)
-        Libra.logger_debug("rpc_exec: rpc_client=#{rpc_client}")
+        Libra.logger_debug("DEBUG: rpc_exec_direct: rpc_client=#{rpc_client}")
         rpc_client
     end
   end

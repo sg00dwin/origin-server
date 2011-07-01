@@ -126,8 +126,6 @@ class BrokerController < ApplicationController
           render :json => generate_result_json("The supplied application name is it not allowed", nil, 105), :status => :invalid and return
         end
         
-        cartridge_type = 'embedded'
-        
         # Execute a framework cartridge
         Libra.embed_execute(data['cartridge'], action, app_name, username)
         
@@ -156,8 +154,6 @@ class BrokerController < ApplicationController
         if !Libra::Util.check_app(app_name)
           render :json => generate_result_json("The supplied application name is it not allowed", nil, 105), :status => :invalid and return
         end
-        
-        cartridge_type = 'standalone'
         
         # Execute a framework cartridge
         Libra.execute(cartridge, action, app_name, username)

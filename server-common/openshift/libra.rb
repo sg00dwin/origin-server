@@ -84,7 +84,7 @@ module Libra
 
       server = Server.new(app_info['server_identity'])
 
-      Libra.logger_debug "DEBUG: Performing action '#{action}' on node: #{server.name} - #{server.repos} repos" if Libra.c[:rpc_opts][:verbose]
+      Libra.logger_debug "DEBUG: Performing action '#{action}' on node '#{server.name}'"
       server_execute_direct('embedded/' + framework, action, app_name, user, server, app_info)
     end
   end
@@ -143,7 +143,7 @@ module Libra
 
       server = Server.new(app_info['server_identity'])
 
-      Libra.logger_debug "DEBUG: Performing action '#{action}' on node: #{server.name} - #{server.repos} repos" if Libra.c[:rpc_opts][:verbose]
+      Libra.logger_debug "DEBUG: Performing action '#{action}' on node '#{server.name}'"
       server_execute_direct(framework, action, app_name, user, server, app_info)
     end
   end
@@ -152,7 +152,7 @@ module Libra
     raise UserException.new(100), "An application '#{app_name}' does not exist", caller[0..5] unless user.app_info(app_name)
 
     # Create persistent storage app entry on configure (one of the first things)
-    Libra.logger_debug "Adding embedded app info from persistant storage: #{app_name}:#{framework}"
+    Libra.logger_debug "DEBUG: Adding embedded app info from persistant storage: #{app_name}:#{framework}"
     app_info = user.app_info(app_name)
     app_info['embedded'] = {} unless app_info['embedded']
     Libra.client_debug "debugline: #{app_info['embedded'][framework]}"
@@ -201,19 +201,19 @@ module Libra
     server = Server.new(app_info['server_identity'])
       
     # first, remove the application
-    Libra.logger_debug "DEBUG: deconfiguring app #{app_name} on node: #{server.name} - #{server.repos} repos" if Libra.c[:rpc_opts][:verbose]
+    Libra.logger_debug "DEBUG: Deconfiguring embedded application '#{framework}' in application '#{app_name}' on node '#{server.name}'"
     begin
       server_execute_direct('embedded/' + framework, 'deconfigure', app_name, user, server, app_info)
     rescue Exception => e
-      if server.has_app?(app_info, app_name)
+      if server.has_embedded_app?(app_info, framework)
         raise
       else
-        Libra.logger_debug "Application '#{app_name}' not found on node #{server.name}.  Continuing with deconfigure."
-        Libra.logger_debug "Error from cartridge on deconfigure: #{e.message}"
+        Libra.logger_debug "DEBUG: Embedded application '#{framework}' not found in application '#{app_name}' on node '#{server.name}'.  Continuing with deconfigure."
+        Libra.logger_debug "DEBUG: Error from cartridge on deconfigure: #{e.message}"
       end
     end
 
-    Libra.logger_debug "Removing embedded app info from persistant storage: #{app_name}:#{framework}"
+    Libra.logger_debug "DEBUG: Removing embedded app info from persistant storage: #{app_name}:#{framework}"
     app_info['embedded'].delete(framework)
     user.update_app(app_info, app_name)
   end
@@ -225,7 +225,7 @@ module Libra
     
     check_cartridge_type(framework, server, 'standalone')
 
-    Libra.logger_debug "DEBUG: Performing configure on node: #{server.name} - #{server.repos} repos" if Libra.c[:rpc_opts][:verbose]
+    Libra.logger_debug "DEBUG: Performing configure on node '#{server.name}'"
 
     user.validate_app_limit # TODO there is a race condition here if two users get past here before creating the app and updating s3
     # Create S3 app entry on configure (one of the first things)
@@ -271,15 +271,15 @@ module Libra
     server = Server.new(app_info['server_identity'])
       
     # first, remove the application
-    Libra.logger_debug "DEBUG: deconfiguring app #{app_name} on node: #{server.name} - #{server.repos} repos" if Libra.c[:rpc_opts][:verbose]
+    Libra.logger_debug "DEBUG: Deconfiguring app '#{app_name}' on node '#{server.name}'"
     begin
       server_execute_direct(framework, 'deconfigure', app_name, user, server, app_info)
     rescue Exception => e
       if server.has_app?(app_info, app_name)
         raise
       else
-        Libra.logger_debug "Application '#{app_name}' not found on node #{server.name}.  Continuing with deconfigure."
-        Libra.logger_debug "Error from cartridge on deconfigure: #{e.message}"
+        Libra.logger_debug "DEBUG: Application '#{app_name}' not found on node #{server.name}.  Continuing with deconfigure."
+        Libra.logger_debug "DEBUG: Error from cartridge on deconfigure: #{e.message}"
       end
     end
 
@@ -287,7 +287,7 @@ module Libra
 
     # remove the node account from the server node.
     begin
-      Libra.logger_debug "Removing app account from server node: #{app_info.pretty_inspect}"
+      Libra.logger_debug "DEBUG: Removing app account from server node: #{app_info.pretty_inspect}"
       server.delete_account(app_info['uuid'])
     rescue Exception => e
       Libra.logger_debug "WARNING: Error removing account '#{app_info['uuid']}' from node '#{app_info['server_identity']}' with message: #{e.message}"
@@ -300,7 +300,7 @@ module Libra
 
     # remove the app record from the user object
     # Remove S3 app on deconfigure (one of the last things)
-    Libra.logger_debug "Removing app info from persistant storage: #{app_name}"
+    Libra.logger_debug "DEBUG: Removing app info from persistant storage: #{app_name}"
     user.delete_app(app_name)
 
   end

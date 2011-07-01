@@ -147,6 +147,22 @@ module MCollective
         end
         reply[:exitcode] = 0
       end
+      
+      #
+      # Returns whether an embedded app is on a server
+      #
+      def has_embedded_app_action
+        validate :uuid, /^[a-zA-Z0-9]+$/
+        validate :embedded_type, /^.+$/
+        uuid = request[:uuid]
+        embedded_type = request[:embedded_type]
+        if File.exist?("/var/lib/libra/#{uuid}/#{embedded_type}")
+          reply[:output] = true
+        else
+          reply[:output] = false
+        end
+        reply[:exitcode] = 0
+      end
 
     end
   end
