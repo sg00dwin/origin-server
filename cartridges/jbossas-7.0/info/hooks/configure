@@ -316,11 +316,6 @@ if [ "x\$JAVA_OPTS" = "x" ]; then
 fi
 EOF
 
-#
-# Populate repo
-#
-GIT_DIR="$GIT_DIR" git archive --format=tar HEAD | (cd "${APP_DIR}/repo" && tar --warning=no-timestamp -xf -)
-
 # Create a link from the repo/deployments directory to the standalone/deployments content
 mkdir -p "$APP_DIR"/repo/deployments
 ln -s "$APP_DIR"/repo/deployments "$APP_JBOSS"/standalone
@@ -439,6 +434,10 @@ esac
 
 __EOF__
 
+#
+# Populate repo
+#
+GIT_DIR="$GIT_DIR" git archive --format=tar HEAD | (cd "${APP_DIR}/repo" && tar --warning=no-timestamp -xf -)
 
 chmod +x "$APP_DIR/${application}_ctl.sh" || error "Failed to chmod new application scripts" 122
 chown $user_id.$group_id -R $APP_DIR || error "Failed to chown new application space.  Please contact support" 123
