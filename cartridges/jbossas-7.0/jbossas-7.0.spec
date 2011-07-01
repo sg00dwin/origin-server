@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.73.7
+Version:   0.73.8
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -74,6 +74,10 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Fri Jul 01 2011 Dan McPherson <dmcphers@redhat.com> 0.73.8-1
+- make jboss like other carts for when untar happens (dmcphers@redhat.com)
+- back off on calling post receive for now (dmcphers@redhat.com)
+
 * Fri Jul 01 2011 Emily Dirsh <edirsh@redhat.com> 0.73.7-1
 - call post-receive from configure instead of start (dmcphers@redhat.com)
 
