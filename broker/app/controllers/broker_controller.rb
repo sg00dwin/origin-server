@@ -164,7 +164,7 @@ class BrokerController < ApplicationController
         if action == 'configure'
           message = "Successfully created application: #{app_name}"
           # TODO would like to move this future down.  Perhaps store cart=>page as the cartlist fact?
-          type = Libra::Util.get_cartridge_type(cartridge)
+          type = Libra::Util.get_cart_framework(cartridge)
           case type
             when 'php'
               page = 'health_check.php'

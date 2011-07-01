@@ -92,7 +92,7 @@ module Libra
   # Raise an exception if cartridge type isn't supported
   def check_cartridge_type(cartridge, server, cart_type)
     carts = Util.get_cartridges_list(cart_type, server)
-    cart_framework = Util.get_cartridge_framework(cartridge, cart_type, carts, server)
+    cart_framework = Util.get_valid_cart_framework(cartridge, cart_type, carts, server)
     if !cart_framework
       if cart_type == 'standalone'
         raise UserException.new(110), "Invalid application type (-t|--type) specified: '#{cartridge}'.  Valid application types are (#{Util.get_cartridge_listing(cart_type, carts, server)}).", caller[0..5]
