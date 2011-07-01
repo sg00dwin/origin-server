@@ -76,6 +76,13 @@ Given /^a new guest account$/ do
 
 end
 
+Given /^the guest account has no application installed$/ do
+  pending # express the regexp above with the code you wish you had
+  # check for http proxy config
+  # check for git repo
+  # check for app repo
+end
+
 When /^I create a guest account$/ do
   # call /usr/libexec/li/cartridges  @table.hashes.each do |row|
   # generate a random account name and use the stock SSH keys
