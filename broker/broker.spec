@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.73.7
+Version:   0.73.8
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -62,6 +62,9 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Fri Jul 01 2011 Dan McPherson <dmcphers@redhat.com> 0.73.8-1
+- fixup embedded cart remove (dmcphers@redhat.com)
+
 * Thu Jun 30 2011 Dan McPherson <dmcphers@redhat.com> 0.73.7-1
 - cleanup (dmcphers@redhat.com)
 - perf improvements for how/when we look up the valid cart types on the server
