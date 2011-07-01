@@ -41,7 +41,7 @@ module RHC
     (time*=adj).to_int
   end
   
-  def self.get_cartridges_list(libra_server, net_http, cart_type='standalone', debug=true, print_result=nil)
+  def self.get_cartridges_list(libra_server, net_http, cart_type="standalone", debug=true, print_result=nil)
     puts "Contacting https://#{libra_server} to obtain list of cartridges..."
     puts " (please excuse the delay)"
     data = {'cart_type' => cart_type}
