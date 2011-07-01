@@ -7,16 +7,20 @@ module Libra
 
     Maxdlen = 16
 
+    def self.get_cart_framework(cart)
+      cart_type = cart.split('-')[0]
+      return cart_type
+    end
+
     def self.get_cartridge_listing(cart_type='standalone', carts=nil, server=nil, sep=', ')
       carts = get_cartridges_list(cart_type, server) unless carts
       carts.join(sep)
     end
 
-    def self.get_cartridge_framework(cartridge, cart_type='standalone', carts=nil, server=nil)
+    def self.get_valid_cart_framework(cartridge, cart_type='standalone', carts=nil, server=nil)
       carts = get_cartridges_list(cart_type, server) unless carts
       if carts.include?(cartridge)
-        cart_framework = cartridge.split('-')[0]
-        return cart_framework
+        return get_cart_framework(cartridge)
       end
       return nil
     end

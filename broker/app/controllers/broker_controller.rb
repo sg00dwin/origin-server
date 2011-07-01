@@ -164,12 +164,14 @@ class BrokerController < ApplicationController
         if action == 'configure'
           message = "Successfully created application: #{app_name}"
           # TODO would like to move this future down.  Perhaps store cart=>page as the cartlist fact?
-          type = cartridge.split('-')[0]
-          page = 'health'
-          if (type == 'php')
-            page = 'health_check.php'
-          elsif (type == 'perl')
-            page = 'health_check.pl'
+          type = Libra::Util.get_cart_framework(cartridge)
+          case type
+            when 'php'
+              page = 'health_check.php'
+            when 'perl'
+              page = 'health_check.pl'
+            else
+              page = 'health'
           end
           json_data = JSON.generate({:health_check_path => page})
         elsif action == 'deconfigure'
