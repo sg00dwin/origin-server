@@ -2,7 +2,7 @@
 
 Summary:       Common dependencies of the OpenShift broker and site
 Name:          rhc-server-common
-Version:       0.73.8
+Version:       0.73.9
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -54,6 +54,9 @@ rm -rf %{buildroot}
                                   -s /sbin/nologin 2>&1 > /dev/null || :
 
 %changelog
+* Thu Jun 30 2011 Dan McPherson <dmcphers@redhat.com> 0.73.9-1
+- wrong message for invalid cart type (dmcphers@redhat.com)
+
 * Thu Jun 30 2011 Dan McPherson <dmcphers@redhat.com> 0.73.8-1
 - cleanup (dmcphers@redhat.com)
 - perf improvements for how/when we look up the valid cart types on the server
