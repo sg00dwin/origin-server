@@ -2,7 +2,7 @@
 
 Summary:   Provides mod_perl support
 Name:      rhc-cartridge-perl-5.10
-Version:   0.4.6
+Version:   0.4.7
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -70,6 +70,10 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Fri Jul 01 2011 Dan McPherson <dmcphers@redhat.com> 0.4.7-1
+- move untar above perms (dmcphers@redhat.com)
+- back off on calling post receive for now (dmcphers@redhat.com)
+
 * Fri Jul 01 2011 Emily Dirsh <edirsh@redhat.com> 0.4.6-1
 - Added deplist info (mmcgrath@redhat.com)
 - Adding deplist (mmcgrath@redhat.com)
