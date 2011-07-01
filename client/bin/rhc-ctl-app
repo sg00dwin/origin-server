@@ -37,7 +37,7 @@ Control an OpenShift express app
   -p|--password password   RHLogin password  (optional, will prompt)
   -c|--command command     (start|stop|restart|reload|status|destroy)
   -L|--embedded-list       List supported embedded cartridges
-  -e|--embed               (add-$cartridge|remove-$cartridge) eg: add-mysql-5.10
+  -e|--embed               (add-$cartridge|remove-$cartridge) eg: add-mysql-5.1
   -b|--bypass              Bypass warnings
   -d|--debug               Print Debug info
   -h|--help                Show Usage info
