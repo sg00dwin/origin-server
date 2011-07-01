@@ -371,7 +371,9 @@ chcon -t libra_var_lib_t -l s0:$c_val -R "$APP_DIR"
 #
 # Populate repo and start the server
 #
-GIT_DIR="$GIT_DIR" runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l s0:$c_val $GIT_DIR/hooks/post-receive" || error "Failed to start ${application}" 121
+GIT_DIR="$GIT_DIR" git archive --format=tar HEAD | (cd "${APP_DIR}/deploy" && tar --warning=no-timestamp -xf -)
+runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l s0:$c_val $APP_DIR/${application}_ctl.sh start" || error "Failed to start ${application}" 121
+#GIT_DIR="$GIT_DIR" runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l s0:$c_val $GIT_DIR/hooks/post-receive" || error "Failed to start ${application}" 121
 
 #
 # Create virtualhost definition for apache

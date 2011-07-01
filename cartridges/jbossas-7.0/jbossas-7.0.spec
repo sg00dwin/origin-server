@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.73.6
+Version:   0.73.7
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -74,6 +74,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Fri Jul 01 2011 Emily Dirsh <edirsh@redhat.com> 0.73.7-1
+- call post-receive from configure instead of start (dmcphers@redhat.com)
+
 * Wed Jun 29 2011 Dan McPherson <dmcphers@redhat.com> 0.73.6-1
 - undo passing rhlogin to cart (dmcphers@redhat.com)
 - add nurture call for git push (dmcphers@redhat.com)
