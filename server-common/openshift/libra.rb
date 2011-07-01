@@ -94,7 +94,7 @@ module Libra
     carts = Util.get_cartridges_list(cart_type, server)
     cart_framework = Util.get_cartridge_framework(cartridge, cart_type, carts, server)
     if !cart_framework
-      if type == 'standalone'
+      if cart_type == 'standalone'
         raise UserException.new(110), "Invalid application type (-t|--type) specified: '#{cartridge}'.  Valid application types are (#{Util.get_cartridge_listing(cart_type, carts, server)}).", caller[0..5]
       else
         raise UserException.new(110), "Invalid type (-e|--embed) specified: '#{cartridge}'.  Valid embedded types are (#{Util.get_cartridge_listing(cart_type, carts, server)}).", caller[0..5]
