@@ -365,7 +365,7 @@ class DevEnv < Thor
   method_option :terminate, :type => :boolean, :desc => "Terminate the instance when finished"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   method_option :unofficial, :type => :boolean, :desc => "For unofficial use.  Do not send emails, etc."
-  def test_internal(tag)
+  def test_internals(tag)
     conn = connect
     instance = Instance.find(conn, tag)
 
@@ -376,7 +376,7 @@ class DevEnv < Thor
     
       # Run internals tests
       print "Running internals tests..."
-      output, test_result = instance.ssh("cucumber -t @internal -f junit -o /tmp/rhc/internal li-test/tests/", 4800, true)
+      output, test_result = instance.ssh("cucumber -t @internals -f junit -o /tmp/rhc/junit li-test/tests/", 4800, true)
       puts "Done"
 
       print "Validating instance..."
@@ -387,9 +387,10 @@ class DevEnv < Thor
       puts "Done"
 
       print "Downloading internals output..."
-      `mkdir -p rhc/log/internals`
-      instance.scp_from("/tmp/rhc/internals/*", "rhc/log/internals")
+      `mkdir -p rhc/junit`
+      instance.scp_from("/tmp/rhc/junit/*", "rhc/junit")
       puts "Done"
+
 
       if test_result != 0
         puts "ERROR - Non-zero exit code from verification tests (exit: #{test_result})"

@@ -1,4 +1,4 @@
-@internal
+@internals
 Feature: Account Management
 #
 # Account control (li-controller) cartridge
