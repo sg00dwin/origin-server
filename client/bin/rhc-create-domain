@@ -148,9 +148,9 @@ response = RHC::http_post(@http, url, json_data, password)
 
 if response.code == '200'
     begin
-        RHC::print_response_success(response, debug)
-        json_resp = JSON.parse(response.body);
-        json_rhlogininfo = JSON.parse(json_resp['result'])
+        json_resp = JSON.parse(response.body)
+        RHC::print_response_success(json_resp, debug)
+        json_rhlogininfo = JSON.parse(json_resp['data'])
         add_rhlogin_config(json_rhlogininfo['rhlogin'], json_rhlogininfo['uuid'])
     
         if opt['alter'] != ''

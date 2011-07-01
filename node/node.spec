@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.73.5
+Version:       0.73.8
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -141,6 +141,25 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Fri Jul 01 2011 Dan McPherson <dmcphers@redhat.com> 0.73.8-1
+- 
+
+* Fri Jul 01 2011 Dan McPherson <dmcphers@redhat.com> 0.73.7-1
+- fixup embedded cart remove (dmcphers@redhat.com)
+
+* Thu Jun 30 2011 Dan McPherson <dmcphers@redhat.com> 0.73.6-1
+- perf improvements for how/when we look up the valid cart types on the server
+  (dmcphers@redhat.com)
+- Merge remote-tracking branch 'origin/master' (markllama@redhat.com)
+- switched deconfigure back to symlink to maintain identity with configure
+  (markllama@redhat.com)
+- updated (de)configure to remove tc elements (markllama@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- fixing embedded call and adding debug (mmcgrath@redhat.com)
+- ensure any apps still running from the user are actually dead / gone
+  (mmcgrath@redhat.com)
+
 * Wed Jun 29 2011 Dan McPherson <dmcphers@redhat.com> 0.73.5-1
 - add nurture migration for existing apps (dmcphers@redhat.com)
 - undo passing rhlogin to cart (dmcphers@redhat.com)

@@ -10,11 +10,12 @@ class BrokerController < ApplicationController
   layout nil
   @@outage_notification_file = '/etc/libra/express_outage_notification.txt'
   
-  def generate_result_json(result, exit_code=0)      
+  def generate_result_json(result, data=nil, exit_code=0)      
       json = JSON.generate({
                   :debug => Thread.current[:debugIO] ? Thread.current[:debugIO].string : '',
                   :messages => Thread.current[:messageIO] ? Thread.current[:messageIO].string : '',
                   :result => result,
+                  :data => data,
                   :exit_code => exit_code
                   })
       json
@@ -51,49 +52,49 @@ class BrokerController < ApplicationController
       case key
         when 'namespace'
           if !(val =~ /\A[A-Za-z0-9]+\z/)
-            render :json => generate_result_json("Invalid namespace: #{val}", 106), :status => :invalid and return nil
+            render :json => generate_result_json("Invalid namespace: #{val}", nil, 106), :status => :invalid and return nil
           end
         when 'rhlogin'
           if !Util.check_rhlogin(val)
-            render :json => generate_result_json("Invalid rhlogin: #{val}", 107), :status => :invalid and return nil
+            render :json => generate_result_json("Invalid rhlogin: #{val}", nil, 107), :status => :invalid and return nil
           end
         when 'ssh'
           if !(val =~ /\A[A-Za-z0-9\+\/=]+\z/)
-            render :json => generate_result_json("Invalid ssh key: #{val}", 108), :status => :invalid and return nil
+            render :json => generate_result_json("Invalid ssh key: #{val}", nil, 108), :status => :invalid and return nil
           end
         when 'app_uuid'
           if !(val =~ /\A[a-f0-9]+\z/)
-            render :json => generate_result_json("Invalid application uuid: #{val}", 254), :status => :invalid and return nil
+            render :json => generate_result_json("Invalid application uuid: #{val}", nil, 254), :status => :invalid and return nil
           end
         when 'debug', 'alter', 'embed'
           if !(val =~ /\A(true|false)\z/)
-            render :json => generate_result_json("Invalid value for #{key}:#{val} specified", 254), :status => :invalid and return nil
+            render :json => generate_result_json("Invalid value for #{key}:#{val} specified", nil, 254), :status => :invalid and return nil
           end
         when 'cartridge'
           if !(val =~ /\A[\w\-\.]+\z/)
-            render :json => generate_result_json("Invalid cartridge: #{val} specified", 254), :status => :invalid and return nil
+            render :json => generate_result_json("Invalid cartridge: #{val} specified", nil, 254), :status => :invalid and return nil
           end
-        when 'cart_types'
+        when 'cart_type'
           if !(val =~ /\A[\w\-\.]+\z/)
-            render :json => generate_result_json("Invalid cart_types: #{val} specified", 109), :status => :invalid and return nil
+            render :json => generate_result_json("Invalid cart_type: #{val} specified", nil, 109), :status => :invalid and return nil
           end
         when 'action'
           if !(val =~ /\A[\w\-\.]+\z/) and val.to_s.length < 24
-            render :json => generate_result_json("Invalid #{key} specified: #{val}", 105), :status => :invalid and return nil
+            render :json => generate_result_json("Invalid #{key} specified: #{val}", nil, 105), :status => :invalid and return nil
           end
         when 'app_name'
           if !(val =~ /\A[\w]+\z/) and val.to_s.length < 24
-            render :json => generate_result_json("Invalid #{key} specified: #{val}", 105), :status => :invalid and return nil
+            render :json => generate_result_json("Invalid #{key} specified: #{val}", nil, 105), :status => :invalid and return nil
           end
         else
-          render :json => generate_result_json("Unknown json key found: #{key}", 254), :status => :invalid and return nil
+          render :json => generate_result_json("Unknown json key found: #{key}", nil, 254), :status => :invalid and return nil
       end
     end
     data
   end
   
   def render_unauthorized
-    render :json => generate_result_json("Invalid user credentials", 97), :status => :unauthorized
+    render :json => generate_result_json("Invalid user credentials", nil, 97), :status => :unauthorized
   end
   
   def render_internal_server_error(e, method_name)      
@@ -108,7 +109,7 @@ class BrokerController < ApplicationController
       logger.error "Exception rescued in #{method_name}:"
       logger.error e.message
     end
-    render :json => generate_result_json(e.message, e.respond_to?('exit_code') ? e.exit_code : 254), :status => :internal_server_error
+    render :json => generate_result_json(e.message, nil, e.respond_to?('exit_code') ? e.exit_code : 254), :status => :internal_server_error
   end
 
   def embed_cartridge_post
@@ -122,13 +123,7 @@ class BrokerController < ApplicationController
         app_name = data['app_name']
 
         if !Libra::Util.check_app(app_name)
-          render :json => generate_result_json("The supplied application name is it not allowed", 105), :status => :invalid and return
-        end
-        
-        cartridge_type = 'embedded'
-
-        if !Libra::Util.get_cartridge_type(data['cartridge'], cartridge_type)
-          render :json => generate_result_json("Invalid application type (-t|--type) specified: '#{data['cartridge']}'.  Valid application types are (#{Libra::Util.get_cartridge_list(cartridge_type)}).", 110), :status => :invalid and return
+          render :json => generate_result_json("The supplied application name is it not allowed", nil, 105), :status => :invalid and return
         end
         
         # Execute a framework cartridge
@@ -154,30 +149,38 @@ class BrokerController < ApplicationController
       if username
         action = data['action']
         app_name = data['app_name']
+        cartridge = data['cartridge']
 
         if !Libra::Util.check_app(app_name)
-          render :json => generate_result_json("The supplied application name is it not allowed", 105), :status => :invalid and return
-        end
-        
-        cartridge_type = 'standalone'
-
-        if !Libra::Util.get_cartridge_type(data['cartridge'], cartridge_type)
-          render :json => generate_result_json("Invalid application type (-t|--type) specified: '#{data['cartridge']}'.  Valid application types are (#{Libra::Util.get_cartridge_list(cartridge_type)}).", 110), :status => :invalid and return
+          render :json => generate_result_json("The supplied application name is it not allowed", nil, 105), :status => :invalid and return
         end
         
         # Execute a framework cartridge
-        Libra.execute(data['cartridge'], action, app_name, username)
+        Libra.execute(cartridge, action, app_name, username)
+          
+        json_data = nil
         
         message = 'Success'
         if action == 'configure'
           message = "Successfully created application: #{app_name}"
+          # TODO would like to move this future down.  Perhaps store cart=>page as the cartlist fact?
+          type = Libra::Util.get_cart_framework(cartridge)
+          case type
+            when 'php'
+              page = 'health_check.php'
+            when 'perl'
+              page = 'health_check.pl'
+            else
+              page = 'health'
+          end
+          json_data = JSON.generate({:health_check_path => page})
         elsif action == 'deconfigure'
           message = "Successfully destroyed application: #{app_name}"
         elsif action == 'status' || (Thread.current[:resultIO] && !Thread.current[:resultIO].string.empty?)
           message = Thread.current[:resultIO].string 
         end
   
-        render :json => generate_result_json(message) and return
+        render :json => generate_result_json(message, json_data) and return
       else
         render_unauthorized and return
       end
@@ -218,10 +221,10 @@ class BrokerController < ApplicationController
           json_data = JSON.generate({:user_info => user_info,
              :app_info => app_info})
           
-          render :json => generate_result_json(json_data) and return
+          render :json => generate_result_json(nil, json_data) and return
         else
           # Return a 404 to denote the user doesn't exist
-          render :json => generate_result_json("User does not exist", 99), :status => :not_found and return
+          render :json => generate_result_json("User does not exist", nil, 99), :status => :not_found and return
         end
       else
         render_unauthorized and return
@@ -241,12 +244,11 @@ class BrokerController < ApplicationController
         user = Libra::User.find(username)
         ns = data['namespace']
         if !Libra::Util.check_namespace(ns)
-          render :json => generate_result_json("Invalid characters in namespace '#{ns}' found", 106), :status => :invalid and return
+          render :json => generate_result_json("Invalid characters in namespace '#{ns}' found", nil, 106), :status => :invalid and return
         end
         if user
           if data['alter']
             if user.namespace != ns
-              #render :json => generate_result_json("You may not change your registered namespace of: #{user.namespace}", 98), :status => :conflict and return
               user.update_namespace(ns)
             end
             user.namespace=ns
@@ -260,7 +262,7 @@ class BrokerController < ApplicationController
               server.execute_direct('li-controller-0.1', 'configure', cfgstring)
             end
           else
-            render :json => generate_result_json("User already has a registered namespace.  To modify, use --alter", 97), :status => :conflict and return
+            render :json => generate_result_json("User already has a registered namespace.  To modify, use --alter", nil, 97), :status => :conflict and return
           end
         else
           user = Libra::User.create(username, data['ssh'], ns)
@@ -275,7 +277,7 @@ class BrokerController < ApplicationController
                               })
 
       # Just return a 200 success
-      render :json => generate_result_json(json_data) and return
+      render :json => generate_result_json(nil, json_data) and return
     rescue Exception => e
       render_internal_server_error(e, 'domain_post') and return
     end
@@ -286,19 +288,19 @@ class BrokerController < ApplicationController
       # Parse the incoming data
       data = parse_json_data(params['json_data'])
       return unless data
-      cart_type = data['cart_types']
+      cart_type = data['cart_type']
       if cart_type != 'standalone' and cart_type != 'embedded'
-        render :json => generate_result_json("Invalid cartridge types: #{cart_type} specified", 109), :status => :invalid and return
-        #TODO handle embedded and subsets (Ex: all php)
+        render :json => generate_result_json("Invalid cartridge types: #{cart_type} specified", nil, 109), :status => :invalid and return
+        #TODO handle subsets (Ex: all php)
       end
 
-      carts = Libra::Util.get_cartridges_tbl(cart_type)
+      carts = Libra::Util.get_cartridges_list(cart_type)
       json_data = JSON.generate({
                               :carts => carts
                               })
 
       # Just return a 200 success
-      render :json => generate_result_json(json_data) and return
+      render :json => generate_result_json(nil, json_data) and return
     rescue Exception => e
       render_internal_server_error(e, 'cart_list_post') and return
     end

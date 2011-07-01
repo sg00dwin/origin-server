@@ -142,7 +142,7 @@ module Libra
     #
     def update
       json = JSON.generate({:rhlogin => rhlogin, :namespace => namespace, :ssh => ssh, :uuid => uuid})
-      Libra.logger_debug "Updating user json:#{json}" if Libra.c[:rpc_opts][:verbose]
+      Libra.logger_debug "DEBUG: Updating user json:#{json}"
       Helper.s3.put(Libra.c[:s3_bucket], "user_info/#{rhlogin}/user.json", json)
     end
     
@@ -156,7 +156,7 @@ module Libra
         Server.dyn_create_txt_record(new_namespace, auth_token)
         Server.dyn_delete_txt_record(@namespace, auth_token)
         apps.each do |app_name, app_info|
-          Libra.logger_debug "Updating namespaces for app: #{app_name}" if Libra.c[:rpc_opts][:verbose]
+          Libra.logger_debug "DEBUG: Updating namespaces for app: #{app_name}"
           server = Server.new(app_info['server_identity'])
           public_ip = server.get_fact_direct('public_ip')
           sshfp = server.get_fact_direct('sshfp').split[-1]
@@ -173,7 +173,7 @@ module Libra
         update_namespace_failures = []
         apps.each do |app_name, app_info|
           begin
-            Libra.logger_debug "Updating namespace for app: #{app_name}" if Libra.c[:rpc_opts][:verbose]
+            Libra.logger_debug "DEBUG: Updating namespace for app: #{app_name}"
             server = Server.new(app_info['server_identity'])
             result = server.execute_direct(app_info['framework'], 'update_namespace', "#{app_name} #{new_namespace} #{@namespace} #{app_info['uuid']}")[0]
             if (result && defined? result.results)            

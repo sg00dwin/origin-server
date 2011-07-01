@@ -51,7 +51,7 @@ def p_embedded_list
     puts ""
     puts "List of supported embedded cartridges:"
     puts ""
-    type_keys = RHC::get_cartridge_list(nil, ', ', libra_server, @http, 'embedded', false)
+    type_keys = RHC::get_cartridge_listing(nil, ', ', libra_server, @http, 'embedded', false)
     puts type_keys
     puts ""
     exit 255
@@ -85,7 +85,7 @@ ssh_config = "#{ENV['HOME']}/.ssh/config"
 ssh_config_d = "#{ENV['HOME']}/.ssh/"
 
 if opt["embedded-list"]
-     p_embedded_list
+    p_embedded_list
 end
 if opt["help"]
     p_usage
@@ -184,7 +184,8 @@ puts "Contacting https://#{libra_server}"
 response = RHC::http_post(@http, url, json_data, password)
 
 if response.code == '200'
-    RHC::print_response_success(response, debug, true)
+    json_resp = JSON.parse(response.body)
+    RHC::print_response_success(json_resp, debug, true)
 else
     RHC::print_response_err(response, debug)
 end

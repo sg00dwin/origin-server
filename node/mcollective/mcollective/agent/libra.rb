@@ -56,6 +56,7 @@ module MCollective
       #
       def cartridge_do_action
         Log.instance.debug("cartridge_do_action call / request = #{request.pretty_inspect}")
+        Log.instance.debug("cartridge_do_action validation = #{request[:cartridge]} #{request[:action]} #{request[:args]}")
         validate :cartridge, /\A[a-zA-Z0-9\.\-\/]+\z/
         validate :cartridge, :shellsafe
         validate :action, /\A(configure|deconfigure|update_namespace|info|post-install|post_remove|pre-install|reload|restart|start|status|stop)\Z/
@@ -140,6 +141,22 @@ module MCollective
         uuid = request[:uuid]
         app_name = request[:application]
         if File.exist?("/var/lib/libra/#{uuid}/#{app_name}")
+          reply[:output] = true
+        else
+          reply[:output] = false
+        end
+        reply[:exitcode] = 0
+      end
+      
+      #
+      # Returns whether an embedded app is on a server
+      #
+      def has_embedded_app_action
+        validate :uuid, /^[a-zA-Z0-9]+$/
+        validate :embedded_type, /^.+$/
+        uuid = request[:uuid]
+        embedded_type = request[:embedded_type]
+        if File.exist?("/var/lib/libra/#{uuid}/#{embedded_type}")
           reply[:output] = true
         else
           reply[:output] = false

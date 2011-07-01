@@ -6,9 +6,9 @@ Feature: Account Management
 # configure
   Scenario: Create One Account
     Given an accepted node
-    And the following test data
-      | accountname                      | ssh_key_name | ssh_pub_key |
-      | 00112233445566778899aabbccdde000 | testkeyname0 | testkey0    |
+#    And the following test data
+#     | accountname                      | ssh_key_name | ssh_pub_key |
+#     | 00112233445566778899aabbccdde000 | testkeyname0 | testkey0    |
     When I create a guest account
     Then an account password entry should exist
     And an account PAM limits file should exist
@@ -25,9 +25,9 @@ Feature: Account Management
 # deconfigure
   Scenario: Delete One Account
     Given an accepted node
-    And the following test data
-      | accountname                      | ssh_key_name | ssh_pub_key |
-      | 00112233445566778899aabbccdde001 | testkeyname1 | testkey1    |
+#    And the following test data
+#     | accountname                      | ssh_key_name | ssh_pub_key |
+#     | 00112233445566778899aabbccdde001 | testkeyname1 | testkey1    |
     And a new guest account
     When I delete the guest account
     Then an account password entry should not exist

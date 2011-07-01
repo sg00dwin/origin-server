@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.73.6
+Version:   0.73.7
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -181,6 +181,8 @@ chkconfig libra-tc on
 %config(noreplace) %{jenkins}/jobs/jenkins_update/config.xml
 %config(noreplace) %{jenkins}/jobs/libra_ami/config.xml
 %config(noreplace) %{jenkins}/jobs/libra_ami_verify/config.xml
+%config(noreplace) %{jenkins}/jobs/libra_ami_stage/config.xml
+%config(noreplace) %{jenkins}/jobs/libra_ami_verify_stage/config.xml
 %config(noreplace) %{jenkins}/jobs/libra_check/config.xml
 %config(noreplace) %{jenkins}/jobs/libra_prune/config.xml
 %config(noreplace) %{jenkins}/jobs/libra_web/config.xml
@@ -189,6 +191,9 @@ chkconfig libra-tc on
 %{_initddir}/libra-site
 
 %changelog
+* Thu Jun 30 2011 Dan McPherson <dmcphers@redhat.com> 0.73.7-1
+- fix devenv build (dmcphers@redhat.com)
+
 * Thu Jun 30 2011 Dan McPherson <dmcphers@redhat.com> 0.73.6-1
 - let jenkins use tmp (dmcphers@redhat.com)
 - Added mysql and charlie (mmcgrath@redhat.com)

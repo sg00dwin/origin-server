@@ -55,7 +55,7 @@ module Libra
         current_server, current_repos = rpc_find_available(true)
       end
       raise NodeException.new(140), "No nodes available.  If the problem persists please contact Red Hat support.", caller[0..5] unless current_server
-      Libra.logger_debug "DEBUG: server.rb:find_available #{current_server}: #{current_repos}" if Libra.c[:rpc_opts][:verbose]
+      Libra.logger_debug "DEBUG: server.rb:find_available #{current_server}: #{current_repos}"
       new(current_server, current_repos)
     end
 
@@ -407,7 +407,19 @@ module Libra
       Helper.rpc_exec('libra', @name) do |client|
         client.has_app(:uuid => app['uuid'],
                        :application => app_name) do |response|
-          #return_code = response[:body][:data][:exitcode]
+          output = response[:body][:data][:output]
+          return output == true
+        end
+      end
+    end
+    
+    #
+    # Returns whether this server has the specified embedded app
+    #
+    def has_embedded_app?(app, embedded_type)
+      Helper.rpc_exec('libra', @name) do |client|
+        client.has_embedded_app(:uuid => app['uuid'],
+                       :embedded_type => embedded_type) do |response|
           output = response[:body][:data][:output]
           return output == true
         end
@@ -453,7 +465,7 @@ module Libra
     def self.execute_many(cartridge, action, args, fact, value, operator="==")
         options = Helper.rpc_options
         options[:filter]['fact'] = [{:value=>value, :fact=>fact, :operator=>operator}]
-        #Libra.logger_debug "DEBUG: Options for cartridge: #{cartridge} action: #{action} args: #{args}: #{options.pretty_inspect}" if Libra.c[:rpc_opts][:verbose]
+        #Libra.logger_debug "DEBUG: Options for cartridge: #{cartridge} action: #{action} args: #{args}: #{options.pretty_inspect}"
         Helper.rpc_exec('libra') do |client|
           cartridge_do(client, cartridge, action, args)
         end
