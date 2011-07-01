@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.73.6
+Version:   0.73.7
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -64,6 +64,9 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Fri Jul 01 2011 Dan McPherson <dmcphers@redhat.com> 0.73.7-1
+- fixup embedded cart remove (dmcphers@redhat.com)
+
 * Thu Jun 30 2011 Dan McPherson <dmcphers@redhat.com> 0.73.6-1
 - Corrected docs link on getting started page (edirsh@redhat.com)
 
