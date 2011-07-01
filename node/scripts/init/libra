@@ -32,7 +32,7 @@ function homedir() {
 
 function userapps() {
     # USERNAME=$1
-    ls `homedir $1`/git | xargs -I{} basename {} .git
+    /bin/find `homedir $1` -maxdepth 2 -mindepth 2 -type f -name "*_ctl.sh" 2> /dev/null
 }
 
 function apptype() {
@@ -41,18 +41,6 @@ function apptype() {
     _HOMEDIR=`homedir $1`
     _APP_TYPE=`cat $_HOMEDIR/git/${2}.git/description | cut -d' ' -f 1`
     echo $_APP_TYPE
-}
-
-function approot() {
-    # USERNAME=$1
-    # APPNAME=$2
-    echo `homedir $1`/$2
-}
-
-function startscript() {
-    # USERNAME=$1
-    # APPNAME=$2
-    echo `approot $1 $2`/$2_ctl.sh
 }
 
 RETVAL=0
@@ -87,12 +75,11 @@ stopuser() {
 
 startapp() {
     # USERNAME=$1
-    # APPNAME=$2
+    # APPSCRIPT=$2
     uid=$(id -u "$1")
     c_val="c$(($uid/1023)),c$(($uid%1023))"
-    STARTSCRIPT=`startscript $1 $2`
-    echo -n $"    Starting http for $1-$2"
-    daemon --user=$1 --pidfile=httpd_$2 runcon -t libra_t -l s0:$c_val $STARTSCRIPT start
+    echo -n $"    Start: $1-$(basename $2)"
+    daemon --user=$1 --pidfile=httpd_$2 runcon -t libra_t -l s0:$c_val $2 start
     RETVAL=$?
     echo
     if [ $RETVAL -eq 0 ]
@@ -106,12 +93,11 @@ startapp() {
 
 stopapp() {
     # USERNAME=$1
-    # APPNAME=$2
+    # APPSCRIPT=$2
     uid=$(id -u "$1")
     c_val="c$(($uid/1023)),c$(($uid%1023))"
-    STARTSCRIPT=`startscript $1 $2`
-    echo -n $"    Stopping http for $1-$2"
-    daemon --user=$1 --pidfile=httpd_$2 runcon -t libra_t -l s0:$c_val $STARTSCRIPT stop
+    echo -n $"    Stop: $1-$(basename $2)"
+    daemon --user=$1 --pidfile=httpd_$2 runcon -t libra_t -l s0:$c_val $2 stop
     RETVAL=$?
     echo
     if [ $RETVAL -eq 0 ]
