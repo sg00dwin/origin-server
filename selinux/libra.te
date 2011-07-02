@@ -1,4 +1,4 @@
-policy_module(libra,1.0.14)
+policy_module(libra,1.0.15)
 
 ########################################
 #
@@ -198,8 +198,6 @@ can_exec(libra_t, mysqld_safe_exec_t)
 corenet_tcp_bind_mysqld_port(libra_t)
 mysql_search_db(libra_t)
 allow libra_t self:process setexec;
-allow libra_t mysqld_safe_exec_t:file entrypoint;
-
 
 
 ##########
