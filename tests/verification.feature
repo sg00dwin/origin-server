@@ -49,7 +49,7 @@ Feature: Verification Tests
       |     1     |   1   |  1   | jbossas-7.0 |
     When the applications are created
     Then they should all be accessible
-    And they should be able to be changed
+#    And they should be able to be changed
 
   Scenario: Creation load tests
     Given the libra client tools
