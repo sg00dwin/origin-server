@@ -25,16 +25,16 @@ Provides JBossAS7 support to OpenShift
 %setup -q
 
 %build
+
 #mkdir -p template/src/main/webapp/WEB-INF/classes
 #pushd template/src/main/java > /dev/null
 #javac *.java -d ../webapp/WEB-INF/classes 
 #popd
 
+mkdir -p info/data
 pushd template/src/main/webapp > /dev/null 
-jar -cvf ../../../../template/deployments/ROOT.war -C . .
+jar -cvf ../../../../info/data/ROOT.war -C . .
 popd
-
-touch template/deployments/ROOT.war.dodeploy
 
 rm -rf git_template
 cp -r template/ git_template/
