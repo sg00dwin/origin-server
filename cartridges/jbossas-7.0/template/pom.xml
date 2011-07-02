@@ -1,0 +1,47 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>openshift.redhat.com</groupId>
+  <artifactId>ROOT</artifactId>
+  <packaging>war</packaging>
+  <version>1.0</version>
+  <name>ROOT</name>
+  <url>http://myapp-mynamespace.rhcloud.com</url>
+  <build>
+    <finalName>ROOT</finalName>
+    <plugins>
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.6</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <configuration>
+              <target>
+
+<echo message="-------------------------------------------------------------------"/>
+<echo message="-------------------- Deploy application start ---------------------"/>
+<echo message="-------------------------------------------------------------------"/>
+<property name="war.file" value="ROOT.war"/>
+<property name="deploy.dir" value="deployments"/>
+<move todir="${deploy.dir}">
+  <fileset dir="target">
+    <include name="${war.file}"/>
+  </fileset>
+</move>
+<touch file="${deploy.dir}/${war.file}.dodeploy"/>
+
+<echo message="-------------------------------------------------------------------"/>
+<echo message="-------------------- Deploy application finish --------------------"/>
+<echo message="-------------------------------------------------------------------"/>
+              </target>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
