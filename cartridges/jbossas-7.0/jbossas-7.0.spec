@@ -11,7 +11,8 @@ Source0:   %{name}-%{version}.tar.gz
 
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires:  git
-BuildRequires:  java
+BuildRequires:  java-devel >= 1:1.6.0 
+BuildRequires:  jpackage-utils
 Requires:  rhc-node
 Requires:  jboss-as7 = 7.0.0.Beta7OS
 Requires:  maven3
