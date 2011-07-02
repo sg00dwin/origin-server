@@ -10,7 +10,7 @@ URL:       http://openshift.redhat.com
 Source0:   %{name}-%{version}.tar.gz
 
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
-BuildRequires: git
+BuildRequires:  git
 BuildRequires:  java
 Requires:  rhc-node
 Requires:  jboss-as7 = 7.0.0.Beta7OS
@@ -28,12 +28,12 @@ Provides JBossAS7 support to OpenShift
 
 #mkdir -p template/src/main/webapp/WEB-INF/classes
 #pushd template/src/main/java > /dev/null
-#javac *.java -d ../webapp/WEB-INF/classes 
+#/usr/bin/javac *.java -d ../webapp/WEB-INF/classes 
 #popd
 
 mkdir -p info/data
 pushd template/src/main/webapp > /dev/null 
-jar -cvf ../../../../info/data/ROOT.war -C . .
+/usr/bin/jar -cvf ../../../../info/data/ROOT.war -C . .
 popd
 
 rm -rf git_template
