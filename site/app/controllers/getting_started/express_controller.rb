@@ -9,6 +9,7 @@ class GettingStarted::ExpressController < ApplicationController
       user = session_user
       user.refresh_roles
       redirect_to new_access_express_requests_path unless user.has_access?(CloudAccess::EXPRESS)
+      @domain = ExpressDomain.new()
     end
   end
 end

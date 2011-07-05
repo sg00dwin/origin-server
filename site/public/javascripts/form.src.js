@@ -11,6 +11,15 @@ $(function() {
     "Account numbers should be a 12-digit number separated by dashes. Ex: 1234-5678-9000"
   );
   
+  //Add custom validation method for alpha_numeric
+  jQuery.validator.addMethod(
+    "alpha_numeric",
+    function (value) {
+      return (/^[A-Za-z0-9]*$/).test(value);
+    },
+    "Only letters and numbers are allowed"
+  );
+  
   //Login form
   $('#login-form form').validate({
     rules: {
@@ -56,6 +65,25 @@ $(function() {
         'aws_account' : true
       },
       'access_flex_request[terms_accepted]' : 'required'
+    }
+  });
+  
+  //Domain form
+  $('#new_express_domain').validate({
+    rules: {
+      'express_domain[namespace]' : {
+        'required' : true,
+        'alpha_numeric' : true,
+        'maxlength' : 16
+      },
+      'express_domain[ssh]' : {
+        'required' : true,
+        'accept': '.pub'
+      },
+      'express_domain[password]' : {
+        'required' : true,
+        'minlength' : 6
+      }
     }
   });
   

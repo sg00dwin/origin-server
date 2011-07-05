@@ -1,4 +1,3 @@
-
 // File: site-wide js functionality
 
 $(function(){  
@@ -12,7 +11,7 @@ $(function(){
     var show_outage_txt = '☟ Service Outages', 
         hide_outage_txt = '☝ Hide', 
         outage_notification_neg_height = '-' + outage_notification.outerHeight() + 'px',
-        outage_animation_length = 700,
+        outage_animation_length = 1000,
         outage_toggle,
         outage_toggle_state,
         overlay;
@@ -53,7 +52,7 @@ $(function(){
         .stop()
         .animate({'top': 0}, outage_animation_length);
       // Fade in Overlay
-      overlay.fadeIn(outage_animation_length);
+      overlay.show();
       // Change toggle text
       outage_toggle.text(hide_outage_txt);
       outage_toggle_state = 'shown';
@@ -66,9 +65,9 @@ $(function(){
         .stop()
         .animate({'top': outage_notification_neg_height}, outage_animation_length);
       // Scroll back to top of page
-      $('html, body, document').stop().animate({scrollTop: 0}, 500); 
+      $('html, body, document').stop().animate({scrollTop: 0}, outage_animation_length); 
       // Fade out overlay
-      overlay.fadeOut(outage_animation_length);
+      overlay.hide();
       // Change toggle text
       outage_toggle.text(show_outage_txt);
       outage_toggle_state = 'hidden';
@@ -97,13 +96,28 @@ $(function(){
   navigation = $('#nav');
   menus = $('ul', navigation);
   labels = $('.category', navigation);
+  menu_widths = null;
+  
+  //Set expanded menu based on cookie
+  expanded_menu_id = $.cookie('os_menu_expanded');
+  //console.log(expanded_menu_id);
+  //console.log(document.cookie);
+  if (expanded_menu_id != null) {
+    expanded_menu = menus.filter('#' + expanded_menu_id);
+    //Check that expanded menu is not the default
+    if (expanded_menu.hasClass('collapsed')) {
+      //remove class from default expanded menu
+      menus.filter('.expanded').removeClass('expanded').addClass('collapsed');
+      labels.filter('.expanded').removeClass('expanded').addClass('collapsed');
+      //add class to previously expanded menu
+      expanded_menu.removeClass('collapsed').addClass('expanded');
+      labels.filter('[data-category=' + expanded_menu_id + ']').removeClass('collapsed').addClass('expanded');
+    }
+  }
   
   //Initialize menus
-  menu_widths = {};
   menus.each(function(){
     //console.log($(this).attr('id'));
-    //Record width
-    menu_widths[$(this).attr('id')] = $(this).width();
     //Restrict height
     $(this).css('height', $(this).height());
     
@@ -112,8 +126,7 @@ $(function(){
       $(this).css({width:0});
     }
   });
-  //console.log(menu_widths);
-  
+
   labels.click(function(){
     var id, menu;
     id = $(this).attr('data-category');
@@ -134,6 +147,13 @@ $(function(){
     }
   });
   
+  //Add hover class to labels
+  labels.hover(function() {
+    $(this).addClass('hover');
+  }, function(){
+    $(this).removeClass('hover');
+  });
+  
   function collapseMenu(menu, label) {
     menu.removeClass('expanded').addClass('collapsed');
     menu.stop().animate({width: 0}, 300,
@@ -143,7 +163,36 @@ $(function(){
   }
   
   function expandMenu(menu, label) {
-    var menu_width = menu_widths[menu.attr('id')];
+    var id, menu_width;
+    id = menu.attr('id');
+    // If widths haven't already been calculated,
+    // do so now.
+    //
+    // We're doing this here because calculating the
+    // widths earlier can result in incorrect numbers
+    // due to incomplete font loading.
+    //
+    // We're making the assumption that by the time
+    // the user makes a decision to click on a menu,
+    // the font file will have had enough time to load.
+    if (menu_widths == null) {
+      menu_widths = {};
+      menus.each(function(){
+        var total_width = 0;
+        $(this).children('li').each(function(){
+          // calculate width using the children 
+          // since some menus are already collapsed
+          total_width += $(this).width();
+        });
+        menu_widths[$(this).attr('id')] = total_width + 1; // IE 9 needs this +1 for some reason
+      });
+      //console.log(menu_widths);
+    }
+    menu_width = menu_widths[id];
+    //Set cookie to remember which menu was last expanded
+    $.cookie('os_menu_expanded', id, {path: '/'});
+    //console.log('expanded ' + id);
+    //console.log(document.cookie);
     label.removeClass('collapsed').addClass('expanded');
     menu.removeClass('collapsed').addClass('expanded');
     menu.stop().animate({width: menu_width}, 300);

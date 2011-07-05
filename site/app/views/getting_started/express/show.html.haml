@@ -3,6 +3,10 @@
 - content_for :page_title do
   Get Started with Express
 
+- content_for :scripts do
+  = javascript_include_tag '/app/javascripts/jquery.validate.min.js'
+  = javascript_include_tag '/app/javascripts/form.js'
+
 = render 'shared/pageheader', :product => 'express', :title => 'Using Express', :subtitle => 'Get started with Express'
 
 #page.container_24
@@ -145,24 +149,50 @@
                   %pre $ gem install rhc
       
       %li#create_domain_name
-        %h4 Create a domain name
         
-        %p
-          Using your OpenShift login and password, call rhc-create-domain to create a unique domain name for your applications.
-
-          %pre
-            :preserve
-              $ rhc-create-domain -n mydomain -l email@address
-              Password: (type... type... type...)
-
+        %h4 Create a domain name
+        .main.grid_10
           
-        %aside
           %p
-            OpenShift domain names make up part of your app's url. They are also unique across all OpenShift users, so choose wisely, and be creative!
+            Using your OpenShift login and password, call rhc-create-domain to create a unique domain name for your applications.
+
+            %pre
+              :preserve
+                $ rhc-create-domain -n mydomain -l email@address
+                Password: (type... type... type...)
+
             
-        %aside
+          %aside
+            %p
+              OpenShift domain names make up part of your app's url. They are also unique across all OpenShift users, so choose wisely, and be creative!
+              
+          %aside
+            %p
+              The <code>rhc-create-domain</code> command will create a configuration file - &lt;your home directory&gt;/.openshift/express.conf - which sets up a default login.
+        
+        #domain_form.form.grid_10.prefix_1
+          %h4 Why wait?
+          %h5 Reserve your amazing domain name right now!
           %p
-            The <code>rhc-create-domain</code> command will create a configuration file - &lt;your home directory&gt;/.openshift/express.conf - which sets up a default login.
+            All you need is an ssh keypair and a unique name.
+          
+          - if flash[:notice]
+            .message.notice
+              = flash[:notice]
+          
+          - if flash[:error]
+            .message.error
+              = flash[:error]
+          
+          - if flash[:success]
+            .message.success
+              = flash[:success]
+              
+          = semantic_form_for @domain, :html => {:multipart => true} do |form|
+            = form.input :namespace, :label => 'Desired domain name'
+            = form.input :ssh, :label => 'SSH public key (ex: id_rsa.pub)', :required => true, :as => :file
+            = form.input :password, :label => 'OpenShift password', :required => true, :as => :password
+            = form.buttons
             
       %li#create_application
         %h4 Create your first application

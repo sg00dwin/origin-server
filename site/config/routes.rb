@@ -92,6 +92,13 @@ RedHatCloud::Application.routes.draw do
                :controller => "flex",
                :only => [:show]
     end
+    
+    resource :express_domain,
+             :controller => "express_domain",
+             :as => "express_domains",
+             :only => [:new, :create]
+    
+    match 'control_panel' => 'control_panel#index'
 
     # Sample resource route with options:
     #   resources :products do
