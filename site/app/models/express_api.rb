@@ -5,7 +5,7 @@ module ExpressApi
   attr_accessor :rhlogin, :password
   
   # API URLs
-  base_url = 'https://em-dev.redhat.com'
+  base_url = 'https://openshift.redhat.com'
   @@domain_url = URI.parse(base_url + '/broker/domain')
   @@userinfo_url = URI.parse(base_url + '/broker/userinfo')
   
