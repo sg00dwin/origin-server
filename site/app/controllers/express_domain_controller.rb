@@ -9,8 +9,8 @@ class ExpressDomainController < ApplicationController
     if @domain.valid?
       begin
         @domain.create do |json_response|
-          result = ActiveSupport::JSON.decode(json_response["result"])
-          Rails.logger.debug "Domain api result: #{response.inspect}"
+          result = ActiveSupport::JSON.decode(json_response["data"])
+          Rails.logger.debug "Domain api result: #{result.inspect}"
           # check that we have expected result
           unless result["uuid"].nil?
             @message = I18n.t('express_api.messages.domain_created')
