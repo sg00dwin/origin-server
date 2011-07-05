@@ -1,5 +1,5 @@
 class ControlPanelController < ApplicationController
-  before_filter :require_login
+  before_filter :deny_access, :require_login
 
   def index
     #@userinfo = ExpressUserinfo.new(:rhlogin => session[:login])
