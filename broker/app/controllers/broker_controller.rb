@@ -129,7 +129,11 @@ class BrokerController < ApplicationController
         # Execute a framework cartridge
         Libra.embed_execute(data['cartridge'], action, app_name, username)
         
-        message = Thread.current[:resultIO].string
+        if Thread.current[:resultIO] && !Thread.current[:resultIO].string.empty?
+          message = Thread.current[:resultIO].string
+        else
+          message = "Success"
+        end
 
         render :json => generate_result_json(message) and return
       else
