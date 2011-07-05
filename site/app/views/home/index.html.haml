@@ -3,7 +3,7 @@
 -# Add javascripts here - jquery is added automatically
 - content_for :scripts do
   = javascript_include_tag "/app/javascripts/jquery.slideshow.minified.js"
-  = javascript_include_tag "/app/javascripts/home"
+  = javascript_include_tag "/app/javascripts/home.src.js"
   
 .simpleSlideShow.slideShow.container_24
   #slides.grid_24
@@ -87,7 +87,7 @@
           %li PHP, Python, Ruby, Perl
           %li Git push  and leave the rest to us!
           %li 
-            = link_to 'Learn more >', express_path
+            = link_to 'Learn more >', express_path, :class => 'list_link'
 
     /Flex box
     .flex.promo.grid_8
@@ -102,7 +102,7 @@
           %li PHP, Java EE, MySQL, MongoDB, Memcache, DFS
           %li Full control over configuration & Built-in monitoring
           %li
-            = link_to 'Learn more >', flex_path
+            = link_to 'Learn more >', flex_path, :class => 'list_link'
             
 
     /Power box
@@ -118,7 +118,7 @@
           %li Custom topologies, root access, multi-tier dependencies
           %li Turn any application into a cloud deployment template
           %li 
-            = link_to 'Learn more >', power_path
+            = link_to 'Learn more >', power_path, :class => 'list_link'
 
     .clear
 

@@ -201,6 +201,7 @@ $sans: 'Liberation Sans','Helvetica Neue',Arial,FreeSans,sans-serif;
     text: {
       decoration: none;
       transform: uppercase;
+      shadow: 1px 1px 1px darken($bg_color, 25%);
     }
     @include border_radius(8);
 }
@@ -298,6 +299,14 @@ form {
     background-image: url('/app/images/icons/important.png');
     color: #FF8000;
     border-color: #F2ED85;
+  }
+  
+  &.success {
+    /* green text / green bg */
+    background-color: #efe;
+    background-image: url('/app/images/icons/success.png');
+    color: #363;
+    border-color: #ada;
   }
 }
 
@@ -474,8 +483,10 @@ form {
   }
   font-family: OverpassBold;
 
+
   ul {
-    margin: 0px;
+    margin: 0;
+    padding: 0;
     display: block;
     float: left;
     overflow: hidden;
@@ -484,7 +495,9 @@ form {
   li {
     float: left;
     list-style-type: none;
+/*
     display: inline-block;
+*/
     margin: 0;
     padding: 0;
 
@@ -505,17 +518,23 @@ form {
   }
 
   .category {
-    background: url('/app/images/nav_category.png') no-repeat right center;
+    background: url('/app/images/nav_category_shadow.png') no-repeat right center;
     display: inline;
     float: left;
     margin: 0;
     color: white;
-    padding: 7px 17px 7px 15px;
+    padding: 7px 24px 7px 10px;
     font-size: 10pt;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, .5);
     cursor: pointer;
     
+    &.hover {
+      color: $light_blue;
+      text-shadow: -1px -1px 1px rgba(0, 0, 0, .4);
+    }
+    
     &.collapsed {
-    background-color: #900;
+    background-color: #cc0000;
     }
     &.expanded {
       background-color: transparent;
@@ -532,20 +551,7 @@ form {
   }
   li.last {
     a {
-      border-right: none;
-    }
-  }
-
-  li.partners {
-    float: right;
-    a {
-      border: none;
-      float: right;
-      color: $bright_blue;
-
-      &:hover {
-        color: $light_blue;
-      }
+      //border-right: none;
     }
   }
 }
@@ -989,10 +995,11 @@ form {
       ul { list-style-type: none; }
       
       a {
-        font-size: 12pt;
+        font-size: 14pt;
         text: {
           decoration: none;
           transform: uppercase;
+          shadow: 1px 1px 1px black;
         }
       }
       &.express a { color: $express; }
@@ -1152,6 +1159,26 @@ form p {
 
 form li {
   @include clearfix;
+}
+
+#new_express_domain {
+  label, input {
+    display: block;
+  }
+  
+  label {
+    width: auto;
+    margin: 0 0 0 15px;
+    line-height: 15px;
+  }
+  
+  input[type=file] {
+    @include form_text_input;
+  }
+  
+  input.create {
+    margin-left: 16px;
+  }
 }
 
 /*

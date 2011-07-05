@@ -18,6 +18,9 @@ s.linkInternalFilters="javascript:,openshift.redhat.com,redhat.com/openshift,www
 s.linkLeaveQueryString=false
 s.linkTrackVars="None"
 s.linkTrackEvents="None"
+s.dynamicAccountSelection=true
+s.dynamicAccountList="redhatglobaltest,redhatdev=localhost;redhatglobal,redhatcom,redhatopenshift=openshift.redhat.com"
+s.dynamicAccountMatch=window.location.host
 
 /* WARNING: Changing any of the below variables will cause drastic
 changes to how your visitor data is collected.  Changes should only be
