@@ -13,10 +13,10 @@ include Libra::Test::Util
 # Controller cartridge command paths
 $cartridge_root = '/usr/libexec/li/cartridges'
 $controller_hooks = "#{$cartridge_root}/li-controller-0.1/info/hooks"
-$configure_path = "#{$controller_hooks}/configure"
-$configure_format = "#{$configure_path} -c '%s' -e '%s' -s '%s'"
-$deconfigure_path = "#{$controller_hooks}/deconfigure"
-$deconfigure_format = "#{$deconfigure_path} -c '%s'"
+$controller_config_path = "#{$controller_hooks}/configure"
+$controller_config_format = "#{$controller_config_path} -c '%s' -e '%s' -s '%s'"
+$controller_deconfig_path = "#{$controller_hooks}/deconfigure"
+$controller_deconfig_format = "#{$controller_deconfig_path} -c '%s'"
 $home_root = "/var/lib/libra"
 # --------------------------------------------------------------------------
 # Account Checks
@@ -56,7 +56,7 @@ Given /^a new guest account$/ do
     @table.hashes.each do |row|
       @accounts << row
       acctname = row['accountname']
-      command = $configure_format % row.values
+      command = $controller_config_format % row.values
     end
   else
     # generate a random UUID and use the stock keys
@@ -67,7 +67,7 @@ Given /^a new guest account$/ do
       'ssh_key_string' => ssh_key_string,
       'ssh_key_name' => ssh_key_name
     }
-    command = $configure_format % [acctname, ssh_key_name, ssh_key_string]
+    command = $controller_config_format % [acctname, ssh_key_name, ssh_key_string]
   end
 
   run command
@@ -77,10 +77,7 @@ Given /^a new guest account$/ do
 end
 
 Given /^the guest account has no application installed$/ do
-  pending # express the regexp above with the code you wish you had
-  # check for http proxy config
-  # check for git repo
-  # check for app repo
+  # Assume this is true
 end
 
 When /^I create a guest account$/ do
@@ -92,7 +89,7 @@ When /^I create a guest account$/ do
     @table.hashes.each do |row|
       @accounts << row
       acctname = row['accountname']
-      command = $configure_format % row.values
+      command = $controller_config_format % row.values
     end
 
   else
@@ -104,7 +101,7 @@ When /^I create a guest account$/ do
       'ssh_key_string' => ssh_key_string,
       'ssh_key_name' => ssh_key_name
     }
-    command = $configure_format % [acctname, ssh_key_name, ssh_key_string]
+    command = $controller_config_format % [acctname, ssh_key_name, ssh_key_string]
   end
   run command
   # get and store the account UID's by name
@@ -114,7 +111,7 @@ end
 When /^I delete the guest account$/ do
   # call /usr/libexec/li/cartridges  @table.hashes.each do |row|
   @accounts.each do |row|
-    command = $deconfigure_format % row.values
+    command = $conroller_deconfig_format % row.values
     run command
   end  
 end
