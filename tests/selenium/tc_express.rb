@@ -328,7 +328,7 @@ class Express < Test::Unit::TestCase
     @driver.navigate.back
     @driver.find_element(:xpath, ".//ol[@id='toc']/li[2]/a").click()
     begin
-        assert_equal "Create a domain name", @driver.find_element(:xpath,".//li[@id='create_domain_name']/h4").text
+        assert_equal "Create a domain name", @driver.find_element(:xpath,".//li[@id='create_domain_name']//h4[1]").text
     rescue Test::Unit::AssertionFailedError
         @verification_errors << $!
     end
