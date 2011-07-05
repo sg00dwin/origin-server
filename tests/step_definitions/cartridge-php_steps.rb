@@ -1,4 +1,15 @@
+# Controller cartridge command paths
+$php_cartridge = "#{$cartridge_root}/php-5.3"
+$php_hooks = "#{$php_cartridge}/info/hooks"
+$php_config_path = "#{$php_hooks}/configure"
+# app_name namespace acct_name
+$php_config_format = "#{$php_config_path} '%s' '%s' '%s'"
+$php_deconfig_path = "#{$php_hooks}/deconfigure"
+# app_name namespace acct_name
+$php_deconfig_format = "#{$php_deconfig_path} -c '%s'"
+
 When /^I configure a PHP application$/ do
+  # generate a random app_name and namespace, and add them to @apps['acct_name']
   pending # express the regexp above with the code you wish you had
 end
 
