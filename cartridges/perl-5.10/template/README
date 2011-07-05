@@ -22,7 +22,7 @@ persist between pushes of your repo.
 deplist.txt
 ===========
 
-Adding module names to deplist.txt causes your remote openshift node to download
+Adding module names to deplist.txt causes your remote OpenShift node to download
 the required modules and install them.
 
 
