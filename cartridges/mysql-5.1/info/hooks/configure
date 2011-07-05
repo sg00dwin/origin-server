@@ -90,7 +90,7 @@ MYSQL_DIR="$CUSTOMER_HOME/mysql-5.1/"
 #
 # Detect IP
 
-IP=$(/bin/awk '/Listen/{ print $2 }' $APP_DIR/conf.d/libra.conf | /bin/sed 's/\:8080$//')
+IP=$(/usr/sbin/lsof -a -u "${uuid}" -i  | /bin/grep LISTEN | /bin/awk '{ print $9 }' | /bin/sed 's/:webcache//' | /usr/bin/uniq)
 
 #
 # Get user id info
