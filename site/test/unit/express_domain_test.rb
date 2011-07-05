@@ -26,22 +26,22 @@ class ExpressDomainTest < ActiveSupport::TestCase
   end
   
   test "create does not alter" do
-    @domain.create!
+    @domain.create
     assert !@domain.alter
   end
   
   test "create function calls save" do
-    @domain.expects('save!')
-    @domain.create!
+    @domain.expects('save')
+    @domain.create
   end
   
   test "update alters" do
-    @domain.update!
+    @domain.update
     assert @domain.alter
   end
   
   test "update function calls save" do
-    @domain.expects('save!')
-    @domain.update!
+    @domain.expects('save')
+    @domain.update
   end
 end
