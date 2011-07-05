@@ -1,3 +1,5 @@
+from setuptools import setup
+
 setup(name='YourAppName',
       version='1.0',
       description='OpenShift App',
