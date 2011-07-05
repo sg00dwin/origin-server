@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.73.9
+Version:       0.73.10
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -141,6 +141,9 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Tue Jul 05 2011 Emily Dirsh <edirsh@redhat.com> 0.73.10-1
+- Don't include 'embedded' as a cart, ever. (jimjag@redhat.com)
+
 * Fri Jul 01 2011 Emily Dirsh <edirsh@redhat.com> 0.73.9-1
 - simplifying start script - checking for embedded cartridges
   (mmcgrath@redhat.com)
