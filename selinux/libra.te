@@ -180,6 +180,8 @@ allow sshd_t libra_domain:process { rlimitinh signal };
 dontaudit libra_domain ssh_home_t:dir search_dir_perms;
 
 dontaudit sendmail_t libra_initrc_t:fifo_file { read write };
+dontaudit domain libra_t:fifo_file write;
+
 append_files_pattern(sendmail_t, libra_var_lib_t, libra_var_lib_t)
 allow domain libra_var_lib_t:dir search_dir_perms;
 allow domain libra_var_lib_t:file { append getattr };
