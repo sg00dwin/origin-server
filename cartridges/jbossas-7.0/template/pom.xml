@@ -24,6 +24,7 @@
 <echo message="-------------------------------------------------------------------"/>
 <property name="war.file" value="ROOT.war"/>
 <property name="deploy.dir" value="deployments"/>
+<mkdir dir="${deploy.dir}"/>
 <move todir="${deploy.dir}">
   <fileset dir="target">
     <include name="${war.file}"/>
