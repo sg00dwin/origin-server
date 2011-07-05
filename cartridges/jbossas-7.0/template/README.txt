@@ -1,4 +1,17 @@
-The standalone/deployments directory in the JBoss Application Server 
+There are two options for deploying content to the JBoss Application Server within OpenShift Express.
+
+1) (Typical) You can upload you content in a maven src structure as is this sample ROOT.war and on 
+git push have the application built and deployed.  For this to work you'll need your pom.xml at the 
+root of your repository and an antrun task like in this sample to move the output from the build
+to the deployments directory.
+
+or
+
+2) You can git push prebuilt wars (with the corresponding .dodeploy file) into deployments/
+
+
+
+The deployments directory in the JBoss Application Server 
 distribution is the location end users can place their deployment content 
 (e.g. war, ear, jar, sar files) to have it automatically deployed into the server 
 runtime.
@@ -51,36 +64,35 @@ The relevant marker file types are:
                  
 Basic workflows:
 
-All examples assume variable $AS points to the root of the JBoss AS distribution.
-
 A) Add new zipped content and deploy it:
 
-1. cp target/example.war/ $AS/standalone/deployments
-2. touch $AS/standalone/deployments/example.war.dodeploy
+1. cp target/example.war/ deployments
+2. touch deployments/example.war.dodeploy
 
 B) Add new unzipped content and deploy it:
 
-1. cp -r target/example.war/ $AS/standalone/deployments
-2. touch $AS/standalone/deployments/example.war.dodeploy
+1. cp -r target/example.war/ deployments
+2. touch deployments/example.war.dodeploy
 
 C) Undeploy currently deployed content:
 
-1. rm $AS/standalone/deployments/example.war.isdeployed
+1. rm deployments/example.war.isdeployed
 
 D) Replace currently deployed zipped content with a new version and deploy it:
 
-1. cp target/example.war/ $AS/standalone/deployments
-2. touch $AS/standalone/deployments/example.war.dodeploy
+1. cp target/example.war/ deployments
+2. touch deployments/example.war.dodeploy
 
 E) Replace currently deployed unzipped content with a new version and deploy 
    it:
 
-1. rm $AS/standalone/deployments/example.war.isdeployed
-2. wait for $AS/standalone/deployments/example.war.undeployed file to appear
-3. cp -r target/example.war/ $AS/standalone/deployments
-4. touch $AS/standalone/deployments/example.war.dodeploy
+1. rm deployments/example.war.isdeployed
+2. wait for deployments/example.war.undeployed file to appear
+3. cp -r target/example.war/ deployments
+4. touch deployments/example.war.dodeploy
 
 F) Redeploy currently deployed content (i.e. bounce it with no content 
    change):
 
-1. touch $AS/standalone/deployments/example.war.dodeploy
+1. touch deployments/example.war.dodeploy
+
