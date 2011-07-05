@@ -24,13 +24,14 @@ class ExpressUserinfo
     data[:password] = @password unless @password.nil? # password is optional
     json_data = ActiveSupport::JSON.encode(data)
     http_post @@userinfo_url, json_data do |response|
+      Rails.logger.debug('response received from api')
       #set messages
       @messages = response[:result][:messages]
       #test exit code for success/failure
       if response[:exit_code] == 0
         #success! > set attributes
         @app_info = response[:result][:app_info]
-        response[:result][:user_info].each_pair |key, value| do
+        response[:result][:user_info].each do |key, value|
           unless key == :rhlogin
             send("#{name}=", value)
           end #end unless

@@ -300,6 +300,14 @@ form {
     color: #FF8000;
     border-color: #F2ED85;
   }
+  
+  &.success {
+    /* green text / green bg */
+    background-color: #efe;
+    background-image: url('/app/images/icons/success.png');
+    color: #363;
+    border-color: #ada;
+  }
 }
 
 #horrible_wrapper {
@@ -1151,6 +1159,26 @@ form p {
 
 form li {
   @include clearfix;
+}
+
+#new_express_domain {
+  label, input {
+    display: block;
+  }
+  
+  label {
+    width: auto;
+    margin: 0 0 0 15px;
+    line-height: 15px;
+  }
+  
+  input[type=file] {
+    @include form_text_input;
+  }
+  
+  input.create {
+    margin-left: 16px;
+  }
 }
 
 /*

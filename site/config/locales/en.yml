@@ -42,3 +42,5 @@ en:
   express_api:
     errors:
       unauthorized: "Authorization problem. Please check that your password is correct."
+    messages:
+      domain_created: "Congratulations! You successfully created your domain"

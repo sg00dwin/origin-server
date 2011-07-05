@@ -143,6 +143,7 @@ class ApplicationController < ActionController::Base
   end
   
   private
+  
   def require_login
     if !session[:login]
       session[:login_workflow] = url_for :controller => self.controller_name, 
@@ -150,4 +151,10 @@ class ApplicationController < ActionController::Base
       redirect_to login_path
     end
   end
+  
+  # Block all access to a controller
+  def deny_access
+    redirect_to root_path
+  end
+  
 end
