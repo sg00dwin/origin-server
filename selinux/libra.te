@@ -15,7 +15,7 @@ type libra_tmp_t;
 files_tmp_file(libra_tmp_t)
 
 type libra_var_lib_t;
-files_type(libra_var_lib_t)
+files_poly(libra_var_lib_t)
 
 type libra_t;
 libra_service_domain(libra_t)
