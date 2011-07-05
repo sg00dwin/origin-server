@@ -43,4 +43,24 @@ RedHatCloud::Application.configure do
   config.streamline = "http://localhost" # Not used
   config.streamline_secret = ''
   config.captcha_secret = 'secret'
+  
+  config.express_api_server = ''
+  
+  ## AWS configuration
+  #config.aws_key = "AKIAJMZR4X6F46UMXV6Q"
+  #config.aws_secret = "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"
+  #config.aws_keypair = "libra"
+  #config.aws_name = "libra-node"
+  #config.aws_environment = "demo"
+  #config.aws_ami = "N/A"
+  #config.repo_threshold = 100
+  #config.s3_bucket = "libra-dev"
+
+  ## DDNS configuration
+  #config.libra_domain = "rhcloud.com"
+  #config.resolver = "209.132.178.9"
+  #config.secret = "hmac-md5:dhcpupdate:fzAvGcKPZWiFgmF8qmNUaA=="
+
+  ## Broker configuration
+  #config.per_user_app_limit = 1
 end

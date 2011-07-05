@@ -2,7 +2,7 @@
 
 Summary:   Provides python-wsgi-3.2 support
 Name:      rhc-cartridge-wsgi-3.2
-Version:   0.73.4
+Version:   0.73.6
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -75,6 +75,15 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Fri Jul 01 2011 Dan McPherson <dmcphers@redhat.com> 0.73.6-1
+- move untar above perms (dmcphers@redhat.com)
+- back off on calling post receive for now (dmcphers@redhat.com)
+
+* Fri Jul 01 2011 Emily Dirsh <edirsh@redhat.com> 0.73.5-1
+- Adding info in the readme about setup.py (mmcgrath@redhat.com)
+- Adding setup.py (mmcgrath@redhat.com)
+- call post-receive from configure instead of start (dmcphers@redhat.com)
+
 * Wed Jun 29 2011 Dan McPherson <dmcphers@redhat.com> 0.73.4-1
 - undo passing rhlogin to cart (dmcphers@redhat.com)
 - add nurture call for git push (dmcphers@redhat.com)

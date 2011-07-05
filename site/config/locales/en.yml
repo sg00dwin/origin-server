@@ -38,3 +38,9 @@ en:
        terms_accepted: "Accept Terms?"
       access/express_request:
        terms_accepted: "Accept Terms?"
+
+  express_api:
+    errors:
+      unauthorized: "Authorization problem. Please check that your password is correct."
+    messages:
+      domain_created: "Congratulations! You successfully created your domain"

@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.73.7
+Version:   0.73.10
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -64,6 +64,37 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Tue Jul 05 2011 Emily Dirsh <edirsh@redhat.com> 0.73.10-1
+- Updated express api baseurl (edirsh@redhat.com)
+
+* Tue Jul 05 2011 Emily Dirsh <edirsh@redhat.com> 0.73.9-1
+- Updated tests to use new function names (edirsh@redhat.com)
+
+* Tue Jul 05 2011 Emily Dirsh <edirsh@redhat.com> 0.73.8-1
+- Prevent access to control panel (edirsh@redhat.com)
+- Changed result checking from result parameter to data parameter
+  (edirsh@redhat.com)
+- Merge branch 'web-control-panel' (edirsh@redhat.com)
+- Unfortunate giant commit - working domain creation form on getting started
+  page (edirsh@redhat.com)
+- Added userinfo model (edirsh@redhat.com)
+- Added login requirement to control panel (edirsh@redhat.com)
+- Functioning remote form submission (edirsh@redhat.com)
+- Merge branch 'master' into web-control-panel (edirsh@redhat.com)
+- Merge branch 'master' into web-control-panel (edirsh@redhat.com)
+- Merge branch 'master' into web-control-panel (edirsh@redhat.com)
+- Merge branch 'em-dev' into web-control-panel (edirsh@redhat.com)
+- Merge branch 'master' into web-control-panel (edirsh@redhat.com)
+- Merge branch 'master' into web-control-panel (edirsh@redhat.com)
+- Added domain form to control panel (edirsh@redhat.com)
+- Merge branch 'master' into web-control-panel (edirsh@redhat.com)
+- Added domain controller (edirsh@redhat.com)
+- Added express api mixin tests (edirsh@redhat.com)
+- Added unit tests for express_domain (edirsh@redhat.com)
+- Merge branch 'master' into web-control-panel (edirsh@redhat.com)
+- basic express api/domain model behavior written (edirsh@redhat.com)
+- Model and controller for control-panel in place (edirsh@redhat.com)
+
 * Fri Jul 01 2011 Dan McPherson <dmcphers@redhat.com> 0.73.7-1
 - fixup embedded cart remove (dmcphers@redhat.com)
 

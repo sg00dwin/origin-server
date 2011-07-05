@@ -32,14 +32,22 @@ $(function() {
   
   //trigger on focus
   promos.focusin(function(event) {
-    event.stopPropagation();
-    slideUp($(this).find('.description'));
+    if ($(event.target).hasClass('list_link')) {
+      /* If this link isn't visible when it's focused, 
+       * it'll pop into view, push everything else up
+       * and generally screw things up
+       * so just show it without delay on focus
+       */ 
+      $(this).find('.description').css({'bottom':0});
+    }
+    else {
+      slideUp($(this).find('.description'));
+    }
   });
   promos.focusout(function(event) {
-      event.stopPropagation();
-      slideDown($(this).find('.description'));
+    slideDown($(this).find('.description'));
   });
-
+  
   function slideUp(obj) {
     obj.stop().animate({'bottom': 0}, 500);
   }

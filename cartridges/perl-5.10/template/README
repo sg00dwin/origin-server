@@ -6,6 +6,7 @@ perl/ - Externally exposed perl code goes here
 libs/ - Additional libraries
 misc/ - For not-externally exposed perl code
 ../data - For persistent data data
+deplist.txt - A list of perl modules required to run
 
 
 Notes about layout
@@ -16,6 +17,13 @@ directories if needed.
 Note: Every time you push, everything in your remote repo dir gets recreated
 please store long term items (like an sqlite database) in ../data which will
 persist between pushes of your repo.
+
+
+deplist.txt
+===========
+
+Adding module names to deplist.txt causes your remote openshift node to download
+the required modules and install them.
 
 
 Additional information

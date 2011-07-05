@@ -85,7 +85,7 @@ Facter.add(:cart_list) do
     carts = []
     Dir.glob('/usr/libexec/li/cartridges/*/').each do |cart|
         cart = File.basename(cart).sub(/^(.*)-(\d+)\.(\d+)\.?.*$/, '\1-\2.\3')
-        carts << cart unless cart.nil?
+        carts << cart unless cart.nil? || cart == "embedded"
     end
     setcode { carts.join('|') }
 end

@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.73.6
+Version:   0.73.14
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -10,9 +10,11 @@ URL:       http://openshift.redhat.com
 Source0:   %{name}-%{version}.tar.gz
 
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
-BuildRequires: git
+BuildRequires:  git
+BuildRequires:  java-devel >= 1:1.6.0 
+BuildRequires:  jpackage-utils
 Requires:  rhc-node
-Requires:  jboss-as7 = 7.0.0.Beta7OS
+Requires: jboss-as7 = 7.0.0.CR1
 Requires:  maven3
 
 BuildArch: noarch
@@ -24,6 +26,17 @@ Provides JBossAS7 support to OpenShift
 %setup -q
 
 %build
+
+#mkdir -p template/src/main/webapp/WEB-INF/classes
+#pushd template/src/main/java > /dev/null
+#/usr/bin/javac *.java -d ../webapp/WEB-INF/classes 
+#popd
+
+mkdir -p info/data
+pushd template/src/main/webapp > /dev/null 
+/usr/bin/jar -cvf ../../../../info/data/ROOT.war -C . .
+popd
+
 rm -rf git_template
 cp -r template/ git_template/
 cd git_template
@@ -74,6 +87,32 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Fri Jul 01 2011 Dan McPherson <dmcphers@redhat.com> 0.73.14-1
+- up jboss.version file (dmcphers@redhat.com)
+- fixup terminology in index.html (dmcphers@redhat.com)
+
+* Fri Jul 01 2011 Dan McPherson <dmcphers@redhat.com> 0.73.13-1
+- change jboss as7 dep (dmcphers@redhat.com)
+
+* Fri Jul 01 2011 Dan McPherson <dmcphers@redhat.com> 0.73.12-1
+- trying different java requires (dmcphers@redhat.com)
+
+* Fri Jul 01 2011 Dan McPherson <dmcphers@redhat.com> 0.73.11-1
+- trying full jar path in build (dmcphers@redhat.com)
+
+* Fri Jul 01 2011 Dan McPherson <dmcphers@redhat.com> 0.73.10-1
+- move ROOT.war out of repo (dmcphers@redhat.com)
+
+* Fri Jul 01 2011 Dan McPherson <dmcphers@redhat.com> 0.73.9-1
+- moving default template to be maven based (dmcphers@redhat.com)
+
+* Fri Jul 01 2011 Dan McPherson <dmcphers@redhat.com> 0.73.8-1
+- make jboss like other carts for when untar happens (dmcphers@redhat.com)
+- back off on calling post receive for now (dmcphers@redhat.com)
+
+* Fri Jul 01 2011 Emily Dirsh <edirsh@redhat.com> 0.73.7-1
+- call post-receive from configure instead of start (dmcphers@redhat.com)
+
 * Wed Jun 29 2011 Dan McPherson <dmcphers@redhat.com> 0.73.6-1
 - undo passing rhlogin to cart (dmcphers@redhat.com)
 - add nurture call for git push (dmcphers@redhat.com)

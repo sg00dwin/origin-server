@@ -434,6 +434,12 @@ esac
 
 __EOF__
 
+#
+# Populate repo
+#
+GIT_DIR="$GIT_DIR" git archive --format=tar HEAD | (cd "${APP_DIR}/repo" && tar --warning=no-timestamp -xf -)
+cp ${JBOSS_CARTRIDGE_ROOT}/info/data/ROOT.war $APP_DIR/repo/deployments 
+touch $APP_DIR/repo/deployments/ROOT.war.dodeploy
 
 chmod +x "$APP_DIR/${application}_ctl.sh" || error "Failed to chmod new application scripts" 122
 chown $user_id.$group_id -R $APP_DIR || error "Failed to chown new application space.  Please contact support" 123
@@ -442,11 +448,12 @@ chown root.root -R "$APP_DIR/${application}_ctl.sh"
 chown $user_id.$group_id -R "$APP_DIR/${jboss_version}/standalone"
 chown $user_id.$group_id $M2_DIR
 chcon -t libra_var_lib_t -l s0:$c_val -R "$APP_DIR"
+#
+# Start the server
+#
 cd $APP_DIR
-#
-# Populate repo and start the server
-#
-GIT_DIR="$GIT_DIR" runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l s0:$c_val $GIT_DIR/hooks/post-receive" || error "Failed to start ${application}" 121
+runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l s0:$c_val $APP_DIR/${application}_ctl.sh start" || error "Failed to start ${application}" 121
+#GIT_DIR="$GIT_DIR" runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l s0:$c_val $GIT_DIR/hooks/post-receive" || error "Failed to start ${application}" 121
 
 #
 # Create virtualhost definition for apache

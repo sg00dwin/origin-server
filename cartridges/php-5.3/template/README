@@ -6,6 +6,7 @@ php/ - Externally exposed php code goes here
 libs/ - Additional libraries
 misc/ - For not-externally exposed php code
 ../data - For persistent data data
+deplist.txt - list of pears to install
 
 
 Notes about layout
@@ -16,6 +17,13 @@ directories if needed.
 Note: Every time you push, everything in your remote repo dir gets recreated
 please store long term items (like an sqlite database) in ../data which will
 persist between pushes of your repo.
+
+
+deplist.txt
+===========
+
+A list of pears to install, line by line on the server.  This will happen when
+the user git pushes.
 
 
 Additional information
