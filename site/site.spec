@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.73.8
+Version:   0.73.9
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -64,6 +64,9 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Tue Jul 05 2011 Emily Dirsh <edirsh@redhat.com> 0.73.9-1
+- Updated tests to use new function names (edirsh@redhat.com)
+
 * Tue Jul 05 2011 Emily Dirsh <edirsh@redhat.com> 0.73.8-1
 - Prevent access to control panel (edirsh@redhat.com)
 - Changed result checking from result parameter to data parameter
