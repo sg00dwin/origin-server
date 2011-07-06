@@ -1,12 +1,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>mynamespace</groupId>
+  <groupId>mygroupid</groupId>
   <artifactId>ROOT</artifactId>
   <packaging>war</packaging>
   <version>1.0</version>
   <name>ROOT</name>
-  <url>http://myapp-mynamespace.rhcloud.com</url>
   <build>
     <finalName>ROOT</finalName>
     <plugins>
@@ -30,7 +29,6 @@
     <include name="${war.file}"/>
   </fileset>
 </move>
-<touch file="${deploy.dir}/${war.file}.dodeploy"/>
 
 <echo message="-------------------------------------------------------------------"/>
 <echo message="-------------------- Deploy application finish --------------------"/>
