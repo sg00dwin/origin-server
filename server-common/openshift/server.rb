@@ -449,7 +449,7 @@ module Libra
     #
     def execute(framework, action, app_name, user)
       # Make the call to configure the application
-      Libra.client_debug "DEBUG: Executing framework:#{framework} action:#{action} app_name:#{app_name} user:#{user}" if Libra.c[:rpc_opts][:verbose]
+      Libra.client_debug "Executing framework:#{framework} action:#{action} app_name:#{app_name} user:#{user}" if Libra.c[:rpc_opts][:verbose]
       execute_internal(framework, action, "#{app_name} #{user.namespace} #{user.uuid}")
     end
 

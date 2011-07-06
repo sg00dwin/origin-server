@@ -219,7 +219,7 @@ module Libra
     # Deletes the user with the current information
     #    
     def delete
-      Libra.client_debug "DEBUG: Deleting user: #{rhlogin}" if Libra.c[:rpc_opts][:verbose]
+      Libra.client_debug "Deleting user: #{rhlogin}" if Libra.c[:rpc_opts][:verbose]
       Helper.s3.delete(Libra.c[:s3_bucket], "user_info/#{rhlogin}/user.json")
     end
 
