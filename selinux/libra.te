@@ -1,4 +1,4 @@
-policy_module(libra,1.0.14)
+policy_module(libra,1.0.15)
 
 ########################################
 #
@@ -15,7 +15,7 @@ type libra_tmp_t;
 files_tmp_file(libra_tmp_t)
 
 type libra_var_lib_t;
-files_type(libra_var_lib_t)
+files_poly(libra_var_lib_t)
 
 type libra_t;
 libra_service_domain(libra_t)
@@ -180,6 +180,8 @@ allow sshd_t libra_domain:process { rlimitinh signal };
 dontaudit libra_domain ssh_home_t:dir search_dir_perms;
 
 dontaudit sendmail_t libra_initrc_t:fifo_file { read write };
+dontaudit domain libra_t:fifo_file write;
+
 append_files_pattern(sendmail_t, libra_var_lib_t, libra_var_lib_t)
 allow domain libra_var_lib_t:dir search_dir_perms;
 allow domain libra_var_lib_t:file { append getattr };
@@ -198,8 +200,6 @@ can_exec(libra_t, mysqld_safe_exec_t)
 corenet_tcp_bind_mysqld_port(libra_t)
 mysql_search_db(libra_t)
 allow libra_t self:process setexec;
-allow libra_t mysqld_safe_exec_t:file entrypoint;
-
 
 
 ##########

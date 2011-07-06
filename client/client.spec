@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system client tools
 Name:          rhc
-Version:       0.73.8
+Version:       0.73.9
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       MIT
@@ -94,6 +94,10 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_sysconfdir}/openshift/express.conf
 
 %changelog
+* Tue Jul 05 2011 Dan McPherson <dmcphers@redhat.com> 0.73.9-1
+- Allowing rhc-tail-files to operate on the ~/ dir instead of ~/app
+  (mmcgrath@redhat.com)
+
 * Fri Jul 01 2011 Emily Dirsh <edirsh@redhat.com> 0.73.8-1
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
   (mmcgrath@redhat.com)
