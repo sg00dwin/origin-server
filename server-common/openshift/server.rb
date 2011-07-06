@@ -141,21 +141,17 @@ module Libra
     
     def self.delete_app_dns_entries(app_name, namespace, retries=2)
       auth_token = dyn_login
-      dyn_do('server.delete_app_dns_entries', retries) do
-        dyn_delete_sshfp_record(app_name, namespace, auth_token)
-        dyn_delete_a_record(app_name, namespace, auth_token)
-        dyn_publish(auth_token)
-      end
+      dyn_delete_sshfp_record(app_name, namespace, auth_token, retries)
+      dyn_delete_a_record(app_name, namespace, auth_token, retries)
+      dyn_publish(auth_token, retries)
       dyn_logout(auth_token)
     end
     
     def self.create_app_dns_entries(app_name, namespace, public_ip, sshfp, retries=2)
       auth_token = dyn_login
-      dyn_do('server.create_app_dns_entries', retries) do
-        dyn_create_a_record(app_name, namespace, public_ip, sshfp, auth_token)
-        dyn_create_sshfp_record(app_name, namespace, sshfp, auth_token)
-        dyn_publish(auth_token)
-      end
+      dyn_create_a_record(app_name, namespace, public_ip, sshfp, auth_token, retries)
+      dyn_create_sshfp_record(app_name, namespace, sshfp, auth_token, retries)
+      dyn_publish(auth_token, retries)
       dyn_logout(auth_token)
     end
     
@@ -178,56 +174,84 @@ module Libra
       resp, data = dyn_delete("Session/", auth_token)
     end
 
-    def self.dyn_create_a_record(application, namespace, public_ip, sshfp, auth_token)
-      fqdn = "#{application}-#{namespace}.#{Libra.c[:libra_domain]}"
-      # Create the A record
-      path = "ARecord/#{Libra.c[:libra_zone]}/#{fqdn}/"
-      record_data = { :rdata => { :address => public_ip }, :ttl => "60" }
-      resp, data = dyn_post(path, record_data, auth_token)
+    def self.dyn_create_a_record(application, namespace, public_ip, sshfp, auth_token, retries=2)
+      resp, data = nil, nil
+      dyn_do('dyn_create_a_record', retries) do
+        fqdn = "#{application}-#{namespace}.#{Libra.c[:libra_domain]}"
+        # Create the A record
+        path = "ARecord/#{Libra.c[:libra_zone]}/#{fqdn}/"
+        record_data = { :rdata => { :address => public_ip }, :ttl => "60" }
+        resp, data = dyn_post(path, record_data, auth_token)
+      end
+      return resp, data
     end
     
-    def self.dyn_create_sshfp_record(application, namespace, sshfp, auth_token)
-      fqdn = "#{application}-#{namespace}.#{Libra.c[:libra_domain]}"
-      # Create the SSHFP record
-      path = "SSHFPRecord/#{Libra.c[:libra_zone]}/#{fqdn}/"
-      record_data = { :rdata => { :algorithm => '1',  :fptype => '1', :fingerprint => sshfp}, :ttl => "60" }
-      resp, data = dyn_post(path, record_data, auth_token)
+    def self.dyn_create_sshfp_record(application, namespace, sshfp, auth_token, retries=2)
+      resp, data = nil, nil
+      dyn_do('dyn_create_sshfp_record', retries) do
+        fqdn = "#{application}-#{namespace}.#{Libra.c[:libra_domain]}"
+        # Create the SSHFP record
+        path = "SSHFPRecord/#{Libra.c[:libra_zone]}/#{fqdn}/"
+        record_data = { :rdata => { :algorithm => '1',  :fptype => '1', :fingerprint => sshfp}, :ttl => "60" }
+        resp, data = dyn_post(path, record_data, auth_token)
+      end
+      return resp, data
     end
 
-    def self.dyn_delete_a_record(application, namespace, auth_token)
-      fqdn = "#{application}-#{namespace}.#{Libra.c[:libra_domain]}"
-      # Delete the A record
-      path = "ARecord/#{Libra.c[:libra_zone]}/#{fqdn}/"
-      resp, data = dyn_delete(path, auth_token)
+    def self.dyn_delete_a_record(application, namespace, auth_token, retries=2)
+      resp, data = nil, nil
+      dyn_do('dyn_delete_a_record', retries) do
+        fqdn = "#{application}-#{namespace}.#{Libra.c[:libra_domain]}"
+        # Delete the A record
+        path = "ARecord/#{Libra.c[:libra_zone]}/#{fqdn}/"
+        resp, data = dyn_delete(path, auth_token)
+      end
+      return resp, data
     end
     
-    def self.dyn_delete_sshfp_record(application, namespace, auth_token)
-      fqdn = "#{application}-#{namespace}.#{Libra.c[:libra_domain]}"
-      # Delete the SSHFP record
-      path = "SSHFPRecord/#{Libra.c[:libra_zone]}/#{fqdn}/"
-      resp, data = dyn_delete(path, auth_token)
+    def self.dyn_delete_sshfp_record(application, namespace, auth_token, retries=2)
+      resp, data = nil, nil
+      dyn_do('dyn_delete_sshfp_record', retries) do
+        fqdn = "#{application}-#{namespace}.#{Libra.c[:libra_domain]}"
+        # Delete the SSHFP record
+        path = "SSHFPRecord/#{Libra.c[:libra_zone]}/#{fqdn}/"
+        resp, data = dyn_delete(path, auth_token)
+      end
+      return resp, data
     end
 
-    def self.dyn_create_txt_record(namespace, auth_token)
-      fqdn = "#{namespace}.#{Libra.c[:libra_domain]}"
-      # Create the TXT record
-      path = "TXTRecord/#{Libra.c[:libra_zone]}/#{fqdn}/"
-      record_data = { :rdata => { :txtdata => "Text record for #{namespace}"}, :ttl => "60" }
-      resp, data = dyn_post(path, record_data, auth_token)
+    def self.dyn_create_txt_record(namespace, auth_token, retries=2)
+      resp, data = nil, nil
+      dyn_do('dyn_create_txt_record', retries) do
+        fqdn = "#{namespace}.#{Libra.c[:libra_domain]}"
+        # Create the TXT record
+        path = "TXTRecord/#{Libra.c[:libra_zone]}/#{fqdn}/"
+        record_data = { :rdata => { :txtdata => "Text record for #{namespace}"}, :ttl => "60" }
+        resp, data = dyn_post(path, record_data, auth_token)
+      end
+      return resp, data
     end
 
-    def self.dyn_delete_txt_record(namespace, auth_token)
-      fqdn = "#{namespace}.#{Libra.c[:libra_domain]}"
-      # Delete the TXT record
-      path = "TXTRecord/#{Libra.c[:libra_zone]}/#{fqdn}/"
-      resp, data = dyn_delete(path, auth_token)
+    def self.dyn_delete_txt_record(namespace, auth_token, retries=2)
+      resp, data = nil, nil
+      dyn_do('dyn_delete_txt_record', retries) do
+        fqdn = "#{namespace}.#{Libra.c[:libra_domain]}"
+        # Delete the TXT record
+        path = "TXTRecord/#{Libra.c[:libra_zone]}/#{fqdn}/"
+        resp, data = dyn_delete(path, auth_token)
+      end
+      return resp, data
     end
 
-    def self.dyn_publish(auth_token)
-      # Publish the changes
-      path = "Zone/#{Libra.c[:libra_zone]}/"
-      publish_data = { "publish" => "true" }
-      resp, data = dyn_put(path, publish_data, auth_token)
+    def self.dyn_publish(auth_token, retries=2)
+      resp, data = nil, nil
+      dyn_do('dyn_publish', retries) do
+        # Publish the changes
+        path = "Zone/#{Libra.c[:libra_zone]}/"
+        publish_data = { "publish" => "true" }
+        resp, data = dyn_put(path, publish_data, auth_token)
+      end
+      return resp, data
     end
 
     def self.dyn_has_txt_record?(namespace, auth_token, raise_exception_on_exists=false)

@@ -56,11 +56,9 @@ module Libra
         Server.dyn_has_txt_record?(namespace, auth_token, true)
 
         Libra.client_debug "Creating user entry rhlogin:#{rhlogin} ssh:#{ssh} namespace:#{namespace}" if Libra.c[:rpc_opts][:verbose]
-        
-        Server.dyn_do('user.create', dyn_retries) do
-          Server.dyn_create_txt_record(namespace, auth_token)
-          Server.dyn_publish(auth_token)
-        end
+
+        Server.dyn_create_txt_record(namespace, auth_token, dyn_retries)
+        Server.dyn_publish(auth_token, dyn_retries)
         Libra.logger_debug "DEBUG: Attempting to add namespace '#{namespace}' for user '#{rhlogin}'"
         Libra.client_debug "Creating user entry rhlogin:#{rhlogin} ssh:#{ssh} namespace:#{namespace}" if Libra.c[:rpc_opts][:verbose]
         begin
@@ -81,8 +79,8 @@ module Libra
         rescue Exception => e
           Libra.logger_debug "DEBUG: Attempting to remove namespace '#{namespace}' after failure to add user '#{rhlogin}'"
           begin
-            Server.dyn_delete_txt_record(namespace, auth_token)
-            Server.dyn_publish(auth_token)
+            Server.dyn_delete_txt_record(namespace, auth_token, dyn_retries)
+            Server.dyn_publish(auth_token, dyn_retries)
           ensure
             raise
           end
@@ -151,12 +149,12 @@ module Libra
     #
     # Updates the user's namespace for txt and full app domains
     #
-    def update_namespace(new_namespace)
+    def update_namespace(new_namespace, dyn_retries=2)
       auth_token = Server.dyn_login
       begin
         Server.dyn_has_txt_record?(new_namespace, auth_token, true) 
-        Server.dyn_create_txt_record(new_namespace, auth_token)
-        Server.dyn_delete_txt_record(@namespace, auth_token)
+        Server.dyn_create_txt_record(new_namespace, auth_token, dyn_retries)
+        Server.dyn_delete_txt_record(@namespace, auth_token, dyn_retries)
         apps.each do |app_name, app_info|
           Libra.logger_debug "DEBUG: Updating namespaces for app: #{app_name}"
           server = Server.new(app_info['server_identity'])
@@ -164,12 +162,12 @@ module Libra
           sshfp = server.get_fact_direct('sshfp').split[-1]
           
           # Cleanup the previous records 
-          Server.dyn_delete_sshfp_record(app_name, @namespace, auth_token)            
-          Server.dyn_delete_a_record(app_name, @namespace, auth_token)     
+          Server.dyn_delete_sshfp_record(app_name, @namespace, auth_token, dyn_retries)            
+          Server.dyn_delete_a_record(app_name, @namespace, auth_token, dyn_retries)     
           
           # add the new entries          
-          Server.dyn_create_a_record(app_name, new_namespace, public_ip, sshfp, auth_token)         
-          Server.dyn_create_sshfp_record(app_name, new_namespace, sshfp, auth_token)
+          Server.dyn_create_a_record(app_name, new_namespace, public_ip, sshfp, auth_token, dyn_retries)         
+          Server.dyn_create_sshfp_record(app_name, new_namespace, sshfp, auth_token, dyn_retries)
         end
         
         update_namespace_failures = []
@@ -202,7 +200,7 @@ module Libra
         
         Nurture.libra_contact(rhlogin, uuid, new_namespace, 'update')
         
-        Server.dyn_publish(auth_token)
+        Server.dyn_publish(auth_token, dyn_retries)
       rescue LibraException => e
         raise
       rescue Exception => e
