@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.73.10
+Version:       0.73.11
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -142,6 +142,12 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Tue Jul 05 2011 Dan McPherson <dmcphers@redhat.com> 0.73.11-1
+- Adding lsof as a req for node (mmcgrath@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- Adding polyinstantiated tmp dir for pam_namespace (mmcgrath@redhat.com)
+
 * Tue Jul 05 2011 Emily Dirsh <edirsh@redhat.com> 0.73.10-1
 - Don't include 'embedded' as a cart, ever. (jimjag@redhat.com)
 
