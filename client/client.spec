@@ -14,12 +14,17 @@ BuildRequires: rubygem-rake
 BuildRequires: rubygem-rspec
 Requires:      ruby >= 1.8.6
 Requires:      rubygem-parseconfig
+
 %if 0%{?fedora} == 13
 %define jpure 1
 %endif
 %if 0%{?rhel} == 5
 %define jpure 1
 %endif
+%ifos darwin
+%define jpure 1
+%endif
+
 %if 0%{?jpure} == 1
 Requires:      rubygem-json_pure
 %else
