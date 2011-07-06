@@ -5,6 +5,8 @@ git push have the application built and deployed.  For this to work you'll need 
 root of your repository and an antrun task like in this sample to move the output from the build
 to the deployments directory.
 
+Note: If you are building locally you'll also want to add target and any output wars/ears under deployments from the build to your .gitignore file.
+
 or
 
 2) You can git push prebuilt wars (with the corresponding .dodeploy file) into deployments/.  To do this
