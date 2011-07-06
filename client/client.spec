@@ -99,6 +99,10 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_sysconfdir}/openshift/express.conf
 
 %changelog
+* Tue Jul 06 2011 Jim Jagielski <jimjag@redhat.com> 0.73.10-1
+- json_pure dependencies
+  (mmcgrath@redhat.com)
+
 * Tue Jul 05 2011 Dan McPherson <dmcphers@redhat.com> 0.73.9-1
 - Allowing rhc-tail-files to operate on the ~/ dir instead of ~/app
   (mmcgrath@redhat.com)
