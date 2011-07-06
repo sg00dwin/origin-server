@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.73.18
+Version:   0.73.19
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -87,6 +87,10 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Wed Jul 06 2011 Dan McPherson <dmcphers@redhat.com> 0.73.19-1
+- readme update (dmcphers@redhat.com)
+- add data dir to jboss (dmcphers@redhat.com)
+
 * Wed Jul 06 2011 Dan McPherson <dmcphers@redhat.com> 0.73.18-1
 - change groupid to be mynamespace by default (dmcphers@redhat.com)
 
