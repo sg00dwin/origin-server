@@ -90,7 +90,7 @@ MYSQL_DIR="$CUSTOMER_HOME/mysql-5.1/"
 #
 # Detect IP
 
-IP=$(/usr/sbin/lsof -a -u "${uuid}" -i  | /bin/grep LISTEN | /bin/awk '{ print $9 }' | /bin/sed 's/:webcache//' | /usr/bin/uniq)
+IP=$(/usr/sbin/lsof -a -u "${uuid}" -i  | /bin/grep webcache..LISTEN | /bin/awk '{ print $9 }' | /bin/sed 's/:webcache//' | /usr/bin/uniq)
 
 #
 # Get user id info
