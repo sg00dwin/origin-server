@@ -46,7 +46,7 @@ module Libra
     # Creates a new user, raising an exception
     # if the user already exists or invalid chars are found.
     #
-    def self.create(rhlogin, ssh, namespace)
+    def self.create(rhlogin, ssh, namespace, dyn_retries=2)
       auth_token = nil
       begin
         auth_token = Server.dyn_login
@@ -56,9 +56,11 @@ module Libra
         Server.dyn_has_txt_record?(namespace, auth_token, true)
 
         Libra.client_debug "Creating user entry rhlogin:#{rhlogin} ssh:#{ssh} namespace:#{namespace}" if Libra.c[:rpc_opts][:verbose]
-
-        Server.dyn_create_txt_record(namespace, auth_token)
-        Server.dyn_publish(auth_token) # TODO should we publish on ensure?
+        
+        Server.dyn_do('user.create', dyn_retries) do
+          Server.dyn_create_txt_record(namespace, auth_token)
+          Server.dyn_publish(auth_token)
+        end
         Libra.logger_debug "DEBUG: Attempting to add namespace '#{namespace}' for user '#{rhlogin}'"
         Libra.client_debug "Creating user entry rhlogin:#{rhlogin} ssh:#{ssh} namespace:#{namespace}" if Libra.c[:rpc_opts][:verbose]
         begin
@@ -80,7 +82,7 @@ module Libra
           Libra.logger_debug "DEBUG: Attempting to remove namespace '#{namespace}' after failure to add user '#{rhlogin}'"
           begin
             Server.dyn_delete_txt_record(namespace, auth_token)
-            Server.dyn_publish(auth_token) # TODO should we publish on ensure?
+            Server.dyn_publish(auth_token)
           ensure
             raise
           end

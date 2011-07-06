@@ -139,20 +139,38 @@ module Libra
       raise DNSException.new(145), "Error communicating with DNS system.  If the problem persists please contact Red Hat support.", caller[0..5]
     end
     
-    def self.delete_app_dns_entries(app_name, namespace)
+    def self.delete_app_dns_entries(app_name, namespace, retries=2)
       auth_token = dyn_login
-      dyn_delete_sshfp_record(app_name, namespace, auth_token)
-      dyn_delete_a_record(app_name, namespace, auth_token)
-      dyn_publish(auth_token)
+      dyn_do('server.delete_app_dns_entries', retries) do
+        dyn_delete_sshfp_record(app_name, namespace, auth_token)
+        dyn_delete_a_record(app_name, namespace, auth_token)
+        dyn_publish(auth_token)
+      end
       dyn_logout(auth_token)
     end
     
-    def self.create_app_dns_entries(app_name, namespace, public_ip, sshfp)
+    def self.create_app_dns_entries(app_name, namespace, public_ip, sshfp, retries=2)
       auth_token = dyn_login
-      dyn_create_a_record(app_name, namespace, public_ip, sshfp, auth_token)
-      dyn_create_sshfp_record(app_name, namespace, sshfp, auth_token)
-      dyn_publish(auth_token)
+      dyn_do('server.create_app_dns_entries', retries) do
+        dyn_create_a_record(app_name, namespace, public_ip, sshfp, auth_token)
+        dyn_create_sshfp_record(app_name, namespace, sshfp, auth_token)
+        dyn_publish(auth_token)
+      end
       dyn_logout(auth_token)
+    end
+    
+    def self.dyn_do(method, retries=2)
+      i = 0
+      while true
+        begin
+          yield
+          break
+        rescue DNSException => e
+          raise if i >= retries
+          Libra.logger_debug "DEBUG: Retrying #{method} after exception caught from DNS request: #{e.message}"
+          i += 1
+        end
+      end
     end
 
     def self.dyn_logout(auth_token)
