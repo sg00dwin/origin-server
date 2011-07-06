@@ -111,6 +111,28 @@ module Libra
           return exit_code
       end
 
+      # run a command in an alternate SELinux context
+      def runcon(cmd, user=nil, role=nil, type=nil)
+        prefix = 'runcon'
+        prefix += (' -u ' + user) if user
+        prefix += (' -r ' + role) if role
+        prefix += (' -t ' + type) if type
+        fullcmd = prefix + " " + cmd
+
+        puts "runcon: #{fullcmd}"
+        pid, stdin, stdout, stderr = Open4::popen4(fullcmd)
+
+        stdin.close
+        ignored, status = Process::waitpid2 pid
+        exit_code = status.exitstatus
+
+        $logger.info("Standard Output:\n#{stdout.read}")
+        $logger.info("Standard Error:\n#{stderr.read}")
+
+        $logger.error("(#{$$}): Execution failed #{cmd} with exit_code: #{exit_code.to_s}") if exit_code != 0
+        return exit_code
+      end
+
       def curl(url)
           pid, stdin, stdout, stderr = Open4::popen4("curl -s #{url}")
 
