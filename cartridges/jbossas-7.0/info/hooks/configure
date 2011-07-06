@@ -446,7 +446,7 @@ chown $user_id.$group_id -R $APP_DIR || error "Failed to chown new application s
 # Secure script and config dirs.
 chown root.root -R "$APP_DIR/${application}_ctl.sh"
 chown $user_id.$group_id -R "$APP_DIR/${jboss_version}/standalone"
-chown $user_id.$group_id $M2_DIR $APP_DIR/tmp
+chown $user_id.$group_id $M2_DIR
 chcon -t libra_var_lib_t -l s0:$c_val -R "$APP_DIR"
 #
 # Start the server
