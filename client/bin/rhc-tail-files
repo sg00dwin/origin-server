@@ -35,7 +35,7 @@ Tail the logs of an application
 
   -l|--rhlogin   rhlogin    Red Hat login (RHN or OpenShift login with OpenShift Express access) (#{rhlogin})
   -a|--app                  Target application (required)
-  -f|--files                File glob relative to app (default ./logs/*) (optional)
+  -f|--files                File glob relative to app (default <application_name>/logs/*) (optional)
   -p|--password  password   RHLogin password (optional, will prompt)
   -d|--debug                Print Debug info
   -h|--help                 Show Usage info
