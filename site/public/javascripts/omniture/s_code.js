@@ -2,7 +2,7 @@
 Copyright 1996-2011 Adobe, Inc. All Rights Reserved
 More info available at http://www.omniture.com */
 
-var s_account="redhatopenshift, redhatcom, redhatglobal"
+var s_account="redhatdev, redhatglobaltest"
 var s=s_gi(s_account)
 /************************** CONFIG SECTION **************************/
 /* You may add or alter any code config here. */
@@ -19,9 +19,8 @@ s.linkLeaveQueryString=false
 s.linkTrackVars="None"
 s.linkTrackEvents="None"
 s.dynamicAccountSelection=true
-s.dynamicAccountList="redhatglobaltest,redhatdev=localhost;redhatglobal,redhatcom,redhatopenshift=openshift.redhat.com"
-s.dynamicAccountMatch=window.location.host
-
+s.dynamicAccountMatch=window.location.host+window.location.pathname
+s.dynamicAccountList="redhatglobaltest,redhatdev=localhost;redhatglobal,redhatcom,redhatopenshift=redhat.com/openshift,openshift.redhat.com"
 /* WARNING: Changing any of the below variables will cause drastic
 changes to how your visitor data is collected.  Changes should only be
 made when instructed to do so by your account manager.*/
