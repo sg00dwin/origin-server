@@ -272,7 +272,7 @@ IP=$(find_open_ip $uid $uuid)
 
 mkdir -p "$APP_DIR"
 pushd "$APP_DIR" > /dev/null
-mkdir -p repo run tmp ${jboss_version}/{bin,standalone/configuration}
+mkdir -p repo run tmp data ${jboss_version}/{bin,standalone/configuration}
 # application jbossas bin directory
 APP_JBOSS_BIN_DIR="$APP_JBOSS"/bin
 
