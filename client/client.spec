@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system client tools
 Name:          rhc
-Version:       0.73.9
+Version:       0.73.10
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       MIT
@@ -99,6 +99,13 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_sysconfdir}/openshift/express.conf
 
 %changelog
+* Wed Jul 06 2011 Dan McPherson <dmcphers@redhat.com> 0.73.10-1
+- up (jimjag@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (jimjag@redhat.com)
+- force spec file to use darwin (jimjag@redhat.com)
+- standardize message (dmcphers@redhat.com)
+
 * Tue Jul 06 2011 Jim Jagielski <jimjag@redhat.com> 0.73.10-1
 - json_pure dependencies
   (mmcgrath@redhat.com)
