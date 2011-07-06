@@ -1,6 +1,6 @@
 There are two options for deploying content to the JBoss Application Server within OpenShift Express.
 
-1) (Typical) You can upload you content in a maven src structure as is this sample ROOT.war and on 
+1) (Typical) You can upload your content in a maven src structure as is this sample ROOT.war and on 
 git push have the application built and deployed.  For this to work you'll need your pom.xml at the 
 root of your repository and an antrun task like in this sample to move the output from the build
 to the deployments directory.
