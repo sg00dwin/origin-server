@@ -78,7 +78,7 @@ module Libra
 
       check_app_exists(app_info)
 
-      if not app_info['embedded'] or not app_info['embedded']framework]
+      if not app_info['embedded'] or not app_info['embedded'][framework]
         raise UserException.new(101), "#{framework} is not embedded in '#{app_name}'", caller[0..5]
       end
 
