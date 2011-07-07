@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.73.10
+Version:   0.73.11
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -62,6 +62,9 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Thu Jul 07 2011 Dan McPherson <dmcphers@redhat.com> 0.73.11-1
+- remove embed param passing to broker and doc updates (dmcphers@redhat.com)
+
 * Tue Jul 05 2011 Emily Dirsh <edirsh@redhat.com> 0.73.10-1
 - Bug 719005 (dmcphers@redhat.com)
 
