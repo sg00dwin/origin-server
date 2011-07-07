@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system client tools
 Name:          rhc
-Version:       0.73.9
+Version:       0.73.11
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       MIT
@@ -14,12 +14,17 @@ BuildRequires: rubygem-rake
 BuildRequires: rubygem-rspec
 Requires:      ruby >= 1.8.6
 Requires:      rubygem-parseconfig
+
 %if 0%{?fedora} == 13
 %define jpure 1
 %endif
 %if 0%{?rhel} == 5
 %define jpure 1
 %endif
+%ifos darwin
+%define jpure 1
+%endif
+
 %if 0%{?jpure} == 1
 Requires:      rubygem-json_pure
 %else
@@ -94,6 +99,20 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_sysconfdir}/openshift/express.conf
 
 %changelog
+* Wed Jul 06 2011 Dan McPherson <dmcphers@redhat.com> 0.73.11-1
+- Bug 719219 (dmcphers@redhat.com)
+
+* Wed Jul 06 2011 Dan McPherson <dmcphers@redhat.com> 0.73.10-1
+- up (jimjag@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (jimjag@redhat.com)
+- force spec file to use darwin (jimjag@redhat.com)
+- standardize message (dmcphers@redhat.com)
+
+* Tue Jul 06 2011 Jim Jagielski <jimjag@redhat.com> 0.73.10-1
+- json_pure dependencies
+  (mmcgrath@redhat.com)
+
 * Tue Jul 05 2011 Dan McPherson <dmcphers@redhat.com> 0.73.9-1
 - Allowing rhc-tail-files to operate on the ~/ dir instead of ~/app
   (mmcgrath@redhat.com)

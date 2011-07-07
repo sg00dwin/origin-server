@@ -2,7 +2,7 @@
 
 Summary:       Common dependencies of the OpenShift broker and site
 Name:          rhc-server-common
-Version:       0.73.11
+Version:       0.73.14
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -54,6 +54,18 @@ rm -rf %{buildroot}
                                   -s /sbin/nologin 2>&1 > /dev/null || :
 
 %changelog
+* Wed Jul 06 2011 Dan McPherson <dmcphers@redhat.com> 0.73.14-1
+- rework dyn retries (dmcphers@redhat.com)
+
+* Wed Jul 06 2011 Dan McPherson <dmcphers@redhat.com> 0.73.13-1
+- rework dyn retries (dmcphers@redhat.com)
+
+* Wed Jul 06 2011 Dan McPherson <dmcphers@redhat.com> 0.73.12-1
+- cleanup client messages (dmcphers@redhat.com)
+- fix typo causing build break (dmcphers@redhat.com)
+- add dyn retries (dmcphers@redhat.com)
+- moving debug line so it produces output (mmcgrath@redhat.com)
+
 * Fri Jul 01 2011 Emily Dirsh <edirsh@redhat.com> 0.73.11-1
 - consistent names (dmcphers@redhat.com)
 - Hide the "type" logic (jimjag@redhat.com)
