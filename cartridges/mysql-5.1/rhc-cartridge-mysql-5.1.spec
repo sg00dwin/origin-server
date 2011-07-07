@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/mysql-5.1
 
 Name: rhc-cartridge-mysql-5.1
-Version: 0.7
+Version: 0.7.1
 Release: 1%{?dist}
 Summary: Embedded mysql support for express
 

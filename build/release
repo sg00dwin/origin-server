@@ -124,7 +124,7 @@ class Release < Thor
           if package == 'rhc'
             tags = `git tag | grep -e rhc-[0-9]`.chomp.split("\n")
           else
-            tags = `git tag | grep #{package}`.chomp.split("\n")
+            tags = `git tag | grep #{package}-`.chomp.split("\n")
           end
 
           # Sort the tags by NVR and take the last entry
