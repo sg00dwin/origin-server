@@ -174,84 +174,56 @@ module Libra
       resp, data = dyn_delete("Session/", auth_token)
     end
 
-    def self.dyn_create_a_record(application, namespace, public_ip, sshfp, auth_token, retries=2)
-      resp, data = nil, nil
-      dyn_do('dyn_create_a_record', retries) do
-        fqdn = "#{application}-#{namespace}.#{Libra.c[:libra_domain]}"
-        # Create the A record
-        path = "ARecord/#{Libra.c[:libra_zone]}/#{fqdn}/"
-        record_data = { :rdata => { :address => public_ip }, :ttl => "60" }
-        resp, data = dyn_post(path, record_data, auth_token)
-      end
-      return resp, data
+    def self.dyn_create_a_record(application, namespace, public_ip, sshfp, auth_token, retries=0)
+      fqdn = "#{application}-#{namespace}.#{Libra.c[:libra_domain]}"
+      # Create the A record
+      path = "ARecord/#{Libra.c[:libra_zone]}/#{fqdn}/"
+      record_data = { :rdata => { :address => public_ip }, :ttl => "60" }
+      resp, data = dyn_post(path, record_data, auth_token, retries)
     end
     
-    def self.dyn_create_sshfp_record(application, namespace, sshfp, auth_token, retries=2)
-      resp, data = nil, nil
-      dyn_do('dyn_create_sshfp_record', retries) do
-        fqdn = "#{application}-#{namespace}.#{Libra.c[:libra_domain]}"
-        # Create the SSHFP record
-        path = "SSHFPRecord/#{Libra.c[:libra_zone]}/#{fqdn}/"
-        record_data = { :rdata => { :algorithm => '1',  :fptype => '1', :fingerprint => sshfp}, :ttl => "60" }
-        resp, data = dyn_post(path, record_data, auth_token)
-      end
-      return resp, data
+    def self.dyn_create_sshfp_record(application, namespace, sshfp, auth_token, retries=0)
+      fqdn = "#{application}-#{namespace}.#{Libra.c[:libra_domain]}"
+      # Create the SSHFP record
+      path = "SSHFPRecord/#{Libra.c[:libra_zone]}/#{fqdn}/"
+      record_data = { :rdata => { :algorithm => '1',  :fptype => '1', :fingerprint => sshfp}, :ttl => "60" }
+      resp, data = dyn_post(path, record_data, auth_token, retries)
     end
 
-    def self.dyn_delete_a_record(application, namespace, auth_token, retries=2)
-      resp, data = nil, nil
-      dyn_do('dyn_delete_a_record', retries) do
-        fqdn = "#{application}-#{namespace}.#{Libra.c[:libra_domain]}"
-        # Delete the A record
-        path = "ARecord/#{Libra.c[:libra_zone]}/#{fqdn}/"
-        resp, data = dyn_delete(path, auth_token)
-      end
-      return resp, data
+    def self.dyn_delete_a_record(application, namespace, auth_token, retries=0)
+      fqdn = "#{application}-#{namespace}.#{Libra.c[:libra_domain]}"
+      # Delete the A record
+      path = "ARecord/#{Libra.c[:libra_zone]}/#{fqdn}/"
+      resp, data = dyn_delete(path, auth_token, retries)
     end
     
-    def self.dyn_delete_sshfp_record(application, namespace, auth_token, retries=2)
-      resp, data = nil, nil
-      dyn_do('dyn_delete_sshfp_record', retries) do
-        fqdn = "#{application}-#{namespace}.#{Libra.c[:libra_domain]}"
-        # Delete the SSHFP record
-        path = "SSHFPRecord/#{Libra.c[:libra_zone]}/#{fqdn}/"
-        resp, data = dyn_delete(path, auth_token)
-      end
-      return resp, data
+    def self.dyn_delete_sshfp_record(application, namespace, auth_token, retries=0)
+      fqdn = "#{application}-#{namespace}.#{Libra.c[:libra_domain]}"
+      # Delete the SSHFP record
+      path = "SSHFPRecord/#{Libra.c[:libra_zone]}/#{fqdn}/"
+      resp, data = dyn_delete(path, auth_token, retries)
     end
 
-    def self.dyn_create_txt_record(namespace, auth_token, retries=2)
-      resp, data = nil, nil
-      dyn_do('dyn_create_txt_record', retries) do
-        fqdn = "#{namespace}.#{Libra.c[:libra_domain]}"
-        # Create the TXT record
-        path = "TXTRecord/#{Libra.c[:libra_zone]}/#{fqdn}/"
-        record_data = { :rdata => { :txtdata => "Text record for #{namespace}"}, :ttl => "60" }
-        resp, data = dyn_post(path, record_data, auth_token)
-      end
-      return resp, data
+    def self.dyn_create_txt_record(namespace, auth_token, retries=0)
+      fqdn = "#{namespace}.#{Libra.c[:libra_domain]}"
+      # Create the TXT record
+      path = "TXTRecord/#{Libra.c[:libra_zone]}/#{fqdn}/"
+      record_data = { :rdata => { :txtdata => "Text record for #{namespace}"}, :ttl => "60" }
+      resp, data = dyn_post(path, record_data, auth_token, retries)
     end
 
-    def self.dyn_delete_txt_record(namespace, auth_token, retries=2)
-      resp, data = nil, nil
-      dyn_do('dyn_delete_txt_record', retries) do
-        fqdn = "#{namespace}.#{Libra.c[:libra_domain]}"
-        # Delete the TXT record
-        path = "TXTRecord/#{Libra.c[:libra_zone]}/#{fqdn}/"
-        resp, data = dyn_delete(path, auth_token)
-      end
-      return resp, data
+    def self.dyn_delete_txt_record(namespace, auth_token, retries=0)
+      fqdn = "#{namespace}.#{Libra.c[:libra_domain]}"
+      # Delete the TXT record
+      path = "TXTRecord/#{Libra.c[:libra_zone]}/#{fqdn}/"
+      resp, data = dyn_delete(path, auth_token, retries)
     end
 
-    def self.dyn_publish(auth_token, retries=2)
-      resp, data = nil, nil
-      dyn_do('dyn_publish', retries) do
-        # Publish the changes
-        path = "Zone/#{Libra.c[:libra_zone]}/"
-        publish_data = { "publish" => "true" }
-        resp, data = dyn_put(path, publish_data, auth_token)
-      end
-      return resp, data
+    def self.dyn_publish(auth_token, retries=0)
+      # Publish the changes
+      path = "Zone/#{Libra.c[:libra_zone]}/"
+      publish_data = { "publish" => "true" }
+      resp, data = dyn_put(path, publish_data, auth_token, retries)
     end
 
     def self.dyn_has_txt_record?(namespace, auth_token, raise_exception_on_exists=false)
@@ -345,41 +317,43 @@ module Libra
       return has
     end
 
-    def self.dyn_put(path, put_data, auth_token)
-      return dyn_put_post(path, put_data, auth_token, true)
+    def self.dyn_put(path, put_data, auth_token, retries=0)
+      return dyn_put_post(path, put_data, auth_token, true, retries)
     end
 
-    def self.dyn_post(path, post_data, auth_token)
-      return dyn_put_post(path, post_data, auth_token)
+    def self.dyn_post(path, post_data, auth_token, retries=0)
+      return dyn_put_post(path, post_data, auth_token, false, retries)
     end
 
-    def self.dyn_put_post(path, post_data, auth_token, put=false)
+    def self.dyn_put_post(path, post_data, auth_token, put=false, retries=0)
       url = URI.parse("#{Libra.c[:dynect_url]}/REST/#{path}")
       headers = { "Content-Type" => 'application/json', 'Auth-Token' => auth_token }
       resp, data = nil, nil
-      http = Net::HTTP.new(url.host, url.port)
-      #http.set_debug_output $stderr
-      http.use_ssl = true
-      json_data = JSON.generate(post_data);
-      begin
-        Libra.logger_debug "DEBUG: DYNECT put/post with path: #{url.path} json data: #{json_data} and headers: #{headers.pretty_inspect}"
-        if put
-          resp, data = http.put(url.path, json_data, headers)
-        else
-          resp, data = http.post(url.path, json_data, headers)
+      dyn_do('dyn_put_post', retries) do
+        http = Net::HTTP.new(url.host, url.port)
+        #http.set_debug_output $stderr
+        http.use_ssl = true
+        json_data = JSON.generate(post_data);
+        begin
+          Libra.logger_debug "DEBUG: DYNECT put/post with path: #{url.path} json data: #{json_data} and headers: #{headers.pretty_inspect}"
+          if put
+            resp, data = http.put(url.path, json_data, headers)
+          else
+            resp, data = http.post(url.path, json_data, headers)
+          end
+          case resp
+          when Net::HTTPSuccess
+            raise_dns_exception(nil, resp) unless dyn_success?(data)
+          when Net::HTTPTemporaryRedirect
+            handle_temp_redirect(resp, auth_token)
+          else
+            raise_dns_exception(nil, resp)
+          end
+        rescue DNSException => e
+          raise
+        rescue Exception => e
+          raise_dns_exception(e)
         end
-        case resp
-        when Net::HTTPSuccess
-          raise_dns_exception(nil, resp) unless dyn_success?(data)
-        when Net::HTTPTemporaryRedirect
-          handle_temp_redirect(resp, auth_token)
-        else
-          raise_dns_exception(nil, resp)
-        end
-      rescue DNSException => e
-        raise
-      rescue Exception => e
-        raise_dns_exception(e)
       end
       return resp, data
     end
@@ -400,30 +374,32 @@ module Libra
       success
     end
 
-    def self.dyn_delete(path, auth_token)
+    def self.dyn_delete(path, auth_token, retries=0)
       headers = { "Content-Type" => 'application/json', 'Auth-Token' => auth_token }
       url = URI.parse("#{Libra.c[:dynect_url]}/REST/#{path}")
-      http = Net::HTTP.new(url.host, url.port)
-      #http.set_debug_output $stderr
-      http.use_ssl = true
       resp, data = nil, nil
-      begin
-        Libra.logger_debug "DEBUG: DYNECT delete with path: #{url.path} and headers: #{headers.pretty_inspect}"
-        resp, data = http.delete(url.path, headers)
-        case resp
-        when Net::HTTPSuccess
-          raise_dns_exception(nil, resp) unless dyn_success?(data)
-        when Net::HTTPNotFound
-          Libra.logger_debug "DEBUG: DYNECT: Could not find #{url.path} to delete"
-        when Net::HTTPTemporaryRedirect
-          handle_temp_redirect(resp, auth_token)
-        else
-          raise_dns_exception(nil, resp)
+      dyn_do('dyn_delete', retries) do
+        http = Net::HTTP.new(url.host, url.port)
+        #http.set_debug_output $stderr
+        http.use_ssl = true
+        begin
+          Libra.logger_debug "DEBUG: DYNECT delete with path: #{url.path} and headers: #{headers.pretty_inspect}"
+          resp, data = http.delete(url.path, headers)
+          case resp
+          when Net::HTTPSuccess
+            raise_dns_exception(nil, resp) unless dyn_success?(data)
+          when Net::HTTPNotFound
+            Libra.logger_debug "DEBUG: DYNECT: Could not find #{url.path} to delete"
+          when Net::HTTPTemporaryRedirect
+            handle_temp_redirect(resp, auth_token)
+          else
+            raise_dns_exception(nil, resp)
+          end
+        rescue DNSException => e
+          raise
+        rescue Exception => e
+          raise_dns_exception(e)
         end
-      rescue DNSException => e
-        raise
-      rescue Exception => e
-        raise_dns_exception(e)
       end
       return resp, data
     end
