@@ -119,7 +119,6 @@ module Libra
         prefix += (' -t ' + type) if type
         fullcmd = prefix + " " + cmd
 
-        puts "runcon: #{fullcmd}"
         pid, stdin, stdout, stderr = Open4::popen4(fullcmd)
 
         stdin.close
