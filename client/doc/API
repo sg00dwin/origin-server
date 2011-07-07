@@ -156,7 +156,12 @@ Data JSON:
         "newapp":{
             "framework":"<FRAMEWORK_TYPE>",
             "creation_time":"<CREATION_TIME>",
-            "uuid":"<APPLICATION_UUID>"
+            "uuid":"<APPLICATION_UUID>",
+            "embedded":{
+                "<EMBEDDED_FRAMEWORK_TYPE>":{
+                    "info":"Info about embedded cartridge"
+                }
+            }
         }
     },
     "user_info":{

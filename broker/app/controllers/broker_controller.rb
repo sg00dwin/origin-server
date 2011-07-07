@@ -66,7 +66,7 @@ class BrokerController < ApplicationController
           if !(val =~ /\A[a-f0-9]+\z/)
             render :json => generate_result_json("Invalid application uuid: #{val}", nil, 254), :status => :invalid and return nil
           end
-        when 'debug', 'alter', 'embed'
+        when 'debug', 'alter'
           if !(val =~ /\A(true|false)\z/)
             render :json => generate_result_json("Invalid value for #{key}:#{val} specified", nil, 254), :status => :invalid and return nil
           end

@@ -182,7 +182,7 @@ module Libra
     if Thread.current[:resultIO].string
         app_info['embedded'][framework] = {'info' => Thread.current[:resultIO].string.split("\n")[-1]}
     end
-    Libra.client_debug "debugline: #{app_info['embedded'][framework]}"
+    Libra.client_debug "Embedded app details: #{app_info['embedded'][framework]}"
     user.update_app(app_info, app_name)
   end
 
