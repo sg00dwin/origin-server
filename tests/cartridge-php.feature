@@ -12,6 +12,7 @@ Feature: PHP Application
     And a php application git repo will exist
     And a php application source tree will exist
     And a php application httpd will be running 
+    And php application log files will exist
 
 #  Scenario: Delete one PHP Application
 #    Given an accepted node

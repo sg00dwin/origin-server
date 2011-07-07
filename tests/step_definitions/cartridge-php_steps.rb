@@ -1,6 +1,7 @@
 # Controller cartridge command paths
 $cartridge_root ||= "/usr/libexec/li/cartridges"
 $php_cartridge = "#{$cartridge_root}/php-5.3"
+$php_common_conf_path = "#{$php_cartridge}/info/configuration/etc/conf/httpd_nolog.conf"
 $php_hooks = "#{$php_cartridge}/info/hooks"
 $php_config_path = "#{$php_hooks}/configure"
 # app_name namespace acct_name
@@ -19,7 +20,7 @@ When /^I configure a PHP application$/ do
     'namespace' => namespace
   }
   command = $php_config_format % [app_name, namespace, account_name]
-  puts "running '#{command}'"
+  #puts "running '#{command}'"
   runcon command,  'unconfined_u', 'system_r', 'libra_initrc_t'
 end
 
@@ -57,19 +58,34 @@ Then /^a php application httpd will be running$/ do
   acct_uid = @account['uid']
   app_name = @app['name']
 
-  # Find out how many should be running: min/max
+  ps_pattern = /^(\d+)\s+(\S+)$/
+  command = "ps --no-headers -o pid,comm -u #{acct_name}"
+  pid, stdin, stdout, stderr = Open4::popen4(command)
 
-  # find all processes for this UID
+  stdin.close
+  ignored, status = Process::waitpid2 pid
+  exit_code = status.exitstatus
 
-  # count the httpds
+  http_daemons = stdout.collect { |line|
+    pid, cmd = line.match(ps_pattern)[1..2]
+    pid if cmd == 'httpd'
+  }.compact!
 
-  # check that each httpd has a rotatelogs
-
-  pending # express the regexp above with the code you wish you had
+  http_daemons.size > 0
 end
 
 Then /^php application log files will exist$/ do
+  acct_name = @account['accountname']
+  acct_uid = @account['uid']
+  app_name = @app['name']
+  log_dir_path = "#$libra_dir/#acct_name/#app_name/logs"
 
+  begin
+    log_dir = Dir.new log_dir_path
+    log_dir.count > 2
+  rescue
+    false
+  end
 end
 
 Given /^a new PHP application$/ do
