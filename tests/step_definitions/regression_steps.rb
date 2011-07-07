@@ -69,6 +69,7 @@ When /^check the number of the git files in libra dir$/ do
 end
 
 And /^check the number of git repos by mc-facts$/ do
+  sleep 10
   run("mc-facts git_repos > #{@sfile}")
   File.open(@sfile,"r").each_line do |line|
     if line.include?"found"
