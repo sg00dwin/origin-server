@@ -155,7 +155,6 @@ module Libra
     Libra.logger_debug "DEBUG: Adding embedded app info from persistant storage: #{app_name}:#{framework}"
     app_info = user.app_info(app_name)
     app_info['embedded'] = {} unless app_info['embedded']
-    Libra.client_debug "debugline: #{app_info['embedded'][framework]}"
 
     if app_info['embedded'][framework]
       raise UserException.new(101), "#{framework} already embedded in '#{app_name}'", caller[0..5]
@@ -183,6 +182,7 @@ module Libra
     if Thread.current[:resultIO].string
         app_info['embedded'][framework] = {'info' => Thread.current[:resultIO].string.split("\n")[-1]}
     end
+    Libra.client_debug "debugline: #{app_info['embedded'][framework]}"
     user.update_app(app_info, app_name)
   end
 

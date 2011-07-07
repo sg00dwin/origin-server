@@ -205,14 +205,14 @@ git archive --format=tar HEAD | (cd $APP_DIR/repo && tar --warning=no-timestamp 
 if [ -f '$APP_DIR/repo/pom.xml' ]
 then
   echo "Found pom.xml attempting to build with 'mvn clean package -DskipTests'" 
-  export JAVA_HOME=/usr/lib/jvm/jre-1.6.0
+  export JAVA_HOME=/usr
   export M2_HOME=/etc/alternatives/maven-3.0
   export M2=\$M2_HOME/bin
   export MAVEN_OPTS="-Xmx208m"
   export PATH=\$M2:\$PATH
   pushd ~/${application}/repo > /dev/null
   mvn --version
-  mvn clean package -DskipTests
+  mvn clean package -DskipTests -Djava.io.tmpdir=$APP_DIR/tmp
   popd
 fi
 
@@ -272,7 +272,7 @@ IP=$(find_open_ip $uid $uuid)
 
 mkdir -p "$APP_DIR"
 pushd "$APP_DIR" > /dev/null
-mkdir -p repo run ${jboss_version}/{bin,standalone/configuration}
+mkdir -p repo run tmp data ${jboss_version}/{bin,standalone/configuration}
 # application jbossas bin directory
 APP_JBOSS_BIN_DIR="$APP_JBOSS"/bin
 

@@ -35,7 +35,7 @@ Tail the logs of an application
 
   -l|--rhlogin   rhlogin    Red Hat login (RHN or OpenShift login with OpenShift Express access) (#{rhlogin})
   -a|--app                  Target application (required)
-  -f|--files                File glob relative to app (default ./logs/*) (optional)
+  -f|--files                File glob relative to app (default <application_name>/logs/*) (optional)
   -p|--password  password   RHLogin password (optional, will prompt)
   -d|--debug                Print Debug info
   -h|--help                 Show Usage info
@@ -100,8 +100,8 @@ unless user_info['app_info'][app]
     exit 101
 end
 
-opt['files'] = "logs/*" unless opt['files']
-file_glob = "#{opt['app']}/#{opt['files']}"
+opt['files'] = "#{opt['app']}/logs/*" unless opt['files']
+file_glob = "#{opt['files']}"
 app_uuid = user_info['app_info'][app]['uuid']
 namespace = user_info['user_info']['namespace']
 rhc_domain = user_info['user_info']['rhc_domain']

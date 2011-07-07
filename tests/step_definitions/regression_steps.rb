@@ -65,10 +65,11 @@ When /^check the number of the git files in libra dir$/ do
   run("ls -d /var/lib/libra/*/git/*.git | wc -l > #{@sfile}")
   @git_files = File.open(@sfile,"r").readline
   @git_files = @git_files.to_i
-  puts "first number: "+@git_files
+  puts "first number: ",@git_files
 end
 
 And /^check the number of git repos by mc-facts$/ do
+  sleep 15
   run("mc-facts git_repos > #{@sfile}")
   File.open(@sfile,"r").each_line do |line|
     if line.include?"found"
@@ -76,7 +77,7 @@ And /^check the number of git repos by mc-facts$/ do
     end
   end
   @git_repos = @git_repos.to_i
-  puts "second number: "+@git_repos
+  puts "second number: ",@git_repos
 end
 
 Then /^the first number is twice the second one$/ do

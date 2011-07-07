@@ -215,8 +215,10 @@ function enable_user_ssh_access {
     USERHOME=`homedir $USERNAME`
     SSHDIR=${USERHOME}/.ssh
 
-    ${NOOP} mkdir -p ${SSHDIR}
+    ${NOOP} mkdir -p ${SSHDIR} ${USERHOME}/.tmp
     ${NOOP} chmod 0750 ${SSHDIR}
+    # Required for polyinstantiated tmp dirs to work
+    ${NOOP} chmod 0000 ${USERHOME}/.tmp
     if [ -z "${NOOP}" ]
     then
 	cat <<EOF > ${SSHDIR}/authorized_keys
