@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system client tools
 Name:          rhc
-Version:       0.73.12
+Version:       0.73.13
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       MIT
@@ -99,6 +99,10 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_sysconfdir}/openshift/express.conf
 
 %changelog
+* Thu Jul 07 2011 Dan McPherson <dmcphers@redhat.com> 0.73.13-1
+- remove embed param passing to broker and doc updates (dmcphers@redhat.com)
+- API updates (dmcphers@redhat.com)
+
 * Thu Jul 07 2011 Dan McPherson <dmcphers@redhat.com> 0.73.12-1
 - bug 719510 (dmcphers@redhat.com)
 - Remove non-tested depende (jimjag@redhat.com)
