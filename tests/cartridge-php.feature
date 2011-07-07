@@ -14,15 +14,15 @@ Feature: PHP Application
     And a php application httpd will be running 
     And php application log files will exist
 
-#  Scenario: Delete one PHP Application
-#    Given an accepted node
-#    And a new guest account
-#    And a new PHP application
-#    When I deconfigure the PHP application
-#    Then a php application http proxy file will not exist
-#    And a php application git repo will not exist
-#    And a php application source tree will not exist
-#    And a php application httpd will not be running
+  Scenario: Delete one PHP Application
+    Given an accepted node
+    And a new guest account
+    And a new PHP application
+    When I deconfigure the PHP application
+    Then a php application http proxy file will not exist
+    And a php application git repo will not exist
+    And a php application source tree will not exist
+    And a php application httpd will not be running
 
 
 #  Scenario: Start a PHP Application

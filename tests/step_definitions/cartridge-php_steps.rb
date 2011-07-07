@@ -24,7 +24,7 @@ When /^I configure a PHP application$/ do
   runcon command,  'unconfined_u', 'system_r', 'libra_initrc_t'
 end
 
-Then /^a php application http proxy file will exist$/ do
+Then /^a php application http proxy file will( not)? exist$/ do | negate |
   acct_name = @account['accountname']
   app_name = @app['name']
   namespace = @app['namespace']
@@ -32,28 +32,28 @@ Then /^a php application http proxy file will exist$/ do
   conf_file_name = "#{@acct_name}_#{namespace}_#{app_name}.conf"
   conf_file_path = "#{$libra_httpd_conf_d}/#{conf_file_name}"
   
-  File.exists? conf_file_path
+  File.exists?(conf_file_path) ^ negate
 end
 
-Then /^a php application git repo will exist$/ do
+Then /^a php application git repo will( not)? exist$/ do | negate |
   acct_name = @account['accountname']
   app_name = @app['name']
 
   git_repo = "#$libra_dir/#acct_name/git/#{app_name}.git"
-  File.exists? git_repo and File.directory? git_repo
+  (File.exists? git_repo and File.directory? git_repo) ^ negate
   # TODO - need to check permissions and SELinux labels
 end
 
-Then /^a php application source tree will exist$/ do
+Then /^a php application source tree will( not)? exist$/ do | negate |
   acct_name = @account['accountname']
   app_name = @app['name']
 
   app_root = "#$libra_dir/#acct_name/#{app_name}"
-  File.exists? app_root and File.directory? app_root
+  (File.exists? app_root and File.directory? app_root) ^ negate
   # TODO - need to check permissions and SELinux labels
 end
 
-Then /^a php application httpd will be running$/ do
+Then /^a php application httpd will( not)? be running$/ do | negate |
   acct_name = @account['accountname']
   acct_uid = @account['uid']
   app_name = @app['name']
@@ -66,15 +66,19 @@ Then /^a php application httpd will be running$/ do
   ignored, status = Process::waitpid2 pid
   exit_code = status.exitstatus
 
+  # sleep?
+
   http_daemons = stdout.collect { |line|
-    pid, cmd = line.match(ps_pattern)[1..2]
-    pid if cmd == 'httpd'
+    match = line.match(ps_pattern)
+    match and (match[1] if match[2] == 'httpd')
   }.compact!
 
-  http_daemons.size > 0
+  http_daemons and puts "httpd PIDs = #{http_daemons.join(',')}"
+
+  (http_daemons and http_daemons.size > 0) ^ negate
 end
 
-Then /^php application log files will exist$/ do
+Then /^php application log files will( not)? exist$/ do | negate |
   acct_name = @account['accountname']
   acct_uid = @account['uid']
   app_name = @app['name']
@@ -82,38 +86,31 @@ Then /^php application log files will exist$/ do
 
   begin
     log_dir = Dir.new log_dir_path
-    log_dir.count > 2
+    (log_dir.count > 2) ^ negate
   rescue
-    false
+    false ^ negate
   end
 end
 
 Given /^a new PHP application$/ do
   account_name = @account['account_name']
-  namespace = "ns1"
-  app_name = "app1"
+  app_name = 'app1'
+  namespace = 'ns1'
+  @app = {
+    'namespace' => namespace,
+    'name' => app_name
+  }
   command = $php_config_format % [app_name, namespace, account_name]
   run command
 end
 
 When /^I deconfigure the PHP application$/ do
-  pending # express the regexp above with the code you wish you had
-end
-
-Then /^a php application http proxy file will not exist$/ do
-  pending # express the regexp above with the code you wish you had
-end
-
-Then /^a php application git repo will not exist$/ do
-  pending # express the regexp above with the code you wish you had
-end
-
-Then /^a php application source tree will not exist$/ do
-  pending # express the regexp above with the code you wish you had
-end
-
-Then /^a php application httpd will not be running$/ do
-  pending # express the regexp above with the code you wish you had
+  account_name = @account['accountname']
+  namespace = @app['namespace']
+  app_name = @app['name']
+  command = $php_deconfig_format % [app_name, namespace, account_name]
+  #puts "running '#{command}'"
+  runcon command,  'unconfined_u', 'system_r', 'libra_initrc_t'
 end
 
 Given /^the php application is stopped$/ do
