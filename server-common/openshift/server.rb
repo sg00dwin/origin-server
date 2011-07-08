@@ -93,32 +93,34 @@ module Libra
       return resp.length > 0
     end
 
-    def self.dyn_login
+    def self.dyn_login(retries=0)
       # Set your customer name, username, and password on the command line
       # Set up our HTTP object with the required host and path
       url = URI.parse("#{Libra.c[:dynect_url]}/REST/Session/")
       headers = { "Content-Type" => 'application/json' }
-      http = Net::HTTP.new(url.host, url.port)
-      #http.set_debug_output $stderr
-      http.use_ssl = true
       # Login and get an authentication token that will be used for all subsequent requests.
       session_data = { :customer_name => Libra.c[:dynect_customer_name], :user_name => Libra.c[:dynect_user_name], :password => Libra.c[:dynect_password] }
       auth_token = nil
-      begin
-        Libra.logger_debug "DEBUG: DYNECT Login with path: #{url.path}"
-        resp, data = http.post(url.path, JSON.generate(session_data), headers)
-        case resp
-        when Net::HTTPSuccess
-          raise_dns_exception(nil, resp) unless dyn_success?(data)
-          result = JSON.parse(data)
-          auth_token = result['data']['token']         
-        else
-          raise_dns_exception(nil, resp)
+      dyn_do('dyn_login', retries) do
+        http = Net::HTTP.new(url.host, url.port)
+        #http.set_debug_output $stderr
+        http.use_ssl = true
+        begin
+          Libra.logger_debug "DEBUG: DYNECT Login with path: #{url.path}"
+          resp, data = http.post(url.path, JSON.generate(session_data), headers)
+          case resp
+          when Net::HTTPSuccess
+            raise_dns_exception(nil, resp) unless dyn_success?(data)
+            result = JSON.parse(data)
+            auth_token = result['data']['token']         
+          else
+            raise_dns_exception(nil, resp)
+          end
+        rescue DNSException => e
+          raise
+        rescue Exception => e
+          raise_dns_exception(e)
         end
-      rescue DNSException => e
-        raise
-      rescue Exception => e
-        raise_dns_exception(e)
       end
       # Is the session still alive?
       #headers = { "Content-Type" => 'application/json', 'Auth-Token' => auth_token }
@@ -140,19 +142,19 @@ module Libra
     end
     
     def self.delete_app_dns_entries(app_name, namespace, retries=2)
-      auth_token = dyn_login
+      auth_token = dyn_login(retries)
       dyn_delete_sshfp_record(app_name, namespace, auth_token, retries)
       dyn_delete_a_record(app_name, namespace, auth_token, retries)
       dyn_publish(auth_token, retries)
-      dyn_logout(auth_token)
+      dyn_logout(auth_token, retries)
     end
     
     def self.create_app_dns_entries(app_name, namespace, public_ip, sshfp, retries=2)
-      auth_token = dyn_login
+      auth_token = dyn_login(retries)
       dyn_create_a_record(app_name, namespace, public_ip, sshfp, auth_token, retries)
       dyn_create_sshfp_record(app_name, namespace, sshfp, auth_token, retries)
       dyn_publish(auth_token, retries)
-      dyn_logout(auth_token)
+      dyn_logout(auth_token, retries)
     end
     
     def self.dyn_do(method, retries=2)
@@ -169,9 +171,9 @@ module Libra
       end
     end
 
-    def self.dyn_logout(auth_token)
+    def self.dyn_logout(auth_token, retries=0)
       # Logout
-      resp, data = dyn_delete("Session/", auth_token)
+      resp, data = dyn_delete("Session/", auth_token, retries)
     end
 
     def self.dyn_create_a_record(application, namespace, public_ip, sshfp, auth_token, retries=0)
