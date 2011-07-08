@@ -415,13 +415,13 @@ class DevEnv < Thor
     end
   end
 
-  desc "install_local_client", "Builds and installs the local client rpm (Run with sudo)"
+  desc "install_local_client", "Builds and installs the local client rpm (uses sudo)"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   def install_local_client
     # Warn on uncommitted changes
     temp_commit
     
-    `rm -rf /tmp/tito/; pushd client; tito build --rpm --test; popd; rpm -Uvh /tmp/tito/noarch/rhc-*;rm -rf /tmp/tito/`
+    `rm -rf /tmp/tito/; pushd client; tito build --rpm --test; popd; sudo rpm -Uvh /tmp/tito/noarch/rhc-*;rm -rf /tmp/tito/`
 
     reset_temp_commit
 
