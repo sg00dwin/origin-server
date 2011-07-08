@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.73.20
+Version:   0.73.21
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -87,6 +87,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Thu Jul 07 2011 Dan McPherson <dmcphers@redhat.com> 0.73.21-1
+- Update to jboss-as-7.0.0.CR1OS to address AS7-1225 (scott.stark@jboss.org)
+
 * Wed Jul 06 2011 Dan McPherson <dmcphers@redhat.com> 0.73.20-1
 - remove .doploy file for packaged war for now (dmcphers@redhat.com)
 
