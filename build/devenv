@@ -55,10 +55,14 @@ class DevEnv < Thor
   
       if $? != 0
         # Perform a temporary commit to build client
-        @temp_commit = true
         puts "Creating temporary commit to build client"
         `git commit -a -m "Temporary commit to build client"`
-        puts "Done."
+        if $? != 0
+          puts "No-op."
+        else
+          @temp_commit = true
+          puts "Done."
+        end
       end
     end
     
