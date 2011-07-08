@@ -125,10 +125,13 @@ module Libra
         ignored, status = Process::waitpid2 pid
         exit_code = status.exitstatus
 
-        $logger.info("Standard Output:\n#{stdout.read}")
-        $logger.info("Standard Error:\n#{stderr.read}")
+        outstring = stdout.read
+        errstring = stderr.read
+        $logger.info("Standard Output:\n#{outstring}")
+        $logger.info("Standard Error:\n#{errstring}")
 
         $logger.error("(#{$$}): Execution failed #{cmd} with exit_code: #{exit_code.to_s}") if exit_code != 0
+
         return exit_code
       end
 
