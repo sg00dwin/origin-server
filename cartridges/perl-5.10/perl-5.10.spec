@@ -15,6 +15,8 @@ Requires:  rhc-node >= 0.69.4
 Requires:  mod_perl
 Requires:  ImageMagick-perl
 Requires:  perl-App-cpanminus
+# used to do dep resolving for perl
+Requires:  rpm-build
 
 BuildArch: noarch
 
