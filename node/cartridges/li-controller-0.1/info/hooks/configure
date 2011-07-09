@@ -194,7 +194,18 @@ function create_user_account() {
 function remove_user_account {
     USERNAME=$1
 
-    ${NOOP} userdel -f -r ${USERNAME}
+    for i in {1..10}
+    do
+        if /bin/ps -U mysql -o pid | /bin/grep -v PID | xargs kill -9 2> /dev/null
+        then
+            sleep .5
+        else
+            break
+        fi
+    done
+
+    ${NOOP} rm -rf `homedir $USERNAME`
+    ${NOOP} userdel -r ${USERNAME}
 }
 
 
