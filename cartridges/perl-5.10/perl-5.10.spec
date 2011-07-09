@@ -2,7 +2,7 @@
 
 Summary:   Provides mod_perl support
 Name:      rhc-cartridge-perl-5.10
-Version:   0.4.9
+Version:   0.4.10
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -72,6 +72,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Sat Jul 09 2011 Dan McPherson <dmcphers@redhat.com> 0.4.10-1
+- Adding rpm-build to dep list (mmcgrath@redhat.com)
+
 * Thu Jul 07 2011 Dan McPherson <dmcphers@redhat.com> 0.4.9-1
 - move empty readmes to .gitkeeps (dmcphers@redhat.com)
 
