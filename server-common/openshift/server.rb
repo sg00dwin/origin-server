@@ -409,15 +409,32 @@ module Libra
     #
     # Configures the user on this server
     #
-    def create_user(user, app_info)
+    def create_account(user, app_info)
       # Make the call to configure the user
       #execute_internal(@@C_CONTROLLER, 'configure', "-c #{user.uuid} -e #{user.rhlogin} -s #{user.ssh}")
-      execute_direct(@@C_CONTROLLER, 'configure', "-c #{app_info['uuid']} -e #{user.rhlogin} -s #{user.ssh}")
+      result = execute_direct(@@C_CONTROLLER, 'configure', "-c #{app_info['uuid']} -e #{user.rhlogin} -s #{user.ssh}")
+      handle_controller_result(result)
     end
 
-    def delete_account(accountname)
+    def delete_account(app_uuid)
       # Make the call to configure the user
-      execute_direct(@@C_CONTROLLER, 'deconfigure', "-c #{accountname}")
+      result = execute_direct(@@C_CONTROLLER, 'deconfigure', "-c #{app_uuid}")
+      handle_controller_result(result)
+    end
+    
+    def handle_controller_result(result)
+      result = result[0]
+      if (result && defined? result.results)
+        output = result.results[:data][:output]
+        exitcode = result.results[:data][:exitcode]
+        log_result_output(output, exitcode)
+        if exitcode != 0
+          Libra.client_debug "Controller return code: " + exitcode.to_s
+          raise NodeException.new(143), "Node execution failure (invalid exit code from node controller).  If the problem persists please contact Red Hat support.", caller[0..5]
+        end
+      else
+        raise NodeException.new(143), "Node execution failure (error getting result from node controller).  If the problem persists please contact Red Hat support.", caller[0..5]
+      end
     end
 
     #
@@ -463,11 +480,36 @@ module Libra
                     :action => action,
                     :args => args }
         rpc_client = Helper.rpc_exec_direct('libra')
+        result = nil
         begin
-          rpc_client.custom_request('cartridge_do', mc_args, self.name, {'identity' => self.name})
+          result = rpc_client.custom_request('cartridge_do', mc_args, self.name, {'identity' => self.name})
         ensure
           rpc_client.disconnect
         end
+        Libra.logger_debug result
+        result
+    end
+    
+    #
+    # Logs result output
+    #
+    def log_result_output(output, exitcode)
+      if output && !output.empty?
+        output.each_line do |line|
+          if line =~ /^CLIENT_(MESSAGE|RESULT|DEBUG): /
+            if line =~ /^CLIENT_MESSAGE: /
+              Libra.client_message line['CLIENT_MESSAGE: '.length..-1]
+            elsif line =~ /^CLIENT_RESULT: /
+              Libra.client_result line['CLIENT_RESULT: '.length..-1]
+            else
+              Libra.client_debug line['CLIENT_DEBUG: '.length..-1]
+            end
+          elsif exitcode != 0
+            Libra.client_debug line
+            Libra.logger_debug "DEBUG: server results: " + line
+          end
+        end
+      end
     end
 
     #

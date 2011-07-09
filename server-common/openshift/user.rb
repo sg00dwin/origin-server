@@ -178,12 +178,10 @@ module Libra
             result = server.execute_direct(app_info['framework'], 'update_namespace', "#{app_name} #{new_namespace} #{@namespace} #{app_info['uuid']}")[0]
             if (result && defined? result.results)            
               exitcode = result.results[:data][:exitcode]
+              output = result.results[:data][:output]
+              server.log_result_output(output, exitcode)
               if exitcode != 0
-                update_namespace_failures.push(app_name)
-                output = result.results[:data][:output]
-                Libra.client_debug "Cartridge return code: " + exitcode.to_s
-                Libra.client_debug "Cartridge output: " + output
-                Libra.logger_debug "DEBUG: execute_direct results: " + output                
+                update_namespace_failures.push(app_name)                
               end
             else
               update_namespace_failures.push(app_name)
@@ -191,7 +189,7 @@ module Libra
           rescue Exception => e
             Libra.client_debug "Exception caught updating namespace #{e.message}"
             Libra.logger_debug "DEBUG: Exception caught updating namespace #{e.message}"
-            Libra.logger_debug e.backtrace     
+            Libra.logger_debug e.backtrace
             update_namespace_failures.push(app_name)
           end
         end

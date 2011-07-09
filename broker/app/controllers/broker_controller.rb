@@ -263,7 +263,8 @@ class BrokerController < ApplicationController
             user.apps.each do |appname, app|
               server = Libra::Server.new app['server_identity']
               cfgstring = "-c #{app['uuid']} -e #{user.rhlogin} -s #{user.ssh} -a"
-              server.execute_direct('li-controller-0.1', 'configure', cfgstring)
+              result = server.execute_direct('li-controller-0.1', 'configure', cfgstring)
+              server.handle_controller_result(result)
             end
           else
             render :json => generate_result_json("User already has a registered namespace.  To modify, use --alter", nil, 97), :status => :conflict and return
