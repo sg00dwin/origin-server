@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.73.22
+Version:   0.73.23
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -87,6 +87,11 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Sat Jul 09 2011 Dan McPherson <dmcphers@redhat.com> 0.73.23-1
+- adjust heap sizes (dmcphers@redhat.com)
+- changing to lsof method (mmcgrath@redhat.com)
+- Update MaxPermSize to 128m (scott.stark@jboss.org)
+
 * Thu Jul 07 2011 Dan McPherson <dmcphers@redhat.com> 0.73.22-1
 - doc updates (dmcphers@redhat.com)
 
