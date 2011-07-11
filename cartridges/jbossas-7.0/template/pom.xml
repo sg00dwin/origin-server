@@ -10,36 +10,11 @@
     <finalName>ROOT</finalName>
     <plugins>
       <plugin>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <version>1.6</version>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <configuration>
-              <target>
-
-<echo message="-------------------------------------------------------------------"/>
-<echo message="-------------------- Deploy application start ---------------------"/>
-<echo message="-------------------------------------------------------------------"/>
-<property name="war.file" value="ROOT.war"/>
-<property name="deploy.dir" value="deployments"/>
-<mkdir dir="${deploy.dir}"/>
-<move todir="${deploy.dir}">
-  <fileset dir="target">
-    <include name="${war.file}"/>
-  </fileset>
-</move>
-
-<echo message="-------------------------------------------------------------------"/>
-<echo message="-------------------- Deploy application finish --------------------"/>
-<echo message="-------------------------------------------------------------------"/>
-              </target>
-            </configuration>
-            <goals>
-              <goal>run</goal>
-            </goals>
-          </execution>
-        </executions>
+        <artifactId>maven-war-plugin</artifactId>
+        <configuration>
+          <outputDirectory>deployments</outputDirectory>
+          <warName>ROOT</warName>
+        </configuration>
       </plugin>
     </plugins>
   </build>
