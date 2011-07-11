@@ -1,0 +1,214 @@
+# Controller cartridge command paths
+$cartridge_root ||= "/usr/libexec/li/cartridges"
+$php_cartridge = "#{$cartridge_root}/php-5.3"
+$php_common_conf_path = "#{$php_cartridge}/info/configuration/etc/conf/httpd_nolog.conf"
+$php_hooks = "#{$php_cartridge}/info/hooks"
+$php_config_path = "#{$php_hooks}/configure"
+# app_name namespace acct_name
+$php_config_format = "#{$php_config_path} '%s' '%s' '%s'"
+$php_deconfig_path = "#{$php_hooks}/deconfigure"
+$php_deconfig_format = "#{$php_deconfig_path} '%s' '%s' '%s'"
+
+$php_start_path = "#{$php_hooks}/start"
+$php_start_format = "#{$php_start_path} '%s' '%s' '%s'"
+
+$php_stop_path = "#{$php_hooks}/stop"
+$php_stop_format = "#{$php_stop_path} '%s' '%s' '%s'"
+
+$php_status_path = "#{$php_hooks}/status"
+$php_status_format = "#{$php_status_path} '%s' '%s' '%s'"
+
+$libra_httpd_conf_d ||= "/etc/httpd/conf.d/libra"
+
+When /^I configure a php application$/ do
+  account_name = @account['accountname']
+  namespace = "ns1"
+  app_name = "app1"
+  @app = {
+    'name' => app_name,
+    'namespace' => namespace
+  }
+  command = $php_config_format % [app_name, namespace, account_name]
+  runcon command,  'unconfined_u', 'system_r', 'libra_initrc_t'
+end
+
+Then /^a php application http proxy file will( not)? exist$/ do | negate |
+  acct_name = @account['accountname']
+  app_name = @app['name']
+  namespace = @app['namespace']
+
+  conf_file_name = "#{acct_name}_#{namespace}_#{app_name}.conf"
+  conf_file_path = "#{$libra_httpd_conf_d}/#{conf_file_name}"
+
+  status = File.exists?(conf_file_path)
+
+  if not negate
+    status.should be_true
+  else
+    status.should be_false
+  end
+end
+
+Then /^a php application git repo will( not)? exist$/ do | negate |
+  acct_name = @account['accountname']
+  app_name = @app['name']
+
+  git_repo = "#{$home_root}/#{acct_name}/git/#{app_name}.git"
+  status = (File.exists? git_repo and File.directory? git_repo)
+  # TODO - need to check permissions and SELinux labels
+
+  if not negate
+    status.should be_true
+  else
+    status.should be_false
+  end
+
+end
+
+Then /^a php application source tree will( not)? exist$/ do | negate |
+  acct_name = @account['accountname']
+  app_name = @app['name']
+
+  app_root = "#{$home_root}/#{acct_name}/#{app_name}"
+  status = (File.exists? app_root and File.directory? app_root) 
+  # TODO - need to check permissions and SELinux labels
+
+  if not negate
+    status.should be_true
+  else
+    status.should be_false
+  end
+
+end
+
+Then /^a php application httpd will( not)? be running$/ do | negate |
+  acct_name = @account['accountname']
+  acct_uid = @account['uid']
+  app_name = @app['name']
+
+  sleep 5
+
+  ps_pattern = /^(\d+)\s+(\S+)$/
+  command = "ps --no-headers -o pid,comm -u #{acct_name}"
+  pid, stdin, stdout, stderr = Open4::popen4(command)
+
+  stdin.close
+  ignored, status = Process::waitpid2 pid
+  exit_code = status.exitstatus
+
+  # sleep?
+
+  http_daemons = stdout.collect { |line|
+    match = line.match(ps_pattern)
+    match and (match[1] if match[2] == 'httpd')
+  }.compact!
+
+  status = (http_daemons and http_daemons.size > 0)
+  if not negate
+    status.should be_true
+  else
+    status.should be_false
+  end
+
+end
+
+Then /^php application log files will( not)? exist$/ do | negate |
+  acct_name = @account['accountname']
+  acct_uid = @account['uid']
+  app_name = @app['name']
+  log_dir_path = "#{$home_root}/#{acct_name}/#{app_name}/logs"
+  begin
+    log_dir = Dir.new log_dir_path
+    status = (log_dir.count > 2)
+  rescue
+    status = false
+  end
+
+  if not negate
+    status.should be_true
+  else
+    status.should be_false
+  end
+
+end
+
+Given /^a new php application$/ do
+  account_name = @account['accountname']
+  app_name = 'app1'
+  namespace = 'ns1'
+  @app = {
+    'namespace' => namespace,
+    'name' => app_name
+  }
+  command = $php_config_format % [app_name, namespace, account_name]
+  runcon command, 'unconfined_u', 'system_r', 'libra_initrc_t'
+end
+
+When /^I deconfigure the php application$/ do
+  account_name = @account['accountname']
+  namespace = @app['namespace']
+  app_name = @app['name']
+  command = $php_deconfig_format % [app_name, namespace, account_name]
+  runcon command,  'unconfined_u', 'system_r', 'libra_initrc_t'
+end
+
+Given /^the php application is (running|stopped)$/ do | start_state |
+  account_name = @account['accountname']
+  namespace = @app['namespace']
+  app_name = @app['name']
+
+  case start_state
+  when 'running':
+      fix_action = 'start'
+      good_exit = 0
+  when 'stopped':
+      fix_action = 'stop'
+      good_exit = 4
+  end
+
+  # check
+  status_command = $php_status_format %  [app_name, namespace, account_name]
+  exit_status = runcon status_command, 'unconfined_u', 'system_r', 'libra_initrc_t'
+
+  if exit_status != good_exit
+    # fix it
+    fix_command = "#{$php_hooks}/%s %s %s %s" % [fix_action, app_name, namespace, account_name]
+    exit_status = runcon fix_command, 'unconfined_u', 'system_r', 'libra_initrc_t'
+    if exit_status != 0
+      raise "Unable to %s for %s %s %s" % [fix_action, app_name, namespace, account_name]
+    end
+    # check exit status
+
+    exit_status = runcon status_command, 'unconfined_u', 'system_r', 'libra_initrc_t'
+    if exit_status != good_exit
+      raise "Unable to %s for %s %s %s" % [fix_action, app_name, namespace, account_name]
+    end
+  end
+  # check again
+end
+
+When /^I (start|stop) the php application$/ do |action|
+  account_name = @account['accountname']
+  namespace = @app['namespace']
+  app_name = @app['name']
+
+  command = "#{$php_hooks}/%s %s %s %s" % [action, app_name, namespace, account_name]
+  exit_status = runcon command, 'unconfined_u', 'system_r', 'libra_initrc_t'
+  if exit_status != 0
+    raise "Unable to %s for %s %s %s" % [fix_action, app_name, namespace, account_name]
+  end
+  sleep 5
+end
+
+Then /^the php application will( not)? be running$/ do | negate |
+  account_name = @account['accountname']
+  namespace = @app['namespace']
+  app_name = @app['name']
+
+  good_status = negate ? 4 : 0
+
+  command = "#{$php_hooks}/status %s %s %s" % [app_name, namespace, account_name]
+  exit_status = runcon command, 'unconfined_u', 'system_r', 'libra_initrc_t'
+  exit_status.should == good_status
+end
+
