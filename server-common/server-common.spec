@@ -2,7 +2,7 @@
 
 Summary:       Common dependencies of the OpenShift broker and site
 Name:          rhc-server-common
-Version:       0.73.14
+Version:       0.73.17
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -54,6 +54,16 @@ rm -rf %{buildroot}
                                   -s /sbin/nologin 2>&1 > /dev/null || :
 
 %changelog
+* Sat Jul 09 2011 Dan McPherson <dmcphers@redhat.com> 0.73.17-1
+- handle errors from controller and properly delete failed app creations
+  (dmcphers@redhat.com)
+
+* Thu Jul 07 2011 Dan McPherson <dmcphers@redhat.com> 0.73.16-1
+- add retries to login/logout and doc updates (dmcphers@redhat.com)
+
+* Thu Jul 07 2011 Dan McPherson <dmcphers@redhat.com> 0.73.15-1
+- remove embed param passing to broker and doc updates (dmcphers@redhat.com)
+
 * Wed Jul 06 2011 Dan McPherson <dmcphers@redhat.com> 0.73.14-1
 - rework dyn retries (dmcphers@redhat.com)
 

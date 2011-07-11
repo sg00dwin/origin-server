@@ -159,18 +159,15 @@ if opt['embed']
     action = embed_mapper[opt['embed'].split('-')[0]] if embed_mapper[opt['embed'].split('-')[0]]
     framework = opt['embed'].split('-')[1..-1].join('-')
     url = URI.parse("https://#{libra_server}/broker/embed_cartridge")
-    embed = 'true'
 else
     action = opt['command']
     url = URI.parse("https://#{libra_server}/broker/cartridge")
-    embed = 'false'
 end
 
 data = {:cartridge => framework,
                 :action => action,
                 :app_name => "#{opt['app']}",
-                :rhlogin => "#{opt['rhlogin']}",
-                :embed => embed
+                :rhlogin => "#{opt['rhlogin']}"
                 }
 if debug
   data['debug'] = "true"

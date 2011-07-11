@@ -40,7 +40,7 @@ Feature: Verification Tests
     When the applications are created
     Then they should all be accessible
     And they should be able to be changed
-    
+
   Scenario: JBossAS modification tests
     Given the libra client tools
     And an accepted node

@@ -11,10 +11,14 @@ rhc-ctl-app \- Control an existing rhcloud.com application
 .B [-p
 .I password
 .B ] [-b] [-d] [-h]
-.B -a
-.I application_name
-.B -c
+.B [-e
+.I embed_action
+.B ] [-L
+.I embedded-list
+.B ] [-c 
 .I command
+.B ] -a
+.I application_name
 .SH DESCRIPTION
 .B rhc-ctl-app
 controls an existing rhcloud.com application.  To create
@@ -39,6 +43,10 @@ RHLogin password
 Name of application to create
 .IP "-c|--command command"
 The command to send to remote server (start|stop|restart|reload|status|destroy)
+.IP "-e|--embed embed_action"
+The action to add or remove an embedded cartridge (add-$cartridge|remove-$cartridge). Ex: add-mysql-5.1
+.IP "-L|--embedded-list embedded-list"
+List of supported embedded cartridges
 .IP -b|--bypass
 Bypass any TOS/SLA warnings and notifications
 .IP -d|--debug

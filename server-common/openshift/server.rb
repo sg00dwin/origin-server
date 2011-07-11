@@ -93,32 +93,34 @@ module Libra
       return resp.length > 0
     end
 
-    def self.dyn_login
+    def self.dyn_login(retries=0)
       # Set your customer name, username, and password on the command line
       # Set up our HTTP object with the required host and path
       url = URI.parse("#{Libra.c[:dynect_url]}/REST/Session/")
       headers = { "Content-Type" => 'application/json' }
-      http = Net::HTTP.new(url.host, url.port)
-      #http.set_debug_output $stderr
-      http.use_ssl = true
       # Login and get an authentication token that will be used for all subsequent requests.
       session_data = { :customer_name => Libra.c[:dynect_customer_name], :user_name => Libra.c[:dynect_user_name], :password => Libra.c[:dynect_password] }
       auth_token = nil
-      begin
-        Libra.logger_debug "DEBUG: DYNECT Login with path: #{url.path}"
-        resp, data = http.post(url.path, JSON.generate(session_data), headers)
-        case resp
-        when Net::HTTPSuccess
-          raise_dns_exception(nil, resp) unless dyn_success?(data)
-          result = JSON.parse(data)
-          auth_token = result['data']['token']         
-        else
-          raise_dns_exception(nil, resp)
+      dyn_do('dyn_login', retries) do
+        http = Net::HTTP.new(url.host, url.port)
+        #http.set_debug_output $stderr
+        http.use_ssl = true
+        begin
+          Libra.logger_debug "DEBUG: DYNECT Login with path: #{url.path}"
+          resp, data = http.post(url.path, JSON.generate(session_data), headers)
+          case resp
+          when Net::HTTPSuccess
+            raise_dns_exception(nil, resp) unless dyn_success?(data)
+            result = JSON.parse(data)
+            auth_token = result['data']['token']         
+          else
+            raise_dns_exception(nil, resp)
+          end
+        rescue DNSException => e
+          raise
+        rescue Exception => e
+          raise_dns_exception(e)
         end
-      rescue DNSException => e
-        raise
-      rescue Exception => e
-        raise_dns_exception(e)
       end
       # Is the session still alive?
       #headers = { "Content-Type" => 'application/json', 'Auth-Token' => auth_token }
@@ -140,19 +142,19 @@ module Libra
     end
     
     def self.delete_app_dns_entries(app_name, namespace, retries=2)
-      auth_token = dyn_login
+      auth_token = dyn_login(retries)
       dyn_delete_sshfp_record(app_name, namespace, auth_token, retries)
       dyn_delete_a_record(app_name, namespace, auth_token, retries)
       dyn_publish(auth_token, retries)
-      dyn_logout(auth_token)
+      dyn_logout(auth_token, retries)
     end
     
     def self.create_app_dns_entries(app_name, namespace, public_ip, sshfp, retries=2)
-      auth_token = dyn_login
+      auth_token = dyn_login(retries)
       dyn_create_a_record(app_name, namespace, public_ip, sshfp, auth_token, retries)
       dyn_create_sshfp_record(app_name, namespace, sshfp, auth_token, retries)
       dyn_publish(auth_token, retries)
-      dyn_logout(auth_token)
+      dyn_logout(auth_token, retries)
     end
     
     def self.dyn_do(method, retries=2)
@@ -169,9 +171,9 @@ module Libra
       end
     end
 
-    def self.dyn_logout(auth_token)
+    def self.dyn_logout(auth_token, retries=0)
       # Logout
-      resp, data = dyn_delete("Session/", auth_token)
+      resp, data = dyn_delete("Session/", auth_token, retries)
     end
 
     def self.dyn_create_a_record(application, namespace, public_ip, sshfp, auth_token, retries=0)
@@ -407,15 +409,32 @@ module Libra
     #
     # Configures the user on this server
     #
-    def create_user(user, app_info)
+    def create_account(user, app_info)
       # Make the call to configure the user
       #execute_internal(@@C_CONTROLLER, 'configure', "-c #{user.uuid} -e #{user.rhlogin} -s #{user.ssh}")
-      execute_direct(@@C_CONTROLLER, 'configure', "-c #{app_info['uuid']} -e #{user.rhlogin} -s #{user.ssh}")
+      result = execute_direct(@@C_CONTROLLER, 'configure', "-c #{app_info['uuid']} -e #{user.rhlogin} -s #{user.ssh}")
+      handle_controller_result(result)
     end
 
-    def delete_account(accountname)
+    def delete_account(app_uuid)
       # Make the call to configure the user
-      execute_direct(@@C_CONTROLLER, 'deconfigure', "-c #{accountname}")
+      result = execute_direct(@@C_CONTROLLER, 'deconfigure', "-c #{app_uuid}")
+      handle_controller_result(result)
+    end
+    
+    def handle_controller_result(result)
+      result = result[0]
+      if (result && defined? result.results)
+        output = result.results[:data][:output]
+        exitcode = result.results[:data][:exitcode]
+        log_result_output(output, exitcode)
+        if exitcode != 0
+          Libra.client_debug "Controller return code: " + exitcode.to_s
+          raise NodeException.new(143), "Node execution failure (invalid exit code from node controller).  If the problem persists please contact Red Hat support.", caller[0..5]
+        end
+      else
+        raise NodeException.new(143), "Node execution failure (error getting result from node controller).  If the problem persists please contact Red Hat support.", caller[0..5]
+      end
     end
 
     #
@@ -461,11 +480,36 @@ module Libra
                     :action => action,
                     :args => args }
         rpc_client = Helper.rpc_exec_direct('libra')
+        result = nil
         begin
-          rpc_client.custom_request('cartridge_do', mc_args, self.name, {'identity' => self.name})
+          result = rpc_client.custom_request('cartridge_do', mc_args, self.name, {'identity' => self.name})
         ensure
           rpc_client.disconnect
         end
+        Libra.logger_debug result
+        result
+    end
+    
+    #
+    # Logs result output
+    #
+    def log_result_output(output, exitcode)
+      if output && !output.empty?
+        output.each_line do |line|
+          if line =~ /^CLIENT_(MESSAGE|RESULT|DEBUG): /
+            if line =~ /^CLIENT_MESSAGE: /
+              Libra.client_message line['CLIENT_MESSAGE: '.length..-1]
+            elsif line =~ /^CLIENT_RESULT: /
+              Libra.client_result line['CLIENT_RESULT: '.length..-1]
+            else
+              Libra.client_debug line['CLIENT_DEBUG: '.length..-1]
+            end
+          elsif exitcode != 0
+            Libra.client_debug line
+            Libra.logger_debug "DEBUG: server results: " + line
+          end
+        end
+      end
     end
 
     #

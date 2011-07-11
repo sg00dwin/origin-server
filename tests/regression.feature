@@ -32,4 +32,52 @@ Feature: Cucumber tests for reported bugs
     Given the libra client tools
     And an accepted node
     When create two domains with same namespace
-    Then the second domain cannot be created
+    Then this operation should fail
+
+  Scenario: (libra-qe) Bug 688893 - Error happens when start wsgi app using rhc-ctl-app
+    Given the libra client tools
+    And an accepted node
+    And the following test data
+      | processes | users | apps |   type   |
+      |     1     |   1   |  1   | wsgi-3.2 |
+    When the applications are created
+    Then they should all be accessible
+    When the applications are stopped
+    Then they should all be able to start
+    And they should all be accessible
+
+  Scenario: (libra-qe) Bug 693975 - rhc-ctl-app reload command will make app does not work any more
+    Given the libra client tools
+    And an accepted node
+    And the following test data
+      | processes | users | apps |   type   |
+      |     1     |   1   |  1   | php-5.3  |
+    When the applications are created
+    Then they should all be accessible
+    When the applications are reloaded
+    Then they should all be accessible
+
+  Scenario: (libra-qe) Bug 685078 - Error happens when check app status using rhc-ctl-app
+    Given the libra client tools
+    And an accepted node
+    And the following test data
+      | processes | users | apps |   type   |
+      |     1     |   1   |  1   | php-5.3  |
+    When the applications are created
+    Then they should all be accessible
+    When check status of the applications
+    Then no errors should be thrown
+
+  Scenario: (libra-qe) Bug 685118 - one user can create 11 apps when set "per_user_app_limit=10" (current limit=5)
+    Given the libra controller configuration
+    And the libra client tools
+    And an accepted node
+    When the libra controller configuration
+    Then the number of apps per user is 5
+    Given the following test data
+      | processes | users | apps |   type   |
+      |     5     |   1   |  5   | php-5.3  |
+    When the applications are created
+    Then no errors should be thrown
+    When create more than 5 apps for the user
+    Then this operation should fail

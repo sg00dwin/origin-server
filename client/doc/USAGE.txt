@@ -82,3 +82,14 @@ of './$APPNAME.tar.gz'.
     
 Upon successful completion, the http://eat-foodie.rhcloud.com/ application
 will be downloaded to ./eat.tar.gz
+
+
+rhc-tail-files
+===========
+
+rhc-tail-files is used tail the logs or any files within an application.  The example below uses the 
+default log location of '<application_name>/logs/*'.
+
+    rhc-tail-files -a eat
+    
+Upon successful execution, the application logs will be tailed in your terminal.  Use ctrl+c to cancel.

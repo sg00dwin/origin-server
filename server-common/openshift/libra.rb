@@ -182,7 +182,7 @@ module Libra
     if Thread.current[:resultIO].string
         app_info['embedded'][framework] = {'info' => Thread.current[:resultIO].string.split("\n")[-1]}
     end
-    Libra.client_debug "debugline: #{app_info['embedded'][framework]}"
+    Libra.client_debug "Embedded app details: #{app_info['embedded'][framework]}"
     user.update_app(app_info, app_name)
   end
 
@@ -233,7 +233,7 @@ module Libra
 
     begin
       # Configure the user on this server if necessary
-      server.create_user(user, app_info) # not cleaned up on failure
+      server.create_account(user, app_info)
 
       server_execute_direct(framework, 'configure', app_name, user, server, app_info)
       begin
@@ -254,7 +254,11 @@ module Libra
       begin
         Libra.logger_debug "DEBUG: Failed to create application '#{app_name}' for user '#{user.rhlogin}' on node '#{server.name}'"
         Libra.client_debug "Failed to create application: '#{app_name}'"
-        server_execute_direct(framework, 'deconfigure', app_name, user, server, app_info)        
+        server_execute_direct(framework, 'deconfigure', app_name, user, server, app_info)
+        Libra.logger_debug "DEBUG: Removing app account from server node: #{app_info.pretty_inspect}"
+        server.delete_account(app_info['uuid'])
+        Libra.logger_debug "DEBUG: Removing app info from persistant storage: #{app_name}"
+        user.delete_app(app_name)
       ensure
         raise
       end
@@ -319,22 +323,7 @@ module Libra
           Libra.client_result "Application '#{app_name}' is either stopped or inaccessible"
         end
       else
-        if output && !output.empty?
-          output.each_line do |line|
-            if line =~ /^CLIENT_(MESSAGE|RESULT|DEBUG): /
-              if line =~ /^CLIENT_MESSAGE: /
-                Libra.client_message line['CLIENT_MESSAGE: '.length..-1]
-              elsif line =~ /^CLIENT_RESULT: /
-                Libra.client_result line['CLIENT_RESULT: '.length..-1]
-              else
-                Libra.client_debug line['CLIENT_DEBUG: '.length..-1]
-              end
-            elsif exitcode != 0
-              Libra.client_debug line
-              Libra.logger_debug "DEBUG: server_execute_direct results: " + line
-            end
-          end
-        end
+        server.log_result_output(output, exitcode)
         if exitcode != 0
           Libra.client_debug "Cartridge return code: " + exitcode.to_s
           raise NodeException.new(143), "Node execution failure (invalid exit code from node).  If the problem persists please contact Red Hat support.", caller[0..5]

@@ -125,7 +125,7 @@ When /^the applications are created$/ do
   processes.reverse.each do |pid|
     wait(pid, urls_by_pid[pid], @cmd_timeout)
   end
-  
+
   # Fill out the data structure for all failures
   unless failures.nil?
     failures.each do |url|

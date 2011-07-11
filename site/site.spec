@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.73.12
+Version:   0.73.13
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -64,6 +64,11 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Thu Jul 07 2011 Dan McPherson <dmcphers@redhat.com> 0.73.13-1
+- Removed front-end for domain creation (edirsh@redhat.com)
+- Merge branch 'master' of ssh://libragit/srv/git/li (edirsh@redhat.com)
+- Updated omniture dynamic account information (edirsh@redhat.com)
+
 * Wed Jul 06 2011 Dan McPherson <dmcphers@redhat.com> 0.73.12-1
 - update default streamline-aws server to webqa (dmcphers@redhat.com)
 

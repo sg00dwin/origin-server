@@ -8,7 +8,7 @@ include Libra::Test::Util
 
 #US37 - TC21
 When /^a new php-5.3 app '(\w+)' is created$/ do |app_php|
-  @namespaces = Array.new(1.to_i)
+  @namespaces = Array.new(1)
   info = get_unique_username(@namespaces)
   @namespace = info[:namespace]
   @login = info[:login]
@@ -77,7 +77,7 @@ Then /^the new app is created under the generated git repo path$/ do
 end
 
 When /^an app is created with -n option$/ do
-  namespaces = Array.new(1.to_i)
+  namespaces = Array.new(1)
   info = get_unique_username(namespaces)
   namespace = info[:namespace]
   login = info[:login]
@@ -173,7 +173,7 @@ end
 
 #US362-TC115
 And /^a created domain$/ do
-  @namespaces = Array.new(1.to_i)
+  @namespaces = Array.new(1)
   info = get_unique_username(@namespaces)
   @namespace = info[:namespace]
   @login = info[:login]
@@ -308,7 +308,7 @@ When /^old audit.log is cleaned$/ do
   run("rm -f #{@audit_file}")
 end
 And /^a rack-1.1 app is created$/ do
-  @namespaces = Array.new(1.to_i)
+  @namespaces = Array.new(1)
   info = get_unique_username(@namespaces)
   @namespace = info[:namespace]
   @login = info[:login]
@@ -394,7 +394,7 @@ Given /^a Mechanize agent and a registered user$/ do
       agent.set_proxy(uri.host, uri.port)
     end
   }
-  @namespaces = Array.new(1.to_i)
+  @namespaces = Array.new(1)
   info = get_unique_username(@namespaces)
   @rh_login = info[:login]
 end
@@ -458,7 +458,7 @@ Then /^users can create a new rails app using rails new$/ do
 
     app_file = "public/index.html"
     app_name = value[:app]
-    
+
     #Create new rails app
     run("rails new #{app_name}")
     Dir.chdir(repo+"/#{app_name}")
@@ -546,8 +546,3 @@ def print_file(file_name)
       end
     end
 end
-
-
-
-
-

@@ -1,4 +1,4 @@
-There are two options for deploying content to the JBoss Application Server within OpenShift Express.
+There are two options for deploying content to the JBoss Application Server within OpenShift Express:
 
 1) (Typical) You can upload your content in a maven src structure as is this sample ROOT.war and on 
 git push have the application built and deployed.  For this to work you'll need your pom.xml at the 
@@ -58,7 +58,7 @@ The relevant marker file types are:
                  the failure.
 
 .undeploying  -- Placed by the deployment scanner service to indicate that it 
-                 has noticed a .isdeployed file has been deleted and the 
+                 has noticed a .deployed file has been deleted and the 
                  content is being undeployed. This marker file will be deleted 
                  when the undeployment process completes.
               
@@ -66,12 +66,11 @@ The relevant marker file types are:
                  given content has been undeployed from the runtime. If an end 
                  user deletes this file, it has no impact.
                  
-Basic workflows:
+Basic workflows for deploying prebuilt content (each operation will require associated git add/commit/push operations to take effect):
 
 A) Add new zipped content and deploy it:
 
-1. cp target/example.war/ deployments
-2. touch deployments/example.war.dodeploy
+1. cp target/example.war deployments
 
 B) Add new unzipped content and deploy it:
 
@@ -80,23 +79,15 @@ B) Add new unzipped content and deploy it:
 
 C) Undeploy currently deployed content:
 
-1. rm deployments/example.war.isdeployed
+1. git rm deployments/example.war.dodeploy deployments/example.war
 
 D) Replace currently deployed zipped content with a new version and deploy it:
 
-1. cp target/example.war/ deployments
-2. touch deployments/example.war.dodeploy
+1. cp target/example.war deployments
 
-E) Replace currently deployed unzipped content with a new version and deploy 
-   it:
+E) Replace currently deployed unzipped content with a new version and deploy it:
 
-1. rm deployments/example.war.isdeployed
-2. wait for deployments/example.war.undeployed file to appear
-3. cp -r target/example.war/ deployments
-4. touch deployments/example.war.dodeploy
-
-F) Redeploy currently deployed content (i.e. bounce it with no content 
-   change):
-
-1. touch deployments/example.war.dodeploy
+1. git rm -rf deployments/example.war/
+2. cp -r target/example.war/ deployments
+3. touch deployments/example.war.dodeploy
 

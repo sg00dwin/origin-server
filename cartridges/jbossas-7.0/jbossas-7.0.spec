@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.73.20
+Version:   0.73.23
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -14,7 +14,7 @@ BuildRequires:  git
 BuildRequires:  java-devel >= 1:1.6.0 
 BuildRequires:  jpackage-utils
 Requires:  rhc-node
-Requires: jboss-as7 = 7.0.0.CR1
+Requires: jboss-as7 = 7.0.0.CR1OS
 Requires:  maven3
 
 BuildArch: noarch
@@ -87,6 +87,17 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Sat Jul 09 2011 Dan McPherson <dmcphers@redhat.com> 0.73.23-1
+- adjust heap sizes (dmcphers@redhat.com)
+- changing to lsof method (mmcgrath@redhat.com)
+- Update MaxPermSize to 128m (scott.stark@jboss.org)
+
+* Thu Jul 07 2011 Dan McPherson <dmcphers@redhat.com> 0.73.22-1
+- doc updates (dmcphers@redhat.com)
+
+* Thu Jul 07 2011 Dan McPherson <dmcphers@redhat.com> 0.73.21-1
+- Update to jboss-as-7.0.0.CR1OS to address AS7-1225 (scott.stark@jboss.org)
+
 * Wed Jul 06 2011 Dan McPherson <dmcphers@redhat.com> 0.73.20-1
 - remove .doploy file for packaged war for now (dmcphers@redhat.com)
 

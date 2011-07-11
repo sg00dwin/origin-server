@@ -49,7 +49,7 @@ module Libra
     def self.create(rhlogin, ssh, namespace, dyn_retries=2)
       auth_token = nil
       begin
-        auth_token = Server.dyn_login
+        auth_token = Server.dyn_login(dyn_retries)
         raise UserException.new(107), "Invalid characters in RHlogin '#{rhlogin}' found", caller[0..5] if !Util.check_rhlogin(rhlogin)
         raise UserException.new(102), "A user with RHLogin '#{rhlogin}' already exists", caller[0..5] if find(rhlogin)
 
@@ -86,7 +86,7 @@ module Libra
           end
         end
       ensure
-        Server.dyn_logout(auth_token)
+        Server.dyn_logout(auth_token, dyn_retries)
       end
     end
     
@@ -150,7 +150,7 @@ module Libra
     # Updates the user's namespace for txt and full app domains
     #
     def update_namespace(new_namespace, dyn_retries=2)
-      auth_token = Server.dyn_login
+      auth_token = Server.dyn_login(dyn_retries)
       begin
         Server.dyn_has_txt_record?(new_namespace, auth_token, true) 
         Server.dyn_create_txt_record(new_namespace, auth_token, dyn_retries)
@@ -178,12 +178,10 @@ module Libra
             result = server.execute_direct(app_info['framework'], 'update_namespace', "#{app_name} #{new_namespace} #{@namespace} #{app_info['uuid']}")[0]
             if (result && defined? result.results)            
               exitcode = result.results[:data][:exitcode]
+              output = result.results[:data][:output]
+              server.log_result_output(output, exitcode)
               if exitcode != 0
-                update_namespace_failures.push(app_name)
-                output = result.results[:data][:output]
-                Libra.client_debug "Cartridge return code: " + exitcode.to_s
-                Libra.client_debug "Cartridge output: " + output
-                Libra.logger_debug "DEBUG: execute_direct results: " + output                
+                update_namespace_failures.push(app_name)                
               end
             else
               update_namespace_failures.push(app_name)
@@ -191,7 +189,7 @@ module Libra
           rescue Exception => e
             Libra.client_debug "Exception caught updating namespace #{e.message}"
             Libra.logger_debug "DEBUG: Exception caught updating namespace #{e.message}"
-            Libra.logger_debug e.backtrace     
+            Libra.logger_debug e.backtrace
             update_namespace_failures.push(app_name)
           end
         end
@@ -209,7 +207,7 @@ module Libra
         Libra.logger_debug e.backtrace
         raise LibraException.new(254), "An error occurred updating the namespace.  If the problem persists please contact Red Hat support.", caller[0..5]
       ensure
-        Server.dyn_logout(auth_token)
+        Server.dyn_logout(auth_token, dyn_retries)
       end
     end
     
