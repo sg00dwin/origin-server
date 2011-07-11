@@ -55,5 +55,15 @@ Feature: Cucumber tests for reported bugs
     When the applications are created
     Then they should all be accessible
     When the applications are reloaded
-    And they should all be accessible
+    Then they should all be accessible
 
+  Scenario: (libra-qe) Bug 685078 - Error happens when check app status using rhc-ctl-app
+    Given the libra client tools
+    And an accepted node
+    And the following test data
+      | processes | users | apps |   type   |
+      |     1     |   1   |  1   | php-5.3  |
+    When the applications are created
+    Then they should all be accessible
+    When check status of the applications
+    Then no errors should be thrown

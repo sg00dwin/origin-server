@@ -458,7 +458,7 @@ Then /^users can create a new rails app using rails new$/ do
 
     app_file = "public/index.html"
     app_name = value[:app]
-    
+
     #Create new rails app
     run("rails new #{app_name}")
     Dir.chdir(repo+"/#{app_name}")
@@ -546,8 +546,3 @@ def print_file(file_name)
       end
     end
 end
-
-
-
-
-

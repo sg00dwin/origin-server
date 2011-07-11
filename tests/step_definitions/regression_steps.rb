@@ -139,3 +139,15 @@ When /^the applications are reloaded$/ do
   end
   sleep 10
 end
+
+When /^check status of the applications$/ do
+  @data.each_pair do |url, value|
+    namespace = "#{value[:namespace]}"
+    login = "libra-test+#{namespace}@redhat.com"
+    app = "#{value[:app]}"
+    command = "#{$ctl_app_script} -l #{login} -a #{app} -c status -p fakepw -d"
+    exit_code = run(command)
+    exit_code.should == 0
+  end
+end
+
