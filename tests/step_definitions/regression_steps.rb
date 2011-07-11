@@ -151,3 +151,13 @@ When /^check status of the applications$/ do
   end
 end
 
+When /^create more than (\d+) apps for the user$/ do |number|
+  @data.each_pair do |url, value|
+    @type = "#{value[:type]}"
+    @namespace = "#{value[:namespace]}"
+  end
+  app = "app"+number
+  login = "libra-test+#{@namespace}@redhat.com"
+  command = "#{$create_app_script} -l #{login} -a #{app}-t #{@type} -p fakepw -d"
+  @exit_code = run(command)
+end
