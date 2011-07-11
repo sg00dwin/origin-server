@@ -85,8 +85,8 @@ Then /^the first number is twice the second one$/ do
   @git_files.should == @git_repos*2
 end
 
-And /^the second one adds 2$/ do
-  @git_repos.should == @git_repos_org+2
+And /^the second one adds (\d+)$/ do |number|
+  @git_repos.should == @git_repos_org+number
 end
 
 When /^create two domains with same namespace$/ do
@@ -102,6 +102,31 @@ When /^create two domains with same namespace$/ do
   @exit_code = run("#{$create_domain_script} -n #{namespace} -l #{login} -p fakepw -d")
 end
 
-Then /^the second domain cannot be created$/ do
+Then /^this operation should fail$/ do
   @exit_code.should_not == 0
 end
+
+When /^the applications are stopped$/ do
+  @data.each_pair do |url, value|
+    namespace = "#{value[:namespace]}"
+    login = "libra-test+#{namespace}@redhat.com"
+    app = "#{value[:app]}"
+    command = "#{$ctl_app_script} -l #{login} -a #{app} -c stop -p fakepw -d"
+    puts command
+    exit_code = run(command)
+    exit_code.should == 0
+  end
+end
+
+Then /^they should all be able to start$/ do
+  @data.each_pair do |url, value|
+    namespace = "#{value[:namespace]}"
+    login = "libra-test+#{namespace}@redhat.com"
+    app = "#{value[:app]}"
+    command = "#{$ctl_app_script} -l #{login} -a #{app} -c start -p fakepw -d"
+    puts command
+    exit_code = run(command)
+    exit_code.should == 0
+  end
+end
+

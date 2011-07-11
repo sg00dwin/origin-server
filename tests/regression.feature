@@ -32,4 +32,16 @@ Feature: Cucumber tests for reported bugs
     Given the libra client tools
     And an accepted node
     When create two domains with same namespace
-    Then the second domain cannot be created
+    Then this operation should fail
+
+  Scenario: (libra-qe) Bug 688893 - Error happens when start wsgi app using rhc-ctl-app
+    Given the libra client tools
+    And an accepted node
+    And the following test data
+      | processes | users | apps |   type   |
+      |     1     |   1   |  1   | wsgi-3.2 |
+    When the applications are created
+    Then they should all be accessible
+    When the applications are stopped
+    Then they should all be able to start
+    And they should all be accessible
