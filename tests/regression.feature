@@ -45,3 +45,15 @@ Feature: Cucumber tests for reported bugs
     When the applications are stopped
     Then they should all be able to start
     And they should all be accessible
+
+  Scenario: (libra-qe) Bug 693975 - rhc-ctl-app reload command will make app does not work any more
+    Given the libra client tools
+    And an accepted node
+    And the following test data
+      | processes | users | apps |   type   |
+      |     1     |   1   |  1   | php-5.3  |
+    When the applications are created
+    Then they should all be accessible
+    When the applications are reloaded
+    And they should all be accessible
+
