@@ -5,6 +5,7 @@ import syslog
 import pwd
 import syslog
 import glob
+import base64
 
 commands = {
     "git-receive-pack": "/usr/bin/git-receive-pack",
@@ -83,7 +84,22 @@ if __name__ == '__main__':
         allargs = ['-r', '-i']
     elif basecmd in ('tail'):
         files = []
-        for glob_list in allargs[1:]:
+        
+        files_start_index = 1
+        args = []
+        add_follow = True
+        if allargs[1] == '--args':
+            files_start_index = 3
+            args_str = base64.standard_b64decode(allargs[2])
+            args = args_str.split(' ')
+            for arg in args:
+                if arg.startswith(('..', '/')):
+                    print "All paths must be relative: " + arg
+                    sys.exit(88) 
+                elif arg == '-f':
+                    add_follow = False
+
+        for glob_list in allargs[files_start_index:]:
             for f in glob.glob(glob_list):
                 try:
                     if f.find('..') != -1 or f.startswith('/'):
@@ -103,7 +119,11 @@ if __name__ == '__main__':
         if len(files) == 0:
             print "Could not find any files matching glob"
             sys.exit(32)
-        allargs = ['-f'] + files
+        allargs = []
+        allargs.extend(args)
+        if add_follow:
+            allargs.append('-f')
+        allargs.extend(files)
     elif basecmd in ('git-receive-pack', 'git-upload-pack'):
         # git repositories need to be parsed specially
         thearg = ' '.join(allargs[1:])
