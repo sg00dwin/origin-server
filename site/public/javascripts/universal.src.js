@@ -197,6 +197,11 @@ $(function(){
     menu.removeClass('collapsed').addClass('expanded');
     menu.stop().animate({width: menu_width}, 300);
   }
+  
+  /* Try it button tracking code */
+  $('.try_it').click(function(e){
+    trackLink(this);
+  });
 });
 
 
