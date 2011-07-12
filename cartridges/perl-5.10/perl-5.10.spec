@@ -2,7 +2,7 @@
 
 Summary:   Provides mod_perl support
 Name:      rhc-cartridge-perl-5.10
-Version:   0.4.10
+Version:   0.5.0
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
