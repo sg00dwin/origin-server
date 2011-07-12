@@ -180,13 +180,18 @@ function create_repo {
 
     GIT_DIR=$APP_HOME/git/$application.git
     mkdir -p "$APP_HOME/git"
-    git clone --bare ${JBOSS_CARTRIDGE_ROOT}/info/data/git_template.git $GIT_DIR
-
-    # Repacking is needed to handle a bug with running multiple
-    # git clone operations under concurrency.  The cloned repos
-    # can end up in a corrupt state which repack will correct
-    pushd $GIT_DIR
-    git repack
+    
+    cp -ad /usr/libexec/li/cartridges/${jboss_version}/template $APP_HOME/git
+    
+    pushd $APP_HOME/git/template
+    sed -i "s/{APP_NAME}/$application/g" pom.xml
+    git init
+    git add *
+    git commit -m 'Creating template'
+    popd
+    pushd $APP_HOME/git
+    git clone --bare template $application.git
+    rm -rf template
     popd
 
     echo "jbossas 7.0 application '$application'" > $GIT_DIR/description
@@ -438,8 +443,7 @@ __EOF__
 # Populate repo
 #
 GIT_DIR="$GIT_DIR" git archive --format=tar HEAD | (cd "${APP_DIR}/repo" && tar --warning=no-timestamp -xf -)
-cp ${JBOSS_CARTRIDGE_ROOT}/info/data/ROOT.war $APP_DIR/repo/deployments 
-touch $APP_DIR/repo/deployments/ROOT.war.dodeploy
+cp ${JBOSS_CARTRIDGE_ROOT}/info/data/ROOT.war $APP_DIR/repo/deployments
 
 chmod +x "$APP_DIR/${application}_ctl.sh" || error "Failed to chmod new application scripts" 122
 chown $user_id.$group_id -R $APP_DIR || error "Failed to chown new application space.  Please contact support" 123

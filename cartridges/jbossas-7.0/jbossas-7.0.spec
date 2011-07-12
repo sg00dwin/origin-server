@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.73.23
+Version:   0.74.1
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -37,25 +37,13 @@ pushd template/src/main/webapp > /dev/null
 /usr/bin/jar -cvf ../../../../info/data/ROOT.war -C . .
 popd
 
-rm -rf git_template
-cp -r template/ git_template/
-cd git_template
-git init
-git add *
-git commit -m 'Creating template'
-cd ..
-git clone --bare git_template git_template.git
-rm -rf git_template
-touch git_template.git/refs/heads/.gitignore
-
 %install
 rm -rf %{buildroot}
 mkdir -p %{buildroot}%{cartridgedir}
 mkdir -p %{buildroot}/%{_sysconfdir}/libra/cartridges
 ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/libra/cartridges/%{name}
 cp -r info %{buildroot}%{cartridgedir}/
-mkdir -p %{buildroot}%{cartridgedir}/info/data/
-cp -r git_template.git %{buildroot}%{cartridgedir}/info/data/
+cp -r template %{buildroot}%{cartridgedir}/
 cp README %{buildroot}%{cartridgedir}/
 ln -s %{cartridgedir}/../abstract-httpd/info/hooks/add-module %{buildroot}%{cartridgedir}/info/hooks/add-module
 ln -s %{cartridgedir}/../abstract-httpd/info/hooks/info %{buildroot}%{cartridgedir}/info/hooks/info
@@ -80,6 +68,7 @@ rm -rf %{buildroot}
 %defattr(-,root,root,-)
 %attr(0750,-,-) %{cartridgedir}/info/hooks/
 %attr(0750,-,-) %{cartridgedir}/info/data/
+%attr(0750,-,-) %{cartridgedir}/template/
 %config(noreplace) %{cartridgedir}/info/configuration/
 %{_sysconfdir}/libra/cartridges/%{name}
 %{cartridgedir}/info/changelog
@@ -87,6 +76,11 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Mon Jul 11 2011 Dan McPherson <dmcphers@redhat.com> 0.74.1-1
+- bumping spec numbers (dmcphers@redhat.com)
+- move jboss template creation to instantiation (dmcphers@redhat.com)
+- use maven war plugin rather than ant by default (dmcphers@redhat.com)
+
 * Sat Jul 09 2011 Dan McPherson <dmcphers@redhat.com> 0.73.23-1
 - adjust heap sizes (dmcphers@redhat.com)
 - changing to lsof method (mmcgrath@redhat.com)

@@ -62,14 +62,14 @@ end
 
 When /^check the number of the git files in libra dir$/ do
   @sfile = "#{$temp}/sfile"
-  run("ls -d /var/lib/libra/*/git/*.git | wc -l > #{@sfile}")
+  run("find /var/lib/libra/ -name '*.git' | wc -l > #{@sfile}")
   @git_files = File.open(@sfile,"r").readline
   @git_files = @git_files.to_i
 #  puts "first number: ",@git_files
 end
 
 And /^check the number of git repos by mc-facts$/ do
-  sleep 30
+#  sleep 30
   run("mc-facts git_repos > #{@sfile}")
   File.open(@sfile,"r").each_line do |line|
     if line.include?"found"
@@ -80,12 +80,12 @@ And /^check the number of git repos by mc-facts$/ do
 #  puts "second number: ",@git_repos
 end
 
-Then /^the first number is twice the second one$/ do
+Then /^the two numbers should be same$/ do
+  @git_files.should == @git_repos
   @git_repos_org = @git_repos
-  @git_files.should == @git_repos*2
 end
 
-And /^the second one adds (\d+)$/ do |number|
+And /^they should increase (\d+)$/ do |number|
   @git_repos.should == @git_repos_org+number.to_i
 end
 

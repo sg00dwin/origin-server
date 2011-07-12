@@ -51,7 +51,7 @@ begin
         ["--apps",  "-a", GetoptLong::NO_ARGUMENT],
         ["--info",  "-i", GetoptLong::NO_ARGUMENT],
         ["--rhlogin",  "-l", GetoptLong::REQUIRED_ARGUMENT],
-        ["--password",  "-p", GetoptLong::OPTIONAL_ARGUMENT]
+        ["--password",  "-p", GetoptLong::REQUIRED_ARGUMENT]
     )
     opt = {}
     opts.each do |o, a|

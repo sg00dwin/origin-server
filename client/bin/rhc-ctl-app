@@ -63,9 +63,9 @@ begin
         ["--help",      "-h", GetoptLong::NO_ARGUMENT],
         ["--bypass",    "-b", GetoptLong::NO_ARGUMENT],
         ["--embedded-list",   "-L", GetoptLong::NO_ARGUMENT],
-        ["--rhlogin",    "-l", GetoptLong::OPTIONAL_ARGUMENT],
-        ["--embed",      "-e", GetoptLong::OPTIONAL_ARGUMENT],
-        ["--password",   "-p", GetoptLong::OPTIONAL_ARGUMENT],
+        ["--rhlogin",    "-l", GetoptLong::REQUIRED_ARGUMENT],
+        ["--embed",      "-e", GetoptLong::REQUIRED_ARGUMENT],
+        ["--password",   "-p", GetoptLong::REQUIRED_ARGUMENT],
         ["--app",        "-a", GetoptLong::REQUIRED_ARGUMENT],
         ["--command",    "-c", GetoptLong::REQUIRED_ARGUMENT]
     )

@@ -17,16 +17,16 @@ Feature: Cucumber tests for reported bugs
     And an accepted node
     When check the number of the git files in libra dir
     And check the number of git repos by mc-facts
-    Then the first number is twice the second one
+    Then the two numbers should be same
     Given the following test data
       | processes | users | apps |   type   |
-      |     2     |   2   |  1   | php-5.3  |
+      |     1     |   1   |  2   | php-5.3  |
     When the applications are created
     Then they should all be accessible
     When check the number of the git files in libra dir
     And check the number of git repos by mc-facts
-    Then the second one adds 2
-    And the first number is twice the second one
+    Then they should increase 2
+    And the two numbers should be same
 
   Scenario: (libra-qe) Bug 688820 - create more than one domain with same namespace
     Given the libra client tools

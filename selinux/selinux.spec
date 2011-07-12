@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.73.4
+Version:       0.74.1
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -38,6 +38,9 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Mon Jul 11 2011 Dan McPherson <dmcphers@redhat.com> 0.74.1-1
+- bumping spec numbers (dmcphers@redhat.com)
+
 * Tue Jul 05 2011 Dan McPherson <dmcphers@redhat.com> 0.73.4-1
 - Dontaudit the fifo_file passing to other domains from libra_t
   (dwalsh@redhat.com)
