@@ -3,13 +3,26 @@ require 'uri'
 
 include AppHelper
 
-Given /^an existing (.+) application$/ do |type|
+Given /^an existing (.+) application with an embedded (.*) cartridge$/ do |type, embed|
   TestApp.find_on_fs.each do |app|
-    if app.type == type
+    if app.type == type and app.embed == embed
       @app = app
       break
     end
   end
+
+  @app.should_not be_nil
+end
+
+Given /^an existing (.+) application( without an embedded cartridge)?$/ do |type, ignore|
+  TestApp.find_on_fs.each do |app|
+    if app.type == type and !app.embed
+      @app = app
+      break
+    end
+  end
+
+  @app.should_not be_nil
 end
 
 When /^(\d+) (.+) applications are created$/ do |app_count, type|
@@ -23,7 +36,15 @@ When /^(\d+) (.+) applications are created$/ do |app_count, type|
   end
 end
 
-When /^that application is changed$/ do
+When /^the embedded (.*) cartridge is added$/ do |type|
+  rhc_embed_add(@app, type)
+end
+
+When /^the embedded cartridge is removed$/ do
+  rhc_embed_remove(@app)
+end
+
+When /^the application is changed$/ do
   Dir.chdir(@app.repo)
   @update = "TEST"
 
@@ -33,23 +54,23 @@ When /^that application is changed$/ do
   run("git push >> " + @app.get_log("git_push") + " 2>&1")
 end
 
-When /^that application is stopped$/ do
+When /^the application is stopped$/ do
   rhc_ctl_stop(@app)
 end
 
-When /^that application is started$/ do
+When /^the application is started$/ do
   rhc_ctl_start(@app)
 end
 
-When /^that application is restarted$/ do
+When /^the application is restarted$/ do
   rhc_ctl_restart(@app)
 end
 
-When /^that application is destroyed$/ do
+When /^the application is destroyed$/ do
   rhc_ctl_destroy(@app)
 end
 
-Then /^they should be accessible?$/ do
+Then /^the applications should be accessible?$/ do
   @apps.each do |app|
     app.is_accessible?.should be_true
     app.is_accessible?(true).should be_true
@@ -69,11 +90,11 @@ Then /^it should be updated successfully$/ do
   body.should match(/#{@update}/)
 end
 
-Then /^it should be accessible$/ do
+Then /^the application should be accessible$/ do
   @app.is_accessible?.should be_true
   @app.is_accessible?(true).should be_true
 end
 
-Then /^it should not be accessible$/ do
+Then /^the application should not be accessible$/ do
   @app.is_inaccessible?.should be_true
 end

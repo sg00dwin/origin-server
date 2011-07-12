@@ -7,7 +7,7 @@ module AppHelper
     include ActiveSupport::JSON
 
     # attributes to represent the general information of the application
-    attr_accessor :name, :namespace, :login, :type, :hostname, :repo, :file
+    attr_accessor :name, :namespace, :login, :type, :hostname, :repo, :file, :embed
 
     # attributes to represent the state of the rhc_create_* commands
     attr_accessor :create_domain_code, :create_app_code
@@ -46,7 +46,9 @@ module AppHelper
     end
 
     def self.from_json(json)
-      return TestApp.new(json['namespace'], json['login'], json['type'], json['name'])
+      app = TestApp.new(json['namespace'], json['login'], json['type'], json['name'])
+      app.embed = json['embed']
+      return app
     end
 
     def get_log(prefix)

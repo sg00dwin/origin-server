@@ -63,6 +63,20 @@ module CommandHelper
     return app
   end
 
+  def rhc_embed_add(app, type)
+    run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -e add-#{type} -d").should == 0
+    app.embed = type
+    app.persist
+    return app
+  end
+
+  def rhc_embed_remove(app)
+    run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -e remove-#{app.embed} -d").should == 0
+    app.embed = nil
+    app.persist
+    return app
+  end
+
   def rhc_ctl_stop(app)
     run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -c stop -d").should == 0
     run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -c status | grep '#{app.get_stop_string}'").should == 0
