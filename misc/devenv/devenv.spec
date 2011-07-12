@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.74.1
+Version:   0.74.2
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -191,6 +191,36 @@ chkconfig libra-tc on
 %{_initddir}/libra-site
 
 %changelog
+* Tue Jul 12 2011 Dan McPherson <dmcphers@redhat.com> 0.74.2-1
+- Automatic commit of package [rhc-devenv] release [0.74.1-1].
+  (dmcphers@redhat.com)
+- bumping spec numbers (dmcphers@redhat.com)
+- Automatic commit of package [rhc-devenv] release [0.73.9-1].
+  (dmcphers@redhat.com)
+- fix prune not to delete stage amis (dmcphers@redhat.com)
+- Automatic commit of package [rhc-devenv] release [0.73.8-1].
+  (edirsh@redhat.com)
+- Updating verify job (mhicks@redhat.com)
+- Automatic commit of package [rhc-devenv] release [0.73.7-1].
+  (dmcphers@redhat.com)
+- fix devenv build (dmcphers@redhat.com)
+- Automatic commit of package [rhc-devenv] release [0.73.6-1].
+  (dmcphers@redhat.com)
+- let jenkins use tmp (dmcphers@redhat.com)
+- Added mysql and charlie (mmcgrath@redhat.com)
+- cleanup unused vars (dmcphers@redhat.com)
+- Automatic commit of package [rhc-devenv] release [0.73.5-1].
+  (dmcphers@redhat.com)
+- removing mysql until it is available (mmcgrath@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- add nurture call for git push (dmcphers@redhat.com)
+- Added mysql (mmcgrath@redhat.com)
+- Switching the stage build to use the stage branch (mhicks@redhat.com)
+- Automatic commit of package [rhc-devenv] release [0.73.4-1].
+  (mhicks@redhat.com)
+- Adding support for staging releases on the new tag (mhicks@redhat.com)
+
 * Mon Jul 11 2011 Dan McPherson <dmcphers@redhat.com> 0.74.1-1
 - bumping spec numbers (dmcphers@redhat.com)
 

@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.74.1
+Version:       0.74.2
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -142,6 +142,65 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Tue Jul 12 2011 Dan McPherson <dmcphers@redhat.com> 0.74.2-1
+- Automatic commit of package [rhc-node] release [0.74.1-1].
+  (dmcphers@redhat.com)
+- bumping spec numbers (dmcphers@redhat.com)
+- add options to tail-files (dmcphers@redhat.com)
+- Automatic commit of package [rhc-node] release [0.73.13-1].
+  (dmcphers@redhat.com)
+- Be more forceful about cleanup on removal (mmcgrath@redhat.com)
+- Automatic commit of package [rhc-node] release [0.73.12-1].
+  (dmcphers@redhat.com)
+- remove syntax error from libra-data (dmcphers@redhat.com)
+- Automatic commit of package [rhc-node] release [0.73.11-1].
+  (dmcphers@redhat.com)
+- Adding lsof as a req for node (mmcgrath@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- Automatic commit of package [rhc-node] release [0.73.10-1].
+  (edirsh@redhat.com)
+- Don't include 'embedded' as a cart, ever. (jimjag@redhat.com)
+- Adding polyinstantiated tmp dir for pam_namespace (mmcgrath@redhat.com)
+- Automatic commit of package [rhc-node] release [0.73.9-1].
+  (edirsh@redhat.com)
+- simplifying start script - checking for embedded cartridges
+  (mmcgrath@redhat.com)
+- Automatic commit of package [rhc-node] release [0.73.8-1].
+  (dmcphers@redhat.com)
+- Automatic commit of package [rhc-node] release [0.73.7-1].
+  (dmcphers@redhat.com)
+- fixup embedded cart remove (dmcphers@redhat.com)
+- Automatic commit of package [rhc-node] release [0.73.6-1].
+  (dmcphers@redhat.com)
+- perf improvements for how/when we look up the valid cart types on the server
+  (dmcphers@redhat.com)
+- Merge remote-tracking branch 'origin/master' (markllama@redhat.com)
+- switched deconfigure back to symlink to maintain identity with configure
+  (markllama@redhat.com)
+- updated (de)configure to remove tc elements (markllama@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- fixing embedded call and adding debug (mmcgrath@redhat.com)
+- ensure any apps still running from the user are actually dead / gone
+  (mmcgrath@redhat.com)
+- Automatic commit of package [rhc-node] release [0.73.5-1].
+  (dmcphers@redhat.com)
+- add nurture migration for existing apps (dmcphers@redhat.com)
+- undo passing rhlogin to cart (dmcphers@redhat.com)
+- add nurture call for git push (dmcphers@redhat.com)
+- fixing merge from Dan (mmcgrath@redhat.com)
+- proper error handling for embedded cases (mmcgrath@redhat.com)
+- Automatic commit of package [rhc-node] release [0.73.4-1].
+  (mhicks@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- Added support to call embedded cartridges (mmcgrath@redhat.com)
+- Automatic commit of package [rhc-node] release [0.73.3-1].
+  (dmcphers@redhat.com)
+- Bug 717168 (dmcphers@redhat.com)
+- Added embedded list (mmcgrath@redhat.com)
+
 * Mon Jul 11 2011 Dan McPherson <dmcphers@redhat.com> 0.74.1-1
 - bumping spec numbers (dmcphers@redhat.com)
 - add options to tail-files (dmcphers@redhat.com)
