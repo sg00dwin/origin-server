@@ -2,7 +2,7 @@
 
 Summary:   Provides mod_perl support
 Name:      rhc-cartridge-perl-5.10
-Version:   0.5.1
+Version:   0.5.2
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -72,6 +72,37 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Tue Jul 12 2011 Dan McPherson <dmcphers@redhat.com> 0.5.2-1
+- Automatic commit of package [rhc-cartridge-perl-5.10] release [0.5.1-1].
+  (dmcphers@redhat.com)
+- bumping spec numbers (dmcphers@redhat.com)
+- Automatic commit of package [rhc-cartridge-perl-5.10] release [0.4.10-1].
+  (dmcphers@redhat.com)
+- Adding rpm-build to dep list (mmcgrath@redhat.com)
+- Automatic commit of package [rhc-cartridge-perl-5.10] release [0.4.9-1].
+  (dmcphers@redhat.com)
+- move empty readmes to .gitkeeps (dmcphers@redhat.com)
+- Automatic commit of package [rhc-cartridge-perl-5.10] release [0.4.8-1].
+  (dmcphers@redhat.com)
+- update rack readme (dmcphers@redhat.com)
+- Automatic commit of package [rhc-cartridge-perl-5.10] release [0.4.7-1].
+  (dmcphers@redhat.com)
+- move untar above perms (dmcphers@redhat.com)
+- back off on calling post receive for now (dmcphers@redhat.com)
+- Automatic commit of package [rhc-cartridge-perl-5.10] release [0.4.6-1].
+  (edirsh@redhat.com)
+- Added deplist info (mmcgrath@redhat.com)
+- Adding deplist (mmcgrath@redhat.com)
+- call post-receive from configure instead of start (dmcphers@redhat.com)
+- Automatic commit of package [rhc-cartridge-perl-5.10] release [0.4.5-1].
+  (dmcphers@redhat.com)
+- undo passing rhlogin to cart (dmcphers@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- Automatic commit of package [rhc-cartridge-perl-5.10] release [0.4.4-1].
+  (mmcgrath@redhat.com)
+- add nurture call for git push (dmcphers@redhat.com)
+
 * Mon Jul 11 2011 Dan McPherson <dmcphers@redhat.com> 0.5.1-1
 - bumping spec numbers (dmcphers@redhat.com)
 
