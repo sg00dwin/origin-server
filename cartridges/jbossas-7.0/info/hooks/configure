@@ -444,13 +444,16 @@ __EOF__
 #
 GIT_DIR="$GIT_DIR" git archive --format=tar HEAD | (cd "${APP_DIR}/repo" && tar --warning=no-timestamp -xf -)
 cp ${JBOSS_CARTRIDGE_ROOT}/info/data/ROOT.war $APP_DIR/repo/deployments
+pushd $M2_DIR
+tar -xf ${JBOSS_CARTRIDGE_ROOT}/info/data/m2_repository.tar.gz
+popd
 
 chmod +x "$APP_DIR/${application}_ctl.sh" || error "Failed to chmod new application scripts" 122
 chown $user_id.$group_id -R $APP_DIR || error "Failed to chown new application space.  Please contact support" 123
 # Secure script and config dirs.
 chown root.root -R "$APP_DIR/${application}_ctl.sh"
 chown $user_id.$group_id -R "$APP_DIR/${jboss_version}/standalone"
-chown $user_id.$group_id $M2_DIR
+chown -R $user_id.$group_id $M2_DIR
 chcon -t libra_var_lib_t -l s0:$c_val -R "$APP_DIR"
 #
 # Start the server
