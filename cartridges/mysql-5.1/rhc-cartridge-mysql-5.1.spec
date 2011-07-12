@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/mysql-5.1
 
 Name: rhc-cartridge-mysql-5.1
-Version: 0.8.1
+Version: 0.8.2
 Release: 1%{?dist}
 Summary: Embedded mysql support for express
 
@@ -45,6 +45,39 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Tue Jul 12 2011 Dan McPherson <dmcphers@redhat.com> 0.8.2-1
+- Automatic commit of package [rhc-cartridge-mysql-5.1] release [0.8.1-1].
+  (dmcphers@redhat.com)
+- bumping spec numbers (dmcphers@redhat.com)
+- Automatic commit of package [rhc-cartridge-mysql-5.1] release [0.7.2-1].
+  (dmcphers@redhat.com)
+- update version number on mysql to be 3 digits (dmcphers@redhat.com)
+- Automatic commit of package [rhc-cartridge-mysql-5.1] release [0.7-1].
+  (dmcphers@redhat.com)
+- fixing mysql to work with rack (mmcgrath@redhat.com)
+- Automatic commit of package [rhc-cartridge-mysql-5.1] release [0.6-1].
+  (dmcphers@redhat.com)
+- Altering binding detection method (mmcgrath@redhat.com)
+- Automatic commit of package [rhc-cartridge-mysql-5.1] release [0.5-1].
+  (dmcphers@redhat.com)
+- moving runcons (mmcgrath@redhat.com)
+- fixing start/stop (mmcgrath@redhat.com)
+- Automatic commit of package [rhc-cartridge-mysql-5.1] release [0.4-1].
+  (mmcgrath@redhat.com)
+- Automatic commit of package [rhc-cartridge-mysql-5.1] release [0.3-1].
+  (mmcgrath@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- undo passing rhlogin to cart (dmcphers@redhat.com)
+- merged (mmcgrath@redhat.com)
+- Adding mysql (mmcgrath@redhat.com)
+- Automatic commit of package [rhc-cartridge-mysql-5.1] release [0.2-1].
+  (mmcgrath@redhat.com)
+- add nurture call for git push (dmcphers@redhat.com)
+- Adding MYSQL_DIR and changing dir location from ~/appname/mysql to ~/mysql/
+  (mmcgrath@redhat.com)
+- Added mysql cartridge (mmcgrath@redhat.com)
+
 * Mon Jul 11 2011 Dan McPherson <dmcphers@redhat.com> 0.8.1-1
 - bumping spec numbers (dmcphers@redhat.com)
 
