@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.74.3
+Version:   0.74.4
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -76,6 +76,10 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Wed Jul 13 2011 Dan McPherson <dmcphers@redhat.com> 0.74.4-1
+- Typo fix (mhicks@redhat.com)
+- mvn env settings (dmcphers@redhat.com)
+
 * Tue Jul 12 2011 Dan McPherson <dmcphers@redhat.com> 0.74.3-1
 - jboss readme updates (dmcphers@redhat.com)
 

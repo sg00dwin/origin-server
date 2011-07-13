@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.74.3
+Version:   0.74.4
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -192,6 +192,9 @@ chkconfig libra-tc on
 %{_initddir}/libra-site
 
 %changelog
+* Wed Jul 13 2011 Dan McPherson <dmcphers@redhat.com> 0.74.4-1
+- Adding namesapce (mmcgrath@redhat.com)
+
 * Tue Jul 12 2011 Mike McGrath <mmcgrath@redhat.com> 0.74.3-1
 - Added explicit reqiures for pam/pam namesapce (mmcgrath@redhat.com)
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
