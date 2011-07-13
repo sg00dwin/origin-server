@@ -217,7 +217,7 @@ then
   export PATH=$JAVA_HOME/bin:\$M2:\$PATH
   pushd ~/${application}/repo > /dev/null
   mvn --version
-  mvn clean package -DskipTests -Djava.io.tmpdir=$APP_DIR/tmp
+  mvn clean package -DskipTests
   popd
 fi
 
