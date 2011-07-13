@@ -136,7 +136,7 @@
             <datasources>
                 <datasource jndi-name="java:jboss/datasources/ExampleDS" pool-name="H2DS" enabled="true" jta="true" use-java-context="true" use-ccm="true">
                     <connection-url>
-                        jdbc:h2:mem:test;DB_CLOSE_DELAY=-1
+                        jdbc:h2:${jboss.server.data.dir}/test;DB_CLOSE_DELAY=-1
                     </connection-url>
                     <driver>
                         h2
@@ -182,15 +182,15 @@
             </datasources>
         </subsystem>
         <subsystem xmlns="urn:jboss:domain:resource-adapters:1.0"/>
-        <subsystem xmlns="urn:jboss:domain:web:1.0">
+        <subsystem xmlns="urn:jboss:domain:web:1.0" default-virtual-server="default-host">
             <connector name="http" protocol="HTTP/1.1" socket-binding="http" scheme="http"/>
-            <virtual-server name="localhost">
-                <alias name="example.com"/>
+            <virtual-server name="default-host">
+                <alias name="localhost"/>
             </virtual-server>
         </subsystem>
         <subsystem xmlns="urn:jboss:domain:weld:1.0"/>
         <subsystem xmlns="urn:jboss:domain:deployment-scanner:1.0">
-            <deployment-scanner name="default" path="deployments" scan-enabled="true" scan-interval="5000" relative-to="jboss.server.base.dir" deployment-timeout="60"/>
+            <deployment-scanner scan-interval="5000" relative-to="jboss.server.base.dir" path="deployments" />
         </subsystem>
     </profile>
     <interfaces>
