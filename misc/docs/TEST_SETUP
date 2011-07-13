@@ -13,7 +13,7 @@ that can be run from /root:
     cucumber --tags @verify li/tests/
 
   Run a specific test scenario (i.e. the one starting on line 55)
-    cucumber li/tests/verification.feature:55
+    cucumber li/tests/cartridge.feature:55
 
 4. Check out the output logs
   Test output - /tmp/rhc/cucumber.log

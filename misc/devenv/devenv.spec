@@ -122,6 +122,9 @@ chmod a+r /etc/libra/controller.conf
 # Allow Apache to connect to Jenkins port 8081
 /usr/sbin/setsebool -P httpd_can_network_connect=on || :
 
+# Allow polyinstantiation to work
+/usr/sbin/setsebool -P allow_polyinstantiation=on || :
+
 # Allow httpd to relay
 /usr/sbin/setsebool -P httpd_can_network_relay=on || :
 
