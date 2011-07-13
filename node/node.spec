@@ -52,6 +52,7 @@ mkdir -p %{buildroot}/var/lib/libra
 mkdir -p %{buildroot}%{_libexecdir}/li
 mkdir -p %{buildroot}%{_sysconfdir}/httpd/conf.d/libra
 mkdir -p %{buildroot}/usr/share/selinux/packages
+mkdir -p %{buildroot}%{_sysconfdir}/cron.daily/
 
 cp -r cartridges %{buildroot}%{_libexecdir}/li
 cp -r conf/httpd %{buildroot}%{_sysconfdir}
