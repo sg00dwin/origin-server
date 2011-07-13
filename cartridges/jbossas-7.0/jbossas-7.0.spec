@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.74.5
+Version:   0.74.6
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -76,6 +76,12 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Wed Jul 13 2011 Dan McPherson <dmcphers@redhat.com> 0.74.6-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (scott.stark@jboss.org)
+- Bug 720474 - Update jbossas server to be based on 7.0.0.GA with mysql jdbc
+  driver (scott.stark@jboss.org)
+
 * Wed Jul 13 2011 Dan McPherson <dmcphers@redhat.com> 0.74.5-1
 - stop using fake tmp for maven build (dmcphers@redhat.com)
 
