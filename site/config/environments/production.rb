@@ -36,5 +36,6 @@ RedHatCloud::Application.configure do
   config.streamline_secret = 'c0ldW1n3'
   config.captcha_secret = 'zvw5LiixMB0I4mjk06aR'
   
-  config.express_api_server = 'https://stg.openshift.redhat.com'
+  # Express API base url
+  config.express_api_url = 'http://openshift.redhat.com'
 end
