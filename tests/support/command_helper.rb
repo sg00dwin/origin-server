@@ -1,11 +1,28 @@
 require 'open4'
 require 'timeout'
+require 'fileutils'
 
 module CommandHelper
-  #
-  # Run a command with logging.  If the command
-  # returns a non-zero error code, raise an exception
-  #
+  def run_stdout(cmd)
+    $logger.info("Running: #{cmd}")
+
+    pid, stdin, stdout, stderr = Open4::popen4(cmd)
+    stdin.close
+
+    exit_code = -1
+    output = nil
+    
+    # Don't let a command run more than 5 minutes
+    Timeout::timeout(500) do
+      ignored, status = Process::waitpid2 pid
+      exit_code = status.exitstatus
+      output = stdout.read
+    end
+
+    $logger.error("(#{$$}): Execution failed #{cmd} with exit_code: #{exit_code.to_s}") if exit_code != 0
+    return output
+  end
+
   def run(cmd)
     $logger.info("Running: #{cmd}")
 
@@ -64,7 +81,15 @@ module CommandHelper
   end
 
   def rhc_embed_add(app, type)
-    run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -e add-#{type} -d").should == 0
+    result = run_stdout("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -e add-#{type} -d")
+    app.mysql_hostname = /^Connection URL: mysql:\/\/(.*)\/$/.match(result)[1]
+    app.mysql_user = /^ +Root User: (.*)$/.match(result)[1]
+    app.mysql_password = /^ +Root Password: (.*)$/.match(result)[1]
+
+    app.mysql_hostname.should_not be_nil
+    app.mysql_user.should_not be_nil
+    app.mysql_password.should_not be_nil
+
     app.embed = type
     app.persist
     return app
@@ -72,6 +97,9 @@ module CommandHelper
 
   def rhc_embed_remove(app)
     run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -e remove-#{app.embed} -d").should == 0
+    app.mysql_hostname = nil
+    app.mysql_user = nil
+    app.mysql_password = nil
     app.embed = nil
     app.persist
     return app
@@ -95,6 +123,8 @@ module CommandHelper
   def rhc_ctl_destroy(app)
     run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -c destroy -b -d").should == 0
     run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -c status | grep 'not found'").should == 0
+    FileUtils.rm_rf app.repo
+    FileUtils.rm_rf app.file
   end
 end
 World(CommandHelper)

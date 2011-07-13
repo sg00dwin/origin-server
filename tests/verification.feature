@@ -1,5 +1,5 @@
 @verify
-Feature: Verification Tests
+Feature: Cartridge Verification Tests
   Scenario Outline: Application Creation
     Given the libra client tools
     And an accepted node
@@ -79,32 +79,6 @@ Feature: Verification Tests
     |   wsgi-3.2    |
     |   perl-5.10   |
     |   rack-1.1    |
-
-  Scenario Outline: MySQL Embedded Creation
-    Given an existing <type> application without an embedded cartridge
-    When the embedded <embed> cartridge is added
-    Then the application should be accessible
-
-  Scenarios: MySQL Embedded Creation Scenarios
-    |     embed     |      type     |
-    |   mysql-5.1   |   php-5.3     |
-    |   mysql-5.1   |   wsgi-3.2    |
-    |   mysql-5.1   |   perl-5.10   |
-    |   mysql-5.1   |   rack-1.1    |
-    |   mysql-5.1   |   jbossas-7.0 |
-
-  Scenario Outline: MySQL Embedded Removal
-    Given an existing <type> application with an embedded <embed> cartridge
-    When the embedded cartridge is removed
-    Then the application should be accessible
-
-  Scenarios: MySQL Embedded Removal Scenarios
-    |     embed     |      type     |
-    |   mysql-5.1   |   php-5.3     |
-    |   mysql-5.1   |   wsgi-3.2    |
-    |   mysql-5.1   |   perl-5.10   |
-    |   mysql-5.1   |   rack-1.1    |
-    |   mysql-5.1   |   jbossas-7.0 |
 
   Scenario Outline: Application Destroying
     Given an existing <type> application
