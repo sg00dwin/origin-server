@@ -2,7 +2,7 @@
 
 Summary:   Provides php-5.3 support
 Name:      rhc-cartridge-php-5.3
-Version:   0.74.1
+Version:   0.74.2
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -80,6 +80,28 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Tue Jul 12 2011 Dan McPherson <dmcphers@redhat.com> 0.74.2-1
+- Automatic commit of package [rhc-cartridge-php-5.3] release [0.74.1-1].
+  (dmcphers@redhat.com)
+- bumping spec numbers (dmcphers@redhat.com)
+- reduce noise checking log files (markllama@redhat.com)
+- Automatic commit of package [rhc-cartridge-php-5.3] release [0.73.6-1].
+  (dmcphers@redhat.com)
+- move untar above perms (dmcphers@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- fixing how php.ini gets created (mmcgrath@redhat.com)
+- back off on calling post receive for now (dmcphers@redhat.com)
+- Automatic commit of package [rhc-cartridge-php-5.3] release [0.73.5-1].
+  (edirsh@redhat.com)
+- Adding deplist (mmcgrath@redhat.com)
+- Adding deplist (mmcgrath@redhat.com)
+- call post-receive from configure instead of start (dmcphers@redhat.com)
+- Automatic commit of package [rhc-cartridge-php-5.3] release [0.73.4-1].
+  (dmcphers@redhat.com)
+- undo passing rhlogin to cart (dmcphers@redhat.com)
+- add nurture call for git push (dmcphers@redhat.com)
+
 * Mon Jul 11 2011 Dan McPherson <dmcphers@redhat.com> 0.74.1-1
 - bumping spec numbers (dmcphers@redhat.com)
 - reduce noise checking log files (markllama@redhat.com)

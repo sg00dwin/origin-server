@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.74.1
+Version:       0.74.2
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -38,6 +38,21 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Tue Jul 12 2011 Dan McPherson <dmcphers@redhat.com> 0.74.2-1
+- Automatic commit of package [rhc-selinux] release [0.74.1-1].
+  (dmcphers@redhat.com)
+- bumping spec numbers (dmcphers@redhat.com)
+- Automatic commit of package [rhc-selinux] release [0.73.4-1].
+  (dmcphers@redhat.com)
+- Dontaudit the fifo_file passing to other domains from libra_t
+  (dwalsh@redhat.com)
+- Make libra_var_lib_t a files_poly() to allow it to be polyinstatiated by sshd
+  (dwalsh@redhat.com)
+- removing un-needed selinux allowance (mmcgrath@redhat.com)
+- Automatic commit of package [rhc-selinux] release [0.73.3-1].
+  (dmcphers@redhat.com)
+- fixed selinux module (mmcgrath@redhat.com)
+
 * Mon Jul 11 2011 Dan McPherson <dmcphers@redhat.com> 0.74.1-1
 - bumping spec numbers (dmcphers@redhat.com)
 

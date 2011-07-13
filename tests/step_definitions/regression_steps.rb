@@ -2,9 +2,6 @@ require 'rubygems'
 require 'net/http'
 require 'uri'
 require 'mechanize'
-include Libra::Test::User
-include Libra::Test::Util
-
 
 #bug 693951
 Given /^an end user$/ do

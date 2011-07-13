@@ -2,9 +2,6 @@ require 'rubygems'
 require 'net/http'
 require 'uri'
 require 'mechanize'
-include Libra::Test::User
-include Libra::Test::Util
-
 
 #US37 - TC21
 When /^a new php-5.3 app '(\w+)' is created$/ do |app_php|

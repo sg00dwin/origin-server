@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.74.1
+Version:   0.74.3
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -76,6 +76,96 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Tue Jul 12 2011 Dan McPherson <dmcphers@redhat.com> 0.74.3-1
+- jboss readme updates (dmcphers@redhat.com)
+
+* Tue Jul 12 2011 Dan McPherson <dmcphers@redhat.com> 0.74.2-1
+- seeding maven repository (dmcphers@redhat.com)
+- Update DataSource name, bug 717187 (scott.stark@jboss.org)
+- Automatic commit of package [rhc-cartridge-jbossas-7.0] release [0.74.1-1].
+  (dmcphers@redhat.com)
+- bumping spec numbers (dmcphers@redhat.com)
+- move jboss template creation to instantiation (dmcphers@redhat.com)
+- use maven war plugin rather than ant by default (dmcphers@redhat.com)
+- Automatic commit of package [rhc-cartridge-jbossas-7.0] release [0.73.23-1].
+  (dmcphers@redhat.com)
+- adjust heap sizes (dmcphers@redhat.com)
+- changing to lsof method (mmcgrath@redhat.com)
+- Update MaxPermSize to 128m (scott.stark@jboss.org)
+- Automatic commit of package [rhc-cartridge-jbossas-7.0] release [0.73.22-1].
+  (dmcphers@redhat.com)
+- doc updates (dmcphers@redhat.com)
+- Automatic commit of package [rhc-cartridge-jbossas-7.0] release [0.73.21-1].
+  (dmcphers@redhat.com)
+- Update to jboss-as-7.0.0.CR1OS to address AS7-1225 (scott.stark@jboss.org)
+- Automatic commit of package [rhc-cartridge-jbossas-7.0] release [0.73.20-1].
+  (dmcphers@redhat.com)
+- remove .doploy file for packaged war for now (dmcphers@redhat.com)
+- Automatic commit of package [rhc-cartridge-jbossas-7.0] release [0.73.19-1].
+  (dmcphers@redhat.com)
+- readme update (dmcphers@redhat.com)
+- add data dir to jboss (dmcphers@redhat.com)
+- Automatic commit of package [rhc-cartridge-jbossas-7.0] release [0.73.18-1].
+  (dmcphers@redhat.com)
+- change groupid to be mynamespace by default (dmcphers@redhat.com)
+- Automatic commit of package [rhc-cartridge-jbossas-7.0] release [0.73.17-1].
+  (dmcphers@redhat.com)
+- remove unnecessary chown (dmcphers@redhat.com)
+- Automatic commit of package [rhc-cartridge-jbossas-7.0] release [0.73.16-1].
+  (dmcphers@redhat.com)
+- doc update (dmcphers@redhat.com)
+- doc update (dmcphers@redhat.com)
+- README updates (dmcphers@redhat.com)
+- Automatic commit of package [rhc-cartridge-jbossas-7.0] release [0.73.15-1].
+  (dmcphers@redhat.com)
+- use different tmp dir for maven (dmcphers@redhat.com)
+- moving jboss README and adding details (dmcphers@redhat.com)
+- add mkdir for deployments just in case (dmcphers@redhat.com)
+- Automatic commit of package [rhc-cartridge-jbossas-7.0] release [0.73.14-1].
+  (dmcphers@redhat.com)
+- up jboss.version file (dmcphers@redhat.com)
+- fixup terminology in index.html (dmcphers@redhat.com)
+- Automatic commit of package [rhc-cartridge-jbossas-7.0] release [0.73.13-1].
+  (dmcphers@redhat.com)
+- change jboss as7 dep (dmcphers@redhat.com)
+- Automatic commit of package [rhc-cartridge-jbossas-7.0] release [0.73.12-1].
+  (dmcphers@redhat.com)
+- trying different java requires (dmcphers@redhat.com)
+- Automatic commit of package [rhc-cartridge-jbossas-7.0] release [0.73.11-1].
+  (dmcphers@redhat.com)
+- trying full jar path in build (dmcphers@redhat.com)
+- Automatic commit of package [rhc-cartridge-jbossas-7.0] release [0.73.10-1].
+  (dmcphers@redhat.com)
+- move ROOT.war out of repo (dmcphers@redhat.com)
+- Automatic commit of package [rhc-cartridge-jbossas-7.0] release [0.73.9-1].
+  (dmcphers@redhat.com)
+- moving default template to be maven based (dmcphers@redhat.com)
+- Automatic commit of package [rhc-cartridge-jbossas-7.0] release [0.73.8-1].
+  (dmcphers@redhat.com)
+- make jboss like other carts for when untar happens (dmcphers@redhat.com)
+- back off on calling post receive for now (dmcphers@redhat.com)
+- Automatic commit of package [rhc-cartridge-jbossas-7.0] release [0.73.7-1].
+  (edirsh@redhat.com)
+- call post-receive from configure instead of start (dmcphers@redhat.com)
+- Automatic commit of package [rhc-cartridge-jbossas-7.0] release [0.73.6-1].
+  (dmcphers@redhat.com)
+- undo passing rhlogin to cart (dmcphers@redhat.com)
+- add nurture call for git push (dmcphers@redhat.com)
+- fix formatting in README (dmcphers@redhat.com)
+- Automatic commit of package [rhc-cartridge-jbossas-7.0] release [0.73.5-1].
+  (dmcphers@redhat.com)
+- handle embed or command not passed (dmcphers@redhat.com)
+- fix typo in README (dmcphers@redhat.com)
+- fix skip tests (dmcphers@redhat.com)
+- use alternative for maven-3.0 (dmcphers@redhat.com)
+- Automatic commit of package [rhc-cartridge-jbossas-7.0] release [0.73.4-1].
+  (mhicks@redhat.com)
+- switch to use rpm for maven (dmcphers@redhat.com)
+- Automatic commit of package [rhc-cartridge-jbossas-7.0] release [0.73.3-1].
+  (dmcphers@redhat.com)
+- Automatic commit of package [rhc-broker] release [0.73.3-1].
+  (dmcphers@redhat.com)
+
 * Mon Jul 11 2011 Dan McPherson <dmcphers@redhat.com> 0.74.1-1
 - bumping spec numbers (dmcphers@redhat.com)
 - move jboss template creation to instantiation (dmcphers@redhat.com)
