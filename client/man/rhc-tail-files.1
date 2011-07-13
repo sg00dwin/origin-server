@@ -13,7 +13,9 @@ rhc-tail-files \- Tail files from remote running applications in real-time
 .B ] [-d] [-h]
 .B [-l
 .I rhlogin
-.B ] -a
+.B ] [-o
+.I options
+.B ]-a
 .I application_name
 .SH DESCRIPTION
 .B rhc-tail-files
@@ -27,8 +29,9 @@ RHLogin password
 .IP "-a|--app application_name"
 Name of remote running application
 .IP "-f|--files"
-Relative file path glob: default:
-.I ./logs/*
+Relative file path glob.  Default: <application_name>/logs/*
+.IP "-o|--opts options"
+Options to pass to the server-side tail command (-f is implicit.  Get the full list of options from 'tail --help'.) (Ex: --opts '-n 100')
 .IP -d|--debug
 Enable debugging / verbose output
 .IP -h|--help

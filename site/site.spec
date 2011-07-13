@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.73.11
+Version:   0.74.2
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -64,6 +64,74 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Tue Jul 12 2011 Dan McPherson <dmcphers@redhat.com> 0.74.2-1
+- Automatic commit of package [rhc-site] release [0.74.1-1].
+  (dmcphers@redhat.com)
+- bumping spec numbers (dmcphers@redhat.com)
+- Automatic commit of package [rhc-site] release [0.73.13-1].
+  (dmcphers@redhat.com)
+- Removed front-end for domain creation (edirsh@redhat.com)
+- Merge branch 'master' of ssh://libragit/srv/git/li (edirsh@redhat.com)
+- Automatic commit of package [rhc-site] release [0.73.12-1].
+  (dmcphers@redhat.com)
+- update default streamline-aws server to webqa (dmcphers@redhat.com)
+- Updated omniture dynamic account information (edirsh@redhat.com)
+- Automatic commit of package [rhc-site] release [0.73.11-1].
+  (edirsh@redhat.com)
+- Corrected getting_started page so selenium tests will pass
+  (edirsh@redhat.com)
+- Automatic commit of package [rhc-site] release [0.73.10-1].
+  (edirsh@redhat.com)
+- Updated express api baseurl (edirsh@redhat.com)
+- Automatic commit of package [rhc-site] release [0.73.9-1].
+  (edirsh@redhat.com)
+- Updated tests to use new function names (edirsh@redhat.com)
+- Automatic commit of package [rhc-site] release [0.73.8-1].
+  (edirsh@redhat.com)
+- Prevent access to control panel (edirsh@redhat.com)
+- Changed result checking from result parameter to data parameter
+  (edirsh@redhat.com)
+- Merge branch 'web-control-panel' (edirsh@redhat.com)
+- Unfortunate giant commit - working domain creation form on getting started
+  page (edirsh@redhat.com)
+- Automatic commit of package [rhc-site] release [0.73.7-1].
+  (dmcphers@redhat.com)
+- fixup embedded cart remove (dmcphers@redhat.com)
+- Automatic commit of package [rhc-site] release [0.73.6-1].
+  (dmcphers@redhat.com)
+- Added userinfo model (edirsh@redhat.com)
+- Added login requirement to control panel (edirsh@redhat.com)
+- Functioning remote form submission (edirsh@redhat.com)
+- Merge branch 'master' into web-control-panel (edirsh@redhat.com)
+- Corrected docs link on getting started page (edirsh@redhat.com)
+- Merge branch 'master' into web-control-panel (edirsh@redhat.com)
+- Automatic commit of package [rhc-site] release [0.73.5-1].
+  (dmcphers@redhat.com)
+- Updated text under "Deploy in Minutes" headline on front page
+  (edirsh@redhat.com)
+- Bug 716885 - Added perl to lists of supported Express platforms
+  (edirsh@redhat.com)
+- Fixed broken video links and added correct video titles (edirsh@redhat.com)
+- Automatic commit of package [rhc-site] release [0.73.4-1].
+  (dmcphers@redhat.com)
+- Fixed broken documentation link (edirsh@redhat.com)
+- Merge branch 'master' into web-control-panel (edirsh@redhat.com)
+- cleanup (dmcphers@redhat.com)
+- cleanup (dmcphers@redhat.com)
+- Automatic commit of package [rhc-site] release [0.73.3-1].
+  (dmcphers@redhat.com)
+
+* Mon Jul 11 2011 Dan McPherson <dmcphers@redhat.com> 0.74.1-1
+- bumping spec numbers (dmcphers@redhat.com)
+
+* Thu Jul 07 2011 Dan McPherson <dmcphers@redhat.com> 0.73.13-1
+- Removed front-end for domain creation (edirsh@redhat.com)
+- Merge branch 'master' of ssh://libragit/srv/git/li (edirsh@redhat.com)
+- Updated omniture dynamic account information (edirsh@redhat.com)
+
+* Wed Jul 06 2011 Dan McPherson <dmcphers@redhat.com> 0.73.12-1
+- update default streamline-aws server to webqa (dmcphers@redhat.com)
+
 * Tue Jul 05 2011 Emily Dirsh <edirsh@redhat.com> 0.73.11-1
 - Corrected getting_started page so selenium tests will pass
   (edirsh@redhat.com)

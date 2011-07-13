@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.73.10
+Version:   0.74.2
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -62,6 +62,61 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Tue Jul 12 2011 Dan McPherson <dmcphers@redhat.com> 0.74.2-1
+- Automatic commit of package [rhc-broker] release [0.74.1-1].
+  (dmcphers@redhat.com)
+- bumping spec numbers (dmcphers@redhat.com)
+- Automatic commit of package [rhc-broker] release [0.73.12-1].
+  (dmcphers@redhat.com)
+- handle errors from controller and properly delete failed app creations
+  (dmcphers@redhat.com)
+- Automatic commit of package [rhc-broker] release [0.73.11-1].
+  (dmcphers@redhat.com)
+- remove embed param passing to broker and doc updates (dmcphers@redhat.com)
+- Automatic commit of package [rhc-broker] release [0.73.10-1].
+  (edirsh@redhat.com)
+- Bug 719005 (dmcphers@redhat.com)
+- Automatic commit of package [rhc-broker] release [0.73.9-1].
+  (edirsh@redhat.com)
+- consistent names (dmcphers@redhat.com)
+- Hide the "type" logic (jimjag@redhat.com)
+- Automatic commit of package [rhc-broker] release [0.73.8-1].
+  (dmcphers@redhat.com)
+- fixup embedded cart remove (dmcphers@redhat.com)
+- Automatic commit of package [rhc-broker] release [0.73.7-1].
+  (dmcphers@redhat.com)
+- cleanup (dmcphers@redhat.com)
+- perf improvements for how/when we look up the valid cart types on the server
+  (dmcphers@redhat.com)
+- move health check path to server (dmcphers@redhat.com)
+- change broker session name (dmcphers@redhat.com)
+- Automatic commit of package [rhc-broker] release [0.73.6-1].
+  (dmcphers@redhat.com)
+- sso support for broker (dmcphers@redhat.com)
+- Automatic commit of package [rhc-broker] release [0.73.5-1].
+  (dmcphers@redhat.com)
+- undo passing rhlogin to cart (dmcphers@redhat.com)
+- add nurture call for git push (dmcphers@redhat.com)
+- fixing merge from Dan (mmcgrath@redhat.com)
+- Added initial S3 bits (mmcgrath@redhat.com)
+- Automatic commit of package [rhc-broker] release [0.73.4-1].
+  (mhicks@redhat.com)
+- allow messsages from cart to client (dmcphers@redhat.com)
+- Added support to call embedded cartridges (mmcgrath@redhat.com)
+- Added embedded list (mmcgrath@redhat.com)
+- Automatic commit of package [rhc-broker] release [0.73.3-1].
+  (dmcphers@redhat.com)
+
+* Mon Jul 11 2011 Dan McPherson <dmcphers@redhat.com> 0.74.1-1
+- bumping spec numbers (dmcphers@redhat.com)
+
+* Sat Jul 09 2011 Dan McPherson <dmcphers@redhat.com> 0.73.12-1
+- handle errors from controller and properly delete failed app creations
+  (dmcphers@redhat.com)
+
+* Thu Jul 07 2011 Dan McPherson <dmcphers@redhat.com> 0.73.11-1
+- remove embed param passing to broker and doc updates (dmcphers@redhat.com)
+
 * Tue Jul 05 2011 Emily Dirsh <edirsh@redhat.com> 0.73.10-1
 - Bug 719005 (dmcphers@redhat.com)
 

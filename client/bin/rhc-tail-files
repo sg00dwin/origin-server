@@ -22,6 +22,7 @@
 # SOFTWARE.
 
 require 'rhc-common'
+require 'base64'
 
 #
 # print help
@@ -35,7 +36,8 @@ Tail the logs of an application
 
   -l|--rhlogin   rhlogin    Red Hat login (RHN or OpenShift login with OpenShift Express access) (#{rhlogin})
   -a|--app                  Target application (required)
-  -f|--files                File glob relative to app (default ./logs/*) (optional)
+  -f|--files                File glob relative to app (default <application_name>/logs/*) (optional)
+  -o|--opts                 Options to pass to the server-side tail command (-f is implicit.  Get the full list of options from 'tail --help'.) (Ex: --opts '-n 100')
   -p|--password  password   RHLogin password (optional, will prompt)
   -d|--debug                Print Debug info
   -h|--help                 Show Usage info
@@ -49,9 +51,10 @@ begin
         ["--debug", "-d", GetoptLong::NO_ARGUMENT],
         ["--help",  "-h", GetoptLong::NO_ARGUMENT],
         ["--app",  "-a", GetoptLong::REQUIRED_ARGUMENT],
-        ["--files",  "-f", GetoptLong::OPTIONAL_ARGUMENT],
+        ["--opts",  "-o", GetoptLong::REQUIRED_ARGUMENT],
+        ["--files",  "-f", GetoptLong::REQUIRED_ARGUMENT],
         ["--rhlogin",  "-l", GetoptLong::REQUIRED_ARGUMENT],
-        ["--password",  "-p", GetoptLong::OPTIONAL_ARGUMENT]
+        ["--password",  "-p", GetoptLong::REQUIRED_ARGUMENT]
     )
     opt = {}
     opts.each do |o, a|
@@ -69,15 +72,15 @@ debug = get_var('debug') == 'false' ? nil : get_var('debug')
 libra_kfile = "#{ENV['HOME']}/.ssh/libra_id_rsa"
 libra_kpfile = "#{ENV['HOME']}/.ssh/libra_id_rsa.pub"
 
-if opt["help"] || !opt['app']
+if opt['help'] || !opt['app']
     p_usage
 end
 
-if opt["debug"]
+if opt['debug']
     debug = true
 end
 
-opt["rhlogin"] = get_var('default_rhlogin') unless opt["rhlogin"]
+opt['rhlogin'] = get_var('default_rhlogin') unless opt['rhlogin']
 
 if !RHC::check_rhlogin(opt['rhlogin'])
     p_usage
@@ -105,7 +108,7 @@ file_glob = "#{opt['files']}"
 app_uuid = user_info['app_info'][app]['uuid']
 namespace = user_info['user_info']['namespace']
 rhc_domain = user_info['user_info']['rhc_domain']
-ssh_cmd = "ssh #{app_uuid}@#{app}-#{namespace}.#{rhc_domain} 'tail #{file_glob}'"
+ssh_cmd = "ssh #{app_uuid}@#{app}-#{namespace}.#{rhc_domain} 'tail#{opt['opts'] ? ' --args ' + Base64::encode64(opt['opts']).chomp : ''} #{file_glob}'"
 
 puts "Attempting to tail files: #{file_glob}"
 puts "Use ctl + c to stop"

@@ -1,4 +1,3 @@
-@verify
 Feature: Rally User Stories
 
 #US37 - TC21, TC29, TC3

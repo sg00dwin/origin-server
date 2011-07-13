@@ -7,16 +7,14 @@
 require 'openshift'
 require 'resolv'
 include Libra
-include Libra::Test::User
-include Libra::Test::Util
 
 # Controller cartridge command paths
 $cartridge_root = '/usr/libexec/li/cartridges'
 $controller_hooks = "#{$cartridge_root}/li-controller-0.1/info/hooks"
-$configure_path = "#{$controller_hooks}/configure"
-$configure_format = "#{$configure_path} -c '%s' -e '%s' -s '%s'"
-$deconfigure_path = "#{$controller_hooks}/deconfigure"
-$deconfigure_format = "#{$deconfigure_path} -c '%s'"
+$controller_config_path = "#{$controller_hooks}/configure"
+$controller_config_format = "#{$controller_config_path} -c '%s' -e '%s' -s '%s'"
+$controller_deconfig_path = "#{$controller_hooks}/deconfigure"
+$controller_deconfig_format = "#{$controller_deconfig_path} -c '%s'"
 $home_root = "/var/lib/libra"
 # --------------------------------------------------------------------------
 # Account Checks
@@ -50,96 +48,76 @@ end
 Given /^a new guest account$/ do
   # call /usr/libexec/li/cartridges/li-controller-0.1/info/hooks/configure
   # generate a random account name and use the stock SSH keys
-  @accounts = []
-  @uid = {}
-  if @table
-    @table.hashes.each do |row|
-      @accounts << row
-      acctname = row['accountname']
-      command = $configure_format % row.values
-    end
-  else
-    # generate a random UUID and use the stock keys
-    acctname = gen_small_uuid
-    ssh_key_string, ssh_key_name = parse_ssh_pub_key $test_pub_key
-    @accounts << {
-      'accountname' => acctname,
-      'ssh_key_string' => ssh_key_string,
-      'ssh_key_name' => ssh_key_name
-    }
-    command = $configure_format % [acctname, ssh_key_name, ssh_key_string]
-  end
+  # generate a random UUID and use the stock keys
+  acctname = gen_small_uuid
+  ssh_key_string, ssh_key_name = parse_ssh_pub_key $test_pub_key
+  @account = {
+    'accountname' => acctname,
+    'ssh_key_string' => ssh_key_string,
+    'ssh_key_name' => ssh_key_name
+  }
+  command = $controller_config_format % [acctname, ssh_key_name, ssh_key_string]
 
   run command
   # get and store the account UID's by name
-  @uid[acctname] = Etc.getpwnam(acctname).uid
+  @account['uid'] = Etc.getpwnam(acctname).uid
+end
 
+Given /^the guest account has no application installed$/ do
+  # Assume this is true
 end
 
 When /^I create a guest account$/ do
   # call /usr/libexec/li/cartridges  @table.hashes.each do |row|
   # generate a random account name and use the stock SSH keys
-  @accounts = []
-  @uid = {}
-  if @table
-    @table.hashes.each do |row|
-      @accounts << row
-      acctname = row['accountname']
-      command = $configure_format % row.values
-    end
-
-  else
-    # generate a random UUID and use the stock keys
-    acctname = gen_small_uuid
-    ssh_key_string, ssh_key_name = parse_ssh_pub_key $test_pub_key
-    @accounts << {
+  # generate a random UUID and use the stock keys
+  acctname = gen_small_uuid
+  ssh_key_string, ssh_key_name = parse_ssh_pub_key $test_pub_key
+  @account = {
       'accountname' => acctname,
       'ssh_key_string' => ssh_key_string,
       'ssh_key_name' => ssh_key_name
     }
-    command = $configure_format % [acctname, ssh_key_name, ssh_key_string]
-  end
+  command = $controller_config_format % [acctname, ssh_key_name, ssh_key_string]
   run command
   # get and store the account UID's by name
-  @uid[acctname] = Etc.getpwnam(acctname).uid
+  @account['uid'] = Etc.getpwnam(acctname).uid
 end
 
 When /^I delete the guest account$/ do
   # call /usr/libexec/li/cartridges  @table.hashes.each do |row|
-  @accounts.each do |row|
-    command = $deconfigure_format % row.values
-    run command
-  end  
+  
+  command = $controller_deconfig_format % [@account['accountname'],
+                                           @account['ssh_key_string'],
+                                           @account['ssh_key_name']]
+  run command
 end
 
 
 Then /^an account password entry should( not)? exist$/ do |negate|
   # use @app['uuid'] for account name
-  @accounts.each do |acct|
-    begin
-      @pwent = Etc.getpwnam acct['accountname']
-    rescue
-      nil
-    end
+  
+  begin
+    @pwent = Etc.getpwnam @account['accountname']
+  rescue
+    nil
+  end
 
-    if negate
-      @pwent.should be_nil      
-    else
-      @pwent.should_not be_nil
-    end
+  if negate
+    @pwent.should be_nil      
+  else
+    @pwent.should_not be_nil
   end
 end
 
 Then /^an account PAM limits file should( not)? exist$/ do |negate|
   limits_dir = '/etc/security/limits.d'
-  @accounts.each do |acct|
-    @pamfile = File.exists? "#{limits_dir}/84-#{acct['accountname']}.conf"
+  @pamfile = File.exists? "#{limits_dir}/84-#{@account['accountname']}.conf"
 
-    if negate
-      @pamfile.should_not be_true
-    else
-      @pamfile.should be_true
-    end
+  if negate
+    @pamfile.should_not be_true
+  else
+    @pamfile.should be_true
   end
 end
 
@@ -149,26 +127,22 @@ end
 
 Then /^an account cgroup directory should( not)? exist$/ do |negate|
   cgroups_dir = '/cgroup/all/libra'
-  @accounts.each do |acct|
-    @cgdir = File.directory? "#{cgroups_dir}/#{acct['accountname']}"
+  @cgdir = File.directory? "#{cgroups_dir}/#{@account['accountname']}"
 
-    if negate
-      @cgdir.should_not be_true
-    else
-      @cgdir.should be_true
-    end
-  end  
+  if negate
+    @cgdir.should_not be_true
+  else
+    @cgdir.should be_true
+  end
 end
 
 Then /^an account home directory should( not)? exist$/ do |negate|
-  @accounts.each do |acct|
-    @homedir = File.directory? "#{$home_root}/#{acct['accountname']}"
+  @homedir = File.directory? "#{$home_root}/#{@account['accountname']}"
     
-    if negate
-      @homedir.should_not be_true
-    else
-      @homedir.should be_true
-    end
+  if negate
+    @homedir.should_not be_true
+  else
+    @homedir.should be_true
   end
 end
 
@@ -177,11 +151,9 @@ Then /^the account home directory permissions should( not)? be correct$/ do |neg
 end
 
 Then /^selinux labels on the account home directory should be correct$/ do
-  @accounts.each do |acct|
-    homedir = "#{$home_root}/#{acct['accountname']}"
-    @result = `restorecon -v -n #{homedir}`
-    @result.should be == "" 
-  end
+  homedir = "#{$home_root}/#{@account['accountname']}"
+  @result = `restorecon -v -n #{homedir}`
+  @result.should be == "" 
 end
 
 Then /^disk quotas on the account home directory should be correct$/ do
@@ -199,28 +171,23 @@ Then /^disk quotas on the account home directory should be correct$/ do
   #     /dev/xvde      24       0  131072               7       0   10000        
 
 
-  @accounts.each do |acct|
-    @result = `quota -u #{acct['accountname']}`
+  @result = `quota -u #{@account['accountname']}`
     
-    @result.should_not match /does not exist./
-    @result.should_not match /: none\s*\n?/
-    @result.should match /Filesystem  blocks   quota   limit   grace   files   quota   limit   grace/
-  end
+  @result.should_not match /does not exist./
+  @result.should_not match /: none\s*\n?/
+  @result.should match /Filesystem  blocks   quota   limit   grace   files   quota   limit   grace/
 end
 
 
 Then /^a traffic control entry should( not)? exist$/ do |negate|
-  @accounts.each do |acct|
-    acctname = acct['accountname']
-    tc_format = 'tc -s class show dev eth0 classid 1:%s'
-    tc_command = tc_format % (netclass @uid[acctname])
-    @result = `#{tc_command}`
-
-    if negate
-      @result.should be == ""
-    else
-      @result.should_not be == ""
-    end
+  acctname = @account['accountname']
+  tc_format = 'tc -s class show dev eth0 classid 1:%s'
+  tc_command = tc_format % (netclass @account['uid'])
+  @result = `#{tc_command}`
+  if negate
+    @result.should be == ""
+  else
+    @result.should_not be == ""
   end
 end
 
@@ -229,15 +196,13 @@ end
 # check the ssh keys?
 Then /^the account should( not)? have an SSH key with the correct label$/ do |negate|
   ssh_format = '/var/lib/libra/%s/.ssh/authorized_keys'
-  @accounts.each do |acct|
-    auth_keys_filename = ssh_format % acct['accountname']
-    exists = File.exists? auth_keys_filename
+  auth_keys_filename = ssh_format % @account['accountname']
+  exists = File.exists? auth_keys_filename
 
-    if negate
-      exists.should be_false
-    else
-      exists.should be_true
-    end
+  if negate
+    exists.should be_false
+  else
+    exists.should be_true
   end
 end
 # 

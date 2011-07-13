@@ -2,7 +2,7 @@
 
 Summary:       Common dependencies of the OpenShift broker and site
 Name:          rhc-server-common
-Version:       0.73.11
+Version:       0.74.2
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -54,6 +54,103 @@ rm -rf %{buildroot}
                                   -s /sbin/nologin 2>&1 > /dev/null || :
 
 %changelog
+* Tue Jul 12 2011 Dan McPherson <dmcphers@redhat.com> 0.74.2-1
+- Automatic commit of package [rhc-server-common] release [0.74.1-1].
+  (dmcphers@redhat.com)
+- bumping spec numbers (dmcphers@redhat.com)
+- Automatic commit of package [rhc-server-common] release [0.73.17-1].
+  (dmcphers@redhat.com)
+- handle errors from controller and properly delete failed app creations
+  (dmcphers@redhat.com)
+- Automatic commit of package [rhc-server-common] release [0.73.16-1].
+  (dmcphers@redhat.com)
+- add retries to login/logout and doc updates (dmcphers@redhat.com)
+- Automatic commit of package [rhc-server-common] release [0.73.15-1].
+  (dmcphers@redhat.com)
+- remove embed param passing to broker and doc updates (dmcphers@redhat.com)
+- Automatic commit of package [rhc-server-common] release [0.73.14-1].
+  (dmcphers@redhat.com)
+- rework dyn retries (dmcphers@redhat.com)
+- Automatic commit of package [rhc-server-common] release [0.73.13-1].
+  (dmcphers@redhat.com)
+- rework dyn retries (dmcphers@redhat.com)
+- Automatic commit of package [rhc-server-common] release [0.73.12-1].
+  (dmcphers@redhat.com)
+- cleanup client messages (dmcphers@redhat.com)
+- fix typo causing build break (dmcphers@redhat.com)
+- add dyn retries (dmcphers@redhat.com)
+- moving debug line so it produces output (mmcgrath@redhat.com)
+- Automatic commit of package [rhc-server-common] release [0.73.11-1].
+  (edirsh@redhat.com)
+- consistent names (dmcphers@redhat.com)
+- Hide the "type" logic (jimjag@redhat.com)
+- Automatic commit of package [rhc-server-common] release [0.73.10-1].
+  (dmcphers@redhat.com)
+- fixup embedded cart remove (dmcphers@redhat.com)
+- Automatic commit of package [rhc-server-common] release [0.73.9-1].
+  (dmcphers@redhat.com)
+- wrong message for invalid cart type (dmcphers@redhat.com)
+- Automatic commit of package [rhc-server-common] release [0.73.8-1].
+  (dmcphers@redhat.com)
+- cleanup (dmcphers@redhat.com)
+- perf improvements for how/when we look up the valid cart types on the server
+  (dmcphers@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- fixing embedded call and adding debug (mmcgrath@redhat.com)
+- handle nil output (dmcphers@redhat.com)
+- Automatic commit of package [rhc-server-common] release [0.73.7-1].
+  (dmcphers@redhat.com)
+- fix error message when havent requested access yet (dmcphers@redhat.com)
+- sso support for broker (dmcphers@redhat.com)
+- cleanup unused vars (dmcphers@redhat.com)
+- Automatic commit of package [rhc-server-common] release [0.73.6-1].
+  (dmcphers@redhat.com)
+- undo passing rhlogin to cart (dmcphers@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- add nurture call for git push (dmcphers@redhat.com)
+- Added mysql (mmcgrath@redhat.com)
+- Correcting framework operations (mmcgrath@redhat.com)
+- fixing merge from Dan (mmcgrath@redhat.com)
+- proper error handling for embedded cases (mmcgrath@redhat.com)
+- share common code (dmcphers@redhat.com)
+- better message on app exists (dmcphers@redhat.com)
+- Automatic commit of package [rhc-server-common] release [0.73.5-1].
+  (dmcphers@redhat.com)
+- Added initial S3 bits (mmcgrath@redhat.com)
+- share code (dmcphers@redhat.com)
+- Automatic commit of package [rhc-server-common] release [0.73.4-1].
+  (mhicks@redhat.com)
+- allow messsages from cart to client (dmcphers@redhat.com)
+- Added support to call embedded cartridges (mmcgrath@redhat.com)
+- Added embedded list (mmcgrath@redhat.com)
+
+* Mon Jul 11 2011 Dan McPherson <dmcphers@redhat.com> 0.74.1-1
+- bumping spec numbers (dmcphers@redhat.com)
+
+* Sat Jul 09 2011 Dan McPherson <dmcphers@redhat.com> 0.73.17-1
+- handle errors from controller and properly delete failed app creations
+  (dmcphers@redhat.com)
+
+* Thu Jul 07 2011 Dan McPherson <dmcphers@redhat.com> 0.73.16-1
+- add retries to login/logout and doc updates (dmcphers@redhat.com)
+
+* Thu Jul 07 2011 Dan McPherson <dmcphers@redhat.com> 0.73.15-1
+- remove embed param passing to broker and doc updates (dmcphers@redhat.com)
+
+* Wed Jul 06 2011 Dan McPherson <dmcphers@redhat.com> 0.73.14-1
+- rework dyn retries (dmcphers@redhat.com)
+
+* Wed Jul 06 2011 Dan McPherson <dmcphers@redhat.com> 0.73.13-1
+- rework dyn retries (dmcphers@redhat.com)
+
+* Wed Jul 06 2011 Dan McPherson <dmcphers@redhat.com> 0.73.12-1
+- cleanup client messages (dmcphers@redhat.com)
+- fix typo causing build break (dmcphers@redhat.com)
+- add dyn retries (dmcphers@redhat.com)
+- moving debug line so it produces output (mmcgrath@redhat.com)
+
 * Fri Jul 01 2011 Emily Dirsh <edirsh@redhat.com> 0.73.11-1
 - consistent names (dmcphers@redhat.com)
 - Hide the "type" logic (jimjag@redhat.com)

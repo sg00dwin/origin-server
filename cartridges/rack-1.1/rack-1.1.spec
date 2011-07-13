@@ -2,7 +2,7 @@
 
 Summary:   Provides ruby rack support running on Phusion Passenger
 Name:      rhc-cartridge-rack-1.1
-Version:   0.73.6
+Version:   0.74.2
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -86,6 +86,37 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Tue Jul 12 2011 Dan McPherson <dmcphers@redhat.com> 0.74.2-1
+- Automatic commit of package [rhc-cartridge-rack-1.1] release [0.74.1-1].
+  (dmcphers@redhat.com)
+- bumping spec numbers (dmcphers@redhat.com)
+- Automatic commit of package [rhc-cartridge-rack-1.1] release [0.73.8-1].
+  (dmcphers@redhat.com)
+- README updates (dmcphers@redhat.com)
+- Automatic commit of package [rhc-cartridge-rack-1.1] release [0.73.7-1].
+  (dmcphers@redhat.com)
+- update rack readme (dmcphers@redhat.com)
+- Automatic commit of package [rhc-cartridge-rack-1.1] release [0.73.6-1].
+  (dmcphers@redhat.com)
+- move untar above perms (dmcphers@redhat.com)
+- back off on calling post receive for now (dmcphers@redhat.com)
+- Automatic commit of package [rhc-cartridge-rack-1.1] release [0.73.5-1].
+  (edirsh@redhat.com)
+- call post-receive from configure instead of start (dmcphers@redhat.com)
+- Automatic commit of package [rhc-cartridge-rack-1.1] release [0.73.4-1].
+  (dmcphers@redhat.com)
+- undo passing rhlogin to cart (dmcphers@redhat.com)
+- add nurture call for git push (dmcphers@redhat.com)
+
+* Mon Jul 11 2011 Dan McPherson <dmcphers@redhat.com> 0.74.1-1
+- bumping spec numbers (dmcphers@redhat.com)
+
+* Tue Jul 05 2011 Dan McPherson <dmcphers@redhat.com> 0.73.8-1
+- README updates (dmcphers@redhat.com)
+
+* Tue Jul 05 2011 Dan McPherson <dmcphers@redhat.com> 0.73.7-1
+- update rack readme (dmcphers@redhat.com)
+
 * Fri Jul 01 2011 Dan McPherson <dmcphers@redhat.com> 0.73.6-1
 - move untar above perms (dmcphers@redhat.com)
 - back off on calling post receive for now (dmcphers@redhat.com)

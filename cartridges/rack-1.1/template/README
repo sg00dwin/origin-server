@@ -19,7 +19,7 @@ Rails 3.0
 
 Option 1) (Recommended) Git push your application Gemfile/Gemfile.lock.  This will 
 cause the remote OpenShift node to run bundle install --deployment to download and 
-locally install your dependencies.  Each subsequent git push will use the previously 
+install your dependencies.  Each subsequent git push will use the previously 
 downloaded dependencies as a starting point, so additional downloads will be a delta.
 
 Option 2) Git add your .bundle and vendor/bundle directories after running 

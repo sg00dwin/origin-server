@@ -7,20 +7,17 @@ require 'json'
 class UserController < ApplicationController
 
   def new(cloud_access_choice=nil)
-    @event = event_id(:register) unless defined? @event
     @product = 'openshift' unless defined? @product
     @user = WebUser.new({:cloud_access_choice => cloud_access_choice})
     render :new and return
   end
 
   def new_flex
-    @event = event_id(:tryit)
     @product = 'flex'
     new(CloudAccess::FLEX)
   end
 
   def new_express
-    @event = event_id(:tryit)
     @product = 'express'
     new(CloudAccess::EXPRESS)
   end
@@ -75,7 +72,10 @@ class UserController < ApplicationController
     @user.register(confirmationUrl)
 
     render :new and return unless @user.errors.length == 0
-
+    
+    # Successful user registration event for analytics
+    @event = 'event29'
+    
     # Redirect to a running workflow if it exists
     workflow_redirect    
   end

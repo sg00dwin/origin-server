@@ -23,8 +23,8 @@
       <command>sudo yum clean metadata</command>
     </hudson.tasks.Shell>
     <hudson.tasks.Shell>
-      <command>build/devenv launch devenv_stage_verifier_${BUILD_NUMBER} --use_stage_image --verifier
-build/devenv test devenv_stage_verifier_${BUILD_NUMBER} --terminate</command>
+      <command>build/devenv launch devenv-stage_verifier_${BUILD_NUMBER} --use_stage_image --verifier
+build/devenv test devenv-stage_verifier_${BUILD_NUMBER} --terminate</command>
     </hudson.tasks.Shell>
     <hudson.tasks.Shell>
       <command># Don&apos;t fail on non-test runs

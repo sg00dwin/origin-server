@@ -2,7 +2,7 @@
 Copyright 1996-2011 Adobe, Inc. All Rights Reserved
 More info available at http://www.omniture.com */
 
-var s_account="redhatopenshift, redhatcom, redhatglobal"
+var s_account="redhatdev, redhatglobaltest"
 var s=s_gi(s_account)
 /************************** CONFIG SECTION **************************/
 /* You may add or alter any code config here. */
@@ -19,14 +19,49 @@ s.linkLeaveQueryString=false
 s.linkTrackVars="None"
 s.linkTrackEvents="None"
 s.dynamicAccountSelection=true
-s.dynamicAccountList="redhatglobaltest,redhatdev=localhost;redhatglobal,redhatcom,redhatopenshift=openshift.redhat.com"
-s.dynamicAccountMatch=window.location.host
-
+s.dynamicAccountMatch=window.location.host+window.location.pathname
+s.dynamicAccountList="redhatglobaltest,redhatdev=localhost;redhatglobal,redhatcom,redhatopenshift=redhat.com/openshift,openshift.redhat.com"
 /* WARNING: Changing any of the below variables will cause drastic
 changes to how your visitor data is collected.  Changes should only be
 made when instructed to do so by your account manager.*/
 s.visitorNamespace="redhat"
 s.trackingServer="redhat.122.2o7.net"
+
+/* Try it button link tracking code */
+function trackLink(obj) {
+  var s=s_gi('openshift,redhatcom,redhatglobal'); //Not sure if this is really necessary
+  s.linkTrackVars='events';
+  s.linkTrackEvents='event28';
+  s.events='event28';
+  s.tl(obj,'o','Try It Button');
+}
+
+/************************** PLUGINS SECTION *************************/
+/* You may insert any plugins you wish to use here. */
+/*
+ * Plugin: getQueryParam 2.3
+ */
+s.getQueryParam=new Function("p","d","u",""
++"var s=this,v='',i,t;d=d?d:'';u=u?u:(s.pageURL?s.pageURL:s.wd.locati"
++"on);if(u=='f')u=s.gtfs().location;while(p){i=p.indexOf(',');i=i<0?p"
++".length:i;t=s.p_gpv(p.substring(0,i),u+'');if(t){t=t.indexOf('#')>-"
++"1?t.substring(0,t.indexOf('#')):t;}if(t)v+=v?d+t:t;p=p.substring(i="
++"=p.length?i:i+1)}return v");
+s.p_gpv=new Function("k","u",""
++"var s=this,v='',i=u.indexOf('?'),q;if(k&&i>-1){q=u.substring(i+1);v"
++"=s.pt(q,'&','p_gvf',k)}return v");
+s.p_gvf=new Function("t","k",""
++"if(t){var s=this,i=t.indexOf('='),p=i<0?t:t.substring(0,i),v=i<0?'T"
++"rue':t.substring(i+1);if(p.toLowerCase()==k.toLowerCase())return s."
++"epa(v)}return ''");
+  
+/* Plugin Config */
+s.usePlugins=true
+function s_doPlugins(s) {
+      if(!s.campaign)
+      s.campaign=s.getQueryParam('cid');
+}
+s.doPlugins=s_doPlugins
 
 /************* DO NOT ALTER ANYTHING BELOW THIS LINE ! **************/
 var s_code='',s_objectID;function s_gi(un,pg,ss){var c="s.version='H.23.3';s.an=s_an;s.logDebug=function(m){var s=this,tcf=new Function('var e;try{console.log(\"'+s.rep(s.rep(m,\"\\n\",\"\\\\n\"),\""

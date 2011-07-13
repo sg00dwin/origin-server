@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system client tools
 Name:          rhc
-Version:       0.73.8
+Version:       0.74.2
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       MIT
@@ -14,12 +14,17 @@ BuildRequires: rubygem-rake
 BuildRequires: rubygem-rspec
 Requires:      ruby >= 1.8.6
 Requires:      rubygem-parseconfig
+
 %if 0%{?fedora} == 13
 %define jpure 1
 %endif
 %if 0%{?rhel} == 5
 %define jpure 1
 %endif
+%ifos darwin
+%define jpure 1
+%endif
+
 %if 0%{?jpure} == 1
 Requires:      rubygem-json_pure
 %else
@@ -94,6 +99,86 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_sysconfdir}/openshift/express.conf
 
 %changelog
+* Tue Jul 12 2011 Dan McPherson <dmcphers@redhat.com> 0.74.2-1
+- Automatic commit of package [rhc] release [0.74.1-1]. (dmcphers@redhat.com)
+- bumping spec numbers (dmcphers@redhat.com)
+- add options to tail-files (dmcphers@redhat.com)
+- Automatic commit of package [rhc] release [0.73.14-1]. (dmcphers@redhat.com)
+- add retries to login/logout and doc updates (dmcphers@redhat.com)
+- Automatic commit of package [rhc] release [0.73.13-1]. (dmcphers@redhat.com)
+- remove embed param passing to broker and doc updates (dmcphers@redhat.com)
+- API updates (dmcphers@redhat.com)
+- Automatic commit of package [rhc] release [0.73.12-1]. (dmcphers@redhat.com)
+- bug 719510 (dmcphers@redhat.com)
+- Remove non-tested depende (jimjag@redhat.com)
+- Automatic commit of package [rhc] release [0.73.11-1]. (dmcphers@redhat.com)
+- Bug 719219 (dmcphers@redhat.com)
+- Automatic commit of package [rhc] release [0.73.10-1]. (dmcphers@redhat.com)
+- up (jimjag@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (jimjag@redhat.com)
+- force spec file to use darwin (jimjag@redhat.com)
+- standardize message (dmcphers@redhat.com)
+- Automatic commit of package [rhc] release [0.73.9-1]. (dmcphers@redhat.com)
+- Allowing rhc-tail-files to operate on the ~/ dir instead of ~/app
+  (mmcgrath@redhat.com)
+- Automatic commit of package [rhc] release [0.73.8-1]. (edirsh@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- fixing mysql version in example (mmcgrath@redhat.com)
+- Automatic commit of package [rhc] release [0.73.7-1]. (dmcphers@redhat.com)
+- cart list fixes from embed (dmcphers@redhat.com)
+- Automatic commit of package [rhc] release [0.73.6-1]. (dmcphers@redhat.com)
+- cleanup (dmcphers@redhat.com)
+- perf improvements for how/when we look up the valid cart types on the server
+  (dmcphers@redhat.com)
+- move health check path to server (dmcphers@redhat.com)
+- Automatic commit of package [rhc] release [0.73.5-1]. (dmcphers@redhat.com)
+- fixing merge from Dan (mmcgrath@redhat.com)
+- fixed formatting and embedded display (mmcgrath@redhat.com)
+- Automatic commit of package [rhc] release [0.73.4-1]. (dmcphers@redhat.com)
+- handle embed or command not passed (dmcphers@redhat.com)
+- Adding embedded list support (mmcgrath@redhat.com)
+- Automatic commit of package [rhc] release [0.73.3-1]. (mhicks@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (mhicks@redhat.com)
+- allow messsages from cart to client (dmcphers@redhat.com)
+- Updating to new Rake tasks to avoid deprecation warning (mhicks@redhat.com)
+- Adding embed support (mmcgrath@redhat.com)
+- Added embedded list (mmcgrath@redhat.com)
+
+* Mon Jul 11 2011 Dan McPherson <dmcphers@redhat.com> 0.74.1-1
+- bumping spec numbers (dmcphers@redhat.com)
+- add options to tail-files (dmcphers@redhat.com)
+
+* Thu Jul 07 2011 Dan McPherson <dmcphers@redhat.com> 0.73.14-1
+- add retries to login/logout and doc updates (dmcphers@redhat.com)
+
+* Thu Jul 07 2011 Dan McPherson <dmcphers@redhat.com> 0.73.13-1
+- remove embed param passing to broker and doc updates (dmcphers@redhat.com)
+- API updates (dmcphers@redhat.com)
+
+* Thu Jul 07 2011 Dan McPherson <dmcphers@redhat.com> 0.73.12-1
+- bug 719510 (dmcphers@redhat.com)
+- Remove non-tested depende (jimjag@redhat.com)
+
+* Wed Jul 06 2011 Dan McPherson <dmcphers@redhat.com> 0.73.11-1
+- Bug 719219 (dmcphers@redhat.com)
+
+* Wed Jul 06 2011 Dan McPherson <dmcphers@redhat.com> 0.73.10-1
+- up (jimjag@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (jimjag@redhat.com)
+- force spec file to use darwin (jimjag@redhat.com)
+- standardize message (dmcphers@redhat.com)
+
+* Tue Jul 06 2011 Jim Jagielski <jimjag@redhat.com> 0.73.10-1
+- json_pure dependencies
+  (mmcgrath@redhat.com)
+
+* Tue Jul 05 2011 Dan McPherson <dmcphers@redhat.com> 0.73.9-1
+- Allowing rhc-tail-files to operate on the ~/ dir instead of ~/app
+  (mmcgrath@redhat.com)
+
 * Fri Jul 01 2011 Emily Dirsh <edirsh@redhat.com> 0.73.8-1
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
   (mmcgrath@redhat.com)

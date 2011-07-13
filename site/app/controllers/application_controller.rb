@@ -65,18 +65,6 @@ class ApplicationController < ActionController::Base
 
   end
   
-  # Returns correct event id for omniture
-  def event_id(event)
-    case event
-      when :tryit
-        'event28'
-      when :register
-        'event29'
-      else
-        ''
-    end
-  end
-  
   def reset_sso       
     Rails.logger.debug "Removing current SSO cookie value of '#{cookies[:rh_sso]}'"
     cookies.delete :rh_sso, :domain => '.redhat.com'
