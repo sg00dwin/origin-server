@@ -13,7 +13,7 @@ from the build to your .gitignore file.
 or
 
 2) You can git push prebuilt wars (with the corresponding .dodeploy file for exploded wars) into deployments/.  To do this
-with the default repo you'll want to first run 'git rm src/ pom.xml' from the root of your repo.
+with the default repo you'll want to first run 'git rm -r src/ pom.xml' from the root of your repo.
 
 Basic workflows for deploying prebuilt content (each operation will require associated git add/commit/push operations to take effect):
 
