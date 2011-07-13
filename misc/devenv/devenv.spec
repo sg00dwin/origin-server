@@ -34,6 +34,7 @@ Requires:  rubygem-mocha
 Requires:  rubygem-rspec
 Requires:  rubygem-nokogiri
 Requires:  charlie
+Requires:  pam
 
 # CI Requirements
 Requires:  jenkins
