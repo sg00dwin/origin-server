@@ -1,8 +1,8 @@
 Given /^an accepted node$/ do
-  accept_node = "sudo /usr/bin/rhc-accept-node"
+  accept_node = "/usr/bin/rhc-accept-node"
   File.exists?(accept_node).should be_true
 
-  pass = `#{accept_node}`.chomp
+  pass = `sudo #{accept_node}`.chomp
   $?.exitstatus.should be(0)
   pass.should == "PASS"
 end
