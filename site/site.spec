@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.74.2
+Version:   0.74.3
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -64,6 +64,17 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Wed Jul 13 2011 Dan McPherson <dmcphers@redhat.com> 0.74.3-1
+- Merge branch 'master' of ssh://libragit/srv/git/li (edirsh@redhat.com)
+- Minified universal js script (edirsh@redhat.com)
+- Added click tracking code to try it buttons (edirsh@redhat.com)
+- Added valid on-page omniture event tracking for successful registrations
+  (edirsh@redhat.com)
+- Removed code for invalid omniture on-page event tracking (edirsh@redhat.com)
+- Changed omniture page ids to use openshift instead of rh (edirsh@redhat.com)
+- Added getQueryParam plugin to Omniture code (edirsh@redhat.com)
+- Corrected CouchConf banner in place (edirsh@redhat.com)
+
 * Tue Jul 12 2011 Dan McPherson <dmcphers@redhat.com> 0.74.2-1
 - Automatic commit of package [rhc-site] release [0.74.1-1].
   (dmcphers@redhat.com)

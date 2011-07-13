@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.74.2
+Version:       0.74.3
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -142,6 +142,9 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Wed Jul 13 2011 Dan McPherson <dmcphers@redhat.com> 0.74.3-1
+- Adding pam_namespace and polyinst /tmp (mmcgrath@redhat.com)
+
 * Tue Jul 12 2011 Dan McPherson <dmcphers@redhat.com> 0.74.2-1
 - Automatic commit of package [rhc-node] release [0.74.1-1].
   (dmcphers@redhat.com)

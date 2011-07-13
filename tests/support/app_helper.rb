@@ -15,6 +15,9 @@ module AppHelper
     # attributes that contain statistics based on calls to connect
     attr_accessor :response_code, :response_time
 
+    # mysql connection information
+    attr_accessor :mysql_hostname, :mysql_user, :mysql_password
+
     # Create the data structure for a test application
     def initialize(namespace, login, type, name)
       @name, @namespace, @login, @type = name, namespace, login, type
@@ -48,6 +51,9 @@ module AppHelper
     def self.from_json(json)
       app = TestApp.new(json['namespace'], json['login'], json['type'], json['name'])
       app.embed = json['embed']
+      app.mysql_user = json['mysql_user']
+      app.mysql_password = json['mysql_password']
+      app.mysql_hostname = json['mysql_hostname']
       return app
     end
 
@@ -74,6 +80,12 @@ module AppHelper
         when "wsgi-3.2" then "wsgi/application"
         when "perl-5.10" then "perl/index.pl"
         when "jbossas-7.0" then "src/main/webapp/index.html"
+      end
+    end
+
+    def get_mysql_file
+      case @type
+        when "php-5.3" then File.expand_path("../misc/php/db_test.php", File.expand_path(File.dirname(__FILE__)))
       end
     end
 
@@ -116,7 +128,7 @@ module AppHelper
       return false
     end
 
-    def is_accessible?(use_https=false, max_retries=30)
+    def is_accessible?(use_https=false, max_retries=120)
       prefix = use_https ? "https://" : "http://"
       url = prefix + hostname
 

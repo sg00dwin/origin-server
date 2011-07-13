@@ -1,5 +1,5 @@
 Given /^an accepted node$/ do
-  accept_node = "/usr/bin/rhc-accept-node"
+  accept_node = "sudo /usr/bin/rhc-accept-node"
   File.exists?(accept_node).should be_true
 
   pass = `#{accept_node}`.chomp

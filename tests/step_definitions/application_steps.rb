@@ -1,5 +1,6 @@
 require 'rubygems'
 require 'uri'
+require 'fileutils'
 
 include AppHelper
 
@@ -45,13 +46,28 @@ When /^the embedded cartridge is removed$/ do
 end
 
 When /^the application is changed$/ do
-  Dir.chdir(@app.repo)
-  @update = "TEST"
+  Dir.chdir(@app.repo) do
+    @update = "TEST"
+  
+    # Make a change to the app index file
+    run("sed -i 's/Welcome/#{@update}/' #{@app.get_index_file}")
+    run("git commit -a -m 'Test change'")
+    run("git push >> " + @app.get_log("git_push") + " 2>&1")
+  end
+end
 
-  # Make a change to the app index file
-  run("sed -i 's/Welcome/#{@update}/' #{@app.get_index_file}")
-  run("git commit -a -m 'Test change'")
-  run("git push >> " + @app.get_log("git_push") + " 2>&1")
+When /^the application uses mysql$/ do
+  Dir.chdir(@app.repo) do
+    # Copy the MySQL file over the index and replace the variables
+    FileUtils.cp @app.get_mysql_file, @app.get_index_file
+  
+    # Make a change to the app index file
+    run("sed -i 's/HOSTNAME/#{@app.mysql_hostname}/' #{@app.get_index_file}")
+    run("sed -i 's/USER/#{@app.mysql_user}/' #{@app.get_index_file}")
+    run("sed -i 's/PASSWORD/#{@app.mysql_password}/' #{@app.get_index_file}")
+    run("git commit -a -m 'Test change'")
+    run("git push >> " + @app.get_log("git_push_mysql") + " 2>&1")
+  end
 end
 
 When /^the application is stopped$/ do
@@ -75,6 +91,10 @@ Then /^the applications should be accessible?$/ do
     app.is_accessible?.should be_true
     app.is_accessible?(true).should be_true
   end
+end
+
+Then /^the mysql response is successful$/ do
+    @app.connect.should match(/Success/)
 end
 
 Then /^it should be updated successfully$/ do

@@ -1,4 +1,4 @@
-policy_module(libra,1.0.15)
+policy_module(libra,1.0.16)
 
 ########################################
 #
@@ -16,6 +16,7 @@ files_tmp_file(libra_tmp_t)
 
 type libra_var_lib_t;
 files_poly(libra_var_lib_t)
+files_poly_parent(libra_var_lib_t)
 
 type libra_t;
 libra_service_domain(libra_t)
@@ -201,7 +202,6 @@ corenet_tcp_bind_mysqld_port(libra_t)
 mysql_search_db(libra_t)
 allow libra_t self:process setexec;
 
-
 ##########
 # Used for development or when the li controller is running outside
 # of the li framework (like when it's installed in /var/www/html
@@ -233,6 +233,7 @@ corecmd_shell_entry_type(libra_domain)
 corecmd_bin_entry_type(libra_domain)
 allow libra_t user_devpts_t:chr_file { getattr read write append ioctl lock };
 
+gpg_entry_type(libra_t)
 
 # Silence passenger
 files_dontaudit_getattr_all_files(httpd_t)
