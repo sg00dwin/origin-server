@@ -224,6 +224,8 @@ fi
 # Start the app
 echo -n "Starting application..."
 exec 1>&- # close stdout
+# Remove any stop_lock, bug 719800
+rm -f $APP_DIR/run/stop_lock
 ~/${application}/${application}_ctl.sh start >/dev/null 2>&1
 exec 1>&2 # redirect stdout to stderr
 echo done
