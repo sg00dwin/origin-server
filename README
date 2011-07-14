@@ -9,12 +9,11 @@ misc:
   Bucket for documentation/development utilities/etc
 node:
   Contains code specific to the nodes which run the various cartridges
-server:
-  Contains site, broker/controller
+site:
+  Contains site
+broker:
+  Contains broker
+server-common:
+  Contains code common to site and broker
 tests:
   Location for cucumber test cases
-  
-
-
-
-
