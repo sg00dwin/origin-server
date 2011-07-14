@@ -5,24 +5,11 @@ require 'selenium-webdriver'
 require 'headless'
 
 class Flex < Test::Unit::TestCase
+  include ::OpenShift::TestBase 
 
-  def setup
-    @verification_errors = []
-    @headless = Headless.new
-    @headless.start
-    @driver=Selenium::WebDriver.for :firefox
-    @driver.manage.timeouts.implicit_wait = 5
-    @url="http://localhost"
-  end
-
-  def teardown
-    @driver.quit
-    @headless.destroy
-    assert_equal [], @verification_errors
-  end
   # Test Flex page contents
   def test_check_flex_contents
-    puts "start to check flex contents"
+    $logger.info "start to check flex contents"
     @driver.navigate.to @url+"/app/"
     sleep 2
     assert !20.times{ break if ("OpenShift by Red Hat" == @driver.title rescue false); sleep 1 }
@@ -123,7 +110,7 @@ class Flex < Test::Unit::TestCase
 
 # Check Flex links
   def test_check_flex_links
-    puts "start to check flex links"
+    $logger.info "start to check flex links"
     @driver.navigate.to @url+"/app/"
     sleep 2  
     assert !10.times{ break if ("OpenShift by Red Hat" == @driver.title rescue false); sleep 1 }
