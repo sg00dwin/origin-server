@@ -259,8 +259,14 @@ class DevEnv < Thor
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   method_option :express_server, :type => :boolean, :desc => "Set as express server in express.conf and leave on public_ip"
   method_option :ssh_config_verifier, :type => :boolean, :desc => "Set as verifier in .ssh/config"
+  method_option :instance_type, :required => false, :desc => "Amazon machine type override (default m1.large)"
   def launch(name)
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
+
+    # Override the machine type to launch if necessary
+    if options[:instance_type]
+      $amz_options[:instance_type] = options[:instance_type]
+    end
 
     # Get the latest devenv image and create a new instance
     conn = connect
