@@ -88,15 +88,15 @@ if __name__ == '__main__':
         files_start_index = 1
         args = []
         add_follow = True
-        if allargs[1] == '--args':
+        if allargs[1] == '--opts':
             files_start_index = 3
             args_str = base64.standard_b64decode(allargs[2])
-            args = args_str.split(' ')
+            args = args_str.split()
             for arg in args:
                 if arg.startswith(('..', '/')):
                     print "All paths must be relative: " + arg
-                    sys.exit(88) 
-                elif arg == '-f':
+                    sys.exit(88)
+                elif arg == '-f' or arg == '-F' or arg.startswith('--follow'):
                     add_follow = False
 
         for glob_list in allargs[files_start_index:]:

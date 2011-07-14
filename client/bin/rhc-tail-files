@@ -37,7 +37,7 @@ Tail the logs of an application
   -l|--rhlogin   rhlogin    Red Hat login (RHN or OpenShift login with OpenShift Express access) (#{rhlogin})
   -a|--app                  Target application (required)
   -f|--files                File glob relative to app (default <application_name>/logs/*) (optional)
-  -o|--opts                 Options to pass to the server-side tail command (-f is implicit.  Get the full list of options from 'tail --help'.) (Ex: --opts '-n 100')
+  -o|--opts                 Options to pass to the server-side (linux based) tail command (-f is implicit.  See the linux tail man page full list of options.) (Ex: --opts '-n 100')
   -p|--password  password   RHLogin password (optional, will prompt)
   -d|--debug                Print Debug info
   -h|--help                 Show Usage info
@@ -108,7 +108,7 @@ file_glob = "#{opt['files']}"
 app_uuid = user_info['app_info'][app]['uuid']
 namespace = user_info['user_info']['namespace']
 rhc_domain = user_info['user_info']['rhc_domain']
-ssh_cmd = "ssh #{app_uuid}@#{app}-#{namespace}.#{rhc_domain} 'tail#{opt['opts'] ? ' --args ' + Base64::encode64(opt['opts']).chomp : ''} #{file_glob}'"
+ssh_cmd = "ssh #{app_uuid}@#{app}-#{namespace}.#{rhc_domain} 'tail#{opt['opts'] ? ' --opts ' + Base64::encode64(opt['opts']).chomp : ''} #{file_glob}'"
 
 puts "Attempting to tail files: #{file_glob}"
 puts "Use ctl + c to stop"
