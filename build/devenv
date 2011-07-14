@@ -306,8 +306,18 @@ class DevEnv < Thor
       if options.unofficial?
         set_private_ip(instance)
       end
+
+      print "Running internals tests..."
+      output, test_result = instance.ssh("cucumber -t @internals -f junit -o /tmp/rhc/junit li-test/tests/", 4800, true)
+      puts "Done"
+
+      print "Validating instance..."
+      unless instance.is_valid?
+        puts "ERROR - instance is not valid"
+        exit 1
+      end
+      puts "Done"
     
-      # Run verification tests
       print "Running verification tests..."
       output, test_result = instance.ssh("cucumber -t @verify -f junit -o /tmp/rhc/junit/ li-test/tests/", 4800, true)
       puts "Done"
@@ -317,6 +327,10 @@ class DevEnv < Thor
         puts "ERROR - instance is not valid"
         exit 1
       end
+      puts "Done"
+
+      print "Running web tests..."
+      output, test_result = instance.ssh("pushd li-test/selenium; ./ts-web", 4800, true)
       puts "Done"
 
       print "Downloading verification output..."
@@ -336,64 +350,15 @@ class DevEnv < Thor
       instance.scp_from("/var/log/messages", "rhc/log/messages.log")
       instance.scp_from("/var/log/dmesg", "rhc/log/messages.log")
 
+      print "Downloading screenshots output..."
+      `mkdir -p rhc/screenshots`
+      instance.scp_from("li-tests/selenium/*.png", "rhc/screenshots")
+
+      print "Downloading junit output..."
       `mkdir -p rhc/junit`
       instance.scp_from("/tmp/rhc/junit/*", "rhc/junit")
 
       puts "Done"
-
-      if test_result != 0
-        puts "ERROR - Non-zero exit code from verification tests (exit: #{test_result})"
-        exit test_result
-      end
-
-      if !options.unofficial?
-        # Mark the image as verified
-        Image.verify(conn, instance.amz_image_id)
-        amz_image_name = Image.get_name(conn, instance.amz_image_id)
-        
-        print "Sending QE ready email..."
-        send_verified_email(instance.amz_image_id, amz_image_name)
-      else
-        set_public_ip(instance)
-      end
-      
-      puts "Done"
-
-    ensure
-      instance.terminate if options.terminate?
-    end
-  end
-  
-  desc "test_internals TAG", "Runs the internals tests on a tagged instance and downloads the results"
-  method_option :terminate, :type => :boolean, :desc => "Terminate the instance when finished"
-  method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
-  method_option :unofficial, :type => :boolean, :desc => "For unofficial use.  Do not send emails, etc."
-  def test_internals(tag)
-    conn = connect
-    instance = Instance.find(conn, tag)
-
-    begin
-      if options.unofficial?
-        set_private_ip(instance)
-      end
-    
-      # Run internals tests
-      print "Running internals tests..."
-      output, test_result = instance.ssh("cucumber -t @internals -f junit -o /tmp/rhc/junit li-test/tests/", 4800, true)
-      puts "Done"
-
-      print "Validating instance..."
-      unless instance.is_valid?
-        puts "ERROR - instance is not valid"
-        exit 1
-      end
-      puts "Done"
-
-      print "Downloading internals output..."
-      `mkdir -p rhc/junit`
-      instance.scp_from("/tmp/rhc/junit/*", "rhc/junit")
-      puts "Done"
-
 
       if test_result != 0
         puts "ERROR - Non-zero exit code from verification tests (exit: #{test_result})"
