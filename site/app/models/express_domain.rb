@@ -54,6 +54,7 @@ class ExpressDomain
     @alter = "true"
     save do |response|
       yield response if block_given?
+    end
   end
   
   private
