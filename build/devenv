@@ -295,7 +295,7 @@ class DevEnv < Thor
     if options.ssh_config_verifier?
       public_ip = instance.ssh("wget -qO- http://169.254.169.254/latest/meta-data/public-ipv4")
       
-      line_num = `grep -n -c 'Host verifier' ~/.ssh/config`.chomp
+      line_num = `grep -n 'Host verifier' ~/.ssh/config`.chomp.split(':')[0]
       puts "Updating ~/.ssh/config verifier entry with public ip = #{public_ip}"
       (1..4).each do |i|
         `sed -i '#{line_num.to_i + i}s,HostName.*,HostName #{public_ip},' ~/.ssh/config`
