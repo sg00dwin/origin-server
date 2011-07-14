@@ -170,30 +170,29 @@
             %p
               The <code>rhc-create-domain</code> command will create a configuration file - &lt;your home directory&gt;/.openshift/express.conf - which sets up a default login.
         
-        -#
-          #domain_form.form.grid_10.prefix_1
-            %h4 Why wait?
-            %h5 Reserve your amazing domain name right now!
-            %p
-              All you need is an ssh keypair and a unique name.
-            
-            - if flash[:notice]
-              .message.notice
-                = flash[:notice]
-            
-            - if flash[:error]
-              .message.error
-                = flash[:error]
-            
-            - if flash[:success]
-              .message.success
-                = flash[:success]
-                
-            = semantic_form_for @domain, :html => {:multipart => true} do |form|
-              = form.input :namespace, :label => 'Desired domain name'
-              = form.input :ssh, :label => 'SSH public key (ex: id_rsa.pub)', :required => true, :as => :file
-              = form.input :password, :label => 'OpenShift password', :required => true, :as => :password
-              = form.buttons
+        #domain_form.form.grid_10.prefix_1
+          %h4 Why wait?
+          %h5 Reserve your amazing domain name right now!
+          %p
+            All you need is an ssh keypair and a unique name.
+          
+          - if flash[:notice]
+            .message.notice
+              = flash[:notice]
+          
+          - if flash[:error]
+            .message.error
+              = flash[:error]
+          
+          - if flash[:success]
+            .message.success
+              = flash[:success]
+              
+          = semantic_form_for @domain, :html => {:multipart => true} do |form|
+            = form.input :namespace, :label => 'Desired domain name'
+            = form.input :ssh, :label => 'SSH public key (ex: id_rsa.pub)', :required => true, :as => :file
+            = form.input :password, :label => 'OpenShift password', :required => true, :as => :password
+            = form.buttons
             
       %li#create_application
         %h4 Create your first application

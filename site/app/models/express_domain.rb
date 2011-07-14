@@ -52,7 +52,8 @@ class ExpressDomain
   
   def update
     @alter = "true"
-    save
+    save do |response|
+      yield response if block_given?
   end
   
   private

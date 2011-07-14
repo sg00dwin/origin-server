@@ -82,6 +82,14 @@ class DevEnv < Thor
       instance.scp_to("/tmp/li-test.tar", "~/", 360)
       instance.ssh('rm -rf li-test; tar -xf li-test.tar; mkdir -p /tmp/rhc/junit')
     end
+
+    def run_ssh(instance, title, cmd)
+      puts "Running " + title + " Tests..."
+      output, code = instance.ssh(cmd, 4800, true)
+      puts output
+      exit code if code != 0
+      puts "Done"
+    end
   end
 
   desc "build NAME", "Build a new devenv AMI with the given NAME"
@@ -308,6 +316,9 @@ class DevEnv < Thor
   method_option :terminate, :type => :boolean, :desc => "Terminate the instance when finished"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   method_option :unofficial, :type => :boolean, :desc => "For unofficial use.  Do not send emails, etc."
+  method_option :exclude_internal, :type => :boolean, :desc => "Exclude running unit and internal tests"
+  method_option :exclude_verification, :type => :boolean, :desc => "Exclude running verification tests"
+  method_option :exclude_web, :type => :boolean, :desc => "Exclude running Selenium tests"
   def test(tag)
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
 
@@ -319,35 +330,26 @@ class DevEnv < Thor
         set_private_ip(instance)
       end
 
-      exit_code = 0
+      unless options.exclude_internal?
+        cmd = "cd li-test/broker; rake test"
+        run_ssh(instance, "Broker Unit", cmd)
 
-      puts "Running internals tests..."
-      output, test_result = instance.ssh("cucumber -f html --out /tmp/rhc/internals.html -f progress -t @internals li-test/tests/", 4800, true)
-      exit_code += test_result
-      puts output
-      puts "Done"
+        cmd = "cd li-test/site; rake test"
+        run_ssh(instance, "Site Unit", cmd)
 
-      puts "Running verification tests..."
-      output, test_result = instance.ssh("cucumber -f html --out /tmp/rhc/verfication.html -f progress -t @verify li-test/tests/", 4800, true)
-      exit_code += test_result
-      puts output
-      puts "Done"
+        cmd = "cucumber -f html --out /tmp/rhc/internals.html -f progress -t @internals li-test/tests/"
+        run_ssh(instance, "Internal", cmd)
+      end
 
-      puts "Running web unit tests..."
-      output, test_result = instance.ssh("cd li-test/broker; rake test", 4800, true)
-      exit_code += test_result
-      puts output
+      unless options.exclude_verification?
+        cmd = "cucumber -f html --out /tmp/rhc/verfication.html -f progress -t @verify li-test/tests/"
+        run_ssh(instance, "Verification", cmd)
+      end
 
-      output, test_result = instance.ssh("cd li-test/site; rake test", 4800, true)
-      exit_code += test_result
-      puts output
-      puts "Done"
-
-      puts "Running web selenium tests..."
-      output, test_result = instance.ssh("cd li-test/selenium; ./ts_web", 4800, true)
-      exit_code += test_result
-      puts output
-      puts "Done"
+      unless options.exclude_web?
+        cmd = "cd li-test/selenium; ./ts_web"
+        run_ssh(instance, "Web Selenium", cmd)
+      end
 
       print "Validating instance..."
       unless instance.is_valid?
@@ -375,11 +377,6 @@ class DevEnv < Thor
       instance.scp_from("/var/log/dmesg", "rhc/log/messages.log")
       instance.scp_from("li-tests/selenium/*.png", "rhc/log")
       puts "Done"
-
-      if exit_code != 0
-        puts "ERROR - Non-zero exit code from verification tests (exit: #{exit_code})"
-        exit exit_code
-      end
 
       if !options.unofficial?
         # Mark the image as verified

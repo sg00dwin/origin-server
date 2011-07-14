@@ -35,4 +35,7 @@ RedHatCloud::Application.configure do
   config.streamline = "https://10.196.215.67"
   config.streamline_secret = 'c0ldW1n3'
   config.captcha_secret = 'zvw5LiixMB0I4mjk06aR'
+  
+  # Express API base url
+  config.express_api_url = 'https://em-dev-broker.redhat.com'
 end
