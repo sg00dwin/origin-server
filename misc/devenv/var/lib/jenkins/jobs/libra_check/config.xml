@@ -69,18 +69,30 @@ build/devenv update
     <hudson.tasks.Shell>
       <command># Run the tests
 cd $WORKSPACE
-# Run the &apos;internals&apos; tests to test lower level components
-#cucumber -t @internals -f junit -o /tmp/rhc/junit/ tests/
+# Build and install HEAD for the integration tests
+build/devenv launch libra_check_${BUILD_NUMBER} --verifier
+build/devenv sync libra_check_${BUILD_NUMBER} --tag
+# Run the 'internals' tests to test lower level components
+build/devenv test_internals libra_check_${BUILD_NUMBER} --unofficial
 
-# Run the &apos;verification&apos; tests to test higher level components
-cucumber -t @verify -f junit -o /tmp/rhc/junit/ tests/
+# Run the 'verification' tests to test higher level components
+build/devenv test libra_check_${BUILD_NUMBER} --terminate --unofficial
 
-# Don&apos;t fail on non-test runs - this will just keep the files
+# Don't fail on non-test runs - this will just keep the files
 # updated to keep Jenkins happy
-find rhc/junit/ | xargs touch</command>
+find rhc/junit/ | xargs touch
     </hudson.tasks.Shell>
   </builders>
   <publishers>
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>rhc/log/*</artifacts>
+      <latestOnly>false</latestOnly>
+    </hudson.tasks.ArtifactArchiver>
+    <hudson.tasks.junit.JUnitResultArchiver>
+      <testResults>rhc/junit/*</testResults>
+      <keepLongStdio>false</keepLongStdio>
+      <testDataPublishers/>
+    </hudson.tasks.junit.JUnitResultArchiver>
     <hudson.tasks.Mailer>
       <recipients>libra-express@redhat.com</recipients>
       <dontNotifyEveryUnstableBuild>true</dontNotifyEveryUnstableBuild>
