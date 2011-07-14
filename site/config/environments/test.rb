@@ -44,7 +44,8 @@ RedHatCloud::Application.configure do
   config.streamline_secret = ''
   config.captcha_secret = 'secret'
   
-  config.express_api_server = ''
+  # Express API base url
+  config.express_api_url = 'https://openshift.redhat.com'
   
   ## AWS configuration
   #config.aws_key = "AKIAJMZR4X6F46UMXV6Q"
