@@ -91,6 +91,8 @@ class DevEnv < Thor
   method_option :reboot, :type => :boolean, :desc => "Reboot the instance after updating"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   def build(name)
+    options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
+
     # Establish a new connection
     conn = connect
 
@@ -155,6 +157,8 @@ class DevEnv < Thor
   desc "update", "Update current instance by installing RPMs from local git tree"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   def update
+    options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
+
     # Warn on uncommitted changes
     `git diff-index --quiet HEAD` 
     puts "WARNING - Uncommitted repository changes" if $? != 0
@@ -179,6 +183,8 @@ class DevEnv < Thor
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   method_option :verifier, :type => :boolean, :desc => "Maintain verifier functionality (private IP setup)"
   def sync(name)
+    options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
+
     temp_commit
 
     if options.tag?
@@ -214,6 +220,8 @@ class DevEnv < Thor
   method_option :tag, :type => :boolean, :desc => "NAME is an Amazon tag"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   def sync_tests(name)
+    options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
+
     temp_commit
 
     if options.tag?
@@ -244,6 +252,8 @@ class DevEnv < Thor
   method_option :express_server, :type => :boolean, :desc => "Set as express server in express.conf and leave on public_ip"
   method_option :ssh_config_verifier, :type => :boolean, :desc => "Set as verifier in .ssh/config"
   def launch(name)
+    options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
+
     # Get the latest devenv image and create a new instance
     conn = connect
     filter = options.use_stage_image? ? DEVENV_STAGE_REGEX : DEVENV_REGEX
@@ -299,6 +309,8 @@ class DevEnv < Thor
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   method_option :unofficial, :type => :boolean, :desc => "For unofficial use.  Do not send emails, etc."
   def test(tag)
+    options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
+
     conn = connect
     instance = Instance.find(conn, tag)
 
@@ -306,10 +318,35 @@ class DevEnv < Thor
       if options.unofficial?
         set_private_ip(instance)
       end
-    
-      # Run verification tests
-      print "Running verification tests..."
-      output, test_result = instance.ssh("cucumber -t @verify -f junit -o /tmp/rhc/junit/ li-test/tests/", 4800, true)
+
+      exit_code = 0
+
+      puts "Running internals tests..."
+      output, test_result = instance.ssh("cucumber -f html --out /tmp/rhc/internals.html -f progress -t @internals li-test/tests/", 4800, true)
+      exit_code += test_result
+      puts output
+      puts "Done"
+
+      puts "Running verification tests..."
+      output, test_result = instance.ssh("cucumber -f html --out /tmp/rhc/verfication.html -f progress -t @verify li-test/tests/", 4800, true)
+      exit_code += test_result
+      puts output
+      puts "Done"
+
+      puts "Running web unit tests..."
+      output, test_result = instance.ssh("cd li-test/broker; rake test", 4800, true)
+      exit_code += test_result
+      puts output
+
+      output, test_result = instance.ssh("cd li-test/site; rake test", 4800, true)
+      exit_code += test_result
+      puts output
+      puts "Done"
+
+      puts "Running web selenium tests..."
+      output, test_result = instance.ssh("cd li-test/selenium; ./ts_web", 4800, true)
+      exit_code += test_result
+      puts output
       puts "Done"
 
       print "Validating instance..."
@@ -319,9 +356,10 @@ class DevEnv < Thor
       end
       puts "Done"
 
-      print "Downloading verification output..."
+      print "Downloading logs and screenshots..."
       `mkdir -p rhc/log`
       instance.scp_from("/tmp/rhc/cucumber*.log", "rhc/log")
+      instance.scp_from("/tmp/rhc/*.html", "rhc/log")
       instance.scp_from("/tmp/rhc/failures.log", "rhc/log")
       instance.scp_from("/var/www/libra/site/httpd/logs/access_log", "rhc/log/site_access_log.txt")
       instance.scp_from("/var/www/libra/site/httpd/logs/error_log", "rhc/log/site_error_log.txt")
@@ -335,69 +373,12 @@ class DevEnv < Thor
       instance.scp_from("/var/log/httpd/error_log", "rhc/log/system_error_log.log")
       instance.scp_from("/var/log/messages", "rhc/log/messages.log")
       instance.scp_from("/var/log/dmesg", "rhc/log/messages.log")
-
-      `mkdir -p rhc/junit`
-      instance.scp_from("/tmp/rhc/junit/*", "rhc/junit")
-
+      instance.scp_from("li-tests/selenium/*.png", "rhc/log")
       puts "Done"
 
-      if test_result != 0
-        puts "ERROR - Non-zero exit code from verification tests (exit: #{test_result})"
-        exit test_result
-      end
-
-      if !options.unofficial?
-        # Mark the image as verified
-        Image.verify(conn, instance.amz_image_id)
-        amz_image_name = Image.get_name(conn, instance.amz_image_id)
-        
-        print "Sending QE ready email..."
-        send_verified_email(instance.amz_image_id, amz_image_name)
-      else
-        set_public_ip(instance)
-      end
-      
-      puts "Done"
-
-    ensure
-      instance.terminate if options.terminate?
-    end
-  end
-  
-  desc "test_internals TAG", "Runs the internals tests on a tagged instance and downloads the results"
-  method_option :terminate, :type => :boolean, :desc => "Terminate the instance when finished"
-  method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
-  method_option :unofficial, :type => :boolean, :desc => "For unofficial use.  Do not send emails, etc."
-  def test_internals(tag)
-    conn = connect
-    instance = Instance.find(conn, tag)
-
-    begin
-      if options.unofficial?
-        set_private_ip(instance)
-      end
-    
-      # Run internals tests
-      print "Running internals tests..."
-      output, test_result = instance.ssh("cucumber -t @internals -f junit -o /tmp/rhc/junit li-test/tests/", 4800, true)
-      puts "Done"
-
-      print "Validating instance..."
-      unless instance.is_valid?
-        puts "ERROR - instance is not valid"
-        exit 1
-      end
-      puts "Done"
-
-      print "Downloading internals output..."
-      `mkdir -p rhc/junit`
-      instance.scp_from("/tmp/rhc/junit/*", "rhc/junit")
-      puts "Done"
-
-
-      if test_result != 0
-        puts "ERROR - Non-zero exit code from verification tests (exit: #{test_result})"
-        exit test_result
+      if exit_code != 0
+        puts "ERROR - Non-zero exit code from verification tests (exit: #{exit_code})"
+        exit exit_code
       end
 
       if !options.unofficial?
@@ -421,6 +402,8 @@ class DevEnv < Thor
   desc "install_local_client", "Builds and installs the local client rpm (uses sudo)"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   def install_local_client
+    options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
+
     # Warn on uncommitted changes
     temp_commit
     
