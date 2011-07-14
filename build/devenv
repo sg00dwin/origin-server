@@ -206,7 +206,8 @@ class DevEnv < Thor
     branch = get_branch
 
     puts "Synchronizing local changes from branch #{branch}..."
-    run("git push root@#{instance.dns}:/root/li #{branch}:master --tags --force", :verbose => options.verbose?)
+    ssh_path=File.expand_path(File.dirname(__FILE__)) + "/ssh-override"
+    run("GIT_SSH=#{ssh_path};git push root@#{instance.dns}:/root/li #{branch}:master --tags --force", :verbose => options.verbose?)
     puts "Done"
 
     reset_temp_commit
