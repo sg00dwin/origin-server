@@ -114,7 +114,7 @@ if opt['apps']
         puts "   Public URL: http://#{key}-#{user_info['user_info']['namespace']}.#{user_info['user_info']['rhc_domain']}/"
         puts ""
         puts " Embedded: "
-        if val['embedded']
+        if val['embedded'] && !val['embedded'].empty? 
             val['embedded'].each do |embed_key, embed_val|
                 puts "      #{embed_key} - #{embed_val['info']}"
             end
