@@ -223,12 +223,16 @@ fi
 
 # Start the app
 echo -n "Starting application..."
-exec 1>&- # close stdout
-# Remove any stop_lock, bug 719800
-rm -f $APP_DIR/run/stop_lock
-~/${application}/${application}_ctl.sh start >/dev/null 2>&1
-exec 1>&2 # redirect stdout to stderr
-echo done
+# Check for stop_lock, bug 719800
+if [ -f $APP_DIR/run/stop_lock ]
+then
+    echo skipped due to stop_lock
+else
+    exec 1>&- # close stdout
+    ~/${application}/${application}_ctl.sh start >/dev/null 2>&1
+    exec 1>&2 # redirect stdout to stderr
+    echo done
+fi
 
 curl -s -O /dev/null -d "json_data=\"{\"app_uuid\":\"${uuid}\",\"action\":\"push\"}\"" https://${libra_server}/broker/nurture >/dev/null 2>&1 &
 __EOF__
