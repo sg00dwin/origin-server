@@ -91,6 +91,8 @@ class DevEnv < Thor
   method_option :reboot, :type => :boolean, :desc => "Reboot the instance after updating"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   def build(name)
+    options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
+
     # Establish a new connection
     conn = connect
 
@@ -155,6 +157,8 @@ class DevEnv < Thor
   desc "update", "Update current instance by installing RPMs from local git tree"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   def update
+    options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
+
     # Warn on uncommitted changes
     `git diff-index --quiet HEAD` 
     puts "WARNING - Uncommitted repository changes" if $? != 0
@@ -179,6 +183,8 @@ class DevEnv < Thor
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   method_option :verifier, :type => :boolean, :desc => "Maintain verifier functionality (private IP setup)"
   def sync(name)
+    options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
+
     temp_commit
 
     if options.tag?
@@ -214,6 +220,8 @@ class DevEnv < Thor
   method_option :tag, :type => :boolean, :desc => "NAME is an Amazon tag"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   def sync_tests(name)
+    options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
+
     temp_commit
 
     if options.tag?
@@ -244,6 +252,8 @@ class DevEnv < Thor
   method_option :express_server, :type => :boolean, :desc => "Set as express server in express.conf and leave on public_ip"
   method_option :ssh_config_verifier, :type => :boolean, :desc => "Set as verifier in .ssh/config"
   def launch(name)
+    options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
+
     # Get the latest devenv image and create a new instance
     conn = connect
     filter = options.use_stage_image? ? DEVENV_STAGE_REGEX : DEVENV_REGEX
@@ -299,6 +309,8 @@ class DevEnv < Thor
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   method_option :unofficial, :type => :boolean, :desc => "For unofficial use.  Do not send emails, etc."
   def test(tag)
+    options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
+
     conn = connect
     instance = Instance.find(conn, tag)
 
@@ -309,19 +321,19 @@ class DevEnv < Thor
 
       exit_code = 0
 
-      print "Running internals tests..."
-      output, test_result = instance.ssh("cucumber -t @internals li-test/tests/", 4800, true)
+      puts "Running internals tests..."
+      output, test_result = instance.ssh("cucumber -f html --out /tmp/rhc/internals.html -f progress -t @internals li-test/tests/", 4800, true)
       exit_code += test_result
       puts output
       puts "Done"
 
-      print "Running verification tests..."
-      output, test_result = instance.ssh("cucumber -t @verify li-test/tests/", 4800, true)
+      puts "Running verification tests..."
+      output, test_result = instance.ssh("cucumber -f html --out /tmp/rhc/verfication.html -f progress -t @verify li-test/tests/", 4800, true)
       exit_code += test_result
       puts output
       puts "Done"
 
-      print "Running web unit tests..."
+      puts "Running web unit tests..."
       output, test_result = instance.ssh("cd li-test/broker; rake test", 4800, true)
       exit_code += test_result
       puts output
@@ -331,8 +343,8 @@ class DevEnv < Thor
       puts output
       puts "Done"
 
-      print "Running web selenium tests..."
-      output, test_result = instance.ssh("cd li-test/selenium; ./ts-web", 4800, true)
+      puts "Running web selenium tests..."
+      output, test_result = instance.ssh("cd li-test/selenium; ./ts_web", 4800, true)
       exit_code += test_result
       puts output
       puts "Done"
@@ -347,6 +359,7 @@ class DevEnv < Thor
       print "Downloading logs and screenshots..."
       `mkdir -p rhc/log`
       instance.scp_from("/tmp/rhc/cucumber*.log", "rhc/log")
+      instance.scp_from("/tmp/rhc/*.html", "rhc/log")
       instance.scp_from("/tmp/rhc/failures.log", "rhc/log")
       instance.scp_from("/var/www/libra/site/httpd/logs/access_log", "rhc/log/site_access_log.txt")
       instance.scp_from("/var/www/libra/site/httpd/logs/error_log", "rhc/log/site_error_log.txt")
@@ -389,6 +402,8 @@ class DevEnv < Thor
   desc "install_local_client", "Builds and installs the local client rpm (uses sudo)"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   def install_local_client
+    options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
+
     # Warn on uncommitted changes
     temp_commit
     
