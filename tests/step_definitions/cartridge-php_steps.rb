@@ -84,7 +84,7 @@ Then /^a php application httpd will( not)? be running$/ do | negate |
   acct_uid = @account['uid']
   app_name = @app['name']
 
-  max_tries = 5
+  max_tries = 7
   poll_rate = 3
   exit_test = negate ? lambda { |tval| tval == 0 } : lambda { |tval| tval > 0 }
   
