@@ -53,16 +53,23 @@ done
 
 [ $# -eq 3 ] || print_help
 
-customer_id=`basename $3`
+uuid=`basename $3`
 application="$1"
 
-CUSTOMER_HOME="$libra_dir/$customer_id/"
+CUSTOMER_HOME="$libra_dir/$uuid/"
 APP_DIR="$CUSTOMER_HOME/php/$application"
 MYSQL_DIR="$CUSTOMER_HOME/mysql-5.1/"
+
+#
+# Get UID information and CVAL
+#
+uid=$(id -u "$uuid")
+c_val="c$(($uid/1023)),c$(($uid%1023))"
+
 
 #
 # Start application
 #
 
-runuser --shell /bin/sh "$customer_id" "$MYSQL_DIR/${application}_mysql_ctl.sh" stop
+/bin/su -s /bin/sh "$uuid" -c "runcon -t libra_t -l s0:$c_val $MYSQL_DIR/${application}_mysql_ctl.sh stop"
 touch "$MYSQL_DIR/run/stop_lock"

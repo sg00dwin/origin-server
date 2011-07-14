@@ -73,10 +73,15 @@ APP_DIR="$CUSTOMER_HOME/$application"
 MYSQL_DIR="$CUSTOMER_HOME/mysql-5.1/"
 
 #
+# Get UID information and CVAL
+#
+uid=$(id -u "$uuid")
+c_val="c$(($uid/1023)),c$(($uid%1023))"
+
+#
 # Stop app
 #
-
-runuser --shell /bin/sh "$uuid" $MYSQL_DIR/${application}_mysql_ctl.sh stop || echo "Failed to stop ${application}:mysql" 1>&2
+/bin/su -s /bin/sh "$uuid" -c "runcon -t libra_t -l s0:$c_val $MYSQL_DIR/${application}_mysql_ctl.sh stop"
 
 # Confirm pid is gone before removing apps
 i=0
@@ -85,4 +90,6 @@ while [ -f ${MYSQL_DIR}/pid/mysql.pid ] && [ $i -lt 30 ]
     sleep .2
     i=$(($i + 1))
 done
+
 runcon -l s0-s0:c0.c1023 rm -rf "$MYSQL_DIR" "$MYSQL_DIR/${application}_mysql_ctl.sh"
+

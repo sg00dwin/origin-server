@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.74.3
+Version:       0.74.5
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -52,6 +52,7 @@ mkdir -p %{buildroot}/var/lib/libra
 mkdir -p %{buildroot}%{_libexecdir}/li
 mkdir -p %{buildroot}%{_sysconfdir}/httpd/conf.d/libra
 mkdir -p %{buildroot}/usr/share/selinux/packages
+mkdir -p %{buildroot}%{_sysconfdir}/cron.daily/
 
 cp -r cartridges %{buildroot}%{_libexecdir}/li
 cp -r conf/httpd %{buildroot}%{_sysconfdir}
@@ -60,6 +61,7 @@ cp -r facter %{buildroot}%{ruby_sitelibdir}/facter
 cp -r mcollective %{buildroot}%{_libexecdir}
 cp scripts/bin/* %{buildroot}%{_bindir}
 cp scripts/init/* %{buildroot}%{_initddir}
+cp scripts/libra_tmpwatch.sh %{buildroot}%{_sysconfdir}/cron.daily/libra_tmpwatch.sh
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -138,10 +140,18 @@ fi
 %attr(0750,-,-) %{_bindir}/rhc-node-application
 %attr(0640,-,-) %config(noreplace) %{_sysconfdir}/libra/node.conf
 %attr(0640,-,-) %config(noreplace) %{_sysconfdir}/libra/resource_limits.conf
+%attr(0750,-,-) %config(noreplace) %{_sysconfdir}/cron.daily/libra_tmpwatch.sh
 %attr(0750,root,root) %config(noreplace) %{_sysconfdir}/httpd/conf.d/000000_default.conf
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Wed Jul 13 2011 Dan McPherson <dmcphers@redhat.com> 0.74.5-1
+- mkdir before copy (mmcgrath@redhat.com)
+- Adding tmpwatch (mmcgrath@redhat.com)
+
+* Wed Jul 13 2011 Dan McPherson <dmcphers@redhat.com> 0.74.4-1
+- Changing shell for this command (mmcgrath@redhat.com)
+
 * Wed Jul 13 2011 Dan McPherson <dmcphers@redhat.com> 0.74.3-1
 - Adding pam_namespace and polyinst /tmp (mmcgrath@redhat.com)
 

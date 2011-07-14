@@ -188,7 +188,7 @@ chown $user_id.$group_id -R $MYSQL_DIR/ || error "Failed to chown new applicatio
 # Secure script and root dir (so they can't chown the script"
 chown root.root "$MYSQL_DIR" "$MYSQL_DIR/${application}_mysql_ctl.sh"
 chcon -t libra_var_lib_t -l s0:$c_val -R "$MYSQL_DIR"
-runuser --shell /bin/sh "$uuid" "$MYSQL_DIR/${application}_mysql_ctl.sh" start
+/bin/su -s /bin/sh "$uuid" -c "runcon -t libra_t -l s0:$c_val $MYSQL_DIR/${application}_mysql_ctl.sh start"
 
 i=0
 while [ ! -f "${MYSQL_DIR}/pid/mysql.pid" ] && [ $i -lt 30 ]

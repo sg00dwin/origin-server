@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.74.3
+Version:   0.74.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -64,6 +64,9 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Wed Jul 13 2011 Dan McPherson <dmcphers@redhat.com> 0.74.4-1
+- 
+
 * Wed Jul 13 2011 Dan McPherson <dmcphers@redhat.com> 0.74.3-1
 - Merge branch 'master' of ssh://libragit/srv/git/li (edirsh@redhat.com)
 - Minified universal js script (edirsh@redhat.com)
