@@ -123,7 +123,7 @@ class BrokerController < ApplicationController
         app_name = data['app_name']
 
         if !Libra::Util.check_app(app_name)
-          render :json => generate_result_json("The supplied application name is it not allowed", nil, 105), :status => :invalid and return
+          render :json => generate_result_json("The supplied application name '#{app_name}' is not allowed", nil, 105), :status => :invalid and return
         end
         
         # Execute a framework cartridge
@@ -156,7 +156,7 @@ class BrokerController < ApplicationController
         cartridge = data['cartridge']
 
         if !Libra::Util.check_app(app_name)
-          render :json => generate_result_json("The supplied application name is it not allowed", nil, 105), :status => :invalid and return
+          render :json => generate_result_json("The supplied application name '#{app_name}' is not allowed", nil, 105), :status => :invalid and return
         end
         
         # Execute a framework cartridge

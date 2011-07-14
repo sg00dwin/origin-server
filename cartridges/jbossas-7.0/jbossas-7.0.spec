@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.74.4
+Version:   0.74.6
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -14,7 +14,7 @@ BuildRequires:  git
 BuildRequires:  java-devel >= 1:1.6.0 
 BuildRequires:  jpackage-utils
 Requires:  rhc-node
-Requires: jboss-as7 = 7.0.0.CR1OS
+Requires: jboss-as7 = 7.0.0.Final
 Requires:  maven3
 
 BuildArch: noarch
@@ -67,8 +67,8 @@ rm -rf %{buildroot}
 %files
 %defattr(-,root,root,-)
 %attr(0750,-,-) %{cartridgedir}/info/hooks/
-%attr(0750,-,-) %{cartridgedir}/info/data/
-%attr(0750,-,-) %{cartridgedir}/template/
+%attr(0640,-,-) %{cartridgedir}/info/data/
+%attr(0640,-,-) %{cartridgedir}/template/
 %config(noreplace) %{cartridgedir}/info/configuration/
 %{_sysconfdir}/libra/cartridges/%{name}
 %{cartridgedir}/info/changelog
@@ -76,6 +76,15 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Wed Jul 13 2011 Dan McPherson <dmcphers@redhat.com> 0.74.6-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (scott.stark@jboss.org)
+- Bug 720474 - Update jbossas server to be based on 7.0.0.GA with mysql jdbc
+  driver (scott.stark@jboss.org)
+
+* Wed Jul 13 2011 Dan McPherson <dmcphers@redhat.com> 0.74.5-1
+- stop using fake tmp for maven build (dmcphers@redhat.com)
+
 * Wed Jul 13 2011 Dan McPherson <dmcphers@redhat.com> 0.74.4-1
 - Typo fix (mhicks@redhat.com)
 - mvn env settings (dmcphers@redhat.com)

@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.74.4
+Version:   0.74.6
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -122,6 +122,9 @@ chmod a+r /etc/libra/controller.conf
 # Allow Apache to connect to Jenkins port 8081
 /usr/sbin/setsebool -P httpd_can_network_connect=on || :
 
+# Allow polyinstantiation to work
+/usr/sbin/setsebool -P allow_polyinstantiation=on || :
+
 # Allow httpd to relay
 /usr/sbin/setsebool -P httpd_can_network_relay=on || :
 
@@ -192,6 +195,16 @@ chkconfig libra-tc on
 %{_initddir}/libra-site
 
 %changelog
+* Wed Jul 13 2011 Dan McPherson <dmcphers@redhat.com> 0.74.6-1
+- Adding system-auth" (mmcgrath@redhat.com)
+
+* Wed Jul 13 2011 Dan McPherson <dmcphers@redhat.com> 0.74.5-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- Adding polyinstantiation (mmcgrath@redhat.com)
+- test case updates (dmcphers@redhat.com)
+- enabling namespace (mmcgrath@redhat.com)
+
 * Wed Jul 13 2011 Dan McPherson <dmcphers@redhat.com> 0.74.4-1
 - Adding namesapce (mmcgrath@redhat.com)
 

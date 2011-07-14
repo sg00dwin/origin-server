@@ -17,7 +17,7 @@
         <string>uploadpack</string>
         <string>git-upload-pack</string>
         <string>url</string>
-        <string>git://10.244.46.66/li.git/</string>
+        <string>git://git1.ops.rhcloud.com/li.git/</string>
         <string>tagopt</string>
         <string></string>
       </org.spearce.jgit.transport.RemoteConfig>
@@ -43,7 +43,7 @@
     <skipTag>false</skipTag>
   </scm>
   <canRoam>true</canRoam>
-  <disabled>true</disabled>
+  <disabled>false</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
   <triggers class="vector">
@@ -63,17 +63,18 @@ rake test</command>
     </hudson.tasks.Shell>
     <hudson.tasks.Shell>
       <command># Build and install HEAD for the integration tests
-build/devenv update
-      </command>
+build/devenv update</command>
     </hudson.tasks.Shell>
     <hudson.tasks.Shell>
-      <command># Run the tests
-cd $WORKSPACE
+      <command>cd $WORKSPACE
+# Build and install HEAD for the integration tests
+build/devenv launch libra_check_${BUILD_NUMBER} --verifier
+build/devenv sync libra_check_${BUILD_NUMBER} --tag
 # Run the &apos;internals&apos; tests to test lower level components
-#cucumber -t @internals -f junit -o /tmp/rhc/junit/ tests/
+build/devenv test_internals libra_check_${BUILD_NUMBER} --unofficial
 
 # Run the &apos;verification&apos; tests to test higher level components
-cucumber -t @verify -f junit -o /tmp/rhc/junit/ tests/
+build/devenv test libra_check_${BUILD_NUMBER} --terminate --unofficial
 
 # Don&apos;t fail on non-test runs - this will just keep the files
 # updated to keep Jenkins happy
@@ -81,10 +82,19 @@ find rhc/junit/ | xargs touch</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>rhc/log/*</artifacts>
+      <latestOnly>false</latestOnly>
+    </hudson.tasks.ArtifactArchiver>
+    <hudson.tasks.junit.JUnitResultArchiver>
+      <testResults>rhc/junit/*</testResults>
+      <keepLongStdio>false</keepLongStdio>
+      <testDataPublishers/>
+    </hudson.tasks.junit.JUnitResultArchiver>
     <hudson.tasks.Mailer>
       <recipients>libra-express@redhat.com</recipients>
       <dontNotifyEveryUnstableBuild>true</dontNotifyEveryUnstableBuild>
-      <sendToIndividuals>true</sendToIndividuals>
+      <sendToIndividuals>false</sendToIndividuals>
     </hudson.tasks.Mailer>
   </publishers>
   <buildWrappers/>
