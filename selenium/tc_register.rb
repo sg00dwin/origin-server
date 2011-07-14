@@ -5,31 +5,16 @@ require 'selenium-webdriver'
 require 'headless'
 
 class Register < Test::Unit::TestCase
+  include ::OpenShift::TestBase 
 
-  def setup
-    @verification_errors = []
-    @headless = Headless.new
-    @headless.start
-    @driver=Selenium::WebDriver.for :firefox
-    @driver.manage.timeouts.implicit_wait = 5
-    @url="http://localhost"
-  end
-  
-  def teardown
-    @driver.quit
-    @headless.destroy
-    assert_equal [], @verification_errors
-  end
-  
   def get_unique_username()
     chars =("1".."9").to_a
     useremail=  "libra-test+"+ Array.new(8, '').collect{chars[rand(chars.size)]}.join+"@redhat.com"
- #   puts useremail
     return useremail
   end
 
   def test_register_invalid_email
-    puts "start to test register with invalid email "
+    $logger.info "start to test register with invalid email "
     @driver.navigate.to @url+"/app"
     sleep 2
     begin
@@ -69,9 +54,8 @@ class Register < Test::Unit::TestCase
     end
   end
 
-#Register without email
   def test_register_without_email
-    puts "start to test register without email"    
+    $logger.info "start to test register without email"    
     @driver.navigate.to @url+"/app"
     sleep 3
     begin
@@ -110,9 +94,8 @@ class Register < Test::Unit::TestCase
     end
   end
 
-#Register without password
   def test_register_without_password
-    puts "start to test register without password"    
+    $logger.info "start to test register without password"    
     @driver.navigate.to @url+"/app"
     sleep 3
     begin
@@ -152,7 +135,7 @@ class Register < Test::Unit::TestCase
 
 #Register with mismatching password
   def test_register_withmismatch_password
-    puts "start to test register with mismatching password"    
+    $logger.info "start to test register with mismatching password"    
     @driver.navigate.to @url+"/app"
     sleep 3
     begin
@@ -192,11 +175,8 @@ class Register < Test::Unit::TestCase
     end
   end
 
-
-
-#Register with invalid password length
   def test_register_with_invalid_passwd_length
-    puts "start to test register with invalid password length"    
+    $logger.info "start to test register with invalid password length"    
     @driver.navigate.to @url+"/app"
     sleep 3
     begin
@@ -236,9 +216,8 @@ class Register < Test::Unit::TestCase
     end
   end
 
-#Register with restricted countries
   def test_register_with_restricted_country
-    puts "start to test register from restricted countries"    
+    $logger.info "start to test register from restricted countries"    
     @driver.navigate.to @url+"/app"
     sleep 3
     begin
@@ -278,11 +257,8 @@ class Register < Test::Unit::TestCase
     end   
   end
  
-
-
-#Register normally
   def test_register_normally
-    puts "start to test register normally"    
+    $logger.info "start to test register normally"    
     @driver.navigate.to @url+"/app"
     sleep 3
     begin
@@ -321,7 +297,4 @@ class Register < Test::Unit::TestCase
         @verification_errors << $!
     end   
   end
-
-
-   
 end

@@ -5,24 +5,11 @@ require 'selenium-webdriver'
 require 'headless'
 
 class Express < Test::Unit::TestCase
+  include ::OpenShift::TestBase 
 
-  def setup
-    @verification_errors = []
-    @headless = Headless.new
-    @headless.start
-    @driver=Selenium::WebDriver.for :firefox
-    @driver.manage.timeouts.implicit_wait = 5
-    @url="http://localhost"
-  end
-  
-  def teardown
-    @driver.quit
-    @headless.destroy
-    assert_equal [], @verification_errors
-  end
-# Check express page contents  
+  # Check express page contents  
   def test_check_express_contents
-    puts "start to check express page contents"
+    $logger.info "start to check express page contents"
     @driver.navigate.to @url+"/app/"
     sleep 2
     begin
@@ -155,7 +142,7 @@ class Express < Test::Unit::TestCase
 # Check express page links
 
   def test_check_express_links
-    puts "start to check express page links"
+    $logger.info "start to check express page links"
     @driver.navigate.to @url+"/app/"
     sleep 2
     begin
@@ -293,7 +280,7 @@ class Express < Test::Unit::TestCase
 
 # check express getting started page
   def test_getting_started_express
-    puts "start to check express getting started page"
+    $logger.info "start to check express getting started page"
     @driver.navigate.to @url+"/app/"
     sleep 2
     begin
