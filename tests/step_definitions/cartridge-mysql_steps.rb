@@ -13,7 +13,35 @@ When /^I configure a mysql database$/ do
   namespace = @app['namespace']
   app_name = @app['name']
   command = $mysql_config_format % [app_name, namespace, account_name]
-  runcon command,  'unconfined_u', 'system_r', 'libra_initrc_t'
+
+  my_username_pattern = /Root User: (\S+)/
+  my_password_pattern = /Root Password: (\S+)/
+  my_ip_pattern = /mysql:\/\/(\d+\.\d+\.\d+\.\d+):(\d+)/
+
+  outbuf = []
+  runcon command,  'unconfined_u', 'system_r', 'libra_initrc_t', outbuf
+
+  # I have to get the stdout back
+  # outbuf[0] = stdout, outbuf[1] = stderr
+  
+  # "Root User: admin"
+  # "Root Password: $password"
+  # "Connection URL: mysql://$IP:3306/"
+  stdout = outbuf[0]
+  @mysql = {}
+  stdout.each {|line|
+    if line.match(my_username_pattern)
+      @mysql['username'] = $1
+    end
+    if line.match(my_password_pattern)
+      @mysql['password'] = $1
+    end
+    if line.match(my_ip_pattern)
+      @mysql['ip'] = $1
+      @mysql['port'] = $2
+    end
+  }
+
 end
 
 When /^I deconfigure the mysql database$/ do
@@ -32,10 +60,8 @@ Then /^the mysql directory will( not)? exist$/ do |negate|
   mysql_user_root = "#{$home_root}/#{account_name}/mysql-#{$mysql_version}"
   begin
     mysql_dir = Dir.new mysql_user_root
-    puts "Found the directory: #{mysql_dir}"
   rescue Errno::ENOENT
     mysql_dir = nil
-    puts "did not find the directory #{mysql_user_root}"
   end
 
   unless negate
@@ -45,20 +71,97 @@ Then /^the mysql directory will( not)? exist$/ do |negate|
   end
 end
 
-Then /^the mysql configuration file will( not)? exist$/ do |negate|
-  pending # express the regexp above with the code you wish you had
-end
-
-Then /^the mysql database will( not)? +exist$/ do |negate|
-  pending # express the regexp above with the code you wish you had
-end
 
 Then /^the mysql control script will( not)? exist$/ do |negate|
-  pending # express the regexp above with the code you wish you had
+  account_name = @account['accountname']
+  namespace = @app['namespace']
+  app_name = @app['name']
+
+  mysql_user_root = "#{$home_root}/#{account_name}/mysql-#{$mysql_version}"
+  mysql_startup_file = "#{mysql_user_root}/#{app_name}_mysql_ctl.sh"
+
+  begin
+    startfile = File.new mysql_startup_file
+  rescue Errno::ENOENT
+    startfile = nil
+  end
+
+  unless negate
+    startfile.should be_a(File)
+  else
+    startfile.should be_nil
+  end
 end
 
-Then /^the mysql daemon will be (running|stopped)$/ do |state|
-  pending # express the regexp above with the code you wish you had
+Then /^the mysql configuration file will( not)? exist$/ do |negate|
+  account_name = @account['accountname']
+  namespace = @app['namespace']
+  app_name = @app['name']
+
+  mysql_user_root = "#{$home_root}/#{account_name}/mysql-#{$mysql_version}"
+  mysql_config_file = "#{mysql_user_root}/etc/my.cnf"
+
+  begin
+    cnffile = File.new mysql_config_file
+  rescue Errno::ENOENT
+    cnffile = nil
+  end
+
+  unless negate
+    cnffile.should be_a(File)
+  else
+    cnffile.should be_nil
+  end
+end
+
+
+Then /^the mysql database will( not)? +exist$/ do |negate|
+  account_name = @account['accountname']
+  namespace = @app['namespace']
+  app_name = @app['name']
+
+  mysql_user_root = "#{$home_root}/#{account_name}/mysql-#{$mysql_version}"
+  mysql_data_dir = "#{mysql_user_root}/data"
+
+  begin
+    datadir = Dir.new mysql_data_dir
+  rescue Errno::ENOENT
+    datadir = nil
+  end
+
+  unless negate
+    datadir.should include "ibdata1"
+    datadir.should include "ib_logfile0"
+    datadir.should include "mysql"
+    datadir.should include "test"
+  else
+    datadir.should be_nil
+  end
+end
+
+Then /^the mysql daemon will( not)? be running$/ do |negate|
+
+  acct_name = @account['accountname']
+  acct_uid = @account['uid']
+  app_name = @app['name']
+
+  max_tries = 7
+  poll_rate = 3
+  exit_test = negate ? lambda { |tval| tval == 0 } : lambda { |tval| tval > 0 }
+  
+  tries = 0
+  num_daemons = num_procs acct_name, 'mysqld'
+  while (not exit_test.call(num_daemons) and tries < max_tries)
+    tries += 1
+    sleep poll_rate
+    found = exit_test.call num_daemons
+  end
+
+  if not negate
+    num_daemons.should be > 0
+  else
+    num_daemons.should be == 0
+  end
 end
 
 Then /^the admin user will have access$/ do
@@ -70,7 +173,31 @@ Given /^a new mysql database$/ do
   namespace = @app['namespace']
   app_name = @app['name']
   command = $mysql_config_format % [app_name, namespace, account_name]
-  runcon command,  'unconfined_u', 'system_r', 'libra_initrc_t'
+
+  outbuf = []
+  runcon command,  'unconfined_u', 'system_r', 'libra_initrc_t', outbuf
+
+  # I have to get the stdout back
+  # outbuf[0] = stdout, outbuf[1] = stderr
+  
+  # "Root User: admin"
+  # "Root Password: $password"
+  # "Connection URL: mysql://$IP:3306/"
+  stdout = outbuf[0]
+  @mysql = {}
+  stdout.each {|line|
+    if line.match(my_username_pattern)
+      @mysql['username'] = $1
+    end
+    if line.match(my_password_pattern)
+      @mysql['password'] = $1
+    end
+    if line.match(my_ip_pattern)
+      @mysql['ip'] = $1
+      @mysql['port'] = $2
+    end
+  }
+
 end
 
 Given /^the mysql database is (running|stopped)$/ do |state|
