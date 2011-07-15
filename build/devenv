@@ -184,6 +184,7 @@ class DevEnv < Thor
         exit 1 unless run('tito build --rpm --test --install', :verbose => options.verbose?)
       end
     end
+    run('service mcollective restart; service libra-broker restart', :verbose => options.verbose?)
   end
 
   desc "sync NAME", "Synchronize a local git repo with a remote DevEnv instance.  NAME should be ssh resolvable."
