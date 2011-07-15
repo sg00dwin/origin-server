@@ -298,11 +298,13 @@ class Express < Test::Unit::TestCase
     rescue Test::Unit::AssertionFailedError
         @verification_errors << $!
     end
-    begin
-        assert @driver.find_element(:xpath,".//a[@id='flex_console_link']").displayed?
-    rescue Test::Unit::AssertionFailedError
-        @verification_errors << $!
-    end
+# mhicks - removing, the mock environment won't return roles for Flex so it wouldn't
+# show up, right?
+#    begin
+#        assert @driver.find_element(:xpath,".//a[@id='flex_console_link']").displayed?
+#    rescue Test::Unit::AssertionFailedError
+#        @verification_errors << $!
+#    end
     @driver.find_element(:xpath,".//div[@id='button']/a").click()
     sleep 2
     assert !10.times{ break if ("OpenShift by Red Hat | Get Started with Express" == @driver.title rescue false); sleep 1 }
