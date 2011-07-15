@@ -44,7 +44,7 @@ class DevEnv < Thor
     def get_branch
       branch_str = `git status | head -n1`.chomp
       branch_str =~ /.*branch (.*)/
-      branch = $1 ? $1 : 'master'
+      branch = $1 ? $1 : 'origin/master'
       return branch
     end
     
