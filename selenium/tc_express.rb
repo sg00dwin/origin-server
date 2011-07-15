@@ -307,7 +307,7 @@ class Express < Test::Unit::TestCase
 #    end
     @driver.find_element(:xpath,".//div[@id='button']/a").click()
     sleep 2
-    assert !10.times{ break if ("OpenShift by Red Hat | Get Started with Express" == @driver.title rescue false); sleep 1 }
+    assert_equal "OpenShift by Red Hat | Get Started with Express", @driver.title
     @driver.find_element(:xpath, ".//ol[@id='toc']/li/a").click()
     begin
         assert_equal "Install the client tools", @driver.find_element(:xpath,".//li[@id='install_client_tools']/h3").text
