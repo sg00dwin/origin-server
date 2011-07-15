@@ -374,8 +374,21 @@ isrunning() {
     # not running
     return 1
 }
+# Check if the server http port is up
+function ishttpup() {
+    let count=0
+    while [ \${count} -lt 10 ]
+    do
+        if /usr/sbin/lsof -P -n -i "@${IP}:8080" | grep "(LISTEN)" > /dev/null; then
+            echo "Found ${IP}:8080 listening port"
+            break
+       fi
+       let count=\${count}+1
+       sleep 2
+    done
+}
 
-# Validate the runcon
+}# Validate the runcon
 if whoami | grep -q root || ! runcon | grep 'system_r:libra_t:s0:$c_val' > /dev/null
 then
     echo 1>&2
@@ -405,6 +418,9 @@ case "\$1" in
             $APP_JBOSS_BIN_DIR/standalone.sh 1>&2 >${APP_JBOSS_TMP_DIR}/${application}.log &
             PROCESS_ID=\$!
             echo \$PROCESS_ID > \$JBOSS_PID_FILE
+            if ! ishttpup; then
+                exit 1
+            fi
         fi
     ;;
     graceful-stop|stop)
