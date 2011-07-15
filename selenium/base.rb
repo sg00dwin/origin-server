@@ -22,13 +22,13 @@ module OpenShift
       # Get a stable firefox connection
       10.times do
         begin
-          Timeout::timeout(10) do
+          Timeout::timeout(20) do
             @headless = Headless.new
             @headless.start
             @driver=Selenium::WebDriver.for :firefox
             @driver.manage.timeouts.implicit_wait = 5
           end
-        rescue
+        rescue Timeout::Error
           @headless.destroy
           $logger.warn "Firefox connection error.  Tearing down environment and retrying..."
         end
