@@ -24,7 +24,7 @@ Feature: MySQL Application Sub-Cartridge
     And a new <type> application
     And a new mysql database
     When I deconfigure the mysql database
-    Then the mysql daemon will be stopped
+    Then the mysql daemon will not be running
     And the mysql database will not exist
     And the mysql control script will not exist
     And the mysql configuration file will not exist
