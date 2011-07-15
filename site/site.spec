@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.74.5
+Version:   0.74.6
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -64,6 +64,9 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Fri Jul 15 2011 Dan McPherson <dmcphers@redhat.com> 0.74.6-1
+- make title consistent (dmcphers@redhat.com)
+
 * Fri Jul 15 2011 Dan McPherson <dmcphers@redhat.com> 0.74.5-1
 - Merge branch 'master' of ssh://libragit/srv/git/li (edirsh@redhat.com)
 - Downgrade jQuery for video player compatibility (edirsh@redhat.com)
