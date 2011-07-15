@@ -16,7 +16,7 @@
     %h2 
       = @title
     
-    %video.projekktor{ :poster => "#{request.protocol}www.redhat.com/g/video_stills/#{@filename}.png", :height => "385px", :width => "640px"}
+    %video.projekktor{ :poster => "#{request.protocol}www.redhat.com/g/video_stills/#{@filename}.png", :height => "385", :width => "640"}
     
       %source{ :src => "#{request.protocol}www.redhat.com/v/ogg/#{@filename}.ogg", :type=>"video/ogg"}
       

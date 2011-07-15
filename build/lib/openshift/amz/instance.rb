@@ -30,7 +30,7 @@ module OpenShift
         instance = Instance.new(conn, name)
 
         # Launch a new instance
-        amz_data = conn.launch_instances(ami, OPTIONS)[0]
+        amz_data = conn.launch_instances(ami, $amz_options)[0]
         instance.amz_id = amz_data[:aws_instance_id]
         instance.amz_image_id = amz_data[:aws_image_id]
 

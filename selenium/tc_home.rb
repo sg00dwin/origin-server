@@ -5,29 +5,10 @@ require 'selenium-webdriver'
 require 'headless'
 
 class Home < Test::Unit::TestCase
+  include ::OpenShift::TestBase 
 
-  def setup
-    @verification_errors = []
-    @headless = Headless.new
-    @headless.start
-#    @profile = Selenium::WebDriver::Firefox::Profile.new
-#    @proxy = Selenium::WebDriver::Proxy.new(:ssl => "file.sjc.redhat.com:3128")
-#    @profile.proxy =@proxy
-#    @driver=Selenium::WebDriver.for :firefox, :profile =>@profile
-    @driver=Selenium::WebDriver.for :firefox
-    @driver.manage.timeouts.implicit_wait = 5
-    @url="http://localhost"
-  end
-  
-  def teardown
-    @driver.quit
-    @headless.destroy
-    assert_equal [], @verification_errors
-  end
-
-#Check navigation bar
   def test_check_home_navigationbar
-    puts "start to test  navigation bar"
+    $logger.info "start to test  navigation bar"
     @driver.navigate.to @url+"/app/"
     sleep 3
     begin
@@ -128,13 +109,11 @@ class Home < Test::Unit::TestCase
         @verification_errors << $!
     end
     @driver.navigate.back
-#    puts "Saving a screenshot"
     @driver.save_screenshot('navigation.png')
   end
-#
-#Check home links
+
   def test_check_home_links
-    puts "start to test home links "
+    $logger.info "start to test home links "
     @driver.navigate.to @url+"/app/"
     begin
         assert_equal "OpenShift by Red Hat", @driver.title
@@ -160,13 +139,11 @@ class Home < Test::Unit::TestCase
     @driver.find_element(:xpath,".//div[@id='app_promos']").click()
     @driver.find_element(:xpath,".//div[@id='app_promos']/div[3]/div/ul/li[4]/a").click()
     @driver.navigate.back
-#    puts "Saving a screenshot"
     @driver.save_screenshot('home_link.png')
   end
-#
-#Check home contents
+
   def test_check_home_contents
-    puts "start to check home contents"
+    $logger.info "start to check home contents"
     @driver.navigate.to @url+"/app/"
     begin
         assert_equal "OpenShift by Red Hat", @driver.title
@@ -224,11 +201,10 @@ class Home < Test::Unit::TestCase
         @verification_errors << $!
     end
     @driver.save_screenshot('home_content.png')
-   end
-#
-#Check home footer
+  end
+   
   def test_check_home_footer
-    puts "start to check home footer"
+    $logger.info "start to check home footer"
     @driver.navigate.to @url+"/app/"
     sleep 2
     begin

@@ -44,7 +44,7 @@ class DevEnv < Thor
     def get_branch
       branch_str = `git status | head -n1`.chomp
       branch_str =~ /.*branch (.*)/
-      branch = $1
+      branch = $1 ? $1 : 'master'
       return branch
     end
     
@@ -206,7 +206,8 @@ class DevEnv < Thor
     branch = get_branch
 
     puts "Synchronizing local changes from branch #{branch}..."
-    run("git push root@#{instance.dns}:/root/li #{branch}:master --tags --force", :verbose => options.verbose?)
+    ssh_path=File.expand_path(File.dirname(__FILE__)) + "/ssh-override"
+    run("export GIT_SSH=#{ssh_path}; git push -q root@#{instance.dns}:/root/li #{branch}:master --tags --force", :verbose => options.verbose?)
     puts "Done"
 
     reset_temp_commit
@@ -259,8 +260,14 @@ class DevEnv < Thor
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   method_option :express_server, :type => :boolean, :desc => "Set as express server in express.conf and leave on public_ip"
   method_option :ssh_config_verifier, :type => :boolean, :desc => "Set as verifier in .ssh/config"
+  method_option :instance_type, :required => false, :desc => "Amazon machine type override (default m1.large)"
   def launch(name)
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
+
+    # Override the machine type to launch if necessary
+    if options[:instance_type]
+      $amz_options[:instance_type] = options[:instance_type]
+    end
 
     # Get the latest devenv image and create a new instance
     conn = connect
@@ -295,7 +302,7 @@ class DevEnv < Thor
     if options.ssh_config_verifier?
       public_ip = instance.ssh("wget -qO- http://169.254.169.254/latest/meta-data/public-ipv4")
       
-      line_num = `grep -n -c 'Host verifier' ~/.ssh/config`.chomp
+      line_num = `grep -n 'Host verifier' ~/.ssh/config`.chomp.split(':')[0]
       puts "Updating ~/.ssh/config verifier entry with public ip = #{public_ip}"
       (1..4).each do |i|
         `sed -i '#{line_num.to_i + i}s,HostName.*,HostName #{public_ip},' ~/.ssh/config`

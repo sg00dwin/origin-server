@@ -223,10 +223,16 @@ fi
 
 # Start the app
 echo -n "Starting application..."
-exec 1>&- # close stdout
-~/${application}/${application}_ctl.sh start >/dev/null 2>&1
-exec 1>&2 # redirect stdout to stderr
-echo done
+# Check for stop_lock, bug 719800
+if [ -f $APP_DIR/run/stop_lock ]
+then
+    echo skipped due to stop_lock
+else
+    exec 1>&- # close stdout
+    ~/${application}/${application}_ctl.sh start >/dev/null 2>&1
+    exec 1>&2 # redirect stdout to stderr
+    echo done
+fi
 
 curl -s -O /dev/null -d "json_data=\"{\"app_uuid\":\"${uuid}\",\"action\":\"push\"}\"" https://${libra_server}/broker/nurture >/dev/null 2>&1 &
 __EOF__
@@ -368,8 +374,21 @@ isrunning() {
     # not running
     return 1
 }
+# Check if the server http port is up
+function ishttpup() {
+    let count=0
+    while [ \${count} -lt 10 ]
+    do
+        if /usr/sbin/lsof -P -n -i "@${IP}:8080" | grep "(LISTEN)" > /dev/null; then
+            echo "Found ${IP}:8080 listening port"
+            break
+       fi
+       let count=\${count}+1
+       sleep 2
+    done
+}
 
-# Validate the runcon
+}# Validate the runcon
 if whoami | grep -q root || ! runcon | grep 'system_r:libra_t:s0:$c_val' > /dev/null
 then
     echo 1>&2
@@ -399,6 +418,9 @@ case "\$1" in
             $APP_JBOSS_BIN_DIR/standalone.sh 1>&2 >${APP_JBOSS_TMP_DIR}/${application}.log &
             PROCESS_ID=\$!
             echo \$PROCESS_ID > \$JBOSS_PID_FILE
+            if ! ishttpup; then
+                exit 1
+            fi
         fi
     ;;
     graceful-stop|stop)
@@ -419,6 +441,7 @@ case "\$1" in
         exit 0
     ;;
     restart|graceful)
+        rm -f $APP_DIR/run/stop_lock
         $APP_DIR/${application}_ctl.sh stop
         $APP_DIR/${application}_ctl.sh start
     ;;
