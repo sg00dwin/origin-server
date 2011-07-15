@@ -45,7 +45,7 @@ module CommandHelper
   end
 
   # run a command in an alternate SELinux context
-  def runcon(cmd, user=nil, role=nil, type=nil)
+  def runcon(cmd, user=nil, role=nil, type=nil, outbuf=nil)
     prefix = 'runcon'
     prefix += (' -u ' + user) if user
     prefix += (' -r ' + role) if role
@@ -62,6 +62,11 @@ module CommandHelper
     errstring = stderr.read
     $logger.info("Standard Output:\n#{outstring}")
     $logger.info("Standard Error:\n#{errstring}")
+    # append the buffers if an array container is provided
+    if outbuf
+      outbuf << outstring
+      outbuf << errstring
+    end
 
     $logger.error("(#{$$}): Execution failed #{cmd} with exit_code: #{exit_code.to_s}") if exit_code != 0
 
