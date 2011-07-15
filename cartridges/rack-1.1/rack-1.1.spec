@@ -25,6 +25,8 @@ Requires:  rubygem-bundler
 Requires:  rubygem-sqlite3
 Requires:  ruby-sqlite3
 Requires:  ruby-mysql
+Requires:  mysql-devel
+Requires:  ruby-devel
 Requires:  ruby-nokogiri
 
 Obsoletes: rhc-cartridge-rack-1.1.0
