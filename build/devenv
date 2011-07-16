@@ -184,7 +184,7 @@ class DevEnv < Thor
         exit 1 unless run('tito build --rpm --test --install', :verbose => options.verbose?)
       end
     end
-    run('service mcollective restart; service libra-broker restart', :verbose => options.verbose?)
+    run('service mcollective restart; service libra-broker restart; service libra-site restart', :verbose => options.verbose?)
   end
 
   desc "sync NAME", "Synchronize a local git repo with a remote DevEnv instance.  NAME should be ssh resolvable."
@@ -355,7 +355,7 @@ class DevEnv < Thor
       end
 
       unless options.exclude_web?
-        cmd = "cd li-test/selenium; ./ts_web"
+        cmd = "rm -rf /tmp/unzip* /tmp/webdriver-profile*; cd li-test/selenium; ./ts_web"
         run_ssh(instance, "Web Selenium", cmd)
       end
 

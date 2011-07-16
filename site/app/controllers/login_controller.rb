@@ -51,7 +51,7 @@ class LoginController < ApplicationController
     Rails.logger.warn "Non integrated environment - faking login"
     session[:login] = params['login']
     session[:ticket] = "test"
-    session[:user] = WebUser.new(:email_address => params['login'])
+    session[:user] = WebUser.new(:email_address => params['login'], :rhlogin => params['login'])
     cookies[:rh_sso] = 'test'
 
     Rails.logger.debug "Session workflow in LoginController#create: #{workflow}"
