@@ -392,7 +392,11 @@ class DevEnv < Thor
         amz_image_name = Image.get_name(conn, instance.amz_image_id)
         
         print "Sending QE ready email..."
-        send_verified_email(instance.amz_image_id, amz_image_name)
+        begin
+          send_verified_email(instance.amz_image_id, amz_image_name)
+        rescue Exception => e
+          print "Failed sending email with message: #{e.message}"
+        end
       else
         set_public_ip(instance)
       end
