@@ -68,7 +68,7 @@ c_val="c$(($uid/1023)),c$(($uid%1023))"
 
 
 #
-# Start application
+# Restart application
 #
-
+rm -f "$APP_DIR/run/stop_lock"
 /bin/su -s /bin/sh "$uuid" -c "runcon -t libra_t -l s0:$c_val $MYSQL_DIR/${application}_mysql_ctl.sh restart"
