@@ -15,13 +15,13 @@ proxy.
 2. yum install mod_ssl
 This will install apache certs you will need
 
-3. cd site/public; mkdir app; cd app; ln -s ../* .; rm app
+3. mkdir site/public/app; ln -s site/public/* site/public/app/.; rm site/public/app/app
 This should link all the resources in public into /app/public
 
-4. cd ../server-common; sudo cp -R openshift* /usr/lib/ruby/site_ruby/1.8/
+4. sudo cp -R server-common/openshift* /usr/lib/ruby/site_ruby/1.8/
 You'll have to do this any time you modify files in server-common
 
-5. cd ../site; rm Gemfile.lock; bundle install
+5. cd site; rm Gemfile.lock; bundle install
 Note: Be sure not to commit the new Gemfile.lock
 
 6. sudo rails s
