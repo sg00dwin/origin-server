@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.74.8
+Version:       0.74.9
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -145,6 +145,9 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Mon Jul 18 2011 Dan McPherson <dmcphers@redhat.com> 0.74.9-1
+- cleanup (dmcphers@redhat.com)
+
 * Mon Jul 18 2011 Dan McPherson <dmcphers@redhat.com> 0.74.8-1
 - remove libra specific daemon (mmcgrath@redhat.com)
 - 722836 (dmcphers@redhat.com)
