@@ -83,13 +83,21 @@ module StreamlineMock
   # Whether the user is authorized for a given cloud solution
   #
   def has_access?(solution)
-    !@roles.index(CloudAccess.auth_role(solution)).nil?
+    unless @rhlogin == 'xtian+test@redhat.com'
+      !@roles.index(CloudAccess.auth_role(solution)).nil?
+    else
+      true
+    end
   end
 
   #
   # Whether the user has already requested access for a given cloud solution
   #
   def has_requested?(solution)
-    !@roles.index(CloudAccess.req_role(solution)).nil?
+    unless @rhlogin == 'xtian+test@redhat.com'
+      !@roles.index(CloudAccess.req_role(solution)).nil?
+    else
+      false
+    end
   end
 end

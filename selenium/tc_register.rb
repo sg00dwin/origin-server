@@ -23,19 +23,22 @@ class Register < Test::Unit::TestCase
         @verification_errors << $!
     end
     @driver.find_element(:xpath,".//div[@id='login']/a").click()
-    sleep 2
-    begin
-        assert_equal "LOGIN TO OPENSHIFT", @driver.find_element(:xpath,".//div[@id='title']/h2").text
-    rescue Test::Unit::AssertionFailedError
-        @verification_errors << $!
+    retry_on_no_elem do
+      begin
+          assert_equal "LOGIN TO OPENSHIFT", @driver.find_element(:xpath,".//div[@id='title']/h2").text
+      rescue Test::Unit::AssertionFailedError
+          @verification_errors << $!
+      end
     end
-    sleep 1
-    @driver.find_element(:link_text,"Click here to register").click()
-    sleep 2
-    begin
-        assert_equal "Register for access to Express", @driver.find_element(:xpath,".//div[@id='registration']/h3").text
-    rescue Test::Unit::AssertionFailedError
-        @verification_errors << $!
+    retry_on_no_elem do
+      @driver.find_element(:link_text,"Click here to register").click()
+    end
+    retry_on_no_elem do
+      begin
+          assert_equal "Register for access to Express", @driver.find_element(:xpath,".//div[@id='registration']/h3").text
+      rescue Test::Unit::AssertionFailedError
+          @verification_errors << $!
+      end
     end
     begin
         assert @driver.find_element(:id,"web_user_email_address").displayed?
@@ -46,11 +49,12 @@ class Register < Test::Unit::TestCase
     @driver.find_element(:id,"web_user_password").send_keys("19861231")
     @driver.find_element(:id,"web_user_password_confirmation").send_keys("19861231")
     @driver.find_element(:id,"web_user_submit").click()
-    sleep 2
-    begin
-        assert_equal "Please enter a valid email address.", @driver.find_element(:xpath,".//li[@id='web_user_email_address_input']/label[2]").text
-    rescue Test::Unit::AssertionFailedError
-        @verification_errors << $!
+    retry_on_no_elem do
+      begin
+          assert_equal "Please enter a valid email address.", @driver.find_element(:xpath,".//li[@id='web_user_email_address_input']/label[2]").text
+      rescue Test::Unit::AssertionFailedError
+          @verification_errors << $!
+      end
     end
   end
 
@@ -64,19 +68,22 @@ class Register < Test::Unit::TestCase
         @verification_errors << $!
     end
     @driver.find_element(:xpath,".//div[@id='login']/a").click()
-    sleep 2
-    begin
-        assert_equal "LOGIN TO OPENSHIFT", @driver.find_element(:xpath,".//div[@id='title']/h2").text
-    rescue Test::Unit::AssertionFailedError
-        @verification_errors << $!
+    retry_on_no_elem do
+      begin
+          assert_equal "LOGIN TO OPENSHIFT", @driver.find_element(:xpath,".//div[@id='title']/h2").text
+      rescue Test::Unit::AssertionFailedError
+          @verification_errors << $!
+      end
     end
-    sleep 1
-    @driver.find_element(:link_text,"Click here to register").click()
-    sleep 2
-    begin
-        assert_equal "Register for access to Express", @driver.find_element(:xpath,".//div[@id='registration']/h3").text
-    rescue Test::Unit::AssertionFailedError
-        @verification_errors << $!
+    retry_on_no_elem do
+      @driver.find_element(:link_text,"Click here to register").click()
+    end
+    retry_on_no_elem do
+      begin
+          assert_equal "Register for access to Express", @driver.find_element(:xpath,".//div[@id='registration']/h3").text
+      rescue Test::Unit::AssertionFailedError
+          @verification_errors << $!
+      end
     end
     begin
         assert @driver.find_element(:id,"web_user_email_address").displayed?
@@ -86,11 +93,12 @@ class Register < Test::Unit::TestCase
     @driver.find_element(:id,"web_user_password").send_keys("19861231")
     @driver.find_element(:id,"web_user_password_confirmation").send_keys("19861231")
     @driver.find_element(:id,"web_user_submit").click()
-    sleep 2
-    begin
-        assert_equal "This field is required.",@driver.find_element(:xpath,".//li[@id='web_user_email_address_input']/label[2]").text
-    rescue Test::Unit::AssertionFailedError
-        @verification_errors << $!
+    retry_on_no_elem do
+      begin
+          assert_equal "This field is required.",@driver.find_element(:xpath,".//li[@id='web_user_email_address_input']/label[2]").text
+      rescue Test::Unit::AssertionFailedError
+          @verification_errors << $!
+      end
     end
   end
 
@@ -104,32 +112,38 @@ class Register < Test::Unit::TestCase
         @verification_errors << $!
     end
     @driver.find_element(:xpath,".//div[@id='login']/a").click()
-    sleep 2
-    begin
-        assert_equal "LOGIN TO OPENSHIFT", @driver.find_element(:xpath,".//div[@id='title']/h2").text
-    rescue Test::Unit::AssertionFailedError
-        @verification_errors << $!
+    retry_on_no_elem do
+      begin
+          assert_equal "LOGIN TO OPENSHIFT", @driver.find_element(:xpath,".//div[@id='title']/h2").text
+      rescue Test::Unit::AssertionFailedError
+          @verification_errors << $!
+      end
     end
-    sleep 1
-    @driver.find_element(:link_text,"Click here to register").click()
-    sleep 2
-    begin
-        assert_equal "Register for access to Express", @driver.find_element(:xpath,".//div[@id='registration']/h3").text
-    rescue Test::Unit::AssertionFailedError
-        @verification_errors << $!
+    retry_on_no_elem do
+      @driver.find_element(:link_text,"Click here to register").click()
     end
-    begin
-        assert @driver.find_element(:id,"web_user_email_address").displayed?
-    rescue Test::Unit::AssertionFailedError
-        @verification_errors << $!
+    retry_on_no_elem do
+      begin
+          assert_equal "Register for access to Express", @driver.find_element(:xpath,".//div[@id='registration']/h3").text
+      rescue Test::Unit::AssertionFailedError
+          @verification_errors << $!
+      end
+    end
+    retry_on_no_elem do
+      begin
+          assert @driver.find_element(:id,"web_user_email_address").displayed?
+      rescue Test::Unit::AssertionFailedError
+          @verification_errors << $!
+      end
     end
     @driver.find_element(:id,"web_user_email_address").send_keys("xtian+c0@redhat.com")    
     @driver.find_element(:id,"web_user_submit").click()
-    sleep 2
-    begin
-        assert_equal "This field is required.",@driver.find_element(:xpath,".//li[@id='web_user_password_input']/label[2]").text
-    rescue Test::Unit::AssertionFailedError
-        @verification_errors << $!
+    retry_on_no_elem do
+      begin
+          assert_equal "This field is required.",@driver.find_element(:xpath,".//li[@id='web_user_password_input']/label[2]").text
+      rescue Test::Unit::AssertionFailedError
+          @verification_errors << $!
+      end
     end
   end
 
@@ -144,19 +158,22 @@ class Register < Test::Unit::TestCase
         @verification_errors << $!
     end
     @driver.find_element(:xpath,".//div[@id='login']/a").click()
-    sleep 2
-    begin
-        assert_equal "LOGIN TO OPENSHIFT", @driver.find_element(:xpath,".//div[@id='title']/h2").text
-    rescue Test::Unit::AssertionFailedError
-        @verification_errors << $!
+    retry_on_no_elem do
+      begin
+          assert_equal "LOGIN TO OPENSHIFT", @driver.find_element(:xpath,".//div[@id='title']/h2").text
+      rescue Test::Unit::AssertionFailedError
+          @verification_errors << $!
+      end
     end
-    sleep 1
-    @driver.find_element(:link_text,"Click here to register").click()
-    sleep 2
-    begin
-        assert_equal "Register for access to Express", @driver.find_element(:xpath,".//div[@id='registration']/h3").text
-    rescue Test::Unit::AssertionFailedError
-        @verification_errors << $!
+    retry_on_no_elem do
+      @driver.find_element(:link_text,"Click here to register").click()
+    end
+    retry_on_no_elem do
+      begin
+          assert_equal "Register for access to Express", @driver.find_element(:xpath,".//div[@id='registration']/h3").text
+      rescue Test::Unit::AssertionFailedError
+          @verification_errors << $!
+      end
     end
     begin
         assert @driver.find_element(:id,"web_user_email_address").displayed?
@@ -167,11 +184,12 @@ class Register < Test::Unit::TestCase
     @driver.find_element(:id,"web_user_password").send_keys("19861231")
     @driver.find_element(:id,"web_user_password_confirmation").send_keys("19861233")   
     @driver.find_element(:id,"web_user_submit").click()
-    sleep 2
-    begin
-        assert_equal "Please enter the same value again.",@driver.find_element(:xpath,".//li[@id='web_user_password_confirmation_input']/label[2]").text
-    rescue Test::Unit::AssertionFailedError
-        @verification_errors << $!
+    retry_on_no_elem do
+      begin
+          assert_equal "Please enter the same value again.",@driver.find_element(:xpath,".//li[@id='web_user_password_confirmation_input']/label[2]").text
+      rescue Test::Unit::AssertionFailedError
+          @verification_errors << $!
+      end
     end
   end
 
@@ -185,19 +203,22 @@ class Register < Test::Unit::TestCase
         @verification_errors << $!
     end
     @driver.find_element(:xpath,".//div[@id='login']/a").click()
-    sleep 2
-    begin
-        assert_equal "LOGIN TO OPENSHIFT", @driver.find_element(:xpath,".//div[@id='title']/h2").text
-    rescue Test::Unit::AssertionFailedError
-        @verification_errors << $!
+    retry_on_no_elem do
+      begin
+          assert_equal "LOGIN TO OPENSHIFT", @driver.find_element(:xpath,".//div[@id='title']/h2").text
+      rescue Test::Unit::AssertionFailedError
+          @verification_errors << $!
+      end
     end
-    sleep 1
-    @driver.find_element(:link_text,"Click here to register").click()
-    sleep 2
-    begin
-        assert_equal "Register for access to Express", @driver.find_element(:xpath,".//div[@id='registration']/h3").text
-    rescue Test::Unit::AssertionFailedError
-        @verification_errors << $!
+    retry_on_no_elem do
+      @driver.find_element(:link_text,"Click here to register").click()
+    end
+    retry_on_no_elem do
+      begin
+          assert_equal "Register for access to Express", @driver.find_element(:xpath,".//div[@id='registration']/h3").text
+      rescue Test::Unit::AssertionFailedError
+          @verification_errors << $!
+      end
     end
     begin
         assert @driver.find_element(:id,"web_user_email_address").displayed?
@@ -208,11 +229,12 @@ class Register < Test::Unit::TestCase
     @driver.find_element(:id,"web_user_password").send_keys("1986")
     @driver.find_element(:id,"web_user_password_confirmation").send_keys("1986")   
     @driver.find_element(:id,"web_user_submit").click()
-    sleep 2
-    begin
-        assert_equal "Please enter at least 6 characters." ,@driver.find_element(:xpath,".//li[@id='web_user_password_input']/label[2]").text
-    rescue Test::Unit::AssertionFailedError
-        @verification_errors << $!
+    retry_on_no_elem do
+      begin
+          assert_equal "Please enter at least 6 characters." ,@driver.find_element(:xpath,".//li[@id='web_user_password_input']/label[2]").text
+      rescue Test::Unit::AssertionFailedError
+          @verification_errors << $!
+      end
     end
   end
 
@@ -226,19 +248,22 @@ class Register < Test::Unit::TestCase
         @verification_errors << $!
     end
     @driver.find_element(:xpath,".//div[@id='login']/a").click()
-    sleep 2
-    begin
-        assert_equal "LOGIN TO OPENSHIFT", @driver.find_element(:xpath,".//div[@id='title']/h2").text
-    rescue Test::Unit::AssertionFailedError
-        @verification_errors << $!
+    retry_on_no_elem do
+      begin
+          assert_equal "LOGIN TO OPENSHIFT", @driver.find_element(:xpath,".//div[@id='title']/h2").text
+      rescue Test::Unit::AssertionFailedError
+          @verification_errors << $!
+      end
     end
-    sleep 1
-    @driver.find_element(:link_text,"Click here to register").click()
-    sleep 2
-    begin
-        assert_equal "Register for access to Express", @driver.find_element(:xpath,".//div[@id='registration']/h3").text
-    rescue Test::Unit::AssertionFailedError
-        @verification_errors << $!
+    retry_on_no_elem do
+      @driver.find_element(:link_text,"Click here to register").click()
+    end
+    retry_on_no_elem do
+      begin
+          assert_equal "Register for access to Express", @driver.find_element(:xpath,".//div[@id='registration']/h3").text
+      rescue Test::Unit::AssertionFailedError
+          @verification_errors << $!
+      end
     end
     begin
         assert @driver.find_element(:id,"web_user_email_address").displayed?
@@ -249,12 +274,13 @@ class Register < Test::Unit::TestCase
     @driver.find_element(:id,"web_user_password").send_keys("redhat")
     @driver.find_element(:id,"web_user_password_confirmation").send_keys("redhat")   
     @driver.find_element(:id,"web_user_submit").click()
-    sleep 2
-    begin
-        assert_equal "We can not accept emails from the following top level domains: .ir, .cu, .kp, .sd, .sy" , @driver.find_element(:xpath,".//li[@id='web_user_email_address_input']/p").text
-    rescue Test::Unit::AssertionFailedError
-        @verification_errors << $!
-    end   
+    retry_on_no_elem do
+      begin
+          assert_equal "We can not accept emails from the following top level domains: .ir, .cu, .kp, .sd, .sy" , @driver.find_element(:xpath,".//li[@id='web_user_email_address_input']/p").text
+      rescue Test::Unit::AssertionFailedError
+          @verification_errors << $!
+      end
+    end
   end
  
   def test_register_normally
@@ -267,19 +293,22 @@ class Register < Test::Unit::TestCase
         @verification_errors << $!
     end
     @driver.find_element(:xpath,".//div[@id='login']/a").click()
-    sleep 2
-    begin
-        assert_equal "LOGIN TO OPENSHIFT", @driver.find_element(:xpath,".//div[@id='title']/h2").text
-    rescue Test::Unit::AssertionFailedError
-        @verification_errors << $!
+    retry_on_no_elem do
+      begin
+          assert_equal "LOGIN TO OPENSHIFT", @driver.find_element(:xpath,".//div[@id='title']/h2").text
+      rescue Test::Unit::AssertionFailedError
+          @verification_errors << $!
+      end
     end
-    sleep 1
-    @driver.find_element(:link_text,"Click here to register").click()
-    sleep 2
-    begin
-        assert_equal "Register for access to Express", @driver.find_element(:xpath,".//div[@id='registration']/h3").text
-    rescue Test::Unit::AssertionFailedError
-        @verification_errors << $!
+    retry_on_no_elem do
+      @driver.find_element(:link_text,"Click here to register").click()
+    end
+    retry_on_no_elem do
+      begin
+          assert_equal "Register for access to Express", @driver.find_element(:xpath,".//div[@id='registration']/h3").text
+      rescue Test::Unit::AssertionFailedError
+          @verification_errors << $!
+      end
     end
     begin
         assert @driver.find_element(:id,"web_user_email_address").displayed?
@@ -290,11 +319,12 @@ class Register < Test::Unit::TestCase
     @driver.find_element(:id,"web_user_password").send_keys("redhat")
     @driver.find_element(:id,"web_user_password_confirmation").send_keys("redhat")   
     @driver.find_element(:id,"web_user_submit").click()
-    sleep 2
-    begin
-        assert_equal "Check your inbox for an email with a validation link. Click on the link to complete the registration process." , @driver.find_element(:xpath,".//div[@id='page']/div[2]/p").text
-    rescue Test::Unit::AssertionFailedError
-        @verification_errors << $!
-    end   
+    retry_on_no_elem do
+      begin
+          assert_equal "Check your inbox for an email with a validation link. Click on the link to complete the registration process." , @driver.find_element(:xpath,".//div[@id='page']/div[2]/p").text
+      rescue Test::Unit::AssertionFailedError
+          @verification_errors << $!
+      end
+    end
   end
 end

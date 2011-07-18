@@ -10,4 +10,4 @@ account		include		system-auth
 password	include		system-auth
 session		include		system-auth
 session		optional	pam_xauth.so
-session    required     pam_namespace.so
+session    	required        pam_namespace.so no_unmount_on_close

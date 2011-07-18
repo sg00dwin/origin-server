@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.74.6
+Version:   0.74.7
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -76,6 +76,18 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Fri Jul 15 2011 Dan McPherson <dmcphers@redhat.com> 0.74.7-1
+- Make the start action syncd with the caller (scott.stark@jboss.org)
+- Bug 719800 instead of removing stop_lock, simply indicate the start is
+  skipped due to lock (scott.stark@jboss.org)
+- Bug 719800, remove stop_lock during git push (scott.stark@jboss.org)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (scott.stark@jboss.org)
+- Bug 720882 (dmcphers@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (scott.stark@jboss.org)
+- Bug 717552, Remove the lock file on restart (scott.stark@jboss.org)
+
 * Wed Jul 13 2011 Dan McPherson <dmcphers@redhat.com> 0.74.6-1
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
   (scott.stark@jboss.org)

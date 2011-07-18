@@ -123,11 +123,12 @@ class Flex < Test::Unit::TestCase
         @verification_errors << $!
     end
     @driver.find_element(:xpath,".//a[contains(text(),'Build')]").click()
-    sleep 1
-    begin
-        assert_equal "OpenShift Flex's wizard driven interface makes it easy to provision resources and build integrated application stacks.", @driver.find_element(:xpath,".//div[@id='step_1']/p").text
-    rescue Test::Unit::AssertionFailedError
-        @verification_errors << $!
+    retry_on_no_elem do
+      begin
+          assert_equal "OpenShift Flex's wizard driven interface makes it easy to provision resources and build integrated application stacks.", @driver.find_element(:xpath,".//div[@id='step_1']/p").text
+      rescue Test::Unit::AssertionFailedError
+          @verification_errors << $!
+      end
     end
     begin
     assert @driver.find_element(:xpath,".//div[@id='step_1']/a").displayed?
@@ -135,11 +136,12 @@ class Flex < Test::Unit::TestCase
         @verification_errors << $!
     end 
     @driver.find_element(:xpath,".//a[contains(text(),'Deploy')]").click()
-    sleep 1
-    begin
-        assert_equal "OpenShift Flex makes it easy to deploy your application, make modifications to code and components, version your changes and redeploy.",@driver.find_element(:xpath,".//div[@id='step_2']/p").text
-    rescue Test::Unit::AssertionFailedError
-        @verification_errors << $!
+    retry_on_no_elem do
+      begin
+          assert_equal "OpenShift Flex makes it easy to deploy your application, make modifications to code and components, version your changes and redeploy.",@driver.find_element(:xpath,".//div[@id='step_2']/p").text
+      rescue Test::Unit::AssertionFailedError
+          @verification_errors << $!
+      end
     end
     begin
     assert @driver.find_element(:xpath,".//div[@id='step_2']/a").displayed?
@@ -157,17 +159,19 @@ class Flex < Test::Unit::TestCase
     rescue Test::Unit::AssertionFailedError
         @verification_errors << $!
     end 
-    sleep 1
-    begin
-    @driver.find_element(:xpath,".//div[@id='resources']/ul/li/a").displayed?
-    rescue Test::Unit::AssertionFailedError
+    retry_on_no_elem do
+      begin
+        @driver.find_element(:xpath,".//div[@id='resources']/ul/li/a").displayed?
+      rescue Test::Unit::AssertionFailedError
         @verification_errors << $!
+      end
     end
-    sleep 3
-    begin
-        assert @driver.find_element(:xpath,".//div[@id='resources']/ul/li[2]/a").displayed?
-    rescue Test::Unit::AssertionFailedError
-        @verification_errors << $!
+    retry_on_no_elem do
+      begin
+          assert @driver.find_element(:xpath,".//div[@id='resources']/ul/li[2]/a").displayed?
+      rescue Test::Unit::AssertionFailedError
+          @verification_errors << $!
+      end
     end
     begin
         assert @driver.find_element(:xpath,".//div[@id='resources']/ul/li[3]/a").displayed?
@@ -188,8 +192,9 @@ class Flex < Test::Unit::TestCase
     sleep 3
     assert !10.times{ break if ("Knowledge Base | Red Hat Openshift Forum" == @driver.title rescue false); sleep 1 }
     @driver.navigate.back
-    sleep 2
-    @driver.find_element(:xpath, ".//div[@id='doc_link']/a[2]/p").click()
+    retry_on_no_elem do
+      @driver.find_element(:xpath, ".//div[@id='doc_link']/a[2]/p").click()
+    end
     sleep 2
     assert !10.times{ break if ("Documents | Red Hat Openshift Forum" == @driver.title rescue false); sleep 1 }
     @driver.navigate.back
@@ -203,8 +208,9 @@ class Flex < Test::Unit::TestCase
     sleep 2
     assert !10.times{ break if ("News and Announcements | Red Hat Openshift Forum" == @driver.title rescue false); sleep 1 }
     @driver.navigate.back
-    sleep 2
-    @driver.find_element(:xpath,".//div[@id='product_community']/div[2]/a").click()
+    retry_on_no_elem do
+      @driver.find_element(:xpath,".//div[@id='product_community']/div[2]/a").click()
+    end
     sleep 2
     assert !10.times{ break if ("Django Application in OpenShift Flex - Workaround | Red Hat Openshift Forum" == @driver.title rescue false); sleep 1 }
     @driver.navigate.back

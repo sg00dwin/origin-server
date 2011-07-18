@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.74.4
+Version:   0.74.7
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -64,6 +64,29 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Sat Jul 16 2011 Dan McPherson <dmcphers@redhat.com> 0.74.7-1
+- test case changes (dmcphers@redhat.com)
+
+* Fri Jul 15 2011 Dan McPherson <dmcphers@redhat.com> 0.74.6-1
+- make title consistent (dmcphers@redhat.com)
+
+* Fri Jul 15 2011 Dan McPherson <dmcphers@redhat.com> 0.74.5-1
+- Merge branch 'master' of ssh://libragit/srv/git/li (edirsh@redhat.com)
+- Downgrade jQuery for video player compatibility (edirsh@redhat.com)
+- fix site videos - Bug 721211 (dmcphers@redhat.com)
+- Revert "Added config variable for express api base url" (edirsh@redhat.com)
+- Revert "Added domain interface back into site" (edirsh@redhat.com)
+- Revert "Changed api urls in config to https" (edirsh@redhat.com)
+- libra_check fix #2 (mhicks@redhat.com)
+- libra_check fix #1 in site (mhicks@redhat.com)
+- Added more test coverage for access/exress controller (edirsh@redhat.com)
+- Merge branch 'master' of ssh://libragit/srv/git/li (edirsh@redhat.com)
+- Bug 721323 (dmcphers@redhat.com)
+- Changed api urls in config to https (edirsh@redhat.com)
+- Merge branch 'master' of ssh://libragit/srv/git/li (edirsh@redhat.com)
+- Added domain interface back into site (edirsh@redhat.com)
+- Added config variable for express api base url (edirsh@redhat.com)
+
 * Wed Jul 13 2011 Dan McPherson <dmcphers@redhat.com> 0.74.4-1
 - 
 
