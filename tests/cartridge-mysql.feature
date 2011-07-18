@@ -40,7 +40,7 @@ Feature: MySQL Application Sub-Cartridge
     And a new guest account
     And a new <type> application
     And a new mysql database
-    And the mysql database is stopped
+    And the mysql daemon is stopped
     When I start the mysql database
 
   Scenarios: Start a MySQL database scenarios
@@ -53,7 +53,7 @@ Feature: MySQL Application Sub-Cartridge
     And a new guest account
     And a new <type> application
     And a new mysql database
-    And the mysql database is running
+    And the mysql daemon is running
     When I stop the mysql database
 
   Scenarios: Stop a MySQL database scenarios

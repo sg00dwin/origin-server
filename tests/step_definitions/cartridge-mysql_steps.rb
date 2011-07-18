@@ -1,5 +1,7 @@
 # step descriptions for MySQL cartridge behavior.
 
+require 'mysql'
+
 $mysql_version = "5.1"
 $mysql_cart_root = "/usr/libexec/li/cartridges/embedded/mysql-#{$mysql_version}"
 $mysql_hooks = $mysql_cart_root + "/info/hooks"
@@ -29,7 +31,7 @@ When /^I configure a mysql database$/ do
   # "Connection URL: mysql://$IP:3306/"
   stdout = outbuf[0]
   @mysql = {}
-  stdout.each {|line|
+  stdout.each do |line|
     if line.match(my_username_pattern)
       @mysql['username'] = $1
     end
@@ -40,8 +42,7 @@ When /^I configure a mysql database$/ do
       @mysql['ip'] = $1
       @mysql['port'] = $2
     end
-  }
-
+  end
 end
 
 When /^I deconfigure the mysql database$/ do
@@ -145,7 +146,7 @@ Then /^the mysql daemon will( not)? be running$/ do |negate|
   acct_uid = @account['uid']
   app_name = @app['name']
 
-  max_tries = 7
+  max_tries = 10
   poll_rate = 3
   exit_test = negate ? lambda { |tval| tval == 0 } : lambda { |tval| tval > 0 }
   
@@ -154,7 +155,7 @@ Then /^the mysql daemon will( not)? be running$/ do |negate|
   while (not exit_test.call(num_daemons) and tries < max_tries)
     tries += 1
     sleep poll_rate
-    found = exit_test.call num_daemons
+    num_daemons = num_procs acct_name, 'mysqld'
   end
 
   if not negate
@@ -165,7 +166,17 @@ Then /^the mysql daemon will( not)? be running$/ do |negate|
 end
 
 Then /^the admin user will have access$/ do
-  pending # express the regexp above with the code you wish you had
+  begin
+    dbh = Mysql.real_connect(@mysql['ip'], 
+                             @mysql['username'], 
+                             @mysql['password'],
+                             'mysql')
+  rescue Mysql::Error
+    dbh = nil
+  end
+
+  dbh.should be_a(Mysql)
+  dbh.close if dbh
 end
 
 Given /^a new mysql database$/ do
@@ -173,6 +184,10 @@ Given /^a new mysql database$/ do
   namespace = @app['namespace']
   app_name = @app['name']
   command = $mysql_config_format % [app_name, namespace, account_name]
+
+  my_username_pattern = /Root User: (\S+)/
+  my_password_pattern = /Root Password: (\S+)/
+  my_ip_pattern = /mysql:\/\/(\d+\.\d+\.\d+\.\d+):(\d+)/
 
   outbuf = []
   runcon command,  'unconfined_u', 'system_r', 'libra_initrc_t', outbuf
@@ -185,7 +200,7 @@ Given /^a new mysql database$/ do
   # "Connection URL: mysql://$IP:3306/"
   stdout = outbuf[0]
   @mysql = {}
-  stdout.each {|line|
+  stdout.each do |line|
     if line.match(my_username_pattern)
       @mysql['username'] = $1
     end
@@ -196,12 +211,56 @@ Given /^a new mysql database$/ do
       @mysql['ip'] = $1
       @mysql['port'] = $2
     end
-  }
+  end
 
 end
 
-Given /^the mysql database is (running|stopped)$/ do |state|
-  pending # express the regexp above with the code you wish you had
+Given /^the mysql daemon is (running|stopped)$/ do |status|
+
+  action = status == "running"  ? "start" : "stop"
+
+  account_name = @account['accountname']
+  namespace = @app['namespace']
+  app_name = @app['name']
+
+  mysql_user_root = "#{$home_root}/#{account_name}/mysql-#{$mysql_version}"
+  mysql_config_file = "#{mysql_user_root}/etc/my.cnf"
+  mysql_pid_file = "#{mysql_user_root}/pid/mysqld.pid"
+
+  num_daemons = num_procs acct_name, 'mysqld'
+  outbuf = []
+
+  case action
+  when 'start'
+    if num_daemons == 0
+      command = mysql_config_file + " start"
+      runcon command,  'unconfined_u', 'system_r', 'libra_initrc_t', outbuf
+    end
+    exit_test = lambda { |tval| tval > 0 }
+    
+  when 'stop'
+    if num_daemons > 0
+      command = mysql_config_file + " stop"
+      runcon command,  'unconfined_u', 'system_r', 'libra_initrc_t', outbuf
+    end
+    exit_test = lambda { |tval| tval == 0 }
+
+  # else 
+  #   raise an exception
+  end
+
+  # now loop until it's true
+  max_tries = 10
+  poll_rate = 3  
+  tries = 0
+  num_daemons = num_procs acct_name, 'mysqld'
+  while (not exit_test.call(num_daemons) and tries < max_tries)
+    tries += 1
+    sleep poll_rate
+    num_daemons = num_procs acct_name, 'mysqld'
+  end
+
+  
 end
 
 When /^I (start|stop|restart) the mysql database$/ do |action|
