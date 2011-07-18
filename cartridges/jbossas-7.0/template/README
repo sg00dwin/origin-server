@@ -1,7 +1,7 @@
 Repo layout
 =========== 
-deployments/ - location for built wars (Details below).
-src/ - maven src structure.
+deployments/ - location for built wars (Details below)
+src/ - maven src structure
 pom.xml - maven build file  
 .config/ - location for JBoss configuration (Ex: adding datasources into standalone.xml)
 
