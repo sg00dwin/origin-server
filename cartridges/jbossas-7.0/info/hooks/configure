@@ -314,8 +314,7 @@ ls -l "$APP_JBOSS"/standalone/configuration
 # Get the standalone.sh script
 cp ${jboss_home}/bin/standalone.sh "$APP_JBOSS_BIN_DIR"
 # Update the standalone.xml for the application IP
-sed 's/loopback-address value="127.*"/loopback-address value="'$IP'"/g' "$APP_JBOSS"/standalone/configuration/standalone.xml >${APP_JBOSS_TMP_DIR}/standalone.xml
-cp ${APP_JBOSS_TMP_DIR}/standalone.xml "$APP_JBOSS"/standalone/configuration
+sed -i 's/{ip}/'$IP'/g' "$APP_JBOSS"/standalone/configuration/standalone.xml
 popd > /dev/null
 
 # Repo
