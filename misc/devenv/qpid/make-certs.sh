@@ -7,6 +7,7 @@
 #
 
 # boilerplate and arg defaulting
+months_valid=3
 server_id="localhost.localdomain"
 owner_domain_name="localhost.localdomain"
 user_id="node"
@@ -34,6 +35,7 @@ usage()
 {
 	echo "cert creator doodad"
 	echo "  -v increase verbosity"
+  echo "  -m <months valid>"
 	echo "  -s <server-id>"
 	echo "  -u <user id>"
 	echo "  -p pretend"
@@ -49,9 +51,10 @@ usage()
 	exit 1;
 }
 
-while getopts d:s:u:p:P:o:O:c:C:vpwz: option
+while getopts d:s:m:u:p:P:o:O:c:C:vpwz: option
 do case $option in
 	v) verbose=`echo $verbose + 1 | bc` ;;
+	m) months_valid="$OPTARG" ;;
 	d) dc="$OPTARG" ;;
 	s) server_id="$OPTARG" ;;
 	u) user_id="$OPTARG" ;;
@@ -219,7 +222,7 @@ sleep $sleep
    #    Enter Password or Pin for "Communicator Certificate DB":
 
 if [ "X$debug_pw" == "X" ] ; then
-    x certutil -C -d $dir/CA_db -c "$ca_pretty_name" -a -i $dir/server_db/server.req -o $dir/server_db/server.crt -f $dir/cert.password -z $dir/random6  -2 -6 <<EOF
+    x certutil -C -v $months_valid -d $dir/CA_db -c "$ca_pretty_name" -a -i $dir/server_db/server.req -o $dir/server_db/server.crt -f $dir/cert.password -z $dir/random6  -2 -6 <<EOF
 0
 9
 n
@@ -227,7 +230,7 @@ n
 -1
 EOF
 else
-    x certutil -C -d $dir/CA_db -c "$ca_pretty_name" -a -i $dir/server_db/server.req -o $dir/server_db/server.crt -z $dir/random6  -2 -6 <<EOF
+    x certutil -C -v $months_valid -d $dir/CA_db -c "$ca_pretty_name" -a -i $dir/server_db/server.req -o $dir/server_db/server.crt -z $dir/random6  -2 -6 <<EOF
 0
 9
 n
@@ -306,7 +309,7 @@ sleep $sleep
    #    Enter Password or Pin for "Communicator Certificate DB":
 
 if [ "X$debug_pw" == "X" ] ; then
-    x certutil -C -d $dir/CA_db -c "$ca_pretty_name" -a -i $dir/client_db/client.req -o $dir/client_db/client.crt -f $dir/cert.password -z $dir/random11 -2 -6 <<EOF
+    x certutil -C -v $months_valid -d $dir/CA_db -c "$ca_pretty_name" -a -i $dir/client_db/client.req -o $dir/client_db/client.crt -f $dir/cert.password -z $dir/random11 -2 -6 <<EOF
 1
 9
 n
@@ -315,7 +318,7 @@ n
 n
 EOF
 else
-    x certutil -C -d $dir/CA_db -c "$ca_pretty_name" -a -i $dir/client_db/client.req -o $dir/client_db/client.crt -z $dir/random11 -2 -6 <<EOF
+    x certutil -C -v $months_valid -d $dir/CA_db -c "$ca_pretty_name" -a -i $dir/client_db/client.req -o $dir/client_db/client.crt -z $dir/random11 -2 -6 <<EOF
 1
 9
 n
