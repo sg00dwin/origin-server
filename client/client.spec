@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system client tools
 Name:          rhc
-Version:       0.74.3
+Version:       0.74.4
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       MIT
@@ -99,6 +99,13 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_sysconfdir}/openshift/express.conf
 
 %changelog
+* Mon Jul 18 2011 Dan McPherson <dmcphers@redhat.com> 0.74.4-1
+- api update (dmcphers@redhat.com)
+- Block it (jimjag@redhat.com)
+- Adding a script to build the gem with json_pure (mhicks@redhat.com)
+- force as block (jimjag@redhat.com)
+- Adding the ability to force json_pure dependency (mhicks@redhat.com)
+
 * Fri Jul 15 2011 Dan McPherson <dmcphers@redhat.com> 0.74.3-1
 - bug 721296 (dmcphers@redhat.com)
 - Bug 721236 (dmcphers@redhat.com)
