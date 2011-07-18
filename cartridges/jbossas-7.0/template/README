@@ -58,11 +58,6 @@ JBoss Application Server distribution is the location end users can place
 their deployment content (e.g. war, ear, jar, sar files) to have it 
 automatically deployed into the server runtime.
 
-Users, particularly those running production systems, are encouraged to use the 
-JBoss AS management APIs to upload and deploy deployment content instead of 
-relying on the deployment scanner subsystem that periodically scans this 
-directory.  See the JBoss AS documentation for details.
-
 The filesystem deployment scanner in AS 7 and later works differently from 
 previous JBoss AS releases. The scanner will no longer attempt to directly 
 monitor the deployment content and decide if or when the end user wishes 
