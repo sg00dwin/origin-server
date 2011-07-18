@@ -7,6 +7,8 @@ require 'rubygems/package_task'
 
 task :default => [:package]
 
+FORCE_JSON_PURE = ENV['JSON_PURE']
+
 # Create the gem specification for packaging
 spec = Gem::Specification.new do |s|
     s.name = %q{rhc}
@@ -20,7 +22,7 @@ spec = Gem::Specification.new do |s|
     s.files += %w(LICENSE README Rakefile)
     s.executables = ['rhc-create-app', 'rhc-create-domain', 'rhc-ctl-app', 'rhc-snapshot', 'rhc-user-info', 'rhc-tail-files']
     # Use Ruby version to target F13, RHEL5, Windows and OSX (assume no Xcode)
-    if RUBY_VERSION == "1.8.6" or RUBY_PLATFORM =~ /mswin/ or RUBY_PLATFORM =~ /darwin/
+    if FORCE_JSON_PURE or (RUBY_VERSION == "1.8.6" or RUBY_PLATFORM =~ /mswin/ or RUBY_PLATFORM =~ /darwin/)
         s.add_dependency('json_pure')
     else
         s.add_dependency('json')
