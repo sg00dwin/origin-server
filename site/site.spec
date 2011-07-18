@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.74.7
+Version:   0.74.8
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -64,6 +64,10 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Mon Jul 18 2011 Dan McPherson <dmcphers@redhat.com> 0.74.8-1
+- Adding flex images (mhicks@redhat.com)
+- update local dev rails instructions (dmcphers@redhat.com)
+
 * Sat Jul 16 2011 Dan McPherson <dmcphers@redhat.com> 0.74.7-1
 - test case changes (dmcphers@redhat.com)
 
