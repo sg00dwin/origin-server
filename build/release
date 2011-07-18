@@ -149,7 +149,7 @@ class Release < Thor
     # Build the gem locally since it's not stored centrally like RPMs in Brew
     puts "Building client gem..."
     inside(File.expand_path(File.dirname(File.expand_path(__FILE__)) + "/../client")) do
-      unless run('rake clean package', :verbose => options.verbose?)
+      unless run('./build_pure.sh', :verbose => options.verbose?)
         puts "ERROR - client gem building failed"
         exit 1
       end
