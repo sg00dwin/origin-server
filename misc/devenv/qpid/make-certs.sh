@@ -35,7 +35,7 @@ usage()
 {
 	echo "cert creator doodad"
 	echo "  -v increase verbosity"
-  echo "  -m <months valid>"
+	echo "  -m <months valid>"
 	echo "  -s <server-id>"
 	echo "  -u <user id>"
 	echo "  -p pretend"
@@ -58,7 +58,7 @@ do case $option in
 	d) dc="$OPTARG" ;;
 	s) server_id="$OPTARG" ;;
 	u) user_id="$OPTARG" ;;
-	P) password="$OPTARG" ;;
+	P) cert_password="$OPTARG" ;;
 	d) dir="$OPTARG" ;;
 	S) state="$OPTARG" ;;
 	o) owner="$OPTARG" ;;
