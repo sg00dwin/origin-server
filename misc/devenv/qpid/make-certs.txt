@@ -1,0 +1,23 @@
+make-cert.sh generates cert databases to be deployed to /etc/qpid/pki/
+
+With no params it generates certs for "localhost.localdomain".  Whatever host
+you're generating certs for it's important to match whatever is listed in the
+/etc/qpidd.conf file.  The "ssl-cert-name" must match or this will fail.
+
+To generate a cert for qpid1.stg.rhcloud.com run:
+
+./make-cert.sh -O qpid1.stg.rhcloud.com -s qpid1.stg.rhcloud.com
+
+Then copy the test/server_db and test/client_db to /etc/qpid/pki of the hosts.
+The client hosts need the client_db and the servers need the server_db.  Then
+restart qpidd.
+
+*IMPORTANT*  If you see an error like this on the qpid server in /var/log/messages:
+
+Jul 18 22:09:29 qpid1 qpidd[1977]: 2011-07-18 22:09:29 error Error reading socket: NSS error [-12195]
+
+it may mean the server is working fine but a client with an old ssl cert is trying to
+connect.  Please log in to all the clients and ensure they've been restarted.  Some
+old clients may be in a funky state and need to be kill -9'd.  (Nagios has been known
+to do this in staging)
+
