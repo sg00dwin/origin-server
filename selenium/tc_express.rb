@@ -17,13 +17,15 @@ class Express < Test::Unit::TestCase
     rescue Test::Unit::AssertionFailedError
         @verification_errors << $!
     end
-    sleep 1
-    @driver.find_element(:xpath,"//a[contains(@href, '/app/express')]").click()     
-    sleep 2
-    begin
-        assert_equal "Get Ruby, PHP and Python apps in the cloud with just a few lines of code.", @driver.find_element(:xpath,".//div[@id='banner']/p").text
-    rescue Test::Unit::AssertionFailedError
-        @verification_errors << $!
+    retry_on_no_elem do
+      @driver.find_element(:xpath,"//a[contains(@href, '/app/express')]").click()
+    end     
+    retry_on_no_elem do
+      begin
+          assert_equal "Get Ruby, PHP and Python apps in the cloud with just a few lines of code.", @driver.find_element(:xpath,".//div[@id='banner']/p").text
+      rescue Test::Unit::AssertionFailedError
+          @verification_errors << $!
+      end
     end
     @driver.find_element(:xpath,".//a[contains(text(),'Install')]").click()
     begin
@@ -150,33 +152,38 @@ class Express < Test::Unit::TestCase
     rescue Test::Unit::AssertionFailedError
         @verification_errors << $!
     end
-    sleep 1
-    @driver.find_element(:xpath,".//a[contains(@href, '/app/express')]").click()     
-    sleep 2
-    @driver.find_element(:xpath,".//img[@alt='OpenShift by Red Hat Cloud']").click()
-    sleep 2
+    retry_on_no_elem do
+      @driver.find_element(:xpath,".//a[contains(@href, '/app/express')]").click()
+    end     
+    retry_on_no_elem do
+      @driver.find_element(:xpath,".//img[@alt='OpenShift by Red Hat Cloud']").click()
+    end
     assert "OpenShift by Red Hat" == @driver.title 
     @driver.navigate.back
-    sleep 2
-    @driver.find_element(:xpath,".//div[@id='banner']/a").click()
-    sleep 2
-    begin
-    assert_equal "TRY EXPRESS", @driver.find_element(:xpath,".//div[@id='title']/h2").text
-    rescue Test::Unit::AssertionFailedError
+    retry_on_no_elem do
+      @driver.find_element(:xpath,".//div[@id='banner']/a").click()
+    end
+    retry_on_no_elem do
+      begin
+        assert_equal "TRY EXPRESS", @driver.find_element(:xpath,".//div[@id='title']/h2").text
+      rescue Test::Unit::AssertionFailedError
         @verification_errors << $!
+      end
     end
     @driver.navigate.back
-    sleep 2
-    begin
-        assert @driver.find_element(:xpath,".//a[contains(text(),'OpenShift Express User Guide')]").displayed?
-    rescue Test::Unit::AssertionFailedError
-        @verification_errors << $!
+    retry_on_no_elem do
+      begin
+          assert @driver.find_element(:xpath,".//a[contains(text(),'OpenShift Express User Guide')]").displayed?
+      rescue Test::Unit::AssertionFailedError
+          @verification_errors << $!
+      end
     end
-    sleep 2
-    begin
-        assert @driver.find_element(:xpath,".//a[contains(@href, 'https://www.redhat.com/openshift/sites/default/files/documents/RHOS_Express_Eval_Guide.pdf')]").displayed?
-    rescue Test::Unit::AssertionFailedError
-        @verification_errors << $!
+    retry_on_no_elem do
+      begin
+          assert @driver.find_element(:xpath,".//a[contains(@href, 'https://www.redhat.com/openshift/sites/default/files/documents/RHOS_Express_Eval_Guide.pdf')]").displayed?
+      rescue Test::Unit::AssertionFailedError
+          @verification_errors << $!
+      end
     end
     begin
         assert @driver.find_element(:xpath,".//a[contains(@href, 'https://www.redhat.com/openshift/sites/default/files/documents/RHOS_Express_Getting_Started_w_Drupal.pdf')]").displayed?
@@ -189,65 +196,72 @@ class Express < Test::Unit::TestCase
         @verification_errors << $!
     end
     @driver.find_element(:xpath,".//div[@id='doc_link']/a/p").click()
-    sleep 2
-    begin
-    assert_equal "Knowledge Base | Red Hat Openshift Forum",@driver.title
-    rescue Test::Unit::AssertionFailedError
+    retry_on_no_elem do
+      begin
+        assert_equal "Knowledge Base | Red Hat Openshift Forum",@driver.title
+      rescue Test::Unit::AssertionFailedError
         @verification_errors << $!
-    end   
+      end
+    end
     @driver.navigate.back
-    sleep 2
-    @driver.find_element(:xpath,".//div[@id='doc_link']/a[2]/p").click()
-    sleep 2
+    retry_on_no_elem do
+      @driver.find_element(:xpath,".//div[@id='doc_link']/a[2]/p").click()
+    end
     begin
-    assert_equal "Documents | Red Hat Openshift Forum",@driver.title
+      assert_equal "Documents | Red Hat Openshift Forum",@driver.title
     rescue Test::Unit::AssertionFailedError
         @verification_errors << $!
     end     
     @driver.navigate.back
-    sleep 2
-    begin 
-        assert @driver.find_element(:xpath,".//a[contains(text(),'Watch the video >>>')]").displayed?
-    rescue Test::Unit::AssertionFailedError
-        @verification_errors << $!
+    retry_on_no_elem do
+      begin 
+          assert @driver.find_element(:xpath,".//a[contains(text(),'Watch the video >>>')]").displayed?
+      rescue Test::Unit::AssertionFailedError
+          @verification_errors << $!
+      end
     end
-    @driver.find_element(:xpath,".//a[contains(text(),'More information >')]").click()
-    sleep 2
+    retry_on_no_elem do
+      @driver.find_element(:xpath,".//a[contains(text(),'More information >')]").click()
+    end
     begin
     assert_equal "Frequently Asked Questions | Red Hat Openshift Forum",@driver.title
     rescue Test::Unit::AssertionFailedError
         @verification_errors << $!
     end  
     @driver.navigate.back
-    @driver.find_element(:xpath,".//a[contains(text(),'Announcements')]").click()
-    sleep 2
+    retry_on_no_elem do
+      @driver.find_element(:xpath,".//a[contains(text(),'Announcements')]").click()
+    end
+    begin
+      assert_equal "News and Announcements | Red Hat Openshift Forum",@driver.title
+    rescue Test::Unit::AssertionFailedError
+      @verification_errors << $!
+    end
+    retry_on_no_elem do   
+      begin
+        assert_equal "OpenShift > Forums > News and Announcements", @driver.find_element(:xpath,".//div[@id='content']/div").text
+      rescue Test::Unit::AssertionFailedError
+          @verification_errors << $!
+      end
+    end
+    @driver.navigate.back
+    begin
+      assert_equal "OpenShift by Red Hat | Express",@driver.title
+    rescue Test::Unit::AssertionFailedError
+        @verification_errors << $!
+    end
+    retry_on_no_elem do
+      @driver.find_element(:xpath,".//div[@id='product_community']/div/a").click()
+    end
     begin
     assert_equal "News and Announcements | Red Hat Openshift Forum",@driver.title
     rescue Test::Unit::AssertionFailedError
         @verification_errors << $!
-    end     
-    begin
-    assert_equal "OpenShift > Forums > News and Announcements", @driver.find_element(:xpath,".//div[@id='content']/div").text
-    rescue Test::Unit::AssertionFailedError
-        @verification_errors << $!
     end  
     @driver.navigate.back
-    begin
-    assert_equal "OpenShift by Red Hat | Express",@driver.title
-    rescue Test::Unit::AssertionFailedError
-        @verification_errors << $!
-    end     
-    @driver.find_element(:xpath,".//div[@id='product_community']/div/a").click()
-    sleep 2
-    begin
-    assert_equal "News and Announcements | Red Hat Openshift Forum",@driver.title
-    rescue Test::Unit::AssertionFailedError
-        @verification_errors << $!
-    end  
-    @driver.navigate.back
-    sleep 2
-    @driver.find_element(:xpath,".//div[@id='product_community']/div[2]/a").click()
-    sleep 2
+    retry_on_no_elem do
+      @driver.find_element(:xpath,".//div[@id='product_community']/div[2]/a").click()
+    end
     begin
     assert_equal "OpenShift Express -- Getting Started with Drupal | Red Hat Openshift Forum",@driver.title
     rescue Test::Unit::AssertionFailedError
@@ -259,22 +273,24 @@ class Express < Test::Unit::TestCase
         @verification_errors << $!
     end
     @driver.navigate.back
-    sleep 2
-    @driver.find_element(:xpath,".//div[@id='product_videos']/a").click()
-    sleep 2
+    retry_on_no_elem do
+      @driver.find_element(:xpath,".//div[@id='product_videos']/a").click()
+    end
     begin
     assert_equal "Videos | Red Hat Openshift Forum", @driver.title 
     rescue Test::Unit::AssertionFailedError
         @verification_errors << $!
     end
     @driver.navigate.back
-    sleep 3
-    @driver.find_element(:xpath,"//div[@id='product_community']/div[3]/a").click()
-    sleep 2
-    begin
-        assert_equal "OpenShift > Forums > Express > How do I delete from Persistant Storage?", @driver.find_element(:xpath,".//div[@id='content']/div").text
-    rescue Test::Unit::AssertionFailedError
-        @verification_errors << $!
+    retry_on_no_elem do
+      @driver.find_element(:xpath,"//div[@id='product_community']/div[3]/a").click()
+    end
+    retry_on_no_elem do
+      begin
+          assert_equal "OpenShift > Forums > Express > How do I delete from Persistant Storage?", @driver.find_element(:xpath,".//div[@id='content']/div").text
+      rescue Test::Unit::AssertionFailedError
+          @verification_errors << $!
+      end
     end
   end
 
@@ -282,21 +298,23 @@ class Express < Test::Unit::TestCase
   def test_getting_started_express
     $logger.info "start to check express getting started page"
     @driver.navigate.to @url+"/app/"
-    sleep 2
-    begin
-        assert @driver.find_element(:xpath,"//div[@id='login']/a")
-    rescue Test::Unit::AssertionFailedError
-        @verification_errors << $!
+    retry_on_no_elem do
+      begin
+          assert @driver.find_element(:xpath,"//div[@id='login']/a")
+      rescue Test::Unit::AssertionFailedError
+          @verification_errors << $!
+      end
     end
     @driver.find_element(:xpath, ".//div[@id='login']/a").click()
     @driver.find_element(:xpath,".//div[@id='login-form']/form/input[3]").send_keys("xtian+test@redhat.com")
     @driver.find_element(:xpath,".//div[@id='login-form']/form/input[4]").send_keys("123456")
     @driver.find_element(:xpath, "//div[@id='login-form']/form/input[7]").click()
-    sleep 2
-    begin
-        assert @driver.find_element(:xpath,".//div[@id='button']/a").displayed?
-    rescue Test::Unit::AssertionFailedError
-        @verification_errors << $!
+    retry_on_no_elem do
+      begin
+          assert @driver.find_element(:xpath,".//div[@id='button']/a").displayed?
+      rescue Test::Unit::AssertionFailedError
+          @verification_errors << $!
+      end
     end
 # mhicks - removing, the mock environment won't return roles for Flex so it wouldn't
 # show up, right?

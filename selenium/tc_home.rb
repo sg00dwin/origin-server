@@ -24,18 +24,18 @@ class Home < Test::Unit::TestCase
         @verification_errors << $!
     end
     @driver.navigate.back
-    sleep 1
-    @driver.find_element(:class,"flex").click()
-    sleep 1
+    retry_on_no_elem do
+      @driver.find_element(:class,"flex").click()
+    end
     begin
         assert_equal "OpenShift by Red Hat | Flex", @driver.title
     rescue Test::Unit::AssertionFailedError
         @verification_errors << $!
     end
     @driver.navigate.back
-    sleep 1
-    @driver.find_element(:class,"power").click()
-    sleep 1
+    retry_on_no_elem do
+      @driver.find_element(:class,"power").click()
+    end
     begin
         assert_equal "OpenShift by Red Hat | Power", @driver.title
     rescue Test::Unit::AssertionFailedError
@@ -51,8 +51,9 @@ class Home < Test::Unit::TestCase
         @verification_errors << $!
     end
     @driver.navigate.back
-    sleep 1
-    @driver.find_element(:xpath,".//div[@id='nav']/h5[2]").click()
+    retry_on_no_elem do
+      @driver.find_element(:xpath,".//div[@id='nav']/h5[2]").click()
+    end
     @driver.find_element(:xpath,".//a[contains(text(),'Blog')]").click()
     sleep 1
     begin
@@ -70,8 +71,9 @@ class Home < Test::Unit::TestCase
         @verification_errors << $!
     end
     @driver.navigate.back
-    sleep 1
-    @driver.find_element(:xpath,".//div[@id='nav']/h5[3]").click()
+    retry_on_no_elem do
+      @driver.find_element(:xpath,".//div[@id='nav']/h5[3]").click()
+    end
     @driver.find_element(:link_text,"KB").click()
     sleep 1
     begin
@@ -80,8 +82,9 @@ class Home < Test::Unit::TestCase
         @verification_errors << $!
     end
     @driver.navigate.back
-    sleep 1
-    @driver.find_element(:xpath,".//div[@id='nav']/h5[3]").click()
+    retry_on_no_elem do
+      @driver.find_element(:xpath,".//div[@id='nav']/h5[3]").click()
+    end
     @driver.find_element(:xpath,".//a[contains(text(),'Docs')]").click()
     sleep 1
     begin
@@ -99,8 +102,9 @@ class Home < Test::Unit::TestCase
         @verification_errors << $!
     end
     @driver.navigate.back
-    sleep 1
-    @driver.find_element(:xpath,".//div[@id='nav']/h5[3]").click()
+    retry_on_no_elem do
+      @driver.find_element(:xpath,".//div[@id='nav']/h5[3]").click()
+    end
     @driver.find_element(:xpath,".//a[contains(text(),'FAQ')]").click()
     sleep 1
     begin
@@ -120,17 +124,20 @@ class Home < Test::Unit::TestCase
     rescue Test::Unit::AssertionFailedError
         @verification_errors << $!
     end
-    sleep 5
-    @driver.find_element(:class,"try_it").click()
-    sleep 1
-    begin
-        assert_equal "TRY EXPRESS",@driver.find_element(:xpath,".//div[@id='title']/h2").text
-    rescue Test::Unit::AssertionFailedError
-        @verification_errors << $!
+    retry_on_no_elem do
+      @driver.find_element(:class,"try_it").click()
+    end
+    retry_on_no_elem do
+      begin
+          assert_equal "TRY EXPRESS",@driver.find_element(:xpath,".//div[@id='title']/h2").text
+      rescue Test::Unit::AssertionFailedError
+          @verification_errors << $!
+      end
     end
     @driver.navigate.back
-    sleep 1
-    @driver.find_element(:xpath,".//div[@id='app_promos']").click()
+    retry_on_no_elem do
+      @driver.find_element(:xpath,".//div[@id='app_promos']").click()
+    end
     @driver.find_element(:xpath,".//div[@id='app_promos']/div[1]/div/ul/li[4]/a").click()
     @driver.navigate.back
     @driver.find_element(:xpath,".//div[@id='app_promos']").click()
@@ -235,8 +242,9 @@ class Home < Test::Unit::TestCase
         @verification_errors << $!
     end
     @driver.navigate.back
-    sleep 2
-    @driver.find_element(:xpath,".//a[contains(text(),'Privacy Policy')]").click()
+    retry_on_no_elem do
+      @driver.find_element(:xpath,".//a[contains(text(),'Privacy Policy')]").click()
+    end
     sleep 2
     begin
         assert_equal "OpenShift by Red Hat | OpenShift Privacy Statement", @driver.title
@@ -249,11 +257,12 @@ class Home < Test::Unit::TestCase
         @verification_errors << $!
     end
     @driver.navigate.back
-    sleep 2
-    begin
-        assert @driver.find_element(:xpath,".//a[contains(text(),'Contact Us')]").displayed?
-    rescue Test::Unit::AssertionFailedError
-        @verification_errors << $!
+    retry_on_no_elem do
+      begin
+          assert @driver.find_element(:xpath,".//a[contains(text(),'Contact Us')]").displayed?
+      rescue Test::Unit::AssertionFailedError
+          @verification_errors << $!
+      end
     end
     @driver.find_element(:xpath,".//a[contains(text(),'Security')]").click()
     sleep 2

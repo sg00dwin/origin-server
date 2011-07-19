@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.74.8
+Version:   0.74.9
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -195,6 +195,11 @@ chkconfig libra-tc on
 %{_initddir}/libra-site
 
 %changelog
+* Mon Jul 18 2011 Dan McPherson <dmcphers@redhat.com> 0.74.9-1
+- added months_valid option (-m) to make-certs.sh (twiest@redhat.com)
+- call pam_namespace (mmcgrath@redhat.com)
+- Adding no_unmount_on_close (mmcgrath@redhat.com)
+
 * Fri Jul 15 2011 Dan McPherson <dmcphers@redhat.com> 0.74.8-1
 - turn libra_check to disabled (dmcphers@redhat.com)
 

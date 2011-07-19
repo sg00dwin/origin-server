@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.74.7
+Version:   0.74.8
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -76,6 +76,20 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Mon Jul 18 2011 Dan McPherson <dmcphers@redhat.com> 0.74.8-1
+- change default mysql ds db name (dmcphers@redhat.com)
+- doc update (dmcphers@redhat.com)
+- doc updates (dmcphers@redhat.com)
+- doc updates (dmcphers@redhat.com)
+- adding disabled mysql ds to jboss cart (dmcphers@redhat.com)
+- adding standalone.xml to git repo (dmcphers@redhat.com)
+- 722836 (dmcphers@redhat.com)
+- Bug 720898, update the weld-translator ejb injection to work with jboss-as-
+  web-7.0.0.Final (scott.stark@jboss.org)
+- Update standalone.xml to be closer to the 7.0.0.Final version. Update default
+  index.hmtl to refer to README for more deployment options.
+  (scott.stark@jboss.org)
+
 * Fri Jul 15 2011 Dan McPherson <dmcphers@redhat.com> 0.74.7-1
 - Make the start action syncd with the caller (scott.stark@jboss.org)
 - Bug 719800 instead of removing stop_lock, simply indicate the start is

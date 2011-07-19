@@ -63,7 +63,7 @@ uid=$(id -u "$app_id")
 c_val="c$(($uid/1023)),c$(($uid%1023))"
 
 #
-# Start application
+# Stop application
 #
 
 runuser --shell /bin/sh "$app_id" -c "runcon -t libra_t -l s0:$c_val $APP_DIR/${application}_ctl.sh stop"
