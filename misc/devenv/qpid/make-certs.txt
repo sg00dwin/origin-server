@@ -8,9 +8,18 @@ To generate a cert for qpid1.stg.rhcloud.com run:
 
 ./make-cert.sh -O qpid1.stg.rhcloud.com -s qpid1.stg.rhcloud.com
 
-Then copy the test/server_db and test/client_db to /etc/qpid/pki of the hosts.
-The client hosts need the client_db and the servers need the server_db.  Then
-restart qpidd.
+This will, by default, create certs that are valid for 3 months.
+
+To generate a cert that is valid for a longer time run:
+
+./make-cert.sh -m 12 -O qpid1.stg.rhcloud.com -s qpid1.stg.rhcloud.com
+
+This will generate a cert that is valid for 1 year.
+
+Once make-cert.sh is done generating the new cert, copy the test/server_db and
+test/client_db to /etc/qpid/pki of the hosts. The client hosts need the client_db
+and the servers need the server_db.  Then restart qpidd.
+
 
 *IMPORTANT*  If you see an error like this on the qpid server in /var/log/messages:
 
