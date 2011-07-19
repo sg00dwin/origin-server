@@ -19,17 +19,19 @@ spec = Gem::Specification.new do |s|
     s.files = FileList['lib/**/*.rb', 'bin/*', 'conf/*'].to_a
     s.files += %w(LICENSE README Rakefile)
     s.executables = ['rhc-create-app', 'rhc-create-domain', 'rhc-ctl-app', 'rhc-snapshot', 'rhc-user-info', 'rhc-tail-files']
+    begin
     # Use Ruby version to target F13, RHEL5, Windows and OSX (assume no Xcode)
-    if RUBY_VERSION == "1.8.6" or RUBY_PLATFORM =~ /mswin/ or RUBY_PLATFORM =~ /darwin/
+    if ENV['JSON_PURE'] or (RUBY_VERSION == "1.8.6" or RUBY_PLATFORM =~ /mswin/ or RUBY_PLATFORM =~ /darwin/)
         s.add_dependency('json_pure')
     else
         s.add_dependency('json')
+    end
     end
     s.add_dependency('parseconfig')
 end
 
 # Define a :package task that bundles the gem
-Gem::PackageTask.new(spec) do |pkg|
+Gem::PackageTask.new(spec) do |pkg, args|
   pkg.need_tar = false
 end
 

@@ -185,8 +185,10 @@ function create_repo {
     
     pushd $APP_HOME/git/template
     sed -i "s/{APP_NAME}/$application/g" pom.xml
+    mkdir .config
+    cp "$APP_JBOSS"/standalone/configuration/standalone.xml .config/
     git init
-    git add *
+    git add .config *
     git commit -m 'Creating template'
     popd
     pushd $APP_HOME/git
@@ -207,9 +209,15 @@ __EOF__
 rm -rf $APP_DIR/repo/* $APP_DIR/repo/.[^.]*
 git archive --format=tar HEAD | (cd $APP_DIR/repo && tar --warning=no-timestamp -xf -)
 
+if [ -f '$APP_DIR/repo/.config/standalone.xml' ]
+then
+  echo "Found .config/standalone.xml... copying to "$APP_JBOSS"/standalone/configuration/"
+  cp $APP_DIR/repo/.config/standalone.xml "$APP_JBOSS"/standalone/configuration/
+fi
+
 if [ -f '$APP_DIR/repo/pom.xml' ]
 then
-  echo "Found pom.xml attempting to build with 'mvn clean package -DskipTests'" 
+  echo "Found pom.xml... attempting to build with 'mvn clean package -DskipTests'" 
   export JAVA_HOME=/etc/alternatives/java_sdk_1.6.0
   export M2_HOME=/etc/alternatives/maven-3.0
   export M2=\$M2_HOME/bin
@@ -268,8 +276,6 @@ group_id=$(id -g "$uuid") || error "Could not find user $uuid ($namespace)" 135
 #
 uid=$(id -u "$uuid")
 c_val="c$(($uid/1023)),c$(($uid%1023))"
-# Repo
-create_repo $application $user_id $group_id $c_val
 
 #
 # Find an open localhost IP
@@ -308,9 +314,11 @@ ls -l "$APP_JBOSS"/standalone/configuration
 # Get the standalone.sh script
 cp ${jboss_home}/bin/standalone.sh "$APP_JBOSS_BIN_DIR"
 # Update the standalone.xml for the application IP
-sed 's/loopback-address value="127.*"/loopback-address value="'$IP'"/g' "$APP_JBOSS"/standalone/configuration/standalone.xml >${APP_JBOSS_TMP_DIR}/standalone.xml
-cp ${APP_JBOSS_TMP_DIR}/standalone.xml "$APP_JBOSS"/standalone/configuration
+sed -i 's/{ip}/'$IP'/g' "$APP_JBOSS"/standalone/configuration/standalone.xml
 popd > /dev/null
+
+# Repo
+create_repo $application $user_id $group_id $c_val
 
 # Build the standalone.conf file
 echo "Creating standalone.conf..."
@@ -441,7 +449,6 @@ case "\$1" in
         exit 0
     ;;
     restart|graceful)
-        rm -f $APP_DIR/run/stop_lock
         $APP_DIR/${application}_ctl.sh stop
         $APP_DIR/${application}_ctl.sh start
     ;;

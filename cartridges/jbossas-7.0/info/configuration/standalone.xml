@@ -91,9 +91,20 @@
                     <timeout></timeout>
                     <statement></statement>
                 </datasource>
+                <datasource jndi-name="java:jboss/datasources/MysqlDS" enabled="false" use-java-context="true" pool-name="MysqlDS">
+                    <connection-url>jdbc:mysql://{ip}:3306/mysql</connection-url>
+                    <driver>mysql</driver>
+                    <security>
+                      <user-name>admin</user-name>
+                      <password>changeme</password>
+                    </security>
+                </datasource>
                 <drivers>
                     <driver name="h2" module="com.h2database.h2">
                         <xa-datasource-class>org.h2.jdbcx.JdbcDataSource</xa-datasource-class>
+                    </driver>
+                    <driver name="mysql" module="com.mysql.jdbc">
+                        <xa-datasource-class>com.mysql.jdbc.jdbc2.optional.MysqlXADataSource</xa-datasource-class>
                     </driver>
                 </drivers>
             </datasources>
@@ -173,10 +184,10 @@
 
     <interfaces>
         <interface name="management">
-            <loopback-address value="127.0.250.1"/>
+            <loopback-address value="{ip}"/>
         </interface>
         <interface name="public">
-            <loopback-address value="127.0.250.1"/>
+            <loopback-address value="{ip}"/>
         </interface>
     </interfaces>
 

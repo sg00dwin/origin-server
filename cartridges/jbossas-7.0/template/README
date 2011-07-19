@@ -1,3 +1,13 @@
+Repo layout
+=========== 
+deployments/ - location for built wars (Details below)
+src/ - maven src structure
+pom.xml - maven build file  
+.config/ - location for JBoss configuration (Ex: adding datasources into standalone.xml)
+
+
+Details about layout and deployment options
+==================
 There are two options for deploying content to the JBoss Application Server within OpenShift Express:
 
 1) (Typical) You can upload your content in a maven src structure as is this sample project and on 
@@ -47,11 +57,6 @@ deployed into the deployments directory. The deployments directory in the
 JBoss Application Server distribution is the location end users can place 
 their deployment content (e.g. war, ear, jar, sar files) to have it 
 automatically deployed into the server runtime.
-
-Users, particularly those running production systems, are encouraged to use the 
-JBoss AS management APIs to upload and deploy deployment content instead of 
-relying on the deployment scanner subsystem that periodically scans this 
-directory.  See the JBoss AS documentation for details.
 
 The filesystem deployment scanner in AS 7 and later works differently from 
 previous JBoss AS releases. The scanner will no longer attempt to directly 
