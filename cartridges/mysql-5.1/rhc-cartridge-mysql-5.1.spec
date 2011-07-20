@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/mysql-5.1
 
 Name: rhc-cartridge-mysql-5.1
-Version: 0.8.4
+Version: 0.9.0
 Release: 1%{?dist}
 Summary: Embedded mysql support for express
 
@@ -14,6 +14,7 @@ BuildArch: noarch
 
 Requires: rhc-broker >= 0.73.4
 Requires: mysql-server
+Requires: mysql-devel
 
 %description
 Provides rhc perl cartridge support

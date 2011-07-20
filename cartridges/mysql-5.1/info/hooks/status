@@ -56,9 +56,14 @@ done
 customer_id=`basename $3`
 application="$1"
 
-CUSTOMER_HOME="$libra_dir/$customer_id/"
-APP_DIR="$CUSTOMER_HOME/$application"
-MYSQL_DIR="$CUSTOMER_HOME/mysql-5.1/"
+APP_HOME="$libra_dir/$customer_id/"
+APP_DIR="$APP_HOME/$application"
+MYSQL_DIR="$APP_HOME/mysql-5.1/"
+
+if [ ! -d "$APP_DIR" ]
+then
+  exit 125
+fi
 
 #
 # Get the status of the application
