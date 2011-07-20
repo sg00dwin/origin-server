@@ -337,20 +337,10 @@ module Libra
           
         server = Server.new(app_info['server_identity'])
           
-        public_ip = server.get_fact_direct('public_ip')
-        sshfp = server.get_fact_direct('sshfp').split[-1]
-          
         dyn_retries = 2
-          
-        Libra.logger_debug "DEBUG: Changing public ip of '#{app_name}' to '#{public_ip}'"
-        auth_token = Server.dyn_login(dyn_retries)
-        # Cleanup the previous records 
-        Server.dyn_delete_sshfp_record(app_name, user.namespace, auth_token, dyn_retries)            
-        Server.dyn_delete_a_record(app_name, user.namespace, auth_token, dyn_retries)
 
-        # add the new entries          
-        Server.dyn_create_a_record(app_name, user.namespace, public_ip, sshfp, auth_token, dyn_retries)
-        Server.dyn_create_sshfp_record(app_name, user.namespace, sshfp, auth_token, dyn_retries)
+        auth_token = Server.dyn_login(dyn_retries)
+        Server.recreate_app_dns_entries(server, app_name, user.namespace, user.namespace, auth_token, dyn_retries)
         Server.dyn_publish(auth_token, dyn_retries)
         Server.dyn_logout(auth_token, dyn_retries)
         
