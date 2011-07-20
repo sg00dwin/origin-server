@@ -149,17 +149,20 @@ module Libra
       dyn_logout(auth_token, retries)
     end
     
-    def self.create_app_dns_entries(app_name, namespace, public_ip, sshfp, retries=2)
-      auth_token = dyn_login(retries)
-      dyn_create_a_record(app_name, namespace, public_ip, sshfp, auth_token, retries)
-      dyn_create_sshfp_record(app_name, namespace, sshfp, auth_token, retries)
-      dyn_publish(auth_token, retries)
-      dyn_logout(auth_token, retries)
+    def create_app_dns_entries(app_name, namespace, retries=2)
+      public_ip = get_fact_direct('public_ip')
+      sshfp = get_fact_direct('sshfp').split[-1]
+      Libra.logger_debug "DEBUG: Public ip being configured '#{public_ip}' to app '#{app_name}'"
+      auth_token = Server.dyn_login(retries)
+      Server.dyn_create_a_record(app_name, namespace, public_ip, sshfp, auth_token, retries)
+      Server.dyn_create_sshfp_record(app_name, namespace, sshfp, auth_token, retries)
+      Server.dyn_publish(auth_token, retries)
+      Server.dyn_logout(auth_token, retries)
     end
     
-    def self.recreate_app_dns_entries(server, app_name, old_namespace, new_namespace, auth_token, retries=2)
-      public_ip = server.get_fact_direct('public_ip')
-      sshfp = server.get_fact_direct('sshfp').split[-1]
+    def recreate_app_dns_entries(app_name, old_namespace, new_namespace, auth_token, retries=2)
+      public_ip = get_fact_direct('public_ip')
+      sshfp = get_fact_direct('sshfp').split[-1]
       Libra.logger_debug "DEBUG: Changing public ip of '#{app_name}' to '#{public_ip}'"
       Server.dyn_delete_sshfp_record(app_name, old_namespace, auth_token, retries)            
       Server.dyn_delete_a_record(app_name, old_namespace, auth_token, retries)
