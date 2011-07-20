@@ -277,7 +277,7 @@ module Libra
     # first, remove the application
     Libra.logger_debug "DEBUG: Deconfiguring app '#{app_name}' on node '#{server.name}'"
     begin
-      server_execute_direct(framework, 'deconfigure', app_name, user, server, app_info)
+      server = server_execute_direct(framework, 'deconfigure', app_name, user, server, app_info)
     rescue Exception => e
       if server.has_app?(app_info, app_name)
         raise
@@ -358,11 +358,12 @@ module Libra
         user.update_app(app_info, app_name)
         
         # retry
-        server_execute_direct(framework, action, app_name, user, server, app_info)
+        return server_execute_direct(framework, action, app_name, user, server, app_info)
       else
         raise NodeException.new(143), "Node execution failure (error getting result from node).  If the problem persists please contact Red Hat support.", caller[0..5]
       end
     end
+    return server
   end
 
   #
