@@ -224,7 +224,7 @@ function create_user_home_skel {
     # Required for polyinstantiated tmp dirs to work
     ${NOOP} chmod 0000 ${USERHOME}/.tmp
     ${NOOP} chmod 0700 ${USERHOME}/.env
-    echo "OPENSHIFT_USERNAME='${USERNAME}'" > ${USERHOME}/.env/OPENSHIFT_USERNAME
+    echo "OPENSHIFT_APP_UUID='${USERNAME}'" > ${USERHOME}/.env/OPENSHIFT_APP_UUID
     echo "OPENSHIFT_HOMEDIR='${USERHOME}'" > ${USERHOME}/.env/OPENSHIFT_HOMEDIR
 }
 
