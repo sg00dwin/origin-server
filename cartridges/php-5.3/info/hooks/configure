@@ -295,6 +295,12 @@ cat <<EOF > "$APP_DIR/${application}_ctl.sh"
 
 export PHPRC="$APP_DIR/conf/php.ini"
 
+# Import Environment Variables
+for f in ~/.env/*
+do
+    . $f
+done
+
 if ! [ \$# -eq 1 ]
 then
     echo "Usage: \$0 [start|restart|graceful|graceful-stop|stop]"
