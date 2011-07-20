@@ -131,5 +131,40 @@ module CommandHelper
     FileUtils.rm_rf app.repo
     FileUtils.rm_rf app.file
   end
+
+  #
+# useful methods to avoid duplicating effort
+#
+
+  #
+  # Count the number of processes owned by account with cmd_name 
+  #
+  def num_procs acct_name, cmd_name
+    
+    ps_pattern = /^(\d+)\s+(\S+)$/
+    command = "ps --no-headers -o pid,comm -u #{acct_name}"
+    $logger.debug("num_procs: executing #{command}")
+    
+    pid, stdin, stdout, stderr = Open4::popen4(command)
+    
+    stdin.close
+    ignored, status = Process::waitpid2 pid
+    exit_code = status.exitstatus
+
+    outstrings = stdout.readlines
+    errstrings = stderr.readlines
+    $logger.debug("looking for #{cmd_name}")
+    $logger.debug("ps output:\n" + outstrings.join("")) 
+
+    proclist = outstrings.collect { |line|
+      match = line.match(ps_pattern)
+      match and (match[1] if match[2] == cmd_name)
+    }.compact!
+
+    found = proclist ? proclist.size : 0
+    $logger.debug("Found = #{found} instances of #{cmd_name}")
+    found
+  end
+
 end
 World(CommandHelper)
