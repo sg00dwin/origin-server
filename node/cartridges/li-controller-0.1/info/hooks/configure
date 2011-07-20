@@ -208,6 +208,25 @@ function remove_user_account {
     ${NOOP} userdel -r ${USERNAME}
 }
 
+#
+# Create Environment and temp dirs
+#
+# ASSUME: local user with username
+# IN: username
+# IN: HOMEDIR
+#
+function create_user_home_skel {
+    USERNAME="$1"
+    USERHOME=`homedir $USERNAME`
+
+    ${NOOP} mkdir -p ${USERHOME}/.tmp ${USERHOME}/.env
+
+    # Required for polyinstantiated tmp dirs to work
+    ${NOOP} chmod 0000 ${USERHOME}/.tmp
+    ${NOOP} chmod 0700 ${USERHOME}/.env
+    echo "OPENSHIFT_USERNAME='${USERNAME}'" > ${USERHOME}/.env/OPENSHIFT_USERNAME
+    echo "OPENSHIFT_HOMEDIR='${USERHOME}'" > ${USERHOME}/.env/OPENSHIFT_HOMEDIR
+}
 
 #
 # Enable SSH RSA access for a user
@@ -219,16 +238,14 @@ function remove_user_account {
 # IN: SSH RSA key string
 #
 function enable_user_ssh_access {
-    USERNAME=$1
+    USERNAME="$1"
     SSHKEY="$2"
     
     USERHOME=`homedir $USERNAME`
     SSHDIR=${USERHOME}/.ssh
 
-    ${NOOP} mkdir -p ${SSHDIR} ${USERHOME}/.tmp
+    ${NOOP} mkdir -p ${SSHDIR}
     ${NOOP} chmod 0750 ${SSHDIR}
-    # Required for polyinstantiated tmp dirs to work
-    ${NOOP} chmod 0000 ${USERHOME}/.tmp
     if [ -z "${NOOP}" ]
     then
 	cat <<EOF > ${SSHDIR}/authorized_keys
@@ -497,6 +514,7 @@ then
       fi
 
       enable_user_ssh_access $username "$ssh_key"
+      create_user_home_skel $username
 
       set_pam_limits $username
   
