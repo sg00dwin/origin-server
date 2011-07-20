@@ -149,7 +149,7 @@ Then /^the mysql daemon will( not)? be running$/ do |negate|
   acct_uid = @account['uid']
   app_name = @app['name']
 
-  max_tries = 20
+  max_tries = 10
   poll_rate = 3
   exit_test = negate ? lambda { |tval| tval == 0 } : lambda { |tval| tval > 0 }
   
@@ -162,8 +162,6 @@ Then /^the mysql daemon will( not)? be running$/ do |negate|
     sleep poll_rate
     num_daemons = num_procs acct_name, 'mysqld'
   end
-
-  puts "It took #{tries} tries"
 
   if not negate
     num_daemons.should be > 0
@@ -233,8 +231,7 @@ Given /^the mysql daemon is (running|stopped)$/ do |status|
   namespace = @app['namespace']
   app_name = @app['name']
 
-  mysql_user_root = "#{$home_root}/#{acct_name}/mysql-#{$mysql_version}"
-  mysql_startup_file = "#{mysql_user_root}/#{app_name}_mysql_ctl.sh"
+  command = "#{$mysql_hooks}/#{action} #{app_name} #{namespace} #{acct_name}"
 
   num_daemons = num_procs acct_name, 'mysqld'
   outbuf = []
@@ -242,29 +239,20 @@ Given /^the mysql daemon is (running|stopped)$/ do |status|
   case action
   when 'start'
     if num_daemons == 0
-      command = mysql_startup_file + " start"
-      puts "running #{command}"
       runcon command,  'unconfined_u', 'system_r', 'libra_initrc_t', outbuf
     end
-    p outbuf[0]
-    exit_test = lambda { |tval| tval > 0 }
-    
+    exit_test = lambda { |tval| tval > 0 }    
   when 'stop'
     if num_daemons > 0
-      command = mysql_startup_file + " stop"
-      puts "running #{command}"
       runcon command,  'unconfined_u', 'system_r', 'libra_initrc_t', outbuf
     end
-    puts "stopping:"
-    p outbuf[0]
     exit_test = lambda { |tval| tval == 0 }
-
   # else 
   #   raise an exception
   end
 
   # now loop until it's true
-  max_tries = 20
+  max_tries = 10
   poll_rate = 3  
   tries = 0
   num_daemons = num_procs acct_name, 'mysqld'
@@ -273,8 +261,6 @@ Given /^the mysql daemon is (running|stopped)$/ do |status|
     sleep poll_rate
     num_daemons = num_procs acct_name, 'mysqld'
   end
-
-  puts "It took #{tries} tries to #{action}"
 end
 
 When /^I (start|stop|restart) the mysql database$/ do |action|
@@ -283,19 +269,15 @@ When /^I (start|stop|restart) the mysql database$/ do |action|
   app_name = @app['name']
 
   mysql_user_root = "#{$home_root}/#{acct_name}/mysql-#{$mysql_version}"
-  mysql_startup_file = "#{mysql_user_root}/#{app_name}_mysql_ctl.sh"
-  mysql_pid_file = "#{mysql_user_root}/pid/mysql.pid"
+  mysql_pid_file = mysql_user_root + "/pid/mysql.pid"
 
   if File.exists? mysql_pid_file
     @mysql['oldpid'] = File.open(mysql_pid_file).readline.strip
   end
 
   outbuf = []
-  command = mysql_startup_file + " #{action}"
-  puts "Running #{command}"
+  command = "#{$mysql_hooks}/#{action} #{app_name} #{namespace} #{acct_name}"
   runcon command,  'unconfined_u', 'system_r', 'libra_initrc_t', outbuf
-  puts "#{action}:"
-  p outbuf[0]
 
 end
 
