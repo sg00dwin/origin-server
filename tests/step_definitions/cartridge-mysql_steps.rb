@@ -50,7 +50,10 @@ When /^I deconfigure the mysql database$/ do
   namespace = @app['namespace']
   app_name = @app['name']
   command = $mysql_deconfig_format % [app_name, namespace, account_name]
-  runcon command,  'unconfined_u', 'system_r', 'libra_initrc_t'
+  exit_code = runcon command,  'unconfined_u', 'system_r', 'libra_initrc_t'
+  if exit_code != 0
+    raise "Command failed with exit code #{exit_code}"
+  end
 end
 
 Then /^the mysql directory will( not)? exist$/ do |negate|
@@ -146,17 +149,21 @@ Then /^the mysql daemon will( not)? be running$/ do |negate|
   acct_uid = @account['uid']
   app_name = @app['name']
 
-  max_tries = 10
+  max_tries = 20
   poll_rate = 3
   exit_test = negate ? lambda { |tval| tval == 0 } : lambda { |tval| tval > 0 }
   
   tries = 0
   num_daemons = num_procs acct_name, 'mysqld'
+  $logger.debug("checking that mysqld is#{negate} running")
+  $logger.debug("try # #{tries}")
   while (not exit_test.call(num_daemons) and tries < max_tries)
     tries += 1
     sleep poll_rate
     num_daemons = num_procs acct_name, 'mysqld'
   end
+
+  puts "It took #{tries} tries"
 
   if not negate
     num_daemons.should be > 0
@@ -190,8 +197,11 @@ Given /^a new mysql database$/ do
   my_ip_pattern = /mysql:\/\/(\d+\.\d+\.\d+\.\d+):(\d+)/
 
   outbuf = []
-  runcon command,  'unconfined_u', 'system_r', 'libra_initrc_t', outbuf
+  exit_code = runcon command,  'unconfined_u', 'system_r', 'libra_initrc_t', outbuf
 
+  if exit_code != 0
+    raise "Error running #{command}: returned #{exit_code}"
+  end
   # I have to get the stdout back
   # outbuf[0] = stdout, outbuf[1] = stderr
   
@@ -217,15 +227,14 @@ end
 
 Given /^the mysql daemon is (running|stopped)$/ do |status|
 
-  action = status == "running"  ? "start" : "stop"
+  action = status == "running" ? "start" : "stop"
 
-  account_name = @account['accountname']
+  acct_name = @account['accountname']
   namespace = @app['namespace']
   app_name = @app['name']
 
-  mysql_user_root = "#{$home_root}/#{account_name}/mysql-#{$mysql_version}"
-  mysql_config_file = "#{mysql_user_root}/etc/my.cnf"
-  mysql_pid_file = "#{mysql_user_root}/pid/mysqld.pid"
+  mysql_user_root = "#{$home_root}/#{acct_name}/mysql-#{$mysql_version}"
+  mysql_startup_file = "#{mysql_user_root}/#{app_name}_mysql_ctl.sh"
 
   num_daemons = num_procs acct_name, 'mysqld'
   outbuf = []
@@ -233,16 +242,21 @@ Given /^the mysql daemon is (running|stopped)$/ do |status|
   case action
   when 'start'
     if num_daemons == 0
-      command = mysql_config_file + " start"
+      command = mysql_startup_file + " start"
+      puts "running #{command}"
       runcon command,  'unconfined_u', 'system_r', 'libra_initrc_t', outbuf
     end
+    p outbuf[0]
     exit_test = lambda { |tval| tval > 0 }
     
   when 'stop'
     if num_daemons > 0
-      command = mysql_config_file + " stop"
+      command = mysql_startup_file + " stop"
+      puts "running #{command}"
       runcon command,  'unconfined_u', 'system_r', 'libra_initrc_t', outbuf
     end
+    puts "stopping:"
+    p outbuf[0]
     exit_test = lambda { |tval| tval == 0 }
 
   # else 
@@ -250,7 +264,7 @@ Given /^the mysql daemon is (running|stopped)$/ do |status|
   end
 
   # now loop until it's true
-  max_tries = 10
+  max_tries = 20
   poll_rate = 3  
   tries = 0
   num_daemons = num_procs acct_name, 'mysqld'
@@ -260,11 +274,41 @@ Given /^the mysql daemon is (running|stopped)$/ do |status|
     num_daemons = num_procs acct_name, 'mysqld'
   end
 
-  
+  puts "It took #{tries} tries to #{action}"
 end
 
 When /^I (start|stop|restart) the mysql database$/ do |action|
-  pending # express the regexp above with the code you wish you had
+  acct_name = @account['accountname']
+  namespace = @app['namespace']
+  app_name = @app['name']
+
+  mysql_user_root = "#{$home_root}/#{acct_name}/mysql-#{$mysql_version}"
+  mysql_startup_file = "#{mysql_user_root}/#{app_name}_mysql_ctl.sh"
+  mysql_pid_file = "#{mysql_user_root}/pid/mysql.pid"
+
+  if File.exists? mysql_pid_file
+    @mysql['oldpid'] = File.open(mysql_pid_file).readline.strip
+  end
+
+  outbuf = []
+  command = mysql_startup_file + " #{action}"
+  puts "Running #{command}"
+  runcon command,  'unconfined_u', 'system_r', 'libra_initrc_t', outbuf
+  puts "#{action}:"
+  p outbuf[0]
+
+end
+
+Then /^the mysql daemon pid will be different$/ do
+  acct_name = @account['accountname']
+  namespace = @app['namespace']
+  app_name = @app['name']
+
+  mysql_user_root = "#{$home_root}/#{acct_name}/mysql-#{$mysql_version}"
+  mysql_pid_file = "#{mysql_user_root}/pid/mysql.pid"
+
+  newpid = File.open(mysql_pid_file).readline.strip
+  newpid.should_not == @mysql['oldpid']
 end
 
 
