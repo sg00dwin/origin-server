@@ -159,7 +159,7 @@ module Libra
           Libra.logger_debug "DEBUG: Updating namespaces for app: #{app_name}"
           server = Server.new(app_info['server_identity'])
           
-          Server.recreate_app_dns_entries(server, app_name, @namespace, new_namespace, auth_token, dyn_retries)
+          server.recreate_app_dns_entries(app_name, @namespace, new_namespace, auth_token, dyn_retries)
         end
         
         update_namespace_failures = []
