@@ -220,8 +220,7 @@ function remove_user_account {
 #
 function enable_user_ssh_access {
     USERNAME=$1
-    USEREMAIL="$2"
-    SSHKEY="$3"
+    SSHKEY="$2"
     
     USERHOME=`homedir $USERNAME`
     SSHDIR=${USERHOME}/.ssh
@@ -233,11 +232,11 @@ function enable_user_ssh_access {
     if [ -z "${NOOP}" ]
     then
 	cat <<EOF > ${SSHDIR}/authorized_keys
-command="/usr/bin/trap-user",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty ssh-rsa $SSHKEY Libra-$USERNAME-$USEREMAIL
+command="/usr/bin/trap-user",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty ssh-rsa $SSHKEY Libra-$USERNAME
 EOF
     else
 	echo "cat <<EOF > $SSHDIR/authorized_keys
-command=\\\"/usr/bin/trap-user\\\",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty ssh-rsa $SSHKEY Libra-$USERNAME-$USEREMAIL
+command=\\\"/usr/bin/trap-user\\\",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty ssh-rsa $SSHKEY Libra-$USERNAME
 EOF\""
     fi
     ${NOOP} chmod 0440 ${SSHDIR}/authorized_keys
@@ -497,7 +496,7 @@ then
 	  service libra-tc startuser ${username} > /dev/null
       fi
 
-      enable_user_ssh_access $username $email "$ssh_key"
+      enable_user_ssh_access $username "$ssh_key"
 
       set_pam_limits $username
   
@@ -506,7 +505,7 @@ then
       # just reset the key, per "ALTER", only if the account exists on this node
       if id $username >/dev/null 2>&1
       then
-        enable_user_ssh_access $username $email "$ssh_key"
+        enable_user_ssh_access $username "$ssh_key"
       fi      
     fi
 else
