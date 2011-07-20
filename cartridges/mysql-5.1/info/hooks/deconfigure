@@ -68,9 +68,14 @@ application="$1"
 namespace=$2 # Not used
 uuid=$3
 
-CUSTOMER_HOME="$libra_dir/$uuid/"
-APP_DIR="$CUSTOMER_HOME/$application"
-MYSQL_DIR="$CUSTOMER_HOME/mysql-5.1/"
+APP_HOME="$libra_dir/$uuid/"
+APP_DIR="$APP_HOME/$application"
+MYSQL_DIR="$APP_HOME/mysql-5.1/"
+
+if [ ! -d "$APP_DIR" ]
+then
+  exit 125
+fi
 
 #
 # Get UID information and CVAL

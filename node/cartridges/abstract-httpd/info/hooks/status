@@ -59,6 +59,11 @@ application="$1"
 APP_HOME="$libra_dir/$app_id/"
 APP_DIR="$APP_HOME/$application"
 
+if [ ! -d "$APP_DIR" ]
+then
+  exit 125
+fi
+
 #
 # Get the status of the application
 #

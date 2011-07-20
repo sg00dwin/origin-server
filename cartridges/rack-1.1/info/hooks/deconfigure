@@ -99,6 +99,11 @@ uuid=$3
 APP_HOME="$libra_dir/$uuid/"
 APP_DIR="$APP_HOME/$application"
 
+if [ ! -d "$APP_DIR" ]
+then
+  exit 125
+fi
+
 uid=$(id -u "$uuid")
 c_val="c$(($uid/1023)),c$(($uid%1023))"
 

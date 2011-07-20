@@ -449,6 +449,24 @@ module Libra
         end
       end
     end
+
+    
+    #
+    # Returns the server identity of the specified app
+    #    
+    def self.find_app(app, app_name)
+      server_identity = nil
+      Helper.rpc_exec('libra') do |client|
+        client.has_app(:uuid => app['uuid'],
+                       :application => app_name) do |response|
+          output = response[:body][:data][:output]
+          if output == true
+            server_identity = response[:senderid]
+          end
+        end
+      end
+      return server_identity
+    end
     
     #
     # Returns whether this server has the specified embedded app
@@ -522,12 +540,9 @@ module Libra
     end
 
     #
-    # Execute an action on many nodes based by fact
+    # Execute an action on all nodes
     #
-    def self.execute_many(cartridge, action, args, fact, value, operator="==")
-        options = Helper.rpc_options
-        options[:filter]['fact'] = [{:value=>value, :fact=>fact, :operator=>operator}]
-        #Libra.logger_debug "DEBUG: Options for cartridge: #{cartridge} action: #{action} args: #{args}: #{options.pretty_inspect}"
+    def self.execute_all(cartridge, action, args)
         Helper.rpc_exec('libra') do |client|
           cartridge_do(client, cartridge, action, args)
         end
