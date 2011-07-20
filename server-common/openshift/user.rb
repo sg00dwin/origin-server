@@ -158,16 +158,8 @@ module Libra
         apps.each do |app_name, app_info|
           Libra.logger_debug "DEBUG: Updating namespaces for app: #{app_name}"
           server = Server.new(app_info['server_identity'])
-          public_ip = server.get_fact_direct('public_ip')
-          sshfp = server.get_fact_direct('sshfp').split[-1]
           
-          # Cleanup the previous records 
-          Server.dyn_delete_sshfp_record(app_name, @namespace, auth_token, dyn_retries)            
-          Server.dyn_delete_a_record(app_name, @namespace, auth_token, dyn_retries)     
-          
-          # add the new entries          
-          Server.dyn_create_a_record(app_name, new_namespace, public_ip, sshfp, auth_token, dyn_retries)         
-          Server.dyn_create_sshfp_record(app_name, new_namespace, sshfp, auth_token, dyn_retries)
+          Server.recreate_app_dns_entries(server, app_name, @namespace, new_namespace, auth_token, dyn_retries)
         end
         
         update_namespace_failures = []
