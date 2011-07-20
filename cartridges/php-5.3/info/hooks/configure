@@ -346,6 +346,21 @@ chown $user_id.$group_id -R $APP_DIR || error "Failed to chown new application s
 chown root.root -R "$APP_DIR/${application}_ctl.sh" "$APP_DIR/conf" "$APP_DIR/conf.d"
 chown root.root "$APP_DIR"
 chcon -t libra_var_lib_t -l s0:$c_val -R "$APP_DIR"
+
+#
+# Create environment variables
+#
+echo "OPENSHIFT_APP_DIR='$APP_DIR'" > $APP_HOME/.env/OPENSHIFT_APP_DIR
+echo "OPENSHIFT_REPO_DIR='$APP_DIR/repo/'" > $APP_HOME/.env/OPENSHIFT_REPO_DIR
+echo "OPENSHIFT_INTERNAL_IP='$IP'" > $APP_HOME/.env/OPENSHIFT_INTERNAL_IP
+echo "OPENSHIFT_INTERNAL_PORT='8080'" > $APP_HOME/.env/OPENSHIFT_INTERNAL_PORT
+echo "OPENSHIFT_LOG_DIR='$APP_DIR/logs/'" > $APP_HOME/.env/OPENSHIFT_LOG_DIR
+echo "OPENSHIFT_DATA_DIR='$APP_DIR/data/'" > $APP_HOME/.env/OPENSHIFT_DATA_DIR
+echo "OPENSHIFT_TMP_DIR='/tmp'" > $APP_HOME/.env/OPENSHIFT_TMP_DIR
+echo "OPENSHIFT_RUN_DIR='$APP_HOME/run/'" > $APP_HOME/.env/OPENSHIFT_RUN_DIR
+echo "OPENSHIFT_APP_NAME='$application'" > $APP_HOME/.env/OPENSHIFT_APP_NAME
+echo "OPENSHIFT_APP_CTL_SCRIPT='$APP_DIR/${application}_ctl.sh'" > $APP_HOME/.env/OPENSHIFT_APP_CTL_SCRIPT
+
 #
 # Start the server
 #
