@@ -298,7 +298,7 @@ export PHPRC="$APP_DIR/conf/php.ini"
 # Import Environment Variables
 for f in ~/.env/*
 do
-    . $f
+    . \$f
 done
 
 if ! [ \$# -eq 1 ]
