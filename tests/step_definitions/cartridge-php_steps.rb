@@ -214,7 +214,7 @@ def num_procs acct_name, cmd_name
   
   ps_pattern = /^(\d+)\s+(\S+)$/
   command = "ps --no-headers -o pid,comm -u #{acct_name}"
-  $logger.info("num_procs: executing #{command}")
+  $logger.debug("num_procs: executing #{command}")
 
   pid, stdin, stdout, stderr = Open4::popen4(command)
 
@@ -224,11 +224,16 @@ def num_procs acct_name, cmd_name
 
   outstrings = stdout.readlines
   errstrings = stderr.readlines
+  $logger.debug("looking for #{cmd_name}")
+  $logger.debug("ps output:\n" + outstrings.join("")) 
+
 
   proclist = outstrings.collect { |line|
     match = line.match(ps_pattern)
     match and (match[1] if match[2] == cmd_name)
   }.compact!
 
-  proclist ? proclist.size : 0
+  found = proclist ? proclist.size : 0
+  $logger.debug("Found = #{found} instances of #{cmd_name}")
+  found
 end
