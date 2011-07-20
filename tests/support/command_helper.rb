@@ -60,8 +60,8 @@ module CommandHelper
 
     outstring = stdout.read
     errstring = stderr.read
-    $logger.info("Standard Output:\n#{outstring}")
-    $logger.info("Standard Error:\n#{errstring}")
+    $logger.debug("Standard Output:\n#{outstring}")
+    $logger.debug("Standard Error:\n#{errstring}")
     # append the buffers if an array container is provided
     if outbuf
       outbuf << outstring
