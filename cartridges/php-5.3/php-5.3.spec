@@ -2,7 +2,7 @@
 
 Summary:   Provides php-5.3 support
 Name:      rhc-cartridge-php-5.3
-Version:   0.75.1
+Version:   0.75.2
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -80,6 +80,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Thu Jul 21 2011 Dan McPherson <dmcphers@redhat.com> 0.75.2-1
+- move .config -> .openshift/config (dmcphers@redhat.com)
+
 * Thu Jul 21 2011 Dan McPherson <dmcphers@redhat.com> 0.75.1-1
 - Escapingi var (mmcgrath@redhat.com)
 - importing environment variables (mmcgrath@redhat.com)
