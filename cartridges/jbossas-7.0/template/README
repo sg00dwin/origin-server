@@ -17,7 +17,7 @@ to the deployments directory.  By default the warName is ROOT within pom.xml.  T
 webapp contents to be rendered at http://app_name-namespace.rhcloud.com/.  If you change the warName in 
 pom.xml to app_name, your base url would then become http://app_name-namespace.rhcloud.com/app_name.
 
-Note: If you are building locally you'll also want to add target and any output wars/ears under deployments 
+Note: If you are building locally you'll also want to add any output wars/ears under deployments 
 from the build to your .gitignore file.
 
 or

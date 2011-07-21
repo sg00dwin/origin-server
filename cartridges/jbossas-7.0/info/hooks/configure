@@ -187,8 +187,11 @@ function create_repo {
     sed -i "s/{APP_NAME}/$application/g" pom.xml
     mkdir .config
     cp "$APP_JBOSS"/standalone/configuration/standalone.xml .config/
+    cat <<__EOF__ > .gitignore
+target
+__EOF__
     git init
-    git add .config *
+    git add .config .gitignore *
     git commit -m 'Creating template'
     popd
     pushd $APP_HOME/git
@@ -217,7 +220,7 @@ fi
 
 if [ -f '$APP_DIR/repo/pom.xml' ]
 then
-  echo "Found pom.xml... attempting to build with 'mvn clean package -DskipTests'" 
+  echo "Found pom.xml... attempting to build with 'mvn clean package -Popenshift -DskipTests'" 
   export JAVA_HOME=/etc/alternatives/java_sdk_1.6.0
   export M2_HOME=/etc/alternatives/maven-3.0
   export M2=\$M2_HOME/bin
@@ -225,7 +228,7 @@ then
   export PATH=$JAVA_HOME/bin:\$M2:\$PATH
   pushd ~/${application}/repo > /dev/null
   mvn --version
-  mvn clean package -DskipTests
+  mvn clean package -Popenshift -DskipTests
   popd
 fi
 
