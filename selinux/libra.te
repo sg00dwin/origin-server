@@ -83,23 +83,28 @@ kernel_read_system_state(libra_domain)
 kernel_read_network_state(libra_domain)
 kernel_dontaudit_search_kernel_sysctl(libra_domain)
 
+corecmd_exec_bin(libra_domain)
+corecmd_exec_shell(libra_domain)
+
 dev_list_sysfs(libra_domain)
 dev_read_rand(libra_domain)
 dev_dontaudit_append_rand(libra_domain)
-fs_dontaudit_rw_anon_inodefs_files(libra_domain)
-fs_search_tmpfs(libra_domain)
-fs_getattr_xattr_fs(libra_domain)
-fs_list_inotifyfs(libra_domain)
-
-files_read_usr_files(libra_domain)
-
-corecmd_exec_bin(libra_domain)
-corecmd_exec_shell(libra_domain)
 
 domain_use_interactive_fds(libra_domain)
 domain_dontaudit_read_all_domains_state(libra_domain)
 
+fs_dontaudit_rw_anon_inodefs_files(libra_domain)
+fs_search_tmpfs(libra_domain)
+fs_getattr_xattr_fs(libra_domain)
+fs_list_inotifyfs(libra_domain)
+fs_dontaudit_list_auto_mountpoints(libra_domain)
+fs_dontaudit_search_cgroup_dirs(libra_domain)
+
+files_dontaudit_getattr_boot_dirs(libra_domain)
+files_dontaudit_getattr_home_dir(libra_domain)
+files_dontaudit_getattr_lost_found_dirs(libra_domain)
 files_read_etc_files(libra_domain)
+files_read_usr_files(libra_domain)
 
 auth_use_nsswitch(libra_domain)
 
@@ -112,6 +117,8 @@ miscfiles_read_localization(libra_domain)
 miscfiles_read_fonts(libra_domain)
 
 term_dontaudit_search_ptys(libra_domain)
+
+userdom_dontaudit_search_admin_dir(libra_domain)
 
 apache_exec(libra_domain)
 apache_exec_modules(libra_domain)
