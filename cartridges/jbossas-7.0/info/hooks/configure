@@ -185,13 +185,13 @@ function create_repo {
     
     pushd $APP_HOME/git/template
     sed -i "s/{APP_NAME}/$application/g" pom.xml
-    mkdir .config
-    cp "$APP_JBOSS"/standalone/configuration/standalone.xml .config/
+    mkdir -p .openshift/config
+    cp "$APP_JBOSS"/standalone/configuration/standalone.xml .openshift/config
     cat <<__EOF__ > .gitignore
 target
 __EOF__
     git init
-    git add .config .gitignore *
+    git add .openshift .gitignore *
     git commit -m 'Creating template'
     popd
     pushd $APP_HOME/git
@@ -212,10 +212,10 @@ __EOF__
 rm -rf $APP_DIR/repo/* $APP_DIR/repo/.[^.]*
 git archive --format=tar HEAD | (cd $APP_DIR/repo && tar --warning=no-timestamp -xf -)
 
-if [ -f '$APP_DIR/repo/.config/standalone.xml' ]
+if [ -f '$APP_DIR/repo/.openshift/config/standalone.xml' ]
 then
-  echo "Found .config/standalone.xml... copying to "$APP_JBOSS"/standalone/configuration/"
-  cp $APP_DIR/repo/.config/standalone.xml "$APP_JBOSS"/standalone/configuration/
+  echo "Found .openshift/config/standalone.xml... copying to "$APP_JBOSS"/standalone/configuration/"
+  cp $APP_DIR/repo/.openshift/config/standalone.xml "$APP_JBOSS"/standalone/configuration/
 fi
 
 if [ -f '$APP_DIR/repo/pom.xml' ]

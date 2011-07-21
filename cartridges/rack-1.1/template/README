@@ -5,7 +5,7 @@ Repo layout
 tmp/ - Temporary storage
 public/ - Content (images, css, etc. available to the public)
 config.ru - This file is used by Rack-based servers to start the application.
-
+../data - For persistent data
 
 Notes about layout
 ==================
