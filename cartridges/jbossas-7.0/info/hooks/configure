@@ -187,6 +187,7 @@ function create_repo {
     sed -i "s/{APP_NAME}/$application/g" pom.xml
     mkdir -p .openshift/config
     cp "$APP_JBOSS"/standalone/configuration/standalone.xml .openshift/config
+    chmod -R 0644 .openshift/config
     cat <<__EOF__ > .gitignore
 target
 __EOF__
@@ -317,7 +318,7 @@ ls -l "$APP_JBOSS"/standalone/configuration
 # Get the standalone.sh script
 cp ${jboss_home}/bin/standalone.sh "$APP_JBOSS_BIN_DIR"
 # Update the standalone.xml for the application IP
-sed -i 's/{ip}/'$IP'/g' "$APP_JBOSS"/standalone/configuration/standalone.xml
+sed -i "s/{ip}/$IP/g" "$APP_JBOSS"/standalone/configuration/standalone.xml
 popd > /dev/null
 
 # Repo
