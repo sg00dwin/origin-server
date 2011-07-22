@@ -279,7 +279,7 @@ When /^I (start|stop|restart) the mysql database$/ do |action|
   command = "#{$mysql_hooks}/#{action} #{app_name} #{namespace} #{acct_name}"
   runcon command,  'unconfined_u', 'system_r', 'libra_initrc_t', outbuf
 
-  #raise Cucumber::Pending.new "restart script bug fix pending" if action == "restart"
+  raise Cucumber::Pending.new "restart script bug fix pending" if action == "restart"
 end
 
 Then /^the mysql daemon pid will be different$/ do
