@@ -2,7 +2,7 @@
 
 Summary:   Provides mod_perl support
 Name:      rhc-cartridge-perl-5.10
-Version:   0.6.2
+Version:   0.6.3
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -72,6 +72,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Fri Jul 22 2011 Dan McPherson <dmcphers@redhat.com> 0.6.3-1
+- Bug 724026 (dmcphers@redhat.com)
+
 * Thu Jul 21 2011 Dan McPherson <dmcphers@redhat.com> 0.6.2-1
 - move .config -> .openshift/config (dmcphers@redhat.com)
 
