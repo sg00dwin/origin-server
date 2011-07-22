@@ -238,10 +238,7 @@ module Libra
       server_execute_direct(framework, 'configure', app_name, user, server, app_info)
       begin
         # update DNS
-        public_ip = server.get_fact_direct('public_ip')
-        Libra.logger_debug "DEBUG: Public ip being configured '#{public_ip}' to namespace '#{user.namespace}'"
-        sshfp = server.get_fact_direct('sshfp').split[-1]
-        Server.create_app_dns_entries(app_name, user.namespace, public_ip, sshfp)
+        server.create_app_dns_entries(app_name, user.namespace)
       rescue Exception => e
         begin
           Libra.logger_debug "DEBUG: Failed to register dns entry for app '#{app_name}' and user '#{user.rhlogin}' on node '#{server.name}'"
@@ -337,20 +334,10 @@ module Libra
           
         server = Server.new(app_info['server_identity'])
           
-        public_ip = server.get_fact_direct('public_ip')
-        sshfp = server.get_fact_direct('sshfp').split[-1]
-          
         dyn_retries = 2
-          
-        Libra.logger_debug "DEBUG: Changing public ip of '#{app_name}' to '#{public_ip}'"
-        auth_token = Server.dyn_login(dyn_retries)
-        # Cleanup the previous records 
-        Server.dyn_delete_sshfp_record(app_name, user.namespace, auth_token, dyn_retries)            
-        Server.dyn_delete_a_record(app_name, user.namespace, auth_token, dyn_retries)
 
-        # add the new entries          
-        Server.dyn_create_a_record(app_name, user.namespace, public_ip, sshfp, auth_token, dyn_retries)
-        Server.dyn_create_sshfp_record(app_name, user.namespace, sshfp, auth_token, dyn_retries)
+        auth_token = Server.dyn_login(dyn_retries)
+        server.recreate_app_dns_entries(app_name, user.namespace, user.namespace, auth_token, dyn_retries)
         Server.dyn_publish(auth_token, dyn_retries)
         Server.dyn_logout(auth_token, dyn_retries)
         

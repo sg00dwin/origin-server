@@ -168,11 +168,12 @@ Given /^the php application is (running|stopped)$/ do | start_state |
     if exit_status != 0
       raise "Unable to %s for %s %s %s" % [fix_action, app_name, namespace, account_name]
     end
+    sleep 5
+    
     # check exit status
-
     exit_status = runcon status_command, 'unconfined_u', 'system_r', 'libra_initrc_t'
     if exit_status != good_exit
-      raise "Unable to %s for %s %s %s" % [fix_action, app_name, namespace, account_name]
+      raise "Received bad status after %s for %s %s %s" % [fix_action, app_name, namespace, account_name]
     end
   end
   # check again

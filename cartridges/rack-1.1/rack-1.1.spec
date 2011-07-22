@@ -2,7 +2,7 @@
 
 Summary:   Provides ruby rack support running on Phusion Passenger
 Name:      rhc-cartridge-rack-1.1
-Version:   0.75.0
+Version:   0.75.3
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -88,6 +88,18 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Fri Jul 22 2011 Dan McPherson <dmcphers@redhat.com> 0.75.3-1
+- Bug 724026 (dmcphers@redhat.com)
+
+* Thu Jul 21 2011 Dan McPherson <dmcphers@redhat.com> 0.75.2-1
+- move .config -> .openshift/config (dmcphers@redhat.com)
+
+* Thu Jul 21 2011 Dan McPherson <dmcphers@redhat.com> 0.75.1-1
+- removing PassengerTempDir location now that polyinst works
+  (mmcgrath@redhat.com)
+- bump spec numbers (dmcphers@redhat.com)
+- add server identity and namespace auto migrate (dmcphers@redhat.com)
+
 * Fri Jul 15 2011 Dan McPherson <dmcphers@redhat.com> 0.74.3-1
 - add mysql-devel as dep (dmcphers@redhat.com)
 

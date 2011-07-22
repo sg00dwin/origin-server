@@ -2,7 +2,7 @@
 
 Summary:       Common dependencies of the OpenShift broker and site
 Name:          rhc-server-common
-Version:       0.75.0
+Version:       0.75.1
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -54,6 +54,13 @@ rm -rf %{buildroot}
                                   -s /sbin/nologin 2>&1 > /dev/null || :
 
 %changelog
+* Thu Jul 21 2011 Dan McPherson <dmcphers@redhat.com> 0.75.1-1
+- dns call cleanup (dmcphers@redhat.com)
+- refactor some common code (dmcphers@redhat.com)
+- handle destroy with auto identity update (dmcphers@redhat.com)
+- bump spec numbers (dmcphers@redhat.com)
+- add server identity and namespace auto migrate (dmcphers@redhat.com)
+
 * Fri Jul 15 2011 Dan McPherson <dmcphers@redhat.com> 0.74.4-1
 - Merge branch 'master' of ssh://libragit/srv/git/li (edirsh@redhat.com)
 - Changed streamline_mock so selenium tests will run (edirsh@redhat.com)
