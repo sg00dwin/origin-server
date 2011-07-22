@@ -141,7 +141,7 @@ module CommandHelper
   #
   def num_procs acct_name, cmd_name
     
-    ps_pattern = /^(\d+)\s+(\S+)$/
+    ps_pattern = /^\s*(\d+)\s+(\S+)$/
     command = "ps --no-headers -o pid,comm -u #{acct_name}"
     $logger.debug("num_procs: executing #{command}")
     
