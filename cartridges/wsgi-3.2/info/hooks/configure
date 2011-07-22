@@ -374,6 +374,7 @@ cat <<EOF > "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}.conf"
   ServerName ${application}-${namespace}.${libra_domain}
   ServerAdmin mmcgrath@redhat.com
   DocumentRoot /var/www/html
+  DefaultType None
 
   ProxyPass / http://$IP:8080/
   ProxyPassReverse / http://$IP:8080/
@@ -382,6 +383,7 @@ cat <<EOF > "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}.conf"
 <VirtualHost *:443>
   ServerName ${application}-${namespace}.${libra_domain}
   ServerAdmin mmcgrath@redhat.com
+  DefaultType None
 
 $(/bin/cat /usr/libexec/li/cartridges/wsgi-3.2/info/configuration/node_ssl_template.conf)
 
