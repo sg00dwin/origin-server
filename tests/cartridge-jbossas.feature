@@ -1,5 +1,5 @@
 @internals
-Feature JBossAS Application
+Feature: JBossAS Application
 
    Scenario: Create one JBoss AS Application
      Given an accepted node
@@ -11,7 +11,7 @@ And the guest account has no application installed
      Given an accepted node
      And a new guest account
      And a new jbossas application
-     When I deconfigure a jbossas application
+     When I deconfigure the jbossas application
      
 
    Scenario: Start a JBoss AS Application
