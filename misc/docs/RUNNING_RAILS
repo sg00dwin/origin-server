@@ -25,6 +25,7 @@ You'll have to do this any time you modify files in server-common
 Note: Be sure not to commit the new Gemfile.lock
 
 6. sudo rails s
+Note: if you get an error about a newer version of rails already activated you might need to uninstall the newer versions first  
 
 7b. To run against streamline in rails production mode with captcha enabled, you can use:
 cp config/environments/streamline-internal.rb config/environments/production.rb; sudo rails s -e production
