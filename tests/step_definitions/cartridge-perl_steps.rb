@@ -1,6 +1,6 @@
 # Controller cartridge command paths
 $cartridge_root ||= "/usr/libexec/li/cartridges"
-$rack_cartridge = "#{$cartridge_root}/perl-5.10"
+$perl_cartridge = "#{$cartridge_root}/perl-5.10"
 $perl_common_conf_path = "#{$perl_cartridge}/info/configuration/etc/conf/httpd_nolog.conf"
 $perl_hooks = "#{$perl_cartridge}/info/hooks"
 $perl_config_path = "#{$perl_hooks}/configure"
