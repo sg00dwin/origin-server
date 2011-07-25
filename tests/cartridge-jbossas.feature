@@ -19,7 +19,7 @@ And the guest account has no application installed
      And a new guest account
      And a new jbossas application
      And the jbossas service is stopped
-     When I start the jboss service
+     When I start the jbossas service
 
 
    Scenario: Stop a JBoss AS Application
@@ -27,7 +27,7 @@ And the guest account has no application installed
      And a new guest account
      And a new jbossas application
      And the jbossas service is running
-     When I stop the jboss service
+     When I stop the jbossas service
 
 
    Scenario: Restart a JBoss AS Application
@@ -35,4 +35,4 @@ And the guest account has no application installed
      And a new guest account
      And a new jbossas application
      And the jbossas service is running
-     When I restart the jboss service
+     When I restart the jbossas service
