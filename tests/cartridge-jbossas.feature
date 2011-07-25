@@ -18,7 +18,7 @@ And the guest account has no application installed
      Given an accepted node
      And a new guest account
      And a new jbossas application
-     And the jboss service is stopped
+     And the jbossas service is stopped
      When I start the jboss service
 
 
@@ -26,7 +26,7 @@ And the guest account has no application installed
      Given an accepted node
      And a new guest account
      And a new jbossas application
-     And the jboss service is running
+     And the jbossas service is running
      When I stop the jboss service
 
 
@@ -34,5 +34,5 @@ And the guest account has no application installed
      Given an accepted node
      And a new guest account
      And a new jbossas application
-     And the jboss service is running
+     And the jbossas service is running
      When I restart the jboss service
