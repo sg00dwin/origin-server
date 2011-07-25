@@ -49,10 +49,6 @@ When /^I deconfigure the jbossas application$/ do
   runcon command,  'unconfined_u', 'system_r', 'libra_initrc_t'
 end
 
-Given /^the jboss service is stopped$/ do
-  pending # express the regexp above with the code you wish you had
-end
-
 When /^I (start|stop|restart) the jbossas service$/ do |action|
   account_name = @account['accountname']
   namespace = @app['namespace']
@@ -66,7 +62,7 @@ When /^I (start|stop|restart) the jbossas service$/ do |action|
   sleep 5
 end
 
-Given /^the jboss service is running$/ do
+Given /^the jbossas service is (running|stopped)$/ do |status|
   pending # express the regexp above with the code you wish you had
 end
 
