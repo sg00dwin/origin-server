@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.75.2
+Version:       0.75.3
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -38,6 +38,10 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Fri Jul 22 2011 Dan McPherson <dmcphers@redhat.com> 0.75.3-1
+- Comment out fs_dontaudit_search_cgroup_dirs, until it shows up in RHEL6
+  (dwalsh@redhat.com)
+
 * Fri Jul 22 2011 Dan McPherson <dmcphers@redhat.com> 0.75.2-1
 - Dontaudit libra domains executing ls / (dwalsh@redhat.com)
 

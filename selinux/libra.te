@@ -98,7 +98,7 @@ fs_search_tmpfs(libra_domain)
 fs_getattr_xattr_fs(libra_domain)
 fs_list_inotifyfs(libra_domain)
 fs_dontaudit_list_auto_mountpoints(libra_domain)
-fs_dontaudit_search_cgroup_dirs(libra_domain)
+#fs_dontaudit_search_cgroup_dirs(libra_domain)
 
 files_dontaudit_getattr_boot_dirs(libra_domain)
 files_dontaudit_getattr_home_dir(libra_domain)
