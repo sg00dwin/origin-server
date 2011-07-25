@@ -60,10 +60,6 @@ $(function() {
   //Flex request access  
   $('#new_access_flex_request').validate({
     rules : {
-      'access_flex_request[ec2_account_number]' : {
-        'required' : true,
-        'aws_account' : true
-      },
       'access_flex_request[terms_accepted]' : 'required'
     }
   });
