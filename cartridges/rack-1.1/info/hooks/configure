@@ -172,6 +172,12 @@ then
   mv '$APP_DIR/deploy/vendor' '$APP_DIR/tmp/'
 fi
 
+# Import Environment Variables
+for f in ~/.env/*
+do
+    . \$f
+done
+
 echo 'Cleaning out deploy/*'
 rm -rf $APP_DIR/deploy/* $APP_DIR/deploy/.[^.]*
 echo 'Deploying application from git repo to deploy/'

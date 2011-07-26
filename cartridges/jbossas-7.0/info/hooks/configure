@@ -213,6 +213,12 @@ __EOF__
 rm -rf $APP_DIR/repo/* $APP_DIR/repo/.[^.]*
 git archive --format=tar HEAD | (cd $APP_DIR/repo && tar --warning=no-timestamp -xf -)
 
+# Import Environment Variables
+for f in ~/.env/*
+do
+    . \$f
+done
+
 if [ -f '$APP_DIR/repo/.openshift/config/standalone.xml' ]
 then
   echo "Found .openshift/config/standalone.xml... copying to "$APP_JBOSS"/standalone/configuration/"

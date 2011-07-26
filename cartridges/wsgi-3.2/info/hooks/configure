@@ -164,6 +164,12 @@ EOF
 rm -rf ~/${application}/repo/*
 git archive --format=tar HEAD | (cd ~/${application}/repo && tar --warning=no-timestamp -xf -)
 
+# Import Environment Variables
+for f in ~/.env/*
+do
+    . \$f
+done
+
 if [ -f ~/${application}/repo/setup.py ]
 then
     echo "setup.py found.  Setting up virtualenv"
