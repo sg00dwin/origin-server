@@ -231,6 +231,7 @@ module Streamline
           json = parse_body(res.body)
           yield json if block_given?
         else
+          log_error "Empty response from streamline - #{res.code}"
           if raise_exception_on_error
             raise StreamlineException
           else
@@ -248,7 +249,7 @@ module Streamline
           errors.add(:base, I18n.t(:unknown))
         end
       end
-    rescue AccessDeniedException, Libra::UserValidationException
+    rescue AccessDeniedException, Libra::UserValidationException, StreamlineException
       raise
     rescue Exception => e
       log_error "Exception occurred while calling streamline - #{e.message}"
