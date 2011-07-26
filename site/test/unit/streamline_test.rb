@@ -94,7 +94,7 @@ class StreamlineTest < ActiveSupport::TestCase
 
   test "http call success" do
     res = Net::HTTPSuccess.new('', '200', '')
-    res.expects(:body).returns(nil)
+    res.expects(:body).at_least_once.returns('{}')
     Net::HTTP.any_instance.expects(:start).returns(res)
 
     @streamline.http_post(@url)
@@ -102,7 +102,7 @@ class StreamlineTest < ActiveSupport::TestCase
 
   test "http call redirect" do
     res = Net::HTTPSuccess.new('', '302', '')
-    res.expects(:body).returns(nil)
+    res.expects(:body).at_least_once.returns('{}')
     Net::HTTP.any_instance.expects(:start).returns(res)
 
     @streamline.http_post(@url)
@@ -111,7 +111,7 @@ class StreamlineTest < ActiveSupport::TestCase
   test "http call parsing ticket" do
     res = Net::HTTPSuccess.new('', '200', '')
     res.expects(:get_fields).returns(["rh_sso=#{@ticket}; Domain=.redhat.com; Path=/; Secure"])
-    res.expects(:body).returns(nil)
+    res.expects(:body).at_least_once.returns('{}')
     Net::HTTP.any_instance.expects(:start).returns(res)
 
     @streamline.http_post(@url)
