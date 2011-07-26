@@ -1,8 +1,8 @@
 require 'rubygems'
-require 'open4'
 require 'fileutils'
 require 'parseconfig'
 require 'pp'
+require 'migrate-util'
 
 module LibraMigration
 
@@ -17,6 +17,12 @@ module LibraMigration
     if (File.exists?(app_home) && !File.symlink?(app_home))
       post_receive = "#{app_home}/git/#{app_name}.git/hooks/post-receive"
       ctl_script = "#{app_dir}/#{app_name}_ctl.sh"
+      begin
+      output += replace_in_file(post_receive, '//', '/')
+      output += replace_in_file(post_receive, "hello", "world")
+      rescue Exception => e
+        output += e.message
+      end
     else
       exitcode = 127
       output += "Application not found to migrate: #{app_home}\n"
