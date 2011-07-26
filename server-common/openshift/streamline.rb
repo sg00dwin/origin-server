@@ -230,6 +230,12 @@ module Streamline
         if res.body and !res.body.empty?
           json = parse_body(res.body)
           yield json if block_given?
+        else
+          if raise_exception_on_error
+            raise StreamlineException
+          else
+            errors.add(:base, I18n.t(:unknown))
+          end
         end
       when Net::HTTPForbidden, Net::HTTPUnauthorized
         raise AccessDeniedException
