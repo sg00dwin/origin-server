@@ -1,0 +1,663 @@
+@font-face {
+  font-family: 'OverpassBold';
+  src: url("fonts/overpass-bold-wf.eot");
+  src: url("fonts/overpass-bold-wf.eot?#iefix") format("eot"), url("fonts/overpass-bold-wf.woff") format("woff"), url("fonts/overpass-bold-wf.ttf") format("truetype"), url("fonts/overpass-bold-wf.svg#webfontzRhIMntw") format("svg");
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Overpass';
+  src: url("fonts/overpass-wf.eot");
+  src: url("fonts/overpass-wf.eot?#iefix") format("eot"), url("fonts/overpass-wf.woff") format("woff"), url("fonts/overpass-wf.ttf") format("truetype"), url("fonts/overpass-wf.svg#webfontiqWxLEM5") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* line 3, ../sass/partials/_forms.scss */
+label {
+  margin: .8em 0;
+}
+
+/* line 7, ../sass/partials/_forms.scss */
+input {
+  display: block;
+  border: 0.1em solid #888;
+  padding: .25em .5em;
+  margin: .25em 0;
+  -moz-border-radius: 0.3em;
+  -webkit-border-radius: 0.3em;
+  -o-border-radius: 0.3em;
+  -ms-border-radius: 0.3em;
+  -khtml-border-radius: 0.3em;
+  border-radius: 0.3em;
+}
+/* line 14, ../sass/partials/_forms.scss */
+input:focus {
+  border: 0.2em solid #509ef1;
+  padding: .05em .3em;
+}
+/* line 19, ../sass/partials/_forms.scss */
+input.button {
+  color: white;
+  background: #8FDB45;
+  border: 1px solid #5c9c1e;
+  padding: .3em 2em;
+  -moz-border-radius: 2em;
+  -webkit-border-radius: 2em;
+  -o-border-radius: 2em;
+  -ms-border-radius: 2em;
+  -khtml-border-radius: 2em;
+  border-radius: 2em;
+  text-shadow: #5c9c1e 0 0.1em 0;
+  margin: .5em 0;
+  font-weight: bold;
+}
+
+/* Placeholder text */
+/* line 32, ../sass/partials/_forms.scss */
+::-webkit-input-placeholder {
+  color: #999;
+  font-size: .9em;
+}
+
+/* line 36, ../sass/partials/_forms.scss */
+:-moz-placeholder {
+  color: #999;
+  font-size: .9em;
+}
+
+/* Universal styles */
+/* line 3, ../sass/partials/_page.scss */
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #38b9e6;
+  background-image: url("../images/clouds_sm.png"), url("../images/clouds_md.png"), url("../images/clouds_lg.png");
+  background-position: -150px -240px;
+}
+
+/* line 13, ../sass/partials/_page.scss */
+body, select, input, textarea {
+  color: #444444;
+  font-family: "Liberation Sans", Arial, "Helvetica Neue", Helvetica, sans-serif;
+  font-size: 1em;
+}
+
+/* line 19, ../sass/partials/_page.scss */
+h1, h2, h3, h4, h5, h6 {
+  font-family: OverpassBold, "Liberation Sans", Arial, "Helvetica Neue", Helvetica, sans-serif;
+  font-weight: bold;
+}
+
+/* line 24, ../sass/partials/_page.scss */
+a, a:active, a:visited {
+  color: black;
+}
+
+/* line 25, ../sass/partials/_page.scss */
+a:hover {
+  color: #3465a4;
+}
+
+/* line 27, ../sass/partials/_page.scss */
+strong, th {
+  font-weight: bold;
+}
+
+/* line 31, ../sass/partials/_page.scss */
+small {
+  font-size: .85em;
+}
+
+/* End universal styles */
+/* Shared styles */
+/* Hide section headers that we don't want showing normally */
+/* line 43, ../sass/partials/_page.scss */
+header.universal hgroup,
+header.universal header,
+nav > header,
+#copyright header {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
+/* line 50, ../../../../../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_helpers.scss */
+header.universal hgroup.focusable:active, header.universal hgroup.focusable:focus,
+header.universal header.focusable:active,
+header.universal header.focusable:focus,
+nav > header.focusable:active,
+nav > header.focusable:focus,
+#copyright header.focusable:active,
+#copyright header.focusable:focus {
+  clip: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  position: static;
+  width: auto;
+}
+
+/* Set content width */
+/* line 49, ../sass/partials/_page.scss */
+.content,
+section > header {
+  width: 50em;
+  margin: 0 auto;
+}
+
+/* Style buttons */
+/* line 55, ../sass/partials/_page.scss */
+a.button {
+  display: inline-block;
+  white-space: nowrap;
+  padding: .3em 2em;
+  font-family: Overpass, "Liberation Sans", Arial, "Helvetica Neue", Helvetica, sans-serif;
+  font-size: 1em;
+  text-decoration: none;
+  text-align: center;
+  text-shadow: rgba(0, 0, 0, 0.6) 0 0.05em 0;
+  -moz-border-radius: 2em;
+  -webkit-border-radius: 2em;
+  -o-border-radius: 2em;
+  -ms-border-radius: 2em;
+  -khtml-border-radius: 2em;
+  border-radius: 2em;
+}
+
+/* Styles shared by "more" links */
+/* line 72, ../sass/partials/_page.scss */
+a.more {
+  font-family: OverpassBold, "Liberation Sans", Arial, "Helvetica Neue", Helvetica, sans-serif;
+  font-weight: bold;
+  font-size: 1em;
+}
+
+/* Styles shared by main content areas */
+/* line 81, ../sass/partials/_page.scss */
+.main {
+  font-size: .9em;
+  color: #555;
+  margin: 0;
+  padding: 1em 0;
+  background-color: white;
+  background-color: rgba(255, 255, 255, 0.9);
+}
+/* line 89, ../sass/partials/_page.scss */
+.main a {
+  color: #1060c8;
+  text-decoration: none;
+}
+/* line 93, ../sass/partials/_page.scss */
+.main a:hover {
+  color: #3288f7;
+  text-decoration: underline;
+}
+/* line 98, ../sass/partials/_page.scss */
+.main a:visited {
+  color: #8f0ccc;
+}
+/* line 103, ../sass/partials/_page.scss */
+.main h1, .main h2, .main h3, .main h4, .main h5 {
+  color: #555;
+  font-family: Overpass, "Liberation Sans", Arial, "Helvetica Neue", Helvetica, sans-serif;
+  font-weight: normal;
+}
+/* line 111, ../sass/partials/_page.scss */
+.main h1 {
+  width: 100%;
+  border-bottom: 1px solid #ececec;
+  padding: 1em 2em;
+}
+
+/* End shared styles */
+/* Layout styles */
+/* line 123, ../sass/partials/_page.scss */
+header.universal > .content {
+  padding: 1em;
+}
+/* line 127, ../sass/partials/_page.scss */
+header.universal nav {
+  background-color: black;
+}
+/* line 130, ../sass/partials/_page.scss */
+header.universal nav ul {
+  padding: 0;
+  margin: 0;
+}
+/* line 135, ../sass/partials/_page.scss */
+header.universal nav li {
+  display: inline;
+  margin: 0;
+  list-style-type: none;
+}
+/* line 140, ../sass/partials/_page.scss */
+header.universal nav li a {
+  padding: .9em 1em;
+  display: inline-block;
+  color: white;
+  font-family: Overpass, "Liberation Sans", Arial, "Helvetica Neue", Helvetica, sans-serif;
+  font-size: .9em;
+  text-decoration: none;
+}
+/* line 150, ../sass/partials/_page.scss */
+header.universal nav li.active a,
+header.universal nav li a:hover {
+  background-color: #333333;
+}
+/* line 154, ../sass/partials/_page.scss */
+header.universal nav li:last-child {
+  float: right;
+}
+
+/* line 161, ../sass/partials/_page.scss */
+#announcements {
+  width: 25em;
+  height: 4em;
+  overflow: hidden;
+  float: right;
+  margin-top: 1em;
+}
+/* line 168, ../sass/partials/_page.scss */
+#announcements ul {
+  margin: 0;
+  padding: 0;
+}
+/* line 173, ../sass/partials/_page.scss */
+#announcements li {
+  width: 25em;
+  height: 4em;
+  list-style-type: none;
+}
+/* line 178, ../sass/partials/_page.scss */
+#announcements li a {
+  width: 23em;
+  height: 4em;
+  font-size: .8em;
+  font-family: Overpass, "Liberation Sans", Arial, "Helvetica Neue", Helvetica, sans-serif;
+  text-decoration: none;
+  color: white;
+  background: transparent url("../images/announce-arrow.png") no-repeat right top;
+  padding-right: 2em;
+  text-align: right;
+  display: block;
+  float: right;
+}
+/* line 193, ../sass/partials/_page.scss */
+#announcements li a .title {
+  font-family: OverpassBold;
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+/* line 205, ../sass/partials/_page.scss */
+footer.universal {
+  color: white;
+  font-size: .9em;
+}
+/* line 209, ../sass/partials/_page.scss */
+footer.universal ul {
+  margin: 0;
+  padding: 0;
+}
+/* line 211, ../sass/partials/_page.scss */
+footer.universal li {
+  list-style-type: none;
+}
+/* line 215, ../sass/partials/_page.scss */
+footer.universal h2 {
+  color: white;
+  font-size: 1.1em;
+}
+/* line 220, ../sass/partials/_page.scss */
+footer.universal .content > ul > li {
+  display: inline-block;
+  margin: 0 1em;
+  vertical-align: top;
+  width: 10em;
+}
+/* line 227, ../sass/partials/_page.scss */
+footer.universal a {
+  color: white;
+  text-decoration: none;
+}
+/* line 232, ../sass/partials/_page.scss */
+footer.universal #copyright {
+  overflow: hidden;
+  *zoom: 1;
+  background: black;
+  margin: 2em 0;
+}
+/* line 237, ../sass/partials/_page.scss */
+footer.universal #copyright .content {
+  padding: .5em 5em;
+}
+/* line 241, ../sass/partials/_page.scss */
+footer.universal #copyright p {
+  float: left;
+}
+/* line 242, ../sass/partials/_page.scss */
+footer.universal #copyright img {
+  float: right;
+  margin-bottom: 1em;
+}
+
+/* line 246, ../sass/partials/_page.scss */
+.dialog {
+  display: none;
+  background: #323232;
+  -moz-border-radius: 2em;
+  -webkit-border-radius: 2em;
+  -o-border-radius: 2em;
+  -ms-border-radius: 2em;
+  -khtml-border-radius: 2em;
+  border-radius: 2em;
+  -moz-box-shadow: rgba(0, 0, 0, 0.6) 0 0 3em;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.6) 0 0 3em;
+  -o-box-shadow: rgba(0, 0, 0, 0.6) 0 0 3em;
+  box-shadow: rgba(0, 0, 0, 0.6) 0 0 3em;
+  color: white;
+  font-family: Overpass, "Liberation Sans", Arial, "Helvetica Neue", Helvetica, sans-serif;
+  font-size: .9em;
+  position: fixed;
+  top: 10em;
+  left: 10em;
+  right: 10em;
+  z-index: 1000;
+  min-width: 30em;
+  padding: 2em;
+}
+/* line 262, ../sass/partials/_page.scss */
+.dialog form {
+  margin: 0 auto;
+  width: 18em;
+}
+/* line 267, ../sass/partials/_page.scss */
+.dialog label {
+  display: block;
+  width: 20em;
+}
+/* line 272, ../sass/partials/_page.scss */
+.dialog h1 {
+  font-weight: normal;
+  font-family: Overpass, "Liberation Sans", Arial, "Helvetica Neue", Helvetica, sans-serif;
+  text-align: center;
+  margin: 0;
+}
+/* line 279, ../sass/partials/_page.scss */
+.dialog .close_button {
+  position: absolute;
+  top: 1.5em;
+  right: 1.5em;
+}
+/* line 284, ../sass/partials/_page.scss */
+.dialog .close_button:active {
+  outline: none;
+  border: none;
+}
+
+/* End layout styles */
+/* Home page styles */
+/* line 295, ../sass/partials/_page.scss */
+#opener {
+  background: #EFEFEF;
+  margin-bottom: 2.5em;
+  height: 488px;
+}
+/* line 300, ../sass/partials/_page.scss */
+#opener .content {
+  position: relative;
+  width: 1280px;
+}
+/* line 305, ../sass/partials/_page.scss */
+#opener img {
+  z-index: 100;
+  display: block;
+  margin: 0 auto;
+}
+/* line 311, ../sass/partials/_page.scss */
+#opener header, #opener a.button {
+  position: absolute;
+}
+/* line 315, ../sass/partials/_page.scss */
+#opener header {
+  top: 13em;
+  right: 200px;
+  text-align: right;
+}
+/* line 321, ../sass/partials/_page.scss */
+#opener h1 {
+  color: #124E51;
+  font-size: 2.5em;
+  line-height: 1.75em;
+  margin: 0;
+  font-weight: normal;
+  font-family: Overpass, "Liberation Sans", Arial, "Helvetica Neue", Helvetica, sans-serif;
+}
+/* line 330, ../sass/partials/_page.scss */
+#opener h2 {
+  color: #666;
+  font-size: 1em;
+  font-weight: normal;
+  font-family: Overpass, "Liberation Sans", Arial, "Helvetica Neue", Helvetica, sans-serif;
+  line-height: .7em;
+  margin: 0;
+}
+/* line 339, ../sass/partials/_page.scss */
+#opener a.button {
+  top: 19em;
+  right: 200px;
+  background-color: #888;
+  color: white;
+  border: 2px solid #777;
+}
+
+/* line 351, ../sass/partials/_page.scss */
+#exposition > .content > div {
+  margin: 5em 0;
+  padding: 0 3em;
+  overflow: hidden;
+  *zoom: 1;
+}
+/* line 355, ../sass/partials/_page.scss */
+#exposition > .content > div img {
+  display: block;
+  float: left;
+}
+/* line 360, ../sass/partials/_page.scss */
+#exposition > .content > div header, #exposition > .content > div p, #exposition > .content > div a {
+  display: block;
+  width: 50%;
+  float: right;
+}
+/* line 368, ../sass/partials/_page.scss */
+#exposition > .content div:nth-child(even) img {
+  float: right;
+}
+/* line 371, ../sass/partials/_page.scss */
+#exposition > .content div:nth-child(even) header, #exposition > .content div:nth-child(even) p, #exposition > .content div:nth-child(even) a {
+  float: left;
+}
+
+/* line 379, ../sass/partials/_page.scss */
+#social .content {
+  padding-bottom: 2em;
+  border-bottom: 1px solid #ececec;
+}
+/* line 384, ../sass/partials/_page.scss */
+#social div, #social li {
+  overflow: hidden;
+  *zoom: 1;
+}
+/* line 388, ../sass/partials/_page.scss */
+#social .content {
+  width: 746px;
+}
+/* line 392, ../sass/partials/_page.scss */
+#social img {
+  float: left;
+  vertical-align: top;
+  padding: .5em;
+  margin-top: .5em;
+}
+/* line 399, ../sass/partials/_page.scss */
+#social p.tweet {
+  position: relative;
+  padding: 1em;
+  margin: 0.1em 0.1em 2em 6em;
+  border: 1px solid #B8E6F6;
+  min-height: 3em;
+  background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #ffffff), color-stop(100%, #def3fb));
+  background: -webkit-linear-gradient(top, #ffffff, #def3fb 2em);
+  background: -moz-linear-gradient(top, #ffffff, #def3fb 2em);
+  background: -o-linear-gradient(top, #ffffff, #def3fb 2em);
+  background: -ms-linear-gradient(top, #ffffff, #def3fb 2em);
+  background: linear-gradient(top, #ffffff, #def3fb 2em);
+  -moz-border-radius: 1.25em;
+  -webkit-border-radius: 1.25em;
+  -o-border-radius: 1.25em;
+  -ms-border-radius: 1.25em;
+  -khtml-border-radius: 1.25em;
+  border-radius: 1.25em;
+}
+/* line 409, ../sass/partials/_page.scss */
+#social p.tweet:after {
+  content: '';
+  background: url("../images/bubble-extension.png") no-repeat left top;
+  position: absolute;
+  top: 1.3em;
+  left: -1.3em;
+  width: 20px;
+  height: 27px;
+  display: block;
+}
+/* line 420, ../sass/partials/_page.scss */
+#social a.tweeter {
+  font-weight: bold;
+  color: black;
+}
+/* line 425, ../sass/partials/_page.scss */
+#social ul {
+  margin: 0;
+  padding: 0;
+}
+/* line 429, ../sass/partials/_page.scss */
+#social li {
+  list-style-type: none;
+  display: inline-block;
+  width: 24em;
+  vertical-align: top;
+  padding-left: .7em;
+}
+/* line 437, ../sass/partials/_page.scss */
+#social #social_links {
+  padding: .5em 4em;
+}
+/* line 439, ../sass/partials/_page.scss */
+#social #social_links a.button {
+  background-color: #57D4DA;
+  color: white;
+  border: 0.1em solid #25a0a6;
+  margin-left: .5em;
+  font-weight: bold;
+  float: right;
+}
+
+/* line 450, ../sass/partials/_page.scss */
+#bottom_signup {
+  text-align: center;
+  font-size: 1.4em;
+  padding: 3.75em;
+}
+/* line 455, ../sass/partials/_page.scss */
+#bottom_signup h1 {
+  border-bottom: none;
+}
+/* line 459, ../sass/partials/_page.scss */
+#bottom_signup h1, #bottom_signup h2 {
+  margin: 0;
+  padding: 0;
+}
+/* line 463, ../sass/partials/_page.scss */
+#bottom_signup a.button {
+  background-color: #57D4DA;
+  color: white;
+  border: 0.1em solid #25a0a6;
+  margin: 1em;
+}
+
+/* End home page styles */
+/*/mediaquery*/
+/*/mediaquery*/
+@media print {
+  /* line 10, ../../../../../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
+  * {
+    background: transparent !important;
+    color: black !important;
+    text-shadow: none !important;
+    filter: none !important;
+    -ms-filter: none !important;
+  }
+
+  /* line 12, ../../../../../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
+  a, a:visited {
+    color: #444 !important;
+    text-decoration: underline;
+  }
+
+  /* line 13, ../../../../../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
+  a[href]:after {
+    content: " (" attr(href) ")";
+  }
+
+  /* line 14, ../../../../../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
+  abbr[title]:after {
+    content: " (" attr(title) ")";
+  }
+
+  /* line 15, ../../../../../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
+  .ir a:after, a[href^="javascript:"]:after, a[href^="#"]:after {
+    content: "";
+  }
+
+  /* line 16, ../../../../../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
+  pre, blockquote {
+    border: 1px solid #999;
+    page-break-inside: avoid;
+  }
+
+  /* line 17, ../../../../../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
+  thead {
+    display: table-header-group;
+  }
+
+  /* line 18, ../../../../../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
+  tr, img {
+    page-break-inside: avoid;
+  }
+
+  /* line 19, ../../../../../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
+  img {
+    max-width: 100% !important;
+  }
+
+  @page {
+    margin: 0.5cm;
+}
+
+  /* line 21, ../../../../../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
+  p, h2, h3 {
+    orphans: 3;
+    widows: 3;
+  }
+
+  /* line 22, ../../../../../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
+  h2, h3 {
+    page-break-after: avoid;
+  }
+}
