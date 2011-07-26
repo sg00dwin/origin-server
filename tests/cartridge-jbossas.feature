@@ -6,6 +6,7 @@ Feature: JBossAS Application
      And a new guest account
      When I configure a jbossas application
      Then a jbossas application directory will exist
+     And the jbossas application directory tree will exist
      And the jbossas server and module files will exist
      And the jbossas server configuration files will exist
      And the jbossas standalone scripts will exist

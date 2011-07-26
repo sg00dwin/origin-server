@@ -1,5 +1,6 @@
 $cartridge_root ||= "/usr/libexec/li/cartridges"
-$jbossas_cartridge = "#{$cartridge_root}/jbossas-7.0"
+$jbossas_version = "jbossas-7.0"
+$jbossas_cartridge = "#{$cartridge_root}/$jboss_version}"
 #$jbossas_common_conf_path = "#{$jbossas_cartridge}/info/configuration/etc/conf/httpd_nolog.conf"
 $jbossas_hooks = "#{$jbossas_cartridge}/info/hooks"
 $jbossas_config_path = "#{$jbossas_hooks}/configure"
@@ -78,6 +79,30 @@ Then /^a jbossas application directory will( not)? exist$/ do |negate|
     status.should be_true
   else
     status.should be_false
+  end
+end
+
+Then /^a jbossas application directory will( not)? be populated$/ do |negate|
+  # This directory should contain specfic elements:
+  
+  acct_name = @account['accountname']
+  app_name = @app['name']
+
+  app_root = "#{$home_root}/#{acct_name}/#{app_name}"
+
+  file_list =  ['repo', 'run', 'tmp', 'data', $jboss_version, 
+                "#{$jboss_version}/bin",  
+                "#{$jboss_version}/standalone/configuration"
+               ]
+
+  file_list.each do |file_name| 
+    file_path = app_root + "/" + file_name
+    file_exists = File.exists? file_path
+    if not negate
+      file_exists.should be_true "file #{file_path} does not exist"
+    else
+      file_exists.should be_false "file #{file_path} exists, and should not"
+    end
   end
 end
 
