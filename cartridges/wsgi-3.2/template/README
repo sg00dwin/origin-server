@@ -6,6 +6,7 @@ wsgi/ - Externally exposed wsgi code goes
 libs/ - Additional libraries
 data/ - For not-externally exposed wsgi code
 setup.py - Standard setup.py, specify deps here
+../data - For persistent data
 
 
 Notes about layout

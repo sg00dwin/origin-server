@@ -16,7 +16,8 @@ class Access::FlexRequestController < Access::AccessRequestController
   end
   
   def setup_create_model(params)
-    @access = Access::FlexRequest.new(params[:access_flex_request])
+    af = params[:access_flex_request]
+    @access = Access::FlexRequest.new(af ? af : {})
   end
   
   def access_type
@@ -24,7 +25,7 @@ class Access::FlexRequestController < Access::AccessRequestController
   end
   
   def request_access
-    @user.request_access(access_type, @access.ec2_account_number)
+    @user.request_access(access_type)
   end
 
 end

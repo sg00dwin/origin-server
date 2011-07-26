@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/mysql-5.1
 
 Name: rhc-cartridge-mysql-5.1
-Version: 0.9.0
+Version: 0.9.1
 Release: 1%{?dist}
 Summary: Embedded mysql support for express
 
@@ -46,6 +46,14 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Thu Jul 21 2011 Dan McPherson <dmcphers@redhat.com> 0.9.1-1
+- Adding mysql environment variables (mmcgrath@redhat.com)
+- bump spec numbers (dmcphers@redhat.com)
+- add server identity and namespace auto migrate (dmcphers@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- adding mysql-devel (mmcgrath@redhat.com)
+
 * Mon Jul 18 2011 Dan McPherson <dmcphers@redhat.com> 0.8.4-1
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
   (mmcgrath@redhat.com)

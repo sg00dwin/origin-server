@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.75.0
+Version:   0.75.1
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -195,6 +195,12 @@ chkconfig libra-tc on
 %{_initddir}/libra-site
 
 %changelog
+* Thu Jul 21 2011 Dan McPherson <dmcphers@redhat.com> 0.75.1-1
+- bump spec numbers (dmcphers@redhat.com)
+- fixed cert_password bug (twiest@redhat.com)
+- added a description for -m to make-certs.txt (twiest@redhat.com)
+- Added makecerts (mmcgrath@redhat.com)
+
 * Mon Jul 18 2011 Dan McPherson <dmcphers@redhat.com> 0.74.9-1
 - added months_valid option (-m) to make-certs.sh (twiest@redhat.com)
 - call pam_namespace (mmcgrath@redhat.com)

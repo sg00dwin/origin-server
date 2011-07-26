@@ -5,7 +5,7 @@ Repo layout
 perl/ - Externally exposed perl code goes here
 libs/ - Additional libraries
 misc/ - For not-externally exposed perl code
-../data - For persistent data data
+../data - For persistent data
 deplist.txt - A list of perl modules required to run
 
 

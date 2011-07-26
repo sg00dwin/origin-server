@@ -93,7 +93,7 @@ DEPENDENCIES
   mocha
   parseconfig
   rack
-  rails (= 3.0.5)
+  rails (~> 3.0.5)
   recaptcha
   stomp
   xml-simple

@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.75.0
+Version:   0.75.5
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -76,6 +76,24 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Mon Jul 25 2011 Dan McPherson <dmcphers@redhat.com> 0.75.5-1
+- adding commented out dep to pom.xml (dmcphers@redhat.com)
+
+* Fri Jul 22 2011 Dan McPherson <dmcphers@redhat.com> 0.75.4-1
+- Bug 724026 (dmcphers@redhat.com)
+
+* Thu Jul 21 2011 Dan McPherson <dmcphers@redhat.com> 0.75.3-1
+- perms cleanup (dmcphers@redhat.com)
+
+* Thu Jul 21 2011 Dan McPherson <dmcphers@redhat.com> 0.75.2-1
+- move .config -> .openshift/config (dmcphers@redhat.com)
+
+* Thu Jul 21 2011 Dan McPherson <dmcphers@redhat.com> 0.75.1-1
+- pom improvements (dmcphers@redhat.com)
+- bump spec numbers (dmcphers@redhat.com)
+- add server identity and namespace auto migrate (dmcphers@redhat.com)
+- half the jca workmanager thread counts (scott.stark@jboss.org)
+
 * Mon Jul 18 2011 Dan McPherson <dmcphers@redhat.com> 0.74.8-1
 - change default mysql ds db name (dmcphers@redhat.com)
 - doc update (dmcphers@redhat.com)

@@ -70,7 +70,7 @@ module StreamlineMock
   #
   # Request access to a cloud solution
   #
-  def request_access(solution, amz_acct="")
+  def request_access(solution)
     # Check if this is an integrated environment
     unless Rails.configuration.integrated
       Rails.logger.warn("Non integrated environment - adding role")

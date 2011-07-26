@@ -1,0 +1,41 @@
+@import "compass/css3";
+
+label {
+  margin: .8em 0;
+}
+
+input {
+  display: block;
+  border: 0.1em solid #888;
+  padding: .25em .5em;
+  margin: .25em 0;
+  @include border-radius(.3em);
+  
+  &:focus {
+    border: 0.2em solid #509ef1;
+    padding: .05em .3em;
+  }
+  
+  &.button {
+    color: white;
+    background: #8FDB45;
+    border: 1px solid darken(#8FDB45, 20%);
+    padding: .3em 2em;
+    @include border-radius(2em);
+    @include text-shadow(darken(#8FDB45, 20%) 0 0.1em 0);
+    margin: .5em 0;
+    font-weight: bold;
+  }  
+}
+
+/* Placeholder text */
+::-webkit-input-placeholder {
+  color: #999;
+  font-size: .9em;
+}
+:-moz-placeholder {
+  color: #999;
+  font-size: .9em;
+}
+
+

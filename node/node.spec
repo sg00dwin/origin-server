@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.75.0
+Version:       0.75.1
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -145,6 +145,15 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Thu Jul 21 2011 Dan McPherson <dmcphers@redhat.com> 0.75.1-1
+- Export vars (mmcgrath@redhat.com)
+- fixing .env ownership (mmcgrath@redhat.com)
+- renaming USERNAME to APP_UUID to avoid confusion (mmcgrath@redhat.com)
+- Adding environment infrastructure (mmcgrath@redhat.com)
+- removing email address from persistent data (mmcgrath@redhat.com)
+- bump spec numbers (dmcphers@redhat.com)
+- add server identity and namespace auto migrate (dmcphers@redhat.com)
+
 * Mon Jul 18 2011 Dan McPherson <dmcphers@redhat.com> 0.74.9-1
 - cleanup (dmcphers@redhat.com)
 

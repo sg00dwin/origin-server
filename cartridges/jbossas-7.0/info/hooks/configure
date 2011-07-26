@@ -185,10 +185,14 @@ function create_repo {
     
     pushd $APP_HOME/git/template
     sed -i "s/{APP_NAME}/$application/g" pom.xml
-    mkdir .config
-    cp "$APP_JBOSS"/standalone/configuration/standalone.xml .config/
+    mkdir -p .openshift/config
+    cp "$APP_JBOSS"/standalone/configuration/standalone.xml .openshift/config
+    chmod -R 0644 .openshift/config
+    cat <<__EOF__ > .gitignore
+target
+__EOF__
     git init
-    git add .config *
+    git add .openshift .gitignore *
     git commit -m 'Creating template'
     popd
     pushd $APP_HOME/git
@@ -209,15 +213,15 @@ __EOF__
 rm -rf $APP_DIR/repo/* $APP_DIR/repo/.[^.]*
 git archive --format=tar HEAD | (cd $APP_DIR/repo && tar --warning=no-timestamp -xf -)
 
-if [ -f '$APP_DIR/repo/.config/standalone.xml' ]
+if [ -f '$APP_DIR/repo/.openshift/config/standalone.xml' ]
 then
-  echo "Found .config/standalone.xml... copying to "$APP_JBOSS"/standalone/configuration/"
-  cp $APP_DIR/repo/.config/standalone.xml "$APP_JBOSS"/standalone/configuration/
+  echo "Found .openshift/config/standalone.xml... copying to "$APP_JBOSS"/standalone/configuration/"
+  cp $APP_DIR/repo/.openshift/config/standalone.xml "$APP_JBOSS"/standalone/configuration/
 fi
 
 if [ -f '$APP_DIR/repo/pom.xml' ]
 then
-  echo "Found pom.xml... attempting to build with 'mvn clean package -DskipTests'" 
+  echo "Found pom.xml... attempting to build with 'mvn clean package -Popenshift -DskipTests'" 
   export JAVA_HOME=/etc/alternatives/java_sdk_1.6.0
   export M2_HOME=/etc/alternatives/maven-3.0
   export M2=\$M2_HOME/bin
@@ -225,7 +229,7 @@ then
   export PATH=$JAVA_HOME/bin:\$M2:\$PATH
   pushd ~/${application}/repo > /dev/null
   mvn --version
-  mvn clean package -DskipTests
+  mvn clean package -Popenshift -DskipTests
   popd
 fi
 
@@ -314,7 +318,7 @@ ls -l "$APP_JBOSS"/standalone/configuration
 # Get the standalone.sh script
 cp ${jboss_home}/bin/standalone.sh "$APP_JBOSS_BIN_DIR"
 # Update the standalone.xml for the application IP
-sed -i 's/{ip}/'$IP'/g' "$APP_JBOSS"/standalone/configuration/standalone.xml
+sed -i "s/{ip}/$IP/g" "$APP_JBOSS"/standalone/configuration/standalone.xml
 popd > /dev/null
 
 # Repo
@@ -504,6 +508,7 @@ cat <<EOF > "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}.conf"
   ServerName ${application}-${namespace}.${libra_domain}
   ServerAdmin mmcgrath@redhat.com
   DocumentRoot /var/www/html
+  DefaultType None
 
   ProxyPass / http://$IP:8080/
   ProxyPassReverse / http://$IP:8080/
@@ -512,6 +517,7 @@ cat <<EOF > "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}.conf"
 <VirtualHost *:443>
   ServerName ${application}-${namespace}.${libra_domain}
   ServerAdmin mmcgrath@redhat.com
+  DefaultType None
 
 $(/bin/cat ${JBOSS_CARTRIDGE_ROOT}/info/configuration/node_ssl_template.conf)
 

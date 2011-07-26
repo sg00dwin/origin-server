@@ -147,10 +147,11 @@ function create_repo {
     cat <<EOF > $GIT_DIR/hooks/pre-receive
 # Stop the app
 echo "Stopping application..."
+httpd_pid=\`cat ~/${application}/run/httpd.pid 2> /dev/null\`
 ~/${application}/${application}_ctl.sh stop
 for i in {1..60}
 do
-    if \`pgrep -P \$(cat ~/${application}/run/httpd.pid 2> /dev/null) > /dev/null 2>&1\`
+    if \`ps --pid \$httpd_pid > /dev/null 2>&1\`
     then
         echo "Waiting for stop to finish"
         sleep .5
@@ -385,6 +386,7 @@ cat <<EOF > "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}.conf"
   ServerName ${application}-${namespace}.${libra_domain}
   ServerAdmin mmcgrath@redhat.com
   DocumentRoot /var/www/html
+  DefaultType None
 
   ProxyPass / http://$IP:8080/
   ProxyPassReverse / http://$IP:8080/
@@ -393,6 +395,7 @@ cat <<EOF > "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}.conf"
 <VirtualHost *:443>
   ServerName ${application}-${namespace}.${libra_domain}
   ServerAdmin mmcgrath@redhat.com
+  DefaultType None
 
 $(/bin/cat $CART_INFO_DIR/configuration/node_ssl_template.conf)
 
