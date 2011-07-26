@@ -6,8 +6,7 @@ Feature: JBossAS Application
      And a new guest account
      When I configure a jbossas application
      Then a jbossas application directory will exist
-     And the jbossas application directory tree will exist
-     And the jbossas application directory will be populated
+     And the jbossas application directory tree will be populated
      And the jbossas server and module files will exist
      And the jbossas server configuration files will exist
      And the jbossas standalone scripts will exist
@@ -26,7 +25,6 @@ And the guest account has no application installed
      And a new jbossas application
      When I deconfigure the jbossas application
      
-
    Scenario: Start a JBoss AS Application
      Given an accepted node
      And a new guest account

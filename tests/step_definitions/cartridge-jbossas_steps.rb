@@ -1,6 +1,6 @@
 $cartridge_root ||= "/usr/libexec/li/cartridges"
 $jbossas_version = "jbossas-7.0"
-$jbossas_cartridge = "#{$cartridge_root}/$jboss_version}"
+$jbossas_cartridge = "#{$cartridge_root}/#{$jbossas_version}"
 #$jbossas_common_conf_path = "#{$jbossas_cartridge}/info/configuration/etc/conf/httpd_nolog.conf"
 $jbossas_hooks = "#{$jbossas_cartridge}/info/hooks"
 $jbossas_config_path = "#{$jbossas_hooks}/configure"
@@ -27,7 +27,11 @@ When /^I configure a jbossas application$/ do
     'namespace' => namespace
   }
   command = $jbossas_config_format % [app_name, namespace, account_name]
-  runcon command,  'unconfined_u', 'system_r', 'libra_initrc_t'
+  buffer = []
+  exit_code = runcon command,  'unconfined_u', 'system_r', 'libra_initrc_t', buffer
+  puts buffer[0]
+  puts buffer[1]
+  raise Exception.new "Error running #{command}: Exit code: #{exit_code}" if exit_code != 0
 end
 
 Given /^a new jbossas application$/ do
@@ -76,13 +80,13 @@ Then /^a jbossas application directory will( not)? exist$/ do |negate|
   # TODO - need to check permissions and SELinux labels
 
   if not negate
-    status.should be_true
+    status.should be_true "#{app_root} does not exist or is not a directory"
   else
-    status.should be_false
+    status.should be_false "file #{app_root} exists and is a directory.  it should not"
   end
 end
 
-Then /^the jbossas application directory will( not)? be populated$/ do |negate|
+Then /^the jbossas application directory tree will( not)? be populated$/ do |negate|
   # This directory should contain specfic elements:
   
   acct_name = @account['accountname']
@@ -90,9 +94,9 @@ Then /^the jbossas application directory will( not)? be populated$/ do |negate|
 
   app_root = "#{$home_root}/#{acct_name}/#{app_name}"
 
-  file_list =  ['repo', 'run', 'tmp', 'data', $jboss_version, 
-                "#{$jboss_version}/bin",  
-                "#{$jboss_version}/standalone/configuration"
+  file_list =  ['repo', 'run', 'tmp', 'data', $jbossas_version, 
+                "#{$jbossas_version}/bin",  
+                "#{$jbossas_version}/standalone/configuration"
                ]
 
   file_list.each do |file_name| 
