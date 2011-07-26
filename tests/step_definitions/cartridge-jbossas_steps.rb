@@ -66,3 +66,46 @@ Given /^the jbossas service is (running|stopped)$/ do |status|
   pending # express the regexp above with the code you wish you had
 end
 
+Then /^a jbossas application directory will exist$/ do
+  pending # express the regexp above with the code you wish you had
+end
+
+Then /^the jbossas server and module files will exist$/ do
+  pending # express the regexp above with the code you wish you had
+end
+
+Then /^the jbossas server configuration files will exist$/ do
+  pending # express the regexp above with the code you wish you had
+end
+
+Then /^the jbossas standalone scripts will exist$/ do
+  pending # express the regexp above with the code you wish you had
+end
+
+Then /^a jbossas git repo will exist$/ do
+  pending # express the regexp above with the code you wish you had
+end
+
+Then /^the jbossas git hooks will exist$/ do
+  pending # express the regexp above with the code you wish you had
+end
+
+Then /^a jbossas deployments directory will exist$/ do
+  pending # express the regexp above with the code you wish you had
+end
+
+Then /^a jbossas service startup script will exist$/ do
+  pending # express the regexp above with the code you wish you had
+end
+
+Then /^a jbossas source tree will exist$/ do
+  pending # express the regexp above with the code you wish you had
+end
+
+Then /^a jbossas application http proxy file will exist$/ do
+  pending # express the regexp above with the code you wish you had
+end
+
+Then /^a jbossas daemon will be running$/ do
+  pending # express the regexp above with the code you wish you had
+end
