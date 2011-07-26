@@ -82,7 +82,7 @@ Then /^a jbossas application directory will( not)? exist$/ do |negate|
   end
 end
 
-Then /^a jbossas application directory will( not)? be populated$/ do |negate|
+Then /^the jbossas application directory will( not)? be populated$/ do |negate|
   # This directory should contain specfic elements:
   
   acct_name = @account['accountname']
