@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.75.1
+Version:       0.75.2
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -147,6 +147,11 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Tue Jul 26 2011 Dan McPherson <dmcphers@redhat.com> 0.75.2-1
+- add passenger tmp dir migration (dmcphers@redhat.com)
+- migration work (dmcphers@redhat.com)
+- add base migration for 2.1.2 (dmcphers@redhat.com)
+
 * Thu Jul 21 2011 Dan McPherson <dmcphers@redhat.com> 0.75.1-1
 - Export vars (mmcgrath@redhat.com)
 - fixing .env ownership (mmcgrath@redhat.com)
