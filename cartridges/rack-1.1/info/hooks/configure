@@ -205,6 +205,13 @@ then
   popd > /dev/null
 fi
 
+# Run build
+if [ -x ~/${application}/repo/.openshift/action_hooks/build ]
+then
+    echo "running .openshift/action_hooks/build"
+    ~/${application}/repo/.openshift/action_hooks/build
+fi
+
 # Start the app
 echo "Starting application..."
 ~/${application}/${application}_ctl.sh start
