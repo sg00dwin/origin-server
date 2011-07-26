@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.75.1
+Version:   0.75.2
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -64,6 +64,9 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Mon Jul 25 2011 Dan McPherson <dmcphers@redhat.com> 0.75.2-1
+- remove aws account number from flex request access (dmcphers@redhat.com)
+
 * Thu Jul 21 2011 Dan McPherson <dmcphers@redhat.com> 0.75.1-1
 - bump spec numbers (dmcphers@redhat.com)
 
