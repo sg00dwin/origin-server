@@ -31,7 +31,7 @@ rm -rf git_template
 cp -r template/ git_template/
 cd git_template
 git init
-git add *
+git add -f .
 git commit -m 'Creating template'
 cd ..
 git clone --bare git_template git_template.git
