@@ -66,8 +66,19 @@ Given /^the jbossas service is (running|stopped)$/ do |status|
   pending # express the regexp above with the code you wish you had
 end
 
-Then /^a jbossas application directory will exist$/ do
-  pending # express the regexp above with the code you wish you had
+Then /^a jbossas application directory will( not)? exist$/ do |negate|
+  acct_name = @account['accountname']
+  app_name = @app['name']
+
+  app_root = "#{$home_root}/#{acct_name}/#{app_name}"
+  status = (File.exists? app_root and File.directory? app_root) 
+  # TODO - need to check permissions and SELinux labels
+
+  if not negate
+    status.should be_true
+  else
+    status.should be_false
+  end
 end
 
 Then /^the jbossas server and module files will exist$/ do
