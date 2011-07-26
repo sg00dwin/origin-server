@@ -233,7 +233,7 @@ module Streamline
         else
           log_error "Empty response from streamline - #{res.code}"
           if raise_exception_on_error
-            raise StreamlineException
+            raise Libra::StreamlineException
           else
             errors.add(:base, I18n.t(:unknown))
           end
@@ -244,12 +244,12 @@ module Streamline
         log_error "Invalid HTTP response from streamline - #{res.code}"
         log_error "Response body:\n#{res.body}"
         if raise_exception_on_error
-          raise StreamlineException
+          raise Libra::StreamlineException
         else
           errors.add(:base, I18n.t(:unknown))
         end
       end
-    rescue AccessDeniedException, Libra::UserValidationException, StreamlineException
+    rescue AccessDeniedException, Libra::UserValidationException, Libra::StreamlineException
       raise
     rescue Exception => e
       log_error "Exception occurred while calling streamline - #{e.message}"
