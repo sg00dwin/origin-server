@@ -115,6 +115,7 @@ fi
 %defattr(-,root,root,-)
 %attr(0640,-,-) %{_libexecdir}/mcollective/mcollective/agent/libra.ddl
 %attr(0640,-,-) %{_libexecdir}/mcollective/mcollective/agent/libra.rb
+%attr(0640,-,-) %{_libexecdir}/mcollective/mcollective/agent/migrate-util.rb
 %attr(0640,-,-) %{_libexecdir}/mcollective/mcollective/agent/migrate-0.73.rb
 %attr(0640,-,-) %{_libexecdir}/mcollective/mcollective/agent/migrate-0.74.rb
 %attr(0640,-,-) %{_libexecdir}/mcollective/mcollective/agent/migrate-2.1.2.rb

@@ -1,8 +1,8 @@
 require 'rubygems'
-require 'open4'
 require 'fileutils'
 require 'parseconfig'
 require 'pp'
+require File.dirname(__FILE__) + "/migrate-util"
 
 module LibraMigration
 
@@ -17,6 +17,11 @@ module LibraMigration
     if (File.exists?(app_home) && !File.symlink?(app_home))
       post_receive = "#{app_home}/git/#{app_name}.git/hooks/post-receive"
       ctl_script = "#{app_dir}/#{app_name}_ctl.sh"
+      libra_conf = "#{app_dir}/conf.d/libra.conf"
+      if (app_type == 'rack-1.1')
+        output += Util.replace_in_file(libra_conf, "^PassengerTempDir .*", "")
+        output += Util.replace_in_file(libra_conf, "^PassengerAnalyticsLogDir .*", "")
+      end
     else
       exitcode = 127
       output += "Application not found to migrate: #{app_home}\n"
