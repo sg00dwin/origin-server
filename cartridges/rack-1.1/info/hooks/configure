@@ -206,7 +206,7 @@ then
 fi
 
 # Run build
-if [ -x ~/${application}/repo/.openshift/action_hooks/build ]
+if [ -x ~/${application}/deploy/.openshift/action_hooks/build ]
 then
     echo "running .openshift/action_hooks/build"
     ~/${application}/repo/.openshift/action_hooks/build
@@ -392,7 +392,7 @@ chcon -t libra_var_lib_t -l s0:$c_val -R "$APP_DIR"
 # Create environment variables
 #
 echo "export OPENSHIFT_APP_DIR='$APP_DIR'" > $APP_HOME/.env/OPENSHIFT_APP_DIR
-echo "export OPENSHIFT_REPO_DIR='$APP_DIR/repo/'" > $APP_HOME/.env/OPENSHIFT_REPO_DIR
+echo "export OPENSHIFT_REPO_DIR='$APP_DIR/deploy/'" > $APP_HOME/.env/OPENSHIFT_REPO_DIR
 echo "export OPENSHIFT_INTERNAL_IP='$IP'" > $APP_HOME/.env/OPENSHIFT_INTERNAL_IP
 echo "export OPENSHIFT_INTERNAL_PORT='8080'" > $APP_HOME/.env/OPENSHIFT_INTERNAL_PORT
 echo "export OPENSHIFT_LOG_DIR='$APP_DIR/logs/'" > $APP_HOME/.env/OPENSHIFT_LOG_DIR
