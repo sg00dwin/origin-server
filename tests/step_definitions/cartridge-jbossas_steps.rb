@@ -201,8 +201,22 @@ Then /^the jbossas git hooks will( not)? exist$/ do |negate|
   end
 end
 
-Then /^a jbossas deployments directory will exist$/ do
-  pending # express the regexp above with the code you wish you had
+Then /^a jbossas deployments directory will( not)? exist$/ do |negate|
+  acct_name = @account['accountname']
+  app_name = @app['name']
+
+  app_root = "#{$home_root}/#{acct_name}/#{app_name}"
+  deploy_root = Dir.new "#{app_root}/repo/deployments"
+  
+  deploy_contents = ['ROOT.war', 'ROOT.war.deployed']
+
+  deploy_contents.each do |file_name|
+    unless negate
+      deploy_root.member?(file_name).should be_true "file #{deploy_root.path}/#{file_name} should exist and does not"
+    else
+      deploy_root.member?(file_name).should be_false "file #{deploy_root.path}/#{file_name} should not exist and does"
+    end
+  end
 end
 
 Then /^a jbossas service startup script will( not)? exist$/ do |negate|
@@ -221,8 +235,23 @@ Then /^a jbossas service startup script will( not)? exist$/ do |negate|
   end
 end
 
-Then /^a jbossas source tree will exist$/ do
-  pending # express the regexp above with the code you wish you had
+Then /^a jbossas source tree will( not)? exist$/ do |negate|
+  acct_name = @account['accountname']
+  app_name = @app['name']
+
+  app_root = "#{$home_root}/#{acct_name}/#{app_name}"
+  src_root = Dir.new "#{app_root}/repo"
+  
+  src_contents = ['deployments', 'pom.xml', 'README', 'src', ".gitignore"]
+
+  src_contents.each do |file_name|
+    unless negate
+      src_root.member?(file_name).should be_true "file #{app_root}/repo/#{file_name} should exist and does not"
+    else
+      src_root.member?(file_name).should be_false "file #{app_root}/repo/#{file_name} should not exist and does"
+    end
+  end
+  
 end
 
 Then /^a jbossas application http proxy file will( not)? exist$/ do | negate |

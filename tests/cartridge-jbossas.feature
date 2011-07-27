@@ -12,9 +12,11 @@ Feature: JBossAS Application
      And the jbossas standalone scripts will exist
      And a jbossas git repo will exist
      And the jbossas git hooks will exist
-     #And a jbossas deployments directory will exist
+     And a jbossas source tree will exist
+     And a jbossas deployments directory will exist
+     #And the maven repository will exist
+     #And the openshift environment variable files will exist
      And a jbossas service startup script will exist
-     #And a jbossas source tree will exist
      And a jbossas application http proxy file will exist
      #And a jbossas daemon will be running
      And the jbossas daemon log files will exist
