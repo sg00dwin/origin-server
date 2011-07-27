@@ -1,0 +1,32 @@
+-# Sign up dialog box
+#signup.dialog
+  %header
+    %h1
+      Sign up for OpenShift - it's Easy!
+     
+  %a.sign_in.more{ :href => "#" }
+    Already have an account?
+       
+  %form
+    
+    %label
+      Email
+      %input{ :type => "email", 
+              :placeholder => "Enter your email address", 
+              :autofocus => true }
+    
+    %formset.confirm
+      %legend Password
+      
+      %input{ :type => "password",
+                :placeholder => "at least 8 characters" }
+                
+      %input{ :type => "password",
+                :placeholder => "please confirm" }
+    
+    %input.button{ :type => "submit",
+                   :value => "Sign me up!" }
+  
+  %a.close_button{ :href => "#",
+                   :title => "Close this dialog" }
+    %img{ :src => "images/close_button.png" }

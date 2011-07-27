@@ -1,0 +1,210 @@
+-# file: Express product page
+
+-# 
+  TODO: at some point, we should be using partials for some of this content
+
+- content_for :scripts do
+  = javascript_include_tag "/app/javascripts/jquery.tools.min.js"
+  = javascript_include_tag "/app/javascripts/products"
+
+- content_for :page_title do
+  Express
+
+-# Express title
+- content_for :pageheader do
+  = render 'shared/pageheader', :product => 'express', :title => 'OpenShift Express', :subtitle => 'Free and Easy Cloud Deployments'
+  
+-# About Express
+- content_for :banner do
+  %h2 OpenShift Express
+  %h3 Looking for a fast on-ramp to the Cloud?
+  %p
+    Get Ruby, PHP and Python apps in the cloud with just a few lines of code.
+    
+  - case @try_link_points_to
+  - when 'register'
+    = link_to 'Try it now!', '/app/user/new/express', :class => 'try_it'
+  
+  - when 'queue', 'request'
+    = link_to 'Try it now!', '/app/access/express/request', :class => 'try_it'
+  
+  - when 'getting_started'
+    = link_to 'Get Started!', '/app/getting_started/express', :class => 'try_it'
+
+-# Tabs
+- content_for :tabs do
+  %ul#tab_navigation
+    %li
+      %a.step-one(href="#step_1") Install
+    %li
+      %a.step-two(href="#step_2") Create
+    %li
+      %a.step-three(href="#step_3") Deploy
+  
+  #step_1.tab
+    %h3 Install the OpenShift Express Client Tools
+    
+    .tab_illustration
+      <object width="560" height="349"><param name="movie" value="http://www.youtube-nocookie.com/v/CD1bRBKEa0A?fs=1&amp;hl=en_US"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube-nocookie.com/v/CD1bRBKEa0A?fs=1&amp;hl=en_US" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="560" height="349"></embed></object>
+    
+    %p
+      Download and install the OpenShift Express client tools so you can deploy and manage your application in the cloud.
+    
+    = link_to 'Watch the video >>>', '#', :class => 'watch'
+
+  #step_2.tab
+    %h3 Create and Define your Application
+
+    .tab_illustration
+      = image_tag "http://placekitten.com/g/300/200",
+              :title => "Replace withillustration of some sort", 
+              :alt => "Step two illustration"
+    %p
+      Create a subdomain for your application and clone the Git master repository from the cloud.
+    
+    = link_to 'Watch the video >>>', '#', :class => 'watch'
+
+  #step_3.tab
+    %h3 Deploy to the Cloud
+
+    .tab_illustration
+      = image_tag "http://placekitten.com/g/300/200",
+              :title => "Replace withillustration of some sort", 
+              :alt => "Step three illustration"
+
+    %p
+      Add your application code to the Git repository and push to the cloud. Congratulations, your application is live!
+    
+    = link_to 'Watch the video >>>', '#', :class => 'watch'
+      
+
+-# Video section
+- content_for :videos do
+  .product-video 
+    %h3 OpenShift Express Product Tour
+    %p.video-author.author
+      Mike McGrath,  Cloud Architect - Red Hat
+    
+    .video-thumb.thumb
+      /"http://www.redhat.com/g/video_stills/expressproddemo.png"
+      /"expressproddemo"
+      %a(href="video/expressproddemo" title="expressproddemo") 
+        %img(src="http://placekitten.com/g/150/100"
+             title="OpenShift Express Product Tour"
+             alt="OpenShift Express Product Tour")
+  
+    %p.video-description
+      This video walks you through the high level functionality of OpenShift Express, from installing the client tools, creating a subdomain to deploying your app onto the cloud.
+        
+    /
+      .video-meta.meta
+        %p.video-length
+          3 min, 27 seconds
+        %p.video-postdate
+          Posted May 5, 2011
+<<<<<<< Updated upstream
+=======
+
+  .product-video 
+    %h3 Mobile App Deployment to Express w/ Appcelerator
+    %p.video-author.author
+      Nolan Wright,  CTO and Co-Founder - Appcelerator
+    
+    .video-thumb.thumb
+      %img(src="/app/images/temp_video_thumb.png"
+           title="Stay Tuned! This video is coming soon!"
+           alt="This video is coming soon!")
+  
+    %p.video-description
+      %strong
+        This video is coming soon! Stay Tuned!
+      This video shows you just how easy it is to develop and  deploy a mobile app onto OpenShift Express with Appcelerator's Mobile Cloud Platform
+      
+    /
+      .video-meta.meta
+        %p.video-length
+          3 min, 27 seconds
+        %p.video-date.date
+          Posted May 5, 2011
+>>>>>>> Stashed changes
+        
+  %a.more(href="http://www.redhat.com/openshift/videos") More Videos &gt;
+  
+-# Community section
+- content_for :community do
+  .post
+    %h3 Post title
+    %p
+      Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diamvoluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+    
+    .post-meta.meta
+      %p.post-author.author
+        Posted by Author
+      %p.post-date.date
+        Posted on June 8, 2011 13:21
+        
+    %a.more(href="#") Read more &gt;
+  
+  .post
+    %h3 Post title
+    %p
+      Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diamvoluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+    
+    .post-meta.meta
+      %p.post-author.author
+        Posted by Author
+      %p.post-date.date
+        Posted on June 8, 2011 13:21
+        
+    %a.more(href="#") Read more &gt;
+    
+-# Resource links
+- content_for :resources do
+  %ul
+    %li
+      = link_to 'OpenShift Express Evaluation Guide', '#'
+    
+    %li
+      = link_to 'Deploying Drupal on OpenShift Express', '#'
+    
+    %li
+      = link_to 'Deploying Wordpress on OpenShift Express', '#'
+      
+    %li
+      = link_to 'Deploying MediaWiki on OpenShift Express', '#'
+    
+  
+  = link_to 'More Documentation>', 'http://www.redhat.com/openshift/documents', :class => 'more'
+
+-# Platforms
+- content_for :platforms do
+  %h4 Application Types
+  %ul
+    %li PHP
+    %li Ruby
+    %li Python
+  
+  = link_to 'More information >', '#', :class => 'more' 
+
+-# Supplementary documentation links
+- content_for :doc_links do
+  #doc_link
+    = link_to 'http://www.redhat.com/openshift/kb' do
+      %h3
+        Knowledge Base
+      %p
+        Get schooled! &gt;
+    
+    = link_to 'http://www.redhat.com/openshift/documents' do
+      %h3 Docs
+      %p
+        For those who want to RTFM! &gt;
+        
+
+-# Promos
+- content_for :promos do
+  /
+    .sidebar-promo
+      %h3 Promo title
+      %p
+        This is an example promo.

@@ -1,126 +1,116 @@
 -# file: Main site index
 
--# Add javascripts here - jquery is added automatically
-- content_for :scripts do
-  = javascript_include_tag "/app/javascripts/jquery.slideshow.minified.js"
-  = javascript_include_tag "/app/javascripts/home.src.js"
+%section#opener 
+  .content
+    %header
+      %hgroup
+        %h1
+          Fast, Free and Open
+        %h2
+          Auto-Scaling for Java, PHP, Ruby, Python, and Perl apps in the cloud
+    
+    %a.button.sign_up{ :href => "#" }
+      Sign up and try it
+    
+    = image_tag '/app/images/flying-panda-ftw2.png',
+      :alt => "Panda pilot, soaring through the clouds!"
+
+%section#exposition.main
+  %header
+    %h1
+      What is OpenShift?
   
-.simpleSlideShow.slideShow.container_24
-  #slides.grid_24
-    %ul
-
-      /Promo banners
-      %li.slide
-        = link_to 'http://makara.nurturehq.com/makara/newsletter_signup.html', :target => '_blank' do
-          = image_tag "/app/images/promo_banner_newsletter.png",
-            :alt => 'Sign up for the official OpenShift newsletter!'
+  .content
+    #fast
+      %header
+        %h2
+          OpenShift is Fast
       
-      %li.slide
-        = link_to 'http://twitter.com/#!/openshift', :target => '_blank' do
-          = image_tag "/app/images/promo_banner_twitter.png",
-            :alt => 'Don\'t get left behind, follow us on twitter @openshift'
+      = image_tag '/app/images/fast_icon.png'
       
-      %li.slide
-        = link_to 'http://www.oscon.com/oscon2011/public/content/java', :target => '_blank' do
-          = image_tag "/app/images/promo_banner_oscon.png", :alt => 'Choose your framework. Choose your cloud. We\'re at OSCON Java - July 25-29'
-      
-      %li.slide
-        = link_to 'http://www.couchbase.com/couchconf', :target => '_blank' do
-          = image_tag "/app/images/promo_banner_couchconf.png", :alt => 'Our Paas is taking a seat at CouchConf. San Fransisco, July 29'
-
-    /Slide show navigation
-    %ul.navigation
-      %li
-        %a.page(href='#') 1
-      %li
-        %a.page(href='#') 2
-      %li
-        %a.page(href='#') 3
-      %li
-        %a.page(href='#') 4
-
-  .clear
-
-#page.container_24
-  /High-level information
-  #info.container_24
-
-    /Deploy in Minutes
-    #deploy_in_minutes.grid_7.prefix_1
-      %h3 Deploy in Minutes
       %p
-        Upload code and go! Whether you prefer a CLI or browser-based UI, OpenShift provides the fastest and easiest on-ramp to the cloud.
+        Looking for the fastest on-ramp to the cloud? OpenShift gets your new and existing apps in the cloud in minutes.
+      
+      -#
+        %a.more{ :href => "#" }
+          Learn more about languages and frameworks
     
-    /Focus on your App
-    #focus_on_your_app.grid_8
-      %h3 Focus on your App, <br/> not the Stack
+    #free
+      %header
+        %h2
+          OpenShift is Free
+      
+      = image_tag '/app/images/free_icon.png'
+    
       %p
-        OpenShift supports and manages multiple frameworks, languages, middleware and clouds so you don't have to.
+        What are you waiting for? Deploying, managing, monitoring and auto-scaling applications on OpenShift is free.
     
-    /Auto-scale
-    #auto_scale.grid_7
-      %h3 Auto-scale
+    #open
+      %header
+        %h2
+          OpenShift is Open
+      
+      = image_tag '/app/images/open_icon.png'
+
       %p
-        Take advantage of the elasticity of the cloud, regardless if your app was designed for it or not.
+        Worried about lock-in? OpenShift lets you choose your language, framework, middleware and cloud.
+      
+      -#
+        %a.more{ :href => "#" }
+          Learn more about frameworks and middleware
 
-    .clear
+%section#social.main
+  %header
+    %h1
+      Buzz
+  
+  .content
+    #latest
+      %img.avatar{ :src => "images/avatars/openshift.png" }
+      
+      %p.tweet
+        <a class="tweeter" href="http://twitter.com/#!/openshift">@OpenShift</a> Behind the scenes goodness on what it takes to run the OpenShift <a class="hashtag" href="http://twitter.com/#!/search?q=#PaaS">#PaaS</a> and the tech that makes it possible - Check it: <a href="http://red.ht/m6xc3y">red.ht/m6xc3y</a>
     
-    = image_tag "/app/images/PaaS.png", 
-      :id => 'front_image',
-      :alt => 'OpenShift takes care of management, scaling, security and configuration, so that developers can focus on, well, development.'
-    
-    .clear
+    #retweets
+      %ul
+        %li
+          %img.avatar{ :src => "images/avatars/hbons.png" }
+          
+          %p.tweet
+            <a class="tweeter" href="http://twitter.com/#!/hbons">@hbons</a> working on the <a class="hashtag" href="http://twitter.com/#!/search?q=#openshift">#openshift</a> website. coming along.
+        
+        %li
+          %img.avatar{ :src => "images/avatars/emichan.png" }
+          
+          %p.tweet
+            <a class="tweeter" href="http://twitter.com/#!/emichan">@emichan</a> i love pandas so much. <a class="hashtag" href="http://twitter.com/#!/search?q=#openshift">#openshift</a> is great for panda lovers like me!
+        
+        %li
+          %img.avatar{ :src => "images/avatars/jimmac.png" }
+          
+          %p.tweet
+            <a class="tweeter" href="http://twitter.com/#!/jimmac">@jimmac</a> RT <a class="tweeter" href="http://twitter.com/#!openshiftevents">@OpenShiftEvents</a> Matt Hicks speaking on what it takes to operate the OpenShift <a class="hashtag" href="http://twitter.com/#!/search?q=#PaaS">#PaaS</a> at next months Silicon Valley <a class="hashtag" href="http://twitter.com/#!/search?q=#CloudComputing">#CloudComputing</a> Meetup
+        
+        %li
+          %img.avatar{ :src => "images/avatars/random.png" }
+          
+          %p.tweet
+            <a class="tweeter" href="http://twitter.com/#!/random">@random</a> trying out <a class="hashtag" href="http://twitter.com/#!/search?q=#openshift">#openshift</a> - so far so good!
 
-  /App promo boxes
-  #app_promos.container_24
-
-    /Express box
-    .express.promo.grid_8
-      %h3 Express
-      = link_to express_path do
-        = image_tag '/app/images/gearshift_express_dev_preview.png',
-          :alt => 'Simple, automatic gearshift'
+    #social_links
+      %a.more{ :href => "http://twitter.com/#!/search/openshift" }
+        More #openshift buzz
       
-      .description.express
-        %ul
-          %li Free and easy cloud deployments
-          %li PHP, Python, Ruby, Perl
-          %li Git push  and leave the rest to us!
-          %li 
-            = link_to 'Learn more >', express_path, :class => 'list_link'
+      %a.button{ :href => "http://twitter.com/#!/openshift" }
+        Follow @OpenShift
 
-    /Flex box
-    .flex.promo.grid_8
-      %h3 Flex
-      = link_to flex_path do
-        = image_tag '/app/images/gearshift_flex_dev_preview.png',
-          :alt => 'Automatic gearshift with a few more options'
-      
-      .description.flex
-        %ul
-          %li Auto-scale new and existing apps in the cloud
-          %li PHP, Java EE, MySQL, MongoDB, Memcache, DFS
-          %li Full control over configuration & Built-in monitoring
-          %li
-            = link_to 'Learn more >', flex_path, :class => 'list_link'
-            
-
-    /Power box
-    .power.promo.grid_8
-      %h3 Power
-      = link_to power_path do
-        = image_tag '/app/images/gearshift_power_coming_soon.png',
-          :alt => 'Powerful, dual stick gearshift with lots of options'
-      
-      .description.power
-        %ul
-          %li Complete control over cloud deployments
-          %li Custom topologies, root access, multi-tier dependencies
-          %li Turn any application into a cloud deployment template
-          %li 
-            = link_to 'Learn more >', power_path, :class => 'list_link'
-
-    .clear
-
-  .clear
-/End app promo boxes
+%section#bottom_signup.main
+  %header
+    %hgroup
+      %h1
+        Curious?
+      %h2
+        Try OpenShift now for free!
+  
+  .content
+    = link_to 'Sign up and try it', login_path, :class => 'sign_up button'
