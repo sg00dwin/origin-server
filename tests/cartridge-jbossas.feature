@@ -18,7 +18,6 @@ Feature: JBossAS Application
      And a jbossas application http proxy file will exist
      And a jbossas daemon will be running
 
-And the guest account has no application installed
    Scenario: Delete one JBoss AS Application
      Given an accepted node
      And a new guest account
@@ -32,14 +31,12 @@ And the guest account has no application installed
      And the jbossas service is stopped
      When I start the jbossas service
 
-
    Scenario: Stop a JBoss AS Application
      Given an accepted node
      And a new guest account
      And a new jbossas application
      And the jbossas service is running
      When I stop the jbossas service
-
 
    Scenario: Restart a JBoss AS Application
      Given an accepted node

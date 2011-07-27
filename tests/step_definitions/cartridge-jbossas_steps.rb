@@ -88,7 +88,6 @@ end
 
 Then /^the jbossas application directory tree will( not)? be populated$/ do |negate|
   # This directory should contain specfic elements:
-  
   acct_name = @account['accountname']
   app_name = @app['name']
 
@@ -102,7 +101,7 @@ Then /^the jbossas application directory tree will( not)? be populated$/ do |neg
   file_list.each do |file_name| 
     file_path = app_root + "/" + file_name
     file_exists = File.exists? file_path
-    if not negate
+    unless negate
       file_exists.should be_true "file #{file_path} does not exist"
     else
       file_exists.should be_false "file #{file_path} exists, and should not"
@@ -110,31 +109,117 @@ Then /^the jbossas application directory tree will( not)? be populated$/ do |neg
   end
 end
 
-Then /^the jbossas server and module files will exist$/ do
-  pending # express the regexp above with the code you wish you had
+Then /^the jbossas server and module files will( not)? exist$/ do |negate|
+  acct_name = @account['accountname']
+  app_name = @app['name']
+
+  app_root = "#{$home_root}/#{acct_name}/#{app_name}"
+  jboss_root = app_root + "/" + $jbossas_version
+
+  file_list = [ "#{jboss_root}/jboss-modules.jar", "#{jboss_root}/modules" ]
+
+  file_list.each do |file_name|
+    file_exists = File.exists? file_name
+    unless negate
+      file_exists.should be_true "file #{file_name} should exist and does not"
+      file_link = File.symlink? file_name
+      file_link.should be_true "file #{file_name} should be a symlink and is not"
+    else
+      file_exists.should be_false "file #{file_name} should not exist and does"
+    end
+  end
 end
 
-Then /^the jbossas server configuration files will exist$/ do
-  pending # express the regexp above with the code you wish you had
+Then /^the jbossas server configuration files will( not)? exist$/ do |negate|
+  acct_name = @account['accountname']
+  app_name = @app['name']
+
+  app_root = "#{$home_root}/#{acct_name}/#{app_name}"
+  jboss_root = app_root + "/" + $jbossas_version
+  jboss_conf_dir = jboss_root + "/standalone/configuration"
+  file_list = ["#{jboss_conf_dir}/standalone.xml", 
+               "#{jboss_conf_dir}/logging.properties"
+             ]
+
+  file_list.each do |file_name|
+    file_exists = File.exists? file_name
+    unless negate
+      file_exists.should be_true "file #{file_name} should exist and does not"
+    else
+      file_exists.should be_false "file #{file_name} should not exist and does"
+    end
+  end
 end
 
-Then /^the jbossas standalone scripts will exist$/ do
-  pending # express the regexp above with the code you wish you had
+Then /^the jbossas standalone scripts will( not)? exist$/ do |negate|
+  acct_name = @account['accountname']
+  app_name = @app['name']
+
+  app_root = "#{$home_root}/#{acct_name}/#{app_name}"
+  jboss_root = app_root + "/" + $jbossas_version
+  jboss_bin_dir = jboss_root + "/bin"
+  file_name = "#{jboss_bin_dir}/standalone.sh"
+  file_exists = File.exists? file_name
+  unless negate
+    file_exists.should be_true "file #{file_name} should exist and does not"
+  else
+    file_exists.should be_false "file #{file_name} should not exist and does"
+  end
 end
 
-Then /^a jbossas git repo will exist$/ do
-  pending # express the regexp above with the code you wish you had
+Then /^a jbossas git repo will( not)? exist$/ do |negate|
+  acct_name = @account['accountname']
+  app_name = @app['name']
+
+  git_root = "#{$home_root}/#{acct_name}/git/#{app_name}.git"
+  file_exists = File.exists? git_root
+  unless negate
+    file_exists.should be_true "directory #{git_root} should exist and does not"
+  else
+    file_exists.should be_false "directory #{git_root} should not exist and does"
+  end
 end
 
-Then /^the jbossas git hooks will exist$/ do
-  pending # express the regexp above with the code you wish you had
+Then /^the jbossas git hooks will( not)? exist$/ do |negate|
+  acct_name = @account['accountname']
+  app_name = @app['name']
+
+  git_root = "#{$home_root}/#{acct_name}/git/#{app_name}.git"
+  git_hook_dir = git_root + "/" + "hooks"
+  hook_list = ["pre-receive", "post-receive"]
+
+  hook_list.each do |file_name|
+    file_path = "#{git_hook_dir}/#{file_name}"
+    file_exists = File.exists? file_path
+    unless negate
+      file_exists.should be_true "file #{file_path} should exist and does not"
+      file_exec = File.executable? file_path
+      file_exec.should be_true "file #{file_path} should be executable and is not"
+    else
+      file_exists.should be_false "file #{file_path} should not exist and does"
+    end
+  end
 end
 
 Then /^a jbossas deployments directory will exist$/ do
   pending # express the regexp above with the code you wish you had
 end
 
-Then /^a jbossas service startup script will exist$/ do
+Then /^a jbossas service startup script will( not)? exist$/ do |negate|
+  acct_name = @account['accountname']
+  app_name = @app['name']
+
+  app_root = "#{$home_root}/#{acct_name}/#{app_name}"
+  app_ctrl_script = "#{app_root}/${app_name}_ctl.sh"
+
+  file_exists = File.exists? app_ctrl_script
+  unless negate
+    file_exists.should be_true "file #{app_ctrl_script} should exist and does not"
+    File.executable?(app_ctrl_script).should be_true "file #{app_ctrl_script} should be executable and is not"
+  else
+    file_exists.should be_false "file #{file_name} should not exist and does"
+  end
+
   pending # express the regexp above with the code you wish you had
 end
 
@@ -142,8 +227,19 @@ Then /^a jbossas source tree will exist$/ do
   pending # express the regexp above with the code you wish you had
 end
 
-Then /^a jbossas application http proxy file will exist$/ do
-  pending # express the regexp above with the code you wish you had
+Then /^a jbossas application http proxy file will( not)? exist$/ do | negate |
+  acct_name = @account['accountname']
+  app_name = @app['name']
+  namespace = @app['namespace']
+
+  conf_file_name = "#{acct_name}_#{namespace}_#{app_name}.conf"
+  conf_file_path = "#{$libra_httpd_conf_d}/#{conf_file_name}"
+
+  unless negate
+    File.exists?(conf_file_path).should be_true
+  else
+    File.exists?(conf_file_path).should be_false
+  end
 end
 
 Then /^a jbossas daemon will be running$/ do
