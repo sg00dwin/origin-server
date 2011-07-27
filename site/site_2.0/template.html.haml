@@ -1,0 +1,242 @@
+!!! 5
+-# paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/
+<!--[if lt IE 7]> <html lang="en" class="no-js ie6"> <![endif]-->
+<!--[if IE 7]>    <html lang="en" class="no-js ie7"> <![endif]-->
+<!--[if IE 8]>    <html lang="en" class="no-js ie8"> <![endif]-->
+<!--[if gt IE 8]><!-->
+%html.no-js{ :lang => "en" }
+  <!--<![endif]-->
+  %head
+    %meta{ :charset => "utf-8" }/
+    
+    -# Always force latest IE rendering engine (even in intranet) & Chrome Frame
+    -# Remove this if you use the .htaccess
+    %meta{ "http-equiv" => "X-UA-Compatible", :content => "IE=edge,chrome=1" }/
+    
+    %title
+    %meta{ :name => "description", :content => "" }/
+    %meta{ :name => "author", :content => "" }/
+    
+    -# Mobile viewport optimized: j.mp/bplateviewport
+    %meta{ :name => "viewport", :content => "width=device-width, initial-scale=1.0" }/
+    
+    -# Place favicon.ico and apple-touch-icon.png in the root directory: mathiasbynens.be/notes/touch-icons
+    
+    -# CSS: implied media="all"
+    %link{ :href => "css/style.css?v=1", :media => "all", :rel => "stylesheet" }/
+    
+    -# All JavaScript at the bottom, except for Modernizr and Respond.
+    -# Modernizr enables HTML5 elements & feature detects; Respond is a polyfill for min/max-width CSS3 Media Queries
+    %script{ :src => "js/modernizr.min.js" }
+    %script{ :src => "js/respond.min.js" }
+    
+  %body
+    %header.universal
+      
+      %hgroup.title
+        %h1
+          OpenShift
+        %h2
+          PaaS by Red Hat Cloud
+      
+      .content
+        %a{ :href => "#" }
+          %img#logo{ :src => "images/openshift-logo-white.png", 
+                     :alt => 'OpenShift Logo' }
+          
+        %aside#announcements
+          %header
+            %h1
+              OpenShift Announcements
+              
+          %ul
+            %li
+              %a.event{ :href => "#" }
+                .title
+                  Our PaaS is taking a seat at CouchConf
+                .further
+                  San Francisco | July 29
+            
+            %li
+              %a.announce{ :href => "#" }
+                .title
+                  OpenShift has New Features
+                .further
+                  Perl support, more applications per user, and more...
+
+      %nav
+        %header
+          %h1
+            Main Navigation
+        .content
+          %ul
+            %li
+              %a.home{ :href => "#" }
+                Home
+            %li
+              %a.services{ :href => "#" }
+                Cloud Services
+            %li
+              %a.community{ :href => "#" }
+                Community
+            %li.user
+              %a.sign_in{ :href => "#" }
+                Sign In
+    
+    -# Begin page-specific content 
+
+    -# End page-specific content
+    
+    %footer.universal
+      %nav
+        %header
+          %h1
+            Secondary Navigation
+        
+        .content
+          %ul
+            %li
+              %header
+                %h2
+                  News
+                
+              %ul
+                %li
+                  %a{ :href => '#' }
+                    Blog
+                %li
+                  %a{ :href => '#' }
+                    Twitter
+                %li
+                  %a{ :href => '#' }
+                    Facebook
+              
+            %li
+              %header
+                %h2
+                  Community
+              
+              %ul
+                %li
+                  %a{ :href => '#' }
+                    Forum
+                %li
+                  %a{ :href => '#' }
+                    Partner Program
+                %li
+                  %a{ :href => '#' }
+                    IRC Channel
+                %li
+                  %a{ :href => '#' }
+                    Feedback
+              
+            %li
+              %header
+                %h2
+                  Legalese
+              
+              %ul
+                %li
+                  %a{ :href => '#' }
+                    Privacy Policy
+                %li
+                  %a{ :href => '#' }
+                    Terms of use
+                %li
+                  %a{ :href => '#' }
+                    Security
+              
+            %li
+              %header
+                %h2
+                  Help
+                
+              %ul
+                %li
+                  %a{ :href => '#' }
+                    FAQ
+                %li
+                  %a{ :href => '#' }
+                    Contact
+  
+      %section#copyright
+        %header
+          %h1
+            Copyright
+        
+        .content
+          %p
+            Copyright &copy; 2011 Red Hat, Inc.
+          
+          %img.redhat{ :src => "images/redhat.png" }
+        
+      
+    -# 
+      Javascript at the bottom for fast page loading
+    %script{ :src => "js/jquery.min.js" }    
+    %script{ :src => "js/plugins.js?v=1" }
+    %script{ :src => "js/script.js?v=1" }
+
+  -# Sign up section
+  #signup.dialog
+    %header
+      %h1
+        Sign up for OpenShift - it's Easy!
+       
+    %a.sign_in.more{ :href => "#" }
+      Already have an account?
+         
+    %form
+      
+      %label
+        Email
+        %input{ :type => "email", 
+                :placeholder => "Enter your email address", 
+                :autofocus => true }
+      
+      %formset.confirm
+        %legend Password
+        
+        %input{ :type => "password",
+                  :placeholder => "at least 8 characters" }
+                  
+        %input{ :type => "password",
+                  :placeholder => "please confirm" }
+      
+      %input.button{ :type => "submit",
+                     :value => "Sign me up!" }
+    
+    %a.close_button{ :href => "#",
+                     :title => "Close this dialog" }
+      %img{ :src => "images/close_button.png" }
+  
+  -# Sign in section
+  #signin.dialog
+    %header
+      %h1
+        Sign in to OpenShift
+    
+    %a.sign_up.more{ :href => "#" }
+      Need an OpenShift account?
+    
+    %form
+      %label
+        Email
+        %input{ :type => "email",
+                :placeholder => "Enter your email address",
+                :autofocus => "true" }
+      
+      %label
+        Password
+        %input{ :type => "password",
+                :placeholder => "Enter your password" }
+      
+      %input.button{ :type => "submit",
+                     :value => "Sign in to OpenShift" }
+    
+    
+    
+    %a.close_button{ :href => "#",
+                     :title => "Close this dialog" }
+      %img{ :src => "images/close_button.png" }
+  

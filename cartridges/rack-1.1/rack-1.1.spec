@@ -2,7 +2,7 @@
 
 Summary:   Provides ruby rack support running on Phusion Passenger
 Name:      rhc-cartridge-rack-1.1
-Version:   0.75.4
+Version:   0.75.7
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -47,7 +47,7 @@ rm -rf git_template
 cp -r template/ git_template/
 cd git_template
 git init
-git add *
+git add -f .
 git commit -m 'Creating template'
 cd ..
 git clone --bare git_template git_template.git
@@ -88,6 +88,22 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Tue Jul 26 2011 Dan McPherson <dmcphers@redhat.com> 0.75.7-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- Correcting rack repo dir to deploy (mmcgrath@redhat.com)
+
+* Tue Jul 26 2011 Dan McPherson <dmcphers@redhat.com> 0.75.6-1
+- Adding .openshift to the git template directory (mmcgrath@redhat.com)
+- Adding README (mmcgrath@redhat.com)
+- added build scripts to jboss, perl, rack and wsgi (mmcgrath@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- import environment variables as part of the git hooks (mmcgrath@redhat.com)
+
+* Tue Jul 26 2011 Dan McPherson <dmcphers@redhat.com> 0.75.5-1
+- Adding environment variables to rack (mmcgrath@redhat.com)
+
 * Fri Jul 22 2011 Dan McPherson <dmcphers@redhat.com> 0.75.4-1
 - Bug 723784 (dmcphers@redhat.com)
 

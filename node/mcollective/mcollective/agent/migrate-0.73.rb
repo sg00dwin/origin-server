@@ -1,8 +1,8 @@
 require 'rubygems'
-require 'open4'
 require 'fileutils'
 require 'parseconfig'
 require 'pp'
+require File.dirname(__FILE__) + "/migrate-util"
 
 module LibraMigration
 
@@ -43,30 +43,30 @@ module LibraMigration
         end
       end
       ctl_script = "#{new_app_dir}/#{app_name}_ctl.sh"
-      output += replace_in_file(ctl_script, '//', '/')
-      output += replace_in_file(ctl_script, old_app_dir, new_app_dir)            
-      output += replace_in_file(ctl_script, old_cartridge_dir, new_cartridge_dir)
+      output += Util.replace_in_file(ctl_script, '//', '/')
+      output += Util.replace_in_file(ctl_script, old_app_dir, new_app_dir)            
+      output += Util.replace_in_file(ctl_script, old_cartridge_dir, new_cartridge_dir)
       libra_conf = "#{new_app_dir}/conf.d/libra.conf"
-      output += replace_in_file(libra_conf, '//', '/')
-      output += replace_in_file(libra_conf, old_app_dir, new_app_dir)
+      output += Util.replace_in_file(libra_conf, '//', '/')
+      output += Util.replace_in_file(libra_conf, old_app_dir, new_app_dir)
       post_receive = "#{app_home}/git/#{app_name}.git/hooks/post-receive"
-      output += replace_in_file(post_receive, '//', '/')
-      output += replace_in_file(post_receive, old_app_dir, new_app_dir)
+      output += Util.replace_in_file(post_receive, '//', '/')
+      output += Util.replace_in_file(post_receive, old_app_dir, new_app_dir)
       # add no-timestamp to tar command
-      output += replace_in_file(post_receive, 'tar xf -', 'tar --warning=no-timestamp -xf -')
+      output += Util.replace_in_file(post_receive, 'tar xf -', 'tar --warning=no-timestamp -xf -')
       if framework == 'php'
         # can't replace // blindly because of http://
-        output += replace_in_file("#{new_app_dir}/conf/php.ini", old_app_dir, new_app_dir)
+        output += Util.replace_in_file("#{new_app_dir}/conf/php.ini", old_app_dir, new_app_dir)
       end
       
       # {application}_ctl.sh runcon changes
-      grep_output, grep_exitcode = execute_script("grep 'runcon' #{ctl_script} 2>&1")
+      grep_output, grep_exitcode = Util.execute_script("grep 'runcon' #{ctl_script} 2>&1")
       runcon_str = grep_output[grep_output.index('runcon')..grep_output.index('/usr/sbin/httpd')-1]
-      output += replace_in_file(ctl_script, runcon_str, '', '/')
+      output += Util.replace_in_file(ctl_script, runcon_str, '', '/')
   
       # add ssl support
       httpd_conf = "/etc/httpd/conf.d/libra/#{uuid}_#{namespace}_#{app_name}.conf"
-      grep_output, grep_exitcode = execute_script("grep 'ProxyPass / http://' #{httpd_conf} 2>&1")
+      grep_output, grep_exitcode = Util.execute_script("grep 'ProxyPass / http://' #{httpd_conf} 2>&1")
       ip = grep_output[grep_output.index('http://') + 'http://'.length..-1]
       ip = ip[0..ip.index(':')-1]
       
@@ -104,27 +104,4 @@ EOF
     return output, exitcode
   end
 
-  def self.replace_in_file(file, old_value, new_value, sep=',')
-    output, exitcode = execute_script("sed -i \"s#{sep}#{old_value}#{sep}#{new_value}#{sep}g\" #{file} 2>&1")
-    #TODO handle exitcode
-    return "Updated '#{file}' changed '#{old_value}' to '#{new_value}'.  output: #{output}  exitcode: #{exitcode}\n"
-  end
-  
-  def self.execute_script(cmd)
-    pid, stdin, stdout, stderr = Open4::popen4(cmd)
-    stdin.close
-    ignored, status = Process::waitpid2 pid
-    exitcode = status.exitstatus
-    output = ''
-    begin
-      Timeout::timeout(5) do
-        while (line = stdout.gets)
-          output << line
-        end
-      end
-    rescue Timeout::Error
-      Log.instance.debug("execute_script WARNING - stdout read timed out")
-    end
-    return output, exitcode
-  end
 end

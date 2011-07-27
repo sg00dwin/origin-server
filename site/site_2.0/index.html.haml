@@ -70,7 +70,7 @@
             Main Navigation
         .content
           %ul
-            %li
+            %li.active
               %a.home{ :href => "#" }
                 Home
             %li
@@ -79,7 +79,7 @@
             %li
               %a.community{ :href => "#" }
                 Community
-            %li
+            %li.user
               %a.sign_in{ :href => "#" }
                 Sign In
     
@@ -97,7 +97,7 @@
         %a.button.sign_up{ :href => "#" }
           Sign up and try it
         
-        %img{ :src => "images/flying-panda-ftw.png",
+        %img{ :src => "images/flying-panda-ftw2.png",
             :alt => "Panda pilot, soaring through the clouds!" }
 
     %section#exposition.main
@@ -299,27 +299,29 @@
     %header
       %h1
         Sign up for OpenShift - it's Easy!
-        
+       
+    %a.sign_in.more{ :href => "#" }
+      Already have an account?
+         
     %form
+      
       %label
         Email
         %input{ :type => "email", 
                 :placeholder => "Enter your email address", 
                 :autofocus => true }
       
-      %label
-        Password
+      %formset.confirm
+        %legend Password
+        
         %input{ :type => "password",
-                :placeholder => "Enter a password" }
-      
-      %label
-        Confirm
+                  :placeholder => "at least 8 characters" }
+                  
         %input{ :type => "password",
-                :placeholder => "Enter your password again" }
+                  :placeholder => "please confirm" }
       
       %input.button{ :type => "submit",
                      :value => "Sign me up!" }
-                     
     
     %a.close_button{ :href => "#",
                      :title => "Close this dialog" }
@@ -330,6 +332,9 @@
     %header
       %h1
         Sign in to OpenShift
+    
+    %a.sign_up.more{ :href => "#" }
+      Need an OpenShift account?
     
     %form
       %label
@@ -346,8 +351,9 @@
       %input.button{ :type => "submit",
                      :value => "Sign in to OpenShift" }
     
+    
+    
     %a.close_button{ :href => "#",
                      :title => "Close this dialog" }
       %img{ :src => "images/close_button.png" }
-      
-      
+  

@@ -7,6 +7,8 @@ libs/ - Additional libraries
 misc/ - For not-externally exposed perl code
 ../data - For persistent data
 deplist.txt - A list of perl modules required to run
+.openshift/action_hooks/build - Script that gets run every push, just prior to
+    starting your app
 
 
 Notes about layout

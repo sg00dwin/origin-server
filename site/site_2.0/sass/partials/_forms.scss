@@ -1,19 +1,21 @@
 @import "compass/css3";
 
 label {
-  margin: .8em 0;
+  margin: 1.2em 0;
+  display: block;
+  @include clearfix;
 }
 
 input {
   display: block;
   border: 0.1em solid #888;
   padding: .25em .5em;
-  margin: .25em 0;
-  @include border-radius(.3em);
+  margin: .25em;
+  @include border-radius(.4em);
   
   &:focus {
     border: 0.2em solid #509ef1;
-    padding: .05em .3em;
+    margin: .15em;
   }
   
   &.button {
@@ -28,14 +30,63 @@ input {
   }  
 }
 
+select {
+  display: block;
+}
+
+formset.confirm {
+  @include clearfix;
+  display: block;
+  border: none;
+  
+  input{
+    float: left;
+  }
+}
+
+input.correct {
+  border: 2px solid #8FDB45;
+  margin: .15em;
+  background: white url('../images/check.png') no-repeat right center;
+}
+
+input.error {
+  border: 2px solid red;
+  margin: .15em;
+  background: white url('../images/eks.png') no-repeat right center;
+}
+
+input[type=radio], input[type=checkbox] {
+  float: left;
+  margin: .1em .5em 0;
+}
+
+
+/* Customize radios for those that can */
+/*
+#foo:checked::before,
+input[type="radio"] {
+  position: absolute;
+  clip: rect(0,0,0,0);
+  clip: rect(0 0 0 0);
+}
+
+#foo:checked,
+input[type="radio"]::before {
+  content: url('../images/radio.png');
+}
+
+input[type="radio"]:checked::before {
+  content: url('../images/radio-checked.png');
+}
+*/
+
 /* Placeholder text */
 ::-webkit-input-placeholder {
   color: #999;
-  font-size: .9em;
 }
 :-moz-placeholder {
   color: #999;
-  font-size: .9em;
 }
 
 

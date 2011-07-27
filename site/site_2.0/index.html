@@ -68,7 +68,7 @@
         </header>
         <div class='content'>
           <ul>
-            <li>
+            <li class='active'>
               <a class='home' href='#'>
                 Home
               </a>
@@ -83,7 +83,7 @@
                 Community
               </a>
             </li>
-            <li>
+            <li class='user'>
               <a class='sign_in' href='#'>
                 Sign In
               </a>
@@ -107,7 +107,7 @@
         <a class='button sign_up' href='#'>
           Sign up and try it
         </a>
-        <img alt='Panda pilot, soaring through the clouds!' src='images/flying-panda-ftw.png' />
+        <img alt='Panda pilot, soaring through the clouds!' src='images/flying-panda-ftw2.png' />
       </div>
     </section>
     <section class='main' id='exposition'>
@@ -361,19 +361,19 @@
         Sign up for OpenShift - it's Easy!
       </h1>
     </header>
+    <a class='sign_in more' href='#'>
+      Already have an account?
+    </a>
     <form>
       <label>
         Email
         <input autofocus='autofocus' placeholder='Enter your email address' type='email' />
       </label>
-      <label>
-        Password
-        <input placeholder='Enter a password' type='password' />
-      </label>
-      <label>
-        Confirm
-        <input placeholder='Enter your password again' type='password' />
-      </label>
+      <formset class='confirm'>
+        <legend>Password</legend>
+        <input placeholder='at least 8 characters' type='password' />
+        <input placeholder='please confirm' type='password' />
+      </formset>
       <input class='button' type='submit' value='Sign me up!' />
     </form>
     <a class='close_button' href='#' title='Close this dialog'>
@@ -386,6 +386,9 @@
         Sign in to OpenShift
       </h1>
     </header>
+    <a class='sign_up more' href='#'>
+      Need an OpenShift account?
+    </a>
     <form>
       <label>
         Email

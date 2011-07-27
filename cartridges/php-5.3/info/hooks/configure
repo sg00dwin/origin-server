@@ -166,6 +166,12 @@ EOF
 rm -rf $APP_DIR/repo/* $APP_DIR/repo/.[^.]*
 git archive --format=tar HEAD | (cd $APP_DIR/repo && tar --warning=no-timestamp -xf -)
 
+# Import Environment Variables
+for f in ~/.env/*
+do
+    . \$f
+done
+
 if [ -f ~/${application}/repo/deplist.txt ]
 then
     for f in \$(cat ~/${application}/repo/deplist.txt)
@@ -179,6 +185,13 @@ then
             pear install "\$f"
         fi
     done
+fi
+
+# Run build
+if [ -x ~/${application}/repo/.openshift/action_hooks/build ]
+then
+    echo "running .openshift/action_hooks/build"
+    ~/${application}/repo/.openshift/action_hooks/build
 fi
 
 # Start the app
