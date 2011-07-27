@@ -210,7 +210,7 @@ Then /^a jbossas service startup script will( not)? exist$/ do |negate|
   app_name = @app['name']
 
   app_root = "#{$home_root}/#{acct_name}/#{app_name}"
-  app_ctrl_script = "#{app_root}/${app_name}_ctl.sh"
+  app_ctrl_script = "#{app_root}/#{app_name}_ctl.sh"
 
   file_exists = File.exists? app_ctrl_script
   unless negate
@@ -219,8 +219,6 @@ Then /^a jbossas service startup script will( not)? exist$/ do |negate|
   else
     file_exists.should be_false "file #{file_name} should not exist and does"
   end
-
-  pending # express the regexp above with the code you wish you had
 end
 
 Then /^a jbossas source tree will exist$/ do
@@ -244,4 +242,22 @@ end
 
 Then /^a jbossas daemon will be running$/ do
   pending # express the regexp above with the code you wish you had
+end
+
+Then /^the jbossas daemon log files will( not)? exist$/ do |negate|
+  acct_name = @account['accountname']
+  app_name = @app['name']
+
+  log_dir = "#{$home_root}/#{acct_name}/#{app_name}/logs"
+  log_list = ["boot.log", "server.log"]
+
+  log_list.each do |file_name|
+    file_path = "#{log_dir}/#{file_name}"
+    file_exists = File.exists? file_path
+    unless negate
+      file_exists.should be_true "file #{file_path} should exist and does not"
+    else
+      file_exists.should be_false "file #{file_path} should not exist and does"
+    end
+  end
 end
