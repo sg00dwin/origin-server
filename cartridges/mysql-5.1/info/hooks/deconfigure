@@ -84,6 +84,11 @@ uid=$(id -u "$uuid")
 c_val="c$(($uid/1023)),c$(($uid%1023))"
 
 #
+# Remove environment variables
+#
+/bin/rm -f $APP_HOME/.env/OPENSHIFT_DB_USERNAME $APP_HOME/.env/OPENSHIFT_DB_PASSWORD $APP_HOME/.env/OPENSHIFT_DB_TYPE $APP_HOME/.env/OPENSHIFT_DB_HOST $APP_HOME/.env/OPENSHIFT_DB_PORT $APP_HOME/.env/OPENSHIFT_DB_SOCKET $APP_HOME/.env/OPENSHIFT_DB_URL $APP_HOME/.env/OPENSHIFT_DB_CTL_SCRIPT
+
+#
 # Stop app
 #
 /bin/su -s /bin/sh "$uuid" -c "runcon -t libra_t -l s0:$c_val $MYSQL_DIR/${application}_mysql_ctl.sh stop"
