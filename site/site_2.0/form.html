@@ -68,7 +68,7 @@
         </header>
         <div class='content'>
           <ul>
-            <li class='active'>
+            <li>
               <a class='home' href='#'>
                 Home
               </a>
@@ -92,142 +92,69 @@
         </div>
       </nav>
     </header>
-    <section id='opener'>
-      <div class='content'>
-        <header>
-          <hgroup>
-            <h1>
-              Fast, Free and Open
-            </h1>
-            <h2>
-              Auto-Scaling Platform-as-a-Service for Java, PHP, Ruby, Python and Perl
-            </h2>
-          </hgroup>
-        </header>
-        <a class='button sign_up' href='#'>
-          Sign up and try it
-        </a>
-        <img alt='Panda pilot, soaring through the clouds!' src='images/flying-panda-ftw2.png' />
-      </div>
-    </section>
-    <section class='main' id='exposition'>
+    <section class='main' id='form'>
       <header>
         <h1>
-          What is OpenShift?
+          This is a form
         </h1>
       </header>
-      <div class='content'>
-        <div id='fast'>
-          <header>
-            <h2>
-              OpenShift is Fast
-            </h2>
-          </header>
-          <img class='icon' src='images/fast_icon.png' />
-          <p>
-            Looking for the fastest on-ramp to the cloud? OpenShift gets your new and existing Java, PHP, Ruby, Python and Perl apps on the cloud in minutes.
-          </p>
-          <a class='more' href='#'>
-            Learn more about languages and frameworks
-          </a>
-        </div>
-        <div id='free'>
-          <header>
-            <h2>
-              OpenShift is Free
-            </h2>
-          </header>
-          <img class='icon' src='images/free_icon.png' />
-          <p>
-            What are you waiting for? Managing and hosting applications on OpenShift is free. All you need is an email address to get started.
-          </p>
-          <a class='more' href='#'>
-            Sign up and try it out
-          </a>
-        </div>
-        <div id='open'>
-          <header>
-            <h2>
-              OpenShift is Open
-            </h2>
-          </header>
-          <img class='icon' src='images/open_icon.png' />
-          <p>
-            The ability to choose your language, framework, middleware and cloud means you're never locked in.
-          </p>
-          <a class='more' href='#'>
-            Learn more about frameworks and middleware
-          </a>
-        </div>
-      </div>
-    </section>
-    <section class='main' id='social'>
-      <header>
-        <h1>
-          Buzz
-        </h1>
-      </header>
-      <div class='content'>
-        <div id='latest'>
-          <img class='avatar' src='images/avatars/openshift.png' />
-          <p class='tweet'>
-            <a class="tweeter" href="http://twitter.com/#!/openshift">@OpenShift</a> Behind the scenes goodness on what it takes to run the OpenShift <a class="hashtag" href="http://twitter.com/#!/search?q=#PaaS">#PaaS</a> and the tech that makes it possible - Check it: <a href="http://red.ht/m6xc3y">red.ht/m6xc3y</a>
-          </p>
-        </div>
-        <div id='retweets'>
-          <ul>
-            <li>
-              <img class='avatar' src='images/avatars/hbons.png' />
-              <p class='tweet'>
-                <a class="tweeter" href="http://twitter.com/#!/hbons">@hbons</a> working on the <a class="hashtag" href="http://twitter.com/#!/search?q=#openshift">#openshift</a> website. coming along.
-              </p>
-            </li>
-            <li>
-              <img class='avatar' src='images/avatars/emichan.png' />
-              <p class='tweet'>
-                <a class="tweeter" href="http://twitter.com/#!/emichan">@emichan</a> i love pandas so much. <a class="hashtag" href="http://twitter.com/#!/search?q=#openshift">#openshift</a> is great for panda lovers like me!
-              </p>
-            </li>
-            <li>
-              <img class='avatar' src='images/avatars/jimmac.png' />
-              <p class='tweet'>
-                <a class="tweeter" href="http://twitter.com/#!/jimmac">@jimmac</a> RT <a class="tweeter" href="http://twitter.com/#!openshiftevents">@OpenShiftEvents</a> Matt Hicks speaking on what it takes to operate the OpenShift <a class="hashtag" href="http://twitter.com/#!/search?q=#PaaS">#PaaS</a> at next months Silicon Valley <a class="hashtag" href="http://twitter.com/#!/search?q=#CloudComputing">#CloudComputing</a> Meetup
-              </p>
-            </li>
-            <li>
-              <img class='avatar' src='images/avatars/random.png' />
-              <p class='tweet'>
-                <a class="tweeter" href="http://twitter.com/#!/random">@random</a> trying out <a class="hashtag" href="http://twitter.com/#!/search?q=#openshift">#openshift</a> - so far so good!
-              </p>
-            </li>
-          </ul>
-        </div>
-        <div id='social_links'>
-          <a class='more' href='http://twitter.com/#!/search/openshift'>
-            More #openshift buzz
-          </a>
-          <a class='button' href='http://twitter.com/#!/openshift'>
-            Follow @OpenShift
-          </a>
-        </div>
-      </div>
-    </section>
-    <section class='main' id='bottom_signup'>
-      <header>
-        <hgroup>
-          <h1>
-            Curious?
-          </h1>
-          <h2>
-            Try OpenShift now for free!
-          </h2>
-        </hgroup>
-      </header>
-      <div class='content'>
-        <a class='button sign_up' href='#'>
-          Sign in and try it
-        </a>
-      </div>
+      <form class='content'>
+        <label class='correct'>
+          Your name
+          <input class='correct' type='text' value='Shadow Man' />
+        </label>
+        <label class='error'>
+          Email
+          <input class='error' type='email' value='shadowman@re' />
+        </label>
+        <formset class='confirm'>
+          <legend>Password</legend>
+          <input placeholder='at least 8 characters' type='password' />
+          <input placeholder='please confirm' type='password' />
+        </formset>
+        <label>
+          Send me lame newsletters
+          <input name='newsletter' type='radio' value='yes' />
+        </label>
+        <label>
+          Please don't...
+          <input name='newsletter' type='radio' value='no' />
+        </label>
+        <label>
+          Favorite Ice Cream Flavor
+          <select>
+            <option>
+              Chocolate
+            </option>
+            <option>
+              Vanilla
+            </option>
+            <option>
+              Chocolate Chip
+            </option>
+            <option>
+              Mint
+            </option>
+            <option>
+              Coffee
+            </option>
+            <option>
+              Chunky monkey
+            </option>
+            <option>
+              Panda - they're delicious!
+            </option>
+            <option>
+              All of them
+            </option>
+          </select>
+        </label>
+        <label>
+          I agree to sell you my soul in exchange for icecream
+          <input type='checkbox' />
+        </label>
+        <input class='button' type='button' value='Done' />
+      </form>
     </section>
     <footer class='universal'>
       <nav>

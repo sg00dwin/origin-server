@@ -1,16 +1,36 @@
 $(function() {
-  var ann_height, ann_list, announcements, body, close_btn, close_dialog, dialogs, lg_pos, md_pos, on_announcement, open_dialog, scroll_announcements, signin, signup, sm_pos, top;
+  var ann_height, ann_list, announcements, body, close_btn, close_dialog, dialogs, lg_pos, md_pos, nav, nav_top, on_announcement, open_dialog, scroll_announcements, signin, signup, sm_pos, sticky_css, top, unsticky_css;
   body = $('body');
+  nav = $('header.universal > nav');
+  nav_top = nav.offset().top;
+  console.log('nav top', nav_top);
   sm_pos = md_pos = lg_pos = 0;
   top = ($(window)).scrollTop();
+  sticky_css = {
+    position: 'fixed',
+    top: 0,
+    'z-index': 2000,
+    width: '100%'
+  };
+  unsticky_css = {
+    position: 'static'
+  };
   ($(window)).scroll(function() {
     var top_diff;
     top_diff = ($(this)).scrollTop() - top;
     top = ($(this)).scrollTop();
-    sm_pos -= Math.round(top_diff * 1.5);
-    md_pos -= top_diff;
+    sm_pos -= top_diff;
+    md_pos -= Math.round(top_diff * 0.5);
     lg_pos -= Math.round(top_diff * 0.25);
-    return body.css('background-position', "-150px " + sm_pos + "px, -150px " + md_pos + "px, -150px " + lg_pos + "px");
+    body.css('background-position', "-150px " + sm_pos + "px, -150px " + md_pos + "px, -150px " + lg_pos + "px");
+    console.log('top', top);
+    if (top > nav_top) {
+      console.log('sticky');
+      return nav.css(sticky_css);
+    } else {
+      console.log('unstuck');
+      return nav.css(unsticky_css);
+    }
   });
   dialogs = $('.dialog');
   open_dialog = function(dialog) {

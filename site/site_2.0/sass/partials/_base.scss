@@ -27,3 +27,12 @@ $list-left-margin: 2em;  // left margin for ul an ol
 $shadow-color: rgba(0, 0, 0, 0.6);
 
 $tweet-color: #DEF3FB;
+
+$express: #73D216;
+$flex: #9258C8;
+$power: #F57900;
+
+@mixin selection {
+  background-color: $background-color;
+  color: white;
+}

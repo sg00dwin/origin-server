@@ -70,7 +70,7 @@
             Main Navigation
         .content
           %ul
-            %li.active
+            %li
               %a.home{ :href => "#" }
                 Home
             %li
@@ -85,123 +85,73 @@
     
     -# Begin page-specific content 
     
-    %section#opener 
-      .content
-        %header
-          %hgroup
-            %h1
-              Fast, Free and Open
-            %h2
-              Auto-Scaling Platform-as-a-Service for Java, PHP, Ruby, Python and Perl
-        
-        %a.button.sign_up{ :href => "#" }
-          Sign up and try it
-        
-        %img{ :src => "images/flying-panda-ftw2.png",
-            :alt => "Panda pilot, soaring through the clouds!" }
-
-    %section#exposition.main
+    %section#form.main
       %header
         %h1
-          What is OpenShift?
+          This is a form
       
-      .content
-        #fast
-          %header
-            %h2
-              OpenShift is Fast
-          
-          %img.icon{ :src => "images/fast_icon.png" }
-          
-          %p
-            Looking for the fastest on-ramp to the cloud? OpenShift gets your new and existing Java, PHP, Ruby, Python and Perl apps on the cloud in minutes.
-          
-          %a.more{ :href => "#" }
-            Learn more about languages and frameworks
+      %form.content
+        %label.correct
+          Your name
+          %input{ :type => "text", 
+                  :class => "correct",
+                  :value => "Shadow Man" }
         
-        #free
-          %header
-            %h2
-              OpenShift is Free
-          
-          %img.icon{ :src => "images/free_icon.png" }
+        %label.error
+          Email
+          %input{ :type => "email",
+                  :class => "error",
+                  :value => "shadowman@re" }
         
-          %p
-            What are you waiting for? Managing and hosting applications on OpenShift is free. All you need is an email address to get started.
+        %formset.confirm
+          %legend Password
           
-          %a.more{ :href => "#" }
-            Sign up and try it out
+          %input{ :type => "password",
+                    :placeholder => "at least 8 characters" }
+                    
+          %input{ :type => "password",
+                    :placeholder => "please confirm" }
         
-        #open
-          %header
-            %h2
-              OpenShift is Open
-          
-          %img.icon{ :src => "images/open_icon.png" }
+        %label
+          Send me lame newsletters
+          %input{ :type => 'radio',
+                  :name => 'newsletter',
+                  :value => 'yes' }
+        
+        %label
+          Please don't...
+          %input{ :type => 'radio',
+                  :name => 'newsletter',
+                  :value => 'no' }
+        
+        %label
+          Favorite Ice Cream Flavor
+          %select
+            %option
+              Chocolate
+            %option
+              Vanilla
+            %option
+              Chocolate Chip
+            %option
+              Mint
+            %option
+              Coffee
+            %option
+              Chunky monkey
+            %option
+              Panda - they're delicious!
+            %option
+              All of them
+        
+        %label
+          I agree to sell you my soul in exchange for icecream
+          %input{ :type => "checkbox" }
+        
+        %input.button{ :type => 'button',
+                       :value => 'Done' }
 
-          %p
-            The ability to choose your language, framework, middleware and cloud means you're never locked in.
           
-          %a.more{ :href => "#" }
-            Learn more about frameworks and middleware
-
-    %section#social.main
-      %header
-        %h1
-          Buzz
-      
-      .content
-        #latest
-          %img.avatar{ :src => "images/avatars/openshift.png" }
-          
-          %p.tweet
-            <a class="tweeter" href="http://twitter.com/#!/openshift">@OpenShift</a> Behind the scenes goodness on what it takes to run the OpenShift <a class="hashtag" href="http://twitter.com/#!/search?q=#PaaS">#PaaS</a> and the tech that makes it possible - Check it: <a href="http://red.ht/m6xc3y">red.ht/m6xc3y</a>
-        
-        #retweets
-          %ul
-            %li
-              %img.avatar{ :src => "images/avatars/hbons.png" }
-              
-              %p.tweet
-                <a class="tweeter" href="http://twitter.com/#!/hbons">@hbons</a> working on the <a class="hashtag" href="http://twitter.com/#!/search?q=#openshift">#openshift</a> website. coming along.
-            
-            %li
-              %img.avatar{ :src => "images/avatars/emichan.png" }
-              
-              %p.tweet
-                <a class="tweeter" href="http://twitter.com/#!/emichan">@emichan</a> i love pandas so much. <a class="hashtag" href="http://twitter.com/#!/search?q=#openshift">#openshift</a> is great for panda lovers like me!
-            
-            %li
-              %img.avatar{ :src => "images/avatars/jimmac.png" }
-              
-              %p.tweet
-                <a class="tweeter" href="http://twitter.com/#!/jimmac">@jimmac</a> RT <a class="tweeter" href="http://twitter.com/#!openshiftevents">@OpenShiftEvents</a> Matt Hicks speaking on what it takes to operate the OpenShift <a class="hashtag" href="http://twitter.com/#!/search?q=#PaaS">#PaaS</a> at next months Silicon Valley <a class="hashtag" href="http://twitter.com/#!/search?q=#CloudComputing">#CloudComputing</a> Meetup
-            
-            %li
-              %img.avatar{ :src => "images/avatars/random.png" }
-              
-              %p.tweet
-                <a class="tweeter" href="http://twitter.com/#!/random">@random</a> trying out <a class="hashtag" href="http://twitter.com/#!/search?q=#openshift">#openshift</a> - so far so good!
-
-        #social_links
-          %a.more{ :href => "http://twitter.com/#!/search/openshift" }
-            More #openshift buzz
-          
-          %a.button{ :href => "http://twitter.com/#!/openshift" }
-            Follow @OpenShift
-    
-    %section#bottom_signup.main
-      %header
-        %hgroup
-          %h1
-            Curious?
-          %h2
-            Try OpenShift now for free!
-      
-      .content
-        %a.button.sign_up{ :href => "#" }
-          Sign in and try it
-    
     -# End page-specific content
     
     %footer.universal
@@ -356,4 +306,4 @@
     %a.close_button{ :href => "#",
                      :title => "Close this dialog" }
       %img{ :src => "images/close_button.png" }
-  
+    

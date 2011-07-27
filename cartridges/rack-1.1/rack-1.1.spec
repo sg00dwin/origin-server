@@ -2,7 +2,7 @@
 
 Summary:   Provides ruby rack support running on Phusion Passenger
 Name:      rhc-cartridge-rack-1.1
-Version:   0.75.6
+Version:   0.75.7
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -88,6 +88,11 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Tue Jul 26 2011 Dan McPherson <dmcphers@redhat.com> 0.75.7-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- Correcting rack repo dir to deploy (mmcgrath@redhat.com)
+
 * Tue Jul 26 2011 Dan McPherson <dmcphers@redhat.com> 0.75.6-1
 - Adding .openshift to the git template directory (mmcgrath@redhat.com)
 - Adding README (mmcgrath@redhat.com)
