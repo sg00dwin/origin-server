@@ -30,7 +30,7 @@
     %script{ :src => "js/modernizr.min.js" }
     %script{ :src => "js/respond.min.js" }
     
-  %body
+  %body{ :class => 'product express' }
     %header.universal
       
       %hgroup.title
@@ -70,10 +70,10 @@
             Main Navigation
         .content
           %ul
-            %li.active
+            %li
               %a.home{ :href => "#" }
                 Home
-            %li
+            %li.active
               %a.services{ :href => "#" }
                 Cloud Services
             %li
@@ -83,125 +83,90 @@
               %a.sign_in{ :href => "#" }
                 Sign In
     
-    -# Begin page-specific content 
-    
-    %section#opener 
-      .content
+      -# Begin page-specific content 
+
+      %nav.service
         %header
-          %hgroup
-            %h1
-              Fast, Free and Open
-            %h2
-              Auto-Scaling Platform-as-a-Service for Java, PHP, Ruby, Python and Perl
-        
-        %a.button.sign_up{ :href => "#" }
-          Sign up and try it
-        
-        %img{ :src => "images/flying-panda-ftw2.png",
-            :alt => "Panda pilot, soaring through the clouds!" }
-
-    %section#exposition.main
-      %header
-        %h1
-          What is OpenShift?
-      
-      .content
-        #fast
-          %header
-            %h2
-              OpenShift is Fast
-          
-          %img.icon{ :src => "images/fast_icon.png" }
-          
-          %p
-            Looking for the fastest on-ramp to the cloud? OpenShift gets your new and existing Java, PHP, Ruby, Python and Perl apps on the cloud in minutes.
-          
-          %a.more{ :href => "#" }
-            Learn more about languages and frameworks
-        
-        #free
-          %header
-            %h2
-              OpenShift is Free
-          
-          %img.icon{ :src => "images/free_icon.png" }
-        
-          %p
-            What are you waiting for? Managing and hosting applications on OpenShift is free. All you need is an email address to get started.
-          
-          %a.more{ :href => "#" }
-            Sign up and try it out
-        
-        #open
-          %header
-            %h2
-              OpenShift is Open
-          
-          %img.icon{ :src => "images/open_icon.png" }
-
-          %p
-            The ability to choose your language, framework, middleware and cloud means you're never locked in.
-          
-          %a.more{ :href => "#" }
-            Learn more about frameworks and middleware
-
-    %section#social.main
-      %header
-        %h1
-          Buzz
-      
-      .content
-        #latest
-          %img.avatar{ :src => "images/avatars/openshift.png" }
-          
-          %p.tweet
-            <a class="tweeter" href="http://twitter.com/#!/openshift">@OpenShift</a> Behind the scenes goodness on what it takes to run the OpenShift <a class="hashtag" href="http://twitter.com/#!/search?q=#PaaS">#PaaS</a> and the tech that makes it possible - Check it: <a href="http://red.ht/m6xc3y">red.ht/m6xc3y</a>
-        
-        #retweets
-          %ul
-            %li
-              %img.avatar{ :src => "images/avatars/hbons.png" }
-              
-              %p.tweet
-                <a class="tweeter" href="http://twitter.com/#!/hbons">@hbons</a> working on the <a class="hashtag" href="http://twitter.com/#!/search?q=#openshift">#openshift</a> website. coming along.
-            
-            %li
-              %img.avatar{ :src => "images/avatars/emichan.png" }
-              
-              %p.tweet
-                <a class="tweeter" href="http://twitter.com/#!/emichan">@emichan</a> i love pandas so much. <a class="hashtag" href="http://twitter.com/#!/search?q=#openshift">#openshift</a> is great for panda lovers like me!
-            
-            %li
-              %img.avatar{ :src => "images/avatars/jimmac.png" }
-              
-              %p.tweet
-                <a class="tweeter" href="http://twitter.com/#!/jimmac">@jimmac</a> RT <a class="tweeter" href="http://twitter.com/#!openshiftevents">@OpenShiftEvents</a> Matt Hicks speaking on what it takes to operate the OpenShift <a class="hashtag" href="http://twitter.com/#!/search?q=#PaaS">#PaaS</a> at next months Silicon Valley <a class="hashtag" href="http://twitter.com/#!/search?q=#CloudComputing">#CloudComputing</a> Meetup
-            
-            %li
-              %img.avatar{ :src => "images/avatars/random.png" }
-              
-              %p.tweet
-                <a class="tweeter" href="http://twitter.com/#!/random">@random</a> trying out <a class="hashtag" href="http://twitter.com/#!/search?q=#openshift">#openshift</a> - so far so good!
-
-        #social_links
-          %a.more{ :href => "http://twitter.com/#!/search/openshift" }
-            More #openshift buzz
-          
-          %a.button{ :href => "http://twitter.com/#!/openshift" }
-            Follow @OpenShift
-    
-    %section#bottom_signup.main
-      %header
-        %hgroup
           %h1
-            Curious?
-          %h2
-            Try OpenShift now for free!
+            Services
+        .content
+          %ul
+            %li.active
+              %a{ :href => "#" }
+                Express
+            %li
+              %a{ :href => "#" }
+                Flex
+            %li
+              %a{ :href => "#" }
+                Power
+    
+    %section.main
+      %header
+        %h1
+          What's Express
       
       .content
-        %a.button.sign_up{ :href => "#" }
-          Sign in and try it
-    
+        %nav
+          %header
+            %h2 
+              Service Navigation
+          %ul 
+            %li.active
+              %a{ :href => "#" }
+                What's Express?
+            %li
+              %a{ :href => "#" }
+                Announcements
+            %li
+              %a{ :href => "#" }
+                Videos
+            %li
+              %a{ :href => "#" }
+                Documentation
+            %li
+              %a{ :href => "#" }
+                Forum
+          
+          #account.signed_out
+            %header
+              %h2
+                Account
+            %ul  
+              %li
+                %a.sign_in{ :href => "#" }
+                  Sign in to get started!
+              %li
+                %a{ :href => "#" }
+                  Quickstart
+              %li
+                %a{ :href => "#" }
+                  Dashboard
+        
+        .content
+          %p
+            Looking for a fast fre on-ramp to the Cloud? Express allows you to create and upload your Ruby, PHP, Perl or Python app with ease.
+          
+          %h2
+            Install
+          
+          %p
+            Looking for a fast fre on-ramp to the Cloud? Express allows you to create and upload your Ruby, PHP, Perl or Python app with ease.
+          
+          %h2
+            Create
+          
+          %p
+            Looking for a fast fre on-ramp to the Cloud? Express allows you to create and upload your Ruby, PHP, Perl or Python app with ease.
+          
+          %h2
+            Deploy
+          
+          %p
+            Looking for a fast fre on-ramp to the Cloud? Express allows you to create and upload your Ruby, PHP, Perl or Python app with ease.
+          
+      
+  
     -# End page-specific content
     
     %footer.universal

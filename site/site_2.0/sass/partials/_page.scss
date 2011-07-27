@@ -24,12 +24,24 @@ h1, h2, h3, h4, h5, h6 {
 a, a:active, a:visited { color: $link-color; }
 a:hover { color: $link-hover-color; }
 
+a:active, a:focus { outline: none; border: none; }
+
 strong, th {
   font-weight: bold;
 }
 
 small {
   font-size: .85em;
+}
+
+::-webkit-selection {
+  @include selection;
+}
+::-moz-selection {
+  @include selection;
+}
+::selection {
+  @include selection;
 }
 
 /* End universal styles */
@@ -53,7 +65,7 @@ section > header {
 
 /* Style buttons */
 a.button {
-  display: inline-block;
+  @include inline-block;
   white-space: nowrap;
   padding: .3em 2em;
   font: {
@@ -82,7 +94,7 @@ a.more {
   font-size: .9em;
   color: #555;
   margin: 0;
-  padding: 1em 0;
+  padding: 1em 0 4em;
   background-color: white;
   background-color: rgba(255, 255, 255, 0.9);
   
@@ -139,7 +151,7 @@ header.universal {
       
       a {      
         padding: .9em 1em;
-        display: inline-block;
+        @include inline-block;
         color: white;
         font-family: Overpass, $base-font-family;
         font-size: .9em;
@@ -151,7 +163,7 @@ header.universal {
         background-color: lighten(black, 20%);
       }
       
-      &:last-child {
+      &.user {
         float: right;
       }
     }
@@ -218,7 +230,7 @@ footer.universal {
   }
   
   .content > ul > li {
-    display: inline-block;
+    @include inline-block;
     margin: 0 1em;
     vertical-align: top;
     width: 10em;
@@ -259,9 +271,16 @@ footer.universal {
   min-width: 30em;
   padding: 2em;
   
+  a.more {
+    display: block;
+    width: 100%;
+    text-align: center;
+    color: #1060c8;
+  }
+  
   form {    
     margin: 0 auto;
-    width: 18em;
+    width: 30em;
   }
   
   label {
@@ -293,13 +312,13 @@ footer.universal {
 /* Home page styles */
 
 #opener {
-  background: #EFEFEF;
+  background: white;
   margin-bottom: 2.5em;
-  height: 488px;
+  height: 392px;
   
   .content {
     position: relative;
-    width: 1280px;
+    width: 986px;
   }
   
   img {
@@ -313,13 +332,13 @@ footer.universal {
   }
   
   header {
-    top: 13em;
-    right: 200px;
+    top: 5em;
+    right: 125px;
     text-align: right;
   }
   
   h1 {
-    color: #124E51;
+    color: #666;
     font-size: 2.5em;
     line-height: 1.75em;
     margin: 0;
@@ -337,8 +356,8 @@ footer.universal {
   }
   
   a.button {
-    top: 19em;
-    right:200px;
+    top: 12em;
+    right:125px;
     background-color: #888;
     color: white;
     border: 2px solid #777;
@@ -347,6 +366,10 @@ footer.universal {
 }
 
 #exposition {
+  h1 {
+    margin-top: 2em;
+  }
+  
   > .content {
     > div {
       margin: 5em 0;
@@ -428,7 +451,7 @@ footer.universal {
   
   li {
     list-style-type: none;
-    display: inline-block;
+    @include inline-block;
     width: 24em;
     vertical-align: top;
     padding-left: .7em;
@@ -452,6 +475,10 @@ footer.universal {
   font-size: 1.4em;
   padding: 3.75em;
   
+  header, .content {
+    width: 35em;
+  }
+  
   h1 {
     border-bottom: none;
   }
@@ -469,3 +496,132 @@ footer.universal {
 }
 
 /* End home page styles */
+
+/* Service page styles */
+nav.service {
+  color: white;
+  font-family: Overpass, $base-font-family;
+  font-size: 0.9em;
+  text-transform: uppercase;
+  
+  .express & {
+    background-color: $express;
+  }
+  
+  .flex & {
+    background-color: $flex;
+  }
+  
+  .power & {
+    background-color: $power;
+  }
+  
+  li.active a,
+  a:hover {
+    background-color: white !important;
+    color: #666;
+  }
+  
+  &:last {
+    float: none !important;
+  }
+}
+
+.product {
+  .main {
+    @include clearfix;
+    
+    .content nav {
+      text-align: right;
+      width: 12em;
+      float: left;
+      font-family: Overpass, $base-font-family;
+      
+      ul {
+        padding: 0; margin: 0;
+      }
+      
+      header {
+        padding: 3.5em .8em 0;
+        width: auto;
+        font-size: .8em;
+        
+        h2 {
+          padding: 0; margin: 0;
+        }
+      }
+      
+      > header {
+        @include visually-hidden;
+      }
+      
+      li {
+        list-style-type: none;
+      }
+      
+      a {
+        @include inline-block;
+        padding: .65em;
+        color: #787878;
+        text-decoration: none;
+        border-bottom: 1px solid #ececec;
+        width: 10em;
+      }
+      
+      li.active a,
+      a:hover {
+        color: #333;
+      }
+      
+      #account.signed_out {
+        a {
+          color: #aaa;
+        }
+        
+        a.sign_in {
+          @include inline-block;
+          margin: .5em  0;
+          padding: 1em;
+          background: #FFFCAF;
+          border: 1px solid #FFDC41;
+          @include border-radius(.25em);
+          color: #333;
+          font-weight: bold;
+          text-align: center;
+        }
+      }
+    }
+  
+    .content .content,
+    header {
+      width: 35em;
+      padding-left: 15em;
+    }
+    
+    h1 {
+      border: 0;
+      padding-left: 0;
+    }
+    
+  }
+  &.express .main h1 {
+    color: $express;
+  }
+  &.express .main nav h2 {
+    color: $express;
+  }
+  &.flex .main h1 {
+    color: $flex;
+  }
+  &.flex .main nav h2 {
+    color: $flex;
+  }
+  &.power .main h1 {
+    color: $power;
+  }
+  &.power .main nav h2 {
+    color: $power;
+  }
+
+}
+
