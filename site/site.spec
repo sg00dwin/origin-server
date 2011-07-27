@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.75.0
+Version:   0.75.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -64,6 +64,19 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Tue Jul 26 2011 Dan McPherson <dmcphers@redhat.com> 0.75.4-1
+- fix test cases (dmcphers@redhat.com)
+
+* Tue Jul 26 2011 Dan McPherson <dmcphers@redhat.com> 0.75.3-1
+- gemfile.lock fix (dmcphers@redhat.com)
+- Copied in stand-alone site v2 conversion for sharing (edirsh@redhat.com)
+
+* Mon Jul 25 2011 Dan McPherson <dmcphers@redhat.com> 0.75.2-1
+- remove aws account number from flex request access (dmcphers@redhat.com)
+
+* Thu Jul 21 2011 Dan McPherson <dmcphers@redhat.com> 0.75.1-1
+- bump spec numbers (dmcphers@redhat.com)
+
 * Mon Jul 18 2011 Dan McPherson <dmcphers@redhat.com> 0.74.8-1
 - Adding flex images (mhicks@redhat.com)
 - update local dev rails instructions (dmcphers@redhat.com)

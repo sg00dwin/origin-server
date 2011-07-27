@@ -1,0 +1,627 @@
+/* Universal styles */
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: $background-color;
+  background-image: url('../images/clouds_sm.png'),
+                    url('../images/clouds_md.png'),
+                    url('../images/clouds_lg.png');
+  background-position: -150px -240px; 
+}
+
+body, select, input, textarea {
+  color: $font-color;
+  font-family: $base-font-family;
+  font-size: $base-font-size;
+}
+ 
+h1, h2, h3, h4, h5, h6 {
+  font-family: OverpassBold, $base-font-family;
+  font-weight: bold;
+}
+
+a, a:active, a:visited { color: $link-color; }
+a:hover { color: $link-hover-color; }
+
+a:active, a:focus { outline: none; border: none; }
+
+strong, th {
+  font-weight: bold;
+}
+
+small {
+  font-size: .85em;
+}
+
+::-webkit-selection {
+  @include selection;
+}
+::-moz-selection {
+  @include selection;
+}
+::selection {
+  @include selection;
+}
+
+/* End universal styles */
+
+/* Shared styles */
+
+/* Hide section headers that we don't want showing normally */
+header.universal hgroup,
+header.universal header,
+nav > header,
+#copyright header {
+  @include visually-hidden;
+}
+
+/* Set content width */
+.content,
+section > header {
+  width: 50em;
+  margin: 0 auto;
+}
+
+/* Style buttons */
+a.button {
+  @include inline-block;
+  white-space: nowrap;
+  padding: .3em 2em;
+  font: {
+    family: Overpass, $base-font-family;
+    size: 1em;
+  }
+  text: {
+    decoration: none;
+    align: center;
+  }
+  @include text-shadow($shadow-color 0 0.05em 0);
+  @include border-radius(2em);
+}
+
+/* Styles shared by "more" links */
+a.more {
+  font: {
+    family: OverpassBold, $base-font-family;
+    weight: bold;
+    size: 1em;
+  }
+}
+
+/* Styles shared by main content areas */
+.main {
+  font-size: .9em;
+  color: #555;
+  margin: 0;
+  padding: 1em 0 4em;
+  background-color: white;
+  background-color: rgba(255, 255, 255, 0.9);
+  
+  a {
+    color: #1060c8;
+    text-decoration: none;
+  
+    &:hover {
+      color: #3288f7;
+      text-decoration: underline;
+    }
+    
+    &:visited {
+      color: #8f0ccc;
+    }
+  }
+  
+  h1, h2, h3, h4, h5 { 
+    color: #555; 
+    font: {
+      family: Overpass, $base-font-family;
+      weight: normal;
+    }
+  }
+  
+  h1 {
+    width: 100%;
+    border-bottom: 1px solid #ececec;
+    padding: 1em 2em;
+  }
+}
+
+/* End shared styles */
+
+/* Layout styles */
+
+header.universal {
+  & > .content {
+    padding: 1em;
+  }
+  
+  nav {
+    background-color: black;
+    
+    ul {
+      padding: 0;
+      margin: 0;
+    }
+    
+    li {
+      display: inline;
+      margin: 0;
+      list-style-type: none;
+      
+      a {      
+        padding: .9em 1em;
+        @include inline-block;
+        color: white;
+        font-family: Overpass, $base-font-family;
+        font-size: .9em;
+        text-decoration: none;
+      }
+    
+      &.active a,
+      a:hover {
+        background-color: lighten(black, 20%);
+      }
+      
+      &.user {
+        float: right;
+      }
+    }
+  }
+}
+
+#announcements {
+  width: 25em;
+  height: 4em;
+  overflow: hidden;
+  float: right;
+  margin-top: 1em;
+  
+  ul {
+    margin: 0;
+    padding: 0;
+  }
+  
+  li {
+    width: 25em;
+    height: 4em;
+    list-style-type: none;
+    
+    a {
+      width: 23em;
+      height: 4em;
+      font: {
+        size: .8em;
+        family: Overpass, $base-font-family;
+      }
+      text-decoration: none;
+      color: white;
+      background: transparent url('../images/announce-arrow.png') no-repeat right top;
+      padding-right: 2em;
+      text-align: right;
+      display: block;
+      float: right;
+      
+      .title {
+        font: {
+          family: OverpassBold;
+          weight: bold;
+          size: 1.2em;
+        }
+      }
+    }
+  }
+}
+
+
+footer.universal {
+  color: white;
+  font-size: .9em;
+  
+  ul { margin: 0; padding: 0; }
+  
+  li {
+    list-style-type: none;
+  }
+  
+  h2 {
+    color: white;
+    font-size: 1.1em;
+  }
+  
+  .content > ul > li {
+    @include inline-block;
+    margin: 0 1em;
+    vertical-align: top;
+    width: 10em;
+  }
+  
+  a {
+    color: white;
+    text-decoration: none;
+  }
+  
+  #copyright {
+    @include clearfix;
+    background: black;
+    margin: 2em 0;
+    
+    .content {
+      padding: .5em 5em;
+    }
+    
+    p { float: left; }
+    img { float: right; margin-bottom: 1em;}
+  }
+}
+
+.dialog {
+  display: none;
+  background: #323232;
+  @include border-radius(2em);
+  @include box-shadow($shadow-color 0 0 3em);
+  color: white;
+  font-family: Overpass, $base-font-family;
+  font-size: .9em;
+  position: fixed;
+  top: 10em;
+  left: 10em;
+  right: 10em;
+  z-index: 1000;
+  min-width: 30em;
+  padding: 2em;
+  
+  a.more {
+    display: block;
+    width: 100%;
+    text-align: center;
+    color: #1060c8;
+  }
+  
+  form {    
+    margin: 0 auto;
+    width: 30em;
+  }
+  
+  label {
+    display: block;
+    width: 20em;
+  }
+    
+  h1 {
+    font-weight: normal;
+    font-family: Overpass, $base-font-family;
+    text-align: center;
+    margin: 0;
+  }
+  
+  .close_button {
+    position: absolute;
+    top: 1.5em;
+    right: 1.5em;
+    
+    &:active {
+      outline: none;
+      border: none;
+    }
+  }
+}
+
+/* End layout styles */
+
+/* Home page styles */
+
+#opener {
+  background: white;
+  margin-bottom: 2.5em;
+  height: 392px;
+  
+  .content {
+    position: relative;
+    width: 986px;
+  }
+  
+  img {
+    z-index: 100;
+    display: block;
+    margin: 0 auto;
+  }
+  
+  header, a.button {
+    position: absolute;
+  }
+  
+  header {
+    top: 5em;
+    right: 125px;
+    text-align: right;
+  }
+  
+  h1 {
+    color: #666;
+    font-size: 2.5em;
+    line-height: 1.75em;
+    margin: 0;
+    font-weight: normal;
+    font-family: Overpass, $base-font-family;
+  }
+  
+  h2 {
+    color: #666;
+    font-size: 1em;
+    font-weight: normal;
+    font-family: Overpass, $base-font-family;
+    line-height: .7em;
+    margin: 0;
+  }
+  
+  a.button {
+    top: 12em;
+    right:125px;
+    background-color: #888;
+    color: white;
+    border: 2px solid #777;
+  }
+  
+}
+
+#exposition {
+  h1 {
+    margin-top: 2em;
+  }
+  
+  > .content {
+    > div {
+      margin: 5em 0;
+      padding: 0 3em;
+      @include clearfix;
+      img {
+        display:block;
+        float: left;
+      }
+      
+      header, p, a {
+        display: block;
+        width: 50%;
+        float: right;
+      }
+    }
+    
+    div:nth-child(even) {
+      img {
+        float: right;
+      }
+      header, p, a {
+        float: left;
+      }
+    }
+  }
+}
+
+#social {
+  .content {
+    padding-bottom: 2em;
+    border-bottom: 1px solid #ececec;
+  }
+  
+  div, li {
+    @include clearfix;
+  }
+  
+  .content {
+    width: 746px;
+  }
+  
+  img {
+    float: left;
+    vertical-align: top;
+    padding: .5em;
+    margin-top: .5em;
+  }
+  
+  p.tweet {
+    position: relative;
+    padding: 1em;
+    margin: 0.1em 0.1em 2em 6em;
+    border: 1px solid #B8E6F6;
+    min-height: 3em;
+    @include background(linear-gradient(top, white, $tweet-color 2em));
+    @include border-radius(1.25em);
+  }
+  
+  p.tweet:after {
+    content: '';
+    background: url('../images/bubble-extension.png') no-repeat left top;
+    position: absolute;
+    top: 1.3em;
+    left: -1.3em;
+    width: 20px;
+    height: 27px;
+    display: block;
+  }
+  
+  a.tweeter {
+    font-weight: bold;
+    color: black;
+  }
+  
+  ul {
+    margin: 0; padding: 0;
+  }
+  
+  li {
+    list-style-type: none;
+    @include inline-block;
+    width: 24em;
+    vertical-align: top;
+    padding-left: .7em;
+  }
+  
+  #social_links {
+    padding: .5em 4em;
+    a.button {
+      background-color: #57D4DA;
+      color: white;
+      border: 0.1em solid darken(#57D4DA, 20%);
+      margin-left: .5em;
+      font-weight: bold;
+      float: right;
+    }
+  }
+}
+
+#bottom_signup {
+  text-align: center;
+  font-size: 1.4em;
+  padding: 3.75em;
+  
+  header, .content {
+    width: 35em;
+  }
+  
+  h1 {
+    border-bottom: none;
+  }
+  
+  h1, h2 {
+    margin: 0; padding: 0;
+  }
+  
+  a.button {
+    background-color: #57D4DA;
+    color: white;
+    border: 0.1em solid darken(#57D4DA, 20%);
+    margin: 1em;
+  }
+}
+
+/* End home page styles */
+
+/* Service page styles */
+nav.service {
+  color: white;
+  font-family: Overpass, $base-font-family;
+  font-size: 0.9em;
+  text-transform: uppercase;
+  
+  .express & {
+    background-color: $express;
+  }
+  
+  .flex & {
+    background-color: $flex;
+  }
+  
+  .power & {
+    background-color: $power;
+  }
+  
+  li.active a,
+  a:hover {
+    background-color: white !important;
+    color: #666;
+  }
+  
+  &:last {
+    float: none !important;
+  }
+}
+
+.product {
+  .main {
+    @include clearfix;
+    
+    .content nav {
+      text-align: right;
+      width: 12em;
+      float: left;
+      font-family: Overpass, $base-font-family;
+      
+      ul {
+        padding: 0; margin: 0;
+      }
+      
+      header {
+        padding: 3.5em .8em 0;
+        width: auto;
+        font-size: .8em;
+        
+        h2 {
+          padding: 0; margin: 0;
+        }
+      }
+      
+      > header {
+        @include visually-hidden;
+      }
+      
+      li {
+        list-style-type: none;
+      }
+      
+      a {
+        @include inline-block;
+        padding: .65em;
+        color: #787878;
+        text-decoration: none;
+        border-bottom: 1px solid #ececec;
+        width: 10em;
+      }
+      
+      li.active a,
+      a:hover {
+        color: #333;
+      }
+      
+      #account.signed_out {
+        a {
+          color: #aaa;
+        }
+        
+        a.sign_in {
+          @include inline-block;
+          margin: .5em  0;
+          padding: 1em;
+          background: #FFFCAF;
+          border: 1px solid #FFDC41;
+          @include border-radius(.25em);
+          color: #333;
+          font-weight: bold;
+          text-align: center;
+        }
+      }
+    }
+  
+    .content .content,
+    header {
+      width: 35em;
+      padding-left: 15em;
+    }
+    
+    h1 {
+      border: 0;
+      padding-left: 0;
+    }
+    
+  }
+  &.express .main h1 {
+    color: $express;
+  }
+  &.express .main nav h2 {
+    color: $express;
+  }
+  &.flex .main h1 {
+    color: $flex;
+  }
+  &.flex .main nav h2 {
+    color: $flex;
+  }
+  &.power .main h1 {
+    color: $power;
+  }
+  &.power .main nav h2 {
+    color: $power;
+  }
+
+}
+

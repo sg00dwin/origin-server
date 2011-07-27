@@ -213,11 +213,12 @@ password=$(head -n 500 /dev/urandom|tr -dc "a-np-zA-NP-Z1-9-_"|fold -w 12 | head
 #
 echo "export OPENSHIFT_DB_USERNAME='admin'" > $APP_HOME/.env/OPENSHIFT_DB_USERNAME
 echo "export OPENSHIFT_DB_PASSWORD='$password'" > $APP_HOME/.env/OPENSHIFT_DB_PASSWORD
-echo "export OPENSHIFT_DB_TYPE='mysql-5.10'" > $APP_HOME/.env/OPENSHIFT_DB_TYPE
+echo "export OPENSHIFT_DB_TYPE='mysql-5.1'" > $APP_HOME/.env/OPENSHIFT_DB_TYPE
 echo "export OPENSHIFT_DB_HOST='$IP'" > $APP_HOME/.env/OPENSHIFT_DB_HOST
 echo "export OPENSHIFT_DB_PORT='3306'" > $APP_HOME/.env/OPENSHIFT_DB_PORT
 echo "export OPENSHIFT_DB_SOCKET='${MYSQL_DIR}/socket/mysql.sock'" > $APP_HOME/.env/OPENSHIFT_DB_SOCKET
 echo "export OPENSHIFT_DB_URL='mysql://admin:$password@$IP:3306/'" > $APP_HOME/.env/OPENSHIFT_DB_URL
+echo "export OPENSHIFT_DB_CTL_SCRIPT='$MYSQL_DIR/${application}_mysql_ctl.sh'" > $APP_HOME/.env/OPENSHIFT_DB_CTL_SCRIPT
 
 # Setup user
 echo "                                  

@@ -3,7 +3,11 @@ Repo layout
 deployments/ - location for built wars (Details below)
 src/ - maven src structure
 pom.xml - maven build file  
-.config/ - location for JBoss configuration (Ex: adding datasources into standalone.xml)
+.openshift/ - location for openshift specific files
+.openshift/config/ - location for configuration files such as standalone.xml (used to modify jboss config such as datasources) 
+../data - For persistent data
+.openshift/action_hooks/build - Script that gets run every push, just prior to
+    starting your app
 
 
 Details about layout and deployment options

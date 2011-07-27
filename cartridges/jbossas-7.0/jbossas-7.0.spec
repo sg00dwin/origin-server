@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.75.0
+Version:   0.75.7
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -68,7 +68,7 @@ rm -rf %{buildroot}
 %defattr(-,root,root,-)
 %attr(0750,-,-) %{cartridgedir}/info/hooks/
 %attr(0640,-,-) %{cartridgedir}/info/data/
-%attr(0640,-,-) %{cartridgedir}/template/
+%{cartridgedir}/template/
 %config(noreplace) %{cartridgedir}/info/configuration/
 %{_sysconfdir}/libra/cartridges/%{name}
 %{cartridgedir}/info/changelog
@@ -76,6 +76,34 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Tue Jul 26 2011 Dan McPherson <dmcphers@redhat.com> 0.75.7-1
+- Adding README (mmcgrath@redhat.com)
+- added build scripts to jboss, perl, rack and wsgi (mmcgrath@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- import environment variables as part of the git hooks (mmcgrath@redhat.com)
+
+* Tue Jul 26 2011 Dan McPherson <dmcphers@redhat.com> 0.75.6-1
+- Adding environment variables to jboss (mmcgrath@redhat.com)
+
+* Mon Jul 25 2011 Dan McPherson <dmcphers@redhat.com> 0.75.5-1
+- adding commented out dep to pom.xml (dmcphers@redhat.com)
+
+* Fri Jul 22 2011 Dan McPherson <dmcphers@redhat.com> 0.75.4-1
+- Bug 724026 (dmcphers@redhat.com)
+
+* Thu Jul 21 2011 Dan McPherson <dmcphers@redhat.com> 0.75.3-1
+- perms cleanup (dmcphers@redhat.com)
+
+* Thu Jul 21 2011 Dan McPherson <dmcphers@redhat.com> 0.75.2-1
+- move .config -> .openshift/config (dmcphers@redhat.com)
+
+* Thu Jul 21 2011 Dan McPherson <dmcphers@redhat.com> 0.75.1-1
+- pom improvements (dmcphers@redhat.com)
+- bump spec numbers (dmcphers@redhat.com)
+- add server identity and namespace auto migrate (dmcphers@redhat.com)
+- half the jca workmanager thread counts (scott.stark@jboss.org)
+
 * Mon Jul 18 2011 Dan McPherson <dmcphers@redhat.com> 0.74.8-1
 - change default mysql ds db name (dmcphers@redhat.com)
 - doc update (dmcphers@redhat.com)

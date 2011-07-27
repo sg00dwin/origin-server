@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.75.0
+Version:       0.75.3
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -38,6 +38,17 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Fri Jul 22 2011 Dan McPherson <dmcphers@redhat.com> 0.75.3-1
+- Comment out fs_dontaudit_search_cgroup_dirs, until it shows up in RHEL6
+  (dwalsh@redhat.com)
+
+* Fri Jul 22 2011 Dan McPherson <dmcphers@redhat.com> 0.75.2-1
+- Dontaudit libra domains executing ls / (dwalsh@redhat.com)
+
+* Thu Jul 21 2011 Dan McPherson <dmcphers@redhat.com> 0.75.1-1
+- Allow socket management in /tmp (mmcgrath@redhat.com)
+- bump spec numbers (dmcphers@redhat.com)
+
 * Wed Jul 13 2011 Dan McPherson <dmcphers@redhat.com> 0.74.4-1
 - Allow libra_t to use gpg_exec_t as an entrypoint.  Define libra_var_lib_t as
   a poly_parent, so login domains can relabelfrom this label

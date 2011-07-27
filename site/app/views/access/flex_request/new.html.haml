@@ -19,18 +19,10 @@
         .message.error
           #{value}
 
-    %p
-      We'll need a little information get to you access to the Developer Preview.
-
     = semantic_form_for @access do |form|
-      = form.inputs do
-        %p
-          First, we'll need your Amazon account number (e.g. 1234-1234-1234).  Your account number will allow us to share the Flex Amazon Machine Images with your account.
-        = form.input :ec2_account_number
-
       - unless @user.terms.empty?
-        %p
-          Next, we will need you to read and agree to the following terms.  Red Hat will grant access to the OpenShift Service subject to the terms and conditions listed in the following documents:
+        %p#explanation
+          Red Hat will grant access to the OpenShift Service subject to the terms and conditions listed in the following documents:
 
         %ul.terms
           - @user.terms.each_with_index do |value, i|

@@ -2,7 +2,7 @@
 
 Summary:   Provides python-wsgi-3.2 support
 Name:      rhc-cartridge-wsgi-3.2
-Version:   0.75.0
+Version:   0.75.5
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -34,7 +34,7 @@ rm -rf git_template
 cp -r template/ git_template/
 cd git_template
 git init
-git add *
+git add -f .
 git commit -m 'Creating template'
 cd ..
 git clone --bare git_template git_template.git
@@ -75,6 +75,26 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Tue Jul 26 2011 Dan McPherson <dmcphers@redhat.com> 0.75.5-1
+- Adding .openshift to the git template directory (mmcgrath@redhat.com)
+- Adding README (mmcgrath@redhat.com)
+- added build scripts to jboss, perl, rack and wsgi (mmcgrath@redhat.com)
+- import environment variables as part of the git hooks (mmcgrath@redhat.com)
+
+* Fri Jul 22 2011 Dan McPherson <dmcphers@redhat.com> 0.75.4-1
+- Bug 723784 (dmcphers@redhat.com)
+
+* Fri Jul 22 2011 Dan McPherson <dmcphers@redhat.com> 0.75.3-1
+- Bug 724026 (dmcphers@redhat.com)
+
+* Thu Jul 21 2011 Dan McPherson <dmcphers@redhat.com> 0.75.2-1
+- move .config -> .openshift/config (dmcphers@redhat.com)
+
+* Thu Jul 21 2011 Dan McPherson <dmcphers@redhat.com> 0.75.1-1
+- adding wsgi (mmcgrath@redhat.com)
+- bump spec numbers (dmcphers@redhat.com)
+- add server identity and namespace auto migrate (dmcphers@redhat.com)
+
 * Tue Jul 12 2011 Dan McPherson <dmcphers@redhat.com> 0.74.2-1
 - Automatic commit of package [rhc-cartridge-wsgi-3.2] release [0.74.1-1].
   (dmcphers@redhat.com)

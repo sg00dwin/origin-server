@@ -157,7 +157,7 @@ module Streamline
   #
   # Request access to a cloud solution
   #
-  def request_access(solution, amz_acct="")
+  def request_access(solution)
     if has_requested?(solution)
       Rails.logger.warn("User already requested access")
       errors.add(:base, I18n.t(:already_requested_access, :scope => :streamline))
@@ -165,8 +165,7 @@ module Streamline
       Rails.logger.warn("User already granted access")
       errors.add(:base, I18n.t(:already_granted_access, :scope => :streamline))
     else
-      access_args = {'solution' => solution,
-                     'amazonAccount' => amz_acct}
+      access_args = {'solution' => solution}
       # Make the request for access
       http_post(@@request_access_url, access_args, false) do |json|
         if json['solution']
@@ -231,6 +230,13 @@ module Streamline
         if res.body and !res.body.empty?
           json = parse_body(res.body)
           yield json if block_given?
+        else
+          log_error "Empty response from streamline - #{res.code}"
+          if raise_exception_on_error
+            raise Libra::StreamlineException
+          else
+            errors.add(:base, I18n.t(:unknown))
+          end
         end
       when Net::HTTPForbidden, Net::HTTPUnauthorized
         raise AccessDeniedException
@@ -238,12 +244,12 @@ module Streamline
         log_error "Invalid HTTP response from streamline - #{res.code}"
         log_error "Response body:\n#{res.body}"
         if raise_exception_on_error
-          raise StreamlineException
+          raise Libra::StreamlineException
         else
           errors.add(:base, I18n.t(:unknown))
         end
       end
-    rescue AccessDeniedException, Libra::UserValidationException
+    rescue AccessDeniedException, Libra::UserValidationException, Libra::StreamlineException
       raise
     rescue Exception => e
       log_error "Exception occurred while calling streamline - #{e.message}"

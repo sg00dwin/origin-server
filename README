@@ -1,6 +1,8 @@
 
 build: 
   Build Artifacts
+cartridges:
+  The root for the cartridges source
 client:
   Contains the client tools
 common:
@@ -9,6 +11,8 @@ misc:
   Bucket for documentation/development utilities/etc
 node:
   Contains code specific to the nodes which run the various cartridges
+selinux:
+  SE linux policy and installation scripts
 site:
   Contains site
 broker:

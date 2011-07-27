@@ -15,7 +15,7 @@ proxy.
 2. yum install mod_ssl
 This will install apache certs you will need
 
-3. mkdir site/public/app; ln -s site/public/* site/public/app/.; rm site/public/app/app
+3. mkdir site/public/app; cd site/public/app; ln -s ../* .; rm app
 This should link all the resources in public into /app/public
 
 4. sudo cp -R server-common/openshift* /usr/lib/ruby/site_ruby/1.8/
@@ -25,6 +25,7 @@ You'll have to do this any time you modify files in server-common
 Note: Be sure not to commit the new Gemfile.lock
 
 6. sudo rails s
+Note: if you get an error about a newer version of rails already activated you might need to uninstall the newer versions first  
 
 7b. To run against streamline in rails production mode with captcha enabled, you can use:
 cp config/environments/streamline-internal.rb config/environments/production.rb; sudo rails s -e production
