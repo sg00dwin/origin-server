@@ -6,6 +6,9 @@ tmp/ - Temporary storage
 public/ - Content (images, css, etc. available to the public)
 config.ru - This file is used by Rack-based servers to start the application.
 ../data - For persistent data
+.openshift/action_hooks/build - Script that gets run every push, just prior to
+    starting your app
+
 
 Notes about layout
 ==================

@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.75.5
+Version:   0.75.7
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -76,6 +76,16 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Tue Jul 26 2011 Dan McPherson <dmcphers@redhat.com> 0.75.7-1
+- Adding README (mmcgrath@redhat.com)
+- added build scripts to jboss, perl, rack and wsgi (mmcgrath@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- import environment variables as part of the git hooks (mmcgrath@redhat.com)
+
+* Tue Jul 26 2011 Dan McPherson <dmcphers@redhat.com> 0.75.6-1
+- Adding environment variables to jboss (mmcgrath@redhat.com)
+
 * Mon Jul 25 2011 Dan McPherson <dmcphers@redhat.com> 0.75.5-1
 - adding commented out dep to pom.xml (dmcphers@redhat.com)
 

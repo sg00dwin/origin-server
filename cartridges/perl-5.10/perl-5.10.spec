@@ -2,7 +2,7 @@
 
 Summary:   Provides mod_perl support
 Name:      rhc-cartridge-perl-5.10
-Version:   0.6.4
+Version:   0.6.5
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -31,7 +31,7 @@ rm -rf git_template
 cp -r template/ git_template/
 cd git_template
 git init
-git add *
+git add -f .
 git commit -m 'Creating template'
 cd ..
 git clone --bare git_template git_template.git
@@ -72,6 +72,11 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Tue Jul 26 2011 Dan McPherson <dmcphers@redhat.com> 0.6.5-1
+- Adding .openshift to the git template directory (mmcgrath@redhat.com)
+- Adding README (mmcgrath@redhat.com)
+- added build scripts to jboss, perl, rack and wsgi (mmcgrath@redhat.com)
+
 * Fri Jul 22 2011 Dan McPherson <dmcphers@redhat.com> 0.6.4-1
 - Bug 723784 (dmcphers@redhat.com)
 
