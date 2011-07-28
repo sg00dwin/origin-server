@@ -59,12 +59,23 @@ When /^I (start|stop|restart) the jbossas service$/ do |action|
   namespace = @app['namespace']
   app_name = @app['name']
 
+  @app['pid'] = 0 if action == "restart"
+
   command = "#{$jbossas_hooks}/%s %s %s %s" % [action, app_name, namespace, account_name]
   exit_status = runcon command, 'unconfined_u', 'system_r', 'libra_initrc_t'
   if exit_status != 0
     raise "Unable to %s for %s %s %s" % [fix_action, app_name, namespace, account_name]
   end
   sleep 5
+
+  if action == "restart"
+    # new_pid = ??
+    # @app['pid'].should not_be(new_pid)
+  end
+end
+
+Then /^the jbossas daemon pid will be different$/ do
+  pending
 end
 
 Given /^the jbossas service is (running|stopped)$/ do |start_state|

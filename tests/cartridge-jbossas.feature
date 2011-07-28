@@ -30,7 +30,7 @@ Feature: JBossAS Application
      Then a jbossas application directory will not exist
      And a jbossas git repo will not exist
      And a jbossas source tree will not exist
-     #And the maven repository will not exist
+     And the maven repository will not exist
      And the openshift environment variable files will not exist
      And a jbossas daemon will not be running
 
@@ -56,3 +56,4 @@ Feature: JBossAS Application
      And a new jbossas application
      And the jbossas service is running
      When I restart the jbossas service
+     Then the jbossas daemon pid will be different
