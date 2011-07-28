@@ -86,10 +86,10 @@ $(function() {
       entities[user_mention.indices[0]] = user_mention;
       indices.push(user_mention.indices[0]);
     }
-    indices.sort(function sortNumber(a,b) {
-      return a - b;
-    });
     if (indices.length > 0) {
+      indices.sort(function sortNumber(a,b) {
+        return a - b;
+      });
       var pos = 0;
       for (var i = 0; i < indices.length; i++) {
         var entity = entities[indices[i]];
