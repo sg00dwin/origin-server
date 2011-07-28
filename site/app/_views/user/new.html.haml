@@ -1,0 +1,43 @@
+-# file: Registration page
+
+- content_for :scripts do
+  = javascript_include_tag "/app/javascripts/jquery.validate.min.js"
+  = javascript_include_tag "/app/javascripts/form"
+
+- if @product == 'openshift'
+  - subtitle = 'Register for an account'
+- else
+  - subtitle = 'Register for access to OpenShift ' + @product
+    
+=render 'shared/pageheader', :product => @product, :title => 'Try ' + @product.capitalize, :subtitle => subtitle
+
+#page.container_24
+
+  #registration.push_4.grid_13
+    %h3 Register for access to #{@product.capitalize}
+    
+    #login_instead
+      = link_to 'Already have a redhat.com or RHN account?', login_path
+    
+    - @user.errors.each do |key, value|
+      - if key == :base || key == :captcha
+        .message.error
+          #{value}
+            
+    = semantic_form_for @user do |form|
+      = form.inputs do
+        = form.hidden_field :cloud_access_choice
+        = form.input :email_address
+        = form.input :password, :input_html => { :autocomplete => 'off' }
+        = form.input :password_confirmation, :input_html => { :autocomplete => 'off' }                
+        %li.captcha
+          %label(for="recaptcha_response_field") Prove You Are Human
+          = recaptcha_tags :ssl => true
+          
+
+      = form.buttons do
+        = form.commit_button "Register Now"
+    .clear
+
+ 
+  .clear

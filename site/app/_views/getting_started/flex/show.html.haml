@@ -1,0 +1,22 @@
+-# file: Flex getting started
+
+- content_for :page_title do
+  Get Started with Flex
+
+= render 'shared/pageheader', :product => 'flex', :title => 'Using Flex', :subtitle => 'Get started with Flex'
+
+#page.container_24
+  #main_content.grid_22
+
+    %h2 Getting Started
+
+    %p
+      Congratulations, your Flex account is now activated!
+
+    %p
+      Clicking on the link below will take you to the Flex application where you can start
+      migrating your applications to the cloud.
+
+    = link_to 'Go to Flex >', '/flex/', :class => 'more'
+
+  .clear
