@@ -26,13 +26,21 @@ Feature: JBossAS Application
      And a new guest account
      And a new jbossas application
      When I deconfigure the jbossas application
-     
+     Then a jbossas application http proxy file will not exist
+     Then a jbossas application directory will not exist
+     And a jbossas git repo will not exist
+     And a jbossas source tree will not exist
+     #And the maven repository will not exist
+     And the openshift environment variable files will not exist
+     And a jbossas daemon will not be running
+
    Scenario: Start a JBoss AS Application
      Given an accepted node
      And a new guest account
      And a new jbossas application
      And the jbossas service is stopped
      When I start the jbossas service
+     Then a jbossas daemon will be running
 
    Scenario: Stop a JBoss AS Application
      Given an accepted node
@@ -40,6 +48,7 @@ Feature: JBossAS Application
      And a new jbossas application
      And the jbossas service is running
      When I stop the jbossas service
+     Then a jbossas daemon will not be running
 
    Scenario: Restart a JBoss AS Application
      Given an accepted node

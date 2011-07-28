@@ -67,8 +67,39 @@ When /^I (start|stop|restart) the jbossas service$/ do |action|
   sleep 5
 end
 
-Given /^the jbossas service is (running|stopped)$/ do |status|
-  pending # express the regexp above with the code you wish you had
+Given /^the jbossas service is (running|stopped)$/ do |start_state|
+  account_name = @account['accountname']
+  namespace = @app['namespace']
+  app_name = @app['name']
+
+  case start_state
+  when 'running':
+      fix_action = 'start'
+      good_exit = 0
+  when 'stopped':
+      fix_action = 'stop'
+      good_exit = 0 # was 4 for others
+  end
+
+  # check
+  status_command = $jbossas_status_format %  [app_name, namespace, account_name]
+  exit_status = runcon status_command, 'unconfined_u', 'system_r', 'libra_initrc_t'
+
+  if exit_status != good_exit
+    # fix it
+    fix_command = "#{$jbossas_hooks}/%s %s %s %s" % [fix_action, app_name, namespace, account_name]
+    exit_status = runcon fix_command, 'unconfined_u', 'system_r', 'libra_initrc_t'
+    if exit_status != 0
+      raise "Unable to %s for %s %s %s" % [fix_action, app_name, namespace, account_name]
+    end
+    sleep 5
+    
+    # check exit status
+    exit_status = runcon status_command, 'unconfined_u', 'system_r', 'libra_initrc_t'
+    if exit_status != good_exit
+      raise "Received bad status (%d) after %s for %s %s %s" % [exit_status, fix_action, app_name, namespace, account_name]
+    end
+  end
 end
 
 Then /^a jbossas application directory will( not)? exist$/ do |negate|
@@ -257,7 +288,7 @@ Then /^the openshift environment variable files will( not)? exist$/ do |negate|
               "OPENSHIFT_APP_CTL_SCRIPT"
               ]
 
-  raise Cucumber::Pending.new "Waiting for bug fix 20110728 MAL"
+  raise Cucumber::Pending.new "Waiting for bug fix 20110728 MAL" unless negate
 
   env_list.each do |file_name|
     file_path = "#{env_root}/#{file_name}"
@@ -292,16 +323,19 @@ Then /^a jbossas source tree will( not)? exist$/ do |negate|
   app_name = @app['name']
 
   app_root = "#{$home_root}/#{acct_name}/#{app_name}"
-  src_root = Dir.new "#{app_root}/repo"
-  
-  src_contents = ['deployments', 'pom.xml', 'README', 'src', ".gitignore"]
+  repo_root_path = "#{app_root}/repo"
 
-  src_contents.each do |file_name|
-    unless negate
+  unless negate
+    File.exists?(repo_root_path).should be_true "file #{repo_root_path} should exist and does not"
+    File.directory?(repo_root_path).should be_true "file #{repo_root_path} should be a directory and is not"
+    src_root = Dir.new repo_root_path
+    src_contents = ['deployments', 'pom.xml', 'README', 'src', ".gitignore"]
+
+    src_contents.each do |file_name|
       src_root.member?(file_name).should be_true "file #{app_root}/repo/#{file_name} should exist and does not"
-    else
-      src_root.member?(file_name).should be_false "file #{app_root}/repo/#{file_name} should not exist and does"
     end
+  else
+    File.exists?(repo_root_path).should be_false "file #{repo_root_path} should not exist and does"
   end
   
 end
