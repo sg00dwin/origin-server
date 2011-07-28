@@ -1,5 +1,6 @@
 -# file: Main site index
 
+
 %section#opener 
   .content
     %header
@@ -68,34 +69,9 @@
     #latest
       %img.avatar{ :src => "images/avatars/openshift.png" }
       
-      %p.tweet
-        <a class="tweeter" href="http://twitter.com/#!/openshift">@OpenShift</a> Behind the scenes goodness on what it takes to run the OpenShift <a class="hashtag" href="http://twitter.com/#!/search?q=#PaaS">#PaaS</a> and the tech that makes it possible - Check it: <a href="http://red.ht/m6xc3y">red.ht/m6xc3y</a>
+      %p.tweet{ :id => "latest_tweet" }
     
     #retweets
-      %ul
-        %li
-          %img.avatar{ :src => "images/avatars/hbons.png" }
-          
-          %p.tweet
-            <a class="tweeter" href="http://twitter.com/#!/hbons">@hbons</a> working on the <a class="hashtag" href="http://twitter.com/#!/search?q=#openshift">#openshift</a> website. coming along.
-        
-        %li
-          %img.avatar{ :src => "images/avatars/emichan.png" }
-          
-          %p.tweet
-            <a class="tweeter" href="http://twitter.com/#!/emichan">@emichan</a> i love pandas so much. <a class="hashtag" href="http://twitter.com/#!/search?q=#openshift">#openshift</a> is great for panda lovers like me!
-        
-        %li
-          %img.avatar{ :src => "images/avatars/jimmac.png" }
-          
-          %p.tweet
-            <a class="tweeter" href="http://twitter.com/#!/jimmac">@jimmac</a> RT <a class="tweeter" href="http://twitter.com/#!openshiftevents">@OpenShiftEvents</a> Matt Hicks speaking on what it takes to operate the OpenShift <a class="hashtag" href="http://twitter.com/#!/search?q=#PaaS">#PaaS</a> at next months Silicon Valley <a class="hashtag" href="http://twitter.com/#!/search?q=#CloudComputing">#CloudComputing</a> Meetup
-        
-        %li
-          %img.avatar{ :src => "images/avatars/random.png" }
-          
-          %p.tweet
-            <a class="tweeter" href="http://twitter.com/#!/random">@random</a> trying out <a class="hashtag" href="http://twitter.com/#!/search?q=#openshift">#openshift</a> - so far so good!
 
     #social_links
       %a.more{ :href => "http://twitter.com/#!/search/openshift" }
@@ -114,3 +90,6 @@
   
   .content
     = link_to 'Sign up and try it', login_path, :class => 'sign_up button'
+
+- content_for :javascripts do
+  = javascript_include_tag "/app/javascripts/home.src.js"
