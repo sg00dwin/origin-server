@@ -219,6 +219,58 @@ Then /^a jbossas deployments directory will( not)? exist$/ do |negate|
   end
 end
 
+Then /^the maven repository will( not)? exist$/ do |negate|
+  acct_name = @account['accountname']
+  app_name = @app['name']
+
+  m2_root = "#{$home_root}/#{acct_name}/.m2"
+  m2_repo_path = "#{m2_root}/repository"
+  m2_repo_list = ["classworlds", "com", "commons-cli", "junit", "org", "xpp3"]
+
+  m2_repo_list.each do |file_name|
+    file_path = "#{m2_repo_path}/#{file_name}"
+    file_exists = File.exists? file_path
+    unless negate
+      file_exists.should be_true "file #{file_path} should exist and does not"
+      file_dir = File.directory? file_path
+      file_dir.should be_true "file #{file_path} should be a directory and is not"
+    else
+      file_exists.should be_false "file #{file_path} should not exist and does"
+    end
+  end
+end
+
+Then /^the openshift environment variable files will( not)? exist$/ do |negate|
+  acct_name = @account['accountname']
+  app_name = @app['name']
+
+  env_root = "#{$home_root}/#{acct_name}/.env"
+  env_list = ["OPENSHIFT_APP_DIR", 
+              "OPENSHIFT_REPO_DIR", 
+              "OPENSHIFT_INTERNAL_IP",
+              "OPENSHIFT_INTERNAL_PORT",
+              "OPENSHIFT_LOG_DIR",
+              "OPENSHIFT_DATA_DIR",
+              "OPENSHIFT_TMP_DIR",
+              "OPENSHIFT_RUN_DIR",
+              "OPENSHIFT_APP_NAME",
+              "OPENSHIFT_APP_CTL_SCRIPT"
+              ]
+
+  raise Cucumber::Pending.new "Waiting for bug fix 20110728 MAL"
+
+  env_list.each do |file_name|
+    file_path = "#{env_root}/#{file_name}"
+    file_exists = File.exists? file_path
+    unless negate
+      file_exists.should be_true "file #{file_path} should exist and does not"
+    else
+      file_exists.should be_false "file #{file_path} should not exist and does"
+    end
+  end
+
+end
+
 Then /^a jbossas service startup script will( not)? exist$/ do |negate|
   acct_name = @account['accountname']
   app_name = @app['name']
@@ -269,8 +321,28 @@ Then /^a jbossas application http proxy file will( not)? exist$/ do | negate |
   end
 end
 
-Then /^a jbossas daemon will be running$/ do
-  pending # express the regexp above with the code you wish you had
+Then /^a jbossas daemon will( not)? be running$/ do |negate|
+  acct_name = @account['accountname']
+  acct_uid = @account['uid']
+  app_name = @app['name']
+
+  max_tries = 7
+  poll_rate = 3
+  exit_test = negate ? lambda { |tval| tval == 0 } : lambda { |tval| tval > 0 }
+  
+  tries = 0
+  num_javas = num_procs acct_name, 'java'
+  while (not exit_test.call(num_javas) and tries < max_tries)
+    tries += 1
+    sleep poll_rate
+    found = exit_test.call num_javas
+  end
+
+  if not negate
+    num_javas.should be > 0
+  else
+    num_javas.should be == 0
+  end
 end
 
 Then /^the jbossas daemon log files will( not)? exist$/ do |negate|
