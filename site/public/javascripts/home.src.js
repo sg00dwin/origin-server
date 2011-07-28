@@ -43,7 +43,8 @@ $(function() {
         li = d.createElement('li');
         ul.appendChild(li);
         img = d.createElement('img');
-          img.setAttribute('src', tweet.user.profile_image_url_https);
+          //img.setAttribute('src', tweet.user.profile_image_url_https);
+          img.setAttribute('src', 'https://api.twitter.com/1/users/profile_image?screen_name=' + tweet.entities.user_mentions[0].name);
           img.setAttribute('class', 'avatar');
         li.appendChild(img);
         el = d.createElement('p');
