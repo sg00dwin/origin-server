@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.75.7
+Version:   0.75.8
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -76,6 +76,11 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Thu Jul 28 2011 Dan McPherson <dmcphers@redhat.com> 0.75.8-1
+- adding skip build and markers (dmcphers@redhat.com)
+- added some sample env variables (mmcgrath@redhat.com)
+- removing restrictive permissions for the template" (mmcgrath@redhat.com)
+
 * Tue Jul 26 2011 Dan McPherson <dmcphers@redhat.com> 0.75.7-1
 - Adding README (mmcgrath@redhat.com)
 - added build scripts to jboss, perl, rack and wsgi (mmcgrath@redhat.com)
