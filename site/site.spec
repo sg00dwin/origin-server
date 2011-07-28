@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.75.4
+Version:   0.75.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -64,6 +64,16 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Thu Jul 28 2011 Dan McPherson <dmcphers@redhat.com> 0.75.5-1
+- minor change (dmcphers@redhat.com)
+- twitter error handling (dmcphers@redhat.com)
+- show tweeters pic instead of retweeter (dmcphers@redhat.com)
+- adding twitter, work in progress (dmcphers@redhat.com)
+- New layout and homepage working, everything else is broken
+  (edirsh@redhat.com)
+- Merge branch 'master' of ssh://libragit/srv/git/li (edirsh@redhat.com)
+- Updated conversion to latest version (edirsh@redhat.com)
+
 * Tue Jul 26 2011 Dan McPherson <dmcphers@redhat.com> 0.75.4-1
 - fix test cases (dmcphers@redhat.com)
 
