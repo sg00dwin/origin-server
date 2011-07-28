@@ -1,0 +1,28 @@
+-# file: Service terms
+
+- content_for :page_title do
+  Terms and Conditions
+
+= render 'shared/pageheader', :product => 'openshift', :title => 'Legal Terms', :subtitle => ''
+
+#page.container_24
+  #main_content.grid_22
+    %h2 Legal Terms Guide
+
+    %p
+      This page provides a list of the legal terms that apply to your use of OpenShift.
+
+    %ul
+      %li
+        = link_to 'OpenShift Preview Services Agreement', legal_services_agreement_path
+
+      %li
+        = link_to 'Acceptable Use Policy', legal_acceptable_use_path
+
+      %li
+        = link_to 'Privacy Policy', legal_openshift_privacy_path
+      
+      %li
+        = link_to 'Terms of Use', legal_site_terms_path
+
+  .clear

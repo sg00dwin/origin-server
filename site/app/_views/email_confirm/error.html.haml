@@ -1,0 +1,11 @@
+-# file: Email confirmation errors page
+
+= render 'shared/pageheader', :product => 'openshift', :title => 'OpenShift Error', :subtitle => "We're sorry…"
+
+#page.container_24
+  #errors.prefix_1.grid_22.suffix_1
+    #errors_div.grid_12
+      - @errors.each do |field, msg|
+        .message.error
+          = msg
+  .clear

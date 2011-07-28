@@ -209,7 +209,7 @@ fi
 if [ -x ~/${application}/deploy/.openshift/action_hooks/build ]
 then
     echo "running .openshift/action_hooks/build"
-    ~/${application}/repo/.openshift/action_hooks/build
+    ~/${application}/deploy/.openshift/action_hooks/build
 fi
 
 # Start the app

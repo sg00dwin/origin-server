@@ -1,81 +1,123 @@
 // File: Front page javascripts
 
 $(function() {
-  var promos;
   
-  // slideshow
-	$('.simpleSlideShow').slideShow({
-    interval: 6
-	});
   
-  //-- Animate description over promo boxes --//
-  //Initialize boxes
-  promos = $('.promo');
-  $('.description', promos).each(function() {
-    //Set css properties
-    $(this).css({
-      'position': 'absolute',
-      'bottom': '-300px', //off the edge of the container
-      'background-color': 'rgba(51, 51, 51, .85)',
-      'left': '55px'
-    });
-  });
-  
-  //trigger on mouseover
-  promos.hover(
-    function() {
-      slideUp($(this).children('.description'));
+
+  $.ajax({
+    url: "https://api.twitter.com/1/statuses/user_timeline/openshift.json?count=1&include_entities=true",
+    dataType: 'jsonp',
+    timeout: 10000,
+    async: true,
+    success: function(data, textStatus, request) {
+      tweet = data[0];
+      var d = document; 
+      var el = d.getElementById('latest_tweet');
+      
+      while (el.firstChild) {
+        el.removeChild(el.firstChild);
+      }
+      render_tweet(d, el, tweet, 'openshift');
     },
-    function() {
-      slideDown($(this).children('.description'));
+    error: function(request, status, error) {
+      console.log('Error: ' + status);
+    }
+  });
+
+  $.ajax({
+    url: "https://api.twitter.com/1/statuses/retweeted_by_user.json?screen_name=openshift&count=4&include_entities=true",
+    dataType: 'jsonp',
+    timeout: 10000,
+    async: true,
+    success: function(data, textStatus, request) {
+      var d = document;
+      var el = d.getElementById('retweets');
+      
+      while (el.firstChild) {
+        el.removeChild(el.firstChild);
+      }
+      ul = d.createElement('ul');
+      el.appendChild(ul);
+      for (var i = 0; i < data.length; i++) {
+        tweet = data[i]
+        li = d.createElement('li');
+        ul.appendChild(li);
+        img = d.createElement('img');
+          img.setAttribute('src', tweet.user.profile_image_url_https);
+          img.setAttribute('class', 'avatar');
+        li.appendChild(img);
+        el = d.createElement('p');
+          el.setAttribute('class', 'tweet');
+        li.appendChild(el);
+        render_tweet(d, el, tweet, tweet.user.screen_name);
+      }
+    },
+    error: function(request, status, error) {
+      console.log('Error: ' + status);
+    }
   });
   
-  //trigger on focus
-  promos.focusin(function(event) {
-    if ($(event.target).hasClass('list_link')) {
-      /* If this link isn't visible when it's focused, 
-       * it'll pop into view, push everything else up
-       * and generally screw things up
-       * so just show it without delay on focus
-       */ 
-      $(this).find('.description').css({'bottom':0});
+  function render_tweet(d, el, tweet, screen_name) {
+    a = d.createElement('a');
+      a.setAttribute('class', 'tweeter');
+      a.setAttribute('href', 'http://twitter.com/#!/' + screen_name);
+      a.appendChild(document.createTextNode('@' + screen_name))
+    el.appendChild(a);
+    el.appendChild(document.createTextNode(' '));
+    var entities = {};
+    var indices = []
+    for (var i = 0; i < tweet.entities.urls.length; i++) {
+      var url = tweet.entities.urls[i];
+      entities[url.indices[0]] = url;
+      indices.push(url.indices[0]);
+    }
+    for (var i = 0; i < tweet.entities.hashtags.length; i++) {
+      var hashtag = tweet.entities.hashtags[i];
+      entities[hashtag.indices[0]] = hashtag;
+      indices.push(hashtag.indices[0]);
+    }
+    for (var i = 0; i < tweet.entities.user_mentions.length; i++) {
+      var user_mention = tweet.entities.user_mentions[i];
+      entities[user_mention.indices[0]] = user_mention;
+      indices.push(user_mention.indices[0]);
+    }
+    indices.sort(function sortNumber(a,b) {
+      return a - b;
+    });
+    if (indices.length > 0) {
+      var pos = 0;
+      for (var i = 0; i < indices.length; i++) {
+        var entity = entities[indices[i]];
+        if (pos < indices[i]) {
+          el.appendChild(d.createTextNode(tweet.text.substring(pos, indices[i])));
+        }
+        pos = entity.indices[1]
+        if (entity.url) {
+          a = d.createElement('a');
+            a.setAttribute('href', entity.url);
+            a.appendChild(document.createTextNode(entity.url))
+          el.appendChild(a);
+        }
+        if (entity.text) {
+          a = d.createElement('a');
+            a.setAttribute('href', 'http://twitter.com/#!/search?q=#' + entity.text);
+            a.appendChild(document.createTextNode('#' + entity.text))
+          el.appendChild(a);
+        }
+        else if (entity.name) {
+          a = d.createElement('a');
+            a.setAttribute('class', 'tweeter');
+            a.setAttribute('href', 'http://twitter.com/#!/' + entity.name);
+            a.appendChild(document.createTextNode('@' + entity.name))
+          el.appendChild(a);
+        }
+      }
+      if (pos < tweet.text.length - 1) {
+        el.appendChild(d.createTextNode(tweet.text.substring(pos, tweet.text.length)));
+      }
     }
     else {
-      slideUp($(this).find('.description'));
+      el.appendChild(document.createTextNode(tweet.text))
     }
-  });
-  promos.focusout(function(event) {
-    slideDown($(this).find('.description'));
-  });
-  
-  function slideUp(obj) {
-    obj.stop().animate({'bottom': 0}, 500);
   }
-  function slideDown(obj) {
-    obj.stop().animate({'bottom': '-300px'}, 500);
-  }
-  
-  
-  // Trigger "advanced" hover action
-  // in product promo boxes
-  //$('.promo a').hover(
-    //function(event) {
-      //// Over event
-      //$(this).closest('.promo').addClass('hover');
-    //},
-    //function(event) {
-      //// Out event
-      //$('.promo').removeClass('hover');
-    //}
-  //);
-  
-  // Fancybox
-  //$('.fancybox').fancybox();
-  
-  //Accordians
-  //$('#info').tabs('#info .section', {
-    //tabs: 'h3.section-header',
-    //effect: 'slide',
-    //initialIndex: 0
-  //});
 });

@@ -1,0 +1,54 @@
+%hgroup.title
+  %h1
+    OpenShift
+  %h2
+    PaaS by Red Hat Cloud
+
+.content
+  = link_to root_path do
+    = image_tag '/app/images/openshift-logo-white.png', 
+               :alt => 'OpenShift Logo'
+    
+  %aside#announcements
+    %header
+      %h1 OpenShift Announcements
+        
+    %ul
+      %li
+        %a.event{ :href => "#" }
+          .title
+            Our PaaS is taking a seat at CouchConf
+          .further
+            San Francisco | July 29
+      
+      %li
+        %a.announce{ :href => "#" }
+          .title
+            OpenShift has New Features
+          .further
+          Perl support, more applications per user, and more...
+
+%nav
+  %header
+    %h1
+      Main Navigation
+  .content
+    %ul
+      %li
+        = link_to 'Home', root_path, :class => 'home'
+      %li
+        = link_to 'Cloud Services', express_path, :class => 'services'
+      %li
+        = link_to 'Community', 'https://redhat.com/openshift', :class => 'community'
+      
+      -if local_assigns[:username]
+        %li.user
+          = "Greetings, #{:username}!"
+          
+        %li.user
+          = link_to 'Sign out', logout_path, :class => 'sign_out'
+      
+      -else
+        %li.user
+          = link_to 'Sign In', login_path, :class => 'sign_in'
+      
