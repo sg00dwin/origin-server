@@ -10,6 +10,29 @@ config.ru - This file is used by Rack-based servers to start the application.
     starting your app
 
 
+Environment Variables
+=====================
+
+OpenShift Express provides several environment variables to reference for ease
+of use.  The following list are some common variables but far from exhaustive:
+
+    ENV['OPENSHIFT_APP_NAME']  - Application name
+    ENV['OPENSHIFT_APP_DIR']   - Application dir
+    ENV['OPENSHIFT_DATA_DIR']  - For persistent storage (between pushes)
+    ENV['OPENSHIFT_TMP_DIR']   - Temp storage (unmodified files deleted after 10 days)
+
+When embedding a database using rhc-ctl-app, you can reference environment
+variables for username, host and password:
+
+    ENV['OPENSHIFT_DB_HOST']      - DB host
+    ENV['OPENSHIFT_DB_PORT']      - DB Port
+    ENV['OPENSHIFT_DB_USERNAME']  - DB Username
+    ENV['OPENSHIFT_DB_PASSWORD']  - DB Password
+
+To get a full list of environment variables, simply add a line in your
+.openshift/action_hooks/build script that says "export" and push.
+
+
 Notes about layout
 ==================
 Every time you push, everything in your remote application path gets recreated
