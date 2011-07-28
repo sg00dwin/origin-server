@@ -241,8 +241,9 @@ then
     then
       mv '$APP_DIR/tmp/deployments' '$APP_DIR/repo/'
     else
-      mv -n $APP_DIR/tmp/deployments/* $APP_DIR/repo/deployments/
-      mv -n $APP_DIR/tmp/deployments/.[^.]* $APP_DIR/repo/deployments/
+      pushd $APP_DIR/tmp/deployments > /dev/null
+      mv -n * .[^.]* $APP_DIR/repo/deployments/
+      popd
     fi
     rm -rf '$APP_DIR/tmp/deployments'
   fi
