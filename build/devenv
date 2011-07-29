@@ -229,7 +229,7 @@ class DevEnv < Thor
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   method_option :express_server, :type => :boolean, :desc => "Set as express server in express.conf and leave on public_ip"
   method_option :ssh_config_verifier, :type => :boolean, :desc => "Set as verifier in .ssh/config"
-  method_option :init_from_ci, :type => :boolean, :desc => "Initialize git repo for syncing and tests (requires --verifier)"
+  method_option :init_repo, :type => :boolean, :desc => "Initialize git repo for syncing and tests (requires --verifier)"
   method_option :instance_type, :required => false, :desc => "Amazon machine type override (default m1.large)"
   def launch(name)
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
@@ -257,12 +257,12 @@ class DevEnv < Thor
       set_instance_ip(instance, private_ip)
       instance.ssh("/usr/bin/puppet /usr/libexec/mcollective/update_yaml.pp")
 
-      if options.init_from_ci?
+      if options.init_repo?
         print "Initializing git repo for syncing..."
-        instance.scp_to("~/.ssh/libra.pem", "~/.ssh/", 30)
-        ssh_path=File.expand_path(File.dirname(__FILE__)) + "/ssh-override"
-        instance.scp_to(ssh_path, "~/", 30)
-        instance.ssh("rm -rf li; export GIT_SSH=/root/ssh-override; git clone --bare root@ci.dev.openshift.redhat.com:/var/lib/jenkins/jobs/libra_check/workspace /root/li")
+        #instance.scp_to("~/.ssh/libra.pem", "~/.ssh/", 30)
+        #ssh_path=File.expand_path(File.dirname(__FILE__)) + "/ssh-override"
+        #instance.scp_to(ssh_path, "~/", 30)
+        instance.ssh("rm -rf li; git clone --bare git://git1.ops.rhcloud.com/li.git/ /root/li")
         update_remote_tests(instance)
         puts "Done"
       else
