@@ -259,9 +259,6 @@ class DevEnv < Thor
 
       if options.init_repo?
         print "Initializing git repo for syncing..."
-        #instance.scp_to("~/.ssh/libra.pem", "~/.ssh/", 30)
-        #ssh_path=File.expand_path(File.dirname(__FILE__)) + "/ssh-override"
-        #instance.scp_to(ssh_path, "~/", 30)
         instance.ssh("rm -rf li; git clone --bare git://git1.ops.rhcloud.com/li.git/ /root/li")
         update_remote_tests(instance)
         puts "Done"
