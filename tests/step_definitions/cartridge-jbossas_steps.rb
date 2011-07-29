@@ -277,7 +277,7 @@ Then /^the maven repository will( not)? exist$/ do |negate|
       file_dir = File.directory? file_path
       file_dir.should be_true "file #{file_path} should be a directory and is not"
     else
-      raise Cucumber::Pending.new 'deconfigure must remove user/.m2'
+      #raise Cucumber::Pending.new 'deconfigure must remove user/.m2'
       file_exists.should be_false "file #{file_path} should not exist and does"
     end
   end
