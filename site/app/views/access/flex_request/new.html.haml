@@ -7,13 +7,11 @@
   = javascript_include_tag "/app/javascripts/jquery.validate.min.js"
   = javascript_include_tag "/app/javascripts/form"
 
-= render 'shared/pageheader', :product => 'flex', :title => 'Try Flex', :subtitle => 'Get Access to the Developer Preview'
+%section.main
+  %header
+    %h1 Request Access to Flex
 
-.container_24#page
-
-  #access.grid_13.push_5
-    %h3 Request Access to Flex
-
+  .content
     - @access.errors.each do |key, value|
       - if key == :base
         .message.error
@@ -37,5 +35,3 @@
 
       = form.buttons do
         = form.commit_button "Request Access", :input_html => { :class => 'button' }
-    .clear
-  .clear

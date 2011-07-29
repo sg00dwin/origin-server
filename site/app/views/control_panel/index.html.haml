@@ -1,27 +1,15 @@
 -# file: Control Panel index
 
--#
   - content_for :scripts do
-    = javascript_include_tag "/app/javascripts/jquery_ujs.js",
-      "/app/javascripts/modernizr.js",
-      "/app/javascripts/control_panel.js"
+    "/app/javascripts/control_panel.js"
 
-= render 'shared/pageheader', :product => 'express', :title => 'Control Panel', :subtitle => ''
-
-#page.container_24
-  #main_content.grid_22
+%section.main
+  %header
+    %h1
+      Dashboard
   
-    - if flash[:success]
-      .message.success
-        = flash[:success]
-  
-    - if flash[:notice]
-      .message.notice
-        = flash[:notice]
-    
-    - if flash[:error]
-      .message.error
-        = flash[:error]
+  .content
+    = render 'layouts/flashes'
 
     #domain_form
       %h2 Create a domain
@@ -31,4 +19,3 @@
         = form.input :password, :as => :password
         = form.buttons
       
-  .clear

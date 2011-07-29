@@ -1,15 +1,8 @@
-- if @product == 'openshift'
-  - subtitle = 'Register for an account'
-- else
-  - subtitle = 'Register for access to ' + @product
+%section.main
+  %header
+    %h1 
+      What's Next?
     
-=render 'shared/pageheader', :product => @product, :title => 'Try ' + @product.capitalize, :subtitle => subtitle
-.container_24#page
-  .clear
-  
-  .prefix_1.grid_22.suffix_1
-    %h4 What's Next?
+  .content
     %p
       Check your inbox for an email with a validation link. Click on the link to complete the registration process.
-
-  .clear

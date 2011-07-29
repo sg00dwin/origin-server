@@ -7,13 +7,12 @@
   = javascript_include_tag "/app/javascripts/jquery.validate.min.js"
   = javascript_include_tag "/app/javascripts/form"
 
-= render 'shared/pageheader', :product => 'express', :title => 'Try Express', :subtitle => 'Get Access to the Developer Preview'
+%section.main
+  %header
+    %h1
+      Request Access to Express
 
-.container_24#page
-
-  #access.express.grid_13.push_5
-    %h3 Request Access to Express
-
+  .content
     - @access.errors.each do |key, value|
       - if key == :base
         .message.error
@@ -35,6 +34,3 @@
         %p <strong>Note:</strong> You have previously accepted all applicable terms.
       = form.buttons do
         = form.commit_button "Request Access", :input_html => { :class => 'button' }
-    .clear
-
-  .clear

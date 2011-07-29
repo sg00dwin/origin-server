@@ -1,23 +1,22 @@
 -# file: Registration page
 
-- content_for :scripts do
+- content_for :javascripts do
   = javascript_include_tag "/app/javascripts/jquery.validate.min.js"
   = javascript_include_tag "/app/javascripts/form"
 
 - if @product == 'openshift'
-  - subtitle = 'Register for an account'
+  - title = 'Register for an account'
 - else
-  - subtitle = 'Register for access to OpenShift ' + @product
+  - title = 'Register for access to OpenShift ' + @product
     
-=render 'shared/pageheader', :product => @product, :title => 'Try ' + @product.capitalize, :subtitle => subtitle
+%section.main
+  %header
+    %h1
+      = title
 
-#page.container_24
-
-  #registration.push_4.grid_13
-    %h3 Register for access to #{@product.capitalize}
-    
+  .content    
     #login_instead
-      = link_to 'Already have a redhat.com or RHN account?', login_path
+      = link_to 'Already have a redhat.com or RHN account?', login_path, :class => 'more'
     
     - @user.errors.each do |key, value|
       - if key == :base || key == :captcha
@@ -37,7 +36,3 @@
 
       = form.buttons do
         = form.commit_button "Register Now"
-    .clear
-
- 
-  .clear

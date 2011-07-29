@@ -4,14 +4,17 @@
   = javascript_include_tag "/app/javascripts/jquery.validate.min.js"
   = javascript_include_tag "/app/javascripts/form"
 
-= render 'shared/pageheader', :product => 'openshift', :title => 'Login to OpenShift', :subtitle => 'Access Your OpenShift Account'
+- content_for :page_title do
+  Sign in to OpenShift
 
-.container_24#page
-  #login-page.grid_13.push_5
-    %h3 Already Have a Login?
-    
+%section.main
+  %header
+    %h1 
+      Sign In to OpenShift
+  
+  .content
     %p#lost_password
-      = link_to 'Lost your password?', "#{Rails.configuration.streamline}/wapps/sso/lostPassword.html"
+      = link_to 'Lost your password?', "#{Rails.configuration.streamline}/wapps/sso/lostPassword.html", :class => 'more'
 
     #login-form
       - if @user and @user.errors.any?
@@ -19,10 +22,7 @@
           .message.error
             = msg
 
-      - if flash[:notice]
-        .message.notice
-          = flash[:notice]
-      
+      = render 'layouts/flashes'
     
       %form{:action => Rails.configuration.login,     
             :method => "post"}
@@ -48,11 +48,8 @@
         %input(type="submit" 
                value="Login" 
                class="button")
-    .clear
-
 
     #register
       %h4 Need to Register instead?
       %p
         =link_to "Click here to register", @register_url
-  .clear

@@ -3,14 +3,11 @@
 - content_for :page_title do
   Get Access to OpenShift Express!
 
-= render 'shared/pageheader', :product => 'express', :title => 'Try Express', :subtitle => 'Request Access to OpenShift Express'
-
-#page.container_24
-  .clear
-
-  .prefix_1.grid_22.suffix_1
-    %h2 What's Next?
+%section.main
+  %header
+    %h1
+      What's Next?
+  
+  .content
     %p
       Check your inbox for an email letting you know you have been granted access.
-
-  .clear
