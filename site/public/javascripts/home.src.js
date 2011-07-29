@@ -103,7 +103,7 @@ $(function() {
             a.appendChild(d.createTextNode(entity.url))
           el.appendChild(a);
         }
-        if (entity.text) {
+        else if (entity.text) {
           a = d.createElement('a');
             a.setAttribute('href', location.protocol + '//twitter.com/#!/search?q=%23' + entity.text);
             a.appendChild(d.createTextNode('#' + entity.text))
