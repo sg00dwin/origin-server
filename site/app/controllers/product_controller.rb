@@ -32,7 +32,6 @@ class ProductController < ApplicationController
 
   def power
     @product = 'power'
-    render :layout => 'application'
   end
   
   
