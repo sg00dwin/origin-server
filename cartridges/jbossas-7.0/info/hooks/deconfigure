@@ -99,6 +99,7 @@ uuid=$3
 
 APP_HOME="$libra_dir/$uuid/"
 APP_DIR="$APP_HOME/$application"
+M2_DIR="$APP_HOME/.m2" # maven dir
 
 if [ ! -d "$APP_DIR" ]
 then
@@ -133,6 +134,9 @@ runcon -l s0-s0:c0.c1023 rm -rf "$APP_DIR"
 #runcon -t libra_t -l s$range_one:c$range_two runuser mmcgrath -c "rm -rf '$APP_DIR'"
 
 rm_symlink $namespace $application
+
+# remove the Maven repository.
+runcon -l s0-s0:c0.c1023 rm -rf "$M2_DIR"
 
 #
 # remove localhost IP
