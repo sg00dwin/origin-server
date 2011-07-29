@@ -1,7 +1,7 @@
 $(function() {
-  var ann_height, ann_list, announcements, body, close_btn, close_dialog, dialogs, lg_pos, md_pos, nav, nav_top, on_announcement, open_dialog, scroll_announcements, signin, signup, sm_pos, sticky_css, top, unsticky_css;
+  var ann_height, ann_list, announcements, body, close_btn, close_dialog, current, dialogs, lg_pos, links, md_pos, nav, nav_top, on_announcement, open_dialog, scroll_announcements, sections, signin, signup, sm_pos, sticky_css, top, unsticky_css;
   body = $('body');
-  nav = $('header.universal > nav');
+  nav = ($('header.universal > nav')).first();
   nav_top = nav.offset().top;
   sm_pos = md_pos = lg_pos = 0;
   top = ($(window)).scrollTop();
@@ -65,6 +65,33 @@ $(function() {
         return ann_list.css('top', -1 * ann_height * on_announcement);
       }
     };
-    return setInterval(scroll_announcements, 10000);
+    setInterval(scroll_announcements, 10000);
+  }
+  if (body.hasClass('product')) {
+    links = $('.content nav a[href^=#]');
+    sections = $('.content section');
+    if (location.hash) {
+      current = location.hash;
+    } else {
+      current = '#' + sections.first().attr('id');
+    }
+    sections.hide();
+    links.removeClass('active');
+    ($(current)).show();
+    ($("a[href=" + current + "]")).addClass('active');
+    return links.click(function(event) {
+      var target;
+      event.preventDefault();
+      target = ($(this)).attr('href');
+      if (history.pushState) {
+        history.pushState(null, null, target);
+      } else {
+        location.hash = target;
+      }
+      sections.hide();
+      ($(target)).show();
+      links.removeClass('active');
+      return ($(this)).addClass('active');
+    });
   }
 });

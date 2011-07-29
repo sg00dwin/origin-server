@@ -11,6 +11,7 @@ input {
   border: 0.1em solid #888;
   padding: .25em .5em;
   margin: .25em;
+  width: 21.75em;
   @include border-radius(.4em);
   
   &:focus {
@@ -27,6 +28,8 @@ input {
     @include text-shadow(darken(#8FDB45, 20%) 0 0.1em 0);
     margin: .5em 0;
     font-weight: bold;
+    cursor: pointer;
+    width: 23em;
   }  
 }
 
@@ -41,6 +44,7 @@ formset.confirm {
   
   input{
     float: left;
+    width: 10em;
   }
 }
 
@@ -88,5 +92,3 @@ input[type="radio"]:checked::before {
 :-moz-placeholder {
   color: #999;
 }
-
-

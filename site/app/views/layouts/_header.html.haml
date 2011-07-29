@@ -52,3 +52,4 @@
         %li.user
           = link_to 'Sign In', login_path, :class => 'sign_in'
       
+= yield :extra_nav if content_for? :extra_nav

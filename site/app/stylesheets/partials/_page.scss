@@ -44,6 +44,11 @@ small {
   @include selection;
 }
 
+h1 { font-size: 1.5em }
+h2 { font-size: 1.25em }
+h3 { font-size: 1.1em }
+h4 { font-size: 1em }
+
 /* End universal styles */
 
 /* Shared styles */
@@ -261,16 +266,15 @@ footer.universal {
   display: none;
   background: #323232;
   @include border-radius(2em);
-  @include box-shadow($shadow-color 0 0 3em);
+  @include box-shadow($shadow-color 0 0 5em);
   color: white;
   font-family: Overpass, $base-font-family;
-  font-size: .9em;
   position: fixed;
-  top: 10em;
-  left: 10em;
-  right: 10em;
+  top: 20%;
+  left: 20%;
+  right: 20%;
   z-index: 1000;
-  min-width: 30em;
+  min-width: 27em;
   padding: 2em;
   
   a.more {
@@ -282,12 +286,12 @@ footer.universal {
   
   form {    
     margin: 0 auto;
-    width: 30em;
+    display: block;
+    width: 23.5em;
   }
   
   label {
     display: block;
-    width: 20em;
   }
     
   h1 {
@@ -473,6 +477,8 @@ footer.universal {
   }
 }
 
+.no-js #social { display: none; }
+
 #bottom_signup {
   text-align: center;
   font-size: 1.4em;
@@ -509,14 +515,29 @@ nav.service {
   
   .express & {
     background-color: $express;
+    
+    .express {
+      background-color: white;
+      color: #666;
+    }
   }
   
   .flex & {
     background-color: $flex;
+    
+    .flex {
+      background-color: white;
+      color: #666;
+    }
   }
   
   .power & {
     background-color: $power;
+    
+    .power {
+      background-color: white;
+      color: #666;
+    }
   }
   
   li.active a,
@@ -534,18 +555,24 @@ nav.service {
   .main {
     @include clearfix;
     
+    > header {
+      @include visually-hidden;
+    }
+    
     .content nav {
       text-align: right;
-      width: 12em;
+      width: 11em;
       float: left;
       font-family: Overpass, $base-font-family;
+      margin-top: 5em;
+      font-size: 1.1em;
       
       ul {
         padding: 0; margin: 0;
       }
       
       header {
-        padding: 3.5em .8em 0;
+        padding: 3em .5em 0;
         width: auto;
         font-size: .8em;
         
@@ -564,22 +591,20 @@ nav.service {
       
       a {
         @include inline-block;
-        padding: .65em;
+        padding: .5em;
         color: #787878;
         text-decoration: none;
         border-bottom: 1px solid #ececec;
         width: 10em;
       }
       
-      li.active a,
+      .js & a.active,
       a:hover {
         color: #333;
       }
       
       #account.signed_out {
-        a {
-          color: #aaa;
-        }
+        color: #aaa;
         
         a.sign_in {
           @include inline-block;
@@ -589,14 +614,12 @@ nav.service {
           border: 1px solid #FFDC41;
           @include border-radius(.25em);
           color: #333;
-          font-weight: bold;
           text-align: center;
         }
       }
     }
   
-    .content .content,
-    header {
+    .content .content {
       width: 35em;
       padding-left: 15em;
     }
@@ -606,6 +629,11 @@ nav.service {
       padding-left: 0;
     }
     
+    a.more {
+      margin: 3em 0;
+      display: block;
+      font-size: 1.2em;
+    }
   }
   &.express .main h1 {
     color: $express;
