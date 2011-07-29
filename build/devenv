@@ -187,6 +187,7 @@ class DevEnv < Thor
   method_option :tag, :type => :boolean, :desc => "NAME is an Amazon tag"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   method_option :verifier, :type => :boolean, :desc => "Maintain verifier functionality (private IP setup)"
+  method_option :skip_build, :type => :boolean, :desc => "Indicator to skip the rpm build/install"
   def sync(name)
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
 
@@ -210,9 +211,11 @@ class DevEnv < Thor
 
     reset_temp_commit
 
-    puts "Performing remote install...."
-    instance.ssh("yum update -y rhc-*; rm -rf li-working; git clone li li-working; pushd li-working; build/devenv update; popd; rm -rf li-working", 600)
-    puts "Done"
+    if !options.skip_build?
+      puts "Performing remote install...."
+      instance.ssh("yum update -y rhc-*; rm -rf li-working; git clone li li-working; pushd li-working; build/devenv update; popd; rm -rf li-working", 600)
+      puts "Done"
+    end
 
     # If this is a verifier, you'll need to reset the private ip setup on each sync
     if options.verifier?
