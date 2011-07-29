@@ -73,14 +73,10 @@ class DevEnv < Thor
       end
     end
     
-    def archive_tests
-      puts "Archiving local changes..."
-      `git archive --prefix li-test/ HEAD --output /tmp/li-test.tar`
-    end
-    
     def update_remote_tests(instance)
-      instance.scp_to("/tmp/li-test.tar", "~/", 360)
-      instance.ssh('rm -rf li-test; tar -xf li-test.tar; mkdir -p /tmp/rhc/junit')
+      print "Updating remote tests..."
+      instance.ssh("rm -rf /root/li-test; cd /root/li; git archive --prefix li-test/ --format=tar HEAD | (cd /root && tar --warning=no-timestamp -xf -); mkdir -p /tmp/rhc/junit")
+      puts "Done"
     end
 
     def run_ssh(instance, title, cmd)
@@ -209,6 +205,7 @@ class DevEnv < Thor
     puts "Synchronizing local changes from branch #{branch}..."
     ssh_path=File.expand_path(File.dirname(__FILE__)) + "/ssh-override"
     run("export GIT_SSH=#{ssh_path}; #{branch == 'origin/master' ? "git push -q root@#{instance.dns}:/root/li master:master --tags --force; " : ''}git push -q root@#{instance.dns}:/root/li #{branch}:master --tags --force", :verbose => options.verbose?)
+    update_remote_tests(instance)
     puts "Done"
 
     reset_temp_commit
@@ -225,35 +222,6 @@ class DevEnv < Thor
       set_public_ip(instance)
     end
   end
-  
-  desc "sync_tests NAME", "Synchronize a local git repo's tests with a remote DevEnv instance.  NAME should be ssh resolvable."
-  method_option :tag, :type => :boolean, :desc => "NAME is an Amazon tag"
-  method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
-  def sync_tests(name)
-    options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
-
-    temp_commit
-
-    if options.tag?
-      instance = Instance.find(connect, name)
-    else
-      instance = Instance.new(nil, nil)
-      instance.dns = name
-    end
-
-    # Get the current branch
-    branch = get_branch
-
-    puts "Archiving local changes from branch #{branch}..."
-    archive_tests
-    puts "Done"
-
-    reset_temp_commit
-
-    puts "Updating remote tests...."
-    update_remote_tests(instance)
-    puts "Done"
-  end
 
   desc "launch NAME", "Launches the latest DevEnv instance, tagging with NAME"
   method_option :verifier, :type => :boolean, :desc => "Add verifier functionality (private IP setup and local tests)"
@@ -261,6 +229,7 @@ class DevEnv < Thor
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   method_option :express_server, :type => :boolean, :desc => "Set as express server in express.conf and leave on public_ip"
   method_option :ssh_config_verifier, :type => :boolean, :desc => "Set as verifier in .ssh/config"
+  method_option :init_repo, :type => :boolean, :desc => "Initialize git repo for syncing and tests (requires --verifier)"
   method_option :instance_type, :required => false, :desc => "Amazon machine type override (default m1.large)"
   def launch(name)
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
@@ -288,13 +257,23 @@ class DevEnv < Thor
       set_instance_ip(instance, private_ip)
       instance.ssh("/usr/bin/puppet /usr/libexec/mcollective/update_yaml.pp")
 
-      print "Updating tests to remote instance..."
-      archive_tests
-      update_remote_tests(instance)
-      puts "Done"
+      if options.init_repo?
+        print "Initializing git repo for syncing..."
+        instance.ssh("rm -rf /root/li; git clone --bare git://git1.ops.rhcloud.com/li.git/ /root/li")
+        update_remote_tests(instance)
+        puts "Done"
+      else
+        print "Archiving local changes..."
+        `git archive --prefix li-test/ HEAD --output /tmp/li-test.tar`
+        puts "Done"
+        print "Updating tests to remote instance..."
+        instance.scp_to("/tmp/li-test.tar", "~/", 600)
+        instance.ssh('rm -rf li-test; tar -xf li-test.tar; mkdir -p /tmp/rhc/junit')
+        puts "Done"
+      end
     end
 
-    print "Validating instance..."
+    puts "Validating instance..."
     unless instance.is_valid?
       puts "ERROR - instance is not valid"
       exit 1

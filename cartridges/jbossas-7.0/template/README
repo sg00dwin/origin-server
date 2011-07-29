@@ -5,7 +5,7 @@ src/ - maven src structure
 pom.xml - maven build file  
 .openshift/ - location for openshift specific files
 .openshift/config/ - location for configuration files such as standalone.xml (used to modify jboss config such as datasources) 
-../data - For persistent data
+../data - For persistent data (also in env var OPENSHIFT_DATA_DIR)
 .openshift/action_hooks/build - Script that gets run every push, just prior to
     starting your app
 
@@ -102,3 +102,26 @@ The relevant marker file types are:
 .undeployed   -- Placed by the deployment scanner service to indicate that the 
                  given content has been undeployed from the runtime. If an end 
                  user deletes this file, it has no impact.
+
+
+Environment Variables
+=====================
+
+OpenShift Express provides several environment variables to reference for ease
+of use.  The following list are some common variables but far from exhaustive:
+
+    System.getenv("OPENSHIFT_APP_NAME")  - Application name
+    System.getenv("OPENSHIFT_APP_DIR")   - Application dir
+    System.getenv("OPENSHIFT_DATA_DIR")  - For persistent storage (between pushes)
+    System.getenv("OPENSHIFT_TMP_DIR")   - Temp storage (unmodified files deleted after 10 days)
+
+When embedding a database using rhc-ctl-app, you can reference environment
+variables for username, host and password:
+
+    System.getenv("OPENSHIFT_DB_HOST")      - DB host
+    System.getenv("OPENSHIFT_DB_PORT")      - DB Port
+    System.getenv("OPENSHIFT_DB_USERNAME")  - DB Username
+    System.getenv("OPENSHIFT_DB_PASSWORD")  - DB Password
+
+To get a full list of environment variables, simply add a line in your
+.openshift/action_hooks/build script that says "export" and push.

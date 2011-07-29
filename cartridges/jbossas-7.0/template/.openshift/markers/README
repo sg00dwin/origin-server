@@ -1,0 +1,10 @@
+Markers
+===========
+
+Adding marker files to this directory will have the following effects:
+
+skip_maven_build - Maven build step will be skipped
+skip_maven_build_keep - Maven build step will be skipped and the previous output in 
+    deployments (excluding what is git pushed) will be left intact from the previous 
+    build.  Applies as long as skip_maven_build_keep is present plus one git push after it
+    is removed.
