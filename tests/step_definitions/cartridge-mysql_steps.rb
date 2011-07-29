@@ -280,7 +280,6 @@ When /^I (start|stop|restart) the mysql database$/ do |action|
   runcon command,  'unconfined_u', 'system_r', 'libra_initrc_t', outbuf
 
   raise Cucumber::Pending.new "restart script bug fix pending" if action == "restart"
-  raise Cucumber::Pending.new "stop script still thinks app dir is in home/php/appname" if action == "stop"
 end
 
 Then /^the mysql daemon pid will be different$/ do
