@@ -43,7 +43,6 @@ APP_JBOSS_TMP_DIR = $APP_DIR/${jboss_version}/standalone/tmp # application jboss
 
 # Exit on any errors
 set -e
-set -x
 
 # Load the jboss_version and jboss_home settings
 . `dirname $0`/jboss.version
