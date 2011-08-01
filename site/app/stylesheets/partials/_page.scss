@@ -81,7 +81,7 @@ a.button {
     decoration: none;
     align: center;
   }
-  @include text-shadow($shadow-color 0 0.05em 0);
+  @include text-shadow($shadow-color 0 0.1em 0);
   @include border-radius(2em);
   
   &:hover {
@@ -762,4 +762,49 @@ li.captcha {
     cursor: pointer;
   }
 
+}
+
+/* End dashboard page */
+
+/* Start partner page */
+
+ul.partners {
+  margin: 0;
+  padding: 0;
+
+  li {
+    @include inline-block;
+    vertical-align: top;
+    width: 15em;
+    padding: 2em .5em;
+  }
+}
+
+.partner.show {
+  .content > div {
+    margin: 1em 0;
+  }
+  
+  #partner_overview {
+    font-size: .8em;
+    border: 0.1em solid #ececec;
+    border-left: 0; border-right: 0;
+    padding: 1em;
+    
+    p { margin: 0; }
+  }
+  
+  #quote blockquote {
+    color: black;
+  }
+}
+
+.partner #join {
+  background: lighten($background-color, 30%);
+  color: black;
+  padding: 1em;
+  border: 0.1em solid $background-color;
+  @include border-radius(1em);
+  
+  p { margin: 0; }
 }

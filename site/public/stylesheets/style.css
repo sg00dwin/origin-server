@@ -334,7 +334,7 @@ a.button {
   font-size: 1em;
   text-decoration: none;
   text-align: center;
-  text-shadow: rgba(0, 0, 0, 0.6) 0 0.05em 0;
+  text-shadow: rgba(0, 0, 0, 0.6) 0 0.1em 0;
   -moz-border-radius: 2em;
   -webkit-border-radius: 2em;
   -o-border-radius: 2em;
@@ -1136,6 +1136,68 @@ li.captcha {
   background-color: #38b9e6;
   font-size: 1.1em;
   cursor: pointer;
+}
+
+/* End dashboard page */
+/* Start partner page */
+/* line 771, ../../app/stylesheets/partials/_page.scss */
+ul.partners {
+  margin: 0;
+  padding: 0;
+}
+/* line 775, ../../app/stylesheets/partials/_page.scss */
+ul.partners li {
+  display: -moz-inline-box;
+  -moz-box-orient: vertical;
+  display: inline-block;
+  vertical-align: middle;
+  *vertical-align: auto;
+  vertical-align: top;
+  width: 15em;
+  padding: 2em .5em;
+}
+/* line 7, ../../../../../../../../usr/lib/ruby/gems/1.8/gems/compass-0.11.5/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
+ul.partners li {
+  *display: inline;
+}
+
+/* line 784, ../../app/stylesheets/partials/_page.scss */
+.partner.show .content > div {
+  margin: 1em 0;
+}
+/* line 788, ../../app/stylesheets/partials/_page.scss */
+.partner.show #partner_overview {
+  font-size: .8em;
+  border: 0.1em solid #ececec;
+  border-left: 0;
+  border-right: 0;
+  padding: 1em;
+}
+/* line 794, ../../app/stylesheets/partials/_page.scss */
+.partner.show #partner_overview p {
+  margin: 0;
+}
+/* line 797, ../../app/stylesheets/partials/_page.scss */
+.partner.show #quote blockquote {
+  color: black;
+}
+
+/* line 802, ../../app/stylesheets/partials/_page.scss */
+.partner #join {
+  background: #c0e9f7;
+  color: black;
+  padding: 1em;
+  border: 0.1em solid #38b9e6;
+  -moz-border-radius: 1em;
+  -webkit-border-radius: 1em;
+  -o-border-radius: 1em;
+  -ms-border-radius: 1em;
+  -khtml-border-radius: 1em;
+  border-radius: 1em;
+}
+/* line 809, ../../app/stylesheets/partials/_page.scss */
+.partner #join p {
+  margin: 0;
 }
 
 /*/mediaquery*/
