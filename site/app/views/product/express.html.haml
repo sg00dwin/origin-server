@@ -1,215 +1,396 @@
 -# file: Express product page
 
--# 
-  TODO: at some point, we should be using partials for some of this content
-
-- content_for :scripts do
-  = javascript_include_tag "/app/javascripts/jquery.tools.min.js"
-  = javascript_include_tag "/app/javascripts/products"
-
 - content_for :page_title do
   Express
 
--# Express title
-- content_for :pageheader do
-  = render 'shared/pageheader', :product => 'express', :title => 'OpenShift Express', :subtitle => 'Free and Easy Cloud Deployments'
-  
--# About Express
-- content_for :banner do
-  %h2 OpenShift Express
-  %h3 Looking for a fast on-ramp to the Cloud?
-  %p
-    Get Ruby, PHP and Python apps in the cloud with just a few lines of code.
-    
-  - case @try_link_points_to
-  - when 'register'
-    = link_to 'Try it now!', '/app/user/new/express', :class => 'try_it'
-  
-  - when 'queue', 'request'
-    = link_to 'Try it now!', '/app/access/express/request', :class => 'try_it'
-  
-  - when 'getting_started'
-    = link_to 'Get Started!', '/app/getting_started/express', :class => 'try_it'
-
--# Tabs
-- content_for :tabs do
-  %ul#tab_navigation
+-# Product navigation
+- content_for :product_nav do
+  %ul 
     %li
-      %a.step-one(href="#step_1") Install
+      = link_to "What's Express?", '#about', :class => 'active'
     %li
-      %a.step-two(href="#step_2") Create
+      = link_to 'Videos', '#videos'
     %li
-      %a.step-three(href="#step_3") Deploy
+      = link_to 'Documentation', '#docs'
+    %li
+      = link_to 'Forum', 'http://redhat.com/openshift/forums/express'
   
-  #step_1.tab
-    %h3 Install the OpenShift Express Client Tools
-    
-    .tab_illustration
-      <object width="560" height="349"><param name="movie" value="#{request.protocol}www.youtube.com/v/KLtbuvyJFFE?version=3"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="#{request.protocol}www.youtube.com/v/KLtbuvyJFFE?version=3" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="560" height="349"></embed></object>
-    
+  - if logged_in?
+    #account.signed_in
+      %header
+        %h2
+          Account
+      
+      %ul
+        %li
+          = link_to 'Quickstart', '#quickstart'
+        -#
+          %li
+            = link_to 'Dashboard', dashboard_path
+  
+  - else
+    #account.signed_out
+      %header
+        %h2
+          Account
+      %ul  
+        %li
+          = link_to 'Sign in to get started!', login_path, :class => 'sign_in'
+        %li
+          Quickstart
+        -#
+          %li
+            Dashboard
+  
+-# Main Content
+- content_for :product_content do
+  %section#about.default
+    %header
+      %h1
+        What's Express?
+        
     %p
-      Download and install the OpenShift Express client tools so you can deploy and manage your application in the cloud.
+      Looking for a fast on-ramp to the Cloud? Get Ruby, PHP, Perl, and Python apps in the cloud with just a few lines of code.
+
+    %h2
+      Install
+ 
+    %p
+      Download and install the OpenShift Express client tools so you can deploy and manage your application in the cloud.  
+          
+    .vid  
+      <iframe width="425" height="349" src="//www.youtube.com/embed/KLtbuvyJFFE" frameborder="0" allowfullscreen></iframe>
     
-    = link_to 'Watch the video >>>', 'http://www.youtube.com/watch?v=KLtbuvyJFFE', :class => 'watch'
-
-  #step_2.tab
-    %h3 Create and Define your Application
-
-    .tab_illustration
-      <object width="560" height="349"><param name="movie" value="#{request.protocol}www.youtube.com/v/p83Cx6s_q1U?version=3"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="#{request.protocol}www.youtube.com/v/p83Cx6s_q1U?version=3" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="560" height="349"></embed></object>
+    %h2
+      Create
+   
     %p
       Create a subdomain for your application and clone the Git master repository from the cloud.
+          
+    .vid
+      <iframe width="425" height="349" src="//www.youtube.com/embed/p83Cx6s_q1U" frameborder="0" allowfullscreen></iframe>
+ 
+    %h2
+      Deploy
     
-    = link_to 'Watch the video >>>', 'http://www.youtube.com/watch?v=p83Cx6s_q1U', :class => 'watch'
-
-  #step_3.tab
-    %h3 Deploy to the Cloud
-
-    .tab_illustration
-      <object width="560" height="349"><param name="movie" value="#{request.protocol}www.youtube.com/v/H9rMgKCoW3w?version=3"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="#{request.protocol}www.youtube.com/v/H9rMgKCoW3w?version=3" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="560" height="349"></embed></object>
-
     %p
       Add your application code to the Git repository and push to the cloud. Congratulations, your application is live!
     
-    = link_to 'Watch the video >>>', 'http://www.youtube.com/watch?v=H9rMgKCoW3w', :class => 'watch'
-      
+    .vid
+      <iframe width="425" height="349" src="//www.youtube.com/embed/H9rMgKCoW3w" frameborder="0" allowfullscreen></iframe>
 
--# Video section
-- content_for :videos do
-  .product-video 
-    %h3 OpenShift Express Product Tour
-    %p.video-author.author
-      Mike McGrath,  Cloud Architect - Red Hat
+  %section#videos
+    %header
+      %h1
+        Express Videos
     
-    .video-thumb.thumb
-      %a(href="video/OpenShift-Express-demo") 
-        %img(src="/app/images/video_stills/OpenShift-Express-demo.png" 
-          title="OpenShift Express Product Tour" 
-          alt="OpenShift Express Product Tour")
-  
-    %p.video-description
-      This video walks you through the high level functionality of OpenShift Express, from installing the client tools, creating a subdomain to deploying your app onto the cloud.
+    .product-video 
+      %header
+        %h2 OpenShift Express Product Tour
+      
+      %p.video-author.author
+        Mike McGrath,  Cloud Architect - Red Hat
+      
+      .video-thumb.thumb
+        = link_to 'video/OpenShift-Express-demo' do 
+          = image_tag '/app/images/video_stills/OpenShift-Express-demo.png',  
+            :title => "OpenShift Express Product Tour", 
+            :alt => "OpenShift Express Product Tour"
+    
+      %p.video-description
+        This video walks you through the high level functionality of OpenShift Express, from installing the client tools, creating a subdomain to deploying your app onto the cloud.
+          
+    .product-video
+      %header
+        %h2
+          Mobile App Deployment to Express w/ Appcelerator
+      
+      %p.video-author.author
+        Nolan Wright, CTO and Co-Founder - Appcelerator
+      
+      .video-thumb.thumb
+        = link_to "video/OpenShift-Appcelerator-demo" do
+          = image_tag "/app/images/video_stills/OpenShift-Appcelerator-demo.png",
+            :title => "OpenShift Appcelerator Demo",
+            :alt => "OpenShift Appcelerator Demo"
+    
+      %p.video-description
+        This video shows you just how easy it is to develop and deploy a mobile app onto OpenShift Express with Appcelerator's Mobile Cloud Platform
+      
+    .product-video
+      %header
+        %h2
+          Deploying to OpenShift PaaS with the eXo Cloud IDE
+      %p.video-author.author
+        Mark Downey, Developer Advocate
         
-    /
-      .video-meta.meta
-        %p.video-length
-          3 min, 27 seconds
-        %p.video-postdate
-          Posted May 5, 2011
-
-  .product-video 
-    %h3 Mobile App Deployment to Express w/ Appcelerator
-    %p.video-author.author
-      Nolan Wright, CTO and Co-Founder - Appcelerator
-    
-    .video-thumb.thumb
-      %a(href="video/OpenShift-Appcelerator-demo")
+      .video-thumb.thumb
+        = link_to "video/OpenShift-eXo-demo" do
+          = image_tag "/app/images/video_stills/OpenShift-eXo-demo.png",
+            :title => "Deploying to OpenShift with eXo Cloud IDE",
+            :alt => "Deploying to OpenShift PaaS with the eXo Cloud IDE"
       
-        %img(src="/app/images/video_stills/OpenShift-Appcelerator-demo.png"
-          title="OpenShift Appcelerator Demo"
-          alt="OpenShift Appcelerator Demo")
+      %p.video-description
+        This video demonstrates how easy it is to use the eXo cloud IDE to develop and deploy applications on OpenShift.
+      
+      = link_to 'Watch more videos', 'http://redhat.com/openshift/videos', :class => 'more'
   
-    %p.video-description
-      This video shows you just how easy it is to develop and deploy a mobile app onto OpenShift Express with Appcelerator's Mobile Cloud Platform
+  %section#docs
+    %header
+      %h1
+        Documentation
     
-  .product-video
-    %h3 Deploying to OpenShift PaaS with the eXo Cloud IDE
-    %p.video-author.author
-      Mark Downey, Developer Advocate
-      
-    .video-thumb.thumb
-      %a(href="video/OpenShift-eXo-demo")
-      
-        %img(src="/app/images/video_stills/OpenShift-eXo-demo.png"
-          title="Deploying to OpenShift with eXo Cloud IDE"
-          alt="Deploying to OpenShift PaaS with the eXo Cloud IDE")
+    <iframe width="100%" height="600px" src="http://docs.redhat.com/docs/en-US/OpenShift_Express/1.0/html/User_Guide/index.html" frameborder="0"></iframe>
     
-    %p.video-description
-      This video demonstrates how easy it is to use the eXo cloud IDE to develop and deploy applications on OpenShift.
+    = link_to 'Read more documentation', 'http://redhat.com/openshift/documents', :class => 'more'
+  
+  -if logged_in?
+    %section#quickstart
+      %header
+        %h1
+          Quickstart
     
+      %ol#toc
+        %li 
+          = link_to 'Install the client tools', '#install_client_tools'
         
-  %a.more(href="http://www.redhat.com/openshift/videos") More Videos &gt;
-  
--# Community section
-- content_for :community do
-  .post
-    %h3 Announcements
-    
-    %p
-      Subscribe to <a href="https://www.redhat.com/openshift/forums/news-and-announcements">Announcements</a> to get product release notifications.
-    
-    = link_to 'Subscribe >', 'https://www.redhat.com/openshift/forums/news-and-announcements', :class => 'more'
-    
-  .post
-    %h3 You ask for it, you get it with Openshift Express!
-    %p.post-author.author
-      by Matt Hicks, OpenShift Guru
+        %li
+          = link_to 'Create a domain name', '#create_domain_name'
+        
+        %li
+          = link_to 'Create your first application', '#create_application'
+        
+        %li
+          = link_to 'Make a change, publish', '#publish'
+          
+        %li
+          = link_to 'Next steps', '#next_steps'
+
+      %ol#instructions
+        %li#install_client_tools
+          %h3 Install the client tools
+          
+          %ul#install
+            #install_toc
+              %ul
+                %li 
+                  = link_to 'Red Hat Enterprise Linux or Fedora', '#rhel'
+                %li
+                  = link_to 'Other Linux Systems', '#other_nix'
+                %li 
+                  = link_to 'Mac OS X', '#mac'
+                %li 
+                  = link_to 'Windows', '#win'
+                  
+            %li#rhel.install
+              %h4 Red Hat Enterprise Linux or Fedora
+              
+              %ol
+                %li.prereqs
+                  %h5 Prerequisites
+                  %ul
+                    %li RHEL 6 and up or Fedora 14 and up.
+                    %li Root or sudoer access
+                %li
+                  Download the express repo file
+                  %a(href="/app/repo/openshift.repo") openshift.repo
+                
+                %li
+                  Move the openshift.repo file to your /etc/yum.repos.d/ directory.
+                  
+                  %pre
+                    $ sudo mv ~/Downloads/openshift.repo /etc/yum.repos.d/
+                  Replace '~/Downloads/openshift.repo' with the location to which you saved the repo file.
+                        
+                %li
+                  Install the client tools:
+                  %pre $ sudo yum install rhc
+              
+              %aside
+                %p
+                  The <code>sudo</code> command will only work if your user is listed in the sudoers file. For more information on setting up sudo, see <a href="http://www.gratisoft.us/sudo/sudo.html">http://www.gratisoft.us/sudo/sudo.html</a>.
+                
+                %p
+                  As an alternative to <code>sudo</code>, you can activate a root terminal with the <code>su</code> command and the root password. In that case, omit <code>sudo</code> from the given commands. Don't forget to close your root terminal when you're done!
+                
+                %aside 
+                  = link_to 'Installing OpenShift client tools video walkthrough', 'http://www.youtube.com/watch?v=KLtbuvyJFFE'
+                  
+            
+            %li#other_nix.install
+              %h4 Other Linuxes
+              %ol
+                %li.prereqs
+                  %h5 Prerequisites
+                  %ul
+                    %li Root access
+                    %li Ruby 1.8 or higher installed or available to be installed
+                  
+                %li
+                  Install the required packages: git, ruby, rubygems, and the ruby 1.8 development package.
+                  
+                %li
+                  Install the gem:
+                  %pre $ su -c 'gem install rhc' 
+            
+            %li#mac.install
+              %h4 Mac
+
+              %ol
+                %li.prereqs
+                  %h5 Prerequisites
+                  %ul    
+                    %li 
+                      git
+                      %ol
+                        %li
+                          %a(href="http://developer.apple.com/xcode") Full Xcode Suite -- or --
+                        %li
+                          %a(href="http://code.google.com/p/git-osx-installer/") git for OS X
+                %li
+                  Install the gem:
+                  %pre
+                    :preserve
+                      $ sudo gem install json_pure
+                      $ sudo gem install rhc
+
+            %li#win.install
+              %h4 Windows
+
+              %ol
+                %li.prereqs
+                  %h5 Prerequisites
+                  %ul
+                    %li
+                      %a(href="http://www.cygwin.com") Cygwin
+                    %li
+                      The following optional cygwin components
+                      %ul
+                        %li openssh
+                        %li ruby
+                        %li make
+                        %li gcc
+                        %li git
+                
+                  %li
+                    Download and extract rubygems from <a href="http://rubyforge.org/projects/rubygems">http://rubyforge.org/projects/rubygems</a>
+                  %li
+                    From within cygwin run:
+                    %pre $ ruby &lt;path_to_extracted_rubygems&gt;/setup.rb install
+              
+                  %li
+                    Install the gem:
+                    %pre $ gem install rhc
+        
+        %li#create_domain_name
+          
+          %h4 Create a domain name
+          .main
+            
+            %p
+              Using your OpenShift login and password, call rhc-create-domain to create a unique domain name for your applications.
+
+              %pre
+                :preserve
+                  $ rhc-create-domain -n mydomain -l email@address
+                  Password: (type... type... type...)
+
+              
+            %aside
+              %p
+                OpenShift domain names make up part of your app's url. They are also unique across all OpenShift users, so choose wisely, and be creative!
+                
+            %aside
+              %p
+                The <code>rhc-create-domain</code> command will create a configuration file - &lt;your home directory&gt;/.openshift/express.conf - which sets up a default login.
+          
+          #domain_link
+            %h4 Why wait?
+            %h5 Reserve your amazing domain name right now!
+            %p
+              All you need is an ssh keypair and a unique name.
+            
+            = link_to 'Create your domain now', dashboard_link, :class => 'button'
+          
+              
+        %li#create_application
+          %h4 Create your first application
+
+          %p
+            Now you can create an application.
+
+            %pre
+              :preserve
+                $ rhc-create-app -a myapp -t php-5.3
+                Password: (type... type... type...)
+          
+          %p
+            This will create a remote git repository for your application, and clone it locally in your current directory.
+          
+          %aside
+            %p
+              OpenShift offers many application stacks. Run <code>rhc-create-app -h</code> to see all of your options.
+          
+          %aside
+            %p
+              Your application's domain name will be &lt;your app name&gt;-&lt;your domain name&gt;.rhcloud.com. So, the application created by the example commands would be located at myapp-mydomain.rhcloud.com
+          
+          %aside
+            = link_to 'Creating a application video walkthrough', 'http://www.youtube.com/watch?v=p83Cx6s_q1U'
+          
+        %li#publish 
+          %h4 Make a change, publish
+
+          %p
+            As we all know, getting an application running is only the first step. Now you are on the road to making it your own.  Here's an example for
+            the php framework.
+
+            %pre
+              :preserve
+                $ cd myapp
+                $ vim php/index.php
+                (Make a change...  :wq)
+                $ git commit -a -m "My first change"
+                $ git push
+          %p  
+            Now, check your URL - your change will be live.
+          
+          %aside
+            = link_to 'Deploying an application video walkthrough', 'http://www.youtube.com/watch?v=H9rMgKCoW3w'
+            
+          %aside
+            %p
+              Use whichever ide or editor works best for you. Chances are, it'll have git support. Even if it doesn't, you're just two simple commands away from glory!
+          
+          %aside
+            %p
+              Checkout these great guides for deploying popular frameworks on OpenShift:
+              %ul
+                %li
+                  = link_to 'TurboGears2 Python framework', 'https://www.redhat.com/openshift/blogs/deploying-turbogears2-python-web-framework-using-express'
+                  
+                %li
+                  = link_to 'Pyramid Python framework', 'https://www.redhat.com/openshift/blogs/deploying-a-pyramid-application-in-a-virtual-python-wsgi-environment-on-red-hat-openshift-expr'
+                
+                %li
+                  = link_to 'Drupal', 'https://www.redhat.com/openshift/sites/default/files/documents/RHOS_Express_Getting_Started_w_Drupal.pdf'
+                
+                %li
+                  = link_to 'MediaWiki', 'https://www.redhat.com/openshift/sites/default/files/documents/RHOS_Express_Getting_Started_w_MediaWiki.pdf'
+                  
+          
+        %li#next_steps
+          %h4 Next steps
+
+          %p
+            While this has gotten you started, there is a lot more information out there to really get you going.  Check out the following pages for videos, blogs, and tutorials:
+
+            %ul
+              %li
+                = link_to 'Videos', 'http://www.redhat.com/openshift/videos', :class => 'more'
+              %li
+                = link_to 'Technical Documentation', 'http://docs.redhat.com/docs/en-US/OpenShift_Express/1.0/html/User_Guide/index.html', :class => 'more'
+              %li
+                = link_to 'Support Forums', 'http://www.redhat.com/openshift/forums', :class => 'more'
       
-    %p
-      Since our release at Summit in early May, we've been busy collecting your feedback, fixing bugs and dropping in new features and enhancements. First off, thank you for all the input and exchanges in the forums and IRC!  To make sure that you know you're being heard, we wanted to recap the issues and bugs that have been fixed plus highlight some new features and coming attractions.
-        
-    = link_to 'Read more >', 'https://www.redhat.com/openshift/videos/openshift-express-getting-started-with-drupal', :class => 'more'
   
-  .post
-    %h3 How do I delete from Persistant Storage?
-    %p.post-author.author
-      started by Nick, OpenShift Community Member
-    %p
-      This thread discusses persistent storage on OpenShift Express.
-    
-    .post-meta.meta
-      %p.post-date.date
-        Posted on June 2, 2011
-        
-    = link_to 'Read more >', 'https://www.redhat.com/openshift/forums/express/how-do-i-delete-from-persistant-storage', :class => 'more'
-    
--# Resource links
-- content_for :resources do
-
-  %ul
-    %li
-      = link_to 'OpenShift Express User Guide', 'http://docs.redhat.com/docs/en-US/OpenShift_Express/1.0/html/User_Guide/index.html'
-    %li
-      = link_to 'OpenShift Express Evaluation Guide', 'https://www.redhat.com/openshift/sites/default/files/documents/RHOS_Express_Eval_Guide.pdf'
-    
-    %li
-      = link_to 'Deploying Drupal on OpenShift Express', 'https://www.redhat.com/openshift/sites/default/files/documents/RHOS_Express_Getting_Started_w_Drupal.pdf'
-      
-    %li
-      = link_to 'Deploying MediaWiki on OpenShift Express', 'https://www.redhat.com/openshift/sites/default/files/documents/RHOS_Express_Getting_Started_w_MediaWiki.pdf'
-    
-  
-  = link_to 'More Documentation>', 'http://www.redhat.com/openshift/documents', :class => 'more'
-
--# Platforms
-- content_for :platforms do
-  %ul
-    %li PHP
-    %li Ruby
-    %li Python
-    %li Perl
-  
-  = link_to 'More information >', 'http://www.redhat.com/openshift/faq', :class => 'more' 
-
--# Supplementary documentation links
-- content_for :doc_links do
-  #doc_link
-    = link_to 'http://www.redhat.com/openshift/kb' do
-      %h3
-        Knowledge Base
-      %p
-        Get schooled! &gt;
-    
-    = link_to 'http://www.redhat.com/openshift/documents' do
-      %h3 Docs
-      %p
-        For those who want to RTFM! &gt;
-        
-
--# Promos
-- content_for :promos do
-  /
-    .sidebar-promo
-      %h3 Promo title
-      %p
-        This is an example promo.

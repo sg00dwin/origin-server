@@ -84,37 +84,23 @@ Then /^a php application httpd will( not)? be running$/ do | negate |
   acct_uid = @account['uid']
   app_name = @app['name']
 
-  sleep 10
-
-  ps_pattern = /^(\d+)\s+(\S+)$/
-  command = "ps --no-headers -o pid,comm -u #{acct_name}"
-  $logger.info("executing #{command}")
-
-  pid, stdin, stdout, stderr = Open4::popen4(command)
-
-  stdin.close
-  ignored, status = Process::waitpid2 pid
-  exit_code = status.exitstatus
-
-  outstrings = stdout.readlines
-  errstrings = stderr.readlines
-  # sleep?
-
-  http_daemons = outstrings.collect { |line|
-    match = line.match(ps_pattern)
-    match and (match[1] if match[2] == 'httpd')
-  }.compact!
-
-  $logger.info("stderr: " + (errstrings.join("\n")))
-  $logger.info("stdout: " + (outstrings.join("\n")))
-
-  status = (http_daemons and http_daemons.size > 0)
-  if not negate
-    http_daemons.should_not be_nil and http_daemons.size.should be > 0
-  else
-    http_daemons.should be_nil or http_daemons.size.should be == 0
+  max_tries = 7
+  poll_rate = 3
+  exit_test = negate ? lambda { |tval| tval == 0 } : lambda { |tval| tval > 0 }
+  
+  tries = 0
+  num_httpds = num_procs acct_name, 'httpd'
+  while (not exit_test.call(num_httpds) and tries < max_tries)
+    tries += 1
+    sleep poll_rate
+    found = exit_test.call num_httpds
   end
 
+  if not negate
+    num_httpds.should be > 0
+  else
+    num_httpds.should be == 0
+  end
 end
 
 Then /^php application log files will( not)? exist$/ do | negate |

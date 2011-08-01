@@ -162,8 +162,8 @@ EOF
     cat <<EOF > $GIT_DIR/hooks/post-receive
 USED_BUNDLER=false 
 # If the previous and current commits didn't upload .bundle and you have .bundle and vendor/bundle already deployed then store away for redeploy
-# Also adding .force_clean_build at the root of the repo will trigger a clean rebundle
-if ! git show master:.force_clean_build > /dev/null 2>&1 && ! git show master:.bundle > /dev/null 2>&1 && ! git show master~1:.bundle > /dev/null 2>&1 && [ -d '$APP_DIR/deploy/.bundle' ] && [ -d '$APP_DIR/deploy/vendor/bundle' ]
+# Also adding .openshift/markers/force_clean_build at the root of the repo will trigger a clean rebundle
+if ! git show master:.openshift/markers/force_clean_build > /dev/null 2>&1 && ! git show master:.bundle > /dev/null 2>&1 && ! git show master~1:.bundle > /dev/null 2>&1 && [ -d '$APP_DIR/deploy/.bundle' ] && [ -d '$APP_DIR/deploy/vendor/bundle' ]
 then
   USED_BUNDLER=true
   echo 'Saving away previously bundled RubyGems'
@@ -185,7 +185,7 @@ git archive --format=tar HEAD | (cd $APP_DIR/deploy && tar --warning=no-timestam
 
 if \$USED_BUNDLER
 then
-  echo 'Restoring previously bundled RubyGems (note: you can commit .force_clean_build at the root of your repo to force a clean bundle)'
+  echo 'Restoring previously bundled RubyGems (note: you can commit .openshift/markers/force_clean_build at the root of your repo to force a clean bundle)'
   mv '$APP_DIR/tmp/.bundle' '$APP_DIR/deploy/'
   if [ -d '$APP_DIR/deploy/vendor' ]
   then

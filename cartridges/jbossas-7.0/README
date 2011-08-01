@@ -2,8 +2,8 @@ A derivative of the php cartridge for jbossas7 that configures a standalone
 jbossas7 instance per application.
 
 The jboss-as-web 7.0.0.Final server rpm can be obtained from:
-BuildTask: https://brewweb.devel.redhat.com//taskinfo?taskID=3485777
-RPM: http://download.devel.redhat.com/brewroot/work/tasks/5777/3485777/jboss-as7-7.0.0.Final-3.noarch.rpm
+BuildTask: https://brewweb.devel.redhat.com//taskinfo?taskID=3527927
+RPM: http://download.devel.redhat.com/brewroot/work/tasks/7931/3527931/jboss-as7-7.0.0.FinalOS-1.noarch.rpm
 
 Scott Stark
 

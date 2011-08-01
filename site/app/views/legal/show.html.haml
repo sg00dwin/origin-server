@@ -3,12 +3,11 @@
 - content_for :page_title do
   Terms and Conditions
 
-= render 'shared/pageheader', :product => 'openshift', :title => 'Legal Terms', :subtitle => ''
+%section.main
+  %header
+    %h1 Legal Terms Guide
 
-#page.container_24
-  #main_content.grid_22
-    %h2 Legal Terms Guide
-
+  .content
     %p
       This page provides a list of the legal terms that apply to your use of OpenShift.
 
@@ -24,5 +23,3 @@
       
       %li
         = link_to 'Terms of Use', legal_site_terms_path
-
-  .clear

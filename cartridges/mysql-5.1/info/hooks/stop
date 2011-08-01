@@ -57,7 +57,7 @@ uuid=`basename $3`
 application="$1"
 
 APP_HOME="$libra_dir/$uuid/"
-APP_DIR="$APP_HOME/php/$application"
+APP_DIR="$APP_HOME/$application"
 MYSQL_DIR="$APP_HOME/mysql-5.1/"
 
 if [ ! -d "$APP_DIR" ]

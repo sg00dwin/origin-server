@@ -3,14 +3,12 @@
 - content_for :page_title do
   Website Terms
 
-= render 'shared/pageheader', :product => 'openshift', :title => 'Legal Terms', :subtitle => ''
-
-#page.container_24
+%section.main
+  %header
+    %h1
+      Legal terms
   
-  #main_content.grid_22
-    
-    %pre
-    
+  .content
     %p
       In order to access and use the OpenShift Preview Services and Software you will need to accept the terms and conditions of the OpenShift Services Agreement.  Also, since OpenShift is just one of several online properties of Red Hat, you will also need to agree to certain site terms that will apply to your use of other Red Hat sites.  As a result, by clicking "I Accept" you agree to comply with the following terms:
     #terms
@@ -38,6 +36,4 @@
                 - unless @term_description[value['termTitle']].nil?
                   %p.description
                     = @term_description[value['termTitle']]
-    .clear
 
-  .clear

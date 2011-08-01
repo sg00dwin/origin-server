@@ -5,7 +5,7 @@ $ ->
   # nav sticks to top when scrolling off page #
   # parallax effect on scroll #
   body = $ 'body'
-  nav = $ 'header.universal > nav' 
+  nav = ($ 'header.universal > nav').first()
   nav_top = nav.offset().top
   sm_pos = md_pos = lg_pos = 0
   top = ($ window).scrollTop()
@@ -36,23 +36,23 @@ $ ->
     else
       nav.css unsticky_css
       
-  # handle dialogs #
+## Dialogs ##
   dialogs = $ '.dialog'
 
   open_dialog = (dialog) -> 
-    #Close any other open dialogs
+    # Close any other open dialogs
     dialogs.hide()
-    #Show given dialog
+    # Show given dialog
     dialog.show()
 
   close_dialog = (dialog) ->
     dialog.hide()
     
-  #Close buttons
+  # Close buttons
   close_btn = $ '.close_button' 
-  #Sign up dialog
+  # Sign up dialog
   signup = $ '#signup'
-  #Sign in dialog
+  # Sign in dialog
   signin = $ '#signin'
 
   ($ 'a.sign_up').click (event) ->
@@ -66,7 +66,7 @@ $ ->
   close_btn.click (event) ->
     close_dialog ($ this).parent()
 
-  # Scroll announcements #
+## Announcements ##
   announcements = ($ '#announcements')
   ann_list = ($ 'ul', announcements)
   on_announcement = 0
@@ -84,21 +84,45 @@ $ ->
     
     setInterval scroll_announcements, 10000
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+## Product page ##
+  if body.hasClass 'product'
+    links = $ '.content nav a[href^=#]'
+    sections = $ '.content section'
+    
+    # get current section
+    if location.hash
+      current = location.hash
+    else
+      current = '#' + sections.first().attr('id')
+    
+    # hide sections
+    sections.hide()
+    links.removeClass 'active'
+    # show current section 
+    ($ current).show()
+    ($ "a[href=#{current}]").addClass 'active'
+    
+    
+    # change sections based on clicked link
+    links.click (event) ->
+      event.preventDefault()
+      
+      target = ($ this).attr('href')
+      
+      # prevent annoying flash for better browsers
+      if history.pushState
+        history.pushState null, null, target
+      else
+        location.hash = target
+      
+      sections.hide()
+      ($ target).show()
+      
+      #change link class
+      links.removeClass 'active'
+      ($ this).addClass 'active'
+    
+    
 
 
 

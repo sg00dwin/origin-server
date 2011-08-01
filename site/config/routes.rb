@@ -99,6 +99,7 @@ RedHatCloud::Application.routes.draw do
              :only => [:new, :create]
     
     match 'control_panel' => 'control_panel#index'
+    match 'dashboard' => 'control_panel#index', :as => 'dashboard'
 
     # Sample resource route with options:
     #   resources :products do

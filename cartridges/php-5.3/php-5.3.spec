@@ -2,7 +2,7 @@
 
 Summary:   Provides php-5.3 support
 Name:      rhc-cartridge-php-5.3
-Version:   0.75.6
+Version:   0.75.7
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -80,6 +80,13 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Thu Jul 28 2011 Dan McPherson <dmcphers@redhat.com> 0.75.7-1
+- adding skip build and markers (dmcphers@redhat.com)
+- Adding env var bits (mmcgrath@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- have php honor environment variables (mmcgrath@redhat.com)
+
 * Tue Jul 26 2011 Dan McPherson <dmcphers@redhat.com> 0.75.6-1
 - fixing permissions (mmcgrath@redhat.com)
 - adding hidden dirs (mmcgrath@redhat.com)

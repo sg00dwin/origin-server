@@ -33,4 +33,9 @@ module ApplicationHelper
     return ''
   end
   
+  # Check if user is logged in or not
+  def logged_in?
+    return controller.logged_in?
+  end
+  
 end

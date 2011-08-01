@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.75.4
+Version:   0.75.9
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -64,6 +64,40 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Mon Aug 01 2011 Dan McPherson <dmcphers@redhat.com> 0.75.9-1
+- 
+
+* Mon Aug 01 2011 Dan McPherson <dmcphers@redhat.com> 0.75.8-1
+- test case fix (dmcphers@redhat.com)
+- test case work (dmcphers@redhat.com)
+- Merge branch 'master' of ssh://libragit/srv/git/li (edirsh@redhat.com)
+- Added web-based domain creation and editing (edirsh@redhat.com)
+- Revert "Revert "Changed api urls in config to https"" (edirsh@redhat.com)
+- Revert "Revert "Added domain interface back into site"" (edirsh@redhat.com)
+- Revert "Revert "Added config variable for express api base url""
+  (edirsh@redhat.com)
+- Updated rest of the views to comply with new design (edirsh@redhat.com)
+- Added power page (edirsh@redhat.com)
+
+* Sun Jul 31 2011 Dan McPherson <dmcphers@redhat.com> 0.75.7-1
+- Added flex page (edirsh@redhat.com)
+- Merge branch 'master' of ssh://libragit/srv/git/li (edirsh@redhat.com)
+- Express page completed, styled, and scripted (edirsh@redhat.com)
+- minor fix (dmcphers@redhat.com)
+
+* Thu Jul 28 2011 Dan McPherson <dmcphers@redhat.com> 0.75.6-1
+- get site working in devenv (dmcphers@redhat.com)
+
+* Thu Jul 28 2011 Dan McPherson <dmcphers@redhat.com> 0.75.5-1
+- minor change (dmcphers@redhat.com)
+- twitter error handling (dmcphers@redhat.com)
+- show tweeters pic instead of retweeter (dmcphers@redhat.com)
+- adding twitter, work in progress (dmcphers@redhat.com)
+- New layout and homepage working, everything else is broken
+  (edirsh@redhat.com)
+- Merge branch 'master' of ssh://libragit/srv/git/li (edirsh@redhat.com)
+- Updated conversion to latest version (edirsh@redhat.com)
+
 * Tue Jul 26 2011 Dan McPherson <dmcphers@redhat.com> 0.75.4-1
 - fix test cases (dmcphers@redhat.com)
 

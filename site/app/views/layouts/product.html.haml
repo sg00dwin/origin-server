@@ -1,55 +1,33 @@
+- content_for :extra_nav do
+  %nav.service
+    %header
+      %h1
+        Cloud Services
+    .content
+      %ul
+        %li
+          = link_to 'Express', express_path, :class => 'express'
+        %li
+          = link_to 'Flex', flex_path, :class => 'flex'
+        %li
+          = link_to 'Power', power_path, :class => 'power'
+
 - content_for :sub_layout do
-
-  / Product banner
-  %div{:id => 'banner',
-       :class => params[:action] + ' container_24' }
-    = yield :banner
-
-  .clear
-
-  #page.container_24
-
-    / Main page content
-    #main_content.grid_17
-
-      / Product instructions
-      #product_tabs.grid_16
-        = yield :tabs
-
-
-      / Videos
-      #product_videos.grid_8
-        %h2 Videos
-        = yield :videos
-
-      / Featured community content
-      #product_community.grid_8
-        %h2 Community Highlights
-        = yield :community
-
-      .clear
-
-
-    / Sidebar
-    %div{:id => 'supplemental_content',
-         :class => params[:action] + ' grid_6' }
-
-      /Resource links
-      #resources
-        %h3 Resources
-        = yield :resources
-
-      /Supplementary documentation links
-      = yield :doc_links
-
-      /Promos
-      = yield :promos
+  %section.main
+    %header
+      %h1
+        = yield :page_title if content_for? :page_title
+    
+    .content
+      %nav
+        %header
+          %h2 
+            Cloud Service Navigation
+        
+        = yield :product_nav if content_for? :product_nav
       
-      /Platforms
-      #platforms
-        %h3 Available Platforms
-        = yield :platforms
-
-    .clear
+      .content
+        = yield :product_content if content_for? :product_content
+            
 
 = render :file => 'layouts/application'

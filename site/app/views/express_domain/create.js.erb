@@ -1,1 +1,25 @@
-$('#domain_form').prepend('<p style="background: yellow;">Test ajax response</p>');
+var form = $('#new_express_domain'), form_container = form.parent();
+// clear out old messages
+$('.message').remove()
+<% 
+if @message_type == :error
+%>
+  form.before('<div class="message error"><%= @message %></div>');
+<%
+else
+  case @dom_action
+    when 'create'
+%>
+      form.replaceWith('<%= render "express_domain/update_form" %>');
+      form = #('form.update');
+      form.before('<div class="message success"><%= @message %></div>');
+      form.trigger('switch_create_to_update');
+<%
+    when 'update'
+%>
+      form.before('<div class="message success"><%= @message %></div>');
+      form.trigger('successful_submission');
+<%
+  end
+end
+%>

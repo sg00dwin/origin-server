@@ -43,7 +43,6 @@ APP_JBOSS_TMP_DIR = $APP_DIR/${jboss_version}/standalone/tmp # application jboss
 
 # Exit on any errors
 set -e
-set -x
 
 # Load the jboss_version and jboss_home settings
 . `dirname $0`/jboss.version
@@ -209,9 +208,46 @@ echo "Stopping application..."
 echo done
 __EOF__
 
+
     cat <<__EOF__ > $GIT_DIR/hooks/post-receive
+
+SKIP_MAVEN_BUILD_KEEP=false
+SKIP_MAVEN_BUILD=false
+if git show master:.openshift/markers/skip_maven_build_keep > /dev/null 2>&1 || git show master~1:.openshift/markers/skip_maven_build_keep > /dev/null 2>&1
+then
+  SKIP_MAVEN_BUILD_KEEP=true
+  SKIP_MAVEN_BUILD=true
+  echo 'Found .openshift/markers/skip_maven_build_keep... keeping previous deployments'
+  if [ -d '$APP_DIR/repo/deployments' ]
+  then
+    rm -rf '$APP_DIR/tmp/deployments'
+    mv '$APP_DIR/repo/deployments' '$APP_DIR/tmp/'
+  fi
+elif git show master:.openshift/markers/skip_maven_build > /dev/null 2>&1
+then
+  SKIP_MAVEN_BUILD=true
+fi
+
 rm -rf $APP_DIR/repo/* $APP_DIR/repo/.[^.]*
 git archive --format=tar HEAD | (cd $APP_DIR/repo && tar --warning=no-timestamp -xf -)
+
+if \$SKIP_MAVEN_BUILD_KEEP
+then
+  echo 'Restoring previous deployments'
+  if [ -d '$APP_DIR/tmp/deployments' ]
+  then
+    if [ ! -d '$APP_DIR/repo/deployments' ]
+    then
+      mv '$APP_DIR/tmp/deployments' '$APP_DIR/repo/'
+    else
+      pushd $APP_DIR/tmp/deployments > /dev/null
+      mv -n * .[^.]* $APP_DIR/repo/deployments/
+      popd
+    fi
+    rm -rf '$APP_DIR/tmp/deployments'
+  fi
+fi
+
 
 # Import Environment Variables
 for f in ~/.env/*
@@ -225,7 +261,7 @@ then
   cp $APP_DIR/repo/.openshift/config/standalone.xml "$APP_JBOSS"/standalone/configuration/
 fi
 
-if [ -f '$APP_DIR/repo/pom.xml' ]
+if [ -f '$APP_DIR/repo/pom.xml' ] && ! \$SKIP_MAVEN_BUILD
 then
   echo "Found pom.xml... attempting to build with 'mvn clean package -Popenshift -DskipTests'" 
   export JAVA_HOME=/etc/alternatives/java_sdk_1.6.0

@@ -3,13 +3,11 @@
 - content_for :page_title do
   OpenShift Preview Services Agreement
 
-= render 'shared/pageheader', :product => 'openshift', :title => 'Legal Terms', :subtitle => ''
+%section.main
+  %header
+    %h1 OpenShift Preview Services Agreement
 
-#page.container_24
-
-  #main_content.grid_22
-    %h2 OpenShift Preview Services Agreement
-
+  .content
     %p.intro
       PLEASE READ THIS AGREEMENT CAREFULLY BEFORE USING RED HAT PREVIEW SERVICES OR PREVIEW SOFTWARE.  IN ORDER TO USE RED HAT PREVIEW SERVICES OR PREVIEW SOFTWARE, YOU MUST AGREE TO THE TERMS OF THIS AGREEMENT.  BY USING RED HAT PREVIEW SOFTWARE OR PREVIEW SERVICES, YOU AGREE THAT YOUR USE IS GOVERNED BY THIS AGREEMENT. IF YOU ARE AN INDIVIDUAL ACTING ON BEHALF OF AN ENTITY, YOU REPRESENT THAT YOU HAVE THE AUTHORITY TO ENTER INTO THIS AGREEMENT ON BEHALF OF THAT ENTITY.  IF YOU DO NOT ACCEPT THE TERMS OF THIS AGREEMENT, THEN YOU MUST NOT USE RED HAT PREVIEW SERVICES OR PREVIEW SOFTWARE.  YOU CONFIRM THAT YOU ARE AT LEAST 18 YEARS OLD.
 
@@ -343,7 +341,3 @@
      
       %p.last-updated
         Last Updated April 28, 2011
-    
-    .clear
-  
-  .clear
