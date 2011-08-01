@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.75.7
+Version:   0.75.8
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -64,6 +64,18 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Mon Aug 01 2011 Dan McPherson <dmcphers@redhat.com> 0.75.8-1
+- test case fix (dmcphers@redhat.com)
+- test case work (dmcphers@redhat.com)
+- Merge branch 'master' of ssh://libragit/srv/git/li (edirsh@redhat.com)
+- Added web-based domain creation and editing (edirsh@redhat.com)
+- Revert "Revert "Changed api urls in config to https"" (edirsh@redhat.com)
+- Revert "Revert "Added domain interface back into site"" (edirsh@redhat.com)
+- Revert "Revert "Added config variable for express api base url""
+  (edirsh@redhat.com)
+- Updated rest of the views to comply with new design (edirsh@redhat.com)
+- Added power page (edirsh@redhat.com)
+
 * Sun Jul 31 2011 Dan McPherson <dmcphers@redhat.com> 0.75.7-1
 - Added flex page (edirsh@redhat.com)
 - Merge branch 'master' of ssh://libragit/srv/git/li (edirsh@redhat.com)
