@@ -83,6 +83,10 @@ a.button {
   }
   @include text-shadow($shadow-color 0 0.05em 0);
   @include border-radius(2em);
+  
+  &:hover {
+    text-decoration: none !important;
+  }
 }
 
 /* Styles shared by "more" links */
@@ -129,6 +133,44 @@ a.more {
     width: 100%;
     border-bottom: 1px solid #ececec;
     padding: 1em 2em;
+  }
+}
+
+/* Flash notices */
+.message {
+  @include box-sizing(border-box);
+  background-repeat: no-repeat;
+  background-position: 1em center;
+  padding: .5em 0 .5em 2em;
+  margin: 0 0 1em;
+  font: {
+    weight: bold;
+  }
+  text-align: center;
+  border: .1em solid;
+  
+  &.error {
+    /* Red text / pink bg */
+    background-color: #FFF3F3;
+    color: red !important;
+    border-color: #FFD9D9;
+    background-image: url('/app/images/icons/error.png');
+  }
+  
+  &.notice {
+    /* bright orange text / pale orange bg */
+    background-color: #FFFBCC;
+    background-image: url('/app/images/icons/important.png');
+    color: #FF8000;
+    border-color: #F2ED85;
+  }
+  
+  &.success {
+    /* green text / green bg */
+    background-color: #efe;
+    background-image: url('/app/images/icons/success.png');
+    color: #363;
+    border-color: #ada;
   }
 }
 
@@ -392,6 +434,8 @@ footer.universal {
         width: 50%;
         float: right;
       }
+      
+      h2 { margin-top: 0; }
     }
     
     div:nth-child(even) {
@@ -659,6 +703,7 @@ nav.service {
 /* End service pages */
 
 /* Start register page */
+
 #login_instead {
   margin: 1em 3em;
 }
@@ -671,3 +716,26 @@ li.captcha {
   margin: 0 1em;
 }
 
+/* End register page */
+
+/* Start login page */
+
+#login-form form {
+  margin: 0 3em;
+}
+
+#register {
+  margin: 0 3em;
+  
+  h2 {
+    font-size: 1em;
+    margin: 0;
+    padding: 2em 0 0;
+  }
+  
+  p { margin: 0; }
+}
+
+#lost_password {
+  margin: 0 3em;
+}

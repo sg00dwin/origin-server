@@ -1,6 +1,9 @@
 # Compile with --bare flag #
 $ ->
 
+## Omniture click tracking ##
+  ($ 'a.sign_up').click trackLink
+
 ## Scroll effects ##
   # nav sticks to top when scrolling off page #
   # parallax effect on scroll #
@@ -102,6 +105,12 @@ $ ->
     ($ current).show()
     ($ "a[href=#{current}]").addClass 'active'
     
+    # hide toc in doc iframe
+    # document.domain = 'redhat.com'
+    # frame = ($ ($ '#docs').find('iframe')[0].contentDocument)
+    # toc = $ '#tocdiv', frame
+    # console.log('frame', frame)
+    # console.log('toc', toc)
     
     # change sections based on clicked link
     links.click (event) ->
@@ -121,6 +130,7 @@ $ ->
       #change link class
       links.removeClass 'active'
       ($ this).addClass 'active'
+    
     
     
 

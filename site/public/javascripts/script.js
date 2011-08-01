@@ -1,5 +1,6 @@
 $(function() {
   var ann_height, ann_list, announcements, body, current, lg_pos, links, md_pos, nav, nav_top, on_announcement, scroll_announcements, sections, sm_pos, sticky_css, top, unsticky_css;
+  ($('a.sign_up')).click(trackLink);
   body = $('body');
   nav = ($('header.universal > nav')).first();
   nav_top = nav.offset().top;
