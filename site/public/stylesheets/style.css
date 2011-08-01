@@ -824,8 +824,8 @@ footer.universal #copyright img {
   color: white;
   border: 0.1em solid #25a0a6;
   margin-left: .5em;
-  font-weight: bold;
   float: right;
+  font-size: 1em;
 }
 
 /* line 524, ../../app/stylesheets/partials/_page.scss */
