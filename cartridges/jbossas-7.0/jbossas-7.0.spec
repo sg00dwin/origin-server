@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.75.11
+Version:   0.75.12
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -76,6 +76,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Sun Jul 31 2011 Dan McPherson <dmcphers@redhat.com> 0.75.12-1
+- fix jboss version (dmcphers@redhat.com)
+
 * Sun Jul 31 2011 Dan McPherson <dmcphers@redhat.com> 0.75.11-1
 - Update to jboss-as-web-7.0.0.FinalOS to reduce the number of msc threads
   (scott.stark@jboss.org)
