@@ -4,15 +4,13 @@
   = javascript_include_tag "/app/javascripts/jquery.validate.min.js"
   = javascript_include_tag "/app/javascripts/form"
 
-- if @product == 'openshift'
-  - title = 'Register for an account'
-- else
-  - title = 'Register for access to OpenShift ' + @product
+- content_for :page_title do
+  Sign up for OpenShift
     
 %section.main
   %header
     %h1
-      = title
+      = Sign up for OpenShift
 
   .content    
     #login_instead
