@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.75.9
+Version:   0.75.10
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -64,6 +64,32 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Mon Aug 01 2011 Dan McPherson <dmcphers@redhat.com> 0.75.10-1
+- fix syntax error (dmcphers@redhat.com)
+- Button styling tweak (edirsh@redhat.com)
+- Changed announcements to actual announcements (edirsh@redhat.com)
+- Changed submit button class for styling purposes on access forms
+  (edirsh@redhat.com)
+- Change 'go to flex' link to point to flex_redirect path (edirsh@redhat.com)
+- Fixed javascript reference in access pages (edirsh@redhat.com)
+- Fixed javascript reference for login page (edirsh@redhat.com)
+- Redirect from old quickstart paths to new quickstart paths
+  (edirsh@redhat.com)
+- Added 'coming soon' to power page (edirsh@redhat.com)
+- Fixed legal pages (edirsh@redhat.com)
+- Added styling to the partner pages (edirsh@redhat.com)
+- Styled dashboard (edirsh@redhat.com)
+- And more of the link changing (edirsh@redhat.com)
+- More of changing links from rh.com to www.rh.com (edirsh@redhat.com)
+- Changed link to forums to www.rh.com/os so scary cert warning isn't triggered
+  (edirsh@redhat.com)
+- Changed register page title for consistency (edirsh@redhat.com)
+- Updated home page with new illustrations; more styling tweaks
+  (edirsh@redhat.com)
+- Merge branch 'master' of ssh://libragit/srv/git/li (edirsh@redhat.com)
+- Styled login, register, and terms forms (edirsh@redhat.com)
+- Removed dialog-triggering javascript (edirsh@redhat.com)
+
 * Mon Aug 01 2011 Dan McPherson <dmcphers@redhat.com> 0.75.9-1
 - 
 
