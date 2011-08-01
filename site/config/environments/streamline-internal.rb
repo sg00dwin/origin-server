@@ -30,11 +30,12 @@ RedHatCloud::Application.configure do
   ############################################
   config.app_scope = "app"
   config.integrated = true
-  config.login = "https://streamline.devlab.phx1.redhat.com/wapps/streamline/login.html"
+  config.login = "https://www.webqa.redhat.com/wapps/streamline/login.html"
   config.streamline_service_base_url = "/wapps/streamline"
-  config.streamline = "https://streamline.devlab.phx1.redhat.com"
+  config.streamline = "https://www.webqa.redhat.com"
   config.streamline_secret = 'c0ldW1n3'
   config.captcha_secret = 'zvw5LiixMB0I4mjk06aR'
   
-  config.express_api_server = 'https://localhost'
+  # Express API base url
+  config.express_api_url = 'https://localhost'
 end

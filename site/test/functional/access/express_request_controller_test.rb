@@ -12,7 +12,7 @@ class Access::ExpressRequestControllerTest < ActionController::TestCase
     assert_response :success
   end
   
-  test "should render already requested view if access already requiested" do
+  test "should render already requested view if access already requested" do
     setup_session CloudAccess.req_role(CloudAccess::EXPRESS)
     get :new
     assert_select '#errors_div p', /already requested access/
