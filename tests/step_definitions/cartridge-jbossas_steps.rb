@@ -250,7 +250,7 @@ Then /^a jbossas deployments directory will( not)? exist$/ do |negate|
   app_root = "#{$home_root}/#{acct_name}/#{app_name}"
   deploy_root = Dir.new "#{app_root}/repo/deployments"
   
-  deploy_contents = ['ROOT.war', 'ROOT.war.deployed']
+  deploy_contents = ['ROOT.war']
 
   deploy_contents.each do |file_name|
     unless negate
