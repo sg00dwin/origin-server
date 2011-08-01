@@ -40,14 +40,15 @@
         = link_to 'Cloud Services', express_path, :class => 'services'
       %li
         = link_to 'Community', 'https://redhat.com/openshift', :class => 'community'
-      
-      -if local_assigns[:username]
-        %li.user
-          = "Greetings, #{:username}!"
-          
+     
+      -if session[:login]
         %li.user
           = link_to 'Sign out', logout_path, :class => 'sign_out'
-      
+        %li.user
+          = link_to "Greetings, #{session[:login]}!", dashboard_path, :class => 'greeting'
+          
+        
+       
       -else
         %li.user
           = link_to 'Sign In', login_path, :class => 'sign_in'

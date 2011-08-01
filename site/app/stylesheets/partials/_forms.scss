@@ -6,6 +6,12 @@ label {
   @include clearfix;
 }
 
+label.error {
+  color: red;
+  margin: 0;
+  padding: 0;
+}
+
 input {
   display: block;
   border: 0.1em solid #888;
@@ -37,10 +43,19 @@ select {
   display: block;
 }
 
-formset.confirm {
+fieldset.confirm {
   @include clearfix;
   display: block;
   border: none;
+  
+  li label  {
+    @include visually-hidden;
+  }
+  
+  li label.error {
+    @include not-visually-hidden;
+    width: 10em;
+  }
   
   input{
     float: left;
@@ -65,6 +80,21 @@ input[type=radio], input[type=checkbox] {
   margin: .1em .5em 0;
 }
 
+form {
+  width: 25em;
+  ul, ol {
+    margin: 0;
+    padding: 0;
+  }
+  li {
+    list-style-type: none;
+  }
+}
+
+fieldset {
+  border: none;
+  outline: none;
+}
 
 /* Customize radios for those that can */
 /*

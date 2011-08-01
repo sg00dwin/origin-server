@@ -36,3 +36,12 @@ $power: #F57900;
   background-color: $background-color;
   color: white;
 }
+
+@mixin not-visually-hidden {
+  position: static;
+  clip: auto;
+  width: auto;
+  height: auto;
+  overflow: visible;
+  margin: 0;
+}

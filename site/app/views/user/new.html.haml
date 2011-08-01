@@ -27,12 +27,14 @@
       = form.inputs do
         = form.hidden_field :cloud_access_choice
         = form.input :email_address
-        = form.input :password, :input_html => { :autocomplete => 'off' }
-        = form.input :password_confirmation, :input_html => { :autocomplete => 'off' }                
-        %li.captcha
-          %label(for="recaptcha_response_field") Prove You Are Human
-          = recaptcha_tags :ssl => true
-          
+        
+      %fieldset.confirm 
+        %legend Password
+        = form.input :password, :label => ' ', :input_html => { :autocomplete => 'off', :placeholder => 'At least 6 characters' }
+        = form.input :password_confirmation, :label => ' ', :input_html => { :autocomplete => 'off', :placeholder => 'Enter it again' }                
+      %li.captcha
+        %label(for="recaptcha_response_field") Prove You Are Human
+        = recaptcha_tags :ssl => true          
 
       = form.buttons do
-        = form.commit_button "Register Now"
+        = form.commit_button "Sign up for OpenShift", :button_html => { :class => 'button' }
