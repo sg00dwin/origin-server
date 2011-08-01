@@ -739,3 +739,27 @@ li.captcha {
 #lost_password {
   margin: 0 3em;
 }
+
+/* End login page */
+
+/* Dashboard page */
+.control_panel {
+  
+  form {
+    margin: 0 3em;
+  }
+  
+  dd, dt {
+    margin: .5em;
+  }
+  
+  dt { font-weight: bold; }
+  
+  a.button {
+    color: white;
+    background-color: $background_color;
+    font-size: 1.1em;
+    cursor: pointer;
+  }
+
+}

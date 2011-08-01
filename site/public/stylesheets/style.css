@@ -29,8 +29,9 @@ label.error {
   padding: 0;
 }
 
-/* line 15, ../../app/stylesheets/partials/_forms.scss */
-input {
+/* line 16, ../../app/stylesheets/partials/_forms.scss */
+input,
+textarea {
   display: block;
   border: 0.1em solid #888;
   padding: .25em .5em;
@@ -43,13 +44,15 @@ input {
   -khtml-border-radius: 0.4em;
   border-radius: 0.4em;
 }
-/* line 23, ../../app/stylesheets/partials/_forms.scss */
-input:focus {
+/* line 24, ../../app/stylesheets/partials/_forms.scss */
+input:focus,
+textarea:focus {
   border: 0.2em solid #509ef1;
   margin: .15em;
 }
-/* line 28, ../../app/stylesheets/partials/_forms.scss */
-input.button {
+/* line 29, ../../app/stylesheets/partials/_forms.scss */
+input.button,
+textarea.button {
   color: white;
   background: #8FDB45;
   border: 1px solid #5c9c1e;
@@ -67,19 +70,24 @@ input.button {
   width: 23em;
 }
 
-/* line 42, ../../app/stylesheets/partials/_forms.scss */
+/* line 43, ../../app/stylesheets/partials/_forms.scss */
+textarea {
+  height: 18em;
+}
+
+/* line 47, ../../app/stylesheets/partials/_forms.scss */
 select {
   display: block;
 }
 
-/* line 46, ../../app/stylesheets/partials/_forms.scss */
+/* line 51, ../../app/stylesheets/partials/_forms.scss */
 fieldset.confirm {
   overflow: hidden;
   *zoom: 1;
   display: block;
   border: none;
 }
-/* line 51, ../../app/stylesheets/partials/_forms.scss */
+/* line 56, ../../app/stylesheets/partials/_forms.scss */
 fieldset.confirm li label {
   border: 0;
   clip: rect(0 0 0 0);
@@ -99,7 +107,7 @@ fieldset.confirm li label.focusable:active, fieldset.confirm li label.focusable:
   position: static;
   width: auto;
 }
-/* line 55, ../../app/stylesheets/partials/_forms.scss */
+/* line 60, ../../app/stylesheets/partials/_forms.scss */
 fieldset.confirm li label.error {
   position: static;
   clip: auto;
@@ -109,47 +117,47 @@ fieldset.confirm li label.error {
   margin: 0;
   width: 10em;
 }
-/* line 60, ../../app/stylesheets/partials/_forms.scss */
+/* line 65, ../../app/stylesheets/partials/_forms.scss */
 fieldset.confirm input {
   float: left;
   width: 10em;
 }
 
-/* line 66, ../../app/stylesheets/partials/_forms.scss */
+/* line 71, ../../app/stylesheets/partials/_forms.scss */
 input.correct {
   border: 2px solid #8FDB45;
   margin: .15em;
   background: white url("../images/check.png") no-repeat right center;
 }
 
-/* line 72, ../../app/stylesheets/partials/_forms.scss */
+/* line 77, ../../app/stylesheets/partials/_forms.scss */
 input.error {
   border: 2px solid red;
   margin: .15em;
   background: white url("../images/eks.png") no-repeat right center;
 }
 
-/* line 78, ../../app/stylesheets/partials/_forms.scss */
+/* line 83, ../../app/stylesheets/partials/_forms.scss */
 input[type=radio], input[type=checkbox] {
   float: left;
   margin: .1em .5em 0;
 }
 
-/* line 83, ../../app/stylesheets/partials/_forms.scss */
+/* line 88, ../../app/stylesheets/partials/_forms.scss */
 form {
   width: 25em;
 }
-/* line 85, ../../app/stylesheets/partials/_forms.scss */
+/* line 90, ../../app/stylesheets/partials/_forms.scss */
 form ul, form ol {
   margin: 0;
   padding: 0;
 }
-/* line 89, ../../app/stylesheets/partials/_forms.scss */
+/* line 94, ../../app/stylesheets/partials/_forms.scss */
 form li {
   list-style-type: none;
 }
 
-/* line 94, ../../app/stylesheets/partials/_forms.scss */
+/* line 99, ../../app/stylesheets/partials/_forms.scss */
 fieldset {
   border: none;
   outline: none;
@@ -174,12 +182,12 @@ input[type="radio"]:checked::before {
 }
 */
 /* Placeholder text */
-/* line 119, ../../app/stylesheets/partials/_forms.scss */
+/* line 124, ../../app/stylesheets/partials/_forms.scss */
 ::-webkit-input-placeholder {
   color: #999;
 }
 
-/* line 122, ../../app/stylesheets/partials/_forms.scss */
+/* line 127, ../../app/stylesheets/partials/_forms.scss */
 :-moz-placeholder {
   color: #999;
 }
@@ -1106,6 +1114,28 @@ li.captcha {
 /* line 739, ../../app/stylesheets/partials/_page.scss */
 #lost_password {
   margin: 0 3em;
+}
+
+/* End login page */
+/* Dashboard page */
+/* line 748, ../../app/stylesheets/partials/_page.scss */
+.control_panel form {
+  margin: 0 3em;
+}
+/* line 752, ../../app/stylesheets/partials/_page.scss */
+.control_panel dd, .control_panel dt {
+  margin: .5em;
+}
+/* line 756, ../../app/stylesheets/partials/_page.scss */
+.control_panel dt {
+  font-weight: bold;
+}
+/* line 758, ../../app/stylesheets/partials/_page.scss */
+.control_panel a.button {
+  color: white;
+  background-color: #38b9e6;
+  font-size: 1.1em;
+  cursor: pointer;
 }
 
 /*/mediaquery*/

@@ -12,7 +12,8 @@ label.error {
   padding: 0;
 }
 
-input {
+input,
+textarea {
   display: block;
   border: 0.1em solid #888;
   padding: .25em .5em;
@@ -37,6 +38,10 @@ input {
     cursor: pointer;
     width: 23em;
   }  
+}
+
+textarea {
+  height: 18em;
 }
 
 select {
