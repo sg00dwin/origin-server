@@ -3,6 +3,7 @@ Feel free to change or remove this file, it is informational only.
 Repo layout
 ===========
 wsgi/ - Externally exposed wsgi code goes
+wsgi/static/ - Public static content gets served here
 libs/ - Additional libraries
 data/ - For not-externally exposed wsgi code
 setup.py - Standard setup.py, specify deps here
