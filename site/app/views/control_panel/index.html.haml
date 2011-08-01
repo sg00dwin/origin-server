@@ -1,7 +1,7 @@
 -# file: Control Panel index
 
-  - content_for :scripts do
-    "/app/javascripts/control_panel.js"
+- content_for :javascripts do
+  = javascript_include_tag '/app/javascripts/control_panel.js'
 
 %section.main
   %header
@@ -9,13 +9,9 @@
       Dashboard
   
   .content
-    = render 'layouts/flashes'
-
-    #domain_form
-      %h2 Create a domain
-      = semantic_form_for @domain, :remote => true do |form|
-        = form.input :namespace
-        = form.input :ssh, :as => :text
-        = form.input :password, :as => :password
-        = form.buttons
+    %h2 
+      Your domain
+    
+    %div{:id => "domain_form"}
+      = render "express_domain/#{@action}_form"
       

@@ -42,4 +42,5 @@ en:
     errors:
       unauthorized: "Authorization problem. Please check that your password is correct."
     messages:
-      domain_created: "Congratulations! You successfully created your domain"
+      domain_create: "Congratulations! You successfully created your domain"
+      domain_update: "Congratulations! You successfully updated your domain"

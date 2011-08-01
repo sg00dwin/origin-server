@@ -1,8 +1,9 @@
 require 'uri'
+require 'json'
 
 module ExpressApi
   
-  attr_accessor :rhlogin, :password
+  attr_accessor :rhlogin, :password, :ticket
   
   # API URLs
   base_url = Rails.configuration.express_api_url
@@ -13,13 +14,15 @@ module ExpressApi
   def http_post(url, json_data={}, raise_exception = false)
     begin
       Rails.logger.debug "Posting to Express API"
-      
+      Rails.logger.debug "Url: #{url}"
       # define post request
       req = Net::HTTP::Post.new(url.path)
-      form_data = {:json_data => ActiveSupport::JSON.encode(json_data)}
-      form_data[:password] = @password unless @password.nil?
+      form_data = {:json_data => json_data.to_json}
+      form_data[:password] = @password.blank? ? '' : @password
       req.set_form_data(form_data)
-      
+      # Set ticket cookie
+      req.add_field "Cookie", "rh_sso=#{@ticket}" unless @ticket.blank?
+      Rails.logger.debug "cookies: #{req.to_hash.inspect}"
       # set up http connection
       http = Net::HTTP.new(url.host, url.port)
       http.use_ssl = true
@@ -32,7 +35,8 @@ module ExpressApi
       if res.is_a? Net::HTTPSuccess
         # Parse and yield the body if a block is supplied
         if res.body and !res.body.empty?
-          json = ActiveSupport::JSON.decode(res.body)
+          json = JSON.parse(res.body)
+          Rails.logger.debug "in http_post decoded json: #{json.inspect}"
           yield json if block_given?
         end
       elsif res.is_a? Net::HTTPClientError

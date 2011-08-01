@@ -1,0 +1,8 @@
+= render 'layouts/flashes'
+              
+= semantic_form_for @domain do |form|
+  = form.input :namespace, :label => 'Desired domain name', :input_html => {:autocomplete => false}
+  = form.input :ssh, :label => 'SSH public key (eg: id_rsa.pub)', :required => true, :as => :text, :input_html => {:autocomplete => false}
+  = form.input :dom_action, :as => :hidden, :value => 'create'
+  = form.buttons do
+    = form.commit_button :button_html => { :class => 'button', :value => 'Create your domain name' }
