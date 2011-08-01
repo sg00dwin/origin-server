@@ -289,6 +289,7 @@ CustomLog "|/usr/sbin/rotatelogs $APP_DIR/logs/access_log$rotatelogs_format $rot
 </Directory>
 
 WSGIScriptAlias / "$APP_DIR/repo/wsgi/application"
+Alias /static "$APP_DIR/repo/wsgi/static/"
 WSGIPythonPath "$APP_DIR/repo/libs:$APP_DIR/repo/wsgi:$APP_DIR/virtenv/lib/python2.6/"
 
 
