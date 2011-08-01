@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.75.6
+Version:   0.75.7
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -64,6 +64,12 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Sun Jul 31 2011 Dan McPherson <dmcphers@redhat.com> 0.75.7-1
+- Added flex page (edirsh@redhat.com)
+- Merge branch 'master' of ssh://libragit/srv/git/li (edirsh@redhat.com)
+- Express page completed, styled, and scripted (edirsh@redhat.com)
+- minor fix (dmcphers@redhat.com)
+
 * Thu Jul 28 2011 Dan McPherson <dmcphers@redhat.com> 0.75.6-1
 - get site working in devenv (dmcphers@redhat.com)
 

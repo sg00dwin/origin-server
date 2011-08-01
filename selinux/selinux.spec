@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.75.4
+Version:       0.75.5
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -38,6 +38,9 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Sun Jul 31 2011 Dan McPherson <dmcphers@redhat.com> 0.75.5-1
+- 
+
 * Thu Jul 28 2011 Dan McPherson <dmcphers@redhat.com> 0.75.4-1
 - Allow libra to connect to memcache port (dwalsh@redhat.com)
 
