@@ -3,7 +3,7 @@
 - content_for :page_title do
   Get Access to OpenShift Express!
 
-- content_for :scripts do
+- content_for :javascripts do
   = javascript_include_tag "/app/javascripts/jquery.validate.min.js"
   = javascript_include_tag "/app/javascripts/form"
 
@@ -33,4 +33,4 @@
       - else
         %p <strong>Note:</strong> You have previously accepted all applicable terms.
       = form.buttons do
-        = form.commit_button "Request Access", :input_html => { :class => 'button' }
+        = form.commit_button "Request Access", :button_html => { :class => 'button' }

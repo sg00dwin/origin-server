@@ -7,7 +7,8 @@
 .content
   = link_to root_path do
     = image_tag '/app/images/openshift-logo-white.png', 
-               :alt => 'OpenShift Logo'
+               :alt => 'OpenShift Logo',
+               :border => '0'
     
   %aside#announcements
     %header
@@ -15,18 +16,11 @@
         
     %ul
       %li
-        %a.event{ :href => "#" }
+        = link_to "http://makara.nurturehq.com/makara/newsletter_signup.html", :class => 'announcement' do
           .title
-            Our PaaS is taking a seat at CouchConf
+            Sign up for the OpenShift Newsletter
           .further
-            San Francisco | July 29
-      
-      %li
-        %a.announce{ :href => "#" }
-          .title
-            OpenShift has New Features
-          .further
-          Perl support, more applications per user, and more...
+            Tricks and Tips, Latest apps, Events and more
 
 %nav
   %header
@@ -39,15 +33,16 @@
       %li
         = link_to 'Cloud Services', express_path, :class => 'services'
       %li
-        = link_to 'Community', 'https://redhat.com/openshift', :class => 'community'
-      
-      -if local_assigns[:username]
-        %li.user
-          = "Greetings, #{:username}!"
-          
+        = link_to 'Community', 'https://www.redhat.com/openshift', :class => 'community'
+     
+      -if session[:login]
         %li.user
           = link_to 'Sign out', logout_path, :class => 'sign_out'
-      
+        %li.user
+          = link_to "Greetings, #{session[:login]}!", dashboard_path, :class => 'greeting'
+          
+        
+       
       -else
         %li.user
           = link_to 'Sign In', login_path, :class => 'sign_in'

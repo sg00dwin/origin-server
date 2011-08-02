@@ -1,5 +1,6 @@
 $(function() {
-  var ann_height, ann_list, announcements, body, close_btn, close_dialog, current, dialogs, lg_pos, links, md_pos, nav, nav_top, on_announcement, open_dialog, scroll_announcements, sections, signin, signup, sm_pos, sticky_css, top, unsticky_css;
+  var ann_height, ann_list, announcements, body, current, lg_pos, links, md_pos, nav, nav_top, on_announcement, scroll_announcements, sections, sm_pos, sticky_css, top, unsticky_css;
+  ($('a.sign_up')).click(trackLink);
   body = $('body');
   nav = ($('header.universal > nav')).first();
   nav_top = nav.offset().top;
@@ -27,28 +28,6 @@ $(function() {
     } else {
       return nav.css(unsticky_css);
     }
-  });
-  dialogs = $('.dialog');
-  open_dialog = function(dialog) {
-    dialogs.hide();
-    return dialog.show();
-  };
-  close_dialog = function(dialog) {
-    return dialog.hide();
-  };
-  close_btn = $('.close_button');
-  signup = $('#signup');
-  signin = $('#signin');
-  ($('a.sign_up')).click(function(event) {
-    event.preventDefault();
-    return open_dialog(signup);
-  });
-  ($('a.sign_in')).click(function(event) {
-    event.preventDefault();
-    return open_dialog(signin);
-  });
-  close_btn.click(function(event) {
-    return close_dialog(($(this)).parent());
   });
   announcements = $('#announcements');
   ann_list = $('ul', announcements);

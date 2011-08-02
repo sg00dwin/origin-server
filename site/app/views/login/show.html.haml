@@ -1,6 +1,6 @@
 -# file: Login form
 
-- content_for :scripts do
+- content_for :javascripts do
   = javascript_include_tag "/app/javascripts/jquery.validate.min.js"
   = javascript_include_tag "/app/javascripts/form"
 
@@ -31,25 +31,24 @@
         
         %label(for="login_input")
           Login:
-        %input{:type => "text", :value => session[:confirm_login] ? session[:confirm_login] : '', :name => "login", :id => "login_input"}
-        %br        
+          %input{:type => "text", :value => session[:confirm_login] ? session[:confirm_login] : '', :name => "login", :id => "login_input"}
+      
         
         %label(for="pwd_input")
           Password:
-        %input(id="pwd_input"
+          %input(id="pwd_input"
                type="password" 
                name="password" 
                autocomplete="off")
-        %br
-               
+  
         %input{:type => "hidden", :name => "redirectUrl", :value => @redirectUrl}
         %input{:type => "hidden", :name => "errorUrl",  :value => @errorUrl}
         
         %input(type="submit" 
-               value="Login" 
+               value="Sign in" 
                class="button")
 
     #register
-      %h4 Need to Register instead?
+      %h2 Need to Register instead?
       %p
         =link_to "Click here to register", @register_url

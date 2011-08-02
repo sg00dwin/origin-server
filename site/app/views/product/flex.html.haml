@@ -13,7 +13,7 @@
     %li
       = link_to 'Documentation', '#docs'
     %li
-      = link_to 'Forum', 'http://redhat.com/openshift/forums/express'
+      = link_to 'Forum', 'http://www.redhat.com/openshift/forums/flex'
   
   - if logged_in?
     #account.signed_in
@@ -155,7 +155,7 @@
     
     <iframe width="100%" height="600px" src="http://docs.redhat.com/docs/en-US/OpenShift_Flex/1.0/html/User_Guide/index.html" frameborder="0"></iframe>
     
-    = link_to 'Read more documentation', 'http://redhat.com/openshift/documents', :class => 'more'
+    = link_to 'Read more documentation', 'http://www.redhat.com/openshift/documents', :class => 'more'
   
   -if logged_in?
     %section#quickstart
@@ -166,4 +166,4 @@
       %p
         Clicking on the link below will take you to the Flex application where you can start migrating your applications to the cloud.
 
-      = link_to 'Go to Flex', '/flex/', :class => 'more'
+      = link_to 'Go to Flex', flex_redirect_path, :class => 'more'

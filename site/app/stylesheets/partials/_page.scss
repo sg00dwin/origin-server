@@ -4,6 +4,9 @@ body {
   margin: 0;
   padding: 0;
   background-color: $background-color;
+}
+
+.multiplebgs body {
   background-image: url('../images/clouds_sm.png'),
                     url('../images/clouds_md.png'),
                     url('../images/clouds_lg.png');
@@ -81,8 +84,12 @@ a.button {
     decoration: none;
     align: center;
   }
-  @include text-shadow($shadow-color 0 0.05em 0);
+  @include text-shadow($shadow-color 0 0.1em 0);
   @include border-radius(2em);
+  
+  &:hover {
+    text-decoration: none !important;
+  }
 }
 
 /* Styles shared by "more" links */
@@ -101,7 +108,6 @@ a.more {
   margin: 0;
   padding: 1em 0 4em;
   background-color: white;
-  background-color: rgba(255, 255, 255, 0.9);
   
   a {
     color: #1060c8;
@@ -129,6 +135,48 @@ a.more {
     width: 100%;
     border-bottom: 1px solid #ececec;
     padding: 1em 2em;
+  }
+}
+
+.rgba .main {
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+/* Flash notices */
+.message {
+  @include box-sizing(border-box);
+  background-repeat: no-repeat;
+  background-position: 1em center;
+  padding: .5em 0 .5em 2em;
+  margin: 0 0 1em;
+  font: {
+    weight: bold;
+  }
+  text-align: center;
+  border: .1em solid;
+  
+  &.error {
+    /* Red text / pink bg */
+    background-color: #FFF3F3;
+    color: red !important;
+    border-color: #FFD9D9;
+    background-image: url('/app/images/icons/error.png');
+  }
+  
+  &.notice {
+    /* bright orange text / pale orange bg */
+    background-color: #FFFBCC;
+    background-image: url('/app/images/icons/important.png');
+    color: #FF8000;
+    border-color: #F2ED85;
+  }
+  
+  &.success {
+    /* green text / green bg */
+    background-color: #efe;
+    background-image: url('/app/images/icons/success.png');
+    color: #363;
+    border-color: #ada;
   }
 }
 
@@ -392,6 +440,8 @@ footer.universal {
         width: 50%;
         float: right;
       }
+      
+      h2 { margin-top: 0; }
     }
     
     div:nth-child(even) {
@@ -432,8 +482,12 @@ footer.universal {
     margin: 0.1em 0.1em 2em 6em;
     border: 1px solid #B8E6F6;
     min-height: 3em;
-    @include background(linear-gradient(top, white, $tweet-color 2em));
+    background: $tweet-color;
     @include border-radius(1.25em);
+  }
+  
+  .cssgradients & p.tweet {
+    @include background(linear-gradient(top, white, $tweet-color 2em));
   }
   
   p.tweet:after {
@@ -447,8 +501,15 @@ footer.universal {
     display: block;
   }
   
+  .ie8 p.tweet:after {
+    background: none;
+  }
+  
   a.tweeter {
     font-weight: bold;
+  }
+
+  a.tweeter:first-child {
     color: black;
   }
   
@@ -471,8 +532,8 @@ footer.universal {
       color: white;
       border: 0.1em solid darken(#57D4DA, 20%);
       margin-left: .5em;
-      font-weight: bold;
       float: right;
+      font-size: 1em;
     }
   }
 }
@@ -656,3 +717,111 @@ nav.service {
 
 }
 
+/* End service pages */
+
+/* Start register page */
+
+#login_instead {
+  margin: 1em 3em;
+}
+
+form#new_web_user {
+  margin: 1em 2em;
+}
+
+li.captcha {
+  margin: 0 1em;
+}
+
+/* End register page */
+
+/* Start login page */
+
+#login-form form {
+  margin: 0 3em;
+}
+
+#register {
+  margin: 0 3em;
+  
+  h2 {
+    font-size: 1em;
+    margin: 0;
+    padding: 2em 0 0;
+  }
+  
+  p { margin: 0; }
+}
+
+#lost_password {
+  margin: 0 3em;
+}
+
+/* End login page */
+
+/* Dashboard page */
+.control_panel {
+  
+  form {
+    margin: 0 3em;
+  }
+  
+  dd, dt {
+    margin: .5em;
+  }
+  
+  dt { font-weight: bold; }
+  
+  a.button {
+    color: white;
+    background-color: $background_color;
+    font-size: 1.1em;
+    cursor: pointer;
+  }
+
+}
+
+/* End dashboard page */
+
+/* Start partner page */
+
+ul.partners {
+  margin: 0;
+  padding: 0;
+
+  li {
+    @include inline-block;
+    vertical-align: top;
+    width: 15em;
+    padding: 2em .5em;
+  }
+}
+
+.partner.show {
+  .content > div {
+    margin: 1em 0;
+  }
+  
+  #partner_overview {
+    font-size: .8em;
+    border: 0.1em solid #ececec;
+    border-left: 0; border-right: 0;
+    padding: 1em;
+    
+    p { margin: 0; }
+  }
+  
+  #quote blockquote {
+    color: black;
+  }
+}
+
+.partner #join {
+  background: lighten($background-color, 30%);
+  color: black;
+  padding: 1em;
+  border: 0.1em solid $background-color;
+  @include border-radius(1em);
+  
+  p { margin: 0; }
+}

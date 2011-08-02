@@ -5,6 +5,8 @@ class GettingStarted::GenericController < ApplicationController
     if !session[:login]
       session[:login_workflow] = getting_started_path
       redirect_to login_path, :notice => flash[:notice] and return
+    else
+      redirect_to root_path
     end
   end
 end

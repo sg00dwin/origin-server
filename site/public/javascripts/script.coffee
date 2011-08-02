@@ -1,6 +1,9 @@
 # Compile with --bare flag #
 $ ->
 
+## Omniture click tracking ##
+  ($ 'a.sign_up').click trackLink
+
 ## Scroll effects ##
   # nav sticks to top when scrolling off page #
   # parallax effect on scroll #
@@ -37,34 +40,34 @@ $ ->
       nav.css unsticky_css
       
 ## Dialogs ##
-  dialogs = $ '.dialog'
+  #dialogs = $ '.dialog'
 
-  open_dialog = (dialog) -> 
-    # Close any other open dialogs
-    dialogs.hide()
-    # Show given dialog
-    dialog.show()
+  #open_dialog = (dialog) -> 
+    ## Close any other open dialogs
+    #dialogs.hide()
+    ## Show given dialog
+    #dialog.show()
 
-  close_dialog = (dialog) ->
-    dialog.hide()
+  #close_dialog = (dialog) ->
+    #dialog.hide()
     
-  # Close buttons
-  close_btn = $ '.close_button' 
-  # Sign up dialog
-  signup = $ '#signup'
-  # Sign in dialog
-  signin = $ '#signin'
+  ## Close buttons
+  #close_btn = $ '.close_button' 
+  ## Sign up dialog
+  #signup = $ '#signup'
+  ## Sign in dialog
+  #signin = $ '#signin'
 
-  ($ 'a.sign_up').click (event) ->
-    event.preventDefault()
-    open_dialog signup
+  #($ 'a.sign_up').click (event) ->
+    #event.preventDefault()
+    #open_dialog signup
 
-  ($ 'a.sign_in').click (event) ->
-    event.preventDefault()
-    open_dialog signin
+  #($ 'a.sign_in').click (event) ->
+    #event.preventDefault()
+    #open_dialog signin
     
-  close_btn.click (event) ->
-    close_dialog ($ this).parent()
+  #close_btn.click (event) ->
+    #close_dialog ($ this).parent()
 
 ## Announcements ##
   announcements = ($ '#announcements')
@@ -102,6 +105,12 @@ $ ->
     ($ current).show()
     ($ "a[href=#{current}]").addClass 'active'
     
+    # hide toc in doc iframe
+    # document.domain = 'redhat.com'
+    # frame = ($ ($ '#docs').find('iframe')[0].contentDocument)
+    # toc = $ '#tocdiv', frame
+    # console.log('frame', frame)
+    # console.log('toc', toc)
     
     # change sections based on clicked link
     links.click (event) ->
@@ -121,6 +130,7 @@ $ ->
       #change link class
       links.removeClass 'active'
       ($ this).addClass 'active'
+    
     
     
 

@@ -2,7 +2,7 @@
 
 Summary:   Provides python-wsgi-3.2 support
 Name:      rhc-cartridge-wsgi-3.2
-Version:   0.75.6
+Version:   0.75.8
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -75,6 +75,12 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Mon Aug 01 2011 Dan McPherson <dmcphers@redhat.com> 0.75.8-1
+- 
+
+* Mon Aug 01 2011 Dan McPherson <dmcphers@redhat.com> 0.75.7-1
+- Added Public Static Dir (mmcgrath@redhat.com)
+
 * Thu Jul 28 2011 Dan McPherson <dmcphers@redhat.com> 0.75.6-1
 - adding skip build and markers (dmcphers@redhat.com)
 - Adding env var bits (mmcgrath@redhat.com)

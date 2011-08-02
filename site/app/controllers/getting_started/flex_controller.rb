@@ -8,7 +8,11 @@ class GettingStarted::FlexController < ApplicationController
     else
       user = session_user
       user.refresh_roles
-      redirect_to new_access_flex_requests_path unless user.has_access?(CloudAccess::FLEX)
+      unless user.has_access?(CloudAccess::FLEX)
+        redirect_to new_access_flex_requests_path 
+      else
+        redirect_to '/app/flex#quickstart'
+      end
     end    
   end
 end

@@ -13,7 +13,7 @@
     %li
       = link_to 'Documentation', '#docs'
     %li
-      = link_to 'Forum', 'http://redhat.com/openshift/forums/express'
+      = link_to 'Forum', 'http://www.redhat.com/openshift/forums/express'
   
   - if logged_in?
     #account.signed_in
@@ -133,16 +133,16 @@
       %p.video-description
         This video demonstrates how easy it is to use the eXo cloud IDE to develop and deploy applications on OpenShift.
       
-      = link_to 'Watch more videos', 'http://redhat.com/openshift/videos', :class => 'more'
+      = link_to 'Watch more videos', 'http://www.redhat.com/openshift/videos', :class => 'more'
   
   %section#docs
     %header
       %h1
         Documentation
     
-    <iframe width="100%" height="600px" src="http://docs.redhat.com/docs/en-US/OpenShift_Express/1.0/html/User_Guide/index.html" frameborder="0"></iframe>
+    <iframe width="100%" height="600px" src="https://docs.redhat.com/docs/en-US/OpenShift_Express/1.0/html/User_Guide/index.html" frameborder="0"></iframe>
     
-    = link_to 'Read more documentation', 'http://redhat.com/openshift/documents', :class => 'more'
+    = link_to 'Read more documentation', 'http://www.redhat.com/openshift/documents', :class => 'more'
   
   -if logged_in?
     %section#quickstart
@@ -310,7 +310,7 @@
             %p
               All you need is an ssh keypair and a unique name.
             
-            = link_to 'Create your domain now', dashboard_link, :class => 'button'
+            = link_to 'Create your domain now', dashboard_path, :class => 'button'
           
               
         %li#create_application

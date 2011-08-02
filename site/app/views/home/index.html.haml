@@ -24,41 +24,33 @@
     #fast
       %header
         %h2
-          OpenShift is Fast
+          Deploy in mere minutes. Just upload code and go!
       
-      = image_tag '/app/images/fast_icon.png'
+      %img.icon{ :src => "/app/images/fast_icon.png" }
       
       %p
-        Looking for the fastest on-ramp to the cloud? OpenShift gets your new and existing apps in the cloud in minutes.
-      
-      -#
-        %a.more{ :href => "#" }
-          Learn more about languages and frameworks
-    
+        Whether you prefer a command line or graphical web-based interface, OpenShift provides the fastest and easiest on-ramp to the cloud.
+          
     #free
       %header
         %h2
-          OpenShift is Free
+          Send apps to the cloud, monitor and scale. OpenShift grows with you.
       
-      = image_tag '/app/images/free_icon.png'
+      %img.icon{ :src => "/app/images/free_icon.png" }
     
       %p
-        What are you waiting for? Deploying, managing, monitoring and auto-scaling applications on OpenShift is free.
-    
+        OpenShift provides the tools not only to deploy your apps to a cloud, but also to monitor them and scale resources on the fly.
+          
     #open
       %header
         %h2
-          OpenShift is Open
+          The freedom to choose your languages, frameworks, and middleware
       
-      = image_tag '/app/images/open_icon.png'
+      %img.icon{ :src => "/app/images/open_icon.png" }
 
       %p
-        Worried about lock-in? OpenShift lets you choose your language, framework, middleware and cloud.
+        No lock-ins. OpenShift supports many programming languages like Java, PHP, Ruby, Python, and Perl. All of this using standard stacks and technologies so you can use the frameworks you like, and take them with you.
       
-      -#
-        %a.more{ :href => "#" }
-          Learn more about frameworks and middleware
-
 %section#social.main
   %header
     %h1
@@ -88,7 +80,7 @@
         Try OpenShift now for free!
   
   .content
-    = link_to 'Sign up and try it', login_path, :class => 'sign_up button'
+    = link_to 'Sign up and try it', '/app/user/new/express', :class => 'sign_up button'
 
 - content_for :javascripts do
   = javascript_include_tag "/app/javascripts/home.src.js"
