@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.75.12
+Version:   0.75.13
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -76,6 +76,10 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Tue Aug 02 2011 Dan McPherson <dmcphers@redhat.com> 0.75.13-1
+- Update the README with the jboss-as7 brew rpm build info and steps, and add
+  the mysql jdbc driver archive to the cartridge data. (starksm64@gmail.com)
+
 * Sun Jul 31 2011 Dan McPherson <dmcphers@redhat.com> 0.75.12-1
 - fix jboss version (dmcphers@redhat.com)
 
