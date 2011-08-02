@@ -80,7 +80,7 @@
         Try OpenShift now for free!
   
   .content
-    = link_to 'Sign up and try it', login_path, :class => 'sign_up button'
+    = link_to 'Sign up and try it', '/app/user/new/express', :class => 'sign_up button'
 
 - content_for :javascripts do
   = javascript_include_tag "/app/javascripts/home.src.js"
