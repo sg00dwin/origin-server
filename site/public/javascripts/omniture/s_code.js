@@ -25,11 +25,14 @@ s.dynamicAccountList="redhatglobaltest,redhatdev=localhost;redhatglobal,redhatco
 changes to how your visitor data is collected.  Changes should only be
 made when instructed to do so by your account manager.*/
 s.visitorNamespace="redhat"
-s.trackingServer="redhat.122.2o7.net"
+s.trackingServer='mtrcs.redhat.com'
+s.trackingServerSecure = 'smtrcs.redhat.com'
 
 /* Try it button link tracking code */
 function trackLink(obj) {
   var s=s_gi('redhatopenshift,redhatcom,redhatglobal'); //Not sure if this is really necessary
+  s.trackingServer='mtrcs.redhat.com'
+  s.trackingServerSecure = 'smtrcs.redhat.com'
   s.linkTrackVars='events';
   s.linkTrackEvents='event28';
   s.events='event28';
@@ -54,12 +57,53 @@ s.p_gvf=new Function("t","k",""
 +"if(t){var s=this,i=t.indexOf('='),p=i<0?t:t.substring(0,i),v=i<0?'T"
 +"rue':t.substring(i+1);if(p.toLowerCase()==k.toLowerCase())return s."
 +"epa(v)}return ''");
-  
+
+var OFFER_PARAM = 'offer_id';
+var OFFER_COOKIE = 'rh_offer_id';
+
 /* Plugin Config */
 s.usePlugins=true
 function s_doPlugins(s) {
-      if(!s.campaign)
-      s.campaign=s.getQueryParam('cid');
+ /* External Campaign Tracking */
+  if(!s.campaign)
+          s.campaign=s.getQueryParamNC('sc_cid');
+  /* Internal Campaign Tracking */
+  if(!s.eVar1)
+          s.eVar1=s.getQueryParamNC('intcmp');
+
+  s.setCookieParam('rh_omni_tc', s.getQueryParamNC('sc_cid'),1,365);
+
+   s.setCookieParam('rh_omni_itc',s.getQueryParamNC('intcmp'),1,365);
+
+  // only set offer cookie when external campaign is present in QS
+  if (s.getQueryParamNC('sc_cid')) {
+          var offer = s.getQueryParamNC(OFFER_PARAM);
+  
+          if (offer) {
+                  s.setCookieParam(OFFER_COOKIE, offer, 1, 365);
+          } else {
+                  // clear cookie when unset in QS
+                  s.unsetCookieParam(OFFER_COOKIE);
+          }
+  }
+
+   if(!s.c_r('rh_omni_tc')&&  !s.campaign) {
+     var chk_ref = document.referrer;
+     s.campaign = (chk_ref) ? '70160000000H4AoAAK' : '70160000000H4AjAAK';
+     s.setCookieParam('rh_omni_tc',s.campaign,1,365);
+   }
+
+   if(s.c_r('rh_omni_tc') == '70160000000H4Aj'&&  !s.campaign) {
+     var chk_ref = document.referrer;
+     s.campaign = '70160000000H4AjAAK';
+     s.setCookieParam('rh_omni_tc',s.campaign,1,365);
+   }
+
+   if(s.c_r('rh_omni_tc') == '70160000000H4Ao'&&  !s.campaign) {
+     var chk_ref = document.referrer;
+     s.campaign = '70160000000H4AoAAK';
+     s.setCookieParam('rh_omni_tc',s.campaign,1,365);
+   }
 }
 s.doPlugins=s_doPlugins
 
