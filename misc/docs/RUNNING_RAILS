@@ -21,7 +21,7 @@ This should link all the resources in public into /app/public
 4. sudo cp -R server-common/openshift* /usr/lib/ruby/site_ruby/1.8/
 You'll have to do this any time you modify files in server-common
 
-5. cd site; rm Gemfile.lock; bundle install
+5. cd site; rm -rf .bundle; rm Gemfile.lock; bundle install
 Note: Be sure not to commit the new Gemfile.lock
 
 6. sudo rails s
