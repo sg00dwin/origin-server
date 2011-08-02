@@ -108,6 +108,7 @@ a.more {
   margin: 0;
   padding: 1em 0 4em;
   background-color: white;
+  display: block;
   
   a {
     color: #1060c8;
@@ -185,11 +186,13 @@ a.more {
 /* Layout styles */
 
 header.universal {
+  display: block;
   & > .content {
     padding: 1em;
   }
   
   nav {
+    display: block;
     background-color: black;
     
     ul {
@@ -270,6 +273,7 @@ header.universal {
 
 
 footer.universal {
+  display: block;
   color: white;
   font-size: .9em;
   
@@ -369,6 +373,7 @@ footer.universal {
   background: white;
   margin-bottom: 2.5em;
   height: 392px;
+  display: block;
   
   .content {
     position: relative;

@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.75.6
+Version:       0.75.7
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -38,6 +38,9 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Tue Aug 02 2011 Dan McPherson <dmcphers@redhat.com> 0.75.7-1
+- Allow libra_t domains to connect to the ftp port (dwalsh@redhat.com)
+
 * Mon Aug 01 2011 Dan McPherson <dmcphers@redhat.com> 0.75.6-1
 - 
 
