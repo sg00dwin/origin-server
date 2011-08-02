@@ -52,6 +52,9 @@ fieldset.confirm {
   @include clearfix;
   display: block;
   border: none;
+  margin-bottom: 2.5em;
+  overflow: visible;
+  position: relative;
   
   li label  {
     @include visually-hidden;
@@ -59,7 +62,11 @@ fieldset.confirm {
   
   li label.error {
     @include not-visually-hidden;
-    width: 10em;
+    width: 20em;
+    background: white;
+    padding: 0.5em;
+    position: absolute;
+    bottom: -2.1em;
   }
   
   input{

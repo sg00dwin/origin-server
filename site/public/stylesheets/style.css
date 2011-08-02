@@ -86,8 +86,11 @@ fieldset.confirm {
   *zoom: 1;
   display: block;
   border: none;
+  margin-bottom: 2.5em;
+  overflow: visible;
+  position: relative;
 }
-/* line 56, ../../app/stylesheets/partials/_forms.scss */
+/* line 59, ../../app/stylesheets/partials/_forms.scss */
 fieldset.confirm li label {
   border: 0;
   clip: rect(0 0 0 0);
@@ -98,7 +101,7 @@ fieldset.confirm li label {
   position: absolute;
   width: 1px;
 }
-/* line 50, ../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_helpers.scss */
+/* line 50, ../../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_helpers.scss */
 fieldset.confirm li label.focusable:active, fieldset.confirm li label.focusable:focus {
   clip: auto;
   height: auto;
@@ -107,7 +110,7 @@ fieldset.confirm li label.focusable:active, fieldset.confirm li label.focusable:
   position: static;
   width: auto;
 }
-/* line 60, ../../app/stylesheets/partials/_forms.scss */
+/* line 63, ../../app/stylesheets/partials/_forms.scss */
 fieldset.confirm li label.error {
   position: static;
   clip: auto;
@@ -115,49 +118,53 @@ fieldset.confirm li label.error {
   height: auto;
   overflow: visible;
   margin: 0;
-  width: 10em;
+  width: 20em;
+  background: white;
+  padding: 0.5em;
+  position: absolute;
+  bottom: -2.1em;
 }
-/* line 65, ../../app/stylesheets/partials/_forms.scss */
+/* line 72, ../../app/stylesheets/partials/_forms.scss */
 fieldset.confirm input {
   float: left;
   width: 10em;
 }
 
-/* line 71, ../../app/stylesheets/partials/_forms.scss */
+/* line 78, ../../app/stylesheets/partials/_forms.scss */
 input.correct {
   border: 2px solid #8FDB45;
   margin: .15em;
   background: white url("../images/check.png") no-repeat right center;
 }
 
-/* line 77, ../../app/stylesheets/partials/_forms.scss */
+/* line 84, ../../app/stylesheets/partials/_forms.scss */
 input.error {
   border: 2px solid red;
   margin: .15em;
   background: white url("../images/eks.png") no-repeat right center;
 }
 
-/* line 83, ../../app/stylesheets/partials/_forms.scss */
+/* line 90, ../../app/stylesheets/partials/_forms.scss */
 input[type=radio], input[type=checkbox] {
   float: left;
   margin: .1em .5em 0;
 }
 
-/* line 88, ../../app/stylesheets/partials/_forms.scss */
+/* line 95, ../../app/stylesheets/partials/_forms.scss */
 form {
   width: 25em;
 }
-/* line 90, ../../app/stylesheets/partials/_forms.scss */
+/* line 97, ../../app/stylesheets/partials/_forms.scss */
 form ul, form ol {
   margin: 0;
   padding: 0;
 }
-/* line 94, ../../app/stylesheets/partials/_forms.scss */
+/* line 101, ../../app/stylesheets/partials/_forms.scss */
 form li {
   list-style-type: none;
 }
 
-/* line 99, ../../app/stylesheets/partials/_forms.scss */
+/* line 106, ../../app/stylesheets/partials/_forms.scss */
 fieldset {
   border: none;
   outline: none;
@@ -182,12 +189,12 @@ input[type="radio"]:checked::before {
 }
 */
 /* Placeholder text */
-/* line 124, ../../app/stylesheets/partials/_forms.scss */
+/* line 131, ../../app/stylesheets/partials/_forms.scss */
 ::-webkit-input-placeholder {
   color: #999;
 }
 
-/* line 127, ../../app/stylesheets/partials/_forms.scss */
+/* line 134, ../../app/stylesheets/partials/_forms.scss */
 :-moz-placeholder {
   color: #999;
 }
@@ -300,7 +307,7 @@ nav > header,
   position: absolute;
   width: 1px;
 }
-/* line 50, ../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_helpers.scss */
+/* line 50, ../../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_helpers.scss */
 header.universal hgroup.focusable:active, header.universal hgroup.focusable:focus,
 header.universal header.focusable:active,
 header.universal header.focusable:focus,
@@ -346,7 +353,7 @@ a.button {
   -khtml-border-radius: 2em;
   border-radius: 2em;
 }
-/* line 7, ../../../../../../../usr/lib/ruby/gems/1.8/gems/compass-0.11.5/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
+/* line 7, ../../../../../../../../usr/lib/ruby/gems/1.8/gems/compass-0.11.5/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
 a.button {
   *display: inline;
 }
@@ -484,7 +491,7 @@ header.universal nav li a {
   font-size: .9em;
   text-decoration: none;
 }
-/* line 7, ../../../../../../../usr/lib/ruby/gems/1.8/gems/compass-0.11.5/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
+/* line 7, ../../../../../../../../usr/lib/ruby/gems/1.8/gems/compass-0.11.5/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
 header.universal nav li a {
   *display: inline;
 }
@@ -569,7 +576,7 @@ footer.universal .content > ul > li {
   vertical-align: top;
   width: 10em;
 }
-/* line 7, ../../../../../../../usr/lib/ruby/gems/1.8/gems/compass-0.11.5/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
+/* line 7, ../../../../../../../../usr/lib/ruby/gems/1.8/gems/compass-0.11.5/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
 footer.universal .content > ul > li {
   *display: inline;
 }
@@ -837,7 +844,7 @@ footer.universal #copyright img {
   vertical-align: top;
   padding-left: .7em;
 }
-/* line 7, ../../../../../../../usr/lib/ruby/gems/1.8/gems/compass-0.11.5/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
+/* line 7, ../../../../../../../../usr/lib/ruby/gems/1.8/gems/compass-0.11.5/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
 #social li {
   *display: inline;
 }
@@ -950,7 +957,7 @@ nav.service:last {
   position: absolute;
   width: 1px;
 }
-/* line 50, ../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_helpers.scss */
+/* line 50, ../../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_helpers.scss */
 .product .main > header.focusable:active, .product .main > header.focusable:focus {
   clip: auto;
   height: auto;
@@ -995,7 +1002,7 @@ nav.service:last {
   position: absolute;
   width: 1px;
 }
-/* line 50, ../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_helpers.scss */
+/* line 50, ../../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_helpers.scss */
 .product .main .content nav > header.focusable:active, .product .main .content nav > header.focusable:focus {
   clip: auto;
   height: auto;
@@ -1021,7 +1028,7 @@ nav.service:last {
   border-bottom: 1px solid #ececec;
   width: 10em;
 }
-/* line 7, ../../../../../../../usr/lib/ruby/gems/1.8/gems/compass-0.11.5/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
+/* line 7, ../../../../../../../../usr/lib/ruby/gems/1.8/gems/compass-0.11.5/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
 .product .main .content nav a {
   *display: inline;
 }
@@ -1054,7 +1061,7 @@ nav.service:last {
   color: #333;
   text-align: center;
 }
-/* line 7, ../../../../../../../usr/lib/ruby/gems/1.8/gems/compass-0.11.5/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
+/* line 7, ../../../../../../../../usr/lib/ruby/gems/1.8/gems/compass-0.11.5/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
 .product .main .content nav #account.signed_out a.sign_in {
   *display: inline;
 }
@@ -1183,7 +1190,7 @@ ul.partners li {
   width: 15em;
   padding: 2em .5em;
 }
-/* line 7, ../../../../../../../usr/lib/ruby/gems/1.8/gems/compass-0.11.5/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
+/* line 7, ../../../../../../../../usr/lib/ruby/gems/1.8/gems/compass-0.11.5/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
 ul.partners li {
   *display: inline;
 }
@@ -1230,7 +1237,7 @@ ul.partners li {
 /*/mediaquery*/
 /*/mediaquery*/
 @media print {
-  /* line 10, ../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
+  /* line 10, ../../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
   * {
     background: transparent !important;
     color: black !important;
@@ -1239,44 +1246,44 @@ ul.partners li {
     -ms-filter: none !important;
   }
 
-  /* line 12, ../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
+  /* line 12, ../../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
   a, a:visited {
     color: #444 !important;
     text-decoration: underline;
   }
 
-  /* line 13, ../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
+  /* line 13, ../../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
   a[href]:after {
     content: " (" attr(href) ")";
   }
 
-  /* line 14, ../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
+  /* line 14, ../../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
   abbr[title]:after {
     content: " (" attr(title) ")";
   }
 
-  /* line 15, ../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
+  /* line 15, ../../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
   .ir a:after, a[href^="javascript:"]:after, a[href^="#"]:after {
     content: "";
   }
 
-  /* line 16, ../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
+  /* line 16, ../../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
   pre, blockquote {
     border: 1px solid #999;
     page-break-inside: avoid;
   }
 
-  /* line 17, ../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
+  /* line 17, ../../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
   thead {
     display: table-header-group;
   }
 
-  /* line 18, ../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
+  /* line 18, ../../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
   tr, img {
     page-break-inside: avoid;
   }
 
-  /* line 19, ../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
+  /* line 19, ../../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
   img {
     max-width: 100% !important;
   }
@@ -1285,13 +1292,13 @@ ul.partners li {
     margin: 0.5cm;
 }
 
-  /* line 21, ../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
+  /* line 21, ../../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
   p, h2, h3 {
     orphans: 3;
     widows: 3;
   }
 
-  /* line 22, ../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
+  /* line 22, ../../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
   h2, h3 {
     page-break-after: avoid;
   }
