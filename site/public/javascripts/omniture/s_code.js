@@ -29,7 +29,7 @@ s.trackingServer="redhat.122.2o7.net"
 
 /* Try it button link tracking code */
 function trackLink(obj) {
-  var s=s_gi('openshift,redhatcom,redhatglobal'); //Not sure if this is really necessary
+  var s=s_gi('redhatopenshift,redhatcom,redhatglobal'); //Not sure if this is really necessary
   s.linkTrackVars='events';
   s.linkTrackEvents='event28';
   s.events='event28';
