@@ -676,7 +676,7 @@ footer.universal #copyright img {
 /* line 376, ../../app/stylesheets/partials/_page.scss */
 #opener {
   background: white;
-  margin-bottom: 2.5em;
+  margin-bottom: 30px;
   height: 392px;
   display: block;
 }
@@ -731,7 +731,7 @@ footer.universal #copyright img {
 
 /* line 433, ../../app/stylesheets/partials/_page.scss */
 #exposition h1 {
-  margin-top: 4em;
+  margin-top: 100px;
 }
 /* line 438, ../../app/stylesheets/partials/_page.scss */
 #exposition > .content > div {
@@ -739,57 +739,60 @@ footer.universal #copyright img {
   padding: 0 3em;
   overflow: hidden;
   *zoom: 1;
+  position: relative;
+  min-height: 200px;
 }
-/* line 442, ../../app/stylesheets/partials/_page.scss */
+/* line 445, ../../app/stylesheets/partials/_page.scss */
 #exposition > .content > div img {
   display: block;
-  float: left;
+  position: absolute;
+  top: 0;
 }
-/* line 447, ../../app/stylesheets/partials/_page.scss */
+/* line 451, ../../app/stylesheets/partials/_page.scss */
 #exposition > .content > div header, #exposition > .content > div p, #exposition > .content > div a {
   display: block;
-  width: 50%;
-  float: right;
+  padding-left: 325px;
 }
-/* line 453, ../../app/stylesheets/partials/_page.scss */
+/* line 456, ../../app/stylesheets/partials/_page.scss */
 #exposition > .content > div h2 {
   margin-top: 0;
 }
-/* line 457, ../../app/stylesheets/partials/_page.scss */
-#exposition > .content div:nth-child(even) img {
-  float: right;
-}
-/* line 460, ../../app/stylesheets/partials/_page.scss */
-#exposition > .content div:nth-child(even) header, #exposition > .content div:nth-child(even) p, #exposition > .content div:nth-child(even) a {
-  float: left;
-}
-/* line 465, ../../app/stylesheets/partials/_page.scss */
+/* line 459, ../../app/stylesheets/partials/_page.scss */
 #exposition > .content div:last-child {
   margin-bottom: 3em;
 }
+/* line 464, ../../app/stylesheets/partials/_page.scss */
+#exposition > .content #free img {
+  right: 0;
+}
+/* line 468, ../../app/stylesheets/partials/_page.scss */
+#exposition > .content #free header, #exposition > .content #free p, #exposition > .content #free a {
+  padding-left: 0;
+  padding-right: 325px;
+}
 
-/* line 472, ../../app/stylesheets/partials/_page.scss */
+/* line 477, ../../app/stylesheets/partials/_page.scss */
 #social .content {
   padding-bottom: 2em;
   border-bottom: 1px solid #ececec;
 }
-/* line 477, ../../app/stylesheets/partials/_page.scss */
+/* line 482, ../../app/stylesheets/partials/_page.scss */
 #social div, #social li {
   overflow: hidden;
   *zoom: 1;
 }
-/* line 481, ../../app/stylesheets/partials/_page.scss */
+/* line 486, ../../app/stylesheets/partials/_page.scss */
 #social .content {
   width: 746px;
 }
-/* line 485, ../../app/stylesheets/partials/_page.scss */
+/* line 490, ../../app/stylesheets/partials/_page.scss */
 #social img {
   float: left;
   vertical-align: top;
   padding: .5em;
   margin-top: .5em;
 }
-/* line 492, ../../app/stylesheets/partials/_page.scss */
+/* line 497, ../../app/stylesheets/partials/_page.scss */
 #social p.tweet {
   position: relative;
   padding: 1em;
@@ -804,7 +807,7 @@ footer.universal #copyright img {
   -khtml-border-radius: 1.25em;
   border-radius: 1.25em;
 }
-/* line 502, ../../app/stylesheets/partials/_page.scss */
+/* line 507, ../../app/stylesheets/partials/_page.scss */
 .cssgradients #social p.tweet {
   background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #ffffff), color-stop(100%, #def3fb));
   background: -webkit-linear-gradient(top, #ffffff, #def3fb 2em);
@@ -813,7 +816,7 @@ footer.universal #copyright img {
   background: -ms-linear-gradient(top, #ffffff, #def3fb 2em);
   background: linear-gradient(top, #ffffff, #def3fb 2em);
 }
-/* line 506, ../../app/stylesheets/partials/_page.scss */
+/* line 511, ../../app/stylesheets/partials/_page.scss */
 #social p.tweet:after {
   content: '';
   background: url("../images/bubble-extension.png") no-repeat left top;
@@ -824,24 +827,24 @@ footer.universal #copyright img {
   height: 27px;
   display: block;
 }
-/* line 517, ../../app/stylesheets/partials/_page.scss */
+/* line 522, ../../app/stylesheets/partials/_page.scss */
 #social .ie8 p.tweet:after {
   background: none;
 }
-/* line 521, ../../app/stylesheets/partials/_page.scss */
+/* line 526, ../../app/stylesheets/partials/_page.scss */
 #social a.tweeter {
   font-weight: bold;
 }
-/* line 525, ../../app/stylesheets/partials/_page.scss */
+/* line 530, ../../app/stylesheets/partials/_page.scss */
 #social a.tweeter:first-child {
   color: black;
 }
-/* line 529, ../../app/stylesheets/partials/_page.scss */
+/* line 534, ../../app/stylesheets/partials/_page.scss */
 #social ul {
   margin: 0;
   padding: 0;
 }
-/* line 533, ../../app/stylesheets/partials/_page.scss */
+/* line 538, ../../app/stylesheets/partials/_page.scss */
 #social li {
   list-style-type: none;
   display: -moz-inline-box;
@@ -857,11 +860,11 @@ footer.universal #copyright img {
 #social li {
   *display: inline;
 }
-/* line 541, ../../app/stylesheets/partials/_page.scss */
+/* line 546, ../../app/stylesheets/partials/_page.scss */
 #social #social_links {
   padding: .5em 4em;
 }
-/* line 543, ../../app/stylesheets/partials/_page.scss */
+/* line 548, ../../app/stylesheets/partials/_page.scss */
 #social #social_links a.button {
   background-color: #57D4DA;
   color: white;
@@ -871,31 +874,31 @@ footer.universal #copyright img {
   font-size: 1em;
 }
 
-/* line 554, ../../app/stylesheets/partials/_page.scss */
+/* line 559, ../../app/stylesheets/partials/_page.scss */
 .no-js #social {
   display: none;
 }
 
-/* line 556, ../../app/stylesheets/partials/_page.scss */
+/* line 561, ../../app/stylesheets/partials/_page.scss */
 #bottom_signup {
   text-align: center;
   font-size: 1.4em;
   padding: 3.75em;
 }
-/* line 561, ../../app/stylesheets/partials/_page.scss */
+/* line 566, ../../app/stylesheets/partials/_page.scss */
 #bottom_signup header, #bottom_signup .content {
   width: 35em;
 }
-/* line 565, ../../app/stylesheets/partials/_page.scss */
+/* line 570, ../../app/stylesheets/partials/_page.scss */
 #bottom_signup h1 {
   border-bottom: none;
 }
-/* line 569, ../../app/stylesheets/partials/_page.scss */
+/* line 574, ../../app/stylesheets/partials/_page.scss */
 #bottom_signup h1, #bottom_signup h2 {
   margin: 0;
   padding: 0;
 }
-/* line 573, ../../app/stylesheets/partials/_page.scss */
+/* line 578, ../../app/stylesheets/partials/_page.scss */
 #bottom_signup a.button {
   background-color: #57D4DA;
   color: white;
@@ -905,57 +908,57 @@ footer.universal #copyright img {
 
 /* End home page styles */
 /* Service page styles */
-/* line 584, ../../app/stylesheets/partials/_page.scss */
+/* line 589, ../../app/stylesheets/partials/_page.scss */
 nav.service {
   color: white;
   font-family: Overpass, "Liberation Sans", Arial, "Helvetica Neue", Helvetica, sans-serif;
   font-size: 0.9em;
   text-transform: uppercase;
 }
-/* line 590, ../../app/stylesheets/partials/_page.scss */
+/* line 595, ../../app/stylesheets/partials/_page.scss */
 .express nav.service {
   background-color: #73d216;
 }
-/* line 593, ../../app/stylesheets/partials/_page.scss */
+/* line 598, ../../app/stylesheets/partials/_page.scss */
 .express nav.service .express {
   background-color: white;
   color: #666;
 }
-/* line 599, ../../app/stylesheets/partials/_page.scss */
+/* line 604, ../../app/stylesheets/partials/_page.scss */
 .flex nav.service {
   background-color: #9258c8;
 }
-/* line 602, ../../app/stylesheets/partials/_page.scss */
+/* line 607, ../../app/stylesheets/partials/_page.scss */
 .flex nav.service .flex {
   background-color: white;
   color: #666;
 }
-/* line 608, ../../app/stylesheets/partials/_page.scss */
+/* line 613, ../../app/stylesheets/partials/_page.scss */
 .power nav.service {
   background-color: #f57900;
 }
-/* line 611, ../../app/stylesheets/partials/_page.scss */
+/* line 616, ../../app/stylesheets/partials/_page.scss */
 .power nav.service .power {
   background-color: white;
   color: #666;
 }
-/* line 618, ../../app/stylesheets/partials/_page.scss */
+/* line 623, ../../app/stylesheets/partials/_page.scss */
 nav.service li.active a,
 nav.service a:hover {
   background-color: white !important;
   color: #666;
 }
-/* line 623, ../../app/stylesheets/partials/_page.scss */
+/* line 628, ../../app/stylesheets/partials/_page.scss */
 nav.service:last {
   float: none !important;
 }
 
-/* line 629, ../../app/stylesheets/partials/_page.scss */
+/* line 634, ../../app/stylesheets/partials/_page.scss */
 .product .main {
   overflow: hidden;
   *zoom: 1;
 }
-/* line 632, ../../app/stylesheets/partials/_page.scss */
+/* line 637, ../../app/stylesheets/partials/_page.scss */
 .product .main > header {
   border: 0;
   clip: rect(0 0 0 0);
@@ -975,7 +978,7 @@ nav.service:last {
   position: static;
   width: auto;
 }
-/* line 636, ../../app/stylesheets/partials/_page.scss */
+/* line 641, ../../app/stylesheets/partials/_page.scss */
 .product .main .content nav {
   text-align: right;
   width: 11em;
@@ -984,23 +987,23 @@ nav.service:last {
   margin-top: 5em;
   font-size: 1.1em;
 }
-/* line 644, ../../app/stylesheets/partials/_page.scss */
+/* line 649, ../../app/stylesheets/partials/_page.scss */
 .product .main .content nav ul {
   padding: 0;
   margin: 0;
 }
-/* line 648, ../../app/stylesheets/partials/_page.scss */
+/* line 653, ../../app/stylesheets/partials/_page.scss */
 .product .main .content nav header {
   padding: 3em .5em 0;
   width: auto;
   font-size: .8em;
 }
-/* line 653, ../../app/stylesheets/partials/_page.scss */
+/* line 658, ../../app/stylesheets/partials/_page.scss */
 .product .main .content nav header h2 {
   padding: 0;
   margin: 0;
 }
-/* line 658, ../../app/stylesheets/partials/_page.scss */
+/* line 663, ../../app/stylesheets/partials/_page.scss */
 .product .main .content nav > header {
   border: 0;
   clip: rect(0 0 0 0);
@@ -1020,11 +1023,11 @@ nav.service:last {
   position: static;
   width: auto;
 }
-/* line 662, ../../app/stylesheets/partials/_page.scss */
+/* line 667, ../../app/stylesheets/partials/_page.scss */
 .product .main .content nav li {
   list-style-type: none;
 }
-/* line 666, ../../app/stylesheets/partials/_page.scss */
+/* line 671, ../../app/stylesheets/partials/_page.scss */
 .product .main .content nav a {
   display: -moz-inline-box;
   -moz-box-orient: vertical;
@@ -1041,16 +1044,16 @@ nav.service:last {
 .product .main .content nav a {
   *display: inline;
 }
-/* line 676, ../../app/stylesheets/partials/_page.scss */
+/* line 681, ../../app/stylesheets/partials/_page.scss */
 .js .product .main .content nav a.active,
 .product .main .content nav a:hover {
   color: #333;
 }
-/* line 680, ../../app/stylesheets/partials/_page.scss */
+/* line 685, ../../app/stylesheets/partials/_page.scss */
 .product .main .content nav #account.signed_out {
   color: #aaa;
 }
-/* line 683, ../../app/stylesheets/partials/_page.scss */
+/* line 688, ../../app/stylesheets/partials/_page.scss */
 .product .main .content nav #account.signed_out a.sign_in {
   display: -moz-inline-box;
   -moz-box-orient: vertical;
@@ -1074,106 +1077,106 @@ nav.service:last {
 .product .main .content nav #account.signed_out a.sign_in {
   *display: inline;
 }
-/* line 696, ../../app/stylesheets/partials/_page.scss */
+/* line 701, ../../app/stylesheets/partials/_page.scss */
 .product .main .content .content {
   width: 35em;
   padding-left: 15em;
 }
-/* line 701, ../../app/stylesheets/partials/_page.scss */
+/* line 706, ../../app/stylesheets/partials/_page.scss */
 .product .main h1 {
   border: 0;
   padding-left: 0;
 }
-/* line 706, ../../app/stylesheets/partials/_page.scss */
+/* line 711, ../../app/stylesheets/partials/_page.scss */
 .product .main a.more {
   margin: 3em 0;
   display: block;
   font-size: 1.2em;
 }
-/* line 712, ../../app/stylesheets/partials/_page.scss */
+/* line 717, ../../app/stylesheets/partials/_page.scss */
 .product.express .main h1 {
   color: #73d216;
 }
-/* line 715, ../../app/stylesheets/partials/_page.scss */
+/* line 720, ../../app/stylesheets/partials/_page.scss */
 .product.express .main nav h2 {
   color: #73d216;
 }
-/* line 718, ../../app/stylesheets/partials/_page.scss */
+/* line 723, ../../app/stylesheets/partials/_page.scss */
 .product.flex .main h1 {
   color: #9258c8;
 }
-/* line 721, ../../app/stylesheets/partials/_page.scss */
+/* line 726, ../../app/stylesheets/partials/_page.scss */
 .product.flex .main nav h2 {
   color: #9258c8;
 }
-/* line 724, ../../app/stylesheets/partials/_page.scss */
+/* line 729, ../../app/stylesheets/partials/_page.scss */
 .product.power .main h1 {
   color: #f57900;
 }
-/* line 727, ../../app/stylesheets/partials/_page.scss */
+/* line 732, ../../app/stylesheets/partials/_page.scss */
 .product.power .main nav h2 {
   color: #f57900;
 }
 
 /* End service pages */
 /* Start register page */
-/* line 737, ../../app/stylesheets/partials/_page.scss */
+/* line 742, ../../app/stylesheets/partials/_page.scss */
 #login_instead {
   margin: 1em 3em;
 }
 
-/* line 741, ../../app/stylesheets/partials/_page.scss */
+/* line 746, ../../app/stylesheets/partials/_page.scss */
 form#new_web_user {
   margin: 1em 2em;
 }
 
-/* line 745, ../../app/stylesheets/partials/_page.scss */
+/* line 750, ../../app/stylesheets/partials/_page.scss */
 li.captcha {
   margin: 0 1em;
 }
 
 /* End register page */
 /* Start login page */
-/* line 753, ../../app/stylesheets/partials/_page.scss */
+/* line 758, ../../app/stylesheets/partials/_page.scss */
 #login-form form {
   margin: 0 3em;
 }
 
-/* line 757, ../../app/stylesheets/partials/_page.scss */
+/* line 762, ../../app/stylesheets/partials/_page.scss */
 #register {
   margin: 0 3em;
 }
-/* line 760, ../../app/stylesheets/partials/_page.scss */
+/* line 765, ../../app/stylesheets/partials/_page.scss */
 #register h2 {
   font-size: 1em;
   margin: 0;
   padding: 2em 0 0;
 }
-/* line 766, ../../app/stylesheets/partials/_page.scss */
+/* line 771, ../../app/stylesheets/partials/_page.scss */
 #register p {
   margin: 0;
 }
 
-/* line 769, ../../app/stylesheets/partials/_page.scss */
+/* line 774, ../../app/stylesheets/partials/_page.scss */
 #lost_password {
   margin: 0 3em;
 }
 
 /* End login page */
 /* Dashboard page */
-/* line 778, ../../app/stylesheets/partials/_page.scss */
+/* line 783, ../../app/stylesheets/partials/_page.scss */
 .control_panel form {
   margin: 0 3em;
 }
-/* line 782, ../../app/stylesheets/partials/_page.scss */
+/* line 787, ../../app/stylesheets/partials/_page.scss */
 .control_panel dd, .control_panel dt {
   margin: .5em;
 }
-/* line 786, ../../app/stylesheets/partials/_page.scss */
+/* line 791, ../../app/stylesheets/partials/_page.scss */
 .control_panel dt {
   font-weight: bold;
 }
-/* line 788, ../../app/stylesheets/partials/_page.scss */
+/* line 793, ../../app/stylesheets/partials/_page.scss */
 .control_panel a.button {
   color: white;
   background-color: #38b9e6;
@@ -1183,12 +1186,12 @@ li.captcha {
 
 /* End dashboard page */
 /* Start partner page */
-/* line 801, ../../app/stylesheets/partials/_page.scss */
+/* line 806, ../../app/stylesheets/partials/_page.scss */
 ul.partners {
   margin: 0;
   padding: 0;
 }
-/* line 805, ../../app/stylesheets/partials/_page.scss */
+/* line 810, ../../app/stylesheets/partials/_page.scss */
 ul.partners li {
   display: -moz-inline-box;
   -moz-box-orient: vertical;
@@ -1204,11 +1207,11 @@ ul.partners li {
   *display: inline;
 }
 
-/* line 814, ../../app/stylesheets/partials/_page.scss */
+/* line 819, ../../app/stylesheets/partials/_page.scss */
 .partner.show .content > div {
   margin: 1em 0;
 }
-/* line 818, ../../app/stylesheets/partials/_page.scss */
+/* line 823, ../../app/stylesheets/partials/_page.scss */
 .partner.show #partner_overview {
   font-size: .8em;
   border: 0.1em solid #ececec;
@@ -1216,16 +1219,16 @@ ul.partners li {
   border-right: 0;
   padding: 1em;
 }
-/* line 824, ../../app/stylesheets/partials/_page.scss */
+/* line 829, ../../app/stylesheets/partials/_page.scss */
 .partner.show #partner_overview p {
   margin: 0;
 }
-/* line 827, ../../app/stylesheets/partials/_page.scss */
+/* line 832, ../../app/stylesheets/partials/_page.scss */
 .partner.show #quote blockquote {
   color: black;
 }
 
-/* line 832, ../../app/stylesheets/partials/_page.scss */
+/* line 837, ../../app/stylesheets/partials/_page.scss */
 .partner #join {
   background: #c0e9f7;
   color: black;
@@ -1238,7 +1241,7 @@ ul.partners li {
   -khtml-border-radius: 1em;
   border-radius: 1em;
 }
-/* line 839, ../../app/stylesheets/partials/_page.scss */
+/* line 844, ../../app/stylesheets/partials/_page.scss */
 .partner #join p {
   margin: 0;
 }
