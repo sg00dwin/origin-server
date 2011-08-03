@@ -10,7 +10,8 @@
         %h2
           Auto-Scaling for Java, PHP, Ruby, Python, and Perl apps in the cloud
     
-    = link_to 'Sign up and try it', '/app/user/new/express', :class => 'button sign_up'
+    - unless logged_in?
+      = link_to 'Sign up and try it', '/app/user/new/express', :class => 'button sign_up'
     
     = image_tag '/app/images/flying-panda-ftw2.png',
       :alt => "Panda pilot, soaring through the clouds!"
@@ -71,16 +72,17 @@
       %a.button{ :href => "http://twitter.com/#!/openshift" }
         Follow @OpenShift
 
-%section#bottom_signup.main
-  %header
-    %hgroup
-      %h1
-        Curious?
-      %h2
-        Try OpenShift now for free!
-  
-  .content
-    = link_to 'Sign up and try it', '/app/user/new/express', :class => 'sign_up button'
+- unless logged_in?
+  %section#bottom_signup.main
+    %header
+      %hgroup
+        %h1
+          Curious?
+        %h2
+          Try OpenShift now for free!
+      
+      .content
+        = link_to 'Sign up and try it', '/app/user/new/express', :class => 'sign_up button'
 
 - content_for :javascripts do
   = javascript_include_tag "/app/javascripts/home.src.js"
