@@ -563,6 +563,11 @@ footer.universal {
 
 .no-js #social { display: none; }
 
+.ie7 li.link {
+  float: left;
+}
+
+
 #bottom_signup {
   text-align: center;
   font-size: 1.4em;
@@ -632,6 +637,16 @@ nav.service {
   
   &:last {
     float: none !important;
+  }
+}
+
+.ie7 .product {
+  .main {
+    .content .content {
+      padding-left: 4em;
+      clear: left;
+      float: right;
+    }
   }
 }
 
@@ -851,4 +866,8 @@ ul.partners {
   @include border-radius(1em);
   
   p { margin: 0; }
+}
+
+.ie7 li.password {
+  float: left;
 }
