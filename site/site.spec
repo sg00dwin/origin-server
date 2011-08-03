@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.75.11
+Version:   0.75.12
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -64,6 +64,28 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Wed Aug 03 2011 Dan McPherson <dmcphers@redhat.com> 0.75.12-1
+- adding generated css (dmcphers@redhat.com)
+- IE fixes (dmcphers@redhat.com)
+- Remove insecure content from flex page so no more scary warnings
+  (edirsh@redhat.com)
+- Make more html5 elements render as block-level by default for older browsers
+  (edirsh@redhat.com)
+- Change the product pages to display 'sign up' link instead of confusing
+  account menu when logged out. (edirsh@redhat.com)
+- Make header block-level element in older browsers (edirsh@redhat.com)
+- Bug 727724 (edirsh@redhat.com)
+- Remove cloud bg due to readability issues (edirsh@redhat.com)
+- Bug 727729 (edirsh@redhat.com)
+- Merge branch 'master' of ssh://libragit/srv/git/li (edirsh@redhat.com)
+- Converted some relative measures to absolute to improve homepage rendering
+  stability (edirsh@redhat.com)
+- link to product specific login pages when possible (dmcphers@redhat.com)
+- Omniture plugin code corrections (edirsh@redhat.com)
+- Improved whitespace on home page (edirsh@redhat.com)
+- Home page copy updated (edirsh@redhat.com)
+- Fixed domain validation to not run if namespace is nil (edirsh@redhat.com)
+
 * Tue Aug 02 2011 Dan McPherson <dmcphers@redhat.com> 0.75.11-1
 - Form error message styling improvements (edirsh@redhat.com)
 - Merge branch 'master' of ssh://libragit/srv/git/li (edirsh@redhat.com)
