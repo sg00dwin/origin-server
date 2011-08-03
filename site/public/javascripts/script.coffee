@@ -6,11 +6,11 @@ $ ->
 
 ## Scroll effects ##
   # nav sticks to top when scrolling off page #
-  # parallax effect on scroll #
+  # parallax effect on scroll (undone for now) #
   body = $ 'body'
   nav = ($ 'header.universal > nav').first()
   nav_top = nav.offset().top
-  sm_pos = md_pos = lg_pos = 0
+  #sm_pos = md_pos = lg_pos = 0
   top = ($ window).scrollTop()
     
   sticky_css =
@@ -23,14 +23,14 @@ $ ->
 
   ($ window).scroll ->
     # parallax effect #
-    top_diff = ($ this).scrollTop() - top
+    #top_diff = ($ this).scrollTop() - top
     top = ($ this).scrollTop()
     
-    sm_pos -= top_diff
-    md_pos -= Math.round top_diff*0.5
-    lg_pos -= Math.round top_diff*0.25
+    #sm_pos -= top_diff
+    #md_pos -= Math.round top_diff*0.5
+    #lg_pos -= Math.round top_diff*0.25
     
-    body.css 'background-position', "-150px #{sm_pos}px, -150px #{md_pos}px, -150px #{lg_pos}px"
+    #body.css 'background-position', "-150px #{sm_pos}px, -150px #{md_pos}px, -150px #{lg_pos}px"
     
     # sticky nav #
     # check if nav is supposed to be off the page

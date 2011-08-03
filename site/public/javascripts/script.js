@@ -1,10 +1,9 @@
 $(function() {
-  var ann_height, ann_list, announcements, body, current, lg_pos, links, md_pos, nav, nav_top, on_announcement, scroll_announcements, sections, sm_pos, sticky_css, top, unsticky_css;
+  var ann_height, ann_list, announcements, body, current, links, nav, nav_top, on_announcement, scroll_announcements, sections, sticky_css, top, unsticky_css;
   ($('a.sign_up')).click(trackLink);
   body = $('body');
   nav = ($('header.universal > nav')).first();
   nav_top = nav.offset().top;
-  sm_pos = md_pos = lg_pos = 0;
   top = ($(window)).scrollTop();
   sticky_css = {
     position: 'fixed',
@@ -16,13 +15,7 @@ $(function() {
     position: 'static'
   };
   ($(window)).scroll(function() {
-    var top_diff;
-    top_diff = ($(this)).scrollTop() - top;
     top = ($(this)).scrollTop();
-    sm_pos -= top_diff;
-    md_pos -= Math.round(top_diff * 0.5);
-    lg_pos -= Math.round(top_diff * 0.25);
-    body.css('background-position', "-150px " + sm_pos + "px, -150px " + md_pos + "px, -150px " + lg_pos + "px");
     if (top > nav_top) {
       return nav.css(sticky_css);
     } else {

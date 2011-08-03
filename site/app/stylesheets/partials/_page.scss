@@ -6,12 +6,14 @@ body {
   background-color: $background-color;
 }
 
+/*
 .multiplebgs body {
   background-image: url('../images/clouds_sm.png'),
                     url('../images/clouds_md.png'),
                     url('../images/clouds_lg.png');
   background-position: -150px -240px; 
 }
+*/
 
 body, select, input, textarea {
   color: $font-color;
