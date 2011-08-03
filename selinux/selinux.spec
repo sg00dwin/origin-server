@@ -9,7 +9,7 @@ Source0:       rhc-selinux-%{version}.tar.gz
 
 BuildRoot:     %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires: selinux-policy
-Requires:      selinux-policy-targeted >= 3.7.19-94
+Requires:      selinux-policy-targeted >= 3.7.19-106
 
 BuildArch: noarch
 
