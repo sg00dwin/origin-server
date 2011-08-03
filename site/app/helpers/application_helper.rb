@@ -38,4 +38,17 @@ module ApplicationHelper
     return controller.logged_in?
   end
   
+  # Check for user access
+  def has_access?(product)
+    false
+    if controller.logged_in?
+      case product
+        when :express
+          session[:user].has_access?(CloudAccess::EXPRESS)
+        when :flex
+          session[:user].has_access?(CloudAccess::FLEX)
+      end
+    end
+  end
+  
 end

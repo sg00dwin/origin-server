@@ -16,18 +16,29 @@
       = link_to 'Forum', 'http://www.redhat.com/openshift/forums/flex'
   
   - if logged_in?
-    #account.signed_in
-      %header
-        %h2
-          Account
-      
-      %ul
-        %li
-          = link_to 'Quickstart', '#quickstart'
-        -#
+    - if has_access? :flex
+      #account.signed_in
+        %header
+          %h2
+            Account
+        
+        %ul
           %li
-            = link_to 'Dashboard', dashboard_path
-  
+            = link_to 'Quickstart', '#quickstart'
+          -#
+            %li
+              = link_to 'Dashboard', dashboard_path
+    
+    - else
+      #account.signed_out
+        %header
+          %h2
+            Account
+        
+        %ul
+          %li
+            = link_to 'Get access to Flex!', '/app/access/flex/request', :class => 'request'
+            
   - else
     #account.signed_out
       %header
