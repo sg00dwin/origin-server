@@ -689,7 +689,11 @@ nav.service {
       #account.signed_out {
         color: #aaa;
         
-        a.sign_in, a.request {
+        header {
+          @include visually-hidden;
+        }
+        
+        a.sign_up, a.request {
           @include inline-block;
           margin: .5em  0;
           padding: 1em;

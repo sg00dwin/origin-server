@@ -25,9 +25,9 @@
         %ul
           %li
             = link_to 'Quickstart', '#quickstart'
-          -#
-            %li
-              = link_to 'Dashboard', dashboard_path
+          
+          %li
+            = link_to 'Dashboard', dashboard_path
     
     - else
       #account.signed_out
@@ -47,12 +47,7 @@
           Account
       %ul  
         %li
-          = link_to 'Sign in to get started!', login_express_path, :class => 'sign_in'
-        %li
-          Quickstart
-        -#
-          %li
-            Dashboard
+          = link_to 'Sign up to try Express!', '/app/user/new/express', :class => 'sign_up'
   
 -# Main Content
 - content_for :product_content do
