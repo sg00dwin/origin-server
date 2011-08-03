@@ -369,6 +369,10 @@ footer.universal {
 
 /* Home page styles */
 
+.home .main {
+  padding: 1em 0;
+}
+
 #opener {
   background: white;
   margin-bottom: 2.5em;
@@ -427,12 +431,12 @@ footer.universal {
 
 #exposition {
   h1 {
-    margin-top: 2em;
+    margin-top: 4em;
   }
   
   > .content {
     > div {
-      margin: 5em 0;
+      margin: 3em 0 6em;
       padding: 0 3em;
       @include clearfix;
       img {
@@ -456,6 +460,10 @@ footer.universal {
       header, p, a {
         float: left;
       }
+    }
+    
+    div:last-child {
+      margin-bottom: 3em;
     }
   }
 }
@@ -500,7 +508,7 @@ footer.universal {
     background: url('../images/bubble-extension.png') no-repeat left top;
     position: absolute;
     top: 1.3em;
-    left: -1.3em;
+    left: -20px;
     width: 20px;
     height: 27px;
     display: block;
