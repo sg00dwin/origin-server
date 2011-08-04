@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.75.12
+Version:   0.75.13
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -64,6 +64,13 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Wed Aug 03 2011 Dan McPherson <dmcphers@redhat.com> 0.75.13-1
+- Merge branch 'master' of ssh://libragit/srv/git/li (edirsh@redhat.com)
+- Cleaned out unnecessary resource files (edirsh@redhat.com)
+- another ie video fix (dmcphers@redhat.com)
+- fix videos on IE (dmcphers@redhat.com)
+- fix twitter @ links (dmcphers@redhat.com)
+
 * Wed Aug 03 2011 Dan McPherson <dmcphers@redhat.com> 0.75.12-1
 - adding generated css (dmcphers@redhat.com)
 - IE fixes (dmcphers@redhat.com)
