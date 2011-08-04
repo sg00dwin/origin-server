@@ -43,14 +43,13 @@ class ExpressDomainController < ApplicationController
   end
   
   def process_response(json_response)
-    result = ActiveSupport::JSON.decode(json_response["data"])
-    Rails.logger.debug "Domain api result: #{result.inspect}"
+    Rails.logger.debug "Domain api result: #{json_response.inspect}"
     # check that we have expected result
-    unless result["uuid"].nil?
+    unless json_response["exit_code"] > 0
       @message = I18n.t("express_api.messages.domain_#{@dom_action}")
       @message_type = :success
     else
-      # unexpected result
+      # broker error
       @message = json_response["result"].empty? ? I18n.t(:unknown) : json_response["result"]
       @message_type = :error
     end

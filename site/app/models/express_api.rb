@@ -32,7 +32,7 @@ module ExpressApi
       Rails.logger.debug "POST Response code = #{res.code}"
       
       # process response
-      if res.is_a? Net::HTTPSuccess
+      if res.content_type == 'application/json'
         # Parse and yield the body if a block is supplied
         if res.body and !res.body.empty?
           json = JSON.parse(res.body)
