@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.75.13
+Version:   0.75.14
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -64,6 +64,14 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Thu Aug 04 2011 Dan McPherson <dmcphers@redhat.com> 0.75.14-1
+- Merge branch 'master' of ssh://libragit/srv/git/li (edirsh@redhat.com)
+- Bug 728129 (edirsh@redhat.com)
+- Bug 728140 (edirsh@redhat.com)
+- bug 728126 (dmcphers@redhat.com)
+- Merge branch 'master' of ssh://libragit/srv/git/li (edirsh@redhat.com)
+- Added openshift twitter avatar back in (edirsh@redhat.com)
+
 * Wed Aug 03 2011 Dan McPherson <dmcphers@redhat.com> 0.75.13-1
 - Merge branch 'master' of ssh://libragit/srv/git/li (edirsh@redhat.com)
 - Cleaned out unnecessary resource files (edirsh@redhat.com)
