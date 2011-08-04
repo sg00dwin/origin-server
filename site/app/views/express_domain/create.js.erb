@@ -1,10 +1,10 @@
 var form = $('#new_express_domain'), form_container = form.parent();
 // clear out old messages
-$('.message').remove()
+$('.message').remove();
 <% 
 if @message_type == :error
 %>
-  form.before('<div class="message error"><%= @message %></div>');
+  form.before('<div class="message error"><%= escape_javascript @message %></div>');
 <%
 else
   case @dom_action
@@ -17,7 +17,7 @@ else
 <%
     when 'update'
 %>
-      form.before('<div class="message success"><%= @message %></div>');
+      form.before('<div class="message success"><%= escape_javascript @message %></div>');
       form.trigger('successful_submission');
 <%
   end

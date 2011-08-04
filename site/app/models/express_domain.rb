@@ -19,6 +19,8 @@ class ExpressDomain
                         :length => {:maximum => 16},
                         :format => {:with => /^[A-Za-z0-9]+$/}
                         
+  validates :ssh, :presence => true
+                        
   validate :namespace_not_in_blacklist
   
   def initialize(attributes = {})
@@ -58,7 +60,6 @@ class ExpressDomain
     data[:namespace] = @namespace
     data[:ssh] = @ssh.nil? ? '' : @ssh
     http_post(@@domain_url, data, true) do |json_response|
-      Rails.logger.debug "response: #{json_response.inspect}"
       yield json_response if block_given?
     end
   end

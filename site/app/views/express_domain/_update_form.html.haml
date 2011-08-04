@@ -1,8 +1,8 @@
 = render 'layouts/flashes'
               
 = semantic_form_for @domain, :remote => true, :html => {:class => 'update hidden'} do |form|
-  = form.input :namespace, :label => 'Desired domain name', :required => false, :input_html => {:autocomplete => false}
-  = form.input :ssh, :label => 'SSH public key (eg: id_rsa.pub)', :as => :text, :input_html => {:autocomplete => false}
+  = form.input :namespace, :label => 'Desired domain name', :required => true, :input_html => {:autocomplete => false}
+  = form.input :ssh, :label => 'SSH public key (eg: id_rsa.pub)', :as => :text, :required => true, :input_html => {:autocomplete => false}
   = form.input :dom_action, :as => :hidden, :value => 'update'
   = form.buttons do
     = form.commit_button :button_html => { :class => 'button', :value => 'Update your domain name' }
