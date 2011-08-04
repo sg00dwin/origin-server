@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.75.2
+Version:       0.75.3
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -147,6 +147,9 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Wed Aug 03 2011 Dan McPherson <dmcphers@redhat.com> 0.75.3-1
+- increase nproc to 100 (dmcphers@redhat.com)
+
 * Tue Jul 26 2011 Dan McPherson <dmcphers@redhat.com> 0.75.2-1
 - add passenger tmp dir migration (dmcphers@redhat.com)
 - migration work (dmcphers@redhat.com)
