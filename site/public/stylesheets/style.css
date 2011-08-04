@@ -354,7 +354,7 @@ a.button {
   font-size: 1em;
   text-decoration: none;
   text-align: center;
-  text-shadow: rgba(0, 0, 0, 0.6) 0 0.1em 0;
+  text-shadow: rgba(0, 0, 0, 0.3) 0 0.1em 0;
   -moz-border-radius: 2em;
   -webkit-border-radius: 2em;
   -o-border-radius: 2em;
@@ -639,10 +639,10 @@ footer.universal #copyright img {
   -ms-border-radius: 2em;
   -khtml-border-radius: 2em;
   border-radius: 2em;
-  -moz-box-shadow: rgba(0, 0, 0, 0.6) 0 0 5em;
-  -webkit-box-shadow: rgba(0, 0, 0, 0.6) 0 0 5em;
-  -o-box-shadow: rgba(0, 0, 0, 0.6) 0 0 5em;
-  box-shadow: rgba(0, 0, 0, 0.6) 0 0 5em;
+  -moz-box-shadow: rgba(0, 0, 0, 0.3) 0 0 5em;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.3) 0 0 5em;
+  -o-box-shadow: rgba(0, 0, 0, 0.3) 0 0 5em;
+  box-shadow: rgba(0, 0, 0, 0.3) 0 0 5em;
   color: white;
   font-family: Overpass, "Liberation Sans", Arial, "Helvetica Neue", Helvetica, sans-serif;
   position: fixed;
@@ -747,9 +747,9 @@ footer.universal #copyright img {
 #opener a.button {
   top: 9em;
   right: 200px;
-  background-color: #888;
+  background-color: #38b9e6;
   color: white;
-  border: 2px solid #777;
+  border: 2px solid #32a4cc;
 }
 
 /* line 444, ../../app/stylesheets/partials/_page.scss */
