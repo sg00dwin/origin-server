@@ -12,6 +12,9 @@
     
     - unless logged_in?
       = link_to 'Sign up and try it', '/app/user/new/express', :class => 'button sign_up'
+    - else
+      - if has_access? :express
+        = link_to 'Get started!', '/app/express#quickstart', :class => 'button quickstart'
     
     = image_tag '/app/images/flying-panda-ftw2.png',
       :alt => "Panda pilot, soaring through the clouds!"
