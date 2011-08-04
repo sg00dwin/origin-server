@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.75.15
+Version:   0.75.16
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -64,6 +64,9 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Thu Aug 04 2011 Dan McPherson <dmcphers@redhat.com> 0.75.16-1
+- 
+
 * Thu Aug 04 2011 Dan McPherson <dmcphers@redhat.com> 0.75.15-1
 - switch express api to localhost (dmcphers@redhat.com)
 - Update express api tests to comply with new express api functionality
