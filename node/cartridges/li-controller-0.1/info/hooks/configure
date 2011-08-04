@@ -35,7 +35,7 @@ DEFAULT_LIBRA_CONF_DIR=/etc/libra
 
 # defaults
 limits_order=84
-limits_nproc=50
+limits_nproc=100
 quota_files=1000
 # a block = 1Kbytes: 1k * 1024 * 128
 quota_blocks=`expr 1024 \* 128` # 128MB
