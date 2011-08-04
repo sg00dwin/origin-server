@@ -17,8 +17,8 @@
       = @title
     
     .content
-      %video.projekktor{ :poster => "//www.redhat.com/g/video_stills/#{@filename}.png", :height => "385", :width => "640"}
+      %video.projekktor{ :poster => "#{request.protocol}www.redhat.com/g/video_stills/#{@filename}.png", :height => "385", :width => "640"}
       
-        %source{ :src => "//www.redhat.com/v/ogg/#{@filename}.ogg", :type=>"video/ogg"}
-        
-        %source{ :src => "//www.redhat.com/v/mp4/#{@filename}.mp4", :type=>"video/mp4"}
+        %source{ :src => "#{request.protocol}www.redhat.com/v/mp4/#{@filename}.mp4", :type=>"video/mp4"}
+      
+        %source{ :src => "#{request.protocol}www.redhat.com/v/ogg/#{@filename}.ogg", :type=>"video/ogg"}
