@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.75.6
+Version:       0.75.9
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -8,8 +8,8 @@ URL:           http://openshift.redhat.com
 Source0:       rhc-selinux-%{version}.tar.gz
 
 BuildRoot:     %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
-BuildRequires: selinux-policy
-Requires:      selinux-policy-targeted >= 3.7.19-94
+BuildRequires: selinux-policy >= 3.7.19-106
+Requires:      selinux-policy-targeted >= 3.7.19-106
 
 BuildArch: noarch
 
@@ -38,6 +38,16 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Wed Aug 03 2011 Dan McPherson <dmcphers@redhat.com> 0.75.9-1
+- adding selinux proper requires (mmcgrath@redhat.com)
+- require newer version of selinux (mmcgrath@redhat.com)
+
+* Tue Aug 02 2011 Dan McPherson <dmcphers@redhat.com> 0.75.8-1
+- 
+
+* Tue Aug 02 2011 Dan McPherson <dmcphers@redhat.com> 0.75.7-1
+- Allow libra_t domains to connect to the ftp port (dwalsh@redhat.com)
+
 * Mon Aug 01 2011 Dan McPherson <dmcphers@redhat.com> 0.75.6-1
 - 
 

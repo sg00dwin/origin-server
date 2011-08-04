@@ -25,11 +25,14 @@ s.dynamicAccountList="redhatglobaltest,redhatdev=localhost;redhatglobal,redhatco
 changes to how your visitor data is collected.  Changes should only be
 made when instructed to do so by your account manager.*/
 s.visitorNamespace="redhat"
-s.trackingServer="redhat.122.2o7.net"
+s.trackingServer='mtrcs.redhat.com'
+s.trackingServerSecure = 'smtrcs.redhat.com'
 
 /* Try it button link tracking code */
 function trackLink(obj) {
   var s=s_gi('redhatopenshift,redhatcom,redhatglobal'); //Not sure if this is really necessary
+  s.trackingServer='mtrcs.redhat.com'
+  s.trackingServerSecure = 'smtrcs.redhat.com'
   s.linkTrackVars='events';
   s.linkTrackEvents='event28';
   s.events='event28';
@@ -39,27 +42,184 @@ function trackLink(obj) {
 /************************** PLUGINS SECTION *************************/
 /* You may insert any plugins you wish to use here. */
 /*
- * Plugin: getQueryParam 2.3
- */
-s.getQueryParam=new Function("p","d","u",""
-+"var s=this,v='',i,t;d=d?d:'';u=u?u:(s.pageURL?s.pageURL:s.wd.locati"
-+"on);if(u=='f')u=s.gtfs().location;while(p){i=p.indexOf(',');i=i<0?p"
-+".length:i;t=s.p_gpv(p.substring(0,i),u+'');if(t){t=t.indexOf('#')>-"
-+"1?t.substring(0,t.indexOf('#')):t;}if(t)v+=v?d+t:t;p=p.substring(i="
-+"=p.length?i:i+1)}return v");
-s.p_gpv=new Function("k","u",""
+* Plugin: unsetCookieParam 0.1 - Unset a cookie
+* Author: aboone at redhat
+*/
+s.unsetCookieParam=new Function("c",""
++"var s=this,d=new Date;s.c_w(c,'',d);");
+/*
+* Plugin: setCookieParam 0.2 -
+*/
+s.setCookieParam=new Function("c","v","x","t",""
++"var s=this,cr,d;cr=s.c_r(c);if(cr&&!x){s.c_w(c,cr);return cr};"
++"if(!t){d='';}else{d=new Date;d.setTime(d.getTime()+(t*24*60*60"
++"*1000));};if(v){s.c_w(c,v,d)};return v;");
+/*
+* Plugin: getQueryParam 1.3 - Return query string parameter values
+*/
+s.getQueryParam=new Function("qp","d",""
++"var s=this,v='',i,t;d=d?d:'';while(qp){i=qp.indexOf(',');i=i<0?qp.l"
++"ength:i;t=s.gcgi(qp.substring(0,i));if(t)v+=v?d+t:t;qp=qp.substring"
++"(i==qp.length?i:i+1)}return v");
+s.gcgi=new Function("k",""
++"var v='',s=this;if(k&&s.wd.location.search){var q=s.wd.location.sea"
++"rch.toLowerCase(),qq=q.indexOf('?');q=qq<0?q:q.substring(qq+1);v=s."
++"pt(q,'&','cgif',k.toLowerCase())}return v");
+s.cgif=new Function("t","k",""
++"if(t){var s=this,i=t.indexOf('='),sk=i<0?t:t.substring(0,i),sv=i<0?"
++"'True':t.substring(i+1);if(sk.toLowerCase()==k)return s.epa(sv)}ret"
++"urn ''");
+/*
+*PLUGIN: getQueryParamNC 0.1 - do not lowercase
+*/
+s.getQueryParamNC=new Function("p","d","u",""
++"var s=this,v='',i,t;d=d?d:'';u=u?u:(s.pageURL?s.pageURL:''+s.wd.loc"
++"ation);u=u=='f'?''+s.gtfs().location:u;while(p){i=p.indexOf(',');i="
++"i<0?p.length:i;t=s.p_gpv_nc(p.substring(0,i),u);if(t)v+=v?d+t:t;p=p.su"
++"bstring(i==p.length?i:i+1)}return v");
+s.p_gpv_nc=new Function("k","u",""
 +"var s=this,v='',i=u.indexOf('?'),q;if(k&&i>-1){q=u.substring(i+1);v"
-+"=s.pt(q,'&','p_gvf',k)}return v");
-s.p_gvf=new Function("t","k",""
++"=s.pt(q,'&','p_gvf_nc',k)}return v");
+s.p_gvf_nc=new Function("t","k",""
 +"if(t){var s=this,i=t.indexOf('='),p=i<0?t:t.substring(0,i),v=i<0?'T"
-+"rue':t.substring(i+1);if(p.toLowerCase()==k.toLowerCase())return s."
++"rue':t.substring(i+1);if(p==k)return s."
 +"epa(v)}return ''");
-  
+/*
+* Plugin: getValOnce_v1.0
+*/
+s.getValOnce=new Function("v","c","e",""
++"var s=this,a=new Date,v=v?v:v='',c=c?c:c='s_gvo',e=e?e:0,k=s.c_r(c"
++");if(v){a.setTime(a.getTime()+e*86400000);s.c_w(c,v,e?a:0);}return"
++" v==k?'':v");
+/*
+* Plugin: getTimeParting 2.0 - Set timeparting values based on time zone
+*
+* Configuration variables MUST be set for plugin to work correctly
+* Format for config variables is MM/DD/YYYY
+* s.dstStart is the start day, month and year for Daylight Savings Time.
+* s.dstEnd is the end day, month and year for Daylight Savings Time
+* s.CurrentYear is the current year. If not set, will assume year of browser
+* If country has no DST - set dstStart, dstEnd to default (1/1/2009)
+* if DST crosses into new year - set dstStart to month,day,year of previous year
+*/
+s.getTimeParting=new Function("t","z",""
++"var s=this,cy;dc=new Date('1/1/2000');"
++"if(dc.getDay()!=6||dc.getMonth()!=0){return'Data Not Available'}"
++"else{;z=parseFloat(z);var dsts=new Date(s.dstStart);"
++"var dste=new Date(s.dstEnd);fl=dste;cd=new Date();if(cd>dsts&&cd<fl)"
++"{z=z+1}else{z=z};utc=cd.getTime()+(cd.getTimezoneOffset()*60000);"
++"tz=new Date(utc + (3600000*z));thisy=tz.getFullYear();"
++"var days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday',"
++"'Saturday'];if(thisy!=s.currentYear){return'Data Not Available'}else{;"
++"thish=tz.getHours();thismin=tz.getMinutes();thisd=tz.getDay();"
++"var dow=days[thisd];var ap='AM';var dt='Weekday';var mint='00';"
++"if(thismin>30){mint='30'}if(thish>=12){ap='PM';thish=thish-12};"
++"if (thish==0){thish=12};if(thisd==6||thisd==0){dt='Weekend'};"
++"var timestring=thish+':'+mint+ap;if(t=='h'){return timestring}"
++"if(t=='d'){return dow};if(t=='w'){return dt}}};");
+/*
+* Plugin: detectRIA v0.1 - detect and set Flash, Silverlight versions
+*/
+s.detectRIA=new Function("cn", "fp", "sp", "mfv", "msv", "sf", ""
++"cn=cn?cn:'s_ria';msv=msv?msv:2;mfv=mfv?mfv:10;var s=this,sv='',fv=-"
++"1,dwi=0,fr='',sr='',w,mt=s.n.mimeTypes,uk=s.c_r(cn),k=s.c_w('s_cc',"
++"'true',0)?'Y':'N';fk=uk.substring(0,uk.indexOf('|'));sk=uk.substrin"
++"g(uk.indexOf('|')+1,uk.length);if(k=='Y'&&s.p_fo('detectRIA')){if(u"
++"k&&!sf){if(fp){s[fp]=fk;}if(sp){s[sp]=sk;}return false;}if(!fk&&fp)"
++"{if(s.pl&&s.pl.length){if(s.pl['Shockwave Flash 2.0'])fv=2;x=s.pl['"
++"Shockwave Flash'];if(x){fv=0;z=x.description;if(z)fv=z.substring(16"
++",z.indexOf('.'));}}else if(navigator.plugins&&navigator.plugins.len"
++"gth){x=navigator.plugins['Shockwave Flash'];if(x){fv=0;z=x.descript"
++"ion;if(z)fv=z.substring(16,z.indexOf('.'));}}else if(mt&&mt.length)"
++"{x=mt['application/x-shockwave-flash'];if(x&&x.enabledPlugin)fv=0;}"
++"if(fv<=0)dwi=1;w=s.u.indexOf('Win')!=-1?1:0;if(dwi&&s.isie&&w&&exec"
++"Script){result=false;for(var i=mfv;i>=3&&result!=true;i--){execScri"
++"pt('on error resume next: result = IsObject(CreateObject(\"Shockwav"
++"eFlash.ShockwaveFlash.'+i+'\"))','VBScript');fv=i;}}fr=fv==-1?'flas"
++"h not detected':fv==0?'flash enabled (no version)':'flash '+fv;}if("
++"!sk&&sp&&s.apv>=4.1){var tc='try{x=new ActiveXObject(\"AgControl.A'"
++"+'gControl\");for(var i=msv;i>0;i--){for(var j=9;j>=0;j--){if(x.is'"
++"+'VersionSupported(i+\".\"+j)){sv=i+\".\"+j;break;}}if(sv){break;}'"
++"+'}}catch(e){try{x=navigator.plugins[\"Silverlight Plug-In\"];sv=x'"
++"+'.description.substring(0,x.description.indexOf(\".\")+2);}catch('"
++"+'e){}}';eval(tc);sr=sv==''?'silverlight not detected':'silverlight"
++" '+sv;}if((fr&&fp)||(sr&&sp)){s.c_w(cn,fr+'|'+sr,0);if(fr)s[fp]=fr;"
++"if(sr)s[sp]=sr;}}");
+s.p_fo=new Function("n",""
++"var s=this;if(!s.__fo){s.__fo=new Object;}if(!s.__fo[n]){s.__fo[n]="
++"new Object;return 1;}else {return 0;}");
+/*
+* Plugin: getNewRepeat 1.0 - Return whether user is new or repeat
+*/
+s.getNewRepeat=new Function(""
++"var s=this,e=new Date(),cval,ct=e.getTime(),y=e.getYear();e.setTime"
++"(ct+30*24*60*60*1000);cval=s.c_r('s_nr');if(cval.length==0){s.c_w("
++"'s_nr',ct,e);return 'New';}if(cval.length!=0&&ct-cval<30*60*1000){s"
++".c_w('s_nr',ct,e);return 'New';}if(cval<1123916400001){e.setTime(cv"
++"al+30*24*60*60*1000);s.c_w('s_nr',ct,e);return 'Repeat';}else retur"
++"n 'Repeat';");
+/*
+* Plugin: Visit Number By Month 2.0 - Return the user visit number
+*/
+s.getVisitNum=new Function(""
++"var s=this,e=new Date(),cval,cvisit,ct=e.getTime(),c='s_vnum',c2='s"
++"_invisit';e.setTime(ct+30*24*60*60*1000);cval=s.c_r(c);if(cval){var"
++" i=cval.indexOf('&vn='),str=cval.substring(i+4,cval.length),k;}cvis"
++"it=s.c_r(c2);if(cvisit){if(str){e.setTime(ct+30*60*1000);s.c_w(c2,'"
++"true',e);return str;}else return 'unknown visit number';}else{if(st"
++"r){str++;k=cval.substring(0,i);e.setTime(k);s.c_w(c,k+'&vn='+str,e)"
++";e.setTime(ct+30*60*1000);s.c_w(c2,'true',e);return str;}else{s.c_w"
++"(c,ct+30*24*60*60*1000+'&vn=1',e);e.setTime(ct+30*60*1000);s.c_w(c2"
++",'true',e);return 1;}}"
+);
+
+
+var OFFER_PARAM = 'offer_id';
+var OFFER_COOKIE = 'rh_offer_id';
+
 /* Plugin Config */
 s.usePlugins=true
 function s_doPlugins(s) {
-      if(!s.campaign)
-      s.campaign=s.getQueryParam('cid');
+ /* External Campaign Tracking */
+  if(!s.campaign)
+          s.campaign=s.getQueryParamNC('sc_cid');
+  /* Internal Campaign Tracking */
+  if(!s.eVar1)
+          s.eVar1=s.getQueryParamNC('intcmp');
+
+  s.setCookieParam('rh_omni_tc', s.getQueryParamNC('sc_cid'),1,365);
+
+   s.setCookieParam('rh_omni_itc',s.getQueryParamNC('intcmp'),1,365);
+
+  // only set offer cookie when external campaign is present in QS
+  if (s.getQueryParamNC('sc_cid')) {
+          var offer = s.getQueryParamNC(OFFER_PARAM);
+  
+          if (offer) {
+                  s.setCookieParam(OFFER_COOKIE, offer, 1, 365);
+          } else {
+                  // clear cookie when unset in QS
+                  s.unsetCookieParam(OFFER_COOKIE);
+          }
+  }
+
+   if(!s.c_r('rh_omni_tc')&&  !s.campaign) {
+     var chk_ref = document.referrer;
+     s.campaign = (chk_ref) ? '70160000000H4AoAAK' : '70160000000H4AjAAK';
+     s.setCookieParam('rh_omni_tc',s.campaign,1,365);
+   }
+
+   if(s.c_r('rh_omni_tc') == '70160000000H4Aj'&&  !s.campaign) {
+     var chk_ref = document.referrer;
+     s.campaign = '70160000000H4AjAAK';
+     s.setCookieParam('rh_omni_tc',s.campaign,1,365);
+   }
+
+   if(s.c_r('rh_omni_tc') == '70160000000H4Ao'&&  !s.campaign) {
+     var chk_ref = document.referrer;
+     s.campaign = '70160000000H4AoAAK';
+     s.setCookieParam('rh_omni_tc',s.campaign,1,365);
+   }
 }
 s.doPlugins=s_doPlugins
 

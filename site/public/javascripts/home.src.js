@@ -112,8 +112,8 @@ $(function() {
         else if (entity.name) {
           a = d.createElement('a');
             a.setAttribute('class', 'tweeter');
-            a.setAttribute('href', location.protocol + '//twitter.com/#!/' + entity.name);
-            a.appendChild(d.createTextNode('@' + entity.name))
+            a.setAttribute('href', location.protocol + '//twitter.com/#!/' + entity.screen_name);
+            a.appendChild(d.createTextNode('@' + entity.screen_name))
           el.appendChild(a);
         }
       }

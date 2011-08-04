@@ -6,12 +6,14 @@ body {
   background-color: $background-color;
 }
 
+/*
 .multiplebgs body {
   background-image: url('../images/clouds_sm.png'),
                     url('../images/clouds_md.png'),
                     url('../images/clouds_lg.png');
   background-position: -150px -240px; 
 }
+*/
 
 body, select, input, textarea {
   color: $font-color;
@@ -47,10 +49,13 @@ small {
   @include selection;
 }
 
+header, footer, section { display: block; }
+
 h1 { font-size: 1.5em }
 h2 { font-size: 1.25em }
 h3 { font-size: 1.1em }
 h4 { font-size: 1em }
+
 
 /* End universal styles */
 
@@ -108,6 +113,7 @@ a.more {
   margin: 0;
   padding: 1em 0 4em;
   background-color: white;
+  display: block;
   
   a {
     color: #1060c8;
@@ -185,11 +191,13 @@ a.more {
 /* Layout styles */
 
 header.universal {
+  display: block;
   & > .content {
     padding: 1em;
   }
   
   nav {
+    display: block;
     background-color: black;
     
     ul {
@@ -270,6 +278,7 @@ header.universal {
 
 
 footer.universal {
+  display: block;
   color: white;
   font-size: .9em;
   
@@ -365,10 +374,15 @@ footer.universal {
 
 /* Home page styles */
 
+.home .main {
+  padding: 1em 0;
+}
+
 #opener {
   background: white;
-  margin-bottom: 2.5em;
+  margin-bottom: 30px;
   height: 392px;
+  display: block;
   
   .content {
     position: relative;
@@ -422,34 +436,43 @@ footer.universal {
 
 #exposition {
   h1 {
-    margin-top: 2em;
+    margin-top: 100px;
   }
   
   > .content {
     > div {
-      margin: 5em 0;
+      margin: 3em 0 6em;
       padding: 0 3em;
       @include clearfix;
+      position: relative;
+      min-height: 200px;
+      
       img {
         display:block;
-        float: left;
+        position: absolute;
+        top: 0;
       }
       
       header, p, a {
         display: block;
-        width: 50%;
-        float: right;
+        padding-left: 325px;
       }
       
       h2 { margin-top: 0; }
     }
     
-    div:nth-child(even) {
+    div:last-child {
+      margin-bottom: 3em;
+    }
+    
+    #free {
       img {
-        float: right;
+        right: 0;
       }
+      
       header, p, a {
-        float: left;
+        padding-left: 0;
+        padding-right: 325px;
       }
     }
   }
@@ -495,7 +518,7 @@ footer.universal {
     background: url('../images/bubble-extension.png') no-repeat left top;
     position: absolute;
     top: 1.3em;
-    left: -1.3em;
+    left: -20px;
     width: 20px;
     height: 27px;
     display: block;
@@ -539,6 +562,11 @@ footer.universal {
 }
 
 .no-js #social { display: none; }
+
+.ie7 li.link {
+  float: left;
+}
+
 
 #bottom_signup {
   text-align: center;
@@ -612,6 +640,16 @@ nav.service {
   }
 }
 
+.ie7 .product {
+  .main {
+    .content .content {
+      padding-left: 4em;
+      clear: left;
+      float: right;
+    }
+  }
+}
+
 .product {
   .main {
     @include clearfix;
@@ -667,7 +705,11 @@ nav.service {
       #account.signed_out {
         color: #aaa;
         
-        a.sign_in {
+        header {
+          @include visually-hidden;
+        }
+        
+        a.sign_up, a.request {
           @include inline-block;
           margin: .5em  0;
           padding: 1em;
@@ -824,4 +866,8 @@ ul.partners {
   @include border-radius(1em);
   
   p { margin: 0; }
+}
+
+.ie7 li.password {
+  float: left;
 }

@@ -33,11 +33,11 @@ Basic workflows for deploying prebuilt content (each operation will require asso
 
 A) Add new zipped content and deploy it:
 
-1. cp target/example.war deployments
+1. cp target/example.war deployments/
 
 B) Add new unzipped content and deploy it:
 
-1. cp -r target/example.war/ deployments
+1. cp -r target/example.war/ deployments/
 2. touch deployments/example.war.dodeploy
 
 C) Undeploy currently deployed content:
@@ -46,12 +46,12 @@ C) Undeploy currently deployed content:
 
 D) Replace currently deployed zipped content with a new version and deploy it:
 
-1. cp target/example.war deployments
+1. cp target/example.war deployments/
 
 E) Replace currently deployed unzipped content with a new version and deploy it:
 
 1. git rm -rf deployments/example.war/
-2. cp -r target/example.war/ deployments
+2. cp -r target/example.war/ deployments/
 3. touch deployments/example.war.dodeploy
 
 

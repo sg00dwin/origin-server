@@ -1,3 +1,5 @@
+require 'openshift'
+
 class ExpressDomain
   include ActiveModel::Validations
   include ActiveModel::Conversion
@@ -7,7 +9,7 @@ class ExpressDomain
   include ExpressApi
   
   attr_accessor :namespace, :ssh, :alter
-  
+    
   validates_presence_of :rhlogin
   validates :password, :length => {:minimum => 6},
                        :allow_blank => true
@@ -16,6 +18,8 @@ class ExpressDomain
   validates :namespace, :presence => true,
                         :length => {:maximum => 16},
                         :format => {:with => /^[A-Za-z0-9]+$/}
+                        
+  validate :namespace_not_in_blacklist
   
   def initialize(attributes = {})
     attributes.each do |name, value|
@@ -50,13 +54,18 @@ class ExpressDomain
   
   private
   def save
-    Rails.logger.info 'Saving domain'
     data = {:rhlogin => @rhlogin, :alter => @alter}
     data[:namespace] = @namespace
     data[:ssh] = @ssh.nil? ? '' : @ssh
     http_post(@@domain_url, data, true) do |json_response|
       Rails.logger.debug "response: #{json_response.inspect}"
       yield json_response if block_given?
+    end
+  end
+  
+  def namespace_not_in_blacklist
+    unless @namespace.nil?
+      errors.add(:namespace, "#{@namespace} is not permitted") if Libra::Blacklist.in_blacklist? @namespace
     end
   end
   

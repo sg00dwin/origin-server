@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.75.10
+Version:   0.75.13
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -64,6 +64,55 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Wed Aug 03 2011 Dan McPherson <dmcphers@redhat.com> 0.75.13-1
+- Merge branch 'master' of ssh://libragit/srv/git/li (edirsh@redhat.com)
+- Cleaned out unnecessary resource files (edirsh@redhat.com)
+- another ie video fix (dmcphers@redhat.com)
+- fix videos on IE (dmcphers@redhat.com)
+- fix twitter @ links (dmcphers@redhat.com)
+
+* Wed Aug 03 2011 Dan McPherson <dmcphers@redhat.com> 0.75.12-1
+- adding generated css (dmcphers@redhat.com)
+- IE fixes (dmcphers@redhat.com)
+- Remove insecure content from flex page so no more scary warnings
+  (edirsh@redhat.com)
+- Make more html5 elements render as block-level by default for older browsers
+  (edirsh@redhat.com)
+- Change the product pages to display 'sign up' link instead of confusing
+  account menu when logged out. (edirsh@redhat.com)
+- Make header block-level element in older browsers (edirsh@redhat.com)
+- Bug 727724 (edirsh@redhat.com)
+- Remove cloud bg due to readability issues (edirsh@redhat.com)
+- Bug 727729 (edirsh@redhat.com)
+- Merge branch 'master' of ssh://libragit/srv/git/li (edirsh@redhat.com)
+- Converted some relative measures to absolute to improve homepage rendering
+  stability (edirsh@redhat.com)
+- link to product specific login pages when possible (dmcphers@redhat.com)
+- Omniture plugin code corrections (edirsh@redhat.com)
+- Improved whitespace on home page (edirsh@redhat.com)
+- Home page copy updated (edirsh@redhat.com)
+- Fixed domain validation to not run if namespace is nil (edirsh@redhat.com)
+
+* Tue Aug 02 2011 Dan McPherson <dmcphers@redhat.com> 0.75.11-1
+- Form error message styling improvements (edirsh@redhat.com)
+- Merge branch 'master' of ssh://libragit/srv/git/li (edirsh@redhat.com)
+- Bug 727418 (edirsh@redhat.com)
+- IE fixes (dmcphers@redhat.com)
+- Corrected favicon and apple touch icon images (edirsh@redhat.com)
+- Merge branch 'master' of ssh://libragit/srv/git/li (edirsh@redhat.com)
+- Omniture link and campaign tracking fixes (edirsh@redhat.com)
+- ie fixes (dmcphers@redhat.com)
+- Bug 727427 (edirsh@redhat.com)
+- Removed unnecessary ruby call in view (edirsh@redhat.com)
+- Bug 727454 (edirsh@redhat.com)
+- Tweaked styles to improve rendering in less-capable browsers
+  (edirsh@redhat.com)
+- Merge branch 'master' of ssh://libragit/srv/git/li (edirsh@redhat.com)
+- Corrected account reference in omniture link tracking function
+  (edirsh@redhat.com)
+- Bug 727421 (dmcphers@redhat.com)
+- Bug 727432 (dmcphers@redhat.com)
+
 * Mon Aug 01 2011 Dan McPherson <dmcphers@redhat.com> 0.75.10-1
 - fix syntax error (dmcphers@redhat.com)
 - Button styling tweak (edirsh@redhat.com)

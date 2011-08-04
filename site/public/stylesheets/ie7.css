@@ -1,9 +1,0 @@
-/* IE 7 specific styles */
-#pageheader #title_wrapper {
-  background-image: none; }
-#pageheader #title_accent {
-  display: none; }
-
-.partner ul.partners li {
-  zoom: 1;
-  display: inline; }

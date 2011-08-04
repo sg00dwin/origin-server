@@ -1,0 +1,2 @@
+REPOSITORY = 'li'
+REVIEWBOARD_URL = 'http://reviewboard-mpmdevtest.dev.rhcloud.com'
