@@ -25,12 +25,12 @@ class ExpressDomainController < ApplicationController
         end #end if action
       rescue Exception
         # Exception messages are recorded in the error hash in ExpressApi
-        @message = @domain.errors.full_messages.join("\n")
+        @message = @domain.errors.full_messages.join("; ")
         @message_type = :error
       end
     else
       # display validation errors
-      @message = @domain.errors.full_messages.join("\n")
+      @message = @domain.errors.full_messages.join("; ")
       @message_type = :error
       Rails.logger.error "Validation error: #{@message}"
     end
