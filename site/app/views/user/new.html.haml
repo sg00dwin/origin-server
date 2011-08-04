@@ -12,9 +12,7 @@
     %h1
       Sign up for OpenShift
 
-  .content    
-    #login_instead
-      = link_to 'Already have a redhat.com or RHN account?', login_path, :class => 'more'
+  .content 
     
     - @user.errors.each do |key, value|
       - if key == :base || key == :captcha
@@ -36,3 +34,6 @@
 
       = form.buttons do
         = form.commit_button "Sign up for OpenShift", :button_html => { :class => 'button' }
+
+    #login_instead
+      = link_to 'Already have a redhat.com or RHN account?', login_path, :class => 'more'
