@@ -45,6 +45,13 @@ module Libra
       @@config[:nurture_password] = fs_config.get_value('nurture_password')
       @@config[:nurture_url] = fs_config.get_value('nurture_url')
 
+      # Apptegic configuration
+      @@config[:apptegic_enabled] = fs_config.get_value('apptegic_enabled')
+      @@config[:apptegic_url] = fs_config.get_value('apptegic_url')
+      @@config[:apptegic_key] = fs_config.get_value('apptegic_key')
+      @@config[:apptegic_secret] = fs_config.get_value('apptegic_secret')
+      @@config[:apptegic_dataset] = fs_config.get_value('apptegic_dataset')
+
       # Optional configuration
       @@config[:aws_name] = fs_config.get_value('aws_name')
       @@config[:aws_environment] = fs_config.get_value('aws_environment')

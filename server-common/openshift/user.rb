@@ -67,6 +67,7 @@ module Libra
           user.update
           begin
             Nurture.libra_contact(rhlogin, uuid, namespace, 'create')
+            Apptegic.libra_contact(rhlogin, uuid, namespace, 'create')
           rescue Exception => e
             Libra.logger_debug "DEBUG: Attempting to delete user '#{rhlogin}' after failing to add nurture contact"
             begin
@@ -189,6 +190,7 @@ module Libra
         raise NodeException.new(143), "Error updating apps: #{update_namespace_failures.pretty_inspect.chomp}.  Updates will not be completed until all apps can be updated successfully.  If the problem persists please contact Red Hat support.", caller[0..5] if !update_namespace_failures.empty?
         
         Nurture.libra_contact(rhlogin, uuid, new_namespace, 'update')
+        Apptegic.libra_contact(rhlogin, uuid, new_namespace, 'update')
         
         Server.dyn_publish(auth_token, dyn_retries)
       rescue LibraException => e
