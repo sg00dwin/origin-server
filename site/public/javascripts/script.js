@@ -1,6 +1,5 @@
 $(function() {
   var ann_height, ann_list, announcements, body, current, links, nav, nav_top, on_announcement, scroll_announcements, sections, sticky_css, top, unsticky_css;
-  ($('a.sign_up')).click(trackLink);
   body = $('body');
   nav = ($('header.universal > nav')).first();
   nav_top = nav.offset().top;
@@ -51,7 +50,7 @@ $(function() {
     links.removeClass('active');
     ($(current)).show();
     ($("a[href=" + current + "]")).addClass('active');
-    return links.click(function(event) {
+    links.click(function(event) {
       var target;
       event.preventDefault();
       target = ($(this)).attr('href');
@@ -66,4 +65,17 @@ $(function() {
       return ($(this)).addClass('active');
     });
   }
+  return ($('a.sign_up')).click(function(event) {
+    var product;
+    if (body.hasClass('express')) {
+      product = 'Express';
+    } else if (body.hasClass('flex')) {
+      product = 'Flex';
+    } else if (body.hasClass('home')) {
+      product = 'Home';
+    } else {
+      product = 'Other';
+    }
+    return trackLink(this, product);
+  });
 });

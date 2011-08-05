@@ -26,16 +26,18 @@ class ExpressApiTest < ActiveSupport::TestCase
     @data = ActiveSupport::JSON.encode({:test => '123'})
   end
   
-  test "http post success" do
+  test "json response is read" do
     response = Net::HTTPSuccess::new('', '200', '')
+    response.add_field 'Content-Type', 'application/json'
     response.expects(:body).returns(nil)
     Net::HTTP.any_instance.expects(:start).returns(response)
     
     @api.http_post(@url, @data)
   end
   
-  test "http post success yields with json" do
+  test "json response yields with json" do
     response = Net::HTTPSuccess::new('', '200', '')
+    response.add_field 'Content-Type', 'application/json'
     json_body = ActiveSupport::JSON.encode({:test_response => '456'})
     response.expects(:body).at_least_once().returns(json_body)
     Net::HTTP.any_instance.expects(:start).returns(response)

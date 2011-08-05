@@ -159,30 +159,36 @@ a.more {
     weight: bold;
   }
   text-align: center;
-  border: .1em solid;
+  border: .2em solid;
+  @include border-radius(2em);
+  
+  p { margin: 0; padding: 0; }
   
   &.error {
-    /* Red text / pink bg */
-    background-color: #FFF3F3;
-    color: red !important;
-    border-color: #FFD9D9;
+    /* Red bg */
+    background-color: #f33;
+    color: white;
+    border-color: #c00;
     background-image: url('/app/images/icons/error.png');
+    @include text-shadow(0 0.1em 0 #900);
   }
   
   &.notice {
-    /* bright orange text / pale orange bg */
-    background-color: #FFFBCC;
+    /* bright orange bg */
+    background-color: #fc0;
     background-image: url('/app/images/icons/important.png');
-    color: #FF8000;
-    border-color: #F2ED85;
+    color: white;
+    border-color: #eb0;
+    @include text-shadow(0 0.1em 0 #c90);
   }
   
   &.success {
-    /* green text / green bg */
-    background-color: #efe;
+    /* green bg */
+    background-color: #6CDB00;
     background-image: url('/app/images/icons/success.png');
-    color: #363;
-    border-color: #ada;
+    color: white;
+    border-color: #5ebf00;
+    @include text-shadow(0 0.1em 0 #4b9900);
   }
 }
 
@@ -427,9 +433,9 @@ footer.universal {
   a.button {
     top: 9em;
     right:200px;
-    background-color: #888;
+    background-color: #38b9e6;
     color: white;
-    border: 2px solid #777;
+    border: 2px solid #32a4cc;
   }
   
 }

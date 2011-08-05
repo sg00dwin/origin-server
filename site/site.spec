@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.75.13
+Version:   0.75.16
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -64,6 +64,33 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Thu Aug 04 2011 Dan McPherson <dmcphers@redhat.com> 0.75.16-1
+- 
+
+* Thu Aug 04 2011 Dan McPherson <dmcphers@redhat.com> 0.75.15-1
+- switch express api to localhost (dmcphers@redhat.com)
+- Update express api tests to comply with new express api functionality
+  (edirsh@redhat.com)
+- Merge branch 'master' of ssh://libragit/srv/git/li (edirsh@redhat.com)
+- Button styling tweaks (edirsh@redhat.com)
+- Handling nil referrers (mhicks@redhat.com)
+- Improvements to flash message styling (edirsh@redhat.com)
+- Home page content tweaks (edirsh@redhat.com)
+- Show getting started button on home page if user is logged in
+  (edirsh@redhat.com)
+- Bug 728125 (edirsh@redhat.com)
+- Updated omniture code to use correct account information in link tracking
+  function (edirsh@redhat.com)
+- fix production.rb back to prod state (dmcphers@redhat.com)
+
+* Thu Aug 04 2011 Dan McPherson <dmcphers@redhat.com> 0.75.14-1
+- Merge branch 'master' of ssh://libragit/srv/git/li (edirsh@redhat.com)
+- Bug 728129 (edirsh@redhat.com)
+- Bug 728140 (edirsh@redhat.com)
+- bug 728126 (dmcphers@redhat.com)
+- Merge branch 'master' of ssh://libragit/srv/git/li (edirsh@redhat.com)
+- Added openshift twitter avatar back in (edirsh@redhat.com)
+
 * Wed Aug 03 2011 Dan McPherson <dmcphers@redhat.com> 0.75.13-1
 - Merge branch 'master' of ssh://libragit/srv/git/li (edirsh@redhat.com)
 - Cleaned out unnecessary resource files (edirsh@redhat.com)

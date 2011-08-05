@@ -1,9 +1,6 @@
 # Compile with --bare flag #
 $ ->
 
-## Omniture click tracking ##
-  ($ 'a.sign_up').click trackLink
-
 ## Scroll effects ##
   # nav sticks to top when scrolling off page #
   # parallax effect on scroll (undone for now) #
@@ -131,8 +128,19 @@ $ ->
       links.removeClass 'active'
       ($ this).addClass 'active'
     
+## Omniture click tracking ##
+  ($ 'a.sign_up').click (event) -> 
+    if body.hasClass 'express'
+      product = 'Express'
+    else if body.hasClass 'flex'
+      product = 'Flex'
+    else if body.hasClass 'home'
+      product = 'Home'
+    else
+      product = 'Other'
     
-    
+    trackLink this, product
+
 
 
 

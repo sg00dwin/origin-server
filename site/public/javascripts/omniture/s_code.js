@@ -2,7 +2,7 @@
 Copyright 1996-2011 Adobe, Inc. All Rights Reserved
 More info available at http://www.omniture.com */
 
-var s_account="redhatdev, redhatglobaltest"
+var s_account="redhatdev,redhatglobaltest"
 var s=s_gi(s_account)
 /************************** CONFIG SECTION **************************/
 /* You may add or alter any code config here. */
@@ -29,13 +29,14 @@ s.trackingServer='mtrcs.redhat.com'
 s.trackingServerSecure = 'smtrcs.redhat.com'
 
 /* Try it button link tracking code */
-function trackLink(obj) {
-  var s=s_gi('redhatopenshift,redhatcom,redhatglobal'); //Not sure if this is really necessary
-  s.trackingServer='mtrcs.redhat.com'
-  s.trackingServerSecure = 'smtrcs.redhat.com'
+function trackLink(obj, product) {
+  var s=s_gi(s_account); //Not sure if this is really necessary
+  s.trackingServer='mtrcs.redhat.com';
+  s.trackingServerSecure = 'smtrcs.redhat.com';
   s.linkTrackVars='events';
   s.linkTrackEvents='event28';
   s.events='event28';
+  s.eVar51=product;
   s.tl(obj,'o','Try It Button');
 }
 

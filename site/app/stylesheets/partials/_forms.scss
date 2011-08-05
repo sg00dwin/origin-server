@@ -6,7 +6,8 @@ label {
   @include clearfix;
 }
 
-label.error {
+label.error,
+p.inline-errors {
   color: red;
   margin: 0;
   padding: 0;
@@ -60,7 +61,8 @@ fieldset.confirm {
     @include visually-hidden;
   }
   
-  li label.error {
+  li label.error,
+  li p.inline-errors {
     @include not-visually-hidden;
     width: 20em;
     background: white;

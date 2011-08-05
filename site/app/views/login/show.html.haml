@@ -13,9 +13,7 @@
       Sign In to OpenShift
   
   .content
-    %p#lost_password
-      = link_to 'Lost your password?', "#{Rails.configuration.streamline}/wapps/sso/lostPassword.html", :class => 'more'
-
+    
     #login-form
       - if @user and @user.errors.any?
         - @user.errors.full_messages.each do |msg| 
@@ -47,6 +45,9 @@
         %input(type="submit" 
                value="Sign in" 
                class="button")
+
+    %p#lost_password
+      = link_to 'Lost your password?', "#{Rails.configuration.streamline}/wapps/sso/lostPassword.html", :class => 'more'
 
     #register
       %h2 Need to Register instead?
