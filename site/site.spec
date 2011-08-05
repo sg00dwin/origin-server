@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.75.16
+Version:   0.75.17
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -64,6 +64,10 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Fri Aug 05 2011 Dan McPherson <dmcphers@redhat.com> 0.75.17-1
+- Added trademark indicators to RedHat logos (edirsh@redhat.com)
+- Add product var to try it link tracking for omniture (edirsh@redhat.com)
+
 * Thu Aug 04 2011 Dan McPherson <dmcphers@redhat.com> 0.75.16-1
 - 
 
