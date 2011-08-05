@@ -2,7 +2,7 @@
 
 Summary:   Provides php-5.3 support
 Name:      rhc-cartridge-php-5.3
-Version:   0.76.0
+Version:   0.76.1
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -80,6 +80,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Fri Aug 05 2011 Dan McPherson <dmcphers@redhat.com> 0.76.1-1
+- bump spec numbers (dmcphers@redhat.com)
+
 * Fri Aug 05 2011 Dan McPherson <dmcphers@redhat.com> 0.75.8-1
 - Adding DNS name for reference (mmcgrath@redhat.com)
 
