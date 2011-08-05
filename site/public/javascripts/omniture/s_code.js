@@ -33,7 +33,7 @@ function trackLink(obj, product) {
   var s=s_gi(s_account); //Not sure if this is really necessary
   s.trackingServer='mtrcs.redhat.com';
   s.trackingServerSecure = 'smtrcs.redhat.com';
-  s.linkTrackVars='events';
+  s.linkTrackVars='events,eVar51';
   s.linkTrackEvents='event28';
   s.events='event28';
   s.eVar51=product;
