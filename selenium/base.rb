@@ -58,6 +58,52 @@ module OpenShift
       @headless.destroy
       assert_equal [], @verification_errors
     end
+    
+    def goto_home
+      @driver.navigate.to @url+"/app"
+      check_title "OpenShift by Red Hat"
+    end
+    
+    def goto_login
+      find_element(:class,"sign_in").click()
+      check_title "OpenShift by Red Hat | Sign in to OpenShift"
+    end
+    
+    def login(username="libra-test+1@redhat.com", pwd="redhat")
+      goto_home
+      goto_login
+      submit = nil
+      begin
+        submit = find_element(:xpath,".//input[@type='submit']") 
+        assert submit.displayed?
+      rescue Test::Unit::AssertionFailedError
+        @verification_errors << $!
+      end
+      find_element(:xpath,".//input[@id='login_input']").send_keys(username)
+      find_element(:xpath,".//input[@id='pwd_input']").send_keys(pwd)
+      submit.click()
+      begin
+        assert find_element(:xpath,".//a[contains(@href, '/app/logout')]").displayed?
+      rescue Test::Unit::AssertionFailedError
+        @verification_errors << $!
+      end
+    end
+    
+    def check_title(title)
+      begin
+        assert_equal title, @driver.title
+      rescue Test::Unit::AssertionFailedError
+        @verification_errors << $!
+      end
+    end
+    
+    def find_element(type, query)
+      elem = nil
+      retry_on_no_elem do
+        elem = @driver.find_element(type, query)
+      end
+      return elem
+    end
   end
 end
 

@@ -2,6 +2,6 @@
 require "base"
 require "tc_home"
 #require "tc_register"
-#require "tc_login"
+require "tc_login"
 #require "tc_express"
 #require "tc_flex"
