@@ -16,7 +16,7 @@ end
 module OpenShift
   module TestBase
     
-    def retry_on_no_elem(retries=10)
+    def retry_on_no_elem(retries=4)
       #wait = Selenium::WebDriver::Wait.new(:timeout => 10) # seconds
       #wait.until { yield }
       i = 0
@@ -82,16 +82,28 @@ module OpenShift
       find_element(:xpath,".//input[@id='login_input']").send_keys(username)
       find_element(:xpath,".//input[@id='pwd_input']").send_keys(pwd)
       submit.click()
-      begin
-        assert find_element(:xpath,".//a[contains(@href, '/app/logout')]").displayed?
-      rescue Test::Unit::AssertionFailedError
-        @verification_errors << $!
-      end
+      check_element_displayed(:xpath, ".//a[contains(@href, '/app/logout')]")
     end
     
     def check_title(title)
       begin
         assert_equal title, @driver.title
+      rescue Test::Unit::AssertionFailedError
+        @verification_errors << $!
+      end
+    end
+    
+    def check_element_value(value, type, query)
+      begin
+        assert_equal value, find_element(type, query).text
+      rescue Test::Unit::AssertionFailedError
+        @verification_errors << $!
+      end
+    end
+    
+    def check_element_displayed(type, query)
+      begin
+        assert find_element(type, query).displayed?
       rescue Test::Unit::AssertionFailedError
         @verification_errors << $!
       end
@@ -103,6 +115,12 @@ module OpenShift
         elem = @driver.find_element(type, query)
       end
       return elem
+    end
+    
+    def goto_register
+      find_element(:link_text,"Click here to register").click()
+      check_title "OpenShift by Red Hat | Sign up for OpenShift"
+      check_element_displayed(:id, "web_user_email_address")
     end
   end
 end

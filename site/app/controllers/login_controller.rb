@@ -24,12 +24,12 @@ class LoginController < ApplicationController
     if params[:redirectUrl]
       session[:login_workflow] = params[:redirectUrl]
     end
-    if !workflow && referrer_url != '/' && !(referrer.path =~ /^\/app\/user\/new/)
+    if !workflow && referrer_url != '/' && !(referrer.path =~ /^\/app\/user\/new/) && !(referrer.path =~ /^\/app\/login/)
       if remote_request
         session[:login_workflow] = referrer_url
       else
         if request.protocol == 'http://'
-          session[:login_workflow] = 'https://' + request.url[request.protocol.length..-1]                 
+          session[:login_workflow] = 'https://' + request.url[request.protocol.length..-1]
         else
           session[:login_workflow] = referrer_url
         end

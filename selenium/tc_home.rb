@@ -7,7 +7,7 @@ require 'headless'
 class Home < Test::Unit::TestCase
   include ::OpenShift::TestBase
   def test_check_home_navigationbar
-    $logger.info "start to test navigation bar"
+    $logger.info "Testing navigation bar"
     goto_home
     find_element(:class,"services").click()
     check_title "OpenShift by Red Hat | Express"
@@ -31,7 +31,7 @@ class Home < Test::Unit::TestCase
   end
 
   def test_check_home_links
-    $logger.info "start to test home links"
+    $logger.info "Testing home links"
     goto_home
     find_element(:class,"sign_up").click()
     check_title "OpenShift by Red Hat | Sign up for OpenShift"
@@ -40,35 +40,23 @@ class Home < Test::Unit::TestCase
   end
 
   def test_check_home_contents
-    $logger.info "start to check home contents"
+    $logger.info "Testing home contents"
     goto_home
-    begin
-      assert_equal "Sign In", find_element(:class,"user").text
-    rescue Test::Unit::AssertionFailedError
-      @verification_errors << $!
-    end
+    check_element_value("Sign In", :class, "user")
     @driver.save_screenshot('home_content.png')
   end
 
   def test_check_home_footer
-    $logger.info "start to check home footer"
+    $logger.info "Testing home footer"
     goto_home
-    begin
-      assert  find_element(:xpath,".//img[@alt='Red Hat']").displayed?
-    rescue Test::Unit::AssertionFailedError
-      @verification_errors << $!
-    end
+    check_element_displayed(:xpath, ".//img[@alt='Red Hat']")
     find_element(:xpath,".//a[contains(@href, '/app/legal')]").click()
     check_title "OpenShift by Red Hat | Terms and Conditions"
     @driver.navigate.back
     find_element(:xpath,".//a[contains(text(),'Privacy Policy')]").click()
     check_title "OpenShift by Red Hat | OpenShift Privacy Statement"
     @driver.navigate.back
-    begin
-      assert find_element(:xpath,".//a[contains(text(),'Contact')]").displayed?
-    rescue Test::Unit::AssertionFailedError
-      @verification_errors << $!
-    end
+    check_element_displayed(:xpath, ".//a[contains(text(),'Contact')]")
     find_element(:xpath,".//a[contains(text(),'Security')]").click()
     check_title "access.redhat.com | Security contacts and procedures"
     @driver.navigate.back

@@ -13,182 +13,73 @@ class Register < Test::Unit::TestCase
   end
 
   def test_register_invalid_email
-    $logger.info "start to test register with invalid email "
+    $logger.info "Testing register with invalid email"
     goto_home
     goto_login
-    find_element(:link_text,"Click here to register").click()
-    begin
-      assert_equal "Register for access to Express", find_element(:xpath,".//div[@id='registration']/h3").text
-    rescue Test::Unit::AssertionFailedError
-      @verification_errors << $!
-    end
-    begin
-      assert find_element(:id,"web_user_email_address").displayed?
-    rescue Test::Unit::AssertionFailedError
-      @verification_errors << $!
-    end
-    find_element(:id,"web_user_email_address").send_keys("123")
-    find_element(:id,"web_user_password").send_keys("19861231")
-    find_element(:id,"web_user_password_confirmation").send_keys("19861231")
-    find_element(:id,"web_user_submit").click()
-    begin
-      assert_equal "Please enter a valid email address.", find_element(:xpath,".//li[@id='web_user_email_address_input']/label[2]").text
-    rescue Test::Unit::AssertionFailedError
-      @verification_errors << $!
-    end
+    goto_register
+    submit_register("123", "19861231")
+    check_element_value("Please enter a valid email address.", :xpath, ".//li[@id='web_user_email_address_input']/label[2]")
   end
 
   def test_register_without_email
-    $logger.info "start to test register without email"
+    $logger.info "Testing register without email"
     goto_home
     goto_login
-    find_element(:link_text,"Click here to register").click()
-    begin
-      assert_equal "Register for access to Express", find_element(:xpath,".//div[@id='registration']/h3").text
-    rescue Test::Unit::AssertionFailedError
-      @verification_errors << $!
-    end
-    begin
-      assert find_element(:id,"web_user_email_address").displayed?
-    rescue Test::Unit::AssertionFailedError
-      @verification_errors << $!
-    end
-    find_element(:id,"web_user_password").send_keys("19861231")
-    find_element(:id,"web_user_password_confirmation").send_keys("19861231")
-    find_element(:id,"web_user_submit").click()
-    begin
-      assert_equal "This field is required.", find_element(:xpath,".//li[@id='web_user_email_address_input']/label[2]").text
-    rescue Test::Unit::AssertionFailedError
-      @verification_errors << $!
-    end
+    goto_register
+    submit_register(nil, "19861231")
+    check_element_value("This field is required.", :xpath, ".//li[@id='web_user_email_address_input']/label[2]")
   end
 
   def test_register_without_password
-    $logger.info "start to test register without password"
+    $logger.info "Testing register without password"
     goto_home
     goto_login
-    find_element(:link_text,"Click here to register").click()
-    begin
-      assert_equal "Register for access to Express", find_element(:xpath,".//div[@id='registration']/h3").text
-    rescue Test::Unit::AssertionFailedError
-      @verification_errors << $!
-    end
-    begin
-      assert find_element(:id,"web_user_email_address").displayed?
-    rescue Test::Unit::AssertionFailedError
-      @verification_errors << $!
-    end
-    find_element(:id,"web_user_email_address").send_keys("xtian+c0@redhat.com")
-    find_element(:id,"web_user_submit").click()
-    begin
-      assert_equal "This field is required.", find_element(:xpath,".//li[@id='web_user_password_input']/label[2]").text
-    rescue Test::Unit::AssertionFailedError
-      @verification_errors << $!
-    end
+    goto_register
+    submit_register("xtian+c0@redhat.com", nil)
+    check_element_value("This field is required.", :xpath, ".//li[@id='web_user_password_input']/label[2]")
   end
 
   #Register with mismatching password
   def test_register_withmismatch_password
-    $logger.info "start to test register with mismatching password"
+    $logger.info "Testing register with mismatching password"
     goto_home
     goto_login
-    find_element(:link_text,"Click here to register").click()
-    begin
-      assert_equal "Register for access to Express", find_element(:xpath,".//div[@id='registration']/h3").text
-    rescue Test::Unit::AssertionFailedError
-      @verification_errors << $!
-    end
-    begin
-      assert find_element(:id,"web_user_email_address").displayed?
-    rescue Test::Unit::AssertionFailedError
-      @verification_errors << $!
-    end
-    find_element(:id,"web_user_email_address").send_keys("xtian+c0@redhat.com")
-    find_element(:id,"web_user_password").send_keys("19861231")
-    find_element(:id,"web_user_password_confirmation").send_keys("19861233")
-    find_element(:id,"web_user_submit").click()
-    begin
-      assert_equal "Please enter the same value again.",find_element(:xpath,".//li[@id='web_user_password_confirmation_input']/label[2]").text
-    rescue Test::Unit::AssertionFailedError
-      @verification_errors << $!
-    end
+    goto_register
+    submit_register("xtian+c0@redhat.com", "19861231", "19861233")
+    check_element_value("Please enter the same value again.", :xpath, ".//li[@id='web_user_password_confirmation_input']/label[2]")
   end
 
   def test_register_with_invalid_passwd_length
-    $logger.info "start to test register with invalid password length"
+    $logger.info "Testing register with invalid password length"
     goto_home
     goto_login
-    find_element(:link_text,"Click here to register").click()
-    begin
-      assert_equal "Register for access to Express", find_element(:xpath,".//div[@id='registration']/h3").text
-    rescue Test::Unit::AssertionFailedError
-      @verification_errors << $!
-    end
-    begin
-      assert find_element(:id,"web_user_email_address").displayed?
-    rescue Test::Unit::AssertionFailedError
-      @verification_errors << $!
-    end
-    find_element(:id,"web_user_email_address").send_keys("xtian+c0@redhat.com")
-    find_element(:id,"web_user_password").send_keys("1986")
-    find_element(:id,"web_user_password_confirmation").send_keys("1986")
-    find_element(:id,"web_user_submit").click()
-    begin
-      assert_equal "Please enter at least 6 characters.", find_element(:xpath,".//li[@id='web_user_password_input']/label[2]").text
-    rescue Test::Unit::AssertionFailedError
-      @verification_errors << $!
-    end
+    goto_register
+    submit_register("xtian+c0@redhat.com", "1986")
+    check_element_value("Please enter at least 6 characters.", :xpath, ".//li[@id='web_user_password_input']/label[2]")
   end
 
   def test_register_with_restricted_country
-    $logger.info "start to test register from restricted countries"
+    $logger.info "Testing register from restricted countries"
     goto_home
     goto_login
-    find_element(:link_text,"Click here to register").click()
-    begin
-      assert_equal "Register for access to Express", find_element(:xpath,".//div[@id='registration']/h3").text
-    rescue Test::Unit::AssertionFailedError
-      @verification_errors << $!
-    end
-    begin
-      assert find_element(:id,"web_user_email_address").displayed?
-    rescue Test::Unit::AssertionFailedError
-      @verification_errors << $!
-    end
-    find_element(:id,"web_user_email_address").send_keys("xyz@yahoo.ir")
-    find_element(:id,"web_user_password").send_keys("redhat")
-    find_element(:id,"web_user_password_confirmation").send_keys("redhat")
-    find_element(:id,"web_user_submit").click()
-    begin
-      assert_equal "We can not accept emails from the following top level domains: .ir, .cu, .kp, .sd, .sy", find_element(:xpath,".//li[@id='web_user_email_address_input']/p").text
-    rescue Test::Unit::AssertionFailedError
-      @verification_errors << $!
-    end
+    goto_register
+    submit_register("xyz@yahoo.ir", "redhat")
+    check_element_value("We can not accept emails from the following top level domains: .ir, .cu, .kp, .sd, .sy", :xpath, ".//li[@id='web_user_email_address_input']/p")
   end
 
   def test_register_normally
-    $logger.info "start to test register normally"
+    $logger.info "Testing register normally"
     goto_home
     goto_login
-    find_element(:link_text,"Click here to register").click()
-    begin
-      assert_equal "Register for access to Express", find_element(:xpath,".//div[@id='registration']/h3").text
-    rescue Test::Unit::AssertionFailedError
-      @verification_errors << $!
-    end
-    begin
-      assert find_element(:id,"web_user_email_address").displayed?
-    rescue Test::Unit::AssertionFailedError
-      @verification_errors << $!
-    end
-    find_element(:id,"web_user_email_address").send_keys(get_unique_username())
-    find_element(:id,"web_user_password").send_keys("redhat")
-    find_element(:id,"web_user_password_confirmation").send_keys("redhat")
+    goto_register
+    submit_register(get_unique_username(), "redhat")
+    check_element_value("Check your inbox for an email with a validation link. Click on the link to complete the registration process." , :xpath, ".//section[@class='main']/div[@class='content']/p")
+  end
+  
+  def submit_register(email, pwd, pwd_confirm=pwd)
+    find_element(:id,"web_user_email_address").send_keys(email) if email
+    find_element(:id,"web_user_password").send_keys(pwd) if pwd
+    find_element(:id,"web_user_password_confirmation").send_keys(pwd_confirm) if pwd_confirm
     find_element(:id,"web_user_submit").click()
-    begin
-      assert_equal "Check your inbox for an email with a validation link. Click on the link to complete the registration process." , find_element(:xpath,".//div[@id='page']/div[2]/p").text
-    rescue Test::Unit::AssertionFailedError
-      @verification_errors << $!
-    end
   end
 end
