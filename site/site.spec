@@ -25,6 +25,7 @@ Requires:  rubygem-xml-simple
 Requires:  rubygem-formtastic
 Requires:  rubygem-haml
 Requires:  rubygem-recaptcha
+Requires:  rubygem-hpricot
 
 Obsoletes: rhc-server
 
