@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.76.1
+Version:   0.76.2
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -65,6 +65,13 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Sun Aug 07 2011 Dan McPherson <dmcphers@redhat.com> 0.76.2-1
+- add gem dep (dmcphers@redhat.com)
+- Fix invalid link (edirsh@redhat.com)
+- Add link validation testing (edirsh@redhat.com)
+- selenium work (dmcphers@redhat.com)
+- get selenium up and running again (dmcphers@redhat.com)
+
 * Fri Aug 05 2011 Dan McPherson <dmcphers@redhat.com> 0.76.1-1
 - bump spec numbers (dmcphers@redhat.com)
 
