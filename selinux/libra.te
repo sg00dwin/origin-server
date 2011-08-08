@@ -70,9 +70,9 @@ allow libra_domain libra_log_t:file { getattr append lock ioctl };
 
 manage_dirs_pattern(libra_domain, libra_tmp_t, libra_tmp_t)
 manage_files_pattern(libra_domain, libra_tmp_t, libra_tmp_t)
-files_tmp_filetrans(libra_domain, libra_tmp_t, { file dir })
-
 manage_sock_files_pattern(libra_t, libra_tmp_t, libra_tmp_t)
+files_tmp_filetrans(libra_domain, libra_tmp_t, { file dir sock_file })
+can_exec(libra_t, libra_tmp_t)
 
 manage_dirs_pattern(libra_domain, libra_var_lib_t, libra_var_lib_t)
 manage_files_pattern(libra_domain, libra_var_lib_t, libra_var_lib_t)
@@ -99,13 +99,14 @@ domain_dontaudit_read_all_domains_state(libra_domain)
 fs_dontaudit_rw_anon_inodefs_files(libra_domain)
 fs_search_tmpfs(libra_domain)
 fs_getattr_xattr_fs(libra_domain)
+fs_dontaudit_getattr_all_fs(libra_domain)
 fs_list_inotifyfs(libra_domain)
 fs_dontaudit_list_auto_mountpoints(libra_domain)
 #fs_dontaudit_search_cgroup_dirs(libra_domain)
+storage_dontaudit_getattr_fixed_disk_dev(libra_domain)
 
-files_dontaudit_getattr_boot_dirs(libra_domain)
-files_dontaudit_getattr_home_dir(libra_domain)
 files_dontaudit_getattr_lost_found_dirs(libra_domain)
+files_dontaudit_search_all_mountpoints(libra_domain)
 files_read_etc_files(libra_domain)
 files_read_usr_files(libra_domain)
 
@@ -113,6 +114,8 @@ libs_exec_lib_files(libra_domain)
 
 logging_send_syslog_msg(libra_domain)
 logging_inherit_append_all_logs(libra_domain)
+
+init_dontaudit_rw_utmp(libra_domain)
 
 miscfiles_read_localization(libra_domain)
 miscfiles_read_fonts(libra_domain)
@@ -160,6 +163,7 @@ allow libra_initrc_t libra_domain:process { getattr getsched setsched transition
 allow libra_domain libra_initrc_t:fd use;
 allow libra_domain libra_initrc_t:fifo_file rw_inherited_fifo_file_perms;
 allow libra_domain libra_initrc_t:process sigchld;
+dontaudit libra_domain libra_initrc_t:process signull;
 dontaudit libra_domain libra_initrc_t:socket_class_set { read write };
 
 # use this when available, see can_exec below MAL 20110422
@@ -191,7 +195,7 @@ allow sshd_t libra_domain:process { rlimitinh signal };
 dontaudit libra_domain ssh_home_t:dir search_dir_perms;
 
 dontaudit sendmail_t libra_initrc_t:fifo_file { read write };
-dontaudit domain libra_t:fifo_file write;
+dontaudit domain libra_t:fifo_file { getattr write };
 
 append_files_pattern(sendmail_t, libra_var_lib_t, libra_var_lib_t)
 allow domain libra_var_lib_t:dir search_dir_perms;
