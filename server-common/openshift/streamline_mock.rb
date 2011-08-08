@@ -28,9 +28,13 @@ module StreamlineMock
   end
 
   def establish_terms
-    @terms = [{"termId"=>1046, "termUrl"=>"http://openshift.redhat.com/app/legal/pdf/services_agreement.pdf", "termTitle"=>"OpenShift Site Terms"},
-              {"termId"=>1, "termUrl"=>"http://www.redhat.com/legal/legal_statement.html", "termTitle"=>"Red Hat Site Terms"},
-              {"termId"=>1010, "termUrl"=>"https://access.redhat.com/help/terms_conditions.html", "termTitle"=>"Red Hat Portals Terms of Use"}]
+    if @rhlogin == 'terms+test@redhat.com'
+      @terms = [{"termId"=>1046, "termUrl"=>"http://openshift.redhat.com/app/legal/pdf/services_agreement.pdf", "termTitle"=>"OpenShift Site Terms"},
+                {"termId"=>1, "termUrl"=>"http://www.redhat.com/legal/legal_statement.html", "termTitle"=>"Red Hat Site Terms"},
+                {"termId"=>1010, "termUrl"=>"https://access.redhat.com/help/terms_conditions.html", "termTitle"=>"Red Hat Portals Terms of Use"}]
+    else
+      @terms = []
+    end
   end
 
   def accept_terms
@@ -83,7 +87,7 @@ module StreamlineMock
   # Whether the user is authorized for a given cloud solution
   #
   def has_access?(solution)
-    unless @rhlogin == 'xtian+test@redhat.com'
+    unless @rhlogin == 'allaccess+test@redhat.com'
       !@roles.index(CloudAccess.auth_role(solution)).nil?
     else
       true
@@ -94,7 +98,7 @@ module StreamlineMock
   # Whether the user has already requested access for a given cloud solution
   #
   def has_requested?(solution)
-    unless @rhlogin == 'xtian+test@redhat.com'
+    unless @rhlogin == 'allaccess+test@redhat.com'
       !@roles.index(CloudAccess.req_role(solution)).nil?
     else
       false

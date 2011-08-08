@@ -69,8 +69,17 @@ module OpenShift
       check_title "OpenShift by Red Hat | Sign in to OpenShift"
     end
     
+    def goto_express
+      find_element(:class,"services").click()
+      check_title "OpenShift by Red Hat | Express"
+    end
+    
+    def goto_flex
+      find_element(:class,"flex").click()
+      check_title "OpenShift by Red Hat | Flex"
+    end
+    
     def login(username="libra-test+1@redhat.com", pwd="redhat")
-      goto_home
       goto_login
       submit = nil
       begin

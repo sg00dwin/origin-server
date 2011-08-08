@@ -13,11 +13,9 @@ class Home < Test::Unit::TestCase
     check_element_displayed(:xpath, ".//img[@alt='Red Hat']")
     check_element_value("Sign In", :class, "user")
     
-    find_element(:class,"services").click()
-    check_title "OpenShift by Red Hat | Express"
+    goto_express
     
-    find_element(:class,"flex").click()
-    check_title "OpenShift by Red Hat | Flex"
+    goto_flex
     @driver.navigate.back
     
     find_element(:class,"power").click()

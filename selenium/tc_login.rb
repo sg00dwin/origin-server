@@ -9,6 +9,7 @@ class Login < Test::Unit::TestCase
   
   def test_login
     $logger.info "Testing login"
+    goto_home
     login
     @driver.manage.delete_cookie("_rhc_session")
     @driver.manage.delete_cookie("rh_sso")
