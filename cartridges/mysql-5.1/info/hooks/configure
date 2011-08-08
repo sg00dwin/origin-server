@@ -189,7 +189,17 @@ case "\$1" in
 esac
 EOF
 
-chmod +x "$MYSQL_DIR/${application}_mysql_ctl.sh" || error "Failed to chmod new application scripts" 122
+#
+# Copy dump and restore scripts
+#
+
+/bin/cp "$CART_CONF_DIR/../*.sh" "$MYSQL_DIR"
+
+#
+# Setup Permissions
+# 
+
+chmod +x "$MYSQL_DIR/*.sh" || error "Failed to chmod new application scripts" 122
 chown $user_id.$group_id -R $MYSQL_DIR/ || error "Failed to chown new application space.  Please contact support" 123
 # Secure script and root dir (so they can't chown the script"
 chown root.root "$MYSQL_DIR" "$MYSQL_DIR/${application}_mysql_ctl.sh"
@@ -219,6 +229,9 @@ echo "export OPENSHIFT_DB_PORT='3306'" > $APP_HOME/.env/OPENSHIFT_DB_PORT
 echo "export OPENSHIFT_DB_SOCKET='${MYSQL_DIR}/socket/mysql.sock'" > $APP_HOME/.env/OPENSHIFT_DB_SOCKET
 echo "export OPENSHIFT_DB_URL='mysql://admin:$password@$IP:3306/'" > $APP_HOME/.env/OPENSHIFT_DB_URL
 echo "export OPENSHIFT_DB_CTL_SCRIPT='$MYSQL_DIR/${application}_mysql_ctl.sh'" > $APP_HOME/.env/OPENSHIFT_DB_CTL_SCRIPT
+echo "export OPENSHIFT_DB_MYSQL_51_DUMP='mysql_dump.sh'" > $APP_HOME/.env/OPENSHIFT_DB_MYSQL_51_DUMP
+echo "export OPENSHIFT_DB_MYSQL_51_DUMP_REMOVE='rm -rf /tmp/mysql_dump_snapshot.gz'" > $APP_HOME/.env/OPENSHIFT_DB_MYSQL_51_DUMP_REMOVE
+echo "export OPENSHIFT_DB_MYSQL_51_RESTORE='$MYSQL_DIR/mysql_restore.sh'" > $APP_HOME/.env/OPENSHIFT_DB_MYSQL_51_RESTORE
 
 # Setup user
 echo "                                  
