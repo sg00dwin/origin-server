@@ -193,7 +193,7 @@ EOF
 # Copy dump and restore scripts
 #
 
-/bin/cp "$CART_CONF_DIR/../*.sh" "$MYSQL_DIR"
+/bin/cp "$CART_CONF_DIR"/../*.sh "$MYSQL_DIR"
 
 #
 # Setup Permissions
