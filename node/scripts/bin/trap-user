@@ -11,6 +11,7 @@ commands = {
     "git-receive-pack": "/usr/bin/git-receive-pack",
     "git-upload-pack": "/usr/bin/git-upload-pack",
     "snapshot": "/bin/tar",
+    "restore": "/bin/tar",
     "tail": "/usr/bin/tail",
 #    "rhcsh": "/usr/local/bin/trap/trap_bash"
 }
@@ -79,6 +80,10 @@ if __name__ == '__main__':
         else:
             print "Failed sanitization"
             sys.exit(35)
+    elif basecmd in ('restore'):
+        # This gets called with "restore"
+        # TODO handle tar |'ed to ssh
+        allargs = "-xzv"
     elif basecmd in ('rhcsh'):
         os.environ["PS1"] = "rhcsh> "
         allargs = ['-r', '-i']
