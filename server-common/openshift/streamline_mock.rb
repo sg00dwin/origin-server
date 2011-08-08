@@ -28,7 +28,7 @@ module StreamlineMock
   end
 
   def establish_terms
-    if @rhlogin == 'terms+test@redhat.com'
+    if @rhlogin == nil || @rhlogin == 'terms+test@redhat.com'
       @terms = [{"termId"=>1046, "termUrl"=>"http://openshift.redhat.com/app/legal/pdf/services_agreement.pdf", "termTitle"=>"OpenShift Site Terms"},
                 {"termId"=>1, "termUrl"=>"http://www.redhat.com/legal/legal_statement.html", "termTitle"=>"Red Hat Site Terms"},
                 {"termId"=>1010, "termUrl"=>"https://access.redhat.com/help/terms_conditions.html", "termTitle"=>"Red Hat Portals Terms of Use"}]
