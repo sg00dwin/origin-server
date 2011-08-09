@@ -82,9 +82,8 @@ class DevEnv < Thor
     def download_artifacts(instance)
       print "Downloading logs and screenshots..."
       `mkdir -p rhc/log`
-      instance.scp_from("/tmp/rhc/cucumber*.log", "rhc/log")
+      instance.scp_from("/tmp/rhc/*.log", "rhc/log")
       instance.scp_from("/tmp/rhc/*.html", "rhc/log")
-      instance.scp_from("/tmp/rhc/failures.log", "rhc/log")
       instance.scp_from("/var/www/libra/site/httpd/logs/access_log", "rhc/log/site_access_log.txt")
       instance.scp_from("/var/www/libra/site/httpd/logs/error_log", "rhc/log/site_error_log.txt")
       instance.scp_from("/var/www/libra/site/log/development.log", "rhc/log")

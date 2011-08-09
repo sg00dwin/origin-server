@@ -1,6 +1,7 @@
 # step descriptions for MySQL cartridge behavior.
 
 require 'mysql'
+require 'fileutils'
 
 $mysql_version = "5.1"
 $mysql_cart_root = "/usr/libexec/li/cartridges/embedded/mysql-#{$mysql_version}"
@@ -198,6 +199,7 @@ Given /^a new mysql database$/ do
   exit_code = runcon command,  'unconfined_u', 'system_r', 'libra_initrc_t', outbuf
 
   if exit_code != 0
+    FileUtils.cp "/var/lib/libra/#{account_name}/mysql-5.1/log/mysql_error.log", "/tmp/rhc/mysql_error_#{account_name}.log"
     raise "Error running #{command}: returned #{exit_code}"
   end
   # I have to get the stdout back
