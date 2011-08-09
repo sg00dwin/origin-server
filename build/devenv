@@ -79,11 +79,36 @@ class DevEnv < Thor
       puts "Done"
     end
 
+    def download_artifacts
+      print "Downloading logs and screenshots..."
+      `mkdir -p rhc/log`
+      instance.scp_from("/tmp/rhc/cucumber*.log", "rhc/log")
+      instance.scp_from("/tmp/rhc/*.html", "rhc/log")
+      instance.scp_from("/tmp/rhc/failures.log", "rhc/log")
+      instance.scp_from("/var/www/libra/site/httpd/logs/access_log", "rhc/log/site_access_log.txt")
+      instance.scp_from("/var/www/libra/site/httpd/logs/error_log", "rhc/log/site_error_log.txt")
+      instance.scp_from("/var/www/libra/site/log/development.log", "rhc/log")
+      instance.scp_from("/var/www/libra/broker/httpd/logs/access_log", "rhc/log/broker_access_log.log")
+      instance.scp_from("/var/www/libra/broker/httpd/logs/error_log", "rhc/log/broker_error_log.log")
+      instance.scp_from("/var/www/libra/broker/log/development.log", "rhc/log")
+      instance.scp_from("/var/log/mcollective.log", "rhc/log")
+      instance.scp_from("/var/www/libra/broker/log/mcollective-client.log", "rhc/log")
+      instance.scp_from("/var/log/httpd/access_log", "rhc/log/system_access_log.log")
+      instance.scp_from("/var/log/httpd/error_log", "rhc/log/system_error_log.log")
+      instance.scp_from("/var/log/messages", "rhc/log/messages.log")
+      instance.scp_from("/var/log/dmesg", "rhc/log/messages.log")
+      instance.scp_from("li-tests/selenium/*.png", "rhc/log")
+      puts "Done"
+    end
+
     def run_ssh(instance, title, cmd)
       puts "Running " + title + " Tests..."
       output, code = instance.ssh(cmd, 4800, true)
       puts output
-      exit code if code != 0
+      if code != 0
+        download_artifacts
+        exit code
+      end
       puts "Done"
     end
   end
@@ -348,25 +373,8 @@ class DevEnv < Thor
       end
       puts "Done"
 
-      print "Downloading logs and screenshots..."
-      `mkdir -p rhc/log`
-      instance.scp_from("/tmp/rhc/cucumber*.log", "rhc/log")
-      instance.scp_from("/tmp/rhc/*.html", "rhc/log")
-      instance.scp_from("/tmp/rhc/failures.log", "rhc/log")
-      instance.scp_from("/var/www/libra/site/httpd/logs/access_log", "rhc/log/site_access_log.txt")
-      instance.scp_from("/var/www/libra/site/httpd/logs/error_log", "rhc/log/site_error_log.txt")
-      instance.scp_from("/var/www/libra/site/log/development.log", "rhc/log")
-      instance.scp_from("/var/www/libra/broker/httpd/logs/access_log", "rhc/log/broker_access_log.log")
-      instance.scp_from("/var/www/libra/broker/httpd/logs/error_log", "rhc/log/broker_error_log.log")
-      instance.scp_from("/var/www/libra/broker/log/development.log", "rhc/log")
-      instance.scp_from("/var/log/mcollective.log", "rhc/log")
-      instance.scp_from("/var/www/libra/broker/log/mcollective-client.log", "rhc/log")
-      instance.scp_from("/var/log/httpd/access_log", "rhc/log/system_access_log.log")
-      instance.scp_from("/var/log/httpd/error_log", "rhc/log/system_error_log.log")
-      instance.scp_from("/var/log/messages", "rhc/log/messages.log")
-      instance.scp_from("/var/log/dmesg", "rhc/log/messages.log")
-      instance.scp_from("li-tests/selenium/*.png", "rhc/log")
-      puts "Done"
+      # Download the successful artifacts
+      download_artifacts
 
       if !options.unofficial?
         # Mark the image as verified
