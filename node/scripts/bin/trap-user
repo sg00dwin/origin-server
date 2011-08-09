@@ -81,9 +81,14 @@ if __name__ == '__main__':
             print "Failed sanitization"
             sys.exit(35)
     elif basecmd in ('restore'):
-        # This gets called with "restore"
-        # TODO handle tar |'ed to ssh
-        allargs = "-xzv"
+        # This gets called with "restore $APP_NAME"
+        name = allargs[1]
+        if name.isalnum():
+            allargs = "-xvmz --exclude=./%s/%s_ctl.sh --exclude=./%s/run --exclude=./%s/modules --exclude=./%s/repo --exclude=./%s/deploy --exclude=./%s/jbossas-* --exclude=./%s/conf --exclude=./%s/conf.d --exclude=./%s/logs --exclude=./%s/sessions --exclude=./%s/tmp" % (name, name, name, name, name, name, name, name, name, name, name, name)
+            allargs = allargs.split()
+        else:
+            print "Failed sanitization"
+            sys.exit(35)
     elif basecmd in ('rhcsh'):
         os.environ["PS1"] = "rhcsh> "
         allargs = ['-r', '-i']

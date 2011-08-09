@@ -10,7 +10,9 @@ rhc-snapshot \- Pulls down an application snapshot as gzipped tarfile
 .B ]
 .B [-s
 .I pathname
-.B ] [-d] [-h]
+.B ] [-r
+.I pathname
+.B ][-d] [-h]
 .B [-l
 .I rhlogin
 .B ] -a
@@ -31,6 +33,9 @@ Name of application to snapshot
 .IP "-s|--save"
 Pathname to save location: default:
 .I ./$APPNAME.tar.gz
+.IP "-r|--restore"
+Pathname to restore location: example:
+.I ./$APPNAME.tar.gz 
 .IP -d|--debug
 Enable debugging / verbose output
 .IP -h|--help

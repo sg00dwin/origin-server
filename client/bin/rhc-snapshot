@@ -110,7 +110,7 @@ if opt['save']
   ssh_cmd = "ssh #{app_uuid}@#{app}-#{namespace}.#{rhc_domain} 'snapshot #{app}' > #{opt['save']}"
   puts "Pulling down a snapshot to #{opt['save']}"
 else
-  ssh_cmd = "cat #{opt['restore']} | ssh #{app_uuid}@#{app}-#{namespace}.#{rhc_domain} 'restore'"
+  ssh_cmd = "cat #{opt['restore']} | ssh #{app_uuid}@#{app}-#{namespace}.#{rhc_domain} 'restore #{app}'"
   puts "Restoring from snapshot #{opt['restore']}"
 end
 
