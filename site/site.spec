@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.76.2
+Version:   0.76.3
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -67,6 +67,11 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Mon Aug 08 2011 Dan McPherson <dmcphers@redhat.com> 0.76.3-1
+- add server side cache for twitter feeds (dmcphers@redhat.com)
+- Change dashboard to console and add flex console link to dashboard
+  (edirsh@redhat.com)
+
 * Sun Aug 07 2011 Dan McPherson <dmcphers@redhat.com> 0.76.2-1
 - add gem dep (dmcphers@redhat.com)
 - Fix invalid link (edirsh@redhat.com)
