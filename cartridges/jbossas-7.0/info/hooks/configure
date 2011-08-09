@@ -47,7 +47,6 @@ set -e
 # Load the jboss_version and jboss_home settings
 . `dirname $0`/jboss.version
 
-echo "Running ${jboss_version} configure script "
 JBOSS_CARTRIDGE_ROOT=/usr/libexec/li/cartridges/${jboss_version}
 
 if [ -f '/etc/libra/node.conf' ]
