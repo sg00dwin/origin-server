@@ -36,11 +36,18 @@ module RHC
   Maxdlen = 16
   Maxretries = 10
   Defaultdelay = 2
+  API = "1.1.1"
 
   def self.delay(time, adj=Defaultdelay)
     (time*=adj).to_int
   end
   
+  def generate_json(data)
+      data['api'] = API
+      json = JSON.generate(data)
+      json
+  end
+
   def self.get_cartridges_list(libra_server, net_http, cart_type="standalone", debug=true, print_result=nil)
     puts "Contacting https://#{libra_server} to obtain list of cartridges..."
     puts " (please excuse the delay)"
@@ -49,7 +56,7 @@ module RHC
       data['debug'] = "true"
     end
     print_post_data(data, debug)
-    json_data = JSON.generate(data)
+    json_data = generate_json(data)
 
     url = URI.parse("https://#{libra_server}/broker/cartlist")
     response = http_post(net_http, url, json_data, "none")
@@ -143,7 +150,7 @@ module RHC
       data['debug'] = "true"
     end
     print_post_data(data, debug)
-    json_data = JSON.generate(data)
+    json_data = generate_json(data)
 
     url = URI.parse("https://#{libra_server}/broker/userinfo")
     response = http_post(net_http, url, json_data, password)

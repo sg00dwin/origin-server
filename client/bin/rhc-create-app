@@ -166,7 +166,7 @@ data = {:cartridge => opt['type'],
 if debug
   data['debug'] = "true"
 end
-json_data = JSON.generate(data)
+json_data = RHC::generate_json(data)
 
 puts "Contacting https://#{libra_server}"
 
@@ -188,7 +188,7 @@ end
 #
 at_exit do
     unless $!.nil? || $!.is_a?(SystemExit) && $!.success?
-        json_data = JSON.generate(
+        json_data = RHC::generate_json(
                    {:cartridge => opt['type'],
                     :action => 'deconfigure',
                     :app_name => opt['app'],

@@ -141,7 +141,7 @@ if debug
   data['debug'] = "true"
 end
 RHC::print_post_data(data, debug)
-json_data = JSON.generate(data)
+json_data = RHC::generate_json(data)
 
 url = URI.parse("https://#{libra_server}/broker/domain")
 response = RHC::http_post(@http, url, json_data, password)
