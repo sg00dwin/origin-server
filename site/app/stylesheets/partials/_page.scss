@@ -666,7 +666,7 @@ nav.service {
       width: 11em;
       float: left;
       font-family: Overpass, $base-font-family;
-      margin-top: 5em;
+      margin-top: 5.7em;
       font-size: 1.1em;
       
       ul {
@@ -760,6 +760,30 @@ nav.service {
     color: $power;
   }
 
+}
+
+#flex-ways {
+  em {
+    font-weight: bold;
+    font-style: normal;
+  }
+  
+  ol {
+    list-style-type: none;
+    padding-left: 0;
+  }
+}
+
+#free-flex {
+  #offer {
+    background-color: #6c9;
+    color: white;
+    font-family: Overpass, $base-font-family;
+    font-size: 1.1em;
+    margin: 1em 0;
+    padding: 1em;
+    @include border-radius(0.5em);
+  }
 }
 
 /* End service pages */
