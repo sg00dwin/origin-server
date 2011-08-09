@@ -23,24 +23,31 @@ module CommandHelper
     return output
   end
 
-  def run(cmd)
+  def run(cmd, outbuf=[])
     $logger.info("Running: #{cmd}")
 
     pid, stdin, stdout, stderr = Open4::popen4(cmd)
     stdin.close
 
     exit_code = -1
-
     # Don't let a command run more than 5 minutes
     Timeout::timeout(500) do
       ignored, status = Process::waitpid2 pid
       exit_code = status.exitstatus
+    end
 
-      $logger.info("Standard Output:\n#{stdout.read}")
-      $logger.info("Standard Error:\n#{stderr.read}")
+    outstring = stdout.read
+    errstring = stderr.read
+    $logger.debug("Standard Output:\n#{outstring}")
+    $logger.debug("Standard Error:\n#{errstring}")
+    # append the buffers if an array container is provided
+    if outbuf
+      outbuf << outstring
+      outbuf << errstring
     end
 
     $logger.error("(#{$$}): Execution failed #{cmd} with exit_code: #{exit_code.to_s}") if exit_code != 0
+
     return exit_code
   end
 
