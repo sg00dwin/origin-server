@@ -10,11 +10,12 @@ Given /^an end user$/ do
   @rhc_login = @info[:login]
 end
 
-Then /^he can create a namespace and app$/ do
+Then /^he can create a namespace and( a (\S+)?) app$/ do |ignore, app_type|
+  app_type = "php-5.3" unless app_type
   @namespace = @info[:namespace]
   @repo_path="#{$temp}/#{@namespace}_#{@namespace}_repo"
   temp_text = run("#{$create_domain_script} -n #{@namespace} -l #{@rhc_login} -p fakepw -d")
-  temp_text = run("#{$create_app_script} -a #{@namespace} -l #{@rhc_login} -r #{@repo_path} -t php-5.3 -p fakepw -d")
+  temp_text = run("#{$create_app_script} -a #{@namespace} -l #{@rhc_login} -r #{@repo_path} -t #{app_type} -p fakepw -d")
 end
 
 When /^he alters the namespace$/ do
