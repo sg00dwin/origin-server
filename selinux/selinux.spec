@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.76.1
+Version:       0.76.2
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -38,6 +38,14 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Mon Aug 08 2011 Dan McPherson <dmcphers@redhat.com> 0.76.2-1
+- Added dontaudit rules for common commands quota, df, uptime, Also allowing
+  libra_t to exec libra_tmp_t, for mmap files. This will allow users to execute
+  files they create.  But I think it would be legitimate for some apps to need
+  the ability to mmap memory. One app attempted to signul is parents, I will
+  just dontaudit this, I dont want signals being sent to the libra_initrc_t
+  process (dwalsh@redhat.com)
+
 * Fri Aug 05 2011 Dan McPherson <dmcphers@redhat.com> 0.76.1-1
 - bump spec numbers (dmcphers@redhat.com)
 
