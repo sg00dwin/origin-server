@@ -4,6 +4,7 @@ body {
   margin: 0;
   padding: 0;
   background-color: $background-color;
+  min-width: 1030px;
 }
 
 /*
@@ -407,7 +408,7 @@ footer.universal {
   
   header {
     top: 3em;
-    right: 200px;
+    right: 260px;
     text-align: right;
     width: 20em;
   }
@@ -432,7 +433,7 @@ footer.universal {
   
   a.button {
     top: 9em;
-    right:200px;
+    right:260px;
     background-color: $background-color;
     color: white;
   }
@@ -776,7 +777,7 @@ nav.service {
 
 #free-flex {
   #offer {
-    background-color: #5fcf07;
+    background-color: #5FCF07;
     color: white;
     font-family: Overpass, $base-font-family;
     font-size: 1.1em;
