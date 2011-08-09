@@ -79,7 +79,7 @@ class DevEnv < Thor
       puts "Done"
     end
 
-    def download_artifacts
+    def download_artifacts(instance)
       print "Downloading logs and screenshots..."
       `mkdir -p rhc/log`
       instance.scp_from("/tmp/rhc/cucumber*.log", "rhc/log")
@@ -106,7 +106,7 @@ class DevEnv < Thor
       output, code = instance.ssh(cmd, 4800, true)
       puts output
       if code != 0
-        download_artifacts
+        download_artifacts instance
         exit code
       end
       puts "Done"
@@ -374,7 +374,7 @@ class DevEnv < Thor
       puts "Done"
 
       # Download the successful artifacts
-      download_artifacts
+      download_artifacts instance
 
       if !options.unofficial?
         # Mark the image as verified
