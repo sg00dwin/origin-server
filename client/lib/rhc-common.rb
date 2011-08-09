@@ -42,7 +42,7 @@ module RHC
     (time*=adj).to_int
   end
   
-  def generate_json(data)
+  def self.generate_json(data)
       data['api'] = API
       json = JSON.generate(data)
       json
