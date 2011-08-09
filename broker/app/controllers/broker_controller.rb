@@ -7,6 +7,10 @@ require 'openshift'
 include Libra
 
 class BrokerController < ApplicationController
+  BROKER_VERSION    = "1.1.1"
+  BROKER_CAPABILITY = %w(namespace rhlogin ssh app_uuid dubug alter cartridge cart_type action app_name)
+
+
   layout nil
   @@outage_notification_file = '/etc/libra/express_outage_notification.txt'
   
@@ -16,7 +20,11 @@ class BrokerController < ApplicationController
                   :messages => Thread.current[:messageIO] ? Thread.current[:messageIO].string : '',
                   :result => result,
                   :data => data,
-                  :exit_code => exit_code
+                  :exit_code => exit_code,
+                  :api => Libra::API::API_VERSION,
+                  :api_c => Libra::API::API_CAPABILITY,
+                  :broker => BROKER_VERSION,
+                  :broker_c => BROKER_CAPABILITY
                   })
       json
   end

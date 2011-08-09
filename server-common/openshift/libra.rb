@@ -1,3 +1,4 @@
+require 'openshift/api.rb'
 require 'openshift/error_codes.rb'
 require 'openshift/exception.rb'
 require 'openshift/config.rb'
