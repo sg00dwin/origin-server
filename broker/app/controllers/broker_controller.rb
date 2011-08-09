@@ -82,6 +82,10 @@ class BrokerController < ApplicationController
           if !(val =~ /\A[\w\-\.]+\z/)
             render :json => generate_result_json("Invalid cartridge: #{val} specified", nil, 254), :status => :invalid and return nil
           end
+        when 'api'
+          if !(val =~ /\A[0-9]\.[0-9]\.[0-9]\z/)
+            render :json => generate_result_json("Invalid API value: #{val} specified", nil, 109), :status => :invalid and return nil
+          end
         when 'cart_type'
           if !(val =~ /\A[\w\-\.]+\z/)
             render :json => generate_result_json("Invalid cart_type: #{val} specified", nil, 109), :status => :invalid and return nil
