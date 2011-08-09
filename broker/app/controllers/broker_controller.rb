@@ -16,15 +16,15 @@ class BrokerController < ApplicationController
   
   def generate_result_json(result, data=nil, exit_code=0)      
       json = JSON.generate({
+                  :api => Libra::API::API_VERSION,
+                  :api_c => Libra::API::API_CAPABILITY,
+                  :broker => BROKER_VERSION,
+                  :broker_c => BROKER_CAPABILITY,
                   :debug => Thread.current[:debugIO] ? Thread.current[:debugIO].string : '',
                   :messages => Thread.current[:messageIO] ? Thread.current[:messageIO].string : '',
                   :result => result,
                   :data => data,
-                  :exit_code => exit_code,
-                  :api => Libra::API::API_VERSION,
-                  :api_c => Libra::API::API_CAPABILITY,
-                  :broker => BROKER_VERSION,
-                  :broker_c => BROKER_CAPABILITY
+                  :exit_code => exit_code
                   })
       json
   end
