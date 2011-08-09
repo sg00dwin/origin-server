@@ -49,6 +49,7 @@ ln -s %{sitedir}/public %{buildroot}%{htmldir}/app
 
 mkdir -p %{buildroot}%{sitedir}/run
 mkdir -p %{buildroot}%{sitedir}/log
+mkdir -p -m 770 %{buildroot}%{sitedir}/tmp
 touch %{buildroot}%{sitedir}/log/production.log
 
 %clean
@@ -63,6 +64,7 @@ rm -rf %{buildroot}
 
 %post
 /bin/touch %{sitedir}/log/production.log
+chmod 0770 %{sitedir}/tmp
 
 %changelog
 * Sun Aug 07 2011 Dan McPherson <dmcphers@redhat.com> 0.76.2-1

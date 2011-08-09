@@ -18,6 +18,8 @@ RedHatCloud::Application.routes.draw do
     match 'power' => 'product#power', :as => 'power'
     match 'flex_redirect' => 'product#flex_redirect', :as => 'flex_redirect'
     match 'about' => 'home#about', :as => 'about'
+    match 'twitter_latest_tweet' => 'twitter#latest_tweet'
+    match 'twitter_latest_retweets' => 'twitter#latest_retweets'
     match 'partners/join' => 'partner#join', :as=> 'join_partner'
 
     #Alias for home page so we can link to it

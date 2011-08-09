@@ -3,11 +3,12 @@
 $(function() {
 
   $.ajax({
-    url: location.protocol + "//api.twitter.com/1/statuses/user_timeline/openshift.json?count=1&include_entities=true",
-    dataType: 'jsonp',
+    url: "/app/twitter_latest_tweet",
+    dataType: 'json',
     timeout: 10000,
     async: true,
     success: function(data, textStatus, request) {
+      console.log(data);
       tweet = data[0];
       var d = document; 
       var el = d.getElementById('latest_tweet');
@@ -25,8 +26,8 @@ $(function() {
   });
 
   $.ajax({
-    url: location.protocol + "//api.twitter.com/1/statuses/retweeted_by_user.json?screen_name=openshift&count=4&include_entities=true",
-    dataType: 'jsonp',
+    url: "/app/twitter_latest_retweets",
+    dataType: 'json',
     timeout: 10000,
     async: true,
     success: function(data, textStatus, request) {
