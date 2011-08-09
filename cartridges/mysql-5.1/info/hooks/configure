@@ -237,8 +237,9 @@ echo "export OPENSHIFT_DB_MYSQL_51_RESTORE='$MYSQL_DIR/mysql_restore.sh'" > $APP
 echo "                                  
 delete from user;
 grant all on *.* to 'admin'@'$IP' identified by '$password' with grant option;
-create database ${application};
 flush privileges;" | mysql -u root -S "${MYSQL_DIR}/socket/mysql.sock" mysql > /dev/null || error "Failed to setup initial root user" 187
+
+echo "create database ${application};" | mysql -u root -S "${MYSQL_DIR}/socket/mysql.sock" mysql > /dev/null || error "Failed to create ${application}" 188
 
 echo "CLIENT_RESULT: "
 echo "CLIENT_RESULT: Mysql 5.1 database added.  Please make note of these credentials:"
