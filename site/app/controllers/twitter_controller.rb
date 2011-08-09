@@ -28,24 +28,23 @@ class TwitterController < ApplicationController
     json = nil
     begin
       if File.exists?(file_path)
-        Rails.logger.debug("File exists: #{file_path}")
-        last_mod = File.atime(file_path)
+        last_mod = File.mtime(file_path)
         if (Time.now - last_mod) > 600 # 10 mins
           FileUtils.touch(file_path) # update current file to keep most people out
-          Rails.logger.debug("Updating twitter cache using #{update_file_path}")
+          Rails.logger.debug("Updating twitter cache using: #{update_file_path}")
           file = File.new(update_file_path, "w")
         else
-          Rails.logger.debug("Twitter cache hit. Using #{file_path}")
+          Rails.logger.debug("Twitter cache hit using: #{file_path}")
           file = File.open(file_path, "r")
           json = file.read
         end
       else
-        Rails.logger.debug("Initial twitter hit using #{file_path}")
+        Rails.logger.debug("Initial twitter hit using: #{file_path}")
         file = File.new(update_file_path, "w")
       end
       
       unless json
-        Rails.logger.debug("Fetching from twitter #{url_path}")
+        Rails.logger.debug("Fetching from twitter: #{url_path}")
         json = twitter_get(url_path)
         file.print json
         FileUtils.mv(update_file_path, file_path, :force => true)
@@ -54,12 +53,14 @@ class TwitterController < ApplicationController
       Rails.logger.debug("Rescued exception: #{e.message}")
       Rails.logger.debug(e.backtrace)
       file.close if file
+      file = nil
       if File.exists?(update_file_path)
         File.delete(update_file_path)
       end
       raise
+    ensure
+      file.close if file
     end
-    file.close if file
     json
   end
   

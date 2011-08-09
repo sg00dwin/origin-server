@@ -8,7 +8,6 @@ $(function() {
     timeout: 10000,
     async: true,
     success: function(data, textStatus, request) {
-      console.log(data);
       tweet = data[0];
       var d = document; 
       var el = d.getElementById('latest_tweet');
