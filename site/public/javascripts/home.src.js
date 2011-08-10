@@ -44,7 +44,7 @@ $(function() {
         ul.appendChild(li);
         img = d.createElement('img');
           if (tweet.entities.user_mentions.length > 0) {
-            img.setAttribute('src', location.protocol + '//api.twitter.com/1/users/profile_image?screen_name=' + tweet.entities.user_mentions[0].name);
+            img.setAttribute('src', location.protocol + '//api.twitter.com/1/users/profile_image?screen_name=' + tweet.entities.user_mentions[0].screen_name);
           }
           else {
             img.setAttribute('src', location.protocol == 'http:' ? tweet.user.profile_image_url : tweet.user.profile_image_url_https);
