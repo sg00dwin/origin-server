@@ -92,7 +92,7 @@
                     <statement></statement>
                 </datasource>
                 <datasource jndi-name="java:jboss/datasources/MysqlDS" enabled="false" use-java-context="true" pool-name="MysqlDS">
-                    <connection-url>jdbc:mysql://{ip}:3306/mysql</connection-url>
+                    <connection-url>jdbc:mysql://{ip}:3306/{app_name}</connection-url>
                     <driver>mysql</driver>
                     <security>
                       <user-name>admin</user-name>

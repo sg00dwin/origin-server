@@ -367,6 +367,7 @@ ls -l "$APP_JBOSS"/standalone/configuration
 cp ${jboss_home}/bin/standalone.sh "$APP_JBOSS_BIN_DIR"
 # Update the standalone.xml for the application IP
 sed -i "s/{ip}/$IP/g" "$APP_JBOSS"/standalone/configuration/standalone.xml
+sed -i "s/{app_name}/$application/g" "$APP_JBOSS"/standalone/configuration/standalone.xml
 popd > /dev/null
 
 # Repo
