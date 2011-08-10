@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.76.3
+Version:   0.76.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -67,6 +67,18 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Tue Aug 09 2011 Dan McPherson <dmcphers@redhat.com> 0.76.4-1
+- Modify banner yet again (edirsh@redhat.com)
+- Subdue java banner (edirsh@redhat.com)
+- Tweak free flex announcment color (edirsh@redhat.com)
+- Add Free flex terms to flex page (edirsh@redhat.com)
+- Use RH brand colors (edirsh@redhat.com)
+- twitter fixes (dmcphers@redhat.com)
+- Fix twitter avatar (edirsh@redhat.com)
+- Add product to registration event tracking (edirsh@redhat.com)
+- Add new announcements (edirsh@redhat.com)
+- Add java announcement banner (edirsh@redhat.com)
+
 * Mon Aug 08 2011 Dan McPherson <dmcphers@redhat.com> 0.76.3-1
 - add server side cache for twitter feeds (dmcphers@redhat.com)
 - Change dashboard to console and add flex console link to dashboard
