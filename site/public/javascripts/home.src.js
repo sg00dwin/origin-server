@@ -8,14 +8,16 @@ $(function() {
     timeout: 10000,
     async: true,
     success: function(data, textStatus, request) {
-      tweet = data[0];
-      var d = document; 
-      var el = d.getElementById('latest_tweet');
-      
-      while (el.firstChild) {
-        el.removeChild(el.firstChild);
+      if (data.length > 0) {
+        tweet = data[0];
+        var d = document; 
+        var el = d.getElementById('latest_tweet');
+        
+        while (el.firstChild) {
+          el.removeChild(el.firstChild);
+        }
+        render_tweet(d, el, tweet, 'openshift');
       }
-      render_tweet(d, el, tweet, 'openshift');
     },
     error: function(request, status, error) {
       var d = document; 

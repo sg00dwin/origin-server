@@ -5,7 +5,7 @@ require 'fileutils'
 class TwitterController < ApplicationController
 
   def latest_tweet
-    get_and_render('user_timeline/openshift.json?count=1&include_entities=true', 'openshift_twitter_latest_tweet.json') and return
+    get_and_render('user_timeline/openshift.json?count=10&include_entities=true', 'openshift_twitter_latest_tweet.json') and return
   end
   
   def latest_retweets
