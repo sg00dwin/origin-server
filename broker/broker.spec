@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.76.3
+Version:   0.76.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -62,6 +62,11 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Tue Aug 09 2011 Dan McPherson <dmcphers@redhat.com> 0.76.4-1
+- added api value (mmcgrath@redhat.com)
+- Adjust ordering (jimjag@redhat.com)
+- Some prelim API and broker versioning (jimjag@redhat.com)
+
 * Mon Aug 08 2011 Matt Hicks <mhicks@redhat.com> 0.76.3-1
 - Apptegic Integration (mhicks@redhat.com)
 
