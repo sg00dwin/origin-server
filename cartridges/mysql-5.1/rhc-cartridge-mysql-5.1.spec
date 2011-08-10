@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/mysql-5.1
 
 Name: rhc-cartridge-mysql-5.1
-Version: 0.10.2
+Version: 0.10.3
 Release: 1%{?dist}
 Summary: Embedded mysql support for express
 
@@ -46,6 +46,11 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Tue Aug 09 2011 Dan McPherson <dmcphers@redhat.com> 0.10.3-1
+- changing order of operations for mysql creation (mmcgrath@redhat.com)
+- changing order and better error (mmcgrath@redhat.com)
+- Adding application name (mmcgrath@redhat.com)
+
 * Mon Aug 08 2011 Dan McPherson <dmcphers@redhat.com> 0.10.2-1
 - correcting wildcard globbing and dump path (mmcgrath@redhat.com)
 - correcting wildcard glob usage (mmcgrath@redhat.com)
