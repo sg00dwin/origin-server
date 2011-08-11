@@ -114,7 +114,10 @@ c_val="c$(($uid/1023)),c$(($uid%1023))"
 destroy_repo $application $uuid
 
 runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l s0:$c_val $APP_DIR/${application}_ctl.sh stop" || echo "Failed to stop ${application}" 1>&2
-/usr/sbin/lsof -t "$APP_DIR/logs/error_log" | /usr/bin/xargs /bin/kill -9
+if [ -f "$APP_DIR/logs/error_log" ]
+then
+  /usr/sbin/lsof -t "$APP_DIR/logs/error_log" | /usr/bin/xargs /bin/kill -9
+fi
 
 # Confirm pid is gone before removing apps
 i=0
