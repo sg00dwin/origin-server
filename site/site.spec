@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.76.4
+Version:   0.76.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -67,6 +67,11 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Thu Aug 11 2011 Matt Hicks <mhicks@redhat.com> 0.76.5-1
+- buffer latest tweet for retweets (dmcphers@redhat.com)
+- fix twitter retweet images (dmcphers@redhat.com)
+- bug 729560 (dmcphers@redhat.com)
+
 * Tue Aug 09 2011 Dan McPherson <dmcphers@redhat.com> 0.76.4-1
 - Modify banner yet again (edirsh@redhat.com)
 - Subdue java banner (edirsh@redhat.com)
