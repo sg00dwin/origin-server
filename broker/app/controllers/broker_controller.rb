@@ -8,11 +8,12 @@ include Libra
 
 class BrokerController < ApplicationController
   BROKER_VERSION    = "1.1.1"
-  BROKER_CAPABILITY = %w(namespace rhlogin ssh app_uuid dubug alter cartridge cart_type action app_name)
+  BROKER_CAPABILITY = %w(namespace rhlogin ssh app_uuid dubug alter cartridge cart_type action app_name api)
 
 
   layout nil
   @@outage_notification_file = '/etc/libra/express_outage_notification.txt'
+  @client_api = "0.0.0"
   
   def generate_result_json(result, data=nil, exit_code=0)      
       json = JSON.generate({
@@ -83,9 +84,10 @@ class BrokerController < ApplicationController
             render :json => generate_result_json("Invalid cartridge: #{val} specified", nil, 254), :status => :invalid and return nil
           end
         when 'api'
-          if !(val =~ /\A[0-9]\.[0-9]\.[0-9]\z/)
+          if !(val =~ /\A[0-9]+\.[0-9]+\.[0-9]+\z/)
             render :json => generate_result_json("Invalid API value: #{val} specified", nil, 109), :status => :invalid and return nil
           end
+          @client_api = val
         when 'cart_type'
           if !(val =~ /\A[\w\-\.]+\z/)
             render :json => generate_result_json("Invalid cart_type: #{val} specified", nil, 109), :status => :invalid and return nil
