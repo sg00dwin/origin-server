@@ -41,7 +41,7 @@ module RHC
   def self.delay(time, adj=Defaultdelay)
     (time*=adj).to_int
   end
-  
+
   def self.generate_json(data)
       data['api'] = API
       json = JSON.generate(data)
@@ -230,6 +230,7 @@ module RHC
     end
     exit_code = 254
     if response.content_type == 'application/json'
+      puts "JSON response:"
       json_resp = JSON.parse(response.body)
       exit_code = print_json_body(json_resp, debug)
     elsif debug
@@ -237,8 +238,8 @@ module RHC
     end
     exit exit_code.nil? ? 666 : exit_code
   end
-  
-  def self.print_response_messages(json_resp)    
+
+  def self.print_response_messages(json_resp)
     messages = json_resp['messages']
     if (messages && !messages.empty?)
       puts ''
@@ -278,6 +279,12 @@ module RHC
         end
       end
     end
+    if json_resp['api']
+      puts "API version:    #{json_resp['api']}"
+    end
+    if json_resp['broker']
+      puts "Broker version: #{json_resp['broker']}"
+    end
     if json_resp['result']
       puts ''
       puts 'RESULT:'
@@ -315,7 +322,7 @@ if !File.exists? local_config_path
   FileUtils.touch local_config_path
   puts ""
   puts "Created local config file: " + local_config_path
-  puts "express.conf contains user configuration and can be transferred across clients."  
+  puts "express.conf contains user configuration and can be transferred across clients."
   puts ""
 end
 
@@ -338,7 +345,7 @@ else
 end
 
 #
-# Check for local var in 
+# Check for local var in
 #   1) ~/.openshift/express.conf
 #   2) /etc/openshift/express.conf
 #   3) $GEM/../conf/express.conf
