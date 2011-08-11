@@ -11,11 +11,11 @@ class EmailConfirmController < ApplicationController
   }
   
   def confirm_flex
-    confirm(new_access_flex_requests_path)
+    confirm(flex_path)
   end
   
   def confirm_express
-    confirm(access_express_request_direct_path)
+    confirm(express_path)
   end
 
   def confirm(redirect_path=getting_started_path)
@@ -89,8 +89,9 @@ class EmailConfirmController < ApplicationController
       else
         reset_sso
         reset_session
+        session[:confirm_flow] = true
         session[:confirm_login] = email
-        redirect_to redirect_path, :notice => "Almost there!  You'll need to login before requesting access." and return
+        redirect_to redirect_path
       end
     end
   end

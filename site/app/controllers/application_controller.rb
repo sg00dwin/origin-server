@@ -74,6 +74,31 @@ class ApplicationController < ActionController::Base
     redirect_to logout_path and return
   end
 
+  def request_access(user)
+    # Now check for access to Express which represents access
+    # to all of OpenShift now.  At this point, the user
+    # has accepted all the OpenShift terms and should already
+    # have access.  If the user doesn't have the cloud_access_1
+    # role or the cloud_access_request_1 role, request access
+    # automatically for the user
+    access_type = CloudAccess::EXPRESS
+    if !user.has_access?(access_type) and !user.has_requested?(access_type)
+      Rails.logger.info "User #{user.rhlogin} access without detected.  Requesting access..."
+      user.request_access(access_type)
+      if user.errors.length > 0
+        Rails.logger.error "Auto-request access for user #{user.rhlogin} failed"
+      else
+        Rails.logger.info "Access request successful for user #{user.rhlogin}"
+        user.refresh_roles(true)
+      end
+    end
+
+    unless user.has_access?(access_type)
+      Rails.logger.debug "Notifying user about pending account access"
+      flash[:notice] = "Note: We are still working on getting your access setup..."
+    end
+  end
+
   def check_credentials
     # If this is a logout request, pass through
     Rails.logger.debug "Checking for logout request"
@@ -111,6 +136,9 @@ class ApplicationController < ActionController::Base
         return
       else
         Rails.logger.debug "Session ticket matches current ticket"
+
+        # Handle access requests
+        request_access(session[:user])
       end
     else
       Rails.logger.debug "User does not have a authenticated session"
@@ -125,7 +153,10 @@ class ApplicationController < ActionController::Base
           redirect_to new_terms_path and return
         else
           session[:login] = user.rhlogin
-        end      
+        end
+
+        # Handle access requests
+        request_access(user)
       end
     end
   end

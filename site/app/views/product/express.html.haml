@@ -1,5 +1,6 @@
 -# file: Express product page
 
+
 - content_for :page_title do
   Express
 
@@ -37,8 +38,7 @@
         
         %ul
           %li
-            = link_to 'Get access to Express!', '/app/access/express/request', :class => 'request'
-            
+            Access Pending...
   
   - else
     #account.signed_out
@@ -51,6 +51,7 @@
   
 -# Main Content
 - content_for :product_content do
+  = render 'layouts/flashes'
   %section#about.default
     %header
       %h1

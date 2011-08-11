@@ -1,5 +1,7 @@
 -# file: Flex product page
 
+= render 'layouts/flashes'
+
 - content_for :page_title do
   Flex
 
@@ -16,7 +18,7 @@
       = link_to 'Forum', 'http://www.redhat.com/openshift/forums/flex'
   
   - if logged_in?
-    - if has_access? :flex
+    - if has_access? :express
       #account.signed_in
         %header
           %h2
@@ -36,7 +38,7 @@
         
         %ul
           %li
-            = link_to 'Get access to Flex!', '/app/access/flex/request', :class => 'request'
+            Access Pending...
             
   - else
     #account.signed_out

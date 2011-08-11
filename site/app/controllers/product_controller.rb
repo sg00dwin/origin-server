@@ -3,6 +3,13 @@ require 'uri'
 class ProductController < ApplicationController
 
   def express
+    # Handle the email confirmation flow
+    if session[:confirm_flow]
+      session.delete(:confirm_flow)
+      flash[:notice] = "Almost there!  Login to complete your registration."
+      require_login
+    end
+
     @product = 'express'
     @try_link_points_to = try_it_destination(CloudAccess::EXPRESS)
   end
@@ -20,6 +27,13 @@ class ProductController < ApplicationController
   end
   
   def flex
+    # Handle the email confirmation flow
+    if session[:confirm_flow]
+      session.delete(:confirm_flow)
+      flash[:notice] = "Almost there!  Login to complete your registration."
+      require_login
+    end
+
     # Handles flex redirecting back to /app/flex
     if workflow_redirect
       return

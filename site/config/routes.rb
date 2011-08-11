@@ -6,6 +6,12 @@ RedHatCloud::Application.routes.draw do
     # The priority is based upon order of creation:
     # first created -> highest priority.
 
+    # Legacy redirects
+    match 'getting_started/express', :to => redirect('/app/express')
+    match 'getting_started/flex', :to => redirect('/app/flex')
+    match 'access/express(/:request)', :to => redirect('/app/express')
+    match 'access/flex(/:request)', :to => redirect('/app/flex')
+
     # Sample of regular route:
     #   match 'products/:id' => 'catalog#view'
     # Keep in mind you can assign values other than :controller and :action
@@ -15,6 +21,8 @@ RedHatCloud::Application.routes.draw do
     match 'email_confirm_express' => 'email_confirm#confirm_express'
     match 'express' => 'product#express', :as => 'express'
     match 'flex' => 'product#flex', :as => 'flex'
+    match 'express_protected' => 'product#express_protected', :as => 'express_protected'
+    match 'flex_protected' => 'product#flex_protected', :as => 'flex_protected'
     match 'power' => 'product#power', :as => 'power'
     match 'flex_redirect' => 'product#flex_redirect', :as => 'flex_redirect'
     match 'about' => 'home#about', :as => 'about'
@@ -71,30 +79,6 @@ RedHatCloud::Application.routes.draw do
               :controller => "partner",
               :only => [:show, :index]
 
-    namespace "access" do
-      resource :flex,
-               :controller => "flex_request",
-               :as => "flex_requests",
-               :path_names => { :new => 'request' },
-               :only => [:new, :create]
-      resource :express,
-               :controller => "express_request",
-               :as => "express_requests",
-               :path_names => { :new => 'request' },
-               :only => [:new, :create]
-      match 'express/request_direct' => 'express_request#request_direct', :via => [:get]
-    end
-
-    namespace "getting_started" do
-      resource :express,
-               :controller => "express",
-               :only => [:show]
-
-      resource :flex,
-               :controller => "flex",
-               :only => [:show]
-    end
-    
     resource :express_domain,
              :controller => "express_domain",
              :as => "express_domains",
