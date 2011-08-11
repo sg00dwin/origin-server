@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.76.2
+Version:   0.76.3
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -76,6 +76,11 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Thu Aug 11 2011 Matt Hicks <mhicks@redhat.com> 0.76.3-1
+- bug729751, fix the failure return value of the ishttpup() function
+  (starksm64@gmail.com)
+- change default db name to app_name (dmcphers@redhat.com)
+
 * Tue Aug 09 2011 Dan McPherson <dmcphers@redhat.com> 0.76.2-1
 - Minor cleanup of echo statement (mhicks@redhat.com)
 
