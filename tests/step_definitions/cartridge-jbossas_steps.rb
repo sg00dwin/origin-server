@@ -64,7 +64,7 @@ When /^I (start|stop|restart) the jbossas service$/ do |action|
   command = "#{$jbossas_hooks}/%s %s %s %s" % [action, app_name, namespace, account_name]
   exit_status = runcon command, 'unconfined_u', 'system_r', 'libra_initrc_t'
   if exit_status != 0
-    raise "Unable to %s for %s %s %s" % [fix_action, app_name, namespace, account_name]
+    raise "Unable to %s for %s %s %s" % [action, app_name, namespace, account_name]
   end
   sleep 5
 
