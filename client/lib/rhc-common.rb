@@ -37,6 +37,17 @@ module RHC
   Maxretries = 10
   Defaultdelay = 2
   API = "1.1.1"
+  broker_version = "?.?.?"
+  api_version = "?.?.?"
+
+  def update_server_api_v(dict)
+    if !dict['broker'].nil? && (dict['broker'] =~ /\A\d+\.\d+\.\d+\z/)
+      broker_version = dict['broker']
+    end
+    if !dict['api'].nil? && (dict['api'] =~ /\A\d+\.\d+\.\d+\z/)
+      api_version = dict['api']
+    end
+  end
 
   def self.delay(time, adj=Defaultdelay)
     (time*=adj).to_int
@@ -65,7 +76,12 @@ module RHC
       print_response_err(response, debug)
       return []
     end
-    json_resp = JSON.parse(response.body)
+    begin
+      json_resp = JSON.parse(response.body)
+    rescue JSON::ParserError
+      exit 254
+    end
+    update_server_api_v(json_resp)
     if print_result
       print_response_success(json_resp, debug)
     end
@@ -171,7 +187,12 @@ module RHC
       end
       exit 254
     end
-    json_resp = JSON.parse(response.body)
+    begin
+      json_resp = JSON.parse(response.body)
+    rescue JSON::ParserError
+      exit 254
+    end
+    update_server_api_v(json_resp)
     if print_result
       print_response_success(json_resp, debug)
     end
@@ -231,8 +252,12 @@ module RHC
     exit_code = 254
     if response.content_type == 'application/json'
       puts "JSON response:"
-      json_resp = JSON.parse(response.body)
-      exit_code = print_json_body(json_resp, debug)
+      begin
+        json_resp = JSON.parse(response.body)
+        exit_code = print_json_body(json_resp, debug)
+      rescue JSON::ParserError
+        exit_code = 254
+      end
     elsif debug
       puts "HTTP response from server is #{response.body}"
     end

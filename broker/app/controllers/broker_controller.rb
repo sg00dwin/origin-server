@@ -84,7 +84,7 @@ class BrokerController < ApplicationController
             render :json => generate_result_json("Invalid cartridge: #{val} specified", nil, 254), :status => :invalid and return nil
           end
         when 'api'
-          if !(val =~ /\A[0-9]+\.[0-9]+\.[0-9]+\z/)
+          if !(val =~ /\A\d+\.\d+\.\d+\z/)
             render :json => generate_result_json("Invalid API value: #{val} specified", nil, 109), :status => :invalid and return nil
           end
           @client_api = val
