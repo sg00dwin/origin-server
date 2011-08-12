@@ -19,9 +19,9 @@ class ProductController < ApplicationController
     when 'register'
       session[:workflow] = '/app/user/new/flex'
     when 'queue', 'request'
-      session[:login_workflow] = '/app/access/flex/request'
+      session[:login_workflow] = '/app/flex'
     when 'getting_started'
-      session[:login_workflow] = '/app/getting_started/flex'
+      session[:login_workflow] = '/app/flex#quickstart'
     end
     redirect_to '/flex' and return
   end
@@ -47,6 +47,4 @@ class ProductController < ApplicationController
   def power
     @product = 'power'
   end
-  
-  
 end
