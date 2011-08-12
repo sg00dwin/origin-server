@@ -105,10 +105,12 @@ fs_dontaudit_list_auto_mountpoints(libra_domain)
 #fs_dontaudit_search_cgroup_dirs(libra_domain)
 storage_dontaudit_getattr_fixed_disk_dev(libra_domain)
 
+files_dontaudit_search_pids(libra_domain)
 files_dontaudit_getattr_lost_found_dirs(libra_domain)
 files_dontaudit_search_all_mountpoints(libra_domain)
 files_read_etc_files(libra_domain)
 files_read_usr_files(libra_domain)
+files_dontaudit_getattr_non_security_sockets(libra_domain)
 
 libs_exec_lib_files(libra_domain)
 
