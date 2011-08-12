@@ -52,6 +52,8 @@ $(function() {
             img.setAttribute('src', location.protocol == 'http:' ? tweet.user.profile_image_url : tweet.user.profile_image_url_https);
           }
           img.setAttribute('class', 'avatar');
+          img.setAttribute('height', '48px');
+          img.setAttribute('width', '48px');
         li.appendChild(img);
         el = d.createElement('p');
           el.setAttribute('class', 'tweet');
