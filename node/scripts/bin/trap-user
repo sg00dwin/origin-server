@@ -11,7 +11,7 @@ commands = {
     "git-receive-pack": "/usr/bin/git-receive-pack",
     "git-upload-pack": "/usr/bin/git-upload-pack",
     "snapshot": "/bin/tar",
-    "restore": "/bin/tar",
+    "restore": "~/.restore",
     "tail": "/usr/bin/tail",
 #    "rhcsh": "/usr/local/bin/trap/trap_bash"
 }
@@ -75,17 +75,25 @@ if __name__ == '__main__':
 
         if name.isalnum():
             path = os.path.expanduser('~')
-            allargs = "-chzf - -C %s/ --exclude=./%s/%s_ctl.sh --exclude=./%s/conf.d/libra.conf --exclude=./%s/run/httpd.pid ./%s/" % (path, name, name, name, name, name)
+            allargs = "--ignore-failed-read -chzf - -C %s/ --exclude=./.restore --exclude=./.tmp --exclude=./.ssh --exclude=./%s/%s_ctl.sh --exclude=./%s/conf.d/libra.conf --exclude=./%s/modules --exclude=./%s/run/httpd.pid ." % (path, name, name, name, name, name)
             allargs = allargs.split()
         else:
             print "Failed sanitization"
             sys.exit(35)
     elif basecmd in ('restore'):
-        # This gets called with "restore $APP_NAME"
+        # This gets called with "restore $APP_NAME INCLUDE_GIT"
         name = allargs[1]
         if name.isalnum():
-            allargs = "-xvmz --exclude=./%s/%s_ctl.sh --exclude=./%s/run --exclude=./%s/modules --exclude=./%s/repo --exclude=./%s/deploy --exclude=./%s/jbossas-* --exclude=./%s/conf --exclude=./%s/conf.d --exclude=./%s/logs --exclude=./%s/sessions --exclude=./%s/tmp" % (name, name, name, name, name, name, name, name, name, name, name, name)
-            allargs = allargs.split()
+            include_git = False
+            if len(allargs) > 2 and allargs[2] == 'INCLUDE_GIT':
+                include_git = True
+
+            path = os.path.expanduser('~')
+            cmd = path + '/.restore'
+            allargs = [name] 
+            if include_git:
+                allargs.append('INCLUDE_GIT')
+
         else:
             print "Failed sanitization"
             sys.exit(35)

@@ -110,14 +110,23 @@ if opt['save']
   ssh_cmd = "ssh #{app_uuid}@#{app}-#{namespace}.#{rhc_domain} 'snapshot #{app}' > #{opt['save']}"
   puts "Pulling down a snapshot to #{opt['save']}"
 else
-  ssh_cmd = "cat #{opt['restore']} | ssh #{app_uuid}@#{app}-#{namespace}.#{rhc_domain} 'restore #{app}'"
-  puts "Restoring from snapshot #{opt['restore']}"
+  `tar -tf #{opt['restore']} ./#{app}`
+  if $?.exitstatus != 0
+    puts "Archive at #{opt['restore']} does not contain the target application: ./#{app}"
+    exit 255
+  else
+    `tar -tf #{opt['restore']} ./git`
+    include_git = $?.exitstatus == 0
+    ssh_cmd = "cat #{opt['restore']} | ssh #{app_uuid}@#{app}-#{namespace}.#{rhc_domain} 'restore #{app}#{include_git ? ' INCLUDE_GIT' : ''}'"
+    puts "Restoring from snapshot #{opt['restore']}"
+  end
 end
 
 
 puts 
 puts ssh_cmd if debug
-git_pull = `#{ssh_cmd}`
+output = `#{ssh_cmd}`
+puts output if opt['restore'] && debug
 if $?.exitstatus != 0
     puts
 if opt['save']

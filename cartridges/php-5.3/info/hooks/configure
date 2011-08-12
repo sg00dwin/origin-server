@@ -355,6 +355,8 @@ EOF
 pear config-create "$APP_DIR"/phplib/pear/ "$APP_HOME"/.pearrc
 pear -c "$APP_HOME"/.pearrc config-set php_ini "$APP_DIR"/conf/php.ini
 
+ln -s $CART_INFO_DIR/bin/restore.sh $APP_HOME/.restore
+
 #
 # Populate repo
 #
