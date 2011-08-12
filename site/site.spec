@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.76.5
+Version:   0.76.6
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -67,6 +67,9 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Fri Aug 12 2011 Matt Hicks <mhicks@redhat.com> 0.76.6-1
+- Simplified user registration changes (mhicks@redhat.com)
+
 * Thu Aug 11 2011 Matt Hicks <mhicks@redhat.com> 0.76.5-1
 - buffer latest tweet for retweets (dmcphers@redhat.com)
 - fix twitter retweet images (dmcphers@redhat.com)

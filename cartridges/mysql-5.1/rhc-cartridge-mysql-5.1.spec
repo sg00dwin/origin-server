@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/mysql-5.1
 
 Name: rhc-cartridge-mysql-5.1
-Version: 0.10.4
+Version: 0.10.5
 Release: 1%{?dist}
 Summary: Embedded mysql support for express
 
@@ -46,6 +46,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Fri Aug 12 2011 Matt Hicks <mhicks@redhat.com> 0.10.5-1
+- correcting dump/restore scripts (mmcgrath@redhat.com)
+
 * Thu Aug 11 2011 Matt Hicks <mhicks@redhat.com> 0.10.4-1
 - storing dump in data dir (mmcgrath@redhat.com)
 

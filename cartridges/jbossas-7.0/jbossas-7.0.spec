@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.76.3
+Version:   0.76.4
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -76,6 +76,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Fri Aug 12 2011 Matt Hicks <mhicks@redhat.com> 0.76.4-1
+- remvove skip maven build keep (dmcphers@redhat.com)
+
 * Thu Aug 11 2011 Matt Hicks <mhicks@redhat.com> 0.76.3-1
 - bug729751, fix the failure return value of the ishttpup() function
   (starksm64@gmail.com)
