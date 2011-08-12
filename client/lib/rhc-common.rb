@@ -40,7 +40,7 @@ module RHC
   broker_version = "?.?.?"
   api_version = "?.?.?"
 
-  def update_server_api_v(dict)
+  def self.update_server_api_v(dict)
     if !dict['broker'].nil? && (dict['broker'] =~ /\A\d+\.\d+\.\d+\z/)
       broker_version = dict['broker']
     end

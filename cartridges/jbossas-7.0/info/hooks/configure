@@ -364,7 +364,7 @@ mkdir -p "$APP_DIR"/repo/deployments
 ln -s "$APP_DIR"/repo/deployments "$APP_JBOSS"/standalone
 
 # Create a link from the standalone/log directory to ${APP_DIR}/logs for rhc-tail-files
-ln -s "$APP_JBOSS"/standalone/log "$APP_DIR"/logs
+ln -s ${jboss_version}/standalone/log "$APP_DIR"/logs
 
 #
 # Create simple application start / stop script

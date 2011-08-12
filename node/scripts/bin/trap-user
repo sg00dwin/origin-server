@@ -75,7 +75,7 @@ if __name__ == '__main__':
 
         if name.isalnum():
             path = os.path.expanduser('~')
-            allargs = "--ignore-failed-read -chzf - -C %s/ --exclude=./.restore --exclude=./.tmp --exclude=./.ssh --exclude=./%s/%s_ctl.sh --exclude=./%s/conf.d/libra.conf --exclude=./%s/modules --exclude=./%s/run/httpd.pid ." % (path, name, name, name, name, name)
+            allargs = "--ignore-failed-read -czf - -C %s/ --exclude=./.restore --exclude=./.tmp --exclude=./.ssh --exclude=./%s/%s_ctl.sh --exclude=./%s/conf.d/libra.conf --exclude=./%s/run/httpd.pid ." % (path, name, name, name, name)
             allargs = allargs.split()
         else:
             print "Failed sanitization"
@@ -90,10 +90,13 @@ if __name__ == '__main__':
 
             path = os.path.expanduser('~')
             cmd = path + '/.restore'
-            allargs = [name] 
-            if include_git:
-                allargs.append('INCLUDE_GIT')
-
+            if os.path.exists(cmd):
+                allargs = [name]
+                if include_git:
+                    allargs.append('INCLUDE_GIT')
+            else:
+                print "Restore is not supported for this application"
+                sys.exit(86)
         else:
             print "Failed sanitization"
             sys.exit(35)
