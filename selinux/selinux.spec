@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.76.2
+Version:       0.76.3
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -38,6 +38,10 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Fri Aug 12 2011 Matt Hicks <mhicks@redhat.com> 0.76.3-1
+- Seems like jboss running lsof and this is causing avcs looking at sockets and
+  dirs within /var/run directory. (dwalsh@redhat.com)
+
 * Mon Aug 08 2011 Dan McPherson <dmcphers@redhat.com> 0.76.2-1
 - Added dontaudit rules for common commands quota, df, uptime, Also allowing
   libra_t to exec libra_tmp_t, for mmap files. This will allow users to execute
