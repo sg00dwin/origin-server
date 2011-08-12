@@ -4,14 +4,14 @@ class ProductController < ApplicationController
 
   def express
     # Handle the email confirmation flow
+    @product = 'express'
+    @try_link_points_to = try_it_destination(CloudAccess::EXPRESS)
+    
     if session[:confirm_flow]
       session.delete(:confirm_flow)
       flash[:notice] = "Almost there!  Login to complete your registration."
-      require_login
+      require_login and return
     end
-
-    @product = 'express'
-    @try_link_points_to = try_it_destination(CloudAccess::EXPRESS)
   end
   
   def flex_redirect
@@ -27,21 +27,18 @@ class ProductController < ApplicationController
   end
   
   def flex
+    @product = 'flex'
+    @try_link_points_to = try_it_destination(CloudAccess::FLEX)
+    
     # Handle the email confirmation flow
     if session[:confirm_flow]
       session.delete(:confirm_flow)
       flash[:notice] = "Almost there!  Login to complete your registration."
-      require_login
-    end
-
-    # Handles flex redirecting back to /app/flex
-    if workflow_redirect
+      require_login and return
+    elsif workflow_redirect
+      # Handles flex redirecting back to /app/flex
       return
     end
-    
-    @product = 'flex'
-    @try_link_points_to = try_it_destination(CloudAccess::FLEX)
-    return
   end
 
   def power
