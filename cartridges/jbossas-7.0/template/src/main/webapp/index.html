@@ -288,7 +288,22 @@ jrcq3gYOyVkvcjjwUWA53iD6KaGAhISEvC/xg+QaYFQiHivqXVAh7w7hLxKGhIS8XzkHeCoUj/cv
 
 
 <h1>Sample Applications</h1>
-<p>To get started, modify the default war, or try downloading one of the following sample pre-built applications:
+<p>To get started you can either modify the default war, download one of the source based samples, or deploy one of the sample pre-built applications:
+  <h2>Source-Based Samples</h2>
+  <ul>
+    <li><a href="https://github.com/openshift/seambooking-example">https://github.com/openshift/seambooking-example</a> a SEAM booking example</li>
+    <li><a href="https://github.com/openshift/tweetstream-example">https://github.com/openshift/tweetstream-example</a> a TweetStream example</li>
+  </ul>
+  
+  <h4>Example usage:</h4>
+  <pre>
+  cd myfirstapp 
+  git remote add upstream -m master 
+  git://github.com/openshift/seambooking-example.git 
+  git pull -s recursive -X theirs upstream master
+  </pre>
+  
+  <h2>Pre-Built Samples</h2>
 	<ul>
 		<li><a href="samples/weld-login.war">weld-login.war</a> a simple login example app</li>
 		<li><a href="samples/weld-numberguess.war">weld-numberguess.war</a> a simple number guessing game app</li>
