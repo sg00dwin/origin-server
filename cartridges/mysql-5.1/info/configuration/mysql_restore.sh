@@ -11,4 +11,7 @@ then
         echo 1>&2
     fi
     /bin/rm -rf $OPENSHIFT_DATA_DIR/mysql_dump_snapshot.gz
+else
+    echo "Mysql restore attempted but no dump found!" 1>&2
+    echo "$OPENSHIFT_DATA_DIR/mysql_dump_snapshot.gz does not exist" 1>&2
 fi

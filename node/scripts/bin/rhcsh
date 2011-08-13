@@ -1,0 +1,63 @@
+#!/bin/bash
+ 
+#. /etc/bashrc
+
+source /etc/init.d/functions 2> /dev/null
+
+# Import Environment Variables
+for f in ~/.env/*
+do
+    . $f
+done
+
+function welcome {
+    cat <<EOF
+
+    Welcome to OpenShift shell
+
+    This shell will assist you in managing openshift applications.
+
+    !!! IMPORTANT !!! IMPORTANT !!! IMPORTANT !!!
+    Shell access is quite powerful and it is possible for you to
+    accidentally damage your application.  Procede with care!
+    If worse comes to worse, destroy your application with rhc-ctl-app
+    and recreate it
+    !!! IMPORTANT !!! IMPORTANT !!! IMPORTANT !!!
+
+    type "help" for more info.
+
+EOF
+}
+
+function ctl_all {
+    for cmd in `awk 'BEGIN { for (a in ENVIRON) if (a ~ /_CTL_SCRIPT$/) print ENVIRON[a] }'`
+    do
+        echo "+ $cmd $@"
+        $cmd $@
+    done
+}
+
+function help {
+    cat <<EOF
+Help menu: The following commands are available to help control your openshift
+application and environment.
+
+ctl_app         control your application (start, stop, restart, etc)
+ctl_all         control application and deps like mysql in one command
+tail_all        tail all log files
+quota           list free space
+export          list available environment variables
+rm              remove files / directories
+ls              list files / directories
+ps              list running applications
+kill            kill running applications
+
+EOF
+}
+
+alias ctl_app=$OPENSHIFT_APP_CTL_SCRIPT
+alias tail_all="/usr/bin/tail -f $OPENSHIFT_APP_DIR/logs/*"
+
+export PS1="[$OPENSHIFT_APP_DNS \W]\> "
+export TMOUT=300
+welcome

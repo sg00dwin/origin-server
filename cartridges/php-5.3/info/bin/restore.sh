@@ -3,6 +3,12 @@
 application="$1"
 include_git="$2"
 
+# Import Environment Variables
+for f in ~/.env/*
+do
+    . $f
+done
+
 ~/git/${application}.git/hooks/pre-receive 1>&2
 
 if [ "$include_git" = "INCLUDE_GIT" ]
@@ -24,3 +30,10 @@ else
 fi
 
 GIT_DIR=~/git/${application}.git/ ~/git/${application}.git/hooks/post-receive 1>&2
+
+awk 'BEGIN { for (a in ENVIRON) if (a ~ /_RESTORE$/) print ENVIRON[a] }' 1>&2
+for cmd in `awk 'BEGIN { for (a in ENVIRON) if (a ~ /_RESTORE$/) print ENVIRON[a] }'`
+do
+    echo "Running extra restore: $cmd" 1>&2
+    $cmd
+done
