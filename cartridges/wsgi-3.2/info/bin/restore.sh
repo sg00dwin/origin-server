@@ -1,23 +1,26 @@
 #!/bin/bash
-set -e
 
 application="$1"
 include_git="$2"
-  
-GIT_DIR=~/git/${application}.git/
-  
+
+~/git/${application}.git/hooks/pre-receive 1>&2
+
 if [ "$include_git" = "INCLUDE_GIT" ]
 then
-  GIT_DIR="$GIT_DIR" $GIT_DIR/hooks/pre-receive
+  echo "Removing old git repo - ~/git/${application}.git/" 1>&2
   /bin/rm -rf ~/git/${application}.git/[^h]*/*
 fi
 
+echo "Removing old data dir - ~/${application}/data/*" 1>&2
 /bin/rm -rf ~/${application}/data/* ~/${application}/data/.[^.]*
+
 
 if [ "$include_git" = "INCLUDE_GIT" ]
 then
-  /bin/tar --overwrite -xvmz ./${application}/data ./git --exclude=git/${application}.git/hooks
-  GIT_DIR="$GIT_DIR" $GIT_DIR/hooks/post-receive
+  echo "Restoring ~/git/${application}.git and ~/${application}/data" 1>&2
+  /bin/tar --overwrite -xvmz ./${application}/data ./git --exclude=git/${application}.git/hooks 1>&2
 else
-  /bin/tar --overwrite -xvmz ./${application}/data
+  /bin/tar --overwrite -xvmz ./${application}/data 1>&2
 fi
+
+GIT_DIR=~/git/${application}.git/ ~/git/${application}.git/hooks/post-receive 1>&2
