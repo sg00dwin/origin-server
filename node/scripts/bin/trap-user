@@ -13,7 +13,7 @@ commands = {
     "snapshot": "/bin/tar",
     "restore": "~/.restore",
     "tail": "/usr/bin/tail",
-#    "rhcsh": "/usr/local/bin/trap/trap_bash"
+    "rhcsh": "/bin/bash"
 }
 
 #
@@ -102,7 +102,7 @@ if __name__ == '__main__':
             sys.exit(35)
     elif basecmd in ('rhcsh'):
         os.environ["PS1"] = "rhcsh> "
-        allargs = ['-r', '-i']
+        allargs = ['--init-file', '/usr/local/bin/rhcsh', '-i']
     elif basecmd in ('tail'):
         files = []
         
