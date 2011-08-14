@@ -140,6 +140,7 @@ fi
 %attr(0750,-,-) %{_bindir}/rhc-accept-node
 %attr(0750,-,-) %{_bindir}/rhc-node-account
 %attr(0750,-,-) %{_bindir}/rhc-node-application
+%attr(0755,-,-) %{_bindir}/rhcsh
 %attr(0640,-,-) %config(noreplace) %{_sysconfdir}/libra/node.conf
 %attr(0640,-,-) %config(noreplace) %{_sysconfdir}/libra/resource_limits.conf
 %attr(0750,-,-) %config(noreplace) %{_sysconfdir}/cron.daily/libra_tmpwatch.sh
