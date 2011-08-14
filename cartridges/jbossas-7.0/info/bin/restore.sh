@@ -24,16 +24,15 @@ echo "Removing old data dir - ~/${application}/data/*" 1>&2
 if [ "$include_git" = "INCLUDE_GIT" ]
 then
   echo "Restoring ~/git/${application}.git and ~/${application}/data" 1>&2
-  /bin/tar --overwrite -xvmz ./${application}/data ./git --exclude=git/${application}.git/hooks 1>&2
+  /bin/tar --overwrite -xmz ./${application}/data ./git --exclude=git/${application}.git/hooks 1>&2
 else
-  /bin/tar --overwrite -xvmz ./${application}/data 1>&2
+  /bin/tar --overwrite -xmz ./${application}/data 1>&2
 fi
 
 GIT_DIR=~/git/${application}.git/ ~/git/${application}.git/hooks/post-receive 1>&2
 
-awk 'BEGIN { for (a in ENVIRON) if (a ~ /_RESTORE$/) print ENVIRON[a] }' 1>&2
 for cmd in `awk 'BEGIN { for (a in ENVIRON) if (a ~ /_RESTORE$/) print ENVIRON[a] }'`
 do
-    echo "Running extra restore: $cmd" 1>&2
+    echo "Running extra restore: $(/bin/basename $cmd)" 1>&2
     $cmd
 done
