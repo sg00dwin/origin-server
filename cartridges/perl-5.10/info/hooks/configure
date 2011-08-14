@@ -349,6 +349,7 @@ esac
 EOF
 
 ln -s $CART_INFO_DIR/bin/restore.sh $APP_HOME/.restore
+ln -s $CART_INFO_DIR/bin/snapshot.sh $APP_HOME/.snapshot
 
 #
 # Populate repo
