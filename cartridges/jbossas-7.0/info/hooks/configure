@@ -419,12 +419,12 @@ function ishttpup() {
     do
         if /usr/sbin/lsof -P -n -i "@${IP}:8080" | grep "(LISTEN)" > /dev/null; then
             echo "Found ${IP}:8080 listening port"
-            return 1
-       fi
-       let count=\${count}+1
-       sleep 2
+            return 0
+        fi
+        let count=\${count}+1
+        sleep 2
     done
-    return 0
+    return 1
 }
 
 }# Validate the runcon
@@ -458,7 +458,7 @@ case "\$1" in
             PROCESS_ID=\$!
             echo \$PROCESS_ID > \$JBOSS_PID_FILE
             if ! ishttpup; then
-                echo "Timedout waiting for http listening port"
+                echo "Timed out waiting for http listening port"
                 exit 1
             fi
         fi
