@@ -8,7 +8,7 @@ include Libra
 
 class BrokerController < ApplicationController
   BROKER_VERSION    = "1.1.1"
-  BROKER_CAPABILITY = %w(namespace rhlogin ssh app_uuid dubug alter cartridge cart_type action app_name api)
+  BROKER_CAPABILITY = %w(namespace rhlogin ssh app_uuid debug alter cartridge cart_type action app_name api)
 
 
   layout nil
