@@ -277,7 +277,7 @@ class BrokerController < ApplicationController
             user.apps.each do |appname, app|
               server = Libra::Server.new app['server_identity']
               cfgstring = "-c #{app['uuid']} -e #{user.rhlogin} -s #{user.ssh} -a"
-              result = server.execute_direct('li-controller-0.1', 'configure', cfgstring)
+              result = server.execute_direct('li-controller', 'configure', cfgstring)
               server.handle_controller_result(result)
             end
           else

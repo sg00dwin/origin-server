@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.76.3
+Version:       0.76.4
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -132,9 +132,9 @@ fi
 %attr(0750,-,-) %{_bindir}/ec2-prep.sh
 %attr(0750,-,-) %{_bindir}/remount-secure.sh
 %dir %attr(0751,root,root) %{_localstatedir}/lib/libra
-%dir %attr(0750,root,root) %{_libexecdir}/li/cartridges/li-controller-0.1/
-%{_libexecdir}/li/cartridges/li-controller-0.1/README
-%{_libexecdir}/li/cartridges/li-controller-0.1/info
+%dir %attr(0750,root,root) %{_libexecdir}/li/cartridges/li-controller/
+%{_libexecdir}/li/cartridges/li-controller/README
+%{_libexecdir}/li/cartridges/li-controller/info
 %dir %attr(0750,root,root) %{_libexecdir}/li/cartridges/abstract-httpd/
 %{_libexecdir}/li/cartridges/abstract-httpd/info
 %attr(0750,-,-) %{_bindir}/rhc-accept-node
@@ -148,6 +148,14 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Sun Aug 14 2011 Dan McPherson <dmcphers@redhat.com> 0.76.4-1
+- adding rhcsh (mmcgrath@redhat.com)
+- Added new scripted snapshot (mmcgrath@redhat.com)
+- Added rhcsh, as well as _RESTORE functionality (mmcgrath@redhat.com)
+- rhcshell bits (mmcgrath@redhat.com)
+- restore error handling (dmcphers@redhat.com)
+- functional restore (dmcphers@redhat.com)
+
 * Tue Aug 09 2011 Dan McPherson <dmcphers@redhat.com> 0.76.3-1
 - get restore to a basic functional level (dmcphers@redhat.com)
 

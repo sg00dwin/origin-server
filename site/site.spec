@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.76.6
+Version:   0.76.7
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -67,6 +67,12 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Sun Aug 14 2011 Dan McPherson <dmcphers@redhat.com> 0.76.7-1
+- fix flex registration to take you to flex after loggin in
+  (dmcphers@redhat.com)
+- set twitter image size (dmcphers@redhat.com)
+- Some routing improvements (mhicks@redhat.com)
+
 * Fri Aug 12 2011 Matt Hicks <mhicks@redhat.com> 0.76.6-1
 - Simplified user registration changes (mhicks@redhat.com)
 

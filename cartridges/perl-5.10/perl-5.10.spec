@@ -2,7 +2,7 @@
 
 Summary:   Provides mod_perl support
 Name:      rhc-cartridge-perl-5.10
-Version:   0.7.2
+Version:   0.7.3
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -73,6 +73,16 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Sun Aug 14 2011 Dan McPherson <dmcphers@redhat.com> 0.7.3-1
+- Added new scripted snapshot (mmcgrath@redhat.com)
+- Adding custom snapshot (mmcgrath@redhat.com)
+- reducing output for restore (mmcgrath@redhat.com)
+- Added rhcsh, as well as _RESTORE functionality (mmcgrath@redhat.com)
+- Adding additional output, also running pre and post hooks of git
+  (mmcgrath@redhat.com)
+- add stop deploy start to restore (dmcphers@redhat.com)
+- functional restore (dmcphers@redhat.com)
+
 * Fri Aug 12 2011 Matt Hicks <mhicks@redhat.com> 0.7.2-1
 - silence file-not-found from lsof when killing processes on non-existant logs
   (markllama@redhat.com)

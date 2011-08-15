@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.76.5
+Version:   0.76.6
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -62,6 +62,10 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Sun Aug 14 2011 Dan McPherson <dmcphers@redhat.com> 0.76.6-1
+- Use \d regex patter for clarity pull broker and server-side api from any/all
+  responses if possible protect against parse errors (jimjag@redhat.com)
+
 * Thu Aug 11 2011 Matt Hicks <mhicks@redhat.com> 0.76.5-1
 - tuck away client API Allow for 1.1.11 (eg) (jimjag@redhat.com)
 

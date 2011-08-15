@@ -2,7 +2,7 @@
 
 Summary:   Provides php-5.3 support
 Name:      rhc-cartridge-php-5.3
-Version:   0.76.1
+Version:   0.76.2
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -81,6 +81,16 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Sun Aug 14 2011 Dan McPherson <dmcphers@redhat.com> 0.76.2-1
+- Added new scripted snapshot (mmcgrath@redhat.com)
+- Adding custom snapshot (mmcgrath@redhat.com)
+- reducing output for restore (mmcgrath@redhat.com)
+- Added rhcsh, as well as _RESTORE functionality (mmcgrath@redhat.com)
+- Adding additional output, also running pre and post hooks of git
+  (mmcgrath@redhat.com)
+- add stop deploy start to restore (dmcphers@redhat.com)
+- functional restore (dmcphers@redhat.com)
+
 * Fri Aug 05 2011 Dan McPherson <dmcphers@redhat.com> 0.76.1-1
 - bump spec numbers (dmcphers@redhat.com)
 

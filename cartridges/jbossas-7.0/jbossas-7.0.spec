@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.76.4
+Version:   0.76.5
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -77,6 +77,19 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Sun Aug 14 2011 Dan McPherson <dmcphers@redhat.com> 0.76.5-1
+- get jboss working again (dmcphers@redhat.com)
+- Added new scripted snapshot (mmcgrath@redhat.com)
+- Adding custom snapshot (mmcgrath@redhat.com)
+- reducing output for restore (mmcgrath@redhat.com)
+- Added rhcsh, as well as _RESTORE functionality (mmcgrath@redhat.com)
+- Adding additional output, also running pre and post hooks of git
+  (mmcgrath@redhat.com)
+- add source based samples to jboss index page (dmcphers@redhat.com)
+- restore error handling (dmcphers@redhat.com)
+- add stop deploy start to restore (dmcphers@redhat.com)
+- functional restore (dmcphers@redhat.com)
+
 * Fri Aug 12 2011 Matt Hicks <mhicks@redhat.com> 0.76.4-1
 - remvove skip maven build keep (dmcphers@redhat.com)
 
