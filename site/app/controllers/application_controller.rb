@@ -26,6 +26,10 @@ class ApplicationController < ActionController::Base
     return session[:login] ||
           (session[:user] && (params[:controller] == 'terms' || params[:controller] == 'legal'))
   end
+
+  def logged_in_with_terms?
+    return session[:login]
+  end
   
   def workflow_redirect    
     wf = nil
@@ -83,7 +87,7 @@ class ApplicationController < ActionController::Base
     # automatically for the user
     access_type = CloudAccess::EXPRESS
     if !user.has_access?(access_type) and !user.has_requested?(access_type)
-      Rails.logger.info "User #{user.rhlogin} access without detected.  Requesting access..."
+      Rails.logger.info "User #{user.rhlogin} is missing access.  Requesting access..."
       user.request_access(access_type)
       if user.errors.length > 0
         Rails.logger.error "Auto-request access for user #{user.rhlogin} failed"
@@ -137,8 +141,8 @@ class ApplicationController < ActionController::Base
       else
         Rails.logger.debug "Session ticket matches current ticket"
 
-        # Handle access requests
-        request_access(session[:user])
+        # Handle access requests - if terms have been accepted
+        request_access(session[:user]) if logged_in_with_terms?
       end
     else
       Rails.logger.debug "User does not have a authenticated session"
@@ -150,6 +154,7 @@ class ApplicationController < ActionController::Base
         user.establish_terms
         session[:ticket] = rh_sso
         if user.terms.length > 0
+          Rails.logger.debug "User #{user} has terms to accept."
           redirect_to new_terms_path and return
         else
           session[:login] = user.rhlogin
