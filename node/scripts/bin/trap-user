@@ -10,8 +10,8 @@ import base64
 commands = {
     "git-receive-pack": "/usr/bin/git-receive-pack",
     "git-upload-pack": "/usr/bin/git-upload-pack",
-    "snapshot": "/bin/tar",
-    "restore": "~/.restore",
+    "snapshot": "snapshot.sh",
+    "restore": "restore.sh",
     "tail": "/usr/bin/tail",
     "rhcsh": "/bin/bash"
 }
@@ -84,10 +84,7 @@ if __name__ == '__main__':
     if basecmd in ('snapshot'):
         # This gets called with "snapshot $APP_NAME"
         name = allargs[1]
-        if name.isalnum():
-            path = os.path.expanduser('~')
-            cmd = path + '/.snapshot'
-        else:
+        if not name.isalnum():
             print "Failed sanitization"
             sys.exit(35)
     elif basecmd in ('restore'):
@@ -98,8 +95,6 @@ if __name__ == '__main__':
             if len(allargs) > 2 and allargs[2] == 'INCLUDE_GIT':
                 include_git = True
 
-            path = os.path.expanduser('~')
-            cmd = path + '/.restore'
             allargs = [name] 
             if include_git:
                 allargs.append('INCLUDE_GIT')

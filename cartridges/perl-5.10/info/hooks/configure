@@ -53,8 +53,8 @@ then
 fi
 
 
-
-CART_INFO_DIR=/usr/libexec/li/cartridges/perl-5.10/info
+CART_DIR=/usr/libexec/li/cartridges
+CART_INFO_DIR=$CART_DIR/perl-5.10/info
 CART_CONF_DIR=$CART_INFO_DIR/configuration/etc/conf
 
 function print_help {
@@ -348,9 +348,6 @@ case "\$1" in
 esac
 EOF
 
-ln -s $CART_INFO_DIR/bin/restore.sh $APP_HOME/.restore
-ln -s $CART_INFO_DIR/bin/snapshot.sh $APP_HOME/.snapshot
-
 #
 # Populate repo
 #
@@ -377,6 +374,7 @@ echo "export OPENSHIFT_RUN_DIR='$APP_HOME/run/'" > $APP_HOME/.env/OPENSHIFT_RUN_
 echo "export OPENSHIFT_APP_NAME='$application'" > $APP_HOME/.env/OPENSHIFT_APP_NAME
 echo "export OPENSHIFT_APP_CTL_SCRIPT='$APP_DIR/${application}_ctl.sh'" > $APP_HOME/.env/OPENSHIFT_APP_CTL_SCRIPT
 echo "export OPENSHIFT_APP_DNS='${application}-${namespace}.${libra_domain}'" > $APP_HOME/.env/OPENSHIFT_APP_DNS
+echo "export PATH=$PATH:$CART_INFO_DIR/bin/:$CART_DIR/li-controller/info/bin" > $APP_HOME/.env/PATH
 
 #
 # Start the server
