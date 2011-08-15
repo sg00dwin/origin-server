@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.76.4
+Version:       0.76.5
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -132,10 +132,15 @@ fi
 %attr(0750,-,-) %{_bindir}/ec2-prep.sh
 %attr(0750,-,-) %{_bindir}/remount-secure.sh
 %dir %attr(0751,root,root) %{_localstatedir}/lib/libra
-%dir %attr(0750,root,root) %{_libexecdir}/li/cartridges/li-controller/
+%dir %attr(0755,root,root) %{_libexecdir}/li/cartridges/li-controller/
+%attr(0750,-,-) %{_libexecdir}/li/cartridges/li-controller/info/hooks/
+%attr(0750,-,-) %{_libexecdir}/li/cartridges/li-controller/info/build/
+%attr(0640,-,-) %{_libexecdir}/li/cartridges/li-controller/info/data/
+%attr(0755,-,-) %{_libexecdir}/li/cartridges/li-controller/info/bin/
 %{_libexecdir}/li/cartridges/li-controller/README
 %{_libexecdir}/li/cartridges/li-controller/info
-%dir %attr(0750,root,root) %{_libexecdir}/li/cartridges/abstract-httpd/
+%dir %attr(0755,root,root) %{_libexecdir}/li/cartridges/abstract-httpd/
+%attr(0750,-,-) %{_libexecdir}/li/cartridges/abstract-httpd/info/hooks/
 %{_libexecdir}/li/cartridges/abstract-httpd/info
 %attr(0750,-,-) %{_bindir}/rhc-accept-node
 %attr(0750,-,-) %{_bindir}/rhc-node-account
@@ -148,6 +153,9 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Mon Aug 15 2011 Matt Hicks <mhicks@redhat.com> 0.76.5-1
+- rename li-controller-0.1 to li-controller (dmcphers@redhat.com)
+
 * Sun Aug 14 2011 Dan McPherson <dmcphers@redhat.com> 0.76.4-1
 - adding rhcsh (mmcgrath@redhat.com)
 - Added new scripted snapshot (mmcgrath@redhat.com)

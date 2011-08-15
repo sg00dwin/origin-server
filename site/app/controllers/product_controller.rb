@@ -5,7 +5,6 @@ class ProductController < ApplicationController
   def express
     # Handle the email confirmation flow
     @product = 'express'
-    @try_link_points_to = try_it_destination(CloudAccess::EXPRESS)
     
     if session[:confirm_flow]
       session.delete(:confirm_flow)
@@ -28,7 +27,6 @@ class ProductController < ApplicationController
   
   def flex
     @product = 'flex'
-    @try_link_points_to = try_it_destination(CloudAccess::FLEX)
     
     # Handle the email confirmation flow
     if session[:confirm_flow]

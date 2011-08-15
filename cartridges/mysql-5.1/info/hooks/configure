@@ -51,7 +51,8 @@ then
     . /etc/libra/resource_limits.conf
 fi
 
-CART_INFO_DIR=/usr/libexec/li/cartridges/embedded/mysql-5.1/info
+CART_DIR=/usr/libexec/li/cartridges
+CART_INFO_DIR=$CART_DIR/embedded/mysql-5.1/info
 CART_CONF_DIR=$CART_INFO_DIR/configuration/etc
 
 function print_help {

@@ -24,9 +24,9 @@ echo "Removing old data dir - ~/${application}/data/*" 1>&2
 if [ "$include_git" = "INCLUDE_GIT" ]
 then
   echo "Restoring ~/git/${application}.git and ~/${application}/data" 1>&2
-  /bin/tar --overwrite -xmz ./${application}/data ./git --exclude=git/${application}.git/hooks 1>&2
+  /bin/tar --overwrite -xmz ./${application}/data ./git ./.m2 --exclude=git/${application}.git/hooks 1>&2
 else
-  /bin/tar --overwrite -xmz ./${application}/data 1>&2
+  /bin/tar --overwrite -xmz ./${application}/data ./.m2 1>&2
 fi
 
 GIT_DIR=~/git/${application}.git/ ~/git/${application}.git/hooks/post-receive 1>&2

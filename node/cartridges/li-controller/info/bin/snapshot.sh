@@ -18,13 +18,11 @@ done
 
 # Run tar, saving to stdout
 echo "Creating and sending tar.gz" 1>&2
-/bin/tar --ignore-failed-read -chzf - -C ~ \
-        --exclude=./.restore \
+/bin/tar --ignore-failed-read -czf - -C ~ \
         --exclude=./.tmp \
         --exclude=./.ssh \
         --exclude=./$OPENSHIFT_APP_NAME/%s_ctl.sh \
         --exclude=./$OPENSHIFT_APP_NAME/conf.d/libra.conf \
-        --exclude=./$OPENSHIFT_APP_NAME/modules \
         --exclude=./$OPENSHIFT_APP_NAME/run/httpd.pid .
 
 # post-receive

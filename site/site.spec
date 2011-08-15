@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.76.7
+Version:   0.76.8
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -67,6 +67,13 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Mon Aug 15 2011 Matt Hicks <mhicks@redhat.com> 0.76.8-1
+- Test case to verify no terms short-circuit (mhicks@redhat.com)
+- Cleanup of old 'try it' logic (mhicks@redhat.com)
+- Removing original files (mhicks@redhat.com)
+- Only grant access once terms are accepted (mhicks@redhat.com)
+- undo accidental commit of env (dmcphers@redhat.com)
+
 * Sun Aug 14 2011 Dan McPherson <dmcphers@redhat.com> 0.76.7-1
 - fix flex registration to take you to flex after loggin in
   (dmcphers@redhat.com)
