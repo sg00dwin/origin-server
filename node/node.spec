@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.76.3
+Version:       0.76.4
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -148,6 +148,14 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Sun Aug 14 2011 Dan McPherson <dmcphers@redhat.com> 0.76.4-1
+- adding rhcsh (mmcgrath@redhat.com)
+- Added new scripted snapshot (mmcgrath@redhat.com)
+- Added rhcsh, as well as _RESTORE functionality (mmcgrath@redhat.com)
+- rhcshell bits (mmcgrath@redhat.com)
+- restore error handling (dmcphers@redhat.com)
+- functional restore (dmcphers@redhat.com)
+
 * Tue Aug 09 2011 Dan McPherson <dmcphers@redhat.com> 0.76.3-1
 - get restore to a basic functional level (dmcphers@redhat.com)
 
