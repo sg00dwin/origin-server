@@ -227,8 +227,8 @@ echo "export OPENSHIFT_DB_MYSQL_51_DUMP='$CART_INFO_DIR/configuration/mysql_dump
 echo "export OPENSHIFT_DB_MYSQL_51_DUMP_REMOVE='rm -rf /tmp/mysql_dump_snapshot.gz'" > $APP_HOME/.env/OPENSHIFT_DB_MYSQL_51_DUMP_REMOVE
 echo "export OPENSHIFT_DB_MYSQL_51_RESTORE='$CART_INFO_DIR/configuration/mysql_restore.sh'" > $APP_HOME/.env/OPENSHIFT_DB_MYSQL_51_RESTORE
 
-# Setup user
-echo "create database ${application};" | mysql -u root -S "${MYSQL_DIR}/socket/mysql.sock" > /dev/null || error "Failed to create ${application}" 188
+## Setup user
+#echo "create database ${application};" | mysql -u root -S "${MYSQL_DIR}/socket/mysql.sock" > /dev/null || error "Failed to create ${application}" 188
 
 echo "                                  
 delete from user;
