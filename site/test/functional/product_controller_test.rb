@@ -26,4 +26,5 @@ class ProductControllerTest < ActionController::TestCase
     assert_not_nil flash[:notice]
     assert_nil session[:confirm_flow]
   end
+
 end
