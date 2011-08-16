@@ -363,7 +363,7 @@ chcon -t libra_var_lib_t -l s0:$c_val -R "$APP_DIR"
 #
 # Create environment variables
 #
-echo "export OPENSHIFT_APP_DIR='$APP_DIR'" > $APP_HOME/.env/OPENSHIFT_APP_DIR
+echo "export OPENSHIFT_APP_DIR='$APP_DIR/'" > $APP_HOME/.env/OPENSHIFT_APP_DIR
 echo "export OPENSHIFT_REPO_DIR='$APP_DIR/repo/'" > $APP_HOME/.env/OPENSHIFT_REPO_DIR
 echo "export OPENSHIFT_INTERNAL_IP='$IP'" > $APP_HOME/.env/OPENSHIFT_INTERNAL_IP
 echo "export OPENSHIFT_INTERNAL_PORT='8080'" > $APP_HOME/.env/OPENSHIFT_INTERNAL_PORT

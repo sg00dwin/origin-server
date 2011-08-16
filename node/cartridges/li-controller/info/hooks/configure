@@ -226,7 +226,7 @@ function create_user_home_skel {
     ${NOOP} chmod 0700 ${USERHOME}/.env
     ${NOOP} chown "$USERNAME" "$USERHOME/.env"
     ${NOOP} echo "export OPENSHIFT_APP_UUID='${USERNAME}'" > ${USERHOME}/.env/OPENSHIFT_APP_UUID
-    ${NOOP} echo "export OPENSHIFT_HOMEDIR='${USERHOME}'" > ${USERHOME}/.env/OPENSHIFT_HOMEDIR
+    ${NOOP} echo "export OPENSHIFT_HOMEDIR='${USERHOME}/'" > ${USERHOME}/.env/OPENSHIFT_HOMEDIR
 }
 
 #
