@@ -202,21 +202,7 @@ __EOF__
     echo "jbossas 7.0 application '$application'" > $GIT_DIR/description
 
     cat <<__EOF__ > $GIT_DIR/hooks/pre-receive
-# Stop the app
-stop_app.sh
-__EOF__
-
-
-    cat <<__EOF__ > $GIT_DIR/hooks/post-receive
-
-SKIP_MAVEN_BUILD=false
-if git show master:.openshift/markers/skip_maven_build > /dev/null 2>&1
-then
-  SKIP_MAVEN_BUILD=true
-fi
-
-rm -rf $APP_DIR/repo/* $APP_DIR/repo/.[^.]*
-git archive --format=tar HEAD | (cd $APP_DIR/repo && tar --warning=no-timestamp -xf -)
+#!/bin/bash
 
 # Import Environment Variables
 for f in ~/.env/*
@@ -224,37 +210,20 @@ do
     . \$f
 done
 
-if [ -f '$APP_DIR/repo/.openshift/config/standalone.xml' ]
-then
-  echo "Found .openshift/config/standalone.xml... copying to "$APP_JBOSS"/standalone/configuration/"
-  cp $APP_DIR/repo/.openshift/config/standalone.xml "$APP_JBOSS"/standalone/configuration/
-fi
+pre_receive_app.sh
+__EOF__
 
-if [ -f '$APP_DIR/repo/pom.xml' ] && ! \$SKIP_MAVEN_BUILD
-then
-  echo "Found pom.xml... attempting to build with 'mvn clean package -Popenshift -DskipTests'" 
-  export JAVA_HOME=/etc/alternatives/java_sdk_1.6.0
-  export M2_HOME=/etc/alternatives/maven-3.0
-  export M2=\$M2_HOME/bin
-  export MAVEN_OPTS="-Xmx208m"
-  export PATH=$JAVA_HOME/bin:\$M2:\$PATH
-  pushd ~/${application}/repo > /dev/null
-  mvn --version
-  mvn clean package -Popenshift -DskipTests
-  popd
-fi
 
-# Run build
-if [ -x ~/${application}/repo/.openshift/action_hooks/build ]
-then
-    echo "running .openshift/action_hooks/build"
-    ~/${application}/repo/.openshift/action_hooks/build
-fi
+    cat <<__EOF__ > $GIT_DIR/hooks/post-receive
+#!/bin/bash
 
-# Start the app
-start_app.sh
+# Import Environment Variables
+for f in ~/.env/*
+do
+    . \$f
+done
 
-curl -s -O /dev/null -d "json_data=\"{\"app_uuid\":\"${uuid}\",\"action\":\"push\"}\"" https://${libra_server}/broker/nurture >/dev/null 2>&1 &
+post_receive_app.sh ${libra_server}
 __EOF__
 
     chmod 0755 $GIT_DIR/hooks/post-receive $GIT_DIR/hooks/pre-receive

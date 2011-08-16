@@ -148,13 +148,7 @@ function create_repo {
     echo "wsgi 3.2 application '$application'" > $GIT_DIR/description
 
     cat <<EOF > $GIT_DIR/hooks/pre-receive
-# Stop the app
-stop_app.sh
-EOF
-
-    cat <<EOF > $GIT_DIR/hooks/post-receive
-rm -rf ~/${application}/repo/*
-git archive --format=tar HEAD | (cd ~/${application}/repo && tar --warning=no-timestamp -xf -)
+#!/bin/bash
 
 # Import Environment Variables
 for f in ~/.env/*
@@ -162,26 +156,19 @@ do
     . \$f
 done
 
-if [ -f ~/${application}/repo/setup.py ]
-then
-    echo "setup.py found.  Setting up virtualenv"
-    cd ~/${application}/virtenv
-    virtualenv ~/${application}/virtenv
-    . ./bin/activate
-    python ~/${application}/repo/setup.py develop
-fi
+pre_receive_app.sh
+EOF
 
-# Run build
-if [ -x ~/${application}/repo/.openshift/action_hooks/build ]
-then
-    echo "running .openshift/action_hooks/build"
-    ~/${application}/repo/.openshift/action_hooks/build
-fi
+    cat <<EOF > $GIT_DIR/hooks/post-receive
+#!/bin/bash
 
-# Start the app
-start_app.sh
+# Import Environment Variables
+for f in ~/.env/*
+do
+    . \$f
+done
 
-curl -s -O /dev/null -d "json_data=\"{\"app_uuid\":\"${uuid}\",\"action\":\"push\"}\"" https://${libra_server}/broker/nurture >/dev/null 2>&1 &
+post_receive_app.sh ${libra_server}
 EOF
 
     chmod 0755 $GIT_DIR/hooks/post-receive $GIT_DIR/hooks/pre-receive

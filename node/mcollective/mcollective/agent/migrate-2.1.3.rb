@@ -46,10 +46,52 @@ module LibraMigration
         echo_output, echo_exitcode = Util.execute_script(env_echo)
         output += echo_output
       end
+      
       if File.exists?("#{app_home}/.env/OPENSHIFT_DB_USERNAME")
-        FileUtils.chown "#{uuid}", 'root', "#{app_home}/.env/OPENSHIFT_DB_USERNAME"
-        FileUtils.chown "#{uuid}", 'root', "#{app_home}/.env/OPENSHIFT_DB_PASSWORD"
+        FileUtils.chown(uuid, "root", "#{app_home}/.env/OPENSHIFT_DB_USERNAME")
+        FileUtils.chown(uuid, "root", "#{app_home}/.env/OPENSHIFT_DB_PASSWORD")
       end
+      
+      post_receive = "#{app_home}/git/#{app_name}.git/hooks/post-receive"
+      output += "Migrating post-receive: #{post_receive}\n"
+      file = File.open(httpd_conf, 'a')
+      begin
+        file.puts <<EOF
+#!/bin/bash
+
+# Import Environment Variables
+for f in ~/.env/*
+do
+    . $f
+done
+
+post_receive_app.sh #{libra_server}
+EOF
+
+      ensure
+        file.close
+      end
+      
+      pre_receive = "#{app_home}/git/#{app_name}.git/hooks/pre-receive"
+      output += "Migrating pre-receive: #{pre_receive}\n"
+      file = File.open(httpd_conf, 'a')
+      begin
+        file.puts <<EOF
+#!/bin/bash
+
+# Import Environment Variables
+for f in ~/.env/*
+do
+    . $f
+done
+
+pre_receive_app.sh
+EOF
+    
+      ensure
+        file.close
+      end
+      
       
     else
       exitcode = 127
