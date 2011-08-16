@@ -8,6 +8,7 @@ require 'aws'
 require 'json'
 require 'date'
 require 'pp'
+require 'uri'
 
 class Apptegic < Thor
   include Thor::Actions
@@ -70,41 +71,32 @@ class Apptegic < Thor
             user_data = JSON.parse(s3.get(bucket, user_path)[:object])
             user_uuid = user_data["uuid"]
 
-            apptegic_url = "https://redhat.apptegic.com/httpreceiver"
             apptegic_key = "redhat"
-            puts "curl -s -O /dev/null '#{apptegic_url}' \
-              --data-urlencode '_ak=#{apptegic_key}' \
-              --data-urlencode '_at=#{apptegic_secret}' \
-              --data-urlencode '_ds=#{apptegic_dataset}' \
-              --data-urlencode '_time=#{app_creation}' \
-              --data-urlencode 'timestamp=#{app_creation}' \
-              --data-urlencode 'accountId=#{rhlogin}' \
-              --data-urlencode 'accountType=regular' \
-              --data-urlencode 'userId=#{rhlogin}' \
-              --data-urlencode 'user_uuid=#{user_uuid}' \
-              --data-urlencode 'app_uuid=#{app_uuid}' \
-              --data-urlencode 'app_name=#{app_name}' \
-              --data-urlencode 'app_type=#{app_type}' \
-              --data-urlencode 'action=configure' \
-              --data-urlencode 'platform=express'"
 
-            puts `curl -O /dev/null '#{apptegic_url}' \
-              --data-urlencode '_ak=#{apptegic_key}' \
-              --data-urlencode '_at=#{apptegic_secret}' \
-              --data-urlencode '_ds=#{apptegic_dataset}' \
-              --data-urlencode '_time=#{app_creation}' \
-              --data-urlencode 'accountId=#{rhlogin}' \
-              --data-urlencode 'accountType=regular' \
-              --data-urlencode 'userId=#{rhlogin}' \
-              --data-urlencode 'user_uuid=#{user_uuid}' \
-              --data-urlencode 'app_uuid=#{app_uuid}' \
-              --data-urlencode 'app_name=#{app_name}' \
-              --data-urlencode 'app_type=#{app_type}' \
-              --data-urlencode 'action=configure' \
-              --data-urlencode 'platform=express'`
+            # Build up the Apptegic URL
+            puts "Migrating #{app_path}"
+            begin
+              apptegic_url = "https://redhat.apptegic.com/httpreceiver"
+              apptegic_url << "?"
+              apptegic_url << "_ak=#{URI.escape(apptegic_key)}"
+              apptegic_url << "&_at=#{URI.escape(apptegic_secret)}"
+              apptegic_url << "&_ds=#{URI.escape(apptegic_dataset)}"
+              apptegic_url << "&_time=#{URI.escape(app_creation.to_s)}"
+              apptegic_url << "&accountId=#{URI.escape(rhlogin)}"
+              apptegic_url << "&accountType=regular"
+              apptegic_url << "&userId=#{URI.escape(rhlogin)}"
+              apptegic_url << "&user_uuid=#{URI.escape(user_uuid)}"
+              apptegic_url << "&app_uuid=#{URI.escape(app_uuid)}"
+              apptegic_url << "&app_name=#{URI.escape(app_name)}"
+              apptegic_url << "&app_type=#{URI.escape(app_type)}"
+              apptegic_url << "&action=configure"
+              apptegic_url << "&platform=express"
 
-            puts "Migrated #{app_path}"
-            `echo "#{app_path}" >> migration_results`
+              puts `curl -s "#{apptegic_url}"`
+              `echo "#{app_path}" >> migration_results`
+            rescue
+              puts "ERROR"
+            end
           else
             puts "Already migrated #{app_path}"
           end
