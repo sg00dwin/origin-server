@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.76.7
+Version:   0.76.8
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -77,6 +77,11 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Tue Aug 16 2011 Dan McPherson <dmcphers@redhat.com> 0.76.8-1
+- redo the start/stop changes (dmcphers@redhat.com)
+- only restore m2 when git is restored (dmcphers@redhat.com)
+- split out post and pre receive from the apps (dmcphers@redhat.com)
+
 * Tue Aug 16 2011 Matt Hicks <mhicks@redhat.com> 0.76.7-1
 - JBoss cgroup and container tuning (mhicks@redhat.com)
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
