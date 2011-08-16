@@ -82,26 +82,17 @@ if __name__ == '__main__':
         sys.stderr.write("Invalid command %s" % orig_cmd)
         sys.exit(2)
     if basecmd in ('snapshot'):
-        # This gets called with "snapshot $APP_NAME"
-        name = allargs[1]
-        if not name.isalnum():
-            print "Failed sanitization"
-            sys.exit(35)
-    elif basecmd in ('restore'):
-        # This gets called with "restore $APP_NAME INCLUDE_GIT"
-        name = allargs[1]
-        if name.isalnum():
-            include_git = False
-            if len(allargs) > 2 and allargs[2] == 'INCLUDE_GIT':
-                include_git = True
+        # This gets called with "snapshot"
+        allargs = []
+    if basecmd in ('restore'):
+        # This gets called with "restore <INCLUDE_GIT>"
+        include_git = False
+        if len(allargs) > 1 and allargs[1] == 'INCLUDE_GIT':
+            include_git = True
 
-            allargs = [name] 
-            if include_git:
-                allargs.append('INCLUDE_GIT')
-
-        else:
-            print "Failed sanitization"
-            sys.exit(35)
+        allargs = [] 
+        if include_git:
+            allargs.append('INCLUDE_GIT')
     elif basecmd in ('rhcsh'):
         os.environ["PS1"] = "rhcsh> "
         allargs = ['--init-file', '/usr/local/bin/rhcsh', '-i']

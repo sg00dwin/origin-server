@@ -1,7 +1,6 @@
 #!/bin/bash
 
-application="$1"
-include_git="$2"
+include_git="$1"
 
 # Import Environment Variables
 for f in ~/.env/*
@@ -9,25 +8,23 @@ do
     . $f
 done
 
-~/git/${application}.git/hooks/pre-receive 1>&2
-
 if [ "$include_git" = "INCLUDE_GIT" ]
 then
-  ~/git/${application}.git/hooks/pre-receive 1>&2
-  echo "Removing old git repo - ~/git/${application}.git/" 1>&2
-  /bin/rm -rf ~/git/${application}.git/[^h]*/*
+  ~/git/${OPENSHIFT_APP_NAME}.git/hooks/pre-receive 1>&2
+  echo "Removing old git repo - ~/git/${OPENSHIFT_APP_NAME}.git/" 1>&2
+  /bin/rm -rf ~/git/${OPENSHIFT_APP_NAME}.git/[^h]*/*
 else
   stop_app.sh 1>&2
 fi
 
-echo "Removing old data dir - ~/${application}/data/*" 1>&2
-/bin/rm -rf ~/${application}/data/* ~/${application}/data/.[^.]*
+echo "Removing old data dir - ~/${OPENSHIFT_APP_NAME}/data/*" 1>&2
+/bin/rm -rf ~/${OPENSHIFT_APP_NAME}/data/* ~/${OPENSHIFT_APP_NAME}/data/.[^.]*
 
 restore_tar.sh $include_git
 
 if [ "$include_git" = "INCLUDE_GIT" ]
 then
-  GIT_DIR=~/git/${application}.git/ ~/git/${application}.git/hooks/post-receive 1>&2  
+  GIT_DIR=~/git/${OPENSHIFT_APP_NAME}.git/ ~/git/${OPENSHIFT_APP_NAME}.git/hooks/post-receive 1>&2  
 else
   start_app.sh 1>&2
 fi

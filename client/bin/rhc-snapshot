@@ -107,7 +107,7 @@ app_uuid = user_info['app_info'][app]['uuid']
 namespace = user_info['user_info']['namespace']
 rhc_domain = user_info['user_info']['rhc_domain']
 if opt['save']
-  ssh_cmd = "ssh #{app_uuid}@#{app}-#{namespace}.#{rhc_domain} 'snapshot #{app}' > #{opt['save']}"
+  ssh_cmd = "ssh #{app_uuid}@#{app}-#{namespace}.#{rhc_domain} 'snapshot' > #{opt['save']}"
   puts "Pulling down a snapshot to #{opt['save']}"
 else
   if File.exists? opt['restore']
@@ -118,7 +118,7 @@ else
     else
       `tar -tf #{opt['restore']} './*/git'`
       include_git = $?.exitstatus == 0
-      ssh_cmd = "cat #{opt['restore']} | ssh #{app_uuid}@#{app}-#{namespace}.#{rhc_domain} 'restore #{app}#{include_git ? ' INCLUDE_GIT' : ''}'"
+      ssh_cmd = "cat #{opt['restore']} | ssh #{app_uuid}@#{app}-#{namespace}.#{rhc_domain} 'restore#{include_git ? ' INCLUDE_GIT' : ''}'"
       puts "Restoring from snapshot #{opt['restore']}"
     end
   else
