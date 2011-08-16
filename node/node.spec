@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.76.5
+Version:       0.76.6
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -154,6 +154,10 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Mon Aug 15 2011 Dan McPherson <dmcphers@redhat.com> 0.76.6-1
+- adding migration for snapshot/restore (dmcphers@redhat.com)
+- snapshot and restore using path (dmcphers@redhat.com)
+
 * Mon Aug 15 2011 Matt Hicks <mhicks@redhat.com> 0.76.5-1
 - rename li-controller-0.1 to li-controller (dmcphers@redhat.com)
 
