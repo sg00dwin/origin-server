@@ -2,7 +2,7 @@
 
 Summary:   Provides php-5.3 support
 Name:      rhc-cartridge-php-5.3
-Version:   0.76.2
+Version:   0.76.3
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -80,6 +80,10 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Mon Aug 15 2011 Dan McPherson <dmcphers@redhat.com> 0.76.3-1
+- adding migration for snapshot/restore (dmcphers@redhat.com)
+- snapshot and restore using path (dmcphers@redhat.com)
+
 * Sun Aug 14 2011 Dan McPherson <dmcphers@redhat.com> 0.76.2-1
 - Added new scripted snapshot (mmcgrath@redhat.com)
 - Adding custom snapshot (mmcgrath@redhat.com)
