@@ -27,7 +27,7 @@ module LibraMigration
       FileUtils.mkdir_p "#{app_home}/.env/"
       
       env_echos = ["echo \"export OPENSHIFT_APP_NAME='#{app_name}'\" > #{app_home}/.env/OPENSHIFT_APP_NAME",
-              "echo \"export PATH=/bin:/usr/bin:#{cartridge_dir}/info/bin/:#{cartridge_root_dir}/li-controller/info/bin/\" > #{app_home}/.env/PATH",
+              "echo \"export PATH=/bin:/usr/bin:#{cartridge_dir}/info/bin/:#{cartridge_root_dir}/abstract-httpd/info/bin/:#{cartridge_root_dir}/li-controller/info/bin/\" > #{app_home}/.env/PATH",
               "echo \"export OPENSHIFT_APP_DIR='#{app_dir}/'\" > #{app_home}/.env/OPENSHIFT_APP_DIR",
               "echo \"export OPENSHIFT_REPO_DIR='#{app_dir}/repo/'\" > #{app_home}/.env/OPENSHIFT_REPO_DIR",
               "echo \"export OPENSHIFT_INTERNAL_IP='#{ip}'\" > #{app_home}/.env/OPENSHIFT_INTERNAL_IP",
