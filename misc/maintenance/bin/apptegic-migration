@@ -44,40 +44,70 @@ class Apptegic < Thor
     # Return the AMZ connection
     s3 = connect
 
+    # Read in accounts already migrated
+    migrated = []
+    File.open("migration_results").each {|line| migrated << line.chomp }
+
     s3.incrementally_list_bucket(bucket, {'prefix' => 'user_info'}) do |result|
       result[:contents].each do |item|  
         if item[:key] =~ /\/apps\//
           app_path = item[:key]
-          app_name = File.basename(app_path, ".json")
 
-          # Read the data from the JSON file
-          app_data = JSON.parse(s3.get(bucket, app_path)[:object])
-          app_type = app_data["framework"]
-          app_creation = Time.parse(app_data["creation_time"]).to_i
-          app_uuid = app_data["uuid"]
+          unless migrated.index(app_path)
+            app_name = File.basename(app_path, ".json")
 
-          # Get the application user
-          user_path = app_path.split("/apps/")[0] + "/user.json"
-          rhlogin = File.basename(app_path.split("/apps/")[0])
-          user_data = JSON.parse(s3.get(bucket, user_path)[:object])
-          user_uuid = user_data["uuid"]
+            # Read the data from the JSON file
+            app_data = JSON.parse(s3.get(bucket, app_path)[:object])
+            app_type = app_data["framework"]
 
-          apptegic_url = "https://redhat.apptegic.com/httpreceiver"
-          apptegic_key = "redhat"
-          `curl -s -O /dev/null '#{apptegic_url}' \
-            --data-urlencode '_ak=#{apptegic_key}' \
-            --data-urlencode '_at=#{apptegic_secret}' \
-            --data-urlencode '_ds=#{apptegic_dataset}' \
-            --data-urlencode 'accountId=#{rhlogin}' \
-            --data-urlencode 'accountType=regular' \
-            --data-urlencode 'userId=#{rhlogin}' \
-            --data-urlencode 'user_uuid=#{user_uuid}' \
-            --data-urlencode 'app_uuid=#{app_uuid}' \
-            --data-urlencode 'app_name=#{app_name}' \
-            --data-urlencode 'app_type=#{app_type}' \
-            --data-urlencode 'action=configure' \
-            --data-urlencode 'timestamp=#{app_creation}' \
-            --data-urlencode 'platform=express'`
+            # Convert seconds to milliseconds
+            app_creation = Time.parse(app_data["creation_time"]).to_i * 1000
+            app_uuid = app_data["uuid"]
+
+            # Get the application user
+            user_path = app_path.split("/apps/")[0] + "/user.json"
+            rhlogin = File.basename(app_path.split("/apps/")[0])
+            user_data = JSON.parse(s3.get(bucket, user_path)[:object])
+            user_uuid = user_data["uuid"]
+
+            apptegic_url = "https://redhat.apptegic.com/httpreceiver"
+            apptegic_key = "redhat"
+            puts "curl -s -O /dev/null '#{apptegic_url}' \
+              --data-urlencode '_ak=#{apptegic_key}' \
+              --data-urlencode '_at=#{apptegic_secret}' \
+              --data-urlencode '_ds=#{apptegic_dataset}' \
+              --data-urlencode '_time=#{app_creation}' \
+              --data-urlencode 'timestamp=#{app_creation}' \
+              --data-urlencode 'accountId=#{rhlogin}' \
+              --data-urlencode 'accountType=regular' \
+              --data-urlencode 'userId=#{rhlogin}' \
+              --data-urlencode 'user_uuid=#{user_uuid}' \
+              --data-urlencode 'app_uuid=#{app_uuid}' \
+              --data-urlencode 'app_name=#{app_name}' \
+              --data-urlencode 'app_type=#{app_type}' \
+              --data-urlencode 'action=configure' \
+              --data-urlencode 'platform=express'"
+
+            puts `curl -O /dev/null '#{apptegic_url}' \
+              --data-urlencode '_ak=#{apptegic_key}' \
+              --data-urlencode '_at=#{apptegic_secret}' \
+              --data-urlencode '_ds=#{apptegic_dataset}' \
+              --data-urlencode '_time=#{app_creation}' \
+              --data-urlencode 'accountId=#{rhlogin}' \
+              --data-urlencode 'accountType=regular' \
+              --data-urlencode 'userId=#{rhlogin}' \
+              --data-urlencode 'user_uuid=#{user_uuid}' \
+              --data-urlencode 'app_uuid=#{app_uuid}' \
+              --data-urlencode 'app_name=#{app_name}' \
+              --data-urlencode 'app_type=#{app_type}' \
+              --data-urlencode 'action=configure' \
+              --data-urlencode 'platform=express'`
+
+            puts "Migrated #{app_path}"
+            `echo "#{app_path}" >> migration_results`
+          else
+            puts "Already migrated #{app_path}"
+          end
         end
       end
     end
