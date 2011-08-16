@@ -111,12 +111,12 @@ if opt['save']
   puts "Pulling down a snapshot to #{opt['save']}"
 else
   if File.exists? opt['restore']
-    `tar -tf #{opt['restore']} ./#{app}`
+    `tar -tf #{opt['restore']} './*/#{app}'`
     if $?.exitstatus != 0
       puts "Archive at #{opt['restore']} does not contain the target application: ./#{app}"
       exit 255
     else
-      `tar -tf #{opt['restore']} ./git`
+      `tar -tf #{opt['restore']} './*/git'`
       include_git = $?.exitstatus == 0
       ssh_cmd = "cat #{opt['restore']} | ssh #{app_uuid}@#{app}-#{namespace}.#{rhc_domain} 'restore #{app}#{include_git ? ' INCLUDE_GIT' : ''}'"
       puts "Restoring from snapshot #{opt['restore']}"
