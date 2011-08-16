@@ -97,10 +97,12 @@ module CommandHelper
     app.mysql_hostname = /^Connection URL: mysql:\/\/(.*)\/$/.match(result)[1]
     app.mysql_user = /^ +Root User: (.*)$/.match(result)[1]
     app.mysql_password = /^ +Root Password: (.*)$/.match(result)[1]
+    app.mysql_database = /^ +Database Name: (.*)$/.match(result)[1]
 
     app.mysql_hostname.should_not be_nil
     app.mysql_user.should_not be_nil
     app.mysql_password.should_not be_nil
+    app.mysql_database.should_not be_nil
 
     app.embed = type
     app.persist
@@ -112,6 +114,7 @@ module CommandHelper
     app.mysql_hostname = nil
     app.mysql_user = nil
     app.mysql_password = nil
+    app.mysql_database = nil
     app.embed = nil
     app.persist
     return app
