@@ -2,7 +2,7 @@
 
 Summary:   Provides php-5.3 support
 Name:      rhc-cartridge-php-5.3
-Version:   0.76.4
+Version:   0.76.5
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -81,6 +81,10 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Tue Aug 16 2011 Dan McPherson <dmcphers@redhat.com> 0.76.5-1
+- split out post and pre receive from the apps (dmcphers@redhat.com)
+- removing default charset (mmcgrath@redhat.com)
+
 * Tue Aug 16 2011 Matt Hicks <mhicks@redhat.com> 0.76.4-1
 - splitting out stop/start, changing snapshot to use stop start and bug 730890
   (dmcphers@redhat.com)
