@@ -359,7 +359,7 @@ chown $user_id.$group_id -R $APP_DIR/virtenv || error "Failed to chown new virte
 # Secure script and config dirs.
 chown root:root -R "$APP_DIR/${application}_ctl.sh" "$APP_DIR/conf" "$APP_DIR/conf.d"
 chown root:root "$APP_DIR"
-chcon -t libra_var_lib_t -l s0:$c_val -R "$APP_DIR"
+chcon -t libra_var_lib_t -l s0:$c_val -R "$APP_HOME/git/" "$APP_DIR"
 
 #
 # Create environment variables
