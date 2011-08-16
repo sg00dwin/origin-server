@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.76.7
+Version:       0.76.8
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -155,6 +155,18 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Tue Aug 16 2011 Dan McPherson <dmcphers@redhat.com> 0.76.8-1
+- cleanup how we call snapshot (dmcphers@redhat.com)
+- redo the start/stop changes (dmcphers@redhat.com)
+- migration fix for post/pre receive (dmcphers@redhat.com)
+- split out post and pre receive from the apps (dmcphers@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- prefixing backup and restore with UUID (mmcgrath@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- correcting double quote (mmcgrath@redhat.com)
+
 * Tue Aug 16 2011 Matt Hicks <mhicks@redhat.com> 0.76.7-1
 - JBoss cgroup and container tuning (mhicks@redhat.com)
 - splitting out stop/start, changing snapshot to use stop start and bug 730890
