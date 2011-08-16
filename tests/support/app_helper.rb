@@ -16,7 +16,7 @@ module AppHelper
     attr_accessor :response_code, :response_time
 
     # mysql connection information
-    attr_accessor :mysql_hostname, :mysql_user, :mysql_password
+    attr_accessor :mysql_hostname, :mysql_user, :mysql_password, :mysql_database
 
     # Create the data structure for a test application
     def initialize(namespace, login, type, name)
