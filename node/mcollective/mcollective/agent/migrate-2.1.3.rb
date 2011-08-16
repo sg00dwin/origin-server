@@ -54,7 +54,7 @@ module LibraMigration
       
       post_receive = "#{app_home}/git/#{app_name}.git/hooks/post-receive"
       output += "Migrating post-receive: #{post_receive}\n"
-      file = File.open(httpd_conf, 'a')
+      file = File.open(post_receive, 'w')
       begin
         file.puts <<EOF
 #!/bin/bash
@@ -74,7 +74,7 @@ EOF
       
       pre_receive = "#{app_home}/git/#{app_name}.git/hooks/pre-receive"
       output += "Migrating pre-receive: #{pre_receive}\n"
-      file = File.open(httpd_conf, 'a')
+      file = File.open(pre_receive, 'w')
       begin
         file.puts <<EOF
 #!/bin/bash
