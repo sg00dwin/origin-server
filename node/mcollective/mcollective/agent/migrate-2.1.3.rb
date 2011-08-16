@@ -28,7 +28,7 @@ module LibraMigration
       
       env_echos = ["echo \"export OPENSHIFT_APP_NAME='#{app_name}'\" > #{app_home}/.env/OPENSHIFT_APP_NAME",
               "echo \"export PATH=/bin:/usr/bin:#{cartridge_dir}/info/bin/:#{cartridge_root_dir}/li-controller/info/bin/\" > #{app_home}/.env/PATH",
-              "echo \"export OPENSHIFT_APP_DIR='#{app_dir}'\" > #{app_home}/.env/OPENSHIFT_APP_DIR",
+              "echo \"export OPENSHIFT_APP_DIR='#{app_dir}/'\" > #{app_home}/.env/OPENSHIFT_APP_DIR",
               "echo \"export OPENSHIFT_REPO_DIR='#{app_dir}/repo/'\" > #{app_home}/.env/OPENSHIFT_REPO_DIR",
               "echo \"export OPENSHIFT_INTERNAL_IP='#{ip}'\" > #{app_home}/.env/OPENSHIFT_INTERNAL_IP",
               "echo \"export OPENSHIFT_INTERNAL_PORT='8080'\" > #{app_home}/.env/OPENSHIFT_INTERNAL_PORT",
@@ -39,7 +39,7 @@ module LibraMigration
               "echo \"export OPENSHIFT_APP_CTL_SCRIPT='#{app_dir}/#{app_name}_ctl.sh'\" > #{app_home}/.env/OPENSHIFT_APP_CTL_SCRIPT",
               "echo \"export OPENSHIFT_APP_DNS='#{app_name}-#{namespace}.#{libra_domain}'\" > #{app_home}/.env/OPENSHIFT_APP_DNS",
               "echo \"export OPENSHIFT_APP_UUID='#{uuid}'\" > #{app_home}/.env/OPENSHIFT_APP_UUID",
-              "echo \"export OPENSHIFT_HOMEDIR='#{app_home}'\" > #{app_home}/.env/OPENSHIFT_HOMEDIR"
+              "echo \"export OPENSHIFT_HOMEDIR='#{app_home}/'\" > #{app_home}/.env/OPENSHIFT_HOMEDIR"
               ]
               
       env_echos.each do |env_echo|
