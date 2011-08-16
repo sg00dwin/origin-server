@@ -2,7 +2,7 @@
 
 Summary:   Provides php-5.3 support
 Name:      rhc-cartridge-php-5.3
-Version:   0.76.3
+Version:   0.76.4
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -80,6 +80,15 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Tue Aug 16 2011 Matt Hicks <mhicks@redhat.com> 0.76.4-1
+- splitting out stop/start, changing snapshot to use stop start and bug 730890
+  (dmcphers@redhat.com)
+- correcting chcon (mmcgrath@redhat.com)
+- adding wildcard (mmcgrath@redhat.com)
+- chcon'ing app_home (mmcgrath@redhat.com)
+- Appending / to dir names (mmcgrath@redhat.com)
+- ensuring /tmp ends with a / (mmcgrath@redhat.com)
+
 * Mon Aug 15 2011 Dan McPherson <dmcphers@redhat.com> 0.76.3-1
 - adding migration for snapshot/restore (dmcphers@redhat.com)
 - snapshot and restore using path (dmcphers@redhat.com)
