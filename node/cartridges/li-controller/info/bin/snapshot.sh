@@ -6,8 +6,8 @@ do
     . $f
 done
 
-# pre-receive
-~/git/${OPENSHIFT_APP_NAME}.git/hooks/pre-receive 1>&2
+# stop
+stop_app.sh 1>&2
 
 # Run pre-dump dumps
 for cmd in `awk 'BEGIN { for (a in ENVIRON) if (a ~ /_DUMP$/) print ENVIRON[a] }'`
@@ -32,6 +32,5 @@ do
     $cmd
 done
 
-
-# post-receive
-GIT_DIR=~/git/${OPENSHIFT_APP_NAME}.git/ ~/git/${OPENSHIFT_APP_NAME}.git/hooks/post-receive 1>&2
+# start_app
+start_app.sh 1>&2
