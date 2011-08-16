@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.75.4
+Version:   0.75.5
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -195,6 +195,9 @@ chkconfig libra-tc on
 %{_initddir}/libra-site
 
 %changelog
+* Mon Aug 15 2011 Dan McPherson <dmcphers@redhat.com> 0.75.5-1
+- Setting timeout back to normal (mmcgrath@redhat.com)
+
 * Mon Aug 15 2011 Matt Hicks <mhicks@redhat.com> 0.75.4-1
 - increasing connection timeout (mmcgrath@redhat.com)
 
