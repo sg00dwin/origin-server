@@ -2,7 +2,7 @@
 
 Summary:   Provides ruby rack support running on Phusion Passenger
 Name:      rhc-cartridge-rack-1.1
-Version:   0.76.4
+Version:   0.76.5
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -89,6 +89,15 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Tue Aug 16 2011 Matt Hicks <mhicks@redhat.com> 0.76.5-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- Fixing chcon to include git (mmcgrath@redhat.com)
+- splitting out stop/start, changing snapshot to use stop start and bug 730890
+  (dmcphers@redhat.com)
+- Appending / to dir names (mmcgrath@redhat.com)
+- ensuring /tmp ends with a / (mmcgrath@redhat.com)
+
 * Mon Aug 15 2011 Dan McPherson <dmcphers@redhat.com> 0.76.4-1
 - adding migration for snapshot/restore (dmcphers@redhat.com)
 - snapshot and restore using path (dmcphers@redhat.com)
