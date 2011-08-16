@@ -2,7 +2,7 @@
 
 Summary:   Provides python-wsgi-3.2 support
 Name:      rhc-cartridge-wsgi-3.2
-Version:   0.76.5
+Version:   0.76.6
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -76,6 +76,10 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Tue Aug 16 2011 Dan McPherson <dmcphers@redhat.com> 0.76.6-1
+- split out post and pre receive from the apps (dmcphers@redhat.com)
+- removing default charset (mmcgrath@redhat.com)
+
 * Tue Aug 16 2011 Matt Hicks <mhicks@redhat.com> 0.76.5-1
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
   (mmcgrath@redhat.com)
