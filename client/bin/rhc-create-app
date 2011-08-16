@@ -145,10 +145,15 @@ end
 #
 unless File.exists?("#{ssh_config_d}/libra_id_rsa")
     puts
-    puts "Could not find #{ssh_config_d}/libra_id_rsa, cannot continue"
-    puts "This file was created by rhc-create-domain.  If it does not exist you may need to create"
-    puts "a new one."
-    puts
+    puts "Could not find #{ssh_config_d}/libra_id_rsa.  Unable to continue."
+    puts "Your SSH keys are created either by running ssh-keygen (password optional)"
+    puts "or by having the rhc-create-domain command do it for you.  If you created"
+    puts "them on your own (or want to use an existing keypair), be sure to paste"
+    puts "your public key into the dashboard page at http://www.openshift.com."
+    puts "The client tools expect libra_id_rsa[.pub] so in the event that you are"
+    puts "using existing keys, you can symlink libra_id_rsa->id_rsa and"
+    puts "libra_id_rsa.pub -> id_rsa.pub"
+    puts "Also, make sure you never give out your secret key!"
     exit 212
 end
 
