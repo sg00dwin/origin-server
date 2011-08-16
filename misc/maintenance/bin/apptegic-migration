@@ -47,7 +47,12 @@ class Apptegic < Thor
 
     # Read in accounts already migrated
     migrated = []
+    users_migrated = []
+    user_cache = []
+    FileUtils.touch "migration_results"
+    FileUtils.touch "user_migration_results"
     File.open("migration_results").each {|line| migrated << line.chomp }
+    File.open("user_migration_results").each {|line| users_migrated << line.chomp }
 
     s3.incrementally_list_bucket(bucket, {'prefix' => 'user_info'}) do |result|
       result[:contents].each do |item|  
@@ -68,12 +73,44 @@ class Apptegic < Thor
             # Get the application user
             user_path = app_path.split("/apps/")[0] + "/user.json"
             rhlogin = File.basename(app_path.split("/apps/")[0])
-            user_data = JSON.parse(s3.get(bucket, user_path)[:object])
+            user = s3.get(bucket, user_path)
+            user_creation = Time.parse(user[:headers]["last-modified"]).to_i * 1000
+            user_data = JSON.parse(user[:object])
             user_uuid = user_data["uuid"]
+            user_namespace = user_data["namespace"]
 
             apptegic_key = "redhat"
 
-            # Build up the Apptegic URL
+            # Build up the URL for migrating create events
+            unless user_cache.index(rhlogin) or users_migrated.index(rhlogin)
+              puts "Migrating user #{user_path}"
+              begin
+                apptegic_url = "https://redhat.apptegic.com/httpreceiver"
+                apptegic_url << "?"
+                apptegic_url << "_ak=#{URI.escape(apptegic_key)}"
+                apptegic_url << "&_at=#{URI.escape(apptegic_secret)}"
+                apptegic_url << "&_ds=#{URI.escape(apptegic_dataset)}"
+                apptegic_url << "&_time=#{URI.escape(user_creation.to_s)}"
+                apptegic_url << "&accountId=#{URI.escape(rhlogin)}"
+                apptegic_url << "&accountType=regular"
+                apptegic_url << "&userId=#{URI.escape(rhlogin)}"
+                apptegic_url << "&user_uuid=#{URI.escape(user_uuid)}"
+                apptegic_url << "&namespace=#{URI.escape(user_namespace)}"
+                apptegic_url << "&action=create"
+                apptegic_url << "&platform=express"
+
+                # Make sure we don't migrate the user multiple times
+                puts `curl -s "#{apptegic_url}"`
+                user_cache << rhlogin
+                `echo "#{rhlogin}" >> user_migration_results`
+              rescue
+                puts "ERROR"
+              end
+            else
+              puts "Skipping #{rhlogin} already migrated."
+            end
+
+            # Build up the Apptegic URL for migrating configure events
             puts "Migrating #{app_path}"
             begin
               apptegic_url = "https://redhat.apptegic.com/httpreceiver"
