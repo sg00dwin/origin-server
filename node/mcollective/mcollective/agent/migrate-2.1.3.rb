@@ -34,7 +34,7 @@ module LibraMigration
               "echo \"export OPENSHIFT_INTERNAL_PORT='8080'\" > #{app_home}/.env/OPENSHIFT_INTERNAL_PORT",
               "echo \"export OPENSHIFT_LOG_DIR='#{app_dir}/logs/'\" > #{app_home}/.env/OPENSHIFT_LOG_DIR",
               "echo \"export OPENSHIFT_DATA_DIR='#{app_dir}/data/'\" > #{app_home}/.env/OPENSHIFT_DATA_DIR",
-              "echo \"export OPENSHIFT_TMP_DIR='/tmp'\" > #{app_home}/.env/OPENSHIFT_TMP_DIR",
+              "echo \"export OPENSHIFT_TMP_DIR='/tmp/'\" > #{app_home}/.env/OPENSHIFT_TMP_DIR",
               "echo \"export OPENSHIFT_RUN_DIR='#{app_dir}/run/'\" > #{app_home}/.env/OPENSHIFT_RUN_DIR",
               "echo \"export OPENSHIFT_APP_CTL_SCRIPT='#{app_dir}/#{app_name}_ctl.sh'\" > #{app_home}/.env/OPENSHIFT_APP_CTL_SCRIPT",
               "echo \"export OPENSHIFT_APP_DNS='#{app_name}-#{namespace}.#{libra_domain}'\" > #{app_home}/.env/OPENSHIFT_APP_DNS",
