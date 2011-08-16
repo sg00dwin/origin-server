@@ -18,6 +18,7 @@ then
     fi
     /bin/cp -f $OPENSHIFT_DATA_DIR/OPENSHIFT_DB_PASSWORD $OPENSHIFT_DATA_DIR/OPENSHIFT_DB_USERNAME ~/.env/
     $OPENSHIFT_DB_MYSQL_51_DUMP_CLEANUP
+    $OPENSHIFT_DB_CTL_SCRIPT restart
 else
     echo "Mysql restore attempted but no dump found!" 1>&2
     echo "$OPENSHIFT_DATA_DIR/mysql_dump_snapshot.gz does not exist" 1>&2
