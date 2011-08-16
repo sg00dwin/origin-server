@@ -46,9 +46,9 @@ module LibraMigration
         echo_output, echo_exitcode = Util.execute_script(env_echo)
         output += echo_output
       end
-      if File.exists?('#{app_home}/.env/OPENSHIFT_DB_USERNAME')
-        FileUtils.chown '#{uuid}', 'root', '#{app_home}/.env/OPENSHIFT_DB_USERNAME'
-        FileUtils.chown '#{uuid}', 'root', '#{app_home}/.env/OPENSHIFT_DB_PASSWORD'
+      if File.exists?("#{app_home}/.env/OPENSHIFT_DB_USERNAME")
+        FileUtils.chown "#{uuid}", 'root', "#{app_home}/.env/OPENSHIFT_DB_USERNAME"
+        FileUtils.chown "#{uuid}", 'root', "#{app_home}/.env/OPENSHIFT_DB_PASSWORD"
       end
       
     else
