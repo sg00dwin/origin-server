@@ -6,13 +6,13 @@ do
     . $f
 done
 
-# pre-receive
-~/git/${OPENSHIFT_APP_NAME}.git/hooks/pre-receive 1>&2
+# stop
+stop_app.sh 1>&2
 
 # Run pre-dump dumps
 for cmd in `awk 'BEGIN { for (a in ENVIRON) if (a ~ /_DUMP$/) print ENVIRON[a] }'`
 do
-    echo "Running extra added: $(/bin/basename $cmd)" 1>&2
+    echo "Running extra dump: $(/bin/basename $cmd)" 1>&2
     $cmd
 done
 
@@ -25,5 +25,12 @@ echo "Creating and sending tar.gz" 1>&2
         --exclude=./$OPENSHIFT_APP_NAME/conf.d/libra.conf \
         --exclude=./$OPENSHIFT_APP_NAME/run/httpd.pid .
 
-# post-receive
-GIT_DIR=~/git/${OPENSHIFT_APP_NAME}.git/ ~/git/${OPENSHIFT_APP_NAME}.git/hooks/post-receive 1>&2
+# Cleanup
+for cmd in `awk 'BEGIN { for (a in ENVIRON) if (a ~ /_DUMP_CLEANUP$/) print ENVIRON[a] }'`
+do
+    echo "Running extra cleanup: $(/bin/basename $cmd)" 1>&2
+    $cmd
+done
+
+# start_app
+start_app.sh 1>&2

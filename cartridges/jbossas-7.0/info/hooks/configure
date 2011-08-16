@@ -195,7 +195,7 @@ __EOF__
     git commit -m 'Creating template'
     popd
     pushd $APP_HOME/git
-    git clone --bare template $application.git
+    git clone --bare --no-hardlinks template $application.git
     rm -rf template
     popd
 
@@ -203,9 +203,7 @@ __EOF__
 
     cat <<__EOF__ > $GIT_DIR/hooks/pre-receive
 # Stop the app
-echo "Stopping application..."
-~/${application}/${application}_ctl.sh stop
-echo done
+stop_app.sh
 __EOF__
 
 
@@ -254,17 +252,7 @@ then
 fi
 
 # Start the app
-echo -n "Starting application..."
-# Check for stop_lock, bug 719800
-if [ -f $APP_DIR/run/stop_lock ]
-then
-    echo skipped due to stop_lock
-else
-    exec 1>&- # close stdout
-    ~/${application}/${application}_ctl.sh start >/dev/null 2>&1
-    exec 1>&2 # redirect stdout to stderr
-    echo done
-fi
+start_app.sh
 
 curl -s -O /dev/null -d "json_data=\"{\"app_uuid\":\"${uuid}\",\"action\":\"push\"}\"" https://${libra_server}/broker/nurture >/dev/null 2>&1 &
 __EOF__
@@ -356,7 +344,7 @@ JAVA_HOME="/usr/lib/jvm/jre-1.6.0"
 # Specify options to pass to the Java VM.
 #
 if [ "x\$JAVA_OPTS" = "x" ]; then
-   JAVA_OPTS="-Xmx123m -XX:MaxPermSize=85m -Dorg.jboss.resolver.warning=true -Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000"
+   JAVA_OPTS="-Xmx95m -XX:MaxPermSize=85m -Dorg.jboss.resolver.warning=true -Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000"
 fi
 EOF
 
@@ -517,7 +505,7 @@ chown $user_id.$group_id -R $APP_DIR || error "Failed to chown new application s
 chown root.root -R "$APP_DIR/${application}_ctl.sh"
 chown $user_id.$group_id -R "$APP_DIR/${jboss_version}/standalone"
 chown -R $user_id.$group_id $M2_DIR
-chcon -t libra_var_lib_t -l s0:$c_val -R "$APP_DIR"
+chcon -t libra_var_lib_t -l s0:$c_val -R "$APP_HOME/git/" "$APP_DIR"
 
 #
 # Create environment variables
@@ -533,7 +521,7 @@ echo "export OPENSHIFT_RUN_DIR='$APP_DIR/run/'" > $APP_HOME/.env/OPENSHIFT_RUN_D
 echo "export OPENSHIFT_APP_NAME='$application'" > $APP_HOME/.env/OPENSHIFT_APP_NAME
 echo "export OPENSHIFT_APP_CTL_SCRIPT='$APP_DIR/${application}_ctl.sh'" > $APP_HOME/.env/OPENSHIFT_APP_CTL_SCRIPT
 echo "export OPENSHIFT_APP_DNS='${application}-${namespace}.${libra_domain}'" > $APP_HOME/.env/OPENSHIFT_APP_DNS
-echo "export PATH=$PATH:$JBOSS_CARTRIDGE_ROOT/info/bin/:$CART_DIR/li-controller/info/bin/" > $APP_HOME/.env/PATH
+echo "export PATH=$PATH:$JBOSS_CARTRIDGE_ROOT/info/bin/:$CART_DIR/abstract-httpd/info/bin/:$CART_DIR/li-controller/info/bin/" > $APP_HOME/.env/PATH
 
 #
 # Start the server

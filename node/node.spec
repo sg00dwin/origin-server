@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.76.6
+Version:       0.76.7
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -142,6 +142,7 @@ fi
 %{_libexecdir}/li/cartridges/li-controller/info
 %dir %attr(0755,root,root) %{_libexecdir}/li/cartridges/abstract-httpd/
 %attr(0750,-,-) %{_libexecdir}/li/cartridges/abstract-httpd/info/hooks/
+%attr(0755,-,-) %{_libexecdir}/li/cartridges/abstract-httpd/info/bin/
 %{_libexecdir}/li/cartridges/abstract-httpd/info
 %attr(0750,-,-) %{_bindir}/rhc-accept-node
 %attr(0750,-,-) %{_bindir}/rhc-node-account
@@ -154,6 +155,16 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Tue Aug 16 2011 Matt Hicks <mhicks@redhat.com> 0.76.7-1
+- JBoss cgroup and container tuning (mhicks@redhat.com)
+- splitting out stop/start, changing snapshot to use stop start and bug 730890
+  (dmcphers@redhat.com)
+- Added cleanup (mmcgrath@redhat.com)
+- allowing user to alter username and password (mmcgrath@redhat.com)
+- dirs should end with / (mmcgrath@redhat.com)
+- Appending / to dir names (mmcgrath@redhat.com)
+- ensuring /tmp ends with a / (mmcgrath@redhat.com)
+
 * Mon Aug 15 2011 Dan McPherson <dmcphers@redhat.com> 0.76.6-1
 - adding migration for snapshot/restore (dmcphers@redhat.com)
 - snapshot and restore using path (dmcphers@redhat.com)

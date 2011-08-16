@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.76.3
+Version:       0.76.4
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -38,6 +38,9 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Tue Aug 16 2011 Matt Hicks <mhicks@redhat.com> 0.76.4-1
+- Allow libra domains to read cgroup data (dwalsh@redhat.com)
+
 * Fri Aug 12 2011 Matt Hicks <mhicks@redhat.com> 0.76.3-1
 - Seems like jboss running lsof and this is causing avcs looking at sockets and
   dirs within /var/run directory. (dwalsh@redhat.com)

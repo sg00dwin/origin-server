@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/mysql-5.1
 
 Name: rhc-cartridge-mysql-5.1
-Version: 0.10.8
+Version: 0.10.9
 Release: 1%{?dist}
 Summary: Embedded mysql support for express
 
@@ -41,11 +41,20 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0750,-,-) %{cartridgedir}/info/hooks/
 %attr(0750,-,-) %{cartridgedir}/info/build/
 %config(noreplace) %{cartridgedir}/info/configuration/
+%attr(0755,-,-) %{cartridgedir}/info/bin/
 %{_sysconfdir}/libra/cartridges/%{name}
 %{cartridgedir}/info/changelog
 %{cartridgedir}/info/control
 
 %changelog
+* Tue Aug 16 2011 Matt Hicks <mhicks@redhat.com> 0.10.9-1
+- restart mysql after restore (mmcgrath@redhat.com)
+- Better handling of env vars (mmcgrath@redhat.com)
+- package bin dir (mmcgrath@redhat.com)
+- Adding cleanup (mmcgrath@redhat.com)
+- Allow user to change their environment variables for username/password
+  (mmcgrath@redhat.com)
+
 * Mon Aug 15 2011 Dan McPherson <dmcphers@redhat.com> 0.10.8-1
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
   (mmcgrath@redhat.com)
