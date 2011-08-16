@@ -1,0 +1,87 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'parseconfig'
+require 'thor'
+require 'fileutils'
+require 'aws'
+require 'json'
+require 'date'
+require 'pp'
+
+class Apptegic < Thor
+  include Thor::Actions
+
+  no_tasks do
+    def connect
+      # This will verify the Amazon SSL connection
+      Rightscale::HttpConnection.params[:ca_file] = "/etc/pki/tls/certs/ca-bundle.trust.crt"
+
+      config = nil
+      begin
+        config = ParseConfig.new(File.expand_path("~/.awscred"))
+      rescue StandardError => e
+        puts <<-eos
+          Couldn't access credentials in ~/.awscred
+
+          Please create a file with the following format:
+            AWSAccessKeyId=<ACCESS_KEY>
+            AWSSecretKey=<SECRET_KEY>
+        eos
+        raise "Error - no credentials"
+      end
+
+      # Return the AMZ connection
+      Aws::S3Interface.new(config.get_value("AWSAccessKeyId"), 
+                           config.get_value("AWSSecretKey"), 
+                           params = {:logger => Logger.new('/dev/null')})
+    end
+  end
+
+  desc "migrate BUCKET DATASET SECRET", "Migrate events from S3 to Apptegic dataset"
+  method_option :dryrun, :type => :boolean, :desc => "Don't actually perform any changes"
+  def migrate(bucket, apptegic_dataset, apptegic_secret)
+    # Return the AMZ connection
+    s3 = connect
+
+    s3.incrementally_list_bucket(bucket, {'prefix' => 'user_info'}) do |result|
+      result[:contents].each do |item|  
+        if item[:key] =~ /\/apps\//
+          app_path = item[:key]
+          app_name = File.basename(app_path, ".json")
+
+          # Read the data from the JSON file
+          app_data = JSON.parse(s3.get(bucket, app_path)[:object])
+          app_type = app_data["framework"]
+          app_creation = Time.parse(app_data["creation_time"]).to_i
+          app_uuid = app_data["uuid"]
+
+          # Get the application user
+          user_path = app_path.split("/apps/")[0] + "/user.json"
+          rhlogin = File.basename(app_path.split("/apps/")[0])
+          user_data = JSON.parse(s3.get(bucket, user_path)[:object])
+          user_uuid = user_data["uuid"]
+
+          apptegic_url = "https://redhat.apptegic.com/httpreceiver"
+          apptegic_key = "redhat"
+          `curl -s -O /dev/null '#{apptegic_url}' \
+            --data-urlencode '_ak=#{apptegic_key}' \
+            --data-urlencode '_at=#{apptegic_secret}' \
+            --data-urlencode '_ds=#{apptegic_dataset}' \
+            --data-urlencode 'accountId=#{rhlogin}' \
+            --data-urlencode 'accountType=regular' \
+            --data-urlencode 'userId=#{rhlogin}' \
+            --data-urlencode 'user_uuid=#{user_uuid}' \
+            --data-urlencode 'app_uuid=#{app_uuid}' \
+            --data-urlencode 'app_name=#{app_name}' \
+            --data-urlencode 'app_type=#{app_type}' \
+            --data-urlencode 'action=configure' \
+            --data-urlencode 'timestamp=#{app_creation}' \
+            --data-urlencode 'platform=express'`
+        end
+      end
+    end
+  end
+end
+
+Apptegic.start
