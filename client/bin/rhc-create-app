@@ -151,7 +151,7 @@ unless File.exists?("#{ssh_config_d}/libra_id_rsa")
     puts "them on your own (or want to use an existing keypair), be sure to paste"
     puts "your public key into the dashboard page at http://www.openshift.com."
     puts "The client tools expect libra_id_rsa[.pub] so in the event that you are"
-    puts "using existing keys, you can symlink libra_id_rsa->id_rsa and"
+    puts "using existing keys, you can symlink libra_id_rsa -> id_rsa and"
     puts "libra_id_rsa.pub -> id_rsa.pub"
     puts "Also, make sure you never give out your secret key!"
     exit 212
