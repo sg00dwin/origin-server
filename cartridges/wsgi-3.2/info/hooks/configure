@@ -277,14 +277,7 @@ EOF
 # Create simple application start / stop script
 #
 cat <<EOF > "$APP_DIR/${application}_ctl.sh"
-#/bin/bash
-if ! [ \$# -eq 1 ]
-then
-    echo "Usage: \$0 [start|restart|graceful|graceful-stop|stop]"
-    exit 1
-fi
-
-export APPDIR="$APP_DIR"
+#!/bin/bash -e
 
 # Import Environment Variables
 for f in ~/.env/*
@@ -292,34 +285,7 @@ do
     . \$f
 done
 
-if whoami | grep -q root || ! runcon | grep 'system_r:libra_t:s0:$c_val' > /dev/null
-then
-    echo 1>&2
-    echo "Please run script in the correct context, try:" 1>&2
-    echo "runuser --shell /bin/sh \"$uuid\" -c \"runcon -t libra_t -l s0:$c_val $APP_DIR/${application}_ctl.sh\"" 1>&2
-    echo 2>&1
-    exit 15
-fi
-
-
-case "\$1" in
-    start)
-        if [ -f $APP_DIR/run/stop_lock ]
-        then
-            echo -n " - Application is disabled" 1>&2
-            exit 0
-        else
-            /usr/sbin/httpd -C 'Include $APP_DIR/conf.d/*.conf' -f $CART_CONF_DIR/httpd_nolog.conf -k \$1
-        fi
-    ;;
-    restart|graceful|graceful-stop|stop)
-        /usr/sbin/httpd -C 'Include $APP_DIR/conf.d/*.conf' -f $CART_CONF_DIR/httpd_nolog.conf -k \$1
-    ;;
-    status)
-        echo "Coming soon"
-        exit 0
-    ;;
-esac
+app_ctl.sh \$1
 EOF
 
 #
