@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.76.8
+Version:   0.76.9
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -67,6 +67,9 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Wed Aug 17 2011 Dan McPherson <dmcphers@redhat.com> 0.76.9-1
+- Redirect /app/user to /app/user/new on get request (edirsh@redhat.com)
+
 * Mon Aug 15 2011 Matt Hicks <mhicks@redhat.com> 0.76.8-1
 - Test case to verify no terms short-circuit (mhicks@redhat.com)
 - Cleanup of old 'try it' logic (mhicks@redhat.com)
