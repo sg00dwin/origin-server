@@ -36,12 +36,17 @@ module LibraMigration
               "echo \"export OPENSHIFT_DATA_DIR='#{app_dir}/data/'\" > #{app_home}/.env/OPENSHIFT_DATA_DIR",
               "echo \"export OPENSHIFT_TMP_DIR='/tmp/'\" > #{app_home}/.env/OPENSHIFT_TMP_DIR",
               "echo \"export OPENSHIFT_RUN_DIR='#{app_dir}/run/'\" > #{app_home}/.env/OPENSHIFT_RUN_DIR",
+              "echo \"export OPENSHIFT_APP_TYPE='#{app_type}'\" > #{app_home}/.env/OPENSHIFT_APP_TYPE",
               "echo \"export OPENSHIFT_APP_CTL_SCRIPT='#{app_dir}/#{app_name}_ctl.sh'\" > #{app_home}/.env/OPENSHIFT_APP_CTL_SCRIPT",
               "echo \"export OPENSHIFT_APP_DNS='#{app_name}-#{namespace}.#{libra_domain}'\" > #{app_home}/.env/OPENSHIFT_APP_DNS",
               "echo \"export OPENSHIFT_APP_UUID='#{uuid}'\" > #{app_home}/.env/OPENSHIFT_APP_UUID",
               "echo \"export OPENSHIFT_HOMEDIR='#{app_home}/'\" > #{app_home}/.env/OPENSHIFT_HOMEDIR"
               ]
               
+      if File.exists?("#{app_home}/.env/OPENSHIFT_DB_TYPE")
+        env_echos.push("echo \"export OPENSHIFT_DB_TYPE='mysql'\" > #{app_home}/.env/OPENSHIFT_DB_TYPE")
+      end
+
       env_echos.each do |env_echo|
         echo_output, echo_exitcode = Util.execute_script(env_echo)
         output += echo_output
