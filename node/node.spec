@@ -132,7 +132,7 @@ fi
 %attr(0750,-,-) %{_bindir}/rhc-init-quota
 %attr(0750,-,-) %{_bindir}/ec2-prep.sh
 %attr(0750,-,-) %{_bindir}/remount-secure.sh
-%attr(0755,-,-) %{_bindir}/check-files
+%attr(0755,-,-) %{_bindir}/rhc-cgroup-read
 %dir %attr(0751,root,root) %{_localstatedir}/lib/libra
 %dir %attr(0755,root,root) %{_libexecdir}/li/cartridges/li-controller/
 %attr(0750,-,-) %{_libexecdir}/li/cartridges/li-controller/info/hooks/
