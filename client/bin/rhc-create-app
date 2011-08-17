@@ -322,6 +322,12 @@ clone your git repository.
   Application URL: http://#{fqdn}
 
   Git Repository URL: #{git_url}
+  Git Clone command: git clone #{git_url}
+
+If you can't get your application running in the browser, you can also try
+destroying and recreating the application as well using:
+
+  rhc-ctl-app -c destroy -a #{opt['app']} -l #{opt["rhlogin"]}
 
 If this doesn't work for you, let us know in the forums or in IRC and we'll
 make sure to get you up and running.
