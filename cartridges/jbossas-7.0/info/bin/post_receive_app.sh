@@ -19,8 +19,8 @@ redeploy_repo_dir.sh
 
 if [ -f ${OPENSHIFT_REPO_DIR}.openshift/config/standalone.xml ]
 then
-  echo "Found .openshift/config/standalone.xml... copying to ${OPENSHIFT_APP_DIR}jbossas-7.0/standalone/configuration/"
-  cp ${OPENSHIFT_REPO_DIR}repo/.openshift/config/standalone.xml ${OPENSHIFT_APP_DIR}jbossas-7.0/standalone/configuration/
+  echo "Found .openshift/config/standalone.xml... copying to ${OPENSHIFT_APP_DIR}${OPENSHIFT_APP_TYPE}/standalone/configuration/"
+  cp ${OPENSHIFT_REPO_DIR}repo/.openshift/config/standalone.xml ${OPENSHIFT_APP_DIR}${OPENSHIFT_APP_TYPE}/standalone/configuration/
 fi
 
 if [ -f ${OPENSHIFT_REPO_DIR}pom.xml ] && ! $SKIP_MAVEN_BUILD
