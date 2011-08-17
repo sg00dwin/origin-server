@@ -168,7 +168,7 @@ EOF
               #
               # Confirm that the host(s) exist in DNS
               #
-              puts "Now your new domain name(s) are being populated worldwide (this might take a minute)..."
+              puts "Now your new domain name(s) are being propagated worldwide (this might take a minute)..."
               # Allow DNS to propogate
               sleep 15
               app_info.each_key do |appname|
