@@ -2,7 +2,7 @@
 
 Summary:   Provides ruby rack support running on Phusion Passenger
 Name:      rhc-cartridge-rack-1.1
-Version:   0.76.7
+Version:   0.76.8
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -89,6 +89,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Wed Aug 17 2011 Dan McPherson <dmcphers@redhat.com> 0.76.8-1
+- add app type and db type and migration restart (dmcphers@redhat.com)
+
 * Tue Aug 16 2011 Dan McPherson <dmcphers@redhat.com> 0.76.7-1
 - cleanup (dmcphers@redhat.com)
 
