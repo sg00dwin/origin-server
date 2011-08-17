@@ -292,13 +292,9 @@ while loop < RHC::Maxretries && !RHC::hostexist?(fqdn)
     sleep_time = RHC::delay(sleep_time)
 end
 
-if loop >= RHC::Maxretries
-    puts "Host could not be created and/or found..."
-    exit 215
-end
-
 sleep_time = 2
 attempt = 0
+
 #
 # Pull new repo locally
 #
@@ -309,6 +305,35 @@ rhc_domain = user_info['user_info']['rhc_domain']
 app_uuid = user_info['app_info'][app_name]['uuid']
 
 git_url = "ssh://#{app_uuid}@#{app_name}-#{namespace}.#{rhc_domain}/~/git/#{app_name}.git/"
+
+# If the hostname couldn't be resolved, print out the git URL
+# and exit cleanly.  This will help solve issues where DNS times
+# out in APAC, etc on resolution.
+if loop >= RHC::Maxretries
+    puts <<WARNING
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+WARNING: We weren't able to lookup your hostname (#{fqdn}) 
+in a reasonable amount of time.  This can happen periodically and will just
+take an extra minute or two to propagate depending on where you are in the
+world.  Once you are able to access your application in a browser, you can then
+clone your git repository.
+
+  Application URL: http://#{fqdn}
+
+  Git Repository URL: #{git_url}
+
+If this doesn't work for you, let us know in the forums or in IRC and we'll
+make sure to get you up and running.
+
+  Forums: https://www.redhat.com/openshift/forums/express
+
+  IRC: #openshift (on Freenode)
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+WARNING
+    exit 0
+end
 
 unless opt['nogit']
     puts "Pulling new repo down"
