@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system client tools
 Name:          rhc
-Version:       0.75.8
+Version:       0.75.9
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       MIT
@@ -99,6 +99,12 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_sysconfdir}/openshift/express.conf
 
 %changelog
+* Wed Aug 17 2011 Dan McPherson <dmcphers@redhat.com> 0.75.9-1
+- Another message tweak (mhicks@redhat.com)
+- change wording from pull to clone (dmcphers@redhat.com)
+- Adding some more information to the warning message (mhicks@redhat.com)
+- Making DNS timeout non-fatal (mhicks@redhat.com)
+
 * Wed Aug 17 2011 Dan McPherson <dmcphers@redhat.com> 0.75.8-1
 - wording change (dmcphers@redhat.com)
 
