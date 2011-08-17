@@ -47,7 +47,8 @@ end
 
 #
 # Migrate applications between 2.1.2 and 2.1.3
-# Add env variables
+# Get env variables synced up to all existing apps
+# switch post-receive and pre-receive to use cart versions
 #
 def migrate
   start_time = Time.now.to_i
