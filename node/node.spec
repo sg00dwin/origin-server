@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.76.14
+Version:       0.76.15
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -156,6 +156,9 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Wed Aug 17 2011 Dan McPherson <dmcphers@redhat.com> 0.76.15-1
+- re-adding (mmcgrath@redhat.com)
+
 * Wed Aug 17 2011 Dan McPherson <dmcphers@redhat.com> 0.76.14-1
 - moving cgroup-read to correct bin (mmcgrath@redhat.com)
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
