@@ -2,7 +2,7 @@
 
 Summary:   Provides mod_perl support
 Name:      rhc-cartridge-perl-5.10
-Version:   0.7.7
+Version:   0.7.8
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -73,6 +73,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Wed Aug 17 2011 Dan McPherson <dmcphers@redhat.com> 0.7.8-1
+- Bug 731220 (dmcphers@redhat.com)
+
 * Wed Aug 17 2011 Dan McPherson <dmcphers@redhat.com> 0.7.7-1
 - add app type and db type and migration restart (dmcphers@redhat.com)
 - fixing perl env vars (mmcgrath@redhat.com)

@@ -34,7 +34,7 @@ require 'uri'
 module RHC
 
   Maxdlen = 16
-  Maxretries = 10
+  Maxretries = 7
   Defaultdelay = 2
   API = "1.1.1"
   broker_version = "?.?.?"
