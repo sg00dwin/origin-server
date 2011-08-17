@@ -1,3 +1,5 @@
+#!/bin/bash
+
 include_git="$1"
 
 # Import Environment Variables
