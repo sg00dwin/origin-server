@@ -346,10 +346,10 @@ unless opt['nogit']
 
     puts "git clone --quiet #{git_url} #{opt['repo']}" if debug
     quiet = (debug ? ' ' : '--quiet ')
-    git_pull = %x<git clone #{quiet} #{git_url} #{opt['repo']}>
+    git_clone = %x<git clone #{quiet} #{git_url} #{opt['repo']}>
     if $?.exitstatus != 0
-        puts "Error in git pull"
-        puts git_pull
+        puts "Error in git clone"
+        puts git_clone
         exit 216
     end
 else
