@@ -2,7 +2,7 @@
 
 Summary:   Provides ruby rack support running on Phusion Passenger
 Name:      rhc-cartridge-rack-1.1
-Version:   0.76.6
+Version:   0.76.7
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -89,6 +89,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Tue Aug 16 2011 Dan McPherson <dmcphers@redhat.com> 0.76.7-1
+- cleanup (dmcphers@redhat.com)
+
 * Tue Aug 16 2011 Dan McPherson <dmcphers@redhat.com> 0.76.6-1
 - cleanup how we call snapshot (dmcphers@redhat.com)
 - split out post and pre receive from the apps (dmcphers@redhat.com)
