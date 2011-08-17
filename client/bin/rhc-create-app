@@ -322,7 +322,9 @@ clone your git repository.
   Application URL: http://#{fqdn}
 
   Git Repository URL: #{git_url}
-  Git Clone command: git clone #{git_url}
+
+  Git Clone command: 
+    git clone #{git_url} #{opt['repo']}
 
 If you can't get your application running in the browser, you can also try
 destroying and recreating the application as well using:
