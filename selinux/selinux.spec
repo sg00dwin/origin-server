@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.76.4
+Version:       0.76.5
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -38,6 +38,9 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Wed Aug 17 2011 Dan McPherson <dmcphers@redhat.com> 0.76.5-1
+- disable cgroup reads for now (mmcgrath@redhat.com)
+
 * Tue Aug 16 2011 Matt Hicks <mhicks@redhat.com> 0.76.4-1
 - Allow libra domains to read cgroup data (dwalsh@redhat.com)
 
