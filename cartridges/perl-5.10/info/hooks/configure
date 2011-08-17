@@ -280,6 +280,12 @@ EOF
 cat <<EOF > "$APP_DIR/${application}_ctl.sh"
 #/bin/bash
 
+# Import Environment Variables
+for f in ~/.env/*
+do
+    . \$f
+done
+
 # Setup ENV vars
 export REPOLIB="$APP_DIR/repo/libs/"
 export LOCALSITELIB="$APP_DIR/perl5lib/lib/perl5/"
