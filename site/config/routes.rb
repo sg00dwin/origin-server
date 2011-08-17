@@ -45,6 +45,7 @@ RedHatCloud::Application.routes.draw do
 
     match 'user/new/flex' => 'user#new_flex', :via => [:get]
     match 'user/new/express' => 'user#new_express', :via => [:get]
+    get 'user' => 'user#new'
 
     resource :terms,
              :as => "terms",
