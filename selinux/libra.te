@@ -102,7 +102,7 @@ fs_getattr_xattr_fs(libra_domain)
 fs_dontaudit_getattr_all_fs(libra_domain)
 fs_list_inotifyfs(libra_domain)
 fs_dontaudit_list_auto_mountpoints(libra_domain)
-fs_read_cgroup_files(libra_domain)
+#fs_read_cgroup_files(libra_domain)
 storage_dontaudit_getattr_fixed_disk_dev(libra_domain)
 
 files_dontaudit_search_pids(libra_domain)
