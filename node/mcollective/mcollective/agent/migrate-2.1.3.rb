@@ -25,6 +25,8 @@ module LibraMigration
       ip = ip[0..ip.index(':')-1]
 
       FileUtils.mkdir_p "#{app_home}/.env/"
+      FileUtils.chmod(0700, "#{app_home}/.env")
+      FileUtils.chown(uuid, "root", "#{app_home}/.env")
       
       env_echos = ["echo \"export OPENSHIFT_APP_NAME='#{app_name}'\" > #{app_home}/.env/OPENSHIFT_APP_NAME",
               "echo \"export PATH=/bin:/usr/bin:#{cartridge_dir}/info/bin/:#{cartridge_root_dir}/abstract-httpd/info/bin/:#{cartridge_root_dir}/li-controller/info/bin/\" > #{app_home}/.env/PATH",
