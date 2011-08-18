@@ -29,7 +29,6 @@ module LibraMigration
       env_echos = ["echo \"export OPENSHIFT_APP_NAME='#{app_name}'\" > #{app_home}/.env/OPENSHIFT_APP_NAME",
               "echo \"export PATH=/bin:/usr/bin:#{cartridge_dir}/info/bin/:#{cartridge_root_dir}/abstract-httpd/info/bin/:#{cartridge_root_dir}/li-controller/info/bin/\" > #{app_home}/.env/PATH",
               "echo \"export OPENSHIFT_APP_DIR='#{app_dir}/'\" > #{app_home}/.env/OPENSHIFT_APP_DIR",
-              "echo \"export OPENSHIFT_REPO_DIR='#{app_dir}/repo/'\" > #{app_home}/.env/OPENSHIFT_REPO_DIR",
               "echo \"export OPENSHIFT_INTERNAL_IP='#{ip}'\" > #{app_home}/.env/OPENSHIFT_INTERNAL_IP",
               "echo \"export OPENSHIFT_INTERNAL_PORT='8080'\" > #{app_home}/.env/OPENSHIFT_INTERNAL_PORT",
               "echo \"export OPENSHIFT_LOG_DIR='#{app_dir}/logs/'\" > #{app_home}/.env/OPENSHIFT_LOG_DIR",
@@ -42,6 +41,12 @@ module LibraMigration
               "echo \"export OPENSHIFT_APP_UUID='#{uuid}'\" > #{app_home}/.env/OPENSHIFT_APP_UUID",
               "echo \"export OPENSHIFT_HOMEDIR='#{app_home}/'\" > #{app_home}/.env/OPENSHIFT_HOMEDIR"
               ]
+      
+      if app_type == 'rack-1.1'
+        env_echos.push("echo \"export OPENSHIFT_REPO_DIR='#{app_dir}/deploy/'\" > #{app_home}/.env/OPENSHIFT_REPO_DIR")
+      else
+        env_echos.push("echo \"export OPENSHIFT_REPO_DIR='#{app_dir}/repo/'\" > #{app_home}/.env/OPENSHIFT_REPO_DIR")
+      end
               
       if File.exists?("#{app_home}/.env/OPENSHIFT_DB_TYPE")
         env_echos.push("echo \"export OPENSHIFT_DB_TYPE='mysql'\" > #{app_home}/.env/OPENSHIFT_DB_TYPE")
