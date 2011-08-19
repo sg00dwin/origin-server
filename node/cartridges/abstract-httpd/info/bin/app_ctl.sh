@@ -14,7 +14,7 @@ fi
 
 validate_user_context.sh
 
-app_ctl_pre.sh
+. app_ctl_pre.sh
 
 CART_CONF_DIR=/usr/libexec/li/cartridges/${OPENSHIFT_APP_TYPE}/info/configuration/etc/conf
 

@@ -6,4 +6,4 @@ do
     . $f
 done
 
-export APPDIR="$OPENSHIFT_APP_DIR"
+export APPDIR="${OPENSHIFT_APP_DIR}"
