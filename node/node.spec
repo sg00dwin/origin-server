@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.77.0
+Version:       0.77.1
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -157,6 +157,11 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Fri Aug 19 2011 Matt Hicks <mhicks@redhat.com> 0.77.1-1
+- fix wsgi apps (dmcphers@redhat.com)
+- bump spec numbers (dmcphers@redhat.com)
+- splitting app_ctl.sh out (dmcphers@redhat.com)
+
 * Thu Aug 18 2011 Dan McPherson <dmcphers@redhat.com> 0.76.17-1
 - fix perms on .env (dmcphers@redhat.com)
 
