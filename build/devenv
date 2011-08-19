@@ -345,8 +345,8 @@ class DevEnv < Thor
       end
 
       unless options.exclude_internal?
-        #cmd = "cd li-test/broker; rake test"
-        #run_ssh(instance, "Broker Unit", cmd)
+        cmd = "cd li-test/broker; rake test"
+        run_ssh(instance, "Broker Unit", cmd)
 
         cmd = "cd li-test/site; rake test"
         run_ssh(instance, "Site Unit", cmd)
@@ -408,7 +408,7 @@ class DevEnv < Thor
 
     begin
       cmd = "cd #{Dir['/usr/lib/ruby/gems/*/gems/openshift-sdk*'][-1]}; rake test"
-      run_ssh(instance, "Broker Unit", cmd)
+      #run_ssh(instance, "Broker Unit", cmd)
       
       puts "Done"
     ensure
