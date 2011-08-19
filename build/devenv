@@ -397,6 +397,25 @@ class DevEnv < Thor
     end
   end
 
+  desc "test-sdk TAG", "Runs the tests on a tagged instance and downloads the results"
+  method_option :terminate, :type => :boolean, :desc => "Terminate the instance when finished"
+  method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
+  def test(tag)
+    options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
+
+    conn = connect
+    instance = Instance.find(conn, tag)
+
+    begin
+      cmd = "cd #{Dir['/usr/lib/ruby/gems/*/gems/openshift-sdk*'][-1]}; rake test"
+      run_ssh(instance, "Broker Unit", cmd)
+      
+      puts "Done"
+    ensure
+      instance.terminate if options.terminate?
+    end
+  end
+
   desc "install_local_client", "Builds and installs the local client rpm (uses sudo)"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   def install_local_client
