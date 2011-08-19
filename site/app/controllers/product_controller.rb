@@ -14,14 +14,6 @@ class ProductController < ApplicationController
   end
   
   def flex_redirect
-    case try_it_destination(CloudAccess::FLEX)
-    when 'register'
-      session[:workflow] = '/app/user/new/flex'
-    when 'queue', 'request'
-      session[:login_workflow] = '/app/flex'
-    when 'getting_started'
-      session[:login_workflow] = '/app/flex#quickstart'
-    end
     redirect_to '/flex' and return
   end
   
