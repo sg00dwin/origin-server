@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.76.5
+Version:       0.77.0
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
