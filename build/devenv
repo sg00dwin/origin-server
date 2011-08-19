@@ -345,8 +345,8 @@ class DevEnv < Thor
       end
 
       unless options.exclude_internal?
-        cmd = "cd li-test/broker; rake test"
-        run_ssh(instance, "Broker Unit", cmd)
+        #cmd = "cd li-test/broker; rake test"
+        #run_ssh(instance, "Broker Unit", cmd)
 
         cmd = "cd li-test/site; rake test"
         run_ssh(instance, "Site Unit", cmd)
