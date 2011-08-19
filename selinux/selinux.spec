@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.77.0
+Version:       0.77.1
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -38,6 +38,9 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Fri Aug 19 2011 Matt Hicks <mhicks@redhat.com> 0.77.1-1
+- bump spec numbers (dmcphers@redhat.com)
+
 * Wed Aug 17 2011 Dan McPherson <dmcphers@redhat.com> 0.76.5-1
 - disable cgroup reads for now (mmcgrath@redhat.com)
 
