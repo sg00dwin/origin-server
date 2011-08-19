@@ -107,8 +107,8 @@ mkdir -p $M2_DIR
 # Redirect the configure script output for debugging
 APP_JBOSS_TMP_DIR="$APP_JBOSS"/standalone/tmp
 mkdir -p ${APP_JBOSS_TMP_DIR}
-#logfile=${APP_JBOSS_TMP_DIR}/jbossas7-configure-$$.log
-#exec > $logfile 2>&1
+logfile=${APP_JBOSS_TMP_DIR}/jbossas7-configure-$$.log
+exec > $logfile 2>&1
 
 # Report an error msg $1 and exit with code $2
 function error {
