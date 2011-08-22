@@ -33,7 +33,7 @@ Requires:  rubygem-mechanize
 Requires:  rubygem-mocha
 Requires:  rubygem-rspec
 Requires:  rubygem-nokogiri
-Requires:  rubygem-openshift-sdk
+#Requires:  rubygem-openshift-sdk
 Requires:  charlie
 Requires:  pam
 
