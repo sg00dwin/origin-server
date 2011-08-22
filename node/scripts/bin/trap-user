@@ -81,10 +81,10 @@ if __name__ == '__main__':
         syslog.syslog("Invalid command %s" % orig_cmd)
         sys.stderr.write("Invalid command %s" % orig_cmd)
         sys.exit(2)
-    if basecmd in ('snapshot'):
+    if basecmd in ('snapshot',):
         # This gets called with "snapshot"
         allargs = []
-    if basecmd in ('restore'):
+    if basecmd in ('restore',):
         # This gets called with "restore <INCLUDE_GIT>"
         include_git = False
         if len(allargs) > 1 and allargs[1] == 'INCLUDE_GIT':
@@ -93,10 +93,10 @@ if __name__ == '__main__':
         allargs = [] 
         if include_git:
             allargs.append('INCLUDE_GIT')
-    elif basecmd in ('rhcsh'):
+    elif basecmd in ('rhcsh',):
         os.environ["PS1"] = "rhcsh> "
         allargs = ['--init-file', '/usr/local/bin/rhcsh', '-i']
-    elif basecmd in ('tail'):
+    elif basecmd in ('tail',):
         files = []
         
         files_start_index = 1
