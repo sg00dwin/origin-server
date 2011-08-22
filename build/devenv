@@ -53,9 +53,9 @@ class DevEnv < Thor
       `git diff-index --quiet HEAD`
   
       if $? != 0
-        # Perform a temporary commit to build client
-        puts "Creating temporary commit to build client"
-        `git commit -a -m "Temporary commit to build client"`
+        # Perform a temporary commit
+        puts "Creating temporary commit to build"
+        `git commit -a -m "Temporary commit to build"`
         if $? != 0
           puts "No-op."
         else
