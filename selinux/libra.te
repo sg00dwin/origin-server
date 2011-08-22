@@ -259,3 +259,32 @@ require {
 
 #============= httpd_t ==============
 allow httpd_t self:capability sys_ptrace;
+
+type libra_cgroup_read_t;
+type libra_cgroup_read_exec_t;
+application_domain(libra_cgroup_read_t, libra_cgroup_read_exec_t)
+
+permissive libra_cgroup_read_t;
+
+########################################
+#
+# libra_cgroup_read local policy
+#
+
+allow libra_cgroup_read_t self:fifo_file rw_fifo_file_perms;
+allow libra_cgroup_read_t self:unix_stream_socket create_stream_socket_perms;
+
+dev_read_urand(libra_cgroup_read_t)
+
+domain_use_interactive_fds(libra_cgroup_read_t)
+
+files_read_etc_files(libra_cgroup_read_t)
+
+userdom_use_inherited_user_ptys(libra_cgroup_read_t)
+
+miscfiles_read_localization(libra_cgroup_read_t)
+
+domtrans_pattern(libra_domain, libra_cgroup_read_exec_t, libra_cgroup_read_t)
+role system_r types libra_cgroup_read_t;
+
+fs_read_cgroup_files(libra_cgroup_read_t)
