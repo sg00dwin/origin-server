@@ -19,6 +19,9 @@ module LibraMigration
       cartridge_root_dir = "/usr/libexec/li/cartridges"
       cartridge_dir = "#{cartridge_root_dir}/#{app_type}"
       
+      FileUtils.chmod(0750, "#{app_home}/.env")
+      FileUtils.chown_R("root", uuid, "#{app_home}/.env")
+      
       #uid=`id -u "#{uuid}"`
       #c_val=`echo c$((#{uid}/1023)),c$((#{uid}%1023))`.chomp
       
