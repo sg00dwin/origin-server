@@ -1,0 +1,416 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="1052.3622"
+   height="744.09448"
+   id="svg4438"
+   version="1.1"
+   inkscape:version="0.48.1 r9760"
+   sodipodi:docname="node-layer.svg">
+  <defs
+     id="defs4440">
+    <marker
+       inkscape:stockid="Arrow1Lstart"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Lstart"
+       style="overflow:visible">
+      <path
+         id="path4150"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt;marker-start:none"
+         transform="scale(0.8) translate(12.5,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Lend"
+       style="overflow:visible;">
+      <path
+         id="path4153"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt;marker-start:none;"
+         transform="scale(0.8) rotate(180) translate(12.5,0)" />
+    </marker>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.98994949"
+     inkscape:cx="493.85558"
+     inkscape:cy="377.44986"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1680"
+     inkscape:window-height="998"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata4443">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-308.2677)">
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="172.09489"
+       y="355.53424"
+       id="text6463"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan6465"
+         x="172.09489"
+         y="355.53424">OpenShift Express</tspan><tspan
+         sodipodi:role="line"
+         x="172.09489"
+         y="405.53424"
+         id="tspan6467">Node Layer Reference Docs</tspan></text>
+    <flowRoot
+       transform="translate(272.99397,655.82402)"
+       style="font-size:12px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       id="flowRoot5325-2"
+       xml:space="preserve"><flowRegion
+         id="flowRegion5327-2"><rect
+           style="font-size:12px"
+           y="170.32784"
+           x="21.213203"
+           height="130.30968"
+           width="363.65491"
+           id="rect5329-7" /></flowRegion><flowPara
+         style="font-size:18px"
+         id="flowPara5331-7">Cartridge Responsiblity</flowPara><flowPara
+         id="flowPara5345-9">Step 1: Creates unix user and home dir</flowPara><flowPara
+         id="flowPara3609" /><flowPara
+         id="flowPara3611">Step 2: Setup security and resource constraints</flowPara><flowPara
+         id="flowPara5333-1" /><flowPara
+         id="flowPara5335-4">Step 3: Lays down directory structure, startup scripts</flowPara><flowPara
+         id="flowPara3605" /><flowPara
+         id="flowPara3607">Step 4: Starts templated 'hello world' app</flowPara><flowPara
+         id="flowPara5337-0" /><flowPara
+         id="flowPara5341-4" /></flowRoot>    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="791.81085"
+       y="337.17825"
+       id="text6457"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan6459"
+         x="791.81085"
+         y="337.17825">Mike McGrath &lt;mmcgrath@redhat.com&gt;</tspan><tspan
+         sodipodi:role="line"
+         x="791.81085"
+         y="352.17825"
+         id="tspan6461">2011-09-23</tspan></text>
+    <g
+       id="g3696"
+       transform="translate(-644.47732,-181.82746)">
+      <g
+         id="g3369"
+         transform="translate(-70.710679,-40.406102)">
+        <rect
+           style="fill:#555577;fill-opacity:0.99607843;stroke:#ddddee;stroke-width:2.33982587;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+           id="rect2985-0-5-3"
+           width="321.33389"
+           height="54.467937"
+           x="740.89423"
+           y="689.75751"
+           rx="48.034943"
+           ry="3.379293" />
+        <flowRoot
+           transform="translate(692.71688,426.23527)"
+           xml:space="preserve"
+           id="flowRoot3899-0-8-3"
+           style="font-size:32px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"><flowRegion
+             id="flowRegion3901-2-7-6"><rect
+               id="rect3903-7-2-5"
+               width="304.31696"
+               height="40"
+               x="57.142857"
+               y="271.95163"
+               style="font-size:32px;fill:#ffffff;fill-opacity:1" /></flowRegion><flowPara
+             id="flowPara3905-9-8-4">mcollective-server</flowPara></flowRoot>      </g>
+    </g>
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3814"
+       style="fill:black;stroke:none;stroke-opacity:1;stroke-width:1px;stroke-linejoin:miter;stroke-linecap:butt;fill-opacity:1;font-family:Bitstream Vera Sans;font-style:normal;font-weight:normal;font-size:40px;line-height:125%;letter-spacing:0px;word-spacing:0px"><flowRegion
+         id="flowRegion3816"><rect
+           id="rect3818"
+           width="274.76151"
+           height="178.797"
+           x="409.11179"
+           y="464.28223" /></flowRegion><flowPara
+         id="flowPara3820" /></flowRoot>    <g
+       id="g3747-9"
+       transform="translate(165.665,64.144692)" />
+    <g
+       transform="translate(-633.87075,-61.619248)"
+       id="g3461">
+      <rect
+         ry="3.379293"
+         rx="48.034943"
+         y="662.48334"
+         x="729.78253"
+         height="52.447651"
+         width="177.89226"
+         id="rect2985-0-5-3-9"
+         style="fill:#555577;fill-opacity:0.99607843;stroke:#ddddee;stroke-width:2.33982587;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+      <flowRoot
+         style="font-size:32px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+         id="flowRoot3899-0-8-3-7"
+         xml:space="preserve"
+         transform="translate(682.61535,394.92054)"><flowRegion
+           id="flowRegion3901-2-7-6-8"><rect
+             style="font-size:32px;fill:#ffffff;fill-opacity:1"
+             y="271.95163"
+             x="57.142857"
+             height="40"
+             width="304.31696"
+             id="rect3903-7-2-5-2" /></flowRegion><flowPara
+           id="flowPara3905-9-8-4-5">mc-agent</flowPara></flowRoot>    </g>
+    <g
+       transform="translate(-587.40372,-53.538023)"
+       id="g3468">
+      <rect
+         ry="3.379293"
+         rx="48.034943"
+         y="822.08746"
+         x="682.30536"
+         height="52.447651"
+         width="177.89226"
+         id="rect2985-0-5-3-9-8"
+         style="fill:#555577;fill-opacity:0.99607843;stroke:#ddddee;stroke-width:2.33982587;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+      <flowRoot
+         style="font-size:32px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+         id="flowRoot3899-0-8-3-7-9"
+         xml:space="preserve"
+         transform="translate(633.11789,554.5247)"><flowRegion
+           id="flowRegion3901-2-7-6-8-6"><rect
+             style="font-size:32px;fill:#ffffff;fill-opacity:1"
+             y="271.95163"
+             x="57.142857"
+             height="40"
+             width="304.31696"
+             id="rect3903-7-2-5-2-0" /></flowRegion><flowPara
+           id="flowPara3905-9-8-4-5-7">cartridges</flowPara></flowRoot>    </g>
+    <g
+       id="g3563"
+       transform="translate(-11.111679,28.284272)">
+      <rect
+         ry="3.379293"
+         rx="48.034943"
+         y="477.62555"
+         x="645.43475"
+         height="51.437481"
+         width="230.42021"
+         id="rect2985-0-5-3-9-8-8"
+         style="fill:#555577;fill-opacity:0.99607843;stroke:#ddddee;stroke-width:2.33982587;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+      <flowRoot
+         style="font-size:32px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+         id="flowRoot3899-0-8-3-7-9-5"
+         xml:space="preserve"
+         transform="translate(596.2473,210.06276)"><flowRegion
+           id="flowRegion3901-2-7-6-8-6-3"><rect
+             style="font-size:32px;fill:#ffffff;fill-opacity:1"
+             y="271.95163"
+             x="57.142857"
+             height="40"
+             width="304.31696"
+             id="rect3903-7-2-5-2-0-3" /></flowRegion><flowPara
+           id="flowPara3905-9-8-4-5-7-8">system-httpd</flowPara></flowRoot>    </g>
+    <g
+       id="g3555"
+       transform="translate(19.192898,23.233509)">
+      <path
+         inkscape:connector-curvature="0"
+         inkscape:connector-type="polyline"
+         id="path3371-8-5"
+         d="m 702.56109,622.03718 0,0"
+         style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+      <rect
+         ry="3.379293"
+         rx="48.034943"
+         y="590.25757"
+         x="641.39417"
+         height="49.417194"
+         width="184.96336"
+         id="rect2985-0-5-3-9-8-8-4"
+         style="fill:#555577;fill-opacity:0.99607843;stroke:#ddddee;stroke-width:2.33982587;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+      <flowRoot
+         style="font-size:32px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+         id="flowRoot3899-0-8-3-7-9-5-8"
+         xml:space="preserve"
+         transform="translate(592.2067,322.69474)"><flowRegion
+           id="flowRegion3901-2-7-6-8-6-3-0"><rect
+             style="font-size:32px;fill:#ffffff;fill-opacity:1"
+             y="271.95163"
+             x="57.142857"
+             height="40"
+             width="304.31696"
+             id="rect3903-7-2-5-2-0-3-8" /></flowRegion><flowPara
+           id="flowPara3905-9-8-4-5-7-8-1">app-httpd</flowPara></flowRoot>    </g>
+    <g
+       id="g3580">
+      <rect
+         ry="3.379293"
+         rx="48.034943"
+         transform="translate(0,308.2677)"
+         y="403.67307"
+         x="656.59918"
+         height="162.63457"
+         width="201.02036"
+         id="rect3570"
+         style="fill:#ffffff;fill-opacity:1;stroke:#dd888f;stroke-width:3;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:0.94117647;stroke-dasharray:none" />
+      <text
+         sodipodi:linespacing="125%"
+         id="text3572"
+         y="752.34686"
+         x="676.80225"
+         style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+         xml:space="preserve"><tspan
+           y="752.34686"
+           x="676.80225"
+           id="tspan3574"
+           sodipodi:role="line">~/</tspan><tspan
+           id="tspan3576"
+           y="802.34686"
+           x="676.80225"
+           sodipodi:role="line">cgroup</tspan><tspan
+           id="tspan3578"
+           y="852.34686"
+           x="676.80225"
+           sodipodi:role="line">selinux</tspan></text>
+    </g>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 186.06133,213.72418 -0.90314,78.87221"
+       id="path3589"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-start="#g3696"
+       inkscape:connection-start-point="d4"
+       inkscape:connection-end="#g3461"
+       inkscape:connection-end-point="d4"
+       transform="translate(0,308.2677)" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 184.69994,345.04404 -0.6942,115.2377"
+       id="path3591"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-start="#g3461"
+       inkscape:connection-start-point="d4"
+       inkscape:connection-end="#g3468"
+       inkscape:connection-end-point="d4"
+       transform="translate(0,308.2677)" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 272.7939,486.27047 383.80528,-1.01446"
+       id="path3593"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-start="#g3468"
+       inkscape:connection-start-point="d4"
+       inkscape:connection-end="#g3580"
+       inkscape:connection-end-point="d4"
+       transform="translate(0,308.2677)" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 754.99034,403.67307 -1.27772,-49.0325"
+       id="path3595"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-start="#g3580"
+       inkscape:connection-start-point="d4"
+       inkscape:connection-end="#g3555"
+       inkscape:connection-end-point="d4"
+       transform="translate(0,308.2677)" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 752.24902,305.22338 -1.8626,-56.14378"
+       id="path3599"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-start="#g3555"
+       inkscape:connection-start-point="d4"
+       inkscape:connection-end="#g3563"
+       inkscape:connection-end-point="d4"
+       transform="translate(0,308.2677)" />
+    <text
+       xml:space="preserve"
+       style="font-size:14px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="193.94928"
+       y="718.00171"
+       id="text3601"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3603"
+         x="193.94928"
+         y="718.00171">Shell out to cartridge with basic</tspan><tspan
+         sodipodi:role="line"
+         x="193.94928"
+         y="735.50171"
+         id="tspan3625">info about app name, uuid, etc.</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:14px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="767.71594"
+       y="374.37866"
+       id="text3613"
+       sodipodi:linespacing="125%"
+       transform="translate(0,308.2677)"><tspan
+         sodipodi:role="line"
+         id="tspan3615"
+         x="767.71594"
+         y="374.37866">Points to docroot</tspan><tspan
+         sodipodi:role="line"
+         x="767.71594"
+         y="424.37866"
+         id="tspan3617">in home dir</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:14px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="759.6347"
+       y="577.59052"
+       id="text3619"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3621"
+         x="759.6347"
+         y="577.59052">Uses mod_proxy to pass vhost</tspan><tspan
+         sodipodi:role="line"
+         x="759.6347"
+         y="595.09052"
+         id="tspan3623">down to proper app </tspan></text>
+  </g>
+</svg>
