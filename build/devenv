@@ -397,10 +397,10 @@ class DevEnv < Thor
     end
   end
 
-  desc "test-sdk TAG", "Runs the tests on a tagged instance and downloads the results"
+  desc "test_sdk TAG", "Runs the tests on a tagged instance and downloads the results"
   method_option :terminate, :type => :boolean, :desc => "Terminate the instance when finished"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
-  def test(tag)
+  def test_sdk(tag)
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
 
     conn = connect
