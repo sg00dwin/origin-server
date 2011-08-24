@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.77.2
+Version:       0.77.3
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -38,6 +38,10 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Wed Aug 24 2011 Dan McPherson <dmcphers@redhat.com> 0.77.3-1
+- puppet is leaking file descriptors to domains that it is restarting
+  (dwalsh@redhat.com)
+
 * Wed Aug 24 2011 Dan McPherson <dmcphers@redhat.com> 0.77.2-1
 - Add libra_croup_read_t domain to allow the libra domains to execute rhc-
   cgroup-read script.  This will allow libr domains to see only their cgroup
