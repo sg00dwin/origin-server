@@ -408,7 +408,7 @@ class DevEnv < Thor
 
     begin
       cmd = "cd #{Dir['/usr/lib/ruby/gems/*/gems/openshift-sdk*'][-1]}; rake test"
-      #run_ssh(instance, "Broker Unit", cmd)
+      run_ssh(instance, "OpenShift SDK Unit", cmd)
       
       puts "Done"
     ensure
