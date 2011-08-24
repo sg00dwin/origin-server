@@ -6,6 +6,12 @@ default you will not be integrated with IT's corporate systems.  Any
 registrations will essentially be 'trusted'.  This is configurable though if
 you want to try logging in as real users.
 
+Pre Setup:
+
+1. yum install mcollective-common mcollective-client rhc rubygem-right_aws rubygem-aws
+2. sudo mkdir /etc/libra
+3. sudo cp server-common/conf/libra/controller.conf  /etc/libra
+
 Developing on laptop - integrated
 1. edit development.rb and search for 'Integrated Streamline'.  Uncomment the
 appropriate section to enable integration testing.  If you are in AWS, you
