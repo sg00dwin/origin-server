@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.76.3
+Version:   0.76.4
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -196,6 +196,10 @@ chkconfig libra-tc on
 %{_initddir}/libra-site
 
 %changelog
+* Wed Aug 24 2011 Dan McPherson <dmcphers@redhat.com> 0.76.4-1
+- add to client tools the ability to specify your rsa key file as well as
+  default back to id_rsa as a last resort (dmcphers@redhat.com)
+
 * Mon Aug 22 2011 Dan McPherson <dmcphers@redhat.com> 0.76.3-1
 - add sdk back (dmcphers@redhat.com)
 
