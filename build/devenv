@@ -257,8 +257,6 @@ class DevEnv < Thor
   def sync_sdk(name, path)
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
 
-    FileUtils.cd path 
-
     if options.tag?
       instance = Instance.find(connect, name)
     else
@@ -271,6 +269,10 @@ class DevEnv < Thor
 
     puts "Synchronizing local changes from branch #{branch}..."
     ssh_path=File.expand_path(File.dirname(__FILE__)) + "/ssh-override"
+
+    # Don't change directories until the ssh_path has been determined from the working directory
+    FileUtils.cd path 
+
     run("export GIT_SSH=#{ssh_path}; #{branch == 'origin/master' ? "git push -q root@#{instance.dns}:/root/openshift-sdk master:master --tags --force; " : ''}git push -q root@#{instance.dns}:/root/openshift-sdk #{branch}:master --tags --force", :verbose => options.verbose?)
     puts "Done"
 
