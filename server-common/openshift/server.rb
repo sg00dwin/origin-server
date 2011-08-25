@@ -154,7 +154,7 @@ module Libra
       sshfp = get_fact_direct('sshfp').split[-1]
       Libra.logger_debug "DEBUG: Public ip being configured '#{public_ip}' to app '#{app_name}'"
       auth_token = Server.dyn_login(retries)
-      Server.dyn_create_a_record(app_name, namespace, public_ip, sshfp, auth_token, retries)
+      Server.dyn_create_a_record(app_name, namespace, public_ip, auth_token, retries)
       Server.dyn_create_sshfp_record(app_name, namespace, sshfp, auth_token, retries)
       Server.dyn_publish(auth_token, retries)
       Server.dyn_logout(auth_token, retries)
@@ -166,7 +166,7 @@ module Libra
       Libra.logger_debug "DEBUG: Changing public ip of '#{app_name}' to '#{public_ip}'"
       Server.dyn_delete_sshfp_record(app_name, old_namespace, auth_token, retries)            
       Server.dyn_delete_a_record(app_name, old_namespace, auth_token, retries)
-      Server.dyn_create_a_record(app_name, new_namespace, public_ip, sshfp, auth_token, retries)
+      Server.dyn_create_a_record(app_name, new_namespace, public_ip, auth_token, retries)
       Server.dyn_create_sshfp_record(app_name, new_namespace, sshfp, auth_token, retries)
     end
     
@@ -189,11 +189,19 @@ module Libra
       resp, data = dyn_delete("Session/", auth_token, retries)
     end
 
-    def self.dyn_create_a_record(application, namespace, public_ip, sshfp, auth_token, retries=0)
+    def self.dyn_create_a_record(application, namespace, public_ip, auth_token, retries=0)
       fqdn = "#{application}-#{namespace}.#{Libra.c[:libra_domain]}"
       # Create the A record
       path = "ARecord/#{Libra.c[:libra_zone]}/#{fqdn}/"
       record_data = { :rdata => { :address => public_ip }, :ttl => "60" }
+      resp, data = dyn_post(path, record_data, auth_token, retries)
+    end
+    
+    def self.dyn_create_cname_record(application, namespace, public_hostname, auth_token, retries=0)
+      fqdn = "#{application}-#{namespace}.#{Libra.c[:libra_domain]}"
+      # Create the CNAME record
+      path = "CNAMERecord/#{Libra.c[:libra_zone]}/#{fqdn}/"
+      record_data = { :rdata => { :cname => public_hostname }, :ttl => "60" }
       resp, data = dyn_post(path, record_data, auth_token, retries)
     end
     
