@@ -20,7 +20,7 @@ then
         then
             pear upgrade "$f"
         else
-            pear install "$f"
+            pear install --alldeps "$f"
         fi
     done
 fi
