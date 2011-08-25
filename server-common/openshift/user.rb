@@ -248,6 +248,8 @@ module Libra
           app_name = File.basename(key[:key], '.json') unless key[:key].end_with?('/')
           if app_name
             @apps[app_name] = app_info(app_name)
+          else
+            Libra.logger_debug "DEBUG: App not found '#{app_name}' for user '#{rhlogin}'"
           end
         end
       end
