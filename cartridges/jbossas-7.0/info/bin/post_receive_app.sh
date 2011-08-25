@@ -25,13 +25,13 @@ then
 
   for f in ${OPENSHIFT_REPO_DIR}/.openshift/config/*
   do
-    target=\$(basename \$f)
-    if [ -e "${OPENSHIFT_APP_DIR}${OPENSHIFT_APP_TYPE}/standalone/configuration/\$target" ]
+    target=$(basename $f)
+    if [ -e "${OPENSHIFT_APP_DIR}${OPENSHIFT_APP_TYPE}/standalone/configuration/$target" ]
     then
-       echo "Removing existing \$target"
-       rm -rf "${OPENSHIFT_APP_DIR}${OPENSHIFT_APP_TYPE}/standalone/configuration/\$target"
+       echo "Removing existing $target"
+       rm -rf "${OPENSHIFT_APP_DIR}${OPENSHIFT_APP_TYPE}/standalone/configuration/$target"
     fi
-    ln -s \$f "${OPENSHIFT_APP_DIR}${OPENSHIFT_APP_TYPE}/standalone/configuration/"
+    ln -s $f "${OPENSHIFT_APP_DIR}${OPENSHIFT_APP_TYPE}/standalone/configuration/"
   done
 fi
 

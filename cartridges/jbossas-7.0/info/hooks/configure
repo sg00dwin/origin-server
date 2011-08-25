@@ -344,7 +344,6 @@ do
 done
 
 app_ctl.sh \$1
->>>>>>> fb6bbe18301ca1930bfba217bde25c076c848e61
 __EOF__
 
 #
