@@ -8,6 +8,7 @@ module Libra
   class Server
     # Cartridge definitions
     @@C_CONTROLLER = 'li-controller'
+    @@USE_CNAME = false
 
     attr_reader :name, :repos, :carts, :embedcarts
 
@@ -141,35 +142,42 @@ module Libra
       raise DNSException.new(145), "Error communicating with DNS system.  If the problem persists please contact Red Hat support.", caller[0..5]
     end
     
-    def self.delete_app_dns_entries(app_name, namespace, retries=2)
-      auth_token = dyn_login(retries)
-      dyn_delete_sshfp_record(app_name, namespace, auth_token, retries)
-      dyn_delete_a_record(app_name, namespace, auth_token, retries)
-      dyn_publish(auth_token, retries)
-      dyn_logout(auth_token, retries)
-    end
-    
-    def create_app_dns_entries(app_name, namespace, retries=2)
-      public_ip = get_fact_direct('public_ip')
-      sshfp = get_fact_direct('sshfp').split[-1]
-      Libra.logger_debug "DEBUG: Public ip being configured '#{public_ip}' to app '#{app_name}'"
+    def delete_app_dns_entries(app_name, namespace, retries=2)
       auth_token = Server.dyn_login(retries)
-      Server.dyn_create_a_record(app_name, namespace, public_ip, auth_token, retries)
-      Server.dyn_create_sshfp_record(app_name, namespace, sshfp, auth_token, retries)
+      if @@USE_CNAME
+        dyn_delete_cname_record(app_name, namespace, auth_token, retries)
+      else
+        dyn_delete_sshfp_record(app_name, namespace, auth_token, retries)
+        dyn_delete_a_record(app_name, namespace, auth_token, retries)
+      end
       Server.dyn_publish(auth_token, retries)
       Server.dyn_logout(auth_token, retries)
     end
-    
-    def recreate_app_dns_entries(app_name, old_namespace, new_namespace, auth_token, retries=2)
-      public_ip = get_fact_direct('public_ip')
-      sshfp = get_fact_direct('sshfp').split[-1]
-      Libra.logger_debug "DEBUG: Changing public ip of '#{app_name}' to '#{public_ip}'"
-      Server.dyn_delete_sshfp_record(app_name, old_namespace, auth_token, retries)            
-      Server.dyn_delete_a_record(app_name, old_namespace, auth_token, retries)
-      Server.dyn_create_a_record(app_name, new_namespace, public_ip, auth_token, retries)
-      Server.dyn_create_sshfp_record(app_name, new_namespace, sshfp, auth_token, retries)
+
+    def create_app_dns_entries(app_name, namespace, retries=2)
+      auth_token = Server.dyn_login(retries)
+      if @@USE_CNAME
+        dyn_create_cname_record(app_name, namespace, auth_token, retries)
+      else
+        dyn_create_a_record(app_name, namespace, auth_token, retries)
+        dyn_create_sshfp_record(app_name, namespace, auth_token, retries)
+      end
+      Server.dyn_publish(auth_token, retries)
+      Server.dyn_logout(auth_token, retries)
     end
-    
+
+    def recreate_app_dns_entries(app_name, old_namespace, new_namespace, auth_token, retries=2)
+      if @@USE_CNAME
+        dyn_delete_cname_record(app_name, old_namespace, auth_token, retries)
+        dyn_create_cname_record(app_name, new_namespace, auth_token, retries)
+      else
+        dyn_delete_sshfp_record(app_name, old_namespace, auth_token, retries)
+        dyn_delete_a_record(app_name, old_namespace, auth_token, retries)
+        dyn_create_a_record(app_name, new_namespace, auth_token, retries)
+        dyn_create_sshfp_record(app_name, new_namespace, auth_token, retries)
+      end
+    end
+
     def self.dyn_do(method, retries=2)
       i = 0
       while true
@@ -189,42 +197,54 @@ module Libra
       resp, data = dyn_delete("Session/", auth_token, retries)
     end
 
-    def self.dyn_create_a_record(application, namespace, public_ip, auth_token, retries=0)
+    def dyn_create_a_record(application, namespace, auth_token, retries=0)
+      public_ip = get_fact_direct('public_ip')
+      Libra.logger_debug "DEBUG: Public ip being configured '#{public_ip}' to app '#{application}'"
       fqdn = "#{application}-#{namespace}.#{Libra.c[:libra_domain]}"
       # Create the A record
       path = "ARecord/#{Libra.c[:libra_zone]}/#{fqdn}/"
       record_data = { :rdata => { :address => public_ip }, :ttl => "60" }
-      resp, data = dyn_post(path, record_data, auth_token, retries)
+      resp, data = Server.dyn_post(path, record_data, auth_token, retries)
     end
     
-    def self.dyn_create_cname_record(application, namespace, public_hostname, auth_token, retries=0)
+    def dyn_create_cname_record(application, namespace, auth_token, retries=0)
+      public_hostname = get_fact_direct('public_hostname')
+      Libra.logger_debug "DEBUG: Public ip being configured '#{public_hostname}' to app '#{application}'"
       fqdn = "#{application}-#{namespace}.#{Libra.c[:libra_domain]}"
       # Create the CNAME record
       path = "CNAMERecord/#{Libra.c[:libra_zone]}/#{fqdn}/"
       record_data = { :rdata => { :cname => public_hostname }, :ttl => "60" }
-      resp, data = dyn_post(path, record_data, auth_token, retries)
+      resp, data = Server.dyn_post(path, record_data, auth_token, retries)
     end
     
-    def self.dyn_create_sshfp_record(application, namespace, sshfp, auth_token, retries=0)
+    def dyn_create_sshfp_record(application, namespace, auth_token, retries=0)
+      sshfp = get_fact_direct('sshfp').split[-1]
       fqdn = "#{application}-#{namespace}.#{Libra.c[:libra_domain]}"
       # Create the SSHFP record
       path = "SSHFPRecord/#{Libra.c[:libra_zone]}/#{fqdn}/"
       record_data = { :rdata => { :algorithm => '1',  :fptype => '1', :fingerprint => sshfp}, :ttl => "60" }
-      resp, data = dyn_post(path, record_data, auth_token, retries)
+      resp, data = Server.dyn_post(path, record_data, auth_token, retries)
     end
 
-    def self.dyn_delete_a_record(application, namespace, auth_token, retries=0)
+    def dyn_delete_a_record(application, namespace, auth_token, retries=0)
       fqdn = "#{application}-#{namespace}.#{Libra.c[:libra_domain]}"
       # Delete the A record
       path = "ARecord/#{Libra.c[:libra_zone]}/#{fqdn}/"
-      resp, data = dyn_delete(path, auth_token, retries)
+      resp, data = Server.dyn_delete(path, auth_token, retries)
     end
     
-    def self.dyn_delete_sshfp_record(application, namespace, auth_token, retries=0)
+    def dyn_delete_cname_record(application, namespace, auth_token, retries=0)
+      fqdn = "#{application}-#{namespace}.#{Libra.c[:libra_domain]}"
+      # Delete the A record
+      path = "CNAMERecord/#{Libra.c[:libra_zone]}/#{fqdn}/"
+      resp, data = Server.dyn_delete(path, auth_token, retries)
+    end
+    
+    def dyn_delete_sshfp_record(application, namespace, auth_token, retries=0)
       fqdn = "#{application}-#{namespace}.#{Libra.c[:libra_domain]}"
       # Delete the SSHFP record
       path = "SSHFPRecord/#{Libra.c[:libra_zone]}/#{fqdn}/"
-      resp, data = dyn_delete(path, auth_token, retries)
+      resp, data = Server.dyn_delete(path, auth_token, retries)
     end
 
     def self.dyn_create_txt_record(namespace, auth_token, retries=0)
@@ -258,12 +278,6 @@ module Libra
       else
         return dyn_has
       end
-    end
-
-    def self.dyn_has_a_record?(application, namespace, auth_token)
-      fqdn = "#{application}-#{namespace}.#{Libra.c[:libra_domain]}"
-      path = "ARecord/#{Libra.c[:libra_zone]}/#{fqdn}/"
-      return dyn_has?(path, auth_token)
     end
     
     def self.handle_temp_redirect(resp, auth_token)

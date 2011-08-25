@@ -34,11 +34,13 @@ start() {
         fi
       done
     fi
+    public_hostname=$(wget -qO- http://169.254.169.254/latest/meta-data/public-hostname)
 
     echo_success
     cat <<EOF > /etc/libra/node_data.conf
 instance_id="$instance_id"
 public_ip="$public_ip"
+public_hostname="$public_hostname"
 EOF
     return
 }

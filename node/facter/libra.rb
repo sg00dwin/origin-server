@@ -45,6 +45,15 @@ Facter.add(:public_ip) do
 end
 
 #
+# Pull public_hostname out of the node_data config
+#
+Facter.add(:public_hostname) do
+    config_file = ParseConfig.new('/etc/libra/node_data.conf')
+    public_hostname = config_file.get_value('public_hostname') ? config_file.get_value('public_hostname') : 'UNKNOWN'
+    setcode { public_hostname }
+end
+
+#
 # Get sshfp record
 #
 Facter.add(:sshfp) do

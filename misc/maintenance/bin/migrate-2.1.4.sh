@@ -25,21 +25,6 @@ def migrate_app_on_node(user, app, app_name)
       if exit_code != 0
         puts "Migrate on node exit code: #{exit_code}"
         raise "Failed migrating app '#{app_name}' with uuid '#{app['uuid']}' on node '#{app['server_identity']}'"
-      else
-        puts "Restarting app '#{app_name}' on node '#{app['server_identity']}'"
-        server = Server.new(app['server_identity'])
-        result = server.execute_direct(app['framework'], 'restart', "#{app_name} #{user.namespace} #{app['uuid']}")[0]
-        if (result && defined? result.results)
-          output = result.results[:data][:output]
-          exit_code = result.results[:data][:exitcode]
-          if (output.length > 0)
-            puts "Restart on node output: #{output}"
-          end
-          if exit_code != 0
-            puts "Restart on node exit code: #{exit_code}"
-            raise "Failed restarting app '#{app_name}' with uuid '#{app['uuid']}' on node '#{app['server_identity']}'"
-          end
-        end
       end
     end
   end
