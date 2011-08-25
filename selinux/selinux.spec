@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.77.3
+Version:       0.77.4
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -38,6 +38,11 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Thu Aug 25 2011 Dan McPherson <dmcphers@redhat.com> 0.77.4-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- Allow sshd connects (mmcgrath@redhat.com)
+
 * Wed Aug 24 2011 Dan McPherson <dmcphers@redhat.com> 0.77.3-1
 - puppet is leaking file descriptors to domains that it is restarting
   (dwalsh@redhat.com)
