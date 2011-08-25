@@ -228,7 +228,17 @@ done
 if [ -f '$APP_DIR/repo/.openshift/config/standalone.xml' ]
 then
   echo "Found .openshift/config/standalone.xml... copying to "$APP_JBOSS"/standalone/configuration/"
-  cp $APP_DIR/repo/.openshift/config/standalone.xml "$APP_JBOSS"/standalone/configuration/
+
+  for f in $APP_DIR/repo/.openshift/config/*
+  do
+    target=\$(basename \$f)
+    if [ -e "$APP_JBOSS/standalone/configuration/\$target" ]
+    then
+       echo "Removing existing \$target"
+       rm -rf "$APP_JBOSS/standalone/configuration/\$target"
+    fi
+    ln -s \$f "$APP_JBOSS/standalone/configuration/"
+  done
 fi
 
 if [ -f '$APP_DIR/repo/pom.xml' ] && ! \$SKIP_MAVEN_BUILD
@@ -335,7 +345,12 @@ fi
 ls -l "$APP_JBOSS"/standalone/configuration
 
 # Get the standalone.sh script
-cp ${jboss_home}/bin/standalone.sh "$APP_JBOSS_BIN_DIR"
+if [ -f ${JBOSS_CARTRIDGE_ROOT}/info/bin/standalone.sh ]
+then
+    cp ${JBOSS_CARTRIDGE_ROOT}/info/bin/standalone.sh "$APP_JBOSS_BIN_DIR"
+else
+    cp ${jboss_home}/bin/standalone.sh "$APP_JBOSS_BIN_DIR"
+fi
 # Update the standalone.xml for the application IP
 sed -i "s/{ip}/$IP/g" "$APP_JBOSS"/standalone/configuration/standalone.xml
 sed -i "s/{app_name}/$application/g" "$APP_JBOSS"/standalone/configuration/standalone.xml
@@ -357,6 +372,9 @@ JAVA_HOME="/usr/lib/jvm/jre-1.6.0"
 if [ "x\$JAVA_OPTS" = "x" ]; then
    JAVA_OPTS="-Xmx123m -XX:MaxPermSize=85m -Dorg.jboss.resolver.warning=true -Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000"
 fi
+
+# Add
+export MODULEPATH="$APP_JBOSS"/modules:"$APP_JBOSS"/standalone/configuration/modules
 EOF
 
 # Create a link from the repo/deployments directory to the standalone/deployments content
@@ -427,7 +445,7 @@ function ishttpup() {
     return 1
 }
 
-}# Validate the runcon
+# Validate the runcon
 if whoami | grep -q root || ! runcon | grep 'system_r:libra_t:s0:$c_val' > /dev/null
 then
     echo 1>&2
@@ -513,6 +531,7 @@ pushd $M2_DIR
 tar -xf ${JBOSS_CARTRIDGE_ROOT}/info/data/m2_repository.tar.gz
 popd
 
+chmod +x "$APP_JBOSS_BIN_DIR/standalone.sh" || error "Failed to chmod new application scripts" 122
 chmod +x "$APP_DIR/${application}_ctl.sh" || error "Failed to chmod new application scripts" 122
 chown $user_id.$group_id -R $APP_DIR || error "Failed to chown new application space.  Please contact support" 123
 # Secure script and config dirs.
