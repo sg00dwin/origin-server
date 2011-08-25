@@ -299,7 +299,7 @@ module Libra
 
     # remove the DNS entries
     Libra.logger_debug "DEBUG: Public ip being deconfigured from namespace '#{user.namespace}'"
-    Server.delete_app_dns_entries(app_name, user.namespace)
+    server.delete_app_dns_entries(app_name, user.namespace)
 
     # remove the app record from the user object
     # Remove S3 app on deconfigure (one of the last things)

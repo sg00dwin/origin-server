@@ -34,12 +34,7 @@ json gem.
 More Setup:
 -------------
 
-yum install mcollective-common mcollective-client rhc rubygem-right_aws rubygem-aws
-
 edit ~/.openshift/express.conf and point libra_server your broker system
-
-sudo mkdir /etc/libra
-sudo cp server-common/conf/libra/controller.conf  /etc/libra
 
 Running Test Cases:
 

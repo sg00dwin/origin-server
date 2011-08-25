@@ -78,6 +78,47 @@ class UserControllerTest < ActionController::TestCase
     assert_response :success
   end
 
+	test "should have captcha check fail" do
+		Rails.configuration.expects(:integrated).returns(true)
+		@controller.expects(:verify_recaptcha).returns(false)
+		post(:create, {:web_user => {}})
+
+		assert_equal "Captcha text didn't match", assigns(:user).errors[:captcha].to_s
+	end
+
+	test "should get success on post and choosing Flex" do
+		post(:create, {:web_user => get_post_form.merge({:cloud_access_choice => CloudAccess::FLEX})})
+
+		assert_equal 'flex', assigns(:product)
+		assert_response :success
+	end
+
+	test "should get success on post and choosing Express" do
+		post(:create, {:web_user => get_post_form.merge({:cloud_access_choice => CloudAccess::EXPRESS})})
+
+		assert_equal 'express', assigns(:product)
+		assert_response :success
+	end
+
+	test "should create new flex user" do
+		get(:new_flex)
+
+		assert assigns(:user)
+		assert_equal assigns(:user).cloud_access_choice, CloudAccess::FLEX
+		assert_equal assigns(:product), 'flex'
+		assert_response :success
+	end
+
+	test "should create new express user" do
+		get(:new_express)
+
+		assert assigns(:user)
+		assert_equal assigns(:user).cloud_access_choice, CloudAccess::EXPRESS
+		assert_equal assigns(:product), 'express'
+		assert_response :success
+	end
+
+
   def get_post_form
     {:email_address => 'tester@example.com', :password => 'pw1234', :password_confirmation => 'pw1234'}
   end

@@ -21,6 +21,18 @@ if [ -f ${OPENSHIFT_REPO_DIR}.openshift/config/standalone.xml ]
 then
   echo "Found .openshift/config/standalone.xml... copying to ${OPENSHIFT_APP_DIR}${OPENSHIFT_APP_TYPE}/standalone/configuration/"
   cp ${OPENSHIFT_REPO_DIR}.openshift/config/standalone.xml ${OPENSHIFT_APP_DIR}${OPENSHIFT_APP_TYPE}/standalone/configuration/
+
+
+  for f in ${OPENSHIFT_REPO_DIR}/.openshift/config/*
+  do
+    target=$(basename $f)
+    if [ -e "${OPENSHIFT_APP_DIR}${OPENSHIFT_APP_TYPE}/standalone/configuration/$target" ]
+    then
+       echo "Removing existing $target"
+       rm -rf "${OPENSHIFT_APP_DIR}${OPENSHIFT_APP_TYPE}/standalone/configuration/$target"
+    fi
+    ln -s $f "${OPENSHIFT_APP_DIR}${OPENSHIFT_APP_TYPE}/standalone/configuration/"
+  done
 fi
 
 if [ -f ${OPENSHIFT_REPO_DIR}pom.xml ] && ! $SKIP_MAVEN_BUILD

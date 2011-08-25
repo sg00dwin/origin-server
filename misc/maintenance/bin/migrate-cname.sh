@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-# Usage: ./migrate-2.1.4.sh > out.txt
+# Usage: ./migrate-cname.sh > out.txt
 require 'rubygems'
 require 'openshift'
 
@@ -8,31 +8,7 @@ include Libra
 RHLOGINS=nil #['username']
 
 #
-#  Migrate the specified app on the node
-#
-def migrate_app_on_node(user, app, app_name)
-  Helper.rpc_exec('libra', app['server_identity']) do |client|
-    client.migrate(:uuid => app['uuid'],
-                   :application => app_name,
-                   :app_type => app['framework'],
-                   :namespace => user.namespace,
-                   :version => '2.1.4') do |response|
-      exit_code = response[:body][:data][:exitcode]
-      output = response[:body][:data][:output]
-      if (output.length > 0)
-        puts "Migrate on node output: #{output}"
-      end
-      if exit_code != 0
-        puts "Migrate on node exit code: #{exit_code}"
-        raise "Failed migrating app '#{app_name}' with uuid '#{app['uuid']}' on node '#{app['server_identity']}'"
-      end
-    end
-  end
-end
-
-#
-# Migrate applications between 2.1.3 and 2.1.4
-# Get env variables synced up to all existing apps
+# Migrate dns from ARecords to CNAME
 #
 def migrate
   start_time = Time.now.to_i
@@ -50,7 +26,14 @@ def migrate
       apps.each do |app_name, app|
         begin
           puts "Migrating app '#{app_name}' with uuid '#{app['uuid']}' on node '#{app['server_identity']}' for user: #{rhlogin}"
-          migrate_app_on_node(user, app, app_name)
+          server = Server.new(app['server_identity'])
+          dyn_retries = 2
+          auth_token = Server.dyn_login(dyn_retries)
+          server.dyn_delete_sshfp_record(app_name,  user.namespace, auth_token, dyn_retries)
+          server.dyn_delete_a_record(app_name,  user.namespace, auth_token, dyn_retries)
+          server.dyn_create_cname_record(app_name,  user.namespace, auth_token, dyn_retries)
+          Server.dyn_publish(auth_token, dyn_retries)
+          Server.dyn_logout(auth_token, dyn_retries)
         rescue Exception => e
           puts "ERROR: Failed migrating app: #{app_name} with uuid: #{app['uuid']} for user: #{rhlogin}"
           puts e.message

@@ -250,6 +250,39 @@ class DevEnv < Thor
     end
   end
 
+  desc "sync_sdk NAME PATH", "Synchronize a local git repo with a remote DevEnv instance.  NAME should be ssh resolvable. PATH should be the location of the git repository to sync"
+  method_option :tag, :type => :boolean, :desc => "NAME is an Amazon tag"
+  method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
+  method_option :skip_build, :type => :boolean, :desc => "Indicator to skip the rpm build/install"
+  def sync_sdk(name, path)
+    options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
+
+    if options.tag?
+      instance = Instance.find(connect, name)
+    else
+      instance = Instance.new(nil, nil)
+      instance.dns = name
+    end
+
+    # Get the current branch
+    branch = get_branch
+
+    puts "Synchronizing local changes from branch #{branch}..."
+    ssh_path=File.expand_path(File.dirname(__FILE__)) + "/ssh-override"
+
+    # Don't change directories until the ssh_path has been determined from the working directory
+    FileUtils.cd path 
+
+    run("export GIT_SSH=#{ssh_path}; #{branch == 'origin/master' ? "git push -q root@#{instance.dns}:/root/openshift-sdk master:master --tags --force; " : ''}git push -q root@#{instance.dns}:/root/openshift-sdk #{branch}:master --tags --force", :verbose => options.verbose?)
+    puts "Done"
+
+    if !options.skip_build?
+      puts "Performing remote install...."
+      instance.ssh("rm -rf openshift-sdk-working; git clone openshift-sdk openshift-sdk-working; pushd openshift-sdk-working; tito build --rpm -i; popd; rm -rf openshift-sdk-working", 600)
+      puts "Done"
+    end
+  end
+
   desc "launch NAME", "Launches the latest DevEnv instance, tagging with NAME"
   method_option :verifier, :type => :boolean, :desc => "Add verifier functionality (private IP setup and local tests)"
   method_option :use_stage_image, :type => :boolean, :desc => "Launch a stage DevEnv image"
@@ -408,7 +441,7 @@ class DevEnv < Thor
 
     begin
       cmd = "cd #{Dir['/usr/lib/ruby/gems/*/gems/openshift-sdk*'][-1]}; rake test"
-      #run_ssh(instance, "Broker Unit", cmd)
+      run_ssh(instance, "OpenShift SDK Unit", cmd)
       
       puts "Done"
     ensure

@@ -150,6 +150,7 @@ gen_require(`
     type unconfined_t;
     type rpm_script_t;
     type puppet_t;
+    type puppet_tmp_t;
 ')
  
 role_transition unconfined_r libra_initrc_exec_t system_r;
@@ -158,6 +159,7 @@ unconfined_domain_noaudit(libra_initrc_t)
 domtrans_pattern(unconfined_t, libra_initrc_exec_t, libra_initrc_t)
 domtrans_pattern(rpm_script_t, libra_initrc_exec_t, libra_initrc_t)
 domtrans_pattern(puppet_t, libra_initrc_exec_t, libra_initrc_t)
+dontaudit domain puppet_tmp_t:file { read write };
 
 manage_dirs_pattern(libra_initrc_t, libra_log_t, libra_log_t)
 manage_files_pattern(libra_initrc_t, libra_log_t, libra_log_t)

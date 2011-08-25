@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.77.1
+Version:       0.77.3
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -157,6 +157,19 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Wed Aug 24 2011 Dan McPherson <dmcphers@redhat.com> 0.77.3-1
+- try adding restorecon of aquota.user (dmcphers@redhat.com)
+
+* Wed Aug 24 2011 Dan McPherson <dmcphers@redhat.com> 0.77.2-1
+- add to client tools the ability to specify your rsa key file as well as
+  default back to id_rsa as a last resort (dmcphers@redhat.com)
+- chgrping env (mmcgrath@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- do not allow users to alter their own env vars (mmcgrath@redhat.com)
+- convert strings to tuples in 'in' comparisons so whole string comparisons get
+  done instead of substring (mmcgrath@redhat.com)
+
 * Fri Aug 19 2011 Matt Hicks <mhicks@redhat.com> 0.77.1-1
 - fix wsgi apps (dmcphers@redhat.com)
 - bump spec numbers (dmcphers@redhat.com)
