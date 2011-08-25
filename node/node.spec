@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.77.3
+Version:       0.77.4
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -157,6 +157,12 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Thu Aug 25 2011 Dan McPherson <dmcphers@redhat.com> 0.77.4-1
+- Adding mkdir (mmcgrath@redhat.com)
+- add cname migration added (dmcphers@redhat.com)
+- add CNAME support (turned off) (dmcphers@redhat.com)
+- Adding support for jenkins slaves (mmcgrath@redhat.com)
+
 * Wed Aug 24 2011 Dan McPherson <dmcphers@redhat.com> 0.77.3-1
 - try adding restorecon of aquota.user (dmcphers@redhat.com)
 
