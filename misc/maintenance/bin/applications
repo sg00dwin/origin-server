@@ -50,6 +50,19 @@ class Applications < Thor
     end
     puts "Total count: #{count}"
   end
+
+  desc "lookup RHLOGIN", "return the application info for a user"
+  method_option :bucket, :required => true, :desc => "The S3 bucket (e.g. libra_dev, rhc_prod)"
+  def lookup(rhlogin)
+    s3 = connect
+    app_list = s3.list_bucket(options[:bucket], { 'prefix' => "user_info/#{rhlogin}/apps/"})
+    app_list.each do |key|
+      json = s3.get(options[:bucket], key[:key])
+      app_name = File.basename(key[:key], '.json')
+      puts "Application: #{app_name}" if app_name
+    end
+  end
+  
 end
 
 Applications.start
