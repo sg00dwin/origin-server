@@ -13,7 +13,13 @@ commands = {
     "snapshot": "snapshot.sh",
     "restore": "restore.sh",
     "tail": "/usr/bin/tail",
-    "rhcsh": "/bin/bash"
+    "rhcsh": "/bin/bash",
+    "true": "/bin/true",
+    "java": "/bin/bash",
+    "scp": "/bin/bash",
+    "cd": "/bin/bash",
+    "set": "/bin/bash",
+    "test": "/bin/bash"
 }
 
 #
@@ -70,6 +76,7 @@ if __name__ == '__main__':
     read_env_vars()
 
     orig_cmd = os.environ.get('SSH_ORIGINAL_COMMAND')
+    syslog.syslog(orig_cmd)
     if not orig_cmd:
         print "Need a command"
         sys.exit(1)
@@ -96,6 +103,9 @@ if __name__ == '__main__':
     elif basecmd in ('rhcsh',):
         os.environ["PS1"] = "rhcsh> "
         allargs = ['--init-file', '/usr/local/bin/rhcsh', '-i']
+    elif basecmd in ('java','set','scp', 'cd', 'test'):
+        str = ' '.join(allargs)
+        allargs = ['-c', str]
     elif basecmd in ('tail',):
         files = []
         
