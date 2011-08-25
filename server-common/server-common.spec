@@ -2,7 +2,7 @@
 
 Summary:       Common dependencies of the OpenShift broker and site
 Name:          rhc-server-common
-Version:       0.77.2
+Version:       0.77.3
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -54,6 +54,11 @@ rm -rf %{buildroot}
                                   -s /sbin/nologin 2>&1 > /dev/null || :
 
 %changelog
+* Thu Aug 25 2011 Dan McPherson <dmcphers@redhat.com> 0.77.3-1
+- add CNAME support (turned off) (dmcphers@redhat.com)
+- add method for cname (dmcphers@redhat.com)
+- add logging (dmcphers@redhat.com)
+
 * Thu Aug 25 2011 Matt Hicks <mhicks@redhat.com> 0.77.2-1
 - Adding protection for a directory entry in S3 (mhicks@redhat.com)
 
