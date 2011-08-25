@@ -2,7 +2,7 @@
 
 Summary:       Common dependencies of the OpenShift broker and site
 Name:          rhc-server-common
-Version:       0.76.3
+Version:       0.77.1
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -54,6 +54,12 @@ rm -rf %{buildroot}
                                   -s /sbin/nologin 2>&1 > /dev/null || :
 
 %changelog
+* Fri Aug 19 2011 Matt Hicks <mhicks@redhat.com> 0.77.1-1
+- bump spec numbers (dmcphers@redhat.com)
+
+* Mon Aug 15 2011 Matt Hicks <mhicks@redhat.com> 0.76.4-1
+- rename li-controller-0.1 to li-controller (dmcphers@redhat.com)
+
 * Tue Aug 09 2011 Dan McPherson <dmcphers@redhat.com> 0.76.3-1
 - Some prelim API and broker versioning (jimjag@redhat.com)
 

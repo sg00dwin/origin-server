@@ -73,4 +73,16 @@ class TermsControllerTest < ActionController::TestCase
     assert_equal 0, assigns(:term).errors.length
     assert_response :success
   end
+
+  test "verify auto-access doesn't fire before accepting terms" do
+    setup_session
+
+    # Remove the key that denotes terms acceptance
+    session.delete(:login)
+
+    # Make sure request access is not called in this scenario
+    @controller.expects(:request_access).never
+
+    get :new
+  end
 end

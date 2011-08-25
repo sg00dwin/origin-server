@@ -51,7 +51,8 @@ then
     . /etc/libra/resource_limits.conf
 fi
 
-CART_INFO_DIR=/usr/libexec/li/cartridges/embedded/mysql-5.1/info
+CART_DIR=/usr/libexec/li/cartridges
+CART_INFO_DIR=$CART_DIR/embedded/mysql-5.1/info
 CART_CONF_DIR=$CART_INFO_DIR/configuration/etc
 
 function print_help {
@@ -124,70 +125,7 @@ popd > /dev/null
 #
 # Create simple mysql start / stop script
 #
-cat <<EOF > "$MYSQL_DIR/${application}_mysql_ctl.sh"
-#/bin/bash
-if ! [ \$# -eq 1 ]
-then
-    echo "Usage: \$0 [start|restart|stop]"
-    exit 1
-fi
-
-# Import Environment Variables
-for f in ~/.env/*
-do
-    . \$f
-done
-
-STOPTIMEOUT=5
-
-if whoami | grep -q root
-then
-    echo 1>&2
-    echo "Please don't run script as root, try:" 1>&2
-    echo "runuser --shell /bin/sh $uuid $MYSQL_DIR/${application}_mysql_ctl.sh" 1>&2
-    echo 2>&1
-    exit 15
-fi
-
-start(){
-
-        /usr/bin/mysqld_safe --defaults-file=$MYSQL_DIR/etc/my.cnf >/dev/null 2>&1 &
-}
-
-stop(){
-    if [ -f $MYSQL_DIR/pid/mysql.pid ]; then
-        /bin/kill \$( /bin/cat $MYSQL_DIR/pid/mysql.pid )
-        ret=\$?
-        if [ \$ret -eq 0 ]; then
-            TIMEOUT="\$STOPTIMEOUT"
-            while [ \$TIMEOUT -gt 0 ] && [ ! -f $MYSQL_DIR/pid/mysql.pid ]; do
-                /bin/kill -0 "\$( /bin/cat $MYSQL_DIR/pid/mysql.pid )" >/dev/null 2>&1 || break
-                sleep 1
-                let TIMEOUT=\${TIMEOUT}-1
-            done
-        fi
-    else
-        echo "Mysql already stopped"
-    fi
-}
-
-case "\$1" in
-    start)
-        start
-    ;;
-    stop)
-        stop
-    ;;
-    restart)
-        stop
-        start
-    ;;
-    status)
-        echo " Coming soon"
-        exit 0
-    ;;
-esac
-EOF
+ln -s $CART_INFO_DIR/bin/mysql_ctl.sh $MYSQL_DIR/${application}_mysql_ctl.sh
 
 #
 # Setup Permissions
@@ -217,18 +155,22 @@ password=$(head -n 500 /dev/urandom|tr -dc "a-np-zA-NP-Z1-9-_"|fold -w 12 | head
 #
 echo "export OPENSHIFT_DB_USERNAME='admin'" > $APP_HOME/.env/OPENSHIFT_DB_USERNAME
 echo "export OPENSHIFT_DB_PASSWORD='$password'" > $APP_HOME/.env/OPENSHIFT_DB_PASSWORD
-echo "export OPENSHIFT_DB_TYPE='mysql-5.1'" > $APP_HOME/.env/OPENSHIFT_DB_TYPE
+echo "export OPENSHIFT_DB_TYPE='mysql'" > $APP_HOME/.env/OPENSHIFT_DB_TYPE
 echo "export OPENSHIFT_DB_HOST='$IP'" > $APP_HOME/.env/OPENSHIFT_DB_HOST
 echo "export OPENSHIFT_DB_PORT='3306'" > $APP_HOME/.env/OPENSHIFT_DB_PORT
 echo "export OPENSHIFT_DB_SOCKET='${MYSQL_DIR}/socket/mysql.sock'" > $APP_HOME/.env/OPENSHIFT_DB_SOCKET
 echo "export OPENSHIFT_DB_URL='mysql://admin:$password@$IP:3306/'" > $APP_HOME/.env/OPENSHIFT_DB_URL
 echo "export OPENSHIFT_DB_CTL_SCRIPT='$MYSQL_DIR/${application}_mysql_ctl.sh'" > $APP_HOME/.env/OPENSHIFT_DB_CTL_SCRIPT
-echo "export OPENSHIFT_DB_MYSQL_51_DUMP='$CART_INFO_DIR/configuration/mysql_dump.sh'" > $APP_HOME/.env/OPENSHIFT_DB_MYSQL_51_DUMP
-echo "export OPENSHIFT_DB_MYSQL_51_DUMP_REMOVE='rm -rf /tmp/mysql_dump_snapshot.gz'" > $APP_HOME/.env/OPENSHIFT_DB_MYSQL_51_DUMP_REMOVE
-echo "export OPENSHIFT_DB_MYSQL_51_RESTORE='$CART_INFO_DIR/configuration/mysql_restore.sh'" > $APP_HOME/.env/OPENSHIFT_DB_MYSQL_51_RESTORE
+echo "export OPENSHIFT_DB_MYSQL_51_DUMP='$CART_INFO_DIR/bin/mysql_dump.sh'" > $APP_HOME/.env/OPENSHIFT_DB_MYSQL_51_DUMP
+echo "export OPENSHIFT_DB_MYSQL_51_DUMP_CLEANUP='$CART_INFO_DIR/bin/mysql_cleanup.sh'" > $APP_HOME/.env/OPENSHIFT_DB_MYSQL_51_DUMP_CLEANUP
+echo "export OPENSHIFT_DB_MYSQL_51_RESTORE='$CART_INFO_DIR/bin/mysql_restore.sh'" > $APP_HOME/.env/OPENSHIFT_DB_MYSQL_51_RESTORE
+echo "export OPENSHIFT_DB_MYSQL_51_EMBEDDED_TYPE='mysql-5.1'" > $APP_HOME/.env/OPENSHIFT_DB_MYSQL_51_EMBEDDED_TYPE
 
-# Setup user
-echo "create database ${application};" | mysql -u root -S "${MYSQL_DIR}/socket/mysql.sock" > /dev/null || error "Failed to create ${application}" 188
+chown $user_id $APP_HOME/.env/OPENSHIFT_DB_USERNAME $APP_HOME/.env/OPENSHIFT_DB_PASSWORD
+
+## Setup user
+echo "drop database test;
+create database ${application};" | mysql -u root -S "${MYSQL_DIR}/socket/mysql.sock" > /dev/null || error "Failed to create ${application}" 188
 
 echo "                                  
 delete from user;

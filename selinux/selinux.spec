@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.76.3
+Version:       0.77.3
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -38,6 +38,31 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Wed Aug 24 2011 Dan McPherson <dmcphers@redhat.com> 0.77.3-1
+- puppet is leaking file descriptors to domains that it is restarting
+  (dwalsh@redhat.com)
+
+* Wed Aug 24 2011 Dan McPherson <dmcphers@redhat.com> 0.77.2-1
+- Add libra_croup_read_t domain to allow the libra domains to execute rhc-
+  cgroup-read script.  This will allow libr domains to see only their cgroup
+  values and continue to block them from other cgroup values.
+  (mmcgrath@redhat.com)
+- Add libra_croup_read_t domain to allow the libra domains to execute rhc-
+  cgroup-read script.  This will allow libr domains to see only their cgroup
+  values and continue to block them from other cgroup values.
+  (mmcgrath@redhat.com)
+- Remove gen_require info that has been implemented in the latest 6.2 selinux-
+  policy package interfaces (dwalsh@redhat.com)
+
+* Fri Aug 19 2011 Matt Hicks <mhicks@redhat.com> 0.77.1-1
+- bump spec numbers (dmcphers@redhat.com)
+
+* Wed Aug 17 2011 Dan McPherson <dmcphers@redhat.com> 0.76.5-1
+- disable cgroup reads for now (mmcgrath@redhat.com)
+
+* Tue Aug 16 2011 Matt Hicks <mhicks@redhat.com> 0.76.4-1
+- Allow libra domains to read cgroup data (dwalsh@redhat.com)
+
 * Fri Aug 12 2011 Matt Hicks <mhicks@redhat.com> 0.76.3-1
 - Seems like jboss running lsof and this is causing avcs looking at sockets and
   dirs within /var/run directory. (dwalsh@redhat.com)

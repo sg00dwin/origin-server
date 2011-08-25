@@ -34,7 +34,7 @@ require 'uri'
 module RHC
 
   Maxdlen = 16
-  Maxretries = 10
+  Maxretries = 7
   Defaultdelay = 2
   API = "1.1.1"
   broker_version = "?.?.?"
@@ -377,4 +377,47 @@ end
 #
 def get_var(var)
   @local_config.get_value(var) ? @local_config.get_value(var) : @global_config.get_value(var)
+end
+
+def kfile_not_found
+  puts <<KFILE_NOT_FOUND
+Your SSH keys are created either by running ssh-keygen (password optional)
+or by having the rhc-create-domain command do it for you.  If you created
+them on your own (or want to use an existing keypair), be sure to paste
+your public key into the dashboard page at http://www.openshift.com.
+The client tools use the value of 'rsa_key_file' in express.conf to find
+your key.  'libra_id_rsa[.pub]' followed by 'id_rsa[.pub]' are used as
+if rsa_key_file isn't specified in express.conf.
+Also, make sure you never give out your secret key!
+KFILE_NOT_FOUND
+
+exit 212
+end
+
+def get_kfile(check_readable=true)
+  rsa_key_file_var = get_var('rsa_key_file')
+  rsa_key_file = rsa_key_file_var ? rsa_key_file_var : 'libra_id_rsa'
+  kfile = "#{ENV['HOME']}/.ssh/#{rsa_key_file}"
+  if check_readable && !File.readable?(kfile)
+    if rsa_key_file_var
+      puts "Unable to read from '#{kfile}' referenced in express.conf."
+      kfile_not_found
+    else
+      kfile = "#{ENV['HOME']}/.ssh/id_rsa"
+      if !File.readable?(kfile)
+        puts "Unable to read from rsa key file."
+        kfile_not_found
+      end
+    end
+  end
+  return kfile
+end
+
+def get_kpfile(kfile, check_readable=true)
+  kpfile = kfile + '.pub'
+  if check_readable && !File.readable?(kpfile)
+    puts "Unable to read from '#{kpfile}'"
+    kfile_not_found
+  end
+  return kpfile
 end

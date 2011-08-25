@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system client tools
 Name:          rhc
-Version:       0.75.4
+Version:       0.76.2
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       MIT
@@ -99,6 +99,33 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_sysconfdir}/openshift/express.conf
 
 %changelog
+* Wed Aug 24 2011 Dan McPherson <dmcphers@redhat.com> 0.76.2-1
+- add to client tools the ability to specify your rsa key file as well as
+  default back to id_rsa as a last resort (dmcphers@redhat.com)
+
+* Fri Aug 19 2011 Matt Hicks <mhicks@redhat.com> 0.76.1-1
+- bump spec numbers (dmcphers@redhat.com)
+
+* Wed Aug 17 2011 Dan McPherson <dmcphers@redhat.com> 0.75.9-1
+- Another message tweak (mhicks@redhat.com)
+- change wording from pull to clone (dmcphers@redhat.com)
+- Adding some more information to the warning message (mhicks@redhat.com)
+- Making DNS timeout non-fatal (mhicks@redhat.com)
+
+* Wed Aug 17 2011 Dan McPherson <dmcphers@redhat.com> 0.75.8-1
+- wording change (dmcphers@redhat.com)
+
+* Tue Aug 16 2011 Dan McPherson <dmcphers@redhat.com> 0.75.7-1
+- doc update (dmcphers@redhat.com)
+
+* Tue Aug 16 2011 Dan McPherson <dmcphers@redhat.com> 0.75.6-1
+- add better message to libra_id_rsa missing on the client
+  (dmcphers@redhat.com)
+
+* Tue Aug 16 2011 Dan McPherson <dmcphers@redhat.com> 0.75.5-1
+- cleanup how we call snapshot (dmcphers@redhat.com)
+- prepping for UUID prefixed backups (mmcgrath@redhat.com)
+
 * Sun Aug 14 2011 Dan McPherson <dmcphers@redhat.com> 0.75.4-1
 - doc updates (dmcphers@redhat.com)
 - restore error handling (dmcphers@redhat.com)

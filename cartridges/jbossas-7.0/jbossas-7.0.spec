@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.76.5
+Version:   0.77.2
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -77,6 +77,42 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Fri Aug 19 2011 Dan McPherson <dmcphers@redhat.com> 0.77.2-1
+- fix internals tests (dmcphers@redhat.com)
+
+* Fri Aug 19 2011 Matt Hicks <mhicks@redhat.com> 0.77.1-1
+- bump spec numbers (dmcphers@redhat.com)
+- splitting app_ctl.sh out (dmcphers@redhat.com)
+
+* Wed Aug 17 2011 Matt Hicks <mhicks@redhat.com> 0.76.11-1
+- Bugzilla 731238 (mhicks@redhat.com)
+
+* Wed Aug 17 2011 Dan McPherson <dmcphers@redhat.com> 0.76.10-1
+- use new env var (dmcphers@redhat.com)
+- add app type and db type and migration restart (dmcphers@redhat.com)
+
+* Tue Aug 16 2011 Dan McPherson <dmcphers@redhat.com> 0.76.9-1
+- cleanup (dmcphers@redhat.com)
+
+* Tue Aug 16 2011 Dan McPherson <dmcphers@redhat.com> 0.76.8-1
+- redo the start/stop changes (dmcphers@redhat.com)
+- only restore m2 when git is restored (dmcphers@redhat.com)
+- split out post and pre receive from the apps (dmcphers@redhat.com)
+
+* Tue Aug 16 2011 Matt Hicks <mhicks@redhat.com> 0.76.7-1
+- JBoss cgroup and container tuning (mhicks@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- Fixing chcon to include git (mmcgrath@redhat.com)
+- splitting out stop/start, changing snapshot to use stop start and bug 730890
+  (dmcphers@redhat.com)
+- Appending / to dir names (mmcgrath@redhat.com)
+- ensuring /tmp ends with a / (mmcgrath@redhat.com)
+
+* Mon Aug 15 2011 Dan McPherson <dmcphers@redhat.com> 0.76.6-1
+- adding migration for snapshot/restore (dmcphers@redhat.com)
+- snapshot and restore using path (dmcphers@redhat.com)
+
 * Sun Aug 14 2011 Dan McPherson <dmcphers@redhat.com> 0.76.5-1
 - get jboss working again (dmcphers@redhat.com)
 - Added new scripted snapshot (mmcgrath@redhat.com)

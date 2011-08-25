@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="1052.3622"
+   height="744.09448"
+   id="svg4438"
+   version="1.1"
+   inkscape:version="0.48.1 r9760"
+   sodipodi:docname="client-layer.svg">
+  <defs
+     id="defs4440">
+    <marker
+       inkscape:stockid="Arrow1Lstart"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Lstart"
+       style="overflow:visible">
+      <path
+         id="path4150"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt;marker-start:none"
+         transform="scale(0.8) translate(12.5,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Lend"
+       style="overflow:visible;">
+      <path
+         id="path4153"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt;marker-start:none;"
+         transform="scale(0.8) rotate(180) translate(12.5,0)" />
+    </marker>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.98994949"
+     inkscape:cx="479.71344"
+     inkscape:cy="387.55139"
+     inkscape:document-units="px"
+     inkscape:current-layer="g3346"
+     showgrid="false"
+     inkscape:window-width="1680"
+     inkscape:window-height="998"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata4443">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-308.2677)">
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="172.09489"
+       y="355.53424"
+       id="text6463"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan6465"
+         x="172.09489"
+         y="355.53424">OpenShift Express</tspan><tspan
+         sodipodi:role="line"
+         x="172.09489"
+         y="405.53424"
+         id="tspan6467">Client Layer Reference Docs</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Lend)"
+       d="m 517.1981,598.80369 1.28604,141.46156"
+       id="path3373"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-end="#g3336"
+       inkscape:connection-end-point="d4" />
+    <g
+       id="g3341"
+       transform="translate(194.95944,4.0406102)">
+      <rect
+         style="fill:#555577;fill-opacity:0.99607843;stroke:#ddddee;stroke-width:2.33982587;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+         id="rect2985"
+         width="194.05469"
+         height="42.34618"
+         x="225.7164"
+         y="579.14581"
+         rx="65.207527"
+         ry="3.379293" />
+      <text
+         sodipodi:linespacing="125%"
+         id="text3218"
+         y="614.96613"
+         x="237.38585"
+         style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+         xml:space="preserve"><tspan
+           y="614.96613"
+           x="237.38585"
+           id="tspan3220"
+           sodipodi:role="line">rhc tools</tspan></text>
+    </g>
+    <g
+       id="g3336"
+       transform="translate(224.25387,8.0812204)">
+      <rect
+         style="fill:#555577;fill-opacity:0.99607843;stroke:#ddddee;stroke-width:2.33982587;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+         id="rect2985-2"
+         width="70.816071"
+         height="50.427425"
+         x="259.05145"
+         y="732.18396"
+         rx="35.408035"
+         ry="3.379293" />
+      <text
+         inkscape:transform-center-y="12.121831"
+         inkscape:transform-center-x="12.121831"
+         sodipodi:linespacing="125%"
+         id="text3222"
+         y="770.52966"
+         x="267.69043"
+         style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+         xml:space="preserve"><tspan
+           y="770.52966"
+           x="267.69043"
+           id="tspan3224"
+           sodipodi:role="line">git</tspan></text>
+    </g>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:url(#Arrow1Lstart);marker-end:url(#Arrow1Lend);display:inline"
+       d="m 614.73053,603.0945 227.17892,-2.96188"
+       id="path3375"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-start="#g3341"
+       inkscape:connection-start-point="d4"
+       inkscape:connection-end="#g3329"
+       inkscape:connection-end-point="d4" />
+    <g
+       id="g3329"
+       transform="translate(185.86807,13.131983)">
+      <rect
+         ry="3.379293"
+         rx="60.156769"
+         y="557.93268"
+         x="656.04138"
+         height="56.488281"
+         width="126.37445"
+         id="rect2985-0"
+         style="fill:#555577;fill-opacity:0.99607843;stroke:#ddddee;stroke-width:2.33982587;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+      <flowRoot
+         style="font-size:32px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+         id="flowRoot3899-0"
+         xml:space="preserve"
+         transform="translate(610.89453,294.41037)"><flowRegion
+           id="flowRegion3901-2"><rect
+             style="font-size:32px;fill:#ffffff;fill-opacity:1"
+             y="271.95163"
+             x="57.142857"
+             height="39.999989"
+             width="116.42857"
+             id="rect3903-7" /></flowRegion><flowPara
+           id="flowPara3905-9">Broker</flowPara></flowRoot>    </g>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Lend);display:inline"
+       d="m 554.12139,765.52597 283.3798,0.37681"
+       id="path3377"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-start="#g3336"
+       inkscape:connection-start-point="d4"
+       inkscape:connection-end="#g3362"
+       inkscape:connection-end-point="d4" />
+    <g
+       id="g3362"
+       transform="translate(197.9899,7.0710657)">
+      <rect
+         ry="3.379293"
+         rx="61.02953"
+         y="729.65857"
+         x="639.51129"
+         height="58.508583"
+         width="122.05906"
+         id="rect2985-0-5-9"
+         style="fill:#555577;fill-opacity:0.99607843;stroke:#ddddee;stroke-width:2.33982587;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+      <text
+         sodipodi:linespacing="125%"
+         id="text3958"
+         y="773.28528"
+         x="646.39252"
+         style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+         xml:space="preserve"><tspan
+           y="773.28528"
+           x="646.39252"
+           id="tspan3960"
+           sodipodi:role="line">node</tspan></text>
+    </g>
+    <g
+       id="g3346"
+       transform="translate(5.0507627,5.050763)">
+      <rect
+         ry="3.379293"
+         rx="60.156769"
+         y="464.45343"
+         x="439.41635"
+         height="89.903564"
+         width="164.65486"
+         id="rect3291"
+         style="fill:#ffffff;fill-opacity:1;stroke:#dd888f;stroke-width:3;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:0.94117647;stroke-dasharray:none" />
+      <text
+         sodipodi:linespacing="125%"
+         id="text3293"
+         y="485.66666"
+         x="450.52802"
+         style="font-size:20px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+         xml:space="preserve"><tspan
+           y="485.66666"
+           x="450.52802"
+           id="tspan3295"
+           sodipodi:role="line">~/.openshift</tspan><tspan
+           id="tspan3297"
+           y="510.66666"
+           x="450.52802"
+           sodipodi:role="line">/etc/openshift</tspan><tspan
+           y="535.66663"
+           x="450.52802"
+           sodipodi:role="line"
+           id="tspan5323">/usr/bin/rhc-*</tspan></text>
+      <flowRoot
+         xml:space="preserve"
+         id="flowRoot5325"
+         style="font-size:12px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+         transform="translate(-5.0507627,303.21694)"><flowRegion
+           id="flowRegion5327"><rect
+             id="rect5329"
+             width="363.65491"
+             height="130.30968"
+             x="21.213203"
+             y="170.32784"
+             style="font-size:12px" /></flowRegion><flowPara
+           id="flowPara5331"
+           style="font-size:18px">Application Creation</flowPara><flowPara
+           id="flowPara5345">Step 1: rhc-create-app contacts broker and requests a new application be made.  Broker returns success / fail</flowPara><flowPara
+           id="flowPara5333" /><flowPara
+           id="flowPara5335">Step 2: rhc-create-app calls out to git, which issues a git clone from the node (node was assigned by the broker)</flowPara><flowPara
+           id="flowPara5337" /><flowPara
+           id="flowPara5341">Step 3: Local git repo created, remote application available.</flowPara></flowRoot>      <flowRoot
+         xml:space="preserve"
+         id="flowRoot5325-2"
+         style="font-size:12px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+         transform="translate(0.2527825,475.00673)"><flowRegion
+           id="flowRegion5327-2"><rect
+             id="rect5329-7"
+             width="363.65491"
+             height="130.30968"
+             x="21.213203"
+             y="170.32784"
+             style="font-size:12px" /></flowRegion><flowPara
+           id="flowPara5331-7"
+           style="font-size:18px">Application Control</flowPara><flowPara
+           id="flowPara5345-9">Step 1: rhc-ctl-app calls out to the broker to run cartridge start, stops and embedded additions (like adding mysql)</flowPara><flowPara
+           id="flowPara5333-1" /><flowPara
+           id="flowPara5335-4">Step 2: git pushes go directly to node and call git hooks</flowPara><flowPara
+           id="flowPara5337-0" /><flowPara
+           id="flowPara5341-4" /></flowRoot>      <text
+         xml:space="preserve"
+         style="font-size:12px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+         x="517.19812"
+         y="676.58545"
+         id="text5389"
+         sodipodi:linespacing="125%"><tspan
+           sodipodi:role="line"
+           id="tspan5391"
+           x="517.19812"
+           y="676.58545">Shell call</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-size:12px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+         x="662.66003"
+         y="749.31647"
+         id="text5393"
+         sodipodi:linespacing="125%"><tspan
+           sodipodi:role="line"
+           id="tspan5395"
+           x="662.66003"
+           y="749.31647">git+ssh (pubkey)</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-size:12px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+         x="658.61945"
+         y="587.69202"
+         id="text5409"
+         sodipodi:linespacing="125%"><tspan
+           sodipodi:role="line"
+           id="tspan5411"
+           x="658.61945"
+           y="587.69202">JSON/REST(ish) https</tspan></text>
+    </g>
+    <g
+       id="g3352"
+       transform="translate(214.15234,14.142135)">
+      <rect
+         ry="3.379293"
+         rx="35.408035"
+         y="814.97632"
+         x="205.06097"
+         height="41.416279"
+         width="192.93912"
+         id="rect3303"
+         style="fill:#ffffff;fill-opacity:1;stroke:#dd888f;stroke-width:3;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:0.94117647;stroke-dasharray:none" />
+      <text
+         sodipodi:linespacing="125%"
+         id="text3299"
+         y="843.26056"
+         x="212.13205"
+         style="font-size:24px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+         xml:space="preserve"><tspan
+           y="843.26056"
+           x="212.13205"
+           id="tspan3301"
+           sodipodi:role="line">./myapp (repo)</tspan></text>
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="791.81085"
+       y="337.17825"
+       id="text6457"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan6459"
+         x="791.81085"
+         y="337.17825">Mike McGrath &lt;mmcgrath@redhat.com&gt;</tspan><tspan
+         sodipodi:role="line"
+         x="791.81085"
+         y="352.17825"
+         id="tspan6461">2011-09-23</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 517.70318,604.35951 0,0"
+       id="path3371"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-start="#g3341"
+       inkscape:connection-start-point="d4"
+       inkscape:connection-end="#g3341"
+       inkscape:connection-end-point="d4" />
+  </g>
+</svg>

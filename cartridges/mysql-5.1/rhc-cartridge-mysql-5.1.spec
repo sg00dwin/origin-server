@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/mysql-5.1
 
 Name: rhc-cartridge-mysql-5.1
-Version: 0.10.6
+Version: 0.11.1
 Release: 1%{?dist}
 Summary: Embedded mysql support for express
 
@@ -41,11 +41,43 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0750,-,-) %{cartridgedir}/info/hooks/
 %attr(0750,-,-) %{cartridgedir}/info/build/
 %config(noreplace) %{cartridgedir}/info/configuration/
+%attr(0755,-,-) %{cartridgedir}/info/bin/
 %{_sysconfdir}/libra/cartridges/%{name}
 %{cartridgedir}/info/changelog
 %{cartridgedir}/info/control
 
 %changelog
+* Fri Aug 19 2011 Matt Hicks <mhicks@redhat.com> 0.11.1-1
+- bump spec numbers (dmcphers@redhat.com)
+- splitting app_ctl.sh out (dmcphers@redhat.com)
+
+* Wed Aug 17 2011 Dan McPherson <dmcphers@redhat.com> 0.10.11-1
+- add app type and db type and migration restart (dmcphers@redhat.com)
+
+* Tue Aug 16 2011 Dan McPherson <dmcphers@redhat.com> 0.10.10-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- correcting mysql import IP problem (mmcgrath@redhat.com)
+
+* Tue Aug 16 2011 Matt Hicks <mhicks@redhat.com> 0.10.9-1
+- restart mysql after restore (mmcgrath@redhat.com)
+- Better handling of env vars (mmcgrath@redhat.com)
+- package bin dir (mmcgrath@redhat.com)
+- Adding cleanup (mmcgrath@redhat.com)
+- Allow user to change their environment variables for username/password
+  (mmcgrath@redhat.com)
+
+* Mon Aug 15 2011 Dan McPherson <dmcphers@redhat.com> 0.10.8-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- Re-enabling database test (mmcgrath@redhat.com)
+
+* Mon Aug 15 2011 Dan McPherson <dmcphers@redhat.com> 0.10.7-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- disabling create database (mmcgrath@redhat.com)
+- snapshot and restore using path (dmcphers@redhat.com)
+
 * Sun Aug 14 2011 Dan McPherson <dmcphers@redhat.com> 0.10.6-1
 - Added rhcsh, as well as _RESTORE functionality (mmcgrath@redhat.com)
 

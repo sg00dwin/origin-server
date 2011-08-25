@@ -74,7 +74,7 @@ function init_quota_db() {
     # initialize quota db on the filesystem
     quotacheck -cmuf $1
     chmod 600 $QUOTA_FILE
-    #restorecon ${QUOTA_FILE}   
+    restorecon ${QUOTA_FILE}   
     # replace the restorecon when the libra rules allow it
     chcon -t quota_db_t ${QUOTA_FILE} 
 

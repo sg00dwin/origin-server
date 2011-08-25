@@ -102,7 +102,7 @@ fs_getattr_xattr_fs(libra_domain)
 fs_dontaudit_getattr_all_fs(libra_domain)
 fs_list_inotifyfs(libra_domain)
 fs_dontaudit_list_auto_mountpoints(libra_domain)
-#fs_dontaudit_search_cgroup_dirs(libra_domain)
+#fs_read_cgroup_files(libra_domain)
 storage_dontaudit_getattr_fixed_disk_dev(libra_domain)
 
 files_dontaudit_search_pids(libra_domain)
@@ -117,7 +117,10 @@ libs_exec_lib_files(libra_domain)
 logging_send_syslog_msg(libra_domain)
 logging_inherit_append_all_logs(libra_domain)
 
+# should be changed to read when init_dontaudit_read_utmp shows up in rhel6 policy
 init_dontaudit_rw_utmp(libra_domain)
+# init_dontaudit_read_utmp(libra_domain)
+# files_dontaudit_search_all_pids(libra_domain)
 
 miscfiles_read_localization(libra_domain)
 miscfiles_read_fonts(libra_domain)
@@ -147,7 +150,7 @@ gen_require(`
     type unconfined_t;
     type rpm_script_t;
     type puppet_t;
-    type user_devpts_t;
+    type puppet_tmp_t;
 ')
  
 role_transition unconfined_r libra_initrc_exec_t system_r;
@@ -156,6 +159,7 @@ unconfined_domain_noaudit(libra_initrc_t)
 domtrans_pattern(unconfined_t, libra_initrc_exec_t, libra_initrc_t)
 domtrans_pattern(rpm_script_t, libra_initrc_exec_t, libra_initrc_t)
 domtrans_pattern(puppet_t, libra_initrc_exec_t, libra_initrc_t)
+dontaudit domain puppet_tmp_t:file { read write };
 
 manage_dirs_pattern(libra_initrc_t, libra_log_t, libra_log_t)
 manage_files_pattern(libra_initrc_t, libra_log_t, libra_log_t)
@@ -208,12 +212,8 @@ allow domain libra_var_lib_t:file { append getattr };
 # Mysql support
 #
 
-require {
-    type mysqld_exec_t;
-    type mysqld_safe_exec_t;
-}
-can_exec(libra_t, mysqld_exec_t)
-can_exec(libra_t, mysqld_safe_exec_t)
+mysql_exec(libra_t)
+mysql_safe_exec(libra_t)
 corenet_tcp_bind_mysqld_port(libra_t)
 mysql_search_db(libra_t)
 allow libra_t self:process setexec;
@@ -247,7 +247,7 @@ allow unconfined_t libra_t:process sigchld;
 dontaudit unconfined_t libra_t:socket_class_set { read write };
 corecmd_shell_entry_type(libra_domain)
 corecmd_bin_entry_type(libra_domain)
-allow libra_t user_devpts_t:chr_file { getattr read write append ioctl lock };
+userdom_use_inherited_user_ptys(libra_t)
 
 gpg_entry_type(libra_t)
 
@@ -261,3 +261,32 @@ require {
 
 #============= httpd_t ==============
 allow httpd_t self:capability sys_ptrace;
+
+type libra_cgroup_read_t;
+type libra_cgroup_read_exec_t;
+application_domain(libra_cgroup_read_t, libra_cgroup_read_exec_t)
+
+permissive libra_cgroup_read_t;
+
+########################################
+#
+# libra_cgroup_read local policy
+#
+
+allow libra_cgroup_read_t self:fifo_file rw_fifo_file_perms;
+allow libra_cgroup_read_t self:unix_stream_socket create_stream_socket_perms;
+
+dev_read_urand(libra_cgroup_read_t)
+
+domain_use_interactive_fds(libra_cgroup_read_t)
+
+files_read_etc_files(libra_cgroup_read_t)
+
+userdom_use_inherited_user_ptys(libra_cgroup_read_t)
+
+miscfiles_read_localization(libra_cgroup_read_t)
+
+domtrans_pattern(libra_domain, libra_cgroup_read_exec_t, libra_cgroup_read_t)
+role system_r types libra_cgroup_read_t;
+
+fs_read_cgroup_files(libra_cgroup_read_t)

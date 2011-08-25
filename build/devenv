@@ -53,9 +53,9 @@ class DevEnv < Thor
       `git diff-index --quiet HEAD`
   
       if $? != 0
-        # Perform a temporary commit to build client
-        puts "Creating temporary commit to build client"
-        `git commit -a -m "Temporary commit to build client"`
+        # Perform a temporary commit
+        puts "Creating temporary commit to build"
+        `git commit -a -m "Temporary commit to build"`
         if $? != 0
           puts "No-op."
         else
@@ -392,6 +392,25 @@ class DevEnv < Thor
       
       puts "Done"
 
+    ensure
+      instance.terminate if options.terminate?
+    end
+  end
+
+  desc "test_sdk TAG", "Runs the tests on a tagged instance and downloads the results"
+  method_option :terminate, :type => :boolean, :desc => "Terminate the instance when finished"
+  method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
+  def test_sdk(tag)
+    options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
+
+    conn = connect
+    instance = Instance.find(conn, tag)
+
+    begin
+      cmd = "cd #{Dir['/usr/lib/ruby/gems/*/gems/openshift-sdk*'][-1]}; rake test"
+      run_ssh(instance, "OpenShift SDK Unit", cmd)
+      
+      puts "Done"
     ensure
       instance.terminate if options.terminate?
     end

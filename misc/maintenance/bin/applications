@@ -1,0 +1,55 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'parseconfig'
+require 'thor'
+require 'fileutils'
+require 'aws'
+require 'pp'
+
+class Applications < Thor
+  include Thor::Actions
+
+  no_tasks do
+    def connect
+      # This will verify the Amazon SSL connection
+      Rightscale::HttpConnection.params[:ca_file] = "/etc/pki/tls/certs/ca-bundle.trust.crt"
+
+      config = nil
+      begin
+        config = ParseConfig.new(File.expand_path("~/.awscred"))
+      rescue StandardError => e
+        puts <<-eos
+          Couldn't access credentials in ~/.awscred
+
+          Please create a file with the following format:
+            AWSAccessKeyId=<ACCESS_KEY>
+            AWSSecretKey=<SECRET_KEY>
+        eos
+        raise "Error - no credentials"
+      end
+
+      # Return the AMZ connection
+      Aws::S3Interface.new(config.get_value("AWSAccessKeyId"), 
+                           config.get_value("AWSSecretKey"), 
+                           params = {:logger => Logger.new('/dev/null')})
+    end
+  end
+
+  desc "count", "return the count of all OpenShift accounts"
+  method_option :bucket, :required => true, :desc => "The S3 bucket (e.g. libra_dev, rhc_prod)"
+  def count
+    s3 = connect
+    count = 0
+    s3.incrementally_list_bucket(options[:bucket], {'prefix' => 'user_info'}) do |result|
+      result[:contents].each do |bucket|  
+        if bucket[:key] =~ /\/apps\//
+          count += 1
+        end
+      end
+    end
+    puts "Total count: #{count}"
+  end
+end
+
+Applications.start

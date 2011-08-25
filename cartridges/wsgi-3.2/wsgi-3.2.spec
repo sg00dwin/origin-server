@@ -2,7 +2,7 @@
 
 Summary:   Provides python-wsgi-3.2 support
 Name:      rhc-cartridge-wsgi-3.2
-Version:   0.76.3
+Version:   0.77.1
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -76,6 +76,31 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Fri Aug 19 2011 Matt Hicks <mhicks@redhat.com> 0.77.1-1
+- fix wsgi apps (dmcphers@redhat.com)
+- bump spec numbers (dmcphers@redhat.com)
+- splitting app_ctl.sh out (dmcphers@redhat.com)
+
+* Wed Aug 17 2011 Dan McPherson <dmcphers@redhat.com> 0.76.7-1
+- add app type and db type and migration restart (dmcphers@redhat.com)
+
+* Tue Aug 16 2011 Dan McPherson <dmcphers@redhat.com> 0.76.6-1
+- split out post and pre receive from the apps (dmcphers@redhat.com)
+- removing default charset (mmcgrath@redhat.com)
+
+* Tue Aug 16 2011 Matt Hicks <mhicks@redhat.com> 0.76.5-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- Fixing chcon to include git (mmcgrath@redhat.com)
+- splitting out stop/start, changing snapshot to use stop start and bug 730890
+  (dmcphers@redhat.com)
+- Appending / to dir names (mmcgrath@redhat.com)
+- ensuring /tmp ends with a / (mmcgrath@redhat.com)
+
+* Mon Aug 15 2011 Dan McPherson <dmcphers@redhat.com> 0.76.4-1
+- adding migration for snapshot/restore (dmcphers@redhat.com)
+- snapshot and restore using path (dmcphers@redhat.com)
+
 * Sun Aug 14 2011 Dan McPherson <dmcphers@redhat.com> 0.76.3-1
 - Added new scripted snapshot (mmcgrath@redhat.com)
 - Adding custom snapshot (mmcgrath@redhat.com)

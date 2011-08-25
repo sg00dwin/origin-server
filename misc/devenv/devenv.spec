@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.75.3
+Version:   0.76.4
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -33,6 +33,7 @@ Requires:  rubygem-mechanize
 Requires:  rubygem-mocha
 Requires:  rubygem-rspec
 Requires:  rubygem-nokogiri
+Requires:  rubygem-openshift-sdk
 Requires:  charlie
 Requires:  pam
 
@@ -195,6 +196,26 @@ chkconfig libra-tc on
 %{_initddir}/libra-site
 
 %changelog
+* Wed Aug 24 2011 Dan McPherson <dmcphers@redhat.com> 0.76.4-1
+- add to client tools the ability to specify your rsa key file as well as
+  default back to id_rsa as a last resort (dmcphers@redhat.com)
+
+* Mon Aug 22 2011 Dan McPherson <dmcphers@redhat.com> 0.76.3-1
+- add sdk back (dmcphers@redhat.com)
+
+* Sun Aug 21 2011 Dan McPherson <dmcphers@redhat.com> 0.76.2-1
+- comment out openshift-sdk to get a build (dmcphers@redhat.com)
+
+* Fri Aug 19 2011 Matt Hicks <mhicks@redhat.com> 0.76.1-1
+- Adding OpenShift SDK to DevEnv (mhicks@redhat.com)
+- bump spec numbers (dmcphers@redhat.com)
+
+* Mon Aug 15 2011 Dan McPherson <dmcphers@redhat.com> 0.75.5-1
+- Setting timeout back to normal (mmcgrath@redhat.com)
+
+* Mon Aug 15 2011 Matt Hicks <mhicks@redhat.com> 0.75.4-1
+- increasing connection timeout (mmcgrath@redhat.com)
+
 * Thu Aug 11 2011 Matt Hicks <mhicks@redhat.com> 0.75.3-1
 - Reducing number of initial passenger instances (mhicks@redhat.com)
 

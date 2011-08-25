@@ -1,0 +1,498 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="1052.3622"
+   height="744.09448"
+   id="svg4438"
+   version="1.1"
+   inkscape:version="0.48.1 r9760"
+   sodipodi:docname="broker-layer.svg">
+  <defs
+     id="defs4440">
+    <marker
+       inkscape:stockid="Arrow1Lstart"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Lstart"
+       style="overflow:visible">
+      <path
+         id="path4150"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt;marker-start:none"
+         transform="scale(0.8) translate(12.5,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Lend"
+       style="overflow:visible;">
+      <path
+         id="path4153"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt;marker-start:none;"
+         transform="scale(0.8) rotate(180) translate(12.5,0)" />
+    </marker>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.98994949"
+     inkscape:cx="493.85558"
+     inkscape:cy="377.44986"
+     inkscape:document-units="px"
+     inkscape:current-layer="g3747-9"
+     showgrid="false"
+     inkscape:window-width="1680"
+     inkscape:window-height="998"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata4443">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-308.2677)">
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="172.09489"
+       y="355.53424"
+       id="text6463"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan6465"
+         x="172.09489"
+         y="355.53424">OpenShift Express</tspan><tspan
+         sodipodi:role="line"
+         x="172.09489"
+         y="405.53424"
+         id="tspan6467">Broker Layer Reference Docs</tspan></text>
+    <flowRoot
+       transform="translate(11.36446,607.33671)"
+       style="font-size:12px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       id="flowRoot5325-2"
+       xml:space="preserve"><flowRegion
+         id="flowRegion5327-2"><rect
+           style="font-size:12px"
+           y="170.32784"
+           x="21.213203"
+           height="130.30968"
+           width="363.65491"
+           id="rect5329-7" /></flowRegion><flowPara
+         style="font-size:18px"
+         id="flowPara5331-7">Access Control</flowPara><flowPara
+         id="flowPara5345-9">Step 1: Request comes in to rails.</flowPara><flowPara
+         id="flowPara5333-1" /><flowPara
+         id="flowPara5335-4">Step 2: API call to streamline determines auth level</flowPara><flowPara
+         id="flowPara5337-0" /><flowPara
+         id="flowPara5341-4" /></flowRoot>    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="791.81085"
+       y="337.17825"
+       id="text6457"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan6459"
+         x="791.81085"
+         y="337.17825">Mike McGrath &lt;mmcgrath@redhat.com&gt;</tspan><tspan
+         sodipodi:role="line"
+         x="791.81085"
+         y="352.17825"
+         id="tspan6461">2011-09-23</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 180.31223,498.2935 0,0"
+       id="path3371"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0" />
+    <g
+       id="g3641">
+      <rect
+         ry="3.379293"
+         rx="48.034943"
+         y="565.00366"
+         x="171.16817"
+         height="56.488312"
+         width="96.069885"
+         id="rect2985-0"
+         style="fill:#555577;fill-opacity:0.99607843;stroke:#ddddee;stroke-width:2.33982587;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+      <flowRoot
+         style="font-size:32px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+         id="flowRoot3899-0"
+         xml:space="preserve"
+         transform="translate(122.99084,301.48144)"><flowRegion
+           id="flowRegion3901-2"><rect
+             style="font-size:32px;fill:#ffffff;fill-opacity:1"
+             y="271.95163"
+             x="57.142857"
+             height="39.999989"
+             width="116.42857"
+             id="rect3903-7" /></flowRegion><flowPara
+           id="flowPara3905-9">Rails</flowPara></flowRoot>    </g>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 207.58635,667.49406 0,0"
+       id="path3371-1"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0" />
+    <g
+       id="g3722"
+       transform="translate(-18.182746,-1.0101525)">
+      <rect
+         ry="3.379293"
+         rx="48.034943"
+         y="688.74738"
+         x="90.355957"
+         height="51.43758"
+         width="297.09024"
+         id="rect2985-0-1"
+         style="fill:#555577;fill-opacity:0.99607843;stroke:#ddddee;stroke-width:2.33982587;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+      <flowRoot
+         style="font-size:32px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+         id="flowRoot3899-0-5"
+         xml:space="preserve"
+         transform="translate(41.168477,422.19467)"><flowRegion
+           id="flowRegion3901-2-5"><rect
+             style="font-size:32px;fill:#ffffff;fill-opacity:1"
+             y="271.95163"
+             x="57.142857"
+             height="42.020306"
+             width="331.59106"
+             id="rect3903-7-9" /></flowRegion><flowPara
+           id="flowPara3905-9-0">mcollective-client</flowPara></flowRoot>    </g>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 452.04325,725.07276 0,0"
+       id="path3371-8"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0" />
+    <g
+       id="g3548"
+       transform="translate(-32.324882,8.0812203)">
+      <rect
+         ry="3.379293"
+         rx="48.034943"
+         y="680.6662"
+         x="522.70123"
+         height="56.488312"
+         width="96.069885"
+         id="rect2985-0-5"
+         style="fill:#555577;fill-opacity:0.99607843;stroke:#ddddee;stroke-width:2.33982587;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+      <flowRoot
+         style="font-size:32px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+         id="flowRoot3899-0-8"
+         xml:space="preserve"
+         transform="translate(474.52391,417.14392)"><flowRegion
+           id="flowRegion3901-2-7"><rect
+             style="font-size:32px;fill:#ffffff;fill-opacity:1"
+             y="271.95163"
+             x="57.142857"
+             height="39.999989"
+             width="116.42857"
+             id="rect3903-7-2" /></flowRegion><flowPara
+           id="flowPara3905-9-8">QPID</flowPara></flowRoot>    </g>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 721.75399,645.27069 0,0"
+       id="path3371-8-5"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0" />
+    <g
+       id="g3696">
+      <rect
+         ry="3.379293"
+         rx="48.034943"
+         y="689.75751"
+         x="740.89423"
+         height="55.478115"
+         width="189.00392"
+         id="rect2985-0-5-3"
+         style="fill:#555577;fill-opacity:0.99607843;stroke:#ddddee;stroke-width:2.33982587;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+      <flowRoot
+         style="font-size:32px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+         id="flowRoot3899-0-8-3"
+         xml:space="preserve"
+         transform="translate(692.71688,426.23527)"><flowRegion
+           id="flowRegion3901-2-7-6"><rect
+             style="font-size:32px;fill:#ffffff;fill-opacity:1"
+             y="271.95163"
+             x="57.142857"
+             height="36.969543"
+             width="172.99712"
+             id="rect3903-7-2-5" /></flowRegion><flowPara
+           id="flowPara3905-9-8-4">Node Farm</flowPara></flowRoot>    </g>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 523.76409,556.37727 0,0"
+       id="path3371-8-9"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0" />
+    <g
+       id="g3709">
+      <rect
+         ry="3.379293"
+         rx="48.034943"
+         y="566.51892"
+         x="443.90936"
+         height="55.47813"
+         width="190.01407"
+         id="rect2985-0-5-8"
+         style="fill:#555577;fill-opacity:0.99607843;stroke:#ddddee;stroke-width:2.33982587;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+      <flowRoot
+         style="font-size:32px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+         id="flowRoot3899-0-8-7"
+         xml:space="preserve"
+         transform="translate(395.73201,302.99667)"><flowRegion
+           id="flowRegion3901-2-7-5"><rect
+             style="font-size:32px;fill:#ffffff;fill-opacity:1"
+             y="271.95163"
+             x="57.142857"
+             height="37.979694"
+             width="175.01744"
+             id="rect3903-7-2-4" /></flowRegion><flowPara
+           id="flowPara3905-9-8-2">streamline</flowPara></flowRoot>    </g>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 196.47466,433.83393 0,0"
+       id="path3371-2"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0" />
+    <g
+       id="g3614"
+       transform="translate(2.0203051,0)">
+      <rect
+         ry="3.379293"
+         rx="34.397884"
+         y="481.3512"
+         x="181.2697"
+         height="44.366512"
+         width="68.795769"
+         id="rect2985-0-4"
+         style="fill:#555577;fill-opacity:0.99607843;stroke:#ddddee;stroke-width:2.33982587;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+      <flowRoot
+         inkscape:transform-center-x="18.03125"
+         style="font-size:32px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+         id="flowRoot3899-0-7"
+         xml:space="preserve"
+         transform="translate(137.13297,212.7782)"><flowRegion
+           id="flowRegion3901-2-75"><rect
+             style="font-size:32px;fill:#ffffff;fill-opacity:1"
+             y="271.95163"
+             x="57.142857"
+             height="39.999989"
+             width="116.42857"
+             id="rect3903-7-4" /></flowRegion><flowPara
+           id="flowPara3905-9-81">S3</flowPara></flowRoot>    </g>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 218.06255,217.44981 0.66353,39.28631"
+       id="path3729"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-start="#g3614"
+       inkscape:connection-start-point="d4"
+       inkscape:connection-end="#g3641"
+       inkscape:connection-end-point="d4"
+       transform="translate(0,308.2677)" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 219.55913,313.22418 0.83502,66.24534"
+       id="path3731"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-start="#g3641"
+       inkscape:connection-start-point="d4"
+       inkscape:connection-end="#g3722"
+       inkscape:connection-end-point="d4"
+       transform="translate(0,308.2677)" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 369.26345,406.84145 121.1129,1.34785"
+       id="path3733"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-start="#g3722"
+       inkscape:connection-start-point="d4"
+       inkscape:connection-end="#g3548"
+       inkscape:connection-end-point="d4"
+       transform="translate(0,308.2677)" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 586.44624,408.80555 154.44799,0.26262"
+       id="path3735"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-start="#g3548"
+       inkscape:connection-start-point="d4"
+       inkscape:connection-end="#g3696"
+       inkscape:connection-end-point="d4"
+       transform="translate(0,308.2677)" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 267.23805,285.13189 176.67131,0.55821"
+       id="path3737"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-start="#g3641"
+       inkscape:connection-start-point="d4"
+       inkscape:connection-end="#g3709"
+       inkscape:connection-end-point="d4"
+       transform="translate(0,308.2677)" />
+    <g
+       id="g3747"
+       transform="translate(-159.6041,-23.233509)">
+      <rect
+         ry="3.379293"
+         rx="48.034943"
+         y="454.35187"
+         x="314.15744"
+         height="27.27412"
+         width="121.21833"
+         id="rect3739"
+         style="fill:#ffffff;fill-opacity:1;stroke:#dd888f;stroke-width:3;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:0.94117647;stroke-dasharray:none" />
+      <text
+         sodipodi:linespacing="125%"
+         id="text3741"
+         y="472.53464"
+         x="323.24881"
+         style="font-size:12px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+         xml:space="preserve"><tspan
+           y="472.53464"
+           x="323.24881"
+           id="tspan3743"
+           sodipodi:role="line">Stored json blobs</tspan></text>
+    </g>
+    <flowRoot
+       transform="translate(8.735459,705.01693)"
+       style="font-size:12px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       id="flowRoot5325-2-0"
+       xml:space="preserve"><flowRegion
+         id="flowRegion5327-2-1"><rect
+           style="font-size:12px"
+           y="170.32784"
+           x="21.213203"
+           height="130.30968"
+           width="363.65491"
+           id="rect5329-7-7" /></flowRegion><flowPara
+         style="font-size:18px"
+         id="flowPara5331-7-8">S3 Cache</flowPara><flowPara
+         id="flowPara5341-4-9">S3 cache is used to store user and application information</flowPara><flowPara
+         id="flowPara3810" /><flowPara
+         id="flowPara3812">Common info includes app name, domain name, UUID, framework type, etc.</flowPara><flowPara
+         id="flowPara3858" /><flowPara
+         id="flowPara3860">S3 also stores what apps are running on what nodes</flowPara></flowRoot>    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3814"
+       style="fill:black;stroke:none;stroke-opacity:1;stroke-width:1px;stroke-linejoin:miter;stroke-linecap:butt;fill-opacity:1;font-family:Bitstream Vera Sans;font-style:normal;font-weight:normal;font-size:40px;line-height:125%;letter-spacing:0px;word-spacing:0px"><flowRegion
+         id="flowRegion3816"><rect
+           id="rect3818"
+           width="274.76151"
+           height="178.797"
+           x="409.11179"
+           y="464.28223" /></flowRegion><flowPara
+         id="flowPara3820" /></flowRoot>    <flowRoot
+       transform="translate(422.18894,610.64381)"
+       style="font-size:12px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       id="flowRoot5325-2-0-3"
+       xml:space="preserve"><flowRegion
+         id="flowRegion5327-2-1-1"><rect
+           style="font-size:12px"
+           y="170.32784"
+           x="21.213203"
+           height="224.25388"
+           width="358.60413"
+           id="rect5329-7-7-1" /></flowRegion><flowPara
+         style="font-size:18px"
+         id="flowPara5331-7-8-9">mcollective</flowPara><flowPara
+         id="flowPara3812-6">Mcollective uses qpid to get a list of available nodes and their current load (calucluated by us, not unix load).  </flowPara><flowPara
+         id="flowPara3866" /><flowPara
+         id="flowPara3868">New apps get created on nodes with the least load</flowPara><flowPara
+         id="flowPara3870" /><flowPara
+         id="flowPara3872">custom express agent is called from mcollective to issue configure/start/stop/deconfigure, etc scripts from the cartridges</flowPara><flowPara
+         id="flowPara3916" /><flowPara
+         id="flowPara3918">mcollective also has a &quot;direct&quot; communiation method which is faster then the default poll/timeout method</flowPara></flowRoot>    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 521.74376,521.21214 0,0"
+       id="path3371-2-8"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0" />
+    <g
+       id="g3747-9"
+       transform="translate(165.665,64.144692)">
+      <rect
+         ry="3.379293"
+         rx="48.034943"
+         y="454.35187"
+         x="314.15744"
+         height="27.27412"
+         width="121.21833"
+         id="rect3739-6"
+         style="fill:#ffffff;fill-opacity:1;stroke:#dd888f;stroke-width:3;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:0.94117647;stroke-dasharray:none" />
+      <text
+         sodipodi:linespacing="125%"
+         id="text3741-4"
+         y="472.53464"
+         x="323.24881"
+         style="font-size:12px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+         xml:space="preserve"><tspan
+           y="472.53464"
+           x="323.24881"
+           id="tspan3743-3"
+           sodipodi:role="line">operated by RHIT</tspan></text>
+      <path
+         style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         d="m -96.469577,512.62585 0,0"
+         id="path3371-2-8-6"
+         inkscape:connector-type="polyline"
+         inkscape:connector-curvature="0" />
+      <rect
+         ry="3.379293"
+         rx="48.034943"
+         y="509.91028"
+         x="-138.3909"
+         height="27.27412"
+         width="121.21833"
+         id="rect3739-6-4"
+         style="fill:#ffffff;fill-opacity:1;stroke:#dd888f;stroke-width:3;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:0.94117647;stroke-dasharray:none" />
+      <text
+         sodipodi:linespacing="125%"
+         id="text3741-4-6"
+         y="528.09302"
+         x="-129.29953"
+         style="font-size:12px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+         xml:space="preserve"><tspan
+           y="528.09302"
+           x="-129.29953"
+           sodipodi:role="line"
+           id="tspan3303">/var/libra/broker</tspan></text>
+    </g>
+  </g>
+</svg>

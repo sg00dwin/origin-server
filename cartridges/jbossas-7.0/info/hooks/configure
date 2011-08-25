@@ -47,7 +47,8 @@ set -e
 # Load the jboss_version and jboss_home settings
 . `dirname $0`/jboss.version
 
-JBOSS_CARTRIDGE_ROOT=/usr/libexec/li/cartridges/${jboss_version}
+CART_DIR=/usr/libexec/li/cartridges
+JBOSS_CARTRIDGE_ROOT=$CART_DIR/${jboss_version}
 
 if [ -f '/etc/libra/node.conf' ]
 then
@@ -194,30 +195,14 @@ __EOF__
     git commit -m 'Creating template'
     popd
     pushd $APP_HOME/git
-    git clone --bare template $application.git
+    git clone --bare --no-hardlinks template $application.git
     rm -rf template
     popd
 
     echo "jbossas 7.0 application '$application'" > $GIT_DIR/description
 
     cat <<__EOF__ > $GIT_DIR/hooks/pre-receive
-# Stop the app
-echo "Stopping application..."
-~/${application}/${application}_ctl.sh stop
-echo done
-__EOF__
-
-
-    cat <<__EOF__ > $GIT_DIR/hooks/post-receive
-
-SKIP_MAVEN_BUILD=false
-if git show master:.openshift/markers/skip_maven_build > /dev/null 2>&1
-then
-  SKIP_MAVEN_BUILD=true
-fi
-
-rm -rf $APP_DIR/repo/* $APP_DIR/repo/.[^.]*
-git archive --format=tar HEAD | (cd $APP_DIR/repo && tar --warning=no-timestamp -xf -)
+#!/bin/bash
 
 # Import Environment Variables
 for f in ~/.env/*
@@ -225,57 +210,19 @@ do
     . \$f
 done
 
-if [ -f '$APP_DIR/repo/.openshift/config/standalone.xml' ]
-then
-  echo "Found .openshift/config/standalone.xml... copying to "$APP_JBOSS"/standalone/configuration/"
+pre_receive_app.sh
+__EOF__
 
-  for f in $APP_DIR/repo/.openshift/config/*
-  do
-    target=\$(basename \$f)
-    if [ -e "$APP_JBOSS/standalone/configuration/\$target" ]
-    then
-       echo "Removing existing \$target"
-       rm -rf "$APP_JBOSS/standalone/configuration/\$target"
-    fi
-    ln -s \$f "$APP_JBOSS/standalone/configuration/"
-  done
-fi
+    cat <<__EOF__ > $GIT_DIR/hooks/post-receive
+#!/bin/bash
 
-if [ -f '$APP_DIR/repo/pom.xml' ] && ! \$SKIP_MAVEN_BUILD
-then
-  echo "Found pom.xml... attempting to build with 'mvn clean package -Popenshift -DskipTests'" 
-  export JAVA_HOME=/etc/alternatives/java_sdk_1.6.0
-  export M2_HOME=/etc/alternatives/maven-3.0
-  export M2=\$M2_HOME/bin
-  export MAVEN_OPTS="-Xmx208m"
-  export PATH=$JAVA_HOME/bin:\$M2:\$PATH
-  pushd ~/${application}/repo > /dev/null
-  mvn --version
-  mvn clean package -Popenshift -DskipTests
-  popd
-fi
+# Import Environment Variables
+for f in ~/.env/*
+do
+    . \$f
+done
 
-# Run build
-if [ -x ~/${application}/repo/.openshift/action_hooks/build ]
-then
-    echo "running .openshift/action_hooks/build"
-    ~/${application}/repo/.openshift/action_hooks/build
-fi
-
-# Start the app
-echo -n "Starting application..."
-# Check for stop_lock, bug 719800
-if [ -f $APP_DIR/run/stop_lock ]
-then
-    echo skipped due to stop_lock
-else
-    exec 1>&- # close stdout
-    ~/${application}/${application}_ctl.sh start >/dev/null 2>&1
-    exec 1>&2 # redirect stdout to stderr
-    echo done
-fi
-
-curl -s -O /dev/null -d "json_data=\"{\"app_uuid\":\"${uuid}\",\"action\":\"push\"}\"" https://${libra_server}/broker/nurture >/dev/null 2>&1 &
+post_receive_app.sh ${libra_server}
 __EOF__
 
     chmod 0755 $GIT_DIR/hooks/post-receive $GIT_DIR/hooks/pre-receive
@@ -370,7 +317,7 @@ JAVA_HOME="/usr/lib/jvm/jre-1.6.0"
 # Specify options to pass to the Java VM.
 #
 if [ "x\$JAVA_OPTS" = "x" ]; then
-   JAVA_OPTS="-Xmx123m -XX:MaxPermSize=85m -Dorg.jboss.resolver.warning=true -Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000"
+   JAVA_OPTS="-Xmx95m -XX:MaxPermSize=85m -Dorg.jboss.resolver.warning=true -Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000"
 fi
 
 # Add
@@ -389,138 +336,16 @@ ln -s ${jboss_version}/standalone/log "$APP_DIR"/logs
 #
 echo "Creating ${application}_ctl.sh..."
 cat <<__EOF__ > "$APP_DIR/${application}_ctl.sh"
-#/bin/bash
-
-# For debugging, capture script output into app tmp dir
-pid=\$\$
-exec 4>&1 > /dev/null 2>&1  # Link file descriptor 4 with stdout, saves stdout.
-exec > "$APP_JBOSS_TMP_DIR/jbossas7-${application}_ctl-\$1.\${pid}.log" 2>&1
-
-if ! [ \$# -eq 1 ]
-then
-    echo "Usage: \$0 [start|restart|graceful|graceful-stop|stop]"
-    exit 1
-fi
-
+#!/bin/bash -e
 # Import Environment Variables
 for f in ~/.env/*
 do
     . \$f
 done
 
-# Kill the process given by $1 and its children
-killtree() {
-    local _pid=\$1
-    for _child in \$(ps -o pid --no-headers --ppid \${_pid}); do
-        killtree \${_child}
-    done
-    echo kill -TERM \${_pid}
-    kill -TERM \${_pid}
-}
-# Check if the jbossas process is running
-isrunning() {
-    # Check for running app
-    if [ -f "\$JBOSS_PID_FILE" ]; then
-      jbpid=\$(cat \$JBOSS_PID_FILE);
-      if /bin/ps --pid \$jbpid 1>&2 >/dev/null;
-      then
-        return 0
-      fi
-    fi
-    # not running
-    return 1
-}
-# Check if the server http port is up
-function ishttpup() {
-    let count=0
-    while [ \${count} -lt 10 ]
-    do
-        if /usr/sbin/lsof -P -n -i "@${IP}:8080" | grep "(LISTEN)" > /dev/null; then
-            echo "Found ${IP}:8080 listening port"
-            return 0
-        fi
-        let count=\${count}+1
-        sleep 2
-    done
-    return 1
-}
-
-# Validate the runcon
-if whoami | grep -q root || ! runcon | grep 'system_r:libra_t:s0:$c_val' > /dev/null
-then
-    echo 1>&2
-    echo "Please run script in the correct context, try:" 1>&2
-    echo "runuser --shell /bin/sh \"$uuid\" -c \"runcon -t libra_t -l s0:$c_val $APP_DIR/${application}_ctl.sh\"" 1>&2
-    echo 2>&1
-    exit 15
-fi
-
-
-JBOSS_PID_FILE="$APP_DIR/run/jboss.pid"
-
-case "\$1" in
-    start)
-        if [ -f $APP_DIR/run/stop_lock ]
-        then
-            echo " - Application is disabled" 1>&2
-            exit 0
-        else
-            # Check for running app
-            if isrunning; then
-                jbpid=\$(cat \$JBOSS_PID_FILE);
-                echo " - Application(\$jbpid) is already running" 1>&2
-                exit 0
-            fi
-            # Start
-            $APP_JBOSS_BIN_DIR/standalone.sh 1>&2 >${APP_JBOSS_TMP_DIR}/${application}.log &
-            PROCESS_ID=\$!
-            echo \$PROCESS_ID > \$JBOSS_PID_FILE
-            if ! ishttpup; then
-                echo "Timed out waiting for http listening port"
-                exit 1
-            fi
-        fi
-    ;;
-    graceful-stop|stop)
-        echo "JBOSS PID FILE:" \$JBOSS_PID_FILE
-        if ! isrunning; then
-            jbpid=\$(cat \$JBOSS_PID_FILE);
-            echo " - Application(\$jbpid) is already running" 1>&2
-            exit 0
-        fi
-        # kill the process tree
-        if [ -f "\$JBOSS_PID_FILE" ]; then
-          pid=\$(cat \$JBOSS_PID_FILE);
-          echo "Sending SIGTERM to jboss:\$pid ...";
-          killtree \$pid
-        else
-          echo "Failed to locate JBOSS PID File"
-        fi
-        exit 0
-    ;;
-    restart|graceful)
-        $APP_DIR/${application}_ctl.sh stop
-        $APP_DIR/${application}_ctl.sh start
-    ;;
-    status)
-        # Restore stdout and close file descriptor #4
-        exec 1>&4 4>&-
-        if ! isrunning; then
-            echo " - Application is NOT running"
-            exit 0
-        fi
-
-        echo tailing "$APP_JBOSS/standalone/log/server.log"
-        echo "------ Tail of ${application} application server.log ------"
-        tail "$APP_JBOSS/standalone/log/server.log"
-        exit 0
-    ;;
-esac
-
+app_ctl.sh \$1
+>>>>>>> fb6bbe18301ca1930bfba217bde25c076c848e61
 __EOF__
-
-ln -s $CART_INFO_DIR/bin/restore.sh $APP_HOME/.restore
-ln -s $CART_INFO_DIR/bin/snapshot.sh $APP_HOME/.snapshot
 
 #
 # Populate repo
@@ -538,22 +363,24 @@ chown $user_id.$group_id -R $APP_DIR || error "Failed to chown new application s
 chown root.root -R "$APP_DIR/${application}_ctl.sh"
 chown $user_id.$group_id -R "$APP_DIR/${jboss_version}/standalone"
 chown -R $user_id.$group_id $M2_DIR
-chcon -t libra_var_lib_t -l s0:$c_val -R "$APP_DIR"
+chcon -t libra_var_lib_t -l s0:$c_val -R "$APP_HOME/git/" "$APP_DIR"
 
 #
 # Create environment variables
 #
-echo "export OPENSHIFT_APP_DIR='$APP_DIR'" > $APP_HOME/.env/OPENSHIFT_APP_DIR
+echo "export OPENSHIFT_APP_DIR='$APP_DIR/'" > $APP_HOME/.env/OPENSHIFT_APP_DIR
 echo "export OPENSHIFT_REPO_DIR='$APP_DIR/repo/'" > $APP_HOME/.env/OPENSHIFT_REPO_DIR
 echo "export OPENSHIFT_INTERNAL_IP='$IP'" > $APP_HOME/.env/OPENSHIFT_INTERNAL_IP
 echo "export OPENSHIFT_INTERNAL_PORT='8080'" > $APP_HOME/.env/OPENSHIFT_INTERNAL_PORT
 echo "export OPENSHIFT_LOG_DIR='$APP_DIR/logs/'" > $APP_HOME/.env/OPENSHIFT_LOG_DIR
 echo "export OPENSHIFT_DATA_DIR='$APP_DIR/data/'" > $APP_HOME/.env/OPENSHIFT_DATA_DIR
-echo "export OPENSHIFT_TMP_DIR='/tmp'" > $APP_HOME/.env/OPENSHIFT_TMP_DIR
-echo "export OPENSHIFT_RUN_DIR='$APP_HOME/run/'" > $APP_HOME/.env/OPENSHIFT_RUN_DIR
+echo "export OPENSHIFT_TMP_DIR='/tmp/'" > $APP_HOME/.env/OPENSHIFT_TMP_DIR
+echo "export OPENSHIFT_RUN_DIR='$APP_DIR/run/'" > $APP_HOME/.env/OPENSHIFT_RUN_DIR
 echo "export OPENSHIFT_APP_NAME='$application'" > $APP_HOME/.env/OPENSHIFT_APP_NAME
+echo "export OPENSHIFT_APP_TYPE='${jboss_version}'" > $APP_HOME/.env/OPENSHIFT_APP_TYPE
 echo "export OPENSHIFT_APP_CTL_SCRIPT='$APP_DIR/${application}_ctl.sh'" > $APP_HOME/.env/OPENSHIFT_APP_CTL_SCRIPT
 echo "export OPENSHIFT_APP_DNS='${application}-${namespace}.${libra_domain}'" > $APP_HOME/.env/OPENSHIFT_APP_DNS
+echo "export PATH=$PATH:$JBOSS_CARTRIDGE_ROOT/info/bin/:$CART_DIR/abstract-httpd/info/bin/:$CART_DIR/li-controller/info/bin/" > $APP_HOME/.env/PATH
 
 #
 # Start the server

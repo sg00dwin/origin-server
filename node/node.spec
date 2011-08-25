@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.76.4
+Version:       0.77.3
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -119,6 +119,8 @@ fi
 %attr(0640,-,-) %{_libexecdir}/mcollective/mcollective/agent/migrate-0.73.rb
 %attr(0640,-,-) %{_libexecdir}/mcollective/mcollective/agent/migrate-0.74.rb
 %attr(0640,-,-) %{_libexecdir}/mcollective/mcollective/agent/migrate-2.1.2.rb
+%attr(0640,-,-) %{_libexecdir}/mcollective/mcollective/agent/migrate-2.1.3.rb
+%attr(0640,-,-) %{_libexecdir}/mcollective/mcollective/agent/migrate-2.1.4.rb
 %attr(0640,-,-) %{_libexecdir}/mcollective/update_yaml.pp
 %attr(0640,-,-) %{ruby_sitelibdir}/facter/libra.rb
 %attr(0750,-,-) %{_initddir}/libra
@@ -131,11 +133,18 @@ fi
 %attr(0750,-,-) %{_bindir}/rhc-init-quota
 %attr(0750,-,-) %{_bindir}/ec2-prep.sh
 %attr(0750,-,-) %{_bindir}/remount-secure.sh
+%attr(0755,-,-) %{_bindir}/rhc-cgroup-read
 %dir %attr(0751,root,root) %{_localstatedir}/lib/libra
-%dir %attr(0750,root,root) %{_libexecdir}/li/cartridges/li-controller/
+%dir %attr(0755,root,root) %{_libexecdir}/li/cartridges/li-controller/
+%attr(0750,-,-) %{_libexecdir}/li/cartridges/li-controller/info/hooks/
+%attr(0750,-,-) %{_libexecdir}/li/cartridges/li-controller/info/build/
+%attr(0640,-,-) %{_libexecdir}/li/cartridges/li-controller/info/data/
+%attr(0755,-,-) %{_libexecdir}/li/cartridges/li-controller/info/bin/
 %{_libexecdir}/li/cartridges/li-controller/README
 %{_libexecdir}/li/cartridges/li-controller/info
-%dir %attr(0750,root,root) %{_libexecdir}/li/cartridges/abstract-httpd/
+%dir %attr(0755,root,root) %{_libexecdir}/li/cartridges/abstract-httpd/
+%attr(0750,-,-) %{_libexecdir}/li/cartridges/abstract-httpd/info/hooks/
+%attr(0755,-,-) %{_libexecdir}/li/cartridges/abstract-httpd/info/bin/
 %{_libexecdir}/li/cartridges/abstract-httpd/info
 %attr(0750,-,-) %{_bindir}/rhc-accept-node
 %attr(0750,-,-) %{_bindir}/rhc-node-account
@@ -148,6 +157,88 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Wed Aug 24 2011 Dan McPherson <dmcphers@redhat.com> 0.77.3-1
+- try adding restorecon of aquota.user (dmcphers@redhat.com)
+
+* Wed Aug 24 2011 Dan McPherson <dmcphers@redhat.com> 0.77.2-1
+- add to client tools the ability to specify your rsa key file as well as
+  default back to id_rsa as a last resort (dmcphers@redhat.com)
+- chgrping env (mmcgrath@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- do not allow users to alter their own env vars (mmcgrath@redhat.com)
+- convert strings to tuples in 'in' comparisons so whole string comparisons get
+  done instead of substring (mmcgrath@redhat.com)
+
+* Fri Aug 19 2011 Matt Hicks <mhicks@redhat.com> 0.77.1-1
+- fix wsgi apps (dmcphers@redhat.com)
+- bump spec numbers (dmcphers@redhat.com)
+- splitting app_ctl.sh out (dmcphers@redhat.com)
+
+* Thu Aug 18 2011 Dan McPherson <dmcphers@redhat.com> 0.76.17-1
+- fix perms on .env (dmcphers@redhat.com)
+
+* Thu Aug 18 2011 Dan McPherson <dmcphers@redhat.com> 0.76.16-1
+- fix repo dir for rack on migration (dmcphers@redhat.com)
+
+* Wed Aug 17 2011 Dan McPherson <dmcphers@redhat.com> 0.76.15-1
+- re-adding (mmcgrath@redhat.com)
+
+* Wed Aug 17 2011 Dan McPherson <dmcphers@redhat.com> 0.76.14-1
+- moving cgroup-read to correct bin (mmcgrath@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- Fixing for real this time (mmcgrath@redhat.com)
+
+* Wed Aug 17 2011 Dan McPherson <dmcphers@redhat.com> 0.76.13-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- adding cgroup_read (mmcgrath@redhat.com)
+
+* Wed Aug 17 2011 Dan McPherson <dmcphers@redhat.com> 0.76.12-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- Added cgroup_read (mmcgrath@redhat.com)
+
+* Wed Aug 17 2011 Dan McPherson <dmcphers@redhat.com> 0.76.11-1
+- 731254 (dmcphers@redhat.com)
+- fixing kill calls (mmcgrath@redhat.com)
+
+* Wed Aug 17 2011 Dan McPherson <dmcphers@redhat.com> 0.76.10-1
+- add app type and db type and migration restart (dmcphers@redhat.com)
+
+* Tue Aug 16 2011 Dan McPherson <dmcphers@redhat.com> 0.76.9-1
+- cleanup (dmcphers@redhat.com)
+
+* Tue Aug 16 2011 Dan McPherson <dmcphers@redhat.com> 0.76.8-1
+- cleanup how we call snapshot (dmcphers@redhat.com)
+- redo the start/stop changes (dmcphers@redhat.com)
+- migration fix for post/pre receive (dmcphers@redhat.com)
+- split out post and pre receive from the apps (dmcphers@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- prefixing backup and restore with UUID (mmcgrath@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- correcting double quote (mmcgrath@redhat.com)
+
+* Tue Aug 16 2011 Matt Hicks <mhicks@redhat.com> 0.76.7-1
+- JBoss cgroup and container tuning (mhicks@redhat.com)
+- splitting out stop/start, changing snapshot to use stop start and bug 730890
+  (dmcphers@redhat.com)
+- Added cleanup (mmcgrath@redhat.com)
+- allowing user to alter username and password (mmcgrath@redhat.com)
+- dirs should end with / (mmcgrath@redhat.com)
+- Appending / to dir names (mmcgrath@redhat.com)
+- ensuring /tmp ends with a / (mmcgrath@redhat.com)
+
+* Mon Aug 15 2011 Dan McPherson <dmcphers@redhat.com> 0.76.6-1
+- adding migration for snapshot/restore (dmcphers@redhat.com)
+- snapshot and restore using path (dmcphers@redhat.com)
+
+* Mon Aug 15 2011 Matt Hicks <mhicks@redhat.com> 0.76.5-1
+- rename li-controller-0.1 to li-controller (dmcphers@redhat.com)
+
 * Sun Aug 14 2011 Dan McPherson <dmcphers@redhat.com> 0.76.4-1
 - adding rhcsh (mmcgrath@redhat.com)
 - Added new scripted snapshot (mmcgrath@redhat.com)

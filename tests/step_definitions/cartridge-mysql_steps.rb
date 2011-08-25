@@ -138,7 +138,7 @@ Then /^the mysql database will( not)? +exist$/ do |negate|
     datadir.should include "ibdata1"
     datadir.should include "ib_logfile0"
     datadir.should include "mysql"
-    datadir.should include "test"
+    datadir.should include app_name
   else
     datadir.should be_nil
   end
