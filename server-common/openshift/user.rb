@@ -245,8 +245,10 @@ module Libra
                   { 'prefix' => "user_info/#{@rhlogin}/apps/"})
         app_list.each do |key|
           json = Helper.s3.get(Libra.c[:s3_bucket], key[:key])
-          app_name = key[:key].sub("user_info/#{@rhlogin}/apps/", "").sub(".json", "")
-          @apps[app_name] = app_info(app_name)
+          app_name = File.basename(key[:key], '.json') unless key[:key].end_with?('/')
+          if app_name
+            @apps[app_name] = app_info(app_name)
+          end
         end
       end
       @apps
