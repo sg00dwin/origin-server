@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system client tools
 Name:          rhc
-Version:       0.76.2
+Version:       0.76.3
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       MIT
@@ -99,6 +99,10 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_sysconfdir}/openshift/express.conf
 
 %changelog
+* Thu Aug 25 2011 Dan McPherson <dmcphers@redhat.com> 0.76.3-1
+- change rsa_key_file to ssh_key_file and change not found to warning
+  (dmcphers@redhat.com)
+
 * Wed Aug 24 2011 Dan McPherson <dmcphers@redhat.com> 0.76.2-1
 - add to client tools the ability to specify your rsa key file as well as
   default back to id_rsa as a last resort (dmcphers@redhat.com)
