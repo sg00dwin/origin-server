@@ -1,0 +1,245 @@
+#!/bin/bash
+
+# Copyright © 2010 Mike McGrath All rights reserved
+# Copyright © 2010 Red Hat, Inc. All rights reserved
+
+# This copyrighted material is made available to anyone wishing to use, modify,
+# copy, or redistribute it subject to the terms and conditions of the GNU
+# General Public License v.2.  This program is distributed in the hope that it
+# will be useful, but WITHOUT ANY WARRANTY expressed or implied, including the
+# implied warranties of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.  You should have
+# received a copy of the GNU General Public License along with this program;
+# if not, write to the Free Software Foundation, Inc., 51 Franklin Street,
+# Fifth Floor, Boston, MA 02110-1301, USA. Any Red Hat trademarks that are
+# incorporated in the source code or documentation are not subject to the GNU
+# General Public License and may only be used or replicated with the express
+# permission of Red Hat, Inc.
+
+# Creates a per application httpd instance
+
+# Exit on any errors
+set -e
+#set -x
+
+if [ -f '/etc/libra/node.conf' ]
+then
+    . /etc/libra/node.conf
+elif [ -f 'node.conf' ]
+then
+    . node.conf
+else
+    echo "node.conf not found.  Cannot continue" 1>&2
+    exit 3
+fi
+
+if [ -f '/etc/libra/node_data.conf' ]
+then
+    . /etc/libra/node_data.conf
+elif [ -f 'node_data.conf' ]
+then
+    . node_data.conf
+else
+    echo "node_data.conf not found.  Cannot continue" 1>&2
+    exit 3
+fi
+
+rotatelogs_interval="86400"
+rotatelogs_format="-%Y%m%d-%H%M%S-%Z"
+
+if [ -f '/etc/libra/resource_limits.conf' ]
+then
+    . /etc/libra/resource_limits.conf
+fi
+
+
+CART_DIR=/usr/libexec/li/cartridges
+CART_INFO_DIR=$CART_DIR/jenkins-1.4/info
+CART_CONF_DIR=$CART_INFO_DIR/configuration/etc/conf
+
+function print_help {
+    echo "Usage: $0 app-name namespace uuid"
+
+    echo "$0 $@" | logger -p local0.notice -t libra_php_configure
+    exit 1
+}
+
+function error {
+    echo "$1" 1>&2
+    exit "$2"
+}
+
+# create an IP address as an 32 bit unsigned integer
+function address() {
+    # uid=$1
+    # final=$2
+    printf "0x%08x\n" "$((0x7f000000 + $(($1<<7)) + $2))"
+}
+
+# convert an integer IP address to dotted quad format
+function dotted_quad() {
+    # ADDR=$1
+    q3=$(($1 >> 24))
+    q2=$(($1 >> 16 & 0xff))
+    q1=$(($1 >> 8 & 0xff))
+    q0=$(($1 & 0xff))
+    echo "$q3.$q2.$q1.$q0"
+}
+
+function find_open_ip {
+    uid=$1
+    uuid=$2
+    for host_ip in `seq 1 127`
+    do
+        a=`address $uid $host_ip`
+        new_ip=`dotted_quad $a`
+        if ! grep -qe '^Listen '$new_ip':8080$' $(find /var/lib/libra/$uuid/ -maxdepth 3 -mindepth 3 -name libra.conf) /etc/sysconfig/network
+        then
+            echo $new_ip
+            exit
+        fi
+    done
+
+    echo "Could not find open IP" 1>&2
+    exit 5
+}
+
+function unobfuscate {
+    # Check if unobfuscate is set in /etc/libra/node.conf
+    # If it is set, symlink /var/lib/libra/uuid to /var/lib/libra/appname-namespace
+    # This will allow easier debugging.
+
+    uuid=$1
+    namespace=$2
+    appname=$3
+
+    if [ $unobfuscate -eq 1 ]
+    then
+        if [ ! -f "${libra_dir}/$appname-$namespace" ] && [ ! -d "${libra_dir}/$appname-$namespace" ]
+        then
+            /bin/ln -sf "${libra_dir}/${uuid}" "${libra_dir}/${appname}-${namespace}"
+        fi
+    fi
+}
+
+while getopts 'd' OPTION
+do
+    case $OPTION in
+        d) set -x
+        ;;
+        ?) print_help
+        ;;
+    esac
+done
+
+
+[ $# -eq 3 ] || print_help
+
+namespace=`basename $2`
+application="$1"
+uuid=$3
+
+APP_HOME="$libra_dir/$uuid"
+APP_DIR=`echo $APP_HOME/$application | tr -s /`
+
+unobfuscate $uuid $namespace $application
+
+#
+# Get user id info
+# Not caching this information caused some early chowns to work but some later
+# chowns to fail with a user not found error
+
+user_id=$(id -u "$uuid") || error "Could not find user $uuid ($namespace)" 134
+group_id=$(id -g "$uuid") || error "Could not find user $uuid ($namespace)" 135
+
+uid=$(id -u "$uuid")
+c_val="c$(($uid/1023)),c$(($uid%1023))"
+
+#
+# Create http base for application, every app gets its own apache instance
+#
+
+[ -d "$APP_DIR" ] && error "${application}.  Please destroy then recreate, or pick a new name" 132
+
+mkdir -p "$APP_DIR"
+pushd "$APP_DIR" > /dev/null
+mkdir logs run data tmp
+popd > /dev/null
+
+#
+# Find an open localhost IP
+#
+
+IP=$(find_open_ip $uid $uuid)
+
+ln -s $CART_INFO_DIR/bin/app_ctl.sh $APP_DIR/${application}_ctl.sh 
+chown $user_id.$group_id -R $APP_DIR || error "Failed to chown new application space.  Please contact support" 123
+# Secure script and config dirs.
+chown root.root "$APP_DIR"
+chcon -t libra_var_lib_t -l s0:$c_val -R "$APP_DIR"
+
+#
+# Create environment variables
+#
+echo "export OPENSHIFT_APP_DIR='$APP_DIR/'" > $APP_HOME/.env/OPENSHIFT_APP_DIR
+echo "export OPENSHIFT_REPO_DIR='$APP_DIR/repo/'" > $APP_HOME/.env/OPENSHIFT_REPO_DIR
+echo "export OPENSHIFT_INTERNAL_IP='$IP'" > $APP_HOME/.env/OPENSHIFT_INTERNAL_IP
+echo "export OPENSHIFT_INTERNAL_PORT='8080'" > $APP_HOME/.env/OPENSHIFT_INTERNAL_PORT
+echo "export OPENSHIFT_LOG_DIR='$APP_DIR/logs/'" > $APP_HOME/.env/OPENSHIFT_LOG_DIR
+echo "export OPENSHIFT_DATA_DIR='$APP_DIR/data/'" > $APP_HOME/.env/OPENSHIFT_DATA_DIR
+echo "export OPENSHIFT_TMP_DIR='/tmp/'" > $APP_HOME/.env/OPENSHIFT_TMP_DIR
+echo "export OPENSHIFT_RUN_DIR='$APP_DIR/run/'" > $APP_HOME/.env/OPENSHIFT_RUN_DIR
+echo "export OPENSHIFT_APP_NAME='$application'" > $APP_HOME/.env/OPENSHIFT_APP_NAME
+echo "export OPENSHIFT_APP_TYPE='jenkins-1.4'" > $APP_HOME/.env/OPENSHIFT_APP_TYPE
+echo "export OPENSHIFT_APP_CTL_SCRIPT='$APP_DIR/${application}_ctl.sh'" > $APP_HOME/.env/OPENSHIFT_APP_CTL_SCRIPT
+echo "export OPENSHIFT_APP_DNS='${application}-${namespace}.${libra_domain}'" > $APP_HOME/.env/OPENSHIFT_APP_DNS
+echo "export PATH=$PATH:$CART_INFO_DIR/bin/:$CART_DIR/abstract-httpd/info/bin/:$CART_DIR/li-controller/info/bin/" > $APP_HOME/.env/PATH
+
+#
+# Start the server
+#
+runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l s0:$c_val $APP_DIR/${application}_ctl.sh start" || error "Failed to start ${application}" 121
+
+#
+# Generate key pair
+#
+runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l s0:$c_val $CART_INFO_DIR/bin/generate_keys" || error "Failed to generate keys" 206
+
+echo "SSH_KEY: $(cat $APP_DIR/data/.ssh/jenkins_id_rsa.pub)"
+
+#
+# Create virtualhost definition for apache
+#
+# node_ssl_template.conf gets copied in unaltered and should contain
+# all of the configuration bits required for ssl to work including key location
+#
+
+cat <<EOF > "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}.conf"
+<VirtualHost *:80>
+  ServerName ${application}-${namespace}.${libra_domain}
+  ServerAdmin mmcgrath@redhat.com
+  DocumentRoot /var/www/html
+  DefaultType None
+
+  RewriteEngine On
+  RewriteRule /health /usr/libexec/li/cartridges/jenkins-1.4/info/configuration/health [L]
+  ProxyPass / http://$IP:8080/
+  ProxyPassReverse / http://$IP:8080/
+</VirtualHost>
+
+<VirtualHost *:443>
+  ServerName ${application}-${namespace}.${libra_domain}
+  ServerAdmin mmcgrath@redhat.com
+  DefaultType None
+
+$(/bin/cat $CART_INFO_DIR/configuration/node_ssl_template.conf)
+
+  RewriteEngine On
+  RewriteRule /health /usr/libexec/li/cartridges/jenkins-1.4/info/configuration/health [L]
+  ProxyPass / http://$IP:8080/
+  ProxyPassReverse / http://$IP:8080/
+</VirtualHost>
+EOF
+
+/sbin/service httpd configtest 2> /dev/null && /sbin/service httpd graceful || error "Failed to restart master httpd, please contact support" 120
+
