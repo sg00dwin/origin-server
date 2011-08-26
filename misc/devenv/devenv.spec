@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.76.5
+Version:   0.76.6
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -198,6 +198,10 @@ chkconfig libra-tc on
 %{_initddir}/libra-site
 
 %changelog
+* Thu Aug 25 2011 Dan McPherson <dmcphers@redhat.com> 0.76.6-1
+- change rsa_key_file to ssh_key_file and change not found to warning
+  (dmcphers@redhat.com)
+
 * Thu Aug 25 2011 Matt Hicks <mhicks@redhat.com> 0.76.5-1
 - Adding initial repo for the openshift-sdk repo (mhicks@redhat.com)
 

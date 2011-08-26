@@ -19,6 +19,7 @@ commands = {
     "scp": "/bin/bash",
     "cd": "/bin/bash",
     "set": "/bin/bash",
+    "mkdir": "/bin/bash",
     "test": "/bin/bash"
 }
 
@@ -103,7 +104,7 @@ if __name__ == '__main__':
     elif basecmd in ('rhcsh',):
         os.environ["PS1"] = "rhcsh> "
         allargs = ['--init-file', '/usr/local/bin/rhcsh', '-i']
-    elif basecmd in ('java','set','scp', 'cd', 'test'):
+    elif basecmd in ('java','set','scp', 'cd', 'test', 'mkdir'):
         str = ' '.join(allargs)
         allargs = ['-c', str]
     elif basecmd in ('tail',):
