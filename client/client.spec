@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system client tools
 Name:          rhc
-Version:       0.76.3
+Version:       0.76.4
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       MIT
@@ -99,6 +99,9 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_sysconfdir}/openshift/express.conf
 
 %changelog
+* Mon Aug 29 2011 Dan McPherson <dmcphers@redhat.com> 0.76.4-1
+- bz736646 - allow pty for ssh commands (markllama@redhat.com)
+
 * Thu Aug 25 2011 Dan McPherson <dmcphers@redhat.com> 0.76.3-1
 - change rsa_key_file to ssh_key_file and change not found to warning
   (dmcphers@redhat.com)

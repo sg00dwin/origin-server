@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.77.5
+Version:       0.77.7
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -157,6 +157,14 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Mon Aug 29 2011 Dan McPherson <dmcphers@redhat.com> 0.77.7-1
+- bz736646 - allow pty for ssh commands (markllama@redhat.com)
+
+* Mon Aug 29 2011 Dan McPherson <dmcphers@redhat.com> 0.77.6-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- increase proxy timeout to 30 (mmcgrath@redhat.com)
+
 * Fri Aug 26 2011 Dan McPherson <dmcphers@redhat.com> 0.77.5-1
 - Bug 733227 (dmcphers@redhat.com)
 

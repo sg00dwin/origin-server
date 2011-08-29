@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.77.3
+Version:   0.77.5
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -14,7 +14,7 @@ BuildRequires:  git
 BuildRequires:  java-devel >= 1:1.6.0 
 BuildRequires:  jpackage-utils
 Requires:  rhc-node
-Requires: jboss-as7 = 7.0.0.FinalOS
+Requires: jboss-as7 = 7.0.1.Final
 Requires:  maven3
 
 BuildArch: noarch
@@ -77,6 +77,12 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Mon Aug 29 2011 Dan McPherson <dmcphers@redhat.com> 0.77.5-1
+- update jboss version (dmcphers@redhat.com)
+
+* Mon Aug 29 2011 Dan McPherson <dmcphers@redhat.com> 0.77.4-1
+- Bug 734028 (dmcphers@redhat.com)
+
 * Thu Aug 25 2011 Matt Hicks <mhicks@redhat.com> 0.77.3-1
 - Fix some merge errors (starksm64@gmail.com)
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li

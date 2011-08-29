@@ -1,11 +1,8 @@
-A derivative of the php cartridge for jbossas7 that configures a standalone
-jbossas7 instance per application.
+Configures a standalone jbossas7 instance per application.
 
-Package: jboss-as7-7.0.0.FinalOS-2
+Package: jboss-as7-7.0.1.Final-2
 rpms:
- http://download.devel.redhat.com/brewroot/packages/jboss-as7/7.0.0.FinalOS/2/noarch/jboss-as7-7.0.0.FinalOS-2.noarch.rpm
-Task Info: https://brewweb.devel.redhat.com//taskinfo?taskID=3531866
-Build Info: https://brewweb.devel.redhat.com//buildinfo?buildID=174755
+ http://download.devel.redhat.com/brewroot/packages/jboss-as7/7.0.1.Final/2/noarch/jboss-as7-7.0.1.Final-2.noarch.rpm
 
 
 * Instructions for creating the jboss-as server rpm *
