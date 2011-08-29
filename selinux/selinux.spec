@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.77.4
+Version:       0.77.5
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -38,6 +38,12 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Mon Aug 29 2011 Dan McPherson <dmcphers@redhat.com> 0.77.5-1
+- Update to use newer RHEL6.2 policy.  selinux-policy-3.7.19-108.el6 required
+  (dwalsh@redhat.com)
+- Fix quota transition rule (dwalsh@redhat.com)
+- Allow quota to be stored in libra filesystems (dwalsh@redhat.com)
+
 * Thu Aug 25 2011 Dan McPherson <dmcphers@redhat.com> 0.77.4-1
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
   (mmcgrath@redhat.com)
