@@ -245,17 +245,16 @@ function enable_user_ssh_access {
     USERHOME=`homedir $USERNAME`
     SSHDIR=${USERHOME}/.ssh
 
+    CMDENTRY="command=\"/usr/bin/trap-user\",no-port-forwarding,no-X11-forwarding,no-agent-forwarding ssh-rsa $SSHKEY Libra-$USERNAME"
+
     ${NOOP} mkdir -p ${SSHDIR}
     ${NOOP} chmod 0750 ${SSHDIR}
+
     if [ -z "${NOOP}" ]
     then
-	cat <<EOF > ${SSHDIR}/authorized_keys
-command="/usr/bin/trap-user",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty ssh-rsa $SSHKEY Libra-$USERNAME
-EOF
+	echo "$CMD_ENTRY" > ${SSHDIR}/authorized_keys
     else
-	echo "cat <<EOF > $SSHDIR/authorized_keys
-command=\\\"/usr/bin/trap-user\\\",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty ssh-rsa $SSHKEY Libra-$USERNAME
-EOF\""
+	echo "echo '$CMD_ENTRY' > $SSHDIR/authorized_keys"
     fi
     ${NOOP} chmod 0440 ${SSHDIR}/authorized_keys
     # Give force ssh key to not change
