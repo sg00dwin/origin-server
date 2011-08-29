@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/mysql-5.1
 
 Name: rhc-cartridge-mysql-5.1
-Version: 0.11.1
+Version: 0.11.2
 Release: 1%{?dist}
 Summary: Embedded mysql support for express
 
@@ -47,6 +47,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Mon Aug 29 2011 Dan McPherson <dmcphers@redhat.com> 0.11.2-1
+- escape application name (root@ip-10-82-227-145.ec2.internal)
+
 * Fri Aug 19 2011 Matt Hicks <mhicks@redhat.com> 0.11.1-1
 - bump spec numbers (dmcphers@redhat.com)
 - splitting app_ctl.sh out (dmcphers@redhat.com)
