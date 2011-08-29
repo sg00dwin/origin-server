@@ -9,8 +9,7 @@ module Libra
   class CartridgeException < LibraException; end
   class NodeException < LibraException; end
   class UserException < LibraException; end
-  class UserAuthException < LibraException; end
-  class UserValidationException < LibraException; end
+  class UserValidationException < UserException; end
   class DNSException < LibraException; end
   class StreamlineException < LibraException
     def initialize
