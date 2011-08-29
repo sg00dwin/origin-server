@@ -4,7 +4,7 @@ body {
   margin: 0;
   padding: 0;
   background-color: $background-color;
-  min-width: 1030px;
+  min-width: 1437px;
 }
 
 /*
@@ -12,7 +12,7 @@ body {
   background-image: url('../images/clouds_sm.png'),
                     url('../images/clouds_md.png'),
                     url('../images/clouds_lg.png');
-  background-position: -150px -240px; 
+  background-position: -150px -240px;
 }
 */
 
@@ -81,17 +81,18 @@ section > header {
 a.button {
   @include inline-block;
   white-space: nowrap;
-  padding: .3em 2em;
+  padding: .3em 1em;
   font: {
     family: Overpass, $base-font-family;
-    size: 1em;
+    size: .9em;
   }
   text: {
     decoration: none;
     align: center;
   }
-  @include text-shadow($shadow-color 0 0.1em 0);
-  @include border-radius(2em);
+  @include box-shadow(black 0 0.1em 0);
+  @include text-shadow($shadow-color 0 0.15em 0);
+  @include border-radius(.2em);
   
   &:hover {
     text-decoration: none !important;
@@ -130,8 +131,8 @@ a.more {
     }
   }
   
-  h1, h2, h3, h4, h5 { 
-    color: #555; 
+  h1, h2, h3, h4, h5 {
+    color: #555;
     font: {
       family: Overpass, $base-font-family;
       weight: normal;
@@ -140,14 +141,13 @@ a.more {
   
   h1 {
     width: 100%;
-    border-bottom: 1px solid #ececec;
-    padding: 1em 2em;
+    text-transform: uppercase;
   }
 }
 
-.rgba .main {
+/*.rgba .main {
   background-color: rgba(255, 255, 255, 0.9);
-}
+}*/
 
 /* Flash notices */
 .message {
@@ -217,7 +217,7 @@ header.universal {
       margin: 0;
       list-style-type: none;
       
-      a {      
+      a {
         padding: .9em 1em;
         @include inline-block;
         color: white;
@@ -348,7 +348,7 @@ footer.universal {
     color: #1060c8;
   }
   
-  form {    
+  form {
     margin: 0 auto;
     display: block;
     width: 23.5em;
@@ -387,70 +387,74 @@ footer.universal {
 
 #opener {
   font-size: 1.1em;
-  background: white;
-  margin-bottom: 30px;
-  height: 392px;
+  background: #2c1f34 url('../images/cloud-bg.png') repeat-x bottom;
+  height: 513px;
   display: block;
   
   .content {
+    width: 1437px;
+    height: 513px;
+    overflow: hidden;
+    background: url('../images/space-panda-ftw.png') no-repeat center;
     position: relative;
-    width: 986px;
   }
-  
-  img {
-    z-index: 100;
-    display: block;
-    margin: 0 auto;
-  }
-  
-  header, a.button {
+  header, a {
     position: absolute;
   }
   
   header {
-    top: 3em;
-    left: 182px;
-    text-align: left;
-    width: 20em;
+    top: 100px;
+    left: 600px;
+    text-align: center;
   }
   
   h1 {
-    color: #666;
-    font-size: 2em;
-    line-height: 1.25em;
+    color: white;
+    font-size: 30px;
+    line-height: 30px;
     margin: 0;
     font-weight: normal;
+    text-transform: uppercase;
     font-family: Overpass, $base-font-family;
+    @include text-shadow(black 0 2px 0);
   }
   
   h2 {
-    color: #666;
-    font-size: 1em;
+    color: white;
+    font-size: 20px;
     font-weight: normal;
     font-family: Overpass, $base-font-family;
-    line-height: 1em;
+    line-height: 20px;
+    text-transform: uppercase;
     margin: 0;
+    @include text-shadow(black 0 2px 0);
+
   }
   
   a.button {
-    top: 9em;
-    left:182px;
-    background-color: $background-color;
-    color: white;
+    top: 160px;
+    left:700px;
+    font-size: 15px;
+    background-color: #ede6cb;
+    @include background-image(linear-gradient(top, #ede6cb, #ddce9b));
+    color: #3b3924;
+    @include text-shadow(white 0 0.15em 0);
   }
   
 }
 
 #exposition {
-  h1 {
-    margin-top: 100px;
+  margin-top: -1em;
+
+  p#intro {
+    font-size: 1.1em;
+    font-family: Overpass, $base-font-family;
   }
   
   > .content {
     > div {
       margin: 3em 0 6em;
       padding: 0 3em;
-      @include clearfix;
       position: relative;
       min-height: 200px;
       
@@ -475,6 +479,7 @@ footer.universal {
     #free {
       img {
         right: 0;
+        top: -16px;
       }
       
       header, p, a {
@@ -488,7 +493,6 @@ footer.universal {
 #social {
   .content {
     padding-bottom: 2em;
-    border-bottom: 1px solid #ececec;
   }
   
   div, li {
@@ -576,8 +580,8 @@ footer.universal {
 
 #bottom_signup {
   text-align: center;
-  font-size: 1.4em;
-  padding: 3.75em;
+  font-size: 1.2em;
+  padding: 4em;
   
   header, .content {
     width: 35em;
