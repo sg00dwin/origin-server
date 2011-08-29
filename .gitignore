@@ -10,3 +10,4 @@
 *.komodoproject
 *.iml
 rhc/
+*.redcar*

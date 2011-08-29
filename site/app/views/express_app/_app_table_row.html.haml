@@ -1,0 +1,11 @@
+%tr
+  %td
+    = app_name
+  %td
+    = app['framework']
+  %td
+    = app['creation_time']
+  %td
+    = app_link_to @userinfo, app_name
+  %td
+    = git_url_for @userinfo, app_name

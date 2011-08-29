@@ -15,6 +15,33 @@
     %h2 
       Your domain
     
-    %div{:id => "domain_form"}
+    #domain_form
       = render "express_domain/#{@action}_form"
       
+    
+    %h2
+      Your apps
+    
+    #apps
+      - if !@userinfo.app_info.nil? and @userinfo.app_info.length > 0
+        = render 'express_app/app_table', :apps => @userinfo.app_info
+      
+    - if @app
+      #app_form
+      
+        %h3 Create a new app
+      
+        = semantic_form_for @app, :remote => true do |form|
+          = form.input :app_name
+          = form.input :cartridge, :as => :select, :collection => @cartlist.list
+          = form.buttons do
+            = form.commit_button :button_html => { :class => 'button', :value => 'Create your new app' }
+          
+    - elsif !@userinfo.app_info.nil? and @userinfo.app_info.length > 0
+      %p
+        You have reached your limit of free apps.
+    
+    - else
+      %p
+        You need to create a domain first, then you can create apps!
+        

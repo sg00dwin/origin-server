@@ -38,5 +38,8 @@ RedHatCloud::Application.configure do
   
   # Express API base url
   config.express_api_url = 'https://localhost'
+  
+  # Max apps for express
+  config.express_max_apps = 5
 
 end

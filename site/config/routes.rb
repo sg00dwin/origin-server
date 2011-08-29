@@ -84,6 +84,13 @@ RedHatCloud::Application.routes.draw do
              :controller => "express_domain",
              :as => "express_domains",
              :only => [:new, :create]
+  
+    resource  :express_app,
+              :controller => "express_app",
+              :as => "express_apps",
+              :only => [:new, :create]
+    
+    get 'express_app/health_check' => 'express_app#health_check'
     
     match 'control_panel' => 'control_panel#index'
     match 'dashboard' => 'control_panel#index', :as => 'dashboard'

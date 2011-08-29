@@ -1,4 +1,6 @@
 var form = $('#new_express_domain'), form_container = form.parent();
+//Emit return event
+form.trigger('submission_returned')
 // clear out old messages
 $('.message').remove();
 <% 

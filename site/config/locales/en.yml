@@ -41,6 +41,9 @@ en:
   express_api:
     errors:
       unauthorized: "Authorization problem. Please check that your password is correct."
+      app_unavailable: "We couldn't verify that your app was successfully created. It may have been created but be unavailable. Please check back in a bit to see if your app was created or not."
     messages:
       domain_create: "Congratulations! You successfully created your domain"
       domain_update: "Congratulations! You successfully updated your domain"
+      app_available: "Congratulations! Your app is live!"
+      app_created: "Congratulations! Your app has been created. It may be a few minutes before it is live."

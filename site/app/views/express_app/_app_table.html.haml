@@ -1,0 +1,17 @@
+%table
+  %thead
+    %tr
+      %td
+        Name
+      %td
+        Stack
+      %td
+        Created
+      %td
+        URL
+      %td
+        Git Repo
+
+  %tbody
+    - apps.each do |app_name, app|
+      = render 'express_app/app_table_row', :app_name => app_name, :app => app

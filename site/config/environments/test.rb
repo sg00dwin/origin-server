@@ -44,8 +44,11 @@ RedHatCloud::Application.configure do
   config.streamline_secret = ''
   config.captcha_secret = 'secret'
   
+  # Maximum number of apps
+  config.express_max_apps = 5
+  
   # Express API base url
-  config.express_api_url = 'https://openshift.redhat.com'
+  config.express_api_url = 'https://localhost'
   
   ## AWS configuration
   #config.aws_key = "AKIAJMZR4X6F46UMXV6Q"

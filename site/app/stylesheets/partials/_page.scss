@@ -853,6 +853,60 @@ li.captcha {
     font-size: 1.1em;
     cursor: pointer;
   }
+  
+  #spinner {
+    background: black;
+    color: white;
+    @include border-radius(1em);
+    @include box-shadow($shadow-color 0 0 3em);
+    font: {
+      size: 1.5em;
+      family: Overpass, $base-font-family;
+    }
+    padding: 20px;
+    position: fixed;
+    top: 20%;
+    left: 20%;
+    right: 20%;
+    z-index: 3000;
+    text-align: center;
+    #spinner_text {
+      margin: auto;
+    }
+    #spinning {
+      width: 50%;
+      height: 23px;
+      margin: 10px auto;
+      background: url('/app/images/spinner-bg.png') repeat-x;
+      background-position: center bottom;
+      display: block;
+    }
+    &.stop-spinning {
+      font-size: 1.2em;
+      bottom: 20%;
+      overflow: auto;
+      #spinning { display:none; }
+      em {
+        font-size: 1.1em;
+        font-color: $background-color;
+        font-style: normal;
+      }
+    }
+    ul {
+      margin: 0; padding: 0;
+      list-style-type: none;
+      li {
+        @include inline-block;
+        width: 45%;
+        margin: 0 10px; padding: 0;
+        a {
+          @include inline-block;
+          color: white;
+          text-decoration: none;
+        }
+      }
+    }
+  }
 
 }
 

@@ -1275,15 +1275,103 @@ li.captcha {
   font-size: 1.1em;
   cursor: pointer;
 }
+/* line 857, ../../app/stylesheets/partials/_page.scss */
+.control_panel #spinner {
+  background: black;
+  color: white;
+  -moz-border-radius: 1em;
+  -webkit-border-radius: 1em;
+  -o-border-radius: 1em;
+  -ms-border-radius: 1em;
+  -khtml-border-radius: 1em;
+  border-radius: 1em;
+  -moz-box-shadow: rgba(0, 0, 0, 0.3) 0 0 3em;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.3) 0 0 3em;
+  -o-box-shadow: rgba(0, 0, 0, 0.3) 0 0 3em;
+  box-shadow: rgba(0, 0, 0, 0.3) 0 0 3em;
+  font-size: 1.5em;
+  font-family: Overpass, "Liberation Sans", Arial, "Helvetica Neue", Helvetica, sans-serif;
+  padding: 20px;
+  position: fixed;
+  top: 20%;
+  left: 20%;
+  right: 20%;
+  z-index: 3000;
+  text-align: center;
+}
+/* line 873, ../../app/stylesheets/partials/_page.scss */
+.control_panel #spinner #spinner_text {
+  margin: auto;
+}
+/* line 876, ../../app/stylesheets/partials/_page.scss */
+.control_panel #spinner #spinning {
+  width: 50%;
+  height: 23px;
+  margin: 10px auto;
+  background: url("/app/images/spinner-bg.png") repeat-x;
+  background-position: center bottom;
+  display: block;
+}
+/* line 884, ../../app/stylesheets/partials/_page.scss */
+.control_panel #spinner.stop-spinning {
+  font-size: 1.2em;
+  bottom: 20%;
+  overflow: auto;
+}
+/* line 888, ../../app/stylesheets/partials/_page.scss */
+.control_panel #spinner.stop-spinning #spinning {
+  display: none;
+}
+/* line 889, ../../app/stylesheets/partials/_page.scss */
+.control_panel #spinner.stop-spinning em {
+  font-size: 1.1em;
+  font-color: #574d4f;
+  font-style: normal;
+}
+/* line 895, ../../app/stylesheets/partials/_page.scss */
+.control_panel #spinner ul {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+/* line 898, ../../app/stylesheets/partials/_page.scss */
+.control_panel #spinner ul li {
+  display: -moz-inline-box;
+  -moz-box-orient: vertical;
+  display: inline-block;
+  vertical-align: middle;
+  *vertical-align: auto;
+  width: 45%;
+  margin: 0 10px;
+  padding: 0;
+}
+/* line 7, ../../../../../../../../usr/lib/ruby/gems/1.8/gems/compass-0.11.5/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
+.control_panel #spinner ul li {
+  *display: inline;
+}
+/* line 902, ../../app/stylesheets/partials/_page.scss */
+.control_panel #spinner ul li a {
+  display: -moz-inline-box;
+  -moz-box-orient: vertical;
+  display: inline-block;
+  vertical-align: middle;
+  *vertical-align: auto;
+  color: white;
+  text-decoration: none;
+}
+/* line 7, ../../../../../../../../usr/lib/ruby/gems/1.8/gems/compass-0.11.5/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
+.control_panel #spinner ul li a {
+  *display: inline;
+}
 
 /* End dashboard page */
 /* Start partner page */
-/* line 863, ../../app/stylesheets/partials/_page.scss */
+/* line 917, ../../app/stylesheets/partials/_page.scss */
 ul.partners {
   margin: 0;
   padding: 0;
 }
-/* line 867, ../../app/stylesheets/partials/_page.scss */
+/* line 921, ../../app/stylesheets/partials/_page.scss */
 ul.partners li {
   display: -moz-inline-box;
   -moz-box-orient: vertical;
@@ -1299,11 +1387,11 @@ ul.partners li {
   *display: inline;
 }
 
-/* line 876, ../../app/stylesheets/partials/_page.scss */
+/* line 930, ../../app/stylesheets/partials/_page.scss */
 .partner.show .content > div {
   margin: 1em 0;
 }
-/* line 880, ../../app/stylesheets/partials/_page.scss */
+/* line 934, ../../app/stylesheets/partials/_page.scss */
 .partner.show #partner_overview {
   font-size: .8em;
   border: 0.1em solid #ececec;
@@ -1311,16 +1399,16 @@ ul.partners li {
   border-right: 0;
   padding: 1em;
 }
-/* line 886, ../../app/stylesheets/partials/_page.scss */
+/* line 940, ../../app/stylesheets/partials/_page.scss */
 .partner.show #partner_overview p {
   margin: 0;
 }
-/* line 889, ../../app/stylesheets/partials/_page.scss */
+/* line 943, ../../app/stylesheets/partials/_page.scss */
 .partner.show #quote blockquote {
   color: black;
 }
 
-/* line 894, ../../app/stylesheets/partials/_page.scss */
+/* line 948, ../../app/stylesheets/partials/_page.scss */
 .partner #join {
   background: #a4999b;
   color: black;
@@ -1333,12 +1421,12 @@ ul.partners li {
   -khtml-border-radius: 1em;
   border-radius: 1em;
 }
-/* line 901, ../../app/stylesheets/partials/_page.scss */
+/* line 955, ../../app/stylesheets/partials/_page.scss */
 .partner #join p {
   margin: 0;
 }
 
-/* line 904, ../../app/stylesheets/partials/_page.scss */
+/* line 958, ../../app/stylesheets/partials/_page.scss */
 .ie7 li.password {
   float: left;
 }

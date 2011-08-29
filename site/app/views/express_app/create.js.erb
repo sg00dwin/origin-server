@@ -1,0 +1,24 @@
+apps = $('#apps');
+app_form = $('#app_form');
+app_table = $('#apps table');
+$('#apps .message').remove(); //Remove old messages
+apps.prepend('<div class="message <%= @message_type %>"><%= escape_javascript @message %></div>'); //Add new message
+<%
+if @message_type == :success
+  # re-render table
+  table = render 'express_app/app_table', :apps => @userinfo.app_info
+%>
+/*current_app_url = '<%= @health_url %>';
+check_url = '<%= @check_url %>';*/
+cartridge = '<%= @app.cartridge.split('-').first %>'
+app_form.trigger('successful_submission');
+if (app_table.length > 0) app_table.replaceWith( '<%= escape_javascript table %>' );
+else apps.append( '<%= escape_javascript table %>' );
+<%
+  if @userinfo.app_info.length >= @max_apps
+%>
+app_form.remove(); //Remove app form - can't create any more apps
+<%
+  end
+end
+%>
