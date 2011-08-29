@@ -3,9 +3,9 @@
 import sys, os
 import syslog
 import pwd
+import syslog
 import glob
 import base64
-import subprocess
 
 commands = {
     "git-receive-pack": "/usr/bin/git-receive-pack",
@@ -22,14 +22,6 @@ commands = {
     "mkdir": "/bin/bash",
     "test": "/bin/bash"
 }
-
-def selinux():
-    mode = subprocess.Popen(['/usr/sbin/getenforce'], 
-                            stdout=subprocess.PIPE, 
-                            stderr=subprocess.STDOUT
-                            ).communicate()[0].strip()
-    return mode == "Enforcing"
-
 
 #
 # Read in environment variables
@@ -181,15 +173,9 @@ if __name__ == '__main__':
 
 
         allargs = [thearg]
-
-
-    if selinux():
-        runcon = '/usr/bin/runcon'
-        mcs = divmod(os.getuid(), 1023)
-        context = 'unconfined_u:system_r:libra_t:s0:c%i,c%i' % mcs
-        os.execv(runcon, [runcon, context, cmd] + allargs)
-    else:
-        os.execv(cmd, [cmd] + allargs)
-        sys.exit(1)
-
+    runcon = '/usr/bin/runcon'
+    mcs = divmod(os.getuid(), 1023)
+    context = 'unconfined_u:system_r:libra_t:s0:c%i,c%i' % mcs
+    os.execv(runcon, [runcon, context, cmd] + allargs)
+    sys.exit(1)
 
