@@ -36,6 +36,7 @@ logging_log_file(libra_log_t)
 # libra standard local policy
 #
 corenet_tcp_connect_mysqld_port(libra_t)
+corenet_tcp_connect_git_port(libra_t)
 corenet_tcp_connect_http_port(libra_t)
 corenet_tcp_connect_ftp_port(libra_t)
 corenet_tcp_connect_ssh_port(libra_t)
@@ -121,6 +122,7 @@ init_dontaudit_read_utmp(libra_domain)
 
 miscfiles_read_localization(libra_domain)
 miscfiles_read_fonts(libra_domain)
+miscfiles_read_man_pages(libra_domain)
 
 term_dontaudit_search_ptys(libra_domain)
 
