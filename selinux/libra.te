@@ -105,7 +105,7 @@ fs_list_inotifyfs(libra_domain)
 fs_dontaudit_list_auto_mountpoints(libra_domain)
 storage_dontaudit_getattr_fixed_disk_dev(libra_domain)
 
-files_dontaudit_search_pids(libra_domain)
+files_dontaudit_search_all_pids(libra_domain)
 files_dontaudit_getattr_lost_found_dirs(libra_domain)
 files_dontaudit_search_all_mountpoints(libra_domain)
 files_read_etc_files(libra_domain)
@@ -117,10 +117,7 @@ libs_exec_lib_files(libra_domain)
 logging_send_syslog_msg(libra_domain)
 logging_inherit_append_all_logs(libra_domain)
 
-# should be changed to read when init_dontaudit_read_utmp shows up in rhel6 policy
-init_dontaudit_rw_utmp(libra_domain)
-# init_dontaudit_read_utmp(libra_domain)
-# files_dontaudit_search_all_pids(libra_domain)
+init_dontaudit_read_utmp(libra_domain)
 
 miscfiles_read_localization(libra_domain)
 miscfiles_read_fonts(libra_domain)
