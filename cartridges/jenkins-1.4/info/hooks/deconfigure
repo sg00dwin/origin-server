@@ -104,33 +104,33 @@ uid=$(id -u "$uuid")
 c_val="c$(($uid/1023)),c$(($uid%1023))"
 
 #
-# Destroy git app repo
+# OpenShift values so they can be used:
 #
-
-destroy_repo $application $uuid
-
-runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l s0:$c_val $APP_DIR/${application}_ctl.sh stop" || echo "Failed to stop ${application}" 1>&2
-
-# Confirm pid is gone before removing apps
-i=0
-while [ -f ${APP_DIR}/run/httpd.pid ] && [ $i -lt 30 ]
-    do
-    sleep .1
-    i=$(($i + 1))
+for f in $APP_HOME/.env/*
+do
+    . $f
 done
 
-for LOGFILE in `find $APP_DIR/logs -type f`
+jenkins_pid=$(/bin/cat ${OPENSHIFT_RUN_DIR}/jenkins.pid)
+runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l s0:$c_val $OPENSHIFT_APP_CTL_SCRIPT stop" || echo "Failed to stop ${OPENSHIFT_APP_NAME}" 1>&2
+
+for i in {1..12}
 do
-  for PID in `/usr/sbin/lsof -t $LOGFILE`
-  do
-    /bin/kill -9 $PID
-  done
+    if ! /bin/kill -0 $jenkins_pid > /dev/null 2>&1
+    then
+        echo "Waiting for stop to finish"
+        sleep .2
+        if [ $i > 9 ]
+        then
+            /bin/kill -9 $jenkins_pid
+        fi
+    else
+        break
+    fi
 done
 
 #rm -rf "$APP_DIR"
 runcon -l s0-s0:c0.c1023 rm -rf "$APP_DIR"
-
-rm_symlink $namespace $application
 
 #
 # Remove virtualhost definition for apache
