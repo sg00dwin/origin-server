@@ -189,6 +189,8 @@ require {
 	type sendmail_t;
 	attribute domain;
 	type ssh_home_t;
+	type quota_t;
+	type quota_db_t;
 }
 
 allow libra_domain httpd_exec_t:file entrypoint;
@@ -206,6 +208,8 @@ dontaudit domain libra_t:fifo_file { getattr write };
 append_files_pattern(sendmail_t, libra_var_lib_t, libra_var_lib_t)
 allow domain libra_var_lib_t:dir search_dir_perms;
 allow domain libra_var_lib_t:file { append getattr };
+
+filetrans_pattern(quota_t, libra_var_lib_t, file, quota_db_t)
 
 ########################################
 #
