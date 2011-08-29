@@ -10,7 +10,7 @@ module Libra
             jmx jopr jrunit jsfunit kosmos liberation makara mass maven metajizer
             metamatrix mobicents mod_cluster modeshape mugshot netty openshift
             osgi overlord ovirt penrose picketbox picketlink portletbridge portletswap
-            posse pressgang qumranet railo redhat resteasy rhca rhca rhcds rhce rhce
+            posse pressgang qumranet railo redhat resteasy rhca rhcds rhce
             rhcsa rhcss rhct rhcva rhel rhev rhq rhx richfaces riftsaw savara scribble
             seam shadowman shotoku shrinkwrap snowdrop solidice spacewalk spice
             steamcannon stormgrind switchyard tattletale teiid tohu torquebox weld
