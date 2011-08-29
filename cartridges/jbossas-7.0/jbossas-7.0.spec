@@ -14,7 +14,7 @@ BuildRequires:  git
 BuildRequires:  java-devel >= 1:1.6.0 
 BuildRequires:  jpackage-utils
 Requires:  rhc-node
-Requires: jboss-as7 = 7.0.0.FinalOS
+Requires: jboss-as7 = 7.0.1.Final
 Requires:  maven3
 
 BuildArch: noarch
