@@ -111,7 +111,8 @@ class BrokerController < ApplicationController
     render :json => generate_result_json("Invalid user credentials", nil, 97), :status => :unauthorized
   end
   
-  def render_internal_server_error(e, method_name)      
+  def render_error(e, method_name)
+    status = :internal_server_error
     if !(e.is_a? Libra::LibraException) 
       logger.error "Exception rescued in #{method_name}:"
       logger.error e.message
@@ -122,8 +123,10 @@ class BrokerController < ApplicationController
     elsif !(e.is_a? Libra::UserException) # User Exceptions just go back to the client
       logger.error "Exception rescued in #{method_name}:"
       logger.error e.message
+    elsif (e.is_a? Libra::UserException)
+      status = :bad_request
     end
-    render :json => generate_result_json(e.message, nil, e.respond_to?('exit_code') ? e.exit_code : 254), :status => :internal_server_error
+    render :json => generate_result_json(e.message, nil, e.respond_to?('exit_code') ? e.exit_code : 254), :status => status
   end
 
   def embed_cartridge_post
@@ -154,7 +157,7 @@ class BrokerController < ApplicationController
         render_unauthorized and return
       end
     rescue Exception => e
-      render_internal_server_error(e, 'cartridge_post') and return
+      render_error(e, 'cartridge_post') and return
     end
   end
 
@@ -203,7 +206,7 @@ class BrokerController < ApplicationController
         render_unauthorized and return
       end
     rescue Exception => e
-      render_internal_server_error(e, 'cartridge_post') and return
+      render_error(e, 'cartridge_post') and return
     end
   end
   
@@ -248,7 +251,7 @@ class BrokerController < ApplicationController
         render_unauthorized and return
       end    
     rescue Exception => e
-      render_internal_server_error(e, 'user_info_post') and return
+      render_error(e, 'user_info_post') and return
     end
   end
   
@@ -298,7 +301,7 @@ class BrokerController < ApplicationController
       # Just return a 200 success
       render :json => generate_result_json(nil, json_data) and return
     rescue Exception => e
-      render_internal_server_error(e, 'domain_post') and return
+      render_error(e, 'domain_post') and return
     end
   end
 
@@ -321,7 +324,7 @@ class BrokerController < ApplicationController
       # Just return a 200 success
       render :json => generate_result_json(nil, json_data) and return
     rescue Exception => e
-      render_internal_server_error(e, 'cart_list_post') and return
+      render_error(e, 'cart_list_post') and return
     end
   end
   
@@ -339,7 +342,7 @@ class BrokerController < ApplicationController
       render :json => generate_result_json("Success") and return
       
     rescue Exception => e
-      render_internal_server_error(e, 'nurture_post') and return
+      render_error(e, 'nurture_post') and return
     end
   end  
 
