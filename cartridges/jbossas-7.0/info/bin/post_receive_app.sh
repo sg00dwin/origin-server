@@ -17,13 +17,9 @@ fi
 
 redeploy_repo_dir.sh
 
-if [ -f ${OPENSHIFT_REPO_DIR}.openshift/config/standalone.xml ]
+if [ -d ${OPENSHIFT_REPO_DIR}.openshift/config ]
 then
-  echo "Found .openshift/config/standalone.xml... copying to ${OPENSHIFT_APP_DIR}${OPENSHIFT_APP_TYPE}/standalone/configuration/"
-  cp ${OPENSHIFT_REPO_DIR}.openshift/config/standalone.xml ${OPENSHIFT_APP_DIR}${OPENSHIFT_APP_TYPE}/standalone/configuration/
-
-
-  for f in ${OPENSHIFT_REPO_DIR}/.openshift/config/*
+  for f in ${OPENSHIFT_REPO_DIR}.openshift/config/*
   do
     target=$(basename $f)
     if [ -e "${OPENSHIFT_APP_DIR}${OPENSHIFT_APP_TYPE}/standalone/configuration/$target" ]
