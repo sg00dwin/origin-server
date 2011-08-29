@@ -170,7 +170,7 @@ chown $user_id $APP_HOME/.env/OPENSHIFT_DB_USERNAME $APP_HOME/.env/OPENSHIFT_DB_
 
 ## Setup user
 echo "drop database test;
-create database ${application};" | mysql -u root -S "${MYSQL_DIR}/socket/mysql.sock" > /dev/null || error "Failed to create ${application}" 188
+create database `${application}`;" | mysql -u root -S "${MYSQL_DIR}/socket/mysql.sock" > /dev/null || error "Failed to create ${application}" 188
 
 echo "                                  
 delete from user;
