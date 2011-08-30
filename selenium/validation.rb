@@ -22,11 +22,12 @@ class Validation < Test::Unit::TestCase
     invalid_links = get_invalid_links
     @tested_pages = []
     invalid_links.concat get_invalid_links('', true)
+    $logger.info "invalid links: #{invalid_links.inspect}"
     puts "invalid links: #{invalid_links.inspect}"
     assert invalid_links.empty?
   end
   
-  def get_invalid_links(url='', logged_in=false)
+  def get_invalid_links(url='', logged_in=false, retries=0)
     # get fully qualified url if needed
     unless url.index 'http://' or url.index 'https://'
       unless url[0, 1] == '/'
@@ -39,7 +40,13 @@ class Validation < Test::Unit::TestCase
     # make sure this link is valid
     res_code = response_code(url)
     unless @@valid_responses.include? res_code
-      return [url] #this is an invalid link
+      $logger.info "res_code: #{res_code}  url: #{url}"
+      puts "res_code: #{res_code}  url: #{url}"
+      if retries > 2
+        return [url] #this is an invalid link
+      else
+        get_invalid_links(url, logged_in, retries + 1)
+      end
     end
     
     links = (get_elements :a, url, logged_in).collect do |a|
