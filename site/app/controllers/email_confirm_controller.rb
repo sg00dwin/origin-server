@@ -5,7 +5,7 @@ require 'cgi'
 
 class EmailConfirmController < ApplicationController
 
-  ERRORS = {'user_failed_confirmation' => "Email confirmation failed",
+  @@ERRORS = {'user_failed_confirmation' => "Email confirmation failed",
             'user_email_failed_confirmation' => "Email confirmation failed",
             :unknown => "An unknown error has occurred"
   }
@@ -16,6 +16,19 @@ class EmailConfirmController < ApplicationController
   
   def confirm_express
     confirm(express_path)
+  end
+  
+  def confirm_external
+    registration_referrer = params[:registration_referrer]
+    if registration_referrer
+      path = url_for(:action => 'show',
+                     :controller => 'getting_started_external',
+                     :only_path => true,
+                     :registration_referrer => registration_referrer)
+      confirm(path)
+      return
+    end
+    confirm
   end
 
   def confirm(redirect_path=getting_started_path)
@@ -58,31 +71,31 @@ class EmailConfirmController < ApplicationController
               #success
             else
               errors.each { |error|
-                if (ERRORS[error])
-                  @errors[error] = ERRORS[error]
+                if (@@ERRORS[error])
+                  @errors[error] = @@ERRORS[error]
                 else
-                  @errors[:unknown] = ERRORS[:unknown]
+                  @errors[:unknown] = @@ERRORS[:unknown]
                 end
               }
             end
           elsif result['emailAddress']
             #success
           else
-            @errors[:unknown] = ERRORS[:unknown]
+            @errors[:unknown] = @@ERRORS[:unknown]
           end
         rescue Exception => e
           logger.error e
-          @errors[:unknown] = ERRORS[:unknown]
+          @errors[:unknown] = @@ERRORS[:unknown]
         end
       else
         logger.error "Problem with server. Response code was #{response.code}"
         logger.error "HTTP response from server is #{response.body}"
-        @errors[:unknown] = ERRORS[:unknown]
+        @errors[:unknown] = @@ERRORS[:unknown]
       end
 
     rescue Exception => e
       logger.error e
-      @errors[:unknown] = ERRORS[:unknown]
+      @errors[:unknown] = @@ERRORS[:unknown]
     ensure
       if (@errors.length > 0)
         render :error and return

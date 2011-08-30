@@ -16,7 +16,9 @@ RedHatCloud::Application.routes.draw do
     #   match 'products/:id' => 'catalog#view'
     # Keep in mind you can assign values other than :controller and :action
     match 'getting_started' => 'getting_started/generic#show'
+    match 'getting_started_external/:registration_referrer' => 'getting_started_external#show'
     match 'email_confirm' => 'email_confirm#confirm'
+    match 'email_confirm_external/:registration_referrer' => 'email_confirm#confirm_external'
     match 'email_confirm_flex' => 'email_confirm#confirm_flex'
     match 'email_confirm_express' => 'email_confirm#confirm_express'
     match 'express' => 'product#express', :as => 'express'
@@ -46,6 +48,7 @@ RedHatCloud::Application.routes.draw do
     match 'user/new/flex' => 'user#new_flex', :via => [:get]
     match 'user/new/express' => 'user#new_express', :via => [:get]
     get 'user' => 'user#new'
+    match 'user/create/external' => 'user#create_external', :via => [:post]
 
     resource :terms,
              :as => "terms",
