@@ -26,9 +26,9 @@ class EmailConfirmController < ApplicationController
                      :only_path => true,
                      :registration_referrer => registration_referrer)
       confirm(path)
-      return
+    else
+      confirm
     end
-    confirm
   end
 
   def confirm(redirect_path=getting_started_path)
