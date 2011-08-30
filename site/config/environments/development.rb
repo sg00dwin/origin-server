@@ -29,17 +29,13 @@ RedHatCloud::Application.configure do
   # OpenShift Configuration Below this point #
   ############################################
   config.app_scope = "app"
-  config.integrated = false
-  config.login = "/app/login"
-  config.streamline_service_base_url = ''
-  config.streamline = "http://localhost" # Non-integrated 
-  config.streamline_secret = ''
+  config.integrated = true
+  config.login = "https://www.webqa.redhat.com/wapps/streamline/login.html"
+  config.streamline_service_base_url = "/wapps/streamline"
+  config.streamline = "https://10.196.215.67"
+  config.streamline_secret = 'c0ldW1n3'
   config.captcha_secret = 'zvw5LiixMB0I4mjk06aR'
   
   # Express API base url
   config.express_api_url = 'https://localhost'
-  
-  # Max apps for express
-  config.express_max_apps = 5
-
 end
