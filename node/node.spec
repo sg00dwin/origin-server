@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.77.8
+Version:       0.77.9
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -157,6 +157,12 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Mon Aug 29 2011 Dan McPherson <dmcphers@redhat.com> 0.77.9-1
+- Revert "Revert "reverse patched to removed commit
+  d34abaacc98e5b8f5387eff71064c4616a61f24b"" (markllama@gmail.com)
+- Revert "reverse patched to removed commit
+  d34abaacc98e5b8f5387eff71064c4616a61f24b" (markllama@redhat.com)
+
 * Mon Aug 29 2011 Dan McPherson <dmcphers@redhat.com> 0.77.8-1
 - reverse patched to removed commit d34abaacc98e5b8f5387eff71064c4616a61f24b
   (markllama@redhat.com)
