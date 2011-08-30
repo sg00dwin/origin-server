@@ -64,9 +64,9 @@ class ApplicationController < ActionController::Base
     redirect_to logout_path and return
   end
   
-  def setup_login_workflow(referrer, remote)
+  def setup_login_workflow(referrer, remote_request)
     if referrer && !workflow && !(referrer.path.start_with?('/app/user')) && !(referrer.path.start_with?('/app/login'))
-      if remote
+      if remote_request
         session[:login_workflow] = referrer.to_s
       else
         if referrer.scheme == 'http'
@@ -78,7 +78,7 @@ class ApplicationController < ActionController::Base
     end
   end
   
-  def remote_request(referrer)
+  def remote_request?(referrer)
     return referrer.host && ((request.host != referrer.host) || !referrer.path.start_with?('/app'))
   end
 

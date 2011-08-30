@@ -13,13 +13,13 @@ class LoginController < ApplicationController
   end
 
   def show
-    remote = false
+    remote_request = false
     referrer = nil
     if request.referer && request.referer != '/'
       referrer = URI.parse(request.referer)
       Rails.logger.debug "Referrer: #{referrer.to_s}"
-      remote = remote_request(referrer)
-      if remote
+      remote_request = remote_request?(referrer)
+      if remote_request
         Rails.logger.debug "Logging out user referred from: #{referrer.to_s}"
         reset_sso
       end
@@ -28,7 +28,7 @@ class LoginController < ApplicationController
     if params[:redirectUrl]
       session[:login_workflow] = params[:redirectUrl]
     else
-      setup_login_workflow(referrer, remote)
+      setup_login_workflow(referrer, remote_request)
     end
     @redirectUrl = root_url
     @errorUrl = login_error_url
