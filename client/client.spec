@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system client tools
 Name:          rhc
-Version:       0.76.5
+Version:       0.76.6
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       MIT
@@ -99,6 +99,12 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_sysconfdir}/openshift/express.conf
 
 %changelog
+* Mon Aug 29 2011 Dan McPherson <dmcphers@redhat.com> 0.76.6-1
+- Revert "Revert "reverse patched to removed commit
+  d34abaacc98e5b8f5387eff71064c4616a61f24b"" (markllama@gmail.com)
+- Revert "reverse patched to removed commit
+  d34abaacc98e5b8f5387eff71064c4616a61f24b" (markllama@redhat.com)
+
 * Mon Aug 29 2011 Dan McPherson <dmcphers@redhat.com> 0.76.5-1
 - reverse patched to removed commit d34abaacc98e5b8f5387eff71064c4616a61f24b
   (markllama@redhat.com)
