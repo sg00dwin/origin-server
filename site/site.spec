@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.77.8
+Version:   0.77.9
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -67,6 +67,12 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Tue Aug 30 2011 Dan McPherson <dmcphers@redhat.com> 0.77.9-1
+- error handling and test cases (dmcphers@redhat.com)
+- change wording (dmcphers@redhat.com)
+- get test cases working (dmcphers@redhat.com)
+- get test cases working (dmcphers@redhat.com)
+
 * Mon Aug 29 2011 Dan McPherson <dmcphers@redhat.com> 0.77.8-1
 - get test cases running (dmcphers@redhat.com)
 
