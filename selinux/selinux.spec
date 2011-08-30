@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.77.5
+Version:       0.77.6
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -38,6 +38,9 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Tue Aug 30 2011 Dan McPherson <dmcphers@redhat.com> 0.77.6-1
+- 
+
 * Mon Aug 29 2011 Dan McPherson <dmcphers@redhat.com> 0.77.5-1
 - Update to use newer RHEL6.2 policy.  selinux-policy-3.7.19-108.el6 required
   (dwalsh@redhat.com)
