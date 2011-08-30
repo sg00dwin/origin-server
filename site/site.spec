@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.77.3
+Version:   0.77.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -67,6 +67,11 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Mon Aug 29 2011 Dan McPherson <dmcphers@redhat.com> 0.77.4-1
+- add external register (dmcphers@redhat.com)
+- Add create app functionality (edirsh@redhat.com)
+- Updated graphics and styles (edirsh@redhat.com)
+
 * Fri Aug 26 2011 Dan McPherson <dmcphers@redhat.com> 0.77.3-1
 - Added functional tests for control panel controller (fotios@redhat.com)
 
