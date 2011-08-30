@@ -13,14 +13,14 @@ $ ->
       <ul>
         <li>
           <figure>
-            <a href="http://youtu.be/SabOGub2jiE">
+            <a href="http://youtu.be/SabOGub2jiE" target="_blank">
               <img src="/app/images/video_stills/mediawiki.png" alt="Mediawiki video" />
               <figcaption>Getting started with MediaWiki</figcaption>
             </a>
           </figure>
         </li>
         <li>
-          <a href="http://youtu.be/6TSxAE2K3QM">
+          <a href="http://youtu.be/6TSxAE2K3QM" target="_blank">
             <figure>
               <img src="/app/images/video_stills/drupal.png" alt="Drupal video" />
               <figcaption>Getting started with Drupal</figcaption>
@@ -30,13 +30,13 @@ $ ->
       </ul>
     """
     wsgi: """
-      In the meantime, check out these blog posts for steps to deploy great python framework on your new OpenShift Python app:
+      In the meantime, check out these blog posts on how to deploy popular python frameworks on your new OpenShift Python app:
       <ul>
         <li>
-          <a href="https://www.redhat.com/openshift/blogs/deploying-a-pyramid-application-in-a-virtual-python-wsgi-environment-on-red-hat-openshift-expr">Deploy a Pyramid app</a>
+          <a href="https://www.redhat.com/openshift/blogs/deploying-a-pyramid-application-in-a-virtual-python-wsgi-environment-on-red-hat-openshift-expr" target="_blank">Deploy a Pyramid app</a>
         </li>
         <li>
-          <a href="https://www.redhat.com/openshift/blogs/deploying-turbogears2-python-web-framework-using-express">Deploy the TurboGears2 framework</a>
+          <a href="https://www.redhat.com/openshift/blogs/deploying-turbogears2-python-web-framework-using-express" target="_blank">Deploy the TurboGears2 framework</a>
         </li>
       </ul>
     """
@@ -45,16 +45,16 @@ $ ->
       popular Ruby frameworks on OpenShift:
       <ul>
           <li>
-            <a href="https://www.redhat.com/openshift/kb/kb-e1005-ruby-on-rails-express-quickstart-guide">Ruby on Rails quickstart guide</a>
+            <a href="https://www.redhat.com/openshift/kb/kb-e1005-ruby-on-rails-express-quickstart-guide" target="_blank">Ruby on Rails quickstart guide</a>
           </li>
           <li>
-            <a href="https://www.redhat.com/openshift/kb/kb-e1009-deploying-a-sinatra-application-on-openshift-express">Deploy a Sinatra app</a>
+            <a href="https://www.redhat.com/openshift/kb/kb-e1009-deploying-a-sinatra-application-on-openshift-express" target="_blank">Deploy a Sinatra app</a>
           </li>
       </ul>
       
     """
     perl: """
-      In the meantime, check out <a href="https://www.redhat.com/openshift/kb/kb-e1013-how-to-onboard-a-perl-application">this article</a> to get started with your new OpenShift Perl app.
+      In the meantime, check out <a href="https://www.redhat.com/openshift/kb/kb-e1013-how-to-onboard-a-perl-application" target="_blank">this article</a> to get started with your new OpenShift Perl app.
     """
     jbossas: """
       In the meantime, check out these videos on getting started using Java
@@ -62,7 +62,7 @@ $ ->
       <ul>
           <li>
             <figure>
-              <a href="http://vimeo.com/27546106">
+              <a href="http://vimeo.com/27546106" target="_blank">
                 <img src="/app/images/video_stills/play.png" alt="Play framework video" />
                 <figcaption>Using the Play framework</figcaption>
               </a>
@@ -70,7 +70,7 @@ $ ->
           </li>
           <li>
             <figure>
-              <a href="http://vimeo.com/27502795">
+              <a href="http://vimeo.com/27502795" target="_blank">
                 <img src="/app/images/video_stills/spring.png" alt="Spring framework video" />
                 <figcaption>Running a Spring application</figcaption>
               </a>
@@ -152,8 +152,6 @@ $ ->
     setup_domain_update_form()
 
   update_values = ->
-    namespace = ($ '#express_domain_namespace').val()
-    ssh = (($ '#express_domain_ssh').val().slice 0, 20) + '...'
     ($ '#show_namespace').text namespace
     ($ '#show_ssh').text ssh
 

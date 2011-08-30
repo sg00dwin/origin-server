@@ -35,6 +35,10 @@ class ExpressDomainController < ApplicationController
       Rails.logger.error "Validation error: #{@message}"
     end
     
+    @userinfo = ExpressUserinfo.new :rhlogin => session[:login],
+                                    :ticket => session[:ticket]
+    @userinfo.establish
+    Rails.logger.debug "Updated userinfo: #{@userinfo.inspect}"
     # respond based on requested format
     respond_to do |format|
       format.html {flash[@message_type] = @message; redirect_to :controller => 'control_panel'}
