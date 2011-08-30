@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.77.4
+Version:   0.77.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -67,6 +67,9 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Mon Aug 29 2011 Dan McPherson <dmcphers@redhat.com> 0.77.5-1
+- cleanup (dmcphers@redhat.com)
+
 * Mon Aug 29 2011 Dan McPherson <dmcphers@redhat.com> 0.77.4-1
 - add external register (dmcphers@redhat.com)
 - Add create app functionality (edirsh@redhat.com)
