@@ -63,6 +63,24 @@ class ApplicationController < ActionController::Base
   def redirect_to_logout
     redirect_to logout_path and return
   end
+  
+  def setup_login_workflow(referrer, remote_request)
+    if referrer && !workflow && !(referrer.path.start_with?('/app/user')) && !(referrer.path.start_with?('/app/login'))
+      if remote_request
+        session[:login_workflow] = referrer.to_s
+      else
+        if referrer.scheme == 'http'
+          session[:login_workflow] = 'https' + referrer.to_s[referrer.scheme.length..-1]
+        else
+          session[:login_workflow] = referrer.to_s
+        end
+      end
+    end
+  end
+  
+  def remote_request?(referrer)
+    return referrer.host && ((request.host != referrer.host) || !referrer.path.start_with?('/app'))
+  end
 
   def request_access(user)
     # Now check for access to Express which represents access

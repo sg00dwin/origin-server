@@ -117,7 +117,26 @@ class UserControllerTest < ActionController::TestCase
 		assert_equal assigns(:product), 'express'
 		assert_response :success
 	end
+	
+  test "should register user from external" do
+    post(:create_external, {:json_data => '{"email_address":"tester@example.com","password":"pw1234"}', :captcha_secret => 'secret', :registration_referrer => 'appcelerator'})
+    assert_response :success
+  end
 
+  test "should fail register external with invalid secret" do
+    post(:create_external, {:json_data => '{"email_address":"tester@example.com","password":"pw1234"}', :captcha_secret => 'wrongsecret', :registration_referrer => 'appcelerator'})
+    assert_response 401
+  end
+  
+  test "should fail register external with invalid password" do
+    post(:create_external, {:json_data => '{"email_address":"tester@example.com","password":"pw"}', :captcha_secret => 'secret', :registration_referrer => 'appcelerator'})
+    assert_response 400
+  end
+  
+  test "should fail register external with no registration referrer" do
+    post(:create_external, {:json_data => '{"email_address":"tester@example.com","password":"pw1234"}', :captcha_secret => 'secret'})
+    assert_response 400
+  end
 
   def get_post_form
     {:email_address => 'tester@example.com', :password => 'pw1234', :password_confirmation => 'pw1234'}

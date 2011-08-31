@@ -1,5 +1,4 @@
 require 'uri'
-require 'json'
 
 module ExpressApi
   
@@ -9,6 +8,8 @@ module ExpressApi
   base_url = Rails.configuration.express_api_url
   @@domain_url = URI.parse(base_url + '/broker/domain')
   @@userinfo_url = URI.parse(base_url + '/broker/userinfo')
+  @@cartlist_url = URI.parse(base_url + '/broker/cartlist')
+  @@app_url = URI.parse(base_url + '/broker/cartridge')
   
   # Post to an api url
   def http_post(url, json_data={}, raise_exception = false)
@@ -17,7 +18,7 @@ module ExpressApi
       Rails.logger.debug "Url: #{url}"
       # define post request
       req = Net::HTTP::Post.new(url.path)
-      form_data = {:json_data => json_data.to_json}
+      form_data = {:json_data => ActiveSupport::JSON.encode(json_data)}
       form_data[:password] = @password.blank? ? '' : @password
       req.set_form_data(form_data)
       # Set ticket cookie
@@ -35,7 +36,7 @@ module ExpressApi
       if res.content_type == 'application/json'
         # Parse and yield the body if a block is supplied
         if res.body and !res.body.empty?
-          json = JSON.parse(res.body)
+          json = ActiveSupport::JSON.decode res.body
           Rails.logger.debug "in http_post decoded json: #{json.inspect}"
           yield json if block_given?
         end

@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.77.3
+Version:   0.77.10
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -67,6 +67,37 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Tue Aug 30 2011 Dan McPherson <dmcphers@redhat.com> 0.77.10-1
+- couple renames (dmcphers@redhat.com)
+- login cleanup (dmcphers@redhat.com)
+- Bug 734370 - Change url of applications after domain is updated
+  (edirsh@redhat.com)
+- Bug 734342; Add max apps config variable to streamline-aws environment
+  (edirsh@redhat.com)
+
+* Tue Aug 30 2011 Dan McPherson <dmcphers@redhat.com> 0.77.9-1
+- error handling and test cases (dmcphers@redhat.com)
+- change wording (dmcphers@redhat.com)
+- get test cases working (dmcphers@redhat.com)
+- get test cases working (dmcphers@redhat.com)
+
+* Mon Aug 29 2011 Dan McPherson <dmcphers@redhat.com> 0.77.8-1
+- get test cases running (dmcphers@redhat.com)
+
+* Mon Aug 29 2011 Dan McPherson <dmcphers@redhat.com> 0.77.7-1
+- revert development.rb back (dmcphers@redhat.com)
+
+* Mon Aug 29 2011 Dan McPherson <dmcphers@redhat.com> 0.77.6-1
+- error handling fix (dmcphers@redhat.com)
+
+* Mon Aug 29 2011 Dan McPherson <dmcphers@redhat.com> 0.77.5-1
+- cleanup (dmcphers@redhat.com)
+
+* Mon Aug 29 2011 Dan McPherson <dmcphers@redhat.com> 0.77.4-1
+- add external register (dmcphers@redhat.com)
+- Add create app functionality (edirsh@redhat.com)
+- Updated graphics and styles (edirsh@redhat.com)
+
 * Fri Aug 26 2011 Dan McPherson <dmcphers@redhat.com> 0.77.3-1
 - Added functional tests for control panel controller (fotios@redhat.com)
 

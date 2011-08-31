@@ -1,7 +1,9 @@
 var form = $('#new_express_domain'), form_container = form.parent();
+//Emit return event
+form.trigger('submission_returned')
 // clear out old messages
 $('.message').remove();
-<% 
+<%
 if @message_type == :error
 %>
   form.before('<div class="message error"><%= escape_javascript @message %></div>');
@@ -17,9 +19,21 @@ else
 <%
     when 'update'
 %>
+      namespace = '<%= @domain.namespace%>';
+      ssh = '<%= @domain.ssh%>';
       form.before('<div class="message success"><%= escape_javascript @message %></div>');
       form.trigger('successful_submission');
 <%
+      unless @userinfo.app_info.nil?
+        table = render 'express_app/app_table', :apps => @userinfo.app_info
+%>
+        //Update app table
+        apps = $('#apps');
+        app_table = $('#apps table');
+        if (app_table.length > 0) app_table.replaceWith( '<%= escape_javascript table %>' );
+        else apps.append( '<%= escape_javascript table %>' );
+<%
+      end
   end
 end
 %>

@@ -122,6 +122,18 @@ function unobfuscate {
     fi
 }
 
+function generate_ssh_keys {
+    CART_DIR=/usr/libexec/li/cartridges
+    CART_INFO_DIR=$CART_DIR/jenkins/info
+    CART_CONF_DIR=$CART_INFO_DIR/configuration/etc/conf
+
+    /bin/mkdir -p $OPENSHIFT_DATA_DIR/.ssh/
+    /usr/bin/ssh-keygen -N '' -f $OPENSHIFT_DATA_DIR/.ssh/jenkins_id_rsa
+
+    /bin/chown root.root -R "$OPENSHIFT_DATA_DIR/.ssh/"
+    /usr/bin/chcon -t libra_var_lib_t -l s0:$c_val -R "$OPENSHIFT_DATA_DIR/.ssh/"
+}
+
 while getopts 'd' OPTION
 do
     case $OPTION in
@@ -154,6 +166,7 @@ group_id=$(id -g "$uuid") || error "Could not find user $uuid ($namespace)" 135
 
 uid=$(id -u "$uuid")
 c_val="c$(($uid/1023)),c$(($uid%1023))"
+export c_val
 
 #
 # Create http base for application, every app gets its own apache instance
@@ -172,10 +185,10 @@ popd > /dev/null
 
 IP=$(find_open_ip $uid $uuid)
 
-ln -s $CART_INFO_DIR/bin/app_ctl.sh $APP_DIR/${application}_ctl.sh 
+cp $CART_INFO_DIR/bin/app_ctl_wrapper.sh $APP_DIR/${application}_ctl.sh
 chown $user_id.$group_id -R $APP_DIR || error "Failed to chown new application space.  Please contact support" 123
 # Secure script and config dirs.
-chown root.root "$APP_DIR"
+chown root.root "$APP_DIR" $CART_INFO_DIR/bin/app_ctl_wrapper.sh
 chcon -t libra_var_lib_t -l s0:$c_val -R "$APP_DIR"
 
 #
@@ -196,6 +209,14 @@ echo "export OPENSHIFT_APP_DNS='${application}-${namespace}.${libra_domain}'" > 
 echo "export PATH=$PATH:$CART_INFO_DIR/bin/:$CART_DIR/abstract-httpd/info/bin/:$CART_DIR/li-controller/info/bin/" > $APP_HOME/.env/PATH
 
 #
+# Import new values so they can be used:
+#
+for f in $APP_HOME/.env/*
+do
+    . $f
+done
+
+#
 # Start the server
 #
 runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l s0:$c_val $APP_DIR/${application}_ctl.sh start" || error "Failed to start ${application}" 121
@@ -203,7 +224,7 @@ runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l s0:$c_val $APP_DIR/${ap
 #
 # Generate key pair
 #
-runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l s0:$c_val $CART_INFO_DIR/bin/generate_keys" || error "Failed to generate keys" 206
+generate_ssh_keys
 
 echo "SSH_KEY: $(cat $APP_DIR/data/.ssh/jenkins_id_rsa.pub)"
 

@@ -29,6 +29,7 @@ class ControlPanelControllerTest < ActionController::TestCase
   test "should edit an existing namespace" do
     setup_session
     ExpressUserinfo.any_instance.stubs('namespace').returns('test.com')
+    ExpressUserinfo.any_instance.stubs('app_info').returns({})
 
     get :index
 

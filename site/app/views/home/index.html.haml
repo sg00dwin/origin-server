@@ -1,28 +1,34 @@
 -# file: Main site index
 
 
-%section#opener 
+%section#opener
   .content
     %header
       %hgroup
         %h1
-          Fast, Free and Open
+          Go Beyond the Clouds
         %h2
-          Auto-Scaling for Java, PHP, Ruby, Python, and Perl apps in the cloud
+          Java PHP Ruby Python Perl
     
     - unless logged_in?
       = link_to 'Sign up and try it', '/app/user/new/express', :class => 'button sign_up'
     - else
       - if has_access? :express
         = link_to 'Get started!', '/app/express#quickstart', :class => 'button quickstart'
-    
-    = image_tag '/app/images/flying-panda-ftw-java.png',
-      :alt => "Panda pilot, soaring through the clouds!"
+
 
 %section#exposition.main
   %header
     %h1
       What is OpenShift?
+  
+  .content
+    %p#intro
+      OpenShift is a collection of cloud services forming a solid redefining Platform-as-a-Service for developers who build apps on open source technologies.
+    
+  %header
+    %h1
+      Why Use OpenShift?
   
   .content
     #fast
@@ -78,14 +84,11 @@
 - unless logged_in?
   %section#bottom_signup.main
     %header
-      %hgroup
-        %h1
-          Curious?
-        %h2
-          Try OpenShift now for free!
+      %h1
+        Try OpenShift now for free!
       
-      .content
-        = link_to 'Sign up and try it', '/app/user/new/express', :class => 'sign_up button'
+    .content
+      = link_to 'Sign up and try it', '/app/user/new/express', :class => 'sign_up button'
 
 - content_for :javascripts do
   = javascript_include_tag "/app/javascripts/home.src.js"
