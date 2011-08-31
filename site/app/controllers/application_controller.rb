@@ -65,7 +65,7 @@ class ApplicationController < ActionController::Base
   end
   
   def setup_login_workflow(referrer, remote_request)
-    if !workflow
+    unless workflow
       if referrer 
         if remote_request
           session[:login_workflow] = referrer.to_s
