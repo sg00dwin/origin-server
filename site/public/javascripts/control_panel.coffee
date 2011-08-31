@@ -1,4 +1,5 @@
 $ ->
+  
   domain_form_container = $ '#domain_form'
   domain_update_form = $ 'form.update'
   domain_form_replacement = ''
@@ -6,6 +7,9 @@ $ ->
   app_form = $ '#app_form'
   submit_buttons = $ 'input.create'
   verification_max_tries = 5
+  multibgs = ($ 'html').hasClass 'multiplebgs'
+  console.log 'Multibgs?', multibgs
+  
   promo_text =
     php: """
       In the meantime, check out these videos
@@ -78,6 +82,7 @@ $ ->
           </li>
       </ul>
     """
+    jenkins: ''
 
   
   # Setup "spinner"
@@ -89,6 +94,7 @@ $ ->
       <div id="spinning"></div>
     </div>
   """
+  
   spinner = $ '#spinner'
   spinner_text = $ '#spinner-text'
   spinny = $ '#spinning'
@@ -98,7 +104,7 @@ $ ->
   
   show_spinner = (show_text = 'Working...') ->
     spinny.css 'background-position', '0px bottom'
-    animate_spinner()
+    start_spinner_animation()
     spinner_text.text show_text
     spinner.show()
   
@@ -115,11 +121,19 @@ $ ->
         spinner.removeClass 'stop-spinning'
       ), time_to_close
   
-  animate_spinner = ->
-    interval = setInterval ( ->
-      spin_x += 5
-      spinny.css 'background-position', "#{spin_x}px bottom"
-    ), 50
+  start_spinner_animation = ->
+    if multibgs
+      console.log 'multi spinning'
+      interval = setInterval ( ->
+        spin_x += 5
+        spinny.css 'background-position': "center center, #{spin_x}px bottom"
+      ), 50
+    else
+      console.log 'multi spinning'
+      interval = setInterval ( ->
+        spin_x += 5
+        spinny.css 'background-position': "#{spin_x}px bottom"
+      ), 50
   
   stop_spinner_animation = ->
     spin_x = 0
@@ -166,6 +180,7 @@ $ ->
       domain_update_form.hide()
       domain_form_replacement.show()
   
+  ###
   verify_app = (app_url) ->
     sleep_time = 1
     found_app = false
@@ -210,6 +225,7 @@ $ ->
       
     look_for_app()
     
+  ###
   
   # Event handling
   
@@ -228,6 +244,9 @@ $ ->
   domain_update_form.live 'successful_submission', toggle_domain_update_form
     
   domain_edit_button.live 'click', toggle_domain_update_form
+
+  app_form.live 'submission_returned', (event) ->
+    close_spinner()
 
   app_form.live 'successful_submission', (event) ->
     close_spinner """
