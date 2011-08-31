@@ -411,7 +411,7 @@ footer.universal {
   h1 {
     color: white;
     font-size: 30px;
-    line-height: 30px;
+    line-height: 36px;
     margin: 0;
     font-weight: normal;
     text-transform: uppercase;
@@ -421,10 +421,10 @@ footer.universal {
   
   h2 {
     color: white;
-    font-size: 20px;
+    font-size: 24px;
     font-weight: normal;
     font-family: Overpass, $base-font-family;
-    line-height: 20px;
+    line-height: 29px;
     text-transform: uppercase;
     margin: 0;
     @include text-shadow(black 0 2px 0);
@@ -432,7 +432,7 @@ footer.universal {
   }
   
   a.button {
-    top: 160px;
+    top: 180px;
     left:700px;
     font-size: 15px;
     background-color: #ede6cb;
@@ -870,6 +870,10 @@ li.captcha {
     right: 20%;
     z-index: 3000;
     text-align: center;
+    a {
+      color: white;
+      text-decoration: underline;
+    }
     #spinner_text {
       margin: auto;
     }
@@ -908,6 +912,12 @@ li.captcha {
     }
   }
 
+}
+
+.multiplebgs #spinner #spinning {
+  @include background-image(linear-gradient(left, black, rgba(0, 0, 0, 0), black), url('/app/images/spinner-bg.png'));
+  background-repeat: no-repeat, repeat-x;
+  background-position: center center, bottom center;
 }
 
 /* End dashboard page */

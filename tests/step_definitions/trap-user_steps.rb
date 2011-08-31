@@ -1,7 +1,8 @@
 #
 #
 #
-require 'open4'
+#require 'open4'
+require 'pty'
 
 Given /^the user creates a new( (\S+))? application$/ do |ignore, app_type|
   app_type = "php-5.3" unless app_type
@@ -43,15 +44,19 @@ Given /^the user has (no|\d+) tail process(es)? running( in (\d+) seconds)?$/ do
 end
 
 Given /a running SSH log stream/ do
-  ssh_cmd = "ssh #{@acct_name}@#{@hostname} tail -f #{@app_name}/logs/\\*"
+  ssh_cmd = "ssh -t #{@acct_name}@#{@hostname} tail -f #{@app_name}/logs/\\*"
 
-  pid, stdin, stdout, stderr = Open4::popen4(ssh_cmd)
-  stdin.close
+  puts "calling #{ssh_cmd}"
+
+  #pid, stdin, stdout, stderr = Open4::popen4(ssh_cmd)
+  stdout, stdin, pid = PTY.spawn ssh_cmd
+  #stdin.close
 
   @ssh_cmd = {
     :pid => pid,
+    :stdin => stdin,
     :stdout => stdout,
-    :stderr => stderr
+    #:stderr => stderr
   }
 
 end
@@ -62,36 +67,39 @@ end
 
 When /^I request the logs via SSH$/ do
 
-  ssh_cmd = "ssh #{@acct_name}@#{@hostname} tail -f #{@app_name}/logs/\\*"
+  ssh_cmd = "ssh -t #{@acct_name}@#{@hostname} tail -f #{@app_name}/logs/\\*"
 
-  pid, stdin, stdout, stderr = Open4::popen4(ssh_cmd)
-
-  stdin.close
+  #pid, stdin, stdout, stderr = Open4::popen4(ssh_cmd)
+  stdout, stdin, pid = PTY.spawn ssh_cmd
 
   @ssh_cmd = {
     :pid => pid,
     :stdout => stdout,
-    :stderr => stderr
+    #:stderr => stderr
   }
 
 end
 
 When /^I terminate the SSH log stream$/ do
 
-  # check if the PID still exists
-  Process.kill("TERM", @ssh_cmd[:pid])
-
-  exit_code = -1
-  # Don't let a command run more than 5 minutes
-  Timeout::timeout(500) do
-    ignored, status = Process::waitpid2 @ssh_cmd[:pid]
-    exit_code = status.exitstatus
-  end
+  begin
+    # check if the PID still exists
+    Process.kill("TERM", @ssh_cmd[:pid])
   
+    exit_code = -1
+    # Don't let a command run more than 5 minutes
+    Timeout::timeout(500) do
+      ignored, status = Process::waitpid2 @ssh_cmd[:pid]
+      exit_code = status.exitstatus
+    end
+  rescue PTY::ChildExited
+    puts "It quit"
+  end
   outstring = @ssh_cmd[:stdout].read
-  errstring = @ssh_cmd[:stderr].read
+  #errstring = @ssh_cmd[:stderr].read
   $logger.debug("Standard Output:\n#{outstring}")
-  $logger.debug("Standard Error:\n#{errstring}")
+  puts "Outstring = #{outstring}"
+  #$logger.debug("Standard Error:\n#{errstring}")
 end
 
 
@@ -103,9 +111,9 @@ Then /^there will be (no|\d+) tail processes running( in (\d+) seconds)?$/ do |e
   pcount = num_procs @acct_name, "tail"
 
 
-  if pcount != expect
-    raise Cucumber::Pending.new "waiting for fix to BZ 726646"
-  end
+  #if pcount != expect
+  #  raise Cucumber::Pending.new "waiting for fix to BZ 726646"
+  #end
 
   pcount.should be == expect
 end
