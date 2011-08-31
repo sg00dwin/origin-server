@@ -727,7 +727,7 @@ footer.universal #copyright img {
 #opener h1 {
   color: white;
   font-size: 30px;
-  line-height: 30px;
+  line-height: 36px;
   margin: 0;
   font-weight: normal;
   text-transform: uppercase;
@@ -737,17 +737,17 @@ footer.universal #copyright img {
 /* line 422, ../../app/stylesheets/partials/_page.scss */
 #opener h2 {
   color: white;
-  font-size: 20px;
+  font-size: 24px;
   font-weight: normal;
   font-family: Overpass, "Liberation Sans", Arial, "Helvetica Neue", Helvetica, sans-serif;
-  line-height: 20px;
+  line-height: 29px;
   text-transform: uppercase;
   margin: 0;
   text-shadow: black 0 2px 0;
 }
 /* line 434, ../../app/stylesheets/partials/_page.scss */
 #opener a.button {
-  top: 160px;
+  top: 180px;
   left: 700px;
   font-size: 15px;
   background-color: #ede6cb;
