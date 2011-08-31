@@ -1,0 +1,82 @@
+#!/usr/bin/env ruby
+# Copyright 2011 Red Hat, Inc.
+#
+# Permission is hereby granted, free of charge, to any person
+# obtaining a copy of this software and associated documentation files
+# (the "Software"), to deal in the Software without restriction,
+# including without limitation the rights to use, copy, modify, merge,
+# publish, distribute, sublicense, and/or sell copies of the Software,
+# and to permit persons to whom the Software is furnished to do so,
+# subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT.  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+# BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+# ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+# CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+require 'getoptlong'
+require 'openshift-node'
+
+#
+# print help
+#
+def p_usage
+    puts <<USAGE
+
+Usage: #{$0}
+Set resource limit for a user.  Set only one value at a time (EG: -c and -p
+conflict)
+
+  -u|--uuid     uuid        Application UUID
+  -a|--app      app         Application name (myapp-domain)
+  -d|--debug                Print Debug info
+  -h|--help                 Show Usage info
+
+USAGE
+exit 255
+end
+
+begin
+    opts = GetoptLong.new(
+        ["--debug", "-d", GetoptLong::NO_ARGUMENT],
+        ["--help",  "-h", GetoptLong::NO_ARGUMENT],
+        ["--uuid",  "-u", GetoptLong::REQUIRED_ARGUMENT],
+        ["--app",   "-a", GetoptLong::REQUIRED_ARGUMENT]
+    )
+    opt = {}
+    opts.each do |o, a|
+        opt[o[2..-1]] = a.to_s
+    end
+rescue Exception => e
+    puts e.message
+    p_usage
+end
+
+p_usage if opt['help']
+@debug = true if opt['debug']
+
+if opt['uuid'] and opt['app']
+    $stderr.puts 'Do not specify both UUID and APP'
+    p_usage
+end
+
+uuid = "UNKNOWN"
+
+if opt['uuid']
+    uuid = opt['uuid']
+elsif opt['app']
+    uuid = Node.uuid_lookup(opt['app'])
+    puts "UUID reported as: #{uuid}"
+else
+    $stderr.puts 'Must specify --app or --uuid'
+    p_usage
+end
+
+Node.sync(uuid)
