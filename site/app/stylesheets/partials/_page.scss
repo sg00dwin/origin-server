@@ -870,6 +870,10 @@ li.captcha {
     right: 20%;
     z-index: 3000;
     text-align: center;
+    a {
+      color: white;
+      text-decoration: underline;
+    }
     #spinner_text {
       margin: auto;
     }
@@ -908,6 +912,12 @@ li.captcha {
     }
   }
 
+}
+
+.multiplebgs #spinner #spinning {
+  @include background-image(linear-gradient(left, black, rgba(0, 0, 0, 0), black), url('/app/images/spinner-bg.png'));
+  background-repeat: no-repeat, repeat-x;
+  background-position: center center, bottom center;
 }
 
 /* End dashboard page */

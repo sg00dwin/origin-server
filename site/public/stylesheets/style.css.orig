@@ -1300,15 +1300,10 @@ li.captcha {
   text-align: center;
 }
 /* line 873, ../../app/stylesheets/partials/_page.scss */
-.control_panel #spinner a {
-  color: white;
-  text-decoration: underline;
-}
-/* line 877, ../../app/stylesheets/partials/_page.scss */
 .control_panel #spinner #spinner_text {
   margin: auto;
 }
-/* line 880, ../../app/stylesheets/partials/_page.scss */
+/* line 876, ../../app/stylesheets/partials/_page.scss */
 .control_panel #spinner #spinning {
   width: 50%;
   height: 23px;
@@ -1317,29 +1312,29 @@ li.captcha {
   background-position: center bottom;
   display: block;
 }
-/* line 888, ../../app/stylesheets/partials/_page.scss */
+/* line 884, ../../app/stylesheets/partials/_page.scss */
 .control_panel #spinner.stop-spinning {
   font-size: 1.2em;
   bottom: 20%;
   overflow: auto;
 }
-/* line 892, ../../app/stylesheets/partials/_page.scss */
+/* line 888, ../../app/stylesheets/partials/_page.scss */
 .control_panel #spinner.stop-spinning #spinning {
   display: none;
 }
-/* line 893, ../../app/stylesheets/partials/_page.scss */
+/* line 889, ../../app/stylesheets/partials/_page.scss */
 .control_panel #spinner.stop-spinning em {
   font-size: 1.1em;
   font-color: #574d4f;
   font-style: normal;
 }
-/* line 899, ../../app/stylesheets/partials/_page.scss */
+/* line 895, ../../app/stylesheets/partials/_page.scss */
 .control_panel #spinner ul {
   margin: 0;
   padding: 0;
   list-style-type: none;
 }
-/* line 902, ../../app/stylesheets/partials/_page.scss */
+/* line 898, ../../app/stylesheets/partials/_page.scss */
 .control_panel #spinner ul li {
   display: -moz-inline-box;
   -moz-box-orient: vertical;
@@ -1354,7 +1349,7 @@ li.captcha {
 .control_panel #spinner ul li {
   *display: inline;
 }
-/* line 906, ../../app/stylesheets/partials/_page.scss */
+/* line 902, ../../app/stylesheets/partials/_page.scss */
 .control_panel #spinner ul li a {
   display: -moz-inline-box;
   -moz-box-orient: vertical;
@@ -1369,26 +1364,14 @@ li.captcha {
   *display: inline;
 }
 
-/* line 917, ../../app/stylesheets/partials/_page.scss */
-.multiplebgs #spinner #spinning {
-  background-image: -webkit-gradient(linear, 0% 50%, 100% 50%, color-stop(0%, #000000), color-stop(50%, rgba(0, 0, 0, 0)), color-stop(100%, #000000)), url("/app/images/spinner-bg.png");
-  background-image: -webkit-linear-gradient(left, #000000, rgba(0, 0, 0, 0), #000000), url("/app/images/spinner-bg.png");
-  background-image: -moz-linear-gradient(left, #000000, rgba(0, 0, 0, 0), #000000), url("/app/images/spinner-bg.png");
-  background-image: -o-linear-gradient(left, #000000, rgba(0, 0, 0, 0), #000000), url("/app/images/spinner-bg.png");
-  background-image: -ms-linear-gradient(left, #000000, rgba(0, 0, 0, 0), #000000), url("/app/images/spinner-bg.png");
-  background-image: linear-gradient(left, #000000, rgba(0, 0, 0, 0), #000000), url("/app/images/spinner-bg.png");
-  background-repeat: no-repeat, repeat-x;
-  background-position: center center, bottom center;
-}
-
 /* End dashboard page */
 /* Start partner page */
-/* line 927, ../../app/stylesheets/partials/_page.scss */
+/* line 917, ../../app/stylesheets/partials/_page.scss */
 ul.partners {
   margin: 0;
   padding: 0;
 }
-/* line 931, ../../app/stylesheets/partials/_page.scss */
+/* line 921, ../../app/stylesheets/partials/_page.scss */
 ul.partners li {
   display: -moz-inline-box;
   -moz-box-orient: vertical;
@@ -1404,11 +1387,11 @@ ul.partners li {
   *display: inline;
 }
 
-/* line 940, ../../app/stylesheets/partials/_page.scss */
+/* line 930, ../../app/stylesheets/partials/_page.scss */
 .partner.show .content > div {
   margin: 1em 0;
 }
-/* line 944, ../../app/stylesheets/partials/_page.scss */
+/* line 934, ../../app/stylesheets/partials/_page.scss */
 .partner.show #partner_overview {
   font-size: .8em;
   border: 0.1em solid #ececec;
@@ -1416,16 +1399,16 @@ ul.partners li {
   border-right: 0;
   padding: 1em;
 }
-/* line 950, ../../app/stylesheets/partials/_page.scss */
+/* line 940, ../../app/stylesheets/partials/_page.scss */
 .partner.show #partner_overview p {
   margin: 0;
 }
-/* line 953, ../../app/stylesheets/partials/_page.scss */
+/* line 943, ../../app/stylesheets/partials/_page.scss */
 .partner.show #quote blockquote {
   color: black;
 }
 
-/* line 958, ../../app/stylesheets/partials/_page.scss */
+/* line 948, ../../app/stylesheets/partials/_page.scss */
 .partner #join {
   background: #a4999b;
   color: black;
@@ -1438,12 +1421,12 @@ ul.partners li {
   -khtml-border-radius: 1em;
   border-radius: 1em;
 }
-/* line 965, ../../app/stylesheets/partials/_page.scss */
+/* line 955, ../../app/stylesheets/partials/_page.scss */
 .partner #join p {
   margin: 0;
 }
 
-/* line 968, ../../app/stylesheets/partials/_page.scss */
+/* line 958, ../../app/stylesheets/partials/_page.scss */
 .ie7 li.password {
   float: left;
 }
