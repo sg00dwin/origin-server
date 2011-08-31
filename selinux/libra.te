@@ -35,6 +35,7 @@ logging_log_file(libra_log_t)
 #
 # libra standard local policy
 #
+corenet_tcp_connect_mssql_port(libra_t)
 corenet_tcp_connect_mysqld_port(libra_t)
 corenet_tcp_connect_git_port(libra_t)
 corenet_tcp_connect_http_port(libra_t)
