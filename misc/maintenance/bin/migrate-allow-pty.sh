@@ -29,3 +29,7 @@ ${NOOP} /usr/bin/rhc-restorecon
 echo Checking for unpatched authorized_keys files
 find $LIBRA_DIR -name authorized_keys | xargs grep -l 'no-pty'
 
+# remove existing daemons
+echo "removing tail(1) daemon processes"
+ps -e -o ppid,pid,comm | grep tail
+pkill -P 1 tail
