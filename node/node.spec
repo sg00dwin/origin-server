@@ -57,7 +57,6 @@ mkdir -p %{buildroot}%{_sysconfdir}/cron.daily/
 cp -r cartridges %{buildroot}%{_libexecdir}/li
 cp -r conf/httpd %{buildroot}%{_sysconfdir}
 cp -r conf/libra %{buildroot}%{_sysconfdir}
-ln -s resource_limits.conf.stg resource_limits.conf
 cp -r facter %{buildroot}%{ruby_sitelibdir}/facter
 cp -r mcollective %{buildroot}%{_libexecdir}
 cp scripts/bin/* %{buildroot}%{_bindir}
