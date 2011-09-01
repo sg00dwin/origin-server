@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.78.1
+Version:       0.78.2
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -157,6 +157,11 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Thu Sep 01 2011 Dan McPherson <dmcphers@redhat.com> 0.78.2-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- changed max_apps_multiplier to max_apps (mmcgrath@redhat.com)
+
 * Thu Sep 01 2011 Dan McPherson <dmcphers@redhat.com> 0.78.1-1
 - Adding max apps multiplier (mmcgrath@redhat.com)
 - Adding proper settings for new resource limits (mmcgrath@redhat.com)
