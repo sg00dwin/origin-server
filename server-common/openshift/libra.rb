@@ -323,7 +323,7 @@ module Libra
           Libra.client_result "Application '#{app_name}' is either stopped or inaccessible"
         end
       else
-        server.log_result_output(output, exitcode)
+        server.log_result_output(output, exitcode, user)
         if exitcode != 0
           Libra.client_debug "Cartridge return code: " + exitcode.to_s
           raise NodeException.new(143), "Node execution failure (invalid exit code from node).  If the problem persists please contact Red Hat support.", caller[0..5]

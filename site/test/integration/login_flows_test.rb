@@ -1,0 +1,58 @@
+require 'test_helper'
+
+class LoginFlowsTest < ActionDispatch::IntegrationTest
+  
+  def setup
+    https!
+    open_session
+  end
+
+  # Make sure unauthenticated users can get to basic pages
+  test "browse unauthenticated pages" do
+    [root_path, login_path, express_path, flex_path, power_path].each do |url|
+      get url
+      assert_response :success
+    end
+  end
+
+  # Make sure users are sent to the login controller when requesting 
+  # a protected page
+  test 'test being redirected to the login controller' do
+    [dashboard_path, express_app_health_check_path].each do |url|
+      get url
+      assert_redirected_to login_path
+    end
+  end
+
+  test 'user should be redirected to Express app when logging in directly' do
+    get login_path
+    assert_response :success
+
+    post_via_redirect(path, {:login => 'testuser', :redirectUrl => root_path })
+
+    assert_response :success
+    assert_equal path, express_path
+  end
+ 
+  test "after requesting a protected resource and logging in, the user should be redirected back to the original resource" do
+    get control_panel_path
+    assert_redirected_to login_path
+    follow_redirect!
+
+    post(path, {:login => 'testuser', :redirectUrl => root_path})
+    follow_redirect!
+
+    assert_redirected_to control_panel_path
+  end
+
+  test "after coming from an external resource and logging in, the user should be redirected back to the external resource" do
+    get login_path, {}, {'HTTP_REFERER' => 'http://foo.com'}
+    assert_response :success
+
+    post(path, {:login => 'testuser', :redirectUrl => root_path})
+    follow_redirect!
+
+    assert_redirected_to 'http://foo.com'
+  end
+  
+end

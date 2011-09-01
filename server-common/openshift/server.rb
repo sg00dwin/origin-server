@@ -546,7 +546,7 @@ module Libra
     #
     # Logs result output
     #
-    def log_result_output(output, exitcode)
+    def log_result_output(output, exitcode, user=nil)
       if output && !output.empty?
         output.each_line do |line|
           if line =~ /^CLIENT_(MESSAGE|RESULT|DEBUG): /
@@ -556,6 +556,14 @@ module Libra
               Libra.client_result line['CLIENT_RESULT: '.length..-1]
             else
               Libra.client_debug line['CLIENT_DEBUG: '.length..-1]
+            end
+          elsif user && line =~ /^SSH_KEY_(ADD|REMOVE): /
+            if line =~ /^SSH_KEY_ADD: /
+              key = line['SSH_KEY_ADD: '.length..-1].chomp
+              user.set_system_ssh_key(key)
+            else
+              key = line['SSH_KEY_REMOVE: '.length..-1].chomp
+              user.remove_system_ssh_key()
             end
           elsif exitcode != 0
             Libra.client_debug line
