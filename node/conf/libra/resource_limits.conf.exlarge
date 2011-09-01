@@ -11,6 +11,9 @@
 quota_files=936228
 quota_blocks=14979657 # 100G / 7 (where.  1 block = 1024byte 
 
+# For no over commitment, should be memory_limit_in_bytes / (Total System Memory - 1G)
+max_apps_multiplier=7
+
 # PAM - resource limits
 # limits_core
 #<item> can be one of the following:
