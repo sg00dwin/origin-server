@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.78.0
+Version:       0.78.1
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -38,6 +38,9 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Thu Sep 01 2011 Dan McPherson <dmcphers@redhat.com> 0.78.1-1
+- bump spec numbers (dmcphers@redhat.com)
+
 * Wed Aug 31 2011 Dan McPherson <dmcphers@redhat.com> 0.77.8-1
 - Allow libra domains to connect to postgresql ports (dwalsh@redhat.com)
 - Allow libra domains to connect to mssql ports (dwalsh@redhat.com)
