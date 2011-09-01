@@ -1,1 +1,0 @@
-require 'openshift-node/node'
