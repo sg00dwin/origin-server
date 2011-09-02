@@ -32,8 +32,8 @@ require 'parseconfig'
 # Count the number of git repos on this host
 #
 Facter.add(:git_repos) do
-    @git_repos_count = Dir.glob("/var/lib/libra/**/git/*.git").count
-    setcode { @git_repos_count }
+    git_repos_count = Dir.glob("/var/lib/libra/**/git/*.git").count
+    setcode { git_repos_count }
 end
 
 #
@@ -55,12 +55,21 @@ Facter.add(:public_hostname) do
 end
 
 #
+# Find node_profile type
+#
+Facter.add(:node_profile) do
+    config_file = ParseConfig.new('/etc/libra/resource_limits.conf')
+    node_profile = config_file.get_value('node_profile') ? config_file.get_value('node_profile') : '0'
+    setcode { node_profile }
+end
+
+#
 # Find Max Apps
 #
 Facter.add(:max_apps) do
     config_file = ParseConfig.new('/etc/libra/resource_limits.conf')
-    @max_apps = config_file.get_value('max_apps') ? config_file.get_value('max_apps') : '0'
-    setcode { @max_apps }
+    max_apps = config_file.get_value('max_apps') ? config_file.get_value('max_apps') : '0'
+    setcode { max_apps }
 end
 
 #
@@ -69,8 +78,6 @@ end
 Facter.add(:capacity) do
     git_repos =  Facter.value(:git_repos).to_f
     max_apps = Facter.value(:max_apps).to_f
-    puts max_apps
-    puts git_repos
     capacity = ( git_repos / max_apps ) * 100
     setcode { capacity.to_s }
 end
