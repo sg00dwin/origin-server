@@ -7,7 +7,7 @@ body {
 }
 
 body.home {
-  min-width: 1437px;
+  min-width: 52em;
 }
 
 /*
@@ -395,19 +395,15 @@ footer.universal {
   display: block;
   
   .content {
-    width: 1437px;
+    width: 100%;
     height: 513px;
     overflow: hidden;
     background: url('../images/space-panda-ftw.png') no-repeat center;
     position: relative;
   }
-  header, a {
-    position: absolute;
-  }
   
   header {
-    top: 100px;
-    left: 600px;
+    padding: 105px 0 0 130px;
     text-align: center;
   }
   
@@ -435,13 +431,14 @@ footer.universal {
   }
   
   a.button {
-    top: 180px;
-    left:700px;
     font-size: 15px;
     background-color: #ede6cb;
     @include background-image(linear-gradient(top, #ede6cb, #ddce9b));
     color: #3b3924;
     @include text-shadow(white 0 0.15em 0);
+    position: relative;
+    left: 50%;
+    margin-top: 15px;
   }
   
 }

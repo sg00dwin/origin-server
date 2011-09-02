@@ -207,7 +207,11 @@ body {
   margin: 0;
   padding: 0;
   background-color: #574d4f;
-  min-width: 1437px;
+}
+
+/* line 9, ../../app/stylesheets/partials/_page.scss */
+body.home {
+  min-width: 52em;
 }
 
 /*
@@ -218,84 +222,84 @@ body {
   background-position: -150px -240px;
 }
 */
-/* line 19, ../../app/stylesheets/partials/_page.scss */
+/* line 22, ../../app/stylesheets/partials/_page.scss */
 body, select, input, textarea {
   color: #444444;
   font-family: "Liberation Sans", Arial, "Helvetica Neue", Helvetica, sans-serif;
   font-size: 1em;
 }
 
-/* line 25, ../../app/stylesheets/partials/_page.scss */
+/* line 28, ../../app/stylesheets/partials/_page.scss */
 h1, h2, h3, h4, h5, h6 {
   font-family: OverpassBold, "Liberation Sans", Arial, "Helvetica Neue", Helvetica, sans-serif;
   font-weight: bold;
 }
 
-/* line 30, ../../app/stylesheets/partials/_page.scss */
+/* line 33, ../../app/stylesheets/partials/_page.scss */
 a, a:active, a:visited {
   color: black;
 }
 
-/* line 31, ../../app/stylesheets/partials/_page.scss */
+/* line 34, ../../app/stylesheets/partials/_page.scss */
 a:hover {
   color: #3465a4;
 }
 
-/* line 33, ../../app/stylesheets/partials/_page.scss */
+/* line 36, ../../app/stylesheets/partials/_page.scss */
 a:active, a:focus {
   outline: none;
   border: none;
 }
 
-/* line 35, ../../app/stylesheets/partials/_page.scss */
+/* line 38, ../../app/stylesheets/partials/_page.scss */
 strong, th {
   font-weight: bold;
 }
 
-/* line 39, ../../app/stylesheets/partials/_page.scss */
+/* line 42, ../../app/stylesheets/partials/_page.scss */
 small {
   font-size: .85em;
 }
 
-/* line 43, ../../app/stylesheets/partials/_page.scss */
+/* line 46, ../../app/stylesheets/partials/_page.scss */
 ::-webkit-selection {
   background-color: #574d4f;
   color: white;
 }
 
-/* line 46, ../../app/stylesheets/partials/_page.scss */
+/* line 49, ../../app/stylesheets/partials/_page.scss */
 ::-moz-selection {
   background-color: #574d4f;
   color: white;
 }
 
-/* line 49, ../../app/stylesheets/partials/_page.scss */
+/* line 52, ../../app/stylesheets/partials/_page.scss */
 ::selection {
   background-color: #574d4f;
   color: white;
 }
 
-/* line 53, ../../app/stylesheets/partials/_page.scss */
+/* line 56, ../../app/stylesheets/partials/_page.scss */
 header, footer, section {
   display: block;
 }
 
-/* line 55, ../../app/stylesheets/partials/_page.scss */
+/* line 58, ../../app/stylesheets/partials/_page.scss */
 h1 {
   font-size: 1.5em;
 }
 
-/* line 56, ../../app/stylesheets/partials/_page.scss */
+/* line 59, ../../app/stylesheets/partials/_page.scss */
 h2 {
   font-size: 1.25em;
 }
 
-/* line 57, ../../app/stylesheets/partials/_page.scss */
+/* line 60, ../../app/stylesheets/partials/_page.scss */
 h3 {
   font-size: 1.1em;
 }
 
-/* line 58, ../../app/stylesheets/partials/_page.scss */
+/* line 61, ../../app/stylesheets/partials/_page.scss */
 h4 {
   font-size: 1em;
 }
@@ -303,7 +307,7 @@ h4 {
 /* End universal styles */
 /* Shared styles */
 /* Hide section headers that we don't want showing normally */
-/* line 69, ../../app/stylesheets/partials/_page.scss */
+/* line 72, ../../app/stylesheets/partials/_page.scss */
 header.universal hgroup,
 header.universal header,
 nav > header,
@@ -334,7 +338,7 @@ nav > header.focusable:focus,
 }
 
 /* Set content width */
-/* line 75, ../../app/stylesheets/partials/_page.scss */
+/* line 78, ../../app/stylesheets/partials/_page.scss */
 .content,
 section > header {
   width: 50em;
@@ -342,7 +346,7 @@ section > header {
 }
 
 /* Style buttons */
-/* line 81, ../../app/stylesheets/partials/_page.scss */
+/* line 84, ../../app/stylesheets/partials/_page.scss */
 a.button {
   display: -moz-inline-box;
   -moz-box-orient: vertical;
@@ -371,13 +375,13 @@ a.button {
 a.button {
   *display: inline;
 }
-/* line 97, ../../app/stylesheets/partials/_page.scss */
+/* line 100, ../../app/stylesheets/partials/_page.scss */
 a.button:hover {
   text-decoration: none !important;
 }
 
 /* Styles shared by "more" links */
-/* line 103, ../../app/stylesheets/partials/_page.scss */
+/* line 106, ../../app/stylesheets/partials/_page.scss */
 a.more {
   font-family: OverpassBold, "Liberation Sans", Arial, "Helvetica Neue", Helvetica, sans-serif;
   font-weight: bold;
@@ -385,7 +389,7 @@ a.more {
 }
 
 /* Styles shared by main content areas */
-/* line 112, ../../app/stylesheets/partials/_page.scss */
+/* line 115, ../../app/stylesheets/partials/_page.scss */
 .main {
   font-size: .9em;
   color: #555;
@@ -394,27 +398,27 @@ a.more {
   background-color: white;
   display: block;
 }
-/* line 120, ../../app/stylesheets/partials/_page.scss */
+/* line 123, ../../app/stylesheets/partials/_page.scss */
 .main a {
   color: #1060c8;
   text-decoration: none;
 }
-/* line 124, ../../app/stylesheets/partials/_page.scss */
+/* line 127, ../../app/stylesheets/partials/_page.scss */
 .main a:hover {
   color: #3288f7;
   text-decoration: underline;
 }
-/* line 129, ../../app/stylesheets/partials/_page.scss */
+/* line 132, ../../app/stylesheets/partials/_page.scss */
 .main a:visited {
   color: #8f0ccc;
 }
-/* line 134, ../../app/stylesheets/partials/_page.scss */
+/* line 137, ../../app/stylesheets/partials/_page.scss */
 .main h1, .main h2, .main h3, .main h4, .main h5 {
   color: #555;
   font-family: Overpass, "Liberation Sans", Arial, "Helvetica Neue", Helvetica, sans-serif;
   font-weight: normal;
 }
-/* line 142, ../../app/stylesheets/partials/_page.scss */
+/* line 145, ../../app/stylesheets/partials/_page.scss */
 .main h1 {
   width: 100%;
   text-transform: uppercase;
@@ -424,7 +428,7 @@ a.more {
   background-color: rgba(255, 255, 255, 0.9);
 }*/
 /* Flash notices */
-/* line 153, ../../app/stylesheets/partials/_page.scss */
+/* line 156, ../../app/stylesheets/partials/_page.scss */
 .message {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
@@ -444,12 +448,12 @@ a.more {
   -khtml-border-radius: 2em;
   border-radius: 2em;
 }
-/* line 166, ../../app/stylesheets/partials/_page.scss */
+/* line 169, ../../app/stylesheets/partials/_page.scss */
 .message p {
   margin: 0;
   padding: 0;
 }
-/* line 168, ../../app/stylesheets/partials/_page.scss */
+/* line 171, ../../app/stylesheets/partials/_page.scss */
 .message.error {
   /* Red bg */
   background-color: #f33;
@@ -458,7 +462,7 @@ a.more {
   background-image: url("/app/images/icons/error.png");
   text-shadow: 0 0.1em 0 #990000;
 }
-/* line 177, ../../app/stylesheets/partials/_page.scss */
+/* line 180, ../../app/stylesheets/partials/_page.scss */
 .message.notice {
   /* bright orange bg */
   background-color: #fc0;
@@ -467,7 +471,7 @@ a.more {
   border-color: #eb0;
   text-shadow: 0 0.1em 0 #cc9900;
 }
-/* line 186, ../../app/stylesheets/partials/_page.scss */
+/* line 189, ../../app/stylesheets/partials/_page.scss */
 .message.success {
   /* green bg */
   background-color: #6CDB00;
@@ -479,31 +483,31 @@ a.more {
 
 /* End shared styles */
 /* Layout styles */
-/* line 200, ../../app/stylesheets/partials/_page.scss */
+/* line 203, ../../app/stylesheets/partials/_page.scss */
 header.universal {
   display: block;
 }
-/* line 202, ../../app/stylesheets/partials/_page.scss */
+/* line 205, ../../app/stylesheets/partials/_page.scss */
 header.universal > .content {
   padding: 1em;
 }
-/* line 206, ../../app/stylesheets/partials/_page.scss */
+/* line 209, ../../app/stylesheets/partials/_page.scss */
 header.universal nav {
   display: block;
   background-color: black;
 }
-/* line 210, ../../app/stylesheets/partials/_page.scss */
+/* line 213, ../../app/stylesheets/partials/_page.scss */
 header.universal nav ul {
   padding: 0;
   margin: 0;
 }
-/* line 215, ../../app/stylesheets/partials/_page.scss */
+/* line 218, ../../app/stylesheets/partials/_page.scss */
 header.universal nav li {
   display: inline;
   margin: 0;
   list-style-type: none;
 }
-/* line 220, ../../app/stylesheets/partials/_page.scss */
+/* line 223, ../../app/stylesheets/partials/_page.scss */
 header.universal nav li a {
   padding: .9em 1em;
   display: -moz-inline-box;
@@ -520,17 +524,17 @@ header.universal nav li a {
 header.universal nav li a {
   *display: inline;
 }
-/* line 232, ../../app/stylesheets/partials/_page.scss */
+/* line 235, ../../app/stylesheets/partials/_page.scss */
 .home header.universal nav li a.home, .product header.universal nav li a.services, header.universal nav li.active a,
 header.universal nav li a:hover {
   background-color: #333333;
 }
-/* line 236, ../../app/stylesheets/partials/_page.scss */
+/* line 239, ../../app/stylesheets/partials/_page.scss */
 header.universal nav li.user {
   float: right;
 }
 
-/* line 243, ../../app/stylesheets/partials/_page.scss */
+/* line 246, ../../app/stylesheets/partials/_page.scss */
 #announcements {
   width: 25em;
   height: 4em;
@@ -538,18 +542,18 @@ header.universal nav li.user {
   float: right;
   margin-top: 1em;
 }
-/* line 250, ../../app/stylesheets/partials/_page.scss */
+/* line 253, ../../app/stylesheets/partials/_page.scss */
 #announcements ul {
   margin: 0;
   padding: 0;
 }
-/* line 255, ../../app/stylesheets/partials/_page.scss */
+/* line 258, ../../app/stylesheets/partials/_page.scss */
 #announcements li {
   width: 25em;
   height: 4em;
   list-style-type: none;
 }
-/* line 260, ../../app/stylesheets/partials/_page.scss */
+/* line 263, ../../app/stylesheets/partials/_page.scss */
 #announcements li a {
   width: 23em;
   height: 4em;
@@ -563,34 +567,34 @@ header.universal nav li.user {
   display: block;
   float: right;
 }
-/* line 275, ../../app/stylesheets/partials/_page.scss */
+/* line 278, ../../app/stylesheets/partials/_page.scss */
 #announcements li a .title {
   font-family: OverpassBold;
   font-weight: bold;
   font-size: 1.2em;
 }
 
-/* line 287, ../../app/stylesheets/partials/_page.scss */
+/* line 290, ../../app/stylesheets/partials/_page.scss */
 footer.universal {
   display: block;
   color: white;
   font-size: .9em;
 }
-/* line 292, ../../app/stylesheets/partials/_page.scss */
+/* line 295, ../../app/stylesheets/partials/_page.scss */
 footer.universal ul {
   margin: 0;
   padding: 0;
 }
-/* line 294, ../../app/stylesheets/partials/_page.scss */
+/* line 297, ../../app/stylesheets/partials/_page.scss */
 footer.universal li {
   list-style-type: none;
 }
-/* line 298, ../../app/stylesheets/partials/_page.scss */
+/* line 301, ../../app/stylesheets/partials/_page.scss */
 footer.universal h2 {
   color: white;
   font-size: 1.1em;
 }
-/* line 303, ../../app/stylesheets/partials/_page.scss */
+/* line 306, ../../app/stylesheets/partials/_page.scss */
 footer.universal .content > ul > li {
   display: -moz-inline-box;
   -moz-box-orient: vertical;
@@ -605,33 +609,33 @@ footer.universal .content > ul > li {
 footer.universal .content > ul > li {
   *display: inline;
 }
-/* line 310, ../../app/stylesheets/partials/_page.scss */
+/* line 313, ../../app/stylesheets/partials/_page.scss */
 footer.universal a {
   color: white;
   text-decoration: none;
 }
-/* line 315, ../../app/stylesheets/partials/_page.scss */
+/* line 318, ../../app/stylesheets/partials/_page.scss */
 footer.universal #copyright {
   overflow: hidden;
   *zoom: 1;
   background: black;
   margin: 2em 0;
 }
-/* line 320, ../../app/stylesheets/partials/_page.scss */
+/* line 323, ../../app/stylesheets/partials/_page.scss */
 footer.universal #copyright .content {
   padding: .5em 5em;
 }
-/* line 324, ../../app/stylesheets/partials/_page.scss */
+/* line 327, ../../app/stylesheets/partials/_page.scss */
 footer.universal #copyright p {
   float: left;
 }
-/* line 325, ../../app/stylesheets/partials/_page.scss */
+/* line 328, ../../app/stylesheets/partials/_page.scss */
 footer.universal #copyright img {
   float: right;
   margin-bottom: 1em;
 }
 
-/* line 329, ../../app/stylesheets/partials/_page.scss */
+/* line 332, ../../app/stylesheets/partials/_page.scss */
 .dialog {
   display: none;
   background: #323232;
@@ -655,37 +659,37 @@ footer.universal #copyright img {
   min-width: 27em;
   padding: 2em;
 }
-/* line 344, ../../app/stylesheets/partials/_page.scss */
+/* line 347, ../../app/stylesheets/partials/_page.scss */
 .dialog a.more {
   display: block;
   width: 100%;
   text-align: center;
   color: #1060c8;
 }
-/* line 351, ../../app/stylesheets/partials/_page.scss */
+/* line 354, ../../app/stylesheets/partials/_page.scss */
 .dialog form {
   margin: 0 auto;
   display: block;
   width: 23.5em;
 }
-/* line 357, ../../app/stylesheets/partials/_page.scss */
+/* line 360, ../../app/stylesheets/partials/_page.scss */
 .dialog label {
   display: block;
 }
-/* line 361, ../../app/stylesheets/partials/_page.scss */
+/* line 364, ../../app/stylesheets/partials/_page.scss */
 .dialog h1 {
   font-weight: normal;
   font-family: Overpass, "Liberation Sans", Arial, "Helvetica Neue", Helvetica, sans-serif;
   text-align: center;
   margin: 0;
 }
-/* line 368, ../../app/stylesheets/partials/_page.scss */
+/* line 371, ../../app/stylesheets/partials/_page.scss */
 .dialog .close_button {
   position: absolute;
   top: 1.5em;
   right: 1.5em;
 }
-/* line 373, ../../app/stylesheets/partials/_page.scss */
+/* line 376, ../../app/stylesheets/partials/_page.scss */
 .dialog .close_button:active {
   outline: none;
   border: none;
@@ -693,37 +697,32 @@ footer.universal #copyright img {
 
 /* End layout styles */
 /* Home page styles */
-/* line 384, ../../app/stylesheets/partials/_page.scss */
+/* line 387, ../../app/stylesheets/partials/_page.scss */
 .home .main {
   padding: 1em 0;
 }
 
-/* line 388, ../../app/stylesheets/partials/_page.scss */
+/* line 391, ../../app/stylesheets/partials/_page.scss */
 #opener {
   font-size: 1.1em;
   background: #2c1f34 url("../images/cloud-bg.png") repeat-x bottom;
   height: 513px;
   display: block;
 }
-/* line 394, ../../app/stylesheets/partials/_page.scss */
+/* line 397, ../../app/stylesheets/partials/_page.scss */
 #opener .content {
-  width: 1437px;
+  width: 100%;
   height: 513px;
   overflow: hidden;
   background: url("../images/space-panda-ftw.png") no-repeat center;
   position: relative;
 }
-/* line 401, ../../app/stylesheets/partials/_page.scss */
-#opener header, #opener a {
-  position: absolute;
-}
 /* line 405, ../../app/stylesheets/partials/_page.scss */
 #opener header {
-  top: 100px;
-  left: 600px;
+  padding: 105px 0 0 120px;
   text-align: center;
 }
-/* line 411, ../../app/stylesheets/partials/_page.scss */
+/* line 410, ../../app/stylesheets/partials/_page.scss */
 #opener h1 {
   color: white;
   font-size: 30px;
@@ -734,7 +733,7 @@ footer.universal #copyright img {
   font-family: Overpass, "Liberation Sans", Arial, "Helvetica Neue", Helvetica, sans-serif;
   text-shadow: black 0 2px 0;
 }
-/* line 422, ../../app/stylesheets/partials/_page.scss */
+/* line 421, ../../app/stylesheets/partials/_page.scss */
 #opener h2 {
   color: white;
   font-size: 24px;
@@ -745,10 +744,8 @@ footer.universal #copyright img {
   margin: 0;
   text-shadow: black 0 2px 0;
 }
-/* line 434, ../../app/stylesheets/partials/_page.scss */
+/* line 433, ../../app/stylesheets/partials/_page.scss */
 #opener a.button {
-  top: 180px;
-  left: 700px;
   font-size: 15px;
   background-color: #ede6cb;
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #ede6cb), color-stop(100%, #ddce9b));
@@ -759,6 +756,9 @@ footer.universal #copyright img {
   background-image: linear-gradient(top, #ede6cb, #ddce9b);
   color: #3b3924;
   text-shadow: white 0 0.15em 0;
+  position: relative;
+  left: 50%;
+  margin-top: 15px;
 }
 
 /* line 446, ../../app/stylesheets/partials/_page.scss */
@@ -1029,7 +1029,7 @@ nav.service:last {
   width: 11em;
   float: left;
   font-family: Overpass, "Liberation Sans", Arial, "Helvetica Neue", Helvetica, sans-serif;
-  margin-top: 5.7em;
+  margin-top: 2.7em;
   font-size: 1.1em;
 }
 /* line 678, ../../app/stylesheets/partials/_page.scss */
