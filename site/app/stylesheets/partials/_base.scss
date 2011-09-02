@@ -45,3 +45,14 @@ $power: #FF8D00;
   overflow: visible;
   margin: 0;
 }
+
+@mixin close_button {
+  position: absolute;
+  top: 1.5em;
+  right: 1.5em;
+    
+  &:active {
+    outline: none;
+    border: none;
+  }
+}

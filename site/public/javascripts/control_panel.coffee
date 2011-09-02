@@ -1,5 +1,4 @@
 $ ->
-  
   domain_form_container = $ '#domain_form'
   domain_update_form = $ 'form.update'
   domain_form_replacement = ''
@@ -8,8 +7,7 @@ $ ->
   submit_buttons = $ 'input.create'
   verification_max_tries = 5
   multibgs = ($ 'html').hasClass 'multiplebgs'
-  console.log 'Multibgs?', multibgs
-  
+
   promo_text =
     php: """
       In the meantime, check out these videos
@@ -98,11 +96,14 @@ $ ->
   spinner = $ '#spinner'
   spinner_text = $ '#spinner-text'
   spinny = $ '#spinning'
+  spinner_closebtn = $ '.close', spinner
   spinner.hide()
   spin_x = 0
   interval = ''
+  timeout = ''
   
   show_spinner = (show_text = 'Working...') ->
+    spinner.removeClass 'stop-spinning'
     spinny.css 'background-position', '0px bottom'
     start_spinner_animation()
     spinner_text.text show_text
@@ -110,12 +111,16 @@ $ ->
   
   close_spinner = (closing_text = false, time_to_close = 5000) ->
     if not closing_text
+      console.log 'closing spinner - no text'
+      clearTimeout timeout
       stop_spinner_animation()
       spinner.hide()
     else
+      console.log "closing spinner - text #{closing_text}"
+      clearTimeout timeout
       spinner.addClass 'stop-spinning'
       spinner_text.html closing_text
-      setTimeout ( ->
+      timeout = setTimeout ( ->
         stop_spinner_animation()
         spinner.hide()
         spinner.removeClass 'stop-spinning'
@@ -123,13 +128,11 @@ $ ->
   
   start_spinner_animation = ->
     if multibgs
-      console.log 'multi spinning'
       interval = setInterval ( ->
         spin_x += 5
         spinny.css 'background-position': "center center, #{spin_x}px bottom"
       ), 50
     else
-      console.log 'multi spinning'
       interval = setInterval ( ->
         spin_x += 5
         spinny.css 'background-position': "#{spin_x}px bottom"
@@ -230,6 +233,9 @@ $ ->
   # Event handling
   
   # Show spinners on form submission
+  spinner_closebtn.live 'click', (event) ->
+    close_spinner '', 100
+  
   ($ 'input.create', domain_form_container).live 'click', (event) ->
     show_spinner 'Updating your domain...'
     
@@ -250,6 +256,7 @@ $ ->
 
   app_form.live 'successful_submission', (event) ->
     close_spinner """
+      
       <p>
         <em>
           Depending on where you live, it may take up to 15 minutes for your app to be live.
@@ -258,6 +265,9 @@ $ ->
       <p>
         #{promo_text[cartridge]}
       </p>
-    """, 15000
+      <a href="#" class="close" title = "Close this dialog">
+        <img src = "/app/images/close_button.png">
+      </a>
+    """, 600000
     #spinner.text 'Verifying your app is available...'
     #verify_app(current_app_url)

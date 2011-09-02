@@ -1,5 +1,5 @@
 $(function() {
-  var app_form, close_spinner, domain_edit_button, domain_form_container, domain_form_replacement, domain_update_form, interval, multibgs, promo_text, setup_domain_update_form, show_spinner, spin_x, spinner, spinner_text, spinny, start_spinner_animation, stop_spinner_animation, submit_buttons, toggle_domain_update_form, update_values, verification_max_tries;
+  var app_form, close_spinner, domain_edit_button, domain_form_container, domain_form_replacement, domain_update_form, interval, multibgs, promo_text, setup_domain_update_form, show_spinner, spin_x, spinner, spinner_closebtn, spinner_text, spinny, start_spinner_animation, stop_spinner_animation, submit_buttons, timeout, toggle_domain_update_form, update_values, verification_max_tries;
   domain_form_container = $('#domain_form');
   domain_update_form = $('form.update');
   domain_form_replacement = '';
@@ -8,7 +8,6 @@ $(function() {
   submit_buttons = $('input.create');
   verification_max_tries = 5;
   multibgs = ($('html')).hasClass('multiplebgs');
-  console.log('Multibgs?', multibgs);
   promo_text = {
     php: "In the meantime, check out these videos\nfor easy ways to use your new OpenShift PHP app:\n<ul>\n  <li>\n    <figure>\n      <a href=\"http://youtu.be/SabOGub2jiE\" target=\"_blank\">\n        <img src=\"/app/images/video_stills/mediawiki.png\" alt=\"Mediawiki video\" />\n        <figcaption>Getting started with MediaWiki</figcaption>\n      </a>\n    </figure>\n  </li>\n  <li>\n    <a href=\"http://youtu.be/6TSxAE2K3QM\" target=\"_blank\">\n      <figure>\n        <img src=\"/app/images/video_stills/drupal.png\" alt=\"Drupal video\" />\n        <figcaption>Getting started with Drupal</figcaption>\n      </figure>\n    </a>\n  </li>\n</ul>",
     wsgi: "In the meantime, check out these blog posts on how to deploy popular python frameworks on your new OpenShift Python app:\n<ul>\n  <li>\n    <a href=\"https://www.redhat.com/openshift/blogs/deploying-a-pyramid-application-in-a-virtual-python-wsgi-environment-on-red-hat-openshift-expr\" target=\"_blank\">Deploy a Pyramid app</a>\n  </li>\n  <li>\n    <a href=\"https://www.redhat.com/openshift/blogs/deploying-turbogears2-python-web-framework-using-express\" target=\"_blank\">Deploy the TurboGears2 framework</a>\n  </li>\n</ul>",
@@ -21,13 +20,16 @@ $(function() {
   spinner = $('#spinner');
   spinner_text = $('#spinner-text');
   spinny = $('#spinning');
+  spinner_closebtn = $('.close', spinner);
   spinner.hide();
   spin_x = 0;
   interval = '';
+  timeout = '';
   show_spinner = function(show_text) {
     if (show_text == null) {
       show_text = 'Working...';
     }
+    spinner.removeClass('stop-spinning');
     spinny.css('background-position', '0px bottom');
     start_spinner_animation();
     spinner_text.text(show_text);
@@ -41,12 +43,16 @@ $(function() {
       time_to_close = 5000;
     }
     if (!closing_text) {
+      console.log('closing spinner - no text');
+      clearTimeout(timeout);
       stop_spinner_animation();
       return spinner.hide();
     } else {
+      console.log("closing spinner - text " + closing_text);
+      clearTimeout(timeout);
       spinner.addClass('stop-spinning');
       spinner_text.html(closing_text);
-      return setTimeout((function() {
+      return timeout = setTimeout((function() {
         stop_spinner_animation();
         spinner.hide();
         return spinner.removeClass('stop-spinning');
@@ -55,7 +61,6 @@ $(function() {
   };
   start_spinner_animation = function() {
     if (multibgs) {
-      console.log('multi spinning');
       return interval = setInterval((function() {
         spin_x += 5;
         return spinny.css({
@@ -63,7 +68,6 @@ $(function() {
         });
       }), 50);
     } else {
-      console.log('multi spinning');
       return interval = setInterval((function() {
         spin_x += 5;
         return spinny.css({
@@ -154,6 +158,9 @@ $(function() {
       look_for_app()
       
     */
+  spinner_closebtn.live('click', function(event) {
+    return close_spinner('', 500);
+  });
   ($('input.create', domain_form_container)).live('click', function(event) {
     return show_spinner('Updating your domain...');
   });
@@ -170,6 +177,6 @@ $(function() {
     return close_spinner();
   });
   return app_form.live('successful_submission', function(event) {
-    return close_spinner("<p>\n  <em>\n    Depending on where you live, it may take up to 15 minutes for your app to be live.\n  </em>\n</p>\n<p>\n  " + promo_text[cartridge] + "\n</p>", 15000);
+    return close_spinner("\n<p>\n  <em>\n    Depending on where you live, it may take up to 15 minutes for your app to be live.\n  </em>\n</p>\n<p>\n  " + promo_text[cartridge] + "\n</p>\n<a href=\"#\" class=\"close\" title = \"Close this dialog\">\n  <img src = \"/app/images/close_button.png\">\n</a>", 60000);
   });
 });

@@ -369,14 +369,7 @@ footer.universal {
   }
   
   .close_button {
-    position: absolute;
-    top: 1.5em;
-    right: 1.5em;
-    
-    &:active {
-      outline: none;
-      border: none;
-    }
+    @include close_button;
   }
 }
 
@@ -874,8 +867,11 @@ li.captcha {
       color: white;
       text-decoration: underline;
     }
-    #spinner_text {
-      margin: auto;
+    a.close {
+      @include close_button;
+    }
+    #spinner-text {
+      margin: auto 3em;
     }
     #spinning {
       width: 50%;
@@ -908,6 +904,7 @@ li.captcha {
           color: white;
           text-decoration: none;
         }
+        figure { margin: 0;}
       }
     }
   }
