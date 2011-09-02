@@ -1,5 +1,7 @@
 $(function() {
-  var app_form, close_spinner, domain_edit_button, domain_form_container, domain_form_replacement, domain_update_form, interval, multibgs, promo_text, setup_domain_update_form, show_spinner, spin_x, spinner, spinner_closebtn, spinner_text, spinny, start_spinner_animation, stop_spinner_animation, submit_buttons, timeout, toggle_domain_update_form, update_values, verification_max_tries;
+  var app_form, close_spinner, domain_action, domain_edit_button, domain_form_container, domain_form_replacement, domain_update_form, interval, multibgs, promo_text, setup_domain_update_form, show_spinner, spin_x, spinner, spinner_closebtn, spinner_text, spinny, start_spinner_animation, stop_spinner_animation, submit_buttons, timeout, toggle_domain_update_form, update_values, verification_max_tries;
+  domain_action = ($('#domain_form form')).hasClass('update') ? 'update' : 'create';
+  console.log('Domain action', domain_action);
   domain_form_container = $('#domain_form');
   domain_update_form = $('form.update');
   domain_form_replacement = '';
@@ -97,8 +99,11 @@ $(function() {
     setup_domain_update_form();
   }
   update_values = function() {
-    ($('#show_namespace')).text(namespace);
-    return ($('#show_ssh')).text(ssh);
+    var ns, sh;
+    ns = (typeof namespace === "function" ? namespace(namespace) : void 0) ? void 0 : ($('#express_domain_namespace')).val();
+    sh = (typeof ssh === "function" ? ssh(ssh) : void 0) ? void 0 : ($('#express_domain_ssh')).val();
+    ($('#show_namespace')).text(ns);
+    return ($('#show_ssh')).text(sh);
   };
   toggle_domain_update_form = function() {
     if (domain_update_form.hasClass('hidden')) {
@@ -159,10 +164,15 @@ $(function() {
       
     */
   spinner_closebtn.live('click', function(event) {
-    return close_spinner('', 500);
+    return close_spinner('', 100);
   });
   ($('input.create', domain_form_container)).live('click', function(event) {
-    return show_spinner('Updating your domain...');
+    switch (domain_action) {
+      case 'update':
+        return show_spinner('Updating your domain...');
+      case 'create':
+        return show_spinner('Creating your domain...');
+    }
   });
   ($('input.create', app_form)).live('click', function(event) {
     return show_spinner('Creating your app...');
@@ -177,6 +187,6 @@ $(function() {
     return close_spinner();
   });
   return app_form.live('successful_submission', function(event) {
-    return close_spinner("\n<p>\n  <em>\n    Depending on where you live, it may take up to 15 minutes for your app to be live.\n  </em>\n</p>\n<p>\n  " + promo_text[cartridge] + "\n</p>\n<a href=\"#\" class=\"close\" title = \"Close this dialog\">\n  <img src = \"/app/images/close_button.png\">\n</a>", 60000);
+    return close_spinner("\n<p>\n  <em>\n    Depending on where you live, it may take up to 15 minutes for your app to be live.\n  </em>\n</p>\n<p>\n  " + promo_text[cartridge] + "\n</p>\n<a href=\"#\" class=\"close\" title = \"Close this dialog\">\n  <img src = \"/app/images/close_button.png\">\n</a>", 600000);
   });
 });

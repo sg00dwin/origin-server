@@ -1,4 +1,5 @@
 $ ->
+  domain_action = if ($ '#domain_form form').hasClass 'update' then 'update' else 'create'
   domain_form_container = $ '#domain_form'
   domain_update_form = $ 'form.update'
   domain_form_replacement = ''
@@ -111,12 +112,10 @@ $ ->
   
   close_spinner = (closing_text = false, time_to_close = 5000) ->
     if not closing_text
-      console.log 'closing spinner - no text'
       clearTimeout timeout
       stop_spinner_animation()
       spinner.hide()
     else
-      console.log "closing spinner - text #{closing_text}"
       clearTimeout timeout
       spinner.addClass 'stop-spinning'
       spinner_text.html closing_text
@@ -169,8 +168,10 @@ $ ->
     setup_domain_update_form()
 
   update_values = ->
-    ($ '#show_namespace').text namespace
-    ($ '#show_ssh').text ssh
+    ns = if namespace? namespace else ($ '#express_domain_namespace').val()
+    sh = if ssh? ssh else ($ '#express_domain_ssh').val()
+    ($ '#show_namespace').text ns
+    ($ '#show_ssh').text sh
 
   toggle_domain_update_form = ->
     if domain_update_form.hasClass 'hidden'
@@ -237,7 +238,9 @@ $ ->
     close_spinner '', 100
   
   ($ 'input.create', domain_form_container).live 'click', (event) ->
-    show_spinner 'Updating your domain...'
+    switch domain_action
+      when 'update' then show_spinner 'Updating your domain...'
+      when 'create' then show_spinner 'Creating your domain...'
     
   ($ 'input.create', app_form).live 'click', (event) ->
     show_spinner 'Creating your app...'
