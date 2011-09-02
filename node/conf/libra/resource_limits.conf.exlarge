@@ -4,6 +4,7 @@
 #
 # Extra Large Profile
 #
+node_profile=exlarge
 
 #
 # Quotas: File system limits

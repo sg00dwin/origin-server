@@ -3,6 +3,7 @@
 #
 # Jumbo Profile
 #
+node_profile=jumbo
 
 #
 # Quotas: File system limits

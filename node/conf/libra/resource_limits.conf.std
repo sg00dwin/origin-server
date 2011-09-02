@@ -3,6 +3,7 @@
 #
 # Standard Profile
 #
+node_profile=std
 
 #
 # Quotas: File system limits

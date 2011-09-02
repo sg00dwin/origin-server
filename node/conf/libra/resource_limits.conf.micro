@@ -3,6 +3,7 @@
 #
 # Micro
 #
+node_profile=micro
 
 #
 # Quotas: File system limits
