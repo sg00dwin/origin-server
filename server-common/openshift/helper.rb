@@ -56,11 +56,13 @@ module Libra
     # Yields to the supplied block if there is a non-nil
     # value for the fact.
     #
-    def self.rpc_get_fact(fact, server=nil, forceRediscovery=false)
+    def self.rpc_get_fact(fact, server=nil, forceRediscovery=false, additional_filters=nil)
       result = nil
+      options = rpc_options
+      options[:filter]['fact'] = options[:filter]['fact'] + additional_filters if additional_filters
 
       Libra.logger_debug("DEBUG: rpc_get_fact: fact=#{fact}")
-      rpc_exec('rpcutil', server, forceRediscovery) do |client|
+      rpc_exec('rpcutil', server, forceRediscovery, options) do |client|
         client.get_fact(:fact => fact) do |response|
           next unless Integer(response[:body][:statuscode]) == 0
 
@@ -100,9 +102,7 @@ module Libra
     # Execute an RPC call for the specified agent.
     # If a server is supplied, only execute for that server.
     #
-    def self.rpc_exec(agent, server=nil, forceRediscovery=false)
-      options = rpc_options
-
+    def self.rpc_exec(agent, server=nil, forceRediscovery=false, options = rpc_options)
       if server
         Libra.logger_debug("DEBUG: rpc_exec: Filtering rpc_exec to server #{server}")
         # Filter to the specified server
