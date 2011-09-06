@@ -54,4 +54,7 @@ class LoginController < ApplicationController
     Rails.logger.debug "Redirecting to home#index"    
     redirect_to params['redirectUrl']
   end
+
+  def ajax
+  end
 end

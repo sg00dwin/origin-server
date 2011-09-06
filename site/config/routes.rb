@@ -72,6 +72,7 @@ RedHatCloud::Application.routes.draw do
     match 'login/error' => 'login#error', :via => [:get]
     match 'login/flex' => 'login#show_flex', :via => [:get]
     match 'login/express' => 'login#show_express', :via => [:get]
+    match 'login/ajax' => 'login#ajax', :via => [:post]
 
     resource :logout,
              :controller => "logout",

@@ -59,6 +59,6 @@
        
       -else
         %li.user
-          = link_to 'Sign In', login_path, :class => 'sign_in'
+          %a.sign_in Sign In
       
 = yield :extra_nav if content_for? :extra_nav
