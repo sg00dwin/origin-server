@@ -53,6 +53,8 @@ corenet_tcp_bind_jboss_management_port(libra_t)
 
 sendmail_domtrans(libra_t)
 
+ssh_exec(libra_t)
+
 ########################################
 #
 # libra net local policy
