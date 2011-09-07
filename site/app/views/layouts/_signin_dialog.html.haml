@@ -8,12 +8,12 @@
   %a.sign_up.more{ :href => "#" }
     Need an OpenShift account?
 
-  = form_tag(login_ajax_path, :remote => true) do
+  %form{ :action => login_ajax_path, :method => 'post', 'data-remote' => true}
     %label
       Email
       %input{ :type => "email",
               :placeholder => "Enter your email address",
-              :name => 'login', 
+              :name => 'login',
               :autofocus => "true" }
     
     %label
