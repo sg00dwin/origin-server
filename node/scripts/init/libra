@@ -32,7 +32,7 @@ function homedir() {
 
 function userapps() {
     # USERNAME=$1
-    /bin/find `homedir $1` -maxdepth 2 -mindepth 2 -type f -name "*_ctl.sh" 2> /dev/null
+    /bin/find `homedir $1` -maxdepth 2 -mindepth 2 -name "*_ctl.sh" 2> /dev/null
 }
 
 function apptype() {
