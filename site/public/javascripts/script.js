@@ -1,5 +1,5 @@
 $(function() {
-  var ann_height, ann_list, announcements, body, current, links, nav, nav_top, on_announcement, scroll_announcements, sections, sticky_css, top, unsticky_css;
+  var ann_height, ann_list, announcements, body, close_btn, close_dialog, current, dialogs, links, login_complete, nav, nav_top, on_announcement, open_dialog, scroll_announcements, sections, signin, signup, sticky_css, top, unsticky_css;
   body = $('body');
   nav = ($('header.universal > nav')).first();
   nav_top = nav.offset().top;
@@ -21,6 +21,46 @@ $(function() {
       return nav.css(unsticky_css);
     }
   });
+  dialogs = $('.dialog');
+  open_dialog = function(dialog) {
+    dialogs.hide();
+    return dialog.show();
+  };
+  close_dialog = function(dialog) {
+    return dialog.hide();
+  };
+  close_btn = $('.close_button');
+  signup = $('#signup');
+  signin = $('#signin');
+  ($('a.sign_up')).click(function(event) {
+    event.preventDefault();
+    return open_dialog(signup);
+  });
+  ($('a.sign_in')).click(function(event) {
+    event.preventDefault();
+    return open_dialog(signin);
+  });
+  close_btn.click(function(event) {
+    return close_dialog(($(this)).parent());
+  });
+  login_complete = function(xhr, status) {
+    var json;
+    json = $.parseJSON(status.responseText);
+    console.log(json);
+    switch (status.status) {
+      case 200:
+        window.location.replace(json.redirectUrl);
+        break;
+      case 401:
+        $(this).prepend($('<div>').addClass('message error').text(json.error));
+        break;
+      default:
+        $(this).prepend($('<div>').addClass('message error').html(json.error || "Some unknown error occured,<br/> please try again."));
+        return console.log('Some unknown AJAX error with the login', status.status);
+    }
+  };
+  signin.find('form').bind('ajax:complete', login_complete);
+  ($('#login-form')).find('form').bind('ajax:complete', login_complete);
   announcements = $('#announcements');
   ann_list = $('ul', announcements);
   on_announcement = 0;

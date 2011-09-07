@@ -1,4 +1,7 @@
 require 'pp'
+require 'net/http'
+require 'net/https'
+require 'uri'
 
 class LoginController < ApplicationController
 
@@ -56,5 +59,58 @@ class LoginController < ApplicationController
   end
 
   def ajax
+    # Keep track of response information
+    responseText = {}
+
+    # Do the remote login
+    uri = URI.parse( Rails.configuration.login )
+
+    # Create the HTTPS object
+    https = Net::HTTP.new( uri.host, uri.port )
+    https.use_ssl = true
+    # TODO: Need to figure out where CAs are so we can do something like: 
+    #   http://goo.gl/QLFFC
+    https.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+    # Make the request
+    req = Net::HTTP::Post.new( uri.path )
+    req.set_form_data({:login => params[:login], :password => params[:password]})
+
+    # Create the request
+    res = https.start{ |http| http.request(req) }
+
+    Rails.logger.debug "Status received: #{res.code}"
+
+    case res
+      when Net::HTTPSuccess, Net::HTTPRedirection
+        # Decode the JSON response
+        json = ActiveSupport::JSON::decode(res.body)
+
+        # Set cookie and session information
+        Rails.logger.debug "Cookies sent: #{YAML.dump res.header['set-cookie']}"
+        rh_sso = res.header['set-cookie'].split('; ')[0].split('=')[1]
+        cookies[:rh_sso] = {
+          :secure => true, 
+          :domain => '.redhat.com', 
+          :path => '/',
+          :value => rh_sso
+        }
+        session[:ticket] = rh_sso
+
+        responseText[:redirectUrl] = root_url
+      when Net::HTTPUnauthorized
+        Rails.logger.debug 'Unauthorized'
+        responseText[:error] = 'Invalid username or password'
+      else
+        Rails.logger.debug "Unknown error: #{res.code}"
+        responseText[:error] = 'An unknown error occurred'
+    end
+
+    respond_to do |format|
+      format.js do
+        render :status => res.code, :json => responseText
+      end
+    end
+
   end
 end

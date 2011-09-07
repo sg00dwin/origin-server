@@ -66,6 +66,29 @@ $ ->
   close_btn.click (event) ->
     close_dialog ($ this).parent()
 
+  # Function based on definitions in rails.js:
+  login_complete = (xhr,status) ->
+    json = $.parseJSON( status.responseText )
+    console.log json
+
+    switch status.status
+        when 200 #everything ok
+          window.location.replace json.redirectUrl
+          break
+        when 401 #Unauthorized
+          $(this).prepend($('<div>').addClass('message error').text(json.error))
+          break
+        else
+          $(this).prepend(
+            $('<div>').addClass('message error')
+              .html(json.error || "Some unknown error occured,<br/> please try again.")
+          )
+          console.log 'Some unknown AJAX error with the login', status.status
+
+  # Bind to both the JS form and the standard form
+  signin.find('form').bind('ajax:complete', login_complete )
+  ($ '#login-form').find('form').bind('ajax:complete', login_complete ) 
+
 ## Announcements ##
   announcements = ($ '#announcements')
   ann_list = ($ 'ul', announcements)
