@@ -22,6 +22,7 @@ Requires:      rubygem-open4
 Requires:      rubygem-parseconfig
 Requires:      quota
 Requires:      lsof
+Requires:      wget
 Requires(post):   /usr/sbin/semodule
 Requires(post):   /usr/sbin/semanage
 Requires(postun): /usr/sbin/semodule
