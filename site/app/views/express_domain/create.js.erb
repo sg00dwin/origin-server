@@ -24,7 +24,7 @@ else
       form.before('<div class="message success"><%= escape_javascript @message %></div>');
       form.trigger('successful_submission');
 <%
-      unless @userinfo.app_info.nil?
+      unless @userinfo.app_info.blank?
         table = render 'express_app/app_table', :apps => @userinfo.app_info
 %>
         //Update app table

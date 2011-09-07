@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.77.10
+Version:   0.78.1
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -67,6 +67,22 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Thu Sep 01 2011 Dan McPherson <dmcphers@redhat.com> 0.78.1-1
+- bump spec numbers (dmcphers@redhat.com)
+- Changed login#create to better mimic streamline. Added tests for workflow
+  integration (fotios@redhat.com)
+- Add max_express_apps to remaining environment config files
+  (edirsh@redhat.com)
+- Small style improvements (edirsh@redhat.com)
+
+* Wed Aug 31 2011 Dan McPherson <dmcphers@redhat.com> 0.77.11-1
+- default to /app/express if nothing else is chosen (dmcphers@redhat.com)
+- minor syntax change (dmcphers@redhat.com)
+- minor rework of login logic (dmcphers@redhat.com)
+- Improve styling of opening text on home page (edirsh@redhat.com)
+- Bug 734638 (edirsh@redhat.com)
+- Bug 734644 (edirsh@redhat.com)
+
 * Tue Aug 30 2011 Dan McPherson <dmcphers@redhat.com> 0.77.10-1
 - couple renames (dmcphers@redhat.com)
 - login cleanup (dmcphers@redhat.com)

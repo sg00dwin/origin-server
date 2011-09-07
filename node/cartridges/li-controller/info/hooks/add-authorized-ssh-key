@@ -1,0 +1,23 @@
+#!/bin/bash -e
+
+USERNAME="$1"
+SSHKEY="$2"
+
+# import Libra node configuration
+if [ -f '/etc/libra/node.conf' ]
+then
+    . /etc/libra/node.conf
+elif [ -f 'node.conf' ]
+then
+    . node.conf
+else
+    echo "node.conf not found.  Cannot continue" 1>&2
+    exit 3
+fi
+
+USERHOME=`echo ${libra_dir}/${USERNAME} | tr -s '/'`
+SSHDIR=${USERHOME}/.ssh
+
+CMDENTRY="command=\"/usr/bin/trap-user\",no-port-forwarding,no-X11-forwarding,no-agent-forwarding ssh-rsa $SSHKEY Libra-$USERNAME"
+sed -i "/${SSHKEY}/d" ${SSHDIR}/authorized_keys
+echo "${CMDENTRY}" >> ${SSHDIR}/authorized_keys

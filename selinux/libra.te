@@ -39,6 +39,7 @@ corenet_tcp_connect_mssql_port(libra_t)
 corenet_tcp_connect_mysqld_port(libra_t)
 corenet_tcp_connect_postgresql_port(libra_t)
 corenet_tcp_connect_git_port(libra_t)
+corenet_tcp_connect_oracle_port(libra_t)
 corenet_tcp_connect_http_port(libra_t)
 corenet_tcp_connect_ftp_port(libra_t)
 corenet_tcp_connect_ssh_port(libra_t)
@@ -51,6 +52,8 @@ corenet_udp_bind_generic_port(libra_t)
 corenet_tcp_bind_jboss_management_port(libra_t)
 
 sendmail_domtrans(libra_t)
+
+ssh_exec(libra_t)
 
 ########################################
 #

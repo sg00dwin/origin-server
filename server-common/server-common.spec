@@ -2,7 +2,7 @@
 
 Summary:       Common dependencies of the OpenShift broker and site
 Name:          rhc-server-common
-Version:       0.77.5
+Version:       0.78.1
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -54,6 +54,11 @@ rm -rf %{buildroot}
                                   -s /sbin/nologin 2>&1 > /dev/null || :
 
 %changelog
+* Thu Sep 01 2011 Dan McPherson <dmcphers@redhat.com> 0.78.1-1
+- bump spec numbers (dmcphers@redhat.com)
+- add system ssh key support along with the beginning of multiple ssh key
+  support (dmcphers@redhat.com)
+
 * Mon Aug 29 2011 Dan McPherson <dmcphers@redhat.com> 0.77.5-1
 - better error handling (dmcphers@redhat.com)
 
