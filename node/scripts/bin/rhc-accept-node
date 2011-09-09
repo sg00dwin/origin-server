@@ -315,7 +315,7 @@ function libra_users() {
 
 function homedir() {
     # USERNAME=$1
-    `grep "^$1" /etc/passwd | cut -d: -f 6`
+    grep "^$1" /etc/passwd | cut -d: -f 6
 }
 
 function uid() {
@@ -338,6 +338,7 @@ function check_users() {
     verbose checking `libra_users | wc -w` user accounts
     for USERNAME in `libra_users`
     do
+	check_home_dir $USERNAME
 	check_user_limits $USERNAME
 	check_user_cgroup $USERNAME
 	check_user_tc $USERNAME
@@ -347,6 +348,16 @@ function check_users() {
 
 LIMITS_CONF_DIR=${LIMITS_CONF_DIR:=/etc/security/limits.d}
 #LIMITS_MAP="nproc:u"
+
+function check_home_dir() {
+    USERNAME=$1
+    HOME=`homedir $USERNAME`
+    if [ ! -d "$HOME" ]
+    then
+	echo "FAIL: user $USERNAME does not have a home directory $HOME" >&2
+	STATUS=$(($STATUS + 1))
+    fi
+}
 
 function check_user_limits() {
     # USERNAME=$1
