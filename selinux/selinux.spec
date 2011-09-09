@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.78.1
+Version:       0.78.2
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -38,6 +38,13 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Fri Sep 09 2011 Matt Hicks <mhicks@redhat.com> 0.78.2-1
+- Allow libra domains to execute user apps like ifconfig and hostname, this
+  does not add priv since it stays within the same domain (dwalsh@redhat.com)
+- Since libra domains can connect to ssh_port_t, I will allow them to execut
+  ssh (dwalsh@redhat.com)
+- Allow libra to connect to oracle ports (dwalsh@redhat.com)
+
 * Thu Sep 01 2011 Dan McPherson <dmcphers@redhat.com> 0.78.1-1
 - bump spec numbers (dmcphers@redhat.com)
 
