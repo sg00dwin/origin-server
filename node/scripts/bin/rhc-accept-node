@@ -408,6 +408,7 @@ function check_user_quota() {
     if quota $1 | head -1 | grep '): none$' > /dev/null
     then
 	echo "FAIL: user $1 does not have quotas imposed" >&2
+	STATUS=$(($STATUS + 1))
     fi
 }
 
