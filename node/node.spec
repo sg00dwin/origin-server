@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.78.2
+Version:       0.78.3
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -158,6 +158,17 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Fri Sep 09 2011 Matt Hicks <mhicks@redhat.com> 0.78.3-1
+- Adding wget to requires (mmcgrath@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- since some of these are files and some are links, we'll want to ensure we hit
+  both of them (mmcgrath@redhat.com)
+- correcting jumbo type (mmcgrath@redhat.com)
+- Added node profile (mmcgrath@redhat.com)
+- Added node profile (mmcgrath@redhat.com)
+- Added arbitrary capacity planning (mmcgrath@redhat.com)
+
 * Thu Sep 01 2011 Dan McPherson <dmcphers@redhat.com> 0.78.2-1
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
   (mmcgrath@redhat.com)
