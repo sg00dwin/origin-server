@@ -62,23 +62,23 @@ function initialize {
     # import Libra node configuration
     if [ -f '/etc/libra/node.conf' ]
     then
-	. /etc/libra/node.conf
+	      . /etc/libra/node.conf
     elif [ -f 'node.conf' ]
     then
-	. node.conf
+	      . node.conf
     else
-	echo "node.conf not found.  Cannot continue" 1>&2
-	exit 3
+	      echo "node.conf not found.  Cannot continue" 1>&2
+	      exit 3
     fi
 
     if [ -f "/etc/libra/resource_limits.conf" ]
     then
-	. /etc/libra/resource_limits.conf
+	      . /etc/libra/resource_limits.conf
     fi
 
     if [ -z "$libra_dir" ]
     then
-	libra_dir=$DEFAULT_LIBRA_DIR
+	      libra_dir=$DEFAULT_LIBRA_DIR
     fi
 
     SCRIPTNAME=`basename $0`
@@ -117,13 +117,13 @@ function parse_options {
     # username is always required
     if ( [ -z "$username" ])
     then
-	print_help
+	      print_help
     fi
 
     # email and ssh_key are only needed for configure, not deconfigure
     if ( [ -z "$REVERT" ] && ([ -z "$email" ] || [ -z "$ssh_key" ]) )
     then
-	print_help
+	      print_help
     fi
 }
 
@@ -139,7 +139,7 @@ function homedir {
         echo $USERHOME
     else
         # remove duplicate slashes (/) and return the result
-	echo ${libra_dir}/${USERNAME} | tr -s '/'
+	      echo ${libra_dir}/${USERNAME} | tr -s '/'
     fi
 }
 
@@ -245,17 +245,15 @@ function enable_user_ssh_access {
     USERHOME=`homedir $USERNAME`
     SSHDIR=${USERHOME}/.ssh
 
+    CMDENTRY="command=\"/usr/bin/trap-user\",no-port-forwarding,no-X11-forwarding,no-agent-forwarding ssh-rsa $SSHKEY Libra-$USERNAME"
+
     ${NOOP} mkdir -p ${SSHDIR}
     ${NOOP} chmod 0750 ${SSHDIR}
     if [ -z "${NOOP}" ]
     then
-	cat <<EOF > ${SSHDIR}/authorized_keys
-command="/usr/bin/trap-user",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty ssh-rsa $SSHKEY Libra-$USERNAME
-EOF
+	      echo "$CMDENTRY" > ${SSHDIR}/authorized_keys
     else
-	echo "cat <<EOF > $SSHDIR/authorized_keys
-command=\\\"/usr/bin/trap-user\\\",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty ssh-rsa $SSHKEY Libra-$USERNAME
-EOF\""
+        echo "echo '$CMDENTRY' > ${SSHDIR}/authorized_keys"
     fi
     ${NOOP} chmod 0440 ${SSHDIR}/authorized_keys
     # Give force ssh key to not change
@@ -511,7 +509,7 @@ then
 
       if (service libra-tc status > /dev/null 2>&1)
       then
-	  service libra-tc startuser ${username} > /dev/null
+	      service libra-tc startuser ${username} > /dev/null
       fi
 
       enable_user_ssh_access $username "$ssh_key"
@@ -530,12 +528,12 @@ then
 else
     if (service libra-tc status ${username} > /dev/null 2>&1)
     then
-	service libra-tc stopuser ${username} > /dev/null
+	      service libra-tc stopuser ${username} > /dev/null
     fi
 
     if (service cgconfig status > /dev/null)
     then
-	service libra-cgroups stopuser ${username} > /dev/null
+	      service libra-cgroups stopuser ${username} > /dev/null
     fi
 
     remove_fs_quotas $username

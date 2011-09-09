@@ -4,7 +4,10 @@ body {
   margin: 0;
   padding: 0;
   background-color: $background-color;
-  min-width: 1437px;
+}
+
+body.home {
+  min-width: 52em;
 }
 
 /*
@@ -224,6 +227,7 @@ header.universal {
         font-family: Overpass, $base-font-family;
         font-size: .9em;
         text-decoration: none;
+        cursor: pointer;
       }
     
       .home & a.home,
@@ -366,14 +370,7 @@ footer.universal {
   }
   
   .close_button {
-    position: absolute;
-    top: 1.5em;
-    right: 1.5em;
-    
-    &:active {
-      outline: none;
-      border: none;
-    }
+    @include close_button;
   }
 }
 
@@ -392,26 +389,22 @@ footer.universal {
   display: block;
   
   .content {
-    width: 1437px;
+    width: 100%;
     height: 513px;
     overflow: hidden;
     background: url('../images/space-panda-ftw.png') no-repeat center;
     position: relative;
   }
-  header, a {
-    position: absolute;
-  }
   
   header {
-    top: 100px;
-    left: 600px;
+    padding: 105px 0 0 130px;
     text-align: center;
   }
   
   h1 {
     color: white;
     font-size: 30px;
-    line-height: 30px;
+    line-height: 36px;
     margin: 0;
     font-weight: normal;
     text-transform: uppercase;
@@ -421,10 +414,10 @@ footer.universal {
   
   h2 {
     color: white;
-    font-size: 20px;
+    font-size: 24px;
     font-weight: normal;
     font-family: Overpass, $base-font-family;
-    line-height: 20px;
+    line-height: 29px;
     text-transform: uppercase;
     margin: 0;
     @include text-shadow(black 0 2px 0);
@@ -432,13 +425,14 @@ footer.universal {
   }
   
   a.button {
-    top: 160px;
-    left:700px;
     font-size: 15px;
     background-color: #ede6cb;
     @include background-image(linear-gradient(top, #ede6cb, #ddce9b));
     color: #3b3924;
     @include text-shadow(white 0 0.15em 0);
+    position: relative;
+    left: 50%;
+    margin-top: 15px;
   }
   
 }
@@ -672,7 +666,7 @@ nav.service {
       width: 11em;
       float: left;
       font-family: Overpass, $base-font-family;
-      margin-top: 5.7em;
+      margin-top: 2.7em;
       font-size: 1.1em;
       
       ul {
@@ -870,8 +864,15 @@ li.captcha {
     right: 20%;
     z-index: 3000;
     text-align: center;
-    #spinner_text {
-      margin: auto;
+    a {
+      color: white;
+      text-decoration: underline;
+    }
+    a.close {
+      @include close_button;
+    }
+    #spinner-text {
+      margin: auto 3em;
     }
     #spinning {
       width: 50%;
@@ -904,10 +905,17 @@ li.captcha {
           color: white;
           text-decoration: none;
         }
+        figure { margin: 0;}
       }
     }
   }
 
+}
+
+.multiplebgs #spinner #spinning {
+  @include background-image(linear-gradient(left, black, rgba(0, 0, 0, 0), black), url('/app/images/spinner-bg.png'));
+  background-repeat: no-repeat, repeat-x;
+  background-position: center center, bottom center;
 }
 
 /* End dashboard page */

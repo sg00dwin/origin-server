@@ -17,11 +17,13 @@ fi
 
 redeploy_repo_dir.sh
 
+# Create a link for each file in user config to server standalone/config
 if [ -d ${OPENSHIFT_REPO_DIR}.openshift/config ]
 then
   for f in ${OPENSHIFT_REPO_DIR}.openshift/config/*
   do
     target=$(basename $f)
+    # Remove any target that is being overwritten
     if [ -e "${OPENSHIFT_APP_DIR}${OPENSHIFT_APP_TYPE}/standalone/configuration/$target" ]
     then
        echo "Removing existing $target"
@@ -30,6 +32,17 @@ then
     ln -s $f "${OPENSHIFT_APP_DIR}${OPENSHIFT_APP_TYPE}/standalone/configuration/"
   done
 fi
+# Now go through the standalone/configuration and remove any stale links from previous
+# deployments, https://bugzilla.redhat.com/show_bug.cgi?id=734380
+for f in "${OPENSHIFT_APP_DIR}${OPENSHIFT_APP_TYPE}/standalone/configuration"/*
+do
+    target=$(basename $f)
+    if [ ! -e $f ]
+    then
+        echo "Removing obsolete $target"
+        rm -rf $f
+    fi
+done
 
 if [ -f ${OPENSHIFT_REPO_DIR}pom.xml ] && ! $SKIP_MAVEN_BUILD
 then

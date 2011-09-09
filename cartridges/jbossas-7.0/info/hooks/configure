@@ -402,6 +402,8 @@ cat <<EOF > "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}.conf"
   DocumentRoot /var/www/html
   DefaultType None
 
+  ProxyPass /swydws/ http://$IP:18001/swydws/
+  ProxyPassReverse /swydws/ http://$IP:18001/swydws/
   ProxyPass / http://$IP:8080/
   ProxyPassReverse / http://$IP:8080/
 </VirtualHost>
@@ -413,6 +415,8 @@ cat <<EOF > "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}.conf"
 
 $(/bin/cat ${JBOSS_CARTRIDGE_ROOT}/info/configuration/node_ssl_template.conf)
 
+  ProxyPass /swydws/ http://$IP:18001/swydws/
+  ProxyPassReverse /swydws/ http://$IP:18001/swydws/
   ProxyPass / http://$IP:8080/
   ProxyPassReverse / http://$IP:8080/
 </VirtualHost>

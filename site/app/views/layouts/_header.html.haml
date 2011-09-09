@@ -48,17 +48,15 @@
         = link_to 'Cloud Services', express_path, :class => 'services'
       %li.link
         = link_to 'Community', 'https://www.redhat.com/openshift', :class => 'community'
-     
-      -if session[:login]
-        %li.user
-          = link_to 'Sign out', logout_path, :class => 'sign_out'
-        %li.user
-          = link_to "Greetings, #{session[:login]}!", dashboard_path, :class => 'greeting'
-          
-        
-       
-      -else
-        %li.user
-          = link_to 'Sign In', login_path, :class => 'sign_in'
+
+      -unless %w(login logout).include?(params[:controller])
+        -if session[:login]
+          %li.user
+            = link_to 'Sign out', logout_path, :class => 'sign_out'
+          %li.user
+            = link_to "Greetings, #{session[:login]}!", dashboard_path, :class => 'greeting'
+        -else
+          %li.user
+            %a.sign_in Sign In
       
 = yield :extra_nav if content_for? :extra_nav

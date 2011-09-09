@@ -1,4 +1,5 @@
 $ ->
+  domain_action = if ($ '#domain_form form').hasClass 'update' then 'update' else 'create'
   domain_form_container = $ '#domain_form'
   domain_update_form = $ 'form.update'
   domain_form_replacement = ''
@@ -6,6 +7,8 @@ $ ->
   app_form = $ '#app_form'
   submit_buttons = $ 'input.create'
   verification_max_tries = 5
+  multibgs = ($ 'html').hasClass 'multiplebgs'
+
   promo_text =
     php: """
       In the meantime, check out these videos
@@ -13,14 +16,14 @@ $ ->
       <ul>
         <li>
           <figure>
-            <a href="http://youtu.be/SabOGub2jiE">
+            <a href="http://youtu.be/SabOGub2jiE" target="_blank">
               <img src="/app/images/video_stills/mediawiki.png" alt="Mediawiki video" />
               <figcaption>Getting started with MediaWiki</figcaption>
             </a>
           </figure>
         </li>
         <li>
-          <a href="http://youtu.be/6TSxAE2K3QM">
+          <a href="http://youtu.be/6TSxAE2K3QM" target="_blank">
             <figure>
               <img src="/app/images/video_stills/drupal.png" alt="Drupal video" />
               <figcaption>Getting started with Drupal</figcaption>
@@ -30,13 +33,13 @@ $ ->
       </ul>
     """
     wsgi: """
-      In the meantime, check out these blog posts for steps to deploy great python framework on your new OpenShift Python app:
+      In the meantime, check out these blog posts on how to deploy popular python frameworks on your new OpenShift Python app:
       <ul>
         <li>
-          <a href="https://www.redhat.com/openshift/blogs/deploying-a-pyramid-application-in-a-virtual-python-wsgi-environment-on-red-hat-openshift-expr">Deploy a Pyramid app</a>
+          <a href="https://www.redhat.com/openshift/blogs/deploying-a-pyramid-application-in-a-virtual-python-wsgi-environment-on-red-hat-openshift-expr" target="_blank">Deploy a Pyramid app</a>
         </li>
         <li>
-          <a href="https://www.redhat.com/openshift/blogs/deploying-turbogears2-python-web-framework-using-express">Deploy the TurboGears2 framework</a>
+          <a href="https://www.redhat.com/openshift/blogs/deploying-turbogears2-python-web-framework-using-express" target="_blank">Deploy the TurboGears2 framework</a>
         </li>
       </ul>
     """
@@ -45,16 +48,16 @@ $ ->
       popular Ruby frameworks on OpenShift:
       <ul>
           <li>
-            <a href="https://www.redhat.com/openshift/kb/kb-e1005-ruby-on-rails-express-quickstart-guide">Ruby on Rails quickstart guide</a>
+            <a href="https://www.redhat.com/openshift/kb/kb-e1005-ruby-on-rails-express-quickstart-guide" target="_blank">Ruby on Rails quickstart guide</a>
           </li>
           <li>
-            <a href="https://www.redhat.com/openshift/kb/kb-e1009-deploying-a-sinatra-application-on-openshift-express">Deploy a Sinatra app</a>
+            <a href="https://www.redhat.com/openshift/kb/kb-e1009-deploying-a-sinatra-application-on-openshift-express" target="_blank">Deploy a Sinatra app</a>
           </li>
       </ul>
       
     """
     perl: """
-      In the meantime, check out <a href="https://www.redhat.com/openshift/kb/kb-e1013-how-to-onboard-a-perl-application">this article</a> to get started with your new OpenShift Perl app.
+      In the meantime, check out <a href="https://www.redhat.com/openshift/kb/kb-e1013-how-to-onboard-a-perl-application" target="_blank">this article</a> to get started with your new OpenShift Perl app.
     """
     jbossas: """
       In the meantime, check out these videos on getting started using Java
@@ -62,7 +65,7 @@ $ ->
       <ul>
           <li>
             <figure>
-              <a href="http://vimeo.com/27546106">
+              <a href="http://vimeo.com/27546106" target="_blank">
                 <img src="/app/images/video_stills/play.png" alt="Play framework video" />
                 <figcaption>Using the Play framework</figcaption>
               </a>
@@ -70,7 +73,7 @@ $ ->
           </li>
           <li>
             <figure>
-              <a href="http://vimeo.com/27502795">
+              <a href="http://vimeo.com/27502795" target="_blank">
                 <img src="/app/images/video_stills/spring.png" alt="Spring framework video" />
                 <figcaption>Running a Spring application</figcaption>
               </a>
@@ -78,6 +81,7 @@ $ ->
           </li>
       </ul>
     """
+    jenkins: ''
 
   
   # Setup "spinner"
@@ -89,37 +93,49 @@ $ ->
       <div id="spinning"></div>
     </div>
   """
+  
   spinner = $ '#spinner'
   spinner_text = $ '#spinner-text'
   spinny = $ '#spinning'
+  spinner_closebtn = $ '.close', spinner
   spinner.hide()
   spin_x = 0
   interval = ''
+  timeout = ''
   
   show_spinner = (show_text = 'Working...') ->
+    spinner.removeClass 'stop-spinning'
     spinny.css 'background-position', '0px bottom'
-    animate_spinner()
+    start_spinner_animation()
     spinner_text.text show_text
     spinner.show()
   
   close_spinner = (closing_text = false, time_to_close = 5000) ->
     if not closing_text
+      clearTimeout timeout
       stop_spinner_animation()
       spinner.hide()
     else
+      clearTimeout timeout
       spinner.addClass 'stop-spinning'
       spinner_text.html closing_text
-      setTimeout ( ->
+      timeout = setTimeout ( ->
         stop_spinner_animation()
         spinner.hide()
         spinner.removeClass 'stop-spinning'
       ), time_to_close
   
-  animate_spinner = ->
-    interval = setInterval ( ->
-      spin_x += 5
-      spinny.css 'background-position', "#{spin_x}px bottom"
-    ), 50
+  start_spinner_animation = ->
+    if multibgs
+      interval = setInterval ( ->
+        spin_x += 5
+        spinny.css 'background-position': "center center, #{spin_x}px bottom"
+      ), 50
+    else
+      interval = setInterval ( ->
+        spin_x += 5
+        spinny.css 'background-position': "#{spin_x}px bottom"
+      ), 50
   
   stop_spinner_animation = ->
     spin_x = 0
@@ -152,10 +168,10 @@ $ ->
     setup_domain_update_form()
 
   update_values = ->
-    namespace = ($ '#express_domain_namespace').val()
-    ssh = (($ '#express_domain_ssh').val().slice 0, 20) + '...'
-    ($ '#show_namespace').text namespace
-    ($ '#show_ssh').text ssh
+    ns = if namespace? namespace else ($ '#express_domain_namespace').val()
+    sh = if ssh? ssh else ($ '#express_domain_ssh').val()
+    ($ '#show_namespace').text ns
+    ($ '#show_ssh').text sh
 
   toggle_domain_update_form = ->
     if domain_update_form.hasClass 'hidden'
@@ -168,6 +184,7 @@ $ ->
       domain_update_form.hide()
       domain_form_replacement.show()
   
+  ###
   verify_app = (app_url) ->
     sleep_time = 1
     found_app = false
@@ -212,12 +229,18 @@ $ ->
       
     look_for_app()
     
+  ###
   
   # Event handling
   
   # Show spinners on form submission
+  spinner_closebtn.live 'click', (event) ->
+    close_spinner '', 100
+  
   ($ 'input.create', domain_form_container).live 'click', (event) ->
-    show_spinner 'Updating your domain...'
+    switch domain_action
+      when 'update' then show_spinner 'Updating your domain...'
+      when 'create' then show_spinner 'Creating your domain...'
     
   ($ 'input.create', app_form).live 'click', (event) ->
     show_spinner 'Creating your app...'
@@ -231,8 +254,12 @@ $ ->
     
   domain_edit_button.live 'click', toggle_domain_update_form
 
+  app_form.live 'submission_returned', (event) ->
+    close_spinner()
+
   app_form.live 'successful_submission', (event) ->
     close_spinner """
+      
       <p>
         <em>
           Depending on where you live, it may take up to 15 minutes for your app to be live.
@@ -241,6 +268,9 @@ $ ->
       <p>
         #{promo_text[cartridge]}
       </p>
-    """, 15000
+      <a href="#" class="close" title = "Close this dialog">
+        <img src = "/app/images/close_button.png">
+      </a>
+    """, 600000
     #spinner.text 'Verifying your app is available...'
     #verify_app(current_app_url)

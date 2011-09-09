@@ -20,5 +20,9 @@ else apps.append( '<%= escape_javascript table %>' );
 app_form.remove(); //Remove app form - can't create any more apps
 <%
   end
+else
+%>
+  app_form.trigger('submission_returned')
+<%
 end
 %>

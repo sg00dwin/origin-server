@@ -35,7 +35,11 @@ logging_log_file(libra_log_t)
 #
 # libra standard local policy
 #
+corenet_tcp_connect_mssql_port(libra_t)
 corenet_tcp_connect_mysqld_port(libra_t)
+corenet_tcp_connect_postgresql_port(libra_t)
+corenet_tcp_connect_git_port(libra_t)
+corenet_tcp_connect_oracle_port(libra_t)
 corenet_tcp_connect_http_port(libra_t)
 corenet_tcp_connect_ftp_port(libra_t)
 corenet_tcp_connect_ssh_port(libra_t)
@@ -48,6 +52,8 @@ corenet_udp_bind_generic_port(libra_t)
 corenet_tcp_bind_jboss_management_port(libra_t)
 
 sendmail_domtrans(libra_t)
+
+ssh_exec(libra_t)
 
 ########################################
 #
@@ -121,10 +127,13 @@ init_dontaudit_read_utmp(libra_domain)
 
 miscfiles_read_localization(libra_domain)
 miscfiles_read_fonts(libra_domain)
+miscfiles_read_man_pages(libra_domain)
 
 term_dontaudit_search_ptys(libra_domain)
 
 userdom_dontaudit_search_admin_dir(libra_domain)
+
+application_exec(libra_domain)
 
 apache_exec(libra_domain)
 apache_exec_modules(libra_domain)

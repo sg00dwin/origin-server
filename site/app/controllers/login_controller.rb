@@ -1,4 +1,7 @@
 require 'pp'
+require 'net/http'
+require 'net/https'
+require 'uri'
 
 class LoginController < ApplicationController
 
@@ -13,27 +16,22 @@ class LoginController < ApplicationController
   end
 
   def show
-    referrer_url = request.referer ? request.referer : '/'
-    referrer = URI.parse(referrer_url)
-    remote_request = referrer.host && request.host != referrer.host
-    if remote_request
-      Rails.logger.debug "Logging out user referred from: #{referrer_url}"
-      reset_sso
+    remote_request = false
+    referrer = nil
+    if request.referer && request.referer != '/'
+      referrer = URI.parse(request.referer)
+      Rails.logger.debug "Referrer: #{referrer.to_s}"
+      remote_request = remote_request?(referrer)
+      if remote_request
+        Rails.logger.debug "Logging out user referred from: #{referrer.to_s}"
+        reset_sso
+      end
     end
     @register_url = @register_url ? @register_url : user_new_express_url
     if params[:redirectUrl]
       session[:login_workflow] = params[:redirectUrl]
-    end
-    if !workflow && referrer_url != '/' && !(referrer.path =~ /^\/app\/user/) && !(referrer.path =~ /^\/app\/login/)
-      if remote_request
-        session[:login_workflow] = referrer_url
-      else
-        if request.protocol == 'http://'
-          session[:login_workflow] = 'https://' + request.url[request.protocol.length..-1]
-        else
-          session[:login_workflow] = referrer_url
-        end
-      end
+    else
+      setup_login_workflow(referrer, remote_request)
     end
     @redirectUrl = root_url
     @errorUrl = login_error_url
@@ -57,6 +55,62 @@ class LoginController < ApplicationController
 
     Rails.logger.debug "Session workflow in LoginController#create: #{workflow}"
     Rails.logger.debug "Redirecting to home#index"    
-    redirect_to root_path
+    redirect_to params['redirectUrl']
+  end
+
+  def ajax
+    # Keep track of response information
+    responseText = {}
+
+    # Do the remote login
+    uri = URI.parse( Rails.configuration.login )
+
+    # Create the HTTPS object
+    https = Net::HTTP.new( uri.host, uri.port )
+    https.use_ssl = true
+    # TODO: Need to figure out where CAs are so we can do something like: 
+    #   http://goo.gl/QLFFC
+    https.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+    # Make the request
+    req = Net::HTTP::Post.new( uri.path )
+    req.set_form_data({:login => params[:login], :password => params[:password]})
+
+    # Create the request
+    res = https.start{ |http| http.request(req) }
+
+    Rails.logger.debug "Status received: #{res.code}"
+
+    case res
+      when Net::HTTPSuccess, Net::HTTPRedirection
+        # Decode the JSON response
+        json = ActiveSupport::JSON::decode(res.body)
+
+        # Set cookie and session information
+        Rails.logger.debug "Cookies sent: #{YAML.dump res.header['set-cookie']}"
+        rh_sso = res.header['set-cookie'].split('; ')[0].split('=')[1]
+        cookies[:rh_sso] = {
+          :secure => true, 
+          :domain => '.redhat.com', 
+          :path => '/',
+          :value => rh_sso
+        }
+        session[:ticket] = rh_sso
+
+        responseText[:redirectUrl] = root_url
+      when Net::HTTPUnauthorized
+        Rails.logger.debug 'Unauthorized'
+        responseText[:error] = 'Invalid username or password'
+      else
+        Rails.logger.debug "Unknown error: #{res.code}"
+        responseText[:error] = 'An unknown error occurred'
+    end
+
+    respond_to do |format|
+      format.js do
+        render :status => res.code, :json => responseText
+      end
+    end
+
   end
 end

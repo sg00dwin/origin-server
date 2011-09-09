@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system client tools
 Name:          rhc
-Version:       0.76.6
+Version:       0.77.2
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       MIT
@@ -99,6 +99,15 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_sysconfdir}/openshift/express.conf
 
 %changelog
+* Fri Sep 09 2011 Matt Hicks <mhicks@redhat.com> 0.77.2-1
+- No more dev here for express client tools (jimjag@redhat.com)
+
+* Thu Sep 01 2011 Dan McPherson <dmcphers@redhat.com> 0.77.1-1
+- bump spec numbers (dmcphers@redhat.com)
+
+* Wed Aug 31 2011 Dan McPherson <dmcphers@redhat.com> 0.76.7-1
+- bz726646 patch attempt #2 (markllama@redhat.com)
+
 * Mon Aug 29 2011 Dan McPherson <dmcphers@redhat.com> 0.76.6-1
 - Revert "Revert "reverse patched to removed commit
   d34abaacc98e5b8f5387eff71064c4616a61f24b"" (markllama@gmail.com)

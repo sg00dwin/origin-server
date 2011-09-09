@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.77.9
+Version:       0.78.3
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -22,6 +22,7 @@ Requires:      rubygem-open4
 Requires:      rubygem-parseconfig
 Requires:      quota
 Requires:      lsof
+Requires:      wget
 Requires(post):   /usr/sbin/semodule
 Requires(post):   /usr/sbin/semanage
 Requires(postun): /usr/sbin/semodule
@@ -151,12 +152,43 @@ fi
 %attr(0750,-,-) %{_bindir}/rhc-node-application
 %attr(0755,-,-) %{_bindir}/rhcsh
 %attr(0640,-,-) %config(noreplace) %{_sysconfdir}/libra/node.conf
-%attr(0640,-,-) %config(noreplace) %{_sysconfdir}/libra/resource_limits.conf
+%attr(0640,-,-) %config(noreplace) %{_sysconfdir}/libra/resource_limits.con*
 %attr(0750,-,-) %config(noreplace) %{_sysconfdir}/cron.daily/libra_tmpwatch.sh
 %attr(0750,root,root) %config(noreplace) %{_sysconfdir}/httpd/conf.d/000000_default.conf
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Fri Sep 09 2011 Matt Hicks <mhicks@redhat.com> 0.78.3-1
+- Adding wget to requires (mmcgrath@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- since some of these are files and some are links, we'll want to ensure we hit
+  both of them (mmcgrath@redhat.com)
+- correcting jumbo type (mmcgrath@redhat.com)
+- Added node profile (mmcgrath@redhat.com)
+- Added node profile (mmcgrath@redhat.com)
+- Added arbitrary capacity planning (mmcgrath@redhat.com)
+
+* Thu Sep 01 2011 Dan McPherson <dmcphers@redhat.com> 0.78.2-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- changed max_apps_multiplier to max_apps (mmcgrath@redhat.com)
+
+* Thu Sep 01 2011 Dan McPherson <dmcphers@redhat.com> 0.78.1-1
+- Adding max apps multiplier (mmcgrath@redhat.com)
+- Adding proper settings for new resource limits (mmcgrath@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- bump spec numbers (dmcphers@redhat.com)
+- Altering how the default resource limit is determined (mmcgrath@redhat.com)
+- adding new resource limits to spec file (mmcgrath@redhat.com)
+- add system ssh key support along with the beginning of multiple ssh key
+  support (dmcphers@redhat.com)
+- Added new resrouce limit types (mmcgrath@redhat.com)
+
+* Wed Aug 31 2011 Dan McPherson <dmcphers@redhat.com> 0.77.10-1
+- bz726646 patch attempt #2 (markllama@redhat.com)
+
 * Mon Aug 29 2011 Dan McPherson <dmcphers@redhat.com> 0.77.9-1
 - Revert "Revert "reverse patched to removed commit
   d34abaacc98e5b8f5387eff71064c4616a61f24b"" (markllama@gmail.com)

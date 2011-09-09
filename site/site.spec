@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.77.8
+Version:   0.78.2
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -67,6 +67,51 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Fri Sep 09 2011 Matt Hicks <mhicks@redhat.com> 0.78.2-1
+- Fixed form_tag to unbreak HAML (fotios@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (fotios@redhat.com)
+- Fix haml error in sign-in dialog (edirsh@redhat.com)
+- Fixed warnings in control_panel_helper_test (fotios@redhat.com)
+- Added funcionality for AJAX login form (fotios@redhat.com)
+- Enabled AJAX login form with no logic (fotios@redhat.com)
+- Bug 735280 (edirsh@redhat.com)
+- Change spinner text to accurately reflect domain action (edirsh@redhat.com)
+- Add close button to app creation promo dialog (edirsh@redhat.com)
+- Add unauthorized paths and remove unused authorized paths from login flows
+  test (edirsh@redhat.com)
+- Further improvements to main graphic styling (edirsh@redhat.com)
+
+* Thu Sep 01 2011 Dan McPherson <dmcphers@redhat.com> 0.78.1-1
+- bump spec numbers (dmcphers@redhat.com)
+- Changed login#create to better mimic streamline. Added tests for workflow
+  integration (fotios@redhat.com)
+- Add max_express_apps to remaining environment config files
+  (edirsh@redhat.com)
+- Small style improvements (edirsh@redhat.com)
+
+* Wed Aug 31 2011 Dan McPherson <dmcphers@redhat.com> 0.77.11-1
+- default to /app/express if nothing else is chosen (dmcphers@redhat.com)
+- minor syntax change (dmcphers@redhat.com)
+- minor rework of login logic (dmcphers@redhat.com)
+- Improve styling of opening text on home page (edirsh@redhat.com)
+- Bug 734638 (edirsh@redhat.com)
+- Bug 734644 (edirsh@redhat.com)
+
+* Tue Aug 30 2011 Dan McPherson <dmcphers@redhat.com> 0.77.10-1
+- couple renames (dmcphers@redhat.com)
+- login cleanup (dmcphers@redhat.com)
+- Bug 734370 - Change url of applications after domain is updated
+  (edirsh@redhat.com)
+- Bug 734342; Add max apps config variable to streamline-aws environment
+  (edirsh@redhat.com)
+
+* Tue Aug 30 2011 Dan McPherson <dmcphers@redhat.com> 0.77.9-1
+- error handling and test cases (dmcphers@redhat.com)
+- change wording (dmcphers@redhat.com)
+- get test cases working (dmcphers@redhat.com)
+- get test cases working (dmcphers@redhat.com)
+
 * Mon Aug 29 2011 Dan McPherson <dmcphers@redhat.com> 0.77.8-1
 - get test cases running (dmcphers@redhat.com)
 
