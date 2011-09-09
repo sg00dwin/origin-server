@@ -18,7 +18,7 @@ DEFAULT_PACKAGES="rhc-common rhc-node rhc-selinux
                   rhc-cartridge-rack-1.1 
                   rhc-cartridge-wsgi-3.2
                   rhc-cartridge-php-5.3"
-DEFAULT_SERVICES="qpidd mcollective cgconfig cgred httpd"
+DEFAULT_SERVICES="mcollective cgconfig cgred httpd"
 DEFAULT_MINSEM=512
 
 #
