@@ -18,5 +18,6 @@
 module Cloud
   module SDK
     VERSION = '0.1'
+    SDK_PATH = File.dirname(__FILE__)
   end
 end

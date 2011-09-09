@@ -15,32 +15,35 @@
 # limitations under the License.
 #++
 
-
 def usage
     puts <<USAGE
 == Synopsis
 
-cdk-app-destroy: Destroys an application.
+cdk-app-destroy: Deletes a new application. 
   This command must be run as root.
 
 == Usage
 
-cdk-app-destroy UUID
+cdk-app-destroy [--with-uuid UUID] [--with-ssh-key KEY]
 
 Options:
 -h|--help:
    Prints this message
-   
+
 UUID: Unique identifier for the application
+NAME: The name of the application to create
 
 USAGE
 end
 
 require 'cloud-sdk'
 opts = GetoptLong.new(
+    ["--with-uuid",        "-c", GetoptLong::OPTIONAL_ARGUMENT],
+    ["--with-ssh-key",     "-s", GetoptLong::OPTIONAL_ARGUMENT],
+    ["--dry-run",          "-n", GetoptLong::NO_ARGUMENT],
     ["--porcelain",        "-q", GetoptLong::NO_ARGUMENT],
     ["--debug",            "-d", GetoptLong::NO_ARGUMENT],
-    ["--help",             "-h", GetoptLong::NO_ARGUMENT]
+    ["--help",             "-?", GetoptLong::NO_ARGUMENT]
 )
 
 args = {}
@@ -51,6 +54,23 @@ rescue GetoptLong::Error => e
     exit -100
 end
 
+uuid = args['--with--uuid']
+ssh_key = args['--with--ssh-key']
+name = args['--named']
+$dry_run = true if args['--dry-run']
 $cdk_debug = true if args['--debug']
 $porcelin = args['--porcelain'] ? true : false
-uuid = ARGV.shift
+
+cmd = File.join(Cloud::SDK::SDK_PATH, "legacy/deconfigure")
+cmd += " -c #{uuid} " if uuid
+cmd += " -s #{ssh_key} " if ssh_key
+cmd += " -n " if $dry_run
+cmd += " -d " if $cdk_debug
+
+print cmd
+
+out,err,rc = Cloud::SDK::Utils::ShellExec.shellCmd(cmd)
+
+$stderr.puts(err)
+$stdout.puts(out)
+exit(rc)

@@ -24,7 +24,7 @@ cdk-app-create: Creates a new application.
 
 == Usage
 
-cdk-app-create [UUID] [--named NAME] [--with-capabilities CAPABILITIES]
+cdk-app-create [--with-uuid UUID] [--with-ssh-key KEY] [--named NAME]
 
 Options:
 -h|--help:
@@ -38,11 +38,13 @@ end
 
 require 'cloud-sdk'
 opts = GetoptLong.new(
+    ["--with-uuid",        "-c", GetoptLong::OPTIONAL_ARGUMENT],
+    ["--with-ssh-key",     "-s", GetoptLong::OPTIONAL_ARGUMENT],
+    ["--dry-run",          "-n", GetoptLong::NO_ARGUMENT],
     ["--named",                  GetoptLong::OPTIONAL_ARGUMENT],
-    ["--with-capabilities",      GetoptLong::OPTIONAL_ARGUMENT],
     ["--porcelain",        "-q", GetoptLong::NO_ARGUMENT],
     ["--debug",            "-d", GetoptLong::NO_ARGUMENT],
-    ["--help",             "-h", GetoptLong::NO_ARGUMENT]
+    ["--help",             "-?", GetoptLong::NO_ARGUMENT]
 )
 
 args = {}
@@ -53,8 +55,23 @@ rescue GetoptLong::Error => e
     exit -100
 end
 
+uuid = args['--with--uuid']
+ssh_key = args['--with--ssh-key']
+name = args['--named']
+$dry_run = true if args['--dry-run']
 $cdk_debug = true if args['--debug']
 $porcelin = args['--porcelain'] ? true : false
-uuid = ARGV.shift
-name = args['--named']
-required_capabilities = args['--with-capabilities']
+
+cmd = File.join(Cloud::SDK::SDK_PATH, "legacy/configure")
+cmd += " -c #{uuid} " if uuid
+cmd += " -s #{ssh_key} " if ssh_key
+cmd += " -n " if $dry_run
+cmd += " -d " if $cdk_debug
+
+print cmd
+
+out,err,rc = Cloud::SDK::Utils::ShellExec.shellCmd(cmd)
+
+$stderr.puts(err)
+$stdout.puts(out)
+exit(rc)
