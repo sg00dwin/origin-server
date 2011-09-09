@@ -74,7 +74,7 @@ class Validation < Test::Unit::TestCase
     opts = ''
     opts << " --cookie rh_sso=#{@ticket}" if logged_in 
     opts << ' -L' if redirect
-    `curl -k#{opts} #{url}`
+    `curl -s -k#{opts} #{url}`
   end
   
   def get_elements(elem, url, logged_in = false)
