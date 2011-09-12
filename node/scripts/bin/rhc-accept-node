@@ -13,12 +13,12 @@ RESOURCE_LIMITS_FILE=${RESOURCE_LIMITS_FILE:=${LIBRA_CONF_DIR}/resource_limits.c
 #
 # Control variables.  Override for testing
 #
-DEFAULT_SEBOOL_LIST="httpd_can_network_relay:on"
+DEFAULT_SEBOOL_LIST="httpd_can_network_connect:on"
 DEFAULT_PACKAGES="rhc-common rhc-node rhc-selinux 
                   rhc-cartridge-rack-1.1 
                   rhc-cartridge-wsgi-3.2
                   rhc-cartridge-php-5.3"
-DEFAULT_SERVICES="qpidd mcollective cgconfig cgred httpd"
+DEFAULT_SERVICES="mcollective cgconfig cgred httpd"
 DEFAULT_MINSEM=512
 
 #
@@ -61,6 +61,12 @@ function verbose() {
     fi
 }
 
+function fail() {
+    # MESSAGE=$*
+    echo "FAIL: $*" >&2
+    STATUS=$(($STATUS + 1))
+}
+
 function load_node_conf() {
     verbose loading node configuration file $NODE_CONF_FILE
     if [ ! -f $NODE_CONF_FILE ]
@@ -73,21 +79,18 @@ function load_node_conf() {
 
     if [ -z "$libra_dir" ]
     then
-	echo "FAIL: libra_dir is not set in the node configuration" >&1
-	STATUS=$(($STATUS + 1))
+	fail "libra_dir is not set in the node configuration"
     fi
 
     if [ ! -d "$libra_dir" ]
     then
-	echo "FAIL: libra_dir does not exist or is not a directory: $libra_dir" >&2
-	STATUS=$(($STATUS + 1))	
+	fail "libra_dir does not exist or is not a directory: $libra_dir"
     fi
 
     verbose loading resource limit file $RESOURCE_LIMITS_FILE
     if [ ! -f "$RESOURCE_LIMITS_FILE" ]
     then
-	echo "FAIL: No resource limits file: $RESOURCE_LIMITS_FILE" >&2
-	STATUS=$(($STATUS + 1))	
+	fail "No resource limits file: $RESOURCE_LIMITS_FILE"
     fi
 
     . $RESOURCE_LIMITS_FILE
@@ -101,8 +104,7 @@ function check_selinux() {
     SELINUX=`getenforce`
     if [ "$SELINUX"  != "Enforcing" ]
     then
-	echo "FAIL: selinux is not enabled" >&2
-	STATUS=$(($STATUS + 1))
+	fail "selinux is not enabled"
     else
 
     #
@@ -112,8 +114,7 @@ function check_selinux() {
 	POLICY=`semodule -l | grep libra`
 	if [ -z "$POLICY" ]
 	then
-	    echo "FAIL: selinux libra policy is not loaded" >&2
-	    STATUS=$(($STATUS + 1))
+	    fail "selinux libra policy is not loaded"
         fi  
     #
     # Check selinux booleans
@@ -126,8 +127,7 @@ function check_selinux() {
 	    RESULT=`getsebool $NAME`
 	    if [ "$RESULT" != "$NAME --> $VALUE" ]
             then
-		echo "FAIL: selinux boolean $NAME should be $VALUE" >&2
-		STATUS=$(($STATUS + 1))
+		fail "selinux boolean $NAME should be $VALUE"
             fi
 	done
     #
@@ -136,8 +136,7 @@ function check_selinux() {
 	RELABELS=`restorecon -n -v $libra_dir`
         if [ "$RELABELS" != "" ]
         then
-            echo "FAIL: invalid selinux labels in LIBRA_DIR $libra_dir" >&2
-            STATUS=$(($STATUS + 1))
+            fail "invalid selinux labels in LIBRA_DIR $libra_dir"
         fi
     fi
 }
@@ -152,8 +151,7 @@ function check_packages() {
 	PKGSTATUS=`rpm -q $PKGNAME`
 	if echo $PKGSTATUS | grep "not installed" >/dev/null
 	then
-	    echo "FAIL: package $PKGNAME is not installed" >&2
-	    STATUS=$(($STATUS + 1))
+	    fail "package $PKGNAME is not installed"
 	fi 
     done
 }
@@ -168,8 +166,7 @@ function check_services() {
 	service $SVCNAME status > /dev/null 2>&1
 	if [ $? != 0 ]
 	then
-	    echo "FAIL: service $SVCNAME not running"
-	    STATUS=$(($STATUS + 1))
+	    fail "service $SVCNAME not running"
 	fi
     done
 }
@@ -183,8 +180,7 @@ function check_semaphores() {
     SEMCOUNT=`sysctl kernel.sem | cut -f4`
     if [ "$SEMCOUNT" -lt "$MINSEM" ]
     then
-	echo "FAIL: kernel.sem semaphores too low: $SEMCOUNT < $MINSEM" >&2
-	STATUS=$(($STATUS + 1))
+	fail "kernel.sem semaphores too low: $SEMCOUNT < $MINSEM"
     fi
 }
 
@@ -198,30 +194,26 @@ function check_cgroup_config() {
     LIBRALINES=`lscgroup cpu,cpuacct,memory,freezer,net_cls:/libra 2>/dev/null | wc -l`
     if [ "$LIBRALINES" -lt 1 ]
     then
-	echo "FAIL: lscgroup /libra path does not exist"
-	STATUS=$(($STATUS + 1))
+	fail "lscgroup /libra path does not exist"
 	CGROUP_PASS="false"
     fi
 
     verbose checking presense of /cgroup
     if [ ! -d /cgroup ]
     then
-	echo "FAIL: cgroup root /cgroup directory does not exist"
-	STATUS=$(($STATUS + 1))
+	fail "cgroup root /cgroup directory does not exist"
 	CGROUP_PASS="false"
     else
 	verbose checking presence of /cgroup/all
 	if [ ! -d /cgroup/all ]
 	then
-	    echo "FAIL: cgroup /cgroup/all directory does not exist"
-	    STATUS=$(($STATUS + 1))	
+	    fail "cgroup /cgroup/all directory does not exist"
 	    CGROUP_PASS="false"
 	else
 	    verbose checking presence of /cgroup/all/libra
 	    if [ ! -d /cgroup/all/libra ]
 	    then
-		echo "FAIL: libra cgroup /cgroup/all/libra directory does not exist"
-		STATUS=$(($STATUS + 1))	
+		fail "libra cgroup /cgroup/all/libra directory does not exist"
 		CGROUP_PASS="false"
 	    fi
 	fi
@@ -238,8 +230,7 @@ function check_tc_config() {
     tc qdisc show dev eth0 | grep "$QDISCRESPONSE" >/dev/null
     if [ $? -ne 0 ]
     then
-	echo "FAIL: tc htb qdisc not configured"
-	STATUS=$(($STATUS + 1))
+	fail "tc htb qdisc not configured"
 	TC_PASS="false"
     else
 	verbose checking for cgroup filter
@@ -247,8 +238,7 @@ function check_tc_config() {
 	FILTERCOUNT=`tc filter show dev eth0 | grep 'cgroup handle' | sort -u | wc -l`
 	if [ "$FILTERCOUNT" -lt 1 ]
         then
-	    echo "FAIL: no cgroup filter configured"
-	    STATUS=$(($STATUS + 1))
+	    fail "no cgroup filter configured"
 	    TC_PASS="false"
 	fi
 
@@ -257,8 +247,7 @@ function check_tc_config() {
 	CLASSCOUNT=`tc class show dev eth0 | grep 'class htb' | wc -l`
 	if [ "$CLASSCOUNT" -lt 1 ]
 	then
-	    echo "FAIL: no htb classes configured"
-	    STATUS=$(($STATUS + 1))
+	    fail "no htb classes configured"
 	    TC_PASS="false"
 	fi
     fi
@@ -271,8 +260,7 @@ function check_tc_config() {
 # Determine where the file system containing the users is mounted
 function libra_device() {
     # LIBRA_DIR=$1
-    LIBRA_DIR=$(echo $1 | sed -e 's/\/$//')    # Remove the trailing slash
-    mount | grep $LIBRA_DIR | tail -1 | cut -d ' ' -f 1
+    df -P -k $1 | tail -1 | cut -d' ' -f1
 }
 
 function libra_mountpoint() {
@@ -287,9 +275,7 @@ function check_quotas() {
     QUOTASTAT=`quotaon -u -p $LIBRA_MOUNTPOINT 2>&1`
     if [ "$QUOTASTAT" != "user quota on $LIBRA_MOUNTPOINT ($LIBRA_DEVICE) is on" ]
     then
-	echo "FAIL: quotas are not enabled on $LIBRA_MOUNTPOINT ($LIBRA_DEVICE)" >&2
-	STATUS=$(($STATUS + 1))
-	
+	fail "quotas are not enabled on $LIBRA_MOUNTPOINT ($LIBRA_DEVICE)"
     fi
 
     QUOTA_DB_FILE=$LIBRA_MOUNTPOINT/aquota.user
@@ -299,12 +285,10 @@ function check_quotas() {
 	QUOTA_DB_TYPE=`secon -f $QUOTA_DB_FILE | grep type:`
 	if echo $QUOTA_DB_TYPE | grep -v 'quota_db_t' >/dev/null
 	then
-	    echo "FAIL: quota db file: selinux type is incorrect: $QUOTA_DB_TYPE"
-	    STATUS=$(($STATUS + 1))
+	    fail "quota db file: selinux type is incorrect: $QUOTA_DB_TYPE"
 	fi
     else
-	echo "FAIL: quota db file $QUOTA_DB_FILE does not exist" >&2
-	STATUS=$(($STATUS + 1))
+	fail "quota db file $QUOTA_DB_FILE does not exist"
     fi
 
 }
@@ -315,7 +299,7 @@ function libra_users() {
 
 function homedir() {
     # USERNAME=$1
-    `grep "^$1" /etc/passwd | cut -d: -f 6`
+    grep "^$1" /etc/passwd | cut -d: -f 6
 }
 
 function uid() {
@@ -338,6 +322,7 @@ function check_users() {
     verbose checking `libra_users | wc -w` user accounts
     for USERNAME in `libra_users`
     do
+	check_home_dir $USERNAME
 	check_user_limits $USERNAME
 	check_user_cgroup $USERNAME
 	check_user_tc $USERNAME
@@ -348,13 +333,21 @@ function check_users() {
 LIMITS_CONF_DIR=${LIMITS_CONF_DIR:=/etc/security/limits.d}
 #LIMITS_MAP="nproc:u"
 
+function check_home_dir() {
+    USERNAME=$1
+    HOME=`homedir $USERNAME`
+    if [ ! -d "$HOME" ]
+    then
+	fail "user $USERNAME does not have a home directory $HOME"
+    fi
+}
+
 function check_user_limits() {
     # USERNAME=$1
     LIMITS_CONF_FILE=$LIMITS_CONF_DIR/84-${1}.conf
     if [ ! -f "$LIMITS_CONF_FILE" ]
     then
-	echo "FAIL: user $1 does not have a PAM limits file" >&2
-	STATUS=$(($STATUS + 1))
+	fail "user $1 does not have a PAM limits file"
     fi
 
     #LIMITS=`set | grep ^limits_`
@@ -378,8 +371,7 @@ function check_user_cgroup() {
     USER_CGROUP_DIR=$USER_CGROUP_ROOT/$1
     if [ ! -d "$USER_CGROUP_DIR" ]
     then
-	echo "FAIL: user $1 does not have a cgroup directory" >&2
-	STATUS=$(($STATUS + 1))
+	fail "user $1 does not have a cgroup directory"
     fi
 }
 
@@ -396,8 +388,7 @@ function check_user_tc() {
     TC_CLASS_COUNT=`tc class show dev eth0 classid $TC_CLASSID 2>/dev/null | wc -l`
     if [ "$TC_CLASS_COUNT" -ne 1 ]
     then
-	echo "FAIL: user $1 must have 1 tc class entry: actual=$TC_CLASS_COUNT" >&2
-	STATUS=$(($STATUS + 1))	
+	fail "user $1 must have 1 tc class entry: actual=$TC_CLASS_COUNT"
     fi
 }
 
@@ -407,7 +398,7 @@ function check_user_quota() {
     # check the first line for the string "): none" at the EOL
     if quota $1 | head -1 | grep '): none$' > /dev/null
     then
-	echo "FAIL: user $1 does not have quotas imposed" >&2
+	fail "user $1 does not have quotas imposed"
     fi
 }
 

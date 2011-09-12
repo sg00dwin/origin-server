@@ -106,17 +106,13 @@ class LoginController < ApplicationController
             :value => rh_sso
           }
           session[:ticket] = rh_sso
-          @message = 'Welcome back to OpenShift!'
-          @message_type = 'success'
-          @redirectUrl = root_url
+          responseText[:redirectUrl] = root_url
         when Net::HTTPUnauthorized
           Rails.logger.debug 'Unauthorized'
-          @message = 'Invalid username or password'
-          @message_type = 'error'
+          responseText[:error] = 'Invalid username or password'
         else
           Rails.logger.debug "Unknown error: #{res.code}"
-          @message = 'An unknown error occurred'
-          @message_type = 'error'
+          responseText[:error] = 'An unknown error occurred'
         end
     end
 
@@ -130,7 +126,9 @@ class LoginController < ApplicationController
           render :new and return
         end
       end
-      format.js
+      format.js do
+        render(:json => responseText, :status => res.code ) and return
+      end
     end
 
   end

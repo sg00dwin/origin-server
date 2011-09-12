@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.78.3
+Version:       0.78.5
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -158,6 +158,26 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Mon Sep 12 2011 Dan McPherson <dmcphers@redhat.com> 0.78.5-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (twiest@redhat.com)
+- rhc-accept-node: fixed libra_device function to work in both devenv and PROD
+  (twiest@redhat.com)
+- rhc-accept-node: refactored failure message into fail function
+  (twiest@redhat.com)
+- rhc-accept-node: added check for user home directories (twiest@redhat.com)
+- rhc-accept-node: fixed bug where quota errors were not being counted
+  (twiest@redhat.com)
+- rhc-accept-node: changed the default selinux bool list to check for
+  httpd_can_network_connect:on since we use that in STG and PROD
+  (twiest@redhat.com)
+- rhc-accept-node: removed qpidd from default services as per mmcgrath
+  (twiest@redhat.com)
+
+* Mon Sep 12 2011 Dan McPherson <dmcphers@redhat.com> 0.78.4-1
+- rhc-accept-node: fixed libra_device to work for long device names
+  (twiest@redhat.com)
+
 * Fri Sep 09 2011 Matt Hicks <mhicks@redhat.com> 0.78.3-1
 - Adding wget to requires (mmcgrath@redhat.com)
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
