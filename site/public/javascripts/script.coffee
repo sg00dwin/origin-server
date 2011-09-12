@@ -70,6 +70,8 @@ $ ->
   login_complete = (xhr,status) ->
     json = $.parseJSON( status.responseText )
     console.log json
+    # Clear out error messages
+    $(this).find('div.message.error').remove()
 
     switch status.status
         when 200 #everything ok
