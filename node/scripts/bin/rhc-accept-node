@@ -339,6 +339,13 @@ function check_home_dir() {
     if [ ! -d "$HOME" ]
     then
 	fail "user $USERNAME does not have a home directory $HOME"
+	return
+    fi
+
+    NUMFILES=`find $HOME -type f|wc -l`
+    if [ $NUMFILES -eq 0 ]
+    then
+	fail "user $USERNAME does not have files in their home directory"
     fi
 }
 
