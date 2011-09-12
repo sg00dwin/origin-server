@@ -2,8 +2,13 @@ Given /^an accepted node$/ do
   accept_node = "/usr/bin/rhc-accept-node"
   File.exists?(accept_node).should be_true
 
-  pass = `sudo #{accept_node}`.chomp
-  $?.exitstatus.should be(0)
+  pass = `sudo #{accept_node}`.chomp  
+  exit_status = $?.exitstatus
+
+  puts pass if pass != "PASS"
+  puts "Exit status = #{exit_status}" if exit_status != 0
+
+  exit_status.should be(0)
   pass.should == "PASS"
 end
 
