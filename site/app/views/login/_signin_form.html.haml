@@ -1,0 +1,35 @@
+#login-form
+  %form{ :action => login_ajax_path, :method => 'post', 'data-remote' => true }
+    %input{ :name => "utf8",
+      :type => "hidden",
+      :value => "✓" }
+
+    %input{ :name => "authenticity_token",
+      :type => "hidden", 
+      :value => form_authenticity_token }
+
+    %label(for="login_input")
+      Login:
+      %input#login_input{ :name => "login", 
+        :type => "text", 
+        :value => session[:confirm_login] ? session[:confirm_login] : '', 
+        :placeholder => "Enter your email address",
+        :autofocus => "true" }
+
+    %label(for="pwd_input")
+      Password:
+      %input#pwd_input{ :name => "password", 
+        :type => "password",
+        :autocomplete => "off",
+        :placeholder => "Enter your password" }
+    
+    %input.button{ :type => "submit", :value => "Sign in to OpenShift" }
+
+  %p#lost_password
+    = link_to 'Lost your password?', "#{Rails.configuration.streamline}/wapps/sso/lostPassword.html", :class => 'more'
+
+  #register
+    %h2 Need to Register instead?
+    %p
+      %a.sign_up.more{ :href => (register_url ||= @register_url) }
+        Click here to register

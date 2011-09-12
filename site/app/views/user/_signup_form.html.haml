@@ -1,0 +1,30 @@
+-# Need to make sure that a user exists for captcha and cloud_access_choice
+- unless @user
+  - choice = CloudAccess::EXPRESS
+
+  -# Where else might we want to override the default?
+  - if params[:controller] == 'product' and params[:action] == 'flex'
+    - choice = CloudAccess::FLEX
+
+  - @product = CloudAccess.access_name( choice )
+  - @user = WebUser.new({:cloud_access_choice => choice})
+
+= semantic_form_for @user do |form|
+  = form.inputs do
+    = form.hidden_field :cloud_access_choice
+    = form.input :email_address
+    
+  %fieldset.confirm 
+    %legend Password
+    = form.input :password, :label => ' ', :input_html => { :autocomplete => 'off', :placeholder => 'At least 6 characters' }
+    = form.input :password_confirmation, :label => ' ', :input_html => { :autocomplete => 'off', :placeholder => 'Enter it again' }                
+
+  %li.captcha
+    %label(for="recaptcha_response_field") Prove You Are Human
+    = recaptcha_tags :ssl => true          
+
+  = form.buttons do
+    = form.commit_button "Sign up for OpenShift", :button_html => { :class => 'button' }
+
+#login_instead
+  = link_to 'Already have a redhat.com or RHN account?', (my_login_path ||= login_path), :class => 'more sign_in'

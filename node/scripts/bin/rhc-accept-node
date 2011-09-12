@@ -260,8 +260,7 @@ function check_tc_config() {
 # Determine where the file system containing the users is mounted
 function libra_device() {
     # LIBRA_DIR=$1
-    LIBRA_DIR=$(echo $1 | sed -e 's/\/$//')    # Remove the trailing slash
-    mount | grep $LIBRA_DIR | tail -1 | cut -d ' ' -f 1
+    df -P -k $1 | tail -1 | cut -d' ' -f1
 }
 
 function libra_mountpoint() {

@@ -6,7 +6,7 @@
 
 .content
   = link_to root_path do
-    = image_tag '/app/images/openshift-logo-white.png', 
+    = image_tag '/app/images/openshift-logo-white.png',
                :alt => 'OpenShift Logo',
                :border => '0'
     
@@ -36,27 +36,11 @@
           .further
             Drop us a line at openshift@redhat.com <br/> and claim your swag.
 
-%nav
+%nav#main_nav
   %header
     %h1
       Main Navigation
   .content
-    %ul
-      %li.link
-        = link_to 'Home', root_path, :class => 'home'
-      %li.link
-        = link_to 'Cloud Services', express_path, :class => 'services'
-      %li.link
-        = link_to 'Community', 'https://www.redhat.com/openshift', :class => 'community'
-
-      -unless %w(login logout).include?(params[:controller])
-        -if session[:login]
-          %li.user
-            = link_to 'Sign out', logout_path, :class => 'sign_out'
-          %li.user
-            = link_to "Greetings, #{session[:login]}!", dashboard_path, :class => 'greeting'
-        -else
-          %li.user
-            %a.sign_in Sign In
+    = render 'layouts/main_navigation'
       
 = yield :extra_nav if content_for? :extra_nav

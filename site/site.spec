@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.78.2
+Version:   0.78.3
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -67,6 +67,13 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Mon Sep 12 2011 Dan McPherson <dmcphers@redhat.com> 0.78.3-1
+- Added support for AJAX login and register forms. DRYed up the forms to all
+  use the same partials (fotios@redhat.com)
+- Change default email confirm redirection path to the express page
+  (edirsh@redhat.com)
+- Add javascript response to ajax login (edirsh@redhat.com)
+
 * Fri Sep 09 2011 Matt Hicks <mhicks@redhat.com> 0.78.2-1
 - Fixed form_tag to unbreak HAML (fotios@redhat.com)
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li

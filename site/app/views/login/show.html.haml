@@ -22,33 +22,4 @@
 
       = render 'layouts/flashes'
     
-      %form{ :action => login_ajax_path, :method => 'post', 'data-remote' => true}
-        %input(type="hidden" value="✓" name="utf8")
-        %input{:type => "hidden", :value => form_authenticity_token, :name => "authenticity_token"}
-        
-        %label(for="login_input")
-          Login:
-          %input{:type => "text", :value => session[:confirm_login] ? session[:confirm_login] : '', :name => "login", :id => "login_input"}
-      
-        
-        %label(for="pwd_input")
-          Password:
-          %input(id="pwd_input"
-               type="password" 
-               name="password" 
-               autocomplete="off")
-  
-        %input{:type => "hidden", :name => "redirectUrl", :value => @redirectUrl}
-        %input{:type => "hidden", :name => "errorUrl",  :value => @errorUrl}
-        
-        %input(type="submit" 
-               value="Sign in" 
-               class="button")
-
-    %p#lost_password
-      = link_to 'Lost your password?', "#{Rails.configuration.streamline}/wapps/sso/lostPassword.html", :class => 'more'
-
-    #register
-      %h2 Need to Register instead?
-      %p
-        =link_to "Click here to register", @register_url
+      = render 'login/signin_form'

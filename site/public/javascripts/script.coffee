@@ -89,6 +89,37 @@ $ ->
   signin.find('form').bind('ajax:complete', login_complete )
   ($ '#login-form').find('form').bind('ajax:complete', login_complete ) 
 
+  registration_complete = (xhr,status) ->
+    form = $(this)
+    json = $.parseJSON( status.responseText )
+
+    # Save all errors
+    messages = $.map(json, (k,v) -> return k)
+
+    if( json['success'] == undefined)
+      # Remove previous errors
+      $(this).find('div.message.error').remove()
+      err_div = $('<div>').addClass('message error').prependTo(form)
+
+      $.each(messages, (i,val)->
+        err_div.append($('<div>').html(val))
+      )
+
+      if typeof Recaptcha != 'undefined'
+        Recaptcha.reload()
+    else
+      form.empty().append(
+        # Remove any children that aren't the header or close button
+        signup.children().not('a.close_button,header').remove()
+        # Add the success message
+        signup.append(
+          $('<div>').addClass('message success').html(json['success'])
+        )
+      )
+
+  signup.find('form').bind('ajax:complete', registration_complete)
+  ($ '#new_web_user').bind('ajax:complete', registration_complete)
+
 ## Announcements ##
   announcements = ($ '#announcements')
   ann_list = ($ 'ul', announcements)

@@ -19,21 +19,4 @@
         .message.error
           #{value}
             
-    = semantic_form_for @user do |form|
-      = form.inputs do
-        = form.hidden_field :cloud_access_choice
-        = form.input :email_address
-        
-      %fieldset.confirm 
-        %legend Password
-        = form.input :password, :label => ' ', :input_html => { :autocomplete => 'off', :placeholder => 'At least 6 characters' }
-        = form.input :password_confirmation, :label => ' ', :input_html => { :autocomplete => 'off', :placeholder => 'Enter it again' }                
-      %li.captcha
-        %label(for="recaptcha_response_field") Prove You Are Human
-        = recaptcha_tags :ssl => true          
-
-      = form.buttons do
-        = form.commit_button "Sign up for OpenShift", :button_html => { :class => 'button' }
-
-    #login_instead
-      = link_to 'Already have a redhat.com or RHN account?', login_path, :class => 'more'
+    = render :partial => 'user/signup_form'

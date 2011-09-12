@@ -5,7 +5,7 @@ require 'uri'
 
 class LoginController < ApplicationController
 
-  def show_flex    
+  def show_flex
     @register_url = user_new_flex_url
     show
   end
@@ -54,62 +54,83 @@ class LoginController < ApplicationController
     cookies[:rh_sso] = 'test'
 
     Rails.logger.debug "Session workflow in LoginController#create: #{workflow}"
-    Rails.logger.debug "Redirecting to home#index"    
+    Rails.logger.debug "Redirecting to home#index"
     redirect_to params['redirectUrl']
   end
 
   def ajax
-    # Keep track of response information
-    responseText = {}
-
-    # Do the remote login
-    uri = URI.parse( Rails.configuration.login )
-
-    # Create the HTTPS object
-    https = Net::HTTP.new( uri.host, uri.port )
-    https.use_ssl = true
-    # TODO: Need to figure out where CAs are so we can do something like: 
-    #   http://goo.gl/QLFFC
-    https.verify_mode = OpenSSL::SSL::VERIFY_NONE
-
-    # Make the request
-    req = Net::HTTP::Post.new( uri.path )
-    req.set_form_data({:login => params[:login], :password => params[:password]})
-
-    # Create the request
-    res = https.start{ |http| http.request(req) }
-
-    Rails.logger.debug "Status received: #{res.code}"
-
-    case res
-      when Net::HTTPSuccess, Net::HTTPRedirection
-        # Decode the JSON response
-        json = ActiveSupport::JSON::decode(res.body)
-
-        # Set cookie and session information
-        Rails.logger.debug "Cookies sent: #{YAML.dump res.header['set-cookie']}"
-        rh_sso = res.header['set-cookie'].split('; ')[0].split('=')[1]
-        cookies[:rh_sso] = {
-          :secure => true, 
-          :domain => '.redhat.com', 
-          :path => '/',
-          :value => rh_sso
-        }
-        session[:ticket] = rh_sso
-
-        responseText[:redirectUrl] = root_url
-      when Net::HTTPUnauthorized
-        Rails.logger.debug 'Unauthorized'
-        responseText[:error] = 'Invalid username or password'
-      else
-        Rails.logger.debug "Unknown error: #{res.code}"
-        responseText[:error] = 'An unknown error occurred'
+    unless Rails.configuration.integrated
+      Rails.logger.warn "Non integrated environment - faking login"
+      session[:login] = params['login']
+      session[:ticket] = "test"
+      session[:user] = WebUser.new(:email_address => params['login'], :rhlogin => params['login'])
+      cookies[:rh_sso] = 'test'
+      @message = 'Welcome back to OpenShift!'
+      @message_type = 'success'
+    else
+      # Keep track of response information
+      responseText = {}
+  
+      # Do the remote login
+      uri = URI.parse( Rails.configuration.login )
+      
+      # Create the HTTPS object
+      https = Net::HTTP.new( uri.host, uri.port )
+      Rails.logger.debug "Integrated login, use SSL"
+      https.use_ssl = true
+      # TODO: Need to figure out where CAs are so we can do something like:
+      #   http://goo.gl/QLFFC
+      https.verify_mode = OpenSSL::SSL::VERIFY_NONE
+        
+      # Make the request
+      req = Net::HTTP::Post.new( uri.path )
+      req.set_form_data({:login => params[:login], :password => params[:password]})
+  
+      # Create the request
+      res = https.start{ |http| http.request(req) }
+  
+      Rails.logger.debug "Status received: #{res.code}"
+  
+      case res
+        when Net::HTTPSuccess, Net::HTTPRedirection
+          # Decode the JSON response
+          json = ActiveSupport::JSON::decode(res.body)
+  
+          # Set cookie and session information
+          Rails.logger.debug "Cookies sent: #{YAML.dump res.header['set-cookie']}"
+          rh_sso = res.header['set-cookie'].split('; ')[0].split('=')[1]
+          cookies[:rh_sso] = {
+            :secure => true,
+            :domain => '.redhat.com',
+            :path => '/',
+            :value => rh_sso
+          }
+          session[:ticket] = rh_sso
+          @message = 'Welcome back to OpenShift!'
+          @message_type = 'success'
+          @redirectUrl = root_url
+        when Net::HTTPUnauthorized
+          Rails.logger.debug 'Unauthorized'
+          @message = 'Invalid username or password'
+          @message_type = 'error'
+        else
+          Rails.logger.debug "Unknown error: #{res.code}"
+          @message = 'An unknown error occurred'
+          @message_type = 'error'
+        end
     end
 
     respond_to do |format|
-      format.js do
-        render :status => res.code, :json => responseText
+      format.html do
+        # Fallback for those without js
+        flash[@message_type] = @message
+        if @message_type == 'success'
+          redirect_to root_url
+        else
+          render :new and return
+        end
       end
+      format.js
     end
 
   end

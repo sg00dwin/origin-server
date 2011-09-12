@@ -1,0 +1,20 @@
+<%
+if @message_type == 'error'
+%>
+$('#login-form > .message').remove(); /* Remove previous messages */
+$('#login-form').prepend('<div class="message <%= @message_type %>"><%= @message %></div>');
+<%
+else
+  if session[:login_workflow]
+%>
+  window.location = '<%= root_url %>'
+<%
+  else
+    new_nav = render 'layouts/main_navigation', :login => @login
+%>
+$('.dialog').hide();
+$('#main_nav .content').html('<%= escape_javascript new_nav %>');
+<%
+  end
+end
+%>

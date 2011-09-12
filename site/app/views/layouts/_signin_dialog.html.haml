@@ -5,27 +5,7 @@
     %h1
       Sign in to OpenShift
 
-  %a.sign_up.more{ :href => "#" }
-    Need an OpenShift account?
-
-  %form{ :action => login_ajax_path, :method => 'post', 'data-remote' => true}
-    %label
-      Email
-      %input{ :type => "email",
-              :placeholder => "Enter your email address",
-              :name => 'login',
-              :autofocus => "true" }
-    
-    %label
-      Password
-      %input{ :type => "password",
-              :name => 'password',
-              :placeholder => "Enter your password" }
-    
-    %input.button{ :type => "submit",
-                   :value => "Sign in to OpenShift" }
-
-
+  = render :partial => 'login/signin_form', :locals => { :register_url => '#' }
 
   %a.close_button{ :href => "#",
                    :title => "Close this dialog" }
