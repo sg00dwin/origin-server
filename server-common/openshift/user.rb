@@ -169,10 +169,6 @@ module Libra
       add_ssh_key_to_servers(ssh_key)
     end
     
-    def set_system_ssh_key(ssh_key)
-      set_ssh_key('system', ssh_key)
-    end
-    
     def remove_ssh_key(name)
       if ssh_keys && ssh_keys.key?(name)
         ssh_key = ssh_keys[name]
@@ -180,10 +176,6 @@ module Libra
         update
         remove_ssh_key_from_servers(ssh_key)
       end
-    end
-    
-    def remove_system_ssh_key()
-      remove_ssh_key('system')
     end
     
     #
@@ -211,7 +203,7 @@ module Libra
             if (result && defined? result.results)            
               exitcode = result.results[:data][:exitcode]
               output = result.results[:data][:output]
-              server.log_result_output(output, exitcode, self)
+              server.log_result_output(output, exitcode, self, app_name)
               if exitcode != 0
                 update_namespace_failures.push(app_name)                
               end
