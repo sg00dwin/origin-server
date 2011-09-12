@@ -225,6 +225,12 @@ class DevEnv < Thor
       instance.dns = name
     end
 
+    puts "Validating instance..."
+    unless instance.is_valid?
+      puts "ERROR - instance is not valid"
+      puts instance.validation_output
+      exit 1
+    end
 
     # Get the current branch
     branch = get_branch
