@@ -31,7 +31,7 @@ class EmailConfirmController < ApplicationController
     end
   end
 
-  def confirm(redirect_path=getting_started_path)
+  def confirm(redirect_path=express_path)
     key = params[:key]
     email = params[:emailAddress]
 
