@@ -4,6 +4,7 @@ module OpenShift
   module AWS
     class Instance
       attr_accessor :conn, :amz_id, :amz_image_id, :name, :dns
+      attr_reader :validation_output
 
       def log
         @@log
@@ -176,9 +177,10 @@ module OpenShift
       end
 
       def is_valid?
-        output = ssh('/usr/bin/rhc-accept-node')
+        @validation_output = ssh('/usr/bin/rhc-accept-node')
         log.info "Node Acceptance Output = #{output}"
-        output == "PASS"
+        @validation_output == "PASS"
+
       end
     end
   end

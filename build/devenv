@@ -157,6 +157,7 @@ class DevEnv < Thor
       print "Validating instance..."
       unless instance.is_valid?
         puts "ERROR - instance is not valid"
+        puts instance.validation_output
         exit 1
       end
       puts "Done"
@@ -224,6 +225,7 @@ class DevEnv < Thor
       instance.dns = name
     end
 
+
     # Get the current branch
     branch = get_branch
 
@@ -248,6 +250,14 @@ class DevEnv < Thor
     else
       set_public_ip(instance)
     end
+
+    puts "Validating instance..."
+    unless instance.is_valid?
+      puts "ERROR - instance is not valid"
+      puts instance.validation_output
+      exit 1
+    end
+
   end
 
   desc "sync_sdk NAME PATH", "Synchronize a local git repo with a remote DevEnv instance.  NAME should be ssh resolvable. PATH should be the location of the git repository to sync"
@@ -336,6 +346,7 @@ class DevEnv < Thor
     puts "Validating instance..."
     unless instance.is_valid?
       puts "ERROR - instance is not valid"
+      puts instance.validation_output
       exit 1
     end
     
@@ -401,6 +412,7 @@ class DevEnv < Thor
       print "Validating instance..."
       unless instance.is_valid?
         puts "ERROR - instance is not valid"
+        puts instance.validation_output
         exit 1
       end
       puts "Done"
