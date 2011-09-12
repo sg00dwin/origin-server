@@ -368,6 +368,10 @@ footer.universal {
     text-align: center;
     margin: 0;
   }
+
+  h2 {
+    text-align: center;
+  }
   
   .close_button {
     @include close_button;
