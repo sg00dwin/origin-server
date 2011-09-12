@@ -127,7 +127,7 @@ class LoginController < ApplicationController
         end
       end
       format.js do
-        render(:json => responseText, :status => res.code ) and return
+        render (:json => responseText, :status => res.code ) and return
       end
     end
 
