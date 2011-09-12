@@ -569,7 +569,7 @@ module Libra
             else
               Libra.client_debug line['CLIENT_DEBUG: '.length..-1]
             end
-          elsif user && line =~ /^SSH_KEY_(ADD|REMOVE): /
+          elsif user && app_name && line =~ /^SSH_KEY_(ADD|REMOVE): /
             if line =~ /^SSH_KEY_ADD: /
               key = line['SSH_KEY_ADD: '.length..-1].chomp
               user.set_ssh_key(app_name, key)

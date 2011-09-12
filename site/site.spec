@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.78.3
+Version:   0.78.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -67,6 +67,10 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Mon Sep 12 2011 Dan McPherson <dmcphers@redhat.com> 0.78.4-1
+- Fixed merge issue between 8c296a2 and e005456 modifying same code
+  (fotios@redhat.com)
+
 * Mon Sep 12 2011 Dan McPherson <dmcphers@redhat.com> 0.78.3-1
 - Added support for AJAX login and register forms. DRYed up the forms to all
   use the same partials (fotios@redhat.com)
