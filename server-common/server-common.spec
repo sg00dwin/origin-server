@@ -2,7 +2,7 @@
 
 Summary:       Common dependencies of the OpenShift broker and site
 Name:          rhc-server-common
-Version:       0.78.2
+Version:       0.78.3
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -54,6 +54,9 @@ rm -rf %{buildroot}
                                   -s /sbin/nologin 2>&1 > /dev/null || :
 
 %changelog
+* Mon Sep 12 2011 Dan McPherson <dmcphers@redhat.com> 0.78.3-1
+- allow 1 system ssh key per app (dmcphers@redhat.com)
+
 * Fri Sep 09 2011 Matt Hicks <mhicks@redhat.com> 0.78.2-1
 - have mcollective use capacity instead of git_repos (mmcgrath@redhat.com)
 
