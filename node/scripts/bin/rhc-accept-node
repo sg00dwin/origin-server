@@ -409,6 +409,30 @@ function check_user_quota() {
     fi
 }
 
+function check_app_dirs() {
+    # save modified env settings
+    pushd $libra_dir > /dev/null
+    SAVEIFS=$IFS
+
+    IFS=$(echo -en "\n\b")
+
+    verbose "checking application dirs"
+    for curfile in *
+    do
+        if [ -d "$curfile" ] && [ "$curfile" != "lost+found" ]
+        then
+            if ! id "$curfile" > /dev/null 2>&1
+            then
+                fail "directory $curfile doesn't have an associated user"
+            fi
+        fi
+    done
+
+    # restore modified env settings
+    IFS=$SAVEIFS
+    popd > /dev/null
+}
+
 # ==========================================================================
 # Process CLI arguments
 # ==========================================================================
@@ -467,6 +491,7 @@ check_tc_config
 check_quotas
 
 check_users
+check_app_dirs
 
 if [ "$STATUS" -eq 0 ]
 then
