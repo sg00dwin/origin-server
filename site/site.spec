@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.78.6
+Version:   0.78.7
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -67,6 +67,11 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Tue Sep 13 2011 Dan McPherson <dmcphers@redhat.com> 0.78.7-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (fotios@redhat.com)
+- Fixed lost password link (fotios@redhat.com)
+
 * Tue Sep 13 2011 Dan McPherson <dmcphers@redhat.com> 0.78.6-1
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
   (fotios@redhat.com)
