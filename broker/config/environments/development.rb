@@ -30,9 +30,13 @@ Broker::Application.configure do
   ############################################
   config.app_scope = "broker"
   config.integrated = false
-  config.streamline_service_base_url = ''
-  config.streamline = "http://localhost" # Non-integrated 
-  config.streamline_secret = ''
+  config.streamline = {
+    :host => 'https://localhost',
+    :base_url => '',
+    :email_confirm_url => '/confirm.html',
+    :lost_password_url => '/wapps/sso/lostPassword.html',
+    :secret => ''
+  }
 
   # AWS configuration
   config.aws_key = "AKIAJMZR4X6F46UMXV6Q"
