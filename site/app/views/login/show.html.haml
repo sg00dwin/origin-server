@@ -47,7 +47,9 @@
                class="button")
 
     %p#lost_password
-      = link_to 'Lost your password?', "#{Rails.configuration.streamline}/wapps/sso/lostPassword.html", :class => 'more'
+      = link_to 'Lost your password?', 
+        URI.join(Rails.configuration.streamline[:host],Rails.configuration.streamline[:lost_password_url]).to_s,
+        :class => 'more'
 
     #register
       %h2 Need to Register instead?
