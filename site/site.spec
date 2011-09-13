@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.78.4
+Version:   0.78.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -67,6 +67,11 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Mon Sep 12 2011 Dan McPherson <dmcphers@redhat.com> 0.78.5-1
+- revert changes to get a build working (dmcphers@redhat.com)
+- Removed AJAX form stuff (fotios@redhat.com)
+- removing whitespace to fix warning (mmcgrath@redhat.com)
+
 * Mon Sep 12 2011 Dan McPherson <dmcphers@redhat.com> 0.78.4-1
 - Fixed merge issue between 8c296a2 and e005456 modifying same code
   (fotios@redhat.com)
