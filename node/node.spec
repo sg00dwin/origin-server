@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.78.5
+Version:       0.78.6
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -158,6 +158,17 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Mon Sep 12 2011 Dan McPherson <dmcphers@redhat.com> 0.78.6-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (twiest@redhat.com)
+- rhc-accept-node: fixed check_app_dirs bug where it would look at symlinks
+  (twiest@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- Add storage (mmcgrath@redhat.com)
+- rhc-accept-node: added check for app dirs without users (twiest@redhat.com)
+- rhc-accept-node: added check for empty home dirs (twiest@redhat.com)
+
 * Mon Sep 12 2011 Dan McPherson <dmcphers@redhat.com> 0.78.5-1
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
   (twiest@redhat.com)
