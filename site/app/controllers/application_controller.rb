@@ -70,7 +70,15 @@ class ApplicationController < ActionController::Base
         if remote_request
           session[:login_workflow] = referrer.to_s
         else
-          if !(referrer.path =~ /^\/app\/?$/) && !(referrer.path =~ /^\/app\/user\/?/) && !(referrer.path =~ /^\/app\/login\/?/)
+          if referrer.path =~ /^\/app\/user\/?/
+            if referrer.path =~ /^\/app\/user\/new\/flex\/?/
+              session[:login_workflow] = flex_path
+            end
+          elsif referrer.path =~ /^\/app\/login\/?/
+            if referrer.path =~ /^\/app\/login\/flex\/?/
+              session[:login_workflow] = flex_path
+            end
+          elsif !(referrer.path =~ /^\/app\/?$/)
             if referrer.scheme == 'http'
               session[:login_workflow] = 'https' + referrer.to_s[referrer.scheme.length..-1]
             else
