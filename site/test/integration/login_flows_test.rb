@@ -24,7 +24,7 @@ class LoginFlowsTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test 'user should be redirected to Express app when logging in directly' do
+  test 'user should be redirected to express app when logging in directly' do
     get login_path
     assert_response :success
 
@@ -33,7 +33,47 @@ class LoginFlowsTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_equal path, express_path
   end
- 
+  
+  test 'user should be redirected to flex app when logging in directly from the flex login' do
+    get login_path, {}, {'HTTP_REFERER' => '/app/login/flex'}
+    assert_response :success
+
+    post_via_redirect(path, {:login => 'testuser', :redirectUrl => root_path })
+
+    assert_response :success
+    assert_equal path, flex_path
+  end
+  
+  test 'user should be redirected to express app when logging in directly from the express login' do
+    get login_path, {}, {'HTTP_REFERER' => '/app/login/express'}
+    assert_response :success
+  
+    post_via_redirect(path, {:login => 'testuser', :redirectUrl => root_path })
+  
+    assert_response :success
+    assert_equal path, express_path
+  end
+  
+  test 'user should be redirected to flex app when logging in directly from the flex new user' do
+    get login_path, {}, {'HTTP_REFERER' => '/app/user/new/flex'}
+    assert_response :success
+  
+    post_via_redirect(path, {:login => 'testuser', :redirectUrl => root_path })
+  
+    assert_response :success
+    assert_equal path, flex_path
+  end
+  
+  test 'user should be redirected to express app when logging in directly from the express new user' do
+    get login_path, {}, {'HTTP_REFERER' => '/app/user/new/express'}
+    assert_response :success
+  
+    post_via_redirect(path, {:login => 'testuser', :redirectUrl => root_path })
+  
+    assert_response :success
+    assert_equal path, express_path
+  end
+  
   test "after requesting a protected resource and logging in, the user should be redirected back to the original resource" do
     get control_panel_path
     assert_redirected_to login_path
