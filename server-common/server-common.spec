@@ -2,7 +2,7 @@
 
 Summary:       Common dependencies of the OpenShift broker and site
 Name:          rhc-server-common
-Version:       0.78.4
+Version:       0.78.5
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -54,6 +54,10 @@ rm -rf %{buildroot}
                                   -s /sbin/nologin 2>&1 > /dev/null || :
 
 %changelog
+* Tue Sep 13 2011 Dan McPherson <dmcphers@redhat.com> 0.78.5-1
+- Changed Rails.configuration.streamline to be a hash. Changed references to
+  build URIs from that hash (fotios@redhat.com)
+
 * Mon Sep 12 2011 Dan McPherson <dmcphers@redhat.com> 0.78.4-1
 - better error checking (dmcphers@redhat.com)
 

@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.78.5
+Version:   0.78.6
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -67,6 +67,13 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Tue Sep 13 2011 Dan McPherson <dmcphers@redhat.com> 0.78.6-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (fotios@redhat.com)
+- Changed Rails.configuration.streamline to be a hash. Changed references to
+  build URIs from that hash (fotios@redhat.com)
+- Bug 735924 (dmcphers@redhat.com)
+
 * Mon Sep 12 2011 Dan McPherson <dmcphers@redhat.com> 0.78.5-1
 - revert changes to get a build working (dmcphers@redhat.com)
 - Removed AJAX form stuff (fotios@redhat.com)
