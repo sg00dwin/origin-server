@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.78.1
+Version:   0.78.2
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -62,6 +62,10 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Tue Sep 13 2011 Dan McPherson <dmcphers@redhat.com> 0.78.2-1
+- Fixed Rails.configuration.streamline in broker config/environments
+  (fotios@redhat.com)
+
 * Thu Sep 01 2011 Dan McPherson <dmcphers@redhat.com> 0.78.1-1
 - bump spec numbers (dmcphers@redhat.com)
 
