@@ -31,9 +31,13 @@ RedHatCloud::Application.configure do
   config.app_scope = "app"
   config.integrated = true
   config.login = "https://www.webqa.redhat.com/wapps/streamline/login.html"
-  config.streamline_service_base_url = "/wapps/streamline"
-  config.streamline = "https://www.webqa.redhat.com"
-  config.streamline_secret = 'c0ldW1n3'
+  config.streamline = {
+    :host => 'https://www.webqa.redhat.com',
+    :base_url => '/wapps/streamline',
+    :email_confirm_url => '/wapps/streamline/confirm.html',
+    :lost_password_url => '/wapps/sso/lostPassword.html',
+    :secret => 'c0ldW1n3'
+  }
   config.captcha_secret = 'zvw5LiixMB0I4mjk06aR'
   
   # Express API base url

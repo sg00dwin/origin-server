@@ -31,9 +31,13 @@ RedHatCloud::Application.configure do
   config.app_scope = "app"
   config.integrated = false
   config.login = "/app/login"
-  config.streamline_service_base_url = ''
-  config.streamline = "http://localhost" # Non-integrated 
-  config.streamline_secret = ''
+  config.streamline = {
+    :host => 'https://localhost',
+    :base_url => '',
+    :email_confirm_url => '/confirm.html',
+    :lost_password_url => '/wapps/sso/lostPassword.html',
+    :secret => ''
+  }
   config.captcha_secret = 'zvw5LiixMB0I4mjk06aR'
   
   # Express API base url
