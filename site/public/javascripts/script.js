@@ -33,12 +33,12 @@ $(function() {
   signup = $('#signup');
   signin = $('#signin');
   ($('a.sign_up')).click(function(event) {
-    event.preventDefault();
-    return open_dialog(signup);
+    #event.preventDefault();
+    #return open_dialog(signup);
   });
   ($('a.sign_in')).click(function(event) {
-    event.preventDefault();
-    return open_dialog(signin);
+    #event.preventDefault();
+    #return open_dialog(signin);
   });
   close_btn.click(function(event) {
     return close_dialog(($(this)).parent());
