@@ -320,8 +320,8 @@ if [ "x\$JAVA_OPTS" = "x" ]; then
    JAVA_OPTS="-Xmx95m -XX:MaxPermSize=85m -Dorg.jboss.resolver.warning=true -Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000"
 fi
 
-# Add
-export MODULEPATH="$APP_JBOSS"/modules:"$APP_JBOSS"/standalone/configuration/modules
+# Add the user module path ahead of the server modules root
+export MODULEPATH="$APP_JBOSS"/standalone/configuration/modules:"$APP_JBOSS"/modules
 EOF
 
 # Create a link from the repo/deployments directory to the standalone/deployments content
