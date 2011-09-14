@@ -1,3 +1,5 @@
+$ = jQuery
+
 $ ->
   domain_action = if ($ '#domain_form form').hasClass 'update' then 'update' else 'create'
   domain_form_container = $ '#domain_form'

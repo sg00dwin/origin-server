@@ -7,6 +7,4 @@
 
   = render :partial => 'login/signin_form', :locals => { :register_url => '#' }
 
-  %a.close_button{ :href => "#",
-                   :title => "Close this dialog" }
-    %img{ :src => "/app/images/close_button.png" }
+  = render :partial => 'layouts/close_button'

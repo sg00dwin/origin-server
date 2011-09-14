@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.78.2
+Version:   0.78.3
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -77,6 +77,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Tue Sep 13 2011 Dan McPherson <dmcphers@redhat.com> 0.78.3-1
+- Added README (mmcgrath@redhat.com)
+
 * Fri Sep 09 2011 Matt Hicks <mhicks@redhat.com> 0.78.2-1
 - Adding switchyard proxy pass setup in JBoss (mhicks@redhat.com)
 
