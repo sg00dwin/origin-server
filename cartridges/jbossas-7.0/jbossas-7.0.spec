@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.78.3
+Version:   0.78.4
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -77,6 +77,12 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Wed Sep 14 2011 Dan McPherson <dmcphers@redhat.com> 0.78.4-1
+- US1114, add user module ahead of server modules root (starksm64@gmail.com)
+- Changing default path to be at the end so we can overwrite system utilities
+  (mmcgrath@redhat.com)
+- Bug 738093, update the modules/README (starksm64@gmail.com)
+
 * Tue Sep 13 2011 Dan McPherson <dmcphers@redhat.com> 0.78.3-1
 - Added README (mmcgrath@redhat.com)
 
