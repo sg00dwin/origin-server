@@ -1,37 +1,40 @@
 #login-form
-  %form{ :action => login_ajax_path, :method => 'post', 'data-remote' => true }
-    %input{ :name => "utf8",
-      :type => "hidden",
-      :value => "✓" }
+  - if @user and @user.errors.any?
+    - @user.errors.full_messages.each do |msg| 
+      .message.error
+        = msg
 
-    %input{ :name => "authenticity_token",
-      :type => "hidden", 
-      :value => form_authenticity_token }
+  = render 'layouts/flashes'
 
+  = form_tag(login_ajax_path, :remote => true ) do|f|
+    %input(type="hidden" value="✓" name="utf8")
+    %input{:type => "hidden", :value => form_authenticity_token, :name => "authenticity_token"}
+    
     %label(for="login_input")
       Login:
-      %input#login_input{ :name => "login", 
-        :type => "text", 
-        :value => session[:confirm_login] ? session[:confirm_login] : '', 
-        :placeholder => "Enter your email address",
-        :autofocus => "true" }
-
+      %input{:type => "text", :value => session[:confirm_login] ? session[:confirm_login] : '', :name => "login",  :id => "login_input"}
+  
+    
     %label(for="pwd_input")
       Password:
-      %input#pwd_input{ :name => "password", 
-        :type => "password",
-        :autocomplete => "off",
-        :placeholder => "Enter your password" }
+      %input(id="pwd_input"
+           type="password" 
+           name="password" 
+           autocomplete="off")
+
+    %input{:type => "hidden", :name => "redirectUrl", :value => @redirectUrl}
+    %input{:type => "hidden", :name => "errorUrl",  :value => @errorUrl}
     
-    %input.button{ :type => "submit", :value => "Sign in to OpenShift" }
+    %input(type="submit" 
+           value="Sign in" 
+           class="button")
 
 %p#lost_password
   = link_to 'Lost your password?', 
     URI.join(Rails.configuration.streamline[:host],Rails.configuration.streamline[:lost_password_url]).to_s,
     :class => 'more'
 
-  #register
-    %h2 Need to Register instead?
-    %p
-      %a.sign_up.more{ :href => (register_url ||= @register_url) }
-        Click here to register
+#register
+  %h2 Need to Register instead?
+  %p
+    =link_to "Click here to register", @register_url

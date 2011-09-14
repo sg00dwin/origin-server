@@ -66,61 +66,55 @@ $ ->
   #close_btn.click (event) ->
     #close_dialog ($ this).parent()
 
-#  # Function based on definitions in rails.js:
-#  login_complete = (xhr,status) ->
-#    json = $.parseJSON( status.responseText )
-#    console.log json
-#    # Clear out error messages
-#    $(this).find('div.message.error').remove()
-#
-#    switch status.status
-#        when 200 #everything ok
-#          window.location.replace json.redirectUrl
-#          break
-#        when 401 #Unauthorized
-#          $(this).prepend($('<div>').addClass('message error').text(json.error))
-#          break
-#        else
-#          $(this).prepend(
-#            $('<div>').addClass('message error')
-#              .html(json.error || "Some unknown error occured,<br/> please try again.")
-#          )
-#          console.log 'Some unknown AJAX error with the login', status.status
-#
-#  # Bind to both the JS form and the standard form
+  # Function based on definitions in rails.js:
+  login_complete = (xhr,status) ->
+    json = $.parseJSON( status.responseText )
+    console.log json
+    # Clear out error messages
+    $(this).parent().find('div.message.error').remove()
+    $err_div = $('<div>').addClass('message error').hide().insertBefore(this)
+
+    switch status.status
+        when 200 #everything ok
+          window.location.replace json.redirectUrl
+          break
+        when 401 #Unauthorized
+          $err_div.text(json.error).show()
+          break
+        else
+          $err_div.html(json.error || "Some unknown error occured,<br/> please try again.").show()
+          console.log 'Some unknown AJAX error with the login', status.status
+
+  # Bind to both the JS form and the standard form
 #  signin.find('form').bind('ajax:complete', login_complete )
-#  ($ '#login-form').find('form').bind('ajax:complete', login_complete ) 
-#
-#  registration_complete = (xhr,status) ->
-#    form = $(this)
-#    json = $.parseJSON( status.responseText )
-#
-#    # Save all errors
-#    messages = $.map(json, (k,v) -> return k)
-#
-#    if( json['success'] == undefined)
-#      # Remove previous errors
-#      $(this).find('div.message.error').remove()
-#      err_div = $('<div>').addClass('message error').prependTo(form)
-#
-#      $.each(messages, (i,val)->
-#        err_div.append($('<div>').html(val))
-#      )
-#
-#      if typeof Recaptcha != 'undefined'
-#        Recaptcha.reload()
-#    else
-#      form.empty().append(
-#        # Remove any children that aren't the header or close button
-#        signup.children().not('a.close_button,header').remove()
-#        # Add the success message
-#        signup.append(
-#          $('<div>').addClass('message success').html(json['success'])
-#        )
-#      )
-#
+  ($ '#login-form').find('form').bind('ajax:complete', login_complete ) 
+
+  registration_complete = (xhr,status) ->
+    form = $(this)
+    json = $.parseJSON( status.responseText )
+    console.log "Reg complete, got JSON", json
+
+    # Clear out error messages
+    $(this).parent().find('div.message.error').remove()
+    $err_div = $('<div>').addClass('message error').hide().insertBefore(this)
+
+    # Save all errors
+    messages = $.map(json, (k,v) -> return k)
+
+    if( json['redirectUrl'] == undefined || json['redirectUrl'] == null )
+
+      $.each(messages, (i,val)->
+        $err_div.addClass('error').append($('<div>').html(val))
+      )
+      $err_div.show()
+
+      if typeof Recaptcha != 'undefined'
+        Recaptcha.reload()
+    else
+      window.location.replace json['redirectUrl']
+
 #  signup.find('form').bind('ajax:complete', registration_complete)
-#  ($ '#new_web_user').bind('ajax:complete', registration_complete)
+  ($ '#new_web_user').bind('ajax:complete', registration_complete)
 
 ## Announcements ##
   announcements = ($ '#announcements')

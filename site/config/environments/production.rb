@@ -58,6 +58,7 @@ RedHatCloud::Application.configure do
     :base_url => '/wapps/streamline',
     :email_confirm_url => '/wapps/streamline/confirm.html',
     :lost_password_url => '/wapps/sso/lostPassword.html',
+    :login_url => '/wapps/streamline/login.html',
     :secret => 'c0ldW1n3'
   }
   config.captcha_secret = 'zvw5LiixMB0I4mjk06aR'
