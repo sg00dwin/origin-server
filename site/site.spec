@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.78.8
+Version:   0.78.9
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -26,6 +26,7 @@ Requires:  rubygem-formtastic
 Requires:  rubygem-haml
 Requires:  rubygem-recaptcha
 Requires:  rubygem-hpricot
+Requires:  rubygem-barista
 
 Obsoletes: rhc-server
 
@@ -67,6 +68,12 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Wed Sep 14 2011 Dan McPherson <dmcphers@redhat.com> 0.78.9-1
+- disable client gem release (temp) beginnings of broker auth adding barista to
+  spec (dmcphers@redhat.com)
+- Fixed some loud warnings (fotios@redhat.com)
+- Squashed commit of the following: (fotios@redhat.com)
+
 * Tue Sep 13 2011 Dan McPherson <dmcphers@redhat.com> 0.78.8-1
 - Changed test/functional/user_controller_test to better test for @user.errors
   not containing any values (fotios@redhat.com)

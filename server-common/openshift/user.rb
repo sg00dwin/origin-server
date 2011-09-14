@@ -7,6 +7,9 @@ require 'date'
 require 'net/http'
 require 'net/https'
 require 'pp'
+require 'openssl'
+require 'digest/sha2'
+require 'base64'
 
 def gen_small_uuid()
     # Put config option for rhlogin here so we can ignore uuid for dev environments
@@ -167,6 +170,29 @@ module Libra
       @ssh_keys[name] = ssh_key
       update
       add_ssh_key_to_servers(ssh_key)
+    end
+    
+    def set_broker_auth_key(app_name)
+      app = apps['app_name']
+
+      cipher.key = OpenSSL::Digest::SHA512.new(Rails.configuration.auth_secret).digest
+      cipher.iv = cipher.random_iv
+      token = {:app_name => app_name,
+               :rhlogin => rhlogin,
+               :creation_time => app['creation_time']}
+      encrypted_token = cipher.update(JSON.generate(token))
+      encrypted_token << cipher.final
+        
+      server = Libra::Server.new app['server_identity']
+      result = server.execute_direct('li-controller', 'add-broker-auth-key', "#{rhlogin} #{Base64::encode64(cipher.iv)} #{Base64::encode64(encrypted_token)}")
+      server.handle_controller_result(result)
+    end
+    
+    def remove_broker_auth_key(app_name)
+      app = apps['app_name']
+      server = Libra::Server.new app['server_identity']
+      result = server.execute_direct('li-controller', 'add-broker-auth-key', "#{rhlogin}")
+      server.handle_controller_result(result)
     end
     
     def remove_ssh_key(name)

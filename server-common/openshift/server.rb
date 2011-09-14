@@ -577,6 +577,12 @@ module Libra
               key = line['SSH_KEY_REMOVE: '.length..-1].chomp
               user.remove_ssh_key(app_name)
             end
+          elsif user && app_name && line =~ /^BROKER_AUTH_KEY_(ADD|REMOVE): /
+            if line =~ /^BROKER_AUTH_KEY_ADD: /
+              user.set_broker_auth_key(app_name)
+            else
+              user.remove_broker_auth_key(app_name)
+            end
           elsif exitcode != 0
             Libra.client_debug line
             Libra.logger_debug "DEBUG: server results: " + line

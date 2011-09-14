@@ -45,4 +45,6 @@ Broker::Application.configure do
     :lost_password_url => '/lostPassword.html',
     :secret => 'c0ldW1n3'
   }
+  
+  config.auth_secret = "fda884Jhf8BKkd83jdkcbfk"
 end
