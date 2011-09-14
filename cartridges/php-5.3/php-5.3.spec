@@ -23,6 +23,7 @@ Requires:  php-mysql
 Requires:  php-pgsql
 Requires:  php-mbstring
 Requires:  php-pear
+Requires:  php-imap
 
 Obsoletes: rhc-cartridge-php-5.3.2
 
