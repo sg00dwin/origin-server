@@ -1,5 +1,5 @@
 $(function() {
-  var ann_height, ann_list, announcements, body, current, links, login_complete, nav, nav_top, on_announcement, registration_complete, scroll_announcements, sections, sticky_css, top, unsticky_css;
+  var ann_height, ann_list, announcements, body, close_btn, close_dialog, current, dialogs, links, login_complete, nav, nav_top, on_announcement, open_dialog, registration_complete, scroll_announcements, sections, signin, signup, sticky_css, top, unsticky_css;
   body = $('body');
   nav = ($('header.universal > nav')).first();
   nav_top = nav.offset().top;
@@ -21,6 +21,28 @@ $(function() {
       return nav.css(unsticky_css);
     }
   });
+  dialogs = $('.dialog');
+  open_dialog = function(dialog) {
+    dialogs.hide();
+    return dialog.show();
+  };
+  close_dialog = function(dialog) {
+    return dialog.hide();
+  };
+  close_btn = $('.close_button');
+  signup = $('#signup');
+  signin = $('#signin');
+  ($('a.sign_up')).click(function(event) {
+    event.preventDefault();
+    return open_dialog(signup);
+  });
+  ($('a.sign_in')).click(function(event) {
+    event.preventDefault();
+    return open_dialog(signin);
+  });
+  close_btn.click(function(event) {
+    return close_dialog(($(this)).parent());
+  });
   login_complete = function(xhr, status) {
     var $err_div, json;
     json = $.parseJSON(status.responseText);
@@ -39,6 +61,7 @@ $(function() {
         return console.log('Some unknown AJAX error with the login', status.status);
     }
   };
+  signin.find('form').bind('ajax:complete', login_complete);
   ($('#login-form')).find('form').bind('ajax:complete', login_complete);
   registration_complete = function(xhr, status) {
     var $err_div, form, json, messages;
@@ -62,6 +85,7 @@ $(function() {
       return window.location.replace(json['redirectUrl']);
     }
   };
+  signup.find('form').bind('ajax:complete', registration_complete);
   ($('#new_web_user')).bind('ajax:complete', registration_complete);
   announcements = $('#announcements');
   ann_list = $('ul', announcements);

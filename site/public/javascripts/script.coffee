@@ -37,34 +37,34 @@ $ ->
       nav.css unsticky_css
       
 ## Dialogs ##
-  #dialogs = $ '.dialog'
+  dialogs = $ '.dialog'
 
-  #open_dialog = (dialog) -> 
-    ## Close any other open dialogs
-    #dialogs.hide()
-    ## Show given dialog
-    #dialog.show()
+  open_dialog = (dialog) -> 
+    # Close any other open dialogs
+    dialogs.hide()
+    # Show given dialog
+    dialog.show()
 
-  #close_dialog = (dialog) ->
-    #dialog.hide()
+  close_dialog = (dialog) ->
+    dialog.hide()
     
-  ## Close buttons
-  #close_btn = $ '.close_button' 
-  ## Sign up dialog
-  #signup = $ '#signup'
-  ## Sign in dialog
-  #signin = $ '#signin'
+  # Close buttons
+  close_btn = $ '.close_button' 
+  # Sign up dialog
+  signup = $ '#signup'
+  # Sign in dialog
+  signin = $ '#signin'
 
-  #($ 'a.sign_up').click (event) ->
-    #event.preventDefault()
-    #open_dialog signup
+  ($ 'a.sign_up').click (event) ->
+    event.preventDefault()
+    open_dialog signup
 
-  #($ 'a.sign_in').click (event) ->
-    #event.preventDefault()
-    #open_dialog signin
+  ($ 'a.sign_in').click (event) ->
+    event.preventDefault()
+    open_dialog signin
     
-  #close_btn.click (event) ->
-    #close_dialog ($ this).parent()
+  close_btn.click (event) ->
+    close_dialog ($ this).parent()
 
   # Function based on definitions in rails.js:
   login_complete = (xhr,status) ->
@@ -86,7 +86,7 @@ $ ->
           console.log 'Some unknown AJAX error with the login', status.status
 
   # Bind to both the JS form and the standard form
-#  signin.find('form').bind('ajax:complete', login_complete )
+  signin.find('form').bind('ajax:complete', login_complete )
   ($ '#login-form').find('form').bind('ajax:complete', login_complete ) 
 
   registration_complete = (xhr,status) ->
@@ -113,7 +113,7 @@ $ ->
     else
       window.location.replace json['redirectUrl']
 
-#  signup.find('form').bind('ajax:complete', registration_complete)
+  signup.find('form').bind('ajax:complete', registration_complete)
   ($ '#new_web_user').bind('ajax:complete', registration_complete)
 
 ## Announcements ##

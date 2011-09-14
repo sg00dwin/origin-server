@@ -37,4 +37,5 @@
 #register
   %h2 Need to Register instead?
   %p
-    =link_to "Click here to register", @register_url
+    %a.sign_up.more{ :href => (register_url ||= @register_url) }
+      Click here to register
