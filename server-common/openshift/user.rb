@@ -191,7 +191,7 @@ module Libra
     def remove_broker_auth_key(app_name)
       app = apps['app_name']
       server = Libra::Server.new app['server_identity']
-      result = server.execute_direct('li-controller', 'add-broker-auth-key', "#{rhlogin}")
+      result = server.execute_direct('li-controller', 'remove-broker-auth-key', "#{rhlogin}")
       server.handle_controller_result(result)
     end
     
