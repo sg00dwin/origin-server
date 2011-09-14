@@ -70,6 +70,10 @@ class LoginController < ApplicationController
       cookies[:rh_sso] = 'test'
       @message = 'Welcome back to OpenShift!'
       @message_type = 'success'
+
+      # Added options to make sure non-integrated environment works
+      responseText[:status] = 200
+      responseText[:redirectUrl] = root_url
     else
       # Do the remote login
       uri = URI.join( Rails.configuration.streamline[:host], Rails.configuration.streamline[:login_url])
