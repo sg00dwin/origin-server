@@ -12,6 +12,10 @@ gem 'haml'
 gem 'formtastic', '~> 1.2.3'
 gem 'rack'
 
+# Files for Barista (https://github.com/Sutto/barista)
+gem 'json'
+gem 'barista'
+
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 

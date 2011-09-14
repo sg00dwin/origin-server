@@ -1,4 +1,6 @@
 # Compile with --bare flag #
+$ = jQuery
+
 $ ->
 
 ## Scroll effects ##
