@@ -146,7 +146,7 @@ class BrokerController < ApplicationController
       encrypted_token = Base64::decode64(data['broker_auth_key'])
       cipher = OpenSSL::Cipher::Cipher.new("aes-256-cbc")
       cipher.decrypt
-      cipher.key = OpenSSL::Digest::SHA512.new(Rails.configuration.auth_secret).digest
+      cipher.key = OpenSSL::Digest::SHA512.new(Libra.c[:broker_auth_secret]).digest
       cipher.iv = Base64::decode64(data['broker_auth_iv']) # TODO add encryption 
       encrypted_token = cipher.update(token)
       json_token << cipher.final

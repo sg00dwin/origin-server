@@ -175,7 +175,7 @@ module Libra
     def set_broker_auth_key(app_name)
       app = apps['app_name']
 
-      cipher.key = OpenSSL::Digest::SHA512.new(Rails.configuration.auth_secret).digest
+      cipher.key = OpenSSL::Digest::SHA512.new(Libra.c[:broker_auth_secret]).digest
       cipher.iv = cipher.random_iv
       token = {:app_name => app_name,
                :rhlogin => rhlogin,

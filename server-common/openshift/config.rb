@@ -61,6 +61,8 @@ module Libra
       @@config[:dynect_user_name] =  fs_config.get_value('dynect_user_name').strip
       @@config[:dynect_password] =  fs_config.get_value('dynect_password').strip
       @@config[:dynect_url] =  fs_config.get_value('dynect_url').strip
+        
+      @@config[:broker_auth_secret] =  fs_config.get_value('broker_auth_secret').strip
     rescue
       # Ignore as long as we have the values below
     ensure
