@@ -53,7 +53,7 @@ class UserControllerTest < ActionController::TestCase
 
   test "should get success on post" do
     post(:create, {:web_user => get_post_form})
-    assert assigns(:user).errors.reject{|x| x.nil?}.empty?
+    assert (assigns(:user).errors.reject{|k,v| v.nil?}).empty?
     assert_response :success
   end
 

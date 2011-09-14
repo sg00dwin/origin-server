@@ -6,7 +6,7 @@
 
   = render 'layouts/flashes'
 
-  = form_tag(login_ajax_path, :remote => true ) do|f|
+  = form_tag(login_ajax_path, :remote => true ) do
     %input(type="hidden" value="✓" name="utf8")
     %input{:type => "hidden", :value => form_authenticity_token, :name => "authenticity_token"}
     
