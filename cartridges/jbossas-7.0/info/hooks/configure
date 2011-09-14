@@ -379,7 +379,7 @@ echo "export OPENSHIFT_APP_NAME='$application'" > $APP_HOME/.env/OPENSHIFT_APP_N
 echo "export OPENSHIFT_APP_TYPE='${jboss_version}'" > $APP_HOME/.env/OPENSHIFT_APP_TYPE
 echo "export OPENSHIFT_APP_CTL_SCRIPT='$APP_DIR/${application}_ctl.sh'" > $APP_HOME/.env/OPENSHIFT_APP_CTL_SCRIPT
 echo "export OPENSHIFT_APP_DNS='${application}-${namespace}.${libra_domain}'" > $APP_HOME/.env/OPENSHIFT_APP_DNS
-echo "export PATH=$PATH:$JBOSS_CARTRIDGE_ROOT/info/bin/:$CART_DIR/abstract-httpd/info/bin/:$CART_DIR/li-controller/info/bin/" > $APP_HOME/.env/PATH
+echo "export PATH=$JBOSS_CARTRIDGE_ROOT/info/bin/:$CART_DIR/abstract-httpd/info/bin/:$CART_DIR/li-controller/info/bin/:$PATH" > $APP_HOME/.env/PATH
 
 #
 # Start the server
