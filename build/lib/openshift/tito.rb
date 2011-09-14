@@ -8,8 +8,8 @@ module OpenShift
           "misc/devenv"
         elsif package =~ /^rhc-(cartridge-.*)-0/
           "cartridges/" + $1['cartridge-'.length..-1]
-        elsif package =~ /^rhc-[0-9]/
-          "client"
+        #elsif package =~ /^rhc-[0-9]/
+        #  "client"
         elsif package =~ /^rhc-(.*)-0/
           $1
         end
