@@ -30,7 +30,11 @@ Broker::Application.configure do
   ############################################
   config.app_scope = "broker"
   config.integrated = true
-  config.streamline_service_base_url = "/wapps/streamline"
-  config.streamline = "https://10.196.215.67"
-  config.streamline_secret = 'c0ldW1n3'
+  config.streamline = {
+    :host => 'https://10.196.215.67',
+    :base_url => '/wapps/streamline',
+    :email_confirm_url => '/wapps/streamline/confirm.html',
+    :lost_password_url => '/wapps/sso/lostpassword.html',
+    :secret => 'c0ldw1n3'
+  }
 end

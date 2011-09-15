@@ -32,9 +32,17 @@ GEM
     activesupport (3.0.5)
     arel (2.0.9)
     aws (2.4.5)
+    barista (1.2.1)
+      coffee-script (~> 2.2)
     builder (2.1.2)
+    coffee-script (2.2.0)
+      coffee-script-source
+      execjs
+    coffee-script-source (1.1.2)
     erubis (2.6.6)
       abstract (>= 1.0.0)
+    execjs (1.2.6)
+      multi_json (~> 1.0)
     formtastic (1.2.3)
       actionpack (>= 2.3.7)
       activesupport (>= 2.3.7)
@@ -51,6 +59,7 @@ GEM
       treetop (~> 1.4.8)
     mime-types (1.16)
     mocha (0.9.8)
+    multi_json (1.0.3)
     multimap (1.1.2)
     parseconfig (0.5.2)
     polyglot (0.2.5)
@@ -87,6 +96,7 @@ PLATFORMS
 
 DEPENDENCIES
   aws (~> 2.4.5)
+  barista
   formtastic (~> 1.2.3)
   haml
   hpricot

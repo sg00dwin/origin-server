@@ -50,7 +50,9 @@ class EmailConfirmController < ApplicationController
     render :error and return unless valid
 
     begin
-      url = URI.parse(Rails.configuration.streamline + Rails.configuration.streamline_service_base_url + '/confirm.html?key=' + key + '&emailAddress=' + CGI::escape(email))
+      query = {:key => key, :emailAddress => email}
+      url = URI.join(Rails.configuration.streamline[:host],Rails.configuration.streamline[:email_confirm_url],"?#{query.to_query}")
+
       req = Net::HTTP::Get.new(url.path + '?' + url.query)
       http = Net::HTTP.new(url.host, url.port)
       if url.scheme == "https"

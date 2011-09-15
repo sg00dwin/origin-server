@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.77.1
+Version:   0.77.2
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -199,6 +199,9 @@ chkconfig libra-tc on
 %{_initddir}/libra-site
 
 %changelog
+* Wed Sep 14 2011 Dan McPherson <dmcphers@redhat.com> 0.77.2-1
+- unset x-forwarded-for (mmcgrath@redhat.com)
+
 * Thu Sep 01 2011 Dan McPherson <dmcphers@redhat.com> 0.77.1-1
 - bump spec numbers (dmcphers@redhat.com)
 

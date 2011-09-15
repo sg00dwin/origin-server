@@ -30,26 +30,12 @@ Broker::Application.configure do
   ############################################
   config.app_scope = "broker"
   config.integrated = false
-  config.streamline_service_base_url = ''
-  config.streamline = "http://localhost" # Non-integrated 
-  config.streamline_secret = ''
-
-  # AWS configuration
-  config.aws_key = "AKIAJMZR4X6F46UMXV6Q"
-  config.aws_secret = "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"
-  config.aws_keypair = "libra"
-  config.aws_name = "libra-node"
-  config.aws_environment = "demo"
-  config.aws_ami = "N/A"
-  config.repo_threshold = 100
-  config.s3_bucket = "libra-dev"
-
-  # DDNS configuration
-  config.libra_domain = "rhcloud.com"
-  config.resolver = "209.132.178.9"
-  config.secret = "hmac-md5:dhcpupdate:fzAvGcKPZWiFgmF8qmNUaA=="
-
-  # Broker configuration
-  config.per_user_app_limit = 5
+  config.streamline = {
+    :host => 'https://localhost',
+    :base_url => '',
+    :email_confirm_url => '/confirm.html',
+    :lost_password_url => '/wapps/sso/lostPassword.html',
+    :secret => ''
+  }
 end
 

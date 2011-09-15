@@ -49,6 +49,7 @@ RedHatCloud::Application.routes.draw do
     match 'user/new/express' => 'user#new_express', :via => [:get]
     get 'user' => 'user#new'
     match 'user/create/external' => 'user#create_external', :via => [:post]
+    match 'user/complete' => 'user#complete', :via => [:get]
 
     resource :terms,
              :as => "terms",

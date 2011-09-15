@@ -38,7 +38,11 @@ Broker::Application.configure do
   ############################################
   config.app_scope = "broker"
   config.integrated = false
-  config.streamline_service_base_url = ''
-  config.streamline = "http://localhost" # Not used
-  config.streamline_secret = ''
+  config.streamline = {
+    :host => 'https://localhost',
+    :base_url => '',
+    :email_confirm_url => '/confirm.html',
+    :lost_password_url => '/lostPassword.html',
+    :secret => 'c0ldW1n3'
+  }
 end

@@ -9,7 +9,7 @@ module Streamline
   include ErrorCodes
   attr_accessor :rhlogin, :ticket, :roles, :terms
 
-  service_base_url = defined?(Rails) ? Rails.configuration.streamline + Rails.configuration.streamline_service_base_url : ""
+  service_base_url = defined?(Rails) ? Rails.configuration.streamline[:host] + Rails.configuration.streamline[:base_url] : ""
   @@login_url = URI.parse(service_base_url + "/login.html")
   @@register_url = URI.parse(service_base_url + "/registration.html")
   @@request_access_url = URI.parse(service_base_url + "/requestAccess.html")
@@ -141,7 +141,7 @@ module Streamline
     register_args = {'emailAddress' => @email_address,
                      'password' => @password,
                      'passwordConfirmation' => @password,
-                     'secretKey' => Rails.configuration.streamline_secret,
+                     'secretKey' => Rails.configuration.streamline[:secret],
                      'termsAccepted' => 'true',
                      'confirmationUrl' => confirm_url}
 
@@ -185,7 +185,7 @@ module Streamline
   def establish_email_address
     if !@email_address
       user_info_args = {'login' => @rhlogin,
-                        'secretKey' => Rails.configuration.streamline_secret}
+                        'secretKey' => Rails.configuration.streamline[:secret]}
       http_post(@@user_info_url, user_info_args) do |json|
         @email_address = json['emailAddress']
       end

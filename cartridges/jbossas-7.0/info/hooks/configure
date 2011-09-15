@@ -320,8 +320,8 @@ if [ "x\$JAVA_OPTS" = "x" ]; then
    JAVA_OPTS="-Xmx95m -XX:MaxPermSize=85m -Dorg.jboss.resolver.warning=true -Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000"
 fi
 
-# Add
-export MODULEPATH="$APP_JBOSS"/modules:"$APP_JBOSS"/standalone/configuration/modules
+# Add the user module path ahead of the server modules root
+export MODULEPATH="$APP_JBOSS"/standalone/configuration/modules:"$APP_JBOSS"/modules
 EOF
 
 # Create a link from the repo/deployments directory to the standalone/deployments content
@@ -379,7 +379,7 @@ echo "export OPENSHIFT_APP_NAME='$application'" > $APP_HOME/.env/OPENSHIFT_APP_N
 echo "export OPENSHIFT_APP_TYPE='${jboss_version}'" > $APP_HOME/.env/OPENSHIFT_APP_TYPE
 echo "export OPENSHIFT_APP_CTL_SCRIPT='$APP_DIR/${application}_ctl.sh'" > $APP_HOME/.env/OPENSHIFT_APP_CTL_SCRIPT
 echo "export OPENSHIFT_APP_DNS='${application}-${namespace}.${libra_domain}'" > $APP_HOME/.env/OPENSHIFT_APP_DNS
-echo "export PATH=$PATH:$JBOSS_CARTRIDGE_ROOT/info/bin/:$CART_DIR/abstract-httpd/info/bin/:$CART_DIR/li-controller/info/bin/" > $APP_HOME/.env/PATH
+echo "export PATH=$JBOSS_CARTRIDGE_ROOT/info/bin/:$CART_DIR/abstract-httpd/info/bin/:$CART_DIR/li-controller/info/bin/:$PATH" > $APP_HOME/.env/PATH
 
 #
 # Start the server

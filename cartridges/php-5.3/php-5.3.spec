@@ -2,7 +2,7 @@
 
 Summary:   Provides php-5.3 support
 Name:      rhc-cartridge-php-5.3
-Version:   0.78.1
+Version:   0.78.2
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -23,6 +23,7 @@ Requires:  php-mysql
 Requires:  php-pgsql
 Requires:  php-mbstring
 Requires:  php-pear
+Requires:  php-imap
 
 Obsoletes: rhc-cartridge-php-5.3.2
 
@@ -81,6 +82,11 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Wed Sep 14 2011 Dan McPherson <dmcphers@redhat.com> 0.78.2-1
+- installing php-imap (mmcgrath@redhat.com)
+- Changing default path to be at the end so we can overwrite system utilities
+  (mmcgrath@redhat.com)
+
 * Thu Sep 01 2011 Dan McPherson <dmcphers@redhat.com> 0.78.1-1
 - bump spec numbers (dmcphers@redhat.com)
 

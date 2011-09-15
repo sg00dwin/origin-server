@@ -269,7 +269,7 @@ CustomLog "|/usr/sbin/rotatelogs $APP_DIR/logs/access_log$rotatelogs_format $rot
 WSGIScriptAlias / "$APP_DIR/repo/wsgi/application"
 Alias /static "$APP_DIR/repo/wsgi/static/"
 WSGIPythonPath "$APP_DIR/repo/libs:$APP_DIR/repo/wsgi:$APP_DIR/virtenv/lib/python2.6/"
-
+WSGIPassAuthorization On
 
 EOF
 
@@ -316,7 +316,7 @@ echo "export OPENSHIFT_APP_NAME='$application'" > $APP_HOME/.env/OPENSHIFT_APP_N
 echo "export OPENSHIFT_APP_TYPE='wsgi-3.2'" > $APP_HOME/.env/OPENSHIFT_APP_TYPE
 echo "export OPENSHIFT_APP_CTL_SCRIPT='$APP_DIR/${application}_ctl.sh'" > $APP_HOME/.env/OPENSHIFT_APP_CTL_SCRIPT
 echo "export OPENSHIFT_APP_DNS='${application}-${namespace}.${libra_domain}'" > $APP_HOME/.env/OPENSHIFT_APP_DNS
-echo "export PATH=$PATH:$CART_INFO_DIR/bin/:$CART_DIR/abstract-httpd/info/bin/:$CART_DIR/li-controller/info/bin/" > $APP_HOME/.env/PATH
+echo "export PATH=$CART_INFO_DIR/bin/:$CART_DIR/abstract-httpd/info/bin/:$CART_DIR/li-controller/info/bin/:$PATH" > $APP_HOME/.env/PATH
 
 #
 # Start the server

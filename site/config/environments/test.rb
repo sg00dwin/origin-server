@@ -39,9 +39,14 @@ RedHatCloud::Application.configure do
   config.app_scope = "app"
   config.integrated = false
   config.login = "/app/login"
-  config.streamline_service_base_url = ''
-  config.streamline = "http://localhost" # Not used
-  config.streamline_secret = ''
+  config.streamline = {
+    :host => 'https://localhost',
+    :base_url => '',
+    :email_confirm_url => '/confirm.html',
+    :lost_password_url => '/lostPassword.html',
+    :login_url => '',
+    :secret => 'c0ldW1n3'
+  }
   config.captcha_secret = 'secret'
   
   # Maximum number of apps
@@ -49,22 +54,4 @@ RedHatCloud::Application.configure do
   
   # Express API base url
   config.express_api_url = 'https://localhost'
-  
-  ## AWS configuration
-  #config.aws_key = "AKIAJMZR4X6F46UMXV6Q"
-  #config.aws_secret = "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"
-  #config.aws_keypair = "libra"
-  #config.aws_name = "libra-node"
-  #config.aws_environment = "demo"
-  #config.aws_ami = "N/A"
-  #config.repo_threshold = 100
-  #config.s3_bucket = "libra-dev"
-
-  ## DDNS configuration
-  #config.libra_domain = "rhcloud.com"
-  #config.resolver = "209.132.178.9"
-  #config.secret = "hmac-md5:dhcpupdate:fzAvGcKPZWiFgmF8qmNUaA=="
-
-  ## Broker configuration
-  #config.per_user_app_limit = 1
 end

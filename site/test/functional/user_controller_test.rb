@@ -1,4 +1,5 @@
 require 'test_helper'
+require 'yaml'
 
 class UserControllerTest < ActionController::TestCase
   test "should get new unauthorized" do
@@ -52,7 +53,7 @@ class UserControllerTest < ActionController::TestCase
 
   test "should get success on post" do
     post(:create, {:web_user => get_post_form})
-    assert_equal 0, assigns(:user).errors.length
+    assert (assigns(:user).errors.reject{|k,v| v.nil?}).empty?
     assert_response :success
   end
 
