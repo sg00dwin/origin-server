@@ -43,6 +43,8 @@ else
     exit 3
 fi
 
+CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
+
 rotatelogs_interval="86400"
 rotatelogs_format="-%Y%m%d-%H%M%S-%Z"
 
@@ -105,7 +107,7 @@ group_id=$(id -g "$uuid") || error "Could not find user $uuid" 135
 # Get UID information and CVAL
 #
 uid=$(id -u "$uuid")
-c_val="c$(($uid/1023)),c$(($uid%1023))"
+mcs_level=`${CART_DIR}/li-controller/info/bin/mcs_level $uid`
 
 #
 # Create http base for application, every app gets its own apache instance
@@ -135,10 +137,10 @@ chmod +x "$MYSQL_DIR/"*.sh || error "Failed to chmod new application scripts" 12
 chown $user_id.$group_id -R $MYSQL_DIR/ || error "Failed to chown new application space.  Please contact support" 123
 # Secure script and root dir (so they can't chown the script"
 chown root.root "$MYSQL_DIR" "$MYSQL_DIR"/*.sh
-chcon -t libra_var_lib_t -l s0:$c_val -R "$MYSQL_DIR"
+chcon -t libra_var_lib_t -l $mcs_level -R "$MYSQL_DIR"
 
 
-/bin/su -s /bin/sh "$uuid" -c "runcon -t libra_t -l s0:$c_val $MYSQL_DIR/${application}_mysql_ctl.sh start"
+/bin/su -s /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $MYSQL_DIR/${application}_mysql_ctl.sh start"
 
 i=0
 while [ ! -f "${MYSQL_DIR}/pid/mysql.pid" ] && [ $i -lt 30 ]

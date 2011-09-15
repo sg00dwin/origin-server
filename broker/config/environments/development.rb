@@ -37,7 +37,5 @@ Broker::Application.configure do
     :lost_password_url => '/wapps/sso/lostPassword.html',
     :secret => ''
   }
-  
-  config.auth_secret = "fda884Jhf8BKkd83jdkcbfk"
 end
 

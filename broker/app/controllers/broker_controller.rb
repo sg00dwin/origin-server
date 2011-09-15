@@ -96,19 +96,19 @@ class BrokerController < ApplicationController
             render :json => generate_result_json("Invalid cart_type: #{val} specified", nil, 109), :status => :invalid and return nil
           end
         when 'action'
-          if !(val =~ /\A[\w\-\.]+\z/) and val.to_s.length < 24
+          if !(val =~ /\A[\w\-\.]+\z/)
             render :json => generate_result_json("Invalid #{key} specified: #{val}", nil, 111), :status => :invalid and return nil
           end
         when 'app_name'
-          if !(val =~ /\A[\w]+\z/) and val.to_s.length < 24
+          if !(val =~ /\A[\w]+\z/)
             render :json => generate_result_json("Invalid #{key} specified: #{val}", nil, 105), :status => :invalid and return nil
           end
         when 'broker_auth_key'
-          if val.to_s.empty?
+          if !(val =~ /\A[A-Za-z0-9\+\/=]+\z/)
             render :json => generate_result_json("Invalid #{key} specified: #{val}", nil, 113), :status => :invalid and return nil
           end
         when 'broker_auth_iv'
-          if val.to_s.empty?
+          if !(val =~ /\A[A-Za-z0-9\+\/=]+\z/)
             render :json => generate_result_json("Invalid #{key} specified: #{val}", nil, 114), :status => :invalid and return nil
           end
         else
@@ -140,20 +140,32 @@ class BrokerController < ApplicationController
     render :json => generate_result_json(e.message, nil, e.respond_to?('exit_code') ? e.exit_code : 254), :status => status
   end
   
-  def login(data, params)
+  def login(data, params, allow_broker_auth_key=false)
     username = nil
-    if data['broker_auth_key']
+    if allow_broker_auth_key && data['broker_auth_key'] && data['broker_auth_iv']
       encrypted_token = Base64::decode64(data['broker_auth_key'])
       cipher = OpenSSL::Cipher::Cipher.new("aes-256-cbc")
       cipher.decrypt
-      cipher.key = OpenSSL::Digest::SHA512.new(Rails.configuration.auth_secret).digest
-      cipher.iv = Base64::decode64(data['broker_auth_iv']) # TODO add encryption 
-      encrypted_token = cipher.update(token)
+      cipher.key = OpenSSL::Digest::SHA512.new(Libra.c[:broker_auth_secret]).digest
+      cipher.iv = Base64::decode64(data['broker_auth_iv']) # TODO add encryption
+      json_token = cipher.update(encrypted_token)
       json_token << cipher.final
+
       token = JSON.parse(json_token)
       username = token['rhlogin']
-      app_name = token['app_name']
-      creation_time = token['creation_time'] # TODO validate creation time for app name
+      user = Libra::User.find(username)
+      if user
+        app_name = token['app_name']
+        app = user.apps[app_name]
+        if app
+          creation_time = token['creation_time']
+          render_unauthorized and return if creation_time != app['creation_time']
+        else
+          render_unauthorized and return
+        end
+      else
+        render_unauthorized and return
+      end
     else
       username = Libra::User.new(data['rhlogin'], nil, nil, nil, params['password'], ticket).login()
     end
@@ -165,7 +177,7 @@ class BrokerController < ApplicationController
       # Parse the incoming data
       data = parse_json_data(params['json_data'])
       return unless data
-      username = login(data, params)
+      username = login(data, params, true)
       if username
         action = data['action']
         app_name = data['app_name']
@@ -197,7 +209,7 @@ class BrokerController < ApplicationController
       # Parse the incoming data
       data = parse_json_data(params['json_data'])
       return unless data
-      username = login(data, params)
+      username = login(data, params, true)
       if username
         action = data['action']
         app_name = data['app_name']
