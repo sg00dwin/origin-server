@@ -27,6 +27,7 @@ Requires:  rubygem-haml
 Requires:  rubygem-recaptcha
 Requires:  rubygem-hpricot
 Requires:  rubygem-barista
+Requires:  js
 
 Obsoletes: rhc-server
 
