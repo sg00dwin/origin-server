@@ -96,19 +96,19 @@ class BrokerController < ApplicationController
             render :json => generate_result_json("Invalid cart_type: #{val} specified", nil, 109), :status => :invalid and return nil
           end
         when 'action'
-          if !(val =~ /\A[\w\-\.]+\z/) and val.to_s.length < 24
+          if !(val =~ /\A[\w\-\.]+\z/)
             render :json => generate_result_json("Invalid #{key} specified: #{val}", nil, 111), :status => :invalid and return nil
           end
         when 'app_name'
-          if !(val =~ /\A[\w]+\z/) and val.to_s.length < 24
+          if !(val =~ /\A[\w]+\z/)
             render :json => generate_result_json("Invalid #{key} specified: #{val}", nil, 105), :status => :invalid and return nil
           end
         when 'broker_auth_key'
-          if val.to_s.empty?
+          if !(val =~ /\A[A-Za-z0-9\+\/=]+\z/)
             render :json => generate_result_json("Invalid #{key} specified: #{val}", nil, 113), :status => :invalid and return nil
           end
         when 'broker_auth_iv'
-          if val.to_s.empty?
+          if !(val =~ /\A[A-Za-z0-9\+\/=]+\z/)
             render :json => generate_result_json("Invalid #{key} specified: #{val}", nil, 114), :status => :invalid and return nil
           end
         else
