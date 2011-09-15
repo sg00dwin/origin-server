@@ -2,7 +2,7 @@
 
 Summary:   Provides jenkins-1.4 support
 Name:      rhc-cartridge-jenkins-1.4
-Version:   0.78.2
+Version:   0.78.3
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -47,6 +47,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Thu Sep 15 2011 Dan McPherson <dmcphers@redhat.com> 0.78.3-1
+- updated mcs_level generation for app accounts > 522 (markllama@redhat.com)
+
 * Wed Sep 14 2011 Dan McPherson <dmcphers@redhat.com> 0.78.2-1
 - fixing cached field (mmcgrath@redhat.com)
 - Changing default path to be at the end so we can overwrite system utilities
