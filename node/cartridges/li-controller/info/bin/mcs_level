@@ -1,0 +1,16 @@
+#!
+
+function openshift_mcs_level() {
+    SETSIZE=1023
+    TIER=$SETSIZE
+
+    ORD=$1
+    while [ $ORD -gt $(($TIER)) ] ; do
+	ORD=$(($ORD - $TIER))
+	TIER=$(($TIER - 1))
+    done
+    TIER=$(($SETSIZE - $TIER))
+    echo s0:c$TIER,c$(($ORD + $TIER))
+}
+
+openshift_mcs_level $1
