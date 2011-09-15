@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.78.9
+Version:   0.78.10
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -69,6 +69,13 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Thu Sep 15 2011 Dan McPherson <dmcphers@redhat.com> 0.78.10-1
+- Added js to site.spec for rubygem-js (fotios@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (fotios@redhat.com)
+- Fixed login#ajax to work properly on non-integrated envs (fotios@redhat.com)
+- Temporary commit to build (fotios@redhat.com)
+
 * Wed Sep 14 2011 Dan McPherson <dmcphers@redhat.com> 0.78.9-1
 - disable client gem release (temp) beginnings of broker auth adding barista to
   spec (dmcphers@redhat.com)
