@@ -140,9 +140,9 @@ class BrokerController < ApplicationController
     render :json => generate_result_json(e.message, nil, e.respond_to?('exit_code') ? e.exit_code : 254), :status => status
   end
   
-  def login(data, params)
+  def login(data, params, allow_broker_auth_key=false)
     username = nil
-    if data['broker_auth_key']
+    if allow_broker_auth_key && data['broker_auth_key']
       encrypted_token = Base64::decode64(data['broker_auth_key'])
       cipher = OpenSSL::Cipher::Cipher.new("aes-256-cbc")
       cipher.decrypt
@@ -152,8 +152,19 @@ class BrokerController < ApplicationController
       json_token << cipher.final
       token = JSON.parse(json_token)
       username = token['rhlogin']
-      app_name = token['app_name']
-      creation_time = token['creation_time'] # TODO validate creation time for app name
+      user = Libra::User.find(username)
+      if user
+        app_name = token['app_name']
+        app = user.apps[app_name]
+        if app
+          creation_time = token['creation_time']
+          render_unauthorized and return if creation_time != app['creation_time']
+        else
+          render_unauthorized and return
+        end
+      else
+        render_unauthorized and return
+      end
     else
       username = Libra::User.new(data['rhlogin'], nil, nil, nil, params['password'], ticket).login()
     end
@@ -165,7 +176,7 @@ class BrokerController < ApplicationController
       # Parse the incoming data
       data = parse_json_data(params['json_data'])
       return unless data
-      username = login(data, params)
+      username = login(data, params, true)
       if username
         action = data['action']
         app_name = data['app_name']
@@ -197,7 +208,7 @@ class BrokerController < ApplicationController
       # Parse the incoming data
       data = parse_json_data(params['json_data'])
       return unless data
-      username = login(data, params)
+      username = login(data, params, true)
       if username
         action = data['action']
         app_name = data['app_name']
