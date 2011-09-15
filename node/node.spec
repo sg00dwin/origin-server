@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.78.6
+Version:       0.78.7
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -158,6 +158,14 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Wed Sep 14 2011 Dan McPherson <dmcphers@redhat.com> 0.78.7-1
+- disable client gem release (temp) beginnings of broker auth adding barista to
+  spec (dmcphers@redhat.com)
+- unset x-forwarded-for (mmcgrath@redhat.com)
+- fixing paths for token and IV file (mmcgrath@redhat.com)
+- allowing broker-auth-key (mmcgrath@redhat.com)
+- Add broker auth and remove bits (mmcgrath@redhat.com)
+
 * Mon Sep 12 2011 Dan McPherson <dmcphers@redhat.com> 0.78.6-1
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
   (twiest@redhat.com)

@@ -40,6 +40,8 @@ else
     exit 3
 fi
 
+CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
+
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
 
@@ -102,7 +104,7 @@ then
 fi
 
 uid=$(id -u "$uuid")
-c_val="c$(($uid/1023)),c$(($uid%1023))"
+mcs_level=`${CART_DIR}/li-controller/info/bin/mcs_level $uid`
 
 #
 # Destroy git app repo
@@ -112,7 +114,7 @@ destroy_repo $application $uuid
 
 [ ! -d "$APP_DIR" ] && echo "${application} does not exist" 1>&2
 
-runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l s0:$c_val $APP_DIR/${application}_ctl.sh stop" || echo "Failed to stop ${application}" 1>&2
+runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $APP_DIR/${application}_ctl.sh stop" || echo "Failed to stop ${application}" 1>&2
 if [ -f "$APP_DIR/logs/error_log" ]
 then
   /usr/sbin/lsof -t "$APP_DIR/logs/error_log" | /usr/bin/xargs /bin/kill -9

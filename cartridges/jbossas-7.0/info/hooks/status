@@ -33,6 +33,8 @@ else
     exit 3
 fi
 
+CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
+
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
     echo "Get application status"
@@ -66,10 +68,10 @@ then
 fi
 
 uid=$(id -u "$app_id")
-c_val="c$(($uid/1023)),c$(($uid%1023))"
+mcs_level=`${CART_DIR}/li-controller/info/bin/mcs_level $uid`
 
 #
 # Check application status
 #
 
-runuser --shell /bin/sh "$app_id" -c "runcon -t libra_t -l s0:$c_val $APP_DIR/${application}_ctl.sh status"
+runuser --shell /bin/sh "$app_id" -c "runcon -t libra_t -l $mcs_level $APP_DIR/${application}_ctl.sh status"

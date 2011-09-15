@@ -558,7 +558,7 @@ module Libra
     #
     # Logs result output
     #
-    def log_result_output(output, exitcode, user=nil, app_name=nil)
+    def log_result_output(output, exitcode, user=nil, app_name=nil, app=nil)
       if output && !output.empty?
         output.each_line do |line|
           if line =~ /^CLIENT_(MESSAGE|RESULT|DEBUG): /
@@ -576,6 +576,12 @@ module Libra
             else
               key = line['SSH_KEY_REMOVE: '.length..-1].chomp
               user.remove_ssh_key(app_name)
+            end
+          elsif user && app_name && app && line =~ /^BROKER_AUTH_KEY_(ADD|REMOVE): /
+            if line =~ /^BROKER_AUTH_KEY_ADD: /
+              user.set_broker_auth_key(app_name, app)
+            else
+              user.remove_broker_auth_key(app_name, app)
             end
           elsif exitcode != 0
             Libra.client_debug line

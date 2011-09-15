@@ -11,14 +11,26 @@ home_dirs = Dir.glob("/var/lib/libra/[0-9a-zA-Z]*")
 
 debug=1
 
+def openshift_mcs_level(uid)
+  setsize=1023
+  tier=setsize
+  ord=uid
+  while ord > tier
+    ord -= tier
+    tier -= 1
+  end
+  tier = setsize - tier
+  "s0:c#{tier},c#{ord + tier}"
+end
+
 home_dirs.each do |home_dir|
     if File.directory? home_dir
         begin
             username = home_dir.split('/')[-1]
             user = Etc.getpwnam(username)
-            c_val = user.uid.divmod(1023)
-            puts "chcon -t libra_var_lib_t -l s0:c#{c_val[0]},c#{c_val[1]} -R #{home_dir}/[^.]*" if debug
-            %x[chcon -t libra_var_lib_t -l s0:c#{c_val[0]},c#{c_val[1]} -R #{home_dir}/[^.]*]
+            mcs_level = openshift_mcs_level(user.uid)
+            puts "chcon -t libra_var_lib_t -l #{mcs_level} -R #{home_dir}/[^.]*" if debug
+            %x[chcon -t libra_var_lib_t -l #{mcs_level} -R #{home_dir}/[^.]*]
         rescue ArgumentError
             puts "Warning: #{home_dir} is not owned by #{user} - #{$!}"
         end
