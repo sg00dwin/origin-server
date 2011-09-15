@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.78.3
+Version:   0.78.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -65,6 +65,13 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Thu Sep 15 2011 Dan McPherson <dmcphers@redhat.com> 0.78.4-1
+- adding iv encryption (dmcphers@redhat.com)
+- param checking (dmcphers@redhat.com)
+- broker auth working (dmcphers@redhat.com)
+- broker auth key validation (dmcphers@redhat.com)
+- move broker_auth_secret to controller.conf (dmcphers@redhat.com)
+
 * Wed Sep 14 2011 Dan McPherson <dmcphers@redhat.com> 0.78.3-1
 - disable client gem release (temp) beginnings of broker auth adding barista to
   spec (dmcphers@redhat.com)
