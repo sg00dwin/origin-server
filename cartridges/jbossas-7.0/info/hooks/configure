@@ -359,7 +359,7 @@ chmod +x "$APP_JBOSS_BIN_DIR/standalone.sh" || error "Failed to chmod new applic
 chmod +x "$APP_DIR/${application}_ctl.sh" || error "Failed to chmod new application scripts" 122
 chown $user_id.$group_id -R $APP_DIR || error "Failed to chown new application space.  Please contact support" 123
 # Secure script and config dirs.
-chown root.root -R "$APP_DIR/${application}_ctl.sh"
+chown root.root "$APP_DIR/${application}_ctl.sh" "$APP_DIR"
 chown $user_id.$group_id -R "$APP_DIR/${jboss_version}/standalone"
 chown -R $user_id.$group_id $M2_DIR
 chcon -t libra_var_lib_t -l s0:$c_val -R "$APP_HOME/git/" "$APP_DIR"
