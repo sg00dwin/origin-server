@@ -129,7 +129,7 @@ function create_repo {
     application="$1"
     user_id=$2
     group_id=$3
-    c_val=$4
+    mcs_level=$4
     APP_HOME=` echo ${libra_dir}/${uuid} | tr -s /`
 
     if [ ! -d $APP_HOME ]; then echo "ERROR: Customer ${uuid} not found!  Please create." 1>&2; exit 2; fi
@@ -211,8 +211,8 @@ group_id=$(id -g "$uuid") || error "Could not find user $uuid ($namespace)" 135
 # Create git app repo
 #
 uid=$(id -u "$uuid")
-c_val="c$(($uid/1023)),c$(($uid%1023))"
-create_repo $application $user_id $group_id $c_val
+mcs_level=`${CART_DIR}/li-controller/info/bin/mcs_level $uid`
+create_repo $application $user_id $group_id $mcs_level
 
 
 #
@@ -299,7 +299,7 @@ chown $user_id.$group_id -R $APP_DIR/virtenv || error "Failed to chown new virte
 # Secure script and config dirs.
 chown root:root -R "$APP_DIR/${application}_ctl.sh" "$APP_DIR/conf" "$APP_DIR/conf.d"
 chown root:root "$APP_DIR"
-chcon -t libra_var_lib_t -l s0:$c_val -R "$APP_HOME/git/" "$APP_DIR"
+chcon -t libra_var_lib_t -l $mcs_level -R "$APP_HOME/git/" "$APP_DIR"
 
 #
 # Create environment variables
@@ -321,8 +321,8 @@ echo "export PATH=$CART_INFO_DIR/bin/:$CART_DIR/abstract-httpd/info/bin/:$CART_D
 #
 # Start the server
 #
-runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l s0:$c_val $APP_DIR/${application}_ctl.sh start" || error "Failed to start ${application}" 121
-#GIT_DIR="$GIT_DIR" runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l s0:$c_val $GIT_DIR/hooks/post-receive" || error "Failed to start ${application}" 121
+runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $APP_DIR/${application}_ctl.sh start" || error "Failed to start ${application}" 121
+#GIT_DIR="$GIT_DIR" runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $GIT_DIR/hooks/post-receive" || error "Failed to start ${application}" 121
 
 #
 # Create virtualhost definition for apache

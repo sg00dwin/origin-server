@@ -32,6 +32,8 @@ else
     exit 3
 fi
 
+CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
+
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
     echo "Stop a running application and disable it"
@@ -69,12 +71,12 @@ fi
 # Get UID information and CVAL
 #
 uid=$(id -u "$uuid")
-c_val="c$(($uid/1023)),c$(($uid%1023))"
+mcs_level=`${CART_DIR}/li-controller/info/bin/mcs_level $uid`
 
 
 #
 # Start application
 #
 
-/bin/su -s /bin/sh "$uuid" -c "runcon -t libra_t -l s0:$c_val $MYSQL_DIR/${application}_mysql_ctl.sh stop"
+/bin/su -s /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $MYSQL_DIR/${application}_mysql_ctl.sh stop"
 touch "$MYSQL_DIR/run/stop_lock"

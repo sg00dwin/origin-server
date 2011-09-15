@@ -44,6 +44,8 @@ else
     exit 3
 fi
 
+CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
+
 rotatelogs_interval="86400"
 rotatelogs_format="-%Y%m%d-%H%M%S-%Z"
 
@@ -131,7 +133,7 @@ function generate_ssh_keys {
     /usr/bin/ssh-keygen -N '' -f $OPENSHIFT_DATA_DIR/.ssh/jenkins_id_rsa
 
     /bin/chown root.root -R "$OPENSHIFT_DATA_DIR/.ssh/"
-    /usr/bin/chcon -t libra_var_lib_t -l s0:$c_val -R "$OPENSHIFT_DATA_DIR/.ssh/"
+    /usr/bin/chcon -t libra_var_lib_t -l $mcs_level -R "$OPENSHIFT_DATA_DIR/.ssh/"
 }
 
 while getopts 'd' OPTION
@@ -165,8 +167,8 @@ user_id=$(id -u "$uuid") || error "Could not find user $uuid ($namespace)" 134
 group_id=$(id -g "$uuid") || error "Could not find user $uuid ($namespace)" 135
 
 uid=$(id -u "$uuid")
-c_val="c$(($uid/1023)),c$(($uid%1023))"
-export c_val
+mcs_level=`${CART_DIR}/li-controller/info/bin/mcs_level $uid`
+export mcs_level
 
 #
 # Create http base for application, every app gets its own apache instance
@@ -189,7 +191,7 @@ cp $CART_INFO_DIR/bin/app_ctl_wrapper.sh $APP_DIR/${application}_ctl.sh
 chown $user_id.$group_id -R $APP_DIR || error "Failed to chown new application space.  Please contact support" 123
 # Secure script and config dirs.
 chown root.root "$APP_DIR" $CART_INFO_DIR/bin/app_ctl_wrapper.sh
-chcon -t libra_var_lib_t -l s0:$c_val -R "$APP_DIR"
+chcon -t libra_var_lib_t -l $mcs_level -R "$APP_DIR"
 
 #
 # Create environment variables
@@ -219,7 +221,7 @@ done
 #
 # Start the server
 #
-runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l s0:$c_val $APP_DIR/${application}_ctl.sh start" || error "Failed to start ${application}" 121
+runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $APP_DIR/${application}_ctl.sh start" || error "Failed to start ${application}" 121
 
 #
 # Generate key pair
