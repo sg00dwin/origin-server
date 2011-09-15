@@ -55,6 +55,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0640,root,libra_user,0750)
 %attr(0666,-,-) %{brokerdir}/log/production.log
 %config(noreplace) %{brokerdir}/config/environments/production.rb
+%config(noreplace) %{brokerdir}/config/keys/public.pem
+%config(noreplace) %{brokerdir}/config/keys/private.pem
+%attr(0750,-,-) %{brokerdir}/config/keys/generate_rsa_keys
 %{brokerdir}
 %{htmldir}/broker
 

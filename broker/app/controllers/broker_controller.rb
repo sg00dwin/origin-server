@@ -147,7 +147,8 @@ class BrokerController < ApplicationController
       cipher = OpenSSL::Cipher::Cipher.new("aes-256-cbc")
       cipher.decrypt
       cipher.key = OpenSSL::Digest::SHA512.new(Libra.c[:broker_auth_secret]).digest
-      cipher.iv = Base64::decode64(data['broker_auth_iv']) # TODO add encryption
+      private_key = OpenSSL::PKey::RSA.new(File.read('config/keys/private.pem'), Libra.c[:broker_auth_rsa_secret])
+      cipher.iv =  private_key.private_decrypt(Base64::decode64(data['broker_auth_iv']))
       json_token = cipher.update(encrypted_token)
       json_token << cipher.final
 
