@@ -172,11 +172,11 @@ module Libra
       add_ssh_key_to_servers(ssh_key)
     end
     
-    def set_broker_auth_key(app_name)
-      app = apps['app_name']
-
+    def set_broker_auth_key(app_name, app)
+      cipher = OpenSSL::Cipher::Cipher.new("aes-256-cbc")                                                                                                                                                                 
+      cipher.encrypt
       cipher.key = OpenSSL::Digest::SHA512.new(Libra.c[:broker_auth_secret]).digest
-      cipher.iv = cipher.random_iv
+      cipher.iv = iv = cipher.random_iv
       token = {:app_name => app_name,
                :rhlogin => rhlogin,
                :creation_time => app['creation_time']}
@@ -184,14 +184,13 @@ module Libra
       encrypted_token << cipher.final
         
       server = Libra::Server.new app['server_identity']
-      result = server.execute_direct('li-controller', 'add-broker-auth-key', "#{rhlogin} #{Base64::encode64(cipher.iv)} #{Base64::encode64(encrypted_token)}")
+      result = server.execute_direct('li-controller', 'add-broker-auth-key', "#{app['uuid']} #{Base64::encode64(iv).gsub("\n", '')} #{Base64::encode64(encrypted_token).gsub("\n", '')}")
       server.handle_controller_result(result)
     end
     
-    def remove_broker_auth_key(app_name)
-      app = apps['app_name']
+    def remove_broker_auth_key(app_name, app)
       server = Libra::Server.new app['server_identity']
-      result = server.execute_direct('li-controller', 'remove-broker-auth-key', "#{rhlogin}")
+      result = server.execute_direct('li-controller', 'remove-broker-auth-key', "#{app['uuid']}")
       server.handle_controller_result(result)
     end
     
@@ -229,7 +228,7 @@ module Libra
             if (result && defined? result.results)            
               exitcode = result.results[:data][:exitcode]
               output = result.results[:data][:output]
-              server.log_result_output(output, exitcode, self, app_name)
+              server.log_result_output(output, exitcode, self, app_name, app_info)
               if exitcode != 0
                 update_namespace_failures.push(app_name)                
               end

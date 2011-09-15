@@ -57,12 +57,12 @@ module Libra
       @@config[:aws_environment] = fs_config.get_value('aws_environment')
       per_user_app_limit = fs_config.get_value('per_user_app_limit')
       @@config[:per_user_app_limit] =  per_user_app_limit ? per_user_app_limit.to_i : 100
-      @@config[:dynect_customer_name] =  fs_config.get_value('dynect_customer_name').strip
-      @@config[:dynect_user_name] =  fs_config.get_value('dynect_user_name').strip
-      @@config[:dynect_password] =  fs_config.get_value('dynect_password').strip
-      @@config[:dynect_url] =  fs_config.get_value('dynect_url').strip
+      @@config[:dynect_customer_name] = fs_config.get_value('dynect_customer_name').strip
+      @@config[:dynect_user_name] = fs_config.get_value('dynect_user_name').strip
+      @@config[:dynect_password] = fs_config.get_value('dynect_password').strip
+      @@config[:dynect_url] = fs_config.get_value('dynect_url').strip
         
-      @@config[:broker_auth_secret] =  fs_config.get_value('broker_auth_secret').strip
+      @@config[:broker_auth_secret] = fs_config.get_value('broker_auth_secret').strip
     rescue
       # Ignore as long as we have the values below
     ensure
