@@ -142,14 +142,15 @@ class BrokerController < ApplicationController
   
   def login(data, params, allow_broker_auth_key=false)
     username = nil
-    if allow_broker_auth_key && data['broker_auth_key']
+    if allow_broker_auth_key && data['broker_auth_key'] && data['broker_auth_iv']
       encrypted_token = Base64::decode64(data['broker_auth_key'])
       cipher = OpenSSL::Cipher::Cipher.new("aes-256-cbc")
       cipher.decrypt
       cipher.key = OpenSSL::Digest::SHA512.new(Libra.c[:broker_auth_secret]).digest
-      cipher.iv = Base64::decode64(data['broker_auth_iv']) # TODO add encryption 
-      encrypted_token = cipher.update(token)
+      cipher.iv = Base64::decode64(data['broker_auth_iv']) # TODO add encryption
+      json_token = cipher.update(encrypted_token)
       json_token << cipher.final
+
       token = JSON.parse(json_token)
       username = token['rhlogin']
       user = Libra::User.find(username)
