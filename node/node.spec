@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.78.7
+Version:       0.78.8
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -158,6 +158,11 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Thu Sep 15 2011 Dan McPherson <dmcphers@redhat.com> 0.78.8-1
+- set execute perms on mcs_level (markllama@redhat.com)
+- updated mcs_level generation for app accounts > 522 (markllama@redhat.com)
+- broker auth fixes - functional for adding token (dmcphers@redhat.com)
+
 * Wed Sep 14 2011 Dan McPherson <dmcphers@redhat.com> 0.78.7-1
 - disable client gem release (temp) beginnings of broker auth adding barista to
   spec (dmcphers@redhat.com)
