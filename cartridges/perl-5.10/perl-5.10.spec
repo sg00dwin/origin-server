@@ -2,7 +2,7 @@
 
 Summary:   Provides mod_perl support
 Name:      rhc-cartridge-perl-5.10
-Version:   0.9.2
+Version:   0.9.3
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -73,6 +73,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Thu Sep 15 2011 Dan McPherson <dmcphers@redhat.com> 0.9.3-1
+- updated mcs_level generation for app accounts > 522 (markllama@redhat.com)
+
 * Wed Sep 14 2011 Dan McPherson <dmcphers@redhat.com> 0.9.2-1
 - Changing default path to be at the end so we can overwrite system utilities
   (mmcgrath@redhat.com)

@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.78.4
+Version:   0.78.5
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -77,6 +77,12 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Thu Sep 15 2011 Dan McPherson <dmcphers@redhat.com> 0.78.5-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- Make sure app dir is not world writable (mmcgrath@redhat.com)
+- updated mcs_level generation for app accounts > 522 (markllama@redhat.com)
+
 * Wed Sep 14 2011 Dan McPherson <dmcphers@redhat.com> 0.78.4-1
 - US1114, add user module ahead of server modules root (starksm64@gmail.com)
 - Changing default path to be at the end so we can overwrite system utilities

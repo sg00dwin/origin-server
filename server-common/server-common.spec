@@ -2,7 +2,7 @@
 
 Summary:       Common dependencies of the OpenShift broker and site
 Name:          rhc-server-common
-Version:       0.78.6
+Version:       0.78.7
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -54,6 +54,12 @@ rm -rf %{buildroot}
                                   -s /sbin/nologin 2>&1 > /dev/null || :
 
 %changelog
+* Thu Sep 15 2011 Dan McPherson <dmcphers@redhat.com> 0.78.7-1
+- adding iv encryption (dmcphers@redhat.com)
+- broker auth fixes - functional for adding token (dmcphers@redhat.com)
+- fix typo (dmcphers@redhat.com)
+- move broker_auth_secret to controller.conf (dmcphers@redhat.com)
+
 * Wed Sep 14 2011 Dan McPherson <dmcphers@redhat.com> 0.78.6-1
 - disable client gem release (temp) beginnings of broker auth adding barista to
   spec (dmcphers@redhat.com)
