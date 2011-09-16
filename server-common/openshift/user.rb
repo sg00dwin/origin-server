@@ -182,9 +182,12 @@ module Libra
                :creation_time => app['creation_time']}
       encrypted_token = cipher.update(JSON.generate(token))
       encrypted_token << cipher.final
+
+      public_key = OpenSSL::PKey::RSA.new(File.read('config/keys/public.pem'), Libra.c[:broker_auth_rsa_secret])
+      encrypted_iv = public_key.public_encrypt(iv)
         
       server = Libra::Server.new app['server_identity']
-      result = server.execute_direct('li-controller', 'add-broker-auth-key', "#{app['uuid']} #{Base64::encode64(iv).gsub("\n", '')} #{Base64::encode64(encrypted_token).gsub("\n", '')}")
+      result = server.execute_direct('li-controller', 'add-broker-auth-key', "#{app['uuid']} #{Base64::encode64(encrypted_iv).gsub("\n", '')} #{Base64::encode64(encrypted_token).gsub("\n", '')}")
       server.handle_controller_result(result)
     end
     

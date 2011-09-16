@@ -96,19 +96,19 @@ class BrokerController < ApplicationController
             render :json => generate_result_json("Invalid cart_type: #{val} specified", nil, 109), :status => :invalid and return nil
           end
         when 'action'
-          if !(val =~ /\A[\w\-\.]+\z/) and val.to_s.length < 24
+          if !(val =~ /\A[\w\-\.]+\z/)
             render :json => generate_result_json("Invalid #{key} specified: #{val}", nil, 111), :status => :invalid and return nil
           end
         when 'app_name'
-          if !(val =~ /\A[\w]+\z/) and val.to_s.length < 24
+          if !(val =~ /\A[\w]+\z/)
             render :json => generate_result_json("Invalid #{key} specified: #{val}", nil, 105), :status => :invalid and return nil
           end
         when 'broker_auth_key'
-          if val.to_s.empty?
+          if !(val =~ /\A[A-Za-z0-9\+\/=]+\z/)
             render :json => generate_result_json("Invalid #{key} specified: #{val}", nil, 113), :status => :invalid and return nil
           end
         when 'broker_auth_iv'
-          if val.to_s.empty?
+          if !(val =~ /\A[A-Za-z0-9\+\/=]+\z/)
             render :json => generate_result_json("Invalid #{key} specified: #{val}", nil, 114), :status => :invalid and return nil
           end
         else
@@ -142,14 +142,16 @@ class BrokerController < ApplicationController
   
   def login(data, params, allow_broker_auth_key=false)
     username = nil
-    if allow_broker_auth_key && data['broker_auth_key']
+    if allow_broker_auth_key && data['broker_auth_key'] && data['broker_auth_iv']
       encrypted_token = Base64::decode64(data['broker_auth_key'])
       cipher = OpenSSL::Cipher::Cipher.new("aes-256-cbc")
       cipher.decrypt
       cipher.key = OpenSSL::Digest::SHA512.new(Libra.c[:broker_auth_secret]).digest
-      cipher.iv = Base64::decode64(data['broker_auth_iv']) # TODO add encryption 
-      encrypted_token = cipher.update(token)
+      private_key = OpenSSL::PKey::RSA.new(File.read('config/keys/private.pem'), Libra.c[:broker_auth_rsa_secret])
+      cipher.iv =  private_key.private_decrypt(Base64::decode64(data['broker_auth_iv']))
+      json_token = cipher.update(encrypted_token)
       json_token << cipher.final
+
       token = JSON.parse(json_token)
       username = token['rhlogin']
       user = Libra::User.find(username)

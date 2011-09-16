@@ -21,10 +21,7 @@ module LibraMigration
       
       FileUtils.chmod(0750, "#{app_home}/.env")
       FileUtils.chown_R("root", uuid, "#{app_home}/.env")
-      
-      #uid=`id -u "#{uuid}"`
-      #c_val=`echo c$((#{uid}/1023)),c$((#{uid}%1023))`.chomp
-      
+            
       ctl_sh = "#{app_home}/#{app_name}/#{app_name}_ctl.sh"
       output += "Migrating _ctl.sh: #{ctl_sh}\n"
       file = File.open(ctl_sh, 'w')

@@ -1,4 +1,4 @@
-/* DO NOT MODIFY. This file was compiled Wed, 14 Sep 2011 13:59:19 GMT from
+/* DO NOT MODIFY. This file was compiled Wed, 14 Sep 2011 14:56:09 GMT from
  * /home/fotios/li/site/app/coffeescripts/control_panel.coffee
  */
 
