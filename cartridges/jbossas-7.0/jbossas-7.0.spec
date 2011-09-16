@@ -59,6 +59,7 @@ ln -s %{cartridgedir}/../abstract-httpd/info/hooks/update_namespace %{buildroot}
 %post
 #maven
 alternatives --install /etc/alternatives/maven-3.0 maven-3.0 /usr/share/java/apache-maven-3.0.3 100
+alternatives --install /etc/alternatives/jbossas-7.0 jbossas-7.0 /opt/jboss-as-web-7.0.1.Final 100
 
 
 %clean

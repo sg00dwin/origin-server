@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-# Usage: ./migrate-2.1.4 > out.txt
+# Usage: ./migrate-2.1.6 > out.txt
 require 'rubygems'
 require 'openshift'
 
@@ -16,7 +16,7 @@ def migrate_app_on_node(user, app, app_name)
                    :application => app_name,
                    :app_type => app['framework'],
                    :namespace => user.namespace,
-                   :version => '2.1.4') do |response|
+                   :version => '2.1.6') do |response|
       exit_code = response[:body][:data][:exitcode]
       output = response[:body][:data][:output]
       if (output.length > 0)
@@ -31,8 +31,7 @@ def migrate_app_on_node(user, app, app_name)
 end
 
 #
-# Migrate applications between 2.1.3 and 2.1.4
-# Get env variables synced up to all existing apps
+# Migrate applications between 2.1.4 and 2.1.6
 #
 def migrate
   start_time = Time.now.to_i
