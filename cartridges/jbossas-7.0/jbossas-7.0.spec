@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.78.5
+Version:   0.78.6
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -78,6 +78,11 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Mon Sep 19 2011 Dan McPherson <dmcphers@redhat.com> 0.78.6-1
+- US1056 (dmcphers@redhat.com)
+- bug738800, enable the jbossweb low memory setting and addition gc tuning
+  (starksm64@gmail.com)
+
 * Thu Sep 15 2011 Dan McPherson <dmcphers@redhat.com> 0.78.5-1
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
   (mmcgrath@redhat.com)

@@ -88,8 +88,8 @@ class ApplicationController < ActionController::Base
         end
       end
       unless workflow
-        session[:login_workflow] = express_path
-      end 
+        session[:login_workflow] = @default_login_workflow ? @default_login_workflow : express_path
+      end
     end
   end
   
