@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.78.8
+Version:       0.78.9
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -157,6 +157,11 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Mon Sep 19 2011 Dan McPherson <dmcphers@redhat.com> 0.78.9-1
+- missed a file on a rename (dmcphers@redhat.com)
+- rename migration (dmcphers@redhat.com)
+- US1056 (dmcphers@redhat.com)
+
 * Thu Sep 15 2011 Dan McPherson <dmcphers@redhat.com> 0.78.8-1
 - set execute perms on mcs_level (markllama@redhat.com)
 - updated mcs_level generation for app accounts > 522 (markllama@redhat.com)
