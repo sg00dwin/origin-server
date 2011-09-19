@@ -10,21 +10,6 @@ done
 
 redeploy_repo_dir.sh
 
-if [ -f ~/${OPENSHIFT_APP_NAME}/repo/deplist.txt ]
-then
-    for f in $(cat ~/${OPENSHIFT_APP_NAME}/repo/deplist.txt)
-    do
-        echo "Checking pear: $f"
-        echo
-        if pear list "$f" > /dev/null
-        then
-            pear upgrade "$f"
-        else
-            pear install "$f"
-        fi
-    done
-fi
-
 # Run build
 user_build.sh
 
