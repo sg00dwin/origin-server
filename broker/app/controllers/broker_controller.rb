@@ -309,7 +309,7 @@ class BrokerController < ApplicationController
         user = Libra::User.find(username)
         ns = data['namespace']
         if !Libra::Util.check_namespace(ns)
-          render :json => generate_result_json("Invalid characters in namespace '#{ns}' found", nil, 106), :status => :invalid and return
+          render :json => generate_result_json("The namespace you entered (#{ns}) is not available for use.  Please choose another one.", nil, 106), :status => :invalid and return
         end
         if user
           if data['alter']
