@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.78.4
+Version:   0.78.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -65,6 +65,9 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Mon Sep 19 2011 Dan McPherson <dmcphers@redhat.com> 0.78.5-1
+- change blacklist message (dmcphers@redhat.com)
+
 * Thu Sep 15 2011 Dan McPherson <dmcphers@redhat.com> 0.78.4-1
 - adding iv encryption (dmcphers@redhat.com)
 - param checking (dmcphers@redhat.com)
