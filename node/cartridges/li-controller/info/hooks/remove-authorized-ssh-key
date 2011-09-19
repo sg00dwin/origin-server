@@ -18,4 +18,4 @@ fi
 USERHOME=`echo ${libra_dir}/${USERNAME} | tr -s '/'`
 SSHDIR=${USERHOME}/.ssh
 
-sed -i "/${SSHKEY}/d" ${SSHDIR}/authorized_keys
+sed -i "/${SSHKEY//\//\\/}/d" ${SSHDIR}/authorized_keys

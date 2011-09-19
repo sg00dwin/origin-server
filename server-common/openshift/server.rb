@@ -574,7 +574,6 @@ module Libra
               key = line['SSH_KEY_ADD: '.length..-1].chomp
               user.set_ssh_key(app_name, key)
             else
-              key = line['SSH_KEY_REMOVE: '.length..-1].chomp
               user.remove_ssh_key(app_name)
             end
           elsif user && app_name && app && line =~ /^BROKER_AUTH_KEY_(ADD|REMOVE): /

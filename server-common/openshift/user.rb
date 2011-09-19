@@ -28,14 +28,14 @@ module Libra
     attr_reader :rhlogin, :password
     attr_accessor :ssh, :namespace, :uuid, :ssh_keys
 
-    def initialize(rhlogin, ssh, namespace, uuid, password=nil, ticket=nil, ssh_keys=nil)
-      @rhlogin, @ssh, @namespace, @uuid, @password, @ticket, @ssh_keys = rhlogin, ssh, namespace, uuid, password, ticket, ssh_keys
+    def initialize(rhlogin, ssh, ssh_keys, namespace, uuid, password=nil, ticket=nil)
+      @rhlogin, @ssh, @ssh_keys, @namespace, @uuid, @password, @ticket, = rhlogin, ssh, ssh_keys, namespace, uuid, password, ticket
       @roles = []
     end
 
     def self.from_json(json)
       data = JSON.parse(json)
-      new(data['rhlogin'], data['ssh'], data['namespace'], data['uuid'], data['ssh_keys'])
+      new(data['rhlogin'], data['ssh'], data['ssh_keys'], data['namespace'], data['uuid'])
     end
 
     #
@@ -59,7 +59,7 @@ module Libra
         Libra.client_debug "Creating user entry rhlogin:#{rhlogin} ssh:#{ssh} namespace:#{namespace}" if Libra.c[:rpc_opts][:verbose]
         begin
           uuid = gen_small_uuid()
-          user = new(rhlogin, ssh, namespace, uuid)
+          user = new(rhlogin, ssh, nil, namespace, uuid)
           user.update
           begin
             Nurture.libra_contact(rhlogin, uuid, namespace, 'create')
@@ -149,27 +149,40 @@ module Libra
       Helper.s3.put(Libra.c[:s3_bucket], "user_info/#{rhlogin}/user.json", json)
     end
     
-    def add_ssh_key_to_servers(ssh_key)
+    def add_ssh_key_to_servers(app_name, ssh_key)
       apps.each do |appname, app|
-        server = Libra::Server.new app['server_identity']
-        result = server.execute_direct('li-controller', 'add-authorized-ssh-key', "#{app['uuid']} #{ssh_key}")
-        server.handle_controller_result(result)
+        if appname != app_name
+          server = Libra::Server.new app['server_identity']
+          result = server.execute_direct('li-controller', 'add-authorized-ssh-key', "#{app['uuid']} #{ssh_key}")
+          server.handle_controller_result(result)
+        end
       end
     end
     
-    def remove_ssh_key_from_servers(ssh_key)
+    def remove_ssh_key_from_servers(app_name, ssh_key)
       apps.each do |appname, app|
-        server = Libra::Server.new app['server_identity']
-        result = server.execute_direct('li-controller', 'remove-authorized-ssh-key', "#{app['uuid']} #{ssh_key}")
-        server.handle_controller_result(result)
+        if appname != app_name
+          server = Libra::Server.new app['server_identity']
+          result = server.execute_direct('li-controller', 'remove-authorized-ssh-key', "#{app['uuid']} #{ssh_key}")
+          server.handle_controller_result(result)
+        end
       end
     end
     
-    def set_ssh_key(name, ssh_key)
+    def set_ssh_key(app_name, ssh_key)
       @ssh_keys = {} unless @ssh_keys
-      @ssh_keys[name] = ssh_key
+      @ssh_keys[app_name] = ssh_key
       update
-      add_ssh_key_to_servers(ssh_key)
+      add_ssh_key_to_servers(app_name, ssh_key)
+    end
+    
+    def remove_ssh_key(app_name)
+      if ssh_keys && ssh_keys.key?(app_name)
+        ssh_key = ssh_keys[app_name]
+        ssh_keys.delete(app_name)
+        update
+        remove_ssh_key_from_servers(app_name, ssh_key)
+      end
     end
     
     def set_broker_auth_key(app_name, app)
@@ -195,15 +208,6 @@ module Libra
       server = Libra::Server.new app['server_identity']
       result = server.execute_direct('li-controller', 'remove-broker-auth-key', "#{app['uuid']}")
       server.handle_controller_result(result)
-    end
-    
-    def remove_ssh_key(name)
-      if ssh_keys && ssh_keys.key?(name)
-        ssh_key = ssh_keys[name]
-        ssh_keys.delete(name)
-        update
-        remove_ssh_key_from_servers(ssh_key)
-      end
     end
     
     #

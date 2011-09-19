@@ -134,6 +134,8 @@ done
 #rm -rf "$APP_DIR"
 runcon -l s0-s0:c0.c1023 rm -rf "$APP_DIR"
 
+echo "SSH_KEY_REMOVE: "
+
 #
 # Remove virtualhost definition for apache
 #
