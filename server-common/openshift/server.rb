@@ -52,12 +52,12 @@ module Libra
     # Currently this is defined by the server that
     # has the least number of git repos on it.
     #
-    def self.find_available
+    def self.find_available(node_profile="std")
       # Defaults
-      current_server, current_capacity = rpc_find_available
+      current_server, current_capacity = rpc_find_available(node_profile)
       puts "CURRENT SERVER: #{current_server}"
       if !current_server
-        current_server, current_capacity = rpc_find_available(true)
+        current_server, current_capacity = rpc_find_available(node_profile, true)
       end
       puts "CURRENT SERVER: #{current_server}"
       raise NodeException.new(140), "No nodes available.  If the problem persists please contact Red Hat support.", caller[0..5] unless current_server
@@ -65,11 +65,11 @@ module Libra
       new(current_server, current_capacity)
     end
 
-    def self.rpc_find_available(forceRediscovery=false)
+    def self.rpc_find_available(node_profile="std", forceRediscovery=false)
       current_server, current_capacity = nil, nil
       additional_filters = [
         {:fact => "node_profile",
-         :value => "std",
+         :value => node_profile,
          :operator => "=="},
         {:fact => "capacity",
          :value => "100",
