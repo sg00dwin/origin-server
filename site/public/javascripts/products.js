@@ -1,1 +1,0 @@
-$(function(){$("#tab_navigation").tabs(".tab",{tabs:"li"})});
