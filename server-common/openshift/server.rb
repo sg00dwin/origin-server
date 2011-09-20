@@ -93,7 +93,7 @@ module Libra
     def self.find_all
       servers = []
 
-      Helper.rpc_get_fact('git_repos') do |server, repos|
+      Helper.rpc_get_fact('capacity') do |server, repos|
         servers << new(server, repos)
       end
 
