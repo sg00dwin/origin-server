@@ -197,7 +197,7 @@ module Libra
     #
     def set_broker_auth_key(app_name, app)
       server = Libra::Server.new app['server_identity']
-      server.set_broker_auth_key(app_name, app)
+      server.set_broker_auth_key(app_name, app, rhlogin)
     end
     
     #

@@ -550,7 +550,7 @@ module Libra
     #
     # Add broker auth key to app
     #
-    def set_broker_auth_key(app_name, app)
+    def set_broker_auth_key(app_name, app, rhlogin)
       cipher = OpenSSL::Cipher::Cipher.new("aes-256-cbc")                                                                                                                                                                 
       cipher.encrypt
       cipher.key = OpenSSL::Digest::SHA512.new(Libra.c[:broker_auth_secret]).digest
