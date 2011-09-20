@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.78.9
+Version:       0.78.10
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -157,6 +157,12 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Tue Sep 20 2011 Dan McPherson <dmcphers@redhat.com> 0.78.10-1
+- added sensitivity (s0:) to the openshift_mcs_level function return value
+  (markllama@redhat.com)
+- call add and remove ssh keys from jenkins configure and deconfigure
+  (dmcphers@redhat.com)
+
 * Mon Sep 19 2011 Dan McPherson <dmcphers@redhat.com> 0.78.9-1
 - missed a file on a rename (dmcphers@redhat.com)
 - rename migration (dmcphers@redhat.com)
