@@ -34,7 +34,7 @@ function openshift_mcs_level() {
         TIER=$(($TIER - 1))
     done
     TIER=$(($SETSIZE - $TIER))
-    echo c$TIER,c$(($ORD + $TIER))
+    echo s0:c$TIER,c$(($ORD + $TIER))
 }
 
 #
