@@ -284,6 +284,8 @@ public_key=$(cat $APP_DIR/data/.ssh/jenkins_id_rsa.pub)
 set -- $public_key
 echo "SSH_KEY_ADD: $2"
 
+echo "BROKER_AUTH_KEY_ADD: "
+
 #
 # Create virtualhost definition for apache
 #
