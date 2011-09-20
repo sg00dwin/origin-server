@@ -2,6 +2,9 @@ require 'openshift/helper'
 require 'aws'
 require 'json'
 require 'resolv'
+require 'openssl'
+require 'digest/sha2'
+require 'base64'
 require 'pp'
 
 module Libra
@@ -526,6 +529,51 @@ module Libra
           return output == true
         end
       end
+    end
+    
+    #
+    # Add authorized key to app
+    #
+    def add_ssh_key(app, ssh_key)
+      result = execute_direct('li-controller', 'add-authorized-ssh-key', "#{app['uuid']} #{ssh_key}")
+      handle_controller_result(result)
+    end
+    
+    #
+    # Remove authorized key from app
+    #
+    def remove_ssh_key(app, ssh_key)
+      result = execute_direct('li-controller', 'remove-authorized-ssh-key', "#{app['uuid']} #{ssh_key}")
+      handle_controller_result(result)
+    end
+    
+    #
+    # Add broker auth key to app
+    #
+    def set_broker_auth_key(app_name, app)
+      cipher = OpenSSL::Cipher::Cipher.new("aes-256-cbc")                                                                                                                                                                 
+      cipher.encrypt
+      cipher.key = OpenSSL::Digest::SHA512.new(Libra.c[:broker_auth_secret]).digest
+      cipher.iv = iv = cipher.random_iv
+      token = {:app_name => app_name,
+               :rhlogin => rhlogin,
+               :creation_time => app['creation_time']}
+      encrypted_token = cipher.update(JSON.generate(token))
+      encrypted_token << cipher.final
+    
+      public_key = OpenSSL::PKey::RSA.new(File.read('config/keys/public.pem'), Libra.c[:broker_auth_rsa_secret])
+      encrypted_iv = public_key.public_encrypt(iv)
+      
+      result = execute_direct('li-controller', 'add-broker-auth-key', "#{app['uuid']} #{Base64::encode64(encrypted_iv).gsub("\n", '')} #{Base64::encode64(encrypted_token).gsub("\n", '')}")
+      handle_controller_result(result)
+    end
+    
+    #
+    # Remove broker auth key from app
+    #
+    def remove_broker_auth_key(app_name, app)
+      result = execute_direct('li-controller', 'remove-broker-auth-key', "#{app['uuid']}")
+      handle_controller_result(result)
     end
 
     #

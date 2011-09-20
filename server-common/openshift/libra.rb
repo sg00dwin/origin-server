@@ -238,6 +238,12 @@ module Libra
       server.create_account(user, app_info)
 
       server_execute_direct(framework, 'configure', app_name, user, server, app_info)
+      
+      # Add any secondary ssh keys
+      user.ssh_keys.each_value do |ssh_key|
+        server.add_ssh_key(app_info, ssh_key)
+      end if user.ssh_keys
+      
       begin
         # update DNS
         server.create_app_dns_entries(app_name, user.namespace)
