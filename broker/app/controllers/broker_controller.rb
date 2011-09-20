@@ -215,13 +215,14 @@ class BrokerController < ApplicationController
         action = data['action']
         app_name = data['app_name']
         cartridge = data['cartridge']
+        node_profile = "std"
 
         if !Libra::Util.check_app(app_name)
           render :json => generate_result_json("The supplied application name '#{app_name}' is not allowed", nil, 105), :status => :invalid and return
         end
         
         # Execute a framework cartridge
-        Libra.execute(cartridge, action, app_name, username)
+        Libra.execute(cartridge, action, app_name, username, node_profile)
           
         json_data = nil
         

@@ -113,7 +113,7 @@ module Libra
 
 
   # Execute a cartridge type (standalone)
-  def self.execute(framework, action, app_name, rhlogin)
+  def self.execute(framework, action, app_name, rhlogin, node_profile)
     # get user
     user = User.find(rhlogin)
     if not user
@@ -125,7 +125,7 @@ module Libra
     case action
     when 'configure'
       # create a new app.  Don't expect it to exist
-      configure_app(framework, app_name, user)
+      configure_app(framework, app_name, user, node_profile)
 
     when 'deconfigure'
       # destroy an app.  It must exists, but won't at the end
@@ -220,10 +220,10 @@ module Libra
     user.update_app(app_info, app_name)
   end
 
-  def self.configure_app(framework, app_name, user)
+  def self.configure_app(framework, app_name, user, node_profile)
     raise UserException.new(100), "An application named '#{app_name}' in namespace '#{user.namespace}' already exists", caller[0..5] if user.app_info(app_name)
     # Find the next available server
-    server = Server.find_available
+    server = Server.find_available(node_profile)
     
     check_cartridge_type(framework, server, 'standalone')
 
