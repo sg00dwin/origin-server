@@ -405,14 +405,14 @@ class DevEnv < Thor
           cmd = "cd li-test/site; rake test"
           run_ssh(instance, "Site Unit", cmd)
         end
-        threads << Thread.new do
+      end
+      
+      threads << Thread.new do
+        unless options.exclude_internal?
           cmd = "cucumber -f html --out /tmp/rhc/internals.html -f progress -t @internals li-test/tests/"
           run_ssh(instance, "Internal", cmd)
         end
-      end
-
-      unless options.exclude_verification?
-        threads << Thread.new do
+        unless options.exclude_verification?
           cmd = "cucumber -f html --out /tmp/rhc/verfication.html -f progress -t @verify li-test/tests/"
           run_ssh(instance, "Verification", cmd)
         end
