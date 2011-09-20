@@ -59,6 +59,8 @@ class BrokerController < ApplicationController
       Libra.c[:rpc_opts][:verbose] = true
     end
 
+    date['node_profile']='std' unless data['node_profile']
+
     # Validate known json vars.  Error on unknown vars.
     data.each do |key, val|
       case key
@@ -77,6 +79,10 @@ class BrokerController < ApplicationController
         when 'app_uuid'
           if !(val =~ /\A[a-f0-9]+\z/)
             render :json => generate_result_json("Invalid application uuid: #{val}", nil, 254), :status => :invalid and return nil
+          end
+        when 'node_profile'
+          if !(val =~ /\A(exlarge|jumbo|large|micro|std)\z/)
+            render :json => generate_result_json("Invalid Profile: #{val}.  Must be: (exlarge|jumbo|large|micro|std)", nil, 254), :status => :invalid and return nil
           end
         when 'debug', 'alter'
           if !(val =~ /\A(true|false)\z/)
@@ -215,7 +221,7 @@ class BrokerController < ApplicationController
         action = data['action']
         app_name = data['app_name']
         cartridge = data['cartridge']
-        node_profile = "std"
+        node_profile = data['node_profile'] if data['node_profile']
 
         if !Libra::Util.check_app(app_name)
           render :json => generate_result_json("The supplied application name '#{app_name}' is not allowed", nil, 105), :status => :invalid and return
