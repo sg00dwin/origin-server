@@ -2,7 +2,7 @@
 
 Summary:       Common dependencies of the OpenShift broker and site
 Name:          rhc-server-common
-Version:       0.78.7
+Version:       0.78.8
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -54,6 +54,18 @@ rm -rf %{buildroot}
                                   -s /sbin/nologin 2>&1 > /dev/null || :
 
 %changelog
+* Tue Sep 20 2011 Dan McPherson <dmcphers@redhat.com> 0.78.8-1
+- Added node profile to broker configs (mmcgrath@redhat.com)
+- updating to use dynamic node profile (mmcgrath@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- Changing default find_all to use capacity instead of git_repos
+  (mmcgrath@redhat.com)
+- add broker auth key when jenkins is created (dmcphers@redhat.com)
+- add auth keys when a new app is added (dmcphers@redhat.com)
+- call add and remove ssh keys from jenkins configure and deconfigure
+  (dmcphers@redhat.com)
+
 * Thu Sep 15 2011 Dan McPherson <dmcphers@redhat.com> 0.78.7-1
 - adding iv encryption (dmcphers@redhat.com)
 - broker auth fixes - functional for adding token (dmcphers@redhat.com)
