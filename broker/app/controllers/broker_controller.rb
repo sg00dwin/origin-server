@@ -59,7 +59,7 @@ class BrokerController < ApplicationController
       Libra.c[:rpc_opts][:verbose] = true
     end
 
-    date['node_profile']='std' unless data['node_profile']
+    data['node_profile']='std' unless data['node_profile']
 
     # Validate known json vars.  Error on unknown vars.
     data.each do |key, val|
