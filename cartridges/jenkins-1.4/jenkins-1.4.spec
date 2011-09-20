@@ -2,7 +2,7 @@
 
 Summary:   Provides jenkins-1.4 support
 Name:      rhc-cartridge-jenkins-1.4
-Version:   0.78.4
+Version:   0.78.5
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -49,6 +49,12 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Tue Sep 20 2011 Dan McPherson <dmcphers@redhat.com> 0.78.5-1
+- add broker auth key when jenkins is created (dmcphers@redhat.com)
+- add base jenkins template (dmcphers@redhat.com)
+- call add and remove ssh keys from jenkins configure and deconfigure
+  (dmcphers@redhat.com)
+
 * Mon Sep 19 2011 Dan McPherson <dmcphers@redhat.com> 0.78.4-1
 - jenkins cleanup (dmcphers@redhat.com)
 
