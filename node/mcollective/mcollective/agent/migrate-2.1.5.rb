@@ -17,6 +17,16 @@ module LibraMigration
     exitcode = 0
     if (File.exists?(app_home) && !File.symlink?(app_home))
       
+      cartridge_root_dir = "/usr/libexec/li/cartridges"
+      cartridge_dir = "#{cartridge_root_dir}/#{app_type}"
+      
+      env_echos = ["echo \"export PATH=#{cartridge_dir}/info/bin/:#{cartridge_root_dir}/abstract-httpd/info/bin/:#{cartridge_root_dir}/li-controller/info/bin/:/bin:/usr/bin\" > #{app_home}/.env/PATH"]
+
+      env_echos.each do |env_echo|
+        echo_output, echo_exitcode = Util.execute_script(env_echo)
+        output += echo_output
+      end
+      
       if app_type == 'jbossas-7.0'
         jboss_home = '/etc/alternatives/jbossas-7.0'
         FileUtils.rm "#{app_dir}/jbossas-7.0/modules"
