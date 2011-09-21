@@ -27,10 +27,9 @@ class Validation < Test::Unit::TestCase
   ]
 
   $logger ||= Logger.new(STDERR)
-  $logger.level = Logger::INFO
+  $logger.level = Logger::DEBUG
 
   def setup
-    puts "Making sure links are empty"
     @@invalid_links = []
     @@tested_pages = []
   end
@@ -72,7 +71,7 @@ class Validation < Test::Unit::TestCase
       when Net::HTTPSuccess, Net::HTTPRedirection
         if response.body
           links = get_links(response.body)
-          links.each{|link| check_page(link,logged_in)}
+          links.each{|link| check_page(link,logged_in) unless link.nil?}
         end
       else
         @@invalid_links << url
@@ -123,18 +122,19 @@ class Validation < Test::Unit::TestCase
       http.verify_mode = OpenSSL::SSL::VERIFY_NONE
     end
 
-    response = http.start{|http|
       begin
-        response = http.__send__(
-          args[:method],
-          (uri.path == '' ? '/' : uri.path),headers
-        )
-        if response == Net::HTTPRedirection && args[:redirect]
-          args[:limit] -= 1
-          fetch(response['location'], args)
-        else
-          response
-        end
+        response = http.start{|http|
+          response = http.__send__(
+            args[:method],
+            (uri.path == '' ? '/' : uri.path),headers
+          )
+          if response == Net::HTTPRedirection && args[:redirect]
+            args[:limit] -= 1
+            fetch(response['location'], args)
+          else
+            response
+          end
+        }
       rescue Timeout::Error
         args[:retries] += 1
         if args[:retries] <= @@retry_limit
@@ -142,8 +142,10 @@ class Validation < Test::Unit::TestCase
         else
           Net::HTTPResponse::CODE_CLASS_TO_OBJ['4']
         end
+      rescue
+          Net::HTTPResponse::CODE_CLASS_TO_OBJ['5']
       end
-    }
+
   end
 
   # Source: http://goo.gl/enmv7
