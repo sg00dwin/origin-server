@@ -1,7 +1,3 @@
-/* DO NOT MODIFY. This file was compiled Wed, 14 Sep 2011 14:56:09 GMT from
- * /home/fotios/li/site/app/coffeescripts/script.coffee
- */
-
 (function() {
   var $;
   $ = jQuery;
@@ -31,7 +27,8 @@
     dialogs = $('.dialog');
     open_dialog = function(dialog) {
       dialogs.hide();
-      return dialog.show();
+      dialog.show();
+      return ($(window, 'html', 'body')).scrollTop(0);
     };
     close_dialog = function(dialog) {
       return dialog.hide();

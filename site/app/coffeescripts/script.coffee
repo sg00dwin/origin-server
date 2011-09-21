@@ -46,6 +46,8 @@ $ ->
     dialogs.hide()
     # Show given dialog
     dialog.show()
+    # scroll to top
+    ($ window, 'html', 'body').scrollTop 0
 
   close_dialog = (dialog) ->
     dialog.hide()
