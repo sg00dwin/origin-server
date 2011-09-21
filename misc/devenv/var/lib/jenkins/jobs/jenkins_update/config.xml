@@ -8,14 +8,14 @@
   <canRoam>true</canRoam>
   <disabled>true</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
-  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>true</blockBuildWhenUpstreamBuilding>
   <authToken>libra1</authToken>
   <triggers class="vector"/>
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>sudo yum clean metadata
-sudo yum update -y --nogpgcheck --exclude=rhc-devenv</command>
+      <command>sudo /usr/bin/yum clean metadata
+sudo /usr/bin/yum update -y --nogpgcheck --exclude=rhc-devenv</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers/>

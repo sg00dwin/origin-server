@@ -23,15 +23,8 @@
       <command># Launch a test instance
 build/devenv launch devenv_verifier_${BUILD_NUMBER} --verifier
 
-# Run the &apos;internals&apos; tests to test lower level components
-build/devenv test_internals devenv_verifier_${BUILD_NUMBER}
-
-# Run the &apos;verification&apos; tests to test higher level components
-build/devenv test devenv_verifier_${BUILD_NUMBER} --terminate
-
-# Don&apos;t fail on non-test runs - this will just keep the files
-# updated to keep Jenkins happy
-find rhc/junit/ | xargs touch</command>
+# Run the image tests
+build/devenv test devenv_verifier_${BUILD_NUMBER} --terminate</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
@@ -39,11 +32,6 @@ find rhc/junit/ | xargs touch</command>
       <artifacts>rhc/log/*</artifacts>
       <latestOnly>false</latestOnly>
     </hudson.tasks.ArtifactArchiver>
-    <hudson.tasks.junit.JUnitResultArchiver>
-      <testResults>rhc/junit/*</testResults>
-      <keepLongStdio>false</keepLongStdio>
-      <testDataPublishers/>
-    </hudson.tasks.junit.JUnitResultArchiver>
     <hudson.tasks.Mailer>
       <recipients>libra-express@redhat.com</recipients>
       <dontNotifyEveryUnstableBuild>true</dontNotifyEveryUnstableBuild>

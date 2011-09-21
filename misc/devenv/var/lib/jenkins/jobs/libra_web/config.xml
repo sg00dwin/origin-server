@@ -20,7 +20,8 @@
   <customWorkspace>jobs/libra_check/workspace</customWorkspace>
   <builders>
     <hudson.tasks.Shell>
-      <command>tests/selenium/login_test
+      <command>cd selenium/
+./ts_web
 
 # Generate an artifact if necessary
 # This keeps Jenkins happy
