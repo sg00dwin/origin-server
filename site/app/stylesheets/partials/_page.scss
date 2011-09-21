@@ -341,7 +341,7 @@ footer.universal {
   top: 20%;
   left: 20%;
   right: 20%;
-  z-index: 1000;
+  z-index: 1000000;
   min-width: 30em;
   padding: 2em;
   overflow: auto;
@@ -379,6 +379,8 @@ footer.universal {
   
   .close_button {
     @include close_button;
+    
+    img { border: none; }
   }
 }
 
