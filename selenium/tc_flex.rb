@@ -47,8 +47,6 @@ class Flex < Test::Unit::TestCase
     goto_flex
     login("allaccess+test@redhat.com", "123456")
     screenshot('after flex login')
-    # TODO: Don't think redirect is working properly
-    goto_flex
     
     # Make sure the signup link is gone and we're signed in
     check_element_hidden(:xpath, ".//div[@id='signup']")

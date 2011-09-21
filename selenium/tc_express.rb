@@ -48,9 +48,6 @@ class Express < Test::Unit::TestCase
     login("allaccess+test@redhat.com", "123456")
     screenshot('after express login')
 
-    # TODO: Don't think redirect is working properly
-    goto_express
-
     # Make sure the signup link is gone and we're signed in
     check_element_hidden(:xpath, ".//div[@id='signup']")
     check_element_displayed(:xpath, ".//nav[@id='main_nav']//a[@class='sign_out']")
