@@ -240,9 +240,9 @@ module Libra
       server_execute_direct(framework, 'configure', app_name, user, server, app_info)
       
       # Add any secondary ssh keys
-      user.ssh_keys.each_value do |ssh_key|
+      user.system_ssh_keys.each_value do |ssh_key|
         server.add_ssh_key(app_info, ssh_key)
-      end if user.ssh_keys
+      end if user.system_ssh_keys
       
       begin
         # update DNS

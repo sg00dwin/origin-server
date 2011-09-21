@@ -620,9 +620,9 @@ module Libra
           elsif user && app_name && line =~ /^SSH_KEY_(ADD|REMOVE): /
             if line =~ /^SSH_KEY_ADD: /
               key = line['SSH_KEY_ADD: '.length..-1].chomp
-              user.set_ssh_key(app_name, key)
+              user.set_system_ssh_key(app_name, key)
             else
-              user.remove_ssh_key(app_name)
+              user.remove_system_ssh_key(app_name)
             end
           elsif user && app_name && app && line =~ /^BROKER_AUTH_KEY_(ADD|REMOVE): /
             if line =~ /^BROKER_AUTH_KEY_ADD: /

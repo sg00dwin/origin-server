@@ -23,16 +23,16 @@ module Libra
     end
 
     attr_reader :rhlogin, :password
-    attr_accessor :ssh, :namespace, :uuid, :ssh_keys
+    attr_accessor :ssh, :namespace, :uuid, :system_ssh_keys
 
-    def initialize(rhlogin, ssh, ssh_keys, namespace, uuid, password=nil, ticket=nil)
-      @rhlogin, @ssh, @ssh_keys, @namespace, @uuid, @password, @ticket, = rhlogin, ssh, ssh_keys, namespace, uuid, password, ticket
+    def initialize(rhlogin, ssh, system_ssh_keys, namespace, uuid, password=nil, ticket=nil)
+      @rhlogin, @ssh, @system_ssh_keys, @namespace, @uuid, @password, @ticket, = rhlogin, ssh, system_ssh_keys, namespace, uuid, password, ticket
       @roles = []
     end
 
     def self.from_json(json)
       data = JSON.parse(json)
-      new(data['rhlogin'], data['ssh'], data['ssh_keys'], data['namespace'], data['uuid'])
+      new(data['rhlogin'], data['ssh'], data['system_ssh_keys'], data['namespace'], data['uuid'])
     end
 
     #
@@ -136,8 +136,8 @@ module Libra
     #
     def update
       data = nil
-      if ssh_keys
-        data = {:rhlogin => rhlogin, :namespace => namespace, :ssh => ssh, :ssh_keys => ssh_keys}
+      if system_ssh_keys
+        data = {:rhlogin => rhlogin, :namespace => namespace, :ssh => ssh, :system_ssh_keys => system_ssh_keys}
       else
         data = {:rhlogin => rhlogin, :namespace => namespace, :ssh => ssh, :uuid => uuid}
       end
@@ -173,9 +173,9 @@ module Libra
     #
     # Add an ssh key for the specified app to access all other apps owned by the user
     #
-    def set_ssh_key(app_name, ssh_key)
-      @ssh_keys = {} unless @ssh_keys
-      @ssh_keys[app_name] = ssh_key
+    def set_system_ssh_key(app_name, ssh_key)
+      @system_ssh_keys = {} unless @system_ssh_keys
+      @system_ssh_keys[app_name] = ssh_key
       update
       add_ssh_key_to_servers(app_name, ssh_key)
     end
@@ -183,10 +183,10 @@ module Libra
     #
     # Remove an ssh key from the authorized keys of this user's apps
     #
-    def remove_ssh_key(app_name)
-      if ssh_keys && ssh_keys.key?(app_name)
-        ssh_key = ssh_keys[app_name]
-        ssh_keys.delete(app_name)
+    def remove_system_ssh_key(app_name)
+      if system_ssh_keys && system_ssh_keys.key?(app_name)
+        ssh_key = system_ssh_keys[app_name]
+        system_ssh_keys.delete(app_name)
         update
         remove_ssh_key_from_servers(app_name, ssh_key)
       end
