@@ -40,7 +40,7 @@ module Broker
     config.encoding = "utf-8"
 
     # Configure sensitive parameters which will be filtered from the log file.
-    config.filter_parameters += [:password]
+    config.filter_parameters += [:password, :broker_auth_key, :broker_auth_iv]
   end
 end
 
