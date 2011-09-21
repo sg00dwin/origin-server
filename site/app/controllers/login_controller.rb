@@ -61,6 +61,10 @@ class LoginController < ApplicationController
   end
 
   def ajax
+    # Set up workflow
+    referrer = url_for(:controller => params[:controller], :action => params[:action])
+    setup_login_workflow(URI.parse(referrer),false)
+
     # Keep track of response information
     responseText = {}
 
