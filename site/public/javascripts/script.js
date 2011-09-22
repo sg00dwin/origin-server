@@ -1,8 +1,12 @@
+/* DO NOT MODIFY. This file was compiled Thu, 22 Sep 2011 20:34:56 GMT from
+ * /home/fotios/li/site/app/coffeescripts/script.coffee
+ */
+
 (function() {
   var $;
   $ = jQuery;
   $(function() {
-    var ann_height, ann_list, announcements, body, close_btn, close_dialog, current, dialogs, links, login_complete, nav, nav_top, on_announcement, open_dialog, registration_complete, scroll_announcements, sections, signin, signup, sticky_css, top, unsticky_css;
+    var ann_height, ann_list, announcements, body, close_btn, close_dialog, current, dialogs, links, login_complete, nav, nav_top, on_announcement, open_dialog, registration_complete, reset, scroll_announcements, sections, signin, signup, sticky_css, top, unsticky_css;
     body = $('body');
     nav = ($('header.universal > nav')).first();
     nav_top = nav.offset().top;
@@ -36,6 +40,7 @@
     close_btn = $('.close_button');
     signup = $('#signup');
     signin = $('#signin');
+    reset = $('#reset_password');
     ($('a.sign_up')).click(function(event) {
       event.preventDefault();
       return open_dialog(signup);
@@ -43,6 +48,10 @@
     ($('a.sign_in')).click(function(event) {
       event.preventDefault();
       return open_dialog(signin);
+    });
+    ($('a.password_reset')).click(function(event) {
+      event.preventDefault();
+      return open_dialog(reset);
     });
     close_btn.click(function(event) {
       return close_dialog(($(this)).parent());

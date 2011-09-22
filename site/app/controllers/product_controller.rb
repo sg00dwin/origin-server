@@ -5,6 +5,7 @@ class ProductController < ApplicationController
   def express
     # Handle the email confirmation flow
     @product = 'express'
+    @register_url = user_new_express_url
     
     if session[:confirm_flow]
       session.delete(:confirm_flow)
@@ -19,6 +20,7 @@ class ProductController < ApplicationController
   
   def flex
     @product = 'flex'
+    @register_url = user_new_flex_url
     
     # Handle the email confirmation flow
     if session[:confirm_flow]

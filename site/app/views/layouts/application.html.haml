@@ -23,6 +23,12 @@
     = render "layouts/javascripts"
     = render 'shared/omniture_code', :controller => controller.controller_name, :action => controller.action_name, :event => @event ||= ''
 
-  -# Dialog boxes
-  = render 'layouts/signin_dialog'
-  = render 'layouts/signup_dialog'
+  :ruby
+    dialogs = [
+      {:controller => 'login', :id => 'signin', :message => 'Sign in to OpenShift'},
+      {:controller => 'user', :id => 'signup', :message => "Sign up for OpenShift - it's Easy!"},
+      {:controller => 'user', :id => 'reset_password', :message => 'Submit a request to have your password reset'}
+    ]
+
+  - dialogs.each do |options|
+    = render 'layouts/dialog', options
