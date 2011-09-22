@@ -2,7 +2,7 @@
 
 Summary:       Common dependencies of the OpenShift broker and site
 Name:          rhc-server-common
-Version:       0.78.8
+Version:       0.78.9
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -54,6 +54,9 @@ rm -rf %{buildroot}
                                   -s /sbin/nologin 2>&1 > /dev/null || :
 
 %changelog
+* Thu Sep 22 2011 Dan McPherson <dmcphers@redhat.com> 0.78.9-1
+- rename ssh_keys to system_ssh_keys (dmcphers@redhat.com)
+
 * Tue Sep 20 2011 Dan McPherson <dmcphers@redhat.com> 0.78.8-1
 - Added node profile to broker configs (mmcgrath@redhat.com)
 - updating to use dynamic node profile (mmcgrath@redhat.com)
