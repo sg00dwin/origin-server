@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.78.2
+Version:       0.78.3
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -38,6 +38,12 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Thu Sep 22 2011 Dan McPherson <dmcphers@redhat.com> 0.78.3-1
+- Allow libra domains to search /var/www/cgi-bin directory and other similarly
+  labeled directories.  I am adding a new interface to allow libra domains to
+  execut cgi scripts in the libra_t domain. Will update as soon as this becomes
+  available (dwalsh@redhat.com)
+
 * Fri Sep 09 2011 Matt Hicks <mhicks@redhat.com> 0.78.2-1
 - Allow libra domains to execute user apps like ifconfig and hostname, this
   does not add priv since it stays within the same domain (dwalsh@redhat.com)
