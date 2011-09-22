@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.77.3
+Version:   0.77.4
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -201,6 +201,10 @@ chkconfig libra-tc on
 %{_initddir}/libra-site
 
 %changelog
+* Thu Sep 22 2011 Dan McPherson <dmcphers@redhat.com> 0.77.4-1
+- turn off sslverify for now (dmcphers@redhat.com)
+- Adding auto-sync for Jenkins -> DevEnv (mhicks@redhat.com)
+
 * Thu Sep 15 2011 Dan McPherson <dmcphers@redhat.com> 0.77.3-1
 - adding iv encryption (dmcphers@redhat.com)
 - broker auth fixes - functional for adding token (dmcphers@redhat.com)
