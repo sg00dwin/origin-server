@@ -221,9 +221,7 @@ create_repo $application $user_id $group_id $mcs_level
 
 mkdir -p "$APP_DIR"
 pushd "$APP_DIR" > /dev/null
-mkdir conf conf.d logs run repo sessions data tmp
-ln -s /usr/lib64/httpd/modules modules
-ln -s /etc/httpd/conf/magic conf/magic
+mkdir logs run repo sessions data tmp
 popd > /dev/null
 
 #
@@ -232,62 +230,13 @@ popd > /dev/null
 
 IP=$(find_open_ip $uid $uuid)
 
-
-#
-# Create simple application specific data
-#
-
-cat <<EOF > "$APP_DIR/conf.d/libra.conf"
-ServerRoot "$APP_DIR"
-DocumentRoot "$APP_DIR/repo/raw"
-Listen $IP:8080
-User $uuid
-Group $uuid
-ErrorLog "|/usr/sbin/rotatelogs $APP_DIR/logs/error_log$rotatelogs_format $rotatelogs_interval"
-CustomLog "|/usr/sbin/rotatelogs $APP_DIR/logs/access_log$rotatelogs_format $rotatelogs_interval" combined
-# TODO: Adjust from ALL to more conservative values
-<Directory "$APP_DIR/repo/raw">
-  AllowOverride All
-</Directory>
-
-<IfModule !mod_bw.c>
-    LoadModule bw_module    modules/mod_bw.so
-</IfModule>
-
-<ifModule mod_bw.c>
-  BandWidthModule On
-  ForceBandWidthModule On
-  BandWidth $apache_bandwidth
-  MaxConnection $apache_maxconnection
-  BandWidthError $apache_bandwidtherror
-</IfModule>
-
-EOF
-
-#
-# Create simple application start / stop script
-#
-cat <<EOF > "$APP_DIR/${application}_ctl.sh"
-#!/bin/bash -e
-
-# Import Environment Variables
-for f in ~/.env/*
-do
-    . \$f
-done
-
-app_ctl.sh \$1
-EOF
-
 #
 # Populate repo
 #
 GIT_DIR="$GIT_DIR" git archive --format=tar HEAD | (cd "${APP_DIR}/repo" && tar --warning=no-timestamp -xf -)
 
-chmod +x "$APP_DIR/${application}_ctl.sh" || error "Failed to chmod new application scripts" 122
 chown $user_id.$group_id -R $APP_DIR || error "Failed to chown new application space.  Please contact support" 123
 # Secure script and config dirs.
-chown root.root -R "$APP_DIR/${application}_ctl.sh" "$APP_DIR/conf" "$APP_DIR/conf.d"
 chown root.root "$APP_DIR"
 chcon -t libra_var_lib_t -l $mcs_level -R "$APP_HOME/git/" "$APP_DIR"
 
@@ -304,15 +253,9 @@ echo "export OPENSHIFT_TMP_DIR='/tmp/'" > $APP_HOME/.env/OPENSHIFT_TMP_DIR
 echo "export OPENSHIFT_RUN_DIR='$APP_DIR/run/'" > $APP_HOME/.env/OPENSHIFT_RUN_DIR
 echo "export OPENSHIFT_APP_NAME='$application'" > $APP_HOME/.env/OPENSHIFT_APP_NAME
 echo "export OPENSHIFT_APP_TYPE='raw-0.1'" > $APP_HOME/.env/OPENSHIFT_APP_TYPE
-echo "export OPENSHIFT_APP_CTL_SCRIPT='$APP_DIR/${application}_ctl.sh'" > $APP_HOME/.env/OPENSHIFT_APP_CTL_SCRIPT
+echo "export OPENSHIFT_APP_CTL_SCRIPT='/bin/true'" > $APP_HOME/.env/OPENSHIFT_APP_CTL_SCRIPT
 echo "export OPENSHIFT_APP_DNS='${application}-${namespace}.${libra_domain}'" > $APP_HOME/.env/OPENSHIFT_APP_DNS
 echo "export PATH=$CART_INFO_DIR/bin/:$CART_DIR/abstract-httpd/info/bin/:$CART_DIR/li-controller/info/bin/:$PATH" > $APP_HOME/.env/PATH
-
-#
-# Start the server
-#
-runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $APP_DIR/${application}_ctl.sh start" || error "Failed to start ${application}" 121
-#GIT_DIR="$GIT_DIR" runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $GIT_DIR/hooks/post-receive" || error "Failed to start ${application}" 121
 
 #
 # Create virtualhost definition for apache
@@ -328,8 +271,8 @@ cat <<EOF > "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}.conf"
   DocumentRoot /var/www/html
   DefaultType None
 
-  Alias / $CART_INFO_DIR/configuration/raw-0.1/info/configuration/index.html
-  Alias /health $CART_INFO_DIR/configuration/raw-0.1/info/configuration/health.html
+  Alias /health $CART_INFO_DIR/configuration/health.html
+  Alias / $CART_INFO_DIR/configuration/index.html
 </VirtualHost>
 
 <VirtualHost *:443>
@@ -339,8 +282,8 @@ cat <<EOF > "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}.conf"
 
 $(/bin/cat $CART_INFO_DIR/configuration/node_ssl_template.conf)
 
-  Alias / $CART_INFO_DIR/configuration/raw-0.1/info/configuration/index.html
-  Alias /health $CART_INFO_DIR/configuration/raw-0.1/info/configuration/health.html
+  Alias /health $CART_INFO_DIR/configuration/health.html
+  Alias / $CART_INFO_DIR/configuration/index.html
 </VirtualHost>
 EOF
 
