@@ -16,7 +16,7 @@
 # General Public License and may only be used or replicated with the express
 # permission of Red Hat, Inc.
 
-# Confirms all required static bits are in place or fails
+# Confirms all required raw bits are in place or fails
 
 set -e
 
@@ -31,7 +31,7 @@ else
     exit 3
 fi
 
-[ -z "$CARTRIDGE_DIR" ] && CARTRIDGE_DIR="/usr/libexec/li/cartridges/static-0.1/"
+[ -z "$CARTRIDGE_DIR" ] && CARTRIDGE_DIR="/usr/libexec/li/cartridges/raw-0.1/"
 
 function print_help {
     echo "Usage: uuid"
@@ -57,5 +57,5 @@ done
 
 app_id=$1
 
-rpm -q static httpd > /dev/null || quit "Missing packages"
+rpm -q raw httpd > /dev/null || quit "Missing packages"
 [ -d "$CARTRIDGE_DIR" ] || quit "Missing cartridge dir: $CARTRIDGE_DIR"

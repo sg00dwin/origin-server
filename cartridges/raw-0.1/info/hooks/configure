@@ -54,13 +54,13 @@ fi
 
 
 CART_DIR=/usr/libexec/li/cartridges
-CART_INFO_DIR=$CART_DIR/static-0.1/info
+CART_INFO_DIR=$CART_DIR/raw-0.1/info
 CART_CONF_DIR=$CART_INFO_DIR/configuration/etc/conf
 
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_static_configure
+    echo "$0 $@" | logger -p local0.notice -t libra_raw_configure
     exit 1
 }
 
@@ -142,7 +142,7 @@ function create_repo {
     git repack
     popd
 
-    echo "static 0.1 application '$application'" > $GIT_DIR/description
+    echo "raw 0.1 application '$application'" > $GIT_DIR/description
 
     cat <<EOF > $GIT_DIR/hooks/pre-receive
 #!/bin/bash
@@ -239,14 +239,14 @@ IP=$(find_open_ip $uid $uuid)
 
 cat <<EOF > "$APP_DIR/conf.d/libra.conf"
 ServerRoot "$APP_DIR"
-DocumentRoot "$APP_DIR/repo/static"
+DocumentRoot "$APP_DIR/repo/raw"
 Listen $IP:8080
 User $uuid
 Group $uuid
 ErrorLog "|/usr/sbin/rotatelogs $APP_DIR/logs/error_log$rotatelogs_format $rotatelogs_interval"
 CustomLog "|/usr/sbin/rotatelogs $APP_DIR/logs/access_log$rotatelogs_format $rotatelogs_interval" combined
 # TODO: Adjust from ALL to more conservative values
-<Directory "$APP_DIR/repo/static">
+<Directory "$APP_DIR/repo/raw">
   AllowOverride All
 </Directory>
 
@@ -303,7 +303,7 @@ echo "export OPENSHIFT_DATA_DIR='$APP_DIR/data/'" > $APP_HOME/.env/OPENSHIFT_DAT
 echo "export OPENSHIFT_TMP_DIR='/tmp/'" > $APP_HOME/.env/OPENSHIFT_TMP_DIR
 echo "export OPENSHIFT_RUN_DIR='$APP_DIR/run/'" > $APP_HOME/.env/OPENSHIFT_RUN_DIR
 echo "export OPENSHIFT_APP_NAME='$application'" > $APP_HOME/.env/OPENSHIFT_APP_NAME
-echo "export OPENSHIFT_APP_TYPE='static-0.1'" > $APP_HOME/.env/OPENSHIFT_APP_TYPE
+echo "export OPENSHIFT_APP_TYPE='raw-0.1'" > $APP_HOME/.env/OPENSHIFT_APP_TYPE
 echo "export OPENSHIFT_APP_CTL_SCRIPT='$APP_DIR/${application}_ctl.sh'" > $APP_HOME/.env/OPENSHIFT_APP_CTL_SCRIPT
 echo "export OPENSHIFT_APP_DNS='${application}-${namespace}.${libra_domain}'" > $APP_HOME/.env/OPENSHIFT_APP_DNS
 echo "export PATH=$CART_INFO_DIR/bin/:$CART_DIR/abstract-httpd/info/bin/:$CART_DIR/li-controller/info/bin/:$PATH" > $APP_HOME/.env/PATH

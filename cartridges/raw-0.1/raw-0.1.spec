@@ -1,7 +1,7 @@
-%define cartridgedir %{_libexecdir}/li/cartridges/static-0.1
+%define cartridgedir %{_libexecdir}/li/cartridges/raw-0.1
 
-Summary:   Provides static support
-Name:      rhc-cartridge-static-0.1
+Summary:   Provides raw support
+Name:      rhc-cartridge-raw-0.1
 Version:   0.1
 Release:   1%{?dist}
 Group:     Development/Languages
@@ -17,7 +17,7 @@ Requires:  httpd
 BuildArch: noarch
 
 %description
-Provides static http support to OpenShift
+Provides raw http support to OpenShift
 
 %prep
 %setup -q
@@ -70,4 +70,4 @@ rm -rf %{buildroot}
 
 %changelog
 * Wed Sep 21 2011 Mike McGrath <mmcgrath@redhat.com> 0.1-1
-- Creating initial static cartridge
+- Creating initial raw cartridge
