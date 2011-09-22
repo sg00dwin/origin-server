@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.78.6
+Version:   0.78.7
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -65,6 +65,12 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Thu Sep 22 2011 Dan McPherson <dmcphers@redhat.com> 0.78.7-1
+- change broker secret_token.rb (dmcphers@redhat.com)
+- perm changes on jenkins_id_rsa and allow user_info calls from broker auth key
+  (dmcphers@redhat.com)
+- move broker auth to params (dmcphers@redhat.com)
+
 * Tue Sep 20 2011 Dan McPherson <dmcphers@redhat.com> 0.78.6-1
 - correcting var name (mmcgrath@redhat.com)
 - Adding node_profile type (mmcgrath@redhat.com)
