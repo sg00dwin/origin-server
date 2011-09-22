@@ -2,7 +2,7 @@
 
 Summary:   Provides jenkins-1.4 support
 Name:      rhc-cartridge-jenkins-1.4
-Version:   0.78.5
+Version:   0.78.6
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -49,6 +49,10 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Thu Sep 22 2011 Dan McPherson <dmcphers@redhat.com> 0.78.6-1
+- perm changes on jenkins_id_rsa and allow user_info calls from broker auth key
+  (dmcphers@redhat.com)
+
 * Tue Sep 20 2011 Dan McPherson <dmcphers@redhat.com> 0.78.5-1
 - add broker auth key when jenkins is created (dmcphers@redhat.com)
 - add base jenkins template (dmcphers@redhat.com)
