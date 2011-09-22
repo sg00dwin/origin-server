@@ -260,7 +260,7 @@ class BrokerController < ApplicationController
       return unless data
   
       # Check if user already exists
-      username = login(data, params)
+      username = login(data, params, true)
       if username
         user = Libra::User.find(username)
         if user
