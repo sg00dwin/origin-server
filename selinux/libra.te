@@ -142,6 +142,9 @@ apache_read_config(libra_domain)
 apache_search_config(libra_domain)
 apache_read_sys_content(libra_domain)
 corenet_tcp_bind_http_cache_port(libra_domain)
+apache_search_sys_scripts(libra_domain)
+# Will need to change to this when it becomes available in RHEL6.2 policy
+# apache_exec_sys_scripts(libra_domain)
 
 java_exec(libra_domain)
 

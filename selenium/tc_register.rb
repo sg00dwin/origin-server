@@ -13,33 +13,30 @@ class Register < Test::Unit::TestCase
   end
 
   def test_register
-    $logger.info "Testing register without email"
-    submit_register(nil, "19861231")
-    check_element_value("This field is required.", :xpath, ".//li[@id='web_user_email_address_input']/label[2]")
-
-    $logger.info "Testing register with invalid email"
-    submit_register("123", "19861231")
-    check_element_value("Please enter a valid email address.", :xpath, ".//li[@id='web_user_email_address_input']/label[2]")
-
-    $logger.info "Testing register without password"
-    submit_register("xtian+c0@redhat.com", nil)
-    check_element_value("This field is required.", :xpath, ".//li[@id='web_user_password_input']/label[2]")
-
-    $logger.info "Testing register with invalid password length"    
-    submit_register("xtian+c0@redhat.com", "1986")
-    check_element_value("Please enter at least 6 characters.", :xpath, ".//li[@id='web_user_password_input']/label[2]")
-
-    $logger.info "Testing register with mismatching password"
-    submit_register("xtian+c0@redhat.com", "19861231", "19861233")
-    check_element_value("Please enter the same value again.", :xpath, ".//li[@id='web_user_password_confirmation_input']/label[2]")
-    
-    $logger.info "Testing register from restricted countries"
-    submit_register("xyz@yahoo.ir", "redhat")
-    check_element_value("We can not accept emails from the following top level domains: .ir, .cu, .kp, .sd, .sy", :xpath, ".//li[@id='web_user_email_address_input']/p")
+    [
+      {:pass => 19861231, 
+        :err => 'Invalid email address'},
+      {:email => '123', :pass => '19861231', 
+        :err =>'Invalid email address'},
+      {:email => "xtian+c0@redhat.com", 
+        :err => 'Passwords must be at least 6 characters'},
+      {:email => 'xtian+c0@redhat.com', :pass => '1986', 
+        :err => 'Passwords must be at least 6 characters'},
+      {:email => 'xtian+c0@redhat.com', :pass => '19861231', :confirm => '19861233', 
+        :err => 'Passwords must match' },
+      {:email => 'xyz@yahoo.ir', :pass => 'redhat', 
+        :err => 'We can not accept emails from the following top level domains: .ir, .cu, .kp, .sd, .sy'}
+    ].each do |hash|
+      $logger.info "Testing register: #{hash[:err]}"
+      submit_register(hash[:email], hash[:pass], hash[:confirm])
+      check_element_displayed(:xpath, ".//div[@class='message error']//div[text()='#{hash[:err]}']")
+      screenshot(hash[:err])
+    end
     
     $logger.info "Testing register success"
     submit_register(get_unique_username(), "redhat")
     check_element_value("Check your inbox for an email with a validation link. Click on the link to complete the registration process." , :xpath, ".//section[@class='main']/div[@class='content']/p")
+    screenshot('success')
   end
   
   def submit_register(email, pwd, pwd_confirm=pwd)

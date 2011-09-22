@@ -2,6 +2,12 @@
 <project>
   <actions/>
   <description></description>
+  <logRotator>
+    <daysToKeep>14</daysToKeep>
+    <numToKeep>-1</numToKeep>
+    <artifactDaysToKeep>-1</artifactDaysToKeep>
+    <artifactNumToKeep>-1</artifactNumToKeep>
+  </logRotator>
   <keepDependencies>false</keepDependencies>
   <properties/>
   <scm class="hudson.plugins.git.GitSCM">
@@ -54,14 +60,12 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>
-# Build and install HEAD for the integration tests
+      <command># Build and install HEAD for the integration tests
 build/devenv launch libra_check_${BUILD_NUMBER} --verifier
 build/devenv sync libra_check_${BUILD_NUMBER} --tag
 
-# Run the 'verification' tests to test higher level components
-build/devenv test libra_check_${BUILD_NUMBER} --terminate --unofficial
-      </command>
+# Run the &apos;verification&apos; tests to test higher level components
+build/devenv test libra_check_${BUILD_NUMBER} --terminate --unofficial</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
@@ -69,11 +73,6 @@ build/devenv test libra_check_${BUILD_NUMBER} --terminate --unofficial
       <artifacts>rhc/log/*</artifacts>
       <latestOnly>false</latestOnly>
     </hudson.tasks.ArtifactArchiver>
-    <hudson.tasks.junit.JUnitResultArchiver>
-      <testResults>rhc/junit/*</testResults>
-      <keepLongStdio>false</keepLongStdio>
-      <testDataPublishers/>
-    </hudson.tasks.junit.JUnitResultArchiver>
     <hudson.tasks.Mailer>
       <recipients>libra-express@redhat.com</recipients>
       <dontNotifyEveryUnstableBuild>true</dontNotifyEveryUnstableBuild>

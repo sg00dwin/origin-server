@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.78.10
+Version:   0.78.11
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -69,6 +69,9 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Mon Sep 19 2011 Dan McPherson <dmcphers@redhat.com> 0.78.11-1
+- bug 735924 (dmcphers@redhat.com)
+
 * Thu Sep 15 2011 Dan McPherson <dmcphers@redhat.com> 0.78.10-1
 - Added js to site.spec for rubygem-js (fotios@redhat.com)
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li

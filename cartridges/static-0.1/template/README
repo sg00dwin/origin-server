@@ -1,0 +1,41 @@
+Feel free to change or remove this file, it is informational only.
+
+Repo layout
+===========
+static/ - Externally exposed static content goes here
+misc/ - For not-externally exposed php code
+../data - For persistent data (full path in environment var: OPENSHIFT_DATA_DIR)
+deplist.txt - list of pears to install
+.openshift/action_hooks/build - Script that gets run every push, just prior to
+    starting your app
+
+
+Notes about layout
+==================
+Please leave the static directory in place (alter but do not delete) but feel
+free to create additional directories if needed.
+
+Note: Every time you push, everything in your remote repo dir gets recreated
+please store long term items (like an sqlite database) in ../data which will
+persist between pushes of your repo.
+
+
+Environment Variables
+=====================
+
+OpenShift Express provides several environment variables to reference for ease
+of use.  The following list are some common variables but far from exhaustive:
+
+    $_ENV['OPENSHIFT_APP_NAME']  - Application name
+    $_ENV['OPENSHIFT_APP_DIR']   - Application dir
+    $_ENV['OPENSHIFT_DATA_DIR']  - For persistent storage (between pushes)
+    $_ENV['OPENSHIFT_TMP_DIR']   - Temp storage (unmodified files deleted after 10 days)
+
+To get a full list of environment variables, simply add a line in your
+.openshift/action_hooks/build script that says "export" and push.
+
+
+Additional information
+======================
+
+Link to additional information will be here, when we have it :)

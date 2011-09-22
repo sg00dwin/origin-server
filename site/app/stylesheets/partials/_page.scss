@@ -337,13 +337,14 @@ footer.universal {
   @include box-shadow($shadow-color 0 0 5em);
   color: white;
   font-family: Overpass, $base-font-family;
-  position: fixed;
+  position: absolute;
   top: 20%;
   left: 20%;
   right: 20%;
-  z-index: 1000;
-  min-width: 27em;
+  z-index: 1000000;
+  min-width: 30em;
   padding: 2em;
+  overflow: auto;
   
   a.more {
     display: block;
@@ -353,10 +354,13 @@ footer.universal {
   }
   
   form {
-    margin: 0 auto;
     display: block;
-    // width: 23.5em;
+    width: 25em;
   }
+  
+  #login-form form, form#new_web_user { margin: 0 auto; }
+    
+  input { width: 22em; }
   
   label {
     display: block;
@@ -375,6 +379,8 @@ footer.universal {
   
   .close_button {
     @include close_button;
+    
+    img { border: none; }
   }
 }
 

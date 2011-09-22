@@ -1,0 +1,45 @@
+#!/usr/bin/env ruby
+# Usage: ./rekey-broker-auth > out.txt
+require 'rubygems'
+require 'openshift'
+
+include Libra
+
+RHLOGINS=nil #['username']
+
+def rekey
+  start_time = Time.now.to_i
+  puts "Getting all RHLogins..." 
+  rhlogins = RHLOGINS || User.find_all_rhlogins
+  user_count = rhlogins.length
+  puts "RHLogins.length: #{user_count.to_s}"
+  rhlogins.each do |rhlogin|
+    user = User.find(rhlogin)
+    if user
+      puts ""
+      puts "######################################################"
+      puts "Updating apps for user: #{user.rhlogin}(#{user_count.to_s}) with uuid: #{user.uuid}"
+      apps = user.apps
+      apps.each do |app_name, app|
+        begin
+          if app['framework'] == 'jenkins-1.4'
+            puts "Re-keying app '#{app_name}' with uuid '#{app['uuid']}' on node '#{app['server_identity']}' for user: #{rhlogin}"
+            user.set_broker_auth_key(app_name, app)
+          end
+        rescue Exception => e
+          puts "ERROR: Failed re-keying app: #{app_name} with uuid: #{app['uuid']} for user: #{rhlogin}"
+          puts e.message
+          puts e.backtrace
+        end
+      end
+    else
+      puts "WARNING:  Couldn't find user: #{rhlogin}"
+    end
+    user_count -= 1
+  end
+  end_time = Time.now.to_i
+  total_time = end_time-start_time
+  puts "Total execution time: #{total_time.to_s}s"
+end
+
+rekey

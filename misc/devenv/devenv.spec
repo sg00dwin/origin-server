@@ -194,6 +194,8 @@ chkconfig libra-tc on
 %config(noreplace) %{jenkins}/jobs/libra_check/config.xml
 %config(noreplace) %{jenkins}/jobs/libra_prune/config.xml
 %config(noreplace) %{jenkins}/jobs/libra_web/config.xml
+%config(noreplace) %{jenkins}/jobs/sdk_check/config.xml
+%{jenkins}/jobs/sync.rb
 %{devenvdir}
 %{_initddir}/libra-broker
 %{_initddir}/libra-site

@@ -11,9 +11,11 @@ class Login < Test::Unit::TestCase
     $logger.info "Testing login"
     goto_home
     login
+    screenshot('after login')
     @driver.manage.delete_cookie("_rhc_session")
     @driver.manage.delete_cookie("rh_sso")
     @driver.navigate.refresh
-    check_element_displayed(:xpath, ".//a[contains(@href, '/app/login')]")
+    screenshot('after refresh')
+    check_element_displayed(:xpath,".//nav[@id='main_nav']//a[@class='sign_in']")
   end
 end

@@ -125,15 +125,69 @@ function unobfuscate {
 }
 
 function generate_ssh_keys {
-    CART_DIR=/usr/libexec/li/cartridges
-    CART_INFO_DIR=$CART_DIR/jenkins/info
-    CART_CONF_DIR=$CART_INFO_DIR/configuration/etc/conf
-
     /bin/mkdir -p $OPENSHIFT_DATA_DIR/.ssh/
     /usr/bin/ssh-keygen -N '' -f $OPENSHIFT_DATA_DIR/.ssh/jenkins_id_rsa
 
-    /bin/chown root.root -R "$OPENSHIFT_DATA_DIR/.ssh/"
+    /bin/chown root.$uuid -R "$OPENSHIFT_DATA_DIR/.ssh/"
+    chmod 0750 "$OPENSHIFT_DATA_DIR/.ssh/"
+    chmod 0640 "$OPENSHIFT_DATA_DIR/.ssh/jenkins_id_rsa"
+    chmod 0640 "$OPENSHIFT_DATA_DIR/.ssh/jenkins_id_rsa.pub"
     /usr/bin/chcon -t libra_var_lib_t -l $mcs_level -R "$OPENSHIFT_DATA_DIR/.ssh/"
+}
+
+function create_repo {
+    application="$1"
+    user_id=$2
+    group_id=$3
+    mcs_level=$4
+
+    if [ ! -d $APP_HOME ]; then echo "ERROR: Application ${uuid} not found!  Please create." 1>&2; exit 2; fi
+
+    GIT_DIR=$APP_HOME/git/$application.git
+    mkdir -p "$APP_HOME/git"
+    
+    cp -ad $CART_DIR/jenkins-1.4/template $APP_HOME/git
+    
+    pushd $APP_HOME/git/template
+    git init
+    git add *
+    git commit -m 'Creating template'
+    popd
+    pushd $APP_HOME/git
+    git clone --bare --no-hardlinks template $application.git
+    rm -rf template
+    popd
+
+    echo "jenkins 1.4 application '$application'" > $GIT_DIR/description
+
+    cat <<__EOF__ > $GIT_DIR/hooks/pre-receive
+#!/bin/bash
+
+# Import Environment Variables
+for f in ~/.env/*
+do
+    . \$f
+done
+
+pre_receive_app.sh
+__EOF__
+
+    cat <<__EOF__ > $GIT_DIR/hooks/post-receive
+#!/bin/bash
+
+# Import Environment Variables
+for f in ~/.env/*
+do
+    . \$f
+done
+
+post_receive_app.sh ${libra_server}
+__EOF__
+
+    chmod 0755 $GIT_DIR/hooks/post-receive $GIT_DIR/hooks/pre-receive
+    chown $user_id.$group_id -R $GIT_DIR
+    # Secure the hooks dir
+    chown root.root -R $GIT_DIR/hooks
 }
 
 while getopts 'd' OPTION
@@ -181,10 +235,11 @@ pushd "$APP_DIR" > /dev/null
 mkdir logs run data tmp
 popd > /dev/null
 
+create_repo $application $user_id $group_id $mcs_level
+
 #
 # Find an open localhost IP
 #
-
 IP=$(find_open_ip $uid $uuid)
 
 cp $CART_INFO_DIR/bin/app_ctl_wrapper.sh $APP_DIR/${application}_ctl.sh
@@ -228,7 +283,11 @@ runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $APP_DIR/${a
 #
 generate_ssh_keys
 
-echo "SSH_KEY: $(cat $APP_DIR/data/.ssh/jenkins_id_rsa.pub)"
+public_key=$(cat $APP_DIR/data/.ssh/jenkins_id_rsa.pub)
+set -- $public_key
+echo "SSH_KEY_ADD: $2"
+
+echo "BROKER_AUTH_KEY_ADD: "
 
 #
 # Create virtualhost definition for apache

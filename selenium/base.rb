@@ -54,7 +54,10 @@ module OpenShift
     end
 
     def teardown
-      @driver.quit if @driver
+      if @driver
+        @driver.close
+        @driver.quit
+      end
       @headless.destroy
       assert_equal [], @verification_errors
     end
@@ -66,37 +69,53 @@ module OpenShift
     
     def goto_login
       find_element(:class,"sign_in").click()
-      check_title "OpenShift by Red Hat | Sign in to OpenShift"
+      check_element_displayed(:xpath,'//*[@id="signin"]')
     end
     
     def goto_express
-      find_element(:class,"services").click()
+      $logger.debug "Clicking services link"
+      $logger.debug "Before click: #{@driver.current_url}"
+      find_element(:xpath,".//a[text()='Cloud Services']").click()
+      find_element(:xpath,".//a[text()='Express']").click()
       check_title "OpenShift by Red Hat | Express"
     end
     
     def goto_flex
-      find_element(:class,"flex").click()
+      $logger.debug "Clicking services link"
+      $logger.debug "Before click: #{@driver.current_url}"
+      find_element(:xpath,".//a[text()='Cloud Services']").click()
+      find_element(:xpath,".//a[text()='Flex']").click()
       check_title "OpenShift by Red Hat | Flex"
     end
     
     def login(username="libra-test+1@redhat.com", pwd="redhat")
       goto_login
       submit = nil
+      form_path = '//*[@id="signin"]'
       begin
-        submit = find_element(:xpath,".//input[@type='submit']") 
+        submit = find_element(:xpath,"#{form_path}//input[@type='submit']") 
         assert submit.displayed?
       rescue Test::Unit::AssertionFailedError
         @verification_errors << $!
       end
-      find_element(:xpath,".//input[@id='login_input']").send_keys(username)
-      find_element(:xpath,".//input[@id='pwd_input']").send_keys(pwd)
+      find_element(:xpath,"#{form_path}//input[@id='login_input']").send_keys(username)
+      find_element(:xpath,"#{form_path}//input[@id='pwd_input']").send_keys(pwd)
       submit.click()
-      check_element_displayed(:xpath, ".//a[contains(@href, '/app/logout')]")
+
+      wait_for_ajax(10,'Timed out waiting for AJAX to return')
+      check_element_displayed(:xpath, ".//a[@href='/app/logout']")
     end
-    
-    def check_title(title)
+
+    def wait_for_ajax(timeout = 10, message = nil)
+      wait = Selenium::WebDriver::Wait.new(:timeout => timeout, :message => message) # seconds
+      wait.until{
+        @driver.execute_script 'return jQuery.active == 0'
+      }
+    end
+
+    def check_title(title,msg=nil)
       begin
-        assert_equal title, @driver.title
+        assert_equal title, @driver.title, msg
       rescue Test::Unit::AssertionFailedError
         @verification_errors << $!
       end
@@ -117,6 +136,14 @@ module OpenShift
         @verification_errors << $!
       end
     end
+
+    def check_element_hidden(type, query)
+      begin
+        assert !find_element(type, query).displayed?
+      rescue Test::Unit::AssertionFailedError
+        @verification_errors << $!
+      end
+    end
     
     def find_element(type, query)
       elem = nil
@@ -128,9 +155,17 @@ module OpenShift
     
     def goto_register
       find_element(:link_text,"Click here to register").click()
-      check_title "OpenShift by Red Hat | Sign up for OpenShift"
+      check_title "OpenShift by Red Hat" 
       check_element_displayed(:id, "web_user_email_address")
+    end
+
+    def screenshot(name)
+      path = File.join(
+        "screenshots",
+        (caller[0] =~ /(.*?).rb:.*`([^']*)'/ and [$1,$2])
+      )
+      FileUtils.mkdir_p(path) 
+      @driver.save_screenshot("#{File.join(path,name)}.png")
     end
   end
 end
-

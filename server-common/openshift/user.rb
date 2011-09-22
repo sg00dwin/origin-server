@@ -7,9 +7,6 @@ require 'date'
 require 'net/http'
 require 'net/https'
 require 'pp'
-require 'openssl'
-require 'digest/sha2'
-require 'base64'
 
 def gen_small_uuid()
     # Put config option for rhlogin here so we can ignore uuid for dev environments
@@ -26,16 +23,16 @@ module Libra
     end
 
     attr_reader :rhlogin, :password
-    attr_accessor :ssh, :namespace, :uuid, :ssh_keys
+    attr_accessor :ssh, :namespace, :uuid, :system_ssh_keys
 
-    def initialize(rhlogin, ssh, namespace, uuid, password=nil, ticket=nil, ssh_keys=nil)
-      @rhlogin, @ssh, @namespace, @uuid, @password, @ticket, @ssh_keys = rhlogin, ssh, namespace, uuid, password, ticket, ssh_keys
+    def initialize(rhlogin, ssh, system_ssh_keys, namespace, uuid, password=nil, ticket=nil)
+      @rhlogin, @ssh, @system_ssh_keys, @namespace, @uuid, @password, @ticket, = rhlogin, ssh, system_ssh_keys, namespace, uuid, password, ticket
       @roles = []
     end
 
     def self.from_json(json)
       data = JSON.parse(json)
-      new(data['rhlogin'], data['ssh'], data['namespace'], data['uuid'], data['ssh_keys'])
+      new(data['rhlogin'], data['ssh'], data['system_ssh_keys'], data['namespace'], data['uuid'])
     end
 
     #
@@ -59,7 +56,7 @@ module Libra
         Libra.client_debug "Creating user entry rhlogin:#{rhlogin} ssh:#{ssh} namespace:#{namespace}" if Libra.c[:rpc_opts][:verbose]
         begin
           uuid = gen_small_uuid()
-          user = new(rhlogin, ssh, namespace, uuid)
+          user = new(rhlogin, ssh, nil, namespace, uuid)
           user.update
           begin
             Nurture.libra_contact(rhlogin, uuid, namespace, 'create')
@@ -139,8 +136,8 @@ module Libra
     #
     def update
       data = nil
-      if ssh_keys
-        data = {:rhlogin => rhlogin, :namespace => namespace, :ssh => ssh, :ssh_keys => ssh_keys}
+      if system_ssh_keys
+        data = {:rhlogin => rhlogin, :namespace => namespace, :ssh => ssh, :system_ssh_keys => system_ssh_keys}
       else
         data = {:rhlogin => rhlogin, :namespace => namespace, :ssh => ssh, :uuid => uuid}
       end
@@ -149,61 +146,66 @@ module Libra
       Helper.s3.put(Libra.c[:s3_bucket], "user_info/#{rhlogin}/user.json", json)
     end
     
-    def add_ssh_key_to_servers(ssh_key)
+    #
+    # Add an ssh key to each of the apps
+    #
+    def add_ssh_key_to_servers(app_name, ssh_key)
       apps.each do |appname, app|
-        server = Libra::Server.new app['server_identity']
-        result = server.execute_direct('li-controller', 'add-authorized-ssh-key', "#{app['uuid']} #{ssh_key}")
-        server.handle_controller_result(result)
+        if appname != app_name
+          server = Libra::Server.new app['server_identity']
+          server.add_ssh_key(app, ssh_key)
+        end
       end
     end
     
-    def remove_ssh_key_from_servers(ssh_key)
+    #
+    # Remove an ssh key from each of the apps
+    #
+    def remove_ssh_key_from_servers(app_name, ssh_key)
       apps.each do |appname, app|
-        server = Libra::Server.new app['server_identity']
-        result = server.execute_direct('li-controller', 'remove-authorized-ssh-key', "#{app['uuid']} #{ssh_key}")
-        server.handle_controller_result(result)
+        if appname != app_name
+          server = Libra::Server.new app['server_identity']
+          server.remove_ssh_key(app, ssh_key)
+        end
       end
     end
-    
-    def set_ssh_key(name, ssh_key)
-      @ssh_keys = {} unless @ssh_keys
-      @ssh_keys[name] = ssh_key
-      update
-      add_ssh_key_to_servers(ssh_key)
-    end
-    
-    def set_broker_auth_key(app_name, app)
-      cipher = OpenSSL::Cipher::Cipher.new("aes-256-cbc")                                                                                                                                                                 
-      cipher.encrypt
-      cipher.key = OpenSSL::Digest::SHA512.new(Libra.c[:broker_auth_secret]).digest
-      cipher.iv = iv = cipher.random_iv
-      token = {:app_name => app_name,
-               :rhlogin => rhlogin,
-               :creation_time => app['creation_time']}
-      encrypted_token = cipher.update(JSON.generate(token))
-      encrypted_token << cipher.final
 
-      public_key = OpenSSL::PKey::RSA.new(File.read('config/keys/public.pem'), Libra.c[:broker_auth_rsa_secret])
-      encrypted_iv = public_key.public_encrypt(iv)
-        
-      server = Libra::Server.new app['server_identity']
-      result = server.execute_direct('li-controller', 'add-broker-auth-key', "#{app['uuid']} #{Base64::encode64(encrypted_iv).gsub("\n", '')} #{Base64::encode64(encrypted_token).gsub("\n", '')}")
-      server.handle_controller_result(result)
+    #
+    # Add an ssh key for the specified app to access all other apps owned by the user
+    #
+    def set_system_ssh_key(app_name, ssh_key)
+      @system_ssh_keys = {} unless @system_ssh_keys
+      @system_ssh_keys[app_name] = ssh_key
+      update
+      add_ssh_key_to_servers(app_name, ssh_key)
     end
     
+    #
+    # Remove an ssh key from the authorized keys of this user's apps
+    #
+    def remove_system_ssh_key(app_name)
+      if system_ssh_keys && system_ssh_keys.key?(app_name)
+        ssh_key = system_ssh_keys[app_name]
+        system_ssh_keys.delete(app_name)
+        update
+        remove_ssh_key_from_servers(app_name, ssh_key)
+      end
+    end
+
+    #
+    # Add a broker authorized key
+    #
+    def set_broker_auth_key(app_name, app)
+      server = Libra::Server.new app['server_identity']
+      server.set_broker_auth_key(app_name, app, rhlogin)
+    end
+    
+    #
+    # Remove a broker authorized key
+    #
     def remove_broker_auth_key(app_name, app)
       server = Libra::Server.new app['server_identity']
-      result = server.execute_direct('li-controller', 'remove-broker-auth-key', "#{app['uuid']}")
-      server.handle_controller_result(result)
-    end
-    
-    def remove_ssh_key(name)
-      if ssh_keys && ssh_keys.key?(name)
-        ssh_key = ssh_keys[name]
-        ssh_keys.delete(name)
-        update
-        remove_ssh_key_from_servers(ssh_key)
-      end
+      server.remove_broker_auth_key(app_name, app)
     end
     
     #

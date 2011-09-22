@@ -2,6 +2,9 @@ require 'openshift/helper'
 require 'aws'
 require 'json'
 require 'resolv'
+require 'openssl'
+require 'digest/sha2'
+require 'base64'
 require 'pp'
 
 module Libra
@@ -49,12 +52,12 @@ module Libra
     # Currently this is defined by the server that
     # has the least number of git repos on it.
     #
-    def self.find_available
+    def self.find_available(node_profile="std")
       # Defaults
-      current_server, current_capacity = rpc_find_available
+      current_server, current_capacity = rpc_find_available(node_profile)
       puts "CURRENT SERVER: #{current_server}"
       if !current_server
-        current_server, current_capacity = rpc_find_available(true)
+        current_server, current_capacity = rpc_find_available(node_profile, true)
       end
       puts "CURRENT SERVER: #{current_server}"
       raise NodeException.new(140), "No nodes available.  If the problem persists please contact Red Hat support.", caller[0..5] unless current_server
@@ -62,11 +65,11 @@ module Libra
       new(current_server, current_capacity)
     end
 
-    def self.rpc_find_available(forceRediscovery=false)
+    def self.rpc_find_available(node_profile="std", forceRediscovery=false)
       current_server, current_capacity = nil, nil
       additional_filters = [
         {:fact => "node_profile",
-         :value => "std",
+         :value => node_profile,
          :operator => "=="},
         {:fact => "capacity",
          :value => "100",
@@ -90,7 +93,7 @@ module Libra
     def self.find_all
       servers = []
 
-      Helper.rpc_get_fact('git_repos') do |server, repos|
+      Helper.rpc_get_fact('capacity') do |server, repos|
         servers << new(server, repos)
       end
 
@@ -527,6 +530,51 @@ module Libra
         end
       end
     end
+    
+    #
+    # Add authorized key to app
+    #
+    def add_ssh_key(app, ssh_key)
+      result = execute_direct('li-controller', 'add-authorized-ssh-key', "#{app['uuid']} #{ssh_key}")
+      handle_controller_result(result)
+    end
+    
+    #
+    # Remove authorized key from app
+    #
+    def remove_ssh_key(app, ssh_key)
+      result = execute_direct('li-controller', 'remove-authorized-ssh-key', "#{app['uuid']} #{ssh_key}")
+      handle_controller_result(result)
+    end
+    
+    #
+    # Add broker auth key to app
+    #
+    def set_broker_auth_key(app_name, app, rhlogin)
+      cipher = OpenSSL::Cipher::Cipher.new("aes-256-cbc")                                                                                                                                                                 
+      cipher.encrypt
+      cipher.key = OpenSSL::Digest::SHA512.new(Libra.c[:broker_auth_secret]).digest
+      cipher.iv = iv = cipher.random_iv
+      token = {:app_name => app_name,
+               :rhlogin => rhlogin,
+               :creation_time => app['creation_time']}
+      encrypted_token = cipher.update(JSON.generate(token))
+      encrypted_token << cipher.final
+    
+      public_key = OpenSSL::PKey::RSA.new(File.read('config/keys/public.pem'), Libra.c[:broker_auth_rsa_secret])
+      encrypted_iv = public_key.public_encrypt(iv)
+      
+      result = execute_direct('li-controller', 'add-broker-auth-key', "#{app['uuid']} #{Base64::encode64(encrypted_iv).gsub("\n", '')} #{Base64::encode64(encrypted_token).gsub("\n", '')}")
+      handle_controller_result(result)
+    end
+    
+    #
+    # Remove broker auth key from app
+    #
+    def remove_broker_auth_key(app_name, app)
+      result = execute_direct('li-controller', 'remove-broker-auth-key', "#{app['uuid']}")
+      handle_controller_result(result)
+    end
 
     #
     # Configures the application for this user on this server
@@ -572,10 +620,9 @@ module Libra
           elsif user && app_name && line =~ /^SSH_KEY_(ADD|REMOVE): /
             if line =~ /^SSH_KEY_ADD: /
               key = line['SSH_KEY_ADD: '.length..-1].chomp
-              user.set_ssh_key(app_name, key)
+              user.set_system_ssh_key(app_name, key)
             else
-              key = line['SSH_KEY_REMOVE: '.length..-1].chomp
-              user.remove_ssh_key(app_name)
+              user.remove_system_ssh_key(app_name)
             end
           elsif user && app_name && app && line =~ /^BROKER_AUTH_KEY_(ADD|REMOVE): /
             if line =~ /^BROKER_AUTH_KEY_ADD: /

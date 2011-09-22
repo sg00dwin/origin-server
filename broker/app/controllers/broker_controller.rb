@@ -59,6 +59,8 @@ class BrokerController < ApplicationController
       Libra.c[:rpc_opts][:verbose] = true
     end
 
+    data['node_profile']='std' unless data['node_profile']
+
     # Validate known json vars.  Error on unknown vars.
     data.each do |key, val|
       case key
@@ -77,6 +79,10 @@ class BrokerController < ApplicationController
         when 'app_uuid'
           if !(val =~ /\A[a-f0-9]+\z/)
             render :json => generate_result_json("Invalid application uuid: #{val}", nil, 254), :status => :invalid and return nil
+          end
+        when 'node_profile'
+          if !(val =~ /\A(exlarge|jumbo|large|micro|std)\z/)
+            render :json => generate_result_json("Invalid Profile: #{val}.  Must be: (exlarge|jumbo|large|micro|std)", nil, 254), :status => :invalid and return nil
           end
         when 'debug', 'alter'
           if !(val =~ /\A(true|false)\z/)
@@ -102,14 +108,6 @@ class BrokerController < ApplicationController
         when 'app_name'
           if !(val =~ /\A[\w]+\z/)
             render :json => generate_result_json("Invalid #{key} specified: #{val}", nil, 105), :status => :invalid and return nil
-          end
-        when 'broker_auth_key'
-          if !(val =~ /\A[A-Za-z0-9\+\/=]+\z/)
-            render :json => generate_result_json("Invalid #{key} specified: #{val}", nil, 113), :status => :invalid and return nil
-          end
-        when 'broker_auth_iv'
-          if !(val =~ /\A[A-Za-z0-9\+\/=]+\z/)
-            render :json => generate_result_json("Invalid #{key} specified: #{val}", nil, 114), :status => :invalid and return nil
           end
         else
           render :json => generate_result_json("Unknown json key found: #{key}", nil, 254), :status => :invalid and return nil
@@ -142,13 +140,13 @@ class BrokerController < ApplicationController
   
   def login(data, params, allow_broker_auth_key=false)
     username = nil
-    if allow_broker_auth_key && data['broker_auth_key'] && data['broker_auth_iv']
-      encrypted_token = Base64::decode64(data['broker_auth_key'])
+    if allow_broker_auth_key && params['broker_auth_key'] && params['broker_auth_iv']
+      encrypted_token = Base64::decode64(params['broker_auth_key'])
       cipher = OpenSSL::Cipher::Cipher.new("aes-256-cbc")
       cipher.decrypt
       cipher.key = OpenSSL::Digest::SHA512.new(Libra.c[:broker_auth_secret]).digest
       private_key = OpenSSL::PKey::RSA.new(File.read('config/keys/private.pem'), Libra.c[:broker_auth_rsa_secret])
-      cipher.iv =  private_key.private_decrypt(Base64::decode64(data['broker_auth_iv']))
+      cipher.iv =  private_key.private_decrypt(Base64::decode64(params['broker_auth_iv']))
       json_token = cipher.update(encrypted_token)
       json_token << cipher.final
 
@@ -168,7 +166,7 @@ class BrokerController < ApplicationController
         render_unauthorized and return
       end
     else
-      username = Libra::User.new(data['rhlogin'], nil, nil, nil, params['password'], ticket).login()
+      username = Libra::User.new(data['rhlogin'], nil, nil, nil, nil, params['password'], ticket).login()
     end
     return username
   end
@@ -215,13 +213,14 @@ class BrokerController < ApplicationController
         action = data['action']
         app_name = data['app_name']
         cartridge = data['cartridge']
+        node_profile = data['node_profile'] if data['node_profile']
 
         if !Libra::Util.check_app(app_name)
           render :json => generate_result_json("The supplied application name '#{app_name}' is not allowed", nil, 105), :status => :invalid and return
         end
         
         # Execute a framework cartridge
-        Libra.execute(cartridge, action, app_name, username)
+        Libra.execute(cartridge, action, app_name, username, node_profile)
           
         json_data = nil
         
@@ -261,7 +260,7 @@ class BrokerController < ApplicationController
       return unless data
   
       # Check if user already exists
-      username = login(data, params)
+      username = login(data, params, true)
       if username
         user = Libra::User.find(username)
         if user
@@ -309,7 +308,7 @@ class BrokerController < ApplicationController
         user = Libra::User.find(username)
         ns = data['namespace']
         if !Libra::Util.check_namespace(ns)
-          render :json => generate_result_json("Invalid characters in namespace '#{ns}' found", nil, 106), :status => :invalid and return
+          render :json => generate_result_json("The namespace you entered (#{ns}) is not available for use.  Please choose another one.", nil, 106), :status => :invalid and return
         end
         if user
           if data['alter']

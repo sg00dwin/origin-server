@@ -394,25 +394,39 @@ class DevEnv < Thor
         set_private_ip(instance)
       end
 
+      threads = []
+
       unless options.exclude_internal?
-        cmd = "cd li-test/broker; rake test"
-        run_ssh(instance, "Broker Unit", cmd)
-
-        cmd = "cd li-test/site; rake test"
-        run_ssh(instance, "Site Unit", cmd)
-
-        cmd = "cucumber -f html --out /tmp/rhc/internals.html -f progress -t @internals li-test/tests/"
-        run_ssh(instance, "Internal", cmd)
+        threads << Thread.new do
+          cmd = "cd li-test/broker; rake test"
+          run_ssh(instance, "Broker Unit", cmd)
+        end
+        threads << Thread.new do
+          cmd = "cd li-test/site; rake test"
+          run_ssh(instance, "Site Unit", cmd)
+        end
       end
-
-      unless options.exclude_verification?
-        cmd = "cucumber -f html --out /tmp/rhc/verfication.html -f progress -t @verify li-test/tests/"
-        run_ssh(instance, "Verification", cmd)
+      
+      threads << Thread.new do
+        unless options.exclude_internal?
+          cmd = "cucumber -f html --out /tmp/rhc/internals.html -f progress -t @internals li-test/tests/"
+          run_ssh(instance, "Internal", cmd)
+        end
+        unless options.exclude_verification?
+          cmd = "cucumber -f html --out /tmp/rhc/verfication.html -f progress -t @verify li-test/tests/"
+          run_ssh(instance, "Verification", cmd)
+        end
       end
 
       unless options.exclude_web?
-        cmd = "rm -rf /tmp/unzip* /tmp/webdriver-profile*; cd li-test/selenium; ./ts_web"
-        run_ssh(instance, "Web Selenium", cmd)
+        threads << Thread.new do
+          cmd = "rm -rf /tmp/unzip* /tmp/webdriver-profile*; cd li-test/selenium; ./ts_web"
+          run_ssh(instance, "Web Selenium", cmd)
+        end
+      end
+      
+      threads.each do |t|
+        t.join
       end
 
       print "Validating instance..."

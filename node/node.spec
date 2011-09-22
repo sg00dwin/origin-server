@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.78.8
+Version:       0.78.10
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -120,7 +120,7 @@ fi
 %attr(0640,-,-) %{_libexecdir}/mcollective/mcollective/agent/migrate-0.73.rb
 %attr(0640,-,-) %{_libexecdir}/mcollective/mcollective/agent/migrate-0.74.rb
 %attr(0640,-,-) %{_libexecdir}/mcollective/mcollective/agent/migrate-2.1.3.rb
-%attr(0640,-,-) %{_libexecdir}/mcollective/mcollective/agent/migrate-2.1.6.rb
+%attr(0640,-,-) %{_libexecdir}/mcollective/mcollective/agent/migrate-2.1.5.rb
 %attr(0640,-,-) %{_libexecdir}/mcollective/update_yaml.pp
 %attr(0640,-,-) %{ruby_sitelibdir}/facter/libra.rb
 %attr(0750,-,-) %{_initddir}/libra
@@ -157,6 +157,17 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Tue Sep 20 2011 Dan McPherson <dmcphers@redhat.com> 0.78.10-1
+- added sensitivity (s0:) to the openshift_mcs_level function return value
+  (markllama@redhat.com)
+- call add and remove ssh keys from jenkins configure and deconfigure
+  (dmcphers@redhat.com)
+
+* Mon Sep 19 2011 Dan McPherson <dmcphers@redhat.com> 0.78.9-1
+- missed a file on a rename (dmcphers@redhat.com)
+- rename migration (dmcphers@redhat.com)
+- US1056 (dmcphers@redhat.com)
+
 * Thu Sep 15 2011 Dan McPherson <dmcphers@redhat.com> 0.78.8-1
 - set execute perms on mcs_level (markllama@redhat.com)
 - updated mcs_level generation for app accounts > 522 (markllama@redhat.com)

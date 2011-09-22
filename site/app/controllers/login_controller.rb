@@ -7,11 +7,13 @@ class LoginController < ApplicationController
 
   def show_flex
     @register_url = user_new_flex_url
+    @default_login_workflow = flex_path
     show
   end
   
   def show_express
     @register_url = user_new_express_url
+    @default_login_workflow = express_path
     show
   end
 
@@ -59,6 +61,9 @@ class LoginController < ApplicationController
   end
 
   def ajax
+    referrer = URI.parse(request.referer)
+    setup_login_workflow(referrer,false)
+
     # Keep track of response information
     responseText = {}
 

@@ -2,7 +2,7 @@
 
 Summary:   Provides jenkins-1.4 support
 Name:      rhc-cartridge-jenkins-1.4
-Version:   0.78.3
+Version:   0.78.5
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -30,6 +30,7 @@ mkdir -p %{buildroot}%{cartridgedir}
 mkdir -p %{buildroot}/%{_sysconfdir}/libra/cartridges
 ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/libra/cartridges/%{name}
 cp -r info %{buildroot}%{cartridgedir}/
+cp -r template %{buildroot}%{cartridgedir}/
 mkdir -p %{buildroot}%{cartridgedir}/info/data/
 
 %clean
@@ -41,12 +42,22 @@ rm -rf %{buildroot}
 %attr(0750,-,-) %{cartridgedir}/info/data/
 %attr(0750,-,-) %{cartridgedir}/info/build/
 %attr(0755,-,-) %{cartridgedir}/info/bin/
+%{cartridgedir}/template/
 %config(noreplace) %{cartridgedir}/info/configuration/
 %{_sysconfdir}/libra/cartridges/%{name}
 %{cartridgedir}/info/changelog
 %{cartridgedir}/info/control
 
 %changelog
+* Tue Sep 20 2011 Dan McPherson <dmcphers@redhat.com> 0.78.5-1
+- add broker auth key when jenkins is created (dmcphers@redhat.com)
+- add base jenkins template (dmcphers@redhat.com)
+- call add and remove ssh keys from jenkins configure and deconfigure
+  (dmcphers@redhat.com)
+
+* Mon Sep 19 2011 Dan McPherson <dmcphers@redhat.com> 0.78.4-1
+- jenkins cleanup (dmcphers@redhat.com)
+
 * Thu Sep 15 2011 Dan McPherson <dmcphers@redhat.com> 0.78.3-1
 - updated mcs_level generation for app accounts > 522 (markllama@redhat.com)
 
