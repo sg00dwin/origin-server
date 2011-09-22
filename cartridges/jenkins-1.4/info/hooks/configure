@@ -128,7 +128,10 @@ function generate_ssh_keys {
     /bin/mkdir -p $OPENSHIFT_DATA_DIR/.ssh/
     /usr/bin/ssh-keygen -N '' -f $OPENSHIFT_DATA_DIR/.ssh/jenkins_id_rsa
 
-    /bin/chown root.root -R "$OPENSHIFT_DATA_DIR/.ssh/"
+    /bin/chown root.$uuid -R "$OPENSHIFT_DATA_DIR/.ssh/"
+    chmod 0750 "$OPENSHIFT_DATA_DIR/.ssh/"
+    chmod 0640 "$OPENSHIFT_DATA_DIR/.ssh/jenkins_id_rsa"
+    chmod 0640 "$OPENSHIFT_DATA_DIR/.ssh/jenkins_id_rsa.pub"
     /usr/bin/chcon -t libra_var_lib_t -l $mcs_level -R "$OPENSHIFT_DATA_DIR/.ssh/"
 }
 
