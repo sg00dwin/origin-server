@@ -1,4 +1,4 @@
-/* DO NOT MODIFY. This file was compiled Thu, 22 Sep 2011 20:34:56 GMT from
+/* DO NOT MODIFY. This file was compiled Fri, 23 Sep 2011 19:53:44 GMT from
  * /home/fotios/li/site/app/coffeescripts/script.coffee
  */
 
@@ -6,7 +6,7 @@
   var $;
   $ = jQuery;
   $(function() {
-    var ann_height, ann_list, announcements, body, close_btn, close_dialog, current, dialogs, links, login_complete, nav, nav_top, on_announcement, open_dialog, registration_complete, reset, scroll_announcements, sections, signin, signup, sticky_css, top, unsticky_css;
+    var ann_height, ann_list, announcements, body, close_btn, close_dialog, current, dialogs, links, login_complete, nav, nav_top, on_announcement, open_dialog, registration_complete, reset, reset_password_complete, scroll_announcements, sections, signin, signup, sticky_css, top, unsticky_css;
     body = $('body');
     nav = ($('header.universal > nav')).first();
     nav_top = nav.offset().top;
@@ -100,6 +100,15 @@
     };
     signup.find('form').bind('ajax:complete', registration_complete);
     ($('#new_web_user')).bind('ajax:complete', registration_complete);
+    reset_password_complete = function(xhr, status) {
+      var $div, form, json;
+      form = $(this);
+      json = $.parseJSON(status.responseText);
+      console.log("Reset password complete, got JSON", json);
+      $(this).parent().find('div.message').remove();
+      return $div = $('<div>').addClass("message " + json.status).text(json.message).insertBefore(this);
+    };
+    reset.find('form').bind('ajax:complete', reset_password_complete);
     announcements = $('#announcements');
     ann_list = $('ul', announcements);
     on_announcement = 0;
