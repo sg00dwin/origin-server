@@ -326,7 +326,7 @@ EOF
 
 # Create a link from the repo/deployments directory to the standalone/deployments content
 mkdir -p "$APP_DIR"/repo/deployments
-ln -s "$APP_DIR"/repo/deployments "$APP_JBOSS"/standalone
+ln -s ../../repo/deployments "$APP_JBOSS"/standalone/deployments
 
 # Create a link from the standalone/log directory to ${APP_DIR}/logs for rhc-tail-files
 ln -s ${jboss_version}/standalone/log "$APP_DIR"/logs
