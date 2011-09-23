@@ -66,40 +66,33 @@ Given /I wait (\d+) second(s)?$/ do |sec, ignore|
 end
 
 When /^I request the logs via SSH$/ do
-
   ssh_cmd = "ssh -t #{@acct_name}@#{@hostname} tail -f #{@app_name}/logs/\\*"
 
-  #pid, stdin, stdout, stderr = Open4::popen4(ssh_cmd)
   stdout, stdin, pid = PTY.spawn ssh_cmd
 
   @ssh_cmd = {
     :pid => pid,
     :stdout => stdout,
-    #:stderr => stderr
   }
-
 end
 
 When /^I terminate the SSH log stream$/ do
-
   begin
     # check if the PID still exists
     Process.kill("TERM", @ssh_cmd[:pid])
-  
     exit_code = -1
+
     # Don't let a command run more than 5 minutes
-    Timeout::timeout(500) do
+    Timeout::timeout(600) do
       ignored, status = Process::waitpid2 @ssh_cmd[:pid]
       exit_code = status.exitstatus
     end
   rescue PTY::ChildExited
-    puts "It quit"
+    # Completed as expected
   end
+
   outstring = @ssh_cmd[:stdout].read
-  #errstring = @ssh_cmd[:stderr].read
   $logger.debug("Standard Output:\n#{outstring}")
-  puts "Outstring = #{outstring}"
-  #$logger.debug("Standard Error:\n#{errstring}")
 end
 
 
@@ -109,11 +102,5 @@ Then /^there will be (no|\d+) tail processes running( in (\d+) seconds)?$/ do |e
   timeout = timeout ? timeout.to_i : 0
   sleep timeout
   pcount = num_procs @acct_name, "tail"
-
-
-  #if pcount != expect
-  #  raise Cucumber::Pending.new "waiting for fix to BZ 726646"
-  #end
-
   pcount.should be == expect
 end
