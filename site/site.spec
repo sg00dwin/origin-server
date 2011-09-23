@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.78.11
+Version:   0.78.12
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -69,6 +69,20 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Thu Sep 22 2011 Dan McPherson <dmcphers@redhat.com> 0.78.12-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (fotios@redhat.com)
+- Changed workflow handling for AJAX calls (fotios@redhat.com)
+- Bug 740176 (edirsh@redhat.com)
+- Bug 740183 - Correct form alignment in dialogs (edirsh@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (fotios@redhat.com)
+- Fix for bug 740147 by making sure workflows are set for AJAX
+  (fotios@redhat.com)
+- Rewrite twitter javascripts to be reusable elsewhere on the site
+  (edirsh@redhat.com)
+- Cleanup unused javascripts (edirsh@redhat.com)
+
 * Mon Sep 19 2011 Dan McPherson <dmcphers@redhat.com> 0.78.11-1
 - bug 735924 (dmcphers@redhat.com)
 

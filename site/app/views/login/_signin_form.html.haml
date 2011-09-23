@@ -29,13 +29,4 @@
            value="Sign in" 
            class="button")
 
-%p#lost_password
-  = link_to 'Lost your password?', 
-    URI.join(Rails.configuration.streamline[:host],Rails.configuration.streamline[:lost_password_url]).to_s,
-    :class => 'more'
-
-#register
-  %h2 Need to Register instead?
-  %p
-    %a.sign_up.more{ :href => (register_url ||= @register_url) }
-      Click here to register
+= render 'layouts/dialogs/extra_options', :page => 'signin'

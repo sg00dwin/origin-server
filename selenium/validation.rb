@@ -23,7 +23,9 @@ class Validation < Test::Unit::TestCase
   ]
   
   @@blacklist = [
-    '/wapps/sso/lostPassword.html'
+    '/wapps/sso/lostPassword.html',
+    '/app/repo/openshift.repo',
+    '/flex'
   ]
 
   $logger ||= Logger.new(STDERR)

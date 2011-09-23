@@ -45,7 +45,7 @@ CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_static_deconfigure
+    echo "$0 $@" | logger -p local0.notice -t libra_raw_deconfigure
     exit 1
 }
 

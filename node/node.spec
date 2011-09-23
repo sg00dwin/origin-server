@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.78.10
+Version:       0.78.11
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -157,6 +157,9 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Thu Sep 22 2011 Dan McPherson <dmcphers@redhat.com> 0.78.11-1
+- add migration of changing path order (dmcphers@redhat.com)
+
 * Tue Sep 20 2011 Dan McPherson <dmcphers@redhat.com> 0.78.10-1
 - added sensitivity (s0:) to the openshift_mcs_level function return value
   (markllama@redhat.com)

@@ -2,6 +2,8 @@ rpm -Uhv http://download.fedora.redhat.com/pub/epel/6/x86_64/epel-release-6-5.no
 rpm -e rh-amazon-rhui-client
 rpm -Uhv http://209.132.178.9/gpxe/trees/li/rhel/6/x86_64/rhel6-and-optional-0.1-1.noarch.rpm
 
+sed -i s/sslverify=1/sslverify=0/g /etc/yum.repos.d/rh-cloud.repo
+
 cat > /etc/yum.repos.d/li.repo <<EOF
 [li]
 name=Li repo for Enterprise Linux 6 - \$basearch

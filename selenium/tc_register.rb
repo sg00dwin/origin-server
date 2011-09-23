@@ -35,6 +35,7 @@ class Register < Test::Unit::TestCase
     
     $logger.info "Testing register success"
     submit_register(get_unique_username(), "redhat")
+    wait_for_ajax(20,'Timed out waiting for AJAX to return')
     check_element_value("Check your inbox for an email with a validation link. Click on the link to complete the registration process." , :xpath, ".//section[@class='main']/div[@class='content']/p")
     screenshot('success')
   end

@@ -58,6 +58,8 @@ $ ->
   signup = $ '#signup'
   # Sign in dialog
   signin = $ '#signin'
+  # Password reset dialog
+  reset  = $ '#reset_password'
 
   ($ 'a.sign_up').click (event) ->
     event.preventDefault()
@@ -66,6 +68,10 @@ $ ->
   ($ 'a.sign_in').click (event) ->
     event.preventDefault()
     open_dialog signin
+
+  ($ 'a.password_reset').click (event) ->
+    event.preventDefault()
+    open_dialog reset
     
   close_btn.click (event) ->
     close_dialog ($ this).parent()

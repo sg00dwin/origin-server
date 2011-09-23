@@ -356,9 +356,12 @@ footer.universal {
   form {
     display: block;
     width: 25em;
+    margin: 0 auto;
+
+    input.button {
+      margin: 0 auto;
+    }
   }
-  
-  #login-form form, form#new_web_user { margin: 0 auto; }
     
   input { width: 22em; }
   
@@ -381,6 +384,23 @@ footer.universal {
     @include close_button;
     
     img { border: none; }
+  }
+
+  #extra_options {
+    div {
+      margin: 0 3em;
+    }
+
+    p { 
+      margin: 0; 
+    }
+
+    h2 {
+      font-size: 1em;
+      margin: 0;
+      padding: 2em 0 0;
+    }
+
   }
 }
 
@@ -800,14 +820,6 @@ nav.service {
 
 /* Start register page */
 
-#login_instead {
-  margin: 1em 3em;
-}
-
-form#new_web_user {
-  margin: 1em 2em;
-}
-
 li.captcha {
   margin: 0 1em;
 }
@@ -816,25 +828,6 @@ li.captcha {
 
 /* Start login page */
 
-#login-form form {
-  margin: 0 3em;
-}
-
-#register {
-  margin: 0 3em;
-  
-  h2 {
-    font-size: 1em;
-    margin: 0;
-    padding: 2em 0 0;
-  }
-  
-  p { margin: 0; }
-}
-
-#lost_password {
-  margin: 0 3em;
-}
 
 /* End login page */
 
