@@ -126,6 +126,16 @@ $ ->
   signup.find('form').bind('ajax:complete', registration_complete)
   ($ '#new_web_user').bind('ajax:complete', registration_complete)
 
+  reset_password_complete = (xhr,status) ->
+    form = $(this)
+    json = $.parseJSON( status.responseText )
+    console.log "Reset password complete, got JSON", json
+
+    $(this).parent().find('div.message').remove()
+    $div = $('<div>').addClass("message #{json.status}").text(json.message).insertBefore(this)
+
+  reset.find('form').bind('ajax:complete', reset_password_complete)
+
 ## Announcements ##
   announcements = ($ '#announcements')
   ann_list = ($ 'ul', announcements)
