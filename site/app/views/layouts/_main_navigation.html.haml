@@ -13,4 +13,4 @@
       = link_to "Greetings, #{session[:login]}!", dashboard_path, :class => 'greeting'
   -else
     %li.user
-      %a.sign_in Sign In
+      = link_to 'Sign in', login_path, :class => 'sign_in'

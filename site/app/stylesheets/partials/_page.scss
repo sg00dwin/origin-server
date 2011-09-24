@@ -455,11 +455,8 @@ footer.universal {
   }
   
   a.button {
+    @include light_button;
     font-size: 15px;
-    background-color: #ede6cb;
-    @include background-image(linear-gradient(top, #ede6cb, #ddce9b));
-    color: #3b3924;
-    @include text-shadow(white 0 0.15em 0);
     position: relative;
     left: 50%;
     margin-top: 15px;
@@ -790,6 +787,241 @@ nav.service {
     color: $power;
   }
 
+}
+
+/* product overview page styles */
+
+#product_overview { padding: 0; }
+
+#product_overview .info {
+  margin: 0; padding: 3em 0 12em;
+  background: $overview_bg url('/app/images/transparent_cloud.png') repeat-x center center;
+
+  ul {
+    list-style-type: none;
+    margin: 0 auto; padding: 0;
+    width: 62em;
+  }
+}
+
+#product_overview.prev_login .info { padding-bottom: 18em; }
+#product_overview.prev_login.no_error .info { padding-bottom: 15em; }
+#product_overview.authorized .info { padding-bottom: 2em; }
+
+.multiplebgs.cssgradients #product_overview .info {
+  @include background-image(
+    url('/app/images/transparent_cloud.png'),
+    radial-gradient(center bottom, circle farthest-side, $overview_highlight, $overview_bg)
+  );
+  background-repeat: repeat-x, no-repeat;
+  background-position: center center, 0 0;
+}
+
+.product_box {
+  @include inline-block;
+  background: white;
+  @include border-radius(2em);
+  width: 24%;
+  height: 23em;
+  margin-right: 2.5%;
+  padding: 1em 2em;
+
+  &:last-child {
+    margin-right: 0;
+  }
+
+  h2 {
+    text-transform: uppercase;
+    font-family: Overpass, $base-font-family;
+    font-size: 2.5em;
+    line-height: .5em;
+  }
+
+  &.express h2, &.express a.more {
+    color: $express;
+  }
+
+  &.flex h2, &.flex a.more{
+    color: $flex;
+  }
+
+  &.power h2, &.power a.more {
+    color: $power;
+  }
+
+  .product .main .content & .content {
+    width: auto;
+    margin: 0; padding: 0;
+  }
+
+  .content {
+    color: #666;
+    font-size: .9em;
+    line-height: 1.5em;
+  }
+}
+
+#user_box {
+  background: $overview_bg;
+  height: 4em;
+  overflow: visible;
+
+  .content {
+    position: relative;
+  }
+  
+  .authorized & .content {
+    top: -2em;
+    width: 40em;
+  }
+
+  .unauthorized & .content {
+    background: $overview_bg;
+    width: 35em;
+    height: 12em;
+    @include border-radius(1em);
+    padding: 2em;
+    top: -18em;
+    text-align: center;
+  }
+
+  .unauthorized.prev_login & .content {
+    height: 18em;
+    top: -24em;
+  }
+  .unauthorized.prev_login.no_error & .content {
+    height: 15em;
+    top: -21em;
+  }
+
+  .no-cssgradients .unauthorized & .content { background: darken($overview_bg, 5%); }
+
+  h2 {
+    color: white;
+    font-family: OverpassBold, $base-font-family;
+    font-weight: bold;
+    margin: 0;
+  }
+
+  .button {
+    @include light_button;
+  }
+
+  .sign_up.button {
+    font-size: 1.5em;
+    display: block;
+    width: 10em;
+    margin: 2em auto .5em;
+  }
+
+  a { color: $overview_highlight; }
+
+  img {
+    position: absolute;
+    bottom: -65px;
+    left: 49%;
+  }
+
+  #login-form {
+    form { margin: 1em 0; width: auto; }
+    label {
+      color: white;
+      font: {
+        family: Overpass, $base_font_family;
+        size: 1em;
+      }
+      text-align: right;
+      margin: 0 6em 0 0;
+      padding: 0;
+    }
+    input {
+      width: 20em;
+      @include border-radius(.25em);
+      border: none;
+      display: inline;
+    }
+    input.button {
+      width: 21em;
+      margin-left: 1.5em;
+    }
+    input:focus { margin: .25em; }
+    input.button:focus { margin: .5em 0 5em 1.5em; }
+
+
+  }
+
+  #register h2 { display: none; }
+
+  #lost_password a, #register a {
+    float: right;
+    font-weight: normal;
+    font-family: $base_font_family;
+    margin: 0 1.4em;
+  }
+}
+
+.cssgradients #user_box {
+  @include background-image(radial-gradient(center top, circle closest-corner, $overview_highlight, $overview_bg 250px));
+}
+
+/* media overview styles */
+
+#media_overview {
+  
+  .content {
+    width: 60em;
+
+     > div {
+      width: 50%;
+      float: left;
+    }
+  }
+
+  ul {
+    list-style-type: none;
+    margin: 0; padding: 0;
+  }
+  
+  li {
+    display: block;
+    @include clearfix;
+  }
+
+  .vid {
+    margin-bottom: .5em;
+
+    .video-thumb { float: left; }
+    
+    h2 {
+      float: right;
+      font-size: 1.1em;
+      margin: 2em 1em 0;
+      width: 50%;
+      
+      a { color: #666; }
+    }
+  }
+
+  #retweets ul li { margin: 10px 0; }
+
+  .avatar {
+    float: left;
+    margin: 4px 0 0;
+    border: 0;
+  }
+  .tweet {
+    background: $light_button_bg;
+    font-size: .8em;
+    @include border-radius(.5em);
+    margin: 0  0 0 55px;
+    padding: 5px;
+    font-size: 10px;
+    height: 45px;
+    
+    a { color: $overview_highlight; }
+  }
+
+  a.more { margin: 1.5em 0 }
 }
 
 #flex-ways {
