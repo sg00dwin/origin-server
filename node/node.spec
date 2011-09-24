@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.78.11
+Version:       0.78.12
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -157,6 +157,10 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Fri Sep 23 2011 Dan McPherson <dmcphers@redhat.com> 0.78.12-1
+- up upload limit to 10M (dmcphers@redhat.com)
+- fixed typo in openshift_mcs_level (markllama@redhat.com)
+
 * Thu Sep 22 2011 Dan McPherson <dmcphers@redhat.com> 0.78.11-1
 - add migration of changing path order (dmcphers@redhat.com)
 
