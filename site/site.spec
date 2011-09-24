@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.78.12
+Version:   0.78.13
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -69,6 +69,13 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Fri Sep 23 2011 Dan McPherson <dmcphers@redhat.com> 0.78.13-1
+- Added password reset form (fotios@redhat.com)
+- Fixed user controller and signup form for cloud access choice
+  (fotios@redhat.com)
+- DRYed up dialogs. Fixed problem with form not submitting for correct account
+  type (fotios@redhat.com)
+
 * Thu Sep 22 2011 Dan McPherson <dmcphers@redhat.com> 0.78.12-1
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
   (fotios@redhat.com)
