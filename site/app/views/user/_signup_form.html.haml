@@ -1,14 +1,7 @@
--if @user
-  - @user.errors.each do |key, value|
-    - if key == :base || key == :captcha
-      .message.error
-        #{value}
-
-- uri = URI.parse(@register_url || user_new_express_path).path
-
-= semantic_form_for('user', :remote => true, :url => uri) do |form|
+= semantic_form_for('web_user', :remote => true, :url => web_users_path) do |form|
   = form.inputs do
-    = form.hidden_field :cloud_access_choice
+    = form.hidden_field :cloud_access_choice,
+      :value => (@product == CloudAccess::FLEX_NAME ? CloudAccess::FLEX : CloudAccess::EXPRESS)
     = form.input :email_address
     
   %fieldset.confirm 

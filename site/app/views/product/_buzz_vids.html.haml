@@ -1,0 +1,51 @@
+-# Recent tweets and videos partial
+
+%section#media_overview.main
+  .content
+    #videos
+      %header
+        %h1 Popular OpenShift Videos
+      %ul
+        %li.vid
+          %header
+            %h2
+              = link_to 'Mobile App Deployment to Express w/ Appcelerator', 'video/OpenShift-Appcelerator-demo'
+          
+          .video-thumb.thumb
+            = link_to "video/OpenShift-Appcelerator-demo" do
+              = image_tag "/app/images/video_stills/OpenShift-Appcelerator-demo.png",
+                :title => "OpenShift Appcelerator Demo",
+                :alt => "OpenShift Appcelerator Demo"
+        
+        %li.vid
+          %header
+            %h2
+              = link_to 'OpenShift Flex Product Tour', 'video/OpenShift-Flex-demo'
+          
+          .video-thumb.thumb
+            = link_to 'video/OpenShift-Flex-demo' do
+              = image_tag "/app/images/video_stills/OpenShift-Flex-demo.png",
+                :title => "OpenShift Flex Product Tour",
+                :alt => "OpenShift Flex Product Tour"
+        
+        %li.vid
+          %header
+            %h2
+              = link_to 'Deploying to OpenShift PaaS with the eXo Cloud IDE', 'video/OpenShift-eXo-demo'
+          
+          .video-thumb.thumb
+            = link_to "video/OpenShift-eXo-demo" do
+              = image_tag "/app/images/video_stills/OpenShift-eXo-demo.png",
+                :title => "Deploying to OpenShift with eXo Cloud IDE",
+                :alt => "Deploying to OpenShift PaaS with the eXo Cloud IDE"
+
+      = link_to 'Watch more videos', 'http://redhat.com/openshift/videos', :class => 'more'
+          
+      
+    #buzz
+      %header
+        %h1 Buzz on OpenShift
+  
+      #retweets
+      
+      = link_to 'Follow @OpenShift', 'http://twitter.com/#!/openshift', :class => 'more'

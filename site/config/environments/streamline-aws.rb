@@ -35,7 +35,7 @@ RedHatCloud::Application.configure do
     :host => 'https://10.196.215.67',
     :base_url => '/wapps/streamline',
     :email_confirm_url => '/wapps/streamline/confirm.html',
-    :lost_password_url => '/wapps/sso/lostPassword.html',
+    :lost_password_url => '/wapps/streamline/resetPassword.html',
     :login_url => '/wapps/streamline/login.html',
     :secret => 'c0ldW1n3'
   }

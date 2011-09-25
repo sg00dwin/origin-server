@@ -185,6 +185,11 @@ class ApplicationController < ActionController::Base
     end
   end
   
+  # Detect previous login
+  def previously_logged_in?
+    cookies[:prev_login] ? true : false
+  end
+  
   private
   
   def require_login
@@ -198,6 +203,11 @@ class ApplicationController < ActionController::Base
   # Block all access to a controller
   def deny_access
     redirect_to root_path
+  end
+  
+  # Set previous log in detection cookie
+  def set_previous_login_detection
+    cookies.permanent[:prev_login] = true
   end
   
 end

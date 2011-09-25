@@ -23,6 +23,7 @@ RedHatCloud::Application.routes.draw do
     match 'email_confirm_express' => 'email_confirm#confirm_express'
     match 'express' => 'product#express', :as => 'express'
     match 'flex' => 'product#flex', :as => 'flex'
+    match 'platform' => 'product#overview', :as => 'product_overview'
     match 'express_protected' => 'product#express_protected', :as => 'express_protected'
     match 'flex_protected' => 'product#flex_protected', :as => 'flex_protected'
     match 'power' => 'product#power', :as => 'power'
@@ -97,7 +98,7 @@ RedHatCloud::Application.routes.draw do
               :as => "express_apps",
               :only => [:new, :create]
         
-    match 'control_panel' => 'control_panel#index'
+    match 'control_panel' => 'control_panel#index', :as => 'control_panel'
     match 'dashboard' => 'control_panel#index', :as => 'dashboard'
 
     # Sample resource route with options:

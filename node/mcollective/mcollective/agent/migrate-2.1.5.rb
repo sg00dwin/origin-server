@@ -35,6 +35,10 @@ module LibraMigration
         FileUtils.ln_s "#{jboss_home}/jboss-modules.jar", "#{app_dir}/jbossas-7.0/jboss-modules.jar"
       end
       
+      if app_type == 'php-5.3'
+        output += Util.replace_in_file("#{app_dir}/conf/php.ini", 'upload_max_filesize = 2M', 'upload_max_filesize = 10M')
+      end
+
     else
       exitcode = 127
       output += "Application not found to migrate: #{app_home}\n"

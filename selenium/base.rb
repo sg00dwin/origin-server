@@ -43,7 +43,7 @@ module OpenShift
             @headless = Headless.new
             @headless.start
             @driver=Selenium::WebDriver.for :firefox
-            @driver.manage.timeouts.implicit_wait = 10
+            @driver.manage.timeouts.implicit_wait = 30
             break
           end
         rescue Timeout::Error

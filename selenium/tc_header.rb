@@ -30,7 +30,7 @@ class Header < Test::Unit::TestCase
     # Make sure sign in link pops up form
     link = find_element(:xpath, ".//a[@class='sign_in']")
     if link
-      check_element_value('Sign In',:xpath,".//a[@class='sign_in']")
+      check_element_value('Sign in',:xpath,".//a[@class='sign_in']")
 
       # Make sure sign in dialog is hidden, shows up, and hides again
       check_element_hidden(:xpath, ".//div[@id='signin']")

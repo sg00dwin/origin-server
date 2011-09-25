@@ -36,4 +36,10 @@ class ProductController < ApplicationController
   def power
     @product = 'power'
   end
+  
+  #Product overview page
+  def overview
+    render :action => :overview, :layout => 'application'
+  end
+  
 end

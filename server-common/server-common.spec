@@ -2,7 +2,7 @@
 
 Summary:       Common dependencies of the OpenShift broker and site
 Name:          rhc-server-common
-Version:       0.78.9
+Version:       0.78.10
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -54,6 +54,9 @@ rm -rf %{buildroot}
                                   -s /sbin/nologin 2>&1 > /dev/null || :
 
 %changelog
+* Fri Sep 23 2011 Dan McPherson <dmcphers@redhat.com> 0.78.10-1
+- remove check for rhlogin length >= 6 (dmcphers@redhat.com)
+
 * Thu Sep 22 2011 Dan McPherson <dmcphers@redhat.com> 0.78.9-1
 - rename ssh_keys to system_ssh_keys (dmcphers@redhat.com)
 

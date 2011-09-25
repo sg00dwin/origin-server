@@ -101,14 +101,12 @@ class DevEnv < Thor
     end
 
     def run_ssh(instance, title, cmd)
-      puts "Running " + title + " Tests..."
       output, code = instance.ssh(cmd, 4800, true)
-      puts output
+      puts "Output from #{title} Tests...\n----------------\n#{output}\n----------------\n"
       if code != 0
         download_artifacts instance
         exit code
       end
-      puts "Done"
     end
   end
 

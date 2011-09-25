@@ -32,6 +32,22 @@ $express: #AFBF27;
 $flex: #4E376B;
 $power: #FF8D00;
 
+$light_button_bg: #ede6cb;
+$light_button_bg_highlight: #ddce9b;
+$light_button_text: #3b3924;
+$light_button_shadow: #b69c3f;
+
+$overview_bg: #002e53;
+$overview_highlight: #0093d9;
+
+@mixin light_button {
+  background-color: $light_button_bg;
+  @include background-image(linear-gradient(top, $light_button_bg, $light_button_bg_highlight));
+  color: $light_button_text;
+  @include text-shadow(white 0 0.1em 0);
+  @include box-shadow($light_button_shadow 0 0.2em 0);
+}
+
 @mixin selection {
   background-color: $background-color;
   color: white;

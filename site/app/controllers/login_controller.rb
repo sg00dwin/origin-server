@@ -75,6 +75,7 @@ class LoginController < ApplicationController
       cookies[:rh_sso] = 'test'
       @message = 'Welcome back to OpenShift!'
       @message_type = 'success'
+      set_previous_login_detection
 
       # Added options to make sure non-integrated environment works
       responseText[:status] = 200
@@ -117,6 +118,7 @@ class LoginController < ApplicationController
           }
           session[:ticket] = rh_sso
           responseText[:redirectUrl] = root_url
+          set_previous_login_detection
         when Net::HTTPUnauthorized
           Rails.logger.debug 'Unauthorized'
           responseText[:error] = 'Invalid username or password'
