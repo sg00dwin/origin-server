@@ -1,4 +1,4 @@
-/* DO NOT MODIFY. This file was compiled Mon, 26 Sep 2011 20:08:25 GMT from
+/* DO NOT MODIFY. This file was compiled Mon, 26 Sep 2011 20:55:01 GMT from
  * /home/fotios/li/site/app/coffeescripts/form.coffee
  */
 
@@ -66,6 +66,7 @@
       event.preventDefault();
       userbox = $('#user_box #login-form');
       if (userbox.length > 0) {
+        dialogs.hide();
         return userbox.find('#login_input').focus();
       } else {
         return open_dialog(signin);
