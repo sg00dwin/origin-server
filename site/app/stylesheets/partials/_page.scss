@@ -392,8 +392,13 @@ footer.universal {
     input.button {
       margin: 0 auto;
     }
+
+    fieldset.confirm label.error {
+      background: #323232;
+    }
   }
     
+
   input { width: 22em; }
   
   label {

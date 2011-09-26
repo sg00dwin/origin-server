@@ -1,11 +1,4 @@
 #login-form
-  - if @user and @user.errors.any?
-    - @user.errors.full_messages.each do |msg| 
-      .message.error
-        = msg
-
-  = render 'layouts/flashes'
-
   = form_tag(login_ajax_path, :remote => true ) do
     %input(type="hidden" value="✓" name="utf8")
     %input{:type => "hidden", :value => form_authenticity_token, :name => "authenticity_token"}
