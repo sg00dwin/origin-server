@@ -141,7 +141,7 @@ module Streamline
     register_args = {'emailAddress' => @email_address,
                      'password' => @password,
                      'passwordConfirmation' => @password,
-                     'secretKey' => Rails.configuration.streamline[:secret],
+                     'secretKey' => Rails.configuration.streamline[:register_secret],
                      'termsAccepted' => 'true',
                      'confirmationUrl' => confirm_url}
 
@@ -185,7 +185,7 @@ module Streamline
   def establish_email_address
     if !@email_address
       user_info_args = {'login' => @rhlogin,
-                        'secretKey' => Rails.configuration.streamline[:secret]}
+                        'secretKey' => Rails.configuration.streamline[:user_info_secret]}
       http_post(@@user_info_url, user_info_args) do |json|
         @email_address = json['emailAddress']
       end

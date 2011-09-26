@@ -55,9 +55,8 @@ Broker::Application.configure do
   config.streamline = {
     :host => 'https://www.redhat.com',
     :base_url => '/wapps/streamline',
-    :email_confirm_url => '/wapps/streamline/confirm.html',
-    :lost_password_url => '/wapps/sso/lostPassword.html',
-    :secret => 'c0ldW1n3'
+    :register_secret => 'c0ldW1n3',
+    :user_info_secret => 'sw33tl1Qu0r'
   }
 
 end

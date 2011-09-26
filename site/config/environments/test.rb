@@ -45,7 +45,8 @@ RedHatCloud::Application.configure do
     :email_confirm_url => '/confirm.html',
     :lost_password_url => '/lostPassword.html',
     :login_url => '',
-    :secret => 'c0ldW1n3'
+    :register_secret => 'c0ldW1n3',
+    :user_info_secret => 'sw33tl1Qu0r'
   }
   config.captcha_secret = 'secret'
   

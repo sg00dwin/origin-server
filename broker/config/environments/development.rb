@@ -33,9 +33,8 @@ Broker::Application.configure do
   config.streamline = {
     :host => 'https://localhost',
     :base_url => '',
-    :email_confirm_url => '/confirm.html',
-    :lost_password_url => '/wapps/sso/lostPassword.html',
-    :secret => ''
+    :register_secret => '',
+    :user_info_secret => ''
   }
 end
 
