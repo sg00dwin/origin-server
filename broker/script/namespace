@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-# Usage: ./namespace register --login=foo --namespace=bar --public_key=baz
+# Usage: rails runner script/namespace register --login=LOGIN --namespace=NAMESPACE --public-key=PUBKEY
 require 'rubygems'
 require 'openshift'
 require 'thor'
