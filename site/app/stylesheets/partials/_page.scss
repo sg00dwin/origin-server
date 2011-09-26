@@ -228,10 +228,11 @@ header.universal {
         font-size: .9em;
         text-decoration: none;
         cursor: pointer;
+        @include transition-duration(.5s);
       }
     
-      .home & a.home,
-      .product & a.services,
+      .express & a.express,
+      .flex & a.flex,
       &.active a,
       a:hover {
         background-color: lighten(black, 20%);
