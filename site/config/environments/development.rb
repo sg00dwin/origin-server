@@ -36,6 +36,7 @@ RedHatCloud::Application.configure do
     :base_url => '',
     :email_confirm_url => '/confirm.html',
     :lost_password_url => '/wapps/streamline/resetPassword.html',
+    :change_password_url => '/wapps/streamline/protected/changePassword.html',
     :login_url => '/wapps/streamline/login.html',
     :register_secret => '',
     :user_info_secret => ''

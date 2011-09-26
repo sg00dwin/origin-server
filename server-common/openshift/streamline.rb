@@ -18,6 +18,7 @@ module Streamline
   @@user_info_url = URI.parse(service_base_url + "/userInfo.html")
   @@acknowledge_terms_url = URI.parse(service_base_url + "/protected/acknowledgeTerms.html")
   @@unacknowledged_terms_url = URI.parse(service_base_url + "/protected/findUnacknowledgedTerms.html?hostname=openshift.redhat.com&context=OPENSHIFT&locale=en")
+  @@change_password_url = URI.parse(service_base_url + '/protected/changePassword.html')
 
   def initialize
     @roles = []
@@ -123,6 +124,11 @@ module Streamline
     return result
   end
   
+  def change_password(args)
+    http_post(@@change_password_url, args, false) do |json|
+      return json
+    end
+  end
   
   def check_access
     unless roles.index('cloud_access_1')

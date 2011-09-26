@@ -53,6 +53,7 @@ RedHatCloud::Application.routes.draw do
     match 'user/complete' => 'user#complete', :via => [:get]
 
     match 'user/reset_password' => 'user#reset_password', :via => [:post]
+    match 'user/change_password' => 'user#change_password', :via => [:post]
 
     resource :terms,
              :as => "terms",

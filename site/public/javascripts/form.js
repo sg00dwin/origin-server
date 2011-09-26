@@ -1,4 +1,4 @@
-/* DO NOT MODIFY. This file was compiled Mon, 26 Sep 2011 20:55:01 GMT from
+/* DO NOT MODIFY. This file was compiled Mon, 26 Sep 2011 22:30:13 GMT from
  * /home/fotios/li/site/app/coffeescripts/form.coffee
  */
 
@@ -6,7 +6,7 @@
   var $;
   $ = jQuery;
   $(function() {
-    var close_btn, close_dialog, dialogs, login_complete, open_dialog, registration_complete, reset, reset_password_complete, signin, signup;
+    var change, close_btn, close_dialog, dialogs, login_complete, open_dialog, registration_complete, reset, reset_password_complete, signin, signup;
     $.validator.addMethod("aws_account", (function(value) {
       return /^[\d]{4}-[\d]{4}-[\d]{4}$/.test(value);
     }), "Account numbers should be a 12-digit number separated by dashes. Ex: 1234-5678-9000");
@@ -57,6 +57,7 @@
     signup = $('#signup');
     signin = $('#signin');
     reset = $('#reset_password');
+    change = $('#change_password');
     ($('a.sign_up')).click(function(event) {
       event.preventDefault();
       return open_dialog(signup);
@@ -75,6 +76,10 @@
     ($('a.password_reset')).click(function(event) {
       event.preventDefault();
       return open_dialog(reset);
+    });
+    ($('a.change_password')).click(function(event) {
+      event.preventDefault();
+      return open_dialog(change);
     });
     close_btn.click(function(event) {
       return close_dialog(($(this)).parent());
@@ -157,6 +162,21 @@
           }
         }
       });
+    });
+    change.find('form').bind('ajax:complete', reset_password_complete).validate({
+      rules: {
+        "old_password": {
+          required: true
+        },
+        "password": {
+          required: true,
+          minlength: 6
+        },
+        "password_confirmation": {
+          required: true,
+          minlength: 6
+        }
+      }
     });
     return reset.find('form').bind('ajax:complete', reset_password_complete).validate({
       rules: {
