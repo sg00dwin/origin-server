@@ -75,16 +75,14 @@ module OpenShift
     def goto_express
       $logger.debug "Clicking services link"
       $logger.debug "Before click: #{@driver.current_url}"
-      find_element(:xpath,".//a[text()='Cloud Services']").click()
-      find_element(:xpath,".//a[text()='Express']").click()
+      find_element(:xpath,".//a[text()='Shared']").click()
       check_title "OpenShift by Red Hat | Express"
     end
     
     def goto_flex
       $logger.debug "Clicking services link"
       $logger.debug "Before click: #{@driver.current_url}"
-      find_element(:xpath,".//a[text()='Cloud Services']").click()
-      find_element(:xpath,".//a[text()='Flex']").click()
+      find_element(:xpath,".//a[text()='Dedicated']").click()
       check_title "OpenShift by Red Hat | Flex"
     end
     

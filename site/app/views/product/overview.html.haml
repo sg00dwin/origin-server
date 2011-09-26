@@ -1,9 +1,12 @@
+- content_for :page_title do
+  Cloud Platform
+  
 - content_for :javascripts do
   = javascript_include_tag "/app/javascripts/twitter.js"
   = javascript_include_tag "/app/javascripts/products.js"
   
 - auth_class = logged_in? ? 'authorized' : 'unauthorized'
-- prev_login_class = previously_logged_in? ? 'prev_login' : ''
+- prev_login_class = (!logged_in? and previously_logged_in?) ? 'prev_login' : ''
 
 -# Product overview view
 %section#product_overview{ :class => "#{auth_class} #{prev_login_class} main"}
@@ -27,7 +30,7 @@
           %p
             Get more control over your apps, or move your existing applications to the cloud with ease! Flex is a dedicated cloud solution that provides everything you need to easily scale, provision, deploy, and monitor your applications.
           
-          - if logged_in? and has_access? :flex
+          - if logged_in? and has_access? :express
             = link_to 'Open control panel ▸', '/flex', :class => 'more'
             
       %li#power.product_box.power

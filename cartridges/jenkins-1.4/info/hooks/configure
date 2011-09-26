@@ -232,8 +232,10 @@ export mcs_level
 
 mkdir -p "$APP_DIR"
 pushd "$APP_DIR" > /dev/null
-mkdir logs run data tmp
+mkdir logs run data tmp data/plugins
 popd > /dev/null
+
+ln -s /usr/lib/jenkins/openshift.hpi $APP_DIR/data/plugins/openshift.hpi
 
 create_repo $application $user_id $group_id $mcs_level
 

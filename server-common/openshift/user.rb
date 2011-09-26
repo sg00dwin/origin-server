@@ -23,7 +23,7 @@ module Libra
     end
 
     attr_reader :rhlogin, :password
-    attr_accessor :ssh, :namespace, :uuid, :system_ssh_keys
+    attr_accessor :ssh, :namespace, :uuid, :system_ssh_keys, :email_address
 
     def initialize(rhlogin, ssh, system_ssh_keys, namespace, uuid, password=nil, ticket=nil)
       @rhlogin, @ssh, @system_ssh_keys, @namespace, @uuid, @password, @ticket, = rhlogin, ssh, system_ssh_keys, namespace, uuid, password, ticket

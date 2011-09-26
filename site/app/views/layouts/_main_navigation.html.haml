@@ -1,8 +1,10 @@
 %ul
   %li.link
-    = link_to 'Home', root_path, :class => 'home'
+    = link_to 'Overview', product_overview_path, :class => 'overview'
   %li.link
-    = link_to 'Cloud Services', express_path, :class => 'services'
+    = link_to 'Shared', express_path, :class => 'express'
+  %li.link
+    = link_to 'Dedicated', flex_path, :class => 'flex'
   %li.link
     = link_to 'Community', 'https://www.redhat.com/openshift', :class => 'community'
 

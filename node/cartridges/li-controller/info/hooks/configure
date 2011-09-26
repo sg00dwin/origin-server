@@ -90,7 +90,7 @@ function initialize {
 }
 
 function parse_options {
-    while getopts 'c:e:s:p:o:dnra' OPTION
+    while getopts 'c:e:s:p:o:dnr' OPTION
     do
 	case $OPTION in
             c) username=$OPTARG
@@ -107,9 +107,7 @@ function parse_options {
 		;;
 	          n) NOOP='echo'
 		;;
-	          r) REVERT="TRUE"
-    ;;
-            a) ALTER="TRUE"	          
+	          r) REVERT="TRUE"	          
 		;;
             ?) print_help
 		;;
@@ -501,33 +499,24 @@ parse_options $*
 
 if [ -z "$REVERT" ]
 then
-    if [ -z "$ALTER" ]
+    create_user_account $username
+
+    if (service cgconfig status > /dev/null 2>&1)
     then
-      create_user_account $username
-
-      if (service cgconfig status > /dev/null 2>&1)
-      then
-  	    service libra-cgroups startuser ${username} > /dev/null
-      fi
-
-      if (service libra-tc status > /dev/null 2>&1)
-      then
-	      service libra-tc startuser ${username} > /dev/null
-      fi
-
-      enable_user_ssh_access $username "$ssh_key"
-      create_user_home_skel $username
-
-      set_pam_limits $username
-  
-      set_fs_quotas $username $quota_blocks $quota_files
-    else
-      # just reset the key, per "ALTER", only if the account exists on this node
-      if id $username >/dev/null 2>&1
-      then
-        enable_user_ssh_access $username "$ssh_key"
-      fi      
+	    service libra-cgroups startuser ${username} > /dev/null
     fi
+
+    if (service libra-tc status > /dev/null 2>&1)
+    then
+      service libra-tc startuser ${username} > /dev/null
+    fi
+
+    enable_user_ssh_access $username "$ssh_key"
+    create_user_home_skel $username
+
+    set_pam_limits $username
+
+    set_fs_quotas $username $quota_blocks $quota_files
 else
     if (service libra-tc status ${username} > /dev/null 2>&1)
     then
