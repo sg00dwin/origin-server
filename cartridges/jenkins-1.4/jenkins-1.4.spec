@@ -2,7 +2,7 @@
 
 Summary:   Provides jenkins-1.4 support
 Name:      rhc-cartridge-jenkins-1.4
-Version:   0.78.7
+Version:   0.78.8
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -49,6 +49,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Mon Sep 26 2011 Dan McPherson <dmcphers@redhat.com> 0.78.8-1
+- add link to openshift.hpi for now (dmcphers@redhat.com)
+
 * Fri Sep 23 2011 Dan McPherson <dmcphers@redhat.com> 0.78.7-1
 - remove erroneous call (dmcphers@redhat.com)
 - add low memory setting to jenkins (dmcphers@redhat.com)
