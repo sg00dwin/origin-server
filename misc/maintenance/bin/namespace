@@ -3,6 +3,7 @@
 require 'rubygems'
 require 'openshift'
 require 'thor'
+require 'mocha'
 require 'pp'
 
 class Namespace < Thor
@@ -18,6 +19,19 @@ class Namespace < Thor
     login = options[:login]
     namespace = options[:namespace]
     key = options[:public_key]
+
+    # Clean up the debug logging
+    Libra.expects(:logger_debug).at_least_once
+
+    # Verify it's a real login
+    user = Libra::User.new(login, nil, nil, nil, nil)
+    user.establish_email_address
+    if user.email_address
+      puts "Successfully verified login - #{login} (email = #{user.email_address})"
+    else
+      puts "ERROR - #{login} didn't resolve to a RH user."
+      exit 1
+    end
 
     user = Libra::User.create(login, key, namespace)
     if user
