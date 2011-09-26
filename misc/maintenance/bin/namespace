@@ -1,0 +1,29 @@
+#!/usr/bin/env ruby
+# Usage: ./namespace register --login=foo --namespace=bar --public_key=baz
+require 'rubygems'
+require 'openshift'
+require 'thor'
+require 'pp'
+
+class Namespace < Thor
+  include Thor::Actions
+  include Libra
+
+
+  desc "register", "Registers a namespace without checking the reserved list"
+  method_option :login, :required => true, :desc => "The OpenShift login"
+  method_option :namespace, :required => true, :desc => "The namespace to register"
+  method_option :public_key, :required => true, :desc => "The public SSH key for the user"
+  def register
+    login = options[:login]
+    namespace = options[:namespace]
+    key = options[:public_key]
+
+    user = Libra::User.create(login, key, namespace)
+    if user
+      puts "Successfully registered domain."
+    end
+  end
+end
+
+Namespace.start
