@@ -53,6 +53,36 @@ small {
   @include selection;
 }
 
+.express ::-moz-selection {
+  background-color: $express;
+}
+.express ::-webkit-selection {
+  background-color: $express;
+}
+.express ::selection {
+  background-color: $express;
+}
+
+.flex ::-moz-selection {
+  background-color: $flex;
+}
+.flex ::-webkit-selection {
+  background-color: $flex;
+}
+.flex ::selection {
+  background-color: $flex;
+}
+
+.power ::-moz-selection {
+  background-color: $power;
+}
+.power ::-webkit-selection {
+  background-color: $power;
+}
+.power ::selection {
+  background-color: $power;
+}
+
 header, footer, section { display: block; }
 
 h1 { font-size: 1.5em }
@@ -837,16 +867,18 @@ nav.service {
     font-size: 2.5em;
     line-height: .5em;
   }
+  
+  h2 a:hover { text-decoration: none; }
 
-  &.express h2, &.express a.more {
+  &.express h2 a, &.express a.more {
     color: $express;
   }
 
-  &.flex h2, &.flex a.more{
+  &.flex h2 a, &.flex a.more{
     color: $flex;
   }
 
-  &.power h2, &.power a.more {
+  &.power h2 a, &.power a.more {
     color: $power;
   }
 
@@ -859,6 +891,10 @@ nav.service {
     color: #666;
     font-size: .9em;
     line-height: 1.5em;
+  }
+  
+  p {
+    margin: 0; padding: 0;
   }
 }
 
