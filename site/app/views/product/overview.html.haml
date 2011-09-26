@@ -27,7 +27,7 @@
           %p
             Get more control over your apps, or move your existing applications to the cloud with ease! Flex is a dedicated cloud solution that provides everything you need to easily scale, provision, deploy, and monitor your applications.
           
-          - if logged_in? and has_access? :flex
+          - if logged_in? and has_access? :express
             = link_to 'Open control panel ▸', '/flex', :class => 'more'
             
       %li#power.product_box.power
