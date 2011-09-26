@@ -312,20 +312,25 @@ class BrokerController < ApplicationController
         end
         if user
           if data['alter']
+            update = false
             if user.namespace != ns
+              update = true
               user.update_namespace(ns)
+              user.namespace = ns
             end
-            user.namespace=ns
-            user.ssh=data['ssh']
-            user.update
-
-            # update each node account for this user's applications
-            user.apps.each do |appname, app|
-              server = Libra::Server.new app['server_identity']
-              cfgstring = "-c #{app['uuid']} -e #{user.rhlogin} -s #{user.ssh} -a"
-              result = server.execute_direct('li-controller', 'configure', cfgstring)
-              server.handle_controller_result(result)
+            if user.ssh != data['ssh']
+              update = true
+              previous_ssh_key = user.ssh 
+              user.ssh=data['ssh']
+  
+              # update each node account for this user's applications
+              user.apps.each do |appname, app|
+                server = Libra::Server.new app['server_identity']
+                server.remove_ssh_key(app, previous_ssh_key)
+                server.add_ssh_key(app, user.ssh)
+              end
             end
+            user.update if update
           else
             render :json => generate_result_json("User already has a registered namespace.  To modify, use --alter", nil, 97), :status => :conflict and return
           end
