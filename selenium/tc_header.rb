@@ -17,8 +17,9 @@ class Header < Test::Unit::TestCase
     check_element_displayed(:xpath, ".//aside[@id='announcements']")
 
     # Check links and their titles
-    { 'Home' => 'OpenShift by Red Hat',
-      'Cloud Services' => 'OpenShift by Red Hat | Express',
+    { 'Overview' => 'OpenShift by Red Hat | Cloud Platform',
+      'Shared' => 'OpenShift by Red Hat | Express',
+      'Dedicated' => 'OpenShift by Red Hat | Flex',
       'Community' => 'Forums | Red Hat Openshift Forum'
     }.each do |text,title|
       find_element(:xpath,".//a[text()='#{text}']").click()
@@ -26,7 +27,7 @@ class Header < Test::Unit::TestCase
       check_title(title)
       @driver.navigate.back
     end
-
+    
     # Make sure sign in link pops up form
     link = find_element(:xpath, ".//a[@class='sign_in']")
     if link
