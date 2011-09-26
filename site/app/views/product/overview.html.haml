@@ -3,7 +3,7 @@
   = javascript_include_tag "/app/javascripts/products.js"
   
 - auth_class = logged_in? ? 'authorized' : 'unauthorized'
-- prev_login_class = previously_logged_in? ? 'prev_login' : ''
+- prev_login_class = (!logged_in? and previously_logged_in?) ? 'prev_login' : ''
 
 -# Product overview view
 %section#product_overview{ :class => "#{auth_class} #{prev_login_class} main"}
