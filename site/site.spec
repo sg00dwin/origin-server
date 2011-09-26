@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.78.15
+Version:   0.78.16
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -69,6 +69,21 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Mon Sep 26 2011 Dan McPherson <dmcphers@redhat.com> 0.78.16-1
+- separate streamline secrets (dmcphers@redhat.com)
+- Fixed dialogs not hiding if user_box exists (fotios@redhat.com)
+- Made AJAX forms work with validation (fotios@redhat.com)
+- Make product overview titles links, add brief summary for each product
+  (edirsh@redhat.com)
+- Add correct page title to overview page (edirsh@redhat.com)
+- Check in compiled stylesheet (edirsh@redhat.com)
+- Fix product overview classes to more accurately reflect status
+  (edirsh@redhat.com)
+- Bug 741174 (edirsh@redhat.com)
+- Add images used for overview page (edirsh@redhat.com)
+- Update product colors (edirsh@redhat.com)
+- Modify site navigation for new page (edirsh@redhat.com)
+
 * Sat Sep 24 2011 Dan McPherson <dmcphers@redhat.com> 0.78.15-1
 - 
 
