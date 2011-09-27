@@ -15,9 +15,9 @@ class Register < Test::Unit::TestCase
   def test_register
     [
       {:pass => 19861231, 
-        :err => 'Invalid email address'},
+        :err => 'This field is required'},
       {:email => '123', :pass => '19861231', 
-        :err =>'Invalid email address'},
+        :err =>'Please enter a valid email address'},
       {:email => "xtian+c0@redhat.com", 
         :err => 'Passwords must be at least 6 characters'},
       {:email => 'xtian+c0@redhat.com', :pass => '1986', 
