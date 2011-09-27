@@ -348,7 +348,7 @@ class DevEnv < Thor
       instance.ssh("/usr/bin/puppet /usr/libexec/mcollective/update_yaml.pp")
 
       if options.init_repo?
-        print "Initializing git repos for syncing..."
+        print "Initializing git repo for syncing..."
         instance.ssh("rm -rf /root/li; git clone --bare git://git1.ops.rhcloud.com/li.git/ /root/li")
         #instance.ssh("rm -rf /root/os-client-tools; git clone --bare git://github.com/openshift/os-client-tools.git /root/os-client-tools")
         update_remote_tests(instance)
