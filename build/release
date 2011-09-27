@@ -148,25 +148,33 @@ class Release < Thor
 
     # Build the gem locally since it's not stored centrally like RPMs in Brew
     puts "Building client gem..."
-    #inside(File.expand_path(File.dirname(File.expand_path(__FILE__)) + "/../client")) do
-    #  unless run('./build_pure.sh', :verbose => options.verbose?)
-    #    puts "ERROR - client gem building failed"
-    #    exit 1
-    #  end
-    #end
-    puts "Done"
+    if File.exists?('../os-client-tools/express')
+      inside(File.expand_path(File.dirname(File.expand_path(__FILE__)) + "/../../os-client-tools/express")) do
+        unless run('./build_pure.sh', :verbose => options.verbose?)
+          puts "ERROR - client gem building failed"
+          exit 1
+        end
+      end
+      puts "Done"
+    else
+      puts "Couldn't find ../os-client-tools/express.  Skipping build client gem step."
+    end
 
     puts "Syncing RPMs and gems to repo..."
     unless run("#{rsync} /tmp/#{mash_config}/#{mash_config}/* #{repo}/#{mash_config}/", :verbose => options.verbose?)
       puts "ERROR - RPM sync failed.  Make sure you have root access on #{repo_host}"
       exit 1
     end
-
-    unless run("#{rsync} client/pkg/*.gem #{repo}/#{mash_config}/client/gems/", :verbose => options.verbose?)
-      puts "ERROR - Gem sync failed.  Make sure you have root access on #{repo_host}"
-      exit 1
+    
+    if File.exists?('../os-client-tools/express')
+      unless run("#{rsync} ../os-client-tools/express/pkg/*.gem #{repo}/#{mash_config}/client/gems/", :verbose => options.verbose?)
+        puts "ERROR - Gem sync failed.  Make sure you have root access on #{repo_host}"
+        exit 1
+      end
+      puts "Done"
+    else
+      puts "Couldn't find ../os-client-tools/express.  Skipping rsync client gem step."
     end
-    puts "Done"
 
     puts "Updating gem indexes..."
     unless run("ssh root@#{repo_host} 'gem generate_index -d #{repo_dir}/#{mash_config}/client'", :verbose => options.verbose?)
