@@ -34,7 +34,7 @@ class Register < Test::Unit::TestCase
 
     # Tests that return server side errors
     [
-      {:email => 'xyz@yahoo.ir', :pass => 'redhat', 
+      {:email => 'xyz@yahoo.ir', :pass => 'redhat', :confirm => 'redhat',
         :err => 'We can not accept emails from the following top level domains: .ir, .cu, .kp, .sd, .sy'}
     ].each do |hash|
       $logger.info "Testing register: #{hash[:err]}"
