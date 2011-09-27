@@ -48,6 +48,20 @@ class DevEnv < Thor
       return branch
     end
     
+    def sync_repo(repo_name, instance, ssh_path)
+      temp_commit
+
+      # Get the current branch
+      branch = get_branch
+  
+      puts "Synchronizing local changes from branch #{branch} for repo #{repo_name}..."
+      run("export GIT_SSH=#{ssh_path}; #{branch == 'origin/master' ? "git push -q root@#{instance.dns}:/root/#{repo_name} master:master --tags --force; " : ''}git push -q root@#{instance.dns}:/root/#{repo_name} #{branch}:master --tags --force", :verbose => options.verbose?)
+      update_remote_tests(instance) if repo_name == 'li'
+      puts "Done"
+  
+      reset_temp_commit
+    end
+    
     def temp_commit
       # Warn on uncommitted changes
       `git diff-index --quiet HEAD`
@@ -229,31 +243,14 @@ class DevEnv < Thor
       exit 1
     end
     
-    temp_commit
-
-    # Get the current branch
-    branch = get_branch
-
-    puts "Synchronizing local changes from branch #{branch}..."
     ssh_path=File.expand_path(File.dirname(__FILE__)) + "/ssh-override"
-    run("export GIT_SSH=#{ssh_path}; #{branch == 'origin/master' ? "git push -q root@#{instance.dns}:/root/li master:master --tags --force; " : ''}git push -q root@#{instance.dns}:/root/li #{branch}:master --tags --force", :verbose => options.verbose?)
-    update_remote_tests(instance)
-    puts "Done"
-
-    reset_temp_commit
+    sync_repo('li', instance, ssh_path)
     
     has_client = File.exists?('../os-client-tools')
     
     if has_client
       inside('../os-client-tools') do
-        temp_commit
-        branch = get_branch
-    
-        puts "Synchronizing local client changes from branch #{branch}..."
-        run("export GIT_SSH=#{ssh_path}; #{branch == 'origin/master' ? "git push -q root@#{instance.dns}:/root/os-client-tools master:master --tags --force; " : ''}git push -q root@#{instance.dns}:/root/os-client-tools #{branch}:master --tags --force", :verbose => options.verbose?) 
-        puts "Done"
-    
-        reset_temp_commit
+        sync_repo('os-client-tools', instance, ssh_path)
       end
     end
 
