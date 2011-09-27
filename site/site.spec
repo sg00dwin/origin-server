@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.78.17
+Version:   0.78.18
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -69,6 +69,9 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Tue Sep 27 2011 Dan McPherson <dmcphers@redhat.com> 0.78.18-1
+- Hard code cartridge list for now (edirsh@redhat.com)
+
 * Mon Sep 26 2011 Dan McPherson <dmcphers@redhat.com> 0.78.17-1
 - Removed .orig file from bad merge (fotios@redhat.com)
 - Added password change functionality (fotios@redhat.com)
