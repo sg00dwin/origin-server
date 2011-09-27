@@ -484,14 +484,18 @@ class DevEnv < Thor
   def install_local_client
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
 
-    # Warn on uncommitted changes
-    temp_commit
-    
-    `rm -rf /tmp/tito/; pushd client; tito build --rpm --test; popd; sudo rpm -Uvh /tmp/tito/noarch/rhc-*;rm -rf /tmp/tito/`
-
-    reset_temp_commit
-
-    puts "Done"
+    if File.exists?('../os-client-tools/express')
+      # Warn on uncommitted changes
+      temp_commit
+      
+      `rm -rf /tmp/tito/; pushd ../os-client-tools/express; tito build --rpm --test; popd; sudo rpm -Uvh /tmp/tito/noarch/rhc-*;rm -rf /tmp/tito/`
+  
+      reset_temp_commit
+  
+      puts "Done"
+    else
+      puts "Couldn't find ../os-client-tools/express."
+    end
   end  
 end
 
