@@ -13,17 +13,27 @@ class Register < Test::Unit::TestCase
   end
 
   def test_register
+    # Tests that have client side error messages
     [
       {:pass => 19861231, 
-        :err => 'Invalid email address'},
+        :err => 'This field is required.'},
       {:email => '123', :pass => '19861231', 
-        :err =>'Invalid email address'},
+        :err =>'Please enter a valid email address.'},
       {:email => "xtian+c0@redhat.com", 
-        :err => 'Passwords must be at least 6 characters'},
+        :err => 'This field is required.'},
       {:email => 'xtian+c0@redhat.com', :pass => '1986', 
-        :err => 'Passwords must be at least 6 characters'},
+        :err => 'Please enter at least 6 characters.'},
       {:email => 'xtian+c0@redhat.com', :pass => '19861231', :confirm => '19861233', 
-        :err => 'Passwords must match' },
+        :err => 'Please enter the same value again.' },
+    ].each do |hash|
+      $logger.info "Testing register: #{hash[:err]}"
+      submit_register(hash[:email], hash[:pass], hash[:confirm])
+      check_element_displayed(:xpath, ".//label[@class='error' and text()='#{hash[:err]}']")
+      screenshot(hash[:err])
+    end
+
+    # Tests that return server side errors
+    [
       {:email => 'xyz@yahoo.ir', :pass => 'redhat', 
         :err => 'We can not accept emails from the following top level domains: .ir, .cu, .kp, .sd, .sy'}
     ].each do |hash|
