@@ -499,7 +499,6 @@ class DevEnv < Thor
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
 
     if File.exists?('../os-client-tools')
-      # Warn on uncommitted changes
       inside('../os-client-tools') do
         temp_commit
         
