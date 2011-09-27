@@ -510,7 +510,7 @@ class DevEnv < Thor
         puts "Done"
       end
     else
-      puts "Couldn't find ../os-client-tools/express."
+      puts "Couldn't find ../os-client-tools."
     end
   end  
 end
