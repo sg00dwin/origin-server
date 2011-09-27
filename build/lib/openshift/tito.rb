@@ -12,11 +12,17 @@ module OpenShift
           $1
         end
       end.compact
-      if File.exists?('../os-client-tools/express/')
-        packages = `cd ../os-client-tools/express/ && tito report --untagged-commits`
+      client_path = nil
+      if File.exists?('../os-client-tools/express')
+        client_path = '../os-client-tools/express'
+      elsif File.exists?('../os-client-tools-working/express')
+        client_path = '../os-client-tools-working/express'
+      end
+      if client_path
+        packages = `cd #{client_path} && tito report --untagged-commits`
         build_dirs += packages.split("\n").collect do |package|
           if package =~ /^rhc-[0-9]/
-            "../os-client-tools/express"
+            client_path
           end
         end.compact
       end

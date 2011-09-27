@@ -69,6 +69,7 @@ class DevEnv < Thor
       if @temp_commit
         puts "Undoing temporary commit..."
         `git reset HEAD^`
+        @temp_commit = false
         puts "Done."
       end
     end
@@ -194,7 +195,7 @@ class DevEnv < Thor
 
     # Figure out what needs to be built - exclude devenv for syncs
     build_dirs = get_build_dirs - ['misc/devenv']
-
+    
     # Build and install them
     build_dirs.each do |build_dir|
       puts "Building in #{build_dir}"
@@ -214,8 +215,6 @@ class DevEnv < Thor
   def sync(name)
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
 
-    temp_commit
-
     if options.tag?
       instance = Instance.find(connect, name)
     else
@@ -229,6 +228,8 @@ class DevEnv < Thor
       puts instance.validation_output
       exit 1
     end
+    
+    temp_commit
 
     # Get the current branch
     branch = get_branch
@@ -240,10 +241,25 @@ class DevEnv < Thor
     puts "Done"
 
     reset_temp_commit
+    
+    has_client = File.exists?('../os-client-tools')
+    
+    if has_client
+      inside('../os-client-tools') do
+        temp_commit
+        branch = get_branch
+    
+        puts "Synchronizing local client changes from branch #{branch}..."
+        run("export GIT_SSH=#{ssh_path}; #{branch == 'origin/master' ? "git push -q root@#{instance.dns}:/root/os-client-tools master:master --tags --force; " : ''}git push -q root@#{instance.dns}:/root/os-client-tools #{branch}:master --tags --force", :verbose => options.verbose?) 
+        puts "Done"
+    
+        reset_temp_commit
+      end
+    end
 
     if !options.skip_build?
       puts "Performing remote install...."
-      instance.ssh("yum update -y rhc-*; rm -rf li-working; git clone li li-working; pushd li-working; build/devenv update; popd; rm -rf li-working", 600)
+      instance.ssh("yum update -y rhc-*; rm -rf li-working os-client-tools-working; git clone li li-working;#{has_client ? ' git clone os-client-tools os-client-tools-working;' : ''} pushd li-working; build/devenv update; popd; rm -rf li-working os-client-tools-working", 600)
       puts "Done"
     end
 
@@ -332,8 +348,9 @@ class DevEnv < Thor
       instance.ssh("/usr/bin/puppet /usr/libexec/mcollective/update_yaml.pp")
 
       if options.init_repo?
-        print "Initializing git repo for syncing..."
+        print "Initializing git repos for syncing..."
         instance.ssh("rm -rf /root/li; git clone --bare git://git1.ops.rhcloud.com/li.git/ /root/li")
+        #instance.ssh("rm -rf /root/os-client-tools; git clone --bare git://github.com/openshift/os-client-tools.git /root/os-client-tools")
         update_remote_tests(instance)
         puts "Done"
       else
@@ -484,15 +501,17 @@ class DevEnv < Thor
   def install_local_client
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
 
-    if File.exists?('../os-client-tools/express')
+    if File.exists?('../os-client-tools')
       # Warn on uncommitted changes
-      temp_commit
-      
-      `rm -rf /tmp/tito/; pushd ../os-client-tools/express; tito build --rpm --test; popd; sudo rpm -Uvh /tmp/tito/noarch/rhc-*;rm -rf /tmp/tito/`
-  
-      reset_temp_commit
-  
-      puts "Done"
+      inside('../os-client-tools') do
+        temp_commit
+        
+        `rm -rf /tmp/tito/; pushd express; tito build --rpm --test; popd; sudo rpm -Uvh /tmp/tito/noarch/rhc-*;rm -rf /tmp/tito/`
+    
+        reset_temp_commit
+    
+        puts "Done"
+      end
     else
       puts "Couldn't find ../os-client-tools/express."
     end
