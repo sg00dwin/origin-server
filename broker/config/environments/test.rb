@@ -41,8 +41,7 @@ Broker::Application.configure do
   config.streamline = {
     :host => 'https://localhost',
     :base_url => '',
-    :email_confirm_url => '/confirm.html',
-    :lost_password_url => '/lostPassword.html',
-    :secret => 'c0ldW1n3'
+    :register_secret => 'c0ldW1n3',
+    :user_info_secret => 'sw33tl1Qu0r'
   }
 end

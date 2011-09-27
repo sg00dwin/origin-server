@@ -64,6 +64,10 @@ module StreamlineMock
     return @rhlogin
   end
 
+  def change_password(args)
+    return {}
+  end
+
   #
   # Register a new streamline user
   #

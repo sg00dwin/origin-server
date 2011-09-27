@@ -1,15 +1,12 @@
 #!/usr/bin/env ruby
-# Usage: ./namespace register --login=foo --namespace=bar --public_key=baz
+# Usage: rails runner script/namespace register --login=LOGIN --namespace=NAMESPACE --public-key=PUBKEY
 require 'rubygems'
 require 'openshift'
 require 'thor'
-require 'mocha'
-require 'pp'
 
 class Namespace < Thor
   include Thor::Actions
   include Libra
-
 
   desc "register", "Registers a namespace without checking the reserved list"
   method_option :login, :required => true, :desc => "The OpenShift login"
@@ -19,9 +16,6 @@ class Namespace < Thor
     login = options[:login]
     namespace = options[:namespace]
     key = options[:public_key]
-
-    # Clean up the debug logging
-    Libra.expects(:logger_debug).at_least_once
 
     # Verify it's a real login
     user = Libra::User.new(login, nil, nil, nil, nil)
