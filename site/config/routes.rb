@@ -24,6 +24,7 @@ RedHatCloud::Application.routes.draw do
     match 'express' => 'product#express', :as => 'express'
     match 'flex' => 'product#flex', :as => 'flex'
     match 'platform' => 'product#overview', :as => 'product_overview'
+    match 'features' => 'product#features', :as => 'features'
     match 'express_protected' => 'product#express_protected', :as => 'express_protected'
     match 'flex_protected' => 'product#flex_protected', :as => 'flex_protected'
     match 'power' => 'product#power', :as => 'power'

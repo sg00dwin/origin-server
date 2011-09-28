@@ -1,7 +1,3 @@
-/* DO NOT MODIFY. This file was compiled Mon, 26 Sep 2011 22:30:13 GMT from
- * /home/fotios/li/site/app/coffeescripts/form.coffee
- */
-
 (function() {
   var $;
   $ = jQuery;
@@ -136,8 +132,7 @@
       return element.find('form').bind('ajax:complete', login_complete).validate({
         rules: {
           "login": {
-            required: true,
-            email: true
+            required: true
           },
           "password": {
             required: true
@@ -174,7 +169,7 @@
         },
         "password_confirmation": {
           required: true,
-          minlength: 6
+          equalTo: '#password'
         }
       }
     });

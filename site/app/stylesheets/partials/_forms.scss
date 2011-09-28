@@ -6,6 +6,8 @@ label {
   @include clearfix;
 }
 
+.inputs label + input { margin-top: -1em; }
+
 label.error,
 p.inline-errors {
   color: red;
@@ -58,7 +60,7 @@ fieldset.confirm {
   @include clearfix;
   display: block;
   border: none;
-  margin-bottom: 2.5em;
+  margin: .5em 0 2.5em;
   overflow: visible;
   position: relative;
   
@@ -67,7 +69,9 @@ fieldset.confirm {
   }
   
   li label.error,
-  li p.inline-errors {
+  label.error,
+  li p.inline-errors,
+  p.inline-errors {
     @include not-visually-hidden;
     width: 20em;
     background: white;
@@ -76,7 +80,7 @@ fieldset.confirm {
     bottom: -2.1em;
   }
   
-  input{
+  input {
     float: left;
     width: 10em;
   }
@@ -113,6 +117,7 @@ form {
 fieldset {
   border: none;
   outline: none;
+  margin: 0; padding: 0;
 }
 
 /* Customize radios for those that can */
