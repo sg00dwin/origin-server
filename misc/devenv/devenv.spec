@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.77.4
+Version:   0.77.5
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -149,6 +149,7 @@ perl -p -i -e "s/^#MaxStartups .*$/MaxStartups 40/" /etc/ssh/sshd_config
 mkdir -p /root/li
 mkdir -p /root/openshift-sdk
 git init --bare /root/li
+git init --bare /root/os-client-tools
 git init --bare /root/openshift-sdk
 
 # Restore permissions
@@ -201,6 +202,9 @@ chkconfig libra-tc on
 %{_initddir}/libra-site
 
 %changelog
+* Tue Sep 27 2011 Dan McPherson <dmcphers@redhat.com> 0.77.5-1
+- add new client to sync and update (dmcphers@redhat.com)
+
 * Thu Sep 22 2011 Dan McPherson <dmcphers@redhat.com> 0.77.4-1
 - turn off sslverify for now (dmcphers@redhat.com)
 - Adding auto-sync for Jenkins -> DevEnv (mhicks@redhat.com)

@@ -11,10 +11,21 @@ include OpenShift::AWS
 class Release < Thor
   include Thor::Actions
   include OpenShift::Tito
+  
+  no_tasks do
+    def git_pull
+      run("git pull", :verbose => options.verbose?)
+      if File.exists?('../os-client-tools')
+        inside('../os-client-tools') do
+          run("git pull", :verbose => options.verbose?)
+        end
+      end
+    end
+  end
 
   desc "check", "Check the directories that need to be released"
   def check
-    run("git pull", :verbose => options.verbose?)
+    git_pull
     puts "Changes detected in the following directories: #{get_build_dirs.pretty_inspect}"
   end
 
@@ -31,7 +42,7 @@ class Release < Thor
     end
      
     # Update the repo
-    run("git pull", :verbose => options.verbose?)
+    git_pull
 
     get_build_dirs.each do |build_dir|
       inside(File.expand_path("../#{build_dir}", File.dirname(__FILE__))) do
