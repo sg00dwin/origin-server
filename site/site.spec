@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.78.19
+Version:   0.78.20
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -69,6 +69,15 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Wed Sep 28 2011 Dan McPherson <dmcphers@redhat.com> 0.78.20-1
+- Fixed form focus flow. Fixed selenium artifact creation (fotios@redhat.com)
+- Improve consistency in naming and linking to control panel
+  (edirsh@redhat.com)
+- Improve client-side validation of express apps/domains (edirsh@redhat.com)
+- Add features page (edirsh@redhat.com)
+- Minor changes to client-side validation (edirsh@redhat.com)
+- Polish form styling (edirsh@redhat.com)
+
 * Tue Sep 27 2011 Dan McPherson <dmcphers@redhat.com> 0.78.19-1
 - Add timeout to http call to broker in web interface (edirsh@redhat.com)
 
