@@ -245,6 +245,11 @@ module Libra
         server.add_ssh_key(app_info, ssh_key)
       end if user.system_ssh_keys
       
+      # Add any secondary env vars
+      user.env_vars.each do |key, value|
+        server.add_env_var(app_info, key, value)
+      end if user.env_vars
+      
       begin
         # update DNS
         server.create_app_dns_entries(app_name, user.namespace)

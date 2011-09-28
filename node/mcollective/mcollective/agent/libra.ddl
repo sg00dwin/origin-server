@@ -22,7 +22,7 @@ action "cartridge_do", :description => "run a cartridge action" do
         :prompt         => "Action",
         :description    => "Cartridge hook to run",
         :type           => :string,
-        :validation     => '^(configure|deconfigure|preconfigure|update_namespace|add-authorized-ssh-key|remove-authorized-ssh-key|add-broker-auth-key|remove-broker-auth-key|info|post-install|post_remove|pre-install|reload|restart|start|status|stop)$',
+        :validation     => '^(configure|deconfigure|preconfigure|update_namespace|add-env-var|remove-env-var|add-authorized-ssh-key|remove-authorized-ssh-key|add-broker-auth-key|remove-broker-auth-key|info|post-install|post_remove|pre-install|reload|restart|start|status|stop)$',
         :optional       => false,
         :maxlength      => 64
 

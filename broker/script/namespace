@@ -18,7 +18,7 @@ class Namespace < Thor
     key = options[:public_key]
 
     # Verify it's a real login
-    user = Libra::User.new(login, nil, nil, nil, nil)
+    user = Libra::User.new(login, nil, nil, nil, nil, nil)
     user.establish_email_address
     if user.email_address
       puts "Successfully verified login - #{login} (email = #{user.email_address})"

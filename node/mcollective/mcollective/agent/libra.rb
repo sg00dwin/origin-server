@@ -59,7 +59,7 @@ module MCollective
         Log.instance.debug("cartridge_do_action validation = #{request[:cartridge]} #{request[:action]} #{request[:args]}")
         validate :cartridge, /\A[a-zA-Z0-9\.\-\/]+\z/
         validate :cartridge, :shellsafe
-        validate :action, /\A(configure|deconfigure|preconfigure|update_namespace|add-authorized-ssh-key|remove-authorized-ssh-key|add-broker-auth-key|remove-broker-auth-key|info|post-install|post_remove|pre-install|reload|restart|start|status|stop)\Z/
+        validate :action, /\A(configure|deconfigure|preconfigure|update_namespace|add-env-var|remove-env-var|remove-authorized-ssh-key|add-authorized-ssh-key|remove-authorized-ssh-key|add-broker-auth-key|remove-broker-auth-key|info|post-install|post_remove|pre-install|reload|restart|start|status|stop)\Z/
         validate :action, :shellsafe
         validate :args, /\A[\w\+\/= @\-\.]+\z/
         validate :args, :shellsafe
