@@ -124,17 +124,6 @@ function unobfuscate {
     fi
 }
 
-function generate_ssh_keys {
-    /bin/mkdir -p $OPENSHIFT_DATA_DIR/.ssh/
-    /usr/bin/ssh-keygen -N '' -f $OPENSHIFT_DATA_DIR/.ssh/jenkins_id_rsa
-
-    /bin/chown root.$uuid -R "$OPENSHIFT_DATA_DIR/.ssh/"
-    chmod 0750 "$OPENSHIFT_DATA_DIR/.ssh/"
-    chmod 0640 "$OPENSHIFT_DATA_DIR/.ssh/jenkins_id_rsa"
-    chmod 0640 "$OPENSHIFT_DATA_DIR/.ssh/jenkins_id_rsa.pub"
-    /usr/bin/chcon -t libra_var_lib_t -l $mcs_level -R "$OPENSHIFT_DATA_DIR/.ssh/"
-}
-
 function create_repo {
     application="$1"
     user_id=$2
@@ -224,17 +213,6 @@ uid=$(id -u "$uuid")
 mcs_level=`${CART_DIR}/li-controller/info/bin/mcs_level $uid`
 export mcs_level
 
-#
-# Create http base for application, every app gets its own apache instance
-#
-
-[ -d "$APP_DIR" ] && error "${application}.  Please destroy then recreate, or pick a new name" 132
-
-mkdir -p "$APP_DIR"
-pushd "$APP_DIR" > /dev/null
-mkdir logs run data tmp data/plugins
-popd > /dev/null
-
 cp -ad "$CART_INFO_DIR/configuration/jenkins-pre-deploy/"* "$APP_DIR/data/"
 unzip -q /usr/lib/jenkins/jenkins.war -d "$APP_DIR/data/war/"
 
@@ -280,17 +258,6 @@ done
 # Start the server
 #
 runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $APP_DIR/${application}_ctl.sh start" || error "Failed to start ${application}" 121
-
-#
-# Generate key pair
-#
-generate_ssh_keys
-
-public_key=$(cat $APP_DIR/data/.ssh/jenkins_id_rsa.pub)
-set -- $public_key
-echo "SSH_KEY_ADD: $2"
-
-echo "BROKER_AUTH_KEY_ADD: "
 
 #
 # Create virtualhost definition for apache

@@ -237,6 +237,7 @@ module Libra
       # Configure the user on this server if necessary
       server.create_account(user, app_info)
 
+      server_execute_direct(framework, 'preconfigure', app_name, user, server, app_info)
       server_execute_direct(framework, 'configure', app_name, user, server, app_info)
       
       # Add any secondary ssh keys
