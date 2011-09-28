@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.78.7
+Version:   0.78.8
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -79,6 +79,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Wed Sep 28 2011 Dan McPherson <dmcphers@redhat.com> 0.78.8-1
+- add preconfigure for jenkins to split out auth key gen (dmcphers@redhat.com)
+
 * Fri Sep 23 2011 Dan McPherson <dmcphers@redhat.com> 0.78.7-1
 - Bug 740729 (dmcphers@redhat.com)
 
