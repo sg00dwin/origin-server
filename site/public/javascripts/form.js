@@ -31,12 +31,23 @@
           maxlength: 16
         },
         "express_domain[ssh]": {
-          required: true,
-          accept: ".pub"
+          required: true
         },
         "express_domain[password]": {
           required: true,
           minlength: 6
+        }
+      }
+    });
+    $("#new_express_app").validate({
+      rules: {
+        "express_app[app_name]": {
+          required: true,
+          alpha_numeric: true,
+          maxlength: 16
+        },
+        "express_app[cartridge]": {
+          required: true
         }
       }
     });
