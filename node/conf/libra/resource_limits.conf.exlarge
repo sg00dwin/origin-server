@@ -58,7 +58,7 @@ memory_memsw_limit_in_bytes=1073741824
 # 
 apache_bandwidth="all 5000000"
 apache_maxconnection="all 200"
-apache_bandwidtherror="5100"
+apache_bandwidtherror="510"
 #
 
 # Traffic control.  used by /etc/init.d/libra-tc
