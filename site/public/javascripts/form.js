@@ -1,3 +1,7 @@
+/* DO NOT MODIFY. This file was compiled Wed, 28 Sep 2011 20:49:02 GMT from
+ * /home/fotios/li/site/app/coffeescripts/form.coffee
+ */
+
 (function() {
   var $;
   $ = jQuery;
@@ -55,9 +59,14 @@
     open_dialog = function(dialog) {
       dialogs.hide();
       dialog.show();
+      dialog.find("input:visible:first").focus();
       return ($(window, 'html', 'body')).scrollTop(0);
     };
     close_dialog = function(dialog) {
+      dialog.find('div.message').remove();
+      dialog.find('input:visible:not(.button)').val('');
+      dialog.find('label.error').remove();
+      dialog.find('input').removeClass('error');
       return dialog.hide();
     };
     close_btn = $('.close_button');
@@ -70,12 +79,13 @@
       return open_dialog(signup);
     });
     ($('a.sign_in')).click(function(event) {
-      var userbox;
+      var login, userbox;
       event.preventDefault();
+      login = $('div.content #login-form');
       userbox = $('#user_box #login-form');
-      if (userbox.length > 0) {
+      if (login.length > 0 || userbox.length > 0) {
         dialogs.hide();
-        return userbox.find('#login_input').focus();
+        return $('#login_input').focus();
       } else {
         return open_dialog(signin);
       }
