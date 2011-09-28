@@ -26,6 +26,7 @@ module OpenShift
           end
         end.compact
       end
+      build_dirs
     end
   end
 end
