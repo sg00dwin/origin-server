@@ -42,6 +42,7 @@ en:
     errors:
       unauthorized: "Authorization problem. Please check that your password is correct."
       app_unavailable: "We couldn't verify that your app was successfully created. It may have been created but be unavailable. Please check back in a bit to see if your app was created or not."
+      timeout: "We're sorry, this operation has timed out. It is possible that it was succfully completed, but we are unable to verify it."
     messages:
       domain_create: "Congratulations! You successfully created your domain"
       domain_update: "Congratulations! You successfully updated your domain"
