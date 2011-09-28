@@ -2,7 +2,7 @@
 
 Summary:   Provides php-5.3 support
 Name:      rhc-cartridge-php-5.3
-Version:   0.78.4
+Version:   0.78.5
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -83,6 +83,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Wed Sep 28 2011 Dan McPherson <dmcphers@redhat.com> 0.78.5-1
+- add preconfigure for jenkins to split out auth key gen (dmcphers@redhat.com)
+
 * Fri Sep 23 2011 Dan McPherson <dmcphers@redhat.com> 0.78.4-1
 - up upload limit to 10M (dmcphers@redhat.com)
 
