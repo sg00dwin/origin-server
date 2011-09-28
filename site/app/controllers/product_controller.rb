@@ -42,4 +42,9 @@ class ProductController < ApplicationController
     render :action => :overview, :layout => 'application'
   end
   
+  #Feature matrix
+  def features
+    render :action => :features, :layout => 'application'
+  end
+  
 end

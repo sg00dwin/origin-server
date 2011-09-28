@@ -25,6 +25,8 @@
           
           - if logged_in? and has_access? :express
             = link_to 'Open control panel ▸', control_panel_path, :class => 'more'
+          - else
+            = link_to 'Compare features ▸', features_path, :class => 'more'
       
       %li#flex.product_box.flex
         %header
@@ -40,6 +42,9 @@
           
           - if logged_in? and has_access? :express
             = link_to 'Open control panel ▸', '/flex', :class => 'more'
+          - else
+            = link_to 'Compare features ▸', features_path, :class => 'more'
+            
             
       %li#power.product_box.power
         %header

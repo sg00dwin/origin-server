@@ -859,7 +859,7 @@ nav.service {
   background: white;
   @include border-radius(2em);
   width: 24%;
-  height: 23em;
+  height: 26em;
   margin-right: 2.5%;
   padding: 1em 2em;
 
@@ -875,6 +875,8 @@ nav.service {
   }
   
   h2 a:hover { text-decoration: none; }
+
+  .product .main & a.more { margin: 1em 0; }
 
   &.express h2 a, &.express a.more {
     color: $express;
@@ -1090,6 +1092,164 @@ nav.service {
     padding: 1em;
     @include border-radius(0.5em);
   }
+}
+
+
+/* Feature matrix */
+
+.features .main {
+  margin: 0; padding: 5em 0;
+  background: $overview_bg url('/app/images/transparent_cloud.png') repeat-x center center;
+
+  .content { padding-left: 5em; }
+
+  & .content > div  {
+    background: white;
+    @include border-radius(2em);
+    position: relative;
+    width: 19em;
+    padding: 2em;
+    margin: 1em;
+    float: left;
+    
+    &:first-child { margin-left: 0; }
+    &:last-child { margin-right: 0; }
+
+    h2 {
+      color: white;
+      position: absolute;
+      top: -2em;
+      left: 0;
+      font-size: 2em;
+      line-height: 1em;
+      width: 100%;
+      text-align: center;
+      text-transform: uppercase;
+    }
+    
+    h3 {
+      width: 10em;
+      margin: 0; padding: 0;
+      position: absolute;
+      left: -10.5em;
+      display:none;
+      color: #ccc;
+      text-align: right;
+      font-size: 1.2em;
+    }
+
+    &:first-child h3 { display: block; }
+
+   ul {
+      list-style-type: none;
+      margin: 2em auto 0; padding: 0;
+      border-top: 2px solid #cecece;
+    }
+
+    ul li {
+      margin: .5em auto;
+      padding: .25em 2em;
+      height: 1.1em;
+      width: 7em;
+      background: #c8c5ac;
+      color: white;
+      @include border-radius(.3em);
+      font-size: 1.3em;
+      font-family: Overpass, $base_font_family;
+      text-align: center;
+    }
+
+    li.disabled {
+      background: #f3f3f3;
+    }
+    ul.languages li.disabled {
+      height: 3.5em;
+    }
+
+    li.soon {
+      background: transparent;
+      color: #666;
+    }
+
+    ul.languages {
+      margin-top: 0;
+      border-top: 0;
+    }
+    ul.languages li {
+      @include border-radius(1em);
+      margin: 2em 1em;
+      padding-left: 1.5em;
+      padding-bottom: 1em;
+      font-family: Overpass, $base_font_family;
+      font-size: 1.1em;
+      text-align: left;
+      color: black;
+      width: auto;
+      height: auto;
+
+      ul { margin: 0;  border: 0;}
+
+      ul li {
+        background: transparent;
+        @include inline-block;
+        margin: 0;
+        padding: .25em .5em;
+        width: 4em;
+      }
+
+      h4 {
+        color: white;
+        position: relative;
+        top: -.5em;
+        left: 0;
+        padding: .25em 1em;
+        display: inline;
+        font-size: 1.2em;
+        @include border-radius(.3em);
+      }
+      
+      &.ruby {
+        background: lighten($ruby, 35%);
+        
+        h4 { background: $ruby; }
+      }
+      
+      &.python {
+        background: lighten($python, 35%);
+        
+        h4 { background: $python; }
+      }
+
+      &.perl {
+        background: lighten($perl, 35%);
+        height: 3.5em;
+        
+        h4 { background: $perl; }
+      }
+
+      &.php {
+        background: lighten($php, 35%);
+        
+        h4 { background: $php; }
+      }
+
+      &.java {
+        background: lighten($java, 30%);
+        
+        h4 { background: $java; }
+      }
+    }
+  }
+
+}
+
+.multiplebgs.cssgradients .features .main {
+  @include background-image(
+    url('/app/images/transparent_cloud.png'),
+    radial-gradient(center bottom, circle farthest-side, $overview_highlight, $overview_bg)
+  );
+  background-repeat: repeat-x, no-repeat;
+  background-position: center center, 0 0;
 }
 
 /* End service pages */
