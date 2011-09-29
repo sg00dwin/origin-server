@@ -61,7 +61,7 @@ module MCollective
         validate :cartridge, :shellsafe
         validate :action, /\A(configure|deconfigure|preconfigure|update_namespace|add-env-var|remove-env-var|remove-authorized-ssh-key|add-authorized-ssh-key|remove-authorized-ssh-key|add-broker-auth-key|remove-broker-auth-key|info|post-install|post_remove|pre-install|reload|restart|start|status|stop)\Z/
         validate :action, :shellsafe
-        validate :args, /\A[\w\+\/= @\-\.]+\z/
+        validate :args, /\A[\w\+\/= @\-\.:]+\z/
         validate :args, :shellsafe
         cartridge = request[:cartridge]
         action = request[:action]
