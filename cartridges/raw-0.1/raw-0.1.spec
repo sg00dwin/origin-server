@@ -2,7 +2,7 @@
 
 Summary:   Provides raw support
 Name:      rhc-cartridge-raw-0.1
-Version:   0.1
+Version:   0.2
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -70,5 +70,8 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Thu Sep 29 2011 Mike McGrath <mmcgrath@redhat.com> 0.2-1
+- new package built with tito
+
 * Wed Sep 21 2011 Mike McGrath <mmcgrath@redhat.com> 0.1-1
 - Creating initial raw cartridge
