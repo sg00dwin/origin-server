@@ -2,7 +2,7 @@
 
 Summary:       Common dependencies of the OpenShift broker and site
 Name:          rhc-server-common
-Version:       0.78.13
+Version:       0.79.1
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -54,6 +54,10 @@ rm -rf %{buildroot}
                                   -s /sbin/nologin 2>&1 > /dev/null || :
 
 %changelog
+* Thu Sep 29 2011 Dan McPherson <dmcphers@redhat.com> 0.79.1-1
+- bump spec numbers (dmcphers@redhat.com)
+- env var add/remove (dmcphers@redhat.com)
+
 * Wed Sep 28 2011 Dan McPherson <dmcphers@redhat.com> 0.78.13-1
 - add preconfigure for jenkins to split out auth key gen (dmcphers@redhat.com)
 

@@ -2,7 +2,7 @@
 
 Summary:   Provides jenkins-1.4 support
 Name:      rhc-cartridge-jenkins-1.4
-Version:   0.78.11
+Version:   0.79.1
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -49,6 +49,10 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Thu Sep 29 2011 Dan McPherson <dmcphers@redhat.com> 0.79.1-1
+- bump spec numbers (dmcphers@redhat.com)
+- adding global env management with jenkins cartridge (mmcgrath@redhat.com)
+
 * Wed Sep 28 2011 Dan McPherson <dmcphers@redhat.com> 0.78.11-1
 - add preconfigure for jenkins to split out auth key gen (dmcphers@redhat.com)
 

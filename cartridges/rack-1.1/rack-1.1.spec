@@ -2,7 +2,7 @@
 
 Summary:   Provides ruby rack support running on Phusion Passenger
 Name:      rhc-cartridge-rack-1.1
-Version:   0.78.6
+Version:   0.79.2
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -29,6 +29,7 @@ Requires:  mysql-devel
 Requires:  ruby-devel
 Requires:  ruby-nokogiri
 Requires:  libxml2-devel
+Requires:  gcc-c++
 
 Obsoletes: rhc-cartridge-rack-1.1.0
 
@@ -91,6 +92,13 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Thu Sep 29 2011 Dan McPherson <dmcphers@redhat.com> 0.79.2-1
+- 
+
+* Thu Sep 29 2011 Dan McPherson <dmcphers@redhat.com> 0.79.1-1
+- bump spec numbers (dmcphers@redhat.com)
+- Bug 742198 (dmcphers@redhat.com)
+
 * Wed Sep 28 2011 Dan McPherson <dmcphers@redhat.com> 0.78.6-1
 - add preconfigure for jenkins to split out auth key gen (dmcphers@redhat.com)
 
