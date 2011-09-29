@@ -18,11 +18,11 @@ retweetSuccess = (data, textStatus, jqXHR) ->
   rts = $ '#retweets'
   rts.empty()
   list = $ '<ul></ul>'
-  console.log 'list', list
+  #console.log 'list', list
   rts.append list
   for rt in data
     item = $ '<li></li>'
-    console.log 'item', item
+    #console.log 'item', item
     item.append $ _this.renderTweet rt.retweeted_status
     list.append item
 
