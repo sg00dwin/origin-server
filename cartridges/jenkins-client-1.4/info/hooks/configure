@@ -107,6 +107,7 @@ mcs_level=`${CART_DIR}/li-controller/info/bin/mcs_level $uid`
 # Create http base for application, every app gets its own apache instance
 #
 
+[ -f "$APP_HOME/.env/OPENSHIFT_CI_URL" ] || error "${application}.  Jenkins Server does not exist!  Please create with rhc-create-app -t jenkins-1.4" 132
 [ -f "$APP_HOME/.env/OPENSHIFT_CI_TYPE" ] && error "${application}.  Jenkins Client already embedded in $application" 132
 [ -d "$APP_DIR/" ] || error "${APP_DIR} Not found!  Aborting." 133
 
@@ -114,13 +115,10 @@ mcs_level=`${CART_DIR}/li-controller/info/bin/mcs_level $uid`
 # Setup Environment Variables
 #
 echo "export OPENSHIFT_CI_TYPE='jenkins-1.4'" > $APP_HOME/.env/OPENSHIFT_CI_TYPE
-echo "export OPENSHIFT_CI_TYPE='jenkins-1.4'" > $APP_HOME/.env/OPENSHIFT_CI_TYPE
 
 . $APP_HOME/.env/OPENSHIFT_DATA_DIR
 . $APP_HOME/.env/OPENSHIFT_APP_NAME
-
-# Figure out some other way to get this
-export OPENSHIFT_CI_URL="http://ci5-${namespace}.${libra_domain}/"
+. $APP_HOME/.env/OPENSHIFT_CI_URL
 
 /usr/bin/wget -q ${OPENSHIFT_CI_URL}jnlpJars/jenkins-cli.jar -O "$OPENSHIFT_DATA_DIR/jenkins-cli.jar" || error "Could not download ${OPENSHIFT_CI_URL}jnlpJars/jenkins-cli.jar" 157
 
