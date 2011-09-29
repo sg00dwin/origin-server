@@ -170,10 +170,12 @@ $ ->
     setup_domain_update_form()
 
   update_values = ->
-    ns = if namespace? namespace else ($ '#express_domain_namespace').val()
-    sh = if ssh? ssh else ($ '#express_domain_ssh').val()
+    ns = namespace || ($ '#express_domain_namespace').val()
+    sh = ssh || ($ 'express_domain_ssh').val()
     ($ '#show_namespace').text ns
-    ($ '#show_ssh').text sh
+    ($ '#show_ssh').text (sh.slice 0, 20) + '...'
+    ($ '#express_domain_namespace').val ns
+    ($ '#express_domain_ssh').val sh
 
   toggle_domain_update_form = ->
     if domain_update_form.hasClass 'hidden'
