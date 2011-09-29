@@ -17,4 +17,7 @@ fi
 
 APP_HOME=`echo ${libra_dir}/${USERNAME} | tr -s '/'`
 
-rm $APP_HOME/.env/$KEY
+if [ -f $APP_HOME/.env/$KEY ]
+then
+    rm $APP_HOME/.env/$KEY
+fi
