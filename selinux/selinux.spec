@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.79.0
+Version:       0.79.1
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -38,6 +38,9 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Thu Sep 29 2011 Dan McPherson <dmcphers@redhat.com> 0.79.1-1
+- bump spec numbers (dmcphers@redhat.com)
+
 * Thu Sep 22 2011 Dan McPherson <dmcphers@redhat.com> 0.78.3-1
 - Allow libra domains to search /var/www/cgi-bin directory and other similarly
   labeled directories.  I am adding a new interface to allow libra domains to
