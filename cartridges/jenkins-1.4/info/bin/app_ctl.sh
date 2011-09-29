@@ -30,7 +30,11 @@ case "$1" in
         $OPENSHIFT_APP_DIR/${OPENSHIFT_APP_NAME}_ctl.sh start
     ;;
     status)
-        echo " Coming soon"
+        echo ""
+        echo "Running Processes:"
+        echo ""
+        ps -eFCvx
+        echo ""
         exit 0
     ;;
 esac
