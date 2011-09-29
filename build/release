@@ -122,7 +122,19 @@ class Release < Thor
         # Check for the supplied NVR value (e.g. 0.45.1)
         if nvr_regex.match(package)
           # Confirm the package is valid
-          nvr_package = `git tag | grep #{package} | tail -n1`.chomp
+          nvr_package = nil
+          if package =~ /^rhc-(\d)/
+            if File.exists?('../os-client-tools')
+              inside('../os-client-tools') do
+                nvr_package = `git tag | grep #{package} | tail -n1`.chomp
+              end
+            else            
+              puts "Couldn't find ../os-client-tools."
+              exit 1
+            end
+          else
+            nvr_package = `git tag | grep #{package} | tail -n1`.chomp
+          end
 
           unless nvr_package.empty?
             package = nvr_package
@@ -132,8 +144,16 @@ class Release < Thor
           end
         else
           # No NVR was specified - lookup the latest
+          tags = []
           if package == 'rhc'
-            tags = `git tag | grep -e rhc-[0-9]`.chomp.split("\n")
+            if File.exists?('../os-client-tools')
+              inside('../os-client-tools') do
+                tags = `git tag | grep -e rhc-[0-9]`.chomp.split("\n")
+              end
+            else            
+              puts "Couldn't find ../os-client-tools."
+              exit 1
+            end
           else
             tags = `git tag | grep #{package}-`.chomp.split("\n")
           end

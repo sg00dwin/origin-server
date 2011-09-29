@@ -239,12 +239,12 @@ $ ->
   spinner_closebtn.live 'click', (event) ->
     close_spinner '', 100
   
-  ($ 'input.create', domain_form_container).live 'click', (event) ->
+  domain_form_container.delegate 'form', 'submit', (event) ->
     switch domain_action
       when 'update' then show_spinner 'Updating your domain...'
       when 'create' then show_spinner 'Creating your domain...'
     
-  ($ 'input.create', app_form).live 'click', (event) ->
+  app_form.delegate 'form', 'submit', (event) ->
     show_spinner 'Creating your app...'
   
   domain_update_form.live 'switch_create_to_update', setup_domain_update_form

@@ -45,36 +45,12 @@ CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_php_deconfigure
+    echo "$0 $@" | logger -p local0.notice -t libra_mysql_deconfigure
     exit 1
 }
 
 function error {
     echo "$1" 1>&2
-}
-
-function destroy_repo {
-    application="$1"
-    uuid="$2"
-    APP_HOME="${libra_dir}/${uuid}"
-    
-    if [ ! -d $APP_HOME ]; then echo "ERROR: Application ${uuid} not found!  Please create." 1>&2; exit 2; fi
-    
-    GIT_DIR=$APP_HOME/git/$application.git
-    rm -rf $GIT_DIR || error "Could not remove ${application}" 108
-}
-
-function rm_symlink {
-    # Check if unobfuscate is set in /etc/libra/node.conf
-    # If it is set, remove symlink
-
-    namespace=$1
-    appname=$2
-
-    if [ $unobfuscate -eq 1 ]
-    then        
-        rm "${libra_dir}/${appname}-${namespace}"
-    fi
 }
 
 while getopts 'd' OPTION
@@ -90,56 +66,31 @@ done
 
 [ $# -eq 3 ] || print_help
 
-namespace=`basename $2`
 application="$1"
+namespace=$2 # Not used
 uuid=$3
 
 APP_HOME="$libra_dir/$uuid/"
 APP_DIR="$APP_HOME/$application"
+MYSQL_DIR="$APP_HOME/mysql-5.1/"
 
 if [ ! -d "$APP_DIR" ]
 then
   exit 125
 fi
 
+#
+# Get UID information and CVAL
+#
 uid=$(id -u "$uuid")
 mcs_level=`${CART_DIR}/li-controller/info/bin/mcs_level $uid`
 
 #
-# OpenShift values so they can be used:
+# Disable job
 #
-for f in $APP_HOME/.env/*
-do
-    . $f
-done
-
-jenkins_pid=$(/bin/cat ${OPENSHIFT_RUN_DIR}/jenkins.pid)
-runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $OPENSHIFT_APP_CTL_SCRIPT stop" || echo "Failed to stop ${OPENSHIFT_APP_NAME}" 1>&2
-
-for i in {1..12}
-do
-    if ! /bin/kill -0 $jenkins_pid > /dev/null 2>&1
-    then
-        echo "Waiting for stop to finish"
-        sleep .2
-        if [ $i > 9 ]
-        then
-            /bin/kill -9 $jenkins_pid
-        fi
-    else
-        break
-    fi
-done
-
-#rm -rf "$APP_DIR"
-runcon -l s0-s0:c0.c1023 rm -rf "$APP_DIR"
-
-echo "SSH_KEY_REMOVE: "
 
 #
-# Remove virtualhost definition for apache
+# Remove environment variables
 #
-rm -rf /etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}.conf || error "Could not remove apache definition" 156
-/sbin/service httpd configtest 2> /dev/null && /sbin/service httpd graceful || error "Failed to restart master httpd, please contact support" 120
+/bin/rm -f $APP_HOME/.env/OPENSHIFT_CI_TYPE "$OPENSHIFT_DATA_DIR/jenkins-cli.jar"
 
-echo "ENV_VAR_REMOVE: OPENSHIFT_CI_URL"

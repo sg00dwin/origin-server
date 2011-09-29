@@ -237,12 +237,18 @@ module Libra
       # Configure the user on this server if necessary
       server.create_account(user, app_info)
 
+      server_execute_direct(framework, 'preconfigure', app_name, user, server, app_info)
       server_execute_direct(framework, 'configure', app_name, user, server, app_info)
       
       # Add any secondary ssh keys
       user.system_ssh_keys.each_value do |ssh_key|
         server.add_ssh_key(app_info, ssh_key)
       end if user.system_ssh_keys
+      
+      # Add any secondary env vars
+      user.env_vars.each do |key, value|
+        server.add_env_var(app_info, key, value)
+      end if user.env_vars
       
       begin
         # update DNS

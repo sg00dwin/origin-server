@@ -548,6 +548,22 @@ module Libra
     end
     
     #
+    # Add env var to app
+    #
+    def add_env_var(app, key, value)
+      result = execute_direct('li-controller', 'add-env-var', "#{app['uuid']} #{key} #{value}")
+      handle_controller_result(result)
+    end
+    
+    #
+    # Remove env var from app
+    #
+    def remove_env_var(app, key)
+      result = execute_direct('li-controller', 'remove-env-var', "#{app['uuid']} #{key}")
+      handle_controller_result(result)
+    end
+    
+    #
     # Add broker auth key to app
     #
     def set_broker_auth_key(app_name, app, rhlogin)
@@ -623,6 +639,14 @@ module Libra
               user.set_system_ssh_key(app_name, key)
             else
               user.remove_system_ssh_key(app_name)
+            end
+          elsif user && app_name && line =~ /^ENV_VAR_(ADD|REMOVE): /
+            if line =~ /^ENV_VAR_ADD: /
+              env_var = line['ENV_VAR_ADD: '.length..-1].chomp.split('=')
+              user.set_env_var(app_name, env_var[0], env_var[1])
+            else
+              key = line['ENV_VAR_REMOVE: '.length..-1].chomp
+              user.remove_env_var(app_name, key)
             end
           elsif user && app_name && app && line =~ /^BROKER_AUTH_KEY_(ADD|REMOVE): /
             if line =~ /^BROKER_AUTH_KEY_ADD: /

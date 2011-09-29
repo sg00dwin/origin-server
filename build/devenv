@@ -111,7 +111,7 @@ class DevEnv < Thor
       instance.scp_from("/var/log/httpd/error_log", "rhc/log/system_error_log.log")
       instance.scp_from("/var/log/messages", "rhc/log/messages.log")
       instance.scp_from("/var/log/dmesg", "rhc/log/messages.log")
-      instance.scp_from("li-tests/selenium/*.png", "rhc/log")
+      instance.scp_from("/tmp/rhc/screenshots/", "rhc/log")
       puts "Done"
     end
 

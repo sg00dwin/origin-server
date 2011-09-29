@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.78.8
+Version:   0.78.9
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -65,6 +65,9 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Wed Sep 28 2011 Dan McPherson <dmcphers@redhat.com> 0.78.9-1
+- add node profile to rhc-cartridge-do (dmcphers@redhat.com)
+
 * Mon Sep 26 2011 Dan McPherson <dmcphers@redhat.com> 0.78.8-1
 - separate streamline secrets (dmcphers@redhat.com)
 - Fixing the help for the namespace command (mhicks@redhat.com)

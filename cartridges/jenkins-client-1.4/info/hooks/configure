@@ -1,0 +1,130 @@
+#!/bin/bash
+
+# Copyright © 2010 Mike McGrath All rights reserved
+# Copyright © 2010 Red Hat, Inc. All rights reserved
+
+# This copyrighted material is made available to anyone wishing to use, modify,
+# copy, or redistribute it subject to the terms and conditions of the GNU
+# General Public License v.2.  This program is distributed in the hope that it
+# will be useful, but WITHOUT ANY WARRANTY expressed or implied, including the
+# implied warranties of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.  You should have
+# received a copy of the GNU General Public License along with this program;
+# if not, write to the Free Software Foundation, Inc., 51 Franklin Street,
+# Fifth Floor, Boston, MA 02110-1301, USA. Any Red Hat trademarks that are
+# incorporated in the source code or documentation are not subject to the GNU
+# General Public License and may only be used or replicated with the express
+# permission of Red Hat, Inc.
+
+# Creates a per customer httpd instance
+
+# Exit on any errors
+set -e
+
+if [ -f '/etc/libra/node.conf' ]
+then
+    . /etc/libra/node.conf
+elif [ -f 'node.conf' ]
+then
+    . node.conf
+else
+    echo "node.conf not found.  Cannot continue" 1>&2
+    exit 3
+fi
+
+if [ -f '/etc/libra/node_data.conf' ]
+then
+    . /etc/libra/node_data.conf
+elif [ -f 'node_data.conf' ]
+then
+    . node_data.conf
+else
+    echo "node_data.conf not found.  Cannot continue" 1>&2
+    exit 3
+fi
+
+CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
+
+rotatelogs_interval="86400"
+rotatelogs_format="-%Y%m%d-%H%M%S-%Z"
+
+if [ -f '/etc/libra/resource_limits.conf' ]
+then
+    . /etc/libra/resource_limits.conf
+fi
+
+CART_DIR=/usr/libexec/li/cartridges
+CART_INFO_DIR=$CART_DIR/embedded/jenkins-client-1.4/info
+CART_CONF_DIR=$CART_INFO_DIR/configuration/etc
+
+function print_help {
+    echo "Usage: $0 app-name namespace uuid"
+
+    echo "$0 $@" | logger -p local0.notice -t libra_mysql_configure
+    exit 1
+}
+
+function error {
+    echo "$1" 1>&2
+    exit "$2"
+}
+
+while getopts 'd' OPTION
+do
+    case $OPTION in
+        d) set -x
+        ;;
+        ?) print_help
+        ;;
+    esac
+done
+
+
+[ $# -eq 3 ] || print_help
+
+application="$1"
+namespace=$2 # Not used
+uuid=$3
+
+APP_HOME="$libra_dir/$uuid/"
+APP_DIR=`echo $APP_HOME/$application | tr -s /`
+
+#
+# Get user id info
+# Not caching this information caused some early chowns to work but some later
+# chowns to fail with a user not found error
+
+user_id=$(id -u "$uuid") || error "Could not find user $uuid" 134
+group_id=$(id -g "$uuid") || error "Could not find user $uuid" 135
+
+#
+# Get UID information and CVAL
+#
+uid=$(id -u "$uuid")
+mcs_level=`${CART_DIR}/li-controller/info/bin/mcs_level $uid`
+
+#
+# Create http base for application, every app gets its own apache instance
+#
+
+[ -f "$APP_HOME/.env/OPENSHIFT_CI_URL" ] || error "${application}.  Jenkins Server does not exist!  Please create with rhc-create-app -t jenkins-1.4" 132
+[ -f "$APP_HOME/.env/OPENSHIFT_CI_TYPE" ] && error "${application}.  Jenkins Client already embedded in $application" 132
+[ -d "$APP_DIR/" ] || error "${APP_DIR} Not found!  Aborting." 133
+
+#
+# Setup Environment Variables
+#
+echo "export OPENSHIFT_CI_TYPE='jenkins-1.4'" > $APP_HOME/.env/OPENSHIFT_CI_TYPE
+
+. $APP_HOME/.env/OPENSHIFT_DATA_DIR
+. $APP_HOME/.env/OPENSHIFT_APP_NAME
+. $APP_HOME/.env/OPENSHIFT_CI_URL
+
+/usr/bin/wget -q ${OPENSHIFT_CI_URL}jnlpJars/jenkins-cli.jar -O "$OPENSHIFT_DATA_DIR/jenkins-cli.jar" || error "Could not download ${OPENSHIFT_CI_URL}jnlpJars/jenkins-cli.jar" 157
+
+# Maybe allow cartridges to create their own jenkins job
+runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level ${CART_INFO_DIR}/bin/jenkins-cli create-job '${OPENSHIFT_APP_NAME}-build'" < $CART_INFO_DIR/configuration/template.xml
+
+echo "CLIENT_RESULT: "
+echo "CLIENT_RESULT: Jenkins Client 1.4 has been added to $OPENSHIFT_APP_NAME:"
+echo "CLIENT_RESULT: Job URL: ${OPENSHIFT_CI_URL}job/${OPENSHIFT_APP_NAME}-build/"

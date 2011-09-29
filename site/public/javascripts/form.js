@@ -1,4 +1,4 @@
-/* DO NOT MODIFY. This file was compiled Mon, 26 Sep 2011 22:30:13 GMT from
+/* DO NOT MODIFY. This file was compiled Wed, 28 Sep 2011 20:49:02 GMT from
  * /home/fotios/li/site/app/coffeescripts/form.coffee
  */
 
@@ -35,8 +35,7 @@
           maxlength: 16
         },
         "express_domain[ssh]": {
-          required: true,
-          accept: ".pub"
+          required: true
         },
         "express_domain[password]": {
           required: true,
@@ -44,13 +43,30 @@
         }
       }
     });
+    $("#new_express_app").validate({
+      rules: {
+        "express_app[app_name]": {
+          required: true,
+          alpha_numeric: true,
+          maxlength: 16
+        },
+        "express_app[cartridge]": {
+          required: true
+        }
+      }
+    });
     dialogs = $('.dialog');
     open_dialog = function(dialog) {
       dialogs.hide();
       dialog.show();
+      dialog.find("input:visible:first").focus();
       return ($(window, 'html', 'body')).scrollTop(0);
     };
     close_dialog = function(dialog) {
+      dialog.find('div.message').remove();
+      dialog.find('input:visible:not(.button)').val('');
+      dialog.find('label.error').remove();
+      dialog.find('input').removeClass('error');
       return dialog.hide();
     };
     close_btn = $('.close_button');
@@ -63,12 +79,13 @@
       return open_dialog(signup);
     });
     ($('a.sign_in')).click(function(event) {
-      var userbox;
+      var login, userbox;
       event.preventDefault();
+      login = $('div.content #login-form');
       userbox = $('#user_box #login-form');
-      if (userbox.length > 0) {
+      if (login.length > 0 || userbox.length > 0) {
         dialogs.hide();
-        return userbox.find('#login_input').focus();
+        return $('#login_input').focus();
       } else {
         return open_dialog(signin);
       }
@@ -136,8 +153,7 @@
       return element.find('form').bind('ajax:complete', login_complete).validate({
         rules: {
           "login": {
-            required: true,
-            email: true
+            required: true
           },
           "password": {
             required: true
@@ -174,7 +190,7 @@
         },
         "password_confirmation": {
           required: true,
-          minlength: 6
+          equalTo: '#password'
         }
       }
     });

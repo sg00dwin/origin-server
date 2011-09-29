@@ -159,7 +159,7 @@ module OpenShift
 
     def screenshot(name)
       path = File.join(
-        "screenshots",
+        "/tmp/rhc/screenshots",
         (caller[0] =~ /(.*?).rb:.*`([^']*)'/ and [$1,$2])
       )
       FileUtils.mkdir_p(path) 
