@@ -214,6 +214,7 @@ mcs_level=`${CART_DIR}/li-controller/info/bin/mcs_level $uid`
 export mcs_level
 
 cp -ad "$CART_INFO_DIR/configuration/jenkins-pre-deploy/"* "$APP_DIR/data/"
+sed -i "s,JENKINS_URL_TEMPLATE,http://${application}-${namespace}.${libra_domain}/,g" "$APP_DIR/data/config.xml"
 unzip -q /usr/lib/jenkins/jenkins.war -d "$APP_DIR/data/war/"
 
 create_repo $application $user_id $group_id $mcs_level
@@ -295,4 +296,4 @@ EOF
 
 /sbin/service httpd configtest 2> /dev/null && /sbin/service httpd graceful || error "Failed to restart master httpd, please contact support" 120
 
-echo "ENV_VAR_ADD: OPENSHIFT_CI_URL=http://${application}-${namespace}.${libra_domain}/"
+echo "ENV_VAR_ADD: JENKINS_URL=http://${application}-${namespace}.${libra_domain}/"
