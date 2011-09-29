@@ -107,7 +107,7 @@ mcs_level=`${CART_DIR}/li-controller/info/bin/mcs_level $uid`
 # Create http base for application, every app gets its own apache instance
 #
 
-[ -f "$APP_HOME/.env/OPENSHIFT_CI_URL" ] || error "${application}.  Jenkins Server does not exist!  Please create with rhc-create-app -t jenkins-1.4" 132
+[ -f "$APP_HOME/.env/JENKINS_URL" ] || error "${application}.  Jenkins Server does not exist!  Please create with rhc-create-app -t jenkins-1.4" 132
 [ -f "$APP_HOME/.env/OPENSHIFT_CI_TYPE" ] && error "${application}.  Jenkins Client already embedded in $application" 132
 [ -d "$APP_DIR/" ] || error "${APP_DIR} Not found!  Aborting." 133
 
@@ -118,13 +118,13 @@ echo "export OPENSHIFT_CI_TYPE='jenkins-1.4'" > $APP_HOME/.env/OPENSHIFT_CI_TYPE
 
 . $APP_HOME/.env/OPENSHIFT_DATA_DIR
 . $APP_HOME/.env/OPENSHIFT_APP_NAME
-. $APP_HOME/.env/OPENSHIFT_CI_URL
+. $APP_HOME/.env/JENKINS_URL
 
-/usr/bin/wget -q ${OPENSHIFT_CI_URL}jnlpJars/jenkins-cli.jar -O "$OPENSHIFT_DATA_DIR/jenkins-cli.jar" || error "Could not download ${OPENSHIFT_CI_URL}jnlpJars/jenkins-cli.jar" 157
+/usr/bin/wget -q ${JENKINS_URL}jnlpJars/jenkins-cli.jar -O "$OPENSHIFT_DATA_DIR/jenkins-cli.jar" || error "Could not download ${JENKINS_URL}jnlpJars/jenkins-cli.jar" 157
 
 # Maybe allow cartridges to create their own jenkins job
 runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level ${CART_INFO_DIR}/bin/jenkins-cli create-job '${OPENSHIFT_APP_NAME}-build'" < $CART_INFO_DIR/configuration/template.xml
 
 echo "CLIENT_RESULT: "
 echo "CLIENT_RESULT: Jenkins Client 1.4 has been added to $OPENSHIFT_APP_NAME:"
-echo "CLIENT_RESULT: Job URL: ${OPENSHIFT_CI_URL}job/${OPENSHIFT_APP_NAME}-build/"
+echo "CLIENT_RESULT: Job URL: ${JENKINS_URL}job/${OPENSHIFT_APP_NAME}-build/"
