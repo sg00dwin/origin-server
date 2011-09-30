@@ -1,3 +1,4 @@
+# If this file changes, you must modify server-common/openshift/streamline.rb to reflect the changes
 ---
 :email_confirm_url: confirm.html
 :lost_password_url: resetPassword.html
