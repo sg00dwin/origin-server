@@ -12,7 +12,18 @@
   <jdks/>
   <viewsTabBar class="hudson.views.DefaultViewsTabBar"/>
   <myViewsTabBar class="hudson.views.DefaultMyViewsTabBar"/>
-  <clouds/>
+  <clouds>
+    <hudson.plugins.openshift.OpenShiftCloud>
+      <name>OpenShift Cloud</name>
+      <username></username>
+      <password></password>
+      <url>https://OPENSHIFT_SERVER/broker</url>
+      <proxyHost></proxyHost>
+      <proxyPort>0</proxyPort>
+      <jenkinsUrl>JENKINS_URL_TEMPLATE</jenkinsUrl>
+      <ignoreBrokerCertCheck>true</ignoreBrokerCertCheck>
+    </hudson.plugins.openshift.OpenShiftCloud>
+  </clouds>
   <slaves/>
   <quietPeriod>1</quietPeriod>
   <scmCheckoutRetryCount>0</scmCheckoutRetryCount>
