@@ -14,6 +14,6 @@ redeploy_repo_dir.sh
 user_build.sh
 
 # Start the app
-#start_app.sh
+start_app.sh
 
 nurture_app_push.sh $libra_server

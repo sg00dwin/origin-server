@@ -110,8 +110,9 @@ case "$1" in
     status)
         # Restore stdout and close file descriptor #4
         exec 1>&4 4>&-
+        
         if ! isrunning; then
-            echo " - Application is NOT running"
+            echo "Application '${OPENSHIFT_APP_NAME}' is either stopped or inaccessible"
             exit 0
         fi
 

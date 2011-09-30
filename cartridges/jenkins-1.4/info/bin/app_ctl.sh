@@ -37,11 +37,19 @@ case "$1" in
             --httpListenAddress="$OPENSHIFT_INTERNAL_IP" &
         echo $! > "$OPENSHIFT_RUN_DIR/jenkins.pid"
     ;;
-    stop)
+    graceful-stop|stop)
         kill -TERM $( cat $OPENSHIFT_RUN_DIR/jenkins.pid )
     ;;
+    restart|graceful)
+        $OPENSHIFT_APP_DIR/${OPENSHIFT_APP_NAME}_ctl.sh stop
+        $OPENSHIFT_APP_DIR/${OPENSHIFT_APP_NAME}_ctl.sh start
+    ;;
     status)
-        echo " Coming soon"
+        echo ""
+        echo "Running Processes:"
+        echo ""
+        ps -eFCvx
+        echo ""
         exit 0
     ;;
 esac
