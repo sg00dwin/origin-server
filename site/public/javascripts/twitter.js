@@ -31,21 +31,21 @@
     _ref = tweet.entities.urls;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       link = _ref[_i];
-      link.replacement = "<a href=\"" + ((_ref2 = link.expanded_url) != null ? _ref2 : link.url) + "\" title=\"" + ((_ref3 = link.display_url) != null ? _ref3 : link.url) + "\">" + ((_ref4 = link.display_url) != null ? _ref4 : link.url) + "</a>";
+      link.replacement = "<a href=\"" + ((_ref2 = link.expanded_url) != null ? _ref2 : link.url) + "\" title=\"" + ((_ref3 = link.display_url) != null ? _ref3 : link.url) + "\" target=\"_blank\">" + ((_ref4 = link.display_url) != null ? _ref4 : link.url) + "</a>";
       entities[link.indices[0]] = link;
       indices.push(link.indices[0]);
     }
     _ref5 = tweet.entities.user_mentions;
     for (_j = 0, _len2 = _ref5.length; _j < _len2; _j++) {
       user = _ref5[_j];
-      user.replacement = "<a href=\"http://twitter.com/#!/" + user.screen_name + "\" title=\"" + user.name + "\">\n  @" + user.screen_name + "\n</a>";
+      user.replacement = "<a href=\"http://twitter.com/#!/" + user.screen_name + "\" title=\"" + user.name + "\" target=\"_blank\">\n    @" + user.screen_name + "\n  </a>";
       entities[user.indices[0]] = user;
       indices.push(user.indices[0]);
     }
     _ref6 = tweet.entities.hashtags;
     for (_k = 0, _len3 = _ref6.length; _k < _len3; _k++) {
       tag = _ref6[_k];
-      tag.replacement = "<a href=\"http://twitter.com/#!/search?q=#" + tag.text + "\">#" + tag.text + "</a>";
+      tag.replacement = "<a href=\"http://twitter.com/#!/search?q=%23" + tag.text + "\" target=\"_blank\">#" + tag.text + "</a>";
       entities[tag.indices[0]] = tag;
       indices.push(tag.indices[0]);
     }
@@ -63,7 +63,7 @@
       index_adjustment += entity.replacement.length + entity.indices[0] - entity.indices[1];
     }
     if (include_image) {
-      avatar = "<a href=\"http://twitter.com/#!/" + tweet.user.screen_name + "\" title=\"" + tweet.user.name + "\">\n  <img class='avatar' src='" + tweet.user.profile_image_url_https + "'>\n</a>";
+      avatar = "<a href=\"http://twitter.com/#!/" + tweet.user.screen_name + "\" title=\"" + tweet.user.name + "\" target=\"_blank\">\n  <img class='avatar' src='" + tweet.user.profile_image_url_https + "'>\n</a>";
     } else {
       avatar = '';
     }
