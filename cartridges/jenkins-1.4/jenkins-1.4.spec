@@ -2,7 +2,7 @@
 
 Summary:   Provides jenkins-1.4 support
 Name:      rhc-cartridge-jenkins-1.4
-Version:   0.79.1
+Version:   0.79.2
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -59,6 +59,20 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Thu Sep 29 2011 Dan McPherson <dmcphers@redhat.com> 0.79.2-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- turn on cnames and some status work (dmcphers@redhat.com)
+- move hook links to spec file (dmcphers@redhat.com)
+- add base status to jenkins (dmcphers@redhat.com)
+- jenkins cleanup (dmcphers@redhat.com)
+- Making start command easier to understand (mmcgrath@redhat.com)
+- fix order of params to start jenkins (dmcphers@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- Switching up to use JENKINS_URL as well as full cloud auto-deployment
+  (mmcgrath@redhat.com)
+
 * Thu Sep 29 2011 Dan McPherson <dmcphers@redhat.com> 0.79.1-1
 - bump spec numbers (dmcphers@redhat.com)
 - adding global env management with jenkins cartridge (mmcgrath@redhat.com)
