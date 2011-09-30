@@ -92,5 +92,5 @@ mcs_level=`${CART_DIR}/li-controller/info/bin/mcs_level $uid`
 #
 # Remove environment variables
 #
-/bin/rm -f $APP_HOME/.env/OPENSHIFT_CI_TYPE "$OPENSHIFT_DATA_DIR/jenkins-cli.jar"
+/bin/rm -f $APP_HOME/.env/OPENSHIFT_CI_TYPE $APP_HOME/.env/PATH_JENKINS_CLIENT "$OPENSHIFT_DATA_DIR/jenkins-cli.jar"
 
