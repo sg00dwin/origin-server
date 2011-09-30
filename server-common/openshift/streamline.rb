@@ -9,16 +9,15 @@ module Streamline
   include ErrorCodes
   attr_accessor :rhlogin, :ticket, :roles, :terms
 
-  service_base_url = defined?(Rails) ? Rails.configuration.streamline[:host] + Rails.configuration.streamline[:base_url] : ""
-  @@login_url = URI.parse(service_base_url + "/login.html")
-  @@register_url = URI.parse(service_base_url + "/registration.html")
-  @@request_access_url = URI.parse(service_base_url + "/requestAccess.html")
-  @@roles_url = URI.parse(service_base_url + "/cloudVerify.html")
-  @@email_confirm_url = URI.parse(service_base_url + "/confirm.html")
-  @@user_info_url = URI.parse(service_base_url + "/userInfo.html")
-  @@acknowledge_terms_url = URI.parse(service_base_url + "/protected/acknowledgeTerms.html")
-  @@unacknowledged_terms_url = URI.parse(service_base_url + "/protected/findUnacknowledgedTerms.html?hostname=openshift.redhat.com&context=OPENSHIFT&locale=en")
-  @@change_password_url = URI.parse(service_base_url + '/protected/changePassword.html')
+  @@login_url = URI.parse(Rails.configuration.streamline[:login_url])
+  @@register_url = URI.parse(Rails.configuration.streamline[:register_url])
+  @@request_access_url = URI.parse(Rails.configuration.streamline[:request_access_url])
+  @@roles_url = URI.parse(Rails.configuration.streamline[:roles_url])
+  @@email_confirm_url = URI.parse(Rails.configuration.streamline[:email_confirm_url])
+  @@user_info_url = URI.parse(Rails.configuration.streamline[:user_info_url])
+  @@acknowledge_terms_url = URI.parse(Rails.configuration.streamline[:acknowledge_terms_url])
+  @@unacknowledged_terms_url = URI.parse(Rails.configuration.streamline[:unacknowledged_terms_url])
+  @@change_password_url = URI.parse(Rails.configuration.streamline[:change_password_url])
 
   def initialize
     @roles = []
