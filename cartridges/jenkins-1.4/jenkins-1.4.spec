@@ -2,7 +2,7 @@
 
 Summary:   Provides jenkins-1.4 support
 Name:      rhc-cartridge-jenkins-1.4
-Version:   0.79.2
+Version:   0.79.3
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -59,6 +59,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Mon Oct 03 2011 Dan McPherson <dmcphers@redhat.com> 0.79.3-1
+- Adding cloud config and libraserver (mmcgrath@redhat.com)
+
 * Thu Sep 29 2011 Dan McPherson <dmcphers@redhat.com> 0.79.2-1
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
   (mmcgrath@redhat.com)

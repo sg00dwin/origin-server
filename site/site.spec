@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.79.4
+Version:   0.79.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -69,6 +69,9 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Mon Oct 03 2011 Dan McPherson <dmcphers@redhat.com> 0.79.5-1
+- Reverting DRYed up streamline configs for now (fotios@redhat.com)
+
 * Mon Oct 03 2011 Dan McPherson <dmcphers@redhat.com> 0.79.4-1
 - Fixed Rails missing for cucumber tests (fotios@redhat.com)
 - Navigation changes (edirsh@redhat.com)

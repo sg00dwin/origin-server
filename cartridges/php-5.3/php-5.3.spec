@@ -2,7 +2,7 @@
 
 Summary:   Provides php-5.3 support
 Name:      rhc-cartridge-php-5.3
-Version:   0.79.1
+Version:   0.79.2
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -83,6 +83,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Mon Oct 03 2011 Dan McPherson <dmcphers@redhat.com> 0.79.2-1
+- Adding openshift markers support for php (mmcgrath@redhat.com)
+
 * Thu Sep 29 2011 Dan McPherson <dmcphers@redhat.com> 0.79.1-1
 - bump spec numbers (dmcphers@redhat.com)
 
