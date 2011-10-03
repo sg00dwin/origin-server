@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.79.3
+Version:   0.79.4
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -79,6 +79,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Mon Oct 03 2011 Dan McPherson <dmcphers@redhat.com> 0.79.4-1
+- use env vars from standalone.xml (dmcphers@redhat.com)
+
 * Fri Sep 30 2011 Dan McPherson <dmcphers@redhat.com> 0.79.3-1
 - Import env vars as system properties, US1174 (starksm64@gmail.com)
 
