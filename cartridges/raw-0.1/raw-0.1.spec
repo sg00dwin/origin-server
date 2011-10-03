@@ -2,7 +2,7 @@
 
 Summary:   Provides raw support
 Name:      rhc-cartridge-raw-0.1
-Version:   0.1
+Version:   0.3
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -53,6 +53,7 @@ ln -s %{cartridgedir}/../abstract-httpd/info/hooks/start %{buildroot}%{cartridge
 ln -s %{cartridgedir}/../abstract-httpd/info/hooks/status %{buildroot}%{cartridgedir}/info/hooks/status
 ln -s %{cartridgedir}/../abstract-httpd/info/hooks/stop %{buildroot}%{cartridgedir}/info/hooks/stop
 ln -s %{cartridgedir}/../abstract-httpd/info/hooks/update_namespace %{buildroot}%{cartridgedir}/info/hooks/update_namespace
+ln -s %{cartridgedir}/../abstract-httpd/info/hooks/preconfigure %{buildroot}%{cartridgedir}/info/hooks/preconfigure
 
 %clean
 rm -rf %{buildroot}
@@ -69,5 +70,11 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Thu Sep 29 2011 Mike McGrath <mmcgrath@redhat.com> 0.3-1
+- Initial tagging
+
+* Thu Sep 29 2011 Mike McGrath <mmcgrath@redhat.com> 0.2-1
+- new package built with tito
+
 * Wed Sep 21 2011 Mike McGrath <mmcgrath@redhat.com> 0.1-1
 - Creating initial raw cartridge

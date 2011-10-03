@@ -23,16 +23,16 @@ module Libra
     end
 
     attr_reader :rhlogin, :password
-    attr_accessor :ssh, :namespace, :uuid, :system_ssh_keys, :email_address
+    attr_accessor :ssh, :namespace, :uuid, :system_ssh_keys, :env_vars, :email_address
 
-    def initialize(rhlogin, ssh, system_ssh_keys, namespace, uuid, password=nil, ticket=nil)
-      @rhlogin, @ssh, @system_ssh_keys, @namespace, @uuid, @password, @ticket, = rhlogin, ssh, system_ssh_keys, namespace, uuid, password, ticket
+    def initialize(rhlogin, ssh, system_ssh_keys, env_vars, namespace, uuid, password=nil, ticket=nil)
+      @rhlogin, @ssh, @system_ssh_keys, @env_vars, @namespace, @uuid, @password, @ticket, = rhlogin, ssh, system_ssh_keys, env_vars, namespace, uuid, password, ticket
       @roles = []
     end
 
     def self.from_json(json)
       data = JSON.parse(json)
-      new(data['rhlogin'], data['ssh'], data['system_ssh_keys'], data['namespace'], data['uuid'])
+      new(data['rhlogin'], data['ssh'], data['system_ssh_keys'], data['env_vars'], data['namespace'], data['uuid'])
     end
 
     #
@@ -56,7 +56,7 @@ module Libra
         Libra.client_debug "Creating user entry rhlogin:#{rhlogin} ssh:#{ssh} namespace:#{namespace}" if Libra.c[:rpc_opts][:verbose]
         begin
           uuid = gen_small_uuid()
-          user = new(rhlogin, ssh, nil, namespace, uuid)
+          user = new(rhlogin, ssh, nil, nil, namespace, uuid)
           user.update
           begin
             Nurture.libra_contact(rhlogin, uuid, namespace, 'create')
@@ -135,12 +135,10 @@ module Libra
     # Updates the user with the current information
     #
     def update
-      data = nil
-      if system_ssh_keys
-        data = {:rhlogin => rhlogin, :namespace => namespace, :ssh => ssh, :system_ssh_keys => system_ssh_keys}
-      else
-        data = {:rhlogin => rhlogin, :namespace => namespace, :ssh => ssh, :uuid => uuid}
-      end
+      data = {:rhlogin => rhlogin, :namespace => namespace, :ssh => ssh, :uuid => uuid}
+      data[:system_ssh_keys] = system_ssh_keys if system_ssh_keys
+      data[:env_vars] = env_vars if env_vars
+
       json = JSON.generate(data)
       Libra.logger_debug "DEBUG: Updating user json:#{json}"
       Helper.s3.put(Libra.c[:s3_bucket], "user_info/#{rhlogin}/user.json", json)
@@ -149,7 +147,7 @@ module Libra
     #
     # Add an ssh key to each of the apps
     #
-    def add_ssh_key_to_servers(app_name, ssh_key)
+    def add_ssh_key_to_apps(app_name, ssh_key)
       apps.each do |appname, app|
         if appname != app_name
           server = Libra::Server.new app['server_identity']
@@ -161,11 +159,35 @@ module Libra
     #
     # Remove an ssh key from each of the apps
     #
-    def remove_ssh_key_from_servers(app_name, ssh_key)
+    def remove_ssh_key_from_apps(app_name, ssh_key)
       apps.each do |appname, app|
         if appname != app_name
           server = Libra::Server.new app['server_identity']
           server.remove_ssh_key(app, ssh_key)
+        end
+      end
+    end
+    
+    #
+    # Add an env var to each of the apps
+    #
+    def add_env_var_to_apps(app_name, key, value)
+      apps.each do |appname, app|
+        if appname != app_name
+          server = Libra::Server.new app['server_identity']
+          server.add_env_var(app, key, value)
+        end
+      end
+    end
+    
+    #
+    # Remove an env var from each of the apps
+    #
+    def remove_env_var_from_apps(app_name, key)
+      apps.each do |appname, app|
+        if appname != app_name
+          server = Libra::Server.new app['server_identity']
+          server.remove_env_var(app, key)
         end
       end
     end
@@ -177,7 +199,7 @@ module Libra
       @system_ssh_keys = {} unless @system_ssh_keys
       @system_ssh_keys[app_name] = ssh_key
       update
-      add_ssh_key_to_servers(app_name, ssh_key)
+      add_ssh_key_to_apps(app_name, ssh_key)
     end
     
     #
@@ -188,7 +210,28 @@ module Libra
         ssh_key = system_ssh_keys[app_name]
         system_ssh_keys.delete(app_name)
         update
-        remove_ssh_key_from_servers(app_name, ssh_key)
+        remove_ssh_key_from_apps(app_name, ssh_key)
+      end
+    end
+    
+    #
+    # Add an env var to user and all other apps owned by the user
+    #
+    def set_env_var(app_name, key, value)
+      @env_vars = {} unless @env_vars
+      @env_vars[key] = value
+      update
+      add_env_var_to_apps(app_name, key, value)
+    end
+    
+    #
+    # Remove an env var from the user and this user's apps
+    #
+    def remove_env_var(app_name, key)
+      if env_vars && env_vars.key?(key)
+        env_vars.delete(key)
+        update
+        remove_env_var_from_apps(app_name, key)
       end
     end
 

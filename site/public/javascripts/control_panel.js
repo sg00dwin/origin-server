@@ -1,7 +1,3 @@
-/* DO NOT MODIFY. This file was compiled Wed, 14 Sep 2011 14:56:09 GMT from
- * /home/fotios/li/site/app/coffeescripts/control_panel.coffee
- */
-
 (function() {
   var $;
   $ = jQuery;
@@ -104,10 +100,12 @@
     }
     update_values = function() {
       var ns, sh;
-      ns = (typeof namespace === "function" ? namespace(namespace) : void 0) ? void 0 : ($('#express_domain_namespace')).val();
-      sh = (typeof ssh === "function" ? ssh(ssh) : void 0) ? void 0 : ($('#express_domain_ssh')).val();
+      ns = namespace || ($('#express_domain_namespace')).val();
+      sh = ssh || ($('express_domain_ssh')).val();
       ($('#show_namespace')).text(ns);
-      return ($('#show_ssh')).text(sh);
+      ($('#show_ssh')).text((sh.slice(0, 20)) + '...');
+      ($('#express_domain_namespace')).val(ns);
+      return ($('#express_domain_ssh')).val(sh);
     };
     toggle_domain_update_form = function() {
       if (domain_update_form.hasClass('hidden')) {
@@ -170,7 +168,7 @@
     spinner_closebtn.live('click', function(event) {
       return close_spinner('', 100);
     });
-    ($('input.create', domain_form_container)).live('click', function(event) {
+    domain_form_container.delegate('form', 'submit', function(event) {
       switch (domain_action) {
         case 'update':
           return show_spinner('Updating your domain...');
@@ -178,7 +176,7 @@
           return show_spinner('Creating your domain...');
       }
     });
-    ($('input.create', app_form)).live('click', function(event) {
+    app_form.delegate('form', 'submit', function(event) {
       return show_spinner('Creating your app...');
     });
     domain_update_form.live('switch_create_to_update', setup_domain_update_form);

@@ -1,4 +1,5 @@
 require 'uri'
+require 'timeout'
 
 module ExpressApi
   
@@ -28,7 +29,10 @@ module ExpressApi
       http = Net::HTTP.new(url.host, url.port)
       http.use_ssl = true
       http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-      res = http.start {|http| http.request(req)}
+      
+      res = Timeout::timeout 15 do
+        http.start {|http| http.request(req)}
+      end
 
       Rails.logger.debug "POST Response code = #{res.code}"
       
@@ -42,19 +46,21 @@ module ExpressApi
         end
       elsif res.is_a? Net::HTTPClientError
         errors.add(:base, I18n.t('express_api.errors.unauthorized'))
-        raise Exception if raise_exception
+        raise Exception, I18n.t('express_api.errors.unauthorized') if raise_exception
       else
         errors.add(:base, I18n.t(:unknown))
-        raise Exception if raise_exception
+        raise Exception, I18n.t(:unknown) if raise_exception
       end
+    rescue Timeout::Error
+      Rails.logger.error "Http call timed out"
+      errors.add :base, I18n.t('express_api.errors.timeout')
+      raise if raise_exception
     rescue Exception => e
       Rails.logger.error "Exception occurred while calling Express API - #{e.message}"
       Rails.logger.error e, e.backtrace
       # set error message if not already set
       errors.add(:base, I18n.t(:unknown)) if errors[:base].empty?
-      if raise_exception
-        raise
-      end
+      raise if raise_exception
     end
   end
   

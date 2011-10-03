@@ -42,6 +42,7 @@ instance_id="$instance_id"
 public_ip="$public_ip"
 public_hostname="$public_hostname"
 EOF
+    chmod o-rws /etc/libra/node_data.conf
     return
 }
 

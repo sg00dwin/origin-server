@@ -11,10 +11,21 @@ include OpenShift::AWS
 class Release < Thor
   include Thor::Actions
   include OpenShift::Tito
+  
+  no_tasks do
+    def git_pull
+      run("git pull", :verbose => options.verbose?)
+      if File.exists?('../os-client-tools')
+        inside('../os-client-tools') do
+          run("git pull", :verbose => options.verbose?)
+        end
+      end
+    end
+  end
 
   desc "check", "Check the directories that need to be released"
   def check
-    run("git pull", :verbose => options.verbose?)
+    git_pull
     puts "Changes detected in the following directories: #{get_build_dirs.pretty_inspect}"
   end
 
@@ -31,7 +42,7 @@ class Release < Thor
     end
      
     # Update the repo
-    run("git pull", :verbose => options.verbose?)
+    git_pull
 
     get_build_dirs.each do |build_dir|
       inside(File.expand_path("../#{build_dir}", File.dirname(__FILE__))) do
@@ -111,7 +122,19 @@ class Release < Thor
         # Check for the supplied NVR value (e.g. 0.45.1)
         if nvr_regex.match(package)
           # Confirm the package is valid
-          nvr_package = `git tag | grep #{package} | tail -n1`.chomp
+          nvr_package = nil
+          if package =~ /^rhc-(\d)/
+            if File.exists?('../os-client-tools')
+              inside('../os-client-tools') do
+                nvr_package = `git tag | grep #{package} | tail -n1`.chomp
+              end
+            else            
+              puts "Couldn't find ../os-client-tools."
+              exit 1
+            end
+          else
+            nvr_package = `git tag | grep #{package} | tail -n1`.chomp
+          end
 
           unless nvr_package.empty?
             package = nvr_package
@@ -121,8 +144,16 @@ class Release < Thor
           end
         else
           # No NVR was specified - lookup the latest
+          tags = []
           if package == 'rhc'
-            tags = `git tag | grep -e rhc-[0-9]`.chomp.split("\n")
+            if File.exists?('../os-client-tools')
+              inside('../os-client-tools') do
+                tags = `git tag | grep -e rhc-[0-9]`.chomp.split("\n")
+              end
+            else            
+              puts "Couldn't find ../os-client-tools."
+              exit 1
+            end
           else
             tags = `git tag | grep #{package}-`.chomp.split("\n")
           end
@@ -148,25 +179,33 @@ class Release < Thor
 
     # Build the gem locally since it's not stored centrally like RPMs in Brew
     puts "Building client gem..."
-    #inside(File.expand_path(File.dirname(File.expand_path(__FILE__)) + "/../client")) do
-    #  unless run('./build_pure.sh', :verbose => options.verbose?)
-    #    puts "ERROR - client gem building failed"
-    #    exit 1
-    #  end
-    #end
-    puts "Done"
+    if File.exists?('../os-client-tools/express')
+      inside(File.expand_path(File.dirname(File.expand_path(__FILE__)) + "/../../os-client-tools/express")) do
+        unless run('./build_pure.sh', :verbose => options.verbose?)
+          puts "ERROR - client gem building failed"
+          exit 1
+        end
+      end
+      puts "Done"
+    else
+      puts "Couldn't find ../os-client-tools/express.  Skipping build client gem step."
+    end
 
     puts "Syncing RPMs and gems to repo..."
     unless run("#{rsync} /tmp/#{mash_config}/#{mash_config}/* #{repo}/#{mash_config}/", :verbose => options.verbose?)
       puts "ERROR - RPM sync failed.  Make sure you have root access on #{repo_host}"
       exit 1
     end
-
-    unless run("#{rsync} client/pkg/*.gem #{repo}/#{mash_config}/client/gems/", :verbose => options.verbose?)
-      puts "ERROR - Gem sync failed.  Make sure you have root access on #{repo_host}"
-      exit 1
+    
+    if File.exists?('../os-client-tools/express')
+      unless run("#{rsync} ../os-client-tools/express/pkg/*.gem #{repo}/#{mash_config}/client/gems/", :verbose => options.verbose?)
+        puts "ERROR - Gem sync failed.  Make sure you have root access on #{repo_host}"
+        exit 1
+      end
+      puts "Done"
+    else
+      puts "Couldn't find ../os-client-tools/express.  Skipping rsync client gem step."
     end
-    puts "Done"
 
     puts "Updating gem indexes..."
     unless run("ssh root@#{repo_host} 'gem generate_index -d #{repo_dir}/#{mash_config}/client'", :verbose => options.verbose?)

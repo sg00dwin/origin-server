@@ -2,7 +2,7 @@
 
 Summary:   Provides python-wsgi-3.2 support
 Name:      rhc-cartridge-wsgi-3.2
-Version:   0.78.5
+Version:   0.79.1
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -60,6 +60,7 @@ ln -s %{cartridgedir}/../abstract-httpd/info/hooks/start %{buildroot}%{cartridge
 ln -s %{cartridgedir}/../abstract-httpd/info/hooks/status %{buildroot}%{cartridgedir}/info/hooks/status
 ln -s %{cartridgedir}/../abstract-httpd/info/hooks/stop %{buildroot}%{cartridgedir}/info/hooks/stop
 ln -s %{cartridgedir}/../abstract-httpd/info/hooks/update_namespace %{buildroot}%{cartridgedir}/info/hooks/update_namespace
+ln -s %{cartridgedir}/../abstract-httpd/info/hooks/preconfigure %{buildroot}%{cartridgedir}/info/hooks/preconfigure
 
 %clean
 rm -rf %{buildroot}
@@ -76,6 +77,12 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Thu Sep 29 2011 Dan McPherson <dmcphers@redhat.com> 0.79.1-1
+- bump spec numbers (dmcphers@redhat.com)
+
+* Wed Sep 28 2011 Dan McPherson <dmcphers@redhat.com> 0.78.6-1
+- add preconfigure for jenkins to split out auth key gen (dmcphers@redhat.com)
+
 * Mon Sep 26 2011 Dan McPherson <dmcphers@redhat.com> 0.78.5-1
 - Added a comment so its more obvious where to start coding
   (mmcgrath@redhat.com)

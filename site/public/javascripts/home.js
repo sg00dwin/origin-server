@@ -18,13 +18,11 @@
     rts = $('#retweets');
     rts.empty();
     list = $('<ul></ul>');
-    console.log('list', list);
     rts.append(list);
     _results = [];
     for (_i = 0, _len = data.length; _i < _len; _i++) {
       rt = data[_i];
       item = $('<li></li>');
-      console.log('item', item);
       item.append($(_this.renderTweet(rt.retweeted_status)));
       _results.push(list.append(item));
     }

@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.78.13
+Version:       0.79.1
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -157,6 +157,18 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Thu Sep 29 2011 Dan McPherson <dmcphers@redhat.com> 0.79.1-1
+- bump spec numbers (dmcphers@redhat.com)
+- add condition around removing env var (dmcphers@redhat.com)
+- add : to allowed args (dmcphers@redhat.com)
+- env var add/remove (dmcphers@redhat.com)
+
+* Wed Sep 28 2011 Dan McPherson <dmcphers@redhat.com> 0.78.15-1
+- add preconfigure for jenkins to split out auth key gen (dmcphers@redhat.com)
+
+* Wed Sep 28 2011 Dan McPherson <dmcphers@redhat.com> 0.78.14-1
+- Correcting bandwidth error (mmcgrath@redhat.com)
+
 * Mon Sep 26 2011 Dan McPherson <dmcphers@redhat.com> 0.78.13-1
 - let ssh key alter work with multiple keys (dmcphers@redhat.com)
 

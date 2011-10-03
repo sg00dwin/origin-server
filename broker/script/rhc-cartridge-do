@@ -54,4 +54,4 @@ end
 Libra.c[:rpc_opts] = options
 
 # Execute the options on a Libra framework
-Libra.execute(options[:cartridge], options[:action], options[:app_name], options[:rhlogin])
+Libra.execute(options[:cartridge], options[:action], options[:app_name], options[:rhlogin], nil)

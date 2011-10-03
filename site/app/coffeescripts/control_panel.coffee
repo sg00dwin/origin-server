@@ -170,10 +170,12 @@ $ ->
     setup_domain_update_form()
 
   update_values = ->
-    ns = if namespace? namespace else ($ '#express_domain_namespace').val()
-    sh = if ssh? ssh else ($ '#express_domain_ssh').val()
+    ns = namespace || ($ '#express_domain_namespace').val()
+    sh = ssh || ($ 'express_domain_ssh').val()
     ($ '#show_namespace').text ns
-    ($ '#show_ssh').text sh
+    ($ '#show_ssh').text (sh.slice 0, 20) + '...'
+    ($ '#express_domain_namespace').val ns
+    ($ '#express_domain_ssh').val sh
 
   toggle_domain_update_form = ->
     if domain_update_form.hasClass 'hidden'
@@ -239,12 +241,12 @@ $ ->
   spinner_closebtn.live 'click', (event) ->
     close_spinner '', 100
   
-  ($ 'input.create', domain_form_container).live 'click', (event) ->
+  domain_form_container.delegate 'form', 'submit', (event) ->
     switch domain_action
       when 'update' then show_spinner 'Updating your domain...'
       when 'create' then show_spinner 'Creating your domain...'
     
-  ($ 'input.create', app_form).live 'click', (event) ->
+  app_form.delegate 'form', 'submit', (event) ->
     show_spinner 'Creating your app...'
   
   domain_update_form.live 'switch_create_to_update', setup_domain_update_form

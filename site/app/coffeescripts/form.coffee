@@ -9,44 +9,57 @@ $ ->
     (/^[A-Za-z0-9]*$/).test value
   ), "Only letters and numbers are allowed"
 
-  $("#new_access_express_request").validate rules: 
-    "access_express_request[terms_accepted]": 
+  $("#new_access_express_request").validate rules:
+    "access_express_request[terms_accepted]":
       required: true
 
-  $("#new_access_flex_request").validate rules: 
-    "access_flex_request[terms_accepted]": 
+  $("#new_access_flex_request").validate rules:
+    "access_flex_request[terms_accepted]":
       required: true
 
-  $("#new_express_domain").validate rules: 
-    "express_domain[namespace]": 
+  $("#new_express_domain").validate rules:
+    "express_domain[namespace]":
       required: true
       alpha_numeric: true
       maxlength: 16
-    "express_domain[ssh]": 
+    "express_domain[ssh]":
       required: true
-      accept: ".pub"
-    "express_domain[password]": 
+    "express_domain[password]":
       required: true
       minlength: 6
-
+  
+  $("#new_express_app").validate rules:
+    "express_app[app_name]":
+      required: true
+      alpha_numeric: true,
+      maxlength: 16
+    "express_app[cartridge]":
+      required: true
+      
   #$("input:visible:first").focus()
 
 ## Dialogs ##
   dialogs = $ '.dialog'
 
-  open_dialog = (dialog) -> 
+  open_dialog = (dialog) ->
     # Close any other open dialogs
     dialogs.hide()
     # Show given dialog
     dialog.show()
+    # Put focus in the first visible box
+    dialog.find("input:visible:first").focus()
     # scroll to top
     ($ window, 'html', 'body').scrollTop 0
 
   close_dialog = (dialog) ->
+    dialog.find('div.message').remove()
+    dialog.find('input:visible:not(.button)').val('')
+    dialog.find('label.error').remove()
+    dialog.find('input').removeClass('error')
     dialog.hide()
     
   # Close buttons
-  close_btn = $ '.close_button' 
+  close_btn = $ '.close_button'
   # Sign up dialog
   signup = $ '#signup'
   # Sign in dialog
@@ -62,10 +75,11 @@ $ ->
 
   ($ 'a.sign_in').click (event) ->
     event.preventDefault()
+    login = $ 'div.content #login-form'
     userbox = $ '#user_box #login-form'
-    if userbox.length > 0
+    if login.length > 0 || userbox.length > 0
       dialogs.hide()
-      userbox.find('#login_input').focus()
+      $('#login_input').focus()
     else
       open_dialog signin
 
@@ -134,10 +148,9 @@ $ ->
   # Bind the forms
   $.each [signin, ($ '#login-form')], (index,element) ->
     element.find('form').bind('ajax:complete', login_complete ).validate rules:
-      "login": 
+      "login":
         required: true
-        email: true
-      "password": 
+      "password":
         required: true
 
   $.each [signup, $( '#new-user')], (index, element) ->
@@ -160,7 +173,7 @@ $ ->
       minlength: 6
     "password_confirmation":
       required: true
-      minlength: 6
+      equalTo: '#password'
 
   reset.find('form').bind('ajax:complete', reset_password_complete).validate rules:
     "email":

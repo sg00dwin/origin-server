@@ -21,7 +21,7 @@ APP_JBOSS_BIN_DIR="$APP_JBOSS"/bin
 # For debugging, capture script output into app tmp dir
 #pid=$$
 exec 4>&1 > /dev/null 2>&1  # Link file descriptor 4 with stdout, saves stdout.
-exec > "$APP_JBOSS_TMP_DIR/jbossas7-${OPENSHIFT_APP_NAME}_ctl-$1.${pid}.log" 2>&1
+exec > "$APP_JBOSS_TMP_DIR/jbossas7-${OPENSHIFT_APP_NAME}_ctl-$1.log" 2>&1
 
 # Kill the process given by $1 and its children
 killtree() {
@@ -110,8 +110,9 @@ case "$1" in
     status)
         # Restore stdout and close file descriptor #4
         exec 1>&4 4>&-
+        
         if ! isrunning; then
-            echo " - Application is NOT running"
+            echo "Application '${OPENSHIFT_APP_NAME}' is either stopped or inaccessible"
             exit 0
         fi
 

@@ -166,7 +166,7 @@ class BrokerController < ApplicationController
         render_unauthorized and return
       end
     else
-      username = Libra::User.new(data['rhlogin'], nil, nil, nil, nil, params['password'], ticket).login()
+      username = Libra::User.new(data['rhlogin'], nil, nil, nil, nil, nil, params['password'], ticket).login()
     end
     return username
   end

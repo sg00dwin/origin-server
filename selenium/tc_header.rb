@@ -17,9 +17,9 @@ class Header < Test::Unit::TestCase
     check_element_displayed(:xpath, ".//aside[@id='announcements']")
 
     # Check links and their titles
-    { 'Overview' => 'OpenShift by Red Hat | Cloud Platform',
-      'Shared' => 'OpenShift by Red Hat | Express',
-      'Dedicated' => 'OpenShift by Red Hat | Flex',
+    { 'Platform Overview' => 'OpenShift by Red Hat | Cloud Platform',
+      'Express' => 'OpenShift by Red Hat | Express',
+      'Flex' => 'OpenShift by Red Hat | Flex',
       'Community' => 'Forums | Red Hat Openshift Forum'
     }.each do |text,title|
       find_element(:xpath,".//a[text()='#{text}']").click()

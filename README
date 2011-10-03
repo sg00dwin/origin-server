@@ -3,10 +3,8 @@ build:
   Build Artifacts
 cartridges:
   The root for the cartridges source
-client:
-  Contains the client tools
 common:
-  Artifacts shared across server and node (and potentially client)
+  Artifacts shared across server and node
 misc:
   Bucket for documentation/development utilities/etc
 node:

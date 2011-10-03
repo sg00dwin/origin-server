@@ -90,10 +90,7 @@ module AppHelper
     end
 
     def get_stop_string
-      case @type
-        when "jbossas-7.0" then "NOT running"
-        else "stopped"
-      end
+      "stopped"
     end
 
     def curl(url, timeout=30)

@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.78.17
+Version:   0.79.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -69,6 +69,45 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Mon Oct 03 2011 Dan McPherson <dmcphers@redhat.com> 0.79.5-1
+- Reverting DRYed up streamline configs for now (fotios@redhat.com)
+
+* Mon Oct 03 2011 Dan McPherson <dmcphers@redhat.com> 0.79.4-1
+- Fixed Rails missing for cucumber tests (fotios@redhat.com)
+- Navigation changes (edirsh@redhat.com)
+- Bug 742429 (edirsh@redhat.com)
+- DRYed up streamline configuration variables (fotios@redhat.com)
+
+* Fri Sep 30 2011 Dan McPherson <dmcphers@redhat.com> 0.79.3-1
+- Fixed production.rb to use resetPassword.html (fotios@redhat.com)
+- Fixed development.rb (fotios@redhat.com)
+- Fixed production password reset URL (fotios@redhat.com)
+- Fixed development password reset URL (fotios@redhat.com)
+
+* Thu Sep 29 2011 Dan McPherson <dmcphers@redhat.com> 0.79.2-1
+- Remove unnecessary logging (edirsh@redhat.com)
+- Bug 730430 - ssh oddities (edirsh@redhat.com)
+- Patch rack/utils to fix cookie validation in streamline (fotios@redhat.com)
+
+* Thu Sep 29 2011 Dan McPherson <dmcphers@redhat.com> 0.79.1-1
+- bump spec numbers (dmcphers@redhat.com)
+- bug 742168 (dmcphers@redhat.com)
+
+* Wed Sep 28 2011 Dan McPherson <dmcphers@redhat.com> 0.78.20-1
+- Fixed form focus flow. Fixed selenium artifact creation (fotios@redhat.com)
+- Improve consistency in naming and linking to control panel
+  (edirsh@redhat.com)
+- Improve client-side validation of express apps/domains (edirsh@redhat.com)
+- Add features page (edirsh@redhat.com)
+- Minor changes to client-side validation (edirsh@redhat.com)
+- Polish form styling (edirsh@redhat.com)
+
+* Tue Sep 27 2011 Dan McPherson <dmcphers@redhat.com> 0.78.19-1
+- Add timeout to http call to broker in web interface (edirsh@redhat.com)
+
+* Tue Sep 27 2011 Dan McPherson <dmcphers@redhat.com> 0.78.18-1
+- Hard code cartridge list for now (edirsh@redhat.com)
+
 * Mon Sep 26 2011 Dan McPherson <dmcphers@redhat.com> 0.78.17-1
 - Removed .orig file from bad merge (fotios@redhat.com)
 - Added password change functionality (fotios@redhat.com)

@@ -1,0 +1,107 @@
+#!/bin/bash
+
+# Copyright © 2010 Mike McGrath All rights reserved
+# Copyright © 2010 Red Hat, Inc. All rights reserved
+
+# This copyrighted material is made available to anyone wishing to use, modify,
+# copy, or redistribute it subject to the terms and conditions of the GNU
+# General Public License v.2.  This program is distributed in the hope that it
+# will be useful, but WITHOUT ANY WARRANTY expressed or implied, including the
+# implied warranties of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.  You should have
+# received a copy of the GNU General Public License along with this program;
+# if not, write to the Free Software Foundation, Inc., 51 Franklin Street,
+# Fifth Floor, Boston, MA 02110-1301, USA. Any Red Hat trademarks that are
+# incorporated in the source code or documentation are not subject to the GNU
+# General Public License and may only be used or replicated with the express
+# permission of Red Hat, Inc.
+
+# Executes before configure.  Gives opportunity to make any callbacks to the broker before configure runs.  
+
+# Exit on any errors
+set -e
+#set -x
+
+if [ -f '/etc/libra/node.conf' ]
+then
+    . /etc/libra/node.conf
+elif [ -f 'node.conf' ]
+then
+    . node.conf
+else
+    echo "node.conf not found.  Cannot continue" 1>&2
+    exit 3
+fi
+
+if [ -f '/etc/libra/node_data.conf' ]
+then
+    . /etc/libra/node_data.conf
+elif [ -f 'node_data.conf' ]
+then
+    . node_data.conf
+else
+    echo "node_data.conf not found.  Cannot continue" 1>&2
+    exit 3
+fi
+
+
+CART_DIR=/usr/libexec/li/cartridges
+CART_INFO_DIR=$CART_DIR/jenkins-1.4/info
+
+while getopts 'd' OPTION
+do
+    case $OPTION in
+        d) set -x
+        ;;
+        ?) print_help
+        ;;
+    esac
+done
+
+
+[ $# -eq 3 ] || print_help
+
+namespace=`basename $2`
+application="$1"
+uuid=$3
+
+APP_HOME="$libra_dir/$uuid"
+APP_DIR=`echo $APP_HOME/$application | tr -s /`
+
+
+function generate_ssh_keys {
+    /bin/mkdir -p $APP_DIR/data/.ssh/
+    /usr/bin/ssh-keygen -N '' -f $APP_DIR/data/.ssh/jenkins_id_rsa
+
+    /bin/chown root.$uuid -R "$APP_DIR/data/.ssh/"
+    chmod 0750 "$APP_DIR/data/.ssh/"
+    chmod 0640 "$APP_DIR/data/.ssh/jenkins_id_rsa"
+    chmod 0640 "$APP_DIR/data/.ssh/jenkins_id_rsa.pub"
+    /usr/bin/chcon -t libra_var_lib_t -l $mcs_level -R "$APP_DIR/data/.ssh/"
+}
+
+uid=$(id -u "$uuid")
+mcs_level=`${CART_DIR}/li-controller/info/bin/mcs_level $uid`
+export mcs_level
+
+#
+# Create http base for application, every app gets its own apache instance
+#
+
+[ -d "$APP_DIR" ] && error "${application}.  Please destroy then recreate, or pick a new name" 132
+
+mkdir -p "$APP_DIR"
+pushd "$APP_DIR" > /dev/null
+mkdir logs run data tmp repo
+popd > /dev/null
+
+#
+# Generate key pair
+#
+generate_ssh_keys
+
+public_key=$(cat $APP_DIR/data/.ssh/jenkins_id_rsa.pub)
+set -- $public_key
+echo "SSH_KEY_ADD: $2"
+
+echo "BROKER_AUTH_KEY_ADD: "
