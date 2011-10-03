@@ -2,7 +2,7 @@
 
 Summary:       Common dependencies of the OpenShift broker and site
 Name:          rhc-server-common
-Version:       0.79.2
+Version:       0.79.3
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -54,6 +54,10 @@ rm -rf %{buildroot}
                                   -s /sbin/nologin 2>&1 > /dev/null || :
 
 %changelog
+* Mon Oct 03 2011 Dan McPherson <dmcphers@redhat.com> 0.79.3-1
+- Fixed Rails missing for cucumber tests (fotios@redhat.com)
+- DRYed up streamline configuration variables (fotios@redhat.com)
+
 * Thu Sep 29 2011 Dan McPherson <dmcphers@redhat.com> 0.79.2-1
 - turn on cnames and some status work (dmcphers@redhat.com)
 
