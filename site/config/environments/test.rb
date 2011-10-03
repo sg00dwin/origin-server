@@ -39,13 +39,13 @@ RedHatCloud::Application.configure do
   config.app_scope = "app"
   config.integrated = false
   config.login = "/app/login"
+
+  # streamline urls are configured in initializers/streamline.rb
+  #  If you want to override the default, simply configure it here
+  #  Note: It must include the base_url
   config.streamline = {
     :host => 'https://localhost',
     :base_url => '',
-    :email_confirm_url => '/confirm.html',
-    :lost_password_url => '/lostPassword.html',
-    :change_password_url => '/changePassword.html',
-    :login_url => '',
     :register_secret => 'c0ldW1n3',
     :user_info_secret => 'sw33tl1Qu0r'
   }

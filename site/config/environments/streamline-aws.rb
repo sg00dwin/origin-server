@@ -31,13 +31,13 @@ RedHatCloud::Application.configure do
   config.app_scope = "app"
   config.integrated = true
   config.login = "https://www.webqa.redhat.com/wapps/streamline/login.html"
+
+  # streamline urls are configured in initializers/streamline.rb
+  #  If you want to override the default, simply configure it here
+  #  Note: It must include the base_url
   config.streamline = {
     :host => 'https://10.196.215.67',
     :base_url => '/wapps/streamline',
-    :email_confirm_url => '/wapps/streamline/confirm.html',
-    :lost_password_url => '/wapps/streamline/resetPassword.html',
-    :change_password_url => '/wapps/streamline/protected/changePassword.html',
-    :login_url => '/wapps/streamline/login.html',
     :register_secret => 'c0ldW1n3',
     :user_info_secret => 'sw33tl1Qu0r'
   }

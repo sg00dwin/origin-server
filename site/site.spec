@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.79.2
+Version:   0.79.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -69,6 +69,18 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Mon Oct 03 2011 Dan McPherson <dmcphers@redhat.com> 0.79.4-1
+- Fixed Rails missing for cucumber tests (fotios@redhat.com)
+- Navigation changes (edirsh@redhat.com)
+- Bug 742429 (edirsh@redhat.com)
+- DRYed up streamline configuration variables (fotios@redhat.com)
+
+* Fri Sep 30 2011 Dan McPherson <dmcphers@redhat.com> 0.79.3-1
+- Fixed production.rb to use resetPassword.html (fotios@redhat.com)
+- Fixed development.rb (fotios@redhat.com)
+- Fixed production password reset URL (fotios@redhat.com)
+- Fixed development password reset URL (fotios@redhat.com)
+
 * Thu Sep 29 2011 Dan McPherson <dmcphers@redhat.com> 0.79.2-1
 - Remove unnecessary logging (edirsh@redhat.com)
 - Bug 730430 - ssh oddities (edirsh@redhat.com)
