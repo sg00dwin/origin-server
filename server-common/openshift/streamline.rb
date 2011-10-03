@@ -9,28 +9,16 @@ module Streamline
   include ErrorCodes
   attr_accessor :rhlogin, :ticket, :roles, :terms
 
-  @@urls = defined?(Rails)? Rails.configuration.streamline : {
-    :email_confirm_url => "/confirm.html",
-    :lost_password_url => "/resetPassword.html",
-    :change_password_url => "/protected/changePassword.html",
-    :login_url => "/login.html",
-    :register_url => "/registration.html",
-    :request_access_url => "/requestAccess.html",
-    :roles_url => "/cloudVerify.html",
-    :user_info_url => "/userInfo.html",
-    :acknowledge_terms_url => "/protected/acknowledgeTerms.html",
-    :unacknowledged_terms_url => "/protected/findUnacknowledgedTerms.html?hostname=openshift.redhat.com&context=OPENSHIFT&locale=en"
-  }
-
-  @@login_url = URI.parse(@@urls[:login_url])
-  @@register_url = URI.parse(@@urls[:register_url])
-  @@request_access_url = URI.parse(@@urls[:request_access_url])
-  @@roles_url = URI.parse(@@urls[:roles_url])
-  @@email_confirm_url = URI.parse(@@urls[:email_confirm_url])
-  @@user_info_url = URI.parse(@@urls[:user_info_url])
-  @@acknowledge_terms_url = URI.parse(@@urls[:acknowledge_terms_url])
-  @@unacknowledged_terms_url = URI.parse(@@urls[:unacknowledged_terms_url])
-  @@change_password_url = URI.parse(@@urls[:change_password_url])
+  service_base_url = defined?(Rails) ? Rails.configuration.streamline[:host] + Rails.configuration.streamline[:base_url] : ""
+  @@login_url = URI.parse(service_base_url + "/login.html")
+  @@register_url = URI.parse(service_base_url + "/registration.html")
+  @@request_access_url = URI.parse(service_base_url + "/requestAccess.html")
+  @@roles_url = URI.parse(service_base_url + "/cloudVerify.html")
+  @@email_confirm_url = URI.parse(service_base_url + "/confirm.html")
+  @@user_info_url = URI.parse(service_base_url + "/userInfo.html")
+  @@acknowledge_terms_url = URI.parse(service_base_url + "/protected/acknowledgeTerms.html")
+  @@unacknowledged_terms_url = URI.parse(service_base_url + "/protected/findUnacknowledgedTerms.html?hostname=openshift.redhat.com&context=OPENSHIFT&locale=en")
+  @@change_password_url = URI.parse(service_base_url + '/protected/changePassword.html')
 
   def initialize
     @roles = []

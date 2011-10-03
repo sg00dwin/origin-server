@@ -51,7 +51,7 @@ class EmailConfirmController < ApplicationController
 
     begin
       query = {:key => key, :emailAddress => email}
-      url = URI.join(Rails.configuration.streamline[:email_confirm_url],"?#{query.to_query}")
+      url = URI.join(Rails.configuration.streamline[:host],Rails.configuration.streamline[:email_confirm_url],"?#{query.to_query}")
 
       req = Net::HTTP::Get.new(url.path + '?' + url.query)
       http = Net::HTTP.new(url.host, url.port)
