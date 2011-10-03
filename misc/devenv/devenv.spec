@@ -135,7 +135,7 @@ echo "kernel.sem = 250  32000 32  4096" >> /etc/sysctl.conf
 sysctl kernel.sem="250  32000 32  4096"
 
 # Setup facts
-/usr/bin/puppet /usr/libexec/mcollective/update_yaml.pp
+/usr/libexec/mcollective/update_yaml.rb
 crontab -u root %{devenvdir}/crontab
 
 # enable disk quotas

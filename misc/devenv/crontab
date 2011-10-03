@@ -1,1 +1,1 @@
-* * * * * /usr/bin/puppet /usr/libexec/mcollective/update_yaml.pp
+* * * * * /usr/libexec/mcollective/update_yaml.rb
