@@ -10,6 +10,13 @@ done
 
 redeploy_repo_dir.sh
 
+if [ -f "${OPENSHIFT_APP_DIR}/.openshift/markers/force_clean_build" ]
+    echo ".openshift/markers/force_clean_build found!  Recreating pear libs" 1>&2
+    rm -rf "${OPENSHIFT_APP_DIR}"/phplib/pear/*
+    mkdir -p phplib/pear/{docs,ext,php,cache,cfg,data,download,temp,tests,www}
+    pear -c ~/.pearrc config-set php_ini "${OPENSHIFT_APP_DIR}/conf/php.ini"
+fi
+
 if [ -f ~/${OPENSHIFT_APP_NAME}/repo/deplist.txt ]
 then
     for f in $(cat ~/${OPENSHIFT_APP_NAME}/repo/deplist.txt)
