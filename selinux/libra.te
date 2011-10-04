@@ -156,7 +156,7 @@ java_exec(libra_domain)
 gen_require(`
     role system_r;
     role unconfined_r;
-    type unconfined_t;
+    attribute unconfined_usertype;
     type rpm_script_t;
     type puppet_t;
     type puppet_tmp_t;
@@ -165,7 +165,7 @@ gen_require(`
 role_transition unconfined_r libra_initrc_exec_t system_r;
 unconfined_domain_noaudit(libra_initrc_t)
 
-domtrans_pattern(unconfined_t, libra_initrc_exec_t, libra_initrc_t)
+domtrans_pattern(unconfined_usertype, libra_initrc_exec_t, libra_initrc_t)
 domtrans_pattern(rpm_script_t, libra_initrc_exec_t, libra_initrc_t)
 domtrans_pattern(puppet_t, libra_initrc_exec_t, libra_initrc_t)
 dontaudit domain puppet_tmp_t:file { read write };
@@ -252,12 +252,12 @@ allow libra_t libra_var_lib_t:file { execute execute_no_trans };
 # replace with apache_exec_rotatelogs(libra_domain) when available MAL 20110422
 can_exec(libra_t, httpd_rotatelogs_exec_t)
 
-allow unconfined_t libra_t:process transition;
-dontaudit unconfined_t libra_t:process { noatsecure siginh rlimitinh };
-allow unconfined_t libra_t:fd use;
-allow unconfined_t libra_t:fifo_file rw_inherited_fifo_file_perms;
-allow unconfined_t libra_t:process sigchld;
-dontaudit unconfined_t libra_t:socket_class_set { read write };
+allow unconfined_usertype libra_t:process transition;
+dontaudit unconfined_usertype libra_t:process { noatsecure siginh rlimitinh };
+allow unconfined_usertype libra_t:fd use;
+allow unconfined_usertype libra_t:fifo_file rw_inherited_fifo_file_perms;
+allow unconfined_usertype libra_t:process sigchld;
+dontaudit unconfined_usertype libra_t:socket_class_set { read write };
 corecmd_shell_entry_type(libra_domain)
 corecmd_bin_entry_type(libra_domain)
 userdom_use_inherited_user_ptys(libra_t)

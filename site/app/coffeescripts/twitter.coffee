@@ -31,7 +31,7 @@ $ = jQuery
     # add replacement string to link
     
     link.replacement = """
-      <a href="#{link.expanded_url ? link.url}" title="#{link.display_url ? link.url}">#{link.display_url ? link.url}</a>
+      <a href="#{link.expanded_url ? link.url}" title="#{link.display_url ? link.url}" target="_blank">#{link.display_url ? link.url}</a>
       """
     # add link to entity object so that we can keep track of where it goes
     entities[link.indices[0]] = link
@@ -42,7 +42,7 @@ $ = jQuery
   for user in tweet.entities.user_mentions
     # add replacement string to user
     user.replacement = """
-      <a href="http://twitter.com/#!/#{user.screen_name}" title="#{user.name}">
+    <a href="http://twitter.com/#!/#{user.screen_name}" title="#{user.name}" target="_blank">
         @#{user.screen_name}
       </a>
     """
@@ -55,7 +55,7 @@ $ = jQuery
   for tag in tweet.entities.hashtags
     # add replacement string to tag
     tag.replacement = """
-      <a href="http://twitter.com/#!/search?q=##{tag.text}">##{tag.text}</a>
+      <a href="http://twitter.com/#!/search?q=%23#{tag.text}" target="_blank">##{tag.text}</a>
     """
     # add tag to entity object so that we can keep track of where it goes
     entities[tag.indices[0]] = tag
@@ -81,7 +81,7 @@ $ = jQuery
   # Render tweet
   if include_image
     avatar = """
-    <a href="http://twitter.com/#!/#{tweet.user.screen_name}" title="#{tweet.user.name}">
+    <a href="http://twitter.com/#!/#{tweet.user.screen_name}" title="#{tweet.user.name}" target="_blank">
       <img class='avatar' src='#{tweet.user.profile_image_url_https}'>
     </a>
     """

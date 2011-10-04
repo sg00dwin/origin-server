@@ -2,7 +2,7 @@
 
 Summary:   Provides mod_perl support
 Name:      rhc-cartridge-perl-5.10
-Version:   0.9.4
+Version:   0.10.1
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -74,6 +74,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Thu Sep 29 2011 Dan McPherson <dmcphers@redhat.com> 0.10.1-1
+- bump spec numbers (dmcphers@redhat.com)
+
 * Wed Sep 28 2011 Dan McPherson <dmcphers@redhat.com> 0.9.4-1
 - add preconfigure for jenkins to split out auth key gen (dmcphers@redhat.com)
 

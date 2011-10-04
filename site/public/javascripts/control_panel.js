@@ -100,10 +100,12 @@
     }
     update_values = function() {
       var ns, sh;
-      ns = (typeof namespace === "function" ? namespace(namespace) : void 0) ? void 0 : ($('#express_domain_namespace')).val();
-      sh = (typeof ssh === "function" ? ssh(ssh) : void 0) ? void 0 : ($('#express_domain_ssh')).val();
+      ns = namespace || ($('#express_domain_namespace')).val();
+      sh = ssh || ($('express_domain_ssh')).val();
       ($('#show_namespace')).text(ns);
-      return ($('#show_ssh')).text(sh);
+      ($('#show_ssh')).text((sh.slice(0, 20)) + '...');
+      ($('#express_domain_namespace')).val(ns);
+      return ($('#express_domain_ssh')).val(sh);
     };
     toggle_domain_update_form = function() {
       if (domain_update_form.hasClass('hidden')) {

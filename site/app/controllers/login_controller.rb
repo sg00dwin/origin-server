@@ -82,7 +82,7 @@ class LoginController < ApplicationController
       responseText[:redirectUrl] = root_url
     else
       # Do the remote login
-      uri = URI.join( Rails.configuration.streamline[:host], Rails.configuration.streamline[:login_url])
+      uri = URI.parse( Rails.configuration.streamline[:login_url] ) 
       
       # Create the HTTPS object
       https = Net::HTTP.new( uri.host, uri.port )

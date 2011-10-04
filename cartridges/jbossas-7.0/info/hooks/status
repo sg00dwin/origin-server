@@ -17,7 +17,7 @@
 # General Public License and may only be used or replicated with the express
 # permission of Red Hat, Inc.
 
-# Creates a per customer httpd instance
+# Give status of application
 
 # Exit on any errors
 set -e

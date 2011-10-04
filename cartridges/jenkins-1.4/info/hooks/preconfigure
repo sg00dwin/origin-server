@@ -92,7 +92,7 @@ export mcs_level
 
 mkdir -p "$APP_DIR"
 pushd "$APP_DIR" > /dev/null
-mkdir logs run data tmp
+mkdir logs run data tmp repo
 popd > /dev/null
 
 #

@@ -11,7 +11,7 @@ module Libra
   class Server
     # Cartridge definitions
     @@C_CONTROLLER = 'li-controller'
-    @@USE_CNAME = false
+    @@USE_CNAME = true
 
     attr_reader :name, :repos, :carts, :embedcarts
 

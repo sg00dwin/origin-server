@@ -6,4 +6,4 @@ do
     . $f
 done
 
-#stop_app.sh
+stop_app.sh

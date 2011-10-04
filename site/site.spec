@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.78.20
+Version:   0.79.3
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -69,6 +69,21 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Fri Sep 30 2011 Dan McPherson <dmcphers@redhat.com> 0.79.3-1
+- Fixed production.rb to use resetPassword.html (fotios@redhat.com)
+- Fixed development.rb (fotios@redhat.com)
+- Fixed production password reset URL (fotios@redhat.com)
+- Fixed development password reset URL (fotios@redhat.com)
+
+* Thu Sep 29 2011 Dan McPherson <dmcphers@redhat.com> 0.79.2-1
+- Remove unnecessary logging (edirsh@redhat.com)
+- Bug 730430 - ssh oddities (edirsh@redhat.com)
+- Patch rack/utils to fix cookie validation in streamline (fotios@redhat.com)
+
+* Thu Sep 29 2011 Dan McPherson <dmcphers@redhat.com> 0.79.1-1
+- bump spec numbers (dmcphers@redhat.com)
+- bug 742168 (dmcphers@redhat.com)
+
 * Wed Sep 28 2011 Dan McPherson <dmcphers@redhat.com> 0.78.20-1
 - Fixed form focus flow. Fixed selenium artifact creation (fotios@redhat.com)
 - Improve consistency in naming and linking to control panel

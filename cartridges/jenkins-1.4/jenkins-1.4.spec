@@ -2,7 +2,7 @@
 
 Summary:   Provides jenkins-1.4 support
 Name:      rhc-cartridge-jenkins-1.4
-Version:   0.78.11
+Version:   0.79.2
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -32,6 +32,16 @@ ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/libra/cart
 cp -r info %{buildroot}%{cartridgedir}/
 cp -r template %{buildroot}%{cartridgedir}/
 mkdir -p %{buildroot}%{cartridgedir}/info/data/
+ln -s %{cartridgedir}/../abstract-httpd/info/hooks/add-module %{buildroot}%{cartridgedir}/info/hooks/add-module
+ln -s %{cartridgedir}/../abstract-httpd/info/hooks/info %{buildroot}%{cartridgedir}/info/hooks/info
+ln -s %{cartridgedir}/../abstract-httpd/info/hooks/post-install %{buildroot}%{cartridgedir}/info/hooks/post-install
+ln -s %{cartridgedir}/../abstract-httpd/info/hooks/post-remove %{buildroot}%{cartridgedir}/info/hooks/post-remove
+ln -s %{cartridgedir}/../abstract-httpd/info/hooks/reload %{buildroot}%{cartridgedir}/info/hooks/reload
+ln -s %{cartridgedir}/../abstract-httpd/info/hooks/remove-module %{buildroot}%{cartridgedir}/info/hooks/remove-module
+ln -s %{cartridgedir}/../abstract-httpd/info/hooks/restart %{buildroot}%{cartridgedir}/info/hooks/restart
+ln -s %{cartridgedir}/../abstract-httpd/info/hooks/start %{buildroot}%{cartridgedir}/info/hooks/start
+ln -s %{cartridgedir}/../abstract-httpd/info/hooks/stop %{buildroot}%{cartridgedir}/info/hooks/stop
+ln -s %{cartridgedir}/../abstract-httpd/info/hooks/update_namespace %{buildroot}%{cartridgedir}/info/hooks/update_namespace
 
 %clean
 rm -rf %{buildroot}
@@ -49,6 +59,24 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Thu Sep 29 2011 Dan McPherson <dmcphers@redhat.com> 0.79.2-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- turn on cnames and some status work (dmcphers@redhat.com)
+- move hook links to spec file (dmcphers@redhat.com)
+- add base status to jenkins (dmcphers@redhat.com)
+- jenkins cleanup (dmcphers@redhat.com)
+- Making start command easier to understand (mmcgrath@redhat.com)
+- fix order of params to start jenkins (dmcphers@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- Switching up to use JENKINS_URL as well as full cloud auto-deployment
+  (mmcgrath@redhat.com)
+
+* Thu Sep 29 2011 Dan McPherson <dmcphers@redhat.com> 0.79.1-1
+- bump spec numbers (dmcphers@redhat.com)
+- adding global env management with jenkins cartridge (mmcgrath@redhat.com)
+
 * Wed Sep 28 2011 Dan McPherson <dmcphers@redhat.com> 0.78.11-1
 - add preconfigure for jenkins to split out auth key gen (dmcphers@redhat.com)
 

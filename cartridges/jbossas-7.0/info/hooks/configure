@@ -299,30 +299,12 @@ else
     cp ${jboss_home}/bin/standalone.sh "$APP_JBOSS_BIN_DIR"
 fi
 # Update the standalone.xml for the application IP
-sed -i "s/{ip}/$IP/g" "$APP_JBOSS"/standalone/configuration/standalone.xml
-sed -i "s/{app_name}/$application/g" "$APP_JBOSS"/standalone/configuration/standalone.xml
+sed -i "s/\${OPENSHIFT_INTERNAL_IP}/$IP/g" "$APP_JBOSS"/standalone/configuration/standalone.xml
+sed -i "s/\${OPENSHIFT_APP_NAME}/$application/g" "$APP_JBOSS"/standalone/configuration/standalone.xml
 popd > /dev/null
 
 # Repo
 create_repo $application $user_id $group_id $mcs_level
-
-# Build the standalone.conf file
-echo "Creating standalone.conf..."
-cat <<EOF > "$APP_JBOSS"/bin/standalone.conf
-# This uses the sun jdk install since the current open-jdk version has a bug
-# Once this has been upgrade to something based on 1.6.0_20 or higher,
-# such as java-1.6.0-openjdk-1.6.0.0-1.39.1.9.7.el6, require the sun jdk.
-JAVA_HOME="/usr/lib/jvm/jre-1.6.0"
-#
-# Specify options to pass to the Java VM.
-#
-if [ "x\$JAVA_OPTS" = "x" ]; then
-   JAVA_OPTS="-Xmx95m -XX:MaxPermSize=85m -XX:+AggressiveOpts -XX:+DoEscapeAnalysis -Dorg.apache.tomcat.util.LOW_MEMORY=true -Dorg.jboss.resolver.warning=true "
-fi
-
-# Add the user module path ahead of the server modules root
-export MODULEPATH="$APP_JBOSS"/standalone/configuration/modules:"$APP_JBOSS"/modules
-EOF
 
 # Create a link from the repo/deployments directory to the standalone/deployments content
 mkdir -p "$APP_DIR"/repo/deployments
@@ -380,6 +362,32 @@ echo "export OPENSHIFT_APP_TYPE='${jboss_version}'" > $APP_HOME/.env/OPENSHIFT_A
 echo "export OPENSHIFT_APP_CTL_SCRIPT='$APP_DIR/${application}_ctl.sh'" > $APP_HOME/.env/OPENSHIFT_APP_CTL_SCRIPT
 echo "export OPENSHIFT_APP_DNS='${application}-${namespace}.${libra_domain}'" > $APP_HOME/.env/OPENSHIFT_APP_DNS
 echo "export PATH=$JBOSS_CARTRIDGE_ROOT/info/bin/:$CART_DIR/abstract-httpd/info/bin/:$CART_DIR/li-controller/info/bin/:$PATH" > $APP_HOME/.env/PATH
+
+# Build the standalone.conf file
+echo "Creating standalone.conf..."
+cat <<EOF > "$APP_JBOSS"/bin/standalone.conf
+# This uses the sun jdk install since the current open-jdk version has a bug
+# Once this has been upgrade to something based on 1.6.0_20 or higher,
+# such as java-1.6.0-openjdk-1.6.0.0-1.39.1.9.7.el6, require the sun jdk.
+JAVA_HOME="/usr/lib/jvm/jre-1.6.0"
+#
+# Specify options to pass to the Java VM.
+#
+if [ "x\$JAVA_OPTS" = "x" ]; then
+   JAVA_OPTS="-Xmx95m -XX:MaxPermSize=85m -XX:+AggressiveOpts -XX:+DoEscapeAnalysis -Dorg.apache.tomcat.util.LOW_MEMORY=true -Dorg.jboss.resolver.warning=true "
+fi
+
+# Add the user module path ahead of the server modules root
+export MODULEPATH="$APP_JBOSS"/standalone/configuration/modules:"$APP_JBOSS"/modules
+
+# Map all OPENSHIFT_X env variable to JVM system properties (US1174)
+echo importing env vars...
+which import_env.sh
+. import_env.sh
+echo "OPENSHIFT_ENV_TO_PROPS = \$OPENSHIFT_ENV_TO_PROPS"
+JAVA_OPTS="\$JAVA_OPTS \${OPENSHIFT_ENV_TO_PROPS}"
+echo "JAVA_OPTS=\$JAVA_OPTS"
+EOF
 
 #
 # Start the server
