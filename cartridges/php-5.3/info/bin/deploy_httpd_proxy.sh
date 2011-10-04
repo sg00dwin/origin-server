@@ -7,18 +7,19 @@
 # all of the configuration bits required for ssl to work including key location
 #
 function print_help {
-    echo "Usage: $0 app-name namespace uuid"
+    echo "Usage: $0 app-name namespace uuid IP"
 
     echo "$0 $@" | logger -p local0.notice -t libra_php_configure
     exit 1
 }
 
-[ $# -eq 3 ] || print_help
+[ $# -eq 4 ] || print_help
 
 
 application="$1"
 namespace=`basename $2`
 uuid=$3
+IP=$4
 
 if [ -f '/etc/libra/node.conf' ]
 then

@@ -325,7 +325,7 @@ runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $APP_DIR/${a
 #
 # Create virtualhost definition for apache
 #
-$CART_INFO_DIR/bin/deploy_httpd_proxy.sh $application $namespace $uuid
+$CART_INFO_DIR/bin/deploy_httpd_proxy.sh $application $namespace $uuid $IP
 
 /sbin/service httpd configtest 2> /dev/null && /sbin/service httpd graceful || error "Failed to restart master httpd, please contact support" 120
 
