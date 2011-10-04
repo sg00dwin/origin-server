@@ -10,6 +10,13 @@ done
 
 redeploy_repo_dir.sh
 
+if [ -f "${OPENSHIFT_REPO_DIR}/.openshift/markers/force_clean_build" ]
+then
+    echo ".openshift/markers/force_clean_build found!  Recreating virtenv" 1>&2
+    rm -rf "${OPENSHIFT_APP_DIR}"/virtenv/*
+fi
+
+
 if [ -f ${OPENSHIFT_REPO_DIR}setup.py ]
 then
     echo "setup.py found.  Setting up virtualenv"

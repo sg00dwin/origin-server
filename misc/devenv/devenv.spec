@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.78.1
+Version:   0.78.2
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -135,7 +135,7 @@ echo "kernel.sem = 250  32000 32  4096" >> /etc/sysctl.conf
 sysctl kernel.sem="250  32000 32  4096"
 
 # Setup facts
-/usr/bin/puppet /usr/libexec/mcollective/update_yaml.pp
+/usr/libexec/mcollective/update_yaml.rb
 crontab -u root %{devenvdir}/crontab
 
 # enable disk quotas
@@ -202,6 +202,9 @@ chkconfig libra-tc on
 %{_initddir}/libra-site
 
 %changelog
+* Mon Oct 03 2011 Dan McPherson <dmcphers@redhat.com> 0.78.2-1
+- changing the default libra_server (mmcgrath@redhat.com)
+
 * Thu Sep 29 2011 Dan McPherson <dmcphers@redhat.com> 0.78.1-1
 - bump spec numbers (dmcphers@redhat.com)
 

@@ -331,12 +331,15 @@ runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $APP_DIR/${a
 # all of the configuration bits required for ssl to work including key location
 #
 
+mkdir "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}"
 cat <<EOF > "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}.conf"
 <VirtualHost *:80>
   ServerName ${application}-${namespace}.${libra_domain}
   ServerAdmin mmcgrath@redhat.com
   DocumentRoot /var/www/html
   DefaultType None
+
+  Include /etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}/*.conf
 
   ProxyPass / http://$IP:8080/
   ProxyPassReverse / http://$IP:8080/
@@ -348,6 +351,8 @@ cat <<EOF > "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}.conf"
   DefaultType None
 
 $(/bin/cat $CART_INFO_DIR/configuration/node_ssl_template.conf)
+
+  Include /etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}/*.conf
 
   ProxyPass / http://$IP:8080/
   ProxyPassReverse / http://$IP:8080/

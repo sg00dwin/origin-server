@@ -263,7 +263,7 @@ class DevEnv < Thor
     # If this is a verifier, you'll need to reset the private ip setup on each sync
     if options.verifier?
       set_private_ip(instance)
-      instance.ssh("/usr/bin/puppet /usr/libexec/mcollective/update_yaml.pp")
+      instance.ssh("/usr/libexec/mcollective/update_yaml.rb")
     else
       set_public_ip(instance)
     end
@@ -342,7 +342,7 @@ class DevEnv < Thor
 
     if options.verifier?
       set_instance_ip(instance, private_ip)
-      instance.ssh("/usr/bin/puppet /usr/libexec/mcollective/update_yaml.pp")
+      instance.ssh("/usr/libexec/mcollective/update_yaml.rb")
 
       if options.init_repo?
         print "Initializing git repo for syncing..."
