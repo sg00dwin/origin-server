@@ -223,7 +223,12 @@ module Streamline
       http = Net::HTTP.new(url.host, url.port)
       http.use_ssl = true
       http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+      # Add timing code
+      start_time = Time.now
       res = http.start {|http| http.request(req)}
+      end_time = Time.now
+      Rails.logger.debug "Response from Streamline took (#{url.path}): #{(end_time - start_time)*1000} ms"
 
       case res
       when Net::HTTPSuccess, Net::HTTPRedirection
