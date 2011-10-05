@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.79.1
+Version:       0.79.2
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -156,6 +156,15 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Tue Oct 04 2011 Dan McPherson <dmcphers@redhat.com> 0.79.2-1
+- cleanup (dmcphers@redhat.com)
+- cleanup (dmcphers@redhat.com)
+- add deploy httpd proxy and migration (dmcphers@redhat.com)
+- beginning of migrate 2.1.6 (dmcphers@redhat.com)
+- removing agent forward denial (mmcgrath@redhat.com)
+- replace update_yaml.pp with update_yaml.rb (blentz@redhat.com)
+- properly secure node_data.conf (mmcgrath@redhat.com)
+
 * Thu Sep 29 2011 Dan McPherson <dmcphers@redhat.com> 0.79.1-1
 - bump spec numbers (dmcphers@redhat.com)
 - add condition around removing env var (dmcphers@redhat.com)
