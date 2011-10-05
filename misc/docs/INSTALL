@@ -93,7 +93,7 @@ Install and configure controller
     key. (exclude the ssh-rsa from the begining and the comment / email from the end)
 5) After running the command from 4) make note of the uuid that is printed to the screen
 6) add the following crontab to root's cron tasks (crontab -e)
-    * * * * * /usr/libexec/mcollective/update_yaml.rb
+    * * * * * /usr/libexec/mcollective/update_yaml.rb > /etc/mcollective/facts.yaml
 
 Prep Host for httpd access
 ==========================

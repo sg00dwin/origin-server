@@ -1,1 +1,1 @@
-* * * * * /usr/libexec/mcollective/update_yaml.rb
+* * * * * /usr/libexec/mcollective/update_yaml.rb > /etc/mcollective/facts.yaml
