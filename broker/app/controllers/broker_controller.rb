@@ -53,6 +53,7 @@ class BrokerController < ApplicationController
     thread[:debugIO] = StringIO.new
     thread[:resultIO] = StringIO.new
     thread[:messageIO] = StringIO.new
+    thread[:errorIO] = StringIO.new
     check_outage_notification
     data = JSON.parse(json_data)
     if (data['debug'])
@@ -135,7 +136,11 @@ class BrokerController < ApplicationController
     elsif (e.is_a? Libra::UserException)
       status = :bad_request
     end
-    render :json => generate_result_json(e.message, nil, e.respond_to?('exit_code') ? e.exit_code : 254), :status => status
+    message = e.message
+    if Thread.current[:errorIO] && !Thread.current[:errorIO].string.empty?
+      message = Thread.current[:errorIO].string
+    end
+    render :json => generate_result_json(message, nil, e.respond_to?('exit_code') ? e.exit_code : 254), :status => status
   end
   
   def login(data, params, allow_broker_auth_key=false)
