@@ -61,4 +61,9 @@ CART_INFO_DIR=$CART_DIR/$OPENSHIFT_APP_TYPE/info
 # Create virtualhost definition for apache
 #
 export CART_INFO_DIR
-$CART_DIR/abstract-httpd/info/bin/deploy_httpd_proxy.sh $application $namespace $uuid $OPENSHIFT_INTERNAL_IP
+if [ -f $CART_INFO_DIR/bin/deploy_httpd_proxy.sh ]
+then
+  $CART_INFO_DIR/bin/deploy_httpd_proxy.sh $application $namespace $uuid $OPENSHIFT_INTERNAL_IP
+else
+  $CART_DIR/abstract-httpd/info/bin/deploy_httpd_proxy.sh $application $namespace $uuid $OPENSHIFT_INTERNAL_IP
+fi
