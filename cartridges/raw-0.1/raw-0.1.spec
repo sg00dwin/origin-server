@@ -2,7 +2,7 @@
 
 Summary:   Provides raw support
 Name:      rhc-cartridge-raw-0.1
-Version:   0.3
+Version:   0.4
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -71,6 +71,10 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Tue Oct 04 2011 Dan McPherson <dmcphers@redhat.com> 0.4-1
+- cleanup (dmcphers@redhat.com)
+- add deploy httpd proxy and migration (dmcphers@redhat.com)
+
 * Thu Sep 29 2011 Mike McGrath <mmcgrath@redhat.com> 0.3-1
 - Initial tagging
 
