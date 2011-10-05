@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.78.4
+Version:   0.78.5
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -205,6 +205,11 @@ chkconfig libra-tc on
 %{_initddir}/libra-site
 
 %changelog
+* Wed Oct 05 2011 Dan McPherson <dmcphers@redhat.com> 0.78.5-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- redirect output to facts.yaml (mmcgrath@redhat.com)
+
 * Wed Oct 05 2011 Dan McPherson <dmcphers@redhat.com> 0.78.4-1
 - Adding new sshd config to allow for AcceptEnv (mmcgrath@redhat.com)
 
