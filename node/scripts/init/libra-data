@@ -86,7 +86,7 @@ start() {
 	get_host_interface_data "eth0"
     fi
     init_node_data $instance_id $public_ip $public_hostname
-    #chmod o-rws $LIBRA_NODE_DATA_CONF
+    chmod o-rws $LIBRA_NODE_DATA_CONF
     return
 }
 
