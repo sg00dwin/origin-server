@@ -55,11 +55,11 @@ module Libra
     def self.find_available(node_profile="std")
       # Defaults
       current_server, current_capacity = rpc_find_available(node_profile)
-      puts "CURRENT SERVER: #{current_server}"
+      Libra.logger_debug "CURRENT SERVER: #{current_server}"
       if !current_server
         current_server, current_capacity = rpc_find_available(node_profile, true)
+        Libra.logger_debug "CURRENT SERVER: #{current_server}"
       end
-      puts "CURRENT SERVER: #{current_server}"
       raise NodeException.new(140), "No nodes available.  If the problem persists please contact Red Hat support.", caller[0..5] unless current_server
       Libra.logger_debug "DEBUG: server.rb:find_available #{current_server}: #{current_capacity}"
       new(current_server, current_capacity)
@@ -76,9 +76,10 @@ module Libra
          :operator => "<"
         }
       ]
+
       Helper.rpc_get_fact('capacity', nil, forceRediscovery, additional_filters) do |server, capacity|
         current_server, current_capacity = server, capacity unless current_capacity
-        puts "server: #{current_server} capacity: #{current_capacity}"
+        Libra.logger_debug "server: #{current_server} capacity: #{current_capacity}"
         if capacity < current_capacity
             current_server = server
             current_capacity = capacity

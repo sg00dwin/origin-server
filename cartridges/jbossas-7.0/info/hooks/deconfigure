@@ -119,10 +119,6 @@ destroy_repo $application $uuid
 
 runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $APP_DIR/${application}_ctl.sh stop" || echo "Failed to stop ${application}" 1>&2
 
-IP=$(awk -F, "/$uuid,$application,/"'{ print $1 }' /etc/libra/ip_db | head -n1)
-range_one=$(echo $IP | awk -F\. '{ print $3 }')
-range_two=$(echo $IP | awk -F\. '{ print $4 }')
-
 
 # Confirm pid is gone before removing apps
 i=0
@@ -133,18 +129,11 @@ while [ -f ${APP_DIR}/run/jboss.pid ] && [ $i -lt 30 ]
 done
 #rm -rf "$APP_DIR"
 runcon -l s0-s0:c0.c1023 rm -rf "$APP_DIR"
-#runcon -t libra_t -l s$range_one:c$range_two runuser mmcgrath -c "rm -rf '$APP_DIR'"
 
 rm_symlink $namespace $application
 
 # remove the Maven repository.
 runcon -l s0-s0:c0.c1023 rm -rf "$M2_DIR"
-
-#
-# remove localhost IP
-# 
-
-sed -i "/,${uuid},${application},httpd,8080/d" /etc/libra/ip_db
 
 #
 # Remove virtualhost definition for apache

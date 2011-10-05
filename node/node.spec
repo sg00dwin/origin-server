@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.79.2
+Version:       0.79.3
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -156,6 +156,11 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Wed Oct 05 2011 Dan McPherson <dmcphers@redhat.com> 0.79.3-1
+- trying to figure out whats wrong with the ami (dmcphers@redhat.com)
+- fixing whitespace (mmcgrath@redhat.com)
+- allow libra-data to run on non-EC2 nodes (markllama@redhat.com)
+
 * Tue Oct 04 2011 Dan McPherson <dmcphers@redhat.com> 0.79.2-1
 - cleanup (dmcphers@redhat.com)
 - cleanup (dmcphers@redhat.com)

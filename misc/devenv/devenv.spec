@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.78.3
+Version:   0.78.4
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -205,6 +205,9 @@ chkconfig libra-tc on
 %{_initddir}/libra-site
 
 %changelog
+* Wed Oct 05 2011 Dan McPherson <dmcphers@redhat.com> 0.78.4-1
+- Adding new sshd config to allow for AcceptEnv (mmcgrath@redhat.com)
+
 * Tue Oct 04 2011 Dan McPherson <dmcphers@redhat.com> 0.78.3-1
 - replace update_yaml.pp with update_yaml.rb (blentz@redhat.com)
 
