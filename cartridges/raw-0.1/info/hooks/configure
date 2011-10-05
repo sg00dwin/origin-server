@@ -260,32 +260,8 @@ echo "export PATH=$CART_INFO_DIR/bin/:$CART_DIR/abstract-httpd/info/bin/:$CART_D
 #
 # Create virtualhost definition for apache
 #
-# node_ssl_template.conf gets copied in unaltered and should contain
-# all of the configuration bits required for ssl to work including key location
-#
-
-cat <<EOF > "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}.conf"
-<VirtualHost *:80>
-  ServerName ${application}-${namespace}.${libra_domain}
-  ServerAdmin openshift@redhat.com
-  DocumentRoot /var/www/html
-  DefaultType None
-
-  Alias /health $CART_INFO_DIR/configuration/health.html
-  Alias / $CART_INFO_DIR/configuration/index.html
-</VirtualHost>
-
-<VirtualHost *:443>
-  ServerName ${application}-${namespace}.${libra_domain}
-  ServerAdmin openshift@redhat.com
-  DefaultType None
-
-$(/bin/cat $CART_INFO_DIR/configuration/node_ssl_template.conf)
-
-  Alias /health $CART_INFO_DIR/configuration/health.html
-  Alias / $CART_INFO_DIR/configuration/index.html
-</VirtualHost>
-EOF
+export CART_INFO_DIR
+$CART_INFO_DIR/bin/deploy_httpd_proxy.sh $application $namespace $uuid $IP
 
 /sbin/service httpd configtest 2> /dev/null && /sbin/service httpd graceful || error "Failed to restart master httpd, please contact support" 120
 

@@ -9,7 +9,7 @@
 function print_help {
     echo "Usage: $0 app-name namespace uuid IP"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_php_configure
+    echo "$0 $@" | logger -p local0.notice -t libra_deploy_httpd_proxy
     exit 1
 }
 
@@ -32,6 +32,8 @@ else
     exit 3
 fi
 
+rm -rf "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}"
+rm -f "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}.conf"
 
 mkdir "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}"
 
@@ -52,6 +54,8 @@ cat <<EOF > "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}.conf"
 </VirtualHost>
 
 <VirtualHost *:443>
+  RequestHeader append X-Forwarded-Proto "https"
+
 $(/bin/cat $CART_INFO_DIR/configuration/node_ssl_template.conf)
 
   Include /etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}/*.conf

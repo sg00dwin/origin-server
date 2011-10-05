@@ -331,38 +331,7 @@ runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $APP_DIR/${a
 #
 # Create virtualhost definition for apache
 #
-# node_ssl_template.conf gets copied in unaltered and should contain
-# all of the configuration bits required for ssl to work including key location
-#
-
-mkdir "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}"
-cat <<EOF > "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}.conf"
-<VirtualHost *:80>
-  ServerName ${application}-${namespace}.${libra_domain}
-  ServerAdmin mmcgrath@redhat.com
-  DocumentRoot /var/www/html
-  DefaultType None
-  RequestHeader append X-Forwarded-Proto "http"
-
-  Include /etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}/*.conf
-
-  ProxyPass / http://$IP:8080/
-  ProxyPassReverse / http://$IP:8080/
-</VirtualHost>
-
-<VirtualHost *:443>
-  ServerName ${application}-${namespace}.${libra_domain}
-  ServerAdmin mmcgrath@redhat.com
-  DefaultType None
-  RequestHeader append X-Forwarded-Proto "https"
-
-$(/bin/cat $CART_INFO_DIR/configuration/node_ssl_template.conf)
-
-  Include /etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}/*.conf
-
-  ProxyPass / http://$IP:8080/
-  ProxyPassReverse / http://$IP:8080/
-</VirtualHost>
-EOF
+export CART_INFO_DIR
+$CART_DIR/abstract-httpd/info/bin/deploy_httpd_proxy.sh $application $namespace $uuid $IP
 
 /sbin/service httpd configtest 2> /dev/null && /sbin/service httpd graceful || error "Failed to restart master httpd, please contact support" 120
