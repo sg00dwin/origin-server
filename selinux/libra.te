@@ -144,7 +144,7 @@ apache_read_sys_content(libra_domain)
 corenet_tcp_bind_http_cache_port(libra_domain)
 apache_search_sys_scripts(libra_domain)
 # Will need to change to this when it becomes available in RHEL6.2 policy
-# apache_exec_sys_scripts(libra_domain)
+apache_exec_sys_scripts(libra_domain)
 
 java_exec(libra_domain)
 
@@ -208,9 +208,10 @@ dontaudit libra_domain exec_type:file getattr;
 libra_search_lib(sshd_t)
 dontaudit sshd_t self:capability sys_admin;
 allow libra_domain sshd_t:process sigchld;
+allow libra_domain sshd_t:unix_stream_socket connectto;
 allow sshd_t libra_domain:process { rlimitinh signal };
+manage_sock_files_pattern(sshd_t, libra_var_lib_t, libra_var_lib_t)
 dontaudit libra_domain ssh_home_t:dir search_dir_perms;
-
 dontaudit sendmail_t libra_initrc_t:fifo_file { read write };
 dontaudit domain libra_t:fifo_file { getattr write };
 
