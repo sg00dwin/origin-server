@@ -5,8 +5,10 @@ Feature: Trap User Shell
   I should be able to limit user login to a defined set of commands
   So that I can ensure the security of the system
 
+  @tail_logs
   Scenario: Tail Logs
-    Given an end user
+    Given an accepted node
+    And an end user
     And the user creates a new php-5.3 application
     And the user has no tail processes running 
     And a running SSH log stream
