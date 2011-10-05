@@ -2,7 +2,7 @@
 
 Summary:   Provides python-wsgi-3.2 support
 Name:      rhc-cartridge-wsgi-3.2
-Version:   0.79.1
+Version:   0.79.2
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -61,6 +61,7 @@ ln -s %{cartridgedir}/../abstract-httpd/info/hooks/status %{buildroot}%{cartridg
 ln -s %{cartridgedir}/../abstract-httpd/info/hooks/stop %{buildroot}%{cartridgedir}/info/hooks/stop
 ln -s %{cartridgedir}/../abstract-httpd/info/hooks/update_namespace %{buildroot}%{cartridgedir}/info/hooks/update_namespace
 ln -s %{cartridgedir}/../abstract-httpd/info/hooks/preconfigure %{buildroot}%{cartridgedir}/info/hooks/preconfigure
+ln -s %{cartridgedir}/../abstract-httpd/info/hooks/deploy_httpd_proxy %{buildroot}%{cartridgedir}/info/hooks/deploy_httpd_proxy
 
 %clean
 rm -rf %{buildroot}
@@ -77,6 +78,17 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Tue Oct 04 2011 Dan McPherson <dmcphers@redhat.com> 0.79.2-1
+- cleanup (dmcphers@redhat.com)
+- add deploy httpd proxy and migration (dmcphers@redhat.com)
+- Adding request header type (mmcgrath@redhat.com)
+- added code to remove the new dir that gets created in
+  /etc/httpd/conf.d/libra/ for the apache definition stuff (twiest@redhat.com)
+- Merge branch 'master' into mmcgrath-conf.d-include (twiest@redhat.com)
+- Adding markers for php (mmcgrath@redhat.com)
+- fixing wsgi configs (mmcgrath@redhat.com)
+- Adding proper include dir (mmcgrath@redhat.com)
+
 * Thu Sep 29 2011 Dan McPherson <dmcphers@redhat.com> 0.79.1-1
 - bump spec numbers (dmcphers@redhat.com)
 

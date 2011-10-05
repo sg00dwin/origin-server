@@ -187,8 +187,6 @@
             <loopback-address value="${OPENSHIFT_INTERNAL_IP}"/>
         </interface>
         <interface name="public">
-        
-        
             <loopback-address value="${OPENSHIFT_INTERNAL_IP}"/>
         </interface>
     </interfaces>

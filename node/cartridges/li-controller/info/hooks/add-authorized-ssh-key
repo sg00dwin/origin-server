@@ -18,6 +18,6 @@ fi
 USERHOME=`echo ${libra_dir}/${USERNAME} | tr -s '/'`
 SSHDIR=${USERHOME}/.ssh
 
-CMDENTRY="command=\"/usr/bin/trap-user\",no-port-forwarding,no-X11-forwarding,no-agent-forwarding ssh-rsa $SSHKEY Libra-$USERNAME"
+CMDENTRY="command=\"/usr/bin/trap-user\",no-port-forwarding,no-X11-forwarding ssh-rsa $SSHKEY Libra-$USERNAME"
 sed -i "/${SSHKEY//\//\\/}/d" ${SSHDIR}/authorized_keys
 echo "${CMDENTRY}" >> ${SSHDIR}/authorized_keys

@@ -2,7 +2,7 @@
 
 Summary:   Provides mod_perl support
 Name:      rhc-cartridge-perl-5.10
-Version:   0.10.1
+Version:   0.10.2
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -58,6 +58,7 @@ ln -s %{cartridgedir}/../abstract-httpd/info/hooks/status %{buildroot}%{cartridg
 ln -s %{cartridgedir}/../abstract-httpd/info/hooks/stop %{buildroot}%{cartridgedir}/info/hooks/stop
 ln -s %{cartridgedir}/../abstract-httpd/info/hooks/update_namespace %{buildroot}%{cartridgedir}/info/hooks/update_namespace
 ln -s %{cartridgedir}/../abstract-httpd/info/hooks/preconfigure %{buildroot}%{cartridgedir}/info/hooks/preconfigure
+ln -s %{cartridgedir}/../abstract-httpd/info/hooks/deploy_httpd_proxy %{buildroot}%{cartridgedir}/info/hooks/deploy_httpd_proxy
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -74,6 +75,15 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Tue Oct 04 2011 Dan McPherson <dmcphers@redhat.com> 0.10.2-1
+- cleanup (dmcphers@redhat.com)
+- add deploy httpd proxy and migration (dmcphers@redhat.com)
+- Adding request header type (mmcgrath@redhat.com)
+- added code to remove the new dir that gets created in
+  /etc/httpd/conf.d/libra/ for the apache definition stuff (twiest@redhat.com)
+- Merge branch 'master' into mmcgrath-conf.d-include (twiest@redhat.com)
+- Adding proper include dir (mmcgrath@redhat.com)
+
 * Thu Sep 29 2011 Dan McPherson <dmcphers@redhat.com> 0.10.1-1
 - bump spec numbers (dmcphers@redhat.com)
 

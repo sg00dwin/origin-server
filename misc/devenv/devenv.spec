@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.78.2
+Version:   0.78.4
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -26,6 +26,8 @@ Requires:  rhc-cartridge-jbossas-7.0
 Requires:  rhc-cartridge-perl-5.10
 Requires:  rhc-cartridge-mysql-5.1
 Requires:  rhc-cartridge-jenkins-1.4
+Requires:  rhc-cartridge-raw-0.1
+Requires:  rhc-cartridge-jenkins-client-1.4
 Requires:  qpid-cpp-server
 Requires:  qpid-cpp-server-ssl
 Requires:  puppet
@@ -164,6 +166,7 @@ service libra-site restart
 service libra-broker restart
 service jenkins restart
 service httpd restart
+service sshd restart
 chkconfig iptables on
 chkconfig qpidd on
 chkconfig mcollective on
@@ -202,6 +205,12 @@ chkconfig libra-tc on
 %{_initddir}/libra-site
 
 %changelog
+* Wed Oct 05 2011 Dan McPherson <dmcphers@redhat.com> 0.78.4-1
+- Adding new sshd config to allow for AcceptEnv (mmcgrath@redhat.com)
+
+* Tue Oct 04 2011 Dan McPherson <dmcphers@redhat.com> 0.78.3-1
+- replace update_yaml.pp with update_yaml.rb (blentz@redhat.com)
+
 * Mon Oct 03 2011 Dan McPherson <dmcphers@redhat.com> 0.78.2-1
 - changing the default libra_server (mmcgrath@redhat.com)
 

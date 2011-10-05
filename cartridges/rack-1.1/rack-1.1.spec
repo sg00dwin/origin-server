@@ -2,7 +2,7 @@
 
 Summary:   Provides ruby rack support running on Phusion Passenger
 Name:      rhc-cartridge-rack-1.1
-Version:   0.79.2
+Version:   0.78.7
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -29,7 +29,6 @@ Requires:  mysql-devel
 Requires:  ruby-devel
 Requires:  ruby-nokogiri
 Requires:  libxml2-devel
-Requires:  gcc-c++
 
 Obsoletes: rhc-cartridge-rack-1.1.0
 
@@ -76,6 +75,7 @@ ln -s %{cartridgedir}/../abstract-httpd/info/hooks/status %{buildroot}%{cartridg
 ln -s %{cartridgedir}/../abstract-httpd/info/hooks/stop %{buildroot}%{cartridgedir}/info/hooks/stop
 ln -s %{cartridgedir}/../abstract-httpd/info/hooks/update_namespace %{buildroot}%{cartridgedir}/info/hooks/update_namespace
 ln -s %{cartridgedir}/../abstract-httpd/info/hooks/preconfigure %{buildroot}%{cartridgedir}/info/hooks/preconfigure
+ln -s %{cartridgedir}/../abstract-httpd/info/hooks/deploy_httpd_proxy %{buildroot}%{cartridgedir}/info/hooks/deploy_httpd_proxy
 
 %clean
 rm -rf %{buildroot}
@@ -92,12 +92,31 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
-* Thu Sep 29 2011 Dan McPherson <dmcphers@redhat.com> 0.79.2-1
-- 
-
-* Thu Sep 29 2011 Dan McPherson <dmcphers@redhat.com> 0.79.1-1
-- bump spec numbers (dmcphers@redhat.com)
-- Bug 742198 (dmcphers@redhat.com)
+* Tue Oct 04 2011 Dan McPherson <dmcphers@redhat.com> 0.78.7-1
+- cleanup (dmcphers@redhat.com)
+- add deploy httpd proxy and migration (dmcphers@redhat.com)
+- removing duplicate specfile (mmcgrath@redhat.com)
+- Adding request header type (mmcgrath@redhat.com)
+- Revert (jimjag@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (jimjag@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (jimjag@redhat.com)
+- added code to remove the new dir that gets created in
+  /etc/httpd/conf.d/libra/ for the apache definition stuff (twiest@redhat.com)
+- Merge branch 'master' into mmcgrath-conf.d-include (twiest@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (jimjag@redhat.com)
+- Adding proper include dir (mmcgrath@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (jimjag@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (jimjag@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (jimjag@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (jimjag@redhat.com)
+- Revert "adding requires for libxml2" (jimjag@redhat.com)
 
 * Wed Sep 28 2011 Dan McPherson <dmcphers@redhat.com> 0.78.6-1
 - add preconfigure for jenkins to split out auth key gen (dmcphers@redhat.com)
@@ -268,9 +287,6 @@ rm -rf %{buildroot}
 
 * Tue Jun 21 2011 Dan McPherson <dmcphers@redhat.com> 0.72.17-1
 - Bug 714868 (dmcphers@redhat.com)
-
-* Mon Jun 20 2011 Dan McPherson <dmcphers@redhat.com> 0.72.16-1
-- 
 
 * Mon Jun 20 2011 Dan McPherson <dmcphers@redhat.com> 0.72.15-1
 - adding template files (dmcphers@redhat.com)

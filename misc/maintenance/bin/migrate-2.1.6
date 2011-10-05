@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-# Usage: ./migrate-2.1.5 > out.txt
+# Usage: ./migrate-2.1.6 > out.txt
 require 'rubygems'
 require 'openshift'
 
@@ -16,7 +16,7 @@ def migrate_app_on_node(user, app, app_name)
                    :application => app_name,
                    :app_type => app['framework'],
                    :namespace => user.namespace,
-                   :version => '2.1.5') do |response|
+                   :version => '2.1.6') do |response|
       exit_code = response[:body][:data][:exitcode]
       output = response[:body][:data][:output]
       if (output.length > 0)
@@ -25,13 +25,41 @@ def migrate_app_on_node(user, app, app_name)
       if exit_code != 0
         puts "Migrate on node exit code: #{exit_code}"
         raise "Failed migrating app '#{app_name}' with uuid '#{app['uuid']}' on node '#{app['server_identity']}'"
+      else
+        
+        server = Server.new(app['server_identity'])
+        result = server.execute_direct(app['framework'], 'deploy_httpd_proxy', "#{app_name} #{user.namespace} #{app['uuid']}")[0]
+        output = result.results[:data][:output]
+        exit_code = result.results[:data][:exitcode]
+        if (output.length > 0)
+          puts "Deploy http proxy on node output: #{output}"
+        end
+        if exit_code != 0
+          puts "Deploy httpd proxy on node exit code: #{exit_code}"
+          raise "Failed deploying httpd proxy for app '#{app_name}' with uuid '#{app['uuid']}' on node '#{app['server_identity']}'"
+        else
+          puts "Restarting app '#{app_name}' on node '#{app['server_identity']}'"
+          server = Server.new(app['server_identity'])
+          result = server.execute_direct(app['framework'], 'restart', "#{app_name} #{user.namespace} #{app['uuid']}")[0]
+          if (result && defined? result.results)
+            output = result.results[:data][:output]
+            exit_code = result.results[:data][:exitcode]
+            if (output.length > 0)
+              puts "Restart on node output: #{output}"
+            end
+            if exit_code != 0
+              puts "Restart on node exit code: #{exit_code}"
+              raise "Failed restarting app '#{app_name}' with uuid '#{app['uuid']}' on node '#{app['server_identity']}'"
+            end
+          end
+        end
       end
     end
   end
 end
 
 #
-# Migrate applications between 2.1.4 and 2.1.5
+# Migrate applications between 2.1.5 and 2.1.6
 #
 def migrate
   start_time = Time.now.to_i

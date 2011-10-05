@@ -23,9 +23,9 @@ Rack::Utils.module_eval do
 
     case header["Set-Cookie"]
     when Array
-      header["Set-Cookie"] << cookie
+      header["Set-Cookie"] = (header["Set-Cookie"] + [cookie]).join("\n")
     when String
-      header["Set-Cookie"] = [header["Set-Cookie"], cookie]
+      header["Set-Cookie"] = [header["Set-Cookie"], cookie].join("\n")
     when nil
       header["Set-Cookie"] = cookie
     end

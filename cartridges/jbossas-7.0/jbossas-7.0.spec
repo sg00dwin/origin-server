@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.79.4
+Version:   0.79.5
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -56,6 +56,7 @@ ln -s %{cartridgedir}/../abstract-httpd/info/hooks/start %{buildroot}%{cartridge
 ln -s %{cartridgedir}/../abstract-httpd/info/hooks/stop %{buildroot}%{cartridgedir}/info/hooks/stop
 ln -s %{cartridgedir}/../abstract-httpd/info/hooks/update_namespace %{buildroot}%{cartridgedir}/info/hooks/update_namespace
 ln -s %{cartridgedir}/../abstract-httpd/info/hooks/preconfigure %{buildroot}%{cartridgedir}/info/hooks/preconfigure
+ln -s %{cartridgedir}/../abstract-httpd/info/hooks/deploy_httpd_proxy %{buildroot}%{cartridgedir}/info/hooks/deploy_httpd_proxy
 
 %post
 #maven
@@ -79,6 +80,16 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Tue Oct 04 2011 Dan McPherson <dmcphers@redhat.com> 0.79.5-1
+- cleanup (dmcphers@redhat.com)
+- add deploy httpd proxy and migration (dmcphers@redhat.com)
+- Adding request header type (mmcgrath@redhat.com)
+- cleanup (dmcphers@redhat.com)
+- added code to remove the new dir that gets created in
+  /etc/httpd/conf.d/libra/ for the apache definition stuff (twiest@redhat.com)
+- Merge branch 'master' into mmcgrath-conf.d-include (twiest@redhat.com)
+- Adding proper include dir (mmcgrath@redhat.com)
+
 * Mon Oct 03 2011 Dan McPherson <dmcphers@redhat.com> 0.79.4-1
 - use env vars from standalone.xml (dmcphers@redhat.com)
 

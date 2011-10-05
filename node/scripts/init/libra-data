@@ -12,37 +12,81 @@
 
 # source function library
 . /etc/rc.d/init.d/functions
-. /etc/libra/node.conf
+LIBRA_NODE_CONF=${LIBRA_NODE_CONF:=/etc/libra/node.conf}
+LIBRA_NODE_DATA_CONF=${LIBRA_NODE_DATA_CONF:=/etc/libra/node_data.conf}
 
+if [ -f $LIBRA_NODE_CONF ]
+then
+  . $LIBRA_NODE_CONF
+fi
 lockfile=/var/lock/subsys/libra
 
 RETVAL=0
 GROUP_RETVAL=0
+SERVICE_URL_ROOT="http://169.254.169.254/latest/meta-data"
 
-start() {
-    echo "Getting Libra info "
-    instance_id=$(wget -qO- http://169.254.169.254/latest/meta-data/instance-id)
-    [ -z $public_ip ] && public_ip=$(wget -qO- http://169.254.169.254/latest/meta-data/public-ipv4)
+# determine if we're on an Amazon EC2 AMI instance
+function ami_instance() {
+   #the best way I've found so far to be sure is to use lspci.
+   # on an AMI it answers with an empty string
+   test -z "`lspci`"
+}
+
+function get_ami_public_interface_data() {
+    echo "Getting Libra info"
+    instance_id=$(wget -qO- ${SERVICE_URL_ROOT}/instance-id)
+    
+    [ -z $public_ip ] && public_ip=$(wget -qO- ${SERVICE_URL_ROOT}/public-ipv4)
     if [ ! "$public_ip" ]; then
-      for i in {1..60}
-      do
+	for i in {1..60}
+	do
         # Sometimes it takes a while for the public ip to be published
-        sleep 10
-        public_ip=$(wget -qO- http://169.254.169.254/latest/meta-data/public-ipv4)
-        if [ "$public_ip" ]; then
-          break
-        fi
-      done
+            sleep 10
+            public_ip=$(wget -qO- ${SERVICE_URL_ROOT}/public-ipv4)
+            if [ "$public_ip" ]; then
+		break
+            fi
+	done
     fi
-    public_hostname=$(wget -qO- http://169.254.169.254/latest/meta-data/public-hostname)
+    public_hostname=$(wget -qO- ${SERVICE_URL_ROOT}/public-hostname)
 
     echo_success
-    cat <<EOF > /etc/libra/node_data.conf
-instance_id="$instance_id"
-public_ip="$public_ip"
-public_hostname="$public_hostname"
+    return
+}
+
+function get_host_interface_data() {
+    # not an EC2 instance
+    #NET_DEVICE=$1
+    instance_id="not_applicable"
+
+    # check eth0?
+    public_ip=`ip --oneline addr show dev $1  | grep 'inet ' | sed -e 's/^.*inet // ; s|/.*$||'`
+    # hostname ?
+    public_hostname=`host $public_ip | awk '{sub(/\.$/, "") ; print $5;}'`
+    # for later parsing
+    #echo "$instance_id:$public_ip:$public_hostname"
+}
+
+function init_node_data() {
+    # instance_id=$1
+    # public_ip=$2
+    # public_hostname=$3
+    cat <<EOF > $LIBRA_NODE_DATA_CONF
+instance_id="$1"
+public_ip="$2"
+public_hostname="$3"
 EOF
-    chmod o-rws /etc/libra/node_data.conf
+}
+
+start() {
+    if ami_instance
+    then
+	get_ami_public_interface_data
+    else
+	get_host_interface_data "eth0"
+    fi
+    init_node_data $instance_id $public_ip $public_hostname
+    chmod o-rws $LIBRA_NODE_DATA_CONF
     return
 }
 
@@ -53,6 +97,24 @@ stop() {
 restart() {
     stop
     start
+}
+
+status() {
+    # check if node.conf exists
+    if [ -f $LIBRA_NODE_CONF ]
+    then
+	echo "Node configuration file exists: $LIBRA_NODE_CONF"
+    else
+	echo "Node configuration file does not exist: $LIBRA_NODE_CONF"
+    fi
+ 
+    if [ -f $LIBRA_NODE_DATA_CONF ]
+    then
+	echo "Node data configuration file exists: $LIBRA_NODE_CONF"
+
+    else
+	echo "Node data configuration file does not exist: $LIBRA_NODE_CONF"
+    fi
 }
 
 case "$1" in
@@ -68,6 +130,7 @@ case "$1" in
   reload)
     ;;
   status)
+    status
     ;;
   *)
     echo $"Usage: $0 {start|stop|status|restart|reload|force-reload|condrestart}"
