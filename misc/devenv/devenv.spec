@@ -26,6 +26,8 @@ Requires:  rhc-cartridge-jbossas-7.0
 Requires:  rhc-cartridge-perl-5.10
 Requires:  rhc-cartridge-mysql-5.1
 Requires:  rhc-cartridge-jenkins-1.4
+Requires:  rhc-cartridge-raw-0.1
+Requires:  rhc-cartridge-jenkins-client-1.4
 Requires:  qpid-cpp-server
 Requires:  qpid-cpp-server-ssl
 Requires:  puppet
@@ -164,6 +166,7 @@ service libra-site restart
 service libra-broker restart
 service jenkins restart
 service httpd restart
+service sshd restart
 chkconfig iptables on
 chkconfig qpidd on
 chkconfig mcollective on
