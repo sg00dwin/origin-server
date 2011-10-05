@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.79.5
+Version:   0.79.6
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -69,6 +69,10 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Tue Oct 04 2011 Dan McPherson <dmcphers@redhat.com> 0.79.6-1
+- Added streamline timing to HTTP requests (fotios@redhat.com)
+- RFC (jimjag@redhat.com)
+
 * Mon Oct 03 2011 Dan McPherson <dmcphers@redhat.com> 0.79.5-1
 - Reverting DRYed up streamline configs for now (fotios@redhat.com)
 
