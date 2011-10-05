@@ -30,6 +30,7 @@ Given /^the user creates a new( (\S+))? application$/ do |ignore, app_type|
     exit_status = run(command, app_output)
     raise Exception.new "exit status #{exit_status} from '#{command}'" if exit_status != 0
   rescue Exception => e
+    puts e.message
     puts "create app failed once: trying again in 10 sec"
     sleep 10
     exit_status = run(command, app_output)
