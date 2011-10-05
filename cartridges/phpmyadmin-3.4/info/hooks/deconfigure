@@ -1,0 +1,125 @@
+#!/bin/bash
+
+# Copyright © 2010 Mike McGrath All rights reserved
+# Copyright © 2010 Red Hat, Inc. All rights reserved
+
+# This copyrighted material is made available to anyone wishing to use, modify,
+# copy, or redistribute it subject to the terms and conditions of the GNU
+# General Public License v.2.  This program is distributed in the hope that it
+# will be useful, but WITHOUT ANY WARRANTY expressed or implied, including the
+# implied warranties of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.  You should have
+# received a copy of the GNU General Public License along with this program;
+# if not, write to the Free Software Foundation, Inc., 51 Franklin Street,
+# Fifth Floor, Boston, MA 02110-1301, USA. Any Red Hat trademarks that are
+# incorporated in the source code or documentation are not subject to the GNU
+# General Public License and may only be used or replicated with the express
+# permission of Red Hat, Inc.
+
+# Destroys http instance
+
+if [ -f '/etc/libra/node.conf' ]
+then
+    . /etc/libra/node.conf
+elif [ -f 'node.conf' ]
+then
+    . node.conf
+else
+    echo "node.conf not found.  Cannot continue" 1>&2
+    exit 3
+fi
+
+if [ -f '/etc/libra/node_data.conf' ]
+then
+    . /etc/libra/node_data.conf
+elif [ -f 'node_data.conf' ]
+then
+    . node_data.conf
+else
+    echo "node_data.conf not found.  Cannot continue" 1>&2
+    exit 3
+fi
+
+CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
+
+function print_help {
+    echo "Usage: $0 app-name namespace uuid"
+
+    echo "$0 $@" | logger -p local0.notice -t libra_phpmyadmin_deconfigure
+    exit 1
+}
+
+function error {
+    echo "$1" 1>&2
+}
+
+while getopts 'd' OPTION
+do
+    case $OPTION in
+        d) set -x
+        ;;
+        ?) print_help
+        ;;
+    esac
+done
+
+
+[ $# -eq 3 ] || print_help
+
+namespace=`basename $2`
+application="$1"
+uuid=$3
+
+APP_HOME="$libra_dir/$uuid/"
+APP_DIR="$APP_HOME/$application"
+PHPMYADMIN_DIR=`echo $APP_HOME/phpmyadmin-3.4 | tr -s /` # ensure that there aren't double /'s
+PHPMYADMIN_CTL_SCRIPT="$PHPMYADMIN_DIR/${application}_phpmyadmin_ctl.sh"
+
+if [ ! -d "$APP_DIR" ]
+then
+  exit 125
+fi
+
+uid=$(id -u "$uuid")
+mcs_level=`${CART_DIR}/li-controller/info/bin/mcs_level $uid`
+
+
+#
+# Stop app
+#
+runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $PHPMYADMIN_CTL_SCRIPT stop" || error "Failed to stop ${application}" 121
+
+
+# Confirm pid is gone before removing apps
+i=0
+while [ -f ${PHPMYADMIN_DIR}/run/httpd.pid ] && [ $i -lt 30 ]
+    do
+    sleep .1
+    i=$(($i + 1))
+done
+
+# Make sure there aren't apps still writing to the log files
+for LOGFILE in `find $PHPMYADMIN_DIR/logs -type f`
+do
+  for PID in `/usr/sbin/lsof -t $LOGFILE`
+  do
+    /bin/kill -9 $PID
+  done
+done
+
+
+#
+# Remove environment variables
+#
+/bin/rm -f $APP_HOME/.env/OPENSHIFT_PHPMYADMIN_APP_DIR $APP_HOME/.env/OPENSHIFT_PHPMYADMIN_CTL_SCRIPT $APP_HOME/.env/OPENSHIFT_PHPMYADMIN_IP
+
+
+# Remove phpmyadmin dir. This MUST be after stopping phpmyadmin as the CTL script relies on these.
+runcon -l s0-s0:c0.c1023 rm -rf "$PHPMYADMIN_DIR"
+
+#
+# Remove ProxyPass definition from apache
+#
+rm -f /etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}/phpmyadmin-3.4.conf || error "Could not remove phpmyadmin apache definition" 156
+
+/sbin/service httpd configtest 2> /dev/null && /sbin/service httpd graceful || error "Failed to restart master httpd, please contact support" 120

@@ -1,0 +1,310 @@
+#!/bin/bash
+
+# Copyright © 2010 Mike McGrath All rights reserved
+# Copyright © 2010 Red Hat, Inc. All rights reserved
+
+# This copyrighted material is made available to anyone wishing to use, modify,
+# copy, or redistribute it subject to the terms and conditions of the GNU
+# General Public License v.2.  This program is distributed in the hope that it
+# will be useful, but WITHOUT ANY WARRANTY expressed or implied, including the
+# implied warranties of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.  You should have
+# received a copy of the GNU General Public License along with this program;
+# if not, write to the Free Software Foundation, Inc., 51 Franklin Street,
+# Fifth Floor, Boston, MA 02110-1301, USA. Any Red Hat trademarks that are
+# incorporated in the source code or documentation are not subject to the GNU
+# General Public License and may only be used or replicated with the express
+# permission of Red Hat, Inc.
+
+# Creates a per application httpd instance
+
+# Exit on any errors
+set -e
+#set -x
+
+if [ -f '/etc/libra/node.conf' ]
+then
+    . /etc/libra/node.conf
+elif [ -f 'node.conf' ]
+then
+    . node.conf
+else
+    echo "node.conf not found.  Cannot continue" 1>&2
+    exit 3
+fi
+
+if [ -f '/etc/libra/node_data.conf' ]
+then
+    . /etc/libra/node_data.conf
+elif [ -f 'node_data.conf' ]
+then
+    . node_data.conf
+else
+    echo "node_data.conf not found.  Cannot continue" 1>&2
+    exit 3
+fi
+
+rotatelogs_interval="86400"
+rotatelogs_format="-%Y%m%d-%H%M%S-%Z"
+
+if [ -f '/etc/libra/resource_limits.conf' ]
+then
+    . /etc/libra/resource_limits.conf
+fi
+
+
+CART_DIR=/usr/libexec/li/cartridges
+CART_INFO_DIR=$CART_DIR/embedded/phpmyadmin-3.4/info
+CART_CONF_DIR=$CART_INFO_DIR/configuration/etc/conf
+
+function log {
+    echo "$0 $@" | logger -p local0.notice -t libra_phpmyadmin_configure
+}
+
+function print_help {
+    echo "Usage: $0 app-name namespace uuid"
+
+    echo "$0 $@" | logger -p local0.notice -t libra_phpmyadmin_configure
+    exit 1
+}
+
+function error {
+    echo "$1" 1>&2
+    exit "$2"
+}
+
+# create an IP address as an 32 bit unsigned integer
+function address() {
+    # uid=$1
+    # final=$2
+    printf "0x%08x\n" "$((0x7f000000 + $(($1<<7)) + $2))"
+}
+
+# convert an integer IP address to dotted quad format
+function dotted_quad() {
+    # ADDR=$1
+    q3=$(($1 >> 24))
+    q2=$(($1 >> 16 & 0xff))
+    q1=$(($1 >> 8 & 0xff))
+    q0=$(($1 & 0xff))
+    echo "$q3.$q2.$q1.$q0"
+}
+
+function find_open_ip {
+    uid=$1
+    app_home=$2
+    for host_ip in `seq 1 127`
+    do
+        a=`address $uid $host_ip`
+        new_ip=`dotted_quad $a`
+        # Ensure nothing is listening on new IP
+        if ! grep -qe '^Listen '$new_ip':8080$' $(find $app_home/ -maxdepth 3 -mindepth 3 -name libra.conf) /etc/sysconfig/network
+        then
+            # Ensure new IP is available
+            if ! grep -q $new_ip $app_home/.env/*_IP
+            then 
+                echo $new_ip
+                exit
+            fi
+        fi
+    done
+
+    echo "Could not find open IP" 1>&2
+    exit 5
+}
+
+while getopts 'd' OPTION
+do
+    case $OPTION in
+        d) set -x
+        ;;
+        ?) print_help
+        ;;
+    esac
+done
+
+
+[ $# -eq 3 ] || print_help
+
+application="$1"
+namespace=`basename $2`  # not used
+uuid=$3
+
+APP_HOME="$libra_dir/$uuid"
+APP_DIR=`echo $APP_HOME/$application | tr -s /`
+PHPMYADMIN_DIR=`echo $APP_HOME/phpmyadmin-3.4 | tr -s /` # ensure that there aren't double /'s
+PHPMYADMIN_CTL_SCRIPT="$PHPMYADMIN_DIR/${application}_phpmyadmin_ctl.sh"
+
+if [ ! -f "$APP_HOME/.env/OPENSHIFT_DB_USERNAME" ] ||
+   [ ! -f "$APP_HOME/.env/OPENSHIFT_DB_PASSWORD" ] ||
+   [ ! -f "$APP_HOME/.env/OPENSHIFT_DB_HOST" ] ||
+   [ ! -f "$APP_HOME/.env/OPENSHIFT_DB_PORT" ]
+then
+    echo "CLIENT_MESSAGE: "
+    echo "CLIENT_MESSAGE: Mysql must be embedded before phpMyAdmin"
+    echo "CLIENT_MESSAGE: "
+    exit 137
+fi
+
+#
+# Get user id info
+# Not caching this information caused some early chowns to work but some later
+# chowns to fail with a user not found error
+
+user_id=$(id -u "$uuid") || error "Could not find user $uuid ($namespace)" 134
+group_id=$(id -g "$uuid") || error "Could not find user $uuid ($namespace)" 135
+
+#
+# Get UID information and CVAL
+#
+uid=$(id -u "$uuid")
+mcs_level=`${CART_DIR}/li-controller/info/bin/mcs_level $uid`
+
+#
+# Create http base for application, every app gets its own apache instance
+#
+[ -d "$PHPMYADMIN_DIR" ] && error "${application}.  Embedded phpMyAdmin-3.4 already attached to $application" 132
+[ -d "$APP_DIR/" ] || error "${APP_DIR} Not found!  Aborting." 133
+mkdir -p "$PHPMYADMIN_DIR"
+pushd "$PHPMYADMIN_DIR" > /dev/null
+mkdir -p conf conf.d logs run sessions tmp
+ln -s /usr/lib64/httpd/modules modules
+ln -s /etc/httpd/conf/magic conf/magic
+
+sed -e "s,TEMPLATE_SET_ME_SESSION_SAVE_PATH,$PHPMYADMIN_DIR/sessions/," \
+    -e "s,TEMPLATE_SET_ME_UPLOAD_TMP_DIR,$PHPMYADMIN_DIR/tmp/," $CART_CONF_DIR/php.ini > $PHPMYADMIN_DIR/conf/php.ini 
+popd > /dev/null
+
+#
+# Find an open localhost IP
+#
+
+IP=$(find_open_ip $uid $APP_HOME)
+
+
+#
+# Create simple application specific data
+#
+
+cat <<EOF > "$PHPMYADMIN_DIR/conf.d/libra.conf"
+ServerRoot "$PHPMYADMIN_DIR"
+Listen $IP:8080
+User $uuid
+Group $uuid
+ErrorLog "|/usr/sbin/rotatelogs $PHPMYADMIN_DIR/logs/error_log$rotatelogs_format $rotatelogs_interval"
+CustomLog "|/usr/sbin/rotatelogs $PHPMYADMIN_DIR/logs/access_log$rotatelogs_format $rotatelogs_interval" combined
+
+php_value include_path "."
+
+# TODO: Adjust from ALL to more conservative values
+<IfModule !mod_bw.c>
+    LoadModule bw_module    modules/mod_bw.so
+</IfModule>
+
+<ifModule mod_bw.c>
+  BandWidthModule On
+  ForceBandWidthModule On
+  BandWidth $apache_bandwidth
+  MaxConnection $apache_maxconnection
+  BandWidthError $apache_bandwidtherror
+</IfModule>
+
+EOF
+
+cat <<EOF > "$PHPMYADMIN_DIR/conf.d/phpMyAdmin.conf"
+Alias /phpmyadmin /usr/share/phpMyAdmin/
+
+<Directory /usr/share/phpMyAdmin/>
+   Order Allow,Deny
+   Allow from All
+</Directory>
+
+# We set it up for them, this should not be necessary
+<Directory /usr/share/phpMyAdmin/setup/>
+   Order Deny,Allow
+   Deny from All
+</Directory>
+
+
+# These directories do not require access over HTTP - taken from the original
+# phpMyAdmin upstream tarball
+#
+<Directory /usr/share/phpMyAdmin/libraries/>
+    Order Deny,Allow
+    Deny from All
+    Allow from None
+</Directory>
+
+<Directory /usr/share/phpMyAdmin/setup/lib/>
+    Order Deny,Allow
+    Deny from All
+    Allow from None
+</Directory>
+
+<Directory /usr/share/phpMyAdmin/setup/frames/>
+    Order Deny,Allow
+    Deny from All
+    Allow from None
+</Directory>
+
+EOF
+
+#
+# Create simple phpmyadmin start / stop script
+#
+ln -s $CART_INFO_DIR/bin/phpmyadmin_ctl.sh $PHPMYADMIN_CTL_SCRIPT
+
+#
+# Setup Permissions
+#
+
+chown $user_id.$group_id -R $PHPMYADMIN_DIR || error "Failed to chown new phpmyadmin space.  Please contact support" 123
+# Secure script and config dirs.
+chown root.root -R "$PHPMYADMIN_DIR/conf" "$PHPMYADMIN_DIR/conf.d"
+chown root.root "$PHPMYADMIN_DIR"
+chcon -t libra_var_lib_t -l $mcs_level -R "$PHPMYADMIN_DIR"
+
+#
+# Create environment variables. This MUST be before starting phpmyadmin as the CTL script relies on these.
+#
+echo "export OPENSHIFT_PHPMYADMIN_IP='$IP'" > $APP_HOME/.env/OPENSHIFT_PHPMYADMIN_IP
+echo "export OPENSHIFT_PHPMYADMIN_APP_DIR='$PHPMYADMIN_DIR/'" > $APP_HOME/.env/OPENSHIFT_PHPMYADMIN_APP_DIR
+echo "export OPENSHIFT_PHPMYADMIN_CTL_SCRIPT='$PHPMYADMIN_CTL_SCRIPT'" > $APP_HOME/.env/OPENSHIFT_PHPMYADMIN_CTL_SCRIPT
+
+
+#
+# Start the server
+#
+runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $PHPMYADMIN_CTL_SCRIPT start" || error "Failed to start ${application}" 121
+
+#
+# Create virtualhost definition for apache
+#
+# node_ssl_template.conf gets copied in unaltered and should contain
+# all of the configuration bits required for ssl to work including key location
+#
+
+[ -d "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}/" ] || error "httpd conf dir not available" 136
+
+cat <<EOF > "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}/phpmyadmin-3.4.conf"
+ProxyPass /phpmyadmin http://$IP:8080/phpmyadmin
+ProxyPassReverse /phpmyadmin http://$IP:8080/phpmyadmin
+
+EOF
+
+/sbin/service httpd configtest 2> /dev/null && /sbin/service httpd graceful || error "Failed to restart master httpd, please contact support" 120
+
+
+# Grab the env vars so we can print them
+. $APP_HOME/.env/OPENSHIFT_DB_USERNAME
+. $APP_HOME/.env/OPENSHIFT_DB_PASSWORD
+. $APP_HOME/.env/OPENSHIFT_APP_DNS
+
+
+echo "CLIENT_RESULT: "
+echo "CLIENT_RESULT: phpMyAdmin 3.4 added.  Please make note of these credentials:"
+echo "CLIENT_RESULT: "
+echo "CLIENT_RESULT:    Root User: $OPENSHIFT_DB_USERNAME"
+echo "CLIENT_RESULT:    Root Password: $OPENSHIFT_DB_PASSWORD"
+echo "CLIENT_RESULT: "
+echo "CLIENT_RESULT: Connection URL: https://$OPENSHIFT_APP_DNS/phpmyadmin/"
