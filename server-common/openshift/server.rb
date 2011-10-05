@@ -626,36 +626,40 @@ module Libra
     def log_result_output(output, exitcode, user=nil, app_name=nil, app=nil)
       if output && !output.empty?
         output.each_line do |line|
-          if line =~ /^CLIENT_(MESSAGE|RESULT|DEBUG): /
+          if line =~ /^CLIENT_(MESSAGE|RESULT|DEBUG|ERROR): /
             if line =~ /^CLIENT_MESSAGE: /
               Libra.client_message line['CLIENT_MESSAGE: '.length..-1]
             elsif line =~ /^CLIENT_RESULT: /
               Libra.client_result line['CLIENT_RESULT: '.length..-1]
-            else
+            elsif line =~ /^CLIENT_DEBUG: /
               Libra.client_debug line['CLIENT_DEBUG: '.length..-1]
-            end
-          elsif user && app_name && line =~ /^SSH_KEY_(ADD|REMOVE): /
-            if line =~ /^SSH_KEY_ADD: /
-              key = line['SSH_KEY_ADD: '.length..-1].chomp
-              user.set_system_ssh_key(app_name, key)
             else
-              user.remove_system_ssh_key(app_name)
+              Libra.client_error line['CLIENT_ERROR: '.length..-1]
             end
-          elsif user && app_name && line =~ /^ENV_VAR_(ADD|REMOVE): /
-            if line =~ /^ENV_VAR_ADD: /
-              env_var = line['ENV_VAR_ADD: '.length..-1].chomp.split('=')
-              user.set_env_var(app_name, env_var[0], env_var[1])
-            else
-              key = line['ENV_VAR_REMOVE: '.length..-1].chomp
-              user.remove_env_var(app_name, key)
+          elsif exitcode == 0 && user && app_name
+            if line =~ /^SSH_KEY_(ADD|REMOVE): /
+              if line =~ /^SSH_KEY_ADD: /
+                key = line['SSH_KEY_ADD: '.length..-1].chomp
+                user.set_system_ssh_key(app_name, key)
+              else
+                user.remove_system_ssh_key(app_name)
+              end
+            elsif line =~ /^ENV_VAR_(ADD|REMOVE): /
+              if line =~ /^ENV_VAR_ADD: /
+                env_var = line['ENV_VAR_ADD: '.length..-1].chomp.split('=')
+                user.set_env_var(app_name, env_var[0], env_var[1])
+              else
+                key = line['ENV_VAR_REMOVE: '.length..-1].chomp
+                user.remove_env_var(app_name, key)
+              end
+            elsif app && line =~ /^BROKER_AUTH_KEY_(ADD|REMOVE): /
+              if line =~ /^BROKER_AUTH_KEY_ADD: /
+                user.set_broker_auth_key(app_name, app)
+              else
+                user.remove_broker_auth_key(app_name, app)
+              end
             end
-          elsif user && app_name && app && line =~ /^BROKER_AUTH_KEY_(ADD|REMOVE): /
-            if line =~ /^BROKER_AUTH_KEY_ADD: /
-              user.set_broker_auth_key(app_name, app)
-            else
-              user.remove_broker_auth_key(app_name, app)
-            end
-          elsif exitcode != 0
+          else # exitcode != 0
             Libra.client_debug line
             Libra.logger_debug "DEBUG: server results: " + line
           end

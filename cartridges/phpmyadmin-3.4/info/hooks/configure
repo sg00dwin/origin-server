@@ -140,9 +140,9 @@ if [ ! -f "$APP_HOME/.env/OPENSHIFT_DB_USERNAME" ] ||
    [ ! -f "$APP_HOME/.env/OPENSHIFT_DB_HOST" ] ||
    [ ! -f "$APP_HOME/.env/OPENSHIFT_DB_PORT" ]
 then
-    echo "CLIENT_MESSAGE: "
-    echo "CLIENT_MESSAGE: Mysql must be embedded before phpMyAdmin"
-    echo "CLIENT_MESSAGE: "
+    echo "CLIENT_ERROR: "
+    echo "CLIENT_ERROR: Mysql must be embedded before phpMyAdmin"
+    echo "CLIENT_ERROR: "
     exit 137
 fi
 

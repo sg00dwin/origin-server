@@ -39,6 +39,15 @@ module Libra
       puts str
     end
   end
+  
+  def self.client_error(str)
+    errorIO = Thread.current[:errorIO]
+    if errorIO
+      errorIO.puts str
+    else
+      puts str
+    end
+  end
 
   def self.logger_debug(str)
     if defined? Rails
