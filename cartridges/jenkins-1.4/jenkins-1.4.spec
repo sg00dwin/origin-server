@@ -2,7 +2,7 @@
 
 Summary:   Provides jenkins-1.4 support
 Name:      rhc-cartridge-jenkins-1.4
-Version:   0.79.3
+Version:   0.79.4
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -60,6 +60,11 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Tue Oct 04 2011 Dan McPherson <dmcphers@redhat.com> 0.79.4-1
+- cleanup (dmcphers@redhat.com)
+- add deploy httpd proxy and migration (dmcphers@redhat.com)
+- Adding request header type (mmcgrath@redhat.com)
+
 * Mon Oct 03 2011 Dan McPherson <dmcphers@redhat.com> 0.79.3-1
 - Adding cloud config and libraserver (mmcgrath@redhat.com)
 
