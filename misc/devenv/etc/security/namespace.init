@@ -29,8 +29,8 @@ then
     then
         uid=$(id -u "$4")
         mcs_level=`/usr/libexec/li/cartridges/li-controller/info/bin/mcs_level $uid`
-        chcon -t libra_var_lib_t -l $mcs_level $1
-        chcon -t libra_var_lib_t -l $mcs_level $2
+        chcon -t libra_tmp_t -l $mcs_level $1
+        chcon -t libra_tmp_t -l $mcs_level $2
     fi
 fi
 
