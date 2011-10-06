@@ -44,7 +44,7 @@ do
     fi
 done
 
-if [ -f ${OPENSHIFT_REPO_DIR}pom.xml ] && ! $SKIP_MAVEN_BUILD
+if [ -f ${OPENSHIFT_REPO_DIR}pom.xml ] && ! $SKIP_MAVEN_BUILD && ! [ -f ~/.env/JENKINS_URL ]
 then
   echo "Found pom.xml... attempting to build with 'mvn clean package -Popenshift -DskipTests'" 
   export JAVA_HOME=/etc/alternatives/java_sdk_1.6.0
