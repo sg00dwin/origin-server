@@ -2,7 +2,7 @@
 
 Summary:   Provides python-wsgi-3.2 support
 Name:      rhc-cartridge-wsgi-3.2
-Version:   0.79.2
+Version:   0.79.3
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -78,6 +78,11 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Thu Oct 06 2011 Dan McPherson <dmcphers@redhat.com> 0.79.3-1
+- switch to use ci type to know if client is avail (dmcphers@redhat.com)
+- add jenkins build kickoff to all post receives (dmcphers@redhat.com)
+- adding base templates for all types (dmcphers@redhat.com)
+
 * Tue Oct 04 2011 Dan McPherson <dmcphers@redhat.com> 0.79.2-1
 - cleanup (dmcphers@redhat.com)
 - add deploy httpd proxy and migration (dmcphers@redhat.com)
