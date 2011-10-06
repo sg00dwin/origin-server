@@ -44,18 +44,23 @@ do
     fi
 done
 
-if [ -f ${OPENSHIFT_REPO_DIR}pom.xml ] && ! $SKIP_MAVEN_BUILD && ! [ -f ~/.env/JENKINS_URL ]
+if [ -f ~/.env/JENKINS_URL ]
 then
-  echo "Found pom.xml... attempting to build with 'mvn clean package -Popenshift -DskipTests'" 
-  export JAVA_HOME=/etc/alternatives/java_sdk_1.6.0
-  export M2_HOME=/etc/alternatives/maven-3.0
-  export M2=$M2_HOME/bin
-  export MAVEN_OPTS="-Xmx208m"
-  export PATH=$JAVA_HOME/bin:$M2:$PATH
-  pushd ${OPENSHIFT_REPO_DIR} > /dev/null
-  mvn --version
-  mvn clean package -Popenshift -DskipTests
-  popd
+  jenkins-cli build -s ${OPENSHIFT_APP_NAME}-build 
+else
+  if [ -f ${OPENSHIFT_REPO_DIR}pom.xml ] && ! $SKIP_MAVEN_BUILD
+  then
+    echo "Found pom.xml... attempting to build with 'mvn clean package -Popenshift -DskipTests'" 
+    export JAVA_HOME=/etc/alternatives/java_sdk_1.6.0
+    export M2_HOME=/etc/alternatives/maven-3.0
+    export M2=$M2_HOME/bin
+    export MAVEN_OPTS="-Xmx208m"
+    export PATH=$JAVA_HOME/bin:$M2:$PATH
+    pushd ${OPENSHIFT_REPO_DIR} > /dev/null
+    mvn --version
+    mvn clean package -Popenshift -DskipTests
+    popd
+  fi
 fi
 
 # Run build
