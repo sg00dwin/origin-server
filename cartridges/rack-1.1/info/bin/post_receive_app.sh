@@ -11,7 +11,7 @@ done
 USED_BUNDLER=false 
 
 JENKINS_ENABLED=false
-if [ -f ~/.env/JENKINS_URL ]
+if [ -f ~/.env/OPENSHIFT_CI_TYPE ]
 then
   JENKINS_ENABLED=true
   redeploy_dotopenshift_dir.sh

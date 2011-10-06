@@ -46,6 +46,12 @@
   <builders>
     <hudson.tasks.Shell>
       <command>
+# If .bundle isn't currently committed and a Gemfile is then bundle install
+if [ -d .bundle ] && [ -f Gemfile ]
+then
+  echo 'Bundling RubyGems based on Gemfile/Gemfile.lock to vendor/bundle'
+  bundle install --deployment
+fi
 rsync -avz -e "/usr/libexec/li/cartridges/jenkins-1.4/info/bin/git_ssh_wrapper.sh" . UPSTREAM_PUBLISH_TARGET/repo/
       </command>
     </hudson.tasks.Shell>

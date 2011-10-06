@@ -9,7 +9,7 @@ do
 done
 
 JENKINS_ENABLED=false
-if [ -f ~/.env/JENKINS_URL ]
+if [ -f ~/.env/OPENSHIFT_CI_TYPE ]
 then
   JENKINS_ENABLED=true
 fi
