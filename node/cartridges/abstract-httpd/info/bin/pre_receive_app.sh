@@ -6,4 +6,7 @@ do
     . $f
 done
 
-stop_app.sh
+if ! [ -f ~/.env/JENKINS_URL ]
+then
+  stop_app.sh
+fi

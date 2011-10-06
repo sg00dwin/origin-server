@@ -15,7 +15,14 @@ then
   SKIP_MAVEN_BUILD=true
 fi
 
-redeploy_repo_dir.sh
+JENKINS_ENABLED=false
+if [ -f ~/.env/JENKINS_URL ]
+then
+  JENKINS_ENABLED=true
+  redeploy_dotopenshift_dir.sh
+else
+  redeploy_repo_dir.sh
+fi
 
 # Create a link for each file in user config to server standalone/config
 if [ -d ${OPENSHIFT_REPO_DIR}.openshift/config ]
@@ -44,7 +51,7 @@ do
     fi
 done
 
-if [ -f ~/.env/JENKINS_URL ]
+if $JENKINS_ENABLED
 then
   jenkins-cli build -s ${OPENSHIFT_APP_NAME}-build 
 else
@@ -65,7 +72,12 @@ fi
 # Run build
 user_build.sh
 
-# Start the app
-start_app.sh
+if $JENKINS_ENABLED
+then
+  restart_app.sh
+else
+  # Start the app
+  start_app.sh
+fi
 
 nurture_app_push.sh $libra_server

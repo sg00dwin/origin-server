@@ -8,6 +8,12 @@ do
     . $f
 done
 
+JENKINS_ENABLED=false
+if [ -f ~/.env/JENKINS_URL ]
+then
+  JENKINS_ENABLED=true
+fi
+
 redeploy_repo_dir.sh
 
 export PERL5LIB="${OPENSHIFT_REPO_DIR}libs:~/${OPENSHIFT_APP_NAME}/perl5lib"
@@ -20,10 +26,20 @@ then
     done
 fi
 
+if $JENKINS_ENABLED
+then
+  jenkins-cli build -s ${OPENSHIFT_APP_NAME}-build 
+fi
+
 # Run build
 user_build.sh
 
-# Start the app
-start_app.sh
+if $JENKINS_ENABLED
+then
+  restart_app.sh
+else
+  # Start the app
+  start_app.sh
+fi
 
 nurture_app_push.sh $libra_server
