@@ -120,11 +120,19 @@ echo "export PATH=\$PATH:${CART_INFO_DIR}/bin/" > $APP_HOME/.env/PATH_JENKINS_CL
 . $APP_HOME/.env/OPENSHIFT_DATA_DIR
 . $APP_HOME/.env/OPENSHIFT_APP_NAME
 . $APP_HOME/.env/JENKINS_URL
+. $APP_HOME/.env/OPENSHIFT_APP_TYPE
 
 /usr/bin/wget --no-check-certificate -q ${JENKINS_URL}jnlpJars/jenkins-cli.jar -O "$OPENSHIFT_DATA_DIR/jenkins-cli.jar" || error "Could not download ${JENKINS_URL}jnlpJars/jenkins-cli.jar" 157
 
 # Maybe allow cartridges to create their own jenkins job
-/bin/sed "s,UPSTREAM_REPO_URL,ssh://${uuid}@${OPENSHIFT_APP_NAME}-${namespace}.${libra_domain}/~/git/${OPENSHIFT_APP_NAME}.git/," $CART_INFO_DIR/configuration/template.xml | runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level ${CART_INFO_DIR}/bin/jenkins-cli create-job '${OPENSHIFT_APP_NAME}-build'"
+if [ -f "${CART_DIR}/${OPENSHIFT_APP_TYPE}/info/configuration/jenkins_job_template.xml" ]
+then
+    JOB_XML="${CART_DIR}/${OPENSHIFT_APP_TYPE}/info/configuration/jenkins_job_template.xml"
+else
+    JOB_XML="$CART_INFO_DIR/configuration/jenkins_job_template.xml"
+fi
+
+/bin/sed "s,UPSTREAM_REPO_URL,ssh://${uuid}@${OPENSHIFT_APP_NAME}-${namespace}.${libra_domain}/~/git/${OPENSHIFT_APP_NAME}.git/," $JOB_XML | runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level ${CART_INFO_DIR}/bin/jenkins-cli create-job '${OPENSHIFT_APP_NAME}-build'"
 
 echo "CLIENT_RESULT: "
 echo "CLIENT_RESULT: Jenkins Client 1.4 has been added to: $OPENSHIFT_APP_NAME"
