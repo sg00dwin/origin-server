@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.79.5
+Version:       0.79.6
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -156,6 +156,13 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Thu Oct 06 2011 Dan McPherson <dmcphers@redhat.com> 0.79.6-1
+- add jenkins build kickoff to all post receives (dmcphers@redhat.com)
+- add m2_home, java_home, update path, add migration for each and jenkins job
+  jboss template (dmcphers@redhat.com)
+- Adding rsync support (mmcgrath@redhat.com)
+- fix some deconfigures for httpd proxy (dmcphers@redhat.com)
+
 * Wed Oct 05 2011 Dan McPherson <dmcphers@redhat.com> 0.79.5-1
 - add ipv4 and split out standalone.sh and standalone.conf
   (dmcphers@redhat.com)
