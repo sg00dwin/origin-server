@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/jenkins-client-1.4
 
 Name: rhc-cartridge-jenkins-client-1.4
-Version: 0.4
+Version: 0.5
 Release: 1%{?dist}
 Summary: Embedded jenkins client support for express 
 Group: Network/Daemons
@@ -47,6 +47,11 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Wed Oct 05 2011 Dan McPherson <dmcphers@redhat.com> 0.5-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- Adding git upstream automation (mmcgrath@redhat.com)
+
 * Wed Oct 05 2011 Dan McPherson <dmcphers@redhat.com> 0.4-1
 - removing explicit CI URL call (mmcgrath@redhat.com)
 
