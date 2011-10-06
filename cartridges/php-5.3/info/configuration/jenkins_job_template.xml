@@ -36,7 +36,7 @@
     <skipTag>false</skipTag>
     <scmName></scmName>
   </scm>
-  <assignedNode>jbossas-7.0</assignedNode>
+  <assignedNode>php-5.3</assignedNode>
   <canRoam>false</canRoam>
   <disabled>false</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
@@ -46,16 +46,13 @@
   <builders>
     <hudson.tasks.Shell>
       <command>
-export MAVEN_OPTS="-Xmx768m"
-mvn --version
-mvn clean package -Popenshift -DskipTests
-rsync -avz -e "/usr/libexec/li/cartridges/jenkins-1.4/info/bin/git_ssh_wrapper.sh"  deployments/. UPSTREAM_PUBLISH_TARGET/repo/deployments/
+rsync -avz -e "/usr/libexec/li/cartridges/jenkins-1.4/info/bin/git_ssh_wrapper.sh" . UPSTREAM_PUBLISH_TARGET/repo/
       </command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>deployments/**</artifacts>
+      <artifacts>**</artifacts>
       <latestOnly>false</latestOnly>
     </hudson.tasks.ArtifactArchiver>
   </publishers>
