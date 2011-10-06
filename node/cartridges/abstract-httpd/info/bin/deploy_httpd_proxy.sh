@@ -32,8 +32,7 @@ else
     exit 3
 fi
 
-rm -rf "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}"
-rm -f "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}.conf"
+rm -rf "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}.conf" "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}"
 
 mkdir "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}"
 
