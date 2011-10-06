@@ -145,7 +145,6 @@ while true; do
          -jaxpmodule javax.xml.jaxp-provider \
          org.jboss.as.standalone \
          -Djboss.home.dir=\"$JBOSS_HOME\" \
-         -Djava.net.preferIPv4Stack=true \
          "$@"
       JBOSS_STATUS=$?
    else
@@ -159,7 +158,6 @@ while true; do
          -jaxpmodule javax.xml.jaxp-provider \
          org.jboss.as.standalone \
          -Djboss.home.dir=\"$JBOSS_HOME\" \
-         -Djava.net.preferIPv4Stack=true \
          "$@" "&"
       JBOSS_PID=$!
       # Trap common signals and relay them to the jboss process
