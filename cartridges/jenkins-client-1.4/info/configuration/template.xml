@@ -36,7 +36,7 @@
     <skipTag>false</skipTag>
     <scmName></scmName>
   </scm>
-  <assignedNode>php-5.3</assignedNode>
+  <assignedNode>raw-0.1</assignedNode>
   <canRoam>false</canRoam>
   <disabled>false</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
@@ -45,8 +45,10 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>date
-hostname</command>
+      <command>
+echo "This command has no default configuration.  Please log in to your jenkins instance to configure this job"
+find *
+      </command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
