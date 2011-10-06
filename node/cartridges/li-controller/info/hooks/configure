@@ -32,6 +32,7 @@
 #
 DEFAULT_LIBRA_DIR=/var/lib/libra
 DEFAULT_LIBRA_CONF_DIR=/etc/libra
+DEFAULT_LIBRA_SKEL_DIR=${DEFAULT_LIBRA_CONF_DIR}/skel
 
 first_uid=${first_uid:=500}
 
@@ -177,10 +178,11 @@ function create_user_account() {
     USERNAME=$1
 
     HOMEDIR=`homedir $USERNAME`
+    SKEL_DIR=${SKEL_DIR:=$DEFAULT_LIBRA_SKEL_DIR}
 
     (
       flock -x -w 10 200
-      ${NOOP} useradd -u `next_uid` -d ${HOMEDIR} -s /usr/bin/trap-user -c 'libra guest' $USERNAME
+      ${NOOP} useradd -u `next_uid` -d ${HOMEDIR} -s /usr/bin/trap-user -c 'libra guest' -m -k $SKEL_DIR $USERNAME
 
       if [ $? -ne 0 ]
       then
