@@ -2,7 +2,7 @@
 
 Summary:   Provides jenkins-1.4 support
 Name:      rhc-cartridge-jenkins-1.4
-Version:   0.79.6
+Version:   0.79.7
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -60,6 +60,13 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Thu Oct 06 2011 Dan McPherson <dmcphers@redhat.com> 0.79.7-1
+- add jenkins build kickoff to all post receives (dmcphers@redhat.com)
+- force alias (jimjag@redhat.com)
+- revert for a bit (jimjag@redhat.com)
+- fix some deconfigures for httpd proxy (dmcphers@redhat.com)
+- Use inexpensive Alias (jimjag@redhat.com)
+
 * Wed Oct 05 2011 Dan McPherson <dmcphers@redhat.com> 0.79.6-1
 - Adding git.hpi so it's auto installed (mmcgrath@redhat.com)
 
