@@ -20,6 +20,14 @@ module LibraMigration
       cartridge_root_dir = "/usr/libexec/li/cartridges"
       cartridge_dir = "#{cartridge_root_dir}/#{app_type}"
       
+      if app_type == 'jbossas-7.0'
+        FileUtils.rm "#{app_dir}/jbossas-7.0/bin/standalone.sh"
+        FileUtils.ln_s "#{cartridge_dir}/info/bin/standalone.sh", "#{app_dir}/jbossas-7.0/bin/standalone.sh"
+          
+        FileUtils.rm "#{app_dir}/jbossas-7.0/bin/standalone.conf"
+        FileUtils.ln_s "#{cartridge_dir}/info/bin/standalone.conf", "#{app_dir}/jbossas-7.0/bin/standalone.conf"
+      end
+      
     else
       exitcode = 127
       output += "Application not found to migrate: #{app_home}\n"
