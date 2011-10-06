@@ -2,7 +2,7 @@
 
 Summary:   Provides raw support
 Name:      rhc-cartridge-raw-0.1
-Version:   0.4
+Version:   0.5
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -71,6 +71,17 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Thu Oct 06 2011 Dan McPherson <dmcphers@redhat.com> 0.5-1
+- switch to use ci type to know if client is avail (dmcphers@redhat.com)
+- cleanup (dmcphers@redhat.com)
+- add jenkins build kickoff to all post receives (dmcphers@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- stripping additional php bits (mmcgrath@redhat.com)
+- adding base templates for all types (dmcphers@redhat.com)
+- Adding health check and index (mmcgrath@redhat.com)
+- fix some deconfigures for httpd proxy (dmcphers@redhat.com)
+
 * Tue Oct 04 2011 Dan McPherson <dmcphers@redhat.com> 0.4-1
 - cleanup (dmcphers@redhat.com)
 - add deploy httpd proxy and migration (dmcphers@redhat.com)
