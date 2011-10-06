@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.79.4
+Version:       0.79.5
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -156,6 +156,10 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Wed Oct 05 2011 Dan McPherson <dmcphers@redhat.com> 0.79.5-1
+- add ipv4 and split out standalone.sh and standalone.conf
+  (dmcphers@redhat.com)
+
 * Wed Oct 05 2011 Dan McPherson <dmcphers@redhat.com> 0.79.4-1
 - undo test (dmcphers@redhat.com)
 
