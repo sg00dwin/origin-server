@@ -25,6 +25,7 @@ Requires:  rhc-cartridge-rack-1.1
 Requires:  rhc-cartridge-jbossas-7.0
 Requires:  rhc-cartridge-perl-5.10
 Requires:  rhc-cartridge-mysql-5.1
+Requires:  rhc-cartridge-phpmyadmin-3.4
 Requires:  rhc-cartridge-jenkins-1.4
 Requires:  rhc-cartridge-raw-0.1
 Requires:  rhc-cartridge-jenkins-client-1.4
