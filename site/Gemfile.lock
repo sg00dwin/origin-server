@@ -105,9 +105,11 @@ DEPENDENCIES
   http_connection
   json
   mocha
+  multimap
   parseconfig
   rack
   rails (~> 3.0.10)
   recaptcha
+  regin
   stomp
   xml-simple

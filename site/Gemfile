@@ -11,6 +11,8 @@ gem 'xml-simple'
 gem 'haml'
 gem 'formtastic', '~> 1.2.3'
 gem 'rack'
+gem 'multimap'
+gem 'regin'
 
 # Files for Barista (https://github.com/Sutto/barista)
 gem 'json'
