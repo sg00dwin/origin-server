@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.78.6
+Version:   0.78.7
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -206,6 +206,9 @@ chkconfig libra-tc on
 %{_initddir}/libra-site
 
 %changelog
+* Fri Oct 07 2011 Thomas Wiest <twiest@redhat.com> 0.78.7-1
+- Added phpmyadmin cartridge to devenv.spec requires (twiest@redhat.com)
+
 * Wed Oct 05 2011 Dan McPherson <dmcphers@redhat.com> 0.78.6-1
 - changing to use libra_tmp_t (mmcgrath@redhat.com)
 - Adding namespace init (mmcgrath@redhat.com)
