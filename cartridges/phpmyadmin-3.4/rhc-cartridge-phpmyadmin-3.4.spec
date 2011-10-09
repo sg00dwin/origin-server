@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/phpmyadmin-3.4
 
 Name: rhc-cartridge-phpmyadmin-3.4
-Version: 0.1.2
+Version: 0.1.3
 Release: 1%{?dist}
 Summary: Embedded phpMyAdmin support for express
 
@@ -48,6 +48,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Sun Oct 09 2011 Dan McPherson <dmcphers@redhat.com> 0.1.3-1
+- Bug 744375 (dmcphers@redhat.com)
+
 * Wed Oct 05 2011 Thomas Wiest <twiest@redhat.com> 0.1.2-1
 - Added %post entry for phpMyAdmin config.inc.php file (twiest@redhat.com)
 - add concept of CLIENT_ERROR and use from phpmyadmin (dmcphers@redhat.com)
