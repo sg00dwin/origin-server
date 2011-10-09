@@ -46,8 +46,20 @@
   <builders>
     <hudson.tasks.Shell>
       <command>
-rsync -avz -e "/usr/libexec/li/cartridges/jenkins-1.4/info/bin/git_ssh_wrapper.sh" . UPSTREAM_PUBLISH_TARGET/repo/
-      </command>
+alias rsync="rsync --delete-after -az -e '$GIT_SSH'"
+
+# Sync Virtual Env Cache - Faster Builds
+rsync UPSTREAM_PUBLISH_TARGET/virtenv/ ~/${OPENSHIFT_APP_NAME}/virtenv/
+
+# Update Virtual Env
+post_receive_app.sh
+
+# Run test
+# python ${OPENSHIFT_REPO_DIR}setup.py test
+
+# Push content back to application
+rsync ~/${OPENSHIFT_APP_NAME}/virtenv/ UPSTREAM_PUBLISH_TARGET/virtenv/
+rsync ~/$WORKSPACE/ UPSTREAM_PUBLISH_TARGET/repo/</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
