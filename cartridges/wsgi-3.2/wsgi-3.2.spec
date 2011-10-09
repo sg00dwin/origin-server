@@ -2,7 +2,7 @@
 
 Summary:   Provides python-wsgi-3.2 support
 Name:      rhc-cartridge-wsgi-3.2
-Version:   0.79.3
+Version:   0.79.4
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -78,6 +78,11 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Sun Oct 09 2011 Dan McPherson <dmcphers@redhat.com> 0.79.4-1
+- Adding more obvious verbage (mmcgrath@redhat.com)
+- A failed jenkins build is a fatal error (mmcgrath@redhat.com)
+- prepping for jenkins integration (mmcgrath@redhat.com)
+
 * Thu Oct 06 2011 Dan McPherson <dmcphers@redhat.com> 0.79.3-1
 - switch to use ci type to know if client is avail (dmcphers@redhat.com)
 - add jenkins build kickoff to all post receives (dmcphers@redhat.com)
