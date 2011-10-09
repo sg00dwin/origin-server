@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.79.6
+Version:       0.79.7
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -157,6 +157,11 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Sat Oct 08 2011 Dan McPherson <dmcphers@redhat.com> 0.79.7-1
+- use alternate skeleton for new users (markllama@redhat.com)
+- added empty skeleton directory for new users (markllama@redhat.com)
+- missed one JENKINS_URL (dmcphers@redhat.com)
+
 * Thu Oct 06 2011 Dan McPherson <dmcphers@redhat.com> 0.79.6-1
 - add jenkins build kickoff to all post receives (dmcphers@redhat.com)
 - add m2_home, java_home, update path, add migration for each and jenkins job
