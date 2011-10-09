@@ -208,7 +208,7 @@ function remove_user_account {
     done
 
     ${NOOP} rm -rf `homedir $USERNAME`
-    ${NOOP} userdel -r ${USERNAME} 2> /dev/null
+    ${NOOP} userdel ${USERNAME}
 }
 
 #
