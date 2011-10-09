@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.79.7
+Version:       0.79.8
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -157,6 +157,11 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Sun Oct 09 2011 Dan McPherson <dmcphers@redhat.com> 0.79.8-1
+- change fix to be based on suggestion (dmcphers@redhat.com)
+- Bug 744513 (dmcphers@redhat.com)
+- Bug 744375 (dmcphers@redhat.com)
+
 * Sat Oct 08 2011 Dan McPherson <dmcphers@redhat.com> 0.79.7-1
 - use alternate skeleton for new users (markllama@redhat.com)
 - added empty skeleton directory for new users (markllama@redhat.com)
