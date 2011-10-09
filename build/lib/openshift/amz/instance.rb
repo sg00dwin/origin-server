@@ -144,7 +144,7 @@ module OpenShift
         # Establish the DNS name
         @dns = get_value(:dns_name)
 
-        (0..15).each do
+        (0..60).each do
           break if can_ssh?
           log.info "SSH access failed... retrying"
           sleep 5
