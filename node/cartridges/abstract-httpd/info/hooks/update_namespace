@@ -73,7 +73,9 @@ mv_symlink $old_namespace $new_namespace $application
 
 if [ -f "/etc/httpd/conf.d/libra/${uuid}_${old_namespace}_${application}.conf" ]
 then
-sed -i "s/ServerName ${application}-${old_namespace}./ServerName ${application}-${new_namespace}./" /etc/httpd/conf.d/libra/${uuid}_${old_namespace}_${application}.conf
-mv /etc/httpd/conf.d/libra/${uuid}_${old_namespace}_${application}.conf /etc/httpd/conf.d/libra/${uuid}_${new_namespace}_${application}.conf
-/sbin/service httpd configtest 2> /dev/null && /sbin/service httpd graceful || error "Failed to restart master httpd, please contact support" 120
+  sed -i "s/ServerName ${application}-${old_namespace}./ServerName ${application}-${new_namespace}./" /etc/httpd/conf.d/libra/${uuid}_${old_namespace}_${application}/00000_default.conf
+  sed -i "s/_${old_namespace}_${application}/_${new_namespace}_${application}/g" /etc/httpd/conf.d/libra/${uuid}_${old_namespace}_${application}.conf
+  mv /etc/httpd/conf.d/libra/${uuid}_${old_namespace}_${application}.conf /etc/httpd/conf.d/libra/${uuid}_${new_namespace}_${application}.conf
+  mv /etc/httpd/conf.d/libra/${uuid}_${old_namespace}_${application} /etc/httpd/conf.d/libra/${uuid}_${new_namespace}_${application}
+  /sbin/service httpd configtest 2> /dev/null && /sbin/service httpd graceful || error "Failed to restart master httpd, please contact support" 120
 fi
