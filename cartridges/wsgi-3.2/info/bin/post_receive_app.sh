@@ -42,9 +42,11 @@ fi
 
 if [ -n "$JENKINS_ENABLED" ]
 then
+    set -e
     echo "Executing Jenkins build..."
     echo "You can track your build at http://jenktest-mmcgrath000.dev.rhcloud.com/job/${OPENSHIFT_APP_NAME}-build"
     jenkins-cli build -s ${OPENSHIFT_APP_NAME}-build 
+    set +e
 fi
 
 if [ -z "$BUILD_NUMBER" ]
