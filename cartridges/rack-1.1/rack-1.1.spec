@@ -29,6 +29,7 @@ Requires:  mysql-devel
 Requires:  ruby-devel
 Requires:  ruby-nokogiri
 Requires:  libxml2-devel
+Requires:  gcc-c++
 
 Obsoletes: rhc-cartridge-rack-1.1.0
 
