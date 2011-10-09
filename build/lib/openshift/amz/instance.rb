@@ -130,7 +130,7 @@ module OpenShift
       def block_until_available
         log.info "Waiting for instance to be available..."
 
-        (0..30).each do
+        (0..60).each do
           break if is_running?
           log.info "Instance isn't running yet... retrying"
           sleep 5
