@@ -54,15 +54,18 @@ rsync UPSTREAM_SSH:UPSTREAM_PUBLISH_DIR/perl5lib/ ~/${OPENSHIFT_APP_NAME}/perl5l
 # Update libs
 post_receive_app.sh
 
+# Deploy new build
+
+# Stop app
 $GIT_SSH UPSTREAM_SSH 'ctl_all stop'
 
 # Push content back to application
 rsync ~/${OPENSHIFT_APP_NAME}/perl5lib/ UPSTREAM_SSH:UPSTREAM_PUBLISH_DIR/perl5lib/
 rsync ~/$WORKSPACE/ UPSTREAM_SSH:UPSTREAM_PUBLISH_DIR/repo/
 
+# Configure / start app
 $GIT_SSH UPSTREAM_SSH deploy.sh
-$GIT_SSH UPSTREAM_SSH 'ctl_all start'
-      </command>
+$GIT_SSH UPSTREAM_SSH 'ctl_all start'</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
