@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.79.8
+Version:       0.79.9
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -157,6 +157,13 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Mon Oct 10 2011 Dan McPherson <dmcphers@redhat.com> 0.79.9-1
+- add deploy step and call from jenkins with stop start (dmcphers@redhat.com)
+- Adding deploy.sh (mmcgrath@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- Adding ctl_all command and fixing rhcsh path (mmcgrath@redhat.com)
+
 * Sun Oct 09 2011 Dan McPherson <dmcphers@redhat.com> 0.79.8-1
 - change fix to be based on suggestion (dmcphers@redhat.com)
 - Bug 744513 (dmcphers@redhat.com)
