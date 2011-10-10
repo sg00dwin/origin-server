@@ -2,7 +2,7 @@
 
 Summary:   Provides raw support
 Name:      rhc-cartridge-raw-0.1
-Version:   0.5
+Version:   0.6
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -71,6 +71,11 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Mon Oct 10 2011 Dan McPherson <dmcphers@redhat.com> 0.6-1
+- add deploy step and call from jenkins with stop start (dmcphers@redhat.com)
+- job updates (dmcphers@redhat.com)
+- working on jenkins build logic (dmcphers@redhat.com)
+
 * Thu Oct 06 2011 Dan McPherson <dmcphers@redhat.com> 0.5-1
 - switch to use ci type to know if client is avail (dmcphers@redhat.com)
 - cleanup (dmcphers@redhat.com)

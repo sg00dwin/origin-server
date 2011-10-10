@@ -2,7 +2,7 @@
 
 Summary:   Provides ruby rack support running on Phusion Passenger
 Name:      rhc-cartridge-rack-1.1
-Version:   0.78.9
+Version:   0.78.10
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -93,6 +93,11 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Mon Oct 10 2011 Dan McPherson <dmcphers@redhat.com> 0.78.10-1
+- add deploy step and call from jenkins with stop start (dmcphers@redhat.com)
+- job updates (dmcphers@redhat.com)
+- working on jenkins build logic (dmcphers@redhat.com)
+
 * Sun Oct 09 2011 Dan McPherson <dmcphers@redhat.com> 0.78.9-1
 - bug 742198 (dmcphers@redhat.com)
 

@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.78.7
+Version:   0.78.8
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -206,6 +206,10 @@ chkconfig libra-tc on
 %{_initddir}/libra-site
 
 %changelog
+* Mon Oct 10 2011 Dan McPherson <dmcphers@redhat.com> 0.78.8-1
+- dont enable timeout value (dmcphers@redhat.com)
+- bug 744660 (dmcphers@redhat.com)
+
 * Fri Oct 07 2011 Thomas Wiest <twiest@redhat.com> 0.78.7-1
 - Added phpmyadmin cartridge to devenv.spec requires (twiest@redhat.com)
 
