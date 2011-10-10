@@ -58,13 +58,7 @@ then
     user_build.sh
 else
     set -e
-    echo "Executing Jenkins build."
-    echo
-    echo "NOTE: If build fails, deployment will halt.  Last previous 'good' build will continue to run."
-    echo
-    echo "You can track your build at http://${JENKINS_URL}/job/${OPENSHIFT_APP_NAME}-build"
-    echo
-    jenkins-cli build -s ${OPENSHIFT_APP_NAME}-build 
+    jenkins_build.sh
     set +e
 fi
 

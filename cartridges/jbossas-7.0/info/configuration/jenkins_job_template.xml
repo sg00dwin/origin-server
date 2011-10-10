@@ -52,12 +52,14 @@ export MAVEN_OPTS="-Xmx768m"
 mvn --version
 mvn clean package -Popenshift -DskipTests
 
+# Stop app
 $GIT_SSH UPSTREAM_SSH 'ctl_all stop'
 
 # Push content back to application
 rsync ~/$WORKSPACE/deployments/. UPSTREAM_SSH:UPSTREAM_PUBLISH_DIR/repo/deployments/
 rsync ~/$WORKSPACE/.openshift UPSTREAM_SSH:UPSTREAM_PUBLISH_DIR/repo/.openshift
 
+# Configure / start app
 $GIT_SSH UPSTREAM_SSH deploy.sh
 $GIT_SSH UPSTREAM_SSH 'ctl_all start'
       </command>
