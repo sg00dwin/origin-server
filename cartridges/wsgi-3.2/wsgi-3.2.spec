@@ -2,7 +2,7 @@
 
 Summary:   Provides python-wsgi-3.2 support
 Name:      rhc-cartridge-wsgi-3.2
-Version:   0.79.6
+Version:   0.79.7
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -78,6 +78,16 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Mon Oct 10 2011 Dan McPherson <dmcphers@redhat.com> 0.79.7-1
+- more jenkins job work (dmcphers@redhat.com)
+- Added better output on failed builds (mmcgrath@redhat.com)
+- Merging (mmcgrath@redhat.com)
+- Adding better output for failed / successful jobs (mmcgrath@redhat.com)
+- Added better comments (mmcgrath@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- correcting URL output (mmcgrath@redhat.com)
+
 * Mon Oct 10 2011 Dan McPherson <dmcphers@redhat.com> 0.79.6-1
 - ssh -> GIT_SSH (dmcphers@redhat.com)
 

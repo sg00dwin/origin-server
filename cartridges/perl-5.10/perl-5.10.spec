@@ -2,7 +2,7 @@
 
 Summary:   Provides mod_perl support
 Name:      rhc-cartridge-perl-5.10
-Version:   0.10.5
+Version:   0.10.6
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -75,6 +75,12 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Mon Oct 10 2011 Dan McPherson <dmcphers@redhat.com> 0.10.6-1
+- bash usage error (dmcphers@redhat.com)
+- more jenkins job work (dmcphers@redhat.com)
+- Added better jenkins output (mmcgrath@redhat.com)
+- Adding better comments to jenkins template (mmcgrath@redhat.com)
+
 * Mon Oct 10 2011 Dan McPherson <dmcphers@redhat.com> 0.10.5-1
 - ssh -> GIT_SSH (dmcphers@redhat.com)
 

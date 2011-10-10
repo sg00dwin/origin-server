@@ -2,7 +2,7 @@
 
 Summary:   Provides php-5.3 support
 Name:      rhc-cartridge-php-5.3
-Version:   0.79.6
+Version:   0.79.7
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -84,6 +84,12 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Mon Oct 10 2011 Dan McPherson <dmcphers@redhat.com> 0.79.7-1
+- bash usage error (dmcphers@redhat.com)
+- more jenkins job work (dmcphers@redhat.com)
+- changing job template (mmcgrath@redhat.com)
+- Added better output on failed builds (mmcgrath@redhat.com)
+
 * Mon Oct 10 2011 Dan McPherson <dmcphers@redhat.com> 0.79.6-1
 - ssh -> GIT_SSH (dmcphers@redhat.com)
 

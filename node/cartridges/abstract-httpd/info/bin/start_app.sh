@@ -8,3 +8,4 @@ done
 
 echo "Starting application..."
 ~/${OPENSHIFT_APP_NAME}/${OPENSHIFT_APP_NAME}_ctl.sh start
+echo "Done"
