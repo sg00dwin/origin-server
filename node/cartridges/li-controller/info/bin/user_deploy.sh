@@ -6,8 +6,8 @@ do
     . $f
 done
 
-if [ -x ${OPENSHIFT_REPO_DIR}.openshift/action_hooks/build ]
+if [ -x ${OPENSHIFT_REPO_DIR}.openshift/action_hooks/deploy ]
 then
-    echo "Running .openshift/action_hooks/build"
-    ${OPENSHIFT_REPO_DIR}.openshift/action_hooks/build
+    echo "Running .openshift/action_hooks/deploy"
+    ${OPENSHIFT_REPO_DIR}.openshift/action_hooks/deploy
 fi
