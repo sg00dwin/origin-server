@@ -1,0 +1,80 @@
+Jenkins
+=======
+
+A note about this repository.  By default it is useless, users can safely
+delete it.
+
+Quickstart
+==========
+
+Jenkins integrates with other openshift applications.  To use start building
+against Jenkins, embed the jenkins-client into an existing application.  The
+below example will cause app "myapp" to start building against Jenkins.
+
+ $ rhc-ctl-app -a myapp -e add-jenkins-client-1.4
+
+From then on, running a "git push" will cause the build process to happen
+inside a Jenkins builder instead of inside your normal application compute
+space.
+
+Benefits
+========
+. Archived build information
+. No application downtime during the build process
+. Failed builds do not get deployed (leaving the previous working version in place
+. Jenkins builders have additional resources like memory and storage
+. A large community of Jenkins plugins
+
+Build/Deploy Process
+====================
+
+In OpenShift the Build/Deploy process has 3 steps.
+
+1) Pre-Receive - This happens as you git push, but before the push is fully
+    committed
+2) Build - This builds your application, downloads required deps, executes the
+    .openshift/action_hooks/build script and preps everything for deployment.
+3) Deploy - This does any prep work to get the application ready to be started
+    including running the .openshift/action_hooks/deploy script.  This step
+    happens right before the new application is issued a start
+
+
+Building Without Jenkins
+------------------------
+
+Building without Jenkins uses your application space as part of the build
+and test process.  Because of this, the application is shut down so its memory
+can be used for building.  The following steps take place
+
+1) User issues a 'git push'
+2) Application is shut down.
+3) Git application files are put in place
+4) .openshift/action_hooks/build is executed
+5) .openshift/action_hooks/install is executed
+6) Application is started
+
+Building with Jenkins
+---------------------
+
+Building with Jenkins uses dedicated application space that is typically larger
+then the application runtime space.  Because the build happens in its own
+dedicated jail, the running application is not shutdown or changed in any way
+until after the build is a success.  If it is not, the current active running
+application will continue to run.  The following steps take place.
+
+1) User issues a git push
+2) Jenkins is notified a new push is ready.
+3) A dedicated Jenkins slave (builder) is created.  It can be seen by using
+    the rhc-user-info command.
+4) Jenkins runs the build
+5) Jenkins stops the current running application
+6) Jenkins rsyncs all new content over to the builder
+7) Jenkins starts the new application.
+8) Jenkins archives build artifiacts for later reference
+9) After 15 minutes of idle time, the 'build app' will be destroyed and will
+    no longer show up with the rhc-user-info command.  The build artificats
+    however, will still exist in Jenkins and can be viewed there.
+
+Users can look at the build job by clicking on it in the Jenkins interface and
+going to "configure".  It is the Jenkins' build job to stop, sync and start the
+application once a build is complete.
