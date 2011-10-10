@@ -2,7 +2,7 @@
 
 Summary:   Provides python-wsgi-3.2 support
 Name:      rhc-cartridge-wsgi-3.2
-Version:   0.79.5
+Version:   0.79.6
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -78,6 +78,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Mon Oct 10 2011 Dan McPherson <dmcphers@redhat.com> 0.79.6-1
+- ssh -> GIT_SSH (dmcphers@redhat.com)
+
 * Mon Oct 10 2011 Dan McPherson <dmcphers@redhat.com> 0.79.5-1
 - add deploy step and call from jenkins with stop start (dmcphers@redhat.com)
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
