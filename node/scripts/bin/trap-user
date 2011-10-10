@@ -21,7 +21,8 @@ commands = {
     "set": "/bin/bash",
     "mkdir": "/bin/bash",
     "test": "/bin/bash",
-    "rsync": "/bin/bash"
+    "rsync": "/bin/bash",
+    "ctl_all": "/bin/bash"
 }
 
 #
@@ -114,7 +115,9 @@ if __name__ == '__main__':
             allargs.append('INCLUDE_GIT')
     elif basecmd in ('rhcsh',):
         os.environ["PS1"] = "rhcsh> "
-        allargs = ['--init-file', '/usr/local/bin/rhcsh', '-i']
+        allargs = ['--init-file', '/usr/bin/rhcsh', '-i']
+    elif basecmd in ('ctl_all',):
+        allargs = ['-c', '. /usr/bin/rhcsh > /dev/null ; ctl_all %s' % allargs[-1]]
     elif basecmd in ('java','set','scp', 'cd', 'test', 'mkdir', 'rsync'):
         str = ' '.join(allargs)
         allargs = ['-c', str]
