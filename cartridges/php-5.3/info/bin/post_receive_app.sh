@@ -11,10 +11,23 @@ done
 JENKINS_ENABLED=false
 if [ -f ~/.env/OPENSHIFT_CI_TYPE ]
 then
-  JENKINS_ENABLED=true
+    JENKINS_ENABLED=true
+else
+    redeploy_repo_dir.sh
 fi
 
-redeploy_repo_dir.sh
+if [ -n "$JENKINS_ENABLED" ]
+then
+    set -e
+    echo "Executing Jenkins build."
+    echo
+    echo "NOTE: If build fails, deployment will halt.  Last previous 'good' build will continue to run."
+    echo
+    echo "You can track your build at http://${JENKINS_URL}/job/${OPENSHIFT_APP_NAME}-build"
+    echo
+    jenkins-cli build -s ${OPENSHIFT_APP_NAME}-build 
+    set +e
+fi
 
 if [ -f "${OPENSHIFT_REPO_DIR}/.openshift/markers/force_clean_build" ]
 then
@@ -39,20 +52,19 @@ then
     done
 fi
 
-if $JENKINS_ENABLED
+if [ -z "$BUILD_NUMBER" ]
 then
-  jenkins-cli build -s ${OPENSHIFT_APP_NAME}-build 
+    user_build.sh
 fi
 
-# Run build
-user_build.sh
-
-if $JENKINS_ENABLED
+if [ -z "$JENKINS_ENABLED" ]
 then
-  restart_app.sh
-else
-  # Start the app
-  start_app.sh
+    # Start the app
+    start_app.sh
 fi
 
-nurture_app_push.sh $libra_server
+if [ -z "$BUILD_NUMBER" ]
+then
+    # Not running inside a build
+    nurture_app_push.sh $libra_server
+fi
