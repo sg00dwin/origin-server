@@ -58,8 +58,10 @@ post_receive_app.sh
 # python ${OPENSHIFT_REPO_DIR}setup.py test
 
 # Push content back to application
+ssh UPSTREAM_UUID@UPSTREAM_DNS 'ctl_all stop'
 rsync ~/${OPENSHIFT_APP_NAME}/virtenv/ UPSTREAM_PUBLISH_TARGET/virtenv/
 rsync ~/$WORKSPACE/ UPSTREAM_PUBLISH_TARGET/repo/</command>
+ssh UPSTREAM_UUID@UPSTREAM_DNS 'ctl_all start'
     </hudson.tasks.Shell>
   </builders>
   <publishers>
