@@ -2,7 +2,7 @@
 
 Summary:   Provides jenkins-1.4 support
 Name:      rhc-cartridge-jenkins-1.4
-Version:   0.79.8
+Version:   0.79.9
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -60,6 +60,10 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Mon Oct 10 2011 Dan McPherson <dmcphers@redhat.com> 0.79.9-1
+- call build instead of post receive (dmcphers@redhat.com)
+- add deploy and post-deploy everywhere (dmcphers@redhat.com)
+
 * Mon Oct 10 2011 Dan McPherson <dmcphers@redhat.com> 0.79.8-1
 - Bug 744721 (dmcphers@redhat.com)
 - Adding jenkins readme (mmcgrath@redhat.com)
