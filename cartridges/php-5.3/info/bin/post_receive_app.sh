@@ -54,11 +54,11 @@ then
     deploy.sh
     # Start the app
     start_app.sh
+    post_deploy.sh
 fi
 
 if [ -z "$BUILD_NUMBER" ]
 then
     # Not running inside a build
-    post_deploy.sh
     nurture_app_push.sh $libra_server
 fi
