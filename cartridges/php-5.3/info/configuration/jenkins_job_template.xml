@@ -49,20 +49,24 @@
 alias rsync="rsync --delete-after -az -e '$GIT_SSH'"
 
 # Sync libs - Faster Builds
-rsync UPSTREAM_SSH:UPSTREAM_PUBLISH_DIR/php5lib/ ~/${OPENSHIFT_APP_NAME}/php5lib/
+rsync UPSTREAM_SSH:UPSTREAM_PUBLISH_DIR/phplib/ ~/${OPENSHIFT_APP_NAME}/phplib/
 
 # Update libs
 post_receive_app.sh
 
-ssh UPSTREAM_SSH 'ctl_all stop'
+# Run tests here
+
+# Deploy new build
+
+# Stop app
+$GIT_SSH UPSTREAM_SSH 'ctl_all stop'
 
 # Push content back to application
-rsync ~/${OPENSHIFT_APP_NAME}/php5lib/ UPSTREAM_SSH:UPSTREAM_PUBLISH_DIR/php5lib/
+rsync ~/${OPENSHIFT_APP_NAME}/phplib/ UPSTREAM_SSH:UPSTREAM_PUBLISH_DIR/phplib/
 rsync ~/$WORKSPACE/ UPSTREAM_SSH:UPSTREAM_PUBLISH_DIR/repo/
 
 $GIT_SSH UPSTREAM_SSH deploy.sh
-$GIT_SSH UPSTREAM_SSH 'ctl_all start'
-      </command>
+$GIT_SSH UPSTREAM_SSH 'ctl_all start'</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
