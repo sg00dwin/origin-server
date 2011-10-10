@@ -2,7 +2,7 @@
 
 Summary:   Provides mod_perl support
 Name:      rhc-cartridge-perl-5.10
-Version:   0.10.3
+Version:   0.10.4
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -75,6 +75,11 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Mon Oct 10 2011 Dan McPherson <dmcphers@redhat.com> 0.10.4-1
+- add deploy step and call from jenkins with stop start (dmcphers@redhat.com)
+- job updates (dmcphers@redhat.com)
+- working on jenkins build logic (dmcphers@redhat.com)
+
 * Thu Oct 06 2011 Dan McPherson <dmcphers@redhat.com> 0.10.3-1
 - switch to use ci type to know if client is avail (dmcphers@redhat.com)
 - add jenkins build kickoff to all post receives (dmcphers@redhat.com)
