@@ -14,21 +14,21 @@ then
     jenkins_build.sh
     set +e
 else
-    if [ -z "$BUILD_NUMBER" ]
-    then
-        pre_deploy.sh
-    fi
+    # Do any cleanup before the next build is deployed
+    pre_deploy.sh
+    
+    # Lay down new code, run internal build steps, then user build
     build.sh
-    if [ -z "$BUILD_NUMBER" ]
-    then
-        deploy.sh
-        start_app.sh
-        post_deploy.sh
-    fi
+    
+    # Deploy new build, run internal deploy steps, then user deploy
+    deploy.sh
+    
+    # Start the app
+    start_app.sh
+    
+    # Run any steps required after startup
+    post_deploy.sh
 fi
 
-if [ -z "$BUILD_NUMBER" ]
-then
-    # Not running inside a build
-    nurture_app_push.sh $libra_server
-fi
+# Not running inside a build
+nurture_app_push.sh $libra_server
