@@ -8,39 +8,13 @@ require 'fileutils'
 require 'lib/openshift'
 require 'pp'
 
-include OpenShift::AWS
-
 class DevEnv < Thor
   include Thor::Actions
   include OpenShift::Tito
+  include OpenShift::SSH
+  include OpenShift::Amazon
   
   no_tasks do
-    def get_private_ip(instance)
-      private_ip = instance.ssh("facter ipaddress")
-      if !private_ip or private_ip.strip.empty?
-        puts "EXITING - AMZ instance didn't return ipaddress fact"
-        exit 0
-      end
-      private_ip
-    end
-    
-    def set_private_ip(instance)
-      private_ip = get_private_ip(instance)
-      set_instance_ip(instance, private_ip)
-    end
-    
-    def set_public_ip(instance)
-      public_ip = instance.ssh("wget -qO- http://169.254.169.254/latest/meta-data/public-ipv4")
-      set_instance_ip(instance, public_ip)
-    end
-    
-    def set_instance_ip(instance, ip)
-      print "Updating the controller to use the ip '#{ip}'..."
-      # Both calls below are needed to fix a race condition between ssh and libra-data start times
-      instance.ssh("sed -i \"s/.*public_ip.*/public_ip='#{ip}'/g\" /etc/libra/node.conf;sed -i \"s/public_ip.*/public_ip='#{ip}'/g\" /etc/libra/node_data.conf")
-      puts 'Done'
-    end
-    
     def get_branch
       branch_str = `git status | head -n1`.chomp
       branch_str =~ /.*branch (.*)/
@@ -48,15 +22,15 @@ class DevEnv < Thor
       return branch
     end
     
-    def sync_repo(repo_name, instance, ssh_path)
+    def sync_repo(repo_name, hostname, ssh_path)
       temp_commit
 
       # Get the current branch
       branch = get_branch
   
       puts "Synchronizing local changes from branch #{branch} for repo #{repo_name}..."
-      run("export GIT_SSH=#{ssh_path}; #{branch == 'origin/master' ? "git push -q root@#{instance.dns}:/root/#{repo_name} master:master --tags --force; " : ''}git push -q root@#{instance.dns}:/root/#{repo_name} #{branch}:master --tags --force", :verbose => options.verbose?)
-      update_remote_tests(instance) if repo_name == 'li'
+      run("export GIT_SSH=#{ssh_path}; #{branch == 'origin/master' ? "git push -q root@#{hostname}:/root/#{repo_name} master:master --tags --force; " : ''}git push -q root@#{hostname}:/root/#{repo_name} #{branch}:master --tags --force", :verbose => options.verbose?)
+      update_remote_tests(hostname) if repo_name == 'li'
       puts "Done"
   
       reset_temp_commit
@@ -88,38 +62,38 @@ class DevEnv < Thor
       end
     end
     
-    def update_remote_tests(instance)
+    def update_remote_tests(hostname)
       print "Updating remote tests..."
-      instance.ssh("rm -rf /root/li-test; cd /root/li; git archive --prefix li-test/ --format=tar HEAD | (cd /root && tar --warning=no-timestamp -xf -); mkdir -p /tmp/rhc/junit")
+      ssh(hostname, "rm -rf /root/li-test; cd /root/li; git archive --prefix li-test/ --format=tar HEAD | (cd /root && tar --warning=no-timestamp -xf -); mkdir -p /tmp/rhc/junit")
       puts "Done"
     end
 
-    def download_artifacts(instance)
+    def download_artifacts(hostname)
       print "Downloading logs and screenshots..."
       `mkdir -p rhc/log`
-      instance.scp_from("/tmp/rhc/*.log", "rhc/log")
-      instance.scp_from("/tmp/rhc/*.html", "rhc/log")
-      instance.scp_from("/var/www/libra/site/httpd/logs/access_log", "rhc/log/site_access_log.txt")
-      instance.scp_from("/var/www/libra/site/httpd/logs/error_log", "rhc/log/site_error_log.txt")
-      instance.scp_from("/var/www/libra/site/log/development.log", "rhc/log")
-      instance.scp_from("/var/www/libra/broker/httpd/logs/access_log", "rhc/log/broker_access_log.log")
-      instance.scp_from("/var/www/libra/broker/httpd/logs/error_log", "rhc/log/broker_error_log.log")
-      instance.scp_from("/var/www/libra/broker/log/development.log", "rhc/log")
-      instance.scp_from("/var/log/mcollective.log", "rhc/log")
-      instance.scp_from("/var/www/libra/broker/log/mcollective-client.log", "rhc/log")
-      instance.scp_from("/var/log/httpd/access_log", "rhc/log/system_access_log.log")
-      instance.scp_from("/var/log/httpd/error_log", "rhc/log/system_error_log.log")
-      instance.scp_from("/var/log/messages", "rhc/log/messages.log")
-      instance.scp_from("/var/log/dmesg", "rhc/log/messages.log")
-      instance.scp_from("/tmp/rhc/screenshots/", "rhc/log")
+      scp_from(hostname, "/tmp/rhc/*.log", "rhc/log")
+      scp_from(hostname, "/tmp/rhc/*.html", "rhc/log")
+      scp_from(hostname, "/var/www/libra/site/httpd/logs/access_log", "rhc/log/site_access_log.txt")
+      scp_from(hostname, "/var/www/libra/site/httpd/logs/error_log", "rhc/log/site_error_log.txt")
+      scp_from(hostname, "/var/www/libra/site/log/development.log", "rhc/log")
+      scp_from(hostname, "/var/www/libra/broker/httpd/logs/access_log", "rhc/log/broker_access_log.log")
+      scp_from(hostname, "/var/www/libra/broker/httpd/logs/error_log", "rhc/log/broker_error_log.log")
+      scp_from(hostname, "/var/www/libra/broker/log/development.log", "rhc/log")
+      scp_from(hostname, "/var/log/mcollective.log", "rhc/log")
+      scp_from(hostname, "/var/www/libra/broker/log/mcollective-client.log", "rhc/log")
+      scp_from(hostname, "/var/log/httpd/access_log", "rhc/log/system_access_log.log")
+      scp_from(hostname, "/var/log/httpd/error_log", "rhc/log/system_error_log.log")
+      scp_from(hostname, "/var/log/messages", "rhc/log/messages.log")
+      scp_from(hostname, "/var/log/dmesg", "rhc/log/messages.log")
+      scp_from(hostname, "/tmp/rhc/screenshots/", "rhc/log")
       puts "Done"
     end
 
-    def run_ssh(instance, title, cmd)
-      output, code = instance.ssh(cmd, 4800, true)
+    def run_ssh(hostname, title, cmd)
+      output, code = ssh(hostname, cmd, 4800, true)
       puts "Output from #{title} Tests...\n----------------\n#{output}\n----------------\n"
       if code != 0
-        download_artifacts instance
+        download_artifacts hostname
         exit code
       end
     end
@@ -138,18 +112,20 @@ class DevEnv < Thor
     conn = connect
 
     # Create a new builder instance
-    instance = Instance.create(conn, name)
+    image = conn.images[AMI]
+    instance = launch_instance(image, name)
+    hostname = instance.dns_name
 
     begin
       print "Uploading devenv script..."
       script_path = File.expand_path(File.dirname(__FILE__) + "/../misc/devenv/li-devenv.sh")
-      instance.scp_to(script_path, "~/")
+      scp_to(hostname, script_path, "~/")
       puts "Done"
 
       print "Performing clean install with the latest code..."
       cmd = 'sh li-devenv.sh'
       cmd += ' stage' if options.use_stage_repo?
-      output = instance.ssh(cmd, 3600)
+      output = ssh(hostname, cmd, 3600)
       puts "Done"
 
       puts "----------------- Install Output ------------------------"
@@ -157,7 +133,7 @@ class DevEnv < Thor
       puts "---------------------------------------------------------"
 
       print "Updating all packages on the system..."
-      instance.ssh('yum update -y', 3600)
+      ssh(hostname, 'yum update -y', 3600)
       puts "Done"
 
       if options.reboot?
@@ -168,15 +144,14 @@ class DevEnv < Thor
 
       # Validate the node installation
       print "Validating instance..."
-      unless instance.is_valid?
+      unless is_valid?(hostname)
         puts "ERROR - instance is not valid"
-        puts instance.validation_output
         exit 1
       end
       puts "Done"
 
-      print "Retrieving RPM manifest"
-      manifest = instance.ssh('rpm -qa | grep rhc-')
+      print "Retrieving RPM manifest..."
+      manifest = ssh(hostname, 'rpm -qa | grep rhc-')
       manifest = manifest.split("\n").sort.join(" / ")
       # Trim down the output to 255 characters
       manifest.gsub!(/rhc-([a-z])/, '\1')
@@ -188,7 +163,9 @@ class DevEnv < Thor
 
       if options.register?
         print "Registering AMI..."
-        Image.register(conn, instance.amz_id, name, manifest)
+        ec2.images.create(:instance_id => instance.id, 
+          :name => name,
+          :description => manifest)
         puts "Done"
       end
     ensure
@@ -196,23 +173,23 @@ class DevEnv < Thor
     end
   end
   
-  desc "yum_update NAME", "Build a new devenv AMI with the given NAME of an existing instance"
+  desc "yum_update TAG", "Build a new devenv AMI with the given NAME of an existing instance"
   method_option :register, :type => :boolean, :desc => "Register the instance"
   method_option :terminate, :type => :boolean, :desc => "Terminate the instance on exit"
   method_option :reboot, :type => :boolean, :desc => "Reboot the instance after updating"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
-  def yum_update(name)
+  def yum_update(tag)
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
 
     # Establish a new connection
     conn = connect
 
-    # Find an existing instance
-    instance = Instance.find(conn, name)
+    instance = find_instance(connect, tag, true)
+    hostname = instance.dns_name
 
     begin
       print "Updating all packages on the system..."
-      instance.ssh('yum clean metadata; yum update -y; yum update -y --disablerepo=\* --enablerepo=li', 3600)
+      ssh(hostname, 'yum clean metadata; yum update -y; yum update -y --disablerepo=\* --enablerepo=li', 3600)
       puts "Done"
 
       if options.reboot?
@@ -223,15 +200,14 @@ class DevEnv < Thor
 
       # Validate the node installation
       print "Validating instance..."
-      unless instance.is_valid?
+      unless is_valid?(hostname)
         puts "ERROR - instance is not valid"
-        puts instance.validation_output
         exit 1
       end
       puts "Done"
 
       print "Retrieving RPM manifest"
-      manifest = instance.ssh('rpm -qa | grep rhc-')
+      manifest = ssh(hostname, 'rpm -qa | grep rhc-')
       manifest = manifest.split("\n").sort.join(" / ")
       # Trim down the output to 255 characters
       manifest.gsub!(/rhc-([a-z])/, '\1')
@@ -243,7 +219,9 @@ class DevEnv < Thor
 
       if options.register?
         print "Registering AMI..."
-        Image.register(conn, instance.amz_id, name, manifest)
+        ec2.images.create(:instance_id => instance.id, 
+          :name => tag,
+          :description => manifest)
         puts "Done"
       end
     ensure
@@ -284,52 +262,33 @@ class DevEnv < Thor
   def sync(name)
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
 
-    if options.tag?
-      instance = Instance.find(connect, name)
-    else
-      instance = Instance.new(nil, nil)
-      instance.dns = name
-    end
-=begin
-    puts "Validating instance..."
-    unless instance.is_valid?
-      puts "ERROR - instance is not valid"
-      puts instance.validation_output
-      exit 1
-    end
-=end    
+    # Get the hostname from a tag lookup or assume it's SSH accessible directly
+    # Get the hostname from a tag lookup or assume it's SSH accessible directly
+    hostname = options.tag? ? find_instance(connect, name, true).dns_name : name
+    
     ssh_path=File.expand_path(File.dirname(__FILE__)) + "/ssh-override"
-    sync_repo('li', instance, ssh_path)
+    sync_repo('li', hostname, ssh_path)
     
     has_client = File.exists?('../os-client-tools')
     
     if has_client
       inside('../os-client-tools') do
-        sync_repo('os-client-tools', instance, ssh_path)
+        sync_repo('os-client-tools', hostname, ssh_path)
       end
     end
 
     if !options.skip_build?
       puts "Performing remote install...."
-      instance.ssh("yum update -y rhc-*; rm -rf li-working os-client-tools-working; git clone li li-working;#{has_client ? ' git clone os-client-tools os-client-tools-working;' : ''} pushd li-working; build/devenv update; popd; rm -rf li-working os-client-tools-working", 600)
+      ssh(hostname, "yum update -y rhc-*; rm -rf li-working os-client-tools-working; git clone li li-working;#{has_client ? ' git clone os-client-tools os-client-tools-working;' : ''} pushd li-working; build/devenv update; popd; rm -rf li-working os-client-tools-working", 600)
       puts "Done"
     end
 
     # If this is a verifier, you'll need to reset the private ip setup on each sync
     if options.verifier?
-      set_private_ip(instance)
-      instance.ssh("/usr/libexec/mcollective/update_yaml.rb")
+      use_private_ip(hostname)
     else
-      set_public_ip(instance)
+      use_public_ip(hostname)
     end
-=begin
-    puts "Validating instance..."
-    unless instance.is_valid?
-      puts "ERROR - instance is not valid"
-      puts instance.validation_output
-      exit 1
-    end
-=end
   end
 
   desc "sync_sdk NAME PATH", "Synchronize a local git repo with a remote DevEnv instance.  NAME should be ssh resolvable. PATH should be the location of the git repository to sync"
@@ -339,12 +298,8 @@ class DevEnv < Thor
   def sync_sdk(name, path)
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
 
-    if options.tag?
-      instance = Instance.find(connect, name)
-    else
-      instance = Instance.new(nil, nil)
-      instance.dns = name
-    end
+    # Get the hostname from a tag lookup or assume it's SSH accessible directly
+    hostname = options.tag? ? find_instance(connect, name, true).dns_name : name
 
     # Get the current branch
     branch = get_branch
@@ -355,12 +310,12 @@ class DevEnv < Thor
     # Don't change directories until the ssh_path has been determined from the working directory
     FileUtils.cd path 
 
-    run("export GIT_SSH=#{ssh_path}; #{branch == 'origin/master' ? "git push -q root@#{instance.dns}:/root/openshift-sdk master:master --tags --force; " : ''}git push -q root@#{instance.dns}:/root/openshift-sdk #{branch}:master --tags --force", :verbose => options.verbose?)
+    run("export GIT_SSH=#{ssh_path}; #{branch == 'origin/master' ? "git push -q root@#{hostname}:/root/openshift-sdk master:master --tags --force; " : ''}git push -q root@#{hostname}:/root/openshift-sdk #{branch}:master --tags --force", :verbose => options.verbose?)
     puts "Done"
 
     if !options.skip_build?
       puts "Performing remote install...."
-      instance.ssh("rm -rf openshift-sdk-working; git clone openshift-sdk openshift-sdk-working; pushd openshift-sdk-working; tito build --rpm --test -i; popd; rm -rf openshift-sdk-working", 600)
+      ssh(hostname, "rm -rf openshift-sdk-working; git clone openshift-sdk openshift-sdk-working; pushd openshift-sdk-working; tito build --rpm --test -i; popd; rm -rf openshift-sdk-working", 600)
       puts "Done"
     end
   end
@@ -385,31 +340,28 @@ class DevEnv < Thor
     # Get the latest devenv image and create a new instance
     conn = connect
     if options.use_stage_image?
-      filter = DEVENV_STAGE_REGEX
+      filter = DEVENV_STAGE_WILDCARD
     elsif options.use_clean_image?
-      filter = DEVENV_CLEAN_REGEX
+      filter = DEVENV_CLEAN_WILDCARD
     else
-      filter = DEVENV_REGEX
+      filter = DEVENV_WILDCARD
     end
-    latest = get_latest_ami(conn, filter)
-    puts "Launching latest DevEnv instance #{latest}"
-    instance = Instance.create(conn, name, latest)
+    ami = get_latest_ami(conn, filter)
+    puts "Launching latest DevEnv instance #{ami.id}"
+    instance = launch_instance(ami, name)
+    hostname = instance.dns_name
     puts "Done"
-    
-    private_ip = get_private_ip(instance)
-    
-    print "Updating the node to use the ip '#{private_ip}' for internal communication..."
-    instance.ssh("sed -i \"s/.*libra_server.*/libra_server='#{private_ip}'/g\" /etc/libra/node.conf")
-    puts 'Done'
 
+    puts "Sleeping for 30 seconds to let node stabilize..."
+    sleep 30
+    puts "Done"
+   
     if options.verifier?
-      set_instance_ip(instance, private_ip)
-      instance.ssh("/usr/libexec/mcollective/update_yaml.rb")
+      use_private_ip(hostname)
 
       if options.init_repo?
         print "Initializing git repo for syncing..."
-        instance.ssh("rm -rf /root/li; git clone --bare git://git1.ops.rhcloud.com/li.git/ /root/li")
-        #instance.ssh("rm -rf /root/os-client-tools; git clone --bare git://github.com/openshift/os-client-tools.git /root/os-client-tools")
+        ssh(hostname, "rm -rf /root/li; git clone --bare git://git1.ops.rhcloud.com/li.git/ /root/li")
         update_remote_tests(instance)
         puts "Done"
       else
@@ -417,21 +369,20 @@ class DevEnv < Thor
         `git archive --prefix li-test/ HEAD --output /tmp/li-test.tar`
         puts "Done"
         print "Updating tests to remote instance..."
-        instance.scp_to("/tmp/li-test.tar", "~/", 600)
-        instance.ssh('rm -rf li-test; tar -xf li-test.tar; mkdir -p /tmp/rhc/junit')
+        scp_to(hostname, "/tmp/li-test.tar", "~/", 600)
+        ssh(hostname, 'rm -rf li-test; tar -xf li-test.tar; mkdir -p /tmp/rhc/junit')
         puts "Done"
       end
     end
 
     puts "Validating instance..."
-    unless instance.is_valid?
+    unless is_valid?(hostname)
       puts "ERROR - instance is not valid"
-      puts instance.validation_output
       exit 1
     end
     
     if options.ssh_config_verifier?
-      public_ip = instance.ssh("wget -qO- http://169.254.169.254/latest/meta-data/public-ipv4")
+      public_ip = instance.public_ip_address
       
       line_num = `grep -n 'Host verifier' ~/.ssh/config`.chomp.split(':')[0]
       puts "Updating ~/.ssh/config verifier entry with public ip = #{public_ip}"
@@ -441,10 +392,10 @@ class DevEnv < Thor
     end
     
     if options.express_server?
-      public_ip = instance.ssh("wget -qO- http://169.254.169.254/latest/meta-data/public-ipv4")
+      public_ip = instance.public_ip_address
       puts "Updating ~/.openshift/express.conf libra_server entry with public ip = #{public_ip}"
       `sed -i 's,^libra_server.*,libra_server=#{public_ip},' ~/.openshift/express.conf`
-      set_instance_ip(instance, public_ip)
+      use_public_ip(hostname)
     end
     
     puts "Done"
@@ -461,11 +412,12 @@ class DevEnv < Thor
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
 
     conn = connect
-    instance = Instance.find(conn, tag)
+    instance = find_instance(conn, tag, true)
+    hostname = instance.dns_name
 
     begin
       if options.unofficial?
-        set_private_ip(instance)
+        use_private_ip(hostname)
       end
 
       threads = []
@@ -473,29 +425,29 @@ class DevEnv < Thor
       unless options.exclude_internal?
         threads << Thread.new do
           cmd = "cd li-test/broker; rake test"
-          run_ssh(instance, "Broker Unit", cmd)
+          run_ssh(hostname, "Broker Unit", cmd)
         end
         threads << Thread.new do
           cmd = "cd li-test/site; rake test"
-          run_ssh(instance, "Site Unit", cmd)
+          run_ssh(hostname, "Site Unit", cmd)
         end
       end
       
       threads << Thread.new do
         unless options.exclude_internal?
           cmd = "cucumber -f html --out /tmp/rhc/internals.html -f progress -t @internals li-test/tests/"
-          run_ssh(instance, "Internal", cmd)
+          run_ssh(hostname, "Internal", cmd)
         end
         unless options.exclude_verification?
           cmd = "cucumber -f html --out /tmp/rhc/verfication.html -f progress -t @verify li-test/tests/"
-          run_ssh(instance, "Verification", cmd)
+          run_ssh(hostname, "Verification", cmd)
         end
       end
 
       unless options.exclude_web?
         threads << Thread.new do
           cmd = "rm -rf /tmp/unzip* /tmp/webdriver-profile*; cd li-test/selenium; ./ts_web"
-          run_ssh(instance, "Web Selenium", cmd)
+          run_ssh(hostname, "Web Selenium", cmd)
         end
       end
       
@@ -504,29 +456,28 @@ class DevEnv < Thor
       end
 
       print "Validating instance..."
-      unless instance.is_valid?
+      unless is_valid?(hostname)
         puts "ERROR - instance is not valid"
-        puts instance.validation_output
         exit 1
       end
       puts "Done"
 
       # Download the successful artifacts
-      download_artifacts instance
+      download_artifacts hostname
 
       if !options.unofficial?
         # Mark the image as verified
-        Image.verify(conn, instance.amz_image_id)
-        amz_image_name = Image.get_name(conn, instance.amz_image_id)
+        image = conn.images[instance.image_id]
+        verify_image(image)
         
         print "Sending QE ready email..."
         begin
-          send_verified_email(instance.amz_image_id, amz_image_name)
+          send_verified_email(instance.image_id, instance.name)
         rescue Exception => e
           print "Failed sending email with message: #{e.message}"
         end
       else
-        set_public_ip(instance)
+        use_public_ip(hostname)
       end
       
       puts "Done"
@@ -543,11 +494,11 @@ class DevEnv < Thor
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
 
     conn = connect
-    instance = Instance.find(conn, tag)
-
+    instance = find_instance(conn, tag, true)
+    hostname = instance.dns_name
     begin
       cmd = "cd /usr/lib/ruby/gems/*/gems/openshift-sdk*; rake test"
-      run_ssh(instance, "OpenShift SDK Unit", cmd)
+      run_ssh(hostname, "OpenShift SDK Unit", cmd)
       
       puts "Done"
     ensure

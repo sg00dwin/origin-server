@@ -5,8 +5,7 @@ gem 'recaptcha', :require => 'recaptcha/rails'
 gem 'json'
 gem 'stomp'
 gem 'parseconfig'
-gem 'aws', '~> 2.4.5'
-gem 'http_connection'
+gem 'aws-sdk'
 gem 'xml-simple'
 gem 'haml'
 gem 'formtastic', '~> 1.2.3'
@@ -15,7 +14,6 @@ gem 'multimap'
 gem 'regin'
 
 # Files for Barista (https://github.com/Sutto/barista)
-gem 'json'
 gem 'barista'
 
 # Bundle edge Rails instead:

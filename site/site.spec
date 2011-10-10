@@ -20,7 +20,6 @@ Requires:  rubygem-passenger-native-libs
 Requires:  rubygem-rails
 Requires:  rubygem-json
 Requires:  rubygem-parseconfig
-Requires:  rubygem-aws
 Requires:  rubygem-xml-simple
 Requires:  rubygem-formtastic
 Requires:  rubygem-haml

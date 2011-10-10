@@ -22,31 +22,6 @@ module Libra
       @embedcarts = embedcarts if embedcarts
     end
 
-    def self.create(opts={})
-      # Set defaults
-      opts[:aws_name] ||= Libra.c[:aws_name]
-      opts[:key_name] ||= Libra.c[:aws_keypair]
-      opts[:image_id] ||= Libra.c[:aws_ami]
-      opts[:max_count] ||= 1
-      opts[:instance_type] ||= "m1.large"
-
-      # Create the instances in EC2, returning
-      # an array of the image id's
-      instances = Helper.ec2.launch_instances(opts[:image_id],
-                      :max_count => opts[:max_count],
-                      :key_name => opts[:key_name],
-                      :instance_type => opts[:instance_type]).collect do |server|
-        server[:aws_instance_id]
-      end
-
-      # Tag the instance(s) if necessary
-      if opts[:aws_name]
-        instances.each {|i| Helper.ec2.create_tag(i, 'Name', opts[:aws_name])}
-      end
-
-      instances
-    end
-
     #
     # Returns the preferred available server.
     # Currently this is defined by the server that

@@ -6,8 +6,6 @@ require 'rubygems'
 require 'thor'
 require 'lib/openshift'
 
-include OpenShift::AWS
-
 class Release < Thor
   include Thor::Actions
   include OpenShift::Tito

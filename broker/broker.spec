@@ -16,7 +16,6 @@ Requires:  rhc-server-common
 Requires:  httpd
 Requires:  mod_ssl
 Requires:  mod_passenger
-Requires:  rubygem-aws
 Requires:  rubygem-json
 Requires:  rubygem-parseconfig
 Requires:  rubygem-passenger-native-libs

@@ -104,11 +104,9 @@ module Libra
       rhlogins = []
 
       # Retrieve the current list of rhlogins
-      Helper.s3.incrementally_list_bucket(Libra.c[:s3_bucket], { 'prefix' => 'user_info'}) do |result|         
-        result[:contents].each do |bucket|
-          if bucket[:key] =~ /\/user.json$/
-            rhlogins << File.basename(File.dirname(bucket[:key]))
-          end
+      get_users_s3.each do |result|
+        if result.key =~ /\/user.json$/
+          rhlogins << File.basename(File.dirname(result.key))
         end
       end
       rhlogins
@@ -120,15 +118,8 @@ module Libra
     #   User.find('test_user')
     #
     def self.find(rhlogin)
-      begin
-        return User.from_json(Helper.s3.get(Libra.c[:s3_bucket], "user_info/#{rhlogin}/user.json")[:object])
-      rescue Aws::AwsError => e
-        if e.message =~ /^NoSuchKey/
-          return nil
-        else
-          raise e
-        end
-      end
+      result = get_user_s3(rhlogin)
+      return User.from_json(result.read) if result.exists?
     end
 
     #
@@ -141,7 +132,7 @@ module Libra
 
       json = JSON.generate(data)
       Libra.logger_debug "DEBUG: Updating user json:#{json}"
-      Helper.s3.put(Libra.c[:s3_bucket], "user_info/#{rhlogin}/user.json", json)
+      get_user_s3.write(json)
     end
     
     #
@@ -314,29 +305,9 @@ module Libra
     #    
     def delete
       Libra.client_debug "Deleting user: #{rhlogin}" if Libra.c[:rpc_opts][:verbose]
-      Helper.s3.delete(Libra.c[:s3_bucket], "user_info/#{rhlogin}/user.json")
+      result = get_user_s3
+      result.delete if result.exists?
     end
-
-=begin
-    #
-    # Returns the servers that this user exists on
-    #
-    def servers
-      # Use the cached value if it exists
-      unless @servers
-        @servers = {}
-
-        # Make the rpc call to check
-        Helper.rpc_get_fact("customer_#{rhlogin}") do |server, value|
-          # Initialize the hash with the server as the key
-          # The applications will eventually become the value
-          @servers[Server.new(server)] = nil
-        end
-      end
-
-      return @servers.keys
-    end
-=end
 
     #
     # Returns the applications that this user has running
@@ -345,11 +316,9 @@ module Libra
       # Use the cached value if it exists
       unless @apps
         @apps = {}
-        app_list = Helper.s3.list_bucket(Libra.c[:s3_bucket],
-                  { 'prefix' => "user_info/#{@rhlogin}/apps/"})
-        app_list.each do |key|
-          json = Helper.s3.get(Libra.c[:s3_bucket], key[:key])
-          app_name = File.basename(key[:key], '.json') unless key[:key].end_with?('/')
+        get_apps_s3.each do |result|
+          json = result.read
+          app_name = File.basename(result.key, '.json') unless result.key.end_with?('/')
           if app_name
             @apps[app_name] = app_info(app_name)
           else
@@ -376,38 +345,65 @@ module Libra
       update_app(h, app_name)
       h
     end
+
+    #
+    # Returns all the user S3 JSON objects
+    #
+    def self.get_users_s3
+      Helper.bucket.objects.with_prefix('user_info')
+    end
+
+    #
+    # Returns the S3 user json object
+    #
+    def self.get_user_s3(rhlogin)
+      Helper.bucket.objects["user_info/#{rhlogin}/user.json"]
+    end
+
+    #
+    # Returns the S3 user json object
+    #
+    def get_user_s3
+      Helper.bucket.objects["user_info/#{@rhlogin}/user.json"]
+    end
+
+    #
+    # Returns the application S3 json object
+    #
+    def get_apps_s3
+      Helper.bucket.objects.with_prefix("user_info/#{@rhlogin}/apps/")
+    end
+
+    #
+    # Returns the application S3 json object
+    #
+    def get_app_s3(app_name)
+      Helper.bucket.objects["user_info/#{@rhlogin}/apps/#{app_name}.json"]
+    end
     
     #
     # Updates the S3 cache of the app
     #
     def update_app(app, app_name)
       json = JSON.generate(app)
-      Helper.s3.put(Libra.c[:s3_bucket],
-                    "user_info/#{@rhlogin}/apps/#{app_name}.json", json)
+      get_app_s3(app_name).write(json)
     end
 
     #
     # Delete an S3 cache of an app
     #
     def delete_app(app_name)
-      Helper.s3.delete(Libra.c[:s3_bucket],
-                        "user_info/#{@rhlogin}/apps/#{app_name}.json")
+      result = get_app_s3(app_name)
+      result.delete if result.exists?
     end
 
     #
     # Check if an application already exists
     #
     def app_info(app_name)
-      return JSON.parse(Helper.s3.get(Libra.c[:s3_bucket],
-            "user_info/#{@rhlogin}/apps/#{app_name}.json")[:object])
-    rescue Aws::AwsError => e
-      if e.message =~ /^NoSuchKey/
-        return nil
-      else
-        raise e
-      end
+      result = get_app_s3(app_name)
+      return JSON.parse(result.read) if result.exists?
     end
-
 
     #
     # Clears out any cached data
