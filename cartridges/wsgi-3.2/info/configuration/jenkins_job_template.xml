@@ -58,14 +58,14 @@ post_receive_app.sh
 # python ${OPENSHIFT_REPO_DIR}setup.py test
 
 
-ssh UPSTREAM_SSH 'ctl_all stop'
+$GIT_SSH UPSTREAM_SSH 'ctl_all stop'
 
 # Push content back to application
 rsync ~/${OPENSHIFT_APP_NAME}/virtenv/ UPSTREAM_SSH:UPSTREAM_PUBLISH_DIR/virtenv/
 rsync ~/$WORKSPACE/ UPSTREAM_SSH:UPSTREAM_PUBLISH_DIR/repo/
 
-ssh UPSTREAM_SSH deploy.sh
-ssh UPSTREAM_SSH 'ctl_all start'
+$GIT_SSH UPSTREAM_SSH deploy.sh
+$GIT_SSH UPSTREAM_SSH 'ctl_all start'
       </command>
     </hudson.tasks.Shell>
   </builders>
