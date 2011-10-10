@@ -47,7 +47,8 @@ else
         echo "New build has been deployed."
     else
         echo "!!!!!!!!"
-        echo "Previous good build still running!  Fix the build and try again".
+        echo "Deployment Halted! Previous good build still running!"
+        echo "Fix the build and try again".
         echo "!!!!!!!!"
         exit 1
     fi
