@@ -65,6 +65,7 @@ $GIT_SSH UPSTREAM_SSH 'ctl_all stop'
 rsync ~/${OPENSHIFT_APP_NAME}/phplib/ UPSTREAM_SSH:UPSTREAM_PUBLISH_DIR/phplib/
 rsync ~/$WORKSPACE/ UPSTREAM_SSH:UPSTREAM_PUBLISH_DIR/repo/
 
+# Configure / start app
 $GIT_SSH UPSTREAM_SSH deploy.sh
 $GIT_SSH UPSTREAM_SSH 'ctl_all start'</command>
     </hudson.tasks.Shell>

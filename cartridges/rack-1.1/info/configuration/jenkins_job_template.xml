@@ -55,11 +55,13 @@ then
   bundle install --deployment
 fi
 
+# Stop app
 $GIT_SSH UPSTREAM_SSH 'ctl_all stop'
 
 # Push content back to application
 rsync ~/$WORKSPACE/ UPSTREAM_SSH:UPSTREAM_PUBLISH_DIR/deploy/
 
+# Configure / start app
 $GIT_SSH UPSTREAM_SSH deploy.sh
 $GIT_SSH UPSTREAM_SSH 'ctl_all start'
       </command>
