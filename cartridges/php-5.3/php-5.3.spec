@@ -2,7 +2,7 @@
 
 Summary:   Provides php-5.3 support
 Name:      rhc-cartridge-php-5.3
-Version:   0.79.7
+Version:   0.79.8
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -84,6 +84,16 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Mon Oct 10 2011 Dan McPherson <dmcphers@redhat.com> 0.79.8-1
+- call build instead of post receive (dmcphers@redhat.com)
+- common post receive and add pre deploy (dmcphers@redhat.com)
+- add deploy and post-deploy everywhere (dmcphers@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- Adding post_deploy methods (mmcgrath@redhat.com)
+
 * Mon Oct 10 2011 Dan McPherson <dmcphers@redhat.com> 0.79.7-1
 - bash usage error (dmcphers@redhat.com)
 - more jenkins job work (dmcphers@redhat.com)
