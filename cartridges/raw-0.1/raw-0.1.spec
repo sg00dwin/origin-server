@@ -2,7 +2,7 @@
 
 Summary:   Provides raw support
 Name:      rhc-cartridge-raw-0.1
-Version:   0.8
+Version:   0.9
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -71,6 +71,11 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Mon Oct 10 2011 Dan McPherson <dmcphers@redhat.com> 0.9-1
+- call build instead of post receive (dmcphers@redhat.com)
+- common post receive and add pre deploy (dmcphers@redhat.com)
+- add deploy and post-deploy everywhere (dmcphers@redhat.com)
+
 * Mon Oct 10 2011 Dan McPherson <dmcphers@redhat.com> 0.8-1
 - bash usage error (dmcphers@redhat.com)
 - more jenkins job work (dmcphers@redhat.com)
