@@ -21,3 +21,8 @@ Feature: Embedded Cartridge Verification Tests
     Given an existing php-5.3 application with an embedded mysql-5.1 cartridge
     When the embedded cartridge is removed
     Then the application should be accessible
+
+  Scenario: Application Destroying
+    Given an existing php-5.3 application
+    When the application is destroyed
+    Then the application should not be accessible
