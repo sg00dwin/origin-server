@@ -305,7 +305,7 @@ class DevEnv < Thor
 
     if !options.skip_build?
       puts "Performing remote install...."
-      instance.ssh("rm -rf openshift-sdk-working; git clone openshift-sdk openshift-sdk-working; pushd openshift-sdk-working; tito build --rpm -i; popd; rm -rf openshift-sdk-working", 600)
+      instance.ssh("rm -rf openshift-sdk-working; git clone openshift-sdk openshift-sdk-working; pushd openshift-sdk-working; tito build --rpm --test -i; popd; rm -rf openshift-sdk-working", 600)
       puts "Done"
     end
   end
