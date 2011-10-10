@@ -40,11 +40,17 @@ else
     set -e
     echo "Executing Jenkins build."
     echo
-    echo "NOTE: If build fails, deployment will halt.  Last previous 'good' build will continue to run."
-    echo
     echo "You can track your build at ${JENKINS_URL}job/${OPENSHIFT_APP_NAME}-build"
     echo
-    jenkins-cli build -s ${OPENSHIFT_APP_NAME}-build 
+    if jenkins-cli build -s ${OPENSHIFT_APP_NAME}-build 
+    then
+        echo "New build has been deployed."
+    else
+        echo "!!!!!!!!"
+        echo "Previous good build still running!  Fix the build and try again".
+        echo "!!!!!!!!"
+        exit 1
+    fi
     set +e
 fi
 
