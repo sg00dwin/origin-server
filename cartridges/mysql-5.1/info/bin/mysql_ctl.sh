@@ -11,7 +11,7 @@ do
     . $f
 done
 
-STOPTIMEOUT=5
+export STOPTIMEOUT=6
 
 if whoami | grep -q root
 then
@@ -35,7 +35,7 @@ stop(){
         ret=$?
         if [ $ret -eq 0 ]; then
             TIMEOUT="$STOPTIMEOUT"
-            while [ $TIMEOUT -gt 0 ] && [ ! -f $MYSQL_DIR/pid/mysql.pid ]; do
+            while [ $TIMEOUT -gt 0 ] && [ -f "$MYSQL_DIR/pid/mysql.pid" ]; do
                 /bin/kill -0 "$( /bin/cat $MYSQL_DIR/pid/mysql.pid )" >/dev/null 2>&1 || break
                 sleep 1
                 let TIMEOUT=${TIMEOUT}-1
