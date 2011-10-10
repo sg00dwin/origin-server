@@ -14,8 +14,8 @@ then
     jenkins_build.sh
     set +e
 else
-    # Do any cleanup before the next build is deployed
-    pre_deploy.sh
+    # Do any cleanup before the next build
+    pre_build.sh
     
     # Lay down new code, run internal build steps, then user build
     build.sh
