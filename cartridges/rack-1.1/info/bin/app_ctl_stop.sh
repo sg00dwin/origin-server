@@ -6,9 +6,11 @@ do
     . $f
 done
 
-echo "Stopping application..."
+CART_CONF_DIR=/usr/libexec/li/cartridges/${OPENSHIFT_APP_TYPE}/info/configuration/etc/conf
+
+# Stop the app
 httpd_pid=`cat ~/${OPENSHIFT_APP_NAME}/run/httpd.pid 2> /dev/null`
-~/${OPENSHIFT_APP_NAME}/${OPENSHIFT_APP_NAME}_ctl.sh stop
+/usr/sbin/httpd -C 'Include ${OPENSHIFT_APP_DIR}conf.d/*.conf' -f $CART_CONF_DIR/httpd_nolog.conf -k $1
 for i in {1..20}
 do
     if `ps --pid $httpd_pid > /dev/null 2>&1` || `pgrep Passenger* > /dev/null 2>&1`
@@ -19,4 +21,3 @@ do
         break
     fi
 done
-echo "Done"

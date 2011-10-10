@@ -28,7 +28,10 @@ case "$1" in
             /usr/sbin/httpd -C 'Include ${OPENSHIFT_APP_DIR}conf.d/*.conf' -f $CART_CONF_DIR/httpd_nolog.conf -k $1
         fi
     ;;
-    restart|graceful|graceful-stop|stop)
+    graceful-stop|stop)
+        app_ctl_stop.sh $1
+    ;;
+    restart|graceful)
         /usr/sbin/httpd -C 'Include ${OPENSHIFT_APP_DIR}conf.d/*.conf' -f $CART_CONF_DIR/httpd_nolog.conf -k $1
     ;;
 esac
