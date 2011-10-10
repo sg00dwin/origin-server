@@ -6,6 +6,8 @@ do
     . $f
 done
 
+redeploy_repo_dir.sh
+
 # Run when jenkins is not being used or run when inside a build
 export PERL5LIB="${OPENSHIFT_REPO_DIR}libs:~/${OPENSHIFT_APP_NAME}/perl5lib"
 

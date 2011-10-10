@@ -48,9 +48,14 @@
       <command>
 alias rsync="rsync --delete-after -az -e '$GIT_SSH'"
 
+# Build/Update virtual env
+build.sh
+
 export MAVEN_OPTS="-Xmx768m"
 mvn --version
 mvn clean package -Popenshift -DskipTests
+
+# Deploy new build
 
 # Stop app
 $GIT_SSH UPSTREAM_SSH 'ctl_all stop'

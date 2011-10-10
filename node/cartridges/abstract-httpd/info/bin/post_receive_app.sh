@@ -10,28 +10,21 @@ done
 
 if [ -f ~/.env/OPENSHIFT_CI_TYPE ]
 then
-    JENKINS_ENABLED=true
-else
-    pre_deploy.sh
-    redeploy_repo_dir.sh
-fi
-
-if [ -n "$JENKINS_ENABLED" ]
-then
     set -e
     jenkins_build.sh
     set +e
 else
-    # Run build
+    if [ -z "$BUILD_NUMBER" ]
+    then
+        pre_deploy.sh
+    fi
     build.sh
-fi
-
-if [ -z "$JENKINS_ENABLED" ] && [ -z "$BUILD_NUMBER" ]
-then
-    deploy.sh
-    # Start the app
-    start_app.sh
-    post_deploy.sh
+    if [ -z "$BUILD_NUMBER" ]
+    then
+        deploy.sh
+        start_app.sh
+        post_deploy.sh
+    fi
 fi
 
 if [ -z "$BUILD_NUMBER" ]

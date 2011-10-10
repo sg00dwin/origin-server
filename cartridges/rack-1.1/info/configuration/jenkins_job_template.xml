@@ -48,12 +48,17 @@
       <command>
 alias rsync="rsync --delete-after -az -e '$GIT_SSH'"
 
+# Build/update libs
+build.sh
+
 # If .bundle isn't currently committed and a Gemfile is then bundle install
 if ! [ -d .bundle ] &amp;&amp; [ -f Gemfile ]
 then
   echo 'Bundling RubyGems based on Gemfile/Gemfile.lock to vendor/bundle'
   bundle install --deployment
 fi
+
+# Deploy new build
 
 # Stop app
 $GIT_SSH UPSTREAM_SSH 'ctl_all stop'

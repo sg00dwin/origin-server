@@ -48,6 +48,11 @@
       <command>
 alias rsync="rsync --delete-after -az -e '$GIT_SSH'"
 
+# Build/update libs
+build.sh
+
+# Deploy new build
+
 # Stop app
 $GIT_SSH UPSTREAM_SSH 'ctl_all stop'
 
