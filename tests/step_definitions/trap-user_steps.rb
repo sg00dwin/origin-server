@@ -61,7 +61,7 @@ end
 Given /a running SSH log stream/ do
   ssh_cmd = "ssh -t #{@acct_name}@#{@hostname} tail -f #{@app_name}/logs/\\*"
 
-  puts "calling #{ssh_cmd}"
+  #puts "calling #{ssh_cmd}"
 
   #pid, stdin, stdout, stderr = Open4::popen4(ssh_cmd)
   stdout, stdin, pid = PTY.spawn ssh_cmd
