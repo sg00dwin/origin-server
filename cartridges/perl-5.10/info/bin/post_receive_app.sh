@@ -28,6 +28,9 @@ then
             cpanm -L ~/${OPENSHIFT_APP_NAME}/perl5lib "$f"
         done
     fi
+    
+    # Run build
+    user_build.sh
 else
     set -e
     echo "Executing Jenkins build."
@@ -40,15 +43,11 @@ else
     set +e
 fi
 
-if [ -z "$BUILD_NUMBER" ]
-then
-    user_build.sh
-fi
-
 if [ -z "$JENKINS_ENABLED" ] && [ -z "$BUILD_NUMBER" ]
 then
-  # Start the app
-  start_app.sh
+    deploy.sh
+    # Start the app
+    start_app.sh
 fi
 
 if [ -z "$BUILD_NUMBER" ]

@@ -55,7 +55,13 @@ then
   bundle install --deployment
 fi
 
-rsync ~/$WORKSPACE/ UPSTREAM_PUBLISH_TARGET/deploy/
+ssh UPSTREAM_SSH 'ctl_all stop'
+
+# Push content back to application
+rsync ~/$WORKSPACE/ UPSTREAM_SSH:UPSTREAM_PUBLISH_DIR/deploy/
+
+ssh UPSTREAM_SSH deploy.sh
+ssh UPSTREAM_SSH 'ctl_all start'
       </command>
     </hudson.tasks.Shell>
   </builders>

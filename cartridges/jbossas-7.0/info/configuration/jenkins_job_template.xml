@@ -52,8 +52,14 @@ export MAVEN_OPTS="-Xmx768m"
 mvn --version
 mvn clean package -Popenshift -DskipTests
 
-rsync ~/$WORKSPACE/deployments/. UPSTREAM_PUBLISH_TARGET/repo/deployments/
-rsync ~/$WORKSPACE/.openshift UPSTREAM_PUBLISH_TARGET/repo/.openshift
+ssh UPSTREAM_SSH 'ctl_all stop'
+
+# Push content back to application
+rsync ~/$WORKSPACE/deployments/. UPSTREAM_SSH:UPSTREAM_PUBLISH_DIR/repo/deployments/
+rsync ~/$WORKSPACE/.openshift UPSTREAM_SSH:UPSTREAM_PUBLISH_DIR/repo/.openshift
+
+ssh UPSTREAM_SSH deploy.sh
+ssh UPSTREAM_SSH 'ctl_all start'
       </command>
     </hudson.tasks.Shell>
   </builders>

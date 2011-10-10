@@ -53,6 +53,9 @@ then
       bundle install --deployment
       popd > /dev/null
     fi
+    
+    # Run build
+    user_build.sh
 else
     set -e
     echo "Executing Jenkins build."
@@ -65,13 +68,9 @@ else
     set +e
 fi
 
-if [ -z "$BUILD_NUMBER" ]
-then
-    user_build.sh
-fi
-
 if [ -z "$JENKINS_ENABLED" ] && [ -z "$BUILD_NUMBER" ]
 then
+    deploy.sh
     # Start the app
     start_app.sh
 fi

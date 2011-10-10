@@ -134,9 +134,8 @@ else
 fi
 
 /bin/sed -e "s,UPSTREAM_REPO_URL,ssh://${uuid}@${OPENSHIFT_APP_NAME}-${namespace}.${libra_domain}/~/git/${OPENSHIFT_APP_NAME}.git/,g" \
-         -e "s,UPSTREAM_PUBLISH_TARGET,${OPENSHIFT_APP_UUID}@${OPENSHIFT_APP_NAME}-${namespace}.${libra_domain}:~/${OPENSHIFT_APP_NAME},g" \
-         -e "s,UPSTREAM_UUID,${OPENSHIFT_APP_UUID},g" \
-         -e "s,UPSTREAM_DNS,${OPENSHIFT_APP_NAME}-${namespace}.${libra_domain},g" $JOB_XML | runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level ${CART_INFO_DIR}/bin/jenkins-cli create-job '${OPENSHIFT_APP_NAME}-build'"
+         -e "s,UPSTREAM_SSH,${OPENSHIFT_APP_UUID}@${OPENSHIFT_APP_NAME}-${namespace}.${libra_domain},g" \
+         -e "s,UPSTREAM_PUBLISH_DIR,~/${OPENSHIFT_APP_NAME},g" $JOB_XML | runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level ${CART_INFO_DIR}/bin/jenkins-cli create-job '${OPENSHIFT_APP_NAME}-build'"
 
 echo "CLIENT_RESULT: "
 echo "CLIENT_RESULT: Jenkins Client 1.4 has been added to: $OPENSHIFT_APP_NAME"

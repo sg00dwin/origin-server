@@ -27,15 +27,14 @@ then
     echo
     jenkins-cli build -s ${OPENSHIFT_APP_NAME}-build 
     set +e
-fi
-
-if [ -z "$BUILD_NUMBER" ]
-then
+else
+    # Run build
     user_build.sh
 fi
 
 if [ -z "$JENKINS_ENABLED" ] && [ -z "$BUILD_NUMBER" ]
 then
+    deploy.sh
     # Start the app
     start_app.sh
 fi

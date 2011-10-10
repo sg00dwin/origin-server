@@ -16,8 +16,35 @@ else
     redeploy_repo_dir.sh
 fi
 
-if [ -n "$JENKINS_ENABLED" ]
+
+if [ -z "$JENKINS_ENABLED" ] || [ -n "$BUILD_NUMBER" ]
 then
+    if [ -f "${OPENSHIFT_REPO_DIR}/.openshift/markers/force_clean_build" ]
+    then
+        echo ".openshift/markers/force_clean_build found!  Recreating pear libs" 1>&2
+        rm -rf "${OPENSHIFT_APP_DIR}"/phplib/pear/*
+        mkdir -p "${OPENSHIFT_APP_DIR}"/phplib/pear/{docs,ext,php,cache,cfg,data,download,temp,tests,www}
+        pear -c ~/.pearrc config-set php_ini "${OPENSHIFT_APP_DIR}/conf/php.ini"
+    fi
+    
+    if [ -f ~/${OPENSHIFT_APP_NAME}/repo/deplist.txt ]
+    then
+        for f in $(cat ~/${OPENSHIFT_APP_NAME}/repo/deplist.txt)
+        do
+            echo "Checking pear: $f"
+            echo
+            if pear list "$f" > /dev/null
+            then
+                pear upgrade "$f"
+            else
+                pear install --alldeps "$f"
+            fi
+        done
+    fi
+    
+    # Run build
+    user_build.sh
+else
     set -e
     echo "Executing Jenkins build."
     echo
@@ -29,36 +56,9 @@ then
     set +e
 fi
 
-if [ -f "${OPENSHIFT_REPO_DIR}/.openshift/markers/force_clean_build" ]
-then
-    echo ".openshift/markers/force_clean_build found!  Recreating pear libs" 1>&2
-    rm -rf "${OPENSHIFT_APP_DIR}"/phplib/pear/*
-    mkdir -p "${OPENSHIFT_APP_DIR}"/phplib/pear/{docs,ext,php,cache,cfg,data,download,temp,tests,www}
-    pear -c ~/.pearrc config-set php_ini "${OPENSHIFT_APP_DIR}/conf/php.ini"
-fi
-
-if [ -f ~/${OPENSHIFT_APP_NAME}/repo/deplist.txt ]
-then
-    for f in $(cat ~/${OPENSHIFT_APP_NAME}/repo/deplist.txt)
-    do
-        echo "Checking pear: $f"
-        echo
-        if pear list "$f" > /dev/null
-        then
-            pear upgrade "$f"
-        else
-            pear install --alldeps "$f"
-        fi
-    done
-fi
-
-if [ -z "$BUILD_NUMBER" ]
-then
-    user_build.sh
-fi
-
 if [ -z "$JENKINS_ENABLED" ] && [ -z "$BUILD_NUMBER" ]
 then
+    deploy.sh
     # Start the app
     start_app.sh
 fi

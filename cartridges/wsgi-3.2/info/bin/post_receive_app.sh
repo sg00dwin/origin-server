@@ -33,6 +33,9 @@ then
         python ${OPENSHIFT_REPO_DIR}setup.py develop
         virtualenv --relocatable ~/${OPENSHIFT_APP_NAME}/virtenv
     fi
+    
+    # Run build
+    user_build.sh
 else
     set -e
     echo "Executing Jenkins build."
@@ -45,19 +48,9 @@ else
     set +e
 fi
 
-if [ -z "$BUILD_NUMBER" ]
-then
-    # Not inside a build
-    # Run build
-    #virtualenv --relocatable ~/${OPENSHIFT_APP_NAME}/virtenv
-    #. ./bin/activate
-    cd ~/${OPENSHIFT_APP_NAME}/virtenv
-    . ./bin/activate
-    user_build.sh
-fi
-
 if [ -z "$JENKINS_ENABLED" ] && [ -z "$BUILD_NUMBER" ]
 then
+    deploy.sh
     # Start the app
     start_app.sh
 fi
