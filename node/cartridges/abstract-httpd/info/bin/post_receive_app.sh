@@ -12,6 +12,7 @@ if [ -f ~/.env/OPENSHIFT_CI_TYPE ]
 then
     JENKINS_ENABLED=true
 else
+    pre_deploy.sh
     redeploy_repo_dir.sh
 fi
 
@@ -22,7 +23,7 @@ then
     set +e
 else
     # Run build
-    user_build.sh
+    build.sh
 fi
 
 if [ -z "$JENKINS_ENABLED" ] && [ -z "$BUILD_NUMBER" ]
