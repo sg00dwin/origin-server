@@ -130,7 +130,7 @@ module OpenShift
       def block_until_available
         log.info "Waiting for instance to be available..."
 
-        (0..30).each do
+        (0..60).each do
           break if is_running?
           log.info "Instance isn't running yet... retrying"
           sleep 5
@@ -144,7 +144,7 @@ module OpenShift
         # Establish the DNS name
         @dns = get_value(:dns_name)
 
-        (0..15).each do
+        (0..60).each do
           break if can_ssh?
           log.info "SSH access failed... retrying"
           sleep 5

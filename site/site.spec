@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.79.6
+Version:   0.79.7
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -69,6 +69,11 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Sat Oct 08 2011 Dan McPherson <dmcphers@redhat.com> 0.79.7-1
+- add multimap and regin as Gemfile deps (dmcphers@redhat.com)
+- add new deps (dmcphers@redhat.com)
+- update Gemfiles (dmcphers@redhat.com)
+
 * Tue Oct 04 2011 Dan McPherson <dmcphers@redhat.com> 0.79.6-1
 - Added streamline timing to HTTP requests (fotios@redhat.com)
 - RFC (jimjag@redhat.com)
