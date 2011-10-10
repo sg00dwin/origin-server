@@ -15,7 +15,6 @@ then
     SKIP_MAVEN_BUILD=true
 fi
 
-JENKINS_ENABLED=false
 if [ -f ~/.env/OPENSHIFT_CI_TYPE ]
 then
     JENKINS_ENABLED=true
