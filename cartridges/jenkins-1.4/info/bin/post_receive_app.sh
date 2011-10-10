@@ -10,10 +10,13 @@ done
 
 redeploy_repo_dir.sh
 
-# Run build
+
 user_build.sh
 
-# Start the app
+user_deploy.sh
+
 start_app.sh
+
+user_post_deploy.sh
 
 nurture_app_push.sh $libra_server

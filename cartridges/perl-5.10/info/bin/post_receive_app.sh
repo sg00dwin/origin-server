@@ -41,6 +41,7 @@ then
     deploy.sh
     # Start the app
     start_app.sh
+    post_deploy.sh
 fi
 
 if [ -z "$BUILD_NUMBER" ]

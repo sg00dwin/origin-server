@@ -68,7 +68,9 @@ rsync ~/$WORKSPACE/ UPSTREAM_SSH:UPSTREAM_PUBLISH_DIR/repo/
 
 # Configure / start app
 $GIT_SSH UPSTREAM_SSH deploy.sh
-$GIT_SSH UPSTREAM_SSH 'ctl_all start'</command>
+$GIT_SSH UPSTREAM_SSH 'ctl_all start'
+$GIT_SSH UPSTREAM_SSH post_deploy.sh
+      </command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
