@@ -45,7 +45,7 @@ then
     user_build.sh
 fi
 
-if [ -z "$JENKINS_ENABLED" ]
+if [ -z "$JENKINS_ENABLED" ] && [ -z "$BUILD_NUMBER" ]
 then
   # Start the app
   start_app.sh
