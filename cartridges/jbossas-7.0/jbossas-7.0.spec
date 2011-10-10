@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.79.9
+Version:   0.79.10
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -80,6 +80,12 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Mon Oct 10 2011 Dan McPherson <dmcphers@redhat.com> 0.79.10-1
+- add deploy step and call from jenkins with stop start (dmcphers@redhat.com)
+- job updates (dmcphers@redhat.com)
+- missed a then (dmcphers@redhat.com)
+- working on jenkins build logic (dmcphers@redhat.com)
+
 * Thu Oct 06 2011 Dan McPherson <dmcphers@redhat.com> 0.79.9-1
 - switch to use ci type to know if client is avail (dmcphers@redhat.com)
 - add jenkins build kickoff to all post receives (dmcphers@redhat.com)
