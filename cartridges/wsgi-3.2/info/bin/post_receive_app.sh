@@ -10,12 +10,8 @@ done
 
 if [ -f ~/.env/OPENSHIFT_CI_TYPE ]
 then
-  JENKINS_ENABLED=true
-fi
-
-if [ -z "$JENKINS_ENABLED" ]
-then
-    # Run only if jenkins is not enabled
+    JENKINS_ENABLED=true
+else
     redeploy_repo_dir.sh
 fi
 
@@ -37,17 +33,13 @@ then
         python ${OPENSHIFT_REPO_DIR}setup.py develop
         virtualenv --relocatable ~/${OPENSHIFT_APP_NAME}/virtenv
     fi
-
-fi
-
-if [ -n "$JENKINS_ENABLED" ]
-then
+else
     set -e
     echo "Executing Jenkins build."
     echo
     echo "NOTE: If build fails, deployment will halt.  Last previous 'good' build will continue to run."
     echo
-    echo "You can track your build at http://jenktest-mmcgrath000.dev.rhcloud.com/job/${OPENSHIFT_APP_NAME}-build"
+    echo "You can track your build at http://${JENKINS_URL}/job/${OPENSHIFT_APP_NAME}-build"
     echo
     jenkins-cli build -s ${OPENSHIFT_APP_NAME}-build 
     set +e
@@ -55,7 +47,7 @@ fi
 
 if [ -z "$BUILD_NUMBER" ]
 then
-    # Not inside a a build
+    # Not inside a build
     # Run build
     #virtualenv --relocatable ~/${OPENSHIFT_APP_NAME}/virtenv
     #. ./bin/activate
@@ -64,12 +56,10 @@ then
     user_build.sh
 fi
 
-if [ -n "$JENKINS_ENABLED" ]
+if [ -z "$JENKINS_ENABLED" ] && [ -z "$BUILD_NUMBER" ]
 then
-  # Start the app
-  start_app.sh
-else
-  restart_app.sh
+    # Start the app
+    start_app.sh
 fi
 
 if [ -z "$BUILD_NUMBER" ]
