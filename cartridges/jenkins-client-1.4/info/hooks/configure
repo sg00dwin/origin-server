@@ -142,8 +142,9 @@ then
     echo "CLIENT_RESULT: Jenkins Client 1.4 has been added to: $OPENSHIFT_APP_NAME"
     echo "CLIENT_RESULT: Job URL: ${JENKINS_URL}job/${OPENSHIFT_APP_NAME}-build/"
 else
-    echo "CLIENT_ERROR: "
-    echo "CLIENT_ERROR: Could not add job to upstream Jenkins:"
-    echo "CLIENT_ERROR: $out"
-    echo "CLIENT_ERROR: "
+    echo "CLIENT_RESULT: "
+    echo "CLIENT_RESULT: Could not add job to upstream Jenkins:"
+    echo "CLIENT_RESULT:    $out"
+    echo "CLIENT_RESULT: Continuing anyway."
+    echo "CLIENT_RESULT: "
 fi
