@@ -35,6 +35,7 @@ then
     jenkins-cli build -s ${OPENSHIFT_APP_NAME}-build 
     set +e
 elif [ -z "$BUILD_NUMBER" ]
+then
     if [ -f ${OPENSHIFT_REPO_DIR}pom.xml ] && ! $SKIP_MAVEN_BUILD
     then
         echo "Found pom.xml... attempting to build with 'mvn clean package -Popenshift -DskipTests'" 
