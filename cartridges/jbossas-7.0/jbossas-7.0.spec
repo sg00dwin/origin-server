@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.79.12
+Version:   0.79.13
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -80,6 +80,11 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Mon Oct 10 2011 Dan McPherson <dmcphers@redhat.com> 0.79.13-1
+- call build instead of post receive (dmcphers@redhat.com)
+- common post receive and add pre deploy (dmcphers@redhat.com)
+- add deploy and post-deploy everywhere (dmcphers@redhat.com)
+
 * Mon Oct 10 2011 Dan McPherson <dmcphers@redhat.com> 0.79.12-1
 - make start/stop blocking (dmcphers@redhat.com)
 - bash usage error (dmcphers@redhat.com)
