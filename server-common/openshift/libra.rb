@@ -231,6 +231,17 @@ module Libra
 
   def self.configure_app(framework, app_name, user, node_profile)
     raise UserException.new(100), "An application named '#{app_name}' in namespace '#{user.namespace}' already exists", caller[0..5] if user.app_info(app_name)
+    
+    #TODO would be nice to move the unique flag to be specified on the cart
+    type = Libra::Util.get_cart_framework(framework)
+    if type == 'jenkins'
+      user.apps.each do |appname, app|
+        if Libra::Util.get_cart_framework(app['framework']) == 'jenkins'
+          raise UserException.new(115), "A jenkins application named '#{appname}' in namespace '#{user.namespace}' already exists.  You can only have 1 jenkins application per account.", caller[0..5]
+        end
+      end
+    end
+    
     # Find the next available server
     server = Server.find_available(node_profile)
     
