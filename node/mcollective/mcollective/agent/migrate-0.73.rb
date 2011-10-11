@@ -19,7 +19,7 @@ module LibraMigration
     new_app_type = app_types[old_app_type] ? app_types[old_app_type] : old_app_type 
     old_cartridge_dir = "#{cartridge_dir}/#{old_app_type}"
     new_cartridge_dir = "#{cartridge_dir}/#{new_app_type}"
-    framework = old_app_type.split('-')[0]
+    framework = old_app_type.split('-')[0..-2].join('-')
     app_home = "#{libra_home}/#{uuid}"             
     framework_dir = "#{app_home}/#{framework}"
     old_app_dir = "#{framework_dir}/#{app_name}"
