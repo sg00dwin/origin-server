@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.79.7
+Version:   0.79.8
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -69,6 +69,14 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Mon Oct 10 2011 Dan McPherson <dmcphers@redhat.com> 0.79.8-1
+- Add express specific workflow to compensate for new default login redirect
+  (edirsh@redhat.com)
+- Change default login workflow path to overview page instead of express page
+  (edirsh@redhat.com)
+- Fixed logging in without javascript. Fixes mechanize/naios scripts for Flex
+  team (fotios@redhat.com)
+
 * Sat Oct 08 2011 Dan McPherson <dmcphers@redhat.com> 0.79.7-1
 - add multimap and regin as Gemfile deps (dmcphers@redhat.com)
 - add new deps (dmcphers@redhat.com)
