@@ -8,7 +8,7 @@ module Libra
     Maxdlen = 16
 
     def self.get_cart_framework(cart)
-      cart_type = cart.split('-')[0]
+      cart_type = cart.split('-')[0..-2].join('-')
       return cart_type
     end
 
