@@ -46,6 +46,8 @@
   <builders>
     <hudson.tasks.Shell>
       <command>
+alias rsync="rsync --delete-after -az -e '$GIT_SSH'"      
+
 # Build/update libs
 build.sh
 
@@ -56,14 +58,12 @@ then
   # Also adding .openshift/markers/force_clean_build at the root of the repo will trigger a clean rebundle
   if ! git show master:.openshift/markers/force_clean_build > /dev/null 2>&amp;1 &amp;&amp; ! git show master:.bundle > /dev/null 2>&amp;1 &amp;&amp; ! git show master~1:.bundle > /dev/null 2>&amp;1
   then
-    rsync -azv --include '.bundle/***' --include 'vendor/***' --exclude=* -e $GIT_SSH UPSTREAM_SSH:~/UPSTREAM_APP_NAME/deploy/ .
+    rsync --include '.bundle/***' --include 'vendor/***' --exclude '*' UPSTREAM_SSH:~/UPSTREAM_APP_NAME/deploy/ .
   fi
 
   echo 'Bundling RubyGems based on Gemfile/Gemfile.lock to vendor/bundle'
   bundle install --deployment
 fi
-
-alias rsync="rsync --delete-after -az -e '$GIT_SSH'"
 
 # Deploy new build
 
