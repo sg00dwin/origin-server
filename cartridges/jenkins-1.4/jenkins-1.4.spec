@@ -13,6 +13,7 @@ BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires: git
 Requires:  rhc-node
 Requires:  jenkins
+Requires:  jenkins-plugin-openshift
 
 BuildArch: noarch
 
