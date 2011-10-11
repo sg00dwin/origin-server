@@ -105,6 +105,10 @@ class LoginController < ApplicationController
       Rails.logger.debug "Response from Streamline took (#{uri.path}): #{(end_time - start_time)*1000} ms"
   
       Rails.logger.debug "Status received: #{res.code}"
+      Rails.logger.debug "-------------------"
+      Rails.logger.debug res.header.to_yaml
+      Rails.logger.debug "-------------------"
+
   
       case res
         when Net::HTTPSuccess, Net::HTTPRedirection
@@ -113,16 +117,25 @@ class LoginController < ApplicationController
   
           # Set cookie and session information
           Rails.logger.debug "Cookies sent: #{YAML.dump res.header['set-cookie']}"
-          rh_sso = res.header['set-cookie'].split('; ')[0].split('=')[1]
-          cookies[:rh_sso] = {
-            :secure => true,
-            :domain => '.redhat.com',
-            :path => '/',
-            :value => rh_sso
-          }
-          session[:ticket] = rh_sso
-          responseText[:redirectUrl] = root_url
-          set_previous_login_detection
+          cookie = res.header['set-cookie']
+          if cookie
+            @message_type = 'success'
+            @message = 'Welcome back kto OpenShift!'
+            rh_sso = cookie.split('; ')[0].split('=')[1]
+            cookies[:rh_sso] = {
+              :secure => true,
+              :domain => '.redhat.com',
+              :path => '/',
+              :value => rh_sso
+            }
+
+            session[:ticket] = rh_sso
+            responseText[:redirectUrl] = root_url
+            set_previous_login_detection
+          else 
+            Rails.logger.debug "Unknown error (no cookie sent): #{res.code}"
+            responseText[:error] = 'An unknown error occurred'
+          end 
         when Net::HTTPUnauthorized
           Rails.logger.debug 'Unauthorized'
           responseText[:error] = 'Invalid username or password'
