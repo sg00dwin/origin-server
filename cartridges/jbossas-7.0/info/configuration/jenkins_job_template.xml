@@ -48,6 +48,8 @@
       <command>
 alias rsync="rsync --delete-after -az -e '$GIT_SSH'"
 
+rsync UPSTREAM_SSH:~/.m2/ ~/.m2/
+
 # Build/Update virtual env
 build.sh
 
@@ -61,8 +63,9 @@ mvn clean package -Popenshift -DskipTests
 $GIT_SSH UPSTREAM_SSH 'ctl_all stop'
 
 # Push content back to application
-rsync ~/$WORKSPACE/deployments/. UPSTREAM_SSH:UPSTREAM_PUBLISH_DIR/repo/deployments/
-rsync ~/$WORKSPACE/.openshift UPSTREAM_SSH:UPSTREAM_PUBLISH_DIR/repo/.openshift
+rsync ~/.m2/ UPSTREAM_SSH:~/.m2/
+rsync ~/$WORKSPACE/deployments/. UPSTREAM_SSH:~/UPSTREAM_APP_NAME/repo/deployments/
+rsync ~/$WORKSPACE/.openshift UPSTREAM_SSH:~/UPSTREAM_APP_NAME/repo/.openshift
 
 # Configure / start app
 $GIT_SSH UPSTREAM_SSH deploy.sh

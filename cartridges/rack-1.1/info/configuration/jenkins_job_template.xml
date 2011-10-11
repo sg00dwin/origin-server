@@ -64,7 +64,7 @@ fi
 $GIT_SSH UPSTREAM_SSH 'ctl_all stop'
 
 # Push content back to application
-rsync ~/$WORKSPACE/ UPSTREAM_SSH:UPSTREAM_PUBLISH_DIR/deploy/
+rsync ~/$WORKSPACE/ UPSTREAM_SSH:~/UPSTREAM_APP_NAME/deploy/
 
 # Configure / start app
 $GIT_SSH UPSTREAM_SSH deploy.sh
