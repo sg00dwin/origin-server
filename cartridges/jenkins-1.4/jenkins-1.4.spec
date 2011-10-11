@@ -2,7 +2,7 @@
 
 Summary:   Provides jenkins-1.4 support
 Name:      rhc-cartridge-jenkins-1.4
-Version:   0.79.10
+Version:   0.79.11
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -60,6 +60,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Tue Oct 11 2011 Dan McPherson <dmcphers@redhat.com> 0.79.11-1
+- no // in broker url (dmcphers@redhat.com)
+
 * Mon Oct 10 2011 Dan McPherson <dmcphers@redhat.com> 0.79.10-1
 - use common post receive for jenkins even (dmcphers@redhat.com)
 
