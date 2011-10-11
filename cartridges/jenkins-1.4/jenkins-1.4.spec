@@ -52,6 +52,7 @@ rm -rf %{buildroot}
 %attr(0750,-,-) %{cartridgedir}/info/hooks/
 %attr(0750,-,-) %{cartridgedir}/info/data/
 %attr(0750,-,-) %{cartridgedir}/info/build/
+%attr(0750,-,-) %{cartridgedir}/info/lib/
 %attr(0755,-,-) %{cartridgedir}/info/bin/
 %{cartridgedir}/template/
 %config(noreplace) %{cartridgedir}/info/configuration/

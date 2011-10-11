@@ -229,10 +229,13 @@ class BrokerController < ApplicationController
           
         json_data = nil
         
-        message = 'Success'
+        message = nil
+        if Thread.current[:resultIO] && !Thread.current[:resultIO].string.empty?
+          message = Thread.current[:resultIO].string
+        end
         if action == 'configure'
-          message = "Successfully created application: #{app_name}"
-          # TODO would like to move this future down.  Perhaps store cart=>page as the cartlist fact?
+          message = "Successfully created application: #{app_name}" if !message
+          # TODO would like to move this further down.  Perhaps store cart=>page as the cartlist fact?
           type = Libra::Util.get_cart_framework(cartridge)
           case type
             when 'php'
@@ -244,10 +247,9 @@ class BrokerController < ApplicationController
           end
           json_data = JSON.generate({:health_check_path => page})
         elsif action == 'deconfigure'
-          message = "Successfully destroyed application: #{app_name}"
-        elsif action == 'status' || (Thread.current[:resultIO] && !Thread.current[:resultIO].string.empty?)
-          message = Thread.current[:resultIO].string 
+          message = "Successfully destroyed application: #{app_name}" if !message
         end
+        message = 'Success' if !message
   
         render :json => generate_result_json(message, json_data) and return
       else

@@ -145,3 +145,5 @@ rm -rf /etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}.conf /etc/htt
 /sbin/service httpd configtest 2> /dev/null && /sbin/service httpd graceful || error "Failed to restart master httpd, please contact support" 120
 
 echo "ENV_VAR_REMOVE: JENKINS_URL"
+echo "ENV_VAR_REMOVE: JENKINS_USERNAME"
+echo "ENV_VAR_REMOVE: JENKINS_PASSWORD"
