@@ -24,14 +24,14 @@ class LoginFlowsTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test 'user should be redirected to express app when logging in directly' do
+  test 'user should be redirected to product overview when logging in directly' do
     get login_path
     assert_response :success
 
     post_via_redirect(path, {:login => 'testuser', :redirectUrl => root_path })
 
     assert_response :success
-    assert_equal path, express_path
+    assert_equal path, product_overview_path
   end
   
   test 'user should be redirected to flex app when logging in directly from the flex login' do

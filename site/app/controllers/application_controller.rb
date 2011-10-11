@@ -73,10 +73,14 @@ class ApplicationController < ActionController::Base
           if referrer.path =~ /^\/app\/user\/?/
             if referrer.path =~ /^\/app\/user\/new\/flex\/?/
               session[:login_workflow] = flex_path
+            elsif referrer.path =~ /^\/app\/user\/new\/express\/?/
+              session[:login_workflow] = express_path
             end
           elsif referrer.path =~ /^\/app\/login\/?/
             if referrer.path =~ /^\/app\/login\/flex\/?/
               session[:login_workflow] = flex_path
+            elsif referrer.path =~ /^\/app\/login\/express\/?/
+              session[:login_workflow] = express_path
             end
           elsif !(referrer.path =~ /^\/app\/?$/)
             if referrer.scheme == 'http'
