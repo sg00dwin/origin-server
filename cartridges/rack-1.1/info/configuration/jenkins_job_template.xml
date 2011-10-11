@@ -56,7 +56,7 @@ if [ -f Gemfile ]
 then
   # If the previous and current commits didn't upload .bundle and you have .bundle and vendor/bundle already deployed then sync previous bundled gems
   # Also adding .openshift/markers/force_clean_build at the root of the repo will trigger a clean rebundle
-  if ! git show master:.openshift/markers/force_clean_build > /dev/null 2>&amp;1 &amp;&amp; ! git show master:.bundle > /dev/null 2>&amp;1 &amp;&amp; ! git show master~1:.bundle > /dev/null 2>&amp;1
+  if [ -f .openshift/markers/force_clean_build ] &amp;&amp; ! [ -d .bundle ] &amp;&amp; ! git show master~1:.bundle > /dev/null 2>&amp;1
   then
     rsync --include '.bundle/***' --include 'vendor/***' --exclude '*' UPSTREAM_SSH:~/UPSTREAM_APP_NAME/deploy/ .
   fi
