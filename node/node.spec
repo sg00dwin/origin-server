@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.79.13
+Version:       0.79.14
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -157,6 +157,12 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Tue Oct 11 2011 Dan McPherson <dmcphers@redhat.com> 0.79.14-1
+- add authentication to jenkins (dmcphers@redhat.com)
+- Disable IPV6 in libra init.d file (tkramer@tkramer.timtech)
+- Removed ipv6 disable (tkramer@tkramer.timtech)
+- Disable IPV6 (tkramer@tkramer.timtech)
+
 * Tue Oct 11 2011 Dan McPherson <dmcphers@redhat.com> 0.79.13-1
 - fix unused get framework too (dmcphers@redhat.com)
 
