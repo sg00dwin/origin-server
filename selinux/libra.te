@@ -197,7 +197,6 @@ require {
 	type httpd_t;
 	type sendmail_t;
 	attribute domain;
-	type ssh_home_t;
 	type quota_t;
 	type quota_db_t;
 }
@@ -211,7 +210,7 @@ allow libra_domain sshd_t:process sigchld;
 allow libra_domain sshd_t:unix_stream_socket connectto;
 allow sshd_t libra_domain:process { rlimitinh signal };
 manage_sock_files_pattern(sshd_t, libra_tmp_t, libra_tmp_t)
-dontaudit libra_domain ssh_home_t:dir search_dir_perms;
+ssh_getattr_user_home_dir(libra_domain)
 dontaudit sendmail_t libra_initrc_t:fifo_file { read write };
 dontaudit domain libra_t:fifo_file { getattr write };
 
