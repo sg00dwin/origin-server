@@ -42,6 +42,8 @@ corenet_tcp_connect_git_port(libra_t)
 corenet_tcp_connect_oracle_port(libra_t)
 corenet_tcp_connect_http_port(libra_t)
 corenet_tcp_connect_ftp_port(libra_t)
+/* These ports are the ephemeral ports needed for ftp */
+corenet_tcp_connect_virt_migration_port(libra_t)
 corenet_tcp_connect_ssh_port(libra_t)
 corenet_tcp_connect_jboss_management_port(libra_t)
 corenet_tcp_connect_memcache_port(libra_t)
