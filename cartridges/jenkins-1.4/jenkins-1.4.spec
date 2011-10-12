@@ -2,7 +2,7 @@
 
 Summary:   Provides jenkins-1.4 support
 Name:      rhc-cartridge-jenkins-1.4
-Version:   0.79.17
+Version:   0.79.18
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -62,6 +62,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Wed Oct 12 2011 Dan McPherson <dmcphers@redhat.com> 0.79.18-1
+- abstract rm_symlink (dmcphers@redhat.com)
+
 * Wed Oct 12 2011 Dan McPherson <dmcphers@redhat.com> 0.79.17-1
 - abstract out common logic (dmcphers@redhat.com)
 - Bug 745373 and remove sessions where not needed (dmcphers@redhat.com)
