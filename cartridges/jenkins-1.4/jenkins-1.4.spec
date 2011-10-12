@@ -2,7 +2,7 @@
 
 Summary:   Provides jenkins-1.4 support
 Name:      rhc-cartridge-jenkins-1.4
-Version:   0.79.10
+Version:   0.79.16
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -13,6 +13,7 @@ BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires: git
 Requires:  rhc-node
 Requires:  jenkins
+Requires:  jenkins-plugin-openshift
 
 BuildArch: noarch
 
@@ -52,6 +53,7 @@ rm -rf %{buildroot}
 %attr(0750,-,-) %{cartridgedir}/info/hooks/
 %attr(0750,-,-) %{cartridgedir}/info/data/
 %attr(0750,-,-) %{cartridgedir}/info/build/
+%attr(0750,-,-) %{cartridgedir}/info/lib/
 %attr(0755,-,-) %{cartridgedir}/info/bin/
 %{cartridgedir}/template/
 %config(noreplace) %{cartridgedir}/info/configuration/
@@ -60,6 +62,27 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Wed Oct 12 2011 Dan McPherson <dmcphers@redhat.com> 0.79.16-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- Fixed jenkins 'slave spin up delay' issues (mmcgrath@redhat.com)
+
+* Tue Oct 11 2011 Dan McPherson <dmcphers@redhat.com> 0.79.15-1
+- renamed post-deploy to post_deploy for consistency (mmcgrath@redhat.com)
+
+* Tue Oct 11 2011 Dan McPherson <dmcphers@redhat.com> 0.79.14-1
+- move link to openshift.hpi (dmcphers@redhat.com)
+
+* Tue Oct 11 2011 Dan McPherson <dmcphers@redhat.com> 0.79.13-1
+- add jenkins-plugin-openshift (dmcphers@redhat.com)
+
+* Tue Oct 11 2011 Dan McPherson <dmcphers@redhat.com> 0.79.12-1
+- add authentication to jenkins (dmcphers@redhat.com)
+- remove elements giving errors (dmcphers@redhat.com)
+
+* Tue Oct 11 2011 Dan McPherson <dmcphers@redhat.com> 0.79.11-1
+- no // in broker url (dmcphers@redhat.com)
+
 * Mon Oct 10 2011 Dan McPherson <dmcphers@redhat.com> 0.79.10-1
 - use common post receive for jenkins even (dmcphers@redhat.com)
 

@@ -6,7 +6,7 @@ do
     . $f
 done
 
-if ! [ -f ~/.env/OPENSHIFT_CI_TYPE ]
+if [ -z "$OPENSHIFT_CI_TYPE" ] || [ -z "$JENKINS_URL" ]
 then
   stop_app.sh
 fi

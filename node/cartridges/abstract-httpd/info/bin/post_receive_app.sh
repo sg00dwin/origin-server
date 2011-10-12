@@ -8,12 +8,21 @@ do
     . $f
 done
 
-if [ -f ~/.env/OPENSHIFT_CI_TYPE ]
+if [ "$OPENSHIFT_CI_TYPE" = "jenkins-1.4" ] && [ -n "$JENKINS_URL" ]
 then
     set -e
     jenkins_build.sh
     set +e
 else
+    if [ "$OPENSHIFT_CI_TYPE" = "jenkins-1.4" ]
+    then
+        echo "!!!!!!!!"
+        echo "Jenkins client installed but a Jenkins server does not exist!"
+        echo "You can remove the jenkins client with rhc-ctl-app -a $OPENSHIFT_APP_NAME -e remove-jenkins-client-1.4"
+        echo "Continuing with local build/deployment."
+        echo "!!!!!!!!"
+    fi
+
     # Do any cleanup before the next build
     pre_build.sh
     

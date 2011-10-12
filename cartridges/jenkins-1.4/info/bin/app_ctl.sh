@@ -23,6 +23,9 @@ case "$1" in
             -Dcom.sun.akuma.Daemon=daemonized \
             -Djava.awt.headless=true \
             -DJENKINS_HOME=$OPENSHIFT_DATA_DIR/ \
+            -Dhudson.slaves.NodeProvisioner.recurrencePeriod=500 \
+            -Dhudson.slaves.NodeProvisioner.initialDelay=100 \
+            -Dhudson.slaves.NodeProvisioner.MARGIN=100 \
             -Xmx95m \
             -XX:MaxPermSize=85m \
             -jar /usr/lib/jenkins/jenkins.war \

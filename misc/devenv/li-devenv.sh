@@ -4,6 +4,9 @@ rpm -Uhv http://209.132.178.9/gpxe/trees/li/rhel/6/x86_64/rhel6-and-optional-0.1
 
 sed -i s/sslverify=1/sslverify=0/g /etc/yum.repos.d/rh-cloud.repo
 
+wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat-stable/jenkins.repo
+rpm --import http://pkg.jenkins-ci.org/redhat/jenkins-ci.org.key
+
 cat > /etc/yum.repos.d/li.repo <<EOF
 [li]
 name=Li repo for Enterprise Linux 6 - \$basearch
@@ -34,13 +37,6 @@ gpgkey=http://209.132.178.9/gpxe/trees/li/li-signing.asc
 [passenger]
 name=Passenger repo for Enterprise Linux 6
 baseurl=http://209.132.178.9/gpxe/trees/passenger
-failovermethod=priority
-enabled=1
-gpgcheck=0
-
-[jenkins]
-name=Jenkins repo for Enterprise Linux 6
-baseurl=http://209.132.178.9/gpxe/trees/jenkins/
 failovermethod=priority
 enabled=1
 gpgcheck=0

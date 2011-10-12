@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/jenkins-client-1.4
 
 Name: rhc-cartridge-jenkins-client-1.4
-Version: 0.9
+Version: 0.11
 Release: 1%{?dist}
 Summary: Embedded jenkins client support for express 
 Group: Network/Daemons
@@ -47,6 +47,13 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Tue Oct 11 2011 Dan McPherson <dmcphers@redhat.com> 0.11-1
+- mv pw to password-file and create jenkins-client-1.4 dir
+  (dmcphers@redhat.com)
+
+* Tue Oct 11 2011 Dan McPherson <dmcphers@redhat.com> 0.10-1
+- add authentication to jenkins (dmcphers@redhat.com)
+
 * Mon Oct 10 2011 Dan McPherson <dmcphers@redhat.com> 0.9-1
 - add .m2 syncing (dmcphers@redhat.com)
 

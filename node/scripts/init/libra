@@ -61,6 +61,9 @@ function apptype() {
 RETVAL=0
 GROUP_RETVAL=0
 
+# Disable IPV6
+echo "install ipv6 /bin/true" > /etc/modprobe.d/disable_ipv6
+
 # UGLY HACK, fix this later
 if ! ( runcon | grep -q s0-s0:c0.c1023 )
 then

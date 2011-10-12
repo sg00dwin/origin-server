@@ -19,6 +19,9 @@ if [ -f ${OPENSHIFT_REPO_DIR}setup.py ]
 then
     echo "setup.py found.  Setting up virtualenv"
     cd ~/${OPENSHIFT_APP_NAME}/virtenv
+
+    # Hack to fix symlink on rsync issue
+    /bin/rm -f lib64
     virtualenv ~/${OPENSHIFT_APP_NAME}/virtenv
     . ./bin/activate
     python ${OPENSHIFT_REPO_DIR}setup.py develop

@@ -107,8 +107,17 @@ mcs_level=`${CART_DIR}/li-controller/info/bin/mcs_level $uid`
 # Create http base for application, every app gets its own apache instance
 #
 
-[ -f "$APP_HOME/.env/JENKINS_URL" ] || error "${application}.  Jenkins Server does not exist!  Please create with rhc-create-app -t jenkins-1.4" 132
-[ -f "$APP_HOME/.env/OPENSHIFT_CI_TYPE" ] && error "${application}.  Jenkins Client already embedded in $application" 132
+if ! [ -f "$APP_HOME/.env/JENKINS_URL" ]
+then
+    echo "CLIENT_ERROR: Jenkins server does not exist!  Please create with rhc-create-app -t jenkins-1.4"
+    exit 132
+fi
+if [ -f "$APP_HOME/.env/OPENSHIFT_CI_TYPE" ]
+then
+    echo "CLIENT_ERROR: Jenkins client already embedded in $application"
+    exit 132
+fi
+
 [ -d "$APP_DIR/" ] || error "${APP_DIR} Not found!  Aborting." 133
 
 #
@@ -117,13 +126,17 @@ mcs_level=`${CART_DIR}/li-controller/info/bin/mcs_level $uid`
 echo "export OPENSHIFT_CI_TYPE='jenkins-1.4'" > $APP_HOME/.env/OPENSHIFT_CI_TYPE
 echo "export PATH=\$PATH:${CART_INFO_DIR}/bin/" > $APP_HOME/.env/PATH_JENKINS_CLIENT
 
-. $APP_HOME/.env/OPENSHIFT_DATA_DIR
+. $APP_HOME/.env/OPENSHIFT_HOMEDIR
 . $APP_HOME/.env/OPENSHIFT_APP_NAME
 . $APP_HOME/.env/OPENSHIFT_APP_UUID
 . $APP_HOME/.env/OPENSHIFT_APP_TYPE
 . $APP_HOME/.env/JENKINS_URL
+. $APP_HOME/.env/JENKINS_USERNAME
+. $APP_HOME/.env/JENKINS_PASSWORD
 
-/usr/bin/wget --no-check-certificate -q ${JENKINS_URL}jnlpJars/jenkins-cli.jar -O "$OPENSHIFT_DATA_DIR/jenkins-cli.jar" || error "Could not download ${JENKINS_URL}jnlpJars/jenkins-cli.jar" 157
+mkdir -p "$OPENSHIFT_HOMEDIR/jenkins-client-1.4/"
+/usr/bin/wget --no-check-certificate -q ${JENKINS_URL}jnlpJars/jenkins-cli.jar -O "$OPENSHIFT_HOMEDIR/jenkins-client-1.4/jenkins-cli.jar" || error "Could not download ${JENKINS_URL}jnlpJars/jenkins-cli.jar" 157
+echo $JENKINS_PASSWORD > $OPENSHIFT_HOMEDIR/jenkins-client-1.4/.password
 
 # Maybe allow cartridges to create their own jenkins job
 if [ -f "${CART_DIR}/${OPENSHIFT_APP_TYPE}/info/configuration/jenkins_job_template.xml" ]
@@ -135,7 +148,7 @@ fi
 
 if out=$(/bin/sed -e "s,UPSTREAM_REPO_URL,ssh://${uuid}@${OPENSHIFT_APP_NAME}-${namespace}.${libra_domain}/~/git/${OPENSHIFT_APP_NAME}.git/,g" \
          -e "s,UPSTREAM_SSH,${OPENSHIFT_APP_UUID}@${OPENSHIFT_APP_NAME}-${namespace}.${libra_domain},g" \
-         -e "s,UPSTREAM_APP_NAME,${OPENSHIFT_APP_NAME},g" $JOB_XML | runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level ${CART_INFO_DIR}/bin/jenkins-cli create-job '${OPENSHIFT_APP_NAME}-build'" 2>&1)
+         -e "s,UPSTREAM_APP_NAME,${OPENSHIFT_APP_NAME},g" $JOB_XML | runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level ${CART_INFO_DIR}/bin/jenkins-cli create-job --username "$JENKINS_USERNAME" --password-file "${OPENSHIFT_HOMEDIR}jenkins-client-1.4/.password" '${OPENSHIFT_APP_NAME}-build'" 2>&1)
 then
     # Embedding success
     echo "CLIENT_RESULT: "

@@ -1,14 +1,14 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <hudson>
-  <disabledAdministrativeMonitors/>
-  <version>1.432</version>
+  <version>1.409.2</version>
   <numExecutors>0</numExecutors>
   <mode>NORMAL</mode>
   <useSecurity>true</useSecurity>
-  <authorizationStrategy class="hudson.security.AuthorizationStrategy$Unsecured"/>
-  <securityRealm class="hudson.security.SecurityRealm$None"/>
-  <workspaceDir>${ITEM_ROOTDIR}/workspace</workspaceDir>
-  <buildsDir>${ITEM_ROOTDIR}/builds</buildsDir>
+  <authorizationStrategy class="hudson.security.FullControlOnceLoggedInAuthorizationStrategy"/>
+  <securityRealm class="hudson.security.HudsonPrivateSecurityRealm">
+    <disableSignup>true</disableSignup>
+  </securityRealm>
+  <markupFormatter class="hudson.markup.RawHtmlMarkupFormatter"/>
   <jdks/>
   <viewsTabBar class="hudson.views.DefaultViewsTabBar"/>
   <myViewsTabBar class="hudson.views.DefaultMyViewsTabBar"/>
@@ -21,6 +21,7 @@
       <proxyHost></proxyHost>
       <proxyPort>0</proxyPort>
       <jenkinsUrl>JENKINS_URL_TEMPLATE</jenkinsUrl>
+      <builderSize>std</builderSize>
       <ignoreBrokerCertCheck>true</ignoreBrokerCertCheck>
     </hudson.plugins.openshift.OpenShiftCloud>
   </clouds>
@@ -41,4 +42,7 @@
   <label></label>
   <nodeProperties/>
   <globalNodeProperties/>
+  <disabledAdministrativeMonitors/>
+  <noUsageStatistics>true</noUsageStatistics>
 </hudson>
+

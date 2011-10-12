@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.79.4
+Version:   0.79.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -65,6 +65,9 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Tue Oct 11 2011 Dan McPherson <dmcphers@redhat.com> 0.79.5-1
+- add authentication to jenkins (dmcphers@redhat.com)
+
 * Sat Oct 08 2011 Dan McPherson <dmcphers@redhat.com> 0.79.4-1
 - correcting Gemfile (mmcgrath@redhat.com)
 - add multimap and regin as Gemfile deps (dmcphers@redhat.com)
