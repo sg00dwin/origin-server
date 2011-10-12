@@ -176,5 +176,31 @@ module CommandHelper
     found
   end
 
+  #
+  # Count the number of processes owned by account that match the regex
+  #
+  def num_procs_like acct_name, regex
+    command = "ps --no-headers -f -u #{acct_name}"
+    $logger.debug("num_procs: executing #{command}")
+
+    pid, stdin, stdout, stderr = Open4::popen4(command)
+
+    stdin.close
+    ignored, status = Process::waitpid2 pid
+    exit_code = status.exitstatus
+
+    outstrings = stdout.readlines
+    errstrings = stderr.readlines
+    $logger.debug("looking for #{regex}")
+    $logger.debug("ps output:\n" + outstrings.join(""))
+
+    proclist = outstrings.collect { |line|
+      line.match(regex)
+    }.compact!
+
+    found = proclist ? proclist.size : 0
+    $logger.debug("Found = #{found} instances of #{regex}")
+    found
+  end
 end
 World(CommandHelper)
