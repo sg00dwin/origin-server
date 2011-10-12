@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.79.3
+Version:       0.79.4
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -38,6 +38,13 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Wed Oct 12 2011 Dan McPherson <dmcphers@redhat.com> 0.79.4-1
+- Allow libra domains to connect to ephemeral ports defined as virt_migration
+  (dwalsh@redhat.com)
+- Allow libra domains to getattr on ssh_home_t, requires selinux-policy-
+  doc-3.7.19-116.el6 now in brew or people.redhat.com/dwalsh/SELinux/RHEL6
+  (dwalsh@redhat.com)
+
 * Wed Oct 05 2011 Dan McPherson <dmcphers@redhat.com> 0.79.3-1
 - allowing libra_tmp_t (mmcgrath@redhat.com)
 - diabling for build (mmcgrath@redhat.com)

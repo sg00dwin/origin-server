@@ -1,0 +1,32 @@
+#!
+
+if [ -f '/etc/libra/node.conf' ]
+then
+    . /etc/libra/node.conf
+elif [ -f 'node.conf' ]
+then
+    . node.conf
+else
+    echo "node.conf not found.  Cannot continue" 1>&2
+    exit 3
+fi
+
+function unobfuscate_app_home {
+    # Check if unobfuscate is set in /etc/libra/node.conf
+    # If it is set, symlink /var/lib/libra/uuid to /var/lib/libra/appname-namespace
+    # This will allow easier debugging.
+
+    uuid=$1
+    namespace=$2
+    appname=$3
+
+    if [ $unobfuscate -eq 1 ]
+    then
+        if [ ! -f "${libra_dir}/$appname-$namespace" ] && [ ! -d "${libra_dir}/$appname-$namespace" ]
+        then
+            /bin/ln -sf "${libra_dir}/${uuid}" "${libra_dir}/${appname}-${namespace}"
+        fi
+    fi
+}
+
+unobfuscate_app_home $1 $2 $3
