@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.79.15
+Version:       0.79.16
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -157,6 +157,11 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Wed Oct 12 2011 Dan McPherson <dmcphers@redhat.com> 0.79.16-1
+- abstract out common logic (dmcphers@redhat.com)
+- Bug 745373 and remove sessions where not needed (dmcphers@redhat.com)
+- Bug 745401 (dmcphers@redhat.com)
+
 * Tue Oct 11 2011 Dan McPherson <dmcphers@redhat.com> 0.79.15-1
 - mv pw to password-file and create jenkins-client-1.4 dir
   (dmcphers@redhat.com)
