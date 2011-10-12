@@ -2,7 +2,7 @@
 
 Summary:   Provides jenkins-1.4 support
 Name:      rhc-cartridge-jenkins-1.4
-Version:   0.79.13
+Version:   0.79.14
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -62,6 +62,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Tue Oct 11 2011 Dan McPherson <dmcphers@redhat.com> 0.79.14-1
+- move link to openshift.hpi (dmcphers@redhat.com)
+
 * Tue Oct 11 2011 Dan McPherson <dmcphers@redhat.com> 0.79.13-1
 - add jenkins-plugin-openshift (dmcphers@redhat.com)
 
