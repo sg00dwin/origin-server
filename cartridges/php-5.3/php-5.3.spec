@@ -2,7 +2,7 @@
 
 Summary:   Provides php-5.3 support
 Name:      rhc-cartridge-php-5.3
-Version:   0.79.10
+Version:   0.79.11
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -84,6 +84,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Wed Oct 12 2011 Dan McPherson <dmcphers@redhat.com> 0.79.11-1
+- abstract out common logic (dmcphers@redhat.com)
+
 * Tue Oct 11 2011 Dan McPherson <dmcphers@redhat.com> 0.79.10-1
 - renamed post-deploy to post_deploy for consistency (mmcgrath@redhat.com)
 
