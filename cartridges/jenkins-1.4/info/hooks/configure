@@ -297,6 +297,9 @@ echo "CLIENT_RESULT: Jenkins created successfully.  Please make note of these cr
 echo "CLIENT_RESULT: "
 echo "CLIENT_RESULT:    User: admin"
 echo "CLIENT_RESULT:    Password: $admin_password"
+echo "CLIENT_RESULT: "
+echo "CLIENT_RESULT: Note:  You can change your password at: http://${application}-${namespace}.${libra_domain}/me/configure"
+echo "CLIENT_RESULT: "
 
 echo "ENV_VAR_ADD: JENKINS_URL=http://${application}-${namespace}.${libra_domain}/"
 echo "ENV_VAR_ADD: JENKINS_USERNAME=system_builder"

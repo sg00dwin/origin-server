@@ -107,8 +107,17 @@ mcs_level=`${CART_DIR}/li-controller/info/bin/mcs_level $uid`
 # Create http base for application, every app gets its own apache instance
 #
 
-[ -f "$APP_HOME/.env/JENKINS_URL" ] || error "${application}.  Jenkins Server does not exist!  Please create with rhc-create-app -t jenkins-1.4" 132
-[ -f "$APP_HOME/.env/OPENSHIFT_CI_TYPE" ] && error "${application}.  Jenkins Client already embedded in $application" 132
+if ! [ -f "$APP_HOME/.env/JENKINS_URL" ]
+then
+    echo "CLIENT_ERROR: Jenkins server does not exist!  Please create with rhc-create-app -t jenkins-1.4"
+    exit 132
+fi
+if [ -f "$APP_HOME/.env/OPENSHIFT_CI_TYPE" ]
+then
+    echo "CLIENT_ERROR: Jenkins client already embedded in $application"
+    exit 132
+fi
+
 [ -d "$APP_DIR/" ] || error "${APP_DIR} Not found!  Aborting." 133
 
 #
