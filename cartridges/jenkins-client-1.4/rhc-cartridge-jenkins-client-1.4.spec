@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/jenkins-client-1.4
 
 Name: rhc-cartridge-jenkins-client-1.4
-Version: 0.11
+Version: 0.12
 Release: 1%{?dist}
 Summary: Embedded jenkins client support for express 
 Group: Network/Daemons
@@ -47,6 +47,10 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Wed Oct 12 2011 Dan McPherson <dmcphers@redhat.com> 0.12-1
+- Bug 745373 and remove sessions where not needed (dmcphers@redhat.com)
+- Bug 745401 (dmcphers@redhat.com)
+
 * Tue Oct 11 2011 Dan McPherson <dmcphers@redhat.com> 0.11-1
 - mv pw to password-file and create jenkins-client-1.4 dir
   (dmcphers@redhat.com)
