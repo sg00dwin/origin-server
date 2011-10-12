@@ -41,6 +41,7 @@ else
 fi
 
 CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
+CART_INFO_DIR=$CART_DIR/embedded/jenkins-client-1.4/info
 
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
@@ -72,7 +73,6 @@ uuid=$3
 
 APP_HOME="$libra_dir/$uuid/"
 APP_DIR="$APP_HOME/$application"
-MYSQL_DIR="$APP_HOME/mysql-5.1/"
 
 if [ ! -d "$APP_DIR" ]
 then
@@ -86,11 +86,34 @@ uid=$(id -u "$uuid")
 mcs_level=`${CART_DIR}/li-controller/info/bin/mcs_level $uid`
 
 #
-# Disable job
-#
-
-#
 # Remove environment variables
 #
 /bin/rm -rf $APP_HOME/.env/OPENSHIFT_CI_TYPE $APP_HOME/.env/PATH_JENKINS_CLIENT "$OPENSHIFT_HOMEDIR/jenkins-client-1.4/"
 
+. $APP_HOME/.env/OPENSHIFT_HOMEDIR
+. $APP_HOME/.env/OPENSHIFT_APP_NAME
+. $APP_HOME/.env/JENKINS_URL
+. $APP_HOME/.env/JENKINS_USERNAME
+
+if [ -n "$JENKINS_URL" ]
+then
+  #
+  # Disable job
+  #
+  if out=$(runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level ${CART_INFO_DIR}/bin/jenkins-cli disable-job --username "$JENKINS_USERNAME" --password-file "${OPENSHIFT_HOMEDIR}jenkins-client-1.4/.password" '${OPENSHIFT_APP_NAME}-build'" 2>&1)
+  then
+      # Existing job was disabled
+      echo "CLIENT_RESULT: "
+      echo "CLIENT_RESULT: The corresponding job '${OPENSHIFT_APP_NAME}-build' in Jenkins has been disabled."
+      echo "CLIENT_RESULT: You can re-enable or delete as desired."
+  else
+      # An error occurred disabling existing job
+      echo "CLIENT_RESULT: "
+      echo "CLIENT_RESULT: Could not disable job '${OPENSHIFT_APP_NAME}-build' in Jenkins server:"
+      echo "CLIENT_RESULT:    $out"
+      echo "CLIENT_RESULT: Continuing anyway."
+  fi
+  echo "CLIENT_RESULT: Job URL: ${JENKINS_URL}job/${OPENSHIFT_APP_NAME}-build/"
+  echo "CLIENT_RESULT: "
+fi
+echo "CLIENT_RESULT: Jenkins client 1.4 has been removed from: $OPENSHIFT_APP_NAME"

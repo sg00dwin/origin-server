@@ -55,7 +55,6 @@ fi
 
 CART_DIR=/usr/libexec/li/cartridges
 CART_INFO_DIR=$CART_DIR/raw-0.1/info
-CART_CONF_DIR=$CART_INFO_DIR/configuration/etc/conf
 
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
@@ -221,7 +220,7 @@ create_repo $application $user_id $group_id $mcs_level
 
 mkdir -p "$APP_DIR"
 pushd "$APP_DIR" > /dev/null
-mkdir logs run repo sessions data tmp
+mkdir logs run repo data tmp
 popd > /dev/null
 
 #

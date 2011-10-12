@@ -90,6 +90,11 @@ APP_HOME="$libra_dir/$uuid/"
 APP_DIR=`echo $APP_HOME/$application | tr -s /`
 MYSQL_DIR="$APP_HOME/mysql-5.1/"
 
+if [ ! -d "$APP_DIR" ]
+then
+  exit 125
+fi
+
 #
 # Detect IP
 
@@ -113,8 +118,11 @@ mcs_level=`${CART_DIR}/li-controller/info/bin/mcs_level $uid`
 # Create http base for application, every app gets its own apache instance
 #
 
-[ -d "$MYSQL_DIR" ] && error "${application}.  Embedded MySQL-5.1 already attached to $application" 132
-[ -d "$APP_DIR/" ] || error "${APP_DIR} Not found!  Aborting." 133
+if [ -d "$MYSQL_DIR" ]
+then
+    echo "CLIENT_ERROR: Embedded MySQL-5.1 already attached to $application"
+    exit 132
+fi
 mkdir -p "$MYSQL_DIR"
 pushd "$MYSQL_DIR" > /dev/null
 mkdir -p log etc data socket pid run

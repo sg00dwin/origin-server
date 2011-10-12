@@ -55,7 +55,6 @@ fi
 
 CART_DIR=/usr/libexec/li/cartridges
 CART_INFO_DIR=$CART_DIR/embedded/jenkins-client-1.4/info
-CART_CONF_DIR=$CART_INFO_DIR/configuration/etc
 
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
@@ -89,6 +88,11 @@ uuid=$3
 APP_HOME="$libra_dir/$uuid/"
 APP_DIR=`echo $APP_HOME/$application | tr -s /`
 
+if [ ! -d "$APP_DIR" ]
+then
+  exit 125
+fi
+
 #
 # Get user id info
 # Not caching this information caused some early chowns to work but some later
@@ -118,8 +122,6 @@ then
     exit 132
 fi
 
-[ -d "$APP_DIR/" ] || error "${APP_DIR} Not found!  Aborting." 133
-
 #
 # Setup Environment Variables
 #
@@ -135,7 +137,14 @@ echo "export PATH=\$PATH:${CART_INFO_DIR}/bin/" > $APP_HOME/.env/PATH_JENKINS_CL
 . $APP_HOME/.env/JENKINS_PASSWORD
 
 mkdir -p "$OPENSHIFT_HOMEDIR/jenkins-client-1.4/"
-/usr/bin/wget --no-check-certificate -q ${JENKINS_URL}jnlpJars/jenkins-cli.jar -O "$OPENSHIFT_HOMEDIR/jenkins-client-1.4/jenkins-cli.jar" || error "Could not download ${JENKINS_URL}jnlpJars/jenkins-cli.jar" 157
+
+if ! $(/usr/bin/wget --no-check-certificate -q ${JENKINS_URL}jnlpJars/jenkins-cli.jar -O "$OPENSHIFT_HOMEDIR/jenkins-client-1.4/jenkins-cli.jar")
+then
+   echo "CLIENT_ERROR: Error contacting Jenkins server."
+   echo "CLIENT_ERROR: Could not download ${JENKINS_URL}jnlpJars/jenkins-cli.jar"
+   exit 157
+fi
+
 echo $JENKINS_PASSWORD > $OPENSHIFT_HOMEDIR/jenkins-client-1.4/.password
 
 # Maybe allow cartridges to create their own jenkins job
@@ -152,12 +161,22 @@ if out=$(/bin/sed -e "s,UPSTREAM_REPO_URL,ssh://${uuid}@${OPENSHIFT_APP_NAME}-${
 then
     # Embedding success
     echo "CLIENT_RESULT: "
-    echo "CLIENT_RESULT: Jenkins Client 1.4 has been added to: $OPENSHIFT_APP_NAME"
-    echo "CLIENT_RESULT: Job URL: ${JENKINS_URL}job/${OPENSHIFT_APP_NAME}-build/"
 else
-    echo "CLIENT_RESULT: "
-    echo "CLIENT_RESULT: Could not add job to upstream Jenkins:"
-    echo "CLIENT_RESULT:    $out"
-    echo "CLIENT_RESULT: Continuing anyway."
-    echo "CLIENT_RESULT: "
+    if enable_out=$(runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level ${CART_INFO_DIR}/bin/jenkins-cli enable-job --username "$JENKINS_USERNAME" --password-file "${OPENSHIFT_HOMEDIR}jenkins-client-1.4/.password" '${OPENSHIFT_APP_NAME}-build'" 2>&1)
+    then
+        echo "CLIENT_RESULT: "
+        echo "CLIENT_RESULT: Associated with existing job '${OPENSHIFT_APP_NAME}-build' in Jenkins server."
+        echo "CLIENT_RESULT: If this was not intended you can remove the jenkins client, remove or rename " 
+        echo "CLIENT_RESULT: the existing job, and re-add the jenkins client to get a new job created."
+    else
+        # An error occurred enabling existing job
+        echo "CLIENT_ERROR: "
+        echo "CLIENT_ERROR: Could not add job '${OPENSHIFT_APP_NAME}-build' in Jenkins server:"
+        echo "CLIENT_ERROR:    $out"
+        echo "CLIENT_ERROR: You'll need to correct this error before attempting to embed the Jenkins client again."
+        exit 1
+    fi
 fi
+echo "CLIENT_RESULT: Job URL: ${JENKINS_URL}job/${OPENSHIFT_APP_NAME}-build/"
+echo "CLIENT_RESULT: "
+echo "CLIENT_RESULT: Jenkins client 1.4 has been added to: $OPENSHIFT_APP_NAME"

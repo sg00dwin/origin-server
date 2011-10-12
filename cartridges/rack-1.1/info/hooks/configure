@@ -59,7 +59,6 @@ fi
 
 CART_DIR=/usr/libexec/li/cartridges
 CART_INFO_DIR=$CART_DIR/rack-1.1/info
-CART_CONF_DIR=$CART_INFO_DIR/configuration/etc/conf
 
 function print_help {
     echo "Usage: $0 app-name namespace uuid"

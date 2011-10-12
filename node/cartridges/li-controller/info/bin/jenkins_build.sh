@@ -16,7 +16,7 @@ then
 else
     echo "!!!!!!!!"
     echo "Deployment Halted! Previous good build still running!"
-    echo "Fix the build and try again".
+    echo "Fix the build and try again."
     echo "!!!!!!!!"
     exit 1
 fi

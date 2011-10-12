@@ -135,6 +135,11 @@ APP_DIR=`echo $APP_HOME/$application | tr -s /`
 PHPMYADMIN_DIR=`echo $APP_HOME/phpmyadmin-3.4 | tr -s /` # ensure that there aren't double /'s
 PHPMYADMIN_CTL_SCRIPT="$PHPMYADMIN_DIR/${application}_phpmyadmin_ctl.sh"
 
+if [ ! -d "$APP_DIR" ]
+then
+  exit 125
+fi
+
 if [ ! -f "$APP_HOME/.env/OPENSHIFT_DB_USERNAME" ] ||
    [ ! -f "$APP_HOME/.env/OPENSHIFT_DB_PASSWORD" ] ||
    [ ! -f "$APP_HOME/.env/OPENSHIFT_DB_HOST" ] ||
@@ -163,8 +168,11 @@ mcs_level=`${CART_DIR}/li-controller/info/bin/mcs_level $uid`
 #
 # Create http base for application, every app gets its own apache instance
 #
-[ -d "$PHPMYADMIN_DIR" ] && error "${application}.  Embedded phpMyAdmin-3.4 already attached to $application" 132
-[ -d "$APP_DIR/" ] || error "${APP_DIR} Not found!  Aborting." 133
+if [ -d "$PHPMYADMIN_DIR" ]
+then
+    echo "CLIENT_ERROR: Embedded phpMyAdmin-3.4 already attached to $application"
+    exit 132
+fi
 mkdir -p "$PHPMYADMIN_DIR"
 pushd "$PHPMYADMIN_DIR" > /dev/null
 mkdir -p conf conf.d logs run sessions tmp

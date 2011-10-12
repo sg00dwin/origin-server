@@ -58,7 +58,6 @@ fi
 
 CART_DIR=/usr/libexec/li/cartridges
 CART_INFO_DIR=$CART_DIR/wsgi-3.2/info
-CART_CONF_DIR=$CART_INFO_DIR/configuration/etc/conf
 
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
@@ -223,7 +222,7 @@ create_repo $application $user_id $group_id $mcs_level
 
 mkdir -p "$APP_DIR"
 pushd "$APP_DIR" > /dev/null
-mkdir conf conf.d logs run repo sessions data tmp virtenv
+mkdir conf conf.d logs run repo data tmp virtenv
 ln -s /usr/lib64/httpd/modules modules
 ln -s /etc/httpd/conf/magic conf/magic
 popd > /dev/null
