@@ -75,11 +75,7 @@ Feature: phpMyAdmin Embedded Cartridge
 
   Scenarios: Stop phpMyAdmin scenarios
     |type|
-    |php|
     |wsgi|
-    |jbossas|
-    |perl|
-    |rack|
 
 
   Scenario Outline: Restart phpMyAdmin

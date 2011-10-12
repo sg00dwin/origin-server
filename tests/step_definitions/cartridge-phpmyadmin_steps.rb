@@ -125,7 +125,7 @@ Then /^a phpmyadmin httpd will( not)? be running$/ do | negate |
   acct_uid = @account['uid']
   app_name = @app['name']
 
-  max_tries = 7
+  max_tries = 20
   poll_rate = 3
   exit_test = negate ? lambda { |tval| tval == 0 } : lambda { |tval| tval > 0 }
 
@@ -134,7 +134,6 @@ Then /^a phpmyadmin httpd will( not)? be running$/ do | negate |
   while (not exit_test.call(num_httpds) and tries < max_tries)
     tries += 1
     sleep poll_rate
-    found = exit_test.call num_httpds
   end
 
   if not negate
