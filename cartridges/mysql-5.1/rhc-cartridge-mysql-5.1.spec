@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/mysql-5.1
 
 Name: rhc-cartridge-mysql-5.1
-Version: 0.13.3
+Version: 0.13.4
 Release: 1%{?dist}
 Summary: Embedded mysql support for express
 
@@ -47,6 +47,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Tue Oct 11 2011 Dan McPherson <dmcphers@redhat.com> 0.13.4-1
+- cleanup invalid script (dmcphers@redhat.com)
+
 * Mon Oct 10 2011 Dan McPherson <dmcphers@redhat.com> 0.13.3-1
 - Properly block when stopping mysql (mmcgrath@redhat.com)
 
