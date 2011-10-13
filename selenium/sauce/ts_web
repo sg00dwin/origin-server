@@ -26,4 +26,4 @@ end
 Test::Unit::UI::Console::TestRunner.run(TS_web);
 
 # HACK: pid is of the `cmd`, which spawns java
-at_exit{ Process.kill('TERM',@pid+1);}
+at_exit{ Process.kill('TERM',@sauce_connect_pid+1);}

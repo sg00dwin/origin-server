@@ -9,7 +9,5 @@ I am going to make sure they work on a devenv as well.
   - gem install sauce
 2. Configure sauce (with your credentials):
   - sauce config <USERNAME> <API_KEY>
-3. Get Sauce-Connect JAR
-  - curl -O http://saucelabs.com/downloads/Sauce-Connect-latest.zip && unzip Sauce-Connect-latest.zip
 3. Run tests
   - ruby ts_web
