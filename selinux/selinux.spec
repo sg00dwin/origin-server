@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.80.0
+Version:       0.80.1
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -38,6 +38,9 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Thu Oct 13 2011 Dan McPherson <dmcphers@redhat.com> 0.80.1-1
+- bump spec numbers (dmcphers@redhat.com)
+
 * Thu Oct 13 2011 Dan McPherson <dmcphers@redhat.com> 0.79.6-1
 - Turn off permissive domain in production. (dwalsh@redhat.com)
 - rhc-cgroup-read needs to read content in the libra_var_lib directory as well
