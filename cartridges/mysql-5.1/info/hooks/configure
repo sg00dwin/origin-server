@@ -97,8 +97,8 @@ fi
 
 #
 # Detect IP
-
-IP=$(/usr/sbin/lsof -a -u "${uuid}" -i  | /bin/grep webcache..LISTEN | /bin/awk '{ print $9 }' | /bin/sed 's/:webcache//' | /usr/bin/uniq)
+. $APP_HOME/.env/OPENSHIFT_INTERNAL_IP
+IP=$OPENSHIFT_INTERNAL_IP
 
 #
 # Get user id info
