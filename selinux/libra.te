@@ -305,3 +305,8 @@ domtrans_pattern(libra_domain, libra_cgroup_read_exec_t, libra_cgroup_read_t)
 role system_r types libra_cgroup_read_t;
 
 fs_read_cgroup_files(libra_cgroup_read_t)
+
+allow libra_cgroup_read_t libra_var_lib_t:dir list_dir_perms;
+read_files_pattern(libra_cgroup_read_t, libra_var_lib_t, libra_var_lib_t)
+
+miscfiles_read_generic_certs(libra_cgroup_read_t)
