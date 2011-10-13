@@ -75,6 +75,8 @@ class Release < Thor
 
   desc "sync", "Download a build from Brew (using Mash) and sync it to the OpenShift repos"
   method_option :stage, :type => :string, :desc => "Comma-delimited list of packages to sync.  Exclude NVR for latest versions.  (e.g. --stage='rhc, rhc-site-0.73.3-1')"
+  method_option :clean_ami, :type => :boolean, :desc => "Indicates whether to build a clean ami"
+  method_option :no_ami, :type => :boolean, :desc => "Indicates whether to not build an ami"
   def sync
 
     # Mash / RSync parameters
@@ -214,20 +216,22 @@ class Release < Thor
     end
     puts "Done"
 
-    if options[:stage]
-      puts "Kicking off stage verification..."
-      unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/libra_ami_stage/build?token=#{token}", :verbose => options.verbose?)
-        puts "ERROR - Jenkins remote job invocation failed."
-        exit 1
+    unless options.no_ami?
+      if options[:stage]
+        puts "Kicking off stage verification..."
+        unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/libra_ami_stage/build?token=#{token}", :verbose => options.verbose?)
+          puts "ERROR - Jenkins remote job invocation failed."
+          exit 1
+        end
+        puts "Done"
+      else
+        puts "Kicking off AMI build..."
+        unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/libra_ami#{options.clean_ami? "" : "_update"}/build?token=#{token}", :verbose => options.verbose?)
+          puts "ERROR - Jenkins remote job invocation failed."
+          exit 1
+        end
+        puts "Done"
       end
-      puts "Done"
-    else
-      puts "Kicking off AMI build..."
-      unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/libra_ami_update/build?token=#{token}", :verbose => options.verbose?)
-        puts "ERROR - Jenkins remote job invocation failed."
-        exit 1
-      end
-      puts "Done"
     end
   end
 end
