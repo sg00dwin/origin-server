@@ -193,12 +193,12 @@ chkconfig libra-tc on
 %attr(0666,-,-) %{sitedir}/log/development.log
 %config(noreplace) %{jenkins}/jobs/jenkins_update/config.xml
 %config(noreplace) %{jenkins}/jobs/libra_ami/config.xml
+%config(noreplace) %{jenkins}/jobs/libra_ami_update/config.xml
 %config(noreplace) %{jenkins}/jobs/libra_ami_verify/config.xml
 %config(noreplace) %{jenkins}/jobs/libra_ami_stage/config.xml
 %config(noreplace) %{jenkins}/jobs/libra_ami_verify_stage/config.xml
 %config(noreplace) %{jenkins}/jobs/libra_check/config.xml
 %config(noreplace) %{jenkins}/jobs/libra_prune/config.xml
-%config(noreplace) %{jenkins}/jobs/libra_web/config.xml
 %config(noreplace) %{jenkins}/jobs/sdk_check/config.xml
 %{jenkins}/jobs/sync.rb
 %{devenvdir}
