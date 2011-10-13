@@ -1,0 +1,15 @@
+These are preliminary directions for getting our selenium tests to run in Sauce.
+
+It is important that you use your own username because of the way Sauce handles tunnelling.
+They allow one tunnel per sub-account (that's you).
+These tests will work on your local machine as long as Rails is running (look at helper.rb).
+I am going to make sure they work on a devenv as well.
+
+1. Install sauce gem: 
+  - gem install sauce
+2. Configure sauce (with your credentials):
+  - sauce config <USERNAME> <API_KEY>
+3. Get Sauce-Connect JAR
+  - curl -O http://saucelabs.com/downloads/Sauce-Connect-latest.zip && unzip Sauce-Connect-latest.zip
+3. Run tests
+  - ruby ts_web

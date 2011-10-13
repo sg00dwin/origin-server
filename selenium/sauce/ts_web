@@ -1,0 +1,29 @@
+#!/usr/bin/env ruby
+require "test/unit"
+require "test/unit/testsuite"
+require "test/unit/ui/console/testrunner"
+
+require 'helper'
+require 'openshift/base'
+require 'openshift/express'
+
+require 'tc_home'
+require 'tc_ajax'
+
+# Need to load the tests manualls so we can
+#   override at_exit
+class TS_web
+  def self.suite
+    suite = Test::Unit::TestSuite.new('Sauce Tests')
+    suite << AJAX.suite
+    suite << Home.suite
+    return suite
+  end
+end
+
+# Need to do this for now in order to kill the 
+#   process when we're done
+Test::Unit::UI::Console::TestRunner.run(TS_web);
+
+# HACK: pid is of the `cmd`, which spawns java
+at_exit{ Process.kill('TERM',@pid+1);}
