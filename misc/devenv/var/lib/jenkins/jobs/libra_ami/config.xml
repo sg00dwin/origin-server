@@ -51,7 +51,7 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>build/devenv build devenv_${BUILD_NUMBER} --terminate --register</command>
+      <command>build/devenv build devenv-clean_${BUILD_NUMBER} --terminate --register</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>

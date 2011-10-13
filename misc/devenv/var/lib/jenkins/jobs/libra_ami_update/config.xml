@@ -52,7 +52,7 @@
   <builders>
     <hudson.tasks.Shell>
       <command>
-build/devenv launch devenv_${BUILD_NUMBER}
+build/devenv launch devenv_${BUILD_NUMBER} --use_clean_image
 build/devenv yum_update devenv_${BUILD_NUMBER} --terminate --register
       </command>
     </hudson.tasks.Shell>

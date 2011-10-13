@@ -7,6 +7,7 @@ KEY_PAIR = "libra"
 ZONE = 'us-east-1d'
 DEVENV_REGEX = /devenv\_/
 DEVENV_STAGE_REGEX = /devenv-stage\_/
+DEVENV_CLEAN_REGEX = /devenv-clean\_/
 TERMINATE_REGEX = /terminate/
 VERIFIED_TAG = "qe-ready"
 RSA = File.expand_path("~/.ssh/libra.pem")
