@@ -172,6 +172,8 @@ sed -i "s,PASSWORD,$admin_password_hash,g" "$APP_DIR/data/users/admin/config.xml
 system_builder_password_hash=`java -classpath "${APP_DIR}/data/war/WEB-INF/lib/acegi-security-1.0.5.jar:${APP_DIR}/data/war/WEB-INF/lib/commons-codec-1.4.jar:${CART_DIR}/jenkins-1.4/info/lib/password-encoder.jar" com.redhat.openshift.PasswordEncoder $system_builder_password`
 sed -i "s,PASSWORD,$system_builder_password_hash,g" "$APP_DIR/data/users/system_builder/config.xml"
 
+echo $system_builder_password > $APP_HOME/.jenkins_password
+
 create_repo $application $user_id $group_id $mcs_level
 
 #

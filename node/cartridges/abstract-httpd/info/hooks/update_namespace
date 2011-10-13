@@ -69,6 +69,11 @@ then
   exit 125
 fi
 
+. $APP_HOME/.env/OPENSHIFT_APP_TYPE
+
+CART_DIR=/usr/libexec/li/cartridges
+CART_INFO_DIR=$CART_DIR/$OPENSHIFT_APP_TYPE/info
+
 mv_symlink $old_namespace $new_namespace $application
 
 if [ -f "/etc/httpd/conf.d/libra/${uuid}_${old_namespace}_${application}.conf" ]
@@ -78,4 +83,9 @@ then
   mv /etc/httpd/conf.d/libra/${uuid}_${old_namespace}_${application}.conf /etc/httpd/conf.d/libra/${uuid}_${new_namespace}_${application}.conf
   mv /etc/httpd/conf.d/libra/${uuid}_${old_namespace}_${application} /etc/httpd/conf.d/libra/${uuid}_${new_namespace}_${application}
   /sbin/service httpd configtest 2> /dev/null && /sbin/service httpd graceful || error "Failed to restart master httpd, please contact support" 120
+fi
+
+if [ -f $CART_INFO_DIR/bin/update_namespace.sh ]
+then
+  $CART_INFO_DIR/bin/update_namespace.sh $application $new_namespace $old_namespace $uuid
 fi
