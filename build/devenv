@@ -149,7 +149,7 @@ class DevEnv < Thor
       print "Performing clean install with the latest code..."
       cmd = 'sh li-devenv.sh'
       cmd += ' stage' if options.use_stage_repo?
-      output = instance.ssh(cmd, 1800)
+      output = instance.ssh(cmd, 3600)
       puts "Done"
 
       puts "----------------- Install Output ------------------------"
@@ -157,7 +157,7 @@ class DevEnv < Thor
       puts "---------------------------------------------------------"
 
       print "Updating all packages on the system..."
-      instance.ssh('yum update -y', 1800)
+      instance.ssh('yum update -y', 3600)
       puts "Done"
 
       if options.reboot?
