@@ -195,6 +195,61 @@ class DevEnv < Thor
       instance.terminate if options.terminate?
     end
   end
+  
+  desc "yum_update NAME", "Build a new devenv AMI with the given NAME of an existing instance"
+  method_option :register, :type => :boolean, :desc => "Register the instance"
+  method_option :terminate, :type => :boolean, :desc => "Terminate the instance on exit"
+  method_option :reboot, :type => :boolean, :desc => "Reboot the instance after updating"
+  method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
+  def yum_update(name)
+    options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
+
+    # Establish a new connection
+    conn = connect
+
+    # Find an existing instance
+    instance = Instance.find(conn, name)
+
+    begin
+      print "Updating all packages on the system..."
+      instance.ssh('yum update -y', 3600)
+      puts "Done"
+
+      if options.reboot?
+        print "Rebooting instance to apply new kernel..."
+        instance.reboot
+        puts "Done"
+      end
+
+      # Validate the node installation
+      print "Validating instance..."
+      unless instance.is_valid?
+        puts "ERROR - instance is not valid"
+        puts instance.validation_output
+        exit 1
+      end
+      puts "Done"
+
+      print "Retrieving RPM manifest"
+      manifest = instance.ssh('rpm -qa | grep rhc-')
+      manifest = manifest.split("\n").sort.join(" / ")
+      # Trim down the output to 255 characters
+      manifest.gsub!(/rhc-([a-z])/, '\1')
+      manifest.gsub!('.el6.noarch', '')
+      manifest.gsub!('.el6_1.noarch', '')
+      manifest.gsub!('cartridge', 'c-')
+      manifest = manifest[0..254]
+      puts "Done"
+
+      if options.register?
+        print "Registering AMI..."
+        Image.register(conn, instance.amz_id, name, manifest)
+        puts "Done"
+      end
+    ensure
+      instance.terminate if options.terminate?
+    end
+  end
 
   desc "update", "Update current instance by installing RPMs from local git tree"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
