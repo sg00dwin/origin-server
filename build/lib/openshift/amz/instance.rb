@@ -176,10 +176,16 @@ module OpenShift
         return @can_ssh 
       end
 
-      def is_valid?
-        @validation_output = ssh('/usr/bin/rhc-accept-node')
-        log.info "Node Acceptance Output = #{@validation_output}"
-        @validation_output == "PASS"
+      def is_valid?(max_retries=10)
+        valid = false
+        (0..max_retries).each do
+          @validation_output = ssh('/usr/bin/rhc-accept-node')
+          log.info "Node Acceptance Output = #{@validation_output}"
+          valid = @validation_output == "PASS"
+          break if valid
+          sleep 5
+        end
+        return valid 
       end
     end
   end
