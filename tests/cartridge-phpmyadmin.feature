@@ -16,10 +16,6 @@ Feature: phpMyAdmin Embedded Cartridge
   Scenarios: Add phpMyAdmin to one Application Scenarios
     |type|
     |php|
-    |wsgi|
-    |jbossas|
-    |perl|
-    |rack|
 
 
   Scenario Outline: Remove phpMyAdmin from one Application
@@ -38,10 +34,6 @@ Feature: phpMyAdmin Embedded Cartridge
   Scenarios: Remove phpMyAdmin from one Application Scenarios
     |type|
     |php|
-    |wsgi|
-    |jbossas|
-    |perl|
-    |rack|
 
 
   Scenario Outline: Start phpMyAdmin
@@ -57,10 +49,6 @@ Feature: phpMyAdmin Embedded Cartridge
   Scenarios: Start phpMyAdmin scenarios
     |type|
     |php|
-    |wsgi|
-    |jbossas|
-    |perl|
-    |rack|
 
 
   Scenario Outline: Stop phpMyAdmin
@@ -75,7 +63,7 @@ Feature: phpMyAdmin Embedded Cartridge
 
   Scenarios: Stop phpMyAdmin scenarios
     |type|
-    |wsgi|
+    |php|
 
 
   Scenario Outline: Restart phpMyAdmin
@@ -91,7 +79,3 @@ Feature: phpMyAdmin Embedded Cartridge
   Scenarios: Restart phpMyAdmin scenarios
     |type|
     |php|
-    |wsgi|
-    |jbossas|
-    |perl|
-    |rack|
