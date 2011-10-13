@@ -2,7 +2,7 @@
 
 Summary:   Provides ruby rack support running on Phusion Passenger
 Name:      rhc-cartridge-rack-1.1
-Version:   0.79.4
+Version:   0.80.0
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
