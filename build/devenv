@@ -418,9 +418,12 @@ class DevEnv < Thor
 
     puts "Validating instance..."
     unless instance.is_valid?
-      puts "ERROR - instance is not valid"
-      puts instance.validation_output
-      exit 1
+      sleep 10
+      unless instance.is_valid?
+        puts "ERROR - instance is not valid"
+        puts instance.validation_output
+        exit 1
+      end
     end
     
     if options.ssh_config_verifier?
