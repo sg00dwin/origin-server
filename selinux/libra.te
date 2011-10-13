@@ -281,8 +281,6 @@ type libra_cgroup_read_t;
 type libra_cgroup_read_exec_t;
 application_domain(libra_cgroup_read_t, libra_cgroup_read_exec_t)
 
-permissive libra_cgroup_read_t;
-
 ########################################
 #
 # libra_cgroup_read local policy
