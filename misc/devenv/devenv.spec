@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.78.10
+Version:   0.78.11
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -206,6 +206,15 @@ chkconfig libra-tc on
 %{_initddir}/libra-site
 
 %changelog
+* Wed Oct 12 2011 Dan McPherson <dmcphers@redhat.com> 0.78.11-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- updating qpid certs (mmcgrath@redhat.com)
+- remove libra_web (dmcphers@redhat.com)
+- libra_ami kicks off libra_ami_update (dmcphers@redhat.com)
+- switch libra_ami to build devenv-clean (dmcphers@redhat.com)
+- retry on invalid launch (dmcphers@redhat.com)
+
 * Tue Oct 11 2011 Dan McPherson <dmcphers@redhat.com> 0.78.10-1
 - getting jenkins stable working (dmcphers@redhat.com)
 
