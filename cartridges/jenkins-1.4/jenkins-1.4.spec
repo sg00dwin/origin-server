@@ -2,7 +2,7 @@
 
 Summary:   Provides jenkins-1.4 support
 Name:      rhc-cartridge-jenkins-1.4
-Version:   0.80.0
+Version:   0.80.1
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -62,6 +62,10 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Thu Oct 13 2011 Dan McPherson <dmcphers@redhat.com> 0.80.1-1
+- bump spec numbers (dmcphers@redhat.com)
+- Bug 745749 (dmcphers@redhat.com)
+
 * Wed Oct 12 2011 Dan McPherson <dmcphers@redhat.com> 0.79.19-1
 - abstract out find_open_ip (dmcphers@redhat.com)
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
