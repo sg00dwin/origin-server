@@ -5,8 +5,8 @@ They allow one tunnel per sub-account (that's you).
 These tests will work on your local machine as long as Rails is running (look at helper.rb).
 I am going to make sure they work on a devenv as well.
 
-1. Install sauce gem: 
-  - gem install sauce
+1. Install required gems: 
+  - bundle install
 2. Configure sauce (with your credentials):
   - sauce config <USERNAME> <API_KEY>
 3. Run tests

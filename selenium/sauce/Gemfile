@@ -1,0 +1,4 @@
+source :rubygems
+
+gem 'sauce'
+gem 'zipruby'
