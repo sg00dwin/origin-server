@@ -74,7 +74,7 @@ function create_repo {
     application="$1"
     user_id=$2
     group_id=$3
-    mcs_level=$4
+    uuid=$4
 
     if [ ! -d $APP_HOME ]; then echo "ERROR: Application ${uuid} not found!  Please create." 1>&2; exit 2; fi
 
@@ -93,36 +93,7 @@ function create_repo {
     rm -rf template
     popd
 
-    echo "jenkins 1.4 application '$application'" > $GIT_DIR/description
-
-    cat <<__EOF__ > $GIT_DIR/hooks/pre-receive
-#!/bin/bash
-
-# Import Environment Variables
-for f in ~/.env/*
-do
-    . \$f
-done
-
-pre_receive_app.sh
-__EOF__
-
-    cat <<__EOF__ > $GIT_DIR/hooks/post-receive
-#!/bin/bash
-
-# Import Environment Variables
-for f in ~/.env/*
-do
-    . \$f
-done
-
-post_receive_app.sh ${libra_server}
-__EOF__
-
-    chmod 0755 $GIT_DIR/hooks/post-receive $GIT_DIR/hooks/pre-receive
-    chown $user_id.$group_id -R $GIT_DIR
-    # Secure the hooks dir
-    chown root.root -R $GIT_DIR/hooks
+    ${CART_DIR}/li-controller/info/bin/clone_git_repo $application $user_id $group_id $uuid "jenkins 1.4"
 }
 
 while getopts 'd' OPTION
@@ -174,7 +145,7 @@ sed -i "s,PASSWORD,$system_builder_password_hash,g" "$APP_DIR/data/users/system_
 
 echo $system_builder_password > $APP_HOME/.jenkins_password
 
-create_repo $application $user_id $group_id $mcs_level
+create_repo $application $user_id $group_id $uuid
 
 #
 # Find an open localhost IP

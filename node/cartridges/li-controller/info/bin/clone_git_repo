@@ -1,0 +1,38 @@
+#!/bin/bash
+
+if [ -f '/etc/libra/node.conf' ]
+then
+    . /etc/libra/node.conf
+elif [ -f 'node.conf' ]
+then
+    . node.conf
+else
+    echo "node.conf not found.  Cannot continue" 1>&2
+    exit 3
+fi
+
+function clone_git_repo {
+    application="$1"
+    user_id=$2
+    group_id=$3
+    uuid=$4
+    desc=$5
+    APP_HOME="${libra_dir}/${uuid}"
+
+    if [ ! -d $APP_HOME ]; then echo "ERROR: Application ${uuid} not found!  Please create." 1>&2; exit 2; fi
+
+    GIT_DIR=$APP_HOME/git/$application.git
+    mkdir -p "$APP_HOME/git"
+    git clone --bare --no-hardlinks $CART_INFO_DIR/data/git_template.git $GIT_DIR
+
+    # Repacking is needed to handle a bug with running multiple
+    # git clone operations under concurrency.  The cloned repos
+    # can end up in a corrupt state which repack will correct
+    pushd $GIT_DIR
+    git repack
+    popd
+
+    /usr/libexec/li/cartridges/li-controller/info/bin/setup_git_repo $application $user_id $group_id $uuid $desc
+}
+
+clone_git_repo $1 $2 $3 $4 $5

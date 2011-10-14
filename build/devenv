@@ -290,14 +290,14 @@ class DevEnv < Thor
       instance = Instance.new(nil, nil)
       instance.dns = name
     end
-
+=begin
     puts "Validating instance..."
     unless instance.is_valid?
       puts "ERROR - instance is not valid"
       puts instance.validation_output
       exit 1
     end
-    
+=end    
     ssh_path=File.expand_path(File.dirname(__FILE__)) + "/ssh-override"
     sync_repo('li', instance, ssh_path)
     
@@ -322,14 +322,14 @@ class DevEnv < Thor
     else
       set_public_ip(instance)
     end
-
+=begin
     puts "Validating instance..."
     unless instance.is_valid?
       puts "ERROR - instance is not valid"
       puts instance.validation_output
       exit 1
     end
-
+=end
   end
 
   desc "sync_sdk NAME PATH", "Synchronize a local git repo with a remote DevEnv instance.  NAME should be ssh resolvable. PATH should be the location of the git repository to sync"

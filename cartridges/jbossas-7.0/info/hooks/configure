@@ -120,7 +120,7 @@ function create_repo {
     application="$1"
     user_id=$2
     group_id=$3
-    mcs_level=$4
+    uuid=$4
 
     if [ ! -d $APP_HOME ]; then echo "ERROR: Application ${uuid} not found!  Please create." 1>&2; exit 2; fi
 
@@ -145,37 +145,8 @@ __EOF__
     git clone --bare --no-hardlinks template $application.git
     rm -rf template
     popd
-
-    echo "jbossas 7.0 application '$application'" > $GIT_DIR/description
-
-    cat <<__EOF__ > $GIT_DIR/hooks/pre-receive
-#!/bin/bash
-
-# Import Environment Variables
-for f in ~/.env/*
-do
-    . \$f
-done
-
-pre_receive_app.sh
-__EOF__
-
-    cat <<__EOF__ > $GIT_DIR/hooks/post-receive
-#!/bin/bash
-
-# Import Environment Variables
-for f in ~/.env/*
-do
-    . \$f
-done
-
-post_receive_app.sh ${libra_server}
-__EOF__
-
-    chmod 0755 $GIT_DIR/hooks/post-receive $GIT_DIR/hooks/pre-receive
-    chown $user_id.$group_id -R $GIT_DIR
-    # Secure the hooks dir
-    chown root.root -R $GIT_DIR/hooks
+    
+    ${CART_DIR}/li-controller/info/bin/clone_git_repo $application $user_id $group_id $uuid "jbossas 7.0"
 }
 
 while getopts 'd' OPTION
@@ -249,7 +220,7 @@ sed -i "s/\${OPENSHIFT_APP_NAME}/$application/g" "$APP_JBOSS"/standalone/configu
 popd > /dev/null
 
 # Repo
-create_repo $application $user_id $group_id $mcs_level
+create_repo $application $user_id $group_id $uuid
 
 # Create a link from the repo/deployments directory to the standalone/deployments content
 mkdir -p "$APP_DIR"/repo/deployments
