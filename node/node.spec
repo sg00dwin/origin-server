@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.70.1
+Version:       0.70.2
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -157,6 +157,10 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Fri Oct 14 2011 Dan McPherson <dmcphers@redhat.com> 0.70.2-1
+- abstract create_repo (dmcphers@redhat.com)
+- fix typo (dmcphers@redhat.com)
+
 * Thu Oct 13 2011 Dan McPherson <dmcphers@redhat.com> 0.70.1-1
 - bump spec numbers (dmcphers@redhat.com)
 - Bug 745749 (dmcphers@redhat.com)
