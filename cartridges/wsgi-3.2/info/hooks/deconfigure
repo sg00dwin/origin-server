@@ -86,7 +86,6 @@ mcs_level=`${CART_DIR}/li-controller/info/bin/mcs_level $uid`
 # Destroy git repo
 #
 ${CART_DIR}/li-controller/info/bin/destroy_git_repo $application $uuid
-exit 1
 
 [ ! -d "$APP_DIR" ] && echo "${application} does not exist" 1>&2
 
@@ -110,4 +109,4 @@ ${CART_DIR}/li-controller/info/bin/rm_unobfuscated_app_home $namespace $applicat
 #
 # Remove virtualhost definition for apache
 #
-${CART_DIR}/li-controller/info/bin/rm_virtualhost_def $uuid $namespace $application
+${CART_DIR}/li-controller/info/bin/rm_httpd_proxy $uuid $namespace $application

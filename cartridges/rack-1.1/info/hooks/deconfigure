@@ -111,5 +111,4 @@ ${CART_DIR}/li-controller/info/bin/rm_unobfuscated_app_home $namespace $applicat
 #
 # Remove virtualhost definition for apache
 #
-rm -rf /etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}.conf /etc/httpd/conf.d/libra/${uuid}_${namespace}_${application} || echo "Could not remove apache definition" 1>&2
-/sbin/service httpd configtest 2> /dev/null && /sbin/service httpd graceful || echo "Failed to restart master httpd, please contact support" 1>&2
+${CART_DIR}/li-controller/info/bin/rm_httpd_proxy $uuid $namespace $application
