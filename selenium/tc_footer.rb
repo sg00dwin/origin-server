@@ -11,9 +11,9 @@ class Footer < Test::Unit::TestCase
   def test_footer
     goto_home
 
-    { 'Announcements' => 'News and Announcements | Red Hat Openshift Community',
-      'Blog' => 'Blogs | Red Hat Openshift Community',
-      'Forum' => 'Forums | Red Hat Openshift Community',
+    { 'Announcements' => 'News and Announcements | Red Hat OpenShift Community',
+      'Blog' => 'Blogs | Red Hat OpenShift Community',
+      'Forum' => 'Forums | Red Hat OpenShift Community',
       'Partner Program' => 'OpenShift by Red Hat | Meet Our Partners',
       'Legal' => 'OpenShift by Red Hat | Terms and Conditions',
       'Privacy Policy' => 'OpenShift by Red Hat | OpenShift Privacy Statement',

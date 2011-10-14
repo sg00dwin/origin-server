@@ -21,7 +21,7 @@ class Flex < Test::Unit::TestCase
 
     { 'Videos' => 'OpenShift by Red Hat | Flex',
       'Documentation' => 'User Guide',
-      'Forum' => 'Flex | Red Hat Openshift Community'
+      'Forum' => 'Flex | Red Hat OpenShift Community'
     }.each do |text,title|
       find_element(:xpath,".//a[text()='#{text}']").click()
       screenshot(text)

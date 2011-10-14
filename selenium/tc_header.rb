@@ -20,7 +20,7 @@ class Header < Test::Unit::TestCase
     { 'Platform Overview' => 'OpenShift by Red Hat | Cloud Platform',
       'Express' => 'OpenShift by Red Hat | Express',
       'Flex' => 'OpenShift by Red Hat | Flex',
-      'Community' => 'Forums | Red Hat Openshift Community'
+      'Community' => 'Forums | Red Hat OpenShift Community'
     }.each do |text,title|
       find_element(:xpath,".//a[text()='#{text}']").click()
       screenshot(text)
