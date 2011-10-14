@@ -99,6 +99,7 @@ then
       echo "No Jenkins server found!"
   fi
 else
-    echo "Coming soon..."
+    echo "You can see the job status here:"
+    echo "${JENKINS_URL}job/${OPENSHIFT_APP_NAME}-build/"
 fi    
   
