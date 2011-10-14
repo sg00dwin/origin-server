@@ -15,8 +15,6 @@ validate_user_context.sh
 
 . app_ctl_pre.sh
 
-CART_CONF_DIR=/usr/libexec/li/cartridges/${OPENSHIFT_APP_TYPE}/info/configuration/etc/conf
-
 isrunning() {
     # Check for running app
     if [ -f ${OPENSHIFT_RUN_DIR}jenkins.pid ]
