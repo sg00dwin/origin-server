@@ -146,7 +146,7 @@ __EOF__
     rm -rf template
     popd
     
-    ${CART_DIR}/li-controller/info/bin/clone_git_repo $application $user_id $group_id $uuid "jbossas 7.0"
+    ${CART_DIR}/li-controller/info/bin/setup_git_repo $application $user_id $group_id $uuid "jbossas 7.0"
 }
 
 while getopts 'd' OPTION

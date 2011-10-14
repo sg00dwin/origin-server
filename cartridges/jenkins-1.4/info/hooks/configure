@@ -93,7 +93,7 @@ function create_repo {
     rm -rf template
     popd
 
-    ${CART_DIR}/li-controller/info/bin/clone_git_repo $application $user_id $group_id $uuid "jenkins 1.4"
+    ${CART_DIR}/li-controller/info/bin/setup_git_repo $application $user_id $group_id $uuid "jenkins 1.4"
 }
 
 while getopts 'd' OPTION

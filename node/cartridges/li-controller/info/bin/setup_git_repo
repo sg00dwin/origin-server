@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 if [ -f '/etc/libra/node.conf' ]
 then
@@ -16,7 +16,7 @@ function setup_git_repo {
     user_id=$2
     group_id=$3
     uuid=$4
-    desc=$5
+    desc="$5"
     
     APP_HOME="${libra_dir}/${uuid}"
     GIT_DIR=$APP_HOME/git/$application.git
@@ -55,4 +55,4 @@ EOF
     chmod 0755 $GIT_DIR
 }
 
-setup_git_repo $1 $2 $3 $4 $5
+setup_git_repo $1 $2 $3 $4 "$5"

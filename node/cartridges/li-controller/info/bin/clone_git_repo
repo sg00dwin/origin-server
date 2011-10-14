@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 if [ -f '/etc/libra/node.conf' ]
 then
@@ -16,7 +16,7 @@ function clone_git_repo {
     user_id=$2
     group_id=$3
     uuid=$4
-    desc=$5
+    desc="$5"
     APP_HOME="${libra_dir}/${uuid}"
 
     if [ ! -d $APP_HOME ]; then echo "ERROR: Application ${uuid} not found!  Please create." 1>&2; exit 2; fi
@@ -32,7 +32,7 @@ function clone_git_repo {
     git repack
     popd
 
-    /usr/libexec/li/cartridges/li-controller/info/bin/setup_git_repo $application $user_id $group_id $uuid $desc
+    /usr/libexec/li/cartridges/li-controller/info/bin/setup_git_repo $application $user_id $group_id $uuid "$desc"
 }
 
-clone_git_repo $1 $2 $3 $4 $5
+clone_git_repo $1 $2 $3 $4 "$5"
