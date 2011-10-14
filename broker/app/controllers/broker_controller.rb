@@ -399,6 +399,6 @@ class BrokerController < ApplicationController
     rescue Exception => e
       render_error(e, 'nurture_post') and return
     end
-  end  
+  end
 
 end

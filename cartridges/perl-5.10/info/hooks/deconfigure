@@ -53,17 +53,6 @@ function error {
     echo "$1" 1>&2
 }
 
-function destroy_repo {
-    application="$1"
-    uuid="$2"
-    APP_HOME="${libra_dir}/${uuid}"
-    
-    if [ ! -d $APP_HOME ]; then echo "ERROR: Customer ${uuid} not found!  Please create." 1>&2; exit 2; fi
-    
-    GIT_DIR=$APP_HOME/git/$application.git
-    rm -rf $GIT_DIR || error "Could not remove ${application}" 108
-}
-
 while getopts 'd' OPTION
 do
     case $OPTION in
@@ -93,10 +82,9 @@ uid=$(id -u "$uuid")
 mcs_level=`${CART_DIR}/li-controller/info/bin/mcs_level $uid`
 
 #
-# Destroy git app repo
+# Destroy git repo
 #
-
-destroy_repo $application $uuid
+${CART_DIR}/li-controller/info/bin/destroy_git_repo $application $uuid
 
 runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $APP_DIR/${application}_ctl.sh stop" || echo "Failed to stop ${application}" 1>&2
 if [ -f "$APP_DIR/logs/error_log" ]

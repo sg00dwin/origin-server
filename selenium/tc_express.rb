@@ -22,7 +22,7 @@ class Express < Test::Unit::TestCase
 
     { 'Videos' => 'OpenShift by Red Hat | Express',
       'Documentation' => 'User Guide',
-      'Forum' => 'Express | Red Hat Openshift Community'
+      'Forum' => 'Express | Red Hat OpenShift Community'
     }.each do |text,title|
       find_element(:xpath,".//a[text()='#{text}']").click()
       screenshot(text)

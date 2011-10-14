@@ -43,8 +43,6 @@ else
     exit 3
 fi
 
-CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
-
 apache_bandwidth="all 100000"
 apache_maxconnection="all 20"
 apache_bandwidtherror="510"
@@ -57,7 +55,7 @@ then
     . /etc/libra/resource_limits.conf
 fi
 
-CART_DIR=/usr/libexec/li/cartridges
+CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
 CART_INFO_DIR=$CART_DIR/rack-1.1/info
 
 function print_help {
