@@ -69,8 +69,7 @@ case "$1" in
         else
             # Check for running app
             if isrunning; then
-                jbpid=$(cat $JBOSS_PID_FILE);
-                echo "CLIENT_MESSAGE: Application($pid) is already running!" 1>&2
+                echo "Application is already running!" 1>&2
                 exit 0
             fi
             # Start
