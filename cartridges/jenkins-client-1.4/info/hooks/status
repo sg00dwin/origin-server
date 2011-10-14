@@ -33,6 +33,7 @@ else
 fi
 
 CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
+CART_INFO_DIR=$CART_DIR/embedded/jenkins-client-1.4/info
 
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
@@ -55,10 +56,10 @@ done
 
 [ $# -eq 3 ] || print_help
 
-app_id=`basename $3`
+uuid=`basename $3`
 application="$1"
 
-APP_HOME="$libra_dir/$app_id/"
+APP_HOME="$libra_dir/$uuid/"
 APP_DIR="$APP_HOME/$application"
 
 if [ ! -d "$APP_DIR" ]
@@ -66,11 +67,38 @@ then
   exit 125
 fi
 
-uid=$(id -u "$app_id")
+uid=$(id -u "$uuid")
 mcs_level=`${CART_DIR}/li-controller/info/bin/mcs_level $uid`
+
+. $APP_HOME/.env/OPENSHIFT_HOMEDIR
+. $APP_HOME/.env/OPENSHIFT_APP_NAME
+. $APP_HOME/.env/JENKINS_URL
+. $APP_HOME/.env/JENKINS_USERNAME
 
 #
 # Check application status
 #
 
-runuser --shell /bin/sh "$app_id" -c "runcon -t libra_t -l $mcs_level $APP_DIR/${application}_ctl.sh status"
+if false
+then
+  if [ -n "$JENKINS_URL" ]
+  then
+      if out=$(runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level ${CART_INFO_DIR}/bin/jenkins-cli list-changes -format PLAIN --username "$JENKINS_USERNAME" --password-file "${OPENSHIFT_HOMEDIR}jenkins-client-1.4/.password" '${OPENSHIFT_APP_NAME}-build' 1" 2>&1)
+      then
+          echo "Latest changes: "
+          echo ""
+          echo "$out"
+      else
+          # An error occurred enabling existing job
+          echo ""
+          echo "Could not get status of job '${OPENSHIFT_APP_NAME}-build' in Jenkins server:"
+          echo "$out"
+          echo "This might be expected if '${OPENSHIFT_APP_NAME}' isn't running."
+      fi
+  else
+      echo "No Jenkins server found!"
+  fi
+else
+    echo "Coming soon..."
+fi    
+  

@@ -64,7 +64,7 @@ then
     echo "CLIENT_MESSAGE: Could not reload Jenkins server '${application}' configuration:"
     echo "CLIENT_MESSAGE:    $out"
     echo "CLIENT_MESSAGE: This might be expected if '${application}' isn't running."
-    echo "CLIENT_MESSAGE: Otherwise you might need to restart it with 'rhc-ctl-app -a ${application} -c restart'"
+    echo "CLIENT_MESSAGE: Otherwise you might need to reload it with 'rhc-ctl-app -a ${application} -c reload'"
     echo "CLIENT_MESSAGE: or by using the Jenkins interface:"
     echo "CLIENT_MESSAGE: http://${application}-${new_namespace}.${libra_domain}/manage"
     echo "CLIENT_MESSAGE: "

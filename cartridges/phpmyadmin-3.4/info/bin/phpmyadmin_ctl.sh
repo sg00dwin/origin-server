@@ -23,7 +23,7 @@ case "$1" in
     start)
         if [ -f ${OPENSHIFT_PHPMYADMIN_APP_DIR}run/stop_lock ]
         then
-            echo -n " - Application is disabled" 1>&2
+            echo "Application is explicitly stopped!  Use 'rhc-ctl-app -a ${OPENSHIFT_APP_NAME} -e start-phpmyadmin-3.4' to start back up." 1>&2
             exit 0
         else
             /usr/sbin/httpd -C 'Include ${OPENSHIFT_PHPMYADMIN_APP_DIR}conf.d/*.conf' -f $CART_CONF_DIR/httpd_nolog.conf -k $1

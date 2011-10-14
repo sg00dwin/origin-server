@@ -58,7 +58,7 @@ case "$1" in
         start
     ;;
     status)
-        echo " Coming soon"
+        echo "Coming soon..."
         exit 0
     ;;
 esac

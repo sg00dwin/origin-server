@@ -64,13 +64,13 @@ case "$1" in
     start)
         if [ -f $OPENSHIFT_APP_DIR/run/stop_lock ]
         then
-            echo " - Application is disabled" 1>&2
+            echo "Application is explicitly stopped!  Use 'rhc-ctl-app -a ${OPENSHIFT_APP_NAME} -c start' to start back up." 1>&2
             exit 0
         else
             # Check for running app
             if isrunning; then
                 jbpid=$(cat $JBOSS_PID_FILE);
-                echo " - Application($jbpid) is already running" 1>&2
+                echo "CLIENT_MESSAGE: Application($pid) is already running!" 1>&2
                 exit 0
             fi
             # Start
