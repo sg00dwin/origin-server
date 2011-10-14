@@ -24,7 +24,7 @@ function find_open_ip {
     do
         a=`address $uid $host_ip`
         new_ip=`dotted_quad $a`
-        if ! /usr/sbin/lsof -i @${new_ip}:8080 > dev/null 2>&1
+        if ! /usr/sbin/lsof -i @${new_ip}:8080 > /dev/null 2>&1
         then
             echo $new_ip
             exit
