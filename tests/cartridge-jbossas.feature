@@ -18,6 +18,7 @@ Feature: JBossAS Application
      #And the openshift environment variable files will exist
      And a jbossas service startup script will exist
      And a jbossas application http proxy file will exist
+     And a jbossas application http proxy directory will exist
      And a jbossas daemon will be running
      And the jbossas daemon log files will exist
 

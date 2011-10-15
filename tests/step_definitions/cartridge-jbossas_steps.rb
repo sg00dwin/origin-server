@@ -367,6 +367,23 @@ Then /^a jbossas application http proxy file will( not)? exist$/ do | negate |
   end
 end
 
+Then /^a jbossas application http proxy directory will( not)? exist$/ do |negate|
+  acct_name = @account['accountname']
+  app_name = @app['name']
+  namespace = @app['namespace']
+
+  conf_dir_path = "#{$libra_httpd_conf_d}/#{acct_name}_#{namespace}_#{app_name}"
+
+  status = (File.exists? conf_dir_path and File.directory? conf_dir_path)
+  # TODO - need to check permissions and SELinux labels
+
+  if not negate
+    status.should be_true "#{conf_dir_path} does not exist or is not a directory"
+  else
+    status.should be_false "file #{conf_dir_path} exists and is a directory.  it should not"
+  end
+end
+
 Then /^a jbossas daemon will( not)? be running$/ do |negate|
   acct_name = @account['accountname']
   acct_uid = @account['uid']
