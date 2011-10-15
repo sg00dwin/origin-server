@@ -1,5 +1,3 @@
-#!
-
 function openshift_mcs_level() {
     SETSIZE=1023
     TIER=$SETSIZE
@@ -12,5 +10,3 @@ function openshift_mcs_level() {
     TIER=$(($SETSIZE - $TIER))
     echo s0:c$TIER,c$(($ORD + $TIER))
 }
-
-openshift_mcs_level $1

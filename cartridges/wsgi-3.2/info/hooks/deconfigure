@@ -80,12 +80,14 @@ then
 fi
 
 uid=$(id -u "$uuid")
-mcs_level=`${CART_DIR}/li-controller/info/bin/mcs_level $uid`
+source ${CART_DIR}/li-controller/info/lib/selinux
+mcs_level=`openshift_mcs_level $uid`
 
 #
 # Destroy git repo
 #
-${CART_DIR}/li-controller/info/bin/destroy_git_repo $application $uuid
+source ${CART_DIR}/li-controller/info/lib/git
+destroy_git_repo $application $uuid
 
 [ ! -d "$APP_DIR" ] && echo "${application} does not exist" 1>&2
 
@@ -104,9 +106,11 @@ while [ -f ${APP_DIR}/run/httpd.pid ] && [ $i -lt 30 ]
 done
 runcon -l s0-s0:c0.c1023 rm -rf "$APP_DIR"
 
-${CART_DIR}/li-controller/info/bin/rm_unobfuscated_app_home $namespace $application
+source ${CART_DIR}/li-controller/info/lib/util
+rm_unobfuscated_app_home $namespace $application
 
 #
 # Remove virtualhost definition for apache
 #
-${CART_DIR}/li-controller/info/bin/rm_httpd_proxy $uuid $namespace $application
+source ${CART_DIR}/li-controller/info/lib/apache
+rm_httpd_proxy $uuid $namespace $application

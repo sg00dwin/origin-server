@@ -1,5 +1,3 @@
-#!
-
 # create an IP address as an 32 bit unsigned integer
 function address() {
     # uid=$1
@@ -35,4 +33,25 @@ function find_open_ip {
     exit 5
 }
 
-find_open_ip $1 $2
+function embedded_find_open_ip {
+    uid=$1
+    app_home=$2
+    for host_ip in `seq 1 127`
+    do
+        a=`address $uid $host_ip`
+        new_ip=`dotted_quad $a`
+        # Ensure nothing is listening on new IP
+        if ! /usr/sbin/lsof -i @${new_ip}:8080 > /dev/null 2>&1
+        then
+            # Ensure new IP is available
+            if ! grep -q $new_ip $app_home/.env/*_IP
+            then 
+                echo $new_ip
+                exit
+            fi
+        fi
+    done
+
+    echo "Could not find open IP" 1>&2
+    exit 5
+}

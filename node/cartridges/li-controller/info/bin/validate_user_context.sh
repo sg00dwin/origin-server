@@ -1,19 +1,5 @@
 #!/bin/bash
 
-# Generate an MCS level from UID
-function openshift_mcs_level() {
-    SETSIZE=1023
-    TIER=$SETSIZE
-
-    ORD=$1
-    while [ $ORD -gt $(($TIER)) ] ; do
-	ORD=$(($ORD - $TIER))
-	TIER=$(($TIER - 1))
-    done
-    TIER=$(($SETSIZE - $TIER))
-    echo s0:c$TIER,c$(($ORD + $TIER))
-}
-
 # Import Environment Variables
 if [ -d ~/.env ]
 then
@@ -24,7 +10,7 @@ then
 fi
 
 uid=$(id -u "$OPENSHIFT_APP_UUID")
-
+source /usr/libexec/li/cartridges/li-controller/info/lib/selinux
 mcs_level=`openshift_mcs_level $uid`
 
 if whoami | grep -q root || ! runcon | grep system_r:libra_t:$mcs_level > /dev/null

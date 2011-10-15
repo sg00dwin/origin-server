@@ -39,7 +39,8 @@ CART_INFO_DIR=$CART_DIR/jenkins-1.4/info
 # Get UID information and CVAL
 #
 uid=$(id -u "$uuid")
-mcs_level=`${CART_DIR}/li-controller/info/bin/mcs_level $uid`
+source ${CART_DIR}/li-controller/info/lib/selinux
+mcs_level=`openshift_mcs_level $uid`
 
 echo "export JENKINS_URL='http://${application}-${new_namespace}.${libra_domain}/'" > $APP_HOME/.env/JENKINS_URL
 . $APP_HOME/.env/OPENSHIFT_INTERNAL_IP

@@ -68,7 +68,8 @@ then
 fi
 
 uid=$(id -u "$app_id")
-mcs_level=`${CART_DIR}/li-controller/info/bin/mcs_level $uid`
+source ${CART_DIR}/li-controller/info/lib/selinux
+mcs_level=`openshift_mcs_level $uid`
 
 #
 # Check application status

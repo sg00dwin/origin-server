@@ -1,15 +1,15 @@
-#!
+function rm_unobfuscated_app_home {
+    # Check if unobfuscate is set in /etc/libra/node.conf
+    # If it is set, remove symlink
 
-if [ -f '/etc/libra/node.conf' ]
-then
-    . /etc/libra/node.conf
-elif [ -f 'node.conf' ]
-then
-    . node.conf
-else
-    echo "node.conf not found.  Cannot continue" 1>&2
-    exit 3
-fi
+    namespace=$1
+    appname=$2
+
+    if [ $unobfuscate -eq 1 ]
+    then        
+        rm "${libra_dir}/${appname}-${namespace}"
+    fi
+}
 
 function unobfuscate_app_home {
     # Check if unobfuscate is set in /etc/libra/node.conf
@@ -28,5 +28,3 @@ function unobfuscate_app_home {
         fi
     fi
 }
-
-unobfuscate_app_home $1 $2 $3

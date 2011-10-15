@@ -93,7 +93,8 @@ function create_repo {
     rm -rf template
     popd
 
-    ${CART_DIR}/li-controller/info/bin/setup_git_repo $application $user_id $group_id $uuid "jenkins 1.4"
+    source ${CART_DIR}/li-controller/info/lib/git
+    setup_git_repo $application $user_id $group_id $uuid "jenkins 1.4"
 }
 
 while getopts 'd' OPTION
@@ -116,7 +117,8 @@ uuid=$3
 APP_HOME="$libra_dir/$uuid"
 APP_DIR=`echo $APP_HOME/$application | tr -s /`
 
-${CART_DIR}/li-controller/info/bin/unobfuscate_app_home $uuid $namespace $application
+source ${CART_DIR}/li-controller/info/lib/util
+unobfuscate_app_home $uuid $namespace $application
 
 #
 # Get user id info
@@ -127,7 +129,8 @@ user_id=$(id -u "$uuid") || error "Could not find user $uuid ($namespace)" 134
 group_id=$(id -g "$uuid") || error "Could not find user $uuid ($namespace)" 135
 
 uid=$(id -u "$uuid")
-mcs_level=`${CART_DIR}/li-controller/info/bin/mcs_level $uid`
+source ${CART_DIR}/li-controller/info/lib/selinux
+mcs_level=`openshift_mcs_level $uid`
 export mcs_level
 
 admin_password=$(head -n 500 /dev/urandom|tr -dc "a-np-zA-NP-Z1-9-_"|fold -w 12 | head | head -n1)
@@ -150,7 +153,8 @@ create_repo $application $user_id $group_id $uuid
 #
 # Find an open localhost IP
 #
-IP=`${CART_DIR}/li-controller/info/bin/find_open_ip $uid $uuid`
+source ${CART_DIR}/li-controller/info/lib/network
+IP=`find_open_ip $uid $uuid`
 
 #
 # Create simple application start / stop script

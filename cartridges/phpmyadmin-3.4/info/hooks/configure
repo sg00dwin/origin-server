@@ -125,7 +125,8 @@ group_id=$(id -g "$uuid") || error "Could not find user $uuid ($namespace)" 135
 # Get UID information and CVAL
 #
 uid=$(id -u "$uuid")
-mcs_level=`${CART_DIR}/li-controller/info/bin/mcs_level $uid`
+source ${CART_DIR}/li-controller/info/lib/selinux
+mcs_level=`openshift_mcs_level $uid`
 
 #
 # Create http base for application, every app gets its own apache instance
@@ -148,7 +149,8 @@ popd > /dev/null
 #
 # Find an open localhost IP
 #
-IP=`${CART_DIR}/li-controller/info/bin/embedded_find_open_ip $uid $APP_HOME`
+source ${CART_DIR}/li-controller/info/lib/network
+IP=`embedded_find_open_ip $uid $APP_HOME`
 
 echo "CLIENT_ERROR: 341234124"
 echo "CLIENT_ERROR: $IP"

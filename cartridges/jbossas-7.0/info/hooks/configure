@@ -146,7 +146,8 @@ __EOF__
     rm -rf template
     popd
     
-    ${CART_DIR}/li-controller/info/bin/setup_git_repo $application $user_id $group_id $uuid "jbossas 7.0"
+    source ${CART_DIR}/li-controller/info/lib/git
+    setup_git_repo $application $user_id $group_id $uuid "jbossas 7.0"
 }
 
 while getopts 'd' OPTION
@@ -159,7 +160,8 @@ do
     esac
 done
 
-${CART_DIR}/li-controller/info/bin/unobfuscate_app_home $uuid $namespace $application
+source ${CART_DIR}/li-controller/info/lib/util
+unobfuscate_app_home $uuid $namespace $application
 
 #
 # Get user id info
@@ -173,12 +175,14 @@ group_id=$(id -g "$uuid") || error "Could not find user $uuid ($namespace)" 135
 # Create git app repo
 #
 uid=$(id -u "$uuid")
-mcs_level=`${CART_DIR}/li-controller/info/bin/mcs_level $uid`
+source ${CART_DIR}/li-controller/info/lib/selinux
+mcs_level=`openshift_mcs_level $uid`
 
 #
 # Find an open localhost IP
 #
-IP=`${CART_DIR}/li-controller/info/bin/find_open_ip $uid $uuid`
+source ${CART_DIR}/li-controller/info/lib/network
+IP=`find_open_ip $uid $uuid`
 
 #
 # Create jbossas7 base for application, every app gets its own jboss instance
