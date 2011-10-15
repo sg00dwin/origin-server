@@ -43,15 +43,13 @@ fi
 CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
 CART_INFO_DIR=$CART_DIR/embedded/jenkins-client-1.4/info
 
+source ${CART_DIR}/li-controller/info/lib/selinux
+
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
 
     echo "$0 $@" | logger -p local0.notice -t libra_mysql_deconfigure
     exit 1
-}
-
-function error {
-    echo "$1" 1>&2
 }
 
 while getopts 'd' OPTION
@@ -83,7 +81,6 @@ fi
 # Get UID information and CVAL
 #
 uid=$(id -u "$uuid")
-source ${CART_DIR}/li-controller/info/lib/selinux
 mcs_level=`openshift_mcs_level $uid`
 
 #

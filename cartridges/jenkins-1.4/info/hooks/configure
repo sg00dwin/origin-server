@@ -58,16 +58,16 @@ fi
 CART_DIR=/usr/libexec/li/cartridges
 CART_INFO_DIR=$CART_DIR/jenkins-1.4/info
 
+source ${CART_DIR}/li-controller/info/lib/util
+source ${CART_DIR}/li-controller/info/lib/git
+source ${CART_DIR}/li-controller/info/lib/selinux
+source ${CART_DIR}/li-controller/info/lib/network
+
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
 
     echo "$0 $@" | logger -p local0.notice -t libra_jenkins_configure
     exit 1
-}
-
-function error {
-    echo "$1" 1>&2
-    exit "$2"
 }
 
 function create_repo {
@@ -93,7 +93,6 @@ function create_repo {
     rm -rf template
     popd
 
-    source ${CART_DIR}/li-controller/info/lib/git
     setup_git_repo $application $user_id $group_id $uuid "jenkins 1.4"
 }
 
@@ -117,7 +116,6 @@ uuid=$3
 APP_HOME="$libra_dir/$uuid"
 APP_DIR=`echo $APP_HOME/$application | tr -s /`
 
-source ${CART_DIR}/li-controller/info/lib/util
 unobfuscate_app_home $uuid $namespace $application
 
 #
@@ -129,7 +127,6 @@ user_id=$(id -u "$uuid") || error "Could not find user $uuid ($namespace)" 134
 group_id=$(id -g "$uuid") || error "Could not find user $uuid ($namespace)" 135
 
 uid=$(id -u "$uuid")
-source ${CART_DIR}/li-controller/info/lib/selinux
 mcs_level=`openshift_mcs_level $uid`
 export mcs_level
 
@@ -153,7 +150,6 @@ create_repo $application $user_id $group_id $uuid
 #
 # Find an open localhost IP
 #
-source ${CART_DIR}/li-controller/info/lib/network
 IP=`find_open_ip $uid $uuid`
 
 #

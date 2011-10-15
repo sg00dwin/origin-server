@@ -42,15 +42,16 @@ fi
 
 CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
 
+source ${CART_DIR}/li-controller/info/lib/selinux
+source ${CART_DIR}/li-controller/info/lib/git
+source ${CART_DIR}/li-controller/info/lib/util
+source ${CART_DIR}/li-controller/info/lib/apache
+
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
 
     echo "$0 $@" | logger -p local0.notice -t libra_php_deconfigure
     exit 1
-}
-
-function error {
-    echo "$1" 1>&2
 }
 
 while getopts 'd' OPTION
@@ -79,13 +80,11 @@ then
 fi
 
 uid=$(id -u "$uuid")
-source ${CART_DIR}/li-controller/info/lib/selinux
 mcs_level=`openshift_mcs_level $uid`
 
 #
 # Destroy git repo
 #
-source ${CART_DIR}/li-controller/info/lib/git
 destroy_git_repo $application $uuid
 
 runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $APP_DIR/${application}_ctl.sh stop" || echo "Failed to stop ${application}" 1>&2
@@ -109,11 +108,9 @@ done
 #rm -rf "$APP_DIR"
 runcon -l s0-s0:c0.c1023 rm -rf "$APP_DIR"
 
-source ${CART_DIR}/li-controller/info/lib/util
 rm_unobfuscated_app_home $namespace $application
 
 #
 # Remove virtualhost definition for apache
 #
-source ${CART_DIR}/li-controller/info/lib/apache
 rm_httpd_proxy $uuid $namespace $application

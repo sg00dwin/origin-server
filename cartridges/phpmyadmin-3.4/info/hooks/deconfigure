@@ -42,15 +42,13 @@ fi
 
 CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
 
+source ${CART_DIR}/li-controller/info/lib/selinux
+
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
 
     echo "$0 $@" | logger -p local0.notice -t libra_phpmyadmin_deconfigure
     exit 1
-}
-
-function error {
-    echo "$1" 1>&2
 }
 
 while getopts 'd' OPTION
@@ -81,14 +79,13 @@ then
 fi
 
 uid=$(id -u "$uuid")
-source ${CART_DIR}/li-controller/info/lib/selinux
 mcs_level=`openshift_mcs_level $uid`
 
 
 #
 # Stop app
 #
-runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $PHPMYADMIN_CTL_SCRIPT stop" || error "Failed to stop ${application}" 121
+runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $PHPMYADMIN_CTL_SCRIPT stop" || warning "Failed to stop ${application}" 121
 
 
 # Confirm pid is gone before removing apps
@@ -121,6 +118,6 @@ runcon -l s0-s0:c0.c1023 rm -rf "$PHPMYADMIN_DIR"
 #
 # Remove ProxyPass definition from apache
 #
-rm -f /etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}/phpmyadmin-3.4.conf || error "Could not remove phpmyadmin apache definition" 156
+rm -f /etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}/phpmyadmin-3.4.conf || warning "Could not remove phpmyadmin apache definition" 156
 
-/sbin/service httpd configtest 2> /dev/null && /sbin/service httpd graceful || error "Failed to restart master httpd, please contact support" 120
+/sbin/service httpd configtest 2> /dev/null && /sbin/service httpd graceful || warning "Failed to restart master httpd, please contact support" 120

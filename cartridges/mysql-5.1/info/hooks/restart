@@ -34,6 +34,8 @@ fi
 
 CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
 
+source ${CART_DIR}/li-controller/info/lib/selinux
+
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
     echo "Get application status"
@@ -71,7 +73,6 @@ fi
 # Get UID information and CVAL
 #
 uid=$(id -u "$uuid")
-source ${CART_DIR}/li-controller/info/lib/selinux
 mcs_level=`openshift_mcs_level $uid`
 
 

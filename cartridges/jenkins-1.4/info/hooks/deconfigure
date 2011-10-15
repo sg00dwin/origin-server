@@ -42,15 +42,16 @@ fi
 
 CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
 
+source ${CART_DIR}/li-controller/info/lib/selinux
+source ${CART_DIR}/li-controller/info/lib/git
+source ${CART_DIR}/li-controller/info/lib/util
+source ${CART_DIR}/li-controller/info/lib/apache
+
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
 
     echo "$0 $@" | logger -p local0.notice -t libra_php_deconfigure
     exit 1
-}
-
-function error {
-    echo "$1" 1>&2
 }
 
 while getopts 'd' OPTION
@@ -79,7 +80,6 @@ then
 fi
 
 uid=$(id -u "$uuid")
-source ${CART_DIR}/li-controller/info/lib/selinux
 mcs_level=`openshift_mcs_level $uid`
 
 #
@@ -93,7 +93,6 @@ done
 #
 # Destroy git repo
 #
-source ${CART_DIR}/li-controller/info/lib/git
 destroy_git_repo $application $uuid
 
 jenkins_pid=$(/bin/cat ${OPENSHIFT_RUN_DIR}/jenkins.pid)
@@ -119,13 +118,11 @@ runcon -l s0-s0:c0.c1023 rm -rf "$APP_DIR"
 
 echo "SSH_KEY_REMOVE: "
 
-source ${CART_DIR}/li-controller/info/lib/util
 rm_unobfuscated_app_home $namespace $application
 
 #
 # Remove virtualhost definition for apache
 #
-source ${CART_DIR}/li-controller/info/lib/apache
 rm_httpd_proxy $uuid $namespace $application
 
 echo "ENV_VAR_REMOVE: JENKINS_URL"

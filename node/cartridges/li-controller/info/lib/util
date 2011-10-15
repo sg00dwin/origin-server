@@ -28,3 +28,13 @@ function unobfuscate_app_home {
         fi
     fi
 }
+
+function error {
+    echo "$1" 1>&2
+    exit "$2"
+}
+
+function warning {
+    echo "$1" 1>&2
+    #echo "$2"
+}

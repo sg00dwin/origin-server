@@ -48,6 +48,8 @@ fi
 CART_DIR=/usr/libexec/li/cartridges
 CART_INFO_DIR=$CART_DIR/jenkins-1.4/info
 
+source ${CART_DIR}/li-controller/info/lib/selinux
+
 while getopts 'd' OPTION
 do
     case $OPTION in
@@ -81,7 +83,6 @@ function generate_ssh_keys {
 }
 
 uid=$(id -u "$uuid")
-source ${CART_DIR}/li-controller/info/lib/selinux
 mcs_level=`openshift_mcs_level $uid`
 export mcs_level
 

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source /usr/libexec/li/cartridges/li-controller/info/lib/selinux
+
 # Import Environment Variables
 if [ -d ~/.env ]
 then
@@ -10,7 +12,6 @@ then
 fi
 
 uid=$(id -u "$OPENSHIFT_APP_UUID")
-source /usr/libexec/li/cartridges/li-controller/info/lib/selinux
 mcs_level=`openshift_mcs_level $uid`
 
 if whoami | grep -q root || ! runcon | grep system_r:libra_t:$mcs_level > /dev/null

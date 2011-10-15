@@ -50,6 +50,11 @@ set -e
 CART_DIR=/usr/libexec/li/cartridges
 JBOSS_CARTRIDGE_ROOT=$CART_DIR/${jboss_version}
 
+source ${CART_DIR}/li-controller/info/lib/git
+source ${CART_DIR}/li-controller/info/lib/util
+source ${CART_DIR}/li-controller/info/lib/selinux
+source ${CART_DIR}/li-controller/info/lib/network
+
 if [ -f '/etc/libra/node.conf' ]
 then
     . /etc/libra/node.conf
@@ -110,12 +115,6 @@ mkdir -p ${APP_JBOSS_TMP_DIR}
 logfile=${APP_JBOSS_TMP_DIR}/jbossas7-configure-$$.log
 exec > $logfile 2>&1
 
-# Report an error msg $1 and exit with code $2
-function error {
-    echo "$1" 1>&2
-    exit "$2"
-}
-
 function create_repo {
     application="$1"
     user_id=$2
@@ -146,7 +145,6 @@ __EOF__
     rm -rf template
     popd
     
-    source ${CART_DIR}/li-controller/info/lib/git
     setup_git_repo $application $user_id $group_id $uuid "jbossas 7.0"
 }
 
@@ -160,7 +158,6 @@ do
     esac
 done
 
-source ${CART_DIR}/li-controller/info/lib/util
 unobfuscate_app_home $uuid $namespace $application
 
 #
@@ -175,13 +172,11 @@ group_id=$(id -g "$uuid") || error "Could not find user $uuid ($namespace)" 135
 # Create git app repo
 #
 uid=$(id -u "$uuid")
-source ${CART_DIR}/li-controller/info/lib/selinux
 mcs_level=`openshift_mcs_level $uid`
 
 #
 # Find an open localhost IP
 #
-source ${CART_DIR}/li-controller/info/lib/network
 IP=`find_open_ip $uid $uuid`
 
 #

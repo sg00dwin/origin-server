@@ -57,6 +57,10 @@ CART_DIR=/usr/libexec/li/cartridges
 CART_INFO_DIR=$CART_DIR/embedded/phpmyadmin-3.4/info
 CART_CONF_DIR=$CART_INFO_DIR/configuration/etc/conf
 
+source ${CART_DIR}/li-controller/info/lib/util
+source ${CART_DIR}/li-controller/info/lib/selinux
+source ${CART_DIR}/li-controller/info/lib/network
+
 function log {
     echo "$0 $@" | logger -p local0.notice -t libra_phpmyadmin_configure
 }
@@ -66,11 +70,6 @@ function print_help {
 
     echo "$0 $@" | logger -p local0.notice -t libra_phpmyadmin_configure
     exit 1
-}
-
-function error {
-    echo "$1" 1>&2
-    exit "$2"
 }
 
 while getopts 'd' OPTION
@@ -125,7 +124,6 @@ group_id=$(id -g "$uuid") || error "Could not find user $uuid ($namespace)" 135
 # Get UID information and CVAL
 #
 uid=$(id -u "$uuid")
-source ${CART_DIR}/li-controller/info/lib/selinux
 mcs_level=`openshift_mcs_level $uid`
 
 #
@@ -149,7 +147,6 @@ popd > /dev/null
 #
 # Find an open localhost IP
 #
-source ${CART_DIR}/li-controller/info/lib/network
 IP=`embedded_find_open_ip $uid $APP_HOME`
 
 echo "CLIENT_ERROR: 341234124"

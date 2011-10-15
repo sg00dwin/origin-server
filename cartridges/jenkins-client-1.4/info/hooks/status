@@ -35,6 +35,8 @@ fi
 CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
 CART_INFO_DIR=$CART_DIR/embedded/jenkins-client-1.4/info
 
+source ${CART_DIR}/li-controller/info/lib/selinux
+
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
     echo "Get application status"
@@ -68,7 +70,6 @@ then
 fi
 
 uid=$(id -u "$uuid")
-source ${CART_DIR}/li-controller/info/lib/selinux
 mcs_level=`openshift_mcs_level $uid`
 
 . $APP_HOME/.env/OPENSHIFT_HOMEDIR
