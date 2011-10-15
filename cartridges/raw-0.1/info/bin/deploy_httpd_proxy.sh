@@ -20,16 +20,10 @@ application="$1"
 namespace=`basename $2`
 uuid=$3
 
-if [ -f '/etc/libra/node.conf' ]
-then
-    . /etc/libra/node.conf
-elif [ -f 'node.conf' ]
-then
-    . node.conf
-else
-    echo "node.conf not found.  Cannot continue" 1>&2
-    exit 3
-fi
+CART_DIR=/usr/libexec/li/cartridges
+source ${CART_DIR}/li-controller/info/lib/util
+
+load_node_conf
 
 rm -rf "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}.conf" "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}"
 

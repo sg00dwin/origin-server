@@ -56,32 +56,11 @@ source ${CART_DIR}/li-controller/info/lib/selinux
 source ${CART_DIR}/li-controller/info/lib/network
 source ${CART_DIR}/li-controller/info/lib/apache
 
-if [ -f '/etc/libra/node.conf' ]
-then
-    . /etc/libra/node.conf
-elif [ -f 'node.conf' ]
-then
-    . node.conf
-else
-    echo "node.conf not found.  Cannot continue" 1>&2
-    exit 3
-fi
+load_node_conf
 
-if [ -f '/etc/libra/node_data.conf' ]
-then
-    . /etc/libra/node_data.conf
-elif [ -f 'node_data.conf' ]
-then
-    . node_data.conf
-else
-    echo "node_data.conf not found.  Cannot continue" 1>&2
-    exit 3
-fi
+load_node_data_conf
 
-if [ -f '/etc/libra/resource_limits.conf' ]
-then
-    . /etc/libra/resource_limits.conf
-fi
+load_resource_limits_conf
 
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
@@ -99,7 +78,7 @@ uuid=$3
 APP_HOME="$libra_dir/$uuid/"
 # The location of the application jboss setup
 APP_DIR=`echo $APP_HOME/$application | tr -s /`
-[ -d "$APP_DIR" ] && error "${application}.  Please destroy then recreate, or pick a new name" 132
+check_app_dir_doesnt_exist
 # The root of the application jbossas contents
 APP_JBOSS="$APP_DIR"/${jboss_version}
 # Maven dir

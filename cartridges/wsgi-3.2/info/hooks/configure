@@ -22,33 +22,6 @@
 set -e
 #set -x
 
-if [ -f '/etc/libra/node.conf' ]
-then
-    . /etc/libra/node.conf
-elif [ -f 'node.conf' ]
-then
-    . node.conf
-else
-    echo "node.conf not found.  Cannot continue" 1>&2
-    exit 3
-fi
-
-if [ -f '/etc/libra/node_data.conf' ]
-then
-    . /etc/libra/node_data.conf
-elif [ -f 'node_data.conf' ]
-then
-    . node_data.conf
-else
-    echo "node_data.conf not found.  Cannot continue" 1>&2
-    exit 3
-fi
-
-if [ -f '/etc/libra/resource_limits.conf' ]
-then
-    . /etc/libra/resource_limits.conf
-fi
-
 CART_DIR=/usr/libexec/li/cartridges
 CART_INFO_DIR=$CART_DIR/wsgi-3.2/info
 
@@ -57,6 +30,12 @@ source ${CART_DIR}/li-controller/info/lib/selinux
 source ${CART_DIR}/li-controller/info/lib/git
 source ${CART_DIR}/li-controller/info/lib/network
 source ${CART_DIR}/li-controller/info/lib/apache
+
+load_node_conf
+
+load_node_data_conf
+
+load_resource_limits_conf
 
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
@@ -106,8 +85,7 @@ GIT_DIR=$APP_HOME/git/$application.git
 #
 # Create http base for application, every app gets its own apache instance
 #
-
-[ -d "$APP_DIR" ] && error "${application}.  Please destroy then recreate, or pick a new name" 132
+check_app_dir_doesnt_exist
 
 mkdir -p "$APP_DIR"
 pushd "$APP_DIR" > /dev/null

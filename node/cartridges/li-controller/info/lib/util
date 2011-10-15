@@ -1,34 +1,3 @@
-function rm_unobfuscated_app_home {
-    # Check if unobfuscate is set in /etc/libra/node.conf
-    # If it is set, remove symlink
-
-    namespace=$1
-    appname=$2
-
-    if [ $unobfuscate -eq 1 ]
-    then        
-        rm "${libra_dir}/${appname}-${namespace}"
-    fi
-}
-
-function unobfuscate_app_home {
-    # Check if unobfuscate is set in /etc/libra/node.conf
-    # If it is set, symlink /var/lib/libra/uuid to /var/lib/libra/appname-namespace
-    # This will allow easier debugging.
-
-    uuid=$1
-    namespace=$2
-    appname=$3
-
-    if [ $unobfuscate -eq 1 ]
-    then
-        if [ ! -f "${libra_dir}/$appname-$namespace" ] && [ ! -d "${libra_dir}/$appname-$namespace" ]
-        then
-            /bin/ln -sf "${libra_dir}/${uuid}" "${libra_dir}/${appname}-${namespace}"
-        fi
-    fi
-}
-
 function start_app {
     runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $APP_DIR/${application}_ctl.sh start" || error "Failed to start ${application}" 121
 }
@@ -94,6 +63,46 @@ function chcon_app_dir_and_git {
     chcon -t libra_var_lib_t -l $mcs_level -R "$APP_HOME/git/" "$APP_DIR"
 }
 
+function check_app_dir_doesnt_exist {
+    if [ -d "$APP_DIR" ] 
+    then
+        error "${application}.  Please destroy then recreate, or pick a new name" 132
+    fi
+}
+
+function load_node_conf {
+    if [ -f '/etc/libra/node.conf' ]
+    then
+        . /etc/libra/node.conf
+    elif [ -f 'node.conf' ]
+    then
+        . node.conf
+    else
+        echo "node.conf not found.  Cannot continue" 1>&2
+        exit 3
+    fi
+}
+
+function load_node_data_conf {
+    if [ -f '/etc/libra/node_data.conf' ]
+    then
+        . /etc/libra/node_data.conf
+    elif [ -f 'node_data.conf' ]
+    then
+        . node_data.conf
+    else
+        echo "node_data.conf not found.  Cannot continue" 1>&2
+        exit 3
+    fi
+}
+
+function load_resource_limits_conf {
+    if [ -f '/etc/libra/resource_limits.conf' ]
+    then
+        . /etc/libra/resource_limits.conf
+    fi
+}
+
 function error {
     echo "$1" 1>&2
     exit "$2"
@@ -102,4 +111,35 @@ function error {
 function warning {
     echo "$1" 1>&2
     #echo "$2"
+}
+
+function rm_unobfuscated_app_home {
+    # Check if unobfuscate is set in /etc/libra/node.conf
+    # If it is set, remove symlink
+
+    namespace=$1
+    appname=$2
+
+    if [ $unobfuscate -eq 1 ]
+    then        
+        rm "${libra_dir}/${appname}-${namespace}"
+    fi
+}
+
+function unobfuscate_app_home {
+    # Check if unobfuscate is set in /etc/libra/node.conf
+    # If it is set, symlink /var/lib/libra/uuid to /var/lib/libra/appname-namespace
+    # This will allow easier debugging.
+
+    uuid=$1
+    namespace=$2
+    appname=$3
+
+    if [ $unobfuscate -eq 1 ]
+    then
+        if [ ! -f "${libra_dir}/$appname-$namespace" ] && [ ! -d "${libra_dir}/$appname-$namespace" ]
+        then
+            /bin/ln -sf "${libra_dir}/${uuid}" "${libra_dir}/${appname}-${namespace}"
+        fi
+    fi
 }

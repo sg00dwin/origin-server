@@ -1,20 +1,11 @@
 #!/bin/bash
 
-if [ -f '/etc/libra/node.conf' ]
-then
-    . /etc/libra/node.conf
-elif [ -f 'node.conf' ]
-then
-    . node.conf
-else
-    echo "node.conf not found.  Cannot continue" 1>&2
-    exit 3
-fi
+CART_DIR=/usr/libexec/li/cartridges
+source ${CART_DIR}/li-controller/info/lib/util
 
-if [ -f '/etc/libra/resource_limits.conf' ]
-then
-    . /etc/libra/resource_limits.conf
-fi
+load_node_conf
+
+load_resource_limits_conf
 
 application="$1"
 uuid="$2"

@@ -16,20 +16,14 @@
 # General Public License and may only be used or replicated with the express
 # permission of Red Hat, Inc.
 
-# Confirms all required php bits are in place or fails
+# Confirms all required python bits are in place or fails
 
 set -e
 
-if [ -f '/etc/libra/node.conf' ]
-then
-    . /etc/libra/node.conf
-elif [ -f 'node.conf' ]
-then
-    . node.conf
-else
-    echo "node.conf not found.  Cannot continue" 1>&2
-    exit 3
-fi
+CART_DIR=/usr/libexec/li/cartridges
+source ${CART_DIR}/li-controller/info/lib/util
+
+load_node_conf
 
 [ -z "$CARTRIDGE_DIR" ] && CARTRIDGE_DIR="/usr/libexec/li/cartridges/wsgi-3.2/"
 

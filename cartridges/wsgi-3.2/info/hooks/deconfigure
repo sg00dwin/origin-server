@@ -18,34 +18,16 @@
 
 # Destroys http instance
 
-if [ -f '/etc/libra/node.conf' ]
-then
-    . /etc/libra/node.conf
-elif [ -f 'node.conf' ]
-then
-    . node.conf
-else
-    echo "node.conf not found.  Cannot continue" 1>&2
-    exit 3
-fi
-
-if [ -f '/etc/libra/node_data.conf' ]
-then
-    . /etc/libra/node_data.conf
-elif [ -f 'node_data.conf' ]
-then
-    . node_data.conf
-else
-    echo "node_data.conf not found.  Cannot continue" 1>&2
-    exit 3
-fi
-
 CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
 
 source ${CART_DIR}/li-controller/info/lib/selinux
 source ${CART_DIR}/li-controller/info/lib/git
 source ${CART_DIR}/li-controller/info/lib/util
 source ${CART_DIR}/li-controller/info/lib/apache
+
+load_node_conf
+
+load_node_data_conf
 
 function print_help {
     echo "Usage: $0 app-name namespace uuid"

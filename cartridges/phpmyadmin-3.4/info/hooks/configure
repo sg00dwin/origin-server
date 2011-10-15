@@ -22,37 +22,6 @@
 set -e
 #set -x
 
-if [ -f '/etc/libra/node.conf' ]
-then
-    . /etc/libra/node.conf
-elif [ -f 'node.conf' ]
-then
-    . node.conf
-else
-    echo "node.conf not found.  Cannot continue" 1>&2
-    exit 3
-fi
-
-if [ -f '/etc/libra/node_data.conf' ]
-then
-    . /etc/libra/node_data.conf
-elif [ -f 'node_data.conf' ]
-then
-    . node_data.conf
-else
-    echo "node_data.conf not found.  Cannot continue" 1>&2
-    exit 3
-fi
-
-rotatelogs_interval="86400"
-rotatelogs_format="-%Y%m%d-%H%M%S-%Z"
-
-if [ -f '/etc/libra/resource_limits.conf' ]
-then
-    . /etc/libra/resource_limits.conf
-fi
-
-
 CART_DIR=/usr/libexec/li/cartridges
 CART_INFO_DIR=$CART_DIR/embedded/phpmyadmin-3.4/info
 CART_CONF_DIR=$CART_INFO_DIR/configuration/etc/conf
@@ -61,6 +30,12 @@ source ${CART_DIR}/li-controller/info/lib/util
 source ${CART_DIR}/li-controller/info/lib/selinux
 source ${CART_DIR}/li-controller/info/lib/network
 source ${CART_DIR}/li-controller/info/lib/apache
+
+load_node_conf
+
+load_node_data_conf
+
+load_resource_limits_conf
 
 function log {
     echo "$0 $@" | logger -p local0.notice -t libra_phpmyadmin_configure

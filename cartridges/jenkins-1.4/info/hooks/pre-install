@@ -20,18 +20,12 @@
 
 set -e
 
-if [ -f '/etc/libra/node.conf' ]
-then
-    . /etc/libra/node.conf
-elif [ -f 'node.conf' ]
-then
-    . node.conf
-else
-    echo "node.conf not found.  Cannot continue" 1>&2
-    exit 3
-fi
+CART_DIR=/usr/libexec/li/cartridges
+source ${CART_DIR}/li-controller/info/lib/util
 
-[ -z "$CARTRIDGE_DIR" ] && CARTRIDGE_DIR="/usr/libexec/li/cartridges/php-5.3/"
+load_node_conf
+
+[ -z "$CARTRIDGE_DIR" ] && CARTRIDGE_DIR="/usr/libexec/li/cartridges/jenkins-1.4/"
 
 function print_help {
     echo "Usage: uuid"

@@ -4,16 +4,13 @@
 set -e
 #set -x
 
-if [ -f '/etc/libra/node.conf' ]
-then
-    . /etc/libra/node.conf
-elif [ -f 'node.conf' ]
-then
-    . node.conf
-else
-    echo "node.conf not found.  Cannot continue" 1>&2
-    exit 3
-fi
+CART_DIR=/usr/libexec/li/cartridges
+CART_INFO_DIR=$CART_DIR/jenkins-1.4/info
+
+source ${CART_DIR}/li-controller/info/lib/selinux
+source ${CART_DIR}/li-controller/info/lib/util
+
+load_node_conf
 
 function print_help {
     echo "Usage: $0 app-name new_namespace old_namespace uuid"
@@ -31,11 +28,6 @@ uuid=$4
 
 APP_HOME="$libra_dir/$uuid/"
 APP_DIR="$APP_HOME/$application"
-
-CART_DIR=/usr/libexec/li/cartridges
-CART_INFO_DIR=$CART_DIR/jenkins-1.4/info
-
-source ${CART_DIR}/li-controller/info/lib/selinux
 
 #
 # Get UID information and CVAL
