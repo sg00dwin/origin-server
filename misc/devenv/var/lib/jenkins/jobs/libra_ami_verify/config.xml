@@ -17,7 +17,7 @@
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
   <triggers class="vector"/>
   <concurrentBuild>false</concurrentBuild>
-  <customWorkspace>jobs/libra_ami/workspace</customWorkspace>
+  <customWorkspace>jobs/libra_ami_update/workspace</customWorkspace>
   <builders>
     <hudson.tasks.Shell>
       <command># Launch a test instance
