@@ -59,6 +59,7 @@ CART_INFO_DIR=$CART_DIR/raw-0.1/info
 source ${CART_DIR}/li-controller/info/lib/util
 source ${CART_DIR}/li-controller/info/lib/selinux
 source ${CART_DIR}/li-controller/info/lib/git
+source ${CART_DIR}/li-controller/info/lib/apache
 
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
@@ -117,30 +118,20 @@ pushd "$APP_DIR" > /dev/null
 mkdir logs run repo data tmp
 popd > /dev/null
 
-#
-# Populate repo
-#
-GIT_DIR="$GIT_DIR" git archive --format=tar HEAD | (cd "${APP_DIR}/repo" && tar --warning=no-timestamp -xf -)
+populate_repo_dir "repo"
 
-chown $user_id.$group_id -R $APP_DIR || error "Failed to chown new application space.  Please contact support" 123
-# Secure script and config dirs.
-chown root.root "$APP_DIR"
-chcon -t libra_var_lib_t -l $mcs_level -R "$APP_HOME/git/" "$APP_DIR"
+secure_app_dir
+
+chcon_app_dir_and_git
 
 #
 # Create environment variables
 #
-echo "export OPENSHIFT_APP_DIR='$APP_DIR/'" > $APP_HOME/.env/OPENSHIFT_APP_DIR
-echo "export OPENSHIFT_REPO_DIR='$APP_DIR/repo/'" > $APP_HOME/.env/OPENSHIFT_REPO_DIR
-echo "export OPENSHIFT_LOG_DIR='$APP_DIR/logs/'" > $APP_HOME/.env/OPENSHIFT_LOG_DIR
-echo "export OPENSHIFT_DATA_DIR='$APP_DIR/data/'" > $APP_HOME/.env/OPENSHIFT_DATA_DIR
-echo "export OPENSHIFT_TMP_DIR='/tmp/'" > $APP_HOME/.env/OPENSHIFT_TMP_DIR
-echo "export OPENSHIFT_RUN_DIR='$APP_DIR/run/'" > $APP_HOME/.env/OPENSHIFT_RUN_DIR
-echo "export OPENSHIFT_APP_NAME='$application'" > $APP_HOME/.env/OPENSHIFT_APP_NAME
+create_standard_env_vars
+create_standard_redo_dir_env_var
+create_standard_path_env_var
 echo "export OPENSHIFT_APP_TYPE='raw-0.1'" > $APP_HOME/.env/OPENSHIFT_APP_TYPE
 echo "export OPENSHIFT_APP_CTL_SCRIPT='/bin/true'" > $APP_HOME/.env/OPENSHIFT_APP_CTL_SCRIPT
-echo "export OPENSHIFT_APP_DNS='${application}-${namespace}.${libra_domain}'" > $APP_HOME/.env/OPENSHIFT_APP_DNS
-echo "export PATH=$CART_INFO_DIR/bin/:$CART_DIR/abstract-httpd/info/bin/:$CART_DIR/li-controller/info/bin/:$PATH" > $APP_HOME/.env/PATH
 
 #
 # Create virtualhost definition for apache
@@ -148,5 +139,5 @@ echo "export PATH=$CART_INFO_DIR/bin/:$CART_DIR/abstract-httpd/info/bin/:$CART_D
 export CART_INFO_DIR
 $CART_INFO_DIR/bin/deploy_httpd_proxy.sh $application $namespace $uuid
 
-/sbin/service httpd configtest 2> /dev/null && /sbin/service httpd graceful || error "Failed to restart master httpd, please contact support" 120
+restart_httpd_graceful
 

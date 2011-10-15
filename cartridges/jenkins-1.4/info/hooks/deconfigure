@@ -96,7 +96,8 @@ done
 destroy_git_repo $application $uuid
 
 jenkins_pid=$(/bin/cat ${OPENSHIFT_RUN_DIR}/jenkins.pid)
-runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $OPENSHIFT_APP_CTL_SCRIPT stop" || echo "Failed to stop ${OPENSHIFT_APP_NAME}" 1>&2
+stop_app
+
 
 for i in {1..12}
 do

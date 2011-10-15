@@ -44,9 +44,6 @@ else
     exit 3
 fi
 
-rotatelogs_interval="86400"
-rotatelogs_format="-%Y%m%d-%H%M%S-%Z"
-
 if [ -f '/etc/libra/resource_limits.conf' ]
 then
     . /etc/libra/resource_limits.conf
@@ -60,6 +57,7 @@ source ${CART_DIR}/li-controller/info/lib/util
 source ${CART_DIR}/li-controller/info/lib/selinux
 source ${CART_DIR}/li-controller/info/lib/git
 source ${CART_DIR}/li-controller/info/lib/network
+source ${CART_DIR}/li-controller/info/lib/apache
 
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
@@ -125,93 +123,32 @@ popd > /dev/null
 #
 IP=`find_open_ip $uid $uuid`
 
+$CART_INFO_DIR/bin/deploy_httpd_config.sh $application $uuid $IP
 
-#
-# Create simple customer specific data
-#
+create_app_ctl_script
 
-cat <<EOF > "$APP_DIR/conf.d/libra.conf"
-ServerRoot "$APP_DIR"
-DocumentRoot "$APP_DIR/repo/perl"
-Listen $IP:8080
-User $uuid
-Group $uuid
-ErrorLog "|/usr/sbin/rotatelogs $APP_DIR/logs/error_log$rotatelogs_format $rotatelogs_interval"
-CustomLog "|/usr/sbin/rotatelogs $APP_DIR/logs/access_log$rotatelogs_format $rotatelogs_interval" combined
+populate_repo_dir "repo"
 
-<Directory $APP_DIR/repo/perl/>
-    AddHandler perl-script .pl
-    PerlResponseHandler ModPerl::Registry
-    PerlOptions +ParseHeaders
-    Options +ExecCGI
-    DirectoryIndex index.pl
-    AllowOverride All
-</Directory>
+secure_app_dir
+chown $user_id.$group_id -R $APP_DIR/../.cpanm/ || error "Failed to chown new application space.  Please contact support" 123
 
+secure_conf_dirs
 
-<IfModule !mod_bw.c>
-    LoadModule bw_module    modules/mod_bw.so
-</IfModule>
-
-<ifModule mod_bw.c>
-  BandWidthModule On
-  ForceBandWidthModule On
-  BandWidth $apache_bandwidth
-  MaxConnection $apache_maxconnection
-  BandWidthError $apache_bandwidtherror
-</IfModule>
-
-EOF
-
-#
-# Create simple application start / stop script
-#
-cat <<EOF > "$APP_DIR/${application}_ctl.sh"
-#!/bin/bash -e
-
-# Import Environment Variables
-for f in ~/.env/*
-do
-    . \$f
-done
-
-app_ctl.sh \$1
-EOF
-
-#
-# Populate repo
-#
-GIT_DIR="$GIT_DIR" git archive --format=tar HEAD | (cd "${APP_DIR}/repo" && tar --warning=no-timestamp -xf -)
-
-chmod +x "$APP_DIR/${application}_ctl.sh" || error "Failed to chmod new application scripts" 122
-chown $user_id.$group_id -R $APP_DIR $APP_DIR/../.cpanm/ || error "Failed to chown new application space.  Please contact support" 123
-# Secure script and config dirs.
-chown root.root -R "$APP_DIR/${application}_ctl.sh" "$APP_DIR/conf" "$APP_DIR/conf.d"
-chown root.root "$APP_DIR"
-chcon -t libra_var_lib_t -l $mcs_level -R "$APP_HOME/git/" "$APP_DIR"
+chcon_app_dir_and_git
 
 #
 # Create environment variables
 #
-echo "export OPENSHIFT_APP_DIR='$APP_DIR/'" > $APP_HOME/.env/OPENSHIFT_APP_DIR
-echo "export OPENSHIFT_REPO_DIR='$APP_DIR/repo/'" > $APP_HOME/.env/OPENSHIFT_REPO_DIR
-echo "export OPENSHIFT_INTERNAL_IP='$IP'" > $APP_HOME/.env/OPENSHIFT_INTERNAL_IP
-echo "export OPENSHIFT_INTERNAL_PORT='8080'" > $APP_HOME/.env/OPENSHIFT_INTERNAL_PORT
-echo "export OPENSHIFT_LOG_DIR='$APP_DIR/logs/'" > $APP_HOME/.env/OPENSHIFT_LOG_DIR
-echo "export OPENSHIFT_DATA_DIR='$APP_DIR/data/'" > $APP_HOME/.env/OPENSHIFT_DATA_DIR
-echo "export OPENSHIFT_TMP_DIR='/tmp/'" > $APP_HOME/.env/OPENSHIFT_TMP_DIR
-echo "export OPENSHIFT_RUN_DIR='$APP_DIR/run/'" > $APP_HOME/.env/OPENSHIFT_RUN_DIR
-echo "export OPENSHIFT_APP_NAME='$application'" > $APP_HOME/.env/OPENSHIFT_APP_NAME
+create_standard_env_vars
+create_standard_network_env_vars
+create_standard_redo_dir_env_var
+create_standard_path_env_var
 echo "export OPENSHIFT_APP_TYPE='perl-5.10'" > $APP_HOME/.env/OPENSHIFT_APP_TYPE
-echo "export OPENSHIFT_APP_CTL_SCRIPT='$APP_DIR/${application}_ctl.sh'" > $APP_HOME/.env/OPENSHIFT_APP_CTL_SCRIPT
-echo "export OPENSHIFT_APP_DNS='${application}-${namespace}.${libra_domain}'" > $APP_HOME/.env/OPENSHIFT_APP_DNS
-echo "export PATH=$CART_INFO_DIR/bin/:$CART_DIR/abstract-httpd/info/bin/:$CART_DIR/li-controller/info/bin/:$PATH" > $APP_HOME/.env/PATH
 
 #
 # Start the server
 #
-runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $APP_DIR/${application}_ctl.sh start" || error "Failed to start ${application}" 121
-#GIT_DIR="$GIT_DIR" runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $GIT_DIR/hooks/post-receive" || error "Failed to start ${application}" 121
+start_app
 
 #
 # Create virtualhost definition for apache
@@ -219,5 +156,5 @@ runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $APP_DIR/${a
 export CART_INFO_DIR
 $CART_DIR/abstract-httpd/info/bin/deploy_httpd_proxy.sh $application $namespace $uuid $IP
 
-/sbin/service httpd configtest 2> /dev/null && /sbin/service httpd graceful || error "Failed to restart master httpd, please contact support" 120
+restart_httpd_graceful
 

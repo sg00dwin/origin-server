@@ -60,6 +60,7 @@ CART_CONF_DIR=$CART_INFO_DIR/configuration/etc/conf
 source ${CART_DIR}/li-controller/info/lib/util
 source ${CART_DIR}/li-controller/info/lib/selinux
 source ${CART_DIR}/li-controller/info/lib/network
+source ${CART_DIR}/li-controller/info/lib/apache
 
 function log {
     echo "$0 $@" | logger -p local0.notice -t libra_phpmyadmin_configure
@@ -262,7 +263,7 @@ ProxyPassReverse /phpmyadmin http://$IP:8080/phpmyadmin
 
 EOF
 
-/sbin/service httpd configtest 2> /dev/null && /sbin/service httpd graceful || error "Failed to restart master httpd, please contact support" 120
+restart_httpd_graceful
 
 
 # Grab the env vars so we can print them

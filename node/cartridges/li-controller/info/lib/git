@@ -76,3 +76,8 @@ EOF
     chown root.root $GIT_DIR
     chmod 0755 $GIT_DIR
 }
+
+function populate_repo_dir {
+    repo_dir="$1"
+    GIT_DIR="$GIT_DIR" git archive --format=tar HEAD | (cd "${APP_DIR}/${repo_dir}" && tar --warning=no-timestamp -xf -)
+}
