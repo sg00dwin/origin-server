@@ -13,7 +13,7 @@ function wait_for_pid()
     do
         if `ps --pid $pid > /dev/null 2>&1`
         then
-            echo "Waiting for pid to end"
+            echo "Waiting for stop to finish"
             sleep .5
         else
             break
