@@ -17,7 +17,7 @@
 # General Public License and may only be used or replicated with the express
 # permission of Red Hat, Inc.
 
-# Creates a per customer jboss-as7 instance
+# Creates a jboss-as7 instance
 # Variables used in this script:
 : << --COMMENT--
 # jboss.version
@@ -47,49 +47,12 @@ set -e
 # Load the jboss_version and jboss_home settings
 . `dirname $0`/jboss.version
 
-CART_DIR=/usr/libexec/li/cartridges
-JBOSS_CARTRIDGE_ROOT=$CART_DIR/${jboss_version}
-
-source ${CART_DIR}/li-controller/info/lib/git
-source ${CART_DIR}/li-controller/info/lib/util
-source ${CART_DIR}/li-controller/info/lib/selinux
-source ${CART_DIR}/li-controller/info/lib/network
-source ${CART_DIR}/li-controller/info/lib/apache
-
-load_node_conf
-
-load_node_data_conf
-
-load_resource_limits_conf
-
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
 
     echo "$0 $@" | logger -p local0.notice -t libra_jboss_configure
     exit 1
 }
-
-[ $# -eq 3 ] || print_help
-
-namespace=`basename $2`
-application="$1"
-uuid=$3
-
-APP_HOME="$libra_dir/$uuid/"
-# The location of the application jboss setup
-APP_DIR=`echo $APP_HOME/$application | tr -s /`
-check_app_dir_doesnt_exist
-# The root of the application jbossas contents
-APP_JBOSS="$APP_DIR"/${jboss_version}
-# Maven dir
-M2_DIR=`echo $APP_HOME/.m2 | tr -s /`
-mkdir -p $M2_DIR
-
-# Redirect the configure script output for debugging
-APP_JBOSS_TMP_DIR="$APP_JBOSS"/standalone/tmp
-mkdir -p ${APP_JBOSS_TMP_DIR}
-logfile=${APP_JBOSS_TMP_DIR}/jbossas7-configure-$$.log
-exec > $logfile 2>&1
 
 function create_repo {
     application="$1"
@@ -134,21 +97,29 @@ do
     esac
 done
 
+[ $# -eq 3 ] || print_help
+
+CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
+JBOSS_CARTRIDGE_ROOT=$CART_DIR/${jboss_version}
+app_type="${jboss_version}"
+
+source ${CART_DIR}/li-controller/info/lib/util
+setup_configure "$1" $2 $3
+
+check_app_dir_doesnt_exist
 unobfuscate_app_home $uuid $namespace $application
 
-#
-# Get user id info
-# Not caching this information caused some early chowns to work but some later
-# chowns to fail with a user not found error
+# The root of the application jbossas contents
+APP_JBOSS="$APP_DIR"/${jboss_version}
+# Maven dir
+M2_DIR=`echo $APP_HOME/.m2 | tr -s /`
+mkdir -p $M2_DIR
 
-user_id=$(id -u "$uuid") || error "Could not find user $uuid ($namespace)" 134
-group_id=$(id -g "$uuid") || error "Could not find user $uuid ($namespace)" 135
-
-#
-# Create git app repo
-#
-uid=$(id -u "$uuid")
-mcs_level=`openshift_mcs_level $uid`
+# Redirect the configure script output for debugging
+APP_JBOSS_TMP_DIR="$APP_JBOSS"/standalone/tmp
+mkdir -p ${APP_JBOSS_TMP_DIR}
+logfile=${APP_JBOSS_TMP_DIR}/jbossas7-configure-$$.log
+exec > $logfile 2>&1
 
 #
 # Find an open localhost IP
@@ -158,10 +129,10 @@ IP=`find_open_ip $uid $uuid`
 #
 # Create jbossas7 base for application, every app gets its own jboss instance
 #
-
 mkdir -p "$APP_DIR"
 pushd "$APP_DIR" > /dev/null
-mkdir -p repo run tmp data ${jboss_version}/{bin,standalone/configuration}
+create_standard_app_dirs
+mkdir -p repo ${jboss_version}/{bin,standalone/configuration}
 # application jbossas bin directory
 APP_JBOSS_BIN_DIR="$APP_JBOSS"/bin
 
@@ -226,7 +197,6 @@ chcon_app_dir_and_git
 create_standard_env_vars
 create_standard_network_env_vars
 create_standard_redo_dir_env_var
-echo "export OPENSHIFT_APP_TYPE='${jboss_version}'" > $APP_HOME/.env/OPENSHIFT_APP_TYPE
 JAVA_HOME=/etc/alternatives/java_sdk_1.6.0
 M2_HOME=/etc/alternatives/maven-3.0
 echo "export JAVA_HOME=$JAVA_HOME" > $APP_HOME/.env/JAVA_HOME
@@ -247,5 +217,3 @@ export CART_INFO_DIR=$JBOSS_CARTRIDGE_ROOT/info
 $JBOSS_CARTRIDGE_ROOT/info/bin/deploy_httpd_proxy.sh $application $namespace $uuid $IP
 
 restart_httpd_graceful
-
-

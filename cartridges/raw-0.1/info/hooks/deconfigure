@@ -18,17 +18,6 @@
 
 # Destroys raw instance
 
-CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
-
-source ${CART_DIR}/li-controller/info/lib/selinux
-source ${CART_DIR}/li-controller/info/lib/git
-source ${CART_DIR}/li-controller/info/lib/util
-source ${CART_DIR}/li-controller/info/lib/apache
-
-load_node_conf
-
-load_node_data_conf
-
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
 
@@ -49,20 +38,10 @@ done
 
 [ $# -eq 3 ] || print_help
 
-namespace=`basename $2`
-application="$1"
-uuid=$3
+CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
+source ${CART_DIR}/li-controller/info/lib/util
 
-APP_HOME="$libra_dir/$uuid/"
-APP_DIR="$APP_HOME/$application"
-
-if [ ! -d "$APP_DIR" ]
-then
-  exit 125
-fi
-
-uid=$(id -u "$uuid")
-mcs_level=`openshift_mcs_level $uid`
+setup_deconfigure "$1" $2 $3
 
 #
 # Destroy git repo

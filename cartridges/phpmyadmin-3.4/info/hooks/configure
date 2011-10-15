@@ -16,26 +16,10 @@
 # General Public License and may only be used or replicated with the express
 # permission of Red Hat, Inc.
 
-# Creates a per application httpd instance
+# Creates a phpmyadmin instance
 
 # Exit on any errors
 set -e
-#set -x
-
-CART_DIR=/usr/libexec/li/cartridges
-CART_INFO_DIR=$CART_DIR/embedded/phpmyadmin-3.4/info
-CART_CONF_DIR=$CART_INFO_DIR/configuration/etc/conf
-
-source ${CART_DIR}/li-controller/info/lib/util
-source ${CART_DIR}/li-controller/info/lib/selinux
-source ${CART_DIR}/li-controller/info/lib/network
-source ${CART_DIR}/li-controller/info/lib/apache
-
-load_node_conf
-
-load_node_data_conf
-
-load_resource_limits_conf
 
 function log {
     echo "$0 $@" | logger -p local0.notice -t libra_phpmyadmin_configure
@@ -60,28 +44,23 @@ done
 
 [ $# -eq 3 ] || print_help
 
-application="$1"
-namespace=`basename $2`  # not used
-uuid=$3
+CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
+source ${CART_DIR}/li-controller/info/lib/util
 
-APP_HOME="$libra_dir/$uuid"
-APP_DIR=`echo $APP_HOME/$application | tr -s /`
+app_type="phpmyadmin-3.4"
+setup_embedded_configure "$1" $2 $3
+
 PHPMYADMIN_DIR=`echo $APP_HOME/phpmyadmin-3.4 | tr -s /` # ensure that there aren't double /'s
 PHPMYADMIN_CTL_SCRIPT="$PHPMYADMIN_DIR/${application}_phpmyadmin_ctl.sh"
-
-if [ ! -d "$APP_DIR" ]
-then
-  exit 125
-fi
 
 if [ ! -f "$APP_HOME/.env/OPENSHIFT_DB_USERNAME" ] ||
    [ ! -f "$APP_HOME/.env/OPENSHIFT_DB_PASSWORD" ] ||
    [ ! -f "$APP_HOME/.env/OPENSHIFT_DB_HOST" ] ||
    [ ! -f "$APP_HOME/.env/OPENSHIFT_DB_PORT" ]
 then
-    echo "CLIENT_ERROR: "
-    echo "CLIENT_ERROR: Mysql must be embedded before phpMyAdmin"
-    echo "CLIENT_ERROR: "
+    client_error ""
+    client_error "Mysql must be embedded before phpMyAdmin"
+    client_error ""
     exit 137
 fi
 
@@ -89,25 +68,11 @@ fi
 [ -d "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}" ] || error "httpd conf dir not available" 136
 
 #
-# Get user id info
-# Not caching this information caused some early chowns to work but some later
-# chowns to fail with a user not found error
-
-user_id=$(id -u "$uuid") || error "Could not find user $uuid ($namespace)" 134
-group_id=$(id -g "$uuid") || error "Could not find user $uuid ($namespace)" 135
-
-#
-# Get UID information and CVAL
-#
-uid=$(id -u "$uuid")
-mcs_level=`openshift_mcs_level $uid`
-
-#
-# Create http base for application, every app gets its own apache instance
+# Create the core of the application
 #
 if [ -d "$PHPMYADMIN_DIR" ]
 then
-    echo "CLIENT_ERROR: Embedded phpMyAdmin-3.4 already attached to $application"
+    client_error "Embedded phpMyAdmin-3.4 already attached to $application"
     exit 132
 fi
 mkdir -p "$PHPMYADMIN_DIR"
@@ -125,9 +90,9 @@ popd > /dev/null
 #
 IP=`embedded_find_open_ip $uid $APP_HOME`
 
-echo "CLIENT_ERROR: 341234124"
-echo "CLIENT_ERROR: $IP"
-echo "CLIENT_ERROR: 4134143"
+client_error "341234124"
+client_error "$IP"
+client_error "4134143"
 
 #
 # Create simple application specific data
@@ -247,10 +212,10 @@ restart_httpd_graceful
 . $APP_HOME/.env/OPENSHIFT_APP_DNS
 
 
-echo "CLIENT_RESULT: "
-echo "CLIENT_RESULT: phpMyAdmin 3.4 added.  Please make note of these credentials:"
-echo "CLIENT_RESULT: "
-echo "CLIENT_RESULT:    Root User: $OPENSHIFT_DB_USERNAME"
-echo "CLIENT_RESULT:    Root Password: $OPENSHIFT_DB_PASSWORD"
-echo "CLIENT_RESULT: "
-echo "CLIENT_RESULT: Connection URL: https://$OPENSHIFT_APP_DNS/phpmyadmin/"
+client_result ""
+client_result "phpMyAdmin 3.4 added.  Please make note of these credentials:"
+client_result ""
+client_result "   Root User: $OPENSHIFT_DB_USERNAME"
+client_result "   Root Password: $OPENSHIFT_DB_PASSWORD"
+client_result ""
+client_result "Connection URL: https://$OPENSHIFT_APP_DNS/phpmyadmin/"

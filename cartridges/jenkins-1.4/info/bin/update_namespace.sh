@@ -54,15 +54,15 @@ fi
 if ! out=$(runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $CART_INFO_DIR/bin/jenkins-cli reload-configuration --username '$JENKINS_USERNAME' --password-file '${APP_HOME}/.jenkins_password'" 2>&1)
 then
     # An error occurred reloading jenkins configuration
-    echo "CLIENT_MESSAGE: "
-    echo "CLIENT_MESSAGE: Could not reload Jenkins server '${application}' configuration:"
-    echo "CLIENT_MESSAGE:    $out"
-    echo "CLIENT_MESSAGE: This might be expected if '${application}' isn't running."
-    echo "CLIENT_MESSAGE: Otherwise you might need to reload it with 'rhc-ctl-app -a ${application} -c reload'"
-    echo "CLIENT_MESSAGE: or by using the Jenkins interface:"
-    echo "CLIENT_MESSAGE: http://${application}-${new_namespace}.${libra_domain}/manage"
-    echo "CLIENT_MESSAGE: "
+    client_message ""
+    client_message "Could not reload Jenkins server '${application}' configuration:"
+    client_message "   $out"
+    client_message "This might be expected if '${application}' isn't running."
+    client_message "Otherwise you might need to reload it with 'rhc-ctl-app -a ${application} -c reload'"
+    client_message "or by using the Jenkins interface:"
+    client_message "http://${application}-${new_namespace}.${libra_domain}/manage"
+    client_message ""
 fi
 
-echo "ENV_VAR_ADD: JENKINS_URL=http://${application}-${new_namespace}.${libra_domain}/"
+add_env_var "JENKINS_URL=http://${application}-${new_namespace}.${libra_domain}/"
 

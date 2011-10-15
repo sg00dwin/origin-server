@@ -18,15 +18,6 @@
 
 # Destroys mysql instance
 
-CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
-
-source ${CART_DIR}/li-controller/info/lib/util
-source ${CART_DIR}/li-controller/info/lib/selinux
-
-load_node_conf
-
-load_node_data_conf
-
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
 
@@ -47,24 +38,13 @@ done
 
 [ $# -eq 3 ] || print_help
 
-application="$1"
-namespace=$2 # Not used
-uuid=$3
+CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
+source ${CART_DIR}/li-controller/info/lib/util
 
-APP_HOME="$libra_dir/$uuid/"
-APP_DIR="$APP_HOME/$application"
+app_type="mysql-5.1"
+setup_embedded_deconfigure "$1" $2 $3
+
 MYSQL_DIR="$APP_HOME/mysql-5.1/"
-
-if [ ! -d "$APP_DIR" ]
-then
-  exit 125
-fi
-
-#
-# Get UID information and CVAL
-#
-uid=$(id -u "$uuid")
-mcs_level=`openshift_mcs_level $uid`
 
 #
 # Remove environment variables

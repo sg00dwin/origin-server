@@ -16,17 +16,7 @@
 # General Public License and may only be used or replicated with the express
 # permission of Red Hat, Inc.
 
-# Destroys http instance
-
-CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
-CART_INFO_DIR=$CART_DIR/embedded/jenkins-client-1.4/info
-
-source ${CART_DIR}/li-controller/info/lib/util
-source ${CART_DIR}/li-controller/info/lib/selinux
-
-load_node_conf
-
-load_node_data_conf
+# Destroys jenkins client instance
 
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
@@ -48,23 +38,11 @@ done
 
 [ $# -eq 3 ] || print_help
 
-application="$1"
-namespace=$2 # Not used
-uuid=$3
+CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
+source ${CART_DIR}/li-controller/info/lib/util
 
-APP_HOME="$libra_dir/$uuid/"
-APP_DIR="$APP_HOME/$application"
-
-if [ ! -d "$APP_DIR" ]
-then
-  exit 125
-fi
-
-#
-# Get UID information and CVAL
-#
-uid=$(id -u "$uuid")
-mcs_level=`openshift_mcs_level $uid`
+app_type="jenkins-client-1.4"
+setup_embedded_deconfigure "$1" $2 $3
 
 #
 # Remove environment variables
@@ -84,17 +62,17 @@ then
   if out=$(runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level ${CART_INFO_DIR}/bin/jenkins-cli disable-job --username "$JENKINS_USERNAME" --password-file "${OPENSHIFT_HOMEDIR}jenkins-client-1.4/.password" '${OPENSHIFT_APP_NAME}-build'" 2>&1)
   then
       # Existing job was disabled
-      echo "CLIENT_RESULT: "
-      echo "CLIENT_RESULT: The corresponding job '${OPENSHIFT_APP_NAME}-build' in Jenkins has been disabled."
-      echo "CLIENT_RESULT: You can re-enable or delete as desired."
+      client_result ""
+      client_result "The corresponding job '${OPENSHIFT_APP_NAME}-build' in Jenkins has been disabled."
+      client_result "You can re-enable or delete as desired."
   else
       # An error occurred disabling existing job
-      echo "CLIENT_RESULT: "
-      echo "CLIENT_RESULT: Could not disable job '${OPENSHIFT_APP_NAME}-build' in Jenkins server:"
-      echo "CLIENT_RESULT:    $out"
-      echo "CLIENT_RESULT: Continuing anyway."
+      client_result ""
+      client_result "Could not disable job '${OPENSHIFT_APP_NAME}-build' in Jenkins server:"
+      client_result "   $out"
+      client_result "Continuing anyway."
   fi
-  echo "CLIENT_RESULT: Job URL: ${JENKINS_URL}job/${OPENSHIFT_APP_NAME}-build/"
-  echo "CLIENT_RESULT: "
+  client_result "Job URL: ${JENKINS_URL}job/${OPENSHIFT_APP_NAME}-build/"
+  client_result ""
 fi
-echo "CLIENT_RESULT: Jenkins client 1.4 has been removed from: $OPENSHIFT_APP_NAME"
+client_result "Jenkins client 1.4 has been removed from: $OPENSHIFT_APP_NAME"

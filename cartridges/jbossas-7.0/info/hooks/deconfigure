@@ -17,21 +17,7 @@
 # General Public License and may only be used or replicated with the express
 # permission of Red Hat, Inc.
 
-# Destroys the customer jboss instance
-
-# The name of the jbossas cartridge dir under /usr/libexec/li/cartridges
-jboss_version=jbossas-7.0.0
-
-CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
-
-source ${CART_DIR}/li-controller/info/lib/selinux
-source ${CART_DIR}/li-controller/info/lib/git
-source ${CART_DIR}/li-controller/info/lib/util
-source ${CART_DIR}/li-controller/info/lib/apache
-
-load_node_conf
-
-load_node_data_conf
+# Destroys jbossas-7 instance
 
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
@@ -53,21 +39,12 @@ done
 
 [ $# -eq 3 ] || print_help
 
-namespace=`basename $2`
-application="$1"
-uuid=$3
+CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
+source ${CART_DIR}/li-controller/info/lib/util
 
-APP_HOME="$libra_dir/$uuid/"
-APP_DIR="$APP_HOME/$application"
+setup_deconfigure "$1" $2 $3
+
 M2_DIR="$APP_HOME/.m2" # maven dir
-
-if [ ! -d "$APP_DIR" ]
-then
-  exit 125
-fi
-
-uid=$(id -u "$uuid")
-mcs_level=`openshift_mcs_level $uid`
 
 #
 # Destroy git repo

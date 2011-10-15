@@ -13,6 +13,7 @@ function create_standard_env_vars {
     echo "export OPENSHIFT_TMP_DIR='/tmp/'" > $APP_HOME/.env/OPENSHIFT_TMP_DIR
     echo "export OPENSHIFT_RUN_DIR='$APP_DIR/run/'" > $APP_HOME/.env/OPENSHIFT_RUN_DIR
     echo "export OPENSHIFT_APP_NAME='$application'" > $APP_HOME/.env/OPENSHIFT_APP_NAME
+    echo "export OPENSHIFT_APP_TYPE='$app_type'" > $APP_HOME/.env/OPENSHIFT_APP_TYPE
 }
 
 function create_standard_network_env_vars {
@@ -28,6 +29,10 @@ function create_standard_redo_dir_env_var {
 
 function create_standard_path_env_var {
     echo "export PATH=$CART_INFO_DIR/bin/:$CART_DIR/abstract-httpd/info/bin/:$CART_DIR/li-controller/info/bin/:$PATH" > $APP_HOME/.env/PATH
+}
+
+function create_standard_app_dirs {
+	mkdir run tmp data
 }
 
 # Create simple application start / stop script
@@ -103,6 +108,15 @@ function load_resource_limits_conf {
     fi
 }
 
+function generate_password {
+    head -n 500 /dev/urandom|tr -dc "a-np-zA-NP-Z1-9-_"|fold -w 12 | head | head -n1
+}
+
+function obfuscate_password {
+	password="$1"
+	java -classpath "${APP_DIR}/data/war/WEB-INF/lib/acegi-security-1.0.5.jar:${APP_DIR}/data/war/WEB-INF/lib/commons-codec-1.4.jar:${CART_DIR}/jenkins-1.4/info/lib/password-encoder.jar" com.redhat.openshift.PasswordEncoder $password
+}
+
 function error {
     echo "$1" 1>&2
     exit "$2"
@@ -111,6 +125,164 @@ function error {
 function warning {
     echo "$1" 1>&2
     #echo "$2"
+}
+
+function client_result {
+	echo "CLIENT_RESULT: $1"
+}
+
+function client_message {
+	echo "CLIENT_MESSAGE: $1"
+}
+
+function client_error {
+	echo "CLIENT_ERROR: $1"
+}
+
+function client_debug {
+	echo "CLIENT_DEBUG: $1"
+}
+
+function add_ssh_key {
+	echo "SSH_KEY_ADD: $1"
+}
+
+function remove_ssh_key {
+	echo "SSH_KEY_REMOVE: "
+}
+
+function add_env_var {
+	echo "ENV_VAR_ADD: $1"
+}
+
+function remove_env_var {
+	echo "ENV_VAR_REMOVE: $1"
+}
+
+function add_broker_auth_key {
+	echo "BROKER_AUTH_KEY_ADD: "
+}
+
+function remove_broker_auth_key {
+	echo "BROKER_AUTH_KEY_REMOVE: "
+}
+
+function setup_configure {
+	source ${CART_DIR}/li-controller/info/lib/git
+	source ${CART_DIR}/li-controller/info/lib/selinux
+	source ${CART_DIR}/li-controller/info/lib/network
+	source ${CART_DIR}/li-controller/info/lib/apache
+	
+	CART_INFO_DIR=$CART_DIR/$app_type/info
+	CART_CONF_DIR=$CART_INFO_DIR/configuration/etc/conf
+	
+	load_node_conf
+
+    load_node_data_conf
+
+    load_resource_limits_conf
+
+    application="$1"
+	namespace=`basename $2`
+	uuid=$3
+	
+	APP_HOME="$libra_dir/$uuid"
+	APP_DIR=`echo $APP_HOME/$application | tr -s /`
+
+    #
+    # Get user id info
+    # Not caching this information caused some early chowns to work but some later
+    # chowns to fail with a user not found error
+	user_id=$(id -u "$uuid") || error "Could not find user $uuid ($namespace)" 134
+	group_id=$(id -g "$uuid") || error "Could not find user $uuid ($namespace)" 135
+	
+	uid=$(id -u "$uuid")
+	mcs_level=`openshift_mcs_level $uid`
+	export mcs_level
+}
+
+function setup_deconfigure {
+	source ${CART_DIR}/li-controller/info/lib/selinux
+	source ${CART_DIR}/li-controller/info/lib/git
+	source ${CART_DIR}/li-controller/info/lib/apache
+	
+	load_node_conf
+	
+	load_node_data_conf
+	
+	namespace=`basename $2`
+	application="$1"
+	uuid=$3
+	
+	APP_HOME="$libra_dir/$uuid/"
+	APP_DIR=`echo $APP_HOME/$application | tr -s /`
+	
+	if [ ! -d "$APP_DIR" ]
+	then
+	  exit 125
+	fi
+	
+	uid=$(id -u "$uuid")
+	mcs_level=`openshift_mcs_level $uid`
+}
+
+function setup_embedded_configure {
+	source ${CART_DIR}/li-controller/info/lib/selinux
+	source ${CART_DIR}/li-controller/info/lib/network
+	source ${CART_DIR}/li-controller/info/lib/apache
+	
+	CART_INFO_DIR=$CART_DIR/embedded/$app_type/info
+	CART_ETC_DIR=$CART_INFO_DIR/configuration/etc
+	CART_CONF_DIR=$CART_INFO_DIR/configuration/etc/conf
+	
+	load_node_conf
+	
+	load_node_data_conf
+	
+	load_resource_limits_conf
+	
+	application="$1"
+	namespace=$2 # Not used
+	uuid=$3
+	
+	APP_HOME="$libra_dir/$uuid/"
+	APP_DIR=`echo $APP_HOME/$application | tr -s /`
+	
+	if [ ! -d "$APP_DIR" ]
+	then
+	  exit 125
+	fi
+	
+	user_id=$(id -u "$uuid") || error "Could not find user $uuid" 134
+	group_id=$(id -g "$uuid") || error "Could not find user $uuid" 135
+
+	uid=$(id -u "$uuid")
+	mcs_level=`openshift_mcs_level $uid`
+}
+
+function setup_embedded_deconfigure {
+	source ${CART_DIR}/li-controller/info/lib/selinux
+	
+	CART_INFO_DIR=$CART_DIR/embedded/$app_type/info
+	
+	load_node_conf
+	
+	load_node_data_conf
+	
+	application="$1"
+	namespace=$2 # Not used
+	uuid=$3
+	
+	APP_HOME="$libra_dir/$uuid/"
+	APP_DIR=`echo $APP_HOME/$application | tr -s /`
+	
+	if [ ! -d "$APP_DIR" ]
+	then
+	  exit 125
+	fi
+
+	uid=$(id -u "$uuid")
+	mcs_level=`openshift_mcs_level $uid`
 }
 
 function rm_unobfuscated_app_home {

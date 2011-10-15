@@ -16,23 +16,10 @@
 # General Public License and may only be used or replicated with the express
 # permission of Red Hat, Inc.
 
-# Creates a per customer httpd instance
+# Creates a mysql instance
 
 # Exit on any errors
 set -e
-
-CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
-CART_INFO_DIR=$CART_DIR/embedded/mysql-5.1/info
-CART_CONF_DIR=$CART_INFO_DIR/configuration/etc
-
-source ${CART_DIR}/li-controller/info/lib/util
-source ${CART_DIR}/li-controller/info/lib/selinux
-
-load_node_conf
-
-load_node_data_conf
-
-load_resource_limits_conf
 
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
@@ -54,18 +41,13 @@ done
 
 [ $# -eq 3 ] || print_help
 
-application="$1"
-namespace=$2 # Not used
-uuid=$3
+CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
+source ${CART_DIR}/li-controller/info/lib/util
 
-APP_HOME="$libra_dir/$uuid/"
-APP_DIR=`echo $APP_HOME/$application | tr -s /`
+app_type="mysql-5.1"
+setup_embedded_configure "$1" $2 $3
+
 MYSQL_DIR="$APP_HOME/mysql-5.1/"
-
-if [ ! -d "$APP_DIR" ]
-then
-  exit 125
-fi
 
 #
 # Detect IP
@@ -73,32 +55,18 @@ fi
 IP=$OPENSHIFT_INTERNAL_IP
 
 #
-# Get user id info
-# Not caching this information caused some early chowns to work but some later
-# chowns to fail with a user not found error
-
-user_id=$(id -u "$uuid") || error "Could not find user $uuid" 134
-group_id=$(id -g "$uuid") || error "Could not find user $uuid" 135
-
-#
-# Get UID information and CVAL
-#
-uid=$(id -u "$uuid")
-mcs_level=`openshift_mcs_level $uid`
-
-#
-# Create http base for application, every app gets its own apache instance
+# Create the core of the application
 #
 
 if [ -d "$MYSQL_DIR" ]
 then
-    echo "CLIENT_ERROR: Embedded MySQL-5.1 already attached to $application"
+    client_error "Embedded MySQL-5.1 already attached to $application"
     exit 132
 fi
 mkdir -p "$MYSQL_DIR"
 pushd "$MYSQL_DIR" > /dev/null
 mkdir -p log etc data socket pid run
-sed "s,RHC_MYSQLDIR,$MYSQL_DIR," $CART_CONF_DIR/my.cnf > $MYSQL_DIR/etc/my.cnf
+sed "s,RHC_MYSQLDIR,$MYSQL_DIR," $CART_ETC_DIR/my.cnf > $MYSQL_DIR/etc/my.cnf
 sed -i "s,RHC_BIND_ADDR,$IP," $MYSQL_DIR/etc/my.cnf
 popd > /dev/null
 # Create mysql database
@@ -130,7 +98,7 @@ while [ ! -f "${MYSQL_DIR}/pid/mysql.pid" ] && [ $i -lt 30 ]
 done
 
 # Generate a password with no o's O's or 0's
-password=$(head -n 500 /dev/urandom|tr -dc "a-np-zA-NP-Z1-9-_"|fold -w 12 | head | head -n1)
+password=$(generate_password)
 
 #
 # Setup Environment Variables
@@ -159,11 +127,11 @@ delete from user;
 grant all on *.* to 'admin'@'$IP' identified by '$password' with grant option;
 flush privileges;" | mysql -u root -S "${MYSQL_DIR}/socket/mysql.sock" mysql > /dev/null || error "Failed to setup initial root user" 187
 
-echo "CLIENT_RESULT: "
-echo "CLIENT_RESULT: Mysql 5.1 database added.  Please make note of these credentials:"
-echo "CLIENT_RESULT: "
-echo "CLIENT_RESULT:    Root User: admin"
-echo "CLIENT_RESULT:    Root Password: $password"
-echo "CLIENT_RESULT:    Database Name: ${application}"
-echo "CLIENT_RESULT: "
-echo "CLIENT_RESULT: Connection URL: mysql://$IP:3306/"
+client_result ""
+client_result "Mysql 5.1 database added.  Please make note of these credentials:"
+client_result ""
+client_result "   Root User: admin"
+client_result "   Root Password: $password"
+client_result "   Database Name: ${application}"
+client_result ""
+client_result "Connection URL: mysql://$IP:3306/"

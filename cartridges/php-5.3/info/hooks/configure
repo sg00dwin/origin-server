@@ -16,26 +16,10 @@
 # General Public License and may only be used or replicated with the express
 # permission of Red Hat, Inc.
 
-# Creates a per application httpd instance
+# Creates a php instance
 
 # Exit on any errors
 set -e
-
-CART_DIR=/usr/libexec/li/cartridges
-CART_INFO_DIR=$CART_DIR/php-5.3/info
-CART_CONF_DIR=$CART_INFO_DIR/configuration/etc/conf
-
-source ${CART_DIR}/li-controller/info/lib/util
-source ${CART_DIR}/li-controller/info/lib/selinux
-source ${CART_DIR}/li-controller/info/lib/git
-source ${CART_DIR}/li-controller/info/lib/network
-source ${CART_DIR}/li-controller/info/lib/apache
-
-load_node_conf
-
-load_node_data_conf
-
-load_resource_limits_conf
 
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
@@ -57,41 +41,25 @@ done
 
 [ $# -eq 3 ] || print_help
 
-namespace=`basename $2`
-application="$1"
-uuid=$3
+CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
+app_type="php-5.3"
 
-APP_HOME="$libra_dir/$uuid"
-APP_DIR=`echo $APP_HOME/$application | tr -s /`
-
-unobfuscate_app_home $uuid $namespace $application
-
-#
-# Get user id info
-# Not caching this information caused some early chowns to work but some later
-# chowns to fail with a user not found error
-
-user_id=$(id -u "$uuid") || error "Could not find user $uuid ($namespace)" 134
-group_id=$(id -g "$uuid") || error "Could not find user $uuid ($namespace)" 135
-
-#
-# Create git app repo
-#
-uid=$(id -u "$uuid")
-mcs_level=`openshift_mcs_level $uid`
-clone_git_repo $application $user_id $group_id $uuid "php 5.3"
-GIT_DIR=$APP_HOME/git/$application.git
-
-
-#
-# Create http base for application, every app gets its own apache instance
-#
+source ${CART_DIR}/li-controller/info/lib/util
+setup_configure "$1" $2 $3
 
 check_app_dir_doesnt_exist
+unobfuscate_app_home $uuid $namespace $application
+
+clone_git_repo $application $user_id $group_id $uuid "php 5.3"
+
+#
+# Create the core of the application
+#
 
 mkdir -p "$APP_DIR"
 pushd "$APP_DIR" > /dev/null
-mkdir conf conf.d logs run repo sessions data tmp
+create_standard_app_dirs
+mkdir conf conf.d logs repo sessions
 mkdir -p phplib/pear/{docs,ext,php,cache,cfg,data,download,temp,tests,www}
 ln -s /usr/lib64/httpd/modules modules
 ln -s /etc/httpd/conf/magic conf/magic
@@ -127,7 +95,6 @@ create_standard_env_vars
 create_standard_network_env_vars
 create_standard_redo_dir_env_var
 create_standard_path_env_var
-echo "export OPENSHIFT_APP_TYPE='php-5.3'" > $APP_HOME/.env/OPENSHIFT_APP_TYPE
 
 #
 # Start the server

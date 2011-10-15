@@ -18,17 +18,6 @@
 
 # Destroys jenkins instance
 
-CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
-
-source ${CART_DIR}/li-controller/info/lib/selinux
-source ${CART_DIR}/li-controller/info/lib/git
-source ${CART_DIR}/li-controller/info/lib/util
-source ${CART_DIR}/li-controller/info/lib/apache
-
-load_node_conf
-
-load_node_data_conf
-
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
 
@@ -49,20 +38,10 @@ done
 
 [ $# -eq 3 ] || print_help
 
-namespace=`basename $2`
-application="$1"
-uuid=$3
+CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
+source ${CART_DIR}/li-controller/info/lib/util
 
-APP_HOME="$libra_dir/$uuid/"
-APP_DIR="$APP_HOME/$application"
-
-if [ ! -d "$APP_DIR" ]
-then
-  exit 125
-fi
-
-uid=$(id -u "$uuid")
-mcs_level=`openshift_mcs_level $uid`
+setup_deconfigure "$1" $2 $3
 
 #
 # OpenShift values so they can be used:
@@ -99,7 +78,7 @@ done
 #rm -rf "$APP_DIR"
 runcon -l s0-s0:c0.c1023 rm -rf "$APP_DIR"
 
-echo "SSH_KEY_REMOVE: "
+remove_ssh_key
 
 rm_unobfuscated_app_home $namespace $application
 
@@ -108,6 +87,6 @@ rm_unobfuscated_app_home $namespace $application
 #
 rm_httpd_proxy $uuid $namespace $application
 
-echo "ENV_VAR_REMOVE: JENKINS_URL"
-echo "ENV_VAR_REMOVE: JENKINS_USERNAME"
-echo "ENV_VAR_REMOVE: JENKINS_PASSWORD"
+remove_env_var "JENKINS_URL"
+remove_env_var "JENKINS_USERNAME"
+remove_env_var "JENKINS_PASSWORD"

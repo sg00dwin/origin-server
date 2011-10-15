@@ -18,15 +18,6 @@
 
 # Destroys phpmyadmin instance
 
-CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
-
-source ${CART_DIR}/li-controller/info/lib/util
-source ${CART_DIR}/li-controller/info/lib/selinux
-
-load_node_conf
-
-load_node_data_conf
-
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
 
@@ -47,23 +38,14 @@ done
 
 [ $# -eq 3 ] || print_help
 
-namespace=`basename $2`
-application="$1"
-uuid=$3
+CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
+source ${CART_DIR}/li-controller/info/lib/util
 
-APP_HOME="$libra_dir/$uuid/"
-APP_DIR="$APP_HOME/$application"
+app_type="phpmyadmin-3.4"
+setup_embedded_deconfigure "$1" $2 $3
+
 PHPMYADMIN_DIR=`echo $APP_HOME/phpmyadmin-3.4 | tr -s /` # ensure that there aren't double /'s
 PHPMYADMIN_CTL_SCRIPT="$PHPMYADMIN_DIR/${application}_phpmyadmin_ctl.sh"
-
-if [ ! -d "$APP_DIR" ]
-then
-  exit 125
-fi
-
-uid=$(id -u "$uuid")
-mcs_level=`openshift_mcs_level $uid`
-
 
 #
 # Stop app
