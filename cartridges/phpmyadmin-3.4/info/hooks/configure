@@ -110,6 +110,9 @@ then
     exit 137
 fi
 
+# check that the proxy pass include directory exists
+[ -d "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}" ] || error "httpd conf dir not available" 136
+
 #
 # Get user id info
 # Not caching this information caused some early chowns to work but some later
@@ -253,7 +256,6 @@ runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $PHPMYADMIN_
 # all of the configuration bits required for ssl to work including key location
 #
 
-[ -d "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}/" ] || error "httpd conf dir not available" 136
 
 cat <<EOF > "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}/phpmyadmin-3.4.conf"
 ProxyPass /phpmyadmin http://$IP:8080/phpmyadmin
