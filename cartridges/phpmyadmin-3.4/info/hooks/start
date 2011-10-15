@@ -21,13 +21,6 @@
 # Exit on any errors
 set -e
 
-CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
-
-source ${CART_DIR}/li-controller/info/lib/util
-source ${CART_DIR}/li-controller/info/lib/selinux
-
-load_node_conf
-
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
     echo "Stop a running application and disable it"
@@ -49,29 +42,17 @@ done
 
 [ $# -eq 3 ] || print_help
 
-uuid=`basename $3`
-application="$1"
+CART_DIR=/usr/libexec/li/cartridges
+source ${CART_DIR}/li-controller/info/lib/util
 
-APP_HOME="$libra_dir/$uuid/"
-APP_DIR="$APP_HOME/$application"
+setup_basic_hook "$1" $2 $3
+
 PHPMYADMIN_DIR=`echo $APP_HOME/phpmyadmin-3.4 | tr -s /` # ensure that there aren't double /'s
 PHPMYADMIN_CTL_SCRIPT="$PHPMYADMIN_DIR/${application}_phpmyadmin_ctl.sh"
-
-if [ ! -d "$APP_DIR" ]
-then
-  exit 125
-fi
-
-#
-# Get UID information and CVAL
-#
-uid=$(id -u "$uuid")
-mcs_level=`openshift_mcs_level $uid`
 
 
 #
 # Start application
 #
-
 rm -f "$PHPMYADMIN_DIR/run/stop_lock"
 runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $PHPMYADMIN_CTL_SCRIPT start"

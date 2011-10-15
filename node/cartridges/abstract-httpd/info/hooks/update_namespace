@@ -58,13 +58,9 @@ old_namespace=`basename $3`
 application="$1"
 uuid=$4
 
-APP_HOME="$libra_dir/$uuid/"
-APP_DIR="$APP_HOME/$application"
+setup_basic_vars
 
-if [ ! -d "$APP_DIR" ]
-then
-  exit 125
-fi
+check_app_dir_exists
 
 . $APP_HOME/.env/OPENSHIFT_APP_TYPE
 

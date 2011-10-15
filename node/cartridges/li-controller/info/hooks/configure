@@ -130,7 +130,7 @@ function homedir {
         echo $USERHOME
     else
         # remove duplicate slashes (/) and return the result
-	      echo ${libra_dir}/${USERNAME} | tr -s '/'
+	    echo ${libra_dir}/${USERNAME} | tr -s '/'
     fi
 }
 
@@ -244,7 +244,7 @@ function enable_user_ssh_access {
     ${NOOP} chmod 0750 ${SSHDIR}
     if [ -z "${NOOP}" ]
     then
-	      echo "$CMDENTRY" > ${SSHDIR}/authorized_keys
+	    echo "$CMDENTRY" > ${SSHDIR}/authorized_keys
     else
         echo "echo '$CMDENTRY' > ${SSHDIR}/authorized_keys"
     fi
@@ -301,10 +301,10 @@ EOF"
 	if [ -n "$VALUE" ]
 	then
 	    if [ -z "${NOOP}" ]
-            then
-		echo "${USERNAME} hard $KEY $VALUE" >> ${LIMITSFILE}
-            else
-		echo "echo \"${USERNAME} hard $KEY $VALUE\" >> ${LIMITSFILE}"
+        then
+		    echo "${USERNAME} hard $KEY $VALUE" >> ${LIMITSFILE}
+        else
+		    echo "echo \"${USERNAME} hard $KEY $VALUE\" >> ${LIMITSFILE}"
 	    fi
 	fi
     done
@@ -316,7 +316,6 @@ function remove_pam_limits {
     LIMITS_ORDER=${2:-$limits_order}
 
     LIMITSFILE=/etc/security/limits.d/${LIMITS_ORDER}-${USERNAME}.conf
-
 
     ${NOOP} rm -f ${LIMITSFILE}
 }
@@ -389,11 +388,11 @@ function get_quota_root() {
     QUOTA_ROOT=$1
     while [ -n "$QUOTA_ROOT" -a ! -f "$QUOTA_ROOT/aquota.user" ]
     do
-	if [ "$QUOTA_ROOT" = "/" ]
+        if [ "$QUOTA_ROOT" = "/" ]
         then
             QUOTA_ROOT=""
         else
-	    QUOTA_ROOT=`dirname $QUOTA_ROOT`
+            QUOTA_ROOT=`dirname $QUOTA_ROOT`
         fi
     done
     echo $QUOTA_ROOT
@@ -414,14 +413,14 @@ function quotas_enabled {
     # if you can't find the quota root for the given directory, it's not enabled
     if [ -z "${QUOTA_ROOT}" ]
     then
-	return 1
+        return 1
     fi
     quotaon -u -p $QUOTA_ROOT >/dev/null 2>&1
     # quotaon returns the opposite of what you expect
     # 1 = enabled, 0 = not enabled
     if [ $? -eq 0 ]
     then
-	return 1
+        return 1
     else
         return 0
     fi
@@ -451,15 +450,14 @@ function set_fs_quotas {
     # get the quota mount point
     if quotas_configured
     then
-	if quotas_enabled $libra_dir
-	then
-	    setquota $1 0 $2 0 $3 `get_quota_root $libra_dir`
-	else
-	    echo "WARNING: quotas not enabled on $libra_dir" >&2
-	fi
-
+        if quotas_enabled $libra_dir
+        then
+            setquota $1 0 $2 0 $3 `get_quota_root $libra_dir`
+        else
+            echo "WARNING: quotas not enabled on $libra_dir" >&2
+        fi
     else
-	echo "WARNING: quotas not configured" >&2
+        echo "WARNING: quotas not configured" >&2
     fi
 }
 
@@ -468,14 +466,14 @@ function remove_fs_quotas {
     USERNAME=$1
     if quotas_configured
     then
-	if quotas_enabled $libra_dir
-	then
-	    setquota $1 0 0 0 0 `get_quota_root $libra_dir`
-	else
-	    echo "WARNING: quotas not enabled on $libra_dir" >&2
-	fi
+        if quotas_enabled $libra_dir
+        then
+            setquota $1 0 0 0 0 `get_quota_root $libra_dir`
+        else
+            echo "WARNING: quotas not enabled on $libra_dir" >&2
+        fi
     else
-	echo "WARNING: quotas not configured" >&2
+        echo "WARNING: quotas not configured" >&2
     fi
 }
 
@@ -495,12 +493,12 @@ then
 
     if (service cgconfig status > /dev/null 2>&1)
     then
-	    service libra-cgroups startuser ${username} > /dev/null
+        service libra-cgroups startuser ${username} > /dev/null
     fi
 
     if (service libra-tc status > /dev/null 2>&1)
     then
-      service libra-tc startuser ${username} > /dev/null
+        service libra-tc startuser ${username} > /dev/null
     fi
 
     enable_user_ssh_access $username "$ssh_key"
@@ -512,12 +510,12 @@ then
 else
     if (service libra-tc status ${username} > /dev/null 2>&1)
     then
-	      service libra-tc stopuser ${username} > /dev/null
+        service libra-tc stopuser ${username} > /dev/null
     fi
 
     if (service cgconfig status > /dev/null)
     then
-	      service libra-cgroups stopuser ${username} > /dev/null
+        service libra-cgroups stopuser ${username} > /dev/null
     fi
 
     remove_fs_quotas $username

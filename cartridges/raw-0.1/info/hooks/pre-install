@@ -49,7 +49,7 @@ done
 
 [ $# -eq 1 ] || print_help
 
-app_id=$1
+uuid=$1
 
 rpm -q raw httpd > /dev/null || quit "Missing packages"
 [ -d "$CARTRIDGE_DIR" ] || quit "Missing cartridge dir: $CARTRIDGE_DIR"

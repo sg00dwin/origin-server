@@ -71,7 +71,14 @@ function chcon_app_dir_and_git {
 function check_app_dir_doesnt_exist {
     if [ -d "$APP_DIR" ] 
     then
-        error "${application}.  Please destroy then recreate, or pick a new name" 132
+        error "${application}.  Please destroy then recreate, or pick a new name: $APP_DIR" 132
+    fi
+}
+
+function check_app_dir_exists {
+    if [ ! -d "$APP_DIR" ]
+    then
+        error "${application}.  Application directory doesn't exist:  $APP_DIR" 125
     fi
 }
 
@@ -113,8 +120,8 @@ function generate_password {
 }
 
 function obfuscate_password {
-	password="$1"
-	java -classpath "${APP_DIR}/data/war/WEB-INF/lib/acegi-security-1.0.5.jar:${APP_DIR}/data/war/WEB-INF/lib/commons-codec-1.4.jar:${CART_DIR}/jenkins-1.4/info/lib/password-encoder.jar" com.redhat.openshift.PasswordEncoder $password
+    password="$1"
+    java -classpath "${APP_DIR}/data/war/WEB-INF/lib/acegi-security-1.0.5.jar:${APP_DIR}/data/war/WEB-INF/lib/commons-codec-1.4.jar:${CART_DIR}/jenkins-1.4/info/lib/password-encoder.jar" com.redhat.openshift.PasswordEncoder $password
 }
 
 function error {
@@ -128,161 +135,158 @@ function warning {
 }
 
 function client_result {
-	echo "CLIENT_RESULT: $1"
+    echo "CLIENT_RESULT: $1"
 }
 
 function client_message {
-	echo "CLIENT_MESSAGE: $1"
+    echo "CLIENT_MESSAGE: $1"
 }
 
 function client_error {
-	echo "CLIENT_ERROR: $1"
+    echo "CLIENT_ERROR: $1"
 }
 
 function client_debug {
-	echo "CLIENT_DEBUG: $1"
+    echo "CLIENT_DEBUG: $1"
 }
 
 function add_ssh_key {
-	echo "SSH_KEY_ADD: $1"
+    echo "SSH_KEY_ADD: $1"
 }
 
 function remove_ssh_key {
-	echo "SSH_KEY_REMOVE: "
+    echo "SSH_KEY_REMOVE: "
 }
 
 function add_env_var {
-	echo "ENV_VAR_ADD: $1"
+    echo "ENV_VAR_ADD: $1"
 }
 
 function remove_env_var {
-	echo "ENV_VAR_REMOVE: $1"
+    echo "ENV_VAR_REMOVE: $1"
 }
 
 function add_broker_auth_key {
-	echo "BROKER_AUTH_KEY_ADD: "
+    echo "BROKER_AUTH_KEY_ADD: "
 }
 
 function remove_broker_auth_key {
-	echo "BROKER_AUTH_KEY_REMOVE: "
+    echo "BROKER_AUTH_KEY_REMOVE: "
 }
 
 function setup_configure {
-	source ${CART_DIR}/li-controller/info/lib/git
-	source ${CART_DIR}/li-controller/info/lib/selinux
-	source ${CART_DIR}/li-controller/info/lib/network
-	source ${CART_DIR}/li-controller/info/lib/apache
+    source ${CART_DIR}/li-controller/info/lib/git
+    source ${CART_DIR}/li-controller/info/lib/selinux
+    source ${CART_DIR}/li-controller/info/lib/network
+    source ${CART_DIR}/li-controller/info/lib/apache
 	
-	CART_INFO_DIR=$CART_DIR/$app_type/info
-	CART_CONF_DIR=$CART_INFO_DIR/configuration/etc/conf
-	
-	load_node_conf
+    CART_INFO_DIR=$CART_DIR/$app_type/info
+    CART_CONF_DIR=$CART_INFO_DIR/configuration/etc/conf
+
+    load_node_conf
 
     load_node_data_conf
 
     load_resource_limits_conf
 
     application="$1"
-	namespace=`basename $2`
-	uuid=$3
+    namespace=`basename $2`
+    uuid=$3
+		
+    setup_basic_vars
 	
-	APP_HOME="$libra_dir/$uuid"
-	APP_DIR=`echo $APP_HOME/$application | tr -s /`
-
     #
     # Get user id info
     # Not caching this information caused some early chowns to work but some later
     # chowns to fail with a user not found error
-	user_id=$(id -u "$uuid") || error "Could not find user $uuid ($namespace)" 134
-	group_id=$(id -g "$uuid") || error "Could not find user $uuid ($namespace)" 135
-	
-	uid=$(id -u "$uuid")
-	mcs_level=`openshift_mcs_level $uid`
-	export mcs_level
+    user_id=$(id -u "$uuid") || error "Could not find user $uuid ($namespace)" 134
+    group_id=$(id -g "$uuid") || error "Could not find user $uuid ($namespace)" 135
+
+    export mcs_level
 }
 
 function setup_deconfigure {
-	source ${CART_DIR}/li-controller/info/lib/selinux
-	source ${CART_DIR}/li-controller/info/lib/git
-	source ${CART_DIR}/li-controller/info/lib/apache
-	
-	load_node_conf
-	
-	load_node_data_conf
-	
-	namespace=`basename $2`
-	application="$1"
-	uuid=$3
-	
-	APP_HOME="$libra_dir/$uuid/"
-	APP_DIR=`echo $APP_HOME/$application | tr -s /`
-	
-	if [ ! -d "$APP_DIR" ]
-	then
-	  exit 125
-	fi
-	
-	uid=$(id -u "$uuid")
-	mcs_level=`openshift_mcs_level $uid`
+    source ${CART_DIR}/li-controller/info/lib/selinux
+    source ${CART_DIR}/li-controller/info/lib/git
+    source ${CART_DIR}/li-controller/info/lib/apache
+
+    load_node_conf
+
+    load_node_data_conf
+
+    namespace=`basename $2`
+    application="$1"
+    uuid=$3
+
+    setup_basic_vars
+
+    check_app_dir_exists
 }
 
 function setup_embedded_configure {
-	source ${CART_DIR}/li-controller/info/lib/selinux
-	source ${CART_DIR}/li-controller/info/lib/network
-	source ${CART_DIR}/li-controller/info/lib/apache
-	
-	CART_INFO_DIR=$CART_DIR/embedded/$app_type/info
-	CART_ETC_DIR=$CART_INFO_DIR/configuration/etc
-	CART_CONF_DIR=$CART_INFO_DIR/configuration/etc/conf
-	
-	load_node_conf
-	
-	load_node_data_conf
-	
-	load_resource_limits_conf
-	
-	application="$1"
-	namespace=$2 # Not used
-	uuid=$3
-	
-	APP_HOME="$libra_dir/$uuid/"
-	APP_DIR=`echo $APP_HOME/$application | tr -s /`
-	
-	if [ ! -d "$APP_DIR" ]
-	then
-	  exit 125
-	fi
-	
-	user_id=$(id -u "$uuid") || error "Could not find user $uuid" 134
-	group_id=$(id -g "$uuid") || error "Could not find user $uuid" 135
+    source ${CART_DIR}/li-controller/info/lib/selinux
+    source ${CART_DIR}/li-controller/info/lib/network
+    source ${CART_DIR}/li-controller/info/lib/apache
 
-	uid=$(id -u "$uuid")
-	mcs_level=`openshift_mcs_level $uid`
+    CART_INFO_DIR=$CART_DIR/embedded/$app_type/info
+    CART_ETC_DIR=$CART_INFO_DIR/configuration/etc
+    CART_CONF_DIR=$CART_INFO_DIR/configuration/etc/conf
+
+    load_node_conf
+
+    load_node_data_conf
+
+    load_resource_limits_conf
+
+    application="$1"
+    namespace=$2 # Not used
+    uuid=$3
+
+    setup_basic_vars
+
+    check_app_dir_exists
+
+    user_id=$(id -u "$uuid") || error "Could not find user $uuid" 134
+    group_id=$(id -g "$uuid") || error "Could not find user $uuid" 135
 }
 
 function setup_embedded_deconfigure {
-	source ${CART_DIR}/li-controller/info/lib/selinux
-	
-	CART_INFO_DIR=$CART_DIR/embedded/$app_type/info
-	
-	load_node_conf
-	
-	load_node_data_conf
-	
-	application="$1"
-	namespace=$2 # Not used
-	uuid=$3
-	
-	APP_HOME="$libra_dir/$uuid/"
-	APP_DIR=`echo $APP_HOME/$application | tr -s /`
-	
-	if [ ! -d "$APP_DIR" ]
-	then
-	  exit 125
-	fi
+    source ${CART_DIR}/li-controller/info/lib/selinux
 
-	uid=$(id -u "$uuid")
-	mcs_level=`openshift_mcs_level $uid`
+    CART_INFO_DIR=$CART_DIR/embedded/$app_type/info
+
+    load_node_conf
+
+    load_node_data_conf
+
+    application="$1"
+    namespace=$2 # Not used
+    uuid=$3
+
+    setup_basic_vars
+
+    check_app_dir_exists
+}
+
+function setup_basic_hook {
+    source ${CART_DIR}/li-controller/info/lib/selinux
+
+    load_node_conf
+
+    uuid=`basename $3`
+    application="$1"
+    
+    setup_basic_vars
+
+    check_app_dir_exists
+}
+
+function setup_basic_vars {
+    APP_HOME="$libra_dir/$uuid/"
+    APP_DIR=`echo $APP_HOME/$application | tr -s /`
+
+    uid=$(id -u "$uuid")
+    mcs_level=`openshift_mcs_level $uid`
 }
 
 function rm_unobfuscated_app_home {
@@ -293,7 +297,7 @@ function rm_unobfuscated_app_home {
     appname=$2
 
     if [ $unobfuscate -eq 1 ]
-    then        
+    then
         rm "${libra_dir}/${appname}-${namespace}"
     fi
 }

@@ -26,14 +26,7 @@ new_namespace="$2"
 old_namespace="$3"
 uuid=$4
 
-APP_HOME="$libra_dir/$uuid/"
-APP_DIR="$APP_HOME/$application"
-
-#
-# Get UID information and CVAL
-#
-uid=$(id -u "$uuid")
-mcs_level=`openshift_mcs_level $uid`
+setup_basic_vars
 
 echo "export JENKINS_URL='http://${application}-${new_namespace}.${libra_domain}/'" > $APP_HOME/.env/JENKINS_URL
 . $APP_HOME/.env/OPENSHIFT_INTERNAL_IP

@@ -21,13 +21,6 @@
 # Exit on any errors
 set -e
 
-CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
-
-source ${CART_DIR}/li-controller/info/lib/util
-source ${CART_DIR}/li-controller/info/lib/selinux
-
-load_node_conf
-
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
     echo "Get application status"
@@ -49,23 +42,13 @@ done
 
 [ $# -eq 3 ] || print_help
 
-app_id=$3
-application="$1"
+CART_DIR=/usr/libexec/li/cartridges
+source ${CART_DIR}/li-controller/info/lib/util
 
-APP_HOME="$libra_dir/$app_id/"
-APP_DIR="$APP_HOME/$application"
-
-if [ ! -d "$APP_DIR" ]
-then
-  exit 125
-fi
-
-uid=$(id -u "$app_id")
-mcs_level=`openshift_mcs_level $uid`
+setup_basic_hook "$1" $2 $3
 
 #
 # Start application
 #
-
-runuser --shell /bin/sh "$app_id" -c "runcon -t libra_t -l $mcs_level $APP_DIR/${application}_ctl.sh reload"
+runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $APP_DIR/${application}_ctl.sh reload"
 

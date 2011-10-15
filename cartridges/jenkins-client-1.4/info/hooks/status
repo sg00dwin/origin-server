@@ -21,14 +21,6 @@
 # Exit on any errors
 set -e
 
-CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
-CART_INFO_DIR=$CART_DIR/embedded/jenkins-client-1.4/info
-
-source ${CART_DIR}/li-controller/info/lib/util
-source ${CART_DIR}/li-controller/info/lib/selinux
-
-load_node_conf
-
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
     echo "Get application status"
@@ -50,19 +42,11 @@ done
 
 [ $# -eq 3 ] || print_help
 
-uuid=`basename $3`
-application="$1"
+CART_DIR=/usr/libexec/li/cartridges
+CART_INFO_DIR=$CART_DIR/embedded/jenkins-client-1.4/info
+source ${CART_DIR}/li-controller/info/lib/util
 
-APP_HOME="$libra_dir/$uuid/"
-APP_DIR="$APP_HOME/$application"
-
-if [ ! -d "$APP_DIR" ]
-then
-  exit 125
-fi
-
-uid=$(id -u "$uuid")
-mcs_level=`openshift_mcs_level $uid`
+setup_basic_hook "$1" $2 $3
 
 . $APP_HOME/.env/OPENSHIFT_HOMEDIR
 . $APP_HOME/.env/OPENSHIFT_APP_NAME

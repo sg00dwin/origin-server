@@ -21,11 +21,6 @@
 # Exit on any errors
 set -e
 
-CART_DIR=/usr/libexec/li/cartridges
-source ${CART_DIR}/li-controller/info/lib/util
-
-load_node_conf
-
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
     echo "Get application status"
@@ -47,20 +42,14 @@ done
 
 [ $# -eq 3 ] || print_help
 
-customer_id=`basename $3`
-application="$1"
+CART_DIR=/usr/libexec/li/cartridges
+source ${CART_DIR}/li-controller/info/lib/util
 
-APP_HOME="$libra_dir/$customer_id/"
-APP_DIR="$APP_HOME/$application"
+setup_basic_hook "$1" $2 $3
+
 MYSQL_DIR="$APP_HOME/mysql-5.1/"
-
-if [ ! -d "$APP_DIR" ]
-then
-  exit 125
-fi
 
 #
 # Get the status of the application
 #
-
-runuser --shell /bin/sh "$customer_id" "$MYSQL_DIR/${application}_mysql_ctl.sh" status
+runuser --shell /bin/sh "$uuid" "$MYSQL_DIR/${application}_mysql_ctl.sh" status
