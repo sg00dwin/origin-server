@@ -6,6 +6,21 @@ do
     . $f
 done
 
+function wait_for_pid()
+{
+    pid=$1
+    for i in {1..60}
+    do
+        if `ps --pid $pid > /dev/null 2>&1`
+        then
+            echo "Waiting for pid to end"
+            sleep .5
+        else
+            break
+        fi
+    done
+}
+
 if ! [ $# -eq 1 ]
 then
     echo "Usage: $0 [start|restart|graceful|graceful-stop|stop]"
@@ -29,7 +44,14 @@ case "$1" in
             /usr/sbin/httpd -C 'Include ${OPENSHIFT_PHPMYADMIN_APP_DIR}conf.d/*.conf' -f $CART_CONF_DIR/httpd_nolog.conf -k $1
         fi
     ;;
-    restart|graceful|graceful-stop|stop)
+
+    graceful-stop|stop)
+        httpd_pid=`cat ${OPENSHIFT_PHPMYADMIN_APP_DIR}run/httpd.pid 2> /dev/null`
+        /usr/sbin/httpd -C 'Include ${OPENSHIFT_PHPMYADMIN_APP_DIR}conf.d/*.conf' -f $CART_CONF_DIR/httpd_nolog.conf -k $1
+        wait_for_pid $httpd_pid
+    ;;
+
+    restart|graceful)
         /usr/sbin/httpd -C 'Include ${OPENSHIFT_PHPMYADMIN_APP_DIR}conf.d/*.conf' -f $CART_CONF_DIR/httpd_nolog.conf -k $1
     ;;
 esac
