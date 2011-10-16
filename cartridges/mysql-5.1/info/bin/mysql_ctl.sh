@@ -24,9 +24,8 @@ fi
 
 MYSQL_DIR="$OPENSHIFT_HOMEDIR/mysql-5.1/"
 
-start(){
-
-        /usr/bin/mysqld_safe --defaults-file=$MYSQL_DIR/etc/my.cnf >/dev/null 2>&1 &
+start() {
+    /usr/bin/mysqld_safe --defaults-file=$MYSQL_DIR/etc/my.cnf >/dev/null 2>&1 &
 }
 
 stop(){

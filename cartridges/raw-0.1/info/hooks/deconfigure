@@ -43,31 +43,11 @@ source ${CART_DIR}/li-controller/info/lib/util
 
 setup_deconfigure "$1" $2 $3
 
-#
-# Destroy git repo
-#
 destroy_git_repo $application $uuid
 
 stop_app
 
-# Confirm pid is gone before removing apps
-i=0
-while [ -f ${APP_DIR}/run/httpd.pid ] && [ $i -lt 30 ]
-    do
-    sleep .1
-    i=$(($i + 1))
-done
-
-for LOGFILE in `find $APP_DIR/logs -type f`
-do
-  for PID in `/usr/sbin/lsof -t $LOGFILE`
-  do
-    /bin/kill -9 $PID
-  done
-done
-
-#rm -rf "$APP_DIR"
-runcon -l s0-s0:c0.c1023 rm -rf "$APP_DIR"
+rm_app_dir
 
 rm_unobfuscated_app_home $namespace $application
 

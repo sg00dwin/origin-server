@@ -52,24 +52,9 @@ PHPMYADMIN_CTL_SCRIPT="$PHPMYADMIN_DIR/${application}_phpmyadmin_ctl.sh"
 #
 runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $PHPMYADMIN_CTL_SCRIPT stop" || warning "Failed to stop ${application}" 121
 
+confirm_pid_gone "${PHPMYADMIN_DIR}/run/httpd.pid"
 
-# Confirm pid is gone before removing apps
-i=0
-while [ -f ${PHPMYADMIN_DIR}/run/httpd.pid ] && [ $i -lt 30 ]
-    do
-    sleep .1
-    i=$(($i + 1))
-done
-
-# Make sure there aren't apps still writing to the log files
-for LOGFILE in `find $PHPMYADMIN_DIR/logs -type f`
-do
-  for PID in `/usr/sbin/lsof -t $LOGFILE`
-  do
-    /bin/kill -9 $PID
-  done
-done
-
+confirm_log_files_inactive "$PHPMYADMIN_DIR/logs"
 
 #
 # Remove environment variables

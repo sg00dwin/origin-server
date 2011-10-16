@@ -56,13 +56,7 @@ MYSQL_DIR="$APP_HOME/mysql-5.1/"
 #
 /bin/su -s /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $MYSQL_DIR/${application}_mysql_ctl.sh stop"
 
-# Confirm pid is gone before removing apps
-i=0
-while [ -f ${MYSQL_DIR}/pid/mysql.pid ] && [ $i -lt 30 ]
-    do
-    sleep .2
-    i=$(($i + 1))
-done
+confirm_pid_gone "${MYSQL_DIR}/pid/mysql.pid"
 
 runcon -l s0-s0:c0.c1023 rm -rf "$MYSQL_DIR" "$MYSQL_DIR/${application}_mysql_ctl.sh"
 

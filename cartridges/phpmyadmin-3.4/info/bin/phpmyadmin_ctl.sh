@@ -1,25 +1,13 @@
 #!/bin/bash -e
 
+CART_DIR=/usr/libexec/li/cartridges
+source ${CART_DIR}/li-controller/info/lib/util
+
 # Import Environment Variables
 for f in ~/.env/*
 do
     . $f
 done
-
-function wait_for_pid()
-{
-    pid=$1
-    for i in {1..60}
-    do
-        if `ps --pid $pid > /dev/null 2>&1`
-        then
-            echo "Waiting for stop to finish"
-            sleep .5
-        else
-            break
-        fi
-    done
-}
 
 if ! [ $# -eq 1 ]
 then
@@ -48,7 +36,7 @@ case "$1" in
     graceful-stop|stop)
         httpd_pid=`cat ${OPENSHIFT_PHPMYADMIN_APP_DIR}run/httpd.pid 2> /dev/null`
         /usr/sbin/httpd -C 'Include ${OPENSHIFT_PHPMYADMIN_APP_DIR}conf.d/*.conf' -f $CART_CONF_DIR/httpd_nolog.conf -k $1
-        wait_for_pid $httpd_pid
+        wait_for_stop $httpd_pid
     ;;
 
     restart|graceful)

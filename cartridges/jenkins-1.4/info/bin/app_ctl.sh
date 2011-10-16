@@ -1,5 +1,8 @@
 #!/bin/bash -e
 
+CART_DIR=/usr/libexec/li/cartridges
+source ${CART_DIR}/li-controller/info/lib/util
+
 # Import Environment Variables
 for f in ~/.env/*
 do
@@ -83,16 +86,7 @@ case "$1" in
                 fi
                 pid=`cat ${OPENSHIFT_RUN_DIR}jenkins.pid 2> /dev/null`
                 kill -TERM $pid > /dev/null 2>&1
-                for i in {1..60}
-                do
-                    if `ps --pid $pid > /dev/null 2>&1`
-                    then
-                        echo "Waiting for stop to finish"
-                        sleep .5
-                    else
-                        break
-                    fi
-                done
+                wait_for_stop $pid
             else
                 echo "Application is already stopped!" 1>&2
                 exit 0

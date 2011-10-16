@@ -9,12 +9,9 @@ load_node_conf
 APP_HOME=`echo ${libra_dir}/${USERNAME} | tr -s '/'`
 
 #
-# Import env values so they can be used:
+# Import env vars so they can be used:
 #
-for f in $APP_HOME/.env/*
-do
-    . $f
-done
+import_env_vars
 
 BROKER_AUTH_DIR="$OPENSHIFT_HOMEDIR/.auth"
 

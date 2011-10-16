@@ -117,12 +117,9 @@ create_standard_redo_dir_env_var
 create_standard_path_env_var
 
 #
-# Import new values so they can be used:
+# Import environment vars so they can be used:
 #
-for f in $APP_HOME/.env/*
-do
-    . $f
-done
+import_env_vars
 
 #
 # Start the server

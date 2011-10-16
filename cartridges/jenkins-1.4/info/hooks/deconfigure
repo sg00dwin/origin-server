@@ -44,39 +44,19 @@ source ${CART_DIR}/li-controller/info/lib/util
 setup_deconfigure "$1" $2 $3
 
 #
-# OpenShift values so they can be used:
+# Import env vars so they can be used:
 #
-for f in $APP_HOME/.env/*
-do
-    . $f
-done
+import_env_vars
 
-#
-# Destroy git repo
-#
 destroy_git_repo $application $uuid
 
 jenkins_pid=$(/bin/cat ${OPENSHIFT_RUN_DIR}/jenkins.pid)
+
 stop_app
 
+force_kill $jenkins_pid
 
-for i in {1..12}
-do
-    if ! /bin/kill -0 $jenkins_pid > /dev/null 2>&1
-    then
-        echo "Waiting for stop to finish"
-        sleep .2
-        if [ $i > 9 ]
-        then
-            /bin/kill -9 $jenkins_pid
-        fi
-    else
-        break
-    fi
-done
-
-#rm -rf "$APP_DIR"
-runcon -l s0-s0:c0.c1023 rm -rf "$APP_DIR"
+rm_app_dir
 
 remove_ssh_key
 

@@ -82,6 +82,11 @@ function check_app_dir_exists {
     fi
 }
 
+function rm_app_dir {
+	#rm -rf "$APP_DIR"
+	runcon -l s0-s0:c0.c1023 rm -rf "$APP_DIR"
+}
+
 function load_node_conf {
     if [ -f '/etc/libra/node.conf' ]
     then
@@ -282,6 +287,66 @@ function setup_basic_vars {
 
     uid=$(id -u "$uuid")
     mcs_level=`openshift_mcs_level $uid`
+}
+
+function force_kill {
+    pid=$1
+    for i in {1..12}
+    do
+        if ! /bin/kill -0 $pid > /dev/null 2>&1
+        then
+            echo "Waiting for stop to finish"
+            sleep .2
+            if [ $i > 9 ]
+            then
+                /bin/kill -9 $pid
+            fi
+        else
+            break
+        fi
+    done
+}
+
+function confirm_log_files_inactive {
+    log_dir="$1"
+    for LOGFILE in `find $log_dir -type f`
+    do
+      for PID in `/usr/sbin/lsof -t $LOGFILE`
+      do
+        /bin/kill -9 $PID
+      done
+    done
+}
+
+function confirm_pid_gone {
+    pid_file="$1"
+    i=0
+    while [ -f $pid_file ] && [ $i -lt 30 ]
+    do
+        sleep .2
+        i=$(($i + 1))
+    done
+}
+
+function wait_for_stop {
+	pid=$1
+    for i in {1..60}
+    do
+        if `ps --pid $pid > /dev/null 2>&1`
+        then
+            echo "Waiting for stop to finish"
+            sleep .5
+        else
+            break
+        fi
+    done
+}
+
+function import_env_vars {
+    for f in $APP_HOME/.env/*
+    do
+        . $f
+    done
 }
 
 function rm_unobfuscated_app_home {

@@ -46,22 +46,13 @@ setup_deconfigure "$1" $2 $3
 
 M2_DIR="$APP_HOME/.m2" # maven dir
 
-#
-# Destroy git repo
-#
 destroy_git_repo $application $uuid
 
 stop_app
 
-# Confirm pid is gone before removing apps
-i=0
-while [ -f ${APP_DIR}/run/jboss.pid ] && [ $i -lt 30 ]
-    do
-    sleep .1
-    i=$(($i + 1))
-done
-#rm -rf "$APP_DIR"
-runcon -l s0-s0:c0.c1023 rm -rf "$APP_DIR"
+confirm_pid_gone "${APP_DIR}/run/jboss.pid"
+
+rm_app_dir
 
 rm_unobfuscated_app_home $namespace $application
 
