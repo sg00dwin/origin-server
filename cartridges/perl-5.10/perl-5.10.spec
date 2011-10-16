@@ -2,7 +2,7 @@
 
 Summary:   Provides mod_perl support
 Name:      rhc-cartridge-perl-5.10
-Version:   0.11.4
+Version:   0.11.5
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -75,6 +75,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Sun Oct 16 2011 Dan McPherson <dmcphers@redhat.com> 0.11.5-1
+- abstract out remainder of deconfigure (dmcphers@redhat.com)
+
 * Sat Oct 15 2011 Dan McPherson <dmcphers@redhat.com> 0.11.4-1
 - more abstracting (dmcphers@redhat.com)
 - more abstracting (dmcphers@redhat.com)
