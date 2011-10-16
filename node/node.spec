@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.80.6
+Version:       0.80.7
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -159,6 +159,9 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Sun Oct 16 2011 Dan McPherson <dmcphers@redhat.com> 0.80.7-1
+- abstract out remainder of deconfigure (dmcphers@redhat.com)
+
 * Sat Oct 15 2011 Dan McPherson <dmcphers@redhat.com> 0.80.6-1
 - move jenkins specific method back to jenkins (dmcphers@redhat.com)
 
