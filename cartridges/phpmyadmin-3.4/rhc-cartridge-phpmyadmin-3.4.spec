@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/phpmyadmin-3.4
 
 Name: rhc-cartridge-phpmyadmin-3.4
-Version: 0.2.2
+Version: 0.2.3
 Release: 1%{?dist}
 Summary: Embedded phpMyAdmin support for express
 
@@ -48,6 +48,22 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Sat Oct 15 2011 Dan McPherson <dmcphers@redhat.com> 0.2.3-1
+- abstract out common vars in remaining hooks (dmcphers@redhat.com)
+- more abstracting (dmcphers@redhat.com)
+- add an include (dmcphers@redhat.com)
+- more abstracting (dmcphers@redhat.com)
+- more abstracting of common code (dmcphers@redhat.com)
+- move sources to the top and abstract out error method (dmcphers@redhat.com)
+- move simple functions to source files (dmcphers@redhat.com)
+- in the phpmyadmin configure script, moved the check for the proxy pass
+  directory to the top so that if it fails, there's nothing to clean up
+  (twiest@redhat.com)
+- changed verbage for phpmyadmin stop (to match other carts)
+  (twiest@redhat.com)
+- Added wait in the phpmyadmin ctl stop script (fixes bug where stop test
+  fails) (twiest@redhat.com)
+
 * Fri Oct 14 2011 Dan McPherson <dmcphers@redhat.com> 0.2.2-1
 - Bug 746182 (dmcphers@redhat.com)
 
