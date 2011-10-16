@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.80.4
+Version:       0.80.5
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -159,6 +159,17 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Sat Oct 15 2011 Dan McPherson <dmcphers@redhat.com> 0.80.5-1
+- abstract out common vars in remaining hooks (dmcphers@redhat.com)
+- more abstracting (dmcphers@redhat.com)
+- switch error to warning on git removal fail more abstracting
+  (dmcphers@redhat.com)
+- more abstracting (dmcphers@redhat.com)
+- more abstracting of common code (dmcphers@redhat.com)
+- move sources to the top and abstract out error method (dmcphers@redhat.com)
+- missed a mcs_level in start (dmcphers@redhat.com)
+- move simple functions to source files (dmcphers@redhat.com)
+
 * Fri Oct 14 2011 Dan McPherson <dmcphers@redhat.com> 0.80.4-1
 - fix param order (dmcphers@redhat.com)
 
