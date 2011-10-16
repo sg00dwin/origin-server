@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/jenkins-client-1.4
 
 Name: rhc-cartridge-jenkins-client-1.4
-Version: 0.14.3
+Version: 0.14.4
 Release: 1%{?dist}
 Summary: Embedded jenkins client support for express 
 Group: Network/Daemons
@@ -47,6 +47,13 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Sat Oct 15 2011 Dan McPherson <dmcphers@redhat.com> 0.14.4-1
+- abstract out common vars in remaining hooks (dmcphers@redhat.com)
+- more abstracting (dmcphers@redhat.com)
+- more abstracting (dmcphers@redhat.com)
+- move sources to the top and abstract out error method (dmcphers@redhat.com)
+- move simple functions to source files (dmcphers@redhat.com)
+
 * Fri Oct 14 2011 Dan McPherson <dmcphers@redhat.com> 0.14.3-1
 - add simple jenkins client status - just a url (dmcphers@redhat.com)
 - more app_ctl fixes (dmcphers@redhat.com)
