@@ -2,7 +2,7 @@
 
 Summary:   Provides python-wsgi-3.2 support
 Name:      rhc-cartridge-wsgi-3.2
-Version:   0.80.4
+Version:   0.80.5
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -78,6 +78,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Sun Oct 16 2011 Dan McPherson <dmcphers@redhat.com> 0.80.5-1
+- abstract out remainder of deconfigure (dmcphers@redhat.com)
+
 * Sat Oct 15 2011 Dan McPherson <dmcphers@redhat.com> 0.80.4-1
 - abstract out common vars in remaining hooks (dmcphers@redhat.com)
 - more abstracting (dmcphers@redhat.com)
