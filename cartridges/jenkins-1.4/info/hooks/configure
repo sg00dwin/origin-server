@@ -54,6 +54,11 @@ function create_repo {
     setup_git_repo $application $user_id $group_id $uuid "jenkins 1.4"
 }
 
+function obfuscate_password {
+    password="$1"
+    java -classpath "${APP_DIR}/data/war/WEB-INF/lib/acegi-security-1.0.5.jar:${APP_DIR}/data/war/WEB-INF/lib/commons-codec-1.4.jar:${CART_DIR}/jenkins-1.4/info/lib/password-encoder.jar" com.redhat.openshift.PasswordEncoder $password
+}
+
 while getopts 'd' OPTION
 do
     case $OPTION in
