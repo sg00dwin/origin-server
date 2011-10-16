@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/phpmyadmin-3.4
 
 Name: rhc-cartridge-phpmyadmin-3.4
-Version: 0.2.3
+Version: 0.2.4
 Release: 1%{?dist}
 Summary: Embedded phpMyAdmin support for express
 
@@ -48,6 +48,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Sun Oct 16 2011 Dan McPherson <dmcphers@redhat.com> 0.2.4-1
+- abstract out remainder of deconfigure (dmcphers@redhat.com)
+
 * Sat Oct 15 2011 Dan McPherson <dmcphers@redhat.com> 0.2.3-1
 - abstract out common vars in remaining hooks (dmcphers@redhat.com)
 - more abstracting (dmcphers@redhat.com)
