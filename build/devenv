@@ -212,7 +212,7 @@ class DevEnv < Thor
 
     begin
       print "Updating all packages on the system..."
-      instance.ssh('yum clean metadata; yum update -y; yum update --disablerepo=\* --enablerepo=li', 3600)
+      instance.ssh('yum clean metadata; yum update -y; yum update -y --disablerepo=\* --enablerepo=li', 3600)
       puts "Done"
 
       if options.reboot?
