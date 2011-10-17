@@ -27,6 +27,7 @@ CART_INFO_DIR=$CART_DIR/$OPENSHIFT_APP_TYPE/info
 
 source ${CART_DIR}/li-controller/info/lib/util
 source ${CART_DIR}/li-controller/info/lib/apache
+source ${CART_DIR}/li-controller/info/lib/selinux
 
 load_node_conf
 
