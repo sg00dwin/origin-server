@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.80.8
+Version:       0.80.9
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -163,6 +163,18 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Mon Oct 17 2011 Dan McPherson <dmcphers@redhat.com> 0.80.9-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- Ensuring all services are started when issuing a 'start'
+  (mmcgrath@redhat.com)
+- add abstract (more generic than httpd)  cart and use from existing carts
+  (dmcphers@redhat.com)
+- making bash type (mmcgrath@redhat.com)
+- increasing nproc limit (mmcgrath@redhat.com)
+- Added support for force-stop (mmcgrath@redhat.com)
+- Allow force-stop (mmcgrath@redhat.com)
+
 * Mon Oct 17 2011 Dan McPherson <dmcphers@redhat.com> 0.80.8-1
 - Bug 746583 (dmcphers@redhat.com)
 
