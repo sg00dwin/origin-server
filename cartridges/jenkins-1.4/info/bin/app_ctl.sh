@@ -136,11 +136,7 @@ case "$1" in
             echo "Application '${OPENSHIFT_APP_NAME}' is either stopped or inaccessible"
             exit 0
         fi
-        echo ""
-        echo "Running Processes:"
-        echo ""
-        ps -eFCvx
-        echo ""
+        print_running_processes
         exit 0
     ;;
 esac

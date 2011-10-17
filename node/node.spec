@@ -148,6 +148,10 @@ fi
 %attr(0750,-,-) %{_libexecdir}/li/cartridges/abstract-httpd/info/hooks/
 %attr(0755,-,-) %{_libexecdir}/li/cartridges/abstract-httpd/info/bin/
 %{_libexecdir}/li/cartridges/abstract-httpd/info
+%dir %attr(0755,root,root) %{_libexecdir}/li/cartridges/abstract/
+%attr(0750,-,-) %{_libexecdir}/li/cartridges/abstract/info/hooks/
+%attr(0755,-,-) %{_libexecdir}/li/cartridges/abstract/info/bin/
+%{_libexecdir}/li/cartridges/abstract/info
 %attr(0750,-,-) %{_bindir}/rhc-accept-node
 %attr(0750,-,-) %{_bindir}/rhc-node-account
 %attr(0750,-,-) %{_bindir}/rhc-node-application

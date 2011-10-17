@@ -14,6 +14,7 @@ Feature: Cartridge Verification Tests
     |     1     |  rack-1.1    |
     |     1     |  jbossas-7.0 |
     |     1     |  jenkins-1.4 |
+    |     1     |  raw-0.1     |
 
   Scenario Outline: Application Modification
     Given an existing <type> application
