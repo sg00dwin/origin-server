@@ -1,7 +1,14 @@
 #!/bin/bash
 
 function start_app {
-    runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $APP_DIR/${application}_ctl.sh start" || error "Failed to start ${application}" 121
+    for env_var in  $APP_HOME/.env/*_CTL_SCRIPT
+    do
+        . $env_var
+    done
+    for cmd in `awk 'BEGIN { for (a in ENVIRON) if (a ~ /_CTL_SCRIPT$/) print ENVIRON[a] }'`
+    do
+        runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $cmd start" || error "Failed to start ${application}" 121
+    done
 }
 
 function stop_app {
@@ -381,3 +388,5 @@ function unobfuscate_app_home {
         fi
     fi
 }
+
+

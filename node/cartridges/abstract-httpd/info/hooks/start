@@ -51,4 +51,4 @@ setup_basic_hook "$1" $2 $3
 # Start application
 #
 rm -f "$APP_DIR/run/stop_lock"
-runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $APP_DIR/${application}_ctl.sh start"
+start_app
