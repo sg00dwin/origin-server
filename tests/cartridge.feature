@@ -13,6 +13,7 @@ Feature: Cartridge Verification Tests
     |     1     |  perl-5.10   |
     |     1     |  rack-1.1    |
     |     1     |  jbossas-7.0 |
+    |     1     |  jenkins-1.4 |
 
   Scenario Outline: Application Modification
     Given an existing <type> application
@@ -40,6 +41,7 @@ Feature: Cartridge Verification Tests
     |   perl-5.10   |
     |   rack-1.1    |
     |   jbossas-7.0 |
+    |   jenkins-1.4 |
 
   Scenario Outline: Application Starting
     Given an existing <type> application
@@ -53,6 +55,7 @@ Feature: Cartridge Verification Tests
     |   perl-5.10   |
     |   rack-1.1    |
     |   jbossas-7.0 |
+    |   jenkins-1.4 |
 
   Scenario Outline: Application Restarting
     Given an existing <type> application
@@ -66,6 +69,7 @@ Feature: Cartridge Verification Tests
     |   perl-5.10   |
     |   rack-1.1    |
     |   jbossas-7.0 |
+    |   jenkins-1.4 |
 
   Scenario Outline: Application Restarting From Stop
     Given an existing <type> application
@@ -79,6 +83,7 @@ Feature: Cartridge Verification Tests
     |   wsgi-3.2    |
     |   perl-5.10   |
     |   rack-1.1    |
+    |   jenkins-1.4 |
 
   Scenario Outline: Application Destroying
     Given an existing <type> application
@@ -92,3 +97,4 @@ Feature: Cartridge Verification Tests
     |   perl-5.10   |
     |   rack-1.1    |
     |   jbossas-7.0 |
+    |   jenkins-1.4 |

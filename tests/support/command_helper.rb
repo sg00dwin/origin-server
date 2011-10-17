@@ -169,7 +169,7 @@ module CommandHelper
     proclist = outstrings.collect { |line|
       match = line.match(ps_pattern)
       match and (match[1] if match[2] == cmd_name)
-    }.compact!
+    }.compact
 
     found = proclist ? proclist.size : 0
     $logger.debug("Found = #{found} instances of #{cmd_name}")
