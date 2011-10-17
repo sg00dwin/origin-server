@@ -2,7 +2,7 @@
 
 Summary:   Provides php-5.3 support
 Name:      rhc-cartridge-php-5.3
-Version:   0.80.5
+Version:   0.80.6
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -85,6 +85,11 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Mon Oct 17 2011 Dan McPherson <dmcphers@redhat.com> 0.80.6-1
+- add abstract (more generic than httpd)  cart and use from existing carts
+  (dmcphers@redhat.com)
+- Added support for force-stop (mmcgrath@redhat.com)
+
 * Sun Oct 16 2011 Dan McPherson <dmcphers@redhat.com> 0.80.5-1
 - abstract out remainder of deconfigure (dmcphers@redhat.com)
 
