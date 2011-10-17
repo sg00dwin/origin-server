@@ -36,7 +36,7 @@ done
 
 function generate_ssh_keys {
     /bin/mkdir -p $APP_DIR/data/.ssh/
-    /usr/bin/ssh-keygen -N '' -f $APP_DIR/data/.ssh/jenkins_id_rsa
+    /usr/bin/ssh-keygen -N '' -f $APP_DIR/data/.ssh/jenkins_id_rsa > /dev/null
 
     /bin/chown root.$uuid -R "$APP_DIR/data/.ssh/"
     chmod 0750 "$APP_DIR/data/.ssh/"

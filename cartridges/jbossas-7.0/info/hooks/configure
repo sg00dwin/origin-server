@@ -67,7 +67,7 @@ function create_repo {
     
     cp -ad /usr/libexec/li/cartridges/${jboss_version}/template $APP_HOME/git
     
-    pushd $APP_HOME/git/template
+    pushd $APP_HOME/git/template > /dev/null
     sed -i "s/{APP_NAME}/$application/g" pom.xml
     mkdir -p .openshift/config
     cp "$APP_JBOSS"/standalone/configuration/standalone.xml .openshift/config
@@ -75,14 +75,14 @@ function create_repo {
     cat <<__EOF__ > .gitignore
 target
 __EOF__
-    git init
+    git init > /dev/null
     git add .openshift .gitignore *
-    git commit -m 'Creating template'
-    popd
-    pushd $APP_HOME/git
-    git clone --bare --no-hardlinks template $application.git
+    git commit -m 'Creating template' > /dev/null
+    popd > /dev/null
+    pushd $APP_HOME/git > /dev/null
+    git clone --bare --no-hardlinks template $application.git > /dev/null
     rm -rf template
-    popd
+    popd > /dev/null
     
     setup_git_repo $application $user_id $group_id $uuid "jbossas 7.0"
 }
