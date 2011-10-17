@@ -12,7 +12,7 @@ class Footer < Test::Unit::TestCase
     goto_home
 
     { 'Announcements' => 'News and Announcements | Red Hat OpenShift Community',
-      'Blog' => 'Blogs | Red Hat OpenShift Community',
+      'Blog' => 'Openshift Blogs | Red Hat OpenShift Community',
       'Forum' => 'Forums | Red Hat OpenShift Community',
       'Partner Program' => 'OpenShift by Red Hat | Meet Our Partners',
       'Legal' => 'OpenShift by Red Hat | Terms and Conditions',
