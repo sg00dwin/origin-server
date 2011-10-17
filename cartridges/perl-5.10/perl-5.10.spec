@@ -59,6 +59,7 @@ ln -s %{cartridgedir}/../abstract-httpd/info/hooks/stop %{buildroot}%{cartridged
 ln -s %{cartridgedir}/../abstract-httpd/info/hooks/update_namespace %{buildroot}%{cartridgedir}/info/hooks/update_namespace
 ln -s %{cartridgedir}/../abstract-httpd/info/hooks/preconfigure %{buildroot}%{cartridgedir}/info/hooks/preconfigure
 ln -s %{cartridgedir}/../abstract-httpd/info/hooks/deploy_httpd_proxy %{buildroot}%{cartridgedir}/info/hooks/deploy_httpd_proxy
+ln -s %{cartridgedir}/../abstract-httpd/info/hooks/force-stop %{buildroot}%{cartridgedir}/info/hooks/force-stop
 
 %clean
 rm -rf $RPM_BUILD_ROOT
