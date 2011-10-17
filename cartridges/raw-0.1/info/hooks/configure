@@ -74,7 +74,7 @@ chcon_app_dir_and_git
 #
 create_standard_env_vars
 create_standard_redo_dir_env_var
-create_standard_path_env_var
+echo "export PATH=$CART_DIR/abstract/info/bin/:$CART_DIR/li-controller/info/bin/:$PATH" > $APP_HOME/.env/PATH
 echo "export OPENSHIFT_APP_CTL_SCRIPT='/bin/true'" > $APP_HOME/.env/OPENSHIFT_APP_CTL_SCRIPT
 
 #

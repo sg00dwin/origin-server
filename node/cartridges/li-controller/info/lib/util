@@ -28,7 +28,7 @@ function create_standard_redo_dir_env_var {
 }
 
 function create_standard_path_env_var {
-    echo "export PATH=$CART_INFO_DIR/bin/:$CART_DIR/abstract-httpd/info/bin/:$CART_DIR/li-controller/info/bin/:$PATH" > $APP_HOME/.env/PATH
+    echo "export PATH=$CART_INFO_DIR/bin/:$CART_DIR/abstract-httpd/info/bin/:$CART_INFO_DIR/bin/:$CART_DIR/abstract/info/bin/:$CART_DIR/li-controller/info/bin/:$PATH" > $APP_HOME/.env/PATH
 }
 
 function create_standard_app_dirs {
@@ -347,6 +347,14 @@ function import_env_vars {
     do
         . $f
     done
+}
+
+function print_running_processes {
+    echo ""
+    echo "Running Processes:"
+    echo ""
+    ps -eFCvx
+    echo ""
 }
 
 function rm_unobfuscated_app_home {
