@@ -90,10 +90,6 @@ popd > /dev/null
 #
 IP=`embedded_find_open_ip $uid $APP_HOME`
 
-client_error "341234124"
-client_error "$IP"
-client_error "4134143"
-
 #
 # Create simple application specific data
 #
