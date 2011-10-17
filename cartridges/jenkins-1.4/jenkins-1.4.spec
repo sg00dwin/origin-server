@@ -2,7 +2,7 @@
 
 Summary:   Provides jenkins-1.4 support
 Name:      rhc-cartridge-jenkins-1.4
-Version:   0.80.10
+Version:   0.80.11
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -64,6 +64,11 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Mon Oct 17 2011 Dan McPherson <dmcphers@redhat.com> 0.80.11-1
+- add abstract (more generic than httpd)  cart and use from existing carts
+  (dmcphers@redhat.com)
+- Added support for force-stop (mmcgrath@redhat.com)
+
 * Sun Oct 16 2011 Dan McPherson <dmcphers@redhat.com> 0.80.10-1
 - jenkins basic cuc tests (dmcphers@redhat.com)
 
