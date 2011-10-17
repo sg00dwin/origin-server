@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.80.9
+Version:   0.80.10
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -82,6 +82,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Mon Oct 17 2011 Dan McPherson <dmcphers@redhat.com> 0.80.10-1
+- less output on configure (dmcphers@redhat.com)
+
 * Mon Oct 17 2011 Dan McPherson <dmcphers@redhat.com> 0.80.9-1
 - add abstract (more generic than httpd)  cart and use from existing carts
   (dmcphers@redhat.com)
