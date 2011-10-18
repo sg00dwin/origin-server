@@ -2,7 +2,7 @@
 
 Summary:       Common dependencies of the OpenShift broker and site
 Name:          rhc-server-common
-Version:       0.80.2
+Version:       0.80.3
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -57,6 +57,9 @@ rm -rf %{buildroot}
                                   -s /sbin/nologin 2>&1 > /dev/null || :
 
 %changelog
+* Tue Oct 18 2011 Matt Hicks <mhicks@redhat.com> 0.80.3-1
+- Moving to Amazon's aws-sdk rubygem (mhicks@redhat.com)
+
 * Mon Oct 17 2011 Dan McPherson <dmcphers@redhat.com> 0.80.2-1
 - add abstract (more generic than httpd)  cart and use from existing carts
   (dmcphers@redhat.com)
