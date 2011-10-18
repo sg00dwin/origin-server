@@ -61,9 +61,20 @@ class Release < Thor
           puts "ERROR - tito tag push failed"; exit 1
         end
 
+        # Detect which tito command is available
+        `tito release --help`
+        cmd_exit = $?.exitstatus
+        if cmd_exit == 0
+          # The release command is supported - use it
+          tito_cmd = "tito release --type=cvs < /tmp/answerfile"
+        else
+          # An older version of tito is present, use build
+          tito_cmd = "tito build --cvs-release < /tmp/answerfile"
+        end
+
         # Build the RPM in brew
         run('echo -e "y\nn" > /tmp/answerfile', :verbose => options.verbose?)
-        unless run("tito release --type=cvs < /tmp/answerfile", :verbose => options.verbose?)
+        unless run(tito_cmd, :verbose => options.verbose?)
           puts "ERROR - tito cvs release failed"
         end
         puts "Done"
