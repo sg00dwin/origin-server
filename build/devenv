@@ -163,9 +163,10 @@ class DevEnv < Thor
 
       if options.register?
         print "Registering AMI..."
-        conn.images.create(:instance_id => instance.id, 
+        image = conn.images.create(:instance_id => instance.id, 
           :name => name,
           :description => manifest)
+        until (image.state == :available) { sleep 30 }
         puts "Done"
       end
     ensure
@@ -219,9 +220,10 @@ class DevEnv < Thor
 
       if options.register?
         print "Registering AMI..."
-        conn.images.create(:instance_id => instance.id, 
+        image = conn.images.create(:instance_id => instance.id, 
           :name => tag,
           :description => manifest)
+        until (image.state == :available) { sleep 30 }
         puts "Done"
       end
     ensure
