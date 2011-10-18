@@ -163,7 +163,7 @@ class DevEnv < Thor
 
       if options.register?
         print "Registering AMI..."
-        ec2.images.create(:instance_id => instance.id, 
+        conn.images.create(:instance_id => instance.id, 
           :name => name,
           :description => manifest)
         puts "Done"
@@ -219,7 +219,7 @@ class DevEnv < Thor
 
       if options.register?
         print "Registering AMI..."
-        ec2.images.create(:instance_id => instance.id, 
+        conn.images.create(:instance_id => instance.id, 
           :name => tag,
           :description => manifest)
         puts "Done"
