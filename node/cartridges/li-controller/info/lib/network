@@ -1,3 +1,8 @@
+#!/bin/bash
+
+[ ! -z "$LI_CONTROLLER_LIB_NETWORK" ] && return 0
+LI_CONTROLLER_LIB_NETWORK=true
+
 # create an IP address as an 32 bit unsigned integer
 function address() {
     # uid=$1

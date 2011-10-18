@@ -1,3 +1,8 @@
+#!/bin/bash
+
+[ ! -z "$LI_CONTROLLER_LIB_GIT" ] && return 0
+LI_CONTROLLER_LIB_GIT=true
+
 function clone_git_repo {
     application="$1"
     user_id=$2

@@ -1,3 +1,8 @@
+#!/bin/bash
+
+[ ! -z "$LI_CONTROLLER_LIB_SELINUX" ] && return 0
+LI_CONTROLLER_LIB_SELINUX=true
+
 function openshift_mcs_level() {
     SETSIZE=1023
     TIER=$SETSIZE
