@@ -4,9 +4,7 @@
 # When combined with selinux, this script will allow users to read their own
 # cgroups entries but not other users cgroups entries
 
-require 'etc'
-
-login = Etc.getlogin
+login = `/usr/bin/whoami`.chomp
 
 attribute=ARGV[0]
 
