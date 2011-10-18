@@ -93,16 +93,19 @@ module CommandHelper
   end
 
   def rhc_embed_add(app, type)
+    puts app.name
     result = run_stdout("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -e add-#{type} -d")
-    app.mysql_hostname = /^Connection URL: mysql:\/\/(.*)\/$/.match(result)[1]
-    app.mysql_user = /^ +Root User: (.*)$/.match(result)[1]
-    app.mysql_password = /^ +Root Password: (.*)$/.match(result)[1]
-    app.mysql_database = /^ +Database Name: (.*)$/.match(result)[1]
-
-    app.mysql_hostname.should_not be_nil
-    app.mysql_user.should_not be_nil
-    app.mysql_password.should_not be_nil
-    app.mysql_database.should_not be_nil
+    if type.start_with?('mysql-')
+      app.mysql_hostname = /^Connection URL: mysql:\/\/(.*)\/$/.match(result)[1]
+      app.mysql_user = /^ +Root User: (.*)$/.match(result)[1]
+      app.mysql_password = /^ +Root Password: (.*)$/.match(result)[1]
+      app.mysql_database = /^ +Database Name: (.*)$/.match(result)[1]
+  
+      app.mysql_hostname.should_not be_nil
+      app.mysql_user.should_not be_nil
+      app.mysql_password.should_not be_nil
+      app.mysql_database.should_not be_nil
+    end
 
     app.embed = type
     app.persist
@@ -110,6 +113,7 @@ module CommandHelper
   end
 
   def rhc_embed_remove(app)
+    puts app.name
     run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -e remove-#{app.embed} -d").should == 0
     app.mysql_hostname = nil
     app.mysql_user = nil

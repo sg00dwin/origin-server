@@ -54,12 +54,12 @@ setup_embedded_configure "$1" $2 $3
 if ! [ -f "$APP_HOME/.env/JENKINS_URL" ]
 then
     client_error "Jenkins server does not exist!  Please create with rhc-create-app -t jenkins-1.4"
-    exit 132
+    exit 151
 fi
 if [ -f "$APP_HOME/.env/OPENSHIFT_CI_TYPE" ]
 then
     client_error "Jenkins client already embedded in $application"
-    exit 132
+    exit 152
 fi
 
 #

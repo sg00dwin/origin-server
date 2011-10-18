@@ -26,3 +26,24 @@ Feature: Embedded Cartridge Verification Tests
     Given an existing php-5.3 application
     When the application is destroyed
     Then the application should not be accessible
+    
+  Scenario: Jenkins Creation
+    Given the libra client tools
+    And an accepted node
+    When 1 jenkins-1.4 applications are created
+    Then the applications should be accessible
+
+  Scenario: Jenkins Client Embedded Creation
+    Given an existing jenkins-1.4 application without an embedded cartridge
+    When the embedded jenkins-client-1.4 cartridge is added
+    Then the application should be accessible
+
+  Scenario: Jenkins Client Embedded Removal
+    Given an existing jenkins-1.4 application with an embedded jenkins-client-1.4 cartridge
+    When the embedded cartridge is removed
+    Then the application should be accessible
+
+  Scenario: Jenkins Destroying
+    Given an existing jenkins-1.4 application
+    When the application is destroyed
+    Then the application should not be accessible
