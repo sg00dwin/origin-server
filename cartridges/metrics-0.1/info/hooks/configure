@@ -1,0 +1,162 @@
+#!/bin/bash
+
+# Copyright © 2010 Mike McGrath All rights reserved
+# Copyright © 2010 Red Hat, Inc. All rights reserved
+
+# This copyrighted material is made available to anyone wishing to use, modify,
+# copy, or redistribute it subject to the terms and conditions of the GNU
+# General Public License v.2.  This program is distributed in the hope that it
+# will be useful, but WITHOUT ANY WARRANTY expressed or implied, including the
+# implied warranties of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.  You should have
+# received a copy of the GNU General Public License along with this program;
+# if not, write to the Free Software Foundation, Inc., 51 Franklin Street,
+# Fifth Floor, Boston, MA 02110-1301, USA. Any Red Hat trademarks that are
+# incorporated in the source code or documentation are not subject to the GNU
+# General Public License and may only be used or replicated with the express
+# permission of Red Hat, Inc.
+
+# Creates a metrics instance
+
+# Exit on any errors
+set -e
+
+function log {
+    echo "$0 $@" | logger -p local0.notice -t libra_metrics_configure
+}
+
+function print_help {
+    echo "Usage: $0 app-name namespace uuid"
+
+    echo "$0 $@" | logger -p local0.notice -t libra_metrics_configure
+    exit 1
+}
+
+while getopts 'd' OPTION
+do
+    case $OPTION in
+        d) set -x
+        ;;
+        ?) print_help
+        ;;
+    esac
+done
+
+[ $# -eq 3 ] || print_help
+
+CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
+source ${CART_DIR}/li-controller/info/lib/util
+
+app_type="metrics-0.1"
+setup_embedded_configure "$1" $2 $3
+
+METRICS_DIR=`echo $APP_HOME/metrics-0.1 | tr -s /` # ensure that there aren't double /'s
+METRICS_CTL_SCRIPT="$METRICS_DIR/${application}_metrics_ctl.sh"
+
+# check that the proxy pass include directory exists
+[ -d "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}" ] || error "httpd conf dir not available" 136
+
+#
+# Create the core of the application
+#
+if [ -d "$METRICS_DIR" ]
+then
+    client_error "Embedded metrics-0.1 already attached to $application"
+    exit 132
+fi
+mkdir -p "$METRICS_DIR"
+pushd "$METRICS_DIR" > /dev/null
+mkdir -p conf conf.d logs run sessions tmp
+ln -s /usr/lib64/httpd/modules modules
+ln -s /etc/httpd/conf/magic conf/magic
+
+sed -e "s,TEMPLATE_SET_ME_SESSION_SAVE_PATH,$METRICS_DIR/sessions/," \
+    -e "s,TEMPLATE_SET_ME_UPLOAD_TMP_DIR,$METRICS_DIR/tmp/," $CART_CONF_DIR/php.ini > $METRICS_DIR/conf/php.ini 
+popd > /dev/null
+
+#
+# Find an open localhost IP
+#
+IP=`embedded_find_open_ip $uid $APP_HOME`
+
+#
+# Create simple application specific data
+#
+
+cat <<EOF > "$METRICS_DIR/conf.d/libra.conf"
+ServerRoot "$METRICS_DIR"
+Listen $IP:8080
+User $uuid
+Group $uuid
+ErrorLog "|/usr/sbin/rotatelogs $METRICS_DIR/logs/error_log$rotatelogs_format $rotatelogs_interval"
+CustomLog "|/usr/sbin/rotatelogs $METRICS_DIR/logs/access_log$rotatelogs_format $rotatelogs_interval" combined
+
+php_value include_path "."
+EOF
+
+cat <<EOF > "$METRICS_DIR/conf.d/metrics.conf"
+Alias /metrics ${CART_INFO_DIR}/data/metrics/
+
+<Directory /usr/share/metrics/>
+   Order Allow,Deny
+   Allow from All
+</Directory>
+
+EOF
+
+#
+# Create simple metrics start / stop script
+#
+ln -s $CART_INFO_DIR/bin/metrics_ctl.sh $METRICS_CTL_SCRIPT
+
+#
+# Setup Permissions
+#
+
+chown $user_id.$group_id -R $METRICS_DIR || error "Failed to chown new metrics space.  Please contact support" 123
+# Secure script and config dirs.
+chown root.root -R "$METRICS_DIR/conf" "$METRICS_DIR/conf.d"
+chown root.root "$METRICS_DIR"
+chcon -t libra_var_lib_t -l $mcs_level -R "$METRICS_DIR"
+
+#
+# Create environment variables. This MUST be before starting metrics as the CTL script relies on these.
+#
+echo "export OPENSHIFT_METRICS_IP='$IP'" > $APP_HOME/.env/OPENSHIFT_METRICS_IP
+echo "export OPENSHIFT_METRICS_APP_DIR='$METRICS_DIR/'" > $APP_HOME/.env/OPENSHIFT_METRICS_APP_DIR
+echo "export OPENSHIFT_METRICS_CTL_SCRIPT='$METRICS_CTL_SCRIPT'" > $APP_HOME/.env/OPENSHIFT_METRICS_CTL_SCRIPT
+
+
+#
+# Start the server
+#
+runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $METRICS_CTL_SCRIPT start" || error "Failed to start ${application}" 121
+
+#
+# Create virtualhost definition for apache
+#
+# node_ssl_template.conf gets copied in unaltered and should contain
+# all of the configuration bits required for ssl to work including key location
+#
+
+
+cat <<EOF > "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}/metrics-0.1.conf"
+ProxyPass /metrics http://$IP:8080/metrics
+ProxyPassReverse /metrics http://$IP:8080/metrics
+
+EOF
+
+restart_httpd_graceful
+
+
+# Grab the env vars so we can print them
+. $APP_HOME/.env/OPENSHIFT_APP_DNS
+
+
+client_result ""
+client_result "metrics 0.1 added.  Please make note of these credentials:"
+client_result ""
+client_result "   Root User: $OPENSHIFT_DB_USERNAME"
+client_result "   Root Password: $OPENSHIFT_DB_PASSWORD"
+client_result ""
+client_result "Connection URL: https://$OPENSHIFT_APP_DNS/metrics/"
