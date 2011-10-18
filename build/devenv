@@ -166,7 +166,7 @@ class DevEnv < Thor
         image = conn.images.create(:instance_id => instance.id, 
           :name => name,
           :description => manifest)
-        until (image.state == :available) { sleep 30 }
+        sleep 30 until image.state == :available
         puts "Done"
       end
     ensure
@@ -223,7 +223,7 @@ class DevEnv < Thor
         image = conn.images.create(:instance_id => instance.id, 
           :name => tag,
           :description => manifest)
-        until (image.state == :available) { sleep 30 }
+        sleep 30 until image.state == :available
         puts "Done"
       end
     ensure
