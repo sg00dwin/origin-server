@@ -25,6 +25,7 @@ CustomLog "|/usr/sbin/rotatelogs $APP_DIR/logs/access_log$rotatelogs_format $rot
 
 <Directory $APP_DIR/repo/perl/>
     AddHandler perl-script .pl
+    AddHandler cgi-script .cgi
     PerlResponseHandler ModPerl::Registry
     PerlOptions +ParseHeaders
     Options +ExecCGI
