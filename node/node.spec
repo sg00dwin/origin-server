@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.80.11
+Version:       0.80.12
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -160,6 +160,11 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Tue Oct 18 2011 Matt Hicks <mhicks@redhat.com> 0.80.12-1
+- Bug 745749 (dmcphers@redhat.com)
+- add include guard to libs (dmcphers@redhat.com)
+- rewrite migration to be multi threaded per node (dmcphers@redhat.com)
+
 * Mon Oct 17 2011 Dan McPherson <dmcphers@redhat.com> 0.80.11-1
 - undo redirection (dmcphers@redhat.com)
 
