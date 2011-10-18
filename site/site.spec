@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.80.3
+Version:   0.80.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -68,6 +68,9 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Tue Oct 18 2011 Dan McPherson <dmcphers@redhat.com> 0.80.4-1
+- bump httparty version (dmcphers@redhat.com)
+
 * Tue Oct 18 2011 Matt Hicks <mhicks@redhat.com> 0.80.3-1
 - Moving to Amazon's aws-sdk rubygem (mhicks@redhat.com)
 
