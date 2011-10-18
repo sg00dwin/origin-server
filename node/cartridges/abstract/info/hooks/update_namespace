@@ -23,7 +23,6 @@ set -e
 #set -x
 
 CART_DIR=/usr/libexec/li/cartridges
-CART_INFO_DIR=$CART_DIR/$OPENSHIFT_APP_TYPE/info
 
 source ${CART_DIR}/li-controller/info/lib/util
 source ${CART_DIR}/li-controller/info/lib/apache
@@ -64,6 +63,8 @@ setup_basic_vars
 check_app_dir_exists
 
 . $APP_HOME/.env/OPENSHIFT_APP_TYPE
+
+CART_INFO_DIR=$CART_DIR/$OPENSHIFT_APP_TYPE/info
 
 mv_symlink $old_namespace $new_namespace $application
 
