@@ -144,43 +144,43 @@ function warning {
 }
 
 function client_result {
-    echo "CLIENT_RESULT: $1" 1>&2
+    echo "CLIENT_RESULT: $1"
 }
 
 function client_message {
-    echo "CLIENT_MESSAGE: $1" 1>&2
+    echo "CLIENT_MESSAGE: $1"
 }
 
 function client_error {
-    echo "CLIENT_ERROR: $1" 1>&2
+    echo "CLIENT_ERROR: $1"
 }
 
 function client_debug {
-    echo "CLIENT_DEBUG: $1" 1>&2
+    echo "CLIENT_DEBUG: $1"
 }
 
 function add_ssh_key {
-    echo "SSH_KEY_ADD: $1" 1>&2
+    echo "SSH_KEY_ADD: $1"
 }
 
 function remove_ssh_key {
-    echo "SSH_KEY_REMOVE: " 1>&2
+    echo "SSH_KEY_REMOVE: "
 }
 
 function add_env_var {
-    echo "ENV_VAR_ADD: $1" 1>&2
+    echo "ENV_VAR_ADD: $1"
 }
 
 function remove_env_var {
-    echo "ENV_VAR_REMOVE: $1" 1>&2
+    echo "ENV_VAR_REMOVE: $1"
 }
 
 function add_broker_auth_key {
-    echo "BROKER_AUTH_KEY_ADD: " 1>&2
+    echo "BROKER_AUTH_KEY_ADD: "
 }
 
 function remove_broker_auth_key {
-    echo "BROKER_AUTH_KEY_REMOVE: " 1>&2
+    echo "BROKER_AUTH_KEY_REMOVE: "
 }
 
 function setup_configure {
