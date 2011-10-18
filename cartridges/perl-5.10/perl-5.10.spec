@@ -2,7 +2,7 @@
 
 Summary:   Provides mod_perl support
 Name:      rhc-cartridge-perl-5.10
-Version:   0.11.6
+Version:   0.11.7
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -76,6 +76,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Tue Oct 18 2011 Dan McPherson <dmcphers@redhat.com> 0.11.7-1
+- adding cgi type (mmcgrath@redhat.com)
+
 * Mon Oct 17 2011 Dan McPherson <dmcphers@redhat.com> 0.11.6-1
 - add abstract (more generic than httpd)  cart and use from existing carts
   (dmcphers@redhat.com)
