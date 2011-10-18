@@ -6,8 +6,6 @@ require 'rubygems'
 require 'thor'
 require 'lib/openshift'
 
-include OpenShift::AWS
-
 class Release < Thor
   include Thor::Actions
   include OpenShift::Tito
@@ -65,7 +63,7 @@ class Release < Thor
 
         # Build the RPM in brew
         run('echo -e "y\nn" > /tmp/answerfile', :verbose => options.verbose?)
-        unless run("tito build --cvs-release < /tmp/answerfile", :verbose => options.verbose?)
+        unless run("tito release --type=cvs < /tmp/answerfile", :verbose => options.verbose?)
           puts "ERROR - tito cvs release failed"
         end
         puts "Done"

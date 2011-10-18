@@ -1,28 +1,26 @@
 require 'rubygems'
 require 'mcollective'
 require 'aws'
-require 'right_http_connection'
 
 include MCollective::RPC
 
 module Libra
   module Helper
-    def self.ec2
-      # This will verify the Amazon SSL connection
-      Rightscale::HttpConnection.params[:ca_file] = "/etc/pki/tls/certs/ca-bundle.trust.crt"
-      # Note - might need to look at setting :multi_thread => false
-      Aws::Ec2.new(Libra.c[:aws_key],
-                   Libra.c[:aws_secret],
-                   params = {:logger => Libra.c[:logger]})
+    def self.s3
+      # Setup the global access configuration
+      AWS.config(
+        :access_key_id => Libra.c[:aws_key],
+        :secret_access_key => Libra.c[:aws_secret],
+        :logger => Libra.c[:logger],
+        :ssl_ca_file => "/etc/pki/tls/certs/ca-bundle.trust.crt"
+      )
+
+      # Return the AMZ connection
+      AWS::S3.new
     end
 
-    def self.s3
-      # This will verify the Amazon SSL connection
-      Rightscale::HttpConnection.params[:ca_file] = "/etc/pki/tls/certs/ca-bundle.trust.crt"
-      # Note - might need to look at setting :multi_thread => false
-      Aws::S3Interface.new(Libra.c[:aws_key],
-                           Libra.c[:aws_secret],
-                           params = {:logger => Libra.c[:logger]})
+    def self.bucket
+      s3.buckets[Libra.c[:s3_bucket]]
     end
 
     def self.rpc_options

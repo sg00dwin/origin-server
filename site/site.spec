@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.80.2
+Version:   0.80.6
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -20,7 +20,6 @@ Requires:  rubygem-passenger-native-libs
 Requires:  rubygem-rails
 Requires:  rubygem-json
 Requires:  rubygem-parseconfig
-Requires:  rubygem-aws
 Requires:  rubygem-xml-simple
 Requires:  rubygem-formtastic
 Requires:  rubygem-haml
@@ -69,6 +68,18 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Tue Oct 18 2011 Dan McPherson <dmcphers@redhat.com> 0.80.6-1
+- 
+
+* Tue Oct 18 2011 Dan McPherson <dmcphers@redhat.com> 0.80.5-1
+- 
+
+* Tue Oct 18 2011 Dan McPherson <dmcphers@redhat.com> 0.80.4-1
+- bump httparty version (dmcphers@redhat.com)
+
+* Tue Oct 18 2011 Matt Hicks <mhicks@redhat.com> 0.80.3-1
+- Moving to Amazon's aws-sdk rubygem (mhicks@redhat.com)
+
 * Mon Oct 17 2011 Dan McPherson <dmcphers@redhat.com> 0.80.2-1
 - Change text in footer per request by Legal (edirsh@redhat.com)
 

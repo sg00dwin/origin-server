@@ -30,7 +30,7 @@ RedHatCloud::Application.configure do
   ############################################
   config.app_scope = "app"
   config.integrated = true
-  config.login = "https://www.webqa.redhat.com/wapps/streamline/login.html"
+  config.login = "https://www.qa.redhat.com/wapps/streamline/login.html"
   config.streamline = {
     :host => 'https://10.196.215.67',
     :base_url => '/wapps/streamline',

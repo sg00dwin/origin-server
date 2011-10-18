@@ -387,24 +387,4 @@ module Libra
     end
     return server
   end
-
-  #
-  # Adjusts the capacity of the Libra cluster if
-  # necessary
-  #
-  def self.adjust_capacity
-    # Get the initial capacity
-    current_servers = Server.find_all
-    current_servers.each do |server|
-      # If any server is below the threshold,
-      # don't add a new server
-      if server.repos < c[:repo_threshold]
-        return
-      end
-    end
-
-    # Add the additional server if needed
-    result = Server.create
-    Libra.logger_debug "DEBUG: Added EC2 instance #{result[0]}"
-  end
 end

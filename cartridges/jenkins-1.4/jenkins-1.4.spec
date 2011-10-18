@@ -2,7 +2,7 @@
 
 Summary:   Provides jenkins-1.4 support
 Name:      rhc-cartridge-jenkins-1.4
-Version:   0.80.12
+Version:   0.80.13
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -64,6 +64,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Tue Oct 18 2011 Matt Hicks <mhicks@redhat.com> 0.80.13-1
+- Bug 745749 (dmcphers@redhat.com)
+
 * Mon Oct 17 2011 Dan McPherson <dmcphers@redhat.com> 0.80.12-1
 - less output on configure (dmcphers@redhat.com)
 

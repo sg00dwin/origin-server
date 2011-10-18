@@ -34,6 +34,29 @@ module LibraMigration
         env_echos.push("echo \"export PATH=#{cartridge_dir}/info/bin/:#{cartridge_root_dir}/abstract-httpd/info/bin/:#{cartridge_root_dir}/abstract/info/bin/:#{cartridge_root_dir}/li-controller/info/bin/:/bin:/usr/bin\" > #{app_home}/.env/PATH")
       end
       
+      mysql_dir = "#{app_home}/mysql-5.1"
+      if File.exists?(mysql_dir)
+        ip = Util.get_env_var_value(app_home, "OPENSHIFT_INTERNAL_IP")
+        mysql_cart_bin_dir = "#{cartridge_root_dir}/embedded/mysql-5.1/info/bin"
+        env_echos.push("echo \"export OPENSHIFT_DB_USERNAME='admin'\" > #{app_home}/.env/OPENSHIFT_DB_USERNAME")
+        env_echos.push("echo \"export OPENSHIFT_DB_TYPE='mysql'\" > #{app_home}/.env/OPENSHIFT_DB_TYPE")
+        env_echos.push("echo \"export OPENSHIFT_DB_HOST='#{ip}'\" > #{app_home}/.env/OPENSHIFT_DB_HOST")
+        env_echos.push("echo \"export OPENSHIFT_DB_PORT='3306'\" > #{app_home}/.env/OPENSHIFT_DB_PORT")
+        env_echos.push("echo \"export OPENSHIFT_DB_SOCKET='#{mysql_dir}/socket/mysql.sock'\" > #{app_home}/.env/OPENSHIFT_DB_SOCKET")
+        env_echos.push("echo \"export OPENSHIFT_DB_CTL_SCRIPT='#{mysql_dir}/#{app_name}_mysql_ctl.sh'\" > #{app_home}/.env/OPENSHIFT_DB_CTL_SCRIPT")
+        env_echos.push("echo \"export OPENSHIFT_DB_MYSQL_51_DUMP='#{mysql_cart_bin_dir}/mysql_dump.sh'\" > #{app_home}/.env/OPENSHIFT_DB_MYSQL_51_DUMP")
+        env_echos.push("echo \"export OPENSHIFT_DB_MYSQL_51_DUMP_CLEANUP='#{mysql_cart_bin_dir}/mysql_cleanup.sh'\" > #{app_home}/.env/OPENSHIFT_DB_MYSQL_51_DUMP_CLEANUP")
+        env_echos.push("echo \"export OPENSHIFT_DB_MYSQL_51_RESTORE='#{mysql_cart_bin_dir}/mysql_restore.sh'\" > #{app_home}/.env/OPENSHIFT_DB_MYSQL_51_RESTORE")
+        env_echos.push("echo \"export OPENSHIFT_DB_MYSQL_51_EMBEDDED_TYPE='mysql-5.1'\" > #{app_home}/.env/OPENSHIFT_DB_MYSQL_51_EMBEDDED_TYPE")
+
+        if !File.exists?("#{app_home}/.env/OPENSHIFT_DB_URL")
+          env_echos.push("echo \"export OPENSHIFT_DB_URL='mysql://admin@#{ip}:3306/'\" > #{app_home}/.env/OPENSHIFT_DB_URL")
+        end
+        if !File.exists?("#{app_home}/.env/OPENSHIFT_DB_PASSWORD")
+          env_echos.push("echo \"export OPENSHIFT_DB_PASSWORD='NOT_AVAILABLE'\" > #{app_home}/.env/OPENSHIFT_DB_PASSWORD")
+        end
+      end
+      
       env_echos.each do |env_echo|
         echo_output, echo_exitcode = Util.execute_script(env_echo)
         output += echo_output

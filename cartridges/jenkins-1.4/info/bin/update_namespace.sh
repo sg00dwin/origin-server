@@ -44,6 +44,11 @@ then
     sed -i "s/-${old_namespace}.${libra_domain}/-${new_namespace}.${libra_domain}/g" $APP_DIR/data/jobs/*/config.xml
 fi
 
+if [ -f $APP_DIR/data/config.xml ]
+then
+    sed -i "s/-${old_namespace}.${libra_domain}/-${new_namespace}.${libra_domain}/g" $APP_DIR/data/config.xml
+fi
+
 if ! out=$(runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $CART_INFO_DIR/bin/jenkins-cli reload-configuration --username '$JENKINS_USERNAME' --password-file '${APP_HOME}/.jenkins_password'" 2>&1)
 then
     # An error occurred reloading jenkins configuration

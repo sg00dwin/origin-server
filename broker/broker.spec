@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.80.2
+Version:   0.80.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -16,7 +16,6 @@ Requires:  rhc-server-common
 Requires:  httpd
 Requires:  mod_ssl
 Requires:  mod_passenger
-Requires:  rubygem-aws
 Requires:  rubygem-json
 Requires:  rubygem-parseconfig
 Requires:  rubygem-passenger-native-libs
@@ -65,6 +64,15 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Tue Oct 18 2011 Dan McPherson <dmcphers@redhat.com> 0.80.5-1
+- 
+
+* Tue Oct 18 2011 Dan McPherson <dmcphers@redhat.com> 0.80.4-1
+- bump httparty version (dmcphers@redhat.com)
+
+* Tue Oct 18 2011 Matt Hicks <mhicks@redhat.com> 0.80.3-1
+- Moving to Amazon's aws-sdk rubygem (mhicks@redhat.com)
+
 * Fri Oct 14 2011 Dan McPherson <dmcphers@redhat.com> 0.80.2-1
 - Temporary commit to build (dmcphers@redhat.com)
 
