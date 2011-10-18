@@ -2,6 +2,7 @@
 # Usage: ./migrate-2.1.7 > out.txt
 require 'rubygems'
 require 'openshift'
+require 'pp'
 
 include Libra
 
@@ -25,20 +26,32 @@ def migrate_app_on_node(user, app, app_name)
       if exit_code != 0
         puts "Migrate on node exit code: #{exit_code}"
         raise "Failed migrating app '#{app_name}' with uuid '#{app['uuid']}' on node '#{app['server_identity']}'"
-      else
 =begin
-        puts "Restarting app '#{app_name}' on node '#{app['server_identity']}'"
+      else
         server = Server.new(app['server_identity'])
-        result = server.execute_direct(app['framework'], 'restart', "#{app_name} #{user.namespace} #{app['uuid']}")[0]
-        if (result && defined? result.results)
-          output = result.results[:data][:output]
-          exit_code = result.results[:data][:exitcode]
-          if (output.length > 0)
-            puts "Restart on node output: #{output}"
-          end
-          if exit_code != 0
-            puts "Restart on node exit code: #{exit_code}"
-            raise "Failed restarting app '#{app_name}' with uuid '#{app['uuid']}' on node '#{app['server_identity']}'"
+        result = server.execute_direct(app['framework'], 'deploy_httpd_proxy', "#{app_name} #{user.namespace} #{app['uuid']}")[0]
+        output = result.results[:data][:output]
+        exit_code = result.results[:data][:exitcode]
+        if (output.length > 0)
+          puts "Deploy http proxy on node output: #{output}"
+        end
+        if exit_code != 0
+          puts "Deploy httpd proxy on node exit code: #{exit_code}"
+          raise "Failed deploying httpd proxy for app '#{app_name}' with uuid '#{app['uuid']}' on node '#{app['server_identity']}'"
+        else
+          puts "Restarting app '#{app_name}' on node '#{app['server_identity']}'"
+          server = Server.new(app['server_identity'])
+          result = server.execute_direct(app['framework'], 'restart', "#{app_name} #{user.namespace} #{app['uuid']}")[0]
+          if (result && defined? result.results)
+            output = result.results[:data][:output]
+            exit_code = result.results[:data][:exitcode]
+            if (output.length > 0)
+              puts "Restart on node output: #{output}"
+            end
+            if exit_code != 0
+              puts "Restart on node exit code: #{exit_code}"
+              raise "Failed restarting app '#{app_name}' with uuid '#{app['uuid']}' on node '#{app['server_identity']}'"
+            end
           end
         end
 =end
@@ -54,30 +67,54 @@ def migrate
   start_time = Time.now.to_i
   puts "Getting all RHLogins..." 
   rhlogins = RHLOGINS || User.find_all_rhlogins
-  user_count = rhlogins.length
-  puts "RHLogins.length: #{user_count.to_s}"
-  rhlogins.each do |rhlogin|
+  puts "RHLogins.length: #{rhlogins.length.to_s}"
+  node_to_apps = {}
+  node_to_users = {}
+  rhlogins.each_with_index do |rhlogin, index|
     user = User.find(rhlogin)
     if user
       puts ""
       puts "######################################################"
-      puts "Updating apps for user: #{user.rhlogin}(#{user_count.to_s}) with uuid: #{user.uuid}"
+      puts "Gathering apps for user: #{user.rhlogin}(#{rhlogins.length - index}) with uuid: #{user.uuid}"
       apps = user.apps
       apps.each do |app_name, app|
-        begin
-          puts "Migrating app '#{app_name}' with uuid '#{app['uuid']}' on node '#{app['server_identity']}' for user: #{rhlogin}"
-          migrate_app_on_node(user, app, app_name)
-        rescue Exception => e
-          puts "ERROR: Failed migrating app: #{app_name} with uuid: #{app['uuid']} for user: #{rhlogin}"
-          puts e.message
-          puts e.backtrace
-        end
+        server_identity = app['server_identity']
+        node_to_apps[server_identity] = [] unless node_to_apps[server_identity]
+        node_to_users[server_identity] = [] unless node_to_users[server_identity]
+        node_to_apps[server_identity] << {:name => app_name, :app => app}
+        node_to_users[server_identity] << user
       end
     else
       puts "WARNING:  Couldn't find user: #{rhlogin}"
     end
-    user_count -= 1
   end
+  
+  node_threads = []
+  node_to_apps.each do |server_identity, apps|
+    node_threads << Thread.new do
+      puts "Migrating #{apps.length} apps on node #{server_identity}: #{apps.pretty_inspect}"
+      users = node_to_users[server_identity]
+      apps.each_with_index do |app_hash, index|
+        app = app_hash[:app]
+        app_name = app_hash[:name]
+        user = users[index]
+        rhlogin = user.rhlogin
+        begin
+          puts "Migrating app '#{app_name}' with uuid '#{app['uuid']}' on node '#{app['server_identity']}' for user: #{rhlogin}"
+          migrate_app_on_node(user, app, app_name)
+        rescue Exception => e
+          puts "ERROR: Failed migrating app: #{app_name} with uuid: #{app['uuid']} on node '#{app['server_identity']}' for user: #{rhlogin}"
+          puts e.message
+          puts e.backtrace
+        end
+      end
+    end
+  end
+  
+  node_threads.each do |t|
+    t.join
+  end
+  
   end_time = Time.now.to_i
   total_time = end_time-start_time
   puts "Total execution time: #{total_time.to_s}s"
