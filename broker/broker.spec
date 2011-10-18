@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.80.2
+Version:   0.80.3
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -64,6 +64,9 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Tue Oct 18 2011 Matt Hicks <mhicks@redhat.com> 0.80.3-1
+- Moving to Amazon's aws-sdk rubygem (mhicks@redhat.com)
+
 * Fri Oct 14 2011 Dan McPherson <dmcphers@redhat.com> 0.80.2-1
 - Temporary commit to build (dmcphers@redhat.com)
 
