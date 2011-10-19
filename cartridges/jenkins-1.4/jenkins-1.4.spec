@@ -2,7 +2,7 @@
 
 Summary:   Provides jenkins-1.4 support
 Name:      rhc-cartridge-jenkins-1.4
-Version:   0.80.13
+Version:   0.80.14
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -64,6 +64,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Wed Oct 19 2011 Dan McPherson <dmcphers@redhat.com> 0.80.14-1
+- add ip back to raw (dmcphers@redhat.com)
+
 * Tue Oct 18 2011 Matt Hicks <mhicks@redhat.com> 0.80.13-1
 - Bug 745749 (dmcphers@redhat.com)
 
