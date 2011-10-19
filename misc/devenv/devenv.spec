@@ -144,6 +144,13 @@ crontab -u root %{devenvdir}/crontab
 # enable disk quotas
 /usr/bin/rhc-init-quota
 
+# Setup swap for devenv
+[ -f /.swap ] || ( /bin/dd if=/dev/zero of=/.swap bs=1024 count=1024000
+    /sbin/mkswap -f /.swap
+    /sbin/swapon /.swap
+    echo "/.swap swap   swap    defaults        0 0" >> /etc/fstab
+)
+
 # Increase max SSH connections and tries to 40
 perl -p -i -e "s/^#MaxSessions .*$/MaxSessions 40/" /etc/ssh/sshd_config
 perl -p -i -e "s/^#MaxStartups .*$/MaxStartups 40/" /etc/ssh/sshd_config
