@@ -3,7 +3,7 @@
 Name: rhc-cartridge-metrics-0.1
 Version: 0.2.7
 Release: 1%{?dist}
-Summary: Embedded phpMyAdmin support for express
+Summary: Embedded metrics support for express
 
 Group: Applications/Internet
 License: GPLv2
@@ -41,6 +41,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0750,-,-) %{cartridgedir}/info/build/
 %config(noreplace) %{cartridgedir}/info/configuration/
 %attr(0755,-,-) %{cartridgedir}/info/bin/
+%attr(0755,-,-) %{cartridgedir}/info/data/
 %{_sysconfdir}/libra/cartridges/%{name}
 %{cartridgedir}/info/changelog
 %{cartridgedir}/info/control
