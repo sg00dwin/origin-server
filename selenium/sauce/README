@@ -10,4 +10,6 @@ I am going to make sure they work on a devenv as well.
 2. Configure sauce (with your credentials):
   - sauce config <USERNAME> <API_KEY>
 3. Run tests
-  - ruby ts_web
+  - To run all tests: ruby ts_web
+  - To run specific tests: ruby ts_web [testcases...]
+

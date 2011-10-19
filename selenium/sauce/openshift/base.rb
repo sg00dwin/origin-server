@@ -21,7 +21,6 @@ module OpenShift
     end
 
     def teardown
-      #puts YAML.dump self.instance_variable_get(:@_result)
       if(get_count('errors') || get_count('failures'))
         page.failed!
       else
@@ -45,6 +44,22 @@ module OpenShift
 
     def type(css,string)
       @page.type(css,string)
+    end
+  end
+
+  module Assertions
+    def assert_dialog_error(dialog,type,name,messages)
+      err = dialog.error(type,name)
+      assert        dialog.exists?(err), "#{err} does not exist"
+
+      messages.each do |msg|
+        assert_match  (dialog.messages[msg] || msg), dialog.text(err)
+      end
+    end
+
+    def assert_redirected_to(location,message=nil)
+      uri = URI.parse(@page.location)
+      assert_match /^#{uri.path}$/, location, message
     end
   end
 end

@@ -1,4 +1,7 @@
 #!/usr/bin/env ruby
+#
+# To run specific tests, specify the name on the command line
+#
 require "test/unit"
 require "test/unit/testsuite"
 require "test/unit/ui/console/testrunner"
@@ -13,13 +16,20 @@ require 'openshift/express/pages'
 require 'tc_home'
 require 'tc_ajax'
 
-# Need to load the tests manualls so we can
+# Need to load the tests manually so we can
 #   override at_exit
 class TS_web
   def self.suite
+    default_suites = {
+      :home => Home.suite,
+      :ajax => AJAX.suite
+    }
+
     suite = Test::Unit::TestSuite.new('Sauce Tests')
-    suite << Home.suite
-    suite << AJAX.suite
+
+    (ARGV.empty? ? default_suites.values : ARGV.map{|x| default_suites[x.downcase.to_sym]}).each do |x|
+      suite << x
+    end
     return suite
   end
 end

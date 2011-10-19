@@ -26,7 +26,7 @@ module OpenShift
       def initialize(page,path)
         super
         @fields = {
-          :title => "OpenShift by Red Hat"
+          :title => /^OpenShift by Red Hat$/
         }
 
         @fields[:signup_links] = %w(opener bottom_signup).map{|x| 

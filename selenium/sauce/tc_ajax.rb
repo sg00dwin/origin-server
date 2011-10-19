@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 class AJAX < Sauce::TestCase
   include ::OpenShift::TestBase
+  include ::OpenShift::Assertions
 
   def setup
     super
@@ -61,6 +62,13 @@ class AJAX < Sauce::TestCase
       signin.submit(data[:username],data[:password])
       assert_dialog_error(signin,:error,nil,[ :invalid ])
     }
+
+    # Try a valid login
+    open(:signin){ |signin|
+      signin.submit("flindiak+sauce_valid@redhat.com","Pa$$word1")
+      @page.wait_for(:wait_for => :page)
+      assert_redirected_to '/app/platform'
+    }
   end
 
   def test_reset_dialog
@@ -88,17 +96,11 @@ class AJAX < Sauce::TestCase
       reset.submit(email)
       assert_dialog_error(reset,:success,nil,[ :reset_success, /at #{email}\.$/ ])
     }
-    
   end
 
-  def assert_dialog_error(dialog,type,name,messages)
-    err = dialog.error(type,name)
-    assert        dialog.exists?(err), "#{err} does not exist"
-
-    messages.each do |msg|
-      assert_match  (dialog.messages[msg] || msg), dialog.text(err)
-    end
-  end
+  # Register
+  #  section.main div.content p Check your inbox for an email with a validation link. Click on the link to complete the registration process. 
+  # /app/user/complete
 
   def open(dialog)
     target = instance_variable_get("@#{dialog.to_s}")

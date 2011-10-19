@@ -12,7 +12,7 @@ class Home < Sauce::TestCase
   end
 
   def test_homepage_title
-    assert_equal @home.title, @home.fields[:title], "Testing the main title"
+    assert_match @home.fields[:title], @home.title
   end
 
   def test_signup_links

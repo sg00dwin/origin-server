@@ -2,6 +2,7 @@ module OpenShift
   module Express
     class Dialog
       include ::OpenShift::CSSHelpers
+      include ::OpenShift::Assertions
 
       attr_accessor :messages, :fields, :id
 
