@@ -13,12 +13,13 @@ function print_help {
     exit 1
 }
 
-#[ $# -eq 3 ] || print_help
+[ $# -eq 4 ] || print_help
 
 
 application="$1"
 namespace=`basename $2`
 uuid=$3
+#IP=$4
 
 CART_DIR=/usr/libexec/li/cartridges
 source ${CART_DIR}/li-controller/info/lib/util
