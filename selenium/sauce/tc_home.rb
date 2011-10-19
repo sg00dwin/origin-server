@@ -4,11 +4,22 @@ class Home < Sauce::TestCase
 
   def setup
     super
-    page.open "/app"
+
+    @home = OpenShift::Express::Home.new(page, '/app')
+    @signup  = OpenShift::Express::Signup.new(page,'signup')
+
+    @home.open
   end
 
   def test_homepage_title
-    assert_equal page.title, MAIN_TITLE, "Testing the main title"
+    assert_equal @home.title, @home.fields[:title], "Testing the main title"
   end
 
+  def test_signup_links
+    @home.fields[:signup_links].each do |link|
+      @home.click(link)
+      assert @signup.is_open?
+      @signup.click(:close)
+    end
+  end
 end

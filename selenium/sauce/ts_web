@@ -5,8 +5,11 @@ require "test/unit/ui/console/testrunner"
 
 require 'helper'
 require 'openshift/base'
-require 'openshift/express'
+require 'openshift/express/dialogs'
+require 'openshift/express/navbars'
+require 'openshift/express/pages'
 
+# Load desired test cases
 require 'tc_home'
 require 'tc_ajax'
 
@@ -15,8 +18,8 @@ require 'tc_ajax'
 class TS_web
   def self.suite
     suite = Test::Unit::TestSuite.new('Sauce Tests')
-    suite << AJAX.suite
     suite << Home.suite
+    suite << AJAX.suite
     return suite
   end
 end
@@ -26,4 +29,8 @@ end
 Test::Unit::UI::Console::TestRunner.run(TS_web);
 
 # HACK: pid is of the `cmd`, which spawns java
-at_exit{ Process.kill('TERM',@sauce_connect_pid+1);}
+at_exit{ 
+  if @sauce_connect_pid
+    Process.kill('TERM',@sauce_connect_pid+1) ;
+  end
+}

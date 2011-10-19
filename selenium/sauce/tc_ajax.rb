@@ -4,12 +4,14 @@ class AJAX < Sauce::TestCase
 
   def setup
     super
-    page.open('/app')
+    @page = page
+    @home = OpenShift::Express::Page.new(page, '/app')
+    @navbar  = OpenShift::Express::MainNav.new(page,'main_nav')
+    @signin  = OpenShift::Express::Login.new(page,'signin')
+    @reset   = OpenShift::Express::Reset.new(page,'reset_password')
+    @signup  = OpenShift::Express::Signup.new(page,'signup')
 
-    @navbar  = OpenShift::Express::MainNav.new(page,'nav#main_nav')
-    @signin  = OpenShift::Express::Login.new(page,'div#signin.dialog')
-    @reset   = OpenShift::Express::Reset.new(page,'div#reset_password.dialog')
-    @signup  = OpenShift::Express::Signup.new(page,'div#signup.dialog')
+    @home.open
   end
 
   def test_dialogs
@@ -50,14 +52,14 @@ class AJAX < Sauce::TestCase
       signin.submit
       # Make sure both errors exist and are correct
       [ :login, :password ].each do |field|
-        assert_dialog_error(signin,:label,field,:required_field)
+        assert_dialog_error(signin,:label,field,[:required_field])
       end
     }
 
     # Try an invalid login
     open(:signin){ |signin|
-      signin.submit('a','a')
-      #assert_dialog_error(signin,:error,nil,:invalid)
+      signin.submit(data[:username],data[:password])
+      assert_dialog_error(signin,:error,nil,[ :invalid ])
     }
   end
 
@@ -65,36 +67,42 @@ class AJAX < Sauce::TestCase
     # Submit with no inputs
     open(:reset){ |reset|
       reset.submit
-      assert_dialog_error(reset,:label,:email,:required_field)
+      assert_dialog_error(reset,:label,:email,[ :required_field ])
     }
 
     # Try with an invalid email
     open(:reset){ |reset|
-      reset.submit('a')
-      assert_dialog_error(reset,:label,:email,:invalid_email)
+      reset.submit(data[:username])
+      assert_dialog_error(reset,:label,:email,[ :invalid_email ])
     }
 
     # Try with a banned TLD
     open(:reset){ |reset|
-      reset.submit('a@foo.ir')
-      assert_dialog_error(reset,:error,nil,:invalid_email_supplied)
+      reset.submit("#{data[:username]}@#{data[:domain]}.ir")
+      assert_dialog_error(reset,:error,nil,[ :invalid_email_supplied ])
     }
 
     # Try a valid request
     open(:reset){ |reset|
-      #reset.submit('a@foo.com')
-      #assert_dialog_error(reset,:div,nil,:invalid_email_supplied)
+      email = "#{data[:username]}@#{data[:domain]}.com"
+      reset.submit(email)
+      assert_dialog_error(reset,:success,nil,[ :reset_success, /at #{email}\.$/ ])
     }
     
   end
 
-  def assert_dialog_error(dialog,type,name,message)
+  def assert_dialog_error(dialog,type,name,messages)
     err = dialog.error(type,name)
     assert        dialog.exists?(err), "#{err} does not exist"
-    assert_match  dialog.messages[message], dialog.text(err)
+
+    messages.each do |msg|
+      assert_match  (dialog.messages[msg] || msg), dialog.text(err)
+    end
   end
 
   def open(dialog)
+    target = instance_variable_get("@#{dialog.to_s}")
+
     case dialog
     when :signin
       @navbar.click(:signin)
@@ -104,9 +112,8 @@ class AJAX < Sauce::TestCase
     end
 
     if block_given?
-      var = instance_variable_get("@#{dialog.to_s}")
-      yield var
-      var.click(:CLOSE)
+      yield target
+      target.click(:CLOSE)
     end
   end
 end

@@ -3,7 +3,7 @@ module OpenShift
     class Dialog
       include ::OpenShift::CSSHelpers
 
-      attr_accessor :messages, :fields
+      attr_accessor :messages, :fields, :id
 
       @@links = {
         :close  => 'a.close_button',
@@ -14,14 +14,16 @@ module OpenShift
       }
 
       def initialize(page,id)
-        @base = id
+        @id = id
         @page = page
+        @base = "div.dialog##{id}"
 
         @messages = {
           :required_field => /This field is required\./,
           :invalid => /Invalid username or password/,
           :invalid_email => /Please enter a valid email address\./,
-          :invalid_email_supplied => /The email supplied is invalid/
+          :invalid_email_supplied => /The email supplied is invalid/,
+          :reset_success => /^The information you have requested has been emailed to you at /
         }
       end
 
@@ -54,11 +56,15 @@ module OpenShift
         end
       end
 
+      def submit()
+        click(:submit)
+        @page.wait_for(:wait_for => :ajax, :javascript_framework => :jquery)
+      end
     end
 
     class Login < Dialog
       def initialize(page,id)
-        super(page,id)
+        super
         @fields = {
           :login => 'login_input',
           :password => 'pwd_input'
@@ -68,13 +74,13 @@ module OpenShift
       def submit(login=nil,password=nil)
         type(input(@fields[:login]),login) if login
         type(input(@fields[:password]),password) if password
-        click(:submit)
+        super()
       end
     end
 
     class Reset < Dialog
       def initialize(page,id)
-        super(page,id)
+        super
         @fields = {
           :email => 'email_input',
         }
@@ -82,7 +88,7 @@ module OpenShift
 
       def submit(email=nil)
         type(input(@fields[:email]),email) if email
-        click(:submit)
+        super()
       end
     end
 
@@ -94,29 +100,6 @@ module OpenShift
 
       def submit(email=nil)
         click(:submit)
-      end
-    end
-
-    class NavBar
-      include ::OpenShift::CSSHelpers
-
-      def initialize(page,id)
-        @page = page
-        @base = id
-      end
-    end
-
-    class MainNav < NavBar
-      @@items = {
-        :signin => 'a.sign_in',
-        :platform_overview => 'a.overview',
-        :express => 'a.express',
-        :flex => 'a.flex',
-        :community => 'a.community'
-      }
-
-      def click(element)
-        @page.click(selector(@@items[element]))
       end
     end
   end
