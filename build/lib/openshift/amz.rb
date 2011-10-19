@@ -125,7 +125,7 @@ module OpenShift
 
       begin
         # Small sleep to avoid exceptions in AMZ call
-        sleep 2
+        sleep 5
 
         # Tag the instance
         instance.add_tag('Name', :value => name)
