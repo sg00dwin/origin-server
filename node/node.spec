@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.80.15
+Version:       0.80.16
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -160,6 +160,11 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Wed Oct 19 2011 Dan McPherson <dmcphers@redhat.com> 0.80.16-1
+- Adding 100M swap to all nodes (mmcgrath@redhat.com)
+- add force-stop to client (dmcphers@redhat.com)
+- add ip back to raw (dmcphers@redhat.com)
+
 * Tue Oct 18 2011 Dan McPherson <dmcphers@redhat.com> 0.80.15-1
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
   (mmcgrath@redhat.com)
