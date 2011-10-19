@@ -63,6 +63,7 @@ then
 
   echo 'Bundling RubyGems based on Gemfile/Gemfile.lock to vendor/bundle'
   bundle install --deployment
+  bundle exec rake assets:precompile 2>/dev/null
 fi
 
 # Deploy new build
