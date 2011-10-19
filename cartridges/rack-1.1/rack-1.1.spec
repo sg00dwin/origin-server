@@ -2,7 +2,7 @@
 
 Summary:   Provides ruby rack support running on Phusion Passenger
 Name:      rhc-cartridge-rack-1.1
-Version:   0.80.8
+Version:   0.80.9
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -94,6 +94,10 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Wed Oct 19 2011 Dan McPherson <dmcphers@redhat.com> 0.80.9-1
+- Bug 746211 (dmcphers@redhat.com)
+- add ip back to raw (dmcphers@redhat.com)
+
 * Mon Oct 17 2011 Dan McPherson <dmcphers@redhat.com> 0.80.8-1
 - add abstract (more generic than httpd)  cart and use from existing carts
   (dmcphers@redhat.com)
