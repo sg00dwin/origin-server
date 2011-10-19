@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.80.5
+Version:   0.80.6
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -213,6 +213,11 @@ chkconfig libra-tc on
 %{_initddir}/libra-site
 
 %changelog
+* Wed Oct 19 2011 Dan McPherson <dmcphers@redhat.com> 0.80.6-1
+- added months-valid param for the CA creation in make-certs.sh
+  (twiest@redhat.com)
+- enable swap for devenv (mmcgrath@redhat.com)
+
 * Sat Oct 15 2011 Dan McPherson <dmcphers@redhat.com> 0.80.5-1
 - 
 
