@@ -98,6 +98,47 @@ class AJAX < Sauce::TestCase
     }
   end
 
+  def test_signup
+    # Submit with no inputs
+    open(:signup){ |signup|
+      signup.submit
+      # Make sure errors exist and are correct
+      [ :email, :password, :confirm ].each do |field|
+        assert_dialog_error(signup,:label,field,[:required_field])
+      end
+    }
+
+    # Try with an invalid email
+    open(:signup){ |signup|
+      signup.submit(data[:username])
+      assert_dialog_error(signup,:label,:email,[ :invalid_email ])
+    }
+
+    # Try with short password
+    open(:signup){ |signup|
+      email = "#{data[:username]}@#{data[:domain]}.com"
+      signup.submit(email,data[:password][0,5])
+      assert_dialog_error(signup,:label,:password,[ :short_password ])
+    }
+
+    # Try with mismatched passwords
+    open(:signup){ |signup|
+      email = "#{data[:username]}@#{data[:domain]}.com"
+      signup.submit(email,data[:password],data[:password2])
+      assert_dialog_error(signup,:label,:confirm,[ :mismatched_password ])
+    }
+
+    # Try with valid input but no captcha
+    open(:signup){ |signup|
+      email = "#{data[:username]}@#{data[:domain]}.com"
+      signup.submit(email,data[:password],data[:password])
+      assert_dialog_error(signup,:error,nil,[ :bad_captcha ])
+    }
+
+    # TODO: Need to figure out a way to get around/disable captcha check
+
+  end
+
   # Register
   #  section.main div.content p Check your inbox for an email with a validation link. Click on the link to complete the registration process. 
   # /app/user/complete

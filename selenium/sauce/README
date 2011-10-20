@@ -11,5 +11,9 @@ I am going to make sure they work on a devenv as well.
   - sauce config <USERNAME> <API_KEY>
 3. Run tests
   - To run all tests: ruby ts_web
-  - To run specific tests: ruby ts_web [testcases...]
+  - To run specific tests: ruby ts_web [home,ajax,etc...]
 
+NOTE: If you plan on running multiple tests, run the Sauce-Connect.jar first and leave it running. 
+ - java -jar Sauce-Connect.jar <username> <api_key>
+The jar file will be downloaded the first time you run the test if it is not already in the sauce folder.
+The test suite will find the tunnel and not start a new one, this should save some time.

@@ -20,11 +20,14 @@ module OpenShift
         @base = "div.dialog##{id}"
 
         @messages = {
-          :required_field => /This field is required\./,
-          :invalid => /Invalid username or password/,
-          :invalid_email => /Please enter a valid email address\./,
-          :invalid_email_supplied => /The email supplied is invalid/,
-          :reset_success => /^The information you have requested has been emailed to you at /
+          :required_field => %q{This field is required},
+          :invalid => %q{Invalid username or password},
+          :invalid_email => %q{Please enter a valid email address.},
+          :invalid_email_supplied => %q{The email supplied is invalid},
+          :reset_success => %q{The information you have requested has been emailed to you at},
+          :short_password => %q{Please enter at least 6 characters.},
+          :mismatched_password => %q{Please enter the same value again.},
+          :bad_captcha => %q{Captcha text didn't match}
         }
       end
 
@@ -96,10 +99,19 @@ module OpenShift
     class Signup < Dialog
       def initialize(page,id)
         super(page,id)
-        @fields = { }
+        @fields = { 
+          :email => 'web_user_email_address',
+          :password => 'web_user_password',
+          :confirm => 'web_user_password_confirmation',
+          :captcha => 'recaptcha_response_field'
+        }
       end
 
-      def submit(email=nil)
+      def submit(email=nil,password=nil,confirm=nil,captcha=nil)
+        type(input(@fields[:email]),email) if email
+        type(input(@fields[:password]),password) if password
+        type(input(@fields[:confirm]),confirm) if confirm
+        type(input(@fields[:captcha]),captcha) if captcha
         click(:submit)
       end
     end
