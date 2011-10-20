@@ -135,7 +135,13 @@ class AJAX < Sauce::TestCase
       assert_dialog_error(signup,:error,nil,[ :bad_captcha ])
     }
 
-    # TODO: Need to figure out a way to get around/disable captcha check
+    # Try success with captcha bypass
+    open(:signup){ |signup|
+      email = "flindiak+sauce_#{data[:username]}@redhat.com"
+      signup.submit(email,data[:password],data[:password],true)
+      @page.wait_for(:wait_for => :page)
+      assert_redirected_to('/app/user/complete')
+    }
 
   end
 

@@ -103,15 +103,30 @@ module OpenShift
           :email => 'web_user_email_address',
           :password => 'web_user_password',
           :confirm => 'web_user_password_confirmation',
-          :captcha => 'recaptcha_response_field'
+          :captcha => 'recaptcha_response_field',
         }
       end
 
-      def submit(email=nil,password=nil,confirm=nil,captcha=nil)
+      def captcha_secret
+        'zvw5LiixMB0I4mjk06aR'
+      end
+
+      def set_captcha
+        @page.js_eval("
+          var input = window.document.createElement('input');
+          input.setAttribute('type','hidden');
+          input.setAttribute('name','captcha_secret');
+          input.setAttribute('value','#{captcha_secret}');
+
+          var dialog = window.document.getElementById('#{@id}');
+          dialog.getElementsByTagName('form')[0].appendChild(input);")
+      end
+
+      def submit(email=nil,password=nil,confirm=nil,captcha=false)
         type(input(@fields[:email]),email) if email
         type(input(@fields[:password]),password) if password
         type(input(@fields[:confirm]),confirm) if confirm
-        type(input(@fields[:captcha]),captcha) if captcha
+        set_captcha if captcha
         click(:submit)
       end
     end
