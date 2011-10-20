@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.80.10
+Version:   0.80.12
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -56,7 +56,7 @@ ln -s %{cartridgedir}/../abstract/info/hooks/start %{buildroot}%{cartridgedir}/i
 ln -s %{cartridgedir}/../abstract/info/hooks/stop %{buildroot}%{cartridgedir}/info/hooks/stop
 ln -s %{cartridgedir}/../abstract/info/hooks/update_namespace %{buildroot}%{cartridgedir}/info/hooks/update_namespace
 ln -s %{cartridgedir}/../abstract/info/hooks/preconfigure %{buildroot}%{cartridgedir}/info/hooks/preconfigure
-ln -s %{cartridgedir}/../abstract-httpd/info/hooks/deploy_httpd_proxy %{buildroot}%{cartridgedir}/info/hooks/deploy_httpd_proxy
+ln -s %{cartridgedir}/../abstract/info/hooks/deploy_httpd_proxy %{buildroot}%{cartridgedir}/info/hooks/deploy_httpd_proxy
 ln -s %{cartridgedir}/../abstract/info/hooks/force-stop %{buildroot}%{cartridgedir}/info/hooks/force-stop
 ln -s %{cartridgedir}/../abstract/info/hooks/status %{buildroot}%{cartridgedir}/info/hooks/status
 
@@ -82,6 +82,12 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Wed Oct 19 2011 Dan McPherson <dmcphers@redhat.com> 0.80.12-1
+- turn on mysql ds by default when mysql is embedded (dmcphers@redhat.com)
+
+* Wed Oct 19 2011 Dan McPherson <dmcphers@redhat.com> 0.80.11-1
+- add ip back to raw (dmcphers@redhat.com)
+
 * Mon Oct 17 2011 Dan McPherson <dmcphers@redhat.com> 0.80.10-1
 - less output on configure (dmcphers@redhat.com)
 

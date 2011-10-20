@@ -46,9 +46,9 @@ limits_nproc=2142        # max number of processes
 cpu_shares=128
 #
 # memory
-# 1024 * 1024 * 256 = 268435456 = 256MB
+# 1024 * 1024 * 512 = 536870912 = 512MB
 memory_limit_in_bytes=536870912
-memory_memsw_limit_in_bytes=536870912
+memory_memsw_limit_in_bytes=641728512 # (512M + 100M (100M swap)
 # memory_soft_limit_in_bytes=-1
 # memory_swappiness=60
 

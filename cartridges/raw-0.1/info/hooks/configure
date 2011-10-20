@@ -65,6 +65,11 @@ popd > /dev/null
 
 populate_repo_dir "repo"
 
+#
+# Find an open localhost IP
+#
+IP=`find_open_ip $uid $uuid`
+
 create_app_ctl_script
 
 secure_app_dir
@@ -75,15 +80,15 @@ chcon_app_dir_and_git
 # Create environment variables
 #
 create_standard_env_vars
+create_standard_network_env_vars
 create_standard_redo_dir_env_var
 echo "export PATH=$CART_INFO_DIR/bin/:$CART_DIR/abstract/info/bin/:$CART_DIR/li-controller/info/bin/:$PATH" > $APP_HOME/.env/PATH
-echo "export OPENSHIFT_APP_CTL_SCRIPT='/bin/true'" > $APP_HOME/.env/OPENSHIFT_APP_CTL_SCRIPT
 
 #
 # Create virtualhost definition for apache
 #
 export CART_INFO_DIR
-$CART_INFO_DIR/bin/deploy_httpd_proxy.sh $application $namespace $uuid
+$CART_INFO_DIR/bin/deploy_httpd_proxy.sh $application $namespace $uuid $IP
 
 restart_httpd_graceful
 

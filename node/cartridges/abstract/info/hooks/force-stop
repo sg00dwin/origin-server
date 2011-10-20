@@ -16,7 +16,7 @@
 # General Public License and may only be used or replicated with the express
 # permission of Red Hat, Inc.
 
-# Stop the application httpd instance
+# Stop all the application processes
 
 # Exit on any errors
 set -e
@@ -25,7 +25,7 @@ function print_help {
     echo "Usage: $0 app-name namespace uuid"
     echo "Stop a running application and disable it"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_httpd_stop
+    echo "$0 $@" | logger -p local0.notice -t libra_force_stop
     exit 1
 }
 

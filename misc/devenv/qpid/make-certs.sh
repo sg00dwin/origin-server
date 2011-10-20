@@ -131,13 +131,13 @@ sleep $sleep
 #      Enter Password or Pin for "Communicator Certificate DB":
 
 if [ "X$debug_pw" == "X" ] ; then
-    x certutil -S -d $dir/CA_db -n "$ca_pretty_name" -s "CN=$ca_name,O=$owner,ST=$state,C=US" -t "CT,," -f $dir/cert.password -z $dir/random2  -x -2 <<EOF
+    x certutil -S -v $months_valid -d $dir/CA_db -n "$ca_pretty_name" -s "CN=$ca_name,O=$owner,ST=$state,C=US" -t "CT,," -f $dir/cert.password -z $dir/random2  -x -2 <<EOF
 y
 0
 n
 EOF
 else
-    x certutil -S -d $dir/CA_db -n "$ca_pretty_name" -s "CN=$ca_name,O=$owner,ST=$state,C=US" -t "CT,," -z $dir/random2  -x -2 <<EOF
+    x certutil -S -v $months_valid -d $dir/CA_db -n "$ca_pretty_name" -s "CN=$ca_name,O=$owner,ST=$state,C=US" -t "CT,," -z $dir/random2  -x -2 <<EOF
 y
 0
 n

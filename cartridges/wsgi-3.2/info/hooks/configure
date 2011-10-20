@@ -99,6 +99,6 @@ start_app
 # Create virtualhost definition for apache
 #
 export CART_INFO_DIR
-$CART_DIR/abstract-httpd/info/bin/deploy_httpd_proxy.sh $application $namespace $uuid $IP
+$CART_DIR/abstract/info/bin/deploy_httpd_proxy.sh $application $namespace $uuid $IP
 
 restart_httpd_graceful

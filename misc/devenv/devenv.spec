@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.80.5
+Version:   0.80.6
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -144,6 +144,13 @@ crontab -u root %{devenvdir}/crontab
 # enable disk quotas
 /usr/bin/rhc-init-quota
 
+# Setup swap for devenv
+[ -f /.swap ] || ( /bin/dd if=/dev/zero of=/.swap bs=1024 count=1024000
+    /sbin/mkswap -f /.swap
+    /sbin/swapon /.swap
+    echo "/.swap swap   swap    defaults        0 0" >> /etc/fstab
+)
+
 # Increase max SSH connections and tries to 40
 perl -p -i -e "s/^#MaxSessions .*$/MaxSessions 40/" /etc/ssh/sshd_config
 perl -p -i -e "s/^#MaxStartups .*$/MaxStartups 40/" /etc/ssh/sshd_config
@@ -206,6 +213,11 @@ chkconfig libra-tc on
 %{_initddir}/libra-site
 
 %changelog
+* Wed Oct 19 2011 Dan McPherson <dmcphers@redhat.com> 0.80.6-1
+- added months-valid param for the CA creation in make-certs.sh
+  (twiest@redhat.com)
+- enable swap for devenv (mmcgrath@redhat.com)
+
 * Sat Oct 15 2011 Dan McPherson <dmcphers@redhat.com> 0.80.5-1
 - 
 
