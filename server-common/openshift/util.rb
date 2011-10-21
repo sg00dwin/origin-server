@@ -53,7 +53,7 @@ module Libra
     end
 
     def self.check_app(app)
-      check_field(app, 'application', Maxdlen + 4)
+      check_field(app, 'application', Maxdlen)
     end
 
     def self.check_namespace(namespace)
