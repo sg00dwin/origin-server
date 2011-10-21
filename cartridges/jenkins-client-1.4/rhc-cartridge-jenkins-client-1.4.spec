@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/jenkins-client-1.4
 
 Name: rhc-cartridge-jenkins-client-1.4
-Version: 0.14.5
+Version: 0.14.6
 Release: 1%{?dist}
 Summary: Embedded jenkins client support for express 
 Group: Network/Daemons
@@ -47,6 +47,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Thu Oct 20 2011 Dan McPherson <dmcphers@redhat.com> 0.14.6-1
+- add builder size to each job template (dmcphers@redhat.com)
+
 * Tue Oct 18 2011 Dan McPherson <dmcphers@redhat.com> 0.14.5-1
 - basic jenkins client testing (dmcphers@redhat.com)
 
