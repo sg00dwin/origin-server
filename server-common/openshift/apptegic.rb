@@ -16,6 +16,7 @@ module Libra
     --data-urlencode '_ak=#{Libra.c[:apptegic_key]}' \
     --data-urlencode '_at=#{Libra.c[:apptegic_secret]}' \
     --data-urlencode '_ds=#{Libra.c[:apptegic_dataset]}' \
+    --data-urlencode 'userAgent=#{Thread.current[:user_agent] || "Unknown"}' \
     --data-urlencode 'accountId=#{rhlogin}' \
     --data-urlencode 'accountType=regular' \
     --data-urlencode 'userId=#{rhlogin}' \
@@ -40,6 +41,7 @@ module Libra
     --data-urlencode '_ak=#{Libra.c[:apptegic_key]}' \
     --data-urlencode '_at=#{Libra.c[:apptegic_secret]}' \
     --data-urlencode '_ds=#{Libra.c[:apptegic_dataset]}' \
+    --data-urlencode 'userAgent=#{Thread.current[:user_agent] || "Unknown"}' \
     --data-urlencode 'action=#{action}' \
     --data-urlencode 'app_uuid=#{app_uuid}' \
     --data-urlencode 'platform=express' &`
@@ -56,6 +58,7 @@ module Libra
     --data-urlencode '_ak=#{Libra.c[:apptegic_key]}' \
     --data-urlencode '_at=#{Libra.c[:apptegic_secret]}' \
     --data-urlencode '_ds=#{Libra.c[:apptegic_dataset]}' \
+    --data-urlencode 'userAgent=#{Thread.current[:user_agent] || "Unknown"}' \
     --data-urlencode 'accountId=#{rhlogin}' \
     --data-urlencode 'accountType=regular' \
     --data-urlencode 'userId=#{rhlogin}' \
