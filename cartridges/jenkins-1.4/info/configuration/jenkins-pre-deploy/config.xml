@@ -21,7 +21,7 @@
       <proxyHost></proxyHost>
       <proxyPort>0</proxyPort>
       <jenkinsUrl>JENKINS_URL_TEMPLATE</jenkinsUrl>
-      <builderSize>std</builderSize>
+      <defaultBuilderSize>std</defaultBuilderSize>
       <ignoreBrokerCertCheck>true</ignoreBrokerCertCheck>
     </hudson.plugins.openshift.OpenShiftCloud>
   </clouds>

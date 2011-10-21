@@ -3,7 +3,14 @@
   <actions/>
   <description></description>
   <keepDependencies>false</keepDependencies>
-  <properties/>
+  <properties>
+    <hudson.plugins.openshift.OpenShiftBuilderSizeJobProperty>
+      <builderSize>large</builderSize>
+    </hudson.plugins.openshift.OpenShiftBuilderSizeJobProperty>
+    <hudson.plugins.openshift.OpenShiftBuilderTypeJobProperty>
+      <builderType>jbossas-7.0/builderType>
+    </hudson.plugins.openshift.OpenShiftBuilderTypeJobProperty>
+  </properties>
   <scm class="hudson.plugins.git.GitSCM">
     <configVersion>2</configVersion>
     <userRemoteConfigs>
@@ -36,7 +43,7 @@
     <skipTag>false</skipTag>
     <scmName></scmName>
   </scm>
-  <assignedNode>jbossas-7.0</assignedNode>
+  <assignedNode>JOB_NAME</assignedNode>
   <canRoam>false</canRoam>
   <disabled>false</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
@@ -53,7 +60,7 @@ rsync UPSTREAM_SSH:~/.m2/ ~/.m2/
 # Build/Update virtual env
 build.sh
 
-export MAVEN_OPTS="-Xmx768m"
+export MAVEN_OPTS="-Xmx396m"
 mvn --version
 mvn clean package -Popenshift -DskipTests
 
