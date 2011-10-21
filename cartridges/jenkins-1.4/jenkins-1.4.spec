@@ -2,7 +2,7 @@
 
 Summary:   Provides jenkins-1.4 support
 Name:      rhc-cartridge-jenkins-1.4
-Version:   0.80.14
+Version:   0.80.15
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -64,6 +64,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Thu Oct 20 2011 Dan McPherson <dmcphers@redhat.com> 0.80.15-1
+- add builder size to each job template (dmcphers@redhat.com)
+
 * Wed Oct 19 2011 Dan McPherson <dmcphers@redhat.com> 0.80.14-1
 - add ip back to raw (dmcphers@redhat.com)
 
