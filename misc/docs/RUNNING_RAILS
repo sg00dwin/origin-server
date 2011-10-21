@@ -8,7 +8,7 @@ you want to try logging in as real users.
 
 Pre Setup:
 
-1. yum install mcollective-common mcollective-client rhc rubygem-right_aws rubygem-aws
+1. yum install mcollective-common mcollective-client rhc rubygem-aws-sdk
 2. sudo mkdir /etc/libra
 3. sudo cp server-common/conf/libra/controller.conf  /etc/libra
 
