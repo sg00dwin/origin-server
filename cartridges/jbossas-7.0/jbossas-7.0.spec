@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.80.13
+Version:   0.80.14
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -82,6 +82,10 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Fri Oct 21 2011 Dan McPherson <dmcphers@redhat.com> 0.80.14-1
+- rotate builds (dmcphers@redhat.com)
+- Marking new action hooks executable by default (mmcgrath@redhat.com)
+
 * Thu Oct 20 2011 Dan McPherson <dmcphers@redhat.com> 0.80.13-1
 - add builder size to each job template (dmcphers@redhat.com)
 
