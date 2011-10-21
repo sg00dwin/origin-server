@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.80.6
+Version:   0.80.7
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -68,6 +68,9 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Fri Oct 21 2011 Dan McPherson <dmcphers@redhat.com> 0.80.7-1
+- Update text on site (edirsh@redhat.com)
+
 * Tue Oct 18 2011 Dan McPherson <dmcphers@redhat.com> 0.80.6-1
 - 
 
