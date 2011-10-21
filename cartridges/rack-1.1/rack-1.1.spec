@@ -2,7 +2,7 @@
 
 Summary:   Provides ruby rack support running on Phusion Passenger
 Name:      rhc-cartridge-rack-1.1
-Version:   0.80.9
+Version:   0.80.10
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -94,6 +94,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Thu Oct 20 2011 Dan McPherson <dmcphers@redhat.com> 0.80.10-1
+- add builder size to each job template (dmcphers@redhat.com)
+
 * Wed Oct 19 2011 Dan McPherson <dmcphers@redhat.com> 0.80.9-1
 - Bug 746211 (dmcphers@redhat.com)
 - add ip back to raw (dmcphers@redhat.com)
