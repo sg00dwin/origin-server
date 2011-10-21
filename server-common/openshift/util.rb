@@ -5,7 +5,8 @@ require 'openshift/server'
 module Libra
   module Util
 
-    Maxdlen = 16
+    DEFAULT_MAX_LENGTH = 16
+    APP_NAME_MAX_LENGTH = 32
 
     def self.get_cart_framework(cart)
       cart_type = cart.split('-')[0..-2].join('-')
@@ -45,7 +46,6 @@ module Libra
     # Invalid chars (") ($) (^) (<) (>) (|) (%) (/) (;) (:) (,) (\) (*) (=) (~)
     def self.check_rhlogin(rhlogin)
       if rhlogin =~ /["\$\^<>\|%\/;:,\\\*=~]/
-        #puts 'RHLogin may not contain any of these characters: (\") ($) (^) (<) (>) (|) (%) (/) (;) (:) (,) (\) (*) (=) (~)'
         return false
       else
         return true
@@ -53,28 +53,25 @@ module Libra
     end
 
     def self.check_app(app)
-      check_field(app, 'application', Maxdlen)
+      check_field(app, 'application', APP_NAME_MAX_LENGTH)
     end
 
     def self.check_namespace(namespace)
-      check_field(namespace, 'namespace', Maxdlen)
+      check_field(namespace, 'namespace', DEFAULT_MAX_LENGTH)
     end
 
     def self.check_field(field, type, max=0)
       if field
         if field =~ /[^0-9a-zA-Z]/
-          #puts "#{type} contains non-alphanumeric characters!"
           return false
         end
         if Blacklist.in_blacklist?(field)
           return false
         end
-        if max != 0 && field.length > Maxdlen
-          #puts "maximum #{type} size is #{Maxdlen} characters"
+        if max != 0 && field.length > max
           return false
         end
       else
-        #puts "#{type} is required"
         return false
       end
       true

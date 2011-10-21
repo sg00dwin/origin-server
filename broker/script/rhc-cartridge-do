@@ -34,18 +34,18 @@ unless options.include?(:cartridge)
     exit 110
 end
 
-unless options.include?(:action) or options[:action] =~ /^(configure|deconfigure|info|post-install|post_remove|pre-install|reload|restart|start|status|stop)$/
+unless options.include?(:action)
     puts "Specify supported action:"
     puts "configure,deconfigure,info,post-install,post_remove,pre-install,reload,restart,start,status,stop"
     exit 253
 end
 
-unless options.include?(:app_name) or options[:app_name] =~ /^.+$/
+unless options.include?(:app_name)
     puts "Specify app name"
     exit 252
 end
 
-unless options.include?(:rhlogin) or !(options[:rhlogin] =~ /["\$\^<>\|%\/;:,\\\*=~]/)
+unless options.include?(:rhlogin)
     puts "Specify rhlogin"
     exit 251
 end

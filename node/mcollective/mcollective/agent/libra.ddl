@@ -64,7 +64,7 @@ action "migrate", :description => "run a cartridge action" do
         :type           => :string,
         :validation     => '^[a-zA-Z0-9]+$',
         :optional       => false,
-        :maxlength      => 128
+        :maxlength      => 32
         
     input :app_type,
         :prompt         => "Application Type",
@@ -80,7 +80,7 @@ action "migrate", :description => "run a cartridge action" do
         :type           => :string,
         :validation     => '^.+$',
         :optional       => false,
-        :maxlength      => 128
+        :maxlength      => 32
 
     input :version,
         :prompt         => "Target Version",
@@ -120,7 +120,7 @@ action "has_app", :description => "Does this server contain a specified app?" do
         :type           => :string,
         :validation     => '^[a-zA-Z0-9]+$',
         :optional       => false,
-        :maxlength      => 128
+        :maxlength      => 32
 
     output  :time,
             :description => "The time as a message",

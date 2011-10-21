@@ -30,17 +30,17 @@ options = rpcoptions do |parser, options|
     end
 end
 
-unless options.include?(:namespace) or options[:namespace] =~ /^[a-zA-Z0-9]+$/ or options[:namespace].length > 16
+unless options.include?(:namespace)
     puts "The namespace is invalid."
     exit 254
 end
 
-unless options.include?(:rhlogin) or !(options[:rhlogin] =~ /["\$\^<>\|%\/;:,\\\*=~]/)
+unless options.include?(:rhlogin)
     puts "The rhlogin is invalid."
     exit 253
 end
 
-unless options.include?(:ssh) or options[:ssh] =~ (options[:ssh] == Base64.encode64(Base64.decode64(options[:ssh])).gsub(/\n/, ''))
+unless options.include?(:ssh)
     puts "The ssh key is invalid."
     exit 252
 end
