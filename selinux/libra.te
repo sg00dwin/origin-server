@@ -211,6 +211,7 @@ dontaudit sshd_t self:capability sys_admin;
 allow libra_domain sshd_t:process sigchld;
 allow libra_domain sshd_t:unix_stream_socket connectto;
 allow sshd_t libra_domain:process { rlimitinh signal };
+manage_dirs_pattern(sshd_t, libra_tmp_t, libra_tmp_t)
 manage_sock_files_pattern(sshd_t, libra_tmp_t, libra_tmp_t)
 ssh_getattr_user_home_dir(libra_domain)
 dontaudit sendmail_t libra_initrc_t:fifo_file { read write };
@@ -302,6 +303,8 @@ miscfiles_read_localization(libra_cgroup_read_t)
 
 domtrans_pattern(libra_domain, libra_cgroup_read_exec_t, libra_cgroup_read_t)
 role system_r types libra_cgroup_read_t;
+
+allow libra_t libra_cgroup_read_t:process { getattr signal signull sigkill };
 
 fs_read_cgroup_files(libra_cgroup_read_t)
 
