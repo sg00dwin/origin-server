@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.80.12
+Version:   0.80.13
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -82,6 +82,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Thu Oct 20 2011 Dan McPherson <dmcphers@redhat.com> 0.80.13-1
+- add builder size to each job template (dmcphers@redhat.com)
+
 * Wed Oct 19 2011 Dan McPherson <dmcphers@redhat.com> 0.80.12-1
 - turn on mysql ds by default when mysql is embedded (dmcphers@redhat.com)
 
