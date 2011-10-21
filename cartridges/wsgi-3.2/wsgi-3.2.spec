@@ -2,7 +2,7 @@
 
 Summary:   Provides python-wsgi-3.2 support
 Name:      rhc-cartridge-wsgi-3.2
-Version:   0.80.9
+Version:   0.80.10
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -79,6 +79,10 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Fri Oct 21 2011 Dan McPherson <dmcphers@redhat.com> 0.80.10-1
+- rotate builds (dmcphers@redhat.com)
+- Marking new action hooks executable by default (mmcgrath@redhat.com)
+
 * Fri Oct 21 2011 Dan McPherson <dmcphers@redhat.com> 0.80.9-1
 - bug 747529 (dmcphers@redhat.com)
 
