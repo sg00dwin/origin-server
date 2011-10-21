@@ -85,6 +85,20 @@ Feature: Cartridge Verification Tests
     |   perl-5.10   |
     |   rack-1.1    |
     |   jenkins-1.4 |
+    
+  Scenario Outline: Application Change Namespace
+    Given an existing <type> application
+    When the application namespace is updated
+    Then the application should be accessible
+
+  Scenarios: Application Change Namespace Scenarios
+    |      type     |
+    |   php-5.3     |
+    |   wsgi-3.2    |
+    |   perl-5.10   |
+    |   rack-1.1    |
+    |   jbossas-7.0 |
+    |   jenkins-1.4 |
 
   Scenario Outline: Application Destroying
     Given an existing <type> application

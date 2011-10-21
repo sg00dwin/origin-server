@@ -86,6 +86,10 @@ When /^the application is destroyed$/ do
   rhc_ctl_destroy(@app)
 end
 
+When /^the application namespace is updated$/ do
+  rhc_update_namespace(@app)
+end
+
 Then /^the applications should be accessible?$/ do
   @apps.each do |app|
     app.is_accessible?.should be_true

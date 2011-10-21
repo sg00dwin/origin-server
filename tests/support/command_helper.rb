@@ -85,6 +85,22 @@ module CommandHelper
     app.create_domain_code = exit_code
     exit_code == 0
   end
+  
+  def rhc_update_namespace(app)
+    old_namespace = app.namespace
+    app.namespace = new_namespace = old_namespace + "new"
+    old_hostname = app.hostname
+    app.hostname = "#{app.name}-#{new_namespace}.#{$domain}"
+    old_repo = app.repo
+    app.repo = "#{$temp}/#{new_namespace}_#{app.name}_repo"
+    FileUtils.mv old_repo, app.repo
+    `sed -i "s,#{old_hostname},#{new_namespace},g" #{app.repo}/.git/config`
+    old_file = app.file
+    app.file = "#{$temp}/#{new_namespace}.json"
+    FileUtils.mv old_file, app.file
+    run("#{$create_domain_script} -n #{new_namespace} -l #{app.login} -p fakepw --alter -d").should == 0
+    app.persist
+  end
 
   def rhc_create_app(app)
     exit_code = run("#{$create_app_script} -l #{app.login} -a #{app.name} -r #{app.repo} -t #{app.type} -p fakepw -d")
@@ -93,7 +109,6 @@ module CommandHelper
   end
 
   def rhc_embed_add(app, type)
-    puts app.name
     result = run_stdout("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -e add-#{type} -d")
     if type.start_with?('mysql-')
       app.mysql_hostname = /^Connection URL: mysql:\/\/(.*)\/$/.match(result)[1]
@@ -147,8 +162,8 @@ module CommandHelper
   end
 
   #
-# useful methods to avoid duplicating effort
-#
+  # useful methods to avoid duplicating effort
+  #
 
   #
   # Count the number of processes owned by account with cmd_name 
