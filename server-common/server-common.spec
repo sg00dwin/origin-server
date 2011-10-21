@@ -2,7 +2,7 @@
 
 Summary:       Common dependencies of the OpenShift broker and site
 Name:          rhc-server-common
-Version:       0.80.5
+Version:       0.80.6
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -57,6 +57,9 @@ rm -rf %{buildroot}
                                   -s /sbin/nologin 2>&1 > /dev/null || :
 
 %changelog
+* Fri Oct 21 2011 Dan McPherson <dmcphers@redhat.com> 0.80.6-1
+- up app name limit to 32 (dmcphers@redhat.com)
+
 * Fri Oct 21 2011 Dan McPherson <dmcphers@redhat.com> 0.80.5-1
 - add user agent to apptegic (dmcphers@redhat.com)
 - set limit back to standard (dmcphers@redhat.com)
