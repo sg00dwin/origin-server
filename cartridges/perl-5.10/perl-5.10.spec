@@ -2,7 +2,7 @@
 
 Summary:   Provides mod_perl support
 Name:      rhc-cartridge-perl-5.10
-Version:   0.11.8
+Version:   0.11.9
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -76,6 +76,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Thu Oct 20 2011 Dan McPherson <dmcphers@redhat.com> 0.11.9-1
+- add builder size to each job template (dmcphers@redhat.com)
+
 * Wed Oct 19 2011 Dan McPherson <dmcphers@redhat.com> 0.11.8-1
 - add ip back to raw (dmcphers@redhat.com)
 
