@@ -2,7 +2,7 @@
 
 Summary:   Provides php-5.3 support
 Name:      rhc-cartridge-php-5.3
-Version:   0.80.7
+Version:   0.80.8
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -85,6 +85,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Thu Oct 20 2011 Dan McPherson <dmcphers@redhat.com> 0.80.8-1
+- add builder size to each job template (dmcphers@redhat.com)
+
 * Wed Oct 19 2011 Dan McPherson <dmcphers@redhat.com> 0.80.7-1
 - add ip back to raw (dmcphers@redhat.com)
 
