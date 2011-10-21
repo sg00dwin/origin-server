@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.80.2
+Version:       0.80.3
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -38,6 +38,10 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Fri Oct 21 2011 Dan McPherson <dmcphers@redhat.com> 0.80.3-1
+- Allow sshd_t to remove libra_tmp_t directories, also allow libra_domains to
+  send signals to the libra_cgroup domains (dwalsh@redhat.com)
+
 * Mon Oct 17 2011 Dan McPherson <dmcphers@redhat.com> 0.80.2-1
 - libra_cgroup_read needs to read certificates (dwalsh@redhat.com)
 
