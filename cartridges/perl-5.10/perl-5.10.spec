@@ -2,7 +2,7 @@
 
 Summary:   Provides mod_perl support
 Name:      rhc-cartridge-perl-5.10
-Version:   0.11.9
+Version:   0.11.10
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -76,6 +76,10 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Fri Oct 21 2011 Dan McPherson <dmcphers@redhat.com> 0.11.10-1
+- rotate builds (dmcphers@redhat.com)
+- Marking new action hooks executable by default (mmcgrath@redhat.com)
+
 * Thu Oct 20 2011 Dan McPherson <dmcphers@redhat.com> 0.11.9-1
 - add builder size to each job template (dmcphers@redhat.com)
 
