@@ -2,7 +2,7 @@
 
 Summary:   Provides jenkins-1.4 support
 Name:      rhc-cartridge-jenkins-1.4
-Version:   0.80.15
+Version:   0.80.16
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -64,6 +64,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Fri Oct 21 2011 Dan McPherson <dmcphers@redhat.com> 0.80.16-1
+- Marking new action hooks executable by default (mmcgrath@redhat.com)
+
 * Thu Oct 20 2011 Dan McPherson <dmcphers@redhat.com> 0.80.15-1
 - add builder size to each job template (dmcphers@redhat.com)
 
