@@ -44,7 +44,7 @@ function create_standard_path_env_var {
 }
 
 function create_standard_app_dirs {
-	mkdir run tmp data
+	mkdir run tmp data ci
 }
 
 # Create simple application start / stop script

@@ -57,6 +57,13 @@ module LibraMigration
         end
       end
       
+      ci_dir = "#{app_dir}/ci"
+      if !File.exists?(ci_dir)
+        FileUtils.mkdir_p ci_dir
+        FileUtils.chown(uuid, uuid, ci_dir)
+        FileUtils.chmod(0755, ci_dir)
+      end
+      
       env_echos.each do |env_echo|
         echo_output, echo_exitcode = Util.execute_script(env_echo)
         output += echo_output
