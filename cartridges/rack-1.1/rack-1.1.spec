@@ -2,7 +2,7 @@
 
 Summary:   Provides ruby rack support running on Phusion Passenger
 Name:      rhc-cartridge-rack-1.1
-Version:   0.80.10
+Version:   0.80.11
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -94,6 +94,10 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Fri Oct 21 2011 Dan McPherson <dmcphers@redhat.com> 0.80.11-1
+- rotate builds (dmcphers@redhat.com)
+- Marking new action hooks executable by default (mmcgrath@redhat.com)
+
 * Thu Oct 20 2011 Dan McPherson <dmcphers@redhat.com> 0.80.10-1
 - add builder size to each job template (dmcphers@redhat.com)
 
