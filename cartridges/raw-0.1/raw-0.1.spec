@@ -2,7 +2,7 @@
 
 Summary:   Provides raw support
 Name:      rhc-cartridge-raw-0.1
-Version:   0.14.8
+Version:   0.14.9
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -71,6 +71,10 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Fri Oct 21 2011 Dan McPherson <dmcphers@redhat.com> 0.14.9-1
+- rotate builds (dmcphers@redhat.com)
+- Marking new action hooks executable by default (mmcgrath@redhat.com)
+
 * Thu Oct 20 2011 Dan McPherson <dmcphers@redhat.com> 0.14.8-1
 - add builder size to each job template (dmcphers@redhat.com)
 
