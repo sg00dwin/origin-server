@@ -474,7 +474,7 @@ class DevEnv < Thor
         
         print "Sending QE ready email..."
         begin
-          send_verified_email(instance.image_id, instance.name)
+          send_verified_email(instance.image_id, image.name)
         rescue Exception => e
           print "Failed sending email with message: #{e.message}"
         end
