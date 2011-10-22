@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.80.8
+Version:   0.80.9
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -214,6 +214,9 @@ chkconfig libra-tc on
 %{_initddir}/libra-site
 
 %changelog
+* Sat Oct 22 2011 Dan McPherson <dmcphers@redhat.com> 0.80.9-1
+- remove extra install (dmcphers@redhat.com)
+
 * Fri Oct 21 2011 Dan McPherson <dmcphers@redhat.com> 0.80.8-1
 - try adding a direct ref to ffi (dmcphers@redhat.com)
 
