@@ -90,7 +90,6 @@ rm -rf %{buildroot}
 %post
 
 # Install the Selenium gems
-gem install ffi
 gem install selenium-webdriver
 gem install headless
 
