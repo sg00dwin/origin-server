@@ -99,12 +99,13 @@ module OpenShift
     end
 
     def instance_status(instance)
-      (0..10).each do
+      (1..10).each do |index|
         begin
           status = instance.status
           return status
         rescue Exception => e
-          log.info "Error getting status: e.message"
+          raise if index == 10
+          log.info "Error getting status(retrying): #{e.message}"
           sleep 30
         end
       end
@@ -136,14 +137,12 @@ module OpenShift
       instance = image.run_instance($amz_options)
 
       begin
-        # Small sleep to avoid exceptions in AMZ call
-        sleep 5
-
-        # Tag the instance
-        instance.add_tag('Name', :value => name)
 
         # Block until the instance is accessible
         block_until_available(instance)
+      
+        # Tag the instance
+        instance.add_tag('Name', :value => name)
 
         return instance
       rescue ScriptError => e
@@ -170,7 +169,7 @@ module OpenShift
 
     def block_until_available(instance)
       log.info "Waiting for instance to be available..."
-
+      
       (0..12).each do
         break if instance_status(instance) == :running
         log.info "Instance isn't running yet... retrying"

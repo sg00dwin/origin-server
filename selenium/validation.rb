@@ -15,6 +15,7 @@ class Validation < Test::Unit::TestCase
   
   @@base_url = 'https://localhost'
   @@base_path = '/app/'
+  @@base_app_url = @@base_url + @@base_path
   @@ticket = 'test'
   @@retry_limit = 3
   @@local_hosts = [
@@ -55,7 +56,6 @@ class Validation < Test::Unit::TestCase
     uri = build_uri(url)
     # Make sure we don't retest pages
     if @@tested_pages.include? uri.to_s
-      $logger.debug "Skipping #{uri.to_s}"
       return
     end
     @@tested_pages << uri.to_s
@@ -76,14 +76,16 @@ class Validation < Test::Unit::TestCase
           links.each{|link| check_page(link,logged_in) unless link.nil?}
         end
       else
-        @@invalid_links << url
+        if uri.to_s.start_with?(@@base_app_url)
+          @@invalid_links << url
+        else
+          $logger.debug "!!!WARNING!!! External URI not accessible: #{uri.to_s}"
+        end
       end
     end
   end
 
   def build_uri(url)
-    $logger.debug("Building URI: #{url}")
-
     uri = URI.parse(url)
     if [URI::Generic].include? uri.class
       # Some sort of relative URI

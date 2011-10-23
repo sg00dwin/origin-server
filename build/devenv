@@ -100,17 +100,30 @@ class DevEnv < Thor
     
     def register_image(conn, instance, name, manifest)
       print "Registering AMI..."
-      image = conn.images.create(:instance_id => instance.id, 
-        :name => name,
-        :description => manifest)
-      (0..10).each do
-        begin
-          sleep 30 until image.state == :available
-          break
-        rescue Exception => e
-          log.info "Error getting state: e.message"
-          sleep 30
+      outer_num_retries = 4
+      (1..outer_num_retries).each do |outer_index|
+        image = conn.images.create(:instance_id => instance.id, 
+          :name => name,
+          :description => manifest)
+        num_retries = 10
+        (1..num_retries).each do |index|
+          begin
+            sleep 30 until image.state == :available
+            break
+          rescue Exception => e
+            raise if index == num_retries && outer_index == outer_num_retries
+            if index == num_retries
+              log.info "Error getting state: #{e.message}"
+              log.info "Deregistering image: #{image.name}"
+              image.deregister
+              image = nil
+            else
+              log.info "Error getting state(retrying): #{e.message}"
+            end
+            sleep 30
+          end
         end
+        break if image
       end
       puts "Done"
     end
@@ -190,7 +203,7 @@ class DevEnv < Thor
 
       validate_instance(hostname)
 
-      manifest = rpm_manifest
+      manifest = rpm_manifest(hostname)
 
       if options.register?
         register_image(conn, instance, name, manifest)
@@ -225,10 +238,10 @@ class DevEnv < Thor
 
       validate_instance(hostname)
 
-      manifest = rpm_manifest
+      manifest = rpm_manifest(hostname)
 
       if options.register?
-        register_image(conn, instance, name, manifest)
+        register_image(conn, instance, tag, manifest)
       end
     ensure
       instance.terminate if options.terminate?
