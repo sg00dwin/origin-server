@@ -98,9 +98,21 @@ module OpenShift
       end
     end
 
+    def instance_status(instance)
+      (0..10).each do
+        begin
+          status = instance.status
+          return status
+        rescue Exception => e
+          log.info "Error getting status: e.message"
+          sleep 30
+        end
+      end
+    end
+
     def find_instance(conn, name, use_tag=false)
       conn.instances.each do |i|
-        if (i.status != :terminated)
+        if (instance_status(i) != :terminated)
           if (use_tag and i.tags["Name"] == name) or
              (!use_tag and i.dns_name == name)
             puts "Found instance #{i.id}"
@@ -160,12 +172,12 @@ module OpenShift
       log.info "Waiting for instance to be available..."
 
       (0..12).each do
-        break if instance.status == :running
+        break if instance_status(instance) == :running
         log.info "Instance isn't running yet... retrying"
         sleep 5
       end
 
-      unless instance.status == :running
+      unless instance_status(instance) == :running
         instance.terminate
         raise ScriptError, "Timed out before instance was 'running'"
       end
@@ -229,7 +241,7 @@ module OpenShift
     def terminate_flagged_instances(conn)
       AWS.memoize do
         conn.instances.each do |i|
-          if (i.status == :stopped) and (i.tags["Name"] =~ TERMINATE_REGEX)
+          if (instance_status(i) == :stopped) and (i.tags["Name"] =~ TERMINATE_REGEX)
             log.info "Terminating #{i.id}"
             i.terminate
           end
@@ -240,7 +252,7 @@ module OpenShift
     def stop_untagged_instances(conn)
       AWS.memoize do
         conn.instances.each do |i|
-          if (i.status == :running) and (i.tags["Name"] == nil)
+          if (instance_status(i) == :running) and (i.tags["Name"] == nil)
             # Tag the node to give people a heads up
             i.add_tag("Name", :value => "will-terminate")
 

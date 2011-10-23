@@ -97,6 +97,54 @@ class DevEnv < Thor
         exit code
       end
     end
+    
+    def register_image(conn, instance, name, manifest)
+      print "Registering AMI..."
+      image = conn.images.create(:instance_id => instance.id, 
+        :name => name,
+        :description => manifest)
+      (0..10).each do
+        begin
+          sleep 30 until image.state == :available
+          break
+        rescue Exception => e
+          log.info "Error getting state: e.message"
+          sleep 30
+        end
+      end
+      puts "Done"
+    end
+    
+    def rpm_manifest(hostname)
+      print "Retrieving RPM manifest"
+      manifest = ssh(hostname, 'rpm -qa | grep rhc-')
+      manifest = manifest.split("\n").sort.join(" / ")
+      # Trim down the output to 255 characters
+      manifest.gsub!(/rhc-([a-z])/, '\1')
+      manifest.gsub!('.el6.noarch', '')
+      manifest.gsub!('.el6_1.noarch', '')
+      manifest.gsub!('cartridge', 'c-')
+      manifest = manifest[0..254]
+      puts "Done"
+      return manifest
+    end
+    
+    def validate_instance(hostname)
+      # Validate the node installation
+      print "Validating instance..."
+      unless is_valid?(hostname)
+        puts "ERROR - instance is not valid"
+        exit 1
+      end
+      puts "Done"
+    end
+    
+    def reboot(instance)
+      print "Rebooting instance to apply new kernel..."
+      instance.reboot
+      puts "Done"
+    end
+    
   end
 
   desc "build NAME", "Build a new devenv AMI with the given NAME"
@@ -137,37 +185,15 @@ class DevEnv < Thor
       puts "Done"
 
       if options.reboot?
-        print "Rebooting instance to apply new kernel..."
-        instance.reboot
-        puts "Done"
+        reboot(instance)
       end
 
-      # Validate the node installation
-      print "Validating instance..."
-      unless is_valid?(hostname)
-        puts "ERROR - instance is not valid"
-        exit 1
-      end
-      puts "Done"
+      validate_instance(hostname)
 
-      print "Retrieving RPM manifest..."
-      manifest = ssh(hostname, 'rpm -qa | grep rhc-')
-      manifest = manifest.split("\n").sort.join(" / ")
-      # Trim down the output to 255 characters
-      manifest.gsub!(/rhc-([a-z])/, '\1')
-      manifest.gsub!('.el6.noarch', '')
-      manifest.gsub!('.el6_1.noarch', '')
-      manifest.gsub!('cartridge', 'c-')
-      manifest = manifest[0..254]
-      puts "Done"
+      manifest = rpm_manifest
 
       if options.register?
-        print "Registering AMI..."
-        image = conn.images.create(:instance_id => instance.id, 
-          :name => name,
-          :description => manifest)
-        sleep 30 until image.state == :available
-        puts "Done"
+        register_image(conn, instance, name, manifest)
       end
     ensure
       instance.terminate if options.terminate?
@@ -194,37 +220,15 @@ class DevEnv < Thor
       puts "Done"
 
       if options.reboot?
-        print "Rebooting instance to apply new kernel..."
-        instance.reboot
-        puts "Done"
+        reboot(instance)
       end
 
-      # Validate the node installation
-      print "Validating instance..."
-      unless is_valid?(hostname)
-        puts "ERROR - instance is not valid"
-        exit 1
-      end
-      puts "Done"
+      validate_instance(hostname)
 
-      print "Retrieving RPM manifest"
-      manifest = ssh(hostname, 'rpm -qa | grep rhc-')
-      manifest = manifest.split("\n").sort.join(" / ")
-      # Trim down the output to 255 characters
-      manifest.gsub!(/rhc-([a-z])/, '\1')
-      manifest.gsub!('.el6.noarch', '')
-      manifest.gsub!('.el6_1.noarch', '')
-      manifest.gsub!('cartridge', 'c-')
-      manifest = manifest[0..254]
-      puts "Done"
+      manifest = rpm_manifest
 
       if options.register?
-        print "Registering AMI..."
-        image = conn.images.create(:instance_id => instance.id, 
-          :name => tag,
-          :description => manifest)
-        sleep 30 until image.state == :available
-        puts "Done"
+        register_image(conn, instance, name, manifest)
       end
     ensure
       instance.terminate if options.terminate?
@@ -377,11 +381,7 @@ class DevEnv < Thor
       end
     end
 
-    puts "Validating instance..."
-    unless is_valid?(hostname)
-      puts "ERROR - instance is not valid"
-      exit 1
-    end
+    validate_instance(hostname)
     
     if options.ssh_config_verifier?
       public_ip = instance.public_ip_address
@@ -457,12 +457,7 @@ class DevEnv < Thor
         t.join
       end
 
-      print "Validating instance..."
-      unless is_valid?(hostname)
-        puts "ERROR - instance is not valid"
-        exit 1
-      end
-      puts "Done"
+      validate_instance(hostname)
 
       # Download the successful artifacts
       download_artifacts hostname
