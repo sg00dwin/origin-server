@@ -33,10 +33,10 @@ function ami_instance() {
 }
 
 function get_ami_public_interface_data() {
-    echo "Getting Libra info"
+    echo -n "Getting Libra info"
     instance_id=$(wget -qO- ${SERVICE_URL_ROOT}/instance-id)
     
-    [ -z $public_ip ] && public_ip=$(wget -qO- ${SERVICE_URL_ROOT}/public-ipv4)
+    [ -z "$public_ip" ] && public_ip=$(wget -qO- ${SERVICE_URL_ROOT}/public-ipv4)
     if [ ! "$public_ip" ]; then
 	for i in {1..60}
 	do
@@ -48,9 +48,12 @@ function get_ami_public_interface_data() {
             fi
 	done
     fi
-    public_hostname=$(wget -qO- ${SERVICE_URL_ROOT}/public-hostname)
+
+    # allow node.conf to override public_hostname
+    [ -z "$public_hostname" ] && public_hostname=$(wget -qO- ${SERVICE_URL_ROOT}/public-hostname)
 
     echo_success
+    echo
     return
 }
 
