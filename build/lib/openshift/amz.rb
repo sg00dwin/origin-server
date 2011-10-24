@@ -125,6 +125,19 @@ module OpenShift
 
       return nil
     end
+      
+    def terminate_instance(instance)
+      (0..4).each do
+        instance.terminate
+        (0..12).each do
+          break if instance_status(instance) == :terminated
+          log.info "Instance isn't terminated yet... waiting"
+          sleep 5
+        end
+        break if instance_status(instance) == :terminated
+        log.info "Instance isn't terminated yet... retrying"
+      end
+    end
 
     def launch_instance(image, name, max_retries = 5)
       log.info "Creating new instance..."
@@ -152,7 +165,7 @@ module OpenShift
           log.info "Retrying instance creation (attempt #{retries + 1})..."
 
           # Terminate the current instance since it didn't load
-          instance.terminate
+          terminate_instance(instance)
 
           # Launch a new instance
           instance = image.run_instance($amz_options)
@@ -177,7 +190,7 @@ module OpenShift
       end
 
       unless instance_status(instance) == :running
-        instance.terminate
+        terminate_instance(instance)
         raise ScriptError, "Timed out before instance was 'running'"
       end
 
@@ -189,7 +202,7 @@ module OpenShift
       end
 
       unless can_ssh?(hostname)
-        instance.terminate 
+        terminate_instance(instance)
         raise ScriptError, "SSH availability timed out"
       end
 
@@ -236,13 +249,45 @@ module OpenShift
       image.add_tag('Name', :value => VERIFIED_TAG)
       log.info "Done"
     end
+    
+    def register_image(conn, instance, name, manifest)
+      print "Registering AMI..."
+      outer_num_retries = 4
+      (1..outer_num_retries).each do |outer_index|
+        image = conn.images.create(:instance_id => instance.id, 
+          :name => name,
+          :description => manifest)
+        num_retries = 10
+        (1..num_retries).each do |index|
+          begin
+            sleep 30 until image.state == :available
+            puts "Sleeping for 30 seconds to let image stabilize..."
+            sleep 30
+            break
+          rescue Exception => e
+            raise if index == num_retries && outer_index == outer_num_retries
+            if index == num_retries
+              log.info "Error getting state: #{e.message}"
+              log.info "Deregistering image: #{image.name}"
+              image.deregister
+              image = nil
+            else
+              log.info "Error getting state(retrying): #{e.message}"
+            end
+            sleep 30
+          end
+        end
+        break if image
+      end
+      puts "Done"
+    end
 
     def terminate_flagged_instances(conn)
       AWS.memoize do
         conn.instances.each do |i|
           if (instance_status(i) == :stopped) and (i.tags["Name"] =~ TERMINATE_REGEX)
             log.info "Terminating #{i.id}"
-            i.terminate
+            terminate_instance(i)
           end
         end
       end

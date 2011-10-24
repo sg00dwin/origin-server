@@ -98,36 +98,6 @@ class DevEnv < Thor
       end
     end
     
-    def register_image(conn, instance, name, manifest)
-      print "Registering AMI..."
-      outer_num_retries = 4
-      (1..outer_num_retries).each do |outer_index|
-        image = conn.images.create(:instance_id => instance.id, 
-          :name => name,
-          :description => manifest)
-        num_retries = 10
-        (1..num_retries).each do |index|
-          begin
-            sleep 30 until image.state == :available
-            break
-          rescue Exception => e
-            raise if index == num_retries && outer_index == outer_num_retries
-            if index == num_retries
-              log.info "Error getting state: #{e.message}"
-              log.info "Deregistering image: #{image.name}"
-              image.deregister
-              image = nil
-            else
-              log.info "Error getting state(retrying): #{e.message}"
-            end
-            sleep 30
-          end
-        end
-        break if image
-      end
-      puts "Done"
-    end
-    
     def rpm_manifest(hostname)
       print "Retrieving RPM manifest"
       manifest = ssh(hostname, 'rpm -qa | grep rhc-')
@@ -209,7 +179,7 @@ class DevEnv < Thor
         register_image(conn, instance, name, manifest)
       end
     ensure
-      instance.terminate if options.terminate?
+      terminate_instance(instance) if options.terminate?
     end
   end
   
@@ -244,7 +214,7 @@ class DevEnv < Thor
         register_image(conn, instance, tag, manifest)
       end
     ensure
-      instance.terminate if options.terminate?
+      terminate_instance(instance) if options.terminate?
     end
   end
 
@@ -493,7 +463,7 @@ class DevEnv < Thor
       puts "Done"
 
     ensure
-      instance.terminate if options.terminate?
+      terminate_instance(instance) if options.terminate?
     end
   end
 
@@ -512,7 +482,7 @@ class DevEnv < Thor
       
       puts "Done"
     ensure
-      instance.terminate if options.terminate?
+      terminate_instance(instance) if options.terminate?
     end
   end
 
