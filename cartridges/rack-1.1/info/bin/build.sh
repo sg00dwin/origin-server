@@ -6,8 +6,6 @@ do
     . $f
 done
 
-redeploy_repo_dir.sh
-
 if [ -z "$BUILD_NUMBER" ]
 then
   USED_BUNDLER=false

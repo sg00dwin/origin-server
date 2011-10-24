@@ -6,8 +6,6 @@ do
     . $f
 done
 
-redeploy_repo_dir.sh
-
 if [ -z "$BUILD_NUMBER" ]
 then
     SKIP_MAVEN_BUILD=false

@@ -63,8 +63,8 @@ alias rsync="rsync --delete-after -az -e '$GIT_SSH'"
 
 rsync UPSTREAM_SSH:~/.m2/ ~/.m2/
 
-# Build/Update virtual env
-build.sh
+# Build setup and run user build
+ci_build.sh
 
 export MAVEN_OPTS="-Xmx396m"
 mvn --version

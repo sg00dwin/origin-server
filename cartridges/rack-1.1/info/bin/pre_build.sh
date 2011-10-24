@@ -16,3 +16,5 @@ then
   mv ${OPENSHIFT_REPO_DIR}.bundle ${OPENSHIFT_APP_DIR}tmp/
   mv ${OPENSHIFT_REPO_DIR}vendor ${OPENSHIFT_APP_DIR}tmp/
 fi
+
+redeploy_repo_dir.sh

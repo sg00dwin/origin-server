@@ -6,8 +6,6 @@ do
     . $f
 done
 
-redeploy_repo_dir.sh
-
 if [ -f "${OPENSHIFT_REPO_DIR}/.openshift/markers/force_clean_build" ]
 then
     echo ".openshift/markers/force_clean_build found!  Recreating pear libs" 1>&2

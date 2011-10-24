@@ -64,8 +64,8 @@ alias rsync="rsync --delete-after -az -e '$GIT_SSH'"
 # Sync libs - Faster builds
 rsync UPSTREAM_SSH:~/UPSTREAM_APP_NAME/perl5lib/ ~/${OPENSHIFT_APP_NAME}/perl5lib/
 
-# Build/update libs
-build.sh
+# Build/update libs and run user build
+ci_build.sh
 
 # Deploy new build
 

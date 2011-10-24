@@ -6,8 +6,6 @@ do
     . $f
 done
 
-redeploy_repo_dir.sh
-
 # Run when jenkins is not being used or run when inside a build
 if [ -f "${OPENSHIFT_REPO_DIR}/.openshift/markers/force_clean_build" ]
 then

@@ -61,8 +61,8 @@
       <command>
 alias rsync="rsync --delete-after -az -e '$GIT_SSH'"
 
-# Build/update libs
-build.sh
+# Build/update libs and run user build
+ci_build.sh
 
 # Deploy new build
 
