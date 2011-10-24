@@ -131,7 +131,7 @@ Then /^the jenkins application directory tree will( not)? be populated$/ do |neg
 
   app_root = "#{$home_root}/#{acct_name}/#{app_name}"
 
-  file_list =  ['repo', 'run', 'tmp', 'data']
+  file_list =  ['runtime/repo', 'run', 'tmp', 'data']
 
   file_list.each do |file_name| 
     file_path = app_root + "/" + file_name

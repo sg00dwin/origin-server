@@ -135,7 +135,7 @@ Then /^the jbossas application directory tree will( not)? be populated$/ do |neg
 
   app_root = "#{$home_root}/#{acct_name}/#{app_name}"
 
-  file_list =  ['repo', 'run', 'tmp', 'data', $jbossas_version, 
+  file_list =  ['runtime/repo', 'run', 'tmp', 'data', $jbossas_version, 
                 "#{$jbossas_version}/bin",  
                 "#{$jbossas_version}/standalone/configuration"
                ]
