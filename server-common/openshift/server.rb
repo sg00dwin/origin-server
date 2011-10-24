@@ -319,28 +319,30 @@ module Libra
       end
     end
 
-    def self.dyn_has?(path, auth_token)
+    def self.dyn_has?(path, auth_token, retries=2)
       headers = { "Content-Type" => 'application/json', 'Auth-Token' => auth_token }
       url = URI.parse("#{Libra.c[:dynect_url]}/REST/#{path}")
-      http = Net::HTTP.new(url.host, url.port)
-      #http.set_debug_output $stderr
-      http.use_ssl = true
       has = false
-      begin
-        Libra.logger_debug "DEBUG: DYNECT has? with path: #{url.path} and headers: #{headers.pretty_inspect}"
-        resp, data = http.get(url.path, headers)
-        case resp
-        when Net::HTTPSuccess
-          has = dyn_success?(data)
-        when Net::HTTPNotFound
-          Libra.logger_debug "DEBUG: DYNECT returned 404 for: #{url.path}"
-        else
-          raise_dns_exception(nil, resp)
+      dyn_do('dyn_has?', retries) do
+        http = Net::HTTP.new(url.host, url.port)
+        #http.set_debug_output $stderr
+        http.use_ssl = true
+        begin
+          Libra.logger_debug "DEBUG: DYNECT has? with path: #{url.path} and headers: #{headers.pretty_inspect}"
+          resp, data = http.get(url.path, headers)
+          case resp
+          when Net::HTTPSuccess
+            has = dyn_success?(data)
+          when Net::HTTPNotFound
+            Libra.logger_debug "DEBUG: DYNECT returned 404 for: #{url.path}"
+          else
+            raise_dns_exception(nil, resp)
+          end
+        rescue DNSException => e
+          raise
+        rescue Exception => e
+          raise_dns_exception(e)
         end
-      rescue DNSException => e
-        raise
-      rescue Exception => e
-        raise_dns_exception(e)
       end
       return has
     end
