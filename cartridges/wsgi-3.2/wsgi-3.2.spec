@@ -2,7 +2,7 @@
 
 Summary:   Provides python-wsgi-3.2 support
 Name:      rhc-cartridge-wsgi-3.2
-Version:   0.80.10
+Version:   0.80.11
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -79,6 +79,10 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Mon Oct 24 2011 Dan McPherson <dmcphers@redhat.com> 0.80.11-1
+- make workspace and repo dir the same in jenkins build (dmcphers@redhat.com)
+- repo and deploy -> runtime (dmcphers@redhat.com)
+
 * Fri Oct 21 2011 Dan McPherson <dmcphers@redhat.com> 0.80.10-1
 - rotate builds (dmcphers@redhat.com)
 - Marking new action hooks executable by default (mmcgrath@redhat.com)
