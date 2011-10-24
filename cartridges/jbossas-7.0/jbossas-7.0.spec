@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.80.14
+Version:   0.80.15
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -82,6 +82,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Mon Oct 24 2011 Matt Hicks <mhicks@redhat.com> 0.80.15-1
+- Typo in Jenkins job - Bug 748321 (mhicks@redhat.com)
+
 * Fri Oct 21 2011 Dan McPherson <dmcphers@redhat.com> 0.80.14-1
 - rotate builds (dmcphers@redhat.com)
 - Marking new action hooks executable by default (mmcgrath@redhat.com)
