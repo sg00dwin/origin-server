@@ -309,7 +309,7 @@ function force_kill {
         then
             echo "Waiting for stop to finish"
             sleep .2
-            if [ $i > 9 ]
+            if [ $i -gt 9 ]
             then
                 /bin/kill -9 $pid
             fi
