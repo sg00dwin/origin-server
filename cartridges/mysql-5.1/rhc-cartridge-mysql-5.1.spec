@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/mysql-5.1
 
 Name: rhc-cartridge-mysql-5.1
-Version: 0.14.4
+Version: 0.14.5
 Release: 1%{?dist}
 Summary: Embedded mysql support for express
 
@@ -47,6 +47,10 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Mon Oct 24 2011 Dan McPherson <dmcphers@redhat.com> 0.14.5-1
+- added message to mysql configrue for the user to know that they can manage
+  their mysql db with phpmyadmin (twiest@redhat.com)
+
 * Sun Oct 16 2011 Dan McPherson <dmcphers@redhat.com> 0.14.4-1
 - abstract out remainder of deconfigure (dmcphers@redhat.com)
 
