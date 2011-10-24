@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.80.19
+Version:       0.80.20
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -160,6 +160,14 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Mon Oct 24 2011 Dan McPherson <dmcphers@redhat.com> 0.80.20-1
+- make workspace and repo dir the same in jenkins build (dmcphers@redhat.com)
+- repo and deploy -> runtime (dmcphers@redhat.com)
+- fixed bug in util/force_kill (twiest@redhat.com)
+- added retry logic to libra-data for public_hostname (twiest@redhat.com)
+- Added override option in node.conf for public_hostname (twiest@redhat.com)
+- Update with my ipv6 disable (tkramer@tkramer.timtech)
+
 * Mon Oct 24 2011 Dan McPherson <dmcphers@redhat.com> 0.80.19-1
 - disable ipv6 SELinux friendly style (tkramer@tkramer.timtech)
 
