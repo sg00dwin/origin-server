@@ -61,8 +61,10 @@ function apptype() {
 RETVAL=0
 GROUP_RETVAL=0
 
-# Disable IPV6
-echo "install ipv6 /bin/true" > /etc/modprobe.d/disable_ipv6
+# Disable IPV6 - SELinux Friendly
+echo ""
+echo "# Disable IPV6 SELinux Friendly style" >> /etc/sysctl.conf
+echo "net.ipv6.conf.all.disable_ipv6 = 1" >> /etc/sysctl.conf
 
 # UGLY HACK, fix this later
 if ! ( runcon | grep -q s0-s0:c0.c1023 )
