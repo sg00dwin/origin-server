@@ -36,21 +36,25 @@ function get_ami_public_interface_data() {
     echo -n "Getting Libra info"
     instance_id=$(wget -qO- ${SERVICE_URL_ROOT}/instance-id)
     
-    [ -z "$public_ip" ] && public_ip=$(wget -qO- ${SERVICE_URL_ROOT}/public-ipv4)
-    if [ ! "$public_ip" ]; then
-	for i in {1..60}
-	do
-        # Sometimes it takes a while for the public ip to be published
-            sleep 10
-            public_ip=$(wget -qO- ${SERVICE_URL_ROOT}/public-ipv4)
-            if [ "$public_ip" ]; then
-		break
-            fi
-	done
-    fi
+    # This allows node.conf to override public_ip
+    # also, sometimes it takes a while for the public ip to be published in aws
+    i=0
+    while [ -z "$public_ip" ] && [ $i -lt 60 ]
+    do
+        [ $i -gt 0 ] && sleep 10 # we don't want to sleep on the first attempt
+        public_ip=$(wget -qO- ${SERVICE_URL_ROOT}/public-ipv4)
+        i=$(( i + 1 ))
+    done
 
-    # allow node.conf to override public_hostname
-    [ -z "$public_hostname" ] && public_hostname=$(wget -qO- ${SERVICE_URL_ROOT}/public-hostname)
+    # This allows node.conf to override public_hostname
+    # also, sometimes it takes a while for the public hostname to be published in aws
+    i=0
+    while [ -z "$public_hostname" ] && [ $i -lt 60 ]
+    do
+        [ $i -gt 0 ] && sleep 10 # we don't want to sleep on the first attempt
+        public_hostname=$(wget -qO- ${SERVICE_URL_ROOT}/public-hostname)
+        i=$(( i + 1 ))
+    done
 
     echo_success
     echo
