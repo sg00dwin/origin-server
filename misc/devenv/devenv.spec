@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.80.10
+Version:   0.80.11
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -215,6 +215,9 @@ chkconfig libra-tc on
 %{_initddir}/libra-site
 
 %changelog
+* Mon Oct 24 2011 Dan McPherson <dmcphers@redhat.com> 0.80.11-1
+- Added override option in node.conf for public_hostname (twiest@redhat.com)
+
 * Sat Oct 22 2011 Dan McPherson <dmcphers@redhat.com> 0.80.10-1
 - trying again with correct version (dmcphers@redhat.com)
 
