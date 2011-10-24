@@ -35,8 +35,8 @@ function create_standard_network_env_vars {
     echo "export OPENSHIFT_APP_DNS='${application}-${namespace}.${libra_domain}'" > $APP_HOME/.env/OPENSHIFT_APP_DNS
 }
 
-function create_standard_redo_dir_env_var {
-    echo "export OPENSHIFT_REPO_DIR='$APP_DIR/repo/'" > $APP_HOME/.env/OPENSHIFT_REPO_DIR
+function create_standard_repo_dir_env_var {
+    echo "export OPENSHIFT_REPO_DIR='$APP_DIR/runtime/repo/'" > $APP_HOME/.env/OPENSHIFT_REPO_DIR
 }
 
 function create_standard_path_env_var {
@@ -44,7 +44,7 @@ function create_standard_path_env_var {
 }
 
 function create_standard_app_dirs {
-	mkdir run tmp data ci
+	mkdir -p run tmp data ci runtime/repo 
 }
 
 # Create simple application start / stop script

@@ -16,14 +16,14 @@ APP_DIR=`echo $APP_HOME/$application | tr -s /`
 
 cat <<EOF > "$APP_DIR/conf.d/libra.conf"
 ServerRoot "$APP_DIR"
-DocumentRoot "$APP_DIR/repo/perl"
+DocumentRoot "$APP_DIR/runtime/repo/perl"
 Listen $IP:8080
 User $uuid
 Group $uuid
 ErrorLog "|/usr/sbin/rotatelogs $APP_DIR/logs/error_log$rotatelogs_format $rotatelogs_interval"
 CustomLog "|/usr/sbin/rotatelogs $APP_DIR/logs/access_log$rotatelogs_format $rotatelogs_interval" combined
 
-<Directory $APP_DIR/repo/perl/>
+<Directory $APP_DIR/runtime/repo/perl/>
     AddHandler perl-script .pl
     AddHandler cgi-script .cgi
     PerlResponseHandler ModPerl::Registry

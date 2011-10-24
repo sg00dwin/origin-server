@@ -16,9 +16,9 @@ then
     pear -c ~/.pearrc config-set php_ini "${OPENSHIFT_APP_DIR}/conf/php.ini"
 fi
 
-if [ -f ~/${OPENSHIFT_APP_NAME}/repo/deplist.txt ]
+if [ -f ${OPENSHIFT_REPO_DIR}deplist.txt ]
 then
-    for f in $(cat ~/${OPENSHIFT_APP_NAME}/repo/deplist.txt)
+    for f in $(cat ${OPENSHIFT_REPO_DIR}deplist.txt)
     do
         echo "Checking pear: $f"
         echo

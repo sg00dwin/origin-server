@@ -61,7 +61,7 @@ check_app_dir_doesnt_exist
 mkdir -p "$APP_DIR"
 pushd "$APP_DIR" > /dev/null
 create_standard_app_dirs
-mkdir logs repo
+mkdir logs
 popd > /dev/null
 
 #

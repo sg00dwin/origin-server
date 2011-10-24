@@ -231,7 +231,7 @@ Then /^a jenkins source tree will( not)? exist$/ do |negate|
   app_name = @app['name']
 
   app_root = "#{$home_root}/#{acct_name}/#{app_name}"
-  repo_root_path = "#{app_root}/repo"
+  repo_root_path = "#{app_root}/runtime/repo"
 
   unless negate
     File.exists?(repo_root_path).should be_true "file #{repo_root_path} should exist and does not"
@@ -240,7 +240,7 @@ Then /^a jenkins source tree will( not)? exist$/ do |negate|
     src_contents = ['README']
 
     src_contents.each do |file_name|
-      src_root.member?(file_name).should be_true "file #{app_root}/repo/#{file_name} should exist and does not"
+      src_root.member?(file_name).should be_true "file #{app_root}/runtime/repo/#{file_name} should exist and does not"
     end
   else
     File.exists?(repo_root_path).should be_false "file #{repo_root_path} should not exist and does"

@@ -59,7 +59,7 @@ clone_git_repo $application $user_id $group_id $uuid "php 5.3"
 mkdir -p "$APP_DIR"
 pushd "$APP_DIR" > /dev/null
 create_standard_app_dirs
-mkdir conf conf.d logs repo sessions
+mkdir conf conf.d logs sessions
 mkdir -p phplib/pear/{docs,ext,php,cache,cfg,data,download,temp,tests,www}
 ln -s /usr/lib64/httpd/modules modules
 ln -s /etc/httpd/conf/magic conf/magic
@@ -80,7 +80,7 @@ create_app_ctl_script
 pear config-create "$APP_DIR"/phplib/pear/ "$APP_HOME"/.pearrc
 pear -c "$APP_HOME"/.pearrc config-set php_ini "$APP_DIR"/conf/php.ini
 
-populate_repo_dir "repo"
+populate_repo_dir
 
 secure_app_dir
 
@@ -93,7 +93,7 @@ chcon_app_dir_and_git
 #
 create_standard_env_vars
 create_standard_network_env_vars
-create_standard_redo_dir_env_var
+create_standard_repo_dir_env_var
 create_standard_path_env_var
 
 #

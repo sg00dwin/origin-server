@@ -60,10 +60,10 @@ clone_git_repo $application $user_id $group_id $uuid "raw 0.1"
 mkdir -p "$APP_DIR"
 pushd "$APP_DIR" > /dev/null
 create_standard_app_dirs
-mkdir logs repo
+mkdir logs
 popd > /dev/null
 
-populate_repo_dir "repo"
+populate_repo_dir
 
 #
 # Find an open localhost IP
@@ -81,7 +81,7 @@ chcon_app_dir_and_git
 #
 create_standard_env_vars
 create_standard_network_env_vars
-create_standard_redo_dir_env_var
+create_standard_repo_dir_env_var
 echo "export PATH=$CART_INFO_DIR/bin/:$CART_DIR/abstract/info/bin/:$CART_DIR/li-controller/info/bin/:$PATH" > $APP_HOME/.env/PATH
 
 #

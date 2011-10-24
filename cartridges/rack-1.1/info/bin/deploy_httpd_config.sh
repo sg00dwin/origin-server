@@ -16,7 +16,7 @@ APP_DIR=`echo $APP_HOME/$application | tr -s /`
 
 cat <<EOF > "$APP_DIR/conf.d/libra.conf"
 ServerRoot "$APP_DIR"
-DocumentRoot "$APP_DIR/deploy/public"
+DocumentRoot "$APP_DIR/runtime/repo/public"
 Listen $IP:8080
 User $uuid
 Group $uuid
@@ -39,7 +39,7 @@ CustomLog "|/usr/sbin/rotatelogs $APP_DIR/logs/access_log$rotatelogs_format $rot
 PassengerUser $uuid
 PassengerPreStart http://$IP:8080/
 PassengerUseGlobalQueue off
-<Directory $APP_DIR/deploy/public>
+<Directory $APP_DIR/runtime/repo/public>
   AllowOverride all
   Options -MultiViews
 </Directory>

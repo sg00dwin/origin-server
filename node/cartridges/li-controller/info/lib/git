@@ -83,6 +83,5 @@ EOF
 }
 
 function populate_repo_dir {
-    repo_dir="$1"
-    GIT_DIR="$GIT_DIR" git archive --format=tar HEAD | (cd "${APP_DIR}/${repo_dir}" && tar --warning=no-timestamp -xf -)
+    GIT_DIR="$GIT_DIR" git archive --format=tar HEAD | (cd "${APP_DIR}/runtime/repo" && tar --warning=no-timestamp -xf -)
 }

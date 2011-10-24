@@ -16,7 +16,7 @@ APP_DIR=`echo $APP_HOME/$application | tr -s /`
 
 cat <<EOF > "$APP_DIR/conf.d/libra.conf"
 ServerRoot "$APP_DIR"
-DocumentRoot "$APP_DIR/repo/wsgi"
+DocumentRoot "$APP_DIR/runtime/repo/wsgi"
 Listen $IP:8080
 User $uuid
 Group $uuid
@@ -36,14 +36,14 @@ CustomLog "|/usr/sbin/rotatelogs $APP_DIR/logs/access_log$rotatelogs_format $rot
   BandWidthError $apache_bandwidtherror
 </IfModule>
 
-<Directory $APP_DIR/repo/wsgi>
+<Directory $APP_DIR/runtime/repo/wsgi>
   AllowOverride all
   Options -MultiViews
 </Directory>
 
-WSGIScriptAlias / "$APP_DIR/repo/wsgi/application"
-Alias /static "$APP_DIR/repo/wsgi/static/"
-WSGIPythonPath "$APP_DIR/repo/libs:$APP_DIR/repo/wsgi:$APP_DIR/virtenv/lib/python2.6/"
+WSGIScriptAlias / "$APP_DIR/runtime/repo/wsgi/application"
+Alias /static "$APP_DIR/runtime/repo/wsgi/static/"
+WSGIPythonPath "$APP_DIR/runtime/repo/libs:$APP_DIR/runtime/repo/wsgi:$APP_DIR/virtenv/lib/python2.6/"
 WSGIPassAuthorization On
 
 EOF

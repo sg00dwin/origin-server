@@ -74,7 +74,7 @@ $GIT_SSH UPSTREAM_SSH 'ctl_all stop'
 
 # Push content back to application
 rsync ~/${OPENSHIFT_APP_NAME}/perl5lib/ UPSTREAM_SSH:~/UPSTREAM_APP_NAME/perl5lib/
-rsync ~/$WORKSPACE/ UPSTREAM_SSH:~/UPSTREAM_APP_NAME/repo/
+rsync ~/$WORKSPACE/ UPSTREAM_SSH:~/UPSTREAM_APP_NAME/runtime/repo/
 
 # Configure / start app
 $GIT_SSH UPSTREAM_SSH deploy.sh

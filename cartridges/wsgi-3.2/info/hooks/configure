@@ -59,7 +59,7 @@ clone_git_repo $application $user_id $group_id $uuid "wsgi 3.2"
 mkdir -p "$APP_DIR"
 pushd "$APP_DIR" > /dev/null
 create_standard_app_dirs
-mkdir conf conf.d logs repo virtenv
+mkdir conf conf.d logs virtenv
 ln -s /usr/lib64/httpd/modules modules
 ln -s /etc/httpd/conf/magic conf/magic
 popd > /dev/null
@@ -73,7 +73,7 @@ $CART_INFO_DIR/bin/deploy_httpd_config.sh $application $uuid $IP
 
 create_app_ctl_script
 
-populate_repo_dir "repo"
+populate_repo_dir
 
 secure_app_dir
 chown $user_id.$group_id -R $APP_DIR/virtenv || error "Failed to chown new virtenv space.  Please contact support" 124
@@ -87,7 +87,7 @@ chcon_app_dir_and_git
 #
 create_standard_env_vars
 create_standard_network_env_vars
-create_standard_redo_dir_env_var
+create_standard_repo_dir_env_var
 create_standard_path_env_var
 
 #

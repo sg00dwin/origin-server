@@ -83,7 +83,7 @@ function user_app_disk_space() {
 function user_app_repo_disk_space() {
     # USERNAME=$1
     # APPNAME=$2
-    du -s `homedir $1`/$2/repo | cut -f1
+    du -s `homedir $1`/$2/runtime/repo | cut -f1
 }
 
 function user_app_git_disk_space() {
@@ -186,7 +186,7 @@ echo
 # largest log files
 # insert an = to prevent splitting
 echo app large files
-for FSPEC in `bigfiles \`user_app_workspace $USERNAME $APPNAME\`/repo | tr ' ' '='`
+for FSPEC in `bigfiles \`user_app_workspace $USERNAME $APPNAME\`/runtime/repo | tr ' ' '='`
 do
     # this is truely ugly.  It needs to be formatted
     echo " " `echo '  ' $FSPEC | tr '=' ' '`

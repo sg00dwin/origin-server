@@ -20,8 +20,48 @@ module LibraMigration
       cartridge_root_dir = "/usr/libexec/li/cartridges"
       cartridge_dir = "#{cartridge_root_dir}/#{app_type}"
       
-      env_echos = ["echo \"export OPENSHIFT_APP_DNS='#{app_name}-#{namespace}.#{libra_domain}'\" > #{app_home}/.env/OPENSHIFT_APP_DNS"]
-        
+      ip = Util.get_env_var_value(app_home, "OPENSHIFT_INTERNAL_IP")
+      
+      env_echos = ["echo \"export OPENSHIFT_APP_DNS='#{app_name}-#{namespace}.#{libra_domain}'\" > #{app_home}/.env/OPENSHIFT_APP_DNS",
+                   "echo \"export OPENSHIFT_REPO_DIR='#{app_dir}/runtime/repo/'\" > #{app_home}/.env/OPENSHIFT_REPO_DIR"]
+
+      runtime_dir = "#{app_dir}/runtime"
+      FileUtils.mkdir_p runtime_dir
+      FileUtils.chown(uuid, uuid, runtime_dir)
+      FileUtils.chmod(0755, runtime_dir)
+      old_repo_dir = "repo"
+      if app_type == 'rack-1.1'
+        old_repo_dir = "deploy"
+      end
+      repo_dir = "#{runtime_dir}/repo"
+      old_repo_dir = "#{app_dir}/#{old_repo_dir}"
+      if File.exists?(old_repo_dir) && !File.symlink?(old_repo_dir)
+        FileUtils.mv old_repo_dir, repo_dir
+      else
+        output += "!!!WARNING!!! Didn't find #{old_repo_dir}\n"
+        FileUtils.mkdir_p repo_dir
+        FileUtils.chown(uuid, uuid, repo_dir)
+        FileUtils.chmod(0755, repo_dir)
+      end
+      if File.exists?(old_repo_dir)
+        output += "!!!WARNING!!! Force removing #{old_repo_dir}\n"
+        FileUtils.rm_rf old_repo_dir
+      end
+      FileUtils.ln_s "runtime/repo", old_repo_dir
+      FileUtils.chown(uuid, uuid, old_repo_dir)
+      if app_type == 'jbossas-7.0'
+        deployments_link = "#{app_dir}/#{app_type}/standalone/deployments"
+        FileUtils.rm_rf deployments_link
+        FileUtils.ln_s "../../runtime/repo/deployments", deployments_link
+      end
+
+      deploy_httpd_config = "#{cartridge_dir}/info/bin/deploy_httpd_config.sh"
+      if File.exists?(deploy_httpd_config)
+        deploy_httpd_config_output, deploy_httpd_config_exitcode = Util.execute_script("#{deploy_httpd_config} #{app_name} #{uuid} #{ip} 2>&1")
+        output += "deploy_httpd_config_exitcode: #{deploy_httpd_config_exitcode.to_s}\n"
+        output += "deploy_httpd_config_output: #{deploy_httpd_config_output}\n"
+      end
+
       if app_type == 'jbossas-7.0'
         java_home = '/etc/alternatives/java_sdk_1.6.0'
         m2_home = '/etc/alternatives/maven-3.0'
@@ -36,7 +76,6 @@ module LibraMigration
       
       mysql_dir = "#{app_home}/mysql-5.1"
       if File.exists?(mysql_dir)
-        ip = Util.get_env_var_value(app_home, "OPENSHIFT_INTERNAL_IP")
         mysql_cart_bin_dir = "#{cartridge_root_dir}/embedded/mysql-5.1/info/bin"
         env_echos.push("echo \"export OPENSHIFT_DB_USERNAME='admin'\" > #{app_home}/.env/OPENSHIFT_DB_USERNAME")
         env_echos.push("echo \"export OPENSHIFT_DB_TYPE='mysql'\" > #{app_home}/.env/OPENSHIFT_DB_TYPE")

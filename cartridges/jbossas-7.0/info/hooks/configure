@@ -132,7 +132,7 @@ IP=`find_open_ip $uid $uuid`
 mkdir -p "$APP_DIR"
 pushd "$APP_DIR" > /dev/null
 create_standard_app_dirs
-mkdir -p repo ${jboss_version}/{bin,standalone/configuration}
+mkdir -p ${jboss_version}/{bin,standalone/configuration}
 # application jbossas bin directory
 APP_JBOSS_BIN_DIR="$APP_JBOSS"/bin
 
@@ -168,18 +168,18 @@ popd > /dev/null
 # Repo
 create_repo $application $user_id $group_id $uuid
 
-# Create a link from the repo/deployments directory to the standalone/deployments content
-mkdir -p "$APP_DIR"/repo/deployments
-ln -s ../../repo/deployments "$APP_JBOSS"/standalone/deployments
+# Create a link from the runtime/repo/deployments directory to the standalone/deployments content
+mkdir -p "$APP_DIR"/runtime/repo/deployments
+ln -s ../../runtime/repo/deployments "$APP_JBOSS"/standalone/deployments
 
 # Create a link from the standalone/log directory to ${APP_DIR}/logs for rhc-tail-files
 ln -s ${jboss_version}/standalone/log "$APP_DIR"/logs
 
 create_app_ctl_script
 
-populate_repo_dir "repo"
+populate_repo_dir
 
-cp ${JBOSS_CARTRIDGE_ROOT}/info/data/ROOT.war $APP_DIR/repo/deployments
+cp ${JBOSS_CARTRIDGE_ROOT}/info/data/ROOT.war $APP_DIR/runtime/repo/deployments
 pushd $M2_DIR
 tar -xf ${JBOSS_CARTRIDGE_ROOT}/info/data/m2_repository.tar.gz
 popd
@@ -196,7 +196,7 @@ chcon_app_dir_and_git
 #
 create_standard_env_vars
 create_standard_network_env_vars
-create_standard_redo_dir_env_var
+create_standard_repo_dir_env_var
 JAVA_HOME=/etc/alternatives/java_sdk_1.6.0
 M2_HOME=/etc/alternatives/maven-3.0
 echo "export JAVA_HOME=$JAVA_HOME" > $APP_HOME/.env/JAVA_HOME

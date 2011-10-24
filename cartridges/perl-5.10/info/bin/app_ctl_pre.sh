@@ -6,6 +6,6 @@ do
     . $f
 done
 
-export REPOLIB="$OPENSHIFT_APP_DIR/repo/libs/"
-export LOCALSITELIB="$OPENSHIFT_APP_DIR/perl5lib/lib/perl5/"
+export REPOLIB="${OPENSHIFT_REPO_DIR}libs/"
+export LOCALSITELIB="${OPENSHIFT_APP_DIR}perl5lib/lib/perl5/"
 export PERL5LIB="$REPOLIB:$LOCALSITELIB"
