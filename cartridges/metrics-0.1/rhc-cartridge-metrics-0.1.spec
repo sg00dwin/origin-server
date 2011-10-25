@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/metrics-0.1
 
 Name: rhc-cartridge-metrics-0.1
-Version: 0.2.8
+Version: 0.2.9
 Release: 1%{?dist}
 Summary: Embedded metrics support for express
 
@@ -47,6 +47,10 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Tue Oct 25 2011 Dan McPherson <dmcphers@redhat.com> 0.2.9-1
+- Bug 748658 (dmcphers@redhat.com)
+- bug 748662 (dmcphers@redhat.com)
+
 * Wed Oct 19 2011 Dan McPherson <dmcphers@redhat.com> 0.2.8-1
 - Adding info/data/ (mmcgrath@redhat.com)
 
