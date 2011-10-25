@@ -1,4 +1,4 @@
-policy_module(libra,1.0.17)
+policy_module(libra,1.0.18)
 
 ########################################
 #
@@ -298,7 +298,8 @@ files_read_etc_files(libra_cgroup_read_t)
 
 userdom_use_inherited_user_ptys(libra_cgroup_read_t)
 
-miscfiles_read_generic_certs(libra_cgroup_read_t)
+#miscfiles_read_generic_certs(libra_cgroup_read_t)
+ssh_getattr_user_home_dir(libra_cgroup_read_t)
 miscfiles_read_localization(libra_cgroup_read_t)
 
 domtrans_pattern(libra_domain, libra_cgroup_read_exec_t, libra_cgroup_read_t)
@@ -310,5 +311,3 @@ fs_read_cgroup_files(libra_cgroup_read_t)
 
 allow libra_cgroup_read_t libra_var_lib_t:dir list_dir_perms;
 read_files_pattern(libra_cgroup_read_t, libra_var_lib_t, libra_var_lib_t)
-
-miscfiles_read_generic_certs(libra_cgroup_read_t)
