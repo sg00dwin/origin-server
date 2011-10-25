@@ -2,7 +2,7 @@
 
 Summary:   Provides raw support
 Name:      rhc-cartridge-raw-0.1
-Version:   0.14.10
+Version:   0.14.11
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -71,6 +71,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Tue Oct 25 2011 Dan McPherson <dmcphers@redhat.com> 0.14.11-1
+- use repo as the default rather than runtime/repo (dmcphers@redhat.com)
+
 * Mon Oct 24 2011 Dan McPherson <dmcphers@redhat.com> 0.14.10-1
 - make workspace and repo dir the same in jenkins build (dmcphers@redhat.com)
 - repo and deploy -> runtime (dmcphers@redhat.com)
