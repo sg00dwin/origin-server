@@ -2,7 +2,7 @@
 
 Summary:   Provides mod_perl support
 Name:      rhc-cartridge-perl-5.10
-Version:   0.11.11
+Version:   0.11.12
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -76,6 +76,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Tue Oct 25 2011 Dan McPherson <dmcphers@redhat.com> 0.11.12-1
+- use repo as the default rather than runtime/repo (dmcphers@redhat.com)
+
 * Mon Oct 24 2011 Dan McPherson <dmcphers@redhat.com> 0.11.11-1
 - make workspace and repo dir the same in jenkins build (dmcphers@redhat.com)
 - repo and deploy -> runtime (dmcphers@redhat.com)
