@@ -16,15 +16,15 @@ APP_DIR=`echo $APP_HOME/$application | tr -s /`
 
 cat <<EOF > "$APP_DIR/conf.d/libra.conf"
 ServerRoot "$APP_DIR"
-DocumentRoot "$APP_DIR/runtime/repo/php"
+DocumentRoot "$APP_DIR/repo/php"
 Listen $IP:8080
 User $uuid
 Group $uuid
 ErrorLog "|/usr/sbin/rotatelogs $APP_DIR/logs/error_log$rotatelogs_format $rotatelogs_interval"
 CustomLog "|/usr/sbin/rotatelogs $APP_DIR/logs/access_log$rotatelogs_format $rotatelogs_interval" combined
-php_value include_path ".:$APP_DIR/runtime/repo/libs/:$APP_DIR/phplib/pear/pear/php/:/usr/share/pear/"
+php_value include_path ".:$APP_DIR/repo/libs/:$APP_DIR/phplib/pear/pear/php/:/usr/share/pear/"
 # TODO: Adjust from ALL to more conservative values
-<Directory "$APP_DIR/runtime/repo/php">
+<Directory "$APP_DIR/repo/php">
   AllowOverride All
 </Directory>
 

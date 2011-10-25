@@ -168,9 +168,9 @@ popd > /dev/null
 # Repo
 create_repo $application $user_id $group_id $uuid
 
-# Create a link from the runtime/repo/deployments directory to the standalone/deployments content
-mkdir -p "$APP_DIR"/runtime/repo/deployments
-ln -s ../../runtime/repo/deployments "$APP_JBOSS"/standalone/deployments
+# Create a link from the repo/deployments directory to the standalone/deployments content
+mkdir -p "$APP_DIR"/repo/deployments
+ln -s ../../repo/deployments "$APP_JBOSS"/standalone/deployments
 
 # Create a link from the standalone/log directory to ${APP_DIR}/logs for rhc-tail-files
 ln -s ${jboss_version}/standalone/log "$APP_DIR"/logs
@@ -179,7 +179,7 @@ create_app_ctl_script
 
 populate_repo_dir
 
-cp ${JBOSS_CARTRIDGE_ROOT}/info/data/ROOT.war $APP_DIR/runtime/repo/deployments
+cp ${JBOSS_CARTRIDGE_ROOT}/info/data/ROOT.war $APP_DIR/repo/deployments
 pushd $M2_DIR
 tar -xf ${JBOSS_CARTRIDGE_ROOT}/info/data/m2_repository.tar.gz
 popd

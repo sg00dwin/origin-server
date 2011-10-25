@@ -23,18 +23,18 @@ module LibraMigration
       ip = Util.get_env_var_value(app_home, "OPENSHIFT_INTERNAL_IP")
       
       env_echos = ["echo \"export OPENSHIFT_APP_DNS='#{app_name}-#{namespace}.#{libra_domain}'\" > #{app_home}/.env/OPENSHIFT_APP_DNS",
-                   "echo \"export OPENSHIFT_REPO_DIR='#{app_dir}/runtime/repo/'\" > #{app_home}/.env/OPENSHIFT_REPO_DIR"]
+                   "echo \"export OPENSHIFT_REPO_DIR='#{app_dir}/repo/'\" > #{app_home}/.env/OPENSHIFT_REPO_DIR"]
 
       runtime_dir = "#{app_dir}/runtime"
       FileUtils.mkdir_p runtime_dir
       FileUtils.chown(uuid, uuid, runtime_dir)
       FileUtils.chmod(0755, runtime_dir)
-      old_repo_dir = "repo"
+      old_repo_name = "repo"
       if app_type == 'rack-1.1'
-        old_repo_dir = "deploy"
+        old_repo_name = "deploy"
       end
       repo_dir = "#{runtime_dir}/repo"
-      old_repo_dir = "#{app_dir}/#{old_repo_dir}"
+      old_repo_dir = "#{app_dir}/#{old_repo_name}"
       if File.exists?(old_repo_dir) && !File.symlink?(old_repo_dir)
         FileUtils.mv old_repo_dir, repo_dir
       else
@@ -43,16 +43,22 @@ module LibraMigration
         FileUtils.chown(uuid, uuid, repo_dir)
         FileUtils.chmod(0755, repo_dir)
       end
+      
       if File.exists?(old_repo_dir)
         output += "!!!WARNING!!! Force removing #{old_repo_dir}\n"
         FileUtils.rm_rf old_repo_dir
       end
       FileUtils.ln_s "runtime/repo", old_repo_dir
       FileUtils.chown(uuid, uuid, old_repo_dir)
-      if app_type == 'jbossas-7.0'
-        deployments_link = "#{app_dir}/#{app_type}/standalone/deployments"
-        FileUtils.rm_rf deployments_link
-        FileUtils.ln_s "../../runtime/repo/deployments", deployments_link
+      
+      if app_type == 'rack-1.1'
+        new_repo_dir = "#{app_dir}/repo"
+        if File.exists?(new_repo_dir)
+          output += "!!!WARNING!!! Force removing #{new_repo_dir}\n"
+          FileUtils.rm_rf new_repo_dir
+        end
+        FileUtils.ln_s "runtime/repo", new_repo_dir
+        FileUtils.chown(uuid, uuid, new_repo_dir)
       end
 
       deploy_httpd_config = "#{cartridge_dir}/info/bin/deploy_httpd_config.sh"

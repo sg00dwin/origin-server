@@ -135,7 +135,7 @@ Then /^the jbossas application directory tree will( not)? be populated$/ do |neg
 
   app_root = "#{$home_root}/#{acct_name}/#{app_name}"
 
-  file_list =  ['runtime/repo', 'run', 'tmp', 'data', $jbossas_version, 
+  file_list =  ['repo', 'run', 'tmp', 'data', $jbossas_version, 
                 "#{$jbossas_version}/bin",  
                 "#{$jbossas_version}/standalone/configuration"
                ]
@@ -248,7 +248,7 @@ Then /^a jbossas deployments directory will( not)? exist$/ do |negate|
   app_name = @app['name']
 
   app_root = "#{$home_root}/#{acct_name}/#{app_name}"
-  deploy_root = Dir.new "#{app_root}/runtime/repo/deployments"
+  deploy_root = Dir.new "#{app_root}/repo/deployments"
   
   deploy_contents = ['ROOT.war']
 
@@ -335,7 +335,7 @@ Then /^a jbossas source tree will( not)? exist$/ do |negate|
   app_name = @app['name']
 
   app_root = "#{$home_root}/#{acct_name}/#{app_name}"
-  repo_root_path = "#{app_root}/runtime/repo"
+  repo_root_path = "#{app_root}/repo"
 
   unless negate
     File.exists?(repo_root_path).should be_true "file #{repo_root_path} should exist and does not"
@@ -344,7 +344,7 @@ Then /^a jbossas source tree will( not)? exist$/ do |negate|
     src_contents = ['deployments', 'pom.xml', 'README', 'src', ".gitignore"]
 
     src_contents.each do |file_name|
-      src_root.member?(file_name).should be_true "file #{app_root}/runtime/repo/#{file_name} should exist and does not"
+      src_root.member?(file_name).should be_true "file #{app_root}/repo/#{file_name} should exist and does not"
     end
   else
     File.exists?(repo_root_path).should be_false "file #{repo_root_path} should not exist and does"
