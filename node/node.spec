@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.80.20
+Version:       0.80.21
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -160,6 +160,12 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Tue Oct 25 2011 Dan McPherson <dmcphers@redhat.com> 0.80.21-1
+- use repo as the default rather than runtime/repo (dmcphers@redhat.com)
+- libra-data init script: changed aws value lookup timeout from 10 seconds to 1
+  second so that the script pauses at most 2 minutes instead of 20 minutes
+  (twiest@redhat.com)
+
 * Mon Oct 24 2011 Dan McPherson <dmcphers@redhat.com> 0.80.20-1
 - make workspace and repo dir the same in jenkins build (dmcphers@redhat.com)
 - repo and deploy -> runtime (dmcphers@redhat.com)
