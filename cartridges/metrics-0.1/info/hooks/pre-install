@@ -25,7 +25,7 @@ source ${CART_DIR}/li-controller/info/lib/util
 
 load_node_conf
 
-[ -z "$CARTRIDGE_DIR" ] && CARTRIDGE_DIR="/usr/libexec/li/cartridges/embedded/phpmyadmin-3.4/"
+[ -z "$CARTRIDGE_DIR" ] && CARTRIDGE_DIR="/usr/libexec/li/cartridges/embedded/metrics-0.1/"
 
 function print_help {
     echo "Usage: uuid"
@@ -51,5 +51,5 @@ done
 
 uuid=$1
 
-rpm -q php httpd phpMyAdmin > /dev/null || quit "Missing packages"
+rpm -q php httpd > /dev/null || quit "Missing packages"
 [ -d "$CARTRIDGE_DIR" ] || quit "Missing cartridge dir: $CARTRIDGE_DIR"

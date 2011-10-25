@@ -47,14 +47,12 @@ source ${CART_DIR}/li-controller/info/lib/util
 
 setup_basic_hook "$1" $2 $3
 
-PHPMYADMIN_DIR=`echo $APP_HOME/phpmyadmin-3.4 | tr -s /` # ensure that there aren't double /'s
-PHPMYADMIN_CTL_SCRIPT="$PHPMYADMIN_DIR/${application}_phpmyadmin_ctl.sh"
-
+METRICS_DIR=`echo $APP_HOME/metrics-0.1 | tr -s /` # ensure that there aren't double /'s
 
 #
 # Start application
 #
-ADDRESS="$(awk '/Listen/{ print $2 }' $PHPMYADMIN_DIR/conf.d/libra.conf)"
+ADDRESS="$(awk '/Listen/{ print $2 }' $METRICS_DIR/conf.d/libra.conf)"
 URL="http://$ADDRESS/server-status?auto"
 
 runuser --shell /bin/sh "$uuid" -c "/usr/bin/wget -qO- $URL"
