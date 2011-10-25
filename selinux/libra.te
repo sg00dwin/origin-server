@@ -292,6 +292,7 @@ application_domain(libra_cgroup_read_t, libra_cgroup_read_exec_t)
 
 allow libra_cgroup_read_t self:fifo_file rw_fifo_file_perms;
 allow libra_cgroup_read_t self:unix_stream_socket create_stream_socket_perms;
+allow libra_cgroup_read_t libra_initrc_t:fifo_file rw_inherited_fifo_file_perms;
 
 corecmd_exec_bin(libra_cgroup_read_t)
 
