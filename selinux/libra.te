@@ -130,6 +130,7 @@ init_dontaudit_read_utmp(libra_domain)
 miscfiles_read_localization(libra_domain)
 miscfiles_read_fonts(libra_domain)
 miscfiles_read_man_pages(libra_domain)
+miscfiles_dontaudit_setattr_fonts_cache_dirs(libra_domain)
 
 term_dontaudit_search_ptys(libra_domain)
 
@@ -222,6 +223,8 @@ allow domain libra_var_lib_t:dir search_dir_perms;
 allow domain libra_var_lib_t:file { append getattr };
 
 filetrans_pattern(quota_t, libra_var_lib_t, quota_db_t, file)
+
+kernel_dontaudit_request_load_module(domain)
 
 ########################################
 #
