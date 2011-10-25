@@ -30,9 +30,9 @@ RedHatCloud::Application.configure do
   ############################################
   config.app_scope = "app"
   config.integrated = true
-  config.login = "https://www.webqa.redhat.com/wapps/streamline/login.html"
+  config.login = "https://www.qa.redhat.com/wapps/streamline/login.html"
   config.streamline = {
-    :host => 'https://www.webqa.redhat.com',
+    :host => 'https://www.qa.redhat.com',
     :base_url => '/wapps/streamline',
     :email_confirm_url => '/wapps/streamline/confirm.html',
     :lost_password_url => '/wapps/streamline/resetPassword.html',
