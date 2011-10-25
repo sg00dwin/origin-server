@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.80.5
+Version:       0.80.6
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -38,6 +38,20 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Tue Oct 25 2011 Dan McPherson <dmcphers@redhat.com> 0.80.6-1
+- Allow libra_cgroup_read_t to use inherited fifo_file from libra_initrc_t.
+  stdin, stdout and stderr (dwalsh@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (dwalsh@redhat.com)
+- Allow libra_cgroup_read_t to execute bin and read cert files
+  (dwalsh@redhat.com)
+- correcting miscfiles interface (mmcgrath@redhat.com)
+- Add dontaudit for libra_domain trying to setattr on the fonts_cache_t file,
+  this would be blocked by DAC anyways, but kernel must be doing the SELinux
+  check first.  Also the way we are disabling IPV6 is causing lots of domains
+  to ask the kernel to load the IPV6 kernel module,  Adding a dontaudit for
+  this until we change the way the IPV6 is disabled. (dwalsh@redhat.com)
+
 * Mon Oct 24 2011 Dan McPherson <dmcphers@redhat.com> 0.80.5-1
 - altering ~/.ssh access (mmcgrath@redhat.com)
 
