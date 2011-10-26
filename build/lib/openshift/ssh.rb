@@ -53,7 +53,7 @@ module OpenShift
     end
 
     def can_ssh?(hostname)
-      ssh(hostname, 'echo Success', 10).split[-1] == "Success"
+      ssh(hostname, 'echo Success', 15).split[-1] == "Success"
     end
   end
 end
