@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.80.21
+Version:       0.80.22
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -160,6 +160,9 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Wed Oct 26 2011 Dan McPherson <dmcphers@redhat.com> 0.80.22-1
+- bug 749069 (dmcphers@redhat.com)
+
 * Tue Oct 25 2011 Dan McPherson <dmcphers@redhat.com> 0.80.21-1
 - use repo as the default rather than runtime/repo (dmcphers@redhat.com)
 - libra-data init script: changed aws value lookup timeout from 10 seconds to 1
