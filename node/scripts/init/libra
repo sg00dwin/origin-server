@@ -61,12 +61,6 @@ function apptype() {
 RETVAL=0
 GROUP_RETVAL=0
 
-# Disable IPV6 - SELinux Friendly
-echo "" >> /etc/sysctl.conf
-echo "# Disable IPV6 SELinux Friendly style" >> /etc/sysctl.conf
-echo "net.ipv6.conf.all.disable_ipv6 = 1" >> /etc/sysctl.conf
-echo "net.ipv6.conf.default.disable_ipv6 = 1" >> /etc/sysctl.conf
-
 # UGLY HACK, fix this later
 if ! ( runcon | grep -q s0-s0:c0.c1023 )
 then
@@ -233,5 +227,11 @@ case "$1" in
     echo $"Usage: $0 {start|stop|status|restart|reload|force-reload|condrestart}"
     exit 1
 esac
+
+# Disable IPV6 - SELinux Friendly
+echo "" >> /etc/sysctl.conf
+echo "# Disable IPV6 SELinux Friendly style" >> /etc/sysctl.conf
+echo "net.ipv6.conf.all.disable_ipv6 = 1" >> /etc/sysctl.conf
+echo "net.ipv6.conf.default.disable_ipv6 = 1" >> /etc/sysctl.conf
 
 exit $RETVAL
