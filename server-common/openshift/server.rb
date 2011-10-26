@@ -613,6 +613,8 @@ module Libra
             else
               Libra.client_error line['CLIENT_ERROR: '.length..-1]
             end
+          elsif line =~ /^APP_INFO: /
+            Libra.add_app_info line['APP_INFO: '.length..-1]
           elsif exitcode == 0 && user && app_name
             if line =~ /^SSH_KEY_(ADD|REMOVE): /
               if line =~ /^SSH_KEY_ADD: /

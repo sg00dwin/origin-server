@@ -160,4 +160,6 @@ client_result "metrics 0.1 added."
 #client_result "   User: $OPENSHIFT_METRICS_USERNAME"
 #client_result "   Password: $OPENSHIFT_METRICS_PASSWORD"
 client_result ""
-client_result "Connection URL: https://$OPENSHIFT_APP_DNS/metrics/"
+client_result "URL: https://$OPENSHIFT_APP_DNS/metrics/"
+
+set_app_info "URL: https://$OPENSHIFT_APP_DNS/metrics/"

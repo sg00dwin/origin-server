@@ -14,39 +14,45 @@ require 'openshift/util.rb'
 module Libra
 
   def self.client_debug(str)
-    debugIO = Thread.current[:debugIO]
-    if debugIO
-      debugIO.puts str
+    debug_io = Thread.current[:debugIO]
+    if debug_io
+      debug_io.puts str
     else
       puts str
     end
   end
   
   def self.client_message(str)
-    messageIO = Thread.current[:messageIO]
-    if messageIO
-      messageIO.puts str
+    message_io = Thread.current[:messageIO]
+    if message_io
+      message_io.puts str
     else
       puts str
     end
   end
 
   def self.client_result(str)
-    resultIO = Thread.current[:resultIO]
-    if resultIO
-      resultIO.puts str
+    result_io = Thread.current[:resultIO]
+    if result_io
+      result_io.puts str
     else
       puts str
     end
   end
   
   def self.client_error(str)
-    errorIO = Thread.current[:errorIO]
-    if errorIO
-      errorIO.puts str
+    error_io = Thread.current[:errorIO]
+    if error_io
+      error_io.puts str
     else
       puts str
     end
+  end
+
+  def self.add_app_info(str)
+    Thread.current[:appInfoIO] = StringIO.new unless Thread.current[:appInfoIO]
+    app_info_io = Thread.current[:appInfoIO]
+    app_info_io.puts str
   end
 
   def self.logger_debug(str)
@@ -190,8 +196,10 @@ module Libra
 
     # Put the last line of output from the embedded cartridge into s3, should be a connection string or
     # other useful thing
-    if Thread.current[:resultIO].string
-        app_info['embedded'][framework] = {'info' => Thread.current[:resultIO].string.split("\n")[-1]}
+    if Thread.current[:appInfoIO]
+      app_info['embedded'][framework] = {'info' => Thread.current[:appInfoIO].string}
+    else
+      app_info['embedded'][framework] = {'info' => ''}
     end
     Libra.client_debug "Embedded app details: #{app_info['embedded'][framework]}"
     user.update_app(app_info, app_name)

@@ -54,6 +54,7 @@ class BrokerController < ApplicationController
     thread[:resultIO] = StringIO.new
     thread[:messageIO] = StringIO.new
     thread[:errorIO] = StringIO.new
+    thread[:appInfoIO] = nil
     check_outage_notification
     data = JSON.parse(json_data)
     if (data['debug'])

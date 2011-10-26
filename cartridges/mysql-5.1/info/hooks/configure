@@ -137,3 +137,5 @@ client_result ""
 client_result "Connection URL: mysql://$IP:3306/"
 client_result ""
 client_result "You can manage your new Mysql database by also embedding phpmyadmin-3.4."
+
+set_app_info "Connection URL: mysql://$IP:3306/"

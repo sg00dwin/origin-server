@@ -163,6 +163,10 @@ function client_debug {
     echo "CLIENT_DEBUG: $1"
 }
 
+function set_app_info {
+    echo "APP_INFO: $1"
+}
+
 function add_ssh_key {
     echo "SSH_KEY_ADD: $1"
 }
