@@ -112,6 +112,32 @@ def migrate
         user = users[index]
         rhlogin = user.rhlogin
         begin
+          s3_change = false
+          if app.has_key?('embedded')
+            embedded = app['embedded']
+            embedded.each_key do |framework|
+              if embedded[framework].has_key?('info')
+                info = embedded[framework]['info']
+                if info.include?("URL:")
+                  s3_change = true
+                  info.gsub!(/-(\w)+.#{Libra.c[:libra_domain]}/, "-#{user.namespace}.#{Libra.c[:libra_domain]}")
+                  if framework == 'phpmyadmin-3.4'
+                    info.gsub!(/Connection URL:/, "URL:")
+                  end
+                  embedded[framework]['info'] = info
+                else
+                  # Can't salvage.  This should only be mysql from the last iteration because of the phpmyadmin line added at the bottom of configure
+                  embedded[framework]['info'] = ''
+                end
+              end
+            end
+          end
+          if s3_change
+            puts "Migrating app in s3 '#{app_name}' with uuid '#{app['uuid']}' for user: #{rhlogin}"            
+            user.update_app(app, app_name)
+          else
+            puts "No change for app in s3 '#{app_name}' with uuid '#{app['uuid']}' for user: #{rhlogin}"
+          end
           puts "Migrating app '#{app_name}' with uuid '#{app['uuid']}' on node '#{app['server_identity']}' for user: #{rhlogin}"
           migrate_app_on_node(user, app, app_name)
         rescue Exception => e
