@@ -21,7 +21,9 @@
         
     -# Javascript at the bottom for fast page loading
     = render "layouts/javascripts"
-    = render 'shared/omniture_code', :controller => controller.controller_name, :action => controller.action_name, :event => @event ||= ''
+
+    -# Omniture code will not load in devenvs to force it to load, just comment out if statement
+    = render('shared/omniture_code', :controller => controller.controller_name, :action => controller.action_name, :event => @event ||= '')if Rails.env.production?
 
   :ruby
     dialogs = [
