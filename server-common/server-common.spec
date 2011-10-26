@@ -2,7 +2,7 @@
 
 Summary:       Common dependencies of the OpenShift broker and site
 Name:          rhc-server-common
-Version:       0.80.7
+Version:       0.80.8
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -57,6 +57,10 @@ rm -rf %{buildroot}
                                   -s /sbin/nologin 2>&1 > /dev/null || :
 
 %changelog
+* Wed Oct 26 2011 Dan McPherson <dmcphers@redhat.com> 0.80.8-1
+- bug 749081 (dmcphers@redhat.com)
+- move app info for embedded carts to separate call (dmcphers@redhat.com)
+
 * Mon Oct 24 2011 Dan McPherson <dmcphers@redhat.com> 0.80.7-1
 - add retry around dyn_has? based on libra_check failure (dmcphers@redhat.com)
 
