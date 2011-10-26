@@ -111,22 +111,31 @@ module OpenShift
         'zvw5LiixMB0I4mjk06aR'
       end
 
-      def set_captcha
-        @page.js_eval("
-          var input = window.document.createElement('input');
-          input.setAttribute('type','hidden');
-          input.setAttribute('name','captcha_secret');
-          input.setAttribute('value','#{captcha_secret}');
-
-          var dialog = window.document.getElementById('#{@id}');
-          dialog.getElementsByTagName('form')[0].appendChild(input);")
+      # Wow, javascript in Selenium 1 is kludgy: http://bit.ly/oCzktV 
+      def exec_js(script)
+        @page.get_eval("
+          (function(){with(this){
+          #{script}
+            }}).call(selenium.browserbot.getUserWindow());
+          ");
       end
 
       def submit(email=nil,password=nil,confirm=nil,captcha=false)
         type(input(@fields[:email]),email) if email
         type(input(@fields[:password]),password) if password
         type(input(@fields[:confirm]),confirm) if confirm
-        set_captcha if captcha
+
+        # Need to clear out captcha_secret if it exists
+        exec_js("
+            $('#signup form').find('input[name=captcha_secret]').remove();
+            $('#signup form').append(
+              $('<input>')
+                .attr('type','hidden')
+                .attr('name','captcha_secret')
+                .val('#{captcha ? captcha_secret : ''}')
+              );
+        ")
+
         click(:submit)
       end
     end

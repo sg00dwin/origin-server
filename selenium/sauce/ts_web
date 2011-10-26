@@ -14,7 +14,10 @@ require 'openshift/express/pages'
 
 # Load desired test cases
 require 'tc_home'
-require 'tc_ajax'
+require 'tc_dialogs'
+require 'tc_signin'
+require 'tc_reset'
+require 'tc_signup'
 
 # Need to load the tests manually so we can
 #   override at_exit
@@ -22,7 +25,10 @@ class TS_web
   def self.suite
     default_suites = {
       :home => Home.suite,
-      :ajax => AJAX.suite
+      :dialogs => Dialogs.suite,
+      :signin => Signin.suite,
+      :reset => Reset.suite,
+      :signup => Signup.suite
     }
 
     suite = Test::Unit::TestSuite.new('Sauce Tests')

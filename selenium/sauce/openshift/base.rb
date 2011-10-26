@@ -45,6 +45,26 @@ module OpenShift
     def type(css,string)
       @page.type(css,string)
     end
+
+    # Needs to have navbar and signin defined,
+    #   probably can figure out a better way
+    def open_dialog(dialog)
+      target = instance_variable_get("@#{dialog.to_s}")
+
+      case dialog
+      when :signin
+        @home.open
+        @navbar.click(:signin)
+      else
+        open_dialog(:signin)
+        @signin.click(dialog)
+      end
+
+      if block_given?
+        yield target
+        target.click(:CLOSE)
+      end
+    end
   end
 
   module Assertions
