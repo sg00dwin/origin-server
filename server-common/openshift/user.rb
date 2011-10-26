@@ -135,6 +135,13 @@ module Libra
       get_user_s3.write(json)
     end
     
+    def update_all
+      update
+      apps.each do |app_name, app|
+        update_app(app, app_name)
+      end
+    end
+    
     #
     # Add an ssh key to each of the apps
     #
@@ -246,6 +253,7 @@ module Libra
     # Updates the user's namespace for txt and full app domains
     #
     def update_namespace(new_namespace, dyn_retries=2)
+      old_namespace = namespace
       auth_token = Server.dyn_login(dyn_retries)
       begin
         Server.dyn_has_txt_record?(new_namespace, auth_token, true) 
@@ -297,6 +305,21 @@ module Libra
         raise LibraException.new(254), "An error occurred updating the namespace.  If the problem persists please contact Red Hat support.", caller[0..5]
       ensure
         Server.dyn_logout(auth_token, dyn_retries)
+      end
+      @namespace = new_namespace
+      update
+      apps.each do |app_name, app_info|
+        if app_info.has_key?('embedded')
+          embedded = app_info['embedded']
+          embedded.each_key do |framework|
+            if embedded[framework].has_key?('info')
+              info = embedded[framework]['info']
+              info.gsub!(/-#{old_namespace}.#{Libra.c[:libra_domain]}/, "-#{new_namespace}.#{Libra.c[:libra_domain]}")
+              embedded[framework]['info'] = info
+            end
+          end
+          update_app(app_info, app_name) if update
+        end
       end
     end
     

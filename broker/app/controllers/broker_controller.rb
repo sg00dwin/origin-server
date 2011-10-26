@@ -321,11 +321,6 @@ class BrokerController < ApplicationController
         if user
           if data['alter']
             update = false
-            if user.namespace != ns
-              update = true
-              user.update_namespace(ns)
-              user.namespace = ns
-            end
             if user.ssh != data['ssh']
               update = true
               previous_ssh_key = user.ssh 
@@ -338,7 +333,11 @@ class BrokerController < ApplicationController
                 server.add_ssh_key(app, user.ssh)
               end
             end
-            user.update if update
+            if user.namespace != ns
+              user.update_namespace(ns)
+            elsif update
+              user.update
+            end
           else
             render :json => generate_result_json("User already has a registered namespace.  To modify, use --alter", nil, 97), :status => :conflict and return
           end
