@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.80.23
+Version:       0.80.24
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -160,6 +160,13 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Wed Oct 26 2011 Dan McPherson <dmcphers@redhat.com> 0.80.24-1
+- move app info for embedded carts to separate call (dmcphers@redhat.com)
+- Disable ipv6 selinux friendly style (tkramer@tkramer.timtech)
+- bug 749133 (dmcphers@redhat.com)
+- Change ipv6 disable oin sysctl.conf (tkramer@tkramer.timtech)
+- Bug 749113 (dmcphers@redhat.com)
+
 * Wed Oct 26 2011 Dan McPherson <dmcphers@redhat.com> 0.80.23-1
 - 749073 and 749076 (dmcphers@redhat.com)
 
