@@ -4,6 +4,13 @@ Jenkins
 A note about this repository.  By default it is useless, users can safely
 delete it.
 
+Repo layout
+=========== 
+.openshift/action_hooks/build - Script that gets run every git push as part of the build process
+.openshift/action_hooks/deploy - Script that gets run every git push after build but before the app is restarted
+.openshift/action_hooks/post_deploy - Script that gets run every git push after the app is restarted
+
+
 Quickstart
 ==========
 
@@ -28,7 +35,7 @@ Benefits
 Build/Deploy Process
 ====================
 
-In OpenShift the Build/Deploy process has 3 steps.
+In OpenShift the Build/Deploy process has 4 steps.
 
 1) Pre-Receive - This happens as you git push, but before the push is fully
     committed
@@ -36,7 +43,10 @@ In OpenShift the Build/Deploy process has 3 steps.
     .openshift/action_hooks/build script and preps everything for deployment.
 3) Deploy - This does any prep work to get the application ready to be started
     including running the .openshift/action_hooks/deploy script.  This step
-    happens right before the new application is issued a start
+    happens right before the application is issued a start
+4) Post-Deploy - This step allows for interaction with the running application
+    including running the .openshift/action_hooks/post_deploy script.  This step
+    happens right after the application is started
 
 
 Building Without Jenkins
@@ -50,8 +60,9 @@ can be used for building.  The following steps take place
 2) Application is shut down.
 3) Git application files are put in place
 4) .openshift/action_hooks/build is executed
-5) .openshift/action_hooks/install is executed
-6) Application is started
+5) .openshift/action_hooks/deploy is executed
+6) .openshift/action_hooks/post_deploy is executed
+7) Application is started
 
 Building with Jenkins
 ---------------------
@@ -67,11 +78,14 @@ application will continue to run.  The following steps take place.
 3) A dedicated Jenkins slave (builder) is created.  It can be seen by using
     the rhc-user-info command.
 4) Jenkins runs the build
+4a) .openshift/action_hooks/build is executed on the Jenkins builder
 5) Jenkins stops the current running application
 6) Jenkins rsyncs all new content over to the builder
-7) Jenkins starts the new application.
-8) Jenkins archives build artifiacts for later reference
-9) After 15 minutes of idle time, the 'build app' will be destroyed and will
+7) .openshift/action_hooks/deploy is executed on the originating application
+8) Jenkins starts the new application.
+9) .openshift/action_hooks/post_deploy is executed on the originating application
+10) Jenkins archives build artifiacts for later reference
+11) After 15 minutes of idle time, the 'build app' will be destroyed and will
     no longer show up with the rhc-user-info command.  The build artificats
     however, will still exist in Jenkins and can be viewed there.
 
