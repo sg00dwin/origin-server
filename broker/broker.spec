@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.80.7
+Version:   0.80.8
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -64,6 +64,10 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Wed Oct 26 2011 Dan McPherson <dmcphers@redhat.com> 0.80.8-1
+- bug 749081 (dmcphers@redhat.com)
+- move app info for embedded carts to separate call (dmcphers@redhat.com)
+
 * Fri Oct 21 2011 Dan McPherson <dmcphers@redhat.com> 0.80.7-1
 - up app name limit to 32 (dmcphers@redhat.com)
 
