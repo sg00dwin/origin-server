@@ -94,7 +94,12 @@ class Release < Thor
     repo_host = "209.132.178.9"
     repo_dir = "/srv/web/gpxe/trees"
     repo = "root@#{repo_host}:#{repo_dir}"
-    rsync = "rsync --delete -avz -e ssh"
+    rsync = nil
+    if options[:stage]
+      rsync = "rsync -avz -e ssh"
+    else
+      rsync = "rsync --delete -avz -e ssh"
+    end
 
     # Jenkins parameters
     proxy = "squid.corp.redhat.com:8080"
