@@ -195,10 +195,10 @@ module OpenShift
       end
 
       hostname = instance.dns_name
-      (1..24).each do
+      (1..12).each do
         break if can_ssh?(hostname)
         log.info "SSH access failed... retrying"
-        sleep 10
+        sleep 5
       end
 
       unless can_ssh?(hostname)
