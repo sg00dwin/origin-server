@@ -71,7 +71,7 @@ Building with Jenkins uses dedicated application space that can be larger
 then the application runtime space.  Because the build happens in its own
 dedicated jail, the running application is not shutdown or changed in any way
 until after the build is a success.  If it is not, the current active running
-application will continue to run.  Note that a failure in the deploy process 
+application will continue to run.  However, a failure in the deploy process 
 (deploy/start/post_deploy) may still leave the app partially deployed or 
 inaccessible.  During a build the following steps take place:
 
