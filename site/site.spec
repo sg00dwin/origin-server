@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.80.8
+Version:   0.80.9
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -68,6 +68,10 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Wed Oct 26 2011 Dan McPherson <dmcphers@redhat.com> 0.80.9-1
+- Prevent omniture code from launching in development Rails env. It was
+  noticably slowing down Sauce tests. (fotios@redhat.com)
+
 * Tue Oct 25 2011 Dan McPherson <dmcphers@redhat.com> 0.80.8-1
 - Cleaning up documentation (mhicks@redhat.com)
 
