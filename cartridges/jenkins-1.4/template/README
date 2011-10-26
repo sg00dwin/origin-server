@@ -28,7 +28,7 @@ Benefits
 ========
 . Archived build information
 . No application downtime during the build process
-. Failed builds do not get deployed (leaving the previous working version in place
+. Failed builds do not get deployed (leaving the previous working version in place). 
 . Jenkins builders have additional resources like memory and storage
 . A large community of Jenkins plugins
 
@@ -67,11 +67,13 @@ can be used for building.  The following steps take place
 Building with Jenkins
 ---------------------
 
-Building with Jenkins uses dedicated application space that is typically larger
+Building with Jenkins uses dedicated application space that can be larger
 then the application runtime space.  Because the build happens in its own
 dedicated jail, the running application is not shutdown or changed in any way
 until after the build is a success.  If it is not, the current active running
-application will continue to run.  The following steps take place.
+application will continue to run.  Note that a failure in the deploy process 
+(deploy/start/post_deploy) may still leave the app partially deployed or 
+inaccessible.  During a build the following steps take place:
 
 1) User issues a git push
 2) Jenkins is notified a new push is ready.

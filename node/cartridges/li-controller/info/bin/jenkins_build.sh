@@ -15,7 +15,10 @@ then
     echo "New build has been deployed."
 else
     echo "!!!!!!!!"
-    echo "Deployment Halted! Previous good build still running!"
+    echo "Deployment Halted!"
+    echo "If the build failed before the deploy step, your previous 
+    echo "build is still running.  Otherwise, your application may be
+    echo "partially deployed or inaccessible."
     echo "Fix the build and try again."
     echo "!!!!!!!!"
     exit 1
