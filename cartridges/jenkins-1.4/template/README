@@ -78,16 +78,25 @@ inaccessible.  During a build the following steps take place:
 1) User issues a git push
 2) Jenkins is notified a new push is ready.
 3) A dedicated Jenkins slave (builder) is created.  It can be seen by using
-    the rhc-user-info command.
+   the rhc-user-info command.  The app name will be the same as the originating
+   app plus "bldr" tagged onto the end.  Note:  This requires the first 28 chars
+   of app name be unique or builders will be shared (can cause issues).
 4) Jenkins runs the build
-4a) .openshift/action_hooks/build is executed on the Jenkins builder
-5) Jenkins stops the current running application
-6) Jenkins rsyncs all new content over to the builder
-7) .openshift/action_hooks/deploy is executed on the originating application
-8) Jenkins starts the new application.
-9) .openshift/action_hooks/post_deploy is executed on the originating application
-10) Jenkins archives build artifiacts for later reference
-11) After 15 minutes of idle time, the 'build app' will be destroyed and will
+5) Content from originating app is downloaded to the builder app through git and rsync
+   (Git for source code and rsync for existing libraries).
+6) ci_build.sh is called from the Jenkins shell which sets up the builder app for the 
+   Jenkins environment and performs some built in bundling steps (php pear processing,
+   python virtual env, etc).
+6a) .openshift/action_hooks/build is executed on the Jenkins builder
+7) Any additional desired steps are executed from the Jenkins shell (Maven build, 
+   Gem install, test cases, etc).
+8) Jenkins stops the current running application
+9) Jenkins rsyncs all new content over to the originating application
+10) .openshift/action_hooks/deploy is executed on the originating application
+11) Jenkins starts the originating application
+12) .openshift/action_hooks/post_deploy is executed on the originating application
+13) Jenkins archives build artifiacts for later reference
+14) After 15 minutes of idle time, the 'build app' will be destroyed and will
     no longer show up with the rhc-user-info command.  The build artificats
     however, will still exist in Jenkins and can be viewed there.
 
