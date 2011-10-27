@@ -165,7 +165,7 @@ module CommandHelper
 
   def rhc_ctl_destroy(app)
     run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -c destroy -b -d").should == 0
-    run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -c status | grep 'not found'").should == 0
+    run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -c status | grep 'does not exist'").should == 0
     FileUtils.rm_rf app.repo
     FileUtils.rm_rf app.file
   end
