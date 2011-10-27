@@ -12,20 +12,6 @@ RHLOGINS=nil #['username']
 #  Migrate the specified app on the node
 #
 def migrate_app_on_node(user, app, app_name)
-  puts "Stopping app '#{app_name}' on node '#{app['server_identity']}'"
-  server = Server.new(app['server_identity'])
-  result = server.execute_direct(app['framework'], 'stop', "#{app_name} #{user.namespace} #{app['uuid']}")[0]
-  if (result && defined? result.results)
-    output = result.results[:data][:output]
-    exit_code = result.results[:data][:exitcode]
-    if (output.length > 0)
-      puts "Stop on node output: #{output}"
-    end
-    if exit_code != 0
-      puts "Stop on node exit code: #{exit_code}"
-      puts "Continuing anyway..."
-    end
-  end
   Helper.rpc_exec('libra', app['server_identity']) do |client|
     client.migrate(:uuid => app['uuid'],
                    :application => app_name,
@@ -54,7 +40,7 @@ def migrate_app_on_node(user, app, app_name)
         #else
           puts "Starting app '#{app_name}' on node '#{app['server_identity']}'"
           server = Server.new(app['server_identity'])
-          result = server.execute_direct(app['framework'], 'start', "#{app_name} #{user.namespace} #{app['uuid']}")[0]
+          result = server.execute_direct(app['framework'], 'restart', "#{app_name} #{user.namespace} #{app['uuid']}")[0]
           if (result && defined? result.results)
             output = result.results[:data][:output]
             exit_code = result.results[:data][:exitcode]
