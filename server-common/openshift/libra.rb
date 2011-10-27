@@ -93,7 +93,7 @@ module Libra
       # send the command
       app_info = user.app_info(app_name)
 
-      check_app_exists(app_info)
+      check_app_exists(app_info, app_name)
 
       if not app_info['embedded'] or not app_info['embedded'][framework]
         raise UserException.new(101), "#{framework} is not embedded in '#{app_name}'", caller[0..5]
@@ -120,7 +120,7 @@ module Libra
   end
   
   # Raise an exception if app doesn't exist
-  def check_app_exists(app_info)
+  def check_app_exists(app_info, app_name)
     if not app_info
       raise UserException.new(101), "An application named '#{app_name}' does not exist", caller[0..5]
     end
@@ -137,31 +137,21 @@ module Libra
 
     # process actions
 
-    case action
-    when 'configure'
+    if action == 'configure'
       # create a new app.  Don't expect it to exist
       configure_app(framework, app_name, user, node_profile)
-
-    when 'deconfigure'
-      # destroy an app.  It must exists, but won't at the end
-      # get the app object
-      # get the server
-      # send the command to the server
-      # remove the app object from persistant storage
-      deconfigure_app(framework, app_name, user)
-
     else
-      # send a command to an app.  It must exist and will afterwards
-      # get the app object
-      # get the server
-      # send the command
       app_info = user.app_info(app_name)
-      check_app_exists(app_info)
+      check_app_exists(app_info, app_name)
 
       server = Server.new(app_info['server_identity'])
 
       Libra.logger_debug "DEBUG: Performing action '#{action}' on node '#{server.name}'"
-      server_execute_direct(framework, action, app_name, user, server, app_info)
+      if action == 'deconfigure'
+        deconfigure_app(app_info, app_name, user, server)
+      else
+        server_execute_direct(app_info['framework'], action, app_name, user, server, app_info)
+      end
     end
   end
 
@@ -210,7 +200,7 @@ module Libra
     # get the application details
     app_info = user.app_info(app_name)
 
-    check_app_exists(app_info)
+    check_app_exists(app_info, app_name)
 
     if not app_info['embedded'][framework]
       raise UserException.new(101), "#{framework} not embedded in '#{app_name}', try adding it first", caller[0..5]
@@ -305,18 +295,10 @@ module Libra
   end
 
   # remove an application from server and persistant storage
-  def self.deconfigure_app(framework, app_name, user)
-    # get the application details
-    app_info = user.app_info(app_name)
-    check_app_exists(app_info)
-    
-    # Remove the application and account from the server
-    server = Server.new(app_info['server_identity'])
-      
+  def self.deconfigure_app(app_info, app_name, user, server)
     # first, remove the application
-    Libra.logger_debug "DEBUG: Deconfiguring app '#{app_name}' on node '#{server.name}'"
     begin
-      server = server_execute_direct(framework, 'deconfigure', app_name, user, server, app_info)
+      server = server_execute_direct(app_info['framework'], 'deconfigure', app_name, user, server, app_info)
     rescue Exception => e
       if server.has_app?(app_info, app_name)
         raise

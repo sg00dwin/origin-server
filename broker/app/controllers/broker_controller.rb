@@ -218,7 +218,7 @@ class BrokerController < ApplicationController
       if username
         action = data['action']
         app_name = data['app_name']
-        cartridge = data['cartridge']
+        cartridge = data['cartridge'] # may be nil except for configure
         node_profile = data['node_profile'] if data['node_profile']
 
         if !Libra::Util.check_app(app_name)
