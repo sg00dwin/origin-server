@@ -38,7 +38,7 @@ def migrate_app_on_node(user, app, app_name)
         #  puts "Deploy httpd proxy on node exit code: #{exit_code}"
         #  raise "Failed deploying httpd proxy for app '#{app_name}' with uuid '#{app['uuid']}' on node '#{app['server_identity']}'"
         #else
-          puts "Starting app '#{app_name}' on node '#{app['server_identity']}'"
+          puts "Restarting app '#{app_name}' on node '#{app['server_identity']}'"
           server = Server.new(app['server_identity'])
           result = server.execute_direct(app['framework'], 'restart', "#{app_name} #{user.namespace} #{app['uuid']}")[0]
           if (result && defined? result.results)
