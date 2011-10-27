@@ -161,8 +161,6 @@ ln -s ${JBOSS_CARTRIDGE_ROOT}/info/bin/standalone.sh $APP_JBOSS_BIN_DIR/standalo
 ln -s ${JBOSS_CARTRIDGE_ROOT}/info/bin/standalone.conf $APP_JBOSS_BIN_DIR/standalone.conf
 
 # Update the standalone.xml for the application IP
-sed -i "s/\${OPENSHIFT_INTERNAL_IP}/$IP/g" "$APP_JBOSS"/standalone/configuration/standalone.xml
-sed -i "s/\${OPENSHIFT_APP_NAME}/$application/g" "$APP_JBOSS"/standalone/configuration/standalone.xml
 popd > /dev/null
 
 # Repo
