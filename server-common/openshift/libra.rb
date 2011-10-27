@@ -155,8 +155,8 @@ module Libra
     end
   end
 
-  def self.embed_configure(framework, app_name, user)
-    raise UserException.new(100), "An application '#{app_name}' does not exist", caller[0..5] unless user.app_info(app_name)
+  def self.embed_configure(framework, app_name, user) 
+    check_app_exists(user.app_info(app_name), app_name)
 
     # Create persistent storage app entry on configure (one of the first things)
     Libra.logger_debug "DEBUG: Adding embedded app info from persistant storage: #{app_name}:#{framework}"
