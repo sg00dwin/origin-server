@@ -4,10 +4,7 @@ class Home < Sauce::TestCase
 
   def setup
     super
-
-    @home = OpenShift::Express::Home.new(page, '/app')
-    @signup  = OpenShift::Express::Signup.new(page,'signup')
-
+    set_vars(page)
     @home.open
   end
 

@@ -25,7 +25,9 @@ class TS_web
       :signin => Signin.suite,
       :reset => Reset.suite,
       :signup => Signup.suite,
-      :header => Header.suite
+      :header => Header.suite,
+      :express => Express.suite,
+      :flex => Flex.suite,
     }
 
     suite = Test::Unit::TestSuite.new('Sauce Tests')

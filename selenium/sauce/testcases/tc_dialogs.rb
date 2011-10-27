@@ -6,13 +6,7 @@ class Dialogs < Sauce::TestCase
 
   def setup
     super
-    @page = page
-    @home = OpenShift::Express::Page.new(page, '/app')
-    @navbar  = OpenShift::Express::MainNav.new(page,'main_nav')
-    @signin  = OpenShift::Express::Login.new(page,'signin')
-    @reset   = OpenShift::Express::Reset.new(page,'reset_password')
-    @signup  = OpenShift::Express::Signup.new(page,'signup')
-
+    set_vars(page)
     @home.open
   end
 

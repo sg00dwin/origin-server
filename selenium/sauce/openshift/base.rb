@@ -7,7 +7,25 @@ module OpenShift
         array = [('a'..'z'),('A'..'Z'),(0..9)].map{|a| a.to_a}.flatten
         hash[key] = 10.times.map{array.choice}.join
       }
+
+      @valid_credentials = {
+        :email => "flindiak+sauce_valid@redhat.com",
+        :password => "Pa$$word1"
+      }
     end
+
+    def set_vars(page)
+      @page    = page
+      @home    = OpenShift::Express::Home.new(page, '/app')
+      @express = OpenShift::Express::Express.new(page, '/app/express')
+      @flex    = OpenShift::Express::Flex.new(page, '/app/flex')
+
+      @navbar  = OpenShift::Express::MainNav.new(page,'main_nav')
+      @signin  = OpenShift::Express::Login.new(page,'signin')
+      @reset   = OpenShift::Express::Reset.new(page,'reset_password')
+      @signup  = OpenShift::Express::Signup.new(page,'signup')
+    end
+
 
     def get_count(type)
       count = 0;
@@ -26,6 +44,12 @@ module OpenShift
       else
         page.passed!
       end
+    end
+
+    def signin
+      open_dialog(:signin){ |signin|
+        signin.submit(@valid_credentials[:email],@valid_credentials[:password])
+      }
     end
   end
 
@@ -77,18 +101,14 @@ module OpenShift
       end
     end
 
-    def assert_redirected_to(location,message=nil)
-      @page.wait_for(:wait_for => :page)
+    def assert_redirected_to(location,wait=true)
+      @page.wait_for(:wait_for => :page) if wait
+
       uri = URI.parse(@page.location)
-      match = ''
+      match = location.start_with?("http") ? #assume absolute URL
+        uri.to_s : uri.to_s.split(uri.host)[1]
 
-      if location.start_with?("http") #assume absolute URL
-        match = uri.to_s
-      else
-        match = uri.path
-      end
-
-      assert_match /^#{match}$/, location, message
+      assert_match /^#{match}$/, location
     end
   end
 end

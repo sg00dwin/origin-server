@@ -38,5 +38,51 @@ module OpenShift
         }
       end
     end
+
+    class Express < Page
+      def initialize(page,path)
+        super
+        @items = {
+          :whats_express => "What\'s Express?",
+          :videos => 'Videos',
+          :documentation => 'Documentation',
+          :forum => 'Forum',
+          :signup => 'Sign up to try Express!',
+          :quickstart => 'Quickstart',
+          :console => 'Express Console'
+        }
+      end
+
+      def link(element)
+        selector("a:contains('#{@items[element]}')")
+      end
+
+      def click(element)
+        @page.click(link(element))
+      end
+    end
+
+    class Flex < Page
+      def initialize(page,path)
+        super
+        @items = {
+          :whats_flex => "What\'s Flex?",
+          :videos => 'Videos',
+          :documentation => 'Documentation',
+          :forum => 'Forum',
+          :signup => 'Sign up to try Flex!',
+          :quickstart => 'Quickstart',
+          :console => 'Flex Console'
+        }
+      end
+
+      def link(element)
+        selector("a:contains('#{@items[element]}')")
+      end
+
+      def click(element)
+        @page.click(link(element))
+      end
+    end
   end
 end

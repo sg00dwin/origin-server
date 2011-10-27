@@ -1,0 +1,52 @@
+#!/usr/bin/env ruby
+class Express < Sauce::TestCase
+  include ::OpenShift::TestBase
+  include ::OpenShift::CSSHelpers
+  include ::OpenShift::Assertions
+
+  def setup
+    super
+    set_vars(page)
+    @express.open
+  end
+
+  def test_public_express_links
+    # These links just change the position on the page, so no page load
+    check_links({
+      :whats_express => '/app/express#about',
+      :videos => '/app/express#videos',
+    },false)
+
+    # External links
+    check_links({
+      :documentation => 'https://docs.redhat.com/docs/en-US/OpenShift_Express/1.0/html/User_Guide/index.html',
+      :forum => 'https://www.redhat.com/openshift/forums/express',
+    })
+
+    # Make sure we get the signup link
+    @express.open
+    @express.click(:signup)
+    assert @signup.is_open?
+    @signup.click(:close)
+  end
+
+  def test_authorized_express_links
+    signin 
+
+    check_links({
+      :quickstart => '/app/express#quickstart',
+    },false)
+
+    check_links({
+      :console => '/app/dashboard'
+    })
+  end
+
+  def check_links(hash,wait=true)
+    hash.each do |name,url|
+      @express.open
+      @express.click(name)
+      assert_redirected_to("#{url}",wait)
+    end
+  end
+end

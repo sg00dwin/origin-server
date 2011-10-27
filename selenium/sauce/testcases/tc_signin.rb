@@ -6,13 +6,7 @@ class Signin < Sauce::TestCase
 
   def setup
     super
-    @page = page
-    @home = OpenShift::Express::Page.new(page, '/app')
-    @navbar  = OpenShift::Express::MainNav.new(page,'main_nav')
-    @signin  = OpenShift::Express::Login.new(page,'signin')
-    @reset   = OpenShift::Express::Reset.new(page,'reset_password')
-    @signup  = OpenShift::Express::Signup.new(page,'signup')
-
+    set_vars(page)
     @home.open
   end
 
@@ -34,17 +28,13 @@ class Signin < Sauce::TestCase
   end
 
   def test_signin_process
-    email = "flindiak+sauce_valid@redhat.com"
-    pass = "Pa$$word1"
 
     # Try a valid login
-    open_dialog(:signin){ |signin|
-      signin.submit(email,pass)
-      assert_redirected_to '/app/platform'
-    }
+    signin
+    assert_redirected_to '/app/platform'
 
     # Make sure that we're greeted
-    assert_match "Greetings, #{email}!", @navbar.text(@navbar.link(:greeting))
+    assert_match "Greetings, #{@valid_credentials[:email]}!", @navbar.text(@navbar.link(:greeting))
 
     # Log out and make sure we're redirected
     @navbar.click(:signout)
