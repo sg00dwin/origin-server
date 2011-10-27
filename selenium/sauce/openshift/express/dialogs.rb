@@ -27,7 +27,8 @@ module OpenShift
           :reset_success => %q{The information you have requested has been emailed to you at},
           :short_password => %q{Please enter at least 6 characters.},
           :mismatched_password => %q{Please enter the same value again.},
-          :bad_captcha => %q{Captcha text didn't match}
+          :bad_captcha => %q{Captcha text didn't match},
+          :bad_domain => %q{We can not accept emails from the following top level domains: .ir, .cu, .kp, .sd, .sy}
         }
       end
 

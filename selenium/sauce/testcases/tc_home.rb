@@ -16,7 +16,7 @@ class Home < Sauce::TestCase
   end
 
   def test_signup_links
-    @home.fields[:signup_links].each do |link|
+    @home.items[:signup_links].each do |link|
       @home.click(link)
       assert @signup.is_open?
       @signup.click(:close)

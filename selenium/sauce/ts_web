@@ -13,11 +13,7 @@ require 'openshift/express/navbars'
 require 'openshift/express/pages'
 
 # Load desired test cases
-require 'tc_home'
-require 'tc_dialogs'
-require 'tc_signin'
-require 'tc_reset'
-require 'tc_signup'
+Dir["testcases/*.rb"].each {|file| require file }
 
 # Need to load the tests manually so we can
 #   override at_exit
@@ -28,7 +24,8 @@ class TS_web
       :dialogs => Dialogs.suite,
       :signin => Signin.suite,
       :reset => Reset.suite,
-      :signup => Signup.suite
+      :signup => Signup.suite,
+      :header => Header.suite
     }
 
     suite = Test::Unit::TestSuite.new('Sauce Tests')

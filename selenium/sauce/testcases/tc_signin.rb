@@ -16,7 +16,7 @@ class Signin < Sauce::TestCase
     @home.open
   end
 
-  def test_signin_dialog
+  def test_signin_dialog_errors
     # Submit with no inputs
     open_dialog(:signin){ |signin|
       signin.submit
@@ -31,12 +31,23 @@ class Signin < Sauce::TestCase
       signin.submit(data[:username],data[:password])
       assert_dialog_error(signin,:error,nil,[ :invalid ])
     }
+  end
+
+  def test_signin_process
+    email = "flindiak+sauce_valid@redhat.com"
+    pass = "Pa$$word1"
 
     # Try a valid login
     open_dialog(:signin){ |signin|
-      signin.submit("flindiak+sauce_valid@redhat.com","Pa$$word1")
-      @page.wait_for(:wait_for => :page)
+      signin.submit(email,pass)
       assert_redirected_to '/app/platform'
     }
+
+    # Make sure that we're greeted
+    assert_match "Greetings, #{email}!", @navbar.text(@navbar.link(:greeting))
+
+    # Log out and make sure we're redirected
+    @navbar.click(:signout)
+    assert_redirected_to '/app/login'
   end
 end

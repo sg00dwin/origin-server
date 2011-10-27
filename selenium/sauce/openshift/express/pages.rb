@@ -2,7 +2,7 @@ module OpenShift
   module Express
     class Page
       include ::OpenShift::CSSHelpers
-      attr_accessor :fields
+      attr_accessor :fields, :items
 
       def initialize(page,path)
         @path = path
@@ -26,10 +26,14 @@ module OpenShift
       def initialize(page,path)
         super
         @fields = {
-          :title => /^OpenShift by Red Hat$/
+          :title => /^OpenShift by Red Hat$/,
         }
 
-        @fields[:signup_links] = %w(opener bottom_signup).map{|x| 
+        @items = {
+          :logo => 'header.universal div.content img'
+        }
+
+        @items[:signup_links] = %w(opener bottom_signup).map{|x| 
           "section##{x} a:contains('Sign up and try it')"
         }
       end

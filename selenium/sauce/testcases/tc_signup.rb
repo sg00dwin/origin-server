@@ -12,20 +12,21 @@ class Signup < Sauce::TestCase
     @signin  = OpenShift::Express::Login.new(page,'signin')
     @reset   = OpenShift::Express::Reset.new(page,'reset_password')
     @signup  = OpenShift::Express::Signup.new(page,'signup')
-
     @home.open
-  end
 
-  def test_signup_dialog
-    tests = {
+    @tests = {
       :empty => [],
       :invalid => [ data[:username] ],
       :short_pass => [ "#{data[:username]}@#{data[:domain]}.com", data[:password][0,5] ],
       :mismatched => [ "#{data[:username]}@#{data[:domain]}.com", data[:password], data[:password2] ],
       :no_captcha => [ "#{data[:username]}@#{data[:domain]}.com", data[:password], data[:password] ],
+      :bad_domain => [ "#{data[:username]}@#{data[:domain]}.ir", data[:password], data[:password], true ],
       :success => [ "flindiak+sauce_#{data[:username]}@redhat.com", data[:password],data[:password], true ]
     }
 
+  end
+
+  def test_signup_dialog
     assertions = {
       :empty => lambda{|s| 
         [ :email, :password, :confirm ].each do |field|
@@ -41,17 +42,22 @@ class Signup < Sauce::TestCase
       :mismatched => lambda{|s|
         assert_dialog_error(s,:label,:confirm,[ :mismatched_password ])
       },
+
+      # These errors are generated server side
       :no_captcha => lambda{|s|
         assert_dialog_error(s,:error,nil,[ :bad_captcha ])
       },
+      :bad_domain => lambda{|s|
+        assert_dialog_error(s,:error,nil,[ :bad_domain ])
+      },
+
+      # This should succeed
       :success => lambda{|s|
-        @page.wait_for(:wait_for => :page)
         assert_redirected_to('/app/user/complete')
-        #  section.main div.content p Check your inbox for an email with a validation link. Click on the link to complete the registration process. 
       }
     }
 
-    tests.each do |name,args|
+    @tests.each do |name,args|
       open_dialog(:signup){ |signup|
         signup.submit(*args) #*args passes the array as individual elements
         assertions[name].call(signup)

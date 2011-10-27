@@ -78,8 +78,17 @@ module OpenShift
     end
 
     def assert_redirected_to(location,message=nil)
+      @page.wait_for(:wait_for => :page)
       uri = URI.parse(@page.location)
-      assert_match /^#{uri.path}$/, location, message
+      match = ''
+
+      if location.start_with?("http") #assume absolute URL
+        match = uri.to_s
+      else
+        match = uri.path
+      end
+
+      assert_match /^#{match}$/, location, message
     end
   end
 end
