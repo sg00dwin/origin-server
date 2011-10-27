@@ -101,9 +101,9 @@ def migrate
     end
   end
   
-  node_threads = []
+  #node_threads = []
   node_to_apps.each do |server_identity, apps|
-    node_threads << Thread.new do
+    #node_threads << Thread.new do
       puts "Migrating #{apps.length} apps on node #{server_identity}: #{apps.pretty_inspect}"
       users = node_to_users[server_identity]
       apps.each_with_index do |app_hash, index|
@@ -146,12 +146,12 @@ def migrate
           puts e.backtrace
         end
       end
-    end
+    #end
   end
   
-  node_threads.each do |t|
-    t.join
-  end
+  #node_threads.each do |t|
+  #  t.join
+  #end
   
   end_time = Time.now.to_i
   total_time = end_time-start_time
