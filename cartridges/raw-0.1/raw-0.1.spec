@@ -2,7 +2,7 @@
 
 Summary:   Provides raw support
 Name:      rhc-cartridge-raw-0.1
-Version:   0.14.12
+Version:   0.15.0
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
