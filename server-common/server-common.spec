@@ -2,7 +2,7 @@
 
 Summary:       Common dependencies of the OpenShift broker and site
 Name:          rhc-server-common
-Version:       0.81.2
+Version:       0.81.3
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -57,6 +57,10 @@ rm -rf %{buildroot}
                                   -s /sbin/nologin 2>&1 > /dev/null || :
 
 %changelog
+* Fri Oct 28 2011 Dan McPherson <dmcphers@redhat.com> 0.81.3-1
+- better error handling (dmcphers@redhat.com)
+- share code (dmcphers@redhat.com)
+
 * Thu Oct 27 2011 Dan McPherson <dmcphers@redhat.com> 0.81.2-1
 - remove requirement to pass cartridge to ctl commands (dmcphers@redhat.com)
 
