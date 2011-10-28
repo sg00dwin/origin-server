@@ -87,7 +87,7 @@ class BrokerController < ApplicationController
             render :json => generate_result_json("Invalid Profile: #{val}.  Must be: (exlarge|jumbo|large|micro|std)", nil, 254), :status => :invalid and return nil
           end
         when 'debug', 'alter'
-          if !(val =~ /\A(true|false)\z/)
+          if val != true && val != false && !(val =~ /\A(true|false)\z/)
             render :json => generate_result_json("Invalid value for #{key}:#{val} specified", nil, 254), :status => :invalid and return nil
           end
         when 'cartridge'

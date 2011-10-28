@@ -335,7 +335,7 @@ module Libra
     Nurture.application(user.rhlogin, user.uuid, app_name, user.namespace, framework, action, app_info['uuid'])
     Apptegic.application(user.rhlogin, user.uuid, app_name, user.namespace, framework, action, app_info['uuid'])
     result = server.execute_direct(framework, action, "#{app_name} #{user.namespace} #{app_info['uuid']}")[0]
-    if (result && defined? result.results)
+    if (result && defined? result.results && result.results.has_key?(:data))
       output = result.results[:data][:output]
       exitcode = result.results[:data][:exitcode]
       if action == 'status'

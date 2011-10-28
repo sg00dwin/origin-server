@@ -272,7 +272,7 @@ module Libra
             Libra.logger_debug "DEBUG: Updating namespace for app: #{app_name}"
             server = Server.new(app_info['server_identity'])
             result = server.execute_direct(app_info['framework'], 'update_namespace', "#{app_name} #{new_namespace} #{@namespace} #{app_info['uuid']}")[0]
-            if (result && defined? result.results)            
+            if (result && defined? result.results && result.results.has_key?(:data))            
               exitcode = result.results[:data][:exitcode]
               output = result.results[:data][:output]
               server.log_result_output(output, exitcode, self, app_name, app_info)

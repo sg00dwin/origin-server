@@ -452,7 +452,7 @@ module Libra
     
     def handle_controller_result(result)
       result = result[0]
-      if (result && defined? result.results)
+      if (result && defined? result.results && result.results.has_key?(:data))
         output = result.results[:data][:output]
         exitcode = result.results[:data][:exitcode]
         log_result_output(output, exitcode)
