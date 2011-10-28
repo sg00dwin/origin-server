@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.81.2
+Version:   0.81.3
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -64,6 +64,9 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Fri Oct 28 2011 Dan McPherson <dmcphers@redhat.com> 0.81.3-1
+- better error handling (dmcphers@redhat.com)
+
 * Thu Oct 27 2011 Dan McPherson <dmcphers@redhat.com> 0.81.2-1
 - remove requirement to pass cartridge to ctl commands (dmcphers@redhat.com)
 
