@@ -4,9 +4,6 @@ body {
   margin: 0;
   padding: 0;
   background-color: $background-color;
-}
-
-body.home {
   min-width: 52em;
 }
 
@@ -827,6 +824,9 @@ nav.service {
 }
 
 /* product overview page styles */
+
+/* Override the body min-width since this page is a bit wider */
+body.product.overview { min-width: 55em; }
 
 #product_overview { padding: 0; }
 
