@@ -1075,151 +1075,131 @@ body.product.overview { min-width: 55em; }
 
 /* Feature matrix */
 
+
 .features .main {
   margin: 0; padding: 5em 0;
   @include cloud_bg_solid;
-
-  .content { padding-left: 5em; }
-
-  & .content > div  {
-    background: white;
-    @include border-radius(2em);
-    position: relative;
-    width: 19em;
-    padding: 2em;
-    margin: 1em;
-    float: left;
-    
-    &:first-child { margin-left: 0; }
-    &:last-child { margin-right: 0; }
-
-    h2 {
-      color: white;
-      position: absolute;
-      top: -2em;
-      left: 0;
-      font-size: 2em;
-      line-height: 1em;
-      width: 100%;
-      text-align: center;
-      text-transform: uppercase;
-    }
-    
-    h3 {
-      width: 10em;
-      margin: 0; padding: 0;
-      position: absolute;
-      left: -10.5em;
-      display:none;
-      color: #ccc;
-      text-align: right;
-      font-size: 1.2em;
-    }
-
-    &:first-child h3 { display: block; }
-
-   ul {
-      list-style-type: none;
-      margin: 2em auto 0; padding: 0;
-      border-top: 2px solid #cecece;
-    }
-
-    ul li {
-      margin: .5em auto;
-      padding: .25em 2em;
-      height: 1.1em;
-      width: 7em;
-      background: #c8c5ac;
-      color: white;
-      @include border-radius(.3em);
-      font-size: 1.3em;
-      font-family: Overpass, $base_font_family;
-      text-align: center;
-    }
-
-    li.disabled {
-      background: #f3f3f3;
-    }
-    ul.languages li.disabled {
-      height: 3.5em;
-    }
-
-    li.soon {
-      background: transparent;
-      color: #666;
-    }
-
-    ul.languages {
-      margin-top: 0;
-      border-top: 0;
-    }
-    ul.languages li {
-      @include border-radius(1em);
-      margin: 2em 1em;
-      padding-left: 1.5em;
-      padding-bottom: 1em;
-      font-family: Overpass, $base_font_family;
-      font-size: 1.1em;
-      text-align: left;
-      color: black;
-      width: auto;
-      height: auto;
-
-      ul { margin: 0;  border: 0;}
-
-      ul li {
-        background: transparent;
-        @include inline-block;
-        margin: 0;
-        padding: .25em .5em;
-        width: 4em;
-      }
-
-      h4 {
-        color: white;
-        position: relative;
-        top: -.5em;
-        left: 0;
-        padding: .25em 1em;
-        display: inline;
-        font-size: 1.2em;
-        @include border-radius(.3em);
-      }
-      
-      &.ruby {
-        background: lighten($ruby, 35%);
-        
-        h4 { background: $ruby; }
-      }
-      
-      &.python {
-        background: lighten($python, 35%);
-        
-        h4 { background: $python; }
-      }
-
-      &.perl {
-        background: lighten($perl, 35%);
-        height: 3.5em;
-        
-        h4 { background: $perl; }
-      }
-
-      &.php {
-        background: lighten($php, 35%);
-        
-        h4 { background: $php; }
-      }
-
-      &.java {
-        background: lighten($java, 30%);
-        
-        h4 { background: $java; }
-      }
-    }
-  }
-
 }
+
+#features {
+  width: 58.8em;
+  margin-left: auto;
+  margin-right: auto;
+  width: 60em; }
+
+#services {
+  .column {
+    border-radius: 0.6em 0.6em 0 0; }
+  .row {
+    padding: 2em;
+    padding-top: 0;
+    padding-bottom: 0;
+    color: #58595b;
+    line-height: 1.5em;
+    background-color: #fff; }
+  section {
+    background-color: #e3b700;
+    padding: 0 1.5em;
+    padding-top: 1.5em; } }
+
+#languages header, #addons header {
+  font-family: Overpass, $base-font-family;
+  font-weight: bold;
+  color: #000;
+  font-size: 1.6em;
+  line-height: 2.7em;
+  background-color: #fff;
+  border-top: 1px solid #dededd;
+  border-bottom: 1px solid #dededd;
+  clear: both; }
+
+#languages section {
+  background-color: #fcc917;
+  padding: 0 1.5em;
+  float: none;
+  overflow: hidden; }
+
+#addons section {
+  background-color: #e3b700;
+  padding: 0 1.5em;
+  overflow: hidden; }
+
+.column {
+  background-color: #fff;
+  height: 100%;
+  min-height: 100%;
+  width: 17.3em;
+  float: left;
+  margin-left: 1.2em;
+  padding-top: 2.2em;
+  padding-bottom: 100%;
+  margin-bottom: -100%; }
+
+.row {
+  background-color: #f8f8f8;
+  margin-bottom: 1.8em;
+  padding-bottom: 0.6em;
+  .service {
+    font-family: Overpass, $base-font-family;
+    font-size: 1.8em;
+    font-weight: bold; } }
+
+.language {
+  font-size: 0.9em;
+  font-weight: bold;
+  background-color: #cc0000;
+  border-radius: 0.3em;
+  color: #fff;
+  line-height: 1em;
+  padding: 0.4em 0em;
+  width: 33%;
+  text-align: center;
+  position: relative;
+  top: -0.9em;
+  left: 1.8em; }
+
+.addon {
+  background-color: #c8c5ac; }
+
+.version {
+  font-size: 0.8em;
+  color: #a7a9ac;
+  text-align: right; }
+
+.clear {
+  clear: both; }
+
+table {
+  padding-left: 1.6em;
+  margin-top: -0.4em; }
+
+td {
+  width: 7.5em;
+  font-size: 1em; }
+
+#ruby {
+  background-color: #cc0000; }
+
+#python {
+  background-color: #abb400; }
+
+#perl {
+  background-color: #fcc917; }
+
+#php {
+  background-color: #0093d9; }
+
+#java {
+  background-color: #4e376b; }
+
+#express .service {
+  color: #0093d9; }
+
+#flex .service {
+  color: #ff8d00; }
+
+#power .service {
+  color: #cc0000; }
 
 .multiplebgs.cssgradients .features .main {
   @include cloud_bg_gradient;
