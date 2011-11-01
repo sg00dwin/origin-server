@@ -440,13 +440,13 @@ module Libra
     def create_account(user, app_info)
       # Make the call to configure the user
       #execute_internal(@@C_CONTROLLER, 'configure', "-c #{user.uuid} -e #{user.rhlogin} -s #{user.ssh}")
-      result = execute_direct(@@C_CONTROLLER, 'configure', "-c #{app_info['uuid']} -e #{user.rhlogin} -s #{user.ssh}")
+      result = execute_direct(@@C_CONTROLLER, 'configure', "-c '#{app_info['uuid']}' -s '#{user.ssh}'")
       handle_controller_result(result)
     end
 
     def delete_account(app_uuid)
       # Make the call to configure the user
-      result = execute_direct(@@C_CONTROLLER, 'deconfigure', "-c #{app_uuid}")
+      result = execute_direct(@@C_CONTROLLER, 'deconfigure', "-c '#{app_uuid}'")
       handle_controller_result(result)
     end
     

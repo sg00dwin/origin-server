@@ -12,7 +12,7 @@ include Libra
 $cartridge_root = '/usr/libexec/li/cartridges'
 $controller_hooks = "#{$cartridge_root}/li-controller/info/hooks"
 $controller_config_path = "#{$controller_hooks}/configure"
-$controller_config_format = "#{$controller_config_path} -c '%s' -e '%s' -s '%s'"
+$controller_config_format = "#{$controller_config_path} -c '%s' -s '%s'"
 $controller_deconfig_path = "#{$controller_hooks}/deconfigure"
 $controller_deconfig_format = "#{$controller_deconfig_path} -c '%s'"
 $home_root = "/var/lib/libra"
@@ -56,7 +56,7 @@ Given /^a new guest account$/ do
     'ssh_key_string' => ssh_key_string,
     'ssh_key_name' => ssh_key_name
   }
-  command = $controller_config_format % [acctname, ssh_key_name, ssh_key_string]
+  command = $controller_config_format % [acctname, ssh_key_string]
 
   run command
   # get and store the account UID's by name
@@ -78,7 +78,7 @@ When /^I create a guest account$/ do
       'ssh_key_string' => ssh_key_string,
       'ssh_key_name' => ssh_key_name
     }
-  command = $controller_config_format % [acctname, ssh_key_name, ssh_key_string]
+  command = $controller_config_format % [acctname, ssh_key_string]
   run command
   # get and store the account UID's by name
   @account['uid'] = Etc.getpwnam(acctname).uid
