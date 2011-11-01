@@ -148,30 +148,32 @@ module Libra
   end
   
   # Move an app
-  def self.execute_move(app_name, rhlogin, new_server_identity, node_profile)
+  def self.execute_move(app_name, rhlogin, new_server_identity=nil, node_profile='std')
     user = get_user(rhlogin)
-    
+
     app_info = user.app_info(app_name)
     check_app_exists(app_info, app_name)
-    
+
     if new_server_identity
       new_server = Server.new(new_server_identity)
     else
       new_server = Server.find_available(node_profile)
     end
-    
+
     old_server = Server.new(app_info['server_identity'])
-    
-    server_execute_direct(framework, 'stop', app_name, user, old_server, app_info)
-    
+
+    server_execute_direct(app_info['framework'], 'stop', app_name, user, old_server, app_info)
+
     new_server.create_account(user, app_info)
-    
-    #rsync from old to new
-    
-    server_execute_direct(framework, 'start', app_name, user, new_server, app_info, false)
-    
+        
+    `eval \`ssh-agent\`; ssh-add /var/www/libra/broker/config/keys/rsync_id_rsa; ssh -A root@#{old_server.get_fact_direct('ipaddress')} "rsync -az -e 'ssh -o VerifyHostKeyDNS=no' /var/lib/libra/#{app_info['uuid']}/ root@#{new_server.get_fact_direct('ipaddress')}:/var/lib/libra/#{app_info['uuid']}/"`
+
     user.move_app(app_name, app_info, new_server)
     
+    server_execute_direct(app_info['framework'], 'deploy_httpd_proxy', app_name, user, new_server, app_info, false)
+
+    server_execute_direct(app_info['framework'], 'start', app_name, user, new_server, app_info, false)
+
     deconfigure_app_from_node(app_info, app_name, user, old_server, false)
   end
   

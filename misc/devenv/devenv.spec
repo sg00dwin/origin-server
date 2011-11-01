@@ -99,6 +99,9 @@ cp -rf %{devenvdir}/etc/* %{_sysconfdir}
 cp -rf %{devenvdir}/bin/* %{_bindir}
 cp -rf %{devenvdir}/var/* %{_localstatedir}
 
+# Add rsync key to authorized keys
+cat %{brokerdir}/config/keys/rsync_id_rsa.pub >> /root/.ssh/authorized_keys
+
 # Move over new http configurations
 cp -rf %{devenvdir}/httpd/* %{libradir}
 cp -rf %{devenvdir}/httpd.conf %{sitedir}/httpd/

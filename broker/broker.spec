@@ -56,7 +56,10 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{brokerdir}/config/environments/production.rb
 %config(noreplace) %{brokerdir}/config/keys/public.pem
 %config(noreplace) %{brokerdir}/config/keys/private.pem
+%attr(0600,-,-) %config(noreplace) %{brokerdir}/config/keys/rsync_id_rsa
+%config(noreplace) %{brokerdir}/config/keys/rsync_id_rsa.pub
 %attr(0750,-,-) %{brokerdir}/config/keys/generate_rsa_keys
+%attr(0750,-,-) %{brokerdir}/config/keys/generate_rsync_rsa_keys
 %{brokerdir}
 %{htmldir}/broker
 
