@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.81.3
+Version:   0.81.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -56,7 +56,10 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{brokerdir}/config/environments/production.rb
 %config(noreplace) %{brokerdir}/config/keys/public.pem
 %config(noreplace) %{brokerdir}/config/keys/private.pem
+%attr(0600,-,-) %config(noreplace) %{brokerdir}/config/keys/rsync_id_rsa
+%config(noreplace) %{brokerdir}/config/keys/rsync_id_rsa.pub
 %attr(0750,-,-) %{brokerdir}/config/keys/generate_rsa_keys
+%attr(0750,-,-) %{brokerdir}/config/keys/generate_rsync_rsa_keys
 %{brokerdir}
 %{htmldir}/broker
 
@@ -64,6 +67,9 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Tue Nov 01 2011 Dan McPherson <dmcphers@redhat.com> 0.81.4-1
+- move app, work in progress (dmcphers@redhat.com)
+
 * Fri Oct 28 2011 Dan McPherson <dmcphers@redhat.com> 0.81.3-1
 - better error handling (dmcphers@redhat.com)
 
