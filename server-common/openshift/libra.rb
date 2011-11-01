@@ -168,11 +168,13 @@ module Libra
         
     `eval \`ssh-agent\`; ssh-add /var/www/libra/broker/config/keys/rsync_id_rsa; ssh -A root@#{old_server.get_fact_direct('ipaddress')} "rsync -az -e 'ssh -o VerifyHostKeyDNS=no' /var/lib/libra/#{app_info['uuid']}/ root@#{new_server.get_fact_direct('ipaddress')}:/var/lib/libra/#{app_info['uuid']}/"`
 
-    user.move_app(app_name, app_info, new_server)
-    
     server_execute_direct(app_info['framework'], 'deploy_httpd_proxy', app_name, user, new_server, app_info, false)
+      
+    # update ip address and anything else on the app itself (perhaps with deploy_httpd_proxy and start
 
     server_execute_direct(app_info['framework'], 'start', app_name, user, new_server, app_info, false)
+
+    user.move_app(app_name, app_info, new_server)
 
     deconfigure_app_from_node(app_info, app_name, user, old_server, false)
   end
