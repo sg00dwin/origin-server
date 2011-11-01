@@ -165,12 +165,10 @@ module Libra
     server_execute_direct(app_info['framework'], 'stop', app_name, user, old_server, app_info)
 
     new_server.create_account(user, app_info)
-        
-    `eval \`ssh-agent\`; ssh-add /var/www/libra/broker/config/keys/rsync_id_rsa; ssh -A root@#{old_server.get_fact_direct('ipaddress')} "rsync -az -e 'ssh -o VerifyHostKeyDNS=no' /var/lib/libra/#{app_info['uuid']}/ root@#{new_server.get_fact_direct('ipaddress')}:/var/lib/libra/#{app_info['uuid']}/"`
+
+    `eval \`ssh-agent\`; ssh-add /var/www/libra/broker/config/keys/rsync_id_rsa; ssh -o StrictHostKeyChecking=no -A root@#{old_server.get_fact_direct('ipaddress')} "rsync -az --exclude '.env/OPENSHIFT_INTERNAL_IP' -e 'ssh -o StrictHostKeyChecking=no' /var/lib/libra/#{app_info['uuid']}/ root@#{new_server.get_fact_direct('ipaddress')}:/var/lib/libra/#{app_info['uuid']}/"`
 
     server_execute_direct(app_info['framework'], 'deploy_httpd_proxy', app_name, user, new_server, app_info, false)
-      
-    # update ip address and anything else on the app itself (perhaps with deploy_httpd_proxy and start
 
     server_execute_direct(app_info['framework'], 'start', app_name, user, new_server, app_info, false)
 
