@@ -6,9 +6,24 @@ require 'net/http'
 require 'net/https'
 require 'zipruby'
 
-# Load OpenShift modules
+# Set localhost to be the default
+hostname = 'localhost'
 
-hostname = Socket.gethostbyname(Socket.gethostname).first
+# See if there is a hostname for this machine in /etc/hosts
+begin
+  hostname = Socket.gethostbyname(Socket.gethostname)
+rescue
+  puts "No local hostname given"
+end
+
+# Check to see if we're running on an EC2 machine
+begin
+  url = 'http://169.254.169.254/latest/meta-data/public-hostname'
+  hostname = Net::HTTP.get_response(URI.parse(url)).body
+rescue Errno::EHOSTUNREACH
+  puts "Not running on EC2"
+end
+puts "Running tests against: #{hostname}"
 
 # This should go in your test_helper.rb file if you have one
 Sauce.config do |config|

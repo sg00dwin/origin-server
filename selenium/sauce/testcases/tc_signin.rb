@@ -6,7 +6,6 @@ class Signin < Sauce::TestCase
 
   def setup
     super
-    set_vars(page)
     @home.open
   end
 
@@ -28,6 +27,7 @@ class Signin < Sauce::TestCase
   end
 
   def test_signin_process
+    sauce_testing
 
     # Try a valid login
     signin

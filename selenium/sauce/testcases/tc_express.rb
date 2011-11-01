@@ -6,7 +6,6 @@ class Express < Sauce::TestCase
 
   def setup
     super
-    set_vars(page)
     @express.open
   end
 

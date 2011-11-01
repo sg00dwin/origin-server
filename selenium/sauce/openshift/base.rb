@@ -14,7 +14,7 @@ module OpenShift
       }
     end
 
-    def set_vars(page)
+    def setup
       @page    = page
       @home    = OpenShift::Express::Home.new(page, '/app')
       @express = OpenShift::Express::Express.new(page, '/app/express')
@@ -25,7 +25,6 @@ module OpenShift
       @reset   = OpenShift::Express::Reset.new(page,'reset_password')
       @signup  = OpenShift::Express::Signup.new(page,'signup')
     end
-
 
     def get_count(type)
       count = 0;
@@ -88,6 +87,19 @@ module OpenShift
         yield target
         target.click(:CLOSE)
       end
+    end
+
+    # Wow, javascript in Selenium 1 is kludgy: http://bit.ly/oCzktV 
+    def exec_js(script)
+      @page.get_eval("
+        (function(){with(this){
+        #{script}
+          }}).call(selenium.browserbot.getUserWindow());
+        ");
+    end
+
+    def sauce_testing(testing=true)
+        exec_js("$.cookie('sauce_testing',#{testing});")
     end
   end
 

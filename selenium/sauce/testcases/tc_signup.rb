@@ -6,7 +6,6 @@ class Signup < Sauce::TestCase
 
   def setup
     super
-    set_vars(page)
     @home.open
 
     @tests = {
@@ -18,7 +17,6 @@ class Signup < Sauce::TestCase
       :bad_domain => [ "#{data[:username]}@#{data[:domain]}.ir", data[:password], data[:password], true ],
       :success => [ "flindiak+sauce_#{data[:username]}@redhat.com", data[:password],data[:password], true ]
     }
-
   end
 
   def test_signup_dialog

@@ -6,7 +6,6 @@ class Flex < Sauce::TestCase
 
   def setup
     super
-    set_vars(page)
     @flex.open
   end
 
