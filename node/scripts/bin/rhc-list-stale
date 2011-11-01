@@ -4,7 +4,7 @@ for f in `/bin/ls /var/lib/libra/`
 do
     if [ -d /var/lib/libra/$f ]
     then
-        if ! GIT_DIR=`echo /var/lib/libra/$f/git/*/` git log --since=2011-11-01 | grep -q commit
+        if ! GIT_DIR=`echo /var/lib/libra/$f/git/*/` git log --since="$(/bin/date "+%Y-%m-%d" --date="60 days ago")" | grep -q commit
         then
             . /var/lib/libra/$f/.env/OPENSHIFT_APP_DIR
             #find $OPENSHIFT_APP_DIR -mtime -60 -name 'access_log-*'
