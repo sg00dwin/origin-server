@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.81.1
+Version:   0.81.2
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -68,6 +68,9 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Tue Nov 01 2011 Dan McPherson <dmcphers@redhat.com> 0.81.2-1
+- Fix small screen display bug (edirsh@redhat.com)
+
 * Thu Oct 27 2011 Dan McPherson <dmcphers@redhat.com> 0.81.1-1
 - bump spec numbers (dmcphers@redhat.com)
 
