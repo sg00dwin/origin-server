@@ -53,13 +53,14 @@ setup_embedded_deconfigure "$1" $2 $3
 . $APP_HOME/.env/OPENSHIFT_APP_NAME
 . $APP_HOME/.env/JENKINS_URL
 . $APP_HOME/.env/JENKINS_USERNAME
+. $APP_HOME/.env/JENKINS_PASSWORD
 
 if [ -n "$JENKINS_URL" ]
 then
   #
   # Disable job
   #
-  if out=$(runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level ${CART_INFO_DIR}/bin/jenkins-cli disable-job --username "$JENKINS_USERNAME" --password-file "${OPENSHIFT_HOMEDIR}jenkins-client-1.4/.password" '${OPENSHIFT_APP_NAME}-build'" 2>&1)
+  if out=$(runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level ${CART_INFO_DIR}/bin/jenkins_disable_job" 2>&1)
   then
       # Existing job was disabled
       client_result ""

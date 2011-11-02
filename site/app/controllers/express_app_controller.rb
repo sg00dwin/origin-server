@@ -9,6 +9,9 @@ class ExpressAppController < ApplicationController
   
   def create
     app_params = params[:express_app] # Get the params we're interested in
+    app_params[:rhlogin] = session[:login]
+    app_params[:ticket] = cookies[:rh_sso]
+    app_params[:password] = ''
     @app = ExpressApp.new app_params
     @app.ticket = session[:ticket]
     if @app.valid?

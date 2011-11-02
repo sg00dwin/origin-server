@@ -1,0 +1,34 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'json'
+require 'pp'
+
+STDOUT.sync = true
+STDERR.sync = true
+
+@username = ENV['JENKINS_USERNAME']
+@password = ENV['JENKINS_PASSWORD']
+@hostname = ENV['JENKINS_URL'].split("/")[-1]
+@job_name = "#{ENV['OPENSHIFT_APP_NAME']}-build"
+@job_url = "/job/#{@job_name}"
+@app_name = ENV['OPENSHIFT_APP_NAME']
+@uuid = ENV['OPENSHIFT_APP_UUID']
+@namespace = ARGV[0]
+@libra_domain = ARGV[1]
+@job_xml = ARGV[2]
+
+
+def create_job
+
+  status_code = `/bin/sed -e "s,UPSTREAM_REPO_URL,ssh://#{@uuid}@#{@app_name}-#{@namespace}.#{@libra_domain}/~/git/#{@app_name}.git/,g" \
+         -e "s,UPSTREAM_SSH,#{@uuid}@#{@app_name}-#{@namespace}.#{@libra_domain},g" \
+         -e "s,JOB_NAME,#{@job_name},g" \
+         -e "s,UPSTREAM_APP_NAME,#{@app_name},g" #{@job_xml} | curl -s -w %{http_code} --output /dev/null -X POST -H "Content-Type: application/xml" --data-binary @- --insecure https://#{@username}:#{@password}@#{@hostname}/createItem?name=#{@job_name}`
+
+  if status_code != '200'
+    exit 1
+  end
+end
+
+create_job

@@ -6,6 +6,13 @@ do
     . $f
 done
 
+HERE="/usr/libexec/li/cartridges/jbossas-7.0/info/bin"
+if `echo $OPENSHIFT_APP_DNS | grep -q stg.rhcloud.com` ; then 
+	LOCALMIRROR="$HERE/settings.stg.xml"
+else 
+	LOCALMIRROR="$HERE/settings.prod.xml"
+fi
+
 if [ -z "$BUILD_NUMBER" ]
 then
     SKIP_MAVEN_BUILD=false
@@ -22,8 +29,8 @@ then
         export MAVEN_OPTS="-Xmx208m"
         export PATH=$JAVA_HOME/bin:$M2_HOME/bin:$PATH
         pushd ${OPENSHIFT_REPO_DIR} > /dev/null
-        mvn --version
-        mvn clean package -Popenshift -DskipTests
+        mvn --global-settings $LOCALMIRROR --version
+        mvn --global-settings $LOCALMIRROR -e clean package -Popenshift -DskipTests
         popd
     fi
 fi

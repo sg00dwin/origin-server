@@ -11,6 +11,7 @@ class ExpressApp
   attr_accessor :app_name, :cartridge, :debug
   attr_reader :health_path
   
+  validates_presence_of :rhlogin
   validates :app_name,  :presence => true,
                         :length => {:maximum => 16},
                         :format => {:with => /^[A-Za-z0-9]+$/}

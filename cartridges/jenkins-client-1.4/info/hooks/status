@@ -57,27 +57,6 @@ setup_basic_hook "$1" $2 $3
 # Check application status
 #
 
-if false
-then
-  if [ -n "$JENKINS_URL" ]
-  then
-      if out=$(runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level ${CART_INFO_DIR}/bin/jenkins-cli list-changes -format PLAIN --username "$JENKINS_USERNAME" --password-file "${OPENSHIFT_HOMEDIR}jenkins-client-1.4/.password" '${OPENSHIFT_APP_NAME}-build' 1" 2>&1)
-      then
-          echo "Latest changes: "
-          echo ""
-          echo "$out"
-      else
-          # An error occurred enabling existing job
-          echo ""
-          echo "Could not get status of job '${OPENSHIFT_APP_NAME}-build' in Jenkins server:"
-          echo "$out"
-          echo "This might be expected if '${OPENSHIFT_APP_NAME}' isn't running."
-      fi
-  else
-      echo "No Jenkins server found!"
-  fi
-else
-    echo "You can see the job status here:"
-    echo "${JENKINS_URL}job/${OPENSHIFT_APP_NAME}-build/"
-fi    
+echo "You can see the job status here:"
+echo "${JENKINS_URL}job/${OPENSHIFT_APP_NAME}-build/"    
   
