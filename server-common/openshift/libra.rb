@@ -122,9 +122,16 @@ module Libra
     end
   end
 
-
+  #
   # Execute a cartridge type (standalone)
-  def self.execute(framework, action, app_name, rhlogin, node_profile)
+  #
+  # framework - application type eg: php-5.3
+  # action - action to take eg: start, stop, configure
+  # app_name - name of the application
+  # rhlogin - rhn login
+  # node_profile - Node profile type to place the application eg: large, small
+  # Optional Args - Optional Arguments passed to the hooks
+  def self.execute(framework, action, app_name, rhlogin, node_profile, optional_args=nil)
     user = get_user(rhlogin)
 
     # process actions
@@ -142,7 +149,7 @@ module Libra
       if action == 'deconfigure'
         deconfigure_app(app_info, app_name, user, server)
       else
-        server_execute_direct(app_info['framework'], action, app_name, user, server, app_info)
+        server_execute_direct(app_info['framework'], action, app_name, user, server, app_info, true, optional_args)
       end
     end
   end
@@ -364,11 +371,16 @@ module Libra
     end
   end
 
-  def self.server_execute_direct(framework, action, app_name, user, server, app_info, allow_move=true)
+  def self.server_execute_direct(framework, action, app_name, user, server, app_info, allow_move=true, optional_args=nil)
     # Execute the action on the server using a framework cartridge
     Nurture.application(user.rhlogin, user.uuid, app_name, user.namespace, framework, action, app_info['uuid'])
     Apptegic.application(user.rhlogin, user.uuid, app_name, user.namespace, framework, action, app_info['uuid'])
-    result = server.execute_direct(framework, action, "#{app_name} #{user.namespace} #{app_info['uuid']}")[0]
+    Libra.logger_debug "DEBUG: optional_args: '#{optional_args}'"
+    if optional_args != '' and optional_args
+        result = server.execute_direct(framework, action, "'#{app_name}' '#{user.namespace}' '#{app_info['uuid']}' '#{optional_args}'")[0]
+    else
+        result = server.execute_direct(framework, action, "'#{app_name}' '#{user.namespace}' '#{app_info['uuid']}'")[0]
+    end
     if (result && defined? result.results && result.results.has_key?(:data))
       output = result.results[:data][:output]
       exitcode = result.results[:data][:exitcode]

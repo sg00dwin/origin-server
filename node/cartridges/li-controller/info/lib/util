@@ -291,6 +291,7 @@ function setup_basic_hook {
     load_node_conf
 
     uuid=`basename $3`
+    namespace="$2"
     application="$1"
     
     setup_basic_vars

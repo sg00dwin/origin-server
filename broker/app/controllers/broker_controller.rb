@@ -111,6 +111,10 @@ class BrokerController < ApplicationController
           if !(val =~ /\A[\w]+\z/)
             render :json => generate_result_json("Invalid #{key} specified: #{val}", nil, 105), :status => :invalid and return nil
           end
+        when 'server_alias'
+          if !(val =~ /\A[\w\-\.]+\z/)
+            render :json => generate_result_json("Invalid ServerAlias specified: #{val}", nil, 105), :status => :invalid and return nil
+          end
         else
           render :json => generate_result_json("Unknown json key found: #{key}", nil, 254), :status => :invalid and return nil
       end
@@ -216,17 +220,22 @@ class BrokerController < ApplicationController
       return unless data
       username = login(data, params, true)
       if username
+        server_alias = nil
         action = data['action']
         app_name = data['app_name']
         cartridge = data['cartridge'] # may be nil except for configure
         node_profile = data['node_profile'] if data['node_profile']
+        server_alias = data['server_alias'] if data['server_alias']
 
+        # 
+        # Confirm application name is valid
+        # 
         if !Libra::Util.check_app(app_name)
           render :json => generate_result_json("The supplied application name '#{app_name}' is not allowed", nil, 105), :status => :invalid and return
         end
         
         # Execute a framework cartridge
-        Libra.execute(cartridge, action, app_name, username, node_profile)
+        Libra.execute(cartridge, action, app_name, username, node_profile, server_alias)
           
         json_data = nil
         
