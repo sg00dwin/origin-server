@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.81.3
+Version:   0.81.4
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -82,6 +82,8 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Wed Nov 02 2011 Troy Dawson <tdawson@redhat.com> 0.81.4-1
+- adding aws local maven repository settings (tdawson@redhat.com)
 * Wed Nov 02 2011 Dan McPherson <dmcphers@redhat.com> 0.81.3-1
 - handle loopback ip hardcoded and ignore (dmcphers@redhat.com)
 
