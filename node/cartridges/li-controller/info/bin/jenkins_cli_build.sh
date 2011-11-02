@@ -47,11 +47,45 @@ def schedule_build
   end
 end
 
+# Source from - http://bit.ly/c1hcaB
+def display_time(total_seconds)
+  total_seconds = total_seconds.to_i
+    
+  days = total_seconds / 86400
+  hours = (total_seconds / 3600) - (days * 24)
+  minutes = (total_seconds / 60) - (hours * 60) - (days * 1440)
+  seconds = total_seconds % 60
+    
+  display = ''
+  display_concat = ''
+  if days > 0
+    display = display + display_concat + "#{days}d"
+    display_concat = ' '
+  end
+  if hours > 0 || display.length > 0
+    display = display + display_concat + "#{hours}h"
+    display_concat = ' '
+  end
+  if minutes > 0 || display.length > 0
+    display = display + display_concat + "#{minutes}m"
+    display_concat = ' '
+  end
+  display = display + display_concat + "#{seconds}s"
+  display
+end
+
 # Save the current build num
 build_num = get_build_num
 
 # Schedule a build
 schedule_build
+
+# See if there was a previous duration we can predict
+last_duration = get_job_info(build_num)["duration"]
+if last_duration
+  display = display_time(last_duration / 1000)
+  puts "Estimated build time: #{display}\n"
+end
 
 # Wait until a new build is kicked off
 next_build_num = get_build_num
@@ -75,9 +109,9 @@ puts "Done"
 
 # Check the build result
 if json["result"] == "SUCCESS"
-  puts "SUCCESS"
+  puts "Build Succeeded"
   exit 0
 else
-  puts "FAILED"
+  puts "Build Failed"
   exit 1
 end
