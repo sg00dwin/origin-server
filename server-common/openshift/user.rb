@@ -324,6 +324,23 @@ module Libra
     end
     
     #
+    # Moves an app from one server to another
+    #    
+    def move_app(app_name, app_info, new_server)
+      Libra.logger_debug "DEBUG: Changing server identity of '#{app_name}' from '#{app_info['server_identity']}' to '#{new_server.name}'"
+      app_info['server_identity'] = new_server.name
+
+      dyn_retries = 2
+      auth_token = Server.dyn_login(dyn_retries)
+      new_server.recreate_app_dns_entries(app_name, namespace, namespace, auth_token, dyn_retries)
+      Server.dyn_publish(auth_token, dyn_retries)
+      Server.dyn_logout(auth_token, dyn_retries)
+      
+      # update s3
+      update_app(app_info, app_name)
+    end
+    
+    #
     # Deletes the user with the current information
     #    
     def delete

@@ -65,11 +65,7 @@ module Libra
 
   # Execute a cartridge type (embedded)
   def self.embed_execute(framework, action, app_name, rhlogin)
-    # get user
-    user = User.find(rhlogin)
-    if not user
-      raise UserException.new(254), "A user with rhlogin '#{rhlogin}' does not have a registered domain.  Be sure to run rhc-create-domain without -a|--alter first.", caller[0..5]
-    end
+    user = get_user(rhlogin)
 
     # process actions
 
@@ -128,12 +124,8 @@ module Libra
 
 
   # Execute a cartridge type (standalone)
-  def self.execute(framework, action, app_name, rhlogin, node_profile)
-    # get user
-    user = User.find(rhlogin)
-    if not user
-      raise UserException.new(254), "A user with rhlogin '#{rhlogin}' does not have a registered domain.  Be sure to run rhc-create-domain without -a|--alter first.", caller[0..5]
-    end
+  def self.execute(framework, action, app_name, rhlogin, node_profile="std")
+    user = get_user(rhlogin)
 
     # process actions
 
@@ -153,6 +145,62 @@ module Libra
         server_execute_direct(app_info['framework'], action, app_name, user, server, app_info)
       end
     end
+  end
+  
+  # Move an app
+  def self.execute_move(app_name, rhlogin, new_server_identity=nil, node_profile="std")
+    user = get_user(rhlogin)
+
+    app_info = user.app_info(app_name)
+    check_app_exists(app_info, app_name)
+
+    if new_server_identity
+      new_server = Server.new(new_server_identity)
+    else
+      new_server = Server.find_available(node_profile)
+    end
+
+    old_server = Server.new(app_info['server_identity'])
+      
+    raise UserException.new(1), "Error moving app.  Old and new servers are the same: #{old_server.name}", caller[0..5] if old_server.name == new_server.name
+      
+    Libra.logger_debug "DEBUG: Moving app '#{app_name}' with uuid #{app_info['uuid']} from #{old_server.name} to #{new_server.name}"
+    
+    Libra.logger_debug "DEBUG: Stopping existing app '#{app_name}' before moving"
+    server_execute_direct(app_info['framework'], 'stop', app_name, user, old_server, app_info)
+
+    Libra.logger_debug "DEBUG: Creating new account for app '#{app_name}' on #{new_server.name}"
+    new_server.create_account(user, app_info)
+    begin
+      Libra.logger_debug "DEBUG: Moving content for app '#{app_name}' to #{new_server.name}"
+      `eval \`ssh-agent\`; ssh-add /var/www/libra/broker/config/keys/rsync_id_rsa; ssh -o StrictHostKeyChecking=no -A root@#{old_server.get_fact_direct('ipaddress')} "rsync -az --exclude '.env/OPENSHIFT_INTERNAL_IP' -e 'ssh -o StrictHostKeyChecking=no' /var/lib/libra/#{app_info['uuid']}/ root@#{new_server.get_fact_direct('ipaddress')}:/var/lib/libra/#{app_info['uuid']}/"`
+      if $?.exitstatus != 0
+        raise NodeException.new(143), "Error moving app '#{app_name}' from #{old_server.name} to #{new_server.name}", caller[0..5]
+      end
+
+      Libra.logger_debug "DEBUG: Deploying http proxy for '#{app_name}' after move on #{new_server.name}"
+      server_execute_direct(app_info['framework'], 'deploy_httpd_proxy', app_name, user, new_server, app_info, false)
+  
+      Libra.logger_debug "DEBUG: Starting '#{app_name}' after move on #{new_server.name}"
+      server_execute_direct(app_info['framework'], 'start', app_name, user, new_server, app_info, false)
+  
+      Libra.logger_debug "DEBUG: Fixing DNS and s3 for app '#{app_name}' after move"
+      user.move_app(app_name, app_info, new_server)
+    rescue Exception => e
+      new_server.delete_account(app_info['uuid'])
+      raise
+    end
+
+    Libra.logger_debug "DEBUG: Deconfiguring old app '#{app_name}' on #{old_server.name} after move"
+    deconfigure_app_from_node(app_info, app_name, user, old_server, false)
+  end
+  
+  def self.get_user(rhlogin)
+    user = User.find(rhlogin)
+    if not user
+      raise UserException.new(254), "A user with rhlogin '#{rhlogin}' does not have a registered domain.  Be sure to run rhc-create-domain without -a|--alter first.", caller[0..5]
+    end
+    return user
   end
 
   def self.embed_configure(framework, app_name, user) 
@@ -296,28 +344,7 @@ module Libra
 
   # remove an application from server and persistant storage
   def self.deconfigure_app(app_info, app_name, user, server)
-    # first, remove the application
-    begin
-      server = server_execute_direct(app_info['framework'], 'deconfigure', app_name, user, server, app_info)
-    rescue Exception => e
-      if server.has_app?(app_info, app_name)
-        raise
-      else
-        Libra.logger_debug "DEBUG: Application '#{app_name}' not found on node #{server.name}.  Continuing with deconfigure."
-        Libra.logger_debug "DEBUG: Error from cartridge on deconfigure: #{e.message}"
-      end
-    end
-
-    # then remove the account
-
-    # remove the node account from the server node.
-    begin
-      Libra.logger_debug "DEBUG: Removing app account from server node: #{app_info.pretty_inspect}"
-      server.delete_account(app_info['uuid'])
-    rescue Exception => e
-      Libra.logger_debug "WARNING: Error removing account '#{app_info['uuid']}' from node '#{app_info['server_identity']}' with message: #{e.message}"
-      #TODO check if the user account is still there and raise exception if it is or even better roll this in with deconfigure app
-    end
+    deconfigure_app_from_node(app_info, app_name, user, server)
 
     # remove the DNS entries
     Libra.logger_debug "DEBUG: Public ip being deconfigured from namespace '#{user.namespace}'"
@@ -329,8 +356,33 @@ module Libra
     user.delete_app(app_name)
 
   end
+  
+  def self.deconfigure_app_from_node(app_info, app_name, user, server, allow_move=true)
+    # first, remove the application
+    begin
+      server = server_execute_direct(app_info['framework'], 'deconfigure', app_name, user, server, app_info, allow_move)
+    rescue Exception => e
+      if server.has_app?(app_info, app_name)
+        raise
+      else
+        Libra.logger_debug "DEBUG: Application '#{app_name}' not found on node #{server.name}."
+        Libra.logger_debug "DEBUG: Error from cartridge on deconfigure: #{e.message}"
+      end
+    end
 
-  def self.server_execute_direct(framework, action, app_name, user, server, app_info)
+    # then remove the account
+
+    # remove the node account from the server node.
+    begin
+      Libra.logger_debug "DEBUG: Removing app account from server node: #{app_info.pretty_inspect}"
+      server.delete_account(app_info['uuid'])
+    rescue Exception => e
+      Libra.logger_debug "WARNING: Error removing account '#{app_info['uuid']}' from node '#{server.name}' with message: #{e.message}"
+      #TODO check if the user account is still there and raise exception if it is or even better roll this in with deconfigure app
+    end
+  end
+
+  def self.server_execute_direct(framework, action, app_name, user, server, app_info, allow_move=true)
     # Execute the action on the server using a framework cartridge
     Nurture.application(user.rhlogin, user.uuid, app_name, user.namespace, framework, action, app_info['uuid'])
     Apptegic.application(user.rhlogin, user.uuid, app_name, user.namespace, framework, action, app_info['uuid'])
@@ -353,22 +405,9 @@ module Libra
       end
     else
       server_identity = action != 'configure' ? Server.find_app(app_info, app_name) : nil
-      if server_identity && app_info['server_identity'] != server_identity
-        Libra.logger_debug "DEBUG: Changing server identity of '#{app_name}' from '#{app_info['server_identity']}' to '#{server_identity}'"
-        app_info['server_identity'] = server_identity
-          
-        server = Server.new(app_info['server_identity'])
-          
-        dyn_retries = 2
-
-        auth_token = Server.dyn_login(dyn_retries)
-        server.recreate_app_dns_entries(app_name, user.namespace, user.namespace, auth_token, dyn_retries)
-        Server.dyn_publish(auth_token, dyn_retries)
-        Server.dyn_logout(auth_token, dyn_retries)
-        
-        # update s3
-        user.update_app(app_info, app_name)
-        
+      if allow_move && server_identity && app_info['server_identity'] != server_identity
+        server = Server.new(server_identity)
+        user.move_app(app_name, app_info, server)
         # retry
         return server_execute_direct(framework, action, app_name, user, server, app_info)
       else

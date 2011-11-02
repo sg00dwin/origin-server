@@ -336,17 +336,33 @@ LIMITS_CONF_DIR=${LIMITS_CONF_DIR:=/etc/security/limits.d}
 function check_home_dir() {
     USERNAME=$1
     HOME=`homedir $USERNAME`
+    GITDIR="$HOME/git"
+
     if [ ! -d "$HOME" ]
     then
-	fail "user $USERNAME does not have a home directory $HOME"
-	return
+        fail "user $USERNAME does not have a home directory $HOME"
+        return
     fi
 
-    NUMFILES=`find $HOME -type f|wc -l`
-    if [ $NUMFILES -eq 0 ]
-    then
-	fail "user $USERNAME does not have files in their home directory"
-    fi
+#    NUMFILES=`find $HOME -type f 2>/dev/null | wc -l`
+#    if [ $NUMFILES -eq 0 ]
+#    then
+#        fail "user $USERNAME does not have any files in their home directory"
+#        return
+#    fi
+#
+#    if [ ! -d "$GITDIR" ]
+#    then
+#        fail "user $USERNAME does not have a git directory"
+#        return
+#    fi
+#
+#    NUMFILES=`find $GITDIR -type f 2>/dev/null | wc -l`
+#    if [ $NUMFILES -eq 0 ]
+#    then
+#        fail "user $USERNAME does not have any files in their git directory"
+#        return
+#    fi
 }
 
 function check_user_limits() {
