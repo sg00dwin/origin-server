@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.81.4
+Version:       0.81.5
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -161,6 +161,11 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Wed Nov 02 2011 Dan McPherson <dmcphers@redhat.com> 0.81.5-1
+- use jenkins api (dmcphers@redhat.com)
+- Output tweaks (mhicks@redhat.com)
+- Switching build to use the Jenkins REST API (mhicks@redhat.com)
+
 * Wed Nov 02 2011 Dan McPherson <dmcphers@redhat.com> 0.81.4-1
 - fix move for jboss (dmcphers@redhat.com)
 - disabling new git check for the moment (mmcgrath@redhat.com)
