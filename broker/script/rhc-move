@@ -1,0 +1,52 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'openshift'
+require 'mcollective'
+
+include MCollective::RPC
+include Libra
+
+options = rpcoptions do |parser, options|
+    parser.define_head "Move an application to another node"
+    parser.banner = "Usage: rhc-move [options]"
+
+    parser.on('-t', '--target_server_identity TARGET_SERVER_IDENTITY', 'Target server identity (e.g. ip-10-10-10-10)') do |target_server_identity|
+      options[:target_server_identity] = target_server_identity
+    end
+
+    parser.on('-f', '--node_profile NODE_PROFILE', "Node profile (e.g. std)") do |node_profile|
+      options[:node_profile] = node_profile
+    end
+
+    parser.on('-n', '--app APP', 'Application name') do |app_name|
+      options[:app_name] = app_name
+    end
+
+    parser.on('-l', '--rhlogin RHLOGIN', 'Account to act on') do |rhlogin|
+      options[:rhlogin] = rhlogin
+    end
+
+end
+
+unless options.include?(:app_name)
+    puts "Specify app name"
+    exit 252
+end
+
+unless options.include?(:rhlogin)
+    puts "Specify rhlogin"
+    exit 251
+end
+
+# Set the MCollective options
+Libra.c[:rpc_opts] = options
+
+# Execute the move
+if options[:target_server_identity]
+  Libra.execute_move(options[:app_name], options[:rhlogin], options[:target_server_identity])
+elsif options[:node_profile]
+  Libra.execute_move(options[:app_name], options[:rhlogin], nil, options[:node_profile])
+else
+  Libra.execute_move(options[:app_name], options[:rhlogin])
+end

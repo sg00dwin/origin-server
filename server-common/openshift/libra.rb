@@ -124,7 +124,7 @@ module Libra
 
 
   # Execute a cartridge type (standalone)
-  def self.execute(framework, action, app_name, rhlogin, node_profile)
+  def self.execute(framework, action, app_name, rhlogin, node_profile="std")
     user = get_user(rhlogin)
 
     # process actions
@@ -148,7 +148,7 @@ module Libra
   end
   
   # Move an app
-  def self.execute_move(app_name, rhlogin, new_server_identity=nil, node_profile='std')
+  def self.execute_move(app_name, rhlogin, new_server_identity=nil, node_profile="std")
     user = get_user(rhlogin)
 
     app_info = user.app_info(app_name)
@@ -161,19 +161,37 @@ module Libra
     end
 
     old_server = Server.new(app_info['server_identity'])
-
+      
+    raise UserException.new(1), "Error moving app.  Old and new servers are the same: #{old_server.name}", caller[0..5] if old_server.name == new_server.name
+      
+    Libra.logger_debug "DEBUG: Moving app '#{app_name}' with uuid #{app_info['uuid']} from #{old_server.name} to #{new_server.name}"
+    
+    Libra.logger_debug "DEBUG: Stopping existing app '#{app_name}' before moving"
     server_execute_direct(app_info['framework'], 'stop', app_name, user, old_server, app_info)
 
+    Libra.logger_debug "DEBUG: Creating new account for app '#{app_name}' on #{new_server.name}"
     new_server.create_account(user, app_info)
+    begin
+      Libra.logger_debug "DEBUG: Moving content for app '#{app_name}' to #{new_server.name}"
+      `eval \`ssh-agent\`; ssh-add /var/www/libra/broker/config/keys/rsync_id_rsa; ssh -o StrictHostKeyChecking=no -A root@#{old_server.get_fact_direct('ipaddress')} "rsync -az --exclude '.env/OPENSHIFT_INTERNAL_IP' -e 'ssh -o StrictHostKeyChecking=no' /var/lib/libra/#{app_info['uuid']}/ root@#{new_server.get_fact_direct('ipaddress')}:/var/lib/libra/#{app_info['uuid']}/"`
+      if $?.exitstatus != 0
+        raise NodeException.new(143), "Error moving app '#{app_name}' from #{old_server.name} to #{new_server.name}", caller[0..5]
+      end
 
-    `eval \`ssh-agent\`; ssh-add /var/www/libra/broker/config/keys/rsync_id_rsa; ssh -o StrictHostKeyChecking=no -A root@#{old_server.get_fact_direct('ipaddress')} "rsync -az --exclude '.env/OPENSHIFT_INTERNAL_IP' -e 'ssh -o StrictHostKeyChecking=no' /var/lib/libra/#{app_info['uuid']}/ root@#{new_server.get_fact_direct('ipaddress')}:/var/lib/libra/#{app_info['uuid']}/"`
+      Libra.logger_debug "DEBUG: Deploying http proxy for '#{app_name}' after move on #{new_server.name}"
+      server_execute_direct(app_info['framework'], 'deploy_httpd_proxy', app_name, user, new_server, app_info, false)
+  
+      Libra.logger_debug "DEBUG: Starting '#{app_name}' after move on #{new_server.name}"
+      server_execute_direct(app_info['framework'], 'start', app_name, user, new_server, app_info, false)
+  
+      Libra.logger_debug "DEBUG: Fixing DNS and s3 for app '#{app_name}' after move"
+      user.move_app(app_name, app_info, new_server)
+    rescue Exception => e
+      new_server.delete_account(app_info['uuid'])
+      raise
+    end
 
-    server_execute_direct(app_info['framework'], 'deploy_httpd_proxy', app_name, user, new_server, app_info, false)
-
-    server_execute_direct(app_info['framework'], 'start', app_name, user, new_server, app_info, false)
-
-    user.move_app(app_name, app_info, new_server)
-
+    Libra.logger_debug "DEBUG: Deconfiguring old app '#{app_name}' on #{old_server.name} after move"
     deconfigure_app_from_node(app_info, app_name, user, old_server, false)
   end
   

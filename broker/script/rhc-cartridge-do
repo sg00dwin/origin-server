@@ -29,15 +29,14 @@ options = rpcoptions do |parser, options|
 
 end
 
-unless options.include?(:cartridge)
-    puts "You need to specify a cartridge:"
-    exit 110
+unless options.include?(:action)
+    puts "Specify action"
+    exit 253
 end
 
-unless options.include?(:action)
-    puts "Specify supported action:"
-    puts "configure,deconfigure,info,post-install,post_remove,pre-install,reload,restart,start,status,stop"
-    exit 253
+unless options.include?(:cartridge) || options[:action] != 'configure'
+    puts "You need to specify a cartridge for configure"
+    exit 110
 end
 
 unless options.include?(:app_name)
@@ -54,4 +53,4 @@ end
 Libra.c[:rpc_opts] = options
 
 # Execute the options on a Libra framework
-Libra.execute(options[:cartridge], options[:action], options[:app_name], options[:rhlogin], nil)
+Libra.execute(options[:cartridge], options[:action], options[:app_name], options[:rhlogin])
