@@ -187,7 +187,7 @@ module Libra
       Libra.logger_debug "DEBUG: Fixing DNS and s3 for app '#{app_name}' after move"
       user.move_app(app_name, app_info, new_server)
     rescue Exception => e
-      new_server.delete_account(app_info['uuid'])
+      #new_server.delete_account(app_info['uuid'])
       raise
     end
 

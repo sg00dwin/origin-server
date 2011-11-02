@@ -11,11 +11,11 @@ options = rpcoptions do |parser, options|
     parser.define_head "Move an application to another node"
     parser.banner = "Usage: rhc-move [options]"
 
-    parser.on('-t', '--target_server_identity TARGET_SERVER_IDENTITY', 'Target server identity (e.g. ip-10-10-10-10)') do |target_server_identity|
+    parser.on('-i', '--target_server_identity TARGET_SERVER_IDENTITY', 'Target server identity (e.g. ip-10-10-10-10)') do |target_server_identity|
       options[:target_server_identity] = target_server_identity
     end
 
-    parser.on('-f', '--node_profile NODE_PROFILE', "Node profile (e.g. std)") do |node_profile|
+    parser.on('-p', '--node_profile NODE_PROFILE', "Node profile (e.g. std)") do |node_profile|
       options[:node_profile] = node_profile
     end
 
