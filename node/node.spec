@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.81.3
+Version:       0.81.4
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -161,6 +161,19 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Wed Nov 02 2011 Dan McPherson <dmcphers@redhat.com> 0.81.4-1
+- fix move for jboss (dmcphers@redhat.com)
+- disabling new git check for the moment (mmcgrath@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- working application move (dmcphers@redhat.com)
+- Allowing add and remove server alias (mmcgrath@redhat.com)
+- Added add/remove server alias hooks (mmcgrath@redhat.com)
+- properly escape li-controller commands and remove email call to configure
+  (mmcgrath@redhat.com)
+- added checks for a missing or empty git dir to rhc-accept-node
+  (twiest@redhat.com)
+
 * Tue Nov 01 2011 Dan McPherson <dmcphers@redhat.com> 0.81.3-1
 - adding 60 day marker (mmcgrath@redhat.com)
 - Adding rhc-list-stale (mmcgrath@redhat.com)
