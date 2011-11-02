@@ -56,15 +56,6 @@ start_jenkins() {
 }
 
 stop_jenkins() {
-    if "$1" == "graceful-stop"
-    then
-        if ! out=$(jenkins-cli quiet-down --username "$JENKINS_USERNAME" --password-file "${OPENSHIFT_HOMEDIR}.jenkins_password" 2>&1)
-        then
-            # An error occurred quieting down jenkins
-            echo "Could not quiet down Jenkins server '${OPENSHIFT_APP_NAME}':" 1>&2
-            echo "   $out" 1>&2
-        fi
-    fi
     pid=`cat ${OPENSHIFT_RUN_DIR}jenkins.pid 2> /dev/null`
     kill -TERM $pid > /dev/null 2>&1
     wait_for_stop $pid
@@ -90,7 +81,7 @@ case "$1" in
         then
             if isrunning
             then
-                stop_jenkins "$1"
+                stop_jenkins
             else
                 echo "Application is already stopped!" 1>&2
                 exit 0
@@ -100,26 +91,14 @@ case "$1" in
     restart|graceful)
         if isrunning
         then
-            #action="restart"
-            #if "$1" == "graceful"
-            #then 
-            #    action="safe-restart"
-            #fi
-            #if ! out=$(jenkins-cli $action --username "$JENKINS_USERNAME" --password-file "${OPENSHIFT_HOMEDIR}.jenkins_password" 2>&1)
-            #then
-            #    # An error occurred restart jenkins
-            #    echo "Failed restarting Jenkins server '${OPENSHIFT_APP_NAME}':" 1>&2
-            #    echo "   $out" 1>&2
-            #    exit 1
-            #fi
-            stop_jenkins "stop"
+            stop_jenkins
         fi
         start_jenkins
     ;;
     reload)
         if isrunning
         then
-            if ! out=$(jenkins-cli reload-configuration --username "$JENKINS_USERNAME" --password-file "${OPENSHIFT_HOMEDIR}.jenkins_password" 2>&1)
+            if ! out=$(jenkins_reload 2>&1)
             then
                 # An error occurred reloading jenkins configuration
                 echo "Could not reload Jenkins server '${OPENSHIFT_APP_NAME}' configuration:" 1>&2

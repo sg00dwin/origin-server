@@ -97,15 +97,12 @@ fi
 
 JOB_NAME=${OPENSHIFT_APP_NAME}-build
 
-if out=$(/bin/sed -e "s,UPSTREAM_REPO_URL,ssh://${uuid}@${OPENSHIFT_APP_NAME}-${namespace}.${libra_domain}/~/git/${OPENSHIFT_APP_NAME}.git/,g" \
-         -e "s,UPSTREAM_SSH,${OPENSHIFT_APP_UUID}@${OPENSHIFT_APP_NAME}-${namespace}.${libra_domain},g" \
-         -e "s,JOB_NAME,${JOB_NAME},g" \
-         -e "s,UPSTREAM_APP_NAME,${OPENSHIFT_APP_NAME},g" $JOB_XML | runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level ${CART_INFO_DIR}/bin/jenkins-cli create-job --username "$JENKINS_USERNAME" --password-file "${OPENSHIFT_HOMEDIR}jenkins-client-1.4/.password" '${JOB_NAME}'" 2>&1)
+if out=$(${CART_INFO_DIR}/bin/jenkins_create_job "${namespace}" "${libra_domain}" "$JOB_XML" 2>&1)
 then
     # Embedding success
     client_result ""
 else
-    if enable_out=$(runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level ${CART_INFO_DIR}/bin/jenkins-cli enable-job --username "$JENKINS_USERNAME" --password-file "${OPENSHIFT_HOMEDIR}jenkins-client-1.4/.password" '${JOB_NAME}'" 2>&1)
+    if enable_out=$(runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level ${CART_INFO_DIR}/bin/jenkins_enable_job" 2>&1)
     then
         client_result ""
         client_result "Associated with existing job '${JOB_NAME}' in Jenkins server."

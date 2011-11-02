@@ -10,7 +10,7 @@ echo "Executing Jenkins build."
 echo
 echo "You can track your build at ${JENKINS_URL}job/${OPENSHIFT_APP_NAME}-build"
 echo
-if jenkins_cli_build.sh ${OPENSHIFT_APP_NAME}-build
+if jenkins_build ${OPENSHIFT_APP_NAME}-build
 then
     echo "New build has been deployed."
 else
