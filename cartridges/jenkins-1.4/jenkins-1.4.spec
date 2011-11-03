@@ -2,7 +2,7 @@
 
 Summary:   Provides jenkins-1.4 support
 Name:      rhc-cartridge-jenkins-1.4
-Version:   0.81.3
+Version:   0.81.4
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -67,6 +67,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Thu Nov 03 2011 Dan McPherson <dmcphers@redhat.com> 0.81.4-1
+- abstract move into each cart and embedded cart (dmcphers@redhat.com)
+
 * Wed Nov 02 2011 Dan McPherson <dmcphers@redhat.com> 0.81.3-1
 - move passwords out of curl command (dmcphers@redhat.com)
 - merging (mmcgrath@redhat.com)
