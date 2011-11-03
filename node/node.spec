@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.81.6
+Version:       0.81.7
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -161,6 +161,13 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Thu Nov 03 2011 Dan McPherson <dmcphers@redhat.com> 0.81.7-1
+- fix typo (dmcphers@redhat.com)
+- moving of embedded apps (dmcphers@redhat.com)
+- split out deploy httpd proxy/config for embedded apps, change stop to stop
+  all for ctl-app and deconfigure and stop and start to all for pre/post
+  receive (dmcphers@redhat.com)
+
 * Wed Nov 02 2011 Dan McPherson <dmcphers@redhat.com> 0.81.6-1
 - move passwords out of curl command (dmcphers@redhat.com)
 - correcting hooks (mmcgrath@redhat.com)
