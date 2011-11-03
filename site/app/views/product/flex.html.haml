@@ -104,7 +104,7 @@
       OpenShift Flex's wizard driven interface makes it easy to provision resources and build integrated application stacks.
 
     .vid  
-      <iframe width="425" height="349" src="//www.youtube.com/embed/CEm-o61tocU" frameborder="0" allowfullscreen></iframe>
+      = render 'product/youtube_embed', :vid_id => 'CEm-o61tocU'
     
     %h2
       Deploy, Modify, Rollback and Restart Applications
@@ -113,8 +113,7 @@
       OpenShift Flex makes it easy to deploy your application, make modifications to code and components, version your changes and redeploy.
 
     .vid  
-      <iframe width="425" height="349" src="//www.youtube.com/embed/KxX7wUg4zq8?wmode=transparent" frameborder="0" allowfullscreen></iframe>
-        
+      = render 'product/youtube_embed', :vid_id => 'KxX7wUg4zq8'  
     %h2
       Monitoring and Auto-Scaling Built-in
     
@@ -122,7 +121,7 @@
       Without the use of agents or scripts, OpenShift Flex gives you end-to-end monitoring straight-out-of-box with configurable auto-scaling that lets you decide when and how to scale your application.
     
     .vid  
-      <iframe width="425" height="349" src="//www.youtube.com/embed/CbUQyc7OFlA?wmode=transparent" frameborder="0" allowfullscreen></iframe>
+      = render 'product/youtube_embed', :vid_id => 'CbUQyc7OFlA'
 
   %section#videos
     %header
@@ -166,7 +165,7 @@
         David Blado
         
       .video-thumb.thumb
-        <iframe width="300" height="200" src="//www.youtube.com/embed/tGOUo3_I8pQ?wmode=transparent" frameborder="0" allowfullscreen></iframe>
+        = render 'product/youtube_embed', :vid_id => 'tGOUo3_I8pQ', :width => '300', :height => '200'
       
       %p.video-description
         This video walks a user through deploying an application on OpenShift Flex that uses MongoDB as its database backend. Complete with performance and log management demo!
@@ -183,7 +182,7 @@
         David Blado
         
       .video-thumb.thumb
-        <iframe width="300" height="200" src="//www.youtube.com/embed/axH_XNGhr08?wmode=transparent" frameborder="0" allowfullscreen></iframe>
+        = render 'product/youtube_embed', :vid_id => 'axH_XNGhr08', :width => '300', :height => '200'
       
       %p.video-description
         This video walks a user through deploying a Seam application on OpenShift Flex. Complete with a performance and log management demo!
