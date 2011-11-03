@@ -7,9 +7,9 @@ do
 done
 
 HERE="/usr/libexec/li/cartridges/jbossas-7.0/info/bin"
-if `echo $OPENSHIFT_APP_DNS | grep -q stg.rhcloud.com` ; then 
+if `echo $OPENSHIFT_APP_DNS | grep -q .stg.rhcloud.com` ; then 
 	LOCALMIRROR="$HERE/settings.stg.xml"
-else 
+elif ! `echo $OPENSHIFT_APP_DNS | grep -q .dev.rhcloud.com` ; then
 	LOCALMIRROR="$HERE/settings.prod.xml"
 fi
 
@@ -23,15 +23,21 @@ then
     
     if [ -f ${OPENSHIFT_REPO_DIR}pom.xml ] && ! $SKIP_MAVEN_BUILD
     then
-        echo "Found pom.xml... attempting to build with 'mvn clean package -Popenshift -DskipTests'" 
+        echo "Found pom.xml... attempting to build with 'mvn -e clean package -Popenshift -DskipTests'" 
         export JAVA_HOME=/etc/alternatives/java_sdk_1.6.0
         export M2_HOME=/etc/alternatives/maven-3.0
         export MAVEN_OPTS="-Xmx208m"
         export PATH=$JAVA_HOME/bin:$M2_HOME/bin:$PATH
         pushd ${OPENSHIFT_REPO_DIR} > /dev/null
-        mvn --global-settings $LOCALMIRROR --version
-        mvn --global-settings $LOCALMIRROR -e clean package -Popenshift -DskipTests
-        popd
+        if [ -n "$LOCALMIRROR" ]
+        then
+            mvn --global-settings $LOCALMIRROR --version
+            mvn --global-settings $LOCALMIRROR -e clean package -Popenshift -DskipTests
+        else
+            mvn --version
+            mvn -e clean package -Popenshift -DskipTests
+        fi
+        popd > /dev/null
     fi
 fi
 
