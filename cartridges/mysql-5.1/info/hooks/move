@@ -24,6 +24,9 @@ set -e
 CART_DIR=/usr/libexec/li/cartridges
 
 source ${CART_DIR}/li-controller/info/lib/util
+source ${CART_DIR}/li-controller/info/lib/selinux
+source ${CART_DIR}/li-controller/info/lib/apache
+source ${CART_DIR}/li-controller/info/lib/network
 
 load_node_conf
 
@@ -43,23 +46,24 @@ namespace=`basename $2`
 application="$1"
 uuid=$3
 
-APP_HOME="$libra_dir/$uuid"
+setup_basic_vars
 
-. $APP_HOME/.env/OPENSHIFT_APP_TYPE
-
-CART_INFO_DIR=$CART_DIR/$OPENSHIFT_APP_TYPE/info
+CART_INFO_DIR=$CART_DIR/embedded/mysql-5.1/info
 
 . $APP_HOME/.env/OPENSHIFT_INTERNAL_IP
+IP=$OPENSHIFT_INTERNAL_IP
 
-#
-# Create virtualhost definition for apache
-#
-export CART_INFO_DIR
-if [ -f $CART_INFO_DIR/bin/deploy_httpd_proxy.sh ]
+echo "export OPENSHIFT_DB_HOST='$IP'" > $APP_HOME/.env/OPENSHIFT_DB_HOST
+
+. $APP_HOME/.env/OPENSHIFT_DB_PASSWORD
+if [ "$OPENSHIFT_DB_PASSWORD" = "NOT_AVAILABLE" ]
 then
-  $CART_INFO_DIR/bin/deploy_httpd_proxy.sh $application $namespace $uuid $OPENSHIFT_INTERNAL_IP
+    echo "export OPENSHIFT_DB_URL='mysql://admin@$IP:3306/'" > $APP_HOME/.env/OPENSHIFT_DB_URL
 else
-  $CART_DIR/abstract/info/bin/deploy_httpd_proxy.sh $application $namespace $uuid $OPENSHIFT_INTERNAL_IP
+    echo "export OPENSHIFT_DB_URL='mysql://admin:$OPENSHIFT_DB_PASSWORD@$IP:3306/'" > $APP_HOME/.env/OPENSHIFT_DB_URL
 fi
+
+$CART_INFO_DIR/bin/deploy_httpd_config.sh $application $uuid $IP
+$CART_INFO_DIR/bin/deploy_httpd_proxy.sh $application $namespace $uuid $IP
 
 restart_httpd_graceful

@@ -186,7 +186,13 @@ module Libra
       end
 
       Libra.logger_debug "DEBUG: Deploying http proxy for '#{app_name}' after move on #{new_server.name}"
-      server_execute_direct(app_info['framework'], 'deploy_httpd_proxy', app_name, user, new_server, app_info, false)
+      server_execute_direct(app_info['framework'], 'move', app_name, user, new_server, app_info, false)
+      if app_info.has_key?('embedded')
+        embedded = app_info['embedded']
+        embedded.each_key do |embedded_framework|
+          server_execute_direct('embedded/' + embedded_framework, 'move', app_name, user, new_server, app_info, false)
+        end
+      end
   
       Libra.logger_debug "DEBUG: Starting '#{app_name}' after move on #{new_server.name}"
       server_execute_direct(app_info['framework'], 'start', app_name, user, new_server, app_info, false)
