@@ -2,7 +2,7 @@
 
 Summary:   Provides raw support
 Name:      rhc-cartridge-raw-0.1
-Version:   0.15.2
+Version:   0.15.3
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -74,6 +74,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Thu Nov 03 2011 Dan McPherson <dmcphers@redhat.com> 0.15.3-1
+- abstract move into each cart and embedded cart (dmcphers@redhat.com)
+
 * Wed Nov 02 2011 Dan McPherson <dmcphers@redhat.com> 0.15.2-1
 - Allowing alias add / remove (mmcgrath@redhat.com)
 
