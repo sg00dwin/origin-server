@@ -7,8 +7,8 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.81.2
-Release:   1%{?dist}
+Version:   0.81.1
+Release:   3%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
 URL:       http://openshift.redhat.com
@@ -98,9 +98,6 @@ gem install headless
 cp -rf %{devenvdir}/etc/* %{_sysconfdir}
 cp -rf %{devenvdir}/bin/* %{_bindir}
 cp -rf %{devenvdir}/var/* %{_localstatedir}
-
-# Add rsync key to authorized keys
-cat %{brokerdir}/config/keys/rsync_id_rsa.pub >> /root/.ssh/authorized_keys
 
 # Move over new http configurations
 cp -rf %{devenvdir}/httpd/* %{libradir}
@@ -198,6 +195,21 @@ chkconfig cgred on
 chkconfig libra-cgroups on
 chkconfig libra-tc on
 
+# Make .mc directory and populate mcollective certs
+cd /root
+mkdir .mc
+cd /root/.mc
+openssl genrsa -out mcollective-private.pem 1024
+openssl rsa -in mcollective-private.pem -out mcollective-public.pem -outform PEM -pubout
+cp -f ./mcollective-public.pem /etc/mcollective/ssl/clients
+cd
+
+# Move puppet certs in devenv
+mkdir -p /var/lib/puppet/ssl/public_keys/
+mkdir -p /var/lib/puppet/ssl/private_keys/
+cp -f %{devenvdir}/puppet-public.pem /var/lib/puppet/ssl/public_keys/$HOSTNAME.ec2.internal.pem
+cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/$HOSTNAME.ec2.internal.pem
+
 %files
 %defattr(-,root,root,-)
 %attr(0666,-,-) %{brokerdir}/log/mcollective-client.log
@@ -218,8 +230,8 @@ chkconfig libra-tc on
 %{_initddir}/libra-site
 
 %changelog
-* Tue Nov 01 2011 Dan McPherson <dmcphers@redhat.com> 0.81.2-1
-- move app, work in progress (dmcphers@redhat.com)
+* Wed Nov 02 2011 Tim Kramer <tkramer@redhat.com> 0.81.1.3
+- bump spec numbers and added AES to mcollective (tkramer@redhat.com)
 
 * Thu Oct 27 2011 Dan McPherson <dmcphers@redhat.com> 0.81.1-1
 - bump spec numbers (dmcphers@redhat.com)
