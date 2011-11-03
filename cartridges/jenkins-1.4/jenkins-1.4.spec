@@ -2,7 +2,7 @@
 
 Summary:   Provides jenkins-1.4 support
 Name:      rhc-cartridge-jenkins-1.4
-Version:   0.81.2
+Version:   0.81.3
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -66,6 +66,11 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Wed Nov 02 2011 Dan McPherson <dmcphers@redhat.com> 0.81.3-1
+- move passwords out of curl command (dmcphers@redhat.com)
+- merging (mmcgrath@redhat.com)
+- Allowing alias add / remove (mmcgrath@redhat.com)
+
 * Wed Nov 02 2011 Dan McPherson <dmcphers@redhat.com> 0.81.2-1
 - use jenkins api (dmcphers@redhat.com)
 
