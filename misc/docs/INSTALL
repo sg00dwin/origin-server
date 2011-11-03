@@ -61,13 +61,14 @@ Install and configure activemq
 
 Install and configure node/mcollective
 ======================================
+* see mcollective.txt for latest AES secure mcollective
 
 1) run "yum install mcollective mcollective-client li-node"
 2) edit /etc/mcollective/server.cfg
-    - Set the plugin.psk line to something unique, remember it
+    * Set the plugin.psk line to something unique, remember it
     - Point plugin.stomp.host to localhost
 3) edit /etc/mcollective/client.cfg
-    - Set plugin.psk line to what you set in server.cfg
+    * Set plugin.psk line to what you set in server.cfg
     - Set plugin.stomp.host to localhost
 4) Start mcollective - service mcollective start
 5) Confirm mcollective is working by issuing a ping:
