@@ -10,3 +10,33 @@ People new to mcollective might find the following videos useful. They include
 introductions, ec2 demos, message flow, writing agents, simple RPC, etc.
 
 http://www.puppetlabs.com/mcollective/screencasts/
+
+Changes to make mcollective use AES encryption
+==============================================
+diff of /etc/mcollective/client.conf
+
+< securityprovider = psk
+< plugin.psk = keepsecret
+---
+> securityprovider = aes_security
+> plugin.aes.client_private = /root/.mc/mcollective-private.pem
+> plugin.aes.client_public = /root/.mc/mcollective-public.pem
+> plugin.aes.send_pubkey = 1
+> plugin.aes.learn_pubkeys = 1
+
+diff of /etc/mcollective/server.conf
+
+< securityprovider = psk
+< plugin.psk = keepsecret
+---
+> securityprovider = aes_security
+> plugin.aes.server_private = /var/lib/puppet/ssl/private_keys/$HOSTNAME.ec2.internal.pem
+> plugin.aes.server_public = /var/lib/puppet/ssl/public_keys/$HOSTNAME.ec2.internal.pem
+> plugin.aes.client_cert_dir = /etc/mcollective/ssl/clients
+> plugin.aes.send_pubkey = 1
+> plugin.aes.learn_pubkeys = 1
+
+* In devenv there is no puppet servers so the keys are baked into the rh-devenv rpm.  In prod, they should not be needed.
+** in the rh-devenv rpm, the client certs are created in /root/.mc and the public copied to /etc/mcollective/ssl/clients
+*** When dropping in production you need to adjust the /etc/qpidd.conf file and add the qpid ports in iptables.  It works with the stock selinux policy.
+
