@@ -102,11 +102,11 @@ then
     # Embedding success
     client_result ""
 else
-    if enable_out=$(runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level ${CART_INFO_DIR}/bin/jenkins_enable_job" 2>&1)
+    if enable_out=$(runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level ${CART_INFO_DIR}/bin/jenkins_job_action enable" 2>&1)
     then
         client_result ""
         client_result "Associated with existing job '${JOB_NAME}' in Jenkins server."
-        client_result "If this was not intended you can remove the jenkins client, remove or rename " 
+        client_result "If this was not intended you can remove the jenkins client, remove or rename "
         client_result "the existing job, and re-add the jenkins client to get a new job created."
     else
         # An error occurred enabling existing job
