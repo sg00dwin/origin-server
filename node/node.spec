@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.81.5
+Version:       0.81.6
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -161,6 +161,12 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 
 %changelog
+* Wed Nov 02 2011 Dan McPherson <dmcphers@redhat.com> 0.81.6-1
+- move passwords out of curl command (dmcphers@redhat.com)
+- correcting hooks (mmcgrath@redhat.com)
+- merging (mmcgrath@redhat.com)
+- Allowing alias add / remove (mmcgrath@redhat.com)
+
 * Wed Nov 02 2011 Dan McPherson <dmcphers@redhat.com> 0.81.5-1
 - use jenkins api (dmcphers@redhat.com)
 - Output tweaks (mhicks@redhat.com)
