@@ -1,11 +1,12 @@
 #!/bin/bash
 
-# Import Environment Variables
-for f in ~/.env/*
-do
-    . $f
-done
-
 echo "Stopping application..."
-~/${OPENSHIFT_APP_NAME}/${OPENSHIFT_APP_NAME}_ctl.sh stop
+    for env_var in  ~/.env/*_CTL_SCRIPT
+    do
+        . $env_var
+    done
+    for cmd in `awk 'BEGIN { for (a in ENVIRON) if (a ~ /_CTL_SCRIPT$/) print ENVIRON[a] }'`
+    do
+        $cmd stop
+    done
 echo "Done"

@@ -14,8 +14,16 @@ function start_app {
     done
 }
 
+
 function stop_app {
-    runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $APP_DIR/${application}_ctl.sh stop" || echo "Failed to stop ${application}" 1>&2
+    for env_var in  $APP_HOME/.env/*_CTL_SCRIPT
+    do
+        . $env_var
+    done
+    for cmd in `awk 'BEGIN { for (a in ENVIRON) if (a ~ /_CTL_SCRIPT$/) print ENVIRON[a] }'`
+    do
+        runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $cmd stop" || echo "Failed to stop ${application}" 1>&2
+    done
 }
 
 function create_standard_env_vars {
@@ -256,7 +264,7 @@ function setup_embedded_configure {
     load_resource_limits_conf
 
     application="$1"
-    namespace=$2 # Not used
+    namespace=$2
     uuid=$3
 
     setup_basic_vars
@@ -277,7 +285,7 @@ function setup_embedded_deconfigure {
     load_node_data_conf
 
     application="$1"
-    namespace=$2 # Not used
+    namespace=$2
     uuid=$3
 
     setup_basic_vars

@@ -94,68 +94,7 @@ IP=`embedded_find_open_ip $uid $APP_HOME`
 # Create simple application specific data
 #
 
-cat <<EOF > "$PHPMYADMIN_DIR/conf.d/libra.conf"
-ServerRoot "$PHPMYADMIN_DIR"
-Listen $IP:8080
-User $uuid
-Group $uuid
-ErrorLog "|/usr/sbin/rotatelogs $PHPMYADMIN_DIR/logs/error_log$rotatelogs_format $rotatelogs_interval"
-CustomLog "|/usr/sbin/rotatelogs $PHPMYADMIN_DIR/logs/access_log$rotatelogs_format $rotatelogs_interval" combined
-
-php_value include_path "."
-
-# TODO: Adjust from ALL to more conservative values
-<IfModule !mod_bw.c>
-    LoadModule bw_module    modules/mod_bw.so
-</IfModule>
-
-<ifModule mod_bw.c>
-  BandWidthModule On
-  ForceBandWidthModule On
-  BandWidth $apache_bandwidth
-  MaxConnection $apache_maxconnection
-  BandWidthError $apache_bandwidtherror
-</IfModule>
-
-EOF
-
-cat <<EOF > "$PHPMYADMIN_DIR/conf.d/phpMyAdmin.conf"
-Alias /phpmyadmin /usr/share/phpMyAdmin/
-
-<Directory /usr/share/phpMyAdmin/>
-   Order Allow,Deny
-   Allow from All
-</Directory>
-
-# We set it up for them, this should not be necessary
-<Directory /usr/share/phpMyAdmin/setup/>
-   Order Deny,Allow
-   Deny from All
-</Directory>
-
-
-# These directories do not require access over HTTP - taken from the original
-# phpMyAdmin upstream tarball
-#
-<Directory /usr/share/phpMyAdmin/libraries/>
-    Order Deny,Allow
-    Deny from All
-    Allow from None
-</Directory>
-
-<Directory /usr/share/phpMyAdmin/setup/lib/>
-    Order Deny,Allow
-    Deny from All
-    Allow from None
-</Directory>
-
-<Directory /usr/share/phpMyAdmin/setup/frames/>
-    Order Deny,Allow
-    Deny from All
-    Allow from None
-</Directory>
-
-EOF
+$CART_INFO_DIR/bin/deploy_httpd_config.sh $application $uuid $IP
 
 #
 # Create simple phpmyadmin start / stop script
@@ -185,19 +124,11 @@ echo "export OPENSHIFT_PHPMYADMIN_CTL_SCRIPT='$PHPMYADMIN_CTL_SCRIPT'" > $APP_HO
 #
 runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $PHPMYADMIN_CTL_SCRIPT start" || error "Failed to start ${application}" 121
 
+
 #
 # Create virtualhost definition for apache
 #
-# node_ssl_template.conf gets copied in unaltered and should contain
-# all of the configuration bits required for ssl to work including key location
-#
-
-
-cat <<EOF > "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}/phpmyadmin-3.4.conf"
-ProxyPass /phpmyadmin http://$IP:8080/phpmyadmin
-ProxyPassReverse /phpmyadmin http://$IP:8080/phpmyadmin
-
-EOF
+$CART_INFO_DIR/bin/deploy_httpd_proxy.sh $application $namespace $uuid $IP
 
 restart_httpd_graceful
 

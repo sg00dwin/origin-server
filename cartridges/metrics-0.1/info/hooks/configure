@@ -83,26 +83,7 @@ IP=`embedded_find_open_ip $uid $APP_HOME`
 # Create simple application specific data
 #
 
-cat <<EOF > "$METRICS_DIR/conf.d/libra.conf"
-ServerRoot "$METRICS_DIR"
-Listen $IP:8080
-User $uuid
-Group $uuid
-ErrorLog "|/usr/sbin/rotatelogs $METRICS_DIR/logs/error_log$rotatelogs_format $rotatelogs_interval"
-CustomLog "|/usr/sbin/rotatelogs $METRICS_DIR/logs/access_log$rotatelogs_format $rotatelogs_interval" combined
-
-php_value include_path "."
-EOF
-
-cat <<EOF > "$METRICS_DIR/conf.d/metrics.conf"
-Alias /metrics ${CART_INFO_DIR}/data/metrics/
-
-<Directory /usr/share/metrics/>
-   Order Allow,Deny
-   Allow from All
-</Directory>
-
-EOF
+$CART_INFO_DIR/bin/deploy_httpd_config.sh $application $uuid $IP
 
 #
 # Create simple metrics start / stop script
@@ -135,16 +116,7 @@ runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $METRICS_CTL
 #
 # Create virtualhost definition for apache
 #
-# node_ssl_template.conf gets copied in unaltered and should contain
-# all of the configuration bits required for ssl to work including key location
-#
-
-
-cat <<EOF > "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}/metrics-0.1.conf"
-ProxyPass /metrics http://$IP:8080/metrics
-ProxyPassReverse /metrics http://$IP:8080/metrics
-
-EOF
+$CART_INFO_DIR/bin/deploy_httpd_proxy.sh $application $namespace $uuid $IP
 
 restart_httpd_graceful
 
