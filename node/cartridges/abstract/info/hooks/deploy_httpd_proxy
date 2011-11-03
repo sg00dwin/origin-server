@@ -65,21 +65,21 @@ then
   fi
   runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level ${CART_DIR}/li-controller/info/bin/redeploy_config_dir.sh"
   
-  if [ -f $APP_HOME/metrics-0.1 ]
+  if [ -d $APP_HOME/metrics-0.1 ]
   then
       METRICS_IP=`embedded_find_open_ip $uid $APP_HOME`
       echo "export OPENSHIFT_METRICS_IP='$METRICS_IP'" > $APP_HOME/.env/OPENSHIFT_METRICS_IP
       $CART_DIR/embedded/metrics-0.1/info/bin/deploy_httpd_config.sh $application $uuid $METRICS_IP
       $CART_DIR/embedded/metrics-0.1/info/bin/deploy_httpd_proxy.sh $application $namespace $uuid $METRICS_IP
   fi
-  if [ -f $APP_HOME/phpmyadmin-3.4 ]
+  if [ -d $APP_HOME/phpmyadmin-3.4 ]
   then
       PHPMYADMIN_IP=`embedded_find_open_ip $uid $APP_HOME`
       echo "export OPENSHIFT_PHPMYADMIN_IP='$PHPMYADMIN_IP'" > $APP_HOME/.env/OPENSHIFT_PHPMYADMIN_IP
       $CART_DIR/embedded/phpmyadmin-3.4/info/bin/deploy_httpd_config.sh $application $uuid $PHPMYADMIN_IP
       $CART_DIR/embedded/phpmyadmin-3.4/info/bin/deploy_httpd_proxy.sh $application $namespace $uuid $PHPMYADMIN_IP
   fi
-  if [ -f $APP_HOME/mysql-5.1 ]
+  if [ -d $APP_HOME/mysql-5.1 ]
   then
       echo "export OPENSHIFT_DB_HOST='$IP'" > $APP_HOME/.env/OPENSHIFT_DB_HOST
       
