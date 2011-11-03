@@ -6,6 +6,12 @@ do
     . $f
 done
 
+if `echo $OPENSHIFT_APP_DNS | grep -q .stg.rhcloud.com` ; then 
+	LOCALMIRROR="http://mirror1.stg.rhcloud.com/mirror/python/web/simple"
+elif ! `echo $OPENSHIFT_APP_DNS | grep -q .dev.rhcloud.com` ; then
+	LOCALMIRROR="http://mirror1.prod.rhcloud.com/mirror/python/web/simple"
+fi
+
 # Run when jenkins is not being used or run when inside a build
 if [ -f "${OPENSHIFT_REPO_DIR}/.openshift/markers/force_clean_build" ]
 then
@@ -22,7 +28,11 @@ then
     /bin/rm -f lib64
     virtualenv ~/${OPENSHIFT_APP_NAME}/virtenv
     . ./bin/activate
-    python ${OPENSHIFT_REPO_DIR}setup.py develop
+	if [ -n "$LOCALMIRROR" ] ; then
+		python ${OPENSHIFT_REPO_DIR}setup.py develop -i $LOCALMIRROR
+	else
+		python ${OPENSHIFT_REPO_DIR}setup.py develop
+	fi
     virtualenv --relocatable ~/${OPENSHIFT_APP_NAME}/virtenv
 fi
 
