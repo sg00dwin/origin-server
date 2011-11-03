@@ -21,10 +21,6 @@
 # Exit on any errors
 set -e
 
-function log {
-    echo "$0 $@" | logger -p local0.notice -t libra_metrics_configure
-}
-
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
 
