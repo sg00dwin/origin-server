@@ -2,7 +2,7 @@
 
 Summary:   Provides jenkins-1.4 support
 Name:      rhc-cartridge-jenkins-1.4
-Version:   0.81.4
+Version:   0.81.5
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -67,6 +67,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Thu Nov 03 2011 Dan McPherson <dmcphers@redhat.com> 0.81.5-1
+- move updates, add pre_build (dmcphers@redhat.com)
+
 * Thu Nov 03 2011 Dan McPherson <dmcphers@redhat.com> 0.81.4-1
 - abstract move into each cart and embedded cart (dmcphers@redhat.com)
 
