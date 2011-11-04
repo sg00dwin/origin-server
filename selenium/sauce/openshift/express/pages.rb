@@ -84,5 +84,41 @@ module OpenShift
         @page.click(link(element))
       end
     end
+    
+    class ExpressConsole < Page
+      attr_accessor :domain_form
+
+      def initialize(page,path)
+        super
+        @domain_form = OpenShift::Express::DomainForm.new(page, "new_express_domain")
+
+        @loc_message_success = "//*[@class='message success']"
+      end
+
+      def processing?
+        return @page.element?("spinner") && @page.visible?("spinner")
+      end
+
+      def processing_message
+        if processing?
+          return @page.text("spinner-text")
+        else
+          return nil
+        end
+      end
+
+      def successful?
+        return @page.element?(@loc_message_success)
+      end
+
+      def success_message
+        if successful?
+          return @page.text(@loc_message_success)
+        else
+          return nil
+        end
+      end
+
+    end
   end
 end

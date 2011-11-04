@@ -19,6 +19,7 @@ module OpenShift
       @home    = OpenShift::Express::Home.new(page, '/app')
       @express = OpenShift::Express::Express.new(page, '/app/express')
       @flex    = OpenShift::Express::Flex.new(page, '/app/flex')
+      @express_console = OpenShift::Express::ExpressConsole.new(page, '/app/dashboard')
 
       @navbar  = OpenShift::Express::MainNav.new(page,'main_nav')
       @signin  = OpenShift::Express::Login.new(page,'signin')
@@ -45,9 +46,9 @@ module OpenShift
       end
     end
 
-    def signin
+    def signin(login=@valid_credentials[:email],password=@valid_credentials[:password])
       open_dialog(:signin, false){ |signin|
-        signin.submit(@valid_credentials[:email],@valid_credentials[:password])
+        signin.submit(login,password)
           
         # a successful sign in will redirect you
         @page.wait_for_page
