@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.81.4
+Version:   0.81.5
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -229,6 +229,9 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 %{_initddir}/libra-site
 
 %changelog
+* Fri Nov 04 2011 Dan McPherson <dmcphers@redhat.com> 0.81.5-1
+- Updated file perms for mcollective private key. (tkramer@redhat.com)
+
 * Fri Nov 04 2011 Dan McPherson <dmcphers@redhat.com> 0.81.4-1
 - Updated for mcollective changes (tkramer@redhat.com)
 - Updated to use localhost.localdomain.pem cert names (tkramer@redhat.com)
