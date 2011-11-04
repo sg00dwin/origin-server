@@ -199,6 +199,8 @@ chkconfig libra-tc on
 cd /etc/mcollective/ssl/clients
 openssl genrsa -out mcollective-private.pem 1024
 openssl rsa -in mcollective-private.pem -out mcollective-public.pem -outform PEM -pubout
+chown libra_passenger:root mcollective-private.pem
+chmod 460 mcollective-private.pem
 cd
 
 # Move puppet certs in devenv
