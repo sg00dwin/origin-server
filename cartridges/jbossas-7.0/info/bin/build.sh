@@ -6,12 +6,12 @@ do
     . $f
 done
 
-HERE="/usr/libexec/li/cartridges/jbossas-7.0/info/bin"
+CONFIG_DIR="/usr/libexec/li/cartridges/jbossas-7.0/info/configuration"
 if `echo $OPENSHIFT_APP_DNS | grep -q .stg.rhcloud.com` || `echo $OPENSHIFT_APP_DNS | grep -q .dev.rhcloud.com`
 then 
-	LOCALMIRROR="$HERE/settings.stg.xml"
+	OPENSHIFT_MAVEN_MIRROR="$CONFIG_DIR/settings.stg.xml"
 else
-	LOCALMIRROR="$HERE/settings.prod.xml"
+	OPENSHIFT_MAVEN_MIRROR="$CONFIG_DIR/settings.prod.xml"
 fi
 
 if [ -z "$BUILD_NUMBER" ]
@@ -30,16 +30,18 @@ then
         export MAVEN_OPTS="-Xmx208m"
         export PATH=$JAVA_HOME/bin:$M2_HOME/bin:$PATH
         pushd ${OPENSHIFT_REPO_DIR} > /dev/null
-        if [ -n "$LOCALMIRROR" ]
+        if [ -n "$OPENSHIFT_MAVEN_MIRROR" ]
         then
-            mvn --global-settings $LOCALMIRROR --version
-            mvn --global-settings $LOCALMIRROR clean package -Popenshift -DskipTests
+            mvn --global-settings $OPENSHIFT_MAVEN_MIRROR --version
+            mvn --global-settings $OPENSHIFT_MAVEN_MIRROR clean package -Popenshift -DskipTests
         else
             mvn --version
             mvn clean package -Popenshift -DskipTests
         fi
         popd > /dev/null
     fi
+else
+    export OPENSHIFT_MAVEN_MIRROR
 fi
 
 user_build.sh

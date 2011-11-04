@@ -63,13 +63,12 @@ alias rsync="rsync --delete-after -az -e '$GIT_SSH'"
 
 rsync UPSTREAM_SSH:~/.m2/ ~/.m2/
 
-# Build setup and run user build
-ci_build.sh
+# Build setup and run user pre_build and build
+. ci_build.sh
 
 export MAVEN_OPTS="-Xmx396m"
-LOCALMIRROR="/usr/libexec/li/cartridges/jbossas-7.0/info/bin/settings.prod.xml"
-mvn --global-settings $LOCALMIRROR --version
-mvn --global-settings $LOCALMIRROR clean package -Popenshift -DskipTests
+mvn --global-settings $OPENSHIFT_MAVEN_MIRROR --version
+mvn --global-settings $OPENSHIFT_MAVEN_MIRROR clean package -Popenshift -DskipTests
 
 # Deploy new build
 

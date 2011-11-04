@@ -64,8 +64,8 @@ alias rsync="rsync --delete-after -az -e '$GIT_SSH'"
 # Sync virtual env cache - Faster builds
 rsync UPSTREAM_SSH:~/UPSTREAM_APP_NAME/virtenv/ ~/${OPENSHIFT_APP_NAME}/virtenv/
 
-# Build/update virtual env and run user build
-ci_build.sh
+# Build/update virtual env and run user pre_build and build
+. ci_build.sh
 
 # Run test
 # python ${OPENSHIFT_REPO_DIR}setup.py test

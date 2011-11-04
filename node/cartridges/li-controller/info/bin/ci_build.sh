@@ -1,4 +1,5 @@
 #!/bin/bash
+set +x
 
 # Import Environment Variables
 for f in ~/.env/*
@@ -15,4 +16,6 @@ fi
 
 user_pre_build.sh
 
-build.sh
+. build.sh
+
+set -x
