@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.81.9
+Version:   0.81.10
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -85,6 +85,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Fri Nov 04 2011 Dan McPherson <dmcphers@redhat.com> 0.81.10-1
+- move maven mirror info to ci_build.sh (dmcphers@redhat.com)
+
 * Fri Nov 04 2011 Troy Dawson <tdawson@redhat.com> 0.81.9-1
 - dev machines now mirror to the stg mirror (tdawson@redhat.com)
 
