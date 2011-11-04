@@ -386,6 +386,17 @@ module Libra
   # remove an application from server and persistant storage
   def self.deconfigure_app(app_info, app_name, user, server)
     deconfigure_app_from_node(app_info, app_name, user, server)
+    
+    type = Libra::Util.get_cart_framework(app_info['framework'])
+    if type == 'jenkins'
+      user.apps.each do |appname, app|
+        if appname != app_name
+          if app.has_key?('embedded') && app['embedded'].has_key?('jenkins-client-1.4')
+            embed_deconfigure('jenkins-client-1.4', appname, user)
+          end
+        end
+      end
+    end
 
     # remove the DNS entries
     Libra.logger_debug "DEBUG: Public ip being deconfigured from namespace '#{user.namespace}'"
