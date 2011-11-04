@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.81.3
+Version:   0.81.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -68,6 +68,9 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Thu Nov 03 2011 Dan McPherson <dmcphers@redhat.com> 0.81.4-1
+- Take related videos out of embedded videos (edirsh@redhat.com)
+
 * Wed Nov 02 2011 Dan McPherson <dmcphers@redhat.com> 0.81.3-1
 - Pass user information to express app model, so app creation will work in non-
   integrated env (edirsh@redhat.com)
