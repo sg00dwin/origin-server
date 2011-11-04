@@ -2,7 +2,7 @@
 
 Summary:       Common dependencies of the OpenShift broker and site
 Name:          rhc-server-common
-Version:       0.81.9
+Version:       0.81.10
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -57,6 +57,10 @@ rm -rf %{buildroot}
                                   -s /sbin/nologin 2>&1 > /dev/null || :
 
 %changelog
+* Fri Nov 04 2011 Dan McPherson <dmcphers@redhat.com> 0.81.10-1
+- better dyn_has? error handling (dmcphers@redhat.com)
+- Bug 749764 (dmcphers@redhat.com)
+
 * Fri Nov 04 2011 Dan McPherson <dmcphers@redhat.com> 0.81.9-1
 - dont allow move of apps with mysql for now (dmcphers@redhat.com)
 
