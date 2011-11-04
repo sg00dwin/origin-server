@@ -6,9 +6,10 @@ do
     . $f
 done
 
-if `echo $OPENSHIFT_APP_DNS | grep -q .stg.rhcloud.com` ; then 
+if `echo $OPENSHIFT_APP_DNS | grep -q .stg.rhcloud.com` || `echo $OPENSHIFT_APP_DNS | grep -q .dev.rhcloud.com`
+then 
 	LOCALMIRROR="http://mirror1.stg.rhcloud.com/mirror/python/web/simple"
-elif ! `echo $OPENSHIFT_APP_DNS | grep -q .dev.rhcloud.com` ; then
+else
 	LOCALMIRROR="http://mirror1.prod.rhcloud.com/mirror/python/web/simple"
 fi
 
@@ -28,7 +29,8 @@ then
     /bin/rm -f lib64
     virtualenv ~/${OPENSHIFT_APP_NAME}/virtenv
     . ./bin/activate
-	if [ -n "$LOCALMIRROR" ] ; then
+	if [ -n "$LOCALMIRROR" ]
+	then
 		python ${OPENSHIFT_REPO_DIR}setup.py develop -i $LOCALMIRROR
 	else
 		python ${OPENSHIFT_REPO_DIR}setup.py develop

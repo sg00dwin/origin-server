@@ -297,11 +297,13 @@ module Libra
                 elsif status == 'incomplete'
                   sleep sleep_time
                   sleep_time *= 2
-                else #if status == 'failure'                  
+                else #if status == 'failure'
                   Libra.logger_debug "DEBUG: DYNECT Response status: #{data['status']}"
                   raise_dns_exception(nil, resp)
                 end
               end
+            when Net::HTTPNotFound
+              raise DNSNotFoundException.new(145), "Error communicating with DNS system.  Job returned not found", caller[0..5]
             else
               raise_dns_exception(nil, resp)
             end
@@ -335,9 +337,16 @@ module Libra
             has = dyn_success?(data)
           when Net::HTTPNotFound
             Libra.logger_debug "DEBUG: DYNECT returned 404 for: #{url.path}"
+          when Net::HTTPTemporaryRedirect
+            begin
+              handle_temp_redirect(resp, auth_token)
+              has = true
+            rescue DNSNotFoundException => e
+              has = false
+            end
           else
             raise_dns_exception(nil, resp)
-          end
+          end 
         rescue DNSException => e
           raise
         rescue Exception => e
