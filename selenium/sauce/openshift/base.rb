@@ -46,8 +46,11 @@ module OpenShift
     end
 
     def signin
-      open_dialog(:signin){ |signin|
+      open_dialog(:signin, false){ |signin|
         signin.submit(@valid_credentials[:email],@valid_credentials[:password])
+          
+        # a successful sign in will redirect you
+        @page.wait_for_page
       }
     end
   end
@@ -71,7 +74,7 @@ module OpenShift
 
     # Needs to have navbar and signin defined,
     #   probably can figure out a better way
-    def open_dialog(dialog)
+    def open_dialog(dialog, closeit=true)
       target = instance_variable_get("@#{dialog.to_s}")
 
       case dialog
@@ -85,7 +88,9 @@ module OpenShift
 
       if block_given?
         yield target
-        target.click(:CLOSE)
+        if closeit
+          target.click(:close)
+        end
       end
     end
 
