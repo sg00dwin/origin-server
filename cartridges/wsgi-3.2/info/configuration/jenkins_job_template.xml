@@ -68,8 +68,7 @@ rsync UPSTREAM_SSH:~/UPSTREAM_APP_NAME/virtenv/ ~/${OPENSHIFT_APP_NAME}/virtenv/
 ci_build.sh
 
 # Run test
-LOCALMIRROR="http://mirror1.prod.rhcloud.com/mirror/python/web/simple"
-# python ${OPENSHIFT_REPO_DIR}setup.py test -i $LOCALMIRROR
+# python ${OPENSHIFT_REPO_DIR}setup.py test
 
 # Deploy new build
 
