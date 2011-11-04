@@ -47,6 +47,8 @@ source ${CART_DIR}/li-controller/info/lib/util
 app_type="mysql-5.1"
 setup_embedded_configure "$1" $2 $3
 
+source ${CART_INFO_DIR}/lib/util
+
 MYSQL_DIR="$APP_HOME/mysql-5.1/"
 
 #
@@ -88,14 +90,7 @@ chown root.root "$MYSQL_DIR" "$MYSQL_DIR"/*.sh
 chcon -t libra_var_lib_t -l $mcs_level -R "$MYSQL_DIR"
 
 
-/bin/su -s /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $MYSQL_DIR/${application}_mysql_ctl.sh start"
-
-i=0
-while ( ! echo ";" | mysql -u root ) && [ $i -lt 30 ]
-do
-    sleep .3
-    i=$(($i + 1))
-done
+start_mysql
 
 # Generate a password with no o's O's or 0's
 password=$(generate_password)

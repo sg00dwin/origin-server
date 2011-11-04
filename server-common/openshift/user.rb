@@ -8,11 +8,6 @@ require 'net/http'
 require 'net/https'
 require 'pp'
 
-def gen_small_uuid()
-    # Put config option for rhlogin here so we can ignore uuid for dev environments
-    %x[/usr/bin/uuidgen].gsub('-', '').strip
-end
-
 module Libra
   class User
     # Include the correct streamline implementation
@@ -55,7 +50,7 @@ module Libra
         Libra.logger_debug "DEBUG: Attempting to add namespace '#{namespace}' for user '#{rhlogin}'"
         Libra.client_debug "Creating user entry rhlogin:#{rhlogin} ssh:#{ssh} namespace:#{namespace}" if Libra.c[:rpc_opts][:verbose]
         begin
-          uuid = gen_small_uuid()
+          uuid = Util.gen_small_uuid()
           user = new(rhlogin, ssh, nil, nil, namespace, uuid)
           user.update
           begin
@@ -380,7 +375,7 @@ module Libra
         'framework' => framework,
         'server_identity' => server.name,
         'creation_time' => creation_time,
-        'uuid' => uuid || gen_small_uuid
+        'uuid' => uuid || Util.gen_small_uuid
       }
       update_app(h, app_name)
       h

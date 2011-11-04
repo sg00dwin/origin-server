@@ -76,6 +76,10 @@ module Libra
       end
       true
     end
+    
+    def self.gen_small_uuid()
+      %x[/usr/bin/uuidgen].gsub('-', '').strip
+    end
 
   end
 end

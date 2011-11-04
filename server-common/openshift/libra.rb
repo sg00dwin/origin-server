@@ -180,19 +180,12 @@ module Libra
     new_server.create_account(user, app_info)
     begin
       Libra.logger_debug "DEBUG: Moving content for app '#{app_name}' to #{new_server.name}"
-      `eval \`ssh-agent\`; ssh-add /var/www/libra/broker/config/keys/rsync_id_rsa; ssh -o StrictHostKeyChecking=no -A root@#{old_server.get_fact_direct('ipaddress')} "rsync -az --exclude '.env/OPENSHIFT_INTERNAL_IP' -e 'ssh -o StrictHostKeyChecking=no' /var/lib/libra/#{app_info['uuid']}/ root@#{new_server.get_fact_direct('ipaddress')}:/var/lib/libra/#{app_info['uuid']}/"`
+      `eval \`ssh-agent\`; ssh-add /var/www/libra/broker/config/keys/rsync_id_rsa; ssh -o StrictHostKeyChecking=no -A root@#{old_server.get_fact_direct('ipaddress')} "rsync -az -e 'ssh -o StrictHostKeyChecking=no' /var/lib/libra/#{app_info['uuid']}/ root@#{new_server.get_fact_direct('ipaddress')}:/var/lib/libra/#{app_info['uuid']}/"`
       if $?.exitstatus != 0
         raise NodeException.new(143), "Error moving app '#{app_name}' from #{old_server.name} to #{new_server.name}", caller[0..5]
       end
-
-      Libra.logger_debug "DEBUG: Deploying http proxy for '#{app_name}' after move on #{new_server.name}"
-      server_execute_direct(app_info['framework'], 'move', app_name, user, new_server, app_info, false)
-      if app_info.has_key?('embedded')
-        embedded = app_info['embedded']
-        embedded.each_key do |embedded_framework|
-          server_execute_direct('embedded/' + embedded_framework, 'move', app_name, user, new_server, app_info, false)
-        end
-      end
+      
+      server_execute_move(app_name, app_info, user, new_server)
   
       Libra.logger_debug "DEBUG: Starting '#{app_name}' after move on #{new_server.name}"
       server_execute_direct(app_info['framework'], 'start', app_name, user, new_server, app_info, false)
@@ -206,6 +199,37 @@ module Libra
 
     Libra.logger_debug "DEBUG: Deconfiguring old app '#{app_name}' on #{old_server.name} after move"
     deconfigure_app_from_node(app_info, app_name, user, old_server, false)
+  end
+  
+  def self.regen_config(app_name, rhlogin)
+    user = get_user(rhlogin)
+
+    app_info = user.app_info(app_name)
+    check_app_exists(app_info, app_name)
+
+    server = Server.new(app_info['server_identity'])
+
+    Libra.logger_debug "DEBUG: Regening config for app '#{app_name}' with uuid #{app_info['uuid']} on server #{server.name}"
+
+    Libra.logger_debug "DEBUG: Stopping app: '#{app_name}'"
+    server_execute_direct(app_info['framework'], 'stop', app_name, user, server, app_info)
+
+    server_execute_move(app_name, app_info, user, server)
+    
+    Libra.logger_debug "DEBUG: Starting app: '#{app_name}'"
+    server_execute_direct(app_info['framework'], 'start', app_name, user, server, app_info, false)
+  end
+  
+  def self.server_execute_move(app_name, app_info, user, server)
+    Libra.logger_debug "DEBUG: Performing cartridge level move for '#{app_name}' on #{server.name}"
+    server_execute_direct(app_info['framework'], 'move', app_name, user, server, app_info, false)
+    if app_info.has_key?('embedded')
+      embedded = app_info['embedded']
+      embedded.each_key do |embedded_framework|
+        Libra.logger_debug "DEBUG: Performing cartridge level move for embedded #{embedded_framework} for '#{app_name}' on #{server.name}"
+        server_execute_direct('embedded/' + embedded_framework, 'move', app_name, user, server, app_info, false)
+      end
+    end
   end
   
   def self.get_user(rhlogin)
@@ -239,7 +263,7 @@ module Libra
       begin
         Libra.logger_debug "DEBUG: Failed to embed '#{framework}' in '#{app_name}' for user '#{user.rhlogin}'"
         Libra.client_debug "Failed to embed '#{framework} in '#{app_name}'"
-        server_execute_direct('embedded/' + framework, 'deconfigure', app_name, user, server, app_info)        
+        server_execute_direct('embedded/' + framework, 'deconfigure', app_name, user, server, app_info)
       ensure
         raise
       end

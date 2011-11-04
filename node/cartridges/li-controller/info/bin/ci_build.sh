@@ -13,4 +13,6 @@ then
     ln -s ~/$WORKSPACE $REPO_LINK
 fi
 
+user_pre_build.sh
+
 build.sh
