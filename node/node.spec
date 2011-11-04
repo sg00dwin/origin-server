@@ -159,6 +159,7 @@ fi
 %attr(0750,-,-) %config(noreplace) %{_sysconfdir}/cron.daily/libra_tmpwatch.sh
 %attr(0750,root,root) %config(noreplace) %{_sysconfdir}/httpd/conf.d/000000_default.conf
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
+%dir %attr(0755,root,root) %{_sysconfdir}/libra/skel
 
 %changelog
 * Thu Nov 03 2011 Dan McPherson <dmcphers@redhat.com> 0.81.9-1
