@@ -7,9 +7,10 @@ do
 done
 
 HERE="/usr/libexec/li/cartridges/jbossas-7.0/info/bin"
-if `echo $OPENSHIFT_APP_DNS | grep -q .stg.rhcloud.com` ; then 
+if `echo $OPENSHIFT_APP_DNS | grep -q .stg.rhcloud.com` || `echo $OPENSHIFT_APP_DNS | grep -q .dev.rhcloud.com`
+then 
 	LOCALMIRROR="$HERE/settings.stg.xml"
-elif ! `echo $OPENSHIFT_APP_DNS | grep -q .dev.rhcloud.com` ; then
+else
 	LOCALMIRROR="$HERE/settings.prod.xml"
 fi
 
@@ -32,10 +33,10 @@ then
         if [ -n "$LOCALMIRROR" ]
         then
             mvn --global-settings $LOCALMIRROR --version
-            mvn --global-settings $LOCALMIRROR -e clean package -Popenshift -DskipTests
+            mvn --global-settings $LOCALMIRROR clean package -Popenshift -DskipTests
         else
             mvn --version
-            mvn -e clean package -Popenshift -DskipTests
+            mvn clean package -Popenshift -DskipTests
         fi
         popd > /dev/null
     fi
