@@ -160,6 +160,10 @@ module Libra
 
     app_info = user.app_info(app_name)
     check_app_exists(app_info, app_name)
+    
+    if app_info.has_key?('embedded') && app_info['embedded'].has_key?('mysql-5.1') 
+      raise UserException.new(1), "Cannot move app '#{app_name}' with mysql embedded", caller[0..5]
+    end
 
     if new_server_identity
       new_server = Server.new(new_server_identity)
@@ -201,7 +205,7 @@ module Libra
     deconfigure_app_from_node(app_info, app_name, user, old_server, false)
   end
   
-  def self.regen_config(app_name, rhlogin)
+  def self.execute_local_move(app_name, rhlogin)
     user = get_user(rhlogin)
 
     app_info = user.app_info(app_name)
@@ -209,7 +213,7 @@ module Libra
 
     server = Server.new(app_info['server_identity'])
 
-    Libra.logger_debug "DEBUG: Regening config for app '#{app_name}' with uuid #{app_info['uuid']} on server #{server.name}"
+    Libra.logger_debug "DEBUG: Local move for app '#{app_name}' with uuid #{app_info['uuid']} on server #{server.name}"
 
     Libra.logger_debug "DEBUG: Stopping app: '#{app_name}'"
     server_execute_direct(app_info['framework'], 'stop', app_name, user, server, app_info)

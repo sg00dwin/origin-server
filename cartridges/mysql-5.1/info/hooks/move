@@ -71,7 +71,7 @@ start_mysql
 
     echo "
 UPDATE user SET Host='$IP' WHERE Host='$ORIG_DB_HOST';
-flush privileges;" | mysql -u admin -h $ORIG_DB_HOST --password="$OPENSHIFT_DB_PASSWORD" -S "${MYSQL_DIR}/socket/mysql.sock" mysql > /dev/null || error "Failed to setup root user with new ip" 187
+flush privileges;" | mysql -u admin -P $OPENSHIFT_DB_PORT -h $IP --password="$OPENSHIFT_DB_PASSWORD" -S "${MYSQL_DIR}/socket/mysql.sock" mysql > /dev/null || error "Failed to setup root user with new ip" 187
 
 stop_mysql
 
