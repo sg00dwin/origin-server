@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.81.10
+Version:       0.81.11
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -162,6 +162,9 @@ fi
 %dir %attr(0755,root,root) %{_sysconfdir}/libra/skel
 
 %changelog
+* Fri Nov 04 2011 Dan McPherson <dmcphers@redhat.com> 0.81.11-1
+- move maven mirror info to ci_build.sh (dmcphers@redhat.com)
+
 * Fri Nov 04 2011 Dan McPherson <dmcphers@redhat.com> 0.81.10-1
 - explicitly add skeleton directory for empty user accounts
   (markllama@redhat.com)
