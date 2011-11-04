@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.81.7
+Version:   0.81.8
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -85,6 +85,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Fri Nov 04 2011 Troy Dawson <tdawson@redhat.com> 0.81.8-1
+- adding local mirror support to jenkins_job_template (tdawson@redhat.com)
+
 * Thu Nov 03 2011 Dan McPherson <dmcphers@redhat.com> 0.81.7-1
 - move updates, add pre_build (dmcphers@redhat.com)
 
