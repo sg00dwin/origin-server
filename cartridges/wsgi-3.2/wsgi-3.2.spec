@@ -2,7 +2,7 @@
 
 Summary:   Provides python-wsgi-3.2 support
 Name:      rhc-cartridge-wsgi-3.2
-Version:   0.81.5
+Version:   0.81.6
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -82,6 +82,10 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Fri Nov 04 2011 Troy Dawson <tdawson@redhat.com> 0.81.6-1
+- jenkins template now uses the mirror (tdawson@redhat.com)
+- dev machines now mirror to the stg mirror (tdawson@redhat.com)
+
 * Thu Nov 03 2011 Dan McPherson <dmcphers@redhat.com> 0.81.5-1
 - move updates, add pre_build (dmcphers@redhat.com)
 
