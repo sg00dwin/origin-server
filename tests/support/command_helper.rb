@@ -161,11 +161,11 @@ module CommandHelper
   end
 
   def rhc_add_alias(app)
-    run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -c add-alias --alias '#{app.name}-alias.example.com' -d").should == 0
+    run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -c add-alias --alias '#{app.name}-#{app.namespace}.example.com' -d").should == 0
   end
   
   def rhc_remove_alias(app)
-    run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -c remove-alias --alias '#{app.name}-alias.example.com' -d").should == 0
+    run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -c remove-alias --alias '#{app.name}-#{app.namespace}.example.com' -d").should == 0
   end
 
   def rhc_ctl_start(app)

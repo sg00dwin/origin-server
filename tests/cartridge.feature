@@ -58,6 +58,20 @@ Feature: Cartridge Verification Tests
     |   jbossas-7.0 |
     |   jenkins-1.4 |
 
+  Scenario Outline: Server Alias
+    Given an existing <type> application
+    When the application is aliased
+    Then the application should respond to the alias
+
+  Scenarios: Server Alias Scenarios
+    |      type     |
+    |   php-5.3     |
+    |   wsgi-3.2    |
+    |   perl-5.10   |
+    |   rack-1.1    |
+    |   jbossas-7.0 |
+    |   jenkins-1.4 |
+
   Scenario Outline: Application Restarting
     Given an existing <type> application
     When the application is restarted

@@ -78,6 +78,14 @@ When /^the application is started$/ do
   rhc_ctl_start(@app)
 end
 
+When /^the application is aliased$/ do
+  rhc_add_alias(@app)
+end
+
+When /^the application is unaliased$/ do
+  rhc_remove_alias(@app)
+end
+
 When /^the application is restarted$/ do
   rhc_ctl_restart(@app)
 end
@@ -88,6 +96,10 @@ end
 
 When /^the application namespace is updated$/ do
   rhc_update_namespace(@app)
+end
+
+Then /^the application should respond to the alias$/ do
+  @app.is_accessible?(false, 120, "#{@app.name}-#{@app.namespace}.example.com").should be_true
 end
 
 Then /^the applications should be accessible?$/ do
