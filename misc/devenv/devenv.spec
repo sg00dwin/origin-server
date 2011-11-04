@@ -207,8 +207,8 @@ cd
 # Move puppet certs in devenv
 mkdir -p /var/lib/puppet/ssl/public_keys/
 mkdir -p /var/lib/puppet/ssl/private_keys/
-cp -f %{devenvdir}/puppet-public.pem /var/lib/puppet/ssl/public_keys/$HOSTNAME.ec2.internal.pem
-cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/$HOSTNAME.ec2.internal.pem
+cp -f %{devenvdir}/puppet-public.pem /var/lib/puppet/ssl/public_keys/localhost.localdomain.pem
+cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost.localdomain.pem
 
 %files
 %defattr(-,root,root,-)
