@@ -196,12 +196,9 @@ chkconfig libra-cgroups on
 chkconfig libra-tc on
 
 # Make .mc directory and populate mcollective certs
-cd /root
-mkdir .mc
-cd /root/.mc
+cd /etc/mcollective/ssl/clients
 openssl genrsa -out mcollective-private.pem 1024
 openssl rsa -in mcollective-private.pem -out mcollective-public.pem -outform PEM -pubout
-cp -f ./mcollective-public.pem /etc/mcollective/ssl/clients
 cd
 
 # Move puppet certs in devenv
