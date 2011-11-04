@@ -113,8 +113,13 @@ module CommandHelper
     app.persist
   end
 
-  def rhc_create_app(app)
-    exit_code = run("#{$create_app_script} -l #{app.login} -a #{app.name} -r #{app.repo} -t #{app.type} -p fakepw -d")
+  def rhc_create_app(app, use_hosts=true)
+    if use_hosts
+      run("echo '127.0.0.1 #{app.name}-#{app.namespace}.dev.rhcloud.com  # Added by cucumber' >> /etc/hosts") if use_hosts
+      exit_code = run("#{$create_app_script} --no-dns -l #{app.login} -a #{app.name} -r #{app.repo} -t #{app.type} -p fakepw -d")
+    else
+      exit_code = run("#{$create_app_script} -l #{app.login} -a #{app.name} -r #{app.repo} -t #{app.type} -p fakepw -d")
+    end
     app.create_app_code = exit_code
     return app
   end
@@ -173,7 +178,8 @@ module CommandHelper
     run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -c status | grep '#{app.get_stop_string}'").should == 1
   end
 
-  def rhc_ctl_destroy(app)
+  def rhc_ctl_destroy(app, use_hosts=true)
+    run("sed -i '/#{app.name}-#{app.namespace}.dev.rhcloud.com/d' /etc/hosts") if use_hosts
     run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -c destroy -b -d").should == 0
     run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -c status | grep 'does not exist'").should == 0
     FileUtils.rm_rf app.repo
