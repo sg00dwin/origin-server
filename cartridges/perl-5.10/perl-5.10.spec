@@ -2,7 +2,7 @@
 
 Summary:   Provides mod_perl support
 Name:      rhc-cartridge-perl-5.10
-Version:   0.12.5
+Version:   0.12.6
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -79,6 +79,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Fri Nov 04 2011 Troy Dawson <tdawson@redhat.com> 0.12.6-1
+- dev machines now mirror to the stg mirror (tdawson@redhat.com)
+
 * Thu Nov 03 2011 Dan McPherson <dmcphers@redhat.com> 0.12.5-1
 - move updates, add pre_build (dmcphers@redhat.com)
 
