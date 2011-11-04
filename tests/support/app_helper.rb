@@ -104,8 +104,12 @@ module AppHelper
       return exit_code, body
     end
 
-    def curl_head(url)
-      pid, stdin, stdout, stderr = Open4::popen4("curl --insecure -s --head --max-time 30 #{url} | grep 200")
+    def curl_head(url, host=nil)
+      if host
+        pid, stdin, stdout, stderr = Open4::popen4("curl --insecure -s --head -H 'Host: #{host}' --max-time 30 #{url} | grep 200")
+      else
+        pid, stdin, stdout, stderr = Open4::popen4("curl --insecure -s --head --max-time 30 #{url} | grep 200")
+      end
 
       stdin.close
       ignored, status = Process::waitpid2 pid
@@ -125,12 +129,13 @@ module AppHelper
       return false
     end
 
-    def is_accessible?(use_https=false, max_retries=120)
+    # Host is for the host header
+    def is_accessible?(use_https=false, max_retries=120, host=nil)
       prefix = use_https ? "https://" : "http://"
       url = prefix + hostname
 
       max_retries.times do |i|
-        if curl_head(url) == 0
+        if curl_head(url, host) == 0
           return true
         else
           $logger.info("Connection still inaccessible / retry #{i} / #{url}")

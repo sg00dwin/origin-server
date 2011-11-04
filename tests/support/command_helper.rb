@@ -76,8 +76,10 @@ module CommandHelper
 
     outstring = stdout.read
     errstring = stderr.read
+    $logger.debug("Command run: #{fullcmd}")
     $logger.debug("Standard Output:\n#{outstring}")
     $logger.debug("Standard Error:\n#{errstring}")
+    $logger.debug("Exit Code: #{exit_code}")
     # append the buffers if an array container is provided
     if outbuf
       outbuf << outstring
@@ -151,6 +153,14 @@ module CommandHelper
   def rhc_ctl_stop(app)
     run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -c stop -d").should == 0
     run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -c status | grep '#{app.get_stop_string}'").should == 0
+  end
+
+  def rhc_add_alias(app)
+    run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -c add-alias --alias '#{app.name}-alias.example.com' -d").should == 0
+  end
+  
+  def rhc_remove_alias(app)
+    run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -c remove-alias --alias '#{app.name}-alias.example.com' -d").should == 0
   end
 
   def rhc_ctl_start(app)

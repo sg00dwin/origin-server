@@ -34,6 +34,21 @@ Feature: PHP Application
     Then the php application will be running
     And a php application httpd will be running
 
+  Scenario: Add-Alias a PHP Application
+    Given an accepted node
+    And a new guest account
+    And a new php application
+    And the php application is running
+    When I add-alias the php application
+    Then the php application will be aliased
+
+  Scenario: Remove-Alias a PHP Application
+    Given an accepted node
+    And a new guest account
+    And a new php application
+    And the php application is running
+    When I remove-alias the php application
+    Then the php application will not be aliased
 
   Scenario: Stop a PHP Application
     Given an accepted node

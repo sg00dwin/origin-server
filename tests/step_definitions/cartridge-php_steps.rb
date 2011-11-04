@@ -179,6 +179,20 @@ Given /^the php application is (running|stopped)$/ do | start_state |
   # check again
 end
 
+When /^I (add-alias|remove-alias) the php application$/ do |action|
+  account_name = @account['accountname']
+  namespace = @app['namespace']
+  app_name = @app['name']
+  server_alias = "#{@app['name']}-#{@account['accountname']}.example.com"
+
+  command = "#{$php_hooks}/%s %s %s %s %s" % [action, app_name, namespace, account_name, server_alias]
+  exit_status = runcon command, 'unconfined_u', 'system_r', 'libra_initrc_t'
+  if exit_status != 0
+    raise "Unable to %s for %s %s %s %s" % [action, app_name, namespace, account_name, server_alias]
+  end
+  sleep 5
+end
+
 When /^I (start|stop) the php application$/ do |action|
   account_name = @account['accountname']
   namespace = @app['namespace']
@@ -190,6 +204,14 @@ When /^I (start|stop) the php application$/ do |action|
     raise "Unable to %s for %s %s %s" % [action, app_name, namespace, account_name]
   end
   sleep 5
+end
+
+Then /^the php application will( not)? be aliased$/ do | negate |
+  good_status = negate ? 1 : 0
+
+  command = "/usr/bin/curl -H 'Host: #{@app['name']}-#{@account['accountname']}.example.com' -s http://localhost/health_check.php | /bin/grep -q -e '^1$'"
+  exit_status = runcon command, 'unconfined_u', 'unconfined_r', 'unconfined_t'
+  exit_status.should == good_status
 end
 
 Then /^the php application will( not)? be running$/ do | negate |
