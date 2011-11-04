@@ -67,8 +67,9 @@ rsync UPSTREAM_SSH:~/.m2/ ~/.m2/
 ci_build.sh
 
 export MAVEN_OPTS="-Xmx396m"
-mvn --version
-mvn clean package -Popenshift -DskipTests
+LOCALMIRROR="/usr/libexec/li/cartridges/jbossas-7.0/info/bin/settings.prod.xml"
+mvn --global-settings $LOCALMIRROR --version
+mvn --global-settings $LOCALMIRROR clean package -Popenshift -DskipTests
 
 # Deploy new build
 
