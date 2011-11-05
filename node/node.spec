@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.81.11
+Version:       0.81.12
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -162,6 +162,9 @@ fi
 %dir %attr(0755,root,root) %{_sysconfdir}/libra/skel
 
 %changelog
+* Sat Nov 05 2011 Dan McPherson <dmcphers@redhat.com> 0.81.12-1
+- cumulative migration for broken apps (dmcphers@redhat.com)
+
 * Fri Nov 04 2011 Dan McPherson <dmcphers@redhat.com> 0.81.11-1
 - move maven mirror info to ci_build.sh (dmcphers@redhat.com)
 
