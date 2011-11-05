@@ -3,10 +3,10 @@
   <actions/>
   <description></description>
   <logRotator>
-    <daysToKeep>14</daysToKeep>
-    <numToKeep>-1</numToKeep>
-    <artifactDaysToKeep>3</artifactDaysToKeep>
-    <artifactNumToKeep>-1</artifactNumToKeep>
+    <daysToKeep>100</daysToKeep>
+    <numToKeep>10</numToKeep>
+    <artifactDaysToKeep>100</artifactDaysToKeep>
+    <artifactNumToKeep>10</artifactNumToKeep>
   </logRotator>
   <keepDependencies>false</keepDependencies>
   <properties/>
