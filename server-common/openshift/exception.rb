@@ -11,6 +11,7 @@ module Libra
   class UserException < LibraException; end
   class UserValidationException < UserException; end
   class DNSException < LibraException; end
+  class DNSNotFoundException < DNSException; end
   class StreamlineException < LibraException
     def initialize
       @exit_code = 144
