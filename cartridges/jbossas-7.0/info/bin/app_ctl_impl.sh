@@ -57,51 +57,59 @@ function ishttpup() {
     return 1
 }
 
+function start_app() {
+    if [ -f $OPENSHIFT_APP_DIR/run/stop_lock ]
+    then
+        echo "Application is explicitly stopped!  Use 'rhc-ctl-app -a ${OPENSHIFT_APP_NAME} -c start' to start back up." 1>&2
+        exit 0
+    else
+        # Check for running app
+        if isrunning; then
+            echo "Application is already running!" 1>&2
+            exit 0
+        fi
+        # Start
+        $APP_JBOSS_BIN_DIR/standalone.sh 1>&2 >${APP_JBOSS_TMP_DIR}/${OPENSHIFT_APP_NAME}.log &
+        PROCESS_ID=$!
+        echo $PROCESS_ID > $JBOSS_PID_FILE
+        if ! ishttpup; then
+            echo "Timed out waiting for http listening port"
+            exit 1
+        fi
+    fi
+}
+
+function stop_app() {
+    echo "JBOSS PID FILE:" $JBOSS_PID_FILE
+    if ! isrunning; then
+        jbpid=$(cat $JBOSS_PID_FILE);
+        echo " - Application($jbpid) is already running" 1>&2
+	        exit 0
+	    fi
+        # kill the process tree
+    if [ -f "$JBOSS_PID_FILE" ]; then
+        pid=$(cat $JBOSS_PID_FILE);
+        echo "Sending SIGTERM to jboss:$pid ...";
+        killtree $pid
+    else 
+        echo "Failed to locate JBOSS PID File"
+    fi
+    exit 0
+}
+
 
 JBOSS_PID_FILE="$OPENSHIFT_APP_DIR/run/jboss.pid"
 
 case "$1" in
     start)
-        if [ -f $OPENSHIFT_APP_DIR/run/stop_lock ]
-        then
-            echo "Application is explicitly stopped!  Use 'rhc-ctl-app -a ${OPENSHIFT_APP_NAME} -c start' to start back up." 1>&2
-            exit 0
-        else
-            # Check for running app
-            if isrunning; then
-                echo "Application is already running!" 1>&2
-                exit 0
-            fi
-            # Start
-            $APP_JBOSS_BIN_DIR/standalone.sh 1>&2 >${APP_JBOSS_TMP_DIR}/${OPENSHIFT_APP_NAME}.log &
-            PROCESS_ID=$!
-            echo $PROCESS_ID > $JBOSS_PID_FILE
-            if ! ishttpup; then
-                echo "Timed out waiting for http listening port"
-                exit 1
-            fi
-        fi
+        start_app
     ;;
     graceful-stop|stop)
-        echo "JBOSS PID FILE:" $JBOSS_PID_FILE
-        if ! isrunning; then
-            jbpid=$(cat $JBOSS_PID_FILE);
-            echo " - Application($jbpid) is already running" 1>&2
-            exit 0
-        fi
-        # kill the process tree
-        if [ -f "$JBOSS_PID_FILE" ]; then
-          pid=$(cat $JBOSS_PID_FILE);
-          echo "Sending SIGTERM to jboss:$pid ...";
-          killtree $pid
-        else
-          echo "Failed to locate JBOSS PID File"
-        fi
-        exit 0
+        stop_app
     ;;
     restart|graceful)
-        $OPENSHIFT_APP_DIR/${OPENSHIFT_APP_NAME}_ctl.sh stop
-        $OPENSHIFT_APP_DIR/${OPENSHIFT_APP_NAME}_ctl.sh start
+        ${OPENSHIFT_APP_CTL_SCRIPT} stop
+        ${OPENSHIFT_APP_CTL_SCRIPT} start
     ;;
     status)
         # Restore stdout and close file descriptor #4
