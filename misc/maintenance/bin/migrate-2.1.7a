@@ -56,7 +56,7 @@ def migrate_app_on_node(server_identity, framework, uuid, namespace, app_name)
               raise "Failed restarting app '#{app_name}' with uuid '#{uuid}' on node '#{server_identity}'"
             end
           else
-            raise "Failed restarting app '#{app_name}' with uuid '#{uuid}' on node '#{server_identity}'"
+            raise "Failed getting result from restart app '#{app_name}' with uuid '#{uuid}' on node '#{server_identity}'"
           end
         end
       end
