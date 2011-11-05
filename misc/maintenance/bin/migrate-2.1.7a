@@ -60,8 +60,8 @@ def migrate_app_on_node(server_identity, framework, uuid, namespace, app_name)
         end
       end
     end
-    raise "Migrate on node failed.  To rerun use: #{__FILE__} '#{server_identity}' '#{framework}' '#{uuid}' '#{namespace}' '#{app_name}'" if !migrated
   end
+  raise "Migrate on node failed.  To rerun use: #{__FILE__} '#{server_identity}' '#{framework}' '#{uuid}' '#{namespace}' '#{app_name}'" if !migrated
 end
 
 #
