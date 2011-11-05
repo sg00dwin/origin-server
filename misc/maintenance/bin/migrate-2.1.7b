@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-# Usage: ./migrate-2.1.7a > out.txt
+# Usage: ./migrate-2.1.7b > out.txt
 require 'rubygems'
 require 'openshift'
 require 'pp'
@@ -20,7 +20,7 @@ def migrate_app_on_node(server_identity, framework, uuid, namespace, app_name)
                    :application => app_name,
                    :app_type => framework,
                    :namespace => namespace,
-                   :version => '2.1.7a') do |response|
+                   :version => '2.1.7b') do |response|
       exit_code = response[:body][:data][:exitcode]
       output = response[:body][:data][:output]
       if (output.length > 0)
@@ -30,35 +30,7 @@ def migrate_app_on_node(server_identity, framework, uuid, namespace, app_name)
         puts "Migrate on node exit code: #{exit_code}"
         raise "Failed migrating app. Rerun with: #{migrate_cmd}"
       else
-        server = Server.new(server_identity)
-        result = server.execute_direct(framework, 'deploy_httpd_proxy', "#{app_name} #{namespace} #{uuid}")[0]
-        output = result.results[:data][:output]
-        exit_code = result.results[:data][:exitcode]
-        if (output.length > 0)
-          puts "Deploy http proxy on node output: #{output}"
-        end
-        if exit_code != 0
-          puts "Deploy httpd proxy on node exit code: #{exit_code}"
-          raise "Failed deploying httpd proxy.  Rerun with: #{migrate_cmd}"
-        else
-          migrated = true
-          puts "Restarting app '#{app_name}' on node '#{server_identity}'"
-          server = Server.new(server_identity)
-          result = server.execute_direct(framework, 'restart', "#{app_name} #{namespace} #{uuid}")[0]
-          if (result && defined? result.results && result.results.has_key?(:data))
-            output = result.results[:data][:output]
-            exit_code = result.results[:data][:exitcode]
-            if (output.length > 0)
-              puts "Restart on node output: #{output}"
-            end
-            if exit_code != 0
-              puts "Restart on node exit code: #{exit_code}"
-              raise "Failed restarting app '#{app_name}' with uuid '#{uuid}' on node '#{server_identity}'"
-            end
-          else
-            raise "Failed getting result from restart app '#{app_name}' with uuid '#{uuid}' on node '#{server_identity}'"
-          end
-        end
+        migrated = true
       end
     end
   end
@@ -66,7 +38,7 @@ def migrate_app_on_node(server_identity, framework, uuid, namespace, app_name)
 end
 
 #
-# Migrate applications between 2.1.2 and 2.1.7
+# Migrate applications between 2.1.7 and 2.1.7b
 #
 def migrate
   start_time = Time.now.to_i
@@ -105,32 +77,6 @@ def migrate
         user = users[index]
         rhlogin = user.rhlogin
         begin
-          s3_change = false
-          if app.has_key?('embedded')
-            embedded = app['embedded']
-            embedded.each_key do |framework|
-              if embedded[framework].has_key?('info')
-                info = embedded[framework]['info']
-                if info.include?("URL:")
-                  s3_change = true
-                  info.gsub!(/-(\w)+.#{Libra.c[:libra_domain]}/, "-#{user.namespace}.#{Libra.c[:libra_domain]}")
-                  if framework == 'phpmyadmin-3.4'
-                    info.gsub!(/Connection URL:/, "URL:")
-                  end
-                  embedded[framework]['info'] = info
-                else
-                  # Can't salvage.  This should only be mysql from the last iteration because of the phpmyadmin line added at the bottom of configure
-                  embedded[framework]['info'] = ''
-                end
-              end
-            end
-          end
-          if s3_change
-            puts "Migrating app in s3 '#{app_name}' with uuid '#{app['uuid']}' for user: #{rhlogin}"            
-            user.update_app(app, app_name)
-          else
-            puts "No change for app in s3 '#{app_name}' with uuid '#{app['uuid']}' for user: #{rhlogin}"
-          end
           puts "Migrating app '#{app_name}' with uuid '#{app['uuid']}' on node '#{app['server_identity']}' for user: #{rhlogin}"
           migrate_on_node_cmd = "#{__FILE__} '#{app['server_identity']}' '#{app['framework']}' '#{app['uuid']}' '#{user.namespace}' '#{app_name}'"
           puts `#{migrate_on_node_cmd}`
