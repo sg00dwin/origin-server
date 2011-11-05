@@ -27,6 +27,8 @@ module LibraMigration
         ip = grep_output['bind-address='.length..-1]
         ip.chomp!
         
+        output += "Using ip='#{ip}'"
+        
         env_echos.push("echo \"export OPENSHIFT_DB_HOST='#{ip}'\" > #{app_home}/.env/OPENSHIFT_DB_HOST")
         
         password = Util.get_env_var_value(app_home, "OPENSHIFT_DB_PASSWORD")

@@ -31,6 +31,22 @@ def migrate_app_on_node(server_identity, framework, uuid, namespace, app_name)
         raise "Failed migrating app. Rerun with: #{migrate_cmd}"
       else
         migrated = true
+        puts "Restarting app '#{app_name}' on node '#{server_identity}'"
+        server = Server.new(server_identity)
+        result = server.execute_direct(framework, 'restart', "#{app_name} #{namespace} #{uuid}")[0]
+        if (result && defined? result.results && result.results.has_key?(:data))
+          output = result.results[:data][:output]
+          exit_code = result.results[:data][:exitcode]
+          if (output.length > 0)
+            puts "Restart on node output: #{output}"
+          end
+          if exit_code != 0
+            puts "Restart on node exit code: #{exit_code}"
+            raise "Failed restarting app '#{app_name}' with uuid '#{uuid}' on node '#{server_identity}'"
+          end
+        else
+          raise "Failed getting result from restart app '#{app_name}' with uuid '#{uuid}' on node '#{server_identity}'"
+        end
       end
     end
   end
