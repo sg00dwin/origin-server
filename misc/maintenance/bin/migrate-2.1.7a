@@ -1,23 +1,25 @@
 #!/usr/bin/env ruby
-# Usage: ./migrate-2.1.7 > out.txt
+# Usage: ./migrate-cumulative > out.txt
 require 'rubygems'
 require 'openshift'
 require 'pp'
 
 include Libra
 
-RHLOGINS=nil #['username']
+RHLOGINS=nil #['rhlogin']
 
 #
 #  Migrate the specified app on the node
 #
 def migrate_app_on_node(server_identity, framework, uuid, namespace, app_name)
+  puts "Migrating app on node.  server_identity: #{server_identity}, framework: #{framework}, uuid: #{uuid}, namespace: #{namespace}, app_name: #{app_name}"
+  migrated = false
   Helper.rpc_exec('libra', server_identity) do |client|
     client.migrate(:uuid => uuid,
                    :application => app_name,
                    :app_type => framework,
                    :namespace => namespace,
-                   :version => '2.1.7') do |response|
+                   :version => '2.1.7a') do |response|
       exit_code = response[:body][:data][:exitcode]
       output = response[:body][:data][:output]
       if (output.length > 0)
@@ -27,29 +29,43 @@ def migrate_app_on_node(server_identity, framework, uuid, namespace, app_name)
         puts "Migrate on node exit code: #{exit_code}"
         raise "Failed migrating app '#{app_name}' with uuid '#{uuid}' on node '#{server_identity}'"
       else
-        puts "Restarting app '#{app_name}' on node '#{server_identity}'"
         server = Server.new(server_identity)
-        result = server.execute_direct(framework, 'restart', "#{app_name} #{namespace} #{uuid}")[0]
-        if (result && defined? result.results && result.results.has_key?(:data))
-          output = result.results[:data][:output]
-          exit_code = result.results[:data][:exitcode]
-          if (output.length > 0)
-            puts "Restart on node output: #{output}"
-          end
-          if exit_code != 0
-            puts "Restart on node exit code: #{exit_code}"
-            raise "Failed restarting app '#{app_name}' with uuid '#{uuid}' on node '#{server_identity}'"
-          end
+        result = server.execute_direct(framework, 'deploy_httpd_proxy', "#{app_name} #{namespace} #{uuid}")[0]
+        output = result.results[:data][:output]
+        exit_code = result.results[:data][:exitcode]
+        if (output.length > 0)
+          puts "Deploy http proxy on node output: #{output}"
+        end
+        if exit_code != 0
+          puts "Deploy httpd proxy on node exit code: #{exit_code}"
+          raise "Failed deploying httpd proxy for app '#{app_name}' with uuid '#{uuid}' on node '#{server_identity}'"
         else
-          puts "Restart on node failed to return valid result!"
+          migrated = true
+          puts "Restarting app '#{app_name}' on node '#{server_identity}'"
+          server = Server.new(server_identity)
+          result = server.execute_direct(framework, 'restart', "#{app_name} #{namespace} #{uuid}")[0]
+          if (result && defined? result.results && result.results.has_key?(:data))
+            output = result.results[:data][:output]
+            exit_code = result.results[:data][:exitcode]
+            if (output.length > 0)
+              puts "Restart on node output: #{output}"
+            end
+            if exit_code != 0
+              puts "Restart on node exit code: #{exit_code}"
+              raise "Failed restarting app '#{app_name}' with uuid '#{uuid}' on node '#{server_identity}'"
+            end
+          else
+            puts "Restart on node failed to return valid result!"
+          end
         end
       end
     end
+    raise "Migrate on node failed.  To rerun use: #{__FILE__} '#{server_identity}' '#{framework}' '#{uuid}' '#{namespace}' '#{app_name}'" if !migrated
   end
 end
 
 #
-# Migrate applications between 2.1.6 and 2.1.7
+# Migrate applications between 2.1.2 and 2.1.7
 #
 def migrate
   start_time = Time.now.to_i

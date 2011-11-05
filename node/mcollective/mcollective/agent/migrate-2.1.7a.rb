@@ -20,10 +20,34 @@ module LibraMigration
       cartridge_root_dir = "/usr/libexec/li/cartridges"
       cartridge_dir = "#{cartridge_root_dir}/#{app_type}"
       
-      ip = Util.get_env_var_value(app_home, "OPENSHIFT_INTERNAL_IP")
+      FileUtils.mkdir_p "#{app_home}/.env/"
+      FileUtils.chmod(0750, "#{app_home}/.env")
+      FileUtils.chown_R("root", uuid, "#{app_home}/.env")
+      
+      ip = nil
+      if File.exists?("#{app_home}/.env/OPENSHIFT_INTERNAL_IP")
+        ip = Util.get_env_var_value(app_home, "OPENSHIFT_INTERNAL_IP")
+      else
+        httpd_conf = "/etc/httpd/conf.d/libra/#{uuid}_#{namespace}_#{app_name}.conf"
+        grep_output, grep_exitcode = Util.execute_script("grep 'ProxyPass / http://' #{httpd_conf} 2>&1")
+        ip = grep_output[grep_output.index('http://') + 'http://'.length..-1]
+        ip = ip[0..ip.index(':')-1]
+      end
       
       env_echos = ["echo \"export OPENSHIFT_APP_DNS='#{app_name}-#{namespace}.#{libra_domain}'\" > #{app_home}/.env/OPENSHIFT_APP_DNS",
-                   "echo \"export OPENSHIFT_REPO_DIR='#{app_dir}/repo/'\" > #{app_home}/.env/OPENSHIFT_REPO_DIR"]
+                   "echo \"export OPENSHIFT_REPO_DIR='#{app_dir}/repo/'\" > #{app_home}/.env/OPENSHIFT_REPO_DIR",
+                   "echo \"export OPENSHIFT_APP_NAME='#{app_name}'\" > #{app_home}/.env/OPENSHIFT_APP_NAME",
+                   "echo \"export OPENSHIFT_APP_DIR='#{app_dir}/'\" > #{app_home}/.env/OPENSHIFT_APP_DIR",
+                   "echo \"export OPENSHIFT_INTERNAL_IP='#{ip}'\" > #{app_home}/.env/OPENSHIFT_INTERNAL_IP",
+                   "echo \"export OPENSHIFT_INTERNAL_PORT='8080'\" > #{app_home}/.env/OPENSHIFT_INTERNAL_PORT",
+                   "echo \"export OPENSHIFT_LOG_DIR='#{app_dir}/logs/'\" > #{app_home}/.env/OPENSHIFT_LOG_DIR",
+                   "echo \"export OPENSHIFT_DATA_DIR='#{app_dir}/data/'\" > #{app_home}/.env/OPENSHIFT_DATA_DIR",
+                   "echo \"export OPENSHIFT_TMP_DIR='/tmp/'\" > #{app_home}/.env/OPENSHIFT_TMP_DIR",
+                   "echo \"export OPENSHIFT_RUN_DIR='#{app_dir}/run/'\" > #{app_home}/.env/OPENSHIFT_RUN_DIR",
+                   "echo \"export OPENSHIFT_APP_TYPE='#{app_type}'\" > #{app_home}/.env/OPENSHIFT_APP_TYPE",
+                   "echo \"export OPENSHIFT_APP_CTL_SCRIPT='#{app_dir}/#{app_name}_ctl.sh'\" > #{app_home}/.env/OPENSHIFT_APP_CTL_SCRIPT",
+                   "echo \"export OPENSHIFT_APP_UUID='#{uuid}'\" > #{app_home}/.env/OPENSHIFT_APP_UUID",
+                   "echo \"export OPENSHIFT_HOMEDIR='#{app_home}/'\" > #{app_home}/.env/OPENSHIFT_HOMEDIR"]
 
       runtime_dir = "#{app_dir}/runtime"
       FileUtils.mkdir_p runtime_dir
@@ -69,6 +93,18 @@ module LibraMigration
       end
 
       if app_type == 'jbossas-7.0'
+        jboss_home = '/etc/alternatives/jbossas-7.0'
+        FileUtils.rm "#{app_dir}/jbossas-7.0/modules"
+        FileUtils.ln_s "#{jboss_home}/modules/", "#{app_dir}/jbossas-7.0/modules"
+        FileUtils.rm "#{app_dir}/jbossas-7.0/jboss-modules.jar"
+        FileUtils.ln_s "#{jboss_home}/jboss-modules.jar", "#{app_dir}/jbossas-7.0/jboss-modules.jar"
+
+        FileUtils.rm "#{app_dir}/jbossas-7.0/bin/standalone.sh"
+        FileUtils.ln_s "#{cartridge_dir}/info/bin/standalone.sh", "#{app_dir}/jbossas-7.0/bin/standalone.sh"
+          
+        FileUtils.rm "#{app_dir}/jbossas-7.0/bin/standalone.conf"
+        FileUtils.ln_s "#{cartridge_dir}/info/bin/standalone.conf", "#{app_dir}/jbossas-7.0/bin/standalone.conf"
+          
         java_home = '/etc/alternatives/java_sdk_1.6.0'
         m2_home = '/etc/alternatives/maven-3.0'
         env_echos.push("echo \"export JAVA_HOME=#{java_home}\" > #{app_home}/.env/JAVA_HOME")
@@ -79,6 +115,7 @@ module LibraMigration
       else
         env_echos.push("echo \"export PATH=#{cartridge_dir}/info/bin/:#{cartridge_root_dir}/abstract-httpd/info/bin/:#{cartridge_root_dir}/abstract/info/bin/:#{cartridge_root_dir}/li-controller/info/bin/:/bin:/usr/bin\" > #{app_home}/.env/PATH")
       end
+      
       
       mysql_dir = "#{app_home}/mysql-5.1"
       if File.exists?(mysql_dir)
@@ -102,6 +139,15 @@ module LibraMigration
         end
       end
       
+      env_echos.each do |env_echo|
+        echo_output, echo_exitcode = Util.execute_script(env_echo)
+        output += echo_output
+      end
+      
+      if app_type == 'php-5.3'
+        output += Util.replace_in_file("#{app_dir}/conf/php.ini", 'upload_max_filesize = 2M', 'upload_max_filesize = 10M')
+      end
+      
       ci_dir = "#{app_dir}/ci"
       if !File.exists?(ci_dir)
         FileUtils.mkdir_p ci_dir
@@ -109,9 +155,49 @@ module LibraMigration
         FileUtils.chmod(0755, ci_dir)
       end
       
-      env_echos.each do |env_echo|
-        echo_output, echo_exitcode = Util.execute_script(env_echo)
-        output += echo_output
+      if File.exists?("#{app_home}/.env/OPENSHIFT_DB_USERNAME")
+        FileUtils.chown(uuid, "root", "#{app_home}/.env/OPENSHIFT_DB_USERNAME")
+        FileUtils.chown(uuid, "root", "#{app_home}/.env/OPENSHIFT_DB_PASSWORD")
+      end
+      
+      post_receive = "#{app_home}/git/#{app_name}.git/hooks/post-receive"
+      output += "Migrating post-receive: #{post_receive}\n"
+      file = File.open(post_receive, 'w')
+      begin
+        file.puts <<EOF
+#!/bin/bash
+
+# Import Environment Variables
+for f in ~/.env/*
+do
+. $f
+done
+
+post_receive_app.sh #{libra_server}
+EOF
+
+      ensure
+        file.close
+      end
+      
+      pre_receive = "#{app_home}/git/#{app_name}.git/hooks/pre-receive"
+      output += "Migrating pre-receive: #{pre_receive}\n"
+      file = File.open(pre_receive, 'w')
+      begin
+        file.puts <<EOF
+#!/bin/bash
+
+# Import Environment Variables
+for f in ~/.env/*
+do
+. $f
+done
+
+pre_receive_app.sh
+EOF
+
+      ensure
+        file.close
       end
       
     else
