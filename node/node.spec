@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.81.12
+Version:       0.81.13
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -163,6 +163,11 @@ fi
 %dir %attr(0755,root,root) %{_sysconfdir}/libra/skel
 
 %changelog
+* Sat Nov 05 2011 Dan McPherson <dmcphers@redhat.com> 0.81.13-1
+- log statement, add restart, remove 1 last var on deconfig
+  (dmcphers@redhat.com)
+- add migration for broken mysql ip (dmcphers@redhat.com)
+
 * Sat Nov 05 2011 Dan McPherson <dmcphers@redhat.com> 0.81.12-1
 - cumulative migration for broken apps (dmcphers@redhat.com)
 
