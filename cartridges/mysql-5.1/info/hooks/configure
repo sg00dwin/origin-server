@@ -91,6 +91,12 @@ chcon -t libra_var_lib_t -l $mcs_level -R "$MYSQL_DIR"
 
 
 start_mysql
+i=0
+while ( ! echo ";" | mysql -u root -S "${MYSQL_DIR}/socket/mysql.sock" > /dev/null 2>&1) && [ $i -lt 10 ]
+do
+    sleep 1
+    i=$(($i + 1))
+done
 
 # Generate a password with no o's O's or 0's
 password=$(generate_password)
