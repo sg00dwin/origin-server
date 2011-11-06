@@ -23,7 +23,7 @@ module CommandHelper
     return output
   end
 
-  def run(cmd, outbuf=[], retrying=false)
+  def run(cmd, outbuf=[], retries=0)
     $logger.info("Running: #{cmd}")
 
     pid, stdin, stdout, stderr = Open4::popen4(cmd)
@@ -43,11 +43,11 @@ module CommandHelper
     
     if exit_code != 0
       $logger.error("(#{$$}): Execution failed #{cmd} with exit_code: #{exit_code.to_s}")
-      if !retrying && exit_code == 140 && cmd.start_with?("/usr/bin/rhc-") # No nodes available...  ugh
+      if retries < 3 && exit_code == 140 && cmd.start_with?("/usr/bin/rhc-") # No nodes available...  ugh
         $logger.debug("Restarting mcollective and retrying")
         $logger.debug `service mcollective restart`
         sleep 5
-        return run(cmd, outbuf, true)
+        return run(cmd, outbuf, retries+1)
       end
     end
     
