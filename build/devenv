@@ -248,6 +248,7 @@ class DevEnv < Thor
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   method_option :verifier, :type => :boolean, :desc => "Maintain verifier functionality (private IP setup)"
   method_option :skip_build, :type => :boolean, :desc => "Indicator to skip the rpm build/install"
+  method_option :clean_metadata, :type => :boolean, :desc => "Cleans metadata before running yum update"
   def sync(name)
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
 
@@ -268,7 +269,12 @@ class DevEnv < Thor
 
     if !options.skip_build?
       puts "Performing remote install...."
-      ssh(hostname, "yum update -y --exclude='rhc-devenv' rhc-*; rm -rf li-working os-client-tools-working; git clone li li-working;#{has_client ? ' git clone os-client-tools os-client-tools-working;' : ''} pushd li-working; build/devenv update; popd; rm -rf li-working os-client-tools-working", 600)
+      output, exit_code = ssh(hostname, "#{options.clean_metadata? ? 'yum clean metadata; ' : ''}yum update -y --exclude='rhc-devenv' --disablerepo=\* --enablerepo=li rhc-*; rm -rf li-working os-client-tools-working; git clone li li-working;#{has_client ? ' git clone os-client-tools os-client-tools-working;' : ''} pushd li-working; build/devenv update #{options.verbose? ? '--verbose' : ''}; if [ $? -ne 0 ]; then echo 'Error during build!'; exit 1; fi; popd; rm -rf li-working os-client-tools-working", 600, true)
+      if exit_code != 0
+        puts "Build failed!  Exiting."
+        puts output
+        exit 1
+      end
       puts "Done"
     end
 
