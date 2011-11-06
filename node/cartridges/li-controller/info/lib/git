@@ -20,9 +20,9 @@ function clone_git_repo {
     # Repacking is needed to handle a bug with running multiple
     # git clone operations under concurrency.  The cloned repos
     # can end up in a corrupt state which repack will correct
-    pushd $GIT_DIR
+    pushd $GIT_DIR > /dev/null
     git repack
-    popd
+    popd > /dev/null
 
     setup_git_repo $application $user_id $group_id $uuid "$desc"
 }
