@@ -2,7 +2,7 @@
 
 Summary:       Common dependencies of the OpenShift broker and site
 Name:          rhc-server-common
-Version:       0.81.11
+Version:       0.81.12
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -57,6 +57,9 @@ rm -rf %{buildroot}
                                   -s /sbin/nologin 2>&1 > /dev/null || :
 
 %changelog
+* Sat Nov 05 2011 Dan McPherson <dmcphers@redhat.com> 0.81.12-1
+- Adding auto enable jenkins (dmcphers@redhat.com)
+
 * Sat Nov 05 2011 Dan McPherson <dmcphers@redhat.com> 0.81.11-1
 - add not found exception (dmcphers@redhat.com)
 
