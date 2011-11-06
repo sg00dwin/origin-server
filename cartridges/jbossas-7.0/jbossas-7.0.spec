@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.81.11
+Version:   0.81.12
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -85,6 +85,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Sun Nov 06 2011 Dan McPherson <dmcphers@redhat.com> 0.81.12-1
+- less output from carts (dmcphers@redhat.com)
+
 * Sat Nov 05 2011 Dan McPherson <dmcphers@redhat.com> 0.81.11-1
 - stop having to call back into app_ctl.sh to restart (dmcphers@redhat.com)
 - simplify case statement (dmcphers@redhat.com)
