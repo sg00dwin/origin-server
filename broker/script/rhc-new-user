@@ -32,17 +32,17 @@ end
 
 unless options.include?(:namespace)
     puts "The namespace is invalid."
-    exit 254
+    exit 1
 end
 
 unless options.include?(:rhlogin)
     puts "The rhlogin is invalid."
-    exit 253
+    exit 1
 end
 
 unless options.include?(:ssh)
     puts "The ssh key is invalid."
-    exit 252
+    exit 1
 end
 
 # Set the MCollective options
@@ -65,7 +65,7 @@ if user
     end
   else
     puts "User already has a registered namespace.  To modify related properties, use --alter"
-    exit 254
+    exit 1
   end
 else  
   user = User.create(options[:rhlogin], options[:ssh], options[:namespace])

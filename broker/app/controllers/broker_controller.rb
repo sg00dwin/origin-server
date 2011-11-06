@@ -80,28 +80,28 @@ class BrokerController < ApplicationController
           end
         when 'app_uuid'
           if !(val =~ /\A[a-f0-9]+\z/)
-            render :json => generate_result_json("Invalid application uuid: #{val}", nil, 254), :status => :invalid and return nil
+            render :json => generate_result_json("Invalid application uuid: #{val}", nil, 1), :status => :invalid and return nil
           end
         when 'node_profile'
           if !(val =~ /\A(exlarge|jumbo|large|micro|std)\z/)
-            render :json => generate_result_json("Invalid Profile: #{val}.  Must be: (exlarge|jumbo|large|micro|std)", nil, 254), :status => :invalid and return nil
+            render :json => generate_result_json("Invalid Profile: #{val}.  Must be: (exlarge|jumbo|large|micro|std)", nil, 1), :status => :invalid and return nil
           end
         when 'debug', 'alter'
           if val != true && val != false && !(val =~ /\A(true|false)\z/)
-            render :json => generate_result_json("Invalid value for #{key}:#{val} specified", nil, 254), :status => :invalid and return nil
+            render :json => generate_result_json("Invalid value for #{key} specified: #{val}", nil, 1), :status => :invalid and return nil
           end
         when 'cartridge'
           if !(val =~ /\A[\w\-\.]+\z/)
-            render :json => generate_result_json("Invalid cartridge: #{val} specified", nil, 254), :status => :invalid and return nil
+            render :json => generate_result_json("Invalid cartridge specified: #{val}", nil, 1), :status => :invalid and return nil
           end
         when 'api'
           if !(val =~ /\A\d+\.\d+\.\d+\z/)
-            render :json => generate_result_json("Invalid API value: #{val} specified", nil, 112), :status => :invalid and return nil
+            render :json => generate_result_json("Invalid API value specified: #{val}", nil, 112), :status => :invalid and return nil
           end
           @client_api = val
         when 'cart_type'
           if !(val =~ /\A[\w\-\.]+\z/)
-            render :json => generate_result_json("Invalid cart_type: #{val} specified", nil, 109), :status => :invalid and return nil
+            render :json => generate_result_json("Invalid cart_type specified: #{val}", nil, 109), :status => :invalid and return nil
           end
         when 'action'
           if !(val =~ /\A[\w\-\.]+\z/)
@@ -116,7 +116,7 @@ class BrokerController < ApplicationController
             render :json => generate_result_json("Invalid ServerAlias specified: #{val}", nil, 105), :status => :invalid and return nil
           end
         else
-          render :json => generate_result_json("Unknown json key found: #{key}", nil, 254), :status => :invalid and return nil
+          render :json => generate_result_json("Unknown json key found: #{key}", nil, 1), :status => :invalid and return nil
       end
     end
     data
@@ -145,7 +145,7 @@ class BrokerController < ApplicationController
     if Thread.current[:errorIO] && !Thread.current[:errorIO].string.empty?
       message = Thread.current[:errorIO].string
     end
-    render :json => generate_result_json(message, nil, e.respond_to?('exit_code') ? e.exit_code : 254), :status => status
+    render :json => generate_result_json(message, nil, e.respond_to?('exit_code') ? e.exit_code : 1), :status => status
   end
   
   def login(data, params, allow_broker_auth_key=false)
@@ -235,7 +235,7 @@ class BrokerController < ApplicationController
         end
         
         # Execute a framework cartridge
-        Libra.execute(cartridge, action, app_name, username, node_profile, server_alias)
+        app_info = Libra.execute(cartridge, action, app_name, username, node_profile, server_alias)
           
         json_data = nil
         
@@ -255,7 +255,8 @@ class BrokerController < ApplicationController
             else
               page = 'health'
           end
-          json_data = JSON.generate({:health_check_path => page})
+          
+          json_data = JSON.generate({:health_check_path => page, :uuid => app_info['uuid']})
         elsif action == 'deconfigure'
           message = "Successfully destroyed application: #{app_name}" if !message
         end
@@ -334,7 +335,7 @@ class BrokerController < ApplicationController
               update = true
               previous_ssh_key = user.ssh 
               user.ssh=data['ssh']
-  
+
               # update each node account for this user's applications
               user.apps.each do |appname, app|
                 server = Libra::Server.new app['server_identity']
@@ -359,7 +360,8 @@ class BrokerController < ApplicationController
 
       json_data = JSON.generate({
                               :rhlogin => user.rhlogin,
-                              :uuid => user.uuid
+                              :uuid => user.uuid,
+                              :rhc_domain => Libra.c[:libra_domain]
                               })
 
       # Just return a 200 success

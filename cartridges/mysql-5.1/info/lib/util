@@ -6,9 +6,9 @@ MYSQL_LIB_UTIL=true
 function start_mysql {
     /bin/su -s /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $MYSQL_DIR/${application}_mysql_ctl.sh start"
     i=0
-    while ( ! echo ";" | mysql -u root ) && [ $i -lt 30 ]
+    while ( ! echo ";" | mysql -u root ) && [ $i -lt 15 ]
     do
-        sleep .3
+        sleep 2
         i=$(($i + 1))
     done
 }

@@ -297,7 +297,7 @@ module Libra
         Libra.client_debug "Exception caught updating namespace: #{e.message}"
         Libra.logger_debug "DEBUG: Exception caught updating namespace: #{e.message}"
         Libra.logger_debug e.backtrace
-        raise LibraException.new(254), "An error occurred updating the namespace.  If the problem persists please contact Red Hat support.", caller[0..5]
+        raise LibraException.new(1), "An error occurred updating the namespace.  If the problem persists please contact Red Hat support.", caller[0..5]
       ensure
         Server.dyn_logout(auth_token, dyn_retries)
       end

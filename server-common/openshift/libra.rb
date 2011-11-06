@@ -136,9 +136,10 @@ module Libra
 
     # process actions
 
+    app_info = nil
     if action == 'configure'
       # create a new app.  Don't expect it to exist
-      configure_app(framework, app_name, user, node_profile)
+      app_info = configure_app(framework, app_name, user, node_profile)
     else
       app_info = user.app_info(app_name)
       check_app_exists(app_info, app_name)
@@ -152,6 +153,7 @@ module Libra
         server_execute_direct(app_info['framework'], action, app_name, user, server, app_info, true, optional_args)
       end
     end
+    return app_info
   end
   
   # Move an app
@@ -239,7 +241,7 @@ module Libra
   def self.get_user(rhlogin)
     user = User.find(rhlogin)
     if not user
-      raise UserException.new(254), "A user with rhlogin '#{rhlogin}' does not have a registered domain.  Be sure to run rhc-create-domain without -a|--alter first.", caller[0..5]
+      raise UserException.new(1), "A user with rhlogin '#{rhlogin}' does not have a registered domain.  Be sure to run rhc-create-domain without -a|--alter first.", caller[0..5]
     end
     return user
   end
@@ -381,6 +383,7 @@ module Libra
         raise
       end
     end
+    return app_info
   end
 
   # remove an application from server and persistant storage
