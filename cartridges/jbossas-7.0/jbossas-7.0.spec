@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.81.12
+Version:   0.81.13
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -85,6 +85,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Sun Nov 06 2011 Dan McPherson <dmcphers@redhat.com> 0.81.13-1
+- work around cucumber failures (dmcphers@redhat.com)
+
 * Sun Nov 06 2011 Dan McPherson <dmcphers@redhat.com> 0.81.12-1
 - less output from carts (dmcphers@redhat.com)
 
