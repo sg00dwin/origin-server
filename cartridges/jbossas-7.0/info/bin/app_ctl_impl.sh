@@ -97,13 +97,18 @@ JBOSS_PID_FILE="$OPENSHIFT_APP_DIR/run/jboss.pid"
 case "$1" in
     start)
         start_app
+        exit 0
     ;;
     graceful-stop|stop)
         stop_app
+        exit 0
     ;;
     restart|graceful)
-        stop_app
-        start_app
+        #stop_app
+        #start_app
+        #exit 0
+        app_ctl_impl.sh stop
+        app_ctl_impl.sh start
     ;;
     status)
         # Restore stdout and close file descriptor #4
