@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.81.7
+Version:   0.81.8
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -68,6 +68,9 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Sat Nov 05 2011 Dan McPherson <dmcphers@redhat.com> 0.81.8-1
+- Adding auto enable jenkins (dmcphers@redhat.com)
+
 * Thu Nov 03 2011 Dan McPherson <dmcphers@redhat.com> 0.81.7-1
 - move updates, add pre_build (dmcphers@redhat.com)
 
