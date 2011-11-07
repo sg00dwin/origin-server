@@ -11,7 +11,7 @@ module CommandHelper
 
     exit_code = -1
     output = nil
-    
+
     # Don't let a command run more than 5 minutes
     Timeout::timeout(500) do
       ignored, status = Process::waitpid2 pid
@@ -40,7 +40,7 @@ module CommandHelper
     errstring = stderr.read
     $logger.debug("Standard Output:\n#{outstring}")
     $logger.debug("Standard Error:\n#{errstring}")
-    
+
     if exit_code != 0
       $logger.error("(#{$$}): Execution failed #{cmd} with exit_code: #{exit_code.to_s}")
       if retries < 3 && exit_code == 140 && cmd.start_with?("/usr/bin/rhc-") # No nodes available...  ugh
@@ -50,7 +50,7 @@ module CommandHelper
         return run(cmd, outbuf, retries+1)
       end
     end
-    
+
     # append the buffers if an array container is provided
     if outbuf
       outbuf << outstring
@@ -92,98 +92,152 @@ module CommandHelper
   end
 
   def rhc_create_domain(app)
-    exit_code = run("#{$create_domain_script} -n #{app.namespace} -l #{app.login} -p fakepw -d")
-    app.create_domain_code = exit_code
-    exit_code == 0
+    rhc_do('rhc_create_create_domain') do
+      exit_code = run("#{$create_domain_script} -n #{app.namespace} -l #{app.login} -p fakepw -d")
+      app.create_domain_code = exit_code
+      return exit_code == 0
+    end
+  end
+
+  def rhc_update_namespace(app)
+    rhc_do('rhc_update_namespace') do
+      old_namespace = app.namespace
+      app.namespace = new_namespace = old_namespace + "new"
+      old_hostname = app.hostname
+      app.hostname = "#{app.name}-#{new_namespace}.#{$domain}"
+      old_repo = app.repo
+      app.repo = "#{$temp}/#{new_namespace}_#{app.name}_repo"
+      FileUtils.mv old_repo, app.repo
+      `sed -i "s,#{old_hostname},#{new_namespace},g" #{app.repo}/.git/config`
+      if run("grep '#{app.name}-#{old_namespace}.dev.rhcloud.com' /etc/hosts") == 0
+        run("sed -i 's,#{app.name}-#{old_namespace}.dev.rhcloud.com,#{app.name}-#{new_namespace}.dev.rhcloud.com,g' /etc/hosts")
+      end
+      old_file = app.file
+      app.file = "#{$temp}/#{new_namespace}.json"
+      FileUtils.mv old_file, app.file
+      run("#{$create_domain_script} -n #{new_namespace} -l #{app.login} -p fakepw --alter -d").should == 0
+      app.persist
+    end
+  end
+
+  def rhc_snapshot(app)
+    rhc_do('rhc_snapshot') do
+      app.snapshot="/tmp/#{app.name}-#{app.namespace}.tar.gz"
+      FileUtils.rm_rf app.snapshot
+      run("#{$snapshot_script} -l #{app.login} -a #{app.name} -s '#{app.snapshot}' -p fakepw -d").should == 0
+      app.persist
+    end
   end
   
-  def rhc_update_namespace(app)
-    old_namespace = app.namespace
-    app.namespace = new_namespace = old_namespace + "new"
-    old_hostname = app.hostname
-    app.hostname = "#{app.name}-#{new_namespace}.#{$domain}"
-    old_repo = app.repo
-    app.repo = "#{$temp}/#{new_namespace}_#{app.name}_repo"
-    FileUtils.mv old_repo, app.repo
-    `sed -i "s,#{old_hostname},#{new_namespace},g" #{app.repo}/.git/config`
-    old_file = app.file
-    app.file = "#{$temp}/#{new_namespace}.json"
-    FileUtils.mv old_file, app.file
-    run("#{$create_domain_script} -n #{new_namespace} -l #{app.login} -p fakepw --alter -d").should == 0
-    app.persist
+  def rhc_restore(app)
+    rhc_do('rhc_restore') do
+      run("#{$snapshot_script} -l #{app.login} -a #{app.name} -r '#{app.snapshot}' -p fakepw -d").should == 0
+    end
   end
 
   def rhc_create_app(app, use_hosts=true)
-    if use_hosts
-      run("echo '127.0.0.1 #{app.name}-#{app.namespace}.dev.rhcloud.com  # Added by cucumber' >> /etc/hosts") if use_hosts
-      exit_code = run("#{$create_app_script} --no-dns -l #{app.login} -a #{app.name} -r #{app.repo} -t #{app.type} -p fakepw -d")
-    else
-      exit_code = run("#{$create_app_script} -l #{app.login} -a #{app.name} -r #{app.repo} -t #{app.type} -p fakepw -d")
+    rhc_do('rhc_create_app') do
+      if use_hosts
+        run("echo '127.0.0.1 #{app.name}-#{app.namespace}.dev.rhcloud.com  # Added by cucumber' >> /etc/hosts") if use_hosts
+        exit_code = run("#{$create_app_script} --no-dns -l #{app.login} -a #{app.name} -r #{app.repo} -t #{app.type} -p fakepw -d")
+      else
+        exit_code = run("#{$create_app_script} -l #{app.login} -a #{app.name} -r #{app.repo} -t #{app.type} -p fakepw -d")
+      end
+      app.create_app_code = exit_code
+      return app
     end
-    app.create_app_code = exit_code
-    return app
   end
 
   def rhc_embed_add(app, type)
-    result = run_stdout("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -e add-#{type} -d")
-    if type.start_with?('mysql-')
-      app.mysql_hostname = /^Connection URL: mysql:\/\/(.*)\/$/.match(result)[1]
-      app.mysql_user = /^ +Root User: (.*)$/.match(result)[1]
-      app.mysql_password = /^ +Root Password: (.*)$/.match(result)[1]
-      app.mysql_database = /^ +Database Name: (.*)$/.match(result)[1]
-  
-      app.mysql_hostname.should_not be_nil
-      app.mysql_user.should_not be_nil
-      app.mysql_password.should_not be_nil
-      app.mysql_database.should_not be_nil
-    end
+    rhc_do('rhc_embed_add') do
+      result = run_stdout("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -e add-#{type} -d")
+      if type.start_with?('mysql-')
+        app.mysql_hostname = /^Connection URL: mysql:\/\/(.*)\/$/.match(result)[1]
+        app.mysql_user = /^ +Root User: (.*)$/.match(result)[1]
+        app.mysql_password = /^ +Root Password: (.*)$/.match(result)[1]
+        app.mysql_database = /^ +Database Name: (.*)$/.match(result)[1]
 
-    app.embed = type
-    app.persist
-    return app
+        app.mysql_hostname.should_not be_nil
+        app.mysql_user.should_not be_nil
+        app.mysql_password.should_not be_nil
+        app.mysql_database.should_not be_nil
+      end
+
+      app.embed = type
+      app.persist
+      return app
+    end
   end
 
   def rhc_embed_remove(app)
-    puts app.name
-    run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -e remove-#{app.embed} -d").should == 0
-    app.mysql_hostname = nil
-    app.mysql_user = nil
-    app.mysql_password = nil
-    app.mysql_database = nil
-    app.embed = nil
-    app.persist
-    return app
+    rhc_do('rhc_embed_remove') do
+      puts app.name
+      run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -e remove-#{app.embed} -d").should == 0
+      app.mysql_hostname = nil
+      app.mysql_user = nil
+      app.mysql_password = nil
+      app.mysql_database = nil
+      app.embed = nil
+      app.persist
+      return app
+    end
   end
 
   def rhc_ctl_stop(app)
-    run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -c stop -d").should == 0
-    run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -c status | grep '#{app.get_stop_string}'").should == 0
+    rhc_do('rhc_ctl_stop') do
+      run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -c stop -d").should == 0
+      run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -c status | grep '#{app.get_stop_string}'").should == 0
+    end
   end
 
   def rhc_add_alias(app)
-    run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -c add-alias --alias '#{app.name}-#{app.namespace}.example.com' -d").should == 0
+    rhc_do('rhc_add_alias') do
+      run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -c add-alias --alias '#{app.name}-#{app.namespace}.example.com' -d").should == 0
+    end
   end
-  
+
   def rhc_remove_alias(app)
-    run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -c remove-alias --alias '#{app.name}-#{app.namespace}.example.com' -d").should == 0
+    rhc_do('rhc_remove_alias') do
+      run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -c remove-alias --alias '#{app.name}-#{app.namespace}.example.com' -d").should == 0
+    end
   end
 
   def rhc_ctl_start(app)
-    run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -c start -d").should == 0
-    run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -c status | grep '#{app.get_stop_string}'").should == 1
+    rhc_do('rhc_ctl_start') do
+      run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -c start -d").should == 0
+      run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -c status | grep '#{app.get_stop_string}'").should == 1
+    end
   end
 
   def rhc_ctl_restart(app)
-    run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -c restart -d").should == 0
-    run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -c status | grep '#{app.get_stop_string}'").should == 1
+    rhc_do('rhc_ctl_restart') do
+      run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -c restart -d").should == 0
+      run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -c status | grep '#{app.get_stop_string}'").should == 1
+    end
   end
 
   def rhc_ctl_destroy(app, use_hosts=true)
-    run("sed -i '/#{app.name}-#{app.namespace}.dev.rhcloud.com/d' /etc/hosts") if use_hosts
-    run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -c destroy -b -d").should == 0
-    run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -c status | grep 'does not exist'").should == 0
-    FileUtils.rm_rf app.repo
-    FileUtils.rm_rf app.file
+    rhc_do('rhc_ctl_destroy') do
+      run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -c destroy -b -d").should == 0
+      run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -c status | grep 'does not exist'").should == 0
+      run("sed -i '/#{app.name}-#{app.namespace}.dev.rhcloud.com/d' /etc/hosts") if use_hosts
+      FileUtils.rm_rf app.repo
+      FileUtils.rm_rf app.file
+    end
+  end
+
+  def rhc_do(method, retries=2)
+    i = 0
+    while true
+      begin
+        yield
+        break
+      rescue Exception => e
+        raise if i >= retries
+        $logger.debug "Retrying #{method} after exception caught: #{e.message}"
+        i += 1
+      end
+    end
   end
 
   #
@@ -191,16 +245,16 @@ module CommandHelper
   #
 
   #
-  # Count the number of processes owned by account with cmd_name 
+  # Count the number of processes owned by account with cmd_name
   #
   def num_procs acct_name, cmd_name
-    
+
     ps_pattern = /^\s*(\d+)\s+(\S+)$/
     command = "ps --no-headers -o pid,comm -u #{acct_name}"
     $logger.debug("num_procs: executing #{command}")
-    
+
     pid, stdin, stdout, stderr = Open4::popen4(command)
-    
+
     stdin.close
     ignored, status = Process::waitpid2 pid
     exit_code = status.exitstatus
@@ -208,7 +262,7 @@ module CommandHelper
     outstrings = stdout.readlines
     errstrings = stderr.readlines
     $logger.debug("looking for #{cmd_name}")
-    $logger.debug("ps output:\n" + outstrings.join("")) 
+    $logger.debug("ps output:\n" + outstrings.join(""))
 
     proclist = outstrings.collect { |line|
       match = line.match(ps_pattern)
@@ -247,4 +301,5 @@ module CommandHelper
     found
   end
 end
+
 World(CommandHelper)

@@ -98,6 +98,14 @@ When /^the application namespace is updated$/ do
   rhc_update_namespace(@app)
 end
 
+When /^I snapshot the application$/ do
+  rhc_snapshot(@app)
+end
+
+When /^I restore the application$/ do
+  rhc_restore(@app)
+end
+
 Then /^the application should respond to the alias$/ do
   @app.is_accessible?(false, 120, "#{@app.name}-#{@app.namespace}.example.com").should be_true
 end

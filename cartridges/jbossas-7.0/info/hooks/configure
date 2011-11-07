@@ -144,15 +144,9 @@ ln -s ${jboss_home}/modules
 # Copy the jbossas server install standalone configuration files
 cp ${jboss_home}/standalone/configuration/{standalone.xml,logging.properties} "$APP_JBOSS"/standalone/configuration
 # Look for cartridge overrides of the configuration/{standalone.xml,logging.properties}
-if [ -f ${JBOSS_CARTRIDGE_ROOT}/info/configuration/standalone.xml ]
-then
-    cp ${JBOSS_CARTRIDGE_ROOT}/info/configuration/standalone.xml "$APP_JBOSS"/standalone/configuration
-fi
-if [ -f ${JBOSS_CARTRIDGE_ROOT}/info/configuration/logging.properties ]
-then
-    cp ${JBOSS_CARTRIDGE_ROOT}/info/configuration/logging.properties "$APP_JBOSS"/standalone/configuration
-fi
-ls -l "$APP_JBOSS"/standalone/configuration
+
+cp ${JBOSS_CARTRIDGE_ROOT}/info/configuration/standalone.xml "$APP_JBOSS"/standalone/configuration
+cp ${JBOSS_CARTRIDGE_ROOT}/info/configuration/logging.properties "$APP_JBOSS"/standalone/configuration
 
 # Link to the standalone.sh script
 ln -s ${JBOSS_CARTRIDGE_ROOT}/info/bin/standalone.sh $APP_JBOSS_BIN_DIR/standalone.sh

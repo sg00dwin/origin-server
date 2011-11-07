@@ -13,12 +13,7 @@ Given /^the user creates a new( (\S+))? application$/ do |ignore, app_type|
   # set the domain into the default user's account
   domain_output = []
   command = "#{$create_domain_script} -n #{@namespace} -l #{@rhc_login} -p fakepw -d"
-  begin
-    exit_status = run(command, domain_output)
-    raise Exception.new "exit status #{exit_status} from '#{command}'" if exit_status != 0
-  rescue Exception => e
-    puts "create domain failed once: trying again in 10 sec"
-    sleep 10
+  rhc_do ('create_domain') do
     exit_status = run(command, domain_output)
     raise Exception.new "exit status #{exit_status} from '#{command}'" if exit_status != 0
   end
@@ -26,13 +21,7 @@ Given /^the user creates a new( (\S+))? application$/ do |ignore, app_type|
   # create the app on an available node
   app_output = []
   command = "#{$create_app_script} -a #{@app_name} -l #{@rhc_login} -r #{@repo_path} -t #{app_type} -p fakepw -d"
-  begin
-    exit_status = run(command, app_output)
-    raise Exception.new "exit status #{exit_status} from '#{command}'" if exit_status != 0
-  rescue Exception => e
-    puts e.message
-    puts "create app failed once: trying again in 10 sec"
-    sleep 10
+  rhc_do ('create_app') do
     exit_status = run(command, app_output)
     raise Exception.new "exit status #{exit_status} from '#{command}'" if exit_status != 0
   end

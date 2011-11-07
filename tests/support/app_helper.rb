@@ -7,7 +7,7 @@ module AppHelper
     include ActiveSupport::JSON
 
     # attributes to represent the general information of the application
-    attr_accessor :name, :namespace, :login, :type, :hostname, :repo, :file, :embed
+    attr_accessor :name, :namespace, :login, :type, :hostname, :repo, :file, :embed, :snapshot
 
     # attributes to represent the state of the rhc_create_* commands
     attr_accessor :create_domain_code, :create_app_code

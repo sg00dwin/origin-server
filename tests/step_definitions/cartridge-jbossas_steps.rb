@@ -26,12 +26,19 @@ When /^I configure a jbossas application$/ do
     'name' => app_name,
     'namespace' => namespace
   }
-  command = $jbossas_config_format % [app_name, namespace, account_name]
-  buffer = []
-  exit_code = runcon command,  'unconfined_u', 'system_r', 'libra_initrc_t', buffer
-  puts buffer[0]
-  puts buffer[1]
-  raise Exception.new "Error running #{command}: Exit code: #{exit_code}" if exit_code != 0
+  rhc_do('configure_jbossas') do
+    begin
+      command = $jbossas_config_format % [app_name, namespace, account_name]
+      buffer = []
+      exit_code = runcon command,  'unconfined_u', 'system_r', 'libra_initrc_t', buffer
+      puts buffer[0]
+      puts buffer[1]
+      raise Exception.new "Error running #{command}: Exit code: #{exit_code}" if exit_code != 0
+    rescue Exception => e
+      command = $jbossas_deconfig_format % [app_name, namespace, account_name]
+      runcon command,  'unconfined_u', 'system_r', 'libra_initrc_t'
+    end
+  end
 end
 
 Given /^a new jbossas application$/ do
