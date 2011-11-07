@@ -11,8 +11,8 @@ export PERL5LIB="${OPENSHIFT_REPO_DIR}libs:~/${OPENSHIFT_APP_NAME}/perl5lib"
 
 if [ -f "${OPENSHIFT_REPO_DIR}/.openshift/markers/force_clean_build" ]
 then
-    echo ".openshift/markers/force_clean_build found!  Re-building perl modules" 1>&2
-    rm -rf "${OPENSHIFT_APP_NAME}/perl5lib/"* ~/.cpan/*
+    echo ".openshift/markers/force_clean_build found!  Rebuilding perl modules" 1>&2
+    rm -rf ~/"${OPENSHIFT_APP_NAME}/perl5lib/"* ~/.cpanm/*
 fi
 
 if `echo $OPENSHIFT_APP_DNS | grep -q .stg.rhcloud.com` || `echo $OPENSHIFT_APP_DNS | grep -q .dev.rhcloud.com`
