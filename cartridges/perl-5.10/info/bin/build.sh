@@ -9,11 +9,17 @@ done
 # Run when jenkins is not being used or run when inside a build
 export PERL5LIB="${OPENSHIFT_REPO_DIR}libs:~/${OPENSHIFT_APP_NAME}/perl5lib"
 
+if [ -f "${OPENSHIFT_REPO_DIR}/.openshift/markers/force_clean_build" ]
+then
+    echo ".openshift/markers/force_clean_build found!  Re-building perl modules" 1>&2
+    rm -rf "${OPENSHIFT_APP_NAME}/perl5lib/"* ~/.cpan/*
+fi
+
 if `echo $OPENSHIFT_APP_DNS | grep -q .stg.rhcloud.com` || `echo $OPENSHIFT_APP_DNS | grep -q .dev.rhcloud.com`
 then 
-	LOCALMIRROR="http://mirror1.stg.rhcloud.com/mirror/perl/CPAN/"
+    LOCALMIRROR="http://mirror1.stg.rhcloud.com/mirror/perl/CPAN/"
 else 
-	LOCALMIRROR="http://mirror1.prod.rhcloud.com/mirror/perl/CPAN/"
+    LOCALMIRROR="http://mirror1.prod.rhcloud.com/mirror/perl/CPAN/"
 fi
 
 if [ -f ${OPENSHIFT_REPO_DIR}deplist.txt ]
