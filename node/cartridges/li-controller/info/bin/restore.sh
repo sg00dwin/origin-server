@@ -22,15 +22,15 @@ echo "Removing old data dir: ~/${OPENSHIFT_APP_NAME}/data/*" 1>&2
 
 restore_tar.sh $include_git
 
+for cmd in `awk 'BEGIN { for (a in ENVIRON) if (a ~ /_RESTORE$/) print ENVIRON[a] }'`
+do
+    echo "Running extra restore: $(/bin/basename $cmd)" 1>&2
+    $cmd
+done
+
 if [ "$include_git" = "INCLUDE_GIT" ]
 then
   GIT_DIR=~/git/${OPENSHIFT_APP_NAME}.git/ ~/git/${OPENSHIFT_APP_NAME}.git/hooks/post-receive 1>&2  
 else
   start_app.sh 1>&2
 fi
-
-for cmd in `awk 'BEGIN { for (a in ENVIRON) if (a ~ /_RESTORE$/) print ENVIRON[a] }'`
-do
-    echo "Running extra restore: $(/bin/basename $cmd)" 1>&2
-    $cmd
-done
