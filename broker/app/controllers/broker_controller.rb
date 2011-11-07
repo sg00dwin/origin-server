@@ -112,7 +112,7 @@ class BrokerController < ApplicationController
             render :json => generate_result_json("Invalid #{key} specified: #{val}", nil, 105), :status => :invalid and return nil
           end
         when 'server_alias'
-          if !(val =~ /\A[\w\-\.]+\z/)
+          if !(val =~ /\A[\w\-\.]+\z/) or (val =~ /rhcloud.com$/)
             render :json => generate_result_json("Invalid ServerAlias specified: #{val}", nil, 105), :status => :invalid and return nil
           end
         else
