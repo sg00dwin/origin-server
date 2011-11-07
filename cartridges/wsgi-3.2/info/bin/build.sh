@@ -8,9 +8,9 @@ done
 
 if `echo $OPENSHIFT_APP_DNS | grep -q .stg.rhcloud.com` || `echo $OPENSHIFT_APP_DNS | grep -q .dev.rhcloud.com`
 then 
-	LOCALMIRROR="http://mirror1.stg.rhcloud.com/mirror/python/web/simple"
+	OPENSHIFT_PYTHON_MIRROR="http://mirror1.stg.rhcloud.com/mirror/python/web/simple"
 else
-	LOCALMIRROR="http://mirror1.prod.rhcloud.com/mirror/python/web/simple"
+	OPENSHIFT_PYTHON_MIRROR="http://mirror1.prod.rhcloud.com/mirror/python/web/simple"
 fi
 
 # Run when jenkins is not being used or run when inside a build
@@ -29,9 +29,9 @@ then
     /bin/rm -f lib64
     virtualenv ~/${OPENSHIFT_APP_NAME}/virtenv
     . ./bin/activate
-	if [ -n "$LOCALMIRROR" ]
+	if [ -n "$OPENSHIFT_PYTHON_MIRROR" ]
 	then
-		python ${OPENSHIFT_REPO_DIR}setup.py develop -i $LOCALMIRROR
+		python ${OPENSHIFT_REPO_DIR}setup.py develop -i $OPENSHIFT_PYTHON_MIRROR
 	else
 		python ${OPENSHIFT_REPO_DIR}setup.py develop
 	fi
