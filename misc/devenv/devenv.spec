@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.81.8
+Version:   0.81.9
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -232,6 +232,9 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 %{_initddir}/libra-site
 
 %changelog
+* Mon Nov 07 2011 Dan McPherson <dmcphers@redhat.com> 0.81.9-1
+- 
+
 * Mon Nov 07 2011 Dan McPherson <dmcphers@redhat.com> 0.81.8-1
 - Bug 751743 (dmcphers@redhat.com)
 - Using the new RHUI client for Amazon (mhicks@redhat.com)
