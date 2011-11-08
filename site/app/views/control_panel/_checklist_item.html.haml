@@ -1,0 +1,10 @@
+%div{:class => item_class}
+%h3
+  - unless link.blank?
+    = link_to title, link
+  - else
+    = title
+- unless summary.blank?
+  %p.summary
+    = summary
+

@@ -1,0 +1,4 @@
+= semantic_form_for @app, :namespace => namespace, :remote => true, :url => express_app_delete_path do |form|
+  = form.input :app_name, :as => :hidden, :value => app_name
+  = form.input :cartridge, :as => :hidden, :value => app['framework']
+  = form.submit :value => "Are you sure you want to delete #{app_name}?", :class => 'delete_button'

@@ -1,10 +1,5 @@
-/* DO NOT MODIFY. This file was compiled Mon, 26 Sep 2011 15:11:47 GMT from
- * /home/fotios/li/site/app/coffeescripts/products.coffee
- */
-
 (function() {
-  /* Scripts for the product pages */
-  var $, retweetError, retweetSuccess, _this;
+  /* Scripts for the product pages */  var $, retweetError, retweetSuccess, _this;
   $ = jQuery;
   _this = this;
   retweetSuccess = function(data, textStatus, jqXHR) {
