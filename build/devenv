@@ -399,6 +399,7 @@ class DevEnv < Thor
   method_option :exclude_internal, :type => :boolean, :desc => "Exclude running unit and internal tests"
   method_option :exclude_verification, :type => :boolean, :desc => "Exclude running verification tests"
   method_option :exclude_web, :type => :boolean, :desc => "Exclude running Selenium tests"
+  method_option :sauce, :type => :boolean, :desc => "Run Selenium tests against Sauce Labs"
   def test(tag)
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
 
@@ -437,7 +438,11 @@ class DevEnv < Thor
 
       unless options.exclude_web?
         threads << Thread.new do
-          cmd = "rm -rf /tmp/unzip* /tmp/webdriver-profile*; cd li-test/selenium; ./ts_web"
+          if options.sauce?
+            cmd = "rm -rf /tmp/unzip* /tmp/webdriver-profile*; cd li-test/selenium/sauce; ruby ts_web"
+          else
+            cmd = "rm -rf /tmp/unzip* /tmp/webdriver-profile*; cd li-test/selenium; ./ts_web"
+          end
           run_ssh(hostname, "Web Selenium", cmd)
         end
       end
