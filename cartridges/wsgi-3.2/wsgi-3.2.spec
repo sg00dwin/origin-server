@@ -2,7 +2,7 @@
 
 Summary:   Provides python-wsgi-3.2 support
 Name:      rhc-cartridge-wsgi-3.2
-Version:   0.81.8
+Version:   0.81.9
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -82,6 +82,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Mon Nov 07 2011 Dan McPherson <dmcphers@redhat.com> 0.81.9-1
+- changed variable LOCALMIRROR to OPENSHIFT_PYTHON_MIRROR (tdawson@redhat.com)
+
 * Fri Nov 04 2011 Dan McPherson <dmcphers@redhat.com> 0.81.8-1
 - move maven mirror info to ci_build.sh (dmcphers@redhat.com)
 
