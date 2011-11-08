@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.81.15
+Version:       0.81.16
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -160,6 +160,9 @@ fi
 %dir %attr(0755,root,root) %{_sysconfdir}/libra/skel
 
 %changelog
+* Mon Nov 07 2011 Dan McPherson <dmcphers@redhat.com> 0.81.16-1
+- Adding an explicit restorecon on cgroup read (mmcgrath@redhat.com)
+
 * Mon Nov 07 2011 Dan McPherson <dmcphers@redhat.com> 0.81.15-1
 - Bug 751743 (dmcphers@redhat.com)
 - Bug 751704 (dmcphers@redhat.com)
