@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-# Usage: ./migrate-2.1.7b > out.txt
+# Usage: ./migrate-2.1.8 > out.txt
 require 'rubygems'
 require 'openshift'
 require 'pp'
@@ -20,7 +20,7 @@ def migrate_app_on_node(server_identity, framework, uuid, namespace, app_name)
                    :application => app_name,
                    :app_type => framework,
                    :namespace => namespace,
-                   :version => '2.1.7b') do |response|
+                   :version => '2.1.8') do |response|
       exit_code = response[:body][:data][:exitcode]
       output = response[:body][:data][:output]
       if (output.length > 0)
@@ -33,7 +33,7 @@ def migrate_app_on_node(server_identity, framework, uuid, namespace, app_name)
         migrated = true
         puts "Restarting app '#{app_name}' on node '#{server_identity}'"
         server = Server.new(server_identity)
-        result = server.execute_direct(framework, 'restart', "#{app_name} #{namespace} #{uuid}")[0]
+        result = server.execute_direct("embedded/phpmyadmin-3.4", 'restart', "#{app_name} #{namespace} #{uuid}")[0]
         if (result && defined? result.results && result.results.has_key?(:data))
           output = result.results[:data][:output]
           exit_code = result.results[:data][:exitcode]
@@ -54,7 +54,7 @@ def migrate_app_on_node(server_identity, framework, uuid, namespace, app_name)
 end
 
 #
-# Migrate applications between 2.1.7 and 2.1.7b
+# Migrate applications between 2.1.7b and 2.1.8
 #
 def migrate
   start_time = Time.now.to_i
@@ -71,7 +71,7 @@ def migrate
       puts "Gathering apps for user: #{user.rhlogin}(#{rhlogins.length - index}) with uuid: #{user.uuid}"
       apps = user.apps
       apps.each do |app_name, app|
-        if app.has_key?('embedded') && app['embedded'].has_key?('mysql-5.1')
+        if app.has_key?('embedded') && app['embedded'].has_key?('phpmyadmin-3.4')
           server_identity = app['server_identity']
           node_to_apps[server_identity] = [] unless node_to_apps[server_identity]
           node_to_users[server_identity] = [] unless node_to_users[server_identity]
