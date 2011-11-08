@@ -24,7 +24,11 @@
         Getting started is easy. Use the resources below to help you out if you need it.
 
       #video
-        Put video here
+        = link_to 'video/OpenShift-Express-demo', :target => '_blank' do 
+          = image_tag '/app/images/video_stills/OpenShift-Express-demo-md.png',  
+            :title => "OpenShift Express Product Tour", 
+            :alt => "OpenShift Express Product Tour"
+          %p Express Product Tour
 
       -# = render :partial => 'control_panel/checklist'
       
@@ -33,13 +37,13 @@
           %h2 Helpful Resources
         %ul
           %li
-            = link_to 'Documentation', '#', :class => 'external'
+            = link_to 'Documentation', 'http://docs.redhat.com/docs/en-US/OpenShift_Express/1.0/html/User_Guide/index.html', :target => '_blank', :class => 'external'
           %li
-            = link_to 'Videos', '#'
+            = link_to 'Videos', 'app/express#videos', :target => '_blank'
           %li
-            = link_to 'Forum', '#', :class => 'external'
+            = link_to 'Forum', 'http://www.redhat.com/openshift/forums/express', :target => '_blank', :class => 'external'
           %li
-            = link_to 'IRC Channel', '#', :class => 'external'
+            = link_to 'IRC Channel', 'http://webchat.freenode.net/?randomnick=1&channels=openshift&uio=d4', :target => '_blank', :class => 'external'
 
     #apps.cp-section
       %h2

@@ -1331,6 +1331,10 @@ li.captcha {
     #video, #resources {
       width: 22em;
       @include inline-block;
+      vertical-align: top;
+    }
+    #video {
+      margin-top: 1em;
     }
     #resources ul {
       list-style-type: none;

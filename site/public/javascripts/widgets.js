@@ -1,61 +1,246 @@
-/* DO NOT MODIFY. This file was compiled Tue, 25 Oct 2011 20:22:36 GMT from
- * /home/emily/Devel/libra/li/site/app/coffeescripts/widgets.coffee
- */
-
 (function() {
-  var $, _this;
+  var $, osData, osDataEmitter, osDialog, osPopup, _this;
+  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
   $ = jQuery;
   _this = this;
-  _this.OpenShiftWidgets || (_this.OpenShiftWidgets = {});
-  _this.OpenShiftWidgets.Dialog = (function() {
-    var contents_selector, dialog, dialog_contents, dialog_html, dialog_selector, overlay, overlay_html, overlay_selector;
-    dialog_selector = '.dialog.widget';
-    contents_selector = '.dialog-contents';
-    dialog_html = "<div class=\"widget dialog\">\n  <a href=\"#\" class=\"close_btn\" title=\"Close dialog\">Close</a>\n  <div class=\"dialog-contents\"></div>\n</div>";
-    dialog = $(dialog_selector);
-    dialog_contents = $(contents_selector);
-    overlay_selector = '.overlay';
-    overlay_html = "<div class=\"overlay\"></div>";
-    overlay = $(overlay_selector);
-    return {
-      get: function() {
-        if (dialog.length === 0) {
-          ($('body')).append(dialog_html);
-          dialog = $(dialog_selector);
-          dialog_contents = $(contents_selector);
-        }
-        return dialog;
-      },
-      setText: function(text) {
-        return dialog_contents.text(text);
-      },
-      setHtml: function(html) {
-        return dialog_contents.html(html);
-      },
-      open: function() {
-        return get().show();
-      },
-      openModal: function() {
-        if (overlay.length === 0) {
-          ($('body')).append(overlay_html);
-          overlay = $(overlay_selector);
-        }
-        overlay.show();
-        return get().show();
+  _this.subscribers || (_this.subscribers = {});
+  osDialog = (function() {
+    function osDialog(options, element) {
+      var defaults;
+      this.options = options;
+      this.element = element;
+      this.insert = __bind(this.insert, this);
+      this.setHtml = __bind(this.setHtml, this);
+      this.setText = __bind(this.setText, this);
+      this.hide = __bind(this.hide, this);
+      this.show = __bind(this.show, this);
+      this.$element = $(this.element);
+      this.$window = $(window);
+      this.$document = $(document);
+      defaults = {
+        modal: false,
+        top: false
+      };
+      this.options = $.extend({}, defaults, this.options);
+      this.name = 'OpenShiftDialog';
+      this._init();
+    }
+    osDialog.prototype._create = function() {};
+    osDialog.prototype._init = function() {
+      this.$overlay = $('#overlay');
+      if (this.$overlay.length === 0) {
+        ($('body')).append("<div id=\"overlay\"></div>");
+        this.$overlay = $('#overlay');
+      }
+      this.$closeLink = $("<a href=\"#\" class=\"os-close-link\">Close</a>");
+      this.$element.prepend(this.$closeLink);
+      this.$container = $("<div class=\"os-dialog-container\"></div>");
+      this.$element.append(this.$container);
+      if (!this.$element.hasClass('os-widget')) {
+        this.$element.addClass('os-widget');
+      }
+      if (!this.$element.hasClass('os-dialog')) {
+        this.$element.addClass('os-dialog');
+      }
+      return this.$closeLink.click(this.hide);
+    };
+    osDialog.prototype.option = function(key, value) {
+      if ($.isPlainObject(key)) {
+        this.options = $.extend(true, this.options, key);
+      } else if (key && (value != null)) {
+        this.options[key] = value;
+      } else {
+        return this.options[key];
+      }
+      return this;
+    };
+    osDialog.prototype._positionDialog = function() {
+      if (this.options.top) {
+        return this.$element.css('top', this.options.top);
       }
     };
-  })();
-  _this.OpenShiftWidgets.InlineDocs = (function() {
-    function _Class(elem) {
-      var docs, link;
-      this.elem = elem;
-      docs = this.elem.children('#docs');
-      if (docs.length > 0) {
-        this.docs = docs.html();
+    osDialog.prototype.show = function() {
+      this._positionDialog();
+      if (this.options.modal) {
+        this.$overlay.show();
       }
-      link = this.elem.children;
-    }
-    _Class.prototype.showDocs = function() {};
-    return _Class;
+      return this.$element.show();
+    };
+    osDialog.prototype.hide = function(event) {
+      if (event != null) {
+        event.preventDefault();
+      }
+      this.$overlay.hide();
+      return this.$element.hide();
+    };
+    osDialog.prototype.setText = function(text) {
+      this.$container.text(text);
+      return this;
+    };
+    osDialog.prototype.setHtml = function(html) {
+      this.$container.html(html);
+      return this;
+    };
+    osDialog.prototype.insert = function(contents) {
+      this.$container.children().detach();
+      this.$container.append(contents);
+      return this;
+    };
+    return osDialog;
   })();
+  $.widget.bridge('osDialog', osDialog);
+  osPopup = (function() {
+    function osPopup(options, element) {
+      var defaults;
+      this.options = options;
+      this.element = element;
+      this.unpop = __bind(this.unpop, this);
+      this.pop = __bind(this.pop, this);
+      this.$element = $(this.element);
+      defaults = {
+        modal: false,
+        top: false,
+        keepindom: false
+      };
+      this.options = $.extend({}, defaults, this.options);
+      this.name = 'OpenShiftPopup';
+      this._init();
+    }
+    osPopup.prototype._create = function() {};
+    osPopup.prototype._init = function() {
+      if (!this.$element.hasClass('os-widget')) {
+        this.$element.addClass('os-widget');
+      }
+      if (!this.$element.hasClass('os-popup')) {
+        this.$element.addClass('os-popup');
+      }
+      this.trigger = $('.popup-trigger', this.$element);
+      this.trigger.addClass('js');
+      this.content = $('.popup-content', this.$element);
+      this.content.addClass('js');
+      if (!this.options.dialog) {
+        this.options.dialog = $('<div class="popup-dialog"></div>');
+        ($('body')).append(this.options.dialog);
+        this.options.dialog.osDialog({
+          modal: this.options.modal
+        });
+      }
+      if (this.options.keepindom) {
+        this._saveSetup();
+      }
+      return this.trigger.click(this.pop);
+    };
+    osPopup.prototype.option = function(key, value) {
+      if ($.isPlainObject(key)) {
+        this.options = $.extend(true, this.options, key);
+      } else if (key && (value != null)) {
+        this.options[key] = value;
+      } else {
+        return this.options[key];
+      }
+      if (this.options.keepindom) {
+        this._saveSetup();
+      }
+      return this;
+    };
+    osPopup.prototype._saveSetup = function() {
+      if (!this.placeholder) {
+        this.placeholder = $('<div class="popup-placeholder" style="display:none"></div>');
+        ($('body')).append(this.placeholder);
+      }
+      return this.options.dialog.data('osDialog').$closeLink.click(this.unpop);
+    };
+    osPopup.prototype.pop = function(event) {
+      var dTop, opts;
+      if (event != null) {
+        event.preventDefault();
+      }
+      dTop = this.options.top ? this.options.top : this.trigger.offset().top;
+      opts = {
+        top: dTop,
+        modal: this.options.modal
+      };
+      return this.options.dialog.osDialog('option', opts).osDialog('insert', this.content).osDialog('show');
+    };
+    osPopup.prototype.unpop = function(event) {
+      if (event != null) {
+        event.preventDefault();
+      }
+      this.options.dialog.osDialog('hide');
+      return this.placeholder.append(this.content);
+    };
+    return osPopup;
+  })();
+  $.widget.bridge('osPopup', osPopup);
+  osData = (function() {
+    function osData(options, element) {
+      var defaults;
+      this.options = options;
+      this.element = element;
+      this.eventResponse = __bind(this.eventResponse, this);
+      this.subscribe = __bind(this.subscribe, this);
+      this.$element = $(this.element);
+      defaults = {
+        event: false,
+        onEvent: false
+      };
+      this.options = $.extend(defaults, this.options);
+      this.name = 'OpenShiftData';
+      this._init();
+    }
+    osData.prototype._create = function() {};
+    osData.prototype._init = function() {
+      if (this.options.event) {
+        return this.subscribe();
+      }
+    };
+    osData.prototype.option = function(key, value) {
+      if ($.isPlainObject(key)) {
+        this.options = $.extend(true, this.options, key);
+      } else if (key && (value != null)) {
+        this.options[key] = value;
+      } else {
+        return this.options[key];
+      }
+      this.subscribe();
+      return this;
+    };
+    osData.prototype.subscribe = function() {
+      var _base, _name;
+      if (this.options.event) {
+        (_base = _this.subscribers)[_name = this.options.event] || (_base[_name] = []);
+        _this.subscribers[this.options.event].push(this.$element);
+        return this.$element.bind(this.options.event, this.eventResponse);
+      }
+    };
+    osData.prototype.eventResponse = function(event) {
+      if (event != null) {
+        event.preventDefault();
+      }
+      if (this.options.onEvent) {
+        return this.options.onEvent.call(this.element, event);
+      }
+    };
+    return osData;
+  })();
+  $.widget.bridge('osData', osData);
+  osDataEmitter = function(event, xhr, status) {
+    var e, elem, json, _i, _len, _ref, _results;
+    json = $.parseJSON(xhr.responseText);
+    console.log('subscribers', _this.subscribers);
+    if (json.event) {
+      e = jQuery.Event(json.event, {
+        osEventData: json.data,
+        osEventStatus: json.status
+      });
+      _ref = _this.subscribers[json.event];
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        elem = _ref[_i];
+        _results.push(elem.trigger(e));
+      }
+      return _results;
+    }
+  };
+  $('body').bind('ajax:complete', osDataEmitter);
 }).call(this);
