@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.81.17
+Version:       0.81.18
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -160,6 +160,11 @@ fi
 %dir %attr(0755,root,root) %{_sysconfdir}/libra/skel
 
 %changelog
+* Tue Nov 08 2011 Alex Boone <aboone@redhat.com> 0.81.18-1
+- filled out the phpmyadmin migrate for bug 749751 (twiest@redhat.com)
+- add phpmyadmin migrate stub (dmcphers@redhat.com)
+- Added check for overriding aliases (mmcgrath@redhat.com)
+
 * Mon Nov 07 2011 Dan McPherson <dmcphers@redhat.com> 0.81.17-1
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
   (mmcgrath@redhat.com)
