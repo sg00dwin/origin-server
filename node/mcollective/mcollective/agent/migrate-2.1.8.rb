@@ -22,7 +22,7 @@ module LibraMigration
       phpmyadmin_dir = "#{app_home}/phpmyadmin-3.4"
       if File.exists?(phpmyadmin_dir)
          phpmyadmin_cartridge_root_dir = "/usr/libexec/li/cartridges/embedded/phpmyadmin-3.4"
-         FileUtils.ln_s  "#{phpmyadmin_cartridge_root_dir}/something",  "#{phpmyadmin_dir}/somethingelse"
+         FileUtils.ln_s  "#{phpmyadmin_cartridge_root_dir}/info/configuration/disabled_pages.conf", "#{phpmyadmin_dir}/conf.d/disabled_pages.conf"
       end
       
     else
