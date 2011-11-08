@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.81.5
+Version:   0.81.6
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -68,6 +68,17 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Tue Nov 08 2011 Alex Boone <aboone@redhat.com> 0.81.6-1
+- Fix bug 751981 - reload apps after a domain change (aboone@redhat.com)
+- Fix delete dialogs not hiding when finished (edirsh@redhat.com)
+- Display ssh placeholder text on control panel if ssh key is 'nossh'
+  (edirsh@redhat.com)
+- Bug 751978 - a few styling tweaks to improve the app list (edirsh@redhat.com)
+- Bug 751984 (edirsh@redhat.com)
+- Bug 751986 - clarify language in app deletion form (edirsh@redhat.com)
+- Bug 751791 - corrected video link in console (edirsh@redhat.com)
+- Bug 751980 - check in missing image (edirsh@redhat.com)
+
 * Mon Nov 07 2011 Dan McPherson <dmcphers@redhat.com> 0.81.5-1
 - Small styling and content tweaks, and checking in generated files
   (edirsh@redhat.com)
