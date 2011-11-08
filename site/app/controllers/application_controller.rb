@@ -195,7 +195,7 @@ class ApplicationController < ActionController::Base
   end
   
   private
-  
+
   def require_login
     if !session[:login]
       session[:login_workflow] = url_for :controller => self.controller_name, 
