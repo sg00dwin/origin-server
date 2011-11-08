@@ -143,4 +143,13 @@ class ExpressAppController < ApplicationController
     render :text => (ActiveSupport::JSON.encode response)
   end
 
+  def list
+    @userinfo = ExpressUserinfo.new :rhlogin => session[:login],
+                                :ticket => session[:ticket]
+    @userinfo.establish
+    @app = ExpressApp.new
+    
+    render :layout => false
+  end
+  
 end

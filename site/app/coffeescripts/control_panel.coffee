@@ -31,6 +31,12 @@ $ ->
         # show app form too
         ($ '.app-form', '#app_form_container').show()
         ($ '.app-placeholder', '#app_form_container').hide()
+      else
+        # reload the apps container
+        ($ '#app_list_container').spin()
+        $.get '/app/control_panel/apps', {}, (resp) ->
+          ($ '#app_list_container').html(resp)
+          ($ '#apps .popup').osPopup dialog: cpDialog, modal: true, keepindom: true 
     else
       # Error
       ($ '.os-dialog-container', cpDialog).prepend """
