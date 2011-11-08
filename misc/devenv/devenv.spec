@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.81.9
+Version:   0.81.10
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -232,6 +232,11 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 %{_initddir}/libra-site
 
 %changelog
+* Tue Nov 08 2011 Alex Boone <aboone@redhat.com> 0.81.10-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (tkramer@redhat.com)
+- Updated commets in mcollective area (tkramer@redhat.com)
+
 * Mon Nov 07 2011 Dan McPherson <dmcphers@redhat.com> 0.81.9-1
 - 
 
