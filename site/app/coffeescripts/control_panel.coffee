@@ -28,6 +28,9 @@ $ ->
         ($ '#express_domain_dom_action').val('update')
         ($ '.ssh-form', '#ssh_container').show()
         ($ '.ssh-placeholder', '#ssh_container').remove()
+        # show app form too
+        ($ '.app-form', '#app_form_container').show()
+        ($ '.app-placeholder', '#app_form_container').hide()
     else
       # Error
       ($ '.os-dialog-container', cpDialog).prepend """
