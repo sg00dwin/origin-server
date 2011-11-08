@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.81.14
+Version:   0.81.15
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -85,6 +85,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Tue Nov 08 2011 Dan McPherson <dmcphers@redhat.com> 0.81.15-1
+- move maven build size to build.sh env var (dmcphers@redhat.com)
+
 * Sun Nov 06 2011 Dan McPherson <dmcphers@redhat.com> 0.81.14-1
 - snapshot tests plus trying to make cuc tests more stable
   (dmcphers@redhat.com)

@@ -30,7 +30,7 @@ module ExpressApi
       http.use_ssl = true
       http.verify_mode = OpenSSL::SSL::VERIFY_NONE
       
-      res = Timeout::timeout 15 do
+      res = Timeout::timeout 30 do
         http.start {|http| http.request(req)}
       end
 

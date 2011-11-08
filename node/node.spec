@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.81.14
+Version:       0.81.17
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -81,6 +81,7 @@ chkconfig cgconfig && /sbin/service cgconfig restart >/dev/null 2>&1 || :
 #/sbin/service mcollective restart > /dev/null 2>&1 || :
 /sbin/restorecon /etc/init.d/libra || :
 /sbin/restorecon /var/lib/libra || :
+/sbin/restorecon /usr/bin/rhc-cgroup-read || :
 /usr/bin/rhc-restorecon || :
 # only enable if cgconfig is
 chkconfig cgconfig && /sbin/service libra-cgroups start > /dev/null 2>&1 || :
@@ -115,11 +116,7 @@ fi
 
 %files
 %defattr(-,root,root,-)
-%attr(0640,-,-) %{_libexecdir}/mcollective/mcollective/agent/libra.ddl
-%attr(0640,-,-) %{_libexecdir}/mcollective/mcollective/agent/libra.rb
-%attr(0640,-,-) %{_libexecdir}/mcollective/mcollective/agent/migrate-util.rb
-%attr(0640,-,-) %{_libexecdir}/mcollective/mcollective/agent/migrate-2.1.7a.rb
-%attr(0640,-,-) %{_libexecdir}/mcollective/mcollective/agent/migrate-2.1.7b.rb
+%attr(0640,-,-) %{_libexecdir}/mcollective/mcollective/agent/*
 %attr(0750,-,-) %{_libexecdir}/mcollective/update_yaml.rb
 %attr(0640,-,-) %{ruby_sitelibdir}/facter/libra.rb
 %attr(0750,-,-) %{_initddir}/libra
@@ -163,6 +160,18 @@ fi
 %dir %attr(0755,root,root) %{_sysconfdir}/libra/skel
 
 %changelog
+* Mon Nov 07 2011 Dan McPherson <dmcphers@redhat.com> 0.81.17-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- correcting .tmp location (mmcgrath@redhat.com)
+
+* Mon Nov 07 2011 Dan McPherson <dmcphers@redhat.com> 0.81.16-1
+- Adding an explicit restorecon on cgroup read (mmcgrath@redhat.com)
+
+* Mon Nov 07 2011 Dan McPherson <dmcphers@redhat.com> 0.81.15-1
+- Bug 751743 (dmcphers@redhat.com)
+- Bug 751704 (dmcphers@redhat.com)
+
 * Sun Nov 06 2011 Dan McPherson <dmcphers@redhat.com> 0.81.14-1
 - less output from carts (dmcphers@redhat.com)
 

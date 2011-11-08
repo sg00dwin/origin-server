@@ -46,6 +46,17 @@ $light_button_shadow: #b69c3f;
 
 $overview_bg: #002e53;
 $overview_highlight: #0093d9;
+@mixin cloud_bg_solid {
+  background: $overview_bg url('/app/images/transparent_cloud.png') repeat-x 8em center;
+ }
+@mixin cloud_bg_gradient {
+  @include background-image(
+    url('/app/images/transparent_cloud.png'),
+    radial-gradient(center bottom, circle farthest-side, $overview_highlight, $overview_bg)
+  );
+  background-repeat: repeat-x, no-repeat;
+  background-position: center 8em, 0 0;
+}
 
 @mixin light_button {
   background-color: $light_button_bg;

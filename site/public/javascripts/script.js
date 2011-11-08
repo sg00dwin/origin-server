@@ -1,7 +1,3 @@
-/* DO NOT MODIFY. This file was compiled Mon, 26 Sep 2011 16:45:52 GMT from
- * /home/fotios/li/site/app/coffeescripts/script.coffee
- */
-
 (function() {
   var $;
   $ = jQuery;
