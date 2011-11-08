@@ -61,9 +61,9 @@ $ ->
       # update app table
       ($ '#app_list_container').html event.osEventData.app_table
       # repopup all the delete forms
-      ($ '.popup', this).osPopup dialog: cpDialog, modal: true, keepindom: true
+      ($ '.popup', this).osPopup dialog: cpDialog, modal: true
       # hide any current popups that are showing
-      ($ '.popup', this).osPopup 'unpop'
+      cpDialog.osDialog 'hide'
       # hide or show form depending on app limit
       if event.osEventData.app_limit_reached
         ($ '.app-form', this).hide()
