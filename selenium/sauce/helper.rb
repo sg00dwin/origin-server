@@ -11,7 +11,9 @@ hostname = 'localhost'
 
 # See if there is a hostname for this machine in /etc/hosts
 begin
-  hostname = Socket.gethostbyname(Socket.gethostname)
+  hostname = Socket.gethostbyname(Socket.gethostname).first
+rescue SocketError
+  puts "Not able to resolve local hostname"
 rescue
   puts "No local hostname given"
 end
