@@ -354,7 +354,7 @@ may be ok if '#{app_name}#{BUILDER_SUFFIX}' was the builder of a previously dest
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 WARNING: The '#{BUILDER_SUFFIX}' suffix is used by the CI system (Jenkins) for its slave 
 builders.  If you create an app of this name you can't also create an app 
-called '#{app_name[0..-(BUILDER_SUFFIX.length+1)]}' and build that app with Jenkins without conflicts
+called '#{app_name[0..-(BUILDER_SUFFIX.length+1)]}' and build that app in Jenkins without conflicts.
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 "
     end
