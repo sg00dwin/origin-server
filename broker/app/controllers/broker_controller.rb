@@ -83,8 +83,8 @@ class BrokerController < ApplicationController
             render :json => generate_result_json("Invalid application uuid: #{val}", nil, 1), :status => :invalid and return nil
           end
         when 'node_profile'
-          if !(val =~ /\A(exlarge|jumbo|large|micro|std)\z/)
-            render :json => generate_result_json("Invalid Profile: #{val}.  Must be: (exlarge|jumbo|large|micro|std)", nil, 1), :status => :invalid and return nil
+          if !(val =~ /\A(jumbo|exlarge|large|micro|std)\z/)
+            render :json => generate_result_json("Invalid Profile: #{val}.  Must be: (jumbo|exlarge|large|micro|std)", nil, 1), :status => :invalid and return nil
           end
         when 'debug', 'alter'
           if val != true && val != false && !(val =~ /\A(true|false)\z/)
@@ -112,7 +112,7 @@ class BrokerController < ApplicationController
             render :json => generate_result_json("Invalid #{key} specified: #{val}", nil, 105), :status => :invalid and return nil
           end
         when 'server_alias'
-          if !(val =~ /\A[\w\-\.]+\z/)
+          if !(val =~ /\A[\w\-\.]+\z/) or (val =~ /rhcloud.com$/)
             render :json => generate_result_json("Invalid ServerAlias specified: #{val}", nil, 105), :status => :invalid and return nil
           end
         else
@@ -255,12 +255,13 @@ class BrokerController < ApplicationController
             else
               page = 'health'
           end
-          
+
           json_data = JSON.generate({:health_check_path => page, :uuid => app_info['uuid']})
         elsif action == 'deconfigure'
           message = "Successfully destroyed application: #{app_name}" if !message
+        elsif !message
+          message = 'Success'
         end
-        message = 'Success' if !message
   
         render :json => generate_result_json(message, json_data) and return
       else

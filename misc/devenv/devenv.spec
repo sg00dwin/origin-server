@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.81.7
+Version:   0.81.9
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -98,6 +98,9 @@ gem install headless
 cp -rf %{devenvdir}/etc/* %{_sysconfdir}
 cp -rf %{devenvdir}/bin/* %{_bindir}
 cp -rf %{devenvdir}/var/* %{_localstatedir}
+
+# Add rsync key to authorized keys
+cat %{brokerdir}/config/keys/rsync_id_rsa.pub >> /root/.ssh/authorized_keys
 
 # Move over new http configurations
 cp -rf %{devenvdir}/httpd/* %{libradir}
@@ -229,6 +232,13 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 %{_initddir}/libra-site
 
 %changelog
+* Mon Nov 07 2011 Dan McPherson <dmcphers@redhat.com> 0.81.9-1
+- 
+
+* Mon Nov 07 2011 Dan McPherson <dmcphers@redhat.com> 0.81.8-1
+- Bug 751743 (dmcphers@redhat.com)
+- Using the new RHUI client for Amazon (mhicks@redhat.com)
+
 * Sun Nov 06 2011 Dan McPherson <dmcphers@redhat.com> 0.81.7-1
 - give better errors on sync with build failures (dmcphers@redhat.com)
 

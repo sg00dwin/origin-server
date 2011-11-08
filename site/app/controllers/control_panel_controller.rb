@@ -3,8 +3,25 @@ class ControlPanelController < ApplicationController
 
   def index
     @userinfo = ExpressUserinfo.new :rhlogin => session[:login],
-				    :ticket => session[:ticket]
-    @userinfo.establish unless @userinfo.nil?
+    				    :ticket => session[:ticket]
+    # We have to have userinfo for the control panel to work
+    # so if we can't establish the user's info, try again
+    3.times do
+      Rails.logger.debug 'Trying to establish'
+      @userinfo.establish
+      Rails.logger.debug 'Errors'
+      Rails.logger.debug @userinfo.errors.inspect
+      Rails.logger.debug @userinfo.errors.length 
+      break if @userinfo.errors.length < 1
+    end
+    
+    # If we really can't establish, at least let the user
+    # know, so it's somewhat less confusing
+    # unless @userinfo.errors.length < 1 
+      # flash[:error] = @userinfo.errors[:base][0]
+      # render :no_info and return
+    # end
+      
     Rails.logger.debug "In cp controller. userinfo: #{@userinfo.inspect}"
     
     # domain
@@ -18,15 +35,13 @@ class ControlPanelController < ApplicationController
 				  :ssh => @userinfo.ssh_key
       @action = 'update'
       Rails.logger.debug 'Has a domain - show edit form'
-      
-      # create app
-      if @userinfo.app_info.length < Rails.configuration.express_max_apps
-        @app = ExpressApp.new
-        @cartlist = ExpressCartlist.new 'standalone'
-        Rails.logger.debug "Control panel cartlist: #{@cartlist.list.inspect}"
-      end
     end
-    
-  end
+      
+    # create app
+    @max_apps = Rails.configuration.express_max_apps
+    @app = ExpressApp.new
+    @cartlist = ExpressCartlist.new 'standalone'
+    Rails.logger.debug "Control panel cartlist: #{@cartlist.list.inspect}"
+  end # end index
+end # end class
 
-end

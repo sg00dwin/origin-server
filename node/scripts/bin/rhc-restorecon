@@ -29,8 +29,8 @@ home_dirs.each do |home_dir|
             username = home_dir.split('/')[-1]
             user = Etc.getpwnam(username)
             mcs_level = openshift_mcs_level(user.uid)
-            puts "chcon -t libra_var_lib_t -l #{mcs_level} -R #{home_dir}/[^.]* #{home_dir}/tmp/" if debug
-            %x[chcon -t libra_var_lib_t -l #{mcs_level} -R #{home_dir}/[^.]* #{home_dir}/tmp/ ]
+            puts "chcon -t libra_var_lib_t -l #{mcs_level} -R #{home_dir}/[^.]* #{home_dir}/.tmp/*" if debug
+            %x[chcon -t libra_var_lib_t -l #{mcs_level} -R #{home_dir}/[^.]* #{home_dir}/.tmp/* ]
         rescue ArgumentError
             puts "Warning: #{home_dir} is not owned by #{user} - #{$!}"
         end

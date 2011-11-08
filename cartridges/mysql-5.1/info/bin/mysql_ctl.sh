@@ -11,7 +11,7 @@ do
     . $f
 done
 
-export STOPTIMEOUT=6
+export STOPTIMEOUT=10
 
 if whoami | grep -q root
 then
@@ -24,24 +24,46 @@ fi
 
 MYSQL_DIR="$OPENSHIFT_HOMEDIR/mysql-5.1/"
 
-start() {
-    /usr/bin/mysqld_safe --defaults-file=$MYSQL_DIR/etc/my.cnf >/dev/null 2>&1 &
+isrunning() {
+    if [ -f $MYSQL_DIR/pid/mysql.pid ]; then
+        mysql_pid=`$MYSQL_DIR/pid/mysql.pid 2> /dev/null`
+        if `ps --pid $mysql_pid > /dev/null 2>&1` || `pgrep mysqld_safe > /dev/null 2>&1`
+        then
+            return 0
+        fi
+    fi
+    return 1
 }
 
-stop(){
+start() {
+	if ! isrunning
+    then
+        /usr/bin/mysqld_safe --defaults-file=$MYSQL_DIR/etc/my.cnf >/dev/null 2>&1 &
+    else
+        echo "Mysql already running" 1>&2
+    fi
+}
+
+stop() {
     if [ -f $MYSQL_DIR/pid/mysql.pid ]; then
-        /bin/kill $( /bin/cat $MYSQL_DIR/pid/mysql.pid )
+    	pid=$( /bin/cat $MYSQL_DIR/pid/mysql.pid )
+        /bin/kill $pid
         ret=$?
         if [ $ret -eq 0 ]; then
             TIMEOUT="$STOPTIMEOUT"
             while [ $TIMEOUT -gt 0 ] && [ -f "$MYSQL_DIR/pid/mysql.pid" ]; do
-                /bin/kill -0 "$( /bin/cat $MYSQL_DIR/pid/mysql.pid )" >/dev/null 2>&1 || break
+                /bin/kill -0 "$pid" >/dev/null 2>&1 || break
                 sleep 1
                 let TIMEOUT=${TIMEOUT}-1
             done
         fi
     else
-        echo "Mysql already stopped"
+        if `pgrep mysqld_safe > /dev/null 2>&1`
+        then
+        	echo "Warning: Mysql process exists without a pid file.  Use force-stop to kill."
+        else
+            echo "Mysql already stopped" 1>&2
+        fi
     fi
 }
 

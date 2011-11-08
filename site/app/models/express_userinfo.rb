@@ -23,26 +23,29 @@ class ExpressUserinfo
   def establish
     data = {:rhlogin => @rhlogin}
     json_data = ActiveSupport::JSON.encode(data)
-    http_post @@userinfo_url, json_data do |response|
-      Rails.logger.debug("response received from api : #{response.inspect}")
-      #set messages
-      @messages = response['messages']
-      #test exit code for success/failure
-      if response['exit_code'] == 0
-        Rails.logger.debug("success! response")
-        #success! > set attributes
-        data = JSON.parse response['data']
-        @app_info = data['app_info']
-        data['user_info'].each do |key, value|
-          if ['uuid', 'namespace', 'rhc_domain', 'ssh_key'].include? key
-            send("#{key}=", value)
-          end #end unless
-        end #end userinfo block
-      else
-        #failure! boo
-        false
-      end #end if
-    end #end response block
+    begin
+      http_post @@userinfo_url, json_data, true do |response|
+        Rails.logger.debug("response received from api : #{response.inspect}")
+        #set messages
+        @messages = response['messages']
+        #test exit code for success/failure
+        if response['exit_code'] == 0
+          Rails.logger.debug("success! response")
+          #success! > set attributes
+          data = JSON.parse response['data']
+          @app_info = data['app_info']
+          data['user_info'].each do |key, value|
+            if ['uuid', 'namespace', 'rhc_domain', 'ssh_key'].include? key
+              send("#{key}=", value)
+            end #end unless
+          end #end userinfo block
+        else
+          errors.add(:base, response['result'])
+        end #end if
+      end #end response block
+    rescue Exception => e
+      errors.add(:base, I18n.t(:unknown)) if errors[:base].empty?
+    end 
   end #end function
-  
+
 end

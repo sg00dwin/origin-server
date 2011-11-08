@@ -100,6 +100,7 @@ RedHatCloud::Application.routes.draw do
               :as => "express_apps",
               :only => [:new, :create]
         
+    match 'express_app_delete' => 'express_app#destroy', :via => [:post]
     match 'control_panel' => 'control_panel#index', :as => 'control_panel'
     match 'dashboard' => 'control_panel#index', :as => 'dashboard'
 
