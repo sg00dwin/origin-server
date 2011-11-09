@@ -1,8 +1,12 @@
+/* DO NOT MODIFY. This file was compiled Wed, 09 Nov 2011 21:42:50 GMT from
+ * /home/aboone/Source/li/site/app/coffeescripts/form.coffee
+ */
+
 (function() {
   var $;
   $ = jQuery;
   $(function() {
-    var change, close_btn, close_dialog, dialogs, login_complete, open_dialog, registration_complete, reset, reset_password_complete, signin, signup;
+    var change, close_btn, close_dialog, dialogs, login_complete, open_dialog, registration_complete, reset, reset_password_complete, signin, signup, start_spinner;
     $.validator.addMethod("aws_account", (function(value) {
       return /^[\d]{4}-[\d]{4}-[\d]{4}$/.test(value);
     }), "Account numbers should be a 12-digit number separated by dashes. Ex: 1234-5678-9000");
@@ -99,6 +103,7 @@
     });
     login_complete = function(xhr, status) {
       var $err_div, json;
+      ($(this)).spin(false);
       json = $.parseJSON(status.responseText);
       console.log(json);
       $(this).parent().find('div.message.error').remove();
@@ -117,6 +122,7 @@
     };
     registration_complete = function(xhr, status) {
       var $err_div, form, json, messages;
+      ($(this)).spin(false);
       form = $(this);
       json = $.parseJSON(status.responseText);
       console.log("Reg complete, got JSON", json);
@@ -139,14 +145,20 @@
     };
     reset_password_complete = function(xhr, status) {
       var $div, form, json;
+      ($(this)).spin(false);
       form = $(this);
       json = $.parseJSON(status.responseText);
       console.log("Reset password complete, got JSON", json);
       $(this).parent().find('div.message').remove();
       return $div = $('<div>').addClass("message " + json.status).text(json.message).insertBefore(this);
     };
+    start_spinner = function(form) {
+      ($(form)).spin();
+      return $(form).ajaxSubmit();
+    };
     $.each([signin, $('#login-form')], function(index, element) {
       return element.find('form').bind('ajax:complete', login_complete).validate({
+        submitHandler: start_spinner,
         rules: {
           "login": {
             required: true
@@ -159,6 +171,7 @@
     });
     $.each([signup, $('#new-user')], function(index, element) {
       return element.find('form').bind('ajax:complete', registration_complete).validate({
+        submitHandler: start_spinner,
         rules: {
           "web_user[email_address]": {
             required: true,
@@ -176,6 +189,7 @@
       });
     });
     change.find('form').bind('ajax:complete', reset_password_complete).validate({
+      submitHandler: start_spinner,
       rules: {
         "old_password": {
           required: true
@@ -191,6 +205,7 @@
       }
     });
     return reset.find('form').bind('ajax:complete', reset_password_complete).validate({
+      submitHandler: start_spinner,
       rules: {
         "email": {
           required: true,
