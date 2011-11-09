@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.81.10
+Version:   0.81.11
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -233,6 +233,9 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 %{_initddir}/sauce-connect
 
 %changelog
+* Wed Nov 09 2011 Dan McPherson <dmcphers@redhat.com> 0.81.11-1
+- Adding sauce connect service script (mhicks@redhat.com)
+
 * Tue Nov 08 2011 Alex Boone <aboone@redhat.com> 0.81.10-1
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
   (tkramer@redhat.com)
