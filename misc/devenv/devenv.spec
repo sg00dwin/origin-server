@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.81.10
+Version:   0.81.13
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -93,6 +93,10 @@ rm -rf %{buildroot}
 gem install ffi -v 1.0.9
 gem install selenium-webdriver
 gem install headless
+
+# Install the Sauce Labs gems
+gem install sauce
+gem install zipruby
 
 # Move over all configs and scripts
 cp -rf %{devenvdir}/etc/* %{_sysconfdir}
@@ -230,8 +234,18 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 %{devenvdir}
 %{_initddir}/libra-broker
 %{_initddir}/libra-site
+%{_initddir}/sauce-connect
 
 %changelog
+* Wed Nov 09 2011 Dan McPherson <dmcphers@redhat.com> 0.81.13-1
+- 
+
+* Wed Nov 09 2011 Dan McPherson <dmcphers@redhat.com> 0.81.12-1
+- Couple more sauce components needed (mhicks@redhat.com)
+
+* Wed Nov 09 2011 Dan McPherson <dmcphers@redhat.com> 0.81.11-1
+- Adding sauce connect service script (mhicks@redhat.com)
+
 * Tue Nov 08 2011 Alex Boone <aboone@redhat.com> 0.81.10-1
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
   (tkramer@redhat.com)

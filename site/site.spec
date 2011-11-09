@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.81.6
+Version:   0.81.7
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -68,6 +68,10 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Wed Nov 09 2011 Dan McPherson <dmcphers@redhat.com> 0.81.7-1
+- Added spinners to login, signup, password change, and reset forms
+  (fotios@redhat.com)
+
 * Tue Nov 08 2011 Alex Boone <aboone@redhat.com> 0.81.6-1
 - Fix bug 751981 - reload apps after a domain change (aboone@redhat.com)
 - Fix delete dialogs not hiding when finished (edirsh@redhat.com)

@@ -4,7 +4,7 @@ BUILD BASICS:
 ============
 cvs -d :gserver:cvs.devel.redhat.com:/cvs/dist co $pkg
 cd $pkg/RHEL-6_1-LIBRA
-make tag
+make tag    # if this is right after the first import, this might fail. Just move onto the next step if that happens.
 make build
 
 Import a new package
