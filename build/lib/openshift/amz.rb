@@ -104,7 +104,10 @@ module OpenShift
           status = instance.status
           return status
         rescue Exception => e
-          raise if index == 10
+          if index == 10
+            instance.terminate
+            raise
+          end
           log.info "Error getting status(retrying): #{e.message}"
           sleep 30
         end
@@ -136,6 +139,10 @@ module OpenShift
         end
         break if instance_status(instance) == :terminated
         log.info "Instance isn't terminated yet... retrying"
+      end
+      if instance_status(instance) != :terminated
+        log.info "Failed to terminate.  Calling stop instead."
+        instance.stop
       end
     end
 
