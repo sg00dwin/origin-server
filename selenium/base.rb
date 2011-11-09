@@ -100,8 +100,10 @@ module OpenShift
       find_element(:xpath,"#{form_path}//input[@id='pwd_input']").send_keys(pwd)
       submit.click()
 
-      wait_for_ajax(10,'Timed out waiting for AJAX to return')
-      check_element_displayed(:xpath, ".//a[@href='/app/logout']")
+      wait = Selenium::WebDriver::Wait.new(:timeout => 10, :message => "Timed out waiting for logged in page") # seconds
+      wait.until{
+        @driver.find_element(:xpath, ".//a[@href='/app/logout']")
+      }
     end
 
     def wait_for_ajax(timeout = 10, message = nil)
