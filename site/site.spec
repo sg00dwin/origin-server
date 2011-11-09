@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.81.8
+Version:   0.81.9
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -68,6 +68,14 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Wed Nov 09 2011 Dan McPherson <dmcphers@redhat.com> 0.81.9-1
+- Remove logging from javascripts as they were causing errors in IE Also
+  checking in generated scripts as barista doesn't seem to be working
+  consistently on the devenvs (edirsh@redhat.com)
+- Remove audio detection from modernizr as IE9 doesn't like it
+  (edirsh@redhat.com)
+- Bug 751978 - round two. (edirsh@redhat.com)
+
 * Wed Nov 09 2011 Dan McPherson <dmcphers@redhat.com> 0.81.8-1
 - Compiled javascript for 0168cbd (aboone@redhat.com)
 
