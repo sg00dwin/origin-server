@@ -94,6 +94,10 @@ gem install ffi -v 1.0.9
 gem install selenium-webdriver
 gem install headless
 
+# Install the Sauce Labs gems
+gem install sauce
+gem install zipruby
+
 # Move over all configs and scripts
 cp -rf %{devenvdir}/etc/* %{_sysconfdir}
 cp -rf %{devenvdir}/bin/* %{_bindir}
