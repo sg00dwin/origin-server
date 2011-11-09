@@ -2217,28 +2217,34 @@ li.captcha {
   overflow: hidden;
   *zoom: 1;
 }
-/* line 1389, ../../app/stylesheets/partials/_page.scss */
-.control_panel .main .content #app_list_container li header {
-  float: left;
-  width: 6em;
+/* line 1388, ../../app/stylesheets/partials/_page.scss */
+.control_panel .main .content #app_list_container li {
+  overflow: hidden;
+  *zoom: 1;
 }
-/* line 1393, ../../app/stylesheets/partials/_page.scss */
+/* line 1390, ../../app/stylesheets/partials/_page.scss */
+.control_panel .main .content #app_list_container li header {
+  width: 10em;
+}
+/* line 1391, ../../app/stylesheets/partials/_page.scss */
 .control_panel .main .content #app_list_container li h1 {
+  text-align: right;
   font-size: 1em;
   font-weight: bold;
   color: black;
   text-transform: none;
+  margin: 0;
 }
 /* line 1399, ../../app/stylesheets/partials/_page.scss */
 .control_panel .main .content #app_list_container li dl {
   float: left;
-  width: 33em;
-  margin: .5em 0 2em;
+  width: 43em;
+  margin: 0 0 2em;
 }
 /* line 1404, ../../app/stylesheets/partials/_page.scss */
 .control_panel .main .content #app_list_container li dt {
   color: #999;
-  width: 6em;
+  width: 10em;
   float: left;
   text-align: right;
   margin-right: 1em;
@@ -2262,6 +2268,10 @@ li.captcha {
   width: 100%;
 }
 /* line 1428, ../../app/stylesheets/partials/_page.scss */
+.control_panel .main #app_form select {
+  margin: 0.1em;
+}
+/* line 1429, ../../app/stylesheets/partials/_page.scss */
 .control_panel .main #app_form li, .control_panel .main #app_form fieldset.buttons {
   display: -moz-inline-box;
   -moz-box-orient: vertical;
@@ -2270,68 +2280,69 @@ li.captcha {
   *vertical-align: auto;
   overflow: hidden;
   *zoom: 1;
+  vertical-align: top;
 }
 /* line 7, ../../../../../../../../usr/lib/ruby/gems/1.8/gems/compass-0.11.5/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
 .control_panel .main #app_form li, .control_panel .main #app_form fieldset.buttons {
   *display: inline;
 }
-/* line 1432, ../../app/stylesheets/partials/_page.scss */
+/* line 1434, ../../app/stylesheets/partials/_page.scss */
 .control_panel .main #app_form li label, .control_panel .main #app_form fieldset.buttons label {
   display: inline;
 }
-/* line 1435, ../../app/stylesheets/partials/_page.scss */
+/* line 1437, ../../app/stylesheets/partials/_page.scss */
 .control_panel .main #app_form li input, .control_panel .main #app_form fieldset.buttons input {
   display: inline;
 }
-/* line 1439, ../../app/stylesheets/partials/_page.scss */
+/* line 1441, ../../app/stylesheets/partials/_page.scss */
 .control_panel .main #app_form li.string {
   width: 24em;
 }
-/* line 1440, ../../app/stylesheets/partials/_page.scss */
+/* line 1442, ../../app/stylesheets/partials/_page.scss */
 .control_panel .main #app_form li.select {
   width: 8em;
 }
-/* line 1441, ../../app/stylesheets/partials/_page.scss */
+/* line 1443, ../../app/stylesheets/partials/_page.scss */
 .control_panel .main #app_form fieldset.buttons {
   width: 7em;
 }
-/* line 1443, ../../app/stylesheets/partials/_page.scss */
+/* line 1445, ../../app/stylesheets/partials/_page.scss */
 .control_panel .main #app_form fieldset.buttons input {
   width: 7em;
-  margin-top: 1.5em;
+  margin-top: 1.1em;
 }
-/* line 1451, ../../app/stylesheets/partials/_page.scss */
+/* line 1453, ../../app/stylesheets/partials/_page.scss */
 .control_panel .main #quote blockquote {
   color: black;
 }
 
-/* line 1457, ../../app/stylesheets/partials/_page.scss */
+/* line 1459, ../../app/stylesheets/partials/_page.scss */
 .control_panel form {
   width: 23.5em;
 }
-/* line 1458, ../../app/stylesheets/partials/_page.scss */
+/* line 1460, ../../app/stylesheets/partials/_page.scss */
 .control_panel textarea {
   height: 5em;
 }
-/* line 1461, ../../app/stylesheets/partials/_page.scss */
+/* line 1463, ../../app/stylesheets/partials/_page.scss */
 .control_panel input.button {
   background-color: #0093d9;
   border: none;
   color: white;
   text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3);
 }
-/* line 1467, ../../app/stylesheets/partials/_page.scss */
+/* line 1469, ../../app/stylesheets/partials/_page.scss */
 .control_panel label {
   font-family: Overpass, "Liberation Sans", Arial, "Helvetica Neue", Helvetica, sans-serif;
   text-transform: uppercase;
   font-size: .9em;
 }
-/* line 1472, ../../app/stylesheets/partials/_page.scss */
+/* line 1474, ../../app/stylesheets/partials/_page.scss */
 .control_panel .os-dialog form {
   margin: 0 auto;
 }
 
-/* line 1476, ../../app/stylesheets/partials/_page.scss */
+/* line 1478, ../../app/stylesheets/partials/_page.scss */
 .delete_button {
   background: #cc0000;
   color: white;
@@ -2341,7 +2352,7 @@ li.captcha {
   border: none;
 }
 
-/* line 1484, ../../app/stylesheets/partials/_page.scss */
+/* line 1486, ../../app/stylesheets/partials/_page.scss */
 .cssgradients.multiplebgs .control_panel .main {
   background-image: url("/app/images/transparent_cloud.png"), -webkit-gradient(radial, 50% 100%, 0, 50% 100%, 100, color-stop(0%, #0093d9), color-stop(100%, #002e53));
   background-image: url("/app/images/transparent_cloud.png"), -webkit-radial-gradient(center bottom, circle farthest-side, #0093d9, #002e53);
@@ -2353,7 +2364,7 @@ li.captcha {
   background-position: center 8em, 0 0;
 }
 
-/* line 1488, ../../app/stylesheets/partials/_page.scss */
+/* line 1490, ../../app/stylesheets/partials/_page.scss */
 .partner #join {
   background: #a4999b;
   color: black;
@@ -2366,12 +2377,12 @@ li.captcha {
   -khtml-border-radius: 1em;
   border-radius: 1em;
 }
-/* line 1495, ../../app/stylesheets/partials/_page.scss */
+/* line 1497, ../../app/stylesheets/partials/_page.scss */
 .partner #join p {
   margin: 0;
 }
 
-/* line 1498, ../../app/stylesheets/partials/_page.scss */
+/* line 1500, ../../app/stylesheets/partials/_page.scss */
 .ie7 li.password {
   float: left;
 }

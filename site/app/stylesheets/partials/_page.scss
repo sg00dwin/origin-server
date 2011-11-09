@@ -1386,24 +1386,24 @@ li.captcha {
         @include clearfix;
       }
       li {
-        header { 
-          float: left; 
-          width: 6em;
-        }
+        @include clearfix;
+        header { width: 10em; }
         h1 {
+          text-align: right;
           font-size: 1em;
           font-weight: bold;
           color: black;
           text-transform: none;
+          margin: 0;
         }
         dl { 
           float: left; 
-          width: 33em;
-          margin: .5em 0 2em;
+          width: 43em;
+          margin: 0 0 2em;
         }
         dt {
           color: #999;
-          width: 6em;
+          width: 10em;
           float: left;
           text-align: right;
           margin-right: 1em;
@@ -1425,9 +1425,11 @@ li.captcha {
   
   #app_form {
     form { width: 100%; }
+    select { margin: 0.1em; }
     li, fieldset.buttons {
       @include inline-block;
       @include clearfix;
+      vertical-align: top;
 
       label {
         display: inline;
@@ -1442,7 +1444,7 @@ li.captcha {
       width: 7em; 
       input { 
         width: 7em;
-        margin-top: 1.5em;
+        margin-top: 1.1em;
       }
     }
 

@@ -12,6 +12,8 @@ require 'openshift/nurture.rb'
 require 'openshift/util.rb'
 
 module Libra
+  
+  BUILDER_SUFFIX='bldr'
 
   def self.client_debug(str)
     debug_io = Thread.current[:debugIO]
@@ -147,8 +149,21 @@ module Libra
       server = Server.new(app_info['server_identity'])
 
       Libra.logger_debug "DEBUG: Performing action '#{action}' on node '#{server.name}'"
-      if action == 'deconfigure'
+      case action
+      when 'deconfigure'
         deconfigure_app(app_info, app_name, user, server)
+      when 'add-alias'
+        user.add_alias(app_info, app_name, optional_args)
+        begin
+          server_execute_direct(app_info['framework'], action, app_name, user, server, app_info, true, optional_args)
+        rescue Exception => e
+          server_execute_direct(app_info['framework'], 'remove-alias', app_name, user, server, app_info, true, optional_args)
+          user.remove_alias(app_info, app_name, optional_args)
+          raise
+        end
+      when 'remove-alias'
+        server_execute_direct(app_info['framework'], action, app_name, user, server, app_info, true, optional_args)
+        user.remove_alias(app_info, app_name, optional_args)
       else
         server_execute_direct(app_info['framework'], action, app_name, user, server, app_info, true, optional_args)
       end
@@ -236,6 +251,11 @@ module Libra
         server_execute_direct('embedded/' + embedded_framework, 'move', app_name, user, server, app_info, false)
       end
     end
+    if app_info.has_key?('aliases')
+      app_info['aliases'].each do |server_alias|
+        server_execute_direct(app_info['framework'], 'add-alias', app_name, user, server, app_info, false, server_alias)
+      end
+    end
   end
   
   def self.get_user(rhlogin)
@@ -256,6 +276,21 @@ module Libra
 
     if app_info['embedded'][framework]
       raise UserException.new(101), "#{framework} already embedded in '#{app_name}'", caller[0..5]
+    end
+    
+    if framework.start_with?('jenkins-')
+      user.apps.each_key do |appname|
+        if appname == "#{app_name}#{BUILDER_SUFFIX}"
+          Libra.client_message "
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+WARNING: You already have an app created named '#{app_name}#{BUILDER_SUFFIX}'.  Be aware that
+if you are building this app using Jenkins it will destroy '#{app_name}#{BUILDER_SUFFIX}'.  This
+may be ok if '#{app_name}#{BUILDER_SUFFIX}' was the builder of a previously destroyed app.
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+"
+          break;
+        end
+      end
     end
 
 
@@ -323,11 +358,35 @@ module Libra
     
     #TODO would be nice to move the unique flag to be specified on the cart
     type = Libra::Util.get_cart_framework(framework)
+    apps = user.apps
     if type == 'jenkins'
       user.apps.each do |appname, app|
         if Libra::Util.get_cart_framework(app['framework']) == 'jenkins'
           raise UserException.new(115), "A jenkins application named '#{appname}' in namespace '#{user.namespace}' already exists.  You can only have 1 jenkins application per account.", caller[0..5]
         end
+      end
+    end
+    
+    if app_name =~ /.+#{BUILDER_SUFFIX}$/
+      Libra.client_message "
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+WARNING: The '#{BUILDER_SUFFIX}' suffix is used by the CI system (Jenkins) for its slave 
+builders.  If you create an app of this name you can't also create an app 
+called '#{app_name[0..-(BUILDER_SUFFIX.length+1)]}' and build that app in Jenkins without conflicts.
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+"
+    end
+
+    apps.each_key do |appname|
+      if appname == "#{app_name}#{BUILDER_SUFFIX}"
+        Libra.client_message "
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+WARNING: You already have an app created named '#{app_name}#{BUILDER_SUFFIX}'.  Be aware that
+if you build '#{app_name}' using Jenkins it will destroy '#{app_name}#{BUILDER_SUFFIX}'.  This
+may be ok if '#{app_name}#{BUILDER_SUFFIX}' was the builder of a previously destroyed app.
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+"
+        break;
       end
     end
     

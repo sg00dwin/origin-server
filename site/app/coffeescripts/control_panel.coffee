@@ -28,6 +28,15 @@ $ ->
         ($ '#express_domain_dom_action').val('update')
         ($ '.ssh-form', '#ssh_container').show()
         ($ '.ssh-placeholder', '#ssh_container').remove()
+        # show app form too
+        ($ '.app-form', '#app_form_container').show()
+        ($ '.app-placeholder', '#app_form_container').hide()
+      else
+        # reload the apps container
+        ($ '#app_list_container').spin()
+        $.get '/app/control_panel/apps', {}, (resp) ->
+          ($ '#app_list_container').html(resp)
+          ($ '#apps .popup').osPopup dialog: cpDialog, modal: true, keepindom: true 
     else
       # Error
       ($ '.os-dialog-container', cpDialog).prepend """
@@ -58,9 +67,9 @@ $ ->
       # update app table
       ($ '#app_list_container').html event.osEventData.app_table
       # repopup all the delete forms
-      ($ '.popup', this).osPopup dialog: cpDialog, modal: true, keepindom: true
+      ($ '.popup', this).osPopup dialog: cpDialog, modal: true
       # hide any current popups that are showing
-      ($ '.popup', this).osPopup 'unpop'
+      cpDialog.osDialog 'hide'
       # hide or show form depending on app limit
       if event.osEventData.app_limit_reached
         ($ '.app-form', this).hide()

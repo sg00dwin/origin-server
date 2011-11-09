@@ -1,3 +1,7 @@
+/* DO NOT MODIFY. This file was compiled Tue, 08 Nov 2011 20:28:39 GMT from
+ * /home/aboone/Source/li/site/app/coffeescripts/control_panel.coffee
+ */
+
 (function() {
   var $;
   $ = jQuery;
@@ -30,7 +34,19 @@
           if (event.osEventData.action === 'create') {
             ($('#express_domain_dom_action')).val('update');
             ($('.ssh-form', '#ssh_container')).show();
-            return ($('.ssh-placeholder', '#ssh_container')).remove();
+            ($('.ssh-placeholder', '#ssh_container')).remove();
+            ($('.app-form', '#app_form_container')).show();
+            return ($('.app-placeholder', '#app_form_container')).hide();
+          } else {
+            ($('#app_list_container')).spin();
+            return $.get('/app/control_panel/apps', {}, function(resp) {
+              ($('#app_list_container')).html(resp);
+              return ($('#apps .popup')).osPopup({
+                dialog: cpDialog,
+                modal: true,
+                keepindom: true
+              });
+            });
           }
         } else {
           return ($('.os-dialog-container', cpDialog)).prepend("<div class=\"error message\">\n  " + event.osEventData + "\n</div>");
