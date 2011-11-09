@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.81.10
+Version:   0.81.11
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -68,6 +68,9 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Wed Nov 09 2011 Dan McPherson <dmcphers@redhat.com> 0.81.11-1
+- bug 752341 (dmcphers@redhat.com)
+
 * Tue Nov 08 2011 Dan McPherson <dmcphers@redhat.com> 0.81.10-1
 - move maven build size to build.sh env var (dmcphers@redhat.com)
 
