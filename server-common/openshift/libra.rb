@@ -149,8 +149,21 @@ module Libra
       server = Server.new(app_info['server_identity'])
 
       Libra.logger_debug "DEBUG: Performing action '#{action}' on node '#{server.name}'"
-      if action == 'deconfigure'
+      case action
+      when 'deconfigure'
         deconfigure_app(app_info, app_name, user, server)
+      when 'add-alias'
+        user.add_alias(app_info, app_name, optional_args)
+        begin
+          server_execute_direct(app_info['framework'], action, app_name, user, server, app_info, true, optional_args)
+        rescue Exception => e
+          server_execute_direct(app_info['framework'], 'remove-alias', app_name, user, server, app_info, true, optional_args)
+          user.remove_alias(app_info, app_name, optional_args)
+          raise
+        end
+      when 'remove-alias'
+        server_execute_direct(app_info['framework'], action, app_name, user, server, app_info, true, optional_args)
+        user.remove_alias(app_info, app_name, optional_args)
       else
         server_execute_direct(app_info['framework'], action, app_name, user, server, app_info, true, optional_args)
       end
@@ -236,6 +249,11 @@ module Libra
       embedded.each_key do |embedded_framework|
         Libra.logger_debug "DEBUG: Performing cartridge level move for embedded #{embedded_framework} for '#{app_name}' on #{server.name}"
         server_execute_direct('embedded/' + embedded_framework, 'move', app_name, user, server, app_info, false)
+      end
+    end
+    if app_info.has_key?('aliases')
+      app_info['aliases'].each do |server_alias|
+        server_execute_direct(app_info['framework'], 'add-alias', app_name, user, server, app_info, false, server_alias)
       end
     end
   end

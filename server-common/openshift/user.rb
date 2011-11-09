@@ -380,6 +380,21 @@ module Libra
       update_app(h, app_name)
       h
     end
+    
+    def add_alias(app, app_name, server_alias)
+      app['aliases'] = [] if !app['aliases']
+      aliases = app['aliases']
+      unless aliases.include?(server_alias)
+        aliases.push(server_alias)
+        update_app(app, app_name)
+      end
+    end
+    
+    def remove_alias(app, app_name, server_alias)
+      if app['aliases'] && app['aliases'].delete(server_alias)
+        update_app(app, app_name)
+      end
+    end
 
     #
     # Returns all the user S3 JSON objects
