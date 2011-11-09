@@ -1,0 +1,9 @@
+%header
+  %h2
+    = "Are you sure you want to delete #{app_name}?"
+%p
+  This will delete all the code and data associated with the app, and cannot be undone, so make sure this is something you really want to do!
+= semantic_form_for @app, :namespace => namespace, :remote => true, :url => express_app_delete_path do |form|
+  = form.input :app_name, :as => :hidden, :value => app_name
+  = form.input :cartridge, :as => :hidden, :value => app['framework']
+  = form.submit :value => "Delete it already!", :class => 'delete_button'

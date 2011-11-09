@@ -6,15 +6,15 @@ do
     . $f
 done
 
-# stop
-stop_app.sh 1>&2
-
 # Run pre-dump dumps
 for cmd in `awk 'BEGIN { for (a in ENVIRON) if (a ~ /_DUMP$/) print ENVIRON[a] }'`
 do
     echo "Running extra dump: $(/bin/basename $cmd)" 1>&2
     $cmd
 done
+
+# stop
+stop_app.sh 1>&2
 
 # Run tar, saving to stdout
 cd ~

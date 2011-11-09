@@ -100,8 +100,10 @@ RedHatCloud::Application.routes.draw do
               :as => "express_apps",
               :only => [:new, :create]
         
+    match 'express_app_delete' => 'express_app#destroy', :via => [:post]
     match 'control_panel' => 'control_panel#index', :as => 'control_panel'
     match 'dashboard' => 'control_panel#index', :as => 'dashboard'
+    match 'control_panel/apps' => 'express_app#list', :as => 'list_apps'
 
     # Sample resource route with options:
     #   resources :products do

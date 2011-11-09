@@ -66,7 +66,7 @@ rsync UPSTREAM_SSH:~/.m2/ ~/.m2/
 # Build setup and run user pre_build and build
 . ci_build.sh
 
-export MAVEN_OPTS="-Xmx396m"
+export MAVEN_OPTS="$OPENSHIFT_MAVEN_XMX"
 mvn --global-settings $OPENSHIFT_MAVEN_MIRROR --version
 mvn --global-settings $OPENSHIFT_MAVEN_MIRROR clean package -Popenshift -DskipTests
 

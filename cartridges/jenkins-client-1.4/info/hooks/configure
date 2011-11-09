@@ -108,6 +108,14 @@ else
         client_result "Associated with existing job '${JOB_NAME}' in Jenkins server."
         client_result "If this was not intended you can remove the jenkins client, remove or rename "
         client_result "the existing job, and re-add the jenkins client to get a new job created."
+        bldr_url="${JENKINS_URL}computer/${OPENSHIFT_APP_NAME}bldr/"
+        status_code=`curl -s -w %{http_code} --output /dev/null $bldr_url`
+        if [ "$status_code" == "200" ]
+        then
+            client_result "In addition we found an existing builder which you might also want"
+            client_result "to delete: ${bldr_url}"
+        fi
+        client_result ""
     else
         # An error occurred enabling existing job
         client_error ""

@@ -4,6 +4,9 @@ body {
   margin: 0;
   padding: 0;
   background-color: $background-color;
+}
+
+body.home {
   min-width: 52em;
 }
 
@@ -190,9 +193,6 @@ a.more {
     weight: bold;
   }
   text-align: center;
-  border: .2em solid;
-  @include border-radius(2em);
-  
   p { margin: 0; padding: 0; }
   
   &.error {
@@ -832,7 +832,7 @@ body.product.overview { min-width: 55em; }
 
 #product_overview .info {
   margin: 0; padding: 3em 0 12em;
-  background: $overview_bg url('/app/images/transparent_cloud.png') repeat-x center center;
+  @include cloud_bg_solid;
 
   ul {
     list-style-type: none;
@@ -846,12 +846,7 @@ body.product.overview { min-width: 55em; }
 #product_overview.authorized .info { padding-bottom: 2em; }
 
 .multiplebgs.cssgradients #product_overview .info {
-  @include background-image(
-    url('/app/images/transparent_cloud.png'),
-    radial-gradient(center bottom, circle farthest-side, $overview_highlight, $overview_bg)
-  );
-  background-repeat: repeat-x, no-repeat;
-  background-position: center center, 0 0;
+  @include cloud_bg_gradient;
 }
 
 .product_box {
@@ -1099,7 +1094,7 @@ body.product.overview { min-width: 55em; }
 
 .features .main {
   margin: 0; padding: 5em 0;
-  background: $overview_bg url('/app/images/transparent_cloud.png') repeat-x center center;
+  @include cloud_bg_solid;
 
   .content { padding-left: 5em; }
 
@@ -1244,12 +1239,7 @@ body.product.overview { min-width: 55em; }
 }
 
 .multiplebgs.cssgradients .features .main {
-  @include background-image(
-    url('/app/images/transparent_cloud.png'),
-    radial-gradient(center bottom, circle farthest-side, $overview_highlight, $overview_bg)
-  );
-  background-repeat: repeat-x, no-repeat;
-  background-position: center center, 0 0;
+  @include cloud_bg_gradient;
 }
 
 /* End service pages */
@@ -1268,132 +1258,233 @@ li.captcha {
 /* End login page */
 
 /* Dashboard page */
-.control_panel {
-  
-  form {
-    margin: 0 3em;
-  }
-  
-  .dialog form {
-    margin: 0 auto;
-  }
-  
-  dd, dt {
-    margin: .5em;
-  }
-  
-  dt { font-weight: bold; }
-  
-  a.button {
-    color: white;
-    background-color: $background_color;
-    font-size: 1.1em;
-    cursor: pointer;
-  }
-  
-  #spinner {
-    background: black;
-    color: white;
-    @include border-radius(1em);
-    @include box-shadow($shadow-color 0 0 3em);
-    font: {
-      size: 1.5em;
-      family: Overpass, $base-font-family;
-    }
-    padding: 20px;
-    position: fixed;
-    top: 20%;
-    left: 20%;
-    right: 20%;
-    z-index: 3000;
-    text-align: center;
-    a {
-      color: white;
-      text-decoration: underline;
-    }
-    a.close {
-      @include close_button;
-    }
-    #spinner-text {
-      margin: auto 3em;
-    }
-    #spinning {
-      width: 50%;
-      height: 23px;
-      margin: 10px auto;
-      background: url('/app/images/spinner-bg.png') repeat-x;
-      background-position: center bottom;
-      display: block;
-    }
-    &.stop-spinning {
-      font-size: 1.2em;
-      bottom: 20%;
-      overflow: auto;
-      #spinning { display:none; }
-      em {
-        font-size: 1.1em;
-        font-color: $background-color;
-        font-style: normal;
-      }
-    }
-    ul {
-      margin: 0; padding: 0;
-      list-style-type: none;
-      li {
-        @include inline-block;
-        width: 45%;
-        margin: 0 10px; padding: 0;
-        a {
-          @include inline-block;
-          color: white;
-          text-decoration: none;
-        }
-        figure { margin: 0;}
-      }
-    }
+.control_panel .main {
+  @include cloud_bg_solid;
+  position: relative;  
+  a {
+    color: $overview_highlight;
   }
 
-}
-
-.multiplebgs #spinner #spinning {
-  @include background-image(linear-gradient(left, black, rgba(0, 0, 0, 0), black), url('/app/images/spinner-bg.png'));
-  background-repeat: no-repeat, repeat-x;
-  background-position: center center, bottom center;
-}
-
-/* End dashboard page */
-
-/* Start partner page */
-
-ul.partners {
-  margin: 0;
-  padding: 0;
-
-  li {
-    @include inline-block;
-    vertical-align: top;
-    width: 15em;
-    padding: 2em .5em;
-  }
-}
-
-.partner.show {
-  .content > div {
-    margin: 1em 0;
-  }
-  
-  #partner_overview {
-    font-size: .8em;
-    border: 0.1em solid #ececec;
-    border-left: 0; border-right: 0;
+  > header {
+    position: absolute;
+    top: 4em;
+    width: 48em;
     padding: 1em;
+    left: 50%;
+    margin-left: -26em; 
+    z-index: 10;
     
-    p { margin: 0; }
+    h1 {
+      font-size: 2em;
+      text-transform: none;
+      color: $overview_highlight;
+    }
+  }
+  .tabs {
+    ul {
+      position: absolute;
+      text-align: right;
+      width: 50em;
+      padding: 0;
+      left: 50%;
+      margin: 0 0 0 -25em;
+      top: 3em;
+      list-style-type: none;
+    }
+    li { display: inline; }
+    li a {
+      @include inline-block;
+      background: white;
+      @include border-radius(1em 1em 0 0);
+      width: 10em;
+      padding: 1em;
+      text-align: center;
+    }
+  }
+  .content {
+    font-family: Overpass, $base_font_family;
+    position: relative;
+    background: white;
+    @include border-radius(2em);
+    padding: 5em 4em 3em;
+    width: 48em;
+    margin-top: 3em;
+
+    .cp-section {
+      margin-bottom: 2.5em;
+
+      h2 {
+        margin-left: -1em;
+        text-transform: uppercase;
+      }
+    }
+
+    .intro > header {
+      @include visually-hidden;
+    }
+    
+    .intro {
+      @include clearfix;
+      padding: 2em 0 0;
+      font-family: $base_font_family;
+    }
+    #video, #resources {
+      width: 22em;
+      @include inline-block;
+      vertical-align: top;
+    }
+    #video {
+      margin-top: 1em;
+    }
+    #resources ul {
+      list-style-type: none;
+      padding: 0; margin: 0;
+      margin-left: 1em;
+    }
+    #resources li {
+      font-family: Overpass, $base_font_family;
+      font-size: 1.1em;
+      line-height: 1.4em;
+    }
+    h2.with-inline-docs {
+      float: left;
+    }
+    h2.with-inline-docs + div.inline-docs-widget {
+      float: left;
+      clear: none;
+    }
+    div.inline-docs-widget + div {
+      clear: both;
+    }
+    .inline-docs-widget {
+      font-size: 0.9em;
+      margin: 1.3em .5em 0;
+    }
+    .edit-widget {
+      .current {
+        color: black;
+        display: inline;
+      }
+      .os-popup.os-widget {
+        display: inline;
+        margin: 0 0 0 5em;
+        .popup-trigger {
+          display: inline;
+          a { color: #dc9f2e; }
+        }
+      }
+    }
+
+    // Apps
+    #app_list_container {
+      @include clearfix;
+      ul {
+        list-style-type: none;
+        margin: 0; padding: 0;
+        border-bottom: 1px solid #ececec;
+        margin-bottom: 1em;
+        @include clearfix;
+      }
+      li {
+        @include clearfix;
+        header { width: 10em; }
+        h1 {
+          text-align: right;
+          font-size: 1em;
+          font-weight: bold;
+          color: black;
+          text-transform: none;
+          margin: 0;
+        }
+        dl { 
+          float: left; 
+          width: 43em;
+          margin: 0 0 2em;
+        }
+        dt {
+          color: #999;
+          width: 10em;
+          float: left;
+          text-align: right;
+          margin-right: 1em;
+        }
+        dd.app_type {
+          text-transform: uppercase;
+        }
+        .popup-trigger {
+          float: right;
+          text-align: right;
+          margin: 0.5em 0;
+          a { color: #cc0000; }
+        }
+      }
+
+    }
+    
+  }
+  
+  #app_form {
+    form { width: 100%; }
+    select { margin: 0.1em; }
+    li, fieldset.buttons {
+      @include inline-block;
+      @include clearfix;
+      vertical-align: top;
+
+      label {
+        display: inline;
+      }
+      input {
+        display: inline;
+      }
+    }
+    li.string{ width: 24em; }
+    li.select{ width: 8em; }
+    fieldset.buttons { 
+      width: 7em; 
+      input { 
+        width: 7em;
+        margin-top: 1.1em;
+      }
+    }
+
   }
   
   #quote blockquote {
     color: black;
   }
+
+}
+.control_panel {
+  form { width: 23.5em; }
+  textarea {
+    height: 5em;
+  }
+  input.button {
+    background-color: $overview_highlight;
+    border: none;
+    color: white;
+    @include text-shadow(1px 1px 0 $shadow_color);
+  }
+  label {
+    font-family: Overpass, $base_font_family;
+    text-transform: uppercase;
+    font-size: .9em;
+  }
+  .os-dialog form {
+    margin: 0 auto;
+  }
+}
+.delete_button {
+  background: #cc0000;
+  color: white;
+  font-weight: bold;
+  @include text-shadow(1px 1px 0 $shadow_color);
+  cursor: pointer;
+  border: none;
+}
+.cssgradients.multiplebgs .control_panel .main {
+  @include cloud_bg_gradient;
 }
 
 .partner #join {

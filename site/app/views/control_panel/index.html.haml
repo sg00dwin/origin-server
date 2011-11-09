@@ -1,49 +1,103 @@
 -# file: Control Panel index
 
 - content_for :javascripts do
+  = javascript_include_tag '/app/javascripts/jquery.ui.widget.js'
+  = javascript_include_tag '/app/javascripts/widgets.js'
   = javascript_include_tag '/app/javascripts/control_panel.js'
+
 
 %section.main
   %header
     %h1
       Control Panel
   
+  -# = render :partial => 'control_panel/tabs'
+
   .content
-    %aside
-      = link_to 'Looking for OpenShift Flex?', '/flex', :class => 'more'
-      
-    %h2
-      Your domain
-    
-    #domain_form
-      = render "express_domain/#{@action}_form"
-      
-    
-    %h2
-      Your apps
-    
-    #apps
-      - if !@userinfo.app_info.nil? and @userinfo.app_info.length > 0
-        = render 'express_app/app_table', :apps => @userinfo.app_info
-      
-    - if @app
-      #app_form
-      
-        %h3 Create a new app
-      
-        = semantic_form_for @app, :remote => true do |form|
-          = form.input :app_name
-          = form.input :cartridge, :as => :select, :collection => @cartlist.list
-          = form.buttons do
-            = form.commit_button :button_html => { :class => 'button', :value => 'Create your new app' }
-          
-    - elsif !@userinfo.app_info.nil? and @userinfo.app_info.length > 0
+    #docs.intro
+      %header
+        %h1 Getting Started 
+
       %p
-        You have reached your limit of free apps.
-    
-    - else
+        Express is a free, cloud-based application platform for Java, Perl, PHP, Python, and Ruby applications delivered in a shared-hosting model. With just a few commands you’ll be able to deploy your application to the cloud. 
       %p
-        You need to create a domain first, then you can create apps!
+        Getting started is easy. Use the resources below to help you out if you need it.
+
+      #video
+        = link_to 'video/OpenShift-Express-demo', :target => '_blank' do 
+          = image_tag '/app/images/video_stills/OpenShift-Express-demo-md.png',  
+            :title => "OpenShift Express Product Tour", 
+            :alt => "OpenShift Express Product Tour"
+          %p Express Product Tour
+
+      -# = render :partial => 'control_panel/checklist'
+      
+      #resources
+        %header
+          %h2 Helpful Resources
+        %ul
+          %li
+            = link_to 'Documentation', 'http://docs.redhat.com/docs/en-US/OpenShift_Express/1.0/html/User_Guide/index.html', :target => '_blank', :class => 'external'
+          %li
+            = link_to 'Videos', 'express#videos', :target => '_blank'
+          %li
+            = link_to 'Forum', 'http://www.redhat.com/openshift/forums/express', :target => '_blank', :class => 'external'
+          %li
+            = link_to 'IRC Channel', 'http://webchat.freenode.net/?randomnick=1&channels=openshift&uio=d4', :target => '_blank', :class => 'external'
+
+    #apps.cp-section
+      %h2
+        Apps
+
+      #app_list_container
+        - unless @userinfo.app_info.blank?
+          = render 'express_app/app_table', :apps => @userinfo.app_info
+      
+      #app_form_container
+        - if @userinfo.namespace.blank?
+          .app-form{ :style => 'display:none' }
+            = render :partial => 'widgets/app_creation_widget'
+          .app-placeholder
+            You need to create a domain first, then you can create apps!
+              
+        - elsif @userinfo.app_info.length >= @max_apps
+          .app-form{ :style => 'display:none' }
+            = render :partial => 'widgets/app_creation_widget'
+          .app-placeholder
+            You have reached your limit of free apps.
+
+        - else
+          .app-form
+            = render :partial => 'widgets/app_creation_widget'
+          .app-placeholder{ :style => 'display:none' }
+            You have reached your limit of free apps.
+
+    #domains.cp-section
+      %h2.with-inline-docs
+        Domain
+
+      = render 'widgets/inline_docs', :docs => 'domains'
+
+      = render :partial => 'widgets/domain_widget'
+
+    #ssh.cp-section
+      %h2.with-inline-docs
+        SSH Public Key
+       
+      = render 'widgets/inline_docs', :docs => 'ssh'
+
+      #ssh_container
+        - if @userinfo.namespace.blank?
+          .ssh-placeholder
+            %p
+              Create a domain name first, then add your ssh key.
+          .ssh-form{:style => 'display: none'}
+            = render :partial => 'widgets/ssh_widget'
+
+        - else
+          = render :partial => 'widgets/ssh_widget'
+
+
 
     %h2
       Change Password

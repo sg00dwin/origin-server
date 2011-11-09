@@ -9,7 +9,7 @@ class ExpressApp
   include ExpressApi
   
   attr_accessor :app_name, :cartridge, :debug
-  attr_reader :health_path
+  attr_reader :health_path, :message
   
   validates_presence_of :rhlogin
   validates :app_name,  :presence => true,
@@ -49,6 +49,21 @@ class ExpressApp
       unless response['exit_code'] > 0
         data = ActiveSupport::JSON.decode response['data']
         @health_path = data['health_check_path']
+      else
+        errors.add :base, response['result']
+      end
+    end
+  end
+
+  def deconfigure
+    data = get_data
+    data[:action] = 'deconfigure'
+    json_data = ActiveSupport::JSON.encode(data)
+    http_post @@app_url, json_data do |response|
+      Rails.logger.debug "Got JSON response"
+      Rails.logger.debug response.to_yaml
+      unless response['exit_code'] > 0
+        @message = response['result']
       else
         errors.add :base, response['result']
       end

@@ -1,17 +1,14 @@
 <settings>
   <mirrors>
     <mirror>
-      <!--This sends everything else to /public -->
       <id>nexus</id>
-      <mirrorOf>*</mirrorOf>
+      <mirrorOf>central</mirrorOf>
       <url>http://mirror1.stg.rhcloud.com:80/nexus/content/groups/public</url>
     </mirror>
   </mirrors>
   <profiles>
     <profile>
       <id>nexus</id>
-      <!--Enable snapshots for the built in central repo to direct -->
-      <!--all requests to nexus via the mirror -->
       <repositories>
         <repository>
           <id>central</id>
@@ -31,7 +28,6 @@
     </profile>
   </profiles>
   <activeProfiles>
-    <!--make the profile active all the time -->
     <activeProfile>nexus</activeProfile>
   </activeProfiles>
 </settings>

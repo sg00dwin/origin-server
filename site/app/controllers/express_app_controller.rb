@@ -48,7 +48,39 @@ class ExpressAppController < ApplicationController
       format.js
     end
   end
-  
+
+  def destroy
+    app_params = params[:express_app] # Get the params we're interested in
+    app_params[:rhlogin] = session[:login]
+    app_params[:ticket] = cookies[:rh_sso]
+    app_params[:password] = ''
+    @app = ExpressApp.new app_params
+    @app.ticket = session[:ticket]
+    if @app.valid?
+      @app.deconfigure
+      if @app.errors[:base].blank?
+        @userinfo = ExpressUserinfo.new :rhlogin => session[:login],
+                                    :ticket => session[:ticket]
+        @userinfo.establish
+        # get message from the JSON
+        @message = @app.message || I18n.t('express_api.messages.app_deleted')
+        @message_type = :success
+      else
+        @message = @app.errors.full_messages.join("; ")
+        @message_type = :error
+      end
+    else
+      @message = @app.errors.full_messages.join("; ")
+      @message_type = :error
+    end
+        
+    @max_apps = Rails.configuration.express_max_apps
+    respond_to do |format|
+      format.html {flash[@message_type] = @message; redirect_to :controller => 'control_panel'}
+      format.js { render :template => "express_app/create.js" }
+    end
+  end
+
   def check_app_health
     health_url = URI.parse("http://#{app_url}/#{@app.health_path}")
     Rails.logger.debug "Health URL: #{health_url}"
@@ -70,7 +102,7 @@ class ExpressAppController < ApplicationController
         @message_type = :success
         return
       end
-      
+
       # Sleep for a bit and try again
       #sleep_time *= 2 # double sleep time
       #sleep sleep_time
@@ -81,13 +113,13 @@ class ExpressAppController < ApplicationController
     @message_type = :error
     Rails.logger.debug "Finished checking health"
   end
-  
+
   def app_url
     if @userinfo.namespace and @userinfo.rhc_domain and @app
       "#{@app.app_name}-#{@userinfo.namespace}.#{@userinfo.rhc_domain}"
     end
   end
-  
+
   def health_check
     begin
       health_url = URI.parse(params[:url])
@@ -111,4 +143,13 @@ class ExpressAppController < ApplicationController
     render :text => (ActiveSupport::JSON.encode response)
   end
 
+  def list
+    @userinfo = ExpressUserinfo.new :rhlogin => session[:login],
+                                :ticket => session[:ticket]
+    @userinfo.establish
+    @app = ExpressApp.new
+    
+    render :layout => false
+  end
+  
 end

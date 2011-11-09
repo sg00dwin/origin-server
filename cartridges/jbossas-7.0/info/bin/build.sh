@@ -6,13 +6,35 @@ do
     . $f
 done
 
-CONFIG_DIR="/usr/libexec/li/cartridges/jbossas-7.0/info/configuration"
+CART_DIR=/usr/libexec/li/cartridges
+CONFIG_DIR="$CART_DIR/$OPENSHIFT_APP_TYPE/info/configuration"
 if `echo $OPENSHIFT_APP_DNS | grep -q .stg.rhcloud.com` || `echo $OPENSHIFT_APP_DNS | grep -q .dev.rhcloud.com`
 then 
 	OPENSHIFT_MAVEN_MIRROR="$CONFIG_DIR/settings.stg.xml"
 else
 	OPENSHIFT_MAVEN_MIRROR="$CONFIG_DIR/settings.prod.xml"
 fi
+
+resource_limits_file=`readlink -f /etc/libra/resource_limits.conf`
+resource_limits_file_name=`basename $resource_limits_file`
+node_profile=`echo ${resource_limits_file_name/*./}`
+case "$node_profile" in
+	micro)
+        OPENSHIFT_MAVEN_XMX="-Xmx208m"
+    ;;
+    std)
+        OPENSHIFT_MAVEN_XMX="-Xmx208m"
+    ;;
+    large)
+        OPENSHIFT_MAVEN_XMX="-Xmx396m"
+    ;;
+    exlarge)
+        OPENSHIFT_MAVEN_XMX="-Xmx792m"
+    ;;
+    jumbo)
+        OPENSHIFT_MAVEN_XMX="-Xmx1584m"
+    ;;
+esac
 
 if [ -z "$BUILD_NUMBER" ]
 then
@@ -27,7 +49,7 @@ then
         echo "Found pom.xml... attempting to build with 'mvn -e clean package -Popenshift -DskipTests'" 
         export JAVA_HOME=/etc/alternatives/java_sdk_1.6.0
         export M2_HOME=/etc/alternatives/maven-3.0
-        export MAVEN_OPTS="-Xmx208m"
+        export MAVEN_OPTS="$OPENSHIFT_MAVEN_XMX"
         export PATH=$JAVA_HOME/bin:$M2_HOME/bin:$PATH
         pushd ${OPENSHIFT_REPO_DIR} > /dev/null
         if [ -n "$OPENSHIFT_MAVEN_MIRROR" ]
@@ -42,6 +64,7 @@ then
     fi
 else
     export OPENSHIFT_MAVEN_MIRROR
+    export OPENSHIFT_MAVEN_XMX
 fi
 
 user_build.sh

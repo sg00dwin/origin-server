@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.81.7
+Version:   0.81.10
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -98,6 +98,9 @@ gem install headless
 cp -rf %{devenvdir}/etc/* %{_sysconfdir}
 cp -rf %{devenvdir}/bin/* %{_bindir}
 cp -rf %{devenvdir}/var/* %{_localstatedir}
+
+# Add rsync key to authorized keys
+cat %{brokerdir}/config/keys/rsync_id_rsa.pub >> /root/.ssh/authorized_keys
 
 # Move over new http configurations
 cp -rf %{devenvdir}/httpd/* %{libradir}
@@ -195,7 +198,7 @@ chkconfig cgred on
 chkconfig libra-cgroups on
 chkconfig libra-tc on
 
-# Make .mc directory and populate mcollective certs
+# Populate mcollective certs
 cd /etc/mcollective/ssl/clients
 openssl genrsa -out mcollective-private.pem 1024
 openssl rsa -in mcollective-private.pem -out mcollective-public.pem -outform PEM -pubout
@@ -203,7 +206,7 @@ chown libra_passenger:root mcollective-private.pem
 chmod 460 mcollective-private.pem
 cd
 
-# Move puppet certs in devenv
+# Move static puppet certs in devenv
 mkdir -p /var/lib/puppet/ssl/public_keys/
 mkdir -p /var/lib/puppet/ssl/private_keys/
 cp -f %{devenvdir}/puppet-public.pem /var/lib/puppet/ssl/public_keys/localhost.localdomain.pem
@@ -229,6 +232,18 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 %{_initddir}/libra-site
 
 %changelog
+* Tue Nov 08 2011 Alex Boone <aboone@redhat.com> 0.81.10-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (tkramer@redhat.com)
+- Updated commets in mcollective area (tkramer@redhat.com)
+
+* Mon Nov 07 2011 Dan McPherson <dmcphers@redhat.com> 0.81.9-1
+- 
+
+* Mon Nov 07 2011 Dan McPherson <dmcphers@redhat.com> 0.81.8-1
+- Bug 751743 (dmcphers@redhat.com)
+- Using the new RHUI client for Amazon (mhicks@redhat.com)
+
 * Sun Nov 06 2011 Dan McPherson <dmcphers@redhat.com> 0.81.7-1
 - give better errors on sync with build failures (dmcphers@redhat.com)
 
