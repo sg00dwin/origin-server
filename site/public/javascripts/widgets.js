@@ -227,7 +227,6 @@
   osDataEmitter = function(event, xhr, status) {
     var e, elem, json, _i, _len, _ref, _results;
     json = $.parseJSON(xhr.responseText);
-    console.log('subscribers', _this.subscribers);
     if (json.event) {
       e = jQuery.Event(json.event, {
         osEventData: json.data,

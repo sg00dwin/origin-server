@@ -70,16 +70,18 @@
     }
     return ($('a.sign_up')).click(function(event) {
       var product;
-      if (body.hasClass('express')) {
-        product = 'Express';
-      } else if (body.hasClass('flex')) {
-        product = 'Flex';
-      } else if (body.hasClass('home')) {
-        product = 'Home';
-      } else {
-        product = 'Other';
+      if (typeof trackLink !== "undefined" && trackLink !== null) {
+        if (body.hasClass('express')) {
+          product = 'Express';
+        } else if (body.hasClass('flex')) {
+          product = 'Flex';
+        } else if (body.hasClass('home')) {
+          product = 'Home';
+        } else {
+          product = 'Other';
+        }
+        return trackLink(this, product);
       }
-      return trackLink(this, product);
     });
   });
 }).call(this);

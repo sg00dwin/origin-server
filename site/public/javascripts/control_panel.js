@@ -1,7 +1,3 @@
-/* DO NOT MODIFY. This file was compiled Tue, 08 Nov 2011 20:28:39 GMT from
- * /home/aboone/Source/li/site/app/coffeescripts/control_panel.coffee
- */
-
 (function() {
   var $;
   $ = jQuery;
@@ -74,10 +70,9 @@
           ($('#app_list_container')).html(event.osEventData.app_table);
           ($('.popup', this)).osPopup({
             dialog: cpDialog,
-            modal: true,
-            keepindom: true
+            modal: true
           });
-          ($('.popup', this)).osPopup('unpop');
+          cpDialog.osDialog('hide');
           if (event.osEventData.app_limit_reached) {
             ($('.app-form', this)).hide();
             return ($('.app-placeholder', this)).show().text('You have reached your limit of free apps.');

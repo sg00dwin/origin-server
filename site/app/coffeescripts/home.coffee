@@ -11,7 +11,6 @@ latestSuccess = (data, textStatus, jqXHR) ->
 # error callback for latest tweet
 latestError = (jqXHR, textStatus, errorThrown) ->
   ($ '#latest').hide()
-  log "Error getting latest tweet: #{errorThrown}"
 
 #success callback for retweets
 retweetSuccess = (data, textStatus, jqXHR) ->
@@ -28,7 +27,6 @@ retweetSuccess = (data, textStatus, jqXHR) ->
 
 retweetError = (jqHXR, textStatus, errorThrown) ->
   ($ '#retweets').hide()
-  log "Error getting retweets: #{}"
 
 # when document is ready
 $ ->

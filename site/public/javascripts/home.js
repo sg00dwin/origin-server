@@ -10,8 +10,7 @@
     }
   };
   latestError = function(jqXHR, textStatus, errorThrown) {
-    ($('#latest')).hide();
-    return log("Error getting latest tweet: " + errorThrown);
+    return ($('#latest')).hide();
   };
   retweetSuccess = function(data, textStatus, jqXHR) {
     var item, list, rt, rts, _i, _len, _results;
@@ -29,8 +28,7 @@
     return _results;
   };
   retweetError = function(jqHXR, textStatus, errorThrown) {
-    ($('#retweets')).hide();
-    return log("Error getting retweets: ");
+    return ($('#retweets')).hide();
   };
   $(function() {
     _this.latestTweet(latestSuccess, latestError);

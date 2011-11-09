@@ -262,7 +262,6 @@ $.widget.bridge 'osData', osData
 # Publishes events and related data based on ajax responses
 osDataEmitter = (event, xhr, status) ->
   json = $.parseJSON xhr.responseText
-  console.log 'subscribers', _this.subscribers
   if json.event
     e = jQuery.Event json.event, { osEventData: json.data, osEventStatus: json.status }
     for elem in _this.subscribers[json.event]

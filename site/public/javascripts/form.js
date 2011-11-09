@@ -105,7 +105,6 @@
       var $err_div, json;
       ($(this)).spin(false);
       json = $.parseJSON(status.responseText);
-      console.log(json);
       $(this).parent().find('div.message.error').remove();
       $err_div = $('<div>').addClass('message error').hide().insertBefore(this);
       switch (status.status) {
@@ -116,8 +115,7 @@
           $err_div.text(json.error).show();
           break;
         default:
-          $err_div.html(json.error || "Some unknown error occured,<br/> please try again.").show();
-          return console.log('Some unknown AJAX error with the login', status.status);
+          return $err_div.html(json.error || "Some unknown error occured,<br/> please try again.").show();
       }
     };
     registration_complete = function(xhr, status) {
@@ -125,7 +123,6 @@
       ($(this)).spin(false);
       form = $(this);
       json = $.parseJSON(status.responseText);
-      console.log("Reg complete, got JSON", json);
       $(this).parent().find('div.message.error').remove();
       $err_div = $('<div>').addClass('message error').hide().insertBefore(this);
       messages = $.map(json, function(k, v) {
@@ -148,7 +145,6 @@
       ($(this)).spin(false);
       form = $(this);
       json = $.parseJSON(status.responseText);
-      console.log("Reset password complete, got JSON", json);
       $(this).parent().find('div.message').remove();
       return $div = $('<div>').addClass("message " + json.status).text(json.message).insertBefore(this);
     };

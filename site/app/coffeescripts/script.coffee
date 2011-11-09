@@ -101,17 +101,18 @@ $ ->
       ($ this).addClass 'active'
     
 ## Omniture click tracking ##
-  ($ 'a.sign_up').click (event) -> 
-    if body.hasClass 'express'
-      product = 'Express'
-    else if body.hasClass 'flex'
-      product = 'Flex'
-    else if body.hasClass 'home'
-      product = 'Home'
-    else
-      product = 'Other'
-    
-    trackLink this, product
+  ($ 'a.sign_up').click (event) ->
+    if trackLink?
+      if body.hasClass 'express'
+        product = 'Express'
+      else if body.hasClass 'flex'
+        product = 'Flex'
+      else if body.hasClass 'home'
+        product = 'Home'
+      else
+        product = 'Other'
+      
+      trackLink this, product
 
 
 
