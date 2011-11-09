@@ -1,0 +1,125 @@
+#!/bin/sh
+#
+# sauce-connect	This shell script takes care of starting
+#               and stopping sauce labs tunnels
+#
+# chkconfig: - 95 25
+# description: The Sauce Labs proxy tunnel
+# processname: sauce-connect
+# pidfile: /var/run/sauce/sauce-connect.pid
+# config:  /etc/sauce/sauce.conf
+#
+
+# Source function library.
+. /etc/init.d/functions
+
+SAUCE_CFG="/etc/sauce/sauce.conf"
+[ -r "$SAUCE_CFG" ] && . "${SAUCE_CFG}"
+
+SAUCE_LOG="/var/log/sauce-connect.log"
+
+SAUCE_SCRIPT="java -jar /var/lib/sauce/Sauce-Connect.jar $SAUCE_USER $SAUCE_SECRET"
+
+if [ -z "$SAUCE_PID" ]; then
+    SAUCE_PID=/var/run/sauce/sauce.pid
+fi
+
+prog=sauce-connect
+RETVAL=0
+
+start() {
+	if [ ! -f /var/lib/sauce/Sauce-Connect.jar ]; then
+		echo -n "Downloading sauce labs jar..."
+		mkdir -p /var/lib/sauce
+		pushd /var/lib/sauce > /dev/null
+		wget --quiet http://saucelabs.com/downloads/Sauce-Connect-latest.zip
+		unzip -oqq Sauce-Connect-latest.zip
+		popd > /dev/null
+		echo "Done"
+	fi
+
+        if [ -f /var/lock/subsys/sauce-connect ] ; then
+                if [ -f $SAUCE_PID ]; then
+                        read kpid < $SAUCE_PID
+                        if checkpid $kpid 2>&1; then
+                                echo "process already running"
+                                return -1
+                        else
+                                echo "lock file found but no process running for pid $kpid, continuing"
+                        fi
+                fi
+        fi
+
+    	echo -n $"Starting $prog: "
+        $SAUCE_SCRIPT &> $SAUCE_LOG &
+	echo "$!" > $SAUCE_PID
+
+	RUNNING_CMD=`grep "Connected! You may start your tests." $SAUCE_LOG`
+        until [ "$?" -eq "0" ]
+        do
+            sleep 1
+	    RUNNING_CMD=`grep "Connected! You may start your tests." $SAUCE_LOG`
+        done
+
+        RETVAL=$?
+        [ $RETVAL = 0 ] && touch /var/lock/subsys/sauce-connect && success || failure
+	echo
+        return $RETVAL
+}
+
+
+stop() {
+    if [ -f /var/lock/subsys/sauce-connect ] ; then
+    	echo -n $"Stopping $prog: "
+        count=0;
+
+        if [ -f $SAUCE_PID ]; then
+
+            read kpid < $SAUCE_PID
+            let kwait=30
+
+            kill -15 $kpid 2> /dev/null
+            until [ `ps --pid $kpid 2> /dev/null | grep -c $kpid 2> /dev/null` -eq '0' ] || [ $count -gt $kwait ]
+            do
+                sleep 1
+                let count=$count+1;
+            done
+
+            if [ $count -gt $kwait ]; then
+                kill -9 $kpid
+            fi
+        fi
+        rm -f /var/lock/subsys/sauce-connect $SAUCE_PID
+	success
+    	echo
+    fi
+}
+
+# See how we were called.
+case "$1" in
+  start)
+        start
+        ;;
+  stop)
+        stop
+        ;;
+  status)
+	status -p $SAUCE_PID sauce-connect
+	;;
+  restart|reload)
+        stop
+        sleep 2
+        start
+        ;;
+  condrestart)
+        if [ -f $SAUCE_PID ] ; then
+                stop
+                start
+        fi
+        ;;
+  *)
+        echo "Usage: $0 {start|stop|status|restart|reload|condrestart}"
+        exit 1
+esac
+                                                                                                                                                             
+exit $RETVAL

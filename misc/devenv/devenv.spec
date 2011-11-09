@@ -230,6 +230,7 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 %{devenvdir}
 %{_initddir}/libra-broker
 %{_initddir}/libra-site
+%{_initddir}/sauce-connect
 
 %changelog
 * Tue Nov 08 2011 Alex Boone <aboone@redhat.com> 0.81.10-1
