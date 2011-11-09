@@ -297,7 +297,8 @@ class BrokerController < ApplicationController
                   :framework => app['framework'],
                   :creation_time => app['creation_time'],
                   :uuid => app['uuid'],
-                  :embedded => app['embedded']
+                  :embedded => app['embedded'],
+                  :aliases => app['aliases']
               }
           end
           
