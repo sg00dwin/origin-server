@@ -21,6 +21,7 @@ SAUCE_LOG="/var/log/sauce-connect.log"
 SAUCE_SCRIPT="java -jar /var/lib/sauce/Sauce-Connect.jar $SAUCE_USER $SAUCE_SECRET"
 
 if [ -z "$SAUCE_PID" ]; then
+    mkdir -p /var/run/sauce 
     SAUCE_PID=/var/run/sauce/sauce.pid
 fi
 
