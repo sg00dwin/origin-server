@@ -42,11 +42,12 @@ end
 
 # Need to do this for now in order to kill the 
 #   process when we're done
-Test::Unit::UI::Console::TestRunner.run(TS_web);
+result = Test::Unit::UI::Console::TestRunner.run(TS_web);
 
 # HACK: pid is of the `cmd`, which spawns java
 at_exit{ 
   if @sauce_connect_pid
     Process.kill('TERM',@sauce_connect_pid+1) ;
   end
+  exit!(result.passed?)
 }
