@@ -1,6 +1,13 @@
 (function() {
-  var $;
+  var $, shorten;
   $ = jQuery;
+  shorten = function(str, len) {
+    if (str.length > len) {
+      return str.slice(0, len) + '...';
+    } else {
+      return str;
+    }
+  };
   $(function() {
     var cpDialog;
     cpDialog = $("<div id=\"cp-dialog\"></div>");
@@ -54,7 +61,7 @@
       onEvent: function(event) {
         ($('.error', cpDialog)).remove();
         if (event.osEventStatus === 'success') {
-          ($('.current', this)).text(event.osEventData.ssh);
+          ($('.current', this)).text(shorten(event.osEventData.ssh, 20));
           ($('.popup', this)).osPopup('unpop');
           return $('#express_domain_ssh').val(event.osEventData.ssh);
         } else {

@@ -1,5 +1,11 @@
 $ = jQuery
 
+shorten = (str, len) ->
+  if str.length > len
+    str.slice(0, len) + '...'
+  else
+    str
+
 $ ->
   # Set up widgets
   
@@ -49,7 +55,7 @@ $ ->
     ($ '.error', cpDialog).remove()
     if event.osEventStatus == 'success'
       # Success
-      ($ '.current', this).text event.osEventData.ssh
+      ($ '.current', this).text ( shorten event.osEventData.ssh, 20 )
       ($ '.popup', this).osPopup 'unpop'
       # update hidden form value in domain form
       $('#express_domain_ssh').val(event.osEventData.ssh)
