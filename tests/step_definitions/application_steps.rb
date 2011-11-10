@@ -118,7 +118,15 @@ Then /^the applications should be accessible?$/ do
 end
 
 Then /^the mysql response is successful$/ do
-    @app.connect.should match(/Success/)
+  60.times do |i|
+    body = @app.connect
+    break if body and body =~ /Success/
+    sleep 1
+  end
+
+  # Check for Success
+  body = @app.connect
+  body.should match(/Success/)
 end
 
 Then /^it should be updated successfully$/ do
