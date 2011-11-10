@@ -50,15 +50,11 @@ class Express < Sauce::TestCase
     form = @express_console.domain_form
 
     assert !form.in_error?(:namespace)
-    assert !form.in_error?(:ssh)
 
     form.submit
 
     assert form.in_error?(:namespace)
     assert_equal "This field is required.", form.error_message(:namespace)
-
-    assert form.in_error?(:ssh)
-    assert_equal "This field is required.", form.error_message(:ssh)
   end
   
   def test_create_namespace_invalid
@@ -70,7 +66,6 @@ class Express < Sauce::TestCase
     form = @express_console.domain_form
 
     assert !form.in_error?(:namespace)
-    assert !form.in_error?(:ssh)
 
     form.set_value(:namespace, "non-alphanumeric!")
 
@@ -78,102 +73,57 @@ class Express < Sauce::TestCase
 
     assert form.in_error?(:namespace)
     assert_equal "Only letters and numbers are allowed", form.error_message(:namespace)
-
-    assert form.in_error?(:ssh)
-    assert_equal "This field is required.", form.error_message(:ssh)
   end
 
   def test_create_namespace_valid
     @login, pass = dummy_credentials
-    create_namespace(@login, pass, @login, "foobar")
-
-    form = @express_console.domain_form
-    assert form.update_mode?
-    assert form.collapsed?
-
-    form.expand
-
-    assert !form.collapsed?
-
-    form.collapse
-
-    assert form.collapsed?
+    create_namespace(@login, pass, @login)
   end
 
   def test_update_namespace
     @login, pass = dummy_credentials
-    create_namespace(@login, pass, @login, "foobar")
+    create_namespace(@login, pass, @login)
 
     # leave and come back
     @express.open
     @express_console.open
 
     form = @express_console.domain_form
-    assert form.update_mode?
     assert form.collapsed?
 
     form.expand
-
-    assert !form.collapsed?
-
-## TODO: this doesn't work because of a bug on the site
-#    form.collapse
-#    assert form.collapsed?
-
-    orig_ssh = form.get_value(:ssh)
+    await { !form.collapsed? }
 
     new_namespace = @login + "a"
 
     form.set_value(:namespace, new_namespace) 
-    form.set_value(:ssh, "foobaz")
-
     assert form.get_value(:namespace) != @login
-    assert form.get_value(:ssh) != orig_ssh
 
     form.submit
 
-    assert @express_console.processing?
-    assert_equal "Updating your domain...", @express_console.processing_message
+    await(30) { form.collapsed? }
 
-    await(5) { !@express_console.processing? }
-
-    assert !@express_console.processing?
-
-    assert @express_console.successful?
-    assert_equal "Congratulations! You successfully updated your domain", @express_console.success_message
-
-    assert_equal new_namespace, form.get_collapsed_value(:namespace)
+    await { new_namespace == form.get_collapsed_value(:namespace) }
   end
 
   # helper method for creating a namespace
   # post: user is on express console page
-  def create_namespace(login, password, app_name, ssh_key)
+  def create_namespace(login, password, namespace)
     signin(login, password)
     
     @express_console.open
-    
+
     form = @express_console.domain_form
 
     assert !form.in_error?(:namespace)
-    assert !form.in_error?(:ssh)
 
-    form.set_value(:namespace, login)
-    form.set_value(:ssh, ssh_key)
+    form.set_value(:namespace, namespace)
 
     form.submit
 
-    # TODO sometimes the spinner element disappears momentarily, causing this to fail
-    await(5) { @express_console.processing? }
+    await { form.collapsed? }
 
-    assert @express_console.processing?
-    assert_equal "Creating your domain...", @express_console.processing_message
-
-    await(5) { !@express_console.processing? }
-
-    assert !@express_console.processing?
-
-    assert @express_console.successful?
-    assert_equal "Congratulations! You successfully created your domain", @express_console.success_message
+    await { namespace == form.get_collapsed_value(:namespace) }
   end
  
   def dummy_credentials

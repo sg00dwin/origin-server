@@ -32,32 +32,35 @@ module OpenShift
       def submit
         @page.click @submit
       end
+
+      def processing?
+        return @page.is_element_present "//form[@id='#{@id}']/div[@aria-role='progressbar']"
+      end
     end
 
     class DomainForm < Form
       def initialize(page,id)
         super(page,id)
         @fields = {
-          :namespace => "express_domain_namespace",
-          :ssh => "express_domain_ssh"
+          :namespace => "express_domain_namespace"
         }
 
       	@submit = "express_domain_submit"
 
-        @loc_btn_edit = "//a[@class='button edit_domain' and text()='Edit']"
-        @loc_btn_cancel = "//a[@class='button edit_domain' and text()='Cancel']"
+        @loc_btn_edit = "//div[contains(@class, 'domain-widget')]//div[contains(@class,'popup-trigger')]/a"
+        @loc_btn_cancel = "//div[@id='cp-dialog']/a[@class='os-close-link']"
         @loc_domain_form_collapsed = "domain_form_replacement"
 
-        @loc_namespace_collapsed = "show_namespace"
-        @loc_ssh_collapsed = "show_ssh"
+        @loc_namespace_collapsed = "//div[@id='domains']//div[@class='current domain']"
       end
 
       def collapsed?
-        return !@page.visible?(@id) && !@page.visible?(@loc_btn_cancel) && @page.visible?(@loc_domain_form_collapsed) && @page.visible?(@loc_btn_edit)
+        return !inside_dialog?
       end
 
-      def update_mode?
-        return @page.element?("//*[@id='new_express_domain' and contains(@class, 'update')]")
+      def inside_dialog?
+        loc = "//div[@id='cp-dialog']//form[@id='#{@id}']"
+        return @page.element?(loc) && @page.visible?(loc)
       end
 
       def collapse
@@ -75,8 +78,6 @@ module OpenShift
       def get_collapsed_value(field)
         if :namespace == field
           return @page.text(@loc_namespace_collapsed)
-        elsif :ssh == field
-          return @page.text(@loc_ssh_collapsed)
         end
       end
     end
