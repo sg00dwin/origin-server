@@ -45,12 +45,10 @@ module OpenShift
           :namespace => "express_domain_namespace"
         }
 
-      	@submit = "express_domain_submit"
+      	@submit = "//div[@id='cp-dialog']//input[@id='express_domain_submit']"
 
         @loc_btn_edit = "//div[contains(@class, 'domain-widget')]//div[contains(@class,'popup-trigger')]/a"
         @loc_btn_cancel = "//div[@id='cp-dialog']/a[@class='os-close-link']"
-        @loc_domain_form_collapsed = "domain_form_replacement"
-
         @loc_namespace_collapsed = "//div[@id='domains']//div[@class='current domain']"
       end
 

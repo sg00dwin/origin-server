@@ -115,6 +115,9 @@ class Express < Sauce::TestCase
 
     form = @express_console.domain_form
 
+    form.expand
+    await { !form.collapsed? }
+
     assert !form.in_error?(:namespace)
 
     form.set_value(:namespace, namespace)
