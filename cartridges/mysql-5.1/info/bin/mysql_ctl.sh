@@ -79,7 +79,12 @@ case "$1" in
         start
     ;;
     status)
-        echo "Coming soon..."
+        if isrunning
+        then
+            echo "Mysql is running"
+        else
+            echo "Mysql is stopped" 1>&2
+        fi
         exit 0
     ;;
 esac
