@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.82.0
+Version:   0.82.1
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -68,6 +68,9 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Thu Nov 10 2011 Dan McPherson <dmcphers@redhat.com> 0.82.1-1
+- bump spec numbers (dmcphers@redhat.com)
+
 * Thu Nov 10 2011 Dan McPherson <dmcphers@redhat.com> 0.81.10-1
 - Bug 752721 - shorten ssh key when updated with javascript (edirsh@redhat.com)
 - Merge remote-tracking branch 'origin/sauce' (aboone@redhat.com)
