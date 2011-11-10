@@ -4,7 +4,6 @@ class Home < Sauce::TestCase
 
   def setup
     super
-    set_vars(page)
     @home.open
   end
 

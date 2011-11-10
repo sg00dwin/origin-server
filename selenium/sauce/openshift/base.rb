@@ -14,18 +14,18 @@ module OpenShift
       }
     end
 
-    def set_vars(page)
+    def setup
       @page    = page
       @home    = OpenShift::Express::Home.new(page, '/app')
       @express = OpenShift::Express::Express.new(page, '/app/express')
       @flex    = OpenShift::Express::Flex.new(page, '/app/flex')
+      @express_console = OpenShift::Express::ExpressConsole.new(page, '/app/dashboard')
 
       @navbar  = OpenShift::Express::MainNav.new(page,'main_nav')
       @signin  = OpenShift::Express::Login.new(page,'signin')
       @reset   = OpenShift::Express::Reset.new(page,'reset_password')
       @signup  = OpenShift::Express::Signup.new(page,'signup')
     end
-
 
     def get_count(type)
       count = 0;
@@ -46,9 +46,12 @@ module OpenShift
       end
     end
 
-    def signin
-      open_dialog(:signin){ |signin|
-        signin.submit(@valid_credentials[:email],@valid_credentials[:password])
+    def signin(login=@valid_credentials[:email],password=@valid_credentials[:password])
+      open_dialog(:signin, false){ |signin|
+        signin.submit(login,password)
+          
+        # a successful sign in will redirect you
+        @page.wait_for_page
       }
     end
   end
@@ -72,7 +75,7 @@ module OpenShift
 
     # Needs to have navbar and signin defined,
     #   probably can figure out a better way
-    def open_dialog(dialog)
+    def open_dialog(dialog, closeit=true)
       target = instance_variable_get("@#{dialog.to_s}")
 
       case dialog
@@ -86,8 +89,23 @@ module OpenShift
 
       if block_given?
         yield target
-        target.click(:CLOSE)
+        if closeit
+          target.click(:close)
+        end
       end
+    end
+
+    # Wow, javascript in Selenium 1 is kludgy: http://bit.ly/oCzktV 
+    def exec_js(script)
+      @page.get_eval("
+        (function(){with(this){
+        #{script}
+          }}).call(selenium.browserbot.getUserWindow());
+        ");
+    end
+
+    def sauce_testing(testing=true)
+        exec_js("$.cookie('sauce_testing',#{testing});")
     end
   end
 

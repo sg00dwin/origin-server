@@ -11,6 +11,7 @@ require 'openshift/base'
 require 'openshift/express/dialogs'
 require 'openshift/express/navbars'
 require 'openshift/express/pages'
+require 'openshift/express/forms'
 
 # Load desired test cases
 Dir["testcases/*.rb"].each {|file| require file }

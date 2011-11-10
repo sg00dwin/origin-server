@@ -214,4 +214,21 @@ class ApplicationController < ActionController::Base
     cookies.permanent[:prev_login] = true
   end
   
+  def sauce_testing?
+    retval = false
+    if Rails.env.development?
+      Rails.logger.debug "------"
+      Rails.logger.debug "Checking for Sauce testing credentials"
+      Rails.logger.debug request.cookies.to_yaml
+
+      key = 'sauce_testing'
+      Rails.logger.debug "cookie: #{request.cookies[key]}"
+      retval = true if (request.cookies[key] == 'true')
+
+      Rails.logger.debug "------"
+    end
+
+    Rails.logger.debug "========== TESTING ===========" if retval
+    retval
+  end
 end

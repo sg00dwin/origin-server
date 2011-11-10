@@ -99,7 +99,7 @@ module OpenShift
 
     class Signup < Dialog
       def initialize(page,id)
-        super(page,id)
+        super
         @fields = { 
           :email => 'web_user_email_address',
           :password => 'web_user_password',
@@ -108,34 +108,12 @@ module OpenShift
         }
       end
 
-      def captcha_secret
-        'zvw5LiixMB0I4mjk06aR'
-      end
-
-      # Wow, javascript in Selenium 1 is kludgy: http://bit.ly/oCzktV 
-      def exec_js(script)
-        @page.get_eval("
-          (function(){with(this){
-          #{script}
-            }}).call(selenium.browserbot.getUserWindow());
-          ");
-      end
-
       def submit(email=nil,password=nil,confirm=nil,captcha=false)
         type(input(@fields[:email]),email) if email
         type(input(@fields[:password]),password) if password
         type(input(@fields[:confirm]),confirm) if confirm
 
-        # Need to clear out captcha_secret if it exists
-        exec_js("
-            $('#signup form').find('input[name=captcha_secret]').remove();
-            $('#signup form').append(
-              $('<input>')
-                .attr('type','hidden')
-                .attr('name','captcha_secret')
-                .val('#{captcha ? captcha_secret : ''}')
-              );
-        ")
+        sauce_testing(captcha)
 
         click(:submit)
       end
