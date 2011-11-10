@@ -2,7 +2,7 @@
 
 Summary:   Provides mod_perl support
 Name:      rhc-cartridge-perl-5.10
-Version:   0.12.8
+Version:   0.13.1
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -79,6 +79,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Thu Nov 10 2011 Dan McPherson <dmcphers@redhat.com> 0.13.1-1
+- bump spec numbers (dmcphers@redhat.com)
+
 * Mon Nov 07 2011 Dan McPherson <dmcphers@redhat.com> 0.12.8-1
 - fixing merge, replacing tabs with spaces (mmcgrath@redhat.com)
 - Adding marker support for perl (mmcgrath@redhat.com)
