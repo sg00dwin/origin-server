@@ -271,8 +271,10 @@ class DevEnv < Thor
       puts "Performing remote install...."
       output, exit_code = ssh(hostname, "set -e; #{options.clean_metadata? ? 'yum clean metadata; ' : ''}yum update -y --exclude='rhc-devenv' --disablerepo=\* --enablerepo=li rhc-*; rm -rf li-working os-client-tools-working; git clone li li-working;#{has_client ? ' git clone os-client-tools os-client-tools-working;' : ''} pushd li-working; build/devenv update #{options.verbose? ? '--verbose' : ''}; popd; rm -rf li-working os-client-tools-working", 600, true)
       if exit_code != 0
+        puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
         puts "Build failed!  Exiting."
         puts output
+        puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
         exit 1
       end
       puts "Done"

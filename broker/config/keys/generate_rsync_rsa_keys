@@ -1,3 +1,5 @@
 #!/bin/bash
 
-ssh-keygen -t rsa -b 2048 -f rsync_id_rsa
+ssh-keygen -t rsa -b 2048 -f ~/.ssh/rsync_id_rsa
+cp ~/.ssh/rsync_id_rsa* .
+chown root:libra_user rsync_id_rsa*
