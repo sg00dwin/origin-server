@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.81.9
+Version:   0.81.10
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -68,6 +68,15 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Thu Nov 10 2011 Dan McPherson <dmcphers@redhat.com> 0.81.10-1
+- Bug 752721 - shorten ssh key when updated with javascript (edirsh@redhat.com)
+- Merge remote-tracking branch 'origin/sauce' (aboone@redhat.com)
+- Merge remote-tracking branch 'origin' into sauce (aboone@redhat.com)
+- Merge remote-tracking branch 'origin/master' into sauce (aboone@redhat.com)
+- Updated tests to use sauce_testing cookie for bypassing certain checks
+  (fotios@redhat.com)
+- Added jquery.cookie.js (fotios@redhat.com)
+
 * Wed Nov 09 2011 Dan McPherson <dmcphers@redhat.com> 0.81.9-1
 - Remove logging from javascripts as they were causing errors in IE Also
   checking in generated scripts as barista doesn't seem to be working
