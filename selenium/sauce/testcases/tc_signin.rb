@@ -19,11 +19,13 @@ class Signin < Sauce::TestCase
       end
     }
 
-    # Try an invalid login
-    open_dialog(:signin){ |signin|
-      signin.submit(data[:username],data[:password])
-      assert_dialog_error(signin,:error,nil,[ :invalid ])
-    }
+    ## Try an invalid login
+    ## TODO: not possible on a dev env.  create a way to reproduce "bad logins"
+    ## and re-enable
+    #open_dialog(:signin){ |signin|
+    #  signin.submit(data[:username],data[:password])
+    #  assert_dialog_error(signin,:error,nil,[ :invalid ])
+    #}
   end
 
   def test_signin_process
