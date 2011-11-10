@@ -13,7 +13,6 @@ class Signup < Sauce::TestCase
       :invalid => [ data[:username] ],
       :short_pass => [ "#{data[:username]}@#{data[:domain]}.com", data[:password][0,5] ],
       :mismatched => [ "#{data[:username]}@#{data[:domain]}.com", data[:password], data[:password2] ],
-      :no_captcha => [ "#{data[:username]}@#{data[:domain]}.com", data[:password], data[:password] ],
       :bad_domain => [ "#{data[:username]}@#{data[:domain]}.ir", data[:password], data[:password], true ],
       :success => [ "flindiak+sauce_#{data[:username]}@redhat.com", data[:password],data[:password], true ]
     }
