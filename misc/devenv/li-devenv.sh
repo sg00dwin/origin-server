@@ -4,9 +4,6 @@ rpm -Uhv http://download.fedora.redhat.com/pub/epel/6/x86_64/epel-release-6-5.no
 
 sed -i s/sslverify=1/sslverify=0/g /etc/yum.repos.d/rh-cloud.repo
 
-wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat-stable/jenkins.repo
-rpm --import http://pkg.jenkins-ci.org/redhat/jenkins-ci.org.key
-
 cat > /etc/yum.repos.d/li.repo <<EOF
 [li]
 name=Li repo for Enterprise Linux 6 - \$basearch
