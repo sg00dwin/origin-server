@@ -60,7 +60,7 @@ stop() {
     else
         if `pgrep mysqld_safe > /dev/null 2>&1`
         then
-        	echo "Warning: Mysql process exists without a pid file.  Use force-stop to kill."
+        	echo "Warning: Mysql process exists without a pid file.  Use force-stop to kill." 1>&2
         else
             echo "Mysql already stopped" 1>&2
         fi
@@ -81,7 +81,7 @@ case "$1" in
     status)
         if isrunning
         then
-            echo "Mysql is running"
+            echo "Mysql is running" 1>&2
         else
             echo "Mysql is stopped" 1>&2
         fi
