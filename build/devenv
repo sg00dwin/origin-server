@@ -363,6 +363,7 @@ class DevEnv < Thor
     instance = launch_instance(ami, name)
     hostname = instance.dns_name
     puts "Done"
+    puts "Hostname: #{hostname}"
 
     puts "Sleeping for 30 seconds to let node stabilize..."
     sleep 30
