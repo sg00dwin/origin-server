@@ -11,7 +11,7 @@ Source0: %{name}-%{version}.tar.gz
 BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildArch: noarch
 
-Requires: rhc-broker >= 0.73.4
+Requires: rhc-node
 Requires: mysql-devel
 Requires: wget
 Requires: java-1.6.0-openjdk

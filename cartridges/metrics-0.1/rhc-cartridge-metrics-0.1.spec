@@ -12,7 +12,7 @@ Source0: %{name}-%{version}.tar.gz
 BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildArch: noarch
 
-Requires: rhc-broker >= 0.70.1
+Requires: rhc-node
 
 %description
 Provides rhc metrics cartridge support
