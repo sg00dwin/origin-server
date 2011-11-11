@@ -8,7 +8,6 @@ Feature: Trap User Shell
   @tail_logs
   Scenario: Tail Logs
     Given an accepted node
-    And an end user
     And the user creates a new php-5.3 application
     And the user has no tail processes running 
     And a running SSH log stream
