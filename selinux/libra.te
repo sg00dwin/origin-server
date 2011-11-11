@@ -79,6 +79,7 @@ allow libra_domain libra_log_t:file { getattr append lock ioctl };
 
 manage_dirs_pattern(libra_domain, libra_tmp_t, libra_tmp_t)
 manage_files_pattern(libra_domain, libra_tmp_t, libra_tmp_t)
+manage_lnk_files_pattern(libra_domain, libra_tmp_t, libra_tmp_t)
 manage_sock_files_pattern(libra_t, libra_tmp_t, libra_tmp_t)
 files_tmp_filetrans(libra_domain, libra_tmp_t, { file dir sock_file })
 can_exec(libra_t, libra_tmp_t)
@@ -148,8 +149,6 @@ corenet_tcp_bind_http_cache_port(libra_domain)
 apache_search_sys_scripts(libra_domain)
 # Will need to change to this when it becomes available in RHEL6.2 policy
 #apache_exec_sys_scripts(libra_domain)
-
-java_exec(libra_domain)
 
 ########################################
 #
