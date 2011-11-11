@@ -49,6 +49,9 @@ class Express < Sauce::TestCase
 
     form = @express_console.domain_form
 
+    form.expand
+    await { !form.collapsed? }
+
     assert !form.in_error?(:namespace)
 
     form.submit
@@ -64,6 +67,9 @@ class Express < Sauce::TestCase
     @express_console.open
     
     form = @express_console.domain_form
+
+    form.expand
+    await { !form.collapsed? }
 
     assert !form.in_error?(:namespace)
 
