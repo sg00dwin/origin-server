@@ -102,7 +102,6 @@ When /^I (start|stop|restart) phpmyadmin$/ do |action|
   if exit_code != 0
     raise "Command failed with exit code #{exit_code}"
   end
-  #raise Cucumber::Pending.new "restart script bug fix pending" if action == "restart"
 end
 
 Then /^a phpmyadmin http proxy file will( not)? exist$/ do | negate |
@@ -200,8 +199,4 @@ Then /^the phpmyadmin control script will( not)? exist$/ do | negate |
   else
     startfile.should be_nil
   end
-end
-
-Then /^the phpmyadmin daemon will be running$/ do
-  pending # express the regexp above with the code you wish you had
 end

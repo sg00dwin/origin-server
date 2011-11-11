@@ -146,10 +146,6 @@ Then /^an account home directory should( not)? exist$/ do |negate|
   end
 end
 
-Then /^the account home directory permissions should( not)? be correct$/ do |negate|
-  pending
-end
-
 Then /^selinux labels on the account home directory should be correct$/ do
   homedir = "#{$home_root}/#{@account['accountname']}"
   @result = `restorecon -v -n #{homedir}`

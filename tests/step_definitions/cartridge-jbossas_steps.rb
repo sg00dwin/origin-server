@@ -31,8 +31,6 @@ When /^I configure a jbossas application$/ do
       command = $jbossas_config_format % [app_name, namespace, account_name]
       buffer = []
       exit_code = runcon command,  'unconfined_u', 'system_r', 'libra_initrc_t', buffer
-      puts buffer[0]
-      puts buffer[1]
       raise Exception.new "Error running #{command}: Exit code: #{exit_code}" if exit_code != 0
     rescue Exception => e
       command = $jbossas_deconfig_format % [app_name, namespace, account_name]
@@ -284,7 +282,6 @@ Then /^the maven repository will( not)? exist$/ do |negate|
       file_dir = File.directory? file_path
       file_dir.should be_true "file #{file_path} should be a directory and is not"
     else
-      #raise Cucumber::Pending.new 'deconfigure must remove user/.m2'
       file_exists.should be_false "file #{file_path} should not exist and does"
     end
   end
@@ -306,8 +303,6 @@ Then /^the openshift environment variable files will( not)? exist$/ do |negate|
               "OPENSHIFT_APP_NAME",
               "OPENSHIFT_APP_CTL_SCRIPT"
               ]
-
-  raise Cucumber::Pending.new "Waiting for bug fix 20110728 MAL" unless negate
 
   env_list.each do |file_name|
     file_path = "#{env_root}/#{file_name}"

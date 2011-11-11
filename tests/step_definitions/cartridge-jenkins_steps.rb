@@ -32,8 +32,6 @@ When /^I configure a jenkins application$/ do
     command = command_format % [app_name, namespace, account_name]
     buffer = []
     exit_code = runcon command,  'unconfined_u', 'system_r', 'libra_initrc_t', buffer
-    puts buffer[0]
-    puts buffer[1]
     raise Exception.new "Error running #{command}: Exit code: #{exit_code}" if exit_code != 0
   end
 end
@@ -195,8 +193,6 @@ Then /^the openshift environment variable files will( not)? exist$/ do |negate|
               "OPENSHIFT_APP_CTL_SCRIPT",
               "JENKINS_URL"
               ]
-
-  raise Cucumber::Pending.new "Waiting for bug fix 20110728 MAL" unless negate
 
   env_list.each do |file_name|
     file_path = "#{env_root}/#{file_name}"
