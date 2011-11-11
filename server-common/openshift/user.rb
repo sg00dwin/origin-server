@@ -387,13 +387,21 @@ module Libra
       unless aliases.include?(server_alias)
         aliases.push(server_alias)
         update_app(app, app_name)
+        return true
       end
+      return false
     end
     
     def remove_alias(app, app_name, server_alias)
       if app['aliases'] && app['aliases'].delete(server_alias)
         update_app(app, app_name)
+        return true
       end
+      return false
+    end
+    
+    def has_alias(app, server_alias)
+      return app['aliases'] && app['aliases'].include?(server_alias)
     end
 
     #

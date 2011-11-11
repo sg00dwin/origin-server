@@ -153,17 +153,22 @@ module Libra
       when 'deconfigure'
         deconfigure_app(app_info, app_name, user, server)
       when 'add-alias'
-        user.add_alias(app_info, app_name, optional_args)
-        begin
-          server_execute_direct(app_info['framework'], action, app_name, user, server, app_info, true, optional_args)
-        rescue Exception => e
-          server_execute_direct(app_info['framework'], 'remove-alias', app_name, user, server, app_info, true, optional_args)
-          user.remove_alias(app_info, app_name, optional_args)
-          raise
+        if user.add_alias(app_info, app_name, optional_args)
+          begin
+            server_execute_direct(app_info['framework'], action, app_name, user, server, app_info, true, optional_args)
+          rescue Exception => e
+            server_execute_direct(app_info['framework'], 'remove-alias', app_name, user, server, app_info, true, optional_args)
+            user.remove_alias(app_info, app_name, optional_args)
+            raise
+          end
+        else
+          raise UserException.new(255), "Alias '#{optional_args}' already exists for '#{app_name}'", caller[0..5]
         end
       when 'remove-alias'
-        server_execute_direct(app_info['framework'], action, app_name, user, server, app_info, true, optional_args)
-        user.remove_alias(app_info, app_name, optional_args)
+        server_execute_direct(app_info['framework'], action, app_name, user, server, app_info, true, optional_args) # trying to remove regardless
+        unless user.remove_alias(app_info, app_name, optional_args)
+          raise UserException.new(255), "Alias '#{optional_args}' does not exist for '#{app_name}'", caller[0..5]
+        end
       else
         server_execute_direct(app_info['framework'], action, app_name, user, server, app_info, true, optional_args)
       end
