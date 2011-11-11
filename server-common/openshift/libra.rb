@@ -220,6 +220,7 @@ module Libra
       user.move_app(app_name, app_info, new_server)
     rescue Exception => e
       new_server.delete_account(app_info['uuid'])
+      server_execute_direct(app_info['framework'], 'start', app_name, user, old_server, app_info)
       raise
     end
 
