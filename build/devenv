@@ -473,7 +473,7 @@ class DevEnv < Thor
             sauce_opts['JENKINS_BUILD'] = tag
           end
 
-          env_string = sauce_opts.keys.map{|k| "#{k}=#{sauce_opts[k]}"}.join(' ')
+          env_string = sauce_opts.keys.map{|k| "#{k}='#{sauce_opts[k]}'"}.join(' ')
 
           puts "Running Sauce tests with the following options:"
           puts sauce_opts.to_yaml
