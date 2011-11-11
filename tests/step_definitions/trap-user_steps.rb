@@ -1,7 +1,3 @@
-#
-#
-#
-#require 'open4'
 require 'pty'
 
 Given /^the user creates a new( (\S+))? application$/ do |ignore, app_type|
@@ -50,17 +46,12 @@ end
 Given /a running SSH log stream/ do
   ssh_cmd = "ssh -t #{@acct_name}@#{@hostname} tail -f #{@app_name}/logs/\\*"
 
-  #puts "calling #{ssh_cmd}"
-
-  #pid, stdin, stdout, stderr = Open4::popen4(ssh_cmd)
   stdout, stdin, pid = PTY.spawn ssh_cmd
-  #stdin.close
 
   @ssh_cmd = {
     :pid => pid,
     :stdin => stdin,
     :stdout => stdout,
-    #:stderr => stderr
   }
 
 end
