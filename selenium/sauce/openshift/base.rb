@@ -50,8 +50,7 @@ module OpenShift
       open_dialog(:signin, false){ |signin|
         signin.submit(login,password)
           
-        # a successful sign in will redirect you
-        @page.wait_for_page
+        @page.wait_for_element("//a[@href='/app/logout']")
       }
     end
   end
