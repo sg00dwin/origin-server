@@ -53,12 +53,12 @@ module Libra
       ]
 
       Helper.rpc_get_fact('capacity', nil, forceRediscovery, additional_filters) do |server, capacity|
-        current_server, current_capacity = server, capacity unless current_capacity
-        Libra.logger_debug "server: #{current_server} capacity: #{current_capacity}"
-        if capacity < current_capacity
-            current_server = server
-            current_capacity = capacity
+        Libra.logger_debug "Next server: #{server} capacity: #{capacity}"
+        if !current_capacity || capacity.to_i < current_capacity.to_i
+          current_server = server
+          current_capacity = capacity
         end
+        Libra.logger_debug "Current server: #{current_server} capacity: #{current_capacity}"
       end
       return current_server, current_capacity
     end
