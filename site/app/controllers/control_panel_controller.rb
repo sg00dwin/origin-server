@@ -1,6 +1,8 @@
 class ControlPanelController < ApplicationController
   before_filter :require_login
 
+  @@exclude_carts = ['raw-0.1', 'jenkins-1.4']
+
   def index
     @userinfo = ExpressUserinfo.new :rhlogin => session[:login],
     				    :ticket => session[:ticket]
@@ -40,8 +42,9 @@ class ControlPanelController < ApplicationController
     # create app
     @max_apps = Rails.configuration.express_max_apps
     @app = ExpressApp.new
-    @cartlist = ExpressCartlist.new 'standalone'
-    Rails.logger.debug "Control panel cartlist: #{@cartlist.list.inspect}"
+    @cartlist = ( ExpressCartlist.new 'standalone' ).list
+    @cartlist -= @@exclude_carts
+    Rails.logger.debug "Control panel cartlist: #{@cartlist.inspect}"
   end # end index
 end # end class
 
