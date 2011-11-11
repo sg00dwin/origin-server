@@ -415,8 +415,11 @@ class DevEnv < Thor
   method_option :exclude_internal, :type => :boolean, :desc => "Exclude running unit and internal tests"
   method_option :exclude_verification, :type => :boolean, :desc => "Exclude running verification tests"
   method_option :exclude_web, :type => :boolean, :desc => "Exclude running Selenium tests"
-  method_option :sauce_username, :required => false, :desc => "Sauce Labs username (default '')"
-  method_option :sauce_access_key, :required => false, :desc => "Sauce Labs access key (default '')"
+  method_option :sauce_username, :required => false, :desc => "Sauce Labs username (default '#{SAUCE_USER}')"
+  method_option :sauce_access_key, :required => false, :desc => "Sauce Labs access key (default '#{SAUCE_SECRET}')"
+  method_option :sauce_os, :required => false, :desc => "Sauce Labs OS (default '#{SAUCE_OS}')"
+  method_option :sauce_browser, :required => false, :desc => "Sauce Labs browser (default '#{SAUCE_BROWSER}')"
+  method_option :sauce_browser_version, :required => false, :desc => "Sauce Labs browser version (default '#{SAUCE_BROWSER_VERSION}')"
   def test(tag)
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
 
@@ -457,7 +460,11 @@ class DevEnv < Thor
         threads << Thread.new do
           sauce_user = options.sauce_username || SAUCE_USER
           sauce_secret = options.sauce_access_key || SAUCE_SECRET
-          cmd = "cd li-test/selenium/sauce; export SAUCE_USERNAME=#{sauce_user}; export SAUCE_ACCESS_KEY=#{sauce_secret}; ruby ts_web"
+          sauce_os = options.sauce_os || SAUCE_OS
+          sauce_browser = options.sauce_browser || SAUCE_BROWSER
+          sauce_browser_version = options.sauce_browser_version || SAUCE_BROWSER_VERSION
+
+          cmd = "cd li-test/selenium/sauce; export SAUCE_USERNAME=#{sauce_user}; export SAUCE_ACCESS_KEY=#{sauce_secret}; export SAUCE_OS=\"#{sauce_os}\"; export SAUCE_BROWSER=\"#{sauce_browser}\"; export SAUCE_BROWSER_VERSION=#{sauce_browser_version}; echo $SAUCE_OS; ruby ts_web"
           run_ssh(hostname, "Web Selenium", cmd)
         end
       end
