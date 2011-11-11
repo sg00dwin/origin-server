@@ -70,7 +70,7 @@ mv_symlink $old_namespace $new_namespace $application
 
 if [ -f $APP_HOME/.env/OPENSHIFT_APP_DNS ]
 then
-    echo "export OPENSHIFT_APP_DNS='http://${application}-${new_namespace}.${libra_domain}/'" > $APP_HOME/.env/OPENSHIFT_APP_DNS
+    echo "export OPENSHIFT_APP_DNS='${application}-${new_namespace}.${libra_domain}'" > $APP_HOME/.env/OPENSHIFT_APP_DNS
 fi
 
 if [ -f "/etc/httpd/conf.d/libra/${uuid}_${old_namespace}_${application}.conf" ]

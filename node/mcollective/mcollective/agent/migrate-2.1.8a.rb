@@ -16,14 +16,14 @@ module LibraMigration
     output = ''
     exitcode = 0
     if (File.exists?(app_home) && !File.symlink?(app_home))
-      cartridge_root_dir = "/usr/libexec/li/cartridges"
+      #cartridge_root_dir = "/usr/libexec/li/cartridges"
       #cartridge_dir = "#{cartridge_root_dir}/#{app_type}"
 
-      phpmyadmin_dir = "#{app_home}/phpmyadmin-3.4"
-      if File.exists?(phpmyadmin_dir)
-         phpmyadmin_cartridge_root_dir = "/usr/libexec/li/cartridges/embedded/phpmyadmin-3.4"
-         FileUtils.rm_rf "#{phpmyadmin_dir}/conf.d/disabled_pages.conf"
-         FileUtils.ln_s  "#{phpmyadmin_cartridge_root_dir}/info/configuration/disabled_pages.conf", "#{phpmyadmin_dir}/conf.d/disabled_pages.conf"
+      env_echos = ["echo \"export OPENSHIFT_APP_DNS='#{app_name}-#{namespace}.#{libra_domain}'\" > #{app_home}/.env/OPENSHIFT_APP_DNS"]
+        
+      env_echos.each do |env_echo|
+        echo_output, echo_exitcode = Util.execute_script(env_echo)
+        output += echo_output
       end
       
     else

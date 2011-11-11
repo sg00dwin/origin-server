@@ -1,0 +1,111 @@
+#!/usr/bin/env ruby
+# Usage: ./migrate-2.1.8a > out.txt
+require 'rubygems'
+require 'openshift'
+require 'pp'
+
+include Libra
+
+RHLOGINS=nil #['rhlogin']
+
+#
+#  Migrate the specified app on the node
+#
+
+#
+#  Migrate the specified app on the node
+#
+def migrate_app_on_node(server_identity, framework, uuid, namespace, app_name)
+  migrate_cmd = "#{__FILE__} '#{server_identity}' '#{framework}' '#{uuid}' '#{namespace}' '#{app_name}'"
+  puts "Migrating app on node with: #{migrate_cmd}"
+  migrated = false
+  Helper.rpc_exec('libra', server_identity) do |client|
+    client.migrate(:uuid => uuid,
+                   :application => app_name,
+                   :app_type => framework,
+                   :namespace => namespace,
+                   :version => '2.1.8a') do |response|
+      exit_code = response[:body][:data][:exitcode]
+      output = response[:body][:data][:output]
+      if (output.length > 0)
+        puts "Migrate on node output: #{output}"
+      end
+      if exit_code != 0
+        puts "Migrate on node exit code: #{exit_code}"
+        raise "Failed migrating app. Rerun with: #{migrate_cmd}"
+      else
+        migrated = true
+      end
+    end
+  end
+  raise "Migrate on node failed.  Rerun with: #{migrate_cmd}" if !migrated
+end
+
+#
+# Migrate applications between 2.1.8 and 2.1.8a
+#
+def migrate
+  start_time = Time.now.to_i
+  puts "Getting all RHLogins..." 
+  rhlogins = RHLOGINS || User.find_all_rhlogins
+  puts "RHLogins.length: #{rhlogins.length.to_s}"
+  node_to_apps = {}
+  node_to_users = {}
+  rhlogins.each_with_index do |rhlogin, index|
+    user = User.find(rhlogin)
+    if user
+      puts ""
+      puts "######################################################"
+      puts "Gathering apps for user: #{user.rhlogin}(#{rhlogins.length - index}) with uuid: #{user.uuid}"
+      apps = user.apps
+      apps.each do |app_name, app|
+        server_identity = app['server_identity']
+        node_to_apps[server_identity] = [] unless node_to_apps[server_identity]
+        node_to_users[server_identity] = [] unless node_to_users[server_identity]
+        node_to_apps[server_identity] << {:name => app_name, :app => app}
+        node_to_users[server_identity] << user
+      end
+    else
+      puts "WARNING:  Couldn't find user: #{rhlogin}"
+    end
+  end
+  
+  node_threads = []
+  node_to_apps.each do |server_identity, apps|
+    node_threads << Thread.new do
+      puts "Migrating #{apps.length} apps on node #{server_identity}: #{apps.pretty_inspect}"
+      users = node_to_users[server_identity]
+      apps.each_with_index do |app_hash, index|
+        app = app_hash[:app]
+        app_name = app_hash[:name]
+        user = users[index]
+        rhlogin = user.rhlogin
+        begin
+          puts "Migrating app '#{app_name}' with uuid '#{app['uuid']}' on node '#{app['server_identity']}' for user: #{rhlogin}"
+          migrate_on_node_cmd = "#{__FILE__} '#{app['server_identity']}' '#{app['framework']}' '#{app['uuid']}' '#{user.namespace}' '#{app_name}'"
+          puts `#{migrate_on_node_cmd}`
+          exit_code = $?
+          puts "Migrate on node exit_code: #{exit_code}"
+        rescue Exception => e
+          puts "ERROR: Failed migrating app: #{app_name} with uuid: #{app['uuid']} on node '#{app['server_identity']}' for user: #{rhlogin}"
+          puts e.message
+          puts e.backtrace
+        end
+      end
+    end
+  end
+  
+  node_threads.each do |t|
+    t.join
+  end
+  
+  end_time = Time.now.to_i
+  total_time = end_time-start_time
+  puts "Total execution time: #{total_time.to_s}s"
+end
+
+if ARGV.length == 5
+  migrate_app_on_node(ARGV[0], ARGV[1], ARGV[2], ARGV[3], ARGV[4])
+else
+  migrate
+end
