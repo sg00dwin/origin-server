@@ -15,7 +15,7 @@ Given /^the user creates a new( (\S+))? application$/ do |ignore, app_type|
   command = "#{$create_domain_script} -n #{@namespace} -l #{@rhc_login} -p fakepw -d"
   rhc_do ('create_domain') do
     exit_status = run(command, domain_output)
-    raise Exception.new "exit status #{exit_status} from '#{command}'" if exit_status != 0
+    exit_status.should == 0
   end
     
   # create the app on an available node
@@ -23,14 +23,14 @@ Given /^the user creates a new( (\S+))? application$/ do |ignore, app_type|
   command = "#{$create_app_script} -a #{@app_name} -l #{@rhc_login} -r #{@repo_path} -t #{app_type} -p fakepw -d"
   rhc_do ('create_app') do
     exit_status = run(command, app_output)
-    raise Exception.new "exit status #{exit_status} from '#{command}'" if exit_status != 0
+    exit_status.should == 0
   end
 
   # find the application account name and host
   ssh_pattern = %r|ssh://([^@]+)@([^/]+)|
     
   match = app_output[0].map { |line| line.match(ssh_pattern)}.compact[0]
-  raise Exception.new "no ssh line for application" unless match
+  match.should_not be_nil
   @acct_name = match[1]
   @hostname = match[2]
 end
