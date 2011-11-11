@@ -29,7 +29,7 @@ puts "Running tests against: #{hostname}"
 
 # This should go in your test_helper.rb file if you have one
 Sauce.config do |config|
-  config.browser_url = "https://#{hostname}"
+  config.browser_url = config.browser_url || "https://#{hostname}"
   config.javascript_framework = :jquery
 
   # uncomment this if your server is not publicly accessible
