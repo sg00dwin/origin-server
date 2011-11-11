@@ -441,10 +441,10 @@ class DevEnv < Thor
 
       unless options.exclude_web?
         threads << Thread.new do
-          options.sauce_username ||= SAUCE_USER
-          options.sauce_access_key ||= SAUCE_SECRET
+          sauce_user = options.sauce_username || SAUCE_USER
+          sauce_secret = options.sauce_access_key || SAUCE_SECRET
           puts "Sauce username: #{options.sauce_username}"
-          cmd = "cd li-test/selenium/sauce; export SAUCE_USERNAME=#{options.sauce_username}; export SAUCE_ACCESS_KEY=#{options.sauce_access_key}; ruby ts_web"
+          cmd = "cd li-test/selenium/sauce; export SAUCE_USERNAME=#{sauce_user}; export SAUCE_ACCESS_KEY=#{sauce_secret}; ruby ts_web"
           run_ssh(hostname, "Web Selenium", cmd)
         end
       end
