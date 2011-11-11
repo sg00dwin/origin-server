@@ -93,10 +93,10 @@ class DevEnv < Thor
       output, code = ssh(hostname, cmd, 4800, true)
       puts <<-eos
 
-      Output From #{title} Tests
-      -------------------------------------------------------------------------------
-      #{output}
-      -------------------------------------------------------------------------------
+Output From #{title} Tests
+-------------------------------------------------------------------------------
+#{output}
+-------------------------------------------------------------------------------
 
 
       eos
@@ -451,7 +451,6 @@ class DevEnv < Thor
         threads << Thread.new do
           sauce_user = options.sauce_username || SAUCE_USER
           sauce_secret = options.sauce_access_key || SAUCE_SECRET
-          puts "Sauce username: #{options.sauce_username}"
           cmd = "cd li-test/selenium/sauce; export SAUCE_USERNAME=#{sauce_user}; export SAUCE_ACCESS_KEY=#{sauce_secret}; ruby ts_web"
           run_ssh(hostname, "Web Selenium", cmd)
         end
