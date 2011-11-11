@@ -91,7 +91,15 @@ class DevEnv < Thor
 
     def run_ssh(hostname, title, cmd)
       output, code = ssh(hostname, cmd, 4800, true)
-      puts "Output from #{title} Tests...\n----------------\n#{output}\n----------------\n"
+      puts <<-eos
+
+      Output From #{title} Tests
+      -------------------------------------------------------------------------------
+      #{output}
+      -------------------------------------------------------------------------------
+
+
+      eos
       if code != 0
         download_artifacts hostname
         exit code
