@@ -1,42 +1,11 @@
 require 'pty'
 
-Given /^the user creates a new( (\S+))? application$/ do |ignore, app_type|
-  app_type = "php-5.3" unless app_type
-  @namespace = @info[:namespace]
-  @app_name = @namespace
-  @repo_path="#{$temp}/#{@namespace}_#{@namespace}_repo"
-
-  # set the domain into the default user's account
-  domain_output = []
-  command = "#{$create_domain_script} -n #{@namespace} -l #{@rhc_login} -p fakepw -d"
-  rhc_do ('create_domain') do
-    exit_status = run(command, domain_output)
-    exit_status.should == 0
-  end
-    
-  # create the app on an available node
-  app_output = []
-  command = "#{$create_app_script} -a #{@app_name} -l #{@rhc_login} -r #{@repo_path} -t #{app_type} -p fakepw -d"
-  rhc_do ('create_app') do
-    exit_status = run(command, app_output)
-    exit_status.should == 0
-  end
-
-  # find the application account name and host
-  ssh_pattern = %r|ssh://([^@]+)@([^/]+)|
-    
-  match = app_output[0].map { |line| line.match(ssh_pattern)}.compact[0]
-  match.should_not be_nil
-  @acct_name = match[1]
-  @hostname = match[2]
-end
-
 Given /^the user has (no|\d+) tail process(es)? running( in (\d+) seconds)?$/ do |expect, ignore1, ignore2, timeout|
   # convert to integer
   expect = (expect == "no" ? 0 : expect.to_i)
   timeout = timeout ? timeout.to_i : 0
   sleep timeout
-  pcount = num_procs @acct_name, "tail"
+  pcount = num_procs @app.uid, "tail"
 
   if pcount != expect
     raise Cucumber::Pending.new "failed given: expected #{expect}, actual #{pcount}" 
@@ -44,7 +13,7 @@ Given /^the user has (no|\d+) tail process(es)? running( in (\d+) seconds)?$/ do
 end
 
 Given /a running SSH log stream/ do
-  ssh_cmd = "ssh -t #{@acct_name}@#{@hostname} tail -f #{@app_name}/logs/\\*"
+  ssh_cmd = "ssh -t #{@app.uid}@#{@app.hostname} tail -f #{@app.name}/logs/\\*"
 
   stdout, stdin, pid = PTY.spawn ssh_cmd
 
@@ -61,7 +30,7 @@ Given /I wait (\d+) second(s)?$/ do |sec, ignore|
 end
 
 When /^I request the logs via SSH$/ do
-  ssh_cmd = "ssh -t #{@acct_name}@#{@hostname} tail -f #{@app_name}/logs/\\*"
+  ssh_cmd = "ssh -t #{@app.uid}@#{@app.hostname} tail -f #{@app.name}/logs/\\*"
 
   stdout, stdin, pid = PTY.spawn ssh_cmd
 
@@ -96,6 +65,6 @@ Then /^there will be (no|\d+) tail processes running( in (\d+) seconds)?$/ do |e
   expect = (expect == "no" ? 0 : expect.to_i)
   timeout = timeout ? timeout.to_i : 0
   sleep timeout
-  pcount = num_procs @acct_name, "tail"
+  pcount = num_procs @app.uid, "tail"
   pcount.should be == expect
 end

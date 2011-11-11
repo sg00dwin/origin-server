@@ -26,6 +26,13 @@ Given /^an existing (.+) application( without an embedded cartridge)?$/ do |type
   @app.should_not be_nil
 end
 
+Given /^a new (.+) application$/ do |type|
+  @app = TestApp.create_unique(type)
+  if rhc_create_domain(@app)
+    rhc_create_app(@app)
+  end
+end
+
 When /^(\d+) (.+) applications are created$/ do |app_count, type|
   # Create our domain and apps
   @apps = app_count.to_i.times.collect do
