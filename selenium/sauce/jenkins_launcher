@@ -1,0 +1,16 @@
+#!/usr/bin/ruby
+
+SAUCE_OS=ARG[0]
+SAUCE_BROWSER=ARG[1]
+SAUCE_BROWSER_VERSION=ARG[2]
+
+STDOUT.sync=true
+STDERR.sync=true
+
+BUILDER="libra_web_#{SAUCE_BROWSER}_#{SAUCE_BROWSER_VERSION}_#{ENV['BUILD_NUMBER']}"
+STD_OPTIONS="--terminate --unofficial --exclude_internal --exclude_verification"
+SAUCE_OPTIONS="--sauce_os=\"#{SAUCE_OS}\" --sauce_browser=\"#{SAUCE_BROWSER}\" --sauce_browser_version=#{SAUCE_BROWSER_VERSION}"
+
+puts `build/devenv launch #{BUILDER}`
+puts `build/devenv sync #{BUILDER} --tag --clean_metadata`
+puts `build/devenv test #{BUILDER} #{STD_OPTIONS} #{SAUCE_OPTIONS}`
