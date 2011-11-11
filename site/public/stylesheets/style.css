@@ -2250,28 +2250,32 @@ li.captcha {
   margin-right: 1em;
 }
 /* line 1411, ../../app/stylesheets/partials/_page.scss */
+.control_panel .main .content #app_list_container li dd {
+  margin-left: 11em;
+}
+/* line 1414, ../../app/stylesheets/partials/_page.scss */
 .control_panel .main .content #app_list_container li dd.app_type {
   text-transform: uppercase;
 }
-/* line 1414, ../../app/stylesheets/partials/_page.scss */
+/* line 1417, ../../app/stylesheets/partials/_page.scss */
 .control_panel .main .content #app_list_container li .popup-trigger {
   float: right;
   text-align: right;
   margin: 0.5em 0;
 }
-/* line 1418, ../../app/stylesheets/partials/_page.scss */
+/* line 1421, ../../app/stylesheets/partials/_page.scss */
 .control_panel .main .content #app_list_container li .popup-trigger a {
   color: #cc0000;
 }
-/* line 1427, ../../app/stylesheets/partials/_page.scss */
+/* line 1430, ../../app/stylesheets/partials/_page.scss */
 .control_panel .main #app_form form {
   width: 100%;
 }
-/* line 1428, ../../app/stylesheets/partials/_page.scss */
+/* line 1431, ../../app/stylesheets/partials/_page.scss */
 .control_panel .main #app_form select {
   margin: 0.1em;
 }
-/* line 1429, ../../app/stylesheets/partials/_page.scss */
+/* line 1432, ../../app/stylesheets/partials/_page.scss */
 .control_panel .main #app_form li, .control_panel .main #app_form fieldset.buttons {
   display: -moz-inline-box;
   -moz-box-orient: vertical;
@@ -2286,63 +2290,63 @@ li.captcha {
 .control_panel .main #app_form li, .control_panel .main #app_form fieldset.buttons {
   *display: inline;
 }
-/* line 1434, ../../app/stylesheets/partials/_page.scss */
+/* line 1437, ../../app/stylesheets/partials/_page.scss */
 .control_panel .main #app_form li label, .control_panel .main #app_form fieldset.buttons label {
   display: inline;
 }
-/* line 1437, ../../app/stylesheets/partials/_page.scss */
+/* line 1440, ../../app/stylesheets/partials/_page.scss */
 .control_panel .main #app_form li input, .control_panel .main #app_form fieldset.buttons input {
   display: inline;
 }
-/* line 1441, ../../app/stylesheets/partials/_page.scss */
+/* line 1444, ../../app/stylesheets/partials/_page.scss */
 .control_panel .main #app_form li.string {
   width: 24em;
 }
-/* line 1442, ../../app/stylesheets/partials/_page.scss */
+/* line 1445, ../../app/stylesheets/partials/_page.scss */
 .control_panel .main #app_form li.select {
   width: 8em;
 }
-/* line 1443, ../../app/stylesheets/partials/_page.scss */
+/* line 1446, ../../app/stylesheets/partials/_page.scss */
 .control_panel .main #app_form fieldset.buttons {
   width: 7em;
 }
-/* line 1445, ../../app/stylesheets/partials/_page.scss */
+/* line 1448, ../../app/stylesheets/partials/_page.scss */
 .control_panel .main #app_form fieldset.buttons input {
   width: 7em;
   margin-top: 1.1em;
 }
-/* line 1453, ../../app/stylesheets/partials/_page.scss */
+/* line 1456, ../../app/stylesheets/partials/_page.scss */
 .control_panel .main #quote blockquote {
   color: black;
 }
 
-/* line 1459, ../../app/stylesheets/partials/_page.scss */
+/* line 1462, ../../app/stylesheets/partials/_page.scss */
 .control_panel form {
   width: 23.5em;
 }
-/* line 1460, ../../app/stylesheets/partials/_page.scss */
+/* line 1463, ../../app/stylesheets/partials/_page.scss */
 .control_panel textarea {
   height: 5em;
 }
-/* line 1463, ../../app/stylesheets/partials/_page.scss */
+/* line 1466, ../../app/stylesheets/partials/_page.scss */
 .control_panel input.button {
   background-color: #0093d9;
   border: none;
   color: white;
   text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3);
 }
-/* line 1469, ../../app/stylesheets/partials/_page.scss */
+/* line 1472, ../../app/stylesheets/partials/_page.scss */
 .control_panel label {
   font-family: Overpass, "Liberation Sans", Arial, "Helvetica Neue", Helvetica, sans-serif;
   text-transform: uppercase;
   font-size: .9em;
 }
-/* line 1474, ../../app/stylesheets/partials/_page.scss */
+/* line 1477, ../../app/stylesheets/partials/_page.scss */
 .control_panel .os-dialog form {
   margin: 0 auto;
 }
 
-/* line 1478, ../../app/stylesheets/partials/_page.scss */
+/* line 1481, ../../app/stylesheets/partials/_page.scss */
 .delete_button {
   background: #cc0000;
   color: white;
@@ -2352,7 +2356,7 @@ li.captcha {
   border: none;
 }
 
-/* line 1486, ../../app/stylesheets/partials/_page.scss */
+/* line 1489, ../../app/stylesheets/partials/_page.scss */
 .cssgradients.multiplebgs .control_panel .main {
   background-image: url("/app/images/transparent_cloud.png"), -webkit-gradient(radial, 50% 100%, 0, 50% 100%, 100, color-stop(0%, #0093d9), color-stop(100%, #002e53));
   background-image: url("/app/images/transparent_cloud.png"), -webkit-radial-gradient(center bottom, circle farthest-side, #0093d9, #002e53);
@@ -2364,7 +2368,7 @@ li.captcha {
   background-position: center 8em, 0 0;
 }
 
-/* line 1490, ../../app/stylesheets/partials/_page.scss */
+/* line 1493, ../../app/stylesheets/partials/_page.scss */
 .partner #join {
   background: #a4999b;
   color: black;
@@ -2377,12 +2381,12 @@ li.captcha {
   -khtml-border-radius: 1em;
   border-radius: 1em;
 }
-/* line 1497, ../../app/stylesheets/partials/_page.scss */
+/* line 1500, ../../app/stylesheets/partials/_page.scss */
 .partner #join p {
   margin: 0;
 }
 
-/* line 1500, ../../app/stylesheets/partials/_page.scss */
+/* line 1503, ../../app/stylesheets/partials/_page.scss */
 .ie7 li.password {
   float: left;
 }
