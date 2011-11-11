@@ -6,7 +6,7 @@ Feature: Trap User Shell
   So that I can ensure the security of the system
 
   Scenario: Tail Logs
-    Given a new php-5.3 application
+    Given a new client created php-5.3 application
     And the user has no tail processes running 
     And a running SSH log stream
     And the user has 1 tail process running in 5 seconds

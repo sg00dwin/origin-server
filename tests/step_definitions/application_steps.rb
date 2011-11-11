@@ -26,7 +26,7 @@ Given /^an existing (.+) application( without an embedded cartridge)?$/ do |type
   @app.should_not be_nil
 end
 
-Given /^a new (.+) application$/ do |type|
+Given /^a new client created (.+) application$/ do |type|
   @app = TestApp.create_unique(type)
   if rhc_create_domain(@app)
     rhc_create_app(@app)
