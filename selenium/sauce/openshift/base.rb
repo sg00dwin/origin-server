@@ -15,6 +15,8 @@ module OpenShift
     end
 
     def setup
+      page.set_context "sauce:job-build=#{ENV['JENKINS_BUILD'] || 'unofficial'}"
+
       @page    = page
       @home    = OpenShift::Express::Home.new(page, '/app')
       @express = OpenShift::Express::Express.new(page, '/app/express')
