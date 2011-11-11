@@ -248,19 +248,24 @@ module Libra
   end
   
   def self.server_execute_move(app_name, app_info, user, server)
-    Libra.logger_debug "DEBUG: Performing cartridge level move for '#{app_name}' on #{server.name}"
-    server_execute_direct(app_info['framework'], 'move', app_name, user, server, app_info, false)
-    if app_info.has_key?('embedded')
-      embedded = app_info['embedded']
-      embedded.each_key do |embedded_framework|
-        Libra.logger_debug "DEBUG: Performing cartridge level move for embedded #{embedded_framework} for '#{app_name}' on #{server.name}"
-        server_execute_direct('embedded/' + embedded_framework, 'move', app_name, user, server, app_info, false)
+    begin
+      Libra.logger_debug "DEBUG: Performing cartridge level move for '#{app_name}' on #{server.name}"
+      server_execute_direct(app_info['framework'], 'move', app_name, user, server, app_info, false)
+      if app_info.has_key?('embedded')
+        embedded = app_info['embedded']
+        embedded.each_key do |embedded_framework|
+          Libra.logger_debug "DEBUG: Performing cartridge level move for embedded #{embedded_framework} for '#{app_name}' on #{server.name}"
+          server_execute_direct('embedded/' + embedded_framework, 'move', app_name, user, server, app_info, false)
+        end
       end
-    end
-    if app_info.has_key?('aliases')
-      app_info['aliases'].each do |server_alias|
-        server_execute_direct(app_info['framework'], 'add-alias', app_name, user, server, app_info, false, server_alias)
+      if app_info.has_key?('aliases')
+        app_info['aliases'].each do |server_alias|
+          server_execute_direct(app_info['framework'], 'add-alias', app_name, user, server, app_info, false, server_alias)
+        end
       end
+    rescue Exception => e
+      server_execute_direct(app_info['framework'], 'remove_httpd_proxy', app_name, user, server, app_info, false)
+      raise
     end
   end
   
