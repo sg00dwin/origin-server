@@ -1,7 +1,7 @@
 = render 'layouts/flashes'
 
 = semantic_form_for @domain, :remote => true do |form|
-  = form.input :namespace, :label => 'Domain', :input_html => {:autocomplete => false}, :value => @userinfo.namespace.nil? ? '' : @userinfo.namespace
+  = form.input :namespace, :label => 'Namespace', :input_html => {:autocomplete => false}, :value => @userinfo.namespace.nil? ? '' : @userinfo.namespace
   = form.input :ssh, :as => :hidden, :value => @userinfo.ssh_key.nil? ? 'nossh' : @userinfo.ssh_key
   = form.input :dom_action, :as => :hidden, :value => @userinfo.namespace.nil? ? 'create' : 'update'
   = form.input :form_type, :as => :hidden, :value => 'domain'
