@@ -86,12 +86,12 @@ module OpenShift
     end
     
     class ExpressConsole < Page
-      attr_accessor :domain_form
+      attr_accessor :domain_form, :app_form
 
       def initialize(page,path)
         super
         @domain_form = OpenShift::Express::DomainForm.new(page, "new_express_domain")
-
+	@app_form = OpenShift::Express::AppForm.new(page, "new_express_app")
       end
     end
   end

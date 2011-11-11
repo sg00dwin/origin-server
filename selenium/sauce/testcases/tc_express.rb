@@ -112,6 +112,58 @@ class Express < Sauce::TestCase
     await { new_namespace == form.get_collapsed_value(:namespace) }
   end
 
+  def test_app_create
+    @login, pass = dummy_credentials
+    create_namespace(@login, pass, @login)
+
+    form = @express_console.app_form
+
+    jump_to "apps"
+
+    n = 5
+    for i in 1.upto(n) do
+      type = get_option_value(form.fields[:cartridge], i)
+      create_app(@login, pass, "app#{i}", type)
+    end
+    
+    # TODO assert cannot create more
+  end
+
+  def get_option_value(select_id, preferred_index)
+    base = "//select[@id='#{select_id}']"
+    ct = @page.get_xpath_count("#{base}/option").to_i
+    i = preferred_index % ct
+    return @page.get_attribute("#{base}/option[#{i+1}]/@value")
+  end
+
+  def jump_to(id)
+    exec_js "jQuery('html,body').scrollTop(jQuery('##{id}').offset().top)"
+  end
+
+  # helper method for creating an app 
+  # pre: user is signed in already
+  # post: user is on express console page
+  def create_app(login, password, app_name, type)
+    @express_console.open
+    
+    form = @express_console.app_form
+
+    assert !form.in_error?(:app_name)
+    assert !form.in_error?(:cartridge)
+
+    form.set_value(:app_name, app_name)
+    form.set_value(:cartridge, type)
+
+    form.submit
+
+    await { form.processing? }
+
+    await(30) { !form.processing? }
+
+    # presence of deletion form indicates successful creation
+    assert @page.element? "//form[@id='#{app_name}_delete_form']"
+  end
+
   # helper method for creating a namespace
   # post: user is on express console page
   def create_namespace(login, password, namespace)

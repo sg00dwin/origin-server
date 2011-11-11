@@ -80,5 +80,17 @@ module OpenShift
       end
     end
 
+    class AppForm < Form
+      def initialize(page,id)
+        super(page,id)
+        @fields = {
+          :app_name => "express_app_app_name",
+          :cartridge => "express_app_cartridge"
+        }
+
+      	@submit = "express_app_submit"
+      end
+    end
+
   end
 end
