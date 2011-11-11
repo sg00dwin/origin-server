@@ -6,8 +6,11 @@ module AppHelper
   class TestApp
     include ActiveSupport::JSON
 
+    # The regex to parse the ssh output from the create app results
+    SSH_OUTPUT_PATTERN = %r|ssh://([^@]+)@([^/]+)|
+
     # attributes to represent the general information of the application
-    attr_accessor :name, :namespace, :login, :type, :hostname, :repo, :file, :embed, :snapshot
+    attr_accessor :name, :namespace, :login, :type, :hostname, :repo, :file, :embed, :snapshot, :uid
 
     # attributes to represent the state of the rhc_create_* commands
     attr_accessor :create_domain_code, :create_app_code
@@ -55,6 +58,11 @@ module AppHelper
       app.mysql_password = json['mysql_password']
       app.mysql_hostname = json['mysql_hostname']
       return app
+    end
+
+    def update_uid(std_output)
+      match = std_output.map {|line| line.match(SSH_OUTPUT_PATTERN)}.compact[0]
+      @uid = match[1]
     end
 
     def get_log(prefix)

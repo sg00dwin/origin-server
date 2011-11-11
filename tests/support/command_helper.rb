@@ -137,13 +137,23 @@ module CommandHelper
 
   def rhc_create_app(app, use_hosts=true)
     rhc_do('rhc_create_app') do
+      cmd = "#{$create_app_script} -l #{app.login} -a #{app.name} -r #{app.repo} -t #{app.type} -p fakepw -d"
+
+      # Short circuit DNS to speed up the tests by adding a host entry and skipping the DNS validation
       if use_hosts
-        run("echo '127.0.0.1 #{app.name}-#{app.namespace}.dev.rhcloud.com  # Added by cucumber' >> /etc/hosts") if use_hosts
-        exit_code = run("#{$create_app_script} --no-dns -l #{app.login} -a #{app.name} -r #{app.repo} -t #{app.type} -p fakepw -d")
-      else
-        exit_code = run("#{$create_app_script} -l #{app.login} -a #{app.name} -r #{app.repo} -t #{app.type} -p fakepw -d")
+        run("echo '127.0.0.1 #{app.name}-#{app.namespace}.dev.rhcloud.com  # Added by cucumber' >> /etc/hosts")
+        cmd << " --no-dns"
       end
+
+      output_buffer = []
+      exit_code = run(cmd, output_buffer)
+
+      # Update the application uid from the command output
+      app.update_uid(output_buffer[0])
+      
+      # Update the application creation code
       app.create_app_code = exit_code
+
       return app
     end
   end
