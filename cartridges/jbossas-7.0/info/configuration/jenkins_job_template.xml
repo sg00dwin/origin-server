@@ -78,7 +78,7 @@ $GIT_SSH UPSTREAM_SSH 'ctl_all stop'
 # Push content back to application
 rsync ~/.m2/ UPSTREAM_SSH:~/.m2/
 rsync ~/$WORKSPACE/deployments/. UPSTREAM_SSH:~/UPSTREAM_APP_NAME/repo/deployments/
-rsync ~/$WORKSPACE/.openshift UPSTREAM_SSH:~/UPSTREAM_APP_NAME/repo/.openshift
+rsync ~/$WORKSPACE/.openshift/ UPSTREAM_SSH:~/UPSTREAM_APP_NAME/repo/.openshift/
 
 # Configure / start app
 $GIT_SSH UPSTREAM_SSH deploy.sh
