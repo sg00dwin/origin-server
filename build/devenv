@@ -332,6 +332,15 @@ class DevEnv < Thor
     end
   end
 
+  desc "terminate TAG", "Terminates the instance with the specified tag"
+  method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
+  def terminate(tag)
+    options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
+    conn = connect
+    instance = find_instance(conn, tag, true)
+    terminate_instance(instance)
+  end
+
   desc "launch NAME", "Launches the latest DevEnv instance, tagging with NAME"
   method_option :verifier, :type => :boolean, :desc => "Add verifier functionality (private IP setup and local tests)"
   method_option :use_stage_image, :type => :boolean, :desc => "Launch a stage DevEnv image"
