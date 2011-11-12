@@ -161,7 +161,7 @@ class Express < Sauce::TestCase
     await(30) { !form.processing? }
 
     # presence of deletion form indicates successful creation
-    assert @page.element? "//form[@id='#{app_name}_delete_form']"
+    await { @page.element? "//form[@id='#{app_name}_delete_form']" }
   end
 
   # helper method for creating a namespace
