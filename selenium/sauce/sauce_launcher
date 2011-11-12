@@ -5,8 +5,11 @@ export SAUCE_OS=$1
 export SAUCE_BROWSER=$2
 export SAUCE_BROWSER_VERSION=$3
 
-# Launch a host and save the hostname
-export SAUCE_HOSTNAME=`${WORKSPACE}/build/devenv launch ${JOB_NAME}_${BUILD_NUMBER} | grep 'Hostname:' | awk '{print $2}'`
+# Launch a host and save the output to parse the hostname
+export CREATE_TMP=`mktemp`
+${WORKSPACE}/build/devenv launch ${JOB_NAME}_${BUILD_NUMBER} | tee $CREATE_TMP
+
+export SAUCE_HOSTNAME=`cat $CREATE_TMP | grep 'Hostname:' | awk '{print $2}'`
 export SAUCE_BROWSER_URL="https://${SAUCE_HOSTNAME}"
 
 # Sync the code
