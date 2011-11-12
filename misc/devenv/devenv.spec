@@ -46,10 +46,6 @@ Requires:  pam
 Requires:  jenkins
 Requires:  tito
 
-# Selenium Requirements
-Requires:  firefox
-Requires:  xorg-x11-server-Xvfb
-
 BuildArch: noarch
 
 %description
@@ -88,11 +84,6 @@ mv %{buildroot}%{devenvdir}%{jenkins}/jobs/* %{buildroot}%{jenkins}/jobs
 rm -rf %{buildroot}
 
 %post
-
-# Install the Selenium gems
-gem install ffi -v 1.0.9
-gem install selenium-webdriver
-gem install headless
 
 # Install the Sauce Labs gems
 gem install sauce
