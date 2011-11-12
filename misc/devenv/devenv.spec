@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.82.1
+Version:   0.82.2
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -228,6 +228,10 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 %{_initddir}/sauce-connect
 
 %changelog
+* Sat Nov 12 2011 Dan McPherson <dmcphers@redhat.com> 0.82.2-1
+- added helpful comment for 5671 (mmcgrath@redhat.com)
+- Removing the Selenium WebDriver dependencies (mhicks@redhat.com)
+
 * Thu Nov 10 2011 Dan McPherson <dmcphers@redhat.com> 0.82.1-1
 - trying to remove the sslverify and better error catching running sync and
   build (dmcphers@redhat.com)
