@@ -4,6 +4,8 @@
 export SAUCE_OS=$1
 export SAUCE_BROWSER=$2
 export SAUCE_BROWSER_VERSION=$3
+export SAUCE_USERNAME=${SAUCE_USERNAME-"openshift_ci"}
+export SAUCE_ACCESS_KEY=${SAUCE_ACCESS_KEY-"3d67e770-ce7d-482a-8c7f-07aec039d564"}
 
 # Launch a host and save the output to parse the hostname
 export CREATE_TMP=`mktemp`
@@ -17,3 +19,9 @@ ${WORKSPACE}/build/devenv sync ${SAUCE_HOSTNAME} --clean_metadata
 
 # Run the Sauce Labs tests
 ruby selenium/sauce/ts_web
+RESULT=$?
+
+# Terminate the builder on exit
+${WORKSPACE}/build/devenv terminate ${JOB_NAME}_${BUILD_NUMBER}
+
+exit $RESULT
