@@ -1,16 +1,16 @@
-#!/usr/bin/ruby
+#!/bin/sh
 
-SAUCE_OS=ARG[0]
-SAUCE_BROWSER=ARG[1]
-SAUCE_BROWSER_VERSION=ARG[2]
+# Set the OS / browser combinations
+export SAUCE_OS=$1
+export SAUCE_BROWSER=$2
+export SAUCE_BROWSER_VERSION=$3
 
-STDOUT.sync=true
-STDERR.sync=true
+# Launch a host and save the hostname
+export SAUCE_HOSTNAME=`${WORKSPACE}/build/devenv launch ${JOB_NAME}_${BUILD_NUMBER} | grep 'Hostname:' | awk '{print $2}'`
+export SAUCE_BROWSER_URL="https://${SAUCE_HOSTNAME}"
 
-BUILDER="libra_web_#{SAUCE_BROWSER}_#{SAUCE_BROWSER_VERSION}_#{ENV['BUILD_NUMBER']}"
-STD_OPTIONS="--terminate --unofficial --exclude_internal --exclude_verification"
-SAUCE_OPTIONS="--sauce_os=\"#{SAUCE_OS}\" --sauce_browser=\"#{SAUCE_BROWSER}\" --sauce_browser_version=#{SAUCE_BROWSER_VERSION}"
+# Sync the code
+${WORKSPACE}/build/devenv sync ${SAUCE_HOSTNAME} --clean_metadata
 
-puts `build/devenv launch #{BUILDER}`
-puts `build/devenv sync #{BUILDER} --tag --clean_metadata`
-puts `build/devenv test #{BUILDER} #{STD_OPTIONS} #{SAUCE_OPTIONS}`
+# Run the Sauce Labs tests
+ruby ts_web
