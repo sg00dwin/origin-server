@@ -1,4 +1,8 @@
 #!/usr/bin/env ruby
+
+# Add current path to the load path
+$: << File.dirname(__FILE__)
+
 #
 # To run specific tests, specify the name on the command line
 #
