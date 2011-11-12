@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.82.1
+Version:   0.82.2
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -68,6 +68,13 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Sat Nov 12 2011 Dan McPherson <dmcphers@redhat.com> 0.82.2-1
+- Fixing the cart list and the assertion order (mhicks@redhat.com)
+- Fix alignment of wrapped lines in app list (edirsh@redhat.com)
+- Change domain to namespace (edirsh@redhat.com)
+- Include new cartridges in cartlist, but don't show them in the create app
+  form (edirsh@redhat.com)
+
 * Thu Nov 10 2011 Dan McPherson <dmcphers@redhat.com> 0.82.1-1
 - bump spec numbers (dmcphers@redhat.com)
 
