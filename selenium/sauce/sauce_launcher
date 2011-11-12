@@ -16,4 +16,4 @@ export SAUCE_BROWSER_URL="https://${SAUCE_HOSTNAME}"
 ${WORKSPACE}/build/devenv sync ${SAUCE_HOSTNAME} --clean_metadata
 
 # Run the Sauce Labs tests
-ruby ts_web
+ruby selenium/sauce/ts_web
