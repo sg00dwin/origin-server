@@ -2,7 +2,7 @@
 
 Summary:       Common dependencies of the OpenShift broker and site
 Name:          rhc-server-common
-Version:       0.82.1
+Version:       0.82.2
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -57,6 +57,12 @@ rm -rf %{buildroot}
                                   -s /sbin/nologin 2>&1 > /dev/null || :
 
 %changelog
+* Sat Nov 12 2011 Dan McPherson <dmcphers@redhat.com> 0.82.2-1
+- remove httpd proxy from new server on failed move (dmcphers@redhat.com)
+- add restart on failed move (dmcphers@redhat.com)
+- fix find available (dmcphers@redhat.com)
+- Bug 753073 (dmcphers@redhat.com)
+
 * Thu Nov 10 2011 Dan McPherson <dmcphers@redhat.com> 0.82.1-1
 - bump spec numbers (dmcphers@redhat.com)
 
