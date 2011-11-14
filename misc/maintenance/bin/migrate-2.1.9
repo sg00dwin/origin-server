@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-# Usage: ./migrate-2.1.8 > out.txt
+# Usage: ./migrate-2.1.9 > out.txt
 require 'rubygems'
 require 'openshift'
 require 'pp'
@@ -7,6 +7,10 @@ require 'pp'
 include Libra
 
 RHLOGINS=nil #['rhlogin']
+
+#
+#  Migrate the specified app on the node
+#
 
 #
 #  Migrate the specified app on the node
@@ -20,7 +24,7 @@ def migrate_app_on_node(server_identity, framework, uuid, namespace, app_name)
                    :application => app_name,
                    :app_type => framework,
                    :namespace => namespace,
-                   :version => '2.1.8') do |response|
+                   :version => '2.1.9') do |response|
       exit_code = response[:body][:data][:exitcode]
       output = response[:body][:data][:output]
       if (output.length > 0)
@@ -31,22 +35,6 @@ def migrate_app_on_node(server_identity, framework, uuid, namespace, app_name)
         raise "Failed migrating app. Rerun with: #{migrate_cmd}"
       else
         migrated = true
-        puts "Restarting phpmyadmin for app '#{app_name}' on node '#{server_identity}'"
-        server = Server.new(server_identity)
-        result = server.execute_direct("embedded/phpmyadmin-3.4", 'restart', "#{app_name} #{namespace} #{uuid}")[0]
-        if (result && defined? result.results && result.results.has_key?(:data))
-          output = result.results[:data][:output]
-          exit_code = result.results[:data][:exitcode]
-          if (output.length > 0)
-            puts "Restart on node output: #{output}"
-          end
-          if exit_code != 0
-            puts "Restart on node exit code: #{exit_code}"
-            raise "Failed restarting app '#{app_name}' with uuid '#{uuid}' on node '#{server_identity}'"
-          end
-        else
-          raise "Failed getting result from restart app '#{app_name}' with uuid '#{uuid}' on node '#{server_identity}'"
-        end
       end
     end
   end
@@ -54,7 +42,7 @@ def migrate_app_on_node(server_identity, framework, uuid, namespace, app_name)
 end
 
 #
-# Migrate applications between 2.1.7b and 2.1.8
+# Migrate applications between 2.1.8a and 2.1.9
 #
 def migrate
   start_time = Time.now.to_i
@@ -71,13 +59,11 @@ def migrate
       puts "Gathering apps for user: #{user.rhlogin}(#{rhlogins.length - index}) with uuid: #{user.uuid}"
       apps = user.apps
       apps.each do |app_name, app|
-        if app.has_key?('embedded') && app['embedded'].has_key?('phpmyadmin-3.4')
-          server_identity = app['server_identity']
-          node_to_apps[server_identity] = [] unless node_to_apps[server_identity]
-          node_to_users[server_identity] = [] unless node_to_users[server_identity]
-          node_to_apps[server_identity] << {:name => app_name, :app => app}
-          node_to_users[server_identity] << user
-        end
+        server_identity = app['server_identity']
+        node_to_apps[server_identity] = [] unless node_to_apps[server_identity]
+        node_to_users[server_identity] = [] unless node_to_users[server_identity]
+        node_to_apps[server_identity] << {:name => app_name, :app => app}
+        node_to_users[server_identity] << user
       end
     else
       puts "WARNING:  Couldn't find user: #{rhlogin}"
