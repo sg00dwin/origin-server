@@ -15,6 +15,8 @@ Requires: rhc-node
 Requires: mysql-devel
 Requires: wget
 Requires: java-1.6.0-openjdk
+Requires:  rubygems
+Requires:  rubygem-json
 
 %description
 Provides embedded jenkins client support
