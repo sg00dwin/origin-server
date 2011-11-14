@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/jenkins-client-1.4
 
 Name: rhc-cartridge-jenkins-client-1.4
-Version: 0.16.3
+Version: 0.16.4
 Release: 1%{?dist}
 Summary: Embedded jenkins client support for express 
 Group: Network/Daemons
@@ -49,6 +49,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Mon Nov 14 2011 Dan McPherson <dmcphers@redhat.com> 0.16.4-1
+- 
+
 * Mon Nov 14 2011 Dan McPherson <dmcphers@redhat.com> 0.16.3-1
 - Bug 753674 (dmcphers@redhat.com)
 
