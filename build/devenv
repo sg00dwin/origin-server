@@ -488,7 +488,7 @@ class DevEnv < Thor
           puts "Running Sauce tests with the following options:"
           puts sauce_opts.to_yaml
 
-          cmd = "cd li-test/selenium/sauce; #{env_string} ruby ts_web"
+          cmd = "cd li-test/selenium; #{env_string} ruby ts_web"
           run_ssh(hostname, "Web Selenium", cmd)
         end
       end
