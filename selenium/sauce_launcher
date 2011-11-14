@@ -9,17 +9,17 @@ export SAUCE_USERNAME=${SAUCE_USERNAME-"openshift_ci"}
 export SAUCE_ACCESS_KEY=${SAUCE_ACCESS_KEY-"3d67e770-ce7d-482a-8c7f-07aec039d564"}
 
 # Launch a host and save the output to parse the hostname
-export CREATE_TMP=`mktemp`
-${WORKSPACE}/build/devenv launch ${JOB_NAME}_${BUILD_NUMBER} | tee $CREATE_TMP
+TMP_FILE=`mktemp`
+${WORKSPACE}/build/devenv launch ${JOB_NAME}_${BUILD_NUMBER} | tee $TMP_FILE
 
 # Make sure the host gets terminated on exit no matter what
 trap "${WORKSPACE}/build/devenv terminate ${JOB_NAME}_${BUILD_NUMBER}; exit" INT TERM EXIT
 
-export SAUCE_HOSTNAME=`cat $CREATE_TMP | grep 'Hostname:' | awk '{print $2}'`
-export SAUCE_BROWSER_URL="https://${SAUCE_HOSTNAME}"
+DEVENV_HOSTNAME=`grep Hostname: $TMP_FILE | awk '{print $2}'`
+export SAUCE_BROWSER_URL="https://${DEVENV_HOSTNAME}"
 
 # Sync the code
-${WORKSPACE}/build/devenv sync ${SAUCE_HOSTNAME} --clean_metadata
+${WORKSPACE}/build/devenv sync ${DEVENV_HOSTNAME} --clean_metadata
 
 # Run the Sauce Labs tests
 cd selenium
