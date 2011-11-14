@@ -1,0 +1,62 @@
+#!/bin/bash
+
+# Copyright © 2010 Mike McGrath All rights reserved
+# Copyright © 2010 Red Hat, Inc. All rights reserved
+
+# This copyrighted material is made available to anyone wishing to use, modify,
+# copy, or redistribute it subject to the terms and conditions of the GNU
+# General Public License v.2.  This program is distributed in the hope that it
+# will be useful, but WITHOUT ANY WARRANTY expressed or implied, including the
+# implied warranties of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.  You should have
+# received a copy of the GNU General Public License along with this program;
+# if not, write to the Free Software Foundation, Inc., 51 Franklin Street,
+# Fifth Floor, Boston, MA 02110-1301, USA. Any Red Hat trademarks that are
+# incorporated in the source code or documentation are not subject to the GNU
+# General Public License and may only be used or replicated with the express
+# permission of Red Hat, Inc.
+
+# Destroys mongodb instance
+
+function print_help {
+    echo "Usage: $0 app-name namespace uuid"
+
+    echo "$0 $@" | logger -p local0.notice -t libra_mongodb_deconfigure
+    exit 1
+}
+
+while getopts 'd' OPTION
+do
+    case $OPTION in
+        d) set -x
+        ;;
+        ?) print_help
+        ;;
+    esac
+done
+
+
+[ $# -eq 3 ] || print_help
+
+CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
+source ${CART_DIR}/li-controller/info/lib/util
+
+app_type="mongodb-2.0"
+setup_embedded_deconfigure "$1" $2 $3
+
+source ${CART_INFO_DIR}/lib/util
+
+MONGODB_DIR="$APP_HOME/mongodb-2.0/"
+
+#
+# Remove environment variables
+#
+#/bin/rm -f $APP_HOME/.env/OPENSHIFT_DB_USERNAME $APP_HOME/.env/OPENSHIFT_DB_PASSWORD $APP_HOME/.env/OPENSHIFT_DB_TYPE $APP_HOME/.env/OPENSHIFT_DB_HOST $APP_HOME/.env/OPENSHIFT_DB_PORT $APP_HOME/.env/OPENSHIFT_DB_SOCKET $APP_HOME/.env/OPENSHIFT_DB_URL $APP_HOME/.env/OPENSHIFT_DB_CTL_SCRIPT $APP_HOME/.env/OPENSHIFT_DB_MYSQL_51_DUMP $APP_HOME/.env/OPENSHIFT_DB_MYSQL_51_DUMP_CLEANUP $APP_HOME/.env/OPENSHIFT_DB_MYSQL_51_RESTORE $APP_HOME/.env/OPENSHIFT_DB_MYSQL_51_EMBEDDED_TYPE
+rm -rf $MONGODB_DIR
+
+stop_mongodb
+
+confirm_pid_gone "${MONGODB_DIR}/pid/mongodb.pid"
+
+runcon -l s0-s0:c0.c1023 rm -rf "$MONGODB_DIR" "$MONGODB_DIR/${application}_mongodb_ctl.sh"
+
