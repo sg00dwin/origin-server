@@ -2,7 +2,7 @@
 
 Summary:   Provides jenkins-1.4 support
 Name:      rhc-cartridge-jenkins-1.4
-Version:   0.82.2
+Version:   0.82.3
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -68,6 +68,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Mon Nov 14 2011 Dan McPherson <dmcphers@redhat.com> 0.82.3-1
+- Bug 753674 (dmcphers@redhat.com)
+
 * Sat Nov 12 2011 Dan McPherson <dmcphers@redhat.com> 0.82.2-1
 - add remove_httpd_proxy (dmcphers@redhat.com)
 
