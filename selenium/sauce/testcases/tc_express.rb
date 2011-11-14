@@ -144,8 +144,6 @@ class Express < Sauce::TestCase
   # pre: user is signed in already
   # post: user is on express console page
   def create_app(login, password, app_name, type)
-    @express_console.open
-    
     form = @express_console.app_form
 
     assert !form.in_error?(:app_name)
