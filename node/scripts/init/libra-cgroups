@@ -280,6 +280,12 @@ start() {
     echo -n $"Libra cgroups initialized"
     echo
     return $GROUP_RETVAL
+    echo
+    echo "WARNING !!! WARNING !!! WARNING !!!"
+    echo "Cgroups may have just restarted.  It's important to confirm all the libra apps are actively running."
+    echo "It's suggested you run service libra restart now"
+    echo "WARNING !!! WARNING !!! WARNING !!!"
+    echo
 }
 
 
