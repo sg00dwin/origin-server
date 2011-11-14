@@ -144,8 +144,6 @@ class Express < Sauce::TestCase
   # pre: user is signed in already
   # post: user is on express console page
   def create_app(login, password, app_name, type)
-    @express_console.open
-    
     form = @express_console.app_form
 
     assert !form.in_error?(:app_name)
@@ -161,7 +159,7 @@ class Express < Sauce::TestCase
     await(30) { !form.processing? }
 
     # presence of deletion form indicates successful creation
-    assert @page.element? "//form[@id='#{app_name}_delete_form']"
+    await { @page.element? "//form[@id='#{app_name}_delete_form']" }
   end
 
   # helper method for creating a namespace

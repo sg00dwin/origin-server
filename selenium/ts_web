@@ -1,10 +1,57 @@
 #!/usr/bin/env ruby
-require "base"
-require "tc_header"
-require "tc_footer"
-require "tc_home"
-require "tc_register"
-require "tc_login"
-require "tc_express"
-require "tc_flex"
-require "validation"
+
+# Add current path to the load path
+$: << File.dirname(__FILE__)
+
+#
+# To run specific tests, specify the name on the command line
+#
+require "test/unit"
+require "test/unit/testsuite"
+require "test/unit/ui/console/testrunner"
+
+require 'helper'
+require 'openshift/base'
+require 'openshift/express/dialogs'
+require 'openshift/express/navbars'
+require 'openshift/express/pages'
+require 'openshift/express/forms'
+
+# Load desired test cases
+Dir["testcases/*.rb"].each {|file| require file }
+
+# Need to load the tests manually so we can
+#   override at_exit
+class TS_web
+  def self.suite
+    default_suites = {
+      :home => Home.suite,
+      :dialogs => Dialogs.suite,
+      :signin => Signin.suite,
+      :reset => Reset.suite,
+      :signup => Signup.suite,
+      :header => Header.suite,
+      :express => Express.suite,
+      :flex => Flex.suite,
+    }
+
+    suite = Test::Unit::TestSuite.new('Sauce Tests')
+
+    (ARGV.empty? ? default_suites.values : ARGV.map{|x| default_suites[x.downcase.to_sym]}).each do |x|
+      suite << x
+    end
+    return suite
+  end
+end
+
+# Need to do this for now in order to kill the 
+#   process when we're done
+result = Test::Unit::UI::Console::TestRunner.run(TS_web);
+
+# HACK: pid is of the `cmd`, which spawns java
+at_exit{ 
+  if @sauce_connect_pid
+    Process.kill('TERM',@sauce_connect_pid+1) ;
+  end
+  exit!(result.passed?)
+}

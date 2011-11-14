@@ -1,9 +1,5 @@
 #!/usr/bin/env ruby
 
-require 'rubygems'
-require 'json'
-require 'pp'
-
 STDOUT.sync = true
 STDERR.sync = true
 

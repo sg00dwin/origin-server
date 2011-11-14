@@ -6,39 +6,49 @@ require 'net/http'
 require 'net/https'
 require 'zipruby'
 
-# Set localhost to be the default
-hostname = 'localhost'
 
-# See if there is a hostname for this machine in /etc/hosts
-begin
-  hostname = Socket.gethostbyname(Socket.gethostname).first
-rescue SocketError
-  puts "Not able to resolve local hostname"
-rescue
-  puts "No local hostname given"
-end
+# helper for obtaining hostname
+def get_my_hostname
+  # Set localhost to be the default
+  hostname = 'localhost'
+  
+  # See if there is a hostname for this machine in /etc/hosts
+  begin
+    hostname = Socket.gethostbyname(Socket.gethostname).first
+  rescue SocketError
+    puts "Not able to resolve local hostname"
+  rescue
+    puts "No local hostname given"
+  end
+  
+  # Check to see if we're running on an EC2 machine
+  begin
+    url = 'http://169.254.169.254/latest/meta-data/public-hostname'
+    hostname = Net::HTTP.get_response(URI.parse(url)).body
+  rescue Errno::EHOSTUNREACH
+    puts "Not running on EC2"
+  end
 
-# Check to see if we're running on an EC2 machine
-begin
-  url = 'http://169.254.169.254/latest/meta-data/public-hostname'
-  hostname = Net::HTTP.get_response(URI.parse(url)).body
-rescue Errno::EHOSTUNREACH
-  puts "Not running on EC2"
+  return hostname
 end
-puts "Running tests against: #{hostname}"
 
 # This should go in your test_helper.rb file if you have one
 Sauce.config do |config|
-  config.browser_url = config.browser_url || "https://#{hostname}"
+  if !ENV["SAUCE_BROWSER_URL"]
+    config.browser_url = "https://#{get_my_hostname}"
+  end
   config.javascript_framework = :jquery
 
   # uncomment this if your server is not publicly accessible
-  # config.application_host = hostname 
+  # config.application_host = get_my_hostname
   # config.application_port = "443"
 end
 
 # Get the Sauce configuration information
 @cfg = Sauce::Config.new()
+
+puts "Running tests against: #{@cfg.browser_url}"
+
 ready_file = 'sauce_ready'
 @sauce_file = 'Sauce-Connect.jar'
 def rest(path)
