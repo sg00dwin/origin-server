@@ -57,7 +57,8 @@ $ ->
       # Success
       ($ '.current', this).text ( shorten event.osEventData.ssh, 20 )
       ($ '.popup', this).osPopup 'unpop'
-      # update hidden form value in domain form
+      # update form elements with cleansed key
+      $('#ssh_form_express_domain_ssh').val(event.osEventData.ssh)
       $('#express_domain_ssh').val(event.osEventData.ssh)
     else
       # Error

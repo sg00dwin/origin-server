@@ -62,7 +62,7 @@ class ExpressDomainController < ApplicationController
       success_data = {
         :action => @dom_action,
         :namespace => params[:express_domain][:namespace],
-        :ssh => params[:express_domain][:ssh]
+        :ssh => @domain.ssh
       }
       response = {:status => 'success', :event => @event, :data => success_data}
     else

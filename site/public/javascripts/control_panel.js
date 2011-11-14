@@ -1,3 +1,7 @@
+/* DO NOT MODIFY. This file was compiled Tue, 15 Nov 2011 15:44:39 GMT from
+ * /home/aboone/Source/li/site/app/coffeescripts/control_panel.coffee
+ */
+
 (function() {
   var $, shorten;
   $ = jQuery;
@@ -63,6 +67,7 @@
         if (event.osEventStatus === 'success') {
           ($('.current', this)).text(shorten(event.osEventData.ssh, 20));
           ($('.popup', this)).osPopup('unpop');
+          $('#ssh_form_express_domain_ssh').val(event.osEventData.ssh);
           return $('#express_domain_ssh').val(event.osEventData.ssh);
         } else {
           return ($('.os-dialog-container', cpDialog)).prepend("<div class=\"error message\">\n  " + event.osEventData + "\n</div>");
