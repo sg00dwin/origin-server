@@ -38,7 +38,7 @@ isrunning() {
 start() {
 	if ! isrunning
     then
-        /usr/bin/mongod --smallfiles --quiet -f $MONGODB_DIR/etc/mongodb.conf run >/dev/null 2>&1 &
+        /usr/bin/mongod --nojournal --smallfiles --quiet -f $MONGODB_DIR/etc/mongodb.conf run >/dev/null 2>&1 &
     else
         echo "Mongodb already running" 1>&2
     fi
