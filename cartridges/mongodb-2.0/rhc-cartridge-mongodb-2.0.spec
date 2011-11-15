@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/mongodb-2.0
 
 Name: rhc-cartridge-mongodb-2.0
-Version: 0.2
+Version: 0.3
 Release: 1%{?dist}
 Summary: Embedded mongodb support for express
 
@@ -50,6 +50,12 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Tue Nov 15 2011 Dan McPherson <dmcphers@redhat.com> 0.3-1
+- Merge branch 'master' of ssh://express-master/srv/git/li (ramr@redhat.com)
+- increasing max filesize (mmcgrath@redhat.com)
+- fixup hooks - start/stop/restart/configure + add "scaffolding" for running
+  mongo w/ auth - admin user. (ramr@redhat.com)
+
 * Tue Nov 15 2011 Ram Ranganathan <ramr@redhat.com> 0.2-2
 - admin user [for auth], plus fixup start/stop/restart/configure hooks
 
