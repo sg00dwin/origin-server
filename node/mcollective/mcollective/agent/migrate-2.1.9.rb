@@ -16,15 +16,29 @@ module LibraMigration
     output = ''
     exitcode = 0
     if (File.exists?(app_home) && !File.symlink?(app_home))
-      cartridge_root_dir = "/usr/libexec/li/cartridges"
+      #cartridge_root_dir = "/usr/libexec/li/cartridges"
       #cartridge_dir = "#{cartridge_root_dir}/#{app_type}"
 
-      phpmyadmin_dir = "#{app_home}/phpmyadmin-3.4"
-      if File.exists?(phpmyadmin_dir)
-         phpmyadmin_cartridge_root_dir = "/usr/libexec/li/cartridges/embedded/phpmyadmin-3.4"
-         FileUtils.rm_rf "#{phpmyadmin_dir}/conf.d/disabled_pages.conf"
-         FileUtils.ln_s  "#{phpmyadmin_cartridge_root_dir}/info/configuration/disabled_pages.conf", "#{phpmyadmin_dir}/conf.d/disabled_pages.conf"
+      git_dir = "#{app_home}/git/#{app_name}.git/"
+      FileUtils.chown(uuid, uuid, git_dir)
+      FileUtils.chmod(0755, git_dir)
+      
+      gitconfig = "#{app_home}/.gitconfig"
+      output += "Migrating .gitconfig: #{gitconfig}\n"
+      file = File.open(gitconfig, 'w')
+      begin
+        file.puts <<EOF
+[user]
+  name = OpenShift System User
+[gc]
+  auto = 100
+EOF
+      ensure
+        file.close
       end
+      
+      FileUtils.chown('root', 'root', gitconfig)
+      FileUtils.chmod(0755, gitconfig)
       
     else
       exitcode = 127

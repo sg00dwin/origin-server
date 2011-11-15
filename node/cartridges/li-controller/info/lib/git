@@ -78,8 +78,14 @@ EOF
     chown $user_id.$group_id -R $GIT_DIR
     # Secure the hooks dir
     chown root.root -R $GIT_DIR/hooks
-    chown root.root $GIT_DIR
+    #chown root.root $GIT_DIR
     chmod 0755 $GIT_DIR
+    cat <<EOF > $APP_HOME/.gitconfig
+[user]
+  name = OpenShift System User
+[gc]
+  auto = 100
+EOF
 }
 
 function populate_repo_dir {
