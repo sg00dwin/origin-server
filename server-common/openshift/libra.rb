@@ -231,8 +231,8 @@ module Libra
         deconfigure_app_from_node(app_info, app_name, user, old_server, false)
         break
       rescue Exception => e
+        Libra.logger_debug "DEBUG: Error deconfiguring old app on try(#{i}): #{e.message}"
         raise if i == num_tries
-        Libra.logger_debug "DEBUG: Error deconfiguring old app: #{e.message}"
       end
     end
   end
