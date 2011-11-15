@@ -137,7 +137,7 @@ class Express < Sauce::TestCase
   end
 
   def jump_to(id)
-    exec_js "jQuery('html,body').scrollTop(jQuery('##{id}').offset().top)"
+    exec_js "jQuery('html,body').scrollTop(jQuery('##{id}').offset().top - 50)"
   end
 
   # helper method for creating an app 
