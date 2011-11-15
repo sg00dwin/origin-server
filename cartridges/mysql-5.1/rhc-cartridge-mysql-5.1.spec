@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/mysql-5.1
 
 Name: rhc-cartridge-mysql-5.1
-Version: 0.16.2
+Version: 0.16.3
 Release: 1%{?dist}
 Summary: Embedded mysql support for express
 
@@ -48,6 +48,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Tue Nov 15 2011 Dan McPherson <dmcphers@redhat.com> 0.16.3-1
+- increased max allowed packet (mmcgrath@redhat.com)
+
 * Sat Nov 12 2011 Dan McPherson <dmcphers@redhat.com> 0.16.2-1
 - remove carts dep on broker (dmcphers@redhat.com)
 
