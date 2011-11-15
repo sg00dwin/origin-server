@@ -108,6 +108,27 @@ module OpenShift
     def sauce_testing(testing=true)
         exec_js("$.cookie('sauce_testing',#{testing});")
     end
+
+    # helper method to wait for a (ruby) condition to become true
+    def await(timeout_secs=5)
+      if block_given?
+        while true
+          begin
+            if yield
+              return
+            else
+              raise StandardError, "block evaluated false", caller
+            end
+          rescue
+            sleep 1
+            timeout_secs -= 1
+            if timeout_secs <= 0
+              raise
+            end
+          end
+        end
+      end
+    end
   end
 
   module Assertions

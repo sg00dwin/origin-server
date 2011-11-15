@@ -189,28 +189,6 @@ class Express < Sauce::TestCase
     return ["test#{data[:uid]}", data[:password]]
   end
 
-  # helper method to wait for a (ruby) condition to become true
-  # TODO: consider either moving this to TestBase or using a different technique
-  def await(timeout_secs=5)
-    if block_given?
-      while true
-        begin
-          if yield
-            return
-          else
-            raise StandardError, "block evaluated false", caller
-          end
-        rescue
-          sleep 1
-          timeout_secs -= 1
-          if timeout_secs <= 0
-            raise
-          end
-        end
-      end
-    end
-  end
-
   def check_links(hash,wait=true)
     hash.each do |name,url|
       @express.open

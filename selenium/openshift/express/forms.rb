@@ -69,7 +69,8 @@ module OpenShift
 
       def expand
         if collapsed?
-	  @page.click(@loc_btn_edit)
+          await { @page.element? @loc_btn_edit }
+          @page.click(@loc_btn_edit)
         end
       end
 
