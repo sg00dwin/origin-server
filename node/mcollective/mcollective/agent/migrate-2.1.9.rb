@@ -19,8 +19,6 @@ module LibraMigration
       #cartridge_root_dir = "/usr/libexec/li/cartridges"
       #cartridge_dir = "#{cartridge_root_dir}/#{app_type}"
 
-      output += "Testing\n"
-=begin
       git_dir = "#{app_home}/git/#{app_name}.git/"
       FileUtils.chown(uuid, uuid, git_dir)
       FileUtils.chmod(0755, git_dir)
@@ -38,7 +36,6 @@ EOF
       ensure
         file.close
       end
-=end
       
       FileUtils.chown('root', 'root', gitconfig)
       FileUtils.chmod(0755, gitconfig)
