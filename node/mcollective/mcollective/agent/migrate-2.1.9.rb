@@ -38,7 +38,7 @@ EOF
       end
       
       FileUtils.chown('root', 'root', gitconfig)
-      FileUtils.chmod(0755, gitconfig)
+      FileUtils.chmod(0644, gitconfig)
       
     else
       exitcode = 127
