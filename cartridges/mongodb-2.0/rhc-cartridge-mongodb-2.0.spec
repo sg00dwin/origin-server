@@ -15,6 +15,8 @@ BuildArch: noarch
 Requires: rhc-node
 Requires: mongodb-server
 Requires: mongodb-devel
+Requires: libmongodb
+Requires: mongodb
 
 %description
 Provides rhc mongodb cartridge support
@@ -48,6 +50,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Tue Nov 15 2011 Ram Ranganathan <ramr@redhat.com> 0.2-2
+- admin user [for auth], plus fixup start/stop/restart/configure hooks
+
 * Tue Nov 15 2011 Mike McGrath <mmcgrath@redhat.com> 0.2-1
 - new package built with tito
 
