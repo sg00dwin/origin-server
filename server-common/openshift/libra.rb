@@ -225,26 +225,16 @@ module Libra
     end
 
     Libra.logger_debug "DEBUG: Deconfiguring old app '#{app_name}' on #{old_server.name} after move"
-    deconfigure_app_from_node(app_info, app_name, user, old_server, false)
-  end
-  
-  def self.execute_local_move(app_name, rhlogin)
-    user = get_user(rhlogin)
-
-    app_info = user.app_info(app_name)
-    check_app_exists(app_info, app_name)
-
-    server = Server.new(app_info['server_identity'])
-
-    Libra.logger_debug "DEBUG: Local move for app '#{app_name}' with uuid #{app_info['uuid']} on server #{server.name}"
-
-    Libra.logger_debug "DEBUG: Stopping app: '#{app_name}'"
-    server_execute_direct(app_info['framework'], 'stop', app_name, user, server, app_info)
-
-    server_execute_move(app_name, app_info, user, server)
-    
-    Libra.logger_debug "DEBUG: Starting app: '#{app_name}'"
-    server_execute_direct(app_info['framework'], 'start', app_name, user, server, app_info, false)
+    num_tries = 2
+    (1..num_tries).each do |i|
+      begin
+        deconfigure_app_from_node(app_info, app_name, user, old_server, false)
+        break
+      rescue Exception => e
+        raise if i == num_tries
+        Libra.logger_debug "DEBUG: Error deconfiguring old app: #{e.message}"
+      end
+    end
   end
   
   def self.server_execute_move(app_name, app_info, user, server)
