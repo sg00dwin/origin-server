@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/mongodb-2.0
 
 Name: rhc-cartridge-mongodb-2.0
-Version: 0.1
+Version: 0.2
 Release: 1%{?dist}
 Summary: Embedded mongodb support for express
 
@@ -48,5 +48,8 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Tue Nov 15 2011 Mike McGrath <mmcgrath@redhat.com> 0.2-1
+- new package built with tito
+
 * Mon Nov 14 2011 Dan McPherson <mmcgrath@redhat.com> 0.1-1
 - Initial packaging
