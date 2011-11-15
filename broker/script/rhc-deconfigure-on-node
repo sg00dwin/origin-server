@@ -47,3 +47,4 @@ user = Libra.get_user(options[:rhlogin])
 app_info = user.app_info(options[:app_name])
 server = Server.new(options[:server_identity])
 Libra.deconfigure_app_from_node(app_info, options[:app_name], user, server, false)
+puts "Successfully deconfigured '#{options[:app_name]}' on '#{server.name}'"

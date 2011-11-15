@@ -219,8 +219,11 @@ module Libra
       Libra.logger_debug "DEBUG: Fixing DNS and s3 for app '#{app_name}' after move"
       user.move_app(app_name, app_info, new_server)
     rescue Exception => e
-      new_server.delete_account(app_info['uuid'])
-      server_execute_direct(app_info['framework'], 'start', app_name, user, old_server, app_info)
+      begin
+        new_server.delete_account(app_info['uuid'])
+      ensure
+        server_execute_direct(app_info['framework'], 'start', app_name, user, old_server, app_info)
+      end
       raise
     end
 
@@ -235,6 +238,7 @@ module Libra
         raise if i == num_tries
       end
     end
+    Libra.logger_debug "Successfully moved '#{app_name}' with uuid #{app_info['uuid']} from #{old_server.name} to #{new_server.name}"
   end
   
   def self.server_execute_move(app_name, app_info, user, server)
