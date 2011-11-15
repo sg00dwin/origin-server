@@ -25,7 +25,7 @@ Libra.c[:rpc_opts] = options
 user = User.find(options[:rhlogin])
 unless user
     puts "Could not find user with rhlogin #{options[:rhlogin]}"
-    exit 5
+    exit 1
 end
 user_info = {
     :rhlogin => user.rhlogin,

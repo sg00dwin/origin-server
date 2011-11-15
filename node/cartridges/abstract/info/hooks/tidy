@@ -16,16 +16,16 @@
 # General Public License and may only be used or replicated with the express
 # permission of Red Hat, Inc.
 
-# Restart the application
+# Tidy up an application
 
 # Exit on any errors
 set -e
 
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
-    echo "Get application status"
+    echo "Stop a running application and disable it"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_httpd_restart
+    echo "$0 $@" | logger -p local0.notice -t libra_force_stop
     exit 1
 }
 
@@ -39,7 +39,6 @@ do
     esac
 done
 
-
 [ $# -eq 3 ] || print_help
 
 CART_DIR=/usr/libexec/li/cartridges
@@ -47,9 +46,18 @@ source ${CART_DIR}/li-controller/info/lib/util
 
 setup_basic_hook "$1" $2 $3
 
+check_app_dir_exists
+
+. $APP_HOME/.env/OPENSHIFT_APP_TYPE
+
+CART_INFO_DIR=$CART_DIR/$OPENSHIFT_APP_TYPE/info
 
 #
-# Restart application
+# Tidy up
 #
-rm -f "$APP_DIR/run/stop_lock"
-runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $APP_DIR/${application}_ctl.sh restart"
+runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level ${CART_DIR}/abstract/info/bin/tidy.sh $application $namespace $uuid"
+
+if [ -f $CART_INFO_DIR/bin/tidy.sh ]
+then
+  runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $CART_INFO_DIR/bin/tidy.sh $application $namespace $uuid"
+fi
