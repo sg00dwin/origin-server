@@ -2,7 +2,7 @@
 
 Summary:   Provides php-5.3 support
 Name:      rhc-cartridge-php-5.3
-Version:   0.82.2
+Version:   0.82.3
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -90,6 +90,10 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Tue Nov 15 2011 Dan McPherson <dmcphers@redhat.com> 0.82.3-1
+- add tidy (dmcphers@redhat.com)
+- increasing max filesize (mmcgrath@redhat.com)
+
 * Sat Nov 12 2011 Dan McPherson <dmcphers@redhat.com> 0.82.2-1
 - add remove_httpd_proxy (dmcphers@redhat.com)
 
