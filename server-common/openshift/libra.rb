@@ -199,46 +199,49 @@ module Libra
       
     Libra.logger_debug "DEBUG: Moving app '#{app_name}' with uuid #{app_info['uuid']} from #{old_server.name} to #{new_server.name}"
     
-    Libra.logger_debug "DEBUG: Stopping existing app '#{app_name}' before moving"
-    server_execute_direct(app_info['framework'], 'stop', app_name, user, old_server, app_info)
-
-    Libra.logger_debug "DEBUG: Creating new account for app '#{app_name}' on #{new_server.name}"
-    new_server.create_account(user, app_info)
     begin
-      Libra.logger_debug "DEBUG: Moving content for app '#{app_name}' to #{new_server.name}"
-      `eval \`ssh-agent\`; ssh-add /var/www/libra/broker/config/keys/rsync_id_rsa; ssh -o StrictHostKeyChecking=no -A root@#{old_server.get_fact_direct('ipaddress')} "rsync -az -e 'ssh -o StrictHostKeyChecking=no' /var/lib/libra/#{app_info['uuid']}/ root@#{new_server.get_fact_direct('ipaddress')}:/var/lib/libra/#{app_info['uuid']}/"`
-      if $?.exitstatus != 0
-        raise NodeException.new(143), "Error moving app '#{app_name}' from #{old_server.name} to #{new_server.name}", caller[0..5]
-      end
-      
-      server_execute_move(app_name, app_info, user, new_server)
+      Libra.logger_debug "DEBUG: Stopping existing app '#{app_name}' before moving"
+      server_execute_direct(app_info['framework'], 'stop', app_name, user, old_server, app_info)
   
-      Libra.logger_debug "DEBUG: Starting '#{app_name}' after move on #{new_server.name}"
-      server_execute_direct(app_info['framework'], 'start', app_name, user, new_server, app_info, false)
-  
-      Libra.logger_debug "DEBUG: Fixing DNS and s3 for app '#{app_name}' after move"
-      user.move_app(app_name, app_info, new_server)
-    rescue Exception => e
       begin
+        Libra.logger_debug "DEBUG: Creating new account for app '#{app_name}' on #{new_server.name}"
+        new_server.create_account(user, app_info)
+        
+        Libra.logger_debug "DEBUG: Moving content for app '#{app_name}' to #{new_server.name}"
+        `eval \`ssh-agent\`; ssh-add /var/www/libra/broker/config/keys/rsync_id_rsa; ssh -o StrictHostKeyChecking=no -A root@#{old_server.get_fact_direct('ipaddress')} "rsync -az -e 'ssh -o StrictHostKeyChecking=no' /var/lib/libra/#{app_info['uuid']}/ root@#{new_server.get_fact_direct('ipaddress')}:/var/lib/libra/#{app_info['uuid']}/"`
+        if $?.exitstatus != 0
+          raise NodeException.new(143), "Error moving app '#{app_name}' from #{old_server.name} to #{new_server.name}", caller[0..5]
+        end
+        
+        server_execute_move(app_name, app_info, user, new_server)
+    
+        Libra.logger_debug "DEBUG: Starting '#{app_name}' after move on #{new_server.name}"
+        server_execute_direct(app_info['framework'], 'start', app_name, user, new_server, app_info, false)
+    
+        Libra.logger_debug "DEBUG: Fixing DNS and s3 for app '#{app_name}' after move"
+        user.move_app(app_name, app_info, new_server)
+        
+        Libra.logger_debug "DEBUG: Deconfiguring old app '#{app_name}' on #{old_server.name} after move"
+        num_tries = 2
+        (1..num_tries).each do |i|
+          begin
+            deconfigure_app_from_node(app_info, app_name, user, old_server, false)
+            break
+          rescue Exception => e
+            Libra.logger_debug "DEBUG: Error deconfiguring old app on try #{i}: #{e.message}"
+            raise if i == num_tries
+          end
+        end
+        Libra.logger_debug "Successfully moved '#{app_name}' with uuid #{app_info['uuid']} from #{old_server.name} to #{new_server.name}"
+
+      rescue Exception => e
         new_server.delete_account(app_info['uuid'])
-      ensure
-        server_execute_direct(app_info['framework'], 'start', app_name, user, old_server, app_info)
+        raise
       end
+    rescue Exception => e
+      server_execute_direct(app_info['framework'], 'start', app_name, user, old_server, app_info)
       raise
     end
-
-    Libra.logger_debug "DEBUG: Deconfiguring old app '#{app_name}' on #{old_server.name} after move"
-    num_tries = 2
-    (1..num_tries).each do |i|
-      begin
-        deconfigure_app_from_node(app_info, app_name, user, old_server, false)
-        break
-      rescue Exception => e
-        Libra.logger_debug "DEBUG: Error deconfiguring old app on try #{i}: #{e.message}"
-        raise if i == num_tries
-      end
-    end
-    Libra.logger_debug "Successfully moved '#{app_name}' with uuid #{app_info['uuid']} from #{old_server.name} to #{new_server.name}"
   end
   
   def self.server_execute_move(app_name, app_info, user, server)
