@@ -130,20 +130,23 @@ module OpenShift
     end
       
     def terminate_instance(instance)
-      (0..4).each do
-        instance.terminate
-        (0..12).each do
+      begin
+        (0..4).each do
+          instance.terminate
+          (0..12).each do
+            break if instance_status(instance) == :terminated
+            log.info "Instance isn't terminated yet... waiting"
+            sleep 5
+          end
           break if instance_status(instance) == :terminated
-          log.info "Instance isn't terminated yet... waiting"
-          sleep 5
+          log.info "Instance isn't terminated yet... retrying"
         end
-        break if instance_status(instance) == :terminated
-        log.info "Instance isn't terminated yet... retrying"
-      end
-      if instance_status(instance) != :terminated
-        log.info "Failed to terminate.  Calling stop instead."
-        add_tag(instance, 'terminate')
-        instance.stop
+      ensure
+        if instance_status(instance) != :terminated
+          log.info "Failed to terminate.  Calling stop instead."
+          add_tag(instance, 'terminate')
+          instance.stop
+        end
       end
     end
         
