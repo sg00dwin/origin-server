@@ -401,6 +401,39 @@ class DevEnv < Thor
     
     if options.ssh_config_verifier?
       public_ip = instance.public_ip_address
+      ssh_config = "~/.ssh/config"
+      pem_file = File.expand_path("~/.ssh/libra.pem")
+      if not File.exist?(pem_file)
+        # copy it from local repo
+        cmd = "cp misc/libra.pem #{pem_file}"
+        puts cmd
+        system(cmd)
+        system("chmod 600 #{pem_file}")
+      end
+      config_file = File.expand_path(ssh_config)
+
+      config_template = <<END
+Host verifier
+  HostName 10.1.1.1
+  User      root
+  IdentityFile ~/.ssh/libra.pem
+END
+
+      if not FileTest.exists?(config_file)
+        puts "File '#{ssh_config}' does not exists, creating..."
+        system("touch #{ssh_config}")
+        cmd = "chmod 600 #{ssh_config}"
+        system(cmd)
+        file_mode = 'w'
+        File.open(config_file, file_mode) { |f| f.write(config_template) }
+      else
+        if not system("grep -n 'Host verifier' #{config_file}")
+          file_mode = 'a'
+          File.open(config_file, file_mode) { |f| f.write(config_template) }
+        end
+        
+      end
+
       
       line_num = `grep -n 'Host verifier' ~/.ssh/config`.chomp.split(':')[0]
       puts "Updating ~/.ssh/config verifier entry with public ip = #{public_ip}"
