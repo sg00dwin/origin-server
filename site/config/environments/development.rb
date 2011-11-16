@@ -44,6 +44,12 @@ RedHatCloud::Application.configure do
   }
   config.captcha_secret = 'zvw5LiixMB0I4mjk06aR'
   
+  # Promo code Email notification setup
+  config.email_from = 'Openshift <noreply@openshift.redhat.com>'
+  config.marketing_mailing_list = 'Marketing Mailing List <jgurrero@redhat.com>'
+  config.action_mailer.delivery_method = :test
+  config.action_mailer.perform_deliveries = false
+  
   # Express API base url
   config.express_api_url = 'https://localhost'
   

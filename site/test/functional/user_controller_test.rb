@@ -139,6 +139,20 @@ class UserControllerTest < ActionController::TestCase
     assert_response 400
   end
 
+  test "promo code should cause email to be sent and session to be set" do
+    email_obj = Object.new
+    PromoCodeMailer.expects(:promo_code_email).once.returns(email_obj)
+    email_obj.expects(:deliver).once
+
+    form = get_post_form
+    form[:promo_code]='promo1'
+    post(:create, {:web_user => form})
+    assert assigns(:user)
+    assert session[:promo_code] == "promo1"
+
+    assert_response :success
+  end
+
   def get_post_form
     {:email_address => 'tester@example.com', :password => 'pw1234', :password_confirmation => 'pw1234'}
   end
