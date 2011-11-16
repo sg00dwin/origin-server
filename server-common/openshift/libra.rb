@@ -241,6 +241,8 @@ module Libra
     rescue Exception => e
       server_execute_direct(app_info['framework'], 'start', app_name, user, old_server, app_info)
       raise
+    ensure
+      Libra.logger_debug "URL: http://#{app_name}-#{user.namespace}.#{Libra.c[:libra_domain]}"
     end
   end
   

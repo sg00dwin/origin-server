@@ -4,6 +4,7 @@ require 'rubygems'
 require 'mcollective'
 require 'fileutils'
 require 'openshift'
+require 'pp'
 
 
 include MCollective::RPC
@@ -39,12 +40,15 @@ app_info = {}
 user.apps.each do |appname, app|
     app_info[appname] = {
         :framework => app['framework'],
-        :creation_time => app['creation_time']
+        :creation_time => app['creation_time'],
+        :uuid => app['uuid'],
+        :embedded => app['embedded'],
+        :aliases => app['aliases']
     }
 end
 
-json_result = JSON.generate(
-                {:user_info => user_info,
-                 :app_info => app_info})
+puts "User Info:"
+puts user_info.pretty_inspect
 
-puts json_result
+puts "App Info:"
+puts app_info.pretty_inspect
