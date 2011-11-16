@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.82.3
+Version:   0.82.4
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -229,6 +229,9 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 %{_initddir}/sauce-connect
 
 %changelog
+* Tue Nov 15 2011 Dan McPherson <dmcphers@redhat.com> 0.82.4-1
+- Added mongodb to devenv (mmcgrath@redhat.com)
+
 * Tue Nov 15 2011 Dan McPherson <dmcphers@redhat.com> 0.82.3-1
 - add mongo req (dmcphers@redhat.com)
 
