@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.82.2
+Version:       0.82.3
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -160,6 +160,16 @@ fi
 %dir %attr(0755,root,root) %{_sysconfdir}/libra/skel
 
 %changelog
+* Tue Nov 15 2011 Dan McPherson <dmcphers@redhat.com> 0.82.3-1
+- add tidy (dmcphers@redhat.com)
+- add deconfigure app on node script (dmcphers@redhat.com)
+- correct perms on .gitconfig (dmcphers@redhat.com)
+- migration optimization (dmcphers@redhat.com)
+- alter permissions on git dir (dmcphers@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- Added warning to libra-cgroups (mmcgrath@redhat.com)
+
 * Sat Nov 12 2011 Dan McPherson <dmcphers@redhat.com> 0.82.2-1
 - remove httpd proxy from new server on failed move (dmcphers@redhat.com)
 - Bug 753040 (dmcphers@redhat.com)

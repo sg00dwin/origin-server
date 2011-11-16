@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.82.2
+Version:   0.82.3
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -68,6 +68,9 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Tue Nov 15 2011 Dan McPherson <dmcphers@redhat.com> 0.82.3-1
+- Fix for BZ 730430 - update SSH key form with cleansed key (aboone@redhat.com)
+
 * Sat Nov 12 2011 Dan McPherson <dmcphers@redhat.com> 0.82.2-1
 - Fixing the cart list and the assertion order (mhicks@redhat.com)
 - Fix alignment of wrapped lines in app list (edirsh@redhat.com)
