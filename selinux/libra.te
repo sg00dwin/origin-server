@@ -73,7 +73,7 @@ allow libra_domain self:tcp_socket  create_stream_socket_perms;
 
 allow libra_domain self:fifo_file rw_fifo_file_perms;
 allow libra_domain self:unix_stream_socket { create_stream_socket_perms connectto };
-dontaudit libra_domain self:netlink_audit_socket create_socket_perms;
+dontaudit libra_domain self:netlink_audit_socket { create_socket_perms nlmsg_relay };
 
 allow libra_domain libra_log_t:file { getattr append lock ioctl };
 
@@ -93,7 +93,7 @@ allow libra_domain libra_var_lib_t:file entrypoint;
 
 kernel_read_system_state(libra_domain)
 kernel_read_network_state(libra_domain)
-kernel_dontaudit_search_kernel_sysctl(libra_domain)
+kernel_dontaudit_list_all_sysctls(libra_domain)
 
 corecmd_exec_bin(libra_domain)
 corecmd_exec_shell(libra_domain)
@@ -117,6 +117,7 @@ storage_dontaudit_getattr_fixed_disk_dev(libra_domain)
 files_dontaudit_search_all_pids(libra_domain)
 files_dontaudit_getattr_lost_found_dirs(libra_domain)
 files_dontaudit_search_all_mountpoints(libra_domain)
+files_dontaudit_search_spool(libra_domain)
 files_read_etc_files(libra_domain)
 files_read_usr_files(libra_domain)
 files_dontaudit_getattr_non_security_sockets(libra_domain)
@@ -132,6 +133,8 @@ miscfiles_read_localization(libra_domain)
 miscfiles_read_fonts(libra_domain)
 miscfiles_read_man_pages(libra_domain)
 miscfiles_dontaudit_setattr_fonts_cache_dirs(libra_domain)
+
+mta_dontaudit_read_spool_symlinks(libra_domain)
 
 term_dontaudit_search_ptys(libra_domain)
 
