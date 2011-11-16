@@ -102,7 +102,7 @@ echo "export OPENSHIFT_DB_TYPE='mongodb'" > $APP_HOME/.env/OPENSHIFT_DB_TYPE
 echo "export OPENSHIFT_DB_HOST='$IP'" > $APP_HOME/.env/OPENSHIFT_DB_HOST
 echo "export OPENSHIFT_DB_PORT='27017'" > $APP_HOME/.env/OPENSHIFT_DB_PORT
 #echo "export OPENSHIFT_DB_SOCKET=''" > $APP_HOME/.env/OPENSHIFT_DB_SOCKET
-#echo "export OPENSHIFT_DB_URL='mysql://admin:$password@$IP:3306/'" > $APP_HOME/.env/OPENSHIFT_DB_URL
+echo "export OPENSHIFT_DB_URL='mongodb://admin:$password@$IP:27017/'" > $APP_HOME/.env/OPENSHIFT_DB_URL
 echo "export OPENSHIFT_DB_CTL_SCRIPT='$MONGODB_DIR/${application}_mongodb_ctl.sh'" > $APP_HOME/.env/OPENSHIFT_DB_CTL_SCRIPT
 #echo "export OPENSHIFT_DB_MYSQL_51_DUMP='$CART_INFO_DIR/bin/mysql_dump.sh'" > $APP_HOME/.env/OPENSHIFT_DB_MYSQL_51_DUMP
 #echo "export OPENSHIFT_DB_MYSQL_51_DUMP_CLEANUP='$CART_INFO_DIR/bin/mysql_cleanup.sh'" > $APP_HOME/.env/OPENSHIFT_DB_MYSQL_51_DUMP_CLEANUP
@@ -112,23 +112,23 @@ echo "export OPENSHIFT_DB_CTL_SCRIPT='$MONGODB_DIR/${application}_mongodb_ctl.sh
 chown $user_id $APP_HOME/.env/OPENSHIFT_DB_USERNAME $APP_HOME/.env/OPENSHIFT_DB_PASSWORD
 
 ## Setup user
-# FIXME: Commented for now .. throws connection errors ...
-#        need to wait for mongo to start up.
-# mongo $IP/27017 <<MONGOEOF
-# db.adduser("admin", "$password")
-# db.system.users.find()
-# exit
-# MONGOEOF
+echo "use admin
+      db.addUser(\"admin\", \"${password}\")
+      db.auth(\"admin\", \"${password}\")
+      db.system.users.find()
+      use $application
+      db.openshift.save({application: \"$application\", dbhost: \"$IP\" })
+      exit
+     "  | mongo $IP
+
 
 client_result ""
 client_result "Mongodb 2.0 database added.  Please make note of these credentials:"
 client_result ""
-client_result "   Root User: admin"
-# client_result "   Root Password: $password"
-client_result "   Root Password: NOT YET IMPLEMENTED"
-client_result "   Database Name: NOT YET IMPLEMENTED"
-client_result ""
-client_result "Connection URL: NOT YET IMPLEMENTED"
+client_result "       Root User: admin"
+client_result "   Root Password: $password"
+client_result "   Database Name: $application"
+client_result "  Connection URL: mongodb://$IP:27017/"
 client_result ""
 client_result "You can manage your new Mongodb by also embedding phpmongoadmin?"
 

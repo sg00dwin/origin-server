@@ -26,7 +26,7 @@ MONGODB_DIR="$OPENSHIFT_HOMEDIR/mongodb-2.0/"
 
 isrunning() {
     if [ -f $MONGODB_DIR/pid/mongodb.pid ]; then
-        mongodb_pid=`$MONGODB_DIR/pid/mongodb.pid 2> /dev/null`
+        mongodb_pid=`cat $MONGODB_DIR/pid/mongodb.pid 2> /dev/null`
         if `ps --pid $mongodb_pid > /dev/null 2>&1` || `pgrep mongod > /dev/null 2>&1`
         then
             return 0
@@ -38,7 +38,7 @@ isrunning() {
 start() {
 	if ! isrunning
     then
-        /usr/bin/mongod --nojournal --smallfiles --quiet -f $MONGODB_DIR/etc/mongodb.conf run >/dev/null 2>&1 &
+        /usr/bin/mongod --auth --nojournal --smallfiles --quiet -f $MONGODB_DIR/etc/mongodb.conf run >/dev/null 2>&1 &
     else
         echo "Mongodb already running" 1>&2
     fi

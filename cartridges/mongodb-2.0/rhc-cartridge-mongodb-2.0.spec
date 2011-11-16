@@ -50,6 +50,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Wed Nov 16 2011 Ram Ranganathan <ramr@redhat.com> 0.5-1
+- authorization support + turn off http interface
+
 * Tue Nov 15 2011 Dan McPherson <dmcphers@redhat.com> 0.4-1
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
   (mmcgrath@redhat.com)
