@@ -31,12 +31,12 @@ end
 
 unless options.include?(:app_name)
     puts "Specify app name"
-    exit 252
+    exit 1
 end
 
 unless options.include?(:rhlogin)
     puts "Specify rhlogin"
-    exit 251
+    exit 1
 end
 
 # Set the MCollective options

@@ -31,22 +31,22 @@ end
 
 unless options.include?(:action)
     puts "Specify action"
-    exit 253
+    exit 1
 end
 
 unless options.include?(:cartridge) || options[:action] != 'configure'
     puts "You need to specify a cartridge for configure"
-    exit 110
+    exit 1
 end
 
 unless options.include?(:app_name)
     puts "Specify app name"
-    exit 252
+    exit 1
 end
 
 unless options.include?(:rhlogin)
     puts "Specify rhlogin"
-    exit 251
+    exit 1
 end
 
 # Set the MCollective options

@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/mongodb-2.0
 
 Name: rhc-cartridge-mongodb-2.0
-Version: 0.2
+Version: 0.4
 Release: 1%{?dist}
 Summary: Embedded mongodb support for express
 
@@ -15,6 +15,8 @@ BuildArch: noarch
 Requires: rhc-node
 Requires: mongodb-server
 Requires: mongodb-devel
+Requires: libmongodb
+Requires: mongodb
 
 %description
 Provides rhc mongodb cartridge support
@@ -48,6 +50,20 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Tue Nov 15 2011 Dan McPherson <dmcphers@redhat.com> 0.4-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- disable journal for embedded (mmcgrath@redhat.com)
+
+* Tue Nov 15 2011 Dan McPherson <dmcphers@redhat.com> 0.3-1
+- Merge branch 'master' of ssh://express-master/srv/git/li (ramr@redhat.com)
+- increasing max filesize (mmcgrath@redhat.com)
+- fixup hooks - start/stop/restart/configure + add "scaffolding" for running
+  mongo w/ auth - admin user. (ramr@redhat.com)
+
+* Tue Nov 15 2011 Ram Ranganathan <ramr@redhat.com> 0.2-2
+- admin user [for auth], plus fixup start/stop/restart/configure hooks
+
 * Tue Nov 15 2011 Mike McGrath <mmcgrath@redhat.com> 0.2-1
 - new package built with tito
 
