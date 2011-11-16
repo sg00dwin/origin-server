@@ -142,11 +142,25 @@ module OpenShift
       end
       if instance_status(instance) != :terminated
         log.info "Failed to terminate.  Calling stop instead."
+        add_tag(instance, 'terminate')
         instance.stop
       end
     end
+        
+    def add_tag(instance, name, retries=2)
+      (1..retries).each do |i|
+        begin
+          # Tag the instance
+          instance.add_tag('Name', :value => name)
+        rescue Exception => e
+          log.info "Failed adding tag: #{e.message}"
+          raise if i == retries
+          sleep 5
+        end
+      end
+    end
 
-    def launch_instance(image, name, max_retries = 5)
+    def launch_instance(image, name, max_retries = 1)
       log.info "Creating new instance..."
 
       # You may have to retry creating instances since Amazon
@@ -157,12 +171,11 @@ module OpenShift
       instance = image.run_instance($amz_options)
 
       begin
+          
+        add_tag(instance, name, 10)
 
         # Block until the instance is accessible
         block_until_available(instance)
-      
-        # Tag the instance
-        instance.add_tag('Name', :value => name)
 
         return instance
       rescue ScriptError => e
@@ -303,9 +316,9 @@ module OpenShift
     def stop_untagged_instances(conn)
       AWS.memoize do
         conn.instances.each do |i|
-          if (instance_status(i) == :running) and (i.tags["Name"] == nil)
+          if (instance_status(i) == :running) and (i.tags['Name'] == nil)
             # Tag the node to give people a heads up
-            i.add_tag("Name", :value => "will-terminate")
+            add_tag(i, 'will-terminate')
 
             # Stop the nodes to save resources
             log.info "Stopping untagged instance #{i.id}"
