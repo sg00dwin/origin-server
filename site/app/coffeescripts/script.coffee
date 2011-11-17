@@ -20,6 +20,8 @@ $ ->
   unsticky_css =
     position: 'static'
 
+  stuck = false
+
   ($ window).scroll ->
     # parallax effect #
     #top_diff = ($ this).scrollTop() - top
@@ -33,10 +35,16 @@ $ ->
     
     # sticky nav #
     # check if nav is supposed to be off the page
-    if top > nav_top
+    should_stick = top > nav_top
+
+    if should_stick and !stuck
       nav.css sticky_css
-    else
+      ($ 'body > section:first').css 'marginTop', nav.height() + 'px'
+      stuck = true
+    else if stuck and !should_stick
       nav.css unsticky_css
+      ($ 'body > section:first').css 'marginTop', 0
+      stuck = false
       
 ## Announcements ##
   announcements = ($ '#announcements')

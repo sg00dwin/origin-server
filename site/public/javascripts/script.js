@@ -1,8 +1,12 @@
+/* DO NOT MODIFY. This file was compiled Thu, 17 Nov 2011 21:57:46 GMT from
+ * /home/aboone/Source/li/site/app/coffeescripts/script.coffee
+ */
+
 (function() {
   var $;
   $ = jQuery;
   $(function() {
-    var ann_height, ann_list, announcements, body, current, links, nav, nav_top, on_announcement, scroll_announcements, sections, sticky_css, top, unsticky_css;
+    var ann_height, ann_list, announcements, body, current, links, nav, nav_top, on_announcement, scroll_announcements, sections, sticky_css, stuck, top, unsticky_css;
     body = $('body');
     nav = ($('header.universal > nav')).first();
     nav_top = nav.offset().top;
@@ -16,12 +20,19 @@
     unsticky_css = {
       position: 'static'
     };
+    stuck = false;
     ($(window)).scroll(function() {
+      var should_stick;
       top = ($(this)).scrollTop();
-      if (top > nav_top) {
-        return nav.css(sticky_css);
-      } else {
-        return nav.css(unsticky_css);
+      should_stick = top > nav_top;
+      if (should_stick && !stuck) {
+        nav.css(sticky_css);
+        ($('body > section:first')).css('marginTop', nav.height() + 'px');
+        return stuck = true;
+      } else if (stuck && !should_stick) {
+        nav.css(unsticky_css);
+        ($('body > section:first')).css('marginTop', 0);
+        return stuck = false;
       }
     });
     announcements = $('#announcements');
