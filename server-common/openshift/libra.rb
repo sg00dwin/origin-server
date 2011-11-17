@@ -458,9 +458,7 @@ may be ok if '#{app_name}#{BUILDER_SUFFIX}' was the builder of a previously dest
       begin
         Libra.logger_debug "DEBUG: Failed to create application '#{app_name}' for user '#{user.rhlogin}' on node '#{server.name}'"
         Libra.client_debug "Failed to create application: '#{app_name}'"
-        server_execute_direct(framework, 'deconfigure', app_name, user, server, app_info)
-        Libra.logger_debug "DEBUG: Removing app account from server node: #{app_info.pretty_inspect}"
-        server.delete_account(app_info['uuid'])
+        deconfigure_app_from_node(app_info, app_name, user, server, false)
         Libra.logger_debug "DEBUG: Removing app info from persistant storage: #{app_name}"
         user.delete_app(app_name)
       ensure
