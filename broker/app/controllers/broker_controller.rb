@@ -128,6 +128,7 @@ class BrokerController < ApplicationController
   
   def render_error(e, method_name)
     status = :internal_server_error
+    message = nil
     if !(e.is_a? Libra::LibraException) 
       logger.error "Exception rescued in #{method_name}:"
       logger.error e.message
@@ -135,13 +136,18 @@ class BrokerController < ApplicationController
       # TODO should we leave this?  Everything that gets in here is unknown and users can tell us about it.  But will mean impl details showing up on the client.
       Libra.client_debug e.message
       Libra.client_debug e.backtrace
+    elsif (e.is_a? Libra::StreamlineException)
+      logger.error "StreamlineException rescued in #{method_name}:"
+      logger.error e.message
+      logger.error e.backtrace
+      message = "An error occurred communicating with the user repository.  If the problem persists please contact Red Hat support."
     elsif !(e.is_a? Libra::UserException) # User Exceptions just go back to the client
       logger.error "Exception rescued in #{method_name}:"
       logger.error e.message
     elsif (e.is_a? Libra::UserException)
       status = :bad_request
     end
-    message = e.message
+    message = e.message if !message
     if Thread.current[:errorIO] && !Thread.current[:errorIO].string.empty?
       message = Thread.current[:errorIO].string
     end
