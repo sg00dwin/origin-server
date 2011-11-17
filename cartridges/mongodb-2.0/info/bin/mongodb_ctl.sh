@@ -27,7 +27,7 @@ MONGODB_DIR="$OPENSHIFT_HOMEDIR/mongodb-2.0/"
 isrunning() {
     if [ -f $MONGODB_DIR/pid/mongodb.pid ]; then
         mongodb_pid=`cat $MONGODB_DIR/pid/mongodb.pid 2> /dev/null`
-        if `ps --pid $mongodb_pid > /dev/null 2>&1` || `pgrep mongod > /dev/null 2>&1`
+        if `ps --pid $mongodb_pid > /dev/null 2>&1` || `pgrep -x mongod > /dev/null 2>&1`
         then
             return 0
         fi
@@ -47,6 +47,9 @@ start() {
 stop() {
     if [ -f $MONGODB_DIR/pid/mongodb.pid ]; then
     	pid=$( /bin/cat $MONGODB_DIR/pid/mongodb.pid )
+    fi
+
+    if [ -n "$pid" ]; then
         /bin/kill $pid
         ret=$?
         if [ $ret -eq 0 ]; then
@@ -58,7 +61,7 @@ stop() {
             done
         fi
     else
-        if `pgrep mongod > /dev/null 2>&1`
+        if `pgrep -x mongod > /dev/null 2>&1`
         then
         	echo "Warning: Mongodb process exists without a pid file.  Use force-stop to kill." 1>&2
         else

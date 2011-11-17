@@ -50,6 +50,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Wed Nov 16 2011 Ram Ranganathan <ramr@redhat.com> 0.5-2
+- fix stop/start issue + add convenience user to db '$app'
+
 * Wed Nov 16 2011 Ram Ranganathan <ramr@redhat.com> 0.5-1
 - authorization support + turn off http interface
 

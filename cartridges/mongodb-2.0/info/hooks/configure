@@ -118,6 +118,7 @@ echo "use admin
       db.system.users.find()
       use $application
       db.openshift.save({application: \"$application\", dbhost: \"$IP\" })
+      db.addUser(\"admin\", \"${password}\")
       exit
      "  | mongo $IP
 
