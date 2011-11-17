@@ -2,7 +2,7 @@
 
 Summary:   Provides jenkins-1.4 support
 Name:      rhc-cartridge-jenkins-1.4
-Version:   0.82.5
+Version:   0.82.6
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -69,6 +69,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Wed Nov 16 2011 Dan McPherson <dmcphers@redhat.com> 0.82.6-1
+- more move error handling and deconfigure ugly error fix (dmcphers@redhat.com)
+
 * Tue Nov 15 2011 Dan McPherson <dmcphers@redhat.com> 0.82.5-1
 - add tidy (dmcphers@redhat.com)
 
