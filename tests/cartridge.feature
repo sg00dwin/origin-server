@@ -131,6 +131,21 @@ Feature: Cartridge Verification Tests
     |   jenkins-1.4 |
     |   raw-0.1     |
 
+  Scenario Outline: Application Tidy
+    Given an existing <type> application
+    When I tidy the application
+    Then the application should be accessible
+
+  Scenarios: Application Tidy Scenarios
+    |      type     |
+    |   php-5.3     |
+    |   wsgi-3.2    |
+    |   perl-5.10   |
+    |   rack-1.1    |
+    |   jbossas-7.0 |
+    |   jenkins-1.4 |
+    |   raw-0.1     |
+
   Scenario Outline: Application Destroying
     Given an existing <type> application
     When the application is destroyed

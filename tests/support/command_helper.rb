@@ -135,6 +135,12 @@ module CommandHelper
       run("#{$snapshot_script} -l #{app.login} -a #{app.name} -r '#{app.snapshot}' -p fakepw -d").should == 0
     end
   end
+  
+  def rhc_tidy(app)
+    rhc_do('rhc_tidy') do
+      run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -c tidy -p fakepw -d").should == 0
+    end
+  end
 
   def rhc_create_app(app, use_hosts=true)
     rhc_do('rhc_create_app') do

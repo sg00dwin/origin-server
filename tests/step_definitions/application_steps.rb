@@ -109,6 +109,10 @@ When /^I snapshot the application$/ do
   rhc_snapshot(@app)
 end
 
+When /^I tidy the application$/ do
+  rhc_tidy(@app)
+end
+
 When /^I restore the application$/ do
   rhc_restore(@app)
 end
