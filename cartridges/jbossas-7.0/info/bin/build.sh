@@ -44,6 +44,16 @@ then
         SKIP_MAVEN_BUILD=true
     fi
     
+    if [ -f "${OPENSHIFT_REPO_DIR}/.openshift/markers/force_clean_build" ]
+    then
+        echo ".openshift/markers/force_clean_build found!  Removing Maven dependencies." 1>&2
+        rm -rf ${OPENSHIFT_HOMEDIR}.m2/* ${OPENSHIFT_HOMEDIR}.m2/.[^.]*
+
+        #pushd ${OPENSHIFT_HOMEDIR}.m2/ > /dev/null
+        #tar -xf ${CART_DIR}/${OPENSHIFT_APP_TYPE}/info/data/m2_repository.tar.gz
+        #popd > /dev/null
+    fi
+
     if [ -f ${OPENSHIFT_REPO_DIR}pom.xml ] && ! $SKIP_MAVEN_BUILD
     then
         echo "Found pom.xml... attempting to build with 'mvn -e clean package -Popenshift -DskipTests'" 
