@@ -27,7 +27,7 @@ MYSQL_DIR="$OPENSHIFT_HOMEDIR/mysql-5.1/"
 isrunning() {
     if [ -f $MYSQL_DIR/pid/mysql.pid ]; then
         mysql_pid=`$MYSQL_DIR/pid/mysql.pid 2> /dev/null`
-        if `ps --pid $mysql_pid > /dev/null 2>&1` || `pgrep mysqld_safe > /dev/null 2>&1`
+        if `ps --pid $mysql_pid > /dev/null 2>&1` || `pgrep -x mysqld_safe > /dev/null 2>&1`
         then
             return 0
         fi
@@ -58,7 +58,7 @@ stop() {
             done
         fi
     else
-        if `pgrep mysqld_safe > /dev/null 2>&1`
+        if `pgrep -x mysqld_safe > /dev/null 2>&1`
         then
         	echo "Warning: Mysql process exists without a pid file.  Use force-stop to kill." 1>&2
         else
