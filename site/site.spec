@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.82.3
+Version:   0.82.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -68,6 +68,9 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Thu Nov 17 2011 Dan McPherson <dmcphers@redhat.com> 0.82.4-1
+- fix test case (dmcphers@redhat.com)
+
 * Tue Nov 15 2011 Dan McPherson <dmcphers@redhat.com> 0.82.3-1
 - Fix for BZ 730430 - update SSH key form with cleansed key (aboone@redhat.com)
 
