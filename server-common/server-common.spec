@@ -2,7 +2,7 @@
 
 Summary:       Common dependencies of the OpenShift broker and site
 Name:          rhc-server-common
-Version:       0.82.3
+Version:       0.82.4
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -57,6 +57,14 @@ rm -rf %{buildroot}
                                   -s /sbin/nologin 2>&1 > /dev/null || :
 
 %changelog
+* Wed Nov 16 2011 Dan McPherson <dmcphers@redhat.com> 0.82.4-1
+- consistent error handling on app creation failure (dmcphers@redhat.com)
+- bump min timeout to 30secs from broker scripts (dmcphers@redhat.com)
+- more move error handling and deconfigure ugly error fix (dmcphers@redhat.com)
+- better move error handling (dmcphers@redhat.com)
+- more rhc-get-user-info details + move logging (dmcphers@redhat.com)
+- better error handling on move (dmcphers@redhat.com)
+
 * Tue Nov 15 2011 Dan McPherson <dmcphers@redhat.com> 0.82.3-1
 - add tidy (dmcphers@redhat.com)
 - add deconfigure app on node script (dmcphers@redhat.com)
