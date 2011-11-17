@@ -41,6 +41,9 @@ unless options.include?(:server_identity)
 end
 
 # Set the MCollective options
+if options[:timeout] && options[:timeout] < 30
+    options[:timeout] = 30
+end
 Libra.c[:rpc_opts] = options
 
 user = Libra.get_user(options[:rhlogin])

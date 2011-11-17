@@ -20,6 +20,9 @@ options = rpcoptions do |parser, options|
 end
 
 # Set the MCollective options
+if options[:timeout] && options[:timeout] < 30
+    options[:timeout] = 30
+end
 Libra.c[:rpc_opts] = options
 
 # Check if rhlogin already exists

@@ -50,6 +50,9 @@ unless options.include?(:rhlogin)
 end
 
 # Set the MCollective options
+if options[:timeout] && options[:timeout] < 30
+    options[:timeout] = 30
+end
 Libra.c[:rpc_opts] = options
 
 # Execute the options on a Libra framework
