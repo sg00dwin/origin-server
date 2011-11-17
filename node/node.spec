@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.82.3
+Version:       0.82.4
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -160,6 +160,11 @@ fi
 %dir %attr(0755,root,root) %{_sysconfdir}/libra/skel
 
 %changelog
+* Wed Nov 16 2011 Dan McPherson <dmcphers@redhat.com> 0.82.4-1
+- more move error handling and deconfigure ugly error fix (dmcphers@redhat.com)
+- fix a couple typos (dmcphers@redhat.com)
+- add migration for max upload sizes (dmcphers@redhat.com)
+
 * Tue Nov 15 2011 Dan McPherson <dmcphers@redhat.com> 0.82.3-1
 - add tidy (dmcphers@redhat.com)
 - add deconfigure app on node script (dmcphers@redhat.com)
