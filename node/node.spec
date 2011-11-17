@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.82.7
+Version:       0.82.8
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -160,6 +160,9 @@ fi
 %dir %attr(0755,root,root) %{_sysconfdir}/libra/skel
 
 %changelog
+* Thu Nov 17 2011 Dan McPherson <dmcphers@redhat.com> 0.82.8-1
+- 
+
 * Thu Nov 17 2011 Dan McPherson <dmcphers@redhat.com> 0.82.7-1
 - handle job being disabled in jenkins build (dmcphers@redhat.com)
 - fail better when job not found on jenkins build (dmcphers@redhat.com)
