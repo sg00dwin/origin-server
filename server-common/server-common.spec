@@ -2,7 +2,7 @@
 
 Summary:       Common dependencies of the OpenShift broker and site
 Name:          rhc-server-common
-Version:       0.82.4
+Version:       0.82.5
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -57,6 +57,9 @@ rm -rf %{buildroot}
                                   -s /sbin/nologin 2>&1 > /dev/null || :
 
 %changelog
+* Wed Nov 16 2011 Dan McPherson <dmcphers@redhat.com> 0.82.5-1
+- Bug 754013 (dmcphers@redhat.com)
+
 * Wed Nov 16 2011 Dan McPherson <dmcphers@redhat.com> 0.82.4-1
 - consistent error handling on app creation failure (dmcphers@redhat.com)
 - bump min timeout to 30secs from broker scripts (dmcphers@redhat.com)
