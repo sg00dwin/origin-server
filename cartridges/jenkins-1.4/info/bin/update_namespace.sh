@@ -26,7 +26,8 @@ new_namespace="$2"
 old_namespace="$3"
 uuid=$4
 
-setup_basic_vars
+setup_app_dir_vars
+setup_user_vars
 
 echo "export JENKINS_URL='http://${application}-${new_namespace}.${libra_domain}/'" > $APP_HOME/.env/JENKINS_URL
 . $APP_HOME/.env/OPENSHIFT_INTERNAL_IP

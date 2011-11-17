@@ -199,10 +199,19 @@ module Libra
       
     Libra.logger_debug "DEBUG: Moving app '#{app_name}' with uuid #{app_info['uuid']} from #{old_server.name} to #{new_server.name}"
     
+    num_tries = 2
+    
     begin
       Libra.logger_debug "DEBUG: Stopping existing app '#{app_name}' before moving"
-      server_execute_direct(app_info['framework'], 'stop', app_name, user, old_server, app_info)
-  
+      (1..num_tries).each do |i|
+        begin
+          server_execute_direct(app_info['framework'], 'stop', app_name, user, old_server, app_info)
+        rescue Exception => e
+          Libra.logger_debug "DEBUG: Error stopping existing app on try #{i}: #{e.message}"
+          raise if i == num_tries
+        end
+      end
+
       begin
         Libra.logger_debug "DEBUG: Creating new account for app '#{app_name}' on #{new_server.name}"
         new_server.create_account(user, app_info)
@@ -216,8 +225,15 @@ module Libra
         server_execute_move(app_name, app_info, user, new_server)
     
         Libra.logger_debug "DEBUG: Starting '#{app_name}' after move on #{new_server.name}"
-        server_execute_direct(app_info['framework'], 'start', app_name, user, new_server, app_info, false)
-    
+        (1..num_tries).each do |i|
+          begin
+            server_execute_direct(app_info['framework'], 'start', app_name, user, new_server, app_info, false)
+          rescue Exception => e
+            Libra.logger_debug "DEBUG: Error starting after move on try #{i}: #{e.message}"
+            raise if i == num_tries
+          end
+        end
+
         Libra.logger_debug "DEBUG: Fixing DNS and s3 for app '#{app_name}' after move"
         user.move_app(app_name, app_info, new_server)
 
@@ -233,7 +249,6 @@ module Libra
     end
     
     Libra.logger_debug "DEBUG: Deconfiguring old app '#{app_name}' on #{old_server.name} after move"
-    num_tries = 2
     (1..num_tries).each do |i|
       begin
         deconfigure_app_from_node(app_info, app_name, user, old_server, false)

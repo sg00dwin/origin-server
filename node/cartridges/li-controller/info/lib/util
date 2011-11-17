@@ -218,7 +218,8 @@ function setup_configure {
     namespace=`basename $2`
     uuid=$3
 		
-    setup_basic_vars
+    setup_app_dir_vars
+    setup_user_vars
 	
     #
     # Get user id info
@@ -244,8 +245,6 @@ function setup_deconfigure {
     uuid=$3
 
     setup_basic_vars
-
-    check_app_dir_exists
 }
 
 function setup_embedded_configure {
@@ -269,8 +268,6 @@ function setup_embedded_configure {
 
     setup_basic_vars
 
-    check_app_dir_exists
-
     user_id=$(id -u "$uuid") || error "Could not find user $uuid" 134
     group_id=$(id -g "$uuid") || error "Could not find user $uuid" 135
 }
@@ -289,8 +286,6 @@ function setup_embedded_deconfigure {
     uuid=$3
 
     setup_basic_vars
-
-    check_app_dir_exists
 }
 
 function setup_basic_hook {
@@ -303,14 +298,20 @@ function setup_basic_hook {
     application="$1"
     
     setup_basic_vars
-
-    check_app_dir_exists
 }
 
 function setup_basic_vars {
+    setup_app_dir_vars
+    check_app_dir_exists
+    setup_user_vars
+}
+
+function setup_app_dir_vars {
     APP_HOME="$libra_dir/$uuid/"
     APP_DIR=`echo $APP_HOME/$application | tr -s /`
+}
 
+function setup_user_vars {
     uid=$(id -u "$uuid")
     mcs_level=`openshift_mcs_level $uid`
 }

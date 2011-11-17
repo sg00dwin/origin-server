@@ -60,8 +60,6 @@ uuid=$4
 
 setup_basic_vars
 
-check_app_dir_exists
-
 . $APP_HOME/.env/OPENSHIFT_APP_TYPE
 
 CART_INFO_DIR=$CART_DIR/$OPENSHIFT_APP_TYPE/info
