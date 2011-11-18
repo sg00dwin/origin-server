@@ -6,6 +6,8 @@ module OpenShift
       build_dirs = packages.split("\n").collect do |package|
         if package =~ /^rhc-devenv-0/
           "misc/devenv"
+        elsif package =~ /^rubygem-cloud-sdk-0/
+          "cloud-sdk"
         elsif package =~ /^rhc-(cartridge-.*)-0/
           "cartridges/" + $1['cartridge-'.length..-1]
         elsif package =~ /^rhc-(.*)-0/

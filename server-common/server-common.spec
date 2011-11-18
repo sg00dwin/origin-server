@@ -50,7 +50,6 @@ rm -rf %{buildroot}
 %attr(0640,root,libra_user) %config(noreplace) %{_sysconfdir}/libra/controller.conf
 
 %pre
-/usr/sbin/groupadd -r libra_user 2>&1 || :
 /usr/sbin/useradd libra_passenger -g libra_user \
                                   -d /var/lib/passenger \
                                   -r \

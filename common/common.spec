@@ -38,6 +38,9 @@ rm -rf %{buildroot}
 %ghost %attr(-,-,libra_user) %{_sysconfdir}/mcollective/client.cfg
 %{_libexecdir}/mcollective/mcollective/connector/amqp.rb
 
+%pre
+/usr/sbin/groupadd -r libra_user 2>&1 || :
+
 %post
 /bin/chgrp libra_user /etc/mcollective/client.cfg
 
