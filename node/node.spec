@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.82.10
+Version:       0.82.11
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -160,6 +160,11 @@ fi
 %dir %attr(0755,root,root) %{_sysconfdir}/libra/skel
 
 %changelog
+* Fri Nov 18 2011 Dan McPherson <dmcphers@redhat.com> 0.82.11-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- Added rhc-node-app-ctl (mmcgrath@redhat.com)
+
 * Fri Nov 18 2011 Dan McPherson <dmcphers@redhat.com> 0.82.10-1
 - more php settings + mirage devenv additions (dmcphers@redhat.com)
 
