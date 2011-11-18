@@ -1,21 +1,21 @@
 PATH
   remote: .
   specs:
-    cloud-sdk (0.1.10)
-      activemodel (= 3.0.5)
+    cloud-sdk (0.1.15)
+      activemodel (= 3.0.10)
       highline (= 1.5.1)
-      json_pure (= 1.4.6)
+      json_pure (= 1.5.1)
       parseconfig (= 0.5.2)
-      state_machine (= 1.0.1)
+      state_machine (= 1.0.2)
 
 GEM
   remote: http://rubygems.org/
   specs:
-    activemodel (3.0.5)
-      activesupport (= 3.0.5)
+    activemodel (3.0.10)
+      activesupport (= 3.0.10)
       builder (~> 2.1.2)
       i18n (~> 0.4)
-    activesupport (3.0.5)
+    activesupport (3.0.10)
     builder (2.1.2)
     cucumber (1.1.2)
       builder (>= 2.1.2)
@@ -29,7 +29,7 @@ GEM
     highline (1.5.1)
     i18n (0.6.0)
     json (1.6.1)
-    json_pure (1.4.6)
+    json_pure (1.5.1)
     mocha (0.9.8)
       rake
     parseconfig (0.5.2)
@@ -42,7 +42,7 @@ GEM
     rspec-expectations (2.7.0)
       diff-lcs (~> 1.1.2)
     rspec-mocks (2.7.0)
-    state_machine (1.0.1)
+    state_machine (1.0.2)
     term-ansicolor (1.0.7)
 
 PLATFORMS

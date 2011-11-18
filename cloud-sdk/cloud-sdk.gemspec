@@ -18,11 +18,11 @@ Gem::Specification.new do |s|
   s.files       += %w(README.md Rakefile Gemfile cloud-sdk.spec cloud-sdk.gemspec)
   s.executables = Dir[bin_dir].map {|binary| File.basename(binary)}
   s.require_paths = ["lib"]
-  s.add_dependency("json_pure", "1.4.6")
+  s.add_dependency("json_pure", "1.5.1")
   s.add_dependency("highline", "1.5.1")
-  s.add_dependency("state_machine", "1.0.1")
+  s.add_dependency("state_machine", "1.0.2")
   s.add_dependency("parseconfig", "0.5.2")
-  s.add_dependency("activemodel", "3.0.5")
+  s.add_dependency("activemodel", "3.0.10")
 
   s.add_development_dependency('cucumber', ">= 0.9.0")
   s.add_development_dependency('rspec')
