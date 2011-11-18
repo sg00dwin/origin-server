@@ -2,7 +2,7 @@
 
 Summary:   Provides python-wsgi-3.2 support
 Name:      rhc-cartridge-wsgi-3.2
-Version:   0.82.4
+Version:   0.82.5
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -85,6 +85,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Fri Nov 18 2011 Troy Dawson <tdawson@redhat.com> 0.82.5-1
+- remove requires: pymongo-bson.  not a real package (tdawson@redhat.com)
+
 * Fri Nov 18 2011 Troy Dawson <tdawson@redhat.com> 0.82.4-1
 - Added Requires:  pymongo, pymongo-bson (tdawson@redhat.com)
 
