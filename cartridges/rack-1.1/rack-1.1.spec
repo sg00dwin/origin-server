@@ -2,7 +2,7 @@
 
 Summary:   Provides ruby rack support running on Phusion Passenger
 Name:      rhc-cartridge-rack-1.1
-Version:   0.82.4
+Version:   0.82.5
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -103,6 +103,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Fri Nov 18 2011 Dan McPherson <dmcphers@redhat.com> 0.82.5-1
+- moving logic to abstract from li-controller (dmcphers@redhat.com)
+
 * Fri Nov 18 2011 Troy Dawson <tdawson@redhat.com> 0.82.4-1
 - Added Requires:  rubygem-mongo (tdawson@redhat.com)
 
