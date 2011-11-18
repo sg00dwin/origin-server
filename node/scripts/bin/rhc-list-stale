@@ -1,14 +1,25 @@
 #!/bin/bash
 
-for f in `/bin/ls /var/lib/libra/`
+function libra_users() {
+    grep ":libra guest:" /etc/passwd | cut -d: -f1
+}
+
+for f in $(libra_users)
 do
-    if [ -d /var/lib/libra/$f ]
+    APPHOME=/var/lib/libra/$f
+    if [ -d "$APPHOME" ]
     then
-        if ! GIT_DIR=`echo /var/lib/libra/$f/git/*/` git log --since="$(/bin/date "+%Y-%m-%d" --date="60 days ago")" | grep -q commit
+        if ! GIT_DIR=`echo $APPHOME/git/*/` git log --since="$(/bin/date "+%Y-%m-%d" --date="60 days ago")" | grep -q commit
         then
-            . /var/lib/libra/$f/.env/OPENSHIFT_APP_DIR
+            . $APPHOME/.env/OPENSHIFT_APP_DIR
             #find $OPENSHIFT_APP_DIR -mtime -60 -name 'access_log-*'
-            echo "$f is stale"
+
+            if [ -d "$APPHOME/mysql-5.1" ]
+            then
+                echo "$f is stale but not movable (mysql)"
+            else
+                echo "$f is stale"
+            fi
         fi
     fi
 done
