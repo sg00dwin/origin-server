@@ -213,15 +213,7 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 %attr(0666,-,-) %{brokerdir}/log/mcollective-client.log
 %attr(0666,-,-) %{brokerdir}/log/development.log
 %attr(0666,-,-) %{sitedir}/log/development.log
-%config(noreplace) %{jenkins}/jobs/jenkins_update/config.xml
-%config(noreplace) %{jenkins}/jobs/libra_ami/config.xml
-%config(noreplace) %{jenkins}/jobs/libra_ami_update/config.xml
-%config(noreplace) %{jenkins}/jobs/libra_ami_verify/config.xml
-%config(noreplace) %{jenkins}/jobs/libra_ami_stage/config.xml
-%config(noreplace) %{jenkins}/jobs/libra_ami_verify_stage/config.xml
-%config(noreplace) %{jenkins}/jobs/libra_check/config.xml
-%config(noreplace) %{jenkins}/jobs/libra_prune/config.xml
-%config(noreplace) %{jenkins}/jobs/sdk_check/config.xml
+%config(noreplace) %{jenkins}/jobs/*/*
 %{jenkins}/jobs/sync.rb
 %{devenvdir}
 %{_initddir}/libra-broker
