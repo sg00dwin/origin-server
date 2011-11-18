@@ -7,7 +7,7 @@ do
 done
 
 CART_DIR=/usr/libexec/li/cartridges
-source ${CART_DIR}/li-controller/info/lib/util
+source ${CART_DIR}/abstract/info/lib/util
 
 standalone_tmp=${OPENSHIFT_APP_DIR}${OPENSHIFT_APP_TYPE}/standalone/tmp/
 if [ -d $standalone_tmp ]

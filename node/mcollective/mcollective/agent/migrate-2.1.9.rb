@@ -18,6 +18,27 @@ module LibraMigration
     if (File.exists?(app_home) && !File.symlink?(app_home))
       #cartridge_root_dir = "/usr/libexec/li/cartridges"
       #cartridge_dir = "#{cartridge_root_dir}/#{app_type}"
+      
+      
+      
+      env_echos = []
+      
+      if app_type == 'jbossas-7.0'
+        java_home = '/etc/alternatives/java_sdk_1.6.0'
+        m2_home = '/etc/alternatives/maven-3.0'
+        env_echos.push("echo \"export PATH=#{cartridge_dir}/info/bin/:#{cartridge_root_dir}/abstract-httpd/info/bin/:#{cartridge_root_dir}/abstract/info/bin/:#{java_home}/bin:#{m2_home}/bin:/bin:/usr/bin\" > #{app_home}/.env/PATH")
+      elsif app_type == 'raw-0.1'
+        env_echos.push("echo \"export PATH=#{cartridge_dir}/info/bin/:#{cartridge_root_dir}/abstract/info/bin/:/bin:/usr/bin\" > #{app_home}/.env/PATH")
+      else
+        env_echos.push("echo \"export PATH=#{cartridge_dir}/info/bin/:#{cartridge_root_dir}/abstract-httpd/info/bin/:#{cartridge_root_dir}/abstract/info/bin/:/bin:/usr/bin\" > #{app_home}/.env/PATH")
+      end
+      
+      env_echos.each do |env_echo|
+        echo_output, echo_exitcode = Util.execute_script(env_echo)
+        output += echo_output
+      end
+      
+      
 
       git_dir = "#{app_home}/git/#{app_name}.git/"
       FileUtils.chown(uuid, uuid, git_dir)

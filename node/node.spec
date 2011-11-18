@@ -137,8 +137,6 @@ fi
 %attr(0750,-,-) %{_libexecdir}/li/cartridges/li-controller/info/hooks/
 %attr(0750,-,-) %{_libexecdir}/li/cartridges/li-controller/info/build/
 %attr(0640,-,-) %{_libexecdir}/li/cartridges/li-controller/info/data/
-%attr(0755,-,-) %{_libexecdir}/li/cartridges/li-controller/info/bin/
-%attr(0755,-,-) %{_libexecdir}/li/cartridges/li-controller/info/lib/
 %{_libexecdir}/li/cartridges/li-controller/README
 %{_libexecdir}/li/cartridges/li-controller/info
 %dir %attr(0755,root,root) %{_libexecdir}/li/cartridges/abstract-httpd/
@@ -148,6 +146,7 @@ fi
 %dir %attr(0755,root,root) %{_libexecdir}/li/cartridges/abstract/
 %attr(0750,-,-) %{_libexecdir}/li/cartridges/abstract/info/hooks/
 %attr(0755,-,-) %{_libexecdir}/li/cartridges/abstract/info/bin/
+%attr(0755,-,-) %{_libexecdir}/li/cartridges/abstract/info/lib/
 %{_libexecdir}/li/cartridges/abstract/info
 %attr(0750,-,-) %{_bindir}/rhc-accept-node
 %attr(0750,-,-) %{_bindir}/rhc-node-account

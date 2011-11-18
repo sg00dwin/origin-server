@@ -7,7 +7,7 @@ do
 done
 
 CART_DIR=/usr/libexec/li/cartridges
-source ${CART_DIR}/li-controller/info/lib/util
+source ${CART_DIR}/abstract/info/lib/util
 
 client_message "Running 'git gc --prune --aggressive'"
 pushd ${OPENSHIFT_HOMEDIR}git/${OPENSHIFT_APP_NAME}.git > /dev/null

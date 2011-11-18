@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source /usr/libexec/li/cartridges/li-controller/info/lib/selinux
+source /usr/libexec/li/cartridges/abstract/info/lib/selinux
 
 # Import Environment Variables
 if [ -d ~/.env ]

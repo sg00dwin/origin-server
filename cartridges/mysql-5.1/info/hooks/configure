@@ -42,7 +42,7 @@ done
 [ $# -eq 3 ] || print_help
 
 CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
-source ${CART_DIR}/li-controller/info/lib/util
+source ${CART_DIR}/abstract/info/lib/util
 
 app_type="mysql-5.1"
 setup_embedded_configure "$1" $2 $3
