@@ -2,7 +2,7 @@
 
 Summary:   Provides php-5.3 support
 Name:      rhc-cartridge-php-5.3
-Version:   0.82.3
+Version:   0.82.4
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -91,6 +91,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Fri Nov 18 2011 Troy Dawson <tdawson@redhat.com> 0.82.4-1
+- added Requires:  php-pecl-mongo (tdawson@redhat.com)
+
 * Tue Nov 15 2011 Dan McPherson <dmcphers@redhat.com> 0.82.3-1
 - add tidy (dmcphers@redhat.com)
 - increasing max filesize (mmcgrath@redhat.com)
