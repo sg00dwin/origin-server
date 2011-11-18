@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.82.5
+Version:   0.82.6
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -221,6 +221,9 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 %{_initddir}/sauce-connect
 
 %changelog
+* Fri Nov 18 2011 Dan McPherson <dmcphers@redhat.com> 0.82.6-1
+- fix build (dmcphers@redhat.com)
+
 * Thu Nov 17 2011 Dan McPherson <dmcphers@redhat.com> 0.82.5-1
 - cloud-sdk req (dmcphers@redhat.com)
 - Updating DevEnv with current Jenkins job definitions (mhicks@redhat.com)
