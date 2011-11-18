@@ -39,7 +39,7 @@ Requires:  rubygem-mechanize
 Requires:  rubygem-mocha
 Requires:  rubygem-rspec
 Requires:  rubygem-nokogiri
-Requires:  rubygem-openshift-sdk
+Requires:  rubygem-cloud-sdk
 Requires:  charlie
 Requires:  pam
 
@@ -158,10 +158,10 @@ perl -p -i -e "s/^#MaxStartups .*$/MaxStartups 40/" /etc/ssh/sshd_config
 
 # Setup an empty git repository to allow code transfer
 mkdir -p /root/li
-mkdir -p /root/openshift-sdk
+#mkdir -p /root/cloud-sdk
 git init --bare /root/li
 git init --bare /root/os-client-tools
-git init --bare /root/openshift-sdk
+#git init --bare /root/cloud-sdk
 
 # Restore permissions
 /sbin/restorecon -R %{_sysconfdir}/qpid/pki
