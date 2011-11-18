@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/mongodb-2.0
 
 Name: rhc-cartridge-mongodb-2.0
-Version: 0.5
+Version: 0.6
 Release: 1%{?dist}
 Summary: Embedded mongodb support for express
 
@@ -50,6 +50,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Fri Nov 18 2011 Dan McPherson <dmcphers@redhat.com> 0.6-1
+- moving logic to abstract from li-controller (dmcphers@redhat.com)
+
 * Wed Nov 16 2011 Dan McPherson <dmcphers@redhat.com> 0.5-1
 - fix stop/start issue + add convenience user to db '$app' (ramr@redhat.com)
 - authorization support + turn off http interface. (ramr@redhat.com)
