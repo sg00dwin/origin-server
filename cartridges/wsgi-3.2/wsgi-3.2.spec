@@ -17,7 +17,6 @@ Requires:  python
 Requires:  mod_wsgi = 3.2
 Requires:  MySQL-python
 Requires:  pymongo
-Requires:  pymongo-bson
 Requires:  python-psycopg2
 Requires:  python-virtualenv
 
