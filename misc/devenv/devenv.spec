@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.82.6
+Version:   0.82.7
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -221,6 +221,9 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 %{_initddir}/sauce-connect
 
 %changelog
+* Fri Nov 18 2011 Dan McPherson <dmcphers@redhat.com> 0.82.7-1
+- moving logic to abstract from li-controller (dmcphers@redhat.com)
+
 * Fri Nov 18 2011 Dan McPherson <dmcphers@redhat.com> 0.82.6-1
 - fix build (dmcphers@redhat.com)
 
