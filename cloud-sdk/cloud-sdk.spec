@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Kit
 Name:           rubygem-%{gemname}
-Version:        0.1.14
+Version:        0.1.15
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        AGPLv3
@@ -85,13 +85,9 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Thu Nov 17 2011 Dan McPherson <dmcphers@redhat.com> 0.1.15-1
+- 
+
 * Thu Nov 17 2011 Dan McPherson <dmcphers@redhat.com> 0.1.14-1
-- Automatic commit of package [rubygem-cloud-sdk] release [0.1.11-1].
-  (dmcphers@redhat.com)
-
-* Thu Nov 17 2011 Dan McPherson <dmcphers@redhat.com> 0.1.13-1
-- new package built with tito
-
-* Thu Nov 17 2011 Dan McPherson <dmcphers@redhat.com> 0.1.11-1
 - new package built with tito
 
