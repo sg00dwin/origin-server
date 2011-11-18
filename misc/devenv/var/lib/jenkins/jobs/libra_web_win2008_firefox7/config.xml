@@ -3,9 +3,9 @@
   <actions/>
   <description></description>
   <logRotator>
-    <daysToKeep>100</daysToKeep>
+    <daysToKeep>10</daysToKeep>
     <numToKeep>10</numToKeep>
-    <artifactDaysToKeep>100</artifactDaysToKeep>
+    <artifactDaysToKeep>10</artifactDaysToKeep>
     <artifactNumToKeep>10</artifactNumToKeep>
   </logRotator>
   <keepDependencies>false</keepDependencies>
@@ -15,12 +15,16 @@
   <disabled>true</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
-  <triggers class="vector"/>
+  <triggers class="vector">
+    <org.jenkinsci.plugins.fstrigger.triggers.FolderContentTrigger>
+      <spec></spec>
+      <path>site</path>
+    </org.jenkinsci.plugins.fstrigger.triggers.FolderContentTrigger>
+  </triggers>
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>build/devenv launch devenv-stage_verifier_${BUILD_NUMBER} --use_stage_image --verifier
-build/devenv test devenv-stage_verifier_${BUILD_NUMBER} --terminate --exclude_web</command>
+      <command>selenium/sauce_launcher &quot;Windows 2008&quot; firefox 7</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
@@ -35,5 +39,5 @@ build/devenv test devenv-stage_verifier_${BUILD_NUMBER} --terminate --exclude_we
     </hudson.tasks.Mailer>
   </publishers>
   <buildWrappers/>
-  <customWorkspace>jobs/libra_ami_stage/workspace</customWorkspace>
+  <customWorkspace>jobs/libra_check/workspace</customWorkspace>
 </project>

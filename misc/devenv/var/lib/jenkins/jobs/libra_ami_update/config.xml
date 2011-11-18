@@ -2,12 +2,6 @@
 <project>
   <actions/>
   <description></description>
-  <logRotator>
-    <daysToKeep>10</daysToKeep>
-    <numToKeep>10</numToKeep>
-    <artifactDaysToKeep>10</artifactDaysToKeep>
-    <artifactNumToKeep>10</artifactNumToKeep>
-  </logRotator>
   <keepDependencies>false</keepDependencies>
   <properties/>
   <scm class="hudson.plugins.git.GitSCM">
@@ -57,8 +51,7 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>
-build/devenv launch devenv_${BUILD_NUMBER} --use_clean_image
+      <command>build/devenv launch devenv_${BUILD_NUMBER} --use_clean_image
 build/devenv yum_update devenv_${BUILD_NUMBER} --terminate --register --verbose
       </command>
     </hudson.tasks.Shell>
@@ -73,7 +66,7 @@ build/devenv yum_update devenv_${BUILD_NUMBER} --terminate --register --verbose
       </threshold>
     </hudson.tasks.BuildTrigger>
     <hudson.tasks.Mailer>
-      <recipients>libra-express@redhat.com</recipients>
+      <recipients>libra-devel@redhat.com</recipients>
       <dontNotifyEveryUnstableBuild>true</dontNotifyEveryUnstableBuild>
       <sendToIndividuals>false</sendToIndividuals>
     </hudson.tasks.Mailer>
