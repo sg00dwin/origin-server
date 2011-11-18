@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Kit
 Name:           rubygem-%{gemname}
-Version:        0.1.11
+Version:        0.1.13
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        AGPLv3
@@ -44,7 +44,7 @@ This contains the Cloud Development Kit packaged as a ruby site library.
 
 %install
 rm -rf %{buildroot}
-mkdir -p %{buildroot}%{_bindir}
+mkdir -p %{buildroot}%{_bindir}/cdk
 mkdir -p %{buildroot}%{_sysconfdir}/cdk
 mkdir -p %{buildroot}%{gemdir}
 mkdir -p %{buildroot}%{ruby_sitelib}
@@ -85,6 +85,9 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Thu Nov 17 2011 Dan McPherson <dmcphers@redhat.com> 0.1.13-1
+- new package built with tito
+
 * Thu Nov 17 2011 Dan McPherson <dmcphers@redhat.com> 0.1.11-1
 - new package built with tito
 
