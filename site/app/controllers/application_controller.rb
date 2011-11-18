@@ -56,6 +56,36 @@ class ApplicationController < ActionController::Base
   end
   
   def reset_sso       
+    if Rails.configuration.integrated and cookies[:rh_sso]
+      # If we're integrated, let's log out of SSO on behalf of the user
+      uri = URI.join( Rails.configuration.streamline[:host], Rails.configuration.streamline[:logout_url] )
+      https = Net::HTTP.new( uri.host, uri.port )
+      Rails.logger.debug "Integrated logout, use SSL"
+      https.use_ssl = true
+      # TODO: Need to figure out where CAs are so we can do something like:
+      #   http://goo.gl/QLFFC
+      https.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+      # Make the request
+      req = Net::HTTP::Get.new( uri.path )
+      req['Cookie'] = "rh_sso=#{cookies[:rh_sso]}"
+
+      # Create the request
+      # Add timing code
+      start_time = Time.now
+      res = https.start{ |http| http.request(req) }
+      end_time = Time.now
+      Rails.logger.debug "Response from Streamline took (#{uri.path}): #{(end_time - start_time)*1000} ms"
+      Rails.logger.debug "Status received: #{res.code}"
+      Rails.logger.debug "-------------------"
+      Rails.logger.debug res.header.to_yaml
+      Rails.logger.debug "-------------------"
+
+      unless 302 == res.code.to_i
+        Rails.logger.debug "Unexpected HTTP status from logout: #{res.code}"
+      end
+    end
+
     Rails.logger.debug "Removing current SSO cookie value of '#{cookies[:rh_sso]}'"
     cookies.delete :rh_sso, :domain => '.redhat.com'
   end

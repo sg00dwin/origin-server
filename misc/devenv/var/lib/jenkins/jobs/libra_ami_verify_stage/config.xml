@@ -17,11 +17,10 @@
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
   <triggers class="vector"/>
   <concurrentBuild>false</concurrentBuild>
-  <customWorkspace>jobs/libra_ami_stage/workspace</customWorkspace>
   <builders>
     <hudson.tasks.Shell>
       <command>build/devenv launch devenv-stage_verifier_${BUILD_NUMBER} --use_stage_image --verifier
-build/devenv test devenv-stage_verifier_${BUILD_NUMBER} --terminate</command>
+build/devenv test devenv-stage_verifier_${BUILD_NUMBER} --terminate --exclude_web</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
@@ -30,10 +29,11 @@ build/devenv test devenv-stage_verifier_${BUILD_NUMBER} --terminate</command>
       <latestOnly>false</latestOnly>
     </hudson.tasks.ArtifactArchiver>
     <hudson.tasks.Mailer>
-      <recipients>libra-express@redhat.com</recipients>
+      <recipients>libra-devel@redhat.com</recipients>
       <dontNotifyEveryUnstableBuild>true</dontNotifyEveryUnstableBuild>
       <sendToIndividuals>false</sendToIndividuals>
     </hudson.tasks.Mailer>
   </publishers>
   <buildWrappers/>
+  <customWorkspace>jobs/libra_ami_stage/workspace</customWorkspace>
 </project>

@@ -2,7 +2,7 @@
 
 Summary:   Provides mod_perl support
 Name:      rhc-cartridge-perl-5.10
-Version:   0.13.3
+Version:   0.13.4
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -13,6 +13,7 @@ BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires: git
 Requires:  rhc-node >= 0.69.4
 Requires:  mod_perl
+Requires:  perl-MongoDB
 Requires:  ImageMagick-perl
 Requires:  perl-App-cpanminus
 # used to do dep resolving for perl
@@ -81,6 +82,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Fri Nov 18 2011 Troy Dawson <tdawson@redhat.com> 0.13.4-1
+- added Requires:  perl-MongoDB (tdawson@redhat.com)
+
 * Tue Nov 15 2011 Dan McPherson <dmcphers@redhat.com> 0.13.3-1
 - add tidy (dmcphers@redhat.com)
 

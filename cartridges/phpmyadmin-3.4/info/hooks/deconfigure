@@ -39,7 +39,7 @@ done
 [ $# -eq 3 ] || print_help
 
 CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
-source ${CART_DIR}/li-controller/info/lib/util
+source ${CART_DIR}/abstract/info/lib/util
 
 app_type="phpmyadmin-3.4"
 setup_embedded_deconfigure "$1" $2 $3

@@ -4,7 +4,7 @@
 LI_CONTROLLER_LIB_APACHE=true
 
 CART_DIR=/usr/libexec/li/cartridges
-source ${CART_DIR}/li-controller/info/lib/util
+source ${CART_DIR}/abstract/info/lib/util
 
 function rm_httpd_proxy {
     uuid=$1

@@ -43,8 +43,8 @@ done
 [ $# -eq 4 ] || print_help
 
 CART_DIR=/usr/libexec/li/cartridges
-source ${CART_DIR}/li-controller/info/lib/util
-source ${CART_DIR}/li-controller/info/lib/apache
+source ${CART_DIR}/abstract/info/lib/util
+source ${CART_DIR}/abstract/info/lib/apache
 
 setup_basic_hook "$1" $2 $3
 server_alias_name="$4"

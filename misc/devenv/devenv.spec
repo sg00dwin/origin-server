@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.82.4
+Version:   0.82.6
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -39,7 +39,7 @@ Requires:  rubygem-mechanize
 Requires:  rubygem-mocha
 Requires:  rubygem-rspec
 Requires:  rubygem-nokogiri
-Requires:  rubygem-openshift-sdk
+Requires:  rubygem-cloud-sdk
 Requires:  charlie
 Requires:  pam
 
@@ -158,10 +158,10 @@ perl -p -i -e "s/^#MaxStartups .*$/MaxStartups 40/" /etc/ssh/sshd_config
 
 # Setup an empty git repository to allow code transfer
 mkdir -p /root/li
-mkdir -p /root/openshift-sdk
+#mkdir -p /root/cloud-sdk
 git init --bare /root/li
 git init --bare /root/os-client-tools
-git init --bare /root/openshift-sdk
+#git init --bare /root/cloud-sdk
 
 # Restore permissions
 /sbin/restorecon -R %{_sysconfdir}/qpid/pki
@@ -213,15 +213,7 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 %attr(0666,-,-) %{brokerdir}/log/mcollective-client.log
 %attr(0666,-,-) %{brokerdir}/log/development.log
 %attr(0666,-,-) %{sitedir}/log/development.log
-%config(noreplace) %{jenkins}/jobs/jenkins_update/config.xml
-%config(noreplace) %{jenkins}/jobs/libra_ami/config.xml
-%config(noreplace) %{jenkins}/jobs/libra_ami_update/config.xml
-%config(noreplace) %{jenkins}/jobs/libra_ami_verify/config.xml
-%config(noreplace) %{jenkins}/jobs/libra_ami_stage/config.xml
-%config(noreplace) %{jenkins}/jobs/libra_ami_verify_stage/config.xml
-%config(noreplace) %{jenkins}/jobs/libra_check/config.xml
-%config(noreplace) %{jenkins}/jobs/libra_prune/config.xml
-%config(noreplace) %{jenkins}/jobs/sdk_check/config.xml
+%config(noreplace) %{jenkins}/jobs/*/*
 %{jenkins}/jobs/sync.rb
 %{devenvdir}
 %{_initddir}/libra-broker
@@ -229,6 +221,13 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 %{_initddir}/sauce-connect
 
 %changelog
+* Fri Nov 18 2011 Dan McPherson <dmcphers@redhat.com> 0.82.6-1
+- fix build (dmcphers@redhat.com)
+
+* Thu Nov 17 2011 Dan McPherson <dmcphers@redhat.com> 0.82.5-1
+- cloud-sdk req (dmcphers@redhat.com)
+- Updating DevEnv with current Jenkins job definitions (mhicks@redhat.com)
+
 * Tue Nov 15 2011 Dan McPherson <dmcphers@redhat.com> 0.82.4-1
 - Added mongodb to devenv (mmcgrath@redhat.com)
 

@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.82.4
+Version:   0.82.6
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -68,6 +68,17 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Thu Nov 17 2011 Dan McPherson <dmcphers@redhat.com> 0.82.6-1
+- 
+
+* Thu Nov 17 2011 Dan McPherson <dmcphers@redhat.com> 0.82.5-1
+- US1441: Promotional code email notification and omniture tracking. Adding
+  missing mailer class. (kraman@gmail.com)
+- Prevent page from jumping when sticky nav sticks (aboone@redhat.com)
+- US1441: Promotional code email notification and omniture tracking
+  (kraman@gmail.com)
+- Fix for BZ #753981 - properly log out of RedHat.com SSO (aboone@redhat.com)
+
 * Thu Nov 17 2011 Dan McPherson <dmcphers@redhat.com> 0.82.4-1
 - fix test case (dmcphers@redhat.com)
 

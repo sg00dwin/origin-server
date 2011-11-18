@@ -322,12 +322,12 @@ class DevEnv < Thor
     # Don't change directories until the ssh_path has been determined from the working directory
     FileUtils.cd path 
 
-    run("export GIT_SSH=#{ssh_path}; #{branch == 'origin/master' ? "git push -q root@#{hostname}:/root/openshift-sdk master:master --tags --force; " : ''}git push -q root@#{hostname}:/root/openshift-sdk #{branch}:master --tags --force", :verbose => options.verbose?)
+    run("export GIT_SSH=#{ssh_path}; #{branch == 'origin/master' ? "git push -q root@#{hostname}:/root/cloud-sdk master:master --tags --force; " : ''}git push -q root@#{hostname}:/root/cloud-sdk #{branch}:master --tags --force", :verbose => options.verbose?)
     puts "Done"
 
     if !options.skip_build?
       puts "Performing remote install...."
-      ssh(hostname, "rm -rf openshift-sdk-working; git clone openshift-sdk openshift-sdk-working; pushd openshift-sdk-working; tito build --rpm --test -i; popd; rm -rf openshift-sdk-working", 600)
+      ssh(hostname, "rm -rf cloud-sdk-working; git clone cloud-sdk cloud-sdk-working; pushd cloud-sdk-working; tito build --rpm --test -i; popd; rm -rf cloud-sdk-working", 600)
       puts "Done"
     end
   end
@@ -487,6 +487,10 @@ END
           cmd = "cd li-test/site; rake test"
           run_ssh(hostname, "Site Unit", cmd)
         end
+        threads << Thread.new do
+          #cmd = "cd /usr/lib/ruby/gems/*/gems/cloud-sdk*; rake test"
+          #run_ssh(hostname, "Cloud SDK Unit", cmd)
+        end
       end
       
       threads << Thread.new do
@@ -567,7 +571,7 @@ END
     instance = find_instance(conn, tag, true)
     hostname = instance.dns_name
     begin
-      cmd = "cd /usr/lib/ruby/gems/*/gems/openshift-sdk*; rake test"
+      cmd = "cd /usr/lib/ruby/gems/*/gems/cloud-sdk*; rake test"
       run_ssh(hostname, "OpenShift SDK Unit", cmd)
       
       puts "Done"

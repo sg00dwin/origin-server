@@ -43,7 +43,7 @@ done
 CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
 app_type="wsgi-3.2"
 
-source ${CART_DIR}/li-controller/info/lib/util
+source ${CART_DIR}/abstract/info/lib/util
 setup_configure "$1" $2 $3
 
 check_app_dir_doesnt_exist

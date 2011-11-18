@@ -46,6 +46,7 @@ RedHatCloud::Application.configure do
     :lost_password_url => '/lostPassword.html',
     :change_password_url => '/changePassword.html',
     :login_url => '',
+    :logout_url => '',
     :register_secret => 'c0ldW1n3',
     :user_info_secret => 'sw33tl1Qu0r'
   }

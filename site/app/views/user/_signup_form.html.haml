@@ -9,6 +9,8 @@
       %legend Password
       = form.input :password, :label => ' ', :input_html => { :autocomplete => 'off', :placeholder => 'At least 6 characters' }
       = form.input :password_confirmation, :label => ' ', :input_html => { :autocomplete => 'off', :placeholder => 'Enter it again' }
+      %legend Promotional Code
+      = form.input :promo_code
     %li.captcha
       %label(for="recaptcha_response_field") Prove You Are Human
       = recaptcha_tags :ssl => true          

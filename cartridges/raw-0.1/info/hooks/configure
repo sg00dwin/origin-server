@@ -44,7 +44,7 @@ done
 CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
 app_type="raw-0.1"
 
-source ${CART_DIR}/li-controller/info/lib/util
+source ${CART_DIR}/abstract/info/lib/util
 setup_configure "$1" $2 $3
 
 check_app_dir_doesnt_exist
@@ -82,7 +82,7 @@ chcon_app_dir_and_git
 create_standard_env_vars
 create_standard_network_env_vars
 create_standard_repo_dir_env_var
-echo "export PATH=$CART_INFO_DIR/bin/:$CART_DIR/abstract/info/bin/:$CART_DIR/li-controller/info/bin/:$PATH" > $APP_HOME/.env/PATH
+echo "export PATH=$CART_INFO_DIR/bin/:$CART_DIR/abstract/info/bin/:$PATH" > $APP_HOME/.env/PATH
 
 #
 # Create virtualhost definition for apache
