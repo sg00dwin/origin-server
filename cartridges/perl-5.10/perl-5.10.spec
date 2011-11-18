@@ -13,6 +13,7 @@ BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires: git
 Requires:  rhc-node >= 0.69.4
 Requires:  mod_perl
+Requires:  perl-MongoDB
 Requires:  ImageMagick-perl
 Requires:  perl-App-cpanminus
 # used to do dep resolving for perl
