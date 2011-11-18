@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/metrics-0.1
 
 Name: rhc-cartridge-metrics-0.1
-Version: 0.4.2
+Version: 0.4.3
 Release: 1%{?dist}
 Summary: Embedded metrics support for express
 
@@ -47,6 +47,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Fri Nov 18 2011 Dan McPherson <dmcphers@redhat.com> 0.4.3-1
+- moving logic to abstract from li-controller (dmcphers@redhat.com)
+
 * Sat Nov 12 2011 Dan McPherson <dmcphers@redhat.com> 0.4.2-1
 - remove carts dep on broker (dmcphers@redhat.com)
 
