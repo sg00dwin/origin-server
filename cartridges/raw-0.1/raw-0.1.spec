@@ -2,7 +2,7 @@
 
 Summary:   Provides raw support
 Name:      rhc-cartridge-raw-0.1
-Version:   0.16.3
+Version:   0.16.4
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -77,6 +77,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Fri Nov 18 2011 Dan McPherson <dmcphers@redhat.com> 0.16.4-1
+- moving logic to abstract from li-controller (dmcphers@redhat.com)
+
 * Tue Nov 15 2011 Dan McPherson <dmcphers@redhat.com> 0.16.3-1
 - add tidy (dmcphers@redhat.com)
 
