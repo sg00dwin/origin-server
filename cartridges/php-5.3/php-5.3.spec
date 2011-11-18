@@ -2,7 +2,7 @@
 
 Summary:   Provides php-5.3 support
 Name:      rhc-cartridge-php-5.3
-Version:   0.82.3
+Version:   0.82.5
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -20,6 +20,7 @@ Requires:  php-pdo
 Requires:  php-gd
 Requires:  php-xml
 Requires:  php-mysql
+Requires:  php-pecl-mongo
 Requires:  php-pgsql
 Requires:  php-mbstring
 Requires:  php-pear
@@ -90,6 +91,12 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Fri Nov 18 2011 Dan McPherson <dmcphers@redhat.com> 0.82.5-1
+- more php settings + mirage devenv additions (dmcphers@redhat.com)
+
+* Fri Nov 18 2011 Troy Dawson <tdawson@redhat.com> 0.82.4-1
+- added Requires:  php-pecl-mongo (tdawson@redhat.com)
+
 * Tue Nov 15 2011 Dan McPherson <dmcphers@redhat.com> 0.82.3-1
 - add tidy (dmcphers@redhat.com)
 - increasing max filesize (mmcgrath@redhat.com)
