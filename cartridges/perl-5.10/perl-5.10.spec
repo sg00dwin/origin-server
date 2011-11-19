@@ -2,7 +2,7 @@
 
 Summary:   Provides mod_perl support
 Name:      rhc-cartridge-perl-5.10
-Version:   0.13.4
+Version:   0.13.5
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -82,6 +82,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Fri Nov 18 2011 Dan McPherson <dmcphers@redhat.com> 0.13.5-1
+- moving logic to abstract from li-controller (dmcphers@redhat.com)
+
 * Fri Nov 18 2011 Troy Dawson <tdawson@redhat.com> 0.13.4-1
 - added Requires:  perl-MongoDB (tdawson@redhat.com)
 

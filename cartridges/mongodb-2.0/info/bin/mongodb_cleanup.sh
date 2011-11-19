@@ -6,6 +6,5 @@ do
     . $f
 done
 
-#/bin/rm -rf $OPENSHIFT_DATA_DIR/mysql_dump_snapshot.gz $OPENSHIFT_DATA_DIR/mysql_db_host
-echo "NOT YET IMPLEMENTED!" 2>&1
-exit 5
+/bin/rm -f  $OPENSHIFT_DATA_DIR/mongodb_dump_snapshot.tar.gz
+exit 0
