@@ -12,15 +12,15 @@ uuid="$2"
 IP="$3"
 
 APP_HOME="$libra_dir/$uuid"
-PHPMYADMIN_DIR=`echo $APP_HOME/phpmyadmin-3.4 | tr -s /`
+PHPMOADMIN_DIR=`echo $APP_HOME/phpmoadmin-1.0 | tr -s /`
 
-cat <<EOF > "$PHPMYADMIN_DIR/conf.d/libra.conf"
-ServerRoot "$PHPMYADMIN_DIR"
+cat <<EOF > "$PHPMOADMIN_DIR/conf.d/libra.conf"
+ServerRoot "$PHPMOADMIN_DIR/html"
 Listen $IP:8080
 User $uuid
 Group $uuid
-ErrorLog "|/usr/sbin/rotatelogs $PHPMYADMIN_DIR/logs/error_log$rotatelogs_format $rotatelogs_interval"
-CustomLog "|/usr/sbin/rotatelogs $PHPMYADMIN_DIR/logs/access_log$rotatelogs_format $rotatelogs_interval" combined
+ErrorLog "|/usr/sbin/rotatelogs $PHPMOADMIN_DIR/logs/error_log$rotatelogs_format $rotatelogs_interval"
+CustomLog "|/usr/sbin/rotatelogs $PHPMOADMIN_DIR/logs/access_log$rotatelogs_format $rotatelogs_interval" combined
 
 php_value include_path "."
 
@@ -39,40 +39,6 @@ php_value include_path "."
 
 EOF
 
-cat <<EOF > "$PHPMYADMIN_DIR/conf.d/phpMyAdmin.conf"
-Alias /phpmyadmin /usr/share/phpMyAdmin/
-
-<Directory /usr/share/phpMyAdmin/>
-   Order Allow,Deny
-   Allow from All
-</Directory>
-
-# We set it up for them, this should not be necessary
-<Directory /usr/share/phpMyAdmin/setup/>
-   Order Deny,Allow
-   Deny from All
-</Directory>
-
-
-# These directories do not require access over HTTP - taken from the original
-# phpMyAdmin upstream tarball
-#
-<Directory /usr/share/phpMyAdmin/libraries/>
-    Order Deny,Allow
-    Deny from All
-    Allow from None
-</Directory>
-
-<Directory /usr/share/phpMyAdmin/setup/lib/>
-    Order Deny,Allow
-    Deny from All
-    Allow from None
-</Directory>
-
-<Directory /usr/share/phpMyAdmin/setup/frames/>
-    Order Deny,Allow
-    Deny from All
-    Allow from None
-</Directory>
-
+cat <<EOF > "$PHPMOADMIN_DIR/conf.d/phpMoAdmin.conf"
+Alias /phpmoadmin /moadmin.php
 EOF

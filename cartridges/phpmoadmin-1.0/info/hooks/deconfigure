@@ -1,0 +1,73 @@
+#!/bin/bash
+
+# Copyright © 2010 Mike McGrath All rights reserved
+# Copyright © 2010 Red Hat, Inc. All rights reserved
+
+# This copyrighted material is made available to anyone wishing to use, modify,
+# copy, or redistribute it subject to the terms and conditions of the GNU
+# General Public License v.2.  This program is distributed in the hope that it
+# will be useful, but WITHOUT ANY WARRANTY expressed or implied, including the
+# implied warranties of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.  You should have
+# received a copy of the GNU General Public License along with this program;
+# if not, write to the Free Software Foundation, Inc., 51 Franklin Street,
+# Fifth Floor, Boston, MA 02110-1301, USA. Any Red Hat trademarks that are
+# incorporated in the source code or documentation are not subject to the GNU
+# General Public License and may only be used or replicated with the express
+# permission of Red Hat, Inc.
+
+# Destroys phpmoadmin instance
+
+function print_help {
+    echo "Usage: $0 app-name namespace uuid"
+
+    echo "$0 $@" | logger -p local0.notice -t libra_phpmoadmin_deconfigure
+    exit 1
+}
+
+while getopts 'd' OPTION
+do
+    case $OPTION in
+        d) set -x
+        ;;
+        ?) print_help
+        ;;
+    esac
+done
+
+
+[ $# -eq 3 ] || print_help
+
+CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
+source ${CART_DIR}/abstract/info/lib/util
+
+app_type="phpmoadmin-1.0"
+setup_embedded_deconfigure "$1" $2 $3
+
+PHPMOADMIN_DIR=`echo $APP_HOME/phpmoadmin-1.0 | tr -s /` # ensure that there aren't double /'s
+PHPMOADMIN_CTL_SCRIPT="$PHPMOADMIN_DIR/${application}_phpmoadmin_ctl.sh"
+
+#
+# Stop app
+#
+runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $PHPMOADMIN_CTL_SCRIPT stop" || warning "Failed to stop ${application}" 121
+
+confirm_pid_gone "${PHPMOADMIN_DIR}/run/httpd.pid"
+
+confirm_log_files_inactive "$PHPMOADMIN_DIR/logs"
+
+#
+# Remove environment variables
+#
+/bin/rm -f $APP_HOME/.env/OPENSHIFT_PHPMOADMIN_APP_DIR $APP_HOME/.env/OPENSHIFT_PHPMOADMIN_CTL_SCRIPT $APP_HOME/.env/OPENSHIFT_PHPMOADMIN_IP
+
+
+# Remove phpmoadmin dir. This MUST be after stopping phpmoadmin as the CTL script relies on these.
+runcon -l s0-s0:c0.c1023 rm -rf "$PHPMOADMIN_DIR"
+
+#
+# Remove ProxyPass definition from apache
+#
+rm -f /etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}/phpmoadmin-1.0.conf || warning "Could not remove phpmoadmin apache definition" 156
+
+/sbin/service httpd configtest 2> /dev/null && /sbin/service httpd graceful || warning "Failed to restart master httpd, please contact support" 120

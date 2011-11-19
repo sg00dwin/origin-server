@@ -28,6 +28,6 @@ load_node_conf
 
 cat <<EOF > "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}/phpmoadmin-1.0.conf"
 ProxyPass /phpmoadmin http://$IP:8080/phpmoadmin
-ProxyPassReverse /phpmoadmin http://$IP:8080/moadmin.php
+ProxyPassReverse /phpmoadmin http://$IP:8080/phpmoadmin
 
 EOF
