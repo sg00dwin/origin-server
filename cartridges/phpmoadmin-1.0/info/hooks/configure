@@ -80,7 +80,6 @@ pushd "$PHPMOADMIN_DIR" > /dev/null
 mkdir -p conf conf.d logs run sessions tmp html
 ln -s /usr/lib64/httpd/modules modules
 ln -s /etc/httpd/conf/magic conf/magic
-cp $CART_INFO_DIR/html/* $PHPMOADMIN_DIR/html/
 
 sed -e "s,TEMPLATE_SET_ME_SESSION_SAVE_PATH,$PHPMOADMIN_DIR/sessions/," \
     -e "s,TEMPLATE_SET_ME_UPLOAD_TMP_DIR,$PHPMOADMIN_DIR/tmp/," $CART_CONF_DIR/php.ini > $PHPMOADMIN_DIR/conf/php.ini 
@@ -93,7 +92,7 @@ sed -e "s,TEMPLATE_SET_ME_SESSION_SAVE_PATH,$PHPMOADMIN_DIR/sessions/," \
 sed -e "s,TEMPLATE_SET_MONGODB_USERNAME,$OPENSHIFT_DB_USERNAME," \
     -e "s,TEMPLATE_SET_MONGODB_HOST,$OPENSHIFT_DB_HOST," \
     -e "s,TEMPLATE_SET_MONGODB_PASSWORD,$OPENSHIFT_DB_PASSWORD," \
-    -e "s,TEMPLATE_SET_MONGODB_PORT,$OPENSHIFT_DB_PORT," $CART_INFO_DIR/html/moadmin.php > $PHPMOADMIN_DIR/html/moadmin.php
+    -e "s,TEMPLATE_SET_MONGODB_PORT,$OPENSHIFT_DB_PORT," $CART_INFO_DIR/html/moadmin.php > $PHPMOADMIN_DIR/moadmin.php
 
 popd > /dev/null
 

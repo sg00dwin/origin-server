@@ -35,7 +35,6 @@ do
     esac
 done
 
-
 [ $# -eq 3 ] || print_help
 
 CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}

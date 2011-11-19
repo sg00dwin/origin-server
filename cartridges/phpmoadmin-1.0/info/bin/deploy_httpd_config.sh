@@ -1,7 +1,7 @@
 #!/bin/bash
 
 CART_DIR=/usr/libexec/li/cartridges
-source ${CART_DIR}/li-controller/info/lib/util
+source ${CART_DIR}/abstract/info/lib/util
 
 load_node_conf
 
@@ -15,7 +15,8 @@ APP_HOME="$libra_dir/$uuid"
 PHPMOADMIN_DIR=`echo $APP_HOME/phpmoadmin-1.0 | tr -s /`
 
 cat <<EOF > "$PHPMOADMIN_DIR/conf.d/libra.conf"
-ServerRoot "$PHPMOADMIN_DIR/html"
+ServerRoot "$PHPMOADMIN_DIR"
+DocumentRoot "$PHPMOADMIN_DIR"
 Listen $IP:8080
 User $uuid
 Group $uuid
@@ -40,5 +41,5 @@ php_value include_path "."
 EOF
 
 cat <<EOF > "$PHPMOADMIN_DIR/conf.d/phpMoAdmin.conf"
-Alias /phpmoadmin /moadmin.php
+Alias /phpmoadmin /$PHPMOADMIN_DIR
 EOF
