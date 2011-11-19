@@ -6,6 +6,10 @@ do
     . $f
 done
 
+CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
+CART_INFO_DIR=$CART_DIR/embedded/mongodb-2.0/info
+source ${CART_INFO_DIR}/lib/util
+
 
 function die() {
    exitcode=${1:-0}
@@ -35,7 +39,7 @@ function restore_from_mongodb_snapshot() {
 
    #  Restore from the "dump".
    if ! mongorestore -h $OPENSHIFT_DB_HOST -u $OPENSHIFT_DB_USERNAME   \
-            -p "$OPENSHIFT_DB_PASSWORD" --directoryperdb > /dev/null 2>&1; then
+            -p "$OPENSHIFT_DB_PASSWORD" --directoryperdb ; then
       popd > /dev/null
       /bin/rm -rf /tmp/mongodump.$$
       die 0 "WARNING" "Could not restore MongoDB databases - mongorestore failed!"
@@ -54,6 +58,7 @@ if [ ! -f $OPENSHIFT_DATA_DIR/mongodb_dump_snapshot.tar.gz ]; then
    echo "MongoDB restore attempted but no dump was found!" 1>&2
    die 0 "ERROR" "$OPENSHIFT_DATA_DIR/mongodb_dump_snapshot.tar.gz does not exist"
 else
+   start_mongodb_as_user
    restore_from_mongodb_snapshot
 fi
 
