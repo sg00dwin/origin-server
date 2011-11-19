@@ -90,8 +90,15 @@ chcon -t libra_var_lib_t -l $mcs_level -R "$MONGODB_DIR"
 
 start_mongodb
 
+# If password was already generated for user's db, use it. This allows mongodb
+# and mysql to share the same generated password.
+if [ -f "$APP_HOME/.env/OPENSHIFT_DB_PASSWORD" ]; then
+   source "$APP_HOME/.env/OPENSHIFT_DB_PASSWORD"
+   password=$OPENSHIFT_DB_PASSWORD
+fi
+
 # Generate a password with no o's O's or 0's
-password=$(generate_password)
+[ -z "$password" ]  &&  password=$(generate_password)
 
 #
 # Setup Environment Variables
@@ -104,10 +111,10 @@ echo "export OPENSHIFT_DB_PORT='27017'" > $APP_HOME/.env/OPENSHIFT_DB_PORT
 #echo "export OPENSHIFT_DB_SOCKET=''" > $APP_HOME/.env/OPENSHIFT_DB_SOCKET
 echo "export OPENSHIFT_DB_URL='mongodb://admin:$password@$IP:27017/'" > $APP_HOME/.env/OPENSHIFT_DB_URL
 echo "export OPENSHIFT_DB_CTL_SCRIPT='$MONGODB_DIR/${application}_mongodb_ctl.sh'" > $APP_HOME/.env/OPENSHIFT_DB_CTL_SCRIPT
-#echo "export OPENSHIFT_DB_MYSQL_51_DUMP='$CART_INFO_DIR/bin/mysql_dump.sh'" > $APP_HOME/.env/OPENSHIFT_DB_MYSQL_51_DUMP
-#echo "export OPENSHIFT_DB_MYSQL_51_DUMP_CLEANUP='$CART_INFO_DIR/bin/mysql_cleanup.sh'" > $APP_HOME/.env/OPENSHIFT_DB_MYSQL_51_DUMP_CLEANUP
-#echo "export OPENSHIFT_DB_MYSQL_51_RESTORE='$CART_INFO_DIR/bin/mysql_restore.sh'" > $APP_HOME/.env/OPENSHIFT_DB_MYSQL_51_RESTORE
-#echo "export OPENSHIFT_DB_MYSQL_51_EMBEDDED_TYPE='mysql-5.1'" > $APP_HOME/.env/OPENSHIFT_DB_MYSQL_51_EMBEDDED_TYPE
+echo "export OPENSHIFT_DB_MONGODB_20_DUMP='$CART_INFO_DIR/bin/mongodb_dump.sh'" > $APP_HOME/.env/OPENSHIFT_DB_MONGODB_20_DUMP
+echo "export OPENSHIFT_DB_MONGODB_20_DUMP_CLEANUP='$CART_INFO_DIR/bin/mongodb_cleanup.sh'" > $APP_HOME/.env/OPENSHIFT_DB_MONGODB_20_DUMP_CLEANUP
+echo "export OPENSHIFT_DB_MONGODB_20_RESTORE='$CART_INFO_DIR/bin/mongodb_restore.sh'" > $APP_HOME/.env/OPENSHIFT_DB_MONGODB_20_RESTORE
+echo "export OPENSHIFT_DB_MONGODB_20_EMBEDDED_TYPE='mongodb-2.0'" > $APP_HOME/.env/OPENSHIFT_DB_MONGODB_20_EMBEDDED_TYPE
 
 chown $user_id $APP_HOME/.env/OPENSHIFT_DB_USERNAME $APP_HOME/.env/OPENSHIFT_DB_PASSWORD
 
@@ -124,13 +131,13 @@ echo "use admin
 
 
 client_result ""
-client_result "Mongodb 2.0 database added.  Please make note of these credentials:"
+client_result "MongoDB 2.0 database added.  Please make note of these credentials:"
 client_result ""
 client_result "       Root User: admin"
 client_result "   Root Password: $password"
 client_result "   Database Name: $application"
 client_result "  Connection URL: mongodb://$IP:27017/"
 client_result ""
-client_result "You can manage your new Mongodb by also embedding phpmongoadmin?"
+client_result "You can manage your new MongoDB by also embedding phpmoadmin-1.0"
 
-set_app_info "Connection URL: mongodb://$IP/"
+set_app_info "Connection URL: mongodb://$IP:27017/"

@@ -50,6 +50,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Fri Nov 18 2011 Ram Ranganathan <ramr@redhat.com> 0.7-1
+- mongodb dump and restore functions
+
 * Fri Nov 18 2011 Dan McPherson <dmcphers@redhat.com> 0.6-1
 - moving logic to abstract from li-controller (dmcphers@redhat.com)
 
