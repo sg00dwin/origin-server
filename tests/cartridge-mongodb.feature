@@ -35,46 +35,46 @@ Feature: MongoDB Application Sub-Cartridge
 #    |php|
 #
 #    
-#  Scenario Outline: Start a MongoDB database
-#    Given an accepted node
-#    And a new guest account
-#    And a new <type> application
-#    And a new mongodb database
-#    And the mongodb daemon is stopped
-#    When I start the mongodb database
-#    Then the mongodb daemon will be running
-#
-#  Scenarios: Start a MongoDB database scenarios
-#    |type|
-#    |php|
-#    
-#
-#  Scenario Outline: Stop a MongoDB database
-#    Given an accepted node
-#    And a new guest account
-#    And a new <type> application
-#    And a new mongodb database
-#    And the mongodb daemon is running
-#    When I stop the mongodb database
-#    Then the mongodb daemon will not be running
-#
-#
-#
-#  Scenarios: Stop a MongoDB database scenarios
-#    |type|
-#    |php|
-#
-#  Scenario Outline: Restart a MongoDB database
-#    Given an accepted node
-#    And a new guest account
-#    And a new <type> application
-#    And a new mongodb database
-#    And the mongodb daemon is running
-#    When I restart the mongodb database
-#    Then the mongodb daemon will be running
-#    And the mongodb daemon pid will be different
-#
-#  Scenarios: Restart a MongoDB database scenarios
-#     |type|
-#     |php|
-#
+  Scenario Outline: Start a MongoDB database
+    Given an accepted node
+    And a new guest account
+    And a new <type> application
+    And a new mongodb database
+    And the mongodb daemon is stopped
+    When I start the mongodb database
+    Then the mongodb daemon will be running
+
+  Scenarios: Start a MongoDB database scenarios
+    |type|
+    |php|
+   
+
+  Scenario Outline: Stop a MongoDB database
+    Given an accepted node
+    And a new guest account
+    And a new <type> application
+    And a new mongodb database
+    And the mongodb daemon is running
+    When I stop the mongodb database
+    Then the mongodb daemon will not be running
+
+
+
+  Scenarios: Stop a MongoDB database scenarios
+    |type|
+    |php|
+
+  Scenario Outline: Restart a MongoDB database
+    Given an accepted node
+    And a new guest account
+    And a new <type> application
+    And a new mongodb database
+    And the mongodb daemon is running
+    When I restart the mongodb database
+    Then the mongodb daemon will be running
+    And the mongodb daemon pid will be different
+
+  Scenarios: Restart a MongoDB database scenarios
+     |type|
+     |php|
+
