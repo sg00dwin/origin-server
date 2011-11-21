@@ -66,11 +66,22 @@ module MCollective
         cartridge = request[:cartridge]
         action = request[:action]
         args = request[:args]
-        if File.exists? "/usr/libexec/li/cartridges/#{cartridge}/info/hooks/#{action}"                
-          pid, stdin, stdout, stderr = Open4::popen4ext(true, "/usr/bin/runcon -l s0-s0:c0.c1023 /usr/libexec/li/cartridges/#{cartridge}/info/hooks/#{action} #{args} 2>&1")
+        pid, stdin, stdout, stderr = nil, nil, nil, nil
+        if cartridge == 'li-controller' && (action == 'configure' || action == 'deconfigure')
+          cmd = nil
+          if action == 'configure'
+            cmd = 'cdk-app-create'
+          elsif action == 'deconfigure'
+            cmd = 'cdk-app-destroy'
+          end
+          pid, stdin, stdout, stderr = Open4::popen4ext(true, "/usr/bin/runcon -l s0-s0:c0.c1023 #{cmd} #{args} 2>&1")
         else
-          reply[:exitcode] = 127
-          reply.fail! "cartridge_do_action ERROR action '#{action}' not found."
+          if File.exists? "/usr/libexec/li/cartridges/#{cartridge}/info/hooks/#{action}"                
+            pid, stdin, stdout, stderr = Open4::popen4ext(true, "/usr/bin/runcon -l s0-s0:c0.c1023 /usr/libexec/li/cartridges/#{cartridge}/info/hooks/#{action} #{args} 2>&1")
+          else
+            reply[:exitcode] = 127
+            reply.fail! "cartridge_do_action ERROR action '#{action}' not found."
+          end
         end
         stdin.close
         ignored, status = Process::waitpid2 pid

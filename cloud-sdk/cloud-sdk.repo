@@ -1,0 +1,5 @@
+[cdk]
+name=Cloud SDK Repo
+baseurl=file:///var/tmp/cloud-sdk-repo
+enabled=1
+gpgcheck=0
