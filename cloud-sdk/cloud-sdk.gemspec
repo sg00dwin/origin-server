@@ -1,7 +1,7 @@
 # OS independent path locations
 bin_dir  = File.join("bin", "*")
 conf_dir = File.join("conf", "*")
-lib_dir  = File.join(File.join("lib", "**"), "*.rb")
+lib_dir  = File.join(File.join("lib", "**"), "*")
 test_dir  = File.join(File.join("test", "**"), "*")
 
 Gem::Specification.new do |s|

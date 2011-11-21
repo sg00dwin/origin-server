@@ -37,6 +37,7 @@ USAGE
 end
 
 require 'cloud-sdk'
+require 'cloud-sdk/utils/shell_exec'
 opts = GetoptLong.new(
     ["--with-uuid",        "-c", GetoptLong::OPTIONAL_ARGUMENT],
     ["--with-ssh-key",     "-s", GetoptLong::OPTIONAL_ARGUMENT],
@@ -54,8 +55,8 @@ rescue GetoptLong::Error => e
     exit -100
 end
 
-uuid = args['--with--uuid']
-ssh_key = args['--with--ssh-key']
+uuid = args['--with-uuid']
+ssh_key = args['--with-ssh-key']
 name = args['--named']
 $dry_run = true if args['--dry-run']
 $cdk_debug = true if args['--debug']

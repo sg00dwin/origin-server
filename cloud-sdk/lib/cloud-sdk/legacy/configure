@@ -75,7 +75,6 @@ function print_help {
     echo "  -c customer_uuid"
     if [ -z "$REVERT" ]
     then
-        echo "  -e customer_username"
         echo "  -s ssh_pub_key"
         echo "  -d (optional: debug)"
     fi
