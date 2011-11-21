@@ -62,9 +62,11 @@ $ ->
       $('#express_domain_ssh').val(event.osEventData.ssh)
     else
       # Error
+      # prevent XSS by scrubbing HTML tags
+      err_msg = event.osEventData.replace(/>/g, '&gt;').replace(/</g, '&lt;')
       ($ '.os-dialog-container', cpDialog).prepend """
         <div class="error message">
-          #{event.osEventData}
+          #{err_msg}
         </div>
       """
 
