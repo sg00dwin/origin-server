@@ -132,12 +132,6 @@ fi
 %attr(0750,-,-) %{_bindir}/remount-secure.sh
 %attr(0755,-,-) %{_bindir}/rhc-cgroup-read
 %dir %attr(0751,root,root) %{_localstatedir}/lib/libra
-%dir %attr(0755,root,root) %{_libexecdir}/li/cartridges/li-controller/
-%attr(0750,-,-) %{_libexecdir}/li/cartridges/li-controller/info/hooks/
-%attr(0750,-,-) %{_libexecdir}/li/cartridges/li-controller/info/build/
-%attr(0640,-,-) %{_libexecdir}/li/cartridges/li-controller/info/data/
-%{_libexecdir}/li/cartridges/li-controller/README
-%{_libexecdir}/li/cartridges/li-controller/info
 %dir %attr(0755,root,root) %{_libexecdir}/li/cartridges/abstract-httpd/
 %attr(0750,-,-) %{_libexecdir}/li/cartridges/abstract-httpd/info/hooks/
 %attr(0755,-,-) %{_libexecdir}/li/cartridges/abstract-httpd/info/bin/

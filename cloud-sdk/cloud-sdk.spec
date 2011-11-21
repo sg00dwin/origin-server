@@ -76,9 +76,7 @@ rm -rf %{buildroot}
 %{gemdir}/cache/%{gemname}-%{version}.gem
 %{gemdir}/specifications/%{gemname}-%{version}.gemspec
 %{_sysconfdir}/cdk
-%{_bindir}/cdk
-%{_bindir}/cdk-app-create
-%{_bindir}/cdk-app-destroy
+%{_bindir}/*
 
 %files -n ruby-%{gemname}
 %{ruby_sitelib}/%{gemname}

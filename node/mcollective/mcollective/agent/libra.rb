@@ -67,12 +67,25 @@ module MCollective
         action = request[:action]
         args = request[:args]
         pid, stdin, stdout, stderr = nil, nil, nil, nil
-        if cartridge == 'li-controller' && (action == 'configure' || action == 'deconfigure')
+        if cartridge == 'li-controller'
           cmd = nil
-          if action == 'configure'
+          case action
+          when 'configure'
             cmd = 'cdk-app-create'
-          elsif action == 'deconfigure'
+          when 'deconfigure'
             cmd = 'cdk-app-destroy'
+          when "add-env-var"
+            cmd = 'cdk-env-var-add'
+          when "remove-env-var"
+            cmd = 'cdk-env-var-remove'
+          when "add-broker-auth-key"
+            cmd = 'cdk-broker-auth-key-add'
+          when "remove-broker-auth-key"
+            cmd = 'cdk-broker-auth-key-remove'
+          when "add-authorized-ssh-key"
+            cmd = 'cdk-authorized-ssh-key-add'
+          when "remove-authorized-ssh-key"
+            cmd = 'cdk-authorized-ssh-key-remove'
           end
           pid, stdin, stdout, stderr = Open4::popen4ext(true, "/usr/bin/runcon -l s0-s0:c0.c1023 #{cmd} #{args} 2>&1")
         else
