@@ -26,7 +26,7 @@ if [ "$1" == "/tmp" ] || [ "$1" == "/var/tmp" ]
 then
     /bin/chown $4 $2
     uid=$(id -u "$4")
-    source /usr/libexec/li/cartridges/li-controller/info/lib/selinux
+    source /usr/libexec/li/cartridges/abstract/info/lib/selinux
     mcs_level=`openshift_mcs_level $uid`
     chcon -t libra_tmp_t -l $mcs_level $1
     chcon -t libra_tmp_t -l $mcs_level $2

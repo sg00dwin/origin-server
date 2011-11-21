@@ -11,7 +11,7 @@ for uid in `seq 500 1550`
 do
     a=$(($uid*128+2130706432))
     net=$(($a>>24 )).$(($(($a%16777216))<<8>>24)).$(($(($a%65536))<<16>>24)).$(($(($a%256))<<24>>24))
-    source /usr/libexec/li/cartridges/li-controller/info/lib/selinux
+    source /usr/libexec/li/cartridges/abstract/info/lib/selinux
     mcs_level=`openshift_mcs_level $uid`
     echo "node -a -t node_t -r $mcs_level -M  255.255.255.128 -p ipv4 $net"
 done > /tmp/selinux

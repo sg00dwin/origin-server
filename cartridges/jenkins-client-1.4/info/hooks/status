@@ -44,7 +44,7 @@ done
 
 CART_DIR=/usr/libexec/li/cartridges
 CART_INFO_DIR=$CART_DIR/embedded/jenkins-client-1.4/info
-source ${CART_DIR}/li-controller/info/lib/util
+source ${CART_DIR}/abstract/info/lib/util
 
 setup_basic_hook "$1" $2 $3
 

@@ -7,8 +7,8 @@ set -e
 CART_DIR=/usr/libexec/li/cartridges
 CART_INFO_DIR=$CART_DIR/jenkins-1.4/info
 
-source ${CART_DIR}/li-controller/info/lib/selinux
-source ${CART_DIR}/li-controller/info/lib/util
+source ${CART_DIR}/abstract/info/lib/selinux
+source ${CART_DIR}/abstract/info/lib/util
 
 load_node_conf
 

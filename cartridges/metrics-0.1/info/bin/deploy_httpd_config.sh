@@ -1,7 +1,7 @@
 #!/bin/bash
 
 CART_DIR=/usr/libexec/li/cartridges
-source ${CART_DIR}/li-controller/info/lib/util
+source ${CART_DIR}/abstract/info/lib/util
 CART_INFO_DIR=$CART_DIR/embedded/metrics-0.1/info
 
 load_node_conf

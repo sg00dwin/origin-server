@@ -2,7 +2,7 @@
 
 Summary:   Provides php-5.3 support
 Name:      rhc-cartridge-php-5.3
-Version:   0.82.5
+Version:   0.82.6
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -91,6 +91,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Fri Nov 18 2011 Dan McPherson <dmcphers@redhat.com> 0.82.6-1
+- moving logic to abstract from li-controller (dmcphers@redhat.com)
+
 * Fri Nov 18 2011 Dan McPherson <dmcphers@redhat.com> 0.82.5-1
 - more php settings + mirage devenv additions (dmcphers@redhat.com)
 

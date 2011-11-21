@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.82.11
+Version:       0.82.13
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -136,8 +136,6 @@ fi
 %attr(0750,-,-) %{_libexecdir}/li/cartridges/li-controller/info/hooks/
 %attr(0750,-,-) %{_libexecdir}/li/cartridges/li-controller/info/build/
 %attr(0640,-,-) %{_libexecdir}/li/cartridges/li-controller/info/data/
-%attr(0755,-,-) %{_libexecdir}/li/cartridges/li-controller/info/bin/
-%attr(0755,-,-) %{_libexecdir}/li/cartridges/li-controller/info/lib/
 %{_libexecdir}/li/cartridges/li-controller/README
 %{_libexecdir}/li/cartridges/li-controller/info
 %dir %attr(0755,root,root) %{_libexecdir}/li/cartridges/abstract-httpd/
@@ -147,6 +145,7 @@ fi
 %dir %attr(0755,root,root) %{_libexecdir}/li/cartridges/abstract/
 %attr(0750,-,-) %{_libexecdir}/li/cartridges/abstract/info/hooks/
 %attr(0755,-,-) %{_libexecdir}/li/cartridges/abstract/info/bin/
+%attr(0755,-,-) %{_libexecdir}/li/cartridges/abstract/info/lib/
 %{_libexecdir}/li/cartridges/abstract/info
 %attr(0750,-,-) %{_bindir}/rhc-accept-node
 %attr(0750,-,-) %{_bindir}/rhc-node-account
@@ -160,6 +159,14 @@ fi
 %dir %attr(0755,root,root) %{_sysconfdir}/libra/skel
 
 %changelog
+* Sat Nov 19 2011 Dan McPherson <dmcphers@redhat.com> 0.82.13-1
+- changed rhc-list-stale to say 'not movable' when the stale app has mysql
+  embedded (twiest@redhat.com)
+
+* Fri Nov 18 2011 Dan McPherson <dmcphers@redhat.com> 0.82.12-1
+- moving logic to abstract from li-controller (dmcphers@redhat.com)
+- Switching to the popen4 extension that closes fd's (mhicks@redhat.com)
+
 * Fri Nov 18 2011 Dan McPherson <dmcphers@redhat.com> 0.82.11-1
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
   (mmcgrath@redhat.com)

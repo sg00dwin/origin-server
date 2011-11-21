@@ -22,7 +22,7 @@ uuid=$3
 #IP=$4
 
 CART_DIR=/usr/libexec/li/cartridges
-source ${CART_DIR}/li-controller/info/lib/util
+source ${CART_DIR}/abstract/info/lib/util
 
 load_node_conf
 

@@ -23,10 +23,10 @@ set -e
 
 CART_DIR=/usr/libexec/li/cartridges
 
-source ${CART_DIR}/li-controller/info/lib/util
-source ${CART_DIR}/li-controller/info/lib/selinux
-source ${CART_DIR}/li-controller/info/lib/apache
-source ${CART_DIR}/li-controller/info/lib/network
+source ${CART_DIR}/abstract/info/lib/util
+source ${CART_DIR}/abstract/info/lib/selinux
+source ${CART_DIR}/abstract/info/lib/apache
+source ${CART_DIR}/abstract/info/lib/network
 
 load_node_conf
 
@@ -61,7 +61,7 @@ if [ -f $CART_INFO_DIR/bin/deploy_httpd_config.sh ]
 then
   $CART_INFO_DIR/bin/deploy_httpd_config.sh $application $uuid $IP
 fi
-runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level ${CART_DIR}/li-controller/info/bin/redeploy_config_dir.sh"
+runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level ${CART_DIR}/abstract/info/bin/redeploy_config_dir.sh"
 
 . $APP_HOME/.env/OPENSHIFT_INTERNAL_IP
 

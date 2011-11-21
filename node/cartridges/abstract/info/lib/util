@@ -48,7 +48,7 @@ function create_standard_repo_dir_env_var {
 }
 
 function create_standard_path_env_var {
-    echo "export PATH=$CART_INFO_DIR/bin/:$CART_DIR/abstract-httpd/info/bin/:$CART_INFO_DIR/bin/:$CART_DIR/abstract/info/bin/:$CART_DIR/li-controller/info/bin/:$PATH" > $APP_HOME/.env/PATH
+    echo "export PATH=$CART_INFO_DIR/bin/:$CART_DIR/abstract-httpd/info/bin/:$CART_INFO_DIR/bin/:$CART_DIR/abstract/info/bin/:$PATH" > $APP_HOME/.env/PATH
 }
 
 function create_standard_app_dirs {
@@ -200,10 +200,10 @@ function remove_broker_auth_key {
 }
 
 function setup_configure {
-    source ${CART_DIR}/li-controller/info/lib/git
-    source ${CART_DIR}/li-controller/info/lib/selinux
-    source ${CART_DIR}/li-controller/info/lib/network
-    source ${CART_DIR}/li-controller/info/lib/apache
+    source ${CART_DIR}/abstract/info/lib/git
+    source ${CART_DIR}/abstract/info/lib/selinux
+    source ${CART_DIR}/abstract/info/lib/network
+    source ${CART_DIR}/abstract/info/lib/apache
 	
     CART_INFO_DIR=$CART_DIR/$app_type/info
     CART_CONF_DIR=$CART_INFO_DIR/configuration/etc/conf
@@ -232,9 +232,9 @@ function setup_configure {
 }
 
 function setup_deconfigure {
-    source ${CART_DIR}/li-controller/info/lib/selinux
-    source ${CART_DIR}/li-controller/info/lib/git
-    source ${CART_DIR}/li-controller/info/lib/apache
+    source ${CART_DIR}/abstract/info/lib/selinux
+    source ${CART_DIR}/abstract/info/lib/git
+    source ${CART_DIR}/abstract/info/lib/apache
 
     load_node_conf
 
@@ -248,9 +248,9 @@ function setup_deconfigure {
 }
 
 function setup_embedded_configure {
-    source ${CART_DIR}/li-controller/info/lib/selinux
-    source ${CART_DIR}/li-controller/info/lib/network
-    source ${CART_DIR}/li-controller/info/lib/apache
+    source ${CART_DIR}/abstract/info/lib/selinux
+    source ${CART_DIR}/abstract/info/lib/network
+    source ${CART_DIR}/abstract/info/lib/apache
 
     CART_INFO_DIR=$CART_DIR/embedded/$app_type/info
     CART_ETC_DIR=$CART_INFO_DIR/configuration/etc
@@ -273,7 +273,7 @@ function setup_embedded_configure {
 }
 
 function setup_embedded_deconfigure {
-    source ${CART_DIR}/li-controller/info/lib/selinux
+    source ${CART_DIR}/abstract/info/lib/selinux
 
     CART_INFO_DIR=$CART_DIR/embedded/$app_type/info
 
@@ -289,7 +289,7 @@ function setup_embedded_deconfigure {
 }
 
 function setup_basic_hook {
-    source ${CART_DIR}/li-controller/info/lib/selinux
+    source ${CART_DIR}/abstract/info/lib/selinux
 
     load_node_conf
 

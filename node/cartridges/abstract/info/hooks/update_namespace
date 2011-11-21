@@ -24,9 +24,9 @@ set -e
 
 CART_DIR=/usr/libexec/li/cartridges
 
-source ${CART_DIR}/li-controller/info/lib/util
-source ${CART_DIR}/li-controller/info/lib/apache
-source ${CART_DIR}/li-controller/info/lib/selinux
+source ${CART_DIR}/abstract/info/lib/util
+source ${CART_DIR}/abstract/info/lib/apache
+source ${CART_DIR}/abstract/info/lib/selinux
 
 load_node_conf
 

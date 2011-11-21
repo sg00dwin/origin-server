@@ -7,7 +7,7 @@ do
 done
 
 CART_DIR=/usr/libexec/li/cartridges
-source ${CART_DIR}/li-controller/info/lib/util
+source ${CART_DIR}/abstract/info/lib/util
 
 if [ -d ${OPENSHIFT_REPO_DIR}log/ ]
 then
