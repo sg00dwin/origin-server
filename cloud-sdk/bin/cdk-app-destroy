@@ -56,7 +56,6 @@ rescue GetoptLong::Error => e
 end
 
 uuid = args['--with-uuid']
-ssh_key = args['--with-ssh-key']
 name = args['--named']
 $dry_run = true if args['--dry-run']
 $cdk_debug = true if args['--debug']
@@ -64,7 +63,6 @@ $porcelin = args['--porcelain'] ? true : false
 
 cmd = File.join(Cloud::SDK::SDK_PATH, "legacy/deconfigure")
 cmd += " -c #{uuid} " if uuid
-cmd += " -s #{ssh_key} " if ssh_key
 cmd += " -n " if $dry_run
 cmd += " -d " if $cdk_debug
 
