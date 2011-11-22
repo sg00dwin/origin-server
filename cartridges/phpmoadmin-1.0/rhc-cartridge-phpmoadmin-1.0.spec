@@ -33,7 +33,6 @@ ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/libra/cart
 cp -r info %{buildroot}%{cartridgedir}/
 
 %post
-cp %{cartridgedir}/info/configuration/etc/phpMoAdmin/config.inc.php %{_sysconfdir}/phpMoAdmin/config.inc.php
 
 %clean
 rm -rf $RPM_BUILD_ROOT
