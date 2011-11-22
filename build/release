@@ -86,11 +86,13 @@ class Release < Thor
   method_option :stage, :type => :string, :desc => "Comma-delimited list of packages to sync.  Exclude NVR for latest versions.  (e.g. --stage='rhc, rhc-site-0.73.3-1')"
   method_option :clean_ami, :type => :boolean, :desc => "Indicates whether to build a clean ami"
   method_option :no_ami, :type => :boolean, :desc => "Indicates whether to not build an ami"
+  method_option :tag_base, :type => :string, :desc => "Tag prefix used as the base name for the mash config", :default => "libra-rhel-6.1"
+  method_option :skip_gem, :type => :boolean, :desc => "Indicates whether to skip the packaging and sync of rhc ruby gem"
   def sync
 
     # Mash / RSync parameters
-    pkg_suffix = "el6_1"
-    mash_config = options[:stage] ? "libra-rhel-6.1-stage" : "libra-rhel-6.1-candidate"
+    tag_base = options[:tag_base]
+    mash_config = options[:stage] ? "#{tag_base}-stage" : "#{tag_base}-candidate"
     repo_host = "209.132.178.9"
     repo_dir = "/srv/web/gpxe/trees"
     repo = "root@#{repo_host}:#{repo_dir}"
@@ -99,6 +101,13 @@ class Release < Thor
       rsync = "rsync -avz -e ssh"
     else
       rsync = "rsync --delete -avz -e ssh"
+    end
+
+    # derive pkg_suffix from tag_base
+    if tag_base =~ /^.*rhel-(\d)\.(\d)$/
+      pkg_suffix = "el#{$1}_#{$2}"
+    else
+      pkg_suffix = "el6_1"
     end
 
     # Jenkins parameters
@@ -193,42 +202,49 @@ class Release < Thor
       exit 1
     end
 
-    # Build the gem locally since it's not stored centrally like RPMs in Brew
-    puts "Building client gem..."
-    if File.exists?('../os-client-tools/express')
-      inside(File.expand_path(File.dirname(File.expand_path(__FILE__)) + "/../../os-client-tools/express")) do
-        unless run('./build_pure.sh', :verbose => options.verbose?)
-          puts "ERROR - client gem building failed"
-          exit 1
+    unless options.skip_gem?
+      # Build the gem locally since it's not stored centrally like RPMs in Brew
+      puts "Building client gem..."
+      if File.exists?('../os-client-tools/express')
+        inside(File.expand_path(File.dirname(File.expand_path(__FILE__)) + "/../../os-client-tools/express")) do
+          unless run('./build_pure.sh', :verbose => options.verbose?)
+            puts "ERROR - client gem building failed"
+            exit 1
+          end
         end
+        puts "Done"
+      else
+        puts "Couldn't find ../os-client-tools/express.  Skipping build client gem step."
       end
-      puts "Done"
-    else
-      puts "Couldn't find ../os-client-tools/express.  Skipping build client gem step."
     end
 
-    puts "Syncing RPMs and gems to repo..."
+    puts "Syncing RPMs to repo..."
     unless run("#{rsync} /tmp/#{mash_config}/#{mash_config}/* #{repo}/#{mash_config}/", :verbose => options.verbose?)
       puts "ERROR - RPM sync failed.  Make sure you have root access on #{repo_host}"
       exit 1
     end
     
-    if File.exists?('../os-client-tools/express')
-      unless run("#{rsync} ../os-client-tools/express/pkg/*.gem #{repo}/#{mash_config}/client/gems/", :verbose => options.verbose?)
-        puts "ERROR - Gem sync failed.  Make sure you have root access on #{repo_host}"
+    unless options.skip_gem?
+      puts "Syncing client gem to repo..."
+      if File.exists?('../os-client-tools/express')
+        unless run("#{rsync} ../os-client-tools/express/pkg/*.gem #{repo}/#{mash_config}/client/gems/", :verbose => options.verbose?)
+          puts "ERROR - Gem sync failed.  Make sure you have root access on #{repo_host}"
+          exit 1
+        end
+        puts "Done"
+      else
+        puts "Couldn't find ../os-client-tools/express.  Skipping rsync client gem step."
+      end
+    end
+
+    unless options.skip_gem?
+      puts "Updating gem indexes..."
+      unless run("ssh root@#{repo_host} 'gem generate_index -d #{repo_dir}/#{mash_config}/client'", :verbose => options.verbose?)
+        puts "ERROR - Gem index update failed."
         exit 1
       end
       puts "Done"
-    else
-      puts "Couldn't find ../os-client-tools/express.  Skipping rsync client gem step."
     end
-
-    puts "Updating gem indexes..."
-    unless run("ssh root@#{repo_host} 'gem generate_index -d #{repo_dir}/#{mash_config}/client'", :verbose => options.verbose?)
-      puts "ERROR - Gem index update failed."
-      exit 1
-    end
-    puts "Done"
 
     unless options.no_ami?
       if options[:stage]
