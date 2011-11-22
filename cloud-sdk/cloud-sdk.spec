@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Kit
 Name:           rubygem-%{gemname}
-Version:        0.1.15
+Version:        0.1.16
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        AGPLv3
@@ -76,15 +76,29 @@ rm -rf %{buildroot}
 %{gemdir}/cache/%{gemname}-%{version}.gem
 %{gemdir}/specifications/%{gemname}-%{version}.gemspec
 %{_sysconfdir}/cdk
-%{_bindir}/cdk
-%{_bindir}/cdk-app-create
-%{_bindir}/cdk-app-destroy
+%{_bindir}/*
 
 %files -n ruby-%{gemname}
 %{ruby_sitelib}/%{gemname}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Mon Nov 21 2011 Dan McPherson <dmcphers@redhat.com> 0.1.16-1
+- li controller cleanup (dmcphers@redhat.com)
+- getting deconfigure working (dmcphers@redhat.com)
+- getting configure working (dmcphers@redhat.com)
+- Merge of legacy user creation code (kraman@gmail.com)
+- first pass at calling cloud-cdk (dmcphers@redhat.com)
+- Automatic commit of package [rubygem-cloud-sdk] release [0.1.15-1].
+  (dmcphers@redhat.com)
+- Automatic commit of package [rubygem-cloud-sdk] release [0.1.14-1].
+  (dmcphers@redhat.com)
+- Automatic commit of package [rubygem-cloud-sdk] release [0.1.11-1].
+  (dmcphers@redhat.com)
+- Automatic commit of package [rubygem-cloud-sdk] release [0.1.11-1].
+  (dmcphers@redhat.com)
+- Initial commit of Cloud SDK (kraman@gmail.com)
+
 * Thu Nov 17 2011 Dan McPherson <dmcphers@redhat.com> 0.1.15-1
 - 
 

@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.82.13
+Version:       0.82.14
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -132,12 +132,6 @@ fi
 %attr(0750,-,-) %{_bindir}/remount-secure.sh
 %attr(0755,-,-) %{_bindir}/rhc-cgroup-read
 %dir %attr(0751,root,root) %{_localstatedir}/lib/libra
-%dir %attr(0755,root,root) %{_libexecdir}/li/cartridges/li-controller/
-%attr(0750,-,-) %{_libexecdir}/li/cartridges/li-controller/info/hooks/
-%attr(0750,-,-) %{_libexecdir}/li/cartridges/li-controller/info/build/
-%attr(0640,-,-) %{_libexecdir}/li/cartridges/li-controller/info/data/
-%{_libexecdir}/li/cartridges/li-controller/README
-%{_libexecdir}/li/cartridges/li-controller/info
 %dir %attr(0755,root,root) %{_libexecdir}/li/cartridges/abstract-httpd/
 %attr(0750,-,-) %{_libexecdir}/li/cartridges/abstract-httpd/info/hooks/
 %attr(0755,-,-) %{_libexecdir}/li/cartridges/abstract-httpd/info/bin/
@@ -159,6 +153,20 @@ fi
 %dir %attr(0755,root,root) %{_sysconfdir}/libra/skel
 
 %changelog
+* Mon Nov 21 2011 Dan McPherson <dmcphers@redhat.com> 0.82.14-1
+- li controller cleanup (dmcphers@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- getting configure working (dmcphers@redhat.com)
+- first pass at calling cloud-cdk (dmcphers@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- removing rhc-node-app-ctl (mmcgrath@redhat.com)
+
 * Sat Nov 19 2011 Dan McPherson <dmcphers@redhat.com> 0.82.13-1
 - changed rhc-list-stale to say 'not movable' when the stale app has mysql
   embedded (twiest@redhat.com)

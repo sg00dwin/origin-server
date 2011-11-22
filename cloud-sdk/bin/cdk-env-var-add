@@ -1,0 +1,68 @@
+#!/usr/bin/env ruby
+#--
+# Copyright 2010 Red Hat, Inc.
+# 
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+#    http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#++
+
+def usage
+    puts <<USAGE
+== Synopsis
+
+cdk-env-var-add: Adds an environment var to the app. 
+  This command must be run as root.
+
+== Usage
+
+cdk-app-create [--with-uuid UUID] [--with-key KEY] [--with-value VALUE]
+
+Options:
+-h|--help:
+   Prints this message
+
+UUID: Unique identifier for the application
+KEY: The env var key
+VALUE: The env var value
+
+USAGE
+end
+
+require 'cloud-sdk'
+require 'cloud-sdk/utils/shell_exec'
+opts = GetoptLong.new(
+    ["--with-uuid",        "-c", GetoptLong::REQUIRED_ARGUMENT],
+    ["--with-key",         "-k", GetoptLong::REQUIRED_ARGUMENT],
+    ["--with-value",       "-v", GetoptLong::REQUIRED_ARGUMENT]
+)
+
+args = {}
+begin
+    opts.each{ |k,v| args[k]=v }
+rescue GetoptLong::Error => e
+    usage
+    exit -100
+end
+
+uuid = args['--with-uuid']
+key = args['--with-key']
+value = args['--with-value']
+
+cmd = File.join(Cloud::SDK::SDK_PATH, "legacy/add-env-var") + " #{uuid} #{key} #{value}"
+
+print cmd
+
+out,err,rc = Cloud::SDK::Utils::ShellExec.shellCmd(cmd)
+
+$stderr.puts(err)
+$stdout.puts(out)
+exit(rc)
