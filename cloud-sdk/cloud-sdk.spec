@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Kit
 Name:           rubygem-%{gemname}
-Version:        0.1.16
+Version:        0.1.17
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        AGPLv3
@@ -83,6 +83,9 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Tue Nov 22 2011 Dan McPherson <dmcphers@redhat.com> 0.1.17-1
+- less output from cdk (dmcphers@redhat.com)
+
 * Mon Nov 21 2011 Dan McPherson <dmcphers@redhat.com> 0.1.16-1
 - li controller cleanup (dmcphers@redhat.com)
 - getting deconfigure working (dmcphers@redhat.com)
