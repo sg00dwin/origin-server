@@ -95,7 +95,8 @@ allow libra_domain libra_var_lib_t:file entrypoint;
 
 kernel_read_system_state(libra_domain)
 kernel_read_network_state(libra_domain)
-kernel_dontaudit_list_all_sysctls(libra_domain)
+kernel_read_vm_sysctls(libra_t)
+kernel_search_vm_sysctl(libra_t)
 kernel_dontaudit_list_all_proc(libra_domain)
 
 corecmd_exec_bin(libra_domain)
