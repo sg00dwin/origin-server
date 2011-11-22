@@ -24,7 +24,7 @@ cdk-app-destroy: Deletes a new application.
 
 == Usage
 
-cdk-app-destroy [--with-uuid UUID] [--with-ssh-key KEY]
+cdk-app-destroy [--with-uuid UUID]
 
 Options:
 -h|--help:
@@ -37,11 +37,10 @@ USAGE
 end
 
 require 'cloud-sdk'
-require 'cloud-sdk/utils/shell_exec'
 opts = GetoptLong.new(
-    ["--with-uuid",        "-c", GetoptLong::OPTIONAL_ARGUMENT],
-    ["--with-ssh-key",     "-s", GetoptLong::OPTIONAL_ARGUMENT],
+    ["--with-uuid",        "-c", GetoptLong::REQUIRED_ARGUMENT],
     ["--dry-run",          "-n", GetoptLong::NO_ARGUMENT],
+    ["--named",                  GetoptLong::OPTIONAL_ARGUMENT],
     ["--porcelain",        "-q", GetoptLong::NO_ARGUMENT],
     ["--debug",            "-d", GetoptLong::NO_ARGUMENT],
     ["--help",             "-?", GetoptLong::NO_ARGUMENT]
@@ -55,19 +54,27 @@ rescue GetoptLong::Error => e
     exit -100
 end
 
+if args["--help"]
+  usage
+  exit -1
+end
+
 uuid = args['--with-uuid']
-name = args['--named']
 $dry_run = true if args['--dry-run']
 $cdk_debug = true if args['--debug']
 $porcelin = args['--porcelain'] ? true : false
 
-cmd = File.join(Cloud::SDK::SDK_PATH, "legacy/deconfigure")
-cmd += " -c #{uuid} " if uuid
-cmd += " -n " if $dry_run
-cmd += " -d " if $cdk_debug
+unless uuid
+  usage
+  exit -100
+end
 
-out,err,rc = Cloud::SDK::Utils::ShellExec.shellCmd(cmd)
-
-$stderr.puts(err)
-$stdout.puts(out)
-exit(rc)
+begin
+  container = Cloud::SDK::Model::ApplicationContainer.new(uuid,uuid)
+  container.destroy
+rescue Exception => e
+  $stderr.puts(e.message)
+  exit -1
+else
+  exit 0
+end

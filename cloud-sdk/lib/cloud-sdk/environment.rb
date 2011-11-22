@@ -14,14 +14,10 @@
 # limitations under the License.
 #++
 
-
 require 'rubygems'
-
-require 'fileutils'
-require 'getoptlong'
-require 'json'
-require 'parseconfig'
-require "cloud-sdk/version"
-require "cloud-sdk/config"
-require "cloud-sdk/environment"
-require "cloud-sdk/model/application_container"
+module Cloud::SDK
+  #load plugins
+  Config.instance.get("plugins").each do |plugin|
+    require "#{plugin}"
+  end
+end

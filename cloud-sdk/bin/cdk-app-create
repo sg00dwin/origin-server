@@ -24,7 +24,7 @@ cdk-app-create: Creates a new application.
 
 == Usage
 
-cdk-app-create [--with-uuid UUID] [--with-ssh-key KEY] [--named NAME]
+cdk-app-create --with-uuid UUID --with-ssh-key KEY [--named NAME]
 
 Options:
 -h|--help:
@@ -37,7 +37,6 @@ USAGE
 end
 
 require 'cloud-sdk'
-require 'cloud-sdk/utils/shell_exec'
 opts = GetoptLong.new(
     ["--with-uuid",        "-c", GetoptLong::REQUIRED_ARGUMENT],
     ["--with-ssh-key",     "-s", GetoptLong::REQUIRED_ARGUMENT],
@@ -56,6 +55,11 @@ rescue GetoptLong::Error => e
     exit -100
 end
 
+if args["--help"]
+  usage
+  exit -1
+end
+
 uuid = args['--with-uuid']
 ssh_key = args['--with-ssh-key']
 name = args['--named']
@@ -63,14 +67,18 @@ $dry_run = true if args['--dry-run']
 $cdk_debug = true if args['--debug']
 $porcelin = args['--porcelain'] ? true : false
 
-cmd = File.join(Cloud::SDK::SDK_PATH, "legacy/configure")
-cmd += " -c #{uuid} " if uuid
-cmd += " -s #{ssh_key} " if ssh_key
-cmd += " -n " if $dry_run
-cmd += " -d " if $cdk_debug
+unless uuid and ssh_key
+  usage
+  exit -100
+end
 
-out,err,rc = Cloud::SDK::Utils::ShellExec.shellCmd(cmd)
-
-$stderr.puts(err)
-$stdout.puts(out)
-exit(rc)
+begin
+  container = Cloud::SDK::Model::ApplicationContainer.new(uuid,uuid)
+  container.create
+  container.user.add_ssh_key(ssh_key)
+rescue Exception => e
+  $stderr.puts(e.message)
+  exit -1
+else
+  exit 0
+end
