@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.82.7
+Version:   0.82.8
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -68,6 +68,9 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Tue Nov 22 2011 Dan McPherson <dmcphers@redhat.com> 0.82.8-1
+- Reinstate outage notification mechanism (BZ 744498) (aboone@redhat.com)
+
 * Mon Nov 21 2011 Dan McPherson <dmcphers@redhat.com> 0.82.7-1
 - Fix for BZ 755375 - html-entitize invalid SSH key to prevent injecting JS
   into error msg (aboone@redhat.com)

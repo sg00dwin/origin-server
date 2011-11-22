@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.82.14
+Version:       0.82.15
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -155,6 +155,12 @@ fi
 %dir %attr(0755,root,root) %{_sysconfdir}/libra/skel
 
 %changelog
+* Tue Nov 22 2011 Dan McPherson <dmcphers@redhat.com> 0.82.15-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- fixing syslog call (mmcgrath@redhat.com)
+- Bug 755878 (dmcphers@redhat.com)
+
 * Mon Nov 21 2011 Dan McPherson <dmcphers@redhat.com> 0.82.14-1
 - li controller cleanup (dmcphers@redhat.com)
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li

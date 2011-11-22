@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/phpmoadmin-1.0
 
 Name: rhc-cartridge-phpmoadmin-1.0
-Version: 0.1.3
+Version: 0.1.4
 Release: 1%{?dist}
 Summary: Embedded phpMoAdmin support for express
 
@@ -33,7 +33,6 @@ ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/libra/cart
 cp -r info %{buildroot}%{cartridgedir}/
 
 %post
-cp %{cartridgedir}/info/configuration/etc/phpMoAdmin/config.inc.php %{_sysconfdir}/phpMoAdmin/config.inc.php
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -50,6 +49,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Tue Nov 22 2011 Dan McPherson <dmcphers@redhat.com> 0.1.4-1
+- Remove unloved [acc. to Rajat] config.inc.php file. (ramr@redhat.com)
+
 * Mon Nov 21 2011 Rajat Chopra <rchopra@redhat.com> 0.1.3-1
 - changed version number is spec file to 1.0
 

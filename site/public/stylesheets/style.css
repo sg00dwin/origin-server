@@ -2391,6 +2391,47 @@ li.captcha {
   float: left;
 }
 
+/* line 3, ../../app/stylesheets/partials/_outage.scss */
+#outage_notification {
+  background: #ffdc4c;
+  width: 100%;
+  min-width: 960px;
+  margin: 0;
+  padding: 0 0 5px;
+  font-size: 9.5pt;
+}
+/* line 11, ../../app/stylesheets/partials/_outage.scss */
+#outage_notification pre {
+  width: 940px;
+  margin: 0 auto;
+  padding: 10px 0;
+  color: black;
+  border-top: 1px solid white;
+}
+/* line 18, ../../app/stylesheets/partials/_outage.scss */
+#outage_notification h2 {
+  width: 960px;
+  margin: 0 auto;
+  padding: 10px 10px 5px;
+  color: #333;
+  text-transform: uppercase;
+  text-align: center;
+  text-shadow: 1px 1px 1px white;
+}
+
+/* line 31, ../../app/stylesheets/partials/_outage.scss */
+#outage_toggle {
+  background: #ffdc4c;
+  position: absolute;
+  padding: 11px 30px 6px;
+  color: black;
+  font-family: OverpassBold;
+  font-size: 10pt;
+  text-decoration: none;
+  text-transform: uppercase;
+  text-shadow: 1px 1px 1px white;
+}
+
 /*/mediaquery*/
 /*/mediaquery*/
 @media print {

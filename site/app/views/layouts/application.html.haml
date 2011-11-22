@@ -9,6 +9,7 @@
       :stylesheet_partial => "layouts/stylesheets"
   
   %body{ :class => "#{controller.controller_name} #{controller.action_name}" }
+    = outage_notification
     
     %header.universal
       = render "layouts/header", 
