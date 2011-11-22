@@ -152,10 +152,34 @@ module Cloud::SDK::Model
       end
     end
     
-    def remove_env_var(key,value)
+    def remove_env_var(key)
       env_dir = File.join(@homedir,".env")      
       cloud_name = @config.get("cloud_name") || "CDK"
       FileUtils.rm_f File.join(env_dir,"#{cloud_name}_#{key}")
+    end
+    
+    def add_broker_auth(iv,token)
+      broker_auth_dir=File.join(@homedir,".auth")
+      FileUtils.mkdir_p broker_auth_dir
+      File.open(File.join(broker_auth_dir,"iv"),File::WRONLY|File::CREAT) do |file|
+        file.write iv
+      end
+      File.open(File.join(broker_auth_dir,"token"),File::WRONLY|File::CREAT) do |file|
+        file.write token
+      end
+      
+      FileUtils.chown_R("root",@uuid,broker_auth_dir)
+      FileUtils.chmod(0o0750,broker_auth_dir)
+      FileUtils.chmod(0o0640,Dir.glob("#{broker_auth_dir}/*"))
+      add_env_var("BROKER_AUTH_IV_FILE",File.join(broker_auth_dir,"iv"))
+      add_env_var("BROKER_AUTH_IV_TOKEN_FILE",File.join(broker_auth_dir,"token"))
+    end
+    
+    def remove_broker_auth
+      broker_auth_dir=File.join(@homedir,".auth")
+      FileUtils.rm_rf broker_auth_dir
+      remove_env_var("BROKER_AUTH_IV_FILE")
+      remove_env_var("BROKER_AUTH_TOKEN_FILE")
     end
 
     def run_as(&block)

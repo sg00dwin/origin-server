@@ -51,13 +51,25 @@ rescue GetoptLong::Error => e
     exit -100
 end
 
+if args["--help"]
+  usage
+  exit -1
+end
+
 uuid = args['--with-uuid']
 ssh_key = args['--with-ssh-key']
 
-cmd = File.join(Cloud::SDK::SDK_PATH, "legacy/remove-authorized-ssh-key") + " #{uuid} #{ssh_key}"
+unless uuid and ssh_key
+  usage
+  exit -100
+end
 
-out,err,rc = Cloud::SDK::Utils::ShellExec.shellCmd(cmd)
-
-$stderr.puts(err)
-$stdout.puts(out)
-exit(rc)
+begin
+  container = Cloud::SDK::Model::ApplicationContainer.new(uuid,uuid)
+  container.user.remove_ssh_key(ssh_key)
+rescue Exception => e
+  $stderr.puts(e.message)
+  exit -1
+else
+  exit 0
+end
