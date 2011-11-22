@@ -1,12 +1,12 @@
-/* DO NOT MODIFY. This file was compiled Thu, 17 Nov 2011 21:57:46 GMT from
- * /home/aboone/Source/li/site/app/coffeescripts/script.coffee
+/* DO NOT MODIFY. This file was compiled Tue, 22 Nov 2011 17:50:50 GMT from
+ * /Users/alex/Source/li/site/app/coffeescripts/script.coffee
  */
 
 (function() {
   var $;
   $ = jQuery;
   $(function() {
-    var ann_height, ann_list, announcements, body, current, links, nav, nav_top, on_announcement, scroll_announcements, sections, sticky_css, stuck, top, unsticky_css;
+    var ann_height, ann_list, announcements, body, current, hide_notification, hide_outage_txt, links, nav, nav_top, on_announcement, outage_animation_length, outage_notification, outage_notification_neg_height, outage_toggle, outage_toggle_state, overlay, scroll_announcements, sections, show_notification, show_outage_txt, sticky_css, stuck, top, unsticky_css;
     body = $('body');
     nav = ($('header.universal > nav')).first();
     nav_top = nav.offset().top;
@@ -79,7 +79,7 @@
         return ($(this)).addClass('active');
       });
     }
-    return ($('a.sign_up')).click(function(event) {
+    ($('a.sign_up')).click(function(event) {
       var product;
       if (typeof trackLink !== "undefined" && trackLink !== null) {
         if (body.hasClass('express')) {
@@ -94,5 +94,69 @@
         return trackLink(this, product);
       }
     });
+    outage_notification = $('#outage_notification');
+    if (outage_notification.length > 0) {
+      show_outage_txt = '☟ Service Outages';
+      hide_outage_txt = '☝ Hide';
+      outage_notification_neg_height = '-' + outage_notification.outerHeight() + 'px';
+      outage_animation_length = 1000;
+      outage_notification.css({
+        position: 'absolute',
+        top: outage_notification_neg_height,
+        left: 0,
+        zIndex: 1000
+      });
+      ($('body')).append('<div id="overlay"></div>');
+      overlay = $('#overlay');
+      overlay.hide();
+      outage_notification.append('<a href="#" id="outage_toggle">' + show_outage_txt + '</a>');
+      outage_toggle = $('#outage_toggle');
+      outage_toggle_state = 'hidden';
+      show_notification = function() {
+        outage_notification.css('z-index', 2000);
+        outage_notification.stop();
+        outage_notification.animate({
+          top: 0
+        }, outage_animation_length);
+        overlay.show();
+        outage_toggle.text(hide_outage_txt);
+        return outage_toggle_state = 'shown';
+      };
+      hide_notification = function() {
+        var containers;
+        outage_notification.css('z-index', 1000);
+        outage_notification.stop();
+        outage_notification.animate({
+          top: outage_notification_neg_height
+        }, outage_animation_length);
+        containers = $('html, body, document');
+        containers.stop();
+        containers.animate({
+          scrollTop: 0
+        }, outage_animation_length);
+        overlay.hide();
+        outage_toggle.text(show_outage_txt);
+        return outage_toggle_state = 'hidden';
+      };
+      outage_toggle.click(function(event) {
+        event.preventDefault();
+        if (outage_toggle_state === 'hidden') {
+          return show_notification();
+        } else {
+          return hide_notification();
+        }
+      });
+      if ('true' !== ($.cookie('outage_notification_displayed'))) {
+        show_notification();
+        return $.cookie('outage_notification_displayed', 'true', {
+          'expires': 14,
+          'path': '/app'
+        });
+      }
+    } else {
+      return $.cookie('outage_notification_displayed', null, {
+        'path': '/app'
+      });
+    }
   });
 }).call(this);
