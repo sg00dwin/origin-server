@@ -91,10 +91,10 @@ if __name__ == '__main__':
     read_env_vars()
 
     orig_cmd = os.environ.get('SSH_ORIGINAL_COMMAND')
-    syslog.syslog(orig_cmd)
     if not orig_cmd:
         print "Need a command"
         sys.exit(1)
+    syslog.syslog(orig_cmd)
     allargs = orig_cmd.split()
     try:
         basecmd = os.path.basename(allargs[0])
