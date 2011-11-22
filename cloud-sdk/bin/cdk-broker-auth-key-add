@@ -59,8 +59,6 @@ token = args['--with-token']
 
 cmd = File.join(Cloud::SDK::SDK_PATH, "legacy/add-broker-auth-key") + " #{uuid} #{iv} #{token}"
 
-print cmd
-
 out,err,rc = Cloud::SDK::Utils::ShellExec.shellCmd(cmd)
 
 $stderr.puts(err)

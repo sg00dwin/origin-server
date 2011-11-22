@@ -56,8 +56,6 @@ key = args['--with-key']
 
 cmd = File.join(Cloud::SDK::SDK_PATH, "legacy/remove-env-var") + " #{uuid} #{key}"
 
-print cmd
-
 out,err,rc = Cloud::SDK::Utils::ShellExec.shellCmd(cmd)
 
 $stderr.puts(err)

@@ -56,8 +56,6 @@ ssh_key = args['--with-ssh-key']
 
 cmd = File.join(Cloud::SDK::SDK_PATH, "legacy/add-authorized-ssh-key") + " #{uuid} #{ssh_key}"
 
-print cmd
-
 out,err,rc = Cloud::SDK::Utils::ShellExec.shellCmd(cmd)
 
 $stderr.puts(err)

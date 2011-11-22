@@ -52,8 +52,6 @@ uuid = args['--with-uuid']
 
 cmd = File.join(Cloud::SDK::SDK_PATH, "legacy/remove-broker-auth-key") + " #{uuid}"
 
-print cmd
-
 out,err,rc = Cloud::SDK::Utils::ShellExec.shellCmd(cmd)
 
 $stderr.puts(err)

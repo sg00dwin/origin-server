@@ -66,8 +66,6 @@ cmd += " -c #{uuid} " if uuid
 cmd += " -n " if $dry_run
 cmd += " -d " if $cdk_debug
 
-print cmd
-
 out,err,rc = Cloud::SDK::Utils::ShellExec.shellCmd(cmd)
 
 $stderr.puts(err)
