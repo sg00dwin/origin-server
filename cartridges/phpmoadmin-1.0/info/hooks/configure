@@ -77,7 +77,7 @@ then
 fi
 mkdir -p "$PHPMOADMIN_DIR"
 pushd "$PHPMOADMIN_DIR" > /dev/null
-mkdir -p conf conf.d logs run sessions tmp html
+mkdir -p conf conf.d logs run sessions tmp 
 ln -s /usr/lib64/httpd/modules modules
 ln -s /etc/httpd/conf/magic conf/magic
 

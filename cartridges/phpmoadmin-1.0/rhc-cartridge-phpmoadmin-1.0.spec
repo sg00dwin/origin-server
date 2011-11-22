@@ -14,6 +14,7 @@ BuildArch: noarch
 
 Requires: rhc-node
 Requires: rhc-cartridge-mongodb-2.0
+Requires: php-devel
 
 %description
 Provides rhc phpMoAdmin cartridge support
