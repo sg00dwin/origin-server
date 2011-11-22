@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/phpmoadmin-1.0
 
 Name: rhc-cartridge-phpmoadmin-3.4
-Version: 0.1.1
+Version: 0.1.2
 Release: 1%{?dist}
 Summary: Embedded phpMoAdmin support for express
 
@@ -50,6 +50,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Mon Nov 21 2011 Rajat Chopra <rchopra@redhat.com> 0.1.2-1
+- new package built with tito
+
 * Fri Nov 18 2011 Rajat Chopra <rchopra@redhat.com> 0.1.1-1
 - new package built with tito
 
