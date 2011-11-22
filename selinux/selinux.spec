@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.81.4
+Version:       0.81.6
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -38,6 +38,13 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Mon Nov 21 2011 Dan McPherson <dmcphers@redhat.com> 0.81.6-1
+- 
+
+* Mon Nov 21 2011 Dan McPherson <dmcphers@redhat.com> 0.81.5-1
+- Add support for mongod, requires selinux-policy-3.7.19-129.el6
+  (dwalsh@redhat.com)
+
 * Thu Nov 17 2011 Dan McPherson <dmcphers@redhat.com> 0.81.4-1
 - Dontaudit listing of /proc withing the libra domains (dwalsh@redhat.com)
 

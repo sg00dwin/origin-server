@@ -1,0 +1,75 @@
+#!/usr/bin/env ruby
+#--
+# Copyright 2010 Red Hat, Inc.
+# 
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+#    http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#++
+
+def usage
+    puts <<USAGE
+== Synopsis
+
+cdk-app-destroy: Deletes a new application. 
+  This command must be run as root.
+
+== Usage
+
+cdk-app-destroy [--with-uuid UUID] [--with-ssh-key KEY]
+
+Options:
+-h|--help:
+   Prints this message
+
+UUID: Unique identifier for the application
+NAME: The name of the application to create
+
+USAGE
+end
+
+require 'cloud-sdk'
+require 'cloud-sdk/utils/shell_exec'
+opts = GetoptLong.new(
+    ["--with-uuid",        "-c", GetoptLong::OPTIONAL_ARGUMENT],
+    ["--with-ssh-key",     "-s", GetoptLong::OPTIONAL_ARGUMENT],
+    ["--dry-run",          "-n", GetoptLong::NO_ARGUMENT],
+    ["--porcelain",        "-q", GetoptLong::NO_ARGUMENT],
+    ["--debug",            "-d", GetoptLong::NO_ARGUMENT],
+    ["--help",             "-?", GetoptLong::NO_ARGUMENT]
+)
+
+args = {}
+begin
+    opts.each{ |k,v| args[k]=v }
+rescue GetoptLong::Error => e
+    usage
+    exit -100
+end
+
+uuid = args['--with-uuid']
+name = args['--named']
+$dry_run = true if args['--dry-run']
+$cdk_debug = true if args['--debug']
+$porcelin = args['--porcelain'] ? true : false
+
+cmd = File.join(Cloud::SDK::SDK_PATH, "legacy/deconfigure")
+cmd += " -c #{uuid} " if uuid
+cmd += " -n " if $dry_run
+cmd += " -d " if $cdk_debug
+
+print cmd
+
+out,err,rc = Cloud::SDK::Utils::ShellExec.shellCmd(cmd)
+
+$stderr.puts(err)
+$stdout.puts(out)
+exit(rc)

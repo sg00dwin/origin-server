@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.82.12
+Version:       0.82.13
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -131,7 +131,6 @@ fi
 %attr(0750,-,-) %{_bindir}/ec2-prep.sh
 %attr(0750,-,-) %{_bindir}/remount-secure.sh
 %attr(0755,-,-) %{_bindir}/rhc-cgroup-read
-%attr(0755,-,-) %{_bindir}/rhc-node-app-ctl
 %dir %attr(0751,root,root) %{_localstatedir}/lib/libra
 %dir %attr(0755,root,root) %{_libexecdir}/li/cartridges/li-controller/
 %attr(0750,-,-) %{_libexecdir}/li/cartridges/li-controller/info/hooks/
@@ -160,6 +159,10 @@ fi
 %dir %attr(0755,root,root) %{_sysconfdir}/libra/skel
 
 %changelog
+* Sat Nov 19 2011 Dan McPherson <dmcphers@redhat.com> 0.82.13-1
+- changed rhc-list-stale to say 'not movable' when the stale app has mysql
+  embedded (twiest@redhat.com)
+
 * Fri Nov 18 2011 Dan McPherson <dmcphers@redhat.com> 0.82.12-1
 - moving logic to abstract from li-controller (dmcphers@redhat.com)
 - Switching to the popen4 extension that closes fd's (mhicks@redhat.com)
