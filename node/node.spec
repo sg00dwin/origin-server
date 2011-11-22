@@ -128,6 +128,8 @@ fi
 %attr(0750,-,-) %{_bindir}/rhc-restorecon
 %attr(0750,-,-) %{_bindir}/rhc-init-quota
 %attr(0750,-,-) %{_bindir}/rhc-list-stale
+%attr(0750,-,-) %{_bindir}/rhc-idler
+%attr(0750,-,-) %{_bindir}/rhc-restorer
 %attr(0750,-,-) %{_bindir}/ec2-prep.sh
 %attr(0750,-,-) %{_bindir}/remount-secure.sh
 %attr(0755,-,-) %{_bindir}/rhc-cgroup-read

@@ -1,0 +1,38 @@
+#!/bin/bash
+# Idle or Restore applications
+
+function print_help {
+    echo "Usage: $0"
+    echo "  -u UUID  (app to idle UUID)"
+    exit 1
+}
+
+
+while getopts 'u:d' OPTION
+do
+case $OPTION in
+        u) uuid=$OPTARG
+    ;;
+        d) set -x
+    ;;
+        ?) print_help
+    ;;
+esac
+done
+
+if [ -z "$uuid" ] || ! [ -d "/var/lib/libra/$uuid" ]
+then
+    print_help
+fi
+
+sed -i "s/ProxyPass/#ProxyPass/g" "/etc/httpd/conf.d/libra/${uuid}"*.conf
+
+HTTP_DIR=`dirname "/etc/httpd/conf.d/libra/${uuid}"*/00000_default.conf`
+
+cat > $HTTP_DIR/0000000000000_disabled.conf <<EOF
+Alias / /var/www/html/test.php/${uuid}/
+EOF
+
+service httpd graceful
+
+service libra stopuser "${uuid}"
