@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.82.6
+Version:   0.82.7
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -68,6 +68,10 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Mon Nov 21 2011 Dan McPherson <dmcphers@redhat.com> 0.82.7-1
+- Fix for BZ 755375 - html-entitize invalid SSH key to prevent injecting JS
+  into error msg (aboone@redhat.com)
+
 * Thu Nov 17 2011 Dan McPherson <dmcphers@redhat.com> 0.82.6-1
 - 
 
