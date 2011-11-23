@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.82.9
+Version:   0.82.10
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -68,6 +68,11 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Tue Nov 22 2011 Dan McPherson <dmcphers@redhat.com> 0.82.10-1
+- comment out test cases (dmcphers@redhat.com)
+- Fix for BZ 744675 -- switch to parent section which contains the referenced
+  element (aboone@redhat.com)
+
 * Tue Nov 22 2011 Dan McPherson <dmcphers@redhat.com> 0.82.9-1
 - Show error page in control_panel when broker request excepts (BZ 728383)
   (aboone@redhat.com)
