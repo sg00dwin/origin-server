@@ -30,7 +30,7 @@ sed -i "s/ProxyPass/#ProxyPass/g" "/etc/httpd/conf.d/libra/${uuid}"*.conf
 HTTP_DIR=`dirname "/etc/httpd/conf.d/libra/${uuid}"*/00000_default.conf`
 
 cat > $HTTP_DIR/0000000000000_disabled.conf <<EOF
-Alias / /var/www/html/test.php/${uuid}/
+Alias / /var/www/html/restorer.php/${uuid}/
 EOF
 
 service httpd graceful
