@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.82.11
+Version:   0.82.12
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -68,6 +68,10 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Wed Nov 23 2011 Dan McPherson <dmcphers@redhat.com> 0.82.12-1
+- Fix control_panel controller functional tests I broke in a01e02e
+  (aboone@redhat.com)
+
 * Tue Nov 22 2011 Dan McPherson <dmcphers@redhat.com> 0.82.11-1
 - 
 
