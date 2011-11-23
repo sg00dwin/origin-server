@@ -145,7 +145,11 @@ module OpenShift
         if instance_status(instance) != :terminated
           log.info "Failed to terminate.  Calling stop instead."
           add_tag(instance, 'terminate')
-          instance.stop
+          begin
+            instance.stop
+          rescue Exception => e
+            log.info "Failed to stop: #{e.message}"
+          end
         end
       end
     end
