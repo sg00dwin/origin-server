@@ -47,8 +47,8 @@ class ControlPanelControllerTest < ActionController::TestCase
     assert_response :success
   end
 
-  test "should gracefully handle broker errors" do
-    err_msg = "Testing Exception"
+  test "should gracefully handle unexpected broker errors" do
+    err_msg = I18n.t(:unknown)
 
     setup_session
     ExpressUserinfo.any_instance.stubs('establish')
