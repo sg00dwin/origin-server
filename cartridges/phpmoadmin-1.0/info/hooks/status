@@ -25,7 +25,7 @@ function print_help {
     echo "Usage: $0 app-name namespace uuid"
     echo "Stop a running application and disable it"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_phpmyadmin_status
+    echo "$0 $@" | logger -p local0.notice -t libra_phpmoadmin_status
     exit 1
 }
 
@@ -47,14 +47,14 @@ source ${CART_DIR}/abstract/info/lib/util
 
 setup_basic_hook "$1" $2 $3
 
-PHPMYADMIN_DIR=`echo $APP_HOME/phpmyadmin-3.4 | tr -s /` # ensure that there aren't double /'s
-PHPMYADMIN_CTL_SCRIPT="$PHPMYADMIN_DIR/${application}_phpmyadmin_ctl.sh"
+PHPMOADMIN_DIR=`echo $APP_HOME/phpmoadmin-1.0 | tr -s /` # ensure that there aren't double /'s
+PHPMOADMIN_CTL_SCRIPT="$PHPMOADMIN_DIR/${application}_phpmoadmin_ctl.sh"
 
 
 #
 # Start application
 #
-ADDRESS="$(awk '/Listen/{ print $2 }' $PHPMYADMIN_DIR/conf.d/libra.conf)"
-URL="http://$ADDRESS/server-status?auto"
+ADDRESS="$(awk '/Listen/{ print $2 }' $PHPMOADMIN_DIR/conf.d/libra.conf)"
+URL="http://$ADDRESS/phpmoadmin"
 
 runuser --shell /bin/sh "$uuid" -c "/usr/bin/wget -qO- $URL"
