@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/phpmoadmin-1.0
 
 Name: rhc-cartridge-phpmoadmin-1.0
-Version: 0.1.4
+Version: 0.1.5
 Release: 1%{?dist}
 Summary: Embedded phpMoAdmin support for express
 
@@ -49,6 +49,10 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Tue Nov 22 2011 Dan McPherson <dmcphers@redhat.com> 0.1.5-1
+- PhpMoAdmin cartridge changes: - Enforce user-name/password for accessing
+  phpMoAdmin web console. (rpenta@redhat.com)
+
 * Tue Nov 22 2011 Dan McPherson <dmcphers@redhat.com> 0.1.4-1
 - Remove unloved [acc. to Rajat] config.inc.php file. (ramr@redhat.com)
 
