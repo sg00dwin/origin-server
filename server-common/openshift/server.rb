@@ -522,7 +522,7 @@ module Libra
     # Add authorized key to app
     #
     def add_ssh_key(app, ssh_key)
-      result = execute_direct('li-controller', 'add-authorized-ssh-key', "-c #{app['uuid']} -s #{ssh_key}")
+      result = execute_direct('li-controller', 'add-authorized-ssh-key', "#{app['uuid']} #{ssh_key}")
       handle_controller_result(result)
     end
     
@@ -530,7 +530,7 @@ module Libra
     # Remove authorized key from app
     #
     def remove_ssh_key(app, ssh_key)
-      result = execute_direct('li-controller', 'remove-authorized-ssh-key', "-c #{app['uuid']} -s #{ssh_key}")
+      result = execute_direct('li-controller', 'remove-authorized-ssh-key', "#{app['uuid']} #{ssh_key}")
       handle_controller_result(result)
     end
     
@@ -538,7 +538,7 @@ module Libra
     # Add env var to app
     #
     def add_env_var(app, key, value)
-      result = execute_direct('li-controller', 'add-env-var', "-c #{app['uuid']} -k #{key} -v #{value}")
+      result = execute_direct('li-controller', 'add-env-var', "#{app['uuid']} #{key} #{value}")
       handle_controller_result(result)
     end
     
@@ -546,7 +546,7 @@ module Libra
     # Remove env var from app
     #
     def remove_env_var(app, key)
-      result = execute_direct('li-controller', 'remove-env-var', "-c #{app['uuid']} -k #{key}")
+      result = execute_direct('li-controller', 'remove-env-var', "#{app['uuid']} #{key}")
       handle_controller_result(result)
     end
     
@@ -567,7 +567,7 @@ module Libra
       public_key = OpenSSL::PKey::RSA.new(File.read('config/keys/public.pem'), Libra.c[:broker_auth_rsa_secret])
       encrypted_iv = public_key.public_encrypt(iv)
       
-      result = execute_direct('li-controller', 'add-broker-auth-key', "-c #{app['uuid']} -i #{Base64::encode64(encrypted_iv).gsub("\n", '')} -t #{Base64::encode64(encrypted_token).gsub("\n", '')}")
+      result = execute_direct('li-controller', 'add-broker-auth-key', "#{app['uuid']} #{Base64::encode64(encrypted_iv).gsub("\n", '')} #{Base64::encode64(encrypted_token).gsub("\n", '')}")
       handle_controller_result(result)
     end
     
@@ -575,7 +575,7 @@ module Libra
     # Remove broker auth key from app
     #
     def remove_broker_auth_key(app_name, app)
-      result = execute_direct('li-controller', 'remove-broker-auth-key', "-c #{app['uuid']}")
+      result = execute_direct('li-controller', 'remove-broker-auth-key', "#{app['uuid']}")
       handle_controller_result(result)
     end
 
