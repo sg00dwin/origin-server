@@ -84,15 +84,35 @@ ln -s /etc/httpd/conf/magic conf/magic
 sed -e "s,TEMPLATE_SET_ME_SESSION_SAVE_PATH,$PHPMOADMIN_DIR/sessions/," \
     -e "s,TEMPLATE_SET_ME_UPLOAD_TMP_DIR,$PHPMOADMIN_DIR/tmp/," $CART_CONF_DIR/php.ini > $PHPMOADMIN_DIR/conf/php.ini 
 
+# If password was already generated for phpmoadmin admin user, use it.
+if [ -f "$APP_HOME/.env/OPENSHIFT_PHPMOADMIN_PASSWORD" ]; then
+   source "$APP_HOME/.env/OPENSHIFT_PHPMOADMIN_PASSWORD"
+   password=$OPENSHIFT_PHPMOADMIN_PASSWORD
+fi
+
+# Generate a password with no o's O's or 0's
+[ -z "$password" ]  &&  password=$(generate_password)
+
+#
+# Setup Environment Variables
+#
+echo "export OPENSHIFT_PHPMOADMIN_USERNAME='admin'" > $APP_HOME/.env/OPENSHIFT_PHPMOADMIN_USERNAME
+echo "export OPENSHIFT_PHPMOADMIN_PASSWORD='$password'" > $APP_HOME/.env/OPENSHIFT_PHPMOADMIN_PASSWORD
+
 . $APP_HOME/.env/OPENSHIFT_DB_USERNAME
 . $APP_HOME/.env/OPENSHIFT_DB_PASSWORD
 . $APP_HOME/.env/OPENSHIFT_DB_HOST
 . $APP_HOME/.env/OPENSHIFT_DB_PORT
+. $APP_HOME/.env/OPENSHIFT_PHPMOADMIN_USERNAME
+. $APP_HOME/.env/OPENSHIFT_PHPMOADMIN_PASSWORD
 
 sed -e "s,TEMPLATE_SET_MONGODB_USERNAME,$OPENSHIFT_DB_USERNAME," \
     -e "s,TEMPLATE_SET_MONGODB_HOST,$OPENSHIFT_DB_HOST," \
     -e "s,TEMPLATE_SET_MONGODB_PASSWORD,$OPENSHIFT_DB_PASSWORD," \
-    -e "s,TEMPLATE_SET_MONGODB_PORT,$OPENSHIFT_DB_PORT," $CART_INFO_DIR/html/moadmin.php > $PHPMOADMIN_DIR/moadmin.php
+    -e "s,TEMPLATE_SET_MONGODB_PORT,$OPENSHIFT_DB_PORT," \
+    -e "s,TEMPLATE_SET_PHPMOADMIN_USERNAME,$OPENSHIFT_PHPMOADMIN_USERNAME," \
+    -e "s,TEMPLATE_SET_PHPMOADMIN_PASSWORD,$OPENSHIFT_PHPMOADMIN_PASSWORD," \
+    $CART_INFO_DIR/html/moadmin.php > $PHPMOADMIN_DIR/moadmin.php
 
 popd > /dev/null
 
@@ -158,8 +178,8 @@ restart_httpd_graceful
 client_result ""
 client_result "phpMoAdmin 1.0 added.  Please make note of these credentials:"
 client_result ""
-client_result "   Root User: $OPENSHIFT_DB_USERNAME"
-client_result "   Root Password: $OPENSHIFT_DB_PASSWORD"
+client_result "   PhpMoAdmin User    : $OPENSHIFT_PHPMOADMIN_USERNAME"
+client_result "   PhpMoAdmin Password: $OPENSHIFT_PHPMOADMIN_PASSWORD"
 client_result ""
 client_result "URL: https://$OPENSHIFT_APP_DNS/phpmoadmin/"
 
