@@ -10,6 +10,8 @@ class ControlPanelControllerTest < ActionController::TestCase
 
   test "should create a new namespace" do
     setup_session
+    ExpressUserinfo.any_instance.stubs('establish')
+
     get :index
 
     # Namespace needs to be nil for the rest of the tests to pass
@@ -28,6 +30,7 @@ class ControlPanelControllerTest < ActionController::TestCase
 
   test "should edit an existing namespace" do
     setup_session
+    ExpressUserinfo.any_instance.stubs('establish')
     ExpressUserinfo.any_instance.stubs('namespace').returns('test.com')
     ExpressUserinfo.any_instance.stubs('app_info').returns({})
 
@@ -41,6 +44,19 @@ class ControlPanelControllerTest < ActionController::TestCase
     assert assigns(:action)
     assert_equal 'update', assigns(:action)
 
+    assert_response :success
+  end
+
+  test "should gracefully handle unexpected broker errors" do
+    err_msg = I18n.t(:unknown)
+
+    setup_session
+    ExpressUserinfo.any_instance.stubs('establish')
+    ExpressUserinfo.any_instance.stubs('errors').returns({:base => [err_msg]})
+
+    get :index
+
+    assert_equal err_msg, flash[:error]
     assert_response :success
   end
 

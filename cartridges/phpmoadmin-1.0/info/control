@@ -6,7 +6,7 @@ Depends: rhc-cartridge-mongodb-2.0
 Conflicts:
 Type: Cartridge
 Role: misc
-Vendor: http://www.phpmyadmin.net/
+Vendor: http://www.phpmoadmin.com/
 DisplayName: phpMoAdmin-1.0
 Description: 
 PHPMoAdmin is a MongoDB administration tool for PHP built on a stripped-down

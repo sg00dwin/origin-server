@@ -57,4 +57,5 @@ Feature: JBossAS Application
      And a new jbossas application
      And the jbossas service is running
      When I restart the jbossas service
-     Then the jbossas daemon pid will be different
+     Then a jbossas daemon will be running
+

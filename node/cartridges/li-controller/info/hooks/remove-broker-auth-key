@@ -1,0 +1,20 @@
+#!/bin/bash -e
+USERNAME="$1"
+
+CART_DIR=/usr/libexec/li/cartridges
+source ${CART_DIR}/abstract/info/lib/util
+
+load_node_conf
+
+APP_HOME=`echo ${libra_dir}/${USERNAME} | tr -s '/'`
+
+#
+# Import env vars so they can be used:
+#
+import_env_vars
+
+BROKER_AUTH_DIR="$OPENSHIFT_HOMEDIR/.auth"
+
+rm -rf $BROKER_AUTH_DIR
+rm -f $OPENSHIFT_HOMEDIR/.env/OPENSHIFT_BROKER_AUTH_IV_FILE
+rm -f $OPENSHIFT_HOMEDIR/.env/OPENSHIFT_BROKER_AUTH_TOKEN_FILE

@@ -19,10 +19,16 @@ class ControlPanelController < ApplicationController
     
     # If we really can't establish, at least let the user
     # know, so it's somewhat less confusing
-    # unless @userinfo.errors.length < 1 
-      # flash[:error] = @userinfo.errors[:base][0]
-      # render :no_info and return
-    # end
+    if @userinfo.errors.length > 0
+      err = @userinfo.errors[:base][0]
+
+      # only show the page if it's an "unknown" error
+      # TODO: use something other than string comparison to detect
+      if err == I18n.t(:unknown)
+        flash[:error] = err
+        render :no_info and return
+      end
+    end
       
     Rails.logger.debug "In cp controller. userinfo: #{@userinfo.inspect}"
     

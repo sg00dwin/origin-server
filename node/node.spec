@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.82.15
+Version:       0.82.16
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -131,6 +131,9 @@ fi
 %attr(0750,-,-) %{_bindir}/ec2-prep.sh
 %attr(0750,-,-) %{_bindir}/remount-secure.sh
 %attr(0755,-,-) %{_bindir}/rhc-cgroup-read
+%dir %attr(0755,root,root) %{_libexecdir}/li/cartridges/li-controller/
+%attr(0750,-,-) %{_libexecdir}/li/cartridges/li-controller/info/hooks/
+%{_libexecdir}/li/cartridges/li-controller/info
 %dir %attr(0751,root,root) %{_localstatedir}/lib/libra
 %dir %attr(0755,root,root) %{_libexecdir}/li/cartridges/abstract-httpd/
 %attr(0750,-,-) %{_libexecdir}/li/cartridges/abstract-httpd/info/hooks/
@@ -153,6 +156,9 @@ fi
 %dir %attr(0755,root,root) %{_sysconfdir}/libra/skel
 
 %changelog
+* Wed Nov 23 2011 Dan McPherson <dmcphers@redhat.com> 0.82.16-1
+- add back li-controller for stability (dmcphers@redhat.com)
+
 * Tue Nov 22 2011 Dan McPherson <dmcphers@redhat.com> 0.82.15-1
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
   (mmcgrath@redhat.com)
