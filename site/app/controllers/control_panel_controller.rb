@@ -19,10 +19,10 @@ class ControlPanelController < ApplicationController
     
     # If we really can't establish, at least let the user
     # know, so it's somewhat less confusing
-    # unless @userinfo.errors.length < 1 
-      # flash[:error] = @userinfo.errors[:base][0]
-      # render :no_info and return
-    # end
+    if @userinfo.errors.length > 0
+      flash[:error] = @userinfo.errors[:base][0]
+      render :no_info and return
+    end
       
     Rails.logger.debug "In cp controller. userinfo: #{@userinfo.inspect}"
     

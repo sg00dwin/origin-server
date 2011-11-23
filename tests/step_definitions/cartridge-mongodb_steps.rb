@@ -1,4 +1,4 @@
-# step descriptions for MySQL cartridge behavior.
+# step descriptions for MongoDB cartridge behavior.
 
 require 'mongo'
 require 'fileutils'
@@ -29,7 +29,7 @@ When /^I configure a mongodb database$/ do
   
   # "Root User: admin"
   # "Root Password: $password"
-  # "Connection URL: mongodb://$IP:3306/"
+  # "Connection URL: mongodb://$IP:27017/"
   stdout = outbuf[0]
   @mongodb = {}
   stdout.each do |line|

@@ -67,21 +67,27 @@ $ ->
 ## Product page ##
   if body.hasClass 'product'
     links = $ '.content nav a[href^=#]'
-    sections = $ '.content section'
+    section_selector = '.content section'
+    sections = $ section_selector
     
     # get current section
     if location.hash
-      current = location.hash
-    else
-      current = '#' + sections.first().attr('id')
+      current = $ location.hash
+      unless current.is section_selector
+        current = current.parents section_selector
+
+    # default to first section
+    unless current.length == 1
+      current = sections.first()
     
     # hide sections
     sections.hide()
     links.removeClass 'active'
+
     # show current section 
-    ($ current).show()
-    ($ "a[href=#{current}]").addClass 'active'
-    
+    current.show()
+    ($ "a[href=##{current.attr 'id'}]").addClass 'active'
+
     # hide toc in doc iframe
     # document.domain = 'redhat.com'
     # frame = ($ ($ '#docs').find('iframe')[0].contentDocument)
