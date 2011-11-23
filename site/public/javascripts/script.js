@@ -1,4 +1,4 @@
-/* DO NOT MODIFY. This file was compiled Tue, 22 Nov 2011 17:50:50 GMT from
+/* DO NOT MODIFY. This file was compiled Tue, 22 Nov 2011 22:56:44 GMT from
  * /Users/alex/Source/li/site/app/coffeescripts/script.coffee
  */
 
@@ -6,7 +6,7 @@
   var $;
   $ = jQuery;
   $(function() {
-    var ann_height, ann_list, announcements, body, current, hide_notification, hide_outage_txt, links, nav, nav_top, on_announcement, outage_animation_length, outage_notification, outage_notification_neg_height, outage_toggle, outage_toggle_state, overlay, scroll_announcements, sections, show_notification, show_outage_txt, sticky_css, stuck, top, unsticky_css;
+    var ann_height, ann_list, announcements, body, current, hide_notification, hide_outage_txt, links, nav, nav_top, on_announcement, outage_animation_length, outage_notification, outage_notification_neg_height, outage_toggle, outage_toggle_state, overlay, scroll_announcements, section_selector, sections, show_notification, show_outage_txt, sticky_css, stuck, top, unsticky_css;
     body = $('body');
     nav = ($('header.universal > nav')).first();
     nav_top = nav.offset().top;
@@ -54,16 +54,21 @@
     }
     if (body.hasClass('product')) {
       links = $('.content nav a[href^=#]');
-      sections = $('.content section');
+      section_selector = '.content section';
+      sections = $(section_selector);
       if (location.hash) {
-        current = location.hash;
-      } else {
-        current = '#' + sections.first().attr('id');
+        current = $(location.hash);
+        if (!current.is(section_selector)) {
+          current = current.parents(section_selector);
+        }
+      }
+      if (current.length !== 1) {
+        current = sections.first();
       }
       sections.hide();
       links.removeClass('active');
-      ($(current)).show();
-      ($("a[href=" + current + "]")).addClass('active');
+      current.show();
+      ($("a[href=#" + (current.attr('id')) + "]")).addClass('active');
       links.click(function(event) {
         var target;
         event.preventDefault();

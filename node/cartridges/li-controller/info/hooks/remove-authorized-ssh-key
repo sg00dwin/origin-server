@@ -1,0 +1,14 @@
+#!/bin/bash -e
+
+USERNAME="$1"
+SSHKEY="$2"
+
+CART_DIR=/usr/libexec/li/cartridges
+source ${CART_DIR}/abstract/info/lib/util
+
+load_node_conf
+
+USERHOME=`echo ${libra_dir}/${USERNAME} | tr -s '/'`
+SSHDIR=${USERHOME}/.ssh
+
+sed -i "/${SSHKEY//\//\\/}/d" ${SSHDIR}/authorized_keys
