@@ -183,8 +183,9 @@ module Libra
     app_info = user.app_info(app_name)
     check_app_exists(app_info, app_name)
     
-    if app_info.has_key?('embedded') && app_info['embedded'].has_key?('mysql-5.1') 
-      raise UserException.new(1), "Cannot move app '#{app_name}' with mysql embedded", caller[0..5]
+    if app_info.has_key?('embedded')
+      raise UserException.new(1), "Cannot move app '#{app_name}' with mysql embedded", caller[0..5] if app_info['embedded'].has_key?('mysql-5.1') 
+      raise UserException.new(1), "Cannot move app '#{app_name}' with mongo embedded", caller[0..5] if app_info['embedded'].has_key?('mongodb-2.0') 
     end
 
     if new_server_identity
