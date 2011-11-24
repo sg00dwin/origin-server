@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.82.12
+Version:   0.82.13
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -68,6 +68,11 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Wed Nov 23 2011 Dan McPherson <dmcphers@redhat.com> 0.82.13-1
+- Fix for control_panel_controller functional test (aboone@redhat.com)
+- Only show an error page for an unknown error in control panel
+  (aboone@redhat.com)
+
 * Wed Nov 23 2011 Dan McPherson <dmcphers@redhat.com> 0.82.12-1
 - Fix control_panel controller functional tests I broke in a01e02e
   (aboone@redhat.com)
