@@ -5,7 +5,7 @@ Feature: phpMoAdmin Embedded Cartridge
     Given an accepted node
     And a new guest account
     And a new <type> application
-    And a new mongo database
+    And a new mongodb database
     When I configure phpmoadmin
     Then a phpmoadmin http proxy file will exist
     And a phpmoadmin httpd will be running
@@ -22,7 +22,7 @@ Feature: phpMoAdmin Embedded Cartridge
     Given an accepted node
     And a new guest account
     And a new <type> application
-    And a new mongo database
+    And a new mongodb database
     And a new phpmoadmin
     When I deconfigure phpmoadmin
     Then a phpmoadmin http proxy file will not exist
@@ -40,7 +40,7 @@ Feature: phpMoAdmin Embedded Cartridge
     Given an accepted node
     And a new guest account
     And a new <type> application
-    And a new mongo database
+    And a new mongodb database
     And a new phpmoadmin
     And phpmoadmin is stopped
     When I start phpmoadmin
@@ -55,7 +55,7 @@ Feature: phpMoAdmin Embedded Cartridge
     Given an accepted node
     And a new guest account
     And a new <type> application
-    And a new mongo database
+    And a new mongodb database
     And a new phpmoadmin
     And phpmoadmin is running
     When I stop phpmoadmin
@@ -70,7 +70,7 @@ Feature: phpMoAdmin Embedded Cartridge
     Given an accepted node
     And a new guest account
     And a new <type> application
-    And a new mongo database
+    And a new mongodb database
     And a new phpmoadmin
     And phpmoadmin is running
     When I restart phpmoadmin
