@@ -207,6 +207,7 @@ module Libra
       (1..num_tries).each do |i|
         begin
           server_execute_direct(app_info['framework'], 'stop', app_name, user, old_server, app_info)
+          break
         rescue Exception => e
           Libra.logger_debug "DEBUG: Error stopping existing app on try #{i}: #{e.message}"
           raise if i == num_tries
@@ -229,6 +230,7 @@ module Libra
         (1..num_tries).each do |i|
           begin
             server_execute_direct(app_info['framework'], 'start', app_name, user, new_server, app_info, false)
+            break
           rescue Exception => e
             Libra.logger_debug "DEBUG: Error starting after move on try #{i}: #{e.message}"
             raise if i == num_tries
