@@ -12,7 +12,8 @@
     %li.user
       = link_to 'Sign out', logout_path, :class => 'sign_out'
     %li.user
-      = link_to "Greetings, #{session[:login]}!", control_panel_path, :class => 'greeting'
+      = link_to control_panel_path, :class => 'greeting' do
+        Greetings, #{session[:login]}!
   -else
     %li.user
       = link_to 'Sign in', login_path, :class => 'sign_in'

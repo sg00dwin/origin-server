@@ -255,6 +255,10 @@ header.universal {
         font-size: .9em;
         text-decoration: none;
         cursor: pointer;
+        white-space: nowrap;
+        max-width: 19em;
+        overflow: hidden;
+        text-overflow: ellipsis;
         @include transition-duration(.5s);
       }
     
