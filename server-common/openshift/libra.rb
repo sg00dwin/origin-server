@@ -206,7 +206,7 @@ module Libra
       Libra.logger_debug "DEBUG: Stopping existing app '#{app_name}' before moving"
       (1..num_tries).each do |i|
         begin
-          server_execute_direct(app_info['framework'], 'stop', app_name, user, old_server, app_info)
+          server_execute_direct(app_info['framework'], 'stop', app_name, user, old_server, app_info, true, nil, false)
           break
         rescue Exception => e
           Libra.logger_debug "DEBUG: Error stopping existing app on try #{i}: #{e.message}"
@@ -229,7 +229,7 @@ module Libra
         Libra.logger_debug "DEBUG: Starting '#{app_name}' after move on #{new_server.name}"
         (1..num_tries).each do |i|
           begin
-            server_execute_direct(app_info['framework'], 'start', app_name, user, new_server, app_info, false)
+            server_execute_direct(app_info['framework'], 'start', app_name, user, new_server, app_info, false, nil, false)
             break
           rescue Exception => e
             Libra.logger_debug "DEBUG: Error starting after move on try #{i}: #{e.message}"
@@ -245,7 +245,7 @@ module Libra
         raise
       end
     rescue Exception => e
-      server_execute_direct(app_info['framework'], 'start', app_name, user, old_server, app_info)
+      server_execute_direct(app_info['framework'], 'start', app_name, user, old_server, app_info, false, nil, false)
       raise
     ensure
       Libra.logger_debug "URL: http://#{app_name}-#{user.namespace}.#{Libra.c[:libra_domain]}"
@@ -277,11 +277,11 @@ module Libra
       end
       if app_info.has_key?('aliases')
         app_info['aliases'].each do |server_alias|
-          server_execute_direct(app_info['framework'], 'add-alias', app_name, user, server, app_info, false, server_alias)
+          server_execute_direct(app_info['framework'], 'add-alias', app_name, user, server, app_info, false, server_alias, false)
         end
       end
     rescue Exception => e
-      server_execute_direct(app_info['framework'], 'remove_httpd_proxy', app_name, user, server, app_info, false)
+      server_execute_direct(app_info['framework'], 'remove_httpd_proxy', app_name, user, server, app_info, false, nil, false)
       raise
     end
   end
@@ -522,10 +522,12 @@ may be ok if '#{app_name}#{BUILDER_SUFFIX}' was the builder of a previously dest
     end
   end
 
-  def self.server_execute_direct(framework, action, app_name, user, server, app_info, allow_move=true, optional_args=nil)
+  def self.server_execute_direct(framework, action, app_name, user, server, app_info, allow_move=true, optional_args=nil, nurture=true)
     # Execute the action on the server using a framework cartridge
-    Nurture.application(user.rhlogin, user.uuid, app_name, user.namespace, framework, action, app_info['uuid'])
-    Apptegic.application(user.rhlogin, user.uuid, app_name, user.namespace, framework, action, app_info['uuid'])
+    if nurture
+      Nurture.application(user.rhlogin, user.uuid, app_name, user.namespace, framework, action, app_info['uuid'])
+      Apptegic.application(user.rhlogin, user.uuid, app_name, user.namespace, framework, action, app_info['uuid'])
+    end
     Libra.logger_debug "DEBUG: optional_args: '#{optional_args}'"
     if optional_args != '' and optional_args
         result = server.execute_direct(framework, action, "'#{app_name}' '#{user.namespace}' '#{app_info['uuid']}' '#{optional_args}'")[0]
