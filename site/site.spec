@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.82.13
+Version:   0.82.14
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -68,6 +68,10 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Fri Nov 25 2011 Dan McPherson <dmcphers@redhat.com> 0.82.14-1
+- Fixes 749297 - truncates the username line with ellipsis when it's too large
+  (ffranz@redhat.com)
+
 * Wed Nov 23 2011 Dan McPherson <dmcphers@redhat.com> 0.82.13-1
 - Fix for control_panel_controller functional test (aboone@redhat.com)
 - Only show an error page for an unknown error in control panel
