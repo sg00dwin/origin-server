@@ -2,7 +2,7 @@
 
 Summary:       Common dependencies of the OpenShift broker and site
 Name:          rhc-server-common
-Version:       0.82.9
+Version:       0.82.10
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -56,6 +56,10 @@ rm -rf %{buildroot}
                                   -s /sbin/nologin 2>&1 > /dev/null || :
 
 %changelog
+* Fri Nov 25 2011 Dan McPherson <dmcphers@redhat.com> 0.82.10-1
+- dont track moves in nurture (dmcphers@redhat.com)
+- devenv and migrate improvements (dmcphers@redhat.com)
+
 * Wed Nov 23 2011 Dan McPherson <dmcphers@redhat.com> 0.82.9-1
 - Adding check to prevent cartridge move if mongo embedded cartridge is in use.
   (kraman@gmail.com)
