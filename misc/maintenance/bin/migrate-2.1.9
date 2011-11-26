@@ -161,19 +161,31 @@ def migrate_node(server_identity, apps, node_to_users)
 end
 
 def execute_script(cmd)
-  pid, stdin, stdout, stderr = Open4::popen4(cmd)
-  stdin.close
-  ignored, status = Process::waitpid2 pid
-  exitcode = status.exitstatus
+  num_tries = 3
+  exitcode = nil
   output = ''
-  begin
-    Timeout::timeout(10) do
-      while (line = stdout.gets)
-        output << line
+  (1..num_tries).each do |i|
+    pid, stdin, stdout, stderr = Open4::popen4(cmd)
+    stdin.close
+    begin
+      Timeout::timeout(60) do
+        ignored, status = Process::waitpid2 pid
+        exitcode = status.exitstatus
       end
+      begin
+        Timeout::timeout(5) do
+          while (line = stdout.gets)
+            output << line
+          end
+        end
+      rescue Timeout::Error
+        puts ("execute_script: WARNING - stdout read timed out")
+      end
+      break
+    rescue Timeout::Error
+      puts "Command '#{cmd}' timed out"
+      raise if i == num_tries
     end
-  rescue Timeout::Error
-    puts ("execute_script: WARNING - stdout read timed out")
   end
   return output, exitcode
 end
