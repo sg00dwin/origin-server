@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.82.17
+Version:       0.82.18
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -156,6 +156,9 @@ fi
 %dir %attr(0755,root,root) %{_sysconfdir}/libra/skel
 
 %changelog
+* Mon Nov 28 2011 Dan McPherson <dmcphers@redhat.com> 0.82.18-1
+- move start dbs to deploy (dmcphers@redhat.com)
+
 * Fri Nov 25 2011 Dan McPherson <dmcphers@redhat.com> 0.82.17-1
 - go back to old popen for now (dmcphers@redhat.com)
 
