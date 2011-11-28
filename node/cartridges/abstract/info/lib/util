@@ -10,10 +10,9 @@ function start_app {
     done
     for cmd in `awk 'BEGIN { for (a in ENVIRON) if (a ~ /_CTL_SCRIPT$/) print ENVIRON[a] }'`
     do
-        runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $cmd start" || error "Failed to start ${application}" 121
+        runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $cmd start" || error "Failed to start ${cmd}" 121
     done
 }
-
 
 function stop_app {
     for env_var in  $APP_HOME/.env/*_CTL_SCRIPT
@@ -23,6 +22,13 @@ function stop_app {
     for cmd in `awk 'BEGIN { for (a in ENVIRON) if (a ~ /_CTL_SCRIPT$/) print ENVIRON[a] }'`
     do
         runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $cmd stop" || echo "Failed to stop ${application}" 1>&2
+    done
+}
+
+function start_dbs {
+    for cmd in `awk 'BEGIN { for (a in ENVIRON) if (a ~ /DB_CTL_SCRIPT$/) print ENVIRON[a] }'`
+    do
+        $cmd start || error "Failed to start ${cmd}" 121
     done
 }
 

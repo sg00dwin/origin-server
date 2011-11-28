@@ -32,7 +32,7 @@ function stop_mysql_as_user {
 }
 
 function wait_to_start_as_user {
-    if [ -n "$OPENSHIFT_DB_USERNAME"]
+    if [ -n "$OPENSHIFT_DB_USERNAME" ]
     then
         i=0
         sleep 1
