@@ -23,6 +23,9 @@ then
 fi
 
 MYSQL_DIR="$OPENSHIFT_HOMEDIR/mysql-5.1/"
+CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
+CART_INFO_DIR=$CART_DIR/embedded/mysql-5.1/info
+source ${CART_INFO_DIR}/lib/util
 
 isrunning() {
     if [ -f $MYSQL_DIR/pid/mysql.pid ]; then
@@ -39,6 +42,7 @@ start() {
 	if ! isrunning
     then
         /usr/bin/mysqld_safe --defaults-file=$MYSQL_DIR/etc/my.cnf >/dev/null 2>&1 &
+        wait_to_start_as_user
     else
         echo "Mysql already running" 1>&2
     fi
