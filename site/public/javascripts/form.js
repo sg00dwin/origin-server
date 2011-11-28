@@ -1,4 +1,4 @@
-/* DO NOT MODIFY. This file was compiled Wed, 09 Nov 2011 21:42:50 GMT from
+/* DO NOT MODIFY. This file was compiled Mon, 28 Nov 2011 17:42:09 GMT from
  * /home/aboone/Source/li/site/app/coffeescripts/form.coffee
  */
 
@@ -148,13 +148,11 @@
       $(this).parent().find('div.message').remove();
       return $div = $('<div>').addClass("message " + json.status).text(json.message).insertBefore(this);
     };
-    start_spinner = function(form) {
-      ($(form)).spin();
-      return $(form).ajaxSubmit();
+    start_spinner = function(e) {
+      return ($(e.target)).spin();
     };
     $.each([signin, $('#login-form')], function(index, element) {
-      return element.find('form').bind('ajax:complete', login_complete).validate({
-        submitHandler: start_spinner,
+      return element.find('form').bind('ajax:complete', login_complete).bind('ajax:beforeSend', start_spinner).validate({
         rules: {
           "login": {
             required: true
@@ -166,8 +164,7 @@
       });
     });
     $.each([signup, $('#new-user')], function(index, element) {
-      return element.find('form').bind('ajax:complete', registration_complete).validate({
-        submitHandler: start_spinner,
+      return element.find('form').bind('ajax:complete', registration_complete).bind('ajax:beforeSend', start_spinner).validate({
         rules: {
           "web_user[email_address]": {
             required: true,
@@ -184,8 +181,7 @@
         }
       });
     });
-    change.find('form').bind('ajax:complete', reset_password_complete).validate({
-      submitHandler: start_spinner,
+    change.find('form').bind('ajax:complete', reset_password_complete).bind('ajax:beforeSend', start_spinner).validate({
       rules: {
         "old_password": {
           required: true
@@ -200,8 +196,7 @@
         }
       }
     });
-    return reset.find('form').bind('ajax:complete', reset_password_complete).validate({
-      submitHandler: start_spinner,
+    return reset.find('form').bind('ajax:complete', reset_password_complete).bind('ajax:beforeSend', start_spinner).validate({
       rules: {
         "email": {
           required: true,
