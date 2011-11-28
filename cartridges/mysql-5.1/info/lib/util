@@ -24,7 +24,6 @@ function stop_mysql {
 
 function start_mysql_as_user {
     ${OPENSHIFT_DB_CTL_SCRIPT} start
-    wait_to_start_as_user
 }
 
 function stop_mysql_as_user {
@@ -33,11 +32,14 @@ function stop_mysql_as_user {
 }
 
 function wait_to_start_as_user {
-    i=0
-    sleep 1
-    while (( ! echo ";" | mysql -h $OPENSHIFT_DB_HOST -P $OPENSHIFT_DB_PORT -u $OPENSHIFT_DB_USERNAME --password="$OPENSHIFT_DB_PASSWORD" > /dev/null 2>&1) || [ ! -f ${MYSQL_DIR}/pid/mysql.pid ]) && [ $i -lt 10 ]
-    do
+    if [ -n "$OPENSHIFT_DB_USERNAME"]
+    then
+        i=0
         sleep 1
-        i=$(($i + 1))
-    done
+        while (( ! echo ";" | mysql -h $OPENSHIFT_DB_HOST -P $OPENSHIFT_DB_PORT -u $OPENSHIFT_DB_USERNAME --password="$OPENSHIFT_DB_PASSWORD" > /dev/null 2>&1) || [ ! -f ${MYSQL_DIR}/pid/mysql.pid ]) && [ $i -lt 10 ]
+        do
+            sleep 1
+            i=$(($i + 1))
+        done
+    fi
 }
