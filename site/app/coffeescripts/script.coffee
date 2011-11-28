@@ -45,7 +45,10 @@ $ ->
       nav.css unsticky_css
       ($ 'body > section:first').css 'marginTop', 0
       stuck = false
-      
+
+## CSS text-overflow: ellipsis polyfill on main nav menu ##
+  $('header.universal nav li a').textOverflow()
+
 ## Announcements ##
   announcements = ($ '#announcements')
   ann_list = ($ 'ul', announcements)
