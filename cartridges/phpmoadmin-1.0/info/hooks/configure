@@ -55,6 +55,11 @@ if [ ! -f "$APP_HOME/.env/OPENSHIFT_NOSQL_DB_USERNAME" ] ||
    [ ! -f "$APP_HOME/.env/OPENSHIFT_NOSQL_DB_TYPE" ] ||
    [ ! -f "$APP_HOME/.env/OPENSHIFT_NOSQL_DB_PORT" ] 
 then
+   client_error ""
+   client_error "MongoDB must be embedded before phpMoAdmin"
+   client_error ""
+   exit 137
+else
    source "$APP_HOME/.env/OPENSHIFT_NOSQL_DB_TYPE"
    if [ $OPENSHIFT_NOSQL_DB_TYPE -ne "mongodb" ]; then
       client_error ""
