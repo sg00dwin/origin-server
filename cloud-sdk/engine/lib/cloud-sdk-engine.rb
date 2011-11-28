@@ -21,7 +21,7 @@ require 'fileutils'
 require 'getoptlong'
 require 'json'
 require 'parseconfig'
-require "cloud-sdk/version"
-require "cloud-sdk/config"
-require "cloud-sdk/environment"
-require "cloud-sdk/model/application_container"
+require "cloud-sdk-engine/version"
+require "cloud-sdk-engine/config"
+require "cloud-sdk-engine/environment"
+require "cloud-sdk-engine/model/application_container"

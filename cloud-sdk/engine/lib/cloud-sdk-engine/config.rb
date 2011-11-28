@@ -22,15 +22,15 @@ require 'parseconfig'
 module Cloud::SDK
   # == Cloud SDK Config
   #
-  # Allows access to cloud-sdk config file.
+  # Allows access to cloud-sdk-engine config file.
   #
-  # Reads config entried for the sdk from /etc/cdk/cloud-sdk.conf and if
-  # that is not available then it will read it from conf/cloud-sdk.conf within
+  # Reads config entried for the sdk from /etc/cdk/cloud-sdk-engine.conf and if
+  # that is not available then it will read it from conf/cloud-sdk-engine.conf within
   # the ruby gem.
   class Config
     include Object::Singleton
 
-    CONF_NAME = 'cloud-sdk.conf'
+    CONF_NAME = 'cloud-sdk-engine.conf'
     CONF_DIR = '/etc/cdk/'
     
     def initialize()

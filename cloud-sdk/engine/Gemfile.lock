@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    cloud-sdk (0.1.15)
+    cloud-sdk-engine (0.1.15)
       activemodel (= 3.0.10)
       highline (= 1.5.1)
       json_pure (= 1.5.1)
@@ -17,6 +17,7 @@ GEM
       i18n (~> 0.4)
     activesupport (3.0.10)
     builder (2.1.2)
+    cloud-sdk-common (0.1.15)
     cucumber (1.1.2)
       builder (>= 2.1.2)
       diff-lcs (>= 1.1.2)
@@ -49,7 +50,8 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  cloud-sdk!
+  cloud-sdk-engine!
+  cloud-sdk-common
   cucumber (>= 0.9.0)
   mocha (= 0.9.8)
   rake (>= 0.8.7)

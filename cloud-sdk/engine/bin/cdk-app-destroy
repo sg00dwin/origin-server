@@ -36,7 +36,7 @@ NAME: The name of the application to create
 USAGE
 end
 
-require 'cloud-sdk'
+require 'cloud-sdk-engine'
 opts = GetoptLong.new(
     ["--with-uuid",        "-c", GetoptLong::REQUIRED_ARGUMENT],
     ["--dry-run",          "-n", GetoptLong::NO_ARGUMENT],

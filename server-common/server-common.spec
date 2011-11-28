@@ -15,6 +15,7 @@ Requires:      ruby >= 1.8.7
 Requires:      rubygem-parseconfig
 Requires:      rubygem-json
 Requires:      rubygem-aws-sdk
+Requires:      rubygem-cloud-sdk-controller
 
 Obsoletes:     rubygem-aws
 

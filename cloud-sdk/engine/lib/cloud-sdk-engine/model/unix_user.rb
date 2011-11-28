@@ -16,9 +16,9 @@
 
 
 require 'rubygems'
-require 'cloud-sdk/config'
-require 'cloud-sdk/utils/shell_exec'
-require 'cloud-sdk/model/cdk_model'
+require 'cloud-sdk-engine/config'
+require 'cloud-sdk-engine/utils/shell_exec'
+require 'cloud-sdk-engine/model/cdk_model'
 
 module Cloud::SDK::Model
   class UserCreationException < Exception

@@ -1,22 +1,19 @@
 # OS independent path locations
-bin_dir  = File.join("bin", "*")
-conf_dir = File.join("conf", "*")
 lib_dir  = File.join(File.join("lib", "**"), "*")
 test_dir  = File.join(File.join("test", "**"), "*")
 
 Gem::Specification.new do |s|
-  s.name        = "cloud-sdk"
-  s.version     = /(Version: )(.*)/.match(File.read("cloud-sdk.spec"))[2]
+  s.name        = "cloud-sdk-common"
+  s.version     = /(Version: )(.*)/.match(File.read("cloud-sdk-common.spec"))[2]
   s.authors     = ["Krishna Raman"]
   s.email       = ["kraman@gmail.com"]
   s.homepage    = "http://www.openshift.com"
-  s.summary     = %q{Cloud Development Kit}
-  s.description = %q{Cloud Development Kit}
+  s.summary     = %q{Cloud Development Common}
+  s.description = %q{Cloud Development Common}
 
-  s.rubyforge_project = "cloud-sdk"
-  s.files       = Dir[lib_dir] + Dir[bin_dir] + Dir[conf_dir] + Dir[test_dir]
-  s.files       += %w(README.md Rakefile Gemfile cloud-sdk.spec cloud-sdk.gemspec)
-  s.executables = Dir[bin_dir].map {|binary| File.basename(binary)}
+  s.rubyforge_project = "cloud-sdk-common"
+  s.files       = Dir[lib_dir] + Dir[test_dir]
+  s.files       += %w(README.md Rakefile Gemfile cloud-sdk-common.spec cloud-sdk-common.gemspec)
   s.require_paths = ["lib"]
   s.add_dependency("json_pure", "1.5.1")
   s.add_dependency("highline", "1.5.1")

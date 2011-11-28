@@ -23,7 +23,7 @@ desc "Integration tests"
 begin
   require 'cucumber/rake/task'
 rescue LoadError => e
-  print "Unable to run integration tests. Please install cucubmber"
+  print "Unable to run integration tests. Please install cucumber"
 else
   Cucumber::Rake::Task.new(:integration_test) do |t|
     ENV['RUBYLIB'] = "#{File.dirname(__FILE__)}/lib:#{ENV['RUBYLIB']}"

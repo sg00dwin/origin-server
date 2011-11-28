@@ -36,7 +36,7 @@ SSH_KEY: The ssh key to add
 USAGE
 end
 
-require 'cloud-sdk'
+require 'cloud-sdk-engine'
 opts = GetoptLong.new(
     ["--with-uuid",        "-c", GetoptLong::REQUIRED_ARGUMENT],
     ["--with-ssh-key",     "-s", GetoptLong::REQUIRED_ARGUMENT]

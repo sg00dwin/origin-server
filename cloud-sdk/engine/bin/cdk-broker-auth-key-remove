@@ -34,8 +34,8 @@ UUID: Unique identifier for the application
 USAGE
 end
 
-require 'cloud-sdk'
-require 'cloud-sdk/utils/shell_exec'
+require 'cloud-sdk-engine'
+require 'cloud-sdk-engine/utils/shell_exec'
 opts = GetoptLong.new(
     ["--with-uuid",        "-c", GetoptLong::REQUIRED_ARGUMENT]
 )
