@@ -38,8 +38,8 @@ function restore_from_mongodb_snapshot() {
    fi
 
    #  Restore from the "dump".
-   if ! mongorestore -h $OPENSHIFT_NOSQL_DB_HOST -u $OPENSHIFT_NOSQL_DB_USERNAME   \
-            -p "$OPENSHIFT_NOSQL_DB_PASSWORD" --directoryperdb ; then
+   creds="-u $OPENSHIFT_NOSQL_DB_USERNAME -p \"$OPENSHIFT_NOSQL_DB_PASSWORD\""
+   if ! mongorestore -h $OPENSHIFT_NOSQL_DB_HOST $creds --directoryperdb --drop; then
       popd > /dev/null
       /bin/rm -rf /tmp/mongodump.$$
       die 0 "WARNING" "Could not restore MongoDB databases - mongorestore failed!"
