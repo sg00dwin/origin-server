@@ -77,7 +77,7 @@ $ ->
         current = current.parents section_selector
 
     # default to first section
-    unless current.length == 1
+    if !current or current.length != 1
       current = sections.first()
     
     # hide sections

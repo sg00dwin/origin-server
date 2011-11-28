@@ -1,4 +1,4 @@
-/* DO NOT MODIFY. This file was compiled Mon, 28 Nov 2011 16:03:15 GMT from
+/* DO NOT MODIFY. This file was compiled Mon, 28 Nov 2011 16:04:45 GMT from
  * /home/aboone/Source/li/site/app/coffeescripts/script.coffee
  */
 
@@ -62,7 +62,7 @@
           current = current.parents(section_selector);
         }
       }
-      if (current.length !== 1) {
+      if (!current || current.length !== 1) {
         current = sections.first();
       }
       sections.hide();
