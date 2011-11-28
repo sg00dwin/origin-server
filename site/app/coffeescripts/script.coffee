@@ -77,7 +77,7 @@ $ ->
         current = current.parents section_selector
 
     # default to first section
-    unless current.length == 1
+    if !current or current.length != 1
       current = sections.first()
     
     # hide sections
@@ -131,8 +131,8 @@ $ ->
 ## Outage Notification ##
   outage_notification = $ '#outage_notification'
   if outage_notification.length > 0
-    show_outage_txt = '☟ Service Outages'
-    hide_outage_txt = '☝ Hide'
+    show_outage_txt = '&#9759; Service Outages'
+    hide_outage_txt = '&#9757; Hide'
     outage_notification_neg_height = '-' + outage_notification.outerHeight() + 'px'
     outage_animation_length = 1000
 
@@ -164,7 +164,7 @@ $ ->
       overlay.show()
 
       # Change toggle text
-      outage_toggle.text hide_outage_txt
+      outage_toggle.html hide_outage_txt
       outage_toggle_state = 'shown'
 
     hide_notification = () ->
@@ -182,7 +182,7 @@ $ ->
       overlay.hide()
 
       # Change toggle text
-      outage_toggle.text show_outage_txt
+      outage_toggle.html show_outage_txt
       outage_toggle_state = 'hidden'
 
     # Toggle bindings
@@ -203,3 +203,4 @@ $ ->
   else
     # Clear cookie if it exists
     $.cookie 'outage_notification_displayed', null, {'path': '/app'}
+
