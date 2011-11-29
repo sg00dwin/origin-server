@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.1.15
+Version:        0.1.16
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        AGPLv3
@@ -84,6 +84,9 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Tue Nov 29 2011 Dan McPherson <dmcphers@redhat.com> 0.1.16-1
+- building updates (dmcphers@redhat.com)
+
 * Mon Nov 28 2011 Dan McPherson <dmcphers@redhat.com> 0.1.15-1
 - new package built with tito
 
