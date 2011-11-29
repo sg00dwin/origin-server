@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.82.18
+Version:       0.82.19
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -172,6 +172,19 @@ fi
 %dir %attr(0755,root,root) %{_sysconfdir}/libra/skel
 
 %changelog
+* Tue Nov 29 2011 Dan McPherson <dmcphers@redhat.com> 0.82.19-1
+- Correcting oddjobd call (mmcgrath@redhat.com)
+- Correcting restorer.php (mmcgrath@redhat.com)
+- Added oddjob configs (mmcgrath@redhat.com)
+- prepping for an oddjob version of restorer (mmcgrath@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- prep work for idler/restorer (mmcgrath@redhat.com)
+- Added restorer.php and rhc-idler plans (mmcgrath@redhat.com)
+- Merge branch 'master' into idler (mmcgrath@redhat.com)
+- Merge branch 'master' into idler (mmcgrath@redhat.com)
+- Adding rhc-idler system (mmcgrath@redhat.com)
+
 * Mon Nov 28 2011 Dan McPherson <dmcphers@redhat.com> 0.82.18-1
 - move start dbs to deploy (dmcphers@redhat.com)
 
