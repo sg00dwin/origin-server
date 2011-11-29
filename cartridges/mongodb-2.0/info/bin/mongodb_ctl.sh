@@ -40,7 +40,7 @@ start() {
     then
         /usr/bin/mongod --auth --nojournal --smallfiles --quiet -f $MONGODB_DIR/etc/mongodb.conf run >/dev/null 2>&1 &
     else
-        echo "Mongodb already running" 1>&2
+        echo "MongoDB already running" 1>&2
     fi
 }
 
@@ -63,9 +63,9 @@ stop() {
     else
         if `pgrep -x mongod > /dev/null 2>&1`
         then
-        	echo "Warning: Mongodb process exists without a pid file.  Use force-stop to kill." 1>&2
+        	echo "Warning: MongoDB process exists without a pid file.  Use force-stop to kill." 1>&2
         else
-            echo "Mongodb already stopped" 1>&2
+            echo "MongoDB already stopped" 1>&2
         fi
     fi
 }
@@ -84,9 +84,9 @@ case "$1" in
     status)
         if isrunning
         then
-            echo "Mongodb is running" 1>&2
+            echo "MongoDB is running" 1>&2
         else
-            echo "Mongodb is stopped" 1>&2
+            echo "MongoDB is stopped" 1>&2
         fi
         exit 0
     ;;

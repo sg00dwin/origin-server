@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/mongodb-2.0
 
 Name: rhc-cartridge-mongodb-2.0
-Version: 0.7
+Version: 0.10.2
 Release: 1%{?dist}
 Summary: Embedded mongodb support for express
 
@@ -50,6 +50,21 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Mon Nov 28 2011 Dan McPherson <dmcphers@redhat.com> 0.10.2-1
+- Fix for bugz 756722 -- mongorestore does the equivalent of inserts, so need
+  to drop and recreate db in order for collections to be restored.
+  (ramr@redhat.com)
+
+* Wed Nov 23 2011 Dan McPherson <dmcphers@redhat.com> 0.10.1-1
+- change to 3 digit version num (dmcphers@redhat.com)
+
+* Wed Nov 23 2011 Dan McPherson <dmcphers@redhat.com> 0.9-1
+- 
+
+* Wed Nov 23 2011 Ram Ranganathan <ramr@redhat.com> 0.8-1
+- minor message cleanup. (ramr@redhat.com)
+- NOSQL prefix to demarcate "namespace/dbtype". (ramr@redhat.com)
+
 * Sat Nov 19 2011 Dan McPherson <dmcphers@redhat.com> 0.7-1
 - start mongod for mongorestore to work - also don't suppress errors.
   (ramr@redhat.com)

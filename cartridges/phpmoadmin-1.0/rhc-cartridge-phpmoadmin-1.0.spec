@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/phpmoadmin-1.0
 
 Name: rhc-cartridge-phpmoadmin-1.0
-Version: 0.1.6
+Version: 0.1.8
 Release: 1%{?dist}
 Summary: Embedded phpMoAdmin support for express
 
@@ -49,6 +49,13 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Mon Nov 28 2011 Dan McPherson <dmcphers@redhat.com> 0.1.8-1
+- phpmoadmin bug fixes #756713, #756716 (rchopra@redhat.com)
+
+* Wed Nov 23 2011 Dan McPherson <dmcphers@redhat.com> 0.1.7-1
+- fixes in phpmoadmin cucumber tests (rpenta@redhat.com)
+- cleanup of hooks (rchopra@redhat.com)
+
 * Tue Nov 22 2011 Dan McPherson <dmcphers@redhat.com> 0.1.6-1
 - 
 

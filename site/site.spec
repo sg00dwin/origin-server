@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.82.12
+Version:   0.82.15
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -68,6 +68,23 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Mon Nov 28 2011 Dan McPherson <dmcphers@redhat.com> 0.82.15-1
+- Fixes 749297 - truncates the username line with ellipsis when it's too large
+  (ffranz@redhat.com)
+- Change the way spinners are kicked off, ajaxSubmit is not defined so use
+  default submitHandler (aboone@redhat.com)
+- Fix a JS error when no location.hash is present (aboone@redhat.com)
+- Fix coffeescript compilation issue with extended chars (aboone@redhat.com)
+
+* Fri Nov 25 2011 Dan McPherson <dmcphers@redhat.com> 0.82.14-1
+- Fixes 749297 - truncates the username line with ellipsis when it's too large
+  (ffranz@redhat.com)
+
+* Wed Nov 23 2011 Dan McPherson <dmcphers@redhat.com> 0.82.13-1
+- Fix for control_panel_controller functional test (aboone@redhat.com)
+- Only show an error page for an unknown error in control panel
+  (aboone@redhat.com)
+
 * Wed Nov 23 2011 Dan McPherson <dmcphers@redhat.com> 0.82.12-1
 - Fix control_panel controller functional tests I broke in a01e02e
   (aboone@redhat.com)

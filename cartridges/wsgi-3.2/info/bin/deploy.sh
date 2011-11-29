@@ -6,6 +6,11 @@ do
     . $f
 done
 
+CART_DIR=/usr/libexec/li/cartridges
+source ${CART_DIR}/abstract/info/lib/util
+
+start_dbs
+
 # Run build
 #virtualenv --relocatable ${OPENSHIFT_APP_DIR}virtenv
 #. ./bin/activate

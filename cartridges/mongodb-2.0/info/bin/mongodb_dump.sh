@@ -30,9 +30,8 @@ function create_mongodb_snapshot() {
    pushd /tmp/mongodump.$$ > /dev/null
 
    #  Take a "dump".
-   if mongodump -h $OPENSHIFT_DB_HOST -u $OPENSHIFT_DB_USERNAME   \
-          -p "$OPENSHIFT_DB_PASSWORD" --directoryperdb > /dev/null 2>&1; then
-
+   creds="-u $OPENSHIFT_NOSQL_DB_USERNAME -p \"$OPENSHIFT_NOSQL_DB_PASSWORD\""
+   if mongodump -h $OPENSHIFT_NOSQL_DB_HOST $creds --directoryperdb > /dev/null 2>&1; then
       #  Dump ok - now create a gzipped tarball.
       if tar -zcf $OPENSHIFT_DATA_DIR/mongodb_dump_snapshot.tar.gz . ; then
          #  Created dump snapshot - restore previous dir and remove temp dir.

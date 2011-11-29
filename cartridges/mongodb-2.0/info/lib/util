@@ -24,12 +24,12 @@ function stop_mongodb {
 }
 
 function start_mongodb_as_user {
-    ${OPENSHIFT_DB_CTL_SCRIPT} start
+    ${OPENSHIFT_NOSQL_DB_CTL_SCRIPT} start
     wait_to_start
 }
 
 function stop_mongodb_as_user {
-    ${OPENSHIFT_DB_CTL_SCRIPT} stop
+    ${OPENSHIFT_NOSQL_DB_CTL_SCRIPT} stop
     sleep 1
 }
 

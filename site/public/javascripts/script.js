@@ -1,5 +1,5 @@
-/* DO NOT MODIFY. This file was compiled Tue, 22 Nov 2011 22:56:44 GMT from
- * /Users/alex/Source/li/site/app/coffeescripts/script.coffee
+/* DO NOT MODIFY. This file was compiled Mon, 28 Nov 2011 16:04:45 GMT from
+ * /home/aboone/Source/li/site/app/coffeescripts/script.coffee
  */
 
 (function() {
@@ -62,7 +62,7 @@
           current = current.parents(section_selector);
         }
       }
-      if (current.length !== 1) {
+      if (!current || current.length !== 1) {
         current = sections.first();
       }
       sections.hide();
@@ -101,8 +101,8 @@
     });
     outage_notification = $('#outage_notification');
     if (outage_notification.length > 0) {
-      show_outage_txt = '☟ Service Outages';
-      hide_outage_txt = '☝ Hide';
+      show_outage_txt = '&#9759; Service Outages';
+      hide_outage_txt = '&#9757; Hide';
       outage_notification_neg_height = '-' + outage_notification.outerHeight() + 'px';
       outage_animation_length = 1000;
       outage_notification.css({
@@ -124,7 +124,7 @@
           top: 0
         }, outage_animation_length);
         overlay.show();
-        outage_toggle.text(hide_outage_txt);
+        outage_toggle.html(hide_outage_txt);
         return outage_toggle_state = 'shown';
       };
       hide_notification = function() {
@@ -140,7 +140,7 @@
           scrollTop: 0
         }, outage_animation_length);
         overlay.hide();
-        outage_toggle.text(show_outage_txt);
+        outage_toggle.html(show_outage_txt);
         return outage_toggle_state = 'hidden';
       };
       outage_toggle.click(function(event) {

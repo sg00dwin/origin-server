@@ -103,7 +103,11 @@ module CommandHelper
   def rhc_update_namespace(app)
     rhc_do('rhc_update_namespace') do
       old_namespace = app.namespace
-      app.namespace = new_namespace = old_namespace + "new"
+      if old_namespace.end_with?('new')
+        app.namespace = new_namespace = old_namespace[0..-4]
+      else
+        app.namespace = new_namespace = old_namespace + "new"
+      end
       old_hostname = app.hostname
       app.hostname = "#{app.name}-#{new_namespace}.#{$domain}"
       old_repo = app.repo

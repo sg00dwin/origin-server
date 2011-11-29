@@ -6,6 +6,11 @@ do
     . $f
 done
 
+CART_DIR=/usr/libexec/li/cartridges
+source ${CART_DIR}/abstract/info/lib/util
+
+start_dbs
+
 standalone_tmp=${OPENSHIFT_APP_DIR}${OPENSHIFT_APP_TYPE}/standalone/tmp
 if [ -d $standalone_tmp ]
 then

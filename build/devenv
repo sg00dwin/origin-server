@@ -384,7 +384,7 @@ class DevEnv < Thor
       if options.init_repo?
         print "Initializing git repo for syncing..."
         ssh(hostname, "rm -rf /root/li; git clone --bare git://git1.ops.rhcloud.com/li.git/ /root/li")
-        update_remote_tests(instance)
+        update_remote_tests(instance.dns_name)
         puts "Done"
       else
         print "Archiving local changes..."
