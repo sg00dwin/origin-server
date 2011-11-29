@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/phpmoadmin-1.0
 
 Name: rhc-cartridge-phpmoadmin-1.0
-Version: 0.1.8
+Version: 0.1.9
 Release: 1%{?dist}
 Summary: Embedded phpMoAdmin support for express
 
@@ -49,6 +49,10 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Tue Nov 29 2011 Dan McPherson <dmcphers@redhat.com> 0.1.9-1
+- fix for bug #758085. Failure keyword replaced with Stopped
+  (rchopra@redhat.com)
+
 * Mon Nov 28 2011 Dan McPherson <dmcphers@redhat.com> 0.1.8-1
 - phpmoadmin bug fixes #756713, #756716 (rchopra@redhat.com)
 
