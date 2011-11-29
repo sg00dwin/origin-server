@@ -1,11 +1,11 @@
 %global ruby_sitelib %(ruby -rrbconfig -e "puts Config::CONFIG['sitelibdir']")
 %global gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
-%global gemname cloud-sdk-engine
+%global gemname cloud-sdk-node
 %global geminstdir %{gemdir}/gems/%{gemname}-%{version}
 
-Summary:        Cloud Development Engine
+Summary:        Cloud Development Node
 Name:           rubygem-%{gemname}
-Version:        0.1.15
+Version:        0.1.14
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        AGPLv3
@@ -28,15 +28,15 @@ BuildArch:      noarch
 Provides:       rubygem(%{gemname}) = %version
 
 %package -n ruby-%{gemname}
-Summary:        Cloud Development Engine Library
+Summary:        Cloud Development Node Library
 Requires:       rubygem(%{gemname}) = %version
 Provides:       ruby(%{gemname}) = %version
 
 %description
-This contains the Cloud Development Engine packaged as a rubygem.
+This contains the Cloud Development Node packaged as a rubygem.
 
 %description -n ruby-%{gemname}
-This contains the Cloud Development Engine packaged as a ruby site library.
+This contains the Cloud Development Node packaged as a ruby site library.
 
 %prep
 %setup -q
@@ -84,5 +84,3 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
-* Tue Nov 22 2011 Dan McPherson <dmcphers@redhat.com> 0.1.17-1
-- less output from cdk (dmcphers@redhat.com)

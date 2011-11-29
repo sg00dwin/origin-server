@@ -15,9 +15,9 @@
 #++
 
 require 'rubygems'
-require 'cloud-sdk-engine/config'
-require 'cloud-sdk-engine/model/unix_user'
-require 'cloud-sdk-engine/model/cdk_model'
+require 'cloud-sdk-node/config'
+require 'cloud-sdk-node/model/unix_user'
+require 'cloud-sdk-node/model/cdk_model'
 
 module Cloud::SDK::Model
   # == Application Container

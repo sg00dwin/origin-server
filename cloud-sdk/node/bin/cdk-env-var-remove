@@ -19,30 +19,28 @@ def usage
     puts <<USAGE
 == Synopsis
 
-cdk-env-var-add: Adds an environment var to the app. 
+cdk-env-var-remove: Removes an env var from the app.
   This command must be run as root.
 
 == Usage
 
-cdk-app-create [--with-uuid UUID] [--with-key KEY] [--with-value VALUE]
+cdk-env-var-remove [--with-uuid UUID] [--with-key KEY]
 
 Options:
 -h|--help:
    Prints this message
 
 UUID: Unique identifier for the application
-KEY: The env var key
-VALUE: The env var value
+NAME: The name of the application to create
 
 USAGE
 end
 
-require 'cloud-sdk-engine'
-require 'cloud-sdk-engine/utils/shell_exec'
+require 'cloud-sdk-node'
+require 'cloud-sdk-node/utils/shell_exec'
 opts = GetoptLong.new(
     ["--with-uuid",        "-c", GetoptLong::REQUIRED_ARGUMENT],
-    ["--with-key",         "-k", GetoptLong::REQUIRED_ARGUMENT],
-    ["--with-value",       "-v", GetoptLong::REQUIRED_ARGUMENT]
+    ["--with-key",         "-k", GetoptLong::REQUIRED_ARGUMENT]
 )
 
 args = {}
@@ -55,21 +53,20 @@ end
 
 uuid = args['--with-uuid']
 key = args['--with-key']
-value = args['--with-value']
 
 if args["--help"]
   usage
   exit -1
 end
 
-unless uuid and key and value
+unless uuid and key
   usage
   exit -100
 end
 
 begin
   container = Cloud::SDK::Model::ApplicationContainer.new(uuid,uuid)
-  container.user.add_env_var(key,value)
+  container.user.remove_env_var(key)
 rescue Exception => e
   $stderr.puts(e.message)
   exit -1

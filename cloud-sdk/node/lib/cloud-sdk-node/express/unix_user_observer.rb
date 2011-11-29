@@ -15,9 +15,9 @@
 
 require 'rubygems'
 require 'singleton'
-require 'cloud-sdk-engine/config'
-require 'cloud-sdk-engine/model/unix_user'
-require 'cloud-sdk-engine/utils/shell_exec'
+require 'cloud-sdk-node/config'
+require 'cloud-sdk-node/model/unix_user'
+require 'cloud-sdk-node/utils/shell_exec'
 
 module Cloud::SDK::Model
   class UnixUserObserver

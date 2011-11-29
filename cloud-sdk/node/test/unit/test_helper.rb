@@ -14,14 +14,7 @@
 # limitations under the License.
 #++
 
-
+require File.expand_path('../../../lib/cloud-sdk-node', __FILE__)
 require 'rubygems'
-
-require 'fileutils'
-require 'getoptlong'
-require 'json'
-require 'parseconfig'
-require "cloud-sdk-engine/version"
-require "cloud-sdk-engine/config"
-require "cloud-sdk-engine/environment"
-require "cloud-sdk-engine/model/application_container"
+require 'mocha'
+require 'test/unit'

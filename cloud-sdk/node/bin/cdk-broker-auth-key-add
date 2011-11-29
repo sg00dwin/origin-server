@@ -19,32 +19,30 @@ def usage
     puts <<USAGE
 == Synopsis
 
-cdk-app-create: Creates a new application. 
+cdk-broker-auth-key-add: Adds broker auth key to the application. 
   This command must be run as root.
 
 == Usage
 
-cdk-app-create --with-uuid UUID --with-ssh-key KEY [--named NAME]
+cdk-broker-auth-key-add [--with-uuid UUID] [--with-iv INITIALIZATION_VECTOR] [--with-token TOKEN]
 
 Options:
 -h|--help:
    Prints this message
 
 UUID: Unique identifier for the application
-NAME: The name of the application to create
+INITIALIZATION_VECTOR: Initialization vector to add
+TOKEN: Token to add
 
 USAGE
 end
 
-require 'cloud-sdk-engine'
+require 'cloud-sdk-node'
+require 'cloud-sdk-node/utils/shell_exec'
 opts = GetoptLong.new(
     ["--with-uuid",        "-c", GetoptLong::REQUIRED_ARGUMENT],
-    ["--with-ssh-key",     "-s", GetoptLong::REQUIRED_ARGUMENT],
-    ["--dry-run",          "-n", GetoptLong::NO_ARGUMENT],
-    ["--named",                  GetoptLong::OPTIONAL_ARGUMENT],
-    ["--porcelain",        "-q", GetoptLong::NO_ARGUMENT],
-    ["--debug",            "-d", GetoptLong::NO_ARGUMENT],
-    ["--help",             "-?", GetoptLong::NO_ARGUMENT]
+    ["--with-iv",          "-i", GetoptLong::REQUIRED_ARGUMENT],
+    ["--with-token",       "-t", GetoptLong::REQUIRED_ARGUMENT]
 )
 
 args = {}
@@ -61,21 +59,17 @@ if args["--help"]
 end
 
 uuid = args['--with-uuid']
-ssh_key = args['--with-ssh-key']
-name = args['--named']
-$dry_run = true if args['--dry-run']
-$cdk_debug = true if args['--debug']
-$porcelin = args['--porcelain'] ? true : false
+iv = args['--with-iv']
+token = args['--with-token']
 
-unless uuid and ssh_key
+unless uuid and iv and token
   usage
   exit -100
 end
 
 begin
   container = Cloud::SDK::Model::ApplicationContainer.new(uuid,uuid)
-  container.create
-  container.user.add_ssh_key(ssh_key)
+  container.user.add_broker_auth(iv,token)
 rescue Exception => e
   $stderr.puts(e.message)
   exit -1

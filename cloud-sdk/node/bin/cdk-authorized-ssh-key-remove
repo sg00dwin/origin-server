@@ -19,28 +19,28 @@ def usage
     puts <<USAGE
 == Synopsis
 
-cdk-env-var-remove: Removes an env var from the app.
+cdk-authorized-ssh-key-remove: Removes an authorized ssh key from the app.
   This command must be run as root.
 
 == Usage
 
-cdk-env-var-remove [--with-uuid UUID] [--with-key KEY]
+cdk-authorized-ssh-key-remove [--with-uuid UUID] [--with-ssh-key KEY]
 
 Options:
 -h|--help:
    Prints this message
 
 UUID: Unique identifier for the application
-NAME: The name of the application to create
+SSH_KEY: The ssh key to remove
 
 USAGE
 end
 
-require 'cloud-sdk-engine'
-require 'cloud-sdk-engine/utils/shell_exec'
+require 'cloud-sdk-node'
+require 'cloud-sdk-node/utils/shell_exec'
 opts = GetoptLong.new(
     ["--with-uuid",        "-c", GetoptLong::REQUIRED_ARGUMENT],
-    ["--with-key",         "-k", GetoptLong::REQUIRED_ARGUMENT]
+    ["--with-ssh-key",     "-s", GetoptLong::REQUIRED_ARGUMENT]
 )
 
 args = {}
@@ -51,22 +51,22 @@ rescue GetoptLong::Error => e
     exit -100
 end
 
-uuid = args['--with-uuid']
-key = args['--with-key']
-
 if args["--help"]
   usage
   exit -1
 end
 
-unless uuid and key
+uuid = args['--with-uuid']
+ssh_key = args['--with-ssh-key']
+
+unless uuid and ssh_key
   usage
   exit -100
 end
 
 begin
   container = Cloud::SDK::Model::ApplicationContainer.new(uuid,uuid)
-  container.user.remove_env_var(key)
+  container.user.remove_ssh_key(ssh_key)
 rescue Exception => e
   $stderr.puts(e.message)
   exit -1

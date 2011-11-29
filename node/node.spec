@@ -20,7 +20,7 @@ Requires:      perl
 Requires:      ruby
 Requires:      rubygem-open4
 Requires:      rubygem-parseconfig
-Requires:      rubygem-cloud-sdk-engine
+Requires:      rubygem-cloud-sdk-node
 Requires:      quota
 Requires:      lsof
 Requires:      wget

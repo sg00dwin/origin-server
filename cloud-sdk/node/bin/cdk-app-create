@@ -19,27 +19,32 @@ def usage
     puts <<USAGE
 == Synopsis
 
-cdk-authorized-ssh-key-add: Adds an authorized ssh key to the app.
+cdk-app-create: Creates a new application. 
   This command must be run as root.
 
 == Usage
 
-cdk-authorized-ssh-key-add [--with-uuid UUID] [--with-ssh-key KEY]
+cdk-app-create --with-uuid UUID --with-ssh-key KEY [--named NAME]
 
 Options:
 -h|--help:
    Prints this message
 
 UUID: Unique identifier for the application
-SSH_KEY: The ssh key to add
+NAME: The name of the application to create
 
 USAGE
 end
 
-require 'cloud-sdk-engine'
+require 'cloud-sdk-node'
 opts = GetoptLong.new(
     ["--with-uuid",        "-c", GetoptLong::REQUIRED_ARGUMENT],
-    ["--with-ssh-key",     "-s", GetoptLong::REQUIRED_ARGUMENT]
+    ["--with-ssh-key",     "-s", GetoptLong::REQUIRED_ARGUMENT],
+    ["--dry-run",          "-n", GetoptLong::NO_ARGUMENT],
+    ["--named",                  GetoptLong::OPTIONAL_ARGUMENT],
+    ["--porcelain",        "-q", GetoptLong::NO_ARGUMENT],
+    ["--debug",            "-d", GetoptLong::NO_ARGUMENT],
+    ["--help",             "-?", GetoptLong::NO_ARGUMENT]
 )
 
 args = {}
@@ -57,6 +62,10 @@ end
 
 uuid = args['--with-uuid']
 ssh_key = args['--with-ssh-key']
+name = args['--named']
+$dry_run = true if args['--dry-run']
+$cdk_debug = true if args['--debug']
+$porcelin = args['--porcelain'] ? true : false
 
 unless uuid and ssh_key
   usage
@@ -65,6 +74,7 @@ end
 
 begin
   container = Cloud::SDK::Model::ApplicationContainer.new(uuid,uuid)
+  container.create
   container.user.add_ssh_key(ssh_key)
 rescue Exception => e
   $stderr.puts(e.message)

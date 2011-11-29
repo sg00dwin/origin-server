@@ -4,9 +4,9 @@ Cloud SDK Quickstart
 Installing via RPM
 ------------------
 
-To install a built version of the Cloud SDK Engine from the repository, just use:
+To install a built version of the Cloud SDK Node from the repository, just use:
 
-    sudo yum install cloud-sdk-engine
+    sudo yum install cloud-sdk-node
 
 To install everything from the source tree, we use a tool called Tito (https://github.com/dgoodwin/tito):
 
@@ -28,13 +28,13 @@ You can also have tito build the tarball, source RPM and other things:
 Installing via Gem
 ------------------
 
-To support multiple operating systems, the Cloud Engine also supports RubyGem installations.  To install a built version of the Cloud Engine RubyGem from the repository, just use:
+To support multiple operating systems, the Cloud Node also supports RubyGem installations.  To install a built version of the Cloud Node RubyGem from the repository, just use:
 
-    sudo gem install cloud-sdk-engine
+    sudo gem install cloud-sdk-node
 
 To build and install the gem from the source tree, use:
 
-    gem build cloud-sdk-engine.gemspec
+    gem build cloud-sdk-node.gemspec
     sudo gem install cloud-sdk-*.gem
 
 Local Checkout

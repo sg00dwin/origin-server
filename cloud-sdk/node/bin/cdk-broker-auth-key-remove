@@ -19,30 +19,25 @@ def usage
     puts <<USAGE
 == Synopsis
 
-cdk-broker-auth-key-add: Adds broker auth key to the application. 
   This command must be run as root.
 
 == Usage
 
-cdk-broker-auth-key-add [--with-uuid UUID] [--with-iv INITIALIZATION_VECTOR] [--with-token TOKEN]
+cdk-broker-auth-key-remove [--with-uuid UUID]
 
 Options:
 -h|--help:
    Prints this message
 
 UUID: Unique identifier for the application
-INITIALIZATION_VECTOR: Initialization vector to add
-TOKEN: Token to add
 
 USAGE
 end
 
-require 'cloud-sdk-engine'
-require 'cloud-sdk-engine/utils/shell_exec'
+require 'cloud-sdk-node'
+require 'cloud-sdk-node/utils/shell_exec'
 opts = GetoptLong.new(
-    ["--with-uuid",        "-c", GetoptLong::REQUIRED_ARGUMENT],
-    ["--with-iv",          "-i", GetoptLong::REQUIRED_ARGUMENT],
-    ["--with-token",       "-t", GetoptLong::REQUIRED_ARGUMENT]
+    ["--with-uuid",        "-c", GetoptLong::REQUIRED_ARGUMENT]
 )
 
 args = {}
@@ -59,17 +54,15 @@ if args["--help"]
 end
 
 uuid = args['--with-uuid']
-iv = args['--with-iv']
-token = args['--with-token']
 
-unless uuid and iv and token
+unless uuid
   usage
   exit -100
 end
 
 begin
   container = Cloud::SDK::Model::ApplicationContainer.new(uuid,uuid)
-  container.user.add_broker_auth(iv,token)
+  container.user.remove_broker_auth
 rescue Exception => e
   $stderr.puts(e.message)
   exit -1

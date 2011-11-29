@@ -17,8 +17,8 @@
 
 require 'rubygems'
 require 'active_model'
-require 'cloud-sdk-engine/config'
-require 'cloud-sdk-engine/utils/shell_exec'
+require 'cloud-sdk-node/config'
+require 'cloud-sdk-node/utils/shell_exec'
 
 module Cloud
   module SDK

@@ -19,25 +19,27 @@ def usage
     puts <<USAGE
 == Synopsis
 
+cdk-authorized-ssh-key-add: Adds an authorized ssh key to the app.
   This command must be run as root.
 
 == Usage
 
-cdk-broker-auth-key-remove [--with-uuid UUID]
+cdk-authorized-ssh-key-add [--with-uuid UUID] [--with-ssh-key KEY]
 
 Options:
 -h|--help:
    Prints this message
 
 UUID: Unique identifier for the application
+SSH_KEY: The ssh key to add
 
 USAGE
 end
 
-require 'cloud-sdk-engine'
-require 'cloud-sdk-engine/utils/shell_exec'
+require 'cloud-sdk-node'
 opts = GetoptLong.new(
-    ["--with-uuid",        "-c", GetoptLong::REQUIRED_ARGUMENT]
+    ["--with-uuid",        "-c", GetoptLong::REQUIRED_ARGUMENT],
+    ["--with-ssh-key",     "-s", GetoptLong::REQUIRED_ARGUMENT]
 )
 
 args = {}
@@ -54,15 +56,16 @@ if args["--help"]
 end
 
 uuid = args['--with-uuid']
+ssh_key = args['--with-ssh-key']
 
-unless uuid
+unless uuid and ssh_key
   usage
   exit -100
 end
 
 begin
   container = Cloud::SDK::Model::ApplicationContainer.new(uuid,uuid)
-  container.user.remove_broker_auth
+  container.user.add_ssh_key(ssh_key)
 rescue Exception => e
   $stderr.puts(e.message)
   exit -1

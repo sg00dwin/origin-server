@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.1.17
+Version:        0.1.14
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        AGPLv3
@@ -84,5 +84,4 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
-* Tue Nov 22 2011 Dan McPherson <dmcphers@redhat.com> 0.1.17-1
-- less output from cdk (dmcphers@redhat.com)
+
