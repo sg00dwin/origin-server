@@ -9,3 +9,4 @@ tag = libra-rhel-5.7-candidate
 inherit = True
 strict_keys = false
 arches = x86_64
+hash = sha
