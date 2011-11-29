@@ -59,7 +59,7 @@ mkdir -p %{buildroot}%{_sysconfdir}/oddjobd.conf.d/
 mkdir -p %{buildroot}%{_sysconfdir}/dbus-1/system.d/
 mkdir -p %{buildroot}%{_sysconfdir}/cron.daily/
 mkdir -p %{buildroot}%{_sysconfdir}/libra/skel
-mkdir -p %{buildroot}/%{_localstatedir}/www/html/restorer.php
+mkdir -p %{buildroot}/%{_localstatedir}/www/html/
 
 cp -r cartridges %{buildroot}%{_libexecdir}/li
 cp -r conf/httpd %{buildroot}%{_sysconfdir}
@@ -71,6 +71,7 @@ cp scripts/init/* %{buildroot}%{_initddir}
 cp scripts/libra_tmpwatch.sh %{buildroot}%{_sysconfdir}/cron.daily/libra_tmpwatch.sh
 cp conf/oddjob/openshift-restorer.conf %{buildroot}%{_sysconfdir}/dbus-1/system.d/
 cp conf/oddjob/oddjobd-restorer.conf %{buildroot}%{_sysconfdir}/oddjobd.conf.d/
+cp scripts/restorer.php %{buildroot}/%{_localstatedir}/www/html/
 
 %clean
 rm -rf $RPM_BUILD_ROOT
