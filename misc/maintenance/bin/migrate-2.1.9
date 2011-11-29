@@ -179,10 +179,15 @@ def execute_script(cmd)
           end
         end
       rescue Timeout::Error
-        puts ("execute_script: WARNING - stdout read timed out")
+        puts "execute_script: WARNING - stdout read timed out"
       end
       break
     rescue Timeout::Error
+      begin
+        Process.kill("TERM", pid)
+      rescue Exception => e
+        puts "execute_script: WARNING - Failed to kill cmd: #{cmd}"
+      end
       puts "Command '#{cmd}' timed out"
       raise if i == num_tries
     end
