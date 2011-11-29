@@ -82,9 +82,9 @@ perl -p -i -e 's:/cgroup/[^\s]+;:/cgroup/all;:; /blkio|cpuset|devices/ && ($_ = 
 /sbin/restorecon /etc/cgconfig.conf || :
 # only restart if it's on
 /sbin/chkconfig cgconfig && /sbin/service cgconfig restart >/dev/null 2>&1 || :
-/sbin/chkconfig oddjob on
+/sbin/chkconfig oddjobd on
 /sbin/service messagebus restart
-/sbin/service oddjob restart
+/sbin/service oddjobd restart
 /sbin/chkconfig --add libra || :
 /sbin/chkconfig --add libra-data || :
 /sbin/chkconfig --add libra-cgroups || :
