@@ -49,14 +49,14 @@ setup_embedded_configure "$1" $2 $3
 PHPMOADMIN_DIR=`echo $APP_HOME/phpmoadmin-1.0 | tr -s /` # ensure that there aren't double /'s
 PHPMOADMIN_CTL_SCRIPT="$PHPMOADMIN_DIR/${application}_phpmoadmin_ctl.sh"
 
-if [ ! -f "$APP_HOME/.env/OPENSHIFT_DB_USERNAME" ] ||
-   [ ! -f "$APP_HOME/.env/OPENSHIFT_DB_PASSWORD" ] ||
-   [ ! -f "$APP_HOME/.env/OPENSHIFT_DB_HOST" ] ||
-   [ ! -f "$APP_HOME/.env/OPENSHIFT_DB_TYPE" ] ||
-   [ ! -f "$APP_HOME/.env/OPENSHIFT_DB_PORT" ] 
+if [ ! -f "$APP_HOME/.env/OPENSHIFT_NOSQL_DB_USERNAME" ] ||
+   [ ! -f "$APP_HOME/.env/OPENSHIFT_NOSQL_DB_PASSWORD" ] ||
+   [ ! -f "$APP_HOME/.env/OPENSHIFT_NOSQL_DB_HOST" ] ||
+   [ ! -f "$APP_HOME/.env/OPENSHIFT_NOSQL_DB_TYPE" ] ||
+   [ ! -f "$APP_HOME/.env/OPENSHIFT_NOSQL_DB_PORT" ] 
 then
-   source "$APP_HOME/.env/OPENSHIFT_DB_TYPE"
-   if [ $OPENSHIFT_DB_TYPE -ne "mongodb" ]; then
+   source "$APP_HOME/.env/OPENSHIFT_NOSQL_DB_TYPE"
+   if [ $OPENSHIFT_NOSQL_DB_TYPE -ne "mongodb" ]; then
       client_error ""
       client_error "MongoDB must be embedded before phpMoAdmin"
       client_error ""
@@ -77,7 +77,7 @@ then
 fi
 mkdir -p "$PHPMOADMIN_DIR"
 pushd "$PHPMOADMIN_DIR" > /dev/null
-mkdir -p conf conf.d logs run sessions tmp 
+mkdir -p conf conf.d logs run sessions tmp html
 ln -s /usr/lib64/httpd/modules modules
 ln -s /etc/httpd/conf/magic conf/magic
 
@@ -99,17 +99,17 @@ fi
 echo "export OPENSHIFT_PHPMOADMIN_USERNAME='admin'" > $APP_HOME/.env/OPENSHIFT_PHPMOADMIN_USERNAME
 echo "export OPENSHIFT_PHPMOADMIN_PASSWORD='$password'" > $APP_HOME/.env/OPENSHIFT_PHPMOADMIN_PASSWORD
 
-. $APP_HOME/.env/OPENSHIFT_DB_USERNAME
-. $APP_HOME/.env/OPENSHIFT_DB_PASSWORD
-. $APP_HOME/.env/OPENSHIFT_DB_HOST
-. $APP_HOME/.env/OPENSHIFT_DB_PORT
+. $APP_HOME/.env/OPENSHIFT_NOSQL_DB_USERNAME
+. $APP_HOME/.env/OPENSHIFT_NOSQL_DB_PASSWORD
+. $APP_HOME/.env/OPENSHIFT_NOSQL_DB_HOST
+. $APP_HOME/.env/OPENSHIFT_NOSQL_DB_PORT
 . $APP_HOME/.env/OPENSHIFT_PHPMOADMIN_USERNAME
 . $APP_HOME/.env/OPENSHIFT_PHPMOADMIN_PASSWORD
 
-sed -e "s,TEMPLATE_SET_MONGODB_USERNAME,$OPENSHIFT_DB_USERNAME," \
-    -e "s,TEMPLATE_SET_MONGODB_HOST,$OPENSHIFT_DB_HOST," \
-    -e "s,TEMPLATE_SET_MONGODB_PASSWORD,$OPENSHIFT_DB_PASSWORD," \
-    -e "s,TEMPLATE_SET_MONGODB_PORT,$OPENSHIFT_DB_PORT," \
+sed -e "s,TEMPLATE_SET_MONGODB_USERNAME,$OPENSHIFT_NOSQL_DB_USERNAME," \
+    -e "s,TEMPLATE_SET_MONGODB_HOST,$OPENSHIFT_NOSQL_DB_HOST," \
+    -e "s,TEMPLATE_SET_MONGODB_PASSWORD,$OPENSHIFT_NOSQL_DB_PASSWORD," \
+    -e "s,TEMPLATE_SET_MONGODB_PORT,$OPENSHIFT_NOSQL_DB_PORT," \
     -e "s,TEMPLATE_SET_PHPMOADMIN_USERNAME,$OPENSHIFT_PHPMOADMIN_USERNAME," \
     -e "s,TEMPLATE_SET_PHPMOADMIN_PASSWORD,$OPENSHIFT_PHPMOADMIN_PASSWORD," \
     $CART_INFO_DIR/html/moadmin.php > $PHPMOADMIN_DIR/moadmin.php
@@ -170,8 +170,6 @@ restart_httpd_graceful
 
 
 # Grab the env vars so we can print them
-. $APP_HOME/.env/OPENSHIFT_DB_USERNAME
-. $APP_HOME/.env/OPENSHIFT_DB_PASSWORD
 . $APP_HOME/.env/OPENSHIFT_APP_DNS
 
 

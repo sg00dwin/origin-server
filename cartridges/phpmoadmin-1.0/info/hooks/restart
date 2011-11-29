@@ -25,7 +25,7 @@ function print_help {
     echo "Usage: $0 app-name namespace uuid"
     echo "Stop a running application and disable it"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_phpmyadmin_restart
+    echo "$0 $@" | logger -p local0.notice -t libra_phpmoadmin_restart
     exit 1
 }
 
@@ -47,12 +47,12 @@ source ${CART_DIR}/abstract/info/lib/util
 
 setup_basic_hook "$1" $2 $3
 
-PHPMYADMIN_DIR=`echo $APP_HOME/phpmyadmin-3.4 | tr -s /` # ensure that there aren't double /'s
-PHPMYADMIN_CTL_SCRIPT="$PHPMYADMIN_DIR/${application}_phpmyadmin_ctl.sh"
+PHPMOADMIN_DIR=`echo $APP_HOME/phpmoadmin-1.0 | tr -s /` # ensure that there aren't double /'s
+PHPMOADMIN_CTL_SCRIPT="$PHPMOADMIN_DIR/${application}_phpmoadmin_ctl.sh"
 
 
 #
 # Start application
 #
-rm -f "$PHPMYADMIN_DIR/run/stop_lock"
-runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $PHPMYADMIN_CTL_SCRIPT restart"
+rm -f "$PHPMOADMIN_DIR/run/stop_lock"
+runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $PHPMOADMIN_CTL_SCRIPT restart"
