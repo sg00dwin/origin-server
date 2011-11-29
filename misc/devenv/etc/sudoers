@@ -88,7 +88,6 @@ Defaults    secure_path = /sbin:/bin:/usr/sbin:/usr/bin
 ## Allow root to run any commands anywhere 
 root	ALL=(ALL) 	ALL
 mhicks ALL=(ALL)	ALL
-apache ALL=(root) NOPASSWD: /usr/bin/runcon -l s0-s0\:c0.c1023 /usr/bin/rhc-restorer -u [a-f0-9]*
 
 ## Allows members of the 'sys' group to run networking, software, 
 ## service management apps and more.
