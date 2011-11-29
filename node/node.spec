@@ -23,6 +23,7 @@ Requires:      rubygem-parseconfig
 Requires:      quota
 Requires:      lsof
 Requires:      wget
+Requires:      oddjob
 Requires(post):   /usr/sbin/semodule
 Requires(post):   /usr/sbin/semanage
 Requires(postun): /usr/sbin/semodule
@@ -54,6 +55,9 @@ mkdir -p %{buildroot}%{_libexecdir}/li
 mkdir -p %{buildroot}%{_sysconfdir}/httpd/conf.d/libra
 mkdir -p %{buildroot}/usr/share/selinux/packages
 mkdir -p %{buildroot}%{_sysconfdir}/cron.daily/
+mkdir -p %{buildroot}%{_sysconfdir}/oddjobd.conf.d/
+mkdir -p %{buildroot}%{_sysconfdir}/dbus-1/system.d/
+mkdir -p %{buildroot}%{_sysconfdir}/cron.daily/
 mkdir -p %{buildroot}%{_sysconfdir}/libra/skel
 mkdir -p %{buildroot}/%{_localstatedir}/www/html/restorer.php
 
@@ -74,7 +78,10 @@ rm -rf $RPM_BUILD_ROOT
 perl -p -i -e 's:/cgroup/[^\s]+;:/cgroup/all;:; /blkio|cpuset|devices/ && ($_ = "#$_")' /etc/cgconfig.conf
 /sbin/restorecon /etc/cgconfig.conf || :
 # only restart if it's on
-chkconfig cgconfig && /sbin/service cgconfig restart >/dev/null 2>&1 || :
+/sbin/chkconfig cgconfig && /sbin/service cgconfig restart >/dev/null 2>&1 || :
+/sbin/chkconfig oddjob on
+/sbin/service messagebus restart
+/sbin/service oddjob restart
 /sbin/chkconfig --add libra || :
 /sbin/chkconfig --add libra-data || :
 /sbin/chkconfig --add libra-cgroups || :
@@ -151,6 +158,7 @@ fi
 %attr(0750,-,-) %{_bindir}/rhc-node-account
 %attr(0750,-,-) %{_bindir}/rhc-node-application
 %attr(0755,-,-) %{_bindir}/rhcsh
+%attr(0640,-,0) %config(noreplace) %{_sysconfdir}/oddjobd.conf.d/*-restorer.conf
 %attr(0640,-,-) %config(noreplace) %{_sysconfdir}/libra/node.conf
 %attr(0640,-,-) %config(noreplace) %{_sysconfdir}/libra/resource_limits.con*
 %attr(0750,-,-) %config(noreplace) %{_sysconfdir}/cron.daily/libra_tmpwatch.sh
