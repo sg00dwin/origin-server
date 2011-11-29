@@ -186,7 +186,7 @@ def execute_script(cmd)
       begin
         Process.kill("TERM", pid)
       rescue Exception => e
-        puts "execute_script: WARNING - Failed to kill cmd: #{cmd}"
+        puts "execute_script: WARNING - Failed to kill cmd: '#{cmd}' with message: #{e.message}"
       end
       puts "Command '#{cmd}' timed out"
       raise if i == num_tries
