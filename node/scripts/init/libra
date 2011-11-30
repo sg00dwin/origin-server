@@ -152,8 +152,19 @@ stop() {
 }
 
 restart() {
-    stop
-    start
+    # This restarts each app individually. DO NOT change it to simply call stop() and start()
+    echo "Restarting Libra Services: "
+
+    for USERNAME in `libra_users`
+    do
+        stopuser $USERNAME
+        startuser $USERNAME
+    done
+    [ $GROUP_RETVAL -eq 0 ] && touch ${lockfile}
+    [ $GROUP_RETVAL -eq 0 ] && success || failure
+    echo -n $"Libra services restarted"
+    echo
+    return $GROUP_RETVAL
 }
 
 case "$1" in
