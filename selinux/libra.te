@@ -159,7 +159,7 @@ apache_search_sys_scripts(libra_domain)
 # Will need to change to this when it becomes available in RHEL6.2 policy
 #apache_exec_sys_scripts(libra_domain)
 
-apache_content_type(libra)
+apache_content_template(libra)
 domtrans_pattern(httpd_libra_script_t, libra_initrc_exec_t, libra_initrc_t)
 
 ########################################
