@@ -207,7 +207,7 @@ class Release < Thor
         exit 1
       end
   
-      unless skip_gem?
+      unless skip_gem
         # Build the gem locally since it's not stored centrally like RPMs in Brew
         puts "Building client gem..."
         if File.exists?('../os-client-tools/express')
@@ -229,7 +229,7 @@ class Release < Thor
         exit 1
       end
       
-      unless skip_gem?
+      unless skip_gem
         puts "Syncing client gem to repo..."
         if File.exists?('../os-client-tools/express')
           unless run("#{rsync} ../os-client-tools/express/pkg/*.gem #{repo}/#{mash_config}/client/gems/", :verbose => options.verbose?)
@@ -242,7 +242,7 @@ class Release < Thor
         end
       end
   
-      unless skip_gem?
+      unless skip_gem
         puts "Updating gem indexes..."
         unless run("ssh root@#{repo_host} 'gem generate_index -d #{repo_dir}/#{mash_config}/client'", :verbose => options.verbose?)
           puts "ERROR - Gem index update failed."
@@ -267,7 +267,7 @@ class Release < Thor
         puts "Done"
       else
         puts "Kicking off AMI build..."
-        unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/libra_ami#{options.clean? ? "" : "_update"}/build?token=#{token}", :verbose => options.verbose?)
+        unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/libra_ami#{options.clean_ami? ? "" : "_update"}/build?token=#{token}", :verbose => options.verbose?)
           puts "ERROR - Jenkins remote job invocation failed."
           exit 1
         end
