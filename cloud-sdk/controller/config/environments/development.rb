@@ -27,4 +27,15 @@ Controller::Application.configure do
 
   # Expands the lines which load the assets
   config.assets.debug = true
+
+  # CDK Config
+  config.cdk = {
+    :domain_suffix => "dev.rhcloud.com",
+    :broker_auth_secret => "",
+    :broker_auth_rsa_secret => "",
+    :auth_service => {
+      :host => "https://www.redhat.com",
+      :base_url => "/wapps/streamline"
+    }
+  }
 end

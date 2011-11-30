@@ -30,7 +30,7 @@ class LegacyBrokerController < ApplicationController
     @reply.data = {
       :rhlogin    => cloud_user.rhlogin,
       :uuid       => cloud_user.uuid,
-      :rhc_domain => Config.get("cloud_domain")
+      :rhc_domain => Rails.application.config.cdk[:domain_suffix]
     }
       
     render :json => @reply
@@ -141,7 +141,7 @@ class LegacyBrokerController < ApplicationController
   end
   
   def authenticate_user
-    @login = AuthService.instance.login(@req.rhlogin, params["password"])
+    @login = AuthService.instance.login(request, params, cookies)
     unless @login
       @reply.message, @reply.exit_code = "Invalid user credentials", 97
       render :json => @reply, :status => :unauthorized
