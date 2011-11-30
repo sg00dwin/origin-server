@@ -1,4 +1,4 @@
-/* DO NOT MODIFY. This file was compiled Mon, 21 Nov 2011 19:24:56 GMT from
+/* DO NOT MODIFY. This file was compiled Wed, 30 Nov 2011 18:02:26 GMT from
  * /home/aboone/Source/li/site/app/coffeescripts/control_panel.coffee
  */
 
@@ -71,7 +71,9 @@
           $('#ssh_form_express_domain_ssh').val(event.osEventData.ssh);
           return $('#express_domain_ssh').val(event.osEventData.ssh);
         } else {
-          err_msg = event.osEventData.replace(/>/g, '&gt;').replace(/</g, '&lt;');
+          err_msg = event.osEventData;
+          err_msg = err_msg.replace(/([^\s]{30})[^\s]+/g, '$1...');
+          err_msg = err_msg.replace(/>/g, '&gt;').replace(/</g, '&lt;');
           return ($('.os-dialog-container', cpDialog)).prepend("<div class=\"error message\">\n  " + err_msg + "\n</div>");
         }
       }
