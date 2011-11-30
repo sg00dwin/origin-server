@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.82.9
+Version:   0.82.10
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -221,6 +221,9 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 %{_initddir}/sauce-connect
 
 %changelog
+* Wed Nov 30 2011 Dan McPherson <dmcphers@redhat.com> 0.82.10-1
+- remove cloud-sdk from prereqs (dmcphers@redhat.com)
+
 * Tue Nov 29 2011 Dan McPherson <dmcphers@redhat.com> 0.82.9-1
 - removing un-needed sudoers file (mmcgrath@redhat.com)
 - prep work for idler/restorer (mmcgrath@redhat.com)
