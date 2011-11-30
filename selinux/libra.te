@@ -10,6 +10,7 @@ type libra_initrc_t;
 type libra_initrc_exec_t;
 init_daemon_domain(libra_initrc_t, libra_initrc_exec_t)
 init_ranged_daemon_domain(libra_initrc_t, libra_initrc_exec_t, s0 - mcs_systemhigh)
+oddjob_system_entry(libra_initrc_t, libra_initrc_exec_t)
 
 type libra_tmp_t;
 files_tmp_file(libra_tmp_t)
