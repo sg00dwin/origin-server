@@ -1,5 +1,5 @@
-/* DO NOT MODIFY. This file was compiled Mon, 28 Nov 2011 22:47:36 GMT from
- * /home/ffranz/Development/redhat/li/site/app/coffeescripts/script.coffee
+/* DO NOT MODIFY. This file was compiled Wed, 30 Nov 2011 15:20:41 GMT from
+ * /home/aboone/Source/li/site/app/coffeescripts/script.coffee
  */
 
 (function() {
