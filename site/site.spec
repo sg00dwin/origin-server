@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.82.15
+Version:   0.82.16
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -68,6 +68,16 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Wed Nov 30 2011 Dan McPherson <dmcphers@redhat.com> 0.82.16-1
+- Fix for 758628 - shorten long SSH keys in error message (aboone@redhat.com)
+- Added style.css to site once the build process is not compass compiling it
+  automagically (ffranz@redhat.com)
+- Added style.css to site once the build process is not compass compiling it
+  automagically (ffranz@redhat.com)
+- Compiled JS for c5440f7 (cope with long usernames in nav) (aboone@redhat.com)
+- Added style.css to site once the build process is not compass compiling it
+  automagically (ffranz@redhat.com)
+
 * Mon Nov 28 2011 Dan McPherson <dmcphers@redhat.com> 0.82.15-1
 - Fixes 749297 - truncates the username line with ellipsis when it's too large
   (ffranz@redhat.com)
