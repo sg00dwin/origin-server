@@ -1,4 +1,4 @@
-/* DO NOT MODIFY. This file was compiled Mon, 28 Nov 2011 16:04:45 GMT from
+/* DO NOT MODIFY. This file was compiled Wed, 30 Nov 2011 15:20:41 GMT from
  * /home/aboone/Source/li/site/app/coffeescripts/script.coffee
  */
 
@@ -35,6 +35,7 @@
         return stuck = false;
       }
     });
+    $('header.universal nav li a').textOverflow();
     announcements = $('#announcements');
     ann_list = $('ul', announcements);
     on_announcement = 0;
