@@ -7,35 +7,14 @@ desc "Print environment to run from checkout - eval $( rake local_env | tail -n 
 task :local_env do
   pwd = Dir.pwd
   puts "RUBYLIB='#{pwd}/lib/'; export RUBYLIB"
-  puts "PATH='#{pwd}/bin/:#{ENV['PATH']}'; export PATH"
-  puts "CDK_CONFIG_DIR='#{pwd}/conf'; export CDK_CONFIG_DIR"
 end
 
 desc "Unit tests"
-Rake::TestTask.new(:unit_test) do |t|
+Rake::TestTask.new(:test) do |t|
   t.libs << File.expand_path('../lib', __FILE__)
   t.libs << File.expand_path('../test', __FILE__)
   t.libs << File.expand_path('../test/unit', __FILE__)
   t.pattern = 'test/unit/**/*_test.rb'
-end
-
-desc "Integration tests"
-begin
-  require 'cucumber/rake/task'
-rescue LoadError => e
-  print "Unable to run integration tests. Please install cucumber"
-else
-  Cucumber::Rake::Task.new(:integration_test) do |t|
-    ENV['RUBYLIB'] = "#{File.dirname(__FILE__)}/lib:#{ENV['RUBYLIB']}"
-    t.libs << File.expand_path('../lib', __FILE__)
-    t.libs << File.expand_path('../test', __FILE__)
-    t.rcov = false
-    #t.cucumber_opts = "--require #{File.expand_path('../test/functional', __FILE__)} --format pretty #{File.expand_path('../test/functional/features/sample.feature', __FILE__)}"
-    t.cucumber_opts = "--require #{File.expand_path('../test/functional', __FILE__)} --format pretty #{File.expand_path('../test/functional', __FILE__)}"
-  end
-end
-
-task :test => [:unit_test, :integration_test] do
 end
 
 desc "Generate RDoc"
