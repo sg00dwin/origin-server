@@ -1,10 +1,12 @@
-/* DO NOT MODIFY. This file was compiled Mon, 28 Nov 2011 16:04:45 GMT from
- * /home/aboone/Source/li/site/app/coffeescripts/script.coffee
+/* DO NOT MODIFY. This file was compiled Mon, 28 Nov 2011 22:47:36 GMT from
+ * /home/ffranz/Development/redhat/li/site/app/coffeescripts/script.coffee
  */
 
 (function() {
   var $;
+
   $ = jQuery;
+
   $(function() {
     var ann_height, ann_list, announcements, body, current, hide_notification, hide_outage_txt, links, nav, nav_top, on_announcement, outage_animation_length, outage_notification, outage_notification_neg_height, outage_toggle, outage_toggle_state, overlay, scroll_announcements, section_selector, sections, show_notification, show_outage_txt, sticky_css, stuck, top, unsticky_css;
     body = $('body');
@@ -35,6 +37,7 @@
         return stuck = false;
       }
     });
+    $('header.universal nav li a').textOverflow();
     announcements = $('#announcements');
     ann_list = $('ul', announcements);
     on_announcement = 0;
@@ -62,9 +65,7 @@
           current = current.parents(section_selector);
         }
       }
-      if (!current || current.length !== 1) {
-        current = sections.first();
-      }
+      if (!current || current.length !== 1) current = sections.first();
       sections.hide();
       links.removeClass('active');
       current.show();
@@ -164,4 +165,5 @@
       });
     }
   });
+
 }).call(this);
