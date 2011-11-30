@@ -40,7 +40,6 @@ Requires:  rubygem-mechanize
 Requires:  rubygem-mocha
 Requires:  rubygem-rspec
 Requires:  rubygem-nokogiri
-Requires:  rubygem-cloud-sdk
 Requires:  charlie
 Requires:  pam
 
