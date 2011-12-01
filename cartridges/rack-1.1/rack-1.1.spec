@@ -2,7 +2,7 @@
 
 Summary:   Provides ruby rack support running on Phusion Passenger
 Name:      rhc-cartridge-rack-1.1
-Version:   0.83.0
+Version:   0.83.1
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -103,6 +103,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Thu Dec 01 2011 Dan McPherson <dmcphers@redhat.com> 0.83.1-1
+- bump spec numbers (dmcphers@redhat.com)
+
 * Mon Nov 28 2011 Dan McPherson <dmcphers@redhat.com> 0.82.7-1
 - move logic to deploy from post_deploy (dmcphers@redhat.com)
 - fixed OpenShift ruby mirror URL (tdawson@redhat.com)
