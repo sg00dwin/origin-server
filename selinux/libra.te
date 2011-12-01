@@ -182,6 +182,7 @@ gen_require(`
  
 role_transition unconfined_r libra_initrc_exec_t system_r;
 unconfined_domain_noaudit(libra_initrc_t)
+mcs_process_set_categories(libra_initrc_t)
 
 domtrans_pattern(unconfined_usertype, libra_initrc_exec_t, libra_initrc_t)
 domtrans_pattern(rpm_script_t, libra_initrc_exec_t, libra_initrc_t)
