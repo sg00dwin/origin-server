@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.83.0
+Version:       0.83.1
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -38,6 +38,11 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Thu Dec 01 2011 Dan McPherson <dmcphers@redhat.com> 0.83.1-1
+- bump spec numbers (dmcphers@redhat.com)
+- Allow libra_initrc_t to set categories on processes (dwalsh@redhat.com)
+- Fixes to allow libra domains to work with oddjob (dwalsh@redhat.com)
+
 * Wed Nov 30 2011 Dan McPherson <dmcphers@redhat.com> 0.81.10-1
 - fix type on policy (dwalsh@redhat.com)
 - Add httpd_libra_script_t policy to allow httpd to talk to oddjob and start up
