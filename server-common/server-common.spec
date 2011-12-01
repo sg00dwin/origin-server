@@ -2,7 +2,7 @@
 
 Summary:       Common dependencies of the OpenShift broker and site
 Name:          rhc-server-common
-Version:       0.83.0
+Version:       0.83.1
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -56,6 +56,9 @@ rm -rf %{buildroot}
                                   -s /sbin/nologin 2>&1 > /dev/null || :
 
 %changelog
+* Thu Dec 01 2011 Dan McPherson <dmcphers@redhat.com> 0.83.1-1
+- bump spec numbers (dmcphers@redhat.com)
+
 * Fri Nov 25 2011 Dan McPherson <dmcphers@redhat.com> 0.82.10-1
 - dont track moves in nurture (dmcphers@redhat.com)
 - devenv and migrate improvements (dmcphers@redhat.com)
