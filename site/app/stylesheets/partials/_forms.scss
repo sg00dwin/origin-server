@@ -86,6 +86,12 @@ fieldset.confirm {
   }
 }
 
+fieldset.promo {
+  label {
+    margin: 0;
+  }
+}
+
 input.correct {
   border: 2px solid #8FDB45;
   margin: .15em;
