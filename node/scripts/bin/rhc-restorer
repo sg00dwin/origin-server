@@ -25,7 +25,7 @@ then
     print_help
 fi
 
-/usr/bin/runcon -l s0-s0:c0.c1023 /sbin/service libra startuser "${uuid}"
+/sbin/service libra startuser "${uuid}"
 
 sed -i "s/#ProxyPass/ProxyPass/g" "/etc/httpd/conf.d/libra/${uuid}"*.conf
 
