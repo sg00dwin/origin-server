@@ -72,16 +72,6 @@ then
     echo 1 > /proc/sys/net/ipv6/conf/default/disable_ipv6
 fi
 
-# UGLY HACK, fix this later
-if ! ( runcon | grep -q s0-s0:c0.c1023 )
-then
-    echo 1>&2
-    echo "ERROR: incorrect selinux range - please rerun with:" 1>&2
-    echo "runcon -l s0-s0:c0.c1023 $0" 1>&2
-    echo 1>&2
-    exit 243
-fi
-
 startuser() {
     # USERNAME=$1
     for APPNAME in `userapps $1`
