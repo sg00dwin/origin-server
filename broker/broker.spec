@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.82.6
+Version:   0.83.1
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -21,6 +21,7 @@ Requires:  rubygem-parseconfig
 Requires:  rubygem-passenger-native-libs
 Requires:  rubygem-rails
 Requires:  rubygem-xml-simple
+Requires:  rubygem-open4
 
 Obsoletes: rhc-server
 
@@ -68,6 +69,10 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Thu Dec 01 2011 Dan McPherson <dmcphers@redhat.com> 0.83.1-1
+- bump spec numbers (dmcphers@redhat.com)
+- add open4 require to broker (dmcphers@redhat.com)
+
 * Wed Nov 16 2011 Dan McPherson <dmcphers@redhat.com> 0.82.6-1
 - Bug 754013 (dmcphers@redhat.com)
 
