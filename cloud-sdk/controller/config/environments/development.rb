@@ -23,10 +23,10 @@ Controller::Application.configure do
   config.action_dispatch.best_standards_support = :builtin
 
   # Do not compress assets
-  config.assets.compress = false
+  #config.assets.compress = false
 
   # Expands the lines which load the assets
-  config.assets.debug = true
+  #config.assets.debug = true
 
   # CDK Config
   config.cdk = {
@@ -38,4 +38,6 @@ Controller::Application.configure do
       :base_url => "/wapps/streamline"
     }
   }
+  
+  config.app_scope = "broker"
 end
