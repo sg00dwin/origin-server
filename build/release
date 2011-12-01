@@ -210,7 +210,7 @@ class Release < Thor
       # If createrepo understands --compress-type flag, it will create repodata in RHEL5-unfriendly format
       # recreate repo metadata if we are targeting RHEL5 and createrepo is sufficiently equipped
       if pkg_suffix =~ /^el5/
-        `/usr/bin/createrepo -h | grep -q "\-\-compress-type"`
+        `/usr/bin/createrepo -h | grep -q compress-type`
         cmd_exit = $?.exitstatus
         if cmd_exit == 0
           repos = `/usr/bin/find /tmp/#{mash_config} -type d -name repodata | /bin/sed 's,/repodata$,,'`.chomp.split("\n")
