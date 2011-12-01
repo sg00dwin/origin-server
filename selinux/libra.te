@@ -100,6 +100,7 @@ kernel_read_network_state(libra_domain)
 kernel_read_vm_sysctls(libra_t)
 kernel_search_vm_sysctl(libra_t)
 kernel_dontaudit_list_all_proc(libra_domain)
+kernel_dontaudit_list_all_sysctls(libra_domain)
 
 corecmd_exec_bin(libra_domain)
 corecmd_exec_shell(libra_domain)
@@ -161,6 +162,9 @@ apache_search_sys_scripts(libra_domain)
 
 apache_content_template(libra)
 domtrans_pattern(httpd_libra_script_t, libra_initrc_exec_t, libra_initrc_t)
+oddjob_dbus_chat(httpd_libra_script_t)
+dbus_system_bus_client(httpd_libra_script_t)
+oddjob_dontaudit_rw_fifo_file(libra_domain)
 
 ########################################
 #
