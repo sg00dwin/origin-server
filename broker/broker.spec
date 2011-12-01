@@ -21,6 +21,7 @@ Requires:  rubygem-parseconfig
 Requires:  rubygem-passenger-native-libs
 Requires:  rubygem-rails
 Requires:  rubygem-xml-simple
+Requires:  rubygem-open4
 
 Obsoletes: rhc-server
 
