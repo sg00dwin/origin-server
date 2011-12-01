@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.82.16
+Version:   0.82.17
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -68,6 +68,10 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Thu Dec 01 2011 Dan McPherson <dmcphers@redhat.com> 0.82.17-1
+- Fix for BZ 758976 - prevent promo code label from getting shifted over
+  (aboone@redhat.com)
+
 * Wed Nov 30 2011 Dan McPherson <dmcphers@redhat.com> 0.82.16-1
 - Fix for 758628 - shorten long SSH keys in error message (aboone@redhat.com)
 - Added style.css to site once the build process is not compass compiling it
