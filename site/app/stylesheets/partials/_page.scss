@@ -247,7 +247,7 @@ header.universal {
       margin: 0;
       list-style-type: none;
       
-      a {
+     a {
         padding: .9em 1em;
         @include inline-block;
         color: white;
@@ -256,8 +256,8 @@ header.universal {
         text-decoration: none;
         cursor: pointer;
         white-space: nowrap;
-        max-width: 19em;
         overflow: hidden;
+        max-width: 19em;
         text-overflow: ellipsis;
         @include transition-duration(.5s);
       }
@@ -272,6 +272,11 @@ header.universal {
       &.user {
         float: right;
       }
+
+      .ie8 &.greeting {
+        width: 19em;
+      }
+
     }
   }
 }

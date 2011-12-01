@@ -11,7 +11,7 @@
   -if session[:login]
     %li.user
       = link_to 'Sign out', logout_path, :class => 'sign_out'
-    %li.user
+    %li.user.greeting
       = link_to control_panel_path, :class => 'greeting' do
         Greetings, #{session[:login]}!
   -else

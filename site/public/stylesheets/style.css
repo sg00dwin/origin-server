@@ -14,7 +14,6 @@
   font-style: normal;
 }
 
-/* line 3, /home/aboone/Source/li/site/app/stylesheets/partials/_forms.scss */
 label {
   margin: 1.2em 0;
   display: block;
@@ -22,12 +21,10 @@ label {
   *zoom: 1;
 }
 
-/* line 9, /home/aboone/Source/li/site/app/stylesheets/partials/_forms.scss */
 .inputs label + input {
   margin-top: -1em;
 }
 
-/* line 12, /home/aboone/Source/li/site/app/stylesheets/partials/_forms.scss */
 label.error,
 p.inline-errors {
   color: red;
@@ -35,7 +32,6 @@ p.inline-errors {
   padding: 0;
 }
 
-/* line 19, /home/aboone/Source/li/site/app/stylesheets/partials/_forms.scss */
 input,
 textarea {
   display: block;
@@ -50,13 +46,11 @@ textarea {
   -khtml-border-radius: 0.4em;
   border-radius: 0.4em;
 }
-/* line 27, /home/aboone/Source/li/site/app/stylesheets/partials/_forms.scss */
 input:focus,
 textarea:focus {
   border: 0.2em solid #509ef1;
   margin: .15em;
 }
-/* line 32, /home/aboone/Source/li/site/app/stylesheets/partials/_forms.scss */
 input.button,
 textarea.button {
   color: white;
@@ -75,24 +69,20 @@ textarea.button {
   cursor: pointer;
   width: 23em;
 }
-/* line 46, /home/aboone/Source/li/site/app/stylesheets/partials/_forms.scss */
 input.button:focused, input.button:active,
 textarea.button:focused,
 textarea.button:active {
   outline: none;
 }
 
-/* line 51, /home/aboone/Source/li/site/app/stylesheets/partials/_forms.scss */
 textarea {
   height: 18em;
 }
 
-/* line 55, /home/aboone/Source/li/site/app/stylesheets/partials/_forms.scss */
 select {
   display: block;
 }
 
-/* line 59, /home/aboone/Source/li/site/app/stylesheets/partials/_forms.scss */
 fieldset.confirm {
   overflow: hidden;
   *zoom: 1;
@@ -102,7 +92,6 @@ fieldset.confirm {
   overflow: visible;
   position: relative;
 }
-/* line 67, /home/aboone/Source/li/site/app/stylesheets/partials/_forms.scss */
 fieldset.confirm li label {
   border: 0;
   clip: rect(0 0 0 0);
@@ -113,7 +102,6 @@ fieldset.confirm li label {
   position: absolute;
   width: 1px;
 }
-/* line 50, /usr/lib64/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_helpers.scss */
 fieldset.confirm li label.focusable:active, fieldset.confirm li label.focusable:focus {
   clip: auto;
   height: auto;
@@ -122,7 +110,6 @@ fieldset.confirm li label.focusable:active, fieldset.confirm li label.focusable:
   position: static;
   width: auto;
 }
-/* line 74, /home/aboone/Source/li/site/app/stylesheets/partials/_forms.scss */
 fieldset.confirm li label.error,
 fieldset.confirm label.error,
 fieldset.confirm li p.inline-errors,
@@ -139,52 +126,43 @@ fieldset.confirm p.inline-errors {
   position: absolute;
   bottom: -2.1em;
 }
-/* line 83, /home/aboone/Source/li/site/app/stylesheets/partials/_forms.scss */
 fieldset.confirm input {
   float: left;
   width: 10em;
 }
 
-/* line 90, /home/aboone/Source/li/site/app/stylesheets/partials/_forms.scss */
 fieldset.promo label {
   margin: 0;
 }
 
-/* line 95, /home/aboone/Source/li/site/app/stylesheets/partials/_forms.scss */
 input.correct {
   border: 2px solid #8FDB45;
   margin: .15em;
   background: white url("../images/check.png") no-repeat right center;
 }
 
-/* line 101, /home/aboone/Source/li/site/app/stylesheets/partials/_forms.scss */
 input.error {
   border: 2px solid red;
   margin: .15em;
   background: white url("../images/eks.png") no-repeat right center;
 }
 
-/* line 107, /home/aboone/Source/li/site/app/stylesheets/partials/_forms.scss */
 input[type=radio], input[type=checkbox] {
   float: left;
   margin: .1em .5em 0;
 }
 
-/* line 112, /home/aboone/Source/li/site/app/stylesheets/partials/_forms.scss */
 form {
   width: 25em;
 }
-/* line 114, /home/aboone/Source/li/site/app/stylesheets/partials/_forms.scss */
 form ul, form ol {
   margin: 0;
   padding: 0;
 }
-/* line 118, /home/aboone/Source/li/site/app/stylesheets/partials/_forms.scss */
 form li {
   list-style-type: none;
 }
 
-/* line 123, /home/aboone/Source/li/site/app/stylesheets/partials/_forms.scss */
 fieldset {
   border: none;
   outline: none;
@@ -211,19 +189,16 @@ input[type="radio"]:checked::before {
 }
 */
 /* Placeholder text */
-/* line 149, /home/aboone/Source/li/site/app/stylesheets/partials/_forms.scss */
 ::-webkit-input-placeholder {
   color: #999;
 }
 
-/* line 152, /home/aboone/Source/li/site/app/stylesheets/partials/_forms.scss */
 :-moz-placeholder {
   color: #999;
 }
 
 /* Styles for widgets used in the control panels */
 /******* Dialog *******/
-/* line 3, /home/aboone/Source/li/site/app/stylesheets/partials/_widgets.scss */
 .os-widget.os-dialog {
   display: none;
   width: 28em;
@@ -247,12 +222,10 @@ input[type="radio"]:checked::before {
   box-shadow: 0 0 2em rgba(0, 0, 0, 0.7);
 }
 
-/* line 17, /home/aboone/Source/li/site/app/stylesheets/partials/_widgets.scss */
 .no-boxshadow .os-widget.os-dialog {
   border: 1px solid #666;
 }
 
-/* line 21, /home/aboone/Source/li/site/app/stylesheets/partials/_widgets.scss */
 #overlay {
   display: none;
   position: fixed;
@@ -266,7 +239,6 @@ input[type="radio"]:checked::before {
   opacity: 0.4;
 }
 
-/* line 30, /home/aboone/Source/li/site/app/stylesheets/partials/_widgets.scss */
 a.os-close-link {
   float: right;
   font-family: Overpass, "Liberation Sans", Arial, "Helvetica Neue", Helvetica, sans-serif;
@@ -285,16 +257,13 @@ a.os-close-link {
   margin-bottom: 1em;
   text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.5);
 }
-/* line 42, /home/aboone/Source/li/site/app/stylesheets/partials/_widgets.scss */
 a.os-close-link::before {
   content: '✖ ';
 }
-/* line 45, /home/aboone/Source/li/site/app/stylesheets/partials/_widgets.scss */
 a.os-close-link:hover {
   background-color: #26b9ff;
 }
 
-/* line 49, /home/aboone/Source/li/site/app/stylesheets/partials/_widgets.scss */
 .os-dialog-container {
   clear: both;
   background: white;
@@ -309,49 +278,40 @@ a.os-close-link:hover {
 
 /******* Inline doc widget *******/
 /* standard styles */
-/* line 60, /home/aboone/Source/li/site/app/stylesheets/partials/_widgets.scss */
 .js .inline-docs-widget .link {
   display: inline;
   text-transform: lowercase;
 }
-/* line 64, /home/aboone/Source/li/site/app/stylesheets/partials/_widgets.scss */
 .js .inline-docs-widget .link::before {
   content: '(';
 }
-/* line 67, /home/aboone/Source/li/site/app/stylesheets/partials/_widgets.scss */
 .js .inline-docs-widget .link::after {
   content: ')';
 }
-/* line 70, /home/aboone/Source/li/site/app/stylesheets/partials/_widgets.scss */
 .js .inline-docs-widget .docs {
   display: none;
 }
 
 /* fallback no js styles */
-/* line 76, /home/aboone/Source/li/site/app/stylesheets/partials/_widgets.scss */
 .no-js .inline-docs-widget .link {
   display: none;
 }
 
 /******* Popup link *******/
 /* standard styles */
-/* line 83, /home/aboone/Source/li/site/app/stylesheets/partials/_widgets.scss */
 .js .popup-trigger {
   font-family: Overpass, "Liberation Sans", Arial, "Helvetica Neue", Helvetica, sans-serif;
 }
 
-/* line 86, /home/aboone/Source/li/site/app/stylesheets/partials/_widgets.scss */
 .js .popup-content {
   display: none;
 }
 
-/* line 89, /home/aboone/Source/li/site/app/stylesheets/partials/_widgets.scss */
 .js .os-dialog.os-widget .popup-content {
   display: block;
 }
 
 /* fallback styles */
-/* line 93, /home/aboone/Source/li/site/app/stylesheets/partials/_widgets.scss */
 .no-js .popup-trigger {
   display: none;
 }
@@ -360,14 +320,12 @@ a.os-close-link:hover {
 /* standard styles */
 /* falback styles */
 /* Universal styles */
-/* line 3, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 body {
   margin: 0;
   padding: 0;
   background-color: #574d4f;
 }
 
-/* line 9, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 body.home {
   min-width: 52em;
 }
@@ -380,129 +338,105 @@ body.home {
   background-position: -150px -240px;
 }
 */
-/* line 22, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 body, select, input, textarea {
   color: #444444;
   font-family: "Liberation Sans", Arial, "Helvetica Neue", Helvetica, sans-serif;
   font-size: 1em;
 }
 
-/* line 28, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 h1, h2, h3, h4, h5, h6 {
   font-family: OverpassBold, "Liberation Sans", Arial, "Helvetica Neue", Helvetica, sans-serif;
   font-weight: bold;
 }
 
-/* line 33, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 a, a:active, a:visited {
   color: black;
 }
 
-/* line 34, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 a:hover {
   color: #3465a4;
 }
 
-/* line 36, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 a:active, a:focus {
   outline: none;
   border: none;
 }
 
-/* line 38, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 strong, th {
   font-weight: bold;
 }
 
-/* line 42, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 small {
   font-size: .85em;
 }
 
-/* line 46, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 ::-webkit-selection {
   background-color: #574d4f;
   color: white;
 }
 
-/* line 49, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 ::-moz-selection {
   background-color: #574d4f;
   color: white;
 }
 
-/* line 52, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 ::selection {
   background-color: #574d4f;
   color: white;
 }
 
-/* line 56, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .express ::-moz-selection {
   background-color: #4e9fdd;
 }
 
-/* line 59, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .express ::-webkit-selection {
   background-color: #4e9fdd;
 }
 
-/* line 62, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .express ::selection {
   background-color: #4e9fdd;
 }
 
-/* line 66, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .flex ::-moz-selection {
   background-color: #dc9f2e;
 }
 
-/* line 69, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .flex ::-webkit-selection {
   background-color: #dc9f2e;
 }
 
-/* line 72, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .flex ::selection {
   background-color: #dc9f2e;
 }
 
-/* line 76, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .power ::-moz-selection {
   background-color: #cc0000;
 }
 
-/* line 79, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .power ::-webkit-selection {
   background-color: #cc0000;
 }
 
-/* line 82, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .power ::selection {
   background-color: #cc0000;
 }
 
-/* line 86, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 header, footer, section {
   display: block;
 }
 
-/* line 88, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 h1 {
   font-size: 1.5em;
 }
 
-/* line 89, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 h2 {
   font-size: 1.25em;
 }
 
-/* line 90, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 h3 {
   font-size: 1.1em;
 }
 
-/* line 91, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 h4 {
   font-size: 1em;
 }
@@ -510,7 +444,6 @@ h4 {
 /* End universal styles */
 /* Shared styles */
 /* Hide section headers that we don't want showing normally */
-/* line 102, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 header.universal hgroup,
 header.universal header,
 nav > header,
@@ -524,7 +457,6 @@ nav > header,
   position: absolute;
   width: 1px;
 }
-/* line 50, /usr/lib64/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_helpers.scss */
 header.universal hgroup.focusable:active, header.universal hgroup.focusable:focus,
 header.universal header.focusable:active,
 header.universal header.focusable:focus,
@@ -541,7 +473,6 @@ nav > header.focusable:focus,
 }
 
 /* Set content width */
-/* line 108, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .content,
 section > header {
   width: 50em;
@@ -549,7 +480,6 @@ section > header {
 }
 
 /* Style buttons */
-/* line 114, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 a.button {
   display: -moz-inline-box;
   -moz-box-orient: vertical;
@@ -574,17 +504,14 @@ a.button {
   -khtml-border-radius: 0.2em;
   border-radius: 0.2em;
 }
-/* line 7, /usr/lib64/ruby/gems/1.8/gems/compass-0.11.5/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
 a.button {
   *display: inline;
 }
-/* line 130, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 a.button:hover {
   text-decoration: none !important;
 }
 
 /* Styles shared by "more" links */
-/* line 136, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 a.more {
   font-family: OverpassBold, "Liberation Sans", Arial, "Helvetica Neue", Helvetica, sans-serif;
   font-weight: bold;
@@ -592,7 +519,6 @@ a.more {
 }
 
 /* Styles shared by main content areas */
-/* line 145, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .main {
   font-size: .9em;
   color: #555;
@@ -601,27 +527,22 @@ a.more {
   background-color: white;
   display: block;
 }
-/* line 153, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .main a {
   color: #1060c8;
   text-decoration: none;
 }
-/* line 157, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .main a:hover {
   color: #3288f7;
   text-decoration: underline;
 }
-/* line 162, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .main a:visited {
   color: #8f0ccc;
 }
-/* line 167, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .main h1, .main h2, .main h3, .main h4, .main h5 {
   color: #555;
   font-family: Overpass, "Liberation Sans", Arial, "Helvetica Neue", Helvetica, sans-serif;
   font-weight: normal;
 }
-/* line 175, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .main h1 {
   width: 100%;
   text-transform: uppercase;
@@ -631,7 +552,6 @@ a.more {
   background-color: rgba(255, 255, 255, 0.9);
 }*/
 /* Flash notices */
-/* line 186, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .message {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
@@ -644,12 +564,10 @@ a.more {
   font-weight: bold;
   text-align: center;
 }
-/* line 196, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .message p {
   margin: 0;
   padding: 0;
 }
-/* line 198, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .message.error {
   /* Red bg */
   background-color: #f33;
@@ -658,7 +576,6 @@ a.more {
   background-image: url("/app/images/icons/error.png");
   text-shadow: 0 0.1em 0 #990000;
 }
-/* line 207, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .message.notice {
   /* bright orange bg */
   background-color: #fc0;
@@ -667,7 +584,6 @@ a.more {
   border-color: #eb0;
   text-shadow: 0 0.1em 0 #cc9900;
 }
-/* line 216, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .message.success {
   /* green bg */
   background-color: #6CDB00;
@@ -679,31 +595,25 @@ a.more {
 
 /* End shared styles */
 /* Layout styles */
-/* line 230, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 header.universal {
   display: block;
 }
-/* line 232, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 header.universal > .content {
   padding: 1em;
 }
-/* line 236, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 header.universal nav {
   display: block;
   background-color: black;
 }
-/* line 240, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 header.universal nav ul {
   padding: 0;
   margin: 0;
 }
-/* line 245, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 header.universal nav li {
   display: inline;
   margin: 0;
   list-style-type: none;
 }
-/* line 250, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 header.universal nav li a {
   padding: .9em 1em;
   display: -moz-inline-box;
@@ -717,29 +627,28 @@ header.universal nav li a {
   text-decoration: none;
   cursor: pointer;
   white-space: nowrap;
-  max-width: 19em;
   overflow: hidden;
+  max-width: 19em;
   text-overflow: ellipsis;
   -moz-transition-duration: 0.5s;
   -webkit-transition-duration: 0.5s;
   -o-transition-duration: 0.5s;
   transition-duration: 0.5s;
 }
-/* line 7, /usr/lib64/ruby/gems/1.8/gems/compass-0.11.5/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
 header.universal nav li a {
   *display: inline;
 }
-/* line 268, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .express header.universal nav li a.express, .flex header.universal nav li a.flex, header.universal nav li.active a,
 header.universal nav li a:hover {
   background-color: #333333;
 }
-/* line 272, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 header.universal nav li.user {
   float: right;
 }
+.ie8 header.universal nav li.greeting {
+  width: 19em;
+}
 
-/* line 279, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #announcements {
   width: 25em;
   height: 4em;
@@ -747,18 +656,15 @@ header.universal nav li.user {
   float: right;
   margin-top: 1em;
 }
-/* line 286, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #announcements ul {
   margin: 0;
   padding: 0;
 }
-/* line 291, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #announcements li {
   width: 25em;
   height: 4em;
   list-style-type: none;
 }
-/* line 296, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #announcements li a {
   width: 23em;
   height: 4em;
@@ -772,34 +678,28 @@ header.universal nav li.user {
   display: block;
   float: right;
 }
-/* line 311, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #announcements li a .title {
   font-family: OverpassBold;
   font-weight: bold;
   font-size: 1.2em;
 }
 
-/* line 323, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 footer.universal {
   display: block;
   color: white;
   font-size: .9em;
 }
-/* line 328, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 footer.universal ul {
   margin: 0;
   padding: 0;
 }
-/* line 330, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 footer.universal li {
   list-style-type: none;
 }
-/* line 334, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 footer.universal h2 {
   color: white;
   font-size: 1.1em;
 }
-/* line 339, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 footer.universal .content > ul > li {
   display: -moz-inline-box;
   -moz-box-orient: vertical;
@@ -810,37 +710,30 @@ footer.universal .content > ul > li {
   vertical-align: top;
   width: 10em;
 }
-/* line 7, /usr/lib64/ruby/gems/1.8/gems/compass-0.11.5/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
 footer.universal .content > ul > li {
   *display: inline;
 }
-/* line 346, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 footer.universal a {
   color: white;
   text-decoration: none;
 }
-/* line 351, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 footer.universal #copyright {
   overflow: hidden;
   *zoom: 1;
   background: black;
   margin: 2em 0;
 }
-/* line 356, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 footer.universal #copyright .content {
   padding: .5em 5em;
 }
-/* line 360, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 footer.universal #copyright p {
   float: left;
 }
-/* line 361, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 footer.universal #copyright img {
   float: right;
   margin-bottom: 1em;
 }
 
-/* line 365, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .dialog {
   display: none;
   background: #323232;
@@ -865,48 +758,39 @@ footer.universal #copyright img {
   padding: 2em;
   overflow: auto;
 }
-/* line 381, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .dialog a.more {
   display: block;
   width: 100%;
   text-align: center;
   color: #1060c8;
 }
-/* line 388, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .dialog form {
   display: block;
   width: 25em;
   margin: 0 auto;
 }
-/* line 393, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .dialog form input.button {
   margin: .5em 0;
   width: 24em;
 }
-/* line 398, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .dialog form fieldset.confirm label.error {
   background: #323232;
 }
-/* line 404, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .dialog input {
   width: 22em;
 }
-/* line 406, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .dialog label {
   display: block;
 }
-/* line 410, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .dialog h1 {
   font-weight: normal;
   font-family: Overpass, "Liberation Sans", Arial, "Helvetica Neue", Helvetica, sans-serif;
   text-align: center;
   margin: 0;
 }
-/* line 417, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .dialog h2 {
   text-align: center;
 }
-/* line 421, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .dialog .close_button {
   position: absolute;
   top: 1.5em;
@@ -914,24 +798,19 @@ footer.universal #copyright img {
   border: none;
   outline: none;
 }
-/* line 90, /home/aboone/Source/li/site/app/stylesheets/partials/_base.scss */
 .dialog .close_button:active {
   outline: none;
   border: none;
 }
-/* line 424, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .dialog .close_button img {
   border: none;
 }
-/* line 428, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .dialog #extra_options div {
   margin: 0 3em;
 }
-/* line 432, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .dialog #extra_options p {
   margin: 0;
 }
-/* line 436, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .dialog #extra_options h2 {
   font-size: 1em;
   margin: 0;
@@ -940,19 +819,16 @@ footer.universal #copyright img {
 
 /* End layout styles */
 /* Home page styles */
-/* line 449, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .home .main {
   padding: 1em 0;
 }
 
-/* line 453, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #opener {
   font-size: 1.1em;
   background: #2c1f34 url("../images/cloud-bg.png") repeat-x bottom;
   height: 513px;
   display: block;
 }
-/* line 459, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #opener .content {
   width: 100%;
   height: 513px;
@@ -960,12 +836,10 @@ footer.universal #copyright img {
   background: url("../images/space-panda-ftw.png") no-repeat center;
   position: relative;
 }
-/* line 467, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #opener header {
   padding: 105px 0 0 130px;
   text-align: center;
 }
-/* line 472, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #opener h1 {
   color: white;
   font-size: 30px;
@@ -976,7 +850,6 @@ footer.universal #copyright img {
   font-family: Overpass, "Liberation Sans", Arial, "Helvetica Neue", Helvetica, sans-serif;
   text-shadow: black 0 2px 0;
 }
-/* line 483, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #opener h2 {
   color: white;
   font-size: 24px;
@@ -987,7 +860,6 @@ footer.universal #copyright img {
   margin: 0;
   text-shadow: black 0 2px 0;
 }
-/* line 495, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #opener a.button {
   background-color: #ede6cb;
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #ede6cb), color-stop(100%, #ddce9b));
@@ -1008,73 +880,59 @@ footer.universal #copyright img {
   margin-top: 15px;
 }
 
-/* line 505, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #exposition {
   margin-top: -1em;
 }
-/* line 508, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #exposition p#intro {
   font-size: 1.1em;
   font-family: Overpass, "Liberation Sans", Arial, "Helvetica Neue", Helvetica, sans-serif;
 }
-/* line 514, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #exposition > .content > div {
   margin: 3em 0 6em;
   padding: 0 3em;
   position: relative;
   min-height: 200px;
 }
-/* line 520, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #exposition > .content > div img {
   display: block;
   position: absolute;
   top: 0;
 }
-/* line 526, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #exposition > .content > div header, #exposition > .content > div p, #exposition > .content > div a {
   display: block;
   padding-left: 325px;
 }
-/* line 531, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #exposition > .content > div h2 {
   margin-top: 0;
 }
-/* line 534, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #exposition > .content div:last-child {
   margin-bottom: 3em;
 }
-/* line 539, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #exposition > .content #free img {
   right: 0;
   top: -16px;
 }
-/* line 544, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #exposition > .content #free header, #exposition > .content #free p, #exposition > .content #free a {
   padding-left: 0;
   padding-right: 325px;
 }
 
-/* line 553, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #social .content {
   padding-bottom: 2em;
 }
-/* line 557, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #social div, #social li {
   overflow: hidden;
   *zoom: 1;
 }
-/* line 561, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #social .content {
   width: 746px;
 }
-/* line 565, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #social img {
   float: left;
   vertical-align: top;
   padding: .5em;
   margin-top: .5em;
 }
-/* line 572, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #social p.tweet {
   position: relative;
   padding: 1em;
@@ -1089,7 +947,6 @@ footer.universal #copyright img {
   -khtml-border-radius: 1.25em;
   border-radius: 1.25em;
 }
-/* line 582, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .cssgradients #social p.tweet {
   background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #ffffff), color-stop(100%, #def3fb));
   background: -webkit-linear-gradient(top, #ffffff, #def3fb 2em);
@@ -1098,7 +955,6 @@ footer.universal #copyright img {
   background: -ms-linear-gradient(top, #ffffff, #def3fb 2em);
   background: linear-gradient(top, #ffffff, #def3fb 2em);
 }
-/* line 586, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #social p.tweet:after {
   content: '';
   background: url("../images/bubble-extension.png") no-repeat left top;
@@ -1109,24 +965,19 @@ footer.universal #copyright img {
   height: 27px;
   display: block;
 }
-/* line 597, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #social .ie8 p.tweet:after {
   background: none;
 }
-/* line 601, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #social a.tweeter {
   font-weight: bold;
 }
-/* line 605, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #social a.tweeter:first-child {
   color: black;
 }
-/* line 609, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #social ul {
   margin: 0;
   padding: 0;
 }
-/* line 613, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #social li {
   list-style-type: none;
   display: -moz-inline-box;
@@ -1138,15 +989,12 @@ footer.universal #copyright img {
   vertical-align: top;
   padding-left: .7em;
 }
-/* line 7, /usr/lib64/ruby/gems/1.8/gems/compass-0.11.5/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
 #social li {
   *display: inline;
 }
-/* line 621, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #social #social_links {
   padding: .5em 4em;
 }
-/* line 623, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #social #social_links a.button {
   background-color: #574d4f;
   color: white;
@@ -1155,36 +1003,29 @@ footer.universal #copyright img {
   font-size: 1em;
 }
 
-/* line 633, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .no-js #social {
   display: none;
 }
 
-/* line 635, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .ie7 li.link {
   float: left;
 }
 
-/* line 640, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #bottom_signup {
   text-align: center;
   font-size: 1.2em;
   padding: 4em;
 }
-/* line 645, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #bottom_signup header, #bottom_signup .content {
   width: 35em;
 }
-/* line 649, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #bottom_signup h1 {
   border-bottom: none;
 }
-/* line 653, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #bottom_signup h1, #bottom_signup h2 {
   margin: 0;
   padding: 0;
 }
-/* line 657, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #bottom_signup a.button {
   background-color: #574d4f;
   color: white;
@@ -1193,64 +1034,52 @@ footer.universal #copyright img {
 
 /* End home page styles */
 /* Service page styles */
-/* line 667, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 nav.service {
   color: white;
   font-family: Overpass, "Liberation Sans", Arial, "Helvetica Neue", Helvetica, sans-serif;
   font-size: 0.9em;
   text-transform: uppercase;
 }
-/* line 673, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .express nav.service {
   background-color: #4e9fdd;
 }
-/* line 676, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .express nav.service .express {
   background-color: white;
   color: #666;
 }
-/* line 682, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .flex nav.service {
   background-color: #dc9f2e;
 }
-/* line 685, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .flex nav.service .flex {
   background-color: white;
   color: #666;
 }
-/* line 691, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .power nav.service {
   background-color: #cc0000;
 }
-/* line 694, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .power nav.service .power {
   background-color: white;
   color: #666;
 }
-/* line 701, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 nav.service li.active a,
 nav.service a:hover {
   background-color: white !important;
   color: #666;
 }
-/* line 706, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 nav.service:last {
   float: none !important;
 }
 
-/* line 713, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .ie7 .product .main .content .content {
   padding-left: 4em;
   clear: left;
   float: right;
 }
 
-/* line 722, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .product .main {
   overflow: hidden;
   *zoom: 1;
 }
-/* line 725, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .product .main > header {
   border: 0;
   clip: rect(0 0 0 0);
@@ -1261,7 +1090,6 @@ nav.service:last {
   position: absolute;
   width: 1px;
 }
-/* line 50, /usr/lib64/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_helpers.scss */
 .product .main > header.focusable:active, .product .main > header.focusable:focus {
   clip: auto;
   height: auto;
@@ -1270,7 +1098,6 @@ nav.service:last {
   position: static;
   width: auto;
 }
-/* line 729, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .product .main .content nav {
   text-align: right;
   width: 11em;
@@ -1279,23 +1106,19 @@ nav.service:last {
   margin-top: 2.7em;
   font-size: 1.1em;
 }
-/* line 737, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .product .main .content nav ul {
   padding: 0;
   margin: 0;
 }
-/* line 741, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .product .main .content nav header {
   padding: 3em .5em 0;
   width: auto;
   font-size: .8em;
 }
-/* line 746, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .product .main .content nav header h2 {
   padding: 0;
   margin: 0;
 }
-/* line 751, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .product .main .content nav > header {
   border: 0;
   clip: rect(0 0 0 0);
@@ -1306,7 +1129,6 @@ nav.service:last {
   position: absolute;
   width: 1px;
 }
-/* line 50, /usr/lib64/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_helpers.scss */
 .product .main .content nav > header.focusable:active, .product .main .content nav > header.focusable:focus {
   clip: auto;
   height: auto;
@@ -1315,11 +1137,9 @@ nav.service:last {
   position: static;
   width: auto;
 }
-/* line 755, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .product .main .content nav li {
   list-style-type: none;
 }
-/* line 759, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .product .main .content nav a {
   display: -moz-inline-box;
   -moz-box-orient: vertical;
@@ -1332,20 +1152,16 @@ nav.service:last {
   border-bottom: 1px solid #ececec;
   width: 10em;
 }
-/* line 7, /usr/lib64/ruby/gems/1.8/gems/compass-0.11.5/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
 .product .main .content nav a {
   *display: inline;
 }
-/* line 769, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .js .product .main .content nav a.active,
 .product .main .content nav a:hover {
   color: #333;
 }
-/* line 773, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .product .main .content nav #account.signed_out {
   color: #aaa;
 }
-/* line 776, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .product .main .content nav #account.signed_out header {
   border: 0;
   clip: rect(0 0 0 0);
@@ -1356,7 +1172,6 @@ nav.service:last {
   position: absolute;
   width: 1px;
 }
-/* line 50, /usr/lib64/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_helpers.scss */
 .product .main .content nav #account.signed_out header.focusable:active, .product .main .content nav #account.signed_out header.focusable:focus {
   clip: auto;
   height: auto;
@@ -1365,7 +1180,6 @@ nav.service:last {
   position: static;
   width: auto;
 }
-/* line 780, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .product .main .content nav #account.signed_out a.sign_up, .product .main .content nav #account.signed_out a.request {
   display: -moz-inline-box;
   -moz-box-orient: vertical;
@@ -1385,70 +1199,56 @@ nav.service:last {
   color: #333;
   text-align: center;
 }
-/* line 7, /usr/lib64/ruby/gems/1.8/gems/compass-0.11.5/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
 .product .main .content nav #account.signed_out a.sign_up, .product .main .content nav #account.signed_out a.request {
   *display: inline;
 }
-/* line 793, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .product .main .content .content {
   width: 35em;
   padding-left: 15em;
 }
-/* line 798, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .product .main h1 {
   border: 0;
   padding-left: 0;
 }
-/* line 803, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .product .main a.more {
   margin: 3em 0;
   display: block;
   font-size: 1.2em;
 }
-/* line 809, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .product.express .main h1 {
   color: #4e9fdd;
 }
-/* line 812, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .product.express .main nav h2 {
   color: #4e9fdd;
 }
-/* line 815, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .product.flex .main h1 {
   color: #dc9f2e;
 }
-/* line 818, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .product.flex .main nav h2 {
   color: #dc9f2e;
 }
-/* line 821, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .product.power .main h1 {
   color: #cc0000;
 }
-/* line 824, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .product.power .main nav h2 {
   color: #cc0000;
 }
 
 /* product overview page styles */
 /* Override the body min-width since this page is a bit wider */
-/* line 833, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 body.product.overview {
   min-width: 55em;
 }
 
-/* line 835, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #product_overview {
   padding: 0;
 }
 
-/* line 837, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #product_overview .info {
   margin: 0;
   padding: 3em 0 12em;
   background: #002e53 url("/app/images/transparent_cloud.png") repeat-x 8em center;
 }
-/* line 841, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #product_overview .info ul {
   list-style-type: none;
   margin: 0 auto;
@@ -1456,22 +1256,18 @@ body.product.overview {
   width: 62em;
 }
 
-/* line 848, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #product_overview.prev_login .info {
   padding-bottom: 18em;
 }
 
-/* line 849, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #product_overview.prev_login.no_error .info {
   padding-bottom: 15em;
 }
 
-/* line 850, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #product_overview.authorized .info {
   padding-bottom: 2em;
 }
 
-/* line 852, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .multiplebgs.cssgradients #product_overview .info {
   background-image: url("/app/images/transparent_cloud.png"), -webkit-gradient(radial, 50% 100%, 0, 50% 100%, 100, color-stop(0%, #0093d9), color-stop(100%, #002e53));
   background-image: url("/app/images/transparent_cloud.png"), -webkit-radial-gradient(center bottom, circle farthest-side, #0093d9, #002e53);
@@ -1483,7 +1279,6 @@ body.product.overview {
   background-position: center 8em, 0 0;
 }
 
-/* line 856, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .product_box {
   display: -moz-inline-box;
   -moz-box-orient: vertical;
@@ -1502,75 +1297,60 @@ body.product.overview {
   margin-right: 2.5%;
   padding: 1em 2em;
 }
-/* line 7, /usr/lib64/ruby/gems/1.8/gems/compass-0.11.5/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
 .product_box {
   *display: inline;
 }
-/* line 865, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .product_box:last-child {
   margin-right: 0;
 }
-/* line 869, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .product_box h2 {
   text-transform: uppercase;
   font-family: Overpass, "Liberation Sans", Arial, "Helvetica Neue", Helvetica, sans-serif;
   font-size: 2.5em;
   line-height: .5em;
 }
-/* line 876, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .product_box h2 a:hover {
   text-decoration: none;
 }
-/* line 878, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .product .main .product_box a.more {
   margin: 1em 0;
 }
-/* line 880, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .product_box.express h2 a, .product_box.express a.more {
   color: #4e9fdd;
 }
-/* line 884, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .product_box.flex h2 a, .product_box.flex a.more {
   color: #dc9f2e;
 }
-/* line 888, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .product_box.power h2 a, .product_box.power a.more {
   color: #cc0000;
 }
-/* line 892, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .product .main .content .product_box .content {
   width: auto;
   margin: 0;
   padding: 0;
 }
-/* line 897, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .product_box .content {
   color: #666;
   font-size: .9em;
   line-height: 1.5em;
 }
-/* line 903, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .product_box p {
   margin: 0;
   padding: 0;
 }
 
-/* line 908, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #user_box {
   background: #002e53;
   height: 4em;
   overflow: visible;
 }
-/* line 913, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #user_box .content {
   position: relative;
 }
-/* line 917, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .authorized #user_box .content {
   top: -2em;
   width: 40em;
 }
-/* line 922, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .unauthorized #user_box .content {
   background: #002e53;
   width: 35em;
@@ -1585,28 +1365,23 @@ body.product.overview {
   top: -18em;
   text-align: center;
 }
-/* line 932, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .unauthorized.prev_login #user_box .content {
   height: 18em;
   top: -24em;
 }
-/* line 936, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .unauthorized.prev_login.no_error #user_box .content {
   height: 15em;
   top: -21em;
 }
-/* line 941, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .no-cssgradients .unauthorized #user_box .content {
   background: #002039;
 }
-/* line 943, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #user_box h2 {
   color: white;
   font-family: OverpassBold, "Liberation Sans", Arial, "Helvetica Neue", Helvetica, sans-serif;
   font-weight: bold;
   margin: 0;
 }
-/* line 950, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #user_box .button {
   background-color: #ede6cb;
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #ede6cb), color-stop(100%, #ddce9b));
@@ -1622,29 +1397,24 @@ body.product.overview {
   -o-box-shadow: #b69c3f 0 0.2em 0;
   box-shadow: #b69c3f 0 0.2em 0;
 }
-/* line 954, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #user_box .sign_up.button {
   font-size: 1.5em;
   display: block;
   width: 10em;
   margin: 2em auto .5em;
 }
-/* line 961, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #user_box a {
   color: #0093d9;
 }
-/* line 963, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #user_box img {
   position: absolute;
   bottom: -65px;
   left: 49%;
 }
-/* line 970, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #user_box #login-form form {
   margin: 1em 0;
   width: auto;
 }
-/* line 971, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #user_box #login-form label {
   color: white;
   font-family: Overpass, "Liberation Sans", Arial, "Helvetica Neue", Helvetica, sans-serif;
@@ -1653,11 +1423,9 @@ body.product.overview {
   margin: 0 6em 0 0;
   padding: 0;
 }
-/* line 981, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #user_box #login-form label.error {
   color: red;
 }
-/* line 982, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #user_box #login-form input {
   width: 20em;
   -moz-border-radius: 0.25em;
@@ -1669,24 +1437,19 @@ body.product.overview {
   border: none;
   display: inline;
 }
-/* line 988, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #user_box #login-form input.button {
   width: 21em;
   margin-left: 1.5em;
 }
-/* line 992, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #user_box #login-form input:focus {
   margin: .25em;
 }
-/* line 993, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #user_box #login-form input.button:focus {
   margin: .5em 0 5em 1.5em;
 }
-/* line 998, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #user_box #extra_options h2 {
   display: none;
 }
-/* line 1000, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #user_box #lost_password a, #user_box #register a {
   float: right;
   font-weight: normal;
@@ -1694,7 +1457,6 @@ body.product.overview {
   margin: 0 1.4em;
 }
 
-/* line 1008, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .cssgradients #user_box {
   background-image: -webkit-gradient(radial, 50% 0%, 0, 50% 0%, 250, color-stop(0%, #0093d9), color-stop(100%, #002e53));
   background-image: -webkit-radial-gradient(center top, circle closest-corner, #0093d9, #002e53 250px);
@@ -1705,57 +1467,46 @@ body.product.overview {
 }
 
 /* media overview styles */
-/* line 1016, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #media_overview .content {
   width: 60em;
 }
-/* line 1019, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #media_overview .content > div {
   width: 50%;
   float: left;
 }
-/* line 1025, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #media_overview ul {
   list-style-type: none;
   margin: 0;
   padding: 0;
 }
-/* line 1030, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #media_overview li {
   display: block;
   overflow: hidden;
   *zoom: 1;
 }
-/* line 1035, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #media_overview .vid {
   margin-bottom: .5em;
 }
-/* line 1038, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #media_overview .vid .video-thumb {
   float: left;
 }
-/* line 1040, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #media_overview .vid h2 {
   float: right;
   font-size: 1.1em;
   margin: 2em 1em 0;
   width: 50%;
 }
-/* line 1046, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #media_overview .vid h2 a {
   color: #666;
 }
-/* line 1050, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #media_overview #retweets ul li {
   margin: 10px 0;
 }
-/* line 1052, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #media_overview .avatar {
   float: left;
   margin: 4px 0 0;
   border: 0;
 }
-/* line 1057, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #media_overview .tweet {
   background: #ede6cb;
   font-size: .8em;
@@ -1770,27 +1521,22 @@ body.product.overview {
   font-size: 10px;
   height: 45px;
 }
-/* line 1066, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #media_overview .tweet a {
   color: #0093d9;
 }
-/* line 1069, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #media_overview a.more {
   margin: 1.5em 0;
 }
 
-/* line 1073, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #flex-ways em {
   font-weight: bold;
   font-style: normal;
 }
-/* line 1078, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #flex-ways ol {
   list-style-type: none;
   padding-left: 0;
 }
 
-/* line 1085, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 #free-flex #offer {
   background-color: #5FCF07;
   color: white;
@@ -1807,17 +1553,14 @@ body.product.overview {
 }
 
 /* Feature matrix */
-/* line 1099, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .features .main {
   margin: 0;
   padding: 5em 0;
   background: #002e53 url("/app/images/transparent_cloud.png") repeat-x 8em center;
 }
-/* line 1103, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .features .main .content {
   padding-left: 5em;
 }
-/* line 1105, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .features .main .content > div {
   background: white;
   -moz-border-radius: 2em;
@@ -1832,15 +1575,12 @@ body.product.overview {
   margin: 1em;
   float: left;
 }
-/* line 1114, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .features .main .content > div:first-child {
   margin-left: 0;
 }
-/* line 1115, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .features .main .content > div:last-child {
   margin-right: 0;
 }
-/* line 1117, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .features .main .content > div h2 {
   color: white;
   position: absolute;
@@ -1852,7 +1592,6 @@ body.product.overview {
   text-align: center;
   text-transform: uppercase;
 }
-/* line 1129, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .features .main .content > div h3 {
   width: 10em;
   margin: 0;
@@ -1864,18 +1603,15 @@ body.product.overview {
   text-align: right;
   font-size: 1.2em;
 }
-/* line 1140, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .features .main .content > div:first-child h3 {
   display: block;
 }
-/* line 1142, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .features .main .content > div ul {
   list-style-type: none;
   margin: 2em auto 0;
   padding: 0;
   border-top: 2px solid #cecece;
 }
-/* line 1148, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .features .main .content > div ul li {
   margin: .5em auto;
   padding: .25em 2em;
@@ -1893,25 +1629,20 @@ body.product.overview {
   font-family: Overpass, "Liberation Sans", Arial, "Helvetica Neue", Helvetica, sans-serif;
   text-align: center;
 }
-/* line 1161, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .features .main .content > div li.disabled {
   background: #f3f3f3;
 }
-/* line 1164, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .features .main .content > div ul.languages li.disabled {
   height: 3.5em;
 }
-/* line 1168, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .features .main .content > div li.soon {
   background: transparent;
   color: #666;
 }
-/* line 1173, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .features .main .content > div ul.languages {
   margin-top: 0;
   border-top: 0;
 }
-/* line 1177, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .features .main .content > div ul.languages li {
   -moz-border-radius: 1em;
   -webkit-border-radius: 1em;
@@ -1929,12 +1660,10 @@ body.product.overview {
   width: auto;
   height: auto;
 }
-/* line 1189, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .features .main .content > div ul.languages li ul {
   margin: 0;
   border: 0;
 }
-/* line 1191, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .features .main .content > div ul.languages li ul li {
   background: transparent;
   display: -moz-inline-box;
@@ -1946,11 +1675,9 @@ body.product.overview {
   padding: .25em .5em;
   width: 4em;
 }
-/* line 7, /usr/lib64/ruby/gems/1.8/gems/compass-0.11.5/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
 .features .main .content > div ul.languages li ul li {
   *display: inline;
 }
-/* line 1199, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .features .main .content > div ul.languages li h4 {
   color: white;
   position: relative;
@@ -1966,49 +1693,38 @@ body.product.overview {
   -khtml-border-radius: 0.3em;
   border-radius: 0.3em;
 }
-/* line 1210, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .features .main .content > div ul.languages li.ruby {
   background: #ff8080;
 }
-/* line 1213, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .features .main .content > div ul.languages li.ruby h4 {
   background: #cc0000;
 }
-/* line 1216, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .features .main .content > div ul.languages li.python {
   background: #e7eeab;
 }
-/* line 1219, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .features .main .content > div ul.languages li.python h4 {
   background: #afbf27;
 }
-/* line 1222, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .features .main .content > div ul.languages li.perl {
   background: #fef2c7;
   height: 3.5em;
 }
-/* line 1226, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .features .main .content > div ul.languages li.perl h4 {
   background: #fcc917;
 }
-/* line 1229, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .features .main .content > div ul.languages li.php {
   background: #e4f0fa;
 }
-/* line 1232, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .features .main .content > div ul.languages li.php h4 {
   background: #4e9fdd;
 }
-/* line 1235, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .features .main .content > div ul.languages li.java {
   background: #a499c2;
 }
-/* line 1238, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .features .main .content > div ul.languages li.java h4 {
   background: #564979;
 }
 
-/* line 1245, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .multiplebgs.cssgradients .features .main {
   background-image: url("/app/images/transparent_cloud.png"), -webkit-gradient(radial, 50% 100%, 0, 50% 100%, 100, color-stop(0%, #0093d9), color-stop(100%, #002e53));
   background-image: url("/app/images/transparent_cloud.png"), -webkit-radial-gradient(center bottom, circle farthest-side, #0093d9, #002e53);
@@ -2022,7 +1738,6 @@ body.product.overview {
 
 /* End service pages */
 /* Start register page */
-/* line 1253, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 li.captcha {
   margin: 0 1em;
 }
@@ -2031,16 +1746,13 @@ li.captcha {
 /* Start login page */
 /* End login page */
 /* Dashboard page */
-/* line 1265, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .control_panel .main {
   background: #002e53 url("/app/images/transparent_cloud.png") repeat-x 8em center;
   position: relative;
 }
-/* line 1268, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .control_panel .main a {
   color: #0093d9;
 }
-/* line 1272, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .control_panel .main > header {
   position: absolute;
   top: 4em;
@@ -2050,13 +1762,11 @@ li.captcha {
   margin-left: -26em;
   z-index: 10;
 }
-/* line 1281, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .control_panel .main > header h1 {
   font-size: 2em;
   text-transform: none;
   color: #0093d9;
 }
-/* line 1288, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .control_panel .main .tabs ul {
   position: absolute;
   text-align: right;
@@ -2067,11 +1777,9 @@ li.captcha {
   top: 3em;
   list-style-type: none;
 }
-/* line 1298, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .control_panel .main .tabs li {
   display: inline;
 }
-/* line 1299, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .control_panel .main .tabs li a {
   display: -moz-inline-box;
   -moz-box-orient: vertical;
@@ -2089,11 +1797,9 @@ li.captcha {
   padding: 1em;
   text-align: center;
 }
-/* line 7, /usr/lib64/ruby/gems/1.8/gems/compass-0.11.5/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
 .control_panel .main .tabs li a {
   *display: inline;
 }
-/* line 1308, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .control_panel .main .content {
   font-family: Overpass, "Liberation Sans", Arial, "Helvetica Neue", Helvetica, sans-serif;
   position: relative;
@@ -2108,16 +1814,13 @@ li.captcha {
   width: 48em;
   margin-top: 3em;
 }
-/* line 1317, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .control_panel .main .content .cp-section {
   margin-bottom: 2.5em;
 }
-/* line 1320, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .control_panel .main .content .cp-section h2 {
   margin-left: -1em;
   text-transform: uppercase;
 }
-/* line 1326, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .control_panel .main .content .intro > header {
   border: 0;
   clip: rect(0 0 0 0);
@@ -2128,7 +1831,6 @@ li.captcha {
   position: absolute;
   width: 1px;
 }
-/* line 50, /usr/lib64/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_helpers.scss */
 .control_panel .main .content .intro > header.focusable:active, .control_panel .main .content .intro > header.focusable:focus {
   clip: auto;
   height: auto;
@@ -2137,14 +1839,12 @@ li.captcha {
   position: static;
   width: auto;
 }
-/* line 1330, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .control_panel .main .content .intro {
   overflow: hidden;
   *zoom: 1;
   padding: 2em 0 0;
   font-family: "Liberation Sans", Arial, "Helvetica Neue", Helvetica, sans-serif;
 }
-/* line 1335, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .control_panel .main .content #video, .control_panel .main .content #resources {
   width: 22em;
   display: -moz-inline-box;
@@ -2154,69 +1854,55 @@ li.captcha {
   *vertical-align: auto;
   vertical-align: top;
 }
-/* line 7, /usr/lib64/ruby/gems/1.8/gems/compass-0.11.5/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
 .control_panel .main .content #video, .control_panel .main .content #resources {
   *display: inline;
 }
-/* line 1340, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .control_panel .main .content #video {
   margin-top: 1em;
 }
-/* line 1343, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .control_panel .main .content #resources ul {
   list-style-type: none;
   padding: 0;
   margin: 0;
   margin-left: 1em;
 }
-/* line 1348, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .control_panel .main .content #resources li {
   font-family: Overpass, "Liberation Sans", Arial, "Helvetica Neue", Helvetica, sans-serif;
   font-size: 1.1em;
   line-height: 1.4em;
 }
-/* line 1353, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .control_panel .main .content h2.with-inline-docs {
   float: left;
 }
-/* line 1356, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .control_panel .main .content h2.with-inline-docs + div.inline-docs-widget {
   float: left;
   clear: none;
 }
-/* line 1360, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .control_panel .main .content div.inline-docs-widget + div {
   clear: both;
 }
-/* line 1363, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .control_panel .main .content .inline-docs-widget {
   font-size: 0.9em;
   margin: 1.3em .5em 0;
 }
-/* line 1368, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .control_panel .main .content .edit-widget .current {
   color: black;
   display: inline;
 }
-/* line 1372, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .control_panel .main .content .edit-widget .os-popup.os-widget {
   display: inline;
   margin: 0 0 0 5em;
 }
-/* line 1375, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .control_panel .main .content .edit-widget .os-popup.os-widget .popup-trigger {
   display: inline;
 }
-/* line 1377, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .control_panel .main .content .edit-widget .os-popup.os-widget .popup-trigger a {
   color: #dc9f2e;
 }
-/* line 1383, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .control_panel .main .content #app_list_container {
   overflow: hidden;
   *zoom: 1;
 }
-/* line 1385, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .control_panel .main .content #app_list_container ul {
   list-style-type: none;
   margin: 0;
@@ -2226,16 +1912,13 @@ li.captcha {
   overflow: hidden;
   *zoom: 1;
 }
-/* line 1392, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .control_panel .main .content #app_list_container li {
   overflow: hidden;
   *zoom: 1;
 }
-/* line 1394, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .control_panel .main .content #app_list_container li header {
   width: 10em;
 }
-/* line 1395, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .control_panel .main .content #app_list_container li h1 {
   text-align: right;
   font-size: 1em;
@@ -2244,13 +1927,11 @@ li.captcha {
   text-transform: none;
   margin: 0;
 }
-/* line 1403, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .control_panel .main .content #app_list_container li dl {
   float: left;
   width: 43em;
   margin: 0 0 2em;
 }
-/* line 1408, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .control_panel .main .content #app_list_container li dt {
   color: #999;
   width: 10em;
@@ -2258,33 +1939,26 @@ li.captcha {
   text-align: right;
   margin-right: 1em;
 }
-/* line 1415, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .control_panel .main .content #app_list_container li dd {
   margin-left: 11em;
 }
-/* line 1418, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .control_panel .main .content #app_list_container li dd.app_type {
   text-transform: uppercase;
 }
-/* line 1421, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .control_panel .main .content #app_list_container li .popup-trigger {
   float: right;
   text-align: right;
   margin: 0.5em 0;
 }
-/* line 1425, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .control_panel .main .content #app_list_container li .popup-trigger a {
   color: #cc0000;
 }
-/* line 1434, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .control_panel .main #app_form form {
   width: 100%;
 }
-/* line 1435, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .control_panel .main #app_form select {
   margin: 0.1em;
 }
-/* line 1436, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .control_panel .main #app_form li, .control_panel .main #app_form fieldset.buttons {
   display: -moz-inline-box;
   -moz-box-orient: vertical;
@@ -2295,67 +1969,53 @@ li.captcha {
   *zoom: 1;
   vertical-align: top;
 }
-/* line 7, /usr/lib64/ruby/gems/1.8/gems/compass-0.11.5/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
 .control_panel .main #app_form li, .control_panel .main #app_form fieldset.buttons {
   *display: inline;
 }
-/* line 1441, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .control_panel .main #app_form li label, .control_panel .main #app_form fieldset.buttons label {
   display: inline;
 }
-/* line 1444, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .control_panel .main #app_form li input, .control_panel .main #app_form fieldset.buttons input {
   display: inline;
 }
-/* line 1448, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .control_panel .main #app_form li.string {
   width: 24em;
 }
-/* line 1449, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .control_panel .main #app_form li.select {
   width: 8em;
 }
-/* line 1450, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .control_panel .main #app_form fieldset.buttons {
   width: 7em;
 }
-/* line 1452, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .control_panel .main #app_form fieldset.buttons input {
   width: 7em;
   margin-top: 1.1em;
 }
-/* line 1460, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .control_panel .main #quote blockquote {
   color: black;
 }
 
-/* line 1466, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .control_panel form {
   width: 23.5em;
 }
-/* line 1467, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .control_panel textarea {
   height: 5em;
 }
-/* line 1470, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .control_panel input.button {
   background-color: #0093d9;
   border: none;
   color: white;
   text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3);
 }
-/* line 1476, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .control_panel label {
   font-family: Overpass, "Liberation Sans", Arial, "Helvetica Neue", Helvetica, sans-serif;
   text-transform: uppercase;
   font-size: .9em;
 }
-/* line 1481, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .control_panel .os-dialog form {
   margin: 0 auto;
 }
 
-/* line 1485, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .delete_button {
   background: #cc0000;
   color: white;
@@ -2365,7 +2025,6 @@ li.captcha {
   border: none;
 }
 
-/* line 1493, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .cssgradients.multiplebgs .control_panel .main {
   background-image: url("/app/images/transparent_cloud.png"), -webkit-gradient(radial, 50% 100%, 0, 50% 100%, 100, color-stop(0%, #0093d9), color-stop(100%, #002e53));
   background-image: url("/app/images/transparent_cloud.png"), -webkit-radial-gradient(center bottom, circle farthest-side, #0093d9, #002e53);
@@ -2377,7 +2036,6 @@ li.captcha {
   background-position: center 8em, 0 0;
 }
 
-/* line 1497, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .partner #join {
   background: #a4999b;
   color: black;
@@ -2390,17 +2048,14 @@ li.captcha {
   -khtml-border-radius: 1em;
   border-radius: 1em;
 }
-/* line 1504, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .partner #join p {
   margin: 0;
 }
 
-/* line 1507, /home/aboone/Source/li/site/app/stylesheets/partials/_page.scss */
 .ie7 li.password {
   float: left;
 }
 
-/* line 3, /home/aboone/Source/li/site/app/stylesheets/partials/_outage.scss */
 #outage_notification {
   background: #ffdc4c;
   width: 100%;
@@ -2409,7 +2064,6 @@ li.captcha {
   padding: 0 0 5px;
   font-size: 9.5pt;
 }
-/* line 11, /home/aboone/Source/li/site/app/stylesheets/partials/_outage.scss */
 #outage_notification pre {
   width: 940px;
   margin: 0 auto;
@@ -2417,7 +2071,6 @@ li.captcha {
   color: black;
   border-top: 1px solid white;
 }
-/* line 18, /home/aboone/Source/li/site/app/stylesheets/partials/_outage.scss */
 #outage_notification h2 {
   width: 960px;
   margin: 0 auto;
@@ -2428,7 +2081,6 @@ li.captcha {
   text-shadow: 1px 1px 1px white;
 }
 
-/* line 31, /home/aboone/Source/li/site/app/stylesheets/partials/_outage.scss */
 #outage_toggle {
   background: #ffdc4c;
   position: absolute;
@@ -2444,7 +2096,6 @@ li.captcha {
 /*/mediaquery*/
 /*/mediaquery*/
 @media print {
-  /* line 10, /usr/lib64/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
   * {
     background: transparent !important;
     color: black !important;
@@ -2453,44 +2104,36 @@ li.captcha {
     -ms-filter: none !important;
   }
 
-  /* line 12, /usr/lib64/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
   a, a:visited {
     color: #444 !important;
     text-decoration: underline;
   }
 
-  /* line 13, /usr/lib64/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
   a[href]:after {
     content: " (" attr(href) ")";
   }
 
-  /* line 14, /usr/lib64/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
   abbr[title]:after {
     content: " (" attr(title) ")";
   }
 
-  /* line 15, /usr/lib64/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
   .ir a:after, a[href^="javascript:"]:after, a[href^="#"]:after {
     content: "";
   }
 
-  /* line 16, /usr/lib64/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
   pre, blockquote {
     border: 1px solid #999;
     page-break-inside: avoid;
   }
 
-  /* line 17, /usr/lib64/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
   thead {
     display: table-header-group;
   }
 
-  /* line 18, /usr/lib64/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
   tr, img {
     page-break-inside: avoid;
   }
 
-  /* line 19, /usr/lib64/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
   img {
     max-width: 100% !important;
   }
@@ -2499,13 +2142,11 @@ li.captcha {
     margin: 0.5cm;
 }
 
-  /* line 21, /usr/lib64/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
   p, h2, h3 {
     orphans: 3;
     widows: 3;
   }
 
-  /* line 22, /usr/lib64/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
   h2, h3 {
     page-break-after: avoid;
   }
