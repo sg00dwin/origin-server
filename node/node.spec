@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.83.0
+Version:       0.83.1
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -172,6 +172,9 @@ fi
 %dir %attr(0755,root,root) %{_sysconfdir}/libra/skel
 
 %changelog
+* Thu Dec 01 2011 Dan McPherson <dmcphers@redhat.com> 0.83.1-1
+- bump spec numbers (dmcphers@redhat.com)
+
 * Tue Nov 29 2011 Dan McPherson <dmcphers@redhat.com> 0.82.19-1
 - Correcting oddjobd call (mmcgrath@redhat.com)
 - Correcting restorer.php (mmcgrath@redhat.com)
