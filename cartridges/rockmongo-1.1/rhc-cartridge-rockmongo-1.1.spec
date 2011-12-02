@@ -2,7 +2,7 @@
 
 Name: rhc-cartridge-rockmongo-1.1
 Version: 1.1.1
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Embedded RockMongo support for express
 
 Group: Applications/Internet
@@ -49,6 +49,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Fri Dec 02 2011 Mike McGrath <mmcgrath@redhat.com> 1.1.1-2
+- Correcting spec
+
 * Fri Dec 02 2011 Mike McGrath <mmcgrath@redhat.com> 1.1.1-1
 - new package built with tito
 
