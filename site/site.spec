@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.83.1
+Version:   0.83.2
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -68,6 +68,11 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Fri Dec 02 2011 Dan McPherson <dmcphers@redhat.com> 0.83.2-1
+- Now using compass compile --no-line-comments to compile CSS
+  (ffranz@redhat.com)
+- Fixes 749297 - now on IE 8 (ffranz@redhat.com)
+
 * Thu Dec 01 2011 Dan McPherson <dmcphers@redhat.com> 0.83.1-1
 - bump spec numbers (dmcphers@redhat.com)
 
