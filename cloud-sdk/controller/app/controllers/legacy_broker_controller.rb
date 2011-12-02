@@ -8,16 +8,16 @@ require 'base64'
 
 class LegacyBrokerController < ApplicationController
   layout nil
-  before_filter :validate_request, :authenticate_user
+  before_filter :validate_request, :authenticate
   rescue_from Exception, :with => exception_handler
   
   def domain_post
-    cloud_user = CloudUser.find_by_login(@login)
+    cloud_user = CloudUser.find(@login)
     if @req.alter
       cloud_user.ssh = @req.ssh
       cloud_user.namespace = @req.namespace
     else
-      cloud_user = CloudUser.new(login, @req.ssh, @req.namespace)
+      cloud_user = CloudUser.new(@login, @req.ssh, @req.namespace)
     end
         
     if cloud_user.invalid?
@@ -74,7 +74,7 @@ class LegacyBrokerController < ApplicationController
   end
   
   def user_info_post
-    user = Libra::User.find(username)
+    user = CloudUser.find(@login)
     if user
       user_info = user.attributes
       app_info = {}
@@ -140,8 +140,8 @@ class LegacyBrokerController < ApplicationController
       end
   end
   
-  def authenticate_user
-    @login = AuthService.instance.login(request, params, cookies)
+  def authenticate
+    @login = AuthService.login(request, params, cookies)
     unless @login
       @reply.message, @reply.exit_code = "Invalid user credentials", 97
       render :json => @reply, :status => :unauthorized

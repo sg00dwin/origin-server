@@ -15,12 +15,19 @@ class DnsService
   end
   
   def namespace_available?(namespace)
+    return true
   end
   
   def register_namespace(namespace)
   end
   
   def deregister_namespace(namespace)
+  end
+  
+  def register_application(app_name, namespace, user_name)
+  end
+  
+  def deregister_application(app_name, namespace, user_name)
   end
   
   def publish

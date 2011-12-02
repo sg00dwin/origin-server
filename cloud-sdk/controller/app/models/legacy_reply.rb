@@ -13,8 +13,8 @@ class LegacyReply < Cloud::Sdk::Model
   def initialize
     @api = API_VERSION
     @api_c = API_CAPABILITY
-    @broker = Cloud::Sdk::Controller::VERSION
-    @broker_c = Cloud::Sdk::Controller::CAPABILITY
+    #@broker = Cloud::Sdk::Controller::VERSION
+    #@broker_c = Cloud::Sdk::Controller::CAPABILITY
     @debug = ""
     @messages = ""
     

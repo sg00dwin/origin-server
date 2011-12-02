@@ -3,6 +3,7 @@ require 'uri'
 require 'net/http'
 require 'net/https'
 require 'json'
+require 'singleton'
 require 'cloud-sdk-common'
 
 class AuthServiceException < Cloud::Sdk::CdkException
@@ -20,7 +21,7 @@ class AuthService
   @@roles_url = URI.parse(service_base_url + "/cloudVerify.html")
   @@user_info_url = URI.parse(service_base_url + "/userInfo.html")
   
-  def login(request, params, cookies)
+  def self.login(request, params, cookies)
     data = JSON.parse(params['json_data'])
 
     username = nil
@@ -73,7 +74,7 @@ class AuthService
   
   private
   
-  def check_access(roles)
+  def self.check_access(roles)
     roles = [] unless roles
     unless roles.index('cloud_access_1')
       if roles.index('cloud_access_request_1')
@@ -84,7 +85,7 @@ class AuthService
     end
   end
   
-  def http_post(url, args={}, ticket=nil)
+  def self.http_post(url, args={}, ticket=nil)
     begin
       req = Net::HTTP::Post.new(url.path + (url.query ? ('?' + url.query) : ''))
       req.set_form_data(args)
@@ -137,7 +138,7 @@ class AuthService
   # Parse the rh_sso cookie out of the headers
   # and set it as the ticket
   #
-  def parse_ticket(cookies)
+  def self.parse_ticket(cookies)
     if cookies
       cookies.each do |cookie|
         if cookie.index("rh_sso")
