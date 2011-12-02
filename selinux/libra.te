@@ -94,6 +94,7 @@ manage_sock_files_pattern(libra_domain, libra_var_lib_t, libra_var_lib_t)
 manage_lnk_files_pattern(libra_domain, libra_var_lib_t, libra_var_lib_t)
 files_var_lib_filetrans(libra_domain, libra_var_lib_t, { dir file sock_file } )
 allow libra_domain libra_var_lib_t:file entrypoint;
+allow libra_domain libra_var_lib_t:file relabelfrom;
 
 kernel_read_system_state(libra_domain)
 kernel_read_network_state(libra_domain)
