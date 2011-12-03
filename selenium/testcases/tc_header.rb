@@ -1,8 +1,5 @@
 #!/usr/bin/env ruby
-class Header < Sauce::TestCase
-  include ::OpenShift::TestBase
-  include ::OpenShift::CSSHelpers
-  include ::OpenShift::Assertions
+class Header < OpenShift::SeleniumTestCase
 
   def setup
     super

@@ -1,8 +1,5 @@
 #!/usr/bin/env ruby
-class Reset < Sauce::TestCase
-  include ::OpenShift::TestBase
-  include ::OpenShift::CSSHelpers
-  include ::OpenShift::Assertions
+class Reset < OpenShift::SeleniumTestCase
 
   def setup
     super
@@ -15,7 +12,7 @@ class Reset < Sauce::TestCase
       reset.submit
       assert_dialog_error(reset,:label,:email,[ :required_field ])
     }
-
+    
     # Try with an invalid email
     open_dialog(:reset){ |reset|
       reset.submit(data[:username])

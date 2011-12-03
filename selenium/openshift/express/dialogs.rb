@@ -33,37 +33,41 @@ module OpenShift
       end
 
       def link(name)
-        selector(@@links[name])
+        "#{@base} #{@@links[name]}"
       end
 
       def is_open?
-        @page.is_visible(selector(''))
+        @page.find_element(:css, @base).displayed?
       end
 
       def click(link)
-        @page.click(selector(@@links[link]))
+        @page.find_element(:css, link(link)).click
       end
 
       def input(id)
-        selector("input##{id}")
+        "input##{id}"
+      end
+      
+      def type(css_selector, text)
+        @page.find_element(:css, css_selector).send_keys text
       end
 
       def error(type,name=nil)
         case type
         when :label
-          selector("label.error[for=#{@fields[name]}]")
+          "label.error[for=#{@fields[name]}]"
         when :error
-          selector("div.message.error")
+          "div.message.error"
         when :success
-          selector("div.message.success")
+          "div.message.success"
         when :notice
-          selector("div.message.notice")
+          "div.message.notice"
         end
       end
 
       def submit()
         click(:submit)
-        @page.wait_for(:wait_for => :ajax, :javascript_framework => :jquery)
+        wait_for_ajax
       end
     end
 
@@ -79,7 +83,7 @@ module OpenShift
       def submit(login=nil,password=nil)
         type(input(@fields[:login]),login) if login
         type(input(@fields[:password]),password) if password
-        super()
+        click(:submit)
       end
     end
 
@@ -114,8 +118,7 @@ module OpenShift
         type(input(@fields[:confirm]),confirm) if confirm
 
         sauce_testing(captcha)
-
-        click(:submit)
+        super()
       end
     end
   end

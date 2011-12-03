@@ -89,7 +89,7 @@ rm -rf %{buildroot}
 
 # Install the Sauce Labs gems
 gem install sauce
-gem install zipruby
+gem install zip
 
 # Move over all configs and scripts
 cp -rf %{devenvdir}/etc/* %{_sysconfdir}
