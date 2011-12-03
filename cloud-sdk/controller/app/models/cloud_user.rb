@@ -50,7 +50,7 @@ class CloudUser < Cloud::Sdk::Model
   end
   
   def applications
-    Application.find_all(@rhlogin)
+    Application.find_all(self)
   end
   
   private

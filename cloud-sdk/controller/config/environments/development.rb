@@ -27,22 +27,30 @@ Controller::Application.configure do
 
   # Expands the lines which load the assets
   #config.assets.debug = true
+  
+
+  
+  config.filter_parameters = [:password]
 
   # CDK Config
   config.cdk = {
     :domain_suffix => "dev.rhcloud.com",
-    :zone="rhcloud.com",
-    :child_zone="dev",
+    :zone => "rhcloud.com",
+    :child_zone => "dev",
     :broker_auth_secret => "",
     :broker_auth_rsa_secret => "",
     :auth_service => {
       :host => "https://www.redhat.com",
       :base_url => "/wapps/streamline"
-    }
+    },
     :dynect_customer_name => "demo-redhat",
     :dynect_user_name => "dev-rhcloud-user",
     :dynect_password => "vo8zaijoN7Aecoo",
-    :dynect_url => "https://api2.dynect.net"
+    :dynect_url => "https://api2.dynect.net",
+    
+    :aws_key => "AKIAITDQ37BWZ5CKAORA",
+    :aws_secret => "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",
+    :s3_bucket => "libra_dev"
   }
   
   config.app_scope = "broker"

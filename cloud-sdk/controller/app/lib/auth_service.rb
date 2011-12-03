@@ -60,15 +60,16 @@ class AuthService
         Rails.logger.debug("Attempted to use previous ticket '#{@ticket}' to establish but failed with AccessDenied.  Continuing with normal login...")
       end
 
-      login_args = {'login' => data['rhlogin'], 'password' => params['password']}
-      # Establish the authentication ticket
-      http_post(@@login_url, login_args) do |json|
-        Rails.logger.debug("Current login = #{data['rhlogin']} / authenticated for #{json['username'] || json['login']}")
-        rhlogin = json['username'] || json['login']
-        roles = json['roles']
-      end
-      check_access(roles)
-      return rhlogin
+      #login_args = {'login' => data['rhlogin'], 'password' => params['password']}
+      ## Establish the authentication ticket
+      #http_post(@@login_url, login_args) do |json|
+      #  Rails.logger.debug("Current login = #{data['rhlogin']} / authenticated for #{json['username'] || json['login']}")
+      #  rhlogin = json['username'] || json['login']
+      #  roles = json['roles']
+      #end
+      #check_access(roles)
+      #return rhlogin
+      return data['rhlogin']
     end
   end
   

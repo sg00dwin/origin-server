@@ -130,9 +130,9 @@ class BrokerController < ApplicationController
     status = :internal_server_error
     message = nil
     if !(e.is_a? Libra::LibraException) 
-      logger.error "Exception rescued in #{method_name}:"
-      logger.error e.message
-      logger.error e.backtrace
+      Rails.logger.error "Exception rescued in #{method_name}:"
+      Rails.logger.error e.message
+      Rails.logger.error e.backtrace
       # TODO should we leave this?  Everything that gets in here is unknown and users can tell us about it.  But will mean impl details showing up on the client.
       Libra.client_debug e.message
       Libra.client_debug e.backtrace

@@ -14,7 +14,9 @@ module Cloud
       include ActiveModel::AttributeMethods
       include ActiveModel::Observing
       include ActiveModel::Conversion
+      
       @@primary_key = :uuid
+      @@excludes_attributes = []
       
       def initialize
         @persisted = false
@@ -72,12 +74,17 @@ module Cloud
         @@primary_key = var_name
       end
       
+      def self.exclude_attributes(*attributes)
+        @@excludes_attributes += attributes
+      end
+      
       def attributes
         return @attributes if @attributes
       
         @attributes = {}
         self.instance_variable_names.map {|name| name[1..-1]}.each do |name|
           next if ['attributes', 'changed_attributes', 'previously_changed', 'persisted', 'new_record', 'deleted'].include? name
+          next if @@excludes_attributes.include? name.to_sym
           @attributes[name] = nil
         end
         @attributes
@@ -90,36 +97,36 @@ module Cloud
       end
       
       def self.find(login, id)
-        json = DataStore.find(self.name,login,id)
-        return nil unless json
+        id_var = @@primary_key || "uuid"        
+        data = DataStore.find(self.name,login,id)
+        return nil unless data
+        
+        json = data.values[0]
         obj = self.new.from_json(json)
-        obj.new_record = false
-        obj.persisted = true
-        obj.deleted = false
-        obj.changed_attrbutes.clear
+        obj.instance_variable_set("@#{id_var}", data.keys[0])
+        obj.reset_state
         obj
       end
       
       def self.find_all(login)
-        jsons = DataStore.find_all(self.name,login)
-        return [] unless jsons
-        jsons.map do |json|
+        id_var = @@primary_key || "uuid"        
+        data = DataStore.find_all(self.name,login)
+        return [] unless data
+        data.map do |id, json|
           obj = self.new.from_json(json)
-          obj.new_record = false
-          obj.persisted = true
-          obj.deleted = false
-          obj.changed_attrbutes.clear
+          obj.instance_variable_set("@#{id_var}", id)
+          obj.reset_state
           obj
         end
       end
       
       def delete(login)
-        id_var = @@class_identifier_var || "uuid"
+        id_var = @@primary_key || "uuid"
         DataStore.delete(self.class.name,login, instance_variable_get("@#{id_var}"))
       end
       
       def save(login)
-        id_var = @@class_identifier_var || "uuid"        
+        id_var = @@primary_key || "uuid"        
         @previously_changed = changes
         @changed_attributes.clear
         @new_record = false
@@ -127,6 +134,13 @@ module Cloud
         @deleted = false
         DataStore.save(self.class.name, login, instance_variable_get("@#{id_var}"), self.to_json)
         self
+      end
+      
+      def reset_state
+        @new_record = false
+        @persisted = true
+        @deleted = false
+        @changed_attributes.clear if @changed_attributes
       end
     end
   end
