@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.83.2
+Version:   0.83.3
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -68,6 +68,10 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Sat Dec 03 2011 Mike McGrath <mmcgrath@redhat.com> 0.83.3-1
+- Added server side validation for SSH keys for BZ 759362 and 755375
+  (fotios@redhat.com)
+
 * Fri Dec 02 2011 Dan McPherson <dmcphers@redhat.com> 0.83.2-1
 - Now using compass compile --no-line-comments to compile CSS
   (ffranz@redhat.com)
