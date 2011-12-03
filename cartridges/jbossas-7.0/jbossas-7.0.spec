@@ -69,7 +69,7 @@ ln -s %{cartridgedir}/../abstract/info/hooks/move %{buildroot}%{cartridgedir}/in
 %post
 #maven
 alternatives --install /etc/alternatives/maven-3.0 maven-3.0 /usr/share/java/apache-maven-3.0.3 100
-alternatives --install /etc/alternatives/jbossas-7.0 jbossas-7.0 jboss-as-7.0.2.Final 100
+alternatives --install /etc/alternatives/jbossas-7.0 jbossas-7.0 /opt/jboss-as-7.0.2.Final 100
 
 
 %clean
