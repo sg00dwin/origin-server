@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.83.1
+Version:   0.83.2
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -88,6 +88,10 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Sat Dec 03 2011 Mike McGrath <mmcgrath@redhat.com> 0.83.2-1
+- Update to use jboss-as7-7.0.2.Final rpm (starksm64@gmail.com)
+- Include the 0.3.0.Final modules (starksm64@gmail.com)
+
 * Fri Dec 02 2011 Scott Stark <sstark@redhat.com> 
 - Update to jboss-as7-7.0.2.Final, brew buildID=3867651
 
