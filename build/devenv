@@ -151,14 +151,23 @@ class DevEnv < Thor
   method_option :use_stage_repo, :type => :boolean, :desc => "Build instance off the stage repository"
   method_option :reboot, :type => :boolean, :desc => "Reboot the instance after updating"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
+  method_option :region, :required => false, :desc => "Amazon region override (default us-east-1)"
   def build(name)
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
 
     # Establish a new connection
-    conn = connect
-
+    conn = connect     
+    conn = conn.regions[options.region] unless (options.region?nil)
     # Create a new builder instance
-    image = conn.images[AMI]
+    if (options.region?nil)
+      image = conn.images[AMI["us-east-1"]]
+    elsif AMI[options.region].nil?
+      puts "No AMI specified for region:" + options.region
+      exit 1
+    else
+      image = conn.images[AMI[options.region]]
+    end
+
     instance = launch_instance(image, name)
     hostname = instance.dns_name
 
@@ -203,13 +212,14 @@ class DevEnv < Thor
   method_option :terminate, :type => :boolean, :desc => "Terminate the instance on exit"
   method_option :reboot, :type => :boolean, :desc => "Reboot the instance after updating"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
+  method_option :region, :required => false, :desc => "Amazon region override (default us-east-1)"
   def yum_update(tag)
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
 
     # Establish a new connection
     conn = connect
-
-    instance = find_instance(connect, tag, true)
+    conn = conn.regions[options.region] unless (options.region?nil)
+    instance = find_instance(conn, tag, true)
     hostname = instance.dns_name
 
     begin
@@ -264,12 +274,14 @@ class DevEnv < Thor
   method_option :verifier, :type => :boolean, :desc => "Maintain verifier functionality (private IP setup)"
   method_option :skip_build, :type => :boolean, :desc => "Indicator to skip the rpm build/install"
   method_option :clean_metadata, :type => :boolean, :desc => "Cleans metadata before running yum update"
+  method_option :region, :required => false, :desc => "Amazon region override (default us-east-1)"
   def sync(name)
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
 
     # Get the hostname from a tag lookup or assume it's SSH accessible directly
-    # Get the hostname from a tag lookup or assume it's SSH accessible directly
-    hostname = options.tag? ? find_instance(connect, name, true).dns_name : name
+    conn = connect
+    conn = conn.regions[options.region] unless (options.region?nil)
+    hostname = options.tag? ? find_instance(conn, name, true).dns_name : name
     
     ssh_path=File.expand_path(File.dirname(__FILE__)) + "/ssh-override"
     sync_repo('li', hostname, ssh_path)
@@ -307,11 +319,14 @@ class DevEnv < Thor
   method_option :tag, :type => :boolean, :desc => "NAME is an Amazon tag"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   method_option :skip_build, :type => :boolean, :desc => "Indicator to skip the rpm build/install"
+  method_option :region, :required => false, :desc => "Amazon region override (default us-east-1)"
   def sync_sdk(name, path)
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
 
     # Get the hostname from a tag lookup or assume it's SSH accessible directly
-    hostname = options.tag? ? find_instance(connect, name, true).dns_name : name
+    conn = connect
+    conn = conn.regions[options.region] unless (options.region?nil)
+    hostname = options.tag? ? find_instance(conn, name, true).dns_name : name
 
     # Get the current branch
     branch = get_branch
@@ -334,9 +349,11 @@ class DevEnv < Thor
 
   desc "terminate TAG", "Terminates the instance with the specified tag"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
+  method_option :region, :required => false, :desc => "Amazon region override (default us-east-1)"
   def terminate(tag)
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
     conn = connect
+    conn = conn.regions[options.region] unless (options.region?nil)
     instance = find_instance(conn, tag, true)
     terminate_instance(instance)
   end
@@ -350,6 +367,7 @@ class DevEnv < Thor
   method_option :ssh_config_verifier, :type => :boolean, :desc => "Set as verifier in .ssh/config"
   method_option :init_repo, :type => :boolean, :desc => "Initialize git repo for syncing and tests (requires --verifier)"
   method_option :instance_type, :required => false, :desc => "Amazon machine type override (default m1.large)"
+  method_option :region, :required => false, :desc => "Amazon region override (default us-east-1)"
   def launch(name)
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
 
@@ -360,6 +378,7 @@ class DevEnv < Thor
 
     # Get the latest devenv image and create a new instance
     conn = connect
+    conn = conn.regions[options.region] unless (options.region?nil)
     if options.use_stage_image?
       filter = DEVENV_STAGE_WILDCARD
     elsif options.use_clean_image?
@@ -464,10 +483,13 @@ END
   method_option :sauce_os, :required => false, :desc => "Sauce Labs OS (default '#{SAUCE_OS}')"
   method_option :sauce_browser, :required => false, :desc => "Sauce Labs browser (default '#{SAUCE_BROWSER}')"
   method_option :sauce_browser_version, :required => false, :desc => "Sauce Labs browser version (default '#{SAUCE_BROWSER_VERSION}')"
+  method_option :region, :required => false, :desc => "Amazon region override (default us-east-1)"
   def test(tag)
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
 
     conn = connect
+    conn = conn.regions[options.region] unless (options.region?nil)
+      
     instance = find_instance(conn, tag, true)
     hostname = instance.dns_name
 
@@ -564,10 +586,13 @@ END
   desc "test_sdk TAG", "Runs the tests on a tagged instance and downloads the results"
   method_option :terminate, :type => :boolean, :desc => "Terminate the instance when finished"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
+  method_option :region, :required => false, :desc => "Amazon region override (default us-east-1)"
   def test_sdk(tag)
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
 
     conn = connect
+    conn = conn.regions[options.region] unless (options.region?nil)
+    
     instance = find_instance(conn, tag, true)
     hostname = instance.dns_name
     begin

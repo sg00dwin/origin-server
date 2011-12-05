@@ -14,29 +14,32 @@ class Prune < Thor
   desc "instances", "prune untagged and instances marked terminate"
   def instances
     conn = connect
-    terminate_flagged_instances(conn)
-    stop_untagged_instances(conn)
+    conn.regions.each do |region|
+      puts "Terminating instances in region=#{region.name}"
+      terminate_flagged_instances(region)
+      stop_untagged_instances(region)
+    end
   end
 
   desc "amis", "prune old devenv AMIs"
   def amis
     # Get current AMIs
     conn = connect
-
-    AWS.memoize do
-      images = get_amis(conn)
-
-      # Take the last DevEnv AMI - memoize saves a remote call
-      sorted_images = images.to_a.sort_by {|ami| ami.name.split("_")[1].to_i}
-
-      # Keep the 10 most recent images
-      sorted_images.pop(10)
-
-      # Deregister the rest
-      puts "Removing AMI's #{sorted_images.pretty_inspect}"
-      sorted_images.each {|i| i.deregister}
+    conn.regions.each do |region|
+      puts "Prunning AMIs in region=#{region.name}"
+      AWS.memoize do
+        images = get_amis(region)
+        # Take the last DevEnv AMI - memoize saves a remote call
+        sorted_images = images.to_a.sort_by {|ami| ami.name.split("_")[1].to_i}
+  
+        # Keep the 10 most recent images
+        sorted_images.pop(10)
+  
+        # Deregister the rest
+        puts "Removing AMI's #{sorted_images.pretty_inspect}"
+        sorted_images.each {|i| i.deregister}
+      end
     end
-
   end
 end
 

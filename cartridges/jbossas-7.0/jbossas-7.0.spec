@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.83.1
+Version:   0.83.4
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -14,7 +14,8 @@ BuildRequires:  git
 BuildRequires:  java-devel >= 1:1.6.0 
 BuildRequires:  jpackage-utils
 Requires:  rhc-node
-Requires: jboss-as7 = 7.0.1.Final
+# When updating jboss-as7, update the alternatives link below
+Requires: jboss-as7 = 7.0.2.Final
 Requires:  maven3
 
 BuildArch: noarch
@@ -68,7 +69,7 @@ ln -s %{cartridgedir}/../abstract/info/hooks/move %{buildroot}%{cartridgedir}/in
 %post
 #maven
 alternatives --install /etc/alternatives/maven-3.0 maven-3.0 /usr/share/java/apache-maven-3.0.3 100
-alternatives --install /etc/alternatives/jbossas-7.0 jbossas-7.0 /opt/jboss-as-web-7.0.1.Final 100
+alternatives --install /etc/alternatives/jbossas-7.0 jbossas-7.0 /opt/jboss-as-7.0.2.Final 100
 
 
 %clean
@@ -87,6 +88,20 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Mon Dec 05 2011 Alex Boone <aboone@redhat.com> 0.83.4-1
+- 
+
+* Mon Dec 05 2011 Alex Boone <aboone@redhat.com> 0.83.3-1
+- Remove the switchyard modules from cartridge repo (starksm64@gmail.com)
+- correcting alternatives to point to /opt/jboss (mmcgrath@redhat.com)
+
+* Sat Dec 03 2011 Mike McGrath <mmcgrath@redhat.com> 0.83.2-1
+- Update to use jboss-as7-7.0.2.Final rpm (starksm64@gmail.com)
+- Include the 0.3.0.Final modules (starksm64@gmail.com)
+
+* Fri Dec 02 2011 Scott Stark <sstark@redhat.com> 
+- Update to jboss-as7-7.0.2.Final, brew buildID=3867651
+
 * Thu Dec 01 2011 Dan McPherson <dmcphers@redhat.com> 0.83.1-1
 - bump spec numbers (dmcphers@redhat.com)
 

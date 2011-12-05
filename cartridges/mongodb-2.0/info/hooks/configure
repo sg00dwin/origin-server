@@ -130,6 +130,6 @@ client_result "   Root Password: $password"
 client_result "   Database Name: $application"
 client_result "  Connection URL: mongodb://$IP:27017/"
 client_result ""
-client_result "You can manage your new MongoDB by also embedding phpmoadmin-1.0"
+client_result "You can manage your new MongoDB by also embedding rockmongo-1.1"
 
 set_app_info "Connection URL: mongodb://$IP:27017/"
