@@ -5,7 +5,7 @@ module OpenShift
     SCP_CMD = "scp 2> /dev/null -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PasswordAuthentication=no -i " + RSA
 
     def ssh(hostname, cmd, timeout=60, return_exit_code=false)
-      log.debug "(ssh: timeout = #{timeout} / cmd = #{cmd})"
+      log.debug "(ssh: hostname = #{hostname} timeout = #{timeout} / cmd = #{cmd})"
       output = ""
       exit_code = 1
       begin
@@ -15,7 +15,7 @@ module OpenShift
           exit_code = $?.exitstatus
         end
       rescue Timeout::Error
-        log.error "SSH command timed out"
+        log.error "SSH command to #{hostname} timed out (timeout = #{timeout})"
       end
       log.debug "----------------------------\n#{output}\n----------------------------"
 
@@ -53,7 +53,7 @@ module OpenShift
     end
 
     def can_ssh?(hostname)
-      ssh(hostname, 'echo Success', 45).split[-1] == "Success"
+      ssh(hostname, 'echo Success', CAN_SSH_TIMEOUT).split[-1] == "Success"
     end
   end
 end
