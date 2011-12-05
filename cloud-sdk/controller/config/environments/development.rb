@@ -31,12 +31,18 @@ Controller::Application.configure do
   # CDK Config
   config.cdk = {
     :domain_suffix => "dev.rhcloud.com",
+    :zone="rhcloud.com",
+    :child_zone="dev",
     :broker_auth_secret => "",
     :broker_auth_rsa_secret => "",
     :auth_service => {
       :host => "https://www.redhat.com",
       :base_url => "/wapps/streamline"
     }
+    :dynect_customer_name => "demo-redhat",
+    :dynect_user_name => "dev-rhcloud-user",
+    :dynect_password => "vo8zaijoN7Aecoo",
+    :dynect_url => "https://api2.dynect.net"
   }
   
   config.app_scope = "broker"
