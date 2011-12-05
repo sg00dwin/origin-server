@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.83.3
+Version:   0.83.4
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -88,6 +88,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Mon Dec 05 2011 Alex Boone <aboone@redhat.com> 0.83.4-1
+- 
+
 * Mon Dec 05 2011 Alex Boone <aboone@redhat.com> 0.83.3-1
 - Remove the switchyard modules from cartridge repo (starksm64@gmail.com)
 - correcting alternatives to point to /opt/jboss (mmcgrath@redhat.com)
