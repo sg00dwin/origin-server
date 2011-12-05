@@ -33,12 +33,14 @@ class DnsService
   end
   
   def register_application(app_name, namespace, user_name)
+    login
     public_hostname = "" #TODO either need to retrieve this or pass it in.  retrieving means an inefficiency
-    DnsService.create_app_dns_entries(app_name, namespace, public_hostname, @@dyn_retries)
+    DnsService.create_app_dns_entries(app_name, namespace, public_hostname, @auth_token, @@dyn_retries)
   end
   
   def deregister_application(app_name, namespace, user_name)
-    DnsService.delete_app_dns_entries(app_name, namespace, @@dyn_retries)    
+    login
+    DnsService.delete_app_dns_entries(app_name, namespace, @auth_token, @@dyn_retries)    
   end
   
   def publish
@@ -118,18 +120,12 @@ class DnsService
     raise DNSException.new(145), "Error communicating with DNS system.  If the problem persists please contact Red Hat support.", caller[0..5]
   end
   
-  def self.delete_app_dns_entries(app_name, namespace, retries=2)
-    auth_token = dyn_login(retries)
+  def self.delete_app_dns_entries(app_name, namespace, auth_token, retries=2)
     dyn_delete_cname_record(app_name, namespace, auth_token, retries)
-    dyn_publish(auth_token, retries)
-    dyn_logout(auth_token, retries)
   end
 
-  def self.create_app_dns_entries(app_name, namespace, public_hostname, retries=2)
-    auth_token = dyn_login(retries)
+  def self.create_app_dns_entries(app_name, namespace, public_hostname, auth_token, retries=2)
     dyn_create_cname_record(app_name, namespace, public_hostname, auth_token, retries)
-    dyn_publish(auth_token, retries)
-    dyn_logout(auth_token, retries)
   end
 
   def self.recreate_app_dns_entries(app_name, old_namespace, new_namespace, public_hostname, auth_token, retries=2)
