@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.83.3
+Version:       0.83.4
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -173,6 +173,9 @@ fi
 %dir %attr(0755,root,root) %{_sysconfdir}/libra/skel
 
 %changelog
+* Mon Dec 05 2011 Alex Boone <aboone@redhat.com> 0.83.4-1
+- 
+
 * Mon Dec 05 2011 Alex Boone <aboone@redhat.com> 0.83.3-1
 - changed the libra init script to restart each app individually instead of
   stopping all apps and then starting all apps (twiest@redhat.com)
