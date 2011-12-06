@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.83.4
+Version:       0.83.5
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -174,6 +174,12 @@ fi
 %dir %attr(0755,root,root) %{_sysconfdir}/libra/skel
 
 %changelog
+* Tue Dec 06 2011 Alex Boone <aboone@redhat.com> 0.83.5-1
+- Added rhc-list-ports (mmcgrath@redhat.com)
+- Adding port forwarding allowance, explicit removal of gatway ports
+  (mmcgrath@redhat.com)
+- added some documentation (mmcgrath@redhat.com)
+
 * Mon Dec 05 2011 Alex Boone <aboone@redhat.com> 0.83.4-1
 - 
 
