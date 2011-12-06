@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.83.4
+Version:   0.83.5
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -88,6 +88,10 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Tue Dec 06 2011 Alex Boone <aboone@redhat.com> 0.83.5-1
+- moved stdout.log file (wdecoste@localhost.localdomain)
+- US1550: redirect stdout to file (wdecoste@localhost.localdomain)
+
 * Mon Dec 05 2011 Alex Boone <aboone@redhat.com> 0.83.4-1
 - 
 
