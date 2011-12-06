@@ -122,11 +122,6 @@ $CART_INFO_DIR/bin/deploy_httpd_config.sh $application $uuid $IP
 ln -s $CART_INFO_DIR/bin/rockmongo_ctl.sh $ROCKMONGO_CTL_SCRIPT
 
 #
-# Add config to show disabled pages instead of default apache Forbidden page
-#
-ln -s $CART_INFO_DIR/configuration/disabled_pages.conf $ROCKMONGO_DIR/conf.d/disabled_pages.conf
-
-#
 # Setup Permissions
 #
 
