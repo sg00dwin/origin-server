@@ -88,7 +88,7 @@ class Release < Thor
   method_option :no_ami, :type => :boolean, :desc => "Indicates whether to not build an ami"
   def sync
     # do RHEL 6.x first
-    mash_and_rsync "libra-rhel-6.1", false, options
+    mash_and_rsync "libra-rhel-6.2", false, options
 
     # now RHEL 5.x, skipping rhc gem build/deploy
     mash_and_rsync "libra-rhel-5.7", true, options
