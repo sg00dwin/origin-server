@@ -25,7 +25,7 @@ module ApplicationHelper
   
   # Which product is the current page referring to?
   def get_product(controller, action)
-    ['express', 'flex', 'power'].each do |product|
+    ['express', 'flex'].each do |product|
       unless controller.index(product).nil? and action.index(product).nil?
         return product
       end
