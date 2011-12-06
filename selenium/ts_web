@@ -7,11 +7,10 @@ $: << File.dirname(__FILE__)
 # To run specific tests, specify the name on the command line
 #
 require "test/unit"
-require "test/unit/testsuite"
 require "test/unit/ui/console/testrunner"
 
-require 'helper'
 require 'openshift/base'
+require 'openshift/selenium_test_case'
 require 'openshift/express/dialogs'
 require 'openshift/express/navbars'
 require 'openshift/express/pages'
@@ -22,6 +21,32 @@ Dir["testcases/*.rb"].each {|file| require file }
 
 # Need to load the tests manually so we can
 #   override at_exit
+
+class TestDecorator < Test::Unit::TestSuite
+  include OpenShift::SauceHelper
+
+  def run(result, &progress_block)
+    setup_suite
+    begin
+      super(result, &progress_block)
+    ensure
+      tear_down_suite
+    end
+  end
+
+  def setup_suite
+    unless OpenShift::SeleniumTestCase.local?
+      ensure_tunnel
+    end
+  end
+
+  def tear_down_suite
+    unless OpenShift::SeleniumTestCase.local?
+      close_tunnel
+    end
+  end
+end
+
 class TS_web
   def self.suite
     default_suites = {
@@ -35,7 +60,7 @@ class TS_web
       :flex => Flex.suite,
     }
 
-    suite = Test::Unit::TestSuite.new('Sauce Tests')
+    suite = TestDecorator.new('Sauce Tests')
 
     (ARGV.empty? ? default_suites.values : ARGV.map{|x| default_suites[x.downcase.to_sym]}).each do |x|
       suite << x
@@ -44,14 +69,6 @@ class TS_web
   end
 end
 
-# Need to do this for now in order to kill the 
-#   process when we're done
 result = Test::Unit::UI::Console::TestRunner.run(TS_web);
 
-# HACK: pid is of the `cmd`, which spawns java
-at_exit{ 
-  if @sauce_connect_pid
-    Process.kill('TERM',@sauce_connect_pid+1) ;
-  end
-  exit!(result.passed?)
-}
+exit!(result.passed?)

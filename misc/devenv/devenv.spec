@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.83.2
+Version:   0.83.3
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -89,7 +89,7 @@ rm -rf %{buildroot}
 
 # Install the Sauce Labs gems
 gem install sauce
-gem install zipruby
+gem install zip
 
 # Move over all configs and scripts
 cp -rf %{devenvdir}/etc/* %{_sysconfdir}
@@ -222,6 +222,13 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 %{_initddir}/sauce-connect
 
 %changelog
+* Tue Dec 06 2011 Alex Boone <aboone@redhat.com> 0.83.3-1
+- Merge branch 'master' of ssh://git/srv/git/li (aboone@redhat.com)
+- Refactor to use Selenium 2, remove unused code (aboone@redhat.com)
+- Adding port forwarding allowance, explicit removal of gatway ports
+  (mmcgrath@redhat.com)
+- added virtual host info to the log format (twiest@redhat.com)
+
 * Fri Dec 02 2011 Dan McPherson <dmcphers@redhat.com> 0.83.2-1
 - adding rockmongo (mmcgrath@redhat.com)
 

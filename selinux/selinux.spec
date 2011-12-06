@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.83.2
+Version:       0.83.3
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -38,6 +38,9 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Tue Dec 06 2011 Alex Boone <aboone@redhat.com> 0.83.3-1
+- Adding munin port (mmcgrath@redhat.com)
+
 * Fri Dec 02 2011 Dan McPherson <dmcphers@redhat.com> 0.83.2-1
 - Allow libra domains to relabelfrom libra_var_lib_t  so if they run vi, it
   will not complain (dwalsh@redhat.com)

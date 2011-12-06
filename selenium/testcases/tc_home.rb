@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
-class Home < Sauce::TestCase
-  include ::OpenShift::TestBase
+class Home < OpenShift::SeleniumTestCase
 
   def setup
     super
@@ -14,7 +13,9 @@ class Home < Sauce::TestCase
   def test_signup_links
     @home.items[:signup_links].each do |link|
       @home.click(link)
-      assert @signup.is_open?
+
+      await { @signup.is_open? }
+
       @signup.click(:close)
     end
   end

@@ -4,21 +4,22 @@ module OpenShift
       include ::OpenShift::CSSHelpers
       attr_accessor :fields, :items
 
-      def initialize(page,path)
+      def initialize(page, path)
         @path = path
         @page = page
       end
 
       def open
-        @page.open(@path)
+        @page.get @path
       end
 
       def title
-        @page.title
+        @page.find_element(:css, "title").text
       end
 
-      def click(selector)
-        @page.click("css=#{selector}")
+      def click(element)
+        text = @items[element]
+        @page.find_element(:xpath, "//a[text()=\"#{text}\"]").click
       end
     end
 
@@ -34,8 +35,12 @@ module OpenShift
         }
 
         @items[:signup_links] = %w(opener bottom_signup).map{|x| 
-          "section##{x} a:contains('Sign up and try it')"
+          "section##{x} a.sign_up"
         }
+      end
+      
+      def click(css)
+        @page.find_element(:css => css).click
       end
     end
 
@@ -43,7 +48,7 @@ module OpenShift
       def initialize(page,path)
         super
         @items = {
-          :whats_express => "What\'s Express?",
+          :whats_express => "What's Express?",
           :videos => 'Videos',
           :documentation => 'Documentation',
           :forum => 'Forum',
@@ -51,14 +56,6 @@ module OpenShift
           :quickstart => 'Quickstart',
           :console => 'Express Console'
         }
-      end
-
-      def link(element)
-        selector("a:contains('#{@items[element]}')")
-      end
-
-      def click(element)
-        @page.click(link(element))
       end
     end
 
@@ -75,14 +72,6 @@ module OpenShift
           :console => 'Flex Console'
         }
       end
-
-      def link(element)
-        selector("a:contains('#{@items[element]}')")
-      end
-
-      def click(element)
-        @page.click(link(element))
-      end
     end
     
     class ExpressConsole < Page
@@ -91,7 +80,7 @@ module OpenShift
       def initialize(page,path)
         super
         @domain_form = OpenShift::Express::DomainForm.new(page, "new_express_domain")
-	@app_form = OpenShift::Express::AppForm.new(page, "new_express_app")
+        @app_form = OpenShift::Express::AppForm.new(page, "new_express_app")
       end
     end
   end

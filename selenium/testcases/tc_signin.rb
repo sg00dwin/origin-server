@@ -1,8 +1,5 @@
 #!/usr/bin/env ruby
-class Signin < Sauce::TestCase
-  include ::OpenShift::TestBase
-  include ::OpenShift::CSSHelpers
-  include ::OpenShift::Assertions
+class Signin < OpenShift::SeleniumTestCase
 
   def setup
     super

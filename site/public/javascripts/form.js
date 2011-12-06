@@ -1,5 +1,5 @@
-/* DO NOT MODIFY. This file was compiled Mon, 28 Nov 2011 17:42:09 GMT from
- * /home/aboone/Source/li/site/app/coffeescripts/form.coffee
+/* DO NOT MODIFY. This file was compiled Mon, 05 Dec 2011 21:39:16 GMT from
+ * /home/fotios/openshift/li/site/app/coffeescripts/form.coffee
  */
 
 (function() {
@@ -57,12 +57,17 @@
     });
     dialogs = $('.dialog');
     open_dialog = function(dialog) {
+      $.each($('div.dialog:visible'), function(index, dialog) {
+        return close_dialog($(dialog));
+      });
       dialogs.hide();
       dialog.show();
       dialog.find("input:visible:first").focus();
       return ($(window, 'html', 'body')).scrollTop(0);
     };
     close_dialog = function(dialog) {
+      console.log("Closed", dialog);
+      dialog.find(':hidden').show();
       dialog.find('div.message').remove();
       dialog.find('input:visible:not(.button)').val('');
       dialog.find('label.error').remove();
@@ -141,12 +146,16 @@
       }
     };
     reset_password_complete = function(xhr, status) {
-      var $div, form, json;
+      var $div, $parent, form, json;
       ($(this)).spin(false);
       form = $(this);
       json = $.parseJSON(status.responseText);
-      $(this).parent().find('div.message').remove();
-      return $div = $('<div>').addClass("message " + json.status).text(json.message).insertBefore(this);
+      $parent = $(this).parent();
+      $parent.find('div.message').remove();
+      $div = $('<div>').addClass("message " + json.status).text(json.message).insertBefore(this);
+      if ($parent.is('div#password-reset-form')) {
+        return $parent.find('form,div#extra_options').hide();
+      }
     };
     start_spinner = function(e) {
       return ($(e.target)).spin();

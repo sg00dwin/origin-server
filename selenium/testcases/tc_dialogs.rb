@@ -1,8 +1,5 @@
 #!/usr/bin/env ruby
-class Dialogs < Sauce::TestCase
-  include ::OpenShift::TestBase
-  include ::OpenShift::CSSHelpers
-  include ::OpenShift::Assertions
+class Dialogs < OpenShift::SeleniumTestCase
 
   def setup
     super

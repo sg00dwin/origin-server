@@ -2,7 +2,7 @@
 
 Summary:   Provides ruby rack support running on Phusion Passenger
 Name:      rhc-cartridge-rack-1.1
-Version:   0.83.1
+Version:   0.83.2
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -104,6 +104,10 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Tue Dec 06 2011 Alex Boone <aboone@redhat.com> 0.83.2-1
+- bug 759976 (dmcphers@redhat.com)
+- bug 759725 (dmcphers@redhat.com)
+
 * Thu Dec 01 2011 Dan McPherson <dmcphers@redhat.com> 0.83.1-1
 - bump spec numbers (dmcphers@redhat.com)
 
