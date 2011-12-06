@@ -1,7 +1,7 @@
 #
 # Global definitions
 #
-AMI = {"us-east-1" =>"ami-7dea2614", "eu-west-1" => "ami-33caf847", "us-west-1" => "ami-4b7a260e", "ap-northeast-1" => "ami-66942067", "ap-southeast-1" => "ami-60017b32"}
+AMI = {"us-east-1" =>"ami-4509c12c", "eu-west-1" => "ami-69360a1d", "us-west-1" => "ami-8b95cace", "ap-northeast-1" => "ami-aeb601af", "ap-southeast-1" => "ami-9e1d58cc", "us-west-2" => "ami-ec810cdc"}
 TYPE = "m1.large"
 KEY_PAIR = "libra"
 ZONE = 'us-east-1d'
