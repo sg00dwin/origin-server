@@ -34,6 +34,7 @@ Requires:  libxml2-devel
 Requires:  libxslt
 Requires:  libxslt-devel
 Requires:  gcc-c++
+Requires:  js
 
 Obsoletes: rhc-cartridge-rack-1.1.0
 
