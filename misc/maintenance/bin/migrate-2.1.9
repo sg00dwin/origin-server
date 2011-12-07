@@ -2,8 +2,8 @@
 # Usage: ./migrate-2.1.9 > out.txt
 require 'rubygems'
 require 'openshift'
-require 'pp'
 require 'open4'
+require 'pp'
 
 include Libra
 
@@ -138,7 +138,7 @@ def migrate
 end
 
 def migrate_node(server_identity, apps, node_to_users)
-  puts "Migrating #{apps.length} apps on node #{server_identity}: #{apps.pretty_inspect}"
+  puts "Migrating #{apps.length} apps on node #{server_identity}"
   users = node_to_users[server_identity]
   apps.each_with_index do |app_hash, index|
     app = app_hash[:app]
