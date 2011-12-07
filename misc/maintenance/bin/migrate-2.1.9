@@ -164,6 +164,8 @@ def migrate_node(server_identity, apps, node_to_users)
             puts "Failed to migrate with cmd: '#{migrate_on_node_cmd}'"
             break
           end
+        else
+          break
         end
       end
     rescue Exception => e
