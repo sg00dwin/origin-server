@@ -87,8 +87,8 @@ module OpenShift
     end
 
     def wait_for_ajax(timeout = 10)
-      sleep 0.5 # ensure that AJAX has had a chance to start
-      wait = Selenium::WebDriver::Wait.new(:timeout => timeout)
+      sleep 0.1 # ensure that AJAX has had a chance to start
+      wait = Selenium::WebDriver::Wait.new(:timeout => timeout, :interval => 0.05)
       wait.until { @page.execute_script 'return jQuery.active == 0' }
     end
 
@@ -102,23 +102,10 @@ module OpenShift
     end
 
     # helper method to wait for a (ruby) condition to become true
-    def await(timeout_secs=5)
+    def await(timeout=5)
       if block_given?
-        while true
-          begin
-            if yield
-              return
-            else
-              raise StandardError, "block evaluated false", caller
-            end
-          rescue
-            sleep 1
-            timeout_secs -= 1
-            if timeout_secs <= 0
-              raise
-            end
-          end
-        end
+        wait = Selenium::WebDriver::Wait.new(:timeout => timeout)
+        wait.until { yield }
       end
     end
   end
