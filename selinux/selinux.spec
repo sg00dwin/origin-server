@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.83.3
+Version:       0.83.4
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -38,6 +38,11 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Wed Dec 07 2011 Matt Hicks <mhicks@redhat.com> 0.83.4-1
+- Fix libra transition to libra_mail_t (dwalsh@redhat.com)
+- Allow libra domains to transition to libra_mail_t domain for sending mail
+  over executables labeled sendmail_exec_t (dwalsh@redhat.com)
+
 * Tue Dec 06 2011 Alex Boone <aboone@redhat.com> 0.83.3-1
 - Adding munin port (mmcgrath@redhat.com)
 
