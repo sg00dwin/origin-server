@@ -149,9 +149,23 @@ def migrate_node(server_identity, apps, node_to_users)
       puts "Migrating app '#{app_name}'(#{@app_cnt}) with uuid '#{app['uuid']}' on node '#{app['server_identity']}' for user: #{rhlogin}"
       @app_cnt -= 1
       migrate_on_node_cmd = "#{__FILE__} '#{app['server_identity']}' '#{app['framework']}' '#{app['uuid']}' '#{user.namespace}' '#{app_name}'"
-      output, exit_code = execute_script(migrate_on_node_cmd)
-      puts output
-      puts "Migrate on node exit_code: #{exit_code}"
+      num_retries = 2
+      (1..num_retries).each do |i|
+        output, exit_code = execute_script(migrate_on_node_cmd)
+        puts output
+        if (exit_code != 0)
+          puts "Migrate on node exit_code: #{exit_code}"
+          if (exit_code == 1)
+            if i == num_retries
+              puts "Failed to migrate with cmd: '#{migrate_on_node_cmd}' after #{num_retries} tries"
+              break
+            end
+          else
+            puts "Failed to migrate with cmd: '#{migrate_on_node_cmd}'"
+            break
+          end
+        end
+      end
     rescue Exception => e
       puts "ERROR: Failed migrating app: #{app_name} with uuid: #{app['uuid']} on node '#{app['server_identity']}' for user: #{rhlogin}"
       puts e.message
