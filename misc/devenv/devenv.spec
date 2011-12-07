@@ -88,8 +88,8 @@ rm -rf %{buildroot}
 %post
 
 # Install the Sauce Labs gems
-gem install sauce
-gem install zip
+gem install sauce --no-rdoc --no-ri
+gem install zip --no-rdoc --no-ri
 
 # Move over all configs and scripts
 cp -rf %{devenvdir}/etc/* %{_sysconfdir}
