@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.83.5
+Version:       0.83.6
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -174,6 +174,12 @@ fi
 %dir %attr(0755,root,root) %{_sysconfdir}/libra/skel
 
 %changelog
+* Wed Dec 07 2011 Matt Hicks <mhicks@redhat.com> 0.83.6-1
+- US1550: add threaddump (wdecoste@localhost.localdomain)
+- Merge branch 'master' of li-master:/srv/git/li (ramr@redhat.com)
+- Add "alias" to mongo shell w/ internal nosql-db-host automatically set.
+  Sample usage:  mongo -u admin -p <mongodb-admin-pass> admin (ramr@redhat.com)
+
 * Tue Dec 06 2011 Alex Boone <aboone@redhat.com> 0.83.5-1
 - Added rhc-list-ports (mmcgrath@redhat.com)
 - Adding port forwarding allowance, explicit removal of gatway ports
