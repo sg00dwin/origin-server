@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.83.3
+Version:   0.83.4
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -88,8 +88,8 @@ rm -rf %{buildroot}
 %post
 
 # Install the Sauce Labs gems
-gem install sauce
-gem install zip
+gem install sauce --no-rdoc --no-ri
+gem install zip --no-rdoc --no-ri
 
 # Move over all configs and scripts
 cp -rf %{devenvdir}/etc/* %{_sysconfdir}
@@ -222,6 +222,9 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 %{_initddir}/sauce-connect
 
 %changelog
+* Wed Dec 07 2011 Matt Hicks <mhicks@redhat.com> 0.83.4-1
+- Skipping rdoc and ri install (mhicks@redhat.com)
+
 * Tue Dec 06 2011 Alex Boone <aboone@redhat.com> 0.83.3-1
 - Merge branch 'master' of ssh://git/srv/git/li (aboone@redhat.com)
 - Refactor to use Selenium 2, remove unused code (aboone@redhat.com)
