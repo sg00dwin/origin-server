@@ -30,16 +30,18 @@ then
   # If .bundle isn't currently committed and a Gemfile is then bundle install
   if [ -f ${OPENSHIFT_REPO_DIR}Gemfile ]
   then
-      pushd ${OPENSHIFT_REPO_DIR} > /dev/null
       if ! git show master:.bundle > /dev/null 2>&1
       then
           echo "Bundling RubyGems based on Gemfile/Gemfile.lock to repo/vendor/bundle with 'bundle install --deployment'"
           SAVED_GIT_DIR=$GIT_DIR
           unset GIT_DIR
+          pushd ${OPENSHIFT_REPO_DIR} > /dev/null
           bundle install --deployment
+          popd > /dev/null
           export GIT_DIR=$SAVED_GIT_DIR
       fi
       echo "Precompiling with 'bundle exec rake assets:precompile'"
+      pushd ${OPENSHIFT_REPO_DIR} > /dev/null
       bundle exec rake assets:precompile 2>/dev/null
       popd > /dev/null
   fi
