@@ -30,7 +30,7 @@ module OpenShift
       open_dialog(:signin, false){ |signin|
         signin.submit(login,password)
       
-        await {
+        await(10) {
           exists?("a[href='/app/logout']")
         }
       }
