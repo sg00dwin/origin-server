@@ -11,7 +11,6 @@ URL: https://engineering.redhat.com/trac/Libra
 Source0: %{name}-%{version}.tar.gz
 BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildArch: noarch
-
 Requires: rhc-node
 Requires: rhc-cartridge-mongodb-2.0
 Requires: php-devel
