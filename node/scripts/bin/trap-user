@@ -89,10 +89,7 @@ if __name__ == '__main__':
     join_cgroup()
     read_env_vars()
 
-    orig_cmd = os.environ.get('SSH_ORIGINAL_COMMAND')
-    if not orig_cmd:
-        print "Need a command"
-        sys.exit(1)
+    orig_cmd = os.environ.get('SSH_ORIGINAL_COMMAND', "rhcsh")
     syslog.syslog(orig_cmd)
     allargs = orig_cmd.split()
     try:
