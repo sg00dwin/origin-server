@@ -76,6 +76,47 @@ class ExpressConsole < OpenShift::SeleniumTestCase
     await { new_namespace == form.get_collapsed_value(:namespace) }
   end
 
+  def test_app_create_validation
+    @login, pass = dummy_credentials
+    create_namespace(@login, pass, @login)
+
+    jump_to "apps"
+
+    form = @express_console.app_form
+
+    assert !form.in_error?(:app_name)
+    assert !form.in_error?(:cartridge)
+
+    # try with no input
+
+    form.submit
+    wait_for_ajax
+
+    assert form.in_error?(:app_name)
+    assert form.in_error?(:cartridge)
+
+    assert_equal_no_case "This field is required.", form.error_message(:app_name)
+    assert_equal_no_case "This field is required.", form.error_message(:cartridge)
+
+    # try to use non-alphanumeric app name
+
+    form.set_value(:app_name, "Non-alphanumeric")
+
+    assert form.in_error?(:app_name)
+    assert_equal_no_case "Only letters and numbers are allowed", form.error_message(:app_name)
+
+    # try to use app name that exceeds max length (16)
+
+    app_name = "abcdefghijklmnopqrstuvwxyz"
+
+    form.set_value(:app_name, app_name)
+
+    assert !form.in_error?(:app_name)
+
+    assert_equal app_name[0..15], form.get_value(:app_name)
+
+  end
+
   def test_app_create
     @login, pass = dummy_credentials
     create_namespace(@login, pass, @login)
