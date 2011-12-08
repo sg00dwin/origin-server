@@ -11,6 +11,7 @@ module OpenShift
 
       def open
         @page.get @path
+        wait_for_page @path
       end
 
       def title
