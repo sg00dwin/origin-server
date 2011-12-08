@@ -34,7 +34,7 @@ When /^I idle the php application$/ do
 end
 
 Then /^the php application health\-check will( not)? be successful$/ do | negate |
-  good_status = negate ? 1 : 0
+  good_status = negate ? 0 : 1
 
   # This command causes curl to hit the app, causing restorer to turn it back
   # on and redirect.  Curl then follows that redirect.
