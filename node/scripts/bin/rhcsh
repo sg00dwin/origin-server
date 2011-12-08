@@ -40,7 +40,7 @@ function ctl_all {
 
 function mongo() {
    [ -n "$OPENSHIFT_NOSQL_DB_HOST" ]  &&  hopt="--host $OPENSHIFT_NOSQL_DB_HOST"
-   if echo "$@" | grep '\-\-host' > /dev/null; then
+   if echo "$@" | egrep "\-\-host|$OPENSHIFT_NOSQL_DB_HOST" > /dev/null; then
       hopt=""  #  Do not override if --host is passed.
    fi
 
