@@ -86,7 +86,7 @@ class BrokerController < ApplicationController
           if !(val =~ /\A(jumbo|exlarge|large|micro|std)\z/)
             render :json => generate_result_json("Invalid Profile: #{val}.  Must be: (jumbo|exlarge|large|micro|std)", nil, 1), :status => :invalid and return nil
           end
-        when 'debug', 'alter'
+        when 'debug', 'alter', 'delete'
           if val != true && val != false && !(val =~ /\A(true|false)\z/)
             render :json => generate_result_json("Invalid value for #{key} specified: #{val}", nil, 1), :status => :invalid and return nil
           end
@@ -355,6 +355,31 @@ class BrokerController < ApplicationController
               user.update_namespace(ns)
             elsif update
               user.update
+            end
+          elsif data['delete']
+            if user.apps.length > 0
+              app_info = {}
+              user.apps.each do |appname, app|
+                  app_info[appname] = {
+                      :framework => app['framework'],
+                      :creation_time => app['creation_time'],
+                      :aliases => app['aliases']
+                  }
+              end
+              render :json => generate_result_json("The namespace you entered (#{ns}) has the following apps created : #{app_info}. \nAll apps need to be destroyed before namespace can be deleted", nil, 106), :status => :invalid and return
+            else
+              json_data = JSON.generate({
+                              :rhlogin => user.rhlogin,
+                              :uuid => user.uuid,
+                              :rhc_domain => Libra.c[:libra_domain]
+                              })
+              user.delete
+              dyn_retries = 2
+              auth_token = Libra::Server.dyn_login(dyn_retries)
+              Libra::Server.dyn_delete_txt_record(ns, auth_token, dyn_retries)
+              Libra::Server.dyn_publish(auth_token, dyn_retries)
+              Libra::Server.dyn_logout(auth_token, dyn_retries)
+              render :json => generate_result_json(nil, json_data) and return
             end
           else
             render :json => generate_result_json("User already has a registered namespace.  To modify, use --alter", nil, 97), :status => :conflict and return
