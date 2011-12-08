@@ -30,7 +30,7 @@ module OpenShift
       open_dialog(:signin, false){ |signin|
         signin.submit(login,password)
       
-        await {
+        await(10) {
           exists?("a[href='/app/logout']")
         }
       }
@@ -109,12 +109,12 @@ module OpenShift
       end
     end
 
-    def wait_for_page(location)
+    def wait_for_page(location, timeout=5)
       uri = URI.parse(@page.current_url)
       match = location.start_with?("http") ? #assume absolute URL
         uri.to_s : uri.to_s.split(uri.host)[1]
 
-      await { location == match }
+      await(timeout) { location == match }
     end
   end
 
@@ -129,7 +129,7 @@ module OpenShift
     end
 
     def assert_redirected_to(location)
-      wait_for_page(location)
+      wait_for_page location, 10
     end
     
     def assert_equal_no_case(expected, actual)

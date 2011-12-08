@@ -19,6 +19,7 @@ Requires:  MySQL-python
 Requires:  pymongo
 Requires:  python-psycopg2
 Requires:  python-virtualenv
+Requires:  libjpeg
 
 Obsoletes: rhc-cartridge-wsgi-3.2.1
 

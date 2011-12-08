@@ -58,6 +58,7 @@ class TS_web
       :header => Header.suite,
       :express => Express.suite,
       :flex => Flex.suite,
+      :console => ExpressConsole.suite,
     }
 
     suite = TestDecorator.new('Sauce Tests')
