@@ -75,3 +75,9 @@ alias tail_all="/usr/bin/tail -f $OPENSHIFT_APP_DIR/logs/*"
 export PS1="[$OPENSHIFT_APP_DNS \W]\> "
 export TMOUT=300
 welcome
+
+if [ -z $SSH_TTY ]
+then
+    echo "WARNING: This ssh terminal was started without a tty." 1>&2
+    echo "          It is highly recommended to login with: ssh -t" 1>&2
+fi
