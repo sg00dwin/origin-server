@@ -6,6 +6,9 @@ import pwd
 import syslog
 import glob
 import base64
+import commands
+
+ABSTRACT_SELINUX_LIB = "/usr/libexec/li/cartridges/abstract/info/lib/selinux"
 
 commands = {
     "git-receive-pack": "/usr/bin/git-receive-pack",
@@ -40,14 +43,9 @@ def read_env_vars():
         os.putenv(env, env_var)
 
 def openshift_mcs_level(uid):
-    setsize=1023
-    ord = uid
-    tier = setsize
-    while ord > tier:
-        ord -= tier
-        tier -= 1
-    tier = setsize - tier
-    return "c%d,c%d" % (tier, ord + tier)
+    cmd = "source %s; openshift_mcs_level %s" % (ABSTRACT_SELINUX_LIB, uid)
+    ret = commands.getstatusoutput(cmd)
+    return ret[1]
 
 #
 # Join the user's cgroup if available
