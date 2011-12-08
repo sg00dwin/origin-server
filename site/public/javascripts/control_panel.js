@@ -1,4 +1,4 @@
-/* DO NOT MODIFY. This file was compiled Wed, 30 Nov 2011 18:02:26 GMT from
+/* DO NOT MODIFY. This file was compiled Thu, 08 Dec 2011 16:34:32 GMT from
  * /home/aboone/Source/li/site/app/coffeescripts/control_panel.coffee
  */
 
@@ -101,7 +101,7 @@
         }
       }
     });
-    ($('body')).delegate('form', 'submit', function(event) {
+    ($('body')).delegate('form', 'ajax:beforeSend', function(event) {
       return ($(this)).spin();
     });
     return ($('body')).delegate('form', 'ajax:complete', function(event) {
