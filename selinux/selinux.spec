@@ -34,6 +34,12 @@ rm -rf %{buildroot}
 /usr/sbin/semodule -i %{_datadir}/selinux/packages/libra.pp
 /usr/sbin/semanage port -m -t submission_port_t -p tcp 587
 
+# Bring in external smtp ports but _NOT_ 25.
+semanage -i - << _EOF
+port -m -t libra_port_t -p tcp 465
+port -m -t libra_port_t -p tcp 587
+_EOF
+
 %files
 %defattr(-,root,root,-)
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
@@ -85,7 +91,7 @@ rm -rf %{buildroot}
 - selinux policy increment (mmcgrath@redhat.com)
 
 * Mon Nov 21 2011 Dan McPherson <dmcphers@redhat.com> 0.81.6-1
-- 
+-
 
 * Mon Nov 21 2011 Dan McPherson <dmcphers@redhat.com> 0.81.5-1
 - Add support for mongod, requires selinux-policy-3.7.19-129.el6
@@ -122,7 +128,7 @@ rm -rf %{buildroot}
 - altering ~/.ssh access (mmcgrath@redhat.com)
 
 * Mon Oct 24 2011 Dan McPherson <dmcphers@redhat.com> 0.80.4-1
-- 
+-
 
 * Fri Oct 21 2011 Dan McPherson <dmcphers@redhat.com> 0.80.3-1
 - Allow sshd_t to remove libra_tmp_t directories, also allow libra_domains to
@@ -189,10 +195,10 @@ rm -rf %{buildroot}
   pages (dwalsh@redhat.com)
 
 * Tue Aug 30 2011 Dan McPherson <dmcphers@redhat.com> 0.77.7-1
-- 
+-
 
 * Tue Aug 30 2011 Dan McPherson <dmcphers@redhat.com> 0.77.6-1
-- 
+-
 
 * Mon Aug 29 2011 Dan McPherson <dmcphers@redhat.com> 0.77.5-1
 - Update to use newer RHEL6.2 policy.  selinux-policy-3.7.19-108.el6 required
@@ -250,16 +256,16 @@ rm -rf %{buildroot}
 - require newer version of selinux (mmcgrath@redhat.com)
 
 * Tue Aug 02 2011 Dan McPherson <dmcphers@redhat.com> 0.75.8-1
-- 
+-
 
 * Tue Aug 02 2011 Dan McPherson <dmcphers@redhat.com> 0.75.7-1
 - Allow libra_t domains to connect to the ftp port (dwalsh@redhat.com)
 
 * Mon Aug 01 2011 Dan McPherson <dmcphers@redhat.com> 0.75.6-1
-- 
+-
 
 * Sun Jul 31 2011 Dan McPherson <dmcphers@redhat.com> 0.75.5-1
-- 
+-
 
 * Thu Jul 28 2011 Dan McPherson <dmcphers@redhat.com> 0.75.4-1
 - Allow libra to connect to memcache port (dwalsh@redhat.com)
@@ -314,7 +320,7 @@ rm -rf %{buildroot}
 - fixed selinux module (mmcgrath@redhat.com)
 
 * Mon Jun 27 2011 Dan McPherson <dmcphers@redhat.com> 0.73.2-1
-- 
+-
 
 * Mon Jun 27 2011 Dan McPherson <dmcphers@redhat.com> 0.73.1-1
 - bump spec numbers (dmcphers@redhat.com)
