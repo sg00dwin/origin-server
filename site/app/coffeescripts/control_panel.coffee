@@ -99,7 +99,7 @@ $ ->
 
 
   # Set up spinners 
-  ($ 'body').delegate 'form', 'submit', (event) ->
+  ($ 'body').delegate 'form', 'ajax:beforeSend', (event) ->
     ($ this).spin()
   ($ 'body').delegate 'form', 'ajax:complete', (event) ->
     ($ this).spin(false)
