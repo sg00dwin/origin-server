@@ -173,7 +173,7 @@ class DevEnv < Thor
 
     begin
       # TODO - Remove this once nss is updated in RHEL 6.2
-      print "Running one yum update to get around RHEL 6.2 AMI problem"
+      print "Running one yum update to get around RHEL 6.2 AMI problem..."
       ssh(hostname, "yum update -y --exclude='rhc*'", 3600)
       puts "Done"
 
