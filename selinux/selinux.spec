@@ -32,6 +32,7 @@ rm -rf %{buildroot}
 
 %post
 /usr/sbin/semodule -i %{_datadir}/selinux/packages/libra.pp
+/usr/sbin/semanage port -m -t submission_port_t -p tcp 587
 
 %files
 %defattr(-,root,root,-)
