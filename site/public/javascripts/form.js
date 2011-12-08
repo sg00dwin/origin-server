@@ -1,5 +1,5 @@
-/* DO NOT MODIFY. This file was compiled Mon, 05 Dec 2011 21:39:16 GMT from
- * /home/fotios/openshift/li/site/app/coffeescripts/form.coffee
+/* DO NOT MODIFY. This file was compiled Thu, 08 Dec 2011 15:48:19 GMT from
+ * /home/aboone/Source/li/site/app/coffeescripts/form.coffee
  */
 
 (function() {
@@ -66,7 +66,6 @@
       return ($(window, 'html', 'body')).scrollTop(0);
     };
     close_dialog = function(dialog) {
-      console.log("Closed", dialog);
       dialog.find(':hidden').show();
       dialog.find('div.message').remove();
       dialog.find('input:visible:not(.button)').val('');
