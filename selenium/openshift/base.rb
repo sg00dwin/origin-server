@@ -108,6 +108,14 @@ module OpenShift
         wait.until { yield }
       end
     end
+
+    def wait_for_page(location)
+      uri = URI.parse(@page.current_url)
+      match = location.start_with?("http") ? #assume absolute URL
+        uri.to_s : uri.to_s.split(uri.host)[1]
+
+      await { location == match }
+    end
   end
 
   module Assertions
@@ -121,11 +129,7 @@ module OpenShift
     end
 
     def assert_redirected_to(location)
-      uri = URI.parse(@page.current_url)
-      match = location.start_with?("http") ? #assume absolute URL
-        uri.to_s : uri.to_s.split(uri.host)[1]
-      
-      await { location == match }
+      wait_for_page(location)
     end
     
     def assert_equal_no_case(expected, actual)
