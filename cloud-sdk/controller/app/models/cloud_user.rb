@@ -7,7 +7,7 @@ class CloudUser < Cloud::Sdk::Model
   primary_key :rhlogin
   private :rhlogin=, :uuid=
   
-  validates_each :login do |record, attribute, val|
+  validates_each :rhlogin do |record, attribute, val|
     record.errors.add(attribute, {:message => "Invalid characters found in RHlogin '#{val}' ", :code => 107}) if val =~ /["\$\^<>\|%\/;:,\\\*=~]/
   end
   
@@ -43,14 +43,15 @@ class CloudUser < Cloud::Sdk::Model
       update_namespace(response) if namespace_changed?
     end
     
-    super()
+    super(@rhlogin)
   end
 
-  def find_all
-  end
-  
   def applications
     Application.find_all(self)
+  end
+  
+  def self.find(rhlogin)
+    super(rhlogin,rhlogin)
   end
   
   private
@@ -66,20 +67,23 @@ class CloudUser < Cloud::Sdk::Model
 
       raise Cloud::Sdk::WorkflowException.new("A namespace with name '#{namespace}' already exists", 103) unless dns_service.namespace_available?(@namespace)
 
-      Rails.logger.debug "DEBUG: Attempting to add namespace '#{@namespace}' for user '#{@rhlogin}'"      
-      response.debug("Creating user entry login:#{@rhlogin} ssh:#{@ssh} namespace:#{@namespace}")
-      dns_service.register_namespace(@namespace)
-      @uuid = Cloud::Sdk::Model.gen_uuid
-      dns_service.publish
-      notify_observers(:cloud_user_create_success)      
-    rescue Exception => e
       begin
-        Rails.logger.debug "DEBUG: Attempting to remove namespace '#{@namespace}' after failure to add user '#{@rhlogin}'"        
-        dns_service.deregister_namespace(@namespace)
+        Rails.logger.debug "DEBUG: Attempting to add namespace '#{@namespace}' for user '#{@rhlogin}'"      
+        response.debug("Creating user entry login:#{@rhlogin} ssh:#{@ssh} namespace:#{@namespace}")
+        dns_service.register_namespace(@namespace)
+        @uuid = Cloud::Sdk::Model.gen_uuid
         dns_service.publish
-        notify_observers(:cloud_user_create_error)      
-      ensure
-        raise
+        notify_observers(:cloud_user_create_success)      
+      rescue Exception => e
+        Rails.logger.debug e
+        begin
+          Rails.logger.debug "DEBUG: Attempting to remove namespace '#{@namespace}' after failure to add user '#{@rhlogin}'"        
+          dns_service.deregister_namespace(@namespace)
+          dns_service.publish
+          notify_observers(:cloud_user_create_error)      
+        ensure
+          raise
+        end
       end
     ensure
       dns_service.close      
@@ -99,8 +103,8 @@ class CloudUser < Cloud::Sdk::Model
 
       applications.each do |app|
         Rails.logger.debug "DEBUG: Updating namespaces for app: #{app.name}"
-        dns_service.deregister_application(app.name, self.namespace_was, @login)
-        dns_service.register_application(app.name, self.namespace, @login)
+        dns_service.deregister_application(app.name, self.namespace_was, @rhlogin)
+        dns_service.register_application(app.name, self.namespace, @rhlogin)
       end
       
       update_namespace_failures = []

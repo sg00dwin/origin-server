@@ -22,7 +22,13 @@ class DataStore
   end
   
   def self.save(obj_type, user_id, id, serialized_obj)
-    print "DataStore.save(#{obj_type}, #{user_id}, #{id}, #{serialized_obj})\n\n"    
+    print "DataStore.save(#{obj_type}, #{user_id}, #{id}, #{serialized_obj})\n\n"
+    case obj_type
+    when "CloudUser"
+      put_user_s3(user_id, serialized_obj)
+    when "Application"
+      put_app_s3(user_id,id, serialized_obj)
+    end
   end
   
   def self.delete(obj_type, user_id, id)
@@ -58,11 +64,24 @@ class DataStore
     users
   end
 
+  def self.put_user_s3(rhlogin, json)
+    begin
+      obj = bucket.objects["user_info/#{rhlogin}/user.json"]
+      obj.write(json)
+    rescue AWS::S3::Errors::NoSuchKey
+      return nil
+    end
+  end
+
   #
   # Returns the S3 user json object
   #
   def self.get_user_s3(rhlogin)
-    {rhlogin => bucket.objects["user_info/#{rhlogin}/user.json"].read}
+    begin
+      {rhlogin => bucket.objects["user_info/#{rhlogin}/user.json"].read}
+    rescue AWS::S3::Errors::NoSuchKey
+      return nil
+    end
   end
 
   def self.get_user_apps_s3(rhlogin)
@@ -78,7 +97,11 @@ class DataStore
   # Returns the application S3 json object
   #
   def self.get_app_s3(rhlogin, app_name)
-    {app_name => bucket.objects["user_info/#{rhlogin}/apps/#{app_name}.json"].read}
+    begin
+      {app_name => bucket.objects["user_info/#{rhlogin}/apps/#{app_name}.json"].read}
+    rescue AWS::S3::Errors::NoSuchKey
+      return nil
+    end
   end
   
   #

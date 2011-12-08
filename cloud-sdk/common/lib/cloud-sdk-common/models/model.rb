@@ -83,7 +83,7 @@ module Cloud
       
         @attributes = {}
         self.instance_variable_names.map {|name| name[1..-1]}.each do |name|
-          next if ['attributes', 'changed_attributes', 'previously_changed', 'persisted', 'new_record', 'deleted'].include? name
+          next if ['attributes', 'changed_attributes', 'previously_changed', 'persisted', 'new_record', 'deleted', 'errors', 'validation_context'].include? name
           next if @@excludes_attributes.include? name.to_sym
           @attributes[name] = nil
         end

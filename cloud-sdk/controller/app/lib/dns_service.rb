@@ -16,10 +16,11 @@ class DnsService
   @@dyn_retries = 2
   
   def initialize
+    login
   end
   
   def namespace_available?(namespace)
-    return has_dns_txt?(namespace)
+    return !DnsService.has_dns_txt?(namespace)
   end
   
   def register_namespace(namespace)
@@ -58,7 +59,7 @@ class DnsService
     if @auth_token
       return @auth_token
     else
-      @auth_token = dyn_login(@@dyn_retries) 
+      @auth_token = DnsService.dyn_login(@@dyn_retries) 
       return @auth_token
     end
   end
@@ -222,7 +223,7 @@ class DnsService
       while !success && retries < 5
         retries += 1
         begin
-          Rails.logger.debug "DEBUG: DYNECT handle temp redirect with path: #{url.path} and headers: #{headers.pretty_inspect} attempt: #{retries} sleep_time: #{sleep_time}"
+          Rails.logger.debug "DEBUG: DYNECT handle temp redirect with path: #{url.path} and headers: #{headers.inspect} attempt: #{retries} sleep_time: #{sleep_time}"
           resp, data = http.get(url.path, headers)
           case resp
           when Net::HTTPSuccess, Net::HTTPTemporaryRedirect
@@ -268,7 +269,7 @@ class DnsService
       #http.set_debug_output $stderr
       http.use_ssl = true
       begin
-        Rails.logger.debug "DEBUG: DYNECT has? with path: #{url.path} and headers: #{headers.pretty_inspect}"
+        Rails.logger.debug "DEBUG: DYNECT has? with path: #{url.path} and headers: #{headers.inspect}"
         resp, data = http.get(url.path, headers)
         case resp
         when Net::HTTPSuccess
@@ -312,7 +313,7 @@ class DnsService
       http.use_ssl = true
       json_data = JSON.generate(post_data);
       begin
-        Rails.logger.debug "DEBUG: DYNECT put/post with path: #{url.path} json data: #{json_data} and headers: #{headers.pretty_inspect}"
+        Rails.logger.debug "DEBUG: DYNECT put/post with path: #{url.path} json data: #{json_data} and headers: #{headers.inspect}"
         if put
           resp, data = http.put(url.path, json_data, headers)
         else
@@ -360,7 +361,7 @@ class DnsService
       #http.set_debug_output $stderr
       http.use_ssl = true
       begin
-        Rails.logger.debug "DEBUG: DYNECT delete with path: #{url.path} and headers: #{headers.pretty_inspect}"
+        Rails.logger.debug "DEBUG: DYNECT delete with path: #{url.path} and headers: #{headers.inspect}"
         resp, data = http.delete(url.path, headers)
         case resp
         when Net::HTTPSuccess

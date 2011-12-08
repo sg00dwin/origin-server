@@ -12,6 +12,27 @@ class LegacyBrokerController < ApplicationController
   before_filter :validate_request, :authenticate
   rescue_from Exception, :with => :exception_handler
   
+  def user_info_post
+    user = CloudUser.find(@login)
+    if user
+      user_info = user.as_json
+      user_info[:rhc_domain] = Rails.application.config.cdk[:domain_suffix]
+      app_info = {}
+      user.applications.each do |app|
+        app_info[app.name] = app.as_json
+      end
+      
+      @reply.data = {:user_info => user_info, :app_info => app_info}.to_json
+      render :json => @reply
+    else
+      # Return a 404 to denote the user doesn't exist
+      @reply.result = "User does not exist"
+      @reply.code = 99
+      
+      render :json => @reply, :status => :not_found
+    end
+  end
+  
   def domain_post
     cloud_user = CloudUser.find(@login)
     if @req.alter
@@ -22,7 +43,7 @@ class LegacyBrokerController < ApplicationController
     end
         
     if cloud_user.invalid?
-      @reply.attributes=(cloud_user.errors.first[1])
+      @reply.result = cloud_user.errors.first[1]
       render :json => @reply, :status => :invalid 
       return
     end
@@ -37,6 +58,23 @@ class LegacyBrokerController < ApplicationController
     render :json => @reply
   end
   
+  def cart_list_post
+    cart_type = @req.cart_type
+    if cart_type != 'standalone' and cart_type != 'embedded'
+      @reply.result = "Invalid cartridge types: #{cart_type} specified"
+      @reply.exit_code = 109
+      
+      render :json => @reply, :status => :invalid
+      return
+    end
+  
+    carts = Libra::Util.get_cartridges_list(cart_type)
+    @reply.data = JSON.generate { :carts => carts }
+    # Just return a 200 success
+    
+    render :json => @reply
+  end
+  
   def cartridge_post
     @req.node_profile ||= "std"
     user = CloudUser.find(@login)
@@ -46,34 +84,38 @@ class LegacyBrokerController < ApplicationController
       cart_type = @req.cartridge.split('-')[0..-2].join('-')
       apps = user.applications
       
-      server = Server.find_available(node_profile)
-      app = Application.new(@req.app_name, @req.framework, server, creation_time=DateTime::now().strftime, uuid=nil)
-      app.valid?
-      app.save
-      begin
-        app.create
-        app.add_ssh_keys
-        app.add_env_vars
-        app.create_dns
-        app.configure_dependencies        
+      app = Application.new(user, @req.app_name, nil, @req.node_profile, @req.framework)
+      if app.valid?
+        app.save
+        begin
+          app.create
+          app.add_ssh_keys
+          app.add_env_vars
+          app.create_dns
+          app.configure_dependencies        
+          
+          case app.framework_cartridge
+            when 'php'
+              page = 'health_check.php'
+            when 'perl'
+              page = 'health_check.pl'
+            else
+              page = 'health'
+          end
         
-        case app.framework_cartridge
-          when 'php'
-            page = 'health_check.php'
-          when 'perl'
-            page = 'health_check.pl'
-          else
-            page = 'health'
+          @reply.data = {:health_check_path => page, :uuid => app.uuid}.to_json
+        rescue
+          app.delete_dns
+          app.destroy
+          app.delete
         end
-
-        @reply.data = {:health_check_path => page, :uuid => app.uuid}.to_json
-      rescue
-        app.delete_dns
-        app.destroy
-        app.delete
+        @reply.result = @reply.resultIO.string if @reply.resultIO && !@reply.resultIO.string.empty?      
+        @reply.result = "Successfully created application: #{app_name}" unless @reply.result      
+      else
+        @reply.result = app.errors.first[1]
+        render :json => @reply, :status => :invalid 
+        return
       end
-      @reply.result = @reply.resultIO.string if @reply.resultIO && !@reply.resultIO.string.empty?      
-      @reply.result = "Successfully created application: #{app_name}" unless @reply.result      
     when 'deconfigure'
       app = Application.find(@login, @req.app_name)
       app.destroy
@@ -150,43 +192,9 @@ class LegacyBrokerController < ApplicationController
     render :json => @reply
   end
   
-  def user_info_post
-    user = CloudUser.find(@login,@login)
-    if user
-      user_info = user.as_json
-      user_info[:rhc_domain] = Rails.application.config.cdk[:domain_suffix]
-      app_info = {}
-      user.applications.each do |app|
-        app_info[app.name] = app.as_json
-      end
-      
-      @reply.data = {:user_info => user_info, :app_info => app_info}.to_json
-      render :json => @reply
-    else
-      # Return a 404 to denote the user doesn't exist
-      @reply.result = "User does not exist"
-      @reply.code = 99
-      
-      render :json => @reply, :status => :not_found
-    end
-  end
   
-  #def cart_list_post
-  #  cart_type = @req.cart_type
-  #  if cart_type != 'standalone' and cart_type != 'embedded'
-  #    @reply.result = "Invalid cartridge types: #{cart_type} specified"
-  #    @reply.exit_code = 109
-  #    
-  #    render :json => @reply, :status => :invalid
-  #    return
-  #  end
-  #
-  #  carts = Libra::Util.get_cartridges_list(cart_type)
-  #  @reply.data = JSON.generate { :carts => carts }
-  #  # Just return a 200 success
-  #  
-  #  render :json => @reply
-  #end
+  
+  
   #
   #def nurture_post
   #  begin
