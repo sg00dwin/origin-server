@@ -87,8 +87,8 @@ module OpenShift
     end
 
     def wait_for_ajax(timeout = 10)
-      sleep 0.5 # ensure that AJAX has had a chance to start
-      wait = Selenium::WebDriver::Wait.new(:timeout => timeout)
+      sleep 0.1 # ensure that AJAX has had a chance to start
+      wait = Selenium::WebDriver::Wait.new(:timeout => timeout, :interval => 0.05)
       wait.until { @page.execute_script 'return jQuery.active == 0' }
     end
 
@@ -102,24 +102,19 @@ module OpenShift
     end
 
     # helper method to wait for a (ruby) condition to become true
-    def await(timeout_secs=5)
+    def await(timeout=5)
       if block_given?
-        while true
-          begin
-            if yield
-              return
-            else
-              raise StandardError, "block evaluated false", caller
-            end
-          rescue
-            sleep 1
-            timeout_secs -= 1
-            if timeout_secs <= 0
-              raise
-            end
-          end
-        end
+        wait = Selenium::WebDriver::Wait.new(:timeout => timeout)
+        wait.until { yield }
       end
+    end
+
+    def wait_for_page(location)
+      uri = URI.parse(@page.current_url)
+      match = location.start_with?("http") ? #assume absolute URL
+        uri.to_s : uri.to_s.split(uri.host)[1]
+
+      await { location == match }
     end
   end
 
@@ -134,11 +129,7 @@ module OpenShift
     end
 
     def assert_redirected_to(location)
-      uri = URI.parse(@page.current_url)
-      match = location.start_with?("http") ? #assume absolute URL
-        uri.to_s : uri.to_s.split(uri.host)[1]
-      
-      await { location == match }
+      wait_for_page(location)
     end
     
     def assert_equal_no_case(expected, actual)

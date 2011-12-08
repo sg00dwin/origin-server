@@ -28,19 +28,22 @@ then
   fi
   
   # If .bundle isn't currently committed and a Gemfile is then bundle install
-  pushd ${OPENSHIFT_REPO_DIR} > /dev/null
-  if ! git show master:.bundle > /dev/null 2>&1 && [ -f ${OPENSHIFT_REPO_DIR}Gemfile ] 
+  if [ -f ${OPENSHIFT_REPO_DIR}Gemfile ]
   then
-    echo "Bundling RubyGems based on Gemfile/Gemfile.lock to repo/vendor/bundle with 'bundle install --deployment'"
-    SAVED_GIT_DIR=$GIT_DIR
-    unset GIT_DIR
-    bundle install --deployment
-    export GIT_DIR=$SAVED_GIT_DIR
+      pushd ${OPENSHIFT_REPO_DIR} > /dev/null
+      if ! git show master:.bundle > /dev/null 2>&1
+      then
+          echo "Bundling RubyGems based on Gemfile/Gemfile.lock to repo/vendor/bundle with 'bundle install --deployment'"
+          SAVED_GIT_DIR=$GIT_DIR
+          unset GIT_DIR
+          bundle install --deployment
+          export GIT_DIR=$SAVED_GIT_DIR
+      fi
+      echo "Precompiling with 'bundle exec rake assets:precompile'"
+      bundle exec rake assets:precompile 2>/dev/null
+      popd > /dev/null
   fi
-  echo "Precompiling with 'bundle exec rake assets:precompile'"
-  bundle exec rake assets:precompile 2>/dev/null
-  popd > /dev/null
-  
+
 fi
 
 user_build.sh

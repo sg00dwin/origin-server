@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.83.3
+Version:       0.83.6
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -9,7 +9,7 @@ Source0:       rhc-selinux-%{version}.tar.gz
 
 BuildRoot:     %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires: selinux-policy >= 3.7.19-106
-Requires:      selinux-policy-targeted >= 3.7.19-106
+Requires:      selinux-policy-targeted >= 3.7.19-130.el6
 
 BuildArch: noarch
 
@@ -38,6 +38,19 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Wed Dec 07 2011 Mike McGrath <mmcgrath@redhat.com> 0.83.6-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- correcting selinux for real this time (mmcgrath@redhat.com)
+
+* Wed Dec 07 2011 Mike McGrath <mmcgrath@redhat.com> 0.83.5-1
+- changing requires (mmcgrath@redhat.com)
+
+* Wed Dec 07 2011 Matt Hicks <mhicks@redhat.com> 0.83.4-1
+- Fix libra transition to libra_mail_t (dwalsh@redhat.com)
+- Allow libra domains to transition to libra_mail_t domain for sending mail
+  over executables labeled sendmail_exec_t (dwalsh@redhat.com)
+
 * Tue Dec 06 2011 Alex Boone <aboone@redhat.com> 0.83.3-1
 - Adding munin port (mmcgrath@redhat.com)
 
