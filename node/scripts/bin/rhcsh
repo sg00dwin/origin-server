@@ -50,6 +50,8 @@ function mongo() {
 
 
 function help {
+# FIXME: Comment out quota for now - till the selinux policy is in place.
+# quota           list free space
     cat <<EOF
 Help menu: The following commands are available to help control your openshift
 application and environment.
@@ -57,7 +59,6 @@ application and environment.
 ctl_app         control your application (start, stop, restart, etc)
 ctl_all         control application and deps like mysql in one command
 tail_all        tail all log files
-quota           list free space
 export          list available environment variables
 rm              remove files / directories
 ls              list files / directories
