@@ -23,7 +23,7 @@ module OpenShift
       }
 
       def link(name)
-        selector(@@items[name])
+        @@items[name]
       end
 
       def links
@@ -31,7 +31,7 @@ module OpenShift
       end
 
       def click(element)
-        @page.click(selector(@@items[element]))
+        @page.find_element(:css, link(element)).click
       end
     end
   end

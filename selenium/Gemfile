@@ -1,5 +1,5 @@
 source :rubygems
 
 gem 'sauce'
-gem 'zipruby'
+gem 'zip'
 gem 'json'

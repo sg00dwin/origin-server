@@ -43,12 +43,12 @@
 
     <profile>
         <subsystem xmlns="urn:jboss:domain:logging:1.0">
-            <console-handler name="CONSOLE">
+            <!--console-handler name="CONSOLE">
                 <level name="INFO"/>
                 <formatter>
                     <pattern-formatter pattern="%d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n"/>
                 </formatter>
-            </console-handler>
+            </console-handler-->
 
             <periodic-rotating-file-handler name="FILE">
                 <level name="INFO"/>
@@ -72,7 +72,7 @@
             <root-logger>
                 <level name="INFO"/>
                 <handlers>
-                    <handler name="CONSOLE"/>
+                    <!--handler name="CONSOLE"/-->
                     <handler name="FILE"/>
                 </handlers>
             </root-logger>

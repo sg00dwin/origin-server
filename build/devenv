@@ -172,6 +172,19 @@ class DevEnv < Thor
     hostname = instance.dns_name
 
     begin
+      # TODO - Remove this once nss is updated in RHEL 6.2
+      print "Running one yum update to get around RHEL 6.2 AMI problem..."
+      ssh(hostname, "yum update -y --exclude='rhc*'", 3600)
+      puts "Done"
+
+      print "Updating all packages on the system..."
+      ssh(hostname, "yum update -y --exclude='rhc*'", 3600)
+      puts "Done"
+
+      if options.reboot?
+        reboot(instance)
+      end
+
       print "Uploading devenv script..."
       script_path = File.expand_path(File.dirname(__FILE__) + "/../misc/devenv/li-devenv.sh")
       scp_to(hostname, script_path, "~/")
@@ -186,14 +199,6 @@ class DevEnv < Thor
       puts "----------------- Install Output ------------------------"
       puts output
       puts "---------------------------------------------------------"
-
-      print "Updating all packages on the system..."
-      ssh(hostname, "yum update -y --exclude='rhc-devenv'", 3600)
-      puts "Done"
-
-      if options.reboot?
-        reboot(instance)
-      end
 
       validate_instance(hostname)
 

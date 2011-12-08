@@ -6,8 +6,11 @@ import pwd
 import syslog
 import glob
 import base64
+import commands
 
-commands = {
+ABSTRACT_SELINUX_LIB = "/usr/libexec/li/cartridges/abstract/info/lib/selinux"
+
+commands_map = {
     "git-receive-pack": "/usr/bin/git-receive-pack",
     "git-upload-pack": "/usr/bin/git-upload-pack",
     "snapshot": "snapshot.sh",
@@ -40,14 +43,9 @@ def read_env_vars():
         os.putenv(env, env_var)
 
 def openshift_mcs_level(uid):
-    setsize=1023
-    ord = uid
-    tier = setsize
-    while ord > tier:
-        ord -= tier
-        tier -= 1
-    tier = setsize - tier
-    return "c%d,c%d" % (tier, ord + tier)
+    cmd = "source %s; openshift_mcs_level %s" % (ABSTRACT_SELINUX_LIB, uid)
+    ret = commands.getstatusoutput(cmd)
+    return ret[1]
 
 #
 # Join the user's cgroup if available
@@ -99,7 +97,7 @@ if __name__ == '__main__':
     allargs = orig_cmd.split()
     try:
         basecmd = os.path.basename(allargs[0])
-        cmd = commands[basecmd]
+        cmd = commands_map[basecmd]
     except:
         syslog.syslog("Invalid command %s" % orig_cmd)
         sys.stderr.write("Invalid command %s" % orig_cmd)
@@ -193,7 +191,7 @@ if __name__ == '__main__':
     runcon = '/usr/bin/runcon'
     mcs_level = openshift_mcs_level(os.getuid())
 
-    context = 'unconfined_u:system_r:libra_t:s0:%s' % mcs_level
+    context = 'unconfined_u:system_r:libra_t:%s' % mcs_level
     os.execv(runcon, [runcon, context, cmd] + allargs)
     sys.exit(1)
 

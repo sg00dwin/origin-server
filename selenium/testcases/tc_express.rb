@@ -1,8 +1,5 @@
 #!/usr/bin/env ruby
-class Express < Sauce::TestCase
-  include ::OpenShift::TestBase
-  include ::OpenShift::CSSHelpers
-  include ::OpenShift::Assertions
+class Express < OpenShift::SeleniumTestCase
 
   def setup
     super
@@ -14,7 +11,7 @@ class Express < Sauce::TestCase
     check_links({
       :whats_express => '/app/express#about',
       :videos => '/app/express#videos',
-    },false)
+    })
 
     # External links
     check_links({
@@ -34,17 +31,17 @@ class Express < Sauce::TestCase
 
     check_links({
       :quickstart => '/app/express#quickstart',
-    },false)
+    })
 
     check_links({
       :console => '/app/dashboard'
     })
   end
-  
+
   def test_create_namespace_blank
     @login, pass = dummy_credentials
     signin(@login, pass)
-    
+
     @express_console.open
 
     form = @express_console.domain_form
@@ -57,15 +54,15 @@ class Express < Sauce::TestCase
     form.submit
 
     assert form.in_error?(:namespace)
-    assert_equal "This field is required.", form.error_message(:namespace)
+    assert_equal_no_case "This field is required.", form.error_message(:namespace)
   end
-  
+
   def test_create_namespace_invalid
     @login, pass = dummy_credentials
     signin(@login, pass)
-    
+
     @express_console.open
-    
+
     form = @express_console.domain_form
 
     form.expand
@@ -78,7 +75,7 @@ class Express < Sauce::TestCase
     form.submit
 
     assert form.in_error?(:namespace)
-    assert_equal "Only letters and numbers are allowed", form.error_message(:namespace)
+    assert_equal_no_case "Only letters and numbers are allowed", form.error_message(:namespace)
   end
 
   def test_create_namespace_valid
@@ -125,15 +122,16 @@ class Express < Sauce::TestCase
       type = get_option_value(form.fields[:cartridge], i)
       create_app(@login, pass, "app#{i}", type)
     end
-    
+
     # TODO assert cannot create more
   end
 
   def get_option_value(select_id, preferred_index)
-    base = "//select[@id='#{select_id}']"
-    ct = @page.get_xpath_count("#{base}/option").to_i
-    i = preferred_index % ct
-    return @page.get_attribute("#{base}/option[#{i+1}]/@value")
+    select = driver.find_elements(:xpath => "//select[@id='#{select_id}']")[0]
+    options = select.find_elements(:css => "option")
+
+    i = preferred_index % options.length
+    options[i].attribute "value"
   end
 
   def jump_to(id)
@@ -152,21 +150,21 @@ class Express < Sauce::TestCase
     form.set_value(:app_name, app_name)
     form.set_value(:cartridge, type)
 
+    jump_to "new_express_app"
+
     form.submit
 
-    await { form.processing? }
-
-    await(30) { !form.processing? }
+    wait_for_ajax 30
 
     # presence of deletion form indicates successful creation
-    await { @page.element? "//form[@id='#{app_name}_delete_form']" }
+    await { exists? "form##{app_name}_delete_form" }
   end
 
   # helper method for creating a namespace
   # post: user is on express console page
   def create_namespace(login, password, namespace)
     signin(login, password)
-    
+
     @express_console.open
 
     form = @express_console.domain_form
@@ -180,20 +178,20 @@ class Express < Sauce::TestCase
 
     form.submit
 
-    await { form.collapsed? }
+    wait_for_ajax 30
 
     await { namespace == form.get_collapsed_value(:namespace) }
   end
- 
+
   def dummy_credentials
     return ["test#{data[:uid]}", data[:password]]
   end
 
-  def check_links(hash,wait=true)
+  def check_links(hash)
     hash.each do |name,url|
       @express.open
       @express.click(name)
-      assert_redirected_to("#{url}",wait)
+      assert_redirected_to("#{url}")
     end
   end
 end

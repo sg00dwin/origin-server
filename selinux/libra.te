@@ -57,8 +57,6 @@ corenet_udp_bind_generic_port(libra_t)
 corenet_tcp_bind_jboss_management_port(libra_t)
 corenet_tcp_bind_mongod_port(libra_t)
 
-sendmail_domtrans(libra_t)
-
 ssh_exec(libra_t)
 cloudform_exec_mongod(libra_t)
 
@@ -335,3 +333,15 @@ fs_read_cgroup_files(libra_cgroup_read_t)
 
 allow libra_cgroup_read_t libra_var_lib_t:dir list_dir_perms;
 read_files_pattern(libra_cgroup_read_t, libra_var_lib_t, libra_var_lib_t)
+
+########################################
+#
+# libra_cgroup_read local policy
+#
+mta_base_mail_template(libra)
+mta_sendmail_domtrans(libra_t, libra_mail_t)
+role system_r types libra_mail_t;
+
+read_files_pattern(libra_mail_t, libra_var_lib_t, libra_var_lib_t)
+
+permissive libra_mail_t;

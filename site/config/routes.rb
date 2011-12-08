@@ -27,7 +27,7 @@ RedHatCloud::Application.routes.draw do
     match 'features' => 'product#features', :as => 'features'
     match 'express_protected' => 'product#express_protected', :as => 'express_protected'
     match 'flex_protected' => 'product#flex_protected', :as => 'flex_protected'
-    match 'power' => 'product#power', :as => 'power'
+    match 'power', :to => redirect('/app/platform')
     match 'flex_redirect' => 'product#flex_redirect', :as => 'flex_redirect'
     match 'about' => 'home#about', :as => 'about'
     match 'twitter_latest_tweet' => 'twitter#latest_tweet'
