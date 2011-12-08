@@ -73,16 +73,6 @@ small {
   background-color: $flex;
 }
 
-.power ::-moz-selection {
-  background-color: $power;
-}
-.power ::-webkit-selection {
-  background-color: $power;
-}
-.power ::selection {
-  background-color: $power;
-}
-
 header, footer, section { display: block; }
 
 h1 { font-size: 1.5em }
@@ -693,15 +683,6 @@ nav.service {
     }
   }
   
-  .power & {
-    background-color: $power;
-    
-    .power {
-      background-color: white;
-      color: #666;
-    }
-  }
-  
   li.active a,
   a:hover {
     background-color: white !important;
@@ -823,12 +804,6 @@ nav.service {
   &.flex .main nav h2 {
     color: $flex;
   }
-  &.power .main h1 {
-    color: $power;
-  }
-  &.power .main nav h2 {
-    color: $power;
-  }
 
 }
 
@@ -853,6 +828,7 @@ body.product.overview { min-width: 55em; }
 #product_overview.prev_login .info { padding-bottom: 18em; }
 #product_overview.prev_login.no_error .info { padding-bottom: 15em; }
 #product_overview.authorized .info { padding-bottom: 2em; }
+#product_overview ul.content { text-align: center; }
 
 .multiplebgs.cssgradients #product_overview .info {
   @include cloud_bg_gradient;
@@ -862,10 +838,11 @@ body.product.overview { min-width: 55em; }
   @include inline-block;
   background: white;
   @include border-radius(2em);
-  width: 24%;
-  height: 26em;
+  width: 40%;
+  height: 22em;
   margin-right: 2.5%;
   padding: 1em 2em;
+  text-align: left;
 
   &:last-child {
     margin-right: 0;
@@ -888,10 +865,6 @@ body.product.overview { min-width: 55em; }
 
   &.flex h2 a, &.flex a.more{
     color: $flex;
-  }
-
-  &.power h2 a, &.power a.more {
-    color: $power;
   }
 
   .product .main .content & .content {
@@ -968,7 +941,7 @@ body.product.overview { min-width: 55em; }
   img {
     position: absolute;
     bottom: -65px;
-    left: 49%;
+    left: 38%;
   }
 
   #login-form {

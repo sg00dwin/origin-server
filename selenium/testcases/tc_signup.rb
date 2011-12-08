@@ -1,8 +1,5 @@
 #!/usr/bin/env ruby
-class Signup < Sauce::TestCase
-  include ::OpenShift::TestBase
-  include ::OpenShift::CSSHelpers
-  include ::OpenShift::Assertions
+class Signup < OpenShift::SeleniumTestCase
 
   def setup
     super
@@ -50,7 +47,7 @@ class Signup < Sauce::TestCase
     }
 
     @tests.each do |name,args|
-      open_dialog(:signup){ |signup|
+      open_dialog(:signup, name != :success){ |signup|
         signup.submit(*args) #*args passes the array as individual elements
         assertions[name].call(signup)
       }

@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.83.3
+Version:   0.83.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -68,6 +68,15 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Tue Dec 06 2011 Alex Boone <aboone@redhat.com> 0.83.4-1
+- Removed all references to Power on /app (ffranz@redhat.com)
+- Removed all references to Power on /app (ffranz@redhat.com)
+- Modified password reset for to prevent double submission. Dialogs are also
+  cleared when closed (fotios@redhat.com)
+- Point to fully-qualified URL for openshift.repo config, not available in all
+  envs (aboone@redhat.com)
+- Use sensible permissions on icons (aboone@redhat.com)
+
 * Sat Dec 03 2011 Mike McGrath <mmcgrath@redhat.com> 0.83.3-1
 - Added server side validation for SSH keys for BZ 759362 and 755375
   (fotios@redhat.com)

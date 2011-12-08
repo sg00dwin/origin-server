@@ -1,6 +1,9 @@
 #!/bin/bash
 # Idle or Restore applications
 
+# Restorer turns an idle application back on making it available to serve
+# requests again.
+
 function print_help {
     echo "Usage: $0"
     echo "  -u UUID  (app to restore UUID)"
@@ -25,7 +28,11 @@ then
     print_help
 fi
 
+# Turn user application back on.
+
 /sbin/service libra startuser "${uuid}"
+
+# Enable proxy setup
 
 sed -i "s/#ProxyPass/ProxyPass/g" "/etc/httpd/conf.d/libra/${uuid}"*.conf
 

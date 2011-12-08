@@ -409,18 +409,6 @@ small {
   background-color: #dc9f2e;
 }
 
-.power ::-moz-selection {
-  background-color: #cc0000;
-}
-
-.power ::-webkit-selection {
-  background-color: #cc0000;
-}
-
-.power ::selection {
-  background-color: #cc0000;
-}
-
 header, footer, section {
   display: block;
 }
@@ -1054,13 +1042,6 @@ nav.service {
   background-color: white;
   color: #666;
 }
-.power nav.service {
-  background-color: #cc0000;
-}
-.power nav.service .power {
-  background-color: white;
-  color: #666;
-}
 nav.service li.active a,
 nav.service a:hover {
   background-color: white !important;
@@ -1227,12 +1208,6 @@ nav.service:last {
 .product.flex .main nav h2 {
   color: #dc9f2e;
 }
-.product.power .main h1 {
-  color: #cc0000;
-}
-.product.power .main nav h2 {
-  color: #cc0000;
-}
 
 /* product overview page styles */
 /* Override the body min-width since this page is a bit wider */
@@ -1268,6 +1243,10 @@ body.product.overview {
   padding-bottom: 2em;
 }
 
+#product_overview ul.content {
+  text-align: center;
+}
+
 .multiplebgs.cssgradients #product_overview .info {
   background-image: url("/app/images/transparent_cloud.png"), -webkit-gradient(radial, 50% 100%, 0, 50% 100%, 100, color-stop(0%, #0093d9), color-stop(100%, #002e53));
   background-image: url("/app/images/transparent_cloud.png"), -webkit-radial-gradient(center bottom, circle farthest-side, #0093d9, #002e53);
@@ -1292,10 +1271,11 @@ body.product.overview {
   -ms-border-radius: 2em;
   -khtml-border-radius: 2em;
   border-radius: 2em;
-  width: 24%;
-  height: 26em;
+  width: 40%;
+  height: 22em;
   margin-right: 2.5%;
   padding: 1em 2em;
+  text-align: left;
 }
 .product_box {
   *display: inline;
@@ -1320,9 +1300,6 @@ body.product.overview {
 }
 .product_box.flex h2 a, .product_box.flex a.more {
   color: #dc9f2e;
-}
-.product_box.power h2 a, .product_box.power a.more {
-  color: #cc0000;
 }
 .product .main .content .product_box .content {
   width: auto;
@@ -1409,7 +1386,7 @@ body.product.overview {
 #user_box img {
   position: absolute;
   bottom: -65px;
-  left: 49%;
+  left: 38%;
 }
 #user_box #login-form form {
   margin: 1em 0;

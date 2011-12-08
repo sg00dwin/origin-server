@@ -24,6 +24,7 @@ commands = {
     "rsync": "/bin/bash",
     "ctl_all": "/bin/bash",
     "deploy.sh": "/bin/bash",
+    "rhc-list-ports": "/bin/bash",
     "post_deploy.sh": "/bin/bash"
 }
 
@@ -120,7 +121,7 @@ if __name__ == '__main__':
         allargs = ['--init-file', '/usr/bin/rhcsh', '-i']
     elif basecmd in ('ctl_all',):
         allargs = ['-c', '. /usr/bin/rhcsh > /dev/null ; ctl_all %s' % allargs[-1]]
-    elif basecmd in ('java','set','scp', 'cd', 'test', 'mkdir', 'rsync', 'deploy.sh', 'post_deploy.sh'):
+    elif basecmd in ('java','set','scp', 'cd', 'test', 'mkdir', 'rsync', 'deploy.sh', 'post_deploy.sh', 'rhc-list-ports'):
         str = ' '.join(allargs)
         allargs = ['-c', str]
     elif basecmd in ('tail',):

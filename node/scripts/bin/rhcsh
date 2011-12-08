@@ -37,6 +37,18 @@ function ctl_all {
     done
 }
 
+
+function mongo() {
+   [ -n "$OPENSHIFT_NOSQL_DB_HOST" ]  &&  hopt="--host $OPENSHIFT_NOSQL_DB_HOST"
+   if echo "$@" | grep '\-\-host' > /dev/null; then
+      hopt=""  #  Do not override if --host is passed.
+   fi
+
+   /usr/bin/mongo $hopt "$@"
+
+}  #  End of  mongo  function.
+
+
 function help {
     cat <<EOF
 Help menu: The following commands are available to help control your openshift
@@ -51,6 +63,7 @@ rm              remove files / directories
 ls              list files / directories
 ps              list running applications
 kill            kill running applications
+mongo           interactive MongoDB shell
 
 EOF
 }

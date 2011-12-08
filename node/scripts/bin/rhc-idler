@@ -1,5 +1,10 @@
 #!/bin/bash
 # Idle or Restore applications
+#
+# rhc-idler takes an existing running application and disables it to free up
+# memory and cpu resources.  It uses rhc-restorer to automatically turn the
+# application back on when a request comes to it (like 
+# http://app-dom.rhcloud.com)
 
 function print_help {
     echo "Usage: $0"

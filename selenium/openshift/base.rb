@@ -14,21 +14,7 @@ module OpenShift
       }
     end
 
-    def setup
-      page.set_context "sauce:job-build=#{ENV['JENKINS_BUILD'] || 'unofficial'}"
-
-      @page    = page
-      @home    = OpenShift::Express::Home.new(page, '/app')
-      @express = OpenShift::Express::Express.new(page, '/app/express')
-      @flex    = OpenShift::Express::Flex.new(page, '/app/flex')
-      @express_console = OpenShift::Express::ExpressConsole.new(page, '/app/dashboard')
-
-      @navbar  = OpenShift::Express::MainNav.new(page,'main_nav')
-      @signin  = OpenShift::Express::Login.new(page,'signin')
-      @reset   = OpenShift::Express::Reset.new(page,'reset_password')
-      @signup  = OpenShift::Express::Signup.new(page,'signup')
-    end
-
+    # unused
     def get_count(type)
       count = 0;
       result = self.instance_variable_get(:@_result)
@@ -40,38 +26,42 @@ module OpenShift
       return count > 0
     end
 
-    def teardown
-      if(get_count('errors') || get_count('failures'))
-        page.failed!
-      else
-        page.passed!
-      end
-    end
-
     def signin(login=@valid_credentials[:email],password=@valid_credentials[:password])
       open_dialog(:signin, false){ |signin|
         signin.submit(login,password)
-          
-        @page.wait_for_element("//a[@href='/app/logout']")
+      
+        await {
+          exists?("a[href='/app/logout']")
+        }
       }
     end
   end
 
   module CSSHelpers
-    def selector(field)
-      "css=#{@base} #{field}"
-    end
-
     def exists?(css)
-      @page.element?(css)
+      begin
+        @page.find_element(:css => css)
+        return true
+      rescue Selenium::WebDriver::Error::NoSuchElementError
+        return false
+      end
     end
 
     def text(css)
-      @page.get_text(css)
+      @page.find_element(:css, css).text
     end
 
     def type(css,string)
-      @page.type(css,string)
+      @page.find_element(:css, css).send_keys strin
+    end
+
+    def xpath_exists?(xpath)
+      begin
+        @page.find_element(:xpath => xpath)
+        return true
+      rescue Selenium::WebDriver::Error::NoSuchElementError
+        return false
+      end
     end
 
     # Needs to have navbar and signin defined,
@@ -96,13 +86,15 @@ module OpenShift
       end
     end
 
+    def wait_for_ajax(timeout = 10)
+      sleep 0.1 # ensure that AJAX has had a chance to start
+      wait = Selenium::WebDriver::Wait.new(:timeout => timeout, :interval => 0.05)
+      wait.until { @page.execute_script 'return jQuery.active == 0' }
+    end
+
     # Wow, javascript in Selenium 1 is kludgy: http://bit.ly/oCzktV 
     def exec_js(script)
-      @page.get_eval("
-        (function(){with(this){
-        #{script}
-          }}).call(selenium.browserbot.getUserWindow());
-        ");
+      @page.execute_script script
     end
 
     def sauce_testing(testing=true)
@@ -110,24 +102,19 @@ module OpenShift
     end
 
     # helper method to wait for a (ruby) condition to become true
-    def await(timeout_secs=5)
+    def await(timeout=5)
       if block_given?
-        while true
-          begin
-            if yield
-              return
-            else
-              raise StandardError, "block evaluated false", caller
-            end
-          rescue
-            sleep 1
-            timeout_secs -= 1
-            if timeout_secs <= 0
-              raise
-            end
-          end
-        end
+        wait = Selenium::WebDriver::Wait.new(:timeout => timeout)
+        wait.until { yield }
       end
+    end
+
+    def wait_for_page(location)
+      uri = URI.parse(@page.current_url)
+      match = location.start_with?("http") ? #assume absolute URL
+        uri.to_s : uri.to_s.split(uri.host)[1]
+
+      await { location == match }
     end
   end
 
@@ -141,14 +128,12 @@ module OpenShift
       end
     end
 
-    def assert_redirected_to(location,wait=true)
-      @page.wait_for(:wait_for => :page) if wait
-
-      uri = URI.parse(@page.location)
-      match = location.start_with?("http") ? #assume absolute URL
-        uri.to_s : uri.to_s.split(uri.host)[1]
-
-      assert_match /^#{match}$/, location
+    def assert_redirected_to(location)
+      wait_for_page(location)
+    end
+    
+    def assert_equal_no_case(expected, actual)
+      assert_equal expected.downcase, actual.downcase
     end
   end
 end

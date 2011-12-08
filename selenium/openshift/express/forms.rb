@@ -9,32 +9,46 @@ module OpenShift
         @page = page
       end
 
-      def set_value(field,value)
-        @page.type @fields[field], value
+      def set_value(field, value)
+        el = @page.find_element(:id => @fields[field])
+        if "select" == el.tag_name
+          el.click
+          el.find_elements( :tag_name => "option" ).find do |option|
+            option.text == value
+          end.click
+        else
+          el.clear
+          el.send_keys value
+        end
       end
 
       def get_value(field)
-        @page.value @fields[field]
+        el = @page.find_element(:id => @fields[field])
+        if "textarea" == el.tag_name
+          el.text
+        else
+          el.attribute "value"
+        end
       end
 
       def in_error?(field)
-        return @page.is_element_present "//*[@id='#{@fields[field]}' and @class='error']"
+        xpath_exists?("//*[@id='#{@fields[field]}' and @class='error']")
       end  
 
       def error_message(field)
         if in_error? field
-          return @page.text "//label[@for='#{@fields[field]}' and @class='error']"
+           @page.find_element(:xpath => "//label[@for='#{@fields[field]}' and @class='error']").text
         else
           return nil
         end
       end
 
       def submit
-        @page.click @submit
+        @page.find_element(:xpath => @submit).click
       end
 
       def processing?
-        return @page.is_element_present "//form[@id='#{@id}']/div[@aria-role='progressbar']"
+        return xpath_exists?("//form[@id='#{@id}']//div[@aria-role='progressbar']")
       end
     end
 
@@ -58,25 +72,25 @@ module OpenShift
 
       def inside_dialog?
         loc = "//div[@id='cp-dialog']//form[@id='#{@id}']"
-        return @page.element?(loc) && @page.visible?(loc)
+        return xpath_exists?(loc) && @page.find_element(:xpath => loc).displayed?
       end
 
       def collapse
         if !collapsed?
-	  @page.click(@loc_btn_cancel)
+          @page.find_element(:xpath => @loc_btn_cancel).click
         end
       end
 
       def expand
         if collapsed?
-          await { @page.element? @loc_btn_edit }
-          @page.click(@loc_btn_edit)
+          await { xpath_exists?(@loc_btn_edit) }
+          @page.find_element(:xpath => @loc_btn_edit).click
         end
       end
 
       def get_collapsed_value(field)
         if :namespace == field
-          return @page.text(@loc_namespace_collapsed)
+          return @page.find_element(:xpath => @loc_namespace_collapsed).text
         end
       end
     end
@@ -89,7 +103,7 @@ module OpenShift
           :cartridge => "express_app_cartridge"
         }
 
-      	@submit = "express_app_submit"
+      	@submit = "//*[@id='express_app_submit']"
       end
     end
 

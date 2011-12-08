@@ -26,18 +26,6 @@ class ApplicationHelperTest < ActionView::TestCase
     assert_equal 'flex', get_product(controller_name, action_name)
   end
   
-  test 'get_product returns power when controller name contains power' do
-    controller_name = 'power_test'
-    action_name = 'test'
-    assert_equal 'power', get_product(controller_name, action_name)
-  end
-  
-  test 'get_product returns power when action name contains power' do
-    controller_name = 'test'
-    action_name = 'test_power'
-    assert_equal 'power', get_product(controller_name, action_name)
-  end
-  
   test 'get_product returns empty string when neither controller nor action contains a product name' do
     controller_name = 'test'
     action_name = 'test'
