@@ -1,3 +1,5 @@
+require 'mcollective'
+
 class ResultIO
   attr_accessor :debugIO, :resultIO, :messageIO, :errorIO, :appInfoIO
   
@@ -19,6 +21,7 @@ class ResultIO
   end
 end
 
+include MCollective::RPC
 class ApplicationContainerProxy
   @@C_CONTROLLER = 'li-controller'
   
@@ -35,18 +38,38 @@ class ApplicationContainerProxy
     current_server
   end
   
+  IGNORE_CARTS = %w(abstract abstract-httpd li-controller embedded)
+  def self.get_available_cartridges(cart_type)
+    server_id = find_available()
+    cartridges = []
+    
+    case cart_type
+    when 'standalone'
+      rpc_get_fact('cart_list', server_id) do |server, carts|
+        cartridges = carts.split('|')
+      end
+    when 'embedded'
+      rpc_get_fact('embed_cart_list', server_id) do |server, embedcarts|
+        cartridges = embedcarts.split('|')
+      end
+    end
+    cartridges.delete_if {|cart| IGNORE_CARTS.include?(cart)}
+    
+    cartridges
+  end
+  
   def self.create(app)
     result = execute_direct(@@C_CONTROLLER, 'configure', "-c '#{app.uuid}' -s '#{app.user.ssh}'")
     parse_result(result)
   end
   
   def add_authorized_ssh_key(app, ssh_key)
-    result = execute_direct(@@C_CONTROLLER, 'add-authorized-ssh-key', "-c #{app.uuid]} -s #{ssh_key}")
+    result = execute_direct(@@C_CONTROLLER, 'add-authorized-ssh-key', "-c #{app.uuid} -s #{ssh_key}")
     parse_result(result)
   end
   
   def remove_authorized_ssh_key(app, ssh_key)
-    result = execute_direct(@@C_CONTROLLER, 'add-authorized-ssh-key', "-c #{app.uuid]} -s #{ssh_key}")
+    result = execute_direct(@@C_CONTROLLER, 'add-authorized-ssh-key', "-c #{app.uuid} -s #{ssh_key}")
     parse_result(result)
   end
   
@@ -83,9 +106,6 @@ class ApplicationContainerProxy
     self.run_cartridge_command(cart, app, "configure")
   end
   
-
-
-  
   private
   
   def self.run_cartridge_command(framework, app, command)
@@ -117,7 +137,7 @@ class ApplicationContainerProxy
       }
     ]
 
-    Helper.rpc_get_fact('capacity', nil, forceRediscovery, additional_filters) do |server, capacity|
+    rpc_get_fact('capacity', nil, forceRediscovery, additional_filters) do |server, capacity|
       Rails.logger.debug "Next server: #{server} capacity: #{capacity}"
       if !current_capacity || capacity.to_i < current_capacity.to_i
         current_server = server
@@ -132,7 +152,7 @@ class ApplicationContainerProxy
       mc_args = { :cartridge => cartridge,
                   :action => action,
                   :args => args }
-      rpc_client = Helper.rpc_exec_direct('libra')
+      rpc_client = rpc_exec_direct('libra')
       result = nil
       begin
         result = rpc_client.custom_request('cartridge_do', mc_args, self.name, {'identity' => self.name})
@@ -191,4 +211,117 @@ class ApplicationContainerProxy
       #  end
     end
     result
+  end
+  
+  def self.rpc_options
+    # Make a deep copy of the default options
+    Marshal::load(Marshal::dump(Rails.application.config.cdk[:rpc_opts]))
+  end
+
+  #
+  # Return the value of the MCollective response
+  # for both a single result and a multiple result
+  # structure
+  #
+  def self.rvalue(response)
+    result = nil
+
+    if response[:body]
+      result = response[:body][:data][:value]
+    elsif response[:data]
+      result = response[:data][:value]
+    end
+
+    result
+  end
+
+  def self.rsuccess(response)
+    response[:body][:statuscode].to_i == 0
+  end
+
+  #
+  # Returns the fact value from the specified server.
+  # Yields to the supplied block if there is a non-nil
+  # value for the fact.
+  #
+  def self.rpc_get_fact(fact, server=nil, forceRediscovery=false, additional_filters=nil)
+    result = nil
+    options = rpc_options
+    options[:filter]['fact'] = options[:filter]['fact'] + additional_filters if additional_filters
+
+    Rails.logger.debug("DEBUG: rpc_get_fact: fact=#{fact}")
+    rpc_exec('rpcutil', server, forceRediscovery, options) do |client|
+      client.get_fact(:fact => fact) do |response|
+        next unless Integer(response[:body][:statuscode]) == 0
+
+        # Yield the server and the value to the block
+        result = rvalue(response)
+        yield response[:senderid], result if result
+      end
+    end
+
+    result
+  end
+
+  #
+  # Given a known fact and node, get a single fact directly.
+  # This is significantly faster then the get_facts method
+  # If multiple nodes of the same name exist, it will pick just one
+  #
+  def self.rpc_get_fact_direct(fact, node)
+      options = rpc_options
+
+      rpc_client = rpcclient("rpcutil", :options => options)
+      begin
+        result = rpc_client.custom_request('get_fact', {:fact => fact}, node, {'identity' => node})[0]
+        if (result && defined? result.results && result.results.has_key?(:data))
+          value = result.results[:data][:value]
+        else
+          raise NodeException.new(143), "Node execution failure (error getting fact).  If the problem persists please contact Red Hat support.", caller[0..5]
+        end
+      ensure
+        rpc_client.disconnect
+      end
+
+      return value
+  end
+
+  #
+  # Execute an RPC call for the specified agent.
+  # If a server is supplied, only execute for that server.
+  #
+  def self.rpc_exec(agent, server=nil, forceRediscovery=false, options = rpc_options)
+    if server
+      Rails.logger.debug("DEBUG: rpc_exec: Filtering rpc_exec to server #{server}")
+      # Filter to the specified server
+      options[:filter]["identity"] = server
+      options[:mcollective_limit_targets] = "1"
+    end
+
+    # Setup the rpc client
+    rpc_client = rpcclient(agent, :options => options)
+    if forceRediscovery
+      rpc_client.reset
+    end
+    Rails.logger.debug("DEBUG: rpc_exec: rpc_client=#{rpc_client}")
+
+    # Execute a block and make sure we disconnect the client
+    begin
+      result = yield rpc_client
+    ensure
+      rpc_client.disconnect
+    end
+
+    result
+  end
+
+  #
+  # Execute direct rpc call directly against a node
+  # If more then one node exists, just pick one
+  def self.rpc_exec_direct(agent)
+      options = rpc_options
+      rpc_client = rpcclient(agent, :options => options)
+      Rails.logger.debug("DEBUG: rpc_exec_direct: rpc_client=#{rpc_client}")
+      rpc_client
+  end
 end

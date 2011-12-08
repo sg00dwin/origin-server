@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'json'
 require 'cloud-sdk-common'
+require 'app/lib/node_proxy'
 
 class Application < Cloud::Sdk::Model
   attr_accessor :user, :framework, :creation_time, :uuid, :embedded, :aliases, :name, :server_identity, :health_check_path, :node_profile
@@ -41,6 +42,10 @@ class Application < Cloud::Sdk::Model
       app.reset_state
       app
     end
+  end
+  
+  def self.get_available_cartridges(cart_type)
+    ApplicationContainerProxy.get_available_cartridges(cart_type)
   end
   
   #saves the application object in the datastore

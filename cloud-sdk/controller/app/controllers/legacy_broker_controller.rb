@@ -9,7 +9,8 @@ require 'app/lib/auth_service.rb'
 
 class LegacyBrokerController < ApplicationController
   layout nil
-  before_filter :validate_request, :authenticate
+  before_filter :validate_request
+  before_filter :authenticate, :except => :cart_list_post
   rescue_from Exception, :with => :exception_handler
   
   def user_info_post
@@ -60,18 +61,15 @@ class LegacyBrokerController < ApplicationController
   
   def cart_list_post
     cart_type = @req.cart_type
-    if cart_type != 'standalone' and cart_type != 'embedded'
+    unless cart_type
       @reply.result = "Invalid cartridge types: #{cart_type} specified"
       @reply.exit_code = 109
-      
       render :json => @reply, :status => :invalid
       return
     end
   
-    carts = Libra::Util.get_cartridges_list(cart_type)
-    @reply.data = JSON.generate { :carts => carts }
-    # Just return a 200 success
-    
+    carts = Application.get_available_cartridges(cart_type)
+    @reply.data = { :carts => carts }.to_json
     render :json => @reply
   end
   

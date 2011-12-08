@@ -39,6 +39,14 @@ Controller::Application.configure do
     :child_zone => "dev",
     :broker_auth_secret => "",
     :broker_auth_rsa_secret => "",
+    :rpc_opts => {
+      :disctimeout => 3,
+      :timeout     => 30,
+      :verbose     => false,
+      :progress_bar=> false,
+      :filter      => {"identity"=>[], "fact"=>[], "agent"=>[], "cf_class"=>[]},
+      :config      => "/etc/mcollective/client.cfg"
+    },
     :auth_service => {
       :host => "https://www.redhat.com",
       :base_url => "/wapps/streamline"

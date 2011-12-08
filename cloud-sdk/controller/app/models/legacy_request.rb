@@ -80,7 +80,7 @@ class LegacyRequest < Cloud::Sdk::Model
   end
   
   validates_each :cart_type, :allow_nil =>true do |record, attribute, val|
-    if !(val =~ /\A[\w\-\.]+\z/)
+    if !(val =~ /\A(standalone|embedded)\z/)
       record.errors.add attribute, {:message => "Invalid cart_type specified: #{val}", :exit_code => 109}
     end
   end
