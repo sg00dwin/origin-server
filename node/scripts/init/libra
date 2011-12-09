@@ -74,18 +74,22 @@ fi
 
 startuser() {
     # USERNAME=$1
+    echo "Starting $1..."
     for APPNAME in `userapps $1`
     do
         startapp $1 $APPNAME
     done
+    echo
 }
 
 stopuser() {
     # USERNAME=$1
+    echo "Stopping $1..."
     for APPNAME in `userapps $1`
     do
         stopapp $1 $APPNAME
     done
+    echo
 }
 
 
@@ -99,17 +103,19 @@ startapp() {
     then
         echo "$1 is locked"
     else
-        echo -n $"    Start: $1-$(basename $2)"
-        daemon --user="$1" --pidfile=httpd_$1-$(basename $2) runcon -t libra_t -l $mcs_level $2 start
+        echo -n $"    $(basename $2)"
+        local OUTPUT=$(daemon --user="$1" --pidfile=httpd_$1-$(basename $2) runcon -t libra_t -l $mcs_level $2 start)
         RETVAL=$?
-        echo
         if [ $RETVAL -eq 0 ]
         then
             echo_success
         else
             GROUP_RETVAL=$(($GROUP_RETVAL+1))
             echo_failure
+            echo
+            echo $OUTPUT
         fi
+        echo
     fi
     unset OPENSHIFT_RUN_DIR
 }
@@ -119,17 +125,19 @@ stopapp() {
     # APPSCRIPT=$2
     uid=$(id -u "$1")
     mcs_level=`openshift_mcs_level $uid`
-    echo -n $"    Stop: $1-$(basename $2)"
-    daemon --user="$1" --pidfile=httpd_$1-$(basename $2) runcon -t libra_t -l $mcs_level $2 stop
+    echo -n $"    $(basename $2)"
+    local OUTPUT=$(daemon --user="$1" --pidfile=httpd_$1-$(basename $2) runcon -t libra_t -l $mcs_level $2 stop)
     RETVAL=$?
-    echo
     if [ $RETVAL -eq 0 ]
     then
         echo_success
     else
         GROUP_RETVAL=$(($GROUP_RETVAL+1))
         echo_failure
+        echo
+        echo $OUTPUT
     fi
+    echo
 }
 
 start() {
