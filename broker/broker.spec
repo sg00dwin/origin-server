@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.83.2
+Version:   0.83.3
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -69,6 +69,12 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Thu Dec 08 2011 Alex Boone <aboone@redhat.com> 0.83.3-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rchopra@redhat.com)
+- implementation of US1366 : REST support for domain deletion
+  (rchopra@redhat.com)
+
 * Wed Dec 07 2011 Mike McGrath <mmcgrath@redhat.com> 0.83.2-1
 - US1443 - admin tools (lnader@dhcp-240-165.mad.redhat.com)
 
