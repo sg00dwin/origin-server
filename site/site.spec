@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.83.5
+Version:   0.83.6
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -68,6 +68,9 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Thu Dec 08 2011 Alex Boone <aboone@redhat.com> 0.83.6-1
+- 
+
 * Thu Dec 08 2011 Alex Boone <aboone@redhat.com> 0.83.5-1
 - Fix for BZ 758976 - display fieldset legend in white text in IE
   (aboone@redhat.com)
