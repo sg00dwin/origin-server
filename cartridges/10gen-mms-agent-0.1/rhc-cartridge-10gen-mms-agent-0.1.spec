@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/10gen-mms-agent-0.1
 
 Name: rhc-cartridge-10gen-mms-agent-0.1
-Version: 1.1.3
+Version: 1.1.4
 Release: 1%{?dist}
 Summary: Embedded 10gen MMS agent for performance monitoring of MondoDB
 
@@ -45,6 +45,11 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Fri Dec 09 2011 Mike McGrath <mmcgrath@redhat.com> 1.1.4-1
+- adding rhc-cartridge-10gen-mms-agent-0.1 to the devenv spec file to be
+  installed on the devenv  and adding the dependency on mms-agent source rpm on
+  the rhc-cartridge-10gen-mms-agent-0.1 spec file (abhgupta@redhat.com)
+
 * Fri Dec 09 2011 Mike McGrath <mmcgrath@redhat.com> 1.1.3-1
 - merging with conflicting changes (abhgupta@redhat.com)
 - changes based on name change of the source rpm package (abhgupta@redhat.com)
