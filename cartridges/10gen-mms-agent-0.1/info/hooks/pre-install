@@ -51,5 +51,5 @@ done
 
 uuid=$1
 
-rpm -q pymongo > /dev/null || quit "Missing package: pymongo"
+rpm -q pymongo mms-agent > /dev/null || quit "Missing packages"
 [ -d "$CARTRIDGE_DIR" ] || quit "Missing cartridge dir: $CARTRIDGE_DIR"
