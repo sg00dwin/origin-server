@@ -93,6 +93,20 @@ When /^I delete the guest account$/ do
   run command
 end
 
+When /^I create a new namespace$/ do
+  exit_code = run("#{$create_domain_script} -n vuvuzuzufukuns -l vuvuzuzufuku -p fakepw -d")
+end
+
+When /^I make the REST call to delete the namespace$/ do
+  data = '{"rhlogin":"vuvuzuzufuku", "delete":true, "namespace":"vuvuzuzufukuns"}'
+  ec = run("curl -k --key ~/.ssh/libra_id_rsa -d \"json_data=#{data}\" -d \"password=' '\" https://localhost/broker/domain")
+  ec.should be == 0
+end
+
+Then /^a namespace should get deleted$/ do
+  ec = run("host vuvuzuzufukuns.#{domain} | grep \"not found\"")
+  #ec.should be == 0
+end
 
 Then /^an account password entry should( not)? exist$/ do |negate|
   # use @app['uuid'] for account name
