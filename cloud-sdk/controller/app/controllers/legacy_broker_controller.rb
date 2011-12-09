@@ -53,7 +53,7 @@ class LegacyBrokerController < ApplicationController
       return
     end
         
-    cloud_user.save(@reply)
+    @reply.append cloud_user.save
     @reply.data = {
       :rhlogin    => cloud_user.rhlogin,
       :uuid       => cloud_user.uuid,
@@ -131,7 +131,7 @@ class LegacyBrokerController < ApplicationController
       
       app.destroy_dns
       app.delete
-      @reply.resultIO << "Successfully destroyed application: #{app_name}" if @reply.resultIO.string.empty?
+      @reply.resultIO << "Successfully destroyed application: #{app.name}" if @reply.resultIO.string.empty?
     when 'start'
       app = Application.find(user, @req.app_name)
       @reply.append app.start

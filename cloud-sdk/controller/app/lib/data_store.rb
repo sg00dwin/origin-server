@@ -25,7 +25,7 @@ class DataStore
     Rails.logger.debug "DataStore.save(#{obj_type}, #{user_id}, #{id}, #{serialized_obj})\n\n"
     case obj_type
     when "CloudUser"
-      Rails.logger.debug "Cannot delete user"
+      put_user_s3(user_id, serialized_obj)
     when "Application"
       put_app_s3(user_id,id,serialized_obj)
     end
@@ -35,7 +35,7 @@ class DataStore
     Rails.logger.debug "DataStore.delete(#{obj_type}, #{user_id}, #{id})\n\n"
     case obj_type
     when "CloudUser"
-      put_user_s3(user_id, serialized_obj)
+      Rails.logger.debug "Cannot delete user"      
     when "Application"
       delete_app(user_id,id)
     end

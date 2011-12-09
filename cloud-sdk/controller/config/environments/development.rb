@@ -37,8 +37,8 @@ Controller::Application.configure do
     :domain_suffix => "dev.rhcloud.com",
     :zone => "rhcloud.com",
     :child_zone => "dev",
-    :broker_auth_secret => "",
-    :broker_auth_rsa_secret => "",
+    :broker_auth_secret => "EIvWT6u3lsvSRNRGZhhW8YcWMh5mUAlc32nZlRJPdJM=",
+    :broker_auth_rsa_secret => "SJDIkdfhuISe3wrulhjvcKHJFDUeoi8gfcdnu8299dhc",
     :rpc_opts => {
       :disctimeout => 3,
       :timeout     => 30,
@@ -53,11 +53,11 @@ Controller::Application.configure do
     },
     :dynect_customer_name => "demo-redhat",
     :dynect_user_name => "dev-rhcloud-user",
-    :dynect_password => "",
+    :dynect_password => "vo8zaijoN7Aecoo",
     :dynect_url => "https://api2.dynect.net",
     
-    :aws_key => "",
-    :aws_secret => "",
+    :aws_key => "AKIAITDQ37BWZ5CKAORA",
+    :aws_secret => "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",
     :s3_bucket => "libra_dev"
   }
   

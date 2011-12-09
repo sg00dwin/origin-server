@@ -21,6 +21,23 @@ class AuthService
   @@roles_url = URI.parse(service_base_url + "/cloudVerify.html")
   @@user_info_url = URI.parse(service_base_url + "/userInfo.html")
   
+  
+  def self.generate_broker_key(app)
+    cipher = OpenSSL::Cipher::Cipher.new("aes-256-cbc")                                                                                                                                                                 
+    cipher.encrypt
+    cipher.key = OpenSSL::Digest::SHA512.new(Rails.application.config.cdk[:broker_auth_secret]).digest
+    cipher.iv = iv = cipher.random_iv
+    token = {:app_name => app.name,
+             :rhlogin => app.user.rhlogin,
+             :creation_time => app.creation_time}
+    encrypted_token = cipher.update(JSON.generate(token))
+    encrypted_token << cipher.final
+  
+    public_key = OpenSSL::PKey::RSA.new(File.read('config/keys/public.pem'), Rails.application.config.cdk[:broker_auth_rsa_secret])
+    encrypted_iv = public_key.public_encrypt(iv)
+    [encrypted_iv, encrypted_token]
+  end
+  
   def self.login(request, params, cookies)
     data = JSON.parse(params['json_data'])
 

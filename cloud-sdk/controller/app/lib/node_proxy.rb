@@ -70,8 +70,8 @@ class ApplicationContainerProxy
     parse_result(result)
   end
   
-  def remove_env_var(app, key, value)
-    result = execute_direct(@@C_CONTROLLER, 'remove-env-var', "-c #{app.uuid} -k #{key} -v #{value}")
+  def remove_env_var(app, key)
+    result = execute_direct(@@C_CONTROLLER, 'remove-env-var', "-c #{app.uuid} -k #{key}")
     parse_result(result)    
   end
 
@@ -271,36 +271,34 @@ class ApplicationContainerProxy
           end
         elsif line =~ /^APP_INFO: /
           result.appInfoIO << line['APP_INFO: '.length..-1]
+        elsif result.exitcode == 0
+          if line =~ /^SSH_KEY_(ADD|REMOVE): /
+            if line =~ /^SSH_KEY_ADD: /
+              key = line['SSH_KEY_ADD: '.length..-1].chomp
+              result.cart_commands.push({:command => "SYSTEM_SSH_KEY_ADD", :args => [key]})
+            else
+              result.cart_commands.push({:command => "SYSTEM_SSH_KEY_REMOVE", :args => []})
+            end
+          elsif line =~ /^ENV_VAR_(ADD|REMOVE): /
+            if line =~ /^ENV_VAR_ADD: /
+              env_var = line['ENV_VAR_ADD: '.length..-1].chomp.split('=')
+              result.cart_commands.push({:command => "ENV_VAR_ADD", :args => [env_var[0], env_var[1]]})
+            else
+              key = line['ENV_VAR_REMOVE: '.length..-1].chomp
+              result.cart_commands.push({:command => "ENV_VAR_REMOVE", :args => [key]})
+            end
+          elsif line =~ /^BROKER_AUTH_KEY_(ADD|REMOVE): /
+            if line =~ /^BROKER_AUTH_KEY_ADD: /
+              result.cart_commands.push({:command => "BROKER_KEY_ADD", :args => []})
+            else
+              result.cart_commands.push({:command => "BROKER_KEY_REMOVE", :args => []})
+            end
+          end
         else # exitcode != 0
           result.debugIO << line
           Rails.logger.debug "DEBUG: server results: " + line
         end
       end
-      
-      #TODO
-      #elsif exitcode == 0 && user && app_name
-      #  if line =~ /^SSH_KEY_(ADD|REMOVE): /
-      #    if line =~ /^SSH_KEY_ADD: /
-      #      key = line['SSH_KEY_ADD: '.length..-1].chomp
-      #      user.set_system_ssh_key(app_name, key)
-      #    else
-      #      user.remove_system_ssh_key(app_name)
-      #    end
-      #  elsif line =~ /^ENV_VAR_(ADD|REMOVE): /
-      #    if line =~ /^ENV_VAR_ADD: /
-      #      env_var = line['ENV_VAR_ADD: '.length..-1].chomp.split('=')
-      #      user.set_env_var(app_name, env_var[0], env_var[1])
-      #    else
-      #      key = line['ENV_VAR_REMOVE: '.length..-1].chomp
-      #      user.remove_env_var(app_name, key)
-      #    end
-      #  elsif app && line =~ /^BROKER_AUTH_KEY_(ADD|REMOVE): /
-      #    if line =~ /^BROKER_AUTH_KEY_ADD: /
-      #      user.set_broker_auth_key(app_name, app)
-      #    else
-      #      user.remove_broker_auth_key(app_name, app)
-      #    end
-      #  end
     end
     result
   end

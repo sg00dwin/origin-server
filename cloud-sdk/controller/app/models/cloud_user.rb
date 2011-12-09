@@ -28,22 +28,23 @@ class CloudUser < Cloud::Sdk::Model
     self.rhlogin, self.ssh, self.namespace = rhlogin, ssh, namespace
   end
   
-  def save(response)
+  def save
+    resultIO = ResultIO.new
     unless persisted?
       #new user record
-      create(response)
+      resultIO.append(create())
     else
       if ssh_changed?
-        apps.each do |appname, app|
-          server = Libra::Server.new app.server_identity
-          server.remove_ssh_key(app.attributes, self.ssh_was)
-          server.add_ssh_key(app.attributes, self.ssh)
+        applications.each do |app|
+          resultIO.append app.remove_authorized_ssh_key(self.ssh_was)
+          resultIO.append app.add_authorized_ssh_key(self.ssh)
         end
       end
-      update_namespace(response) if namespace_changed?
+      update_namespace() if namespace_changed?
     end
     
     super(@rhlogin)
+    resultIO
   end
 
   def applications
@@ -54,22 +55,75 @@ class CloudUser < Cloud::Sdk::Model
     super(rhlogin,rhlogin)
   end
   
+  def add_system_ssh_key(app_name, key)
+    self.system_ssh_keys = {} unless self.system_ssh_keys
+    result = ResultIO.new
+    self.system_ssh_keys[app_name] = key
+    self.save
+    applications.each do |app|
+      Rails.logger.debug "DEBUG: Adding #{app_name}'s system ssh keys to app: #{app.name}"
+      result.append app.add_authorized_ssh_key(key)
+    end
+    result
+  end
+  
+  def remove_system_ssh_key(app_name)
+    self.system_ssh_keys = {} unless self.system_ssh_keys    
+    result = ResultIO.new
+    key = self.system_ssh_keys[app_name]
+    return unless key
+    applications.each do |app|
+      Rails.logger.debug "DEBUG: Removing #{app_name}'s system ssh keys from app: #{app.name}"
+      result.append app.remove_authorized_ssh_key(key)
+    end
+    
+    self.system_ssh_keys.delete app_name
+    self.save
+    result
+  end
+  
+  def add_env_var(key, value)
+    result = ResultIO.new
+    self.env_vars = {} unless self.env_vars
+    self.env_vars[key] = value
+    self.save
+    applications.each do |app|
+      Rails.logger.debug "DEBUG: Adding env var #{key} to app: #{app.name}"
+      result.append app.add_env_var(key,value)
+    end
+    result
+  end
+  
+  def remove_env_var(key)
+    result = ResultIO.new
+    self.env_vars = {} unless self.env_vars
+    self.env_vars.delete key
+    self.save
+    applications.each do |app|
+      Rails.logger.debug "DEBUG: Removing env var #{key} to app: #{app.name}"
+      result.append app.remove_env_var(key)
+    end
+    result
+  end
+  
   private
   
-  def create(response)
+  def create
+    resultIO = ResultIO.new
     notify_observers(:before_cloud_user_create)
     dns_service = DnsService.new
     begin
       if CloudUser.find(@rhlogin,@rhlogin)
-        record.errors.add(attribute, {:message => "A user with RHLogin '#{@rhlogin}' already exists", :code => 102})
+        resultIO.errorIO << "A user with RHLogin '#{@rhlogin}' already exists"
+        resultIO.exitcode = 102
         raise "A user with RHLogin '#{@rhlogin}' already exists"
       end
 
-      raise Cloud::Sdk::WorkflowException.new("A namespace with name '#{namespace}' already exists", 103) unless dns_service.namespace_available?(@namespace)
+      raise Cloud::Sdk::WorkflowException.new("A namespace with name '#{namespace}' already exists", 103, resultIO) unless dns_service.namespace_available?(@namespace)
 
       begin
         Rails.logger.debug "DEBUG: Attempting to add namespace '#{@namespace}' for user '#{@rhlogin}'"      
-        response.debug("Creating user entry login:#{@rhlogin} ssh:#{@ssh} namespace:#{@namespace}")
+        resultIO.debugIOo << "Creating user entry login:#{@rhlogin} ssh:#{@ssh} namespace:#{@namespace}"
         dns_service.register_namespace(@namespace)
         @uuid = Cloud::Sdk::Model.gen_uuid
         dns_service.publish
@@ -86,12 +140,13 @@ class CloudUser < Cloud::Sdk::Model
         end
       end
     ensure
-      dns_service.close      
+      dns_service.close
       notify_observers(:after_cloud_user_create)
     end
+    resultIO
   end
   
-  def update_namespace(response)
+  def update_namespace
     notify_observers(:before_namespace_update)
     
     dns_service = DnsService.new
@@ -135,7 +190,7 @@ class CloudUser < Cloud::Sdk::Model
         app.embedded.each_key do |framework|
           if embedded["framework"].has_key?('info')
             info = embedded[framework]['info']
-            info.gsub!(/-#{old_namespace}.#{Libra.c[:libra_domain]}/, "-#{new_namespace}.#{Libra.c[:libra_domain]}")
+            info.gsub!(/-#{old_namespace}.#{Rails.application.config.cdk[:domain_suffix]}/, "-#{new_namespace}.#{Rails.application.config.cdk[:domain_suffix]}")
             embedded[framework]['info'] = info
           end
         end

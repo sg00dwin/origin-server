@@ -3,6 +3,7 @@ require 'json'
 require 'cloud-sdk-common'
 require 'app/lib/node_proxy'
 require 'app/lib/dns_service'
+require 'app/lib/auth_service'
 
 class Application < Cloud::Sdk::Model
   attr_accessor :user, :framework, :creation_time, :uuid, :embedded, :aliases, :name, :server_identity, :health_check_path, :node_profile, :container
@@ -89,6 +90,7 @@ class Application < Cloud::Sdk::Model
     notify_observers(:before_application_configure)
     resultIO = self.container.preconfigure_cartridge(self, self.framework)
     resultIO.append self.container.configure_cartridge(self, self.framework)
+    resultIO.append process_cartridge_commands(resultIO.cart_commands)
     notify_observers(:after_application_configure)    
     resultIO
   end
@@ -96,6 +98,7 @@ class Application < Cloud::Sdk::Model
   def deconfigure_dependencies
     notify_observers(:before_application_deconfigure)    
     resultIO = self.container.deconfigure_cartridge(self, self.framework)
+    resultIO.append process_cartridge_commands(resultIO.cart_commands)    
     notify_observers(:after_application_deconfigure)    
     resultIO
   end
@@ -158,19 +161,8 @@ class Application < Cloud::Sdk::Model
   end
   
   def add_broker_key
-    cipher = OpenSSL::Cipher::Cipher.new("aes-256-cbc")                                                                                                                                                                 
-    cipher.encrypt
-    cipher.key = OpenSSL::Digest::SHA512.new(Rails.application.config.cdk[:broker_auth_secret]).digest
-    cipher.iv = iv = cipher.random_iv
-    token = {:app_name => name,
-             :rhlogin => user.rhlogin,
-             :creation_time => app.creation_time}
-    encrypted_token = cipher.update(JSON.generate(token))
-    encrypted_token << cipher.final
-  
-    public_key = OpenSSL::PKey::RSA.new(File.read('config/keys/public.pem'), Rails.application.config.cdk[:broker_auth_rsa_secret])
-    encrypted_iv = public_key.public_encrypt(iv)
-    self.container.add_broker_auth_key(self, Base64::encode64(encrypted_iv).gsub("\n", ''), Base64::encode64(encrypted_token).gsub("\n", ''))
+    iv, token = AuthService.generate_broker_key(self)
+    self.container.add_broker_auth_key(self, Base64::encode64(iv).gsub("\n", ''), Base64::encode64(token).gsub("\n", ''))
   end
   
   def remove_broker_key
@@ -310,5 +302,32 @@ class Application < Cloud::Sdk::Model
   def dependency_status(dep)
     raise WorkflowException.new("#{dep} not embedded in '#{@name}', try adding it first", 101), caller[0..5] unless self.embedded[dep]  
     self.container.component_status(self, dep)
+  end
+  
+  private
+  
+  def process_cartridge_commands(commands)
+    result = ResultIO.new
+    commands.each do |command_item|
+      case command_item[:command]
+      when "SYSTEM_SSH_KEY_ADD"
+        key = command_item[:args][0]
+        result.append self.user.add_system_ssh_key(self.name, key)
+      when "SYSTEM_SSH_KEY_REMOVE"
+        result.append self.user.remove_system_ssh_key(self.name)
+      when "ENV_VAR_ADD"
+        key = command_item[:args][0]
+        value = command_item[:args][1]
+        result.append self.user.add_env_var(key,value)
+      when "ENV_VAR_REMOVE"
+        key = command_item[:args][0]
+        result.append self.user.remove_env_var(key)        
+      when "BROKER_KEY_ADD"
+        add_broker_key
+      when "BROKER_KEY_REMOVE"
+        remove_broker_key
+      end
+    end
+    result
   end
 end

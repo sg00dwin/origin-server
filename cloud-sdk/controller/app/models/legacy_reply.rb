@@ -3,7 +3,7 @@ require 'json'
 require 'cloud-sdk-common'
 
 class ResultIO
-  attr_accessor :debugIO, :resultIO, :messageIO, :errorIO, :appInfoIO, :exitcode, :data
+  attr_accessor :debugIO, :resultIO, :messageIO, :errorIO, :appInfoIO, :exitcode, :data, :system_ssh_key, :cart_commands
   
   def initialize
     @debugIO = StringIO.new
@@ -13,6 +13,7 @@ class ResultIO
     @appInfoIO = StringIO.new
     @data = ""
     @exitcode = nil
+    @cart_commands = []
   end
   
   def append(resultIO)
@@ -21,6 +22,7 @@ class ResultIO
     self.messageIO << resultIO.messageIO.string
     self.errorIO << resultIO.errorIO.string
     self.appInfoIO << resultIO.appInfoIO.string
+    self.cart_commands += resultIO.cart_commands
     self
   end
   
@@ -30,7 +32,8 @@ class ResultIO
           "--MESSAGE--\n#{@messageIO.string}\n" +
           "--ERROR--\n#{@errorIO.string}\n" +
           "--APP INFO--\n#{@appInfoIO.string}\n" +
-          "--EXIT CODE--\n#{@exitcode}\n"
+          "--EXIT CODE--\n#{@exitcode}\n" +
+          "--CART COMMANDS--\n#{@cart_commands.join("\n")}\n"
   end
   
   def to_json(*args)
