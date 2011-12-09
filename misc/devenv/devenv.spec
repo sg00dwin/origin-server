@@ -33,6 +33,7 @@ Requires:  rhc-cartridge-metrics-0.1
 Requires:  rhc-cartridge-mongodb-2.0
 Requires:  rhc-cartridge-phpmoadmin-1.0
 Requires:  rhc-cartridge-rockmongo-1.1
+Requires:  rhc-cartridge-10gen-mms-agent-0.1
 Requires:  qpid-cpp-server
 Requires:  qpid-cpp-server-ssl
 Requires:  puppet

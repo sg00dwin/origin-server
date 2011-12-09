@@ -15,7 +15,7 @@ BuildArch: noarch
 Requires: rhc-node
 Requires: rhc-cartridge-mongodb-2.0
 Requires: pymongo
-#Requires: mms-agent
+Requires: mms-agent
 
 %description
 Provides 10gen MMS agent cartridge support
