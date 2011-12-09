@@ -38,7 +38,7 @@ module Cloud
       
       def self.gen_uuid
         File.open("/proc/sys/kernel/random/uuid", "r") do |file|
-          file.gets.strip
+          file.gets.strip.gsub("-","")
         end
       end
       
@@ -91,6 +91,8 @@ module Cloud
       end
       
       def attributes=(hash)
+        return nil unless hash
+        
         hash.each do |key,value|
           self.send("#{key}=",value)
         end

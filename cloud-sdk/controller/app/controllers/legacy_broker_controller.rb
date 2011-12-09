@@ -6,6 +6,7 @@ require 'openssl'
 require 'digest/sha2'
 require 'base64'
 require 'app/lib/auth_service.rb'
+require 'app/models/legacy_reply'
 
 class LegacyBrokerController < ApplicationController
   layout nil
@@ -17,6 +18,9 @@ class LegacyBrokerController < ApplicationController
     user = CloudUser.find(@login)
     if user
       user_info = user.as_json
+      user_info["ssh_key"] = user_info["ssh"]
+      user_info.delete("ssh")
+      
       user_info[:rhc_domain] = Rails.application.config.cdk[:domain_suffix]
       app_info = {}
       user.applications.each do |app|
@@ -27,8 +31,8 @@ class LegacyBrokerController < ApplicationController
       render :json => @reply
     else
       # Return a 404 to denote the user doesn't exist
-      @reply.result = "User does not exist"
-      @reply.code = 99
+      @reply.result << "User does not exist"
+      @reply.exitcode = 99
       
       render :json => @reply, :status => :not_found
     end
@@ -44,7 +48,7 @@ class LegacyBrokerController < ApplicationController
     end
         
     if cloud_user.invalid?
-      @reply.result = cloud_user.errors.first[1]
+      @reply.resultIO << cloud_user.errors.first[1]
       render :json => @reply, :status => :invalid 
       return
     end
@@ -62,8 +66,8 @@ class LegacyBrokerController < ApplicationController
   def cart_list_post
     cart_type = @req.cart_type
     unless cart_type
-      @reply.result = "Invalid cartridge types: #{cart_type} specified"
-      @reply.exit_code = 109
+      @reply.resultIO << "Invalid cartridge types: #{cart_type} specified"
+      @reply.exitcode = 109
       render :json => @reply, :status => :invalid
       return
     end
@@ -82,15 +86,15 @@ class LegacyBrokerController < ApplicationController
       cart_type = @req.cartridge.split('-')[0..-2].join('-')
       apps = user.applications
       
-      app = Application.new(user, @req.app_name, nil, @req.node_profile, @req.framework)
+      app = Application.new(user, @req.app_name, nil, @req.node_profile, @req.cartridge)
       if app.valid?
-        app.save
         begin
-          app.create
-          app.add_ssh_keys
-          app.add_env_vars
+          @reply.append app.create
+          app.save          
+          @reply.append app.add_user_ssh_keys
+          @reply.append app.add_user_env_vars
           app.create_dns
-          app.configure_dependencies        
+          @reply.append app.configure_dependencies        
           
           case app.framework_cartridge
             when 'php'
@@ -102,20 +106,21 @@ class LegacyBrokerController < ApplicationController
           end
         
           @reply.data = {:health_check_path => page, :uuid => app.uuid}.to_json
-        rescue
-          app.delete_dns
-          app.destroy
+        rescue Exception => e
+          Rails.logger.debug e.message
+          Rails.logger.debug e.backtrace.inspect          
+          app.destroy_dns
+          @reply.append app.destroy
           app.delete
         end
-        @reply.result = @reply.resultIO.string if @reply.resultIO && !@reply.resultIO.string.empty?      
-        @reply.result = "Successfully created application: #{app_name}" unless @reply.result      
+        @reply.resultIO << "Successfully created application: #{app.name}" if @reply.resultIO.string.empty?
       else
         @reply.result = app.errors.first[1]
         render :json => @reply, :status => :invalid 
         return
       end
     when 'deconfigure'
-      app = Application.find(@login, @req.app_name)
+      app = Application.find(user, @req.app_name)
       app.destroy
       
       if app.framework_cartridge == "jenkins"
@@ -124,74 +129,69 @@ class LegacyBrokerController < ApplicationController
         end
       end
       
-      app.delete_dns
+      app.destroy_dns
       app.delete
-      @reply.result = "Successfully destroyed application: #{app_name}" unless @reply.result      
+      @reply.resultIO << "Successfully destroyed application: #{app_name}" if @reply.resultIO.string.empty?
     when 'start'
-      app = Application.find(@login, @req.app_name)
-      app.start
+      app = Application.find(user, @req.app_name)
+      @reply.append app.start
     when 'stop'
-      app = Application.find(@login, @req.app_name)
-      app.stop
+      app = Application.find(user, @req.app_name)
+      @reply.append app.stop
     when 'restart'
-      app = Application.find(@login, @req.app_name)
-      app.restart
+      app = Application.find(user, @req.app_name)
+      @reply.append app.restart
     when 'force-stop'
-      app = Application.find(@login, @req.app_name)
-      app.force_stop
+      app = Application.find(user, @req.app_name)
+      @reply.append app.force_stop
     when 'reload'
-      app = Application.find(@login, @req.app_name)
-      app.reload
+      app = Application.find(user, @req.app_name)
+      @reply.append app.reload
     when 'status'
-      app = Application.find(@login, @req.app_name)
-      app.status
+      app = Application.find(user, @req.app_name)
+      @reply.append app.status
     when 'tidy'
-      app = Application.find(@login, @req.app_name)
-      app.tidy      
+      app = Application.find(user, @req.app_name)
+      @reply.append app.tidy      
     when 'add-alias'
-      app = Application.find(@login, @req.app_name)
-      app.tidy
+      app = Application.find(user, @req.app_name)
+      @reply.append app.add_alias @req.server_alias
     when 'remove-alias'
-      app = Application.find(@login, @req.app_name)
-      app.tidy      
+      app = Application.find(user, @req.app_name)
+      @reply.append app.remove_alias @req.server_alias
     else
       #unrecognized command
     end
-    @reply.result = 'Success' unless @reply.result
+    @reply.resultIO << 'Success' if @reply.resultIO.string.empty?
     
     render :json => @reply
   end
   
   def embed_cartridge_post
+    user = CloudUser.find(@login)    
+    app = Application.find(user, @req.app_name)
+
+    Rails.logger.debug "DEBUG: Performing action '#{@req.action}' on node '#{app.server_identity}'"    
     case @req.action
-    when 'add'
-      app = Application.find(@login, @req.app_name)
-      app.add_dependency()
-    when 'remove'
-      app.remove_dependency()      
+    when 'configure'
+      @reply.append app.add_dependency(@req.cartridge)
+    when 'deconfigure'
+      @reply.append app.remove_dependency(@req.cartridge)
     when 'start'
-      app.start_dependency()      
+      @reply.append app.start_dependency(@req.cartridge)      
     when 'stop'
-      app.stop_dependency()      
+      @reply.append app.stop_dependency(@req.cartridge)      
     when 'restart'
-      app.restart_dependency()      
+      @reply.append app.restart_dependency(@req.cartridge)      
     when 'status'
-      app.dependency_status()      
+      @reply.append app.dependency_status(@req.cartridge)      
     when 'reload'
-      app.reload_dependency()      
+      @reply.append app.reload_dependency(@req.cartridge)      
     end
-    
-    #add|remove|start|stop|restart|status|reload
-    
-    # Execute a framework cartridge
-    Libra.embed_execute(@req.cartridge, @req.action, @req.app_name, @login)
-    @reply.result = @reply.resultIO.string if @reply.resultIO && !@reply.resultIO.string.empty?
-    @reply.result = "Success" unless @reply.result
+        
+    @reply.resultIO << 'Success' if @reply.resultIO.string.empty?
     render :json => @reply
   end
-  
-  
-  
   
   #
   #def nurture_post
@@ -215,11 +215,11 @@ class LegacyBrokerController < ApplicationController
   protected
   
   def validate_request
-    @reply = LegacyReply.new
+    @reply = ResultIO.new
     begin
       @req = LegacyRequest.new.from_json(params['json_data'])
       if @req.invalid?
-        @reply.attributes=(@req.errors.first[1])
+        @reply.resultIO << @req.errors.first[1]
         render :json => @reply, :status => :invalid 
       end
     end
@@ -228,7 +228,8 @@ class LegacyBrokerController < ApplicationController
   def authenticate
     @login = AuthService.login(request, params, cookies)
     unless @login
-      @reply.message, @reply.exit_code = "Invalid user credentials", 97
+      @reply.resultIO << "Invalid user credentials"
+      @reply.exitcode = 97
       render :json => @reply, :status => :unauthorized
     end
   end
@@ -240,29 +241,32 @@ class LegacyBrokerController < ApplicationController
       logger.error "AuthenticationException rescued in #{request.path}"
       logger.error e.message
       logger.error e.backtrace
-      @reply.message = "An error occurred while contacting the authentication service. If the problem persists please contact support."
+      @reply.append e.resultIO if e.resultIO
+      @reply.resultIO << "An error occurred while contacting the authentication service. If the problem persists please contact Red Hat support."
     when Cloud::Sdk::WorkflowException
       logger.error "WorkflowException rescued in #{request.path}"
       logger.error e.message
-      @reply.debug += e.message
-      @reply.debug += e.backtrace[0..5].to_s
-      @reply.message = e.message unless @reply.message
+      @reply.append e.resultIO if e.resultIO      
+      @reply.debug << e.message
+      @reply.debug << e.backtrace[0..5].join("\n")
+      @reply.messageIO << e.message
       status = :bad_request
     when Cloud::Sdk::CdkException
       logger.error "Exception rescued in #{request.path}:"
       logger.error e.message
       logger.error e.backtrace
-      @reply.message = "An internal error occurred [code: #{e.code}]. If the problem persists please contact support." unless @reply.message
+      @reply.append e.resultIO if e.resultIO      
+      @reply.messageIO << "An internal error occurred [code: #{e.code}]. If the problem persists please contact support."
     else
       logger.error "Exception rescued in #{request.path}:"
       logger.error e.message
       logger.error e.backtrace
-      @reply.debug += e.message
-      @reply.debug += e.backtrace[0..5].to_s
-      @reply.message = e.message unless @reply.message
+      @reply.debugIO << e.message
+      @reply.debugIO << e.backtrace[0..5].join("\n")
+      @reply.messageIO << e.message
     end
     
-    @reply.exit_code = e.respond_to?('exit_code') ? e.exit_code : 1
+    @reply.exitcode = e.respond_to?('exit_code') ? e.exit_code : 1
     render :json => @reply, :status => status
   end
 end

@@ -16,11 +16,9 @@ Gem::Specification.new do |s|
   s.files       += %w(README.md Rakefile Gemfile cloud-sdk-common.spec cloud-sdk-common.gemspec)
   s.require_paths = ["lib"]
 
-  s.add_dependency("json")
-  s.add_dependency("activemodel", "3.1.3")
-  s.add_development_dependency('cucumber', ">= 0.9.0")
-  s.add_development_dependency('rspec')
+  s.add_dependency("json", "1.4.3")
+  s.add_dependency("activemodel", "3.0.10")
+  s.add_development_dependency('rspec', "1.3.1")
   s.add_development_dependency('mocha', "0.9.8")
-  s.add_development_dependency('ruby-debug')
-  s.add_development_dependency('rake', ">= 0.8.7")
+  s.add_development_dependency('rake', "0.9.2")
 end

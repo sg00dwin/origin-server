@@ -33,13 +33,12 @@ class DnsService
     DnsService.dyn_delete_txt_record(namespace, @auth_token, @@dyn_retries)
   end
   
-  def register_application(app_name, namespace, user_name)
+  def register_application(app_name, namespace, public_hostname)
     login
-    public_hostname = "" #TODO either need to retrieve this or pass it in.  retrieving means an inefficiency
     DnsService.create_app_dns_entries(app_name, namespace, public_hostname, @auth_token, @@dyn_retries)
   end
   
-  def deregister_application(app_name, namespace, user_name)
+  def deregister_application(app_name, namespace)
     login
     DnsService.delete_app_dns_entries(app_name, namespace, @auth_token, @@dyn_retries)    
   end

@@ -2,7 +2,7 @@ require 'aws'
 
 class DataStore
   def self.find(obj_type, user_id, id)
-    print "DataStore.find(#{obj_type}, #{user_id}, #{id})\n\n"
+    Rails.logger.debug "DataStore.find(#{obj_type}, #{user_id}, #{id})\n\n"
     case obj_type
     when "CloudUser"
       get_user_s3(id)
@@ -12,7 +12,7 @@ class DataStore
   end
   
   def self.find_all(obj_type, user_id)
-    print "DataStore.find_all(#{obj_type}, #{user_id})\n\n"
+    Rails.logger.debug "DataStore.find_all(#{obj_type}, #{user_id})\n\n"
     case obj_type
     when "CloudUser"
       get_user_s3(id)
@@ -22,17 +22,23 @@ class DataStore
   end
   
   def self.save(obj_type, user_id, id, serialized_obj)
-    print "DataStore.save(#{obj_type}, #{user_id}, #{id}, #{serialized_obj})\n\n"
+    Rails.logger.debug "DataStore.save(#{obj_type}, #{user_id}, #{id}, #{serialized_obj})\n\n"
     case obj_type
     when "CloudUser"
-      put_user_s3(user_id, serialized_obj)
+      Rails.logger.debug "Cannot delete user"
     when "Application"
-      put_app_s3(user_id,id, serialized_obj)
+      put_app_s3(user_id,id,serialized_obj)
     end
   end
   
   def self.delete(obj_type, user_id, id)
-    print "DataStore.delete(#{obj_type}, #{user_id}, #{id})\n\n"        
+    Rails.logger.debug "DataStore.delete(#{obj_type}, #{user_id}, #{id})\n\n"
+    case obj_type
+    when "CloudUser"
+      put_user_s3(user_id, serialized_obj)
+    when "Application"
+      delete_app(user_id,id)
+    end
   end
   
   private
@@ -88,7 +94,8 @@ class DataStore
     apps = {}
     app_prefix = "user_info/#{rhlogin}/apps/"
     bucket.objects.with_prefix(app_prefix).map do |app_obj|
-      apps[app_obj.key.gsub(app_prefix,'')[0..-6]] = app_obj.read
+      serialized_obj = app_obj.read
+      apps[app_obj.key.gsub(app_prefix,'')[0..-6]] = serialized_obj unless serialized_obj.empty?
     end
     apps
   end
@@ -104,19 +111,12 @@ class DataStore
     end
   end
   
-  #
-  # Updates the S3 cache of the app
-  #
-  def self.update_app(app)
-    json = app.to_json
-    get_app_s3(app.user.rhlogin, app.name).write(json)
+  def self.put_app_s3(rhlogin,app_name,serialized_obj)
+    bucket.objects["user_info/#{rhlogin}/apps/#{app_name}.json"].write(serialized_obj)
   end
 
-  #
-  # Delete an S3 cache of an app
-  #
-  def self.delete_app(app)
-    result = get_app_s3(app.user.rhlogin, app.name)
-    result.delete if result.exists?
+  def self.delete_app(rhlogin,app_name)
+    obj = bucket.objects["user_info/#{rhlogin}/apps/#{app_name}.json"]
+    obj.delete if obj.exists?
   end
 end

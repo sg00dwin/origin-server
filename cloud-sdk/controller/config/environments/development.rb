@@ -53,11 +53,11 @@ Controller::Application.configure do
     },
     :dynect_customer_name => "demo-redhat",
     :dynect_user_name => "dev-rhcloud-user",
-    :dynect_password => "vo8zaijoN7Aecoo",
+    :dynect_password => "",
     :dynect_url => "https://api2.dynect.net",
     
-    :aws_key => "AKIAITDQ37BWZ5CKAORA",
-    :aws_secret => "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",
+    :aws_key => "",
+    :aws_secret => "",
     :s3_bucket => "libra_dev"
   }
   
