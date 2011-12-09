@@ -1,5 +1,7 @@
 class ApplicationObserver < ActiveModel::Observer
   observe Application
+
+  BUILDER_SUFFIX = "bldr"
   
   def validate_application(app)    
     if app.name =~ /.+#{BUILDER_SUFFIX}$/
@@ -34,6 +36,16 @@ may be ok if '#{uapp.name}#{BUILDER_SUFFIX}' was the builder of a previously des
   end
   
   def before_application_create(application)
-    
+    #raise Exception.new(100), "An applicaiton named '#{application.name}' in namespace '#{application.user.namespace}' already exists", caller[0..5] if applicatin.user.app_info(application.name)
+
+    apps = application.user.applications
+    type = application.framework_cartridge
+    if type == 'jenkins'
+      apps.each do |appname, app|
+        if app.framework_cartridge == 'jenkins'
+          raise Exception.new(115), "A jenkins application named '#{application.name}' in namespace '#{application.user.namespace}' already exists. You can only have 1 jenkins application per account.", caller[0..5]
+        end
+      end
+    end
   end
 end
