@@ -134,8 +134,9 @@ a.more {
   color: #555;
   margin: 0;
   padding: 1em 0 4em;
-  background-color: white;
   display: block;
+  line-height: 1.9em;
+  background-color: white;
   
   a {
     color: #1060c8;
@@ -153,10 +154,15 @@ a.more {
   
   h1, h2, h3, h4, h5 {
     color: #555;
+    margin-top: 2em;
     font: {
       family: Overpass, $base-font-family;
       weight: normal;
     }
+  }
+
+  p {
+    text-align: justify;
   }
   
   h1 {
