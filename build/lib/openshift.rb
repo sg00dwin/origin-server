@@ -24,7 +24,7 @@ end
 def send_verified_email(image_id, image_name)
   msg = <<END_OF_MESSAGE   
 From: Jenkins <noreply@redhat.com>
-To: Libra Team <libra-express@redhat.com>
+To: Libra Team <libra-devel@redhat.com>
 Subject: [Jenkins] DevEnv Image #{image_name} (#{image_id}) is QE Ready
 
 Image #{image_name} (#{image_id}) has passed validation tests and is ready for QE.
@@ -32,6 +32,6 @@ Image #{image_name} (#{image_id}) has passed validation tests and is ready for Q
 END_OF_MESSAGE
 
   Net::SMTP.start('localhost') do |smtp|
-    smtp.send_message msg, "noreply@redhat.com", "libra-express@redhat.com"
+    smtp.send_message msg, "noreply@redhat.com", "libra-devel@redhat.com"
   end
 end
