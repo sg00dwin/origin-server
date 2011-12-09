@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.83.4
+Version:   0.83.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -68,6 +68,13 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Thu Dec 08 2011 Alex Boone <aboone@redhat.com> 0.83.5-1
+- Fix for BZ 758976 - display fieldset legend in white text in IE
+  (aboone@redhat.com)
+- Bump jQuery.validate to 1.9.0, spinner on ajax:beforeSend instead of submit
+  (IE8 fixes) (aboone@redhat.com)
+- Get rid of console.log statement (breaks in IE) (aboone@redhat.com)
+
 * Tue Dec 06 2011 Alex Boone <aboone@redhat.com> 0.83.4-1
 - Removed all references to Power on /app (ffranz@redhat.com)
 - Removed all references to Power on /app (ffranz@redhat.com)
