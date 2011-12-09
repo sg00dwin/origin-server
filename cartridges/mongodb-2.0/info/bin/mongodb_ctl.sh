@@ -27,7 +27,8 @@ MONGODB_DIR="$OPENSHIFT_HOMEDIR/mongodb-2.0/"
 isrunning() {
     if [ -f $MONGODB_DIR/pid/mongodb.pid ]; then
         mongodb_pid=`cat $MONGODB_DIR/pid/mongodb.pid 2> /dev/null`
-        if `ps --pid $mongodb_pid > /dev/null 2>&1` || `pgrep -x mongod > /dev/null 2>&1`
+        myid=`id -u`
+        if `ps --pid $mongodb_pid 2>&1 | grep mongod > /dev/null 2>&1` || `pgrep -x mongod -u $myid > /dev/null 2>&1`
         then
             return 0
         fi
