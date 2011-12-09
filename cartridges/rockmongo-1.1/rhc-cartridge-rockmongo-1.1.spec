@@ -1,8 +1,8 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/rockmongo-1.1
 
 Name: rhc-cartridge-rockmongo-1.1
-Version: 1.1.1
-Release: 2%{?dist}
+Version: 1.1.2
+Release: 1%{?dist}
 Summary: Embedded RockMongo support for express
 
 Group: Applications/Internet
@@ -48,6 +48,12 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Fri Dec 09 2011 Mike McGrath <mmcgrath@redhat.com> 1.1.2-1
+- whitelist change for rebuild (mmcgrath@redhat.com)
+- fix for bug#760008 (rchopra@redhat.com)
+- release bump (mmcgrath@redhat.com)
+- adding rockmongo dir, should be separated out later (mmcgrath@redhat.com)
+
 * Fri Dec 02 2011 Mike McGrath <mmcgrath@redhat.com> 1.1.1-2
 - Correcting spec
 
