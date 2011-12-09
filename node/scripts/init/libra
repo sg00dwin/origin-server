@@ -94,17 +94,24 @@ startapp() {
     # APPSCRIPT=$2
     uid=$(id -u "$1")
     mcs_level=`openshift_mcs_level $uid`
-    echo -n $"    Start: $1-$(basename $2)"
-    daemon --user="$1" --pidfile=httpd_$1-$(basename $2) runcon -t libra_t -l $mcs_level $2 start
-    RETVAL=$?
-    echo
-    if [ $RETVAL -eq 0 ]
+    source /var/lib/libra/$1/.env/OPENSHIFT_RUN_DIR
+    if [ -f "${OPENSHIFT_RUN_DIR}/stop_lock" ]
     then
-        echo_success
+        echo "$1 is locked"
     else
-        GROUP_RETVAL=$(($GROUP_RETVAL+1))
-        echo_failure
+        echo -n $"    Start: $1-$(basename $2)"
+        daemon --user="$1" --pidfile=httpd_$1-$(basename $2) runcon -t libra_t -l $mcs_level $2 start
+        RETVAL=$?
+        echo
+        if [ $RETVAL -eq 0 ]
+        then
+            echo_success
+        else
+            GROUP_RETVAL=$(($GROUP_RETVAL+1))
+            echo_failure
+        fi
     fi
+    unset OPENSHIFT_RUN_DIR
 }
 
 stopapp() {

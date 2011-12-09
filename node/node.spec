@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.83.7
+Version:       0.83.8
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -174,6 +174,16 @@ fi
 %dir %attr(0755,root,root) %{_sysconfdir}/libra/skel
 
 %changelog
+* Thu Dec 08 2011 Alex Boone <aboone@redhat.com> 0.83.8-1
+- fix for bugz 761384 (ramr@redhat.com)
+- change default command to rhcsh if nothing is specified (ramr@redhat.com)
+- Added warning (mmcgrath@redhat.com)
+- Merge branch 'master' of li-master:/srv/git/li (ramr@redhat.com)
+- Fix to rename var to not clobber import + comment quota help for now.
+  (ramr@redhat.com)
+- Use the mcs_level function from the abstract cartridge to get the
+  openshift_mcs_level for the current user. (ramr@redhat.com)
+
 * Wed Dec 07 2011 Mike McGrath <mmcgrath@redhat.com> 0.83.7-1
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
   (mmcgrath@redhat.com)

@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.83.6
+Version:       0.83.7
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -45,6 +45,13 @@ _EOF
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Thu Dec 08 2011 Alex Boone <aboone@redhat.com> 0.83.7-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rmillner@redhat.com)
+- Allow libra applications to make outbound connnections to the submission
+  port. (rmillner@redhat.com)
+- Allowing outbound smtp (mmcgrath@redhat.com)
+
 * Wed Dec 07 2011 Mike McGrath <mmcgrath@redhat.com> 0.83.6-1
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
   (mmcgrath@redhat.com)

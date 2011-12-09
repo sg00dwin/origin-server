@@ -132,6 +132,13 @@ startuser() {
     NETCLASS=`netclass $USERID`
     ${NOOP} $TC class add dev $tc_if parent 1:1 classid 1:$NETCLASS htb rate ${tc_user_share}mbit ceil ${tc_user_limit}mbit
 
+    ${NOOP} $TC qdisc add dev $tc_if parent 1:$NETCLASS handle ${NETCLASS}: htb r2q $tc_rate_to_quantum_ratio default 1
+    ${NOOP} $TC class add dev $tc_if parent ${NETCLASS}: classid ${NETCLASS}:1 htb rate ${tc_user_share}mbit ceil ${tc_user_limit}mbit
+    ${NOOP} $TC class add dev $tc_if parent ${NETCLASS}: classid ${NETCLASS}:2 htb rate 128kbit ceil 256kbit
+    ${NOOP} $TC class add dev $tc_if parent ${NETCLASS}: classid ${NETCLASS}:3 htb rate  12kbit ceil  24kbit
+    ${NOOP} $TC filter add dev $tc_if parent ${NETCLASS}: protocol ip prio 10 u32 match ip dport 587 0xffff flowid ${NETCLASS}:2
+    ${NOOP} $TC filter add dev $tc_if parent ${NETCLASS}: protocol ip prio 10 u32 match ip dport  25 0xffff flowid ${NETCLASS}:3
+    ${NOOP} $TC filter add dev $tc_if parent ${NETCLASS}: protocol ip prio 10 u32 match ip dport 465 0xffff flowid ${NETCLASS}:3
 }
 
 stopuser() {
