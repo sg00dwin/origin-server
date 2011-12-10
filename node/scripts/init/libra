@@ -74,22 +74,30 @@ fi
 
 startuser() {
     # USERNAME=$1
-    echo "Starting $1..."
+    local OUTFILE=$(mktemp /tmp/libra_init.XXXXXXXX)
+    echo "Starting $1..." >> $OUTFILE 2>&1
     for APPNAME in `userapps $1`
     do
-        startapp $1 $APPNAME
+        startapp $1 $APPNAME >> $OUTFILE 2>&1
     done
-    echo
+    echo >> $OUTFILE 2>&1
+
+    cat $OUTFILE
+    rm $OUTFILE
 }
 
 stopuser() {
     # USERNAME=$1
-    echo "Stopping $1..."
+    local OUTFILE=$(mktemp /tmp/libra_init.XXXXXXXX)
+    echo "Stopping $1..." >> $OUTFILE 2>&1
     for APPNAME in `userapps $1`
     do
-        stopapp $1 $APPNAME
+        stopapp $1 $APPNAME >> $OUTFILE 2>&1
     done
-    echo
+    echo >> $OUTFILE 2>&1
+
+    cat $OUTFILE
+    rm $OUTFILE
 }
 
 
