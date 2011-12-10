@@ -52,6 +52,10 @@ module Libra
       end
     end
 
+    def self.check_user(username)
+      check_rhlogin(username)
+    end
+
     def self.check_app(app)
       check_field(app, 'application', APP_NAME_MAX_LENGTH)
     end
