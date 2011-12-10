@@ -90,7 +90,7 @@ class BrokerController < ApplicationController
           if !(val =~ /\A(jumbo|exlarge|large|micro|std)\z/)
             render :json => generate_result_json("Invalid Profile: #{val}.  Must be: (jumbo|exlarge|large|micro|std)", nil, 1), :status => :invalid and return nil
           end
-        when 'debug', 'alter', 'delete', 'add', 'remove', 'force', 'list'
+        when 'debug', 'alter', 'delete', 'add', 'remove', 'list'
           if val != true && val != false && !(val =~ /\A(true|false)\z/)
             render :json => generate_result_json("Invalid value for #{key} specified: #{val}", nil, 1), :status => :invalid and return nil
           end
@@ -464,7 +464,7 @@ class BrokerController < ApplicationController
             if not data['ssh'] or not data['user_name']
               render :json => generate_result_json("Must provide 'user-name' and 'ssh' key for the user", nil, 105), :status => :invalid and return
             end
-            rhlogin_user.add_app_ssh_key(data['user_name'], data['ssh'], data['app_name'], data['force'])
+            rhlogin_user.add_app_ssh_key(data['user_name'], data['ssh'], data['app_name'])
           elsif data['remove']
             if not data['user_name']
               render :json => generate_result_json("Must provide 'user-name'", nil, 105), :status => :invalid and return

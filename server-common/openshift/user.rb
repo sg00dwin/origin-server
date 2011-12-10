@@ -185,9 +185,9 @@ module Libra
       end
     end
 
-    def add_user_to_app(user_name, ssh_key, app, app_name, force)
-      if !force && app['ssh_keys'] && app['ssh_keys'].has_key?(user_name)
-        raise NodeException.new(143), "Error: Setting access to app '#{app_name}' for user '#{user_name}'. You must delete existing user ssh-key for the app before assigning a new key or use force option.", caller[0..5]
+    def add_user_to_app(user_name, ssh_key, app, app_name)
+      if app['ssh_keys'] && app['ssh_keys'].has_key?(user_name)
+        raise NodeException.new(143), "Error: Setting access to app '#{app_name}' for user '#{user_name}'. You must delete existing user ssh-key for the app before assigning a new key.", caller[0..5]
       end
       server = Libra::Server.new app['server_identity']
       server.add_ssh_key(app, ssh_key, user_name)
@@ -199,30 +199,28 @@ module Libra
     def check_ssh_key(app, app_name, ssh_key)
       return if not app['ssh_keys']
       app['ssh_keys'].each do |user, key|
-        raise NodeException.new(143), "Error: Given public key is already used by user '#{user}' for app '#{app_name}'. Use different key or enable force option.", caller[0..5] if ssh_key == key
+        raise NodeException.new(143), "Error: Given public key is already used by user '#{user}' for app '#{app_name}'. Use different key or delete conflicting key and retry", caller[0..5] if ssh_key == key
       end
     end
 
     #
     # Add an ssh key for the specified app/apps 
     #
-    def add_app_ssh_key(user_name, ssh_key, app_name=nil, force=false)
+    def add_app_ssh_key(user_name, ssh_key, app_name=nil)
       if app_name.nil?
-        if not force
-          # check ssh key conflicts
-          apps.each do |appname, app|
-            check_ssh_key(app, appname, ssh_key)
-          end
+        # check ssh key conflicts
+        apps.each do |appname, app|
+          check_ssh_key(app, appname, ssh_key)
         end
         apps.each do |appname, app|
-          add_user_to_app(user_name, ssh_key, app, appname, force)
+          add_user_to_app(user_name, ssh_key, app, appname)
         end
       else
         found = false
         apps.each do |appname, app|
           if appname == app_name
             check_ssh_key(app, appname, ssh_key)
-            add_user_to_app(user_name, ssh_key, app, appname, force)
+            add_user_to_app(user_name, ssh_key, app, appname)
             found = true
             break
           end
