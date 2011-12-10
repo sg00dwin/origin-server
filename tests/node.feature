@@ -23,3 +23,9 @@ Feature: Account Management
     And an account cgroup directory should not exist
     And an account home directory should not exist
     
+ Scenario: Delete One Namespace
+    Given an accepted node
+    When I create a new namespace
+    And I make the REST call to delete the namespace
+    Then a namespace should get deleted
+

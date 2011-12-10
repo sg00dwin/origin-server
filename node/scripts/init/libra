@@ -13,10 +13,40 @@
 
 # source function library
 . /etc/rc.d/init.d/functions
-id -Z
 #set -x
 
 lockfile=/var/lock/subsys/libra
+
+numparallel=5
+
+# colors, use like: echo "${RED}FAILED!!!${NORM}"
+RED=$(echo -e "\033[31m")
+GREEN=$(echo -e "\033[32m")
+NORM=$(echo -e "\033[0m")
+
+function print_column() {
+    sameline="false"
+    if [ "$1" == "-n" ]
+    then
+        shift
+        sameline="true"
+    fi
+
+    length=$1
+    msg=$2
+    numspaces=$(( $length - ${#msg} ))
+
+    echo -n "$msg"
+
+    for ix in $(seq $numspaces)
+    do
+        echo -n ' '
+    done
+    if [ "$sameline" == "false" ]
+    then
+        echo
+    fi
+}
 
 function libra_users() {
     grep ":libra guest:" /etc/passwd | cut -d: -f1
@@ -74,18 +104,30 @@ fi
 
 startuser() {
     # USERNAME=$1
+    local OUTFILE=$(mktemp /tmp/libra_init-startuser-$1.XXXXXXXX)
+    echo "Starting $1..." >> $OUTFILE 2>&1
     for APPNAME in `userapps $1`
     do
-        startapp $1 $APPNAME
+        startapp $1 $APPNAME >> $OUTFILE 2>&1
     done
+    echo >> $OUTFILE 2>&1
+
+    cat $OUTFILE | sed -e "s#\[  OK  \]#\[  ${GREEN}OK${NORM}  \]#" -e "s#\[FAILED\]#\[${RED}FAILED${NORM}\]#"
+    rm $OUTFILE
 }
 
 stopuser() {
     # USERNAME=$1
+    local OUTFILE=$(mktemp /tmp/libra_init-stopuser-$1.XXXXXXXX)
+    echo "Stopping $1..." >> $OUTFILE 2>&1
     for APPNAME in `userapps $1`
     do
-        stopapp $1 $APPNAME
+        stopapp $1 $APPNAME >> $OUTFILE 2>&1
     done
+    echo >> $OUTFILE 2>&1
+
+    cat $OUTFILE | sed -e "s#\[  OK  \]#\[  ${GREEN}OK${NORM}  \]#" -e "s#\[FAILED\]#\[${RED}FAILED${NORM}\]#"
+    rm $OUTFILE
 }
 
 
@@ -99,17 +141,20 @@ startapp() {
     then
         echo "$1 is locked"
     else
-        echo -n $"    Start: $1-$(basename $2)"
-        daemon --user="$1" --pidfile=httpd_$1-$(basename $2) runcon -t libra_t -l $mcs_level $2 start
+        print_column -n 59 "    $(basename $2)"
+        local OUTPUT=$(daemon --user="$1" --pidfile=httpd_$1-$(basename $2) runcon -t libra_t -l $mcs_level $2 start)
         RETVAL=$?
-        echo
         if [ $RETVAL -eq 0 ]
         then
             echo_success
         else
             GROUP_RETVAL=$(($GROUP_RETVAL+1))
             echo_failure
+            echo
+            echo $OUTPUT
+            echo
         fi
+        echo
     fi
     unset OPENSHIFT_RUN_DIR
 }
@@ -119,41 +164,44 @@ stopapp() {
     # APPSCRIPT=$2
     uid=$(id -u "$1")
     mcs_level=`openshift_mcs_level $uid`
-    echo -n $"    Stop: $1-$(basename $2)"
-    daemon --user="$1" --pidfile=httpd_$1-$(basename $2) runcon -t libra_t -l $mcs_level $2 stop
+    print_column -n 59 "    $(basename $2)"
+    local OUTPUT=$(daemon --user="$1" --pidfile=httpd_$1-$(basename $2) runcon -t libra_t -l $mcs_level $2 stop)
     RETVAL=$?
-    echo
     if [ $RETVAL -eq 0 ]
     then
         echo_success
     else
         GROUP_RETVAL=$(($GROUP_RETVAL+1))
         echo_failure
+        echo
+        echo $OUTPUT
+        echo
     fi
+    echo
 }
 
 start() {
     echo "Starting Libra Services: "
+    echo
 
-    for USERNAME in `libra_users`
-    do
-        startuser $USERNAME
-    done
+    echo `libra_users` | xargs -d' ' -I{} -n 1 -P $numparallel /etc/init.d/libra startuser {}
+
+    echo -n "All Libra services started"
     [ $GROUP_RETVAL -eq 0 ] && touch ${lockfile}
     [ $GROUP_RETVAL -eq 0 ] && success || failure
-    echo -n $"Libra services started"
     echo
     return $GROUP_RETVAL
 }
 
 stop() {
     echo "Stopping Libra Services: "
-    for USERNAME in `libra_users`
-    do
-        stopuser $USERNAME
-    done
+    echo
+
+    echo `libra_users` | xargs -d' ' -I{} -n 1 -P $numparallel /etc/init.d/libra stopuser {}
+
+    echo -n "All Libra services stopped"
     [ $GROUP_RETVAL -eq 0 ] && touch ${lockfile}
-    echo -n $"Libra services stopped"
+    [ $GROUP_RETVAL -eq 0 ] && success || failure
     echo
     return $GROUP_RETVAL
 }
@@ -161,15 +209,13 @@ stop() {
 restart() {
     # This restarts each app individually. DO NOT change it to simply call stop() and start()
     echo "Restarting Libra Services: "
+    echo
 
-    for USERNAME in `libra_users`
-    do
-        stopuser $USERNAME
-        startuser $USERNAME
-    done
+    echo `libra_users` | xargs -d' ' -I{} -n 1 -P $numparallel /etc/init.d/libra restartuser {}
+
+    echo -n "All Libra services restarted"
     [ $GROUP_RETVAL -eq 0 ] && touch ${lockfile}
     [ $GROUP_RETVAL -eq 0 ] && success || failure
-    echo -n $"Libra services restarted"
     echo
     return $GROUP_RETVAL
 }
@@ -198,7 +244,7 @@ case "$1" in
     do
         script_name=$(basename $ctl_script)
         run_as=$( echo $ctl_script | awk -F/ '{print $5}')
-        echo -n $"    Checking http for ${script_name%_ctl.sh}"
+        echo -n "    Checking http for ${script_name%_ctl.sh}"
         uid=$(id -u "$run_as")
         mcs_level=`openshift_mcs_level $uid`
         daemon --user=$run_as --pidfile=httpd_${script_name} runcon -t libra_t -l $mcs_level $ctl_script status
@@ -243,7 +289,7 @@ case "$1" in
     ;;
 
   *)
-    echo $"Usage: $0 {start|stop|status|restart|reload|force-reload|condrestart}"
+    echo "Usage: $0 {start|stop|status|restart|reload|force-reload|condrestart}"
     exit 1
 esac
 
