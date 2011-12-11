@@ -1,5 +1,6 @@
 require 'rubygems'
 require 'json'
+require 'active_model'
 
 module Cloud
   module Sdk
@@ -71,11 +72,12 @@ module Cloud
       end
       
       def self.primary_key(var_name)
-        @@primary_key = var_name
+        @primary_key = var_name
       end
       
       def self.exclude_attributes(*attributes)
-        @@excludes_attributes += attributes
+        @excludes_attributes = [] unless @excludes_attributes
+        @excludes_attributes += attributes
       end
       
       def attributes
@@ -84,7 +86,7 @@ module Cloud
         @attributes = {}
         self.instance_variable_names.map {|name| name[1..-1]}.each do |name|
           next if ['attributes', 'changed_attributes', 'previously_changed', 'persisted', 'new_record', 'deleted', 'errors', 'validation_context'].include? name
-          next if @@excludes_attributes.include? name.to_sym
+          next if self.class.excludes_attributes.include? name.to_sym
           @attributes[name] = nil
         end
         @attributes
@@ -99,8 +101,8 @@ module Cloud
       end
       
       def self.find(login, id)
-        id_var = @@primary_key || "uuid"        
-        data = DataStore.find(self.name,login,id)
+        id_var = @primary_key || "uuid"        
+        data = DataStore.instance.find(self.name,login,id)
         return nil unless data
         
         json = data.values[0]
@@ -111,8 +113,8 @@ module Cloud
       end
       
       def self.find_all(login)
-        id_var = @@primary_key || "uuid"        
-        data = DataStore.find_all(self.name,login)
+        id_var = @primary_key || "uuid"        
+        data = DataStore.instance.find_all(self.name,login)
         return [] unless data
         data.map do |id, json|
           obj = self.new.from_json(json)
@@ -123,18 +125,18 @@ module Cloud
       end
       
       def delete(login)
-        id_var = @@primary_key || "uuid"
-        DataStore.delete(self.class.name,login, instance_variable_get("@#{id_var}"))
+        id_var = self.class.pk || "uuid"
+        DataStore.instance.delete(self.class.name,login, instance_variable_get("@#{id_var}"))
       end
       
       def save(login)
-        id_var = @@primary_key || "uuid"        
+        id_var = self.class.pk || "uuid"        
         @previously_changed = changes
         @changed_attributes.clear
         @new_record = false
         @persisted = true
         @deleted = false
-        DataStore.save(self.class.name, login, instance_variable_get("@#{id_var}"), self.to_json)
+        DataStore.instance.save(self.class.name, login, instance_variable_get("@#{id_var}"), self.to_json)
         self
       end
       
@@ -143,6 +145,17 @@ module Cloud
         @persisted = true
         @deleted = false
         @changed_attributes.clear if @changed_attributes
+      end
+      
+      def self.excludes_attributes
+        @excludes_attributes = [] unless @excludes_attributes
+        @excludes_attributes
+      end
+      
+      protected
+      
+      def self.pk
+        @primary_key
       end
     end
   end

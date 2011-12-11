@@ -18,7 +18,4 @@ Gem::Specification.new do |s|
 
   s.add_dependency("json", "1.4.3")
   s.add_dependency("activemodel", "3.0.10")
-  s.add_development_dependency('rspec', "1.3.1")
-  s.add_development_dependency('mocha', "0.9.8")
-  s.add_development_dependency('rake', "0.9.2")
 end
