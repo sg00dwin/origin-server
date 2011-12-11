@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.83.3
+Version:   0.83.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -67,6 +67,14 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Sun Dec 11 2011 Dan McPherson <dmcphers@redhat.com> 0.83.4-1
+- move common dep (dmcphers@redhat.com)
+- remove popen usage and better migration output (dmcphers@redhat.com)
+- multi-user bug-fixes: 'force' param usage is confusing, removing the option
+  (rpenta@redhat.com)
+- Support for managing multiple sub-users for the RHN/openshift account
+  (rpenta@redhat.com)
+
 * Thu Dec 08 2011 Alex Boone <aboone@redhat.com> 0.83.3-1
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
   (rchopra@redhat.com)
