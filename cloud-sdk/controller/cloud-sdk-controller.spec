@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.1.16
+Version:        0.1.17
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        AGPLv3
@@ -72,6 +72,38 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Sun Dec 11 2011 Dan McPherson <dmcphers@redhat.com> 0.1.17-1
+- building cloud sdk (dmcphers@redhat.com)
+- Changed cdk-controller to be rails plugin. Modified express-broker with
+  customizations and integrating cdk-controller (kraman@gmail.com)
+- Checkpoint: Added cartridge populated env vars, broker key reuest and system
+  ssh keys. (kraman@gmail.com)
+- Checkpoint: cartridge and embedded actions work (kraman@gmail.com)
+- observers containing express specific code for user and app creation
+  (rchopra@redhat.com)
+- Checkpoint cart_list_post working (kraman@gmail.com)
+- Bug fixes in DNS service API Added ability to store users in data store API
+  create/modify domain and user_info calls working. (kraman@gmail.com)
+- Checkpoint of cloud-sdk work. Added implementation and bugfixes for
+  Datastore, Auth and node-communication user-info works (kraman@gmail.com)
+- move auth token logic (dmcphers@redhat.com)
+- starting to fill in dnsservice (dmcphers@redhat.com)
+- Flushed out data storage API CloudUser model close to complete Changed
+  AuthAPI methods to be static (kraman@gmail.com)
+- rpm work (dmcphers@redhat.com)
+- Added auth service code. (kraman@gmail.com)
+- Starting work on migration of common logic from broker into common +
+  controller packages (kraman@gmail.com)
+- change common files (dmcphers@redhat.com)
+- Automatic commit of package [rubygem-cloud-sdk-controller] release
+  [0.1.16-1]. (dmcphers@redhat.com)
+- building updates (dmcphers@redhat.com)
+- Automatic commit of package [rubygem-cloud-sdk-controller] release
+  [0.1.15-1]. (dmcphers@redhat.com)
+- engine -> node (dmcphers@redhat.com)
+- more work splitting into 3 gems (dmcphers@redhat.com)
+- split into three gems (dmcphers@redhat.com)
+
 * Tue Nov 29 2011 Dan McPherson <dmcphers@redhat.com> 0.1.16-1
 - building updates (dmcphers@redhat.com)
 
