@@ -2,6 +2,7 @@
 
 USERNAME="$1"
 SSHKEY="$2"
+SUBUSER="$3"
 
 CART_DIR=/usr/libexec/li/cartridges
 source ${CART_DIR}/abstract/info/lib/util
@@ -11,6 +12,6 @@ load_node_conf
 USERHOME=`echo ${libra_dir}/${USERNAME} | tr -s '/'`
 SSHDIR=${USERHOME}/.ssh
 
-CMDENTRY="command=\"/usr/bin/trap-user\",no-X11-forwarding ssh-rsa $SSHKEY Libra-$USERNAME"
+CMDENTRY="command=\"/usr/bin/trap-user\",no-X11-forwarding ssh-rsa $SSHKEY Libra-$USERNAME-$SUBUSER"
 sed -i "/${SSHKEY//\//\\/}/d" ${SSHDIR}/authorized_keys
 echo "${CMDENTRY}" >> ${SSHDIR}/authorized_keys
