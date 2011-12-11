@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.83.6
+Version:   0.83.7
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -68,6 +68,12 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Sun Dec 11 2011 Dan McPherson <dmcphers@redhat.com> 0.83.7-1
+- Also ignore whitespace-only promo code entries (aboone@redhat.com)
+- Properly check for the presence of a promo code (aboone@redhat.com)
+- Added ability to disable forms while waiting for AJAX (for US1489). Also
+  DRYed up some of the form processing (fotios@redhat.com)
+
 * Thu Dec 08 2011 Alex Boone <aboone@redhat.com> 0.83.6-1
 - 
 
