@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Node
 Name:           rubygem-%{gemname}
-Version:        0.1.16
+Version:        0.1.17
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        AGPLv3
@@ -84,6 +84,17 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Sun Dec 11 2011 Dan McPherson <dmcphers@redhat.com> 0.1.17-1
+- building cloud sdk (dmcphers@redhat.com)
+- Checkpoint: cartridge and embedded actions work (kraman@gmail.com)
+- rpm work (dmcphers@redhat.com)
+- Automatic commit of package [rubygem-cloud-sdk-node] release [0.1.16-1].
+  (dmcphers@redhat.com)
+- building updates (dmcphers@redhat.com)
+- Automatic commit of package [rubygem-cloud-sdk-node] release [0.1.15-1].
+  (dmcphers@redhat.com)
+- engine -> node (dmcphers@redhat.com)
+
 * Tue Nov 29 2011 Dan McPherson <dmcphers@redhat.com> 0.1.16-1
 - building updates (dmcphers@redhat.com)
 
