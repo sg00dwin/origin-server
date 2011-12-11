@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Common
 Name:           rubygem-%{gemname}
-Version:        0.1.16
+Version:        0.1.17
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        AGPLv3
@@ -72,6 +72,28 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Sun Dec 11 2011 Dan McPherson <dmcphers@redhat.com> 0.1.17-1
+- Changed cdk-controller to be rails plugin. Modified express-broker with
+  customizations and integrating cdk-controller (kraman@gmail.com)
+- Checkpoint: cartridge and embedded actions work (kraman@gmail.com)
+- Bug fixes in DNS service API Added ability to store users in data store API
+  create/modify domain and user_info calls working. (kraman@gmail.com)
+- Checkpoint of cloud-sdk work. Added implementation and bugfixes for
+  Datastore, Auth and node-communication user-info works (kraman@gmail.com)
+- Flushed out data storage API CloudUser model close to complete Changed
+  AuthAPI methods to be static (kraman@gmail.com)
+- rpm work (dmcphers@redhat.com)
+- Starting work on migration of common logic from broker into common +
+  controller packages (kraman@gmail.com)
+- Automatic commit of package [rubygem-cloud-sdk-common] release [0.1.16-1].
+  (dmcphers@redhat.com)
+- building updates (dmcphers@redhat.com)
+- Automatic commit of package [rubygem-cloud-sdk-common] release [0.1.15-1].
+  (dmcphers@redhat.com)
+- engine -> node (dmcphers@redhat.com)
+- more work splitting into 3 gems (dmcphers@redhat.com)
+- split into three gems (dmcphers@redhat.com)
+
 * Tue Nov 29 2011 Dan McPherson <dmcphers@redhat.com> 0.1.16-1
 - building updates (dmcphers@redhat.com)
 
