@@ -37,7 +37,6 @@ case "$1" in
 
     graceful-stop|stop)
         mms_agent_pid=`cat ${OPENSHIFT_10GEN_MMS_AGENT_APP_DIR}run/mms-agent.pid 2> /dev/null`
-        force_kill $mms_agent_pid
-        wait_for_stop $mms_agent_pid
+        kill -9 $mms_agent_pid > /dev/null
     ;;
 esac
