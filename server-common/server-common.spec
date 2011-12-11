@@ -2,7 +2,7 @@
 
 Summary:       Common dependencies of the OpenShift broker and site
 Name:          rhc-server-common
-Version:       0.83.1
+Version:       0.83.2
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -57,6 +57,13 @@ rm -rf %{buildroot}
                                   -s /sbin/nologin 2>&1 > /dev/null || :
 
 %changelog
+* Sun Dec 11 2011 Dan McPherson <dmcphers@redhat.com> 0.83.2-1
+- move common dep (dmcphers@redhat.com)
+- multi-user bug-fixes: 'force' param usage is confusing, removing the option
+  (rpenta@redhat.com)
+- Support for managing multiple sub-users for the RHN/openshift account
+  (rpenta@redhat.com)
+
 * Thu Dec 01 2011 Dan McPherson <dmcphers@redhat.com> 0.83.1-1
 - bump spec numbers (dmcphers@redhat.com)
 
