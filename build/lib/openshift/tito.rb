@@ -8,9 +8,9 @@ module OpenShift
           "misc/devenv"
         elsif package =~ /^rubygem-cloud-sdk-\d/
           "cloud-sdk"
-        elsif package =~ /^rhc-(cartridge-[\w-]*\d\.\d)-/
+        elsif package =~ /^rhc-(cartridge-[\w-]+\d\.\d)-/
           "cartridges/" + $1['cartridge-'.length..-1]
-        elsif package =~ /^(rhc-[\w-]*\d\.\d)-/
+        elsif package =~ /^rhc-([\w-]+)-\d/
           $1
         end
       end.compact
