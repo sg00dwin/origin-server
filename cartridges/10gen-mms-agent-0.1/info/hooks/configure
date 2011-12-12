@@ -70,13 +70,32 @@ else
    fi
 fi
 
+#
+# Checking if the user has added the settings.py file in the git repo
+#
+pushd "$APP_HOME" > /dev/null
+mkdir -p tmp_${uuid}
+cd tmp_${uuid}
+git clone $APP_HOME/git/${application}.git/ .
+
+if [ -f ".openshift/mms/settings.py" ]
+then
+    mkdir -p $APP_DIR/.openshift/mms
+    cp .openshift/mms/settings.py $APP_DIR/.openshift/mms/settings.py
+fi
+
+popd > /dev/null
+rm -rf $APP_HOME/tmp_${uuid}
+
+
 if [ ! -f "$APP_DIR/.openshift/mms/settings.py" ]
 then
     client_error ""
     client_error "Missing settings.py file:  $APP_DIR/.openshift/mms/settings.py"
     client_error "This file is part of the agent zip file: 10gen-mms-agent-<group-name>.zip"
-    client_error "The zip file ia available to download from https://mms.10gen.com/ after your register. "
-    client_error "It contains your 10gen MMS credentials and is required for running the agent"
+    client_error "The zip file ia available to download from https://mms.10gen.com/ after you register with their service. "
+    client_error "It contains your 10gen MMS credentials and is required for running the agent."
+    client_error "You will need to add this file and then do a git commit and push before you can embed the 10gen-mms-agent-0.1 cartridge."
     client_error ""
     exit 137
 fi
