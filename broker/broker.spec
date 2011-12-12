@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.83.3
+Version:   0.83.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -11,7 +11,6 @@ URL:       http://openshift.redhat.com
 Source0:   rhc-broker-%{version}.tar.gz
 
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
-Requires:  rhc-common
 Requires:  rhc-server-common
 Requires:  httpd
 Requires:  mod_ssl
@@ -21,7 +20,6 @@ Requires:  rubygem-parseconfig
 Requires:  rubygem-passenger-native-libs
 Requires:  rubygem-rails
 Requires:  rubygem-xml-simple
-Requires:  rubygem-open4
 
 Obsoletes: rhc-server
 
@@ -38,6 +36,7 @@ This includes the public APIs for the client tools.
 
 %install
 rm -rf %{buildroot}
+mkdir -p %{buildroot}%{_bindir}
 mkdir -p %{buildroot}%{htmldir}
 mkdir -p %{buildroot}%{brokerdir}
 cp -r . %{buildroot}%{brokerdir}
@@ -46,6 +45,8 @@ ln -s %{brokerdir}/public %{buildroot}%{htmldir}/broker
 mkdir -p %{buildroot}%{brokerdir}/run
 mkdir -p %{buildroot}%{brokerdir}/log
 touch %{buildroot}%{brokerdir}/log/production.log
+mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-app %{buildroot}/%{_bindir}
+mv %{buildroot}%{brokerdir}/script/rhc-get-user-info %{buildroot}/%{_bindir}
 
 
 %clean
@@ -64,11 +65,25 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0750,-,-) %{brokerdir}/script
 %{brokerdir}
 %{htmldir}/broker
+%{_bindir}/rhc-admin-ctl-app
+%{_bindir}/rhc-get-user-info
 
 %post
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Mon Dec 12 2011 Dan McPherson <dmcphers@redhat.com> 0.83.5-1
+- fix broker build (dmcphers@redhat.com)
+- add scripts to /usr/bin (lnader@dhcp-240-165.mad.redhat.com)
+
+* Sun Dec 11 2011 Dan McPherson <dmcphers@redhat.com> 0.83.4-1
+- move common dep (dmcphers@redhat.com)
+- remove popen usage and better migration output (dmcphers@redhat.com)
+- multi-user bug-fixes: 'force' param usage is confusing, removing the option
+  (rpenta@redhat.com)
+- Support for managing multiple sub-users for the RHN/openshift account
+  (rpenta@redhat.com)
+
 * Thu Dec 08 2011 Alex Boone <aboone@redhat.com> 0.83.3-1
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
   (rchopra@redhat.com)

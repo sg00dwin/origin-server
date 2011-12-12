@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.83.7
+Version:       0.83.10
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -10,6 +10,8 @@ Source0:       rhc-selinux-%{version}.tar.gz
 BuildRoot:     %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires: selinux-policy >= 3.7.19-106
 Requires:      selinux-policy-targeted >= 3.7.19-130.el6
+Requires(post):   /usr/sbin/semanage
+Requires(postun): /usr/sbin/semanage
 
 BuildArch: noarch
 
@@ -32,19 +34,30 @@ rm -rf %{buildroot}
 
 %post
 /usr/sbin/semodule -i %{_datadir}/selinux/packages/libra.pp
-/usr/sbin/semanage port -m -t submission_port_t -p tcp 587
 
 # Bring in external smtp ports but _NOT_ 25.
-semanage -i - << _EOF
-port -m -t libra_port_t -p tcp 465
-port -m -t libra_port_t -p tcp 587
-_EOF
+#semanage -i - << _EOF
+#port -m -t libra_port_t -p tcp 465
+#port -m -t libra_port_t -p tcp 587
+#_EOF
 
 %files
 %defattr(-,root,root,-)
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Mon Dec 12 2011 Dan McPherson <dmcphers@redhat.com> 0.83.10-1
+- Use the RHEL supplied policy for allowing connections to smtp.
+  (rmillner@redhat.com)
+- Revert "Allow libra applications to make outbound connnections to the
+  submission port." (rmillner@redhat.com)
+
+* Sun Dec 11 2011 Dan McPherson <dmcphers@redhat.com> 0.83.9-1
+- disabling libra_port_t (mmcgrath@redhat.com)
+
+* Sun Dec 11 2011 Dan McPherson <dmcphers@redhat.com> 0.83.8-1
+- add require for semanage (dmcphers@redhat.com)
+
 * Thu Dec 08 2011 Alex Boone <aboone@redhat.com> 0.83.7-1
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
   (rmillner@redhat.com)

@@ -1,14 +1,13 @@
 #!/usr/bin/env ruby
-# Usage: ./migrate-2.1.9 > out.txt
+# Usage: ./migrate-2.0.2 > out.txt
 require 'rubygems'
 require 'openshift'
-require 'open4'
 require 'pp'
 
 include Libra
 
 RHLOGINS = nil #['rhlogin']
-MAX_THREADS = 2
+MAX_THREADS = 10
 
 #
 #  Migrate the specified app on the node
@@ -26,7 +25,7 @@ def migrate_app_on_node(server_identity, framework, uuid, namespace, app_name)
                    :application => app_name,
                    :app_type => framework,
                    :namespace => namespace,
-                   :version => '2.1.9') do |response|
+                   :version => '2.0.2') do |response|
       exit_code = response[:body][:data][:exitcode]
       output = response[:body][:data][:output]
       if (output.length > 0)
@@ -44,7 +43,7 @@ def migrate_app_on_node(server_identity, framework, uuid, namespace, app_name)
 end
 
 #
-# Migrate applications between 2.1.8a and 2.1.9
+# Migrate applications between 2.1.9 and 2.0.2
 #
 def migrate
   start_time = Time.now.to_i
@@ -68,8 +67,6 @@ def migrate
       rhlogins.each do |rhlogin|
         user = User.find(rhlogin)
         if user
-          puts ""
-          puts "######################################################"
           puts "Gathering apps for user: #{user.rhlogin}(#{all_rhlogins_length - rhlogin_cnt}) with uuid: #{user.uuid}"
           apps = user.apps
           apps.each do |app_name, app|
@@ -90,6 +87,8 @@ def migrate
   s3_threads.each do |t|
     t.join
   end
+  
+  all_apps_length = @app_cnt
 
   app_cnts = []
   thread_groups = []
@@ -112,11 +111,12 @@ def migrate
   end
   node_to_apps = nil
   
-  puts '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
+  puts "#####################################################"
   puts 'Application Counts Per Thread:'
   puts app_cnts.pretty_inspect
-  puts '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
+  puts "#####################################################"
 
+  @failures = []
   node_threads = []
   thread_groups.each do |thread_group|
     node_threads << Thread.new do
@@ -131,10 +131,26 @@ def migrate
   node_threads.each do |t|
     t.join
   end
+  if @failures.length > 0
+    puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+    puts "Failures:"
+    @failures.each do |failure|
+      puts failure
+    end
+    puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+    puts ""
+  end
+  puts "#####################################################"
+  puts "Summary:"
+  puts "# of users: #{all_rhlogins_length}"
+  puts "# of apps: #{all_apps_length}"
+  puts "# of failures: #{@failures.length}"
+  puts "Application counts per thread: #{app_cnts.pretty_inspect}"
 
   end_time = Time.now.to_i
   total_time = end_time-start_time
   puts "Total execution time: #{total_time.to_s}s"
+  puts "#####################################################"
 end
 
 def migrate_node(server_identity, apps, node_to_users)
@@ -145,11 +161,11 @@ def migrate_node(server_identity, apps, node_to_users)
     app_name = app_hash[:name]
     user = users[index]
     rhlogin = user.rhlogin
+    migrate_on_node_cmd = "#{__FILE__} '#{app['server_identity']}' '#{app['framework']}' '#{app['uuid']}' '#{user.namespace}' '#{app_name}'"
     begin
       puts "Migrating app '#{app_name}'(#{@app_cnt}) with uuid '#{app['uuid']}' on node '#{app['server_identity']}' for user: #{rhlogin}"
       @app_cnt -= 1
-      migrate_on_node_cmd = "#{__FILE__} '#{app['server_identity']}' '#{app['framework']}' '#{app['uuid']}' '#{user.namespace}' '#{app_name}'"
-      num_tries = 3
+      num_tries = 2
       (1..num_tries).each do |i|
         output, exit_code = execute_script(migrate_on_node_cmd)
         puts output
@@ -158,10 +174,14 @@ def migrate_node(server_identity, apps, node_to_users)
           if (exit_code == 1)
             if i == num_tries
               puts "Failed to migrate with cmd: '#{migrate_on_node_cmd}' after #{num_tries} tries"
+              @failures << migrate_on_node_cmd
               break
+            else
+              sleep 10
             end
           else
             puts "Failed to migrate with cmd: '#{migrate_on_node_cmd}'"
+            @failures << migrate_on_node_cmd
             break
           end
         else
@@ -170,6 +190,7 @@ def migrate_node(server_identity, apps, node_to_users)
       end
     rescue Exception => e
       puts "ERROR: Failed migrating app: #{app_name} with uuid: #{app['uuid']} on node '#{app['server_identity']}' for user: #{rhlogin}"
+      @failures << migrate_on_node_cmd
       puts e.message
       puts e.backtrace
     end
@@ -181,21 +202,22 @@ def execute_script(cmd)
   exitcode = nil
   output = ''
   (1..num_tries).each do |i|
-    pid, stdin, stdout, stderr = Open4::popen4(cmd)
-    stdin.close
+    read, write = IO.pipe
+    pid = fork {
+        # child
+        $stdout.reopen write
+        read.close
+        exec(cmd)
+    }
+    # parent
+    write.close
+    read.each do |line|
+        output << line
+    end
     begin
       Timeout::timeout(60) do
-        ignored, status = Process::waitpid2 pid
-        exitcode = status.exitstatus
-      end
-      begin
-        Timeout::timeout(5) do
-          while (line = stdout.gets)
-            output << line
-          end
-        end
-      rescue Timeout::Error
-        puts "execute_script: WARNING - stdout read timed out"
+        Process.waitpid(pid)
+        exitcode = $?.exitstatus
       end
       break
     rescue Timeout::Error

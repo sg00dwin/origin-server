@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.83.8
+Version:       0.83.11
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -102,6 +102,7 @@ chkconfig cgconfig && /sbin/service libra-tc start > /dev/null 2>&1 || :
 echo "/usr/bin/trap-user" >> /etc/shells
 /sbin/restorecon /etc/init.d/libra || :
 /sbin/restorecon /etc/init.d/mcollective || :
+/sbin/restorecon /usr/bin/rhc-restorer* || :
 [ $(/usr/sbin/semanage node -l | /bin/grep -c 255.255.255.128) -lt 1000 ] && /usr/bin/rhc-ip-prep.sh || :
 
 # Ensure the default users have a more restricted shell then normal.
@@ -174,6 +175,34 @@ fi
 %dir %attr(0755,root,root) %{_sysconfdir}/libra/skel
 
 %changelog
+* Mon Dec 12 2011 Dan McPherson <dmcphers@redhat.com> 0.83.11-1
+- add 2.0.2 migration (dmcphers@redhat.com)
+
+* Mon Dec 12 2011 Mike McGrath <mmcgrath@redhat.com> 0.83.10-1
+- Adding restorecon to rhc-restorer (mmcgrath@redhat.com)
+
+* Sun Dec 11 2011 Dan McPherson <dmcphers@redhat.com> 0.83.9-1
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- minor touchups to the libra init script (twiest@redhat.com)
+- Support for managing multiple sub-users for the RHN/openshift account
+  (rpenta@redhat.com)
+- added parallization to the libra init script (twiest@redhat.com)
+- changed libra init script to output startuser and stopuser in clumps
+  (twiest@redhat.com)
+- changed the output format of the libra init script (twiest@redhat.com)
+- removing notice (mmcgrath@redhat.com)
+- Don't start disabled apps (mmcgrath@redhat.com)
+- We may have to re-open port 25 access in selinux in order to allow
+  communicating to localhost:25 (req for some app frameworks to use the local
+  mail solution).  Traffic rate application smtp off-box to modem speed.
+  (rmillner@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rmillner@redhat.com)
+- Add a queue underneath the class for each user and then subclass for
+  different traffic rates, with outbound e-mail being limited to 256kbit.
+  Naming the queues after the user id class keeps from having to invent another
+  scheme (ex: by carving up uids). (rmillner@redhat.com)
+
 * Thu Dec 08 2011 Alex Boone <aboone@redhat.com> 0.83.8-1
 - fix for bugz 761384 (ramr@redhat.com)
 - change default command to rhcsh if nothing is specified (ramr@redhat.com)
