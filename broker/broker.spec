@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.83.5
+Version:   0.83.6
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -72,6 +72,11 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Mon Dec 12 2011 Dan McPherson <dmcphers@redhat.com> 0.83.6-1
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- Multi-user rest api: Use 'action'=add-user/remove-user/list-users instead of
+  add-user=true/false (rpenta@redhat.com)
+
 * Mon Dec 12 2011 Dan McPherson <dmcphers@redhat.com> 0.83.5-1
 - fix broker build (dmcphers@redhat.com)
 - add scripts to /usr/bin (lnader@dhcp-240-165.mad.redhat.com)
