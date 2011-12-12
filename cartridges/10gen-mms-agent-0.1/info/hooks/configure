@@ -136,9 +136,8 @@ echo "export OPENSHIFT_10GEN_MMS_AGENT_CTL_SCRIPT='$MMS_CTL_SCRIPT'" > $APP_HOME
 runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $MMS_CTL_SCRIPT start" || error "Failed to start ${application}" 121
 
 client_result ""
-client_result "10gen-mms-agent-0.1 added.  Please register with https://mms.10gen.com/ if you haven't done so already."
-client_result "Once registered, you will need to specify your API key and secret key in settings.py and do a git commit and push."
-client_result "This is to allow the agent to communicate with the MMS website for reporting metrics."
+client_result "10gen-mms-agent-0.1 added. " 
+client_result "Please configure your mongodb host at https://mms.10gen.com/ to start monitoring performance data."
 client_result ""
 client_result "Monitoring URL: https://mms.10gen.com/"
 
