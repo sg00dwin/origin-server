@@ -37,10 +37,10 @@ rm -rf %{buildroot}
 /usr/sbin/semanage port -m -t submission_port_t -p tcp 587
 
 # Bring in external smtp ports but _NOT_ 25.
-semanage -i - << _EOF
-port -m -t libra_port_t -p tcp 465
-port -m -t libra_port_t -p tcp 587
-_EOF
+#semanage -i - << _EOF
+#port -m -t libra_port_t -p tcp 465
+#port -m -t libra_port_t -p tcp 587
+#_EOF
 
 %files
 %defattr(-,root,root,-)
