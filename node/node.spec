@@ -102,6 +102,7 @@ chkconfig cgconfig && /sbin/service libra-tc start > /dev/null 2>&1 || :
 echo "/usr/bin/trap-user" >> /etc/shells
 /sbin/restorecon /etc/init.d/libra || :
 /sbin/restorecon /etc/init.d/mcollective || :
+/sbin/restorecon /usr/bin/rhc-restorer* || :
 [ $(/usr/sbin/semanage node -l | /bin/grep -c 255.255.255.128) -lt 1000 ] && /usr/bin/rhc-ip-prep.sh || :
 
 # Ensure the default users have a more restricted shell then normal.
