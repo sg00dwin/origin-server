@@ -56,6 +56,7 @@ corenet_tcp_connect_munin_port(libra_t)
 corenet_udp_bind_generic_port(libra_t)
 corenet_tcp_bind_jboss_management_port(libra_t)
 corenet_tcp_bind_mongod_port(libra_t)
+corenet_tcp_connect_smtp_port(libra_t)
 
 ssh_exec(libra_t)
 cloudform_exec_mongod(libra_t)
