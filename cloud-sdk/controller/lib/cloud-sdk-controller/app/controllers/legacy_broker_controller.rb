@@ -101,6 +101,26 @@ class LegacyBrokerController < ApplicationController
     if @req.alter
       cloud_user.ssh = @req.ssh
       cloud_user.namespace = @req.namespace
+    elsif @req.delete
+       if not cloud_user.applications.empty?
+         res_string = "Cannot remove namespace #{cloud_user.namespace}. Remove existing apps first.\n"
+         cloud_user.applications.each { |app|
+	   res_string += app.name 
+           res_string += "\n" 
+         }
+         @reply.resultIO << res_string
+         @reply.exitcode = 106 
+         render :json => @reply, :status => :invalid
+         return
+       end
+       dns_service = Cloud::Sdk::DnsService.instance
+       dns_service.deregister_namespace(cloud_user.namespace)      
+       dns_service.publish        
+       dns_service.close
+       @reply.resultIO << "Namespace #{cloud_user.namespace} deleted successfully.\n"
+       cloud_user.delete
+       render :json => @reply
+       return
     else
       cloud_user = CloudUser.new(@login, @req.ssh, @req.namespace)
     end
