@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.83.4
+Version:   0.83.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -72,6 +72,10 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Mon Dec 12 2011 Dan McPherson <dmcphers@redhat.com> 0.83.5-1
+- fix broker build (dmcphers@redhat.com)
+- add scripts to /usr/bin (lnader@dhcp-240-165.mad.redhat.com)
+
 * Sun Dec 11 2011 Dan McPherson <dmcphers@redhat.com> 0.83.4-1
 - move common dep (dmcphers@redhat.com)
 - remove popen usage and better migration output (dmcphers@redhat.com)
