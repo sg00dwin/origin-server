@@ -90,7 +90,7 @@ class BrokerController < ApplicationController
           if !(val =~ /\A(jumbo|exlarge|large|micro|std)\z/)
             render :json => generate_result_json("Invalid Profile: #{val}.  Must be: (jumbo|exlarge|large|micro|std)", nil, 1), :status => :invalid and return nil
           end
-        when 'debug', 'alter', 'delete', 'add', 'remove', 'list'
+        when 'debug', 'alter', 'delete'
           if val != true && val != false && !(val =~ /\A(true|false)\z/)
             render :json => generate_result_json("Invalid value for #{key} specified: #{val}", nil, 1), :status => :invalid and return nil
           end
@@ -460,22 +460,23 @@ class BrokerController < ApplicationController
       if rhlogin_user_name
         rhlogin_user = Libra::User.find(rhlogin_user_name)
         if rhlogin_user
-          if data['add']
+          action = data['action']
+          if action == 'add-user'
             if not data['ssh'] or not data['user_name']
               render :json => generate_result_json("Must provide 'user-name' and 'ssh' key for the user", nil, 105), :status => :invalid and return
             end
             rhlogin_user.add_app_ssh_key(data['user_name'], data['ssh'], data['app_name'])
-          elsif data['remove']
+          elsif action == 'remove-user'
             if not data['user_name']
               render :json => generate_result_json("Must provide 'user-name'", nil, 105), :status => :invalid and return
             end
             rhlogin_user.remove_app_ssh_key(data['user_name'], data['app_name'])
-          elsif data['list']
+          elsif action == 'list-users'
             app_users = rhlogin_user.list_app_users(data['app_name'])
             json_data = JSON.generate({ :app_users => app_users })
             render :json => generate_result_json(nil, json_data) and return
           else
-            render :json => generate_result_json("Invalid action, allowed operations: 'add'/'remove'/'list'", nil, 105), :status => :invalid and return
+            render :json => generate_result_json("Invalid action, allowed operations: 'add-user'/'remove-user'/'list-users'", nil, 105), :status => :invalid and return
           end
           
           # Just return a 200 success
