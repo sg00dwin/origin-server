@@ -36,6 +36,7 @@ This includes the public APIs for the client tools.
 
 %install
 rm -rf %{buildroot}
+mkdir -p %{buildroot}%{_bindir}
 mkdir -p %{buildroot}%{htmldir}
 mkdir -p %{buildroot}%{brokerdir}
 cp -r . %{buildroot}%{brokerdir}

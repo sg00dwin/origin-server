@@ -131,14 +131,15 @@ def migrate
   node_threads.each do |t|
     t.join
   end
-  
-  puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-  puts "Failures:"
-  @failures.each do |failure|
-    puts failure
+  if @failures.length > 0
+    puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+    puts "Failures:"
+    @failures.each do |failure|
+      puts failure
+    end
+    puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+    puts ""
   end
-  puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-  puts ""
   puts "#####################################################"
   puts "Summary:"
   puts "# of users: #{all_rhlogins_length}"
