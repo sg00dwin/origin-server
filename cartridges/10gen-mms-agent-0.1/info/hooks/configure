@@ -70,6 +70,17 @@ else
    fi
 fi
 
+if [ ! -f "$APP_DIR/.openshift/mms/settings.py" ]
+then
+    client_error ""
+    client_error "Missing settings.py file:  $APP_DIR/.openshift/mms/settings.py"
+    client_error "This file is part of the agent zip file: 10gen-mms-agent-<group-name>.zip"
+    client_error "The zip file ia available to download from https://mms.10gen.com/ after your register. "
+    client_error "It contains your 10gen MMS credentials and is required for running the agent"
+    client_error ""
+    exit 137
+fi
+
 #
 # Create the core of the application
 #
@@ -90,8 +101,11 @@ ln -s agent.py $MMS_DIR/mms-agent/"$uuid"_agent.py
 # This is required so that the user can set the credentials in this file
 #
 rm -f $MMS_DIR/mms-agent/settings.py $MMS_DIR/mms-agent/settings.pyc $MMS_DIR/mms-agent/settings.pyo
-mkdir -p $APP_HOME/${application}/.openshift/mms
-cp /usr/local/share/mms-agent/settings.py $APP_DIR/.openshift/mms/settings.py
+
+# The $APP_HOME/${application}/.openshift/mms directory will be created by the user
+# and the settings.py file will be placed there by the user too.
+# mkdir -p $APP_HOME/${application}/.openshift/mms
+# cp /usr/local/share/mms-agent/settings.py $APP_DIR/.openshift/mms/settings.py
 ln -s $APP_DIR/.openshift/mms/settings.py $MMS_DIR/mms-agent/settings.py
 chown $user_id.$group_id -R $APP_HOME/${application}/.openshift
 
