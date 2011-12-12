@@ -34,7 +34,6 @@ rm -rf %{buildroot}
 
 %post
 /usr/sbin/semodule -i %{_datadir}/selinux/packages/libra.pp
-/usr/sbin/semanage port -m -t submission_port_t -p tcp 587
 
 # Bring in external smtp ports but _NOT_ 25.
 #semanage -i - << _EOF

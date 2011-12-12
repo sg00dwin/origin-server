@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-# Usage: ./migrate-2.1.9 > out.txt
+# Usage: ./migrate-2.0.2 > out.txt
 require 'rubygems'
 require 'openshift'
 require 'pp'
@@ -25,7 +25,7 @@ def migrate_app_on_node(server_identity, framework, uuid, namespace, app_name)
                    :application => app_name,
                    :app_type => framework,
                    :namespace => namespace,
-                   :version => '2.1.9') do |response|
+                   :version => '2.0.2') do |response|
       exit_code = response[:body][:data][:exitcode]
       output = response[:body][:data][:output]
       if (output.length > 0)
@@ -43,7 +43,7 @@ def migrate_app_on_node(server_identity, framework, uuid, namespace, app_name)
 end
 
 #
-# Migrate applications between 2.1.8a and 2.1.9
+# Migrate applications between 2.1.9 and 2.0.2
 #
 def migrate
   start_time = Time.now.to_i
@@ -131,14 +131,15 @@ def migrate
   node_threads.each do |t|
     t.join
   end
-  
-  puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-  puts "Failures:"
-  @failures.each do |failure|
-    puts failure
+  if @failures.length > 0
+    puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+    puts "Failures:"
+    @failures.each do |failure|
+      puts failure
+    end
+    puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+    puts ""
   end
-  puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-  puts ""
   puts "#####################################################"
   puts "Summary:"
   puts "# of users: #{all_rhlogins_length}"
