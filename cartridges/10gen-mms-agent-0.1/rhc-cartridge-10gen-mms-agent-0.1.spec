@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/10gen-mms-agent-0.1
 
 Name: rhc-cartridge-10gen-mms-agent-0.1
-Version: 1.1.7
+Version: 1.1.8
 Release: 1%{?dist}
 Summary: Embedded 10gen MMS agent for performance monitoring of MondoDB
 
@@ -45,6 +45,10 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Mon Dec 12 2011 Dan McPherson <dmcphers@redhat.com> 1.1.8-1
+- pullings the settings.py file from the git repo to check if the user has done
+  a git push (abhgupta@redhat.com)
+
 * Mon Dec 12 2011 Mike McGrath <mmcgrath@redhat.com> 1.1.7-1
 - modified the confirmation message to the user to reflect recent changes
   (abhgupta@redhat.com)
