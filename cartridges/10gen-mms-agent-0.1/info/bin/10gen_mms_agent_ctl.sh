@@ -11,7 +11,7 @@ done
 
 if ! [ $# -eq 1 ]
 then
-    echo "Usage: $0 [start|restart|graceful|graceful-stop|stop]"
+    echo "Usage: $0 [start|graceful-stop|stop]"
     exit 1
 fi
 
@@ -24,15 +24,19 @@ case "$1" in
         then
             echo "Application is explicitly stopped!  Use 'rhc-ctl-app -a ${OPENSHIFT_APP_NAME} -e start-10gen-mms-agent-0.1' to start back up." 1>&2
             exit 0
-        else
-            nohup python ${OPENSHIFT_10GEN_MMS_AGENT_APP_DIR}mms-agent/${OPENSHIFT_APP_UUID}_agent.py > ${OPENSHIFT_10GEN_MMS_AGENT_APP_DIR}logs/agent.log 2>&1 &
-            echo $! > ${OPENSHIFT_10GEN_MMS_AGENT_APP_DIR}run/mms-agent.pid
         fi
+
+        if ps -ef | grep ${OPENSHIFT_APP_UUID}_agent.py | grep -qv grep > /dev/null 2>&1; then
+            echo "Application is already running!  Use 'rhc-ctl-app -a ${OPENSHIFT_APP_NAME} -e restart-10gen-mms-agent-0.1' to restart." 1>&2
+            exit 0
+        fi
+
+        nohup python ${OPENSHIFT_10GEN_MMS_AGENT_APP_DIR}mms-agent/${OPENSHIFT_APP_UUID}_agent.py > ${OPENSHIFT_10GEN_MMS_AGENT_APP_DIR}logs/agent.log 2>&1 &
+        echo $! > ${OPENSHIFT_10GEN_MMS_AGENT_APP_DIR}run/mms-agent.pid
     ;;
 
     graceful-stop|stop)
         mms_agent_pid=`cat ${OPENSHIFT_10GEN_MMS_AGENT_APP_DIR}run/mms-agent.pid 2> /dev/null`
-        force_kill $mms_agent_pid
-        wait_for_stop $mms_agent_pid
+        kill -9 $mms_agent_pid > /dev/null
     ;;
 esac

@@ -46,6 +46,7 @@ source ${CART_DIR}/abstract/info/lib/util
 app_type="10gen-mms-agent-0.1"
 setup_embedded_configure "$1" $2 $3
 
+APP_DIR=`echo $APP_HOME/${application} | tr -s /` # ensure that there aren't double /'s
 MMS_DIR=`echo $APP_HOME/10gen-mms-agent-0.1 | tr -s /` # ensure that there aren't double /'s
 MMS_CTL_SCRIPT="$MMS_DIR/${application}_10gen_mms_agent_ctl.sh"
 
@@ -83,18 +84,29 @@ pushd "$MMS_DIR" > /dev/null
 mkdir -p logs mms-agent run
 cp -r /usr/local/share/mms-agent/* $MMS_DIR/mms-agent/
 ln -s agent.py $MMS_DIR/mms-agent/"$uuid"_agent.py
+
+#
+# Create symbolic links to the settings.py file and remove the compiled files.
+# This is required so that the user can set the credentials in this file
+#
+rm -f $MMS_DIR/mms-agent/settings.py $MMS_DIR/mms-agent/settings.pyc $MMS_DIR/mms-agent/settings.pyo
+mkdir -p $APP_HOME/${application}/.openshift/mms
+cp /usr/local/share/mms-agent/settings.py $APP_DIR/.openshift/mms/settings.py
+ln -s $APP_DIR/.openshift/mms/settings.py $MMS_DIR/mms-agent/settings.py
+chown $user_id.$group_id -R $APP_HOME/${application}/.openshift
+
 popd > /dev/null
 
 
 #
-# Create simple rockmongo start / stop script
+# Create simple 10gen-mms-agent start / stop script
 #
 ln -s $CART_INFO_DIR/bin/10gen_mms_agent_ctl.sh $MMS_CTL_SCRIPT
 
 #
 # Setup Permissions
 #
-chown $user_id.$group_id -R $MMS_DIR || error "Failed to chown new 10gen-mms0-agent space.  Please contact support" 123
+chown $user_id.$group_id -R $MMS_DIR || error "Failed to chown new 10gen-mms-agent space.  Please contact support" 123
 chown root.root "$MMS_DIR"
 chcon -t libra_var_lib_t -l $mcs_level -R "$MMS_DIR"
 

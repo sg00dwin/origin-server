@@ -229,7 +229,7 @@ class DevEnv < Thor
 
     begin
       print "Updating all packages on the system..."
-      ssh(hostname, "yum clean metadata; yum update -y --exclude='rhc-devenv'; yum update -y --exclude='rhc-devenv' --disablerepo=\* --enablerepo=li", 3600)
+      ssh(hostname, "yum clean metadata; yum update -y --exclude='rhc-devenv'; yum update -y --exclude='rhc-devenv' --disablerepo=\* --enablerepo=li", 600)
       puts "Done"
 
       if options.reboot?

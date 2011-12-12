@@ -45,6 +45,7 @@ setup_embedded_deconfigure "$1" $2 $3
 
 MMS_DIR=`echo $APP_HOME/10gen-mms-agent-0.1 | tr -s /` # ensure that there aren't double /'s
 MMS_CTL_SCRIPT="$MMS_DIR/${application}_10gen_mms_agent_ctl.sh"
+APP_DIR=`echo $APP_HOME/${application} | tr -s /` # ensure that there aren't double /'s
 
 #
 # Stop app
@@ -62,3 +63,4 @@ confirm_log_files_inactive "$MMS_DIR/logs"
 
 # Remove 10gen mms agent dir. This MUST be after stopping the agent as the CTL script relies on these.
 runcon -l s0-s0:c0.c1023 rm -rf "$MMS_DIR"
+runcon -l s0-s0:c0.c1023 rm -rf "$APP_DIR/.openshift"

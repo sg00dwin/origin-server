@@ -102,7 +102,7 @@ When /^I make the REST call to delete the namespace$/ do
 end
 
 Then /^a namespace should get deleted$/ do
-  ec = run("host vuvuzuzufukuns.#{domain} | grep \"not found\"")
+  ec = run("host vuvuzuzufukuns.dev.rhcloud.com | grep \"not found\"")
   #ec.should be == 0
 end
 

@@ -1,4 +1,4 @@
-Name: 10gen-mms-agent
+Name: 10gen-mms-agent-0.1
 Version: 1.0.x
 Architecture: noarch
 Provides: 10gen-mms-agent

@@ -521,7 +521,7 @@ module Libra
     #
     # Add authorized key to app
     #
-    def add_ssh_key(app, ssh_key)
+    def add_ssh_key(app, ssh_key, comment='')
       result = execute_direct('li-controller', 'add-authorized-ssh-key', "-c #{app['uuid']} -s #{ssh_key}")
       handle_controller_result(result)
     end

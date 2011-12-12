@@ -74,6 +74,10 @@ class BrokerController < ApplicationController
           if !Util.check_rhlogin(val)
             render :json => generate_result_json("Invalid rhlogin: #{val}", nil, 107), :status => :invalid and return nil
           end
+        when 'user_name'
+          if !Util.check_user(val)
+            render :json => generate_result_json("Invalid username: #{val}", nil, 106), :status => :invalid and return nil
+          end
         when 'ssh'
           if !(val =~ /\A[A-Za-z0-9\+\/=]+\z/)
             render :json => generate_result_json("Invalid ssh key: #{val}", nil, 108), :status => :invalid and return nil
@@ -86,7 +90,7 @@ class BrokerController < ApplicationController
           if !(val =~ /\A(jumbo|exlarge|large|micro|std)\z/)
             render :json => generate_result_json("Invalid Profile: #{val}.  Must be: (jumbo|exlarge|large|micro|std)", nil, 1), :status => :invalid and return nil
           end
-        when 'debug', 'alter', 'delete'
+        when 'debug', 'alter', 'delete', 'add', 'remove', 'list'
           if val != true && val != false && !(val =~ /\A(true|false)\z/)
             render :json => generate_result_json("Invalid value for #{key} specified: #{val}", nil, 1), :status => :invalid and return nil
           end
@@ -445,4 +449,47 @@ class BrokerController < ApplicationController
     end
   end
 
+  def user_manage_post
+    begin
+      # Parse the incoming data
+      data = parse_json_data(params['json_data'])
+      return unless data
+  
+      # Check if rhlogin user already exists
+      rhlogin_user_name = login(data, params, true)
+      if rhlogin_user_name
+        rhlogin_user = Libra::User.find(rhlogin_user_name)
+        if rhlogin_user
+          if data['add']
+            if not data['ssh'] or not data['user_name']
+              render :json => generate_result_json("Must provide 'user-name' and 'ssh' key for the user", nil, 105), :status => :invalid and return
+            end
+            rhlogin_user.add_app_ssh_key(data['user_name'], data['ssh'], data['app_name'])
+          elsif data['remove']
+            if not data['user_name']
+              render :json => generate_result_json("Must provide 'user-name'", nil, 105), :status => :invalid and return
+            end
+            rhlogin_user.remove_app_ssh_key(data['user_name'], data['app_name'])
+          elsif data['list']
+            app_users = rhlogin_user.list_app_users(data['app_name'])
+            json_data = JSON.generate({ :app_users => app_users })
+            render :json => generate_result_json(nil, json_data) and return
+          else
+            render :json => generate_result_json("Invalid action, allowed operations: 'add'/'remove'/'list'", nil, 105), :status => :invalid and return
+          end
+          
+          # Just return a 200 success
+          render :json => generate_result_json("Success") and return
+        else
+          # Return a 404 to denote the user doesn't exist
+          render :json => generate_result_json("User does not exist", nil, 99), :status => :not_found and return
+        end
+      else
+        render_unauthorized and return
+      end    
+    rescue Exception => e
+      render_error(e, 'user_manage_post') and return
+    end
+  end
+ 
 end

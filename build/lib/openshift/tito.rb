@@ -14,7 +14,7 @@ module OpenShift
           "cloud-sdk/node"
         elsif package =~ /^rhc-(cartridge-.*)-0/
           "cartridges/" + $1['cartridge-'.length..-1]
-        elsif package =~ /^(rhc-[\w-]*\d\.\d)-/
+        elsif package =~ /^rhc-([\w-]+)-\d/
           $1
         end
       end.compact
