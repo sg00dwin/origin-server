@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.83.9
+Version:       0.83.10
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -175,6 +175,9 @@ fi
 %dir %attr(0755,root,root) %{_sysconfdir}/libra/skel
 
 %changelog
+* Mon Dec 12 2011 Mike McGrath <mmcgrath@redhat.com> 0.83.10-1
+- Adding restorecon to rhc-restorer (mmcgrath@redhat.com)
+
 * Sun Dec 11 2011 Dan McPherson <dmcphers@redhat.com> 0.83.9-1
 - Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
 - minor touchups to the libra init script (twiest@redhat.com)
