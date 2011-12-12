@@ -345,15 +345,3 @@ role system_r types libra_mail_t;
 read_files_pattern(libra_mail_t, libra_var_lib_t, libra_var_lib_t)
 
 permissive libra_mail_t;
-
-
-########################################
-#
-# Allow Libra apps to access submission
-#
-
-type submission_port_t;
-corenet_port(submission_port_t)
-
-allow libra_t submission_port_t:tcp_socket name_connect;
-
