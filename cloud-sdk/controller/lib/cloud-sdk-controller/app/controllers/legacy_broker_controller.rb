@@ -21,6 +21,74 @@ class LegacyBrokerController < ApplicationController
       render :json => @reply
     else
       # Return a 404 to denote the user doesn't exist
+      @reply.resultIO << "User does not exist"
+      @reply.exitcode = 99
+      
+      render :json => @reply, :status => :not_found
+    end
+  end
+  
+  def user_manage_post
+    user = CloudUser.find(@login)
+    if user
+      case @req.action
+      when "add"
+        if @req.ssh.nil? or @req.user_name.nil?
+          @reply.resultIO << "Must provide 'user-name' and 'ssh' key for the user"
+          @reply.exitcode = 105
+          render :json => @reply, :status => :invalid
+          return
+        end
+        
+        if @req.app_name.nil?
+          user.applications.each do |app|
+            #add to all applications            
+            @reply.append app.add_delegate_user(@req.user_name, @req.ssh)
+            app.save
+          end
+        else
+          app = Application.find(user, @req.app_name)
+          raise Cloud::Sdk::WorkflowException.new("Application #{@req.app_name} does not exist.", 143), caller[0..5] if app.nil?
+          @reply.append app.add_delegate_user(@req.user_name, @req.ssh)
+          app.save
+        end
+      when "remove"
+        if @req.user_name.nil?
+          @reply.resultIO << "Must provide 'user-name'"
+          @reply.exitcode = 105
+          render :json => @reply, :status => :invalid
+          return
+        end
+        
+        if @req.app_name.nil?
+          user.applications.each do |app|
+            #remove from all applications            
+            @reply.append app.remove_delegate_user(@req.user_name)
+            app.save
+          end
+        else
+          app = Application.find(user, @req.app_name)
+          raise Cloud::Sdk::WorkflowException.new("Application #{@req.app_name} does not exist.", 143), caller[0..5] if app.nil?
+          @reply.append app.remove_delegate_user(@req.user_name)
+          app.save
+        end
+      when "list"
+        app_users = {}
+        if @req.app_name.nil?
+          user.applications.each do |app|
+            app_users[app.name] = app.ssh_keys
+          end
+        else
+          app = Application.find(user, @req.app_name)
+          raise Cloud::Sdk::WorkflowException.new("Application #{@req.app_name} does not exist.", 143), caller[0..5] if app.nil?
+          app_users[app.name] = app.ssh_keys
+        end
+        
+        @reply.data = { :app_users => app_users }.to_json
+      end
+      render :json => @reply
+    else
+      # Return a 404 to denote the user doesn't exist
       @reply.result << "User does not exist"
       @reply.exitcode = 99
       
@@ -82,9 +150,9 @@ class LegacyBrokerController < ApplicationController
           @reply.append app.create          
           app.save
           @reply.append app.configure_dependencies          
-          @reply.append app.add_user_ssh_keys
-          @reply.append app.add_user_env_vars
-          app.create_dns
+          @reply.append app.add_system_ssh_keys
+          @reply.append app.add_system_env_vars
+          @reply.append app.create_dns
           
           case app.framework_cartridge
             when 'php'
@@ -99,7 +167,7 @@ class LegacyBrokerController < ApplicationController
         rescue Exception => e
           Rails.logger.debug e.message
           Rails.logger.debug e.backtrace.inspect          
-          app.destroy_dns
+          @reply.append app.destroy_dns
           @reply.append app.destroy
           app.delete
         end
@@ -111,15 +179,15 @@ class LegacyBrokerController < ApplicationController
       end
     when 'deconfigure'
       app = Application.find(user, @req.app_name)
-      app.destroy
+      @reply.append app.destroy
       
       if app.framework_cartridge == "jenkins"
         user.applications.each do |uapp|
-          uapp.remove_cartridge('jenkins-client-1.4') if uapp.name != app.name and uapp.embedded and uapp.embedded.has_key?('jenkins-client-1.4')
+          @reply.append uapp.remove_dependency('jenkins-client-1.4') if uapp.name != app.name and uapp.embedded and uapp.embedded.has_key?('jenkins-client-1.4')
         end
       end
       
-      app.destroy_dns
+      @reply.append app.destroy_dns
       app.delete
       @reply.resultIO << "Successfully destroyed application: #{app.name}" if @reply.resultIO.string.empty?
     when 'start'
@@ -182,25 +250,6 @@ class LegacyBrokerController < ApplicationController
     @reply.resultIO << 'Success' if @reply.resultIO.string.empty?
     render :json => @reply
   end
-  
-  #
-  #def nurture_post
-  #  begin
-  #    # Parse the incoming data
-  #    data = parse_json_data(params['json_data'])
-  #    return unless data
-  #    action = data['action']
-  #    app_uuid = data['app_uuid']
-  #    Nurture.application_update(action, app_uuid)
-  #    Apptegic.application_update(action, app_uuid)
-  #
-  #    # Just return a 200 success
-  #    render :json => generate_result_json("Success") and return
-  #    
-  #  rescue Exception => e
-  #    render_error(e, 'nurture_post') and return
-  #  end
-  #end
   
   protected
   

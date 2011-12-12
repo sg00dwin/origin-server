@@ -1,5 +1,5 @@
 class LegacyRequest < Cloud::Sdk::Model
-  attr_accessor :namespace, :rhlogin, :ssh, :app_uuid, :app_name, :node_profile, :debug, :alter, :cartridge, :api, :cart_type, :action, :server_alias, :api
+  attr_accessor :namespace, :rhlogin, :ssh, :app_uuid, :app_name, :node_profile, :debug, :alter, :cartridge, :api, :cart_type, :action, :server_alias, :api, :user_name
   attr_reader   :invalid_keys
   
   APP_NAME_MAX_LENGTH = 32
@@ -20,6 +20,12 @@ class LegacyRequest < Cloud::Sdk::Model
 #      record.errors.add attribute, {:message => "Invalid rhlogin: #{val}", :exit_code => 107}
 #    end
 #  end
+
+  validates_each :user_name, :allow_nil =>true do |record, attribute, val|
+    if !(val =~ /\A[a-f0-9]+\z/)
+      record.errors.add attribute, {:message => "Invalid username: #{val}", :exit_code => 106}
+    end
+  end
   
   validates_each :namespace, :allow_nil =>true do |record, attribute, val|
     if !(val =~ /\A[A-Za-z0-9]+\z/)

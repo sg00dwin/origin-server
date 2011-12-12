@@ -235,7 +235,9 @@ module Express
           rpc_client = rpc_exec_direct('libra')
           result = nil
           begin
+            Rails.logger.debug "DEBUG: rpc_client.custom_request('cartridge_do', #{mc_args.inspect}, #{@id}, {'identity' => #{@id}})"
             result = rpc_client.custom_request('cartridge_do', mc_args, @id, {'identity' => @id})
+            Rails.logger.debug "DEBUG: #{result.inspect}"
           ensure
             rpc_client.disconnect
           end

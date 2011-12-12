@@ -5,5 +5,6 @@ Rails.application.routes.draw do
     match 'domain'          => 'legacy_broker#domain_post', :via => [:post]
     match 'userinfo'        => 'legacy_broker#user_info_post', :via => [:post]
     match 'cartlist'        => 'legacy_broker#cart_list_post', :via => [:post]
+    match 'user'            => 'legacy_broker#user_manage_post', :via => [:post]    
   end
 end

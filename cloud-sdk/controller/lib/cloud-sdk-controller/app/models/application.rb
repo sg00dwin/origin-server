@@ -1,5 +1,5 @@
 class Application < Cloud::Sdk::Model
-  attr_accessor :user, :framework, :creation_time, :uuid, :embedded, :aliases, :name, :server_identity, :health_check_path, :node_profile, :container
+  attr_accessor :user, :framework, :creation_time, :uuid, :embedded, :aliases, :name, :server_identity, :health_check_path, :node_profile, :container, :ssh_keys
   primary_key :name  
   exclude_attributes :user, :health_check_path, :dependencies, :node_profile, :container
 
@@ -62,41 +62,45 @@ class Application < Cloud::Sdk::Model
   
   #creates a new application container on a node and initializes it
   def create
-    notify_observers(:before_application_create)
+    reply = ResultIO.new
+    self.class.notify_observers(:before_application_create, {:application => self, :reply => reply})
     self.container = Cloud::Sdk::ApplicationContainerProxy.find_available(self.node_profile)
     self.server_identity = self.container.id
-    resultIO = self.container.create(self)
-    notify_observers(:after_application_create)    
-    resultIO
+    reply.append self.container.create(self)
+    self.class.notify_observers(:after_application_create, {:application => self, :reply => reply})        
+    reply
   end
   
   #destroys all application containers
   def destroy
-    notify_observers(:before_application_destroy)    
-    resultIO = self.container.destroy(self)
-    notify_observers(:after_application_create)    
-    resultIO
+    reply = ResultIO.new
+    self.class.notify_observers(:before_application_destroy, {:application => self, :reply => reply})    
+    reply.append self.container.destroy(self) if self.container
+    self.class.notify_observers(:after_application_create, {:application => self, :reply => reply})    
+    reply
   end
   
   #configures cartridges for the application
   def configure_dependencies
-    notify_observers(:before_application_configure)
-    resultIO = self.container.preconfigure_cartridge(self, self.framework)
-    resultIO.append self.container.configure_cartridge(self, self.framework)
-    resultIO.append process_cartridge_commands(resultIO.cart_commands)
-    notify_observers(:after_application_configure)    
-    resultIO
+    reply = ResultIO.new
+    self.class.notify_observers(:before_application_configure, {:application => self, :reply => reply})
+    reply.append self.container.preconfigure_cartridge(self, self.framework)
+    reply.append self.container.configure_cartridge(self, self.framework)
+    reply.append process_cartridge_commands(reply.cart_commands)
+    self.class.notify_observers(:after_application_configure, {:application => self, :reply => reply})
+    reply
   end
   
   def deconfigure_dependencies
-    notify_observers(:before_application_deconfigure)    
-    resultIO = self.container.deconfigure_cartridge(self, self.framework)
-    resultIO.append process_cartridge_commands(resultIO.cart_commands)    
-    notify_observers(:after_application_deconfigure)    
-    resultIO
+    reply = ResultIO.new
+    self.class.notify_observers(:before_application_deconfigure, {:application => self, :reply => reply})  
+    reply.append self.container.deconfigure_cartridge(self, self.framework)
+    reply.append process_cartridge_commands(reply.cart_commands)    
+    self.class.notify_observers(:after_application_deconfigure, {:application => self, :reply => reply})
+    reply
   end
   
-  def add_user_ssh_keys
+  def add_system_ssh_keys
     reply = ResultIO.new
     @user.system_ssh_keys.each_value do |ssh_key|
       reply.append add_authorized_ssh_key(ssh_key)
@@ -104,11 +108,35 @@ class Application < Cloud::Sdk::Model
     reply
   end
   
-  def add_user_env_vars
+  def add_system_env_vars
     reply = ResultIO.new    
     @user.env_vars.each do |key, value|
       reply.append add_env_var(key, value)
     end if @user.env_vars
+    reply
+  end
+  
+  def add_delegate_user(user_name, ssh_key)
+    @ssh_keys = {} unless @ssh_keys
+    if self.ssh_keys.keys.include?(user_name) and self.ssh_keys[user_name] != ssh_key
+      raise Cloud::Sdk::WorkflowException.new("User '#{user_name}' already has access to application '#{@name}' with a different SSH key", 143), caller[0..5]
+    end
+    @ssh_keys.each do |uname, ukey|
+      raise Cloud::Sdk::WorkflowException.new("SSH key is already being used by user #{uname} for application '#{@name}'. Use different key or delete conflicting key and retry", 143), caller[0..5] if ukey == ssh_key and uname != user_name
+    end
+    ssh_keys_will_change!    
+    self.ssh_keys[user_name] = ssh_key
+    reply = add_authorized_ssh_key(ssh_key)
+    reply    
+  end
+  
+  def remove_delegate_user(user_name)
+    @ssh_keys = {} unless @ssh_keys
+    unless @ssh_keys[user_name].nil?
+      reply = remove_authorized_ssh_key(@ssh_keys[user_name])
+      ssh_keys_will_change!
+      self.ssh_keys.delete user_name
+    end
     reply
   end
 
@@ -129,7 +157,8 @@ class Application < Cloud::Sdk::Model
   end
   
   def create_dns
-    notify_observers(:before_create_dns)
+    reply = ResultIO.new
+    self.class.notify_observers(:before_create_dns, {:application => self, :reply => reply})    
     dns = Cloud::Sdk::DnsService.instance
     begin
       public_hostname = @container.get_public_hostname
@@ -138,11 +167,13 @@ class Application < Cloud::Sdk::Model
     ensure
       dns.close
     end
-    notify_observers(:after_create_dns)
+    self.class.notify_observers(:after_create_dns, {:application => self, :reply => reply})    
+    reply
   end
   
   def destroy_dns
-    notify_observers(:before_destroy_dns)
+    reply = ResultIO.new
+    self.class.notify_observers(:before_destroy_dns, {:application => self, :reply => reply})
     dns = Cloud::Sdk::DnsService.instance
     begin
       dns.deregister_application(@name,@user.namespace)
@@ -150,7 +181,8 @@ class Application < Cloud::Sdk::Model
     ensure
       dns.close
     end
-    notify_observers(:after_destroy_dns)    
+    self.class.notify_observers(:after_destroy_dns, {:application => self, :reply => reply})  
+    reply
   end
   
   def add_broker_key
@@ -247,28 +279,31 @@ class Application < Cloud::Sdk::Model
   end
   
   def add_dependency(dep)
-    self.class.notify_observers(:before_add_dependency, self, dep)
+    reply = ResultIO.new
+    self.class.notify_observers(:before_add_dependency, {:application => self, :dependency => dep, :reply => reply})
     # Create persistent storage app entry on configure (one of the first things)
     Rails.logger.debug "DEBUG: Adding embedded app info from persistant storage: #{@name}:#{dep}"
     self.embedded = {} unless self.embedded
     
     raise Cloud::Sdk::WorkflowException.new("#{dep} already embedded in '#{@name}'", 101), caller[0..5] if self.embedded[dep]
-    reply,component_details = self.container.add_component(self, dep)
+    c_reply,component_details = self.container.add_component(self, dep)
+    reply.append c_reply
     self.embedded[dep] = { "info" => component_details }
     self.save
-    self.class.notify_observers(:after_add_dependency, self, dep)
+    self.class.notify_observers(:after_add_dependency, {:application => self, :dependency => dep, :reply => reply})
     reply
   end
   
   def remove_dependency(dep)
-    self.class.notify_observers(:before_remove_dependency, self, dep)
+    reply = ResultIO.new
+    self.class.notify_observers(:before_remove_dependency, {:application => self, :dependency => dep, :reply => reply})
     self.embedded = {} unless self.embedded
         
     raise Cloud::Sdk::WorkflowException.new("#{dep} not embedded in '#{@name}', try adding it first", 101), caller[0..5] unless self.embedded[dep]
-    reply = self.container.remove_component(self, dep)
+    reply.append self.container.remove_component(self, dep)
     self.embedded.delete dep
     self.save
-    self.class.notify_observers(:after_remove_dependency, self, dep)    
+    self.class.notify_observers(:after_remove_dependency, {:application => self, :dependency => dep, :reply => reply})
     reply
   end
   
