@@ -44,6 +44,8 @@ ln -s %{brokerdir}/public %{buildroot}%{htmldir}/broker
 mkdir -p %{buildroot}%{brokerdir}/run
 mkdir -p %{buildroot}%{brokerdir}/log
 touch %{buildroot}%{brokerdir}/log/production.log
+mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-app %{buildroot}/%{_bindir}
+mv %{buildroot}%{brokerdir}/script/rhc-get-user-info %{buildroot}/%{_bindir}
 
 
 %clean
@@ -62,6 +64,8 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0750,-,-) %{brokerdir}/script
 %{brokerdir}
 %{htmldir}/broker
+%{_bindir}/rhc-admin-ctl-app
+%{_bindir}/rhc-get-user-info
 
 %post
 /bin/touch %{brokerdir}/log/production.log
