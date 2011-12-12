@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.83.8
+Version:       0.83.9
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -47,6 +47,9 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Sun Dec 11 2011 Dan McPherson <dmcphers@redhat.com> 0.83.9-1
+- disabling libra_port_t (mmcgrath@redhat.com)
+
 * Sun Dec 11 2011 Dan McPherson <dmcphers@redhat.com> 0.83.8-1
 - add require for semanage (dmcphers@redhat.com)
 
