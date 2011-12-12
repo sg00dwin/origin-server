@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.83.4
+Version:   0.83.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -36,6 +36,7 @@ This includes the public APIs for the client tools.
 
 %install
 rm -rf %{buildroot}
+mkdir -p %{buildroot}%{_bindir}
 mkdir -p %{buildroot}%{htmldir}
 mkdir -p %{buildroot}%{brokerdir}
 cp -r . %{buildroot}%{brokerdir}
@@ -44,6 +45,8 @@ ln -s %{brokerdir}/public %{buildroot}%{htmldir}/broker
 mkdir -p %{buildroot}%{brokerdir}/run
 mkdir -p %{buildroot}%{brokerdir}/log
 touch %{buildroot}%{brokerdir}/log/production.log
+mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-app %{buildroot}/%{_bindir}
+mv %{buildroot}%{brokerdir}/script/rhc-get-user-info %{buildroot}/%{_bindir}
 
 
 %clean
@@ -62,11 +65,17 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0750,-,-) %{brokerdir}/script
 %{brokerdir}
 %{htmldir}/broker
+%{_bindir}/rhc-admin-ctl-app
+%{_bindir}/rhc-get-user-info
 
 %post
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Mon Dec 12 2011 Dan McPherson <dmcphers@redhat.com> 0.83.5-1
+- fix broker build (dmcphers@redhat.com)
+- add scripts to /usr/bin (lnader@dhcp-240-165.mad.redhat.com)
+
 * Sun Dec 11 2011 Dan McPherson <dmcphers@redhat.com> 0.83.4-1
 - move common dep (dmcphers@redhat.com)
 - remove popen usage and better migration output (dmcphers@redhat.com)

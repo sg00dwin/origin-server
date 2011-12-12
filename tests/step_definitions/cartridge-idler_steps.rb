@@ -40,6 +40,6 @@ Then /^the php application health\-check will( not)? be successful$/ do | negate
   # on and redirect.  Curl then follows that redirect.
   command = "/usr/bin/curl -L -H 'Host: #{@app['name']}-#{@app['namespace']}.dev.rhcloud.com' -s http://localhost/health_check.php | /bin/grep -e '^1$'"
   exit_status = runcon command, 'unconfined_u', 'unconfined_r', 'unconfined_t'
-  #exit_status.should == good_status
+  exit_status.should == good_status
 end
 

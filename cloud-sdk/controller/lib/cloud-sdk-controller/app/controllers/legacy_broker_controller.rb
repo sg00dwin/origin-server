@@ -32,7 +32,7 @@ class LegacyBrokerController < ApplicationController
     user = CloudUser.find(@login)
     if user
       case @req.action
-      when "add"
+      when "add-user"
         if @req.ssh.nil? or @req.user_name.nil?
           @reply.resultIO << "Must provide 'user-name' and 'ssh' key for the user"
           @reply.exitcode = 105
@@ -52,7 +52,7 @@ class LegacyBrokerController < ApplicationController
           @reply.append app.add_delegate_user(@req.user_name, @req.ssh)
           app.save
         end
-      when "remove"
+      when "remove-user"
         if @req.user_name.nil?
           @reply.resultIO << "Must provide 'user-name'"
           @reply.exitcode = 105
@@ -72,7 +72,7 @@ class LegacyBrokerController < ApplicationController
           @reply.append app.remove_delegate_user(@req.user_name)
           app.save
         end
-      when "list"
+      when "list-users"
         app_users = {}
         if @req.app_name.nil?
           user.applications.each do |app|

@@ -4,9 +4,6 @@ body {
   margin: 0;
   padding: 0;
   background-color: $background-color;
-}
-
-body.home {
   min-width: 52em;
 }
 
@@ -842,8 +839,8 @@ body.product.overview { min-width: 55em; }
   @include inline-block;
   background: white;
   @include border-radius(2em);
-  width: 40%;
-  height: 22em;
+  width: 35%;
+  height: 24em;
   margin-right: 2.5%;
   padding: 1em 2em;
   text-align: left;
