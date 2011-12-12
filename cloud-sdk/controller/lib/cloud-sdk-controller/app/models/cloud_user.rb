@@ -47,6 +47,10 @@ class CloudUser < Cloud::Sdk::Model
     Application.find_all(self)
   end
   
+  def delete
+    super(@rhlogin)
+  end
+
   def self.find(rhlogin)
     super(rhlogin,rhlogin)
   end
@@ -184,10 +188,10 @@ class CloudUser < Cloud::Sdk::Model
       
       applications.each do |app|
         app.embedded.each_key do |framework|
-          if embedded["framework"].has_key?('info')
-            info = embedded[framework]['info']
+          if app.embedded["framework"].has_key?('info')
+            info = app.embedded[framework]['info']
             info.gsub!(/-#{old_namespace}.#{Rails.application.config.cdk[:domain_suffix]}/, "-#{new_namespace}.#{Rails.application.config.cdk[:domain_suffix]}")
-            embedded[framework]['info'] = info
+            app.embedded[framework]['info'] = info
           end
         end
         app.save        

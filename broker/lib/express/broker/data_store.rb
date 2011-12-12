@@ -37,7 +37,7 @@ module Express
         Rails.logger.debug "DataStore.delete(#{obj_type}, #{user_id}, #{id})\n\n"
         case obj_type
         when "CloudUser"
-          Rails.logger.debug "Cannot delete user"      
+          DataStore.delete_user(user_id)
         when "Application"
           DataStore.delete_app(user_id,id)
         end
@@ -117,6 +117,11 @@ module Express
         bucket.objects["user_info/#{rhlogin}/apps/#{app_name}.json"].write(serialized_obj)
       end
     
+      def self.delete_user(rhlogin)
+        obj = bucket.objects["user_info/#{rhlogin}"]
+        obj.delete if obj.exists?
+      end
+
       def self.delete_app(rhlogin,app_name)
         obj = bucket.objects["user_info/#{rhlogin}/apps/#{app_name}.json"]
         obj.delete if obj.exists?
