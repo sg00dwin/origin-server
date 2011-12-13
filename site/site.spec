@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.83.7
+Version:   0.83.8
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -68,6 +68,11 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Mon Dec 12 2011 Dan McPherson <dmcphers@redhat.com> 0.83.8-1
+- Small changes to product overview styling (edirsh@redhat.com)
+- put min-width on body so that text does not overflow onto dark bg
+  (edirsh@redhat.com)
+
 * Sun Dec 11 2011 Dan McPherson <dmcphers@redhat.com> 0.83.7-1
 - Also ignore whitespace-only promo code entries (aboone@redhat.com)
 - Properly check for the presence of a promo code (aboone@redhat.com)

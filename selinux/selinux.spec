@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.83.9
+Version:       0.83.10
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -34,7 +34,6 @@ rm -rf %{buildroot}
 
 %post
 /usr/sbin/semodule -i %{_datadir}/selinux/packages/libra.pp
-/usr/sbin/semanage port -m -t submission_port_t -p tcp 587
 
 # Bring in external smtp ports but _NOT_ 25.
 #semanage -i - << _EOF
@@ -47,6 +46,12 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Mon Dec 12 2011 Dan McPherson <dmcphers@redhat.com> 0.83.10-1
+- Use the RHEL supplied policy for allowing connections to smtp.
+  (rmillner@redhat.com)
+- Revert "Allow libra applications to make outbound connnections to the
+  submission port." (rmillner@redhat.com)
+
 * Sun Dec 11 2011 Dan McPherson <dmcphers@redhat.com> 0.83.9-1
 - disabling libra_port_t (mmcgrath@redhat.com)
 
