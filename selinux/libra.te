@@ -31,6 +31,9 @@ libra_service_domain(libra_min_t)
 type libra_log_t;
 logging_log_file(libra_log_t)
 
+type libra_port_t;
+corenet_port(libra_port_t)
+corenet_reserved_port(libra_port_t)
 
 ########################################
 #
@@ -235,6 +238,8 @@ ssh_getattr_user_home_dir(libra_domain)
 #ssh_dontaudit_search_user_home_dir(libra_domain)
 dontaudit sendmail_t libra_initrc_t:fifo_file { read write };
 dontaudit domain libra_t:fifo_file { getattr write };
+
+allow libra_t libra_port_t:tcp_socket name_connect;
 
 append_files_pattern(sendmail_t, libra_var_lib_t, libra_var_lib_t)
 allow domain libra_var_lib_t:dir search_dir_perms;
