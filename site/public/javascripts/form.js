@@ -1,5 +1,5 @@
-/* DO NOT MODIFY. This file was compiled Tue, 13 Dec 2011 17:08:43 GMT from
- * /home/fotios/openshift/li/site/app/coffeescripts/form.coffee
+/* DO NOT MODIFY. This file was compiled Tue, 13 Dec 2011 18:08:17 GMT from
+ * /Users/alex/Source/li/site/app/coffeescripts/form.coffee
  */
 
 (function() {
@@ -119,7 +119,7 @@
     };
     registration_complete = function($form, $msg, $json, status) {
       var messages;
-      messages = $.map(json, function(k, v) {
+      messages = $.map($json, function(k, v) {
         return k;
       });
       if ($json['redirectUrl'] === void 0 || $json['redirectUrl'] === null) {
