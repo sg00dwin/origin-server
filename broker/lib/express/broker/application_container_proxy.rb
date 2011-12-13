@@ -197,12 +197,12 @@ module Express
         arguments += " '#{arg}'" if arg
         
         result = execute_direct(framework, command, arguments)
-        resultIO = parse_result(result)
+        resultIO = parse_result(result, command)
         if resultIO.exitcode != 0
           resultIO.debugIO << "Cartridge return code: " + resultIO.exitcode.to_s
           raise Cloud::Sdk::NodeException.new("Node execution failure (invalid exit code from node).  If the problem persists please contact Red Hat support.", 143, resultIO), caller[0..5]
         end
-        resultIO    
+        resultIO
       end
       
       def self.rpc_find_available(node_profile="std", forceRediscovery=false)
@@ -245,19 +245,22 @@ module Express
           result
       end
       
-      def parse_result(mcoll_reply)
+      def parse_result(mcoll_reply, command=nil)
         result = ResultIO.new
         
         mcoll_result = mcoll_reply[0]
         output = nil
         if (mcoll_result && defined? mcoll_result.results && mcoll_result.results.has_key?(:data))
           output = mcoll_result.results[:data][:output]
+          if command == "status"
+            result.resultIO << output
+          else
+            #Rails.logger.debug "--output--\n\n#{output}\n\n"
+          end
           result.exitcode = mcoll_result.results[:data][:exitcode]
         else
           raise Cloud::Sdk::NodeException.new("Node execution failure (error getting result from node).  If the problem persists please contact Red Hat support.", 143), caller[0..5]
         end
-        
-        Rails.logger.debug "--output--\n\n#{output}\n\n"
         
         if output && !output.empty?
           output.each_line do |line|
