@@ -187,19 +187,6 @@ module Libra
     end
 
     #
-    # Add ssh key to the app
-    #
-    def add_user_ssh_key_to_app(app_name, ssh_key, comment=nil)
-      apps.each do |appname, app|
-        if appname == app_name
-          server = Libra::Server.new app['server_identity']
-          server.add_ssh_key(app, ssh_key, comment)
-          break
-        end
-      end
-    end
-
-    #
     # Add an ssh key for the user
     #
     def add_user_ssh_key(key_name, ssh_key)

@@ -255,14 +255,6 @@ class BrokerController < ApplicationController
           message = Thread.current[:resultIO].string
         end
         if action == 'configure'
-          # Add user ssh keys
-          user = Libra::User.find(username)
-          render :json => generate_result_json("User does not exist", nil, 99), :status => :not_found and return if not user
-          if defined?(user.ssh_keys) && user.ssh_keys.kind_of?(Hash)
-            user.ssh_keys.each do |key_name, ssh_key|
-              user.add_user_ssh_key_to_app(app_name, ssh_key, key_name)
-            end
-          end
           message = "Successfully created application: #{app_name}" if !message
           # TODO would like to move this further down.  Perhaps store cart=>page as the cartlist fact?
           type = Libra::Util.get_cart_framework(cartridge)
