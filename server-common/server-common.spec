@@ -2,7 +2,7 @@
 
 Summary:       Common dependencies of the OpenShift broker and site
 Name:          rhc-server-common
-Version:       0.83.2
+Version:       0.83.3
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -57,6 +57,13 @@ rm -rf %{buildroot}
                                   -s /sbin/nologin 2>&1 > /dev/null || :
 
 %changelog
+* Tue Dec 13 2011 Dan McPherson <dmcphers@redhat.com> 0.83.3-1
+- remove -z from move rsync (dmcphers@redhat.com)
+- Fix wrong #params to remove_user_ssh_key (rpenta@redhat.com)
+- Multi-key support: bug-fixes (rpenta@redhat.com)
+- Multi-key support: Update <key-name>:<ssh-pubkey> info s3/user.json, nuke app
+  specific ssh key info (rpenta@redhat.com)
+
 * Sun Dec 11 2011 Dan McPherson <dmcphers@redhat.com> 0.83.2-1
 - move common dep (dmcphers@redhat.com)
 - multi-user bug-fixes: 'force' param usage is confusing, removing the option
