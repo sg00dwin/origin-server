@@ -7,6 +7,7 @@ module Libra
 
     DEFAULT_MAX_LENGTH = 16
     APP_NAME_MAX_LENGTH = 32
+    RSA_SSH_KEY_MIN_LENGTH = 96  # 768 bits = 96 bytes
 
     def self.get_cart_framework(cart)
       cart_type = cart.split('-')[0..-2].join('-')
@@ -52,8 +53,13 @@ module Libra
       end
     end
 
-    def self.check_user(username)
-      check_rhlogin(username)
+    def self.check_keyname(keyname)
+      check_field(keyname, 'keyname', DEFAULT_MAX_LENGTH)
+    end
+
+    def self.check_rsa_key(ssh_key)
+      return true if ssh_key.length >= RSA_SSH_KEY_MIN_LENGTH
+      return false
     end
 
     def self.check_app(app)

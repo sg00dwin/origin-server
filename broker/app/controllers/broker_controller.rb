@@ -74,12 +74,13 @@ class BrokerController < ApplicationController
           if !Util.check_rhlogin(val)
             render :json => generate_result_json("Invalid rhlogin: #{val}", nil, 107), :status => :invalid and return nil
           end
-        when 'user_name'
-          if !Util.check_user(val)
-            render :json => generate_result_json("Invalid username: #{val}", nil, 106), :status => :invalid and return nil
+        when 'key_name'
+          if !Util.check_keyname(val)
+            render :json => generate_result_json("Invalid keyname: #{val}", nil, 106), :status => :invalid and return nil
           end
         when 'ssh'
-          if !(val =~ /\A[A-Za-z0-9\+\/=]+\z/)
+          #FIXME: Supports only RSA keys
+          if !(val =~ /\A[A-Za-z0-9\+\/=]+\z/) || !Util.check_rsa_key(val)
             render :json => generate_result_json("Invalid ssh key: #{val}", nil, 108), :status => :invalid and return nil
           end
         when 'app_uuid'
@@ -186,7 +187,7 @@ class BrokerController < ApplicationController
         render_unauthorized and return
       end
     else
-      username = Libra::User.new(data['rhlogin'], nil, nil, nil, nil, nil, params['password'], ticket).login()
+      username = Libra::User.new(data['rhlogin'], nil, nil, nil, nil, nil, params['password'], ticket, {}).login()
     end
     return username
   end
@@ -254,6 +255,14 @@ class BrokerController < ApplicationController
           message = Thread.current[:resultIO].string
         end
         if action == 'configure'
+          # Add user ssh keys
+          user = Libra::User.find(username)
+          render :json => generate_result_json("User does not exist", nil, 99), :status => :not_found and return if not user
+          if defined?(user.ssh_keys) && user.ssh_keys.kind_of?(Hash)
+            user.ssh_keys.each do |key_name, ssh_key|
+              user.add_user_ssh_key_to_app(app_name, ssh_key, key_name)
+            end
+          end
           message = "Successfully created application: #{app_name}" if !message
           # TODO would like to move this further down.  Perhaps store cart=>page as the cartlist fact?
           type = Libra::Util.get_cart_framework(cartridge)
@@ -467,7 +476,8 @@ class BrokerController < ApplicationController
             end
             # check ssh key conflicts
             if (user.ssh == data['ssh']) || \
-               (defined?(user.system_ssh_keys) && user.system_ssh_keys.has_value?(data['ssh']))
+               (defined?(user.system_ssh_keys) && user.system_ssh_keys.kind_of?(Hash) && user.system_ssh_keys.value?(data['ssh'])) || \
+               (defined?(user.ssh_keys) && user.ssh_keys.kind_of?(Hash) && user.ssh_keys.value?(data['ssh']))
               render :json => generate_result_json("Given public key is already in use. Use different key or delete conflicting key and retry", nil, 105), :status => :invalid and return
             end
             user.add_user_ssh_key(data['key_name'], data['ssh'])

@@ -187,11 +187,24 @@ module Libra
     end
 
     #
+    # Add ssh key to the app
+    #
+    def add_user_ssh_key_to_app(app_name, ssh_key, comment=nil)
+      apps.each do |appname, app|
+        if appname == app_name
+          server = Libra::Server.new app['server_identity']
+          server.add_ssh_key(app, ssh_key, comment)
+          break
+        end
+      end
+    end
+
+    #
     # Add an ssh key for the user
     #
     def add_user_ssh_key(key_name, ssh_key)
       @ssh_keys = {} unless @ssh_keys
-      raise NodeException.new(143), "Error: Key name '#{key_name}' already in use, use different key. To upgrade a key, remove and re-add the key", caller[0..5] if @ssh_keys.has_key?(key_name)
+      raise NodeException.new(143), "Error: Key name '#{key_name}' already in use, use different key. To upgrade a key, remove and re-add the key", caller[0..5] if @ssh_keys.key?(key_name)
       apps.each do |appname, app|
         server = Libra::Server.new app['server_identity']
         server.add_ssh_key(app, ssh_key, key_name)
@@ -204,7 +217,7 @@ module Libra
     # Remove an ssh key for the user
     #
     def remove_user_ssh_key(key_name, app, app_name)
-      if @ssh_keys && @ssh_keys.has_key?(key_name)
+      if @ssh_keys && @ssh_keys.key?(key_name)
         apps.each do |appname, app|
           server = Libra::Server.new app['server_identity']
           server.remove_ssh_key(app, @ssh_keys[key_name])
