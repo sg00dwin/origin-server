@@ -1,4 +1,4 @@
-/* DO NOT MODIFY. This file was compiled Fri, 09 Dec 2011 16:23:30 GMT from
+/* DO NOT MODIFY. This file was compiled Tue, 13 Dec 2011 17:08:43 GMT from
  * /home/fotios/openshift/li/site/app/coffeescripts/form.coffee
  */
 
@@ -173,6 +173,7 @@
           reset_password_complete($form, $msg, $json, false);
           break;
       }
+      return $msg.truncate();
     };
     rulesets = {
       reset: {

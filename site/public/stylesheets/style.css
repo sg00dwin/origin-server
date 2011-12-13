@@ -113,7 +113,7 @@ fieldset.confirm li label {
   position: absolute;
   width: 1px;
 }
-/* line 50, ../../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_helpers.scss */
+/* line 50, ../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_helpers.scss */
 fieldset.confirm li label.focusable:active, fieldset.confirm li label.focusable:focus {
   clip: auto;
   height: auto;
@@ -505,7 +505,7 @@ nav > header,
   position: absolute;
   width: 1px;
 }
-/* line 50, ../../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_helpers.scss */
+/* line 50, ../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_helpers.scss */
 header.universal hgroup.focusable:active, header.universal hgroup.focusable:focus,
 header.universal header.focusable:active,
 header.universal header.focusable:focus,
@@ -555,7 +555,7 @@ a.button {
   -khtml-border-radius: 0.2em;
   border-radius: 0.2em;
 }
-/* line 7, ../../../../../../../../usr/lib/ruby/gems/1.8/gems/compass-0.11.5/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
+/* line 7, ../../../../../../../usr/lib/ruby/gems/1.8/gems/compass-0.11.5/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
 a.button {
   *display: inline;
 }
@@ -621,7 +621,7 @@ a.more {
   background-repeat: no-repeat;
   background-position: 1em center;
   padding: .5em 0 .5em 2em;
-  margin: 0 0 1em;
+  margin: 0 50px 1em;
   font-weight: bold;
   text-align: center;
 }
@@ -706,7 +706,7 @@ header.universal nav li a {
   -o-transition-duration: 0.5s;
   transition-duration: 0.5s;
 }
-/* line 7, ../../../../../../../../usr/lib/ruby/gems/1.8/gems/compass-0.11.5/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
+/* line 7, ../../../../../../../usr/lib/ruby/gems/1.8/gems/compass-0.11.5/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
 header.universal nav li a {
   *display: inline;
 }
@@ -795,7 +795,7 @@ footer.universal .content > ul > li {
   vertical-align: top;
   width: 10em;
 }
-/* line 7, ../../../../../../../../usr/lib/ruby/gems/1.8/gems/compass-0.11.5/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
+/* line 7, ../../../../../../../usr/lib/ruby/gems/1.8/gems/compass-0.11.5/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
 footer.universal .content > ul > li {
   *display: inline;
 }
@@ -1127,7 +1127,7 @@ footer.universal #copyright img {
   vertical-align: top;
   padding-left: .7em;
 }
-/* line 7, ../../../../../../../../usr/lib/ruby/gems/1.8/gems/compass-0.11.5/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
+/* line 7, ../../../../../../../usr/lib/ruby/gems/1.8/gems/compass-0.11.5/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
 #social li {
   *display: inline;
 }
@@ -1241,7 +1241,7 @@ nav.service:last {
   position: absolute;
   width: 1px;
 }
-/* line 50, ../../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_helpers.scss */
+/* line 50, ../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_helpers.scss */
 .product .main > header.focusable:active, .product .main > header.focusable:focus {
   clip: auto;
   height: auto;
@@ -1286,7 +1286,7 @@ nav.service:last {
   position: absolute;
   width: 1px;
 }
-/* line 50, ../../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_helpers.scss */
+/* line 50, ../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_helpers.scss */
 .product .main .content nav > header.focusable:active, .product .main .content nav > header.focusable:focus {
   clip: auto;
   height: auto;
@@ -1312,7 +1312,7 @@ nav.service:last {
   border-bottom: 1px solid #ececec;
   width: 10em;
 }
-/* line 7, ../../../../../../../../usr/lib/ruby/gems/1.8/gems/compass-0.11.5/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
+/* line 7, ../../../../../../../usr/lib/ruby/gems/1.8/gems/compass-0.11.5/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
 .product .main .content nav a {
   *display: inline;
 }
@@ -1336,7 +1336,7 @@ nav.service:last {
   position: absolute;
   width: 1px;
 }
-/* line 50, ../../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_helpers.scss */
+/* line 50, ../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_helpers.scss */
 .product .main .content nav #account.signed_out header.focusable:active, .product .main .content nav #account.signed_out header.focusable:focus {
   clip: auto;
   height: auto;
@@ -1365,7 +1365,7 @@ nav.service:last {
   color: #333;
   text-align: center;
 }
-/* line 7, ../../../../../../../../usr/lib/ruby/gems/1.8/gems/compass-0.11.5/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
+/* line 7, ../../../../../../../usr/lib/ruby/gems/1.8/gems/compass-0.11.5/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
 .product .main .content nav #account.signed_out a.sign_up, .product .main .content nav #account.signed_out a.request {
   *display: inline;
 }
@@ -1480,7 +1480,7 @@ body.product.overview {
   padding: 1em 2em;
   text-align: left;
 }
-/* line 7, ../../../../../../../../usr/lib/ruby/gems/1.8/gems/compass-0.11.5/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
+/* line 7, ../../../../../../../usr/lib/ruby/gems/1.8/gems/compass-0.11.5/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
 .product_box {
   *display: inline;
 }
@@ -1920,7 +1920,7 @@ body.product.overview {
   padding: .25em .5em;
   width: 4em;
 }
-/* line 7, ../../../../../../../../usr/lib/ruby/gems/1.8/gems/compass-0.11.5/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
+/* line 7, ../../../../../../../usr/lib/ruby/gems/1.8/gems/compass-0.11.5/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
 .features .main .content > div ul.languages li ul li {
   *display: inline;
 }
@@ -2063,7 +2063,7 @@ li.captcha {
   padding: 1em;
   text-align: center;
 }
-/* line 7, ../../../../../../../../usr/lib/ruby/gems/1.8/gems/compass-0.11.5/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
+/* line 7, ../../../../../../../usr/lib/ruby/gems/1.8/gems/compass-0.11.5/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
 .control_panel .main .tabs li a {
   *display: inline;
 }
@@ -2102,7 +2102,7 @@ li.captcha {
   position: absolute;
   width: 1px;
 }
-/* line 50, ../../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_helpers.scss */
+/* line 50, ../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_helpers.scss */
 .control_panel .main .content .intro > header.focusable:active, .control_panel .main .content .intro > header.focusable:focus {
   clip: auto;
   height: auto;
@@ -2128,7 +2128,7 @@ li.captcha {
   *vertical-align: auto;
   vertical-align: top;
 }
-/* line 7, ../../../../../../../../usr/lib/ruby/gems/1.8/gems/compass-0.11.5/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
+/* line 7, ../../../../../../../usr/lib/ruby/gems/1.8/gems/compass-0.11.5/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
 .control_panel .main .content #video, .control_panel .main .content #resources {
   *display: inline;
 }
@@ -2269,7 +2269,7 @@ li.captcha {
   *zoom: 1;
   vertical-align: top;
 }
-/* line 7, ../../../../../../../../usr/lib/ruby/gems/1.8/gems/compass-0.11.5/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
+/* line 7, ../../../../../../../usr/lib/ruby/gems/1.8/gems/compass-0.11.5/frameworks/compass/stylesheets/compass/css3/_inline-block.scss */
 .control_panel .main #app_form li, .control_panel .main #app_form fieldset.buttons {
   *display: inline;
 }
@@ -2418,7 +2418,7 @@ li.captcha {
 /*/mediaquery*/
 /*/mediaquery*/
 @media print {
-  /* line 10, ../../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
+  /* line 10, ../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
   * {
     background: transparent !important;
     color: black !important;
@@ -2427,44 +2427,44 @@ li.captcha {
     -ms-filter: none !important;
   }
 
-  /* line 12, ../../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
+  /* line 12, ../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
   a, a:visited {
     color: #444 !important;
     text-decoration: underline;
   }
 
-  /* line 13, ../../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
+  /* line 13, ../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
   a[href]:after {
     content: " (" attr(href) ")";
   }
 
-  /* line 14, ../../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
+  /* line 14, ../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
   abbr[title]:after {
     content: " (" attr(title) ")";
   }
 
-  /* line 15, ../../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
+  /* line 15, ../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
   .ir a:after, a[href^="javascript:"]:after, a[href^="#"]:after {
     content: "";
   }
 
-  /* line 16, ../../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
+  /* line 16, ../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
   pre, blockquote {
     border: 1px solid #999;
     page-break-inside: avoid;
   }
 
-  /* line 17, ../../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
+  /* line 17, ../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
   thead {
     display: table-header-group;
   }
 
-  /* line 18, ../../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
+  /* line 18, ../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
   tr, img {
     page-break-inside: avoid;
   }
 
-  /* line 19, ../../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
+  /* line 19, ../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
   img {
     max-width: 100% !important;
   }
@@ -2473,13 +2473,13 @@ li.captcha {
     margin: 0.5cm;
 }
 
-  /* line 21, ../../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
+  /* line 21, ../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
   p, h2, h3 {
     orphans: 3;
     widows: 3;
   }
 
-  /* line 22, ../../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
+  /* line 22, ../../../../../../../usr/lib/ruby/gems/1.8/gems/html5-boilerplate-1.0.0/stylesheets/html5-boilerplate/_media.scss */
   h2, h3 {
     page-break-after: avoid;
   }
