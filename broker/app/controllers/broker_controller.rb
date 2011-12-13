@@ -449,34 +449,42 @@ class BrokerController < ApplicationController
     end
   end
 
-  def user_manage_post
+  def user_keys_post
     begin
       # Parse the incoming data
       data = parse_json_data(params['json_data'])
       return unless data
   
       # Check if rhlogin user already exists
-      rhlogin_user_name = login(data, params, true)
-      if rhlogin_user_name
-        rhlogin_user = Libra::User.find(rhlogin_user_name)
-        if rhlogin_user
+      user_name = login(data, params, true)
+      if user_name
+        user = Libra::User.find(user_name)
+        if user
           action = data['action']
-          if action == 'add-user'
-            if not data['ssh'] or not data['user_name']
-              render :json => generate_result_json("Must provide 'user-name' and 'ssh' key for the user", nil, 105), :status => :invalid and return
+          if action == 'add-key'
+            if not data['ssh'] or not data['key_name']
+              render :json => generate_result_json("Must provide 'key-name' and 'ssh' key for the user", nil, 105), :status => :invalid and return
             end
-            rhlogin_user.add_app_ssh_key(data['user_name'], data['ssh'], data['app_name'])
-          elsif action == 'remove-user'
-            if not data['user_name']
-              render :json => generate_result_json("Must provide 'user-name'", nil, 105), :status => :invalid and return
+            # check ssh key conflicts
+            if (user.ssh == data['ssh']) || \
+               (defined?(user.system_ssh_keys) && user.system_ssh_keys.has_value?(data['ssh']))
+              render :json => generate_result_json("Given public key is already in use. Use different key or delete conflicting key and retry", nil, 105), :status => :invalid and return
             end
-            rhlogin_user.remove_app_ssh_key(data['user_name'], data['app_name'])
-          elsif action == 'list-users'
-            app_users = rhlogin_user.list_app_users(data['app_name'])
-            json_data = JSON.generate({ :app_users => app_users })
+            user.add_user_ssh_key(data['key_name'], data['ssh'])
+          elsif action == 'remove-key'
+            if not data['key_name']
+              render :json => generate_result_json("Must provide 'key-name'", nil, 105), :status => :invalid and return
+            end
+            user.remove_user_ssh_key(data['key_name'])
+          elsif action == 'list-keys'
+            user_keys = {}
+            if defined?(user.ssh_keys)
+              user_keys = user.ssh_keys
+            end
+            json_data = JSON.generate({ :user_keys => user_keys })
             render :json => generate_result_json(nil, json_data) and return
           else
-            render :json => generate_result_json("Invalid action, allowed operations: 'add-user'/'remove-user'/'list-users'", nil, 105), :status => :invalid and return
+            render :json => generate_result_json("Invalid action, allowed operations: 'add-key'/'remove-key'/'list-keys'", nil, 105), :status => :invalid and return
           end
           
           # Just return a 200 success
@@ -489,7 +497,7 @@ class BrokerController < ApplicationController
         render_unauthorized and return
       end    
     rescue Exception => e
-      render_error(e, 'user_manage_post') and return
+      render_error(e, 'user_keys_post') and return
     end
   end
  
