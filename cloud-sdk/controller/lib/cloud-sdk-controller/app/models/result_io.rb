@@ -19,6 +19,8 @@ class ResultIO
     self.errorIO << resultIO.errorIO.string
     self.appInfoIO << resultIO.appInfoIO.string
     self.cart_commands += resultIO.cart_commands
+    self.exitcode = resultIO.exitcode
+    self.data += resultIO.data
     self
   end
   
@@ -28,8 +30,9 @@ class ResultIO
           "--MESSAGE--\n#{@messageIO.string}\n" +
           "--ERROR--\n#{@errorIO.string}\n" +
           "--APP INFO--\n#{@appInfoIO.string}\n" +
-          "--EXIT CODE--\n#{@exitcode}\n" +
-          "--CART COMMANDS--\n#{@cart_commands.join("\n")}\n"
+          "--CART COMMANDS--\n#{@cart_commands.join("\n")}\n" +
+          "--DATA--\n#{@data}\n" +
+          "--EXIT CODE--\n#{@exitcode}\n"          
   end
   
   def to_json(*args)

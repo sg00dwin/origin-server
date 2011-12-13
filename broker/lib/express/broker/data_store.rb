@@ -118,7 +118,7 @@ module Express
       end
     
       def self.delete_user(rhlogin)
-        obj = bucket.objects["user_info/#{rhlogin}"]
+        obj = bucket.objects["user_info/#{rhlogin}/user.json"]
         obj.delete if obj.exists?
       end
 

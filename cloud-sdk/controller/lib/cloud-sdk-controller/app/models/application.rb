@@ -1,5 +1,5 @@
 class Application < Cloud::Sdk::Model
-  attr_accessor :user, :framework, :creation_time, :uuid, :embedded, :aliases, :name, :server_identity, :health_check_path, :node_profile, :container, :ssh_keys
+  attr_accessor :user, :framework, :creation_time, :uuid, :embedded, :aliases, :name, :server_identity, :health_check_path, :node_profile, :container
   primary_key :name  
   exclude_attributes :user, :health_check_path, :dependencies, :node_profile, :container
 
@@ -108,35 +108,19 @@ class Application < Cloud::Sdk::Model
     reply
   end
   
+  def add_secondary_ssh_keys
+    reply = ResultIO.new
+    @user.ssh_keys.each_value do |ssh_key|
+      reply.append add_authorized_ssh_key(ssh_key)
+    end if @user.ssh_keys
+    reply
+  end
+  
   def add_system_env_vars
     reply = ResultIO.new    
     @user.env_vars.each do |key, value|
       reply.append add_env_var(key, value)
     end if @user.env_vars
-    reply
-  end
-  
-  def add_delegate_user(user_name, ssh_key)
-    @ssh_keys = {} unless @ssh_keys
-    if self.ssh_keys.keys.include?(user_name) and self.ssh_keys[user_name] != ssh_key
-      raise Cloud::Sdk::UserException.new("User '#{user_name}' already has access to application '#{@name}' with a different SSH key", 143), caller[0..5]
-    end
-    @ssh_keys.each do |uname, ukey|
-      raise Cloud::Sdk::UserException.new("SSH key is already being used by user #{uname} for application '#{@name}'. Use different key or delete conflicting key and retry", 143), caller[0..5] if ukey == ssh_key and uname != user_name
-    end
-    ssh_keys_will_change!    
-    self.ssh_keys[user_name] = ssh_key
-    reply = add_authorized_ssh_key(ssh_key)
-    reply    
-  end
-  
-  def remove_delegate_user(user_name)
-    @ssh_keys = {} unless @ssh_keys
-    unless @ssh_keys[user_name].nil?
-      reply = remove_authorized_ssh_key(@ssh_keys[user_name])
-      ssh_keys_will_change!
-      self.ssh_keys.delete user_name
-    end
     reply
   end
 

@@ -303,6 +303,8 @@ module Express
                 else
                   result.cart_commands.push({:command => "BROKER_KEY_REMOVE", :args => []})
                 end
+              else
+                result.resultIO << line
               end
             else # exitcode != 0
               result.debugIO << line

@@ -1,5 +1,5 @@
 class CloudUser < Cloud::Sdk::Model
-  attr_accessor :rhlogin, :uuid, :ssh, :namespace, :system_ssh_keys, :env_vars, :email_address
+  attr_accessor :rhlogin, :uuid, :ssh, :namespace, :system_ssh_keys, :env_vars, :email_address, :ssh_keys
   primary_key :rhlogin
   private :rhlogin=, :uuid=
   
@@ -48,7 +48,17 @@ class CloudUser < Cloud::Sdk::Model
   end
   
   def delete
+    dns_service = Cloud::Sdk::DnsService.instance
+    reply = ResultIO.new
+    begin
+      dns_service.deregister_namespace(@namespace)      
+      dns_service.publish        
+    ensure
+      dns_service.close
+    end
+    reply.resultIO << "Namespace #{@namespace} deleted successfully.\n"
     super(@rhlogin)
+    reply
   end
 
   def self.find(rhlogin)
@@ -78,6 +88,33 @@ class CloudUser < Cloud::Sdk::Model
     end
     
     self.system_ssh_keys.delete app_name
+    self.save
+    result
+  end
+  
+  def add_secondary_ssh_key(key_name, key)
+    self.ssh_keys = {} unless self.ssh_keys
+    result = ResultIO.new
+    self.ssh_keys[key_name] = key
+    self.save
+    applications.each do |app|
+      Rails.logger.debug "DEBUG: Adding secondary key named #{key_name} to app: #{app.name} for user #{@name}"
+      result.append app.add_authorized_ssh_key(key)
+    end
+    result
+  end
+  
+  def remove_secondary_ssh_key(key_name)
+    self.ssh_keys = {} unless self.ssh_keys    
+    result = ResultIO.new
+    key = self.ssh_keys[app_name]
+    return unless key
+    applications.each do |app|
+      Rails.logger.debug "DEBUG: Removing secondary key named #{key_name} from app: #{app.name} for user #{@name}"
+      result.append app.remove_authorized_ssh_key(key)
+    end
+    
+    self.ssh_keys.delete key_name
     self.save
     result
   end

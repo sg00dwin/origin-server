@@ -1,11 +1,10 @@
 #!/usr/bin/env ruby
 
-require 'rubygems'
-require 'openshift'
+require "/var/www/libra/broker/config/environment"
+require 'getoptlong'
 require 'mcollective'
 
 include MCollective::RPC
-include Libra
 
 options = rpcoptions do |parser, options|
     parser.define_head "Move an application to another node"
@@ -43,13 +42,8 @@ end
 if options[:timeout] && options[:timeout] < 30
     options[:timeout] = 30
 end
-Libra.c[:rpc_opts] = options
+Rails.application.config.cdk[:rhc_opts] = options
 
-# Execute the move
-if options[:target_server_identity]
-  Libra.execute_move(options[:app_name], options[:rhlogin], options[:target_server_identity])
-elsif options[:node_profile]
-  Libra.execute_move(options[:app_name], options[:rhlogin], nil, options[:node_profile])
-else
-  Libra.execute_move(options[:app_name], options[:rhlogin])
-end
+user = CloudUser.find(options[:rhlogin])
+app  = Application.find(user, options[:app_name])
+

@@ -1,11 +1,10 @@
 #!/usr/bin/env ruby
 
-require 'rubygems'
-require 'openshift'
+require "/var/www/libra/broker/config/environment"
+require 'getoptlong'
 require 'mcollective'
 
 include MCollective::RPC
-include Libra
 
 options = rpcoptions do |parser, options|
     parser.define_head "Deconfigure an application on a node"
@@ -44,10 +43,11 @@ end
 if options[:timeout] && options[:timeout] < 30
     options[:timeout] = 30
 end
-Libra.c[:rpc_opts] = options
+Rails.application.config.cdk[:rhc_opts] = options
 
-user = Libra.get_user(options[:rhlogin])
-app_info = user.app_info(options[:app_name])
-server = Server.new(options[:server_identity])
-Libra.deconfigure_app_from_node(app_info, options[:app_name], user, server, false)
-puts "Successfully deconfigured '#{options[:app_name]}' on '#{server.name}'"
+user = CloudUser.find(options[:rhlogin])
+app  = Application.find(user,options[:app_name])
+app.container = Cloud::Sdk::ApplicationContainerProxy.instance(options[:server_identity])
+
+app.container.destroy(app)
+puts "Successfully deconfigured '#{options[:app_name]}' on '#{app.container.id}'"

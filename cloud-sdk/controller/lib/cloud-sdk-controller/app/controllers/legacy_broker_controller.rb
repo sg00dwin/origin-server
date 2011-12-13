@@ -1,4 +1,3 @@
-class LegacyBrokerController < ApplicationController
   layout nil
   before_filter :validate_request
   before_filter :authenticate, :except => :cart_list_post
@@ -32,67 +31,26 @@ class LegacyBrokerController < ApplicationController
     user = CloudUser.find(@login)
     if user
       case @req.action
-      when "add-user"
-        if @req.ssh.nil? or @req.user_name.nil?
-          @reply.resultIO << "Must provide 'user-name' and 'ssh' key for the user"
-          @reply.exitcode = 105
-          render :json => @reply, :status => :invalid
-          return
+      when "add-key"
+        raise Cloud::Sdk::UserException.new("Missing SSH key or key name", 105), caller[0..5] if @req.ssh.nil? or @req.key_name.nil?
+        user.ssh_keys.each do |key_name, key|
+          raise Cloud::Sdk::UserException.new("Key with name #{@req.key_name} already exists. Please choose a different name", 105), caller[0..5] if key_name == @req.key_name
+          raise Cloud::Sdk::UserException.new("Given public key is already in use. Use different key or delete conflicting key and retry", 105), caller[0..5] if key == @req.ssh
         end
-        
-        if @req.app_name.nil?
-          user.applications.each do |app|
-            #add to all applications            
-            @reply.append app.add_delegate_user(@req.user_name, @req.ssh)
-            app.save
-          end
-        else
-          app = Application.find(user, @req.app_name)
-          raise Cloud::Sdk::UserException.new("Application #{@req.app_name} does not exist.", 143), caller[0..5] if app.nil?
-          @reply.append app.add_delegate_user(@req.user_name, @req.ssh)
-          app.save
-        end
-      when "remove-user"
-        if @req.user_name.nil?
-          @reply.resultIO << "Must provide 'user-name'"
-          @reply.exitcode = 105
-          render :json => @reply, :status => :invalid
-          return
-        end
-        
-        if @req.app_name.nil?
-          user.applications.each do |app|
-            #remove from all applications            
-            @reply.append app.remove_delegate_user(@req.user_name)
-            app.save
-          end
-        else
-          app = Application.find(user, @req.app_name)
-          raise Cloud::Sdk::UserException.new("Application #{@req.app_name} does not exist.", 143), caller[0..5] if app.nil?
-          @reply.append app.remove_delegate_user(@req.user_name)
-          app.save
-        end
-      when "list-users"
-        app_users = {}
-        if @req.app_name.nil?
-          user.applications.each do |app|
-            app_users[app.name] = app.ssh_keys
-          end
-        else
-          app = Application.find(user, @req.app_name)
-          raise Cloud::Sdk::UserException.new("Application #{@req.app_name} does not exist.", 143), caller[0..5] if app.nil?
-          app_users[app.name] = app.ssh_keys
-        end
-        
-        @reply.data = { :app_users => app_users }.to_json
+        @reply.append user.add_secondary_ssh_key(@req.key_name, @req.ssh)
+        user.save
+      when "remove-key"
+        raise Cloud::Sdk::UserException.new("Missing key name", 105), caller[0..5] if @req.key_name.nil?
+        @reply.append user.remove_secondary_ssh_key(@req.key_name)
+        user.save
+      when "list-keys"
+        @reply.data = { :keys => user.ssh_keys }.to_json
+      else
+        raise Cloud::Sdk::UserException.new("Invalid action #{@req.action}", 111), caller[0..5]
       end
       render :json => @reply
     else
-      # Return a 404 to denote the user doesn't exist
-      @reply.result << "User does not exist"
-      @reply.exitcode = 99
-      
-      render :json => @reply, :status => :not_found
+      raise Cloud::Sdk::CdkException.new("Invalid user", 99), caller[0..5]
     end
   end
   
@@ -103,22 +61,13 @@ class LegacyBrokerController < ApplicationController
       cloud_user.namespace = @req.namespace
     elsif @req.delete @login
        if not cloud_user.applications.empty?
-         res_string = "Cannot remove namespace #{cloud_user.namespace}. Remove existing apps first.\n"
-         cloud_user.applications.each { |app|
-	         res_string += app.name 
-           res_string += "\n" 
-         }
-         @reply.resultIO << res_string
+         @reply.resultIO << "Cannot remove namespace #{cloud_user.namespace}. Remove existing apps first.\n"
+         @reply.resultIO << cloud_user.applications.map{|a| a.name}.join("\n")
          @reply.exitcode = 106 
          render :json => @reply, :status => :invalid
          return
        end
-       dns_service = Cloud::Sdk::DnsService.instance
-       dns_service.deregister_namespace(cloud_user.namespace)      
-       dns_service.publish        
-       dns_service.close
-       @reply.resultIO << "Namespace #{cloud_user.namespace} deleted successfully.\n"
-       cloud_user.delete
+       @reply.append cloud_user.delete
        render :json => @reply
        return
     else
@@ -158,6 +107,7 @@ class LegacyBrokerController < ApplicationController
   def cartridge_post
     @req.node_profile ||= "std"
     user = CloudUser.find(@login)
+    raise Cloud::Sdk::CdkException.new("Invalid user", 99), caller[0..5] if user.nil?
     
     case @req.action
     when 'configure'    #create app and configure framework
@@ -171,6 +121,7 @@ class LegacyBrokerController < ApplicationController
           app.save
           @reply.append app.configure_dependencies          
           @reply.append app.add_system_ssh_keys
+          @reply.append app.add_secondary_ssh_keys
           @reply.append app.add_system_env_vars
           @reply.append app.create_dns
           
@@ -199,6 +150,7 @@ class LegacyBrokerController < ApplicationController
       end
     when 'deconfigure'
       app = Application.find(user, @req.app_name)
+      raise Cloud::Sdk::UserException.new("An application named '#{@req.app_name}' does not exist", 101), caller[0..5] if app.nil?
       @reply.append app.destroy
       
       if app.framework_cartridge == "jenkins"
@@ -212,33 +164,42 @@ class LegacyBrokerController < ApplicationController
       @reply.resultIO << "Successfully destroyed application: #{app.name}" if @reply.resultIO.string.empty?
     when 'start'
       app = Application.find(user, @req.app_name)
+      raise Cloud::Sdk::UserException.new("An application named '#{@req.app_name}' does not exist", 101), caller[0..5] if app.nil?
       @reply.append app.start
     when 'stop'
       app = Application.find(user, @req.app_name)
+      raise Cloud::Sdk::UserException.new("An application named '#{@req.app_name}' does not exist", 101), caller[0..5] if app.nil?
       @reply.append app.stop
     when 'restart'
       app = Application.find(user, @req.app_name)
+      raise Cloud::Sdk::UserException.new("An application named '#{@req.app_name}' does not exist", 101), caller[0..5] if app.nil?
       @reply.append app.restart
     when 'force-stop'
       app = Application.find(user, @req.app_name)
+      raise Cloud::Sdk::UserException.new("An application named '#{@req.app_name}' does not exist", 101), caller[0..5] if app.nil?
       @reply.append app.force_stop
     when 'reload'
       app = Application.find(user, @req.app_name)
+      raise Cloud::Sdk::UserException.new("An application named '#{@req.app_name}' does not exist", 101), caller[0..5] if app.nil?
       @reply.append app.reload
     when 'status'
       app = Application.find(user, @req.app_name)
+      raise Cloud::Sdk::UserException.new("An application named '#{@req.app_name}' does not exist", 101), caller[0..5] if app.nil?
       @reply.append app.status
     when 'tidy'
       app = Application.find(user, @req.app_name)
+      raise Cloud::Sdk::UserException.new("An application named '#{@req.app_name}' does not exist", 101), caller[0..5] if app.nil?
       @reply.append app.tidy      
     when 'add-alias'
       app = Application.find(user, @req.app_name)
+      raise Cloud::Sdk::UserException.new("An application named '#{@req.app_name}' does not exist", 101), caller[0..5] if app.nil?
       @reply.append app.add_alias @req.server_alias
     when 'remove-alias'
       app = Application.find(user, @req.app_name)
+      raise Cloud::Sdk::UserException.new("An application named '#{@req.app_name}' does not exist", 101), caller[0..5] if app.nil?
       @reply.append app.remove_alias @req.server_alias
     else
-      #unrecognized command
+      raise Cloud::Sdk::UserException.new("Invalid action #{@req.action}", 111), caller[0..5]
     end
     @reply.resultIO << 'Success' if @reply.resultIO.string.empty?
     
@@ -247,7 +208,10 @@ class LegacyBrokerController < ApplicationController
   
   def embed_cartridge_post
     user = CloudUser.find(@login)    
+    raise Cloud::Sdk::CdkException.new("Invalid user", 99), caller[0..5] if user.nil?
+        
     app = Application.find(user, @req.app_name)
+    raise Cloud::Sdk::UserException.new("An application named '#{@req.app_name}' does not exist", 101), caller[0..5] if app.nil?
 
     Rails.logger.debug "DEBUG: Performing action '#{@req.action}' on node '#{app.server_identity}'"    
     case @req.action
@@ -264,7 +228,9 @@ class LegacyBrokerController < ApplicationController
     when 'status'
       @reply.append app.dependency_status(@req.cartridge)      
     when 'reload'
-      @reply.append app.reload_dependency(@req.cartridge)      
+      @reply.append app.reload_dependency(@req.cartridge)
+    else
+      raise Cloud::Sdk::UserException.new("Invalid action #{@req.action}", 111), caller[0..5]           
     end
         
     @reply.resultIO << 'Success' if @reply.resultIO.string.empty?
