@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# How long to delay PassengerHelperAgent ps commands.
+passenger_delay_ps=40
+
+# Get parent pid and command.
+p_pid=`/bin/ps -p $$ --no-heading -o ppid`
+[ -n "$p_pid" ]   &&  p_cmd=`/bin/ps -p $p_pid --no-heading -o cmd`
+
+# Get parent pid and command -- if its PassengerHelperAgent that issued
+# the ps, then throttle the command (sleep a bit).
+if test "$p_cmd"  = "PassengerHelperAgent"; then
+   sleep $passenger_delay_ps
+fi
+
+exec /bin/ps "$@"
