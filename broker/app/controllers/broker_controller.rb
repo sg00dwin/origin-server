@@ -458,7 +458,7 @@ class BrokerController < ApplicationController
     end
   end
 
-  def user_keys_post
+  def ssh_keys_post
     begin
       # Parse the incoming data
       data = parse_json_data(params['json_data'])
@@ -470,9 +470,12 @@ class BrokerController < ApplicationController
         user = Libra::User.find(user_name)
         if user
           action = data['action']
-          if action == 'add-key'
+          if (action == 'add-key') || (action == 'update-key')
             if not data['ssh'] or not data['key_name']
               render :json => generate_result_json("Must provide 'key-name' and 'ssh' key for the user", nil, 105), :status => :invalid and return
+            end
+            if action == 'update-key'
+              user.remove_user_ssh_key(data['key_name'])
             end
             # check ssh key conflicts
             if (user.ssh == data['ssh']) || \
@@ -487,11 +490,11 @@ class BrokerController < ApplicationController
             end
             user.remove_user_ssh_key(data['key_name'])
           elsif action == 'list-keys'
-            user_keys = {}
+            ssh_keys = {}
             if defined?(user.ssh_keys)
-              user_keys = user.ssh_keys
+              ssh_keys = user.ssh_keys
             end
-            json_data = JSON.generate({ :user_keys => user_keys })
+            json_data = JSON.generate({ :ssh_keys => ssh_keys })
             render :json => generate_result_json(nil, json_data) and return
           else
             render :json => generate_result_json("Invalid action, allowed operations: 'add-key'/'remove-key'/'list-keys'", nil, 105), :status => :invalid and return
@@ -507,7 +510,7 @@ class BrokerController < ApplicationController
         render_unauthorized and return
       end    
     rescue Exception => e
-      render_error(e, 'user_keys_post') and return
+      render_error(e, 'ssh_keys_post') and return
     end
   end
  
