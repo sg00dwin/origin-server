@@ -123,7 +123,6 @@ module Cloud::SDK::Model
     def remove_ssh_key
       self.class.notify_observers(:before_remove_ssh_key,self,key)
       ssh_dir = File.join(@homedir, ".ssh")
-      cloud_name = @config.get("cloud_name") || "CDK"
       authorized_keys_file = File.join(ssh_dir,"authorized_keys")
       
       FileUtils.mkdir_p ssh_dir
@@ -144,18 +143,22 @@ module Cloud::SDK::Model
       self.class.notify_observers(:after_remove_ssh_key,self,key)
     end
     
-    def add_env_var(key,value)
+    def add_env_var(key, value, prefix_cloud_name=false)
       env_dir = File.join(@homedir,".env")      
-      cloud_name = @config.get("cloud_name") || "CDK"
-      File.open(File.join(env_dir,"#{cloud_name}_#{key}"),File::WRONLY|File::CREAT) do |file|
-        file.write "export #{cloud_name}_#{key}=#{value}"
+      if prefix_cloud_name
+        key = (@config.get("cloud_name") || "CDK") + "_#{key}"
+      end
+      File.open(File.join(env_dir, key),File::WRONLY|File::CREAT) do |file|
+        file.write "export #{key}=#{value}"
       end
     end
     
-    def remove_env_var(key)
-      env_dir = File.join(@homedir,".env")      
-      cloud_name = @config.get("cloud_name") || "CDK"
-      FileUtils.rm_f File.join(env_dir,"#{cloud_name}_#{key}")
+    def remove_env_var(key, prefix_cloud_name=false)
+      env_dir = File.join(@homedir,".env")
+      if prefix_cloud_name
+        key = (@config.get("cloud_name") || "CDK") + "_#{key}"
+      end
+      FileUtils.rm_f File.join(env_dir, key)
     end
     
     def add_broker_auth(iv,token)
@@ -171,15 +174,11 @@ module Cloud::SDK::Model
       FileUtils.chown_R("root",@uuid,broker_auth_dir)
       FileUtils.chmod(0o0750,broker_auth_dir)
       FileUtils.chmod(0o0640,Dir.glob("#{broker_auth_dir}/*"))
-      add_env_var("BROKER_AUTH_IV_FILE",File.join(broker_auth_dir,"iv"))
-      add_env_var("BROKER_AUTH_IV_TOKEN_FILE",File.join(broker_auth_dir,"token"))
     end
     
     def remove_broker_auth
       broker_auth_dir=File.join(@homedir,".auth")
       FileUtils.rm_rf broker_auth_dir
-      remove_env_var("BROKER_AUTH_IV_FILE")
-      remove_env_var("BROKER_AUTH_TOKEN_FILE")
     end
 
     def run_as(&block)
@@ -208,9 +207,9 @@ module Cloud::SDK::Model
       FileUtils.chmod(0o0750,env_dir)
       FileUtils.chown(nil,@uuid,env_dir)
 
-      add_env_var("APP_UUID",@application_uuid)
-      add_env_var("CONTAINER_UUID",@container_uuid)
-      add_env_var("HOMEDIR",@homedir)
+      add_env_var("APP_UUID", @application_uuid, true)
+      add_env_var("CONTAINER_UUID", @container_uuid, true)
+      add_env_var("HOMEDIR", @homedir, true)
       notify_observers(:after_initialize_homedir)        
     end
     

@@ -69,7 +69,7 @@ end
 
 begin
   container = Cloud::SDK::Model::ApplicationContainer.new(uuid,uuid)
-  container.user.add_env_var(key,value)
+  container.user.add_env_var(key, value)
 rescue Exception => e
   $stderr.puts(e.message)
   exit -1

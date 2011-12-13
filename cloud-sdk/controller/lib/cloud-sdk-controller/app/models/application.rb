@@ -349,7 +349,7 @@ class Application < Cloud::Sdk::Model
         result.append self.user.add_env_var(key,value)
       when "ENV_VAR_REMOVE"
         key = command_item[:args][0]
-        result.append self.user.remove_env_var(key)        
+        result.append self.user.remove_env_var(key)
       when "BROKER_KEY_ADD"
         add_broker_key
       when "BROKER_KEY_REMOVE"
