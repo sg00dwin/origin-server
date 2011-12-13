@@ -114,12 +114,10 @@ class CloudUser < Cloud::Sdk::Model
     dns_service = Cloud::Sdk::DnsService.instance
     begin
       if CloudUser.find(@rhlogin)
-        resultIO.errorIO << "A user with RHLogin '#{@rhlogin}' already exists"
-        resultIO.exitcode = 102
-        raise "A user with RHLogin '#{@rhlogin}' already exists"
+        raise Cloud::Sdk::UserException.new("A user with RHLogin '#{@rhlogin}' already exists", 102, resultIO)
       end
 
-      raise Cloud::Sdk::WorkflowException.new("A namespace with name '#{namespace}' already exists", 103, resultIO) unless dns_service.namespace_available?(@namespace)
+      raise Cloud::Sdk::UserException.new("A namespace with name '#{namespace}' already exists", 103, resultIO) unless dns_service.namespace_available?(@namespace)
 
       begin
         Rails.logger.debug "DEBUG: Attempting to add namespace '#{@namespace}' for user '#{@rhlogin}'"      
@@ -150,7 +148,7 @@ class CloudUser < Cloud::Sdk::Model
     notify_observers(:before_namespace_update)
     
     dns_service = Cloud::Sdk::DnsService.instance
-    raise Cloud::Sdk::WorkflowException.new("A namespace with name '#{namespace}' already exists", 103) unless dns_service.namespace_available?(@namespace)
+    raise Cloud::Sdk::UserException.new("A namespace with name '#{namespace}' already exists", 103) unless dns_service.namespace_available?(@namespace)
     
     begin
       dns_service.register_namespace(self.namespace)

@@ -119,10 +119,10 @@ class Application < Cloud::Sdk::Model
   def add_delegate_user(user_name, ssh_key)
     @ssh_keys = {} unless @ssh_keys
     if self.ssh_keys.keys.include?(user_name) and self.ssh_keys[user_name] != ssh_key
-      raise Cloud::Sdk::WorkflowException.new("User '#{user_name}' already has access to application '#{@name}' with a different SSH key", 143), caller[0..5]
+      raise Cloud::Sdk::UserException.new("User '#{user_name}' already has access to application '#{@name}' with a different SSH key", 143), caller[0..5]
     end
     @ssh_keys.each do |uname, ukey|
-      raise Cloud::Sdk::WorkflowException.new("SSH key is already being used by user #{uname} for application '#{@name}'. Use different key or delete conflicting key and retry", 143), caller[0..5] if ukey == ssh_key and uname != user_name
+      raise Cloud::Sdk::UserException.new("SSH key is already being used by user #{uname} for application '#{@name}'. Use different key or delete conflicting key and retry", 143), caller[0..5] if ukey == ssh_key and uname != user_name
     end
     ssh_keys_will_change!    
     self.ssh_keys[user_name] = ssh_key
@@ -242,7 +242,7 @@ class Application < Cloud::Sdk::Model
   
   def add_alias(server_alias)
     self.aliases = [] unless self.aliases
-    raise Cloud::Sdk::WorkflowException.new("Alias '#{server_alias}' already exists for '#{@name}'", 255), caller[0..5] if self.aliases.include? server_alias
+    raise Cloud::Sdk::UserException.new("Alias '#{server_alias}' already exists for '#{@name}'", 255), caller[0..5] if self.aliases.include? server_alias
     reply = ResultIO.new
     begin
       self.aliases.push(server_alias)
@@ -272,7 +272,7 @@ class Application < Cloud::Sdk::Model
         self.aliases.delete(server_alias)
         self.save
       else
-        raise Cloud::Sdk::WorkflowException.new("Alias '#{server_alias}' does not exist for '#{@name}'", 255, reply), caller[0..5]
+        raise Cloud::Sdk::UserException.new("Alias '#{server_alias}' does not exist for '#{@name}'", 255, reply), caller[0..5]
       end      
     end
     reply
@@ -285,7 +285,7 @@ class Application < Cloud::Sdk::Model
     Rails.logger.debug "DEBUG: Adding embedded app info from persistant storage: #{@name}:#{dep}"
     self.embedded = {} unless self.embedded
     
-    raise Cloud::Sdk::WorkflowException.new("#{dep} already embedded in '#{@name}'", 101), caller[0..5] if self.embedded[dep]
+    raise Cloud::Sdk::UserException.new("#{dep} already embedded in '#{@name}'", 101), caller[0..5] if self.embedded[dep]
     c_reply,component_details = self.container.add_component(self, dep)
     reply.append c_reply
     self.embedded[dep] = { "info" => component_details }
@@ -299,7 +299,7 @@ class Application < Cloud::Sdk::Model
     self.class.notify_observers(:before_remove_dependency, {:application => self, :dependency => dep, :reply => reply})
     self.embedded = {} unless self.embedded
         
-    raise Cloud::Sdk::WorkflowException.new("#{dep} not embedded in '#{@name}', try adding it first", 101), caller[0..5] unless self.embedded[dep]
+    raise Cloud::Sdk::UserException.new("#{dep} not embedded in '#{@name}', try adding it first", 101), caller[0..5] unless self.embedded[dep]
     reply.append self.container.remove_component(self, dep)
     self.embedded.delete dep
     self.save
@@ -308,27 +308,27 @@ class Application < Cloud::Sdk::Model
   end
   
   def start_dependency(dep)
-    raise Cloud::Sdk::WorkflowException.new("#{dep} not embedded in '#{@name}', try adding it first", 101), caller[0..5] unless self.embedded[dep]    
+    raise Cloud::Sdk::UserException.new("#{dep} not embedded in '#{@name}', try adding it first", 101), caller[0..5] unless self.embedded[dep]    
     self.container.start_component(self, dep)
   end
   
   def stop_dependency(dep)
-    raise Cloud::Sdk::WorkflowException.new("#{dep} not embedded in '#{@name}', try adding it first", 101), caller[0..5] unless self.embedded[dep]    
+    raise Cloud::Sdk::UserException.new("#{dep} not embedded in '#{@name}', try adding it first", 101), caller[0..5] unless self.embedded[dep]    
     self.container.stop_component(self, dep)
   end
   
   def restart_dependency(dep)
-    raise Cloud::Sdk::WorkflowException.new("#{dep} not embedded in '#{@name}', try adding it first", 101), caller[0..5] unless self.embedded[dep]    
+    raise Cloud::Sdk::UserException.new("#{dep} not embedded in '#{@name}', try adding it first", 101), caller[0..5] unless self.embedded[dep]    
     self.container.restart_component(self, dep)
   end
   
   def reload_dependency(dep)
-    raise Cloud::Sdk::WorkflowException.new("#{dep} not embedded in '#{@name}', try adding it first", 101), caller[0..5] unless self.embedded[dep]    
+    raise Cloud::Sdk::UserException.new("#{dep} not embedded in '#{@name}', try adding it first", 101), caller[0..5] unless self.embedded[dep]    
     self.container.reload_component(self, dep)
   end
   
   def dependency_status(dep)
-    raise Cloud::Sdk::WorkflowException.new("#{dep} not embedded in '#{@name}', try adding it first", 101), caller[0..5] unless self.embedded[dep]  
+    raise Cloud::Sdk::UserException.new("#{dep} not embedded in '#{@name}', try adding it first", 101), caller[0..5] unless self.embedded[dep]  
     self.container.component_status(self, dep)
   end
   

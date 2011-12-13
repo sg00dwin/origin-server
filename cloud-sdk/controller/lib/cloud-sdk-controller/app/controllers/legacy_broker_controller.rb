@@ -48,7 +48,7 @@ class LegacyBrokerController < ApplicationController
           end
         else
           app = Application.find(user, @req.app_name)
-          raise Cloud::Sdk::WorkflowException.new("Application #{@req.app_name} does not exist.", 143), caller[0..5] if app.nil?
+          raise Cloud::Sdk::UserException.new("Application #{@req.app_name} does not exist.", 143), caller[0..5] if app.nil?
           @reply.append app.add_delegate_user(@req.user_name, @req.ssh)
           app.save
         end
@@ -68,7 +68,7 @@ class LegacyBrokerController < ApplicationController
           end
         else
           app = Application.find(user, @req.app_name)
-          raise Cloud::Sdk::WorkflowException.new("Application #{@req.app_name} does not exist.", 143), caller[0..5] if app.nil?
+          raise Cloud::Sdk::UserException.new("Application #{@req.app_name} does not exist.", 143), caller[0..5] if app.nil?
           @reply.append app.remove_delegate_user(@req.user_name)
           app.save
         end
@@ -80,7 +80,7 @@ class LegacyBrokerController < ApplicationController
           end
         else
           app = Application.find(user, @req.app_name)
-          raise Cloud::Sdk::WorkflowException.new("Application #{@req.app_name} does not exist.", 143), caller[0..5] if app.nil?
+          raise Cloud::Sdk::UserException.new("Application #{@req.app_name} does not exist.", 143), caller[0..5] if app.nil?
           app_users[app.name] = app.ssh_keys
         end
         
@@ -105,7 +105,7 @@ class LegacyBrokerController < ApplicationController
        if not cloud_user.applications.empty?
          res_string = "Cannot remove namespace #{cloud_user.namespace}. Remove existing apps first.\n"
          cloud_user.applications.each { |app|
-	   res_string += app.name 
+	         res_string += app.name 
            res_string += "\n" 
          }
          @reply.resultIO << res_string
@@ -302,27 +302,23 @@ class LegacyBrokerController < ApplicationController
       logger.error e.backtrace
       @reply.append e.resultIO if e.resultIO
       @reply.resultIO << "An error occurred while contacting the authentication service. If the problem persists please contact Red Hat support."
-    when Cloud::Sdk::WorkflowException
-      logger.error "WorkflowException rescued in #{request.path}"
-      logger.error e.message
-      @reply.append e.resultIO if e.resultIO      
-      @reply.debugIO << e.message
-      @reply.debugIO << e.backtrace[0..5].join("\n")
-      @reply.messageIO << e.message
+    when Cloud::Sdk::UserException
+      @reply.append e.resultIO if e.resultIO
+      @reply.resultIO << e.message
       status = :bad_request
     when Cloud::Sdk::CdkException
       logger.error "Exception rescued in #{request.path}:"
       logger.error e.message
       logger.error e.backtrace
-      @reply.append e.resultIO if e.resultIO      
-      @reply.messageIO << "An internal error occurred [code: #{e.code}]. If the problem persists please contact support."
+      @reply.append e.resultIO if e.resultIO
+      @reply.resultIO << "An internal error occurred [code: #{e.code}]. If the problem persists please contact support."
     else
       logger.error "Exception rescued in #{request.path}:"
       logger.error e.message
       logger.error e.backtrace
       @reply.debugIO << e.message
       @reply.debugIO << e.backtrace[0..5].join("\n")
-      @reply.messageIO << e.message
+      @reply.resultIO << e.message
     end
     
     @reply.exitcode = e.respond_to?('exit_code') ? e.exit_code : 1
