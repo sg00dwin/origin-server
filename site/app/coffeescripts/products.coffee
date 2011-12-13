@@ -30,6 +30,6 @@ $ ->
       overview.addClass 'no_error'
     # check for errors when ajax is finished
     overview.bind 'ajax:complete', (xhr, status)->
-      unless status == 200
+      unless status.status == 200
         overview.removeClass 'no_error'
         

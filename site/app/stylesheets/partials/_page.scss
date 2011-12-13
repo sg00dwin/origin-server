@@ -969,7 +969,7 @@ body.product.overview { min-width: 55em; }
       margin-left: 1.5em;
     }
     input:focus { margin: .25em; }
-    input.button:focus { margin: .5em 0 5em 1.5em; }
+    input.button:focus { margin: .5em 0 .5em 1.5em; }
 
 
   }
@@ -980,7 +980,7 @@ body.product.overview { min-width: 55em; }
     float: right;
     font-weight: normal;
     font-family: $base_font_family;
-    margin: 0 1.4em;
+    margin: 0 1.3em;
   }
 }
 
