@@ -10,7 +10,7 @@ Feature: Idler
     And the php application is running
     When I idle the php application
     Then the php application will not be running
-    And the php application health-check will be successful
+#    And the php application health-check will be successful
 
 #  Scenario: Restore one PHP Application
 #    Given an accepted node

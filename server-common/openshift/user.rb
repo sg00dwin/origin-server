@@ -18,16 +18,16 @@ module Libra
     end
 
     attr_reader :rhlogin, :password
-    attr_accessor :ssh, :namespace, :uuid, :system_ssh_keys, :env_vars, :email_address
+    attr_accessor :ssh, :namespace, :uuid, :system_ssh_keys, :env_vars, :email_address, :ssh_keys
 
-    def initialize(rhlogin, ssh, system_ssh_keys, env_vars, namespace, uuid, password=nil, ticket=nil)
-      @rhlogin, @ssh, @system_ssh_keys, @env_vars, @namespace, @uuid, @password, @ticket = rhlogin, ssh, system_ssh_keys, env_vars, namespace, uuid, password, ticket
+    def initialize(rhlogin, ssh, system_ssh_keys, env_vars, namespace, uuid, password=nil, ticket=nil, ssh_keys={})
+      @rhlogin, @ssh, @system_ssh_keys, @env_vars, @namespace, @uuid, @password, @ticket, @ssh_keys = rhlogin, ssh, system_ssh_keys, env_vars, namespace, uuid, password, ticket, ssh_keys
       @roles = []
     end
 
     def self.from_json(json)
       data = JSON.parse(json)
-      new(data['rhlogin'], data['ssh'], data['system_ssh_keys'], data['env_vars'], data['namespace'], data['uuid'])
+      new(data['rhlogin'], data['ssh'], data['system_ssh_keys'], data['env_vars'], data['namespace'], data['uuid'], data['password'], data['ticket'], data['ssh_keys'])
     end
 
     #
@@ -124,6 +124,7 @@ module Libra
       data = {:rhlogin => rhlogin, :namespace => namespace, :ssh => ssh, :uuid => uuid}
       data[:system_ssh_keys] = system_ssh_keys if system_ssh_keys
       data[:env_vars] = env_vars if env_vars
+      data[:ssh_keys] = ssh_keys if ssh_keys
 
       json = JSON.generate(data)
       Libra.logger_debug "DEBUG: Updating user json:#{json}"
@@ -185,102 +186,47 @@ module Libra
       end
     end
 
-    def add_user_to_app(user_name, ssh_key, app, app_name)
-      if app['ssh_keys'] && app['ssh_keys'].has_key?(user_name)
-        raise NodeException.new(143), "Error: Setting access to app '#{app_name}' for user '#{user_name}'. You must delete existing user ssh-key for the app before assigning a new key.", caller[0..5]
-      end
-      server = Libra::Server.new app['server_identity']
-      server.add_ssh_key(app, ssh_key, user_name)
-      app['ssh_keys'] = {} if not app['ssh_keys']
-      app['ssh_keys'][user_name] = ssh_key
-      update_app(app, app_name)
-    end
-
-    def check_ssh_key(app, app_name, ssh_key)
-      return if not app['ssh_keys']
-      app['ssh_keys'].each do |user, key|
-        raise NodeException.new(143), "Error: Given public key is already used by user '#{user}' for app '#{app_name}'. Use different key or delete conflicting key and retry", caller[0..5] if ssh_key == key
+    #
+    # Add ssh key to the app
+    #
+    def add_user_ssh_key_to_app(app_name, ssh_key, comment=nil)
+      apps.each do |appname, app|
+        if appname == app_name
+          server = Libra::Server.new app['server_identity']
+          server.add_ssh_key(app, ssh_key, comment)
+          break
+        end
       end
     end
 
     #
-    # Add an ssh key for the specified app/apps 
+    # Add an ssh key for the user
     #
-    def add_app_ssh_key(user_name, ssh_key, app_name=nil)
-      if app_name.nil?
-        # check ssh key conflicts
-        apps.each do |appname, app|
-          check_ssh_key(app, appname, ssh_key)
-        end
-        apps.each do |appname, app|
-          add_user_to_app(user_name, ssh_key, app, appname)
-        end
-      else
-        found = false
-        apps.each do |appname, app|
-          if appname == app_name
-            check_ssh_key(app, appname, ssh_key)
-            add_user_to_app(user_name, ssh_key, app, appname)
-            found = true
-            break
-          end
-        end
-        raise NodeException.new(143), "Error: App '#{app_name}' doesn't exist.", caller[0..5] if not found
+    def add_user_ssh_key(key_name, ssh_key)
+      @ssh_keys = {} unless @ssh_keys
+      raise NodeException.new(143), "Error: Key name '#{key_name}' already in use, use different key. To upgrade a key, remove and re-add the key", caller[0..5] if @ssh_keys.key?(key_name)
+      apps.each do |appname, app|
+        server = Libra::Server.new app['server_identity']
+        server.add_ssh_key(app, ssh_key, key_name)
       end
-    end
-    
-    def remove_user_from_app(user_name, app, app_name)
-      server = Libra::Server.new app['server_identity']
-      server.remove_ssh_key(app, app['ssh_keys'][user_name])
-      app['ssh_keys'].delete(user_name)
-      update_app(app, app_name)
+      @ssh_keys[key_name] = ssh_key
+      update
     end
 
     #
-    # Remove an ssh key from the app
+    # Remove an ssh key for the user
     #
-    def remove_app_ssh_key(user_name, app_name=nil)
-      if app_name.nil?
+    def remove_user_ssh_key(key_name)
+      if @ssh_keys && @ssh_keys.key?(key_name)
         apps.each do |appname, app|
-          if app['ssh_keys'] && app['ssh_keys'].has_key?(user_name)
-            remove_user_from_app(user_name, app, appname)
-          end
+          server = Libra::Server.new app['server_identity']
+          server.remove_ssh_key(app, @ssh_keys[key_name])
         end
-      else
-        apps.each do |appname, app|
-          if (appname == app_name) and app['ssh_keys']
-            raise NodeException.new(143), "Error: User '#{user_name}' doesn't exist for app '#{app_name}'.", caller[0..5] if not app['ssh_keys'][user_name]
-            remove_user_from_app(user_name, app, appname)
-            break
-          end
-        end
+        @ssh_keys.delete(key_name)
+        update
       end
     end
-   
-    def list_app_users(app_name=nil)
-      app_users = {}
-      if app_name.nil?
-        apps.each do |appname, app|
-          users = []
-          if app['ssh_keys']
-            users += app['ssh_keys'].keys
-          end
-          app_users[appname] = users
-        end
-      else
-        found = false
-        apps.each do |appname, app|
-          if (appname == app_name) and app['ssh_keys']
-            app_users[appname] = app['ssh_keys'].keys
-            found = true
-            break
-          end
-        end
-        raise NodeException.new(143), "Error: App '#{app_name}' doesn't exist.", caller[0..5] if not found
-      end
-      return app_users
-    end
- 
+
     #
     # Add an ssh key for the specified app to access all other apps owned by the user
     #
@@ -471,8 +417,7 @@ module Libra
         'framework' => framework,
         'server_identity' => server.name,
         'creation_time' => creation_time,
-        'uuid' => uuid || Util.gen_small_uuid,
-        'ssh_keys' => {}
+        'uuid' => uuid || Util.gen_small_uuid
       }
       update_app(h, app_name)
       h

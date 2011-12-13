@@ -202,27 +202,28 @@ def execute_script(cmd)
   exitcode = nil
   output = ''
   (1..num_tries).each do |i|
-    read, write = IO.pipe
-    pid = fork {
-        # child
-        $stdout.reopen write
-        read.close
-        exec(cmd)
-    }
-    # parent
-    write.close
-    read.each do |line|
-        output << line
-    end
+    pid = nil
     begin
       Timeout::timeout(60) do
+        read, write = IO.pipe
+        pid = fork {
+          # child
+          $stdout.reopen write
+          read.close
+          exec(cmd)
+        }
+        # parent
+        write.close
+        read.each do |line|
+          output << line
+        end
         Process.waitpid(pid)
         exitcode = $?.exitstatus
       end
       break
     rescue Timeout::Error
       begin
-        Process.kill("TERM", pid)
+        Process.kill("TERM", pid) if pid
       rescue Exception => e
         puts "execute_script: WARNING - Failed to kill cmd: '#{cmd}' with message: #{e.message}"
       end

@@ -65,8 +65,8 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0750,-,-) %{brokerdir}/script
 %{brokerdir}
 %{htmldir}/broker
-%{_bindir}/rhc-admin-ctl-app
-%{_bindir}/rhc-get-user-info
+%attr(0750,-,-) %{_bindir}/rhc-admin-ctl-app
+%attr(0750,-,-) %{_bindir}/rhc-get-user-info
 
 %post
 /bin/touch %{brokerdir}/log/production.log

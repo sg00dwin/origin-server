@@ -28,8 +28,6 @@ When /^I idle the php application$/ do
     'name' => app_name,
     'namespace' => namespace
   }
-  command = $php_config_format % [app_name, namespace, account_name]
-  runcon command,  'unconfined_u', 'system_r', 'libra_initrc_t'
   run("/usr/bin/rhc-idler -u #{@account['accountname']}")
 end
 
