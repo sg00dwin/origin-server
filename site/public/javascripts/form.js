@@ -1,5 +1,5 @@
-/* DO NOT MODIFY. This file was compiled Tue, 13 Dec 2011 18:08:17 GMT from
- * /Users/alex/Source/li/site/app/coffeescripts/form.coffee
+/* DO NOT MODIFY. This file was compiled Tue, 13 Dec 2011 19:01:18 GMT from
+ * /home/fotios/openshift/li/site/app/coffeescripts/form.coffee
  */
 
 (function() {
@@ -158,18 +158,18 @@
       $parent = $form.parent();
       $parent.find('div.message').remove();
       $msg = $('<div>').addClass('message').hide().insertBefore($form);
-      type = $form.closest('.dialog').attr('id');
+      type = $parent.attr('id');
       switch (type) {
-        case 'signup':
+        case 'new-user':
           registration_complete($form, $msg, $json, status.status);
           break;
-        case 'signin':
+        case 'login-form':
           login_complete($form, $msg, $json, status.status);
           break;
-        case 'reset_password':
+        case 'password-reset-form':
           reset_password_complete($form, $msg, $json, true);
           break;
-        case 'change_password':
+        case 'change-password-form':
           reset_password_complete($form, $msg, $json, false);
           break;
       }
