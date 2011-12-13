@@ -7,8 +7,8 @@ class CloudUserObserver < ActiveModel::Observer
 
   def cloud_user_create_success(user)
     # add nurture and apptegic
-    Nurture.libra_contact(user.rhlogin, user.uuid, user.namespace, 'create')
-    Apptegic.libra_contact(user.rhlogin, user.uuid, user.namespace, 'create')
+    Express::Broker::Nurture.libra_contact(user.rhlogin, user.uuid, user.namespace, 'create')
+    Express::Broker::Apptegic.libra_contact(user.rhlogin, user.uuid, user.namespace, 'create')
     # if any of the above fail, it will result in the user being deleted
   end
 
@@ -23,8 +23,8 @@ class CloudUserObserver < ActiveModel::Observer
   end
 
   def namespace_update_success(user)
-    Nurture.libra_contact(user.rhlogin, user.uuid, user.namespace, 'create')
-    Apptegic.libra_contact(user.rhlogin, user.uuid, user.namespace, 'create')
+    Express::Broker::Nurture.libra_contact(user.rhlogin, user.uuid, user.namespace, 'create')
+    Express::Broker::Apptegic.libra_contact(user.rhlogin, user.uuid, user.namespace, 'create')
   end
 
   def namespace_update_error(user)

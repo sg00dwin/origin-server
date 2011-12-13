@@ -136,7 +136,7 @@ class LegacyBrokerController < ApplicationController
       :rhlogin    => cloud_user.rhlogin,
       :uuid       => cloud_user.uuid,
       :rhc_domain => Rails.application.config.cdk[:domain_suffix]
-    }
+    }.to_json
       
     render :json => @reply
   end
