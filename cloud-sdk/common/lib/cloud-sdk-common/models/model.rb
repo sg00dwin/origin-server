@@ -126,7 +126,7 @@ module Cloud
       
       def delete(login)
         id_var = self.class.pk || "uuid"
-        DataStore.instance.delete(self.class.name,login, instance_variable_get("@#{id_var}"))
+        DataStore.instance.delete(self.class.name, login, instance_variable_get("@#{id_var}"))
       end
       
       def save(login)

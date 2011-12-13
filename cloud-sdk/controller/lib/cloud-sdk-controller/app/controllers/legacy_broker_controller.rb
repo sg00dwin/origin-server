@@ -101,7 +101,7 @@ class LegacyBrokerController < ApplicationController
     if @req.alter
       cloud_user.ssh = @req.ssh
       cloud_user.namespace = @req.namespace
-    elsif @req.delete
+    elsif @req.delete @login
        if not cloud_user.applications.empty?
          res_string = "Cannot remove namespace #{cloud_user.namespace}. Remove existing apps first.\n"
          cloud_user.applications.each { |app|
