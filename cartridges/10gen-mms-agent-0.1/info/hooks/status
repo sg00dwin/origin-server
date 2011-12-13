@@ -42,4 +42,11 @@ done
 
 [ $# -eq 3 ] || print_help
 
-runuser --shell /bin/sh "$uuid" -c "if [ 'ps -ef | grep ${uuid}_agent.py | grep -v grep > /dev/null' ]; then echo Running; else echo Stopped; fi"
+
+CART_DIR=/usr/libexec/li/cartridges
+source ${CART_DIR}/abstract/info/lib/util
+
+setup_basic_hook "$1" $2 $3
+
+
+runuser --shell /bin/sh "$uuid" -c "if ps -ef | grep ${uuid}_agent.py | grep -qv grep > /dev/null; then echo Running; else echo Stopped; fi"

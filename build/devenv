@@ -629,6 +629,70 @@ END
       puts "Couldn't find ../os-client-tools."
     end
   end  
+  
+  desc "sync_groups GROUPNAME", "Copies the security group permission from specified region to other regions"
+  method_option :clean, :type => :boolean, :desc => "Revokes any existing permissions and starts fresh"
+  method_option :region, :required => false, :default => 'us-east-1', :desc => "Amazon region to copy (default us-east-1)"
+  def sync_groups(group_name)
+    conn = connect
+    origin_sg = conn.regions[options.region].security_groups.filter('group-name', group_name).first
+    if(origin_sg.nil?)
+      puts "Group #{group_name} not found in region #{options.region}"
+      exit 1
+    end
+    conn.regions.each do |region|
+      #skip the region of origin
+      next if(region.name == options.region) 
+      
+      puts "Synching #{region.name}"
+      sg = conn.regions[region.name].security_groups.filter('group-name', group_name).first
+      #If group does not exist then create it
+      if(sg.nil?)
+        sg = conn.regions[region.name].security_groups.create(group_name)
+        #open access within the group
+        sg.authorize_ingress(:tcp, 0..65535, sg)
+        sg.authorize_ingress(:udp, 0..65535, sg)
+        sg.authorize_ingress(:icmp, -1, sg)
+      elsif (options.clean)
+        puts "Revoking existing permissions"
+        sg.ingress_ip_permissions.each do |i|
+          i.revoke()
+        end
+        #open access within the group
+        sg.authorize_ingress(:tcp, 0..65535, sg)
+        sg.authorize_ingress(:udp, 0..65535, sg)
+        sg.authorize_ingress(:icmp, -1, sg)
+      end
+      puts "Adding permissions"
+      origin_sg.ingress_ip_permissions.each do |i|
+        i.ip_ranges.each do |ip| 
+          puts "#{i.protocol}  \tport_range=#{i.port_range}\t" + 
+            "ip_range=#{ip} "
+          begin
+            sg.authorize_ingress(i.protocol , i.port_range, ip )
+          rescue AWS::EC2::Errors::InvalidPermission::Duplicate
+            puts "Permission already exists."
+          end 
+        end
+        i.groups.each do |g| 
+          if(g.owner_id != sg.owner_id)
+            puts "#{i.protocol}  \tport_range=#{i.port_range}\t" + 
+              "group name=#{g.name} owner=#{g.owner_id} id=#{g.group_id} " 
+            if(g.exists?)
+              begin
+                sg.authorize_ingress(i.protocol , i.port_range, g )
+              rescue AWS::EC2::Errors::InvalidPermission::Duplicate
+                puts "Permission already exists."
+              end 
+            else
+              puts "ERROR: Group name=#{g.name} owner=#{g.owner_id} id=#{g.group_id} " + 
+                "does not exist or is in a different region."
+            end
+          end
+        end
+      end
+    end
+  end
 end
 
 DevEnv.start

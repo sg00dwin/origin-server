@@ -1,5 +1,10 @@
+/* DO NOT MODIFY. This file was compiled Tue, 13 Dec 2011 19:54:11 GMT from
+ * /Users/alex/Source/li/site/app/coffeescripts/products.coffee
+ */
+
 (function() {
-  /* Scripts for the product pages */  var $, retweetError, retweetSuccess, _this;
+  /* Scripts for the product pages */
+  var $, retweetError, retweetSuccess, _this;
   $ = jQuery;
   _this = this;
   retweetSuccess = function(data, textStatus, jqXHR) {
@@ -32,7 +37,7 @@
         overview.addClass('no_error');
       }
       return overview.bind('ajax:complete', function(xhr, status) {
-        if (status !== 200) {
+        if (status.status !== 200) {
           return overview.removeClass('no_error');
         }
       });

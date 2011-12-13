@@ -10,6 +10,8 @@ require 'base64'
 include Libra
 
 class BrokerController < ApplicationController
+  include ApplicationHelper
+
   BROKER_VERSION    = "1.1.1"
   BROKER_CAPABILITY = %w(namespace rhlogin ssh app_uuid debug alter cartridge cart_type action app_name api)
 
@@ -420,7 +422,11 @@ class BrokerController < ApplicationController
         #TODO handle subsets (Ex: all php)
       end
 
-      carts = Libra::Util.get_cartridges_list(cart_type)
+      cache_key = "cart_list_#{cart_type}"
+      carts = get_cached(cache_key, :expires_in => 3600.seconds) {
+        Libra::Util.get_cartridges_list(cart_type)
+      }
+
       json_data = JSON.generate({
                               :carts => carts
                               })

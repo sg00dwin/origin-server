@@ -41,6 +41,21 @@ class Prune < Thor
       end
     end
   end
+  desc "security_groups PATTERN", "prune unused security groups matching pattern"
+  def security_groups(pattern)
+    conn = connect
+    conn.regions.each do |region|
+      security_groups = region.security_groups.filter('group-name', pattern)
+      security_groups.each do |s|
+        begin
+          puts "Deleting security group #{s.name} in #{region.name}"
+          s.delete()
+        rescue AWS::EC2::Errors::InvalidGroup::InUse
+          puts "security group #{s.name} is in use and cannot be deleted"
+        end
+      end
+    end
+  end
 end
 
 Prune.start

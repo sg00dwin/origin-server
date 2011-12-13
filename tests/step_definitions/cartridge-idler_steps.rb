@@ -20,14 +20,20 @@ $php_status_format = "#{$php_status_path} '%s' '%s' '%s'"
 
 $libra_httpd_conf_d ||= "/etc/httpd/conf.d/libra"
 
+Given /^a new php_idler application$/ do
+  account_name = @account['accountname']
+  app_name = 'app_idler'
+  namespace = 'ns_idler'
+  @app = {
+    'namespace' => namespace,
+    'name' => app_name
+  }
+  command = $php_config_format % [app_name, namespace, account_name]
+  runcon command, 'unconfined_u', 'system_r', 'libra_initrc_t'
+end
+
 When /^I idle the php application$/ do
   account_name = @account['accountname']
-  namespace = "ns1"
-  app_name = "app1"
-  @app = {
-    'name' => app_name,
-    'namespace' => namespace
-  }
   run("/usr/bin/rhc-idler -u #{@account['accountname']}")
 end
 
