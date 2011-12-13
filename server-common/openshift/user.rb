@@ -216,7 +216,7 @@ module Libra
     #
     # Remove an ssh key for the user
     #
-    def remove_user_ssh_key(key_name, app, app_name)
+    def remove_user_ssh_key(key_name)
       if @ssh_keys && @ssh_keys.key?(key_name)
         apps.each do |appname, app|
           server = Libra::Server.new app['server_identity']
