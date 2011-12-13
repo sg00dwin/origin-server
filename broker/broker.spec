@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.83.6
+Version:   0.83.7
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -72,6 +72,14 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Tue Dec 13 2011 Dan McPherson <dmcphers@redhat.com> 0.83.7-1
+- Cache cartridge list, default TTL of 1 hour (aboone@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- Multi-key support: bug-fixes (rpenta@redhat.com)
+- fixing permissions (mmcgrath@redhat.com)
+- Multi-key support: Update <key-name>:<ssh-pubkey> info s3/user.json, nuke app
+  specific ssh key info (rpenta@redhat.com)
+
 * Mon Dec 12 2011 Dan McPherson <dmcphers@redhat.com> 0.83.6-1
 - Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
 - Multi-user rest api: Use 'action'=add-user/remove-user/list-users instead of

@@ -323,7 +323,6 @@ may be ok if '#{app_name}#{BUILDER_SUFFIX}' was the builder of a previously dest
 
 
     server = Server.new(app_info['server_identity'])
-      
     check_cartridge_type(framework, server, 'embedded')
 
     begin
@@ -441,6 +440,12 @@ may be ok if '#{app_name}#{BUILDER_SUFFIX}' was the builder of a previously dest
         server.add_ssh_key(app_info, ssh_key)
       end if user.system_ssh_keys
       
+      # Add any user ssh keys
+      user.ssh_keys = {} if !defined?(user.ssh_keys) || !user.ssh_keys.kind_of?(Hash)
+      user.ssh_keys.each do |key_name, ssh_key|
+        server.add_ssh_key(app_info, ssh_key, key_name)
+      end
+
       # Add any secondary env vars
       user.env_vars.each do |key, value|
         server.add_env_var(app_info, key, value)

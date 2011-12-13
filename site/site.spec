@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.83.8
+Version:   0.83.9
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -68,6 +68,14 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Tue Dec 13 2011 Dan McPherson <dmcphers@redhat.com> 0.83.9-1
+- Fixes for BZ 759002: (aboone@redhat.com)
+- Fixed the way form.js determines AJAX workflow (fotios@redhat.com)
+- Fix a variable name bug in b5b7832 (aboone@redhat.com)
+- Fix for BZ766490: Modified dialog message CSS and javascript to truncate long
+  messages and added a margin to prevent overlap with close button
+  (fotios@redhat.com)
+
 * Mon Dec 12 2011 Dan McPherson <dmcphers@redhat.com> 0.83.8-1
 - Small changes to product overview styling (edirsh@redhat.com)
 - put min-width on body so that text does not overflow onto dark bg

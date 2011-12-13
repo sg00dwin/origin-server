@@ -50,20 +50,8 @@ module LibraMigration
     end
   
     def self.execute_script(cmd)
-      pid, stdin, stdout, stderr = Open4::popen4(cmd)
-      stdin.close
-      ignored, status = Process::waitpid2 pid
-      exitcode = status.exitstatus
-      output = ''
-      begin
-        Timeout::timeout(5) do
-          while (line = stdout.gets)
-            output << line
-          end
-        end
-      rescue Timeout::Error
-        Log.instance.debug("execute_script WARNING - stdout read timed out")
-      end
+      output = `#{cmd}`
+      exitcode = $?.exitstatus
       return output, exitcode
     end
   end

@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.83.6
+Version:   0.83.7
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -88,6 +88,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Tue Dec 13 2011 Dan McPherson <dmcphers@redhat.com> 0.83.7-1
+- removed modules.jsp for Bug 756425 (wdecoste@localhost.localdomain)
+
 * Wed Dec 07 2011 Matt Hicks <mhicks@redhat.com> 0.83.6-1
 - US1550: disable CONSOLE logging (wdecoste@localhost.localdomain)
 - use JDK 1.6 (wdecoste@localhost.localdomain)

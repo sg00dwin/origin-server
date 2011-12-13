@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.83.11
+Version:       0.83.12
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -175,6 +175,13 @@ fi
 %dir %attr(0755,root,root) %{_sysconfdir}/libra/skel
 
 %changelog
+* Tue Dec 13 2011 Dan McPherson <dmcphers@redhat.com> 0.83.12-1
+- less popen usage (dmcphers@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- Multi-key support: Update <key-name>:<ssh-pubkey> info s3/user.json, nuke app
+  specific ssh key info (rpenta@redhat.com)
+- fixing redirect to function correctly (mmcgrath@redhat.com)
+
 * Mon Dec 12 2011 Dan McPherson <dmcphers@redhat.com> 0.83.11-1
 - add 2.0.2 migration (dmcphers@redhat.com)
 

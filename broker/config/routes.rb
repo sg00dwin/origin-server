@@ -14,7 +14,7 @@ Broker::Application.routes.draw do
     match 'userinfo' => 'broker#user_info_post', :via => [:post]
     match 'cartlist' => 'broker#cart_list_post', :via => [:post]
     match 'nurture' => 'broker#nurture_post', :via => [:post]
-    match 'user_keys' => 'broker#user_keys_post', :via => [:post]
+    match 'ssh_keys' => 'broker#ssh_keys_post', :via => [:post]
 
     # Sample resource route with options:
     #   resources :products do
