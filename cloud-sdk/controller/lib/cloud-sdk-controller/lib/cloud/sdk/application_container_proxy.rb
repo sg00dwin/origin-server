@@ -109,6 +109,9 @@ module Cloud
       
       def component_status(app, component)
       end
+      
+      def move_app(app, destination_container_proxy)
+      end
     end
   end
 end

@@ -101,6 +101,10 @@ module Express
         rpc_get_fact_direct('public_hostname')
       end
       
+      def get_ip_address
+        rpc_get_fact_direct('ipaddress')
+      end
+      
       def start(app, cart)
         run_cartridge_command(cart, app, "start")
       end
@@ -188,6 +192,107 @@ module Express
       
       def component_status(app, component)
         run_cartridge_command('embedded/' + component, app, "status")    
+      end
+      
+      def move_app(app, destination_container_proxy)
+        unless app.embedded.nil?
+          raise Cloud::Sdk::UserException.new("Cannot move app '#{app.name}' with mysql embedded",1), caller[0..5] if app.embedded.has_key?('mysql-5.1') 
+          raise Cloud::Sdk::UserException.new("Cannot move app '#{app.name}' with mongo embedded",1), caller[0..5] if app.embedded.has_key?('mongodb-2.0')           
+        end
+
+        if destination_container_proxy.nil?
+          destination_container_proxy = Cloud::Sdk::ApplicationContainerProxy.find_available(app.node_profile)
+        end
+        
+        raise UserException.new("Error moving app.  Old and new servers are the same: #{@id}", 1), , caller[0..5] if @id = destination_container_proxy.id
+
+        Rails.logger.debug "DEBUG: Moving app '#{app.name}' with uuid #{app.uuid} from #{@id} to #{destination_container_proxy.id}"
+
+        num_tries = 2
+        reply = ResultIO.new
+        begin
+          Rails.logger.debug "DEBUG: Stopping existing app '#{app.name}' before moving"
+          (1..num_tries).each do |i|
+            begin
+              reply.append self.stop(app, app.framework)
+              break
+            rescue Exception => e
+              Rails.logger.debug "DEBUG: Error stopping existing app on try #{i}: #{e.message}"
+              raise if i == num_tries
+            end
+          end
+
+          begin
+            Rails.logger.debug "DEBUG: Creating new account for app '#{app.name}' on #{destination_container_proxy.id}"
+            reply.append destination_container_proxy.create(app)
+
+            Rails.logger.debug "DEBUG: Moving content for app '#{app.name}' to #{destination_container_proxy.id}"
+            `eval \`ssh-agent\`; ssh-add /var/www/libra/broker/config/keys/rsync_id_rsa; ssh -o StrictHostKeyChecking=no -A root@#{self.get_ip_address} "rsync -a -e 'ssh -o StrictHostKeyChecking=no' /var/lib/libra/#{app.uuid}/ root@#{destination_container_proxy.get_ip_address}:/var/lib/libra/#{app.uuid}/"`
+            if $?.exitstatus != 0
+              raise Cloud::Sdk::NodeException.new("Error moving app '#{app.name}' from #{@id} to #{destination_container_proxy.id}", 143), caller[0..5]
+            end
+
+            begin
+              Rails.logger.debug "DEBUG: Performing cartridge level move for '#{app.name}' on #{destination_container_proxy.id}"
+              reply.append destination_container_proxy.send(:run_cartridge_command, app.framework, app, "move")
+              unless app.embedded.nil?
+                app.embedded.each do |cart, cart_info|
+                  Libra.logger_debug "DEBUG: Performing cartridge level move for embedded #{cart} for '#{app.name}' on #{destination_container_proxy.id}"
+                  reply.append destination_container_proxy.send(:run_cartridge_command, "embedded/" + cart, app, "move")
+                end
+              end
+              
+              unless app.aliases.nil?
+                app.aliases.each do |server_alias|
+                  destination_container_proxy.add_alias(app, app.framework, server_alias)
+                end
+              end
+            rescue Exception => e
+              reply.append destination_container_proxy.send(:run_cartridge_command, app.framework, app, "remove_httpd_proxy")              
+              raise
+            end
+
+            Rails.logger.debug "DEBUG: Starting '#{app.name}' after move on #{destination_container_proxy.id}"
+            (1..num_tries).each do |i|
+              begin
+                reply.append destination_container_proxy.start(app, app.framework)
+                break
+              rescue Exception => e
+                Rails.logger.debug "DEBUG: Error starting after move on try #{i}: #{e.message}"
+                raise if i == num_tries
+              end
+            end
+
+            Rails.logger.debug "DEBUG: Fixing DNS and s3 for app '#{app.name}' after move"
+            Rails.logger.debug "DEBUG: Changing server identity of '#{app.name}' from '#{@id}' to '#{destination_container_proxy.id}'"
+            app.server_identity = destination_container_proxy.id
+            app.container = destination_container_proxy
+            reply.append app.destroy_dns
+            reply.append app.create_dns
+            app.save
+          rescue Exception => e
+            reply.append destination_container_proxy.destroy(app)
+            raise
+          end
+        rescue Exception => e
+          reply.append self.start(app, app.framework)
+          raise
+        ensure
+          Rails.logger.debug "URL: http://#{app_name}-#{user.namespace}.#{Rails.application.config.cdk[:domain_suffix]}"
+        end
+
+        Rails.logger.debug "DEBUG: Deconfiguring old app '#{app.name}' on #{@id} after move"
+        (1..num_tries).each do |i|
+          begin
+            reply.append self.destroy(app)
+            break
+          rescue Exception => e
+            Rails.logger.debug "DEBUG: Error deconfiguring old app on try #{i}: #{e.message}"
+            raise if i == num_tries
+          end
+        end
+        Rails.logger.debug "Successfully moved '#{app.name}' with uuid #{app.uuid} from #{@id} to #{destination_container_proxy.id}"
+        reply
       end
     
       private
@@ -304,7 +409,7 @@ module Express
                   result.cart_commands.push({:command => "BROKER_KEY_REMOVE", :args => []})
                 end
               else
-                result.resultIO << line
+                result.debugIO << line
               end
             else # exitcode != 0
               result.debugIO << line
