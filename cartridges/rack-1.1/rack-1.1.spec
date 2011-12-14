@@ -2,7 +2,7 @@
 
 Summary:   Provides ruby rack support running on Phusion Passenger
 Name:      rhc-cartridge-rack-1.1
-Version:   0.83.5
+Version:   0.83.6
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -104,6 +104,14 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Wed Dec 14 2011 Dan McPherson <dmcphers@redhat.com> 0.83.6-1
+- Missed mentioning prior commit 64296b44d9440857b0c3dbfa0af5a0844837f7fb is
+  fix for bugz 767485. (ramr@redhat.com)
+- Merge branch 'master' of li-master:/srv/git/li (ramr@redhat.com)
+- Rework a bit to make it more efficient + sleeping of 40 secs messes up stop
+  -- Passenger code hangs on child process + we have a default 10 sec timeout
+  on all rhc command line ops. (ramr@redhat.com)
+
 * Tue Dec 13 2011 Dan McPherson <dmcphers@redhat.com> 0.83.5-1
 - Sorta hackish fix for bugz 717671 -- PassengerHelperAgent calls ps every 4
   secs for every rack env -- throttle the ps command issued by
