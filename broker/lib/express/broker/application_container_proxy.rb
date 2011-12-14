@@ -204,7 +204,7 @@ module Express
           destination_container_proxy = Cloud::Sdk::ApplicationContainerProxy.find_available(app.node_profile)
         end
         
-        raise UserException.new("Error moving app.  Old and new servers are the same: #{@id}", 1), , caller[0..5] if @id = destination_container_proxy.id
+        raise UserException.new("Error moving app.  Old and new servers are the same: #{@id}", 1), caller[0..5] if @id == destination_container_proxy.id
 
         Rails.logger.debug "DEBUG: Moving app '#{app.name}' with uuid #{app.uuid} from #{@id} to #{destination_container_proxy.id}"
 
