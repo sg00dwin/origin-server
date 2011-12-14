@@ -1,6 +1,5 @@
 require 'openshift'
 require 'active_support'
-require 'open4'
 
 module AppHelper
   class TestApp
@@ -102,26 +101,20 @@ module AppHelper
     end
 
     def curl(url, timeout=30)
-      pid, stdin, stdout, stderr = Open4::popen4("curl --insecure -s --max-time #{timeout} #{url}")
-
-      stdin.close
-      ignored, status = Process::waitpid2 pid
-      exit_code = status.exitstatus
-      body = stdout.read
+      body = `curl --insecure -s --max-time #{timeout} #{url}`
+      exit_code = $?.exitstatus
 
       return exit_code, body
     end
 
     def curl_head(url, host=nil)
       if host
-        pid, stdin, stdout, stderr = Open4::popen4("curl --insecure -s --head -H 'Host: #{host}' --max-time 30 #{url} | grep 200")
+        `curl --insecure -s --head -H 'Host: #{host}' --max-time 30 #{url} | grep 200`
       else
-        pid, stdin, stdout, stderr = Open4::popen4("curl --insecure -s --head --max-time 30 #{url} | grep 200")
+        `curl --insecure -s --head --max-time 30 #{url} | grep 200`
       end
-
-      stdin.close
-      ignored, status = Process::waitpid2 pid
-      return status.exitstatus
+      exit_code = $?.exitstatus
+      return exit_code
     end
 
     def is_inaccessible?(max_retries=60)
