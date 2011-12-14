@@ -122,11 +122,15 @@ class ApplicationController < ActionController::Base
         end
       end
       unless workflow
-        session[:login_workflow] = @default_login_workflow ? @default_login_workflow : product_overview_path
+        session[:login_workflow] = default_logged_in_redirect
       end
     end
   end
   
+  def default_logged_in_redirect
+    return @default_login_workflow ? @default_login_workflow : product_overview_path
+  end
+
   def remote_request?(referrer)
     return referrer.host && ((request.host != referrer.host) || !referrer.path.start_with?('/app'))
   end

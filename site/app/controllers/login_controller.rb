@@ -18,6 +18,10 @@ class LoginController < ApplicationController
   end
 
   def show
+    if logged_in?
+      redirect_to default_logged_in_redirect and return
+    end
+
     remote_request = false
     referrer = nil
     if request.referer && request.referer != '/'
