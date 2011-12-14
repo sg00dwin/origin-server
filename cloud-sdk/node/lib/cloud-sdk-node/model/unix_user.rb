@@ -47,7 +47,7 @@ module Cloud::SDK::Model
         @uid = user_info.uid
         @gid = user_info.gid
         @gecos = user_info.gecos
-        @homedir = user_info.dir
+        @homedir = "#{user_info.dir}/"
       rescue ArgumentError => e
         @uid = nil
         @gid = nil
