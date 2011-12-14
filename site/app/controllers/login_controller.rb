@@ -18,6 +18,10 @@ class LoginController < ApplicationController
   end
 
   def show
+    if logged_in?
+      redirect_to default_logged_in_redirect and return
+    end
+
     remote_request = false
     referrer = nil
     if request.referer && request.referer != '/'
@@ -53,7 +57,12 @@ class LoginController < ApplicationController
     session[:login] = params['login']
     session[:ticket] = "test"
     session[:user] = WebUser.new(:email_address => params['login'], :rhlogin => params['login'])
-    cookies[:rh_sso] = 'test'
+    cookies[:rh_sso] = {
+      :secure => true,
+      :domain => '.redhat.com',
+      :path => '/',
+      :value => 'test'
+    }
 
     Rails.logger.debug "Session workflow in LoginController#create: #{workflow}"
     Rails.logger.debug "Redirecting to home#index"
@@ -72,7 +81,12 @@ class LoginController < ApplicationController
       session[:login] = params['login']
       session[:ticket] = "test"
       session[:user] = WebUser.new(:email_address => params['login'], :rhlogin => params['login'])
-      cookies[:rh_sso] = 'test'
+      cookies[:rh_sso] = {
+        :secure => true,
+        :domain => '.redhat.com',
+        :path => '/',
+        :value => 'test'
+      }
       @message = 'Welcome back to OpenShift!'
       @message_type = 'success'
       set_previous_login_detection
