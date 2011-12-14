@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.83.7
+Version:   0.83.8
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -72,6 +72,12 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Tue Dec 13 2011 Dan McPherson <dmcphers@redhat.com> 0.83.8-1
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- Multi-key : move addition of ssh key to new app into libra.rb
+  (rpenta@redhat.com)
+- Multile ssh-keys: allow "action=update-key" (rpenta@redhat.com)
+
 * Tue Dec 13 2011 Dan McPherson <dmcphers@redhat.com> 0.83.7-1
 - Cache cartridge list, default TTL of 1 hour (aboone@redhat.com)
 - Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)

@@ -67,10 +67,15 @@ ln -s %{cartridgedir}/../abstract/info/hooks/remove-alias %{buildroot}%{cartridg
 ln -s %{cartridgedir}/../abstract/info/hooks/move %{buildroot}%{cartridgedir}/info/hooks/move
 
 %post
-#maven
+# To modify an alternative you should:
+# - remove the previous version if it's no longer valid
+# - install the new version with an increased priority
+# - set the new version as the default to be safe
 alternatives --install /etc/alternatives/maven-3.0 maven-3.0 /usr/share/java/apache-maven-3.0.3 100
-alternatives --install /etc/alternatives/jbossas-7.0 jbossas-7.0 /opt/jboss-as-7.0.2.Final 100
-
+alternatives --set maven-3.0 /usr/share/java/apache-maven-3.0.3
+alternatives --remove jbossas-7.0 /opt/jboss-as-web-7.0.1.Final
+alternatives --install /etc/alternatives/jbossas-7.0 jbossas-7.0 /opt/jboss-as-7.0.2.Final 101
+alternatives --set jbossas-7.0 /opt/jboss-as-7.0.2.Final
 
 %clean
 rm -rf %{buildroot}

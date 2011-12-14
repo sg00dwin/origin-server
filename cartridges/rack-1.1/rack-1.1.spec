@@ -2,7 +2,7 @@
 
 Summary:   Provides ruby rack support running on Phusion Passenger
 Name:      rhc-cartridge-rack-1.1
-Version:   0.83.4
+Version:   0.83.5
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -104,6 +104,12 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Tue Dec 13 2011 Dan McPherson <dmcphers@redhat.com> 0.83.5-1
+- Sorta hackish fix for bugz 717671 -- PassengerHelperAgent calls ps every 4
+  secs for every rack env -- throttle the ps command issued by
+  PassengerHelperAgent. Note ps is the name of the executable in the rack
+  cartridge and federates calls to /bin/ps. (ramr@redhat.com)
+
 * Thu Dec 08 2011 Alex Boone <aboone@redhat.com> 0.83.4-1
 - Bug 761338 (dmcphers@redhat.com)
 
