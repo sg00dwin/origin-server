@@ -1,3 +1,4 @@
+class LegacyBrokerController < ApplicationController
   layout nil
   before_filter :validate_request
   before_filter :authenticate, :except => :cart_list_post
@@ -149,8 +150,7 @@
         return
       end
     when 'deconfigure'
-      app = Application.find(user, @req.app_name)
-      raise Cloud::Sdk::UserException.new("An application named '#{@req.app_name}' does not exist", 101), caller[0..5] if app.nil?
+      app = get_app_from_request(user)
       @reply.append app.destroy
       
       if app.framework_cartridge == "jenkins"
@@ -163,40 +163,31 @@
       app.delete
       @reply.resultIO << "Successfully destroyed application: #{app.name}" if @reply.resultIO.string.empty?
     when 'start'
-      app = Application.find(user, @req.app_name)
-      raise Cloud::Sdk::UserException.new("An application named '#{@req.app_name}' does not exist", 101), caller[0..5] if app.nil?
+      app = get_app_from_request(user)
       @reply.append app.start
     when 'stop'
-      app = Application.find(user, @req.app_name)
-      raise Cloud::Sdk::UserException.new("An application named '#{@req.app_name}' does not exist", 101), caller[0..5] if app.nil?
+      app = get_app_from_request(user)
       @reply.append app.stop
     when 'restart'
-      app = Application.find(user, @req.app_name)
-      raise Cloud::Sdk::UserException.new("An application named '#{@req.app_name}' does not exist", 101), caller[0..5] if app.nil?
+      app = get_app_from_request(user)
       @reply.append app.restart
     when 'force-stop'
-      app = Application.find(user, @req.app_name)
-      raise Cloud::Sdk::UserException.new("An application named '#{@req.app_name}' does not exist", 101), caller[0..5] if app.nil?
+      app = get_app_from_request(user)
       @reply.append app.force_stop
     when 'reload'
-      app = Application.find(user, @req.app_name)
-      raise Cloud::Sdk::UserException.new("An application named '#{@req.app_name}' does not exist", 101), caller[0..5] if app.nil?
+      app = get_app_from_request(user)
       @reply.append app.reload
     when 'status'
-      app = Application.find(user, @req.app_name)
-      raise Cloud::Sdk::UserException.new("An application named '#{@req.app_name}' does not exist", 101), caller[0..5] if app.nil?
+      app = get_app_from_request(user)
       @reply.append app.status
     when 'tidy'
-      app = Application.find(user, @req.app_name)
-      raise Cloud::Sdk::UserException.new("An application named '#{@req.app_name}' does not exist", 101), caller[0..5] if app.nil?
+      app = get_app_from_request(user)
       @reply.append app.tidy      
     when 'add-alias'
-      app = Application.find(user, @req.app_name)
-      raise Cloud::Sdk::UserException.new("An application named '#{@req.app_name}' does not exist", 101), caller[0..5] if app.nil?
+      app = get_app_from_request(user)
       @reply.append app.add_alias @req.server_alias
     when 'remove-alias'
-      app = Application.find(user, @req.app_name)
-      raise Cloud::Sdk::UserException.new("An application named '#{@req.app_name}' does not exist", 101), caller[0..5] if app.nil?
+      app = get_app_from_request(user)
       @reply.append app.remove_alias @req.server_alias
     else
       raise Cloud::Sdk::UserException.new("Invalid action #{@req.action}", 111), caller[0..5]
@@ -210,8 +201,7 @@
     user = CloudUser.find(@login)    
     raise Cloud::Sdk::CdkException.new("Invalid user", 99), caller[0..5] if user.nil?
         
-    app = Application.find(user, @req.app_name)
-    raise Cloud::Sdk::UserException.new("An application named '#{@req.app_name}' does not exist", 101), caller[0..5] if app.nil?
+    app = get_app_from_request(user)
 
     Rails.logger.debug "DEBUG: Performing action '#{@req.action}' on node '#{app.server_identity}'"    
     case @req.action
@@ -238,6 +228,12 @@
   end
   
   protected
+  
+  def get_app_from_request(user)
+    app = Application.find(user, @req.app_name)
+    raise Cloud::Sdk::UserException.new("An application named '#{@req.app_name}' does not exist", 101) if app.nil?
+    return app
+  end
   
   def validate_request
     @reply = ResultIO.new
@@ -269,7 +265,6 @@
       @reply.append e.resultIO if e.resultIO
       @reply.resultIO << "An error occurred while contacting the authentication service. If the problem persists please contact Red Hat support."
     when Cloud::Sdk::UserException
-      @reply.append e.resultIO if e.resultIO
       @reply.resultIO << e.message
       status = :bad_request
     when Cloud::Sdk::CdkException
