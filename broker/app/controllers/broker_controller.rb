@@ -82,7 +82,7 @@ class BrokerController < ApplicationController
           end
         when 'ssh'
           #FIXME: Supports only RSA keys
-          if !(val =~ /\A[A-Za-z0-9\+\/=]+\z/) || !Util.check_rsa_key(val)
+          if val != 'nossh' && (!(val =~ /\A[A-Za-z0-9\+\/=]+\z/) || !Util.check_rsa_key(val))
             render :json => generate_result_json("Invalid ssh key: #{val}", nil, 108), :status => :invalid and return nil
           end
         when 'app_uuid'
