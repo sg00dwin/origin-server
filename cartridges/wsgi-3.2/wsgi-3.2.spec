@@ -2,7 +2,7 @@
 
 Summary:   Provides python-wsgi-3.2 support
 Name:      rhc-cartridge-wsgi-3.2
-Version:   0.83.2
+Version:   0.83.3
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -17,6 +17,7 @@ Requires:  python
 Requires:  mod_wsgi = 3.2
 Requires:  MySQL-python
 Requires:  pymongo
+Requires:  pymongo-gridfs
 Requires:  python-psycopg2
 Requires:  python-virtualenv
 Requires:  libjpeg
@@ -86,6 +87,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Wed Dec 14 2011 Dan McPherson <dmcphers@redhat.com> 0.83.3-1
+- wsgi-3.2.spec: added Requires: pymongo-gridfs (tdawson@redhat.com)
+
 * Thu Dec 08 2011 Alex Boone <aboone@redhat.com> 0.83.2-1
 - added libjpeg dependency to wsgi cartridge (twiest@redhat.com)
 

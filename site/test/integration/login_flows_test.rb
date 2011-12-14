@@ -3,6 +3,7 @@ require 'test_helper'
 class LoginFlowsTest < ActionDispatch::IntegrationTest
   
   def setup
+    host! "openshift.redhat.com"
     https!
     open_session
   end

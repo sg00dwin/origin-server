@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.83.9
+Version:   0.83.10
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -68,6 +68,10 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Wed Dec 14 2011 Dan McPherson <dmcphers@redhat.com> 0.83.10-1
+- Redirect logged-in users trying to access the login page (aboone@redhat.com)
+- Fix for devenv mock login, actually allow proper log out (aboone@redhat.com)
+
 * Tue Dec 13 2011 Dan McPherson <dmcphers@redhat.com> 0.83.9-1
 - Fixes for BZ 759002: (aboone@redhat.com)
 - Fixed the way form.js determines AJAX workflow (fotios@redhat.com)

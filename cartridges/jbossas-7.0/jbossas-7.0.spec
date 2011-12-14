@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.83.7
+Version:   0.83.8
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -93,6 +93,11 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Wed Dec 14 2011 Dan McPherson <dmcphers@redhat.com> 0.83.8-1
+- threadump returns message for failed non-jbossas calls
+  (wdecoste@localhost.localdomain)
+- Bug 767540 (dmcphers@redhat.com)
+
 * Tue Dec 13 2011 Dan McPherson <dmcphers@redhat.com> 0.83.7-1
 - removed modules.jsp for Bug 756425 (wdecoste@localhost.localdomain)
 
