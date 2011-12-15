@@ -38,6 +38,8 @@ rm -rf %{buildroot}
 mkdir -p %{buildroot}%{ruby_sitelibdir}
 cp -r openshift %{buildroot}%{ruby_sitelibdir}
 cp openshift.rb %{buildroot}%{ruby_sitelibdir}
+mkdir -p %{buildroot}%{_sysconfdir}/libra
+cp conf/libra/* %{buildroot}%{_sysconfdir}/libra/
 
 %clean
 rm -rf %{buildroot}
@@ -46,6 +48,7 @@ rm -rf %{buildroot}
 %defattr(-,root,root,-)
 %{ruby_sitelibdir}/openshift
 %{ruby_sitelibdir}/openshift.rb
+%attr(0640,root,libra_user) %config(noreplace) %{_sysconfdir}/libra/controller.conf
 
 %pre
 /usr/sbin/useradd libra_passenger -g libra_user \
