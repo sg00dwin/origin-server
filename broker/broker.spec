@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.84.0
+Version:   0.84.1
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -77,6 +77,33 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Wed Dec 14 2011 Dan McPherson <dmcphers@redhat.com> 0.84.1-1
+- bump spec numbers (dmcphers@redhat.com)
+- Merge remote-tracking branch 'origin/master' (kraman@gmail.com)
+- Adding cartridge list cache. Added nossh to validation for ssh key (BZ
+  767442). Based on 2cbab9d374409 Added secondary ssh key management based on
+  Ravi's work (kraman@gmail.com)
+- Merge remote-tracking branch 'origin/mirage' (kraman@gmail.com)
+- rhc-admin-move completed (kraman@gmail.com)
+- fix typo (dmcphers@redhat.com)
+- Adding first version of app move admin utility (kraman@gmail.com)
+- Added ability to add/remove/list secondary ssh keys Added admin tools
+  (kraman@gmail.com)
+- fix stopped status (dmcphers@redhat.com)
+- get status working (dmcphers@redhat.com)
+- get create domain working (dmcphers@redhat.com)
+- merge code for deletion of namespace into cloud-sdk (rchopra@redhat.com)
+- Merge remote-tracking branch 'origin/master' into mirage (kraman@gmail.com)
+- Added application, cloud_user observers to validate objects and print jenkins
+  related warnings. Added per application user delegation (with ssh keys)
+  (kraman@gmail.com)
+- Merge remote-tracking branch 'origin/master' into mirage (kraman@gmail.com)
+- building cloud sdk (dmcphers@redhat.com)
+- Changed cdk-controller to be rails plugin. Modified express-broker with
+  customizations and integrating cdk-controller (kraman@gmail.com)
+- Checkpoint of cloud-sdk work. Added implementation and bugfixes for
+  Datastore, Auth and node-communication user-info works (kraman@gmail.com)
+
 * Wed Dec 14 2011 Dan McPherson <dmcphers@redhat.com> 0.83.9-1
 - Accept "nossh" as a valid ssh key in the broker as it's needed by the web
   site (BZ 767442) (aboone@redhat.com)
