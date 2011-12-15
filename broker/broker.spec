@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.83.8
+Version:   0.83.9
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -77,6 +77,10 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Wed Dec 14 2011 Dan McPherson <dmcphers@redhat.com> 0.83.9-1
+- Accept "nossh" as a valid ssh key in the broker as it's needed by the web
+  site (BZ 767442) (aboone@redhat.com)
+
 * Tue Dec 13 2011 Dan McPherson <dmcphers@redhat.com> 0.83.8-1
 - Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
 - Multi-key : move addition of ssh key to new app into libra.rb
