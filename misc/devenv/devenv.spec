@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.84.0
+Version:   0.84.1
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -223,6 +223,10 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 %{_initddir}/sauce-connect
 
 %changelog
+* Wed Dec 14 2011 Dan McPherson <dmcphers@redhat.com> 0.84.1-1
+- bump spec numbers (dmcphers@redhat.com)
+- rpm work (dmcphers@redhat.com)
+
 * Fri Dec 09 2011 Mike McGrath <mmcgrath@redhat.com> 0.83.7-1
 - adding rhc-cartridge-10gen-mms-agent-0.1 to the devenv spec file to be
   installed on the devenv  and adding the dependency on mms-agent source rpm on
