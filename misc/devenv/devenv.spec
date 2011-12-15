@@ -1,6 +1,6 @@
 %define htmldir %{_localstatedir}/www/html
 %define libradir %{_localstatedir}/www/libra
-%define brokerdir %{_localstatedir}/www/broker
+%define brokerdir %{_localstatedir}/www/libra/broker
 %define sitedir %{_localstatedir}/www/libra/site
 %define devenvdir %{_sysconfdir}/libra/devenv
 %define jenkins %{_sharedstatedir}/jenkins
