@@ -3,6 +3,7 @@ class LegacyBrokerController < ApplicationController
   before_filter :validate_request
   before_filter :authenticate, :except => :cart_list_post
   rescue_from Exception, :with => :exception_handler
+  include LegacyBrokerHelper
   
   def user_info_post
     user = CloudUser.find(@login)
@@ -28,7 +29,7 @@ class LegacyBrokerController < ApplicationController
     end
   end
   
-  def user_manage_post
+  def ssh_keys_post
     user = CloudUser.find(@login)
     if user
       case @req.action
@@ -44,6 +45,10 @@ class LegacyBrokerController < ApplicationController
         raise Cloud::Sdk::UserException.new("Missing key name", 105), caller[0..5] if @req.key_name.nil?
         @reply.append user.remove_secondary_ssh_key(@req.key_name)
         user.save
+      when "update-key"
+        raise Cloud::Sdk::UserException.new("Missing SSH key or key name", 105), caller[0..5] if @req.ssh.nil? or @req.key_name.nil?
+        @reply.append user.remove_secondary_ssh_key(@req.key_name)
+        @reply.append user.add_secondary_ssh_key(@req.key_name, @req.ssh)
       when "list-keys"
         @reply.data = { :keys => user.ssh_keys }.to_json
       else
@@ -92,7 +97,7 @@ class LegacyBrokerController < ApplicationController
   end
   
   def cart_list_post
-    cart_type = @req.cart_type
+    cart_type = @req.cart_type                                                                                                                                                                                                                                    
     unless cart_type
       @reply.resultIO << "Invalid cartridge types: #{cart_type} specified"
       @reply.exitcode = 109
@@ -100,7 +105,10 @@ class LegacyBrokerController < ApplicationController
       return
     end
   
-    carts = Application.get_available_cartridges(cart_type)
+    cache_key = "cart_list_#{cart_type}"                                                                                                                                                                                                 
+    carts = get_cached(cache_key, :expires_in => 3600.seconds) {                                                                                                                                                                         
+      Application.get_available_cartridges(cart_type)
+    }
     @reply.data = { :carts => carts }.to_json
     render :json => @reply
   end

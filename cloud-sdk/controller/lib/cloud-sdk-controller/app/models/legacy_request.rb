@@ -1,9 +1,10 @@
 class LegacyRequest < Cloud::Sdk::Model
-  attr_accessor :namespace, :rhlogin, :ssh, :app_uuid, :app_name, :node_profile, :debug, :alter, :cartridge, :api, :cart_type, :action, :server_alias, :api, :user_name
+  attr_accessor :namespace, :rhlogin, :ssh, :app_uuid, :app_name, :node_profile, :debug, :alter, :cartridge, :api, :cart_type, :action, :server_alias, :api, :key_name
   attr_reader   :invalid_keys
   
   APP_NAME_MAX_LENGTH = 32
   NAMESPACE_MAX_LENGTH = 16
+  RSA_SSH_KEY_MIN_LENGTH = 96  # 768 bits = 96 bytes
 
   def initialize
     @invalid_keys = []
@@ -15,15 +16,15 @@ class LegacyRequest < Cloud::Sdk::Model
     end
   end
   
-#  validates_each :rhlogin do |record, attribute, val|
-#    if !Util.check_rhlogin(val)
-#      record.errors.add attribute, {:message => "Invalid rhlogin: #{val}", :exit_code => 107}
-#    end
-#  end
+  validates_each :rhlogin do |record, attribute, val|
+    if val =~ /["\$\^<>\|%\/;:,\\\*=~]/
+      record.errors.add attribute, {:message => "Invalid rhlogin: #{val}", :exit_code => 107}
+    end
+  end
 
-  validates_each :user_name, :allow_nil =>true do |record, attribute, val|
+  validates_each :key_name, :allow_nil =>true do |record, attribute, val|
     if !(val =~ /\A[a-f0-9]+\z/)
-      record.errors.add attribute, {:message => "Invalid username: #{val}", :exit_code => 106}
+      record.errors.add attribute, {:message => "Invalid key name: #{val}", :exit_code => 106}
     end
   end
   
@@ -46,7 +47,7 @@ class LegacyRequest < Cloud::Sdk::Model
   end
   
   validates_each :ssh, :allow_nil =>true do |record, attribute, val|
-    if !(val =~ /\A[A-Za-z0-9\+\/=]+\z/)
+    unless (val =~ /\A[A-Za-z0-9\+\/=]+\z/) && (val == 'nossh' || val.length >= RSA_SSH_KEY_MIN_LENGTH)
       record.errors.add attribute, {:message => "Invalid ssh key: #{val}", :exit_code => 108}
     end
   end
