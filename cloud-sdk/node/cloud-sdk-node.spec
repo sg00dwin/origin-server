@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Node
 Name:           rubygem-%{gemname}
-Version:        0.2.1
+Version:        0.2.2
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        AGPLv3
@@ -84,6 +84,9 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Wed Dec 14 2011 Dan McPherson <dmcphers@redhat.com> 0.2.2-1
+- bump spec numbers (dmcphers@redhat.com)
+
 * Wed Dec 14 2011 Dan McPherson <dmcphers@redhat.com> 0.2.1-1
 - bump spec numbers (dmcphers@redhat.com)
 - rhc-admin-move completed (kraman@gmail.com)
