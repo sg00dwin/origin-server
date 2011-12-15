@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/phpmyadmin-3.4
 
 Name: rhc-cartridge-phpmyadmin-3.4
-Version: 0.5.2
+Version: 0.6.0
 Release: 1%{?dist}
 Summary: Embedded phpMyAdmin support for express
 

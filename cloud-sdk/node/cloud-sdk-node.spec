@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Node
 Name:           rubygem-%{gemname}
-Version:        0.1.17
+Version:        0.2.0
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        AGPLv3

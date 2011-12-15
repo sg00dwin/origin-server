@@ -2,7 +2,7 @@
 
 Summary:   Provides php-5.3 support
 Name:      rhc-cartridge-php-5.3
-Version:   0.83.2
+Version:   0.84.0
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2

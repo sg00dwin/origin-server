@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.83.9
+Version:   0.84.0
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
