@@ -1,22 +1,18 @@
-require 'open4'
 require 'timeout'
 require 'fileutils'
+require 'open3'
 
 module CommandHelper
   def run_stdout(cmd)
     $logger.info("Running: #{cmd}")
-
-    pid, stdin, stdout, stderr = Open4::popen4(cmd)
-    stdin.close
 
     exit_code = -1
     output = nil
 
     # Don't let a command run more than 5 minutes
     Timeout::timeout(500) do
-      ignored, status = Process::waitpid2 pid
-      exit_code = status.exitstatus
-      output = stdout.read
+      output = `#{cmd} 2>&1`
+      exit_code = $?.exitstatus
     end
 
     $logger.error("(#{$$}): Execution failed #{cmd} with exit_code: #{exit_code.to_s}") if exit_code != 0
@@ -27,20 +23,15 @@ module CommandHelper
   def run(cmd, outbuf=[], retries=0)
     $logger.info("Running: #{cmd}")
 
-    pid, stdin, stdout, stderr = Open4::popen4(cmd)
-    stdin.close
-
     exit_code = -1
+    output = nil 
     # Don't let a command run more than 5 minutes
     Timeout::timeout(500) do
-      ignored, status = Process::waitpid2 pid
-      exit_code = status.exitstatus
+      output = `#{cmd} 2>&1`
+      exit_code = $?.exitstatus
     end
 
-    outstring = stdout.read
-    errstring = stderr.read
-    $logger.debug("Standard Output:\n#{outstring}")
-    $logger.debug("Standard Error:\n#{errstring}")
+    $logger.debug("Output:\n#{output}")
 
     if exit_code != 0
       $logger.error("(#{$$}): Execution failed #{cmd} with exit_code: #{exit_code.to_s}")
@@ -54,8 +45,7 @@ module CommandHelper
 
     # append the buffers if an array container is provided
     if outbuf
-      outbuf << outstring
-      outbuf << errstring
+      outbuf << output
     end
 
     return exit_code
@@ -69,22 +59,15 @@ module CommandHelper
     prefix += (' -t ' + type) if type
     fullcmd = prefix + " " + cmd
 
-    pid, stdin, stdout, stderr = Open4::popen4(fullcmd)
+    output = `#{fullcmd} 2>&1`
+    exit_code = $?.exitstatus
 
-    stdin.close
-    ignored, status = Process::waitpid2 pid
-    exit_code = status.exitstatus
-
-    outstring = stdout.read
-    errstring = stderr.read
     $logger.debug("Command run: #{fullcmd}")
-    $logger.debug("Standard Output:\n#{outstring}")
-    $logger.debug("Standard Error:\n#{errstring}")
+    $logger.debug("Output:\n#{output}")
     $logger.debug("Exit Code: #{exit_code}")
     # append the buffers if an array container is provided
     if outbuf
-      outbuf << outstring
-      outbuf << errstring
+      outbuf << output
     end
 
     $logger.error("(#{$$}): Execution failed #{cmd} with exit_code: #{exit_code.to_s}") if exit_code != 0
@@ -274,11 +257,9 @@ module CommandHelper
     command = "ps --no-headers -o pid,comm -u #{acct_name}"
     $logger.debug("num_procs: executing #{command}")
 
-    pid, stdin, stdout, stderr = Open4::popen4(command)
+    stdin, stdout, stderr = Open3.popen3(command)
 
     stdin.close
-    ignored, status = Process::waitpid2 pid
-    exit_code = status.exitstatus
 
     outstrings = stdout.readlines
     errstrings = stderr.readlines
@@ -302,11 +283,9 @@ module CommandHelper
     command = "ps --no-headers -f -u #{acct_name}"
     $logger.debug("num_procs: executing #{command}")
 
-    pid, stdin, stdout, stderr = Open4::popen4(command)
+    stdin, stdout, stderr = Open3.popen3(command)
 
     stdin.close
-    ignored, status = Process::waitpid2 pid
-    exit_code = status.exitstatus
 
     outstrings = stdout.readlines
     errstrings = stderr.readlines

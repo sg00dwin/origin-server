@@ -41,6 +41,7 @@ module Broker
 
     # Configure sensitive parameters which will be filtered from the log file.
     config.filter_parameters += [:password, :broker_auth_key, :broker_auth_iv]
+    config.autoload_paths += %W(#{config.root}/lib)
   end
 end
 

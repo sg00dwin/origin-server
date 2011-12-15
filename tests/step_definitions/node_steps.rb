@@ -10,10 +10,9 @@ include Libra
 
 # Controller cartridge command paths
 $cartridge_root = '/usr/libexec/li/cartridges'
-$controller_hooks = "#{$cartridge_root}/li-controller/info/hooks"
-$controller_config_path = "#{$controller_hooks}/configure"
+$controller_config_path = "cdk-app-create"
 $controller_config_format = "#{$controller_config_path} -c '%s' -s '%s'"
-$controller_deconfig_path = "#{$controller_hooks}/deconfigure"
+$controller_deconfig_path = "cdk-app-destroy"
 $controller_deconfig_format = "#{$controller_deconfig_path} -c '%s'"
 $home_root = "/var/lib/libra"
 # --------------------------------------------------------------------------
@@ -46,7 +45,6 @@ def parse_ssh_pub_key filename
 end
 
 Given /^a new guest account$/ do
-  # call /usr/libexec/li/cartridges/li-controller/info/hooks/configure
   # generate a random account name and use the stock SSH keys
   # generate a random UUID and use the stock keys
   acctname = gen_small_uuid

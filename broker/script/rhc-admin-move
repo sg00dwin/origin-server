@@ -1,0 +1,54 @@
+#!/usr/bin/env ruby
+
+require "/var/www/libra/broker/config/environment"
+require 'getoptlong'
+require 'mcollective'
+
+include MCollective::RPC
+
+options = rpcoptions do |parser, options|
+    parser.define_head "Move an application to another node"
+    parser.banner = "Usage: rhc-move [options]"
+
+    parser.on('-i', '--target_server_identity TARGET_SERVER_IDENTITY', 'Target server identity (e.g. ip-10-10-10-10)') do |target_server_identity|
+      options[:target_server_identity] = target_server_identity
+    end
+
+    parser.on('-p', '--node_profile NODE_PROFILE', "Node profile (e.g. std)") do |node_profile|
+      options[:node_profile] = node_profile
+    end
+
+    parser.on('-n', '--app APP', 'Application name') do |app_name|
+      options[:app_name] = app_name
+    end
+
+    parser.on('-l', '--rhlogin RHLOGIN', 'Account to act on') do |rhlogin|
+      options[:rhlogin] = rhlogin
+    end
+
+end
+
+unless options.include?(:app_name)
+    puts "Specify app name"
+    exit 1
+end
+
+unless options.include?(:rhlogin)
+    puts "Specify rhlogin"
+    exit 1
+end
+
+# Set the MCollective options
+if options[:timeout] && options[:timeout] < 30
+    options[:timeout] = 30
+end
+Rails.application.config.cdk[:rhc_opts] = options
+
+user = CloudUser.find(options[:rhlogin])
+app  = Application.find(user, options[:app_name])
+
+destination_container = nil
+destination_container = Cloud::Sdk::ApplicationContainerProxy.instance(options[:target_server_identity]) if options[:target_server_identity]
+reply = app.container.move_app(app, destination_container)
+
+print reply.to_s
