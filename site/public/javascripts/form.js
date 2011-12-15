@@ -1,4 +1,4 @@
-/* DO NOT MODIFY. This file was compiled Tue, 13 Dec 2011 19:01:18 GMT from
+/* DO NOT MODIFY. This file was compiled Thu, 15 Dec 2011 18:49:48 GMT from
  * /home/fotios/openshift/li/site/app/coffeescripts/form.coffee
  */
 
@@ -157,7 +157,7 @@
       $json = $.parseJSON(status.responseText);
       $parent = $form.parent();
       $parent.find('div.message').remove();
-      $msg = $('<div>').addClass('message').hide().insertBefore($form);
+      $msg = $('<div>').addClass('message word_wrap').hide().insertBefore($form);
       type = $parent.attr('id');
       switch (type) {
         case 'new-user':
@@ -173,7 +173,6 @@
           reset_password_complete($form, $msg, $json, false);
           break;
       }
-      return $msg.truncate();
     };
     rulesets = {
       reset: {
