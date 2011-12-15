@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.83.13
+Version:       0.83.14
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -175,6 +175,11 @@ fi
 %dir %attr(0755,root,root) %{_sysconfdir}/libra/skel
 
 %changelog
+* Wed Dec 14 2011 Dan McPherson <dmcphers@redhat.com> 0.83.14-1
+- Merge branch 'master' of li-master:/srv/git/li (ramr@redhat.com)
+- Fix for bugz 767825. Allow commands to be run non-interactively on rhcsh.
+  (ramr@redhat.com)
+
 * Wed Dec 14 2011 Dan McPherson <dmcphers@redhat.com> 0.83.13-1
 - threadump returns message for failed non-jbossas calls
   (wdecoste@localhost.localdomain)
