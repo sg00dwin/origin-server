@@ -122,7 +122,7 @@ class StreamlineTest < ActiveSupport::TestCase
     res = Net::HTTPNotFound.new('', '404', '')
     Net::HTTP.any_instance.expects(:start).returns(res)
 
-    assert_raise(Libra::StreamlineException) {
+    assert_raise(OpenShift::StreamlineException) {
       @streamline.http_post(@url)
     }
   end
@@ -132,7 +132,7 @@ class StreamlineTest < ActiveSupport::TestCase
     res.expects(:body).at_least_once.returns("{corrupt??#")
     Net::HTTP.any_instance.expects(:start).returns(res)
 
-    assert_raise(Libra::StreamlineException) {
+    assert_raise(OpenShift::StreamlineException) {
       @streamline.http_post(@url)
     }
 
@@ -145,7 +145,7 @@ class StreamlineTest < ActiveSupport::TestCase
     res.expects(:body).at_least_once.raises(Exception, 'random http exception')
     Net::HTTP.any_instance.expects(:start).returns(res)
 
-    assert_raise(Libra::StreamlineException) {
+    assert_raise(OpenShift::StreamlineException) {
       @streamline.http_post(@url)
     }
 

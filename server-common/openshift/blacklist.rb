@@ -1,6 +1,5 @@
 
-
-module Libra
+module OpenShift
   module Blacklist
 
     NONO = %w(amentra aop apiviz arquillian blacktie boxgrinder byteman cirras

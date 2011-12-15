@@ -5,6 +5,8 @@ class LegacyBrokerController < ApplicationController
   rescue_from Exception, :with => :exception_handler
   include LegacyBrokerHelper
   
+  @@outage_notification_file = '/etc/libra/express_outage_notification.txt'
+  
   def user_info_post
     user = CloudUser.find(@login)
     if user
@@ -250,6 +252,22 @@ class LegacyBrokerController < ApplicationController
       if @req.invalid?
         @reply.resultIO << @req.errors.first[1]
         render :json => @reply, :status => :invalid 
+      end
+    end
+    check_outage_notification
+  end
+  
+  def check_outage_notification    
+    if File.exists?(@@outage_notification_file)
+      file = File.open(@@outage_notification_file, "r")
+      details = nil
+      begin
+        details = file.read
+      ensure
+        file.close
+      end
+      if details
+        @reply.messageIO << details
       end
     end
   end

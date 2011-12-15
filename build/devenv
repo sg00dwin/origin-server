@@ -506,17 +506,17 @@ END
       threads = []
 
       unless options.exclude_internal?
-        #threads << Thread.new do
-        #  cmd = "cd li-test/broker; rake test"
-        #  run_ssh(hostname, "Broker Unit", cmd)
-        #end
+        threads << Thread.new do
+          cmd = "cd li-test/broker; rake test"
+          run_ssh(hostname, "Broker Unit", cmd)
+        end
         threads << Thread.new do
           cmd = "cd li-test/site; rake test"
           run_ssh(hostname, "Site Unit", cmd)
         end
         #threads << Thread.new do
-          #cmd = "cd /usr/lib/ruby/gems/*/gems/cloud-sdk*; rake test"
-          #run_ssh(hostname, "Cloud SDK Unit", cmd)
+        #  cmd = "cd li-test/cloud-sdk/controller; rake test"
+        #  run_ssh(hostname, "Cloud SDK Unit", cmd)
         #end
       end
       

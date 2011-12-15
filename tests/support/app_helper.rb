@@ -73,7 +73,7 @@ module AppHelper
     end
 
     def reserved?
-      Libra::User.find(login) or Libra::Server.has_dns_txt?(@namespace) or File.exists?(@file)
+      OpenShift::User.find(login) or OpenShift::Server.has_dns_txt?(@namespace) or File.exists?(@file)
     end
 
     def has_domain?

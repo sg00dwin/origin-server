@@ -117,8 +117,7 @@ end
 #
 # List cartridges on the host
 #   Convert from name-m.n.p to name-m.n
-#   This is the *full* list. Public version is
-#   obtained via Libra::Util.get_cartridges_list
+#   This is the *full* list.
 #
 Facter.add(:cart_list) do
     carts = []
@@ -132,8 +131,7 @@ end
 #
 # List embedded cartridges on the host
 #   Convert from name-m.n.p to name-m.n
-#   This is the *full* list. Public version is
-#   obtained via Libra::Util.get_embedded_cartridges_tbl
+#   This is the *full* list.
 #
 Facter.add(:embed_cart_list) do
     carts = []

@@ -90,7 +90,7 @@ module Streamline
   # Login the current user, setting the roles and ticket
   #
   def login
-    raise UserException.new(107), "Invalid characters in RHLogin '#{@rhlogin}' found", caller[0..5] if !Libra::Util.check_rhlogin(@rhlogin)
+    raise UserException.new(107), "Invalid characters in RHLogin '#{@rhlogin}' found", caller[0..5] if !OpenShift::Util.check_rhlogin(@rhlogin)
 
     result = nil    
     begin
@@ -133,9 +133,9 @@ module Streamline
   def check_access
     unless roles.index('cloud_access_1')
       if roles.index('cloud_access_request_1')
-        raise Libra::UserValidationException.new(146), "Found valid credentials but you haven't been granted access to Express yet", caller[0..5]
+        raise OpenShift::UserValidationException.new(146), "Found valid credentials but you haven't been granted access to Express yet", caller[0..5]
       else
-        raise Libra::UserValidationException.new(147), "Found valid credentials but you haven't requested access to Express yet", caller[0..5]
+        raise OpenShift::UserValidationException.new(147), "Found valid credentials but you haven't requested access to Express yet", caller[0..5]
       end
     end
   end
@@ -244,7 +244,7 @@ module Streamline
         else
           log_error "Empty response from streamline - #{res.code}"
           if raise_exception_on_error
-            raise Libra::StreamlineException
+            raise OpenShift::StreamlineException
           else
             errors.add(:base, I18n.t(:unknown))
           end
@@ -255,18 +255,18 @@ module Streamline
         log_error "Invalid HTTP response from streamline - #{res.code}"
         log_error "Response body:\n#{res.body}"
         if raise_exception_on_error
-          raise Libra::StreamlineException
+          raise OpenShift::StreamlineException
         else
           errors.add(:base, I18n.t(:unknown))
         end
       end
-    rescue AccessDeniedException, Libra::UserValidationException, Libra::StreamlineException
+    rescue AccessDeniedException, OpenShift::UserValidationException, OpenShift::StreamlineException
       raise
     rescue Exception => e
       log_error "Exception occurred while calling streamline - #{e.message}"
       Rails.logger.error e, e.backtrace
       if raise_exception_on_error
-        raise Libra::StreamlineException
+        raise OpenShift::StreamlineException
       else
         errors.add(:base, I18n.t(:unknown))
       end

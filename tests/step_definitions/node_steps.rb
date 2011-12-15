@@ -6,7 +6,7 @@
 
 require 'openshift'
 require 'resolv'
-include Libra
+include OpenShift
 
 # Controller cartridge command paths
 $cartridge_root = '/usr/libexec/li/cartridges'

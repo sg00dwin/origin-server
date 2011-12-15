@@ -90,7 +90,7 @@ class ExpressApp
   
   def app_name_not_in_blacklist
     unless @app_name.nil?
-      errors.add(:app_name, "#{@app_name} is not a permitted app name") if Libra::Blacklist.in_blacklist? @app_name 
+      errors.add(:app_name, "#{@app_name} is not a permitted app name") if OpenShift::Blacklist.in_blacklist? @app_name 
     end
   end
 

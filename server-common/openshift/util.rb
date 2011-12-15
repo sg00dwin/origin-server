@@ -2,7 +2,7 @@ require 'openshift/blacklist'
 require 'openshift/server'
 
 
-module Libra
+module OpenShift
   module Util
 
     DEFAULT_MAX_LENGTH = 16

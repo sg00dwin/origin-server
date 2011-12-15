@@ -241,7 +241,7 @@ module Express
               reply.append destination_container_proxy.send(:run_cartridge_command, app.framework, app, "move")
               unless app.embedded.nil?
                 app.embedded.each do |cart, cart_info|
-                  Libra.logger_debug "DEBUG: Performing cartridge level move for embedded #{cart} for '#{app.name}' on #{destination_container_proxy.id}"
+                  Rails.logger.debug "DEBUG: Performing cartridge level move for embedded #{cart} for '#{app.name}' on #{destination_container_proxy.id}"
                   reply.append destination_container_proxy.send(:run_cartridge_command, "embedded/" + cart, app, "move")
                 end
               end

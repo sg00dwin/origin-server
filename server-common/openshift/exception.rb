@@ -1,18 +1,14 @@
-module Libra
-  class LibraException < StandardError
+module OpenShift
+  class OpenShiftException < StandardError
     attr :exit_code
     def initialize(exit_code)
       @exit_code = exit_code
     end
   end
-  class ConfigureException < LibraException; end
-  class CartridgeException < LibraException; end
-  class NodeException < LibraException; end
-  class UserException < LibraException; end
-  class UserValidationException < UserException; end
-  class DNSException < LibraException; end
-  class DNSNotFoundException < DNSException; end
-  class StreamlineException < LibraException
+  class UserException < OpenShiftException; end
+  class UserException < OpenShiftException; end
+  class UserValidationException < OpenShiftException; end
+  class StreamlineException < OpenShiftException
     def initialize
       @exit_code = 144
     end

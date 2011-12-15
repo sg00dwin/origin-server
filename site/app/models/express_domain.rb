@@ -66,7 +66,7 @@ class ExpressDomain
   
   def namespace_not_in_blacklist
     unless @namespace.nil?
-      errors.add(:namespace, "#{@namespace} is not permitted") if Libra::Blacklist.in_blacklist? @namespace
+      errors.add(:namespace, "#{@namespace} is not permitted") if OpenShift::Blacklist.in_blacklist? @namespace
     end
   end
   

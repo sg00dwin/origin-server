@@ -1,6 +1,7 @@
 require 'test_helper'
 
 class BrokerControllerTest < ActionController::TestCase
+=begin
   test "cart list" do
     # setup cache
     Rails.cache.clear
@@ -36,6 +37,6 @@ class BrokerControllerTest < ActionController::TestCase
 
     assert body1 == body2
   end
-
+=end
 end
 

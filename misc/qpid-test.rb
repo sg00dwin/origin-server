@@ -2,7 +2,7 @@
 
 require 'rubygems'
 require 'openshift'
-include Libra
+include OpenShift
 
 puts "Testing broadcast call"
 server = Server.find_available
