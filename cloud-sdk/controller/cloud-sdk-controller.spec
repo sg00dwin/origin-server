@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.2.2
+Version:        0.2.3
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        AGPLv3
