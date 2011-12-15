@@ -2,7 +2,7 @@
 
 Summary:   Provides python-wsgi-3.2 support
 Name:      rhc-cartridge-wsgi-3.2
-Version:   0.84.0
+Version:   0.84.1
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -87,6 +87,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Wed Dec 14 2011 Dan McPherson <dmcphers@redhat.com> 0.84.1-1
+- bump spec numbers (dmcphers@redhat.com)
+
 * Wed Dec 14 2011 Dan McPherson <dmcphers@redhat.com> 0.83.3-1
 - wsgi-3.2.spec: added Requires: pymongo-gridfs (tdawson@redhat.com)
 
