@@ -4,13 +4,13 @@ module OpenShift
       # Figure out what needs to be built
       packages = `tito report --untagged-commits`
       build_dirs = packages.split("\n").collect do |package|
-        if package =~ /^rhc-devenv-\d/
+        if package =~ /^rhc-devenv-\d+/
           "misc/devenv"
-        elsif package =~ /^rubygem-cloud-sdk-([\w]+)-\d/
+        elsif package =~ /^rubygem-cloud-sdk-([\w]+)-\d+/
           "cloud-sdk/#{$1}"
-        elsif package =~ /^rhc-(cartridge-[\w-]+\d\.\d)-/
+        elsif package =~ /^rhc-(cartridge-[\w-]+\d+\.\d+)-/
           "cartridges/" + $1['cartridge-'.length..-1]
-        elsif package =~ /^rhc-([\w-]+)-\d/
+        elsif package =~ /^rhc-([\w-]+)-\d+/
           $1
         end
       end.compact
