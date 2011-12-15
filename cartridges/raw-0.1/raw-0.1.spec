@@ -2,7 +2,7 @@
 
 Summary:   Provides raw support
 Name:      rhc-cartridge-raw-0.1
-Version:   0.17.1
+Version:   0.17.2
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -77,6 +77,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Wed Dec 14 2011 Dan McPherson <dmcphers@redhat.com> 0.17.2-1
+- 
+
 * Thu Dec 01 2011 Dan McPherson <dmcphers@redhat.com> 0.17.1-1
 - bump spec numbers (dmcphers@redhat.com)
 
