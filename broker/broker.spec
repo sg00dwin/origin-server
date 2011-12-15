@@ -20,8 +20,7 @@ Requires:  rubygem-parseconfig
 Requires:  rubygem-passenger-native-libs
 Requires:  rubygem-rails
 Requires:  rubygem-xml-simple
-
-Obsoletes: rhc-server
+Requires:  rubygem-cloud-sdk-controller
 
 BuildArch: noarch
 
