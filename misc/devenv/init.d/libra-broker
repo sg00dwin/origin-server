@@ -5,9 +5,9 @@
 # chkconfig: - 85 15
 # description: The Libra broker
 # processname: httpd
-# config: /var/www/cloud-sdk-controller/httpd/broker.conf
-# config: /var/www/cloud-sdk-controller/httpd
-# pidfile: /var/www/cloud-sdk-controller/httpd/run/httpd.pid
+# config: /var/www/broker/httpd/broker.conf
+# config: /var/www/broker/httpd
+# pidfile: /var/www/broker/httpd/run/httpd.pid
 #
 ### BEGIN INIT INFO
 # Provides: httpd
@@ -28,11 +28,11 @@ HTTPD_LANG=${HTTPD_LANG-"C"}
 apachectl=/usr/sbin/apachectl
 httpd=${HTTPD-/usr/sbin/httpd}
 prog=libra-broker
-pidfile=${PIDFILE-/var/www/cloud-sdk-controller/httpd/run/httpd.pid}
+pidfile=${PIDFILE-/var/www/broker/httpd/run/httpd.pid}
 lockfile=${LOCKFILE-/var/lock/subsys/libra-broker}
 RETVAL=0
 
-OPTIONS="-C 'Include /var/www/cloud-sdk-controller/httpd/broker.conf' -f /var/www/cloud-sdk-controller/httpd/httpd.conf"
+OPTIONS="-C 'Include /var/www/broker/httpd/broker.conf' -f /var/www/broker/httpd/httpd.conf"
 
 # The semantics of these two functions differ from the way apachectl does
 # things -- attempting to start while running is a failure, and shutdown

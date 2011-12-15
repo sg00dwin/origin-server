@@ -42,11 +42,11 @@ clean = opt["clean"]
 archive = opt["archive"]
 
 if clean
-    `echo > /var/www/cloud-sdk-controller/log/mcollective-client.log`
+    `echo > /var/www/broker/log/mcollective-client.log`
     `echo > /var/log/mcollective.log`
     `echo > /var/www/libra/site/log/development.log`
-    `echo > /var/www/cloud-sdk-controller/log/development.log`    
+    `echo > /var/www/broker/log/development.log`    
     `echo > /tmp/rhc/cucumber.log`
 else
-    `tar -cf #{opt["archive"]}.tar.gz -z /var/www/cloud-sdk-controller/log/mcollective-client.log /var/log/mcollective.log /var/www/libra/site/log/development.log /var/www/cloud-sdk-controller/log/development.log /tmp/rhc/cucumber.log`
+    `tar -cf #{opt["archive"]}.tar.gz -z /var/www/broker/log/mcollective-client.log /var/log/mcollective.log /var/www/libra/site/log/development.log /var/www/broker/log/development.log /tmp/rhc/cucumber.log`
 end
