@@ -1,13 +1,13 @@
 %define htmldir %{_localstatedir}/www/html
 %define libradir %{_localstatedir}/www/libra
-%define brokerdir %{_localstatedir}/www/cloud-sdk-controller
+%define brokerdir %{_localstatedir}/www/libra/broker
 %define sitedir %{_localstatedir}/www/libra/site
 %define devenvdir %{_sysconfdir}/libra/devenv
 %define jenkins %{_sharedstatedir}/jenkins
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.84.1
+Version:   0.84.3
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -223,6 +223,12 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 %{_initddir}/sauce-connect
 
 %changelog
+* Thu Dec 15 2011 Dan McPherson <dmcphers@redhat.com> 0.84.3-1
+- use the right path this time (dmcphers@redhat.com)
+
+* Thu Dec 15 2011 Dan McPherson <dmcphers@redhat.com> 0.84.2-1
+- mirage merging fixes (dmcphers@redhat.com)
+
 * Wed Dec 14 2011 Dan McPherson <dmcphers@redhat.com> 0.84.1-1
 - bump spec numbers (dmcphers@redhat.com)
 - rpm work (dmcphers@redhat.com)
