@@ -17,7 +17,7 @@
 
 module Cloud
   module SDK
-    VERSION = '0.1'
+    VERSION = File.open("#{File.dirname(__FILE__)}/../../cloud-sdk-node.spec").readlines.delete_if{ |x| !x.match(/Version:/) }.first.split(':')[1].strip
     SDK_PATH = File.dirname(__FILE__)
   end
 end
