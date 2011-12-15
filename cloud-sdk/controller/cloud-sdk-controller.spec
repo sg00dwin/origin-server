@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.2.0
+Version:        0.2.1
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        AGPLv3
@@ -72,6 +72,25 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Wed Dec 14 2011 Dan McPherson <dmcphers@redhat.com> 0.2.1-1
+- bump spec numbers (dmcphers@redhat.com)
+- Adding cartridge list cache. Added nossh to validation for ssh key (BZ
+  767442). Based on 2cbab9d374409 Added secondary ssh key management based on
+  Ravi's work (kraman@gmail.com)
+- Adding first version of app move admin utility (kraman@gmail.com)
+- fix app not found cases (dmcphers@redhat.com)
+- Added ability to add/remove/list secondary ssh keys Added admin tools
+  (kraman@gmail.com)
+- more consistent error handling (dmcphers@redhat.com)
+- get jenkins running again (dmcphers@redhat.com)
+- get create domain working (dmcphers@redhat.com)
+- fix delete (dmcphers@redhat.com)
+- merge code for deletion of namespace into cloud-sdk (rchopra@redhat.com)
+- Merge remote-tracking branch 'origin/master' into mirage (kraman@gmail.com)
+- Added application, cloud_user observers to validate objects and print jenkins
+  related warnings. Added per application user delegation (with ssh keys)
+  (kraman@gmail.com)
+
 * Sun Dec 11 2011 Dan McPherson <dmcphers@redhat.com> 0.1.17-1
 - building cloud sdk (dmcphers@redhat.com)
 - Changed cdk-controller to be rails plugin. Modified express-broker with
