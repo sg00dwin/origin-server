@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Common
 Name:           rubygem-%{gemname}
-Version:        0.2.0
+Version:        0.2.1
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        AGPLv3
@@ -72,6 +72,11 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Wed Dec 14 2011 Dan McPherson <dmcphers@redhat.com> 0.2.1-1
+- bump spec numbers (dmcphers@redhat.com)
+- more consistent error handling (dmcphers@redhat.com)
+- fix delete (dmcphers@redhat.com)
+
 * Sun Dec 11 2011 Dan McPherson <dmcphers@redhat.com> 0.1.17-1
 - Changed cdk-controller to be rails plugin. Modified express-broker with
   customizations and integrating cdk-controller (kraman@gmail.com)
