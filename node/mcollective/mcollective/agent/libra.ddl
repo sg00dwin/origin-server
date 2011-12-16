@@ -32,7 +32,7 @@ action "cartridge_do", :description => "run a cartridge action" do
         :type           => :string,
         :validation     => '^.+$',
         :optional       => true,
-        :maxlength      => 512
+        :maxlength      => 1024
 
     output  :time,
             :description => "The time as a message",

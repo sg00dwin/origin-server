@@ -22,10 +22,10 @@ module Express
         token = {:app_name => app.name,
                  :rhlogin => app.user.rhlogin,
                  :creation_time => app.creation_time}
-        encrypted_token = cipher.update(JSON.generate(token))
+        encrypted_token = cipher.update(token.to_json)
         encrypted_token << cipher.final
       
-        public_key = OpenSSL::PKey::RSA.new(File.read('config/keys/public.pem'), Rails.application.config.cdk[:broker_auth_rsa_secret])
+        public_key = OpenSSL::PKey::RSA.new(File.read('/var/www/libra/broker/config/keys/public.pem'), Rails.application.config.cdk[:broker_auth_rsa_secret])
         encrypted_iv = public_key.public_encrypt(iv)
         [encrypted_iv, encrypted_token]
       end

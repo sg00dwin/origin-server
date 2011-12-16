@@ -75,8 +75,8 @@ module Express
         parse_result(result)    
       end
     
-      def add_broker_auth_key(app, id, token)
-        result = execute_direct(@@C_CONTROLLER, 'add-broker-auth-key', "-c '#{app.uuid}' -i '#{id}' -t '#{token}'")
+      def add_broker_auth_key(app, iv, token)
+        result = execute_direct(@@C_CONTROLLER, 'add-broker-auth-key', "-c '#{app.uuid}' -i '#{iv}' -t '#{token}'")
         parse_result(result)
       end
     

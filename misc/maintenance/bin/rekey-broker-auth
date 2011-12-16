@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
 # Usage: ./rekey-broker-auth > out.txt
+$:.unshift('/var/www/libra/broker')
+require 'config/environment'
 require 'rubygems'
 require 'openshift'
 
@@ -24,7 +26,10 @@ def rekey
         begin
           if app['framework'] == 'jenkins-1.4'
             puts "Re-keying app '#{app_name}' with uuid '#{app['uuid']}' on node '#{app['server_identity']}' for user: #{rhlogin}"
-            user.set_broker_auth_key(app_name, app)
+
+            user = CloudUser.find(rhlogin)
+            app2  = Application.find(user, app_name)
+            app2.add_broker_key
           end
         rescue Exception => e
           puts "ERROR: Failed re-keying app: #{app_name} with uuid: #{app['uuid']} for user: #{rhlogin}"
