@@ -39,9 +39,16 @@ function isParentPassenger() {
 
 # Get parent pid and command -- if its PassengerHelperAgent that issued
 # the ps, then renice and throttle the command (sleep a bit).
-if isParentPassenger "$@"; then
-   renice -5 -p $$
-   sleep $passenger_delay_ps
-fi
+{
+   if isParentPassenger "$@"; then
+      # Perl's sleep uses sigalrm and is the best of the lot - use some
+      # randomness though.
+      case "$((RANDOM % 5))" in
+         0) ;;  #  run immediately
+         2) sleep 1;;
+         *) perl -e "sleep $passenger_delay_ps";;
+      esac
+   fi
+} > /dev/null 2>&1
 
 exec /bin/ps "$@"
