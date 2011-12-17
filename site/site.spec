@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.84.2
+Version:   0.84.3
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -68,6 +68,10 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Fri Dec 16 2011 Dan McPherson <dmcphers@redhat.com> 0.84.3-1
+- Fix for Bug 765906: Promo email problem (fotios@redhat.com)
+- some cleanup of server-common (dmcphers@redhat.com)
+
 * Thu Dec 15 2011 Dan McPherson <dmcphers@redhat.com> 0.84.2-1
 - Removed message truncation and added CSS to enable word wrapping
   (fotios@redhat.com)
