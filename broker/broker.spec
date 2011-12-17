@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.84.4
+Version:   0.84.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -76,6 +76,10 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Fri Dec 16 2011 Dan McPherson <dmcphers@redhat.com> 0.84.5-1
+- rework rekey broker auth logic (dmcphers@redhat.com)
+- some cleanup of server-common (dmcphers@redhat.com)
+
 * Thu Dec 15 2011 Dan McPherson <dmcphers@redhat.com> 0.84.4-1
 - add cloud-sdk-controller prereq (dmcphers@redhat.com)
 
