@@ -3,4 +3,4 @@
 # List ports available to user:
 
 /usr/sbin/lsof -iTCP -sTCP:LISTEN -P 2> /dev/null | /bin/awk '/LISTEN/{ print $9 }' | /usr/bin/uniq
-/usr/sbin/lsof -iTCP -sTCP:LISTEN -P 2> /dev/null | /bin/awk '/LISTEN/{ print $1" -> "$9 }' | /usr/bin/uniq 1>&2
+/usr/sbin/lsof -iTCP -sTCP:LISTEN -P 2> /dev/null | /bin/awk '/LISTEN/{ print $1" -> "$9 }' | /bin/sort -u 1>&2
