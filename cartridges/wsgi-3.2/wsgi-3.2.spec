@@ -21,6 +21,7 @@ Requires:  pymongo-gridfs
 Requires:  python-psycopg2
 Requires:  python-virtualenv
 Requires:  libjpeg
+Requires:  libjpeg-devel
 
 Obsoletes: rhc-cartridge-wsgi-3.2.1
 
