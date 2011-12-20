@@ -87,7 +87,11 @@ class ApplicationController < ActionController::Base
     end
 
     Rails.logger.debug "Removing current SSO cookie value of '#{cookies[:rh_sso]}'"
-    cookies.delete :rh_sso, :domain => '.redhat.com'
+    if Rails.configuration.integrated
+      cookies.delete :rh_sso, :domain => '.redhat.com'
+    else
+      cookies.delete :rh_sso
+    end
   end
   
   def redirect_to_logout

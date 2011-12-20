@@ -57,12 +57,7 @@ class LoginController < ApplicationController
     session[:login] = params['login']
     session[:ticket] = "test"
     session[:user] = WebUser.new(:email_address => params['login'], :rhlogin => params['login'])
-    cookies[:rh_sso] = {
-      :secure => true,
-      :domain => '.redhat.com',
-      :path => '/',
-      :value => 'test'
-    }
+    cookies[:rh_sso] = domain_cookie_opts(:value => 'test')
 
     Rails.logger.debug "Session workflow in LoginController#create: #{workflow}"
     Rails.logger.debug "Redirecting to home#index"
@@ -81,12 +76,7 @@ class LoginController < ApplicationController
       session[:login] = params['login']
       session[:ticket] = "test"
       session[:user] = WebUser.new(:email_address => params['login'], :rhlogin => params['login'])
-      cookies[:rh_sso] = {
-        :secure => true,
-        :domain => '.redhat.com',
-        :path => '/',
-        :value => 'test'
-      }
+      cookies[:rh_sso] = domain_cookie_opts(:value => 'test')
       @message = 'Welcome back to OpenShift!'
       @message_type = 'success'
       set_previous_login_detection
@@ -136,13 +126,7 @@ class LoginController < ApplicationController
             @message_type = 'success'
             @message = 'Welcome back kto OpenShift!'
             rh_sso = cookie.split('; ')[0].split('=')[1]
-            cookies[:rh_sso] = {
-              :secure => true,
-              :domain => '.redhat.com',
-              :path => '/',
-              :value => rh_sso
-            }
-
+            cookies[:rh_sso] = domain_cookie_opts(:value => rh_sso)
             session[:ticket] = rh_sso
             responseText[:redirectUrl] = root_url
             set_previous_login_detection
@@ -174,5 +158,17 @@ class LoginController < ApplicationController
       end
     end
 
+  end
+
+  # Helper to apply common defaults to cookie options
+  def domain_cookie_opts(opts)
+    defaults = {
+      :secure => true,
+      :path => '/'
+    }
+    if Rails.configuration.integrated
+      defaults[:domain] = '.redhat.com'
+    end
+    defaults.merge(opts)
   end
 end
