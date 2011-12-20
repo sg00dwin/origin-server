@@ -16,7 +16,7 @@ class Express < OpenShift::SeleniumTestCase
     # External links
     check_links({
       :documentation => 'https://docs.redhat.com/docs/en-US/OpenShift_Express/1.0/html/User_Guide/index.html',
-      :forum => 'https://www.redhat.com/openshift/forums/express',
+      :forum => 'https://www.redhat.com/openshift/community/forums/express',
     })
 
     # Make sure we get the signup link

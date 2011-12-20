@@ -16,7 +16,7 @@ class Flex < OpenShift::SeleniumTestCase
     # External links
     check_links({
       :documentation => 'http://docs.redhat.com/docs/en-US/OpenShift_Flex/1.0/html/User_Guide/index.html',
-      :forum => 'https://www.redhat.com/openshift/forums/flex',
+      :forum => 'https://www.redhat.com/openshift/community/forums/flex',
     })
 
     # Make sure we get the signup link
