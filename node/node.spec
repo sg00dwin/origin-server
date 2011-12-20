@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.84.3
+Version:       0.84.4
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -173,6 +173,9 @@ fi
 %dir %attr(0755,root,root) %{_sysconfdir}/libra/skel
 
 %changelog
+* Tue Dec 20 2011 Alex Boone <aboone@redhat.com> 0.84.4-1
+- Adding lock and non-lock functionality (mmcgrath@redhat.com)
+
 * Tue Dec 20 2011 Mike McGrath <mmcgrath@redhat.com> 0.84.3-1
 - Merge branch 'master' of li-master:/srv/git/li (ramr@redhat.com)
 - Set username and password if default call w/o any arguments. Can only set
