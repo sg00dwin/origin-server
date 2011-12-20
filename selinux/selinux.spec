@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.84.1
+Version:       0.84.2
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -46,6 +46,9 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Tue Dec 20 2011 Mike McGrath <mmcgrath@redhat.com> 0.84.2-1
+- Adding pop/imap ports (mmcgrath@redhat.com)
+
 * Wed Dec 14 2011 Dan McPherson <dmcphers@redhat.com> 0.84.1-1
 - bump spec numbers (dmcphers@redhat.com)
 
