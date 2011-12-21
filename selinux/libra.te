@@ -1,4 +1,4 @@
-policy_module(libra,1.0.20)
+policy_module(libra,1.0.21)
 
 ########################################
 #
@@ -11,6 +11,9 @@ type libra_initrc_exec_t;
 init_daemon_domain(libra_initrc_t, libra_initrc_exec_t)
 init_ranged_daemon_domain(libra_initrc_t, libra_initrc_exec_t, s0 - mcs_systemhigh)
 oddjob_system_entry(libra_initrc_t, libra_initrc_exec_t)
+
+type libra_initrc_tmp_t;
+files_tmp_file(libra_initrc_tmp_t)
 
 type libra_tmp_t;
 files_tmp_file(libra_tmp_t)
@@ -84,6 +87,8 @@ allow libra_domain self:unix_stream_socket { create_stream_socket_perms connectt
 dontaudit libra_domain self:netlink_audit_socket { create_socket_perms nlmsg_relay };
 
 allow libra_domain libra_log_t:file { getattr append lock ioctl };
+
+allow libra_domain libra_tmp_t:file append;
 
 manage_dirs_pattern(libra_domain, libra_tmp_t, libra_tmp_t)
 manage_files_pattern(libra_domain, libra_tmp_t, libra_tmp_t)
@@ -188,6 +193,11 @@ gen_require(`
 role_transition unconfined_r libra_initrc_exec_t system_r;
 unconfined_domain_noaudit(libra_initrc_t)
 mcs_process_set_categories(libra_initrc_t)
+
+manage_dirs_pattern(libra_initrc_t, libra_initrc_tmp_t, libra_initrc_tmp_t)
+manage_files_pattern(libra_initrc_t, libra_initrc_tmp_t, libra_initrc_tmp_t)
+manage_lnk_files_pattern(libra_initrc_t, libra_initrc_tmp_t, libra_initrc_tmp_t)
+files_tmp_filetrans(libra_initrc_t, libra_initrc_tmp_t, { file dir })
 
 domtrans_pattern(unconfined_usertype, libra_initrc_exec_t, libra_initrc_t)
 domtrans_pattern(rpm_script_t, libra_initrc_exec_t, libra_initrc_t)
