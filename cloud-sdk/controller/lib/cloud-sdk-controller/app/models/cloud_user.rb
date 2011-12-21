@@ -193,19 +193,20 @@ class CloudUser < Cloud::Sdk::Model
 
       applications.each do |app|
         Rails.logger.debug "DEBUG: Updating namespaces for app: #{app.name}"
-        dns_service.deregister_application(app.name, self.namespace_was, @rhlogin)
-        dns_service.register_application(app.name, self.namespace, @rhlogin)
+        dns_service.deregister_application(app.name, self.namespace_was)
+        public_hostname = app.container.get_public_hostname
+        dns_service.register_application(app.name, self.namespace, public_hostname)
       end
       
       update_namespace_failures = []
       applications.each do |app|
-        Rails.logger.debug "DEBUG: Updating namespace for app: #{app_name}"
+        Rails.logger.debug "DEBUG: Updating namespace for app: #{app.name}"
         result = app.update_namespace(self.namespace, self.namespace_was)
         update_namespace_failures.push(app.name) unless result
       end
       
       if update_namespace_failures.empty?
-        dns_service.publish        
+        dns_service.publish
         notify_observers(:namespace_update_success)
       else
         notify_observers(:namespace_update_error)
@@ -214,23 +215,21 @@ class CloudUser < Cloud::Sdk::Model
     rescue Cloud::Sdk::CdkException => e
       raise
     rescue Exception => e
-      response.debug "Exception caught updating namespace: #{e.message}"
       Rails.logger.debug "DEBUG: Exception caught updating namespace: #{e.message}"
       Rails.logger.debug e.backtrace
       raise Cloud::Sdk::CdkException.new("An error occurred updating the namespace.  If the problem persists please contact support.",1), caller[0..5]
     ensure
       dns_service.close
-      
-      applications.each do |app|
-        app.embedded.each_key do |framework|
-          if app.embedded[framework].has_key?('info')
-            info = app.embedded[framework]['info']
-            info.gsub!(/-#{old_namespace}.#{Rails.application.config.cdk[:domain_suffix]}/, "-#{new_namespace}.#{Rails.application.config.cdk[:domain_suffix]}")
-            app.embedded[framework]['info'] = info
-          end
+    end
+    applications.each do |app|
+      app.embedded.each_key do |framework|
+        if app.embedded[framework].has_key?('info')
+          info = app.embedded[framework]['info']
+          info.gsub!(/-#{self.namespace_was}.#{Rails.application.config.cdk[:domain_suffix]}/, "-#{self.namespace}.#{Rails.application.config.cdk[:domain_suffix]}")
+          app.embedded[framework]['info'] = info
         end
-        app.save        
       end
+      app.save
     end
     notify_observers(:after_namespace_update)
   end

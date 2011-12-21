@@ -298,44 +298,21 @@ module Express
         Rails.logger.debug "Successfully moved '#{app.name}' with uuid #{app.uuid} from #{source_container.id} to #{destination_container_proxy.id}"
         reply
       end
-    
+      
+      def update_namespace(app, cart, new_ns, old_ns)
+        begin
+          mcoll_reply = execute_direct(cart, 'update_namespace', "#{app.name} #{new_ns} #{old_ns} #{app.uuid}")
+          result = parse_result(mcoll_reply)
+          return result.exitcode == 0
+        rescue Exception => e
+          Rails.logger.debug "Exception caught updating namespace #{e.message}"
+          Rails.logger.debug "DEBUG: Exception caught updating namespace #{e.message}"
+          Rails.logger.debug e.backtrace
+        end
+        return false
+      end
+      
       private
-      
-      def run_cartridge_command(framework, app, command, arg=nil)
-        arguments = "'#{app.name}' '#{app.user.namespace}' '#{app.uuid}'"
-        arguments += " '#{arg}'" if arg
-        
-        result = execute_direct(framework, command, arguments)
-        resultIO = parse_result(result, app, command)
-        if resultIO.exitcode != 0
-          resultIO.debugIO << "Cartridge return code: " + resultIO.exitcode.to_s
-          raise Cloud::Sdk::NodeException.new("Node execution failure (invalid exit code from node).  If the problem persists please contact Red Hat support.", 143, resultIO), caller[0..5]
-        end
-        resultIO
-      end
-      
-      def self.rpc_find_available(node_profile="std", forceRediscovery=false)
-        current_server, current_capacity = nil, nil
-        additional_filters = [
-          {:fact => "node_profile",
-           :value => node_profile,
-           :operator => "=="},
-          {:fact => "capacity",
-           :value => "100",
-           :operator => "<"
-          }
-        ]
-    
-        rpc_get_fact('capacity', nil, forceRediscovery, additional_filters) do |server, capacity|
-          Rails.logger.debug "Next server: #{server} capacity: #{capacity}"
-          if !current_capacity || capacity.to_i < current_capacity.to_i
-            current_server = server
-            current_capacity = capacity
-          end
-          Rails.logger.debug "Current server: #{current_server} capacity: #{current_capacity}"
-        end
-        return current_server, current_capacity
-      end
       
       def execute_direct(cartridge, action, args)
           mc_args = { :cartridge => cartridge,
@@ -416,12 +393,48 @@ module Express
                 result.debugIO << line
               end
             else # exitcode != 0
-              result.debugIO << line
+              #result.debugIO << line
               Rails.logger.debug "DEBUG: server results: " + line
             end
           end
         end
         result
+      end
+      
+      def run_cartridge_command(framework, app, command, arg=nil)
+        arguments = "'#{app.name}' '#{app.user.namespace}' '#{app.uuid}'"
+        arguments += " '#{arg}'" if arg
+        
+        result = execute_direct(framework, command, arguments)
+        resultIO = parse_result(result, app, command)
+        if resultIO.exitcode != 0
+          resultIO.debugIO << "Cartridge return code: " + resultIO.exitcode.to_s
+          raise Cloud::Sdk::NodeException.new("Node execution failure (invalid exit code from node).  If the problem persists please contact Red Hat support.", 143, resultIO), caller[0..5]
+        end
+        resultIO
+      end
+      
+      def self.rpc_find_available(node_profile="std", forceRediscovery=false)
+        current_server, current_capacity = nil, nil
+        additional_filters = [
+          {:fact => "node_profile",
+           :value => node_profile,
+           :operator => "=="},
+          {:fact => "capacity",
+           :value => "100",
+           :operator => "<"
+          }
+        ]
+    
+        rpc_get_fact('capacity', nil, forceRediscovery, additional_filters) do |server, capacity|
+          Rails.logger.debug "Next server: #{server} capacity: #{capacity}"
+          if !current_capacity || capacity.to_i < current_capacity.to_i
+            current_server = server
+            current_capacity = capacity
+          end
+          Rails.logger.debug "Current server: #{current_server} capacity: #{current_capacity}"
+        end
+        return current_server, current_capacity
       end
       
       def self.rpc_options

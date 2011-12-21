@@ -112,6 +112,10 @@ module Cloud
       
       def move_app(app, destination_container_proxy)
       end
+      
+      def update_namespace(app, cart, new_ns, old_ns)
+      end
+      end
     end
   end
 end

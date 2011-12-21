@@ -179,21 +179,7 @@ class Application < Cloud::Sdk::Model
   end
   
   def update_namespace(new_ns, old_ns)
-    begin
-      result = self.container.execute_direct(app.framework, 'update_namespace', "#{app.name} #{self.namespace} #{self.namespace_was} #{app.uuid}")[0]
-      if (result && defined?(result.results) && result.results.has_key?(:data))
-        exitcode = result.results[:data][:exitcode]
-        output = result.results[:data][:output]
-        server.log_result_output(output, exitcode, self, name, app.attributes)
-        return exitcode == 0
-      end
-    rescue Exception => e
-      Rails.logger.debug "Exception caught updating namespace #{e.message}"
-      Rails.logger.debug "DEBUG: Exception caught updating namespace #{e.message}"
-      Rails.logger.debug e.backtrace
-      raise
-    end
-    return false
+    return self.container.update_namespace(self, @framework, new_ns, old_ns)
   end
   
   def start
