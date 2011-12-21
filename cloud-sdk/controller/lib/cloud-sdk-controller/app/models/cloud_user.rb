@@ -223,7 +223,7 @@ class CloudUser < Cloud::Sdk::Model
       
       applications.each do |app|
         app.embedded.each_key do |framework|
-          if app.embedded["framework"].has_key?('info')
+          if app.embedded[framework].has_key?('info')
             info = app.embedded[framework]['info']
             info.gsub!(/-#{old_namespace}.#{Rails.application.config.cdk[:domain_suffix]}/, "-#{new_namespace}.#{Rails.application.config.cdk[:domain_suffix]}")
             app.embedded[framework]['info'] = info
