@@ -399,7 +399,7 @@ function rm_unobfuscated_app_home {
 
     if [ $unobfuscate -eq 1 ]
     then
-        rm "${libra_dir}/${appname}-${namespace}"
+        rm -f "${libra_dir}/${appname}-${namespace}"
     fi
 }
 
