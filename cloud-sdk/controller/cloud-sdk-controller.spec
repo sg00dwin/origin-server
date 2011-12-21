@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.2.7
+Version:        0.2.8
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        AGPLv3
@@ -72,6 +72,13 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Wed Dec 21 2011 Dan McPherson <dmcphers@redhat.com> 0.2.8-1
+- bump spec numbers (dmcphers@redhat.com)
+- Bug 769211 (dmcphers@redhat.com)
+- fix typo (dmcphers@redhat.com)
+- Bug 769663 (dmcphers@redhat.com)
+- Bug 769663 (dmcphers@redhat.com)
+
 * Wed Dec 21 2011 Dan McPherson <dmcphers@redhat.com> 0.2.7-1
 - fix spec numbers (dmcphers@redhat.com)
 
