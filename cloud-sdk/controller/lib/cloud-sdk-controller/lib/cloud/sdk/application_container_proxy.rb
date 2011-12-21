@@ -115,7 +115,6 @@ module Cloud
       
       def update_namespace(app, cart, new_ns, old_ns)
       end
-      end
     end
   end
 end
