@@ -76,7 +76,7 @@ class Application < Cloud::Sdk::Model
     reply = ResultIO.new
     self.class.notify_observers(:before_application_destroy, {:application => self, :reply => reply})    
     reply.append self.container.destroy(self) if self.container
-    self.class.notify_observers(:after_application_create, {:application => self, :reply => reply})    
+    self.class.notify_observers(:after_application_destroy, {:application => self, :reply => reply})    
     reply
   end
   

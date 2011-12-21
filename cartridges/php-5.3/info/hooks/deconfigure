@@ -38,22 +38,40 @@ done
 
 [ $# -eq 3 ] || print_help
 
+echo 1
+
 CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
 source ${CART_DIR}/abstract/info/lib/util
 
+echo 2
+
 setup_deconfigure "$1" $2 $3
+
+echo 3
 
 destroy_git_repo $application $uuid
 
+echo 4
+
 stop_app
+
+echo 5
 
 confirm_pid_gone "${APP_DIR}/run/httpd.pid"
 
+echo 6
+
 confirm_log_files_inactive "$APP_DIR/logs"
+
+echo 7
 
 rm_app_dir
 
+echo 8
+
 rm_unobfuscated_app_home $namespace $application
+
+echo 9
 
 #
 # Remove virtualhost definition for apache

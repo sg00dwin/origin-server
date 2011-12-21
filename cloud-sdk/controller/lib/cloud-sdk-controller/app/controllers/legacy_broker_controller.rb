@@ -130,7 +130,7 @@ class LegacyBrokerController < ApplicationController
         begin
           @reply.append app.create          
           app.save
-          @reply.append app.configure_dependencies          
+          @reply.append app.configure_dependencies
           @reply.append app.add_system_ssh_keys
           @reply.append app.add_secondary_ssh_keys
           @reply.append app.add_system_env_vars
@@ -161,6 +161,7 @@ class LegacyBrokerController < ApplicationController
       end
     when 'deconfigure'
       app = get_app_from_request(user)
+      @reply.append app.deconfigure_dependencies
       @reply.append app.destroy
       
       if app.framework_cartridge == "jenkins"

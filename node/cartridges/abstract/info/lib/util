@@ -396,9 +396,14 @@ function rm_unobfuscated_app_home {
 
     namespace=$1
     appname=$2
+    
+    echo Removing
+    echo "${libra_dir}/${appname}-${namespace}"
+    echo $unobfuscate
 
     if [ $unobfuscate -eq 1 ]
     then
+    echo "in here"
         rm -f "${libra_dir}/${appname}-${namespace}"
     fi
 }
