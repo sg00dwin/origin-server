@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.84.4
+Version:   0.84.5
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -223,6 +223,11 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 %{_initddir}/sauce-connect
 
 %changelog
+* Wed Dec 21 2011 Mike McGrath <mmcgrath@redhat.com> 0.84.5-1
+- namespace.ini - deleted extra config file 12 21 2011 (tkramer@redhat.com)
+- namespace.ini change location of polyinstantiated files 12 21 2011
+  (tkramer@redhat.com)
+
 * Fri Dec 16 2011 Dan McPherson <dmcphers@redhat.com> 0.84.4-1
 - some cleanup of server-common (dmcphers@redhat.com)
 
