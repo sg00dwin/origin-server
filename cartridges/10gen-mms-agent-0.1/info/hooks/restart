@@ -59,6 +59,6 @@ rm -f $MMS_DIR/mms-agent/settings.pyc $MMS_DIR/mms-agent/settings.pyo
 #
 # Start application
 #
-rm -f "$ROCKMONGO_DIR/run/stop_lock"
+rm -f "$MMS_DIR/run/stop_lock"
 runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $MMS_CTL_SCRIPT stop"
 runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $MMS_CTL_SCRIPT start"

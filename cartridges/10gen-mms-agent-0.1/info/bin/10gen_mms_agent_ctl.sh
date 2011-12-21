@@ -36,7 +36,18 @@ case "$1" in
     ;;
 
     graceful-stop|stop)
-        mms_agent_pid=`cat ${OPENSHIFT_10GEN_MMS_AGENT_APP_DIR}run/mms-agent.pid 2> /dev/null`
-        kill -9 $mms_agent_pid > /dev/null
+        if [ -f ${OPENSHIFT_10GEN_MMS_AGENT_APP_DIR}run/mms-agent.pid ]
+        then
+            mms_agent_pid=`cat ${OPENSHIFT_10GEN_MMS_AGENT_APP_DIR}run/mms-agent.pid 2> /dev/null`
+            kill -9 $mms_agent_pid > /dev/null
+            rm -f ${OPENSHIFT_10GEN_MMS_AGENT_APP_DIR}run/mms-agent.pid > /dev/null
+        else
+            if ps -ef | grep ${OPENSHIFT_APP_UUID}_agent.py | grep -qv grep > /dev/null 2>&1; then
+                echo "Failed to stop 10gen-mms-agent-0.1 as the pid file is missing!" 1>&2
+                exit 1
+            else
+                echo "The 10-gen-mms-agent-0.1 is already stopped!" 1>&2
+            fi
+        fi
     ;;
 esac
