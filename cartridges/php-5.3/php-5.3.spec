@@ -2,7 +2,7 @@
 
 Summary:   Provides php-5.3 support
 Name:      rhc-cartridge-php-5.3
-Version:   0.84.1
+Version:   0.84.2
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -91,6 +91,10 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Wed Dec 21 2011 Dan McPherson <dmcphers@redhat.com> 0.84.2-1
+- undo accidental commit (dmcphers@redhat.com)
+- Bug 769211 (dmcphers@redhat.com)
+
 * Wed Dec 14 2011 Dan McPherson <dmcphers@redhat.com> 0.84.1-1
 - bump spec numbers (dmcphers@redhat.com)
 
