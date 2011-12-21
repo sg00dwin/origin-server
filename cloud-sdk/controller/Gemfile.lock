@@ -1,9 +1,9 @@
 PATH
   remote: .
   specs:
-    cloud-sdk-controller (0.2.7)
+    cloud-sdk-controller (0.2.8)
       activesupport (~> 3.0.10)
-      cloud-sdk-common (= 0.2.4)
+      cloud-sdk-common
       json (= 1.4.3)
 
 GEM
