@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.2.6
+Version:        0.2.7
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        AGPLv3
@@ -72,6 +72,9 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Wed Dec 21 2011 Dan McPherson <dmcphers@redhat.com> 0.2.7-1
+- fix spec numbers (dmcphers@redhat.com)
+
 * Wed Dec 21 2011 Mike McGrath <mmcgrath@redhat.com> 0.2.6-1
 - Bump cartridge list cache to 6 hours (aboone@redhat.com)
 
