@@ -29,6 +29,9 @@ then
 fi
 
 # Turn user application back on.
+# enable
+source "/var/lib/libra/${uuid}/.env/OPENSHIFT_RUN_DIR"
+rm -f "${OPENSHIFT_RUN_DIR}/stop_lock"
 
 /sbin/service libra startuser "${uuid}"
 

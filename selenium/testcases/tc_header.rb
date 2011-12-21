@@ -16,7 +16,7 @@ class Header < OpenShift::SeleniumTestCase
       :platform_overview => '/app/platform',
       :express => '/app/express',
       :flex => '/app/flex',
-      :community => 'https://www.redhat.com/openshift/'
+      :community => 'https://www.redhat.com/openshift/community/'
     }
 
     links.each do |name,url|

@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.84.1
+Version:       0.84.3
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -8,8 +8,8 @@ URL:           http://openshift.redhat.com
 Source0:       rhc-selinux-%{version}.tar.gz
 
 BuildRoot:     %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
-BuildRequires: selinux-policy >= 3.7.19-106
-Requires:      selinux-policy-targeted >= 3.7.19-130.el6
+BuildRequires: selinux-policy >= 3.7.19-131 
+Requires:      selinux-policy-targeted >= 3.7.19-131
 Requires(post):   /usr/sbin/semanage
 Requires(postun): /usr/sbin/semanage
 
@@ -46,6 +46,16 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Wed Dec 21 2011 Mike McGrath <mmcgrath@redhat.com> 0.84.3-1
+- require selinux policy 131 (mmcgrath@redhat.com)
+- Dontaudit libra domains searching ssh_home_t (dwalsh@redhat.com)
+- Add policy for libra_var_run_t (dwalsh@redhat.com)
+- Add tmp file for librar init script to setup log file (dwalsh@redhat.com)
+- Dontaudit libra domains searching ssh_home_t (dwalsh@redhat.com)
+
+* Tue Dec 20 2011 Mike McGrath <mmcgrath@redhat.com> 0.84.2-1
+- Adding pop/imap ports (mmcgrath@redhat.com)
+
 * Wed Dec 14 2011 Dan McPherson <dmcphers@redhat.com> 0.84.1-1
 - bump spec numbers (dmcphers@redhat.com)
 

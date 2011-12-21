@@ -75,7 +75,8 @@ $ ->
     
     # get current section
     if location.hash
-      current = $ location.hash
+      section = location.hash.replace(/[^a-z0-9_\-]/gi, '')
+      current = $ ('#' + section)
       unless current.is section_selector
         current = current.parents section_selector
 

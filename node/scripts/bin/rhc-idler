@@ -41,3 +41,7 @@ EOF
 service httpd graceful
 
 service libra stopuser "${uuid}"
+
+# Disable
+source "/var/lib/libra/${uuid}/.env/OPENSHIFT_RUN_DIR"
+touch "${OPENSHIFT_RUN_DIR}/stop_lock"

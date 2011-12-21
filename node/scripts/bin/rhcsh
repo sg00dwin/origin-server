@@ -39,12 +39,21 @@ function ctl_all {
 
 
 function mongo() {
-   [ -n "$OPENSHIFT_NOSQL_DB_HOST" ]  &&  hopt="--host $OPENSHIFT_NOSQL_DB_HOST"
-   if echo "$@" | egrep "\-\-host|$OPENSHIFT_NOSQL_DB_HOST" > /dev/null; then
-      hopt=""  #  Do not override if --host is passed.
+   if test $# -gt 0; then
+      uopt=""
+      popt=""
+   else
+      uopt="--username ${OPENSHIFT_NOSQL_DB_USERNAME:-'admin'}"
+      [ -n "$OPENSHIFT_NOSQL_DB_PASSWORD" ]  &&  popt="--password $OPENSHIFT_NOSQL_DB_PASSWORD"
    fi
 
-   /usr/bin/mongo $hopt "$@"
+   if echo "$@" | egrep "\-\-host|$OPENSHIFT_NOSQL_DB_HOST" > /dev/null; then
+      hopt=""  #  Do not override if --host is passed.
+   else
+      hopt="${OPENSHIFT_NOSQL_DB_HOST:-'127.0.0.1'}:${OPENSHIFT_NOSQL_DB_PORT:-27017}/admin"
+   fi
+
+   /usr/bin/mongo ${hopt} ${uopt} ${popt} "$@"
 
 }  #  End of  mongo  function.
 
