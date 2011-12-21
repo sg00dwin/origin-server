@@ -18,6 +18,9 @@ files_tmp_file(libra_initrc_tmp_t)
 type libra_tmp_t;
 files_tmp_file(libra_tmp_t)
 
+type libra_var_run_t;
+files_pid_file(libra_var_run_t)
+
 type libra_var_lib_t;
 files_poly(libra_var_lib_t)
 files_poly_parent(libra_var_lib_t)
@@ -88,7 +91,8 @@ dontaudit libra_domain self:netlink_audit_socket { create_socket_perms nlmsg_rel
 
 allow libra_domain libra_log_t:file { getattr append lock ioctl };
 
-allow libra_domain libra_tmp_t:file append;
+dontaudit libra_domain libra_initrc_tmp_t:file append;
+dontaudit libra_domain libra_var_run_t:file append;
 
 manage_dirs_pattern(libra_domain, libra_tmp_t, libra_tmp_t)
 manage_files_pattern(libra_domain, libra_tmp_t, libra_tmp_t)
@@ -198,6 +202,11 @@ manage_dirs_pattern(libra_initrc_t, libra_initrc_tmp_t, libra_initrc_tmp_t)
 manage_files_pattern(libra_initrc_t, libra_initrc_tmp_t, libra_initrc_tmp_t)
 manage_lnk_files_pattern(libra_initrc_t, libra_initrc_tmp_t, libra_initrc_tmp_t)
 files_tmp_filetrans(libra_initrc_t, libra_initrc_tmp_t, { file dir })
+
+manage_dirs_pattern(libra_initrc_t, libra_var_run_t, libra_var_run_t)
+manage_files_pattern(libra_initrc_t, libra_var_run_t, libra_var_run_t)
+manage_lnk_files_pattern(libra_initrc_t, libra_var_run_t, libra_var_run_t)
+files_pid_filetrans(libra_initrc_t, libra_var_run_t, { file dir })
 
 domtrans_pattern(unconfined_usertype, libra_initrc_exec_t, libra_initrc_t)
 domtrans_pattern(rpm_script_t, libra_initrc_exec_t, libra_initrc_t)

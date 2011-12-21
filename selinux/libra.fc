@@ -13,3 +13,5 @@
 
 /usr/bin/rhc-restorer           --    gen_context(system_u:object_r:libra_initrc_exec_t,s0)
 /usr/bin/rhc-restorer-wrapper.sh    --  gen_context(unconfined_u:object_r:httpd_libra_script_exec_t,s0)
+
+/var/run/libra(/.*)?		    	gen_context(system_u:object_r:libra_var_run_t,s0)
