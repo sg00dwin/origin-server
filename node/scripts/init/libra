@@ -104,7 +104,7 @@ fi
 
 startuser() {
     # USERNAME=$1
-    local OUTFILE=$(mktemp /tmp/libra_init-startuser-$1.XXXXXXXX)
+    local OUTFILE=$(mktemp /var/run/libra/libra_init-startuser-$1.XXXXXXXX)
     echo "Starting $1..." >> $OUTFILE 2>&1
     for APPNAME in `userapps $1`
     do
@@ -118,7 +118,7 @@ startuser() {
 
 stopuser() {
     # USERNAME=$1
-    local OUTFILE=$(mktemp /tmp/libra_init-stopuser-$1.XXXXXXXX)
+    local OUTFILE=$(mktemp /var/run/libra/libra_init-stopuser-$1.XXXXXXXX)
     echo "Stopping $1..." >> $OUTFILE 2>&1
     for APPNAME in `userapps $1`
     do

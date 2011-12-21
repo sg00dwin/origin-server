@@ -51,7 +51,6 @@ mkdir -p %{buildroot}%{_bindir}
 mkdir -p %{buildroot}%{_libexecdir}
 mkdir -p %{buildroot}%{_initddir}
 mkdir -p %{buildroot}%{ruby_sitelibdir}
-mkdir -p %{buildroot}/var/lib/libra
 mkdir -p %{buildroot}%{_libexecdir}/li
 mkdir -p %{buildroot}%{_sysconfdir}/httpd/conf.d/libra
 mkdir -p %{buildroot}/usr/share/selinux/packages
@@ -60,7 +59,9 @@ mkdir -p %{buildroot}%{_sysconfdir}/oddjobd.conf.d/
 mkdir -p %{buildroot}%{_sysconfdir}/dbus-1/system.d/
 mkdir -p %{buildroot}%{_sysconfdir}/cron.daily/
 mkdir -p %{buildroot}%{_sysconfdir}/libra/skel
-mkdir -p %{buildroot}/%{_localstatedir}/www/html/
+mkdir -p %{buildroot}%{_localstatedir}/www/html/
+mkdir -p %{buildroot}%{_localstatedir}/lib/libra
+mkdir -p %{buildroot}%{_localstatedir}/run/libra
 
 cp -r cartridges %{buildroot}%{_libexecdir}/li
 cp -r conf/httpd %{buildroot}%{_sysconfdir}
@@ -93,6 +94,7 @@ perl -p -i -e 's:/cgroup/[^\s]+;:/cgroup/all;:; /blkio|cpuset|devices/ && ($_ = 
 #/sbin/service mcollective restart > /dev/null 2>&1 || :
 /sbin/restorecon /etc/init.d/libra || :
 /sbin/restorecon /var/lib/libra || :
+/sbin/restorecon /var/run/libra || :
 /sbin/restorecon /usr/bin/rhc-cgroup-read || :
 /usr/bin/rhc-restorecon || :
 # only enable if cgconfig is
@@ -148,6 +150,7 @@ fi
 %attr(0750,-,-) %{_bindir}/remount-secure.sh
 %attr(0755,-,-) %{_bindir}/rhc-cgroup-read
 %dir %attr(0751,root,root) %{_localstatedir}/lib/libra
+%dir %attr(0700,root,root) %{_localstatedir}/run/libra
 %dir %attr(0755,root,root) %{_libexecdir}/li/cartridges/abstract-httpd/
 %attr(0750,-,-) %{_libexecdir}/li/cartridges/abstract-httpd/info/hooks/
 %attr(0755,-,-) %{_libexecdir}/li/cartridges/abstract-httpd/info/bin/
