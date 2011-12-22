@@ -47,12 +47,14 @@ module Express
           token = JSON.parse(json_token)
           username = token['rhlogin']
           app_name = token['app_name']
+          creation_time = Time.parse(token['creation_time'])
                 
-          user = CloudUser.find_by_login(username)
-          raise UserValidationException.new unless user
+          user = CloudUser.find(username)
+          raise Cloud::Sdk::UserValidationException.new unless user
           
-          app = user.applications[app_name]
-          raise UserValidationException.new if !app or creation_time != app.creation_time
+          app = Application.find(user, app_name)
+          
+          raise Cloud::Sdk::UserValidationException.new if !app or creation_time != app.creation_time
           return username
         else
           return data['rhlogin']
@@ -88,9 +90,9 @@ module Express
         roles = [] unless roles
         unless roles.index('cloud_access_1')
           if roles.index('cloud_access_request_1')
-            raise UserValidationException.new("Found valid credentials but you haven't been granted access to Express yet", 146), caller[0..5]
+            raise Cloud::Sdk::UserValidationException.new("Found valid credentials but you haven't been granted access to Express yet", 146), caller[0..5]
           else
-            raise UserValidationException.new("Found valid credentials but you haven't requested access to Express yet", 147), caller[0..5]
+            raise Cloud::Sdk::UserValidationException.new("Found valid credentials but you haven't requested access to Express yet", 147), caller[0..5]
           end
         end
       end
