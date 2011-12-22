@@ -122,13 +122,14 @@ class LegacyBrokerController < ApplicationController
     
     case @req.action
     when 'configure'    #create app and configure framework
-      cart_type = @req.cartridge.split('-')[0..-2].join('-')
       apps = user.applications
       
       app = Application.new(user, @req.app_name, nil, @req.node_profile, @req.cartridge)
+      container = Cloud::Sdk::ApplicationContainerProxy.find_available(@req.node_profile)
+      check_cartridge_type(app.framework, container, "standalone")
       if app.valid?
         begin
-          @reply.append app.create          
+          @reply.append app.create(container)
           app.save
           @reply.append app.configure_dependencies
           @reply.append app.add_system_ssh_keys
@@ -213,6 +214,8 @@ class LegacyBrokerController < ApplicationController
     raise Cloud::Sdk::CdkException.new("Invalid user", 99), caller[0..5] if user.nil?
         
     app = get_app_from_request(user)
+    
+    check_cartridge_type(@req.cartridge, app.container, "embedded")
 
     Rails.logger.debug "DEBUG: Performing action '#{@req.action}' on node '#{app.server_identity}'"    
     case @req.action
@@ -239,6 +242,18 @@ class LegacyBrokerController < ApplicationController
   end
   
   protected
+  
+  # Raise an exception if cartridge type isn't supported
+  def check_cartridge_type(framework, container, cart_type)
+    carts = container.get_available_cartridges(cart_type)
+    unless carts.include? framework
+      if cart_type == 'standalone'
+        raise Cloud::Sdk::UserException.new(110), "Invalid application type (-t|--type) specified: '#{framework}'.  Valid application types are (#{carts.join(', ')}).", caller[0..5]
+      else
+        raise Cloud::Sdk::UserException.new(110), "Invalid type (-e|--embed) specified: '#{framework}'.  Valid embedded types are (#{carts.join(', ')}).", caller[0..5]
+      end
+    end
+  end
   
   def get_app_from_request(user)
     app = Application.find(user, @req.app_name)

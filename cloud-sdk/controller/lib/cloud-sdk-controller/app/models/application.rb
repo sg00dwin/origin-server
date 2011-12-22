@@ -61,10 +61,14 @@ class Application < Cloud::Sdk::Model
   end
   
   #creates a new application container on a node and initializes it
-  def create
+  def create(container)
     reply = ResultIO.new
     self.class.notify_observers(:before_application_create, {:application => self, :reply => reply})
-    self.container = Cloud::Sdk::ApplicationContainerProxy.find_available(self.node_profile)
+    if container
+      self.container = container
+    else
+      self.container = Cloud::Sdk::ApplicationContainerProxy.find_available(self.node_profile)
+    end
     self.server_identity = self.container.id
     reply.append self.container.create(self)
     self.class.notify_observers(:after_application_create, {:application => self, :reply => reply})        
