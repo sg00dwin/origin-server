@@ -3,7 +3,7 @@
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
 Version:       0.84.6
-Release:       1%{?dist}
+Release:       2%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
 URL:           http://openshift.redhat.com
@@ -51,6 +51,7 @@ mkdir -p %{buildroot}%{_bindir}
 mkdir -p %{buildroot}%{_libexecdir}
 mkdir -p %{buildroot}%{_initddir}
 mkdir -p %{buildroot}%{ruby_sitelibdir}
+mkdir -p %{buildroot}/var/lib/libra
 mkdir -p %{buildroot}%{_libexecdir}/li
 mkdir -p %{buildroot}%{_sysconfdir}/httpd/conf.d/libra
 mkdir -p %{buildroot}/usr/share/selinux/packages
@@ -59,15 +60,15 @@ mkdir -p %{buildroot}%{_sysconfdir}/oddjobd.conf.d/
 mkdir -p %{buildroot}%{_sysconfdir}/dbus-1/system.d/
 mkdir -p %{buildroot}%{_sysconfdir}/cron.daily/
 mkdir -p %{buildroot}%{_sysconfdir}/libra/skel
-mkdir -p %{buildroot}%{_localstatedir}/www/html/
-mkdir -p %{buildroot}%{_localstatedir}/lib/libra
-mkdir -p %{buildroot}%{_localstatedir}/run/libra
+mkdir -p %{buildroot}/%{_localstatedir}/www/html/
+mkdir -p %{buildroot}/%{_sysconfdir}/security/
 
 cp -r cartridges %{buildroot}%{_libexecdir}/li
 cp -r conf/httpd %{buildroot}%{_sysconfdir}
 cp -r conf/libra %{buildroot}%{_sysconfdir}
 cp -r facter %{buildroot}%{ruby_sitelibdir}/facter
 cp -r mcollective %{buildroot}%{_libexecdir}
+cp -r namespace.d %{buildroot}%{_sysconfdir}/security
 cp scripts/bin/* %{buildroot}%{_bindir}
 cp scripts/init/* %{buildroot}%{_initddir}
 cp scripts/libra_tmpwatch.sh %{buildroot}%{_sysconfdir}/cron.daily/libra_tmpwatch.sh
@@ -94,7 +95,6 @@ perl -p -i -e 's:/cgroup/[^\s]+;:/cgroup/all;:; /blkio|cpuset|devices/ && ($_ = 
 #/sbin/service mcollective restart > /dev/null 2>&1 || :
 /sbin/restorecon /etc/init.d/libra || :
 /sbin/restorecon /var/lib/libra || :
-/sbin/restorecon /var/run/libra || :
 /sbin/restorecon /usr/bin/rhc-cgroup-read || :
 /usr/bin/rhc-restorecon || :
 # only enable if cgconfig is
@@ -150,7 +150,6 @@ fi
 %attr(0750,-,-) %{_bindir}/remount-secure.sh
 %attr(0755,-,-) %{_bindir}/rhc-cgroup-read
 %dir %attr(0751,root,root) %{_localstatedir}/lib/libra
-%dir %attr(0700,root,root) %{_localstatedir}/run/libra
 %dir %attr(0755,root,root) %{_libexecdir}/li/cartridges/abstract-httpd/
 %attr(0750,-,-) %{_libexecdir}/li/cartridges/abstract-httpd/info/hooks/
 %attr(0755,-,-) %{_libexecdir}/li/cartridges/abstract-httpd/info/bin/
@@ -170,12 +169,16 @@ fi
 %attr(0640,-,-) %config(noreplace) %{_sysconfdir}/libra/node.conf
 %attr(0640,-,-) %config(noreplace) %{_sysconfdir}/libra/resource_limits.con*
 %attr(0750,-,-) %config(noreplace) %{_sysconfdir}/cron.daily/libra_tmpwatch.sh
+%attr(0644,-,-) %config(noreplace) %{_sysconfdir}/security/namespace.d/*
 %{_localstatedir}/www/html/restorer.php
 %attr(0750,root,root) %config(noreplace) %{_sysconfdir}/httpd/conf.d/000000_default.conf
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 %dir %attr(0755,root,root) %{_sysconfdir}/libra/skel
 
 %changelog
+* Thu Dec 22 2011 Tim Kramer <tkramer@redhat.com> 0.84.6-2
+- Changed the namespaced.conf to namespace.d <tkramer@redhat.com>
+
 * Wed Dec 21 2011 Dan McPherson <dmcphers@redhat.com> 0.84.6-1
 - Bug 769211 (dmcphers@redhat.com)
 
