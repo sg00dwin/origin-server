@@ -78,9 +78,9 @@ when "status"
   reply.append app.status  
 when "destroy"
   unless bypass
-    puts <<WARNING
+    puts <<-WARNING
   !!!! WARNING !!!! WARNING !!!! WARNING !!!!
-  You are about to destroy the #{opt['app']} application.
+  You are about to destroy the #{app_name} application.
 
   This is NOT reversible, all remote data for this application will be removed.
   WARNING
