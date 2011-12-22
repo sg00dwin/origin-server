@@ -1,5 +1,5 @@
-/* DO NOT MODIFY. This file was compiled Thu, 15 Dec 2011 18:49:48 GMT from
- * /home/fotios/openshift/li/site/app/coffeescripts/form.coffee
+/* DO NOT MODIFY. This file was compiled Thu, 22 Dec 2011 14:44:19 GMT from
+ * /home/aboone/Source/li/site/app/coffeescripts/form.coffee
  */
 
 (function() {
@@ -79,8 +79,15 @@
     reset = $('#reset_password');
     change = $('#change_password');
     ($('a.sign_up')).click(function(event) {
+      var content_signup;
       event.preventDefault();
-      return open_dialog(signup);
+      content_signup = $('div.content #new-user');
+      if (content_signup.length > 0) {
+        dialogs.hide();
+        return $('#web_user_email_address').focus();
+      } else {
+        return open_dialog(signup);
+      }
     });
     ($('a.sign_in')).click(function(event) {
       var login, userbox;
