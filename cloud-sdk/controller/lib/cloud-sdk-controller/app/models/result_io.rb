@@ -39,7 +39,11 @@ class ResultIO
     reply = LegacyReply.new
     reply.debug = @debugIO.string
     reply.messages = @messageIO.string
-    reply.result = @resultIO.string
+    if !@errorIO.string.empty?
+      reply.result = @errorIO.string
+    else
+      reply.result = @resultIO.string
+    end
     reply.data = @data
     reply.exit_code = @exitcode
     reply.to_json(*args)

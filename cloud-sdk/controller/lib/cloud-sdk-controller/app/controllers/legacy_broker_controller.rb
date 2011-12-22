@@ -298,8 +298,8 @@ class LegacyBrokerController < ApplicationController
       logger.error "Exception rescued in #{request.path}:"
       logger.error e.message
       logger.error e.backtrace
+      logger.error e.resultIO
       @reply.append e.resultIO if e.resultIO
-      @reply.resultIO << "An internal error occurred [code: #{e.code}]. If the problem persists please contact support."
     else
       logger.error "Exception rescued in #{request.path}:"
       logger.error e.message
