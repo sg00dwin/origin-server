@@ -11,9 +11,7 @@ module Express
         @current_capacity = current_capacity
       end
       
-      def self.find_available_impl(node_profile=nil)
-        node_profile ||= "std"
-        
+      def self.find_available_impl(node_profile=nil)       
         current_server, current_capacity = rpc_find_available(node_profile)
         Rails.logger.debug "CURRENT SERVER: #{current_server}"
         if !current_server
@@ -414,17 +412,19 @@ module Express
         resultIO
       end
       
-      def self.rpc_find_available(node_profile="std", forceRediscovery=false)
+      def self.rpc_find_available(node_profile=nil, forceRediscovery=false)
         current_server, current_capacity = nil, nil
         additional_filters = [
-          {:fact => "node_profile",
-           :value => node_profile,
-           :operator => "=="},
           {:fact => "capacity",
            :value => "100",
            :operator => "<"
           }
         ]
+        if node_profile
+          additional_filters.push({:fact => "node_profile",
+                                   :value => node_profile,
+                                   :operator => "=="})
+        end
     
         rpc_get_fact('capacity', nil, forceRediscovery, additional_filters) do |server, capacity|
           Rails.logger.debug "Next server: #{server} capacity: #{capacity}"

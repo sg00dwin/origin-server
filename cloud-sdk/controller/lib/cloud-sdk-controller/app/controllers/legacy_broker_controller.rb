@@ -149,8 +149,9 @@ class LegacyBrokerController < ApplicationController
           @reply.data = {:health_check_path => page, :uuid => app.uuid}.to_json
         rescue Exception => e
           Rails.logger.debug e.message
-          Rails.logger.debug e.backtrace.inspect          
+          Rails.logger.debug e.backtrace.inspect
           @reply.append app.destroy_dns
+          @reply.append app.deconfigure_dependencies
           @reply.append app.destroy
           app.delete
         end
