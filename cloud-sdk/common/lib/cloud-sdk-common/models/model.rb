@@ -81,7 +81,7 @@ module Cloud
       end
       
       def attributes
-        return @attributes if @attributes
+        #return @attributes if @attributes
       
         @attributes = {}
         self.instance_variable_names.map {|name| name[1..-1]}.each do |name|
