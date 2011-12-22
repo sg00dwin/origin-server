@@ -8,7 +8,7 @@ class ResultIO
     @errorIO = StringIO.new
     @appInfoIO = StringIO.new
     @data = ""
-    @exitcode = nil
+    @exitcode = 0
     @cart_commands = []
   end
   

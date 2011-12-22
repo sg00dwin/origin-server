@@ -109,7 +109,7 @@ module Cloud::SDK::Model
       authorized_keys_file = File.join(ssh_dir,"authorized_keys")
       shell    = @config.get("user_shell")     || "/bin/bash"      
       
-      cmd_entry = "command=\"#{shell}\",no-port-forwarding,no-X11-forwarding ssh-rsa #{key} #{cloud_name}-#{@uuid}"
+      cmd_entry = "command=\"#{shell}\",no-port-forwarding,no-X11-forwarding ssh-rsa #{key} #{cloud_name}-#{@uuid}\n"
       FileUtils.mkdir_p ssh_dir
       FileUtils.chmod(0o0750,ssh_dir)
       File.open(authorized_keys_file, File::WRONLY|File::APPEND|File::CREAT, 0o0440) do |file|
