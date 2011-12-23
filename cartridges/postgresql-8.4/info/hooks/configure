@@ -79,7 +79,7 @@ ln -s $CART_INFO_DIR/bin/postgresql_ctl.sh $PSQL_DIR/${application}_postgresql_c
 
 #
 # Setup Permissions
-# 
+#
 
 chmod +x "$PSQL_DIR/"*.sh || error "Failed to chmod new application scripts" 122
 chown $user_id.$group_id -R $PSQL_DIR/ || error "Failed to chown new application space.  Please contact support" 123

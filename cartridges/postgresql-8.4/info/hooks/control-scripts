@@ -37,7 +37,7 @@ function print_help() {
 }  #  End of function  print_help.
 
 
-function _control_postgres_service() { 
+function _control_postgres_service() {
    [ $# -lt 1 ]  &&  return 1
    ctl_cmd="runcon -t libra_t -l $mcs_level $CTL_SCRIPT $1"
    /bin/su -s /bin/sh "$uuid" -c "$ctl_cmd"
