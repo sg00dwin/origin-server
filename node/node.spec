@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.84.7
+Version:       0.84.8
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -176,6 +176,9 @@ fi
 %dir %attr(0755,root,root) %{_sysconfdir}/libra/skel
 
 %changelog
+* Thu Dec 22 2011 Dan McPherson <dmcphers@redhat.com> 0.84.8-1
+- rhc-idler: added ability to list idled apps (twiest@redhat.com)
+
 * Thu Dec 22 2011 Dan McPherson <dmcphers@redhat.com> 0.84.7-1
 - node - changed namepace location 12 22 2011 (tkramer@redhat.com)
 - added /var/run/libra to the node spec file and changed libra init script
