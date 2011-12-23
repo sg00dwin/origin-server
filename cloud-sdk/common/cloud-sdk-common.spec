@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Common
 Name:           rubygem-%{gemname}
-Version:        0.2.6
+Version:        0.2.7
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        AGPLv3
@@ -72,6 +72,9 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Fri Dec 23 2011 Dan McPherson <dmcphers@redhat.com> 0.2.7-1
+- Bug 770085 (dmcphers@redhat.com)
+
 * Thu Dec 22 2011 Dan McPherson <dmcphers@redhat.com> 0.2.6-1
 - removing more of server-common (dmcphers@redhat.com)
 
