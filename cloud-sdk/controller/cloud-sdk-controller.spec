@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.2.11
+Version:        0.2.12
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        AGPLv3
@@ -72,6 +72,10 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Thu Dec 22 2011 Dan McPherson <dmcphers@redhat.com> 0.2.12-1
+- bump spec numbers (dmcphers@redhat.com)
+- add better error handling for configure errors (dmcphers@redhat.com)
+
 * Thu Dec 22 2011 Dan McPherson <dmcphers@redhat.com> 0.2.11-1
 - bump spec numbers (dmcphers@redhat.com)
 - Bug 768851 - allow jboss build with only large instance available (devenv)
