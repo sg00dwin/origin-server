@@ -97,21 +97,6 @@ module Cloud::SDK::Model
       end
       
       FileUtils.rm_rf(@homedir)
-      # FileUtils.rm_rf, above,  may have just broken a symlink ({app_name}-{namespace}) we don't 
-      # + have that information in this method so we troll for broken symlinks in the user_base_dir
-      # + and remove them. This hack does have the nice side effect of cleaning up any symlinks
-      # + broken in the past.
-      begin
-	basedir = @config.get("user_base_dir")
-	Dir.foreach(basedir) { |f|
-	  path = File.join(basedir, f)
-	  if File.lstat(path).symlink? && !File.exists?(path)
-	    FileUtils.rm_f(path)
-	  end
-	}
-      rescue Exception => e
-        shellCmd("logger -p local0.notice -t libra_unix_user_destroy #{e}. Not all clean up of #{@homedir} was completed.")
-      end
 
       out,err,rc = shellCmd("userdel \"#{@uuid}\"")
       raise UserDeletionException.new("ERROR: unable to create user account #{@uuid}") unless rc == 0

@@ -98,6 +98,7 @@ when "destroy"
     end
   end
   
+  reply.append app.deconfigure_dependencies
   reply.append app.destroy
   if app.framework_cartridge == "jenkins"
     user.applications.each do |uapp|
