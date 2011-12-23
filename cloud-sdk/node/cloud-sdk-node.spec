@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Node
 Name:           rubygem-%{gemname}
-Version:        0.2.7
+Version:        0.2.8
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        AGPLv3
@@ -84,6 +84,11 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Fri Dec 23 2011 Dan McPherson <dmcphers@redhat.com> 0.2.8-1
+- bump spec numbers (dmcphers@redhat.com)
+- reverted 11996f1b2f12b378ca420e002097203654ac4fb2 and implemented Dan\'s
+  suggestion (jhonce@redhat.com)
+
 * Thu Dec 22 2011 Dan McPherson <dmcphers@redhat.com> 0.2.7-1
 - bump spec numbers (dmcphers@redhat.com)
 
