@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.84.8
+Version:       0.84.9
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -179,6 +179,10 @@ fi
 %dir %attr(0755,root,root) %{_sysconfdir}/libra/skel
 
 %changelog
+* Thu Dec 22 2011 Dan McPherson <dmcphers@redhat.com> 0.84.9-1
+- fix bad merge (dmcphers@redhat.com)
+- remove debug (dmcphers@redhat.com)
+
 * Thu Dec 22 2011 Dan McPherson <dmcphers@redhat.com> 0.84.8-1
 - rhc-idler: added ability to list idled apps (twiest@redhat.com)
 
