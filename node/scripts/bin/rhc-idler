@@ -6,24 +6,65 @@
 # application back on when a request comes to it (like 
 # http://app-dom.rhcloud.com)
 
+TRUE=0
+FALSE=1
+
 function print_help {
     echo "Usage: $0"
-    echo "  -u UUID  (app to idle UUID)"
+    echo "  -u UUID       idles the app"
+    echo "  -l            list all idled apps"
     exit 1
 }
 
+function libra_users() {
+    grep ":libra guest:" /etc/passwd | cut -d: -f1
+}
 
-while getopts 'u:d' OPTION
+function print_idled {
+    for appid in $(libra_users)
+    do
+        if is_idled "$appid"
+        then
+            echo "$appid is idled"
+        fi
+    done
+}
+
+function is_idled {
+    appid=$1
+    if ! grep -q ' #ProxyPass' "/etc/httpd/conf.d/libra/${appid}"*.conf 2>/dev/null
+    then
+        return $FALSE
+    fi
+
+    if [ ! -f "/etc/httpd/conf.d/libra/${appid}"*/0000000000000_disabled.conf ]
+    then
+        return $FALSE
+    fi
+
+    # if it makes it here, then the app is definitely idled
+    return $TRUE
+}
+
+while getopts 'u:dl' OPTION
 do
 case $OPTION in
         u) uuid=$OPTARG
     ;;
         d) set -x
     ;;
+        l) list_idled="TRUE"
+    ;;
         ?) print_help
     ;;
 esac
 done
+
+if [ ! -z "$list_idled" ]
+then
+    print_idled
+    exit 0
+fi
 
 if [ -z "$uuid" ] || ! [ -d "/var/lib/libra/$uuid" ]
 then
