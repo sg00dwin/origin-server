@@ -310,6 +310,35 @@ module Express
         return false
       end
       
+      #
+      # Execute an RPC call for the specified agent.
+      # If a server is supplied, only execute for that server.
+      #
+      def self.rpc_exec(agent, server=nil, forceRediscovery=false, options = rpc_options)
+        if server
+          Rails.logger.debug("DEBUG: rpc_exec: Filtering rpc_exec to server #{server}")
+          # Filter to the specified server
+          options[:filter]["identity"] = server
+          options[:mcollective_limit_targets] = "1"
+        end
+      
+        # Setup the rpc client
+        rpc_client = rpcclient(agent, :options => options)
+        if forceRediscovery
+          rpc_client.reset
+        end
+        Rails.logger.debug("DEBUG: rpc_exec: rpc_client=#{rpc_client}")
+      
+        # Execute a block and make sure we disconnect the client
+        begin
+          result = yield rpc_client
+        ensure
+          rpc_client.disconnect
+        end
+      
+        result
+      end
+      
       private
       
       def execute_direct(cartridge, action, args)
@@ -508,35 +537,6 @@ module Express
           end
     
           return value
-      end
-    
-      #
-      # Execute an RPC call for the specified agent.
-      # If a server is supplied, only execute for that server.
-      #
-      def self.rpc_exec(agent, server=nil, forceRediscovery=false, options = rpc_options)
-        if server
-          Rails.logger.debug("DEBUG: rpc_exec: Filtering rpc_exec to server #{server}")
-          # Filter to the specified server
-          options[:filter]["identity"] = server
-          options[:mcollective_limit_targets] = "1"
-        end
-    
-        # Setup the rpc client
-        rpc_client = rpcclient(agent, :options => options)
-        if forceRediscovery
-          rpc_client.reset
-        end
-        Rails.logger.debug("DEBUG: rpc_exec: rpc_client=#{rpc_client}")
-    
-        # Execute a block and make sure we disconnect the client
-        begin
-          result = yield rpc_client
-        ensure
-          rpc_client.disconnect
-        end
-    
-        result
       end
     
       #

@@ -3,42 +3,44 @@
 $:.unshift('/var/www/libra/broker')
 require 'config/environment'
 require 'rubygems'
-require 'openshift'
-
-include OpenShift
 
 RHLOGINS=nil #['username']
 
 def rekey
   start_time = Time.now.to_i
   puts "Getting all RHLogins..." 
-  rhlogins = RHLOGINS || User.find_all_rhlogins
-  user_count = rhlogins.length
-  puts "RHLogins.length: #{user_count.to_s}"
-  rhlogins.each do |rhlogin|
-    user = User.find(rhlogin)
-    if user
-      puts ""
-      puts "######################################################"
-      puts "Updating apps for user: #{user.rhlogin}(#{user_count.to_s}) with uuid: #{user.uuid}"
-      apps = user.apps
-      apps.each do |app_name, app|
-        begin
-          if app['framework'] == 'jenkins-1.4'
-            puts "Re-keying app '#{app_name}' with uuid '#{app['uuid']}' on node '#{app['server_identity']}' for user: #{rhlogin}"
-
-            user = CloudUser.find(rhlogin)
-            app2  = Application.find(user, app_name)
-            app2.add_broker_key
-          end
-        rescue Exception => e
-          puts "ERROR: Failed re-keying app: #{app_name} with uuid: #{app['uuid']} for user: #{rhlogin}"
-          puts e.message
-          puts e.backtrace
-        end
+  users = []
+  if RHLOGINS
+    RHLOGINS.each do |rhlogin|
+      user = CloudUser.find(rhlogin)
+      if user
+        users << user
+      else
+        puts "WARNING:  Couldn't find user: #{rhlogin}"
       end
-    else
-      puts "WARNING:  Couldn't find user: #{rhlogin}"
+    end
+  else
+    users = CloudUser.find_all(nil)
+  end
+  user_count = users.length
+  puts "RHLogins.length: #{user_count.to_s}"
+  users.each do |user|
+    puts ""
+    puts "######################################################"
+    puts "Updating apps for user: #{user.rhlogin}(#{user_count.to_s}) with uuid: #{user.uuid}"
+    apps = user.applications
+    apps.each do |app|
+      begin
+        app_name = app.name
+        if app.framework == 'jenkins-1.4'
+          puts "Re-keying app '#{app_name}' with uuid '#{app.uuid}' on node '#{app.server_identity}' for user: #{user.rhlogin}"
+          app.add_broker_key
+        end
+      rescue Exception => e
+        puts "ERROR: Failed re-keying app: #{app_name} with uuid: #{app.uuid} for user: #{user.rhlogin}"
+        puts e.message
+        puts e.backtrace
+      end
     end
     user_count -= 1
   end
