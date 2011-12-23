@@ -15,6 +15,10 @@ module Cloud
         @proxy_provider.find_available_impl(node_profile)
       end
       
+      def self.blacklisted?(name)
+        @proxy_provider.blacklisted?(name)
+      end
+      
       attr_accessor :id
       def self.find_available_impl(node_profile=nil)
       end

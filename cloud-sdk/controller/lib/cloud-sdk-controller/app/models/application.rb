@@ -99,7 +99,7 @@ class Application < Cloud::Sdk::Model
     reply = ResultIO.new
     self.class.notify_observers(:before_application_deconfigure, {:application => self, :reply => reply})  
     reply.append self.container.deconfigure_cartridge(self, self.framework)
-    reply.append process_cartridge_commands(reply.cart_commands)    
+    reply.append process_cartridge_commands(reply.cart_commands)
     self.class.notify_observers(:after_application_deconfigure, {:application => self, :reply => reply})
     reply
   end

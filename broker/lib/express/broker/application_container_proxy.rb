@@ -1,4 +1,6 @@
 require 'mcollective'
+require 'openshift'
+
 include MCollective::RPC
 module Express
   module Broker
@@ -22,6 +24,10 @@ module Express
         Rails.logger.debug "DEBUG: server.rb:find_available #{current_server}: #{current_capacity}"
         
         ApplicationContainerProxy.new(current_server, current_capacity)
+      end
+
+      def self.blacklisted?(name)
+        OpenShift::Blacklist.in_blacklist?(name)
       end
       
       IGNORE_CARTS = %w(abstract abstract-httpd li-controller embedded)
@@ -290,6 +296,7 @@ module Express
         Rails.logger.debug "DEBUG: Deconfiguring old app '#{app.name}' on #{source_container.id} after move"
         (1..num_tries).each do |i|
           begin
+            #TODO we aren't handling dependencies here.  Need to delete dependencies without following directives such as remove system env var.
             reply.append source_container.destroy(app)
             break
           rescue Exception => e

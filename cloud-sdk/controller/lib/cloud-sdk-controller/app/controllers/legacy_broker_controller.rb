@@ -79,6 +79,7 @@ class LegacyBrokerController < ApplicationController
        render :json => @reply
        return
     else
+      raise Cloud::Sdk::CdkException.new("The supplied namespace '#{@req.namespace}' is not allowed", 106) if Cloud::Sdk::ApplicationContainerProxy.blacklisted? @req.namespace
       cloud_user = CloudUser.new(@login, @req.ssh, @req.namespace)
     end
         
@@ -127,6 +128,7 @@ class LegacyBrokerController < ApplicationController
       app = Application.new(user, @req.app_name, nil, @req.node_profile, @req.cartridge)
       container = Cloud::Sdk::ApplicationContainerProxy.find_available(@req.node_profile)
       check_cartridge_type(app.framework, container, "standalone")
+      raise Cloud::Sdk::CdkException.new("The supplied application name '#{app.name}' is not allowed", 105) if Cloud::Sdk::ApplicationContainerProxy.blacklisted? app.name
       if app.valid?
         begin
           @reply.append app.create(container)

@@ -32,7 +32,7 @@ class LegacyRequest < Cloud::Sdk::Model
     if !(val =~ /\A[A-Za-z0-9]+\z/)
       record.errors.add attribute, {:message => "Invalid namespace: #{val}", :exit_code => 106}
     end
-    if val and (val.length > NAMESPACE_MAX_LENGTH) #or Blacklist.in_blacklist?(val))
+    if val and val.length > NAMESPACE_MAX_LENGTH
       record.errors.add attribute, {:message => "The namespace you entered (#{val}) is not available for use.  Please choose another one.", :exit_code => 106}
     end
   end
@@ -41,7 +41,7 @@ class LegacyRequest < Cloud::Sdk::Model
     if !(val =~ /\A[\w]+\z/)
       record.errors.add attribute, {:message => "Invalid #{attribute} specified: #{val}", :exit_code => 105}
     end
-    if val and (val.length > APP_NAME_MAX_LENGTH) #or Blacklist.in_blacklist?(val))
+    if val and val.length > APP_NAME_MAX_LENGTH
       record.errors.add attribute, {:message => "The supplied application name '#{val}' is not allowed", :exit_code => 105}
     end
   end
