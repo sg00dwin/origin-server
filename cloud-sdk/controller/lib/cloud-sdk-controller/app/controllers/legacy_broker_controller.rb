@@ -135,25 +135,30 @@ class LegacyBrokerController < ApplicationController
           @reply.append app.add_system_ssh_keys
           @reply.append app.add_secondary_ssh_keys
           @reply.append app.add_system_env_vars
-          @reply.append app.create_dns
+          begin
+            @reply.append app.create_dns
+            
+            case app.framework_cartridge
+              when 'php'
+                page = 'health_check.php'
+              when 'perl'
+                page = 'health_check.pl'
+              else
+                page = 'health'
+            end
           
-          case app.framework_cartridge
-            when 'php'
-              page = 'health_check.php'
-            when 'perl'
-              page = 'health_check.pl'
-            else
-              page = 'health'
+            @reply.data = {:health_check_path => page, :uuid => app.uuid}.to_json
+          rescue Exception => e
+            @reply.append app.destroy_dns
+            raise
           end
-        
-          @reply.data = {:health_check_path => page, :uuid => app.uuid}.to_json
         rescue Exception => e
           Rails.logger.debug e.message
           Rails.logger.debug e.backtrace.inspect
-          @reply.append app.destroy_dns
           @reply.append app.deconfigure_dependencies
           @reply.append app.destroy
           app.delete
+          raise
         end
         @reply.resultIO << "Successfully created application: #{app.name}" if @reply.resultIO.string.empty?
       else
