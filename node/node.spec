@@ -2,8 +2,8 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.84.6
-Release:       2%{?dist}
+Version:       0.84.7
+Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
 URL:           http://openshift.redhat.com
@@ -176,6 +176,11 @@ fi
 %dir %attr(0755,root,root) %{_sysconfdir}/libra/skel
 
 %changelog
+* Thu Dec 22 2011 Dan McPherson <dmcphers@redhat.com> 0.84.7-1
+- node - changed namepace location 12 22 2011 (tkramer@redhat.com)
+- added /var/run/libra to the node spec file and changed libra init script
+  (twiest@redhat.com)
+
 * Thu Dec 22 2011 Tim Kramer <tkramer@redhat.com> 0.84.6-2
 - Changed the namespaced.conf to namespace.d <tkramer@redhat.com>
 

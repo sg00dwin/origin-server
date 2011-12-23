@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.84.5
+Version:   0.84.6
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -68,6 +68,10 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Thu Dec 22 2011 Dan McPherson <dmcphers@redhat.com> 0.84.6-1
+- Fix BZ 767477 - When on a register page, prefer content form to dialog
+  (aboone@redhat.com)
+
 * Tue Dec 20 2011 Alex Boone <aboone@redhat.com> 0.84.5-1
 - Fix devenv logins (regression from 1931b89) - only use .redhat.com domain
   cookies in integrated config (aboone@redhat.com)

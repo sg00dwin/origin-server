@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.84.9
+Version:   0.84.10
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -76,6 +76,12 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Thu Dec 22 2011 Dan McPherson <dmcphers@redhat.com> 0.84.10-1
+- bump spec numbers (dmcphers@redhat.com)
+- Bug 768851 - allow jboss build with only large instance available (devenv)
+  (dmcphers@redhat.com)
+- Fixed broken here document for warning (jhonce@redhat.com)
+
 * Thu Dec 22 2011 Dan McPherson <dmcphers@redhat.com> 0.84.9-1
 - bump spec numbers (dmcphers@redhat.com)
 - Bug 768851 (dmcphers@redhat.com)
