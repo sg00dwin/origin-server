@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Node
 Name:           rubygem-%{gemname}
-Version:        0.2.6
+Version:        0.2.7
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        AGPLv3
@@ -84,6 +84,9 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Thu Dec 22 2011 Dan McPherson <dmcphers@redhat.com> 0.2.7-1
+- bump spec numbers (dmcphers@redhat.com)
+
 * Thu Dec 22 2011 Dan McPherson <dmcphers@redhat.com> 0.2.6-1
 - bump spec numbers (dmcphers@redhat.com)
 - Added code to clean up broken symlinks in config.get("user_base_dir")
