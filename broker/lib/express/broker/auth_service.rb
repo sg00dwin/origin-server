@@ -90,9 +90,9 @@ module Express
         roles = [] unless roles
         unless roles.index('cloud_access_1')
           if roles.index('cloud_access_request_1')
-            raise Cloud::Sdk::UserValidationException.new("Found valid credentials but you haven't been granted access to Express yet", 146), caller[0..5]
+            raise Cloud::Sdk::UserValidationException.new("Found valid credentials but you haven't been granted access to Express yet", 146)
           else
-            raise Cloud::Sdk::UserValidationException.new("Found valid credentials but you haven't requested access to Express yet", 147), caller[0..5]
+            raise Cloud::Sdk::UserValidationException.new("Found valid credentials but you haven't requested access to Express yet", 147)
           end
         end
       end

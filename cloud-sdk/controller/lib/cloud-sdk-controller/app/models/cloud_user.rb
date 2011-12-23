@@ -210,14 +210,14 @@ class CloudUser < Cloud::Sdk::Model
         notify_observers(:namespace_update_success)
       else
         notify_observers(:namespace_update_error)
-        raise Cloud::Sdk::NodeException.new("Error updating apps: #{update_namespace_failures.pretty_inspect.chomp}.  Updates will not be completed until all apps can be updated successfully.  If the problem persists please contact support.",143), caller[0..5]
+        raise Cloud::Sdk::NodeException.new("Error updating apps: #{update_namespace_failures.pretty_inspect.chomp}.  Updates will not be completed until all apps can be updated successfully.  If the problem persists please contact support.",143)
       end
     rescue Cloud::Sdk::CdkException => e
       raise
     rescue Exception => e
       Rails.logger.debug "DEBUG: Exception caught updating namespace: #{e.message}"
       Rails.logger.debug e.backtrace
-      raise Cloud::Sdk::CdkException.new("An error occurred updating the namespace.  If the problem persists please contact support.",1), caller[0..5]
+      raise Cloud::Sdk::CdkException.new("An error occurred updating the namespace.  If the problem persists please contact support.",1)
     ensure
       dns_service.close
     end

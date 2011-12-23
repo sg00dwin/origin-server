@@ -84,8 +84,20 @@ function stop_app() {
         echo "Application($jbpid) is already stopped" 1>&2
     elif [ -f "$JBOSS_PID_FILE" ]; then
         pid=$(cat $JBOSS_PID_FILE);
-        echo "Sending SIGTERM to jboss:$pid ...";
+        echo "Sending SIGTERM to jboss:$pid ..." 1>&2
         killtree $pid
+    else 
+        echo "Failed to locate JBOSS PID File" 1>&2
+    fi
+}
+
+function threaddump() {
+    if ! isrunning; then
+        echo "Application is stopped"
+        exit 1
+    elif [ -f "$JBOSS_PID_FILE" ]; then
+        pid=$(cat $JBOSS_PID_FILE);
+        kill -3 $pid
     else 
         echo "Failed to locate JBOSS PID File"
     fi
@@ -109,6 +121,9 @@ case "$1" in
         #exit 0
         app_ctl_impl.sh stop
         app_ctl_impl.sh start
+    ;;
+    threaddump)
+        threaddump
     ;;
     status)
         # Restore stdout and close file descriptor #4

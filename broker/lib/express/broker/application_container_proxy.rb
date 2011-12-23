@@ -18,7 +18,7 @@ module Express
           current_server, current_capacity = rpc_find_available(node_profile, true)
           Rails.logger.debug "CURRENT SERVER: #{current_server}"
         end
-        raise Cloud::Sdk::NodeException.new("No nodes available.  If the problem persists please contact Red Hat support.", 140), caller[0..5] unless current_server
+        raise Cloud::Sdk::NodeException.new("No nodes available.  If the problem persists please contact Red Hat support.", 140) unless current_server
         Rails.logger.debug "DEBUG: server.rb:find_available #{current_server}: #{current_capacity}"
         
         ApplicationContainerProxy.new(current_server, current_capacity)
@@ -131,6 +131,10 @@ module Express
         run_cartridge_command(cart, app, "tidy")
       end
       
+      def threaddump(app, cart)
+        run_cartridge_command(cart, app, "threaddump")
+      end
+      
       def add_alias(app, cart, server_alias)
         run_cartridge_command(cart, app, "add-alias", server_alias)
       end
@@ -196,8 +200,8 @@ module Express
         source_container = app.container
         
         unless app.embedded.nil?
-          raise Cloud::Sdk::UserException.new("Cannot move app '#{app.name}' with mysql embedded",1), caller[0..5] if app.embedded.has_key?('mysql-5.1') 
-          raise Cloud::Sdk::UserException.new("Cannot move app '#{app.name}' with mongo embedded",1), caller[0..5] if app.embedded.has_key?('mongodb-2.0')           
+          raise Cloud::Sdk::UserException.new("Cannot move app '#{app.name}' with mysql embedded",1) if app.embedded.has_key?('mysql-5.1') 
+          raise Cloud::Sdk::UserException.new("Cannot move app '#{app.name}' with mongo embedded",1) if app.embedded.has_key?('mongodb-2.0')           
         end
 
         if destination_container_proxy.nil?
@@ -205,7 +209,7 @@ module Express
         end
 
         if source_container.id == destination_container_proxy.id
-          raise Cloud::Sdk::UserException.new("Error moving app.  Old and new servers are the same: #{source_container.id}", 1), caller[0..5]
+          raise Cloud::Sdk::UserException.new("Error moving app.  Old and new servers are the same: #{source_container.id}", 1)
         end
 
         Rails.logger.debug "DEBUG: Moving app '#{app.name}' with uuid #{app.uuid} from #{source_container.id} to #{destination_container_proxy.id}"
@@ -231,7 +235,7 @@ module Express
             Rails.logger.debug "DEBUG: Moving content for app '#{app.name}' to #{destination_container_proxy.id}"
             Rails.logger.debug `eval \`ssh-agent\`; ssh-add /var/www/libra/broker/config/keys/rsync_id_rsa; ssh -o StrictHostKeyChecking=no -A root@#{source_container.get_ip_address} "rsync -a -e 'ssh -o StrictHostKeyChecking=no' /var/lib/libra/#{app.uuid}/ root@#{destination_container_proxy.get_ip_address}:/var/lib/libra/#{app.uuid}/"`
             if $?.exitstatus != 0
-              raise Cloud::Sdk::NodeException.new("Error moving app '#{app.name}' from #{source_container.id} to #{destination_container_proxy.id}", 143), caller[0..5]
+              raise Cloud::Sdk::NodeException.new("Error moving app '#{app.name}' from #{source_container.id} to #{destination_container_proxy.id}", 143)
             end
 
             begin
@@ -377,7 +381,7 @@ module Express
             #Rails.logger.debug "--output--\n\n#{output}\n\n"
           end
         else
-          raise Cloud::Sdk::NodeException.new("Node execution failure (error getting result from node).  If the problem persists please contact Red Hat support.", 143), caller[0..5]
+          raise Cloud::Sdk::NodeException.new("Node execution failure (error getting result from node).  If the problem persists please contact Red Hat support.", 143)
         end
         
         if output && !output.empty?
@@ -436,7 +440,7 @@ module Express
         resultIO = parse_result(result, app, command)
         if resultIO.exitcode != 0
           resultIO.debugIO << "Cartridge return code: " + resultIO.exitcode.to_s
-          raise Cloud::Sdk::NodeException.new("Node execution failure (invalid exit code from node).  If the problem persists please contact Red Hat support.", 143, resultIO), caller[0..5]
+          raise Cloud::Sdk::NodeException.new("Node execution failure (invalid exit code from node).  If the problem persists please contact Red Hat support.", 143, resultIO)
         end
         resultIO
       end
@@ -530,7 +534,7 @@ module Express
             if (result && defined? result.results && result.results.has_key?(:data))
               value = result.results[:data][:value]
             else
-              raise NodeException.new(143), "Node execution failure (error getting fact).  If the problem persists please contact Red Hat support.", caller[0..5]
+              raise NodeException.new(143), "Node execution failure (error getting fact).  If the problem persists please contact Red Hat support."
             end
           ensure
             rpc_client.disconnect

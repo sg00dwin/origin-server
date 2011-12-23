@@ -107,7 +107,7 @@ module Express
           Rails.logger.debug "DEBUG: Response code: #{resp.code}"
           Rails.logger.debug "DEBUG: Response body: #{resp.body}"
         end
-        raise DNSException.new(145), "Error communicating with DNS system.  If the problem persists please contact Red Hat support.", caller[0..5]
+        raise DNSException.new(145), "Error communicating with DNS system.  If the problem persists please contact Red Hat support."
       end
       
       def self.delete_app_dns_entries(app_name, namespace, auth_token, retries=2)
@@ -193,7 +193,7 @@ module Express
         path = "TXTRecord/#{Rails.application.config.cdk[:zone]}/#{fqdn}/"      
         dyn_has = dyn_has?(path, auth_token)
         if dyn_has && raise_exception_on_exists
-          raise UserException.new(103), "A namespace with name '#{namespace}' already exists", caller[0..5]
+          raise UserException.new(103), "A namespace with name '#{namespace}' already exists"
         else
           return dyn_has
         end
@@ -231,7 +231,7 @@ module Express
                   end
                 end
               when Net::HTTPNotFound
-                raise DNSNotFoundException.new(145), "Error communicating with DNS system.  Job returned not found", caller[0..5]
+                raise DNSNotFoundException.new(145), "Error communicating with DNS system.  Job returned not found"
               else
                 raise_dns_exception(nil, resp)
               end

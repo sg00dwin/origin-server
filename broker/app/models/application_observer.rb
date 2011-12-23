@@ -41,13 +41,13 @@ may be ok if '#{uapp.name}#{BUILDER_SUFFIX}' was the builder of a previously des
     end
     
     unless Application.find(application.user, application.name).nil?
-      raise Exception.new("An applicaiton named '#{application.name}' in namespace '#{application.user.namespace}' already exists", 100), caller[0..5]
+      raise Exception.new("An applicaiton named '#{application.name}' in namespace '#{application.user.namespace}' already exists", 100)
     end
 
     if application.framework_cartridge == 'jenkins'
       application.user.applications.each do |app|
         if app.framework_cartridge == 'jenkins'
-          raise Cloud::Sdk::CdkException.new("A jenkins application named '#{application.name}' in namespace '#{application.user.namespace}' already exists. You can only have 1 jenkins application per account.", 115), caller[0..5]
+          raise Cloud::Sdk::CdkException.new("A jenkins application named '#{application.name}' in namespace '#{application.user.namespace}' already exists. You can only have 1 jenkins application per account.", 115)
         end
       end
     end

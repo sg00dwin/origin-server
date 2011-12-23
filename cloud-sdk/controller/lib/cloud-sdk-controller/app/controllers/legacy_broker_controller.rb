@@ -36,29 +36,29 @@ class LegacyBrokerController < ApplicationController
     if user
       case @req.action
       when "add-key"
-        raise Cloud::Sdk::UserException.new("Missing SSH key or key name", 105), caller[0..5] if @req.ssh.nil? or @req.key_name.nil?
+        raise Cloud::Sdk::UserException.new("Missing SSH key or key name", 105) if @req.ssh.nil? or @req.key_name.nil?
         user.ssh_keys.each do |key_name, key|
-          raise Cloud::Sdk::UserException.new("Key with name #{@req.key_name} already exists. Please choose a different name", 105), caller[0..5] if key_name == @req.key_name
-          raise Cloud::Sdk::UserException.new("Given public key is already in use. Use different key or delete conflicting key and retry", 105), caller[0..5] if key == @req.ssh
+          raise Cloud::Sdk::UserException.new("Key with name #{@req.key_name} already exists. Please choose a different name", 105) if key_name == @req.key_name
+          raise Cloud::Sdk::UserException.new("Given public key is already in use. Use different key or delete conflicting key and retry", 105) if key == @req.ssh
         end
         @reply.append user.add_secondary_ssh_key(@req.key_name, @req.ssh)
         user.save
       when "remove-key"
-        raise Cloud::Sdk::UserException.new("Missing key name", 105), caller[0..5] if @req.key_name.nil?
+        raise Cloud::Sdk::UserException.new("Missing key name", 105) if @req.key_name.nil?
         @reply.append user.remove_secondary_ssh_key(@req.key_name)
         user.save
       when "update-key"
-        raise Cloud::Sdk::UserException.new("Missing SSH key or key name", 105), caller[0..5] if @req.ssh.nil? or @req.key_name.nil?
+        raise Cloud::Sdk::UserException.new("Missing SSH key or key name", 105) if @req.ssh.nil? or @req.key_name.nil?
         @reply.append user.remove_secondary_ssh_key(@req.key_name)
         @reply.append user.add_secondary_ssh_key(@req.key_name, @req.ssh)
       when "list-keys"
         @reply.data = { :keys => user.ssh_keys }.to_json
       else
-        raise Cloud::Sdk::UserException.new("Invalid action #{@req.action}", 111), caller[0..5]
+        raise Cloud::Sdk::UserException.new("Invalid action #{@req.action}", 111)
       end
       render :json => @reply
     else
-      raise Cloud::Sdk::CdkException.new("Invalid user", 99), caller[0..5]
+      raise Cloud::Sdk::CdkException.new("Invalid user", 99)
     end
   end
   
@@ -118,7 +118,7 @@ class LegacyBrokerController < ApplicationController
   def cartridge_post
     @req.node_profile ||= "std"
     user = CloudUser.find(@login)
-    raise Cloud::Sdk::CdkException.new("Invalid user", 99), caller[0..5] if user.nil?
+    raise Cloud::Sdk::CdkException.new("Invalid user", 99) if user.nil?
     
     case @req.action
     when 'configure'    #create app and configure framework
@@ -160,7 +160,7 @@ class LegacyBrokerController < ApplicationController
           app.delete
           raise
         end
-        @reply.resultIO << "Successfully created application: #{app.name}" if @reply.resultIO.string.empty?
+        @reply.resultIO << "Successfully created application: #{app.name}" if @reply.resultIO.length == 0
       else
         @reply.result = app.errors.first[1]
         render :json => @reply, :status => :invalid 
@@ -179,7 +179,7 @@ class LegacyBrokerController < ApplicationController
       
       @reply.append app.destroy_dns
       app.delete
-      @reply.resultIO << "Successfully destroyed application: #{app.name}" if @reply.resultIO.string.empty?
+      @reply.resultIO << "Successfully destroyed application: #{app.name}" if @reply.resultIO.length == 0
     when 'start'
       app = get_app_from_request(user)
       @reply.append app.start
@@ -207,17 +207,20 @@ class LegacyBrokerController < ApplicationController
     when 'remove-alias'
       app = get_app_from_request(user)
       @reply.append app.remove_alias @req.server_alias
+    when 'threaddump'
+      app = get_app_from_request(user)
+      @reply.append app.threaddump
     else
-      raise Cloud::Sdk::UserException.new("Invalid action #{@req.action}", 111), caller[0..5]
+      raise Cloud::Sdk::UserException.new("Invalid action #{@req.action}", 111)
     end
-    @reply.resultIO << 'Success' if @reply.resultIO.string.empty?
+    @reply.resultIO << 'Success' if @reply.resultIO.length == 0
     
     render :json => @reply
   end
   
   def embed_cartridge_post
     user = CloudUser.find(@login)    
-    raise Cloud::Sdk::CdkException.new("Invalid user", 99), caller[0..5] if user.nil?
+    raise Cloud::Sdk::CdkException.new("Invalid user", 99) if user.nil?
         
     app = get_app_from_request(user)
     
@@ -240,10 +243,10 @@ class LegacyBrokerController < ApplicationController
     when 'reload'
       @reply.append app.reload_dependency(@req.cartridge)
     else
-      raise Cloud::Sdk::UserException.new("Invalid action #{@req.action}", 111), caller[0..5]           
+      raise Cloud::Sdk::UserException.new("Invalid action #{@req.action}", 111)           
     end
         
-    @reply.resultIO << 'Success' if @reply.resultIO.string.empty?
+    @reply.resultIO << 'Success' if @reply.resultIO.length == 0
     render :json => @reply
   end
   
@@ -254,9 +257,9 @@ class LegacyBrokerController < ApplicationController
     carts = container.get_available_cartridges(cart_type)
     unless carts.include? framework
       if cart_type == 'standalone'
-        raise Cloud::Sdk::UserException.new(110), "Invalid application type (-t|--type) specified: '#{framework}'.  Valid application types are (#{carts.join(', ')}).", caller[0..5]
+        raise Cloud::Sdk::UserException.new(110), "Invalid application type (-t|--type) specified: '#{framework}'.  Valid application types are (#{carts.join(', ')})."
       else
-        raise Cloud::Sdk::UserException.new(110), "Invalid type (-e|--embed) specified: '#{framework}'.  Valid embedded types are (#{carts.join(', ')}).", caller[0..5]
+        raise Cloud::Sdk::UserException.new(110), "Invalid type (-e|--embed) specified: '#{framework}'.  Valid embedded types are (#{carts.join(', ')})."
       end
     end
   end
@@ -305,21 +308,23 @@ class LegacyBrokerController < ApplicationController
   
   def exception_handler(e)
     status = :internal_server_error
+    
     case e
     when Cloud::Sdk::AuthServiceException
       logger.error "AuthenticationException rescued in #{request.path}"
       logger.error e.message
-      logger.error e.backtrace
+      logger.error e.backtrace[0..5].join("\n")
       @reply.append e.resultIO if e.resultIO
-      @reply.resultIO << "An error occurred while contacting the authentication service. If the problem persists please contact Red Hat support."
+      @reply.resultIO << "An error occurred while contacting the authentication service. If the problem persists please contact Red Hat support." if @reply.resultIO.length == 0
     when Cloud::Sdk::UserException
       @reply.resultIO << e.message
       status = :bad_request
     when Cloud::Sdk::CdkException
       logger.error "Exception rescued in #{request.path}:"
       logger.error e.message
-      logger.error e.backtrace
+      logger.error e.backtrace[0..5].join("\n")
       logger.error e.resultIO
+      @reply.resultIO << e.message if @reply.resultIO.length == 0
       @reply.append e.resultIO if e.resultIO
     else
       logger.error "Exception rescued in #{request.path}:"
@@ -327,7 +332,7 @@ class LegacyBrokerController < ApplicationController
       logger.error e.backtrace
       @reply.debugIO << e.message
       @reply.debugIO << e.backtrace[0..5].join("\n")
-      @reply.resultIO << e.message
+      @reply.resultIO << e.message if @reply.resultIO.length == 0
     end
     
     @reply.exitcode = e.respond_to?('exit_code') ? e.exit_code : 1

@@ -10,7 +10,7 @@ module Cloud
       end
     end
     
-    class NodeException < CdkException; end
+    class NodeException < Cloud::Sdk::CdkException; end
     class UserException < Cloud::Sdk::CdkException; end
     class AuthServiceException < Cloud::Sdk::CdkException; end
     class UserValidationException < Cloud::Sdk::CdkException; end

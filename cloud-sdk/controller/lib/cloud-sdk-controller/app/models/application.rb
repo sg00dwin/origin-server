@@ -214,9 +214,13 @@ class Application < Cloud::Sdk::Model
     self.container.tidy(self, @framework)
   end
   
+  def threaddump
+    self.container.threaddump(self, @framework)
+  end
+  
   def add_alias(server_alias)
     self.aliases = [] unless self.aliases
-    raise Cloud::Sdk::UserException.new("Alias '#{server_alias}' already exists for '#{@name}'", 255), caller[0..5] if self.aliases.include? server_alias
+    raise Cloud::Sdk::UserException.new("Alias '#{server_alias}' already exists for '#{@name}'", 255) if self.aliases.include? server_alias
     reply = ResultIO.new
     begin
       self.aliases.push(server_alias)
@@ -246,7 +250,7 @@ class Application < Cloud::Sdk::Model
         self.aliases.delete(server_alias)
         self.save
       else
-        raise Cloud::Sdk::UserException.new("Alias '#{server_alias}' does not exist for '#{@name}'", 255, reply), caller[0..5]
+        raise Cloud::Sdk::UserException.new("Alias '#{server_alias}' does not exist for '#{@name}'", 255, reply)
       end      
     end
     reply
@@ -259,7 +263,7 @@ class Application < Cloud::Sdk::Model
     Rails.logger.debug "DEBUG: Adding embedded app info from persistant storage: #{@name}:#{dep}"
     self.embedded = {} unless self.embedded
     
-    raise Cloud::Sdk::UserException.new("#{dep} already embedded in '#{@name}'", 101), caller[0..5] if self.embedded[dep]
+    raise Cloud::Sdk::UserException.new("#{dep} already embedded in '#{@name}'", 101) if self.embedded[dep]
     c_reply,component_details = self.container.add_component(self, dep)
     reply.append c_reply
     self.embedded[dep] = { "info" => component_details }
@@ -273,7 +277,7 @@ class Application < Cloud::Sdk::Model
     self.class.notify_observers(:before_remove_dependency, {:application => self, :dependency => dep, :reply => reply})
     self.embedded = {} unless self.embedded
         
-    raise Cloud::Sdk::UserException.new("#{dep} not embedded in '#{@name}', try adding it first", 101), caller[0..5] unless self.embedded[dep]
+    raise Cloud::Sdk::UserException.new("#{dep} not embedded in '#{@name}', try adding it first", 101) unless self.embedded[dep]
     reply.append self.container.remove_component(self, dep)
     self.embedded.delete dep
     self.save
@@ -282,27 +286,27 @@ class Application < Cloud::Sdk::Model
   end
   
   def start_dependency(dep)
-    raise Cloud::Sdk::UserException.new("#{dep} not embedded in '#{@name}', try adding it first", 101), caller[0..5] unless self.embedded[dep]    
+    raise Cloud::Sdk::UserException.new("#{dep} not embedded in '#{@name}', try adding it first", 101) unless self.embedded[dep]    
     self.container.start_component(self, dep)
   end
   
   def stop_dependency(dep)
-    raise Cloud::Sdk::UserException.new("#{dep} not embedded in '#{@name}', try adding it first", 101), caller[0..5] unless self.embedded[dep]    
+    raise Cloud::Sdk::UserException.new("#{dep} not embedded in '#{@name}', try adding it first", 101) unless self.embedded[dep]    
     self.container.stop_component(self, dep)
   end
   
   def restart_dependency(dep)
-    raise Cloud::Sdk::UserException.new("#{dep} not embedded in '#{@name}', try adding it first", 101), caller[0..5] unless self.embedded[dep]    
+    raise Cloud::Sdk::UserException.new("#{dep} not embedded in '#{@name}', try adding it first", 101) unless self.embedded[dep]    
     self.container.restart_component(self, dep)
   end
   
   def reload_dependency(dep)
-    raise Cloud::Sdk::UserException.new("#{dep} not embedded in '#{@name}', try adding it first", 101), caller[0..5] unless self.embedded[dep]    
+    raise Cloud::Sdk::UserException.new("#{dep} not embedded in '#{@name}', try adding it first", 101) unless self.embedded[dep]    
     self.container.reload_component(self, dep)
   end
   
   def dependency_status(dep)
-    raise Cloud::Sdk::UserException.new("#{dep} not embedded in '#{@name}', try adding it first", 101), caller[0..5] unless self.embedded[dep]  
+    raise Cloud::Sdk::UserException.new("#{dep} not embedded in '#{@name}', try adding it first", 101) unless self.embedded[dep]  
     self.container.component_status(self, dep)
   end
   
