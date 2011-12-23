@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    cloud-sdk-controller (0.2.10)
+    cloud-sdk-controller (0.2.11)
       activesupport (~> 3.0.10)
       cloud-sdk-common
       json (= 1.4.3)
