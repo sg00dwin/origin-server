@@ -52,7 +52,7 @@ class Release < Thor
     gem_updates = false
     if build_dirs.include?("cloud-sdk/common")
       version = /(Version: )(.*)/.match(File.read("cloud-sdk/common/cloud-sdk-common.spec"))[2].strip
-      nv = next_version
+      nv = next_version(version)
       run("/bin/sed -i 's,cloud-sdk-common (#{version}),cloud-sdk-common (#{nv}),' broker/Gemfile.lock", :verbose => options.verbose?)
       run("/bin/sed -i 's,cloud-sdk-common (#{version}),cloud-sdk-common (#{nv}),' cloud-sdk/controller/Gemfile.lock", :verbose => options.verbose?)
       run("/bin/sed -i 's,cloud-sdk-common (#{version}),cloud-sdk-common (#{nv}),' cloud-sdk/node/Gemfile.lock", :verbose => options.verbose?)
@@ -61,7 +61,7 @@ class Release < Thor
     
     if build_dirs.include?("cloud-sdk/controller")
       version = /(Version: )(.*)/.match(File.read("cloud-sdk/controller/cloud-sdk-controller.spec"))[2].strip
-      nv = next_version
+      nv = next_version(version)
       run("/bin/sed -i 's,cloud-sdk-controller (#{version}),cloud-sdk-controller (#{nv}),' broker/Gemfile.lock", :verbose => options.verbose?)
       run("/bin/sed -i 's,cloud-sdk-controller (#{version}),cloud-sdk-controller (#{nv}),' cloud-sdk/controller/Gemfile.lock", :verbose => options.verbose?)
       gem_updates = true
@@ -69,14 +69,14 @@ class Release < Thor
     
     if build_dirs.include?("cloud-sdk/node")
       version = /(Version: )(.*)/.match(File.read("cloud-sdk/node/cloud-sdk-node.spec"))[2].strip
-      nv = next_version
+      nv = next_version(version)
       run("/bin/sed -i 's,cloud-sdk-node (#{version}),cloud-sdk-node (#{nv}),' cloud-sdk/node/Gemfile.lock", :verbose => options.verbose?)
       gem_updates = true
     end
     
     if gem_updates
       branch = get_branch
-      run("git add *; git commit -m 'Updating gem versions'; git push#{branch != 'origin/master' ? " origin #{branch}" : ""}", :verbose => options.verbose?)
+      #run("git add *; git commit -m 'Updating gem versions'; git push#{branch != 'origin/master' ? " origin #{branch}" : ""}", :verbose => options.verbose?)
     end
     
     exit 1
