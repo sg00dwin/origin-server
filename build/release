@@ -76,7 +76,7 @@ class Release < Thor
     
     if gem_updates
       branch = get_branch
-      run("git add *; git commit -m 'Updating gem versions'; git push origin #{branch}", :verbose => options.verbose?)
+      run("git add *; git commit -m 'Updating gem versions'; git push#{branch != 'origin/master' ? " origin #{branch}" : ""}", :verbose => options.verbose?)
     end
     
     exit 1
@@ -97,7 +97,7 @@ class Release < Thor
         end
 
         branch = get_branch
-        unless run("git pull && git push origin #{branch} && git push --tags", :verbose => options.verbose?)
+        unless run("git pull && git push#{branch != 'origin/master' ? " origin #{branch}" : ""} && git push --tags", :verbose => options.verbose?)
           puts "ERROR - tito tag push failed"; exit 1
         end
 
