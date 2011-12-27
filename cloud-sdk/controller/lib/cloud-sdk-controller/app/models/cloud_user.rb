@@ -29,14 +29,6 @@ class CloudUser < Cloud::Sdk::Model
     unless persisted?
       #new user record
       resultIO.append(create())
-    else
-      if ssh_changed?
-        applications.each do |app|
-          resultIO.append app.remove_authorized_ssh_key(self.ssh_was)
-          resultIO.append app.add_authorized_ssh_key(self.ssh)
-        end
-      end
-      update_namespace() if namespace_changed?
     end
     
     super(@rhlogin)
@@ -143,6 +135,61 @@ class CloudUser < Cloud::Sdk::Model
     result
   end
   
+  def update_namespace
+    notify_observers(:before_namespace_update)
+    
+    dns_service = Cloud::Sdk::DnsService.instance
+    raise Cloud::Sdk::UserException.new("A namespace with name '#{namespace}' already exists", 103) unless dns_service.namespace_available?(@namespace)
+    
+    begin
+      old_ns = self.namespace_was
+      new_ns = self.namespace
+      dns_service.register_namespace(new_ns)
+      dns_service.deregister_namespace(old_ns)      
+  
+      applications.each do |app|
+        Rails.logger.debug "DEBUG: Updating namespaces for app: #{app.name}"
+        dns_service.deregister_application(app.name, old_ns)
+        public_hostname = app.container.get_public_hostname
+        dns_service.register_application(app.name, new_ns, public_hostname)
+      end
+      
+      update_namespace_failures = []
+      applications.each do |app|
+        Rails.logger.debug "DEBUG: Updating namespace for app: #{app.name}"
+        result = app.update_namespace(new_ns, old_ns)
+        update_namespace_failures.push(app.name) unless result
+      end
+      
+      if update_namespace_failures.empty?
+        dns_service.publish
+        notify_observers(:namespace_update_success)
+      else
+        notify_observers(:namespace_update_error)
+        raise Cloud::Sdk::NodeException.new("Error updating apps: #{update_namespace_failures.pretty_inspect.chomp}.  Updates will not be completed until all apps can be updated successfully.  If the problem persists please contact support.",143)
+      end
+    rescue Cloud::Sdk::CdkException => e
+      raise
+    rescue Exception => e
+      Rails.logger.debug "DEBUG: Exception caught updating namespace: #{e.message}"
+      Rails.logger.debug e.backtrace
+      raise Cloud::Sdk::CdkException.new("An error occurred updating the namespace.  If the problem persists please contact support.",1)
+    ensure
+      dns_service.close
+    end
+    applications.each do |app|
+      app.embedded.each_key do |framework|
+        if app.embedded[framework].has_key?('info')
+          info = app.embedded[framework]['info']
+          info.gsub!(/-#{old_ns}.#{Rails.application.config.cdk[:domain_suffix]}/, "-#{new_ns}.#{Rails.application.config.cdk[:domain_suffix]}")
+          app.embedded[framework]['info'] = info
+        end
+      end
+      app.save
+    end
+    notify_observers(:after_namespace_update)
+  end
+  
   private
   
   def create
@@ -180,57 +227,5 @@ class CloudUser < Cloud::Sdk::Model
     end
     resultIO
   end
-  
-  def update_namespace
-    notify_observers(:before_namespace_update)
-    
-    dns_service = Cloud::Sdk::DnsService.instance
-    raise Cloud::Sdk::UserException.new("A namespace with name '#{namespace}' already exists", 103) unless dns_service.namespace_available?(@namespace)
-    
-    begin
-      dns_service.register_namespace(self.namespace)
-      dns_service.deregister_namespace(self.namespace_was)      
 
-      applications.each do |app|
-        Rails.logger.debug "DEBUG: Updating namespaces for app: #{app.name}"
-        dns_service.deregister_application(app.name, self.namespace_was)
-        public_hostname = app.container.get_public_hostname
-        dns_service.register_application(app.name, self.namespace, public_hostname)
-      end
-      
-      update_namespace_failures = []
-      applications.each do |app|
-        Rails.logger.debug "DEBUG: Updating namespace for app: #{app.name}"
-        result = app.update_namespace(self.namespace, self.namespace_was)
-        update_namespace_failures.push(app.name) unless result
-      end
-      
-      if update_namespace_failures.empty?
-        dns_service.publish
-        notify_observers(:namespace_update_success)
-      else
-        notify_observers(:namespace_update_error)
-        raise Cloud::Sdk::NodeException.new("Error updating apps: #{update_namespace_failures.pretty_inspect.chomp}.  Updates will not be completed until all apps can be updated successfully.  If the problem persists please contact support.",143)
-      end
-    rescue Cloud::Sdk::CdkException => e
-      raise
-    rescue Exception => e
-      Rails.logger.debug "DEBUG: Exception caught updating namespace: #{e.message}"
-      Rails.logger.debug e.backtrace
-      raise Cloud::Sdk::CdkException.new("An error occurred updating the namespace.  If the problem persists please contact support.",1)
-    ensure
-      dns_service.close
-    end
-    applications.each do |app|
-      app.embedded.each_key do |framework|
-        if app.embedded[framework].has_key?('info')
-          info = app.embedded[framework]['info']
-          info.gsub!(/-#{self.namespace_was}.#{Rails.application.config.cdk[:domain_suffix]}/, "-#{self.namespace}.#{Rails.application.config.cdk[:domain_suffix]}")
-          app.embedded[framework]['info'] = info
-        end
-      end
-      app.save
-    end
-    notify_observers(:after_namespace_update)
-  end
 end

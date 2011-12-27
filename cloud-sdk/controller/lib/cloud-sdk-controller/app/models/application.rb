@@ -183,7 +183,18 @@ class Application < Cloud::Sdk::Model
   end
   
   def update_namespace(new_ns, old_ns)
-    return self.container.update_namespace(self, @framework, new_ns, old_ns)
+    
+    updated = false
+    begin
+      result = self.container.update_namespace(self, @framework, new_ns, old_ns)
+      process_cartridge_commands(result.cart_commands)
+      updated = result.exitcode == 0
+    rescue Exception => e
+      Rails.logger.debug "Exception caught updating namespace #{e.message}"
+      Rails.logger.debug "DEBUG: Exception caught updating namespace #{e.message}"
+      Rails.logger.debug e.backtrace
+    end
+    return updated 
   end
   
   def start

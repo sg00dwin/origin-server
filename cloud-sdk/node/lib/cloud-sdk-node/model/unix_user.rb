@@ -145,12 +145,12 @@ module Cloud::SDK::Model
     end
     
     def add_env_var(key, value, prefix_cloud_name=false)
-      env_dir = File.join(@homedir,".env")      
+      env_dir = File.join(@homedir,".env")
       if prefix_cloud_name
         key = (@config.get("cloud_name") || "CDK") + "_#{key}"
       end
-      File.open(File.join(env_dir, key),File::WRONLY|File::CREAT) do |file|
-        file.write "export #{key}=#{value}"
+      File.open(File.join(env_dir, key),File::WRONLY|File::CREAT, 0o0640) do |file|
+        file.write "export #{key}='#{value}'"
       end
     end
     

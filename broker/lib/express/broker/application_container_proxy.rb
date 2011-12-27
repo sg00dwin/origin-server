@@ -309,16 +309,8 @@ module Express
       end
       
       def update_namespace(app, cart, new_ns, old_ns)
-        begin
-          mcoll_reply = execute_direct(cart, 'update_namespace', "#{app.name} #{new_ns} #{old_ns} #{app.uuid}")
-          result = parse_result(mcoll_reply)
-          return result.exitcode == 0
-        rescue Exception => e
-          Rails.logger.debug "Exception caught updating namespace #{e.message}"
-          Rails.logger.debug "DEBUG: Exception caught updating namespace #{e.message}"
-          Rails.logger.debug e.backtrace
-        end
-        return false
+        mcoll_reply = execute_direct(cart, 'update_namespace', "#{app.name} #{new_ns} #{old_ns} #{app.uuid}")
+        parse_result(mcoll_reply)
       end
       
       #
