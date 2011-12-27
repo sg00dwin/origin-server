@@ -68,20 +68,6 @@ class LegacyBrokerController < ApplicationController
     if @req.alter
       cloud_user.ssh = @req.ssh
       cloud_user.namespace = @req.namespace
-      
-      if cloud_user.persisted?
-        if cloud_user.namespace_changed?
-          raise Cloud::Sdk::CdkException.new("The supplied namespace '#{@req.namespace}' is not allowed", 106) if Cloud::Sdk::ApplicationContainerProxy.blacklisted? @req.namespace
-          cloud_user.update_namespace()
-        end
-        
-        if cloud_user.ssh_changed?
-          cloud_user.applications.each do |app|
-            @reply.append app.remove_authorized_ssh_key(self.ssh_was)
-            @reply.append app.add_authorized_ssh_key(self.ssh)
-          end
-        end
-      end
     elsif @req.delete @login
        if not cloud_user.applications.empty?
          @reply.resultIO << "Cannot remove namespace #{cloud_user.namespace}. Remove existing apps first.\n"
@@ -97,11 +83,27 @@ class LegacyBrokerController < ApplicationController
       raise Cloud::Sdk::CdkException.new("The supplied namespace '#{@req.namespace}' is not allowed", 106) if Cloud::Sdk::ApplicationContainerProxy.blacklisted? @req.namespace
       cloud_user = CloudUser.new(@login, @req.ssh, @req.namespace)
     end
-        
+
     if cloud_user.invalid?
       @reply.resultIO << cloud_user.errors.first[1]
       render :json => @reply, :status => :invalid 
       return
+    end
+    
+    if @req.alter     
+      if cloud_user.persisted?
+        if cloud_user.namespace_changed?
+          raise Cloud::Sdk::CdkException.new("The supplied namespace '#{@req.namespace}' is not allowed", 106) if Cloud::Sdk::ApplicationContainerProxy.blacklisted? @req.namespace
+          cloud_user.update_namespace()
+        end
+        
+        if cloud_user.ssh_changed?
+          cloud_user.applications.each do |app|
+            @reply.append app.remove_authorized_ssh_key(cloud_user.ssh_was)
+            @reply.append app.add_authorized_ssh_key(cloud_user.ssh)
+          end
+        end
+      end
     end
         
     @reply.append cloud_user.save

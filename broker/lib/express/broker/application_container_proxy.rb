@@ -65,7 +65,7 @@ module Express
       end
       
       def remove_authorized_ssh_key(app, ssh_key)
-        result = execute_direct(@@C_CONTROLLER, 'add-authorized-ssh-key', "-c '#{app.uuid}' -s '#{ssh_key}'")
+        result = execute_direct(@@C_CONTROLLER, 'remove-authorized-ssh-key', "-c '#{app.uuid}' -s '#{ssh_key}'")
         parse_result(result)
       end
     
