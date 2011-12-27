@@ -76,10 +76,8 @@ class Release < Thor
     
     if gem_updates
       branch = get_branch
-      #run("git add *; git commit -m 'Updating gem versions'; git push#{branch != 'origin/master' ? " origin #{branch}" : ""}", :verbose => options.verbose?)
+      run("git add *; git commit -m 'Updating gem versions'; git push#{branch != 'origin/master' ? " origin #{branch}" : ""}", :verbose => options.verbose?)
     end
-    
-    exit 1
 
     build_dirs.each do |build_dir|
       inside(File.expand_path("../#{build_dir}", File.dirname(__FILE__))) do
