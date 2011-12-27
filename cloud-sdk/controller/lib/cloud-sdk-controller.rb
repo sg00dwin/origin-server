@@ -1,5 +1,4 @@
 require "cloud-sdk-common"
-require "cloud-sdk-controller/version"
 
 module Cloud
   module Sdk
