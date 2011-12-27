@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.84.13
+Version:   0.84.14
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -76,6 +76,11 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Mon Dec 26 2011 Dan McPherson <dmcphers@redhat.com> 0.84.14-1
+- bump spec numbers (dmcphers@redhat.com)
+- Bug 770406 (dmcphers@redhat.com)
+- Bug 770364 (dmcphers@redhat.com)
+
 * Fri Dec 23 2011 Dan McPherson <dmcphers@redhat.com> 0.84.13-1
 - bump spec number (dmcphers@redhat.com)
 
