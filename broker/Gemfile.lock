@@ -37,11 +37,11 @@ GEM
       nokogiri (>= 1.4.3)
       uuidtools (~> 2.1)
     builder (2.1.2)
-    cloud-sdk-common (0.2.7)
+    cloud-sdk-common (0.2.8)
       activemodel (= 3.0.10)
       json (= 1.4.3)
       rack (= 1.1.0)
-    cloud-sdk-controller (0.2.14)
+    cloud-sdk-controller (0.2.15)
       activesupport (~> 3.0.10)
       cloud-sdk-common
       json (= 1.4.3)
