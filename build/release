@@ -19,6 +19,11 @@ class Release < Thor
         end
       end
     end
+    
+    def next_version(version)
+      last_index_of_dot = version.rindex('.')
+      version[0..last_index_of_dot] + (version[last_index_of_dot+1..-1].to_i + 1).to_s
+    end
   end
 
   desc "check", "Check the directories that need to be released"
@@ -41,13 +46,47 @@ class Release < Thor
      
     # Update the repo
     git_pull
+    
+    build_dirs = get_build_dirs
+    
+    gem_updates = false
+    if build_dirs.include?("cloud-sdk/common")
+      version = /(Version: )(.*)/.match(File.read("cloud-sdk/common/cloud-sdk-common.spec"))[2].strip
+      nv = next_version
+      run("/bin/sed -i 's,cloud-sdk-common (#{version}),cloud-sdk-common (#{nv}),' broker/Gemfile.lock", :verbose => options.verbose?)
+      run("/bin/sed -i 's,cloud-sdk-common (#{version}),cloud-sdk-common (#{nv}),' cloud-sdk/controller/Gemfile.lock", :verbose => options.verbose?)
+      run("/bin/sed -i 's,cloud-sdk-common (#{version}),cloud-sdk-common (#{nv}),' cloud-sdk/node/Gemfile.lock", :verbose => options.verbose?)
+      gem_updates = true
+    end
+    
+    if build_dirs.include?("cloud-sdk/controller")
+      version = /(Version: )(.*)/.match(File.read("cloud-sdk/controller/cloud-sdk-controller.spec"))[2].strip
+      nv = next_version
+      run("/bin/sed -i 's,cloud-sdk-controller (#{version}),cloud-sdk-controller (#{nv}),' broker/Gemfile.lock", :verbose => options.verbose?)
+      run("/bin/sed -i 's,cloud-sdk-controller (#{version}),cloud-sdk-controller (#{nv}),' cloud-sdk/controller/Gemfile.lock", :verbose => options.verbose?)
+      gem_updates = true
+    end
+    
+    if build_dirs.include?("cloud-sdk/node")
+      version = /(Version: )(.*)/.match(File.read("cloud-sdk/node/cloud-sdk-node.spec"))[2].strip
+      nv = next_version
+      run("/bin/sed -i 's,cloud-sdk-node (#{version}),cloud-sdk-node (#{nv}),' cloud-sdk/node/Gemfile.lock", :verbose => options.verbose?)
+      gem_updates = true
+    end
+    
+    if gem_updates
+      branch = get_branch
+      run("git add *; git commit -m 'Updating gem versions'; git push origin #{branch}", :verbose => options.verbose?)
+    end
+    
+    exit 1
 
-    get_build_dirs.each do |build_dir|
+    build_dirs.each do |build_dir|
       inside(File.expand_path("../#{build_dir}", File.dirname(__FILE__))) do
         puts "Releasing #{build_dir}"
 
         # Cleanup any tito data
-        unless run("rm -rf /tmp/tito/cvswork/rhc*", :verbose => options.verbose?)
+        unless run("rm -rf /tmp/tito/cvswork/", :verbose => options.verbose?)
           puts "ERROR - tito temp cleanup failed"; exit 1
         end
 
@@ -57,7 +96,8 @@ class Release < Thor
           exit 1
         end
 
-        unless run("git pull && git push && git push --tags", :verbose => options.verbose?)
+        branch = get_branch
+        unless run("git pull && git push origin #{branch} && git push --tags", :verbose => options.verbose?)
           puts "ERROR - tito tag push failed"; exit 1
         end
 

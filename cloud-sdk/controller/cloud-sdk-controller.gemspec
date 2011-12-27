@@ -3,11 +3,10 @@ $:.push File.expand_path("../lib", __FILE__)
 lib_dir  = File.join(File.join("lib", "**"), "*")
 test_dir  = File.join(File.join("test", "**"), "*")
 bin_dir  = File.join("bin", "*")
-require 'cloud-sdk-controller/version'
 
 Gem::Specification.new do |s|
   s.name        = "cloud-sdk-controller"
-  s.version     = Cloud::Sdk::Controller::VERSION
+  s.version     = /(Version: )(.*)/.match(File.read("cloud-sdk-controller.spec"))[2].strip
   s.authors     = ["Krishna Raman"]
   s.email       = ["kraman@gmail.com"]
   s.homepage    = ""
@@ -24,5 +23,5 @@ Gem::Specification.new do |s|
 
   s.add_dependency "activesupport", "~> 3.0.10"
   s.add_dependency "json", "1.4.3"
-  s.add_dependency "cloud-sdk-common", "= #{s.version}"
+  s.add_dependency "cloud-sdk-common"
 end
