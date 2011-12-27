@@ -149,7 +149,7 @@ module Cloud::SDK::Model
       if prefix_cloud_name
         key = (@config.get("cloud_name") || "CDK") + "_#{key}"
       end
-      File.open(File.join(env_dir, key),File::WRONLY|File::CREAT, 0o0640) do |file|
+      File.open(File.join(env_dir, key),File::WRONLY|File::CREAT) do |file|
         file.write "export #{key}='#{value}'"
       end
     end
