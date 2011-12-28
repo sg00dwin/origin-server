@@ -195,7 +195,11 @@ class LegacyBrokerController < ApplicationController
       
       if app.framework_cartridge == "jenkins"
         user.applications.each do |uapp|
-          @reply.append uapp.remove_dependency('jenkins-client-1.4') if uapp.name != app.name and uapp.embedded and uapp.embedded.has_key?('jenkins-client-1.4')
+          begin
+            @reply.append uapp.remove_dependency('jenkins-client-1.4') if uapp.name != app.name and uapp.embedded and uapp.embedded.has_key?('jenkins-client-1.4')
+          rescue Exception => e
+            @reply.debugIO << "Failed to remove jenkins client from application: #{uapp.name}\n"
+          end
         end
       end
       

@@ -98,7 +98,13 @@ module Express
       end
       
       def deconfigure_cartridge(app, cart)
-        run_cartridge_command(cart, app, "deconfigure")
+        begin
+          run_cartridge_command(cart, app, "deconfigure")
+        rescue Cloud::Sdk::NodeException => e
+          if has_app?(app.uuid, app.name)
+            raise
+          end
+        end
       end
       
       def get_public_hostname
@@ -173,12 +179,16 @@ module Express
           Rails.logger.debug "DEBUG: Deconfiguring embedded application '#{component}' in application '#{app.name}' on node '#{@id}'"
           return run_cartridge_command('embedded/' + component, app, 'deconfigure')
         rescue Exception => e
-          #if still present
-            #raise
-          #else
-            Rails.logger.debug "DEBUG: Embedded application '#{component}' not found in application '#{app.name}' on node '#{@id}'.  Continuing with deconfigure."
-            Rails.logger.debug "DEBUG: Error from cartridge on deconfigure: #{e.message}"
-          #end
+          begin
+            run_cartridge_command(cart, app, "deconfigure")
+          rescue Cloud::Sdk::NodeException => e
+            if has_embedded_app?(app.uuid, component)
+              raise
+            else
+              Rails.logger.debug "DEBUG: Embedded application '#{component}' not found in application '#{app.name}' on node '#{@id}'.  Continuing with deconfigure."
+              Rails.logger.debug "DEBUG: Error from cartridge on deconfigure: #{e.message}"
+            end
+          end
         end
       end
       
@@ -439,6 +449,9 @@ module Express
         result
       end
       
+      #
+      # Returns the server identity of the specified app
+      #
       def self.find_app(app_uuid, app_name)
         server_identity = nil
         rpc_exec('libra') do |client|
@@ -451,6 +464,32 @@ module Express
           end
         end
         return server_identity
+      end
+      
+      #
+      # Returns whether this server has the specified app
+      #
+      def has_app?(app_uuid, app_name)
+        ApplicationContainerProxy.rpc_exec('libra', @id) do |client|
+          client.has_app(:uuid => app_uuid,
+                         :application => app_name) do |response|
+            output = response[:body][:data][:output]
+            return output == true
+          end
+        end
+      end
+      
+      #
+      # Returns whether this server has the specified embedded app
+      #
+      def has_embedded_app?(app_uuid, embedded_type)
+        ApplicationContainerProxy.rpc_exec('libra', @id) do |client|
+          client.has_embedded_app(:uuid => app_uuid,
+                                  :embedded_type => embedded_type) do |response|
+            output = response[:body][:data][:output]
+            return output == true
+          end
+        end
       end
       
       def run_cartridge_command(framework, app, command, arg=nil)
