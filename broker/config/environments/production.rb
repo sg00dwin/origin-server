@@ -64,6 +64,7 @@ Broker::Application.configure do
     :domain_suffix => "dev.rhcloud.com",
     :zone => "rhcloud.com",
     :child_zone => "dev",
+    :per_user_app_limit => 5,
     :broker_auth_secret => "EIvWT6u3lsvSRNRGZhhW8YcWMh5mUAlc32nZlRJPdJM=",
     :broker_auth_rsa_secret => "SJDIkdfhuISe3wrulhjvcKHJFDUeoi8gfcdnu8299dhc",
     :rpc_opts => {
