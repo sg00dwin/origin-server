@@ -92,16 +92,16 @@ class LegacyBrokerController < ApplicationController
     
     if @req.alter     
       if cloud_user.persisted?
-        if cloud_user.namespace_changed?
-          raise Cloud::Sdk::CdkException.new("The supplied namespace '#{@req.namespace}' is not allowed", 106) if Cloud::Sdk::ApplicationContainerProxy.blacklisted? @req.namespace
-          cloud_user.update_namespace()
-        end
-        
         if cloud_user.ssh_changed?
           cloud_user.applications.each do |app|
             @reply.append app.remove_authorized_ssh_key(cloud_user.ssh_was)
             @reply.append app.add_authorized_ssh_key(cloud_user.ssh)
           end
+        end
+
+        if cloud_user.namespace_changed?
+          raise Cloud::Sdk::CdkException.new("The supplied namespace '#{@req.namespace}' is not allowed", 106) if Cloud::Sdk::ApplicationContainerProxy.blacklisted? @req.namespace
+          cloud_user.update_namespace()
         end
       end
     end
