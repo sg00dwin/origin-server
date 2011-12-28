@@ -1,4 +1,4 @@
-policy_module(libra,1.0.22)
+policy_module(libra,1.0.23)
 
 ########################################
 #
@@ -96,10 +96,12 @@ dontaudit libra_domain libra_initrc_tmp_t:file append;
 dontaudit libra_domain libra_var_run_t:file append;
 
 manage_dirs_pattern(libra_domain, libra_tmp_t, libra_tmp_t)
+manage_fifo_files_pattern(libra_domain, libra_tmp_t, libra_tmp_t)
 manage_files_pattern(libra_domain, libra_tmp_t, libra_tmp_t)
 manage_lnk_files_pattern(libra_domain, libra_tmp_t, libra_tmp_t)
 manage_sock_files_pattern(libra_t, libra_tmp_t, libra_tmp_t)
-files_tmp_filetrans(libra_domain, libra_tmp_t, { file dir sock_file })
+allow libra_domain libra_tmp_t:file { relabelfrom relabelto };
+files_tmp_filetrans(libra_domain, libra_tmp_t, { file dir sock_file fifo_file })
 can_exec(libra_t, libra_tmp_t)
 
 manage_dirs_pattern(libra_domain, libra_var_lib_t, libra_var_lib_t)
@@ -108,7 +110,7 @@ manage_sock_files_pattern(libra_domain, libra_var_lib_t, libra_var_lib_t)
 manage_lnk_files_pattern(libra_domain, libra_var_lib_t, libra_var_lib_t)
 files_var_lib_filetrans(libra_domain, libra_var_lib_t, { dir file sock_file } )
 allow libra_domain libra_var_lib_t:file entrypoint;
-allow libra_domain libra_var_lib_t:file relabelfrom;
+allow libra_domain libra_var_lib_t:file { relabelfrom relabelto };
 
 kernel_read_system_state(libra_domain)
 kernel_read_network_state(libra_domain)
@@ -143,6 +145,7 @@ files_dontaudit_search_spool(libra_domain)
 files_read_etc_files(libra_domain)
 files_read_usr_files(libra_domain)
 files_dontaudit_getattr_non_security_sockets(libra_domain)
+# files_dontaudit_setattr_etc_runtime_files(libra_domain)
 
 libs_exec_lib_files(libra_domain)
 
