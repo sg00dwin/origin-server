@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Common
 Name:           rubygem-%{gemname}
-Version:        0.2.8
+Version:        0.2.9
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        AGPLv3
@@ -72,6 +72,9 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Tue Dec 27 2011 Dan McPherson <dmcphers@redhat.com> 0.2.9-1
+- various fixed (dmcphers@redhat.com)
+
 * Tue Dec 27 2011 Dan McPherson <dmcphers@redhat.com> 0.2.8-1
 - release fixes (dmcphers@redhat.com)
 
