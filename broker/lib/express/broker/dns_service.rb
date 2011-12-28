@@ -117,12 +117,7 @@ module Express
       def self.create_app_dns_entries(app_name, namespace, public_hostname, auth_token, retries=2)
         dyn_create_cname_record(app_name, namespace, public_hostname, auth_token, retries)
       end
-    
-      def self.recreate_app_dns_entries(app_name, old_namespace, new_namespace, public_hostname, auth_token, retries=2)
-        dyn_delete_cname_record(app_name, old_namespace, auth_token, retries)
-        dyn_create_cname_record(app_name, new_namespace, public_hostname, auth_token, retries)
-      end
-    
+
       def self.dyn_do(method, retries=2)
         i = 0
         while true

@@ -49,6 +49,6 @@ user = CloudUser.find(options[:rhlogin])
 app  = Application.find(user,options[:app_name])
 app.container = Cloud::Sdk::ApplicationContainerProxy.instance(options[:server_identity])
 
-#TODO deconfigure dependencies without processing directives
+app.container.deconfigure_cartridge(app, app.framework)
 app.container.destroy(app)
 puts "Successfully deconfigured '#{options[:app_name]}' on '#{app.container.id}'"

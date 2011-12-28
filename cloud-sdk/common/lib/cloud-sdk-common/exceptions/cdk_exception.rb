@@ -3,7 +3,7 @@ module Cloud
     class CdkException < StandardError
       attr_accessor :code, :resultIO
       
-      def initialize(msg=nil,code=nil,resultIO=nil)
+      def initialize(msg=nil, code=nil, resultIO=nil)
         super(msg)
         @code = code
         @resultIO = resultIO
@@ -11,6 +11,14 @@ module Cloud
     end
     
     class NodeException < Cloud::Sdk::CdkException; end
+    class InvalidNodeException < NodeException
+      attr_accessor :server_identity
+      
+      def initialize(msg=nil, code=nil, resultIO=nil, server_identity=nil)
+        super(msg, code, resultIO)
+        @server_identity = server_identity  
+      end
+    end
     class UserException < Cloud::Sdk::CdkException; end
     class AuthServiceException < Cloud::Sdk::CdkException; end
     class UserValidationException < Cloud::Sdk::CdkException; end

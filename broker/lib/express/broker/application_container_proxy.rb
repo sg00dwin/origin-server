@@ -76,7 +76,7 @@ module Express
       
       def remove_env_var(app, key)
         result = execute_direct(@@C_CONTROLLER, 'remove-env-var', "-c '#{app.uuid}' -k '#{key}'")
-        parse_result(result)    
+        parse_result(result)
       end
     
       def add_broker_auth_key(app, iv, token)
@@ -296,7 +296,7 @@ module Express
         Rails.logger.debug "DEBUG: Deconfiguring old app '#{app.name}' on #{source_container.id} after move"
         (1..num_tries).each do |i|
           begin
-            #TODO we aren't handling dependencies here.  Need to delete dependencies without following directives such as remove system env var.
+            reply.append source_container.deconfigure_cartridge(app, app.framework)
             reply.append source_container.destroy(app)
             break
           rescue Exception => e
@@ -380,7 +380,15 @@ module Express
             #Rails.logger.debug "--output--\n\n#{output}\n\n"
           end
         else
-          raise Cloud::Sdk::NodeException.new("Node execution failure (error getting result from node).  If the problem persists please contact Red Hat support.", 143)
+          
+          puts app.name
+          puts app.uuid
+          server_identity = app ? ApplicationContainerProxy.find_app(app.uuid, app.name) : nil
+          if server_identity && @id != server_identity
+            raise Cloud::Sdk::InvalidNodeException.new("Node execution failure (invalid  node).  If the problem persists please contact Red Hat support.", 143, nil, server_identity)
+          else
+            raise Cloud::Sdk::NodeException.new("Node execution failure (error getting result from node).  If the problem persists please contact Red Hat support.", 143)
+          end
         end
         
         if output && !output.empty?
@@ -431,12 +439,45 @@ module Express
         result
       end
       
+      def self.find_app(app_uuid, app_name)
+        server_identity = nil
+        rpc_exec('libra') do |client|
+          client.has_app(:uuid => app_uuid,
+                         :application => app_name) do |response|
+            output = response[:body][:data][:output]
+            if output == true
+              server_identity = response[:senderid]
+            end
+          end
+        end
+        return server_identity
+      end
+      
       def run_cartridge_command(framework, app, command, arg=nil)
         arguments = "'#{app.name}' '#{app.user.namespace}' '#{app.uuid}'"
         arguments += " '#{arg}'" if arg
         
         result = execute_direct(framework, command, arguments)
-        resultIO = parse_result(result, app, command)
+        begin
+          resultIO = parse_result(result, app, command)
+        rescue Cloud::Sdk::InvalidNodeException => e
+          #TODO need a better way to opt out of this
+          if command != 'configure' && command != 'move'
+            @id = e.server_identity
+            Rails.logger.debug "DEBUG: Changing server identity of '#{app.name}' from '#{app.server_identity}' to '#{@id}'"
+            dns_service = Cloud::Sdk::DnsService.instance
+            dns_service.deregister_application(app.name, app.user.namespace)
+            dns_service.register_application(app.name, app.user.namespace, get_public_hostname)
+            dns_service.publish
+            app.server_identity = @id
+            app.save
+            #retry
+            result = execute_direct(framework, command, arguments)
+            resultIO = parse_result(result, app, command)
+          else
+            raise
+          end
+        end
         if resultIO.exitcode != 0
           resultIO.debugIO << "Cartridge return code: " + resultIO.exitcode.to_s
           raise Cloud::Sdk::NodeException.new("Node execution failure (invalid exit code from node).  If the problem persists please contact Red Hat support.", 143, resultIO)
