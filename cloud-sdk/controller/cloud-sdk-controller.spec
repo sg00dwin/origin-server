@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.2.16
+Version:        0.2.17
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        AGPLv3
@@ -72,6 +72,11 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Tue Dec 27 2011 Dan McPherson <dmcphers@redhat.com> 0.2.17-1
+- Updating gem versions (dmcphers@redhat.com)
+- various fixes (dmcphers@redhat.com)
+- add application limit of 5 (dmcphers@redhat.com)
+
 * Tue Dec 27 2011 Dan McPherson <dmcphers@redhat.com> 0.2.16-1
 - Updating gem versions (dmcphers@redhat.com)
 - remove version ref (dmcphers@redhat.com)
