@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.84.3
+Version:       0.84.4
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -46,6 +46,10 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Thu Dec 29 2011 Dan McPherson <dmcphers@redhat.com> 0.84.4-1
+- Allow zibra domains to create fifo_files in /tmp, allow libra domains to
+  relabelfrom/to libra_tmp_t and libra_var_lib_t (dwalsh@redhat.com)
+
 * Wed Dec 21 2011 Mike McGrath <mmcgrath@redhat.com> 0.84.3-1
 - require selinux policy 131 (mmcgrath@redhat.com)
 - Dontaudit libra domains searching ssh_home_t (dwalsh@redhat.com)
