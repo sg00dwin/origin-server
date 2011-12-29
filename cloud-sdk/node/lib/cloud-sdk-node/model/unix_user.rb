@@ -210,7 +210,7 @@ module Cloud::SDK::Model
 
       add_env_var("APP_UUID", @application_uuid, true)
       add_env_var("CONTAINER_UUID", @container_uuid, true)
-      add_env_var("HOMEDIR", @homedir, true)
+      add_env_var("HOMEDIR", @homedir.end_with?('/') ? @homedir : @homedir + '/', true)
       notify_observers(:after_initialize_homedir)        
     end
     
