@@ -1,4 +1,4 @@
-policy_module(libra,1.0.24)
+policy_module(libra,1.0.25)
 
 ########################################
 #
@@ -141,6 +141,7 @@ fs_dontaudit_list_auto_mountpoints(libra_domain)
 storage_dontaudit_getattr_fixed_disk_dev(libra_domain)
 
 files_dontaudit_search_all_pids(libra_domain)
+files_dontaudit_getattr_all_dirs(libra_domain)
 files_dontaudit_getattr_lost_found_dirs(libra_domain)
 files_dontaudit_search_all_mountpoints(libra_domain)
 files_dontaudit_search_spool(libra_domain)
