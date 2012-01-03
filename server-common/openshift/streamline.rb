@@ -92,34 +92,22 @@ module Streamline
   def login
     raise UserException.new(107), "Invalid characters in RHLogin '#{@rhlogin}' found", caller[0..5] if !OpenShift::Util.check_rhlogin(@rhlogin)
 
-    result = nil    
+    result = nil
+    # First do the authentication
+    login_args = {'login' => @rhlogin,
+                  'password' => @password}
+
     begin
-      if @ticket
-        establish
+      # Establish the authentication ticket
+      http_post(@@login_url, login_args) do |json|
+        Rails.logger.debug("Current login = #{@rhlogin} / authenticated for #{json['username'] || json['login']}")
+        @rhlogin = json['username'] || json['login'] # remove 'login' if/once streamline changes to username like cloudVerify
+        @roles = json['roles']
         check_access
-        result = @rhlogin
       end
+
+      result = @rhlogin
     rescue AccessDeniedException
-      Rails.logger.debug("Attempted to use previous ticket '#{@ticket}' to establish but failed with AccessDenied.  Continuing with normal login...")
-    end
-
-    unless result
-      # First do the authentication
-      login_args = {'login' => @rhlogin,
-                    'password' => @password}
-  
-      begin
-        # Establish the authentication ticket
-        http_post(@@login_url, login_args) do |json|
-          Rails.logger.debug("Current login = #{@rhlogin} / authenticated for #{json['username'] || json['login']}")
-          @rhlogin = json['username'] || json['login'] # remove 'login' if/once streamline changes to username like cloudVerify
-          @roles = json['roles']
-          check_access
-        end
-
-        result = @rhlogin
-      rescue AccessDeniedException
-      end
     end
     return result
   end
@@ -133,9 +121,9 @@ module Streamline
   def check_access
     unless roles.index('cloud_access_1')
       if roles.index('cloud_access_request_1')
-        raise OpenShift::UserValidationException.new(146), "Found valid credentials but you haven't been granted access to Express yet", caller[0..5]
+        raise OpenShift::UserValidationException.new(146), "Found valid credentials but you haven't been granted access yet", caller[0..5]
       else
-        raise OpenShift::UserValidationException.new(147), "Found valid credentials but you haven't requested access to Express yet", caller[0..5]
+        raise OpenShift::UserValidationException.new(147), "Found valid credentials but you haven't requested access yet", caller[0..5]
       end
     end
   end
