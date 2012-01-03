@@ -52,7 +52,6 @@ mkdir -p %{buildroot}%{_libexecdir}
 mkdir -p %{buildroot}%{_initddir}
 mkdir -p %{buildroot}%{ruby_sitelibdir}
 mkdir -p %{buildroot}%{_libexecdir}/li
-mkdir -p %{buildroot}%{_sysconfdir}/httpd/conf.d/libra
 mkdir -p %{buildroot}/usr/share/selinux/packages
 mkdir -p %{buildroot}%{_sysconfdir}/cron.daily/
 mkdir -p %{buildroot}%{_sysconfdir}/oddjobd.conf.d/
@@ -62,7 +61,11 @@ mkdir -p %{buildroot}%{_sysconfdir}/libra/skel
 mkdir -p %{buildroot}/%{_localstatedir}/www/html/
 mkdir -p %{buildroot}/%{_sysconfdir}/security/
 mkdir -p %{buildroot}%{_localstatedir}/lib/libra
+mkdir -p %{buildroot}%{_localstatedir}/lib/libra/.limits.d
 mkdir -p %{buildroot}%{_localstatedir}/run/libra
+mkdir -p %{buildroot}%{_localstatedir}/lib/libra/.httpd.d
+mkdir -p %{buildroot}/%{_sysconfdir}/httpd/conf.d/
+ln -s %{_localstatedir}/lib/libra/.httpd.d/ %{buildroot}/%{_sysconfdir}/httpd/conf.d/libra
 
 cp -r cartridges %{buildroot}%{_libexecdir}/li
 cp -r conf/httpd %{buildroot}%{_sysconfdir}
@@ -113,6 +116,16 @@ echo "/usr/bin/trap-user" >> /etc/shells
 # Ensure the default users have a more restricted shell then normal.
 #semanage login -m -s guest_u __default__ || :
 
+# If /etc/httpd/conf.d/libra is a dir, make it a symlink
+if [ -d /etc/httpd/conf.d/libra ]
+then
+    mv /etc/httpd/conf.d/libra.bak/* /var/lib/libra/.httpd.d/
+    # not forced to prevent data loss
+    rmdir /etc/httpd/conf.d/libra /etc/httpd/conf.d/libra.bak
+fi
+
+
+
 %preun
 if [ "$1" -eq "0" ]; then
     /sbin/service libra-tc stop > /dev/null 2>&1 || :
@@ -130,6 +143,13 @@ if [ "$1" -eq 0 ]; then
     /sbin/service mcollective restart > /dev/null 2>&1 || :
 fi
 #/usr/sbin/semodule -r libra
+
+%pre
+
+if [ -d /etc/httpd/conf.d/libra ]
+then
+    mv /etc/httpd/conf.d/libra/ /etc/httpd/conf.d/libra.bak/
+fi
 
 %files
 %defattr(-,root,root,-)
@@ -152,6 +172,8 @@ fi
 %attr(0750,-,-) %{_bindir}/remount-secure.sh
 %attr(0755,-,-) %{_bindir}/rhc-cgroup-read
 %dir %attr(0751,root,root) %{_localstatedir}/lib/libra
+%dir %attr(0750,root,root) %{_localstatedir}/lib/libra/.httpd.d
+%dir %attr(0750,root,root) %{_localstatedir}/lib/libra/.limits.d
 %dir %attr(0700,root,root) %{_localstatedir}/run/libra
 %dir %attr(0755,root,root) %{_libexecdir}/li/cartridges/abstract-httpd/
 %attr(0750,-,-) %{_libexecdir}/li/cartridges/abstract-httpd/info/hooks/
