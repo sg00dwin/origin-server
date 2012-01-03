@@ -19,7 +19,7 @@ module LibraMigration
       cartridge_root_dir = "/usr/libexec/li/cartridges"
       cartridge_dir = "#{cartridge_root_dir}/#{app_type}"
 
-      sed_output, sed_exitcode = Util.execute_script("sed -i 's/libra-#{uuid}/OPENSHIFT-#{uuid}/' #{app_home}/.ssh/authorized_keys")
+      sed_output, sed_exitcode = Util.execute_script("sed -i 's/Libra-#{uuid}/OPENSHIFT-#{uuid}/' #{app_home}/.ssh/authorized_keys")
       output += sed_output
 
     else
