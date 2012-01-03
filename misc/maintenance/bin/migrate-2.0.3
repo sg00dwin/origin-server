@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-# Usage: ./migrate-2.0.2 > out.txt
+# Usage: ./migrate-2.0.3 > out.txt
 $:.unshift('/var/www/libra/broker')
 require 'config/environment'
 require 'rubygems'
@@ -24,7 +24,7 @@ def migrate_app_on_node(server_identity, framework, uuid, namespace, app_name)
                    :application => app_name,
                    :app_type => framework,
                    :namespace => namespace,
-                   :version => '2.0.2') do |response|
+                   :version => '2.0.3') do |response|
       exit_code = response[:body][:data][:exitcode]
       output = response[:body][:data][:output]
       if (output.length > 0)
@@ -42,7 +42,7 @@ def migrate_app_on_node(server_identity, framework, uuid, namespace, app_name)
 end
 
 #
-# Migrate applications between 2.1.9 and 2.0.2
+# Migrate applications between 2.0.2 and 2.0.3
 #
 def migrate
   start_time = Time.now.to_i
