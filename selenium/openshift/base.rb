@@ -104,8 +104,21 @@ module OpenShift
     # helper method to wait for a (ruby) condition to become true
     def await(timeout=5)
       if block_given?
-        wait = Selenium::WebDriver::Wait.new(:timeout => timeout)
-        wait.until { yield }
+        while true
+          begin
+            if yield
+              return
+            else
+              raise StandardError, "block evaluated false", caller
+            end
+          rescue
+            sleep 1
+            timeout_secs -= 1
+            if timeout_secs <= 0
+              raise
+            end
+          end
+        end
       end
     end
 
