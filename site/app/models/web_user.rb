@@ -1,4 +1,4 @@
-require 'openshift'
+require 'streamline'
 
 class WebUser
   include ActiveModel::Validations

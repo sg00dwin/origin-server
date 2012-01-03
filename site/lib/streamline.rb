@@ -1,5 +1,8 @@
 require 'cgi'
 require 'uri'
+require 'streamline_mock'
+require 'error_codes'
+require 'exception'
 
 #
 # This mixin encapsulates calls made back to the IT systems via
@@ -85,32 +88,6 @@ module Streamline
     end
     @terms.clear if errors.empty?
   end
-
-  #
-  # Login the current user, setting the roles and ticket
-  #
-  def login
-    raise UserException.new(107), "Invalid characters in RHLogin '#{@rhlogin}' found", caller[0..5] if !OpenShift::Util.check_rhlogin(@rhlogin)
-
-    result = nil
-    # First do the authentication
-    login_args = {'login' => @rhlogin,
-                  'password' => @password}
-
-    begin
-      # Establish the authentication ticket
-      http_post(@@login_url, login_args) do |json|
-        Rails.logger.debug("Current login = #{@rhlogin} / authenticated for #{json['username'] || json['login']}")
-        @rhlogin = json['username'] || json['login'] # remove 'login' if/once streamline changes to username like cloudVerify
-        @roles = json['roles']
-        check_access
-      end
-
-      result = @rhlogin
-    rescue AccessDeniedException
-    end
-    return result
-  end
   
   def change_password(args)
     http_post(@@change_password_url, args, false) do |json|
@@ -121,9 +98,9 @@ module Streamline
   def check_access
     unless roles.index('cloud_access_1')
       if roles.index('cloud_access_request_1')
-        raise OpenShift::UserValidationException.new(146), "Found valid credentials but you haven't been granted access yet", caller[0..5]
+        raise Streamline::UserValidationException.new(146), "Found valid credentials but you haven't been granted access yet", caller[0..5]
       else
-        raise OpenShift::UserValidationException.new(147), "Found valid credentials but you haven't requested access yet", caller[0..5]
+        raise Streamline::UserValidationException.new(147), "Found valid credentials but you haven't requested access yet", caller[0..5]
       end
     end
   end
@@ -230,9 +207,9 @@ module Streamline
           json = parse_body(res.body)
           yield json if block_given?
         else
-          log_error "Empty response from streamline - #{res.code}"
+          Rails.logger.error "Empty response from streamline - #{res.code}"
           if raise_exception_on_error
-            raise OpenShift::StreamlineException
+            raise Streamline::StreamlineException
           else
             errors.add(:base, I18n.t(:unknown))
           end
@@ -240,29 +217,25 @@ module Streamline
       when Net::HTTPForbidden, Net::HTTPUnauthorized
         raise AccessDeniedException
       else
-        log_error "Invalid HTTP response from streamline - #{res.code}"
-        log_error "Response body:\n#{res.body}"
+        Rails.logger.error "Invalid HTTP response from streamline - #{res.code}"
+        Rails.logger.error "Response body:\n#{res.body}"
         if raise_exception_on_error
-          raise OpenShift::StreamlineException
+          raise Streamline::StreamlineException
         else
           errors.add(:base, I18n.t(:unknown))
         end
       end
-    rescue AccessDeniedException, OpenShift::UserValidationException, OpenShift::StreamlineException
+    rescue AccessDeniedException, Streamline::UserValidationException, Streamline::StreamlineException
       raise
     rescue Exception => e
-      log_error "Exception occurred while calling streamline - #{e.message}"
+      Rails.logger.error "Exception occurred while calling streamline - #{e.message}"
       Rails.logger.error e, e.backtrace
       if raise_exception_on_error
-        raise OpenShift::StreamlineException
+        raise Streamline::StreamlineException
       else
         errors.add(:base, I18n.t(:unknown))
       end
     end
-  end
-
-  def log_error(msg)
-    Rails.logger.error msg
   end
 
   #
