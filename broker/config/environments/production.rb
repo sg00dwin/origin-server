@@ -61,9 +61,9 @@ Broker::Application.configure do
   
   # CDK Config
   config.cdk = {
-    :domain_suffix => "dev.rhcloud.com",
+    :domain_suffix => "rhcloud.com",
     :zone => "rhcloud.com",
-    :child_zone => "dev",
+    :child_zone => "",
     :per_user_app_limit => 5,
     :broker_auth_secret => "EIvWT6u3lsvSRNRGZhhW8YcWMh5mUAlc32nZlRJPdJM=",
     :broker_auth_rsa_secret => "SJDIkdfhuISe3wrulhjvcKHJFDUeoi8gfcdnu8299dhc",
@@ -80,19 +80,19 @@ Broker::Application.configure do
       :base_url => "/wapps/streamline"
     },
     :dynect_customer_name => "demo-redhat",
-    :dynect_user_name => "dev-rhcloud-user",
-    :dynect_password => "vo8zaijoN7Aecoo",
+    :dynect_user_name => "390XFV-dev-user",
+    :dynect_password => "Mei5aeru6yahchee",
     :dynect_url => "https://api2.dynect.net",
-    
-    :aws_key => "AKIAITDQ37BWZ5CKAORA",
-    :aws_secret => "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",
-    :s3_bucket => "libra_dev",
-    
+
+    :aws_key => "KEY_HERE",
+    :aws_secret => "SECRET_HERE",
+    :s3_bucket => "BUCKET_HERE",
+
     :nurture_enabled => false,
     :nurture_username => "admin",
     :nurture_password => "password",
     :nurture_url => "http://69.164.192.124:4500/",
-    
+
     :apptegic_enabled => false,
     :apptegic_url => "https://redhat.apptegic.com/httpreceiver",
     :apptegic_key => "redhat",
