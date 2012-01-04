@@ -130,11 +130,20 @@ stopuser() {
     rm $OUTFILE
 }
 
+setuppam(){
+    uuid=$1
+    if [ ! -f "/etc/security/limits.d/84-${uuid}.conf" ]
+    then
+        echo "found"
+        /usr/bin/setup_pam_fs_limits.sh $uuid
+    fi
+}
 
 startapp() {
     # USERNAME=$1
     # APPSCRIPT=$2
     uid=$(id -u "$1")
+    setuppam $1
     mcs_level=`openshift_mcs_level $uid`
     source /var/lib/libra/$1/.env/OPENSHIFT_RUN_DIR
     if [ -f "${OPENSHIFT_RUN_DIR}/stop_lock" ]

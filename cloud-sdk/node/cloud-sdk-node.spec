@@ -49,6 +49,9 @@ mkdir -p %{buildroot}%{_bindir}/cdk
 mkdir -p %{buildroot}%{_sysconfdir}/cdk
 mkdir -p %{buildroot}%{gemdir}
 mkdir -p %{buildroot}%{ruby_sitelib}
+mkdir -p %{_bindir}
+
+ln -s %{geminstdir}/lib/cloud-sdk-node/express/setup_pam_fs_limits.sh %{buildroot}/%{_bindir}/setup_pam_fs_limits.sh
 
 # Build and install into the rubygem structure
 gem build %{gemname}.gemspec
