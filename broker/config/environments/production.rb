@@ -52,12 +52,6 @@ Broker::Application.configure do
   ############################################
   config.app_scope = ""
   config.integrated = true
-  config.streamline = {
-    :host => 'https://www.redhat.com',
-    :base_url => '/wapps/streamline',
-    :register_secret => 'c0ldW1n3',
-    :user_info_secret => 'sw33tl1Qu0r'
-  }
   
   # CDK Config
   config.cdk = {

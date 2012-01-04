@@ -1,7 +1,2 @@
-require 'openshift/exception'
 require 'openshift/blacklist'
-require 'openshift/server'
-require 'openshift/error_codes'
-require 'openshift/streamline'
-require 'openshift/streamline_mock'
 require 'openshift/util'

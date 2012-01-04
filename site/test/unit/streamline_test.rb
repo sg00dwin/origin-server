@@ -122,7 +122,7 @@ class StreamlineTest < ActiveSupport::TestCase
     res = Net::HTTPNotFound.new('', '404', '')
     Net::HTTP.any_instance.expects(:start).returns(res)
 
-    assert_raise(OpenShift::StreamlineException) {
+    assert_raise(Streamline::StreamlineException) {
       @streamline.http_post(@url)
     }
   end
@@ -132,7 +132,7 @@ class StreamlineTest < ActiveSupport::TestCase
     res.expects(:body).at_least_once.returns("{corrupt??#")
     Net::HTTP.any_instance.expects(:start).returns(res)
 
-    assert_raise(OpenShift::StreamlineException) {
+    assert_raise(Streamline::StreamlineException) {
       @streamline.http_post(@url)
     }
 
@@ -145,23 +145,12 @@ class StreamlineTest < ActiveSupport::TestCase
     res.expects(:body).at_least_once.raises(Exception, 'random http exception')
     Net::HTTP.any_instance.expects(:start).returns(res)
 
-    assert_raise(OpenShift::StreamlineException) {
+    assert_raise(Streamline::StreamlineException) {
       @streamline.http_post(@url)
     }
 
     # Make sure something was written to the client log
     #assert !Thread.current[:debugIO].string.empty?
-  end
-
-  test "login valid" do
-    @streamline.rhlogin = "test@example.com"
-    @streamline.password = "password"
-    roles = ['authenticated', 'cloud_access_1']
-    json = {"username" => @streamline.rhlogin, "roles" => roles}
-    @streamline.stubs(:http_post).yields(json)
-    @streamline.login
-    assert_equal roles, @streamline.roles
-    assert @streamline.errors.empty?
   end
 
   test "register valid" do

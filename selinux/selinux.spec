@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.84.4
+Version:       0.84.5
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -46,6 +46,12 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Tue Jan 03 2012 Dan McPherson <dmcphers@redhat.com> 0.84.5-1
+- Version 25 dontaudit getaddr of any directory,  running simple probes with ls
+  generate hundreds of these, which I just ignore (dwalsh@redhat.com)
+- Version 24 dontaudit getcap, which can be triggered by using ls command and
+  probing (dwalsh@redhat.com)
+
 * Thu Dec 29 2011 Dan McPherson <dmcphers@redhat.com> 0.84.4-1
 - Allow zibra domains to create fifo_files in /tmp, allow libra domains to
   relabelfrom/to libra_tmp_t and libra_var_lib_t (dwalsh@redhat.com)

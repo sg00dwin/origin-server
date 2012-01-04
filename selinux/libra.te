@@ -1,4 +1,4 @@
-policy_module(libra,1.0.25)
+policy_module(libra,1.0.26)
 
 ########################################
 #
@@ -178,7 +178,7 @@ apache_search_config(libra_domain)
 apache_read_sys_content(libra_domain)
 corenet_tcp_bind_http_cache_port(libra_domain)
 apache_search_sys_scripts(libra_domain)
-# Will need to change to this when it becomes available in RHEL6.2 policy
+# Will need to change to this when it becomes available in RHEL6.3 policy
 #apache_exec_sys_scripts(libra_domain)
 
 apache_content_template(libra)
@@ -377,3 +377,11 @@ role system_r types libra_mail_t;
 read_files_pattern(libra_mail_t, libra_var_lib_t, libra_var_lib_t)
 
 permissive libra_mail_t;
+
+# Will Remove when this fix gets into RHEL6.3 policy
+# selinux-policy-3.7.19-133.el6
+gen_require(`
+	attribute mta_user_agent;
+')
+allow mta_user_agent libra_domain:fd use;
+allow mta_user_agent libra_domain:process sigchld;
