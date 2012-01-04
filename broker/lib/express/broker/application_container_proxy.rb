@@ -513,12 +513,18 @@ module Express
             raise Cloud::Sdk::NodeException.new("Node execution failure (invalid exit code from node).  If the problem persists please contact Red Hat support.", 143, resultIO)
           rescue Cloud::Sdk::NodeException => e
             if command == 'deconfigure'
-              if framework.start_with?('embedded/') && has_embedded_app?(app.uuid, framework[9..-1])
-                raise
-              elsif has_app?(app.uuid, app.name)
-                raise
+              if framework.start_with?('embedded/')
+                if has_embedded_app?(app.uuid, framework[9..-1])
+                  raise
+                else
+                  Rails.logger.debug "DEBUG: Component '#{framework}' in application '#{app.name}' not found on node '#{@id}'.  Continuing with deconfigure."
+                end
               else
-                Rails.logger.debug "DEBUG: Application '#{app.name}' with framework '#{framework}' not found on node '#{@id}'.  Continuing with deconfigure."
+                if has_app?(app.uuid, app.name)
+                  raise
+                else
+                  Rails.logger.debug "DEBUG: Application '#{app.name}' not found on node '#{@id}'.  Continuing with deconfigure."
+                end
               end
             else
               raise

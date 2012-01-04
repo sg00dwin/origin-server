@@ -41,7 +41,7 @@ may be ok if '#{uapp.name}#{BUILDER_SUFFIX}' was the builder of a previously des
     end
     
     unless Application.find(application.user, application.name).nil?
-      raise Exception.new("An applicaiton named '#{application.name}' in namespace '#{application.user.namespace}' already exists", 100)
+      raise Cloud::Sdk::CdkException.new("An application named '#{application.name}' in namespace '#{application.user.namespace}' already exists", 100)
     end
 
     if application.framework_cartridge == 'jenkins'
