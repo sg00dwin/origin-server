@@ -76,7 +76,7 @@ class Release < Thor
     
     if gem_updates
       branch = get_branch
-      run("git add *; git commit -m 'Updating gem versions'; git push origin #{branch}", :verbose => options.verbose?)
+      run("git add broker/Gemfile.lock cloud-sdk/controller/Gemfile.lock cloud-sdk/node/Gemfile.lock; git commit -m 'Updating gem versions'; git push origin #{branch}", :verbose => options.verbose?)
       build_dirs = get_build_dirs
     end
 

@@ -145,7 +145,7 @@ class CloudUser < Cloud::Sdk::Model
       old_ns = self.namespace_was
       new_ns = self.namespace
       dns_service.register_namespace(new_ns)
-      dns_service.deregister_namespace(old_ns)      
+      dns_service.deregister_namespace(old_ns)    
   
       applications.each do |app|
         Rails.logger.debug "DEBUG: Updating namespaces for app: #{app.name}"
@@ -160,7 +160,7 @@ class CloudUser < Cloud::Sdk::Model
         result = app.update_namespace(new_ns, old_ns)
         update_namespace_failures.push(app.name) unless result
       end
-      
+
       if update_namespace_failures.empty?
         dns_service.publish
         notify_observers(:namespace_update_success)
