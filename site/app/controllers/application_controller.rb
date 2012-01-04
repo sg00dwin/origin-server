@@ -204,6 +204,7 @@ class ApplicationController < ActionController::Base
 
         # Handle access requests - if terms have been accepted
         request_access(session[:user]) if logged_in_with_terms?
+        ensure_valid_ticket
       end
     else
       Rails.logger.debug "User does not have a authenticated session"
@@ -214,15 +215,42 @@ class ApplicationController < ActionController::Base
         session[:user] = user
         user.establish_terms
         session[:ticket] = rh_sso
+
         if user.terms.length > 0
           Rails.logger.debug "User #{user} has terms to accept."
           redirect_to new_terms_path and return
         else
           session[:login] = user.rhlogin
+          session[:ticket_verified] = Time.now.to_i
         end
 
         # Handle access requests
         request_access(user)
+      end
+    end
+  end
+
+  def ensure_valid_ticket
+    # don't re-verify logout requests
+    return if request.path =~ /logout/
+
+    reverify_interval = Rails.configuration.sso_verify_interval
+
+    if session[:login] && reverify_interval > 0
+      ts = session[:ticket_verified] || 0
+      diff = Time.now.to_i - ts
+
+      if (diff > reverify_interval)
+        Rails.logger.debug "ticket_verified timestamp has expired, checking ticket: #{session[:ticket]}"
+
+        user = WebUser.find_by_ticket(session[:ticket])
+        if !user || session[:login] != user.rhlogin
+          Rails.logger.debug "SSO ticket no longer valid, logging out!"
+          redirect_to_logout
+        end
+
+        # ticket is valid, set a new timestamp
+        session[:ticket_verified] = Time.now.to_i
       end
     end
   end
