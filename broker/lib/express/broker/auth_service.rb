@@ -57,7 +57,7 @@ module Express
           raise Cloud::Sdk::UserValidationException.new if !app or creation_time != app.creation_time
           return username
         else
-          if Rails.application.config.integrated
+          unless Rails.application.config.integrated
             return data['rhlogin']
           else
             ticket = cookies[:rh_sso]
