@@ -73,7 +73,7 @@ module AppHelper
     end
 
     def reserved?
-      OpenShift::Server.has_dns_txt?(@namespace) or File.exists?(@file)
+      OpenShift::Util.has_dns_txt?(@namespace) or File.exists?(@file)
     end
 
     def has_domain?
