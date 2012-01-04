@@ -64,7 +64,6 @@ mkdir -p %{buildroot}%{_sysconfdir}/libra/skel
 mkdir -p %{buildroot}/%{_localstatedir}/www/html/
 mkdir -p %{buildroot}/%{_sysconfdir}/security/
 mkdir -p %{buildroot}%{_localstatedir}/lib/libra
-mkdir -p %{buildroot}%{_localstatedir}/lib/libra/.limits.d
 mkdir -p %{buildroot}%{_localstatedir}/run/libra
 mkdir -p %{buildroot}%{_localstatedir}/lib/libra/.httpd.d
 mkdir -p %{buildroot}/%{_sysconfdir}/httpd/conf.d/
@@ -176,7 +175,6 @@ fi
 %attr(0755,-,-) %{_bindir}/rhc-cgroup-read
 %dir %attr(0751,root,root) %{_localstatedir}/lib/libra
 %dir %attr(0750,root,root) %{_localstatedir}/lib/libra/.httpd.d
-%dir %attr(0750,root,root) %{_localstatedir}/lib/libra/.limits.d
 %dir %attr(0700,root,root) %{_localstatedir}/run/libra
 %dir %attr(0755,root,root) %{_libexecdir}/li/cartridges/abstract-httpd/
 %attr(0750,-,-) %{_libexecdir}/li/cartridges/abstract-httpd/info/hooks/
