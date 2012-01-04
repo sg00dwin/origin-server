@@ -89,7 +89,7 @@ module Express
                   roles = json['roles']
                 end
                 check_access(roles)
-                login = rhlogin
+                rhlogin = login
               rescue Cloud::Sdk::AccessDeniedException
               end
             end
