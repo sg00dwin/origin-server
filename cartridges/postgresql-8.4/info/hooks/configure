@@ -60,16 +60,22 @@ IP=$OPENSHIFT_INTERNAL_IP
 # Create the core of the application
 #
 
-if [ -d "$PSQL_DIR" ]
-then
+if [ -d "$PSQL_DIR" ]; then
     client_error "Embedded PostgreSQL-8.4 already attached to $application"
     exit 132
 fi
+
+if [ -f $APP_HOME/.env/OPENSHIFT_DB_TYPE ]; then
+    client_error "Only 1 embedded database permitted per application - application currently has `cat $APP_HOME/.env/OPENSHIFT_DB_TYPE`"
+    exit 132
+fi
+
 mkdir -p "$PSQL_DIR"
 pushd "$PSQL_DIR" > /dev/null
 mkdir -p log etc data socket pid run
-sed "s,RHC_PSQLDIR,$PSQL_DIR," $CART_ETC_DIR/postgresql.conf > $PSQL_DIR/etc/postgresql.conf
+sed "s,RHC_PSQLDIR,$PSQL_DIR," $CART_ETC_DIR/postgresql.conf > $PSQL_DIR/data/postgresql.conf
 sed -i "s,RHC_BIND_ADDR,$IP," $PSQL_DIR/etc/postgresql.conf
+cp -f $CART_ETC_DIR/pg_hba.conf $PSQL_DIR/data/pg_hba.conf
 popd > /dev/null
 
 #
@@ -88,7 +94,7 @@ chown root.root "$PSQL_DIR" "$PSQL_DIR"/*.sh
 chcon -t libra_var_lib_t -l $mcs_level -R "$PSQL_DIR"
 
 
-start_postgres
+start_postgresql
 
 # Generate a password with no o's O's or 0's
 password=$(generate_password)

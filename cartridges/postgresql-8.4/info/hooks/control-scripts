@@ -45,40 +45,40 @@ function _control_postgres_service() {
 }  #  End of function  _control_postgres_service.
 
 
-function start_postgres_service() {
+function _start_postgres_service() {
    rm -f "$CART_INSTANCE_DIR/run/stop_lock"
    _control_postgres_service "start"
 
-}  #  End of function  start_postgres_service.
+}  #  End of function  _start_postgres_service.
 
 
-function stop_postgres_service() {
+function _stop_postgres_service() {
    _control_postgres_service "stop"
    touch "$CART_INSTANCE_DIR/run/stop_lock"
 
-}  #  End of function  stop_postgres_service.
+}  #  End of function  _stop_postgres_service.
 
 
-function restart_postgres_service() {
+function _restart_postgres_service() {
    rm -f "$CART_INSTANCE_DIR/run/stop_lock"
    _control_postgres_service "restart"
 
-}  #  End of function  restart_postgres_service.
+}  #  End of function  _restart_postgres_service.
 
 
-function reload_postgres_service() {
+function _reload_postgres_service() {
    #  Do nothing.
 
-}  #  End of function  reload_postgres_service.
+}  #  End of function  _reload_postgres_service.
 
 
-function move_postgres_service() {
+function _move_postgres_service() {
    source ${CART_INSTALL_DIR}/abstract/info/lib/selinux
    source ${CART_INSTALL_DIR}/abstract/info/lib/apache
    source ${CART_INSTALL_DIR}/abstract/info/lib/network
    load_node_conf
 
-}  #  End of function  move_postgres_service.
+}  #  End of function  _move_postgres_service.
 
 
 
@@ -106,10 +106,10 @@ CTL_SCRIPT="$CART_INSTANCE_DIR/${application}_${CART_NAME}_ctl.sh"
 cmd=$(basename "$0")
 case "$cmd" in
    status)  runuser --shell /bin/sh "$uuid" "$CTL_SCRIPT" status ;;
-   start)   start_postgres_service   ;;
-   stop)    stop_postgres_service    ;;
-   restart) restart_postgres_service ;;
-   reload)  reload_postgres_service  ;;
-   reload)  move_postgres_service    ;;
+   start)   _start_postgres_service   ;;
+   stop)    _stop_postgres_service    ;;
+   restart) _restart_postgres_service ;;
+   reload)  _reload_postgres_service  ;;
+   reload)  _move_postgres_service    ;;
 esac
 
