@@ -12,7 +12,7 @@ Source0:       rhc-node-%{version}.tar.gz
 BuildRoot:     %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires: ruby
 Requires:      rhc-common
-Requires:      rhc-selinux
+Requires:      rhc-selinux >= 0.84.7-1
 Requires:      git
 Requires:      libcgroup
 Requires:      mcollective
