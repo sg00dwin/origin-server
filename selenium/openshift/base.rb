@@ -113,8 +113,8 @@ module OpenShift
             end
           rescue
             sleep 1
-            timeout_secs -= 1
-            if timeout_secs <= 0
+            timeout -= 1
+            if timeout <= 0
               raise
             end
           end

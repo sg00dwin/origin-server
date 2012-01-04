@@ -117,7 +117,7 @@ module Cloud
       def component_status(app, component)
       end
       
-      def move_app(app, destination_container_proxy)
+      def move_app(app, destination_container_proxy, node_profile=nil)
       end
       
       def update_namespace(app, cart, new_ns, old_ns)

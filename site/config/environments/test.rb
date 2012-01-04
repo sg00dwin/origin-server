@@ -51,6 +51,7 @@ RedHatCloud::Application.configure do
     :user_info_secret => 'sw33tl1Qu0r'
   }
   config.captcha_secret = 'secret'
+  config.sso_verify_interval = 0
   
   # Maximum number of apps
   config.express_max_apps = 5

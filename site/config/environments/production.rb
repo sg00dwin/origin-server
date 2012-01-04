@@ -65,6 +65,7 @@ RedHatCloud::Application.configure do
     :user_info_secret => 'sw33tl1Qu0r'
   }
   config.captcha_secret = 'zvw5LiixMB0I4mjk06aR'
+  config.sso_verify_interval = 60
 
   # Promo code Email notification setup
   config.email_from = 'Openshift <noreply@openshift.redhat.com>'
