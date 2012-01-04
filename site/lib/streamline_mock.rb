@@ -44,26 +44,6 @@ module StreamlineMock
   def refresh_roles(force=false)
   end
 
-  #
-  # Login the current user, setting the roles and ticket
-  #
-  def login
-    Rails.logger.warn("Non integrated environment - faking login")
-    if @email_address and @email_address.index("@")
-      Rails.logger.debug("Fake streamline login")
-      @roles << "simple_authenticated"
-    else
-      Rails.logger.debug("Fake legacy login")
-      @roles << "authenticated"
-    end
-
-    # Set a fake ticket
-    @ticket = "test"
-
-    # Return the login
-    return @rhlogin
-  end
-
   def change_password(args)
     return {}
   end

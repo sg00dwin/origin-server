@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.84.6
+Version:   0.84.8
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -68,6 +68,15 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Wed Jan 04 2012 Alex Boone <aboone@redhat.com> 0.84.8-1
+- Periodically re-verify the SSO ticket (fixes exploit from BZ 753981)
+  (aboone@redhat.com)
+- remove unused method (dmcphers@redhat.com)
+
+* Tue Jan 03 2012 Dan McPherson <dmcphers@redhat.com> 0.84.7-1
+- moving streamline into site (dmcphers@redhat.com)
+- Corrected typo on express product page (edirsh@redhat.com)
+
 * Thu Dec 22 2011 Dan McPherson <dmcphers@redhat.com> 0.84.6-1
 - Fix BZ 767477 - When on a register page, prefer content form to dialog
   (aboone@redhat.com)

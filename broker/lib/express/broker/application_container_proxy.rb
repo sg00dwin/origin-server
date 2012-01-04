@@ -98,16 +98,7 @@ module Express
       end
       
       def deconfigure_cartridge(app, cart)
-        begin
-          run_cartridge_command(cart, app, "deconfigure")
-        rescue Cloud::Sdk::NodeException => e
-          if has_app?(app.uuid, app.name)
-            raise
-          else
-            Rails.logger.debug "DEBUG: Application '#{app.name}' not found on node '#{@id}'.  Continuing with deconfigure."
-            Rails.logger.debug "DEBUG: Error from cartridge on deconfigure: #{e.message}"
-          end
-        end
+        run_cartridge_command(cart, app, "deconfigure")
       end
       
       def get_public_hostname
@@ -178,21 +169,8 @@ module Express
       end
       
       def remove_component(app, component)
-        begin
-          Rails.logger.debug "DEBUG: Deconfiguring embedded application '#{component}' in application '#{app.name}' on node '#{@id}'"
-          return run_cartridge_command('embedded/' + component, app, 'deconfigure')
-        rescue Exception => e
-          begin
-            run_cartridge_command(cart, app, "deconfigure")
-          rescue Cloud::Sdk::NodeException => e
-            if has_embedded_app?(app.uuid, component)
-              raise
-            else
-              Rails.logger.debug "DEBUG: Embedded application '#{component}' not found in application '#{app.name}' on node '#{@id}'.  Continuing with deconfigure."
-              Rails.logger.debug "DEBUG: Error from cartridge on deconfigure: #{e.message}"
-            end
-          end
-        end
+        Rails.logger.debug "DEBUG: Deconfiguring embedded application '#{component}' in application '#{app.name}' on node '#{@id}'"
+        return run_cartridge_command('embedded/' + component, app, 'deconfigure')
       end
       
       def start_component(app, component)
@@ -215,12 +193,16 @@ module Express
         run_cartridge_command('embedded/' + component, app, "status")    
       end
       
-      def move_app(app, destination_container_proxy)
+      def move_app(app, destination_container_proxy, node_profile=nil)
         source_container = app.container
         
         unless app.embedded.nil?
           raise Cloud::Sdk::UserException.new("Cannot move app '#{app.name}' with mysql embedded",1) if app.embedded.has_key?('mysql-5.1') 
           raise Cloud::Sdk::UserException.new("Cannot move app '#{app.name}' with mongo embedded",1) if app.embedded.has_key?('mongodb-2.0')           
+        end
+        
+        if node_profile
+          app.node_profile = node_profile
         end
 
         if destination_container_proxy.nil?
@@ -231,39 +213,39 @@ module Express
           raise Cloud::Sdk::UserException.new("Error moving app.  Old and new servers are the same: #{source_container.id}", 1)
         end
 
-        Rails.logger.debug "DEBUG: Moving app '#{app.name}' with uuid #{app.uuid} from #{source_container.id} to #{destination_container_proxy.id}"
+        log_debug "DEBUG: Moving app '#{app.name}' with uuid #{app.uuid} from #{source_container.id} to #{destination_container_proxy.id}"
 
         num_tries = 2
         reply = ResultIO.new
         begin
-          Rails.logger.debug "DEBUG: Stopping existing app '#{app.name}' before moving"
+          log_debug "DEBUG: Stopping existing app '#{app.name}' before moving"
           (1..num_tries).each do |i|
             begin
               reply.append source_container.stop(app, app.framework)
               break
             rescue Exception => e
-              Rails.logger.debug "DEBUG: Error stopping existing app on try #{i}: #{e.message}"
+              log_debug "DEBUG: Error stopping existing app on try #{i}: #{e.message}"
               raise if i == num_tries
             end
           end
 
           begin
-            Rails.logger.debug "DEBUG: Creating new account for app '#{app.name}' on #{destination_container_proxy.id}"
+            log_debug "DEBUG: Creating new account for app '#{app.name}' on #{destination_container_proxy.id}"
             reply.append destination_container_proxy.create(app)
 
-            Rails.logger.debug "DEBUG: Moving content for app '#{app.name}' to #{destination_container_proxy.id}"
-            Rails.logger.debug `eval \`ssh-agent\`; ssh-add /var/www/libra/broker/config/keys/rsync_id_rsa; ssh -o StrictHostKeyChecking=no -A root@#{source_container.get_ip_address} "rsync -a -e 'ssh -o StrictHostKeyChecking=no' /var/lib/libra/#{app.uuid}/ root@#{destination_container_proxy.get_ip_address}:/var/lib/libra/#{app.uuid}/"`
+            log_debug "DEBUG: Moving content for app '#{app.name}' to #{destination_container_proxy.id}"
+            log_debug `eval \`ssh-agent\`; ssh-add /var/www/libra/broker/config/keys/rsync_id_rsa; ssh -o StrictHostKeyChecking=no -A root@#{source_container.get_ip_address} "rsync -a -e 'ssh -o StrictHostKeyChecking=no' /var/lib/libra/#{app.uuid}/ root@#{destination_container_proxy.get_ip_address}:/var/lib/libra/#{app.uuid}/"`
             if $?.exitstatus != 0
               raise Cloud::Sdk::NodeException.new("Error moving app '#{app.name}' from #{source_container.id} to #{destination_container_proxy.id}", 143)
             end
 
             begin
-              Rails.logger.debug "DEBUG: Performing cartridge level move for '#{app.name}' on #{destination_container_proxy.id}"
-              reply.append destination_container_proxy.send(:run_cartridge_command, app.framework, app, "move")
+              log_debug "DEBUG: Performing cartridge level move for '#{app.name}' on #{destination_container_proxy.id}"
+              reply.append destination_container_proxy.send(:run_cartridge_command, app.framework, app, "move", nil, false)
               unless app.embedded.nil?
                 app.embedded.each do |cart, cart_info|
-                  Rails.logger.debug "DEBUG: Performing cartridge level move for embedded #{cart} for '#{app.name}' on #{destination_container_proxy.id}"
-                  reply.append destination_container_proxy.send(:run_cartridge_command, "embedded/" + cart, app, "move")
+                  log_debug "DEBUG: Performing cartridge level move for embedded #{cart} for '#{app.name}' on #{destination_container_proxy.id}"
+                  reply.append destination_container_proxy.send(:run_cartridge_command, "embedded/" + cart, app, "move", nil, false)
                 end
               end
               
@@ -273,51 +255,50 @@ module Express
                 end
               end
             rescue Exception => e
-              reply.append destination_container_proxy.send(:run_cartridge_command, app.framework, app, "remove_httpd_proxy")              
+              reply.append destination_container_proxy.send(:run_cartridge_command, app.framework, app, "remove_httpd_proxy", nil, false)          
               raise
             end
 
-            Rails.logger.debug "DEBUG: Starting '#{app.name}' after move on #{destination_container_proxy.id}"
+            log_debug "DEBUG: Starting '#{app.name}' after move on #{destination_container_proxy.id}"
             (1..num_tries).each do |i|
               begin
                 reply.append destination_container_proxy.start(app, app.framework)
                 break
               rescue Exception => e
-                Rails.logger.debug "DEBUG: Error starting after move on try #{i}: #{e.message}"
+                log_debug "DEBUG: Error starting after move on try #{i}: #{e.message}"
                 raise if i == num_tries
               end
             end
 
-            Rails.logger.debug "DEBUG: Fixing DNS and s3 for app '#{app.name}' after move"
-            Rails.logger.debug "DEBUG: Changing server identity of '#{app.name}' from '#{source_container.id}' to '#{destination_container_proxy.id}'"
+            log_debug "DEBUG: Fixing DNS and s3 for app '#{app.name}' after move"
+            log_debug "DEBUG: Changing server identity of '#{app.name}' from '#{source_container.id}' to '#{destination_container_proxy.id}'"
             app.server_identity = destination_container_proxy.id
             app.container = destination_container_proxy
-            reply.append app.destroy_dns
-            reply.append app.create_dns
+            reply.append app.recreate_dns
             app.save
           rescue Exception => e
             reply.append destination_container_proxy.destroy(app)
             raise
           end
         rescue Exception => e
-          reply.append source_container.start(app, app.framework)
+          reply.append source_container.run_cartridge_command(app.framework, app, "start", nil, false)
           raise
         ensure
-          Rails.logger.debug "URL: http://#{app.name}-#{app.user.namespace}.#{Rails.application.config.cdk[:domain_suffix]}"
+          log_debug "URL: http://#{app.name}-#{app.user.namespace}.#{Rails.application.config.cdk[:domain_suffix]}"
         end
 
-        Rails.logger.debug "DEBUG: Deconfiguring old app '#{app.name}' on #{source_container.id} after move"
+        log_debug "DEBUG: Deconfiguring old app '#{app.name}' on #{source_container.id} after move"
         (1..num_tries).each do |i|
           begin
-            reply.append source_container.deconfigure_cartridge(app, app.framework)
+            reply.append source_container.run_cartridge_command(app.framework, app, "deconfigure", nil, false)
             reply.append source_container.destroy(app)
             break
           rescue Exception => e
-            Rails.logger.debug "DEBUG: Error deconfiguring old app on try #{i}: #{e.message}"
+            log_debug "DEBUG: Error deconfiguring old app on try #{i}: #{e.message}"
             raise if i == num_tries
           end
         end
-        Rails.logger.debug "Successfully moved '#{app.name}' with uuid #{app.uuid} from #{source_container.id} to #{destination_container_proxy.id}"
+        log_debug "Successfully moved '#{app.name}' with uuid #{app.uuid} from #{source_container.id} to #{destination_container_proxy.id}"
         reply
       end
       
@@ -355,7 +336,17 @@ module Express
         result
       end
       
-      private
+      protected
+      
+      def log_debug(message)
+        Rails.logger.debug message
+        puts message
+      end
+      
+      def log_error(message)
+        Rails.logger.error message
+        puts message
+      end
       
       def execute_direct(cartridge, action, args)
           mc_args = { :cartridge => cartridge,
@@ -393,9 +384,6 @@ module Express
             #Rails.logger.debug "--output--\n\n#{output}\n\n"
           end
         else
-          
-          puts app.name
-          puts app.uuid
           server_identity = app ? ApplicationContainerProxy.find_app(app.uuid, app.name) : nil
           if server_identity && @id != server_identity
             raise Cloud::Sdk::InvalidNodeException.new("Node execution failure (invalid  node).  If the problem persists please contact Red Hat support.", 143, nil, server_identity)
@@ -495,7 +483,7 @@ module Express
         end
       end
       
-      def run_cartridge_command(framework, app, command, arg=nil)
+      def run_cartridge_command(framework, app, command, arg=nil, allow_move=true)
         arguments = "'#{app.name}' '#{app.user.namespace}' '#{app.uuid}'"
         arguments += " '#{arg}'" if arg
         
@@ -503,8 +491,7 @@ module Express
         begin
           resultIO = parse_result(result, app, command)
         rescue Cloud::Sdk::InvalidNodeException => e
-          #TODO need a better way to opt out of this
-          if command != 'configure' && command != 'move'
+          if command != 'configure' && allow_move
             @id = e.server_identity
             Rails.logger.debug "DEBUG: Changing server identity of '#{app.name}' from '#{app.server_identity}' to '#{@id}'"
             dns_service = Cloud::Sdk::DnsService.instance
@@ -522,7 +509,21 @@ module Express
         end
         if resultIO.exitcode != 0
           resultIO.debugIO << "Cartridge return code: " + resultIO.exitcode.to_s
-          raise Cloud::Sdk::NodeException.new("Node execution failure (invalid exit code from node).  If the problem persists please contact Red Hat support.", 143, resultIO)
+          begin
+            raise Cloud::Sdk::NodeException.new("Node execution failure (invalid exit code from node).  If the problem persists please contact Red Hat support.", 143, resultIO)
+          rescue Cloud::Sdk::NodeException => e
+            if command == 'deconfigure'
+              if framework.start_with?('embedded/') && has_embedded_app?(app.uuid, framework[9..-1])
+                raise
+              elsif has_app?(app.uuid, app.name)
+                raise
+              else
+                Rails.logger.debug "DEBUG: Application '#{app.name}' with framework '#{framework}' not found on node '#{@id}'.  Continuing with deconfigure."
+              end
+            else
+              raise
+            end
+          end
         end
         resultIO
       end

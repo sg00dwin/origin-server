@@ -38,12 +38,6 @@ Broker::Application.configure do
   ############################################
   config.app_scope = "broker"
   config.integrated = false
-  config.streamline = {
-    :host => 'https://localhost',
-    :base_url => '',
-    :register_secret => 'c0ldW1n3',
-    :user_info_secret => 'sw33tl1Qu0r'
-  }
   
   # CDK Config
   config.cdk = {

@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.2.18
+Version:        0.2.19
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        AGPLv3
@@ -72,6 +72,9 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Wed Jan 04 2012 Alex Boone <aboone@redhat.com> 0.2.19-1
+- move fixes (dmcphers@redhat.com)
+
 * Wed Dec 28 2011 Dan McPherson <dmcphers@redhat.com> 0.2.18-1
 - Updating gem versions (dmcphers@redhat.com)
 - Bug 770544 (dmcphers@redhat.com)
