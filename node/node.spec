@@ -25,6 +25,9 @@ Requires:      quota
 Requires:      lsof
 Requires:      wget
 Requires:      oddjob
+Requires:      libjpeg-devel
+Requires:      libpng-devel
+Requires:      giflib-devel
 Requires(post):   /usr/sbin/semodule
 Requires(post):   /usr/sbin/semanage
 Requires(postun): /usr/sbin/semodule
