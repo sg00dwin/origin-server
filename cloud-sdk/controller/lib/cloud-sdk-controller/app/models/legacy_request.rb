@@ -23,7 +23,7 @@ class LegacyRequest < Cloud::Sdk::Model
   end
 
   validates_each :key_name, :allow_nil =>true do |record, attribute, val|
-    if !(val =~ /\A[a-f0-9]+\z/)
+    if !(val =~ /\A[A-Za-z0-9]+\z/)
       record.errors.add attribute, {:message => "Invalid key name: #{val}", :exit_code => 106}
     end
   end

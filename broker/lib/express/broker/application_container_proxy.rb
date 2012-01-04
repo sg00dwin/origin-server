@@ -393,9 +393,6 @@ module Express
             #Rails.logger.debug "--output--\n\n#{output}\n\n"
           end
         else
-          
-          puts app.name
-          puts app.uuid
           server_identity = app ? ApplicationContainerProxy.find_app(app.uuid, app.name) : nil
           if server_identity && @id != server_identity
             raise Cloud::Sdk::InvalidNodeException.new("Node execution failure (invalid  node).  If the problem persists please contact Red Hat support.", 143, nil, server_identity)
