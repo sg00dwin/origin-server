@@ -165,11 +165,27 @@ class Application < Cloud::Sdk::Model
     dns = Cloud::Sdk::DnsService.instance
     begin
       dns.deregister_application(@name,@user.namespace)
-      dns.publish      
+      dns.publish
     ensure
       dns.close
     end
     self.class.notify_observers(:after_destroy_dns, {:application => self, :reply => reply})  
+    reply
+  end
+  
+  def recreate_dns
+    reply = ResultIO.new
+    self.class.notify_observers(:before_recreate_dns, {:application => self, :reply => reply})    
+    dns = Cloud::Sdk::DnsService.instance
+    begin
+      dns.deregister_application(@name,@user.namespace)
+      public_hostname = @container.get_public_hostname
+      dns.register_application(@name,@user.namespace, public_hostname)
+      dns.publish
+    ensure
+      dns.close
+    end
+    self.class.notify_observers(:after_recreate_dns, {:application => self, :reply => reply})    
     reply
   end
   
