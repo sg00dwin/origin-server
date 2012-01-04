@@ -67,7 +67,12 @@ function start_app() {
             echo "Application is already running" 1>&2
         else
             # Start
-	        $APP_JBOSS_BIN_DIR/standalone.sh 1>&2 >${APP_JBOSS_TMP_DIR}/${OPENSHIFT_APP_NAME}.log &
+            jopts="${JAVA_OPTS}"
+            #  TODO: For now set jboss_enable_jpda to off/0 by default as port
+            #        8787 is not open by default.
+            export JBOSS_ENABLE_JPDA=0
+            [ "${JBOSS_ENABLE_JPDA:-1}" -eq 1 ] && jopts="-Xdebug -Xrunjdwp:transport=dt_socket,address=$OPENSHIFT_INTERNAL_IP:8787,server=y,suspend=n ${JAVA_OPTS}"
+            JAVA_OPTS="${jopts}" $APP_JBOSS_BIN_DIR/standalone.sh > ${APP_JBOSS_TMP_DIR}/${OPENSHIFT_APP_NAME}.log 2>&1 &
 	        PROCESS_ID=$!
 	        echo $PROCESS_ID > $JBOSS_PID_FILE
 	        if ! ishttpup; then

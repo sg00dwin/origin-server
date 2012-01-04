@@ -54,3 +54,6 @@ make -f /usr/share/selinux/devel/Makefile
 /sbin/restorecon -F -R -v /var/run/httpd
 # Fixing the file context on /var/log/httpd
 /sbin/restorecon -F -R -v /var/log/httpd
+
+# Allow binding to JPDA port 8787 (temporarily add to jboss_management_port_t)
+/usr/sbin/semanage port -a -t jboss_management_port_t -p tcp 8787
