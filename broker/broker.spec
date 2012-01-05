@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.84.26
+Version:   0.84.27
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -76,6 +76,13 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Wed Jan 04 2012 Dan McPherson <dmcphers@redhat.com> 0.84.27-1
+- Updating gem versions (dmcphers@redhat.com)
+- US1608: support DSA keys (rpenta@redhat.com)
+- US1608: support DSA keys (rpenta@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- bug-fixes related to Mirage/express merge (rpenta@redhat.com)
+
 * Wed Jan 04 2012 Dan McPherson <dmcphers@redhat.com> 0.84.26-1
 - Updating gem versions (dmcphers@redhat.com)
 
