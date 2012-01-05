@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.84.8
+Version:       0.84.9
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -46,6 +46,13 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Thu Jan 05 2012 Dan McPherson <dmcphers@redhat.com> 0.84.9-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (dwalsh@redhat.com)
+- Since selinux-policy-3.7.19-133.el6 has been pulled into libra I am removing
+  extra policy and turning on dontaudit for setattr on /etc/fstab.  Also
+  removing permissive flag from libra_mail_t (dwalsh@redhat.com)
+
 * Wed Jan 04 2012 Dan McPherson <dmcphers@redhat.com> 0.84.8-1
 - Merge branch 'master' of li-master:/srv/git/li (ramr@redhat.com)
 - Merge branch 'master' of li-master:/srv/git/li (ramr@redhat.com)
