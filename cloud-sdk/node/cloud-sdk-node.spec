@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Node
 Name:           rubygem-%{gemname}
-Version:        0.2.13
+Version:        0.2.14
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        AGPLv3
@@ -87,6 +87,9 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Wed Jan 04 2012 Dan McPherson <dmcphers@redhat.com> 0.2.14-1
+- Updating gem versions (dmcphers@redhat.com)
+
 * Wed Jan 04 2012 Alex Boone <aboone@redhat.com> 0.2.13-1
 - Updating gem versions (aboone@redhat.com)
 - adding auto-create of limits.d (mmcgrath@redhat.com)

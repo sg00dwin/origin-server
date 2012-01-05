@@ -58,7 +58,7 @@ class LegacyBrokerController < ApplicationController
       end
       render :json => @reply
     else
-      raise Cloud::Sdk::CdkException.new("Invalid user", 99)
+      raise Cloud::Sdk::UserException.new("Invalid user", 99)
     end
   end
   
@@ -80,7 +80,7 @@ class LegacyBrokerController < ApplicationController
        render :json => @reply
        return
     else
-      raise Cloud::Sdk::CdkException.new("The supplied namespace '#{@req.namespace}' is not allowed", 106) if Cloud::Sdk::ApplicationContainerProxy.blacklisted? @req.namespace
+      raise Cloud::Sdk::UserException.new("The supplied namespace '#{@req.namespace}' is not allowed", 106) if Cloud::Sdk::ApplicationContainerProxy.blacklisted? @req.namespace
       cloud_user = CloudUser.new(@login, @req.ssh, @req.namespace)
     end
 
@@ -100,7 +100,7 @@ class LegacyBrokerController < ApplicationController
         end
 
         if cloud_user.namespace_changed?
-          raise Cloud::Sdk::CdkException.new("The supplied namespace '#{@req.namespace}' is not allowed", 106) if Cloud::Sdk::ApplicationContainerProxy.blacklisted? @req.namespace
+          raise Cloud::Sdk::UserException.new("The supplied namespace '#{@req.namespace}' is not allowed", 106) if Cloud::Sdk::ApplicationContainerProxy.blacklisted? @req.namespace
           cloud_user.update_namespace()
         end
       end
@@ -136,7 +136,7 @@ class LegacyBrokerController < ApplicationController
   def cartridge_post
     @req.node_profile ||= "std"
     user = CloudUser.find(@login)
-    raise Cloud::Sdk::CdkException.new("Invalid user", 99) if user.nil?
+    raise Cloud::Sdk::UserException.new("Invalid user", 99) if user.nil?
     
     case @req.action
     when 'configure'    #create app and configure framework
@@ -148,7 +148,7 @@ class LegacyBrokerController < ApplicationController
       if (apps.length >= Rails.application.config.cdk[:per_user_app_limit])
         raise Cloud::Sdk::UserException.new("#{@login} has already reached the application limit of #{Rails.application.config.cdk[:per_user_app_limit]}", 104)
       end
-      raise Cloud::Sdk::CdkException.new("The supplied application name '#{app.name}' is not allowed", 105) if Cloud::Sdk::ApplicationContainerProxy.blacklisted? app.name
+      raise Cloud::Sdk::UserException.new("The supplied application name '#{app.name}' is not allowed", 105) if Cloud::Sdk::ApplicationContainerProxy.blacklisted? app.name
       if app.valid?
         begin
           @reply.append app.create(container)
@@ -173,6 +173,8 @@ class LegacyBrokerController < ApplicationController
             @reply.append app.destroy_dns
             raise
           end
+        rescue Cloud::Sdk::UserException => e
+          raise
         rescue Exception => e
           Rails.logger.debug e.message
           Rails.logger.debug e.backtrace.inspect
@@ -245,7 +247,7 @@ class LegacyBrokerController < ApplicationController
   
   def embed_cartridge_post
     user = CloudUser.find(@login)    
-    raise Cloud::Sdk::CdkException.new("Invalid user", 99) if user.nil?
+    raise Cloud::Sdk::UserException.new("Invalid user", 99) if user.nil?
         
     app = get_app_from_request(user)
     
