@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.2.23
+Version:        0.2.24
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        AGPLv3
@@ -72,6 +72,13 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Wed Jan 04 2012 Dan McPherson <dmcphers@redhat.com> 0.2.24-1
+- Updating gem versions (dmcphers@redhat.com)
+- fix build break and better error messaging (dmcphers@redhat.com)
+- US1608: support DSA keys (rpenta@redhat.com)
+- US1608: support DSA keys (rpenta@redhat.com)
+- bug-fixes related to Mirage/express merge (rpenta@redhat.com)
+
 * Wed Jan 04 2012 Dan McPherson <dmcphers@redhat.com> 0.2.23-1
 - Updating gem versions (dmcphers@redhat.com)
 - better error handling (dmcphers@redhat.com)
