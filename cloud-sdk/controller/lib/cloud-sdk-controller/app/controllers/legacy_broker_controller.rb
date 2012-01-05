@@ -87,7 +87,7 @@ class LegacyBrokerController < ApplicationController
     end
 
     if cloud_user.invalid?
-      @reply.resultIO << cloud_user.errors.first[1]
+      @reply.resultIO << cloud_user.errors.first[1][:message]
       render :json => @reply, :status => :invalid 
       return
     end
@@ -187,7 +187,7 @@ class LegacyBrokerController < ApplicationController
         end
         @reply.resultIO << "Successfully created application: #{app.name}" if @reply.resultIO.length == 0
       else
-        @reply.result = app.errors.first[1]
+        @reply.result = app.errors.first[1][:message]
         render :json => @reply, :status => :invalid 
         return
       end
@@ -304,7 +304,7 @@ class LegacyBrokerController < ApplicationController
     begin
       @req = LegacyRequest.new.from_json(params['json_data'])
       if @req.invalid?
-        @reply.resultIO << @req.errors.first[1]
+        @reply.resultIO << @req.errors.first[1][:message]
         render :json => @reply, :status => :invalid 
       end
     end

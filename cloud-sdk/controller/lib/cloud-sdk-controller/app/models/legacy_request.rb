@@ -95,7 +95,7 @@ class LegacyRequest < Cloud::Sdk::Model
   end
   
   validates_each :action, :allow_nil =>true do |record, attribute, val|
-    if !(val =~ /\A[\w]+\z/)
+    if !(val =~ /\A[\w\-\.]+\z/)
       record.errors.add attribute, {:message => "Invalid action specified: #{val}", :exit_code => 111}
     end
   end
