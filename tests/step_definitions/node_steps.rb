@@ -38,10 +38,10 @@ def gen_small_uuid()
 end
 
 def parse_ssh_pub_key filename
-  key_pattern = /^ssh-rsa (\S+) (\S+)\n$/
+  key_pattern = /^(ssh-rsa|ssh-dss) (\S+) (\S+)\n$/
   key_string = File.open(filename, &:readline)  
   key_match = key_string.match key_pattern
-  key_match[1..2] if key_match
+  key_match[2..3] if key_match
 end
 
 Given /^a new guest account$/ do

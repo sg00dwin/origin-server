@@ -21,6 +21,13 @@ def exit_msg(msg)
   exit 0
 end
 
+def get_branch
+  branch_str = `git status | head -n1`.chomp
+  branch_str =~ /.*branch (.*)/
+  branch = $1 ? $1 : 'origin/master'
+  return branch
+end
+
 def send_verified_email(image_id, image_name)
   msg = <<END_OF_MESSAGE   
 From: Jenkins <noreply@redhat.com>

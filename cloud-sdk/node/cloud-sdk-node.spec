@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Node
 Name:           rubygem-%{gemname}
-Version:        0.2.5
+Version:        0.2.15
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        AGPLv3
@@ -49,6 +49,9 @@ mkdir -p %{buildroot}%{_bindir}/cdk
 mkdir -p %{buildroot}%{_sysconfdir}/cdk
 mkdir -p %{buildroot}%{gemdir}
 mkdir -p %{buildroot}%{ruby_sitelib}
+mkdir -p %{_bindir}
+
+ln -s %{geminstdir}/lib/cloud-sdk-node/express/setup_pam_fs_limits.sh %{buildroot}/%{_bindir}/setup_pam_fs_limits.sh
 
 # Build and install into the rubygem structure
 gem build %{gemname}.gemspec
@@ -84,6 +87,47 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Wed Jan 04 2012 Dan McPherson <dmcphers@redhat.com> 0.2.15-1
+- Updating gem versions (dmcphers@redhat.com)
+- US1608: support DSA keys (rpenta@redhat.com)
+- US1608: support DSA keys (rpenta@redhat.com)
+
+* Wed Jan 04 2012 Dan McPherson <dmcphers@redhat.com> 0.2.14-1
+- Updating gem versions (dmcphers@redhat.com)
+
+* Wed Jan 04 2012 Alex Boone <aboone@redhat.com> 0.2.13-1
+- Updating gem versions (aboone@redhat.com)
+- adding auto-create of limits.d (mmcgrath@redhat.com)
+
+* Thu Dec 29 2011 Dan McPherson <dmcphers@redhat.com> 0.2.12-1
+- 770784 (dmcphers@redhat.com)
+
+* Tue Dec 27 2011 Dan McPherson <dmcphers@redhat.com> 0.2.11-1
+- Updating gem versions (dmcphers@redhat.com)
+
+* Tue Dec 27 2011 Dan McPherson <dmcphers@redhat.com> 0.2.10-1
+- Updating gem versions (dmcphers@redhat.com)
+- release fixes (dmcphers@redhat.com)
+- Bug 770544 (dmcphers@redhat.com)
+
+* Mon Dec 26 2011 Dan McPherson <dmcphers@redhat.com> 0.2.9-1
+- bump spec numbers (dmcphers@redhat.com)
+- Bug 770085 (dmcphers@redhat.com)
+- Bug 770406 (dmcphers@redhat.com)
+
+* Fri Dec 23 2011 Dan McPherson <dmcphers@redhat.com> 0.2.8-1
+- bump spec numbers (dmcphers@redhat.com)
+- reverted 11996f1b2f12b378ca420e002097203654ac4fb2 and implemented Dan\'s
+  suggestion (jhonce@redhat.com)
+
+* Thu Dec 22 2011 Dan McPherson <dmcphers@redhat.com> 0.2.7-1
+- bump spec numbers (dmcphers@redhat.com)
+
+* Thu Dec 22 2011 Dan McPherson <dmcphers@redhat.com> 0.2.6-1
+- bump spec numbers (dmcphers@redhat.com)
+- Added code to clean up broken symlinks in config.get("user_base_dir")
+  (jhonce@redhat.com)
+
 * Thu Dec 22 2011 Dan McPherson <dmcphers@redhat.com> 0.2.5-1
 - bump spec numbers (dmcphers@redhat.com)
 - Bug 769358 (dmcphers@redhat.com)

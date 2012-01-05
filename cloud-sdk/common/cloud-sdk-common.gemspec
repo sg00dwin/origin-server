@@ -4,7 +4,7 @@ test_dir  = File.join(File.join("test", "**"), "*")
 
 Gem::Specification.new do |s|
   s.name        = "cloud-sdk-common"
-  s.version     = /(Version: )(.*)/.match(File.read("cloud-sdk-common.spec"))[2]
+  s.version     = /(Version: )(.*)/.match(File.read("cloud-sdk-common.spec"))[2].strip
   s.authors     = ["Krishna Raman"]
   s.email       = ["kraman@gmail.com"]
   s.homepage    = "http://www.openshift.com"

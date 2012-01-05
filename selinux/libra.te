@@ -1,4 +1,4 @@
-policy_module(libra,1.0.22)
+policy_module(libra,1.0.28)
 
 ########################################
 #
@@ -82,6 +82,8 @@ corenet_tcp_connect_all_ports(libra_net_t)
 # libra general local policy
 #
 allow libra_domain self:process { getattr fork getpgid setpgid setrlimit setsched signal_perms ptrace getsched execmem };
+dontaudit libra_t self:process getcap;
+
 allow libra_domain self:sem create_sem_perms;
 allow libra_domain self:tcp_socket  create_stream_socket_perms;
 
@@ -96,10 +98,12 @@ dontaudit libra_domain libra_initrc_tmp_t:file append;
 dontaudit libra_domain libra_var_run_t:file append;
 
 manage_dirs_pattern(libra_domain, libra_tmp_t, libra_tmp_t)
+manage_fifo_files_pattern(libra_domain, libra_tmp_t, libra_tmp_t)
 manage_files_pattern(libra_domain, libra_tmp_t, libra_tmp_t)
 manage_lnk_files_pattern(libra_domain, libra_tmp_t, libra_tmp_t)
 manage_sock_files_pattern(libra_t, libra_tmp_t, libra_tmp_t)
-files_tmp_filetrans(libra_domain, libra_tmp_t, { file dir sock_file })
+allow libra_domain libra_tmp_t:file { relabelfrom relabelto };
+files_tmp_filetrans(libra_domain, libra_tmp_t, { file dir sock_file fifo_file })
 can_exec(libra_t, libra_tmp_t)
 
 manage_dirs_pattern(libra_domain, libra_var_lib_t, libra_var_lib_t)
@@ -108,7 +112,7 @@ manage_sock_files_pattern(libra_domain, libra_var_lib_t, libra_var_lib_t)
 manage_lnk_files_pattern(libra_domain, libra_var_lib_t, libra_var_lib_t)
 files_var_lib_filetrans(libra_domain, libra_var_lib_t, { dir file sock_file } )
 allow libra_domain libra_var_lib_t:file entrypoint;
-allow libra_domain libra_var_lib_t:file relabelfrom;
+allow libra_domain libra_var_lib_t:file { relabelfrom relabelto };
 
 kernel_read_system_state(libra_domain)
 kernel_read_network_state(libra_domain)
@@ -137,12 +141,14 @@ fs_dontaudit_list_auto_mountpoints(libra_domain)
 storage_dontaudit_getattr_fixed_disk_dev(libra_domain)
 
 files_dontaudit_search_all_pids(libra_domain)
+files_dontaudit_getattr_all_dirs(libra_domain)
 files_dontaudit_getattr_lost_found_dirs(libra_domain)
 files_dontaudit_search_all_mountpoints(libra_domain)
 files_dontaudit_search_spool(libra_domain)
 files_read_etc_files(libra_domain)
 files_read_usr_files(libra_domain)
 files_dontaudit_getattr_non_security_sockets(libra_domain)
+files_dontaudit_setattr_etc_runtime_files(libra_domain)
 
 libs_exec_lib_files(libra_domain)
 
@@ -172,7 +178,7 @@ apache_search_config(libra_domain)
 apache_read_sys_content(libra_domain)
 corenet_tcp_bind_http_cache_port(libra_domain)
 apache_search_sys_scripts(libra_domain)
-# Will need to change to this when it becomes available in RHEL6.2 policy
+# Will need to change to this when it becomes available in RHEL6.3 policy
 #apache_exec_sys_scripts(libra_domain)
 
 apache_content_template(libra)
@@ -369,5 +375,9 @@ mta_sendmail_domtrans(libra_t, libra_mail_t)
 role system_r types libra_mail_t;
 
 read_files_pattern(libra_mail_t, libra_var_lib_t, libra_var_lib_t)
+manage_files_pattern(libra_mail_t, libra_tmp_t, libra_tmp_t)
 
-permissive libra_mail_t;
+mta_dontaudit_read_spool_symlinks(libra_mail_t)
+
+userdom_dontaudit_use_user_ptys(libra_mail_t)
+

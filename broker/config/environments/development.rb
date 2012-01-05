@@ -30,18 +30,13 @@ Broker::Application.configure do
   ############################################
   config.app_scope = "broker"
   config.integrated = false
-  config.streamline = {
-    :host => 'https://localhost',
-    :base_url => '',
-    :register_secret => '',
-    :user_info_secret => ''
-  }
   
   # CDK Config
   config.cdk = {
     :domain_suffix => "dev.rhcloud.com",
     :zone => "rhcloud.com",
     :child_zone => "dev",
+    :per_user_app_limit => 5,
     :broker_auth_secret => "EIvWT6u3lsvSRNRGZhhW8YcWMh5mUAlc32nZlRJPdJM=",
     :broker_auth_rsa_secret => "SJDIkdfhuISe3wrulhjvcKHJFDUeoi8gfcdnu8299dhc",
     :rpc_opts => {

@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.2.10
+Version:        0.2.24
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        AGPLv3
@@ -72,6 +72,68 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Wed Jan 04 2012 Dan McPherson <dmcphers@redhat.com> 0.2.24-1
+- Updating gem versions (dmcphers@redhat.com)
+- fix build break and better error messaging (dmcphers@redhat.com)
+- US1608: support DSA keys (rpenta@redhat.com)
+- US1608: support DSA keys (rpenta@redhat.com)
+- bug-fixes related to Mirage/express merge (rpenta@redhat.com)
+
+* Wed Jan 04 2012 Dan McPherson <dmcphers@redhat.com> 0.2.23-1
+- Updating gem versions (dmcphers@redhat.com)
+- better error handling (dmcphers@redhat.com)
+
+* Wed Jan 04 2012 Dan McPherson <dmcphers@redhat.com> 0.2.22-1
+- Updating gem versions (dmcphers@redhat.com)
+- use user exception (dmcphers@redhat.com)
+- Adding cloud-sdk-controller unit tests (kraman@gmail.com)
+
+* Wed Jan 04 2012 Dan McPherson <dmcphers@redhat.com> 0.2.21-1
+- Updating gem versions (dmcphers@redhat.com)
+- better rollback logic (dmcphers@redhat.com)
+
+* Wed Jan 04 2012 Alex Boone <aboone@redhat.com> 0.2.20-1
+- Updating gem versions (aboone@redhat.com)
+
+* Wed Jan 04 2012 Alex Boone <aboone@redhat.com> 0.2.19-1
+- move fixes (dmcphers@redhat.com)
+
+* Wed Dec 28 2011 Dan McPherson <dmcphers@redhat.com> 0.2.18-1
+- Updating gem versions (dmcphers@redhat.com)
+- Bug 770544 (dmcphers@redhat.com)
+
+* Tue Dec 27 2011 Dan McPherson <dmcphers@redhat.com> 0.2.17-1
+- Updating gem versions (dmcphers@redhat.com)
+- various fixes (dmcphers@redhat.com)
+- add application limit of 5 (dmcphers@redhat.com)
+
+* Tue Dec 27 2011 Dan McPherson <dmcphers@redhat.com> 0.2.16-1
+- Updating gem versions (dmcphers@redhat.com)
+- remove version ref (dmcphers@redhat.com)
+
+* Tue Dec 27 2011 Dan McPherson <dmcphers@redhat.com> 0.2.15-1
+- Updating gem versions (dmcphers@redhat.com)
+- release fixes (dmcphers@redhat.com)
+- Bug 770544 (dmcphers@redhat.com)
+
+* Mon Dec 26 2011 Dan McPherson <dmcphers@redhat.com> 0.2.14-1
+- bump spec numbers (dmcphers@redhat.com)
+- Bug 770406 (dmcphers@redhat.com)
+
+* Fri Dec 23 2011 Dan McPherson <dmcphers@redhat.com> 0.2.13-1
+- bump spec numbers (dmcphers@redhat.com)
+- Bug 77027 (dmcphers@redhat.com)
+- Bug 770085 (dmcphers@redhat.com)
+
+* Thu Dec 22 2011 Dan McPherson <dmcphers@redhat.com> 0.2.12-1
+- bump spec numbers (dmcphers@redhat.com)
+- add better error handling for configure errors (dmcphers@redhat.com)
+
+* Thu Dec 22 2011 Dan McPherson <dmcphers@redhat.com> 0.2.11-1
+- bump spec numbers (dmcphers@redhat.com)
+- Bug 768851 - allow jboss build with only large instance available (devenv)
+  (dmcphers@redhat.com)
+
 * Thu Dec 22 2011 Dan McPherson <dmcphers@redhat.com> 0.2.10-1
 - bump spec numbers (dmcphers@redhat.com)
 - Bug 769358 (dmcphers@redhat.com)

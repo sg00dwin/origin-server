@@ -13,11 +13,11 @@ module Express
         end
       end
       
-      def find_all(obj_type, user_id)
+      def find_all(obj_type, user_id=nil)
         Rails.logger.debug "DataStore.find_all(#{obj_type}, #{user_id})\n\n"
         case obj_type
         when "CloudUser"
-          DataStore.get_user_s3(id)
+          DataStore.get_users_s3
         when "Application"
           DataStore.get_user_apps_s3(user_id)
         end
@@ -67,7 +67,9 @@ module Express
       def self.get_users_s3
         users = {}
         bucket.objects.with_prefix('user_info').each do |user_obj|
-          users[user_obj.key.gsub("user_info/")[0..-6]] = user_obj.read
+          if user_obj.key =~ /\/user.json$/
+            users[File.basename(File.dirname(user_obj.key))] = user_obj.read
+          end
         end
         users
       end

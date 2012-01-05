@@ -32,7 +32,7 @@ module Express
       
       def login(request, params, cookies)
         data = JSON.parse(params['json_data'])
-    
+
         username = nil
         if params['broker_auth_key'] && params['broker_auth_iv']
           encrypted_token = Base64::decode64(params['broker_auth_key'])
@@ -57,30 +57,45 @@ module Express
           raise Cloud::Sdk::UserValidationException.new if !app or creation_time != app.creation_time
           return username
         else
-          return data['rhlogin']
-          ticket = cookies[:rh_sso]
-          rhlogin = nil
-          roles = []
-          begin
-            http_post(@@roles_url,{},ticket) do |json|
-              rhlogin = json['username'] || json['login']
-              roles = json['roles']      
+          unless Rails.application.config.integrated
+            return data['rhlogin']
+          else
+            ticket = cookies[:rh_sso]
+            rhlogin = nil
+            if ticket
+              begin
+                login = nil
+                roles = []
+                http_post(@@roles_url,{},ticket) do |json|
+                  login = json['username'] || json['login']
+                  roles = json['roles']      
+                end
+                check_access(roles)
+                rhlogin = login
+              rescue Cloud::Sdk::AccessDeniedException
+                Rails.logger.debug("Attempted to use previous ticket '#{ticket}' to establish but failed with AccessDenied.  Continuing with normal login...")
+              end
             end
-            check_access(roles)
+
+            unless rhlogin
+              begin
+                login_args = {'login' => data['rhlogin'], 'password' => params['password']}
+                # Establish the authentication ticket
+                login = nil
+                roles = []
+                http_post(@@login_url, login_args) do |json|
+                  Rails.logger.debug("Current login = #{data['rhlogin']} / authenticated for #{json['username'] || json['login']}")
+                  login = json['username'] || json['login']
+                  roles = json['roles']
+                end
+                check_access(roles)
+                rhlogin = login
+              rescue Cloud::Sdk::AccessDeniedException
+              end
+            end
+            
             return rhlogin
-          rescue Cloud::Sdk::UserValidationException
-            Rails.logger.debug("Attempted to use previous ticket '#{@ticket}' to establish but failed with AccessDenied.  Continuing with normal login...")
           end
-    
-          login_args = {'login' => data['rhlogin'], 'password' => params['password']}
-          # Establish the authentication ticket
-          http_post(@@login_url, login_args) do |json|
-            Rails.logger.debug("Current login = #{data['rhlogin']} / authenticated for #{json['username'] || json['login']}")
-            rhlogin = json['username'] || json['login']
-            roles = json['roles']
-          end
-          check_access(roles)
-          return rhlogin
         end
       end
       
@@ -90,9 +105,9 @@ module Express
         roles = [] unless roles
         unless roles.index('cloud_access_1')
           if roles.index('cloud_access_request_1')
-            raise Cloud::Sdk::UserValidationException.new("Found valid credentials but you haven't been granted access to Express yet", 146), caller[0..5]
+            raise Cloud::Sdk::UserValidationException.new("Found valid credentials but you haven't been granted access yet", 146)
           else
-            raise Cloud::Sdk::UserValidationException.new("Found valid credentials but you haven't requested access to Express yet", 147), caller[0..5]
+            raise Cloud::Sdk::UserValidationException.new("Found valid credentials but you haven't requested access yet", 147)
           end
         end
       end
@@ -119,45 +134,27 @@ module Express
           when Net::HTTPSuccess, Net::HTTPRedirection
             Rails.logger.debug("POST Response code = #{res.code}")
     
-            # Set the rh_sso cookie as the ticket
-            parse_ticket(res.get_fields('Set-Cookie'))
-    
             # Parse and yield the body if a block is supplied
             if res.body and !res.body.empty?
               json = JSON.parse(res.body)
               yield json if block_given?
             else
               Rails.logger.error "Empty response from streamline - #{res.code}"
-              raise AuthServiceException
+              raise Cloud::Sdk::AuthServiceException
             end
           when Net::HTTPForbidden, Net::HTTPUnauthorized
-            raise AccessDeniedException
+            raise Cloud::Sdk::AccessDeniedException
           else
             Rails.logger.error "Invalid HTTP response from streamline - #{res.code}"
             Rails.logger.error "Response body:\n#{res.body}"
-            raise AuthServiceException
+            raise Cloud::Sdk::AuthServiceException
           end
         rescue Cloud::Sdk::AccessDeniedException, Cloud::Sdk::UserValidationException, Cloud::Sdk::AuthServiceException
           raise
         rescue Exception => e
           Rails.logger.error "Exception occurred while calling streamline - #{e.message}"
           Rails.logger.error e, e.backtrace
-          raise AuthServiceException
-        end
-      end
-      
-      #
-      # Parse the rh_sso cookie out of the headers
-      # and set it as the ticket
-      #
-      def parse_ticket(cookies)
-        if cookies
-          cookies.each do |cookie|
-            if cookie.index("rh_sso")
-              @ticket = cookie.split('; ')[0].split("=")[1]
-              break
-            end
-          end
+          raise Cloud::Sdk::AuthServiceException
         end
       end
     end

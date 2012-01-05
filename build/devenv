@@ -16,12 +16,6 @@ class DevEnv < Thor
   include OpenShift::Amazon
   
   no_tasks do
-    def get_branch
-      branch_str = `git status | head -n1`.chomp
-      branch_str =~ /.*branch (.*)/
-      branch = $1 ? $1 : 'origin/master'
-      return branch
-    end
     
     def sync_repo(repo_name, hostname, ssh_path)
       temp_commit

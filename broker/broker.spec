@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.84.9
+Version:   0.84.27
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -76,6 +76,84 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Wed Jan 04 2012 Dan McPherson <dmcphers@redhat.com> 0.84.27-1
+- Updating gem versions (dmcphers@redhat.com)
+- US1608: support DSA keys (rpenta@redhat.com)
+- US1608: support DSA keys (rpenta@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- bug-fixes related to Mirage/express merge (rpenta@redhat.com)
+
+* Wed Jan 04 2012 Dan McPherson <dmcphers@redhat.com> 0.84.26-1
+- Updating gem versions (dmcphers@redhat.com)
+
+* Wed Jan 04 2012 Dan McPherson <dmcphers@redhat.com> 0.84.25-1
+- Updating gem versions (dmcphers@redhat.com)
+- use user exception (dmcphers@redhat.com)
+- Adding cloud-sdk-controller unit tests (kraman@gmail.com)
+
+* Wed Jan 04 2012 Dan McPherson <dmcphers@redhat.com> 0.84.24-1
+- Updating gem versions (dmcphers@redhat.com)
+- better rollback logic (dmcphers@redhat.com)
+
+* Wed Jan 04 2012 Alex Boone <aboone@redhat.com> 0.84.23-1
+- Updating gem versions (aboone@redhat.com)
+
+* Wed Jan 04 2012 Alex Boone <aboone@redhat.com> 0.84.22-1
+- move fixes (dmcphers@redhat.com)
+
+* Tue Jan 03 2012 Dan McPherson <dmcphers@redhat.com> 0.84.21-1
+- streamline fix (dmcphers@redhat.com)
+
+* Tue Jan 03 2012 Dan McPherson <dmcphers@redhat.com> 0.84.20-1
+- switch if around (dmcphers@redhat.com)
+
+* Tue Jan 03 2012 Dan McPherson <dmcphers@redhat.com> 0.84.19-1
+- getting streamline working properly (dmcphers@redhat.com)
+- fixup production.rb to be closer to prod settings (dmcphers@redhat.com)
+- get nurture/apptegic working again (dmcphers@redhat.com)
+
+* Wed Dec 28 2011 Dan McPherson <dmcphers@redhat.com> 0.84.18-1
+- Updating gem versions (dmcphers@redhat.com)
+
+* Tue Dec 27 2011 Dan McPherson <dmcphers@redhat.com> 0.84.17-1
+- Updating gem versions (dmcphers@redhat.com)
+- better logging (dmcphers@redhat.com)
+- various fixes (dmcphers@redhat.com)
+- various fixed (dmcphers@redhat.com)
+- add application limit of 5 (dmcphers@redhat.com)
+
+* Tue Dec 27 2011 Dan McPherson <dmcphers@redhat.com> 0.84.16-1
+- Updating gem versions (dmcphers@redhat.com)
+
+* Tue Dec 27 2011 Dan McPherson <dmcphers@redhat.com> 0.84.15-1
+- Updating gem versions (dmcphers@redhat.com)
+- Bug 770544 (dmcphers@redhat.com)
+
+* Mon Dec 26 2011 Dan McPherson <dmcphers@redhat.com> 0.84.14-1
+- bump spec numbers (dmcphers@redhat.com)
+- Bug 770406 (dmcphers@redhat.com)
+- Bug 770364 (dmcphers@redhat.com)
+
+* Fri Dec 23 2011 Dan McPherson <dmcphers@redhat.com> 0.84.13-1
+- bump spec number (dmcphers@redhat.com)
+
+* Fri Dec 23 2011 Dan McPherson <dmcphers@redhat.com> 0.84.12-1
+- bump spec numbers (dmcphers@redhat.com)
+- Bug 77027 (dmcphers@redhat.com)
+- Bug 770085 (dmcphers@redhat.com)
+- reverted 11996f1b2f12b378ca420e002097203654ac4fb2 and implemented Dan\'s
+  suggestion (jhonce@redhat.com)
+
+* Thu Dec 22 2011 Dan McPherson <dmcphers@redhat.com> 0.84.11-1
+- bump spec numbers (dmcphers@redhat.com)
+- removing more of server-common (dmcphers@redhat.com)
+
+* Thu Dec 22 2011 Dan McPherson <dmcphers@redhat.com> 0.84.10-1
+- bump spec numbers (dmcphers@redhat.com)
+- Bug 768851 - allow jboss build with only large instance available (devenv)
+  (dmcphers@redhat.com)
+- Fixed broken here document for warning (jhonce@redhat.com)
+
 * Thu Dec 22 2011 Dan McPherson <dmcphers@redhat.com> 0.84.9-1
 - bump spec numbers (dmcphers@redhat.com)
 - Bug 768851 (dmcphers@redhat.com)

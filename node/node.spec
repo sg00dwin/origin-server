@@ -2,8 +2,8 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.84.6
-Release:       2%{?dist}
+Version:       0.84.16
+Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
 URL:           http://openshift.redhat.com
@@ -12,7 +12,7 @@ Source0:       rhc-node-%{version}.tar.gz
 BuildRoot:     %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires: ruby
 Requires:      rhc-common
-Requires:      rhc-selinux
+Requires:      rhc-selinux >= 0.84.7-1
 Requires:      git
 Requires:      libcgroup
 Requires:      mcollective
@@ -25,6 +25,9 @@ Requires:      quota
 Requires:      lsof
 Requires:      wget
 Requires:      oddjob
+Requires:      libjpeg-devel
+Requires:      libpng-devel
+Requires:      giflib-devel
 Requires(post):   /usr/sbin/semodule
 Requires(post):   /usr/sbin/semanage
 Requires(postun): /usr/sbin/semodule
@@ -51,9 +54,7 @@ mkdir -p %{buildroot}%{_bindir}
 mkdir -p %{buildroot}%{_libexecdir}
 mkdir -p %{buildroot}%{_initddir}
 mkdir -p %{buildroot}%{ruby_sitelibdir}
-mkdir -p %{buildroot}/var/lib/libra
 mkdir -p %{buildroot}%{_libexecdir}/li
-mkdir -p %{buildroot}%{_sysconfdir}/httpd/conf.d/libra
 mkdir -p %{buildroot}/usr/share/selinux/packages
 mkdir -p %{buildroot}%{_sysconfdir}/cron.daily/
 mkdir -p %{buildroot}%{_sysconfdir}/oddjobd.conf.d/
@@ -62,6 +63,11 @@ mkdir -p %{buildroot}%{_sysconfdir}/cron.daily/
 mkdir -p %{buildroot}%{_sysconfdir}/libra/skel
 mkdir -p %{buildroot}/%{_localstatedir}/www/html/
 mkdir -p %{buildroot}/%{_sysconfdir}/security/
+mkdir -p %{buildroot}%{_localstatedir}/lib/libra
+mkdir -p %{buildroot}%{_localstatedir}/run/libra
+mkdir -p %{buildroot}%{_localstatedir}/lib/libra/.httpd.d
+mkdir -p %{buildroot}/%{_sysconfdir}/httpd/conf.d/
+ln -s %{_localstatedir}/lib/libra/.httpd.d/ %{buildroot}/%{_sysconfdir}/httpd/conf.d/libra
 
 cp -r cartridges %{buildroot}%{_libexecdir}/li
 cp -r conf/httpd %{buildroot}%{_sysconfdir}
@@ -95,7 +101,9 @@ perl -p -i -e 's:/cgroup/[^\s]+;:/cgroup/all;:; /blkio|cpuset|devices/ && ($_ = 
 #/sbin/service mcollective restart > /dev/null 2>&1 || :
 /sbin/restorecon /etc/init.d/libra || :
 /sbin/restorecon /var/lib/libra || :
+/sbin/restorecon /var/run/libra || :
 /sbin/restorecon /usr/bin/rhc-cgroup-read || :
+/sbin/restorecon /var/lib/libra/.httpd.d/ || :
 /usr/bin/rhc-restorecon || :
 # only enable if cgconfig is
 chkconfig cgconfig && /sbin/service libra-cgroups start > /dev/null 2>&1 || :
@@ -110,6 +118,16 @@ echo "/usr/bin/trap-user" >> /etc/shells
 
 # Ensure the default users have a more restricted shell then normal.
 #semanage login -m -s guest_u __default__ || :
+
+# If /etc/httpd/conf.d/libra is a dir, make it a symlink
+if [[ -d "/etc/httpd/conf.d/libra" && ! -L "/etc/httpd/conf.d/libra" ]]
+then
+    mv /etc/httpd/conf.d/libra.bak/* /var/lib/libra/.httpd.d/
+    # not forced to prevent data loss
+    rmdir /etc/httpd/conf.d/libra /etc/httpd/conf.d/libra.bak
+fi
+
+
 
 %preun
 if [ "$1" -eq "0" ]; then
@@ -128,6 +146,13 @@ if [ "$1" -eq 0 ]; then
     /sbin/service mcollective restart > /dev/null 2>&1 || :
 fi
 #/usr/sbin/semodule -r libra
+
+%pre
+
+if [[ -d "/etc/httpd/conf.d/libra" && ! -L "/etc/httpd/conf.d/libra" ]]
+then
+    mv /etc/httpd/conf.d/libra/ /etc/httpd/conf.d/libra.bak/
+fi
 
 %files
 %defattr(-,root,root,-)
@@ -150,6 +175,8 @@ fi
 %attr(0750,-,-) %{_bindir}/remount-secure.sh
 %attr(0755,-,-) %{_bindir}/rhc-cgroup-read
 %dir %attr(0751,root,root) %{_localstatedir}/lib/libra
+%dir %attr(0750,root,root) %{_localstatedir}/lib/libra/.httpd.d
+%dir %attr(0700,root,root) %{_localstatedir}/run/libra
 %dir %attr(0755,root,root) %{_libexecdir}/li/cartridges/abstract-httpd/
 %attr(0750,-,-) %{_libexecdir}/li/cartridges/abstract-httpd/info/hooks/
 %attr(0755,-,-) %{_libexecdir}/li/cartridges/abstract-httpd/info/bin/
@@ -176,6 +203,52 @@ fi
 %dir %attr(0755,root,root) %{_sysconfdir}/libra/skel
 
 %changelog
+* Wed Jan 04 2012 Dan McPherson <dmcphers@redhat.com> 0.84.16-1
+- allow re-entrant update namespace (dmcphers@redhat.com)
+
+* Wed Jan 04 2012 Dan McPherson <dmcphers@redhat.com> 0.84.15-1
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li
+  (wdecoste@localhost.localdomain)
+- Bug 771716 migration (wdecoste@localhost.localdomain)
+
+* Wed Jan 04 2012 Dan McPherson <dmcphers@redhat.com> 0.84.14-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- force a restorecon on httpd.d (mmcgrath@redhat.com)
+
+* Wed Jan 04 2012 Dan McPherson <dmcphers@redhat.com> 0.84.13-1
+- pull in a more rhc-selinux (mmcgrath@redhat.com)
+
+* Wed Jan 04 2012 Alex Boone <aboone@redhat.com> 0.84.12-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- removed limits.d from /var/lib/libra (mmcgrath@redhat.com)
+- adding auto-create of limits.d (mmcgrath@redhat.com)
+- check for symlink of conf.d/libra (mmcgrath@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- Converting /etc/httpd/conf.d/ to a symlink (mmcgrath@redhat.com)
+
+* Wed Jan 04 2012 Alex Boone <aboone@redhat.com> 0.84.11-1
+- node.spec: Added Requires for libjpeg-devel libpng-devel giflib-devel
+  (tdawson@redhat.com)
+
+* Tue Jan 03 2012 Dan McPherson <dmcphers@redhat.com> 0.84.10-1
+- fix case (dmcphers@redhat.com)
+- add 2.0.3 migration (dmcphers@redhat.com)
+
+* Thu Dec 22 2011 Dan McPherson <dmcphers@redhat.com> 0.84.9-1
+- fix bad merge (dmcphers@redhat.com)
+- remove debug (dmcphers@redhat.com)
+
+* Thu Dec 22 2011 Dan McPherson <dmcphers@redhat.com> 0.84.8-1
+- rhc-idler: added ability to list idled apps (twiest@redhat.com)
+
+* Thu Dec 22 2011 Dan McPherson <dmcphers@redhat.com> 0.84.7-1
+- node - changed namepace location 12 22 2011 (tkramer@redhat.com)
+- added /var/run/libra to the node spec file and changed libra init script
+  (twiest@redhat.com)
+
 * Thu Dec 22 2011 Tim Kramer <tkramer@redhat.com> 0.84.6-2
 - Changed the namespaced.conf to namespace.d <tkramer@redhat.com>
 

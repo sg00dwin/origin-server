@@ -15,7 +15,7 @@ module Cloud
         Rails.logger.debug "DataStore.find(#{obj_type}, #{user_id}, #{id})\n\n"
       end
       
-      def find_all(obj_type, user_id)
+      def find_all(obj_type, user_id=nil)
         Rails.logger.debug "DataStore.find_all(#{obj_type}, #{user_id})\n\n"
       end
       

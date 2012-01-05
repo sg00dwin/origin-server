@@ -2,7 +2,7 @@ class CloudUserObserver < ActiveModel::Observer
   observe CloudUser
 
   def before_cloud_user_create(user)
-    raise Cloud::Sdk::CdkException.new("Invalid characters in RHlogin '#{user.rhlogin}' found", 107), caller[0..5] if user.rhlogin =~ /["\$\^<>\|%\/;:,\\\*=~]/
+    raise Cloud::Sdk::UserException.new("Invalid characters in RHlogin '#{user.rhlogin}' found", 107) if user.rhlogin =~ /["\$\^<>\|%\/;:,\\\*=~]/
   end
 
   def cloud_user_create_success(user)

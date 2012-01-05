@@ -2,7 +2,7 @@
 
 Summary:       Common dependencies of the OpenShift broker and site
 Name:          rhc-server-common
-Version:       0.84.3
+Version:       0.84.7
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -38,8 +38,6 @@ rm -rf %{buildroot}
 mkdir -p %{buildroot}%{ruby_sitelibdir}
 cp -r openshift %{buildroot}%{ruby_sitelibdir}
 cp openshift.rb %{buildroot}%{ruby_sitelibdir}
-mkdir -p %{buildroot}%{_sysconfdir}/libra
-cp conf/libra/* %{buildroot}%{_sysconfdir}/libra/
 
 %clean
 rm -rf %{buildroot}
@@ -48,7 +46,6 @@ rm -rf %{buildroot}
 %defattr(-,root,root,-)
 %{ruby_sitelibdir}/openshift
 %{ruby_sitelibdir}/openshift.rb
-%attr(0640,root,libra_user) %config(noreplace) %{_sysconfdir}/libra/controller.conf
 
 %pre
 /usr/sbin/useradd libra_passenger -g libra_user \
@@ -57,6 +54,20 @@ rm -rf %{buildroot}
                                   -s /sbin/nologin 2>&1 > /dev/null || :
 
 %changelog
+* Wed Jan 04 2012 Alex Boone <aboone@redhat.com> 0.84.7-1
+- server-common cleanup (dmcphers@redhat.com)
+- server-common cleanup (dmcphers@redhat.com)
+
+* Tue Jan 03 2012 Dan McPherson <dmcphers@redhat.com> 0.84.6-1
+- moving streamline into site (dmcphers@redhat.com)
+- getting streamline working properly (dmcphers@redhat.com)
+
+* Fri Dec 23 2011 Dan McPherson <dmcphers@redhat.com> 0.84.5-1
+- more server-common cleanup (dmcphers@redhat.com)
+
+* Thu Dec 22 2011 Dan McPherson <dmcphers@redhat.com> 0.84.4-1
+- removing more of server-common (dmcphers@redhat.com)
+
 * Fri Dec 16 2011 Dan McPherson <dmcphers@redhat.com> 0.84.3-1
 - undo accidential commit (dmcphers@redhat.com)
 - some cleanup of server-common (dmcphers@redhat.com)

@@ -97,35 +97,22 @@ module Cloud::SDK::Model
       end
       
       FileUtils.rm_rf(@homedir)
-      # FileUtils.rm_rf, above,  may have just broken a symlink ({app_name}-{namespace}) we don't 
-      # + have that information in this method so we troll for broken symlinks in the user_base_dir
-      # + and remove them. This hack does have the nice side effect of cleaning up any symlinks
-      # + broken in the past.
-      begin
-	basedir = @config.get("user_base_dir")
-	Dir.foreach(basedir) { |f|
-	  path = File.join(basedir, f)
-	  if File.lstat(path).symlink? && !File.exists?(path)
-	    FileUtils.rm_f(path)
-	  end
-	}
-      rescue Exception => e
-        shellCmd("logger -p local0.notice -t libra_unix_user_destroy #{e}. Not all clean up of #{@homedir} was completed.")
-      end
 
       out,err,rc = shellCmd("userdel \"#{@uuid}\"")
       raise UserDeletionException.new("ERROR: unable to create user account #{@uuid}") unless rc == 0
       notify_observers(:after_unix_user_destroy)
     end
     
-    def add_ssh_key(key)
-      self.class.notify_observers(:before_add_ssh_key,self,key)
+    def add_ssh_key(key, key_type=nil, comment=nil)
+      self.class.notify_observers(:before_add_ssh_key, self, key)
       ssh_dir = File.join(@homedir, ".ssh")
       cloud_name = @config.get("cloud_name") || "CDK"
       authorized_keys_file = File.join(ssh_dir,"authorized_keys")
-      shell    = @config.get("user_shell")     || "/bin/bash"      
+      shell    = @config.get("user_shell")     || "/bin/bash"
+      key_type = key_type || "ssh-rsa"
+      comment  = comment  || ""
       
-      cmd_entry = "command=\"#{shell}\",no-port-forwarding,no-X11-forwarding ssh-rsa #{key} #{cloud_name}-#{@uuid}\n"
+      cmd_entry = "command=\"#{shell}\",no-port-forwarding,no-X11-forwarding #{key_type} #{key} #{cloud_name}-#{@uuid}#{comment}\n"
       FileUtils.mkdir_p ssh_dir
       FileUtils.chmod(0o0750,ssh_dir)
       File.open(authorized_keys_file, File::WRONLY|File::APPEND|File::CREAT, 0o0440) do |file|
@@ -133,11 +120,11 @@ module Cloud::SDK::Model
       end
       FileUtils.chmod 0o0440, authorized_keys_file
       FileUtils.chown_R("root",@uuid,ssh_dir)
-      self.class.notify_observers(:after_add_ssh_key,self,key)
+      self.class.notify_observers(:after_add_ssh_key, self, key)
     end
     
-    def remove_ssh_key
-      self.class.notify_observers(:before_remove_ssh_key,self,key)
+    def remove_ssh_key(key)
+      self.class.notify_observers(:before_remove_ssh_key, self, key)
       ssh_dir = File.join(@homedir, ".ssh")
       authorized_keys_file = File.join(ssh_dir,"authorized_keys")
       
@@ -145,27 +132,27 @@ module Cloud::SDK::Model
       FileUtils.chmod(0o0750,ssh_dir)
       keys = []
       File.open(authorized_keys_file, File::RDONLY|File::CREAT, 0o0440) do |file|
-        keys = []
+        keys = file.readlines
       end
       
-      keys.delete_if{ |key| key.match(/#{key}/)}
+      keys.delete_if{ |k| k.include?(key)}
       
-      File.open(authorized_keys_file, File::WRONLY|File::CREAT, 0o0440) do |file|
+      File.open(authorized_keys_file, File::WRONLY|File::TRUNC|File::CREAT, 0o0440) do |file|
         file.write(keys.join("\n"))
       end
       
       FileUtils.chmod 0o0440, authorized_keys_file
       FileUtils.chown("root",@uuid,ssh_dir)
-      self.class.notify_observers(:after_remove_ssh_key,self,key)
+      self.class.notify_observers(:after_remove_ssh_key, self, key)
     end
     
     def add_env_var(key, value, prefix_cloud_name=false)
-      env_dir = File.join(@homedir,".env")      
+      env_dir = File.join(@homedir,".env")
       if prefix_cloud_name
         key = (@config.get("cloud_name") || "CDK") + "_#{key}"
       end
-      File.open(File.join(env_dir, key),File::WRONLY|File::CREAT) do |file|
-        file.write "export #{key}=#{value}"
+      File.open(File.join(env_dir, key),File::WRONLY|File::TRUNC|File::CREAT) do |file|
+        file.write "export #{key}='#{value}'"
       end
     end
     
@@ -180,10 +167,10 @@ module Cloud::SDK::Model
     def add_broker_auth(iv,token)
       broker_auth_dir=File.join(@homedir,".auth")
       FileUtils.mkdir_p broker_auth_dir
-      File.open(File.join(broker_auth_dir,"iv"),File::WRONLY|File::CREAT) do |file|
+      File.open(File.join(broker_auth_dir,"iv"),File::WRONLY|File::TRUNC|File::CREAT) do |file|
         file.write iv
       end
-      File.open(File.join(broker_auth_dir,"token"),File::WRONLY|File::CREAT) do |file|
+      File.open(File.join(broker_auth_dir,"token"),File::WRONLY|File::TRUNC|File::CREAT) do |file|
         file.write token
       end
       
@@ -225,7 +212,7 @@ module Cloud::SDK::Model
 
       add_env_var("APP_UUID", @application_uuid, true)
       add_env_var("CONTAINER_UUID", @container_uuid, true)
-      add_env_var("HOMEDIR", @homedir, true)
+      add_env_var("HOMEDIR", @homedir.end_with?('/') ? @homedir : @homedir + '/', true)
       notify_observers(:after_initialize_homedir)        
     end
     

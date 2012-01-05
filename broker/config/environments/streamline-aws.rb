@@ -30,18 +30,13 @@ Broker::Application.configure do
   ############################################
   config.app_scope = "broker"
   config.integrated = true
-  config.streamline = {
-    :host => 'https://10.196.215.67',
-    :base_url => '/wapps/streamline',
-    :register_secret => 'c0ldw1n3',
-    :user_info_secret => 'sw33tl1Qu0r'
-  }
   
   # CDK Config
   config.cdk = {
     :domain_suffix => "dev.rhcloud.com",
     :zone => "rhcloud.com",
     :child_zone => "dev",
+    :per_user_app_limit => 5,
     :broker_auth_secret => "EIvWT6u3lsvSRNRGZhhW8YcWMh5mUAlc32nZlRJPdJM=",
     :broker_auth_rsa_secret => "SJDIkdfhuISe3wrulhjvcKHJFDUeoi8gfcdnu8299dhc",
     :rpc_opts => {

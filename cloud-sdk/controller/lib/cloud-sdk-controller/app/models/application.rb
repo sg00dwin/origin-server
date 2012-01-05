@@ -13,7 +13,7 @@ class Application < Cloud::Sdk::Model
     framework.split('-')[0..-2].join('-')
   end
 
-  def initialize(user=nil,app_name=nil,uuid=nil,node_profile=nil,framework=nil)
+  def initialize(user=nil, app_name=nil, uuid=nil, node_profile=nil, framework=nil)
     self.user = user
     self.name = app_name
     self.creation_time = DateTime::now().strftime
@@ -70,6 +70,7 @@ class Application < Cloud::Sdk::Model
       self.container = Cloud::Sdk::ApplicationContainerProxy.find_available(self.node_profile)
     end
     self.server_identity = self.container.id
+    save
     reply.append self.container.create(self)
     self.class.notify_observers(:after_application_create, {:application => self, :reply => reply})        
     reply
@@ -99,7 +100,7 @@ class Application < Cloud::Sdk::Model
     reply = ResultIO.new
     self.class.notify_observers(:before_application_deconfigure, {:application => self, :reply => reply})  
     reply.append self.container.deconfigure_cartridge(self, self.framework)
-    reply.append process_cartridge_commands(reply.cart_commands)    
+    reply.append process_cartridge_commands(reply.cart_commands)
     self.class.notify_observers(:after_application_deconfigure, {:application => self, :reply => reply})
     reply
   end
@@ -128,8 +129,8 @@ class Application < Cloud::Sdk::Model
     reply
   end
 
-  def add_authorized_ssh_key(ssh_key)
-    self.container.add_authorized_ssh_key(self, ssh_key)
+  def add_authorized_ssh_key(ssh_key, key_type=nil, comment=nil)
+    self.container.add_authorized_ssh_key(self, ssh_key, key_type, comment)
   end
   
   def remove_authorized_ssh_key(ssh_key)
@@ -165,11 +166,27 @@ class Application < Cloud::Sdk::Model
     dns = Cloud::Sdk::DnsService.instance
     begin
       dns.deregister_application(@name,@user.namespace)
-      dns.publish      
+      dns.publish
     ensure
       dns.close
     end
     self.class.notify_observers(:after_destroy_dns, {:application => self, :reply => reply})  
+    reply
+  end
+  
+  def recreate_dns
+    reply = ResultIO.new
+    self.class.notify_observers(:before_recreate_dns, {:application => self, :reply => reply})    
+    dns = Cloud::Sdk::DnsService.instance
+    begin
+      dns.deregister_application(@name,@user.namespace)
+      public_hostname = @container.get_public_hostname
+      dns.register_application(@name,@user.namespace, public_hostname)
+      dns.publish
+    ensure
+      dns.close
+    end
+    self.class.notify_observers(:after_recreate_dns, {:application => self, :reply => reply})    
     reply
   end
   
@@ -183,7 +200,18 @@ class Application < Cloud::Sdk::Model
   end
   
   def update_namespace(new_ns, old_ns)
-    return self.container.update_namespace(self, @framework, new_ns, old_ns)
+    
+    updated = false
+    begin
+      result = self.container.update_namespace(self, @framework, new_ns, old_ns)
+      process_cartridge_commands(result.cart_commands)
+      updated = result.exitcode == 0
+    rescue Exception => e
+      Rails.logger.debug "Exception caught updating namespace #{e.message}"
+      Rails.logger.debug "DEBUG: Exception caught updating namespace #{e.message}"
+      Rails.logger.debug e.backtrace
+    end
+    return updated 
   end
   
   def start
@@ -214,9 +242,13 @@ class Application < Cloud::Sdk::Model
     self.container.tidy(self, @framework)
   end
   
+  def threaddump
+    self.container.threaddump(self, @framework)
+  end
+  
   def add_alias(server_alias)
     self.aliases = [] unless self.aliases
-    raise Cloud::Sdk::UserException.new("Alias '#{server_alias}' already exists for '#{@name}'", 255), caller[0..5] if self.aliases.include? server_alias
+    raise Cloud::Sdk::UserException.new("Alias '#{server_alias}' already exists for '#{@name}'", 255) if self.aliases.include? server_alias
     reply = ResultIO.new
     begin
       self.aliases.push(server_alias)
@@ -246,7 +278,7 @@ class Application < Cloud::Sdk::Model
         self.aliases.delete(server_alias)
         self.save
       else
-        raise Cloud::Sdk::UserException.new("Alias '#{server_alias}' does not exist for '#{@name}'", 255, reply), caller[0..5]
+        raise Cloud::Sdk::UserException.new("Alias '#{server_alias}' does not exist for '#{@name}'", 255, reply)
       end      
     end
     reply
@@ -259,7 +291,7 @@ class Application < Cloud::Sdk::Model
     Rails.logger.debug "DEBUG: Adding embedded app info from persistant storage: #{@name}:#{dep}"
     self.embedded = {} unless self.embedded
     
-    raise Cloud::Sdk::UserException.new("#{dep} already embedded in '#{@name}'", 101), caller[0..5] if self.embedded[dep]
+    raise Cloud::Sdk::UserException.new("#{dep} already embedded in '#{@name}'", 101) if self.embedded[dep]
     c_reply,component_details = self.container.add_component(self, dep)
     reply.append c_reply
     self.embedded[dep] = { "info" => component_details }
@@ -273,7 +305,7 @@ class Application < Cloud::Sdk::Model
     self.class.notify_observers(:before_remove_dependency, {:application => self, :dependency => dep, :reply => reply})
     self.embedded = {} unless self.embedded
         
-    raise Cloud::Sdk::UserException.new("#{dep} not embedded in '#{@name}', try adding it first", 101), caller[0..5] unless self.embedded[dep]
+    raise Cloud::Sdk::UserException.new("#{dep} not embedded in '#{@name}', try adding it first", 101) unless self.embedded[dep]
     reply.append self.container.remove_component(self, dep)
     self.embedded.delete dep
     self.save
@@ -282,27 +314,27 @@ class Application < Cloud::Sdk::Model
   end
   
   def start_dependency(dep)
-    raise Cloud::Sdk::UserException.new("#{dep} not embedded in '#{@name}', try adding it first", 101), caller[0..5] unless self.embedded[dep]    
+    raise Cloud::Sdk::UserException.new("#{dep} not embedded in '#{@name}', try adding it first", 101) unless self.embedded[dep]    
     self.container.start_component(self, dep)
   end
   
   def stop_dependency(dep)
-    raise Cloud::Sdk::UserException.new("#{dep} not embedded in '#{@name}', try adding it first", 101), caller[0..5] unless self.embedded[dep]    
+    raise Cloud::Sdk::UserException.new("#{dep} not embedded in '#{@name}', try adding it first", 101) unless self.embedded[dep]    
     self.container.stop_component(self, dep)
   end
   
   def restart_dependency(dep)
-    raise Cloud::Sdk::UserException.new("#{dep} not embedded in '#{@name}', try adding it first", 101), caller[0..5] unless self.embedded[dep]    
+    raise Cloud::Sdk::UserException.new("#{dep} not embedded in '#{@name}', try adding it first", 101) unless self.embedded[dep]    
     self.container.restart_component(self, dep)
   end
   
   def reload_dependency(dep)
-    raise Cloud::Sdk::UserException.new("#{dep} not embedded in '#{@name}', try adding it first", 101), caller[0..5] unless self.embedded[dep]    
+    raise Cloud::Sdk::UserException.new("#{dep} not embedded in '#{@name}', try adding it first", 101) unless self.embedded[dep]    
     self.container.reload_component(self, dep)
   end
   
   def dependency_status(dep)
-    raise Cloud::Sdk::UserException.new("#{dep} not embedded in '#{@name}', try adding it first", 101), caller[0..5] unless self.embedded[dep]  
+    raise Cloud::Sdk::UserException.new("#{dep} not embedded in '#{@name}', try adding it first", 101) unless self.embedded[dep]  
     self.container.component_status(self, dep)
   end
   

@@ -1,4 +1,6 @@
 require 'mcollective'
+require 'openshift'
+
 include MCollective::RPC
 module Express
   module Broker
@@ -11,19 +13,21 @@ module Express
         @current_capacity = current_capacity
       end
       
-      def self.find_available_impl(node_profile=nil)
-        node_profile ||= "std"
-        
+      def self.find_available_impl(node_profile=nil)       
         current_server, current_capacity = rpc_find_available(node_profile)
         Rails.logger.debug "CURRENT SERVER: #{current_server}"
         if !current_server
           current_server, current_capacity = rpc_find_available(node_profile, true)
           Rails.logger.debug "CURRENT SERVER: #{current_server}"
         end
-        raise Cloud::Sdk::NodeException.new("No nodes available.  If the problem persists please contact Red Hat support.", 140), caller[0..5] unless current_server
+        raise Cloud::Sdk::NodeException.new("No nodes available.  If the problem persists please contact Red Hat support.", 140) unless current_server
         Rails.logger.debug "DEBUG: server.rb:find_available #{current_server}: #{current_capacity}"
         
         ApplicationContainerProxy.new(current_server, current_capacity)
+      end
+
+      def self.blacklisted?(name)
+        OpenShift::Blacklist.in_blacklist?(name)
       end
       
       IGNORE_CARTS = %w(abstract abstract-httpd li-controller embedded)
@@ -55,13 +59,16 @@ module Express
         parse_result(result)
       end
       
-      def add_authorized_ssh_key(app, ssh_key)
-        result = execute_direct(@@C_CONTROLLER, 'add-authorized-ssh-key', "-c '#{app.uuid}' -s '#{ssh_key}'")
+      def add_authorized_ssh_key(app, ssh_key, key_type=nil, message=nil)
+        cmd = "-c '#{app.uuid}' -s '#{ssh_key}'"
+        cmd += " -t '#{key_type}'" if key_type
+        cmd += " -m '#{message}'" if message
+        result = execute_direct(@@C_CONTROLLER, 'add-authorized-ssh-key', cmd)
         parse_result(result)
       end
       
       def remove_authorized_ssh_key(app, ssh_key)
-        result = execute_direct(@@C_CONTROLLER, 'add-authorized-ssh-key', "-c '#{app.uuid}' -s '#{ssh_key}'")
+        result = execute_direct(@@C_CONTROLLER, 'remove-authorized-ssh-key', "-c '#{app.uuid}' -s '#{ssh_key}'")
         parse_result(result)
       end
     
@@ -72,7 +79,7 @@ module Express
       
       def remove_env_var(app, key)
         result = execute_direct(@@C_CONTROLLER, 'remove-env-var', "-c '#{app.uuid}' -k '#{key}'")
-        parse_result(result)    
+        parse_result(result)
       end
     
       def add_broker_auth_key(app, iv, token)
@@ -133,6 +140,10 @@ module Express
         run_cartridge_command(cart, app, "tidy")
       end
       
+      def threaddump(app, cart)
+        run_cartridge_command(cart, app, "threaddump")
+      end
+      
       def add_alias(app, cart, server_alias)
         run_cartridge_command(cart, app, "add-alias", server_alias)
       end
@@ -161,17 +172,8 @@ module Express
       end
       
       def remove_component(app, component)
-        begin
-          Rails.logger.debug "DEBUG: Deconfiguring embedded application '#{component}' in application '#{app.name}' on node '#{@id}'"
-          return run_cartridge_command('embedded/' + component, app, 'deconfigure')
-        rescue Exception => e
-          #if still present
-            #raise
-          #else
-            Rails.logger.debug "DEBUG: Embedded application '#{component}' not found in application '#{app.name}' on node '#{@id}'.  Continuing with deconfigure."
-            Rails.logger.debug "DEBUG: Error from cartridge on deconfigure: #{e.message}"
-          #end
-        end
+        Rails.logger.debug "DEBUG: Deconfiguring embedded application '#{component}' in application '#{app.name}' on node '#{@id}'"
+        return run_cartridge_command('embedded/' + component, app, 'deconfigure')
       end
       
       def start_component(app, component)
@@ -194,12 +196,16 @@ module Express
         run_cartridge_command('embedded/' + component, app, "status")    
       end
       
-      def move_app(app, destination_container_proxy)
+      def move_app(app, destination_container_proxy, node_profile=nil)
         source_container = app.container
         
         unless app.embedded.nil?
-          raise Cloud::Sdk::UserException.new("Cannot move app '#{app.name}' with mysql embedded",1), caller[0..5] if app.embedded.has_key?('mysql-5.1') 
-          raise Cloud::Sdk::UserException.new("Cannot move app '#{app.name}' with mongo embedded",1), caller[0..5] if app.embedded.has_key?('mongodb-2.0')           
+          raise Cloud::Sdk::UserException.new("Cannot move app '#{app.name}' with mysql embedded",1) if app.embedded.has_key?('mysql-5.1') 
+          raise Cloud::Sdk::UserException.new("Cannot move app '#{app.name}' with mongo embedded",1) if app.embedded.has_key?('mongodb-2.0')           
+        end
+        
+        if node_profile
+          app.node_profile = node_profile
         end
 
         if destination_container_proxy.nil?
@@ -207,42 +213,42 @@ module Express
         end
 
         if source_container.id == destination_container_proxy.id
-          raise Cloud::Sdk::UserException.new("Error moving app.  Old and new servers are the same: #{source_container.id}", 1), caller[0..5]
+          raise Cloud::Sdk::UserException.new("Error moving app.  Old and new servers are the same: #{source_container.id}", 1)
         end
 
-        Rails.logger.debug "DEBUG: Moving app '#{app.name}' with uuid #{app.uuid} from #{source_container.id} to #{destination_container_proxy.id}"
+        log_debug "DEBUG: Moving app '#{app.name}' with uuid #{app.uuid} from #{source_container.id} to #{destination_container_proxy.id}"
 
         num_tries = 2
         reply = ResultIO.new
         begin
-          Rails.logger.debug "DEBUG: Stopping existing app '#{app.name}' before moving"
+          log_debug "DEBUG: Stopping existing app '#{app.name}' before moving"
           (1..num_tries).each do |i|
             begin
               reply.append source_container.stop(app, app.framework)
               break
             rescue Exception => e
-              Rails.logger.debug "DEBUG: Error stopping existing app on try #{i}: #{e.message}"
+              log_debug "DEBUG: Error stopping existing app on try #{i}: #{e.message}"
               raise if i == num_tries
             end
           end
 
           begin
-            Rails.logger.debug "DEBUG: Creating new account for app '#{app.name}' on #{destination_container_proxy.id}"
+            log_debug "DEBUG: Creating new account for app '#{app.name}' on #{destination_container_proxy.id}"
             reply.append destination_container_proxy.create(app)
 
-            Rails.logger.debug "DEBUG: Moving content for app '#{app.name}' to #{destination_container_proxy.id}"
-            Rails.logger.debug `eval \`ssh-agent\`; ssh-add /var/www/libra/broker/config/keys/rsync_id_rsa; ssh -o StrictHostKeyChecking=no -A root@#{source_container.get_ip_address} "rsync -a -e 'ssh -o StrictHostKeyChecking=no' /var/lib/libra/#{app.uuid}/ root@#{destination_container_proxy.get_ip_address}:/var/lib/libra/#{app.uuid}/"`
+            log_debug "DEBUG: Moving content for app '#{app.name}' to #{destination_container_proxy.id}"
+            log_debug `eval \`ssh-agent\`; ssh-add /var/www/libra/broker/config/keys/rsync_id_rsa; ssh -o StrictHostKeyChecking=no -A root@#{source_container.get_ip_address} "rsync -a -e 'ssh -o StrictHostKeyChecking=no' /var/lib/libra/#{app.uuid}/ root@#{destination_container_proxy.get_ip_address}:/var/lib/libra/#{app.uuid}/"`
             if $?.exitstatus != 0
-              raise Cloud::Sdk::NodeException.new("Error moving app '#{app.name}' from #{source_container.id} to #{destination_container_proxy.id}", 143), caller[0..5]
+              raise Cloud::Sdk::NodeException.new("Error moving app '#{app.name}' from #{source_container.id} to #{destination_container_proxy.id}", 143)
             end
 
             begin
-              Rails.logger.debug "DEBUG: Performing cartridge level move for '#{app.name}' on #{destination_container_proxy.id}"
-              reply.append destination_container_proxy.send(:run_cartridge_command, app.framework, app, "move")
+              log_debug "DEBUG: Performing cartridge level move for '#{app.name}' on #{destination_container_proxy.id}"
+              reply.append destination_container_proxy.send(:run_cartridge_command, app.framework, app, "move", nil, false)
               unless app.embedded.nil?
                 app.embedded.each do |cart, cart_info|
-                  Rails.logger.debug "DEBUG: Performing cartridge level move for embedded #{cart} for '#{app.name}' on #{destination_container_proxy.id}"
-                  reply.append destination_container_proxy.send(:run_cartridge_command, "embedded/" + cart, app, "move")
+                  log_debug "DEBUG: Performing cartridge level move for embedded #{cart} for '#{app.name}' on #{destination_container_proxy.id}"
+                  reply.append destination_container_proxy.send(:run_cartridge_command, "embedded/" + cart, app, "move", nil, false)
                 end
               end
               
@@ -252,67 +258,98 @@ module Express
                 end
               end
             rescue Exception => e
-              reply.append destination_container_proxy.send(:run_cartridge_command, app.framework, app, "remove_httpd_proxy")              
+              reply.append destination_container_proxy.send(:run_cartridge_command, app.framework, app, "remove_httpd_proxy", nil, false)          
               raise
             end
 
-            Rails.logger.debug "DEBUG: Starting '#{app.name}' after move on #{destination_container_proxy.id}"
+            log_debug "DEBUG: Starting '#{app.name}' after move on #{destination_container_proxy.id}"
             (1..num_tries).each do |i|
               begin
                 reply.append destination_container_proxy.start(app, app.framework)
                 break
               rescue Exception => e
-                Rails.logger.debug "DEBUG: Error starting after move on try #{i}: #{e.message}"
+                log_debug "DEBUG: Error starting after move on try #{i}: #{e.message}"
                 raise if i == num_tries
               end
             end
 
-            Rails.logger.debug "DEBUG: Fixing DNS and s3 for app '#{app.name}' after move"
-            Rails.logger.debug "DEBUG: Changing server identity of '#{app.name}' from '#{source_container.id}' to '#{destination_container_proxy.id}'"
+            log_debug "DEBUG: Fixing DNS and s3 for app '#{app.name}' after move"
+            log_debug "DEBUG: Changing server identity of '#{app.name}' from '#{source_container.id}' to '#{destination_container_proxy.id}'"
             app.server_identity = destination_container_proxy.id
             app.container = destination_container_proxy
-            reply.append app.destroy_dns
-            reply.append app.create_dns
+            reply.append app.recreate_dns
             app.save
           rescue Exception => e
             reply.append destination_container_proxy.destroy(app)
             raise
           end
         rescue Exception => e
-          reply.append source_container.start(app, app.framework)
+          reply.append source_container.run_cartridge_command(app.framework, app, "start", nil, false)
           raise
         ensure
-          Rails.logger.debug "URL: http://#{app.name}-#{app.user.namespace}.#{Rails.application.config.cdk[:domain_suffix]}"
+          log_debug "URL: http://#{app.name}-#{app.user.namespace}.#{Rails.application.config.cdk[:domain_suffix]}"
         end
 
-        Rails.logger.debug "DEBUG: Deconfiguring old app '#{app.name}' on #{source_container.id} after move"
+        log_debug "DEBUG: Deconfiguring old app '#{app.name}' on #{source_container.id} after move"
         (1..num_tries).each do |i|
           begin
+            reply.append source_container.run_cartridge_command(app.framework, app, "deconfigure", nil, false)
             reply.append source_container.destroy(app)
             break
           rescue Exception => e
-            Rails.logger.debug "DEBUG: Error deconfiguring old app on try #{i}: #{e.message}"
+            log_debug "DEBUG: Error deconfiguring old app on try #{i}: #{e.message}"
             raise if i == num_tries
           end
         end
-        Rails.logger.debug "Successfully moved '#{app.name}' with uuid #{app.uuid} from #{source_container.id} to #{destination_container_proxy.id}"
+        log_debug "Successfully moved '#{app.name}' with uuid #{app.uuid} from #{source_container.id} to #{destination_container_proxy.id}"
         reply
       end
       
       def update_namespace(app, cart, new_ns, old_ns)
-        begin
-          mcoll_reply = execute_direct(cart, 'update_namespace', "#{app.name} #{new_ns} #{old_ns} #{app.uuid}")
-          result = parse_result(mcoll_reply)
-          return result.exitcode == 0
-        rescue Exception => e
-          Rails.logger.debug "Exception caught updating namespace #{e.message}"
-          Rails.logger.debug "DEBUG: Exception caught updating namespace #{e.message}"
-          Rails.logger.debug e.backtrace
-        end
-        return false
+        mcoll_reply = execute_direct(cart, 'update_namespace', "#{app.name} #{new_ns} #{old_ns} #{app.uuid}")
+        parse_result(mcoll_reply)
       end
       
-      private
+      #
+      # Execute an RPC call for the specified agent.
+      # If a server is supplied, only execute for that server.
+      #
+      def self.rpc_exec(agent, server=nil, forceRediscovery=false, options = rpc_options)
+        if server
+          Rails.logger.debug("DEBUG: rpc_exec: Filtering rpc_exec to server #{server}")
+          # Filter to the specified server
+          options[:filter]["identity"] = server
+          options[:mcollective_limit_targets] = "1"
+        end
+      
+        # Setup the rpc client
+        rpc_client = rpcclient(agent, :options => options)
+        if forceRediscovery
+          rpc_client.reset
+        end
+        Rails.logger.debug("DEBUG: rpc_exec: rpc_client=#{rpc_client}")
+      
+        # Execute a block and make sure we disconnect the client
+        begin
+          result = yield rpc_client
+        ensure
+          rpc_client.disconnect
+        end
+      
+        result
+      end
+      
+      protected
+      
+      def log_debug(message)
+        Rails.logger.debug message
+        puts message
+      end
+      
+      def log_error(message)
+        Rails.logger.error message
+        puts message
+      end
       
       def execute_direct(cartridge, action, args)
           mc_args = { :cartridge => cartridge,
@@ -350,7 +387,12 @@ module Express
             #Rails.logger.debug "--output--\n\n#{output}\n\n"
           end
         else
-          raise Cloud::Sdk::NodeException.new("Node execution failure (error getting result from node).  If the problem persists please contact Red Hat support.", 143), caller[0..5]
+          server_identity = app ? ApplicationContainerProxy.find_app(app.uuid, app.name) : nil
+          if server_identity && @id != server_identity
+            raise Cloud::Sdk::InvalidNodeException.new("Node execution failure (invalid  node).  If the problem persists please contact Red Hat support.", 143, nil, server_identity)
+          else
+            raise Cloud::Sdk::NodeException.new("Node execution failure (error getting result from node).  If the problem persists please contact Red Hat support.", 143)
+          end
         end
         
         if output && !output.empty?
@@ -401,30 +443,113 @@ module Express
         result
       end
       
-      def run_cartridge_command(framework, app, command, arg=nil)
+      #
+      # Returns the server identity of the specified app
+      #
+      def self.find_app(app_uuid, app_name)
+        server_identity = nil
+        rpc_exec('libra') do |client|
+          client.has_app(:uuid => app_uuid,
+                         :application => app_name) do |response|
+            output = response[:body][:data][:output]
+            if output == true
+              server_identity = response[:senderid]
+            end
+          end
+        end
+        return server_identity
+      end
+      
+      #
+      # Returns whether this server has the specified app
+      #
+      def has_app?(app_uuid, app_name)
+        ApplicationContainerProxy.rpc_exec('libra', @id) do |client|
+          client.has_app(:uuid => app_uuid,
+                         :application => app_name) do |response|
+            output = response[:body][:data][:output]
+            return output == true
+          end
+        end
+      end
+      
+      #
+      # Returns whether this server has the specified embedded app
+      #
+      def has_embedded_app?(app_uuid, embedded_type)
+        ApplicationContainerProxy.rpc_exec('libra', @id) do |client|
+          client.has_embedded_app(:uuid => app_uuid,
+                                  :embedded_type => embedded_type) do |response|
+            output = response[:body][:data][:output]
+            return output == true
+          end
+        end
+      end
+      
+      def run_cartridge_command(framework, app, command, arg=nil, allow_move=true)
         arguments = "'#{app.name}' '#{app.user.namespace}' '#{app.uuid}'"
         arguments += " '#{arg}'" if arg
         
         result = execute_direct(framework, command, arguments)
-        resultIO = parse_result(result, app, command)
+        begin
+          resultIO = parse_result(result, app, command)
+        rescue Cloud::Sdk::InvalidNodeException => e
+          if command != 'configure' && allow_move
+            @id = e.server_identity
+            Rails.logger.debug "DEBUG: Changing server identity of '#{app.name}' from '#{app.server_identity}' to '#{@id}'"
+            dns_service = Cloud::Sdk::DnsService.instance
+            dns_service.deregister_application(app.name, app.user.namespace)
+            dns_service.register_application(app.name, app.user.namespace, get_public_hostname)
+            dns_service.publish
+            app.server_identity = @id
+            app.save
+            #retry
+            result = execute_direct(framework, command, arguments)
+            resultIO = parse_result(result, app, command)
+          else
+            raise
+          end
+        end
         if resultIO.exitcode != 0
           resultIO.debugIO << "Cartridge return code: " + resultIO.exitcode.to_s
-          raise Cloud::Sdk::NodeException.new("Node execution failure (invalid exit code from node).  If the problem persists please contact Red Hat support.", 143, resultIO), caller[0..5]
+          begin
+            raise Cloud::Sdk::NodeException.new("Node execution failure (invalid exit code from node).  If the problem persists please contact Red Hat support.", 143, resultIO)
+          rescue Cloud::Sdk::NodeException => e
+            if command == 'deconfigure'
+              if framework.start_with?('embedded/')
+                if has_embedded_app?(app.uuid, framework[9..-1])
+                  raise
+                else
+                  Rails.logger.debug "DEBUG: Component '#{framework}' in application '#{app.name}' not found on node '#{@id}'.  Continuing with deconfigure."
+                end
+              else
+                if has_app?(app.uuid, app.name)
+                  raise
+                else
+                  Rails.logger.debug "DEBUG: Application '#{app.name}' not found on node '#{@id}'.  Continuing with deconfigure."
+                end
+              end
+            else
+              raise
+            end
+          end
         end
         resultIO
       end
       
-      def self.rpc_find_available(node_profile="std", forceRediscovery=false)
+      def self.rpc_find_available(node_profile=nil, forceRediscovery=false)
         current_server, current_capacity = nil, nil
         additional_filters = [
-          {:fact => "node_profile",
-           :value => node_profile,
-           :operator => "=="},
           {:fact => "capacity",
            :value => "100",
            :operator => "<"
           }
         ]
+        if node_profile
+          additional_filters.push({:fact => "node_profile",
+                                   :value => node_profile,
+                                   :operator => "=="})
+        end
     
         rpc_get_fact('capacity', nil, forceRediscovery, additional_filters) do |server, capacity|
           Rails.logger.debug "Next server: #{server} capacity: #{capacity}"
@@ -501,42 +626,13 @@ module Express
             if (result && defined? result.results && result.results.has_key?(:data))
               value = result.results[:data][:value]
             else
-              raise NodeException.new(143), "Node execution failure (error getting fact).  If the problem persists please contact Red Hat support.", caller[0..5]
+              raise NodeException.new(143), "Node execution failure (error getting fact).  If the problem persists please contact Red Hat support."
             end
           ensure
             rpc_client.disconnect
           end
     
           return value
-      end
-    
-      #
-      # Execute an RPC call for the specified agent.
-      # If a server is supplied, only execute for that server.
-      #
-      def self.rpc_exec(agent, server=nil, forceRediscovery=false, options = rpc_options)
-        if server
-          Rails.logger.debug("DEBUG: rpc_exec: Filtering rpc_exec to server #{server}")
-          # Filter to the specified server
-          options[:filter]["identity"] = server
-          options[:mcollective_limit_targets] = "1"
-        end
-    
-        # Setup the rpc client
-        rpc_client = rpcclient(agent, :options => options)
-        if forceRediscovery
-          rpc_client.reset
-        end
-        Rails.logger.debug("DEBUG: rpc_exec: rpc_client=#{rpc_client}")
-    
-        # Execute a block and make sure we disconnect the client
-        begin
-          result = yield rpc_client
-        ensure
-          rpc_client.disconnect
-        end
-    
-        result
       end
     
       #

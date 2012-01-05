@@ -49,6 +49,4 @@ app  = Application.find(user, options[:app_name])
 
 destination_container = nil
 destination_container = Cloud::Sdk::ApplicationContainerProxy.instance(options[:target_server_identity]) if options[:target_server_identity]
-reply = app.container.move_app(app, destination_container)
-
-print reply.to_s
+reply = app.container.move_app(app, destination_container, options[:node_profile])

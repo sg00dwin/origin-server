@@ -15,6 +15,10 @@ module Cloud
         @proxy_provider.find_available_impl(node_profile)
       end
       
+      def self.blacklisted?(name)
+        @proxy_provider.blacklisted?(name)
+      end
+      
       attr_accessor :id
       def self.find_available_impl(node_profile=nil)
       end
@@ -32,7 +36,7 @@ module Cloud
       def destroy(app)
       end
       
-      def add_authorized_ssh_key(app, ssh_key)
+      def add_authorized_ssh_key(app, ssh_key, key_type=nil, comment=nil)
       end
       
       def remove_authorized_ssh_key(app, ssh_key)
@@ -83,6 +87,9 @@ module Cloud
       def tidy(app, cart)
       end
       
+      def threaddump(app, cart)
+      end
+      
       def add_alias(app, cart, server_alias)
       end
       
@@ -110,7 +117,7 @@ module Cloud
       def component_status(app, component)
       end
       
-      def move_app(app, destination_container_proxy)
+      def move_app(app, destination_container_proxy, node_profile=nil)
       end
       
       def update_namespace(app, cart, new_ns, old_ns)

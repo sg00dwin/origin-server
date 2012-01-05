@@ -1,5 +1,5 @@
 class LegacyRequest < Cloud::Sdk::Model
-  attr_accessor :namespace, :rhlogin, :ssh, :app_uuid, :app_name, :node_profile, :debug, :alter, :cartridge, :api, :cart_type, :action, :server_alias, :api, :key_name
+  attr_accessor :namespace, :rhlogin, :ssh, :app_uuid, :app_name, :node_profile, :debug, :alter, :cartridge, :api, :cart_type, :action, :server_alias, :api, :key_name, :key_type
   attr_reader   :invalid_keys
   
   APP_NAME_MAX_LENGTH = 32
@@ -23,16 +23,22 @@ class LegacyRequest < Cloud::Sdk::Model
   end
 
   validates_each :key_name, :allow_nil =>true do |record, attribute, val|
-    if !(val =~ /\A[a-f0-9]+\z/)
+    if !(val =~ /\A[A-Za-z0-9]+\z/)
       record.errors.add attribute, {:message => "Invalid key name: #{val}", :exit_code => 106}
     end
   end
   
+  validates_each :key_type, :allow_nil =>true do |record, attribute, val|
+    if !(val =~ /^(ssh-rsa|ssh-dss)$/)
+      record.errors.add attribute, {:message => "Invalid key type: #{val}", :exit_code => 106}
+    end
+  end
+
   validates_each :namespace, :allow_nil =>true do |record, attribute, val|
     if !(val =~ /\A[A-Za-z0-9]+\z/)
       record.errors.add attribute, {:message => "Invalid namespace: #{val}", :exit_code => 106}
     end
-    if val and (val.length > NAMESPACE_MAX_LENGTH) #or Blacklist.in_blacklist?(val))
+    if val and val.length > NAMESPACE_MAX_LENGTH
       record.errors.add attribute, {:message => "The namespace you entered (#{val}) is not available for use.  Please choose another one.", :exit_code => 106}
     end
   end
@@ -41,7 +47,7 @@ class LegacyRequest < Cloud::Sdk::Model
     if !(val =~ /\A[\w]+\z/)
       record.errors.add attribute, {:message => "Invalid #{attribute} specified: #{val}", :exit_code => 105}
     end
-    if val and (val.length > APP_NAME_MAX_LENGTH) #or Blacklist.in_blacklist?(val))
+    if val and val.length > APP_NAME_MAX_LENGTH
       record.errors.add attribute, {:message => "The supplied application name '#{val}' is not allowed", :exit_code => 105}
     end
   end
