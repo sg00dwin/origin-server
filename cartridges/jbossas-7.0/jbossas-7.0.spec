@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.84.4
+Version:   0.84.5
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -93,6 +93,11 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Thu Jan 05 2012 Dan McPherson <dmcphers@redhat.com> 0.84.5-1
+- mysql and mongo move (dmcphers@redhat.com)
+- added mod_cluster to standalone-ha.xml (wdecoste@localhost.localdomain)
+- added standalone-ha.xml (wdecoste@localhost.localdomain)
+
 * Wed Jan 04 2012 Dan McPherson <dmcphers@redhat.com> 0.84.4-1
 - initial checkin for US1614 -- jboss remote debugging ports. (ramr@redhat.com)
 
