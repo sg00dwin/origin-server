@@ -13,7 +13,7 @@ class Application < Cloud::Sdk::Model
     framework.split('-')[0..-2].join('-')
   end
 
-  def initialize(user=nil,app_name=nil,uuid=nil,node_profile=nil,framework=nil)
+  def initialize(user=nil, app_name=nil, uuid=nil, node_profile=nil, framework=nil)
     self.user = user
     self.name = app_name
     self.creation_time = DateTime::now().strftime
@@ -70,6 +70,7 @@ class Application < Cloud::Sdk::Model
       self.container = Cloud::Sdk::ApplicationContainerProxy.find_available(self.node_profile)
     end
     self.server_identity = self.container.id
+    save
     reply.append self.container.create(self)
     self.class.notify_observers(:after_application_create, {:application => self, :reply => reply})        
     reply
@@ -165,11 +166,27 @@ class Application < Cloud::Sdk::Model
     dns = Cloud::Sdk::DnsService.instance
     begin
       dns.deregister_application(@name,@user.namespace)
-      dns.publish      
+      dns.publish
     ensure
       dns.close
     end
     self.class.notify_observers(:after_destroy_dns, {:application => self, :reply => reply})  
+    reply
+  end
+  
+  def recreate_dns
+    reply = ResultIO.new
+    self.class.notify_observers(:before_recreate_dns, {:application => self, :reply => reply})    
+    dns = Cloud::Sdk::DnsService.instance
+    begin
+      dns.deregister_application(@name,@user.namespace)
+      public_hostname = @container.get_public_hostname
+      dns.register_application(@name,@user.namespace, public_hostname)
+      dns.publish
+    ensure
+      dns.close
+    end
+    self.class.notify_observers(:after_recreate_dns, {:application => self, :reply => reply})    
     reply
   end
   

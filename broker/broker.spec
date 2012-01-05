@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.84.21
+Version:   0.84.26
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -76,6 +76,24 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Wed Jan 04 2012 Dan McPherson <dmcphers@redhat.com> 0.84.26-1
+- Updating gem versions (dmcphers@redhat.com)
+
+* Wed Jan 04 2012 Dan McPherson <dmcphers@redhat.com> 0.84.25-1
+- Updating gem versions (dmcphers@redhat.com)
+- use user exception (dmcphers@redhat.com)
+- Adding cloud-sdk-controller unit tests (kraman@gmail.com)
+
+* Wed Jan 04 2012 Dan McPherson <dmcphers@redhat.com> 0.84.24-1
+- Updating gem versions (dmcphers@redhat.com)
+- better rollback logic (dmcphers@redhat.com)
+
+* Wed Jan 04 2012 Alex Boone <aboone@redhat.com> 0.84.23-1
+- Updating gem versions (aboone@redhat.com)
+
+* Wed Jan 04 2012 Alex Boone <aboone@redhat.com> 0.84.22-1
+- move fixes (dmcphers@redhat.com)
+
 * Tue Jan 03 2012 Dan McPherson <dmcphers@redhat.com> 0.84.21-1
 - streamline fix (dmcphers@redhat.com)
 
