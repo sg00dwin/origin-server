@@ -51,11 +51,10 @@ module OpenShift
         driver_cfg[:os] = cfg['os'] if cfg['os']
         driver_cfg[:browser] = cfg['browser'] if cfg['browser']
         driver_cfg[:browser_version] = cfg['browser-version'] if cfg['browser-version']
+        driver_cfg[:build] = ENV['JENKINS_BUILD'] || 'unofficial'
 
         @driver = build_driver(driver_cfg)
       end
-
-      #page.set_context "sauce:job-build=#{ENV['JENKINS_BUILD'] || 'unofficial'}"
 
       @page    = page
       @home    = OpenShift::Express::Home.new(page, "#{base_url}/app")
@@ -81,7 +80,7 @@ module OpenShift
         @driver.quit
 
         unless OpenShift::SeleniumTestCase.local?
-          set_meta(@driver.session_id, {:passed => @test_passed})
+          set_meta(session_id, {:passed => @test_passed})
         end
       end
       
