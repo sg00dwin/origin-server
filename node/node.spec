@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.84.17
+Version:       0.84.18
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -203,6 +203,9 @@ fi
 %dir %attr(0755,root,root) %{_sysconfdir}/libra/skel
 
 %changelog
+* Thu Jan 05 2012 Dan McPherson <dmcphers@redhat.com> 0.84.18-1
+- 
+
 * Thu Jan 05 2012 Dan McPherson <dmcphers@redhat.com> 0.84.17-1
 - mysql and mongo move (dmcphers@redhat.com)
 - Make UID range a command line option (rmillner@redhat.com)
