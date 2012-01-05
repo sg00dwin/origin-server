@@ -7,6 +7,59 @@
 UID_BEGIN=500
 UID_END=12700
 
+DEBUG=""
+SYSCONFIG=""
+
+
+function iptables {
+  if [ "${SYSCONFIG}" ]; then
+    echo "$@"
+  elif [ "${DEBUG}" ]; then
+    echo /sbin/iptables "$@"
+  else
+    /sbin/iptables "$@"
+  fi
+}
+
+function new_table {
+  if [ "${SYSCONFIG}" ]; then
+    echo ':'"$1"' REJECT [0:0]'
+  else
+    iptables -N "$1"
+    iptables -F "$1"
+    iptables -P "$1" REJECT
+  fi
+}
+
+
+function help {
+  echo "Usage: $0 [ -n ] [ -s ]" >&2
+  echo "    -n   Print what would be done." >&2
+  echo "    -s   Print output suitable for /etc/sysconfig/iptables." >&2
+}
+
+while getopts ':hns' opt; do
+  case $opt in
+    'h')
+      help
+      exit 0
+      ;;
+    'n')
+      DEBUG=1
+      ;;
+    's')
+      SYSCONFIG=1
+      ;;
+    '?')
+      echo "Invalid option: -$OPTARG"
+      help
+      exit 1
+      ;;
+  esac
+done
+
+
+
 # Bottom block is system services, quick bypass
 iptables -A OUTPUT -o lo -d 127.0.0.0/25 \
   -m owner --uid-owner ${UID_BEGIN}-${UID_END} \
@@ -21,9 +74,7 @@ iptables -A OUTPUT -o lo -d 127.0.0.0/8 \
 
 
 # New connections with specific uids get checked on the app table.
-iptables -N rhc-app-table
-iptables -F rhc-app-table
-iptables -P rhc-app-table REJECT
+new_table rhc-app-table
 
 iptables -A OUTPUT -o lo -d 127.0.0.0/8 \
   -m owner --uid-owner ${UID_BEGIN}-${UID_END} \
