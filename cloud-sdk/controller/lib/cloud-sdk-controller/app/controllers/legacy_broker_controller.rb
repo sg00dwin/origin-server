@@ -173,14 +173,14 @@ class LegacyBrokerController < ApplicationController
             @reply.append app.destroy_dns
             raise
           end
-        rescue Cloud::Sdk::UserException => e
-          raise
         rescue Exception => e
-          Rails.logger.debug e.message
-          Rails.logger.debug e.backtrace.inspect
-          @reply.append app.deconfigure_dependencies
-          @reply.append app.destroy
-          app.delete
+          if app.persisted?
+            Rails.logger.debug e.message
+            Rails.logger.debug e.backtrace.inspect
+            @reply.append app.deconfigure_dependencies
+            @reply.append app.destroy
+            app.delete
+          end
           raise
         end
         @reply.resultIO << "Successfully created application: #{app.name}" if @reply.resultIO.length == 0
