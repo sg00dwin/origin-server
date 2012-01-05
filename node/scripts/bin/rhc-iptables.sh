@@ -10,6 +10,43 @@ UID_END=12700
 DEBUG=""
 SYSCONFIG=""
 
+function help {
+  echo "Usage: $0 [ -n ] [ -s ] [ -b Beginning UID ] [ -e Ending UID ]" >&2
+  echo "    -n       Print what would be done." >&2
+  echo "    -s       Print output suitable for /etc/sysconfig/iptables." >&2
+  echo "    -b UID   Beginning UID.  (default: $UID_BEGIN)"  >&2
+  echo "    -e UID   Ending UID.  (default: $UID_END)"  >&2
+}
+
+while getopts ':hnsb:e:' opt; do
+  case $opt in
+    'h')
+      help
+      exit 0
+      ;;
+    'n')
+      DEBUG=1
+      ;;
+    's')
+      SYSCONFIG=1
+      ;;
+    'b')
+      UID_BEGIN="${OPTARG}"
+      ;;
+    'e')
+      UID_END="${OPTARG}"
+      ;;
+    '?')
+      echo "Invalid option: -$OPTARG" >&2
+      exit 1
+      ;;
+    ':')
+      echo "Option requires argument: -$OPTARG" >&2
+      exit 1
+      ;;
+  esac
+done
+
 
 function iptables {
   if [ "${SYSCONFIG}" ]; then
@@ -30,34 +67,6 @@ function new_table {
     iptables -P "$1" REJECT
   fi
 }
-
-
-function help {
-  echo "Usage: $0 [ -n ] [ -s ]" >&2
-  echo "    -n   Print what would be done." >&2
-  echo "    -s   Print output suitable for /etc/sysconfig/iptables." >&2
-}
-
-while getopts ':hns' opt; do
-  case $opt in
-    'h')
-      help
-      exit 0
-      ;;
-    'n')
-      DEBUG=1
-      ;;
-    's')
-      SYSCONFIG=1
-      ;;
-    '?')
-      echo "Invalid option: -$OPTARG"
-      help
-      exit 1
-      ;;
-  esac
-done
-
 
 
 # Bottom block is system services, quick bypass
