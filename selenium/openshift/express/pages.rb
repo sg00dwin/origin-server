@@ -20,7 +20,7 @@ module OpenShift
 
       def click(element)
         text = @items[element]
-        @page.find_element(:xpath, "//a[text()=\"#{text}\"]").click
+        @page.find_element(:link_text, text).click
       end
     end
 
