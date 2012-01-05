@@ -2,7 +2,7 @@
 
 Summary:   Provides php-5.3 support
 Name:      rhc-cartridge-php-5.3
-Version:   0.84.2
+Version:   0.84.3
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -91,6 +91,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Thu Jan 05 2012 Dan McPherson <dmcphers@redhat.com> 0.84.3-1
+- mysql and mongo move (dmcphers@redhat.com)
+
 * Wed Dec 21 2011 Dan McPherson <dmcphers@redhat.com> 0.84.2-1
 - undo accidental commit (dmcphers@redhat.com)
 - Bug 769211 (dmcphers@redhat.com)
