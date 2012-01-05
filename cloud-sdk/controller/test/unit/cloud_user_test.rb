@@ -1,5 +1,5 @@
-require 'cloud-sdk-controller'
 require 'test_helper'
+require 'cloud-sdk-controller'
 require 'mocha'
 
 module Rails
@@ -124,35 +124,128 @@ class CloudUserTest < ActiveSupport::TestCase
     end
   end
 
-  
-  test "adding secondary ssh key" do
+  test "system ssh key" do
+    ssh = "AAAAB3NzaC1yc2EAAAABIwAAAQEAvzdpZ/3+PUi3SkYQc3j8v5W8+PUNqWe7p3xd9r1y4j60IIuCS4aaVqorVPhwrOCPD5W70aeLM/B3oO3QaBw0FJYfYBWvX3oi+FjccuzSmMoyaYweXCDWxyPi6arBqpsSf3e8YQTEkL7fwOQdaZWtW7QHkiDCfcB/LIUZCiaArm2taIXPvaoz/hhHnqB2s3W/zVP2Jf5OkQHsVOTxYr/Hb+/gV3Zrjy+tE9+z2ivL+2M0iTIoSVsUcz0d4g4XpgM8eG9boq1YGzeEhHe1BeliHmAByD8PwU74tOpdpzDnuKf8E9Gnwhsp2yqwUUkkBUoVcv1LXtimkEyIl0dSeRRcMw=="
+    namespace = "kraman.cloudsdk.net"
+    rhlogin = "kraman@redhat.com"
+    apps = [mock("app1"), mock("app2")]
+    apps.each {|app| app.expects(:add_authorized_ssh_key).returns(ResultIO.new).once}
+    apps.each {|app| app.expects(:name).once}    
+    
+    user = CloudUser.new(rhlogin, ssh, namespace)
+    user.expects(:save).once
+    user.expects(:applications).returns(apps)
+    
+    user.add_system_ssh_key("app_name", "key")
+    assert user.system_ssh_keys["app_name"].nil? == false
+    
+    apps = [mock("app1"), mock("app2")]
+    apps.each {|app| app.expects(:remove_authorized_ssh_key).returns(ResultIO.new).once}
+    apps.each {|app| app.expects(:name).once}
+    user.expects(:save).once
+    user.expects(:applications).returns(apps)
+    
+    user.remove_system_ssh_key("app_name")
+    assert user.system_ssh_keys["app_name"].nil?    
   end
   
-  test "removing secondary ssh key" do
+  test "environment variable" do
+    ssh = "AAAAB3NzaC1yc2EAAAABIwAAAQEAvzdpZ/3+PUi3SkYQc3j8v5W8+PUNqWe7p3xd9r1y4j60IIuCS4aaVqorVPhwrOCPD5W70aeLM/B3oO3QaBw0FJYfYBWvX3oi+FjccuzSmMoyaYweXCDWxyPi6arBqpsSf3e8YQTEkL7fwOQdaZWtW7QHkiDCfcB/LIUZCiaArm2taIXPvaoz/hhHnqB2s3W/zVP2Jf5OkQHsVOTxYr/Hb+/gV3Zrjy+tE9+z2ivL+2M0iTIoSVsUcz0d4g4XpgM8eG9boq1YGzeEhHe1BeliHmAByD8PwU74tOpdpzDnuKf8E9Gnwhsp2yqwUUkkBUoVcv1LXtimkEyIl0dSeRRcMw=="
+    namespace = "kraman.cloudsdk.net"
+    rhlogin = "kraman@redhat.com"
+    apps = [mock("app1"), mock("app2")]
+    apps.each {|app| app.expects(:add_env_var).returns(ResultIO.new).once}
+    apps.each {|app| app.expects(:name).once}    
+    
+    user = CloudUser.new(rhlogin, ssh, namespace)
+    user.expects(:save).once
+    user.expects(:applications).returns(apps)
+    
+    user.add_env_var("key", "value")
+    assert user.env_vars["key"] == "value"
+    
+    apps = [mock("app1"), mock("app2")]
+    apps.each {|app| app.expects(:remove_env_var).returns(ResultIO.new).once}
+    apps.each {|app| app.expects(:name).once}
+    user.expects(:save).once
+    user.expects(:applications).returns(apps)
+    
+    user.remove_env_var("key")
+    assert user.env_vars["key"].nil?
   end
   
-  test "adding system ssh key" do
-  end
-  
-  test "removing system ssh key" do
-  end
-  
-  test "adding environment variable" do
-  end
-  
-  test "removing environment variable" do
-  end
-  
-  test "creating a new user" do
-  end
-  
-  test "deleting a user" do
+  test "secondary ssh key" do
+    ssh = "AAAAB3NzaC1yc2EAAAABIwAAAQEAvzdpZ/3+PUi3SkYQc3j8v5W8+PUNqWe7p3xd9r1y4j60IIuCS4aaVqorVPhwrOCPD5W70aeLM/B3oO3QaBw0FJYfYBWvX3oi+FjccuzSmMoyaYweXCDWxyPi6arBqpsSf3e8YQTEkL7fwOQdaZWtW7QHkiDCfcB/LIUZCiaArm2taIXPvaoz/hhHnqB2s3W/zVP2Jf5OkQHsVOTxYr/Hb+/gV3Zrjy+tE9+z2ivL+2M0iTIoSVsUcz0d4g4XpgM8eG9boq1YGzeEhHe1BeliHmAByD8PwU74tOpdpzDnuKf8E9Gnwhsp2yqwUUkkBUoVcv1LXtimkEyIl0dSeRRcMw=="
+    namespace = "kraman.cloudsdk.net"
+    rhlogin = "kraman@redhat.com"
+    apps = [mock("app1"), mock("app2")]
+    apps.each {|app| app.expects(:add_authorized_ssh_key).returns(ResultIO.new).once}
+    apps.each {|app| app.expects(:name).once}    
+    
+    user = CloudUser.new(rhlogin, ssh, namespace)
+    user.expects(:save).once
+    user.expects(:applications).returns(apps)
+    
+    user.add_secondary_ssh_key("key_name", "key")
+    assert user.ssh_keys["key_name"].nil? == false
+    
+    apps = [mock("app1"), mock("app2")]
+    apps.each {|app| app.expects(:remove_authorized_ssh_key).returns(ResultIO.new).once}
+    apps.each {|app| app.expects(:name).once}
+    user.expects(:save).once
+    user.expects(:applications).returns(apps)
+    
+    user.remove_secondary_ssh_key("key_name")
+    assert user.ssh_keys["key_name"].nil?
   end
   
   test "updating namespace" do
-  end
-  
-  test "updating namespace and ssh when ssh update fails" do
+    #first create a user
+    ssh = "AAAAB3NzaC1yc2EAAAABIwAAAQEAvzdpZ/3+PUi3SkYQc3j8v5W8+PUNqWe7p3xd9r1y4j60IIuCS4aaVqorVPhwrOCPD5W70aeLM/B3oO3QaBw0FJYfYBWvX3oi+FjccuzSmMoyaYweXCDWxyPi6arBqpsSf3e8YQTEkL7fwOQdaZWtW7QHkiDCfcB/LIUZCiaArm2taIXPvaoz/hhHnqB2s3W/zVP2Jf5OkQHsVOTxYr/Hb+/gV3Zrjy+tE9+z2ivL+2M0iTIoSVsUcz0d4g4XpgM8eG9boq1YGzeEhHe1BeliHmAByD8PwU74tOpdpzDnuKf8E9Gnwhsp2yqwUUkkBUoVcv1LXtimkEyIl0dSeRRcMw=="
+    namespace = "kraman.cloudsdk.net"
+    rhlogin = "kraman@redhat.com"
+    user = CloudUser.new(rhlogin, ssh, namespace)
+     
+    CloudUser.expects(:find).returns(nil)
+    Cloud::Sdk::DnsService.instance.class.any_instance.expects(:namespace_available?).with(namespace).returns(true)
+    Cloud::Sdk::DataStore.instance.class.any_instance.expects(:save)
+    Cloud::Sdk::DnsService.instance.class.any_instance.expects(:register_namespace).with(namespace).at_least_once
+    Cloud::Sdk::DnsService.instance.class.any_instance.expects(:publish).at_least_once
+    Cloud::Sdk::DnsService.instance.class.any_instance.expects(:close).at_least_once
+    user.save
+    Mocha::Mockery.instance.stubba.unstub_all
+
+    #update namespace
+    app_container = mock()
+    app_container.expects(:get_public_hostname).returns("foo.bar").at_least_once
+    apps = [mock("app1"), mock("app2")]
+    apps.each {|app|
+      app.expects(:update_namespace).once.returns(ResultIO.new)
+      app.expects(:embedded).returns({})
+      app.expects(:container).returns(app_container)
+      app.expects(:save)      
+    }
+    apps[0].expects(:name).at_least_once.returns("app1")
+    apps[1].expects(:name).at_least_once.returns("app2")
+    user.expects(:applications).returns(apps).at_least_once
+
+    observer_seq = sequence("observer_seq")
+    CloudUser.expects(:notify_observers).with(:before_namespace_update, user).in_sequence(observer_seq).at_least_once
+    CloudUser.expects(:notify_observers).with(:namespace_update_success, user).in_sequence(observer_seq).at_least_once
+    CloudUser.expects(:notify_observers).with(:after_namespace_update, user).in_sequence(observer_seq).at_least_once
+    
+    user.namespace = new_namespace = "kraman.cloudsdk1.net"
+    Cloud::Sdk::DnsService.instance.class.any_instance.expects(:namespace_available?).with(new_namespace).returns(true)
+    Cloud::Sdk::DnsService.instance.class.any_instance.expects(:deregister_namespace).with(namespace).once
+    Cloud::Sdk::DnsService.instance.class.any_instance.expects(:register_namespace).with(new_namespace).once
+    Cloud::Sdk::DnsService.instance.class.any_instance.expects(:publish).once
+    
+    Cloud::Sdk::DnsService.instance.class.any_instance.expects(:deregister_application).with("app1", namespace).once
+    Cloud::Sdk::DnsService.instance.class.any_instance.expects(:deregister_application).with("app2", namespace).once
+    Cloud::Sdk::DnsService.instance.class.any_instance.expects(:register_application).with("app1", new_namespace, "foo.bar").once
+    Cloud::Sdk::DnsService.instance.class.any_instance.expects(:register_application).with("app2", new_namespace, "foo.bar").once
+    
+    user.update_namespace
   end
   
   def teardown
