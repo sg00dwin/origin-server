@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.84.11
+Version:       0.84.13
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -12,7 +12,7 @@ Source0:       rhc-node-%{version}.tar.gz
 BuildRoot:     %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires: ruby
 Requires:      rhc-common
-Requires:      rhc-selinux
+Requires:      rhc-selinux >= 0.84.7-1
 Requires:      git
 Requires:      libcgroup
 Requires:      mcollective
@@ -203,6 +203,19 @@ fi
 %dir %attr(0755,root,root) %{_sysconfdir}/libra/skel
 
 %changelog
+* Wed Jan 04 2012 Dan McPherson <dmcphers@redhat.com> 0.84.13-1
+- pull in a more rhc-selinux (mmcgrath@redhat.com)
+
+* Wed Jan 04 2012 Alex Boone <aboone@redhat.com> 0.84.12-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- removed limits.d from /var/lib/libra (mmcgrath@redhat.com)
+- adding auto-create of limits.d (mmcgrath@redhat.com)
+- check for symlink of conf.d/libra (mmcgrath@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- Converting /etc/httpd/conf.d/ to a symlink (mmcgrath@redhat.com)
+
 * Wed Jan 04 2012 Alex Boone <aboone@redhat.com> 0.84.11-1
 - node.spec: Added Requires for libjpeg-devel libpng-devel giflib-devel
   (tdawson@redhat.com)

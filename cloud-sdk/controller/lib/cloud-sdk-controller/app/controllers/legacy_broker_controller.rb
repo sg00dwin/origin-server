@@ -141,7 +141,7 @@ class LegacyBrokerController < ApplicationController
     case @req.action
     when 'configure'    #create app and configure framework
       apps = user.applications
-      
+
       app = Application.new(user, @req.app_name, nil, @req.node_profile, @req.cartridge)
       container = Cloud::Sdk::ApplicationContainerProxy.find_available(@req.node_profile)
       check_cartridge_type(app.framework, container, "standalone")
@@ -152,7 +152,6 @@ class LegacyBrokerController < ApplicationController
       if app.valid?
         begin
           @reply.append app.create(container)
-          app.save
           @reply.append app.configure_dependencies
           @reply.append app.add_system_ssh_keys
           @reply.append app.add_secondary_ssh_keys
