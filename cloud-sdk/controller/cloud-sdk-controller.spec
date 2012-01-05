@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.2.21
+Version:        0.2.22
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        AGPLv3
@@ -72,6 +72,11 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Wed Jan 04 2012 Dan McPherson <dmcphers@redhat.com> 0.2.22-1
+- Updating gem versions (dmcphers@redhat.com)
+- use user exception (dmcphers@redhat.com)
+- Adding cloud-sdk-controller unit tests (kraman@gmail.com)
+
 * Wed Jan 04 2012 Dan McPherson <dmcphers@redhat.com> 0.2.21-1
 - Updating gem versions (dmcphers@redhat.com)
 - better rollback logic (dmcphers@redhat.com)
