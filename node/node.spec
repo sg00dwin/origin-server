@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.84.16
+Version:       0.84.17
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -203,6 +203,15 @@ fi
 %dir %attr(0755,root,root) %{_sysconfdir}/libra/skel
 
 %changelog
+* Thu Jan 05 2012 Dan McPherson <dmcphers@redhat.com> 0.84.17-1
+- mysql and mongo move (dmcphers@redhat.com)
+- Make UID range a command line option (rmillner@redhat.com)
+- Output for /etc/sysconfig/iptables or just run the iptables commands.
+  (rmillner@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rmillner@redhat.com)
+- Script to generate app iptables rules (rmillner@redhat.com)
+
 * Wed Jan 04 2012 Dan McPherson <dmcphers@redhat.com> 0.84.16-1
 - allow re-entrant update namespace (dmcphers@redhat.com)
 
