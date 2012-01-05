@@ -12,7 +12,7 @@ source ${CART_INFO_DIR}/lib/util
 
 start_postgres_as_user
 
-/usr/bin/pg_dumpall -h $OPENSHIFT_DB_HOST -p $OPENSHIFT_DB_PORT -u $OPENSHIFT_DB_USERNAME | /bin/gzip -v > $OPENSHIFT_DATA_DIR/postgresql_dump_snapshot.gz
+/usr/bin/pg_dumpall | /bin/gzip -v > $OPENSHIFT_DATA_DIR/postgresql_dump_snapshot.gz
 
 if [ ! ${PIPESTATUS[0]} -eq 0 ]
 then

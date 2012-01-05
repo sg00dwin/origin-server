@@ -38,7 +38,7 @@ function _service_start() {
    if _is_service_running; then
       echo "$SERVICE_NAME server instance already running" 1>&2
    else
-      pglogfile="$CART_INSTANCE_DIR/logs/postgres.log"
+      pglogfile="$CART_INSTANCE_DIR/log/postgres.log"
       /usr/bin/postgres -D $CART_INSTANCE_DIR/data > $pglogfile 2>&1 &
       wait_to_start_as_user
    fi
@@ -78,13 +78,13 @@ function _service_stop() {
 # main():
 #
 # Ensure arguments.
-if ! [ $# -eq 1 ] then
+if ! [ $# -eq 1 ]; then
     echo "Usage: $0 [start|restart|stop]"
     exit 1
 fi
 
 # Import Environment Variables
-for f in ~/.env/* do
+for f in ~/.env/*; do
     . $f
 done
 
