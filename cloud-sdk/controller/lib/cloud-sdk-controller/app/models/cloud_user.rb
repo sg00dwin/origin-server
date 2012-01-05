@@ -84,14 +84,14 @@ class CloudUser < Cloud::Sdk::Model
     result
   end
   
-  def add_secondary_ssh_key(key_name, key)
+  def add_secondary_ssh_key(key_name, key, key_type=nil)
     self.ssh_keys = {} unless self.ssh_keys
     result = ResultIO.new
     self.ssh_keys[key_name] = key
     self.save
     applications.each do |app|
       Rails.logger.debug "DEBUG: Adding secondary key named #{key_name} to app: #{app.name} for user #{@name}"
-      result.append app.add_authorized_ssh_key(key)
+      result.append app.add_authorized_ssh_key(key, key_type, comment="-#{key_name}")
     end
     result
   end
@@ -99,7 +99,7 @@ class CloudUser < Cloud::Sdk::Model
   def remove_secondary_ssh_key(key_name)
     self.ssh_keys = {} unless self.ssh_keys    
     result = ResultIO.new
-    key = self.ssh_keys[app_name]
+    key = self.ssh_keys[key_name]
     return unless key
     applications.each do |app|
       Rails.logger.debug "DEBUG: Removing secondary key named #{key_name} from app: #{app.name} for user #{@name}"

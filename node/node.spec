@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.84.13
+Version:       0.84.15
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -103,6 +103,7 @@ perl -p -i -e 's:/cgroup/[^\s]+;:/cgroup/all;:; /blkio|cpuset|devices/ && ($_ = 
 /sbin/restorecon /var/lib/libra || :
 /sbin/restorecon /var/run/libra || :
 /sbin/restorecon /usr/bin/rhc-cgroup-read || :
+/sbin/restorecon /var/lib/libra/.httpd.d/ || :
 /usr/bin/rhc-restorecon || :
 # only enable if cgconfig is
 chkconfig cgconfig && /sbin/service libra-cgroups start > /dev/null 2>&1 || :
@@ -202,6 +203,16 @@ fi
 %dir %attr(0755,root,root) %{_sysconfdir}/libra/skel
 
 %changelog
+* Wed Jan 04 2012 Dan McPherson <dmcphers@redhat.com> 0.84.15-1
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li
+  (wdecoste@localhost.localdomain)
+- Bug 771716 migration (wdecoste@localhost.localdomain)
+
+* Wed Jan 04 2012 Dan McPherson <dmcphers@redhat.com> 0.84.14-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- force a restorecon on httpd.d (mmcgrath@redhat.com)
+
 * Wed Jan 04 2012 Dan McPherson <dmcphers@redhat.com> 0.84.13-1
 - pull in a more rhc-selinux (mmcgrath@redhat.com)
 

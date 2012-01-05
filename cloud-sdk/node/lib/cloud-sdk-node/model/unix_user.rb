@@ -103,14 +103,16 @@ module Cloud::SDK::Model
       notify_observers(:after_unix_user_destroy)
     end
     
-    def add_ssh_key(key)
+    def add_ssh_key(key, key_type=nil, comment=nil)
       self.class.notify_observers(:before_add_ssh_key, self, key)
       ssh_dir = File.join(@homedir, ".ssh")
       cloud_name = @config.get("cloud_name") || "CDK"
       authorized_keys_file = File.join(ssh_dir,"authorized_keys")
-      shell    = @config.get("user_shell")     || "/bin/bash"      
+      shell    = @config.get("user_shell")     || "/bin/bash"
+      key_type = key_type || "ssh-rsa"
+      comment  = comment  || ""
       
-      cmd_entry = "command=\"#{shell}\",no-port-forwarding,no-X11-forwarding ssh-rsa #{key} #{cloud_name}-#{@uuid}\n"
+      cmd_entry = "command=\"#{shell}\",no-port-forwarding,no-X11-forwarding #{key_type} #{key} #{cloud_name}-#{@uuid}#{comment}\n"
       FileUtils.mkdir_p ssh_dir
       FileUtils.chmod(0o0750,ssh_dir)
       File.open(authorized_keys_file, File::WRONLY|File::APPEND|File::CREAT, 0o0440) do |file|

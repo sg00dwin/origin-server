@@ -59,8 +59,11 @@ module Express
         parse_result(result)
       end
       
-      def add_authorized_ssh_key(app, ssh_key)
-        result = execute_direct(@@C_CONTROLLER, 'add-authorized-ssh-key', "-c '#{app.uuid}' -s '#{ssh_key}'")
+      def add_authorized_ssh_key(app, ssh_key, key_type=nil, message=nil)
+        cmd = "-c '#{app.uuid}' -s '#{ssh_key}'"
+        cmd += " -t '#{key_type}'" if key_type
+        cmd += " -m '#{message}'" if message
+        result = execute_direct(@@C_CONTROLLER, 'add-authorized-ssh-key', cmd)
         parse_result(result)
       end
       
