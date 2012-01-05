@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/metrics-0.1
 
 Name: rhc-cartridge-metrics-0.1
-Version: 0.6.1
+Version: 0.6.2
 Release: 1%{?dist}
 Summary: Embedded metrics support for express
 
@@ -47,6 +47,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Thu Jan 05 2012 Dan McPherson <dmcphers@redhat.com> 0.6.2-1
+- mysql and mongo move (dmcphers@redhat.com)
+
 * Wed Dec 14 2011 Dan McPherson <dmcphers@redhat.com> 0.6.1-1
 - bump spec numbers (dmcphers@redhat.com)
 
