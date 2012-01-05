@@ -103,6 +103,7 @@ perl -p -i -e 's:/cgroup/[^\s]+;:/cgroup/all;:; /blkio|cpuset|devices/ && ($_ = 
 /sbin/restorecon /var/lib/libra || :
 /sbin/restorecon /var/run/libra || :
 /sbin/restorecon /usr/bin/rhc-cgroup-read || :
+/sbin/restorecon /var/lib/libra/.httpd.d/ || :
 /usr/bin/rhc-restorecon || :
 # only enable if cgconfig is
 chkconfig cgconfig && /sbin/service libra-cgroups start > /dev/null 2>&1 || :
