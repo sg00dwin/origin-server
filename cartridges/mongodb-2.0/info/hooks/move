@@ -65,8 +65,6 @@ IP=$OPENSHIFT_INTERNAL_IP
 echo "export OPENSHIFT_NOSQL_DB_HOST='$IP'" > $APP_HOME/.env/OPENSHIFT_NOSQL_DB_HOST
 echo "export OPENSHIFT_NOSQL_DB_URL='mongodb://$OPENSHIFT_NOSQL_DB_USERNAME:$OPENSHIFT_NOSQL_DB_PASSWORD@$IP:27017/'" > $APP_HOME/.env/OPENSHIFT_NOSQL_DB_URL
 
-pushd "$MONGODB_DIR" > /dev/null
 sed -i "s,$ORIG_DB_HOST,$IP," $MONGODB_DIR/etc/mongodb.conf
-popd > /dev/null
 
 set_app_info "Connection URL: mongodb://$IP:27017/"
