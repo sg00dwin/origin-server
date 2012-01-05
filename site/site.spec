@@ -16,6 +16,7 @@ Requires:  rhc-server-common
 Requires:  httpd
 Requires:  mod_ssl
 Requires:  mod_passenger
+Requires:  ruby-geoip
 Requires:  rubygem-passenger-native-libs
 Requires:  rubygem-rails
 Requires:  rubygem-json
