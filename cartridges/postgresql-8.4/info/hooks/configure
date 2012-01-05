@@ -60,16 +60,23 @@ IP=$OPENSHIFT_INTERNAL_IP
 # Create the core of the application
 #
 
-if [ -d "$PSQL_DIR" ]
-then
+if [ -d "$PSQL_DIR" ]; then
     client_error "Embedded PostgreSQL-8.4 already attached to $application"
     exit 132
 fi
+
+if [ -f $APP_HOME/.env/OPENSHIFT_DB_TYPE ]; then
+    client_error "Only 1 embedded database permitted per application - application currently has `cat $APP_HOME/.env/OPENSHIFT_DB_TYPE`"
+    exit 132
+fi
+
+touch $APP_HOME/.psql_history
+touch $APP_HOME/.pgpass
+chmod 0600 $APP_HOME/.pgpass
 mkdir -p "$PSQL_DIR"
 pushd "$PSQL_DIR" > /dev/null
 mkdir -p log etc data socket pid run
-sed "s,RHC_PSQLDIR,$PSQL_DIR," $CART_ETC_DIR/postgresql.conf > $PSQL_DIR/etc/postgresql.conf
-sed -i "s,RHC_BIND_ADDR,$IP," $PSQL_DIR/etc/postgresql.conf
+chmod go-rwx data
 popd > /dev/null
 
 #
@@ -80,15 +87,37 @@ ln -s $CART_INFO_DIR/bin/postgresql_ctl.sh $PSQL_DIR/${application}_postgresql_c
 #
 # Setup Permissions
 #
-
 chmod +x "$PSQL_DIR/"*.sh || error "Failed to chmod new application scripts" 122
 chown $user_id.$group_id -R $PSQL_DIR/ || error "Failed to chown new application space.  Please contact support" 123
 # Secure script and root dir (so they can't chown the script)
 chown root.root "$PSQL_DIR" "$PSQL_DIR"/*.sh
 chcon -t libra_var_lib_t -l $mcs_level -R "$PSQL_DIR"
+chcon -t libra_var_lib_t -l $mcs_level $APP_HOME/.psql_history
+chcon -t libra_var_lib_t -l $mcs_level $APP_HOME/.pgpass
 
+#
+# Initialize database
+#
+/bin/su -s /bin/sh "$uuid" -c "/usr/bin/initdb --pgdata=\"$PSQL_DIR/data\" --auth='ident'" || error "Failed to initialize db" 124
 
-start_postgres
+#
+# Overlay default configuration files.
+#
+pushd "$PSQL_DIR" > /dev/null
+mkdir data/pg_log
+chmod go-rwx data/pg_log
+chown $user_id.$group_id data/pg_log/ || error "Failed to chown pg_log directory. Please contact support" 126
+chcon -t libra_var_lib_t -l $mcs_level -R "$PSQL_DIR"
+sed "s,RHC_PSQLDIR,$PSQL_DIR," $CART_ETC_DIR/postgresql.conf > $PSQL_DIR/data/postgresql.conf
+sed -i "s,RHC_BIND_ADDR,$IP," $PSQL_DIR/data/postgresql.conf
+cp -f $CART_ETC_DIR/pg_hba.conf $PSQL_DIR/data/pg_hba.conf
+popd > /dev/null
+
+#
+# Start postgres and initialize database
+#
+start_postgresql
+/bin/su -s /bin/sh "$uuid" -c "/usr/bin/createdb \"$application\"" || error "Failed to create default database" 125
 
 # Generate a password with no o's O's or 0's
 password=$(generate_password)
@@ -112,13 +141,13 @@ echo "export OPENSHIFT_DB_POSTGRESQL_84_EMBEDDED_TYPE='postgresql-8.4'" > $APP_H
 chown $user_id $APP_HOME/.env/OPENSHIFT_DB_USERNAME $APP_HOME/.env/OPENSHIFT_DB_PASSWORD
 
 ## Setup automatic login file.
-echo "$IP:5432:$application:admin:$password" > $APP_HOME/.pgpass
+echo "$IP:5432:*:admin:$password" > $APP_HOME/.pgpass
 chmod 0400 $APP_HOME/.pgpass
 
 ## Setup user
-echo "
-  CREATE USER admin WITH SUPERUSER PASSWORD '$password';
-  CREATE DATABASE \`${application}\`;" | psql -u root -S "${PSQL_DIR}/socket/postgresql.sock" > /dev/null || error "Failed to create ${application}" 188
+if [ 2 -eq 1 ]; then
+   echo "CREATE USER admin WITH SUPERUSER PASSWORD '$password';" | /usr/bin/psql > /dev/null || error "Failed to create admin user for ${application}" 188
+fi
 
 client_result ""
 client_result "PostgreSQL 8.4 database added.  Please make note of these credentials:"

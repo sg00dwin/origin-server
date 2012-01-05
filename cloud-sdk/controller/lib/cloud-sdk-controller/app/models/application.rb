@@ -13,7 +13,7 @@ class Application < Cloud::Sdk::Model
     framework.split('-')[0..-2].join('-')
   end
 
-  def initialize(user=nil,app_name=nil,uuid=nil,node_profile=nil,framework=nil)
+  def initialize(user=nil, app_name=nil, uuid=nil, node_profile=nil, framework=nil)
     self.user = user
     self.name = app_name
     self.creation_time = DateTime::now().strftime
@@ -70,6 +70,7 @@ class Application < Cloud::Sdk::Model
       self.container = Cloud::Sdk::ApplicationContainerProxy.find_available(self.node_profile)
     end
     self.server_identity = self.container.id
+    save
     reply.append self.container.create(self)
     self.class.notify_observers(:after_application_create, {:application => self, :reply => reply})        
     reply
@@ -128,8 +129,8 @@ class Application < Cloud::Sdk::Model
     reply
   end
 
-  def add_authorized_ssh_key(ssh_key)
-    self.container.add_authorized_ssh_key(self, ssh_key)
+  def add_authorized_ssh_key(ssh_key, key_type=nil, comment=nil)
+    self.container.add_authorized_ssh_key(self, ssh_key, key_type, comment)
   end
   
   def remove_authorized_ssh_key(ssh_key)

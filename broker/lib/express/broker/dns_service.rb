@@ -107,7 +107,7 @@ module Express
           Rails.logger.debug "DEBUG: Response code: #{resp.code}"
           Rails.logger.debug "DEBUG: Response body: #{resp.body}"
         end
-        raise DNSException.new(145), "Error communicating with DNS system.  If the problem persists please contact Red Hat support."
+        raise Cloud::Sdk::DNSException.new(145), "Error communicating with DNS system.  If the problem persists please contact Red Hat support."
       end
       
       def self.delete_app_dns_entries(app_name, namespace, auth_token, retries=2)

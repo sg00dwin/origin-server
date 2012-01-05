@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Node
 Name:           rubygem-%{gemname}
-Version:        0.2.12
+Version:        0.2.15
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        AGPLv3
@@ -49,6 +49,9 @@ mkdir -p %{buildroot}%{_bindir}/cdk
 mkdir -p %{buildroot}%{_sysconfdir}/cdk
 mkdir -p %{buildroot}%{gemdir}
 mkdir -p %{buildroot}%{ruby_sitelib}
+mkdir -p %{_bindir}
+
+ln -s %{geminstdir}/lib/cloud-sdk-node/express/setup_pam_fs_limits.sh %{buildroot}/%{_bindir}/setup_pam_fs_limits.sh
 
 # Build and install into the rubygem structure
 gem build %{gemname}.gemspec
@@ -84,6 +87,18 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Wed Jan 04 2012 Dan McPherson <dmcphers@redhat.com> 0.2.15-1
+- Updating gem versions (dmcphers@redhat.com)
+- US1608: support DSA keys (rpenta@redhat.com)
+- US1608: support DSA keys (rpenta@redhat.com)
+
+* Wed Jan 04 2012 Dan McPherson <dmcphers@redhat.com> 0.2.14-1
+- Updating gem versions (dmcphers@redhat.com)
+
+* Wed Jan 04 2012 Alex Boone <aboone@redhat.com> 0.2.13-1
+- Updating gem versions (aboone@redhat.com)
+- adding auto-create of limits.d (mmcgrath@redhat.com)
+
 * Thu Dec 29 2011 Dan McPherson <dmcphers@redhat.com> 0.2.12-1
 - 770784 (dmcphers@redhat.com)
 

@@ -38,8 +38,10 @@ end
 
 require 'cloud-sdk-node'
 opts = GetoptLong.new(
-    ["--with-uuid",        "-c", GetoptLong::REQUIRED_ARGUMENT],
-    ["--with-ssh-key",     "-s", GetoptLong::REQUIRED_ARGUMENT]
+    ["--with-uuid",            "-c", GetoptLong::REQUIRED_ARGUMENT],
+    ["--with-ssh-key",         "-s", GetoptLong::REQUIRED_ARGUMENT],
+    ["--with-ssh-key-type",    "-t", GetoptLong::REQUIRED_ARGUMENT],
+    ["--with-ssh-key-comment", "-m", GetoptLong::REQUIRED_ARGUMENT]
 )
 
 args = {}
@@ -57,6 +59,8 @@ end
 
 uuid = args['--with-uuid']
 ssh_key = args['--with-ssh-key']
+key_type = args['--with-ssh-key-type']
+comment = args['--with-ssh-key-comment']
 
 unless uuid and ssh_key
   usage
@@ -65,7 +69,7 @@ end
 
 begin
   container = Cloud::SDK::Model::ApplicationContainer.new(uuid,uuid)
-  container.user.add_ssh_key(ssh_key)
+  container.user.add_ssh_key(ssh_key, key_type, comment)
 rescue Exception => e
   $stderr.puts(e.message)
   exit -1

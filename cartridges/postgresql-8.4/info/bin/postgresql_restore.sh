@@ -16,8 +16,7 @@ then
     start_postgres_as_user
 
     # Restore the PostgreSQL databases
-    /bin/zcat $OPENSHIFT_DATA_DIR/postgresql_dump_snapshot.gz |  \
-         /usr/bin/psql -h $OPENSHIFT_DB_HOST -p $OPENSHIFT_DB_PORT -W -u $OPENSHIFT_DB_USERNAME
+    /bin/zcat $OPENSHIFT_DATA_DIR/postgresql_dump_snapshot.gz | /usr/bin/psql
     if [ ! ${PIPESTATUS[1]} -eq 0 ]
     then
         echo 1>&2

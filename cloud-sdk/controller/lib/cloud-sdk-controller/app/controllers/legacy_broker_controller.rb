@@ -37,11 +37,13 @@ class LegacyBrokerController < ApplicationController
       case @req.action
       when "add-key"
         raise Cloud::Sdk::UserException.new("Missing SSH key or key name", 105) if @req.ssh.nil? or @req.key_name.nil?
-        user.ssh_keys.each do |key_name, key|
-          raise Cloud::Sdk::UserException.new("Key with name #{@req.key_name} already exists. Please choose a different name", 105) if key_name == @req.key_name
-          raise Cloud::Sdk::UserException.new("Given public key is already in use. Use different key or delete conflicting key and retry", 105) if key == @req.ssh
+        if user.ssh_keys
+          user.ssh_keys.each do |key_name, key|
+            raise Cloud::Sdk::UserException.new("Key with name #{@req.key_name} already exists. Please choose a different name", 105) if key_name == @req.key_name
+            raise Cloud::Sdk::UserException.new("Given public key is already in use. Use different key or delete conflicting key and retry", 105) if key == @req.ssh
+          end
         end
-        @reply.append user.add_secondary_ssh_key(@req.key_name, @req.ssh)
+        @reply.append user.add_secondary_ssh_key(@req.key_name, @req.ssh, @req.key_type)
         user.save
       when "remove-key"
         raise Cloud::Sdk::UserException.new("Missing key name", 105) if @req.key_name.nil?
@@ -50,7 +52,7 @@ class LegacyBrokerController < ApplicationController
       when "update-key"
         raise Cloud::Sdk::UserException.new("Missing SSH key or key name", 105) if @req.ssh.nil? or @req.key_name.nil?
         @reply.append user.remove_secondary_ssh_key(@req.key_name)
-        @reply.append user.add_secondary_ssh_key(@req.key_name, @req.ssh)
+        @reply.append user.add_secondary_ssh_key(@req.key_name, @req.ssh, @req.key_type)
       when "list-keys"
         @reply.data = { :keys => user.ssh_keys }.to_json
       else
@@ -58,7 +60,7 @@ class LegacyBrokerController < ApplicationController
       end
       render :json => @reply
     else
-      raise Cloud::Sdk::CdkException.new("Invalid user", 99)
+      raise Cloud::Sdk::UserException.new("Invalid user", 99)
     end
   end
   
@@ -80,12 +82,12 @@ class LegacyBrokerController < ApplicationController
        render :json => @reply
        return
     else
-      raise Cloud::Sdk::CdkException.new("The supplied namespace '#{@req.namespace}' is not allowed", 106) if Cloud::Sdk::ApplicationContainerProxy.blacklisted? @req.namespace
+      raise Cloud::Sdk::UserException.new("The supplied namespace '#{@req.namespace}' is not allowed", 106) if Cloud::Sdk::ApplicationContainerProxy.blacklisted? @req.namespace
       cloud_user = CloudUser.new(@login, @req.ssh, @req.namespace)
     end
 
     if cloud_user.invalid?
-      @reply.resultIO << cloud_user.errors.first[1]
+      @reply.resultIO << cloud_user.errors.first[1][:message]
       render :json => @reply, :status => :invalid 
       return
     end
@@ -95,12 +97,12 @@ class LegacyBrokerController < ApplicationController
         if cloud_user.ssh_changed?
           cloud_user.applications.each do |app|
             @reply.append app.remove_authorized_ssh_key(cloud_user.ssh_was)
-            @reply.append app.add_authorized_ssh_key(cloud_user.ssh)
+            @reply.append app.add_authorized_ssh_key(cloud_user.ssh, @req.key_type)
           end
         end
 
         if cloud_user.namespace_changed?
-          raise Cloud::Sdk::CdkException.new("The supplied namespace '#{@req.namespace}' is not allowed", 106) if Cloud::Sdk::ApplicationContainerProxy.blacklisted? @req.namespace
+          raise Cloud::Sdk::UserException.new("The supplied namespace '#{@req.namespace}' is not allowed", 106) if Cloud::Sdk::ApplicationContainerProxy.blacklisted? @req.namespace
           cloud_user.update_namespace()
         end
       end
@@ -136,23 +138,22 @@ class LegacyBrokerController < ApplicationController
   def cartridge_post
     @req.node_profile ||= "std"
     user = CloudUser.find(@login)
-    raise Cloud::Sdk::CdkException.new("Invalid user", 99) if user.nil?
+    raise Cloud::Sdk::UserException.new("Invalid user", 99) if user.nil?
     
     case @req.action
     when 'configure'    #create app and configure framework
       apps = user.applications
-      
+
       app = Application.new(user, @req.app_name, nil, @req.node_profile, @req.cartridge)
       container = Cloud::Sdk::ApplicationContainerProxy.find_available(@req.node_profile)
       check_cartridge_type(app.framework, container, "standalone")
       if (apps.length >= Rails.application.config.cdk[:per_user_app_limit])
         raise Cloud::Sdk::UserException.new("#{@login} has already reached the application limit of #{Rails.application.config.cdk[:per_user_app_limit]}", 104)
       end
-      raise Cloud::Sdk::CdkException.new("The supplied application name '#{app.name}' is not allowed", 105) if Cloud::Sdk::ApplicationContainerProxy.blacklisted? app.name
+      raise Cloud::Sdk::UserException.new("The supplied application name '#{app.name}' is not allowed", 105) if Cloud::Sdk::ApplicationContainerProxy.blacklisted? app.name
       if app.valid?
         begin
           @reply.append app.create(container)
-          app.save
           @reply.append app.configure_dependencies
           @reply.append app.add_system_ssh_keys
           @reply.append app.add_secondary_ssh_keys
@@ -175,16 +176,18 @@ class LegacyBrokerController < ApplicationController
             raise
           end
         rescue Exception => e
-          Rails.logger.debug e.message
-          Rails.logger.debug e.backtrace.inspect
-          @reply.append app.deconfigure_dependencies
-          @reply.append app.destroy
-          app.delete
+          if app.persisted?
+            Rails.logger.debug e.message
+            Rails.logger.debug e.backtrace.inspect
+            @reply.append app.deconfigure_dependencies
+            @reply.append app.destroy
+            app.delete
+          end
           raise
         end
         @reply.resultIO << "Successfully created application: #{app.name}" if @reply.resultIO.length == 0
       else
-        @reply.result = app.errors.first[1]
+        @reply.result = app.errors.first[1][:message]
         render :json => @reply, :status => :invalid 
         return
       end
@@ -246,7 +249,7 @@ class LegacyBrokerController < ApplicationController
   
   def embed_cartridge_post
     user = CloudUser.find(@login)    
-    raise Cloud::Sdk::CdkException.new("Invalid user", 99) if user.nil?
+    raise Cloud::Sdk::UserException.new("Invalid user", 99) if user.nil?
         
     app = get_app_from_request(user)
     
@@ -301,7 +304,7 @@ class LegacyBrokerController < ApplicationController
     begin
       @req = LegacyRequest.new.from_json(params['json_data'])
       if @req.invalid?
-        @reply.resultIO << @req.errors.first[1]
+        @reply.resultIO << @req.errors.first[1][:message]
         render :json => @reply, :status => :invalid 
       end
     end

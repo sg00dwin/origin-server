@@ -13,6 +13,7 @@ BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildArch: noarch
 
 Requires: rhc-node
+Requires: postgresql
 Requires: postgresql-server
 Requires: postgresql-libs
 Requires: postgresql-devel
@@ -22,7 +23,6 @@ Requires: postgresql-plperl
 Requires: postgresql-plpython
 Requires: postgresql-pltcl
 Requires: PyGreSQL
-Requires: mod_auth_pgsql
 Requires: perl-Class-DBI-Pg
 Requires: perl-DBD-Pg
 Requires: perl-DateTime-Format-Pg
