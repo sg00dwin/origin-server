@@ -45,7 +45,7 @@ function mv_symlink {
     new_namespace=$2
     appname=$3
 
-    if [ $unobfuscate -eq 1 ]
+    if [ $unobfuscate -eq 1 ] && [ -d ${libra_dir}/${appname}-${old_namespace} ]
     then
         mv "${libra_dir}/${appname}-${old_namespace}" "${libra_dir}/${appname}-${new_namespace}"
     fi
