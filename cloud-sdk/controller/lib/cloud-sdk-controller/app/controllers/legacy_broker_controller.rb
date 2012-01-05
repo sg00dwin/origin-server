@@ -37,11 +37,13 @@ class LegacyBrokerController < ApplicationController
       case @req.action
       when "add-key"
         raise Cloud::Sdk::UserException.new("Missing SSH key or key name", 105) if @req.ssh.nil? or @req.key_name.nil?
-        user.ssh_keys.each do |key_name, key|
-          raise Cloud::Sdk::UserException.new("Key with name #{@req.key_name} already exists. Please choose a different name", 105) if key_name == @req.key_name
-          raise Cloud::Sdk::UserException.new("Given public key is already in use. Use different key or delete conflicting key and retry", 105) if key == @req.ssh
+        if user.ssh_keys
+          user.ssh_keys.each do |key_name, key|
+            raise Cloud::Sdk::UserException.new("Key with name #{@req.key_name} already exists. Please choose a different name", 105) if key_name == @req.key_name
+            raise Cloud::Sdk::UserException.new("Given public key is already in use. Use different key or delete conflicting key and retry", 105) if key == @req.ssh
+          end
         end
-        @reply.append user.add_secondary_ssh_key(@req.key_name, @req.ssh)
+        @reply.append user.add_secondary_ssh_key(@req.key_name, @req.ssh, @req.key_type)
         user.save
       when "remove-key"
         raise Cloud::Sdk::UserException.new("Missing key name", 105) if @req.key_name.nil?
@@ -50,7 +52,7 @@ class LegacyBrokerController < ApplicationController
       when "update-key"
         raise Cloud::Sdk::UserException.new("Missing SSH key or key name", 105) if @req.ssh.nil? or @req.key_name.nil?
         @reply.append user.remove_secondary_ssh_key(@req.key_name)
-        @reply.append user.add_secondary_ssh_key(@req.key_name, @req.ssh)
+        @reply.append user.add_secondary_ssh_key(@req.key_name, @req.ssh, @req.key_type)
       when "list-keys"
         @reply.data = { :keys => user.ssh_keys }.to_json
       else
@@ -95,7 +97,7 @@ class LegacyBrokerController < ApplicationController
         if cloud_user.ssh_changed?
           cloud_user.applications.each do |app|
             @reply.append app.remove_authorized_ssh_key(cloud_user.ssh_was)
-            @reply.append app.add_authorized_ssh_key(cloud_user.ssh)
+            @reply.append app.add_authorized_ssh_key(cloud_user.ssh, @req.key_type)
           end
         end
 

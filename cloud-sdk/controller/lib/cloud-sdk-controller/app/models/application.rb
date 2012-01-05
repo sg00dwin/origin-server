@@ -128,8 +128,8 @@ class Application < Cloud::Sdk::Model
     reply
   end
 
-  def add_authorized_ssh_key(ssh_key)
-    self.container.add_authorized_ssh_key(self, ssh_key)
+  def add_authorized_ssh_key(ssh_key, key_type=nil, comment=nil)
+    self.container.add_authorized_ssh_key(self, ssh_key, key_type, comment)
   end
   
   def remove_authorized_ssh_key(ssh_key)

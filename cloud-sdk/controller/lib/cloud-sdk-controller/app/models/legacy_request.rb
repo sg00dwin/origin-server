@@ -1,5 +1,5 @@
 class LegacyRequest < Cloud::Sdk::Model
-  attr_accessor :namespace, :rhlogin, :ssh, :app_uuid, :app_name, :node_profile, :debug, :alter, :cartridge, :api, :cart_type, :action, :server_alias, :api, :key_name
+  attr_accessor :namespace, :rhlogin, :ssh, :app_uuid, :app_name, :node_profile, :debug, :alter, :cartridge, :api, :cart_type, :action, :server_alias, :api, :key_name, :key_type
   attr_reader   :invalid_keys
   
   APP_NAME_MAX_LENGTH = 32
@@ -28,6 +28,12 @@ class LegacyRequest < Cloud::Sdk::Model
     end
   end
   
+  validates_each :key_type, :allow_nil =>true do |record, attribute, val|
+    if !(val =~ /^(ssh-rsa|ssh-dss)$/)
+      record.errors.add attribute, {:message => "Invalid key type: #{val}", :exit_code => 106}
+    end
+  end
+
   validates_each :namespace, :allow_nil =>true do |record, attribute, val|
     if !(val =~ /\A[A-Za-z0-9]+\z/)
       record.errors.add attribute, {:message => "Invalid namespace: #{val}", :exit_code => 106}

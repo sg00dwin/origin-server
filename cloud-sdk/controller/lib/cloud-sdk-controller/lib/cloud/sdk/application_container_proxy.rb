@@ -36,7 +36,7 @@ module Cloud
       def destroy(app)
       end
       
-      def add_authorized_ssh_key(app, ssh_key)
+      def add_authorized_ssh_key(app, ssh_key, key_type=nil, comment=nil)
       end
       
       def remove_authorized_ssh_key(app, ssh_key)
