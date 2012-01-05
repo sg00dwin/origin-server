@@ -64,7 +64,7 @@ module OpenShift
       def initialize(page,path)
         super
         @items = {
-          :whats_flex => "What\'s Flex?",
+          :whats_flex => "What's Flex?",
           :videos => 'Videos',
           :documentation => 'Documentation',
           :forum => 'Forum',
