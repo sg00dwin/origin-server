@@ -21,6 +21,11 @@ module LibraMigration
 
       sed_output, sed_exitcode = Util.execute_script("sed -i 's/Libra-#{uuid}/OPENSHIFT-#{uuid}/' #{app_home}/.ssh/authorized_keys")
       output += sed_output
+      
+      if app_type == 'jenkins-1.4'
+        sed_output, sed_exitcode = Util.execute_script("sed -i 's,<url>https://#{libra_server}/broker</url>,<brokerHost>#{libra_server}</brokerHost><brokerPort></brokerPort>,' #{app_dir}/data/config.xml")
+        output += sed_output
+      end
 
     else
       exitcode = 127
