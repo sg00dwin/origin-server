@@ -1,4 +1,4 @@
-policy_module(libra,1.0.27)
+policy_module(libra,1.0.28)
 
 ########################################
 #
@@ -148,7 +148,7 @@ files_dontaudit_search_spool(libra_domain)
 files_read_etc_files(libra_domain)
 files_read_usr_files(libra_domain)
 files_dontaudit_getattr_non_security_sockets(libra_domain)
-# files_dontaudit_setattr_etc_runtime_files(libra_domain)
+files_dontaudit_setattr_etc_runtime_files(libra_domain)
 
 libs_exec_lib_files(libra_domain)
 
@@ -381,12 +381,3 @@ mta_dontaudit_read_spool_symlinks(libra_mail_t)
 
 userdom_dontaudit_use_user_ptys(libra_mail_t)
 
-permissive libra_mail_t;
-
-# Will Remove when this fix gets into RHEL6.3 policy
-# selinux-policy-3.7.19-133.el6
-gen_require(`
-	attribute mta_user_agent;
-')
-allow mta_user_agent libra_domain:fd use;
-allow mta_user_agent libra_domain:process sigchld;
