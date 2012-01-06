@@ -77,6 +77,22 @@ function _move_postgres_service() {
    source ${CART_DIR}/abstract/info/lib/apache
    source ${CART_DIR}/abstract/info/lib/network
    load_node_conf
+   
+. $APP_HOME/.env/OPENSHIFT_INTERNAL_IP
+IP=$OPENSHIFT_INTERNAL_IP
+
+. $APP_HOME/.env/OPENSHIFT_DB_PORT
+. $APP_HOME/.env/OPENSHIFT_DB_HOST
+. $APP_HOME/.env/OPENSHIFT_DB_PASSWORD
+. $APP_HOME/.env/OPENSHIFT_DB_USERNAME
+
+ORIG_DB_HOST=$OPENSHIFT_DB_HOST
+echo "export OPENSHIFT_DB_URL='postgresql://$OPENSHIFT_DB_USERNAME:$OPENSHIFT_DB_PASSWORD@$IP:$OPENSHIFT_DB_PORT/'" > $APP_HOME/.env/OPENSHIFT_DB_URL
+
+sed -i "s,$ORIG_DB_HOST,$IP," $PSQL_DIR/data/postgresql.conf
+echo "$IP:$OPENSHIFT_DB_PORT:*:$OPENSHIFT_DB_USERNAME:$OPENSHIFT_DB_PASSWORD" > $APP_HOME/.pgpass
+
+set_app_info "Connection URL: postgresql://$IP:5432/"
 
 }  #  End of function  _move_postgres_service.
 
