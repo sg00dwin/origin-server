@@ -293,8 +293,12 @@ allow libra_t self:process setexec;
 #
 # Postgresql support
 #
+require {
+	type postgresql_exec_t;
+}
 
-# postgresql_exec(libra_t)
+# postgresql_exec(libra_domain)
+can_exec(libra_domain, postgresql_exec_t)
 corenet_tcp_bind_postgresql_port(libra_t)
 
 ##########
