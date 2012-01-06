@@ -508,10 +508,10 @@ END
           cmd = "cd li-test/site; rake test"
           run_ssh(hostname, "Site Unit", cmd)
         end
-        #threads << Thread.new do
-        #  cmd = "cd li-test/cloud-sdk/controller; rake test"
-        #  run_ssh(hostname, "Cloud SDK Unit", cmd)
-        #end
+        threads << Thread.new do
+          cmd = "cd li-test/cloud-sdk/controller; rake test"
+          run_ssh(hostname, "Cloud SDK Unit", cmd)
+        end
       end
       
       threads << Thread.new do

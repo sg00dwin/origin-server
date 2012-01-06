@@ -61,7 +61,7 @@ class Application < Cloud::Sdk::Model
   end
   
   #creates a new application container on a node and initializes it
-  def create(container)
+  def create(container=nil)
     reply = ResultIO.new
     self.class.notify_observers(:before_application_create, {:application => self, :reply => reply})
     if container
