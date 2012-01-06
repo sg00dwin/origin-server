@@ -1,5 +1,5 @@
 class LegacyRequest < Cloud::Sdk::Model
-  attr_accessor :namespace, :rhlogin, :ssh, :app_uuid, :app_name, :node_profile, :debug, :alter, :cartridge, :api, :cart_type, :action, :server_alias, :api, :key_name, :key_type
+  attr_accessor :namespace, :rhlogin, :ssh, :app_uuid, :app_name, :node_profile, :debug, :alter, :delete, :cartridge, :api, :cart_type, :action, :server_alias, :api, :key_name, :key_type
   attr_reader   :invalid_keys
   
   APP_NAME_MAX_LENGTH = 32
@@ -70,7 +70,7 @@ class LegacyRequest < Cloud::Sdk::Model
     end
   end
   
-  validates_each :debug, :alter, :allow_nil =>true do |record, attribute, val|
+  validates_each :debug, :alter, :delete, :allow_nil =>true do |record, attribute, val|
     if val != true && val != false && !(val =~ /\A(true|false)\z/)
       record.errors.add attribute, {:message => "Invalid value for #{attribute} specified: #{val}", :exit_code => 1}
     end
@@ -95,7 +95,7 @@ class LegacyRequest < Cloud::Sdk::Model
   end
   
   validates_each :action, :allow_nil =>true do |record, attribute, val|
-    if !(val =~ /\A[\w]+\z/)
+    if !(val =~ /\A[\w\-\.]+\z/)
       record.errors.add attribute, {:message => "Invalid action specified: #{val}", :exit_code => 111}
     end
   end
@@ -114,6 +114,10 @@ class LegacyRequest < Cloud::Sdk::Model
     @debug == "true" || @debug == true
   end
   
+  def delete
+    @delete == "true" || @delete == true
+  end
+
   def attributes=(hash)
     hash.each do |key,value|
       begin

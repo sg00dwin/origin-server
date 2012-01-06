@@ -6,23 +6,39 @@
 
 UID_BEGIN=500
 UID_END=12700
+UTABLE="rhc-app-table"
 
 DEBUG=""
 SYSCONFIG=""
 
 function help {
-  echo "Usage: $0 [ -n ] [ -s ] [ -b Beginning UID ] [ -e Ending UID ]" >&2
-  echo "    -n       Print what would be done." >&2
-  echo "    -s       Print output suitable for /etc/sysconfig/iptables." >&2
-  echo "    -b UID   Beginning UID.  (default: $UID_BEGIN)"  >&2
-  echo "    -e UID   Ending UID.  (default: $UID_END)"  >&2
+  cat <<EOF >&2
+Usage: $0 [ -h ] [ -i | -n | -s ] [ -b UID ] [ -e UID ] [ -t name ]
+
+    Basic options:
+    -h       Print this message and exit.
+
+    Output/execution type
+    -i       Run iptables (default mode)
+    -n       Print what would be done instead of calling iptables.
+    -s       Print output suitable for /etc/sysconfig/iptables.
+
+    Less common options that must remain consistent across invocation
+    -b UID   Beginning UID.  (default: $UID_BEGIN)
+    -e UID   Ending UID.  (default: $UID_END)
+    -t name  Table name (default: $UTABLE)
+EOF
 }
 
-while getopts ':hnsb:e:' opt; do
+while getopts ':hinsb:e:t:' opt; do
   case $opt in
     'h')
       help
       exit 0
+      ;;
+    'i')
+      DEBUG=""
+      SYSCONFIG=""
       ;;
     'n')
       DEBUG=1
@@ -36,6 +52,9 @@ while getopts ':hnsb:e:' opt; do
     'e')
       UID_END="${OPTARG}"
       ;;
+    't')
+      UTABLE="${OPTARG}"
+      ;;
     '?')
       echo "Invalid option: -$OPTARG" >&2
       exit 1
@@ -47,6 +66,11 @@ while getopts ':hnsb:e:' opt; do
   esac
 done
 
+# Test combinations of arguments for compatibility
+if [ "${DEBUG}" = "1" -a "${SYSCONFIG}" = "1" ]; then
+  echo "Debug (-n) and Sysconfig (-s) are mutually exclusive." >&2
+  exit 1
+fi
 
 function iptables {
   if [ "${SYSCONFIG}" ]; then
@@ -60,20 +84,20 @@ function iptables {
 
 function new_table {
   if [ "${SYSCONFIG}" ]; then
-    echo ':'"$1"' REJECT [0:0]'
+    echo ':'"$1"' - [0:0]'
   else
-    iptables -N "$1"
+    iptables -N "$1" || :
     iptables -F "$1"
-    iptables -P "$1" REJECT
   fi
 }
 
+# Create the table and clear it
+new_table ${UTABLE}
 
 # Bottom block is system services, quick bypass
 iptables -A OUTPUT -o lo -d 127.0.0.0/25 \
   -m owner --uid-owner ${UID_BEGIN}-${UID_END} \
   -j ACCEPT
-
 
 # Established connections quickly bypass
 iptables -A OUTPUT -o lo -d 127.0.0.0/8 \
@@ -81,19 +105,19 @@ iptables -A OUTPUT -o lo -d 127.0.0.0/8 \
   -m state --state ESTABLISHED,RELATED \
   -j ACCEPT
 
-
 # New connections with specific uids get checked on the app table.
-new_table rhc-app-table
-
 iptables -A OUTPUT -o lo -d 127.0.0.0/8 \
   -m owner --uid-owner ${UID_BEGIN}-${UID_END} \
   -m state --state NEW \
-  -j rhc-app-table
+  -j ${UTABLE}
 
 seq ${UID_BEGIN} ${UID_END} | while read uid; do
   # Logic copied from rhc-ip-prep
   a=$(($uid*128+2130706432))
   net=$(($a>>24 )).$(($(($a%16777216))<<8>>24)).$(($(($a%65536))<<16>>24)).$(($(($a%256))<<24>>24))
 
-  iptables -A rhc-app-table -d ${net}/25 -m owner --uid-owner $uid -j ACCEPT 
+  iptables -A ${UTABLE} -d ${net}/25 -m owner --uid-owner $uid -j ACCEPT 
 done
+
+# Can't set default policy on a table, set reject at the bottom
+iptables -A ${UTABLE} -j REJECT --reject-with icmp-host-prohibited
