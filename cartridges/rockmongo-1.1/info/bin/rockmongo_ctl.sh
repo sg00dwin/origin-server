@@ -20,7 +20,7 @@ validate_user_context.sh
 
 export PHPRC="${OPENSHIFT_ROCKMONGO_APP_DIR}conf/php.ini"
 
-CART_CONF_DIR=/usr/libexec/li/cartridges/embedded/rockmongo-1.1/info/configuration/etc/conf
+CART_CONF_DIR=${CART_DIR}/embedded/rockmongo-1.1/info/configuration/etc/conf
 
 case "$1" in
     start)
