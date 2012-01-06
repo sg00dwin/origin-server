@@ -299,8 +299,10 @@ require {
 	type tmpfs_t;
 }
 
+# Uncomment when we have selinux-policy-3.7.19-134.el6
+# fs_rw_inherited_tmpfs_files(libra_domain)
 # postgresql_exec(libra_domain)
-can_exec(libra_domain, postgresql_exec_t)
+can_exec(libra_t, postgresql_exec_t)
 corenet_tcp_bind_postgresql_port(libra_t)
 # Do not allow open or create, just allow it to use inherited from kernel
 allow libra_t tmpfs_t:file { read write };
