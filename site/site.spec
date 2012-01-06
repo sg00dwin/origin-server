@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.84.8
+Version:   0.84.9
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -68,6 +68,13 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Fri Jan 06 2012 Dan McPherson <dmcphers@redhat.com> 0.84.9-1
+- scss: purple link looks web 1.0 (hylkebons@gmail.com)
+- scss: cleaner plain page style (hylkebons@gmail.com)
+- scss: footer and copyright (hylkebons@gmail.com)
+- New features page (hylkebons@gmail.com)
+- New features page (hylkebons@gmail.com)
+
 * Wed Jan 04 2012 Alex Boone <aboone@redhat.com> 0.84.8-1
 - Periodically re-verify the SSO ticket (fixes exploit from BZ 753981)
   (aboone@redhat.com)
