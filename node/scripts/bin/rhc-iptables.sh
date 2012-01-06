@@ -60,20 +60,20 @@ function iptables {
 
 function new_table {
   if [ "${SYSCONFIG}" ]; then
-    echo ':'"$1"' REJECT [0:0]'
+    echo ':'"$1"' - [0:0]'
   else
-    iptables -N "$1"
+    iptables -N "$1" || :
     iptables -F "$1"
-    iptables -P "$1" REJECT
   fi
 }
 
+# Create the table and clear it
+new_table rhc-app-table
 
 # Bottom block is system services, quick bypass
 iptables -A OUTPUT -o lo -d 127.0.0.0/25 \
   -m owner --uid-owner ${UID_BEGIN}-${UID_END} \
   -j ACCEPT
-
 
 # Established connections quickly bypass
 iptables -A OUTPUT -o lo -d 127.0.0.0/8 \
@@ -81,10 +81,7 @@ iptables -A OUTPUT -o lo -d 127.0.0.0/8 \
   -m state --state ESTABLISHED,RELATED \
   -j ACCEPT
 
-
 # New connections with specific uids get checked on the app table.
-new_table rhc-app-table
-
 iptables -A OUTPUT -o lo -d 127.0.0.0/8 \
   -m owner --uid-owner ${UID_BEGIN}-${UID_END} \
   -m state --state NEW \
@@ -97,3 +94,6 @@ seq ${UID_BEGIN} ${UID_END} | while read uid; do
 
   iptables -A rhc-app-table -d ${net}/25 -m owner --uid-owner $uid -j ACCEPT 
 done
+
+# Can't set default policy on a table, set reject at the bottom
+iptables -A rhc-app-table -j REJECT --reject-with icmp-host-prohibited
