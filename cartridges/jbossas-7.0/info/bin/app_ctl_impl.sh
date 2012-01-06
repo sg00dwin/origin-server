@@ -58,6 +58,10 @@ function ishttpup() {
 }
 
 function start_app() {
+    if [ -f "${OPENSHIFT_REPO_DIR}/.openshift/markers/enable_jpda" ]; then
+       ENABLE_JPDA=1
+    fi
+
     if [ -f $OPENSHIFT_APP_DIR/run/stop_lock ]
     then
         echo "Application is explicitly stopped!  Use 'rhc-ctl-app -a ${OPENSHIFT_APP_NAME} -c start' to start back up." 1>&2
@@ -68,10 +72,7 @@ function start_app() {
         else
             # Start
             jopts="${JAVA_OPTS}"
-            #  TODO: For now set jboss_enable_jpda to off/0 by default as port
-            #        8787 is not open by default.
-            export JBOSS_ENABLE_JPDA=0
-            [ "${JBOSS_ENABLE_JPDA:-1}" -eq 1 ] && jopts="-Xdebug -Xrunjdwp:transport=dt_socket,address=$OPENSHIFT_INTERNAL_IP:8787,server=y,suspend=n ${JAVA_OPTS}"
+            [ "${ENABLE_JPDA:-0}" -eq 1 ] && jopts="-Xdebug -Xrunjdwp:transport=dt_socket,address=$OPENSHIFT_INTERNAL_IP:8787,server=y,suspend=n ${JAVA_OPTS}"
             JAVA_OPTS="${jopts}" $APP_JBOSS_BIN_DIR/standalone.sh > ${APP_JBOSS_TMP_DIR}/${OPENSHIFT_APP_NAME}.log 2>&1 &
 	        PROCESS_ID=$!
 	        echo $PROCESS_ID > $JBOSS_PID_FILE
