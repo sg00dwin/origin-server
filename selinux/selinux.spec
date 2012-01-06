@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.84.9
+Version:       0.84.10
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -46,6 +46,18 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Thu Jan 05 2012 Dan McPherson <dmcphers@redhat.com> 0.84.10-1
+- Seems like build is still failing because we have : selinux-
+  policy-3.7.19-131.el6 installed and not selinux-policy-3.7.19-133.el6 [131 in
+  lieu of 133]. So Dan, commenting the line causing failure for now.
+  (ramr@redhat.com)
+- Revert temporary comment as it is failing locally [but build seems to be ok].
+  (ramr@redhat.com)
+- Merge branch 'master' of li-master:/srv/git/li (ramr@redhat.com)
+- Bug fixes to get postgresql working for US1386. As of now php, python and
+  perl drivers are working fine. Drivers for java and ruby are still pending.
+  (ramr@redhat.com)
+
 * Thu Jan 05 2012 Dan McPherson <dmcphers@redhat.com> 0.84.9-1
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
   (dwalsh@redhat.com)
