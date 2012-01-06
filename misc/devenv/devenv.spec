@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.84.7
+Version:   0.84.8
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -223,6 +223,9 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 %{_initddir}/sauce-connect
 
 %changelog
+* Fri Jan 06 2012 Dan McPherson <dmcphers@redhat.com> 0.84.8-1
+- Add output of rhc-iptables. (rmillner@redhat.com)
+
 * Thu Dec 22 2011 Dan McPherson <dmcphers@redhat.com> 0.84.7-1
 - removing more of server-common (dmcphers@redhat.com)
 
