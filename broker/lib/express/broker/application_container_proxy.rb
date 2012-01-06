@@ -199,11 +199,11 @@ module Express
       def move_app(app, destination_container, node_profile=nil)
         source_container = app.container
 
-        unless app.embedded.nil?
+        #unless app.embedded.nil?
           #raise Cloud::Sdk::UserException.new("Cannot move app '#{app.name}' with mysql embedded",1) if app.embedded.has_key?('mysql-5.1')
           #raise Cloud::Sdk::UserException.new("Cannot move app '#{app.name}' with mongo embedded",1) if app.embedded.has_key?('mongodb-2.0')
-          raise Cloud::Sdk::UserException.new("Cannot move app '#{app.name}' with postgresql embedded",1) if app.embedded.has_key?('postgresql-8.4')
-        end
+          #raise Cloud::Sdk::UserException.new("Cannot move app '#{app.name}' with postgresql embedded",1) if app.embedded.has_key?('postgresql-8.4')
+        #end
 
         if node_profile
           app.node_profile = node_profile
