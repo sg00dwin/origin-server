@@ -20,7 +20,7 @@ module OpenShift
 
       def click(element)
         text = @items[element]
-        @page.find_element(:xpath, "//a[text()=\"#{text}\"]").click
+        @page.find_element(:link_text, text).click
       end
     end
 
@@ -64,7 +64,7 @@ module OpenShift
       def initialize(page,path)
         super
         @items = {
-          :whats_flex => "What\'s Flex?",
+          :whats_flex => "What's Flex?",
           :videos => 'Videos',
           :documentation => 'Documentation',
           :forum => 'Forum',

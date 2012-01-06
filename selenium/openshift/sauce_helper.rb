@@ -13,7 +13,24 @@ module OpenShift
     end
 
     def build_driver(opts)
-      Sauce::Selenium2.new(opts)
+      @config = Sauce::Config.new(opts)
+      http_client = ::Selenium::WebDriver::Remote::Http::Default.new
+      http_client.timeout = 300 # Browser launch can take a while
+
+      caps = @config.to_desired_capabilities
+
+      if ENV["SAUCE_SELENIUM_VERSION"]
+        caps["selenium-version"] = ENV["SAUCE_SELENIUM_VERSION"]
+      end
+
+      @driver = ::Selenium::WebDriver.for(:remote, :url => "http://#{@config.username}:#{@config.access_key}@#{@config.host}:#{@config.port}/wd/hub", :desired_capabilities => caps, :http_client => http_client)
+      http_client.timeout = 90 # Once the browser is up, commands should time out reasonably
+
+      return @driver
+    end
+
+    def session_id
+      @driver.send(:bridge).session_id
     end
 
     def put(path, body, headers={}, config={})

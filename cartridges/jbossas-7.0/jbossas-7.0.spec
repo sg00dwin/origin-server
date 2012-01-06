@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.84.4
+Version:   0.84.5
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -55,10 +55,10 @@ ln -s %{cartridgedir}/../abstract/info/hooks/remove-module %{buildroot}%{cartrid
 ln -s %{cartridgedir}/../abstract/info/hooks/restart %{buildroot}%{cartridgedir}/info/hooks/restart
 ln -s %{cartridgedir}/../abstract/info/hooks/start %{buildroot}%{cartridgedir}/info/hooks/start
 ln -s %{cartridgedir}/../abstract/info/hooks/stop %{buildroot}%{cartridgedir}/info/hooks/stop
-ln -s %{cartridgedir}/../abstract/info/hooks/update_namespace %{buildroot}%{cartridgedir}/info/hooks/update_namespace
+ln -s %{cartridgedir}/../abstract/info/hooks/update-namespace %{buildroot}%{cartridgedir}/info/hooks/update-namespace
 ln -s %{cartridgedir}/../abstract/info/hooks/preconfigure %{buildroot}%{cartridgedir}/info/hooks/preconfigure
-ln -s %{cartridgedir}/../abstract/info/hooks/deploy_httpd_proxy %{buildroot}%{cartridgedir}/info/hooks/deploy_httpd_proxy
-ln -s %{cartridgedir}/../abstract/info/hooks/remove_httpd_proxy %{buildroot}%{cartridgedir}/info/hooks/remove_httpd_proxy
+ln -s %{cartridgedir}/../abstract/info/hooks/deploy-httpd-proxy %{buildroot}%{cartridgedir}/info/hooks/deploy-httpd-proxy
+ln -s %{cartridgedir}/../abstract/info/hooks/remove-httpd-proxy %{buildroot}%{cartridgedir}/info/hooks/remove-httpd-proxy
 ln -s %{cartridgedir}/../abstract/info/hooks/force-stop %{buildroot}%{cartridgedir}/info/hooks/force-stop
 ln -s %{cartridgedir}/../abstract/info/hooks/status %{buildroot}%{cartridgedir}/info/hooks/status
 ln -s %{cartridgedir}/../abstract/info/hooks/add-alias %{buildroot}%{cartridgedir}/info/hooks/add-alias
@@ -93,6 +93,11 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Thu Jan 05 2012 Dan McPherson <dmcphers@redhat.com> 0.84.5-1
+- mysql and mongo move (dmcphers@redhat.com)
+- added mod_cluster to standalone-ha.xml (wdecoste@localhost.localdomain)
+- added standalone-ha.xml (wdecoste@localhost.localdomain)
+
 * Wed Jan 04 2012 Dan McPherson <dmcphers@redhat.com> 0.84.4-1
 - initial checkin for US1614 -- jboss remote debugging ports. (ramr@redhat.com)
 

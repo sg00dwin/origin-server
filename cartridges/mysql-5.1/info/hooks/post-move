@@ -16,7 +16,7 @@
 # General Public License and may only be used or replicated with the express
 # permission of Red Hat, Inc.
 
-# Move the app to a new ip
+# Cleanup app after moving to a new ip
 
 # Exit on any errors
 set -e
@@ -57,22 +57,13 @@ MYSQL_DIR="$APP_HOME/mysql-5.1/"
 IP=$OPENSHIFT_INTERNAL_IP
 
 . $APP_HOME/.env/OPENSHIFT_DB_PORT
-. $APP_HOME/.env/OPENSHIFT_DB_HOST
 . $APP_HOME/.env/OPENSHIFT_DB_PASSWORD
 . $APP_HOME/.env/OPENSHIFT_DB_USERNAME
-
-ORIG_DB_HOST=$OPENSHIFT_DB_HOST
-echo "export OPENSHIFT_DB_HOST='$IP'" > $APP_HOME/.env/OPENSHIFT_DB_HOST
-echo "export OPENSHIFT_DB_URL='mysql://$OPENSHIFT_DB_USERNAME:$OPENSHIFT_DB_PASSWORD@$IP:$OPENSHIFT_DB_PORT/'" > $APP_HOME/.env/OPENSHIFT_DB_URL
-
-sed -i "s,$ORIG_DB_HOST,$IP," $MYSQL_DIR/etc/my.cnf
-
+    
 start_mysql
 
     echo "
-UPDATE user SET Host='$IP' WHERE Host='$ORIG_DB_HOST';
-flush privileges;" | mysql -u $OPENSHIFT_DB_USERNAME -P $OPENSHIFT_DB_PORT -h $IP --password="$OPENSHIFT_DB_PASSWORD" -S "${MYSQL_DIR}/socket/mysql.sock" mysql > /dev/null || error "Failed to setup root user with new ip" 187
+DELETE FROM user WHERE Host<>'$IP';
+flush privileges;" | mysql -u $OPENSHIFT_DB_USERNAME -P $OPENSHIFT_DB_PORT -h $IP --password="$OPENSHIFT_DB_PASSWORD" -S "${MYSQL_DIR}/socket/mysql.sock" mysql > /dev/null || error "Failed to remove wildcard ip" 187
 
 stop_mysql
-
-set_app_info "Connection URL: mysql://$IP:3306/"
