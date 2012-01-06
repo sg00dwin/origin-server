@@ -296,11 +296,14 @@ allow libra_t self:process setexec;
 #
 require {
 	type postgresql_exec_t;
+	type tmpfs_t;
 }
 
 # postgresql_exec(libra_domain)
 can_exec(libra_domain, postgresql_exec_t)
 corenet_tcp_bind_postgresql_port(libra_t)
+# Do not allow open or create, just allow it to use inherited from kernel
+allow libra_t tmpfs_t:file { read write };
 
 ##########
 # Used for development or when the li controller is running outside
