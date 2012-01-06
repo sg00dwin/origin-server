@@ -145,9 +145,12 @@ files_dontaudit_getattr_all_dirs(libra_domain)
 files_dontaudit_getattr_lost_found_dirs(libra_domain)
 files_dontaudit_search_all_mountpoints(libra_domain)
 files_dontaudit_search_spool(libra_domain)
+# Uncomment when we have selinux-policy-3.7.19-134.el6
+# files_dontaudit_list_var(libra_domain)
 files_read_etc_files(libra_domain)
 files_read_usr_files(libra_domain)
 files_dontaudit_getattr_non_security_sockets(libra_domain)
+# Uncomment when we have selinux-policy-3.7.19-133.el6
 # files_dontaudit_setattr_etc_runtime_files(libra_domain)
 
 libs_exec_lib_files(libra_domain)
@@ -287,19 +290,12 @@ mysql_search_db(libra_t)
 allow libra_t self:process setexec;
 
 ########################################
-# PostgreSQL support
-postgresql_admin(libra_t, system_r)
-postgresql_search_db(libra_t)
-postgresql_manage_db(libra_t)
-postgresql_domtrans(libra_t)
-postgresql_signal(libra_t)
-manage_files_pattern(postgresql_t, libra_var_lib_t, libra_var_lib_t)
-manage_dirs_pattern(postgresql_t, libra_var_lib_t, libra_var_lib_t)
-manage_files_pattern(postgresql_t, libra_tmp_t, libra_tmp_t)
-manage_files_pattern(postgresql_tmp_t, libra_tmp_t, libra_tmp_t)
-allow postgresql_t libra_tmp_t:sock_file { create unlink setattr };
-allow postgresql_t libra_var_lib_t:sock_file { create unlink setattr };
-allow postgresql_t libra_initrc_t:fifo_file { read write };
+#
+# Postgresql support
+#
+
+# postgresql_exec(libra_t)
+corenet_tcp_bind_postgresql_port(libra_t)
 
 ##########
 # Used for development or when the li controller is running outside
@@ -339,7 +335,6 @@ files_dontaudit_getattr_all_files(httpd_t)
 domain_dontaudit_read_all_domains_state(httpd_t)
 require {
         type httpd_t;
-        class capability sys_ptrace;
 }
 
 #============= httpd_t ==============
@@ -395,4 +390,3 @@ manage_files_pattern(libra_mail_t, libra_tmp_t, libra_tmp_t)
 mta_dontaudit_read_spool_symlinks(libra_mail_t)
 
 userdom_dontaudit_use_user_ptys(libra_mail_t)
-
