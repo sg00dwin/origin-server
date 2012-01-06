@@ -67,10 +67,16 @@ class LegacyBrokerController < ApplicationController
   def domain_post
     cloud_user = CloudUser.find(@login)
 
+    if !cloud_user && (@req.alter || @req.delete)
+      @reply.resultIO << "Cannot alter or remove namespace #{@req.namespace}. Namspace does not exist.\n"
+      render :json => @reply, :status => :invalid
+      return
+    end
+
     if @req.alter
       cloud_user.ssh = @req.ssh
       cloud_user.namespace = @req.namespace
-    elsif @req.delete @login
+    elsif @req.delete
        if not cloud_user.applications.empty?
          @reply.resultIO << "Cannot remove namespace #{cloud_user.namespace}. Remove existing apps first.\n"
          @reply.resultIO << cloud_user.applications.map{|a| a.name}.join("\n")
