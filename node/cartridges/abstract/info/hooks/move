@@ -52,6 +52,8 @@ setup_basic_vars
 
 CART_INFO_DIR=$CART_DIR/$OPENSHIFT_APP_TYPE/info
 
+unobfuscate_app_home $uuid $namespace $application
+
 #
 # Find an open localhost IP
 #

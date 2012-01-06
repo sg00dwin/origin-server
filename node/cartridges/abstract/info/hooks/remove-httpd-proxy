@@ -21,6 +21,10 @@
 # Exit on any errors
 set -e
 
+CART_DIR=/usr/libexec/li/cartridges
+
+source ${CART_DIR}/abstract/info/lib/util
+
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
     echo "Remove httpd proxy for an application"
@@ -44,5 +48,7 @@ done
 namespace=`basename $2`
 application="$1"
 uuid=$3
+
+rm_unobfuscated_app_home $namespace $application
 
 rm -rf "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}.conf" "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}"

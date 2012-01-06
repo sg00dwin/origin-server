@@ -263,7 +263,7 @@ module Express
                       app.embedded[cart] = { "info" => component_details }
                     end
                     reply.append embedded_reply
-                  log_debug "DEBUG: Performing cartridge level post-move for embedded #{cart} for '#{app.name}' on #{destination_container.id}"
+                    log_debug "DEBUG: Performing cartridge level post-move for embedded #{cart} for '#{app.name}' on #{destination_container.id}"
                     reply.append destination_container.send(:run_cartridge_command, "embedded/" + cart, app, "post-move", nil, false)
                   end
                 end
