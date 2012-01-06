@@ -77,7 +77,7 @@ class LegacyRequestTest < ActiveSupport::TestCase
   end
   
   test "Request validation: action" do
-    invalid_chars = '"$^<>|%/;:,\*=~@-. '
+    invalid_chars = '"$^<>|%/;:,\*=~@ '
     invalid_chars.length.times do |i|
       req = LegacyRequest.new.from_json("{'action': 'test#{invalid_chars[i].chr}sometime'}")
       assert req.invalid?
