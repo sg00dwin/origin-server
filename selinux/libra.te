@@ -148,7 +148,7 @@ files_dontaudit_search_spool(libra_domain)
 files_read_etc_files(libra_domain)
 files_read_usr_files(libra_domain)
 files_dontaudit_getattr_non_security_sockets(libra_domain)
-files_dontaudit_setattr_etc_runtime_files(libra_domain)
+# files_dontaudit_setattr_etc_runtime_files(libra_domain)
 
 libs_exec_lib_files(libra_domain)
 
