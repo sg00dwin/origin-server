@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.2.24
+Version:        0.2.25
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        AGPLv3
@@ -72,6 +72,12 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Fri Jan 06 2012 Dan McPherson <dmcphers@redhat.com> 0.2.25-1
+- Updating gem versions (dmcphers@redhat.com)
+- fix test case (dmcphers@redhat.com)
+- fixing issues resulting out of code merging (abhgupta@redhat.com)
+- Fixes to enable cloud-sdk-controller tests (kraman@gmail.com)
+
 * Wed Jan 04 2012 Dan McPherson <dmcphers@redhat.com> 0.2.24-1
 - Updating gem versions (dmcphers@redhat.com)
 - fix build break and better error messaging (dmcphers@redhat.com)
