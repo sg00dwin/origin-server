@@ -77,7 +77,9 @@ function _move_postgres_service() {
    source ${CART_DIR}/abstract/info/lib/apache
    source ${CART_DIR}/abstract/info/lib/network
    load_node_conf
-   
+
+PSQL_DIR="$APP_HOME/postgresql-8.4/"   
+
 . $APP_HOME/.env/OPENSHIFT_INTERNAL_IP
 IP=$OPENSHIFT_INTERNAL_IP
 
