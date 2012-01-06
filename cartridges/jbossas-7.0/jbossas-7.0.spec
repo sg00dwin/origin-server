@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.84.5
+Version:   0.84.6
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -93,6 +93,14 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Thu Jan 05 2012 Dan McPherson <dmcphers@redhat.com> 0.84.6-1
+- Add help information re: how to use the enable_jpda marker to enable
+  attaching a remote debugger to the JBoss AS7 application server instance.
+  (ramr@redhat.com)
+- For user story US1614 -- use a marker file to enable jpda. That way by
+  default we don't run w/ debugging on -- and this gives the user a mechanism
+  to turn on debugging if and when they want to. (ramr@redhat.com)
+
 * Thu Jan 05 2012 Dan McPherson <dmcphers@redhat.com> 0.84.5-1
 - mysql and mongo move (dmcphers@redhat.com)
 - added mod_cluster to standalone-ha.xml (wdecoste@localhost.localdomain)
