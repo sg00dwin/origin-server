@@ -17,7 +17,8 @@
       <name>OpenShift Cloud</name>
       <username></username>
       <password></password>
-      <url>https://OPENSHIFT_SERVER/broker</url>
+      <brokerHost>OPENSHIFT_SERVER</brokerHost>
+      <brokerPort></brokerPort>
       <proxyHost></proxyHost>
       <proxyPort>0</proxyPort>
       <jenkinsUrl>JENKINS_URL_TEMPLATE</jenkinsUrl>
