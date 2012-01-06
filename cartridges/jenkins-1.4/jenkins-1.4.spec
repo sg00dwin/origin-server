@@ -2,7 +2,7 @@
 
 Summary:   Provides jenkins-1.4 support
 Name:      rhc-cartridge-jenkins-1.4
-Version:   0.84.2
+Version:   0.84.3
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -69,6 +69,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/control
 
 %changelog
+* Fri Jan 06 2012 Dan McPherson <dmcphers@redhat.com> 0.84.3-1
+- update config.xml for Bug 771716 (bdecoste@gmail.com)
+
 * Thu Jan 05 2012 Dan McPherson <dmcphers@redhat.com> 0.84.2-1
 - mysql and mongo move (dmcphers@redhat.com)
 
