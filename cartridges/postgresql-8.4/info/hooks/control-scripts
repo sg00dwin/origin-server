@@ -110,6 +110,6 @@ case "$cmd" in
    stop)    _stop_postgres_service    ;;
    restart) _restart_postgres_service ;;
    reload)  _reload_postgres_service  ;;
-   reload)  _move_postgres_service    ;;
+   move)    _move_postgres_service    ;;
 esac
 

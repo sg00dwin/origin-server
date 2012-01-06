@@ -13,10 +13,10 @@ then
 	CART_INFO_DIR=$CART_DIR/embedded/postgresql-8.4/info
 	source ${CART_INFO_DIR}/lib/util
 
-    start_postgres_as_user
+    start_postgresql_as_user
 
     # Restore the PostgreSQL databases
-    /bin/zcat $OPENSHIFT_DATA_DIR/postgresql_dump_snapshot.gz | /usr/bin/psql
+    /bin/zcat $OPENSHIFT_DATA_DIR/postgresql_dump_snapshot.gz | /usr/bin/psql -d postgres
     if [ ! ${PIPESTATUS[1]} -eq 0 ]
     then
         echo 1>&2

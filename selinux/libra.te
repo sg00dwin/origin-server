@@ -286,6 +286,21 @@ corenet_tcp_bind_mysqld_port(libra_t)
 mysql_search_db(libra_t)
 allow libra_t self:process setexec;
 
+########################################
+# PostgreSQL support
+postgresql_admin(libra_t, system_r)
+postgresql_search_db(libra_t)
+postgresql_manage_db(libra_t)
+postgresql_domtrans(libra_t)
+postgresql_signal(libra_t)
+manage_files_pattern(postgresql_t, libra_var_lib_t, libra_var_lib_t)
+manage_dirs_pattern(postgresql_t, libra_var_lib_t, libra_var_lib_t)
+manage_files_pattern(postgresql_t, libra_tmp_t, libra_tmp_t)
+manage_files_pattern(postgresql_tmp_t, libra_tmp_t, libra_tmp_t)
+allow postgresql_t libra_tmp_t:sock_file { create unlink setattr };
+allow postgresql_t libra_var_lib_t:sock_file { create unlink setattr };
+allow postgresql_t libra_initrc_t:fifo_file { read write };
+
 ##########
 # Used for development or when the li controller is running outside
 # of the li framework (like when it's installed in /var/www/html

@@ -74,6 +74,13 @@ function _service_stop() {
 }  #  End of function  _service_stop.
 
 
+function _service_restart() {
+   _service_stop
+   _service_start
+
+}  #  End of function  _service_restart.
+
+
 #
 # main():
 #

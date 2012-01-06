@@ -88,7 +88,7 @@ ln -s $CART_INFO_DIR/bin/postgresql_ctl.sh $PSQL_DIR/${application}_postgresql_c
 # Setup Permissions
 #
 chmod +x "$PSQL_DIR/"*.sh || error "Failed to chmod new application scripts" 122
-chown $user_id.$group_id -R $PSQL_DIR/ || error "Failed to chown new application space.  Please contact support" 123
+chown $user_id.$group_id -R $PSQL_DIR/ $APP_HOME/.psql_history $APP_HOME/.pgpass || error "Failed to chown new application space.  Please contact support" 123
 # Secure script and root dir (so they can't chown the script)
 chown root.root "$PSQL_DIR" "$PSQL_DIR"/*.sh
 chcon -t libra_var_lib_t -l $mcs_level -R "$PSQL_DIR"
@@ -145,9 +145,8 @@ echo "$IP:5432:*:admin:$password" > $APP_HOME/.pgpass
 chmod 0400 $APP_HOME/.pgpass
 
 ## Setup user
-if [ 2 -eq 1 ]; then
-   echo "CREATE USER admin WITH SUPERUSER PASSWORD '$password';" | /usr/bin/psql > /dev/null || error "Failed to create admin user for ${application}" 188
-fi
+/bin/su -s /bin/sh "$uuid" -c "/usr/bin/psql -d postgres -c \"CREATE USER admin WITH SUPERUSER PASSWORD '$password';\"" || error "Failed to create database or admin user for ${application}" 188
+
 
 client_result ""
 client_result "PostgreSQL 8.4 database added.  Please make note of these credentials:"
