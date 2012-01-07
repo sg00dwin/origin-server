@@ -53,45 +53,55 @@ Broker::Application.configure do
   config.app_scope = ""
   config.integrated = true
   
-  # CDK Config
-  config.cdk = {
-    :domain_suffix => "rhcloud.com",
+  config.dns = {
     :zone => "rhcloud.com",
-    :child_zone => "",
-    :per_user_app_limit => 5,
-    :broker_auth_secret => "EIvWT6u3lsvSRNRGZhhW8YcWMh5mUAlc32nZlRJPdJM=",
-    :broker_auth_rsa_secret => "SJDIkdfhuISe3wrulhjvcKHJFDUeoi8gfcdnu8299dhc",
-    :rpc_opts => {
-      :disctimeout => 3,
-      :timeout     => 30,
-      :verbose     => false,
-      :progress_bar=> false,
-      :filter      => {"identity"=>[], "fact"=>[], "agent"=>[], "cf_class"=>[]},
-      :config      => "/etc/mcollective/client.cfg"
-    },
-    :auth_service => {
-      :host => "https://www.redhat.com",
-      :base_url => "/wapps/streamline"
-    },
     :dynect_customer_name => "demo-redhat",
     :dynect_user_name => "390XFV-dev-user",
     :dynect_password => "Mei5aeru6yahchee",
-    :dynect_url => "https://api2.dynect.net",
-
+    :dynect_url => "https://api2.dynect.net"
+  }
+  
+  config.auth = {
+    :broker_auth_secret => "EIvWT6u3lsvSRNRGZhhW8YcWMh5mUAlc32nZlRJPdJM=",
+    :broker_auth_rsa_secret => "SJDIkdfhuISe3wrulhjvcKHJFDUeoi8gfcdnu8299dhc",
+    :auth_service => {
+      :host => "https://www.redhat.com",
+      :base_url => "/wapps/streamline"
+    }
+  }
+  
+  config.rpc_opts => {
+    :disctimeout => 3,
+    :timeout     => 30,
+    :verbose     => false,
+    :progress_bar=> false,
+    :filter      => {"identity"=>[], "fact"=>[], "agent"=>[], "cf_class"=>[]},
+    :config      => "/etc/mcollective/client.cfg"
+  }
+  
+  config.datastore => {
     :aws_key => "KEY_HERE",
     :aws_secret => "SECRET_HERE",
-    :s3_bucket => "BUCKET_HERE",
-
+    :s3_bucket => "BUCKET_HERE"
+  }
+  
+  config.analytics => {
     :nurture_enabled => false,
     :nurture_username => "admin",
     :nurture_password => "password",
     :nurture_url => "http://69.164.192.124:4500/",
-
+    
     :apptegic_enabled => false,
     :apptegic_url => "https://redhat.apptegic.com/httpreceiver",
     :apptegic_key => "redhat",
     :apptegic_secret => "4DC5A0AA-48AE-9287-5F66-9A73E14B6E31",
     :apptegic_dataset => "test"
+  }
+  
+  # CDK Config
+  config.cdk = {
+    :domain_suffix => "rhcloud.com",
+    :per_user_app_limit => 5
   }
 
 end

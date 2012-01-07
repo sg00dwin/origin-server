@@ -43,7 +43,7 @@ end
 if options[:timeout] && options[:timeout] < 30
     options[:timeout] = 30
 end
-Rails.application.config.cdk[:rhc_opts] = options
+Rails.application.config.rpc_opts = options
 
 user = CloudUser.find(options[:rhlogin])
 app  = Application.find(user,options[:app_name])
