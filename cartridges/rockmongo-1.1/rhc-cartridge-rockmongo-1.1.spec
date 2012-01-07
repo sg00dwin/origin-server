@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/rockmongo-1.1
 
 Name: rhc-cartridge-rockmongo-1.1
-Version: 1.2.3
+Version: 1.2.4
 Release: 1%{?dist}
 Summary: Embedded RockMongo support for express
 
@@ -48,6 +48,11 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Fri Jan 06 2012 Dan McPherson <dmcphers@redhat.com> 1.2.4-1
+- basic descriptors for all cartridges; added primitive structure for a www-
+  dynamic cartridge that will abstract all httpd processes that any cartridges
+  need (e.g. php, perl, metrics, rockmongo etc). (rchopra@redhat.com)
+
 * Fri Jan 06 2012 Dan McPherson <dmcphers@redhat.com> 1.2.3-1
 - Bug 772173 (dmcphers@redhat.com)
 
