@@ -1,0 +1,32 @@
+Name: rhc-cartridge-10gen-mms-0.1
+Display-Name: 10gen-mms v0.1 (noarch)
+Description: Cartridge packaging 10gen mms service
+Version: 1.0.0
+License: GPLv2
+Vendor:  10gen.com
+Provides:
+  - "10gen-mms"
+Requires:
+  - pymongo
+  - mms-agent
+Conflicts:
+Native-Requires:
+Architecture: noarch
+Descriptor:
+  Reservations:
+    - MEM >= 100MB
+  Components:
+    default:
+       Service-Dependencies: [rhc-cartridge-mongodb-2.0]
+       Subscribes:
+          set-mongo-connection-info:
+             Type: "NET_TCP:db:mongodb"
+             Required : true
+   Groups:
+     default:
+       Components:
+         default : default
+       Scaling:
+         Min: 1
+         Max: 1
+
