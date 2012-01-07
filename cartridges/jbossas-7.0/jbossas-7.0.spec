@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.84.6
+Version:   0.84.7
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -100,6 +100,18 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Fri Jan 06 2012 Dan McPherson <dmcphers@redhat.com> 0.84.7-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rchopra@redhat.com)
+- basic descriptors for all cartridges; added primitive structure for a www-
+  dynamic cartridge that will abstract all httpd processes that any cartridges
+  need (e.g. php, perl, metrics, rockmongo etc). (rchopra@redhat.com)
+- Fix to use correct module name + use-ccm (ramr@redhat.com)
+- Fix to move to the post-install step. (ramr@redhat.com)
+- Don't link abstract post-install hook as we now have a post-install hook.
+  (ramr@redhat.com)
+- Add postgresql driver support to jboss. (ramr@redhat.com)
+
 * Thu Jan 05 2012 Dan McPherson <dmcphers@redhat.com> 0.84.6-1
 - Add help information re: how to use the enable_jpda marker to enable
   attaching a remote debugger to the JBoss AS7 application server instance.
