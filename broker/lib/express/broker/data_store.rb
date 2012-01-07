@@ -48,8 +48,8 @@ module Express
       def self.s3
         # Setup the global access configuration
         AWS.config(
-          :access_key_id => Rails.application.config.cdk[:aws_key],
-          :secret_access_key => Rails.application.config.cdk[:aws_secret],
+          :access_key_id => Rails.application.config.datastore[:aws_key],
+          :secret_access_key => Rails.application.config.datastore[:aws_secret],
           :ssl_ca_file => "/etc/pki/tls/certs/ca-bundle.trust.crt"
         )
     
@@ -58,7 +58,7 @@ module Express
       end
     
       def self.bucket
-        s3.buckets[Rails.application.config.cdk[:s3_bucket]]
+        s3.buckets[Rails.application.config.datastore[:s3_bucket]]
       end
       
       #
