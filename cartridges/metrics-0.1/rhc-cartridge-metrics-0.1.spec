@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/metrics-0.1
 
 Name: rhc-cartridge-metrics-0.1
-Version: 0.6.4
+Version: 0.6.5
 Release: 1%{?dist}
 Summary: Embedded metrics support for express
 
@@ -48,6 +48,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/manifest.yml
 
 %changelog
+* Fri Jan 06 2012 Dan McPherson <dmcphers@redhat.com> 0.6.5-1
+- fix build breaks (dmcphers@redhat.com)
+
 * Fri Jan 06 2012 Dan McPherson <dmcphers@redhat.com> 0.6.4-1
 - basic descriptors for all cartridges; added primitive structure for a www-
   dynamic cartridge that will abstract all httpd processes that any cartridges
