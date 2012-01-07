@@ -2,7 +2,7 @@
 
 Summary:   Provides mod_perl support
 Name:      rhc-cartridge-perl-5.10
-Version:   0.15.3
+Version:   0.15.4
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -83,6 +83,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/manifest.yml
 
 %changelog
+* Fri Jan 06 2012 Dan McPherson <dmcphers@redhat.com> 0.15.4-1
+- fix build breaks (dmcphers@redhat.com)
+
 * Fri Jan 06 2012 Dan McPherson <dmcphers@redhat.com> 0.15.3-1
 - basic descriptors for all cartridges; added primitive structure for a www-
   dynamic cartridge that will abstract all httpd processes that any cartridges
