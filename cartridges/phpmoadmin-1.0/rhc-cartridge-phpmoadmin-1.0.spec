@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/phpmoadmin-1.0
 
 Name: rhc-cartridge-phpmoadmin-1.0
-Version: 0.3.3
+Version: 0.3.4
 Release: 1%{?dist}
 Summary: Embedded phpMoAdmin support for express
 
@@ -49,6 +49,11 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Fri Jan 06 2012 Dan McPherson <dmcphers@redhat.com> 0.3.4-1
+- basic descriptors for all cartridges; added primitive structure for a www-
+  dynamic cartridge that will abstract all httpd processes that any cartridges
+  need (e.g. php, perl, metrics, rockmongo etc). (rchopra@redhat.com)
+
 * Fri Jan 06 2012 Dan McPherson <dmcphers@redhat.com> 0.3.3-1
 - Bug 772173 (dmcphers@redhat.com)
 
