@@ -47,7 +47,7 @@ Broker::Application.configure do
   }
 
   config.auth = {
-    :integrated = false,
+    :integrated => false,
     :broker_auth_secret => "EIvWT6u3lsvSRNRGZhhW8YcWMh5mUAlc32nZlRJPdJM=",
     :broker_auth_rsa_secret => "SJDIkdfhuISe3wrulhjvcKHJFDUeoi8gfcdnu8299dhc",
     :auth_service => {
