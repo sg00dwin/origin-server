@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/mysql-5.1
 
 Name: rhc-cartridge-mysql-5.1
-Version: 0.18.5
+Version: 0.18.6
 Release: 1%{?dist}
 Summary: Embedded mysql support for express
 
@@ -48,6 +48,17 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Fri Jan 06 2012 Dan McPherson <dmcphers@redhat.com> 0.18.6-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rchopra@redhat.com)
+- Cleanup error message to indicate only 1 embedded database is permitted per
+  application. (ramr@redhat.com)
+- basic descriptors for all cartridges; added primitive structure for a www-
+  dynamic cartridge that will abstract all httpd processes that any cartridges
+  need (e.g. php, perl, metrics, rockmongo etc). (rchopra@redhat.com)
+- Display errors if there's already a database embedded within the app + on
+  deconfigure only cleanup if we "owned" the configuration. (ramr@redhat.com)
+
 * Fri Jan 06 2012 Dan McPherson <dmcphers@redhat.com> 0.18.5-1
 - Bug 772173 (dmcphers@redhat.com)
 
