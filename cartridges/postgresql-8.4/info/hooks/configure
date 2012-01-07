@@ -66,8 +66,9 @@ if [ -d "$PSQL_DIR" ]; then
 fi
 
 if [ -f $APP_HOME/.env/OPENSHIFT_DB_TYPE ]; then
-    client_error "Only 1 embedded database permitted per application - application currently has `cat $APP_HOME/.env/OPENSHIFT_DB_TYPE`"
-    exit 132
+    source $APP_HOME/.env/OPENSHIFT_DB_TYPE
+    client_error "Only 1 embedded database permitted - application currently has '$OPENSHIFT_DB_TYPE'"
+    exit 133
 fi
 
 touch $APP_HOME/.psql_history

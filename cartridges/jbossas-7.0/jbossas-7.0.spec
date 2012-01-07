@@ -76,6 +76,13 @@ alternatives --set maven-3.0 /usr/share/java/apache-maven-3.0.3
 alternatives --remove jbossas-7.0 /opt/jboss-as-web-7.0.1.Final
 alternatives --install /etc/alternatives/jbossas-7.0 jbossas-7.0 /opt/jboss-as-7.0.2.Final 101
 alternatives --set jbossas-7.0 /opt/jboss-as-7.0.2.Final
+#
+# Temp placeholder to add a postgresql datastore -- keep this until the
+# the postgresql module is added to jboss as 7.* upstream.
+mkdir -p /etc/alternatives/jbossas-7.0/modules/org/postgresql/jdbc/main
+ln -fs /usr/share/java/postgresql-jdbc3.jar /etc/alternatives/jbossas-7.0/modules/org/postgresql/jdbc/main
+cp -p %{cartridgedir}/info/configuration/postgresql_module.xml /etc/alternatives/jbossas-7.0/modules/org/postgresql/jdbc/main/module.xml
+
 
 %clean
 rm -rf %{buildroot}
