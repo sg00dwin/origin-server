@@ -65,6 +65,12 @@ then
     client_error "Embedded MySQL-5.1 already attached to $application"
     exit 132
 fi
+
+if [ -f $APP_HOME/.env/OPENSHIFT_DB_TYPE ]; then
+    client_error "Only 1 embedded database permitted per application - application currently has `cat $APP_HOME/.env/OPENSHIFT_DB_TYPE`"
+    exit 133
+fi
+
 mkdir -p "$MYSQL_DIR"
 pushd "$MYSQL_DIR" > /dev/null
 mkdir -p log etc data socket pid run
