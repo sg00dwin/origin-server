@@ -2,7 +2,7 @@
 
 Summary:   Provides raw support
 Name:      rhc-cartridge-raw-0.1
-Version:   0.18.3
+Version:   0.18.4
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -78,6 +78,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/manifest.yml
 
 %changelog
+* Fri Jan 06 2012 Dan McPherson <dmcphers@redhat.com> 0.18.4-1
+- fix build breaks (dmcphers@redhat.com)
+
 * Fri Jan 06 2012 Dan McPherson <dmcphers@redhat.com> 0.18.3-1
 - basic descriptors for all cartridges; added primitive structure for a www-
   dynamic cartridge that will abstract all httpd processes that any cartridges
