@@ -86,12 +86,12 @@ Broker::Application.configure do
   }
   
   config.analytics = {
-    :nurture_enabled => false,
+    :nurture_enabled => true,
     :nurture_username => "admin",
     :nurture_password => "password",
     :nurture_url => "http://69.164.192.124:4500/",
     
-    :apptegic_enabled => false,
+    :apptegic_enabled => true,
     :apptegic_url => "https://redhat.apptegic.com/httpreceiver",
     :apptegic_key => "redhat",
     :apptegic_secret => "4DC5A0AA-48AE-9287-5F66-9A73E14B6E31",
