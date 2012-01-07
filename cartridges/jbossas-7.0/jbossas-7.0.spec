@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.84.7
+Version:   0.84.8
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -101,6 +101,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Fri Jan 06 2012 Dan McPherson <dmcphers@redhat.com> 0.84.8-1
+- fix build breaks (dmcphers@redhat.com)
+
 * Fri Jan 06 2012 Dan McPherson <dmcphers@redhat.com> 0.84.7-1
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
   (rchopra@redhat.com)
