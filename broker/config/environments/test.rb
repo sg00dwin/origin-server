@@ -56,7 +56,7 @@ Broker::Application.configure do
     }
   }
   
-  config.rpc_opts => {
+  config.rpc_opts = {
     :disctimeout => 3,
     :timeout     => 30,
     :verbose     => false,
@@ -65,13 +65,13 @@ Broker::Application.configure do
     :config      => "/etc/mcollective/client.cfg"
   }
   
-  config.datastore => {
+  config.datastore = {
     :aws_key => "AKIAITDQ37BWZ5CKAORA",
     :aws_secret => "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",
     :s3_bucket => "libra_dev"
   }
   
-  config.analytics => {
+  config.analytics = {
     :nurture_enabled => false,
     :nurture_username => "admin",
     :nurture_password => "password",
