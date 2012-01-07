@@ -29,7 +29,6 @@ Broker::Application.configure do
   # OpenShift Configuration Below this point #
   ############################################
   config.app_scope = "broker"
-  config.integrated = false
   
   config.dns = {
     :zone => "rhcloud.com",
@@ -40,6 +39,7 @@ Broker::Application.configure do
   }
   
   config.auth = {
+    :integrated = false,
     :broker_auth_secret => "EIvWT6u3lsvSRNRGZhhW8YcWMh5mUAlc32nZlRJPdJM=",
     :broker_auth_rsa_secret => "SJDIkdfhuISe3wrulhjvcKHJFDUeoi8gfcdnu8299dhc",
     :auth_service => {
