@@ -30,6 +30,7 @@ Requires: php-pear-MDB2-Driver-pgsql
 Requires: php-pgsql
 Requires: postgis
 Requires: python-psycopg2
+Requires: ruby-postgres
 Requires: rhdb-utils
 Requires: uuid-pgsql
 
