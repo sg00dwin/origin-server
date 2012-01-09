@@ -1,0 +1,4 @@
+- width ||= 425
+- height ||= 349
+- vid = local_video(video)
+= render "#{vid[:provider].to_s}_embed", :vid_id => vid[:id], :width => width, :height => height

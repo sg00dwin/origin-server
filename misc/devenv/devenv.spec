@@ -38,7 +38,6 @@ Requires:  rhc-cartridge-postgresql-8.4
 Requires:  qpid-cpp-server
 Requires:  qpid-cpp-server-ssl
 Requires:  puppet
-Requires:  ruby-geoip
 Requires:  rubygem-cucumber
 Requires:  rubygem-mechanize
 Requires:  rubygem-mocha
