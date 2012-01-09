@@ -53,7 +53,8 @@ RedHatCloud::Application.routes.draw do
     match 'user/create/external' => 'user#create_external', :via => [:post]
     match 'user/complete' => 'user#complete', :via => [:get]
 
-    match 'user/reset_password' => 'user#reset_password', :via => [:post]
+    match 'user/request_password_reset' => 'user#request_password_reset', :via => [:post]
+    match 'user/reset_password' => 'user#reset_password', :via => [:get]
     match 'user/change_password' => 'user#change_password', :via => [:post]
 
     resource :terms,
