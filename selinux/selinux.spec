@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.84.11
+Version:       0.84.12
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -48,6 +48,10 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Mon Jan 09 2012 Dan McPherson <dmcphers@redhat.com> 0.84.12-1
+- Move the temp add of jboss debug port to selinux.spec as install.sh is only
+  run locally. Should fix bugz 772547. (ramr@redhat.com)
+
 * Fri Jan 06 2012 Dan McPherson <dmcphers@redhat.com> 0.84.11-1
 - Allow libra domains to use tmpfs_t files if handed to it by the kernel, shm,
   do not allow open or create (dwalsh@redhat.com)
