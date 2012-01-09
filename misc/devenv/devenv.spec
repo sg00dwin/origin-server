@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.84.9
+Version:   0.84.10
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -225,6 +225,10 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 %{_initddir}/sauce-connect
 
 %changelog
+* Mon Jan 09 2012 Dan McPherson <dmcphers@redhat.com> 0.84.10-1
+- Require ruby-geoip package in devenv in preparation for US1455
+  (aboone@redhat.com)
+
 * Fri Jan 06 2012 Dan McPherson <dmcphers@redhat.com> 0.84.9-1
 - Merge branch 'master' of li-master:/srv/git/li (ramr@redhat.com)
 - Add postgresql cartridge to the list to install on the devenv.
