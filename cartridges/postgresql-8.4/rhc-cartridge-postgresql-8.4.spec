@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/postgresql-8.4
 
 Name: rhc-cartridge-postgresql-8.4
-Version: 0.1.3
+Version: 0.1.4
 Release: 1%{?dist}
 Summary: Embedded postgresql support for express
 
@@ -67,6 +67,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/control
 
 %changelog
+* Mon Jan 09 2012 Dan McPherson <dmcphers@redhat.com> 0.1.4-1
+- Add ruby postgres driver. (ramr@redhat.com)
+
 * Fri Jan 06 2012 Dan McPherson <dmcphers@redhat.com> 0.1.3-1
 - Cleanup error message to indicate only 1 embedded database is permitted per
   application. (ramr@redhat.com)
