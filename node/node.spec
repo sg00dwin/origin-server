@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.84.20
+Version:       0.84.21
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -204,6 +204,10 @@ fi
 %dir %attr(0755,root,root) %{_sysconfdir}/libra/skel
 
 %changelog
+* Fri Jan 06 2012 Dan McPherson <dmcphers@redhat.com> 0.84.21-1
+- Make table a parameter.  Clean up help message. (rmillner@redhat.com)
+- Can't set default policy on user generated table. (rmillner@redhat.com)
+
 * Fri Jan 06 2012 Dan McPherson <dmcphers@redhat.com> 0.84.20-1
 - Bug 772173 (dmcphers@redhat.com)
 - Bug 772151 (dmcphers@redhat.com)

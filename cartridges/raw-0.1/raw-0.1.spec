@@ -2,7 +2,7 @@
 
 Summary:   Provides raw support
 Name:      rhc-cartridge-raw-0.1
-Version:   0.18.2
+Version:   0.18.4
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -75,144 +75,13 @@ rm -rf %{buildroot}
 %{_sysconfdir}/libra/cartridges/%{name}
 %{cartridgedir}/info/changelog
 %{cartridgedir}/info/control
+%{cartridgedir}/info/manifest.yml
 
 %changelog
-* Thu Jan 05 2012 Dan McPherson <dmcphers@redhat.com> 0.18.2-1
-- mysql and mongo move (dmcphers@redhat.com)
+* Fri Jan 06 2012 Dan McPherson <dmcphers@redhat.com> 0.18.4-1
+- fix build breaks (dmcphers@redhat.com)
 
-* Wed Dec 14 2011 Dan McPherson <dmcphers@redhat.com> 0.18.1-1
-- bump spec numbers (dmcphers@redhat.com)
-
-* Wed Dec 14 2011 Dan McPherson <dmcphers@redhat.com> 0.17.2-1
-- 
-
-* Thu Dec 01 2011 Dan McPherson <dmcphers@redhat.com> 0.17.1-1
-- bump spec numbers (dmcphers@redhat.com)
-
-* Fri Nov 18 2011 Dan McPherson <dmcphers@redhat.com> 0.16.4-1
-- moving logic to abstract from li-controller (dmcphers@redhat.com)
-
-* Tue Nov 15 2011 Dan McPherson <dmcphers@redhat.com> 0.16.3-1
-- add tidy (dmcphers@redhat.com)
-
-* Sat Nov 12 2011 Dan McPherson <dmcphers@redhat.com> 0.16.2-1
-- add remove_httpd_proxy (dmcphers@redhat.com)
-
-* Thu Nov 10 2011 Dan McPherson <dmcphers@redhat.com> 0.16.1-1
-- bump spec numbers (dmcphers@redhat.com)
-
-* Fri Nov 04 2011 Dan McPherson <dmcphers@redhat.com> 0.15.5-1
-- move maven mirror info to ci_build.sh (dmcphers@redhat.com)
-
-* Thu Nov 03 2011 Dan McPherson <dmcphers@redhat.com> 0.15.4-1
-- move updates, add pre_build (dmcphers@redhat.com)
-
-* Thu Nov 03 2011 Dan McPherson <dmcphers@redhat.com> 0.15.3-1
-- abstract move into each cart and embedded cart (dmcphers@redhat.com)
-
-* Wed Nov 02 2011 Dan McPherson <dmcphers@redhat.com> 0.15.2-1
-- Allowing alias add / remove (mmcgrath@redhat.com)
-
-* Thu Oct 27 2011 Dan McPherson <dmcphers@redhat.com> 0.15.1-1
-- bump spec numbers (dmcphers@redhat.com)
-
-* Tue Oct 25 2011 Dan McPherson <dmcphers@redhat.com> 0.14.12-1
-- doc updates (dmcphers@redhat.com)
-
-* Tue Oct 25 2011 Dan McPherson <dmcphers@redhat.com> 0.14.11-1
-- use repo as the default rather than runtime/repo (dmcphers@redhat.com)
-
-* Mon Oct 24 2011 Dan McPherson <dmcphers@redhat.com> 0.14.10-1
-- make workspace and repo dir the same in jenkins build (dmcphers@redhat.com)
-- repo and deploy -> runtime (dmcphers@redhat.com)
-
-* Fri Oct 21 2011 Dan McPherson <dmcphers@redhat.com> 0.14.9-1
-- rotate builds (dmcphers@redhat.com)
-- Marking new action hooks executable by default (mmcgrath@redhat.com)
-
-* Thu Oct 20 2011 Dan McPherson <dmcphers@redhat.com> 0.14.8-1
-- add builder size to each job template (dmcphers@redhat.com)
-
-* Wed Oct 19 2011 Dan McPherson <dmcphers@redhat.com> 0.14.7-1
-- add ip back to raw (dmcphers@redhat.com)
-
-* Mon Oct 17 2011 Dan McPherson <dmcphers@redhat.com> 0.14.6-1
-- add app_ctl script for raw (dmcphers@redhat.com)
-- add abstract (more generic than httpd)  cart and use from existing carts
-  (dmcphers@redhat.com)
-- Added support for force-stop (mmcgrath@redhat.com)
-
-* Sun Oct 16 2011 Dan McPherson <dmcphers@redhat.com> 0.14.5-1
-- abstract out remainder of deconfigure (dmcphers@redhat.com)
-
-* Sat Oct 15 2011 Dan McPherson <dmcphers@redhat.com> 0.14.4-1
-- abstract out common vars in remaining hooks (dmcphers@redhat.com)
-- more abstracting (dmcphers@redhat.com)
-- more abstracting (dmcphers@redhat.com)
-- more abstracting of common code (dmcphers@redhat.com)
-- move sources to the top and abstract out error method (dmcphers@redhat.com)
-- move simple functions to source files (dmcphers@redhat.com)
-
-* Fri Oct 14 2011 Dan McPherson <dmcphers@redhat.com> 0.14.3-1
-- abstract destroy git repo and rm httpd proxy (dmcphers@redhat.com)
-- Temporary commit to build (dmcphers@redhat.com)
-
-* Fri Oct 14 2011 Dan McPherson <dmcphers@redhat.com> 0.14.2-1
-- abstract create_repo (dmcphers@redhat.com)
-
-* Thu Oct 13 2011 Dan McPherson <dmcphers@redhat.com> 0.14.1-1
-- bump spec numbers (dmcphers@redhat.com)
-
-* Wed Oct 12 2011 Dan McPherson <dmcphers@redhat.com> 0.13-1
-- abstract rm_symlink (dmcphers@redhat.com)
-
-* Wed Oct 12 2011 Dan McPherson <dmcphers@redhat.com> 0.12-1
-- abstract out common logic (dmcphers@redhat.com)
-- Bug 745373 and remove sessions where not needed (dmcphers@redhat.com)
-
-* Tue Oct 11 2011 Dan McPherson <dmcphers@redhat.com> 0.11-1
-- renamed post-deploy to post_deploy for consistency (mmcgrath@redhat.com)
-
-* Mon Oct 10 2011 Dan McPherson <dmcphers@redhat.com> 0.10-1
-- add .m2 syncing (dmcphers@redhat.com)
-
-* Mon Oct 10 2011 Dan McPherson <dmcphers@redhat.com> 0.9-1
-- call build instead of post receive (dmcphers@redhat.com)
-- common post receive and add pre deploy (dmcphers@redhat.com)
-- add deploy and post-deploy everywhere (dmcphers@redhat.com)
-
-* Mon Oct 10 2011 Dan McPherson <dmcphers@redhat.com> 0.8-1
-- bash usage error (dmcphers@redhat.com)
-- more jenkins job work (dmcphers@redhat.com)
-
-* Mon Oct 10 2011 Dan McPherson <dmcphers@redhat.com> 0.7-1
-- ssh -> GIT_SSH (dmcphers@redhat.com)
-
-* Mon Oct 10 2011 Dan McPherson <dmcphers@redhat.com> 0.6-1
-- add deploy step and call from jenkins with stop start (dmcphers@redhat.com)
-- job updates (dmcphers@redhat.com)
-- working on jenkins build logic (dmcphers@redhat.com)
-
-* Thu Oct 06 2011 Dan McPherson <dmcphers@redhat.com> 0.5-1
-- switch to use ci type to know if client is avail (dmcphers@redhat.com)
-- cleanup (dmcphers@redhat.com)
-- add jenkins build kickoff to all post receives (dmcphers@redhat.com)
-- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
-  (mmcgrath@redhat.com)
-- stripping additional php bits (mmcgrath@redhat.com)
-- adding base templates for all types (dmcphers@redhat.com)
-- Adding health check and index (mmcgrath@redhat.com)
-- fix some deconfigures for httpd proxy (dmcphers@redhat.com)
-
-* Tue Oct 04 2011 Dan McPherson <dmcphers@redhat.com> 0.4-1
-- cleanup (dmcphers@redhat.com)
-- add deploy httpd proxy and migration (dmcphers@redhat.com)
-
-* Thu Sep 29 2011 Mike McGrath <mmcgrath@redhat.com> 0.3-1
-- Initial tagging
-
-* Thu Sep 29 2011 Mike McGrath <mmcgrath@redhat.com> 0.2-1
-- new package built with tito
-
-* Wed Sep 21 2011 Mike McGrath <mmcgrath@redhat.com> 0.1-1
-- Creating initial raw cartridge
+* Fri Jan 06 2012 Dan McPherson <dmcphers@redhat.com> 0.18.3-1
+- basic descriptors for all cartridges; added primitive structure for a www-
+  dynamic cartridge that will abstract all httpd processes that any cartridges
+  need (e.g. php, perl, metrics, rockmongo etc). (rchopra@redhat.com)

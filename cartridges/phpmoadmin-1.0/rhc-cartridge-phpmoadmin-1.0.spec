@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/phpmoadmin-1.0
 
 Name: rhc-cartridge-phpmoadmin-1.0
-Version: 0.3.3
+Version: 0.3.5
 Release: 1%{?dist}
 Summary: Embedded phpMoAdmin support for express
 
@@ -47,50 +47,13 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/libra/cartridges/%{name}
 %{cartridgedir}/info/changelog
 %{cartridgedir}/info/control
+%{cartridgedir}/info/manifest.yml
 
 %changelog
-* Fri Jan 06 2012 Dan McPherson <dmcphers@redhat.com> 0.3.3-1
-- Bug 772173 (dmcphers@redhat.com)
+* Fri Jan 06 2012 Dan McPherson <dmcphers@redhat.com> 0.3.5-1
+- fix build breaks (dmcphers@redhat.com)
 
-* Thu Jan 05 2012 Dan McPherson <dmcphers@redhat.com> 0.3.2-1
-- mysql and mongo move (dmcphers@redhat.com)
-
-* Wed Dec 14 2011 Dan McPherson <dmcphers@redhat.com> 0.3.1-1
-- bump spec numbers (dmcphers@redhat.com)
-
-* Wed Dec 14 2011 Dan McPherson <dmcphers@redhat.com> 0.2.2-1
-- 
-
-* Thu Dec 01 2011 Dan McPherson <dmcphers@redhat.com> 0.2.1-1
-- bump spec numbers (dmcphers@redhat.com)
-
-* Tue Nov 29 2011 Dan McPherson <dmcphers@redhat.com> 0.1.9-1
-- fix for bug #758085. Failure keyword replaced with Stopped
-  (rchopra@redhat.com)
-
-* Mon Nov 28 2011 Dan McPherson <dmcphers@redhat.com> 0.1.8-1
-- phpmoadmin bug fixes #756713, #756716 (rchopra@redhat.com)
-
-* Wed Nov 23 2011 Dan McPherson <dmcphers@redhat.com> 0.1.7-1
-- fixes in phpmoadmin cucumber tests (rpenta@redhat.com)
-- cleanup of hooks (rchopra@redhat.com)
-
-* Tue Nov 22 2011 Dan McPherson <dmcphers@redhat.com> 0.1.6-1
-- 
-
-* Tue Nov 22 2011 Dan McPherson <dmcphers@redhat.com> 0.1.5-1
-- PhpMoAdmin cartridge changes: - Enforce user-name/password for accessing
-  phpMoAdmin web console. (rpenta@redhat.com)
-
-* Tue Nov 22 2011 Dan McPherson <dmcphers@redhat.com> 0.1.4-1
-- Remove unloved [acc. to Rajat] config.inc.php file. (ramr@redhat.com)
-
-* Mon Nov 21 2011 Rajat Chopra <rchopra@redhat.com> 0.1.3-1
-- changed version number is spec file to 1.0
-
-* Mon Nov 21 2011 Rajat Chopra <rchopra@redhat.com> 0.1.2-1
-- new package built with tito
-
-* Fri Nov 18 2011 Rajat Chopra <rchopra@redhat.com> 0.1.1-1
-- new package built with tito
-
+* Fri Jan 06 2012 Dan McPherson <dmcphers@redhat.com> 0.3.4-1
+- basic descriptors for all cartridges; added primitive structure for a www-
+  dynamic cartridge that will abstract all httpd processes that any cartridges
+  need (e.g. php, perl, metrics, rockmongo etc). (rchopra@redhat.com)

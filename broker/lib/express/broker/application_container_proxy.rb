@@ -591,7 +591,7 @@ module Express
       
       def self.rpc_options
         # Make a deep copy of the default options
-        Marshal::load(Marshal::dump(Rails.application.config.cdk[:rpc_opts]))
+        Marshal::load(Marshal::dump(Rails.application.config.rpc_opts))
       end
     
       #

@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.84.10
+Version:       0.84.11
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -46,6 +46,13 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Fri Jan 06 2012 Dan McPherson <dmcphers@redhat.com> 0.84.11-1
+- Allow libra domains to use tmpfs_t files if handed to it by the kernel, shm,
+  do not allow open or create (dwalsh@redhat.com)
+- Allow libra domains to create shared memory (dwalsh@redhat.com)
+- Allow libra domains to execute postgresql_exec_t (dwalsh@redhat.com)
+- Fix support for postgresql (dwalsh@redhat.com)
+
 * Thu Jan 05 2012 Dan McPherson <dmcphers@redhat.com> 0.84.10-1
 - Seems like build is still failing because we have : selinux-
   policy-3.7.19-131.el6 installed and not selinux-policy-3.7.19-133.el6 [131 in

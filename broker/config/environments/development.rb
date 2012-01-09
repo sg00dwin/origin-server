@@ -29,37 +29,41 @@ Broker::Application.configure do
   # OpenShift Configuration Below this point #
   ############################################
   config.app_scope = "broker"
-  config.integrated = false
   
-  # CDK Config
-  config.cdk = {
-    :domain_suffix => "dev.rhcloud.com",
+  config.dns = {
     :zone => "rhcloud.com",
-    :child_zone => "dev",
-    :per_user_app_limit => 5,
-    :broker_auth_secret => "EIvWT6u3lsvSRNRGZhhW8YcWMh5mUAlc32nZlRJPdJM=",
-    :broker_auth_rsa_secret => "SJDIkdfhuISe3wrulhjvcKHJFDUeoi8gfcdnu8299dhc",
-    :rpc_opts => {
-      :disctimeout => 3,
-      :timeout     => 30,
-      :verbose     => false,
-      :progress_bar=> false,
-      :filter      => {"identity"=>[], "fact"=>[], "agent"=>[], "cf_class"=>[]},
-      :config      => "/etc/mcollective/client.cfg"
-    },
-    :auth_service => {
-      :host => "https://www.redhat.com",
-      :base_url => "/wapps/streamline"
-    },
     :dynect_customer_name => "demo-redhat",
     :dynect_user_name => "dev-rhcloud-user",
     :dynect_password => "vo8zaijoN7Aecoo",
-    :dynect_url => "https://api2.dynect.net",
-    
+    :dynect_url => "https://api2.dynect.net"
+  }
+  
+  config.auth = {
+    :integrated => false,
+    :broker_auth_secret => "EIvWT6u3lsvSRNRGZhhW8YcWMh5mUAlc32nZlRJPdJM=",
+    :broker_auth_rsa_secret => "SJDIkdfhuISe3wrulhjvcKHJFDUeoi8gfcdnu8299dhc",
+    :auth_service => {
+      :host => "https://www.redhat.com",
+      :base_url => "/wapps/streamline"
+    }
+  }
+  
+  config.rpc_opts = {
+    :disctimeout => 3,
+    :timeout     => 30,
+    :verbose     => false,
+    :progress_bar=> false,
+    :filter      => {"identity"=>[], "fact"=>[], "agent"=>[], "cf_class"=>[]},
+    :config      => "/etc/mcollective/client.cfg"
+  }
+  
+  config.datastore = {
     :aws_key => "AKIAITDQ37BWZ5CKAORA",
     :aws_secret => "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",
-    :s3_bucket => "libra_dev",
-    
+    :s3_bucket => "libra_dev"
+  }
+  
+  config.analytics = {
     :nurture_enabled => false,
     :nurture_username => "admin",
     :nurture_password => "password",
@@ -70,6 +74,12 @@ Broker::Application.configure do
     :apptegic_key => "redhat",
     :apptegic_secret => "4DC5A0AA-48AE-9287-5F66-9A73E14B6E31",
     :apptegic_dataset => "test"
+  }
+  
+  # CDK Config
+  config.cdk = {
+    :domain_suffix => "dev.rhcloud.com",
+    :per_user_app_limit => 5
   }
 end
 

@@ -9,7 +9,7 @@ require 'cloud-sdk-common'
 module Express
   module Broker
     class AuthService
-      service_base_url = defined?(Rails) ? Rails.application.config.cdk[:auth_service][:host] + Rails.application.config.cdk[:auth_service][:base_url] : ""
+      service_base_url = defined?(Rails) ? Rails.application.config.auth[:auth_service][:host] + Rails.application.config.auth[:auth_service][:base_url] : ""
       @@login_url = URI.parse(service_base_url + "/login.html")
       @@roles_url = URI.parse(service_base_url + "/cloudVerify.html")
       @@user_info_url = URI.parse(service_base_url + "/userInfo.html")
@@ -17,7 +17,7 @@ module Express
       def generate_broker_key(app)
         cipher = OpenSSL::Cipher::Cipher.new("aes-256-cbc")                                                                                                                                                                 
         cipher.encrypt
-        cipher.key = OpenSSL::Digest::SHA512.new(Rails.application.config.cdk[:broker_auth_secret]).digest
+        cipher.key = OpenSSL::Digest::SHA512.new(Rails.application.config.auth[:broker_auth_secret]).digest
         cipher.iv = iv = cipher.random_iv
         token = {:app_name => app.name,
                  :rhlogin => app.user.rhlogin,
@@ -25,7 +25,7 @@ module Express
         encrypted_token = cipher.update(token.to_json)
         encrypted_token << cipher.final
       
-        public_key = OpenSSL::PKey::RSA.new(File.read('/var/www/libra/broker/config/keys/public.pem'), Rails.application.config.cdk[:broker_auth_rsa_secret])
+        public_key = OpenSSL::PKey::RSA.new(File.read('/var/www/libra/broker/config/keys/public.pem'), Rails.application.config.auth[:broker_auth_rsa_secret])
         encrypted_iv = public_key.public_encrypt(iv)
         [encrypted_iv, encrypted_token]
       end
@@ -38,8 +38,8 @@ module Express
           encrypted_token = Base64::decode64(params['broker_auth_key'])
           cipher = OpenSSL::Cipher::Cipher.new("aes-256-cbc")
           cipher.decrypt
-          cipher.key = OpenSSL::Digest::SHA512.new(Rails.application.config.cdk[:broker_auth_secret]).digest
-          private_key = OpenSSL::PKey::RSA.new(File.read('config/keys/private.pem'), Rails.application.config.cdk[:broker_auth_rsa_secret])
+          cipher.key = OpenSSL::Digest::SHA512.new(Rails.application.config.auth[:broker_auth_secret]).digest
+          private_key = OpenSSL::PKey::RSA.new(File.read('config/keys/private.pem'), Rails.application.config.auth[:broker_auth_rsa_secret])
           cipher.iv =  private_key.private_decrypt(Base64::decode64(params['broker_auth_iv']))
           json_token = cipher.update(encrypted_token)
           json_token << cipher.final
@@ -57,7 +57,7 @@ module Express
           raise Cloud::Sdk::UserValidationException.new if !app or creation_time != app.creation_time
           return username
         else
-          unless Rails.application.config.integrated
+          unless Rails.application.config.auth[:integrated]
             return data['rhlogin']
           else
             ticket = cookies[:rh_sso]

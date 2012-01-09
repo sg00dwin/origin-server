@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/rockmongo-1.1
 
 Name: rhc-cartridge-rockmongo-1.1
-Version: 1.2.3
+Version: 1.2.5
 Release: 1%{?dist}
 Summary: Embedded RockMongo support for express
 
@@ -46,29 +46,13 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/libra/cartridges/%{name}
 %{cartridgedir}/info/changelog
 %{cartridgedir}/info/control
+%{cartridgedir}/info/manifest.yml
 
 %changelog
-* Fri Jan 06 2012 Dan McPherson <dmcphers@redhat.com> 1.2.3-1
-- Bug 772173 (dmcphers@redhat.com)
+* Fri Jan 06 2012 Dan McPherson <dmcphers@redhat.com> 1.2.5-1
+- fix build breaks (dmcphers@redhat.com)
 
-* Thu Jan 05 2012 Dan McPherson <dmcphers@redhat.com> 1.2.2-1
-- mysql and mongo move (dmcphers@redhat.com)
-
-* Wed Dec 14 2011 Dan McPherson <dmcphers@redhat.com> 1.2.1-1
-- bump spec numbers (dmcphers@redhat.com)
-
-* Wed Dec 14 2011 Dan McPherson <dmcphers@redhat.com> 1.1.3-1
-- 
-
-* Fri Dec 09 2011 Mike McGrath <mmcgrath@redhat.com> 1.1.2-1
-- whitelist change for rebuild (mmcgrath@redhat.com)
-- fix for bug#760008 (rchopra@redhat.com)
-- release bump (mmcgrath@redhat.com)
-- adding rockmongo dir, should be separated out later (mmcgrath@redhat.com)
-
-* Fri Dec 02 2011 Mike McGrath <mmcgrath@redhat.com> 1.1.1-2
-- Correcting spec
-
-* Fri Dec 02 2011 Mike McGrath <mmcgrath@redhat.com> 1.1.1-1
-- new package built with tito
-
+* Fri Jan 06 2012 Dan McPherson <dmcphers@redhat.com> 1.2.4-1
+- basic descriptors for all cartridges; added primitive structure for a www-
+  dynamic cartridge that will abstract all httpd processes that any cartridges
+  need (e.g. php, perl, metrics, rockmongo etc). (rchopra@redhat.com)
