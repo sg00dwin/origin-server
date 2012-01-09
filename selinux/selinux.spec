@@ -34,6 +34,8 @@ rm -rf %{buildroot}
 
 %post
 /usr/sbin/semodule -i %{_datadir}/selinux/packages/libra.pp
+# Allow binding to JPDA port 8787 (temporarily add to jboss_management_port_t)
+/usr/sbin/semanage port -a -t jboss_management_port_t -p tcp 8787
 
 # Bring in external smtp ports but _NOT_ 25.
 #semanage -i - << _EOF
