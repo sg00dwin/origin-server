@@ -1,6 +1,6 @@
 # step descriptions for PostgreSQL cartridge behavior.
 
-# require 'pg'
+require 'postgres'
 require 'fileutils'
 
 $pgsql_version = "8.4"
@@ -175,23 +175,14 @@ end
 Then /^the postgresql admin user will have access$/ do
   begin
     # FIXME: For now use psql -- we should try programatically later.
-    command = "PGPASSWORD=#{@mysql['password']} pgsql -h #{@mysql['ip']} -U #{@mysql['username']} -l"
-    exit_code = runcon command,  'unconfined_u', 'system_r', 'libra_initrc_t', outbuf
-    if exit_code != 0
-       FileUtils.cp "/var/lib/libra/#{account_name}/postgresql-#{$pgsql_version}/log/postgres.log", "/tmp/rhc/postgresql_error_#{account_name}.log"
-       raise "Error running #{command}: returned #{exit_code}"
-    end
+    dbconn = PGconn.connect(@pgsql['ip'], 5432, '', '', 'postgres',
+                            @pgsql['username'], @pgsql['password'])
+  rescue PGError
+    dbconn = nil
+ end
 
-#    dbh = Mysql.real_connect(@mysql['ip'], 
-#                             @mysql['username'], 
-#                             @mysql['password'],
-#                             'postgres')
-#  rescue Mysql::Error
-#    dbh = nil
-  end
-#
-#  dbh.should be_a(PostgreSQL)
-#  dbh.close if dbh
+ dbconn.should be_a(PGconn)
+ dbconn.close if dbconn
 end
 
 Given /^a new postgresql database$/ do

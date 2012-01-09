@@ -11,7 +11,7 @@ Feature: PostgreSQL Application Sub-Cartridge
     And the postgresql database will exist
     And the postgresql control script will exist
     And the postgresql daemon will be running
-    And the admin user will have access
+    And the postgresql admin user will have access
 
   Scenarios: Create Application With Database Scenarios
     |type|
