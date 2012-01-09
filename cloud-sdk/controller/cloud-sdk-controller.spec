@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.2.25
+Version:        0.2.26
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        AGPLv3
@@ -72,6 +72,11 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Mon Jan 09 2012 Dan McPherson <dmcphers@redhat.com> 0.2.26-1
+- Updating gem versions (dmcphers@redhat.com)
+- TA1166: Move outage notification out of cloud-sdk controller to broker
+  component (kraman@gmail.com)
+
 * Fri Jan 06 2012 Dan McPherson <dmcphers@redhat.com> 0.2.25-1
 - Updating gem versions (dmcphers@redhat.com)
 - fix test case (dmcphers@redhat.com)
