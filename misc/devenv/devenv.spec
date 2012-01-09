@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.84.10
+Version:   0.84.11
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -224,6 +224,9 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 %{_initddir}/sauce-connect
 
 %changelog
+* Mon Jan 09 2012 Dan McPherson <dmcphers@redhat.com> 0.84.11-1
+- Revert 9619834, dependency belongs in site.spec (aboone@redhat.com)
+
 * Mon Jan 09 2012 Dan McPherson <dmcphers@redhat.com> 0.84.10-1
 - Require ruby-geoip package in devenv in preparation for US1455
   (aboone@redhat.com)
