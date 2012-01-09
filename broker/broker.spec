@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.84.34
+Version:   0.84.35
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -76,6 +76,12 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Mon Jan 09 2012 Dan McPherson <dmcphers@redhat.com> 0.84.35-1
+- Updating gem versions (dmcphers@redhat.com)
+- TA1166: Move outage notification out of cloud-sdk controller to broker
+  component (kraman@gmail.com)
+- enable nurture by default for prod settings (dmcphers@redhat.com)
+
 * Fri Jan 06 2012 Dan McPherson <dmcphers@redhat.com> 0.84.34-1
 - fix typo (dmcphers@redhat.com)
 
