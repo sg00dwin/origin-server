@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.84.12
+Version:   0.84.13
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -69,6 +69,11 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Mon Jan 09 2012 Dan McPherson <dmcphers@redhat.com> 0.84.13-1
+- Show "video not available" message for videos without a Chinese equivalent
+  (aboone@redhat.com)
+- Updates to password form for US1602 (fotios@redhat.com)
+
 * Mon Jan 09 2012 Alex Boone <aboone@redhat.com> 0.84.12-1
 - 
 
