@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.84.11
+Version:   0.84.12
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -69,6 +69,9 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Mon Jan 09 2012 Alex Boone <aboone@redhat.com> 0.84.12-1
+- 
+
 * Mon Jan 09 2012 Alex Boone <aboone@redhat.com> 0.84.11-1
 - Use an alternative video host for Chinese site visitors (aboone@redhat.com)
 
