@@ -24,10 +24,10 @@ module Cloud::SDK::Model
   class ApplicationContainer < CdkModel
     attr_reader :uuid, :application_uuid, :user
     
-    def initialize(application_uuid, container_uuid)
+    def initialize(application_uuid, container_uuid, user_uid=nil)
       @uuid = container_uuid
       @application_uuid = application_uuid
-      @user = UnixUser.new(application_uuid,container_uuid)
+      @user = UnixUser.new(application_uuid, container_uuid, user_uid)
     end
     
     def name

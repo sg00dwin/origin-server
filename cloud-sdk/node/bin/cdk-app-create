@@ -24,7 +24,7 @@ cdk-app-create: Creates a new application.
 
 == Usage
 
-cdk-app-create --with-uuid UUID --with-ssh-key KEY [--with-ssh-key-type KEY_TYPE --named NAME]
+cdk-app-create --with-uuid UUID --with-ssh-key KEY [--with-ssh-key-type KEY_TYPE] [--named NAME] [--with-uid UID]
 
 Options:
 -h|--help:
@@ -39,6 +39,7 @@ end
 require 'cloud-sdk-node'
 opts = GetoptLong.new(
     ["--with-uuid",         "-c", GetoptLong::REQUIRED_ARGUMENT],
+    ["--with-uid",          "-i", GetoptLong::REQUIRED_ARGUMENT],
     ["--with-ssh-key",      "-s", GetoptLong::REQUIRED_ARGUMENT],
     ["--with-ssh-key-type", "-t", GetoptLong::REQUIRED_ARGUMENT],
     ["--dry-run",           "-n", GetoptLong::NO_ARGUMENT],
@@ -62,6 +63,8 @@ if args["--help"]
 end
 
 uuid = args['--with-uuid']
+uid = args['--with-uid']
+uid = nil if uid && uid.empty?
 ssh_key = args['--with-ssh-key']
 ssh_key_type = args['--with-ssh-key-type']
 name = args['--named']
@@ -75,7 +78,7 @@ unless uuid and ssh_key
 end
 
 begin
-  container = Cloud::SDK::Model::ApplicationContainer.new(uuid,uuid)
+  container = Cloud::SDK::Model::ApplicationContainer.new(uuid, uuid, uid)
   container.create
   container.user.add_ssh_key(ssh_key, ssh_key_type)
 rescue Exception => e

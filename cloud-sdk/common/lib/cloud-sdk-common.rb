@@ -21,5 +21,6 @@ require 'fileutils'
 require 'getoptlong'
 require 'json'
 require "cloud-sdk-common/models/model"
+require "cloud-sdk-common/models/user_model"
 require "cloud-sdk-common/exceptions/cdk_exception"
 require "cloud-sdk-common/lib/data_store"
