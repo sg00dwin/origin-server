@@ -158,6 +158,6 @@ client_result "   Database Name: ${application}"
 client_result ""
 client_result "Connection URL: postgresql://$IP:5432/"
 client_result ""
-client_result "You can manage your new PostgreSQL database by also embedding phpPgAdmin."
+#client_result "You can manage your new PostgreSQL database by also embedding phpPgAdmin."
 
 set_app_info "Connection URL: postgresql://$IP:5432/"
