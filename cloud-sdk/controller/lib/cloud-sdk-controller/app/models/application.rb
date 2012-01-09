@@ -76,6 +76,16 @@ class Application < Cloud::Sdk::Model
     reply
   end
   
+  #convinence method to cleanup an application
+  def cleanup_and_delete
+    reply = ResultIO.new
+    reply.append self.deconfigure_dependencies
+    reply.append self.destroy
+    reply.append self.destroy_dns
+    self.delete
+    reply
+  end
+  
   #destroys all application containers
   def destroy
     reply = ResultIO.new

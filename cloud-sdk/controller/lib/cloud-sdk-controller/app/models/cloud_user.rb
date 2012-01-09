@@ -1,7 +1,7 @@
 class CloudUser < Cloud::Sdk::Model
-  attr_accessor :rhlogin, :uuid, :ssh, :namespace, :system_ssh_keys, :env_vars, :email_address, :ssh_keys
+  attr_accessor :rhlogin, :uuid, :system_ssh_keys, :env_vars, :email_address, :ssh_keys, :ssh, :namespace
   primary_key :rhlogin
-  private :rhlogin=, :uuid=
+  private :rhlogin=, :uuid=, :ssh=, :namespace=
   
   validates_each :rhlogin do |record, attribute, val|
     record.errors.add(attribute, {:message => "Invalid characters found in RHlogin '#{val}' ", :code => 107}) if val =~ /["\$\^<>\|%\/;:,\\\*=~]/
@@ -135,15 +135,30 @@ class CloudUser < Cloud::Sdk::Model
     result
   end
   
-  def update_namespace
-    notify_observers(:before_namespace_update)
+  def update_ssh_key(new_key, key_type)
+    reply = ResultIO.new    
+    return reply if self.ssh == new_key
     
+    self.applications.each do |app|
+      reply.append app.remove_authorized_ssh_key(self.ssh)
+      reply.append app.add_authorized_ssh_key(new_key, key_type)
+    end
+    @ssh = key_type
+    reply.append self.save
+    reply
+  end
+  
+  def update_namespace(new_ns)
+    old_ns = self.namespace
+    reply = ResultIO.new
+    return reply if old_ns == new_ns
+    self.namespace = new_ns
+    
+    notify_observers(:before_namespace_update)
     dns_service = Cloud::Sdk::DnsService.instance
-    raise Cloud::Sdk::UserException.new("A namespace with name '#{namespace}' already exists", 103) unless dns_service.namespace_available?(@namespace)
+    raise Cloud::Sdk::UserException.new("A namespace with name '#{new_ns}' already exists", 103) unless dns_service.namespace_available?(new_ns)
     
     begin
-      old_ns = self.namespace_was
-      new_ns = self.namespace
       dns_service.register_namespace(new_ns)
       dns_service.deregister_namespace(old_ns)    
   
@@ -177,6 +192,7 @@ class CloudUser < Cloud::Sdk::Model
     ensure
       dns_service.close
     end
+    
     applications.each do |app|
       app.embedded.each_key do |framework|
         if app.embedded[framework].has_key?('info')
@@ -187,7 +203,10 @@ class CloudUser < Cloud::Sdk::Model
       end
       app.save
     end
+    
+    reply.append self.save
     notify_observers(:after_namespace_update)
+    reply
   end
   
   private

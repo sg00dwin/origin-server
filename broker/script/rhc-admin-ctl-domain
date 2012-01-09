@@ -73,9 +73,9 @@ when "update"
     print "User with login: #{login} not found\n"
     exit 1
   end
-  user.ssh = ssh unless ssh.nil?
-  user.namespace = namespace unless namespace.nil?
-  reply.append user.save
+  
+  reply.append user.update_ssh_key(ssh, "dsa") unless ssh.nil?
+  reply.append user.update_namespace(namespace) unless namespace.nil?
   reply.resultIO << "Successfully updated user.\n"
 when "delete"
   user = CloudUser.find(login)
