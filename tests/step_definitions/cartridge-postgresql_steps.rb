@@ -4,7 +4,7 @@
 require 'fileutils'
 
 $pgsql_version = "8.4"
-$pgsql_cart_root = "/usr/libexec/li/cartridges/embedded/postgreql-#{$pgsql_version}"
+$pgsql_cart_root = "/usr/libexec/li/cartridges/embedded/postgresql-#{$pgsql_version}"
 $pgsql_hooks = $pgsql_cart_root + "/info/hooks"
 $pgsql_config = $pgsql_hooks + "/configure"
 $pgsql_config_format = "#{$pgsql_config} %s %s %s"
@@ -104,7 +104,7 @@ Then /^the postgresql configuration file will( not)? exist$/ do |negate|
   app_name = @app['name']
 
   pgsql_user_root = "#{$home_root}/#{account_name}/postgresql-#{$pgsql_version}"
-  pgsql_config_file = "#{postgresql_user_root}/data/postgresql.conf"
+  pgsql_config_file = "#{pgsql_user_root}/data/postgresql.conf"
 
   begin
     cnffile = File.new pgsql_config_file
@@ -172,7 +172,7 @@ Then /^the postgresql daemon will( not)? be running$/ do |negate|
   end
 end
 
-Then /^the admin user will have access$/ do
+Then /^the postgresql admin user will have access$/ do
   begin
     # FIXME: For now use psql -- we should try programatically later.
     command = "PGPASSWORD=#{@mysql['password']} pgsql -h #{@mysql['ip']} -U #{@mysql['username']} -l"
