@@ -100,7 +100,7 @@ class CloudUser < Cloud::Sdk::Model
     self.ssh_keys = {} unless self.ssh_keys    
     result = ResultIO.new
     key = self.ssh_keys[key_name]
-    return unless key
+    return result unless key
     applications.each do |app|
       Rails.logger.debug "DEBUG: Removing secondary key named #{key_name} from app: #{app.name} for user #{@name}"
       result.append app.remove_authorized_ssh_key(key)
