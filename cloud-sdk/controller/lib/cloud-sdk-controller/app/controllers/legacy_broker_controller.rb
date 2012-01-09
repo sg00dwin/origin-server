@@ -1,11 +1,9 @@
 class LegacyBrokerController < ApplicationController
   layout nil
-  before_filter :validate_request
+  before_filter :validate_request, :process_notification
   before_filter :authenticate, :except => :cart_list_post
   rescue_from Exception, :with => :exception_handler
   include LegacyBrokerHelper
-  
-  @@outage_notification_file = '/etc/libra/express_outage_notification.txt'
   
   def user_info_post
     user = CloudUser.find(@login)
@@ -287,6 +285,11 @@ class LegacyBrokerController < ApplicationController
   
   protected
   
+  def process_notification
+    message = self.notifications if self.respond_to? "notifications"
+    @reply.messageIO << message unless message.nil?
+  end
+  
   # Raise an exception if cartridge type isn't supported
   def check_cartridge_type(framework, container, cart_type)
     carts = container.get_available_cartridges(cart_type)
@@ -312,22 +315,6 @@ class LegacyBrokerController < ApplicationController
       if @req.invalid?
         @reply.resultIO << @req.errors.first[1][:message]
         render :json => @reply, :status => :invalid 
-      end
-    end
-    check_outage_notification
-  end
-  
-  def check_outage_notification    
-    if File.exists?(@@outage_notification_file)
-      file = File.open(@@outage_notification_file, "r")
-      details = nil
-      begin
-        details = file.read
-      ensure
-        file.close
-      end
-      if details
-        @reply.messageIO << details
       end
     end
   end
