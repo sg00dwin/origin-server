@@ -1,11 +1,7 @@
-%object{ :width=>"#{width}", :height=>"#{height}" }
+%object{ :width=>"#{width}",
+         :height=>"#{height}",
+         :data=>"http://www.tudou.com/v/#{vid_id}",
+         :type=>"application/x-shockwave-flash" }
   %param{ :name=>"movie", :value=>"http://www.tudou.com/v/#{vid_id}" }
   %param{ :name=>"allowFullScreen", :value=>"true" }
   %param{ :name=>"wmode", :value=>"transparent" }
-  %embed{ :src=>"http://www.tudou.com/v/#{vid_id}",
-    :value=>"transparent",
-    :type=>"application/x-shockwave-flash",
-    :allowFullScreen=>"true",
-    :wmode=>"opaque",
-    :width=>"#{width}",
-    :height=>"#{height}" }
