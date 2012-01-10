@@ -13,7 +13,7 @@ class ExpressControllerTest < ActiveSupport::TestCase
     assert_raise( StandardError ) { @controller.local_video('foo') }
   end
 
-  test 'should provide todou info in China' do
+  test 'should provide tudou info in China' do
     key = 'express_client_tools'
     ips = [EN_CHINA_CN]
 
@@ -21,10 +21,10 @@ class ExpressControllerTest < ActiveSupport::TestCase
       @controller = DummyController.new(ip)
       vid = @controller.local_video(key)
     
-      assert_equal :todou, vid[:provider]
+      assert_equal :tudou, vid[:provider]
       assert_equal 'MUx16XMfBi0', vid[:id]
 
-      assert_equal 'http://www.todou.com/programs/view/MUx16XMfBi0/', @controller.local_video_url(key)
+      assert_equal 'http://www.tudou.com/programs/view/MUx16XMfBi0/', @controller.local_video_url(key)
     }
   end
 

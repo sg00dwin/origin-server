@@ -63,8 +63,8 @@ module ApplicationHelper
 
     if :youtube == vid[:provider]
       "http://www.youtube.com/watch?v=#{vid[:id]}"
-    elsif :todou == vid[:provider]
-      "http://www.todou.com/programs/view/#{vid[:id]}/"
+    elsif :tudou == vid[:provider]
+      "http://www.tudou.com/programs/view/#{vid[:id]}/"
     end
   end
 
@@ -76,7 +76,7 @@ module ApplicationHelper
     country_code = geo.country_code_by_addr(request.remote_ip)
 
     if chinese_country_codes.include?(country_code)
-      vid_provider = :todou
+      vid_provider = :tudou
       vid_locale = :zh_CN
     else
       vid_provider = :youtube
