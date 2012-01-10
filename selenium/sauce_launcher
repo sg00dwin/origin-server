@@ -16,6 +16,12 @@ ${WORKSPACE}/build/devenv launch ${JOB_NAME}_${BUILD_NUMBER} | tee $TMP_FILE
 trap "${WORKSPACE}/build/devenv terminate ${JOB_NAME}_${BUILD_NUMBER}; exit" INT TERM EXIT
 
 DEVENV_HOSTNAME=`grep Hostname: $TMP_FILE | awk '{print $2}'`
+
+if [ -z "$DEVENV_HOSTNAME" ]; then
+  echo "DEVENV_HOSTNAME is blank - something is wrong.  Exiting!"
+  exit 1
+fi
+
 export SAUCE_BROWSER_URL="https://${DEVENV_HOSTNAME}"
 
 # Sync the code

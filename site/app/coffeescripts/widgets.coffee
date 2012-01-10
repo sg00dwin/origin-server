@@ -264,8 +264,10 @@ osDataEmitter = (event, xhr, status) ->
   json = $.parseJSON xhr.responseText
   if json.event
     e = jQuery.Event json.event, { osEventData: json.data, osEventStatus: json.status }
-    for elem in _this.subscribers[json.event]
-      elem.trigger e
+    subs = _this.subscribers[json.event]
+    if subs
+      for elem in subs
+        elem.trigger e
 
 # bind data emitter
 $('body').bind 'ajax:complete', osDataEmitter

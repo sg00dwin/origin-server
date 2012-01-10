@@ -26,9 +26,9 @@ class CloudUser < Cloud::Sdk::Model
     end
   end
   
-  def initialize(rhlogin=nil, ssh=nil, namespace=nil, ssh_type=nil)
+  def initialize(rhlogin=nil, ssh=nil, namespace=nil, ssh_type='ssh-rsa')
     super()
-    self.rhlogin, self.ssh, self.namespace = rhlogin, ssh, namespace, self.ssh_type = ssh_type
+    self.rhlogin, self.ssh, self.namespace, self.ssh_type = rhlogin, ssh, namespace, ssh_type
   end
   
   def save
