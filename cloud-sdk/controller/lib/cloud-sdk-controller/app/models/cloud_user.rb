@@ -1,7 +1,8 @@
 class CloudUser < Cloud::Sdk::Model
-  attr_accessor :rhlogin, :uuid, :system_ssh_keys, :env_vars, :email_address, :ssh_keys, :ssh, :namespace
+  attr_accessor :rhlogin, :uuid, :system_ssh_keys, :env_vars, :email_address, :ssh_keys, :ssh, :ssh_type, :namespace, :key, :type
   primary_key :rhlogin
   private :rhlogin=, :uuid=, :ssh=, :namespace=
+  exclude_attributes :key, :type
   
   validates_each :rhlogin do |record, attribute, val|
     record.errors.add(attribute, {:message => "Invalid characters found in RHlogin '#{val}' ", :code => 107}) if val =~ /["\$\^<>\|%\/;:,\\\*=~]/
@@ -19,9 +20,15 @@ class CloudUser < Cloud::Sdk::Model
     end
   end
   
-  def initialize(rhlogin=nil, ssh=nil, namespace=nil)
+  validates_each :ssh_type, :allow_nil =>true do |record, attribute, val|
+    if !(val =~ /^(ssh-rsa|ssh-dss)$/)
+      record.errors.add attribute, {:message => "Invalid ssh key type: #{val}", :exit_code => 116}
+    end
+  end
+  
+  def initialize(rhlogin=nil, ssh=nil, namespace=nil, ssh_type=nil)
     super()
-    self.rhlogin, self.ssh, self.namespace = rhlogin, ssh, namespace
+    self.rhlogin, self.ssh, self.namespace = rhlogin, ssh, namespace, self.ssh_type = ssh_type
   end
   
   def save
@@ -87,11 +94,11 @@ class CloudUser < Cloud::Sdk::Model
   def add_secondary_ssh_key(key_name, key, key_type=nil)
     self.ssh_keys = {} unless self.ssh_keys
     result = ResultIO.new
-    self.ssh_keys[key_name] = key
+    self.ssh_keys[key_name] = { :key => key, :type => key_type }
     self.save
     applications.each do |app|
       Rails.logger.debug "DEBUG: Adding secondary key named #{key_name} to app: #{app.name} for user #{@name}"
-      result.append app.add_authorized_ssh_key(key, key_type, comment="-#{key_name}")
+      result.append app.add_authorized_ssh_key(key, key_type, key_name)
     end
     result
   end
@@ -144,6 +151,7 @@ class CloudUser < Cloud::Sdk::Model
       reply.append app.add_authorized_ssh_key(new_key, key_type)
     end
     @ssh = new_key
+    @ssh_type = key_type
     reply.append self.save
     reply
   end

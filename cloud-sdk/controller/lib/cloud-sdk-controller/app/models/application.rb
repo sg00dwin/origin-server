@@ -125,8 +125,8 @@ class Application < Cloud::Sdk::Model
   
   def add_secondary_ssh_keys
     reply = ResultIO.new
-    @user.ssh_keys.each_value do |ssh_key|
-      reply.append add_authorized_ssh_key(ssh_key)
+    @user.ssh_keys.each do |key_name, ssh_key|
+      reply.append add_authorized_ssh_key(ssh_key["key"], ssh_key["type"], key_name)
     end if @user.ssh_keys
     reply
   end
