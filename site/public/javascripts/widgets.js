@@ -1,3 +1,7 @@
+/* DO NOT MODIFY. This file was compiled Tue, 10 Jan 2012 16:53:11 GMT from
+ * /home/aboone/Source/li/site/app/coffeescripts/widgets.coffee
+ */
+
 (function() {
   var $, osData, osDataEmitter, osDialog, osPopup, _this;
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
@@ -225,20 +229,22 @@
   })();
   $.widget.bridge('osData', osData);
   osDataEmitter = function(event, xhr, status) {
-    var e, elem, json, _i, _len, _ref, _results;
+    var e, elem, json, subs, _i, _len, _results;
     json = $.parseJSON(xhr.responseText);
     if (json.event) {
       e = jQuery.Event(json.event, {
         osEventData: json.data,
         osEventStatus: json.status
       });
-      _ref = _this.subscribers[json.event];
-      _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        elem = _ref[_i];
-        _results.push(elem.trigger(e));
+      subs = _this.subscribers[json.event];
+      if (subs) {
+        _results = [];
+        for (_i = 0, _len = subs.length; _i < _len; _i++) {
+          elem = subs[_i];
+          _results.push(elem.trigger(e));
+        }
+        return _results;
       }
-      return _results;
     }
   };
   $('body').bind('ajax:complete', osDataEmitter);
