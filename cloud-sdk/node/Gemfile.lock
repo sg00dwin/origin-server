@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    cloud-sdk-node (0.2.15)
+    cloud-sdk-node (0.2.16)
       activemodel (= 3.0.10)
       cloud-sdk-common
       highline (= 1.5.1)
