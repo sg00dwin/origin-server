@@ -20,6 +20,7 @@ Requires:       rubygem(json_pure)
 Requires:       rubygem(mocha)
 Requires:       rubygem(parseconfig)
 Requires:       rubygem(state_machine)
+Requires:       rubygem(mongo)
 
 BuildRequires:  ruby
 BuildRequires:  rubygems

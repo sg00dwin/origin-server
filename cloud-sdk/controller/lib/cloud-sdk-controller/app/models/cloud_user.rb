@@ -143,7 +143,7 @@ class CloudUser < Cloud::Sdk::Model
       reply.append app.remove_authorized_ssh_key(self.ssh)
       reply.append app.add_authorized_ssh_key(new_key, key_type)
     end
-    @ssh = key_type
+    @ssh = new_key
     reply.append self.save
     reply
   end

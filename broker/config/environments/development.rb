@@ -81,5 +81,13 @@ Broker::Application.configure do
     :domain_suffix => "dev.rhcloud.com",
     :per_user_app_limit => 5
   }
+
+  config.cdk.datastore.mongo = {
+    :host => "localhost",
+    :port => 27017,
+    :db => "openshift",
+    :collection => "test1"
+  }
+
 end
 
