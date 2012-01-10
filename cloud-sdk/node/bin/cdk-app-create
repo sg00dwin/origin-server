@@ -24,7 +24,7 @@ cdk-app-create: Creates a new application.
 
 == Usage
 
-cdk-app-create --with-uuid UUID --with-ssh-key KEY [--named NAME]
+cdk-app-create --with-uuid UUID --with-ssh-key KEY [--with-ssh-key-type KEY_TYPE --named NAME]
 
 Options:
 -h|--help:
@@ -38,13 +38,14 @@ end
 
 require 'cloud-sdk-node'
 opts = GetoptLong.new(
-    ["--with-uuid",        "-c", GetoptLong::REQUIRED_ARGUMENT],
-    ["--with-ssh-key",     "-s", GetoptLong::REQUIRED_ARGUMENT],
-    ["--dry-run",          "-n", GetoptLong::NO_ARGUMENT],
-    ["--named",                  GetoptLong::OPTIONAL_ARGUMENT],
-    ["--porcelain",        "-q", GetoptLong::NO_ARGUMENT],
-    ["--debug",            "-d", GetoptLong::NO_ARGUMENT],
-    ["--help",             "-?", GetoptLong::NO_ARGUMENT]
+    ["--with-uuid",         "-c", GetoptLong::REQUIRED_ARGUMENT],
+    ["--with-ssh-key",      "-s", GetoptLong::REQUIRED_ARGUMENT],
+    ["--with-ssh-key-type", "-t", GetoptLong::REQUIRED_ARGUMENT],
+    ["--dry-run",           "-n", GetoptLong::NO_ARGUMENT],
+    ["--named",                   GetoptLong::OPTIONAL_ARGUMENT],
+    ["--porcelain",         "-q", GetoptLong::NO_ARGUMENT],
+    ["--debug",             "-d", GetoptLong::NO_ARGUMENT],
+    ["--help",              "-?", GetoptLong::NO_ARGUMENT]
 )
 
 args = {}
@@ -62,6 +63,7 @@ end
 
 uuid = args['--with-uuid']
 ssh_key = args['--with-ssh-key']
+ssh_key_type = args['--with-ssh-key-type']
 name = args['--named']
 $dry_run = true if args['--dry-run']
 $cdk_debug = true if args['--debug']
@@ -75,7 +77,7 @@ end
 begin
   container = Cloud::SDK::Model::ApplicationContainer.new(uuid,uuid)
   container.create
-  container.user.add_ssh_key(ssh_key)
+  container.user.add_ssh_key(ssh_key, ssh_key_type)
 rescue Exception => e
   $stderr.puts(e.message)
   exit -1

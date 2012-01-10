@@ -89,7 +89,7 @@ class LegacyBrokerController < ApplicationController
        return
     else
       raise Cloud::Sdk::UserException.new("The supplied namespace '#{@req.namespace}' is not allowed", 106) if Cloud::Sdk::ApplicationContainerProxy.blacklisted? @req.namespace
-      cloud_user = CloudUser.new(@login, @req.ssh, @req.namespace)
+      cloud_user = CloudUser.new(@login, @req.ssh, @req.namespace, @req.key_type)
       if cloud_user.invalid?
         @reply.resultIO << cloud_user.errors.first[1][:message]
         render :json => @reply, :status => :invalid 
