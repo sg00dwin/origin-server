@@ -98,20 +98,7 @@ when "destroy"
     end
   end
   
-  reply.append app.deconfigure_dependencies
-  reply.append app.destroy
-  if app.framework_cartridge == "jenkins"
-    user.applications.each do |uapp|
-      begin
-        reply.append uapp.remove_dependency('jenkins-client-1.4') if uapp.name != app.name and uapp.embedded and uapp.embedded.has_key?('jenkins-client-1.4')
-      rescue Exception => e
-        reply.debugIO << "Failed to remove jenkins client from application: #{uapp.name}\n"
-      end
-    end
-  end
-    
-  reply.append app.destroy_dns
-  app.delete
+  reply.append app.cleanup_and_delete
   reply.resultIO << "Successfully destroyed application: #{app.name}" if reply.resultIO.string.empty?
 end
 

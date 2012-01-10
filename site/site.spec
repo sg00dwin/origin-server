@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.84.10
+Version:   0.84.13
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -16,6 +16,7 @@ Requires:  rhc-server-common
 Requires:  httpd
 Requires:  mod_ssl
 Requires:  mod_passenger
+Requires:  ruby-geoip
 Requires:  rubygem-passenger-native-libs
 Requires:  rubygem-rails
 Requires:  rubygem-json
@@ -68,6 +69,17 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Mon Jan 09 2012 Dan McPherson <dmcphers@redhat.com> 0.84.13-1
+- Show "video not available" message for videos without a Chinese equivalent
+  (aboone@redhat.com)
+- Updates to password form for US1602 (fotios@redhat.com)
+
+* Mon Jan 09 2012 Alex Boone <aboone@redhat.com> 0.84.12-1
+- 
+
+* Mon Jan 09 2012 Alex Boone <aboone@redhat.com> 0.84.11-1
+- Use an alternative video host for Chinese site visitors (aboone@redhat.com)
+
 * Mon Jan 09 2012 Dan McPherson <dmcphers@redhat.com> 0.84.10-1
 - Fix grammar error (BZ 771835) (aboone@redhat.com)
 

@@ -72,8 +72,10 @@ class LegacyBrokerController < ApplicationController
     end
 
     if @req.alter
-      cloud_user.ssh = @req.ssh
-      cloud_user.namespace = @req.namespace
+      @reply.append cloud_user.update_ssh_key(@req.ssh, @req.key_type)
+      
+      raise Cloud::Sdk::UserException.new("The supplied namespace '#{@req.namespace}' is not allowed", 106) if Cloud::Sdk::ApplicationContainerProxy.blacklisted? @req.namespace            
+      @reply.append cloud_user.update_namespace(@req.namespace)
     elsif @req.delete
        if not cloud_user.applications.empty?
          @reply.resultIO << "Cannot remove namespace #{cloud_user.namespace}. Remove existing apps first.\n"
@@ -87,28 +89,11 @@ class LegacyBrokerController < ApplicationController
        return
     else
       raise Cloud::Sdk::UserException.new("The supplied namespace '#{@req.namespace}' is not allowed", 106) if Cloud::Sdk::ApplicationContainerProxy.blacklisted? @req.namespace
-      cloud_user = CloudUser.new(@login, @req.ssh, @req.namespace)
-    end
-
-    if cloud_user.invalid?
-      @reply.resultIO << cloud_user.errors.first[1][:message]
-      render :json => @reply, :status => :invalid 
-      return
-    end
-    
-    if @req.alter     
-      if cloud_user.persisted?
-        if cloud_user.ssh_changed?
-          cloud_user.applications.each do |app|
-            @reply.append app.remove_authorized_ssh_key(cloud_user.ssh_was)
-            @reply.append app.add_authorized_ssh_key(cloud_user.ssh, @req.key_type)
-          end
-        end
-
-        if cloud_user.namespace_changed?
-          raise Cloud::Sdk::UserException.new("The supplied namespace '#{@req.namespace}' is not allowed", 106) if Cloud::Sdk::ApplicationContainerProxy.blacklisted? @req.namespace
-          cloud_user.update_namespace()
-        end
+      cloud_user = CloudUser.new(@login, @req.ssh, @req.namespace, @req.key_type)
+      if cloud_user.invalid?
+        @reply.resultIO << cloud_user.errors.first[1][:message]
+        render :json => @reply, :status => :invalid 
+        return
       end
     end
         
@@ -196,22 +181,8 @@ class LegacyBrokerController < ApplicationController
         return
       end
     when 'deconfigure'
-      app = get_app_from_request(user)
-      @reply.append app.deconfigure_dependencies
-      @reply.append app.destroy
-      
-      if app.framework_cartridge == "jenkins"
-        user.applications.each do |uapp|
-          begin
-            @reply.append uapp.remove_dependency('jenkins-client-1.4') if uapp.name != app.name and uapp.embedded and uapp.embedded.has_key?('jenkins-client-1.4')
-          rescue Exception => e
-            @reply.debugIO << "Failed to remove jenkins client from application: #{uapp.name}\n"
-          end
-        end
-      end
-      
-      @reply.append app.destroy_dns
-      app.delete
+      app = get_app_from_request(user)      
+      @reply.append app.cleanup_and_delete
       @reply.resultIO << "Successfully destroyed application: #{app.name}" if @reply.resultIO.length == 0
     when 'start'
       app = get_app_from_request(user)

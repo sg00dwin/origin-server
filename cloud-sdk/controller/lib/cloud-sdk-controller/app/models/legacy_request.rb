@@ -24,13 +24,13 @@ class LegacyRequest < Cloud::Sdk::Model
 
   validates_each :key_name, :allow_nil =>true do |record, attribute, val|
     if !(val =~ /\A[A-Za-z0-9]+\z/)
-      record.errors.add attribute, {:message => "Invalid key name: #{val}", :exit_code => 106}
+      record.errors.add attribute, {:message => "Invalid key name: #{val}", :exit_code => 117}
     end
   end
   
   validates_each :key_type, :allow_nil =>true do |record, attribute, val|
     if !(val =~ /^(ssh-rsa|ssh-dss)$/)
-      record.errors.add attribute, {:message => "Invalid key type: #{val}", :exit_code => 106}
+      record.errors.add attribute, {:message => "Invalid key type: #{val}", :exit_code => 116}
     end
   end
 

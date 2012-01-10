@@ -15,7 +15,8 @@ class ExpressApp
   validates :app_name,  :presence => true,
                         :length => {:maximum => 16},
                         :format => {:with => /^[A-Za-z0-9]+$/}
-  validates :cartridge, :presence => true
+  validates :cartridge, :presence => true,
+                        :format => {:with => /^[\w\-\.]+$/}
   
   validate :cartridge_list_is_present
   validate :cartridge_in_cartlist
@@ -83,7 +84,7 @@ class ExpressApp
   end
   
   def cartridge_in_cartlist
-    if @cartlist and @cartridge
+    if @cartlist and @cartridge and not errors[:cartridge].any?
       errors.add(:cartridge, "#{@cartridge} is not a valid cartridge.") unless @cartlist.include? @cartridge
     end
   end

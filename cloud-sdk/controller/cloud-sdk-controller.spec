@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.2.26
+Version:        0.2.27
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        AGPLv3
@@ -72,6 +72,13 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Mon Jan 09 2012 Dan McPherson <dmcphers@redhat.com> 0.2.27-1
+- Updating gem versions (dmcphers@redhat.com)
+- BugzID# 772760 (kraman@gmail.com)
+- Move jenkins deconfigure to observer. Create convinence method to move app
+  deconfigure and user update logic from admin script and cloud-sdk controller
+  to cloud-sdk models. (kraman@gmail.com)
+
 * Mon Jan 09 2012 Dan McPherson <dmcphers@redhat.com> 0.2.26-1
 - Updating gem versions (dmcphers@redhat.com)
 - TA1166: Move outage notification out of cloud-sdk controller to broker

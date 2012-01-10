@@ -13,7 +13,7 @@ class ExpressDomainController < ApplicationController
     # check for which domain action we should call
     @dom_action = domain_params.delete :dom_action
     form_type = domain_params.delete :form_type
-    @event = "#{form_type}_form_return"
+    @event = "#{form_type.gsub(/[^\w]/, '')}_form_return"
 
     if @ssh_key_validation[:valid]
       # Ensure we only send the key until the broker supports comments

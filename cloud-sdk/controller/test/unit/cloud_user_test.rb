@@ -234,7 +234,7 @@ class CloudUserTest < ActiveSupport::TestCase
     CloudUser.expects(:notify_observers).with(:namespace_update_success, user).in_sequence(observer_seq).at_least_once
     CloudUser.expects(:notify_observers).with(:after_namespace_update, user).in_sequence(observer_seq).at_least_once
     
-    user.namespace = new_namespace = "kraman.cloudsdk1.net"
+    new_namespace = "kraman.cloudsdk1.net"
     Cloud::Sdk::DnsService.instance.class.any_instance.expects(:namespace_available?).with(new_namespace).returns(true)
     Cloud::Sdk::DnsService.instance.class.any_instance.expects(:deregister_namespace).with(namespace).once
     Cloud::Sdk::DnsService.instance.class.any_instance.expects(:register_namespace).with(new_namespace).once
@@ -244,8 +244,9 @@ class CloudUserTest < ActiveSupport::TestCase
     Cloud::Sdk::DnsService.instance.class.any_instance.expects(:deregister_application).with("app2", namespace).once
     Cloud::Sdk::DnsService.instance.class.any_instance.expects(:register_application).with("app1", new_namespace, "foo.bar").once
     Cloud::Sdk::DnsService.instance.class.any_instance.expects(:register_application).with("app2", new_namespace, "foo.bar").once
+    CloudUser.excludes_attributes.push :mocha
     
-    user.update_namespace
+    user.update_namespace(new_namespace)
   end
   
   def teardown

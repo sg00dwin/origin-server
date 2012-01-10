@@ -1,7 +1,8 @@
 class CloudUser < Cloud::Sdk::Model
-  attr_accessor :rhlogin, :uuid, :ssh, :namespace, :system_ssh_keys, :env_vars, :email_address, :ssh_keys
+  attr_accessor :rhlogin, :uuid, :system_ssh_keys, :env_vars, :email_address, :ssh_keys, :ssh, :ssh_type, :namespace, :key, :type
   primary_key :rhlogin
-  private :rhlogin=, :uuid=
+  private :rhlogin=, :uuid=, :ssh=, :namespace=
+  exclude_attributes :key, :type
   
   validates_each :rhlogin do |record, attribute, val|
     record.errors.add(attribute, {:message => "Invalid characters found in RHlogin '#{val}' ", :code => 107}) if val =~ /["\$\^<>\|%\/;:,\\\*=~]/
@@ -19,9 +20,15 @@ class CloudUser < Cloud::Sdk::Model
     end
   end
   
-  def initialize(rhlogin=nil, ssh=nil, namespace=nil)
+  validates_each :ssh_type, :allow_nil =>true do |record, attribute, val|
+    if !(val =~ /^(ssh-rsa|ssh-dss)$/)
+      record.errors.add attribute, {:message => "Invalid ssh key type: #{val}", :exit_code => 116}
+    end
+  end
+  
+  def initialize(rhlogin=nil, ssh=nil, namespace=nil, ssh_type='ssh-rsa')
     super()
-    self.rhlogin, self.ssh, self.namespace = rhlogin, ssh, namespace
+    self.rhlogin, self.ssh, self.namespace, self.ssh_type = rhlogin, ssh, namespace, ssh_type
   end
   
   def save
@@ -87,11 +94,11 @@ class CloudUser < Cloud::Sdk::Model
   def add_secondary_ssh_key(key_name, key, key_type=nil)
     self.ssh_keys = {} unless self.ssh_keys
     result = ResultIO.new
-    self.ssh_keys[key_name] = key
+    self.ssh_keys[key_name] = { :key => key, :type => key_type }
     self.save
     applications.each do |app|
       Rails.logger.debug "DEBUG: Adding secondary key named #{key_name} to app: #{app.name} for user #{@name}"
-      result.append app.add_authorized_ssh_key(key, key_type, comment="-#{key_name}")
+      result.append app.add_authorized_ssh_key(key, key_type, key_name)
     end
     result
   end
@@ -100,7 +107,7 @@ class CloudUser < Cloud::Sdk::Model
     self.ssh_keys = {} unless self.ssh_keys    
     result = ResultIO.new
     key = self.ssh_keys[key_name]
-    return unless key
+    return result unless key
     applications.each do |app|
       Rails.logger.debug "DEBUG: Removing secondary key named #{key_name} from app: #{app.name} for user #{@name}"
       result.append app.remove_authorized_ssh_key(key)
@@ -135,15 +142,31 @@ class CloudUser < Cloud::Sdk::Model
     result
   end
   
-  def update_namespace
-    notify_observers(:before_namespace_update)
+  def update_ssh_key(new_key, key_type)
+    reply = ResultIO.new    
+    return reply if self.ssh == new_key
     
+    self.applications.each do |app|
+      reply.append app.remove_authorized_ssh_key(self.ssh)
+      reply.append app.add_authorized_ssh_key(new_key, key_type)
+    end
+    @ssh = new_key
+    @ssh_type = key_type
+    reply.append self.save
+    reply
+  end
+  
+  def update_namespace(new_ns)
+    old_ns = self.namespace
+    reply = ResultIO.new
+    return reply if old_ns == new_ns
+    self.namespace = new_ns
+    
+    notify_observers(:before_namespace_update)
     dns_service = Cloud::Sdk::DnsService.instance
-    raise Cloud::Sdk::UserException.new("A namespace with name '#{namespace}' already exists", 103) unless dns_service.namespace_available?(@namespace)
+    raise Cloud::Sdk::UserException.new("A namespace with name '#{new_ns}' already exists", 103) unless dns_service.namespace_available?(new_ns)
     
     begin
-      old_ns = self.namespace_was
-      new_ns = self.namespace
       dns_service.register_namespace(new_ns)
       dns_service.deregister_namespace(old_ns)    
   
@@ -177,6 +200,7 @@ class CloudUser < Cloud::Sdk::Model
     ensure
       dns_service.close
     end
+    
     applications.each do |app|
       app.embedded.each_key do |framework|
         if app.embedded[framework].has_key?('info')
@@ -187,7 +211,10 @@ class CloudUser < Cloud::Sdk::Model
       end
       app.save
     end
+    
+    reply.append self.save
     notify_observers(:after_namespace_update)
+    reply
   end
   
   private
