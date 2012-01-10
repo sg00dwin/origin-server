@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.2.27
+Version:        0.2.28
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        AGPLv3
@@ -72,6 +72,12 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Tue Jan 10 2012 Dan McPherson <dmcphers@redhat.com> 0.2.28-1
+- Updating gem versions (dmcphers@redhat.com)
+- change identified in code review for bug 772673 (abhgupta@redhat.com)
+- Fix for Bug# 772673 -Persist ssh key type in the datastore (currently in s3)
+  (rpenta@redhat.com)
+
 * Mon Jan 09 2012 Dan McPherson <dmcphers@redhat.com> 0.2.27-1
 - Updating gem versions (dmcphers@redhat.com)
 - BugzID# 772760 (kraman@gmail.com)
