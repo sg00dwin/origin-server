@@ -52,4 +52,19 @@ may be ok if '#{uapp.name}#{BUILDER_SUFFIX}' was the builder of a previously des
       end
     end
   end
+  
+  def application_after_destroy(data)
+    app = data[:application]
+    reply = data[:reply]
+    
+    if app.framework_cartridge == "jenkins"
+      app.user.applications.each do |uapp|
+        begin
+          reply.append uapp.remove_dependency('jenkins-client-1.4') if uapp.name != app.name and uapp.embedded and uapp.embedded.has_key?('jenkins-client-1.4')
+        rescue Exception => e
+          reply.debugIO << "Failed to remove jenkins client from application: #{uapp.name}\n"
+        end
+      end
+    end
+  end
 end
