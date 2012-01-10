@@ -64,6 +64,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/libra/cartridges/%{name}
 %{cartridgedir}/info/changelog
 %{cartridgedir}/info/control
+%{cartridgedir}/info/manifest.yml
 
 %changelog
 * Fri Jan 06 2012 Dan McPherson <dmcphers@redhat.com> 0.1.3-1
