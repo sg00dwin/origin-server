@@ -38,22 +38,34 @@ class AppController < BaseController
   def create
     user = CloudUser.find(@login)
     app_name = params[:name]
+    if Cloud::Sdk::ApplicationContainerProxy.blacklisted? app_name
+      @result = Result.new(:forbidden)
+      message = Message.new("ERROR", "The supplied application name '#{app_name}' is not allowed") 
+      result.messages.push(message)
+      respond_with(@result, :status => :forbidden)
+    end
+    
     cartridge = params[:cartridge]
+    if not check_cartridge_type(app.framework, container, "standalone")
+      @result = Result.new( :bad_request)
+      carts = get_cached(cache_key, :expires_in => 21600.seconds) {
+      Application.get_available_cartridges("standalone")}
+      message = Message.new("ERROR", "Invalid cartridge #{cartridge}.  Valid values are (#{carts.join(', ')})") 
+      @result.messages.push(message)
+      respond_with(@result, :status => :bad_request)  
+    end
+    
     app = Application.new(user, app_name, nil, nil, cartridge)
     container = Cloud::Sdk::ApplicationContainerProxy.find_available(nil)
-    check_cartridge_type(app.framework, container, "standalone")
+    
+    
     if (apps.length >= Rails.application.config.cdk[:per_user_app_limit])
       @result = Result.new(:forbidden)
       message = Message.new("ERROR", "#{@login} has already reached the application limit of #{Rails.application.config.cdk[:per_user_app_limit]}")
       result.messages.push(message)
       respond_with(@result, :status => :forbidden)
     end
-    if Cloud::Sdk::ApplicationContainerProxy.blacklisted? app.name
-      @result = Result.new(:forbidden)
-      message = Message.new("ERROR", "The supplied application name '#{app.name}' is not allowed") 
-      result.messages.push(message)
-      respond_with(@result, :status => :forbidden)
-    end
+    
         
     if app.valid?
       begin
@@ -64,20 +76,10 @@ class AppController < BaseController
         app.add_system_env_vars
         begin
           app.create_dns
-            
-          case app.framework_cartridge
-            when 'php'
-              page = 'health_check.php'
-            when 'perl'
-              page = 'health_check.pl'
-            else
-              page = 'health'
-          end
-          @reply.data = {:health_check_path => page, :uuid => app.uuid}.to_json
         rescue Exception => e
             app.destroy_dns
             @result = Result.new(:internal_server_error)
-            message = Message.new("ERROR", e) 
+            message = Message.new("ERROR", e.message) 
             result.messages.push(message)
             respond_with(@result, :status => :internal_server_error)
         end
@@ -91,17 +93,21 @@ class AppController < BaseController
         end
 
         @result = Result.new(:internal_server_error)
-        message = Message.new("ERROR", e) 
+        message = Message.new("ERROR", "Failed to create application #{app_name}") 
+        result.messages.push(message)
+        message = Message.new("ERROR", e.message) 
         result.messages.push(message)
         respond_with(@result, :status => :internal_server_error)  
       end
         app.links = get_links(id)
         @result = Result.new( :created, "application", application)
-        message = Message.new("INFO", "Domain was created.")
+        message = Message.new("INFO", "Application #{app_name} was created.")
         @result.messages.push(message)
         respond_with(@result, :status =>  :created)
       else
         @result = Result.new( :bad_request)
+        message = Message.new("ERROR", "Failed to create application #{app_name}") 
+        result.messages.push(message)
         message = Message.new("ERROR", app.errors.first[1][:message]) 
         @result.messages.push(message)
         respond_with(@result, :status => :bad_request)  
@@ -136,6 +142,110 @@ class AppController < BaseController
     respond_with(@result, :status => :ok)
   end
   
+  # POST /applications/<id>/cartridges
+  def add_cartridge
+    id = params[:id]
+    cartridge = params[:cartridge]
+    application = Application.find(@login,id)
+    if(application.nil?)
+      @result = Result.new(:not_found)
+      message = Message.new("ERROR", "Application #{id} not found.")
+      @result.messages.push(message)
+      respond_with(@result, :status => :not_found)
+    end
+    if not check_cartridge_type(app.framework, container, "embedded")
+      @result = Result.new( :bad_request)
+      carts = get_cached(cache_key, :expires_in => 21600.seconds) {
+      Application.get_available_cartridges("embedded")}
+      message = Message.new("ERROR", "Invalid cartridge #{cartridge}.  Valid values are (#{carts.join(', ')})") 
+      @result.messages.push(message)
+      respond_with(@result, :status => :bad_request)  
+    end
+
+    app.add_dependency(@req.cartridge)
+    application = Application.find(@login,id)
+    application.links = get_links(id)
+    @result = Result.new(:ok, "application", application)
+    message = Message.new("INFO", "Added #{cartridge} to application #{id}")
+    @result.messages.push(message)
+    respond_with(@result, :status => :ok)
+  end
+  
+  # DELETE /applications/<id>/cartridges/<cartridge>
+  def remove_cartridge
+    id = params[:id]
+    cartridge = params[:cartridge]
+    application = Application.find(@login,id)
+    if(application.nil?)
+      @result = Result.new(:not_found)
+      message = Message.new("ERROR", "Application #{id} not found.")
+      @result.messages.push(message)
+      respond_with(@result, :status => :not_found)
+    end
+    
+    if not check_cartridge_type(app.framework, container, "embedded")
+      @result = Result.new( :bad_request)
+      carts = get_cached(cache_key, :expires_in => 21600.seconds) {
+      Application.get_available_cartridges("embedded")}
+      message = Message.new("ERROR", "Invalid cartridge #{cartridge}.  Valid values are (#{carts.join(', ')})") 
+      @result.messages.push(message)
+      respond_with(@result, :status => :bad_request)  
+    end
+
+    app.remove_dependency(@req.cartridge)
+    application = Application.find(@login,id)
+    application.links = get_links(id)
+    @result = Result.new(:ok, "application", application)
+    message = Message.new("INFO", "Removed #{cartridge} from application #{id}")
+    @result.messages.push(message)
+    respond_with(@result, :status => :ok)
+  end
+  
+  # PUT /applications/<id>/cartridges/<cartridge>/<state>
+  def update_cartridge
+    id = params[:id]
+    cartridge = params[:cartridge]
+    state = params[:state]
+    application = Application.find(@login,id)
+    if(application.nil?)
+      @result = Result.new(:not_found)
+      message = Message.new("ERROR", "Application #{id} not found.")
+      @result.messages.push(message)
+      respond_with(@result, :status => :not_found)
+    end
+    if not check_cartridge_type(app.framework, container, "embedded")
+      @result = Result.new( :bad_request)
+      carts = get_cached(cache_key, :expires_in => 21600.seconds) {
+      Application.get_available_cartridges("embedded")}
+      message = Message.new("ERROR", "Invalid cartridge #{cartridge}.  Valid values are (#{carts.join(', ')})") 
+      @result.messages.push(message)
+      respond_with(@result, :status => :bad_request)  
+    end
+
+    case state
+      when 'start'
+        app.start_dependency(cartridge)      
+      when 'stop'
+        app.stop_dependency(cartridge)      
+      when 'restart'
+        app.restart_dependency(cartridge)          
+      when 'reload'
+        app.reload_dependency(cartridge)
+      else
+        @result = Result.new(:bad_request)
+        message = Message.new("ERROR", "Invalid action #{state}")
+        @result.messages.push(message)
+        respond_with(@result, :status => :bad_request)       
+    end
+    
+    application = Application.find(@login,id)
+    application.links = get_links(id)
+    @result = Result.new(:ok, "application", application)
+    message = Message.new("INFO", "Successful #{state} on #{cartridge} for application #{id}")
+    @result.messages.push(message)
+    respond_with(@result, :status => :ok)
+  end
+  
   # DELELTE /applications/<id>
   def destroy
     id = params[:id]
@@ -167,9 +277,24 @@ class AppController < BaseController
     links.push(link)
     link = Link.new("PUT", "/applications/" + id + "/force-stop")
     links.push(link)
+    link = Link.new("POST", "/applications/" + id + "/cartridges")
+    carts = get_cached(cache_key, :expires_in => 21600.seconds) {
+      Application.get_available_cartridges("embedded")}
+    param = Param.new("cartridge", "string", "framework-type, e.g.: mysql-5.1", carts.join(', '))
+    link.required_params.push(param)
+    links.push(link)
     link = Link.new("DELETE", "/applications/" + id)
     links.push(link)
     return links
   end
   
+  def check_cartridge_type(framework, container, cart_type)
+    carts = container.get_available_cartridges(cart_type)
+    unless carts.include? framework
+      return false
+    end
+    return true
+  end
+  
+ 
 end
