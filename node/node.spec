@@ -26,6 +26,7 @@ Requires:      lsof
 Requires:      wget
 Requires:      oddjob
 Requires:      libjpeg-devel
+Requires:      libcurl-devel
 Requires:      libpng-devel
 Requires:      giflib-devel
 Requires(post):   /usr/sbin/semodule
