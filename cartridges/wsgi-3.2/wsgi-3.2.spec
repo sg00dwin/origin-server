@@ -22,6 +22,8 @@ Requires:  python-psycopg2
 Requires:  python-virtualenv
 Requires:  libjpeg
 Requires:  libjpeg-devel
+Requires:  libcurl
+Requires:  libcurl-devel
 
 Obsoletes: rhc-cartridge-wsgi-3.2.1
 
