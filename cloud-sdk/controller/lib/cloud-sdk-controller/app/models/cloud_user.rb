@@ -1,5 +1,5 @@
 class CloudUser < Cloud::Sdk::Model
-  attr_accessor :rhlogin, :uuid, :system_ssh_keys, :env_vars, :email_address, :ssh_keys, :ssh, :ssh_type, :namespace, :key, :type
+  attr_accessor :rhlogin, :uuid, :system_ssh_keys, :env_vars, :ssh_keys, :ssh, :ssh_type, :namespace, :key, :type
   primary_key :rhlogin
   private :rhlogin=, :uuid=, :ssh=, :namespace=
   exclude_attributes :key, :type
