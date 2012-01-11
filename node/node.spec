@@ -121,7 +121,7 @@ echo "/usr/bin/trap-user" >> /etc/shells
 #semanage login -m -s guest_u __default__ || :
 
 # If /etc/httpd/conf.d/libra is a dir, make it a symlink
-if [[ -d "/etc/httpd/conf.d/libra" && ! -L "/etc/httpd/conf.d/libra" ]]
+if [[ -d "/etc/httpd/conf.d/libra.bak" && -L "/etc/httpd/conf.d/libra" ]]
 then
     mv /etc/httpd/conf.d/libra.bak/* /var/lib/libra/.httpd.d/
     # not forced to prevent data loss
