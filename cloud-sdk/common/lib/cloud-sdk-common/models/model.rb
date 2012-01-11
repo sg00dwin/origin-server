@@ -81,13 +81,11 @@ module Cloud
       end
       
       def attributes
-        #return @attributes if @attributes
-      
         @attributes = {}
         self.instance_variable_names.map {|name| name[1..-1]}.each do |name|
           next if ['attributes', 'changed_attributes', 'previously_changed', 'persisted', 'new_record', 'deleted', 'errors', 'validation_context'].include? name
           next if self.class.excludes_attributes.include? name.to_sym
-          @attributes[name] = nil
+          @attributes[name] = instance_variable_get("@#{name}")
         end
         @attributes
       end
@@ -150,6 +148,15 @@ module Cloud
       def self.excludes_attributes
         @excludes_attributes = [] unless @excludes_attributes
         @excludes_attributes
+      end
+
+      def to_xml(options = {})
+        to_xml_opts = {:skip_types => true} # no type information, not such a great idea!
+        to_xml_opts.merge!(options.slice(:builder, :skip_instruct))
+        # a builder instance is provided when to_xml is called on a collection of instructors,
+        # in which case you would not want to have <?xml ...?> added to each item
+        to_xml_opts[:root] ||= self.class.name
+        self.attributes.to_xml(to_xml_opts)
       end
       
       protected

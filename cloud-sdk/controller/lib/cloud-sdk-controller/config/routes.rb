@@ -7,4 +7,7 @@ Rails.application.routes.draw do
     match 'cartlist'        => 'legacy_broker#cart_list_post', :via => [:post]
     match 'ssh_keys'        => 'legacy_broker#ssh_keys_post', :via => [:post]    
   end
+  scope "/broker/rest" do
+    resource :api, :only => [:show], :controller => :base
+  end
 end
