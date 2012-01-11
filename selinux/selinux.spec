@@ -8,8 +8,8 @@ URL:           http://openshift.redhat.com
 Source0:       rhc-selinux-%{version}.tar.gz
 
 BuildRoot:     %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
-BuildRequires: selinux-policy >= 3.7.19-131 
-Requires:      selinux-policy-targeted >= 3.7.19-131
+BuildRequires: selinux-policy >= 3.7.19-134
+Requires:      selinux-policy-targeted >= 3.7.19-134
 Requires(post):   /usr/sbin/semanage
 Requires(postun): /usr/sbin/semanage
 
@@ -34,8 +34,6 @@ rm -rf %{buildroot}
 
 %post
 /usr/sbin/semodule -i %{_datadir}/selinux/packages/libra.pp
-# Allow binding to JPDA port 8787 (temporarily add to jboss_management_port_t)
-/usr/sbin/semanage port -a -t jboss_management_port_t -p tcp 8787
 
 # Bring in external smtp ports but _NOT_ 25.
 #semanage -i - << _EOF
