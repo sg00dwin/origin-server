@@ -77,6 +77,12 @@ class LegacyBrokerController < ApplicationController
       raise Cloud::Sdk::UserException.new("The supplied namespace '#{@req.namespace}' is not allowed", 106) if Cloud::Sdk::ApplicationContainerProxy.blacklisted? @req.namespace            
       @reply.append cloud_user.update_namespace(@req.namespace)
     elsif @req.delete
+       if  @req.namespace != cloud_user.namespace
+         @reply.resultIO << "Cannot remove namespace #{req.namespace}. This namespace is not associate with #{cloud_user.rhlogin}.\n"
+         @reply.exitcode = 106
+         render :json => @reply, :status => :invalid
+         return
+       end
        if not cloud_user.applications.empty?
          @reply.resultIO << "Cannot remove namespace #{cloud_user.namespace}. Remove existing apps first.\n"
          @reply.resultIO << cloud_user.applications.map{|a| a.name}.join("\n")
