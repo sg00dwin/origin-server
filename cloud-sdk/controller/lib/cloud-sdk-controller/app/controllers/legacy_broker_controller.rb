@@ -78,9 +78,9 @@ class LegacyBrokerController < ApplicationController
       @reply.append cloud_user.update_namespace(@req.namespace)
     elsif @req.delete
        if  @req.namespace != cloud_user.namespace
-         @reply.resultIO << "Cannot remove namespace #{@req.namespace}. This namespace is not associate with #{cloud_user.rhlogin}.\n"
+         @reply.resultIO << "Cannot remove namespace #{@req.namespace}. This namespace is not associated with rhlogin: #{cloud_user.rhlogin}\n"
          @reply.exitcode = 106
-         render :json => @reply, :status => :invalid
+         render :json => @reply, :status => :bad_request
          return
        end
        if not cloud_user.applications.empty?
