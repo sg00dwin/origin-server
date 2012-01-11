@@ -67,7 +67,7 @@ class LegacyBrokerController < ApplicationController
 
     if !cloud_user && (@req.alter || @req.delete)
       @reply.resultIO << "Cannot alter or remove namespace #{@req.namespace}. Namspace does not exist.\n"
-      render :json => @reply, :status => :invalid
+      render :json => @reply, :status => :bad_request
       return
     end
 
@@ -81,7 +81,7 @@ class LegacyBrokerController < ApplicationController
          @reply.resultIO << "Cannot remove namespace #{cloud_user.namespace}. Remove existing apps first.\n"
          @reply.resultIO << cloud_user.applications.map{|a| a.name}.join("\n")
          @reply.exitcode = 106 
-         render :json => @reply, :status => :invalid
+         render :json => @reply, :status => :bad_request
          return
        end
        @reply.append cloud_user.delete
@@ -92,11 +92,11 @@ class LegacyBrokerController < ApplicationController
       cloud_user = CloudUser.new(@login, @req.ssh, @req.namespace, @req.key_type)
       if cloud_user.invalid?
         @reply.resultIO << cloud_user.errors.first[1][:message]
-        render :json => @reply, :status => :invalid 
+        render :json => @reply, :status => :bad_request 
         return
       end
     end
-        
+
     @reply.append cloud_user.save
     @reply.data = {
       :rhlogin    => cloud_user.rhlogin,
@@ -112,7 +112,7 @@ class LegacyBrokerController < ApplicationController
     unless cart_type
       @reply.resultIO << "Invalid cartridge types: #{cart_type} specified"
       @reply.exitcode = 109
-      render :json => @reply, :status => :invalid
+      render :json => @reply, :status => :bad_request
       return
     end
   
@@ -177,7 +177,7 @@ class LegacyBrokerController < ApplicationController
         @reply.resultIO << "Successfully created application: #{app.name}" if @reply.resultIO.length == 0
       else
         @reply.result = app.errors.first[1][:message]
-        render :json => @reply, :status => :invalid 
+        render :json => @reply, :status => :bad_request 
         return
       end
     when 'deconfigure'
@@ -285,7 +285,7 @@ class LegacyBrokerController < ApplicationController
       @req = LegacyRequest.new.from_json(params['json_data'])
       if @req.invalid?
         @reply.resultIO << @req.errors.first[1][:message]
-        render :json => @reply, :status => :invalid 
+        render :json => @reply, :status => :bad_request 
       end
     end
   end
