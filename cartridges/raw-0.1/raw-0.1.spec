@@ -2,7 +2,7 @@
 
 Summary:   Provides raw support
 Name:      rhc-cartridge-raw-0.1
-Version:   0.18.4
+Version:   0.18.5
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -79,6 +79,10 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/manifest.yml
 
 %changelog
+* Wed Jan 11 2012 Dan McPherson <dmcphers@redhat.com> 0.18.5-1
+- Gracefully handle threaddump in cartridges that do not support it (BZ772114)
+  (aboone@redhat.com)
+
 * Fri Jan 06 2012 Dan McPherson <dmcphers@redhat.com> 0.18.4-1
 - fix build breaks (dmcphers@redhat.com)
 
