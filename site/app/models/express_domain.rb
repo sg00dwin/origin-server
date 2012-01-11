@@ -19,7 +19,8 @@ class ExpressDomain
                         :length => {:maximum => 16},
                         :format => {:with => /^[A-Za-z0-9]+$/}
                         
-  validates :ssh, :presence => true
+  validates :ssh, :presence => true,
+                        :format => {:with => /^(ssh-rsa|ssh-dss)\s+.*$/}
                         
   validate :namespace_not_in_blacklist
   
@@ -27,7 +28,15 @@ class ExpressDomain
     attributes.each do |name, value|
       send("#{name}=", value)
     end
-    process_pub_key unless @ssh.nil?
+  end
+
+  def parse_pub_key
+    if @ssh =~ /^(ssh-rsa|ssh-dss)\s+(.*)/
+      {
+        :ssh_key => $2,
+        :key_type => $1
+      }
+    end
   end
   
   # Strip unnecessary data from ssh key
@@ -56,9 +65,13 @@ class ExpressDomain
   
   private
   def save
+
+    key_data = parse_pub_key
     data = {:rhlogin => @rhlogin, :alter => @alter}
     data[:namespace] = @namespace
-    data[:ssh] = @ssh.nil? ? '' : @ssh
+    data[:ssh] = key_data[:ssh_key]
+    data[:key_type] = key_data[:key_type]
+
     http_post(@@domain_url, data, true) do |json_response|
       yield json_response if block_given?
     end
