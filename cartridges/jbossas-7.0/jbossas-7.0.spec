@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.84.8
+Version:   0.84.9
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -101,6 +101,11 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Wed Jan 11 2012 Dan McPherson <dmcphers@redhat.com> 0.84.9-1
+- Gracefully handle threaddump in cartridges that do not support it (BZ772114)
+  (aboone@redhat.com)
+- Bug 773110 - added /home/wdecoste/.java (wdecoste@localhost.localdomain)
+
 * Fri Jan 06 2012 Dan McPherson <dmcphers@redhat.com> 0.84.8-1
 - fix build breaks (dmcphers@redhat.com)
 
