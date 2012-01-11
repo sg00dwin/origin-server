@@ -86,7 +86,7 @@ Broker::Application.configure do
     :host => "localhost",
     :port => 27017,
     :db => "openshift",
-    :collection => "test1"
+    :collection => "test2"
   }
 
 end

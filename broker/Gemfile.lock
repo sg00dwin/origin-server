@@ -41,6 +41,7 @@ GEM
       activemodel (= 3.0.10)
       json (= 1.4.3)
       rack (= 1.1.0)
+      mongo (= 1.5.2)
     cloud-sdk-controller (0.2.27)
       activesupport (~> 3.0.10)
       cloud-sdk-common
