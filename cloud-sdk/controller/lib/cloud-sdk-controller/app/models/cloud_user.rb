@@ -107,7 +107,7 @@ class CloudUser < Cloud::Sdk::Model
     self.ssh_keys = {} unless self.ssh_keys    
     result = ResultIO.new
     key = self.ssh_keys[key_name]
-    return result unless key
+    raise Cloud::Sdk::UserKeyException.new("ERROR: Key name '#{key_name}' doesn't exist for user #{self.rhlogin}", 118) unless key
     applications.each do |app|
       Rails.logger.debug "DEBUG: Removing secondary key named #{key_name} from app: #{app.name} for user #{@name}"
       result.append app.remove_authorized_ssh_key(key)
