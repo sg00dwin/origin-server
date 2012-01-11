@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.84.13
+Version:   0.84.14
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -69,6 +69,13 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Tue Jan 10 2012 Dan McPherson <dmcphers@redhat.com> 0.84.14-1
+- Fix for "XSS" issues in BZ 759362 (aboone@redhat.com)
+- Use valid XHTML markup for video embed (aboone@redhat.com)
+- Also rename partial to be consistent with actual video domain name (related
+  to 2a0cd3f) (aboone@redhat.com)
+- Correct typo in Chinese video domain name (aboone@redhat.com)
+
 * Mon Jan 09 2012 Dan McPherson <dmcphers@redhat.com> 0.84.13-1
 - Show "video not available" message for videos without a Chinese equivalent
   (aboone@redhat.com)

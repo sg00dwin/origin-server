@@ -1,180 +1,142 @@
 - content_for :page_title do
   Platform Features
   
-#features
-  #services
-    %section
-      .column
-        #express.row
-          .service EXPRESS
-          %p
-            Our shared cloud solution Express is a free, cloud-based application
-            platform for Java, Ruby, PHP, Perl and Python applications.
-          %p
-            It's super-simple: your development environment is your deployment environment:
-            git push, and you're in the cloud!
-      .column
-        #flex.row
-          .service FLEX
-          %p
-            Our shared cloud solution Express is a free, cloud-based application
-            platform for Java, Ruby, PHP, Perl and Python applications.
-          %p
-            It's super-simple: your development environment is your deployment environment:
-            git push, and you're in the cloud!
-      .column
-        #power.row
-          .service POWER
-          %p
-            Our shared cloud solution Express is a free, cloud-based application
-            platform for Java, Ruby, PHP, Perl and Python applications.
-      .clear
-  #languages
-    %header LANGUAGES AND FRAMEWORKS
-    %section
-      .column
-        .row
-          .language Ruby
-          %table
-            %tr
-              %td Rails
-              %td.version version 2
-            %tr
-              %td Sinatra
-              %td.version version 1
-        .row
-          #python.language Python
-          %table
-            %tr
-              %td Django
-              %td.version version 2
-            %tr
-              %td Pylons
-              %td.version version 1
-            %tr
-              %td Turbogears
-              %td.version version 1
-        .row
-          #perl.language Perl
-          %table
-            %tr
-              %td PerlDancer
-              %td.version version 2
-        .row
-          #php.language PHP
-          %table
-            %tr
-              %td Cake
-              %td.version version 2
-            %tr
-              %td CodeIgniter
-              %td.version version 1
-            %tr
-              %td Symphony
-              %td.version version 1
-            %tr
-              %td Zend
-              %td.version version 1
-        .row
-          #java.language Java
-          %table
-            %tr
-              %td CDI/Weld
-              %td.version version 2
-            %tr
-              %td EE6
-              %td.version version 1
-            %tr
-              %td Seam
-              %td.version version 1
-            %tr
-              %td Spring
-              %td.version version 1
-      .column
-        .row
-          .language Ruby
-          %table
-            %tr
-              %td Rails
-              %td.version version 2
-            %tr
-              %td Sinatra
-              %td.version version 1
-        .row
-          #python.language Python
-          %table
-            %tr
-              %td Django
-              %td.version version 2
-            %tr
-              %td Pylons
-              %td.version version 1
-            %tr
-              %td Turbogears
-              %td.version version 1
-        .row
-          #perl.language Perl
-          %table
-            %tr
-              %td PerlDancer
-              %td.version version 2
-        .row
-          #php.language PHP
-          %table
-            %tr
-              %td Cake
-              %td.version version 2
-            %tr
-              %td CodeIgniter
-              %td.version version 1
-            %tr
-              %td Symphony
-              %td.version version 1
-            %tr
-              %td Zend
-              %td.version version 1
-        .row
-          #java.language Java
-          %table
-            %tr
-              %td CDI/Weld
-              %td.version version 2
-            %tr
-              %td EE6
-              %td.version version 1
-            %tr
-              %td Seam
-              %td.version version 1
-            %tr
-              %td Spring
-              %td.version version 1
-      .column
-      %div{:style => "clear:both;"}
-  #addons
-    %header ADD-ONS
-    %section
-      .column
-        .row
-          .language.addon Databases
-          %table
-            %tr
-              %td MySQL
-              %td.version version 2
-            %tr
-              %td SQLite
-              %td.version version 1
-      .column
-        .row
-          .language.addon Databases
-          %table
-            %tr
-              %td MySQL
-              %td.version version 2
-            %tr
-              %td MongoDB
-              %td.version version 1
-            %tr
-              %td Membase
-              %td.version version 1
-      .column
-      %div{:style => "clear:both;"}
+%section.main
+  %header
+    %h1
+      Features
+      
+  .content
+    .express
+      %h2 Express
+      
+      %ul.languages
+        %h3 Languages and Frameworks
+        %li.ruby
+          %h4 Ruby
+          %ul
+            %li
+              Rails
+            %li
+              Sinatra
+        
+        
+        %li.python
+          %h4 Python
+          %ul
+            %li
+              Pylons
+            %li
+              Turbogears
+            %li
+              Django
+        
+        %li.perl
+          %h4 Perl
+          %ul
+            %li
+              PerlDancer
+        
+        %li.php
+          %h4 PHP
+          %ul
+            %li
+              Zend
+            %li
+              Cake
+            %li
+              Symfony
+            %li
+              CodeIgniter
+        
+        %li.java
+          %h4 Java
+          %ul
+            %li
+              EE6
+            %li
+              CDI/Weld
+            %li
+              Spring
+            %li
+              Seam
+        
+      %ul.databases
+        %h3 Databases
+        %li
+          MySQL
+        %li
+          SQLite
+        %li
+          MongoDB
+        %li.disabled
+  
+      %ul.messaging
+        %h3 Messaging
+        %li.soon
+          Coming soon
+    
+    .flex
+      %h2 Flex
+      
+      %ul.languages
+        %h3 Languages and Frameworks
+        %li.ruby
+          %h4 Ruby
+          %ul
+            %li
+              Rails
+            %li
+              Sinatra
+        
+        
+        %li.python
+          %h4 Python
+          %ul
+            %li
+              Pylons
+            %li
+              Turbogears
+            %li
+              Django
+        
+        %li.disabled
+         
+        %li.php
+          %h4 PHP
+          %ul
+            %li
+              Zend
+            %li
+              Cake
+            %li
+              Symfony
+            %li
+              CodeIgniter
+        
+        %li.java
+          %h4 Java
+          %ul
+            %li
+              EE6
+            %li
+              CDI/Weld
+            %li
+              Spring
+            %li
+              Seam
+        
+      %ul.databases
+        %h3 Databases
+        %li
+          MySQL
+        %li.disabled
+        %li
+          MongoDB
+        %li
+          Membase
+  
+      %ul.messaging
+        %h3 Messaging
+        %li
+          MRG

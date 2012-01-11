@@ -45,6 +45,7 @@ source ${CART_DIR}/abstract/info/lib/util
 setup_deconfigure "$1" $2 $3
 
 M2_DIR="$APP_HOME/.m2" # maven dir
+JAVA_PREFS_DIR="$APP_HOME/.java" # Java preferences dir
 
 destroy_git_repo $application $uuid
 
@@ -58,6 +59,9 @@ rm_unobfuscated_app_home $namespace $application
 
 # remove the Maven repository.
 runcon -l s0-s0:c0.c1023 rm -rf "$M2_DIR"
+
+# remove the Java preferences dir
+runcon -l s0-s0:c0.c1023 rm -rf "$JAVA_PREFS_DIR"
 
 #
 # Remove virtualhost definition for apache

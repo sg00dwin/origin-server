@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Node
 Name:           rubygem-%{gemname}
-Version:        0.2.15
+Version:        0.2.16
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        AGPLv3
@@ -87,6 +87,11 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Tue Jan 10 2012 Dan McPherson <dmcphers@redhat.com> 0.2.16-1
+- Updating gem versions (dmcphers@redhat.com)
+- Fix for Bug# 772673 -Persist ssh key type in the datastore (currently in s3)
+  (rpenta@redhat.com)
+
 * Wed Jan 04 2012 Dan McPherson <dmcphers@redhat.com> 0.2.15-1
 - Updating gem versions (dmcphers@redhat.com)
 - US1608: support DSA keys (rpenta@redhat.com)

@@ -134,9 +134,8 @@ a.more {
   color: #555;
   margin: 0;
   padding: 1em 0 4em;
-  display: block;
-  line-height: 1.9em;
   background-color: white;
+  display: block;
   
   a {
     color: #1060c8;
@@ -146,19 +145,18 @@ a.more {
       color: #3288f7;
       text-decoration: underline;
     }
+    
+    &:visited {
+      color: #8f0ccc;
+    }
   }
   
   h1, h2, h3, h4, h5 {
     color: #555;
-    margin-top: 2em;
     font: {
       family: Overpass, $base-font-family;
       weight: normal;
     }
-  }
-
-  p {
-    text-align: justify;
   }
   
   h1 {
@@ -317,9 +315,7 @@ header.universal {
 footer.universal {
   display: block;
   color: white;
-  font-size: .85em;
-  line-height: 1.6em;
-  padding-top: 1.75em;
+  font-size: .9em;
   
   ul { margin: 0; padding: 0; }
   
@@ -329,7 +325,7 @@ footer.universal {
   
   h2 {
     color: white;
-    font-size: 1.2em;
+    font-size: 1.1em;
   }
   
   .content > ul > li {
@@ -341,23 +337,19 @@ footer.universal {
   
   a {
     color: white;
-    opacity: 0.8;
     text-decoration: none;
-  }
-
-  a:hover {
-    opacity: 1.0;
   }
   
   #copyright {
     @include clearfix;
     background: black;
     margin: 2em 0;
-    margin-top: 4em;
-    padding-left: 6em;
-    padding-right: 4em;
     
-    p { float: left; opacity: 0.9; }
+    .content {
+      padding: .5em 5em;
+    }
+    
+    p { float: left; }
     img { float: right; margin-bottom: 1em;}
   }
 }
@@ -1083,131 +1075,151 @@ body.product.overview { min-width: 55em; }
 
 /* Feature matrix */
 
-
 .features .main {
   margin: 0; padding: 5em 0;
   @include cloud_bg_solid;
-}
 
-#features {
-  width: 58.8em;
-  margin-left: auto;
-  margin-right: auto;
-  width: 60em; }
+  .content { padding-left: 5em; }
 
-#services {
-  .column {
-    border-radius: 0.6em 0.6em 0 0; }
-  .row {
+  & .content > div  {
+    background: white;
+    @include border-radius(2em);
+    position: relative;
+    width: 19em;
     padding: 2em;
-    padding-top: 0;
-    padding-bottom: 0;
-    color: #58595b;
-    line-height: 1.5em;
-    background-color: #fff; }
-  section {
-    background-color: #e3b700;
-    padding: 0 1.5em;
-    padding-top: 1.5em; } }
+    margin: 1em;
+    float: left;
+    
+    &:first-child { margin-left: 0; }
+    &:last-child { margin-right: 0; }
 
-#languages header, #addons header {
-  font-family: Overpass, $base-font-family;
-  font-weight: bold;
-  color: #000;
-  font-size: 1.6em;
-  line-height: 2.7em;
-  background-color: #fff;
-  border-top: 1px solid #dededd;
-  border-bottom: 1px solid #dededd;
-  clear: both; }
+    h2 {
+      color: white;
+      position: absolute;
+      top: -2em;
+      left: 0;
+      font-size: 2em;
+      line-height: 1em;
+      width: 100%;
+      text-align: center;
+      text-transform: uppercase;
+    }
+    
+    h3 {
+      width: 10em;
+      margin: 0; padding: 0;
+      position: absolute;
+      left: -10.5em;
+      display:none;
+      color: #ccc;
+      text-align: right;
+      font-size: 1.2em;
+    }
 
-#languages section {
-  background-color: #fcc917;
-  padding: 0 1.5em;
-  float: none;
-  overflow: hidden; }
+    &:first-child h3 { display: block; }
 
-#addons section {
-  background-color: #e3b700;
-  padding: 0 1.5em;
-  overflow: hidden; }
+   ul {
+      list-style-type: none;
+      margin: 2em auto 0; padding: 0;
+      border-top: 2px solid #cecece;
+    }
 
-.column {
-  background-color: #fff;
-  height: 100%;
-  min-height: 100%;
-  width: 17.3em;
-  float: left;
-  margin-left: 1.2em;
-  padding-top: 2.2em;
-  padding-bottom: 100%;
-  margin-bottom: -100%; }
+    ul li {
+      margin: .5em auto;
+      padding: .25em 2em;
+      height: 1.1em;
+      width: 7em;
+      background: #c8c5ac;
+      color: white;
+      @include border-radius(.3em);
+      font-size: 1.3em;
+      font-family: Overpass, $base_font_family;
+      text-align: center;
+    }
 
-.row {
-  background-color: #f8f8f8;
-  margin-bottom: 1.8em;
-  padding-bottom: 0.6em;
-  .service {
-    font-family: Overpass, $base-font-family;
-    font-size: 1.8em;
-    font-weight: bold; } }
+    li.disabled {
+      background: #f3f3f3;
+    }
+    ul.languages li.disabled {
+      height: 3.5em;
+    }
 
-.language {
-  font-size: 0.9em;
-  font-weight: bold;
-  background-color: #cc0000;
-  border-radius: 0.3em;
-  color: #fff;
-  line-height: 1em;
-  padding: 0.4em 0em;
-  width: 33%;
-  text-align: center;
-  position: relative;
-  top: -0.9em;
-  left: 1.8em; }
+    li.soon {
+      background: transparent;
+      color: #666;
+    }
 
-.addon {
-  background-color: #c8c5ac; }
+    ul.languages {
+      margin-top: 0;
+      border-top: 0;
+    }
+    ul.languages li {
+      @include border-radius(1em);
+      margin: 2em 1em;
+      padding-left: 1.5em;
+      padding-bottom: 1em;
+      font-family: Overpass, $base_font_family;
+      font-size: 1.1em;
+      text-align: left;
+      color: black;
+      width: auto;
+      height: auto;
 
-.version {
-  font-size: 0.8em;
-  color: #a7a9ac;
-  text-align: right; }
+      ul { margin: 0;  border: 0;}
 
-.clear {
-  clear: both; }
+      ul li {
+        background: transparent;
+        @include inline-block;
+        margin: 0;
+        padding: .25em .5em;
+        width: 4em;
+      }
 
-table {
-  padding-left: 1.6em;
-  margin-top: -0.4em; }
+      h4 {
+        color: white;
+        position: relative;
+        top: -.5em;
+        left: 0;
+        padding: .25em 1em;
+        display: inline;
+        font-size: 1.2em;
+        @include border-radius(.3em);
+      }
+      
+      &.ruby {
+        background: lighten($ruby, 35%);
+        
+        h4 { background: $ruby; }
+      }
+      
+      &.python {
+        background: lighten($python, 35%);
+        
+        h4 { background: $python; }
+      }
 
-td {
-  width: 7.5em;
-  font-size: 1em; }
+      &.perl {
+        background: lighten($perl, 35%);
+        height: 3.5em;
+        
+        h4 { background: $perl; }
+      }
 
-#ruby {
-  background-color: #cc0000; }
+      &.php {
+        background: lighten($php, 35%);
+        
+        h4 { background: $php; }
+      }
 
-#python {
-  background-color: #abb400; }
+      &.java {
+        background: lighten($java, 30%);
+        
+        h4 { background: $java; }
+      }
+    }
+  }
 
-#perl {
-  background-color: #fcc917; }
-
-#php {
-  background-color: #0093d9; }
-
-#java {
-  background-color: #4e376b; }
-
-#express .service {
-  color: #0093d9; }
-
-#flex .service {
-  color: #ff8d00; }
-
-#power .service {
-  color: #cc0000; }
+}
 
 .multiplebgs.cssgradients .features .main {
   @include cloud_bg_gradient;
