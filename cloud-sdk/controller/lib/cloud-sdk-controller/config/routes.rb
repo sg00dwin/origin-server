@@ -9,5 +9,6 @@ Rails.application.routes.draw do
   end
   scope "/broker/rest" do
     resource :api, :only => [:show], :controller => :base
+    resource :user, :only => [:show], :controller => :user, :constraints => { :id => /[^"\$\^<>\|%\/;:,\\\*=~]+/ }
   end
 end

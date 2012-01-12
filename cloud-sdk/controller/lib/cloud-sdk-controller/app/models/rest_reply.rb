@@ -1,12 +1,13 @@
 class RestReply < Cloud::Sdk::Model
-  attr_accessor :status, :type, :data, :messages, :version
+  attr_accessor :version, :status, :type, :data, :messages, :links
   API_VERSION = "1.0"
   
-  def initialize(status=nil, type=nil, data=nil)
+  def initialize(status=nil, links=nil, type=nil, data=nil)
     self.status = status
     self.type = type
     self.data = data
-    self.messages = Array.new
+    self.links = links
+    self.messages = []
     self.version = API_VERSION
   end
   
