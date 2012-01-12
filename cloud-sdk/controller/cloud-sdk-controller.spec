@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.2.29
+Version:        0.2.30
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        AGPLv3
@@ -72,6 +72,14 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Wed Jan 11 2012 Dan McPherson <dmcphers@redhat.com> 0.2.30-1
+- Updating gem versions (dmcphers@redhat.com)
+- remove email from cloud user (dmcphers@redhat.com)
+- grammar change in message to user (rchopra@redhat.com)
+- typo fix in message (rchopra@redhat.com)
+- bugfixes for #773189 and #773139 (rchopra@redhat.com)
+- correctly return 400 for invalid requests (dmcphers@redhat.com)
+
 * Wed Jan 11 2012 Dan McPherson <dmcphers@redhat.com> 0.2.29-1
 - Updating gem versions (dmcphers@redhat.com)
 - Fix for Bugs# 773209, 773176 (rpenta@redhat.com)
