@@ -8,12 +8,12 @@ class AppController < BaseController
     applications = Application.find_all(@login)
     if(applications.nil?)
       @result = Result.new(:not_found)
-      message = Message.new("ERROR", "No applications found.")
+      message = Message.new("ERROR", "No applications found for user #{@login}.")
       @result.messages.push(message)
       respond_with(@result, :status => :not_found)
     end
     applications.each do |app|
-      app.links = get_links(app.name)
+      app.links = get_links(app)
     end
     @result = Result.new(:ok, "applications", applications)
     respond_with(@result, :status => :ok)
@@ -29,7 +29,7 @@ class AppController < BaseController
       @result.messages.push(message)
       respond_with(@result, :status => :not_found)
     end
-    application.links = get_links(id)
+    application.links = get_links(application)
     @result = Result.new(:ok, "application", application)
     respond_with(@result, :status => :ok)
   end
@@ -99,7 +99,7 @@ class AppController < BaseController
         result.messages.push(message)
         respond_with(@result, :status => :internal_server_error)  
       end
-        app.links = get_links(id)
+        app.links = get_links(app)
         @result = Result.new( :created, "application", application)
         message = Message.new("INFO", "Application #{app_name} was created.")
         @result.messages.push(message)
@@ -137,7 +137,7 @@ class AppController < BaseController
     end
     
     application = Application.find(@login,id)
-    application.links = get_links(id)
+    application.links = get_links(application)
     @result = Result.new(:ok, "application", application)
     respond_with(@result, :status => :ok)
   end
@@ -164,14 +164,14 @@ class AppController < BaseController
 
     app.add_dependency(@req.cartridge)
     application = Application.find(@login,id)
-    application.links = get_links(id)
+    application.links = get_links(application)
     @result = Result.new(:ok, "application", application)
     message = Message.new("INFO", "Added #{cartridge} to application #{id}")
     @result.messages.push(message)
     respond_with(@result, :status => :ok)
   end
   
-  # DELETE /applications/<id>/cartridges/<cartridge>
+  # DELETE /applications/<id>/cartridges
   def remove_cartridge
     id = params[:id]
     cartridge = params[:cartridge]
@@ -194,7 +194,7 @@ class AppController < BaseController
 
     app.remove_dependency(@req.cartridge)
     application = Application.find(@login,id)
-    application.links = get_links(id)
+    application.links = get_links(application)
     @result = Result.new(:ok, "application", application)
     message = Message.new("INFO", "Removed #{cartridge} from application #{id}")
     @result.messages.push(message)
@@ -239,7 +239,7 @@ class AppController < BaseController
     end
     
     application = Application.find(@login,id)
-    application.links = get_links(id)
+    application.links = get_links(application)
     @result = Result.new(:ok, "application", application)
     message = Message.new("INFO", "Successful #{state} on #{cartridge} for application #{id}")
     @result.messages.push(message)
@@ -265,26 +265,37 @@ class AppController < BaseController
     respond_with(@result, :status => :no_content)
   end
   
-  def get_links(id)
+  def get_links(app)
     links = Array.new
-    link = Link.new("GET", "/applications/" + id)
+    link = Link.new("GET", "/applications/#{app.name}")
     links.push(link)
-    link = Link.new("PUT", "/applications/" + id + "/start")
+    link = Link.new("PUT", "/applications/#{app.name}/start")
     links.push(link)
-    link = Link.new("PUT", "/applications/" + id + "/stop")
+    link = Link.new("PUT", "/applications/#{app.name}/stop")
     links.push(link)
-    link = Link.new("PUT", "/applications/" + id + "/restart")
+    link = Link.new("PUT", "/applications/#{app.name}/restart")
     links.push(link)
-    link = Link.new("PUT", "/applications/" + id + "/force-stop")
+    link = Link.new("PUT", "/applications/#{app.name}/force-stop")
     links.push(link)
-    link = Link.new("POST", "/applications/" + id + "/cartridges")
+    link = Link.new("DELETE", "/applications/#{app.name}")
+    links.push(link)
+    
+    link = Link.new("POST", "/applications/#{app.name}/cartridges")
     carts = get_cached(cache_key, :expires_in => 21600.seconds) {
       Application.get_available_cartridges("embedded")}
     param = Param.new("cartridge", "string", "framework-type, e.g.: mysql-5.1", carts.join(', '))
     link.required_params.push(param)
     links.push(link)
-    link = Link.new("DELETE", "/applications/" + id)
+    
+    link = Link.new("PUT", "/applications/#{app.name}/cartridges/#{app.embedded}/start")
     links.push(link)
+    link = Link.new("PUT", "/applications/#{app.name}/cartridges/#{app.embedded}/stop")
+    links.push(link)
+    link = Link.new("PUT", "/applications/#{app.name}/cartridges/#{app.embedded}/restart")
+    links.push(link)
+    link = Link.new("PUT", "/applications/#{app.name}/cartridges/#{app.embedded}/reload")
+    links.push(link)
+
     return links
   end
   
