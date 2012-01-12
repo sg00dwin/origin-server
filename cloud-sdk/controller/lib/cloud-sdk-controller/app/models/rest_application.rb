@@ -6,7 +6,7 @@ class RestApplication < Cloud::Sdk::Model
     self.name = app.name
     self.creation_time = app.creation_time
     self.uuid = app.uuid
-    self.aliases = app.aliases
+    self.aliases = app.aliases || Array.new
     self.server_identity = app.server_identity
     self.embedded = app.embedded
   end
