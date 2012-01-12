@@ -125,7 +125,7 @@ if [[ -d "/etc/httpd/conf.d/libra.bak" && -L "/etc/httpd/conf.d/libra" ]]
 then
     mv /etc/httpd/conf.d/libra.bak/* /var/lib/libra/.httpd.d/
     # not forced to prevent data loss
-    rmdir /etc/httpd/conf.d/libra /etc/httpd/conf.d/libra.bak
+    rmdir /etc/httpd/conf.d/libra.bak
 fi
 
 
