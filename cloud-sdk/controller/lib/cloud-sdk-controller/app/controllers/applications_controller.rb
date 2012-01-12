@@ -13,10 +13,13 @@ class ApplicationsController < BaseController
       @reply.messages.push(message)
       respond_with @reply, :status => @reply.status
     end
-    #applications.each do |app|
-    #  app.links = get_links(app)
-    #end
-    @reply = RestReply.new(:ok, "application", applications)
+    apps = Array.new
+    applications.each do |application|
+      app = RestApplication.new(application)
+      app.links = get_links(app)
+      apps.push(app)
+    end
+    @reply = RestReply.new(:ok, "application", apps)
     respond_with @reply, :status => @reply.status
   end
   
@@ -288,10 +291,12 @@ class ApplicationsController < BaseController
     links.push(link)
     
     link = Link.new("Add embedded cartridge", "POST", "/domains/#{domain_id}/applications/#{app.name}/cartridges")
-    carts = get_cached(cache_key, :expires_in => 21600.seconds) {
-      Application.get_available_cartridges("embedded")}
-    param = Param.new("cartridge", "string", "framework-type, e.g.: mysql-5.1", carts.join(', '))
-    link.required_params.push(param)
+    cart_type = "embedded"
+    cache_key = "cart_list_#{cart_type}"
+    #carts = get_cached(cache_key, :expires_in => 21600.seconds) {
+    #  Application.get_available_cartridges("embedded")}
+    #param = Param.new("cartridge", "string", "framework-type, e.g.: mysql-5.1", carts.join(', '))
+    #link.required_params.push(param)
     links.push(link)
     
     link = Link.new("Start embedded cartridge", "PUT", "/domains/#{domain_id}/applications/#{app.name}/cartridges/#{app.embedded}/start")
