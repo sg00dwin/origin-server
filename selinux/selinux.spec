@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.84.12
+Version:       0.84.13
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -46,6 +46,11 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Wed Jan 11 2012 Dan McPherson <dmcphers@redhat.com> 0.84.13-1
+- Remove temporary addition of port 8787 to the jboss mgmt port list and use
+  jboss_debug_port_t from the updated selinux-policy-3.7.19-134 package.
+  (ramr@redhat.com)
+
 * Mon Jan 09 2012 Dan McPherson <dmcphers@redhat.com> 0.84.12-1
 - Move the temp add of jboss debug port to selinux.spec as install.sh is only
   run locally. Should fix bugz 772547. (ramr@redhat.com)
