@@ -40,7 +40,7 @@ class ControlPanelController < ApplicationController
     else
       @domain = ExpressDomain.new :rhlogin => @userinfo.rhlogin,
 				  :namespace => @userinfo.namespace,
-				  :ssh => @userinfo.ssh_key
+				  :ssh => @userinfo.readable_ssh_key
       @action = 'update'
       Rails.logger.debug 'Has a domain - show edit form'
     end

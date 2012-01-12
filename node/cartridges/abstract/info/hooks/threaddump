@@ -1,8 +1,7 @@
 #!/bin/bash
 
 # Copyright © 2010 Mike McGrath All rights reserved
-# Copyright © 2011 Scott Stark All rights reserved
-# Copyright © 2011 Red Hat, Inc. All rights reserved
+# Copyright © 2010 Red Hat, Inc. All rights reserved
 
 # This copyrighted material is made available to anyone wishing to use, modify,
 # copy, or redistribute it subject to the terms and conditions of the GNU
@@ -17,8 +16,10 @@
 # General Public License and may only be used or replicated with the express
 # permission of Red Hat, Inc.
 
-
-# Creates a thread dump from a jboss-as7 instance
+# Creates a thread dump of the application
+# NOTE: This abstract hook is intended to notify users this feature is not
+#       yet supported.  This can and probably should be removed once we have
+#       complete coverage of the threaddump command on all app types.
 
 # Exit on any errors
 set -e
@@ -49,10 +50,7 @@ source ${CART_DIR}/abstract/info/lib/util
 setup_basic_hook "$1" $2 $3
 
 #
-# Get the thread dump
+# Print a notice that this command is not supported
 #
-runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $APP_DIR/${application}_ctl.sh threaddump"
 
-client_result "Success"
-client_result ""
-client_result "The thread dump file will be available via 'rhc-tail-files -f $1/jbossas-7.0/stdout.log -a $1'"
+client_error "The threaddump command is not supported by this application type."

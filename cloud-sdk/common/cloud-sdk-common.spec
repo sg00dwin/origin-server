@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Common
 Name:           rubygem-%{gemname}
-Version:        0.2.10
+Version:        0.2.11
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        AGPLv3
@@ -73,6 +73,9 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Wed Jan 11 2012 Dan McPherson <dmcphers@redhat.com> 0.2.11-1
+- Fix for Bugs# 773209, 773176 (rpenta@redhat.com)
+
 * Wed Jan 04 2012 Dan McPherson <dmcphers@redhat.com> 0.2.10-1
 - Adding cloud-sdk-controller unit tests (kraman@gmail.com)
 
