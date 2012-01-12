@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.84.22
+Version:       0.84.23
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -205,6 +205,13 @@ fi
 %dir %attr(0755,root,root) %{_sysconfdir}/libra/skel
 
 %changelog
+* Wed Jan 11 2012 Dan McPherson <dmcphers@redhat.com> 0.84.23-1
+- fixing directory copy failures (mmcgrath@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rmillner@redhat.com)
+- Bugzilla 772753: Add libcurl dependencies to the wsgi cartridge to support
+  pycurl. (rmillner@redhat.com)
+
 * Wed Jan 11 2012 Dan McPherson <dmcphers@redhat.com> 0.84.22-1
 - Gracefully handle threaddump in cartridges that do not support it (BZ772114)
   (aboone@redhat.com)
