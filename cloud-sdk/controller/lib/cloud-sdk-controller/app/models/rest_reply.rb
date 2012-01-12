@@ -11,7 +11,7 @@ class RestReply < Cloud::Sdk::Model
   end
   
   def to_xml(options={})
-    options[:root] ||= "response"
+    options[:tag_name] = "response"
     super(options)
   end
 end

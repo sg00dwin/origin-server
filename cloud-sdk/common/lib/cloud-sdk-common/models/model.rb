@@ -151,11 +151,9 @@ module Cloud
       end
 
       def to_xml(options = {})
-        to_xml_opts = {:skip_types => true} # no type information, not such a great idea!
+        to_xml_opts = {:skip_types => true}
         to_xml_opts.merge!(options.slice(:builder, :skip_instruct))
-        # a builder instance is provided when to_xml is called on a collection of instructors,
-        # in which case you would not want to have <?xml ...?> added to each item
-        to_xml_opts[:root] ||= self.class.name
+        to_xml_opts[:root] = options[:tag_name] || self.class.name.underscore.gsub("_","-")
         self.attributes.to_xml(to_xml_opts)
       end
       
