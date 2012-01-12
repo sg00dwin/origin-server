@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.84.16
+Version:   0.84.17
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -69,6 +69,10 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Thu Jan 12 2012 Dan McPherson <dmcphers@redhat.com> 0.84.17-1
+- Adding PostgreSQL to Express offering on Features comparison page
+  (aboone@redhat.com)
+
 * Wed Jan 11 2012 Dan McPherson <dmcphers@redhat.com> 0.84.16-1
 - Pass key_type to broker when creating/updating domain (aboone@redhat.com)
 
