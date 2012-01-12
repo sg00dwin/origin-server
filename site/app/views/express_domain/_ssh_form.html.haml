@@ -2,7 +2,7 @@
 
 = semantic_form_for @domain, :namespace=>'ssh_form', :remote => true do |form|
   = form.input :namespace, :as => :hidden, :value => @userinfo.namespace.nil? ? '' : @userinfo.namespace
-  = form.input :ssh, :as => :text, :value => @userinfo.ssh_key.nil? ? '' : @userinfo.ssh_key
+  = form.input :ssh, :as => :text, :value => @userinfo.ssh_key.nil? ? '' : @userinfo.readable_ssh_key, :hint => "Your ssh key should start with ssh-rsa or ssh-dss."
   = form.input :dom_action, :as => :hidden, :value => 'update'
   = form.input :form_type, :as => :hidden, :value => 'ssh'
   = form.buttons do

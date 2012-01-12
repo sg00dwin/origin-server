@@ -20,6 +20,8 @@ Native-Requires:
   - python-virtualenv
   - libjpeg
   - libjpeg-devel
+  - libcurl
+  - libcurl-devel
 Architecture: noarch
 Descriptor:
   Reservations:

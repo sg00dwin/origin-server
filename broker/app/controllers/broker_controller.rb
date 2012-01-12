@@ -28,14 +28,14 @@ class BrokerController < ApplicationController
       case key
         when 'app_uuid'
           if !(val =~ /\A[a-f0-9]+\z/)
-            render :json => generate_result_json("Invalid application uuid: #{val}", nil, 1), :status => :invalid and return nil
+            render :json => generate_result_json("Invalid application uuid: #{val}", nil, 1), :status => :bad_request and return nil
           end
         when 'action'
           if !(val =~ /\A[\w\-\.]+\z/)
-            render :json => generate_result_json("Invalid #{key} specified: #{val}", nil, 111), :status => :invalid and return nil
+            render :json => generate_result_json("Invalid #{key} specified: #{val}", nil, 111), :status => :bad_request and return nil
           end
         else
-          render :json => generate_result_json("Unknown json key found: #{key}", nil, 1), :status => :invalid and return nil
+          render :json => generate_result_json("Unknown json key found: #{key}", nil, 1), :status => :bad_request and return nil
       end
     end
     data
