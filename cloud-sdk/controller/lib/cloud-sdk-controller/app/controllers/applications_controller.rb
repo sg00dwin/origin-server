@@ -5,33 +5,35 @@ class ApplicationsController < BaseController
   
   # GET /applications
   def index
-    applications = Application.find_all(@login)
-    if(applications.nil?)
-      @result = Result.new(:not_found)
+    cloud_user = CloudUser.find(@login)
+    applications = Application.find_all(cloud_user)
+    if applications.nil? 
+      @reply = RestReply.new(:not_found)
       message = Message.new("ERROR", "No applications found for user #{@login}.")
-      @result.messages.push(message)
-      respond_with(@result, :status => :not_found)
+      @reply.messages.push(message)
+      respond_with @reply, :status => @reply.status
     end
     #applications.each do |app|
     #  app.links = get_links(app)
     #end
-    @result = Result.new(:ok, "applications", applications)
-    respond_with(@result, :status => :ok)
+    @reply = RestReply.new(:ok, "application", applications)
+    respond_with @reply, :status => @reply.status
   end
   
   # GET /applications/<id>
   def show
     id = params[:id]
-    application = Application.find(@login,id)
+    cloud_user = CloudUser.find(@login)
+    application = Application.find(cloud_user,id)
     if(application.nil?)
-      @result = Result.new(:not_found)
+      @reply = RestReply.new(:not_found)
       message = Message.new("ERROR", "Application #{id} not found.")
-      @result.messages.push(message)
-      respond_with(@result, :status => :not_found)
+      @reply.messages.push(message)
+      respond_with @reply, :status => @reply.status
     end
-    application.links = get_links(application)
-    @result = Result.new(:ok, "application", application)
-    respond_with(@result, :status => :ok)
+    #application.links = get_links(application)
+    @reply = RestReply.new(:ok, "application", application)
+    respond_with @reply, :status => @reply.status
   end
   
   # POST /applications
@@ -39,20 +41,20 @@ class ApplicationsController < BaseController
     user = CloudUser.find(@login)
     app_name = params[:name]
     if Cloud::Sdk::ApplicationContainerProxy.blacklisted? app_name
-      @result = Result.new(:forbidden)
+      @reply = RestReply.new(:forbidden)
       message = Message.new("ERROR", "The supplied application name '#{app_name}' is not allowed") 
-      result.messages.push(message)
-      respond_with(@result, :status => :forbidden)
+      @reply.messages.push(message)
+      respond_with(@reply, :status => :forbidden)
     end
     
     cartridge = params[:cartridge]
     if not check_cartridge_type(app.framework, container, "standalone")
-      @result = Result.new( :bad_request)
+      @reply = RestReply.new( :bad_request)
       carts = get_cached(cache_key, :expires_in => 21600.seconds) {
       Application.get_available_cartridges("standalone")}
       message = Message.new("ERROR", "Invalid cartridge #{cartridge}.  Valid values are (#{carts.join(', ')})") 
-      @result.messages.push(message)
-      respond_with(@result, :status => :bad_request)  
+      @reply.messages.push(message)
+      respond_with(@reply, :status => :bad_request)  
     end
     
     app = Application.new(user, app_name, nil, nil, cartridge)
@@ -60,10 +62,10 @@ class ApplicationsController < BaseController
     
     
     if (apps.length >= Rails.application.config.cdk[:per_user_app_limit])
-      @result = Result.new(:forbidden)
+      @reply = RestReply.new(:forbidden)
       message = Message.new("ERROR", "#{@login} has already reached the application limit of #{Rails.application.config.cdk[:per_user_app_limit]}")
-      result.messages.push(message)
-      respond_with(@result, :status => :forbidden)
+      @reply.messages.push(message)
+      respond_with(@reply, :status => :forbidden)
     end
     
         
@@ -78,10 +80,10 @@ class ApplicationsController < BaseController
           app.create_dns
         rescue Exception => e
             app.destroy_dns
-            @result = Result.new(:internal_server_error)
+            @reply = RestReply.new(:internal_server_error)
             message = Message.new("ERROR", e.message) 
-            result.messages.push(message)
-            respond_with(@result, :status => :internal_server_error)
+            @reply.messages.push(message)
+            respond_with(@reply, :status => :internal_server_error)
         end
       rescue Exception => e
         if app.persisted?
@@ -92,25 +94,25 @@ class ApplicationsController < BaseController
           app.delete
         end
 
-        @result = Result.new(:internal_server_error)
+        @reply = RestReply.new(:internal_server_error)
         message = Message.new("ERROR", "Failed to create application #{app_name}") 
-        result.messages.push(message)
+        @reply.messages.push(message)
         message = Message.new("ERROR", e.message) 
-        result.messages.push(message)
-        respond_with(@result, :status => :internal_server_error)  
+        @reply.messages.push(message)
+        respond_with(@reply, :status => :internal_server_error)  
       end
         app.links = get_links(app)
-        @result = Result.new( :created, "application", application)
+        @reply = RestReply.new( :created, "application", application)
         message = Message.new("INFO", "Application #{app_name} was created.")
-        @result.messages.push(message)
-        respond_with(@result, :status =>  :created)
+        @reply.messages.push(message)
+        respond_with(@reply, :status =>  :created)
       else
-        @result = Result.new( :bad_request)
+        @reply = RestReply.new( :bad_request)
         message = Message.new("ERROR", "Failed to create application #{app_name}") 
-        result.messages.push(message)
+        @reply.messages.push(message)
         message = Message.new("ERROR", app.errors.first[1][:message]) 
-        @result.messages.push(message)
-        respond_with(@result, :status => :bad_request)  
+        @reply.messages.push(message)
+        respond_with(@reply, :status => :bad_request)  
       end
   end
   
@@ -118,12 +120,13 @@ class ApplicationsController < BaseController
   def update
     id = params[:id]
     state = params[:state]
-    application = Application.find(@login,id)
+    cloud_user = CloudUser.find(@login)
+    application = Application.find(cloud_user,id)
     if(application.nil?)
-      @result = Result.new(:not_found)
+      @reply = RestReply.new(:not_found)
       message = Message.new("ERROR", "Application #{id} not found.")
-      @result.messages.push(message)
-      respond_with(@result, :status => :not_found)
+      @reply.messages.push(message)
+      respond_with(@reply, :status => :not_found)
     end
     case state
       when "start"
@@ -136,69 +139,71 @@ class ApplicationsController < BaseController
         application.restart  
     end
     
-    application = Application.find(@login,id)
+    application = Application.find(cloud_user, id)
     application.links = get_links(application)
-    @result = Result.new(:ok, "application", application)
-    respond_with(@result, :status => :ok)
+    @reply = RestReply.new(:ok, "application", application)
+    respond_with(@reply, :status => :ok)
   end
   
   # POST /applications/<id>/cartridges
   def add_cartridge
     id = params[:id]
     cartridge = params[:cartridge]
-    application = Application.find(@login,id)
+    cloud_user = CloudUser.find(@login)
+    application = Application.find(cloud_user,id)
     if(application.nil?)
-      @result = Result.new(:not_found)
+      @reply = RestReply.new(:not_found)
       message = Message.new("ERROR", "Application #{id} not found.")
-      @result.messages.push(message)
-      respond_with(@result, :status => :not_found)
+      @reply.messages.push(message)
+      respond_with(@reply, :status => :not_found)
     end
     if not check_cartridge_type(app.framework, container, "embedded")
-      @result = Result.new( :bad_request)
+      @reply = RestReply.new( :bad_request)
       carts = get_cached(cache_key, :expires_in => 21600.seconds) {
       Application.get_available_cartridges("embedded")}
       message = Message.new("ERROR", "Invalid cartridge #{cartridge}.  Valid values are (#{carts.join(', ')})") 
-      @result.messages.push(message)
-      respond_with(@result, :status => :bad_request)  
+      @reply.messages.push(message)
+      respond_with(@reply, :status => :bad_request)  
     end
 
     app.add_dependency(@req.cartridge)
-    application = Application.find(@login,id)
+    application = Application.find(cloud_user,id)
     application.links = get_links(application)
-    @result = Result.new(:ok, "application", application)
+    @reply = RestReply.new(:ok, "application", application)
     message = Message.new("INFO", "Added #{cartridge} to application #{id}")
-    @result.messages.push(message)
-    respond_with(@result, :status => :ok)
+    @reply.messages.push(message)
+    respond_with(@reply, :status => :ok)
   end
   
   # DELETE /applications/<id>/cartridges
   def remove_cartridge
     id = params[:id]
     cartridge = params[:cartridge]
-    application = Application.find(@login,id)
+    cloud_user = CloudUser.find(@login)
+    application = Application.find(cloud_user,id)
     if(application.nil?)
-      @result = Result.new(:not_found)
+      @reply = RestReply.new(:not_found)
       message = Message.new("ERROR", "Application #{id} not found.")
-      @result.messages.push(message)
-      respond_with(@result, :status => :not_found)
+      @reply.messages.push(message)
+      respond_with(@reply, :status => :not_found)
     end
     
     if not check_cartridge_type(app.framework, container, "embedded")
-      @result = Result.new( :bad_request)
+      @reply = RestReply.new( :bad_request)
       carts = get_cached(cache_key, :expires_in => 21600.seconds) {
       Application.get_available_cartridges("embedded")}
       message = Message.new("ERROR", "Invalid cartridge #{cartridge}.  Valid values are (#{carts.join(', ')})") 
-      @result.messages.push(message)
-      respond_with(@result, :status => :bad_request)  
+      @reply.messages.push(message)
+      respond_with(@reply, :status => :bad_request)  
     end
 
     app.remove_dependency(@req.cartridge)
-    application = Application.find(@login,id)
+    application = Application.find(cloud_user, id)
     application.links = get_links(application)
-    @result = Result.new(:ok, "application", application)
+    @reply = RestReply.new(:ok, "application", application)
     message = Message.new("INFO", "Removed #{cartridge} from application #{id}")
-    @result.messages.push(message)
-    respond_with(@result, :status => :ok)
+    @reply.messages.push(message)
+    respond_with(@reply, :status => :ok)
   end
   
   # PUT /applications/<id>/cartridges/<cartridge>/<state>
@@ -206,20 +211,21 @@ class ApplicationsController < BaseController
     id = params[:id]
     cartridge = params[:cartridge]
     state = params[:state]
-    application = Application.find(@login,id)
+    cloud_user = CloudUser.find(@login)
+    application = Application.find(cloud_user,id)
     if(application.nil?)
-      @result = Result.new(:not_found)
+      @reply = RestReply.new(:not_found)
       message = Message.new("ERROR", "Application #{id} not found.")
-      @result.messages.push(message)
-      respond_with(@result, :status => :not_found)
+      @reply.messages.push(message)
+      respond_with(@reply, :status => :not_found)
     end
     if not check_cartridge_type(app.framework, container, "embedded")
-      @result = Result.new( :bad_request)
+      @reply = RestReply.new( :bad_request)
       carts = get_cached(cache_key, :expires_in => 21600.seconds) {
       Application.get_available_cartridges("embedded")}
       message = Message.new("ERROR", "Invalid cartridge #{cartridge}.  Valid values are (#{carts.join(', ')})") 
-      @result.messages.push(message)
-      respond_with(@result, :status => :bad_request)  
+      @reply.messages.push(message)
+      respond_with(@reply, :status => :bad_request)  
     end
 
     case state
@@ -232,37 +238,38 @@ class ApplicationsController < BaseController
       when 'reload'
         app.reload_dependency(cartridge)
       else
-        @result = Result.new(:bad_request)
+        @reply = RestReply.new(:bad_request)
         message = Message.new("ERROR", "Invalid action #{state}")
-        @result.messages.push(message)
-        respond_with(@result, :status => :bad_request)       
+        @reply.messages.push(message)
+        respond_with(@reply, :status => :bad_request)       
     end
     
-    application = Application.find(@login,id)
+    application = Application.find(cloud_user, id)
     application.links = get_links(application)
-    @result = Result.new(:ok, "application", application)
+    @reply = RestReply.new(:ok, "application", application)
     message = Message.new("INFO", "Successful #{state} on #{cartridge} for application #{id}")
-    @result.messages.push(message)
-    respond_with(@result, :status => :ok)
+    @reply.messages.push(message)
+    respond_with(@reply, :status => :ok)
   end
   
   # DELELTE /applications/<id>
   def destroy
     id = params[:id]
-    application = Application.find(@login,id)
+    cloud_user = CloudUser.find(@login)
+    application = Application.find(cloud_user,id)
     if(application.nil?)
-      @result = Result.new(:not_found)
+      @reply = RestReply.new(:not_found)
       message = Message.new("ERROR", "Application #{id} not found.")
-      @result.messages.push(message)
-      respond_with(@result, :status => :not_found)
+      @reply.messages.push(message)
+      respond_with @reply, :status => @reply.status
     end
     
     application.cleanup_and_delete()
  
-    @result = Result.new(:no_content)
+    @reply = RestReply.new(:no_content)
     message = Message.new("INFO", "Application #{id} is deleted.")
-    @result.messages.push(message)
-    respond_with(@result, :status => :no_content)
+    @reply.messages.push(message)
+    respond_with @reply, :status => @reply.status
   end
   
   def get_links(domain_id, app)

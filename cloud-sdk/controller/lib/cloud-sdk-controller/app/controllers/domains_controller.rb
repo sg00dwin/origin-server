@@ -4,17 +4,16 @@ class DomainsController < BaseController
 
   # GET /domains
   def index
-    id = params[:id]
     cloud_user = CloudUser.find(@login)
-    if(cloud_user.nil? or cloud_user.namespace != id)
+    if cloud_user.nil?
       @reply = RestReply.new(:not_found)
-      message = Message.new("ERROR", "Domain not found.")
+      message = Message.new("ERROR", "No domain found for user #{@login}.")
       @reply.messages.push(message)
-      respond_with(@reply, :status => :not_found)
+      respond_with @reply, :status => @reply.status
     end
     domain = Domain.new(cloud_user.namespace, cloud_user.ssh)
     @reply = RestReply.new(:ok, "domain", domain)
-    respond_with(@reply, :status => :ok)
+    respond_with @reply, :status => @reply.status
   end
   
   # GET /domains/<id>
@@ -23,13 +22,13 @@ class DomainsController < BaseController
     cloud_user = CloudUser.find(@login)
     if(cloud_user.nil? or cloud_user.namespace != id)
       @reply = RestReply.new(:not_found)
-      message = Message.new("ERROR", "Domain not found.")
+      message = Message.new("ERROR", "Domain #{id} not found.")
       @reply.messages.push(message)
-      respond_with(@reply, :status => :not_found)
+      respond_with @reply, :status => @reply.status
     end
     domain = Domain.new(cloud_user.namespace, cloud_user.ssh)
     @reply = RestReply.new(:ok, "domain", domain)
-    respond_with(@reply, :status => :ok)
+    respond_with @reply, :status => @reply.status
   end
   
   # POST /domains

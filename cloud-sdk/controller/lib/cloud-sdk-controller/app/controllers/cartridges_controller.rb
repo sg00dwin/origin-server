@@ -1,4 +1,4 @@
-class AppController < BaseController
+class CartridgesController < BaseController
   respond_to :html, :xml, :json
   
   # GET /cartridges

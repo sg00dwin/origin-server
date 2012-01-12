@@ -14,7 +14,7 @@ class BaseController < ActionController::Base
       Link.new("List embedded cartridges", "GET", "/cartridges/embedded"),
     ]
     
-    @reply = RestReply.new(:ok, links)
+    @reply = RestReply.new(:ok, "links", links)
     respond_with @reply, :status => @reply.status
   end
   
@@ -25,6 +25,6 @@ class BaseController < ActionController::Base
     #unless @login
     #  #TODO return 401
     #end
-    @login = "kraman6"
+    @login = "lnader@redhat.com"
   end
 end
