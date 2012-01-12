@@ -11,7 +11,8 @@ class DomainsController < BaseController
       @reply.messages.push(message)
       respond_with @reply, :status => @reply.status
     end
-    domain = Domain.new(cloud_user.namespace, cloud_user.ssh)
+    domain = RestDomain.new(cloud_user.namespace, cloud_user.ssh)
+    domain.links = get_links(cloud_user.namespace)
     @reply = RestReply.new(:ok, "domain", domain)
     respond_with @reply, :status => @reply.status
   end
@@ -26,7 +27,8 @@ class DomainsController < BaseController
       @reply.messages.push(message)
       respond_with @reply, :status => @reply.status
     end
-    domain = Domain.new(cloud_user.namespace, cloud_user.ssh)
+    domain = RestDomain.new(cloud_user.namespace, cloud_user.ssh)
+    domain.links = get_links(cloud_user.namespace)
     @reply = RestReply.new(:ok, "domain", domain)
     respond_with @reply, :status => @reply.status
   end
@@ -47,7 +49,8 @@ class DomainsController < BaseController
     cloud_user = CloudUser.new(@login, ssh, namespace)
     cloud_user.save
     
-    domain = Domain.new(cloud_user.namespace, cloud_user.ssh)
+    domain = RestDomain.new(cloud_user.namespace, cloud_user.ssh)
+    domain.links = get_links(cloud_user.namespace)
     @reply = RestReply.new(:created, "domain", domain)
     message = Message.new("INFO", "Domain was created.")
     @reply.messages.push(message)
@@ -73,7 +76,8 @@ class DomainsController < BaseController
     cloud_user.update_namespace(namespace)
     
     cloud_user = CloudUser.find(@login)
-    domain = Domain.new(cloud_user.namespace, cloud_user.ssh)
+    domain = RestDomain.new(cloud_user.namespace, cloud_user.ssh)
+    domain.links = get_links(cloud_user.namespace)
     @reply = RestReply.new(:ok, "domain", domain)
     message = Message.new("INFO", "Domain was updated.")
     @reply.messages.push(message)
@@ -115,7 +119,7 @@ class DomainsController < BaseController
   
   def get_links(id)
     links = Array.new
-    link = Link.new("Get domain", "GET", "/domains/" + id)
+    link = Link.new("Get domain", "GET", "/domains/#{id}")
     links.push(link)
     
     link = Link.new("List applications", "GET", "/domains/#{id}/applications")
@@ -126,8 +130,8 @@ class DomainsController < BaseController
     link.required_params.push(param)
     carts = get_cached(cache_key, :expires_in => 21600.seconds) {
       Application.get_available_cartridges("standalone")}
-    param = Param.new("cartridge", "string", "framework-type, e.g: php-5.3", carts.join(', '))
-    link.required_params.push(param)
+    #param = Param.new("cartridge", "string", "framework-type, e.g: php-5.3", carts.join(', '))
+    #link.required_params.push(param)
     links.push(link)
        
     link = Link.new("Delete domain", "DELETE", "/domains/" + id)
