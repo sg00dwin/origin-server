@@ -309,7 +309,7 @@ class ApplicationsController < BaseController
     param = Param.new("cartridge", "string", "framework-type, e.g.: mysql-5.1", carts.join(', '))
     link.required_params.push(param)
     links.push(link)
-    if app.embedded.nil?
+    if app.embedded.nil? 
       link = Link.new("Start embedded cartridge", "PUT", "/applications/#{app.name}/cartridges/#{app.embedded}/start")
       links.push(link)
       link = Link.new("Stop embedded cartridge", "PUT", "/applications/#{app.name}/cartridges/#{app.embedded}/stop")

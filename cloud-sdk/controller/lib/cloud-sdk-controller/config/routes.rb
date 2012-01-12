@@ -11,5 +11,7 @@ Rails.application.routes.draw do
     resource :api, :only => [:show], :controller => :base
     resource :user, :only => [:show], :controller => :user
     resources :domains, :constraints => { :id => /[A-Za-z0-9]+/ }
+    resources :cartridges, :constraints => { :id => /[A-Za-z0-9]+/ }
+    resources :applications, :constraints => { :id => /[A-Za-z0-9]+/ }
   end
 end

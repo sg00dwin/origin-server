@@ -10,7 +10,8 @@ class BaseController < ActionController::Base
         Param.new("namespace", "string", "Name of the domain"),
         Param.new("ssh", "string", "The key portion of an rsa key (excluding ssh-rsa and comment)")
       ]),
-      Link.new("List standalone cartridges", "GET", "/cartridges"),
+      Link.new("List cartridges", "GET", "/cartridges"),
+      Link.new("List standalone cartridges", "GET", "/cartridges/standalone"),
       Link.new("List embedded cartridges", "GET", "/cartridges/embedded"),
     ]
     
