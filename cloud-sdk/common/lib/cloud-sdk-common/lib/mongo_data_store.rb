@@ -56,34 +56,70 @@ module Cloud::Sdk
     private
 
     def self.db
-      con = Mongo::Connection.new(Rails.application.config.cdk.datastore.mongo[:host], 
-                                  Rails.application.config.cdk.datastore.mongo[:port])
-      con.db(Rails.application.config.cdk.datastore.mongo[:db])
+      con = Mongo::Connection.new(Rails.application.config.datastore_mongo[:host], 
+                                  Rails.application.config.datastore_mongo[:port])
+      con.db(Rails.application.config.datastore_mongo[:db])
     end
 
     def self.collection
-      MongoDataStore.db.collection(Rails.application.config.cdk.datastore.mongo[:collection])
+      MongoDataStore.db.collection(Rails.application.config.datastore_mongo[:collection])
     end
 
     def self.get_user(user_id)
-      MongoDataStore.collection.find( "_id" => user_id )
+      mcursor = MongoDataStore.collection.find( "_id" => user_id )
+      bson = mcursor.next
+      return nil unless bson
+      pkey = bson["_id"]
+      bson.delete("_id")
+      bson.delete("apps")
+      { pkey => bson.to_json }
     end
 
     def self.get_users
-      MongoDataStore.collection.find()
+      mcursor = MongoDataStore.collection.find()
+      return [] unless mcursor
+      ret = []
+      mcursor.each do |bson|
+        pkey = bson["_id"]
+        bson.delete("_id")
+        bson.delete("apps")
+        ret.push({ pkey => bson.to_json })
+      end
+      ret
     end
 
     def self.get_app(user_id, id)
       select_fields = "apps." + id
-      MongoDataStore.collection.find({ "_id" => user_id }, :fields => [select_fields]) 
+      mcursor = MongoDataStore.collection.find({ "_id" => user_id }, :fields => [select_fields])
+      bson = mcursor.next
+      return nil unless bson
+      app_bson = bson["apps"][id]
+      { id => app_bson.to_json }
     end
   
     def self.get_user_apps(user_id)
-      MongoDataStore.collection.find({ "_id" => user_id }, :fields => ["apps"] )
+      mcursor = MongoDataStore.collection.find({ "_id" => user_id }, :fields => ["apps"] )
+      bson = mcursor.next
+      return [] unless bson
+      apps_bson = bson["apps"]
+      ret = []
+      apps_bson.each do |app_id, app_bson|
+        ret.push({ app_id => app_bson.to_json })
+      end
+      ret 
     end
 
     def self.put_user(user_id, serialized_obj)
-      MongoDataStore.collection.update({ "_id" => user_id }, serialized_obj)
+      mcursor = MongoDataStore.collection.find( "_id" => user_id )
+      bson = mcursor.next
+      if bson
+        apps = bson["apps"]
+        serialized_obj.gsub!(/}$/, " \"_id\" : \"#{user_id}\" , \"apps\" : #{apps} }")
+        MongoDataStore.collection.update({ "_id" => user_id }, serialized_obj)
+      else
+        serialized_obj.gsub!(/}$/, " \"_id\" : \"#{user_id}\" }")
+        MongoDataStore.collection.insert({ "_id" => user_id }, serialized_obj)
+      end
     end
 
     def self.put_app(user_id, id, serialized_obj)

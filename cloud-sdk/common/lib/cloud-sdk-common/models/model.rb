@@ -105,8 +105,7 @@ module Cloud
         data = DataStore.instance.find(self.name,login,id)
         return nil unless data
         
-        json = data.values[0]
-        obj = self.new.from_json(json)
+        obj = self.new.from_json(data.values[0])
         obj.instance_variable_set("@#{id_var}", data.keys[0])
         obj.reset_state
         obj
@@ -114,11 +113,11 @@ module Cloud
       
       def self.find_all(login)
         id_var = @primary_key || "uuid"        
-        data = DataStore.instance.find_all(self.name,login)
+        data_list = DataStore.instance.find_all(self.name,login)
         return [] unless data
-        data.map do |id, json|
-          obj = self.new.from_json(json)
-          obj.instance_variable_set("@#{id_var}", id)
+        data_list.each do |data|
+          obj = self.new.from_json(data.values[0])
+          obj.instance_variable_set("@#{id_var}", data.keys[0])
           obj.reset_state
           obj
         end

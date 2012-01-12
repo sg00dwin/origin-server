@@ -104,4 +104,11 @@ Broker::Application.configure do
     :per_user_app_limit => 5
   }
 
+  config.datastore_mongo = {
+    :host => "HOST_HERE",
+    :port => 27017,
+    :db => "DB_NAME",
+    :collection => "COLLECTION_NAME"
+  }
+
 end

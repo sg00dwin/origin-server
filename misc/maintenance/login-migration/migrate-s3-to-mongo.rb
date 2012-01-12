@@ -10,8 +10,8 @@ $config = {
 
   :host => "localhost",
   :port => "27017",
-  :database_name => "openshift",
-  :collection_name => "test10"
+  :database_name => "libra_dev",
+  :collection_name => "user_info"
 }
 
 def s3
@@ -44,10 +44,9 @@ def mongo_populate
       # Get RH login user data
       user_name = File.basename(File.dirname(user_obj.key))
       user_data_str = user_obj.read
-      if not user_data_str
-        next
-      end
+      next if not user_data_str
       user_data_str.gsub!(/\"\s*:/, "\" =>")
+      user_data_str.gsub!(/null/, "\"\"")
       #puts user_data_str
       puts user_name
       user_data = eval(user_data_str)
@@ -63,34 +62,35 @@ def mongo_populate
               "ssh_keys" => user_data["ssh_keys"],
               "system_ssh_keys" => user_data["system_ssh_keys"],
               "env_vars" => user_data["env_vars"],
-              "email_address" => user_data["email_address"]
             }              
         
       # Get all apps for this RH login user
       app_prefix = "user_info/#{user_name}/apps/"
       app_info = bucket.objects.with_prefix(app_prefix)
       app_bson_doc = {}
+      next if not app_info
+
       app_info.map do |app_obj|
         app_data_str = app_obj.read
-        if not app_data_str
-          next
-        end
+        next if (not app_data_str) or app_data_str.empty?
+        app_name = app_obj.key.gsub(app_prefix,'')[0..-6]
+        #puts app_name
         app_data_str.gsub!(/\"\s*:/, "\" =>")
+        app_data_str.gsub!(/null/, "\"\"")
         #puts app_data_str
         app_data = eval(app_data_str)
         
         # Create app bson doc
         embedded_carts = {}
-        if app_data["embedded"] and app_data["embedded"].kind_of?(Hash)
-          app_data["embedded"].each do |cart_name, cart_info|
-            # FIXME: Hack to overcome mongo limitation, key name can't have '.' char
-            cname = cart_name.gsub(/\./, "(dot)")
-            embedded_carts[cname] = cart_info
-          end
-        end
-        app_bson_doc[app_data["name"]] = \
+        app_data["embedded"].each do |cart_name, cart_info|
+          # FIXME: Hack to overcome mongo limitation, key name can't have '.' char
+          cname = cart_name.gsub(/\./, "(dot)")
+          embedded_carts[cname] = cart_info
+        end if app_data["embedded"]
+        embedded_carts = nil if embedded_carts.empty?
+        app_bson_doc[app_name] = \
                           {
-                            "name" => app_data["name"],
+                            "name" => app_name,
                             "uuid" => app_data["uuid"],
                             "framework" => app_data["framework"],
                             "creation_time" => app_data["creation_time"],

@@ -82,7 +82,7 @@ Broker::Application.configure do
     :per_user_app_limit => 5
   }
 
-  config.cdk.datastore.mongo = {
+  config.datastore_mongo = {
     :host => "localhost",
     :port => 27017,
     :db => "openshift",
