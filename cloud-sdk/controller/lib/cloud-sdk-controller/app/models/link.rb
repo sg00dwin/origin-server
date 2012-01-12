@@ -5,7 +5,7 @@ class Link < Cloud::Sdk::Model
     self.rel = rel
     self.method = method
     self.href = href
-    self.required_params ||= Array.new
-    self.optional_params ||= Array.new
+    self.required_params = required_params || Array.new
+    self.optional_params = optional_params || Array.new
   end
 end

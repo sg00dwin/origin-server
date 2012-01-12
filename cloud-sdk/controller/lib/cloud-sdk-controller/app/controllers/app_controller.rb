@@ -265,35 +265,35 @@ class AppController < BaseController
     respond_with(@result, :status => :no_content)
   end
   
-  def get_links(app)
+  def get_links(domain_id, app)
     links = Array.new
-    link = Link.new("GET", "/applications/#{app.name}")
+    link = Link.new("Get application", "GET", "/domains/#{domain_id}/applications/#{app.name}")
     links.push(link)
-    link = Link.new("PUT", "/applications/#{app.name}/start")
+    link = Link.new("Start application", "PUT", "/domains/#{domain_id}/applications/#{app.name}/start")
     links.push(link)
-    link = Link.new("PUT", "/applications/#{app.name}/stop")
+    link = Link.new("Stop application", "PUT", "/domains/#{domain_id}/applications/#{app.name}/stop")
     links.push(link)
-    link = Link.new("PUT", "/applications/#{app.name}/restart")
+    link = Link.new("Restart application", "PUT", "/domains/#{domain_id}/applications/#{app.name}/restart")
     links.push(link)
-    link = Link.new("PUT", "/applications/#{app.name}/force-stop")
+    link = Link.new("Force stop application", "PUT", "/domains/#{domain_id}/applications/#{app.name}/force-stop")
     links.push(link)
-    link = Link.new("DELETE", "/applications/#{app.name}")
+    link = Link.new("Delete application", "DELETE", "/domains/#{domain_id}/applications/#{app.name}")
     links.push(link)
     
-    link = Link.new("POST", "/applications/#{app.name}/cartridges")
+    link = Link.new("Add embedded cartridge", "POST", "/domains/#{domain_id}/applications/#{app.name}/cartridges")
     carts = get_cached(cache_key, :expires_in => 21600.seconds) {
       Application.get_available_cartridges("embedded")}
     param = Param.new("cartridge", "string", "framework-type, e.g.: mysql-5.1", carts.join(', '))
     link.required_params.push(param)
     links.push(link)
     
-    link = Link.new("PUT", "/applications/#{app.name}/cartridges/#{app.embedded}/start")
+    link = Link.new("Start embedded cartridge", "PUT", "/domains/#{domain_id}/applications/#{app.name}/cartridges/#{app.embedded}/start")
     links.push(link)
-    link = Link.new("PUT", "/applications/#{app.name}/cartridges/#{app.embedded}/stop")
+    link = Link.new("Stop embedded cartridge", "PUT", "/domains/#{domain_id}/applications/#{app.name}/cartridges/#{app.embedded}/stop")
     links.push(link)
-    link = Link.new("PUT", "/applications/#{app.name}/cartridges/#{app.embedded}/restart")
+    link = Link.new("Restart embedded cartridge", "PUT", "/domains/#{domain_id}/applications/#{app.name}/cartridges/#{app.embedded}/restart")
     links.push(link)
-    link = Link.new("PUT", "/applications/#{app.name}/cartridges/#{app.embedded}/reload")
+    link = Link.new("Reload embedded cartridge", "PUT", "/domains/#{domain_id}/applications/#{app.name}/cartridges/#{app.embedded}/reload")
     links.push(link)
 
     return links

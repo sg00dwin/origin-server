@@ -5,6 +5,6 @@ class Param < Cloud::Sdk::Model
     self.name = name
     self.type = type
     self.description = description
-    self.valid_options = valid_options
+    self.valid_options = valid_options || Array.new
   end
 end

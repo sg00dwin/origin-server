@@ -116,10 +116,13 @@ class DomainController < BaseController
   
   def get_links(id)
     links = Array.new
-    link = Link.new("GET", "/domains/" + id)
+    link = Link.new("Get domain", "GET", "/domains/" + id)
+    links.push(link)
+    
+    link = Link.new("List applications", "GET", "/domains/#{id}/applications")
     links.push(link)
         
-    link = Link.new("POST", "/applications")
+    link = Link.new("Create new application", "POST", "/applications")
     param = Param.new("name", "string", "Name of the application")
     link.required_params.push(param)
     carts = get_cached(cache_key, :expires_in => 21600.seconds) {
@@ -128,7 +131,7 @@ class DomainController < BaseController
     link.required_params.push(param)
     links.push(link)
        
-    link = Link.new("DELETE", "/domains/" + id)
+    link = Link.new("Delete domain", "DELETE", "/domains/" + id)
     param = OptionalParam.new("force", "boolean", "Force delete domain.  i.e. delete any applications under this domain", "true or false", false)
     link.optional_params.push(param)
     links.push(link)

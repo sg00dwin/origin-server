@@ -11,14 +11,13 @@ class BaseController < ActionController::Base
   def show
     links = [
       Link.new("List domains", "GET", "/domains"),
-      Link.new("Create a new domain", "POST", "/domains", [
+      Link.new("Create new domain", "POST", "/domains", [
         Param.new("namespace", "string", "Name of the domain"),
         Param.new("ssh", "string", "The key portion of an rsa key (excluding ssh-rsa and comment)")
       ]),
-      Link.new("GET", "/applications"),
-      Link.new("GET", "/cartridges"),
-      Link.new("GET", "/cartridges/embedded"),
-      Link.new("GET", "/users")
+      Link.new("List standalone cartridges", "GET", "/cartridges"),
+      Link.new("List embedded cartridges", "GET", "/cartridges/embedded"),
+      Link.new("List users", "GET", "/users")
     ]
     
     @reply = RestReply.new(:ok, "links", links)
