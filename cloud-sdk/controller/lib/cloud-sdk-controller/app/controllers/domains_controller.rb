@@ -1,4 +1,4 @@
-class DomainController < BaseController
+class DomainsController < BaseController
   respond_to :html, :xml, :json
   before_filter :authenticate
 
@@ -7,14 +7,14 @@ class DomainController < BaseController
     id = params[:id]
     cloud_user = CloudUser.find(@login)
     if(cloud_user.nil? or cloud_user.namespace != id)
-      @result = Result.new(:not_found)
+      @reply = RestReply.new(:not_found)
       message = Message.new("ERROR", "Domain not found.")
-      @result.messages.push(message)
-      respond_with(@result, :status => :not_found)
+      @reply.messages.push(message)
+      respond_with(@reply, :status => :not_found)
     end
     domain = Domain.new(cloud_user.namespace, cloud_user.ssh)
-    @result = Result.new(:ok, "domain", domain)
-    respond_with(@result, :status => :ok)
+    @reply = RestReply.new(:ok, "domain", domain)
+    respond_with(@reply, :status => :ok)
   end
   
   # GET /domains/<id>
@@ -22,14 +22,14 @@ class DomainController < BaseController
     id = params[:id]
     cloud_user = CloudUser.find(@login)
     if(cloud_user.nil? or cloud_user.namespace != id)
-      @result = Result.new(:not_found)
+      @reply = RestReply.new(:not_found)
       message = Message.new("ERROR", "Domain not found.")
-      @result.messages.push(message)
-      respond_with(@result, :status => :not_found)
+      @reply.messages.push(message)
+      respond_with(@reply, :status => :not_found)
     end
     domain = Domain.new(cloud_user.namespace, cloud_user.ssh)
-    @result = Result.new(:ok, "domain", domain)
-    respond_with(@result, :status => :ok)
+    @reply = RestReply.new(:ok, "domain", domain)
+    respond_with(@reply, :status => :ok)
   end
   
   # POST /domains
@@ -39,20 +39,20 @@ class DomainController < BaseController
     cloud_user = CloudUser.find(@login)
     
     if (cloud_user or Cloud::Sdk::ApplicationContainerProxy.blacklisted? namespace)
-      @result = Result.new(:conflict)
+      @reply = RestReply.new(:conflict)
       message = Message.new("ERROR", "Domain not allowed.")
-      @result.messages.push(message)
-      respond_with(@result, :status => :conflict)
+      @reply.messages.push(message)
+      respond_with(@reply, :status => :conflict)
     end
     
     cloud_user = CloudUser.new(@login, ssh, namespace)
     cloud_user.save
     
     domain = Domain.new(cloud_user.namespace, cloud_user.ssh)
-    @result = Result.new(:created, "domain", domain)
+    @reply = RestReply.new(:created, "domain", domain)
     message = Message.new("INFO", "Domain was created.")
-    @result.messages.push(message)
-    respond_with(@result, :status => :created)
+    @reply.messages.push(message)
+    respond_with(@reply, :status => :created)
     
   end
   
@@ -65,20 +65,20 @@ class DomainController < BaseController
     ssh = params[:ssh]
     
     if(cloud_user.nil? or cloud_user.namespace != id)
-      @result = Result.new(:not_found)
+      @reply = RestReply.new(:not_found)
       message = Message.new("ERROR", "Domain not found.")
-      @result.messages.push(message)
-      respond_with(@result, :status => :not_found)
+      @reply.messages.push(message)
+      respond_with(@reply, :status => :not_found)
     end
     cloud_user.update_ssh(ssh)
     cloud_user.update_namespace(namespace)
     
     cloud_user = CloudUser.find(@login)
     domain = Domain.new(cloud_user.namespace, cloud_user.ssh)
-    @result = Result.new(:ok, "domain", domain)
+    @reply = RestReply.new(:ok, "domain", domain)
     message = Message.new("INFO", "Domain was updated.")
-    @result.messages.push(message)
-    respond_with(@result, :status => :ok)
+    @reply.messages.push(message)
+    respond_with(@reply, :status => :ok)
   end
   
   
@@ -89,17 +89,17 @@ class DomainController < BaseController
     force = params[:force]
     
     if(cloud_user.nil? or cloud_user.namespace != namespace)
-      @result = Result.new(:not_found)
+      @reply = RestReply.new(:not_found)
       message = Message.new("ERROR", "Domain not found.")
-      @result.messages.push(message)
-      respond_with(@result, :status => :not_found)
+      @reply.messages.push(message)
+      respond_with(@reply, :status => :not_found)
     end
     if (!cloud_user.applications.empty? and !force)
-      @result = Result.new( :bad_request)
+      @reply = RestReply.new( :bad_request)
       message = Message.new("ERROR", "Domain contains applications.  
           Delete applications first or set force to true.")
-      @result.messages.push(message)
-      respond_with(@result, :status =>  :bad_request)
+      @reply.messages.push(message)
+      respond_with(@reply, :status =>  :bad_request)
     elsif force
       cloud_user.applications.each do |app|
         app.cleanup_and_delete()
@@ -107,10 +107,10 @@ class DomainController < BaseController
     end
     cloud_user.delete
     
-    @result = Result.new(:no_content)
+    @reply = RestReply.new(:no_content)
     message = Message.new("INFO", "Damain deleted.")
-    @result.messages.push(message)
-    respond_with(@result, :status => :no_content)
+    @reply.messages.push(message)
+    respond_with(@reply, :status => :no_content)
     
   end
   

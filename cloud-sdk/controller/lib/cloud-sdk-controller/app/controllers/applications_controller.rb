@@ -1,4 +1,4 @@
-class AppController < BaseController
+class ApplicationsController < BaseController
   respond_to :html, :xml, :json
   before_filter :authenticate
   
@@ -12,9 +12,9 @@ class AppController < BaseController
       @result.messages.push(message)
       respond_with(@result, :status => :not_found)
     end
-    applications.each do |app|
-      app.links = get_links(app)
-    end
+    #applications.each do |app|
+    #  app.links = get_links(app)
+    #end
     @result = Result.new(:ok, "applications", applications)
     respond_with(@result, :status => :ok)
   end
