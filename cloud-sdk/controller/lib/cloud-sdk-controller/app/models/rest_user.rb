@@ -1,5 +1,5 @@
 class RestUser < Cloud::Sdk::Model
-  attr_accessor :login
+  attr_accessor :login, :links
   
   def initialize(*args)
     if args[0].class == CloudUser
@@ -12,7 +12,7 @@ class RestUser < Cloud::Sdk::Model
           self.instance_variable_set("@#{k}",v)
         end
       else
-        @login = args[0]
+        @login, @links = args
       end
     end
   end

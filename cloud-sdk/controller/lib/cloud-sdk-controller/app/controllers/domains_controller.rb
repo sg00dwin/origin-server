@@ -13,7 +13,7 @@ class DomainsController < BaseController
     end
     domain = RestDomain.new(cloud_user.namespace, cloud_user.ssh)
     domain.links = get_links(cloud_user.namespace)
-    @reply = RestReply.new(:ok, "domain", domain)
+    @reply = RestReply.new(:ok, "domains", [domain])
     respond_with @reply, :status => @reply.status
   end
   

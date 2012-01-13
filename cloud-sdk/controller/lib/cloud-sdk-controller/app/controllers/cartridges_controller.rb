@@ -1,5 +1,5 @@
 class CartridgesController < BaseController
-  respond_to :html, :xml, :json
+  respond_to :xml, :json
   
   # GET /cartridges
   def index
@@ -12,6 +12,7 @@ class CartridgesController < BaseController
       cartridge = RestCartridge.new(cart_type, cart)
       cartridges.push(cartridge)
     end
+    
     cart_type = "embedded"
     cache_key = "cart_list_#{cart_type}"
     carts = get_cached(cache_key, :expires_in => 21600.seconds) {
@@ -20,6 +21,7 @@ class CartridgesController < BaseController
       cartridge = RestCartridge.new(cart_type, cart)
       cartridges.push(cartridge)
     end
+    
     @reply = RestReply.new(:ok, "cartridges", cartridges)
     respond_with @reply, :status => @reply.status
   end
@@ -38,7 +40,5 @@ class CartridgesController < BaseController
     @reply = RestReply.new(:ok, "cartridges", cartridges)
     respond_with @reply, :status => @reply.status
   end
-  
-  
 end
 

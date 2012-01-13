@@ -1,12 +1,14 @@
 class ApplicationsController < BaseController
-  respond_to :html, :xml, :json
+  respond_to :xml, :json
   before_filter :authenticate
   
-  
-  # GET /applications
+  # GET /domains/[domain id]/applications
   def index
+    domain_id = params[:domain_id]
+    
     cloud_user = CloudUser.find(@login)
     applications = Application.find_all(cloud_user)
+    
     if applications.nil? 
       @reply = RestReply.new(:not_found)
       message = Message.new("ERROR", "No applications found for user #{@login}.")
@@ -220,8 +222,13 @@ class ApplicationsController < BaseController
     return respond_with @reply, :status => @reply.status
   end
   
-  # PUT /applications/<id>/cartridges/<cartridge>/<state>
+  # POST /domain/[domain_id]/applications/[application_id]/cartridges/[cartridge_id]/events?state=start
   def update_cartridge
+    params[:domain_id]
+    params[:application_id]
+    params[:cartridge_id]
+    params[:state]
+    
     id = params[:id]
     cartridge = params[:cartridge]
     state = params[:state]
