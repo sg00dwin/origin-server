@@ -2,7 +2,7 @@
 
 Summary:   Provides jenkins-1.4 support
 Name:      rhc-cartridge-jenkins-1.4
-Version:   0.85.0
+Version:   0.85.1
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -71,6 +71,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/manifest.yml
 
 %changelog
+* Fri Jan 13 2012 Dan McPherson <dmcphers@redhat.com> 0.85.1-1
+- bump spec numbers (dmcphers@redhat.com)
+
 * Wed Jan 11 2012 Dan McPherson <dmcphers@redhat.com> 0.84.6-1
 - Gracefully handle threaddump in cartridges that do not support it (BZ772114)
   (aboone@redhat.com)
