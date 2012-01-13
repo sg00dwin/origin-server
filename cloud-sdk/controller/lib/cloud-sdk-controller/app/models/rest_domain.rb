@@ -1,13 +1,14 @@
 class RestDomain < Cloud::Sdk::Model
   attr_accessor :namespace, :ssh, :links
+  include LegacyBrokerHelper
+  
   def initialize(namespace=nil, ssh=nil)
     self.namespace = namespace
     self.ssh = ssh
 
-    carts = []
-    #get_cached("cart_list_standalone", :expires_in => 21600.seconds) do
-    #  Application.get_available_cartridges("standalone")
-    #end
+    carts = get_cached("cart_list_standalone", :expires_in => 21600.seconds) do
+      Application.get_available_cartridges("standalone")
+    end
     
     self.links = [
       Link.new("Get domain", "GET", "/domains/#{namespace}"),

@@ -12,10 +12,9 @@ class RestApplication < Cloud::Sdk::Model
 
     cart_type = "embedded"
     cache_key = "cart_list_#{cart_type}"
-    carts = []
-    #get_cached(cache_key, :expires_in => 21600.seconds) do
-    #  Application.get_available_cartridges("embedded")
-    #end
+    carts = get_cached(cache_key, :expires_in => 21600.seconds) do
+      Application.get_available_cartridges("embedded")
+    end
 
     self.links = [
       Link.new("Get application", "GET", "/applications/#{@name}"),

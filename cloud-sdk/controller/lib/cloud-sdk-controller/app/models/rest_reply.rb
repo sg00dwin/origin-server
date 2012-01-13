@@ -10,6 +10,13 @@ class RestReply < Cloud::Sdk::Model
     self.version = API_VERSION
   end
   
+  def process_result_io(result_io)
+    messages.push(Message.new(:debug, result_io.debugIO.string)) unless result_io.debugIO.string.empty?
+    messages.push(Message.new(:info, result_io.messageIO.string)) unless result_io.messageIO.string.empty?
+    messages.push(Message.new(:error, result_io.errorIO.string)) unless result_io.errorIO.string.empty?
+    messages.push(Message.new(:result, result_io.resultIO.string)) unless result_io.resultIO.string.empty?    
+  end
+  
   def to_xml(options={})
     options[:tag_name] = "response"
     super(options)

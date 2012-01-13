@@ -7,12 +7,13 @@ class UserController < BaseController
     user = CloudUser.find(@login)
     
     if(user.nil?)
-      @reply = RestReply.new(:not_found, links)
-      @reply.messages.push(Message.new(:error, "User information for #{@login} not available."))
-      respond_with @result, :status => @reply.status
+      @reply = RestReply.new(:not_found)
+      @reply.messages.push(Message.new(:error, "User #{@login} not found"))
+      respond_with @reply, :status => @reply.status
+      return
     end
     
-    @reply = RestReply.new(:ok, "user", RestUser.new(user)
+    @reply = RestReply.new(:ok, "user", RestUser.new(user))
     respond_with @reply, :status => @reply.status
   end
 end
