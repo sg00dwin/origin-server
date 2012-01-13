@@ -9,15 +9,15 @@ Rails.application.routes.draw do
   end
   scope "/broker/rest" do
     resource :api, :only => [:show], :controller => :base
-    resource :user, :only => [:show]
-    resource :cartridges, :only => [:index, :show], :constraints => { :id => /standalone|embedded/ }
+    resource :user, :only => [:show], :controller => :user
+    resources :cartridges, :only => [:index,:show], :constraints => { :id => /standalone|embedded/ }
     resources :domains, :constraints => { :id => /[A-Za-z0-9]+/ } do
-      resources :applications, :constraints => { :id => /[a-f0-9]+/ } do
-        resources :cartridges, :controller => :applications, :only => [:new, :destroy],
-          :path_names => { :new => 'add_cartridge', :destroy => 'remove_cartridge' }, :constraints => { :id => /[\w\-\.]+/ } do
-            resources :events, :controller => :applications, :only => [:new], :path_names => { :new => 'update_cartridge' }
+      resources :applications, :constraints => { :id => /[\w]+/ } do
+        resources :cartridges, :controller => :applications, :only => [:create, :destroy],
+          :path_names => { :create => 'add_cartridge', :destroy => 'remove_cartridge' }, :constraints => { :id => /[\w\-\.]+/ } do
+            resources :events, :controller => :applications, :only => [:create], :path_names => { :create => 'update_cartridge' }
         end
-        resources :events, :controller => :applications, :only => [:new], :path_names => { :new => 'update' }
+        resources :events, :controller => :applications, :only => [:create], :path_names => { :create => 'update' }
       end
     end
   end

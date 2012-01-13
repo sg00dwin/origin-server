@@ -26,7 +26,8 @@ class BaseController < ActionController::Base
     #unless @login
     #  #TODO return 401
     #end
-    @login = "lnader@redhat.com"
+    #@login = "lnader@redhat.com"
+    @login = "kraman7"    
   end
   
   def get_cached(key, opts={})

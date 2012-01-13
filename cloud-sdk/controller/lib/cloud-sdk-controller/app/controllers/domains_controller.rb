@@ -11,8 +11,8 @@ class DomainsController < BaseController
       @reply.messages.push(message)
       respond_with @reply, :status => @reply.status
     end
+    
     domain = RestDomain.new(cloud_user.namespace, cloud_user.ssh)
-    domain.links = get_links(cloud_user.namespace)
     @reply = RestReply.new(:ok, "domains", [domain])
     respond_with @reply, :status => @reply.status
   end
@@ -27,8 +27,8 @@ class DomainsController < BaseController
       @reply.messages.push(message)
       respond_with @reply, :status => @reply.status
     end
+    
     domain = RestDomain.new(cloud_user.namespace, cloud_user.ssh)
-    domain.links = get_links(cloud_user.namespace)
     @reply = RestReply.new(:ok, "domain", domain)
     respond_with @reply, :status => @reply.status
   end
@@ -50,7 +50,6 @@ class DomainsController < BaseController
     cloud_user.save
     
     domain = RestDomain.new(cloud_user.namespace, cloud_user.ssh)
-    domain.links = get_links(cloud_user.namespace)
     @reply = RestReply.new(:created, "domain", domain)
     message = Message.new("INFO", "Domain was created.")
     @reply.messages.push(message)
@@ -77,7 +76,6 @@ class DomainsController < BaseController
     
     cloud_user = CloudUser.find(@login)
     domain = RestDomain.new(cloud_user.namespace, cloud_user.ssh)
-    domain.links = get_links(cloud_user.namespace)
     @reply = RestReply.new(:ok, "domain", domain)
     message = Message.new("INFO", "Domain was updated.")
     @reply.messages.push(message)
@@ -113,34 +111,6 @@ class DomainsController < BaseController
     @reply = RestReply.new(:no_content)
     message = Message.new("INFO", "Damain deleted.")
     @reply.messages.push(message)
-    respond_with(@reply, :status => :no_content)
-    
-  end
-  
-  def get_links(id)
-    links = Array.new
-    link = Link.new("Get domain", "GET", "/domains/#{id}")
-    links.push(link)
-    
-    link = Link.new("List applications", "GET", "/domains/#{id}/applications")
-    links.push(link)
-        
-    link = Link.new("Create new application", "POST", "/applications")
-    param = Param.new("name", "string", "Name of the application")
-    link.required_params.push(param)
-    cart_type = "standalone"
-    cache_key = "cart_list_#{cart_type}"
-    carts = get_cached(cache_key, :expires_in => 21600.seconds) {
-      Application.get_available_cartridges("standalone")}
-    param = Param.new("cartridge", "string", "framework-type, e.g: php-5.3", carts.join(', '))
-    link.required_params.push(param)
-    links.push(link)
-       
-    link = Link.new("Delete domain", "DELETE", "/domains/" + id)
-    param = OptionalParam.new("force", "boolean", "Force delete domain.  i.e. delete any applications under this domain", "true or false", false)
-    link.optional_params.push(param)
-    links.push(link)
-
-    return links
+    respond_with(@reply, :status => :no_content)    
   end
 end

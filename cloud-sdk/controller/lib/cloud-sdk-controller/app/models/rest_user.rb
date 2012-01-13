@@ -12,9 +12,14 @@ class RestUser < Cloud::Sdk::Model
           self.instance_variable_set("@#{k}",v)
         end
       else
-        @login, @links = args
+        @login = args[0]
       end
     end
+    
+    @links = [
+      Link.new("API entry point", "GET", "/api"),
+      Link.new("Get user information", "GET", "/user"),
+    ]
   end
   
   def to_xml(options={})
