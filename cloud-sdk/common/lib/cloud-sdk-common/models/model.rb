@@ -87,7 +87,7 @@ module Cloud
         self.instance_variable_names.map {|name| name[1..-1]}.each do |name|
           next if ['attributes', 'changed_attributes', 'previously_changed', 'persisted', 'new_record', 'deleted', 'errors', 'validation_context'].include? name
           next if self.class.excludes_attributes.include? name.to_sym
-          @attributes[name] = nil
+          @attributes[name] = instance_variable_get("@#{name}")
         end
         @attributes
       end
@@ -114,8 +114,8 @@ module Cloud
       def self.find_all(login)
         id_var = @primary_key || "uuid"        
         data_list = DataStore.instance.find_all(self.name,login)
-        return [] unless data
-        data_list.each do |data|
+        return [] unless data_list
+        data_list.map! do |data|
           obj = self.new.from_json(data.values[0])
           obj.instance_variable_set("@#{id_var}", data.keys[0])
           obj.reset_state
@@ -135,7 +135,8 @@ module Cloud
         @new_record = false
         @persisted = true
         @deleted = false
-        DataStore.instance.save(self.class.name, login, instance_variable_get("@#{id_var}"), self.to_json)
+#        DataStore.instance.save(self.class.name, login, instance_variable_get("@#{id_var}"), self.to_json)
+        DataStore.instance.save(self.class.name, login, instance_variable_get("@#{id_var}"), self.attributes)
         self
       end
       
