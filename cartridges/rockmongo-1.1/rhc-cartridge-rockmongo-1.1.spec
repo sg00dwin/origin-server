@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/rockmongo-1.1
 
 Name: rhc-cartridge-rockmongo-1.1
-Version: 1.2.6
+Version: 1.3.0
 Release: 1%{?dist}
 Summary: Embedded RockMongo support for express
 

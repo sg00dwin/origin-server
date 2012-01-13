@@ -2,7 +2,7 @@
 
 Summary:   Provides python-wsgi-3.2 support
 Name:      rhc-cartridge-wsgi-3.2
-Version:   0.84.7
+Version:   0.85.0
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2

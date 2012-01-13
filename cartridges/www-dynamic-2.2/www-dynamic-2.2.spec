@@ -2,7 +2,7 @@
 
 Summary:   Provides post proxy httpd support
 Name:      rhc-cartridge-www-dynamic-2.2
-Version:   0.1
+Version:   0.1.1
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2

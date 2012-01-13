@@ -2,7 +2,7 @@
 
 Summary:   Provides jenkins-1.4 support
 Name:      rhc-cartridge-jenkins-1.4
-Version:   0.84.6
+Version:   0.85.0
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2

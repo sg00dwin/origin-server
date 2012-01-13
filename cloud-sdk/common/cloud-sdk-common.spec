@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Common
 Name:           rubygem-%{gemname}
-Version:        0.2.11
+Version:        0.3.0
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        AGPLv3
