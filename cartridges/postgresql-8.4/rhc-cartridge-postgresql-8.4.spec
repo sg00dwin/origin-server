@@ -6,7 +6,7 @@ Release: 1%{?dist}
 Summary: Embedded postgresql support for express
 
 Group: Network/Daemons
-License: GPLv2
+License: PostgreSQL License
 URL: https://engineering.redhat.com/trac/Libra
 Source0: %{name}-%{version}.tar.gz
 BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
