@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/postgresql-8.4
 
 Name: rhc-cartridge-postgresql-8.4
-Version: 0.2.0
+Version: 0.2.1
 Release: 1%{?dist}
 Summary: Embedded postgresql support for express
 
@@ -68,6 +68,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/manifest.yml
 
 %changelog
+* Fri Jan 13 2012 Dan McPherson <dmcphers@redhat.com> 0.2.1-1
+- bump spec numbers (dmcphers@redhat.com)
+
 * Tue Jan 10 2012 Dan McPherson <dmcphers@redhat.com> 0.1.5-1
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
   (rchopra@redhat.com)
