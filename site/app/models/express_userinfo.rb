@@ -6,7 +6,7 @@ class ExpressUserinfo
   
   include ExpressApi
   
-  attr_accessor :app_info, :uuid, :ssh_key, :rhc_domain, :namespace, :messages
+  attr_accessor :app_info, :uuid, :ssh_key, :key_type, :rhc_domain, :namespace, :messages
   
   validates_presence_of :rhlogin
   validates :password, :length => {:minimum => 6},
@@ -35,9 +35,11 @@ class ExpressUserinfo
           data = JSON.parse response['data']
           @app_info = data['app_info']
           data['user_info'].each do |key, value|
-            if ['uuid', 'namespace', 'rhc_domain', 'ssh_key'].include? key
+            if ['uuid', 'namespace', 'rhc_domain', 'ssh_key', 'key_type'].include? key
               send("#{key}=", value)
-            end #end unless
+            elsif 'ssh_type' == key
+              send("key_type=", value)
+            end
           end #end userinfo block
         else
           errors.add(:base, response['result'])
@@ -47,5 +49,13 @@ class ExpressUserinfo
       errors.add(:base, I18n.t(:unknown)) if errors[:base].empty?
     end 
   end #end function
+
+  def readable_ssh_key
+    if not @ssh_key or @ssh_key.empty?
+      "ssh-rsa nossh"
+    else
+      "#{@key_type} #{@ssh_key}"
+    end
+  end
 
 end

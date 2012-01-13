@@ -34,7 +34,7 @@ case "$1" in
     ;;
 
     graceful-stop|stop)
-        httpd_pid=`cat ${OPENSHIFT_ROCKMONGO_APP_DIR}run/httpd.pid 2> /dev/null`
+        httpd_pid=`cat ${OPENSHIFT_ROCKMONGO_APP_DIR}run/httpd.pid 2> /dev/null` || exit 0
         /usr/sbin/httpd -C 'Include ${OPENSHIFT_ROCKMONGO_APP_DIR}/conf.d/*.conf' -f $CART_CONF_DIR/httpd_nolog.conf -k $1
         wait_for_stop $httpd_pid
     ;;

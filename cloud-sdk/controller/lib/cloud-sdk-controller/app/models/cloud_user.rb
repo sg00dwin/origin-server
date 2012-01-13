@@ -1,5 +1,5 @@
 class CloudUser < Cloud::Sdk::Model
-  attr_accessor :rhlogin, :uuid, :system_ssh_keys, :env_vars, :email_address, :ssh_keys, :ssh, :ssh_type, :namespace, :key, :type
+  attr_accessor :rhlogin, :uuid, :system_ssh_keys, :env_vars, :ssh_keys, :ssh, :ssh_type, :namespace, :key, :type
   primary_key :rhlogin
   private :rhlogin=, :uuid=, :ssh=, :namespace=
   exclude_attributes :key, :type
@@ -26,9 +26,10 @@ class CloudUser < Cloud::Sdk::Model
     end
   end
   
-  def initialize(rhlogin=nil, ssh=nil, namespace=nil, ssh_type=nil)
+  def initialize(rhlogin=nil, ssh=nil, namespace=nil, ssh_type='ssh-rsa')
     super()
-    self.rhlogin, self.ssh, self.namespace = rhlogin, ssh, namespace, self.ssh_type = ssh_type
+    ssh_type = "ssh-rsa" if ssh_type.to_s.strip.length == 0
+    self.rhlogin, self.ssh, self.namespace, self.ssh_type = rhlogin, ssh, namespace, ssh_type
   end
   
   def save
@@ -107,7 +108,7 @@ class CloudUser < Cloud::Sdk::Model
     self.ssh_keys = {} unless self.ssh_keys    
     result = ResultIO.new
     key = self.ssh_keys[key_name]
-    return result unless key
+    raise Cloud::Sdk::UserKeyException.new("ERROR: Key name '#{key_name}' doesn't exist for user #{self.rhlogin}", 118) unless key
     applications.each do |app|
       Rails.logger.debug "DEBUG: Removing secondary key named #{key_name} from app: #{app.name} for user #{@name}"
       result.append app.remove_authorized_ssh_key(key)
@@ -168,7 +169,7 @@ class CloudUser < Cloud::Sdk::Model
     
     begin
       dns_service.register_namespace(new_ns)
-      dns_service.deregister_namespace(old_ns)    
+      dns_service.deregister_namespace(old_ns)
   
       applications.each do |app|
         Rails.logger.debug "DEBUG: Updating namespaces for app: #{app.name}"
@@ -236,14 +237,14 @@ class CloudUser < Cloud::Sdk::Model
         dns_service.register_namespace(@namespace)
         @uuid = Cloud::Sdk::Model.gen_uuid
         dns_service.publish
-        notify_observers(:cloud_user_create_success)      
+        notify_observers(:cloud_user_create_success)   
       rescue Exception => e
         Rails.logger.debug e
         begin
-          Rails.logger.debug "DEBUG: Attempting to remove namespace '#{@namespace}' after failure to add user '#{@rhlogin}'"        
-          dns_service.deregister_namespace(@namespace)
-          dns_service.publish
-          notify_observers(:cloud_user_create_error)      
+          #Rails.logger.debug "DEBUG: Attempting to remove namespace '#{@namespace}' after failure to add user '#{@rhlogin}'"        
+          #dns_service.deregister_namespace(@namespace)
+          #dns_service.publish
+          notify_observers(:cloud_user_create_error)
         ensure
           raise
         end

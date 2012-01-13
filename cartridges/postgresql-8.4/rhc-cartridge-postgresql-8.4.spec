@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/postgresql-8.4
 
 Name: rhc-cartridge-postgresql-8.4
-Version: 0.1.4
+Version: 0.1.5
 Release: 1%{?dist}
 Summary: Embedded postgresql support for express
 
@@ -65,8 +65,15 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/libra/cartridges/%{name}
 %{cartridgedir}/info/changelog
 %{cartridgedir}/info/control
+%{cartridgedir}/info/manifest.yml
 
 %changelog
+* Tue Jan 10 2012 Dan McPherson <dmcphers@redhat.com> 0.1.5-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rchopra@redhat.com)
+- descriptor file for postgresql (rchopra@redhat.com)
+- Disable phpPgAdmin message on adding postgres cartridge. (mpatel@redhat.com)
+
 * Mon Jan 09 2012 Dan McPherson <dmcphers@redhat.com> 0.1.4-1
 - Add ruby postgres driver. (ramr@redhat.com)
 

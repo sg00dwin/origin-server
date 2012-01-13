@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.84.11
+Version:   0.84.13
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -224,6 +224,15 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 %{_initddir}/sauce-connect
 
 %changelog
+* Fri Jan 13 2012 Alex Boone <aboone@redhat.com> 0.84.13-1
+- Re-issuing devenv Qpid certs -- now valid through Jan 13, 2013
+  (aboone@redhat.com)
+
+* Thu Jan 12 2012 Dan McPherson <dmcphers@redhat.com> 0.84.12-1
+- Add a Jenkins job to build and test the Java client (aboone@redhat.com)
+- Persist minor change to libra_ami Jenkins job config (aboone@redhat.com)
+- Persist Jenkins config for Selenium test jobs (aboone@redhat.com)
+
 * Mon Jan 09 2012 Dan McPherson <dmcphers@redhat.com> 0.84.11-1
 - Revert 9619834, dependency belongs in site.spec (aboone@redhat.com)
 

@@ -13,11 +13,12 @@ class ExpressDomainController < ApplicationController
     # check for which domain action we should call
     @dom_action = domain_params.delete :dom_action
     form_type = domain_params.delete :form_type
-    @event = "#{form_type}_form_return"
+    @event = "#{form_type.gsub(/[^\w]/, '')}_form_return"
 
     if @ssh_key_validation[:valid]
+
       # Ensure we only send the key until the broker supports comments
-      domain_params[:ssh] = @ssh_key_validation[:key]
+      domain_params[:ssh] = "#{@ssh_key_validation[:type]} #{@ssh_key_validation[:key]}"
 
       Rails.logger.debug "dom_action: #{@dom_action}"
       domain_params[:rhlogin] = session[:login]
@@ -94,6 +95,8 @@ class ExpressDomainController < ApplicationController
   def validate_ssh(ssh)
     type_regex = /^ssh-(rsa|dss)$/
     key_regex =  /^[A-Za-z0-9+\/]+[=]*$/
+    type_required = true
+
     values = { :valid => true }
     parts = ssh.split
 
@@ -112,6 +115,10 @@ class ExpressDomainController < ApplicationController
       values[:type] = parts[0]
       values[:key] = parts[1]
       values[:comment] = parts[2]
+    end
+
+    if type_required && !values[:type]
+      values[:valid] = false
     end
 
     if values[:type] && !type_regex.match(values[:type])

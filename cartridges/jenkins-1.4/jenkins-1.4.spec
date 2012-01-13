@@ -2,7 +2,7 @@
 
 Summary:   Provides jenkins-1.4 support
 Name:      rhc-cartridge-jenkins-1.4
-Version:   0.84.5
+Version:   0.84.6
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -51,6 +51,7 @@ ln -s %{cartridgedir}/../abstract/info/hooks/add-alias %{buildroot}%{cartridgedi
 ln -s %{cartridgedir}/../abstract/info/hooks/tidy %{buildroot}%{cartridgedir}/info/hooks/tidy
 ln -s %{cartridgedir}/../abstract/info/hooks/remove-alias %{buildroot}%{cartridgedir}/info/hooks/remove-alias
 ln -s %{cartridgedir}/../abstract/info/hooks/move %{buildroot}%{cartridgedir}/info/hooks/move
+ln -s %{cartridgedir}/../abstract/info/hooks/threaddump %{buildroot}%{cartridgedir}/info/hooks/threaddump
 
 %clean
 rm -rf %{buildroot}
@@ -70,6 +71,10 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/manifest.yml
 
 %changelog
+* Wed Jan 11 2012 Dan McPherson <dmcphers@redhat.com> 0.84.6-1
+- Gracefully handle threaddump in cartridges that do not support it (BZ772114)
+  (aboone@redhat.com)
+
 * Fri Jan 06 2012 Dan McPherson <dmcphers@redhat.com> 0.84.5-1
 - fix build breaks (dmcphers@redhat.com)
 

@@ -53,10 +53,9 @@ may be ok if '#{uapp.name}#{BUILDER_SUFFIX}' was the builder of a previously des
     end
   end
   
-  def application_after_destroy(data)
+  def after_application_destroy(data)
     app = data[:application]
     reply = data[:reply]
-    
     if app.framework_cartridge == "jenkins"
       app.user.applications.each do |uapp|
         begin

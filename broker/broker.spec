@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.84.36
+Version:   0.84.41
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -76,6 +76,26 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Thu Jan 12 2012 Dan McPherson <dmcphers@redhat.com> 0.84.41-1
+- Updating gem versions (dmcphers@redhat.com)
+
+* Wed Jan 11 2012 Dan McPherson <dmcphers@redhat.com> 0.84.40-1
+- Automatic commit of package [rhc-broker] release [0.84.39-1].
+  (dmcphers@redhat.com)
+
+* Wed Jan 11 2012 Dan McPherson <dmcphers@redhat.com> 0.84.39-1
+- Updating gem versions (dmcphers@redhat.com)
+- correctly return 400 for invalid requests (dmcphers@redhat.com)
+
+* Wed Jan 11 2012 Dan McPherson <dmcphers@redhat.com> 0.84.38-1
+- Updating gem versions (dmcphers@redhat.com)
+- Bug 773248 and 773186 (dmcphers@redhat.com)
+
+* Tue Jan 10 2012 Dan McPherson <dmcphers@redhat.com> 0.84.37-1
+- Updating gem versions (dmcphers@redhat.com)
+- Fix for Bug# 772673 -Persist ssh key type in the datastore (currently in s3)
+  (rpenta@redhat.com)
+
 * Mon Jan 09 2012 Dan McPherson <dmcphers@redhat.com> 0.84.36-1
 - Updating gem versions (dmcphers@redhat.com)
 - Move jenkins deconfigure to observer. Create convinence method to move app

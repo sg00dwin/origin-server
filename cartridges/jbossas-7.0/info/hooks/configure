@@ -114,6 +114,8 @@ APP_JBOSS="$APP_DIR"/${jboss_version}
 # Maven dir
 M2_DIR=`echo $APP_HOME/.m2 | tr -s /`
 mkdir -p $M2_DIR
+JAVA_PREFS_DIR=`echo $APP_HOME/.java | tr -s /`
+mkdir -p $JAVA_PREFS_DIR
 
 # Redirect the configure script output for debugging
 APP_JBOSS_TMP_DIR="$APP_JBOSS"/standalone/tmp
@@ -182,6 +184,7 @@ secure_app_dir
 chown $user_id.$group_id -R "$APP_DIR/${jboss_version}/standalone"
 chown -R $user_id.$group_id $M2_DIR
 chcon_app_dir_and_git
+chown -R $user_id.$group_id $JAVA_PREFS_DIR
 
 #
 # Create environment variables

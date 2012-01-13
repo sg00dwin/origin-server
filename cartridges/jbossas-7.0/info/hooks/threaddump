@@ -52,3 +52,7 @@ setup_basic_hook "$1" $2 $3
 # Get the thread dump
 #
 runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $APP_DIR/${application}_ctl.sh threaddump"
+
+client_result "Success"
+client_result ""
+client_result "The thread dump file will be available via 'rhc-tail-files -f $1/jbossas-7.0/stdout.log -a $1'"

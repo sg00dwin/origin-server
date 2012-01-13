@@ -1,6 +1,6 @@
 .edit-widget.ssh-widget
   .current.ssh
-    = @userinfo.ssh_key.nil? || @userinfo.ssh_key == 'nossh' ? "We don't have an ssh key for you yet" : @userinfo.ssh_key.slice(0, 20)+ '...'
+    = @userinfo.ssh_key.nil? || @userinfo.ssh_key == 'nossh' ? "We don't have an ssh key for you yet" : @userinfo.readable_ssh_key.slice(0, 20)+ '...'
 
   .popup
     .popup-trigger
