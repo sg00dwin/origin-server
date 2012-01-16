@@ -22,12 +22,11 @@ class BaseController < ActionController::Base
   protected
   
   def authenticate
-    #@login = Cloud::Sdk::AuthService.instance.login(request, params, cookies)
-    #unless @login
-    #  #TODO return 401
-    #end
-    #@login = "lnader@redhat.com"
-    @login = "kraman7"    
+    if user = authenticate_with_http_basic {|u, p| Cloud::Sdk::AuthService.instance.authenticate(request, u, p)}
+      @login = user
+    else
+      request_http_basic_authentication
+    end
   end
   
   def rest_replies_url(*args)
