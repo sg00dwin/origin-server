@@ -79,12 +79,6 @@ Broker::Application.configure do
     :config      => "/etc/mcollective/client.cfg"
   }
   
-  config.datastore = {
-    :aws_key => "KEY_HERE",
-    :aws_secret => "SECRET_HERE",
-    :s3_bucket => "BUCKET_HERE"
-  }
-  
   config.analytics = {
     :nurture_enabled => true,
     :nurture_username => "admin",
@@ -101,14 +95,14 @@ Broker::Application.configure do
   # CDK Config
   config.cdk = {
     :domain_suffix => "rhcloud.com",
-    :per_user_app_limit => 5
-  }
+    :per_user_app_limit => 5,
 
-  config.datastore_mongo = {
-    :host => "HOST_HERE",
-    :port => 27017,
-    :db => "DB_NAME",
-    :collection => "COLLECTION_NAME"
+    :datastore_mongo => {
+      :host => "HOST_NAME",
+      :port => 27017,
+      :db => "DB_NAME",
+      :collection => "COLLECTION_NAME"
+    }
   }
 
 end

@@ -5,7 +5,7 @@ module Cloud::Sdk
   class MongoDataStore < DataStore
     @cdk_ds_provider = Cloud::Sdk::MongoDataStore
     DOT = "."
-    DOT_SUBSTITUTE = "(dot)"  
+    DOT_SUBSTITUTE = "(ö)"  
  
     def self.provider=(provider_class)
       @cdk_ds_provider = provider_class
@@ -58,13 +58,13 @@ module Cloud::Sdk
     private
 
     def self.db
-      con = Mongo::Connection.new(Rails.application.config.datastore_mongo[:host], 
-                                  Rails.application.config.datastore_mongo[:port])
-      con.db(Rails.application.config.datastore_mongo[:db])
+      con = Mongo::Connection.new(Rails.application.config[:datastore_mongo][:host], 
+                                  Rails.application.config[:datastore_mongo][:port])
+      con.db(Rails.application.config[:datastore_mongo][:db])
     end
 
     def self.collection
-      MongoDataStore.db.collection(Rails.application.config.datastore_mongo[:collection])
+      MongoDataStore.db.collection(Rails.application.config[:datastore_mongo][:collection])
     end
 
     def self.get_user(user_id)

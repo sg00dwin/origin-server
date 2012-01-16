@@ -3,6 +3,7 @@ require 'aws'
 require 'aws/s3'
 require 'mongo'
 
+# Configurable params
 $config = {
   :aws_key => "AKIAITDQ37BWZ5CKAORA",
   :aws_secret => "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",
@@ -45,7 +46,7 @@ def mongo_populate
       user_name = File.basename(File.dirname(user_obj.key))
       user_data_str = user_obj.read
       next if not user_data_str
-      user_data_str.gsub!(/\"\s*:/, "\" =>")
+      user_data_str.gsub!(/\"\s*:/, "\" => ")
       user_data_str.gsub!(/null/, "\"\"")
       #puts user_data_str
       puts user_name
@@ -75,7 +76,7 @@ def mongo_populate
         next if (not app_data_str) or app_data_str.empty?
         app_name = app_obj.key.gsub(app_prefix,'')[0..-6]
         #puts app_name
-        app_data_str.gsub!(/\"\s*:/, "\" =>")
+        app_data_str.gsub!(/\"\s*:/, "\" => ")
         app_data_str.gsub!(/null/, "\"\"")
         #puts app_data_str
         app_data = eval(app_data_str)
@@ -84,7 +85,7 @@ def mongo_populate
         embedded_carts = {}
         app_data["embedded"].each do |cart_name, cart_info|
           # FIXME: Hack to overcome mongo limitation, key name can't have '.' char
-          cname = cart_name.gsub(/\./, "(dot)")
+          cname = cart_name.gsub(/\./, "(ö)")
           embedded_carts[cname] = cart_info
         end if app_data["embedded"]
         embedded_carts = nil if embedded_carts.empty?
@@ -108,4 +109,6 @@ def mongo_populate
 end
 
 mongo_connect
+puts "User migration from S3 to Mongo datastore Started"
 mongo_populate
+puts "User migration from S3 to Mongo datastore Done!"
