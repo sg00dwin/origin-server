@@ -69,7 +69,6 @@ corenet_tcp_bind_jboss_management_port(libra_t)
 corenet_tcp_bind_jboss_debug_port(libra_t)
 corenet_tcp_bind_mongod_port(libra_t)
 corenet_tcp_connect_smtp_port(libra_t)
-corenet_tcp_connect_pop_port(libra_t)
 
 ssh_exec(libra_t)
 cloudform_exec_mongod(libra_t)
