@@ -17,14 +17,14 @@
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
   <triggers class="vector">
     <org.jenkinsci.plugins.fstrigger.triggers.FolderContentTrigger>
-      <spec></spec>
-      <path>site</path>
+      <spec>*/15 * * * *</spec>
+      <path>/var/lib/jenkins/jobs/libra_check/workspace/site</path>
     </org.jenkinsci.plugins.fstrigger.triggers.FolderContentTrigger>
   </triggers>
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>selenium/sauce_launcher &quot;Windows 2008&quot; firefox 7</command>
+      <command>selenium/sauce_launcher &quot;Windows 2003&quot; firefox 7</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>

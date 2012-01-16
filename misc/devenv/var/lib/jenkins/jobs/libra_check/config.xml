@@ -69,14 +69,6 @@ build/devenv test libra_check_${BUILD_NUMBER} --terminate --unofficial --exclude
     </hudson.tasks.Shell>
   </builders>
   <publishers>
-    <hudson.tasks.BuildTrigger>
-      <childProjects>libra_web_win2008_firefox7</childProjects>
-      <threshold>
-        <name>SUCCESS</name>
-        <ordinal>0</ordinal>
-        <color>BLUE</color>
-      </threshold>
-    </hudson.tasks.BuildTrigger>
     <hudson.tasks.ArtifactArchiver>
       <artifacts>rhc/log/*</artifacts>
       <latestOnly>false</latestOnly>

@@ -28,6 +28,7 @@ class CloudUser < Cloud::Sdk::Model
   
   def initialize(rhlogin=nil, ssh=nil, namespace=nil, ssh_type='ssh-rsa')
     super()
+    ssh_type = "ssh-rsa" if ssh_type.to_s.strip.length == 0
     self.rhlogin, self.ssh, self.namespace, self.ssh_type = rhlogin, ssh, namespace, ssh_type
   end
   
@@ -168,7 +169,7 @@ class CloudUser < Cloud::Sdk::Model
     
     begin
       dns_service.register_namespace(new_ns)
-      dns_service.deregister_namespace(old_ns)    
+      dns_service.deregister_namespace(old_ns)
   
       applications.each do |app|
         Rails.logger.debug "DEBUG: Updating namespaces for app: #{app.name}"
@@ -236,14 +237,14 @@ class CloudUser < Cloud::Sdk::Model
         dns_service.register_namespace(@namespace)
         @uuid = Cloud::Sdk::Model.gen_uuid
         dns_service.publish
-        notify_observers(:cloud_user_create_success)      
+        notify_observers(:cloud_user_create_success)   
       rescue Exception => e
         Rails.logger.debug e
         begin
-          Rails.logger.debug "DEBUG: Attempting to remove namespace '#{@namespace}' after failure to add user '#{@rhlogin}'"        
-          dns_service.deregister_namespace(@namespace)
-          dns_service.publish
-          notify_observers(:cloud_user_create_error)      
+          #Rails.logger.debug "DEBUG: Attempting to remove namespace '#{@namespace}' after failure to add user '#{@rhlogin}'"        
+          #dns_service.deregister_namespace(@namespace)
+          #dns_service.publish
+          notify_observers(:cloud_user_create_error)
         ensure
           raise
         end

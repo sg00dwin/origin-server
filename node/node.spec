@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.84.23
+Version:       0.85.1
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -125,7 +125,7 @@ if [[ -d "/etc/httpd/conf.d/libra.bak" && -L "/etc/httpd/conf.d/libra" ]]
 then
     mv /etc/httpd/conf.d/libra.bak/* /var/lib/libra/.httpd.d/
     # not forced to prevent data loss
-    rmdir /etc/httpd/conf.d/libra /etc/httpd/conf.d/libra.bak
+    rmdir /etc/httpd/conf.d/libra.bak
 fi
 
 
@@ -205,6 +205,15 @@ fi
 %dir %attr(0755,root,root) %{_sysconfdir}/libra/skel
 
 %changelog
+* Fri Jan 13 2012 Dan McPherson <dmcphers@redhat.com> 0.85.1-1
+- bump spec numbers (dmcphers@redhat.com)
+
+* Thu Jan 12 2012 Dan McPherson <dmcphers@redhat.com> 0.84.25-1
+- fix node.spec install issue (dmcphers@redhat.com)
+
+* Thu Jan 12 2012 Dan McPherson <dmcphers@redhat.com> 0.84.24-1
+- Bug 773606 (dmcphers@redhat.com)
+
 * Wed Jan 11 2012 Dan McPherson <dmcphers@redhat.com> 0.84.23-1
 - fixing directory copy failures (mmcgrath@redhat.com)
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
