@@ -13,7 +13,7 @@ class RestDomain < Cloud::Sdk::Model
     self.links = [
       Link.new("Get domain", "GET", "/domains/#{namespace}"),
       Link.new("List applications", "GET", "/domains/#{namespace}/applications"),
-      Link.new("Create new application", "POST", "/applications", [
+      Link.new("Create new application", "POST", "/domains/#{namespace}/applications", [
         Param.new("name", "string", "Name of the application"),
         Param.new("cartridge", "string", "framework-type, e.g: php-5.3", carts.join(', '))
       ]),

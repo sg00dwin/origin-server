@@ -5,7 +5,7 @@ class RestCartridge < Cloud::Sdk::Model
     self.name = name
     self.type = type
   end
-  
+
   def to_xml(options={})
     options[:tag_name] = "cartridge"
     super(options)
