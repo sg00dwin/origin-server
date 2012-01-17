@@ -58,7 +58,7 @@ class ApplicationsController < BaseController
       respond_with @reply, :status => @reply.status
       return
     end
-    Rails.logger.debug "Cahecking to see if application name is black listed"
+    Rails.logger.debug "Checking to see if application name is black listed"
     if Cloud::Sdk::ApplicationContainerProxy.blacklisted? app_name
       @reply = RestReply.new(:forbidden)
       message = Message.new("ERROR", "The supplied application name '#{app_name}' is not allowed") 
@@ -86,7 +86,6 @@ class ApplicationsController < BaseController
     end
     Rails.logger.debug "Checking to see if user limit for number of apps has been reached"
     apps = Application.find_all(user)
-    Rails.logger.debug "checking existing apps"
     if (apps.length >= Rails.application.config.cdk[:per_user_app_limit])
       @reply = RestReply.new(:forbidden)
       message = Message.new("ERROR", "#{@login} has already reached the application limit of #{Rails.application.config.cdk[:per_user_app_limit]}")
@@ -114,6 +113,8 @@ class ApplicationsController < BaseController
         rescue Exception => e
             application.destroy_dns
             @reply = RestReply.new(:internal_server_error)
+            message = Message.new("ERROR", "Failed to create dns for application #{app_name}") 
+            @reply.messages.push(message)
             message = Message.new("ERROR", e.message) 
             @reply.messages.push(message)
             respond_with @reply, :status => @reply.status
@@ -151,152 +152,10 @@ class ApplicationsController < BaseController
     end
   end
   
-  # POST /domains/[domain_id]/applications/[id]/events
-  def update
-    domain_id = params[:domain_id]
-    id = params[:id]
-    event = params[:event]
-    cloud_user = CloudUser.find(@login)
-    application = Application.find(cloud_user,id)
-    if(application.nil?)
-      @reply = RestReply.new(:not_found)
-      message = Message.new("ERROR", "Application #{id} not found.")
-      @reply.messages.push(message)
-      respond_with @reply, :status => @reply.status
-      return
-    end
-    case state
-      when "start"
-        application.start
-      when "stop"
-        application.stop  
-      when "force-stop"
-        application.force_stop  
-      when "restart"
-        application.restart  
-    end
-    
-    application = Application.find(cloud_user, id)
-    application.links = get_links(application)
-    @reply = RestReply.new(:ok, "application", application)
-    respond_with @reply, :status => @reply.status
-  end
   
-  # POST /domains/[domain_id]/applications/[id]/cartridges
-  def add_cartridge
-    domain_id = params[:domain_id]
-    id = params[:id]
-    cartridge = params[:cartridge]
-    cloud_user = CloudUser.find(@login)
-    application = Application.find(cloud_user,id)
-    if(application.nil?)
-      @reply = RestReply.new(:not_found)
-      message = Message.new("ERROR", "Application #{id} not found.")
-      @reply.messages.push(message)
-      return respond_with @reply, :status => @reply.status
-    end
-    if not check_cartridge_type(app.framework, container, "embedded")
-      @reply = RestReply.new( :bad_request)
-      carts = get_cached("cart_list_embedded", :expires_in => 21600.seconds) {
-      Application.get_available_cartridges("embedded")}
-      message = Message.new("ERROR", "Invalid cartridge #{cartridge}.  Valid values are (#{carts.join(', ')})") 
-      @reply.messages.push(message)
-      return respond_with @reply, :status => @reply.status
-    end
-
-    app.add_dependency(@req.cartridge)
-    application = Application.find(cloud_user,id)
-    application.links = get_links(application)
-    @reply = RestReply.new(:ok, "application", application)
-    message = Message.new("INFO", "Added #{cartridge} to application #{id}")
-    @reply.messages.push(message)
-    return respond_with @reply, :status => @reply.status
-  end
   
-  # DELETE /applications/<id>/cartridges
-  def remove_cartridge
-    domain_id = params[:domain_id]
-    id = params[:id]
-    cartridge = params[:cartridge]
-    cloud_user = CloudUser.find(@login)
-    application = Application.find(cloud_user,id)
-    if(application.nil?)
-      @reply = RestReply.new(:not_found)
-      message = Message.new("ERROR", "Application #{id} not found.")
-      @reply.messages.push(message)
-      return respond_with @reply, :status => @reply.status
-    end
-    
-    if not check_cartridge_type(app.framework, container, "embedded")
-      @reply = RestReply.new( :bad_request)
-      carts = get_cached("cart_list_embedded", :expires_in => 21600.seconds) {
-      Application.get_available_cartridges("embedded")}
-      message = Message.new("ERROR", "Invalid cartridge #{cartridge}.  Valid values are (#{carts.join(', ')})") 
-      @reply.messages.push(message)
-      return respond_with @reply, :status => @reply.status
-    end
-
-    app.remove_dependency(@req.cartridge)
-    application = Application.find(cloud_user, id)
-    application.links = get_links(application)
-    @reply = RestReply.new(:ok, "application", application)
-    message = Message.new("INFO", "Removed #{cartridge} from application #{id}")
-    @reply.messages.push(message)
-    return respond_with @reply, :status => @reply.status
-  end
   
-  # POST /domain/[domain_id]/applications/[application_id]/cartridges/[cartridge_id]/events?state=start
-  def update_cartridge
-    params[:domain_id]
-    params[:application_id]
-    params[:cartridge_id]
-    params[:state]
-    
-    id = params[:id]
-    cartridge = params[:cartridge]
-    state = params[:state]
-    cloud_user = CloudUser.find(@login)
-    application = Application.find(cloud_user,id)
-    if(application.nil?)
-      @reply = RestReply.new(:not_found)
-      message = Message.new("ERROR", "Application #{id} not found.")
-      @reply.messages.push(message)
-      return respond_with @reply, :status => @reply.status
-    end
-    if not check_cartridge_type(app.framework, container, "embedded")
-      @reply = RestReply.new( :bad_request)
-      carts = get_cached("cart_list_embedded", :expires_in => 21600.seconds) {
-      Application.get_available_cartridges("embedded")}
-      message = Message.new("ERROR", "Invalid cartridge #{cartridge}.  Valid values are (#{carts.join(', ')})") 
-      @reply.messages.push(message)
-      return respond_with @reply, :status => @reply.status 
-    end
-
-    case state
-      when 'start'
-        app.start_dependency(cartridge)      
-      when 'stop'
-        app.stop_dependency(cartridge)      
-      when 'restart'
-        app.restart_dependency(cartridge)          
-      when 'reload'
-        app.reload_dependency(cartridge)
-      else
-        @reply = RestReply.new(:bad_request)
-        message = Message.new("ERROR", "Invalid action #{state}")
-        @reply.messages.push(message)
-        return respond_with @reply, :status => @reply.status   
-    end
-    
-    application = Application.find(cloud_user, id)
-    application.links = get_links(application)
-    @reply = RestReply.new(:ok, "application", application)
-    message = Message.new("INFO", "Successful #{state} on #{cartridge} for application #{id}")
-    @reply.messages.push(message)
-    return respond_with @reply, :status => @reply.status
-  end
-  
-  # DELELTE /applications/<id>
+  # DELELTE domains/[domain_id]/applications/[id]
   def destroy
     domain_id = params[:domain_id]
     id = params[:id]
@@ -306,49 +165,26 @@ class ApplicationsController < BaseController
       @reply = RestReply.new(:not_found)
       message = Message.new("ERROR", "Application #{id} not found.")
       @reply.messages.push(message)
-      return respond_with @reply, :status => @reply.status
+      respond_with @reply, :status => @reply.status
+      return
     end
     
-    application.cleanup_and_delete()
+    begin
+      application.cleanup_and_delete()
+    rescue Exception => e
+      @reply = RestReply.new(:internal_server_error)
+      message = Message.new("ERROR", "Failed to delete application #{app_name}") 
+      @reply.messages.push(message)
+      message = Message.new("ERROR", e.message) 
+      @reply.messages.push(message)
+      respond_with @reply, :status => @reply.status
+      return
+    end
  
     @reply = RestReply.new(:no_content)
     message = Message.new("INFO", "Application #{id} is deleted.")
     @reply.messages.push(message)
-    return respond_with @reply, :status => @reply.status
-  end
-  
-  def get_links(domain_id, app)
-    links = Array.new
-    link = Link.new("Get application", "GET", "/domains/#{domain_id}/applications/#{app.name}")
-    links.push(link)
-    link = Link.new("Start application", "PUT", "/domains/#{domain_id}/applications/#{app.name}/start")
-    links.push(link)
-    link = Link.new("Stop application", "PUT", "/domains/#{domain_id}/applications/#{app.name}/stop")
-    links.push(link)
-    link = Link.new("Restart application", "PUT", "/domains/#{domain_id}/applications/#{app.name}/restart")
-    links.push(link)
-    link = Link.new("Force stop application", "PUT", "/domains/#{domain_id}/applications/#{app.name}/force-stop")
-    links.push(link)
-    link = Link.new("Delete application", "DELETE", "/domains/#{domain_id}/applications/#{app.name}")
-    links.push(link)
-    
-    link = Link.new("Add embedded cartridge", "POST", "/domains/#{domain_id}/applications/#{app.name}/cartridges")
-    carts = get_cached("cart_list_embedded", :expires_in => 21600.seconds) {
-      Application.get_available_cartridges("embedded")}
-    param = Param.new("cartridge", "string", "framework-type, e.g.: mysql-5.1", carts.join(', '))
-    link.required_params.push(param)
-    links.push(link)
-    if app.embedded.nil? 
-      link = Link.new("Start embedded cartridge", "PUT", "/domains/#{domain_id}/applications/#{app.name}/cartridges/#{app.embedded}/start")
-      links.push(link)
-      link = Link.new("Stop embedded cartridge", "PUT", "/domains/#{domain_id}/applications/#{app.name}/cartridges/#{app.embedded}/stop")
-      links.push(link)
-      link = Link.new("Restart embedded cartridge", "PUT", "/domains/#{domain_id}/applications/#{app.name}/cartridges/#{app.embedded}/restart")
-      links.push(link)
-      link = Link.new("Reload embedded cartridge", "PUT", "/domains/#{domain_id}/applications/#{app.name}/cartridges/#{app.embedded}/reload")
-      links.push(link)
-    end
-    return links
+    respond_with @reply, :status => @reply.status
   end
     
   def check_cartridge_type(framework, container, cart_type)
