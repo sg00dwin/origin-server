@@ -14,7 +14,7 @@ Rails.application.routes.draw do
     resources :domains, :constraints => { :id => /[A-Za-z0-9]+/ } do
       resources :applications, :constraints => { :id => /[\w]+/ } do
         resources :cartridges, :controller => :embedded_cartridges, :only => [:create, :destroy], :constraints => { :id => /[\w\-\.]+/ } do
-            resources :events, :only => [:create], :path_names => { :create => 'update_cartridge' }
+            resources :events, :only => [:create]
         end
         resources :events, :only => [:create]
       end
