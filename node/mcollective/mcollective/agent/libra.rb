@@ -162,6 +162,30 @@ module MCollective
         reply[:exitcode] = exitcode
         reply.fail! "migrate_action failed #{exitcode}.  Output #{output}" unless exitcode == 0
       end
+      
+      #
+      # Set the district for a node
+      #
+      def set_district_action
+        Log.instance.debug("set_district call / request = #{request.pretty_inspect}")
+        validate :uuid, /^[a-zA-Z0-9]+$/
+        uuid = request[:uuid]
+
+        output = `echo "district='#{uuid}'" > /etc/libra/district.conf`
+        exitcode = $?.exitstatus
+
+        if exitcode == 0
+          Facter.add(:district) do
+              setcode { uuid }
+          end
+        end
+
+        Log.instance.debug("set_district (#{exitcode})\n------\n#{output}\n------)")
+
+        reply[:output] = output
+        reply[:exitcode] = exitcode
+        reply.fail! "set_district failed #{exitcode}.  Output #{output}" unless exitcode == 0
+      end
 
       #
       # Returns whether an app is on a server

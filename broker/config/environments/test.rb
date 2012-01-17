@@ -37,6 +37,13 @@ Broker::Application.configure do
   # OpenShift Configuration Below this point #
   ############################################
   config.app_scope = "broker"
+  
+  config.districts = {
+    :enabled => false,
+    :district => nil,
+    :max_capacity => 6000,
+    :first_uid => 1000
+  }
 
   config.dns = {
     :zone => "rhcloud.com",

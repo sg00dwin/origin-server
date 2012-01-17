@@ -37,6 +37,20 @@ Facter.add(:git_repos) do
 end
 
 #
+# Setup the district
+#
+Facter.add(:district) do
+    district = nil
+    if File.exists?('/etc/libra/district.conf')
+      config_file = ParseConfig.new('/etc/libra/district.conf')
+      district = config_file.get_value('district') ? config_file.get_value('district') : 'NONE'
+    else
+      district = 'NONE'
+    end
+    setcode { district }
+end
+
+#
 # Pull public_ip out of the node_data config
 #
 Facter.add(:public_ip) do
