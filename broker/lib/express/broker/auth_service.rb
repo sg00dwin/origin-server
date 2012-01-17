@@ -30,76 +30,98 @@ module Express
         [encrypted_iv, encrypted_token]
       end
       
+      def authenticate(request, login, password)
+        if request.headers['User-Agent'] == "Cloud-SDK"
+          return check_broker_key(login, password)
+        else
+          unless Rails.application.config.auth[:integrated]
+            return login
+          else
+            return check_login(request, login, password)
+          end
+        end
+      end
+      
       def login(request, params, cookies)
         data = JSON.parse(params['json_data'])
 
         username = nil
         if params['broker_auth_key'] && params['broker_auth_iv']
-          encrypted_token = Base64::decode64(params['broker_auth_key'])
-          cipher = OpenSSL::Cipher::Cipher.new("aes-256-cbc")
-          cipher.decrypt
-          cipher.key = OpenSSL::Digest::SHA512.new(Rails.application.config.auth[:broker_auth_secret]).digest
-          private_key = OpenSSL::PKey::RSA.new(File.read('config/keys/private.pem'), Rails.application.config.auth[:broker_auth_rsa_secret])
-          cipher.iv =  private_key.private_decrypt(Base64::decode64(params['broker_auth_iv']))
-          json_token = cipher.update(encrypted_token)
-          json_token << cipher.final
-    
-          token = JSON.parse(json_token)
-          username = token['rhlogin']
-          app_name = token['app_name']
-          creation_time = Time.parse(token['creation_time'])
-                
-          user = CloudUser.find(username)
-          raise Cloud::Sdk::UserValidationException.new unless user
-          
-          app = Application.find(user, app_name)
-          
-          raise Cloud::Sdk::UserValidationException.new if !app or creation_time != app.creation_time
-          return username
+          return check_broker_key(params['broker_auth_key'],params['broker_auth_iv'])
         else
           unless Rails.application.config.auth[:integrated]
             return data['rhlogin']
           else
-            ticket = cookies[:rh_sso]
-            rhlogin = nil
-            if ticket
-              begin
-                login = nil
-                roles = []
-                http_post(@@roles_url,{},ticket) do |json|
-                  login = json['username'] || json['login']
-                  roles = json['roles']      
-                end
-                check_access(roles)
-                rhlogin = login
-              rescue Cloud::Sdk::AccessDeniedException
-                Rails.logger.debug("Attempted to use previous ticket '#{ticket}' to establish but failed with AccessDenied.  Continuing with normal login...")
-              end
-            end
-
-            unless rhlogin
-              begin
-                login_args = {'login' => data['rhlogin'], 'password' => params['password']}
-                # Establish the authentication ticket
-                login = nil
-                roles = []
-                http_post(@@login_url, login_args) do |json|
-                  Rails.logger.debug("Current login = #{data['rhlogin']} / authenticated for #{json['username'] || json['login']}")
-                  login = json['username'] || json['login']
-                  roles = json['roles']
-                end
-                check_access(roles)
-                rhlogin = login
-              rescue Cloud::Sdk::AccessDeniedException
-              end
-            end
-            
-            return rhlogin
+            login = json['rhlogin']
+            password = params['password']
+            return check_login(request, login, password)
           end
         end
       end
       
       private
+      
+      def check_login(request, user, password)
+        ticket = request.cookies[:rh_sso]
+        rhlogin = nil
+        if ticket
+          begin
+            login = nil
+            roles = []
+            http_post(@@roles_url,{},ticket) do |json|
+              login = json['username'] || json['login']
+              roles = json['roles']      
+            end
+            check_access(roles)
+            rhlogin = login
+          rescue Cloud::Sdk::AccessDeniedException
+            Rails.logger.debug("Attempted to use previous ticket '#{ticket}' to establish but failed with AccessDenied.  Continuing with normal login...")
+          end
+        end
+
+        unless rhlogin
+          begin
+            login_args = {'login' => user, 'password' => password}
+            # Establish the authentication ticket
+            login = nil
+            roles = []
+            http_post(@@login_url, login_args) do |json|
+              Rails.logger.debug("Current login = #{user} / authenticated for #{json['username'] || json['login']}")
+              login = json['username'] || json['login']
+              roles = json['roles']
+            end
+            check_access(roles)
+            rhlogin = login
+          rescue Cloud::Sdk::AccessDeniedException
+          end
+        end
+        
+        return rhlogin
+      end
+      
+      def check_broker_key(key, iv)
+        encrypted_token = Base64::decode64(key)
+        cipher = OpenSSL::Cipher::Cipher.new("aes-256-cbc")
+        cipher.decrypt
+        cipher.key = OpenSSL::Digest::SHA512.new(Rails.application.config.auth[:broker_auth_secret]).digest
+        private_key = OpenSSL::PKey::RSA.new(File.read('config/keys/private.pem'), Rails.application.config.auth[:broker_auth_rsa_secret])
+        cipher.iv =  private_key.private_decrypt(Base64::decode64(iv))
+        json_token = cipher.update(encrypted_token)
+        json_token << cipher.final
+  
+        token = JSON.parse(json_token)
+        username = token['rhlogin']
+        app_name = token['app_name']
+        creation_time = Time.parse(token['creation_time'])
+              
+        user = CloudUser.find(username)
+        raise Cloud::Sdk::UserValidationException.new unless user
+        
+        app = Application.find(user, app_name)
+        
+        raise Cloud::Sdk::UserValidationException.new if !app or creation_time != app.creation_time
+        return username
+      end
       
       def check_access(roles)
         roles = [] unless roles
