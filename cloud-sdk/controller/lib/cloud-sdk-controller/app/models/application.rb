@@ -1,7 +1,21 @@
-class Application < Cloud::Sdk::UserModel
-  attr_accessor :user, :framework, :creation_time, :uuid, :embedded, :aliases, :name, :server_identity, :health_check_path, :node_profile, :container, :uid
-  primary_key :name  
-  exclude_attributes :user, :health_check_path, :dependencies, :node_profile, :container
+class Application < Cloud::Sdk::Cartridge
+  attr_accessor :state, :group_instances
+  attr_accessor :domain, :creation_time, :uuid, :aliases, :uid
+  primary_key :uuid
+    
+  #state_machine :state, :initial => :not_created do
+  #  event(:create) { transition :not_created => :creating }
+  #  event(:create_complete) { transition :creating => :stopped }
+  #  event(:create_error) { transition :creating => :destroying }
+  #  event(:start) { transition :stopped => :starting }
+  #  event(:start_error) { transition :starting => :stopped }
+  #  event(:start_complete) { transition :starting => :running }
+  #  event(:stop) { transition :running => :stopping }
+  #  event(:stop_error) { transition :stopping => :running }
+  #  event(:stop_complete) { transition :stopping => :stopped }
+  #  event(:destroy) { transition :stopped => :destroying }
+  #  event(:destroy_complete) { transition :destroying => :not_created }
+  #end
 
   validate :extended_validator
 
@@ -13,14 +27,11 @@ class Application < Cloud::Sdk::UserModel
     framework.split('-')[0..-2].join('-')
   end
 
-  def initialize(user=nil, app_name=nil, uuid=nil, node_profile=nil, framework=nil)
+  def initialize(domain=nil, name=nil, uuid=nil)
     self.user = user
-    self.name = app_name
+    self.name = name
     self.creation_time = DateTime::now().strftime
     self.uuid = uuid || Cloud::Sdk::Model.gen_uuid
-    self.embedded = {}
-    self.node_profile = node_profile
-    self.framework = framework
   end
   
   def self.find(user, app_name)

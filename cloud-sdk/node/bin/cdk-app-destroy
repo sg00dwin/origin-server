@@ -70,7 +70,7 @@ unless uuid
 end
 
 begin
-  container = Cloud::SDK::Model::ApplicationContainer.new(uuid,uuid)
+  container = Cloud::Sdk::ApplicationContainer.new(uuid,uuid)
   container.destroy
 rescue Exception => e
   $stderr.puts(e.message)

@@ -17,11 +17,11 @@
 require 'rubygems'
 require 'cloud-sdk-node/config'
 require 'cloud-sdk-node/model/unix_user'
-require 'cloud-sdk-node/model/cdk_model'
+require 'cloud-sdk-common'
 
-module Cloud::SDK::Model
+module Cloud::Sdk
   # == Application Container
-  class ApplicationContainer < CdkModel
+  class ApplicationContainer < Model
     attr_reader :uuid, :application_uuid, :user
     
     def initialize(application_uuid, container_uuid, user_uid=nil)

@@ -68,7 +68,7 @@ unless uuid and key and value
 end
 
 begin
-  container = Cloud::SDK::Model::ApplicationContainer.new(uuid,uuid)
+  container = Cloud::Sdk::ApplicationContainer.new(uuid,uuid)
   container.user.add_env_var(key, value)
 rescue Exception => e
   $stderr.puts(e.message)

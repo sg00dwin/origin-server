@@ -68,7 +68,7 @@ unless uuid and iv and token
 end
 
 begin
-  container = Cloud::SDK::Model::ApplicationContainer.new(uuid,uuid)
+  container = Cloud::Sdk::ApplicationContainer.new(uuid,uuid)
   container.user.add_broker_auth(iv,token)
 rescue Exception => e
   $stderr.puts(e.message)

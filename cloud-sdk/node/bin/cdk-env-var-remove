@@ -65,7 +65,7 @@ unless uuid and key
 end
 
 begin
-  container = Cloud::SDK::Model::ApplicationContainer.new(uuid,uuid)
+  container = Cloud::Sdk::ApplicationContainer.new(uuid,uuid)
   container.user.remove_env_var(key)
 rescue Exception => e
   $stderr.puts(e.message)

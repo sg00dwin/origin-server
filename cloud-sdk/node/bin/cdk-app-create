@@ -74,7 +74,7 @@ unless uuid
 end
 
 begin
-  container = Cloud::SDK::Model::ApplicationContainer.new(uuid, uuid, uid)
+  container = Cloud::Sdk::ApplicationContainer.new(uuid, uuid, uid)
   container.create
 rescue Cloud::SDK::Model::UserCreationException => e
   $stderr.puts(e.message)

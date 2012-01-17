@@ -17,24 +17,23 @@ Native-Requires:
 # TO DO:
 #  - xmemcached.noarch
 #  - rubygem-memcached
-Descriptor:
-  Profiles:
-    standalone:
-      &standalone-profile
-      Provides: memcached-standalone
-      Components:
-        memcached-server:
-          Publishes:
-            get-db-connection-info:
-              Type: "NET_TCP:db:connection-info"
-      Groups:
-        memcached:
-          Components:
-            memcached-server: memcached-server
-          Scaling:
-            Min: 1
-            Max: 1
+Profiles:
+  standalone:
+    &standalone-profile
+    Provides: memcached-standalone
+    Components:
+      memcached-server:
+        Publishes:
+          get-db-connection-info:
+            Type: "NET_TCP:db:connection-info"
+    Groups:
+      memcached:
+        Components:
+          memcached-server: memcached-server
+        Scaling:
+          Min: 1
+          Max: 1
 
-    default:
-       *standalone-profile
+  default:
+     *standalone-profile
       

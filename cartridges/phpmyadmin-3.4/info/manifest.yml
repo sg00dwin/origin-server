@@ -10,25 +10,29 @@ Requires:
 Conflicts:
 Native-Requires:
 Architecture: noarch
-Descriptor:
-  Reservations:
-    - MEM >= 100MB
-  Components:
-    default:
-       Dependencies: [rhc-cartridge-php]
-       Service-Dependencies: [rhc-cartridge-mysql-5.1]
-       Publishes:
-          get-serve-info:
-             Type: "NET_TCP:db-config:url"
-       Subscribes:
-          set-mysql-connection-info:
-             Type: "NET_TCP:db:mysql"
-             Required : true
-   Groups:
-     default:
-       Components:
-         default : default
-       Scaling:
-         Min: 1
-         Max: 1
+Reservations:
+  - MEM >= 100MB
+Components:
+  default:
+     Dependencies: [rhc-cartridge-php]
+     Service-Dependencies: [rhc-cartridge-mysql-5.1]
+     Publishes:
+        get-serve-info:
+           Type: "NET_TCP:db-config:url"
+     Subscribes:
+        set-mysql-connection-info:
+           Type: "NET_TCP:db:mysql"
+           Required : true
+<<<<<<< HEAD
+Groups:
+  default:
+=======
+ Groups:
+   default:
+>>>>>>> 54b52eda813cf07aa0173ac1533e69ed6e0a3099
+     Components:
+       default : default
+     Scaling:
+       Min: 1
+       Max: 1
 

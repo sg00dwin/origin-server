@@ -33,21 +33,19 @@ Native-Requires:
   -  gcc-c++
   -  js
 Architecture: noarch
-Descriptor:
-  Reservations:
-    - MEM >= 100MB
-  Start-Order: ruby
-  Publishes:
-    get-doc-root:
-      Type: "FILESYSTEM:doc-root"
-  Subscribes:
-    set-mysql-connection-info:
-      Type: "NET_TCP:db:mysql"
-      Required : false
-    set-postgres-connection-info:
-      Type: "NET_TCP:db:postgres"
-      Required : false
-  Scaling:
-    Min: 1
-    Max: -1
-
+Reservations:
+  - MEM >= 100MB
+Start-Order: rack
+Publishes:
+  get-doc-root:
+    Type: "FILESYSTEM:doc-root"
+Subscribes:
+  set-mysql-connection-info:
+    Type: "NET_TCP:db:mysql"
+    Required : false
+  set-postgres-connection-info:
+    Type: "NET_TCP:db:postgres"
+    Required : false
+Scaling:
+  Min: 1
+  Max: -1

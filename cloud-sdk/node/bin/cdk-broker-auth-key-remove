@@ -61,7 +61,7 @@ unless uuid
 end
 
 begin
-  container = Cloud::SDK::Model::ApplicationContainer.new(uuid,uuid)
+  container = Cloud::Sdk::ApplicationContainer.new(uuid,uuid)
   container.user.remove_broker_auth
 rescue Exception => e
   $stderr.puts(e.message)

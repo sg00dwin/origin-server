@@ -65,7 +65,7 @@ unless uuid and ssh_key
 end
 
 begin
-  container = Cloud::SDK::Model::ApplicationContainer.new(uuid,uuid)
+  container = Cloud::Sdk::ApplicationContainer.new(uuid,uuid)
   container.user.remove_ssh_key(ssh_key)
 rescue Exception => e
   $stderr.puts(e.message)

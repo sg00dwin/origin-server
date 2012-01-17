@@ -61,7 +61,14 @@ module Express
         
         cartridges
       end
-
+      
+      def get_cartriges
+        result = execute_direct(@@C_CONTROLLER, 'cartridge-list', "--porcelain --with-descriptors")
+        result = parse_result(result)
+        cart_data = JSON.parse(result.resultIO.string)
+        cart_data.map! {|c| Cloud::Sdk::Cartridge.new.from_descriptor(YAML.load(c))}
+      end
+      
       def reserve_uid(district_uuid=nil)
         reserved_uid = nil
         if Rails.configuration.districts[:enabled]
