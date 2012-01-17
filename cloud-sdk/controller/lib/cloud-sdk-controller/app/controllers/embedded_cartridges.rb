@@ -3,11 +3,11 @@ class EmbeddedCartridgesController < BaseController
   before_filter :authenticate
   include LegacyBrokerHelper
 
-# POST /domains/[domain_id]/applications/[id]/cartridges
+# POST /domains/[domain_id]/applications/[application_id]/cartridges
   def create
     domain_id = params[:domain_id]
-    id = params[:id]
-    cartridge = params[:cartridge_id]
+    id = params[:application_id]
+    cartridge = params[:id]
     cloud_user = CloudUser.find(@login)
     application = Application.find(cloud_user,id)
     if(application.nil?)
@@ -50,8 +50,8 @@ class EmbeddedCartridgesController < BaseController
   # DELETE /domains/[domain_id]/applications/[id]/cartridges/[cartridge_id]
   def destroy
     domain_id = params[:domain_id]
-    id = params[:id]
-    cartridge = params[:cartridge_id]
+    id = params[:application_id]
+    cartridge = params[:id]
     cloud_user = CloudUser.find(@login)
     application = Application.find(cloud_user,id)
     if(application.nil?)
@@ -92,7 +92,7 @@ class EmbeddedCartridgesController < BaseController
   def update
     domain_id = params[:domain_id]
     id = params[:application_id]
-    cartridge = params[:cartridge_id]
+    cartridge = params[:id]
     event = params[:event]
 
     cloud_user = CloudUser.find(@login)

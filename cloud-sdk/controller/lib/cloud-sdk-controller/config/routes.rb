@@ -13,11 +13,10 @@ Rails.application.routes.draw do
     resources :cartridges, :only => [:index,:show], :constraints => { :id => /standalone|embedded/ }
     resources :domains, :constraints => { :id => /[A-Za-z0-9]+/ } do
       resources :applications, :constraints => { :id => /[\w]+/ } do
-        resources :cartridges, :controller => :applications, :only => [:create, :destroy],
-          :path_names => { :create => 'add_cartridge', :destroy => 'remove_cartridge' }, :constraints => { :id => /[\w\-\.]+/ } do
-            resources :events, :controller => :applications, :only => [:create], :path_names => { :create => 'update_cartridge' }
+        resources :cartridges, :controller => :embedded_cartridges, :only => [:create, :destroy], :constraints => { :id => /[\w\-\.]+/ } do
+            resources :events, :only => [:create], :path_names => { :create => 'update_cartridge' }
         end
-        resources :events, :controller => :applications, :only => [:create], :path_names => { :create => 'update' }
+        resources :events, :only => [:create]
       end
     end
   end
