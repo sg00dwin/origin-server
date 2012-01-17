@@ -49,6 +49,8 @@ mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-app %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-cartridge-do %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-deconfigure-on-node %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-move %{buildroot}/%{_bindir}
+mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-district %{buildroot}/%{_bindir}
+mv %{buildroot}%{brokerdir}/script/rhc-admin-create-district %{buildroot}/%{_bindir}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -71,6 +73,8 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0750,-,-) %{_bindir}/rhc-admin-cartridge-do
 %attr(0750,-,-) %{_bindir}/rhc-admin-deconfigure-on-node
 %attr(0750,-,-) %{_bindir}/rhc-admin-move
+%attr(0750,-,-) %{_bindir}/rhc-admin-ctl-district
+%attr(0750,-,-) %{_bindir}/rhc-admin-create-district
 
 %post
 /bin/touch %{brokerdir}/log/production.log

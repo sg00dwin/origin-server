@@ -47,6 +47,30 @@ action "cartridge_do", :description => "run a cartridge action" do
            :display_as => "Exit Code"
 end
 
+action "set_district", :description => "run a cartridge action" do
+    display :always
+
+    input :uuid,
+        :prompt         => "District uuid",
+        :description    => "District uuid",
+        :type           => :string,
+        :validation     => '^[a-zA-Z0-9]+$',
+        :optional       => false,
+        :maxlength      => 32
+
+    output  :time,
+            :description => "The time as a message",
+            :display_as => "Time"
+
+    output  :output,
+            :description => "Output from script",
+            :display_as => "Output"
+
+    output :exitcode,
+           :description => "Exit code",
+           :display_as => "Exit Code"
+end
+
 action "migrate", :description => "run a cartridge action" do
     display :always
 

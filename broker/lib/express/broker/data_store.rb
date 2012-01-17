@@ -19,7 +19,7 @@ module Express
         when "CloudUser"
           DataStore.get_users_s3
         when "Application"
-          DataStore.get_user_apps_s3(user_id)
+          DataStore.get_apps_s3(user_id)
         end
       end
       
@@ -29,7 +29,7 @@ module Express
         when "CloudUser"
           DataStore.put_user_s3(user_id, serialized_obj)
         when "Application"
-          DataStore.put_app_s3(user_id,id,serialized_obj)
+          DataStore.put_app_s3(user_id, id, serialized_obj)
         end
       end
       
@@ -37,12 +37,33 @@ module Express
         Rails.logger.debug "DataStore.delete(#{obj_type}, #{user_id}, #{id})\n\n"
         case obj_type
         when "CloudUser"
-          DataStore.delete_user(user_id)
+          DataStore.delete_user_s3(user_id)
         when "Application"
-          DataStore.delete_app(user_id,id)
+          DataStore.delete_app_s3(user_id, id)
         end
       end
       
+      def find_district(uuid)
+        Rails.logger.debug "DataStore.find_district(#{uuid})\n\n"
+        DataStore.get_district_s3(uuid)
+      end
+      
+      def find_all_districts()
+        Rails.logger.debug "DataStore.find_all_districts()\n\n"
+        districts = DataStore.get_districts_s3()
+        districts
+      end
+      
+      def save_district(uuid, serialized_district)
+        Rails.logger.debug "DataStore.save_district(#{uuid}, #{serialized_district})\n\n"
+        DataStore.put_district_s3(uuid, serialized_district)
+      end
+      
+      def delete_district(uuid)
+        Rails.logger.debug "DataStore.delete_district(#{uuid})\n\n"
+        DataStore.delete_district_s3(uuid)
+      end
+
       private
       
       def self.s3
@@ -93,8 +114,51 @@ module Express
           return nil
         end
       end
-    
-      def self.get_user_apps_s3(rhlogin)
+      
+      def self.delete_user_s3(rhlogin)
+        obj = bucket.objects["user_info/#{rhlogin}/user.json"]
+        obj.delete if obj.exists?
+      end
+
+      #
+      # Returns all the district S3 JSON objects
+      #
+      def self.get_districts_s3
+        districts = []
+        bucket.objects.with_prefix('districts').each do |district_obj|
+          if district_obj.key =~ /\/.+\.json$/
+            districts << district_obj.read
+          end
+        end
+        districts
+      end
+
+      def self.put_district_s3(uuid, json)
+        begin
+          obj = bucket.objects["districts/#{uuid}.json"]
+          obj.write(json)
+        rescue AWS::S3::Errors::NoSuchKey
+          return nil
+        end
+      end
+
+      #
+      # Returns the S3 district json object
+      #
+      def self.get_district_s3(uuid)
+        begin
+          bucket.objects["districts/#{uuid}.json"].read
+        rescue AWS::S3::Errors::NoSuchKey
+          return nil
+        end
+      end
+
+      def self.delete_district_s3(uuid)
+        obj = bucket.objects["districts/#{uuid}.json"]
+        obj.delete if obj.exists?
+      end
+
+      def self.get_apps_s3(rhlogin)
         apps = {}
         app_prefix = "user_info/#{rhlogin}/apps/"
         bucket.objects.with_prefix(app_prefix).map do |app_obj|
@@ -115,16 +179,11 @@ module Express
         end
       end
       
-      def self.put_app_s3(rhlogin,app_name,serialized_obj)
+      def self.put_app_s3(rhlogin, app_name, serialized_obj)
         bucket.objects["user_info/#{rhlogin}/apps/#{app_name}.json"].write(serialized_obj)
       end
-    
-      def self.delete_user(rhlogin)
-        obj = bucket.objects["user_info/#{rhlogin}/user.json"]
-        obj.delete if obj.exists?
-      end
 
-      def self.delete_app(rhlogin,app_name)
+      def self.delete_app_s3(rhlogin, app_name)
         obj = bucket.objects["user_info/#{rhlogin}/apps/#{app_name}.json"]
         obj.delete if obj.exists?
       end

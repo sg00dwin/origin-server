@@ -36,7 +36,7 @@ module Cloud::SDK::Model
     
     DEFAULT_SKEL_DIR = File.join(Cloud::SDK::Config::CONF_DIR,"skel")
 
-    def initialize(application_uuid, container_uuid)
+    def initialize(application_uuid, container_uuid, user_uid=nil)
       @config = Cloud::SDK::Config.instance
       
       @container_uuid = container_uuid
@@ -49,8 +49,8 @@ module Cloud::SDK::Model
         @gecos = user_info.gecos
         @homedir = "#{user_info.dir}/"
       rescue ArgumentError => e
-        @uid = nil
-        @gid = nil
+        @uid = user_uid
+        @gid = user_uid
         @gecos = nil
         @homedir = nil
       end
@@ -72,6 +72,9 @@ module Cloud::SDK::Model
         
         unless @uid
           @uid = @gid = next_uid
+        end
+        
+        unless @homedir 
           @homedir = File.join(basedir,@uuid)
         end
         
