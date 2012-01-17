@@ -129,7 +129,7 @@ module OpenShift
       return nil
     end
       
-    def terminate_instance(instance)
+    def terminate_instance(instance, handle_authdenied=false)
       begin
         (0..4).each do
           instance.terminate
@@ -141,6 +141,9 @@ module OpenShift
           break if instance_status(instance) == :terminated
           log.info "Instance isn't terminated yet... retrying"
         end
+      rescue AWS::EC2::Errors::UnauthorizedOperation
+        raise unless handle_authdenied
+        log.info "You do not have permission to terminate instances."
       ensure
         if instance_status(instance) != :terminated
           log.info "Failed to terminate.  Calling stop instead."

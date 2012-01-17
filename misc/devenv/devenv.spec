@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.84.13
+Version:   0.85.1
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -224,6 +224,9 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 %{_initddir}/sauce-connect
 
 %changelog
+* Fri Jan 13 2012 Dan McPherson <dmcphers@redhat.com> 0.85.1-1
+- bump spec numbers (dmcphers@redhat.com)
+
 * Fri Jan 13 2012 Alex Boone <aboone@redhat.com> 0.84.13-1
 - Re-issuing devenv Qpid certs -- now valid through Jan 13, 2013
   (aboone@redhat.com)
