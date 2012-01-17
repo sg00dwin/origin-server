@@ -40,8 +40,13 @@ end
 # Setup the district
 #
 Facter.add(:district) do
-    config_file = ParseConfig.new('/etc/libra/node.conf')
-    district = config_file.get_value('district') ? config_file.get_value('district') : 'NONE'
+    district = nil
+    if File.exists?('/etc/libra/district.conf')
+      config_file = ParseConfig.new('/etc/libra/district.conf')
+      district = config_file.get_value('district') ? config_file.get_value('district') : 'NONE'
+    else
+      district = 'NONE'
+    end
     setcode { district }
 end
 

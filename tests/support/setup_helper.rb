@@ -14,7 +14,7 @@ $create_app_script = "/usr/bin/rhc-create-app"
 $create_domain_script = "/usr/bin/rhc-create-domain"
 $client_config = "/etc/openshift/express.conf"
 $ctl_app_script = "/usr/bin/rhc-ctl-app"
-$user_info_script = "/usr/bin/rhc-user-info"
+$user_info_script = "/usr/bin/rhc-domain-info"
 $snapshot_script = "/usr/bin/rhc-snapshot"
 
 # RSA Key constants

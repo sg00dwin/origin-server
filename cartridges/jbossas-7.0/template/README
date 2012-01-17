@@ -65,7 +65,7 @@ would have to do this after each git push followed by 'rhc-ctl-app -a appname -c
 
 rsync -avz localdir/deployments/ app_uuid@appname-namespace.rhcloud.com:~/appname/repo/deployments/
 
-Note: You can get the information in the uri above from running 'rhc-user-info -a'
+Note: You can get the information in the uri above from running 'rhc-domain-info -a'
 
 If you have already committed large files to your git repo, you rewrite or reset the history of those files in git
 to an earlier point in time and then 'git push --force' to apply those changes on the remote OpenShift server.  A 
