@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.2.30
+Version:        0.3.1
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        AGPLv3
@@ -20,6 +20,7 @@ Requires:       rubygem(json_pure)
 Requires:       rubygem(mocha)
 Requires:       rubygem(parseconfig)
 Requires:       rubygem(state_machine)
+Requires:       rubygem(cloud-sdk-common)
 
 BuildRequires:  ruby
 BuildRequires:  rubygems
@@ -72,6 +73,19 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Fri Jan 13 2012 Dan McPherson <dmcphers@redhat.com> 0.3.1-1
+- Updating gem versions (dmcphers@redhat.com)
+- bump spec numbers (dmcphers@redhat.com)
+- Bug 781254 (dmcphers@redhat.com)
+
+* Thu Jan 12 2012 Dan McPherson <dmcphers@redhat.com> 0.2.31-1
+- Updating gem versions (dmcphers@redhat.com)
+- Bump API version to 1.1.2 due to key_type requirement on domain create/update
+  (aboone@redhat.com)
+- add common to controller deps (dmcphers@redhat.com)
+- - Assign default ssh_type when empty string is passed to cloud user.
+  (rpenta@redhat.com)
+
 * Wed Jan 11 2012 Dan McPherson <dmcphers@redhat.com> 0.2.30-1
 - Updating gem versions (dmcphers@redhat.com)
 - remove email from cloud user (dmcphers@redhat.com)

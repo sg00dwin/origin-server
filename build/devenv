@@ -354,7 +354,7 @@ class DevEnv < Thor
     conn = connect
     conn = conn.regions[options.region] unless (options.region?nil)
     instance = find_instance(conn, tag, true)
-    terminate_instance(instance)
+    terminate_instance(instance, true) if instance
   end
 
   desc "launch NAME", "Launches the latest DevEnv instance, tagging with NAME"
