@@ -171,7 +171,7 @@ module MCollective
         validate :uuid, /^[a-zA-Z0-9]+$/
         uuid = request[:uuid]
 
-        output = `sed -i "s,#*district *=.*,district='#{uuid}',g" /etc/libra/node.conf 2>&1`
+        output = `echo "district='#{uuid}'" > /etc/libra/district.conf`
         exitcode = $?.exitstatus
 
         if exitcode == 0
