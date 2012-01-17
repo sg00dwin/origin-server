@@ -52,6 +52,13 @@ Broker::Application.configure do
   ############################################
   config.app_scope = ""
   
+  config.districts = {
+    :enabled => true,
+    :district => nil,
+    :max_capacity => 6000,
+    :first_uid => 1000
+  }
+  
   config.dns = {
     :zone => "rhcloud.com",
     :dynect_customer_name => "demo-redhat",

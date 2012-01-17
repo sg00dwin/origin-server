@@ -17,6 +17,8 @@ class ApplicationTest < ActiveSupport::TestCase
     container = mock("container")
     container.expects(:id).returns("server1")
     container.expects(:create).returns(ResultIO.new)
+    container.expects(:available_uid).returns("1")
+    
     
     user = mock("user")
     user.expects(:rhlogin).returns("kraman@redhat.com")

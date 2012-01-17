@@ -1,10 +1,10 @@
-class Application < Cloud::Sdk::Model
-  attr_accessor :user, :framework, :creation_time, :uuid, :embedded, :aliases, :name, :server_identity, :health_check_path, :node_profile, :container
+class Application < Cloud::Sdk::UserModel
+  attr_accessor :user, :framework, :creation_time, :uuid, :embedded, :aliases, :name, :server_identity, :health_check_path, :node_profile, :container, :uid
   primary_key :name  
   exclude_attributes :user, :health_check_path, :dependencies, :node_profile, :container
 
   validate :extended_validator
-  
+
   def extended_validator
     notify_observers(:validate_application)
   end
@@ -70,8 +70,9 @@ class Application < Cloud::Sdk::Model
       self.container = Cloud::Sdk::ApplicationContainerProxy.find_available(self.node_profile)
     end
     self.server_identity = self.container.id
+    self.uid = self.container.available_uid
     save
-    reply.append self.container.create(self)
+    reply.append self.container.create(self, self.uid)
     self.class.notify_observers(:after_application_create, {:application => self, :reply => reply})        
     reply
   end

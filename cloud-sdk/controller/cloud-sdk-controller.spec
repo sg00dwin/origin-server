@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.2.31
+Version:        0.3.2
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        AGPLv3
@@ -73,6 +73,19 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Tue Jan 17 2012 Dan McPherson <dmcphers@redhat.com> 0.3.2-1
+- Updating gem versions (dmcphers@redhat.com)
+- fix test case (dmcphers@redhat.com)
+- districts (work in progress) (dmcphers@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- Raise UserKeyException instead of UserException when dealing with user ssh
+  keys (rpenta@redhat.com)
+
+* Fri Jan 13 2012 Dan McPherson <dmcphers@redhat.com> 0.3.1-1
+- Updating gem versions (dmcphers@redhat.com)
+- bump spec numbers (dmcphers@redhat.com)
+- Bug 781254 (dmcphers@redhat.com)
+
 * Thu Jan 12 2012 Dan McPherson <dmcphers@redhat.com> 0.2.31-1
 - Updating gem versions (dmcphers@redhat.com)
 - Bump API version to 1.1.2 due to key_type requirement on domain create/update

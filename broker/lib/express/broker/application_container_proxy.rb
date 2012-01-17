@@ -6,24 +6,33 @@ module Express
   module Broker
     class ApplicationContainerProxy
       @@C_CONTROLLER = 'li-controller'
-      attr_accessor :id, :current_capacity
+      attr_accessor :id, :current_capacity, :district
       
-      def initialize(id, current_capacity=nil)
+      def initialize(id, current_capacity=nil, district=nil)
         @id = id
         @current_capacity = current_capacity
+        @district = district
       end
       
-      def self.find_available_impl(node_profile=nil)       
-        current_server, current_capacity = rpc_find_available(node_profile)
+      def self.find_available_impl(node_profile=nil)
+        if Rails.application.config.districts[:enabled]
+          unless Rails.application.config.districts[:district]
+            district = District.find_available()
+          else
+            district = District.find(Rails.application.config.districts[:district])
+            district_uuid = district ? district.uuid : nil
+          end
+        end
+        current_server, current_capacity = rpc_find_available(node_profile, district_uuid)
         Rails.logger.debug "CURRENT SERVER: #{current_server}"
         if !current_server
-          current_server, current_capacity = rpc_find_available(node_profile, true)
+          current_server, current_capacity = rpc_find_available(node_profile, district_uuid, true)
           Rails.logger.debug "CURRENT SERVER: #{current_server}"
         end
         raise Cloud::Sdk::NodeException.new("No nodes available.  If the problem persists please contact Red Hat support.", 140) unless current_server
         Rails.logger.debug "DEBUG: server.rb:find_available #{current_server}: #{current_capacity}"
-        
-        ApplicationContainerProxy.new(current_server, current_capacity)
+
+        ApplicationContainerProxy.new(current_server, current_capacity, district)
       end
 
       def self.blacklisted?(name)
@@ -49,16 +58,44 @@ module Express
         cartridges
       end
       
-      def create(app)
-        result = execute_direct(@@C_CONTROLLER, 'configure', "-c '#{app.uuid}' -s '#{app.user.ssh}' -t '#{app.user.ssh_type}'")
+      def available_uid
+        #TODO need this to be done in a block with a capacity check
+        available_uid = nil
+        if @district
+          available_uid = @district.available_uid
+        end
+        available_uid
+      end
+      
+      def create(app, uid=nil)
+        #TODO need this to be done in a block with a capacity check
+        if @district
+          @district.capacity += 1
+          @district.save
+        end
+
+        result = execute_direct(@@C_CONTROLLER, 'configure', "-c '#{app.uuid}' -i '#{uid}' -s '#{app.user.ssh}' -t '#{app.user.ssh_type}'")
         parse_result(result)
       end
     
       def destroy(app)
         result = execute_direct(@@C_CONTROLLER, 'deconfigure', "-c '#{app.uuid}'")
-        parse_result(result)
+        result_io = parse_result(result)
+        
+        if Rails.application.config.districts[:enabled]
+          district_uuid = rpc_get_fact_direct('district')
+          if district_uuid && district_uuid != 'NONE'
+            district = District.find(district_uuid)
+            if district
+              district.capacity -= 1
+              district.uids.delete(app.uid)
+              district.save
+            end
+          end
+        end
+        return result_io
       end
-      
+
       def add_authorized_ssh_key(app, ssh_key, key_type=nil, message=nil)
         cmd = "-c '#{app.uuid}' -s '#{ssh_key}'"
         cmd += " -t '#{key_type}'" if key_type
@@ -66,12 +103,12 @@ module Express
         result = execute_direct(@@C_CONTROLLER, 'add-authorized-ssh-key', cmd)
         parse_result(result)
       end
-      
+
       def remove_authorized_ssh_key(app, ssh_key)
         result = execute_direct(@@C_CONTROLLER, 'remove-authorized-ssh-key', "-c '#{app.uuid}' -s '#{ssh_key}'")
         parse_result(result)
       end
-    
+
       def add_env_var(app, key, value)
         result = execute_direct(@@C_CONTROLLER, 'add-env-var', "-c '#{app.uuid}' -k '#{key}' -v '#{value}'")
         parse_result(result)
@@ -366,6 +403,21 @@ module Express
         result
       end
       
+      def set_district(uuid)
+        mc_args = { :uuid => uuid }
+        rpc_client = rpc_exec_direct('libra')
+        result = nil
+        begin
+          Rails.logger.debug "DEBUG: rpc_client.custom_request('set_district', #{mc_args.inspect}, #{@id}, {'identity' => #{@id}})"
+          result = rpc_client.custom_request('set_district', mc_args, @id, {'identity' => @id})
+          Rails.logger.debug "DEBUG: #{result.inspect}"
+        ensure
+          rpc_client.disconnect
+        end
+        Rails.logger.debug result.inspect
+        result
+      end
+      
       protected
       
       def log_debug(message)
@@ -564,7 +616,7 @@ module Express
         resultIO
       end
       
-      def self.rpc_find_available(node_profile=nil, forceRediscovery=false)
+      def self.rpc_find_available(node_profile=nil, district=nil, forceRediscovery=false)
         current_server, current_capacity = nil, nil
         additional_filters = [
           {:fact => "capacity",
@@ -575,6 +627,17 @@ module Express
         if node_profile
           additional_filters.push({:fact => "node_profile",
                                    :value => node_profile,
+                                   :operator => "=="})
+        end
+        
+        if district
+          additional_filters.push({:fact => "district",
+                                   :value => district,
+                                   :operator => "=="})
+        else
+          #TODO how do you filter on a fact not being set
+          additional_filters.push({:fact => "district",
+                                   :value => "NONE",
                                    :operator => "=="})
         end
     
