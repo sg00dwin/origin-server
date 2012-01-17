@@ -17,15 +17,24 @@ class EmbeddedCartridgesController < BaseController
       respond_with @reply, :status => @reply.status
       return
     end
-    if not check_cartridge_type(cartridge, container, "embedded")
-      @reply = RestReply.new( :bad_request)
-      carts = get_cached("cart_list_embedded", :expires_in => 21600.seconds) {
-      Application.get_available_cartridges("embedded")}
-      message = Message.new("ERROR", "Invalid cartridge #{cartridge}.  Valid values are (#{carts.join(', ')})") 
+    begin
+      container = Cloud::Sdk::ApplicationContainerProxy.find_available(application.server_identity)
+      if not check_cartridge_type(cartridge, container, "embedded")
+        @reply = RestReply.new( :bad_request)
+        carts = get_cached("cart_list_embedded", :expires_in => 21600.seconds) {
+        Application.get_available_cartridges("embedded")}
+        message = Message.new("ERROR", "Invalid cartridge #{cartridge}.  Valid values are (#{carts.join(', ')})") 
+        @reply.messages.push(message)
+        respond_with @reply, :status => @reply.status
+        return
+      end
+    rescue Cloud::Sdk::NodeException => e
+      @reply = RestReply.new(:service_unavailable)
+      message = Message.new("ERROR", e.message) 
       @reply.messages.push(message)
       respond_with @reply, :status => @reply.status
-      return
     end
+    
 
     begin
       app.add_dependency(@req.cartridge)

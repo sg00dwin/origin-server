@@ -186,15 +186,4 @@ class ApplicationsController < BaseController
     @reply.messages.push(message)
     respond_with @reply, :status => @reply.status
   end
-    
-  def check_cartridge_type(framework, container, cart_type)
-    carts = container.get_available_cartridges(cart_type)
-    Rails.logger.debug "Available cartridges #{carts.join(', ')}"
-    unless carts.include? framework
-      return false
-    end
-    return true
-  end
-  
- 
 end
