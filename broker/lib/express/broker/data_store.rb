@@ -67,7 +67,7 @@ module Express
       def self.get_users_s3
         users = {}
         bucket.objects.with_prefix('user_info').each do |user_obj|
-          if user_obj.key =~ /\/user.json$/
+          if user_obj.key.end_with?("/user.json") && !user_obj.key.end_with?("/apps/user.json")
             users[File.basename(File.dirname(user_obj.key))] = user_obj.read
           end
         end

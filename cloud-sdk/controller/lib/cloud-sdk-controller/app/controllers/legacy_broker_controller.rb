@@ -34,27 +34,27 @@ class LegacyBrokerController < ApplicationController
     if user
       case @req.action
       when "add-key"
-        raise Cloud::Sdk::UserException.new("Missing SSH key or key name", 105) if @req.ssh.nil? or @req.key_name.nil?
+        raise Cloud::Sdk::UserKeyException.new("Missing SSH key or key name", 119) if @req.ssh.nil? or @req.key_name.nil?
         if user.ssh_keys
           user.ssh_keys.each do |key_name, key|
-            raise Cloud::Sdk::UserException.new("Key with name #{@req.key_name} already exists. Please choose a different name", 105) if key_name == @req.key_name
-            raise Cloud::Sdk::UserException.new("Given public key is already in use. Use different key or delete conflicting key and retry", 105) if key == @req.ssh
+            raise Cloud::Sdk::UserKeyException.new("Key with name #{@req.key_name} already exists. Please choose a different name", 120) if key_name == @req.key_name
+            raise Cloud::Sdk::UserKeyException.new("Given public key is already in use. Use different key or delete conflicting key and retry", 121) if key == @req.ssh
           end
         end
         @reply.append user.add_secondary_ssh_key(@req.key_name, @req.ssh, @req.key_type)
         user.save
       when "remove-key"
-        raise Cloud::Sdk::UserException.new("Missing key name", 105) if @req.key_name.nil?
+        raise Cloud::Sdk::UserKeyException.new("Missing key name", 119) if @req.key_name.nil?
         @reply.append user.remove_secondary_ssh_key(@req.key_name)
         user.save
       when "update-key"
-        raise Cloud::Sdk::UserException.new("Missing SSH key or key name", 105) if @req.ssh.nil? or @req.key_name.nil?
+        raise Cloud::Sdk::UserKeyException.new("Missing SSH key or key name", 119) if @req.ssh.nil? or @req.key_name.nil?
         @reply.append user.remove_secondary_ssh_key(@req.key_name)
         @reply.append user.add_secondary_ssh_key(@req.key_name, @req.ssh, @req.key_type)
       when "list-keys"
         @reply.data = { :keys => user.ssh_keys }.to_json
       else
-        raise Cloud::Sdk::UserException.new("Invalid action #{@req.action}", 111)
+        raise Cloud::Sdk::UserKeyException.new("Invalid action #{@req.action}", 111)
       end
       render :json => @reply
     else
