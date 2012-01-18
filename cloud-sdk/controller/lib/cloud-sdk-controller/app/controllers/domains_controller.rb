@@ -16,6 +16,12 @@ class DomainsController < BaseController
   # GET /domains/<id>
   def show
     id = params[:id]
+    if(@cloud_user.namespace != id)
+      @reply = RestReply.new(:not_found)
+      @reply.messages.push(message = Message.new(:error, "Domain #{id} not found."))
+      respond_with @reply, :status => @reply.status, :location => "/domains"
+      return
+    end
     domain = RestDomain.new(@cloud_user.namespace, @cloud_user.ssh)
     @reply = RestReply.new(:ok, "domain", domain)
     respond_with @reply, :status => @reply.status
@@ -90,11 +96,10 @@ class DomainsController < BaseController
   def destroy
     id = params[:id]
     force = params[:force]
-    
-    if(cloud_user.namespace != id)
+    if(@cloud_user.namespace != id)
       @reply = RestReply.new(:not_found)
       @reply.messages.push(message = Message.new(:error, "Domain #{id} not found."))
-      respond_with @reply, :status => @reply.status
+      respond_with @reply, :status => @reply.status, :location => "/domains"
       return
     end
     
@@ -102,7 +107,7 @@ class DomainsController < BaseController
     if (!@cloud_user.applications.empty? and !force)
       @reply = RestReply.new(:bad_request)
       @reply.messages.push(message = Message.new(:error, "Domain contains applications. Delete applications first or set force to true."))
-      respond_with @reply, :status => @reply.status
+      respond_with @reply, :status => @reply.status, :location => "/domains"
       return
     elsif force
       @cloud_user.applications.each do |app|
@@ -114,7 +119,7 @@ class DomainsController < BaseController
     result_io.append @cloud_user.delete
     @reply.process_result_io(result_io)
     @reply.messages.push(Message.new(:info, "Damain deleted."))
-    respond_with @reply, :status => @reply.status
+    respond_with @reply, :status => @reply.status, :location => "/domains"
   end
   
   protected

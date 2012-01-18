@@ -12,7 +12,7 @@ class EventsController < BaseController
     application = Application.find(cloud_user,id)
     if application.nil?
       @reply = RestReply.new(:not_found)
-      message = Message.new("ERROR", "Application #{id} not found.")
+      message = Message.new(:error, "Application #{id} not found.")
       @reply.messages.push(message)
       respond_with @reply, :status => @reply.status
       return
@@ -29,16 +29,16 @@ class EventsController < BaseController
           application.restart  
         else
           @reply = RestReply.new(:bad_request)
-          message = Message.new("ERROR", "Invalid event #{event}.  Valid events are start, stop, restart, force-stop")
+          message = Message.new(:error, "Invalid event #{event}.  Valid events are start, stop, restart, force-stop")
           @reply.messages.push(message)
           respond_with @reply, :status => @reply.status   
           return
         end
     rescue Exception => e
       @reply = RestReply.new(:internal_server_error)
-      message = Message.new("ERROR", "Failed to add event #{event} to application #{id}") 
+      message = Message.new(:error, "Failed to add event #{event} to application #{id}") 
       @reply.messages.push(message)
-      message = Message.new("ERROR", e.message) 
+      message = Message.new(:error, e.message) 
       @reply.messages.push(message)
       respond_with @reply, :status => @reply.status
       return

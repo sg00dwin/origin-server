@@ -11,7 +11,7 @@ class ApplicationsController < BaseController
     
     if applications.nil? 
       @reply = RestReply.new(:not_found)
-      message = Message.new("ERROR", "No applications found for user #{@login}.")
+      message = Message.new(:error, "No applications found for user #{@login}.")
       @reply.messages.push(message)
       respond_with @reply, :status => @reply.status
     else
@@ -35,7 +35,7 @@ class ApplicationsController < BaseController
     
     if application.nil?
       @reply = RestReply.new(:not_found)
-      message = Message.new("ERROR", "Application #{id} not found.")
+      message = Message.new(:error, "Application #{id} not found.")
       @reply.messages.push(message)
       respond_with @reply, :status => @reply.status
     else
@@ -53,7 +53,7 @@ class ApplicationsController < BaseController
     cartridge = params[:cartridge]
     if app_name.nil? 
       @reply = RestReply.new( :bad_request)
-      message = Message.new("ERROR", "Missing required parameter name.") 
+      message = Message.new(:error, "Missing required parameter name.") 
       @reply.messages.push(message)
       respond_with @reply, :status => @reply.status
       return
@@ -61,7 +61,7 @@ class ApplicationsController < BaseController
     Rails.logger.debug "Checking to see if application name is black listed"
     if Cloud::Sdk::ApplicationContainerProxy.blacklisted? app_name
       @reply = RestReply.new(:forbidden)
-      message = Message.new("ERROR", "The supplied application name '#{app_name}' is not allowed") 
+      message = Message.new(:error, "The supplied application name '#{app_name}' is not allowed") 
       @reply.messages.push(message)
       respond_with @reply, :status => @reply.status
       return
@@ -71,7 +71,7 @@ class ApplicationsController < BaseController
       container = Cloud::Sdk::ApplicationContainerProxy.find_available(nil)
     rescue Cloud::Sdk::NodeException => e
       @reply = RestReply.new(:service_unavailable)
-      message = Message.new("ERROR", e.message) 
+      message = Message.new(:error, e.message) 
       @reply.messages.push(message)
       respond_with @reply, :status => @reply.status
     end
@@ -79,7 +79,7 @@ class ApplicationsController < BaseController
       @reply = RestReply.new( :bad_request)
       carts = get_cached("cart_list_standalone", :expires_in => 21600.seconds) {
       Application.get_available_cartridges("standalone")}
-      message = Message.new("ERROR", "Invalid cartridge #{cartridge}.  Valid values are (#{carts.join(', ')})") 
+      message = Message.new(:error, "Invalid cartridge #{cartridge}.  Valid values are (#{carts.join(', ')})") 
       @reply.messages.push(message)
       respond_with @reply, :status => @reply.status
       return
@@ -88,7 +88,7 @@ class ApplicationsController < BaseController
     apps = Application.find_all(user)
     if (apps.length >= Rails.application.config.cdk[:per_user_app_limit])
       @reply = RestReply.new(:forbidden)
-      message = Message.new("ERROR", "#{@login} has already reached the application limit of #{Rails.application.config.cdk[:per_user_app_limit]}")
+      message = Message.new(:error, "#{@login} has already reached the application limit of #{Rails.application.config.cdk[:per_user_app_limit]}")
       @reply.messages.push(message)
       respond_with @reply, :status => @reply.status
       return
@@ -113,9 +113,9 @@ class ApplicationsController < BaseController
         rescue Exception => e
             application.destroy_dns
             @reply = RestReply.new(:internal_server_error)
-            message = Message.new("ERROR", "Failed to create dns for application #{app_name}") 
+            message = Message.new(:error, "Failed to create dns for application #{app_name}") 
             @reply.messages.push(message)
-            message = Message.new("ERROR", e.message) 
+            message = Message.new(:error, e.message) 
             @reply.messages.push(message)
             respond_with @reply, :status => @reply.status
             return
@@ -130,23 +130,23 @@ class ApplicationsController < BaseController
         end
 
         @reply = RestReply.new(:internal_server_error)
-        message = Message.new("ERROR", "Failed to create application #{app_name}") 
+        message = Message.new(:error, "Failed to create application #{app_name}") 
         @reply.messages.push(message)
-        message = Message.new("ERROR", e.message) 
+        message = Message.new(:error, e.message) 
         @reply.messages.push(message)
         respond_with @reply, :status => @reply.status
         return
       end
       app = RestApplication.new(application, domain_id)
       @reply = RestReply.new( :created, "application", app)
-      message = Message.new("INFO", "Application #{app_name} was created.")
+      message = Message.new(:info, "Application #{app_name} was created.")
       @reply.messages.push(message)
       respond_with @reply, :status => @reply.status
     else
       @reply = RestReply.new( :bad_request)
-      message = Message.new("ERROR", "Failed to create application #{app_name}") 
+      message = Message.new(:error, "Failed to create application #{app_name}") 
       @reply.messages.push(message)
-      message = Message.new("ERROR", application.errors.first[1][:message]) 
+      message = Message.new(:error, application.errors.first[1][:message]) 
       @reply.messages.push(message)
       respond_with @reply, :status => @reply.status
     end
@@ -161,28 +161,30 @@ class ApplicationsController < BaseController
     id = params[:id]
     cloud_user = CloudUser.find(@login)
     application = Application.find(cloud_user,id)
-    if(application.nil?)
+    if application.nil?
       @reply = RestReply.new(:not_found)
-      message = Message.new("ERROR", "Application #{id} not found.")
+      message = Message.new(:error, "Application #{id} not found.")
       @reply.messages.push(message)
       respond_with @reply, :status => @reply.status
       return
     end
     
     begin
+      Rails.logger.debug "Deleting application #{id}"
       application.cleanup_and_delete()
     rescue Exception => e
+      Rails.logger.error "Failed to Delete application #{id}: #{e.message}"
       @reply = RestReply.new(:internal_server_error)
-      message = Message.new("ERROR", "Failed to delete application #{app_name}") 
+      message = Message.new(:error, "Failed to delete application #{app_name}") 
       @reply.messages.push(message)
-      message = Message.new("ERROR", e.message) 
+      message = Message.new(:error, e.message) 
       @reply.messages.push(message)
       respond_with @reply, :status => @reply.status
       return
     end
  
     @reply = RestReply.new(:no_content)
-    message = Message.new("INFO", "Application #{id} is deleted.")
+    message = Message.new(:info, "Application #{id} is deleted.")
     @reply.messages.push(message)
     respond_with @reply, :status => @reply.status
   end

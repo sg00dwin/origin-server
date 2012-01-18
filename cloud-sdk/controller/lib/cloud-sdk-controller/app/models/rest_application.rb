@@ -41,7 +41,8 @@ class RestApplication < Cloud::Sdk::Model
       
     unless @embedded.nil?
       @embedded.each do |key, value|
-        links += [
+        Rails.logger.debug "key=#{key} value=#{value}"
+        self.links += [
           Link.new("Start embedded cartridge", "POST", "/domains/#{@domain_id}/applications/#{@name}/cartridges/#{key}/events", [
             Param.new("event", "string", "event", "started")
           ]),
