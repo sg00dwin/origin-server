@@ -25,13 +25,13 @@ case "$1" in
             echo "Application is explicitly stopped!  Use 'rhc-ctl-app -a ${OPENSHIFT_APP_NAME} -c start' to start back up." 1>&2
             exit 0
         else
-            /usr/sbin/httpd -C 'Include ${OPENSHIFT_APP_DIR}conf.d/*.conf' -f $CART_CONF_DIR/httpd_nolog.conf -k $1
+            /usr/sbin/httpd -C 'Include $OPENSHIFT_APP_DIR/conf.d/*.conf' -f $CART_CONF_DIR/httpd_nolog.conf -k $1
         fi
     ;;
     graceful-stop|stop)
         app_ctl_stop.sh $1
     ;;
     restart|graceful)
-        /usr/sbin/httpd -C 'Include ${OPENSHIFT_APP_DIR}conf.d/*.conf' -f $CART_CONF_DIR/httpd_nolog.conf -k $1
+        /usr/sbin/httpd -C 'Include $OPENSHIFT_APP_DIR/conf.d/*.conf' -f $CART_CONF_DIR/httpd_nolog.conf -k $1
     ;;
 esac
