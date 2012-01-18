@@ -14,6 +14,8 @@ $config = {
   :database_name => "libra_dev",
   :collection_name => "user_info"
 }
+# This should match DOT_SUBSTITUTE in Cloud::SDK::MongoDataStore
+DOT_SUBSTITUTE = "(ö)"  
 
 def s3
   # Setup the global access configuration
@@ -85,7 +87,7 @@ def mongo_populate
         embedded_carts = {}
         app_data["embedded"].each do |cart_name, cart_info|
           # FIXME: Hack to overcome mongo limitation, key name can't have '.' char
-          cname = cart_name.gsub(/\./, "(ö)")
+          cname = cart_name.gsub(/\./, DOT_SUBSTITUTE)
           embedded_carts[cname] = cart_info
         end if app_data["embedded"]
         embedded_carts = nil if embedded_carts.empty?

@@ -60,7 +60,10 @@ module Cloud::Sdk
     def self.db
       con = Mongo::Connection.new(Rails.application.config[:datastore_mongo][:host], 
                                   Rails.application.config[:datastore_mongo][:port])
-      con.db(Rails.application.config[:datastore_mongo][:db])
+      db = $con.db("admin")
+      $db.auth(Rails.application.config[:datastore_mongo][:user],
+               Rails.application.config[:datastore_mongo][:password])
+      $con.db(Rails.application.config[:datastore_mongo][:db])
     end
 
     def self.collection

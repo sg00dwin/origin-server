@@ -395,7 +395,11 @@ class DevEnv < Thor
     puts "Sleeping for 30 seconds to let node stabilize..."
     sleep 30
     puts "Done"
-   
+  
+    # start datastore service
+    ssh(hostname, '/sbin/chkconfig --add libra-datastore; \
+                   /sbin/service libra-datastore configure > /dev/null 2>&1; \
+                   /sbin/service libra-datastore start > /dev/null 2>&1') 
     if options.verifier?
       use_private_ip(hostname)
 

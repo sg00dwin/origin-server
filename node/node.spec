@@ -162,6 +162,7 @@ fi
 %attr(0640,-,-) %{ruby_sitelibdir}/facter/libra.rb
 %attr(0750,-,-) %{_initddir}/libra
 %attr(0750,-,-) %{_initddir}/libra-data
+%attr(0750,-,-) %{_initddir}/libra-datastore
 %attr(0750,-,-) %{_initddir}/libra-cgroups
 %attr(0750,-,-) %{_initddir}/libra-tc
 %attr(0755,-,-) %{_bindir}/trap-user

@@ -107,6 +107,8 @@ Broker::Application.configure do
     :datastore_mongo => {
       :host => "HOST_NAME",
       :port => 27017,
+      :user => "USER_NAME",
+      :password => "PASSWORD",
       :db => "DB_NAME",
       :collection => "COLLECTION_NAME"
     }

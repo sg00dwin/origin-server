@@ -92,6 +92,8 @@ Broker::Application.configure do
     :datastore_mongo => {
       :host => "localhost",
       :port => 27017,
+      :user => "libra",
+      :password => "7sh6c7AblcR6",
       :db => "libra_dev",
       :collection => "user_info"
     }
