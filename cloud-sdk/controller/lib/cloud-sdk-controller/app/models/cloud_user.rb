@@ -20,7 +20,7 @@ class CloudUser < Cloud::Sdk::UserModel
     end
   end
   
-  validates_each :ssh_type, :allow_nil =>true do |record, attribute, val|
+  validates_each :ssh_type, :allow_nil => true do |record, attribute, val|
     if !(val =~ /^(ssh-rsa|ssh-dss)$/)
       record.errors.add attribute, {:message => "Invalid ssh key type: #{val}", :exit_code => 116}
     end

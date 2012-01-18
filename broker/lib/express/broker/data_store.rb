@@ -9,7 +9,7 @@ module Express
         when "CloudUser"
           DataStore.get_user_s3(id)
         when "Application"
-          DataStore.get_app_s3(user_id,id)
+          DataStore.get_app_s3(user_id, id)
         end
       end
       

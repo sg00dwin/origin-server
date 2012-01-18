@@ -7,7 +7,7 @@ require 'pp'
 
 RHLOGINS = nil #['rhlogin']
 MAX_THREADS = 10
-WORK_DIR = '/tmp/rhc/migrate'
+WORK_DIR = '/tmp/rhc/migration'
 
 #
 #  Migrate the specified app on the node
@@ -170,7 +170,7 @@ def migrate_node(server_identity, apps, node_to_users)
     app_name = app_hash[:name]
     user = users[index]
     rhlogin = user.rhlogin
-    migrate_on_node_args = "#{app.server_identity},#{app.framework},#{app.uuid},#{user.namespace},#{app_name}"
+    migrate_on_node_args = "#{app.server_identity},#{app.framework},#{app.uuid},#{user.namespace},#{app_name},#{rhlogin}"
     append_to_file(f, migrate_on_node_args)
   end
   migrate_node_cmd = "#{__FILE__} '#{f}'"
@@ -192,13 +192,14 @@ def migrate_from_file(file)
     while (line = file.readline)
       params = line.chomp.split(',')
       server_identity = params[0] 
-      framework = params[1] 
+      framework = params[1]
       uuid = params[2] 
       namespace = params[3]
       app_name = params[4]
+      rhlogin = params[5]
       migrate_on_node_cmd = "#{__FILE__} '#{server_identity}' '#{framework}' '#{uuid}' '#{namespace}' '#{app_name}'"
       error_file = "#{WORK_DIR}/migrate_errors_#{server_identity}"
-      puts "Migrating app '#{app_name}' with uuid '#{uuid}' on node '#{server_identity}'"
+      puts "Migrating app '#{app_name}' with uuid '#{uuid}' on node '#{server_identity}' for user: #{rhlogin}"
       num_tries = 2
       (1..num_tries).each do |i|
         begin
@@ -210,7 +211,12 @@ def migrate_from_file(file)
             append_to_file(error_file, migrate_on_node_cmd)
             break
           else
-            sleep 4
+            if Cloud::Sdk::DataStore.instance.find(Application.name, rhlogin, app_name)
+              sleep 4
+            else
+              puts "App '#{app_name}' no longer found in datastore with uuid '#{uuid}'.  Ignoring..."
+              break
+            end
           end
         end
       end
