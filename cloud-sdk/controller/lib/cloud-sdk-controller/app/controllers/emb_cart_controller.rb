@@ -3,7 +3,7 @@ class EmbeddedCartridgesController < BaseController
   before_filter :authenticate
   include LegacyBrokerHelper
 
-# POST /domains/[domain_id]/applications/[application_id]/cartridges
+  # POST /domains/[domain_id]/applications/[application_id]/cartridges
   def create
     domain_id = params[:domain_id]
     id = params[:application_id]
