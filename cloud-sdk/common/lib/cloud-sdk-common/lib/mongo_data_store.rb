@@ -19,9 +19,9 @@ module Cloud::Sdk
       Rails.logger.debug "MongoDataStore.find(#{obj_type}, #{user_id}, #{id})\n\n"
       case obj_type
       when "CloudUser"
-	MongoDataStore.get_user(user_id)
+	      MongoDataStore.get_user(user_id)
       when "Application"
-	MongoDataStore.get_app(user_id, id)
+	      MongoDataStore.get_app(user_id, id)
       end
     end
     
@@ -29,9 +29,9 @@ module Cloud::Sdk
       Rails.logger.debug "MongoDataStore.find_all(#{obj_type}, #{user_id})\n\n"
       case obj_type
       when "CloudUser"
-	MongoDataStore.get_users
+	      MongoDataStore.get_users
       when "Application"
-	MongoDataStore.get_user_apps(user_id)
+	      MongoDataStore.get_user_apps(user_id)
       end
     end
     
@@ -39,9 +39,9 @@ module Cloud::Sdk
       Rails.logger.debug "MongoDataStore.save(#{obj_type}, #{user_id}, #{id}, #{obj_bson})\n\n"
       case obj_type
       when "CloudUser"
-	MongoDataStore.put_user(user_id, obj_bson)
+	      MongoDataStore.put_user(user_id, obj_bson)
       when "Application"
-	MongoDataStore.put_app(user_id, id, obj_bson)
+	      MongoDataStore.put_app(user_id, id, obj_bson)
       end
     end
     
@@ -49,9 +49,9 @@ module Cloud::Sdk
       Rails.logger.debug "MongoDataStore.delete(#{obj_type}, #{user_id}, #{id})\n\n"
       case obj_type
       when "CloudUser"
-	MongoDataStore.delete_user(user_id)
+	      MongoDataStore.delete_user(user_id)
       when "Application"
-	MongoDataStore.delete_app(user_id, id)
+	      MongoDataStore.delete_app(user_id, id)
       end
     end
 
@@ -87,10 +87,8 @@ module Cloud::Sdk
 
       ret = []
       mcursor.each do |bson|
-        pkey = bson["_id"]
         bson.delete("_id")
-        bson.delete("apps")
-        ret.push({ pkey => bson.to_json })
+        ret.push(bson.to_json)
       end
       ret
     end

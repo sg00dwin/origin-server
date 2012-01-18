@@ -71,6 +71,10 @@ Broker::Application.configure do
 #    :s3_bucket => "libra_dev"
 #  }
   
+  config.datastore_mongo = {
+    :collection => "district"
+  }
+  
   config.analytics = {
     :nurture_enabled => false,
     :nurture_username => "admin",
