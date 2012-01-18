@@ -24,7 +24,6 @@ Requires:  mod_passenger
 Requires:  rubygem-bundler
 Requires:  rubygem-mongo
 Requires:  rubygem-sqlite3
-Requires:  rubygem-xray
 Requires:  ruby-sqlite3
 Requires:  ruby-mysql
 Requires:  mysql-devel
