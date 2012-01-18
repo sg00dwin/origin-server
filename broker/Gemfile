@@ -10,6 +10,8 @@ gem 'rack'
 gem 'multimap'
 gem 'regin'
 gem 'cloud-sdk-controller'
+gem 'thread-dump'
+gem 'xray'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'

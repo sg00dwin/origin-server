@@ -58,8 +58,13 @@ module Express
       #
       def self.has_dns_txt?(namespace)
         dns = Resolv::DNS.new
-        resp = dns.getresources("#{namespace}.#{Rails.application.config.cdk[:domain_suffix]}", Resolv::DNS::Resource::IN::TXT)
-        return resp.length > 0
+        resp = nil
+        begin
+          resp = dns.getresources("#{namespace}.#{Rails.application.config.cdk[:domain_suffix]}", Resolv::DNS::Resource::IN::TXT)
+        rescue Exception => e
+          raise_dns_exception(e)
+        end
+        return resp && resp.length > 0
       end
     
       def self.dyn_login(retries=0)
@@ -101,7 +106,7 @@ module Express
       def self.raise_dns_exception(e=nil, resp=nil)
         if e
           Rails.logger.debug "DEBUG: Exception caught from DNS request: #{e.message}"
-          Rails.logger.debug e.backtrace        
+          Rails.logger.debug e.backtrace
         end
         if resp
           Rails.logger.debug "DEBUG: Response code: #{resp.code}"

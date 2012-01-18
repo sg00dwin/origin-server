@@ -104,3 +104,6 @@ $ ->
   ($ 'body').delegate 'form', 'ajax:complete', (event) ->
     ($ this).spin(false)
 
+  # don't show placeholder ssh key if user has not set one up yet
+  if ($('#ssh_form_express_domain_ssh').val().match(/nossh$/))
+    $('#ssh_form_express_domain_ssh').val('')

@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.84.15
+Version:   0.85.2
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -69,6 +69,22 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Tue Jan 17 2012 Dan McPherson <dmcphers@redhat.com> 0.85.2-1
+- Adding Flex Monitoring and Scaling video for Chinese viewers
+  (aboone@redhat.com)
+
+* Fri Jan 13 2012 Dan McPherson <dmcphers@redhat.com> 0.85.1-1
+- bump spec numbers (dmcphers@redhat.com)
+- Adding China-hosted Flex - Deploying Seam video (BZ 773191)
+  (aboone@redhat.com)
+
+* Thu Jan 12 2012 Dan McPherson <dmcphers@redhat.com> 0.84.17-1
+- Adding PostgreSQL to Express offering on Features comparison page
+  (aboone@redhat.com)
+
+* Wed Jan 11 2012 Dan McPherson <dmcphers@redhat.com> 0.84.16-1
+- Pass key_type to broker when creating/updating domain (aboone@redhat.com)
+
 * Wed Jan 11 2012 Dan McPherson <dmcphers@redhat.com> 0.84.15-1
 - Add MongoDB to Express feature set on Features page (aboone@redhat.com)
 - Revert changes to Features page made in 4950348 and 17b869f (fix for

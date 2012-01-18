@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.2.29
+Version:        0.3.2
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        AGPLv3
@@ -20,6 +20,7 @@ Requires:       rubygem(json_pure)
 Requires:       rubygem(mocha)
 Requires:       rubygem(parseconfig)
 Requires:       rubygem(state_machine)
+Requires:       rubygem(cloud-sdk-common)
 
 BuildRequires:  ruby
 BuildRequires:  rubygems
@@ -72,6 +73,35 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Tue Jan 17 2012 Dan McPherson <dmcphers@redhat.com> 0.3.2-1
+- Updating gem versions (dmcphers@redhat.com)
+- fix test case (dmcphers@redhat.com)
+- districts (work in progress) (dmcphers@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- Raise UserKeyException instead of UserException when dealing with user ssh
+  keys (rpenta@redhat.com)
+
+* Fri Jan 13 2012 Dan McPherson <dmcphers@redhat.com> 0.3.1-1
+- Updating gem versions (dmcphers@redhat.com)
+- bump spec numbers (dmcphers@redhat.com)
+- Bug 781254 (dmcphers@redhat.com)
+
+* Thu Jan 12 2012 Dan McPherson <dmcphers@redhat.com> 0.2.31-1
+- Updating gem versions (dmcphers@redhat.com)
+- Bump API version to 1.1.2 due to key_type requirement on domain create/update
+  (aboone@redhat.com)
+- add common to controller deps (dmcphers@redhat.com)
+- - Assign default ssh_type when empty string is passed to cloud user.
+  (rpenta@redhat.com)
+
+* Wed Jan 11 2012 Dan McPherson <dmcphers@redhat.com> 0.2.30-1
+- Updating gem versions (dmcphers@redhat.com)
+- remove email from cloud user (dmcphers@redhat.com)
+- grammar change in message to user (rchopra@redhat.com)
+- typo fix in message (rchopra@redhat.com)
+- bugfixes for #773189 and #773139 (rchopra@redhat.com)
+- correctly return 400 for invalid requests (dmcphers@redhat.com)
+
 * Wed Jan 11 2012 Dan McPherson <dmcphers@redhat.com> 0.2.29-1
 - Updating gem versions (dmcphers@redhat.com)
 - Fix for Bugs# 773209, 773176 (rpenta@redhat.com)

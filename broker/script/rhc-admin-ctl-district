@@ -1,0 +1,122 @@
+#!/usr/bin/env ruby
+
+require "/var/www/libra/broker/config/environment"
+require 'getoptlong'
+require 'pp'
+
+def usage
+    puts <<USAGE
+== Synopsis
+
+rhc-admin-ctl-district: Control districts
+
+== Usage
+
+rhc-admin-ctl-district OPTIONS
+
+Options:
+-u|--uuid     <district uuid>
+    District uuid  (alphanumeric)
+-c|--command <command>
+    (add-node|remove-node|mark-remove-node|destroy)
+-i|--server_identity
+    Node server_identity (required)
+-b|--bypass
+    Ignore warnings
+-h|--help
+    Show Usage info
+USAGE
+end
+
+opts = GetoptLong.new(
+    ["--uuid",             "-u", GetoptLong::REQUIRED_ARGUMENT],
+    ["--server_identity",  "-i", GetoptLong::REQUIRED_ARGUMENT],
+    ["--command",          "-c", GetoptLong::REQUIRED_ARGUMENT],
+    ["--bypass",           "-b", GetoptLong::NO_ARGUMENT],    
+    ["--help",             "-h", GetoptLong::NO_ARGUMENT]
+)
+
+args = {}
+begin
+    opts.each{ |k,v| args[k]=v }
+rescue GetoptLong::Error => e
+    usage
+    exit -100
+end
+
+if args["--help"]
+  usage
+  exit 1
+end
+
+uuid     = args["--uuid"]
+command  = args['--command']
+server_identity  = args['--server_identity']
+bypass   = args['--bypass']
+
+district = nil
+if uuid
+  district = District.find(uuid)
+  unless district
+    puts "District #{uuid} not found."
+    exit 1
+  end
+  unless server_identity || !command || command == 'destroy'
+    puts "--server_identity is required with command: #{command}"  
+  end
+elsif command
+  puts "--uuid is requied with --command"
+end
+
+reply = ResultIO.new
+case command
+when "add-node"
+  district.add_node(server_identity)
+  district.save
+when "remove-node"
+  district.remove_node(server_identity)
+  district.save
+when "mark-remove-node"
+  district.mark_remove_node(server_identity)
+  district.save
+when "destroy"
+  unless bypass
+    puts <<-WARNING
+  !!!! WARNING !!!! WARNING !!!! WARNING !!!!
+  You are about to destroy the #{uuid} district.
+
+  This is NOT reversible, all remote data for this district will be removed.
+  WARNING
+
+    print "Do you want to destroy this district (y/n): "
+    begin
+      agree = gets.chomp
+      if agree != 'y'
+        puts "\n"
+        exit 217
+      end
+    rescue Interrupt
+      puts "\n"
+      exit 217
+    end
+  end
+
+  if district.server_identities.empty? && district.capacity = 0
+    district.delete
+    reply.resultIO << "Successfully destroyed district: #{uuid}" if reply.resultIO.string.empty?
+  else
+    reply.resultIO << "Couldn't destroy district '#{uuid}' because it still contains applications and/or nodes" if reply.resultIO.string.empty?
+  end
+
+else
+  if district
+    reply.resultIO << district.pretty_inspect
+  else
+    districts = District.find_all
+    reply.resultIO << districts.pretty_inspect
+  end
+end
+
+print "DEBUG OUTPUT:\n#{reply.debugIO.string}\n\n" unless reply.debugIO.string.empty?
+print "ERROR OUTPUT:\n#{reply.errorIO.string}\n\n" unless reply.errorIO.string.empty?
+print "#{reply.resultIO.string}\n" unless reply.resultIO.string.empty?

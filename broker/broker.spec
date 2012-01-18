@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.84.38
+Version:   0.85.3
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -49,6 +49,8 @@ mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-app %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-cartridge-do %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-deconfigure-on-node %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-move %{buildroot}/%{_bindir}
+mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-district %{buildroot}/%{_bindir}
+mv %{buildroot}%{brokerdir}/script/rhc-admin-create-district %{buildroot}/%{_bindir}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -71,11 +73,46 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0750,-,-) %{_bindir}/rhc-admin-cartridge-do
 %attr(0750,-,-) %{_bindir}/rhc-admin-deconfigure-on-node
 %attr(0750,-,-) %{_bindir}/rhc-admin-move
+%attr(0750,-,-) %{_bindir}/rhc-admin-ctl-district
+%attr(0750,-,-) %{_bindir}/rhc-admin-create-district
 
 %post
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Tue Jan 17 2012 Dan McPherson <dmcphers@redhat.com> 0.85.3-1
+- US1667: threaddump for rack (wdecoste@localhost.localdomain)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li
+  (wdecoste@localhost.localdomain)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li
+  (wdecoste@localhost.localdomain)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li
+  (wdecoste@localhost.localdomain)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li
+  (wdecoste@localhost.localdomain)
+- Temporary commit to build (wdecoste@localhost.localdomain)
+
+* Tue Jan 17 2012 Dan McPherson <dmcphers@redhat.com> 0.85.2-1
+- Updating gem versions (dmcphers@redhat.com)
+- districts (work in progress) (dmcphers@redhat.com)
+- fix get all users with app named user.json (dmcphers@redhat.com)
+
+* Fri Jan 13 2012 Dan McPherson <dmcphers@redhat.com> 0.85.1-1
+- Updating gem versions (dmcphers@redhat.com)
+- bump spec numbers (dmcphers@redhat.com)
+- Bug 781254 (dmcphers@redhat.com)
+
+* Thu Jan 12 2012 Dan McPherson <dmcphers@redhat.com> 0.84.41-1
+- Updating gem versions (dmcphers@redhat.com)
+
+* Wed Jan 11 2012 Dan McPherson <dmcphers@redhat.com> 0.84.40-1
+- Automatic commit of package [rhc-broker] release [0.84.39-1].
+  (dmcphers@redhat.com)
+
+* Wed Jan 11 2012 Dan McPherson <dmcphers@redhat.com> 0.84.39-1
+- Updating gem versions (dmcphers@redhat.com)
+- correctly return 400 for invalid requests (dmcphers@redhat.com)
+
 * Wed Jan 11 2012 Dan McPherson <dmcphers@redhat.com> 0.84.38-1
 - Updating gem versions (dmcphers@redhat.com)
 - Bug 773248 and 773186 (dmcphers@redhat.com)

@@ -2,7 +2,7 @@
 
 Summary:   Provides python-wsgi-3.2 support
 Name:      rhc-cartridge-wsgi-3.2
-Version:   0.84.6
+Version:   0.85.1
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -92,6 +92,15 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/manifest.yml
 
 %changelog
+* Fri Jan 13 2012 Dan McPherson <dmcphers@redhat.com> 0.85.1-1
+- bump spec numbers (dmcphers@redhat.com)
+
+* Wed Jan 11 2012 Dan McPherson <dmcphers@redhat.com> 0.84.7-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rmillner@redhat.com)
+- Bugzilla 772753: Add libcurl dependencies to the wsgi cartridge to support
+  pycurl. (rmillner@redhat.com)
+
 * Wed Jan 11 2012 Dan McPherson <dmcphers@redhat.com> 0.84.6-1
 - Bugzilla 772753: Add libcurl dependencies to the wsgi cartridge to support
   pycurl. (rmillner@redhat.com)
