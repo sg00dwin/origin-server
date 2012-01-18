@@ -1,12 +1,12 @@
 Name: rhc-cartridge-cron-1.4
 Version: 1.4
 Architecture: noarch
-Display-Name: cron v1.4 
+Display-Name: cron v1.4
 Description: cron batch processing services
-Vendor: 
+Vendor:
 License: MIT and BSD and ISC and GPLv2
 Provides: rhc-cartridge-cron
-Native-Requires: 
+Native-Requires:
   - cronie
 Descriptor:
   Profiles:
@@ -31,4 +31,4 @@ Descriptor:
 
     default:
         *batch-services-profile
-      
+

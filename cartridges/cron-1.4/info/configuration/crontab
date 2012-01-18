@@ -4,10 +4,10 @@
 # Use /bin/sh to run commands.
 SHELL=/bin/sh
 
-# Entries are of the form: 
+# Entries are of the form:
 #    <minute> <hour> <day-of-month> <month> <day-of-week>  <cmd>
 # See man 5 crontab for more details.
 
-# Run a job daily at 3:00 am. 
+# Run a job daily at 3:00 am.
 # 0 3 * * *  source $HOME/.env/OPENSHIFT_REPO_DIR && $OPENSHIFT_REPO_DIR/batch-jobs/daily.job
 
