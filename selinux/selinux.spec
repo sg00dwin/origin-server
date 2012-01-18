@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.85.3
+Version:       0.85.4
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -46,6 +46,9 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Wed Jan 18 2012 Dan McPherson <dmcphers@redhat.com> 0.85.4-1
+- Checkpoint cron cartridge work. (ramr@redhat.com)
+
 * Tue Jan 17 2012 Dan McPherson <dmcphers@redhat.com> 0.85.3-1
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
   (dwalsh@redhat.com)
