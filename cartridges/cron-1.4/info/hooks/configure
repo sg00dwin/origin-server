@@ -1,0 +1,103 @@
+#!/bin/bash
+
+# Copyright © 2011 Ram Ranganathan All rights reserved
+# Copyright © 2010 Red Hat, Inc. All rights reserved
+
+# This copyrighted material is made available to anyone wishing to use, modify,
+# copy, or redistribute it subject to the terms and conditions of the GNU
+# General Public License v.2.  This program is distributed in the hope that it
+# will be useful, but WITHOUT ANY WARRANTY expressed or implied, including the
+# implied warranties of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.  You should have
+# received a copy of the GNU General Public License along with this program;
+# if not, write to the Free Software Foundation, Inc., 51 Franklin Street,
+# Fifth Floor, Boston, MA 02110-1301, USA. Any Red Hat trademarks that are
+# incorporated in the source code or documentation are not subject to the GNU
+# General Public License and may only be used or replicated with the express
+# permission of Red Hat, Inc.
+
+# Configures batch processing service (cron) support for the application.
+
+# Exit on any errors
+set -e
+
+function print_help {
+    echo "Usage: $0 app-name namespace uuid"
+
+    echo "$0 $@" | logger -p local0.notice -t libra_cron_configure
+    exit 1
+}
+
+while getopts 'd' OPTION
+do
+    case $OPTION in
+        d) set -x
+        ;;
+        ?) print_help
+        ;;
+    esac
+done
+
+
+[ $# -eq 3 ] || print_help
+
+CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
+source ${CART_DIR}/abstract/info/lib/util
+
+app_type="cron-1.4"
+setup_embedded_configure "$1" $2 $3
+
+source ${CART_INFO_DIR}/lib/util
+
+CRON_DIR="$APP_HOME/cron-1.4/"
+
+#
+# Detect IP
+. $APP_HOME/.env/OPENSHIFT_INTERNAL_IP
+IP=$OPENSHIFT_INTERNAL_IP
+
+#
+# Create the core of the application
+#
+
+if [ -d "$CRON_DIR" ]; then
+    client_error "Embedded cron-1.4 already attached to $application"
+    exit 132
+fi
+
+mkdir -p "$CRON_DIR"
+pushd "$CRON_DIR" > /dev/null
+mkdir -p log etc data pid run
+chmod go-rwx data
+popd > /dev/null
+
+#
+# Create simple batch processing service control script.
+#
+ln -s $CART_INFO_DIR/bin/cron_ctl.sh $CRON_DIR/${application}_cron_ctl.sh
+
+#
+# Setup Permissions
+#
+chmod +x "$CRON_DIR/"*.sh || error "Failed to chmod new application scripts" 122
+chown $user_id.$group_id -R "$CRON_DIR/" || error "Failed to chown new application space.  Please contact support" 123
+ln -s "$OPENSHIFT_REPO_DIR/.openshift/crontab" "$CRON_DIR/etc/"
+chown root.root "$CRON_DIR" "$CRON_DIR"/*.sh
+chcon -t libra_var_lib_t -l $mcs_level -R "$CRON_DIR"
+
+#
+# Enable batch jobs services (crontab).
+#
+enable_crontab
+
+#
+# Setup Environment Variables
+#
+echo "export OPENSHIFT_BATCH_TYPE='cron'" > $APP_HOME/.env/OPENSHIFT_BATCH_TYPE
+echo "export OPENSHIFT_BATCH_CTL_SCRIPT='$CRON_DIR/${application}_cron_ctl.sh'" > $APP_HOME/.env/OPENSHIFT_BATCH_CTL_SCRIPT
+echo "export OPENSHIFT_BATCH_CRON_14_EMBEDDED_TYPE='cron-1.4'" > $APP_HOME/.env/OPENSHIFT_BATCH_CRON_14_EMBEDDED_TYPE
+
+client_result ""
+client_result "cron 1.4 services have been added to ${application}"
+client_result ""
+client_result "See file .openshift/crontab for managing your batch jobs"

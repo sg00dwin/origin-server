@@ -311,6 +311,12 @@ corenet_tcp_bind_postgresql_port(libra_t)
 # Do not allow open or create, just allow it to use inherited from kernel
 allow libra_t tmpfs_t:file { read write };
 
++########################################
+#
+# cron support
+#
+cron_exec(libra_t)
+
 ##########
 # Used for development or when the li controller is running outside
 # of the li framework (like when it's installed in /var/www/html
