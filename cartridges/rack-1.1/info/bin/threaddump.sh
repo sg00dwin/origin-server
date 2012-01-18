@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 # Import Environment Variables
 for f in ~/.env/*
@@ -6,18 +6,17 @@ do
     . $f
 done
 
-CART_CONF_DIR=/usr/libexec/li/cartridges/${OPENSHIFT_APP_TYPE}/info/configuration/etc/conf
+if ! [ $# -eq 2 ]
+then
+    echo "Usage: \$0 APP_ID UUID"
+    exit 1
+fi
 
-# Stop the app
-httpd_pid=`cat ${OPENSHIFT_RUN_DIR}httpd.pid 2> /dev/null`
-/usr/sbin/httpd -C 'Include ${OPENSHIFT_APP_DIR}conf.d/*.conf' -f $CART_CONF_DIR/httpd_nolog.conf -k $1
-for i in {1..20}
-do
-    if `ps --pid $httpd_pid > /dev/null 2>&1` || `pgrep Passenger* > /dev/null 2>&1`
-    then
-        echo "Waiting for stop to finish"
-        sleep 3
-    else
-        break
-    fi
-done
+PID=`ps -e -o pid,command | grep Rack | grep $2 | grep $3 | awk 'BEGIN {FS=" "}{print $1}'`
+
+if [$PID .eq ""]; then
+	echo "Application is stopped"
+    exit 1
+else 
+    kill -3 $PID
+fi
