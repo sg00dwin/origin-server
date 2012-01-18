@@ -87,12 +87,32 @@ Facter.add(:max_apps) do
 end
 
 #
+# Find max active apps
+#
+Facter.add(:max_active_apps) do
+    config_file = ParseConfig.new('/etc/libra/resource_limits.conf')
+    max_active_apps = config_file.get_value('max_active_apps') ? config_file.get_value('max_active_apps') : '0'
+    setcode { max_active_apps }
+end
+
+#
 # Find capacity
 #
 Facter.add(:capacity) do
     git_repos =  Facter.value(:git_repos).to_f
-    max_apps = Facter.value(:max_apps).to_f
-    capacity = ( git_repos / max_apps ) * 100
+    max_active_apps = Facter.value(:max_active_apps).to_f
+    stopped_app_count =0
+    Dir.glob("/var/lib/libra/*").each { |app_dir|
+        if File.symlink?(app_dir)
+            basename = File.basename(app_dir)
+            app_name = basename.split("-")[0]
+            stop_count = Dir.glob("#{app_dir}/#{app_name}/run/stop_lock").count
+            if stop_count == 1
+                 stopped_app_count = stopped_app_count +1
+            end
+        end
+    }
+    capacity = ( (git_repos-stopped_app_count) / max_active_apps ) * 100
     setcode { capacity.to_s }
 end
 

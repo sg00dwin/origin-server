@@ -1,4 +1,5 @@
 require 'rack/lobster'
+require 'xray/thread_dump_signal_handler'
 
 map '/health' do
   health = proc do |env|

@@ -8,7 +8,7 @@ done
 
 if ! [ $# -eq 1 ]
 then
-    echo "Usage: \$0 [start|restart|graceful|graceful-stop|stop]"
+    echo "Usage: \$0 [start|restart|graceful|graceful-stop|stop|threaddump]"
     exit 1
 fi
 

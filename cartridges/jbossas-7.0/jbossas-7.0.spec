@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.85.2
+Version:   0.85.3
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -101,6 +101,9 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 
 %changelog
+* Tue Jan 17 2012 Dan McPherson <dmcphers@redhat.com> 0.85.3-1
+- US1667: threaddump for rack (wdecoste@localhost.localdomain)
+
 * Tue Jan 17 2012 Dan McPherson <dmcphers@redhat.com> 0.85.2-1
 - use rhc-domain-info consistently (dmcphers@redhat.com)
 
