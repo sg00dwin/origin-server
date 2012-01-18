@@ -1,0 +1,40 @@
+#!/bin/bash
+
+[ ! -z "$CRON_LIB_UTIL" ] && return 0
+CRON_LIB_UTIL=true
+
+function start_crontab {
+    enable_crontab
+}
+
+function stop_crontab {
+    disable_crontab
+}
+
+function start_crontab_as_user {
+    ${OPENSHIFT_BATCH_CTL_SCRIPT} start
+}
+
+function stop_crontab_as_user {
+    ${OPENSHIFT_BATCH_CTL_SCRIPT} stop
+    sleep 1
+}
+
+function enable_crontab {
+    CRON_DIR=${CRON_DIR:-"$APP_HOME/cron-1.4/"}
+    /bin/su -s /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $CRON_DIR/${application}_cron_ctl.sh enable"
+    wait_to_enable
+}
+
+function wait_to_enable {
+    sleep 1
+}
+
+function disable_crontab {
+    CRON_DIR=${CRON_DIR:-"$APP_HOME/cron-1.4/"}
+    /bin/su -s /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $CRON_DIR/${application}_cron_ctl.sh disable"
+}
+
+function wait_to_start_as_user {
+    sleep 1
+}

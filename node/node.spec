@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.85.3
+Version:       0.85.5
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -206,6 +206,23 @@ fi
 %dir %attr(0755,root,root) %{_sysconfdir}/libra/skel
 
 %changelog
+* Wed Jan 18 2012 Dan McPherson <dmcphers@redhat.com> 0.85.5-1
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li
+  (bdecoste@gmail.com)
+- rollback rack chances for threaddump (bdecoste@gmail.com)
+- working on base migration (dmcphers@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li
+  (bdecoste@gmail.com)
+- replace OPENSHIFT_APP_DIR in httpd start (bdecoste@gmail.com)
+
+* Tue Jan 17 2012 Dan McPherson <dmcphers@redhat.com> 0.85.4-1
+- remove broker gem refs for threaddump (bdecoste@gmail.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rchopra@redhat.com)
+- implementation of user story 1734 : max_active_apps metric. Currently the
+  value is set to 100. Also note, that now, this value will influence the
+  capacity of nodes. (rchopra@redhat.com)
+
 * Tue Jan 17 2012 Dan McPherson <dmcphers@redhat.com> 0.85.3-1
 - US1667: threaddump for rack (wdecoste@localhost.localdomain)
 

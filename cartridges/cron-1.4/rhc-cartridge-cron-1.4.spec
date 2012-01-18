@@ -1,32 +1,23 @@
-%define cartridgedir %{_libexecdir}/li/cartridges/embedded/memcached-1.4
+%define cartridgedir %{_libexecdir}/li/cartridges/embedded/cron-1.4
 
-Name: rhc-cartridge-memcached-1.4
-Version: 0.2.0
+Name: rhc-cartridge-cron-1.4
+Version: 0.1.1
 Release: 1%{?dist}
-Summary: Embedded memcached support for express
+Summary: Embedded cron support for express
 
 Group: Network/Daemons
-License: BSD
+License: MIT and BSD and ISC and GPLv2
 URL: https://engineering.redhat.com/trac/Libra
 Source0: %{name}-%{version}.tar.gz
 BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildArch: noarch
 
 Requires: rhc-node
-Requires: memcached
-Requires: libmemcached
-Requires: php-pecl-memcache
-Requires: php-pecl-memcached
-Requires: perl-Cache-Memcached
-Requires: python-memcached.noarch
-#
-# TO DO:
-# Requires: xmemcached.noarch - need pkg http://code.google.com/p/xmemcached/
-# Requires: rubygem-memcached - need rubygem for memcached gem
+Requires: cronie
 
 
 %description
-Provides rhc memcached cartridge support
+Provides rhc cron cartridge support
 
 %prep
 %setup -q
@@ -58,5 +49,5 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/manifest.yml
 
 %changelog
-* Thu Jan 12 2012 Ram Ranganathan <ramr@redhat.com> 0.1-1
+* Tue Jan 17 2012 Ram Ranganathan <ramr@redhat.com> 0.1-1
 - Initial packaging
