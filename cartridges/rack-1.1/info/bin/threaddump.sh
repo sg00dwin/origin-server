@@ -12,7 +12,7 @@ then
     exit 1
 fi
 
-PID=`ps -e -o pid,command | grep Rack | grep $2 | grep $3 | awk 'BEGIN {FS=" "}{print $1}'`
+PID=`ps -e -o pid,command | grep Rack | grep $1 | grep $2 | awk 'BEGIN {FS=" "}{print $1}'`
 
 if [$PID .eq ""]; then
 	echo "Application is stopped"
