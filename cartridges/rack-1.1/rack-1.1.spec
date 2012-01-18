@@ -35,7 +35,6 @@ Requires:  libxslt
 Requires:  libxslt-devel
 Requires:  gcc-c++
 Requires:  js
-Requires:  xray
 
 Obsoletes: rhc-cartridge-rack-1.1.0
 
