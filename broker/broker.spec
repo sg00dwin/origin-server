@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.85.1
+Version:   0.85.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -80,6 +80,26 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Tue Jan 17 2012 Dan McPherson <dmcphers@redhat.com> 0.85.4-1
+- remove broker gem refs for threaddump (bdecoste@gmail.com)
+
+* Tue Jan 17 2012 Dan McPherson <dmcphers@redhat.com> 0.85.3-1
+- US1667: threaddump for rack (wdecoste@localhost.localdomain)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li
+  (wdecoste@localhost.localdomain)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li
+  (wdecoste@localhost.localdomain)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li
+  (wdecoste@localhost.localdomain)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li
+  (wdecoste@localhost.localdomain)
+- Temporary commit to build (wdecoste@localhost.localdomain)
+
+* Tue Jan 17 2012 Dan McPherson <dmcphers@redhat.com> 0.85.2-1
+- Updating gem versions (dmcphers@redhat.com)
+- districts (work in progress) (dmcphers@redhat.com)
+- fix get all users with app named user.json (dmcphers@redhat.com)
+
 * Fri Jan 13 2012 Dan McPherson <dmcphers@redhat.com> 0.85.1-1
 - Updating gem versions (dmcphers@redhat.com)
 - bump spec numbers (dmcphers@redhat.com)

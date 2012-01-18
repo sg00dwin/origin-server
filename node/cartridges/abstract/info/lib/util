@@ -74,7 +74,7 @@ do
     . \$f
 done
 
-app_ctl.sh \$1
+app_ctl.sh \$1 $2 $3
 EOF
 
 chmod +x "$APP_DIR/${application}_ctl.sh" || error "Failed to chmod new application scripts" 122
