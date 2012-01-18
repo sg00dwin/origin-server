@@ -332,6 +332,28 @@ a.os-close-link:hover {
 /******* Edit widget *******/
 /* standard styles */
 /* falback styles */
+#ssh_container dt {
+  width: 15%;
+  clear: left;
+  float: left;
+}
+#ssh_container .primary_key {
+  font-weight: bold;
+}
+#ssh_container dd.ssh_key_preview {
+  float: left;
+}
+#ssh_container .os-widget {
+  margin: 0 0 0 2em;
+}
+#ssh_container .os-widget.new_ssh_key {
+  margin: 0;
+}
+#ssh_container .new_ssh_key input.create {
+  display: inline;
+  width: auto;
+}
+
 /* Universal styles */
 body {
   margin: 0;

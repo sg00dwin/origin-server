@@ -13,6 +13,7 @@ module ExpressApi
   @@userinfo_url = URI.parse(base_url + '/broker/userinfo')
   @@cartlist_url = URI.parse(base_url + '/broker/cartlist')
   @@app_url = URI.parse(base_url + '/broker/cartridge')
+  @@ssh_key_url = URI.parse(base_url + '/broker/ssh_keys')
 
   def http_post(url, json_data={}, raise_exception = false)
     begin

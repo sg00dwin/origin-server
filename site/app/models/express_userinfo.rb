@@ -50,12 +50,25 @@ class ExpressUserinfo
     end 
   end #end function
 
-  def readable_ssh_key
-    if not @ssh_key or @ssh_key.empty?
-      "ssh-rsa nossh"
-    else
-      "#{@key_type} #{@ssh_key}"
+  def default_ssh_key
+    key = ExpressSshKey.new({
+      :public_key => @ssh_key,
+      :type => @key_type,
+      :name => ExpressSshKey.primary_key_name,
+      :primary => true
+    })
+    key.namespace = @namespace
+
+    key
+  end
+
+  def ssh_keys
+    keys = []
+    default_key = default_ssh_key
+    unless default_key.placeholder?
+      keys << default_key
     end
+    keys + ExpressSshKey.find_secondary(@rhlogin, @ticket)
   end
 
 end
