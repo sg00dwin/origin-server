@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.85.1
+Version:   0.85.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -49,6 +49,8 @@ mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-app %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-cartridge-do %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-deconfigure-on-node %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-move %{buildroot}/%{_bindir}
+mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-district %{buildroot}/%{_bindir}
+mv %{buildroot}%{brokerdir}/script/rhc-admin-create-district %{buildroot}/%{_bindir}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -71,11 +73,57 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0750,-,-) %{_bindir}/rhc-admin-cartridge-do
 %attr(0750,-,-) %{_bindir}/rhc-admin-deconfigure-on-node
 %attr(0750,-,-) %{_bindir}/rhc-admin-move
+%attr(0750,-,-) %{_bindir}/rhc-admin-ctl-district
+%attr(0750,-,-) %{_bindir}/rhc-admin-create-district
 
 %post
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Wed Jan 18 2012 Dan McPherson <dmcphers@redhat.com> 0.85.5-1
+- Updating gem versions (dmcphers@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li into s3-to-mongo
+  (rpenta@redhat.com)
+- handle app being removed during migration (dmcphers@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li into s3-to-mongo
+  (rpenta@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li into s3-to-mongo
+  (rpenta@redhat.com)
+- configure/start mongod service for new devenv launch (rpenta@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li into s3-to-mongo
+  (rpenta@redhat.com)
+- Merge/resolve conflicts from master (rpenta@redhat.com)
+- s3-to-mongo: code cleanup (rpenta@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li into s3-to-mongo
+  (rpenta@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li into s3-to-mongo
+  (rpenta@redhat.com)
+- fixes related to mongo datastore (rpenta@redhat.com)
+- merge changes from master (rpenta@redhat.com)
+- s3-to-mongo: bug fixes (rpenta@redhat.com)
+- Merge changes from master (rpenta@redhat.com)
+- Added MongoDataStore model (rpenta@redhat.com)
+
+* Tue Jan 17 2012 Dan McPherson <dmcphers@redhat.com> 0.85.4-1
+- remove broker gem refs for threaddump (bdecoste@gmail.com)
+
+* Tue Jan 17 2012 Dan McPherson <dmcphers@redhat.com> 0.85.3-1
+- US1667: threaddump for rack (wdecoste@localhost.localdomain)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li
+  (wdecoste@localhost.localdomain)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li
+  (wdecoste@localhost.localdomain)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li
+  (wdecoste@localhost.localdomain)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li
+  (wdecoste@localhost.localdomain)
+- Temporary commit to build (wdecoste@localhost.localdomain)
+
+* Tue Jan 17 2012 Dan McPherson <dmcphers@redhat.com> 0.85.2-1
+- Updating gem versions (dmcphers@redhat.com)
+- districts (work in progress) (dmcphers@redhat.com)
+- fix get all users with app named user.json (dmcphers@redhat.com)
+
 * Fri Jan 13 2012 Dan McPherson <dmcphers@redhat.com> 0.85.1-1
 - Updating gem versions (dmcphers@redhat.com)
 - bump spec numbers (dmcphers@redhat.com)

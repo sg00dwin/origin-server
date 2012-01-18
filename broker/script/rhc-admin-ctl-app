@@ -21,7 +21,7 @@ Options:
 -c|--command <command>
     (start|stop|force-stop|restart|status|destroy) (required)
 -b|--bypass
-    Ignore exceptions
+    Ignore warnings
 -h|--help
     Show Usage info
 USAGE

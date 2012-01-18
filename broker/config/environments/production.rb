@@ -52,6 +52,13 @@ Broker::Application.configure do
   ############################################
   config.app_scope = ""
   
+  config.districts = {
+    :enabled => true,
+    :district => nil,
+    :max_capacity => 6000,
+    :first_uid => 1000
+  }
+  
   config.dns = {
     :zone => "rhcloud.com",
     :dynect_customer_name => "demo-redhat",
@@ -79,12 +86,6 @@ Broker::Application.configure do
     :config      => "/etc/mcollective/client.cfg"
   }
   
-  config.datastore = {
-    :aws_key => "KEY_HERE",
-    :aws_secret => "SECRET_HERE",
-    :s3_bucket => "BUCKET_HERE"
-  }
-  
   config.analytics = {
     :nurture_enabled => true,
     :nurture_username => "admin",
@@ -101,7 +102,16 @@ Broker::Application.configure do
   # CDK Config
   config.cdk = {
     :domain_suffix => "rhcloud.com",
-    :per_user_app_limit => 5
+    :per_user_app_limit => 5,
+
+    :datastore_mongo => {
+      :host => "HOST_NAME",
+      :port => 27017,
+      :user => "USER_NAME",
+      :password => "PASSWORD",
+      :db => "DB_NAME",
+      :collection => "COLLECTION_NAME"
+    }
   }
 
 end

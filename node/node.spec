@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.85.1
+Version:       0.85.6
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -162,6 +162,7 @@ fi
 %attr(0640,-,-) %{ruby_sitelibdir}/facter/libra.rb
 %attr(0750,-,-) %{_initddir}/libra
 %attr(0750,-,-) %{_initddir}/libra-data
+%attr(0750,-,-) %{_initddir}/libra-datastore
 %attr(0750,-,-) %{_initddir}/libra-cgroups
 %attr(0750,-,-) %{_initddir}/libra-tc
 %attr(0755,-,-) %{_bindir}/trap-user
@@ -205,6 +206,37 @@ fi
 %dir %attr(0755,root,root) %{_sysconfdir}/libra/skel
 
 %changelog
+* Wed Jan 18 2012 Dan McPherson <dmcphers@redhat.com> 0.85.6-1
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li into s3-to-mongo
+  (rpenta@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li into s3-to-mongo
+  (rpenta@redhat.com)
+- configure/start mongod service for new devenv launch (rpenta@redhat.com)
+
+* Wed Jan 18 2012 Dan McPherson <dmcphers@redhat.com> 0.85.5-1
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li
+  (bdecoste@gmail.com)
+- rollback rack chances for threaddump (bdecoste@gmail.com)
+- working on base migration (dmcphers@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li
+  (bdecoste@gmail.com)
+- replace OPENSHIFT_APP_DIR in httpd start (bdecoste@gmail.com)
+
+* Tue Jan 17 2012 Dan McPherson <dmcphers@redhat.com> 0.85.4-1
+- remove broker gem refs for threaddump (bdecoste@gmail.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rchopra@redhat.com)
+- implementation of user story 1734 : max_active_apps metric. Currently the
+  value is set to 100. Also note, that now, this value will influence the
+  capacity of nodes. (rchopra@redhat.com)
+
+* Tue Jan 17 2012 Dan McPherson <dmcphers@redhat.com> 0.85.3-1
+- US1667: threaddump for rack (wdecoste@localhost.localdomain)
+
+* Tue Jan 17 2012 Dan McPherson <dmcphers@redhat.com> 0.85.2-1
+- move district lookup to /etc/libra/district.conf (dmcphers@redhat.com)
+- districts (work in progress) (dmcphers@redhat.com)
+
 * Fri Jan 13 2012 Dan McPherson <dmcphers@redhat.com> 0.85.1-1
 - bump spec numbers (dmcphers@redhat.com)
 

@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Common
 Name:           rubygem-%{gemname}
-Version:        0.3.1
+Version:        0.3.3
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        AGPLv3
@@ -20,6 +20,7 @@ Requires:       rubygem(json_pure)
 Requires:       rubygem(mocha)
 Requires:       rubygem(parseconfig)
 Requires:       rubygem(state_machine)
+Requires:       rubygem(mongo)
 
 BuildRequires:  ruby
 BuildRequires:  rubygems
@@ -72,6 +73,27 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Wed Jan 18 2012 Dan McPherson <dmcphers@redhat.com> 0.3.3-1
+- enable auth for mongo connection + misc bug fixes (rpenta@redhat.com)
+- configure/start mongod service for new devenv launch (rpenta@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li into s3-to-mongo
+  (rpenta@redhat.com)
+- Merge/resolve conflicts from master (rpenta@redhat.com)
+- s3-to-mongo: code cleanup (rpenta@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li into s3-to-mongo
+  (rpenta@redhat.com)
+- s3-to-mongo: rhc-* cmds are working with mongo datastore (rpenta@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li into s3-to-mongo
+  (rpenta@redhat.com)
+- fixes related to mongo datastore (rpenta@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li into s3-to-mongo
+  (rpenta@redhat.com)
+- s3-to-mongo: bug fixes (rpenta@redhat.com)
+- Added MongoDataStore model (rpenta@redhat.com)
+
+* Tue Jan 17 2012 Dan McPherson <dmcphers@redhat.com> 0.3.2-1
+- districts (work in progress) (dmcphers@redhat.com)
+
 * Fri Jan 13 2012 Dan McPherson <dmcphers@redhat.com> 0.3.1-1
 - bump spec numbers (dmcphers@redhat.com)
 

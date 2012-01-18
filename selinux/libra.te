@@ -1,4 +1,4 @@
-policy_module(libra,1.0.29)
+policy_module(libra,1.0.30)
 
 ########################################
 #
@@ -17,6 +17,7 @@ files_tmp_file(libra_initrc_tmp_t)
 
 type libra_tmp_t;
 files_tmp_file(libra_tmp_t)
+files_mountpoint(libra_tmp_t)
 
 type libra_var_run_t;
 files_pid_file(libra_var_run_t)
@@ -267,6 +268,7 @@ allow libra_domain sshd_t:unix_stream_socket connectto;
 allow sshd_t libra_domain:process { rlimitinh signal };
 manage_dirs_pattern(sshd_t, libra_tmp_t, libra_tmp_t)
 manage_sock_files_pattern(sshd_t, libra_tmp_t, libra_tmp_t)
+allow sshd_t libra_tmp_t:dir mounton;
 ssh_dontaudit_search_user_home_dir(libra_domain)
 dontaudit sendmail_t libra_initrc_t:fifo_file { read write };
 dontaudit domain libra_t:fifo_file { getattr write };
@@ -301,11 +303,19 @@ require {
 	type tmpfs_t;
 }
 
+# Uncomment when we have selinux-policy-3.7.19-134.el6
+# fs_rw_inherited_tmpfs_files(libra_domain)
 # postgresql_exec(libra_domain)
-can_exec(libra_domain, postgresql_exec_t)
+can_exec(libra_t, postgresql_exec_t)
 corenet_tcp_bind_postgresql_port(libra_t)
 # Do not allow open or create, just allow it to use inherited from kernel
 allow libra_t tmpfs_t:file { read write };
+
++########################################
+#
+# cron support
+#
+cron_exec(libra_t)
 
 ##########
 # Used for development or when the li controller is running outside

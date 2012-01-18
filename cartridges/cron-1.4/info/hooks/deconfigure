@@ -1,0 +1,62 @@
+#!/bin/bash
+
+# Copyright © 2011 Ram Ranganathan All rights reserved
+# Copyright © 2010 Red Hat, Inc. All rights reserved
+
+# This copyrighted material is made available to anyone wishing to use, modify,
+# copy, or redistribute it subject to the terms and conditions of the GNU
+# General Public License v.2.  This program is distributed in the hope that it
+# will be useful, but WITHOUT ANY WARRANTY expressed or implied, including the
+# implied warranties of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.  You should have
+# received a copy of the GNU General Public License along with this program;
+# if not, write to the Free Software Foundation, Inc., 51 Franklin Street,
+# Fifth Floor, Boston, MA 02110-1301, USA. Any Red Hat trademarks that are
+# incorporated in the source code or documentation are not subject to the GNU
+# General Public License and may only be used or replicated with the express
+# permission of Red Hat, Inc.
+
+# Removes the batch processing service (cron) support from the application.
+
+function print_help {
+    echo "Usage: $0 app-name namespace uuid"
+
+    echo "$0 $@" | logger -p local0.notice -t libra_cron_deconfigure
+    exit 1
+}
+
+while getopts 'd' OPTION
+do
+    case $OPTION in
+        d) set -x
+        ;;
+        ?) print_help
+        ;;
+    esac
+done
+
+
+[ $# -eq 3 ] || print_help
+
+CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
+source ${CART_DIR}/abstract/info/lib/util
+
+app_type="cron-1.4"
+setup_embedded_deconfigure "$1" $2 $3
+
+source ${CART_INFO_DIR}/lib/util
+
+CRON_DIR="$APP_HOME/cron-1.4/"
+
+#
+# Remove environment variables
+#
+[ -f $APP_HOME/.env/OPENSHIFT_BATCH_TYPE ]  &&  source $APP_HOME/.env/OPENSHIFT_BATCH_TYPE
+if [ "$OPENSHIFT_BATCH_TYPE" = "cron" ]; then
+   /bin/rm -f $APP_HOME/.env/OPENSHIFT_BATCH_TYPE $APP_HOME/.env/OPENSHIFT_BATCH_CTL_SCRIPT $APP_HOME/.env/OPENSHIFT_BATCH_CRON_14_EMBEDDED_TYPE
+fi
+
+stop_crontab
+
+runcon -l s0-s0:c0.c1023 rm -rf "$CRON_DIR" "$CRON_DIR/${application}_cron_ctl.sh"
+

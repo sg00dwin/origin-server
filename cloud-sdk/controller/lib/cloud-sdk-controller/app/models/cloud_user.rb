@@ -1,4 +1,4 @@
-class CloudUser < Cloud::Sdk::Model
+class CloudUser < Cloud::Sdk::UserModel
   attr_accessor :rhlogin, :uuid, :system_ssh_keys, :env_vars, :ssh_keys, :ssh, :ssh_type, :namespace, :key, :type
   primary_key :rhlogin
   private :rhlogin=, :uuid=, :ssh=, :namespace=
@@ -20,7 +20,7 @@ class CloudUser < Cloud::Sdk::Model
     end
   end
   
-  validates_each :ssh_type, :allow_nil =>true do |record, attribute, val|
+  validates_each :ssh_type, :allow_nil => true do |record, attribute, val|
     if !(val =~ /^(ssh-rsa|ssh-dss)$/)
       record.errors.add attribute, {:message => "Invalid ssh key type: #{val}", :exit_code => 116}
     end
