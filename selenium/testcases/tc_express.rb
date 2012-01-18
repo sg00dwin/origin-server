@@ -15,7 +15,7 @@ class Express < OpenShift::SeleniumTestCase
 
     # External links
     check_links({
-      :documentation => 'https://docs.redhat.com/docs/en-US/OpenShift_Express/1.0/html/User_Guide/index.html',
+      :documentation => 'http://docs.redhat.com/docs/en-US/OpenShift_Express/2.0/html/User_Guide/index.html',
       :forum => 'https://www.redhat.com/openshift/community/forums/express',
     })
 
