@@ -312,6 +312,8 @@ class DevEnv < Thor
     else
       use_public_ip(hostname)
     end
+    # restart libra datastore
+    ssh(hostname, '/sbin/service libra-datastore restart > /dev/null 2>&1')
   end
 
   desc "sync_sdk NAME PATH", "Synchronize a local git repo with a remote DevEnv instance.  NAME should be ssh resolvable. PATH should be the location of the git repository to sync"
