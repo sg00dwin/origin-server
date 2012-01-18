@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.85.5
+Version:       0.85.6
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -162,6 +162,7 @@ fi
 %attr(0640,-,-) %{ruby_sitelibdir}/facter/libra.rb
 %attr(0750,-,-) %{_initddir}/libra
 %attr(0750,-,-) %{_initddir}/libra-data
+%attr(0750,-,-) %{_initddir}/libra-datastore
 %attr(0750,-,-) %{_initddir}/libra-cgroups
 %attr(0750,-,-) %{_initddir}/libra-tc
 %attr(0755,-,-) %{_bindir}/trap-user
@@ -205,6 +206,13 @@ fi
 %dir %attr(0755,root,root) %{_sysconfdir}/libra/skel
 
 %changelog
+* Wed Jan 18 2012 Dan McPherson <dmcphers@redhat.com> 0.85.6-1
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li into s3-to-mongo
+  (rpenta@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li into s3-to-mongo
+  (rpenta@redhat.com)
+- configure/start mongod service for new devenv launch (rpenta@redhat.com)
+
 * Wed Jan 18 2012 Dan McPherson <dmcphers@redhat.com> 0.85.5-1
 - Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li
   (bdecoste@gmail.com)

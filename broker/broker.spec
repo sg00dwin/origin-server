@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.85.4
+Version:   0.85.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -80,6 +80,30 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Wed Jan 18 2012 Dan McPherson <dmcphers@redhat.com> 0.85.5-1
+- Updating gem versions (dmcphers@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li into s3-to-mongo
+  (rpenta@redhat.com)
+- handle app being removed during migration (dmcphers@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li into s3-to-mongo
+  (rpenta@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li into s3-to-mongo
+  (rpenta@redhat.com)
+- configure/start mongod service for new devenv launch (rpenta@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li into s3-to-mongo
+  (rpenta@redhat.com)
+- Merge/resolve conflicts from master (rpenta@redhat.com)
+- s3-to-mongo: code cleanup (rpenta@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li into s3-to-mongo
+  (rpenta@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li into s3-to-mongo
+  (rpenta@redhat.com)
+- fixes related to mongo datastore (rpenta@redhat.com)
+- merge changes from master (rpenta@redhat.com)
+- s3-to-mongo: bug fixes (rpenta@redhat.com)
+- Merge changes from master (rpenta@redhat.com)
+- Added MongoDataStore model (rpenta@redhat.com)
+
 * Tue Jan 17 2012 Dan McPherson <dmcphers@redhat.com> 0.85.4-1
 - remove broker gem refs for threaddump (bdecoste@gmail.com)
 
