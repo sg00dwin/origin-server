@@ -94,7 +94,7 @@ module Cloud::Sdk
     end
 
     def self.get_app(user_id, id)
-      select_fields = "apps." + id
+      select_fields = "apps.#{id}"
       mcursor = MongoDataStore.collection.find({ "_id" => user_id }, :fields => [select_fields])
       bson = mcursor.next
       return nil unless (bson and bson["apps"])
