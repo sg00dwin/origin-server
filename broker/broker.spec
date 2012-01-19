@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.85.9
+Version:   0.85.10
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -80,6 +80,20 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Thu Jan 19 2012 Dan McPherson <dmcphers@redhat.com> 0.85.10-1
+- Updating gem versions (dmcphers@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (lnader@dhcp-240-165.mad.redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (lnader@dhcp-240-165.mad.redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (lnader@dhcp-240-165.mad.redhat.com)
+- Merge remote branch 'origin/REST' (lnader@dhcp-240-165.mad.redhat.com)
+- Merge remote branch 'origin/master' into REST
+  (lnader@dhcp-240-165.mad.redhat.com)
+- Added new method to auth service with support for user/pass based
+  authentication for new REST API (kraman@gmail.com)
+
 * Thu Jan 19 2012 Dan McPherson <dmcphers@redhat.com> 0.85.9-1
 - Updating gem versions (dmcphers@redhat.com)
 
