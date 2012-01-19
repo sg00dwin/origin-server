@@ -81,8 +81,6 @@ module Cloud
       end
       
       def attributes
-        #return @attributes if @attributes
-      
         @attributes = {}
         self.instance_variable_names.map {|name| name[1..-1]}.each do |name|
           next if ['attributes', 'changed_attributes', 'previously_changed', 'persisted', 'new_record', 'deleted', 'errors', 'validation_context'].include? name
@@ -110,6 +108,13 @@ module Cloud
       def self.excludes_attributes
         @excludes_attributes = [] unless @excludes_attributes
         @excludes_attributes
+      end
+
+      def to_xml(options = {})
+        to_xml_opts = {:skip_types => true}
+        to_xml_opts.merge!(options.slice(:builder, :skip_instruct))
+        to_xml_opts[:root] = options[:tag_name] || self.class.name.underscore.gsub("_","-")
+        self.attributes.to_xml(to_xml_opts)
       end
       
       protected

@@ -7,4 +7,17 @@ Rails.application.routes.draw do
     match 'cartlist'        => 'legacy_broker#cart_list_post', :via => [:post]
     match 'ssh_keys'        => 'legacy_broker#ssh_keys_post', :via => [:post]    
   end
+  scope "/broker/rest" do
+    resource :api, :only => [:show], :controller => :base
+    resource :user, :only => [:show], :controller => :user
+    resources :cartridges, :only => [:index,:show], :constraints => { :id => /standalone|embedded/ }
+    resources :domains, :constraints => { :id => /[A-Za-z0-9]+/ } do
+      resources :applications, :constraints => { :id => /[\w]+/ } do
+        resources :cartridges, :controller => :emb_cart, :only => [:index, :create, :destroy], :constraints => { :id => /[\w\-\.]+/ } do
+            resources :events, :controller => :emb_cart_events, :only => [:create]
+        end
+        resources :events, :controller => :app_events, :only => [:create]
+      end
+    end
+  end
 end
