@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.85.1
+Version:   0.85.2
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -228,6 +228,9 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 %{_initddir}/sauce-connect
 
 %changelog
+* Thu Jan 19 2012 Dan McPherson <dmcphers@redhat.com> 0.85.2-1
+- Move libra-datastore to devenv.spec (rpenta@redhat.com)
+
 * Fri Jan 13 2012 Dan McPherson <dmcphers@redhat.com> 0.85.1-1
 - bump spec numbers (dmcphers@redhat.com)
 
