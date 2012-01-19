@@ -16,6 +16,10 @@ module Cloud
         token = app.user.rhlogin
         [iv, token]
       end
+      
+      def authenticate(request, login, password)
+        return login
+      end
 
       def login(request, params, cookies)
         if params['broker_auth_key'] && params['broker_auth_iv']
