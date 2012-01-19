@@ -1,4 +1,4 @@
-class EmbeddedCartridgesEventsController < BaseController
+class EmbCartEventsController < BaseController
   respond_to :xml, :json
   before_filter :authenticate
   include LegacyBrokerHelper

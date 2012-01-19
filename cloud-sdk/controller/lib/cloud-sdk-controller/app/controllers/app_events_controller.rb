@@ -1,4 +1,4 @@
-class EventsController < BaseController
+class AppEventsController < BaseController
   respond_to :xml, :json
   before_filter :authenticate
   include LegacyBrokerHelper
