@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.85.5
+Version:       0.85.6
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -46,6 +46,9 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Thu Jan 19 2012 Dan McPherson <dmcphers@redhat.com> 0.85.6-1
+- Try out cron with libra domain (dwalsh@redhat.com)
+
 * Wed Jan 18 2012 Mike McGrath <mmcgrath@redhat.com> 0.85.5-1
 - Fix typo. (ramr@redhat.com)
 
