@@ -143,7 +143,10 @@ class LegacyBrokerController < ApplicationController
       container = Cloud::Sdk::ApplicationContainerProxy.find_available(@req.node_profile)
       check_cartridge_type(app.framework, container, "standalone")
       if (apps.length >= Rails.application.config.cdk[:per_user_app_limit])
-        raise Cloud::Sdk::UserException.new("#{@login} has already reached the application limit of #{Rails.application.config.cdk[:per_user_app_limit]}", 104)
+        raise Cloud::Sdk::UserException.new("#{@login} has already reached the application limit of #{Rails.application.config.cdk[:per_user_app_limit]}", 104) if not user.max_gears
+        if (apps.length >= user.max_gears)
+          raise Cloud::Sdk::UserException.new("#{@login} has already reached the application limit of #{user.max_gears}", 104) 
+        end
       end
       raise Cloud::Sdk::UserException.new("The supplied application name '#{app.name}' is not allowed", 105) if Cloud::Sdk::ApplicationContainerProxy.blacklisted? app.name
       if app.valid?
