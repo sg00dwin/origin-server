@@ -9,7 +9,7 @@ module Cloud
       def self.find(login, id)
         id_var = @primary_key || "uuid"        
         data = DataStore.instance.find(self.name,login,id)
-        return nil unless data
+        return nil if data.to_s.strip.length ==0
         
         obj = self.new.from_json(data.values[0])
         obj.instance_variable_set("@#{id_var}", data.keys[0])
@@ -20,7 +20,8 @@ module Cloud
       def self.find_all(login)
         id_var = @primary_key || "uuid"        
         data_list = DataStore.instance.find_all(self.name,login)
-        return [] unless data_list
+        return [] if data_list.to_s.strip.length ==0
+
         data_list.map! do |data|
           obj = self.new.from_json(data.values[0])
           obj.instance_variable_set("@#{id_var}", data.keys[0])
