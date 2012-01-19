@@ -93,7 +93,7 @@ Broker::Application.configure do
       :host => "localhost",
       :port => 27017,
       :user => "libra",
-      :password => "7sh6c7AblcR6",
+      :password => "momo",
       :db => "libra_dev",
       :collection => "user_info"
     }

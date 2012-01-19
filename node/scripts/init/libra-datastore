@@ -74,7 +74,7 @@ rh_configure() {
     done
     # Setup user
     echo "use admin
-          db.addUser(\"libra\", \"7sh6c7AblcR6\")
+          db.addUser(\"libra\", \"momo\")
           exit
          "  | mongo
     # Stop mongod server

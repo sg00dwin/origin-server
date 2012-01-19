@@ -99,7 +99,8 @@ module Cloud::Sdk
       select_fields = "apps." + id
       mcursor = MongoDataStore.collection.find({ "_id" => user_id }, :fields => [select_fields])
       bson = mcursor.next
-      return nil unless (bson and bson["apps"])
+      return [] unless bson
+      return [] if bson["apps"].to_s.strip.length == 0
 
       # Hack to overcome mongo limitation: Mongo key name can't have '.' char
       app_bson = bson["apps"][id]
@@ -116,11 +117,21 @@ module Cloud::Sdk
     def self.get_user_apps(user_id)
       mcursor = MongoDataStore.collection.find({ "_id" => user_id }, :fields => ["apps"] )
       bson = mcursor.next
-      return [] unless (bson and bson["apps"])
+      return [] unless bson
+      return [] if bson["apps"].to_s.strip.length == 0
 
       apps_bson = bson["apps"]
       ret = []
       apps_bson.each do |app_id, app_bson|
+
+        # Hack to overcome mongo limitation: Mongo key name can't have '.' char
+        embedded_carts = {}
+        app_bson["embedded"].each do |cart_name, cart_info|
+          cart_name = cart_name.gsub(DOT_SUBSTITUTE, DOT)
+          embedded_carts[cart_name] = cart_info
+        end if app_bson and app_bson["embedded"]
+        app_bson["embedded"] = embedded_carts if app_bson
+
         ret.push({ app_id => app_bson.to_json })
       end
       ret
