@@ -17,6 +17,10 @@ function _is_crontab_enabled() {
 
 
 function _crontab_status() {
+   if [ ! -f "$OPENSHIFT_REPO_DIR/.openshift/crontab" ]; then
+      echo "Application has no batch jobs configured [.openshift/crontab]" 1>&2
+   fi
+
    if _is_crontab_enabled; then
       echo "$SERVICE_NAME batch processing service is enabled" 1>&2
    else
@@ -30,9 +34,11 @@ function _crontab_enable() {
    if _is_crontab_enabled; then
       echo "$SERVICE_NAME batch processing service is already enabled" 1>&2
    else
-      # /usr/bin/crontab -u "$uuid" "$OPENSHIFT_REPO_DIR/.openshift/crontab"
-      /usr/bin/crontab "$OPENSHIFT_REPO_DIR/.openshift/crontab"
-      wait_to_start_as_user
+      if [ -f "$OPENSHIFT_REPO_DIR/.openshift/crontab" ]; then
+         crontab "$OPENSHIFT_REPO_DIR/.openshift/crontab"
+         wait_to_start_as_user
+      fi
+
       touch "$CART_INSTANCE_DIR/run/crontab.enabled"
    fi
 
@@ -41,8 +47,9 @@ function _crontab_enable() {
 
 function _crontab_disable() {
    if _is_crontab_enabled; then
-      # /usr/bin/crontab -u "$uuid" -r
-      /usr/bin/crontab -r
+      if crontab -l > /dev/null 2>&1; then
+         crontab -r
+      fi
       rm -f $CART_INSTANCE_DIR/run/crontab.enabled
    else
       echo "$SERVICE_NAME batch processing service is already disabled" 1>&2
