@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.85.7
+Version:       0.85.8
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -179,7 +179,6 @@ fi
 %attr(0640,-,-) %{ruby_sitelibdir}/facter/libra.rb
 %attr(0750,-,-) %{_initddir}/libra
 %attr(0750,-,-) %{_initddir}/libra-data
-%attr(0750,-,-) %{_initddir}/libra-datastore
 %attr(0750,-,-) %{_initddir}/libra-cgroups
 %attr(0750,-,-) %{_initddir}/libra-tc
 %attr(0755,-,-) %{_bindir}/trap-user
@@ -227,6 +226,10 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Thu Jan 19 2012 Dan McPherson <dmcphers@redhat.com> 0.85.8-1
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- Move libra-datastore to devenv.spec (rpenta@redhat.com)
+
 * Wed Jan 18 2012 Mike McGrath <mmcgrath@redhat.com> 0.85.7-1
 - Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
 - mongo datastore fixes (rpenta@redhat.com)
