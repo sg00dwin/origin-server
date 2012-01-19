@@ -40,6 +40,7 @@ class RestApplication < Cloud::Sdk::Model
     ]
       
     unless @embedded.nil?
+      #self.links += [ Link.new("Get embedded cartridges", "GET", "/applications/#{@name}/cartridges")]
       @embedded.each do |key, value|
         Rails.logger.debug "key=#{key} value=#{value}"
         self.links += [

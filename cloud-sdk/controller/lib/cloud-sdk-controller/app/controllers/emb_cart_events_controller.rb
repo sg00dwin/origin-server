@@ -7,7 +7,7 @@ class EmbCartEventsController < BaseController
   def create
     domain_id = params[:domain_id]
     id = params[:application_id]
-    cartridge = params[:id]
+    cartridge = params[:cartridge_id]
     event = params[:event]
 
     cloud_user = CloudUser.find(@login)
@@ -19,7 +19,7 @@ class EmbCartEventsController < BaseController
       respond_with @reply, :status => @reply.status
       return
     end
-    if application.embedded.nil? or not application.embedded.include?(cartridge)
+    if application.embedded.nil? or not application.embedded.has_key?(cartridge)
       @reply = RestReply.new( :bad_request)
       message = Message.new(:error, "The application #{id} is not configured with embedded cartridge #{cartridge}.") 
       @reply.messages.push(message)
@@ -39,7 +39,7 @@ class EmbCartEventsController < BaseController
           application.reload_dependency(cartridge)
         else
           @reply = RestReply.new(:bad_request)
-          message = Message.new(:error, "Invalid event #{event}")
+          message = Message.new(:error, "Invalid event #{event}.  Valid values are start, stop, restart and reload.")
           @reply.messages.push(message)
           respond_with @reply, :status => @reply.status   
           return
