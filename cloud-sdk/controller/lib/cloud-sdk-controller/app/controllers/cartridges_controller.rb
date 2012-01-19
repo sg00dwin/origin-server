@@ -1,5 +1,6 @@
 class CartridgesController < BaseController
   respond_to :xml, :json
+  include LegacyBrokerHelper
   
   def show
     index
