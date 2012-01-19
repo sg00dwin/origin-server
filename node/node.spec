@@ -34,7 +34,7 @@ Requires(post):   /usr/sbin/semanage
 Requires(postun): /usr/sbin/semodule
 Requires(postun): /usr/sbin/semanage
 
-BuildArch: noarch
+#BuildArch: noarch
 
 %description
 Turns current host into a OpenShift managed node
@@ -58,7 +58,7 @@ done
 
 # Build pam_libra
 pwd
-cd node/pam_libra
+cd pam_libra
 make
 cd -
 
