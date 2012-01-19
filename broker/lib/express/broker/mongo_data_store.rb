@@ -40,22 +40,18 @@ module Express
   
         districts = []
         mcursor.each do |bson|
-          pkey = bson["_id"]
           bson.delete("_id")
-          bson.delete("apps")
           districts.push(bson.to_json)
         end
         districts
       end
 
       def self.put_district(uuid, district_json)        
-        mcursor = MongoDataStore.district_collection.find( "_id" => uuid )
-        bson = mcursor.next
+        bson = MongoDataStore.district_collection.find_one( "_id" => uuid )
+        district_json["_id"] = uuid
         if bson
-          district_json["_id"] = uuid
           MongoDataStore.district_collection.update({ "_id" => uuid }, district_json)
         else
-          district_json["_id"] = uuid
           MongoDataStore.district_collection.insert(district_json)
         end
       end
@@ -64,8 +60,7 @@ module Express
       # Returns the district json object
       #
       def self.get_district(uuid)
-        mcursor = MongoDataStore.district_collection.find( "_id" => uuid )
-        bson = mcursor.next
+        bson = MongoDataStore.district_collection.find_one( "_id" => uuid )
         return nil unless bson
   
         bson.delete("_id")
