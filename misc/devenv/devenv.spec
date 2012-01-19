@@ -174,6 +174,8 @@ git init --bare /root/os-client-tools
 service iptables restart
 service qpidd restart
 service mcollective start
+service libra-datastore configure
+service libra-datastore start
 service libra-site restart
 service libra-broker restart
 service jenkins restart
@@ -182,6 +184,7 @@ service sshd restart
 chkconfig iptables on
 chkconfig qpidd on
 chkconfig mcollective on
+chkconfig libra-datastore on
 chkconfig libra-site on
 chkconfig libra-broker on
 chkconfig jenkins on
@@ -219,6 +222,7 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 %config(noreplace) %{jenkins}/jobs/*/*
 %{jenkins}/jobs/sync.rb
 %{devenvdir}
+%{_initddir}/libra-datastore
 %{_initddir}/libra-broker
 %{_initddir}/libra-site
 %{_initddir}/sauce-connect

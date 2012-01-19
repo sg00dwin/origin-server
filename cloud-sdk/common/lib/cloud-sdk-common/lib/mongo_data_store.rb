@@ -73,7 +73,7 @@ module Cloud::Sdk
     def self.get_user(user_id)
       mcursor = MongoDataStore.collection.find( "_id" => user_id )
       bson = mcursor.next
-      return nil unless bson
+      return nil if bson.to_s.strip.length == 0
 
       pkey = bson["_id"]
       bson.delete("_id")
@@ -83,7 +83,7 @@ module Cloud::Sdk
 
     def self.get_users
       mcursor = MongoDataStore.collection.find()
-      return [] unless mcursor
+      return [] if mcursor.to_s.strip.length == 0
 
       ret = []
       mcursor.each do |bson|
@@ -97,7 +97,7 @@ module Cloud::Sdk
       select_fields = "apps.#{id}"
       mcursor = MongoDataStore.collection.find({ "_id" => user_id }, :fields => [select_fields])
       bson = mcursor.next
-      return [] unless bson
+      return [] if bson.to_s.strip.length == 0
       return [] if bson["apps"].to_s.strip.length == 0
 
       # Hack to overcome mongo limitation: Mongo key name can't have '.' char
@@ -115,7 +115,7 @@ module Cloud::Sdk
     def self.get_user_apps(user_id)
       mcursor = MongoDataStore.collection.find({ "_id" => user_id }, :fields => ["apps"] )
       bson = mcursor.next
-      return [] unless bson
+      return [] if bson.to_s.strip.length == 0
       return [] if bson["apps"].to_s.strip.length == 0
 
       apps_bson = bson["apps"]

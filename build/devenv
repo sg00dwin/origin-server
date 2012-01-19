@@ -312,8 +312,6 @@ class DevEnv < Thor
     else
       use_public_ip(hostname)
     end
-    # restart libra datastore
-    ssh(hostname, '/sbin/service libra-datastore restart > /dev/null 2>&1')
   end
 
   desc "sync_sdk NAME PATH", "Synchronize a local git repo with a remote DevEnv instance.  NAME should be ssh resolvable. PATH should be the location of the git repository to sync"
@@ -398,10 +396,6 @@ class DevEnv < Thor
     sleep 30
     puts "Done"
   
-    # start datastore service
-    ssh(hostname, '/sbin/chkconfig --add libra-datastore; \
-                   /sbin/service libra-datastore configure > /dev/null 2>&1; \
-                   /sbin/service libra-datastore start > /dev/null 2>&1') 
     if options.verifier?
       use_private_ip(hostname)
 
