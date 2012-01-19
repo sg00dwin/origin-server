@@ -19,9 +19,9 @@ module Cloud::Sdk
       Rails.logger.debug "MongoDataStore.find(#{obj_type}, #{user_id}, #{id})\n\n"
       case obj_type
       when "CloudUser"
-	MongoDataStore.get_user(user_id)
+	      MongoDataStore.get_user(user_id)
       when "Application"
-	MongoDataStore.get_app(user_id, id)
+	      MongoDataStore.get_app(user_id, id)
       end
     end
     
@@ -29,9 +29,9 @@ module Cloud::Sdk
       Rails.logger.debug "MongoDataStore.find_all(#{obj_type}, #{user_id})\n\n"
       case obj_type
       when "CloudUser"
-	MongoDataStore.get_users
+	      MongoDataStore.get_users
       when "Application"
-	MongoDataStore.get_user_apps(user_id)
+	      MongoDataStore.get_user_apps(user_id)
       end
     end
     
@@ -39,9 +39,9 @@ module Cloud::Sdk
       Rails.logger.debug "MongoDataStore.save(#{obj_type}, #{user_id}, #{id}, #{obj_bson})\n\n"
       case obj_type
       when "CloudUser"
-	MongoDataStore.put_user(user_id, obj_bson)
+	      MongoDataStore.put_user(user_id, obj_bson)
       when "Application"
-	MongoDataStore.put_app(user_id, id, obj_bson)
+	      MongoDataStore.put_app(user_id, id, obj_bson)
       end
     end
     
@@ -49,9 +49,9 @@ module Cloud::Sdk
       Rails.logger.debug "MongoDataStore.delete(#{obj_type}, #{user_id}, #{id})\n\n"
       case obj_type
       when "CloudUser"
-	MongoDataStore.delete_user(user_id)
+	      MongoDataStore.delete_user(user_id)
       when "Application"
-	MongoDataStore.delete_app(user_id, id)
+	      MongoDataStore.delete_app(user_id, id)
       end
     end
 
@@ -87,19 +87,18 @@ module Cloud::Sdk
 
       ret = []
       mcursor.each do |bson|
-        pkey = bson["_id"]
         bson.delete("_id")
-        bson.delete("apps")
-        ret.push({ pkey => bson.to_json })
+        ret.push(bson.to_json)
       end
       ret
     end
 
     def self.get_app(user_id, id)
-      select_fields = "apps." + id
+      select_fields = "apps.#{id}"
       mcursor = MongoDataStore.collection.find({ "_id" => user_id }, :fields => [select_fields])
       bson = mcursor.next
-      return nil unless (bson and bson["apps"])
+      return [] unless bson
+      return [] if bson["apps"].to_s.strip.length == 0
 
       # Hack to overcome mongo limitation: Mongo key name can't have '.' char
       app_bson = bson["apps"][id]
@@ -116,11 +115,21 @@ module Cloud::Sdk
     def self.get_user_apps(user_id)
       mcursor = MongoDataStore.collection.find({ "_id" => user_id }, :fields => ["apps"] )
       bson = mcursor.next
-      return [] unless (bson and bson["apps"])
+      return [] unless bson
+      return [] if bson["apps"].to_s.strip.length == 0
 
       apps_bson = bson["apps"]
       ret = []
       apps_bson.each do |app_id, app_bson|
+
+        # Hack to overcome mongo limitation: Mongo key name can't have '.' char
+        embedded_carts = {}
+        app_bson["embedded"].each do |cart_name, cart_info|
+          cart_name = cart_name.gsub(DOT_SUBSTITUTE, DOT)
+          embedded_carts[cart_name] = cart_info
+        end if app_bson and app_bson["embedded"]
+        app_bson["embedded"] = embedded_carts if app_bson
+
         ret.push({ app_id => app_bson.to_json })
       end
       ret

@@ -43,7 +43,7 @@ def mongo_populate
   user_info = bucket.objects.with_prefix('user_info')
 
   user_info.each do |user_obj|
-    if user_obj.key =~ /\/user.json$/
+    if user_obj.key.end_with?('/user.json') && !user_obj.key.end_with?('/apps/user.json')
       # Get RH login user data
       user_name = File.basename(File.dirname(user_obj.key))
       user_data_str = user_obj.read

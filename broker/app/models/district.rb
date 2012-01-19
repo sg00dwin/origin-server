@@ -83,7 +83,7 @@ class District < Cloud::Sdk::Model
     @new_record = false
     @persisted = true
     @deleted = false
-    Cloud::Sdk::DataStore.instance.save_district(@uuid, self.to_json)
+    Cloud::Sdk::DataStore.instance.save_district(@uuid, self.attributes)
     self
   end
   

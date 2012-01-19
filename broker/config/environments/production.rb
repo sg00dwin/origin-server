@@ -86,6 +86,10 @@ Broker::Application.configure do
     :config      => "/etc/mcollective/client.cfg"
   }
   
+  config.datastore_mongo = {
+    :collection => "district"
+  }
+  
   config.analytics = {
     :nurture_enabled => true,
     :nurture_username => "admin",

@@ -77,11 +77,15 @@ popd > /dev/null
 ln -s $CART_INFO_DIR/bin/cron_ctl.sh $CRON_DIR/${application}_cron_ctl.sh
 
 #
+# Add a sample crontab entry for the user.
+#
+crontab -u "$uuid"  "$CART_INFO_DIR/configuration/crontab" || error "Failed to setup application's crontab.  Please contact support" 121
+
+#
 # Setup Permissions
 #
 chmod +x "$CRON_DIR/"*.sh || error "Failed to chmod new application scripts" 122
 chown $user_id.$group_id -R "$CRON_DIR/" || error "Failed to chown new application space.  Please contact support" 123
-ln -s "$OPENSHIFT_REPO_DIR/.openshift/crontab" "$CRON_DIR/etc/"
 chown root.root "$CRON_DIR" "$CRON_DIR"/*.sh
 chcon -t libra_var_lib_t -l $mcs_level -R "$CRON_DIR"
 
@@ -98,6 +102,6 @@ echo "export OPENSHIFT_BATCH_CTL_SCRIPT='$CRON_DIR/${application}_cron_ctl.sh'" 
 echo "export OPENSHIFT_BATCH_CRON_14_EMBEDDED_TYPE='cron-1.4'" > $APP_HOME/.env/OPENSHIFT_BATCH_CRON_14_EMBEDDED_TYPE
 
 client_result ""
-client_result "cron 1.4 services have been added to ${application}"
+client_result "cron-1.4 added to application ${application}"
 client_result ""
 client_result "See file .openshift/crontab for managing your batch jobs"
