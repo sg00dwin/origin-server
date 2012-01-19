@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Node
 Name:           rubygem-%{gemname}
-Version:        0.3.5
+Version:        0.3.6
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        AGPLv3
@@ -87,6 +87,9 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Thu Jan 19 2012 Dan McPherson <dmcphers@redhat.com> 0.3.6-1
+- Updating gem versions (dmcphers@redhat.com)
+
 * Thu Jan 19 2012 Dan McPherson <dmcphers@redhat.com> 0.3.5-1
 - Updating gem versions (dmcphers@redhat.com)
 
