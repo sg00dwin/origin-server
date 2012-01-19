@@ -1,5 +1,5 @@
 class CloudUser < Cloud::Sdk::UserModel
-  attr_accessor :rhlogin, :uuid, :system_ssh_keys, :env_vars, :ssh_keys, :ssh, :ssh_type, :namespace, :key, :type
+  attr_accessor :rhlogin, :uuid, :system_ssh_keys, :env_vars, :ssh_keys, :ssh, :ssh_type, :namespace, :key, :type, :max_gears
   primary_key :rhlogin
   private :rhlogin=, :uuid=, :ssh=, :namespace=
   exclude_attributes :key, :type
@@ -30,6 +30,7 @@ class CloudUser < Cloud::Sdk::UserModel
     super()
     ssh_type = "ssh-rsa" if ssh_type.to_s.strip.length == 0
     self.rhlogin, self.ssh, self.namespace, self.ssh_type = rhlogin, ssh, namespace, ssh_type
+    self.max_gears = nil
   end
   
   def save
