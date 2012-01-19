@@ -38,7 +38,7 @@ GEM
       uuidtools (~> 2.1)
     bson (1.5.2)
     builder (2.1.2)
-    cloud-sdk-common (0.3.4)
+    cloud-sdk-common (0.3.5)
       activemodel (= 3.0.10)
       json (= 1.4.3)
       mongo (= 1.5.2)
