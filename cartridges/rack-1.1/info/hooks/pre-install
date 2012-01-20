@@ -25,7 +25,7 @@ source ${CART_DIR}/abstract/info/lib/util
 
 load_node_conf
 
-[ -z "$CARTRIDGE_DIR" ] && CARTRIDGE_DIR="/usr/libexec/li/cartridges/rack-1.1/"
+[ -z "$CARTRIDGE_DIR" ] && CARTRIDGE_DIR="/usr/libexec/li/cartridges/ruby-1.8/"
 
 function print_help {
     echo "Usage: uuid"

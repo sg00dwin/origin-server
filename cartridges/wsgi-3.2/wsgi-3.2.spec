@@ -92,10 +92,7 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/manifest.yml
 
 %changelog
-* Fri Jan 20 2012 Mike McGrath <mmcgrath@redhat.com> 0.85.4-1
-- Renamed wsgi to python (mmcgrath@redhat.com)
-
-* Fri Jan 20 2012 Mike McGrath <mmcgrath@redhat.com>
+* Fri Jan 20 2012 Mike McGrath <mmcgrath@redhat.com> 0.85.3-1
 - Renamed wsgi to python (mmcgrath@redhat.com)
 
 * Wed Jan 18 2012 Dan McPherson <dmcphers@redhat.com> 0.85.2-1
