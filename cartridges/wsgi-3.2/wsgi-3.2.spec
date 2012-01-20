@@ -2,7 +2,7 @@
 
 Summary:   Provides python-wsgi-3.2 support
 Name:      rhc-cartridge-wsgi-3.2
-Version:   0.85.2
+Version:   0.85.4
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -92,6 +92,12 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/manifest.yml
 
 %changelog
+* Fri Jan 20 2012 Mike McGrath <mmcgrath@redhat.com> 0.85.4-1
+- Renamed wsgi to python (mmcgrath@redhat.com)
+
+* Fri Jan 20 2012 Mike McGrath <mmcgrath@redhat.com>
+- Renamed wsgi to python (mmcgrath@redhat.com)
+
 * Wed Jan 18 2012 Dan McPherson <dmcphers@redhat.com> 0.85.2-1
 - Fixup minor issue reported on forums - create python eggs cache directory
   with write permissions for the user. (ramr@redhat.com)
