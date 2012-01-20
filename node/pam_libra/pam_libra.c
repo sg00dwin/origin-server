@@ -161,7 +161,7 @@ static void openshift_mcs_level(int uid, security_context_t *scon) {
 	}
 	TIER = SETSIZE - TIER;
 	ORD = ORD + TIER;
-	asprintf(scon, "unconfined_u:unconfined_r:libra_t:s0:c%d,c%d", TIER, ORD);
+	asprintf(scon, "unconfined_u:system_r:libra_t:s0:c%d,c%d", TIER, ORD);
 }
 
 PAM_EXTERN int
@@ -215,7 +215,7 @@ pam_sm_open_session(pam_handle_t *pamh, int flags UNUSED,
 		user_context = strdup("unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023");
 	}
 	if (!user_context) {
-		pam_syslog(pamh, LOG_ERR, "Unable to generate User context for user %s", username);
+		pam_syslog(pamh, LOG_ERR, "Unable to generate User context for user %s: %s", username, strerror(errno));
 		return -1;
 	}
 	
@@ -232,8 +232,8 @@ pam_sm_open_session(pam_handle_t *pamh, int flags UNUSED,
 	}
 	if (ret) {
 		pam_syslog(pamh, LOG_ERR,
-			   "Error!  Unable to set %s executable context %s.",
-			   username, user_context);
+			   "Error!  Unable to set %s executable context %s. %s",
+			   username, user_context, strerror(errno));
 		if (security_getenforce() == 1) {
 			freecon(user_context);
 			return PAM_AUTH_ERR;
@@ -274,8 +274,8 @@ pam_sm_close_session(pam_handle_t *pamh, int flags UNUSED,
 		return PAM_SUCCESS;
 	
 	if (setexeccon(prev_user_context)) {
-		pam_syslog(pamh, LOG_ERR, "Unable to restore executable context %s.",
-			   prev_user_context ? prev_user_context : "");
+		pam_syslog(pamh, LOG_ERR, "Unable to restore executable context %s: %s",
+			   prev_user_context ? prev_user_context : "", strerror(errno));
 		if (security_getenforce() == 1)
 			status = PAM_AUTH_ERR;
 		else

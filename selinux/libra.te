@@ -250,7 +250,6 @@ require {
 	type httpd_exec_t;
 	type httpd_rotatelogs_exec_t;
 	attribute exec_type;
-	type sshd_t;
 	type httpd_t;
 	type sendmail_t;
 	attribute domain;
@@ -260,15 +259,6 @@ require {
 
 allow libra_domain httpd_exec_t:file entrypoint;
 dontaudit libra_domain exec_type:file getattr;
-
-libra_search_lib(sshd_t)
-dontaudit sshd_t self:capability sys_admin;
-allow libra_domain sshd_t:process sigchld;
-allow libra_domain sshd_t:unix_stream_socket connectto;
-allow sshd_t libra_domain:process { rlimitinh signal };
-manage_dirs_pattern(sshd_t, libra_tmp_t, libra_tmp_t)
-manage_sock_files_pattern(sshd_t, libra_tmp_t, libra_tmp_t)
-allow sshd_t libra_tmp_t:dir mounton;
 ssh_dontaudit_search_user_home_dir(libra_domain)
 dontaudit sendmail_t libra_initrc_t:fifo_file { read write };
 dontaudit domain libra_t:fifo_file { getattr write };
@@ -410,3 +400,24 @@ manage_files_pattern(libra_mail_t, libra_tmp_t, libra_tmp_t)
 mta_dontaudit_read_spool_symlinks(libra_mail_t)
 
 userdom_dontaudit_use_user_ptys(libra_mail_t)
+
+gen_require(`
+	type sshd_devpts_t;
+	type ptmx_t;
+	type sshd_t;
+')
+
+allow sshd_t libra_domain:process { transition dyntransition };
+libra_search_lib(sshd_t)
+dontaudit sshd_t self:capability sys_admin;
+allow libra_domain sshd_t:process sigchld;
+allow libra_domain sshd_t:unix_stream_socket connectto;
+allow sshd_t libra_domain:process { rlimitinh signal };
+manage_dirs_pattern(sshd_t, libra_tmp_t, libra_tmp_t)
+manage_sock_files_pattern(sshd_t, libra_tmp_t, libra_tmp_t)
+allow sshd_t libra_tmp_t:dir mounton;
+
+allow libra_t ptmx_t:chr_file { read write };
+allow libra_t sshd_devpts_t:chr_file { read write ioctl open getattr };
+allow libra_t sshd_t:tcp_socket { read write getattr setopt getopt };
+allow libra_t sshd_t:unix_stream_socket { write read };
