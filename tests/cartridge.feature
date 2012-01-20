@@ -11,7 +11,7 @@ Feature: Cartridge Verification Tests
     |     1     |  php-5.3     |
     |     1     |  wsgi-3.2    |
     |     1     |  perl-5.10   |
-    |     1     |  rack-1.1    |
+    |     1     |  ruby-1.8    |
     |     1     |  jbossas-7.0 |
     |     1     |  jenkins-1.4 |
     |     1     |  raw-0.1     |
@@ -27,7 +27,7 @@ Feature: Cartridge Verification Tests
     |   php-5.3     |
     |   wsgi-3.2    |
     |   perl-5.10   |
-    |   rack-1.1    |
+    |   ruby-1.8    |
     |   jbossas-7.0 |
 
   Scenario Outline: Application Stopping
@@ -40,7 +40,7 @@ Feature: Cartridge Verification Tests
     |   php-5.3     |
     |   wsgi-3.2    |
     |   perl-5.10   |
-    |   rack-1.1    |
+    |   ruby-1.8    |
     |   jbossas-7.0 |
     |   jenkins-1.4 |
 
@@ -54,7 +54,7 @@ Feature: Cartridge Verification Tests
     |   php-5.3     |
     |   wsgi-3.2    |
     |   perl-5.10   |
-    |   rack-1.1    |
+    |   ruby-1.8    |
     |   jbossas-7.0 |
     |   jenkins-1.4 |
 
@@ -68,7 +68,7 @@ Feature: Cartridge Verification Tests
     |   php-5.3     |
     |   wsgi-3.2    |
     |   perl-5.10   |
-    |   rack-1.1    |
+    |   ruby-1.8    |
     |   jbossas-7.0 |
     |   jenkins-1.4 |
 
@@ -82,7 +82,7 @@ Feature: Cartridge Verification Tests
     |   php-5.3     |
     |   wsgi-3.2    |
     |   perl-5.10   |
-    |   rack-1.1    |
+    |   ruby-1.8    |
     |   jbossas-7.0 |
     |   jenkins-1.4 |
 
@@ -97,7 +97,7 @@ Feature: Cartridge Verification Tests
     |   php-5.3     |
     |   wsgi-3.2    |
     |   perl-5.10   |
-    |   rack-1.1    |
+    |   ruby-1.8    |
     |   jenkins-1.4 |
     
   Scenario Outline: Application Change Namespace
@@ -110,7 +110,7 @@ Feature: Cartridge Verification Tests
     |   php-5.3     |
     |   wsgi-3.2    |
     |   perl-5.10   |
-    |   rack-1.1    |
+    |   ruby-1.8    |
     |   jbossas-7.0 |
     |   jenkins-1.4 |
     
@@ -126,7 +126,7 @@ Feature: Cartridge Verification Tests
     |   php-5.3     |
     |   wsgi-3.2    |
     |   perl-5.10   |
-    |   rack-1.1    |
+    |   ruby-1.8    |
     |   jbossas-7.0 |
     |   jenkins-1.4 |
     |   raw-0.1     |
@@ -141,7 +141,7 @@ Feature: Cartridge Verification Tests
     |   php-5.3     |
     |   wsgi-3.2    |
     |   perl-5.10   |
-    |   rack-1.1    |
+    |   ruby-1.8    |
     |   jbossas-7.0 |
     |   jenkins-1.4 |
     |   raw-0.1     |
@@ -156,6 +156,6 @@ Feature: Cartridge Verification Tests
     |   php-5.3     |
     |   wsgi-3.2    |
     |   perl-5.10   |
-    |   rack-1.1    |
+    |   ruby-1.8    |
     |   jbossas-7.0 |
     |   jenkins-1.4 |
