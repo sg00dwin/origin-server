@@ -228,7 +228,7 @@ class DevEnv < Thor
       end
 
       if options.register?
-        register_image(conn, instance, name + build_num, manifest)
+        register_image(conn, instance, name + '_' + build_num, manifest)
       end
     ensure
       terminate_instance(instance) if options.terminate?
