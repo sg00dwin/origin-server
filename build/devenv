@@ -154,9 +154,7 @@ class DevEnv < Thor
     conn = connect
     conn = conn.regions[options.region] unless (options.region?nil)
 
-    instance = nil
-    image = nil
-    
+    image = nil    
     if options.build_clean_ami
       
       # Create a new builder instance
@@ -168,8 +166,6 @@ class DevEnv < Thor
       else
         image = conn.images[AMI[options.region]]
       end
-  
-      instance = launch_instance(image, name + '_' + build_num)
     else
       # Get the latest devenv image and create a new instance
       if options.use_stage_repo?
