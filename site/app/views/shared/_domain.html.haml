@@ -1,0 +1,8 @@
+= form_for :express_domain, :url => express_domains_path do |f|
+  = f.hidden_field :dom_action, :value => 'create'
+  = f.hidden_field :form_type, :value => 'domain'
+  %div
+    http://myapps-
+    = f.text_field :namespace
+    = ".rhcloud.com"
+    = f.submit "Save"

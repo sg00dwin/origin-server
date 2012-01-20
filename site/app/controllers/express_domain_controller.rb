@@ -8,6 +8,14 @@ class ExpressDomainController < ApplicationController
     # Make sure that if there is an SSH key provided, it's valid
     if ssh = domain_params[:ssh]
       @ssh_key_validation = validate_ssh(ssh)
+      if @ssh_key_validation[:valid]
+        # Ensure we only send the key until the broker supports comments
+        domain_params[:ssh] = "#{@ssh_key_validation[:type]} #{@ssh_key_validation[:key]}"
+      else
+        ssh_invalid = true
+      end
+    else
+      domain_params[:ssh] = 'ssh-rsa nossh'
     end
 
     # check for which domain action we should call
@@ -15,10 +23,7 @@ class ExpressDomainController < ApplicationController
     form_type = domain_params.delete :form_type
     @event = "#{form_type.gsub(/[^\w]/, '')}_form_return"
 
-    if @ssh_key_validation[:valid]
-
-      # Ensure we only send the key until the broker supports comments
-      domain_params[:ssh] = "#{@ssh_key_validation[:type]} #{@ssh_key_validation[:key]}"
+    if !ssh_invalid
 
       Rails.logger.debug "dom_action: #{@dom_action}"
       domain_params[:rhlogin] = session[:login]
