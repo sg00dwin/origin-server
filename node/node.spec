@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.85.10
+Version:       0.85.11
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -227,6 +227,10 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Fri Jan 20 2012 Mike McGrath <mmcgrath@redhat.com> 0.85.11-1
+- Fix pam_libra to user the system_r role rather then unconfined_r, also add
+  better errno reporting (dwalsh@redhat.com)
+
 * Fri Jan 20 2012 Mike McGrath <mmcgrath@redhat.com> 0.85.10-1
 - adding libselinux-devel to the requires list
 
