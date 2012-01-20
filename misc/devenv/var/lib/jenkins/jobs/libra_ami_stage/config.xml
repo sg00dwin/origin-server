@@ -57,7 +57,12 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>build/devenv build devenv-stage_${BUILD_NUMBER} --use_stage_repo --terminate --register</command>
+      <command>if [ &quot;$BUILD_CLEAN_AMI&quot; == &quot;true&quot; ]
+then
+  build/devenv build devenv-stage ${BUILD_NUMBER} --register --terminate --use_stage_repo --build_clean_ami
+else
+  build/devenv build devenv-stage ${BUILD_NUMBER} --register --terminate --use_stage_repo
+fi</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>

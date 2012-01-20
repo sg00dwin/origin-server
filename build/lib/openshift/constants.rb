@@ -8,6 +8,7 @@ ZONE = 'us-east-1d'
 DEVENV_WILDCARD = "devenv_*"
 DEVENV_STAGE_WILDCARD = "devenv-stage_*"
 DEVENV_CLEAN_WILDCARD = "devenv-clean_*"
+DEVENV_STAGE_CLEAN_WILDCARD = "devenv-stage-clean_*"
 TERMINATE_REGEX = /terminate/
 VERIFIED_TAG = "qe-ready"
 RSA = File.expand_path("~/.ssh/libra.pem")
