@@ -18,7 +18,7 @@ Options:
 -u|--uuid     <district uuid>
     District uuid  (alphanumeric)
 -c|--command <command>
-    (add-node|remove-node|mark-remove-node|destroy)
+    (add-node|remove-node|deactivate-node|destroy)
 -i|--server_identity
     Node server_identity (required)
 -b|--bypass
@@ -72,13 +72,10 @@ reply = ResultIO.new
 case command
 when "add-node"
   district.add_node(server_identity)
-  district.save
 when "remove-node"
   district.remove_node(server_identity)
-  district.save
-when "mark-remove-node"
-  district.mark_remove_node(server_identity)
-  district.save
+when "deactivate-node"
+  district.deactivate_node(server_identity)
 when "destroy"
   unless bypass
     puts <<-WARNING
@@ -101,7 +98,8 @@ when "destroy"
     end
   end
 
-  if district.server_identities.empty? && district.capacity = 0
+  #TODO handle uids reserved outside of district
+  if district.server_identities.empty? && district.available_capacity == Rails.application.config.districts[:max_capacity]
     district.delete
     reply.resultIO << "Successfully destroyed district: #{uuid}" if reply.resultIO.string.empty?
   else
@@ -110,10 +108,14 @@ when "destroy"
 
 else
   if district
-    reply.resultIO << district.pretty_inspect
+    district.available_uids = '<hidden>'
+    reply.resultIO << district.attributes.pretty_inspect
   else
     districts = District.find_all
-    reply.resultIO << districts.pretty_inspect
+    districts.each do |district|
+      district.available_uids = '<hidden>'
+      reply.resultIO << district.attributes.pretty_inspect
+    end
   end
 end
 

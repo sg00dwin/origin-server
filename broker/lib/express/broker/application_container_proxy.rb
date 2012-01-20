@@ -15,12 +15,12 @@ module Express
       end
       
       def self.find_available_impl(node_profile=nil)
+        district_uuid = nil
         if Rails.application.config.districts[:enabled]
-          unless Rails.application.config.districts[:district]
-            district = District.find_available()
-          else
-            district = District.find(Rails.application.config.districts[:district])
-            district_uuid = district ? district.uuid : nil
+          district = District.find_available()
+          if district
+            district_uuid = district.uuid
+            Rails.logger.debug "DEBUG: find_available_impl: district_uuid: #{district_uuid}"
           end
         end
         current_server, current_capacity = rpc_find_available(node_profile, district_uuid)
@@ -30,7 +30,7 @@ module Express
           Rails.logger.debug "CURRENT SERVER: #{current_server}"
         end
         raise Cloud::Sdk::NodeException.new("No nodes available.  If the problem persists please contact Red Hat support.", 140) unless current_server
-        Rails.logger.debug "DEBUG: server.rb:find_available #{current_server}: #{current_capacity}"
+        Rails.logger.debug "DEBUG: find_available_impl: current_server: #{current_server}: #{current_capacity}"
 
         ApplicationContainerProxy.new(current_server, current_capacity, district)
       end
@@ -58,22 +58,15 @@ module Express
         cartridges
       end
       
-      def available_uid
-        #TODO need this to be done in a block with a capacity check
-        available_uid = nil
+      def reserve_uid
+        reserved_uid = nil
         if @district
-          available_uid = @district.available_uid
+          reserved_uid = @district.reserve_uid
         end
-        available_uid
+        reserved_uid
       end
       
       def create(app, uid=nil)
-        #TODO need this to be done in a block with a capacity check
-        if @district
-          @district.capacity += 1
-          @district.save
-        end
-
         result = execute_direct(@@C_CONTROLLER, 'configure', "-c '#{app.uuid}' -i '#{uid}' -s '#{app.user.ssh}' -t '#{app.user.ssh_type}'")
         parse_result(result)
       end
@@ -85,12 +78,7 @@ module Express
         if Rails.application.config.districts[:enabled]
           district_uuid = rpc_get_fact_direct('district')
           if district_uuid && district_uuid != 'NONE'
-            district = District.find(district_uuid)
-            if district
-              district.capacity -= 1
-              district.uids.delete(app.uid)
-              district.save
-            end
+            unreserve_district_uid(district_uuid, app.uid)
           end
         end
         return result_io
@@ -403,8 +391,9 @@ module Express
         result
       end
       
-      def set_district(uuid)
-        mc_args = { :uuid => uuid }
+      def set_district(uuid, active)
+        mc_args = { :uuid => uuid,
+                    :active => active}
         rpc_client = rpc_exec_direct('libra')
         result = nil
         begin
@@ -616,27 +605,28 @@ module Express
         resultIO
       end
       
-      def self.rpc_find_available(node_profile=nil, district=nil, forceRediscovery=false)
+      def self.rpc_find_available(node_profile=nil, district_uuid=nil, forceRediscovery=false)
         current_server, current_capacity = nil, nil
-        additional_filters = [
-          {:fact => "capacity",
-           :value => "100",
-           :operator => "<"
-          }
-        ]
+        additional_filters = []
         if node_profile
           additional_filters.push({:fact => "node_profile",
                                    :value => node_profile,
                                    :operator => "=="})
         end
         
-        if district
-          additional_filters.push({:fact => "district",
-                                   :value => district,
+        if district_uuid
+          additional_filters.push({:fact => "district_uuid",
+                                   :value => district_uuid,
+                                   :operator => "=="})
+          additional_filters.push({:fact => "district_active",
+                                   :value => true.to_s,
                                    :operator => "=="})
         else
+          additional_filters.push({:fact => "capacity",
+                                   :value => 100,
+                                   :operator => "<"})
           #TODO how do you filter on a fact not being set
-          additional_filters.push({:fact => "district",
+          additional_filters.push({:fact => "district_uuid",
                                    :value => "NONE",
                                    :operator => "=="})
         end
