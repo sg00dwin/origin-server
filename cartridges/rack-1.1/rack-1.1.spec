@@ -1,4 +1,4 @@
-%define cartridgedir %{_libexecdir}/li/cartridges/rack-1.1
+%define cartridgedir %{_libexecdir}/li/cartridges/ruby-1.8
 
 Summary:   Provides ruby rack support running on Phusion Passenger
 Name:      rhc-cartridge-rack-1.1
@@ -44,7 +44,7 @@ Requires: ruby-RMagick
 BuildArch: noarch
 
 %description
-Provides rack support to OpenShift
+Provides ruby support to OpenShift
 
 %prep
 %setup -q

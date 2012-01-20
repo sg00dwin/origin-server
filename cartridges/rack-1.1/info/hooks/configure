@@ -24,7 +24,7 @@ set -e
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_rack_configure
+    echo "$0 $@" | logger -p local0.notice -t libra_ruby_configure
     exit 1
 }
 
@@ -41,7 +41,7 @@ done
 [ $# -eq 3 ] || print_help
 
 CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
-app_type="rack-1.1"
+app_type="ruby-1.8"
 
 source ${CART_DIR}/abstract/info/lib/util
 setup_configure "$1" $2 $3
@@ -49,7 +49,7 @@ setup_configure "$1" $2 $3
 check_app_dir_doesnt_exist
 unobfuscate_app_home $uuid $namespace $application
 
-clone_git_repo $application $user_id $group_id $uuid "rack 1.1"
+clone_git_repo $application $user_id $group_id $uuid "ruby 1.8"
 
 
 #

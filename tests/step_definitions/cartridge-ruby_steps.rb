@@ -1,26 +1,26 @@
 # Controller cartridge command paths
 $cartridge_root ||= "/usr/libexec/li/cartridges"
-$rack_cartridge = "#{$cartridge_root}/rack-1.1"
-$rack_common_conf_path = "#{$rack_cartridge}/info/configuration/etc/conf/httpd_nolog.conf"
-$rack_hooks = "#{$rack_cartridge}/info/hooks"
-$rack_config_path = "#{$rack_hooks}/configure"
+$ruby_cartridge = "#{$cartridge_root}/ruby-1.8"
+$ruby_common_conf_path = "#{$ruby_cartridge}/info/configuration/etc/conf/httpd_nolog.conf"
+$ruby_hooks = "#{$ruby_cartridge}/info/hooks"
+$ruby_config_path = "#{$ruby_hooks}/configure"
 # app_name namespace acct_name
-$rack_config_format = "#{$rack_config_path} '%s' '%s' '%s'"
-$rack_deconfig_path = "#{$rack_hooks}/deconfigure"
-$rack_deconfig_format = "#{$rack_deconfig_path} '%s' '%s' '%s'"
+$ruby_config_format = "#{$ruby_config_path} '%s' '%s' '%s'"
+$ruby_deconfig_path = "#{$ruby_hooks}/deconfigure"
+$ruby_deconfig_format = "#{$ruby_deconfig_path} '%s' '%s' '%s'"
 
-$rack_start_path = "#{$rack_hooks}/start"
-$rack_start_format = "#{$rack_start_path} '%s' '%s' '%s'"
+$ruby_start_path = "#{$ruby_hooks}/start"
+$ruby_start_format = "#{$ruby_start_path} '%s' '%s' '%s'"
 
-$rack_stop_path = "#{$rack_hooks}/stop"
-$rack_stop_format = "#{$rack_stop_path} '%s' '%s' '%s'"
+$ruby_stop_path = "#{$ruby_hooks}/stop"
+$ruby_stop_format = "#{$ruby_stop_path} '%s' '%s' '%s'"
 
-$rack_status_path = "#{$rack_hooks}/status"
-$rack_status_format = "#{$rack_status_path} '%s' '%s' '%s'"
+$ruby_status_path = "#{$ruby_hooks}/status"
+$ruby_status_format = "#{$ruby_status_path} '%s' '%s' '%s'"
 
 $libra_httpd_conf_d ||= "/etc/httpd/conf.d/libra"
 
-When /^I configure a rack application$/ do
+When /^I configure a ruby application$/ do
   account_name = @account['accountname']
   namespace = "ns1"
   app_name = "app1"
@@ -28,11 +28,11 @@ When /^I configure a rack application$/ do
     'name' => app_name,
     'namespace' => namespace
   }
-  command = $rack_config_format % [app_name, namespace, account_name]
+  command = $ruby_config_format % [app_name, namespace, account_name]
   runcon command,  'unconfined_u', 'system_r', 'libra_initrc_t'
 end
 
-Then /^a rack application http proxy file will( not)? exist$/ do | negate |
+Then /^a ruby application http proxy file will( not)? exist$/ do | negate |
   acct_name = @account['accountname']
   app_name = @app['name']
   namespace = @app['namespace']
@@ -47,7 +47,7 @@ Then /^a rack application http proxy file will( not)? exist$/ do | negate |
   end
 end
 
-Then /^a rack application git repo will( not)? exist$/ do | negate |
+Then /^a ruby application git repo will( not)? exist$/ do | negate |
   acct_name = @account['accountname']
   app_name = @app['name']
 
@@ -63,7 +63,7 @@ Then /^a rack application git repo will( not)? exist$/ do | negate |
 
 end
 
-Then /^a rack application source tree will( not)? exist$/ do | negate |
+Then /^a ruby application source tree will( not)? exist$/ do | negate |
   acct_name = @account['accountname']
   app_name = @app['name']
 
@@ -79,7 +79,7 @@ Then /^a rack application source tree will( not)? exist$/ do | negate |
 
 end
 
-Then /^a rack application httpd will( not)? be running$/ do | negate |
+Then /^a ruby application httpd will( not)? be running$/ do | negate |
   acct_name = @account['accountname']
   acct_uid = @account['uid']
   app_name = @app['name']
@@ -103,7 +103,7 @@ Then /^a rack application httpd will( not)? be running$/ do | negate |
   end
 end
 
-Then /^rack application log files will( not)? exist$/ do | negate |
+Then /^ruby application log files will( not)? exist$/ do | negate |
   acct_name = @account['accountname']
   acct_uid = @account['uid']
   app_name = @app['name']
@@ -123,7 +123,7 @@ Then /^rack application log files will( not)? exist$/ do | negate |
 
 end
 
-Given /^a new rack application$/ do
+Given /^a new ruby application$/ do
   account_name = @account['accountname']
   app_name = 'app1'
   namespace = 'ns1'
@@ -131,19 +131,19 @@ Given /^a new rack application$/ do
     'namespace' => namespace,
     'name' => app_name
   }
-  command = $rack_config_format % [app_name, namespace, account_name]
+  command = $ruby_config_format % [app_name, namespace, account_name]
   runcon command, 'unconfined_u', 'system_r', 'libra_initrc_t'
 end
 
-When /^I deconfigure the rack application$/ do
+When /^I deconfigure the ruby application$/ do
   account_name = @account['accountname']
   namespace = @app['namespace']
   app_name = @app['name']
-  command = $rack_deconfig_format % [app_name, namespace, account_name]
+  command = $ruby_deconfig_format % [app_name, namespace, account_name]
   runcon command,  'unconfined_u', 'system_r', 'libra_initrc_t'
 end
 
-Given /^the rack application is (running|stopped)$/ do | start_state |
+Given /^the ruby application is (running|stopped)$/ do | start_state |
   account_name = @account['accountname']
   namespace = @app['namespace']
   app_name = @app['name']
@@ -158,12 +158,12 @@ Given /^the rack application is (running|stopped)$/ do | start_state |
   end
 
   # check
-  status_command = $rack_status_format %  [app_name, namespace, account_name]
+  status_command = $ruby_status_format %  [app_name, namespace, account_name]
   exit_status = runcon status_command, 'unconfined_u', 'system_r', 'libra_initrc_t'
 
   if exit_status != good_exit
     # fix it
-    fix_command = "#{$rack_hooks}/%s %s %s %s" % [fix_action, app_name, namespace, account_name]
+    fix_command = "#{$ruby_hooks}/%s %s %s %s" % [fix_action, app_name, namespace, account_name]
     exit_status = runcon fix_command, 'unconfined_u', 'system_r', 'libra_initrc_t'
     if exit_status != 0
       raise "Unable to %s for %s %s %s" % [fix_action, app_name, namespace, account_name]
@@ -179,12 +179,12 @@ Given /^the rack application is (running|stopped)$/ do | start_state |
   # check again
 end
 
-When /^I (start|stop) the rack application$/ do |action|
+When /^I (start|stop) the ruby application$/ do |action|
   account_name = @account['accountname']
   namespace = @app['namespace']
   app_name = @app['name']
 
-  command = "#{$rack_hooks}/%s %s %s %s" % [action, app_name, namespace, account_name]
+  command = "#{$ruby_hooks}/%s %s %s %s" % [action, app_name, namespace, account_name]
   exit_status = runcon command, 'unconfined_u', 'system_r', 'libra_initrc_t'
   if exit_status != 0
     raise "Unable to %s for %s %s %s" % [action, app_name, namespace, account_name]
@@ -192,14 +192,14 @@ When /^I (start|stop) the rack application$/ do |action|
   sleep 5
 end
 
-Then /^the rack application will( not)? be running$/ do | negate |
+Then /^the ruby application will( not)? be running$/ do | negate |
   account_name = @account['accountname']
   namespace = @app['namespace']
   app_name = @app['name']
 
   good_status = negate ? 4 : 0
 
-  command = "#{$rack_hooks}/status %s %s %s" % [app_name, namespace, account_name]
+  command = "#{$ruby_hooks}/status %s %s %s" % [app_name, namespace, account_name]
   exit_status = runcon command, 'unconfined_u', 'system_r', 'libra_initrc_t'
   exit_status.should == good_status
 end
