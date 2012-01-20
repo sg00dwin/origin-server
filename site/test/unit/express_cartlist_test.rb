@@ -3,7 +3,7 @@ require 'test_helper'
 class ExpressCartlistTest < ActiveSupport::TestCase
 
   @@valid_cart_types = ['standalone', 'embedded']
-  @@standalone_list =  ['perl-5.10', 'jbossas-7.0', 'wsgi-3.2', 'rack-1.1', 'php-5.3', 'raw-0.1', 'jenkins-1.4']
+  @@standalone_list =  ['perl-5.10', 'jbossas-7.0', 'python-2.6', 'ruby-1.8', 'php-5.3', 'raw-0.1', 'jenkins-1.4']
   @@embedded_list = ['mysql-5.1']
 
 
@@ -23,12 +23,12 @@ class ExpressCartlistTest < ActiveSupport::TestCase
 
   #test 'zero exit code creates list' do
     #Rails.logger.debug "in zero_exit_code_creates_list"
-    #res = { :exit_code => 0, :data =>  "{ 'carts': [ 'php-5.3',  'rack-1.1', 'wsgi-3.2',  'perl-5.10' ]}"}
+    #res = { :exit_code => 0, :data =>  "{ 'carts': [ 'php-5.3',  'ruby-1.8', 'python-2.6',  'perl-5.10' ]}"}
     #json = ActiveSupport::JSON.encode res
     #@cartlist.expects(:http_post).yields(ActiveSupport::JSON.decode json)
     #@cartlist.establish true
     #Rails.logger.debug "List: #{@cartlist.list}"
-    #assert @cartlist.list == [ "php-5.3", "rack-1.1", "wsgi-3.2", "perl-5.10" ]
+    #assert @cartlist.list == [ "php-5.3", "ruby-1.8", "python-2.6", "perl-5.10" ]
   #end
   
   #test 'nonzero exit code triggers error' do

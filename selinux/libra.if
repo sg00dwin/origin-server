@@ -326,6 +326,7 @@ template(`libra_service_domain',`
 	domain_type($1)
 	role system_r types $1;
 	mcs_untrusted_proc($1)
+	domain_user_exemption_target($1)
 
 	auth_use_nsswitch($1)
 ')

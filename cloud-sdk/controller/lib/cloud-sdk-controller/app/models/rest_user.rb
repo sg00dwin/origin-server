@@ -17,8 +17,13 @@ class RestUser < Cloud::Sdk::Model
     end
     
     @links = [
-      Link.new("API entry point", "GET", "/api"),
       Link.new("Get user information", "GET", "/user"),
+      Link.new("Get SSH keys", "GET", "/user/keys"),
+      Link.new("Add new SSH key", "POST", "/user/keys", [
+        Param.new("name", "string", "Name of the application"),
+        Param.new("type", "string", "Type of Key", "RSA or DSA"),
+        Param.new("ssh", "string", "The key portion of an rsa key (excluding ssh-rsa and comment)"),
+      ]),
     ]
   end
   

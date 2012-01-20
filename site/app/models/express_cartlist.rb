@@ -16,7 +16,7 @@ class ExpressCartlist
     @debug = debug ? 'true' : 'false'
     case cart_type
       when 'standalone'
-        @list = ['perl-5.10', 'jbossas-7.0', 'wsgi-3.2', 'rack-1.1', 'php-5.3', 'raw-0.1', 'jenkins-1.4']
+        @list = ['perl-5.10', 'jbossas-7.0', 'python-2.6', 'ruby-1.8', 'php-5.3', 'raw-0.1', 'jenkins-1.4']
       when 'embedded'
         @list = ['mysql-5.1']
     end

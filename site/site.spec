@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.85.3
+Version:   0.85.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -69,6 +69,9 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Fri Jan 20 2012 Mike McGrath <mmcgrath@redhat.com> 0.85.4-1
+- merge and ruby-1.8 prep (mmcgrath@redhat.com)
+
 * Wed Jan 18 2012 Dan McPherson <dmcphers@redhat.com> 0.85.3-1
 - Fix documentation links (aboone@redhat.com)
 
