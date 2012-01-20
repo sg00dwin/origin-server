@@ -1,5 +1,5 @@
 #new-user
-  = semantic_form_for('web_user', :remote => true, :url => web_users_path) do |form|
+  = semantic_form_for('web_user', :remote => true, :url => web_user_path) do |form|
     = form.inputs do
       = form.hidden_field :cloud_access_choice,
         :value => (@product == CloudAccess::FLEX_NAME ? CloudAccess::FLEX : CloudAccess::EXPRESS)

@@ -34,25 +34,31 @@ RedHatCloud::Application.routes.draw do
     match 'twitter_latest_retweets' => 'twitter#latest_retweets'
     match 'partners/join' => 'partner#join', :as=> 'join_partner'
 
-    #Alias for home page so we can link to it
-    #match 'home' => 'home#index'
-
-    # Sample of named route:
-    #   match 'products/:id/purchase' => 'catalog#purchase', :as => :purchase
-    # This route can be invoked with purchase_url(:id => product.id)
-
-    # Sample resource route (maps HTTP verbs to controller actions automatically):
-    resource :user,
+    resource :account,
              :controller => "user",
-             :as => "web_users",
-             :only => [:new, :create]
+             :only => [:new, :create, :show]
 
+    scope '/account' do
+      resource :password,
+               :controller => "password" do
+        match 'edit' => 'password#update', :via => :put
+        match 'reset' => 'password#edit_with_token', :via => :get
+      end
+    end
+
+    # deprecated, move to :account
+    resource :user,
+             :path => :account,
+             :as => "web_user",
+             :controller => "user",
+             :only => [:new, :create, :show]
     match 'user/new/flex' => 'user#new_flex', :via => [:get]
     match 'user/new/express' => 'user#new_express', :via => [:get]
-    get 'user' => 'user#new'
     match 'user/create/external' => 'user#create_external', :via => [:post]
     match 'user/complete' => 'user#complete', :via => [:get]
+    match 'user' => 'user#show', :via => :get
 
+    # deprecated, use :password
     match 'user/request_password_reset' => 'user#request_password_reset', :via => [:post]
     match 'user/reset_password' => 'user#reset_password', :via => [:get]
     match 'user/change_password' => 'user#change_password', :via => [:post]
@@ -73,6 +79,7 @@ RedHatCloud::Application.routes.draw do
     match 'legal/acceptable_use' => 'legal#acceptable_use'
     match 'legal/openshift_privacy' => 'legal#openshift_privacy'
 
+    # suggest we consolidate login/logout onto a session controller
     resource :login,
              :controller => "login",
              :only => [:show, :create]
