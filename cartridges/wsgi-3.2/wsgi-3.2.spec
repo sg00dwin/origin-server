@@ -1,4 +1,4 @@
-%define cartridgedir %{_libexecdir}/li/cartridges/wsgi-3.2
+%define cartridgedir %{_libexecdir}/li/cartridges/python-2.4
 
 Summary:   Provides python-wsgi-3.2 support
 Name:      rhc-cartridge-wsgi-3.2

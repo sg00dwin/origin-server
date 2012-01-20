@@ -41,7 +41,7 @@ done
 [ $# -eq 3 ] || print_help
 
 CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
-app_type="wsgi-3.2"
+app_type="python-2.4"
 
 source ${CART_DIR}/abstract/info/lib/util
 setup_configure "$1" $2 $3
