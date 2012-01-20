@@ -319,14 +319,14 @@ class Release < Thor
   
       if options.stage?
         puts "Kicking off stage verification..."
-        unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/libra_ami_stage/buildWithParameters?token=#{token}\&BUILD_CLEAN_AMI=#{options.clean_ami? ? "true" : "false"}", :verbose => options.verbose?)
+        unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/libra_ami_stage/buildWithParameters?token=#{token}\\&BUILD_CLEAN_AMI=#{options.clean_ami? ? "true" : "false"}", :verbose => options.verbose?)
           puts "ERROR - Jenkins remote job invocation failed."
           exit 1
         end
         puts "Done"
       else
         puts "Kicking off AMI build..."
-        unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/libra_ami/buildWithParameters?token=#{token}\&BUILD_CLEAN_AMI=#{options.clean_ami? ? "true" : "false"}", :verbose => options.verbose?)
+        unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/libra_ami/buildWithParameters?token=#{token}\\&BUILD_CLEAN_AMI=#{options.clean_ami? ? "true" : "false"}", :verbose => options.verbose?)
           puts "ERROR - Jenkins remote job invocation failed."
           exit 1
         end

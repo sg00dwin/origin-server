@@ -1,26 +1,26 @@
 # Controller cartridge command paths
 $cartridge_root ||= "/usr/libexec/li/cartridges"
-$wsgi_cartridge = "#{$cartridge_root}/wsgi-3.2"
-$wsgi_common_conf_path = "#{$wsgi_cartridge}/info/configuration/etc/conf/httpd_nolog.conf"
-$wsgi_hooks = "#{$wsgi_cartridge}/info/hooks"
-$wsgi_config_path = "#{$wsgi_hooks}/configure"
+$python_cartridge = "#{$cartridge_root}/python-2.4"
+$python_common_conf_path = "#{$python_cartridge}/info/configuration/etc/conf/httpd_nolog.conf"
+$python_hooks = "#{$python_cartridge}/info/hooks"
+$python_config_path = "#{$python_hooks}/configure"
 # app_name namespace acct_name
-$wsgi_config_format = "#{$wsgi_config_path} '%s' '%s' '%s'"
-$wsgi_deconfig_path = "#{$wsgi_hooks}/deconfigure"
-$wsgi_deconfig_format = "#{$wsgi_deconfig_path} '%s' '%s' '%s'"
+$python_config_format = "#{$python_config_path} '%s' '%s' '%s'"
+$python_deconfig_path = "#{$python_hooks}/deconfigure"
+$python_deconfig_format = "#{$python_deconfig_path} '%s' '%s' '%s'"
 
-$wsgi_start_path = "#{$wsgi_hooks}/start"
-$wsgi_start_format = "#{$wsgi_start_path} '%s' '%s' '%s'"
+$python_start_path = "#{$python_hooks}/start"
+$python_start_format = "#{$python_start_path} '%s' '%s' '%s'"
 
-$wsgi_stop_path = "#{$wsgi_hooks}/stop"
-$wsgi_stop_format = "#{$wsgi_stop_path} '%s' '%s' '%s'"
+$python_stop_path = "#{$python_hooks}/stop"
+$python_stop_format = "#{$python_stop_path} '%s' '%s' '%s'"
 
-$wsgi_status_path = "#{$wsgi_hooks}/status"
-$wsgi_status_format = "#{$wsgi_status_path} '%s' '%s' '%s'"
+$python_status_path = "#{$python_hooks}/status"
+$python_status_format = "#{$python_status_path} '%s' '%s' '%s'"
 
 $libra_httpd_conf_d ||= "/etc/httpd/conf.d/libra"
 
-When /^I configure a wsgi application$/ do
+When /^I configure a python application$/ do
   account_name = @account['accountname']
   namespace = "ns1"
   app_name = "app1"
@@ -28,11 +28,11 @@ When /^I configure a wsgi application$/ do
     'name' => app_name,
     'namespace' => namespace
   }
-  command = $wsgi_config_format % [app_name, namespace, account_name]
+  command = $python_config_format % [app_name, namespace, account_name]
   runcon command,  'unconfined_u', 'system_r', 'libra_initrc_t'
 end
 
-Then /^a wsgi application http proxy file will( not)? exist$/ do | negate |
+Then /^a python application http proxy file will( not)? exist$/ do | negate |
   acct_name = @account['accountname']
   app_name = @app['name']
   namespace = @app['namespace']
@@ -47,7 +47,7 @@ Then /^a wsgi application http proxy file will( not)? exist$/ do | negate |
   end
 end
 
-Then /^a wsgi application git repo will( not)? exist$/ do | negate |
+Then /^a python application git repo will( not)? exist$/ do | negate |
   acct_name = @account['accountname']
   app_name = @app['name']
 
@@ -63,7 +63,7 @@ Then /^a wsgi application git repo will( not)? exist$/ do | negate |
 
 end
 
-Then /^a wsgi application source tree will( not)? exist$/ do | negate |
+Then /^a python application source tree will( not)? exist$/ do | negate |
   acct_name = @account['accountname']
   app_name = @app['name']
 
@@ -79,7 +79,7 @@ Then /^a wsgi application source tree will( not)? exist$/ do | negate |
 
 end
 
-Then /^a wsgi application httpd will( not)? be running$/ do | negate |
+Then /^a python application httpd will( not)? be running$/ do | negate |
   acct_name = @account['accountname']
   acct_uid = @account['uid']
   app_name = @app['name']
@@ -103,7 +103,7 @@ Then /^a wsgi application httpd will( not)? be running$/ do | negate |
   end
 end
 
-Then /^wsgi application log files will( not)? exist$/ do | negate |
+Then /^python application log files will( not)? exist$/ do | negate |
   acct_name = @account['accountname']
   acct_uid = @account['uid']
   app_name = @app['name']
@@ -123,7 +123,7 @@ Then /^wsgi application log files will( not)? exist$/ do | negate |
 
 end
 
-Given /^a new wsgi application$/ do
+Given /^a new python application$/ do
   account_name = @account['accountname']
   app_name = 'app1'
   namespace = 'ns1'
@@ -131,19 +131,19 @@ Given /^a new wsgi application$/ do
     'namespace' => namespace,
     'name' => app_name
   }
-  command = $wsgi_config_format % [app_name, namespace, account_name]
+  command = $python_config_format % [app_name, namespace, account_name]
   runcon command, 'unconfined_u', 'system_r', 'libra_initrc_t'
 end
 
-When /^I deconfigure the wsgi application$/ do
+When /^I deconfigure the python application$/ do
   account_name = @account['accountname']
   namespace = @app['namespace']
   app_name = @app['name']
-  command = $wsgi_deconfig_format % [app_name, namespace, account_name]
+  command = $python_deconfig_format % [app_name, namespace, account_name]
   runcon command,  'unconfined_u', 'system_r', 'libra_initrc_t'
 end
 
-Given /^the wsgi application is (running|stopped)$/ do | start_state |
+Given /^the python application is (running|stopped)$/ do | start_state |
   account_name = @account['accountname']
   namespace = @app['namespace']
   app_name = @app['name']
@@ -158,12 +158,12 @@ Given /^the wsgi application is (running|stopped)$/ do | start_state |
   end
 
   # check
-  status_command = $wsgi_status_format %  [app_name, namespace, account_name]
+  status_command = $python_status_format %  [app_name, namespace, account_name]
   exit_status = runcon status_command, 'unconfined_u', 'system_r', 'libra_initrc_t'
 
   if exit_status != good_exit
     # fix it
-    fix_command = "#{$wsgi_hooks}/%s %s %s %s" % [fix_action, app_name, namespace, account_name]
+    fix_command = "#{$python_hooks}/%s %s %s %s" % [fix_action, app_name, namespace, account_name]
     exit_status = runcon fix_command, 'unconfined_u', 'system_r', 'libra_initrc_t'
     if exit_status != 0
       raise "Unable to %s for %s %s %s" % [fix_action, app_name, namespace, account_name]
@@ -179,12 +179,12 @@ Given /^the wsgi application is (running|stopped)$/ do | start_state |
   # check again
 end
 
-When /^I (start|stop) the wsgi application$/ do |action|
+When /^I (start|stop) the python application$/ do |action|
   account_name = @account['accountname']
   namespace = @app['namespace']
   app_name = @app['name']
 
-  command = "#{$wsgi_hooks}/%s %s %s %s" % [action, app_name, namespace, account_name]
+  command = "#{$python_hooks}/%s %s %s %s" % [action, app_name, namespace, account_name]
   exit_status = runcon command, 'unconfined_u', 'system_r', 'libra_initrc_t'
   if exit_status != 0
     raise "Unable to %s for %s %s %s" % [action, app_name, namespace, account_name]
@@ -192,14 +192,14 @@ When /^I (start|stop) the wsgi application$/ do |action|
   sleep 5
 end
 
-Then /^the wsgi application will( not)? be running$/ do | negate |
+Then /^the python application will( not)? be running$/ do | negate |
   account_name = @account['accountname']
   namespace = @app['namespace']
   app_name = @app['name']
 
   good_status = negate ? 4 : 0
 
-  command = "#{$wsgi_hooks}/status %s %s %s" % [app_name, namespace, account_name]
+  command = "#{$python_hooks}/status %s %s %s" % [app_name, namespace, account_name]
   exit_status = runcon command, 'unconfined_u', 'system_r', 'libra_initrc_t'
   exit_status.should == good_status
 end

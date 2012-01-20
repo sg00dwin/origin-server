@@ -14,7 +14,7 @@
       <builderSize>std</builderSize>
     </hudson.plugins.openshift.OpenShiftBuilderSizeJobProperty>
     <hudson.plugins.openshift.OpenShiftBuilderTypeJobProperty>
-      <builderType>wsgi-3.2</builderType>
+      <builderType>python-2.4</builderType>
     </hudson.plugins.openshift.OpenShiftBuilderTypeJobProperty>
   </properties>
   <scm class="hudson.plugins.git.GitSCM">

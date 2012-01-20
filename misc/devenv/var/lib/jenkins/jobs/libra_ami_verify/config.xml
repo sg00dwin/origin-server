@@ -38,5 +38,5 @@ build/devenv test devenv_verifier_${BUILD_NUMBER} --terminate --exclude_web</com
     </hudson.tasks.Mailer>
   </publishers>
   <buildWrappers/>
-  <customWorkspace>jobs/libra_ami_update/workspace</customWorkspace>
+  <customWorkspace>jobs/libra_ami/workspace</customWorkspace>
 </project>

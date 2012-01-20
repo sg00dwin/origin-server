@@ -84,7 +84,7 @@ module AppHelper
       case @type
         when "php-5.3" then "php/index.php"
         when "rack-1.1" then "config.ru"
-        when "wsgi-3.2" then "wsgi/application"
+        when "python-2.4" then "wsgi/application"
         when "perl-5.10" then "perl/index.pl"
         when "jbossas-7.0" then "src/main/webapp/index.html"
       end

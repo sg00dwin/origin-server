@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.85.8
+Version:       0.85.10
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -34,10 +34,19 @@ Requires(post):   /usr/sbin/semanage
 Requires(postun): /usr/sbin/semodule
 Requires(postun): /usr/sbin/semanage
 
-BuildArch: noarch
+#BuildArch: noarch
 
 %description
 Turns current host into a OpenShift managed node
+
+%package pam_libra
+BuildRequires: pam-devel
+BuildRequires: libselinux-devel
+Summary: pam_libra support for rhc nodes
+
+%description pam_libra
+Adds pam_libra support to nodes
+
 
 %prep
 %setup -q
@@ -47,6 +56,13 @@ for f in **/*.rb
 do
   ruby -c $f
 done
+
+# Build pam_libra
+pwd
+cd pam_libra
+make
+cd -
+
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -68,6 +84,7 @@ mkdir -p %{buildroot}%{_localstatedir}/lib/libra
 mkdir -p %{buildroot}%{_localstatedir}/run/libra
 mkdir -p %{buildroot}%{_localstatedir}/lib/libra/.httpd.d
 mkdir -p %{buildroot}/%{_sysconfdir}/httpd/conf.d/
+mkdir -p %{buildroot}/lib64/security/
 ln -s %{_localstatedir}/lib/libra/.httpd.d/ %{buildroot}/%{_sysconfdir}/httpd/conf.d/libra
 
 cp -r cartridges %{buildroot}%{_libexecdir}/li
@@ -82,6 +99,7 @@ cp scripts/libra_tmpwatch.sh %{buildroot}%{_sysconfdir}/cron.daily/libra_tmpwatc
 cp conf/oddjob/openshift-restorer.conf %{buildroot}%{_sysconfdir}/dbus-1/system.d/
 cp conf/oddjob/oddjobd-restorer.conf %{buildroot}%{_sysconfdir}/oddjobd.conf.d/
 cp scripts/restorer.php %{buildroot}/%{_localstatedir}/www/html/
+cp pam_libra/pam_libra.so.1  %{buildroot}/lib64/security/pam_libra.so
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -182,12 +200,12 @@ fi
 %dir %attr(0755,root,root) %{_libexecdir}/li/cartridges/abstract-httpd/
 %attr(0750,-,-) %{_libexecdir}/li/cartridges/abstract-httpd/info/hooks/
 %attr(0755,-,-) %{_libexecdir}/li/cartridges/abstract-httpd/info/bin/
-%{_libexecdir}/li/cartridges/abstract-httpd/info
+#%{_libexecdir}/li/cartridges/abstract-httpd/info
 %dir %attr(0755,root,root) %{_libexecdir}/li/cartridges/abstract/
 %attr(0750,-,-) %{_libexecdir}/li/cartridges/abstract/info/hooks/
 %attr(0755,-,-) %{_libexecdir}/li/cartridges/abstract/info/bin/
 %attr(0755,-,-) %{_libexecdir}/li/cartridges/abstract/info/lib/
-%{_libexecdir}/li/cartridges/abstract/info
+#%{_libexecdir}/li/cartridges/abstract/info
 %attr(0750,-,-) %{_bindir}/rhc-accept-node
 %attr(0755,-,-) %{_bindir}/rhc-list-ports
 %attr(0750,-,-) %{_bindir}/rhc-node-account
@@ -204,7 +222,20 @@ fi
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 %dir %attr(0755,root,root) %{_sysconfdir}/libra/skel
 
+%files pam_libra
+%defattr(-,root,root,-)
+/lib64/security/pam_libra.so
+
 %changelog
+* Fri Jan 20 2012 Mike McGrath <mmcgrath@redhat.com> 0.85.10-1
+- adding libselinux-devel to the requires list
+
+* Fri Jan 20 2012 Mike McGrath <mmcgrath@redhat.com> 0.85.9-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- Added pam_libra (mmcgrath@redhat.com)
+- Temporary commit to build (mmcgrath@redhat.com)
+
 * Thu Jan 19 2012 Dan McPherson <dmcphers@redhat.com> 0.85.8-1
 - Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
 - Move libra-datastore to devenv.spec (rpenta@redhat.com)
