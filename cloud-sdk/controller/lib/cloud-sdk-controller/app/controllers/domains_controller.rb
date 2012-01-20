@@ -92,7 +92,7 @@ class DomainsController < BaseController
   end
   
   
-  # DELELTE /domains/<id>
+  # DELETE /domains/<id>
   def destroy
     id = params[:id]
     force = params[:force]
@@ -100,7 +100,11 @@ class DomainsController < BaseController
     if(@cloud_user.namespace != id)
       @reply = RestReply.new(:not_found)
       @reply.messages.push(Message.new(:error, "Domain #{id} not found."))
-      respond_with @reply, :status => @reply.status
+      #respond_with @reply, :status => @reply.status
+      respond_with(@reply) do |format|
+         format.xml { render :xml => @reply, :status => @reply.status }
+         format.json { render :json => @reply, :status => @reply.status }
+      end
       return
     end
     
@@ -108,7 +112,11 @@ class DomainsController < BaseController
     if (!@cloud_user.applications.empty? and !force)
       @reply = RestReply.new(:bad_request)
       @reply.messages.push(Message.new(:error, "Domain contains applications. Delete applications first or set force to true."))
-      respond_with @reply, :status => @reply.status
+      #respond_with @reply, :status => @reply.status
+      respond_with(@reply) do |format|
+         format.xml { render :xml => @reply, :status => @reply.status }
+         format.json { render :json => @reply, :status => @reply.status }
+      end
       return
     elsif force
       @cloud_user.applications.each do |app|
@@ -120,7 +128,11 @@ class DomainsController < BaseController
     result_io.append @cloud_user.delete
     @reply.process_result_io(result_io)
     @reply.messages.push(Message.new(:info, "Damain deleted."))
-    respond_with @reply, :status => @reply.status
+    #respond_with @reply, :status => @reply.status
+    respond_with(@reply) do |format|
+       format.xml { render :xml => @reply, :status => @reply.status }
+       format.json { render :json => @reply, :status => @reply.status }
+    end
   end
   
   protected

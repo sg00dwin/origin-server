@@ -151,18 +151,31 @@ class DevEnv < Thor
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
 
     # Establish a new connection
-    conn = connect     
+    conn = connect
     conn = conn.regions[options.region] unless (options.region?nil)
-    # Create a new builder instance
-    if (options.region?nil)
-      image = conn.images[AMI["us-east-1"]]
-    elsif AMI[options.region].nil?
-      puts "No AMI specified for region:" + options.region
-      exit 1
-    else
-      image = conn.images[AMI[options.region]]
-    end
 
+    image = nil    
+    if options.build_clean_ami
+      
+      # Create a new builder instance
+      if (options.region?nil)
+        image = conn.images[AMI["us-east-1"]]
+      elsif AMI[options.region].nil?
+        puts "No AMI specified for region:" + options.region
+        exit 1
+      else
+        image = conn.images[AMI[options.region]]
+      end
+    else
+      # Get the latest devenv image and create a new instance
+      if options.use_stage_repo?
+        filter = DEVENV_STAGE_CLEAN_WILDCARD
+      else
+        filter = DEVENV_CLEAN_WILDCARD
+      end
+      image = get_latest_ami(conn, filter)
+    end
+    
     instance = launch_instance(image, name + '_' + build_num)
     hostname = instance.dns_name
 
@@ -215,7 +228,7 @@ class DevEnv < Thor
       end
 
       if options.register?
-        register_image(conn, instance, name + build_num, manifest)
+        register_image(conn, instance, name + '_' + build_num, manifest)
       end
     ensure
       terminate_instance(instance) if options.terminate?
