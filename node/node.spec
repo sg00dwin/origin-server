@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.85.9
+Version:       0.85.10
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -227,6 +227,9 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Fri Jan 20 2012 Mike McGrath <mmcgrath@redhat.com> 0.85.10-1
+- adding libselinux-devel to the requires list
+
 * Fri Jan 20 2012 Mike McGrath <mmcgrath@redhat.com> 0.85.9-1
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
   (mmcgrath@redhat.com)
