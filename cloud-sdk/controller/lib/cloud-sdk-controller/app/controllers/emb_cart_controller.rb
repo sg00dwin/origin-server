@@ -19,6 +19,7 @@ class EmbCartController < BaseController
     @reply = RestReply.new(:ok, "cartridges", application.embedded)
     respond_with @reply, :status => @reply.status
   end
+  
   # POST /domains/[domain_id]/applications/[application_id]/cartridges
   def create
     domain_id = params[:domain_id]
@@ -85,7 +86,10 @@ class EmbCartController < BaseController
       @reply = RestReply.new(:not_found)
       message = Message.new(:error, "Application #{id} not found.")
       @reply.messages.push(message)
-      respond_with @reply, :status => @reply.status
+      respond_with(@reply) do |format|
+         format.xml { render :xml => @reply, :status => @reply.status }
+         format.json { render :json => @reply, :status => @reply.status }
+      end
       return
     end
     
@@ -93,7 +97,10 @@ class EmbCartController < BaseController
       @reply = RestReply.new( :bad_request)
       message = Message.new(:error, "The application #{id} is not configured with embedded cartridge #{cartridge}.") 
       @reply.messages.push(message)
-      respond_with @reply, :status => @reply.status
+      respond_with(@reply) do |format|
+         format.xml { render :xml => @reply, :status => @reply.status }
+         format.json { render :json => @reply, :status => @reply.status }
+      end
       return
     end
 
@@ -107,7 +114,10 @@ class EmbCartController < BaseController
       @reply.messages.push(message)
       message = Message.new(:error, e.message) 
       @reply.messages.push(message)
-      respond_with @reply, :status => @reply.status
+      respond_with(@reply) do |format|
+         format.xml { render :xml => @reply, :status => @reply.status }
+         format.json { render :json => @reply, :status => @reply.status }
+      end
       return
     end
       
@@ -116,6 +126,9 @@ class EmbCartController < BaseController
     @reply = RestReply.new(:ok, "application", app)
     message = Message.new(:info, "Removed #{cartridge} from application #{id}")
     @reply.messages.push(message)
-    respond_with @reply, :status => @reply.status
+    respond_with(@reply) do |format|
+         format.xml { render :xml => @reply, :status => @reply.status }
+         format.json { render :json => @reply, :status => @reply.status }
+      end
   end
 end

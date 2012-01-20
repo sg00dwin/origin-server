@@ -152,9 +152,6 @@ class ApplicationsController < BaseController
     end
   end
   
-  
-  
-  
   # DELELTE domains/[domain_id]/applications/[id]
   def destroy
     domain_id = params[:domain_id]
@@ -165,7 +162,10 @@ class ApplicationsController < BaseController
       @reply = RestReply.new(:not_found)
       message = Message.new(:error, "Application #{id} not found.")
       @reply.messages.push(message)
-      respond_with @reply, :status => @reply.status
+      respond_with(@reply) do |format|
+         format.xml { render :xml => @reply, :status => @reply.status }
+         format.json { render :json => @reply, :status => @reply.status }
+      end
       return
     end
     
@@ -179,13 +179,19 @@ class ApplicationsController < BaseController
       @reply.messages.push(message)
       message = Message.new(:error, e.message) 
       @reply.messages.push(message)
-      respond_with @reply, :status => @reply.status
+      respond_with(@reply) do |format|
+         format.xml { render :xml => @reply, :status => @reply.status }
+         format.json { render :json => @reply, :status => @reply.status }
+      end
       return
     end
  
     @reply = RestReply.new(:no_content)
     message = Message.new(:info, "Application #{id} is deleted.")
     @reply.messages.push(message)
-    respond_with @reply, :status => @reply.status
+    respond_with(@reply) do |format|
+      format.xml { render :xml => @reply, :status => @reply.status }
+      format.json { render :json => @reply, :status => @reply.status }
+    end
   end
 end
