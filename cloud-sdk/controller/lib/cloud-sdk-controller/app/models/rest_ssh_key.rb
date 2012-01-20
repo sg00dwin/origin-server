@@ -1,16 +1,15 @@
 class RestSshKey < Cloud::Sdk::Model
-  attr_accessor :name, :ssh, :type, :links
+  attr_accessor :name, :ssh, :links
   
-  def initialize(name=nil, type=nil, ssh=nil)
+  def initialize(name=nil, ssh=nil)
     self.name= name
     self.ssh = ssh
-    self.type = type
 
     self.links = [
       Link.new("Get SSH key", "GET", "/user/keys/#{name}"),
-      Link.new("Update SSH key", "DELETE", "/user/keys/#{name}", [
+      Link.new("Update SSH key", "PUT", "/user/keys/#{name}", [
         Param.new("name", "string", "Name of the application"),
-        Param.new("type", "string", "Type of Key", ["RSA", "DSA"]),
+        Param.new("type", "string", "Type of Key", "RSA or DSA"),
         Param.new("ssh", "string", "The key portion of an rsa key (excluding ssh-rsa and comment)"),
       ]),
       Link.new("Delete SSH key", "DELETE", "/user/keys/#{name}")
