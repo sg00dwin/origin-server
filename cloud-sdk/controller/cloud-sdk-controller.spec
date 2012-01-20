@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.3.7
+Version:        0.3.9
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        AGPLv3
@@ -73,6 +73,60 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Thu Jan 19 2012 Dan McPherson <dmcphers@redhat.com> 0.3.9-1
+- Updating gem versions (dmcphers@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rchopra@redhat.com)
+- bug fix for rails responder in case of DELETE call. using 'render' for each
+  format instead of relying actionpack for status code. (rchopra@redhat.com)
+- removed pry from cloud-sdk-controller.gemspec
+  (lnader@dhcp-240-165.mad.redhat.com)
+
+* Thu Jan 19 2012 Dan McPherson <dmcphers@redhat.com> 0.3.8-1
+- Updating gem versions (dmcphers@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (lnader@dhcp-240-165.mad.redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (lnader@dhcp-240-165.mad.redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (lnader@dhcp-240-165.mad.redhat.com)
+- bug fix in cartridge controller (lnader@dhcp-240-165.mad.redhat.com)
+- everything but the delete (lnader@dhcp-240-165.mad.redhat.com)
+- bug fixes (lnader@dhcp-240-165.mad.redhat.com)
+- Merge remote branch 'origin/master' into REST
+  (lnader@dhcp-240-165.mad.redhat.com)
+- renamed controllers (lnader@dhcp-240-165.mad.redhat.com)
+- bug fixes (lnader@dhcp-240-165.mad.redhat.com)
+- Merge branch 'REST' of ssh://git1.ops.rhcloud.com/srv/git/li into REST
+  (lnader@dhcp-240-165.mad.redhat.com)
+- bug fixes in embedded controller (lnader@dhcp-240-165.mad.redhat.com)
+- renamed controller (lnader@dhcp-240-165.mad.redhat.com)
+- new event and embedded controller (lnader@dhcp-240-165.mad.redhat.com)
+- split app controller into 3 controllers (lnader@dhcp-240-165.mad.redhat.com)
+- bug fixes and HTTP status codes in app controller
+  (lnader@dhcp-240-165.mad.redhat.com)
+- Added new method to auth service with support for user/pass based
+  authentication for new REST API (kraman@gmail.com)
+- Completed domain api (kraman@gmail.com)
+- Cleanup and fixes for routes and REST models (kraman@gmail.com)
+- Adding additional routes and fixing merge conflicts (kraman@gmail.com)
+- bug fixes (lnader@dhcp-240-165.mad.redhat.com)
+- new rest cartridge object (lnader@dhcp-240-165.mad.redhat.com)
+- created rest app class (lnader@dhcp-240-165.mad.redhat.com)
+- bug fixes and file name changes (lnader@dhcp-240-165.mad.redhat.com)
+- REST API bug fixes (lnader@dhcp-240-165.mad.redhat.com)
+- REST API bug fixes (lnader@dhcp-240-165.mad.redhat.com)
+- controller file renamed (lnader@dhcp-240-165.mad.redhat.com)
+- Adding route for domains (kraman@gmail.com)
+- Adding user management api routes (kraman@gmail.com)
+- REST API revision 3 (lnader@dhcp-240-165.mad.redhat.com)
+- XML tags for serialized classes are returned as - seperated words instead of
+  camel case (kraman@gmail.com)
+- Creating REST routes. Bugfixes (kraman@gmail.com)
+- REST API revision 2 (lnader@dhcp-240-165.mad.redhat.com)
+- REST API revision (lnader@dhcp-240-165.mad.redhat.com)
+- REST API (lnader@dhcp-240-165.mad.redhat.com)
+
 * Thu Jan 19 2012 Dan McPherson <dmcphers@redhat.com> 0.3.7-1
 - Updating gem versions (dmcphers@redhat.com)
 

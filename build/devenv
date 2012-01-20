@@ -139,103 +139,96 @@ class DevEnv < Thor
     
   end
 
-  desc "build NAME", "Build a new devenv AMI with the given NAME"
+  desc "build NAME BUILD_NUM", "Build a new devenv AMI with the given NAME"
   method_option :register, :type => :boolean, :desc => "Register the instance"
   method_option :terminate, :type => :boolean, :desc => "Terminate the instance on exit"
   method_option :use_stage_repo, :type => :boolean, :desc => "Build instance off the stage repository"
   method_option :reboot, :type => :boolean, :desc => "Reboot the instance after updating"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   method_option :region, :required => false, :desc => "Amazon region override (default us-east-1)"
-  def build(name)
-    options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
-
-    # Establish a new connection
-    conn = connect     
-    conn = conn.regions[options.region] unless (options.region?nil)
-    # Create a new builder instance
-    if (options.region?nil)
-      image = conn.images[AMI["us-east-1"]]
-    elsif AMI[options.region].nil?
-      puts "No AMI specified for region:" + options.region
-      exit 1
-    else
-      image = conn.images[AMI[options.region]]
-    end
-
-    instance = launch_instance(image, name)
-    hostname = instance.dns_name
-
-    begin
-      # TODO - Remove this once nss is updated in RHEL 6.2
-      print "Running one yum update to get around RHEL 6.2 AMI problem..."
-      ssh(hostname, "yum update -y --exclude='rhc*'", 3600)
-      puts "Done"
-
-      print "Updating all packages on the system..."
-      ssh(hostname, "yum update -y --exclude='rhc*'", 3600)
-      puts "Done"
-
-      if options.reboot?
-        reboot(instance)
-      end
-
-      print "Uploading devenv script..."
-      script_path = File.expand_path(File.dirname(__FILE__) + "/../misc/devenv/li-devenv.sh")
-      scp_to(hostname, script_path, "~/")
-      puts "Done"
-
-      print "Performing clean install with the latest code..."
-      cmd = 'set -e; sh li-devenv.sh'
-      cmd += ' stage' if options.use_stage_repo?
-      output = ssh(hostname, cmd, 3600)
-      puts "Done"
-
-      puts "----------------- Install Output ------------------------"
-      puts output
-      puts "---------------------------------------------------------"
-
-      validate_instance(hostname)
-
-      manifest = rpm_manifest(hostname)
-
-      if options.register?
-        register_image(conn, instance, name, manifest)
-      end
-    ensure
-      terminate_instance(instance) if options.terminate?
-    end
-  end
-  
-  desc "yum_update TAG", "Build a new devenv AMI with the given NAME of an existing instance"
-  method_option :register, :type => :boolean, :desc => "Register the instance"
-  method_option :terminate, :type => :boolean, :desc => "Terminate the instance on exit"
-  method_option :reboot, :type => :boolean, :desc => "Reboot the instance after updating"
-  method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
-  method_option :region, :required => false, :desc => "Amazon region override (default us-east-1)"
-  def yum_update(tag)
+  method_option :build_clean_ami, :required => false, :desc => "Indicates whether to start from a base RHEL image"
+  def build(name, build_num)
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
 
     # Establish a new connection
     conn = connect
     conn = conn.regions[options.region] unless (options.region?nil)
-    instance = find_instance(conn, tag, true)
+
+    image = nil    
+    if options.build_clean_ami
+      
+      # Create a new builder instance
+      if (options.region?nil)
+        image = conn.images[AMI["us-east-1"]]
+      elsif AMI[options.region].nil?
+        puts "No AMI specified for region:" + options.region
+        exit 1
+      else
+        image = conn.images[AMI[options.region]]
+      end
+    else
+      # Get the latest devenv image and create a new instance
+      if options.use_stage_repo?
+        filter = DEVENV_STAGE_CLEAN_WILDCARD
+      else
+        filter = DEVENV_CLEAN_WILDCARD
+      end
+      image = get_latest_ami(conn, filter)
+    end
+    
+    instance = launch_instance(image, name + '_' + build_num)
     hostname = instance.dns_name
 
     begin
-      print "Updating all packages on the system..."
-      ssh(hostname, "yum clean metadata; yum update -y --exclude='rhc-devenv'; set -e; yum update -y --exclude='rhc-devenv' --disablerepo=\* --enablerepo=li", 600)
-      puts "Done"
+      manifest = nil
+      if options.build_clean_ami
+        # TODO - Remove this once nss is updated in RHEL 6.2
+        print "Running one yum update to get around RHEL 6.2 AMI problem..."
+        ssh(hostname, "yum update -y --exclude='rhc*'", 3600)
+        puts "Done"
+  
+        print "Updating all packages on the system..."
+        ssh(hostname, "yum update -y --exclude='rhc*'", 3600)
+        puts "Done"
+  
+        if options.reboot?
+          reboot(instance)
+        end
 
-      if options.reboot?
-        reboot(instance)
+        print "Uploading devenv script..."
+        script_path = File.expand_path(File.dirname(__FILE__) + "/../misc/devenv/li-devenv.sh")
+        scp_to(hostname, script_path, "~/")
+        puts "Done"
+  
+        print "Performing clean install with the latest code..."
+        cmd = 'set -e; sh li-devenv.sh'
+        cmd += ' stage' if options.use_stage_repo?
+        output = ssh(hostname, cmd, 3600)
+        puts "Done"
+  
+        puts "----------------- Install Output ------------------------"
+        puts output
+        puts "---------------------------------------------------------"
+        
+        validate_instance(hostname)
+        
+        manifest = rpm_manifest(hostname)
+        
+        if options.register?
+          register_image(conn, instance, name + '-clean_' + build_num, manifest)
+        end
+      else
+        print "Updating all packages on the system..."
+        ssh(hostname, "yum clean metadata; yum update -y --exclude='rhc-devenv'; set -e; yum update -y --exclude='rhc-devenv' --disablerepo=\* --enablerepo=li", 600)
+        puts "Done"
+        
+        validate_instance(hostname)
+        
+        manifest = rpm_manifest(hostname)
       end
 
-      validate_instance(hostname)
-
-      manifest = rpm_manifest(hostname)
-
       if options.register?
-        register_image(conn, instance, tag, manifest)
+        register_image(conn, instance, name + '_' + build_num, manifest)
       end
     ensure
       terminate_instance(instance) if options.terminate?

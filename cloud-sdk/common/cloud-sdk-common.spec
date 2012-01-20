@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Common
 Name:           rubygem-%{gemname}
-Version:        0.3.5
+Version:        0.3.6
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        AGPLv3
@@ -73,6 +73,20 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Thu Jan 19 2012 Dan McPherson <dmcphers@redhat.com> 0.3.6-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (lnader@dhcp-240-165.mad.redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (lnader@dhcp-240-165.mad.redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (lnader@dhcp-240-165.mad.redhat.com)
+- Merge remote branch 'origin/REST' (lnader@dhcp-240-165.mad.redhat.com)
+- Merge remote branch 'origin/master' into REST
+  (lnader@dhcp-240-165.mad.redhat.com)
+- XML tags for serialized classes are returned as - seperated words instead of
+  camel case (kraman@gmail.com)
+- Creating REST routes. Bugfixes (kraman@gmail.com)
+
 * Thu Jan 19 2012 Dan McPherson <dmcphers@redhat.com> 0.3.5-1
 - fix build (rpenta@redhat.com)
 
