@@ -39,15 +39,20 @@ end
 #
 # Setup the district
 #
-Facter.add(:district) do
-    district = nil
-    if File.exists?('/etc/libra/district.conf')
-      config_file = ParseConfig.new('/etc/libra/district.conf')
-      district = config_file.get_value('district') ? config_file.get_value('district') : 'NONE'
-    else
-      district = 'NONE'
-    end
-    setcode { district }
+district_uuid = nil
+district_active = false
+if File.exists?('/etc/libra/district.conf')
+  config_file = ParseConfig.new('/etc/libra/district.conf')
+  district_uuid = config_file.get_value('uuid') ? config_file.get_value('uuid') : 'NONE'
+  district_active = config_file.get_value('active') ? config_file.get_value('active') == "true" : false
+else
+  district_uuid = 'NONE'
+end
+Facter.add(:district_uuid) do
+  setcode { district_uuid }
+end
+Facter.add(:district_active) do
+  setcode { district_active }
 end
 
 #

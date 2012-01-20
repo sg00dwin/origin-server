@@ -170,13 +170,17 @@ module MCollective
         Log.instance.debug("set_district call / request = #{request.pretty_inspect}")
         validate :uuid, /^[a-zA-Z0-9]+$/
         uuid = request[:uuid]
+        active = request[:active]
 
-        output = `echo "district='#{uuid}'" > /etc/libra/district.conf`
+        output = `echo "uuid='#{uuid}'\nactive='#{active}'" > /etc/libra/district.conf`
         exitcode = $?.exitstatus
 
         if exitcode == 0
-          Facter.add(:district) do
+          Facter.add(:district_uuid) do
               setcode { uuid }
+          end
+          Facter.add(:district_active) do
+              setcode { active }
           end
         end
 

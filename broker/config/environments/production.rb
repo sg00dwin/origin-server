@@ -54,7 +54,6 @@ Broker::Application.configure do
   
   config.districts = {
     :enabled => true,
-    :district => nil,
     :max_capacity => 6000,
     :first_uid => 1000
   }

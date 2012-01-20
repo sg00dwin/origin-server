@@ -31,8 +31,7 @@ Broker::Application.configure do
   config.app_scope = "broker"
 
   config.districts = {
-    :enabled => false,
-    :district => nil,
+    :enabled => true,
     :max_capacity => 6000,
     :first_uid => 1000
   }

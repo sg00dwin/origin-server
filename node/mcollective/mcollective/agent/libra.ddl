@@ -57,6 +57,12 @@ action "set_district", :description => "run a cartridge action" do
         :validation     => '^[a-zA-Z0-9]+$',
         :optional       => false,
         :maxlength      => 32
+        
+    input :active,
+        :prompt         => "District active boolean",
+        :description    => "District active boolean",
+        :type           => :boolean,
+        :optional       => false
 
     output  :time,
             :description => "The time as a message",

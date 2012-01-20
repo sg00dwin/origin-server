@@ -1,14 +1,15 @@
 class District < Cloud::Sdk::Model
   
-  attr_accessor :server_identities, :uuid, :creation_time, :capacity, :uids
+  attr_accessor :server_identities, :active_server_identities_size, :uuid, :creation_time, :available_capacity, :available_uids
   primary_key :uuid
 
   def initialize(uuid=nil)
     self.creation_time = DateTime::now().strftime
     self.uuid = uuid || Cloud::Sdk::Model.gen_uuid
-    self.server_identities = []
-    self.capacity = 0
-    self.uids = []
+    self.server_identities = {}
+    self.available_capacity = Rails.application.config.districts[:max_capacity]
+    self.available_uids = []
+    self.available_uids.fill(0, Rails.application.config.districts[:max_capacity]) {|i| i+Rails.application.config.districts[:first_uid]}
   end
   
   def self.find(uuid)
@@ -31,45 +32,16 @@ class District < Cloud::Sdk::Model
   end
 
   def self.find_available()
-    data = Cloud::Sdk::DataStore.instance.find_all_districts()
-    return [] unless data
-    districts = data.map do |json|
-      district = self.new.from_json(json)
-      district.reset_state
-      district
-    end
-    available_capacity = Rails.application.config.districts[:max_capacity]
-    available_district = nil
-    districts.each do |district|
-      unless district.server_identities.empty?
-        capacity = district.capacity
-        if capacity < available_capacity && capacity < Rails.application.config.districts[:max_capacity]
-          available_capacity = capacity
-          available_district = district
-        end
-      end
-    end
-    available_district
+    json = Cloud::Sdk::DataStore.instance.find_available_district()
+    return nil unless json
+    district = self.new.from_json(json)
+    district.reset_state
+    district
   end
   
-  def available_uid()
-    uid = Rails.application.config.districts[:first_uid]
-    unless @uids.empty?
-      @uids.each_with_index do |next_used_uid, index|
-        if uid != next_used_uid
-          @uids.insert(index, uid)
-          break
-        else
-          uid += 1
-          if index == @uids.length - 1
-            @uids << uid
-            break
-          end
-        end
-      end
-    else
-      @uids << uid
-    end
+  def reserve_uid()
+    uid = Cloud::Sdk::DataStore.instance.reserve_district_uid(@uuid)
+    #TODO fail it nil
     return uid
   end
   
@@ -88,22 +60,32 @@ class District < Cloud::Sdk::Model
   end
   
   def add_node(server_identity)
-    if server_identity
-      unless server_identities.include? server_identity
+    if server_identity && !Cloud::Sdk::DataStore.instance.find_district_with_node(server_identity)
+      unless server_identities.has_key?(server_identity)
         container = Cloud::Sdk::ApplicationContainerProxy.instance(server_identity)
-        container.set_district(@uuid)
-        server_identities << server_identity
+        container.set_district(@uuid, true)
+        server_identities[server_identity] = {"active" => true}
+        Cloud::Sdk::DataStore.instance.add_district_node(@uuid, server_identity)
       end
     end
   end
   
   def remove_node(server_identity)
-    container = Cloud::Sdk::ApplicationContainerProxy.instance(server_identity)
-    container.set_district('NONE')
-    server_identities.delete(server_identity)
+    if server_identities.has_key?(server_identity)
+      container = Cloud::Sdk::ApplicationContainerProxy.instance(server_identity)
+      container.set_district('NONE', false)
+      Cloud::Sdk::DataStore.instance.remove_district_node(@uuid, server_identity)
+      server_identities.delete(server_identity)
+    end
   end
   
-  def mark_remove_node(server_identity)
+  def deactivate_node(server_identity)
+    if server_identities.has_key?(server_identity)
+      container = Cloud::Sdk::ApplicationContainerProxy.instance(server_identity)
+      container.set_district(@uuid, false)
+      server_identities[server_identity] = {"active" => false}
+      Cloud::Sdk::DataStore.instance.deactivate_district_node(@uuid, server_identity)
+    end
   end
   
   private
