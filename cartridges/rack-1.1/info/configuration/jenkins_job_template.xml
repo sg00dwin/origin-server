@@ -14,7 +14,7 @@
       <builderSize>std</builderSize>
     </hudson.plugins.openshift.OpenShiftBuilderSizeJobProperty>
     <hudson.plugins.openshift.OpenShiftBuilderTypeJobProperty>
-      <builderType>rack-1.1</builderType>
+      <builderType>ruby-1.8</builderType>
     </hudson.plugins.openshift.OpenShiftBuilderTypeJobProperty>
   </properties>
   <scm class="hudson.plugins.git.GitSCM">
