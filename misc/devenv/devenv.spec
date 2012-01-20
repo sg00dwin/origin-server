@@ -142,8 +142,8 @@ echo "kernel.sem = 250  32000 32  4096" >> /etc/sysctl.conf
 sysctl kernel.sem="250  32000 32  4096"
 
 # Move ephemeral port range to accommodate app proxies
-echo "net.ipv4.ip_local_port_range = 15000 35535" >> /etc/sysctl.conf
-sysctl net.ipv4.ip_local_port_range="15000 35535"
+echo "net.ipv4.ip_local_port_range = 15000 35534" >> /etc/sysctl.conf
+sysctl net.ipv4.ip_local_port_range="15000 35534"
 
 # Setup facts
 /usr/libexec/mcollective/update_yaml.rb
