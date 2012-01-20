@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.85.8
+Version:       0.85.10
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -41,6 +41,7 @@ Turns current host into a OpenShift managed node
 
 %package pam_libra
 BuildRequires: pam-devel
+BuildRequires: libselinux-devel
 Summary: pam_libra support for rhc nodes
 
 %description pam_libra
@@ -226,6 +227,15 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Fri Jan 20 2012 Mike McGrath <mmcgrath@redhat.com> 0.85.10-1
+- adding libselinux-devel to the requires list
+
+* Fri Jan 20 2012 Mike McGrath <mmcgrath@redhat.com> 0.85.9-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- Added pam_libra (mmcgrath@redhat.com)
+- Temporary commit to build (mmcgrath@redhat.com)
+
 * Thu Jan 19 2012 Dan McPherson <dmcphers@redhat.com> 0.85.8-1
 - Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
 - Move libra-datastore to devenv.spec (rpenta@redhat.com)

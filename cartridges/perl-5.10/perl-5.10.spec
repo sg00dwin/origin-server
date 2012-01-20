@@ -2,7 +2,7 @@
 
 Summary:   Provides mod_perl support
 Name:      rhc-cartridge-perl-5.10
-Version:   0.16.1
+Version:   0.16.2
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   GPLv2
@@ -86,6 +86,10 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/manifest.yml
 
 %changelog
+* Fri Jan 20 2012 Mike McGrath <mmcgrath@redhat.com> 0.16.2-1
+- perl-5.10.spec: Added Requires perl-DBD-SQLite and perl-DBD-MySQL
+  (tdawson@redhat.com)
+
 * Fri Jan 13 2012 Dan McPherson <dmcphers@redhat.com> 0.16.1-1
 - bump spec numbers (dmcphers@redhat.com)
 
