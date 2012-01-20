@@ -9,7 +9,9 @@ Rails.application.routes.draw do
   end
   scope "/broker/rest" do
     resource :api, :only => [:show], :controller => :base
-    resource :user, :only => [:show], :controller => :user
+    resource :user, :only => [:show], :controller => :user do
+      resources :keys, :controller => :keys, :constraints => { :id => /[\w]+/ } 
+    end
     resources :cartridges, :only => [:index,:show], :constraints => { :id => /standalone|embedded/ }
     resources :domains, :constraints => { :id => /[A-Za-z0-9]+/ } do
       resources :applications, :constraints => { :id => /[\w]+/ } do

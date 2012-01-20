@@ -1,5 +1,5 @@
 class RestUser < Cloud::Sdk::Model
-  attr_accessor :login, :links
+  attr_accessor :login, :ssh_keys, :links
   
   def initialize(*args)
     if args[0].class == CloudUser
