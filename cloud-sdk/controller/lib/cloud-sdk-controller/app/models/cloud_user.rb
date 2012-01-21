@@ -166,9 +166,10 @@ class CloudUser < Cloud::Sdk::UserModel
     
     notify_observers(:before_namespace_update)
     dns_service = Cloud::Sdk::DnsService.instance
-    raise Cloud::Sdk::UserException.new("A namespace with name '#{new_ns}' already exists", 103) unless dns_service.namespace_available?(new_ns)
     
     begin
+      raise Cloud::Sdk::UserException.new("A namespace with name '#{new_ns}' already exists", 103) unless dns_service.namespace_available?(new_ns)
+      
       dns_service.register_namespace(new_ns)
       dns_service.deregister_namespace(old_ns)
   

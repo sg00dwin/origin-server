@@ -11,12 +11,7 @@ module Express
       
       def namespace_available?(namespace)
         login
-        has_txt_record = true
-        begin
-          has_txt_record = DnsService.dyn_has_txt_record?(namespace, @auth_token)
-        ensure
-          close
-        end
+        has_txt_record = DnsService.dyn_has_txt_record?(namespace, @auth_token)
         return !has_txt_record
       end
       
