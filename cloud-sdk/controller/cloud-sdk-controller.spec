@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.3.11
+Version:        0.3.12
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        AGPLv3
@@ -73,6 +73,10 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Fri Jan 20 2012 Dan McPherson <dmcphers@redhat.com> 0.3.12-1
+- Updating gem versions (dmcphers@redhat.com)
+- build fixes (dmcphers@redhat.com)
+
 * Fri Jan 20 2012 Dan McPherson <dmcphers@redhat.com> 0.3.11-1
 - Updating gem versions (dmcphers@redhat.com)
 - getting to the real districts mongo impl (dmcphers@redhat.com)
