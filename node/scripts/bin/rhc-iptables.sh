@@ -7,6 +7,7 @@
 UID_BEGIN=500
 # UID_END=12700   # Too large for port numbers
 UID_END=6500
+NTABLE="rhc-user-table"
 UTABLE="rhc-app-table"
 PTABLE="rhc-port-table"
 PIFACE="eth0"
@@ -122,32 +123,34 @@ function uid_to_portend {
 }
 
 # Create the table and clear it
+new_table ${NTABLE}
 new_table ${UTABLE}
 new_table ${PTABLE}
 
-# Established connections quickly bypass
+# Don't do the global UID match in every rule
 iptables -A OUTPUT \
   -m owner --uid-owner ${UID_BEGIN}-${UID_END} \
+  -j ${NTABLE}
+
+# Established connections allowed
+iptables -A ${NTABLE} \
   -m state --state ESTABLISHED,RELATED \
   -j ACCEPT
 
 # Bottom block is system services
-iptables -A OUTPUT -o lo -d 127.0.0.0/25 \
-  -m owner --uid-owner ${UID_BEGIN}-${UID_END} \
+iptables -A ${NTABLE} -o lo -d 127.0.0.0/25 \
   -m state --state NEW \
   -j ACCEPT
 
 # New connections with specific uids get checked on the app table.
-iptables -A OUTPUT -o lo -d 127.0.0.0/8 \
-  -m owner --uid-owner ${UID_BEGIN}-${UID_END} \
+iptables -A ${NTABLE} -o lo -d 127.0.0.0/8 \
   -m state --state NEW \
   -j ${UTABLE}
 
 # New port proxy connections
-iptables -A OUTPUT -p tcp -o ${PIFACE} \
+iptables -A ${NTABLE} -p tcp -o ${PIFACE} \
   -m multiport \
   --dports `uid_to_portbegin $UID_BEGIN`:`uid_to_portend $UID_END` \
-  -m owner --uid-owner ${UID_BEGIN}-${UID_END} \
   -m state --state NEW \
   -j ${PTABLE}
 
