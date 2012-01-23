@@ -5,7 +5,7 @@ Name:      rhc-cartridge-jbossas-7.0
 Version:   0.85.3
 Release:   1%{?dist}
 Group:     Development/Languages
-License:   GPLv2
+License:   ASL V2 and LGPLv2
 URL:       http://openshift.redhat.com
 Source0:   %{name}-%{version}.tar.gz
 
@@ -44,6 +44,8 @@ mkdir -p %{buildroot}%{cartridgedir}
 mkdir -p %{buildroot}/%{_sysconfdir}/libra/cartridges
 ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/libra/cartridges/%{name}
 cp -r info %{buildroot}%{cartridgedir}/
+cp LICENSE %{buildroot}%{cartridgedir}/
+cp COPYRIGHT %{buildroot}%{cartridgedir}/
 cp -r template %{buildroot}%{cartridgedir}/
 cp README %{buildroot}%{cartridgedir}/
 ln -s %{cartridgedir}/../abstract/info/hooks/add-module %{buildroot}%{cartridgedir}/info/hooks/add-module
@@ -88,17 +90,21 @@ cp -p %{cartridgedir}/info/configuration/postgresql_module.xml /etc/alternatives
 rm -rf %{buildroot}
 
 %files
+# ASL V2
 %defattr(-,root,root,-)
 %attr(0750,-,-) %{cartridgedir}/info/hooks/
 %attr(0640,-,-) %{cartridgedir}/info/data/
 %attr(0755,-,-) %{cartridgedir}/info/bin/
 %{cartridgedir}/template/
-%config(noreplace) %{cartridgedir}/info/configuration/
 %{_sysconfdir}/libra/cartridges/%{name}
 %{cartridgedir}/info/changelog
 %{cartridgedir}/info/control
 %{cartridgedir}/info/manifest.yml
 %{cartridgedir}/README
+%doc %{cartridgedir}/COPYRIGHT
+%doc %{cartridgedir}/LICENSE
+# ASL V2 and LGPLv2
+%config(noreplace) %{cartridgedir}/info/configuration/
 
 %changelog
 * Tue Jan 17 2012 Dan McPherson <dmcphers@redhat.com> 0.85.3-1
