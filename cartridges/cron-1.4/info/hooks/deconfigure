@@ -48,6 +48,8 @@ source ${CART_INFO_DIR}/lib/util
 
 CRON_DIR="$APP_HOME/cron-1.4/"
 
+disable_cronjobs
+
 #
 # Remove environment variables
 #
@@ -55,8 +57,6 @@ CRON_DIR="$APP_HOME/cron-1.4/"
 if [ "$OPENSHIFT_BATCH_TYPE" = "cron" ]; then
    /bin/rm -f $APP_HOME/.env/OPENSHIFT_BATCH_TYPE $APP_HOME/.env/OPENSHIFT_BATCH_CTL_SCRIPT $APP_HOME/.env/OPENSHIFT_BATCH_CRON_14_EMBEDDED_TYPE
 fi
-
-stop_crontab
 
 runcon -l s0-s0:c0.c1023 rm -rf "$CRON_DIR" "$CRON_DIR/${application}_cron_ctl.sh"
 

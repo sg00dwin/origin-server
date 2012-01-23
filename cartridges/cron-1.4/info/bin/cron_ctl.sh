@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Control application's embedded batch processing (cron) service
+# Control application's embedded job scheduling service (cron)
 SERVICE_NAME=cron
 CART_NAME=cron
 CART_VERSION=1.4
@@ -9,60 +9,65 @@ CART_INSTALL_DIR=/usr/libexec/li/cartridges
 CART_INFO_DIR=$CART_INSTALL_DIR/embedded/$CART_DIRNAME/info
 export STOPTIMEOUT=10
 
-function _is_crontab_enabled() {
-   [ -f $CART_INSTANCE_DIR/run/crontab.enabled ]  &&  return 0
+function _are_cronjobs_enabled() {
+   [ -f $CART_INSTANCE_DIR/run/jobs.enabled ]  &&  return 0
    return 1
 
-}  #  End of function  _is_crontab_enabled.
+}  #  End of function  _are_cronjobs_enabled.
 
 
-function _crontab_status() {
-   if [ ! -f "$OPENSHIFT_REPO_DIR/.openshift/crontab" ]; then
-      echo "Application has no batch jobs configured [.openshift/crontab]" 1>&2
-   fi
-
-   if _is_crontab_enabled; then
-      echo "$SERVICE_NAME batch processing service is enabled" 1>&2
-   else
-      echo "$SERVICE_NAME batch processing service is disabled" 1>&2
-   fi
-
-}  #  End of function  _crontab_status.
-
-
-function _crontab_enable() {
-   if _is_crontab_enabled; then
-      echo "$SERVICE_NAME batch processing service is already enabled" 1>&2
-   else
-      if [ -f "$OPENSHIFT_REPO_DIR/.openshift/crontab" ]; then
-         crontab "$OPENSHIFT_REPO_DIR/.openshift/crontab"
-         wait_to_start_as_user
+function _cronjobs_status() {
+   if [ -d "$OPENSHIFT_REPO_DIR/.openshift/cron" ]; then
+      njobs=$(find $OPENSHIFT_REPO_DIR/.openshift/cron/ -type f -executable | wc -l)
+      if test 0 -ge ${njobs:-0}; then
+         echo "Application has no scheduled jobs" 1>&2
+         locn=".openshift/cron/{hourly,weekly,daily,monthly}/"
+         nfiles=$(find $OPENSHIFT_REPO_DIR/.openshift/cron/ -type f | wc -l)
+         if test 0 -ge ${nfiles:-0}; then
+            echo "  - No files found in $locn directories." 1>&2
+         else
+            echo "  - ${nfiles} files found in $locn directories - not executable?" 1>&2
+         fi
       fi
-
-      touch "$CART_INSTANCE_DIR/run/crontab.enabled"
-   fi
-
-}  #  End of function  _crontab_enable.
-
-
-function _crontab_disable() {
-   if _is_crontab_enabled; then
-      if crontab -l > /dev/null 2>&1; then
-         crontab -r
-      fi
-      rm -f $CART_INSTANCE_DIR/run/crontab.enabled
    else
-      echo "$SERVICE_NAME batch processing service is already disabled" 1>&2
+      echo "Application has no scheduled jobs" 1>&2
+      echo "   - Missing .openshift/cron/ directory." 1>&2
    fi
 
-}  #  End of function  _crontab_disable.
+   if _are_cronjobs_enabled; then
+      echo "$SERVICE_NAME scheduling service is enabled" 1>&2
+   else
+      echo "$SERVICE_NAME scheduling service is disabled" 1>&2
+   fi
+
+}  #  End of function  _cronjobs_status.
 
 
-function _crontab_reenable() {
-   _crontab_disable
-   _crontab_enable
+function _cronjobs_enable() {
+   if _are_cronjobs_enabled; then
+      echo "$SERVICE_NAME scheduling service is already enabled" 1>&2
+   else
+      touch "$CART_INSTANCE_DIR/run/jobs.enabled"
+   fi
 
-}  #  End of function  _crontab_reenable.
+}  #  End of function  _cronjobs_enable.
+
+
+function _cronjobs_disable() {
+   if _are_cronjobs_enabled; then
+      rm -f $CART_INSTANCE_DIR/run/jobs.enabled
+   else
+      echo "$SERVICE_NAME scheduling service is already disabled" 1>&2
+   fi
+
+}  #  End of function  _cronjobs_disable.
+
+
+function _cronjobs_reenable() {
+   _cronjobs_disable
+   _cronjobs_enable
+
+}  #  End of function  _cronjobs_reenable.
 
 
 #
@@ -95,9 +100,9 @@ then
 fi
 
 case "$1" in
-   enable|start)      _crontab_enable   ;;
-   disable|stop)      _crontab_disable  ;;
-   reenable|restart)  _crontab_reenable ;;
-   status)            _crontab_status   ;;
+   enable|start)      _cronjobs_enable   ;;
+   disable|stop)      _cronjobs_disable  ;;
+   reenable|restart)  _cronjobs_reenable ;;
+   status)            _cronjobs_status   ;;
 esac
 

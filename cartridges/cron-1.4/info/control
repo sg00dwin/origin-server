@@ -9,4 +9,4 @@ Role: misc
 Vendor: https://fedorahosted.org/cronie
 DisplayName: cron-1.4
 Description:
-Cartridge providing cron batch processing services.
+Cartridge providing cron job scheduling service.
