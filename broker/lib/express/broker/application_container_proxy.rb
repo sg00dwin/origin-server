@@ -57,7 +57,7 @@ module Express
         
         cartridges
       end
-      
+
       def reserve_uid
         reserved_uid = nil
         if @district
@@ -65,7 +65,7 @@ module Express
         end
         reserved_uid
       end
-      
+
       def create(app, uid=nil)
         unless uid
           if app.uid
