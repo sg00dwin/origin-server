@@ -39,11 +39,13 @@ if args["--help"]
 end
 
 reply = ResultIO.new
-
-district = District.new
-district.save
-reply.resultIO << "Successfully created district: #{district.uuid}" if reply.resultIO.string.empty?
-
+begin
+  district = District.new
+  district.save
+  reply.resultIO << "Successfully created district: #{district.uuid}" if reply.resultIO.string.empty?
+rescue Cloud::Sdk::CdkException => e
+  reply.errorIO << e.message
+end
 
 print "DEBUG OUTPUT:\n#{reply.debugIO.string}\n\n" unless reply.debugIO.string.empty?
 print "ERROR OUTPUT:\n#{reply.errorIO.string}\n\n" unless reply.errorIO.string.empty?

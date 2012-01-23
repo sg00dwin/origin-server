@@ -67,6 +67,11 @@ module Express
       end
       
       def create(app, uid=nil)
+        unless uid
+          if app.uid
+            uid = app.uid
+          end
+        end
         result = execute_direct(@@C_CONTROLLER, 'configure', "-c '#{app.uuid}' -i '#{uid}' -s '#{app.user.ssh}' -t '#{app.user.ssh_type}'")
         parse_result(result)
       end
@@ -131,6 +136,10 @@ module Express
       
       def get_public_hostname
         rpc_get_fact_direct('public_hostname')
+      end
+      
+      def get_capacity
+        rpc_get_fact_direct('capacity').to_i
       end
       
       def get_ip_address
@@ -292,7 +301,7 @@ module Express
                     reply.append destination_container.send(:run_cartridge_command, "embedded/" + cart, app, "post-move", nil, false)
                   end
                 end
-  
+
                 unless app.aliases.nil?
                   app.aliases.each do |server_alias|
                     destination_container.add_alias(app, app.framework, server_alias)
@@ -706,7 +715,7 @@ module Express
             if (result && defined? result.results && result.results.has_key?(:data))
               value = result.results[:data][:value]
             else
-              raise NodeException.new(143), "Node execution failure (error getting fact).  If the problem persists please contact Red Hat support."
+              raise Cloud::Sdk::NodeException.new("Node execution failure (error getting fact).  If the problem persists please contact Red Hat support.", 143)
             end
           ensure
             rpc_client.disconnect
