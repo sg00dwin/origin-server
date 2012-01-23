@@ -18,7 +18,7 @@ Options:
 -u|--uuid     <district uuid>
     District uuid  (alphanumeric)
 -c|--command <command>
-    (add-node|remove-node|mark-remove-node|destroy)
+    (add-node|remove-node|deactivate-node|destroy)
 -i|--server_identity
     Node server_identity (required)
 -b|--bypass
@@ -69,52 +69,61 @@ elsif command
 end
 
 reply = ResultIO.new
-case command
-when "add-node"
-  district.add_node(server_identity)
-  district.save
-when "remove-node"
-  district.remove_node(server_identity)
-  district.save
-when "mark-remove-node"
-  district.mark_remove_node(server_identity)
-  district.save
-when "destroy"
-  unless bypass
-    puts <<-WARNING
-  !!!! WARNING !!!! WARNING !!!! WARNING !!!!
-  You are about to destroy the #{uuid} district.
-
-  This is NOT reversible, all remote data for this district will be removed.
-  WARNING
-
-    print "Do you want to destroy this district (y/n): "
-    begin
-      agree = gets.chomp
-      if agree != 'y'
+begin
+  case command
+  when "add-node"
+    district.add_node(server_identity)
+    reply.resultIO << "Success!"
+  when "remove-node"
+    district.remove_node(server_identity)
+    reply.resultIO << "Success!"
+  when "deactivate-node"
+    district.deactivate_node(server_identity)
+    reply.resultIO << "Success!"
+  when "destroy"
+    unless bypass
+      puts <<-WARNING
+    !!!! WARNING !!!! WARNING !!!! WARNING !!!!
+    You are about to destroy the #{uuid} district.
+  
+    This is NOT reversible, all remote data for this district will be removed.
+    WARNING
+  
+      print "Do you want to destroy this district (y/n): "
+      begin
+        agree = gets.chomp
+        if agree != 'y'
+          puts "\n"
+          exit 217
+        end
+      rescue Interrupt
         puts "\n"
         exit 217
       end
-    rescue Interrupt
-      puts "\n"
-      exit 217
+    end
+
+    #TODO handle uids reserved outside of district
+    if district.server_identities.empty? && district.available_capacity == Rails.application.config.districts[:max_capacity]
+      district.delete
+      reply.resultIO << "Successfully destroyed district: #{uuid}" if reply.resultIO.string.empty?
+    else
+      reply.resultIO << "Couldn't destroy district '#{uuid}' because it still contains applications and/or nodes" if reply.resultIO.string.empty?
+    end
+  
+  else
+    if district
+      district.available_uids = '<hidden>'
+      reply.resultIO << district.attributes.pretty_inspect
+    else
+      districts = District.find_all
+      districts.each do |district|
+        district.available_uids = '<hidden>'
+        reply.resultIO << district.attributes.pretty_inspect
+      end
     end
   end
-
-  if district.server_identities.empty? && district.capacity = 0
-    district.delete
-    reply.resultIO << "Successfully destroyed district: #{uuid}" if reply.resultIO.string.empty?
-  else
-    reply.resultIO << "Couldn't destroy district '#{uuid}' because it still contains applications and/or nodes" if reply.resultIO.string.empty?
-  end
-
-else
-  if district
-    reply.resultIO << district.pretty_inspect
-  else
-    districts = District.find_all
-    reply.resultIO << districts.pretty_inspect
-  end
+rescue Cloud::Sdk::CdkException => e
+  reply.errorIO << e.message
 end
 
 print "DEBUG OUTPUT:\n#{reply.debugIO.string}\n\n" unless reply.debugIO.string.empty?

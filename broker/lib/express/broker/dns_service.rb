@@ -10,7 +10,9 @@ module Express
       end
       
       def namespace_available?(namespace)
-        return !DnsService.has_dns_txt?(namespace)
+        login
+        has_txt_record = DnsService.dyn_has_txt_record?(namespace, @auth_token)
+        return !has_txt_record
       end
       
       def register_namespace(namespace)

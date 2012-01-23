@@ -70,7 +70,7 @@ class Application < Cloud::Sdk::UserModel
       self.container = Cloud::Sdk::ApplicationContainerProxy.find_available(self.node_profile)
     end
     self.server_identity = self.container.id
-    self.uid = self.container.available_uid
+    self.uid = self.container.reserve_uid
     save
     reply.append self.container.create(self, self.uid)
     self.class.notify_observers(:after_application_create, {:application => self, :reply => reply})        

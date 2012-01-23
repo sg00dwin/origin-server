@@ -5,15 +5,21 @@
 #
 
 UID_BEGIN=500
-UID_END=12700
+# UID_END=12700   # Too large for port numbers
+UID_END=6500
+NTABLE="rhc-user-table"
 UTABLE="rhc-app-table"
+PTABLE="rhc-port-table"
+PIFACE="eth0"
+PORT_BEGIN=35531
+PORTS_PER_USER=5
 
 DEBUG=""
 SYSCONFIG=""
 
 function help {
   cat <<EOF >&2
-Usage: $0 [ -h ] [ -i | -n | -s ] [ -b UID ] [ -e UID ] [ -t name ]
+Usage: $0 [ -h ] [ -i | -n | -s ] [ -b UID ] [ -e UID ] [ -t name ] [ -p name ] [ -i iface ]
 
     Basic options:
     -h       Print this message and exit.
@@ -26,11 +32,13 @@ Usage: $0 [ -h ] [ -i | -n | -s ] [ -b UID ] [ -e UID ] [ -t name ]
     Less common options that must remain consistent across invocation
     -b UID   Beginning UID.  (default: $UID_BEGIN)
     -e UID   Ending UID.  (default: $UID_END)
-    -t name  Table name (default: $UTABLE)
+    -t name  Table Name (default: $UTABLE)
+    -p name  Port Table Name (default: $PTABLE)
+    -i name  Proxy Interface (default: $PIFACE)
 EOF
 }
 
-while getopts ':hinsb:e:t:' opt; do
+while getopts ':hinsb:e:t:p:' opt; do
   case $opt in
     'h')
       help
@@ -54,6 +62,9 @@ while getopts ':hinsb:e:t:' opt; do
       ;;
     't')
       UTABLE="${OPTARG}"
+      ;;
+    'p')
+      PTABLE="${OPTARG}"
       ;;
     '?')
       echo "Invalid option: -$OPTARG" >&2
@@ -91,33 +102,70 @@ function new_table {
   fi
 }
 
+function uid_to_ip {
+  # Logic copied from rhc-ip-prep
+  a=$(($1*128+2130706432))
+  h1=$(($a/16777216))
+  h2=$(($(($a%16777216))/65536))
+  h3=$(($(($a%65536))/256))
+  h4=$(($a%256))
+
+  echo "${h1}.${h2}.${h3}.${h4}"
+}
+
+function uid_to_portbegin {
+  echo $(($(($(($1-$UID_BEGIN))*$PORTS_PER_USER))+$PORT_BEGIN))
+}
+
+function uid_to_portend {
+  pbegin=`uid_to_portbegin $1`
+  echo $(( $pbegin + $PORTS_PER_USER - 1 ))
+}
+
 # Create the table and clear it
+new_table ${NTABLE}
 new_table ${UTABLE}
+new_table ${PTABLE}
 
-# Bottom block is system services, quick bypass
-iptables -A OUTPUT -o lo -d 127.0.0.0/25 \
+# Don't do the global UID match in every rule
+iptables -A OUTPUT \
   -m owner --uid-owner ${UID_BEGIN}-${UID_END} \
-  -j ACCEPT
+  -j ${NTABLE}
 
-# Established connections quickly bypass
-iptables -A OUTPUT -o lo -d 127.0.0.0/8 \
-  -m owner --uid-owner ${UID_BEGIN}-${UID_END} \
+# Established connections allowed
+iptables -A ${NTABLE} \
   -m state --state ESTABLISHED,RELATED \
   -j ACCEPT
 
+# Bottom block is system services
+iptables -A ${NTABLE} -o lo -d 127.0.0.0/25 \
+  -m state --state NEW \
+  -j ACCEPT
+
 # New connections with specific uids get checked on the app table.
-iptables -A OUTPUT -o lo -d 127.0.0.0/8 \
-  -m owner --uid-owner ${UID_BEGIN}-${UID_END} \
+iptables -A ${NTABLE} -o lo -d 127.0.0.0/8 \
   -m state --state NEW \
   -j ${UTABLE}
 
+# New port proxy connections
+iptables -A ${NTABLE} -p tcp -o ${PIFACE} \
+  -m multiport \
+  --dports `uid_to_portbegin $UID_BEGIN`:`uid_to_portend $UID_END` \
+  -m state --state NEW \
+  -j ${PTABLE}
+
+# Per UID rules
 seq ${UID_BEGIN} ${UID_END} | while read uid; do
-  # Logic copied from rhc-ip-prep
-  a=$(($uid*128+2130706432))
-  net=$(($a>>24 )).$(($(($a%16777216))<<8>>24)).$(($(($a%65536))<<16>>24)).$(($(($a%256))<<24>>24))
-
-  iptables -A ${UTABLE} -d ${net}/25 -m owner --uid-owner $uid -j ACCEPT 
+  iptables -A ${UTABLE} -d `uid_to_ip $uid`/25 \
+    -m owner --uid-owner $uid \
+    -j ACCEPT
 done
-
-# Can't set default policy on a table, set reject at the bottom
 iptables -A ${UTABLE} -j REJECT --reject-with icmp-host-prohibited
+
+seq ${UID_BEGIN} ${UID_END} | while read uid; do
+  iptables -A ${PTABLE} -p tcp \
+    -m multiport --dports `uid_to_portbegin $uid`:`uid_to_portend $uid` \
+    -m owner --uid-owner $uid \
+    -j ACCEPT
+done
+iptables -A ${PTABLE} -j REJECT --reject-with icmp-host-prohibited

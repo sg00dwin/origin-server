@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.85.11
+Version:       0.85.13
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -227,6 +227,16 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Mon Jan 23 2012 Dan McPherson <dmcphers@redhat.com> 0.85.13-1
+- Use additional table to simplify rules a bit.  Bugfixes.
+  (rmillner@redhat.com)
+- Not able to solve this with selinux.  Use iptables instead.
+  (rmillner@redhat.com)
+- Try libra_port_t (rmillner@redhat.com)
+
+* Fri Jan 20 2012 Dan McPherson <dmcphers@redhat.com> 0.85.12-1
+- getting to the real districts mongo impl (dmcphers@redhat.com)
+
 * Fri Jan 20 2012 Mike McGrath <mmcgrath@redhat.com> 0.85.11-1
 - Fix pam_libra to user the system_r role rather then unconfined_r, also add
   better errno reporting (dwalsh@redhat.com)

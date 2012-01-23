@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.85.5
+Version:   0.85.6
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -141,6 +141,10 @@ chmod a+r /etc/libra/controller.conf
 echo "kernel.sem = 250  32000 32  4096" >> /etc/sysctl.conf
 sysctl kernel.sem="250  32000 32  4096"
 
+# Move ephemeral port range to accommodate app proxies
+echo "net.ipv4.ip_local_port_range = 15000 35534" >> /etc/sysctl.conf
+sysctl net.ipv4.ip_local_port_range="15000 35534"
+
 # Setup facts
 /usr/libexec/mcollective/update_yaml.rb
 crontab -u root %{devenvdir}/crontab
@@ -214,6 +218,21 @@ mkdir -p /var/lib/puppet/ssl/private_keys/
 cp -f %{devenvdir}/puppet-public.pem /var/lib/puppet/ssl/public_keys/localhost.localdomain.pem
 cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost.localdomain.pem
 
+# Chmod o-z for rpm, dmesg, su, and sudo
+/bin/chmod 0750 /bin/rpm
+/bin/chmod 0750 /bin/dmesg
+/bin/chmod 4750 /bin/su
+/bin/chmod 4110 /usr/bin/sudo
+
+# Chgrp to wheel for rpm, dmesg, su, and sudo
+/bin/chgrp wheel /bin/rpm
+/bin/chgrp wheel /bin/dmesg
+/bin/chgrp wheel /bin/su
+/bin/chgrp wheel /usr/bin/sudo
+
+# Add user nagios_monitor to wheel group for running rpm, dmesg, su, and sudo
+/usr/bin/gpasswd nagios_monitor wheel
+
 %files
 %defattr(-,root,root,-)
 %attr(0666,-,-) %{brokerdir}/log/mcollective-client.log
@@ -228,6 +247,10 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 %{_initddir}/sauce-connect
 
 %changelog
+* Mon Jan 23 2012 Tim Kramer <tkramer@redhat.com> 0.85.6-1
+- Fixed the o-x permissions on sudo rpm su and dmesg
+- Added nagios_monitor to wheel so that it can run sudo rpm su and dmesg
+
 * Fri Jan 20 2012 Mike McGrath <mmcgrath@redhat.com> 0.85.5-1
 - more rack/ruby replacements (mmcgrath@redhat.com)
 

@@ -27,9 +27,9 @@ module Cloud
         @id = id
       end
       
-      def available_uid
-        available_uid = nil
-        available_uid
+      def reserve_uid
+        reserved_uid = nil
+        reserved_uid
       end
       
       def get_available_cartridges(cart_type)

@@ -43,7 +43,7 @@ GEM
       json (= 1.4.3)
       mongo (= 1.5.2)
       rack (= 1.1.0)
-    cloud-sdk-controller (0.3.10)
+    cloud-sdk-controller (0.3.12)
       activesupport (~> 3.0.10)
       cloud-sdk-common
       json (= 1.4.3)

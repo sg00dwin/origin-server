@@ -1,13 +1,13 @@
 PATH
   remote: .
   specs:
-    cloud-sdk-node (0.3.2)
+    cloud-sdk-node (0.3.7)
       activemodel (= 3.0.10)
       cloud-sdk-common
       highline (= 1.5.1)
       json (= 1.4.3)
       parseconfig (= 0.5.2)
-      state_machine (= 1.1.0)
+      state_machine (= 1.1.1)
 
 GEM
   remote: http://rubygems.org/
@@ -37,7 +37,7 @@ GEM
     rspec-expectations (2.7.0)
       diff-lcs (~> 1.1.2)
     rspec-mocks (2.7.0)
-    state_machine (1.1.0)
+    state_machine (1.1.1)
 
 PLATFORMS
   ruby
