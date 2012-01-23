@@ -18,17 +18,15 @@ function _are_cronjobs_enabled() {
 
 function _cronjobs_status() {
    if [ -d "$OPENSHIFT_REPO_DIR/.openshift/cron" ]; then
-      njobs=$(find $OPENSHIFT_REPO_DIR/.openshift/cron/ -type f -executable | wc -l)
+      njobs=0
+      for freq in `cat $CART_INFO_DIR/configuration/frequencies`; do
+         if [ -d "$OPENSHIFT_REPO_DIR/.openshift/cron/$freq" ]; then
+            jobcnt=$(ls $OPENSHIFT_REPO_DIR/.openshift/cron/$freq | wc -l)
+            njobs=$((njobs + jobcnt))
+         fi
+      done
       if test 0 -ge ${njobs:-0}; then
          echo "Application has no scheduled jobs" 1>&2
-         freqs=$(cat $CART_INFO_DIR/configuration/frequencies | tr '\n' ',')
-         locn=".openshift/cron/{${freqs%?}}/"
-         nfiles=$(find $OPENSHIFT_REPO_DIR/.openshift/cron/ -type f | wc -l)
-         if test 0 -ge ${nfiles:-0}; then
-            echo "  - No files found in $locn directories." 1>&2
-         else
-            echo "  - ${nfiles} files found in $locn directories - not executable?" 1>&2
-         fi
       fi
    else
       echo "Application has no scheduled jobs" 1>&2
