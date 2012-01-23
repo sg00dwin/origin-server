@@ -105,10 +105,9 @@ class Release < Thor
         cmd_exit = $?.exitstatus
         if cmd_exit == 0
           # The release command is supported - use it
-          tito_cmd = "tito release cvs < /tmp/answerfile"
+          tito_cmd = "tito release brew < /tmp/answerfile"
         else
-          # An older version of tito is present, use build
-          tito_cmd = "tito build --cvs-release < /tmp/answerfile"
+          raise "Your version of tito is no longer supported after the Brew migration to git"
         end
 
         # Build the RPM in brew

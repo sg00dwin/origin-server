@@ -623,7 +623,7 @@ module Express
                                    :operator => "=="})
         else
           additional_filters.push({:fact => "capacity",
-                                   :value => 100,
+                                   :value => '100',
                                    :operator => "<"})
           #TODO how do you filter on a fact not being set
           additional_filters.push({:fact => "district_uuid",
