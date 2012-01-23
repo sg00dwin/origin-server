@@ -74,7 +74,7 @@ module Express
           @district.save
         end
 
-        result = execute_direct(@@C_CONTROLLER, 'configure', "-c '#{app.uuid}' -i '#{uid}' -s '#{app.user.ssh}' -t '#{app.user.ssh_type}'")
+        result = execute_direct(@@C_CONTROLLER, 'configure', "-c '#{app.uuid}' -i '#{uid}'")
         parse_result(result)
       end
     

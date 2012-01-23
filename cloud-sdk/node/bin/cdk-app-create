@@ -24,7 +24,7 @@ cdk-app-create: Creates a new application.
 
 == Usage
 
-cdk-app-create --with-uuid UUID --with-ssh-key KEY [--with-ssh-key-type KEY_TYPE] [--named NAME] [--with-uid UID]
+cdk-app-create --with-uuid UUID [--named NAME] [--with-uid UID]
 
 Options:
 -h|--help:
@@ -40,8 +40,6 @@ require 'cloud-sdk-node'
 opts = GetoptLong.new(
     ["--with-uuid",         "-c", GetoptLong::REQUIRED_ARGUMENT],
     ["--with-uid",          "-i", GetoptLong::REQUIRED_ARGUMENT],
-    ["--with-ssh-key",      "-s", GetoptLong::REQUIRED_ARGUMENT],
-    ["--with-ssh-key-type", "-t", GetoptLong::REQUIRED_ARGUMENT],
     ["--dry-run",           "-n", GetoptLong::NO_ARGUMENT],
     ["--named",                   GetoptLong::OPTIONAL_ARGUMENT],
     ["--porcelain",         "-q", GetoptLong::NO_ARGUMENT],
@@ -65,14 +63,12 @@ end
 uuid = args['--with-uuid']
 uid = args['--with-uid']
 uid = nil if uid && uid.empty?
-ssh_key = args['--with-ssh-key']
-ssh_key_type = args['--with-ssh-key-type']
 name = args['--named']
 $dry_run = true if args['--dry-run']
 $cdk_debug = true if args['--debug']
 $porcelin = args['--porcelain'] ? true : false
 
-unless uuid and ssh_key
+unless uuid
   usage
   exit -100
 end
@@ -80,7 +76,6 @@ end
 begin
   container = Cloud::SDK::Model::ApplicationContainer.new(uuid, uuid, uid)
   container.create
-  container.user.add_ssh_key(ssh_key, ssh_key_type)
 rescue Exception => e
   $stderr.puts(e.message)
   exit -1

@@ -71,8 +71,7 @@ module Cloud::Sdk
     end
 
     def self.get_user(user_id)
-      mcursor = MongoDataStore.collection.find( "_id" => user_id )
-      bson = mcursor.next
+      bson = MongoDataStore.collection.find_one( "_id" => user_id )
       return nil if bson.to_s.strip.length == 0
 
       pkey = bson["_id"]
@@ -95,8 +94,7 @@ module Cloud::Sdk
 
     def self.get_app(user_id, id)
       select_fields = "apps.#{id}"
-      mcursor = MongoDataStore.collection.find({ "_id" => user_id }, :fields => [select_fields])
-      bson = mcursor.next
+      bson = MongoDataStore.collection.find_one({ "_id" => user_id }, :fields => [select_fields])
       return [] if bson.to_s.strip.length == 0
       return [] if bson["apps"].to_s.strip.length == 0
 
@@ -113,8 +111,7 @@ module Cloud::Sdk
     end
   
     def self.get_user_apps(user_id)
-      mcursor = MongoDataStore.collection.find({ "_id" => user_id }, :fields => ["apps"] )
-      bson = mcursor.next
+      bson = MongoDataStore.collection.find_one({ "_id" => user_id }, :fields => ["apps"] )
       return [] if bson.to_s.strip.length == 0
       return [] if bson["apps"].to_s.strip.length == 0
 

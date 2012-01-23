@@ -1,8 +1,8 @@
 class CloudUser < Cloud::Sdk::UserModel
-  attr_accessor :rhlogin, :uuid, :system_ssh_keys, :env_vars, :ssh_keys, :ssh, :ssh_type, :namespace, :key, :type, :max_gears
+  attr_accessor :rhlogin, :uuid, :system_ssh_keys, :env_vars, :ssh_keys, :namespace, :max_gears
   primary_key :rhlogin
-  private :rhlogin=, :uuid=, :ssh=, :namespace=
-  exclude_attributes :key, :type
+  private :rhlogin=, :uuid=, :namespace=
+  DEFAULT_SSH_KEY_NAME = "default"
   
   validates_each :rhlogin do |record, attribute, val|
     record.errors.add(attribute, {:message => "Invalid characters found in RHlogin '#{val}' ", :code => 107}) if val =~ /["\$\^<>\|%\/;:,\\\*=~]/
@@ -14,22 +14,14 @@ class CloudUser < Cloud::Sdk::UserModel
     end
   end
   
-  validates_each :ssh do |record, attribute, val|
-    if !(val =~ /\A[A-Za-z0-9\+\/=]+\z/)
-      record.errors.add attribute, {:message => "Invalid ssh key: #{val}", :exit_code => 108}
-    end
-  end
-  
-  validates_each :ssh_type, :allow_nil => true do |record, attribute, val|
-    if !(val =~ /^(ssh-rsa|ssh-dss)$/)
-      record.errors.add attribute, {:message => "Invalid ssh key type: #{val}", :exit_code => 116}
-    end
-  end
-  
-  def initialize(rhlogin=nil, ssh=nil, namespace=nil, ssh_type='ssh-rsa')
+  def initialize(rhlogin=nil, ssh=nil, namespace=nil, ssh_type=nil)
     super()
     ssh_type = "ssh-rsa" if ssh_type.to_s.strip.length == 0
-    self.rhlogin, self.ssh, self.namespace, self.ssh_type = rhlogin, ssh, namespace, ssh_type
+    self.ssh_keys = {} unless self.ssh_keys
+
+    self.ssh_keys[DEFAULT_SSH_KEY_NAME] = { "key" => ssh, "type" => ssh_type }
+    self.rhlogin = rhlogin
+    self.namespace = namespace
     self.max_gears = nil
   end
   
@@ -93,25 +85,26 @@ class CloudUser < Cloud::Sdk::UserModel
     result
   end
   
-  def add_secondary_ssh_key(key_name, key, key_type=nil)
+  def add_ssh_key(key_name, key, key_type=nil)
     self.ssh_keys = {} unless self.ssh_keys
     result = ResultIO.new
-    self.ssh_keys[key_name] = { :key => key, :type => key_type }
+    self.ssh_keys[key_name] = { "key" => key, "type" => key_type }
     self.save
     applications.each do |app|
-      Rails.logger.debug "DEBUG: Adding secondary key named #{key_name} to app: #{app.name} for user #{@name}"
+      Rails.logger.debug "DEBUG: Adding ssh key named #{key_name} to app: #{app.name} for user #{@name}"
       result.append app.add_authorized_ssh_key(key, key_type, key_name)
     end
     result
   end
   
-  def remove_secondary_ssh_key(key_name)
+  def remove_ssh_key(key_name)
     self.ssh_keys = {} unless self.ssh_keys    
     result = ResultIO.new
+    raise Cloud::Sdk::UserKeyException.new("ERROR: Can't remove all ssh keys for user #{self.rhlogin}", 122) if self.ssh_keys.size <= 1
     key = self.ssh_keys[key_name]
     raise Cloud::Sdk::UserKeyException.new("ERROR: Key name '#{key_name}' doesn't exist for user #{self.rhlogin}", 118) unless key
     applications.each do |app|
-      Rails.logger.debug "DEBUG: Removing secondary key named #{key_name} from app: #{app.name} for user #{@name}"
+      Rails.logger.debug "DEBUG: Removing ssh key named #{key_name} from app: #{app.name} for user #{@name}"
       result.append app.remove_authorized_ssh_key(key)
     end
     
@@ -142,20 +135,6 @@ class CloudUser < Cloud::Sdk::UserModel
       result.append app.remove_env_var(key)
     end
     result
-  end
-  
-  def update_ssh_key(new_key, key_type)
-    reply = ResultIO.new    
-    return reply if self.ssh == new_key
-    
-    self.applications.each do |app|
-      reply.append app.remove_authorized_ssh_key(self.ssh)
-      reply.append app.add_authorized_ssh_key(new_key, key_type)
-    end
-    @ssh = new_key
-    @ssh_type = key_type
-    reply.append self.save
-    reply
   end
   
   def update_namespace(new_ns)
