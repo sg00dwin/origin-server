@@ -566,6 +566,11 @@ module Express
       def run_cartridge_command(framework, app, command, arg=nil, allow_move=true)
         arguments = "'#{app.name}' '#{app.user.namespace}' '#{app.uuid}'"
         arguments += " '#{arg}'" if arg
+          
+        if allow_move
+          Express::Broker::Nurture.application(app.user.rhlogin, app.user.uuid, app.name, app.user.namespace, framework, command, app.uuid)
+          Express::Broker::Apptegic.application(app.user.rhlogin, app.user.uuid, app.name, app.user.namespace, framework, command, app.uuid)
+        end
         
         result = execute_direct(framework, command, arguments)
         begin
