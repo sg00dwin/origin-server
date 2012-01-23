@@ -6,7 +6,7 @@ Release: 1%{?dist}
 Summary: Embedded phpMyAdmin support for express
 
 Group: Applications/Internet
-License: GPLv2
+License: ASL V2
 URL: https://engineering.redhat.com/trac/Libra
 Source0: %{name}-%{version}.tar.gz
 BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
@@ -30,6 +30,8 @@ mkdir -p %{buildroot}%{cartridgedir}
 mkdir -p %{buildroot}/%{_sysconfdir}/libra/cartridges
 ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/libra/cartridges/%{name}
 cp -r info %{buildroot}%{cartridgedir}/
+cp LICENSE %{buildroot}%{cartridgedir}/
+cp COPYRIGHT %{buildroot}%{cartridgedir}/
 
 %post
 cp %{cartridgedir}/info/configuration/etc/phpMyAdmin/config.inc.php %{_sysconfdir}/phpMyAdmin/config.inc.php
@@ -49,6 +51,8 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/changelog
 %{cartridgedir}/info/control
 %{cartridgedir}/info/manifest.yml
+%doc %{cartridgedir}/COPYRIGHT
+%doc %{cartridgedir}/LICENSE
 
 %changelog
 * Fri Jan 13 2012 Dan McPherson <dmcphers@redhat.com> 0.7.1-1
