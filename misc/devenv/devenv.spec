@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.85.6
+Version:   0.85.7
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -248,6 +248,20 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 %{_initddir}/sauce-connect
 
 %changelog
+* Tue Jan 24 2012 Dan McPherson <dmcphers@redhat.com> 0.85.7-1
+- add pam-devel (dmcphers@redhat.com)
+- devenv.spec changed comment typo in chmod section 01 24 2012
+  (tkramer@redhat.com)
+- devenv.spec Added changes for sudo rpm su and dmesg.  Also added nagios
+  monitor to wheel group  01 23 2012 (tkramer@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rmillner@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rmillner@redhat.com)
+- Don't overlap range. (rmillner@redhat.com)
+- US1371, Move the ephemeral port range down to clear room for proxy.
+  (rmillner@redhat.com)
+
 * Mon Jan 23 2012 Tim Kramer <tkramer@redhat.com> 0.85.6-1
 - Fixed the o-x permissions on sudo rpm su and dmesg
 - Added nagios_monitor to wheel so that it can run sudo rpm su and dmesg
