@@ -1,5 +1,5 @@
-/* DO NOT MODIFY. This file was compiled Tue, 10 Jan 2012 16:53:11 GMT from
- * /home/aboone/Source/li/site/app/coffeescripts/widgets.coffee
+/* DO NOT MODIFY. This file was compiled Tue, 24 Jan 2012 23:09:04 GMT from
+ * /home/clayton/code/li/site/app/coffeescripts/widgets.coffee
  */
 
 (function() {
