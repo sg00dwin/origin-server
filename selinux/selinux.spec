@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.85.7
+Version:       0.85.8
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -46,6 +46,10 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Tue Jan 24 2012 Dan McPherson <dmcphers@redhat.com> 0.85.8-1
+- Dontaudit leaked file descriptors stdin/sdout from libra initrc domain to
+  mail program (dwalsh@redhat.com)
+
 * Fri Jan 20 2012 Mike McGrath <mmcgrath@redhat.com> 0.85.7-1
 - Add access to allow relabeling of privledged part of the openssh process
   (dwalsh@redhat.com)
