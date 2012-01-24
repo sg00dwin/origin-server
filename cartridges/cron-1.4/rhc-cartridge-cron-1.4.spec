@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/cron-1.4
 
 Name: rhc-cartridge-cron-1.4
-Version: 0.1.1
+Version: 0.1.2
 Release: 1%{?dist}
 Summary: Embedded cron support for express
 
@@ -51,5 +51,8 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/manifest.yml
 
 %changelog
+* Mon Jan 23 2012 Ram Ranganathan <ramr@redhat.com> 0.1.2-1
+- new package built with tito
+
 * Tue Jan 17 2012 Ram Ranganathan <ramr@redhat.com> 0.1-1
 - Initial packaging
