@@ -5,7 +5,7 @@ Name:      rhc-cartridge-jbossas-7.0
 Version:   0.85.3
 Release:   1%{?dist}
 Group:     Development/Languages
-License:   ASL V2
+License:   ASL 2.0
 URL:       http://openshift.redhat.com
 Source0:   %{name}-%{version}.tar.gz
 
