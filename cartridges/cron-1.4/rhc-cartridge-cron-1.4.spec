@@ -6,7 +6,7 @@ Release: 1%{?dist}
 Summary: Embedded cron support for express
 
 Group: Network/Daemons
-License: MIT and BSD and ISC and GPLv2
+License: ASL V2
 URL: https://engineering.redhat.com/trac/Libra
 Source0: %{name}-%{version}.tar.gz
 BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
@@ -32,6 +32,8 @@ mkdir -p %{buildroot}/%{_sysconfdir}/libra/cartridges
 ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/libra/cartridges/%{name}
 cp -r info %{buildroot}%{cartridgedir}/
 cp -r etc %{buildroot}%{cartridgedir}/
+cp LICENSE %{buildroot}%{cartridgedir}/
+cp COPYRIGHT %{buildroot}%{cartridgedir}/
 
 
 %clean
@@ -49,6 +51,8 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/changelog
 %{cartridgedir}/info/control
 %{cartridgedir}/info/manifest.yml
+%doc %{cartridgedir}/COPYRIGHT
+%doc %{cartridgedir}/LICENSE
 
 %changelog
 * Mon Jan 23 2012 Ram Ranganathan <ramr@redhat.com> 0.1.2-1
