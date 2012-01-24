@@ -14,9 +14,8 @@ module Express
         @district = district
       end
       
-      def self.find_available_impl(node_profile=nil)
-        district_uuid = nil
-        if Rails.application.config.districts[:enabled]
+      def self.find_available_impl(node_profile=nil, district_uuid=nil)
+        if Rails.application.config.districts[:enabled] && (!district_uuid || district_uuid == 'NONE')  
           district = District.find_available()
           if district
             district_uuid = district.uuid
@@ -81,7 +80,7 @@ module Express
         result_io = parse_result(result)
         
         if Rails.application.config.districts[:enabled]
-          district_uuid = rpc_get_fact_direct('district')
+          district_uuid = get_district_uuid
           if district_uuid && district_uuid != 'NONE'
             unreserve_district_uid(district_uuid, app.uid)
           end
@@ -140,6 +139,10 @@ module Express
       
       def get_capacity
         rpc_get_fact_direct('capacity').to_i
+      end
+      
+      def get_district_uuid
+        rpc_get_fact_direct('district')
       end
       
       def get_ip_address
@@ -230,7 +233,7 @@ module Express
         run_cartridge_command('embedded/' + component, app, "status")    
       end
       
-      def move_app(app, destination_container, node_profile=nil)
+      def move_app(app, destination_container, destination_district_uuid=nil, allow_change_district=false, node_profile=nil)
         source_container = app.container
 
         #unless app.embedded.nil?
@@ -243,8 +246,17 @@ module Express
           app.node_profile = node_profile
         end
 
+        source_district_uuid = source_container.get_district_uuid
         if destination_container.nil?
-          destination_container = Cloud::Sdk::ApplicationContainerProxy.find_available(app.node_profile)
+          unless allow_change_district
+            destination_district_uuid = source_district_uuid
+          end
+          destination_container = ApplicationContainerProxy.find_available_impl(app.node_profile, destination_district_uuid)
+        else
+          destination_district_uuid = destination_container.get_district_uuid
+          unless allow_change_district || (source_district_uuid == destination_district_uuid)
+            raise Cloud::Sdk::UserException.new("Resulting move would change districts from '#{source_district_uuid}' to '#{destination_district_uuid}'", 1)
+          end
         end
 
         if source_container.id == destination_container.id
@@ -622,6 +634,7 @@ module Express
       def self.rpc_find_available(node_profile=nil, district_uuid=nil, forceRediscovery=false)
         current_server, current_capacity = nil, nil
         additional_filters = []
+        district_uuid = nil if district_uuid == 'NONE'
         if node_profile
           additional_filters.push({:fact => "node_profile",
                                    :value => node_profile,
