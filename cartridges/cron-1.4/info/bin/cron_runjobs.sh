@@ -7,6 +7,7 @@ CART_VERSION=1.4
 CART_DIRNAME=${CART_NAME}-$CART_VERSION
 CART_INSTALL_DIR=/usr/libexec/li/cartridges
 CART_INFO_DIR=$CART_INSTALL_DIR/embedded/$CART_DIRNAME/info
+CART_DIR=${CART_DIR:-$CART_INSTALL_DIR}
 
 
 #
@@ -27,11 +28,6 @@ for f in ~/.env/*; do
     . $f
 done
 
-# Load common libraries and setup basic env.
-namespace=$(echo "$OPENSHIFT_APP_DNS" | cut -f 1 -d '.'|cut -f2 -d '-')
-source ${CART_DIR}/abstract/info/lib/util
-setup_basic_hook "$OPENSHIFT_APP_NAME" "$namespace" "$OPENSHIFT_APP_UUID"
-
 # First up check if the cron jobs are enabled.
 CART_INSTANCE_DIR="$OPENSHIFT_HOMEDIR/$CART_DIRNAME"
 if [ ! -f $CART_INSTANCE_DIR/run/jobs.enabled ]; then
@@ -45,7 +41,7 @@ if [ -d "$SCRIPTS_DIR" ]; then
    # Run all scripts in the scripts directory serially.
    for f in `ls "$SCRIPTS_DIR"`; do
       [ ! -x "$SCRIPTS_DIR/$f" ]  &&  chmod +x "$SCRIPTS_DIR/$f"
-      "$SCRIPTS_DIR/$f" >> $CART_INSTANCE_DIR/log/cron.$f.log 2>&1
+      "$SCRIPTS_DIR/$f" >> $CART_INSTANCE_DIR/log/cron.$freq.log 2>&1
    done
 fi
 

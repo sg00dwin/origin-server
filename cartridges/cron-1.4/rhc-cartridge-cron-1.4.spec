@@ -31,6 +31,7 @@ mkdir -p %{buildroot}%{cartridgedir}
 mkdir -p %{buildroot}/%{_sysconfdir}/libra/cartridges
 ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/libra/cartridges/%{name}
 cp -r info %{buildroot}%{cartridgedir}/
+cp -r etc %{buildroot}%{cartridgedir}/
 
 
 %clean
@@ -43,6 +44,7 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{cartridgedir}/info/configuration/
 %attr(0755,-,-) %{cartridgedir}/info/bin/
 %attr(0755,-,-) %{cartridgedir}/info/lib/
+%attr(0755,-,-) %{cartridgedir}/etc/
 %{_sysconfdir}/libra/cartridges/%{name}
 %{cartridgedir}/info/changelog
 %{cartridgedir}/info/control

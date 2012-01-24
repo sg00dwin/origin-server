@@ -12,18 +12,23 @@ DOP=5  # Degree of Parallelism.
 
 function usage() {
    freqs=$(cat $CART_INFO_DIR/configuration/frequencies | tr '\n' '|')
-   echo "Usage: $0 {start | start-user <uid>} <${freqs%?}>"
+   echo "Usage: $0 {run | run-user <uid>} <${freqs%?}>"
 }
 
 
-function start_all_scheduled_jobs() {
+function libra_users() {
+    grep ":libra guest:" /etc/passwd | cut -d: -f1
+}
+
+
+function run_all_scheduled_jobs() {
    freq=${1:-""}
    if [ -z "$freq" ]; then
       usage
       exit 1
    fi
 
-   `libra_users` | xargs -d' ' -I{} -n 1 -P $DOP $0 start-user {} $freq
+   libra_users | xargs -d' ' -I{} -n 1 -P $DOP $0 run-user {} $freq
 }
 
 
@@ -35,12 +40,7 @@ function setuppam() {
 }
 
 
-function libra_users() {
-    grep ":libra guest:" /etc/passwd | cut -d: -f1
-}
-
-
-function start_user_scheduled_jobs() {
+function run_user_scheduled_jobs() {
    uuid=${1:-""}
    freq=${2:-""}
    if [ -z "$uuid" || -z "$freq" ]; then
@@ -77,9 +77,9 @@ source "$CART_INFO_DIR/configuration/limits"
 
 # Check whether to run all or a specific user's jobs.
 case "$1" in 
-    start)       start_all_scheduled_jobs  "$2"       ;;
-    start-user)  start_user_scheduled_jobs "$2" "$3"  ;;
-    *)           usage ; exit 1                       ;;
+    run)       run_all_scheduled_jobs  "$2"       ;;
+    run-user)  run_user_scheduled_jobs "$2" "$3"  ;;
+    *)         usage ; exit 1                     ;;
 esac
 
 exit 0
