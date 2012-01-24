@@ -36,9 +36,9 @@ module Express
       def reserve_district_uid(uuid)
         Rails.logger.debug "MongoDataStore.reserve_district_uid(#{uuid})\n\n"
         bson = MongoDataStore.district_collection.find_and_modify({
-             :query => {"_id" => uuid},
-             :update => {"$pop" => { "available_uids" => -1}, "$inc" => { "available_capacity" => -1 }},
-             :new => false })
+          :query => {"_id" => uuid},
+          :update => {"$pop" => { "available_uids" => -1}, "$inc" => { "available_capacity" => -1 }},
+          :new => false })
         bson["available_uids"][0]
       end
       
@@ -54,7 +54,10 @@ module Express
       
       def remove_district_node(uuid, server_identity)
         Rails.logger.debug "MongoDataStore.remove_district_node(#{uuid},#{server_identity})\n\n"
-        MongoDataStore.district_collection.update({"_id" => uuid, "server_identities.#{server_identity}.active" => false}, {"$unset" => { "server_identities.#{server_identity}" => 1}})
+        bson = MongoDataStore.district_collection.find_and_modify({
+          :query => {"_id" => uuid, "server_identities.#{server_identity}.active" => false}, 
+          :update => {"$unset" => { "server_identities.#{server_identity}" => 1}} })
+        return bson != nil
       end
       
       def deactivate_district_node(uuid, server_identity)

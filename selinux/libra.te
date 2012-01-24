@@ -394,6 +394,8 @@ mta_base_mail_template(libra)
 mta_sendmail_domtrans(libra_t, libra_mail_t)
 role system_r types libra_mail_t;
 
+dontaudit libra_mail_t libra_initrc_t:fifo_file rw_inherited_fifo_file_perms;
+
 read_files_pattern(libra_mail_t, libra_var_lib_t, libra_var_lib_t)
 manage_files_pattern(libra_mail_t, libra_tmp_t, libra_tmp_t)
 

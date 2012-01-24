@@ -93,7 +93,7 @@ Broker::Application.configure do
     :nurture_enabled => true,
     :nurture_username => "admin",
     :nurture_password => "password",
-    :nurture_url => "http://69.164.192.124:4500/",
+    :nurture_url => "https://libra-makara.nurturehq.com/",
     
     :apptegic_enabled => true,
     :apptegic_url => "https://redhat.apptegic.com/httpreceiver",
@@ -105,7 +105,7 @@ Broker::Application.configure do
   # CDK Config
   config.cdk = {
     :domain_suffix => "rhcloud.com",
-    :per_user_app_limit => 5,
+    :default_max_gears => 5,
 
     :datastore_mongo => {
       :host => "HOST_NAME",

@@ -46,7 +46,7 @@ module Express
       def self.libra_contact(rhlogin, uuid, user_namespace, action)
           return unless Rails.application.config.analytics[:nurture_enabled]
           Rails.logger.debug "DEBUG: Sending to Nurture:libra_contact: rhlogin='#{rhlogin}' namespace='#{user_namespace}' action='#{action}'"
-          `curl -s -O /dev/null -X POST -u '#{Rails.application.config.analytics[:nurture_username]}:#{Rails.application.config.analytics[:nurture_password]}' '#{Rails.application.config.analytics[:nurture_url]}/libra_contact' \
+          `curl -s -O /dev/null -X POST -u '#{Rails.application.config.analytics[:nurture_username]}:#{Rails.application.config.analytics[:nurture_password]}' '#{Rails.application.config.analytics[:nurture_url]}libra_contact' \
        --data-urlencode "user_type=express" \
        --data-urlencode "user[uuid]=#{uuid}" \
        --data-urlencode "user[action]=#{action}" \

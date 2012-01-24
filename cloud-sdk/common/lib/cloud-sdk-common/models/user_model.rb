@@ -36,13 +36,18 @@ module Cloud
       end
       
       def save(login)
-        id_var = self.class.pk || "uuid"        
+        id_var = self.class.pk || "uuid"
+        was_persisted = @persisted
         @previously_changed = changes
         @changed_attributes.clear
         @new_record = false
         @persisted = true
         @deleted = false
-        DataStore.instance.save(self.class.name, login, instance_variable_get("@#{id_var}"), self.attributes)
+        if was_persisted
+          DataStore.instance.save(self.class.name, login, instance_variable_get("@#{id_var}"), self.attributes)
+        else
+          DataStore.instance.create(self.class.name, login, instance_variable_get("@#{id_var}"), self.attributes)
+        end
         self
       end
       
