@@ -85,10 +85,9 @@ class ApplicationsController < BaseController
       return
     end
     Rails.logger.debug "Checking to see if user limit for number of apps has been reached"
-    apps = Application.find_all(user)
-    if (apps.length >= Rails.application.config.cdk[:per_user_app_limit])
+    if (user.consumed_gears >= user.max_gears)
       @reply = RestReply.new(:forbidden)
-      message = Message.new(:error, "#{@login} has already reached the application limit of #{Rails.application.config.cdk[:per_user_app_limit]}")
+      message = Message.new(:error, "#{@login} has already reached the application limit of #{user.max_gears}")
       @reply.messages.push(message)
       respond_with @reply, :status => @reply.status
       return

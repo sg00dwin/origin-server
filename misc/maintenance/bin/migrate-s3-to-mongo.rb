@@ -69,6 +69,7 @@ def mongo_populate
               "ssh_keys" => user_data["ssh_keys"],
               "system_ssh_keys" => user_data["system_ssh_keys"],
               "env_vars" => user_data["env_vars"],
+              "max_gears" => 5
             }              
         
       # Get all apps for this RH login user
@@ -106,6 +107,7 @@ def mongo_populate
                             "aliases"         => app_data["aliases"]
                           }
       end
+      bson_doc["consumed_gears"] = app_bson_doc.length
       bson_doc["apps"] = app_bson_doc
 
       # Insert doc into the mongo collection

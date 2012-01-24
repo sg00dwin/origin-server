@@ -1,5 +1,5 @@
 class CloudUser < Cloud::Sdk::UserModel
-  attr_accessor :rhlogin, :uuid, :system_ssh_keys, :env_vars, :ssh_keys, :namespace, :max_gears
+  attr_accessor :rhlogin, :uuid, :system_ssh_keys, :env_vars, :ssh_keys, :namespace, :max_gears, :consumed_gears
   primary_key :rhlogin
   private :rhlogin=, :uuid=, :namespace=
   DEFAULT_SSH_KEY_NAME = "default"
@@ -22,7 +22,8 @@ class CloudUser < Cloud::Sdk::UserModel
     self.ssh_keys[DEFAULT_SSH_KEY_NAME] = { "key" => ssh, "type" => ssh_type }
     self.rhlogin = rhlogin
     self.namespace = namespace
-    self.max_gears = nil
+    self.max_gears = Rails.application.config.cdk[:default_max_gears]
+    self.consumed_gears = 0
   end
   
   def save
