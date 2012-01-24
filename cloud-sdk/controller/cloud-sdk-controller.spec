@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.3.13
+Version:        0.3.14
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -73,6 +73,10 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Tue Jan 24 2012 Dan McPherson <dmcphers@redhat.com> 0.3.14-1
+- Updating gem versions (dmcphers@redhat.com)
+- rubygem-cloud-sdk-controller: Modified license to ASL 2.0 (jhonce@redhat.com)
+
 * Tue Jan 24 2012 Dan McPherson <dmcphers@redhat.com> 0.3.13-1
 - Updating gem versions (dmcphers@redhat.com)
 - fix test case (dmcphers@redhat.com)
