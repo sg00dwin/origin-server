@@ -97,10 +97,10 @@ class CloudUser < Cloud::Sdk::UserModel
     result
   end
   
-  def remove_ssh_key(key_name)
+  def remove_ssh_key(key_name, num_keys_check=true)
     self.ssh_keys = {} unless self.ssh_keys    
     result = ResultIO.new
-    raise Cloud::Sdk::UserKeyException.new("ERROR: Can't remove all ssh keys for user #{self.rhlogin}", 122) if self.ssh_keys.size <= 1
+    raise Cloud::Sdk::UserKeyException.new("ERROR: Can't remove all ssh keys for user #{self.rhlogin}", 122) if num_keys_check and self.ssh_keys.size <= 1
     key = self.ssh_keys[key_name]
     raise Cloud::Sdk::UserKeyException.new("ERROR: Key name '#{key_name}' doesn't exist for user #{self.rhlogin}", 118) unless key
     applications.each do |app|
@@ -111,6 +111,12 @@ class CloudUser < Cloud::Sdk::UserModel
     self.ssh_keys.delete key_name
     self.save
     result
+  end
+
+  def update_ssh_key(key, key_type=nil, key_name=nil)
+    key_name = CloudUser::DEFAULT_SSH_KEY_NAME if key_name.to_s.strip.length == 0
+    remove_ssh_key(key_name, false)
+    add_ssh_key(key_name, key, key_type)
   end
   
   def add_env_var(key, value)

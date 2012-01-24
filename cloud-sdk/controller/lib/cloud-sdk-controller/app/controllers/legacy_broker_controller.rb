@@ -10,7 +10,9 @@ class LegacyBrokerController < ApplicationController
     if user
       user_info = user.as_json
       #FIXME: This is redundant, for now keeping it for backward compatibility
-      user_info["ssh_key"] = user_info["ssh_keys"][CloudUser.DEFAULT_SSH_KEY_NAME]
+      if user_info["ssh_keys"] and user_info["ssh_keys"].kind_of?(Hash)
+        user_info["ssh_key"] = user_info["ssh_keys"][CloudUser::DEFAULT_SSH_KEY_NAME]
+      end
       
       user_info[:rhc_domain] = Rails.application.config.cdk[:domain_suffix]
       app_info = {}
@@ -49,8 +51,7 @@ class LegacyBrokerController < ApplicationController
         user.save
       when "update-key"
         raise Cloud::Sdk::UserKeyException.new("Missing SSH key or key name", 119) if @req.ssh.nil? or @req.key_name.nil?
-        @reply.append user.remove_ssh_key(@req.key_name)
-        @reply.append user.add_ssh_key(@req.key_name, @req.ssh, @req.key_type)
+        @reply.append user.update_ssh_key(@req.ssh, @req.key_type, @req.key_name)
       when "list-keys"
         @reply.data = { :keys => user.ssh_keys }.to_json
       else
@@ -73,8 +74,7 @@ class LegacyBrokerController < ApplicationController
 
     if @req.alter
       #FIXME: Either this needs to be removed or user should pass key name to alter
-      @reply.append cloud_user.remove_ssh_key(CloudUser.DEFAULT_SSH_KEY_NAME)
-      @reply.append cloud_user.add_ssh_key(CloudUser.DEFAULT_SSH_KEY_NAME, @req.ssh, @req.key_type)
+      @reply.append cloud_user.update_ssh_key(@req.ssh, @req.key_type, CloudUser::DEFAULT_SSH_KEY_NAME)
       
       raise Cloud::Sdk::UserException.new("The supplied namespace '#{@req.namespace}' is not allowed", 106) if Cloud::Sdk::ApplicationContainerProxy.blacklisted? @req.namespace            
       @reply.append cloud_user.update_namespace(@req.namespace)
