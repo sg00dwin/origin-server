@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/phpmoadmin-1.0
 
 Name: rhc-cartridge-phpmoadmin-1.0
-Version: 0.4.1
+Version: 0.4.2
 Release: 1%{?dist}
 Summary: Embedded phpMoAdmin support for express
 
@@ -54,6 +54,11 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Tue Jan 24 2012 Dan McPherson <dmcphers@redhat.com> 0.4.2-1
+- Updated License value in manifest.yml files. Corrected Apache Software
+  License Fedora short name (jhonce@redhat.com)
+- phpmoadmin-1.0: Modified license to ASL V2 (jhonce@redhat.com)
+
 * Fri Jan 13 2012 Dan McPherson <dmcphers@redhat.com> 0.4.1-1
 - bump spec numbers (dmcphers@redhat.com)
 
