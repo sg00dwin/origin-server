@@ -1,5 +1,7 @@
 require 'mcollective'
 require 'openshift'
+require 'express/broker/nurture'
+require 'express/broker/apptegic'
 
 include MCollective::RPC
 module Express
@@ -71,7 +73,8 @@ module Express
             uid = app.uid
           end
         end
-        result = execute_direct(@@C_CONTROLLER, 'configure', "-c '#{app.uuid}' -i '#{uid}' -s '#{app.user.ssh}' -t '#{app.user.ssh_type}'")
+
+        result = execute_direct(@@C_CONTROLLER, 'configure', "-c '#{app.uuid}' -i '#{uid}'")
         parse_result(result)
       end
     
