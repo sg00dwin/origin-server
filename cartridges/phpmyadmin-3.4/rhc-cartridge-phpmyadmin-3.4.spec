@@ -1,12 +1,12 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/phpmyadmin-3.4
 
 Name: rhc-cartridge-phpmyadmin-3.4
-Version: 0.7.1
+Version: 0.7.2
 Release: 1%{?dist}
 Summary: Embedded phpMyAdmin support for express
 
 Group: Applications/Internet
-License: ASL V2
+License: ASL 2.0
 URL: https://engineering.redhat.com/trac/Libra
 Source0: %{name}-%{version}.tar.gz
 BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
@@ -55,6 +55,11 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Tue Jan 24 2012 Dan McPherson <dmcphers@redhat.com> 0.7.2-1
+- Updated License value in manifest.yml files. Corrected Apache Software
+  License Fedora short name (jhonce@redhat.com)
+- phpmyadmin-3.4: Modified license to ASL V2 (jhonce@redhat.com)
+
 * Fri Jan 13 2012 Dan McPherson <dmcphers@redhat.com> 0.7.1-1
 - bump spec numbers (dmcphers@redhat.com)
 

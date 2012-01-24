@@ -8,11 +8,21 @@ UID_BEGIN=500
 # UID_END=12700   # Too large for port numbers
 UID_END=6500
 NTABLE="rhc-user-table"
+
 UTABLE="rhc-app-table"
-PTABLE="rhc-port-table"
+UIFACE="lo"
+UWHOLE_NET="127.0.0.0"
+UWHOLE_NM="8"
+USAFE_NET="127.0.0.0"
+USAFE_NM="25"
+
+PTABLE="rhc-port-table"   # To Port Proxies
 PIFACE="eth0"
 PORT_BEGIN=35531
 PORTS_PER_USER=5
+
+XSTABLE="rhc-proxy-servers-table"   # From express servers
+XPTABLE="rhc-proxy-inbound-table"   # DNAT configuration
 
 DEBUG=""
 SYSCONFIG=""
@@ -126,6 +136,24 @@ function uid_to_portend {
 new_table ${NTABLE}
 new_table ${UTABLE}
 new_table ${PTABLE}
+new_table ${XSTABLE}
+new_table ${XPTABLE}
+
+# INPUT proxy table from allowed servers only.  Blind guess where to
+# insert this, 4'th place is below the lo and existing connection
+# rules.
+iptables -I INPUT 4 \
+  -m multiport \
+  --dports `uid_to_portbegin $UID_BEGIN`:`uid_to_portend $UID_END` \
+  -m state --state NEW \
+  -j ${XSTABLE}
+
+
+# Proxy DNAT to internal servers
+iptables -t nat -A PREROUTING \
+  -m multiport \
+  --dports `uid_to_portbegin $UID_BEGIN`:`uid_to_portend $UID_END` \
+  -j ${XPTABLE}
 
 # Don't do the global UID match in every rule
 iptables -A OUTPUT \
@@ -138,12 +166,12 @@ iptables -A ${NTABLE} \
   -j ACCEPT
 
 # Bottom block is system services
-iptables -A ${NTABLE} -o lo -d 127.0.0.0/25 \
+iptables -A ${NTABLE} -o ${UIFACE} -d ${USAFE_NET}/${USAFE_NM} \
   -m state --state NEW \
   -j ACCEPT
 
 # New connections with specific uids get checked on the app table.
-iptables -A ${NTABLE} -o lo -d 127.0.0.0/8 \
+iptables -A ${NTABLE} -o ${UIFACE} -d ${UWHOLE_NET}/${UWHOLE_NM} \
   -m state --state NEW \
   -j ${UTABLE}
 
@@ -162,10 +190,11 @@ seq ${UID_BEGIN} ${UID_END} | while read uid; do
 done
 iptables -A ${UTABLE} -j REJECT --reject-with icmp-host-prohibited
 
-seq ${UID_BEGIN} ${UID_END} | while read uid; do
-  iptables -A ${PTABLE} -p tcp \
-    -m multiport --dports `uid_to_portbegin $uid`:`uid_to_portend $uid` \
-    -m owner --uid-owner $uid \
-    -j ACCEPT
-done
+# Per UID port rules
+# seq ${UID_BEGIN} ${UID_END} | while read uid; do
+#  iptables -A ${PTABLE} -p tcp \
+#    -m multiport --dports `uid_to_portbegin $uid`:`uid_to_portend $uid` \
+#    -m owner --uid-owner $uid \
+#    -j ACCEPT
+# done
 iptables -A ${PTABLE} -j REJECT --reject-with icmp-host-prohibited

@@ -14,7 +14,7 @@ class Home < OpenShift::SeleniumTestCase
     @home.items[:signup_links].each do |link|
       @home.click(link)
 
-      await { @signup.is_open? }
+      await("signup dialog open") { @signup.is_open? }
 
       @signup.click(:close)
     end

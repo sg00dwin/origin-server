@@ -61,7 +61,7 @@ class CloudUserTest < ActiveSupport::TestCase
     CloudUser.expects(:notify_observers).with(:before_cloud_user_create, user).in_sequence(observer_seq).at_least_once
     CloudUser.expects(:notify_observers).with(:cloud_user_create_success, user).in_sequence(observer_seq).at_least_once
     CloudUser.expects(:notify_observers).with(:after_cloud_user_create, user).in_sequence(observer_seq).at_least_once
-    Cloud::Sdk::DataStore.instance.class.any_instance.expects(:save)
+    Cloud::Sdk::DataStore.instance.class.any_instance.expects(:create)
     
     Cloud::Sdk::DnsService.instance.class.any_instance.expects(:register_namespace).with(namespace).at_least_once
     Cloud::Sdk::DnsService.instance.class.any_instance.expects(:publish).at_least_once
@@ -208,7 +208,7 @@ class CloudUserTest < ActiveSupport::TestCase
      
     CloudUser.expects(:find).returns(nil)
     Cloud::Sdk::DnsService.instance.class.any_instance.expects(:namespace_available?).with(namespace).returns(true)
-    Cloud::Sdk::DataStore.instance.class.any_instance.expects(:save)
+    Cloud::Sdk::DataStore.instance.class.any_instance.expects(:create)
     Cloud::Sdk::DnsService.instance.class.any_instance.expects(:register_namespace).with(namespace).at_least_once
     Cloud::Sdk::DnsService.instance.class.any_instance.expects(:publish).at_least_once
     Cloud::Sdk::DnsService.instance.class.any_instance.expects(:close).at_least_once

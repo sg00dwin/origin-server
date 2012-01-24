@@ -2,7 +2,7 @@ Name: phpmoadmin
 Display-Name: phpmoadmin v1.0 (noarch)
 Description: Cartridge packaging phpmoadmin
 Version: 1.0.0
-License: GPLv2
+License: ASL 2.0
 Vendor:  phpmoadmin.com
 Provides:
   - "phpmoadmin"

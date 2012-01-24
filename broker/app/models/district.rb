@@ -7,9 +7,9 @@ class District < Cloud::Sdk::Model
     self.creation_time = DateTime::now().strftime
     self.uuid = uuid || Cloud::Sdk::Model.gen_uuid
     self.server_identities = {}
-    self.available_capacity = Rails.application.config.districts[:max_capacity]
+    self.available_capacity = Rails.configuration.districts[:max_capacity]
     self.available_uids = []
-    self.available_uids.fill(0, Rails.application.config.districts[:max_capacity]) {|i| i+Rails.application.config.districts[:first_uid]}
+    self.available_uids.fill(0, Rails.configuration.districts[:max_capacity]) {|i| i+Rails.configuration.districts[:first_uid]}
   end
   
   def self.find(uuid)

@@ -2,7 +2,7 @@ Name: mongodb
 Display-Name: MongoDB v2.0.0 (x86-64)
 Description: Cartridge packaging MongoDB
 Version: 2.0.0
-License: GNU AGPLv3.0
+License: ASL 2.0
 Vendor:  mongodb.org
 Provides:
   - "mongodb"

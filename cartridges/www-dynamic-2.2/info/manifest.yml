@@ -2,7 +2,7 @@ Name: www-dynamic
 Display-Name: www-dynamic v2.2 (noarch)
 Description: Web server
 Version: 1.0.0
-License: APL
+License: ASL 2.0
 Vendor: Apache
 Provides:
   - "www-dynamic"

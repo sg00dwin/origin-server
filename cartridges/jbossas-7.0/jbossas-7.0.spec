@@ -2,10 +2,10 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.85.3
+Version:   0.85.4
 Release:   1%{?dist}
 Group:     Development/Languages
-License:   ASL V2 and LGPLv2
+License:   ASL 2.0
 URL:       http://openshift.redhat.com
 Source0:   %{name}-%{version}.tar.gz
 
@@ -90,7 +90,6 @@ cp -p %{cartridgedir}/info/configuration/postgresql_module.xml /etc/alternatives
 rm -rf %{buildroot}
 
 %files
-# ASL V2
 %defattr(-,root,root,-)
 %attr(0750,-,-) %{cartridgedir}/info/hooks/
 %attr(0640,-,-) %{cartridgedir}/info/data/
@@ -103,10 +102,16 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 %doc %{cartridgedir}/COPYRIGHT
 %doc %{cartridgedir}/LICENSE
-# ASL V2 and LGPLv2
 %config(noreplace) %{cartridgedir}/info/configuration/
 
 %changelog
+* Tue Jan 24 2012 Dan McPherson <dmcphers@redhat.com> 0.85.4-1
+- Updated License value in manifest.yml files. Corrected Apache Software
+  License Fedora short name (jhonce@redhat.com)
+- jbossas-7.0.spec: Modified license to ASL V2 (jhonce@redhat.com)
+- jbossas-7.0: Modified license to ASL V2 and LGPLv2. jboss configuration files
+  that are included are covered under LGPL. (jhonce@redhat.com)
+
 * Tue Jan 17 2012 Dan McPherson <dmcphers@redhat.com> 0.85.3-1
 - US1667: threaddump for rack (wdecoste@localhost.localdomain)
 

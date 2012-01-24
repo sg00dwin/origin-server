@@ -62,7 +62,7 @@ module Express
         dns = Resolv::DNS.new
         resp = nil
         begin
-          resp = dns.getresources("#{namespace}.#{Rails.application.config.cdk[:domain_suffix]}", Resolv::DNS::Resource::IN::TXT)
+          resp = dns.getresources("#{namespace}.#{Rails.configuration.cdk[:domain_suffix]}", Resolv::DNS::Resource::IN::TXT)
         rescue Exception => e
           raise_dns_exception(e)
         end
@@ -72,10 +72,10 @@ module Express
       def self.dyn_login(retries=0)
         # Set your customer name, username, and password on the command line
         # Set up our HTTP object with the required host and path
-        url = URI.parse("#{Rails.application.config.dns[:dynect_url]}/REST/Session/")
+        url = URI.parse("#{Rails.configuration.dns[:dynect_url]}/REST/Session/")
         headers = { "Content-Type" => 'application/json' }
         # Login and get an authentication token that will be used for all subsequent requests.
-        session_data = { :customer_name => Rails.application.config.dns[:dynect_customer_name], :user_name => Rails.application.config.dns[:dynect_user_name], :password => Rails.application.config.dns[:dynect_password] }
+        session_data = { :customer_name => Rails.configuration.dns[:dynect_customer_name], :user_name => Rails.configuration.dns[:dynect_user_name], :password => Rails.configuration.dns[:dynect_password] }
         auth_token = nil
         dyn_do('dyn_login', retries) do
           http = Net::HTTP.new(url.host, url.port)
@@ -147,52 +147,52 @@ module Express
       def self.dyn_create_cname_record(application, namespace, public_hostname, auth_token, retries=0)
         #public_hostname = get_fact_direct('public_hostname')
         Rails.logger.debug "DEBUG: Public ip being configured '#{public_hostname}' to app '#{application}'"
-        fqdn = "#{application}-#{namespace}.#{Rails.application.config.cdk[:domain_suffix]}"
+        fqdn = "#{application}-#{namespace}.#{Rails.configuration.cdk[:domain_suffix]}"
         # Create the CNAME record
-        path = "CNAMERecord/#{Rails.application.config.dns[:zone]}/#{fqdn}/"
+        path = "CNAMERecord/#{Rails.configuration.dns[:zone]}/#{fqdn}/"
         record_data = { :rdata => { :cname => public_hostname }, :ttl => "60" }
         resp, data = dyn_post(path, record_data, auth_token, retries)
       end
       
       def self.dyn_delete_cname_record(application, namespace, auth_token, retries=0)
-        fqdn = "#{application}-#{namespace}.#{Rails.application.config.cdk[:domain_suffix]}"
+        fqdn = "#{application}-#{namespace}.#{Rails.configuration.cdk[:domain_suffix]}"
         # Delete the A record
-        path = "CNAMERecord/#{Rails.application.config.dns[:zone]}/#{fqdn}/"
+        path = "CNAMERecord/#{Rails.configuration.dns[:zone]}/#{fqdn}/"
         resp, data = dyn_delete(path, auth_token, retries)
       end
       
       def self.dyn_delete_sshfp_record(application, namespace, auth_token, retries=0)
-        fqdn = "#{application}-#{namespace}.#{Rails.application.config.cdk[:domain_suffix]}"
+        fqdn = "#{application}-#{namespace}.#{Rails.configuration.cdk[:domain_suffix]}"
         # Delete the SSHFP record
-        path = "SSHFPRecord/#{Rails.application.config.dns[:zone]}/#{fqdn}/"
+        path = "SSHFPRecord/#{Rails.configuration.dns[:zone]}/#{fqdn}/"
         resp, data = dyn_delete(path, auth_token, retries)
       end
     
       def self.dyn_create_txt_record(namespace, auth_token, retries=0)
-        fqdn = "#{namespace}.#{Rails.application.config.cdk[:domain_suffix]}"
+        fqdn = "#{namespace}.#{Rails.configuration.cdk[:domain_suffix]}"
         # Create the TXT record
-        path = "TXTRecord/#{Rails.application.config.dns[:zone]}/#{fqdn}/"
+        path = "TXTRecord/#{Rails.configuration.dns[:zone]}/#{fqdn}/"
         record_data = { :rdata => { :txtdata => "Text record for #{namespace}"}, :ttl => "60" }
         resp, data = dyn_post(path, record_data, auth_token, retries)
       end
     
       def self.dyn_delete_txt_record(namespace, auth_token, retries=0)
-        fqdn = "#{namespace}.#{Rails.application.config.cdk[:domain_suffix]}"
+        fqdn = "#{namespace}.#{Rails.configuration.cdk[:domain_suffix]}"
         # Delete the TXT record
-        path = "TXTRecord/#{Rails.application.config.dns[:zone]}/#{fqdn}/"
+        path = "TXTRecord/#{Rails.configuration.dns[:zone]}/#{fqdn}/"
         resp, data = dyn_delete(path, auth_token, retries)
       end
     
       def self.dyn_publish(auth_token, retries=0)
         # Publish the changes
-        path = "Zone/#{Rails.application.config.dns[:zone]}/"
+        path = "Zone/#{Rails.configuration.dns[:zone]}/"
         publish_data = { "publish" => "true" }
         resp, data = dyn_put(path, publish_data, auth_token, retries)
       end
     
       def self.dyn_has_txt_record?(namespace, auth_token, raise_exception_on_exists=false)
-        fqdn = "#{namespace}.#{Rails.application.config.cdk[:domain_suffix]}"
-        path = "TXTRecord/#{Rails.application.config.dns[:zone]}/#{fqdn}/"      
+        fqdn = "#{namespace}.#{Rails.configuration.cdk[:domain_suffix]}"
+        path = "TXTRecord/#{Rails.configuration.dns[:zone]}/#{fqdn}/"      
         dyn_has = dyn_has?(path, auth_token)
         if dyn_has && raise_exception_on_exists
           raise UserException.new(103), "A namespace with name '#{namespace}' already exists"
@@ -204,7 +204,7 @@ module Express
       def self.handle_temp_redirect(resp, auth_token)
         if resp.body =~ /^\/REST\//
           headers = { "Content-Type" => 'application/json', 'Auth-Token' => auth_token }
-          url = URI.parse("#{Rails.application.config.dns[:dynect_url]}#{resp.body}")
+          url = URI.parse("#{Rails.configuration.dns[:dynect_url]}#{resp.body}")
           http = Net::HTTP.new(url.host, url.port)
           #http.set_debug_output $stderr
           http.use_ssl = true
@@ -253,7 +253,7 @@ module Express
     
       def self.dyn_has?(path, auth_token, retries=2)
         headers = { "Content-Type" => 'application/json', 'Auth-Token' => auth_token }
-        url = URI.parse("#{Rails.application.config.dns[:dynect_url]}/REST/#{path}")
+        url = URI.parse("#{Rails.configuration.dns[:dynect_url]}/REST/#{path}")
         has = false
         dyn_do('dyn_has?', retries) do
           http = Net::HTTP.new(url.host, url.port)
@@ -295,7 +295,7 @@ module Express
       end
     
       def self.dyn_put_post(path, post_data, auth_token, put=false, retries=0)
-        url = URI.parse("#{Rails.application.config.dns[:dynect_url]}/REST/#{path}")
+        url = URI.parse("#{Rails.configuration.dns[:dynect_url]}/REST/#{path}")
         headers = { "Content-Type" => 'application/json', 'Auth-Token' => auth_token }
         resp, data = nil, nil
         dyn_do('dyn_put_post', retries) do
@@ -345,7 +345,7 @@ module Express
     
       def self.dyn_delete(path, auth_token, retries=0)
         headers = { "Content-Type" => 'application/json', 'Auth-Token' => auth_token }
-        url = URI.parse("#{Rails.application.config.dns[:dynect_url]}/REST/#{path}")
+        url = URI.parse("#{Rails.configuration.dns[:dynect_url]}/REST/#{path}")
         resp, data = nil, nil
         dyn_do('dyn_delete', retries) do
           http = Net::HTTP.new(url.host, url.port)
