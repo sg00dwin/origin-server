@@ -91,7 +91,7 @@ Broker::Application.configure do
   # CDK Config
   config.cdk = {
     :domain_suffix => "dev.rhcloud.com",
-    :per_user_app_limit => 5,
+    :default_max_gears => 5,
 
     :datastore_mongo => {
       :host => "localhost",

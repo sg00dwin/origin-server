@@ -45,6 +45,16 @@ module Cloud::Sdk
       end
     end
     
+    def create(obj_type, user_id, id, obj_json)
+      Rails.logger.debug "MongoDataStore.add(#{obj_type}, #{user_id}, #{id}, #{obj_json})\n\n"
+      case obj_type
+      when "CloudUser"
+        MongoDataStore.add_user(user_id, obj_json)
+      when "Application"
+        MongoDataStore.add_app(user_id, id, obj_json)
+      end
+    end
+    
     def delete(obj_type, user_id, id=nil)
       Rails.logger.debug "MongoDataStore.delete(#{obj_type}, #{user_id}, #{id})\n\n"
       case obj_type
@@ -91,8 +101,8 @@ module Cloud::Sdk
     end
 
     def self.get_app(user_id, id)
-      select_fields = "apps.#{id}"
-      bson = MongoDataStore.collection.find_one({ "_id" => user_id, "apps.#{id}" => { "$exists" => true } }, :fields => [select_fields])
+      field = "apps.#{id}"
+      bson = MongoDataStore.collection.find_one({ "_id" => user_id, field => { "$exists" => true } }, :fields => [field])
       return nil unless bson
 
       app_bson = bson["apps"][id]
@@ -117,6 +127,7 @@ module Cloud::Sdk
     end
 
     def self.put_user(user_id, user_json)
+      #TODO this would be better to just set everything but apps
       bson = MongoDataStore.collection.find_one( "_id" => user_id )
       if bson
         apps = bson["apps"]
@@ -127,11 +138,25 @@ module Cloud::Sdk
       end
       MongoDataStore.collection.update({ "_id" => user_id }, user_json, { :upsert => true })
     end
+    
+    def self.add_user(user_id, user_json)
+      user_json["_id"] = user_id
+      MongoDataStore.collection.insert(user_json)
+    end
 
     def self.put_app(user_id, id, app_json)
-      field = "apps." + id
+      field = "apps.#{id}"
       escape(app_json)
       MongoDataStore.collection.update({ "_id" => user_id }, { "$set" => { field => app_json }})
+    end
+
+    def self.add_app(user_id, id, app_json)
+      field = "apps.#{id}"
+      escape(app_json)
+      bson = MongoDataStore.collection.find_and_modify({
+        :query => { "_id" => user_id, "$where" => "this.consumed_gears < this.max_gears"},
+        :update => { "$set" => { field => app_json }, "$inc" => { "consumed_gears" => 1 }} })
+      raise Cloud::Sdk::UserException.new("#{user_id} has already reached the application limit", 104) if bson == nil
     end
 
     def self.delete_user(user_id)
@@ -139,8 +164,9 @@ module Cloud::Sdk
     end
 
     def self.delete_app(user_id, id)
-      field = "apps." + id
-      MongoDataStore.collection.update({ "_id" => user_id }, { "$unset" => { field => 1 }})
+      field = "apps.#{id}"
+      MongoDataStore.collection.update({ "_id" => user_id, field => { "$exists" => true }}, 
+                                       { "$unset" => { field => 1 }, "$inc" => { "consumed_gears" => -1 }})
     end
     
     def self.escape(app_json)

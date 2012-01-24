@@ -568,8 +568,8 @@ module Express
         arguments += " '#{arg}'" if arg
           
         if allow_move
-          Express::Broker::Nurture.application(app.user.rhlogin, app.user.uuid, app.name, app.user.namespace, framework, command, app.uuid)
-          Express::Broker::Apptegic.application(app.user.rhlogin, app.user.uuid, app.name, app.user.namespace, framework, command, app.uuid)
+          Nurture.application(app.user.rhlogin, app.user.uuid, app.name, app.user.namespace, framework, command, app.uuid)
+          Apptegic.application(app.user.rhlogin, app.user.uuid, app.name, app.user.namespace, framework, command, app.uuid)
         end
         
         result = execute_direct(framework, command, arguments)
