@@ -2,10 +2,10 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.85.3
+Version:   0.85.4
 Release:   1%{?dist}
 Group:     Development/Languages
-License:   GPLv2
+License:   ASL 2.0
 URL:       http://openshift.redhat.com
 Source0:   %{name}-%{version}.tar.gz
 
@@ -44,6 +44,8 @@ mkdir -p %{buildroot}%{cartridgedir}
 mkdir -p %{buildroot}/%{_sysconfdir}/libra/cartridges
 ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/libra/cartridges/%{name}
 cp -r info %{buildroot}%{cartridgedir}/
+cp LICENSE %{buildroot}%{cartridgedir}/
+cp COPYRIGHT %{buildroot}%{cartridgedir}/
 cp -r template %{buildroot}%{cartridgedir}/
 cp README %{buildroot}%{cartridgedir}/
 ln -s %{cartridgedir}/../abstract/info/hooks/add-module %{buildroot}%{cartridgedir}/info/hooks/add-module
@@ -93,14 +95,23 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{cartridgedir}/info/data/
 %attr(0755,-,-) %{cartridgedir}/info/bin/
 %{cartridgedir}/template/
-%config(noreplace) %{cartridgedir}/info/configuration/
 %{_sysconfdir}/libra/cartridges/%{name}
 %{cartridgedir}/info/changelog
 %{cartridgedir}/info/control
 %{cartridgedir}/info/manifest.yml
 %{cartridgedir}/README
+%doc %{cartridgedir}/COPYRIGHT
+%doc %{cartridgedir}/LICENSE
+%config(noreplace) %{cartridgedir}/info/configuration/
 
 %changelog
+* Tue Jan 24 2012 Dan McPherson <dmcphers@redhat.com> 0.85.4-1
+- Updated License value in manifest.yml files. Corrected Apache Software
+  License Fedora short name (jhonce@redhat.com)
+- jbossas-7.0.spec: Modified license to ASL V2 (jhonce@redhat.com)
+- jbossas-7.0: Modified license to ASL V2 and LGPLv2. jboss configuration files
+  that are included are covered under LGPL. (jhonce@redhat.com)
+
 * Tue Jan 17 2012 Dan McPherson <dmcphers@redhat.com> 0.85.3-1
 - US1667: threaddump for rack (wdecoste@localhost.localdomain)
 

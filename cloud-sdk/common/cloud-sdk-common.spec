@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Common
 Name:           rubygem-%{gemname}
-Version:        0.3.6
+Version:        0.3.7
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        AGPLv3
@@ -73,6 +73,11 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Tue Jan 24 2012 Dan McPherson <dmcphers@redhat.com> 0.3.7-1
+- fix test cases (dmcphers@redhat.com)
+- move gear limit checking to mongo (dmcphers@redhat.com)
+- improve mongo usage (dmcphers@redhat.com)
+
 * Thu Jan 19 2012 Dan McPherson <dmcphers@redhat.com> 0.3.6-1
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
   (lnader@dhcp-240-165.mad.redhat.com)

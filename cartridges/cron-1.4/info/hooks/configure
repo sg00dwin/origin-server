@@ -1,22 +1,6 @@
 #!/bin/bash
 
-# Copyright © 2011 Ram Ranganathan All rights reserved
-# Copyright © 2010 Red Hat, Inc. All rights reserved
-
-# This copyrighted material is made available to anyone wishing to use, modify,
-# copy, or redistribute it subject to the terms and conditions of the GNU
-# General Public License v.2.  This program is distributed in the hope that it
-# will be useful, but WITHOUT ANY WARRANTY expressed or implied, including the
-# implied warranties of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-# See the GNU General Public License for more details.  You should have
-# received a copy of the GNU General Public License along with this program;
-# if not, write to the Free Software Foundation, Inc., 51 Franklin Street,
-# Fifth Floor, Boston, MA 02110-1301, USA. Any Red Hat trademarks that are
-# incorporated in the source code or documentation are not subject to the GNU
-# General Public License and may only be used or replicated with the express
-# permission of Red Hat, Inc.
-
-# Configures batch processing service (cron) support for the application.
+# Configures application's jobs scheduling service (cron).
 
 # Exit on any errors
 set -e
@@ -72,14 +56,16 @@ chmod go-rwx data
 popd > /dev/null
 
 #
-# Create simple batch processing service control script.
+# Create simple job scheduling service control script.
 #
 ln -s $CART_INFO_DIR/bin/cron_ctl.sh $CRON_DIR/${application}_cron_ctl.sh
 
+
 #
-# Add a sample crontab entry for the user.
+# Create links to the jobs directory and the run jobs script.
 #
-crontab -u "$uuid"  "$CART_INFO_DIR/configuration/crontab" || error "Failed to setup application's crontab.  Please contact support" 121
+ln -s $APP_HOME/${application}/repo/.openshift/cron $CRON_DIR/jobs
+ln -s $CART_INFO_DIR/bin/cron_runjobs.sh $CRON_DIR/cron_runjobs.sh
 
 #
 # Setup Permissions
@@ -90,9 +76,9 @@ chown root.root "$CRON_DIR" "$CRON_DIR"/*.sh
 chcon -t libra_var_lib_t -l $mcs_level -R "$CRON_DIR"
 
 #
-# Enable batch jobs services (crontab).
+# Enable job scheduling service (cronjobs).
 #
-enable_crontab
+enable_cronjobs
 
 #
 # Setup Environment Variables
@@ -101,7 +87,14 @@ echo "export OPENSHIFT_BATCH_TYPE='cron'" > $APP_HOME/.env/OPENSHIFT_BATCH_TYPE
 echo "export OPENSHIFT_BATCH_CTL_SCRIPT='$CRON_DIR/${application}_cron_ctl.sh'" > $APP_HOME/.env/OPENSHIFT_BATCH_CTL_SCRIPT
 echo "export OPENSHIFT_BATCH_CRON_14_EMBEDDED_TYPE='cron-1.4'" > $APP_HOME/.env/OPENSHIFT_BATCH_CRON_14_EMBEDDED_TYPE
 
+frequencies=$(cat $CART_INFO_DIR/configuration/frequencies | tr '\n' ',')
+
 client_result ""
 client_result "cron-1.4 added to application ${application}"
 client_result ""
-client_result "See file .openshift/crontab for managing your batch jobs"
+client_result "To run scripts or jobs on a periodic basis, add the scripts to your"
+client_result "application's .openshift/cron/{${frequencies%?}}/ directories"
+client_result "(and commit and redeploy your application)"
+client_result ""
+client_result "Example: Script .openshift/cron/hourly/batz will be run every hour"
+client_result ""

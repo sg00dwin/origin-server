@@ -14,7 +14,7 @@ class ExpressConsole < OpenShift::SeleniumTestCase
     form = @express_console.domain_form
 
     form.expand
-    await { !form.collapsed? }
+    await("form expanded") { !form.collapsed? }
 
     assert !form.in_error?(:namespace)
 
@@ -33,7 +33,7 @@ class ExpressConsole < OpenShift::SeleniumTestCase
     form = @express_console.domain_form
 
     form.expand
-    await { !form.collapsed? }
+    await("form expanded") { !form.collapsed? }
 
     assert !form.in_error?(:namespace)
 
@@ -62,7 +62,7 @@ class ExpressConsole < OpenShift::SeleniumTestCase
     assert form.collapsed?
 
     form.expand
-    await { !form.collapsed? }
+    await("form expanded") { !form.collapsed? }
 
     new_namespace = @login + "a"
 
@@ -71,9 +71,9 @@ class ExpressConsole < OpenShift::SeleniumTestCase
 
     form.submit
 
-    await(30) { form.collapsed? }
+    await("form collapsed", 30) { form.collapsed? }
 
-    await { new_namespace == form.get_collapsed_value(:namespace) }
+    await("namespace updated on page") { new_namespace == form.get_collapsed_value(:namespace) }
   end
 
   def test_app_create_validation
@@ -165,7 +165,7 @@ class ExpressConsole < OpenShift::SeleniumTestCase
     wait_for_ajax 30
 
     # presence of deletion form indicates successful creation
-    await { exists? "form##{app_name}_delete_form" }
+    await("app created") { exists? "form##{app_name}_delete_form" }
   end
 
   # helper method for creating a namespace
@@ -178,7 +178,7 @@ class ExpressConsole < OpenShift::SeleniumTestCase
     form = @express_console.domain_form
 
     form.expand
-    await { !form.collapsed? }
+    await("form expanded") { !form.collapsed? }
 
     assert !form.in_error?(:namespace)
 
@@ -188,7 +188,7 @@ class ExpressConsole < OpenShift::SeleniumTestCase
 
     wait_for_ajax 30
 
-    await { namespace == form.get_collapsed_value(:namespace) }
+    await("namespace created") { namespace == form.get_collapsed_value(:namespace) }
   end
 
   def dummy_credentials

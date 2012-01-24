@@ -12,7 +12,7 @@ class LegacyBrokerController < ApplicationController
       user_info["ssh_key"] = user_info["ssh"]
       user_info.delete("ssh")
       
-      user_info[:rhc_domain] = Rails.application.config.cdk[:domain_suffix]
+      user_info[:rhc_domain] = Rails.configuration.cdk[:domain_suffix]
       app_info = {}
       user.applications.each do |app|
         app_info[app.name] = app.as_json
@@ -107,7 +107,7 @@ class LegacyBrokerController < ApplicationController
     @reply.data = {
       :rhlogin    => cloud_user.rhlogin,
       :uuid       => cloud_user.uuid,
-      :rhc_domain => Rails.application.config.cdk[:domain_suffix]
+      :rhc_domain => Rails.configuration.cdk[:domain_suffix]
     }.to_json
       
     render :json => @reply
@@ -142,11 +142,8 @@ class LegacyBrokerController < ApplicationController
       app = Application.new(user, @req.app_name, nil, @req.node_profile, @req.cartridge)
       container = Cloud::Sdk::ApplicationContainerProxy.find_available(@req.node_profile)
       check_cartridge_type(app.framework, container, "standalone")
-      if (apps.length >= Rails.application.config.cdk[:per_user_app_limit])
-        raise Cloud::Sdk::UserException.new("#{@login} has already reached the application limit of #{Rails.application.config.cdk[:per_user_app_limit]}", 104) if not user.max_gears
-        if (apps.length >= user.max_gears)
-          raise Cloud::Sdk::UserException.new("#{@login} has already reached the application limit of #{user.max_gears}", 104) 
-        end
+      if (user.consumed_gears >= user.max_gears)
+        raise Cloud::Sdk::UserException.new("#{@login} has already reached the application limit of #{user.max_gears}", 104)
       end
       raise Cloud::Sdk::UserException.new("The supplied application name '#{app.name}' is not allowed", 105) if Cloud::Sdk::ApplicationContainerProxy.blacklisted? app.name
       if app.valid?

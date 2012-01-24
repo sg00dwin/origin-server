@@ -4,7 +4,7 @@ Architecture: noarch
 Display-Name: mysql v5.1 (x86-64)
 Description: MySQL DB Server
 Vendor: Oracle
-License: GPL
+License: ASL 2.0
 Provides: mysql
 Native-Requires: 
   - mysql-server

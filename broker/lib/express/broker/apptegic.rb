@@ -8,14 +8,14 @@ module Express
       # Send application data (start, stop, etc)
       #
       def self.application(rhlogin, user_uuid, app_name, user_namespace, type, action, app_uuid)
-          return unless Rails.application.config.analytics[:apptegic_enabled]
+          return unless Rails.configuration.analytics[:apptegic_enabled]
           Rails.logger.debug "DEBUG: Sending to Apptegic:application: app_uuid='#{app_uuid}' action='#{action}'"
           # Why curl?  So I could & at the end.  We don't want this blocking requests
           # Please fix if you can :)  - mmcgrath
-          `curl -s -O /dev/null '#{Rails.application.config.analytics[:apptegic_url]}' \
-      --data-urlencode '_ak=#{Rails.application.config.analytics[:apptegic_key]}' \
-      --data-urlencode '_at=#{Rails.application.config.analytics[:apptegic_secret]}' \
-      --data-urlencode '_ds=#{Rails.application.config.analytics[:apptegic_dataset]}' \
+          `curl -s -O /dev/null '#{Rails.configuration.analytics[:apptegic_url]}' \
+      --data-urlencode '_ak=#{Rails.configuration.analytics[:apptegic_key]}' \
+      --data-urlencode '_at=#{Rails.configuration.analytics[:apptegic_secret]}' \
+      --data-urlencode '_ds=#{Rails.configuration.analytics[:apptegic_dataset]}' \
       --data-urlencode 'userAgent=#{Thread.current[:user_agent] || "Unknown"}' \
       --data-urlencode 'accountId=#{rhlogin}' \
       --data-urlencode 'accountType=regular' \
@@ -33,14 +33,14 @@ module Express
       # Send application data (git push, etc)
       #
       def self.application_update(action, app_uuid)
-          return unless Rails.application.config.analytics[:apptegic_enabled]
+          return unless Rails.configuration.analytics[:apptegic_enabled]
           Rails.logger.debug "DEBUG: Sending to Apptegic:application_update: app_uuid='#{app_uuid}' action='#{action}'"
           # Why curl?  So I could & at the end.  We don't want this blocking requests
           # Please fix if you can :)  - mmcgrath
-          `curl -s -O /dev/null '#{Rails.application.config.analytics[:apptegic_url]}' \
-      --data-urlencode '_ak=#{Rails.application.config.analytics[:apptegic_key]}' \
-      --data-urlencode '_at=#{Rails.application.config.analytics[:apptegic_secret]}' \
-      --data-urlencode '_ds=#{Rails.application.config.analytics[:apptegic_dataset]}' \
+          `curl -s -O /dev/null '#{Rails.configuration.analytics[:apptegic_url]}' \
+      --data-urlencode '_ak=#{Rails.configuration.analytics[:apptegic_key]}' \
+      --data-urlencode '_at=#{Rails.configuration.analytics[:apptegic_secret]}' \
+      --data-urlencode '_ds=#{Rails.configuration.analytics[:apptegic_dataset]}' \
       --data-urlencode 'userAgent=#{Thread.current[:user_agent] || "Unknown"}' \
       --data-urlencode 'action=#{action}' \
       --data-urlencode 'app_uuid=#{app_uuid}' \
@@ -52,12 +52,12 @@ module Express
       # Send account data (actual username)
       #
       def self.libra_contact(rhlogin, uuid, user_namespace, action)
-          return unless Rails.application.config.analytics[:apptegic_enabled]
+          return unless Rails.configuration.analytics[:apptegic_enabled]
           Rails.logger.debug "DEBUG: Sending to Apptegic:libra_contact: userId='#{rhlogin}' namespace='#{user_namespace}' action='#{action}'"
-          `curl -s -O /dev/null '#{Rails.application.config.analytics[:apptegic_url]}' \
-      --data-urlencode '_ak=#{Rails.application.config.analytics[:apptegic_key]}' \
-      --data-urlencode '_at=#{Rails.application.config.analytics[:apptegic_secret]}' \
-      --data-urlencode '_ds=#{Rails.application.config.analytics[:apptegic_dataset]}' \
+          `curl -s -O /dev/null '#{Rails.configuration.analytics[:apptegic_url]}' \
+      --data-urlencode '_ak=#{Rails.configuration.analytics[:apptegic_key]}' \
+      --data-urlencode '_at=#{Rails.configuration.analytics[:apptegic_secret]}' \
+      --data-urlencode '_ds=#{Rails.configuration.analytics[:apptegic_dataset]}' \
       --data-urlencode 'userAgent=#{Thread.current[:user_agent] || "Unknown"}' \
       --data-urlencode 'accountId=#{rhlogin}' \
       --data-urlencode 'accountType=regular' \

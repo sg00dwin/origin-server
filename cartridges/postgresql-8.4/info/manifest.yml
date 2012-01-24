@@ -4,7 +4,7 @@ Architecture: noarch
 Display-Name: postgres v8.4 
 Description: Postgres DB Server
 Vendor: 
-License: GPLv2
+License: ASL 2.0
 Provides: rhc-cartridge-postgresql
 Native-Requires: 
   - postgresql

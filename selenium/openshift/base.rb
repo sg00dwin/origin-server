@@ -30,7 +30,7 @@ module OpenShift
       open_dialog(:signin, false){ |signin|
         signin.submit(login,password)
       
-        await(10) {
+        await("logout link", 10) {
           exists?("a[href='/app/logout']")
         }
       }
@@ -102,19 +102,23 @@ module OpenShift
     end
 
     # helper method to wait for a (ruby) condition to become true
-    def await(timeout=5)
+    def await(condition=nil, timeout=5)
       if block_given?
+        secs = timeout
         while true
           begin
             if yield
               return
             else
-              raise StandardError, "block evaluated false", caller
+              if !condition
+                condition = "block to return true"
+              end
+              raise StandardError, "timed out after #{timeout} seconds waiting for #{condition}", caller
             end
           rescue
             sleep 1
-            timeout -= 1
-            if timeout <= 0
+            secs -= 1
+            if secs <= 0
               raise
             end
           end
@@ -127,7 +131,9 @@ module OpenShift
       match = location.start_with?("http") ? #assume absolute URL
         uri.to_s : uri.to_s.split(uri.host)[1]
 
-      await(timeout) { location == match }
+      await("location: #{location}", timeout) {
+        location == match
+      }
     end
   end
 
