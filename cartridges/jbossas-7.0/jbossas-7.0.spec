@@ -5,7 +5,7 @@ Name:      rhc-cartridge-jbossas-7.0
 Version:   0.85.3
 Release:   1%{?dist}
 Group:     Development/Languages
-License:   ASL V2 and LGPLv2
+License:   ASL V2
 URL:       http://openshift.redhat.com
 Source0:   %{name}-%{version}.tar.gz
 
@@ -90,7 +90,6 @@ cp -p %{cartridgedir}/info/configuration/postgresql_module.xml /etc/alternatives
 rm -rf %{buildroot}
 
 %files
-# ASL V2
 %defattr(-,root,root,-)
 %attr(0750,-,-) %{cartridgedir}/info/hooks/
 %attr(0640,-,-) %{cartridgedir}/info/data/
@@ -103,7 +102,6 @@ rm -rf %{buildroot}
 %{cartridgedir}/README
 %doc %{cartridgedir}/COPYRIGHT
 %doc %{cartridgedir}/LICENSE
-# ASL V2 and LGPLv2
 %config(noreplace) %{cartridgedir}/info/configuration/
 
 %changelog
