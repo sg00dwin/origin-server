@@ -1,7 +1,4 @@
-= form_for :sshkey do |f|
-  %div
-    = f.label :value, "Paste your public key"
+= semantic_form_for :sshkey do |f|
+  -#= f.label :value, "Paste your public key"
     = f.text_area :value, :rows => 5
-    or upload
-    = f.file_field :file
-    = f.submit "Add"
+  = f.input :value, :as => :text, :required => false, :label => "Paste your public key"
