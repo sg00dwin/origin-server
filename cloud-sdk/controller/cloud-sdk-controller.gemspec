@@ -7,6 +7,7 @@ bin_dir  = File.join("bin", "*")
 Gem::Specification.new do |s|
   s.name        = "cloud-sdk-controller"
   s.version     = /(Version: )(.*)/.match(File.read("cloud-sdk-controller.spec"))[2].strip
+  s.license     = 'ASL 2.0'
   s.authors     = ["Krishna Raman"]
   s.email       = ["kraman@gmail.com"]
   s.homepage    = ""
@@ -18,7 +19,7 @@ Gem::Specification.new do |s|
   s.files       = Dir[lib_dir]
   s.test_files  = Dir[test_dir]
   s.executables   = Dir[bin_dir]
-  s.files       += %w(README.md Rakefile Gemfile cloud-sdk-controller.spec cloud-sdk-controller.gemspec)
+  s.files       += %w(README.md Rakefile Gemfile cloud-sdk-controller.spec cloud-sdk-controller.gemspec LICENSE COPYRIGHT)
   s.require_paths = ["lib"]
 
   s.add_dependency "activesupport", "~> 3.0.10"
