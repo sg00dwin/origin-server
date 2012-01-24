@@ -1,5 +1,7 @@
 require 'mcollective'
 require 'openshift'
+require 'express/broker/nurture'
+require 'express/broker/apptegic'
 
 include MCollective::RPC
 module Express
