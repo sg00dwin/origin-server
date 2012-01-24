@@ -87,6 +87,10 @@ def mongo_populate
         app_data_str.gsub!(/null/, "\"\"")
         #puts app_data_str
         app_data = eval(app_data_str)
+
+        # Migrate wsgi/rack to python/ruby
+        app_data['framework'] = 'ruby-1.8' if app_data['framework'] == 'rack-1.1'
+        app_data['framework'] = 'python-2.6' if app_data['framework'] == 'wsgi-3.2'
         
         # Create app bson doc
         embedded_carts = {}
