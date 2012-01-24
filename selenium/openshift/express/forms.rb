@@ -83,7 +83,7 @@ module OpenShift
 
       def expand
         if collapsed?
-          await { xpath_exists?(@loc_btn_edit) }
+          await("form collapsed") { xpath_exists?(@loc_btn_edit) }
           @page.find_element(:xpath => @loc_btn_edit).click
         end
       end
