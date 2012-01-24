@@ -11,7 +11,6 @@ Feature: Account Management
     And an account home directory should exist
     And selinux labels on the account home directory should be correct
     And disk quotas on the account home directory should be correct
-    And the account should have an SSH key with the correct label
 
   Scenario: Delete One Account
     Given an accepted node

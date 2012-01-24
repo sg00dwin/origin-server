@@ -82,7 +82,7 @@ module Cloud::Sdk
 
     def self.get_user(user_id)
       bson = MongoDataStore.collection.find_one( "_id" => user_id )
-      return nil unless bson
+      return nil if bson.to_s.strip.length == 0
 
       pkey = bson["_id"]
       bson.delete("_id")
@@ -103,7 +103,8 @@ module Cloud::Sdk
     def self.get_app(user_id, id)
       field = "apps.#{id}"
       bson = MongoDataStore.collection.find_one({ "_id" => user_id, field => { "$exists" => true } }, :fields => [field])
-      return nil unless bson
+      return nil if bson.to_s.strip.length == 0
+      return nil if bson["apps"].to_s.strip.length == 0
 
       app_bson = bson["apps"][id]
       unescape(app_bson)
@@ -113,7 +114,7 @@ module Cloud::Sdk
   
     def self.get_apps(user_id)
       bson = MongoDataStore.collection.find_one({ "_id" => user_id }, :fields => ["apps"] )
-      return [] unless bson
+      return [] if bson.to_s.strip.length == 0
       return [] if bson["apps"].to_s.strip.length == 0
 
       apps_bson = bson["apps"]

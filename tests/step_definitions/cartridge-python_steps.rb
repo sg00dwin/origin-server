@@ -1,6 +1,6 @@
 # Controller cartridge command paths
 $cartridge_root ||= "/usr/libexec/li/cartridges"
-$python_cartridge = "#{$cartridge_root}/python-2.4"
+$python_cartridge = "#{$cartridge_root}/python-2.6"
 $python_common_conf_path = "#{$python_cartridge}/info/configuration/etc/conf/httpd_nolog.conf"
 $python_hooks = "#{$python_cartridge}/info/hooks"
 $python_config_path = "#{$python_hooks}/configure"

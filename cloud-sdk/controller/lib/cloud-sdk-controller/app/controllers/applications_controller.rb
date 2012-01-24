@@ -102,8 +102,8 @@ class ApplicationsController < BaseController
         application.configure_dependencies
         Rails.logger.debug "Adding system ssh keys #{app_name}"
         application.add_system_ssh_keys
-        Rails.logger.debug "Adding secondary ssh keys #{app_name}"
-        application.add_secondary_ssh_keys
+        Rails.logger.debug "Adding ssh keys #{app_name}"
+        application.add_ssh_keys
         Rails.logger.debug "Adding system environment vars #{app_name}"
         application.add_system_env_vars
         begin
