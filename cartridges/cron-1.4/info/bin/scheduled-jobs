@@ -1,0 +1,85 @@
+#!/bin/bash
+
+# Constants.
+SERVICE_NAME=cron
+CART_NAME=cron
+CART_VERSION=1.4
+CART_DIRNAME=${CART_NAME}-$CART_VERSION
+CART_INSTALL_DIR=/usr/libexec/li/cartridges
+CART_INFO_DIR=$CART_INSTALL_DIR/embedded/$CART_DIRNAME/info
+DOP=5  # Degree of Parallelism.
+
+
+function usage() {
+   freqs=$(cat $CART_INFO_DIR/configuration/frequencies | tr '\n' '|')
+   echo "Usage: $0 {start | start-user <uid>} <${freqs%?}>"
+}
+
+
+function start_all_scheduled_jobs() {
+   freq=${1:-""}
+   if [ -z "$freq" ]; then
+      usage
+      exit 1
+   fi
+
+   `libra_users` | xargs -d' ' -I{} -n 1 -P $DOP $0 start-user {} $freq
+}
+
+
+function setuppam() {
+   uuid=$1
+   if [ ! -f "/etc/security/limits.d/84-${uuid}.conf" ]; then
+      /usr/bin/setup_pam_fs_limits.sh $uuid
+   fi
+}
+
+
+function libra_users() {
+    grep ":libra guest:" /etc/passwd | cut -d: -f1
+}
+
+
+function start_user_scheduled_jobs() {
+   uuid=${1:-""}
+   freq=${2:-""}
+   if [ -z "$uuid" || -z "$freq" ]; then
+      usage
+      exit 22
+   fi
+
+   # Ensure cron jobs are enabled, there's a jobs dir and there's some jobs
+   # to run.
+   [ ! -f $CART_INSTANCE_DIR/run/jobs.enabled ]  &&  return 0
+   USER_JOBS_DIR=/var/lib/libra/$uuid/$CART_DIRNAME/jobs/$freq
+   [ ! -d "$USER_JOBS_DIR" ]  &&  return 0
+   njobs=$(ls "$USER_JOBS_DIR" | wc -l)
+   [ 0 -ge ${njobs:-0} ]  &&  return 0
+
+   # Get mcs level + setup pam.
+   libra_userid=$(id -u "$uuid")
+   mcs_level=$(openshift_mcs_level $libra_userid)
+   setuppam "$uuid"
+
+   cmd="timeout $MAX_RUN_TIME /var/lib/libra/$uuid/$CART_DIRNAME/cron_runjobs.sh $freq"
+   if [ -f $cmdfile ]; then
+      daemon --user="$uuid" runcon -t libra_t -l $mcs_level $cmd
+   fi
+}
+
+
+
+#
+# main():
+#
+source "${CART_INSTALL_DIR}/abstract/info/lib/selinux"
+source "$CART_INFO_DIR/configuration/limits"
+
+# Check whether to run all or a specific user's jobs.
+case "$1" in 
+    start)       start_all_scheduled_jobs  "$2"       ;;
+    start-user)  start_user_scheduled_jobs "$2" "$3"  ;;
+    *)           usage ; exit 1                       ;;
+esac
+
+exit 0

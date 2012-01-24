@@ -7,7 +7,6 @@ CART_VERSION=1.4
 CART_DIRNAME=${CART_NAME}-$CART_VERSION
 CART_INSTALL_DIR=/usr/libexec/li/cartridges
 CART_INFO_DIR=$CART_INSTALL_DIR/embedded/$CART_DIRNAME/info
-export STOPTIMEOUT=10
 
 function _are_cronjobs_enabled() {
    [ -f $CART_INSTANCE_DIR/run/jobs.enabled ]  &&  return 0
