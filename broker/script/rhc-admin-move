@@ -25,7 +25,15 @@ options = rpcoptions do |parser, options|
     parser.on('-l', '--rhlogin RHLOGIN', 'Account to act on') do |rhlogin|
       options[:rhlogin] = rhlogin
     end
-
+    
+    parser.on('-u', '--destination_district_uuid UUID', 'Uuid of the district to move to.  Not to be used in conjunction with -i') do |destination_district_uuid|
+      options[:destination_district_uuid] = destination_district_uuid
+    end
+    
+    parser.on('--allow_change_district') do |v|
+      options[:allow_change_district] = true
+    end
+    options[:allow_change_district] = false unless options[:allow_change_district]
 end
 
 unless options.include?(:app_name)
@@ -49,4 +57,4 @@ app  = Application.find(user, options[:app_name])
 
 destination_container = nil
 destination_container = Cloud::Sdk::ApplicationContainerProxy.instance(options[:target_server_identity]) if options[:target_server_identity]
-reply = app.container.move_app(app, destination_container, options[:node_profile])
+reply = app.container.move_app(app, destination_container, options[:destination_district_uuid], options[:allow_change_district], options[:node_profile])
