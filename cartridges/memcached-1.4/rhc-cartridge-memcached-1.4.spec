@@ -6,7 +6,7 @@ Release: 1%{?dist}
 Summary: Embedded memcached support for express
 
 Group: Network/Daemons
-License: BSD
+License: ASL 2.0
 URL: https://engineering.redhat.com/trac/Libra
 Source0: %{name}-%{version}.tar.gz
 BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
@@ -40,7 +40,8 @@ mkdir -p %{buildroot}%{cartridgedir}
 mkdir -p %{buildroot}/%{_sysconfdir}/libra/cartridges
 ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/libra/cartridges/%{name}
 cp -r info %{buildroot}%{cartridgedir}/
-
+cp LICENSE %{buildroot}%{cartridgedir}/
+cp COPYRIGHT %{buildroot}%{cartridgedir}/
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -56,6 +57,8 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/changelog
 %{cartridgedir}/info/control
 %{cartridgedir}/info/manifest.yml
+%doc %{cartridgedir}/COPYRIGHT
+%doc %{cartridgedir}/LICENSE
 
 %changelog
 * Thu Jan 12 2012 Ram Ranganathan <ramr@redhat.com> 0.1-1

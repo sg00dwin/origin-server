@@ -2,10 +2,10 @@
 
 Summary:   Provides raw support
 Name:      rhc-cartridge-raw-0.1
-Version:   0.19.1
+Version:   0.19.2
 Release:   1%{?dist}
 Group:     Development/Languages
-License:   ASL V2
+License:   ASL 2.0
 URL:       http://openshift.redhat.com
 Source0:   %{name}-%{version}.tar.gz
 
@@ -83,6 +83,11 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Tue Jan 24 2012 Dan McPherson <dmcphers@redhat.com> 0.19.2-1
+- Updated License value in manifest.yml files. Corrected Apache Software
+  License Fedora short name (jhonce@redhat.com)
+- raw-0.1: Modified license to ASL V2 (jhonce@redhat.com)
+
 * Fri Jan 13 2012 Dan McPherson <dmcphers@redhat.com> 0.19.1-1
 - bump spec numbers (dmcphers@redhat.com)
 

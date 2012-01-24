@@ -2,7 +2,7 @@ Name:  rhc-cartridge-jenkins-1.4
 Display-Name: Jenkins v0.84.1 (noarch)
 Description: Provides jenkins-1.4 support
 Version:   0.84.1
-License: GPLv2
+License: ASL 2.0
 Vendor: 
 Provides:
   - "jenkins"

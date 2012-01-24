@@ -2,10 +2,10 @@
 
 Summary:   Provides ruby rack support running on Phusion Passenger
 Name:      rhc-cartridge-rack-1.1
-Version:   0.85.7
+Version:   0.85.8
 Release:   1%{?dist}
 Group:     Development/Languages
-License:   ASL V2
+License:   ASL 2.0
 URL:       http://openshift.redhat.com
 Source0:   %{name}-%{version}.tar.gz
 
@@ -109,6 +109,11 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Tue Jan 24 2012 Dan McPherson <dmcphers@redhat.com> 0.85.8-1
+- Updated License value in manifest.yml files. Corrected Apache Software
+  License Fedora short name (jhonce@redhat.com)
+- rack-1.1: Modified license to ASL V2 (jhonce@redhat.com)
+
 * Fri Jan 20 2012 Mike McGrath <mmcgrath@redhat.com> 0.85.7-1
 - more rack/ruby replacements (mmcgrath@redhat.com)
 - merge and ruby-1.8 prep (mmcgrath@redhat.com)

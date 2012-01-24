@@ -2,7 +2,7 @@ Name: rhc-cartridge-wsgi
 Display-Name: wsgi v3.2 (noarch)
 Description: Cartridge packaging wsgi support for python applications
 Version: 1.0.0
-License: GPLv2
+License: ASL 2.0
 Vendor:  
 Provides:
   - "wsgi"

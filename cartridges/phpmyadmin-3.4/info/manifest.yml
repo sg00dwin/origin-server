@@ -2,7 +2,7 @@ Name: rhc-cartridge-phpmyadmin
 Display-Name: phpmyadmin v3.4 (noarch)
 Description: Cartridge packaging phpmyadmin
 Version: 1.1.0
-License: GPLv2
+License: ASL 2.0
 Vendor:
 Provides:
   - "phpmyadmin"
