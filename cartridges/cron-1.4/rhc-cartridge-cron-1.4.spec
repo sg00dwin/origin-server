@@ -55,6 +55,10 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0755,-,-) %{cartridgedir}/info/bin/
 %attr(0755,-,-) %{cartridgedir}/info/lib/
 %attr(0755,-,-) %{cartridgedir}/jobs/
+%attr(0755,-,-) %{_sysconfdir}/cron.hourly/libra-cron-hourly
+%attr(0755,-,-) %{_sysconfdir}/cron.daily/libra-cron-daily
+%attr(0755,-,-) %{_sysconfdir}/cron.weekly/libra-cron-weekly
+%attr(0755,-,-) %{_sysconfdir}/cron.monthly/libra-cron-monthly
 %{_sysconfdir}/libra/cartridges/%{name}
 %{cartridgedir}/info/changelog
 %{cartridgedir}/info/control
