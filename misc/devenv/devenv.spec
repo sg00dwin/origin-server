@@ -218,7 +218,7 @@ mkdir -p /var/lib/puppet/ssl/private_keys/
 cp -f %{devenvdir}/puppet-public.pem /var/lib/puppet/ssl/public_keys/localhost.localdomain.pem
 cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost.localdomain.pem
 
-# Chmod o-z for rpm, dmesg, su, and sudo
+# Chmod o-x for rpm, dmesg, su, and sudo
 /bin/chmod 0750 /bin/rpm
 /bin/chmod 0750 /bin/dmesg
 /bin/chmod 4750 /bin/su
