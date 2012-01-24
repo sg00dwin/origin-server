@@ -2,7 +2,7 @@
 
 Summary:   Provides mod_perl support
 Name:      rhc-cartridge-perl-5.10
-Version:   0.16.2
+Version:   0.16.3
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -90,6 +90,11 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Tue Jan 24 2012 Dan McPherson <dmcphers@redhat.com> 0.16.3-1
+- Updated License value in manifest.yml files. Corrected Apache Software
+  License Fedora short name (jhonce@redhat.com)
+- perl-5.10: Modified license to ASL V2 (jhonce@redhat.com)
+
 * Fri Jan 20 2012 Mike McGrath <mmcgrath@redhat.com> 0.16.2-1
 - perl-5.10.spec: Added Requires perl-DBD-SQLite and perl-DBD-MySQL
   (tdawson@redhat.com)
