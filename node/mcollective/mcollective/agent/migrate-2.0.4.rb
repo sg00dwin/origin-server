@@ -18,6 +18,19 @@ module LibraMigration
     if (File.exists?(app_home) && !File.symlink?(app_home))
       cartridge_root_dir = "/usr/libexec/li/cartridges"
       cartridge_dir = "#{cartridge_root_dir}/#{app_type}"
+      
+      env_echos = []
+      if app_type == 'rack-1.1' || app_type == 'ruby-1.8' 
+        env_echos.push("echo \"export OPENSHIFT_APP_TYPE='ruby-1.8'\" > #{app_home}/.env/OPENSHIFT_APP_TYPE")
+      elsif app_type == 'wsgi-3.2' || app_type == 'python-2.6'
+        env_echos.push("echo \"export OPENSHIFT_APP_TYPE='python-2.6'\" > #{app_home}/.env/OPENSHIFT_APP_TYPE")
+      end
+      
+      env_echos.each do |env_echo|
+        echo_output, echo_exitcode = Util.execute_script(env_echo)
+        output += echo_output
+      end
+      
 
       
     else

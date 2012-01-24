@@ -5,10 +5,10 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.3.12
+Version:        0.3.13
 Release:        1%{?dist}
 Group:          Development/Languages
-License:        AGPLv3
+License:        ASL 2.0
 URL:            http://openshift.redhat.com
 Source0:        rubygem-%{gemname}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -73,6 +73,13 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Tue Jan 24 2012 Dan McPherson <dmcphers@redhat.com> 0.3.13-1
+- Updating gem versions (dmcphers@redhat.com)
+- fix test case (dmcphers@redhat.com)
+- fix test cases (dmcphers@redhat.com)
+- fix typo (dmcphers@redhat.com)
+- move gear limit checking to mongo (dmcphers@redhat.com)
+
 * Fri Jan 20 2012 Dan McPherson <dmcphers@redhat.com> 0.3.12-1
 - Updating gem versions (dmcphers@redhat.com)
 - build fixes (dmcphers@redhat.com)
