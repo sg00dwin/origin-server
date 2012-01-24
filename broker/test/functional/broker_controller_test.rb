@@ -5,7 +5,7 @@ class BrokerControllerTest < ActionController::TestCase
   test "cart list" do
     # setup cache
     Rails.cache.clear
-    Rails.application.config.action_controller.perform_caching = true
+    Rails.configuration.action_controller.perform_caching = true
 
     # should be a cache miss
     resp = post(:cart_list_post, {:json_data => '{"cart_type" : "standalone"}'})
@@ -23,7 +23,7 @@ class BrokerControllerTest < ActionController::TestCase
   test "embedded cart list" do
     # setup cache
     Rails.cache.clear
-    Rails.application.config.action_controller.perform_caching = true
+    Rails.configuration.action_controller.perform_caching = true
 
     # should be a cache miss
     resp = post(:cart_list_post, {:json_data => '{"cart_type" : "embedded"}'})

@@ -12,7 +12,7 @@ class LegacyBrokerController < ApplicationController
       user_info["ssh_key"] = user_info["ssh"]
       user_info.delete("ssh")
       
-      user_info[:rhc_domain] = Rails.application.config.cdk[:domain_suffix]
+      user_info[:rhc_domain] = Rails.configuration.cdk[:domain_suffix]
       app_info = {}
       user.applications.each do |app|
         app_info[app.name] = app.as_json
@@ -107,7 +107,7 @@ class LegacyBrokerController < ApplicationController
     @reply.data = {
       :rhlogin    => cloud_user.rhlogin,
       :uuid       => cloud_user.uuid,
-      :rhc_domain => Rails.application.config.cdk[:domain_suffix]
+      :rhc_domain => Rails.configuration.cdk[:domain_suffix]
     }.to_json
       
     render :json => @reply

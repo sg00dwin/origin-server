@@ -15,7 +15,7 @@ module Express
       end
       
       def self.find_available_impl(node_profile=nil, district_uuid=nil)
-        if Rails.application.config.districts[:enabled] && (!district_uuid || district_uuid == 'NONE')  
+        if Rails.configuration.districts[:enabled] && (!district_uuid || district_uuid == 'NONE')  
           district = District.find_available()
           if district
             district_uuid = district.uuid
@@ -79,7 +79,7 @@ module Express
         result = execute_direct(@@C_CONTROLLER, 'deconfigure', "-c '#{app.uuid}'")
         result_io = parse_result(result)
         
-        if Rails.application.config.districts[:enabled]
+        if Rails.configuration.districts[:enabled]
           district_uuid = get_district_uuid
           if district_uuid && district_uuid != 'NONE'
             unreserve_district_uid(district_uuid, app.uid)
@@ -360,7 +360,7 @@ module Express
           reply.append source_container.run_cartridge_command(app.framework, app, "start", nil, false)
           raise
         ensure
-          log_debug "URL: http://#{app.name}-#{app.user.namespace}.#{Rails.application.config.cdk[:domain_suffix]}"
+          log_debug "URL: http://#{app.name}-#{app.user.namespace}.#{Rails.configuration.cdk[:domain_suffix]}"
         end
 
         log_debug "DEBUG: Deconfiguring old app '#{app.name}' on #{source_container.id} after move"
@@ -671,7 +671,7 @@ module Express
       
       def self.rpc_options
         # Make a deep copy of the default options
-        Marshal::load(Marshal::dump(Rails.application.config.rpc_opts))
+        Marshal::load(Marshal::dump(Rails.configuration.rpc_opts))
       end
     
       #

@@ -1,6 +1,6 @@
 module LegacyBrokerHelper
   def get_cached(key, opts={})
-    unless Rails.application.config.action_controller.perform_caching
+    unless Rails.configuration.action_controller.perform_caching
       if block_given?
         return yield
       end

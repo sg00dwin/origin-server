@@ -30,7 +30,7 @@ class CloudUser < Cloud::Sdk::UserModel
     super()
     ssh_type = "ssh-rsa" if ssh_type.to_s.strip.length == 0
     self.rhlogin, self.ssh, self.namespace, self.ssh_type = rhlogin, ssh, namespace, ssh_type
-    self.max_gears = Rails.application.config.cdk[:default_max_gears]
+    self.max_gears = defined? Rails.configuration ? Rails.configuration.cdk[:default_max_gears] : 5
     self.consumed_gears = 0
   end
   
@@ -209,7 +209,7 @@ class CloudUser < Cloud::Sdk::UserModel
       app.embedded.each_key do |framework|
         if app.embedded[framework].has_key?('info')
           info = app.embedded[framework]['info']
-          info.gsub!(/-#{old_ns}.#{Rails.application.config.cdk[:domain_suffix]}/, "-#{new_ns}.#{Rails.application.config.cdk[:domain_suffix]}")
+          info.gsub!(/-#{old_ns}.#{Rails.configuration.cdk[:domain_suffix]}/, "-#{new_ns}.#{Rails.configuration.cdk[:domain_suffix]}")
           app.embedded[framework]['info'] = info
         end
       end

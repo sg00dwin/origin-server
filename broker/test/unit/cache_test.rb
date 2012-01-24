@@ -7,7 +7,7 @@ class CacheTest < ActiveSupport::TestCase
     super
     @key = "foo"
     Rails.cache.clear
-    Rails.application.config.action_controller.perform_caching = true
+    Rails.configuration.action_controller.perform_caching = true
   end
 
   test "no block given" do
