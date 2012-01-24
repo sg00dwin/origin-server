@@ -28,7 +28,7 @@ class CloudUserTest < ActiveSupport::TestCase
     invalid_chars.length.times do |i|
       user = CloudUser.new("kraman@redhat.com", "ssh#{invalid_chars[i].chr}key", "namespace")
       assert user.invalid?
-      assert 108, user.errors[:ssh][0][:exit_code]
+      assert 108, user.errors[:ssh_keys][0][:exit_code]
     end
     
     user = CloudUser.new("kraman@redhat.com", "ABCdef012+/=", "namespace")
