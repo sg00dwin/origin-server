@@ -30,8 +30,8 @@ class CloudUser < Cloud::Sdk::UserModel
     super()
     ssh_type = "ssh-rsa" if ssh_type.to_s.strip.length == 0
     self.rhlogin, self.ssh, self.namespace, self.ssh_type = rhlogin, ssh, namespace, ssh_type
-    self.max_gears = 5
-    self.consumed_gears = Rails.application.config.cdk[:default_max_gears]
+    self.max_gears = Rails.application.config.cdk[:default_max_gears]
+    self.consumed_gears = 0
   end
   
   def save
