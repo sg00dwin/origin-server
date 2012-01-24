@@ -75,7 +75,7 @@ module Express
       private
       
       def self.district_collection
-        MongoDataStore.db.collection(Rails.application.config.datastore_mongo[:collection])
+        MongoDataStore.db.collection(Rails.configuration.datastore_mongo[:collection])
       end
       
       def cursor_to_district_json(cursor)
