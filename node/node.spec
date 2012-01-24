@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.85.13
+Version:       0.85.14
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -227,6 +227,10 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Tue Jan 24 2012 Dan McPherson <dmcphers@redhat.com> 0.85.14-1
+- Assumptions about how uid would work were wrong.  That's now a dynamic table.
+  Add tables for input filtering and DNAT. (rmillner@redhat.com)
+
 * Mon Jan 23 2012 Dan McPherson <dmcphers@redhat.com> 0.85.13-1
 - Use additional table to simplify rules a bit.  Bugfixes.
   (rmillner@redhat.com)
