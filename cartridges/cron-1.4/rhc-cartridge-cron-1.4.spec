@@ -30,6 +30,10 @@ rm -rf %{buildroot}
 mkdir -p %{buildroot}%{cartridgedir}
 mkdir -p %{buildroot}/%{_sysconfdir}/libra/cartridges
 ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/libra/cartridges/%{name}
+ln -s %{cartridgedir}/jobs/libra-cron-hourly %{buildroot}/%{_sysconfdir}/etc/cron.hourly/
+ln -s %{cartridgedir}/jobs/libra-cron-daily %{buildroot}/%{_sysconfdir}/etc/cron.daily/
+ln -s %{cartridgedir}/jobs/libra-cron-weekly %{buildroot}/%{_sysconfdir}/etc/cron.weekly/
+ln -s %{cartridgedir}/jobs/libra-cron-monthly %{buildroot}/%{_sysconfdir}/etc/cron.monthly/
 cp -r info %{buildroot}%{cartridgedir}/
 cp -r etc %{buildroot}%{cartridgedir}/
 cp LICENSE %{buildroot}%{cartridgedir}/
