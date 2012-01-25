@@ -42,6 +42,7 @@ Turns current host into a OpenShift managed node
 %package pam_libra
 BuildRequires: pam-devel
 BuildRequires: libselinux-devel
+BuildRequires: gcc-c++
 Summary: pam_libra support for rhc nodes
 
 %description pam_libra
