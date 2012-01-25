@@ -22,6 +22,8 @@ module Express
           if district
             district_uuid = district.uuid
             Rails.logger.debug "DEBUG: find_available_impl: district_uuid: #{district_uuid}"
+          elsif Rails.configuration.districts[:require_for_app_create]
+            raise Cloud::Sdk::NodeException.new("No district nodes available.  If the problem persists please contact Red Hat support.", 140)
           end
         end
         current_server, current_capacity = rpc_find_available(node_profile, district_uuid)
@@ -76,13 +78,15 @@ module Express
       end
       
       def unreserve_uid(uid, district_uuid=nil)
-        if @district
-          district_uuid = @district.uuid
-        else
-          district_uuid = get_district_uuid unless district_uuid
-        end
-        if district_uuid && district_uuid != 'NONE'
-          Cloud::Sdk::DataStore.instance.unreserve_district_uid(district_uuid, uid)
+        if Rails.configuration.districts[:enabled]
+          if @district
+            district_uuid = @district.uuid
+          else
+            district_uuid = get_district_uuid unless district_uuid
+          end
+          if district_uuid && district_uuid != 'NONE'
+            Cloud::Sdk::DataStore.instance.unreserve_district_uid(district_uuid, uid)
+          end
         end
       end
 
@@ -101,7 +105,7 @@ module Express
         result = execute_direct(@@C_CONTROLLER, 'deconfigure', "-c '#{app.uuid}'")
         result_io = parse_result(result)
         
-        if Rails.configuration.districts[:enabled] && !keep_uid
+        unless !keep_uid
           unreserve_uid(app.uid)
         end
         return result_io
