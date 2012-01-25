@@ -57,7 +57,7 @@ then
   pushd /root/os-client-tools/express > /dev/null
     tito build --test --rpm
   popd > /dev/null
-  yum localinstall -y /tmp/tito/noarch/rhc-devenv*.rpm
+  yum localinstall -y /tmp/tito/noarch/*.rpm
   popd > /dev/null
   rm -rf /root/os-client-tools
   rm -rf /root/li-working
