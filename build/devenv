@@ -188,11 +188,11 @@ class DevEnv < Thor
       if options.build_clean_ami || options.install_from_source
         # TODO - Remove this once nss is updated in RHEL 6.2
         print "Running one yum update to get around RHEL 6.2 AMI problem..."
-        ssh(hostname, "yum update -y --exclude='rhc*'", 3600)
+        ssh(hostname, "yum update -y --exclude='rhc*'", 1800)
         puts "Done"
   
         print "Updating all packages on the system..."
-        ssh(hostname, "yum update -y --exclude='rhc*'", 3600)
+        ssh(hostname, "yum update -y --exclude='rhc*'", 1800)
         puts "Done"
   
         if options.reboot?
@@ -206,7 +206,7 @@ class DevEnv < Thor
   
         if options.install_from_source
           cmd = 'set -e; sh li-devenv.sh candidate --install_build_prereqs'
-          ssh(hostname, cmd, 120)
+          ssh(hostname, cmd, 600)
           print "Performing clean install from source..."
           cmd = 'set -e; sh li-devenv.sh candidate --install_from_source'
         else
@@ -214,7 +214,7 @@ class DevEnv < Thor
           cmd = 'set -e; sh li-devenv.sh'
           cmd += ' stage' if options.use_stage_repo?
         end
-        output = ssh(hostname, cmd, 3600)
+        output = ssh(hostname, cmd, 1800)
         puts "Done"
   
         puts "----------------- Install Output ------------------------"
