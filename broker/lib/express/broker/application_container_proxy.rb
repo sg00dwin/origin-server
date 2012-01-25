@@ -105,7 +105,7 @@ module Express
         result = execute_direct(@@C_CONTROLLER, 'deconfigure', "-c '#{app.uuid}'")
         result_io = parse_result(result)
         
-        unless !keep_uid
+        unless keep_uid
           unreserve_uid(app.uid)
         end
         return result_io
