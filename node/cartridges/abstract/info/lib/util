@@ -54,7 +54,7 @@ function create_standard_repo_dir_env_var {
 }
 
 function create_standard_path_env_var {
-    echo "export PATH=$CART_INFO_DIR/bin/:$CART_DIR/abstract-httpd/info/bin/:$CART_INFO_DIR/bin/:$CART_DIR/abstract/info/bin/:$PATH" > $APP_HOME/.env/PATH
+    echo "export PATH=$CART_INFO_DIR/bin/:$CART_DIR/abstract-httpd/info/bin/:$CART_DIR/abstract/info/bin/:$PATH" > $APP_HOME/.env/PATH
 }
 
 function create_standard_app_dirs {

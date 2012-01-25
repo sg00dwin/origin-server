@@ -22,16 +22,19 @@ module LibraMigration
       env_echos = []
       if app_type == 'rack-1.1' || app_type == 'ruby-1.8' 
         env_echos.push("echo \"export OPENSHIFT_APP_TYPE='ruby-1.8'\" > #{app_home}/.env/OPENSHIFT_APP_TYPE")
+        env_echos.push("echo \"export PATH=#{cartridge_root_dir}/ruby-1.8/info/bin/:#{cartridge_root_dir}/abstract-httpd/info/bin/:#{cartridge_root_dir}/abstract/info/bin/:/bin:/usr/bin\" > #{app_home}/.env/PATH")
       elsif app_type == 'wsgi-3.2' || app_type == 'python-2.6'
         env_echos.push("echo \"export OPENSHIFT_APP_TYPE='python-2.6'\" > #{app_home}/.env/OPENSHIFT_APP_TYPE")
+        env_echos.push("echo \"export PATH=#{cartridge_root_dir}/python-2.6/info/bin/:#{cartridge_root_dir}/abstract-httpd/info/bin/:#{cartridge_root_dir}/abstract/info/bin/:/bin:/usr/bin\" > #{app_home}/.env/PATH")
+      elsif app_type == 'php-5.4' || app_type == 'perl-5.10' || app_type == 'jenkins-1.4'
+        # Unrelated to renames, this fixes a double cartridge_dir/info/bin listing
+        env_echos.push("echo \"export PATH=#{cartridge_dir}/info/bin/:#{cartridge_root_dir}/abstract-httpd/info/bin/:#{cartridge_root_dir}/abstract/info/bin/:/bin:/usr/bin\" > #{app_home}/.env/PATH")
       end
       
       env_echos.each do |env_echo|
         echo_output, echo_exitcode = Util.execute_script(env_echo)
         output += echo_output
       end
-      
-
       
     else
       exitcode = 127
