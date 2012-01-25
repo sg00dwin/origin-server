@@ -1,4 +1,4 @@
-/* DO NOT MODIFY. This file was compiled Tue, 24 Jan 2012 23:09:03 GMT from
+/* DO NOT MODIFY. This file was compiled Wed, 25 Jan 2012 15:49:29 GMT from
  * /home/clayton/code/li/site/app/coffeescripts/twitter.coffee
  */
 
