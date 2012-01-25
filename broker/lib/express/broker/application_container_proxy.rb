@@ -22,6 +22,8 @@ module Express
           if district
             district_uuid = district.uuid
             Rails.logger.debug "DEBUG: find_available_impl: district_uuid: #{district_uuid}"
+          elsif Rails.configuration.districts[:require_for_app_create]
+            raise Cloud::Sdk::NodeException.new("No district nodes available.  If the problem persists please contact Red Hat support.", 140)
           end
         end
         current_server, current_capacity = rpc_find_available(node_profile, district_uuid)
@@ -59,12 +61,33 @@ module Express
         cartridges
       end
 
-      def reserve_uid
+      def reserve_uid(district_uuid=nil)
         reserved_uid = nil
-        if @district
-          reserved_uid = @district.reserve_uid
+        if Rails.configuration.districts[:enabled]
+          if @district
+            district_uuid = @district.uuid
+          else
+            district_uuid = get_district_uuid unless district_uuid
+          end
+          if district_uuid && district_uuid != 'NONE'
+            reserved_uid = Cloud::Sdk::DataStore.instance.reserve_district_uid(district_uuid)
+            raise Cloud::Sdk::CdkException.new("uid could not be reserved") unless reserved_uid
+          end
         end
         reserved_uid
+      end
+      
+      def unreserve_uid(uid, district_uuid=nil)
+        if Rails.configuration.districts[:enabled]
+          if @district
+            district_uuid = @district.uuid
+          else
+            district_uuid = get_district_uuid unless district_uuid
+          end
+          if district_uuid && district_uuid != 'NONE'
+            Cloud::Sdk::DataStore.instance.unreserve_district_uid(district_uuid, uid)
+          end
+        end
       end
 
       def create(app, uid=nil)
@@ -78,15 +101,12 @@ module Express
         parse_result(result)
       end
     
-      def destroy(app)
+      def destroy(app, keep_uid=false)
         result = execute_direct(@@C_CONTROLLER, 'deconfigure', "-c '#{app.uuid}'")
         result_io = parse_result(result)
         
-        if Rails.configuration.districts[:enabled]
-          district_uuid = get_district_uuid
-          if district_uuid && district_uuid != 'NONE'
-            unreserve_district_uid(district_uuid, app.uid)
-          end
+        unless !keep_uid
+          unreserve_uid(app.uid)
         end
         return result_io
       end
@@ -255,14 +275,17 @@ module Express
             destination_district_uuid = source_district_uuid
           end
           destination_container = ApplicationContainerProxy.find_available_impl(app.node_profile, destination_district_uuid)
+          destination_district_uuid = destination_container.get_district_uuid if allow_change_district
         else
           destination_district_uuid = destination_container.get_district_uuid
           unless allow_change_district || (source_district_uuid == destination_district_uuid)
             raise Cloud::Sdk::UserException.new("Resulting move would change districts from '#{source_district_uuid}' to '#{destination_district_uuid}'", 1)
           end
         end
+        
+        keep_uid = destination_district_uuid == source_district_uuid
 
-        if source_container.id == destination_container.id
+        if keep_uid
           raise Cloud::Sdk::UserException.new("Error moving app.  Old and new servers are the same: #{source_container.id}", 1)
         end
 
@@ -291,6 +314,9 @@ module Express
             end
 
             begin
+              unless keep_uid
+                app.uid = destination_container.reserve_uid(destination_district_uuid)
+              end
               log_debug "DEBUG: Creating new account for app '#{app.name}' on #{destination_container.id}"
               reply.append destination_container.create(app)
   
@@ -345,7 +371,7 @@ module Express
               reply.append app.recreate_dns
               app.save
             rescue Exception => e
-              reply.append destination_container.destroy(app)
+              reply.append destination_container.destroy(app, keep_uid)
               raise
             end
           rescue Exception => e
@@ -370,7 +396,7 @@ module Express
         (1..num_tries).each do |i|
           begin
             reply.append source_container.run_cartridge_command(app.framework, app, "deconfigure", nil, false)
-            reply.append source_container.destroy(app)
+            reply.append source_container.destroy(app, keep_uid)
             break
           rescue Exception => e
             log_debug "DEBUG: Error deconfiguring old app on try #{i}: #{e.message}"
