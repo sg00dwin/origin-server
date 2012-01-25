@@ -60,10 +60,10 @@ module OpenShift
             end
             unless previous_package_contents == current_package_contents
               sync_dirs << current_sync_dir
+              `echo "#{current_package_contents}" > #{current_package_file}`
             else
               puts "Latest package already installed for: #{current_package}"
             end
-            `echo "#{current_package_contents}" > #{current_package_file}`
             current_package_contents = ''
             current_package = nil
             current_sync_dir = nil
