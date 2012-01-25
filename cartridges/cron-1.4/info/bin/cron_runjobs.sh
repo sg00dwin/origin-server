@@ -60,6 +60,13 @@ if [ -d "$SCRIPTS_DIR" ]; then
       done
 RUN_USER_SCRIPTS_EOF
 
+   status=$?
+   if [ 124 -eq $status ]; then
+      wmsg="Warning: $freq cron run terminated as it exceeded max run time"
+      log_message "$wmsg [$MAX_RUN_TIME] for libra user '$OPENSHIFT_APP_UUID'"
+      echo "$wmsg" >> $CART_INSTANCE_DIR/log/cron.$freq.log
+   fi
+
 fi
 
 log_message ":END: $freq cron run for libra user '$OPENSHIFT_APP_UUID'"
