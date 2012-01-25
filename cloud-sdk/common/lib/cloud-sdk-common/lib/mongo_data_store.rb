@@ -155,7 +155,7 @@ module Cloud::Sdk
       field = "apps.#{id}"
       escape(app_json)
       bson = MongoDataStore.collection.find_and_modify({
-        :query => { "_id" => user_id, "$where" => "this.consumed_gears < this.max_gears"},
+        :query => { "_id" => user_id, field => { "$exists" => false }, "$where" => "this.consumed_gears < this.max_gears"},
         :update => { "$set" => { field => app_json }, "$inc" => { "consumed_gears" => 1 }} })
       raise Cloud::Sdk::UserException.new("#{user_id} has already reached the application limit", 104) if bson == nil
     end
