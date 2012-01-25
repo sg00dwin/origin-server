@@ -216,17 +216,17 @@ mkdir -p /var/lib/puppet/ssl/private_keys/
 cp -f %{devenvdir}/puppet-public.pem /var/lib/puppet/ssl/public_keys/localhost.localdomain.pem
 cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost.localdomain.pem
 
-# Chmod o-x for rpm, dmesg, su, and sudo
-/bin/chmod 0750 /bin/rpm
-/bin/chmod 0750 /bin/dmesg
-/bin/chmod 4750 /bin/su
-/bin/chmod 4110 /usr/bin/sudo
-
 # Chgrp to wheel for rpm, dmesg, su, and sudo
 /bin/chgrp wheel /bin/rpm
 /bin/chgrp wheel /bin/dmesg
 /bin/chgrp wheel /bin/su
 /bin/chgrp wheel /usr/bin/sudo
+
+# Chmod o-x for rpm, dmesg, su, and sudo
+/bin/chmod 0750 /bin/rpm
+/bin/chmod 0750 /bin/dmesg
+/bin/chmod 4750 /bin/su
+/bin/chmod 4110 /usr/bin/sudo
 
 # Add user nagios_monitor to wheel group for running rpm, dmesg, su, and sudo
 /usr/bin/gpasswd nagios_monitor wheel
