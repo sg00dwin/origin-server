@@ -117,8 +117,8 @@ class PasswordController < ApplicationController
     else
       Rails.logger.warn "Non integrated environment - faking password change"
       json = {}
-      if not params[:old_password].empty?
-        json['errors'] = [params[:old_password]]
+      unless params[:test].nil?
+        json['errors'] = [params[:test]]
       end
     end
 
