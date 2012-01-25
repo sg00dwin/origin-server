@@ -275,6 +275,12 @@ kernel_dontaudit_request_load_module(domain)
 
 ########################################
 #
+# Cron support
+#
+cron_role(system_r, libra_t)
+
+########################################
+#
 # Mysql support
 #
 
