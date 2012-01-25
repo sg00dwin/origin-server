@@ -4,7 +4,6 @@ class DomainsController < BaseController
   before_filter :lookup_user, :except => [:create]
   
   NAMESPACE_MAX_LENGTH = 16
-  RSA_SSH_KEY_MIN_LENGTH = 96  # 768 bits = 96 bytes
 
   # GET /domains
   def index
@@ -155,7 +154,7 @@ class DomainsController < BaseController
     
     unless params[:ssh].nil?
       val = params[:ssh]
-      unless (val =~ /\A[A-Za-z0-9\+\/=]+\z/) && (val == 'nossh' || val.length >= RSA_SSH_KEY_MIN_LENGTH)
+      unless (val =~ /\A[A-Za-z0-9\+\/=]+\z/) and (val == 'nossh')
         errors.push({:message => "Invalid ssh key: #{val}", :exit_code => 108})
       end
     end

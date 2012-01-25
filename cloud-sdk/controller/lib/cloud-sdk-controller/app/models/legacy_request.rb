@@ -4,7 +4,6 @@ class LegacyRequest < Cloud::Sdk::Model
   
   APP_NAME_MAX_LENGTH = 32
   NAMESPACE_MAX_LENGTH = 16
-  RSA_SSH_KEY_MIN_LENGTH = 96  # 768 bits = 96 bytes
 
   def initialize
     @invalid_keys = []
@@ -53,7 +52,7 @@ class LegacyRequest < Cloud::Sdk::Model
   end
   
   validates_each :ssh, :allow_nil =>true do |record, attribute, val|
-    unless (val =~ /\A[A-Za-z0-9\+\/=]+\z/) && (val == 'nossh' || val.length >= RSA_SSH_KEY_MIN_LENGTH)
+    unless (val =~ /\A[A-Za-z0-9\+\/=]+\z/) && (val == 'nossh')
       record.errors.add attribute, {:message => "Invalid ssh key: #{val}", :exit_code => 108}
     end
   end
