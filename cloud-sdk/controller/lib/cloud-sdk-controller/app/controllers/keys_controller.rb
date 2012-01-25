@@ -88,7 +88,7 @@ class KeysController < BaseController
     end
     
     begin
-      user.add_secondary_ssh_key(name, ssh, type)
+      user.add_ssh_key(name, ssh, type)
       user.save
       ssh_key = RestSshKey.new(name, user.ssh_keys[name])
       @reply = RestReply.new(:created, "SSH key", ssh_key)
@@ -141,8 +141,8 @@ class KeysController < BaseController
     end
 
     begin
-      user.remove_secondary_ssh_key(name)
-      user.add_secondary_ssh_key(name, ssh, type)
+      user.remove_ssh_key(name)
+      user.add_ssh_key(name, ssh, type)
       user.save
       ssh_key = RestSshKey.new(name, user.ssh_keys[name])
       @reply = RestReply.new(:ok, "SSH key", ssh_key)
@@ -199,7 +199,7 @@ class KeysController < BaseController
     end
 
     begin
-      user.remove_secondary_ssh_key(name)
+      user.remove_ssh_key(name)
       user.save
       @reply = RestReply.new(:no_content)
       @reply.messages.push(Message.new(:info, "Deleted SSH key #{name} for user #{@login}"))

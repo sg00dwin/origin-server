@@ -28,7 +28,7 @@ class CloudUserTest < ActiveSupport::TestCase
     invalid_chars.length.times do |i|
       user = CloudUser.new("kraman@redhat.com", "ssh#{invalid_chars[i].chr}key", "namespace")
       assert user.invalid?
-      assert 108, user.errors[:ssh][0][:exit_code]
+      assert 108, user.errors[:ssh_keys][0][:exit_code]
     end
     
     user = CloudUser.new("kraman@redhat.com", "ABCdef012+/=", "namespace")
@@ -174,7 +174,7 @@ class CloudUserTest < ActiveSupport::TestCase
     assert user.env_vars["key"].nil?
   end
   
-  test "secondary ssh key" do
+  test "user ssh keys" do
     ssh = "AAAAB3NzaC1yc2EAAAABIwAAAQEAvzdpZ/3+PUi3SkYQc3j8v5W8+PUNqWe7p3xd9r1y4j60IIuCS4aaVqorVPhwrOCPD5W70aeLM/B3oO3QaBw0FJYfYBWvX3oi+FjccuzSmMoyaYweXCDWxyPi6arBqpsSf3e8YQTEkL7fwOQdaZWtW7QHkiDCfcB/LIUZCiaArm2taIXPvaoz/hhHnqB2s3W/zVP2Jf5OkQHsVOTxYr/Hb+/gV3Zrjy+tE9+z2ivL+2M0iTIoSVsUcz0d4g4XpgM8eG9boq1YGzeEhHe1BeliHmAByD8PwU74tOpdpzDnuKf8E9Gnwhsp2yqwUUkkBUoVcv1LXtimkEyIl0dSeRRcMw=="
     namespace = "kraman.cloudsdk.net"
     rhlogin = "kraman@redhat.com"
@@ -186,7 +186,7 @@ class CloudUserTest < ActiveSupport::TestCase
     user.expects(:save).once
     user.expects(:applications).returns(apps)
     
-    user.add_secondary_ssh_key("key_name", "key")
+    user.add_ssh_key("key_name", "key")
     assert user.ssh_keys["key_name"].nil? == false
     
     apps = [mock("app1"), mock("app2")]
@@ -195,7 +195,7 @@ class CloudUserTest < ActiveSupport::TestCase
     user.expects(:save).once
     user.expects(:applications).returns(apps)
     
-    user.remove_secondary_ssh_key("key_name")
+    user.remove_ssh_key("key_name")
     assert user.ssh_keys["key_name"].nil?
   end
   

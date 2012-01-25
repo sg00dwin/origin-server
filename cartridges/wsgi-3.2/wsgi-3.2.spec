@@ -1,8 +1,8 @@
-%define cartridgedir %{_libexecdir}/li/cartridges/python-2.4
+%define cartridgedir %{_libexecdir}/li/cartridges/python-2.6
 
 Summary:   Provides python-wsgi-3.2 support
 Name:      rhc-cartridge-wsgi-3.2
-Version:   0.85.6
+Version:   0.85.7
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -83,6 +83,8 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root,-)
+%dir %{cartridgedir}
+%dir %{cartridgedir}/info/
 %attr(0750,-,-) %{cartridgedir}/info/hooks/
 %attr(0750,-,-) %{cartridgedir}/info/data/
 %attr(0750,-,-) %{cartridgedir}/info/build/
@@ -96,6 +98,10 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Tue Jan 24 2012 Dan McPherson <dmcphers@redhat.com> 0.85.7-1
+- Renaming tests to 2.6 (mmcgrath@redhat.com)
+- python2.6 is being used, not 2.4 (mmcgrath@redhat.com)
+
 * Tue Jan 24 2012 Dan McPherson <dmcphers@redhat.com> 0.85.6-1
 - Updated License value in manifest.yml files. Corrected Apache Software
   License Fedora short name (jhonce@redhat.com)

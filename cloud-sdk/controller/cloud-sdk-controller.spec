@@ -5,10 +5,10 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.3.13
+Version:        0.3.15
 Release:        1%{?dist}
 Group:          Development/Languages
-License:        AGPLv3
+License:        ASL 2.0
 URL:            http://openshift.redhat.com
 Source0:        rubygem-%{gemname}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -73,6 +73,23 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Tue Jan 24 2012 Dan McPherson <dmcphers@redhat.com> 0.3.15-1
+- Updating gem versions (dmcphers@redhat.com)
+- fix cloud user unit test (rpenta@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- resolve merge conflicts (rpenta@redhat.com)
+- Resolve merge conflicts (rpenta@redhat.com)
+- Any ssh key can be removed (even the default/primary key). Ony restriction
+  will be at least one ssh key should be associated with the domain
+  (rpenta@redhat.com)
+- Resolve merge conflicts (rpenta@redhat.com)
+- ssh keys code refactor (rpenta@redhat.com)
+
+* Tue Jan 24 2012 Dan McPherson <dmcphers@redhat.com> 0.3.14-1
+- Updating gem versions (dmcphers@redhat.com)
+- rubygem-cloud-sdk-controller: Modified license to ASL 2.0 (jhonce@redhat.com)
+
 * Tue Jan 24 2012 Dan McPherson <dmcphers@redhat.com> 0.3.13-1
 - Updating gem versions (dmcphers@redhat.com)
 - fix test case (dmcphers@redhat.com)

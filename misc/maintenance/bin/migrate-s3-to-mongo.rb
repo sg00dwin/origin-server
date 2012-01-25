@@ -15,7 +15,9 @@ $config = {
   :collection_name => "user_info"
 }
 # This should match DOT_SUBSTITUTE in Cloud::SDK::MongoDataStore
-DOT_SUBSTITUTE = "(ö)"  
+DOT_SUBSTITUTE = "(ö)"
+# This should match DEFAULT_SSH_KEY_NAME in CloudUser 
+DEFAULT_SSH_KEY_NAME = "default" 
 
 def s3
   # Setup the global access configuration
@@ -54,14 +56,16 @@ def mongo_populate
       puts user_name
       user_data = eval(user_data_str)
 
+      # update ssh keys
+      user_data["ssh_keys"] = {} unless user_data["ssh_keys"]
+      user_data["ssh_keys"][DEFAULT_SSH_KEY_NAME] = { "key" => user_data["ssh"], "type" => user_data["ssh_type"] || "ssh-rsa" }
+
       # Create user bson doc
       bson_doc = { 
               "_id"  => user_name,
               "uuid" => user_data["uuid"],
               "rhlogin" => user_data["rhlogin"],
               "namespace" => user_data["namespace"],
-              "ssh" => user_data["ssh"],
-              "ssh_type" => user_data["ssh_type"] || "ssh-rsa",
               "ssh_keys" => user_data["ssh_keys"],
               "system_ssh_keys" => user_data["system_ssh_keys"],
               "env_vars" => user_data["env_vars"],
@@ -83,6 +87,10 @@ def mongo_populate
         app_data_str.gsub!(/null/, "\"\"")
         #puts app_data_str
         app_data = eval(app_data_str)
+
+        # Migrate wsgi/rack to python/ruby
+        app_data['framework'] = 'ruby-1.8' if app_data['framework'] == 'rack-1.1'
+        app_data['framework'] = 'python-2.6' if app_data['framework'] == 'wsgi-3.2'
         
         # Create app bson doc
         embedded_carts = {}
