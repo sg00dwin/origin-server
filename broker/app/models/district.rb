@@ -39,12 +39,6 @@ class District < Cloud::Sdk::Model
     district
   end
   
-  def reserve_uid()
-    uid = Cloud::Sdk::DataStore.instance.reserve_district_uid(@uuid)
-    raise Cloud::Sdk::CdkException.new("uid could not be reserved") unless uid
-    return uid
-  end
-  
   def delete()
     Cloud::Sdk::DataStore.instance.delete_district(@uuid)
   end

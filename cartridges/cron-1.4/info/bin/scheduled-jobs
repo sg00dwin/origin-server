@@ -16,8 +16,15 @@ function usage() {
 }
 
 
+function log_message() {
+   msg=${1-""}
+   [ -z "$msg" ]  &&  return 0
+   logger -i -s "run-scheduled-libra-user-jobs" -p user.info "`date`: $msg"
+}
+
+
 function libra_users() {
-    grep ":libra guest:" /etc/passwd | cut -d: -f1
+    grep ":libra guest:" /etc/passwd | cut -d: -f1 | tr '\n' ' '
 }
 
 
@@ -28,7 +35,9 @@ function run_all_scheduled_jobs() {
       exit 1
    fi
 
+   log_message ":START: $freq run of all scheduled jobs"
    libra_users | xargs -d' ' -I{} -n 1 -P $DOP $0 run-user {} $freq
+   log_message ":END: $freq run of all scheduled jobs"
 }
 
 
@@ -43,27 +52,32 @@ function setuppam() {
 function run_user_scheduled_jobs() {
    uuid=${1:-""}
    freq=${2:-""}
-   if [ -z "$uuid" || -z "$freq" ]; then
+   if [[ -z "$uuid" || -z "$freq" ]]; then
       usage
       exit 22
    fi
 
    # Ensure cron jobs are enabled, there's a jobs dir and there's some jobs
    # to run.
-   [ ! -f $CART_INSTANCE_DIR/run/jobs.enabled ]  &&  return 0
-   USER_JOBS_DIR=/var/lib/libra/$uuid/$CART_DIRNAME/jobs/$freq
-   [ ! -d "$USER_JOBS_DIR" ]  &&  return 0
-   njobs=$(ls "$USER_JOBS_DIR" | wc -l)
+   USER_CRON_INSTANCE_DIR=/var/lib/libra/$uuid/$CART_DIRNAME
+   [ ! -f $USER_CRON_INSTANCE_DIR/run/jobs.enabled ]  &&  return 0
+   [ ! -d "$USER_CRON_INSTANCE_DIR/jobs/$freq" ]  &&  return 0
+   njobs=$(ls "$USER_CRON_INSTANCE_DIR/jobs/$freq" | wc -l)
    [ 0 -ge ${njobs:-0} ]  &&  return 0
+
+   # Ensure scripts are executable
+   chmod +x -R "$USER_CRON_INSTANCE_DIR/jobs/$freq/"
 
    # Get mcs level + setup pam.
    libra_userid=$(id -u "$uuid")
    mcs_level=$(openshift_mcs_level $libra_userid)
    setuppam "$uuid"
 
-   cmd="timeout $MAX_RUN_TIME /var/lib/libra/$uuid/$CART_DIRNAME/cron_runjobs.sh $freq"
-   if [ -f $cmdfile ]; then
-      daemon --user="$uuid" runcon -t libra_t -l $mcs_level $cmd
+   cmd="$USER_CRON_INSTANCE_DIR/cron_runjobs.sh $freq"
+
+   # Ensure cron's embedded in the app.
+   if [ -f "$USER_CRON_INSTANCE_DIR/cron_runjobs.sh" ]; then
+      daemon --user="$uuid" runcon -r system_r -t libra_t -l $mcs_level $cmd
    fi
 }
 
@@ -72,8 +86,8 @@ function run_user_scheduled_jobs() {
 #
 # main():
 #
+source /etc/init.d/functions
 source "${CART_INSTALL_DIR}/abstract/info/lib/selinux"
-source "$CART_INFO_DIR/configuration/limits"
 
 # Check whether to run all or a specific user's jobs.
 case "$1" in 

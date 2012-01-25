@@ -31,6 +31,10 @@ class DevEnv < Thor
       reset_temp_commit
     end
     
+    def init_repo(hostname)
+      ssh(hostname, "rm -rf /root/li; git clone --bare git://git1.ops.rhcloud.com/li.git/ /root/li")
+    end
+    
     def temp_commit
       # Warn on uncommitted changes
       `git diff-index --quiet HEAD`
@@ -147,6 +151,7 @@ class DevEnv < Thor
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   method_option :region, :required => false, :desc => "Amazon region override (default us-east-1)"
   method_option :build_clean_ami, :required => false, :desc => "Indicates whether to start from a base RHEL image"
+  method_option :install_from_source, :required => false, :desc => "Indicates whether to start from a base RHEL image"
   def build(name, build_num)
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
 
@@ -155,8 +160,7 @@ class DevEnv < Thor
     conn = conn.regions[options.region] unless (options.region?nil)
 
     image = nil    
-    if options.build_clean_ami
-      
+    if options.build_clean_ami || options.install_from_source
       # Create a new builder instance
       if (options.region?nil)
         image = conn.images[AMI["us-east-1"]]
@@ -181,14 +185,14 @@ class DevEnv < Thor
 
     begin
       manifest = nil
-      if options.build_clean_ami
+      if options.build_clean_ami || options.install_from_source
         # TODO - Remove this once nss is updated in RHEL 6.2
         print "Running one yum update to get around RHEL 6.2 AMI problem..."
-        ssh(hostname, "yum update -y --exclude='rhc*'", 3600)
+        ssh(hostname, "yum update -y --exclude='rhc*'", 1800)
         puts "Done"
   
         print "Updating all packages on the system..."
-        ssh(hostname, "yum update -y --exclude='rhc*'", 3600)
+        ssh(hostname, "yum update -y --exclude='rhc*'", 1800)
         puts "Done"
   
         if options.reboot?
@@ -200,10 +204,17 @@ class DevEnv < Thor
         scp_to(hostname, script_path, "~/")
         puts "Done"
   
-        print "Performing clean install with the latest code..."
-        cmd = 'set -e; sh li-devenv.sh'
-        cmd += ' stage' if options.use_stage_repo?
-        output = ssh(hostname, cmd, 3600)
+        if options.install_from_source
+          cmd = 'set -e; sh li-devenv.sh candidate --install_build_prereqs'
+          ssh(hostname, cmd, 600)
+          print "Performing clean install from source..."
+          cmd = 'set -e; sh li-devenv.sh candidate --install_from_source'
+        else
+          print "Performing clean install with the latest code..."
+          cmd = 'set -e; sh li-devenv.sh'
+          cmd += ' stage' if options.use_stage_repo?
+        end
+        output = ssh(hostname, cmd, 1800)
         puts "Done"
   
         puts "----------------- Install Output ------------------------"
@@ -214,7 +225,7 @@ class DevEnv < Thor
         
         manifest = rpm_manifest(hostname)
         
-        if options.register?
+        if options.register? && !options.install_from_source
           register_image(conn, instance, name + '-clean_' + build_num, manifest)
         end
       else
@@ -394,7 +405,7 @@ class DevEnv < Thor
 
       if options.init_repo?
         print "Initializing git repo for syncing..."
-        ssh(hostname, "rm -rf /root/li; git clone --bare git://git1.ops.rhcloud.com/li.git/ /root/li")
+        init_repo(hostname)
         update_remote_tests(instance.dns_name)
         puts "Done"
       else

@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Common
 Name:           rubygem-%{gemname}
-Version:        0.3.8
+Version:        0.3.9
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -73,6 +73,14 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Tue Jan 24 2012 Dan McPherson <dmcphers@redhat.com> 0.3.9-1
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- resolve merge conflicts (rpenta@redhat.com)
+- Resolve merge conflicts (rpenta@redhat.com)
+- Resolve merge conflicts (rpenta@redhat.com)
+- ssh keys code refactor (rpenta@redhat.com)
+
 * Tue Jan 24 2012 Dan McPherson <dmcphers@redhat.com> 0.3.8-1
 - cloud-sdk-common: Modified license to ASL 2.0 (jhonce@redhat.com)
 

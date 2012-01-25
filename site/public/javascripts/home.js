@@ -1,5 +1,10 @@
+/* DO NOT MODIFY. This file was compiled Tue, 24 Jan 2012 23:09:03 GMT from
+ * /home/clayton/code/li/site/app/coffeescripts/home.coffee
+ */
+
 (function() {
-  /* Home page scripts */  var $, latestError, latestSuccess, retweetError, retweetSuccess, _this;
+  /* Home page scripts */
+  var $, latestError, latestSuccess, retweetError, retweetSuccess, _this;
   $ = jQuery;
   _this = this;
   latestSuccess = function(data, textStatus, jqXHR) {

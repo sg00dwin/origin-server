@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.85.7
+Version:   0.85.8
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -35,6 +35,7 @@ Requires:  rhc-cartridge-phpmoadmin-1.0
 Requires:  rhc-cartridge-rockmongo-1.1
 Requires:  rhc-cartridge-10gen-mms-agent-0.1
 Requires:  rhc-cartridge-postgresql-8.4
+Requires:  rhc-cartridge-cron-1.4
 Requires:  qpid-cpp-server
 Requires:  qpid-cpp-server-ssl
 Requires:  puppet
@@ -124,10 +125,6 @@ setfacl -m u:jenkins:rwx /tmp
 # Jenkins specific setup
 usermod -G libra_user jenkins
 chown -R jenkins:jenkins /var/lib/jenkins
-
-# TODO - fix this because having jenkins in libra_user should correct this
-# However, without doing this, rake test fails for the rails sites
-chmod a+r /etc/libra/controller.conf
 
 # Allow Apache to connect to Jenkins port 8081
 /usr/sbin/setsebool -P httpd_can_network_connect=on || :
@@ -219,17 +216,17 @@ mkdir -p /var/lib/puppet/ssl/private_keys/
 cp -f %{devenvdir}/puppet-public.pem /var/lib/puppet/ssl/public_keys/localhost.localdomain.pem
 cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost.localdomain.pem
 
-# Chmod o-x for rpm, dmesg, su, and sudo
-/bin/chmod 0750 /bin/rpm
-/bin/chmod 0750 /bin/dmesg
-/bin/chmod 4750 /bin/su
-/bin/chmod 4110 /usr/bin/sudo
-
 # Chgrp to wheel for rpm, dmesg, su, and sudo
 /bin/chgrp wheel /bin/rpm
 /bin/chgrp wheel /bin/dmesg
 /bin/chgrp wheel /bin/su
 /bin/chgrp wheel /usr/bin/sudo
+
+# Chmod o-x for rpm, dmesg, su, and sudo
+/bin/chmod 0750 /bin/rpm
+/bin/chmod 0750 /bin/dmesg
+/bin/chmod 4750 /bin/su
+/bin/chmod 4110 /usr/bin/sudo
 
 # Add user nagios_monitor to wheel group for running rpm, dmesg, su, and sudo
 /usr/bin/gpasswd nagios_monitor wheel
@@ -248,6 +245,10 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 %{_initddir}/sauce-connect
 
 %changelog
+* Tue Jan 24 2012 Dan McPherson <dmcphers@redhat.com> 0.85.8-1
+- resolve merge conflicts (rpenta@redhat.com)
+- Expose internal mongo datastore through rock-mongo UI (rpenta@redhat.com)
+
 * Tue Jan 24 2012 Dan McPherson <dmcphers@redhat.com> 0.85.7-1
 - add pam-devel (dmcphers@redhat.com)
 - devenv.spec changed comment typo in chmod section 01 24 2012
