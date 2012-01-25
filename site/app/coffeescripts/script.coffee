@@ -3,49 +3,6 @@ $ = jQuery
 
 $ ->
 
-## Scroll effects ##
-  # nav sticks to top when scrolling off page #
-  # parallax effect on scroll (undone for now) #
-  body = $ 'body'
-  nav = ($ 'header.universal > nav').first()
-  nav_top = nav.offset().top
-  #sm_pos = md_pos = lg_pos = 0
-  top = ($ window).scrollTop()
-    
-  sticky_css =
-    position: 'fixed'
-    top: 0
-    'z-index': 2000
-    width: '100%'
-  unsticky_css =
-    position: 'static'
-
-  stuck = false
-
-  ($ window).scroll ->
-    # parallax effect #
-    #top_diff = ($ this).scrollTop() - top
-    top = ($ this).scrollTop()
-    
-    #sm_pos -= top_diff
-    #md_pos -= Math.round top_diff*0.5
-    #lg_pos -= Math.round top_diff*0.25
-    
-    #body.css 'background-position', "-150px #{sm_pos}px, -150px #{md_pos}px, -150px #{lg_pos}px"
-    
-    # sticky nav #
-    # check if nav is supposed to be off the page
-    should_stick = top > nav_top
-
-    if should_stick and !stuck
-      nav.css sticky_css
-      ($ 'body > section:first').css 'marginTop', nav.height() + 'px'
-      stuck = true
-    else if stuck and !should_stick
-      nav.css unsticky_css
-      ($ 'body > section:first').css 'marginTop', 0
-      stuck = false
-
 ## CSS text-overflow: ellipsis polyfill on main nav menu ##
   $('header.universal nav li a').textOverflow()
 

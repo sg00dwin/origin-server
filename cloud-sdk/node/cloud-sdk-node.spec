@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Node
 Name:           rubygem-%{gemname}
-Version:        0.3.10
+Version:        0.3.11
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        AGPLv3
@@ -87,6 +87,13 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Tue Jan 24 2012 Dan McPherson <dmcphers@redhat.com> 0.3.11-1
+- Updating gem versions (dmcphers@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- resolve merge conflicts (rpenta@redhat.com)
+- Resolve merge conflicts (rpenta@redhat.com)
+- ssh keys code refactor (rpenta@redhat.com)
+
 * Tue Jan 24 2012 Dan McPherson <dmcphers@redhat.com> 0.3.10-1
 - Updating gem versions (dmcphers@redhat.com)
 

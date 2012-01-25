@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.85.4
+Version:   0.85.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -69,6 +69,10 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Tue Jan 24 2012 Dan McPherson <dmcphers@redhat.com> 0.85.5-1
+- Remove floating header to reduce problems on iPad/iPhone
+  (ccoleman@redhat.com)
+
 * Fri Jan 20 2012 Mike McGrath <mmcgrath@redhat.com> 0.85.4-1
 - merge and ruby-1.8 prep (mmcgrath@redhat.com)
 

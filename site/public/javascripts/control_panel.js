@@ -1,5 +1,5 @@
-/* DO NOT MODIFY. This file was compiled Thu, 12 Jan 2012 00:01:30 GMT from
- * /home/aboone/Source/li/site/app/coffeescripts/control_panel.coffee
+/* DO NOT MODIFY. This file was compiled Tue, 24 Jan 2012 23:09:04 GMT from
+ * /home/clayton/code/li/site/app/coffeescripts/control_panel.coffee
  */
 
 (function() {

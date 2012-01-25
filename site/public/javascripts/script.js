@@ -1,40 +1,12 @@
-/* DO NOT MODIFY. This file was compiled Tue, 20 Dec 2011 14:29:57 GMT from
- * /Users/alex/Source/li/site/app/coffeescripts/script.coffee
+/* DO NOT MODIFY. This file was compiled Tue, 24 Jan 2012 23:09:03 GMT from
+ * /home/clayton/code/li/site/app/coffeescripts/script.coffee
  */
 
 (function() {
   var $;
   $ = jQuery;
   $(function() {
-    var ann_height, ann_list, announcements, body, current, hide_notification, hide_outage_txt, links, nav, nav_top, on_announcement, outage_animation_length, outage_notification, outage_notification_neg_height, outage_toggle, outage_toggle_state, overlay, scroll_announcements, section, section_selector, sections, show_notification, show_outage_txt, sticky_css, stuck, top, unsticky_css;
-    body = $('body');
-    nav = ($('header.universal > nav')).first();
-    nav_top = nav.offset().top;
-    top = ($(window)).scrollTop();
-    sticky_css = {
-      position: 'fixed',
-      top: 0,
-      'z-index': 2000,
-      width: '100%'
-    };
-    unsticky_css = {
-      position: 'static'
-    };
-    stuck = false;
-    ($(window)).scroll(function() {
-      var should_stick;
-      top = ($(this)).scrollTop();
-      should_stick = top > nav_top;
-      if (should_stick && !stuck) {
-        nav.css(sticky_css);
-        ($('body > section:first')).css('marginTop', nav.height() + 'px');
-        return stuck = true;
-      } else if (stuck && !should_stick) {
-        nav.css(unsticky_css);
-        ($('body > section:first')).css('marginTop', 0);
-        return stuck = false;
-      }
-    });
+    var ann_height, ann_list, announcements, current, hide_notification, hide_outage_txt, links, on_announcement, outage_animation_length, outage_notification, outage_notification_neg_height, outage_toggle, outage_toggle_state, overlay, scroll_announcements, section, section_selector, sections, show_notification, show_outage_txt;
     $('header.universal nav li a').textOverflow();
     announcements = $('#announcements');
     ann_list = $('ul', announcements);
