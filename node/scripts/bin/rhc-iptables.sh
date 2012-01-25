@@ -108,11 +108,15 @@ function iptables {
 }
 
 function new_table {
+  tbl="$2"
+  if [ "$tbl" = "" ]; then
+    tbl="filter"
+  fi
   if [ "${SYSCONFIG}" ]; then
     echo ':'"$1"' - [0:0]'
   else
-    iptables -N "$1" || :
-    iptables -F "$1"
+    iptables -t "$tbl" -N "$1" || :
+    iptables -t "$tbl" -F "$1"
   fi
 }
 
@@ -156,22 +160,19 @@ new_table ${NTABLE}
 new_table ${UTABLE}
 new_table ${PTABLE}
 new_table ${XSTABLE}
-new_table ${XPTABLE}
+new_table ${XPTABLE} nat
 
 # INPUT proxy table from allowed servers only.  Blind guess where to
 # insert this, 4'th place is below the lo and existing connection
 # rules.
-iptables -I INPUT 4 \
-  -m multiport \
-  --dports `uid_to_portbegin $UID_BEGIN`:`uid_to_portend $UID_END` \
-  -m state --state NEW \
+iptables -I INPUT 4 -p tcp -i ${PIFACE} \
+  -m conntrack --ctstate DNAT,NEW \
   -j ${XSTABLE}
 
 
 # Proxy DNAT to internal servers
-iptables -t nat -A PREROUTING \
-  -m multiport \
-  --dports `uid_to_portbegin $UID_BEGIN`:`uid_to_portend $UID_END` \
+iptables -t nat -A PREROUTING -p tcp -i ${PIFACE} \
+  --dport `uid_to_portbegin $UID_BEGIN`:`uid_to_portend $UID_END` \
   -j ${XPTABLE}
 
 # Don't do the global UID match in every rule
@@ -196,8 +197,7 @@ iptables -A ${NTABLE} -o ${UIFACE} -d ${UWHOLE_NET}/${UWHOLE_NM} \
 
 # New port proxy connections
 iptables -A ${NTABLE} -p tcp -o ${PIFACE} \
-  -m multiport \
-  --dports `uid_to_portbegin $UID_BEGIN`:`uid_to_portend $UID_END` \
+  --dport `uid_to_portbegin $UID_BEGIN`:`uid_to_portend $UID_END` \
   -m state --state NEW \
   -j ${PTABLE}
 
@@ -212,7 +212,7 @@ iptables -A ${UTABLE} -j REJECT --reject-with icmp-host-prohibited
 # Per UID port rules
 # seq ${UID_BEGIN} ${UID_END} | while read uid; do
 #  iptables -A ${PTABLE} -p tcp \
-#    -m multiport --dports `uid_to_portbegin $uid`:`uid_to_portend $uid` \
+#    --dport `uid_to_portbegin $uid`:`uid_to_portend $uid` \
 #    -m owner --uid-owner $uid \
 #    -j ACCEPT
 # done
