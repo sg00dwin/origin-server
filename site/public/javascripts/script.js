@@ -1,4 +1,4 @@
-/* DO NOT MODIFY. This file was compiled Tue, 24 Jan 2012 23:09:03 GMT from
+/* DO NOT MODIFY. This file was compiled Wed, 25 Jan 2012 15:49:29 GMT from
  * /home/clayton/code/li/site/app/coffeescripts/script.coffee
  */
 
@@ -6,7 +6,8 @@
   var $;
   $ = jQuery;
   $(function() {
-    var ann_height, ann_list, announcements, current, hide_notification, hide_outage_txt, links, on_announcement, outage_animation_length, outage_notification, outage_notification_neg_height, outage_toggle, outage_toggle_state, overlay, scroll_announcements, section, section_selector, sections, show_notification, show_outage_txt;
+    var ann_height, ann_list, announcements, body, current, hide_notification, hide_outage_txt, links, on_announcement, outage_animation_length, outage_notification, outage_notification_neg_height, outage_toggle, outage_toggle_state, overlay, scroll_announcements, section, section_selector, sections, show_notification, show_outage_txt;
+    body = $('body');
     $('header.universal nav li a').textOverflow();
     announcements = $('#announcements');
     ann_list = $('ul', announcements);

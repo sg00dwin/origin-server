@@ -2,6 +2,7 @@
 $ = jQuery
 
 $ ->
+  body = $ 'body'
 
 ## CSS text-overflow: ellipsis polyfill on main nav menu ##
   $('header.universal nav li a').textOverflow()
