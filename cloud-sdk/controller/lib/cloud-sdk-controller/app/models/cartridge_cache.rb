@@ -9,6 +9,7 @@ class CartridgeCache
 	  carts = self.cartridges
 	  carts.each do |cart|
 	    return cart if cart.all_capabilities.include?(capability)
+	    return cart if cart.name == capability
     end
   end
 end

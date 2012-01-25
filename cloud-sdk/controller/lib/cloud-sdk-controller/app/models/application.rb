@@ -1,5 +1,5 @@
 class Application < Cloud::Sdk::Cartridge
-  attr_accessor :state, :group_instances
+  attr_accessor :state, :group_instance_map, :comp_instance_map, :conn_endpoints_list
   attr_accessor :domain, :creation_time, :uuid, :aliases, :uid
   primary_key :uuid
     
@@ -263,7 +263,38 @@ class Application < Cloud::Sdk::Cartridge
     end
     return updated 
   end
-  
+
+  def elaborate_descriptor
+    self.default_profile.groups.each { |k, g|
+      gpath = self.name + "." + g.name
+      gi = GroupInstance.new(self.name, self.default_profile.name, gpath )
+      self.group_instance_map[gpath] = gi
+      gi.elaborate(g, group_list)
+    }
+    # make connection_endpoints out of provided connections
+    self.default_profile.connections.each { |name, conn|
+      inst1 = ComponentInstance::find_component_in_cart(profile, app, conn.components[0], self.name)
+      inst2 = ComponentInstance::find_component_in_cart(profile, app, conn.components[1], self.name)
+      ComponentInstance::establish_connections(inst1, inst2, app)
+    }
+    # check self.comp_instance_map for component instances
+    # check self.group_instance_map for group instances
+    # check self.conn_endpoints_list for list of connection endpoints (fully resolved)
+
+    # resolve group co-locations
+    colocate_groups
+  end
+
+  def colocate_groups
+    self.conn_endpoints_list.each { |conn|
+      if conn.pub.type.match(/^FILESYSTEM/) or conn.pub.type.match(/^AFUNIX/)
+        ginst1 = self.group_instance_map[conn.from_comp_inst.group_instance_name]
+        ginst2 = self.group_instance_map[conn.to_comp_inst.group_instance_name]
+        # these two group instances need to be colocated
+      end
+    }
+  end
+
   def start
     self.container.start(self, @framework)
   end
