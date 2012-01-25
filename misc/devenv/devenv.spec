@@ -126,10 +126,6 @@ setfacl -m u:jenkins:rwx /tmp
 usermod -G libra_user jenkins
 chown -R jenkins:jenkins /var/lib/jenkins
 
-# TODO - fix this because having jenkins in libra_user should correct this
-# However, without doing this, rake test fails for the rails sites
-chmod a+r /etc/libra/controller.conf
-
 # Allow Apache to connect to Jenkins port 8081
 /usr/sbin/setsebool -P httpd_can_network_connect=on || :
 

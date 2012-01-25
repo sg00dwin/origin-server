@@ -44,6 +44,8 @@ if [ "$2" == "--install_from_source" ]
 then
   rm -rf /root/li-working
   git clone git://git1.ops.rhcloud.com/li.git/ /root/li-working
+  rm -rf /root/os-client-tools
+  git clone https://github.com/openshift/os-client-tools.git /root/os-client-tools
   pushd /root/li-working > /dev/null
   for x in `find -name *.spec`
   do
@@ -52,10 +54,10 @@ then
 	popd > /dev/null
   done
   cp /tmp/tito/x86_64/*.rpm /tmp/tito/noarch/
+  pushd /root/os-client-tools/express > /dev/null
+    tito build --test --rpm
+  popd > /dev/null
   yum localinstall -y /tmp/tito/noarch/*.rpm
-  rm -rf /root/os-client-tools
-  git clone https://github.com/openshift/os-client-tools.git /root/os-client-tools
-  build/devenv install_local_client
   popd > /dev/null
   rm -rf /root/os-client-tools
   rm -rf /root/li-working
