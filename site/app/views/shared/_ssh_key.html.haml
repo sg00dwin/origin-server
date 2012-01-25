@@ -2,3 +2,5 @@
   -#= f.label :value, "Paste your public key"
     = f.text_area :value, :rows => 5
   = f.input :value, :as => :text, :required => false, :label => "Paste your public key"
+  = f.buttons do
+    = f.commit_button :button_html => { :class => 'button', :value => 'Save' }
