@@ -19,6 +19,15 @@
         </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>INSTALL_FROM_SOURCE</name>
+          <description></description>
+          <defaultValue>false</defaultValue>
+        </hudson.model.StringParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
   </properties>
   <scm class="hudson.plugins.git.GitSCM">
     <configVersion>1</configVersion>
@@ -70,6 +79,9 @@
       <command>if [ &quot;$BUILD_CLEAN_AMI&quot; == &quot;true&quot; ]
 then
   build/devenv build devenv ${BUILD_NUMBER} --register --terminate --build_clean_ami
+elif [ &quot;$INSTALL_FROM_SOURCE&quot; == &quot;true&quot; ]
+then
+  build/devenv build devenv ${BUILD_NUMBER} --register --terminate --install_from_source
 else
   build/devenv build devenv ${BUILD_NUMBER} --register --terminate
 fi</command>
