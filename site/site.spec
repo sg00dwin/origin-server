@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.85.5
+Version:   0.85.6
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -11,6 +11,11 @@ URL:       http://openshift.redhat.com
 Source0:   rhc-site-%{version}.tar.gz
 
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
+
+BuildRequires: rubygem-rake
+BuildRequires: rubygem-rails
+BuildRequires: rubygem-barista
+
 Requires:  rhc-common
 Requires:  rhc-server-common
 Requires:  httpd
@@ -41,6 +46,7 @@ authorization and also the workflows to request access.
 %setup -q
 
 %build
+rake barista:brew
 
 %install
 rm -rf %{buildroot}
@@ -69,6 +75,10 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Tue Jan 25 2012 John (J5) Palmieri <johnp@redhat.com> 0.85.6-1
+- remove generated javascript and use rake to generate
+  javascript during the build
+
 * Tue Jan 24 2012 Dan McPherson <dmcphers@redhat.com> 0.85.5-1
 - Remove floating header to reduce problems on iPad/iPhone
   (ccoleman@redhat.com)
