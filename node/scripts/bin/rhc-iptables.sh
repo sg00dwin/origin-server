@@ -7,22 +7,26 @@
 UID_BEGIN=500
 # UID_END=12700   # Too large for port numbers
 UID_END=6500
-NTABLE="rhc-user-table"
+NTABLE="rhc-user-table"             # Switchyard for app UID tables
 
-UTABLE="rhc-app-table"
+UTABLE="rhc-app-table"              # Which IP address ranges are you allowed to talk to
 UIFACE="lo"
 UWHOLE_NET="127.0.0.0"
 UWHOLE_NM="8"
 USAFE_NET="127.0.0.0"
 USAFE_NM="25"
 
-PTABLE="rhc-port-table"   # To Port Proxies
+UAPP_BASE="127.0.250.0"
+UAPP_NM="25"
+
+
+PTABLE="rhc-port-table"             # Rules for allowing a UID to access a proxy
 PIFACE="eth0"
 PORT_BEGIN=35531
 PORTS_PER_USER=5
 
 XSTABLE="rhc-proxy-servers-table"   # From express servers
-XPTABLE="rhc-proxy-inbound-table"   # DNAT configuration
+XPTABLE="rhc-proxy-dnat-table"      # DNAT configuration
 
 DEBUG=""
 SYSCONFIG=""
@@ -112,9 +116,24 @@ function new_table {
   fi
 }
 
+function decode_ip {
+  ret=0
+  quad=16777216
+  for byt in `echo "$1" | sed -e 's/\./ /g'`; do
+    ret=$(($ret + $(($byt * $quad))))
+    quad=$(($quad/256))
+  done
+
+  echo $ret
+}
+
 function uid_to_ip {
-  # Logic copied from rhc-ip-prep
-  a=$(($1*128+2130706432))
+  # This works on IPv4.  Switch to a real language
+  # and use inet_ntop/inet_pton for ipv6.
+  block=$((2**$((32 - $UAPP_NM))))
+  start=`decode_ip $UAPP_BASE`
+
+  a=$(($1*$block+$start))
   h1=$(($a/16777216))
   h2=$(($(($a%16777216))/65536))
   h3=$(($(($a%65536))/256))
