@@ -34,7 +34,7 @@ class Express < OpenShift::SeleniumTestCase
     })
 
     check_links({
-      :console => '/app/dashboard'
+      :console => '/app/control_panel'
     })
   end
 

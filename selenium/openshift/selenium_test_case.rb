@@ -60,7 +60,7 @@ module OpenShift
       @home    = OpenShift::Express::Home.new(page, "#{base_url}/app")
       @express = OpenShift::Express::Express.new(page, "#{base_url}/app/express")
       @flex    = OpenShift::Express::Flex.new(page, "#{base_url}/app/flex")
-      @express_console = OpenShift::Express::ExpressConsole.new(page, "#{base_url}/app/dashboard")
+      @express_console = OpenShift::Express::ExpressConsole.new(page, "#{base_url}/app/control_panel")
 
       @navbar  = OpenShift::Express::MainNav.new(page,'main_nav')
       @signin  = OpenShift::Express::Login.new(page,'signin')

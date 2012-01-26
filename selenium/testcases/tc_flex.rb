@@ -32,10 +32,6 @@ class Flex < OpenShift::SeleniumTestCase
     check_links({
       :quickstart => '/app/flex#quickstart',
     })
-
-    check_links({
-      #:console => '/app/dashboard'
-    })
   end
 
   def check_links(hash)
