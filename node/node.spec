@@ -37,6 +37,11 @@ Requires(post):   /usr/sbin/semanage
 Requires(postun): /usr/sbin/semodule
 Requires(postun): /usr/sbin/semanage
 
+
+%description
+Turns current host into a OpenShift managed node
+
+
 %prep
 %setup -q
 
