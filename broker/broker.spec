@@ -77,6 +77,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0750,-,-) %{_bindir}/rhc-admin-create-district
 
 %post
+/bin/touch %{brokerdir}/log/development.log
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
