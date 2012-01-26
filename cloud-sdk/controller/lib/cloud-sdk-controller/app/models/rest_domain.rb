@@ -1,21 +1,16 @@
 class RestDomain < Cloud::Sdk::Model
-  attr_accessor :namespace, :ssh, :links
+  attr_accessor :namespace, :links
   include LegacyBrokerHelper
   
-  def initialize(namespace=nil, ssh=nil)
+  def initialize(namespace=nil)
     self.namespace = namespace
-    self.ssh = ssh
-
-    carts = get_cached("cart_list_standalone", :expires_in => 21600.seconds) do
-      Application.get_available_cartridges("standalone")
-    end
     
     self.links = [
       Link.new("Get domain", "GET", "/domains/#{namespace}"),
       Link.new("List applications", "GET", "/domains/#{namespace}/applications"),
       Link.new("Create new application", "POST", "/domains/#{namespace}/applications", [
         Param.new("name", "string", "Name of the application"),
-        Param.new("cartridge", "string", "framework-type, e.g: php-5.3", carts.join(', '))
+        Param.new("cartridge", "string", "framework-type, e.g: php-5.3", Application.get_available_cartridges.map{|c| c.name}.join(', '))
       ]),
       Link.new("Delete domain", "DELETE", "/domains/#{namespace}",nil,[
         OptionalParam.new("force", "boolean", "Force delete domain.  i.e. delete any applications under this domain", "true or false", false)

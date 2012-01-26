@@ -14,7 +14,6 @@
 # limitations under the License.
 #++
 
-
 require 'rubygems'
 
 require 'fileutils'
@@ -26,13 +25,13 @@ require "cloud-sdk-common/exceptions/cdk_exception"
 require "cloud-sdk-common/lib/data_store"
 require "cloud-sdk-common/lib/mongo_data_store"
 
-require "cloud-sdk-common/models/cartridge"
-require "cloud-sdk-common/models/component"
-require "cloud-sdk-common/models/component_ref"
-require "cloud-sdk-common/models/connection"
-require "cloud-sdk-common/models/connector"
-require "cloud-sdk-common/models/group"
 require "cloud-sdk-common/models/scaling"
+require "cloud-sdk-common/models/component_ref"
+require "cloud-sdk-common/models/group"
+require "cloud-sdk-common/models/connector"
+require "cloud-sdk-common/models/component"
+require "cloud-sdk-common/models/connection"
 require "cloud-sdk-common/models/profile"
+require "cloud-sdk-common/models/cartridge"
 require "cloud-sdk-common/exceptions/cdk_exception"
 require "cloud-sdk-common/models/group_instance"

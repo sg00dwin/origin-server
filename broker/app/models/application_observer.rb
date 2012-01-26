@@ -3,9 +3,11 @@ class ApplicationObserver < ActiveModel::Observer
 
   BUILDER_SUFFIX = "bldr"
   
-  def validate_application(app)
-    #TODO
-    #app.user.validate_app_limit
+  def validate_application(application)
+    Rails.logger.debug "Checking to see if user limit for number of apps has been reached"
+    if (application.user.consumed_gears >= application.user.max_gears)
+      application.errors.add :base, {:message => "User has already reached the application limit of #{application.user.max_gears}", :exit_code => 100}
+    end
   end
   
   def before_application_create(data)

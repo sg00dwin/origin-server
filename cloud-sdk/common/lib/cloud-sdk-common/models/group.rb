@@ -2,12 +2,48 @@ module Cloud::Sdk
   class Group < Cloud::Sdk::UserModel
     attr_accessor :name, :component_refs, :auto_component_refs, :scaling, :generated
     
-    def initialize
-      self.name = "default"
+    def initialize(name="default")
+      self.name = name
       self.component_refs = {}
       self.auto_component_refs = {}
       self.scaling = Scaling.new
       self.generated = false
+    end
+    
+    def component_refs=(hash)
+      component_refs_will_change!
+      @component_refs = {}
+      hash.each do |key, value|
+        if value.class == Hash
+          @component_refs[key] = ComponentRef.new(key)
+          @component_refs[key].attributes=value
+        else
+          @component_refs[key] = value
+        end
+      end
+    end
+    
+    def auto_component_refs=(hash)
+      auto_component_refs_will_change!
+      @auto_component_refs = {}
+      hash.each do |key, value|
+        if value.class == Hash
+          @auto_component_refs[key] = ComponentRef.new(key)
+          @auto_component_refs[key].attributes=value
+        else
+          @auto_component_refs[key] = value
+        end
+      end
+    end
+    
+    def scaling=(value)
+      scaling_will_change!
+      if value.class == Hash
+        @scaling = Scaling.new
+        @scaling.attributes=value
+      else
+        @scaling = value
+      end
     end
     
     def from_descriptor(spec_hash = {})

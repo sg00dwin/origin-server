@@ -2,7 +2,7 @@ module Cloud::Sdk
   class Connector < Cloud::Sdk::UserModel
     attr_accessor :name, :type, :required
     
-    def initialize(name)
+    def initialize(name=nil)
       self.name = name
     end
     

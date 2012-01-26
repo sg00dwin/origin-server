@@ -50,10 +50,10 @@ class ApplicationsController < BaseController
     domain_id = params[:domain_id]
     user = CloudUser.find(@login)
     app_name = params[:name]
-    cartridge = params[:cartridge]
+    cartridges = params[:cartridges]
     if app_name.nil? 
-      @reply = RestReply.new( :bad_request)
-      message = Message.new(:error, "Missing required parameter name.") 
+      @reply = RestReply.new(:bad_request)
+      message = Message.new(:error, "Missing required parameter: name.") 
       @reply.messages.push(message)
       respond_with @reply, :status => @reply.status
       return
@@ -74,51 +74,45 @@ class ApplicationsController < BaseController
       respond_with @reply, :status => @reply.status
       return
     end
-    Rails.logger.debug "Finding available container"
-    begin
-      container = Cloud::Sdk::ApplicationContainerProxy.find_available(nil)
-    rescue Cloud::Sdk::NodeException => e
-      @reply = RestReply.new(:service_unavailable)
-      message = Message.new(:error, e.message) 
-      @reply.messages.push(message)
-      respond_with @reply, :status => @reply.status
+
+    all_cart_names = Application.get_available_cartridges.map{|c| c.name}
+    unless cartridges.nil?
+      invalid_carts = []
+      cartridges = cartridges.split(/\s*,\s*/)
+      cartridges.each do |cart_name|
+        invalid_carts.add cart_name unless all_cart_names.include? cart_name
+      end
+      
+      unless invalid_carts.empty?
+        @reply = RestReply.new(:bad_request)
+        message = Message.new(:error, "Invalid cartridges #{invalid_carts.join(', ')}.  Valid values are (#{all_cart_names.join(', ')})") 
+        @reply.messages.push(message)
+        respond_with @reply, :status => @reply.status
+        return
+      end
     end
-    if cartridge.nil? or not check_cartridge_type(cartridge, container, "standalone")
-      @reply = RestReply.new( :bad_request)
-      carts = get_cached("cart_list_standalone", :expires_in => 21600.seconds) {
-      Application.get_available_cartridges("standalone")}
-      message = Message.new(:error, "Invalid cartridge #{cartridge}.  Valid values are (#{carts.join(', ')})") 
-      @reply.messages.push(message)
-      respond_with @reply, :status => @reply.status
-      return
-    end
-    Rails.logger.debug "Checking to see if user limit for number of apps has been reached"
-    if (user.consumed_gears >= user.max_gears)
-      @reply = RestReply.new(:forbidden)
-      message = Message.new(:error, "#{@login} has already reached the application limit of #{user.max_gears}")
-      @reply.messages.push(message)
-      respond_with @reply, :status => @reply.status
-      return
-    end
+    
     Rails.logger.debug "Validating application"
-    application = Application.new(user, app_name, nil, nil, cartridge)   
+    application = Application.new(user, domain_id, app_name)   
     if application.valid?
       begin
-        Rails.logger.debug "Creating application #{app_name}"
-        application.create(container)
-        Rails.logger.debug "Configuring dependencies #{app_name}"
-        application.configure_dependencies
-        Rails.logger.debug "Adding system ssh keys #{app_name}"
-        application.add_system_ssh_keys
-        Rails.logger.debug "Adding ssh keys #{app_name}"
-        application.add_ssh_keys
-        Rails.logger.debug "Adding system environment vars #{app_name}"
-        application.add_system_env_vars
+        #application.elaborate
+        application.save
+        #Rails.logger.debug "Creating application #{app_name}"
+        #application.create
+        #Rails.logger.debug "Configuring dependencies #{app_name}"
+        #application.configure_dependencies
+        #Rails.logger.debug "Adding system ssh keys #{app_name}"
+        #application.add_system_ssh_keys
+        #Rails.logger.debug "Adding ssh keys #{app_name}"
+        #application.add_ssh_keys
+        #Rails.logger.debug "Adding system environment vars #{app_name}"
+        #application.add_system_env_vars
         begin
           Rails.logger.debug "Creating dns"
-          application.create_dns
+          #application.create_dns
         rescue Exception => e
-            application.destroy_dns
+            #application.destroy_dns
             @reply = RestReply.new(:internal_server_error)
             message = Message.new(:error, "Failed to create dns for application #{app_name}") 
             @reply.messages.push(message)
@@ -128,11 +122,12 @@ class ApplicationsController < BaseController
             return
         end
       rescue Exception => e
+        Rails.logger.error e.inspect
         if application.persisted?
           Rails.logger.debug e.message
           Rails.logger.debug e.backtrace.inspect
-          application.deconfigure_dependencies
-          application.destroy
+          #application.deconfigure_dependencies
+          #application.destroy
           application.delete
         end
 
@@ -150,7 +145,7 @@ class ApplicationsController < BaseController
       @reply.messages.push(message)
       respond_with @reply, :status => @reply.status
     else
-      @reply = RestReply.new( :bad_request)
+      @reply = RestReply.new(:bad_request)
       message = Message.new(:error, "Failed to create application #{app_name}") 
       @reply.messages.push(message)
       message = Message.new(:error, application.errors.first[1][:message]) 

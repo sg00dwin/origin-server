@@ -4,9 +4,49 @@ module Cloud::Sdk
     attr_accessor :name, :provides, :components, :groups,
                   :connections, :property_overrides, :service_overrides,
                   :start_order, :stop_order, :configure_order, :generated
+    
     def initialize
       self.generated = false
       self.provides = []
+    end
+    
+    def components=(hash)
+      components_will_change!
+      @components = {}
+      hash.each do |key, value|
+        if value.class == Hash
+          @components[key] = Component.new(key)
+          @components[key].attributes=value
+        else
+          @components[key] = value
+        end
+      end
+    end
+    
+    def groups=(hash)
+      groups_will_change!
+      @groups = {}
+      hash.each do |key, value|
+        if value.class == Hash
+          @groups[key] = Group.new(key)
+          @groups[key].attributes=value
+        else
+          @groups[key] = value
+        end
+      end
+    end
+    
+    def connections=(hash)
+      connections_will_change!
+      @connections = {}
+      hash.each do |key, value|
+        if value.class == Hash
+          @connections[key] = Connection.new(key)
+          @connections[key].attributes=value
+        else
+          @connections[key] = value
+        end
+      end
     end
 
     def from_descriptor(spec_hash = {})

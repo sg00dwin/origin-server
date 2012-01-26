@@ -2,8 +2,35 @@ module Cloud::Sdk
   class Component < Cloud::Sdk::UserModel
     attr_accessor :name, :publishes, :subscribes, :generated, :depends, :depends_service
     
-    def initialize
+    def initialize(name=nil)
+      self.name = name
       self.generated = false
+    end
+    
+    def publishes=(hash)
+      publishes_will_change!
+      @publishes = {}
+      hash.each do |key, value|
+        if value.class == Hash
+          @publishes[key] = Connector.new(key)
+          @publishes[key].attributes=value
+        else
+          @publishes[key] = value
+        end
+      end
+    end
+    
+    def subscribes=(hash)
+      subscribes_will_change!
+      @subscribes = {}
+      hash.each do |key, value|
+        if value.class == Hash
+          @subscribes[key] = Connector.new(key)
+          @subscribes[key].attributes=value
+        else
+          @subscribes[key] = value
+        end
+      end
     end
     
     def from_descriptor(spec_hash = {})

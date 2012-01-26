@@ -17,6 +17,19 @@ module Cloud::Sdk
       caps.uniq
     end
     
+    def profiles=(hash)
+      profiles_will_change!
+      @profiles = {}
+      hash.each do |key, value|
+        if value.class == Hash
+          @profiles[key] = Profile.new
+          @profiles[key].attributes=value
+        else
+          @profiles[key] = value
+        end
+      end
+    end
+    
     # Search for a profile that provides specified capabilities
     def find_profile(capability)
       if capability.nil? || self.provides_feature.include?(capability)
@@ -46,7 +59,7 @@ module Cloud::Sdk
       self.requires_feature = [self.requires_feature] if self.requires_feature.class == String
       self.conflicts_feature = [self.conflicts_feature] if self.conflicts_feature.class == String
       self.requires = [self.requires] if self.requires.class == String
-      
+
       self.profiles = {}
       if spec_hash.has_key?("Profiles")
         spec_hash["Profiles"].each do |pname, p|

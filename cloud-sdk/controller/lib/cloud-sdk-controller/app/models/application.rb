@@ -1,21 +1,24 @@
+require 'state_machine'
+
 class Application < Cloud::Sdk::Cartridge
-  attr_accessor :state, :group_instance_map, :comp_instance_map, :conn_endpoints_list
-  attr_accessor :domain, :creation_time, :uuid, :aliases, :uid
-  primary_key :uuid
+  attr_accessor :state, :group_instance_map, :comp_instance_map, :conn_endpoints_list,
+                :domain, :creation_time, :uuid, :aliases, :uid, :user
+  primary_key :name
+  exclude_attributes :user
     
-  #state_machine :state, :initial => :not_created do
-  #  event(:create) { transition :not_created => :creating }
-  #  event(:create_complete) { transition :creating => :stopped }
-  #  event(:create_error) { transition :creating => :destroying }
-  #  event(:start) { transition :stopped => :starting }
-  #  event(:start_error) { transition :starting => :stopped }
-  #  event(:start_complete) { transition :starting => :running }
-  #  event(:stop) { transition :running => :stopping }
-  #  event(:stop_error) { transition :stopping => :running }
-  #  event(:stop_complete) { transition :stopping => :stopped }
-  #  event(:destroy) { transition :stopped => :destroying }
-  #  event(:destroy_complete) { transition :destroying => :not_created }
-  #end
+  state_machine :state, :initial => :not_created do
+    event(:create) { transition :not_created => :creating }
+    event(:create_complete) { transition :creating => :stopped }
+    event(:create_error) { transition :creating => :destroying }
+    event(:start) { transition :stopped => :starting }
+    event(:start_error) { transition :starting => :stopped }
+    event(:start_complete) { transition :starting => :running }
+    event(:stop) { transition :running => :stopping }
+    event(:stop_error) { transition :stopping => :running }
+    event(:stop_complete) { transition :stopping => :stopped }
+    event(:destroy) { transition :stopped => :destroying }
+    event(:destroy_complete) { transition :destroying => :not_created }
+  end
 
   validate :extended_validator
 
@@ -23,15 +26,20 @@ class Application < Cloud::Sdk::Cartridge
     notify_observers(:validate_application)
   end
 
-  def framework_cartridge
-    framework.split('-')[0..-2].join('-')
-  end
-
-  def initialize(domain=nil, name=nil, uuid=nil)
+  def initialize(user=nil, domain=nil, name=nil, uuid=nil)
+    super()
     self.user = user
     self.name = name
     self.creation_time = DateTime::now().strftime
     self.uuid = uuid || Cloud::Sdk::Model.gen_uuid
+  end
+  
+  def self.get_available_cartridges
+    Cloud::Sdk::ApplicationContainerProxy.find_available.get_cartriges
+  end
+
+  def framework_cartridge
+    framework.split('-')[0..-2].join('-')
   end
   
   def self.find(user, app_name)
@@ -79,10 +87,6 @@ class Application < Cloud::Sdk::Cartridge
     apps
   end
   
-  def self.get_available_cartridges(cart_type)
-    Cloud::Sdk::ApplicationContainerProxy.find_available.get_available_cartridges(cart_type)
-  end
-  
   #saves the application object in the datastore
   def save
     super(user.login)
@@ -91,12 +95,6 @@ class Application < Cloud::Sdk::Cartridge
   #deletes the application object from the datastore
   def delete
     super(user.login)
-  end
-  
-  def from_json(*args)
-    super(*args)
-    self.container ||= Cloud::Sdk::ApplicationContainerProxy.instance(self.server_identity)
-    self
   end
   
   #creates a new application container on a node and initializes it
@@ -265,14 +263,17 @@ class Application < Cloud::Sdk::Cartridge
   end
 
   def elaborate_descriptor
-    self.default_profile.groups.each { |k, g|
+    self.group_instance_map = {} if group_instance_map.nil?
+    self.comp_instance_map = {} if comp_instance_map.nil?
+    
+    @profiles[@default_profile].groups.each { |k, g|
       gpath = self.name + "." + g.name
-      gi = GroupInstance.new(self.name, self.default_profile.name, gpath )
+      gi = GroupInstance.new(self.name, self.default_profile, gpath)
       self.group_instance_map[gpath] = gi
-      gi.elaborate(g, group_list)
+      gi.elaborate(g, self.name, self)
     }
     # make connection_endpoints out of provided connections
-    self.default_profile.connections.each { |name, conn|
+    @profiles[@default_profile].connections.each { |name, conn|
       inst1 = ComponentInstance::find_component_in_cart(profile, app, conn.components[0], self.name)
       inst2 = ComponentInstance::find_component_in_cart(profile, app, conn.components[1], self.name)
       ComponentInstance::establish_connections(inst1, inst2, app)
@@ -286,6 +287,7 @@ class Application < Cloud::Sdk::Cartridge
   end
 
   def colocate_groups
+    self.conn_endpoints_list = [] if self.conn_endpoints_list.nil?
     self.conn_endpoints_list.each { |conn|
       if conn.pub.type.match(/^FILESYSTEM/) or conn.pub.type.match(/^AFUNIX/)
         ginst1 = self.group_instance_map[conn.from_comp_inst.group_instance_name]
