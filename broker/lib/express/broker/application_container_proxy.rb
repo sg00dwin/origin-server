@@ -90,14 +90,8 @@ module Express
         end
       end
 
-      def create(app, uid=nil)
-        unless uid
-          if app.uid
-            uid = app.uid
-          end
-        end
-
-        result = execute_direct(@@C_CONTROLLER, 'configure', "-c '#{app.uuid}' -i '#{uid}'")
+      def create(app)
+        result = execute_direct(@@C_CONTROLLER, 'configure', "-c '#{app.uuid}' -i '#{app.uid}'")
         parse_result(result)
       end
     
