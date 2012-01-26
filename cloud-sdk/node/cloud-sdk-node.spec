@@ -8,7 +8,7 @@ Name:           rubygem-%{gemname}
 Version:        0.3.11
 Release:        1%{?dist}
 Group:          Development/Languages
-License:        AGPLv3
+License:        ASL 2.0
 URL:            http://openshift.redhat.com
 Source0:        rubygem-%{gemname}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
