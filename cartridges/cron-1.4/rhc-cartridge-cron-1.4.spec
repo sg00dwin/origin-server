@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/cron-1.4
 
 Name: rhc-cartridge-cron-1.4
-Version: 0.1.3
+Version: 0.1.4
 Release: 1%{?dist}
 Summary: Embedded cron support for express
 
@@ -29,11 +29,19 @@ rm -rf $RPM_BUILD_ROOT
 rm -rf %{buildroot}
 mkdir -p %{buildroot}%{cartridgedir}
 mkdir -p %{buildroot}/%{_sysconfdir}/libra/cartridges
-ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/libra/cartridges/%{name}
+mkdir -p %{buildroot}/%{_sysconfdir}/cron.hourly
+mkdir -p %{buildroot}/%{_sysconfdir}/cron.daily
+mkdir -p %{buildroot}/%{_sysconfdir}/cron.weekly
+mkdir -p %{buildroot}/%{_sysconfdir}/cron.monthly
 cp -r info %{buildroot}%{cartridgedir}/
-cp -r etc %{buildroot}%{cartridgedir}/
+cp -r jobs %{buildroot}%{cartridgedir}/
 cp LICENSE %{buildroot}%{cartridgedir}/
 cp COPYRIGHT %{buildroot}%{cartridgedir}/
+ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/libra/cartridges/%{name}
+ln -s %{cartridgedir}/jobs/libra-cron-hourly %{buildroot}/%{_sysconfdir}/cron.hourly/
+ln -s %{cartridgedir}/jobs/libra-cron-daily %{buildroot}/%{_sysconfdir}/cron.daily/
+ln -s %{cartridgedir}/jobs/libra-cron-weekly %{buildroot}/%{_sysconfdir}/cron.weekly/
+ln -s %{cartridgedir}/jobs/libra-cron-monthly %{buildroot}/%{_sysconfdir}/cron.monthly/
 
 
 %clean
@@ -46,7 +54,11 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{cartridgedir}/info/configuration/
 %attr(0755,-,-) %{cartridgedir}/info/bin/
 %attr(0755,-,-) %{cartridgedir}/info/lib/
-%attr(0755,-,-) %{cartridgedir}/etc/
+%attr(0755,-,-) %{cartridgedir}/jobs/
+%attr(0755,-,-) %{_sysconfdir}/cron.hourly/libra-cron-hourly
+%attr(0755,-,-) %{_sysconfdir}/cron.daily/libra-cron-daily
+%attr(0755,-,-) %{_sysconfdir}/cron.weekly/libra-cron-weekly
+%attr(0755,-,-) %{_sysconfdir}/cron.monthly/libra-cron-monthly
 %{_sysconfdir}/libra/cartridges/%{name}
 %{cartridgedir}/info/changelog
 %{cartridgedir}/info/control
@@ -55,6 +67,17 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Wed Jan 25 2012 Dan McPherson <dmcphers@redhat.com> 0.1.4-1
+- Log messages if user's $freq job exceeds max run time. (ramr@redhat.com)
+- Add run time limits + added some log messages for auditing purposes.
+  (ramr@redhat.com)
+- Cleanup message displayed when cron is embedded into the app.
+  (ramr@redhat.com)
+- More bug fixes. (ramr@redhat.com)
+- Merge branch 'master' of li-master:/srv/git/li (ramr@redhat.com)
+- Fix installation paths. (ramr@redhat.com)
+- Install libra wrapper job files. (ramr@redhat.com)
+
 * Tue Jan 24 2012 Dan McPherson <dmcphers@redhat.com> 0.1.3-1
 - Updated License value in manifest.yml files. Corrected Apache Software
   License Fedora short name (jhonce@redhat.com)

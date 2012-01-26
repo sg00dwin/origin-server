@@ -40,4 +40,32 @@ gpgcheck=0
 
 EOF
 
-yum -y install rhc-devenv
+if [ "$2" == "--install_from_source" ]
+then
+  rm -rf /root/li-working
+  git clone git://git1.ops.rhcloud.com/li.git/ /root/li-working
+  rm -rf /root/os-client-tools
+  git clone https://github.com/openshift/os-client-tools.git /root/os-client-tools
+  pushd /root/li-working > /dev/null
+  for x in `find -name *.spec`
+  do
+    pushd `dirname $x` > /dev/null
+	tito build --test --rpm
+	popd > /dev/null
+  done
+  cp /tmp/tito/x86_64/*.rpm /tmp/tito/noarch/
+  pushd /root/os-client-tools/express > /dev/null
+    tito build --test --rpm
+  popd > /dev/null
+  yum localinstall -y /tmp/tito/noarch/*.rpm
+  popd > /dev/null
+  rm -rf /root/os-client-tools
+  rm -rf /root/li-working
+  git init --bare /root/os-client-tools
+elif [ "$2" == "--install_build_prereqs" ]
+then
+  # Would be better to parse these from the BuildRequires: + tito
+  yum -y install ruby rubygems git tito java-devel jpackage-utils pam-devel libselinux-devel selinux-policy gcc-c++ rubygem-rake rubygem-rspec
+else
+  yum -y install rhc-devenv
+fi

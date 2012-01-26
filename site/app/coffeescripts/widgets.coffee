@@ -189,11 +189,35 @@ class osPopup
     if event?
       event.preventDefault()
     dTop = if @options.top then @options.top else @trigger.offset().top
-    opts = top:
-             dTop
-           modal:
-             @options.modal
-    @options.dialog.osDialog('option', opts).osDialog('insert', @content).osDialog 'show'
+    opts =
+      top:
+        dTop
+      modal:
+        @options.modal
+
+    dialog = @options.dialog.osDialog('option', opts).osDialog('insert', @content)
+
+    # reposition dialog if it flows out of view
+    dHeight = dialog.outerHeight()
+    dBottom = dTop + dHeight
+
+    docViewTop = $(window).scrollTop()
+    docViewBottom = docViewTop + $(window).height()
+
+    # raise popup so bottom is resting on document viewport bottom if needed
+    if dBottom > docViewBottom
+      dTop = docViewBottom - dHeight
+
+    # recorrect if the top is above the document viewport
+    if dTop < docViewTop
+      dTop = docViewTop
+
+    # reflow if pos needs changing
+    if opts.top != dTop
+      opts.top = dTop
+      dialog = dialog.osDialog('option', opts)
+
+    dialog.osDialog 'show'
 
   unpop: (event) =>
     if event?
