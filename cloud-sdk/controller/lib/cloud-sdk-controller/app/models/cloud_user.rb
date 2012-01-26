@@ -28,12 +28,13 @@ class CloudUser < Cloud::Sdk::UserModel
     end if val
   end
 
-  def initialize(rhlogin=nil, ssh=nil, namespace=nil, ssh_type=nil)
+  def initialize(rhlogin=nil, ssh=nil, namespace=nil, ssh_type=nil, key_name=nil)
     super()
     ssh_type = "ssh-rsa" if ssh_type.to_s.strip.length == 0
     self.ssh_keys = {} unless self.ssh_keys
+    key_name = CloudUser::DEFAULT_SSH_KEY_NAME if key_name.to_s.strip.length == 0
 
-    self.ssh_keys[DEFAULT_SSH_KEY_NAME] = { "key" => ssh, "type" => ssh_type }
+    self.ssh_keys[key_name] = { "key" => ssh, "type" => ssh_type }
     self.rhlogin = rhlogin
     self.namespace = namespace
     self.max_gears = (defined?(Rails.configuration)) ? Rails.configuration.cdk[:default_max_gears] : 5
@@ -103,8 +104,11 @@ class CloudUser < Cloud::Sdk::UserModel
   def add_ssh_key(key_name, key, key_type=nil)
     self.ssh_keys = {} unless self.ssh_keys
     result = ResultIO.new
+
+    key_type = "ssh-rsa" if key_type.to_s.strip.length == 0
     self.ssh_keys[key_name] = { "key" => key, "type" => key_type }
     self.save
+
     applications.each do |app|
       Rails.logger.debug "DEBUG: Adding ssh key named #{key_name} to app: #{app.name} for user #{@name}"
       result.append app.add_authorized_ssh_key(key, key_type, key_name)
@@ -115,9 +119,16 @@ class CloudUser < Cloud::Sdk::UserModel
   def remove_ssh_key(key_name, num_keys_check=true)
     self.ssh_keys = {} unless self.ssh_keys    
     result = ResultIO.new
-    raise Cloud::Sdk::UserKeyException.new("ERROR: Can't remove all ssh keys for user #{self.rhlogin}", 122) if num_keys_check and self.ssh_keys.size <= 1
+
+    # validations
+    raise Cloud::Sdk::UserKeyException.new("ERROR: Can't remove all ssh keys for user #{self.rhlogin}", 
+                                           122) if num_keys_check and self.ssh_keys.size <= 1
+    #FIXME: remove this check when client tools are updated
+    raise Cloud::Sdk::UserKeyException.new("ERROR: Can't remove '#{key_name}' ssh key for user #{self.rhlogin}", 
+                                           124) if num_keys_check and (key_name == CloudUser::DEFAULT_SSH_KEY_NAME)
     key = self.ssh_keys[key_name]
     raise Cloud::Sdk::UserKeyException.new("ERROR: Key name '#{key_name}' doesn't exist for user #{self.rhlogin}", 118) unless key
+
     applications.each do |app|
       Rails.logger.debug "DEBUG: Removing ssh key named #{key_name} from app: #{app.name} for user #{@name}"
       result.append app.remove_authorized_ssh_key(key)
@@ -133,7 +144,13 @@ class CloudUser < Cloud::Sdk::UserModel
     remove_ssh_key(key_name, false)
     add_ssh_key(key_name, key, key_type)
   end
-  
+ 
+  def get_ssh_key
+    raise Cloud::Sdk::UserKeyException.new("ERROR: At least one ssh key doesn't exist for user #{self.rhlogin}", 
+                                           123) unless self.ssh_keys and self.ssh_keys.kind_of?(Hash)
+    (self.ssh_keys.key?(CloudUser::DEFAULT_SSH_KEY_NAME)) ? self.ssh_keys[CloudUser::DEFAULT_SSH_KEY_NAME] : self.ssh_keys.keys[0]
+  end
+ 
   def add_env_var(key, value)
     result = ResultIO.new
     self.env_vars = {} unless self.env_vars

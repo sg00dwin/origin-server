@@ -58,7 +58,8 @@ def mongo_populate
 
       # update ssh keys
       user_data["ssh_keys"] = {} unless user_data["ssh_keys"]
-      user_data["ssh_keys"][DEFAULT_SSH_KEY_NAME] = { "key" => user_data["ssh"], "type" => user_data["ssh_type"] || "ssh-rsa" }
+      user_data["ssh_type"] = "ssh-rsa" if user_data["ssh_type"].to_s.strip.length == 0
+      user_data["ssh_keys"][DEFAULT_SSH_KEY_NAME] = { "key" => user_data["ssh"], "type" => user_data["ssh_type"] }
 
       # Create user bson doc
       bson_doc = { 
