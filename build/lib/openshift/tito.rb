@@ -30,15 +30,16 @@ module OpenShift
     end
     
     def get_sync_dirs
-      # Figure out what needs to be built
-      packages = `tito report --untagged-commits`
+      # Figure out what needs to be synced
+      tito_report = `tito report --untagged-commits`
       current_package = nil
       FileUtils.mkdir_p "/tmp/devenv/sync/"
       current_package_contents = ''
       current_package = nil
       current_sync_dir = nil
       sync_dirs = []
-      packages.split("\n").each do |package|
+      packages = tito_report.split("\n")
+      packages.each do |package|
         if package =~ /^rhc-devenv-\d+/
           puts "The devenv package has an update but isn't being installed."
         elsif package =~ /^rubygem-cloud-sdk-([\w]+)-\d+/
@@ -53,38 +54,48 @@ module OpenShift
           current_sync_dir = current_package
         elsif package =~ /---------------------/
           if current_package
-            current_package_file = "/tmp/devenv/sync/#{current_package}"
-            previous_package_contents = nil
-            if File.exists? current_package_file
-              previous_package_contents = `cat #{current_package_file}`.chomp
-            end
-            unless previous_package_contents == current_package_contents
-              sync_dirs << current_sync_dir
-              `echo "#{current_package_contents}" > #{current_package_file}`
-            else
-              puts "Latest package already installed for: #{current_package}"
-            end
+            update_sync_history(current_package, current_package_contents, current_sync_dir, sync_dirs)
             current_package_contents = ''
             current_package = nil
             current_sync_dir = nil
           end
         end
-        if current_package
-          current_package_contents += package
-        end
+        current_package_contents += package if current_package
       end
+      update_sync_history(current_package, current_package_contents, current_sync_dir, sync_dirs) if current_package
+      current_package_contents = ''
+      current_package = nil
+      current_sync_dir = nil
       sync_dirs.compact! 
       client_path = nil
       if File.exists?('../os-client-tools-working/express')
         client_path = '../os-client-tools-working/express'
         packages = `cd #{client_path} && tito report --untagged-commits`
-        sync_dirs += packages.split("\n").collect do |package|
+        packages.split("\n").collect do |package|
           if package =~ /^rhc-[0-9]/
-            client_path
+            current_package = 'rhc'
+            current_sync_dir = client_path
           end
-        end.compact
+          current_package_contents += package if current_sync_dir
+        end
+        update_sync_history(current_package, current_package_contents, current_sync_dir, sync_dirs) if current_package
+        sync_dirs.compact!
       end
       sync_dirs
+    end
+    
+    def update_sync_history(current_package, current_package_contents, current_sync_dir, sync_dirs)
+      current_package_file = "/tmp/devenv/sync/#{current_package}"
+      previous_package_contents = nil
+      if File.exists? current_package_file
+        previous_package_contents = `cat #{current_package_file}`.chomp
+      end
+      unless previous_package_contents == current_package_contents
+        sync_dirs << current_sync_dir
+        `echo "#{current_package_contents}" > #{current_package_file}`
+      else
+        puts "Latest package already installed for: #{current_package}"
+      end
     end
   end
 end

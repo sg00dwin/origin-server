@@ -18,9 +18,11 @@ Options:
 -u|--uuid     <district uuid>
     District uuid  (alphanumeric)
 -c|--command <command>
-    (add-node|remove-node|deactivate-node|destroy)
+    (add-node|remove-node|deactivate-node|add-capacity|remove-capacity|destroy)
 -i|--server_identity
     Node server_identity (required)
+-s|--size
+    Size to add or remove (positive number) (required)
 -b|--bypass
     Ignore warnings
 -h|--help
@@ -32,6 +34,7 @@ opts = GetoptLong.new(
     ["--uuid",             "-u", GetoptLong::REQUIRED_ARGUMENT],
     ["--server_identity",  "-i", GetoptLong::REQUIRED_ARGUMENT],
     ["--command",          "-c", GetoptLong::REQUIRED_ARGUMENT],
+    ["--size",             "-s", GetoptLong::REQUIRED_ARGUMENT],
     ["--bypass",           "-b", GetoptLong::NO_ARGUMENT],    
     ["--help",             "-h", GetoptLong::NO_ARGUMENT]
 )
@@ -52,6 +55,7 @@ end
 uuid     = args["--uuid"]
 command  = args['--command']
 server_identity  = args['--server_identity']
+size     = args['--size'] ? args['--size'].to_i : nil
 bypass   = args['--bypass']
 
 district = nil
@@ -61,11 +65,17 @@ if uuid
     puts "District #{uuid} not found."
     exit 1
   end
-  unless server_identity || !command || command == 'destroy'
-    puts "--server_identity is required with command: #{command}"  
+  unless server_identity || command != 'add-node' || command != 'remove-node' || command != 'deactivate-node'
+    puts "--server_identity is required with command: #{command}"
+    exit 1
+  end
+  unless size || command != 'add-capacity' || command != 'remove-capacity'
+    puts "--size is required with command: #{command}"
+    exit 1
   end
 elsif command
   puts "--uuid is requied with --command"
+  exit 1
 end
 
 reply = ResultIO.new
@@ -79,6 +89,12 @@ begin
     reply.resultIO << "Success!"
   when "deactivate-node"
     district.deactivate_node(server_identity)
+    reply.resultIO << "Success!"
+  when "add-capacity"
+    district.add_capacity(size)
+    reply.resultIO << "Success!"
+  when "remove-capacity"
+    district.remove_capacity(size)
     reply.resultIO << "Success!"
   when "destroy"
     unless bypass
@@ -102,8 +118,7 @@ begin
       end
     end
 
-    #TODO handle uids reserved outside of district
-    if district.server_identities.empty? && district.available_capacity == Rails.configuration.districts[:max_capacity]
+    if district.server_identities.empty? && ((district.available_capacity + district.externally_reserved_uids_size) == district.max_capacity)
       district.delete
       reply.resultIO << "Successfully destroyed district: #{uuid}" if reply.resultIO.string.empty?
     else
@@ -116,9 +131,13 @@ begin
       reply.resultIO << district.attributes.pretty_inspect
     else
       districts = District.find_all
-      districts.each do |district|
-        district.available_uids = '<hidden>'
-        reply.resultIO << district.attributes.pretty_inspect
+      unless districts.empty?
+        districts.each do |district|
+          district.available_uids = '<hidden>'
+          reply.resultIO << district.attributes.pretty_inspect
+        end
+      else
+        puts "No districts created yet.  Use rhc-admin-create-district to create one."
       end
     end
   end

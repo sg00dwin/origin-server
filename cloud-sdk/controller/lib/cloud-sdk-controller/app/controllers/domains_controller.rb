@@ -7,7 +7,7 @@ class DomainsController < BaseController
 
   # GET /domains
   def index
-    domain = RestDomain.new(@cloud_user.namespace, @cloud_user.ssh)
+    domain = RestDomain.new(@cloud_user.namespace, @cloud_user.ssh_keys[CloudUser::DEFAULT_SSH_KEY_NAME]['key'])
     @reply = RestReply.new(:ok, "domains", [domain])
     respond_with @reply, :status => @reply.status
   end
@@ -21,7 +21,7 @@ class DomainsController < BaseController
       respond_with @reply, :status => @reply.status
       return
     end
-    domain = RestDomain.new(@cloud_user.namespace, @cloud_user.ssh)
+    domain = RestDomain.new(@cloud_user.namespace, @cloud_user.ssh_keys[CloudUser::DEFAULT_SSH_KEY_NAME]['key'])
     @reply = RestReply.new(:ok, "domain", domain)
     respond_with @reply, :status => @reply.status
   end
@@ -30,6 +30,7 @@ class DomainsController < BaseController
   def create
     namespace = params[:namespace]
     ssh = params[:ssh]
+    Rails.logger.debug "Creating domain with namespace #{namespace}"
     cloud_user = CloudUser.find(@login)
     
     if cloud_user
@@ -57,9 +58,15 @@ class DomainsController < BaseController
       @reply.messages.push(e.message)
       respond_with @reply, :status => @reply.status
       return
+    rescue Cloud::Sdk::DNSException => e
+      @reply = RestReply.new(:conflict)
+      @reply.process_result_io(e.resultIO)
+      @reply.messages.push(e.message)
+      respond_with @reply, :status => @reply.status
+      return
     end
     
-    domain = RestDomain.new(cloud_user.namespace, cloud_user.ssh)
+    domain = RestDomain.new(cloud_user.namespace, cloud_user.ssh_keys[CloudUser::DEFAULT_SSH_KEY_NAME]['key'])
     @reply = RestReply.new(:created, "domain", domain)
     @reply.process_result_io(result_io)
     respond_with @reply, :status => @reply.status
@@ -82,9 +89,9 @@ class DomainsController < BaseController
     
     result_io = ResultIO.new
     result_io.append @cloud_user.update_ssh_key(ssh, key_type) unless params[:ssh].nil?
-    result_io.append @cloud_user.update_namespace(namespace) unless params[:namespace].nil?
+    result_io.append @cloud_user.update_namespace(new_namespace) unless params[:namespace].nil?
     
-    domain = RestDomain.new(@cloud_user.namespace, @cloud_user.ssh)
+    domain = RestDomain.new(@cloud_user.namespace, @cloud_user.ssh_keys[CloudUser::DEFAULT_SSH_KEY_NAME]['key'])
     @reply = RestReply.new(:ok, "domain", domain)
     @reply.process_result_io(result_io)
     respond_with @reply, :status => @reply.status

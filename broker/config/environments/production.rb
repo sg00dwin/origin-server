@@ -55,8 +55,8 @@ Broker::Application.configure do
   config.districts = {
     :enabled => true,
     :require_for_app_create => true,
-    :max_capacity => 6000,
-    :first_uid => 1000
+    :max_capacity => 6000, # Only used with district create.  Modify capacity through rhc-admin-ctl-district.
+    :first_uid => 1000 # Can not modify after district is created.  Only affects new districts.
   }
   
   config.dns = {
@@ -87,7 +87,7 @@ Broker::Application.configure do
   }
   
   config.datastore_mongo = {
-    :collection => "district"
+    :collections => {:district => "district"}
   }
   
   config.analytics = {
@@ -113,8 +113,8 @@ Broker::Application.configure do
       :port => 27017,
       :user => "USER_NAME",
       :password => "PASSWORD",
-      :db => "DB_NAME",
-      :collection => "COLLECTION_NAME"
+      :db => "openshift_broker",
+      :collections => {:user => "user"}
     }
   }
 

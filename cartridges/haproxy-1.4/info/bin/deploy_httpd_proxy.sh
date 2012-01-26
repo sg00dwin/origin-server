@@ -39,9 +39,9 @@ cat <<EOF > "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}/00000_d
   ProxyPass /health !
   Alias /health $CART_DIR/haproxy-1.4/info/configuration/health.html
 
-  ProxyPass /haproxy-status/ http://$IP2:8080/
+  ProxyPass /haproxy-status/ http://$IP2:8080/ status=I
   ProxyPassReverse /haproxy-status/ http://$IP2:8080/
-  ProxyPass / http://$IP:8080/
+  ProxyPass / http://$IP:8080/ status=I
   ProxyPassReverse / http://$IP:8080/
 EOF
 cat <<EOF > "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}.conf"

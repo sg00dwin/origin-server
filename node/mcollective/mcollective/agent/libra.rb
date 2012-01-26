@@ -67,7 +67,7 @@ module MCollective
         action = request[:action]
         args = request[:args]
         pid, stdin, stdout, stderr = nil, nil, nil, nil
-        if cartridge == 'li-controller'
+        if cartridge == 'cloud-sdk-node'
           cmd = nil
           case action
           when 'configure'
@@ -172,7 +172,7 @@ module MCollective
         uuid = request[:uuid]
         active = request[:active]
 
-        output = `echo "uuid='#{uuid}'\nactive='#{active}'" > /etc/libra/district.conf`
+        output = `echo "#Do not modify manually!\nuuid='#{uuid}'\nactive='#{active}'" > /etc/libra/district.conf`
         exitcode = $?.exitstatus
 
         if exitcode == 0

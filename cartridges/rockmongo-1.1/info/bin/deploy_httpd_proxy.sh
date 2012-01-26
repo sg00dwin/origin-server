@@ -27,7 +27,7 @@ source ${CART_DIR}/abstract/info/lib/util
 load_node_conf
 
 cat <<EOF > "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}/rockmongo-1.1.conf"
-ProxyPass /rockmongo http://$IP:8080/rockmongo
+ProxyPass /rockmongo http://$IP:8080/rockmongo status=I
 ProxyPassReverse /rockmongo http://$IP:8080/rockmongo
 
 EOF

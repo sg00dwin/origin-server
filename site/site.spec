@@ -15,6 +15,7 @@ BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires: rubygem-rake
 BuildRequires: rubygem-rails
 BuildRequires: rubygem-barista
+BuildRequires: rubygem-crack
 
 Requires:  rhc-common
 Requires:  rhc-server-common
@@ -33,8 +34,6 @@ Requires:  rubygem-recaptcha
 Requires:  rubygem-hpricot
 Requires:  rubygem-barista
 Requires:  js
-
-Obsoletes: rhc-server
 
 BuildArch: noarch
 

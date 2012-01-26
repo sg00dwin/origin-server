@@ -72,7 +72,7 @@ class Application < Cloud::Sdk::UserModel
     self.server_identity = self.container.id
     self.uid = self.container.reserve_uid
     save
-    reply.append self.container.create(self, self.uid)
+    reply.append self.container.create(self)
     self.class.notify_observers(:after_application_create, {:application => self, :reply => reply})        
     reply
   end

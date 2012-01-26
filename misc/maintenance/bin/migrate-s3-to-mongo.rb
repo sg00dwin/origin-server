@@ -11,8 +11,8 @@ $config = {
 
   :host => "localhost",
   :port => "27017",
-  :database_name => "libra_dev",
-  :collection_name => "user_info"
+  :database_name => "openshift_broker_dev",
+  :collection_name => "user"
 }
 # This should match DOT_SUBSTITUTE in Cloud::SDK::MongoDataStore
 DOT_SUBSTITUTE = "(ö)"

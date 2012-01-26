@@ -65,6 +65,16 @@ module Express
         MongoDataStore.district_collection.update({"_id" => uuid}, {"$set" => { "server_identities.#{server_identity}" => {"active" => false}}, "$inc" => { "active_server_identities_size" => -1 }})
       end
       
+      def add_district_uids(uuid, uids)
+        Rails.logger.debug "MongoDataStore.add_district_capacity(#{uuid},#{uids})\n\n"
+        MongoDataStore.district_collection.update({"_id" => uuid}, {"$pushAll" => { "available_uids" => uids }, "$inc" => { "available_capacity" => uids.length, "max_uid" => uids.length }})
+      end
+
+      def remove_district_uids(uuid, uids)
+        Rails.logger.debug "MongoDataStore.remove_district_capacity(#{uuid},#{uids})\n\n"
+        MongoDataStore.district_collection.update({"_id" => uuid, "available_uids" => uids[0]}, {"$pullAll" => { "available_uids" => uids }, "$inc" => { "available_capacity" => -uids.length, "max_uid" => -uids.length }})
+      end
+      
       def find_available_district
         bson = MongoDataStore.district_collection.find(
           { "available_capacity" => { "$gt" => 0 }, 
@@ -75,7 +85,7 @@ module Express
       private
       
       def self.district_collection
-        MongoDataStore.db.collection(Rails.configuration.datastore_mongo[:collection])
+        MongoDataStore.db.collection(Rails.configuration.datastore_mongo[:collections][:district])
       end
       
       def cursor_to_district_json(cursor)

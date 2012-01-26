@@ -28,7 +28,7 @@
             = link_to 'Quickstart', '#quickstart'
           
           %li
-            = link_to 'Express Console', dashboard_path
+            = link_to 'Express Console', control_panel_path
     
     - else
       #account.signed_out
@@ -317,7 +317,7 @@
             %p
               All you need is an ssh keypair and a unique name.
             
-            = link_to 'Create your domain now', dashboard_path, :class => 'button'
+            = link_to 'Create your domain now', control_panel_path, :class => 'button'
           
               
         %li#create_application
