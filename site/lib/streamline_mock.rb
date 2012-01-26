@@ -48,6 +48,12 @@ module StreamlineMock
     return {}
   end
 
+  def authenticate(login, password)
+    @rhlogin = login
+    @ticket = nil
+    true
+  end
+
   #
   # Register a new streamline user
   #
