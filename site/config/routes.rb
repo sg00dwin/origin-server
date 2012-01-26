@@ -56,7 +56,11 @@ RedHatCloud::Application.routes.draw do
     match 'user/new/express' => 'user#new_express', :via => [:get]
     match 'user/create/external' => 'user#create_external', :via => [:post]
     match 'user/complete' => 'user#complete', :via => [:get]
-    match 'user' => 'user#show', :via => :get
+    # legacy routes
+    match 'user' => 'user#create', :as => :new_web_users, :via => [:post]
+    match 'user' => 'user#new', :as => :web_users, :via => [:get]
+    match 'user' => 'user#new', :as => :user, :via => [:get]
+    #match 'user' => 'user#show', :via => :get
 
     # deprecated, use :password
     match 'user/request_password_reset' => 'user#request_password_reset', :via => [:post]
