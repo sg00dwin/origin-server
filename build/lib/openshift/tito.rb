@@ -78,7 +78,7 @@ module OpenShift
           end
           current_package_contents += package if current_sync_dir
         end
-        update_sync_history(current_package, current_package_contents, current_sync_dir, sync_dirs) if current_sync_dir
+        update_sync_history(current_package, current_package_contents, current_sync_dir, sync_dirs) if current_package
         sync_dirs.compact!
       end
       sync_dirs
