@@ -1,6 +1,6 @@
 class District < Cloud::Sdk::Model
   
-  attr_accessor :server_identities, :active_server_identities_size, :uuid, :creation_time, :available_capacity, :available_uids
+  attr_accessor :server_identities, :active_server_identities_size, :uuid, :creation_time, :available_capacity, :available_uids, :max_uid, :externally_reserved_uids_size
   primary_key :uuid
 
   def initialize(uuid=nil)
@@ -10,6 +10,8 @@ class District < Cloud::Sdk::Model
     self.available_capacity = Rails.configuration.districts[:max_capacity]
     self.available_uids = []
     self.available_uids.fill(0, Rails.configuration.districts[:max_capacity]) {|i| i+Rails.configuration.districts[:first_uid]}
+    self.max_uid = Rails.configuration.districts[:max_capacity] + Rails.configuration.districts[:first_uid] - 1
+    self.externally_reserved_uids_size = 0
   end
   
   def self.find(uuid)
@@ -112,6 +114,48 @@ class District < Cloud::Sdk::Model
       end
     else
       raise Cloud::Sdk::CdkException.new("Node with server identity: #{server_identity} doesn't belong to district: #{@uuid}")
+    end
+  end
+  
+  def add_capacity(num_uids)
+    if num_uids > 0
+      additions = []
+      additions.fill(0, num_uids) {|i| i+max_uid+1}
+      Cloud::Sdk::DataStore.instance.add_district_uids(uuid, additions)
+      @available_capacity += num_uids
+      @max_uid += num_uids
+      @available_uids += additions
+    else
+      raise Cloud::Sdk::CdkException.new("You must supply a positive number of uids to remove")
+    end
+  end
+  
+  def remove_capacity(num_uids)
+    if num_uids > 0
+      subtractions = []
+      subtractions.fill(0, num_uids) {|i| i+max_uid-num_uids+1}
+      pos = 0
+      found_first_pos = false
+      available_uids.each do |available_uid|
+        if !found_first_pos && available_uid == subtractions[pos]
+          found_first_pos = true
+        elsif found_first_pos
+          unless available_uid == subtractions[pos]
+            raise Cloud::Sdk::CdkException.new("Uid: #{subtractions[pos]} not found in order in available_uids.  Can not continue!")
+          end
+        end
+        pos += 1 if found_first_pos
+        break if pos == subtractions.length
+      end
+      if !found_first_pos
+        raise Cloud::Sdk::CdkException.new("Missing uid: #{subtractions[0]} in existing available_uids.  Can not continue!")
+      end
+      Cloud::Sdk::DataStore.instance.remove_district_uids(uuid, subtractions)
+      @available_capacity -= num_uids
+      @max_uid -= num_uids
+      @available_uids -= subtractions
+    else
+      raise Cloud::Sdk::CdkException.new("You must supply a positive number of uids to remove")
     end
   end
   
