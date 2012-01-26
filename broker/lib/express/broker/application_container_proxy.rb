@@ -7,7 +7,7 @@ include MCollective::RPC
 module Express
   module Broker
     class ApplicationContainerProxy
-      @@C_CONTROLLER = 'li-controller'
+      @@C_CONTROLLER = 'cloud-sdk-node'
       attr_accessor :id, :current_capacity, :district
       
       def initialize(id, current_capacity=nil, district=nil)
@@ -42,7 +42,7 @@ module Express
         OpenShift::Blacklist.in_blacklist?(name)
       end
       
-      IGNORE_CARTS = %w(abstract abstract-httpd li-controller embedded)
+      IGNORE_CARTS = %w(abstract abstract-httpd embedded)
       def get_available_cartridges(cart_type)
         cartridges = []
         
