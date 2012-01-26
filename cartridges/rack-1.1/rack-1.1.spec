@@ -37,8 +37,6 @@ Requires:  libxslt-devel
 Requires:  gcc-c++
 Requires:  js
 
-Obsoletes: rhc-cartridge-rack-1.1.0
-
 # Deps for users
 Requires: ruby-RMagick
 
