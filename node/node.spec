@@ -11,6 +11,9 @@ Source0:       rhc-node-%{version}.tar.gz
 
 BuildRoot:     %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires: ruby
+BuildRequires: pam-devel
+BuildRequires: libselinux-devel
+BuildRequires: gcc-c++
 Requires:      rhc-common
 Requires:      rhc-selinux >= 0.84.7-1
 Requires:      git
@@ -33,21 +36,6 @@ Requires(post):   /usr/sbin/semodule
 Requires(post):   /usr/sbin/semanage
 Requires(postun): /usr/sbin/semodule
 Requires(postun): /usr/sbin/semanage
-
-#BuildArch: noarch
-
-%description
-Turns current host into a OpenShift managed node
-
-%package pam_libra
-BuildRequires: pam-devel
-BuildRequires: libselinux-devel
-BuildRequires: gcc-c++
-Summary: pam_libra support for rhc nodes
-
-%description pam_libra
-Adds pam_libra support to nodes
-
 
 %prep
 %setup -q
@@ -222,9 +210,6 @@ fi
 %attr(0750,root,root) %config(noreplace) %{_sysconfdir}/httpd/conf.d/000000_default.conf
 %attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
 %dir %attr(0755,root,root) %{_sysconfdir}/libra/skel
-
-%files pam_libra
-%defattr(-,root,root,-)
 /lib64/security/pam_libra.so
 
 %changelog
