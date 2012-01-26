@@ -10,9 +10,9 @@ class LegacyBrokerController < ApplicationController
     if user
       user_info = user.as_json
       #FIXME: This is redundant, for now keeping it for backward compatibility
-      if user_info["ssh_keys"] and user_info["ssh_keys"].kind_of?(Hash)
-        user_info["ssh_key"] = user_info["ssh_keys"][CloudUser::DEFAULT_SSH_KEY_NAME]
-      end
+      key_info = user.get_ssh_key
+      user_info["ssh_key"] = key_info['key'] 
+      user_info["ssh_type"] = key_info['type'] 
       
       user_info[:rhc_domain] = Rails.configuration.cdk[:domain_suffix]
       app_info = {}
@@ -39,8 +39,10 @@ class LegacyBrokerController < ApplicationController
         raise Cloud::Sdk::UserKeyException.new("Missing SSH key or key name", 119) if @req.ssh.nil? or @req.key_name.nil?
         if user.ssh_keys
           user.ssh_keys.each do |key_name, key|
-            raise Cloud::Sdk::UserKeyException.new("Key with name #{@req.key_name} already exists. Please choose a different name", 120) if key_name == @req.key_name
-            raise Cloud::Sdk::UserKeyException.new("Given public key is already in use. Use different key or delete conflicting key and retry", 121) if key == @req.ssh
+            raise Cloud::Sdk::UserKeyException.new("Key with name #{@req.key_name} already exists. \
+                                                   Please choose a different name", 120) if key_name == @req.key_name
+            raise Cloud::Sdk::UserKeyException.new("Given public key is already in use. \
+                                                   Use different key or delete conflicting key and retry", 121) if key == @req.ssh
           end
         end
         @reply.append user.add_ssh_key(@req.key_name, @req.ssh, @req.key_type)
@@ -53,7 +55,12 @@ class LegacyBrokerController < ApplicationController
         raise Cloud::Sdk::UserKeyException.new("Missing SSH key or key name", 119) if @req.ssh.nil? or @req.key_name.nil?
         @reply.append user.update_ssh_key(@req.ssh, @req.key_type, @req.key_name)
       when "list-keys"
-        @reply.data = { :keys => user.ssh_keys }.to_json
+        #FIXME: when client tools are updated
+        keys = user.ssh_keys.reject {|k, v| k == CloudUser::DEFAULT_SSH_KEY_NAME }
+        @reply.data = { :keys => keys, 
+                        :ssh_key => user.ssh_keys[CloudUser::DEFAULT_SSH_KEY_NAME]['key'],
+                        :ssh_type => user.ssh_keys[CloudUser::DEFAULT_SSH_KEY_NAME]['type']
+                      }.to_json
       else
         raise Cloud::Sdk::UserKeyException.new("Invalid action #{@req.action}", 111)
       end
@@ -100,6 +107,7 @@ class LegacyBrokerController < ApplicationController
       cloud_user = CloudUser.new(@login, @req.ssh, @req.namespace, @req.key_type)
       if cloud_user.invalid?
         @reply.resultIO << cloud_user.errors.first[1][:message]
+        @reply.exitcode << cloud_user.errors.first[1][:exit_code]
         render :json => @reply, :status => :bad_request 
         return
       end
