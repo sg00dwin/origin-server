@@ -52,7 +52,7 @@ class LegacyRequest < Cloud::Sdk::Model
   end
   
   validates_each :ssh, :allow_nil =>true do |record, attribute, val|
-    unless (val =~ /\A[A-Za-z0-9\+\/=]+\z/) && (val == 'nossh')
+    unless (val =~ /\A[A-Za-z0-9\+\/=]+\z/)
       record.errors.add attribute, {:message => "Invalid ssh key: #{val}", :exit_code => 108}
     end
   end

@@ -161,7 +161,7 @@ class DomainsController < BaseController
     
     unless params[:ssh].nil?
       val = params[:ssh]
-      unless (val =~ /\A[A-Za-z0-9\+\/=]+\z/) and (val == 'nossh')
+      unless (val =~ /\A[A-Za-z0-9\+\/=]+\z/)
         errors.push({:message => "Invalid ssh key: #{val}", :exit_code => 108})
       end
     end
