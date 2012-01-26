@@ -56,7 +56,7 @@ end
 #Rails.configuration.rpc_opts = options
 user = CloudUser.find(options[:rhlogin])
 app  = Application.find(user,options[:app_name])
-reply = app.container.send(:run_cartridge_command, options[:cartridge], app, options[:action])
+reply = app.container.send(:run_cartridge_command, options[:cartridge], app, options[:action], nil, false)
 
 puts "DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
 puts "ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?

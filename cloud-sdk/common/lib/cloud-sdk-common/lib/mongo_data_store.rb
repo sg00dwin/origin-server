@@ -84,20 +84,23 @@ module Cloud::Sdk
       bson = MongoDataStore.collection.find_one( "_id" => user_id )
       return nil if bson.to_s.strip.length == 0
 
-      pkey = bson["_id"]
-      bson.delete("_id")
-      bson.delete("apps")
-      { pkey => bson.to_json }
+      user_bson_to_ret(bson)
     end
 
     def self.get_users
       mcursor = MongoDataStore.collection.find()
       ret = []
       mcursor.each do |bson|
-        bson.delete("_id")
-        ret.push(bson.to_json)
+        ret.push(user_bson_to_ret(bson))
       end
       ret
+    end
+    
+    def self.user_bson_to_ret(bson)
+      pkey = bson["_id"]
+      bson.delete("_id")
+      bson.delete("apps")
+      { pkey => bson.to_json }
     end
 
     def self.get_app(user_id, id)
@@ -107,9 +110,7 @@ module Cloud::Sdk
       return nil if bson["apps"].to_s.strip.length == 0
 
       app_bson = bson["apps"][id]
-      unescape(app_bson)
-
-      { id => app_bson.to_json }
+      app_bson_to_ret(id, app_bson)
     end
   
     def self.get_apps(user_id)
@@ -120,11 +121,14 @@ module Cloud::Sdk
       apps_bson = bson["apps"]
       ret = []
       apps_bson.each do |app_id, app_bson|
-        
-        unescape(app_bson)
-        ret.push({ app_id => app_bson.to_json })
+        ret.push(app_bson_to_ret(app_id, app_bson))
       end
       ret
+    end
+    
+    def self.app_bson_to_ret(id, bson)
+      unescape(bson)
+      { id => bson.to_json }
     end
 
     def self.put_user(user_id, user_json)
