@@ -61,6 +61,7 @@ then
   popd > /dev/null
   rm -rf /root/os-client-tools
   rm -rf /root/li-working
+  rm -rf /tmp/tito
   git init --bare /root/os-client-tools
 elif [ "$2" == "--install_build_prereqs" ]
 then

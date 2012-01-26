@@ -46,7 +46,7 @@ module Cloud::Sdk
     end
     
     def create(obj_type, user_id, id, obj_json)
-      Rails.logger.debug "MongoDataStore.add(#{obj_type}, #{user_id}, #{id}, #{obj_json})\n\n"
+      Rails.logger.debug "MongoDataStore.create(#{obj_type}, #{user_id}, #{id}, #{obj_json})\n\n"
       case obj_type
       when "CloudUser"
         MongoDataStore.add_user(user_id, obj_json)
@@ -133,7 +133,7 @@ module Cloud::Sdk
       if bson
         apps = bson["apps"]
         user_json["_id"] = user_id
-        user_json["apps"] = apps
+        user_json["apps"] = apps if apps
       else
         user_json["_id"] = user_id
       end
