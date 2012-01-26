@@ -66,13 +66,11 @@ Feature: domains
     When I send a DELETE request to "/domains/cucumber"
     Then the response should be "204"
    
-  Scenario: Retrieve or Delete non-exstent domain
+  Scenario: Retrieve non-exstent domain
     Given a new guest account
     And I am a valid user
     And I accept "XML"
     When I send a GET request to "/domains/cucumber"
-    Then the response should be "404"
-    When I send a DELETE request to "/domains/cucumber"
     Then the response should be "404"
     
   Scenario: Delete domain with existing applications
@@ -96,7 +94,7 @@ Feature: domains
     And I accept "XML"
     When I send a POST request to "/domains" with the following:"namespace=cucumber&ssh=XYZ123ABC456"
     Then the response should be "201"
-    When I send a POST request to "/domains/cucumber" with the following:"name=app&cartridge=php-5.3"
+    When I send a POST request to "/domains/cucumber/applications" with the following:"name=app&cartridge=php-5.3"
     Then the response should be "201"
     When I send a DELETE request to "/domains/cucumber?force=true"
     Then the response should be "400"

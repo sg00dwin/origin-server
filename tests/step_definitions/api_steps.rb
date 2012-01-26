@@ -85,6 +85,7 @@ When /^I send a DELETE request to "([^\"]*)"$/ do |path|
 end
 
 Then /^the response should be "([^\"]*)"$/ do |status|
+  puts "#{@response.body}" if @response.code != status.to_i
   @response.code.should == status.to_i
 end
 

@@ -58,6 +58,14 @@ class ApplicationsController < BaseController
       respond_with @reply, :status => @reply.status
       return
     end
+    application = Application.find(user,app_name)
+    if not application.nil?
+      @reply = RestReply.new(:conflict)
+      message = Message.new(:error, "The supplied application name '#{app_name}' already exists") 
+      @reply.messages.push(message)
+      respond_with @reply, :status => @reply.status
+      return
+    end
     Rails.logger.debug "Checking to see if application name is black listed"
     if Cloud::Sdk::ApplicationContainerProxy.blacklisted? app_name
       @reply = RestReply.new(:forbidden)

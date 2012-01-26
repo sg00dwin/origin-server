@@ -10,126 +10,110 @@ Feature: applications
     And I accept "XML"
     When I send a POST request to "/domains" with the following:"namespace=cucumber&ssh=XYZ123ABC456"
     Then the response should be "201"
-    When I send a POST request to "/domains/cucumber" with the following:"name=app&cartridge=php-5.3"
-    Then the response should be "201"
-    When I send a GET request for "/domains/cucumber/applications"
-    Then the response should be "200"
-    When I send a DELETE request to "/domains/cucumber/applications/app"
-    Then the response should be "204"
-    When I send a DELETE request to "/domains/cucumber"
-    Then the response should be "204"
-    
-  Scenario: Create applications
-    Given a new guest account
-    And I am a valid user
-    And I accept "XML"
-    When I send a POST request to "/domains" with the following:"namespace=cucumber&ssh=XYZ123ABC456"
-    Then the response should be "201"
-    When I send a POST request to "/domains/cucumber" with the following:"name=app&cartridge=php-5.3"
-    Then the response should be "201"
-    When I send a GET request for "/domains/cucumber/applications"
-    Then the response should be "200"
-    When I send a GET request for "/domains/cucumber/applications/app"
-    Then the response should be "200"
     When I send a POST request to "/domains/cucumber/applications" with the following:"name=app&cartridge=php-5.3"
-    Then the response should be "409"
-    When I send a POST request to "/domains/cucumber/applications" with the following:"name=app1&cartridge=bogus"
-    Then the response should be "400"
-    When I send a POST request to "/domains/cucumber/applications/app1/events" with the following:"event=start"
     Then the response should be "201"
-    When I send a POST request to "/domains/cucumber/applications/app1/events" with the following:"event=stop"
-    Then the response should be "201"
-    When I send a POST request to "/domains/cucumber/applications/app1/events" with the following:"event=restart"
-    Then the response should be "201"
-    When I send a POST request to "/domains/cucumber/applications/app1/events" with the following:"event=force-stop"
-    Then the response should be "201"
-    When I send a DELETE request to "/domains/cucumber/applications/app"
-    Then the response should be "204"
-    When I send a DELETE request to "/domains/cucumber"
-    Then the response should be "204"
-    
-  Scenario: Retrieve applications
-    Given a new guest account
-    And I am a valid user
-    And I accept "XML"
-    When I send a POST request to "/domains" with the following:"namespace=cucumber&ssh=XYZ123ABC456"
-    Then the response should be "201"
-    When I send a POST request to "/domains/cucumber" with the following:"name=app&cartridge=php-5.3"
-    Then the response should be "201"
-    When I send a GET request for "/domains/cucumber/applications/app"
+    When I send a GET request to "/domains/cucumber/applications"
     Then the response should be "200"
     When I send a DELETE request to "/domains/cucumber/applications/app"
     Then the response should be "204"
     When I send a DELETE request to "/domains/cucumber"
     Then the response should be "204"
     
-  Scenario: Start applications
+  Scenario: Create application
     Given a new guest account
     And I am a valid user
     And I accept "XML"
     When I send a POST request to "/domains" with the following:"namespace=cucumber&ssh=XYZ123ABC456"
     Then the response should be "201"
-    When I send a POST request to "/domains/cucumber" with the following:"name=app&cartridge=php-5.3"
-    Then the response should be "201"
-    When I send a POST request to "/domains/cucumber/applications/app1/events" with the following:"event=start"
+    When I send a POST request to "/domains/cucumber/applications" with the following:"name=app&cartridge=php-5.3"
     Then the response should be "201"
     When I send a DELETE request to "/domains/cucumber/applications/app"
     Then the response should be "204"
     When I send a DELETE request to "/domains/cucumber"
     Then the response should be "204"
     
-  Scenario: Stop applications
+  Scenario: Retrieve application
     Given a new guest account
     And I am a valid user
     And I accept "XML"
     When I send a POST request to "/domains" with the following:"namespace=cucumber&ssh=XYZ123ABC456"
     Then the response should be "201"
-    When I send a POST request to "/domains/cucumber" with the following:"name=app&cartridge=php-5.3"
+    When I send a POST request to "/domains/cucumber/applications" with the following:"name=app&cartridge=php-5.3"
     Then the response should be "201"
-    When I send a POST request to "/domains/cucumber/applications/app1/events" with the following:"event=stop"
-    Then the response should be "201"
+    When I send a GET request to "/domains/cucumber/applications/app"
+    Then the response should be "200"
     When I send a DELETE request to "/domains/cucumber/applications/app"
     Then the response should be "204"
     When I send a DELETE request to "/domains/cucumber"
     Then the response should be "204"
     
-  Scenario: Restart applications
+  Scenario: Start application
     Given a new guest account
     And I am a valid user
     And I accept "XML"
     When I send a POST request to "/domains" with the following:"namespace=cucumber&ssh=XYZ123ABC456"
     Then the response should be "201"
-    When I send a POST request to "/domains/cucumber" with the following:"name=app&cartridge=php-5.3"
+    When I send a POST request to "/domains/cucumber/applications" with the following:"name=app&cartridge=php-5.3"
     Then the response should be "201"
-    When I send a POST request to "/domains/cucumber/applications/app1/events" with the following:"event=restart"
-    Then the response should be "201"
+    When I send a POST request to "/domains/cucumber/applications/app/events" with the following:"event=start"
+    Then the response should be "200"
     When I send a DELETE request to "/domains/cucumber/applications/app"
     Then the response should be "204"
     When I send a DELETE request to "/domains/cucumber"
     Then the response should be "204"
     
-  Scenario: Force-stop applications
+  Scenario: Stop application
     Given a new guest account
     And I am a valid user
     And I accept "XML"
     When I send a POST request to "/domains" with the following:"namespace=cucumber&ssh=XYZ123ABC456"
     Then the response should be "201"
-    When I send a POST request to "/domains/cucumber" with the following:"name=app&cartridge=php-5.3"
+    When I send a POST request to "/domains/cucumber/applications" with the following:"name=app&cartridge=php-5.3"
     Then the response should be "201"
-    When I send a POST request to "/domains/cucumber/applications/app1/events" with the following:"event=force-stop"
+    When I send a POST request to "/domains/cucumber/applications/app/events" with the following:"event=stop"
+    Then the response should be "200"
+    When I send a DELETE request to "/domains/cucumber/applications/app"
+    Then the response should be "204"
+    When I send a DELETE request to "/domains/cucumber"
+    Then the response should be "204"
+    
+  Scenario: Restart application
+    Given a new guest account
+    And I am a valid user
+    And I accept "XML"
+    When I send a POST request to "/domains" with the following:"namespace=cucumber&ssh=XYZ123ABC456"
     Then the response should be "201"
+    When I send a POST request to "/domains/cucumber/applications" with the following:"name=app&cartridge=php-5.3"
+    Then the response should be "201"
+    When I send a POST request to "/domains/cucumber/applications/app/events" with the following:"event=restart"
+    Then the response should be "200"
+    When I send a DELETE request to "/domains/cucumber/applications/app"
+    Then the response should be "204"
+    When I send a DELETE request to "/domains/cucumber"
+    Then the response should be "204"
+    
+  Scenario: Force-stop application
+    Given a new guest account
+    And I am a valid user
+    And I accept "XML"
+    When I send a POST request to "/domains" with the following:"namespace=cucumber&ssh=XYZ123ABC456"
+    Then the response should be "201"
+    When I send a POST request to "/domains/cucumber/applications" with the following:"name=app&cartridge=php-5.3"
+    Then the response should be "201"
+    When I send a POST request to "/domains/cucumber/applications/app/events" with the following:"event=force-stop"
+    Then the response should be "200"
     When I send a DELETE request to "/domains/cucumber/applications/app"
     Then the response should be "204"
     When I send a DELETE request to "/domains/cucumber"
     Then the response should be "204"
   
-  Scenario: Delete applications
+  Scenario: Delete application
     Given a new guest account
     And I am a valid user
     And I accept "XML"
     When I send a POST request to "/domains" with the following:"namespace=cucumber&ssh=XYZ123ABC456"
     Then the response should be "201"
-    When I send a POST request to "/domains/cucumber" with the following:"name=app&cartridge=php-5.3"
+    When I send a POST request to "/domains/cucumber/applications" with the following:"name=app&cartridge=php-5.3"
     Then the response should be "201"
     When I send a DELETE request to "/domains/cucumber/applications/app"
     Then the response should be "204"
@@ -157,13 +141,25 @@ Feature: applications
     And I accept "XML"
     When I send a POST request to "/domains" with the following:"namespace=cucumber&ssh=XYZ123ABC456"
     Then the response should be "201"
-    When I send a POST request to "/domains/cucumber/applications" with the following:"name=app1&cartridge=bogus"
+    When I send a POST request to "/domains/cucumber/applications" with the following:"name=app&cartridge=bogus"
     Then the response should be "400"
     When I send a DELETE request to "/domains/cucumber/applications/app"
     Then the response should be "404"
     When I send a DELETE request to "/domains/cucumber"
     Then the response should be "204"
-    
+  
+  Scenario: Retrieve or delete a non-existent application
+    Given a new guest account
+    And I am a valid user
+    And I accept "XML"
+    When I send a POST request to "/domains" with the following:"namespace=cucumber&ssh=XYZ123ABC456"
+    Then the response should be "201"
+    When I send a GET request to "/domains/cucumber/applications/app"
+    Then the response should be "404"
+    When I send a DELETE request to "/domains/cucumber/applications/app"
+    Then the response should be "404"
+    When I send a DELETE request to "/domains/cucumber"
+    Then the response should be "204"
 
     
     
