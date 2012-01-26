@@ -174,8 +174,6 @@ class LegacyBrokerController < ApplicationController
           end
         rescue Exception => e
           if app.persisted?
-            Rails.logger.debug e.message
-            Rails.logger.debug e.backtrace.inspect
             @reply.append app.deconfigure_dependencies
             @reply.append app.destroy
             app.delete

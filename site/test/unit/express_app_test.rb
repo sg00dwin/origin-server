@@ -16,8 +16,8 @@ class ExpressAppTest < ActiveSupport::TestCase
     assert !@app.valid?
   end
   
-  test 'app name should not be more than 16 characters' do
-    @app.app_name = 'thisisaverylongappname'
+  test 'app name should not be more than 32 characters' do
+    @app.app_name = 'thisisaverylongappnamewithevenmorecharactersthanbefore'
     assert !@app.valid?
   end
   

@@ -105,15 +105,15 @@ class ExpressConsole < OpenShift::SeleniumTestCase
     assert form.in_error?(:app_name)
     assert_equal_no_case "Only letters and numbers are allowed", form.error_message(:app_name)
 
-    # try to use app name that exceeds max length (16)
+    # try to use app name that exceeds max length (32)
 
-    app_name = "abcdefghijklmnopqrstuvwxyz"
+    app_name = "abcdefghijklmnopqrstuvwxyz0123456789"
 
     form.set_value(:app_name, app_name)
 
     assert !form.in_error?(:app_name)
 
-    assert_equal app_name[0..15], form.get_value(:app_name)
+    assert_equal app_name[0..31], form.get_value(:app_name)
 
   end
 
@@ -165,7 +165,7 @@ class ExpressConsole < OpenShift::SeleniumTestCase
     wait_for_ajax 30
 
     # presence of deletion form indicates successful creation
-    await("app created") { exists? "form##{app_name}_delete_form" }
+    await("#{type} app created") { exists? "form##{app_name}_delete_form" }
   end
 
   # helper method for creating a namespace

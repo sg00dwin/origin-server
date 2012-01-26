@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/cron-1.4
 
 Name: rhc-cartridge-cron-1.4
-Version: 0.1.3
+Version: 0.1.4
 Release: 1%{?dist}
 Summary: Embedded cron support for express
 
@@ -67,6 +67,17 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Wed Jan 25 2012 Dan McPherson <dmcphers@redhat.com> 0.1.4-1
+- Log messages if user's $freq job exceeds max run time. (ramr@redhat.com)
+- Add run time limits + added some log messages for auditing purposes.
+  (ramr@redhat.com)
+- Cleanup message displayed when cron is embedded into the app.
+  (ramr@redhat.com)
+- More bug fixes. (ramr@redhat.com)
+- Merge branch 'master' of li-master:/srv/git/li (ramr@redhat.com)
+- Fix installation paths. (ramr@redhat.com)
+- Install libra wrapper job files. (ramr@redhat.com)
+
 * Tue Jan 24 2012 Dan McPherson <dmcphers@redhat.com> 0.1.3-1
 - Updated License value in manifest.yml files. Corrected Apache Software
   License Fedora short name (jhonce@redhat.com)

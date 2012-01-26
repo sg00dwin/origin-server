@@ -255,6 +255,7 @@ require {
 	attribute domain;
 	type quota_t;
 	type quota_db_t;
+        type system_cronjob_t;
 }
 
 allow libra_domain httpd_exec_t:file entrypoint;
@@ -272,6 +273,14 @@ allow domain libra_var_lib_t:file { append getattr };
 filetrans_pattern(quota_t, libra_var_lib_t, quota_db_t, file)
 
 kernel_dontaudit_request_load_module(domain)
+
+########################################
+#
+# Cron support
+#
+cron_role(system_r, libra_t)
+allow system_cronjob_t libra_t:process transition;
+allow libra_t system_cronjob_t:process sigchld;
 
 ########################################
 #
