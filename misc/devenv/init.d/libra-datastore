@@ -94,7 +94,7 @@ $MONGO["features"]["plugins"] = "on"; //plugins
 $MONGO["servers"][0]["mongo_host"] = "localhost"; //mongo host
 $MONGO["servers"][0]["mongo_port"] = "27017"; //mongo port
 $MONGO["servers"][0]["mongo_timeout"] = 30; //mongo connection timeout
-$MONGO["servers"][0]["mongo_db"] = "libra_dev"; //default mongo db to connect, works only if mongo_auth=false
+$MONGO["servers"][0]["mongo_db"] = "openshift_broker_dev"; //default mongo db to connect, works only if mongo_auth=false
 $MONGO["servers"][0]["mongo_user"] = "libra"; //mongo authentication user name, works only if mongo_auth=false
 $MONGO["servers"][0]["mongo_pass"] = "momo"; //mongo authentication password, works only if mongo_auth=false
 $MONGO["servers"][0]["mongo_auth"] = false; //enable mongo authentication?

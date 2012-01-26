@@ -77,7 +77,7 @@ module Cloud::Sdk
     end
 
     def self.collection
-      MongoDataStore.db.collection(Rails.configuration.cdk[:datastore_mongo][:collection])
+      MongoDataStore.db.collection(Rails.configuration.cdk[:datastore_mongo][:collections][:user])
     end
 
     def self.get_user(user_id)
