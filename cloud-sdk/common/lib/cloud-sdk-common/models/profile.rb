@@ -86,7 +86,7 @@ module Cloud::Sdk
       else
         group = Group.new
         self.components.keys.each do |c|
-          group.auto_component_refs[c]=ComponentRef.new(c).from_descriptor(c)
+          group.component_refs[c]=ComponentRef.new(c).from_descriptor(c)
         end
         group.generated = true
         self.groups = {"default" => group}

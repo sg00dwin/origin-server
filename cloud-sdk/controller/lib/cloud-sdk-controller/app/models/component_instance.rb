@@ -1,5 +1,5 @@
 class ComponentInstance < Cloud::Sdk::UserModel
-  attr_accessor :state, :parent_cart_name, :parent_cart_profile, :parent_component_name,
+  attr_accessor :state, :parent_cart_name, :parent_cart_profile, :parent_component_name, :parent_cart_group,
                 :name, :dependencies, :group_instance_name
   
   state_machine :state, :initial => :not_created do
@@ -16,38 +16,34 @@ class ComponentInstance < Cloud::Sdk::UserModel
     event(:destroy_complete) { transition :destroying => :not_created }
   end
 
-  def initialize (cartname, profname, compname, pathname, gi)
+  def initialize (cartname, profname, groupname, compname, pathname, gi)
     self.name = pathname
     self.parent_cart_name = cartname
     self.parent_cart_profile = profname
+    self.parent_cart_group = groupname
     self.group_instance_name = gi.name
     self.parent_component_name = compname
     self.dependencies = []
   end
 
-  def get_component_definition
+  def get_component_definition(app)
     if self.parent_cart_name == app.name
       cart = app
     else
-      cart = CartridgeCache::find_cartridge(self.parent_cart_name)[0]
+      cart = CartridgeCache::find_cartridge(self.parent_cart_name)
     end
     profile = cart.profiles[self.parent_cart_profile]
-    comp = profile.components[self.parent_component_name]
-    return comp
+    group = profile.groups[self.parent_cart_group]
+    comp_name = group.component_refs[self.parent_component_name].component
+    comp = profile.components[comp_name]
+    return comp,profile,cart
   end
 
   def elaborate(app)
-    # get this instance's actual component from cartridge's descriptor
-    if self.parent_cart_name == app.name
-      cart = app
-    else
-      cart = CartridgeCache::find_cartridge(self.parent_cart_name)[0]
-    end
-    profile = cart.profiles[self.parent_cart_profile]
-    comp = profile.components[self.parent_component_name]
- 
+    comp,profile,cart = get_component_definition(app)
+    
     # cart map has all the sub-cartridges that will get instantiated through this component instance
-    cart_map = get_cartridges_for_dependencies(comp)
+    cart_map = get_cartridges_for_dependencies(comp, cart)
 
     group_list = cart_map.map { |name, cartprofile| 
       elaborate_cartridge(cartprofile[0], cartprofile[1], app) 
@@ -55,15 +51,16 @@ class ComponentInstance < Cloud::Sdk::UserModel
 
     self.dependencies.each do |dep|
       cinst = app.comp_instance_map[dep]
-      establish_connections(cinst, self, app)
+      ComponentInstance.establish_connections(cinst, self, app)
     end
 
     return group_list
   end
 
   def self.establish_connections(inst1, inst2, app)
-    comp1 = inst1.get_component_definition
-    comp2 = inst2.get_component_definition
+    comp1,prof1,cart1 = inst1.get_component_definition(app)
+    comp2,prof2,cart2 = inst2.get_component_definition(app)
+    
     comp1.publishes.each do |pub|
       comp2.subscribes.each do |sub|
         app.conn_endpoints_list << ConnectionEndpoint.new(inst1, inst2, pub, sub) if pub.type==sub.type
@@ -78,11 +75,11 @@ class ComponentInstance < Cloud::Sdk::UserModel
 
   def elaborate_cartridge(cart, profile, app)
     group_list = profile.groups.map do |k,g|
-       gpath = self.path + "." + cart.name + ":" + profile.name + "." + k
-       gi = GroupInstance.new(cart.name, profile.name, gpath)
+       gpath = self.name + "." + cart.name + "." + k
+       gi = GroupInstance.new(cart.name, profile.name, k, gpath)
        app.group_instance_map[gpath] = gi
-       gi.elaborate(g, self.path, app)
-       self.dependencies << gi.component_instances
+       gi.elaborate(g, self.name, app)
+       self.dependencies += gi.component_instances
        gi
     end
 
@@ -103,12 +100,14 @@ class ComponentInstance < Cloud::Sdk::UserModel
     return app.comp_instance_map[parent_path + "." + comp_name]
   end
 
-  def get_cartridges_for_dependencies(comp)
+  def get_cartridges_for_dependencies(comp, cart)
     # resolve features into cartridges - two features may resolve
     # into one cartridge only, e.g. depends = [db,db-failover] 
     # will resolve into one mysql cartridge being instantiated with (master/slave) profile
     cart_map = {}
-    comp.depends.each do |feature| 
+    depends = comp.depends + cart.requires_feature
+    
+    depends.each do |feature| 
       cart = CartridgeCache::find_cartridge(feature)
       raise Exception "Cannot find cartridge for dependency '#{feature}'" if cart.nil?
       capability = feature

@@ -268,9 +268,9 @@ class Application < Cloud::Sdk::Cartridge
     
     @profiles[@default_profile].groups.each { |k, g|
       gpath = self.name + "." + g.name
-      gi = GroupInstance.new(self.name, self.default_profile, gpath)
+      gi = GroupInstance.new(self.name, self.default_profile, k, gpath)
       self.group_instance_map[gpath] = gi
-      gi.elaborate(g, self.name, self)
+      gi.elaborate(g, "", self)
     }
     # make connection_endpoints out of provided connections
     @profiles[@default_profile].connections.each { |name, conn|

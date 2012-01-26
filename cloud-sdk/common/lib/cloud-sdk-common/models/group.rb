@@ -1,11 +1,11 @@
 module Cloud::Sdk
   class Group < Cloud::Sdk::UserModel
-    attr_accessor :name, :component_refs, :auto_component_refs, :scaling, :generated
+    attr_accessor :name, :component_refs, :component_refs, :scaling, :generated
     
     def initialize(name="default")
       self.name = name
       self.component_refs = {}
-      self.auto_component_refs = {}
+      self.component_refs = {}
       self.scaling = Scaling.new
       self.generated = false
     end
@@ -23,15 +23,15 @@ module Cloud::Sdk
       end
     end
     
-    def auto_component_refs=(hash)
-      auto_component_refs_will_change!
-      @auto_component_refs = {}
+    def component_refs=(hash)
+      component_refs_will_change!
+      @component_refs = {}
       hash.each do |key, value|
         if value.class == Hash
-          @auto_component_refs[key] = ComponentRef.new(key)
-          @auto_component_refs[key].attributes=value
+          @component_refs[key] = ComponentRef.new(key)
+          @component_refs[key].attributes=value
         else
-          @auto_component_refs[key] = value
+          @component_refs[key] = value
         end
       end
     end
