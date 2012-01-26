@@ -75,6 +75,10 @@ class ExpressDomainController < ApplicationController
     end
   end
 
+  def edit
+    #@user ||= session_user ||= WebUser.new
+  end
+
   def process_response(json_response)
     Rails.logger.debug "Domain api result: #{json_response.inspect}"
     # check that we have expected result

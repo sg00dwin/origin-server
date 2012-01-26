@@ -1,0 +1,15 @@
+- content_for :page_title do
+  OpenShift Change Domain Name
+
+%section.main
+  .content
+    %h1 Change Your Domain Name
+    - form_for @user, :url => edit_password_path, :html => {:method => :put} do |f|
+      %p When choosing a password we recommend using numbers, symbols, and upper and lower case letters for extra security.
+
+      = f.label :domain_name
+      = f.domain_name_field :domain_name
+      - @user.errors[:domain_name].each do |e|
+        %div #{e}
+
+      = f.submit "Change Domain Name"

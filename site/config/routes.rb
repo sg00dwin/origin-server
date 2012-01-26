@@ -106,7 +106,7 @@ RedHatCloud::Application.routes.draw do
     resource :express_domain,
              :controller => "express_domain",
              :as => "express_domains",
-             :only => [:new, :create]
+             :only => [:new, :create, :edit]
   
     resource  :express_app,
               :controller => "express_app",
