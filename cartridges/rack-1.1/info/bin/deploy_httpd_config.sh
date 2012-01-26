@@ -38,6 +38,7 @@ CustomLog "|/usr/sbin/rotatelogs $APP_DIR/logs/access_log$rotatelogs_format $rot
 
 PassengerUser $uuid
 PassengerPreStart http://$IP:8080/
+PassengerSpawnIPAddress $IP
 PassengerUseGlobalQueue off
 <Directory $APP_DIR/repo/public>
   AllowOverride all
