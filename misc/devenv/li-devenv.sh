@@ -66,7 +66,7 @@ then
 elif [ "$2" == "--install_build_prereqs" ]
 then
   # Would be better to parse these from the BuildRequires: + tito
-  yum -y install ruby rubygems git tito java-devel jpackage-utils pam-devel libselinux-devel selinux-policy gcc-c++ libxml2-devel libxslt-devel rubygem-bundler
+  yum -y install ruby rubygems git tito java-devel jpackage-utils pam-devel libselinux-devel selinux-policy gcc-c++ libxml2-devel libxslt-devel rubygem-bundler js
 else
   yum -y install rhc-devenv
 fi
