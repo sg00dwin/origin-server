@@ -58,6 +58,7 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(0640,root,libra_user,0750)
 %attr(0666,-,-) %{brokerdir}/log/production.log
+%attr(0666,-,-) %{brokerdir}/log/development.log
 %config(noreplace) %{brokerdir}/config/environments/production.rb
 %config(noreplace) %{brokerdir}/config/keys/public.pem
 %config(noreplace) %{brokerdir}/config/keys/private.pem
