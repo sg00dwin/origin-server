@@ -52,6 +52,12 @@ if [ -d "$SCRIPTS_DIR" ]; then
    executor=bash
    [ -n "$MAX_RUN_TIME" ]  &&  executor="timeout $MAX_RUN_TIME bash"
 
+   if [ -f "$CART_INSTANCE_DIR/log/cron.$freq.log" ]; then
+      mv -f "$CART_INSTANCE_DIR/log/cron.$freq.log" "$CART_INSTANCE_DIR/log/cron.$freq.log.1"
+   fi
+
+   echo "`date`: START $freq cron run" >> $CART_INSTANCE_DIR/log/cron.$freq.log
+
    script_list=$(ls "$SCRIPTS_DIR")
    $executor <<RUN_USER_SCRIPTS_EOF
       ls "$SCRIPTS_DIR" | while read f; do
@@ -66,6 +72,8 @@ RUN_USER_SCRIPTS_EOF
       log_message "$wmsg [$MAX_RUN_TIME] for libra user '$OPENSHIFT_APP_UUID'"
       echo "$wmsg" >> $CART_INSTANCE_DIR/log/cron.$freq.log
    fi
+
+   echo "`date`: END $freq cron run - status=$status" >> $CART_INSTANCE_DIR/log/cron.$freq.log
 
 fi
 
