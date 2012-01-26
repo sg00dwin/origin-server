@@ -42,9 +42,9 @@ cat <<EOF > "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}.conf"
 
   Include /etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}/*.conf
 
-  ProxyPass /swydws/ http://$IP:18001/swydws/
+  ProxyPass /swydws/ http://$IP:18001/swydws/ status=I
   ProxyPassReverse /swydws/ http://$IP:18001/swydws/
-  ProxyPass / http://$IP:8080/
+  ProxyPass / http://$IP:8080/ status=I
   ProxyPassReverse / http://$IP:8080/
 </VirtualHost>
 
@@ -55,9 +55,9 @@ $(/bin/cat $CART_INFO_DIR/configuration/node_ssl_template.conf)
 
   Include /etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}/*.conf
 
-  ProxyPass /swydws/ http://$IP:18001/swydws/
+  ProxyPass /swydws/ http://$IP:18001/swydws/ status=I
   ProxyPassReverse /swydws/ http://$IP:18001/swydws/
-  ProxyPass / http://$IP:8080/
+  ProxyPass / http://$IP:8080/ status=I
   ProxyPassReverse / http://$IP:8080/
 </VirtualHost>
 EOF

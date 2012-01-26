@@ -27,7 +27,7 @@ source ${CART_DIR}/abstract/info/lib/util
 load_node_conf
 
 cat <<EOF > "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}/phpmoadmin-1.0.conf"
-ProxyPass /phpmoadmin http://$IP:8080/phpmoadmin
+ProxyPass /phpmoadmin http://$IP:8080/phpmoadmin status=I
 ProxyPassReverse /phpmoadmin http://$IP:8080/phpmoadmin
 
 EOF

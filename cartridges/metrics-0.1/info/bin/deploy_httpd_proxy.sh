@@ -27,7 +27,7 @@ source ${CART_DIR}/abstract/info/lib/util
 load_node_conf
 
 cat <<EOF > "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}/metrics-0.1.conf"
-ProxyPass /metrics http://$IP:8080/metrics
+ProxyPass /metrics http://$IP:8080/metrics status=I
 ProxyPassReverse /metrics http://$IP:8080/metrics
 
 EOF
