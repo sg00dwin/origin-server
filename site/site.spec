@@ -73,6 +73,7 @@ rm -rf %{buildroot}
 %{htmldir}/app
 
 %post
+/bin/touch %{sitedir}/log/development.log
 /bin/touch %{sitedir}/log/production.log
 chmod 0770 %{sitedir}/tmp
 
