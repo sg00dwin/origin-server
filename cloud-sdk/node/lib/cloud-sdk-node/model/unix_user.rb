@@ -90,7 +90,7 @@ module Cloud::SDK::Model
     end
     
     def destroy
-      raise UserDeletionException.new("ERROR: unable to create user account #{@uuid}") if @uid.nil? || @homedir.nil? || @uuid.nil?
+      raise UserDeletionException.new("ERROR: unable to destroy user account #{@uuid}") if @uid.nil? || @homedir.nil? || @uuid.nil?
       notify_observers(:before_unix_user_destroy)
       
       cmd = "/bin/ps -U \"#{@uuid}\" -o pid | /bin/grep -v PID | xargs kill -9 2> /dev/null"
@@ -102,7 +102,7 @@ module Cloud::SDK::Model
       FileUtils.rm_rf(@homedir)
 
       out,err,rc = shellCmd("userdel \"#{@uuid}\"")
-      raise UserDeletionException.new("ERROR: unable to create user account #{@uuid}") unless rc == 0
+      raise UserDeletionException.new("ERROR: unable to destroy user account #{@uuid}") unless rc == 0
       notify_observers(:after_unix_user_destroy)
     end
     

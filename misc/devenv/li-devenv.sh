@@ -61,11 +61,12 @@ then
   popd > /dev/null
   rm -rf /root/os-client-tools
   rm -rf /root/li-working
+  rm -rf /tmp/tito
   git init --bare /root/os-client-tools
 elif [ "$2" == "--install_build_prereqs" ]
 then
   # Would be better to parse these from the BuildRequires: + tito
-  yum -y install ruby rubygems git tito java-devel jpackage-utils pam-devel libselinux-devel selinux-policy gcc-c++ rubygem-rake rubygem-rspec
+  yum -y install ruby rubygems git tito java-devel jpackage-utils pam-devel libselinux-devel selinux-policy gcc-c++ rubygem-rake rubygem-rspec rubygem-rails rubygem-barista
 else
   yum -y install rhc-devenv
 fi

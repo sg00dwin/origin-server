@@ -25,8 +25,6 @@ Requires:  libjpeg-devel
 Requires:  libcurl
 Requires:  libcurl-devel
 
-Obsoletes: rhc-cartridge-wsgi-3.2.1
-
 BuildArch: noarch
 
 %description

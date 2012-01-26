@@ -34,8 +34,6 @@ Requires:  rubygem-hpricot
 Requires:  rubygem-barista
 Requires:  js
 
-Obsoletes: rhc-server
-
 BuildArch: noarch
 
 %description

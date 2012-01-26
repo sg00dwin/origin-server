@@ -67,7 +67,7 @@ module MCollective
         action = request[:action]
         args = request[:args]
         pid, stdin, stdout, stderr = nil, nil, nil, nil
-        if cartridge == 'li-controller'
+        if cartridge == 'cloud-sdk-node'
           cmd = nil
           case action
           when 'configure'
