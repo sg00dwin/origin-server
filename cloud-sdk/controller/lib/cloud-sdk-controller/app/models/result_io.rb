@@ -1,5 +1,5 @@
 class ResultIO
-  attr_accessor :debugIO, :resultIO, :messageIO, :errorIO, :appInfoIO, :exitcode, :data, :system_ssh_key, :cart_commands
+  attr_accessor :debugIO, :resultIO, :messageIO, :errorIO, :appInfoIO, :exitcode, :data, :cart_commands
   
   def initialize
     @debugIO = StringIO.new
