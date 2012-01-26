@@ -12,28 +12,62 @@ WORK_DIR = '/tmp/rhc/migration'
 #
 #  Migrate the specified app on the node
 #
-def migrate_app_on_node(server_identity, framework, uuid, namespace, app_name)
-  migrate_cmd = "#{__FILE__} '#{server_identity}' '#{framework}' '#{uuid}' '#{namespace}' '#{app_name}'"
+def migrate_app_on_node(server_identity, framework, uuid, rhlogin, app_name)
+  migrate_cmd = "#{__FILE__} '#{server_identity}' '#{framework}' '#{uuid}' '#{rhlogin}' '#{app_name}'"
   puts "Migrating app on node with: #{migrate_cmd}"
   migrated = false
-  Express::Broker::ApplicationContainerProxy.rpc_exec('libra', server_identity) do |client|
-    client.migrate(:uuid => uuid,
-                   :application => app_name,
-                   :app_type => framework,
-                   :namespace => namespace,
-                   :version => '2.0.4') do |response|
-      exit_code = response[:body][:data][:exitcode]
-      output = response[:body][:data][:output]
-      if (output.length > 0)
-        puts "Migrate on node output: #{output}"
+  user = CloudUser.find(rhlogin)
+  if user
+    app  = Application.find(user, app_name)
+    if app
+      Express::Broker::ApplicationContainerProxy.rpc_exec('libra', server_identity) do |client|
+        client.migrate(:uuid => uuid,
+                       :application => app_name,
+                       :app_type => framework,
+                       :namespace => user.namespace,
+                       :version => '2.0.4') do |response|
+          exit_code = response[:body][:data][:exitcode]
+          output = response[:body][:data][:output]
+          if (output.length > 0)
+            puts "Migrate on node output: #{output}"
+          end
+          if exit_code != 0
+            puts "Migrate on node exit code: #{exit_code}"
+            raise "Failed migrating app. Rerun with: #{migrate_cmd}"
+          else
+            reply = app.container.send(:run_cartridge_command, framework, app, 'deploy-httpd-proxy', nil, false)
+            
+            puts "DEPLOY_HTTP_PROXY DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
+            puts "DEPLOY_HTTP_PROXY ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
+    
+            if reply.exitcode != 0
+              puts "Deploy httpd proxy on node exit code: #{reply.exitcode}"
+              raise "Failed deploying httpd proxy for app '#{app_name}' with uuid '#{uuid}' on node '#{server_identity}'"
+            else
+              deployed_httpd_proxy_success = true
+              app.embedded.each do |cart, cart_info|
+                puts "DEBUG: Deploying httpd proxy for embedded #{cart} for '#{app_name}' with uuid '#{uuid}' on node #{server_identity}"
+                reply.append app.container.send(:run_cartridge_command, "embedded/" + cart, app, "deploy-httpd-proxy", nil, false)
+                puts "DEPLOY_HTTP_PROXY DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
+                puts "DEPLOY_HTTP_PROXY ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
+                if reply.exitcode != 0
+                  puts "Deploy httpd proxy for cart: #{cart} on node exit code: #{reply.exitcode}"
+                  deployed_httpd_proxy_success = false
+                end
+              end
+              raise "Failed deploying httpd proxy for app '#{app_name}' with uuid '#{uuid}' on node '#{server_identity}'" unless deployed_httpd_proxy_success 
+              migrated = true
+            end
+          end
+        end
       end
-      if exit_code != 0
-        puts "Migrate on node exit code: #{exit_code}"
-        raise "Failed migrating app. Rerun with: #{migrate_cmd}"
-      else
-        migrated = true
-      end
+    else
+      puts "App not found: #{app_name}"
+      exit 1
     end
+  else
+    puts "User not found: #{rhlogin}"
+    exit 1
   end
   raise "Migrate on node failed.  Rerun with: #{migrate_cmd}" if !migrated
 end
@@ -170,7 +204,7 @@ def migrate_node(server_identity, apps, node_to_users)
     app_name = app_hash[:name]
     user = users[index]
     rhlogin = user.rhlogin
-    migrate_on_node_args = "#{app.server_identity},#{app.framework},#{app.uuid},#{user.namespace},#{app_name},#{rhlogin}"
+    migrate_on_node_args = "#{app.server_identity},#{app.framework},#{app.uuid},#{rhlogin},#{app_name}"
     append_to_file(f, migrate_on_node_args)
   end
   migrate_node_cmd = "#{__FILE__} '#{f}'"
@@ -194,16 +228,15 @@ def migrate_from_file(file)
       server_identity = params[0] 
       framework = params[1]
       uuid = params[2] 
-      namespace = params[3]
+      rhlogin = params[3]
       app_name = params[4]
-      rhlogin = params[5]
-      migrate_on_node_cmd = "#{__FILE__} '#{server_identity}' '#{framework}' '#{uuid}' '#{namespace}' '#{app_name}'"
+      migrate_on_node_cmd = "#{__FILE__} '#{server_identity}' '#{framework}' '#{uuid}' '#{rhlogin}' '#{app_name}'"
       error_file = "#{WORK_DIR}/migrate_errors_#{server_identity}"
       puts "Migrating app '#{app_name}' with uuid '#{uuid}' on node '#{server_identity}' for user: #{rhlogin}"
       num_tries = 2
       (1..num_tries).each do |i|
         begin
-          migrate_app_on_node(server_identity, framework, uuid, namespace, app_name)
+          migrate_app_on_node(server_identity, framework, uuid, rhlogin, app_name)
           break
         rescue Exception => e
           if i == num_tries
