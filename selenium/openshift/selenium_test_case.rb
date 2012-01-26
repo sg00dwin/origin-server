@@ -44,16 +44,38 @@ module OpenShift
         @driver.navigate.to browser_url
       else
         cfg = Sauce::Config.new()
+        opts = cfg.opts
 
-        driver_cfg = {}
-        driver_cfg[:browser_url] = browser_url
-        driver_cfg[:job_name] = get_name
-        driver_cfg[:os] = cfg['os'] if cfg['os']
-        driver_cfg[:browser] = cfg['browser'] if cfg['browser']
-        driver_cfg[:browser_version] = cfg['browser-version'] if cfg['browser-version']
-        driver_cfg[:build] = ENV['JENKINS_BUILD'] || 'unofficial'
+        case opts[:browser] || ''
+          when "iexplore"
+            caps = Selenium::WebDriver::Remote::Capabilities.internet_explorer
+          when "chrome"
+            caps = Selenium::WebDriver::Remote::Capabilities.chrome
+          when "opera"
+            caps = Selenium::WebDriver::Remote::Capabilities.opera
+          else
+            caps = Selenium::WebDriver::Remote::Capabilities.firefox
+        end
 
-        @driver = build_driver(driver_cfg)
+        platform = opts[:os] || ''
+        case platform.downcase
+          when "windows 2008"
+            caps.platform = :VISTA
+          when "linux"
+            caps.platform = :LINUX
+          else
+            caps.platform = :XP
+        end
+
+        caps.version = opts[:browser_version] if opts[:browser_version]
+
+        caps[:name] = get_name
+        caps[:build] = ENV['JENKINS_BUILD'] || 'unofficial'
+
+        @driver = Selenium::WebDriver.for(
+          :remote,
+          :url => "http://#{opts[:username]}:#{opts[:access_key]}@#{opts[:host]}:#{opts[:port]}/wd/hub",
+          :desired_capabilities => caps)
       end
 
       @page    = page
