@@ -16,6 +16,7 @@ BuildRequires: libxml2-devel
 BuildRequires: libxslt-devel
 BuildRequires: gcc-c++
 BuildRequires: rubygem-bundler
+BuildRequires: js
 
 Requires:  rhc-common
 Requires:  rhc-server-common

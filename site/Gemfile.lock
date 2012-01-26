@@ -58,7 +58,6 @@ GEM
       crack (= 0.1.8)
     i18n (0.5.0)
     json (1.4.3)
-    libv8 (3.3.10.2)
     mail (2.3.0)
       activesupport (>= 2.3.6)
       i18n (>= 0.4.0)
@@ -95,8 +94,6 @@ GEM
     recaptcha (0.3.1)
     regin (0.3.7)
     stomp (1.1.8)
-    therubyracer (0.9.8)
-      libv8 (~> 3.3.10)
     thor (0.14.6)
     treetop (1.4.9)
       polyglot (>= 0.2.5)
@@ -122,5 +119,4 @@ DEPENDENCIES
   recaptcha
   regin
   stomp
-  therubyracer
   xml-simple
