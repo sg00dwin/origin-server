@@ -19,8 +19,12 @@ module Cloud
         Rails.logger.debug "DataStore.find_all(#{obj_type}, #{user_id})\n\n"
       end
       
-      def save(obj_type, user_id, id, serialized_obj)
-        Rails.logger.debug "DataStore.save(#{obj_type}, #{user_id}, #{id}, #{serialized_obj})\n\n"
+      def save(obj_type, user_id, id, obj)
+        Rails.logger.debug "DataStore.save(#{obj_type}, #{user_id}, #{id}, #{obj})\n\n"
+      end
+      
+      def create(obj_type, user_id, id, obj)
+        Rails.logger.debug "DataStore.add(#{obj_type}, #{user_id}, #{id}, #{obj})\n\n"
       end
       
       def delete(obj_type, user_id, id)

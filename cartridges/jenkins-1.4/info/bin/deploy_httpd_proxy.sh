@@ -46,7 +46,7 @@ cat <<EOF > "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}.conf"
   ##RewriteRule /health /usr/libexec/li/cartridges/jenkins-1.4/info/configuration/health [L]
   Alias /health /usr/libexec/li/cartridges/jenkins-1.4/info/configuration/health
   ProxyPass /health !
-  ProxyPass / http://$IP:8080/
+  ProxyPass / http://$IP:8080/ status=I
   ProxyPassReverse / http://$IP:8080/
 </VirtualHost>
 
@@ -61,7 +61,7 @@ $(/bin/cat $CART_INFO_DIR/configuration/node_ssl_template.conf)
   ##RewriteRule /health /usr/libexec/li/cartridges/jenkins-1.4/info/configuration/health [L]
   Alias /health /usr/libexec/li/cartridges/jenkins-1.4/info/configuration/health
   ProxyPass /health !
-  ProxyPass / http://$IP:8080/
+  ProxyPass / http://$IP:8080/ status=I
   ProxyPassReverse / http://$IP:8080/
 </VirtualHost>
 EOF

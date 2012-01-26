@@ -58,6 +58,14 @@ class ApplicationsController < BaseController
       respond_with @reply, :status => @reply.status
       return
     end
+    application = Application.find(user,app_name)
+    if not application.nil?
+      @reply = RestReply.new(:conflict)
+      message = Message.new(:error, "The supplied application name '#{app_name}' already exists") 
+      @reply.messages.push(message)
+      respond_with @reply, :status => @reply.status
+      return
+    end
     Rails.logger.debug "Checking to see if application name is black listed"
     if Cloud::Sdk::ApplicationContainerProxy.blacklisted? app_name
       @reply = RestReply.new(:forbidden)
@@ -85,10 +93,9 @@ class ApplicationsController < BaseController
       return
     end
     Rails.logger.debug "Checking to see if user limit for number of apps has been reached"
-    apps = Application.find_all(user)
-    if (apps.length >= Rails.application.config.cdk[:per_user_app_limit])
+    if (user.consumed_gears >= user.max_gears)
       @reply = RestReply.new(:forbidden)
-      message = Message.new(:error, "#{@login} has already reached the application limit of #{Rails.application.config.cdk[:per_user_app_limit]}")
+      message = Message.new(:error, "#{@login} has already reached the application limit of #{user.max_gears}")
       @reply.messages.push(message)
       respond_with @reply, :status => @reply.status
       return
@@ -103,8 +110,8 @@ class ApplicationsController < BaseController
         application.configure_dependencies
         Rails.logger.debug "Adding system ssh keys #{app_name}"
         application.add_system_ssh_keys
-        Rails.logger.debug "Adding secondary ssh keys #{app_name}"
-        application.add_secondary_ssh_keys
+        Rails.logger.debug "Adding ssh keys #{app_name}"
+        application.add_ssh_keys
         Rails.logger.debug "Adding system environment vars #{app_name}"
         application.add_system_env_vars
         begin

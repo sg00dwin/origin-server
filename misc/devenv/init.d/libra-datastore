@@ -55,7 +55,7 @@ force_reload() {
     restart
 }
 
-rh_configure() {
+rh_configure_mongo() {
     # Start mongod server
     start
     retry_cnt=0
@@ -79,6 +79,38 @@ rh_configure() {
          "  | mongo
     # Stop mongod server
     stop
+}
+
+rh_configure_rockmongo() {
+    /bin/cp -r /usr/libexec/li/cartridges/embedded/rockmongo-1.1/info/rockmongo/ /var/www/html/
+    /bin/chmod -R 755 /var/www/html/rockmongo/
+    echo '
+<?php
+$MONGO = array();
+$MONGO["features"]["log_query"] = "off"; //log queries
+$MONGO["features"]["theme"] = "default"; //theme
+$MONGO["features"]["plugins"] = "on"; //plugins
+
+$MONGO["servers"][0]["mongo_host"] = "localhost"; //mongo host
+$MONGO["servers"][0]["mongo_port"] = "27017"; //mongo port
+$MONGO["servers"][0]["mongo_timeout"] = 30; //mongo connection timeout
+$MONGO["servers"][0]["mongo_db"] = "openshift_broker_dev"; //default mongo db to connect, works only if mongo_auth=false
+$MONGO["servers"][0]["mongo_user"] = "libra"; //mongo authentication user name, works only if mongo_auth=false
+$MONGO["servers"][0]["mongo_pass"] = "momo"; //mongo authentication password, works only if mongo_auth=false
+$MONGO["servers"][0]["mongo_auth"] = false; //enable mongo authentication?
+
+$MONGO["servers"][0]["control_auth"] = false; //enable control users, works only if mongo_auth=false
+?>
+' > /var/www/html/rockmongo/config.php
+    echo ' 
+Alias /datastore /var/www/html/rockmongo/
+
+<Directory /var/www/html/rockmongo/>
+Order Allow,Deny
+Allow from All
+</Directory>
+' > /etc/httpd/conf.d/libra-datastore.conf
+    /etc/init.d/httpd restart
 }
 
 rh_status() {
@@ -113,7 +145,7 @@ case "$1" in
         rh_status
         ;;
     configure)
-        rh_configure
+        rh_configure_mongo && rh_configure_rockmongo
         ;;
     condrestart|try-restart)
         rh_status_q || exit 0

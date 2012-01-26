@@ -90,7 +90,7 @@ module Cloud::SDK::Model
     end
     
     def destroy
-      raise UserDeletionException.new("ERROR: unable to create user account #{@uuid}") if @uid.nil? || @homedir.nil? || @uuid.nil?
+      raise UserDeletionException.new("ERROR: unable to destroy user account #{@uuid}") if @uid.nil? || @homedir.nil? || @uuid.nil?
       notify_observers(:before_unix_user_destroy)
       
       cmd = "/bin/ps -U \"#{@uuid}\" -o pid | /bin/grep -v PID | xargs kill -9 2> /dev/null"
@@ -102,7 +102,7 @@ module Cloud::SDK::Model
       FileUtils.rm_rf(@homedir)
 
       out,err,rc = shellCmd("userdel \"#{@uuid}\"")
-      raise UserDeletionException.new("ERROR: unable to create user account #{@uuid}") unless rc == 0
+      raise UserDeletionException.new("ERROR: unable to destroy user account #{@uuid}") unless rc == 0
       notify_observers(:after_unix_user_destroy)
     end
     
@@ -112,8 +112,8 @@ module Cloud::SDK::Model
       cloud_name = @config.get("cloud_name") || "CDK"
       authorized_keys_file = File.join(ssh_dir,"authorized_keys")
       shell    = @config.get("user_shell")     || "/bin/bash"
-      key_type = key_type || "ssh-rsa"
-      comment  = comment  || ""
+      key_type = "ssh-rsa" if key_type.to_s.strip.length == 0
+      comment  = "" unless comment
       
       cmd_entry = "command=\"#{shell}\",no-port-forwarding,no-X11-forwarding #{key_type} #{key} #{cloud_name}-#{@uuid}#{comment}\n"
       FileUtils.mkdir_p ssh_dir

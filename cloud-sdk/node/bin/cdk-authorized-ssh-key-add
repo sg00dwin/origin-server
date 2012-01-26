@@ -24,7 +24,7 @@ cdk-authorized-ssh-key-add: Adds an authorized ssh key to the app.
 
 == Usage
 
-cdk-authorized-ssh-key-add [--with-uuid UUID] [--with-ssh-key KEY]
+cdk-authorized-ssh-key-add [--with-uuid UUID] [--with-ssh-key KEY --with-ssh-key-type KEY_TYPE]
 
 Options:
 -h|--help:

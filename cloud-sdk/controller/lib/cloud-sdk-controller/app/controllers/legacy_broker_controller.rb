@@ -9,10 +9,12 @@ class LegacyBrokerController < ApplicationController
     user = CloudUser.find(@login)
     if user
       user_info = user.as_json
-      user_info["ssh_key"] = user_info["ssh"]
-      user_info.delete("ssh")
+      #FIXME: This is redundant, for now keeping it for backward compatibility
+      key_info = user.get_ssh_key
+      user_info["ssh_key"] = key_info['key'] 
+      user_info["ssh_type"] = key_info['type'] 
       
-      user_info[:rhc_domain] = Rails.application.config.cdk[:domain_suffix]
+      user_info[:rhc_domain] = Rails.configuration.cdk[:domain_suffix]
       app_info = {}
       user.applications.each do |app|
         app_info[app.name] = app.as_json
@@ -37,22 +39,28 @@ class LegacyBrokerController < ApplicationController
         raise Cloud::Sdk::UserKeyException.new("Missing SSH key or key name", 119) if @req.ssh.nil? or @req.key_name.nil?
         if user.ssh_keys
           user.ssh_keys.each do |key_name, key|
-            raise Cloud::Sdk::UserKeyException.new("Key with name #{@req.key_name} already exists. Please choose a different name", 120) if key_name == @req.key_name
-            raise Cloud::Sdk::UserKeyException.new("Given public key is already in use. Use different key or delete conflicting key and retry", 121) if key == @req.ssh
+            raise Cloud::Sdk::UserKeyException.new("Key with name #{@req.key_name} already exists. \
+                                                   Please choose a different name", 120) if key_name == @req.key_name
+            raise Cloud::Sdk::UserKeyException.new("Given public key is already in use. \
+                                                   Use different key or delete conflicting key and retry", 121) if key == @req.ssh
           end
         end
-        @reply.append user.add_secondary_ssh_key(@req.key_name, @req.ssh, @req.key_type)
+        @reply.append user.add_ssh_key(@req.key_name, @req.ssh, @req.key_type)
         user.save
       when "remove-key"
         raise Cloud::Sdk::UserKeyException.new("Missing key name", 119) if @req.key_name.nil?
-        @reply.append user.remove_secondary_ssh_key(@req.key_name)
+        @reply.append user.remove_ssh_key(@req.key_name)
         user.save
       when "update-key"
         raise Cloud::Sdk::UserKeyException.new("Missing SSH key or key name", 119) if @req.ssh.nil? or @req.key_name.nil?
-        @reply.append user.remove_secondary_ssh_key(@req.key_name)
-        @reply.append user.add_secondary_ssh_key(@req.key_name, @req.ssh, @req.key_type)
+        @reply.append user.update_ssh_key(@req.ssh, @req.key_type, @req.key_name)
       when "list-keys"
-        @reply.data = { :keys => user.ssh_keys }.to_json
+        #FIXME: when client tools are updated
+        keys = user.ssh_keys.reject {|k, v| k == CloudUser::DEFAULT_SSH_KEY_NAME }
+        @reply.data = { :keys => keys, 
+                        :ssh_key => user.ssh_keys[CloudUser::DEFAULT_SSH_KEY_NAME]['key'],
+                        :ssh_type => user.ssh_keys[CloudUser::DEFAULT_SSH_KEY_NAME]['type']
+                      }.to_json
       else
         raise Cloud::Sdk::UserKeyException.new("Invalid action #{@req.action}", 111)
       end
@@ -72,7 +80,8 @@ class LegacyBrokerController < ApplicationController
     end
 
     if @req.alter
-      @reply.append cloud_user.update_ssh_key(@req.ssh, @req.key_type)
+      #FIXME: Either this needs to be removed or user should pass key name to alter
+      @reply.append cloud_user.update_ssh_key(@req.ssh, @req.key_type, CloudUser::DEFAULT_SSH_KEY_NAME)
       
       raise Cloud::Sdk::UserException.new("The supplied namespace '#{@req.namespace}' is not allowed", 106) if Cloud::Sdk::ApplicationContainerProxy.blacklisted? @req.namespace            
       @reply.append cloud_user.update_namespace(@req.namespace)
@@ -98,6 +107,7 @@ class LegacyBrokerController < ApplicationController
       cloud_user = CloudUser.new(@login, @req.ssh, @req.namespace, @req.key_type)
       if cloud_user.invalid?
         @reply.resultIO << cloud_user.errors.first[1][:message]
+        @reply.exitcode << cloud_user.errors.first[1][:exit_code]
         render :json => @reply, :status => :bad_request 
         return
       end
@@ -107,7 +117,7 @@ class LegacyBrokerController < ApplicationController
     @reply.data = {
       :rhlogin    => cloud_user.rhlogin,
       :uuid       => cloud_user.uuid,
-      :rhc_domain => Rails.application.config.cdk[:domain_suffix]
+      :rhc_domain => Rails.configuration.cdk[:domain_suffix]
     }.to_json
       
     render :json => @reply
@@ -142,19 +152,16 @@ class LegacyBrokerController < ApplicationController
       app = Application.new(user, @req.app_name, nil, @req.node_profile, @req.cartridge)
       container = Cloud::Sdk::ApplicationContainerProxy.find_available(@req.node_profile)
       check_cartridge_type(app.framework, container, "standalone")
-      if (apps.length >= Rails.application.config.cdk[:per_user_app_limit])
-        raise Cloud::Sdk::UserException.new("#{@login} has already reached the application limit of #{Rails.application.config.cdk[:per_user_app_limit]}", 104) if not user.max_gears
-        if (apps.length >= user.max_gears)
-          raise Cloud::Sdk::UserException.new("#{@login} has already reached the application limit of #{user.max_gears}", 104) 
-        end
+      if (user.consumed_gears >= user.max_gears)
+        raise Cloud::Sdk::UserException.new("#{@login} has already reached the application limit of #{user.max_gears}", 104)
       end
       raise Cloud::Sdk::UserException.new("The supplied application name '#{app.name}' is not allowed", 105) if Cloud::Sdk::ApplicationContainerProxy.blacklisted? app.name
       if app.valid?
         begin
           @reply.append app.create(container)
           @reply.append app.configure_dependencies
+          @reply.append app.add_ssh_keys
           @reply.append app.add_system_ssh_keys
-          @reply.append app.add_secondary_ssh_keys
           @reply.append app.add_system_env_vars
           begin
             @reply.append app.create_dns
@@ -175,8 +182,6 @@ class LegacyBrokerController < ApplicationController
           end
         rescue Exception => e
           if app.persisted?
-            Rails.logger.debug e.message
-            Rails.logger.debug e.backtrace.inspect
             @reply.append app.deconfigure_dependencies
             @reply.append app.destroy
             app.delete

@@ -7,12 +7,37 @@
 UID_BEGIN=500
 # UID_END=12700   # Too large for port numbers
 UID_END=6500
-NTABLE="rhc-user-table"
+NTABLE="rhc-user-table"             # Switchyard for app UID tables
+
+# Cross-app restrictions
 UTABLE="rhc-app-table"
+UIFACE="lo"
+UWHOLE_NET="127.0.0.0"
+UWHOLE_NM="8"
+USAFE_NET="127.0.0.0"
+USAFE_NM="25"
+UAPP_BASE="127.0.250.0"
+UAPP_NM="25"
+# Example of use:
+# iptables -I rhc-app-table -d 127.0.250.0/25 -m owner --uid-owner 500 -j ACCEPT
+
+
+# Rules for allowing a UID to access a proxy
 PTABLE="rhc-port-table"
 PIFACE="eth0"
 PORT_BEGIN=35531
 PORTS_PER_USER=5
+# Example of use:
+# iptables -I rhc-port-table -p tcp --dport 35531:35535 -m owner --uid-owner 500 -j ACCEPT
+
+
+# Proxy inbound and DNAT rules
+XSTABLE="rhc-proxy-servers-table"   # From express servers
+XPTABLE="rhc-proxy-dnat-table"      # DNAT configuration
+# Example of use:
+# iptables -t nat -I rhc-proxy-dnat-table -p tcp --dport 40960 -j DNAT --to-destination 192.168.100.100:8080
+# iptables -I rhc-proxy-servers-table -s 209.132.181.86 -j ACCEPT
+
 
 DEBUG=""
 SYSCONFIG=""
@@ -94,17 +119,36 @@ function iptables {
 }
 
 function new_table {
+  tbl="$2"
+  if [ "$tbl" = "" ]; then
+    tbl="filter"
+  fi
   if [ "${SYSCONFIG}" ]; then
     echo ':'"$1"' - [0:0]'
   else
-    iptables -N "$1" || :
-    iptables -F "$1"
+    iptables -t "$tbl" -N "$1" || :
+    iptables -t "$tbl" -F "$1"
   fi
 }
 
+function decode_ip {
+  ret=0
+  quad=16777216
+  for byt in `echo "$1" | sed -e 's/\./ /g'`; do
+    ret=$(($ret + $(($byt * $quad))))
+    quad=$(($quad/256))
+  done
+
+  echo $ret
+}
+
 function uid_to_ip {
-  # Logic copied from rhc-ip-prep
-  a=$(($1*128+2130706432))
+  # This works on IPv4.  Switch to a real language
+  # and use inet_ntop/inet_pton for ipv6.
+  block=$((2**$((32 - $UAPP_NM))))
+  start=`decode_ip $UAPP_BASE`
+
+  a=$(($1*$block+$start))
   h1=$(($a/16777216))
   h2=$(($(($a%16777216))/65536))
   h3=$(($(($a%65536))/256))
@@ -126,6 +170,21 @@ function uid_to_portend {
 new_table ${NTABLE}
 new_table ${UTABLE}
 new_table ${PTABLE}
+new_table ${XSTABLE}
+new_table ${XPTABLE} nat
+
+# INPUT proxy table from allowed servers only.  Blind guess where to
+# insert this, 4'th place is below the lo and existing connection
+# rules.
+iptables -I INPUT 4 -p tcp -i ${PIFACE} \
+  -m conntrack --ctstate DNAT,NEW \
+  -j ${XSTABLE}
+
+
+# Proxy DNAT to internal servers
+iptables -t nat -A PREROUTING -p tcp -i ${PIFACE} \
+  --dport `uid_to_portbegin $UID_BEGIN`:`uid_to_portend $UID_END` \
+  -j ${XPTABLE}
 
 # Don't do the global UID match in every rule
 iptables -A OUTPUT \
@@ -138,34 +197,29 @@ iptables -A ${NTABLE} \
   -j ACCEPT
 
 # Bottom block is system services
-iptables -A ${NTABLE} -o lo -d 127.0.0.0/25 \
+iptables -A ${NTABLE} -o ${UIFACE} -d ${USAFE_NET}/${USAFE_NM} \
   -m state --state NEW \
   -j ACCEPT
 
-# New connections with specific uids get checked on the app table.
-iptables -A ${NTABLE} -o lo -d 127.0.0.0/8 \
-  -m state --state NEW \
-  -j ${UTABLE}
-
 # New port proxy connections
 iptables -A ${NTABLE} -p tcp -o ${PIFACE} \
-  -m multiport \
-  --dports `uid_to_portbegin $UID_BEGIN`:`uid_to_portend $UID_END` \
+  --dport `uid_to_portbegin $UID_BEGIN`:`uid_to_portend $UID_END` \
   -m state --state NEW \
   -j ${PTABLE}
 
-# Per UID rules
+iptables -A ${PTABLE} -j REJECT --reject-with icmp-host-prohibited
+
+
+# New connections with specific uids get checked on the app table.
+iptables -A ${NTABLE} -o ${UIFACE} -d ${UWHOLE_NET}/${UWHOLE_NM} \
+  -m state --state NEW \
+  -j ${UTABLE}
+
 seq ${UID_BEGIN} ${UID_END} | while read uid; do
   iptables -A ${UTABLE} -d `uid_to_ip $uid`/25 \
     -m owner --uid-owner $uid \
     -j ACCEPT
 done
+
 iptables -A ${UTABLE} -j REJECT --reject-with icmp-host-prohibited
 
-seq ${UID_BEGIN} ${UID_END} | while read uid; do
-  iptables -A ${PTABLE} -p tcp \
-    -m multiport --dports `uid_to_portbegin $uid`:`uid_to_portend $uid` \
-    -m owner --uid-owner $uid \
-    -j ACCEPT
-done
-iptables -A ${PTABLE} -j REJECT --reject-with icmp-host-prohibited

@@ -1,8 +1,8 @@
 class CloudUser < Cloud::Sdk::UserModel
-  attr_accessor :rhlogin, :uuid, :system_ssh_keys, :env_vars, :ssh_keys, :ssh, :ssh_type, :namespace, :key, :type, :max_gears
+  attr_accessor :rhlogin, :uuid, :system_ssh_keys, :env_vars, :ssh_keys, :namespace, :max_gears, :consumed_gears
   primary_key :rhlogin
-  private :rhlogin=, :uuid=, :ssh=, :namespace=
-  exclude_attributes :key, :type
+  private :rhlogin=, :uuid=, :namespace=
+  DEFAULT_SSH_KEY_NAME = "default"
   
   validates_each :rhlogin do |record, attribute, val|
     record.errors.add(attribute, {:message => "Invalid characters found in RHlogin '#{val}' ", :code => 107}) if val =~ /["\$\^<>\|%\/;:,\\\*=~]/
@@ -14,23 +14,31 @@ class CloudUser < Cloud::Sdk::UserModel
     end
   end
   
-  validates_each :ssh do |record, attribute, val|
-    if !(val =~ /\A[A-Za-z0-9\+\/=]+\z/)
-      record.errors.add attribute, {:message => "Invalid ssh key: #{val}", :exit_code => 108}
-    end
+  validates_each :ssh_keys do |record, attribute, val|
+    val.each do |key_name, key_info|
+      if !(key_name =~ /\A[A-Za-z0-9]+\z/)
+        record.errors.add attribute, {:message => "Invalid key name: #{key_name}", :exit_code => 117}
+      end
+      if !(key_info['type'] =~ /^(ssh-rsa|ssh-dss)$/)
+        record.errors.add attribute, {:message => "Invalid key type: #{key_info['type']}", :exit_code => 116}
+      end
+      if !(key_info['key'] =~ /\A[A-Za-z0-9\+\/=]+\z/)
+        record.errors.add attribute, {:message => "Invalid ssh key: #{key_info['key']}", :exit_code => 108}
+      end
+    end if val
   end
-  
-  validates_each :ssh_type, :allow_nil => true do |record, attribute, val|
-    if !(val =~ /^(ssh-rsa|ssh-dss)$/)
-      record.errors.add attribute, {:message => "Invalid ssh key type: #{val}", :exit_code => 116}
-    end
-  end
-  
-  def initialize(rhlogin=nil, ssh=nil, namespace=nil, ssh_type='ssh-rsa')
+
+  def initialize(rhlogin=nil, ssh=nil, namespace=nil, ssh_type=nil, key_name=nil)
     super()
     ssh_type = "ssh-rsa" if ssh_type.to_s.strip.length == 0
-    self.rhlogin, self.ssh, self.namespace, self.ssh_type = rhlogin, ssh, namespace, ssh_type
-    self.max_gears = nil
+    self.ssh_keys = {} unless self.ssh_keys
+    key_name = CloudUser::DEFAULT_SSH_KEY_NAME if key_name.to_s.strip.length == 0
+
+    self.ssh_keys[key_name] = { "key" => ssh, "type" => ssh_type }
+    self.rhlogin = rhlogin
+    self.namespace = namespace
+    self.max_gears = (defined?(Rails.configuration)) ? Rails.configuration.cdk[:default_max_gears] : 5
+    self.consumed_gears = 0
   end
   
   def save
@@ -93,25 +101,36 @@ class CloudUser < Cloud::Sdk::UserModel
     result
   end
   
-  def add_secondary_ssh_key(key_name, key, key_type=nil)
+  def add_ssh_key(key_name, key, key_type=nil)
     self.ssh_keys = {} unless self.ssh_keys
     result = ResultIO.new
-    self.ssh_keys[key_name] = { :key => key, :type => key_type }
+
+    key_type = "ssh-rsa" if key_type.to_s.strip.length == 0
+    self.ssh_keys[key_name] = { "key" => key, "type" => key_type }
     self.save
+
     applications.each do |app|
-      Rails.logger.debug "DEBUG: Adding secondary key named #{key_name} to app: #{app.name} for user #{@name}"
+      Rails.logger.debug "DEBUG: Adding ssh key named #{key_name} to app: #{app.name} for user #{@name}"
       result.append app.add_authorized_ssh_key(key, key_type, key_name)
     end
     result
   end
   
-  def remove_secondary_ssh_key(key_name)
+  def remove_ssh_key(key_name, num_keys_check=true)
     self.ssh_keys = {} unless self.ssh_keys    
     result = ResultIO.new
+
+    # validations
+    raise Cloud::Sdk::UserKeyException.new("ERROR: Can't remove all ssh keys for user #{self.rhlogin}", 
+                                           122) if num_keys_check and self.ssh_keys.size <= 1
+    #FIXME: remove this check when client tools are updated
+    raise Cloud::Sdk::UserKeyException.new("ERROR: Can't remove '#{key_name}' ssh key for user #{self.rhlogin}", 
+                                           124) if num_keys_check and (key_name == CloudUser::DEFAULT_SSH_KEY_NAME)
     key = self.ssh_keys[key_name]
     raise Cloud::Sdk::UserKeyException.new("ERROR: Key name '#{key_name}' doesn't exist for user #{self.rhlogin}", 118) unless key
+
     applications.each do |app|
-      Rails.logger.debug "DEBUG: Removing secondary key named #{key_name} from app: #{app.name} for user #{@name}"
+      Rails.logger.debug "DEBUG: Removing ssh key named #{key_name} from app: #{app.name} for user #{@name}"
       result.append app.remove_authorized_ssh_key(key)
     end
     
@@ -119,7 +138,19 @@ class CloudUser < Cloud::Sdk::UserModel
     self.save
     result
   end
-  
+
+  def update_ssh_key(key, key_type=nil, key_name=nil)
+    key_name = CloudUser::DEFAULT_SSH_KEY_NAME if key_name.to_s.strip.length == 0
+    remove_ssh_key(key_name, false)
+    add_ssh_key(key_name, key, key_type)
+  end
+ 
+  def get_ssh_key
+    raise Cloud::Sdk::UserKeyException.new("ERROR: At least one ssh key doesn't exist for user #{self.rhlogin}", 
+                                           123) unless self.ssh_keys and self.ssh_keys.kind_of?(Hash)
+    (self.ssh_keys.key?(CloudUser::DEFAULT_SSH_KEY_NAME)) ? self.ssh_keys[CloudUser::DEFAULT_SSH_KEY_NAME] : self.ssh_keys.keys[0]
+  end
+ 
   def add_env_var(key, value)
     result = ResultIO.new
     self.env_vars = {} unless self.env_vars
@@ -142,20 +173,6 @@ class CloudUser < Cloud::Sdk::UserModel
       result.append app.remove_env_var(key)
     end
     result
-  end
-  
-  def update_ssh_key(new_key, key_type)
-    reply = ResultIO.new    
-    return reply if self.ssh == new_key
-    
-    self.applications.each do |app|
-      reply.append app.remove_authorized_ssh_key(self.ssh)
-      reply.append app.add_authorized_ssh_key(new_key, key_type)
-    end
-    @ssh = new_key
-    @ssh_type = key_type
-    reply.append self.save
-    reply
   end
   
   def update_namespace(new_ns)
@@ -208,7 +225,7 @@ class CloudUser < Cloud::Sdk::UserModel
       app.embedded.each_key do |framework|
         if app.embedded[framework].has_key?('info')
           info = app.embedded[framework]['info']
-          info.gsub!(/-#{old_ns}.#{Rails.application.config.cdk[:domain_suffix]}/, "-#{new_ns}.#{Rails.application.config.cdk[:domain_suffix]}")
+          info.gsub!(/-#{old_ns}.#{Rails.configuration.cdk[:domain_suffix]}/, "-#{new_ns}.#{Rails.configuration.cdk[:domain_suffix]}")
           app.embedded[framework]['info'] = info
         end
       end

@@ -11,7 +11,7 @@ include OpenShift
 # Controller cartridge command paths
 $cartridge_root = '/usr/libexec/li/cartridges'
 $controller_config_path = "cdk-app-create"
-$controller_config_format = "#{$controller_config_path} -c '%s' -s '%s'"
+$controller_config_format = "#{$controller_config_path} -c '%s'"
 $controller_deconfig_path = "cdk-app-destroy"
 $controller_deconfig_format = "#{$controller_deconfig_path} -c '%s'"
 $home_root = "/var/lib/libra"
@@ -22,8 +22,8 @@ $home_root = "/var/lib/libra"
 
 # These depend on test data of this form:
 #    And the following test data
-#      | accountname                      | ssh_key_name | ssh_pub_key |
-#      | 00112233445566778899aabbccdde000 | testkeyname0 | testkey0    |
+#      | accountname 
+#      | 00112233445566778899aabbccdde000
 
 
 # Convert a unix UID to a hex string suitable for use as a tc(1m) class value
@@ -37,24 +37,14 @@ def gen_small_uuid()
     %x[/usr/bin/uuidgen].gsub('-', '').strip
 end
 
-def parse_ssh_pub_key filename
-  key_pattern = /^(ssh-rsa|ssh-dss) (\S+) (\S+)\n$/
-  key_string = File.open(filename, &:readline)  
-  key_match = key_string.match key_pattern
-  key_match[2..3] if key_match
-end
-
 Given /^a new guest account$/ do
   # generate a random account name and use the stock SSH keys
   # generate a random UUID and use the stock keys
   acctname = gen_small_uuid
-  ssh_key_string, ssh_key_name = parse_ssh_pub_key $test_pub_key
   @account = {
     'accountname' => acctname,
-    'ssh_key_string' => ssh_key_string,
-    'ssh_key_name' => ssh_key_name
   }
-  command = $controller_config_format % [acctname, ssh_key_string]
+  command = $controller_config_format % [acctname]
 
   run command
   # get and store the account UID's by name
@@ -70,13 +60,10 @@ When /^I create a guest account$/ do
   # generate a random account name and use the stock SSH keys
   # generate a random UUID and use the stock keys
   acctname = gen_small_uuid
-  ssh_key_string, ssh_key_name = parse_ssh_pub_key $test_pub_key
   @account = {
       'accountname' => acctname,
-      'ssh_key_string' => ssh_key_string,
-      'ssh_key_name' => ssh_key_name
     }
-  command = $controller_config_format % [acctname, ssh_key_string]
+  command = $controller_config_format % [acctname]
   run command
   # get and store the account UID's by name
   @account['uid'] = Etc.getpwnam(acctname).uid
@@ -85,9 +72,7 @@ end
 When /^I delete the guest account$/ do
   # call /usr/libexec/li/cartridges  @table.hashes.each do |row|
   
-  command = $controller_deconfig_format % [@account['accountname'],
-                                           @account['ssh_key_string'],
-                                           @account['ssh_key_name']]
+  command = $controller_deconfig_format % [@account['accountname']]
   run command
 end
 
@@ -198,23 +183,6 @@ Then /^a traffic control entry should( not)? exist$/ do |negate|
     @result.should_not be == ""
   end
 end
-
-# Account home contents
-
-# check the ssh keys?
-Then /^the account should( not)? have an SSH key with the correct label$/ do |negate|
-  ssh_format = '/var/lib/libra/%s/.ssh/authorized_keys'
-  auth_keys_filename = ssh_format % @account['accountname']
-  exists = File.exists? auth_keys_filename
-
-  if negate
-    exists.should be_false
-  else
-    exists.should be_true
-  end
-end
-# 
-
 
 # ===========================================================================
 # Generic App Checks

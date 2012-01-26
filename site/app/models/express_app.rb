@@ -13,7 +13,7 @@ class ExpressApp
   
   validates_presence_of :rhlogin
   validates :app_name,  :presence => true,
-                        :length => {:maximum => 16},
+                        :length => {:maximum => 32},
                         :format => {:with => /^[A-Za-z0-9]+$/}
   validates :cartridge, :presence => true,
                         :format => {:with => /^[\w\-\.]+$/}

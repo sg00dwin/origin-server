@@ -1,11 +1,13 @@
 require 'mcollective'
 require 'openshift'
+require 'express/broker/nurture'
+require 'express/broker/apptegic'
 
 include MCollective::RPC
 module Express
   module Broker
     class ApplicationContainerProxy
-      @@C_CONTROLLER = 'li-controller'
+      @@C_CONTROLLER = 'cloud-sdk-node'
       attr_accessor :id, :current_capacity, :district
       
       def initialize(id, current_capacity=nil, district=nil)
@@ -14,13 +16,14 @@ module Express
         @district = district
       end
       
-      def self.find_available_impl(node_profile=nil)
-        district_uuid = nil
-        if Rails.application.config.districts[:enabled]
+      def self.find_available_impl(node_profile=nil, district_uuid=nil)
+        if Rails.configuration.districts[:enabled] && (!district_uuid || district_uuid == 'NONE')  
           district = District.find_available()
           if district
             district_uuid = district.uuid
             Rails.logger.debug "DEBUG: find_available_impl: district_uuid: #{district_uuid}"
+          elsif Rails.configuration.districts[:require_for_app_create]
+            raise Cloud::Sdk::NodeException.new("No district nodes available.  If the problem persists please contact Red Hat support.", 140)
           end
         end
         current_server, current_capacity = rpc_find_available(node_profile, district_uuid)
@@ -39,7 +42,7 @@ module Express
         OpenShift::Blacklist.in_blacklist?(name)
       end
       
-      IGNORE_CARTS = %w(abstract abstract-httpd li-controller embedded)
+      IGNORE_CARTS = %w(abstract abstract-httpd embedded)
       def get_available_cartridges(cart_type)
         cartridges = []
         
@@ -57,29 +60,47 @@ module Express
         
         cartridges
       end
-      
-      def reserve_uid
+
+      def reserve_uid(district_uuid=nil)
         reserved_uid = nil
-        if @district
-          reserved_uid = @district.reserve_uid
+        if Rails.configuration.districts[:enabled]
+          if @district
+            district_uuid = @district.uuid
+          else
+            district_uuid = get_district_uuid unless district_uuid
+          end
+          if district_uuid && district_uuid != 'NONE'
+            reserved_uid = Cloud::Sdk::DataStore.instance.reserve_district_uid(district_uuid)
+            raise Cloud::Sdk::CdkException.new("uid could not be reserved") unless reserved_uid
+          end
         end
         reserved_uid
       end
       
-      def create(app, uid=nil)
-        result = execute_direct(@@C_CONTROLLER, 'configure', "-c '#{app.uuid}' -i '#{uid}' -s '#{app.user.ssh}' -t '#{app.user.ssh_type}'")
+      def unreserve_uid(uid, district_uuid=nil)
+        if Rails.configuration.districts[:enabled]
+          if @district
+            district_uuid = @district.uuid
+          else
+            district_uuid = get_district_uuid unless district_uuid
+          end
+          if district_uuid && district_uuid != 'NONE'
+            Cloud::Sdk::DataStore.instance.unreserve_district_uid(district_uuid, uid)
+          end
+        end
+      end
+
+      def create(app)
+        result = execute_direct(@@C_CONTROLLER, 'configure', "-c '#{app.uuid}' -i '#{app.uid}'")
         parse_result(result)
       end
     
-      def destroy(app)
+      def destroy(app, keep_uid=false)
         result = execute_direct(@@C_CONTROLLER, 'deconfigure', "-c '#{app.uuid}'")
         result_io = parse_result(result)
         
-        if Rails.application.config.districts[:enabled]
-          district_uuid = rpc_get_fact_direct('district')
-          if district_uuid && district_uuid != 'NONE'
-            unreserve_district_uid(district_uuid, app.uid)
-          end
+        unless keep_uid
+          unreserve_uid(app.uid)
         end
         return result_io
       end
@@ -131,6 +152,14 @@ module Express
       
       def get_public_hostname
         rpc_get_fact_direct('public_hostname')
+      end
+      
+      def get_capacity
+        rpc_get_fact_direct('capacity').to_i
+      end
+      
+      def get_district_uuid
+        rpc_get_fact_direct('district')
       end
       
       def get_ip_address
@@ -221,7 +250,7 @@ module Express
         run_cartridge_command('embedded/' + component, app, "status")    
       end
       
-      def move_app(app, destination_container, node_profile=nil)
+      def move_app(app, destination_container, destination_district_uuid=nil, allow_change_district=false, node_profile=nil)
         source_container = app.container
 
         #unless app.embedded.nil?
@@ -234,11 +263,23 @@ module Express
           app.node_profile = node_profile
         end
 
+        source_district_uuid = source_container.get_district_uuid
         if destination_container.nil?
-          destination_container = Cloud::Sdk::ApplicationContainerProxy.find_available(app.node_profile)
+          unless allow_change_district
+            destination_district_uuid = source_district_uuid
+          end
+          destination_container = ApplicationContainerProxy.find_available_impl(app.node_profile, destination_district_uuid)
+          destination_district_uuid = destination_container.get_district_uuid if allow_change_district
+        else
+          destination_district_uuid = destination_container.get_district_uuid
+          unless allow_change_district || (source_district_uuid == destination_district_uuid)
+            raise Cloud::Sdk::UserException.new("Resulting move would change districts from '#{source_district_uuid}' to '#{destination_district_uuid}'", 1)
+          end
         end
+        
+        keep_uid = destination_district_uuid == source_district_uuid
 
-        if source_container.id == destination_container.id
+        if keep_uid
           raise Cloud::Sdk::UserException.new("Error moving app.  Old and new servers are the same: #{source_container.id}", 1)
         end
 
@@ -267,6 +308,9 @@ module Express
             end
 
             begin
+              unless keep_uid
+                app.uid = destination_container.reserve_uid(destination_district_uuid)
+              end
               log_debug "DEBUG: Creating new account for app '#{app.name}' on #{destination_container.id}"
               reply.append destination_container.create(app)
   
@@ -292,7 +336,7 @@ module Express
                     reply.append destination_container.send(:run_cartridge_command, "embedded/" + cart, app, "post-move", nil, false)
                   end
                 end
-  
+
                 unless app.aliases.nil?
                   app.aliases.each do |server_alias|
                     destination_container.add_alias(app, app.framework, server_alias)
@@ -321,7 +365,7 @@ module Express
               reply.append app.recreate_dns
               app.save
             rescue Exception => e
-              reply.append destination_container.destroy(app)
+              reply.append destination_container.destroy(app, keep_uid)
               raise
             end
           rescue Exception => e
@@ -339,14 +383,14 @@ module Express
           reply.append source_container.run_cartridge_command(app.framework, app, "start", nil, false)
           raise
         ensure
-          log_debug "URL: http://#{app.name}-#{app.user.namespace}.#{Rails.application.config.cdk[:domain_suffix]}"
+          log_debug "URL: http://#{app.name}-#{app.user.namespace}.#{Rails.configuration.cdk[:domain_suffix]}"
         end
 
         log_debug "DEBUG: Deconfiguring old app '#{app.name}' on #{source_container.id} after move"
         (1..num_tries).each do |i|
           begin
             reply.append source_container.run_cartridge_command(app.framework, app, "deconfigure", nil, false)
-            reply.append source_container.destroy(app)
+            reply.append source_container.destroy(app, keep_uid)
             break
           rescue Exception => e
             log_debug "DEBUG: Error deconfiguring old app on try #{i}: #{e.message}"
@@ -557,6 +601,11 @@ module Express
       def run_cartridge_command(framework, app, command, arg=nil, allow_move=true)
         arguments = "'#{app.name}' '#{app.user.namespace}' '#{app.uuid}'"
         arguments += " '#{arg}'" if arg
+          
+        if allow_move
+          Nurture.application(app.user.rhlogin, app.user.uuid, app.name, app.user.namespace, framework, command, app.uuid)
+          Apptegic.application(app.user.rhlogin, app.user.uuid, app.name, app.user.namespace, framework, command, app.uuid)
+        end
         
         result = execute_direct(framework, command, arguments)
         begin
@@ -608,6 +657,7 @@ module Express
       def self.rpc_find_available(node_profile=nil, district_uuid=nil, forceRediscovery=false)
         current_server, current_capacity = nil, nil
         additional_filters = []
+        district_uuid = nil if district_uuid == 'NONE'
         if node_profile
           additional_filters.push({:fact => "node_profile",
                                    :value => node_profile,
@@ -644,7 +694,7 @@ module Express
       
       def self.rpc_options
         # Make a deep copy of the default options
-        Marshal::load(Marshal::dump(Rails.application.config.rpc_opts))
+        Marshal::load(Marshal::dump(Rails.configuration.rpc_opts))
       end
     
       #
@@ -706,7 +756,7 @@ module Express
             if (result && defined? result.results && result.results.has_key?(:data))
               value = result.results[:data][:value]
             else
-              raise NodeException.new(143), "Node execution failure (error getting fact).  If the problem persists please contact Red Hat support."
+              raise Cloud::Sdk::NodeException.new("Node execution failure (error getting fact).  If the problem persists please contact Red Hat support.", 143)
             end
           ensure
             rpc_client.disconnect

@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.85.7
+Version:       0.85.8
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -33,7 +33,9 @@ cp libra.pp %{buildroot}%{_datadir}/selinux/packages/libra.pp
 rm -rf %{buildroot}
 
 %post
-/usr/sbin/semodule -i %{_datadir}/selinux/packages/libra.pp
+/usr/sbin/semodule -i %{_datadir}/selinux/packages/libra.pp || :
+# This can be removed after 2012-02-06
+#/usr/sbin/semanage node -d -t node_t -r s0 -p ipv4 -M 255.255.255.255 127.0.0.1 || :
 
 # Bring in external smtp ports but _NOT_ 25.
 #semanage -i - << _EOF
@@ -46,6 +48,10 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Tue Jan 24 2012 Dan McPherson <dmcphers@redhat.com> 0.85.8-1
+- Dontaudit leaked file descriptors stdin/sdout from libra initrc domain to
+  mail program (dwalsh@redhat.com)
+
 * Fri Jan 20 2012 Mike McGrath <mmcgrath@redhat.com> 0.85.7-1
 - Add access to allow relabeling of privledged part of the openssh process
   (dwalsh@redhat.com)

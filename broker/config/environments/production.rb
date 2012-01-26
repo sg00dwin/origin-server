@@ -54,8 +54,9 @@ Broker::Application.configure do
   
   config.districts = {
     :enabled => true,
-    :max_capacity => 6000,
-    :first_uid => 1000
+    :require_for_app_create => true,
+    :max_capacity => 6000, # Only used with district create.  Modify capacity through rhc-admin-ctl-district.
+    :first_uid => 1000 # Can not modify after district is created.  Only affects new districts.
   }
   
   config.dns = {
@@ -86,14 +87,14 @@ Broker::Application.configure do
   }
   
   config.datastore_mongo = {
-    :collection => "district"
+    :collections => {:district => "district"}
   }
   
   config.analytics = {
     :nurture_enabled => true,
     :nurture_username => "admin",
     :nurture_password => "password",
-    :nurture_url => "http://69.164.192.124:4500/",
+    :nurture_url => "https://libra-makara.nurturehq.com/",
     
     :apptegic_enabled => true,
     :apptegic_url => "https://redhat.apptegic.com/httpreceiver",
@@ -105,15 +106,15 @@ Broker::Application.configure do
   # CDK Config
   config.cdk = {
     :domain_suffix => "rhcloud.com",
-    :per_user_app_limit => 5,
+    :default_max_gears => 5,
 
     :datastore_mongo => {
       :host => "HOST_NAME",
       :port => 27017,
       :user => "USER_NAME",
       :password => "PASSWORD",
-      :db => "DB_NAME",
-      :collection => "COLLECTION_NAME"
+      :db => "openshift_broker",
+      :collections => {:user => "user"}
     }
   }
 

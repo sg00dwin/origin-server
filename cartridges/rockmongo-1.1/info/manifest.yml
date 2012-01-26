@@ -2,7 +2,7 @@ Name: rhc-cartridge-rockmongo
 Display-Name: rockmongo v1.1 (noarch)
 Description: Cartridge packaging rockmongo
 Version: 1.1.0
-License: GPLv2
+License: ASL 2.0
 Vendor: code.google.com/p/rock-php/wiki/rock_mongo
 Provides:
   - "rockmongo"
