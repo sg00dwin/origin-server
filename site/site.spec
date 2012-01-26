@@ -12,10 +12,10 @@ Source0:   rhc-site-%{version}.tar.gz
 
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 
-BuildRequires: rubygem-rake
-BuildRequires: rubygem-rails
-BuildRequires: rubygem-barista
-BuildRequires: rubygem-crack
+BuildRequires: libxml2-devel
+BuildRequires: libxslt-devel
+BuildRequires: gcc-c++
+BuildRequires: rubygem-bundler
 
 Requires:  rhc-common
 Requires:  rhc-server-common
@@ -45,7 +45,8 @@ authorization and also the workflows to request access.
 %setup -q
 
 %build
-rake barista:brew
+bundle install
+bundle exec rake barista:brew
 
 %install
 rm -rf %{buildroot}
