@@ -1,8 +1,8 @@
 = form_for :express_domain, :url => express_domains_path, :html => {:style => 'width:auto;'} do |f|
   = f.hidden_field :dom_action, :value => 'create'
   = f.hidden_field :form_type, :value => 'domain'
-  %div
-    %span{:style => 'float:left;margin-top:4px;text-align:right;width:150px;'} http://myapps-
-    = f.text_field :namespace, :style => 'display: inline;width:auto;'
-    %span .rhcloud.com
-    = f.submit "Save", :style => 'margin-left:154px;width:auto;'
+  %div.inline
+    = f.label :namespace, "http://myapp-", :style => 'display:inline'
+    = f.text_field :namespace, :style => 'display:inline'
+    = f.label :namespace, ".rhcloud.com", :style => 'display:inline'
+    = f.submit "Create", :style => 'display:inline;width:auto;'
