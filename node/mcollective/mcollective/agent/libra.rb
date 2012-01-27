@@ -222,6 +222,24 @@ module MCollective
         end
         reply[:exitcode] = 0
       end
+      
+      #
+      # Returns whether a uid or gid is already reserved on the system
+      #
+      def has_uid_or_gid_action
+        validate :uid, /^[0-9]+$/
+        uid = request[:uid].to_i
+
+        uids = IO.readlines("/etc/passwd").map{ |line| line.split(":")[2].to_i }
+        gids = IO.readlines("/etc/group").map{ |line| line.split(":")[2].to_i }
+
+        if uids.include?(uid) || gids.include?(uid)
+          reply[:output] = true
+        else
+          reply[:output] = false
+        end
+        reply[:exitcode] = 0
+      end
 
     end
   end
