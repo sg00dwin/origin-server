@@ -91,7 +91,7 @@ class LegacyBrokerController < ApplicationController
          return
        end
        if not cloud_user.applications.empty?
-         @reply.resultIO << "Cannot remove namespace #{cloud_user.namespace}. Remove existing apps first.\n"
+         @reply.resultIO << "Cannot remove namespace #{cloud_user.namespace}. Remove existing app(s) first: "
          @reply.resultIO << cloud_user.applications.map{|a| a.name}.join("\n")
          @reply.exitcode = 106 
          render :json => @reply, :status => :bad_request

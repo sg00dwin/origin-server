@@ -142,6 +142,12 @@ class DevEnv < Thor
     end
     
   end
+  
+  desc "write_sync_history", "Write out the sync history so updates won't happen for already installed changes"
+  def write_sync_history()
+    options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
+    get_sync_dirs
+  end
 
   desc "build NAME BUILD_NUM", "Build a new devenv AMI with the given NAME"
   method_option :register, :type => :boolean, :desc => "Register the instance"
@@ -206,7 +212,8 @@ class DevEnv < Thor
   
         if options.install_from_source
           cmd = 'set -e; sh li-devenv.sh candidate --install_build_prereqs'
-          ssh(hostname, cmd, 600)
+          # Setup sync_dirs so first sync will be faster
+          ssh(hostname, 'build/devenv write_sync_history', 120)
           print "Performing clean install from source..."
           cmd = 'set -e; sh li-devenv.sh candidate --install_from_source'
         else
