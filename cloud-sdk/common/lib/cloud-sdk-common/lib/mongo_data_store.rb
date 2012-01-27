@@ -176,12 +176,14 @@ module Cloud::Sdk
     end
 
     def self.substitute_chars(app, from_char, to_char)
-      embedded_carts = {}
-      app["embedded"].each do |cart_name, cart_info|
-        cart_name = cart_name.gsub(from_char, to_char)
-        embedded_carts[cart_name] = cart_info
-      end if app and app["embedded"]
-      app["embedded"] = embedded_carts if app
+      if app and app["embedded"]
+        embedded_carts = {}
+        app["embedded"].each do |cart_name, cart_info|
+          cart_name = cart_name.gsub(from_char, to_char)
+          embedded_carts[cart_name] = cart_info
+        end
+        app["embedded"] = embedded_carts
+      end
     end
 
   end

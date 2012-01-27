@@ -29,12 +29,16 @@ module Cloud
       def save(login)
         id_var = self.class.pk || "uuid"
         if @persisted
-          unless changes.empty?
-            changed_attrs = {}
-            changes.each do |key, value|
-              changed_attrs[key] = value[1] 
+          if supports_partial_updates?
+            unless changes.empty?
+              changed_attrs = {}
+              changes.each do |key, value|
+                changed_attrs[key] = value[1]
+              end
+              DataStore.instance.save(self.class.name, login, instance_variable_get("@#{id_var}"), changed_attrs)
             end
-            DataStore.instance.save(self.class.name, login, instance_variable_get("@#{id_var}"), changed_attrs)
+          else
+            DataStore.instance.save(self.class.name, login, instance_variable_get("@#{id_var}"), self.attributes)
           end
         else
           DataStore.instance.create(self.class.name, login, instance_variable_get("@#{id_var}"), self.attributes)
@@ -48,6 +52,10 @@ module Cloud
       end
       
       protected
+      
+      def supports_partial_updates?
+        return true
+      end
       
       def self.json_to_obj(json)
         id_var = @primary_key || "uuid"
