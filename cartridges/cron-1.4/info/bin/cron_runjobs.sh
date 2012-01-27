@@ -56,11 +56,12 @@ if [ -d "$SCRIPTS_DIR" ]; then
       mv -f "$CART_INSTANCE_DIR/log/cron.$freq.log" "$CART_INSTANCE_DIR/log/cron.$freq.log.1"
    fi
 
-   cnt75=$(seq 75)
-   separator=${cnt75//??/_}
-   echo $separator
-   echo "`date`: START $freq cron run" >> $CART_INSTANCE_DIR/log/cron.$freq.log
-   echo $separator
+   separator=$(seq -s_ 75 | tr -d '[:digit:]')
+   {
+      echo $separator
+      echo "`date`: START $freq cron run"
+      echo $separator
+   } >> $CART_INSTANCE_DIR/log/cron.$freq.log
 
    script_list=$(ls "$SCRIPTS_DIR")
    $executor <<RUN_USER_SCRIPTS_EOF
@@ -77,9 +78,11 @@ RUN_USER_SCRIPTS_EOF
       echo "$wmsg" >> $CART_INSTANCE_DIR/log/cron.$freq.log
    fi
 
-   echo $separator
-   echo "`date`: END $freq cron run - status=$status" >> $CART_INSTANCE_DIR/log/cron.$freq.log
-   echo $separator
+   {
+      echo $separator >> $CART_INSTANCE_DIR/log/cron.$freq.log
+      echo "`date`: END $freq cron run - status=$status"
+      echo $separator
+   } >> $CART_INSTANCE_DIR/log/cron.$freq.log
 
 fi
 
