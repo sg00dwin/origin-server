@@ -107,7 +107,7 @@ class LegacyBrokerController < ApplicationController
       cloud_user = CloudUser.new(@login, @req.ssh, @req.namespace, @req.key_type)
       if cloud_user.invalid?
         @reply.resultIO << cloud_user.errors.first[1][:message]
-        @reply.exitcode << cloud_user.errors.first[1][:exit_code]
+        @reply.exitcode = cloud_user.errors.first[1][:exit_code]
         render :json => @reply, :status => :bad_request 
         return
       end
@@ -299,6 +299,7 @@ class LegacyBrokerController < ApplicationController
       @req = LegacyRequest.new.from_json(params['json_data'])
       if @req.invalid?
         @reply.resultIO << @req.errors.first[1][:message]
+        @reply.exitcode = @req.errors.first[1][:exit_code]
         render :json => @reply, :status => :bad_request 
       end
     end

@@ -67,11 +67,13 @@ rm -rf %{buildroot}
 %files
 %defattr(0640,root,libra_user,0750)
 %attr(0666,root,libra_user) %{sitedir}/log/production.log
+%attr(0666,-,-) %{sitedir}/log/development.log
 %config(noreplace) %{sitedir}/config/environments/production.rb
 %{sitedir}
 %{htmldir}/app
 
 %post
+/bin/touch %{sitedir}/log/development.log
 /bin/touch %{sitedir}/log/production.log
 chmod 0770 %{sitedir}/tmp
 

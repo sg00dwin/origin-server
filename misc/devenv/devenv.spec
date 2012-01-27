@@ -230,8 +230,6 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 %files
 %defattr(-,root,root,-)
 %attr(0666,-,-) %{brokerdir}/log/mcollective-client.log
-%attr(0666,-,-) %{brokerdir}/log/development.log
-%attr(0666,-,-) %{sitedir}/log/development.log
 %config(noreplace) %{jenkins}/jobs/*/*
 %{jenkins}/jobs/sync.rb
 %{devenvdir}
