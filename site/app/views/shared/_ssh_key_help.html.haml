@@ -14,4 +14,7 @@
     -#:javascript
       if (/linux/i.exec(window.navigator.platform))
         jQuery('.only-linux').each(function(el) {el.style.display = 'block'});
-  %p See <a href='http://docs.redhat.com/docs/en-US/OpenShift_Express/2.0/html/User_Guide/sect-User_Guide-SSH_Key_Management.html'>the user guide</a> for more information on keys.
+  %p 
+    See 
+    = link_to "the user guide", user_guide_topic_url('sect-User_Guide-SSH_Key_Management.html')
+    for more information on keys.

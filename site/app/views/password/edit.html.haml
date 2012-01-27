@@ -9,6 +9,7 @@
 
       - if @token.nil?
         = f.input :old_password, :required => true
+        = link_to "Forget your password?  Reset it now", new_password_path
       - else
         = hidden_field_tag 'token', @token
 
