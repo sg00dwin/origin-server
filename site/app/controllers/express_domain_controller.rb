@@ -1,5 +1,6 @@
 class ExpressDomainController < ApplicationController
   before_filter :require_login
+  before_filter :require_user, :only => [:edit, :account_update]
 
   def create
     # Get only relevant parameters
@@ -76,8 +77,41 @@ class ExpressDomainController < ApplicationController
   end
 
   def edit
-    #@user ||= session_user ||= WebUser.new
+      @domain = ExpressDomain.new :rhlogin => @userinfo.rhlogin, :namespace => @userinfo.namespace
   end
+
+  def account_update
+    # Get only relevant parameters
+    domain_params = params[:express_domain]
+
+    domain_params[:rhlogin] = session[:login]
+    domain_params[:ticket] = cookies[:rh_sso]
+    domain_params[:password] = ''
+
+    # do this until we get ssh saving working
+    domain_params[:ssh] = 'ssh-rsa nossh'
+
+    @domain = ExpressDomain.new(domain_params)
+
+    ajax_response = {}
+    if @domain.valid?
+      @domain.update do |json_response|
+        ajax_response = process_response json_response
+      end
+    else
+      # display validation errors
+      @message = @domain.errors.full_messages.join("; ")
+      @message_type = :error
+      Rails.logger.error "Validation error: #{@message}"
+      raise @message
+    end
+
+    respond_to do |format|
+      format.html { redirect_to account_path }
+      format.js { render :json => { :status => 'success', :message => 'Your namespace has been successfully updated' } }
+    end
+  end
+
 
   def process_response(json_response)
     Rails.logger.debug "Domain api result: #{json_response.inspect}"

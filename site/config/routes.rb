@@ -45,6 +45,10 @@ RedHatCloud::Application.routes.draw do
         match 'reset' => 'password#edit_with_token', :via => :get
         match 'success' => 'password#success', :via => :get
       end
+      resource :express_domains,
+               :controller => "express_domain" do
+        match 'edit' => 'express_domain#account_update', :via => :put
+      end
     end
 
     # deprecated, move to :account
@@ -106,7 +110,7 @@ RedHatCloud::Application.routes.draw do
     resource :express_domain,
              :controller => "express_domain",
              :as => "express_domains",
-             :only => [:new, :create, :edit]
+             :only => [:new, :create]
   
     resource  :express_app,
               :controller => "express_app",
