@@ -4,23 +4,17 @@
 %section.main
   .content
     %h1 Change Your Password
-    - form_for @user, :url => edit_password_path, :html => {:method => :put} do |f|
+    = semantic_form_for @user, :url => edit_password_path, :html => {:method => :put} do |f|
       %p When choosing a password we recommend using numbers, symbols, and upper and lower case letters for extra security.
 
       - if @token.nil?
-        = label_tag :old_password, "Old password"
-        = password_field_tag :old_password
-        - @user.errors[:old_password].each do |e|
-          %div #{e}
+        = f.input :old_password, :required => true
       - else
         = hidden_field_tag 'token', @token
 
-      = f.label :password
-      = f.password_field :password
-      - @user.errors[:password].each do |e|
-        %div #{e}
-
-      = f.label :password_confirmation
-      = f.password_field :password_confirmation
-
-      = f.submit "Change Password"
+      = f.input :password, :as => :password, :required => true
+      = f.input :password_confirmation, :as => :password, :required => true
+      -#= f.label :password_confirmation
+      = f.buttons do
+        = f.commit_button :label => 'Change Password'
+      -#= f.commit_button :name => 'Change Password'

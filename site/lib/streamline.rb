@@ -134,9 +134,36 @@ module Streamline
     errors.empty?
   end
   
-  def change_password(args)
-    http_post(@@change_password_url, args) do |json|
-      return json
+  def change_password(args=nil)
+    if args.nil?
+      if valid?
+        args = {
+          'oldPassword' => @old_password,
+          'newPassword' => @password,
+          'newPasswordConfirmation' => @password_confirmation
+        }
+        http_post(@@change_password_url, args) do |json|
+          if json['errors'].present?
+            msg = 'Your password could not be changed'
+            field = :password
+            if json['errors'].include? 'password_incorrect'
+              msg = 'Your old password was incorrect'
+              field = :old_password
+            elsif json['errors'].include? 'password_invalid'
+              msg = 'Please choose a valid new password'
+            end
+            errors.add(field, msg)
+            false
+          else
+            true
+          end          
+        end
+      end
+    else
+      # <b>DEPRECATED</b> Will be removed
+      http_post(@@change_password_url, args) do |json|
+        return json
+      end
     end
   end
 
@@ -236,7 +263,8 @@ module Streamline
   end
 
   # Return true if the user has access to OpenShift, and false if they are not yet
-  # granted.  If false is returned call waiting_for_entitlement?
+  # granted.  If false is returned call waiting_for_entitlement?  Will attempt to
+  # request access if the user has never requested it.
   def entitled?    
     return true if roles.include?('cloud_access_1')
     
@@ -254,7 +282,7 @@ module Streamline
     end
   end
 
-  # Return true if the user is currently waiting to be entitled
+  # Return true if the user is currently waiting to be entitled.  No side effects
   def waiting_for_entitle?
     not roles.include?('cloud_access_1') and roles.include?('cloud_access_request_1')
   end
