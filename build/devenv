@@ -212,8 +212,6 @@ class DevEnv < Thor
   
         if options.install_from_source
           cmd = 'set -e; sh li-devenv.sh candidate --install_build_prereqs'
-          # Setup sync_dirs so first sync will be faster
-          ssh(hostname, 'build/devenv write_sync_history', 120)
           print "Performing clean install from source..."
           cmd = 'set -e; sh li-devenv.sh candidate --install_from_source'
         else
@@ -222,11 +220,17 @@ class DevEnv < Thor
           cmd += ' stage' if options.use_stage_repo?
         end
         output = ssh(hostname, cmd, 1800)
+
         puts "Done"
   
         puts "----------------- Install Output ------------------------"
         puts output
         puts "---------------------------------------------------------"
+
+        if options.install_from_source
+          # Setup sync_dirs so first sync will be faster
+          ssh(hostname, 'build/devenv write_sync_history', 120)
+        end
         
         validate_instance(hostname)
         
