@@ -54,7 +54,7 @@ module StreamlineMock
 
   def change_password(args=nil)
     if args.nil?
-      if valid?
+      if valid? :change_password
         return true
       else
         if @old_password == 'invalid_old_password'
@@ -66,6 +66,23 @@ module StreamlineMock
     return {'errors' => ['password_invalid']} unless args['newPassword'] == args['newPasswordConfirmation']
     return {'errors' => ['password_incorrect']} if args['oldPassword'] == 'invalid_old_password'
     return {}
+  end
+
+  def request_password_reset(args)
+    Rails.logger.debug "Requesting password reset"
+    if args.is_a? String
+      valid? :reset_password
+    else
+      {}
+    end
+  end
+
+  def reset_password(args=nil)
+    if args.nil?
+      valid? :change_password
+    else
+      {}
+    end
   end
 
   def authenticate(login, password)

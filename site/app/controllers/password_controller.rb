@@ -9,32 +9,16 @@ class PasswordController < ApplicationController
   # This function makes the first request to send an email with a token
   def create
     # Test the email against the WebUser validations
-    @user = WebUser.new(params[:web_user])
-    @user.valid?
+    @user = WebUser.new({:email_address => params[:web_user][:email_address]})
 
     respond_to do |format|
-      if @user.errors[:email_address].empty?
-        if Rails.configuration.integrated
-          user.request_password_reset({
-            :login => @user.email_address,
-            :url   => user_reset_password_url
-          })
-        else
-          Rails.logger.warn "Non integrated environment - faking password reset"
-        end
-        format.html { redirect_to(password_path) }
-        format.js { render :json => {
-            :status => 'success',
-            :message => "The information you have requested has been emailed to you at #{params[:email]}."
-          }
-        }
+      if @user.request_password_reset user_reset_password_url
+        Rails.logger.debug "Password returned true"
+        format.html { redirect_to(password_path, { :reset => true }) }
+        format.js { render :json => { :status => 'success', :message => "The information you have requested has been emailed to you at #{params[:email]}." } }
       else
-        format.html { render :action => :new and return }
-        format.js { render :json => {
-            :status => 'error',
-            :message => 'The email supplied is invalid'
-          }
-        }
+        format.html { render :action => :new  }
+        format.js { render :json => { :status => 'error', :message => 'The email supplied is invalid' } }
       end
     end
   end

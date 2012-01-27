@@ -13,6 +13,7 @@ en:
     email_required: 'Email address is required'
     email_invalid: 'The given email address is not a valid email format'
     email_not_verified: 'The given email address is not a valid email format'
+    password_reset_invalid: "This password reset request is no longer valid. This could be caused by the link being more than 24 hours old or it's already been used. Please try to reset your password again using the 'Sign in' form."
     password_invalid: 'Password format invalid'
     password_required: 'Password is required'
     password_match_failure: 'Passwords must match'
