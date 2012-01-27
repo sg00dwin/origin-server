@@ -21,7 +21,7 @@ Requires:  rubygem-passenger-native-libs
 Requires:  rubygem-rails
 Requires:  rubygem-xml-simple
 Requires:  rubygem-cloud-sdk-controller
-Requires:  rubygem-bson-ext
+Requires:  rubygem-bson_ext
 
 BuildArch: noarch
 

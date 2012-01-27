@@ -36,6 +36,20 @@ module LibraMigration
         output += echo_output
       end
       
+      sed_output, sed_exitcode = Util.execute_script("sed -i 's/,no-port-forwarding//' #{app_home}/.ssh/authorized_keys")
+      output += sed_output
+      
+      ip = Util.get_env_var_value(app_home, "OPENSHIFT_INTERNAL_IP")
+      
+      if app_type == 'rack-1.1' || app_type == 'ruby-1.8'
+        deploy_httpd_config = "#{cartridge_dir}/info/bin/deploy_httpd_config.sh"
+        if File.exists?(deploy_httpd_config)
+          deploy_httpd_config_output, deploy_httpd_config_exitcode = Util.execute_script("#{deploy_httpd_config} #{app_name} #{uuid} #{ip} 2>&1")
+          output += "deploy_httpd_config_exitcode: #{deploy_httpd_config_exitcode.to_s}\n"
+          output += "deploy_httpd_config_output: #{deploy_httpd_config_output}\n"
+        end
+      end
+      
     else
       exitcode = 127
       output += "Application not found to migrate: #{app_home}\n"
