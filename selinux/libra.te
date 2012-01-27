@@ -1,4 +1,4 @@
-policy_module(libra,1.0.30)
+policy_module(libra,1.0.31)
 
 ########################################
 #
@@ -146,6 +146,8 @@ storage_dontaudit_getattr_fixed_disk_dev(libra_domain)
 
 files_dontaudit_search_all_pids(libra_domain)
 files_dontaudit_getattr_all_dirs(libra_domain)
+files_dontaudit_getattr_all_files(libra_domain)
+files_dontaudit_list_var(libra_domain)
 files_dontaudit_getattr_lost_found_dirs(libra_domain)
 files_dontaudit_search_all_mountpoints(libra_domain)
 files_dontaudit_search_spool(libra_domain)
@@ -155,7 +157,7 @@ files_read_etc_files(libra_domain)
 files_read_usr_files(libra_domain)
 files_dontaudit_getattr_non_security_sockets(libra_domain)
 # Uncomment when we have selinux-policy-3.7.19-133.el6
-# files_dontaudit_setattr_etc_runtime_files(libra_domain)
+files_dontaudit_setattr_etc_runtime_files(libra_domain)
 
 libs_exec_lib_files(libra_domain)
 
@@ -428,3 +430,13 @@ allow libra_t ptmx_t:chr_file { read write };
 allow libra_t sshd_devpts_t:chr_file { read write ioctl open getattr };
 allow libra_t sshd_t:tcp_socket { read write getattr setopt getopt };
 allow libra_t sshd_t:unix_stream_socket { write read };
+
+#
+# Programs that libra instances should not be allowed to execute, that I have 
+# see users attempt to execute
+#
+# rpm, yum
+# ping, traceroute, iptables, iptables-multi
+# dmesg
+# su, sudo
+#
