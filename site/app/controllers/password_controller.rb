@@ -90,58 +90,32 @@ class PasswordController < ApplicationController
   end
 
   def edit_with_token
-    @token = params[:token]
     @user = WebUser.new :email_address => params[:email]
+    @token ||= params[:token] #when reset is integrated
     render :action => :edit
   end
 
   def edit
     @user ||= session_user ||= WebUser.new
-    #@token ||= params[:token] when reset is integrated
+    @token ||= params[:token] #when reset is integrated
   end
 
   def update
     @user = session_user
     user_params = params[:web_user]
-    if user_params.nil?
-      raise "No params"
-    end
-    Rails.logger.debug user_params.to_yaml
-
-    if Rails.configuration.integrated
-      json = @user.change_password({
-        'oldPassword' => params['old_password'],
-        'newPassword' => user_params['password'],
-        'newPasswordConfirmation' => user_params['password_confirmation']
-      })
-    else
-      Rails.logger.warn "Non integrated environment - faking password change"
-      json = {}
-      unless params[:test].nil?
-        json['errors'] = [params[:test]]
-      end
+    ['old_password', 'password', 'password_confirmation'].each do |name|
+      @user.send("#{name}=", user_params[name])
     end
 
     respond_to do |format|
-      if json['errors'].present?
-        msg = 'Your password could not be changed'
-        field = :password
-        if json['errors'].include? 'password_incorrect'
-          msg = 'Your old password was incorrect'
-          field = :old_password
-        elsif json['errors'].include? 'password_invalid'
-          msg = 'Please choose a valid new password'
-        end
-
-        format.html do 
-          @user.errors.add(field, msg)
-          Rails.logger.debug @user.errors.to_yaml
-          render :action => :edit
-        end
-        format.js { render :json => { :status => 'error', :message => msg } }
-      else
+      if @user.change_password
         format.html { redirect_to account_path }
         format.js { render :json => { :status => 'success', :message => 'Your password has been successfully changed' } }
+      else
+        Rails.logger.debug "User errors: #{@user.errors.inspect}"
+        msg = @user.errors.values.first
+        format.html { render :action => :edit }
+        format.js { render :json => { :status => 'error', :message => msg } }
       end
     end
   end

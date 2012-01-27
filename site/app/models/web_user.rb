@@ -14,6 +14,9 @@ class WebUser
   end
 
   attr_accessor :email_address, :password, :cloud_access_choice, :promo_code
+ 
+  # temporary variables that are not persisted
+  attr_accessor :token, :old_password
 
   validates_format_of :email_address,
                       :with => /^[-a-z0-9_+\.]+\@([-a-z0-9]+\.)+[a-z0-9]{2,4}$/i,

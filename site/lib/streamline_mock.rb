@@ -52,7 +52,19 @@ module StreamlineMock
   def refresh_roles(force=false)
   end
 
-  def change_password(args)
+  def change_password(args=nil)
+    if args.nil?
+      if valid?
+        return true
+      else
+        if @old_password == 'invalid_old_password'
+          errors.add :old_password, "Your old password is not valid"
+        end
+        return false
+      end
+    end
+    return {'errors' => ['password_invalid']} unless args['newPassword'] == args['newPasswordConfirmation']
+    return {'errors' => ['password_incorrect']} if args['oldPassword'] == 'invalid_old_password'
     return {}
   end
 
