@@ -19,8 +19,12 @@ Options:
 -n|--namespace <Namespace>
     Namespace for application(s) (alphanumeric - max 16 chars) (required)
 -c|--command (create|update|delete|info)
--s|--ssh <ssh key>
+-s|--ssh_key <ssh key>
     Users SSH key
+-t|--key_type <ssh key type>
+    Users SSH key type (ssh-rsa|ssh-dss)
+-k|--key_name <ssh key name>
+    Users SSH key name
 -h|--help:
     Show Usage info
 USAGE
@@ -30,7 +34,9 @@ opts = GetoptLong.new(
     ["--rhlogin",          "-l", GetoptLong::REQUIRED_ARGUMENT],
     ["--namespace",        "-n", GetoptLong::REQUIRED_ARGUMENT],    
     ["--command",          "-c", GetoptLong::REQUIRED_ARGUMENT],
-    ["--ssh",              "-s", GetoptLong::REQUIRED_ARGUMENT],
+    ["--ssh_key",          "-s", GetoptLong::REQUIRED_ARGUMENT],
+    ["--key_type",         "-t", GetoptLong::REQUIRED_ARGUMENT],
+    ["--key_name",         "-k", GetoptLong::REQUIRED_ARGUMENT],
     ["--help",             "-h", GetoptLong::NO_ARGUMENT]
 )
 
@@ -43,7 +49,9 @@ rescue GetoptLong::Error => e
 end
 
 login = args["--rhlogin"]
-ssh = args["--ssh"]
+ssh_key = args["--ssh_key"]
+ssh_type = args["--key_type"]
+ssh_name = args["--key_name"]
 namespace = args["--namespace"]
 
 if login.nil? or args["--help"]
@@ -54,7 +62,7 @@ end
 reply = ResultIO.new
 case args["--command"]
 when "create"
-  if ssh.nil? || namespace.nil? || login.nil?
+  if ssh_key.nil? || namespace.nil? || login.nil?
     print "Please provide rhlogin, ssh key and namespace to create the user\n"
     exit -1
   end
@@ -74,7 +82,7 @@ when "update"
     exit 1
   end
   
-  reply.append user.update_ssh_key(ssh, "dsa") unless ssh.nil?
+  reply.append user.update_ssh_key(ssh_key, key_type, key_name) unless ssh_key.nil?
   reply.append user.update_namespace(namespace) unless namespace.nil?
   reply.resultIO << "Successfully updated user.\n"
 when "delete"
@@ -96,9 +104,8 @@ else
     exit 1
   end
   reply.resultIO << "RHLogin: #{user.rhlogin}\n"
-  reply.resultIO << "Primary SSH key:\n#{user.ssh}\n\n"
   reply.resultIO << "Namespace: #{user.namespace}\n"
-  reply.resultIO << "Additional SSH keys:\n"
+  reply.resultIO << "SSH keys:\n"
   user.ssh_keys.each do |name,key|
     reply.resultIO << "\t#{name}:\n#{key}\n\n"
   end unless user.ssh_keys.nil?

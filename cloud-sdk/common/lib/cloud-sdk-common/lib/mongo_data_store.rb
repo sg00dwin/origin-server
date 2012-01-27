@@ -132,16 +132,7 @@ module Cloud::Sdk
     end
 
     def self.put_user(user_id, user_json)
-      #TODO this would be better to just set everything but apps
-      bson = MongoDataStore.collection.find_one( "_id" => user_id )
-      if bson
-        apps = bson["apps"]
-        user_json["_id"] = user_id
-        user_json["apps"] = apps if apps
-      else
-        user_json["_id"] = user_id
-      end
-      MongoDataStore.collection.update({ "_id" => user_id }, user_json, { :upsert => true })
+      MongoDataStore.collection.update({ "_id" => user_id }, { "$set" => user_json }, { :upsert => true })
     end
     
     def self.add_user(user_id, user_json)
