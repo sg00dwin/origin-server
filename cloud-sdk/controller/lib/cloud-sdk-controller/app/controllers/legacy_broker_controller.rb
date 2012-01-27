@@ -46,11 +46,9 @@ class LegacyBrokerController < ApplicationController
           end
         end
         @reply.append user.add_ssh_key(@req.key_name, @req.ssh, @req.key_type)
-        user.save
       when "remove-key"
         raise Cloud::Sdk::UserKeyException.new("Missing key name", 119) if @req.key_name.nil?
         @reply.append user.remove_ssh_key(@req.key_name)
-        user.save
       when "update-key"
         raise Cloud::Sdk::UserKeyException.new("Missing SSH key or key name", 119) if @req.ssh.nil? or @req.key_name.nil?
         @reply.append user.update_ssh_key(@req.ssh, @req.key_type, @req.key_name)
@@ -107,7 +105,7 @@ class LegacyBrokerController < ApplicationController
       cloud_user = CloudUser.new(@login, @req.ssh, @req.namespace, @req.key_type)
       if cloud_user.invalid?
         @reply.resultIO << cloud_user.errors.first[1][:message]
-        @reply.exitcode << cloud_user.errors.first[1][:exit_code]
+        @reply.exitcode = cloud_user.errors.first[1][:exit_code]
         render :json => @reply, :status => :bad_request 
         return
       end
@@ -299,6 +297,7 @@ class LegacyBrokerController < ApplicationController
       @req = LegacyRequest.new.from_json(params['json_data'])
       if @req.invalid?
         @reply.resultIO << @req.errors.first[1][:message]
+        @reply.exitcode = @req.errors.first[1][:exit_code]
         render :json => @reply, :status => :bad_request 
       end
     end

@@ -351,6 +351,10 @@ class Application < Cloud::Sdk::UserModel
   
   private
   
+  def supports_partial_updates?
+    return false
+  end
+  
   def process_cartridge_commands(commands)
     result = ResultIO.new
     commands.each do |command_item|

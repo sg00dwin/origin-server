@@ -21,6 +21,7 @@ Requires:  rubygem-passenger-native-libs
 Requires:  rubygem-rails
 Requires:  rubygem-xml-simple
 Requires:  rubygem-cloud-sdk-controller
+Requires:  rubygem-bson-ext
 
 BuildArch: noarch
 
@@ -44,6 +45,7 @@ ln -s %{brokerdir}/public %{buildroot}%{htmldir}/broker
 mkdir -p %{buildroot}%{brokerdir}/run
 mkdir -p %{buildroot}%{brokerdir}/log
 touch %{buildroot}%{brokerdir}/log/production.log
+touch %{buildroot}%{brokerdir}/log/development.log
 mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-domain %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-app %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-cartridge-do %{buildroot}/%{_bindir}
@@ -58,6 +60,7 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(0640,root,libra_user,0750)
 %attr(0666,-,-) %{brokerdir}/log/production.log
+%attr(0666,-,-) %{brokerdir}/log/development.log
 %config(noreplace) %{brokerdir}/config/environments/production.rb
 %config(noreplace) %{brokerdir}/config/keys/public.pem
 %config(noreplace) %{brokerdir}/config/keys/private.pem
@@ -77,6 +80,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0750,-,-) %{_bindir}/rhc-admin-create-district
 
 %post
+/bin/touch %{brokerdir}/log/development.log
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog

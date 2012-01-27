@@ -74,6 +74,11 @@ module Express
         Rails.logger.debug "MongoDataStore.remove_district_capacity(#{uuid},#{uids})\n\n"
         MongoDataStore.district_collection.update({"_id" => uuid, "available_uids" => uids[0]}, {"$pullAll" => { "available_uids" => uids }, "$inc" => { "available_capacity" => -uids.length, "max_uid" => -uids.length }})
       end
+
+      def inc_district_externally_reserved_uids_size(uuid)
+        Rails.logger.debug "MongoDataStore.inc_district_externally_reserved_uids_size(#{uuid})\n\n"
+        MongoDataStore.district_collection.update({"_id" => uuid}, {"$inc" => { "externally_reserved_uids_size" => 1 }})
+      end
       
       def find_available_district
         bson = MongoDataStore.district_collection.find(
