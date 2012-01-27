@@ -13,8 +13,7 @@ class PasswordController < ApplicationController
 
     respond_to do |format|
       if @user.request_password_reset user_reset_password_url
-        Rails.logger.debug "Password returned true"
-        format.html { redirect_to(password_path, { :reset => true }) }
+        format.html { redirect_to success_password_path }
         format.js { render :json => { :status => 'success', :message => "The information you have requested has been emailed to you at #{params[:email]}." } }
       else
         format.html { render :action => :new  }
@@ -23,10 +22,12 @@ class PasswordController < ApplicationController
     end
   end
 
-  def show
-    
+  def success
   end
 
+  def show
+    redirect_to logged_in? ? edit_password_path : new_password_path
+  end
 
   # This function actually checks the token against streamline
   def reset
@@ -96,7 +97,6 @@ class PasswordController < ApplicationController
         format.html { redirect_to account_path }
         format.js { render :json => { :status => 'success', :message => 'Your password has been successfully changed' } }
       else
-        Rails.logger.debug "User errors: #{@user.errors.inspect}"
         msg = @user.errors.values.first
         format.html { render :action => :edit }
         format.js { render :json => { :status => 'error', :message => msg } }

@@ -43,6 +43,7 @@ RedHatCloud::Application.routes.draw do
                :controller => "password" do
         match 'edit' => 'password#update', :via => :put
         match 'reset' => 'password#edit_with_token', :via => :get
+        match 'success' => 'password#success', :via => :get
       end
     end
 
