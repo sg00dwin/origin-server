@@ -90,25 +90,39 @@ class ExpressDomainController < ApplicationController
 
     # do this until we get ssh saving working
     domain_params[:ssh] = 'ssh-rsa nossh'
-
     @domain = ExpressDomain.new(domain_params)
 
     ajax_response = {}
     if @domain.valid?
-      @domain.update do |json_response|
-        ajax_response = process_response json_response
+      begin
+        @domain.update do |json_response|
+          ajax_response = process_response json_response
+        end
+      rescue Exception
+        @message = @domain.errors.full_messages.join("; ")
+        @message_type = :error
+        ajax_response = {:status => 'error', :data => @message, :event => @event}
       end
     else
       # display validation errors
       @message = @domain.errors.full_messages.join("; ")
       @message_type = :error
       Rails.logger.error "Validation error: #{@message}"
-      raise @message
+      ajax_response = {:status => 'error', :data => @message, :event => @event}
     end
 
     respond_to do |format|
-      format.html { redirect_to account_path }
-      format.js { render :json => { :status => 'success', :message => 'Your namespace has been successfully updated' } }
+      if @message_type == :error
+        format.html do
+          flash[@message_type] = @message
+          render :action => :edit and return
+        end
+        format.js { render :json => ajax_response }
+      else
+        flash[@message_type] = @message
+        format.html { redirect_to account_path }
+        format.js { render :json => ajax_response }
+      end
     end
   end
 

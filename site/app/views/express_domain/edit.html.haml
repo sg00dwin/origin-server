@@ -4,6 +4,7 @@
 %section.main
   .content
     %h1 Update Your Domain Name
+    = render 'layouts/flashes'
     = form_for :express_domain, :url => edit_express_domains_path, :html => {:method => :put, :style => 'width:auto;'} do |f|
       = f.hidden_field :ssh, :value => ''
       %div
