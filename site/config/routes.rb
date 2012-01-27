@@ -103,6 +103,7 @@ RedHatCloud::Application.routes.draw do
 
     resources :express_ssh_keys
 
+    match 'express_ssh_key_delete' => 'express_ssh_keys#destroy', :via => [:post]
     match 'express_app_delete' => 'express_app#destroy', :via => [:post]
     match 'control_panel' => 'control_panel#index', :as => 'control_panel'
     match 'dashboard' => 'control_panel#index', :as => 'dashboard'
