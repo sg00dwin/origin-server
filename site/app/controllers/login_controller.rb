@@ -124,7 +124,7 @@ class LoginController < ApplicationController
           cookie = res.header['set-cookie']
           if cookie
             @message_type = 'success'
-            @message = 'Welcome back kto OpenShift!'
+            @message = 'Welcome back to OpenShift!'
             rh_sso = cookie.split('; ')[0].split('=')[1]
             cookies[:rh_sso] = domain_cookie_opts(:value => rh_sso)
             session[:ticket] = rh_sso
