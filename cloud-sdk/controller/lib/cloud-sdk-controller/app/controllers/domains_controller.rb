@@ -4,7 +4,6 @@ class DomainsController < BaseController
   before_filter :lookup_user, :except => [:create]
   
   NAMESPACE_MAX_LENGTH = 16
-  RSA_SSH_KEY_MIN_LENGTH = 96  # 768 bits = 96 bytes
 
   # GET /domains
   def index

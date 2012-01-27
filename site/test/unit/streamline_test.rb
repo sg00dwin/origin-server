@@ -14,8 +14,13 @@ class StreamlineTest < ActiveSupport::TestCase
     @streamline = StreamlineTester.new
     @url = URI.parse("https://localhost/")
     @ticket = "0|abcdefghijlkmnop"
-    Thread.current[:debugIO] = StringIO.new
-    Thread.current[:messageIO] = StringIO.new
+#    Thread.current[:debugIO] = StringIO.new
+#    Thread.current[:messageIO] = StringIO.new
+  end
+
+  def set_roles(roles)
+    eval "def @streamline.set_roles(roles); @roles=roles; end"
+    @streamline.set_roles roles
   end
 
   test "streamline urls" do
@@ -172,13 +177,15 @@ class StreamlineTest < ActiveSupport::TestCase
   end
 
   test "role has access" do
-    @streamline.roles << CloudAccess.auth_role(CloudAccess::EXPRESS)
+    @streamline.expects(:http_post).never
+    set_roles [CloudAccess.auth_role(CloudAccess::EXPRESS)]
     assert @streamline.has_access?(CloudAccess::EXPRESS)
     assert !@streamline.has_requested?(CloudAccess::EXPRESS)
   end
 
   test "role requested access" do
-    @streamline.roles << CloudAccess.req_role(CloudAccess::EXPRESS)
+    @streamline.expects(:http_post).never
+    set_roles [CloudAccess.req_role(CloudAccess::EXPRESS)]
     assert !@streamline.has_access?(CloudAccess::EXPRESS)
     assert @streamline.has_requested?(CloudAccess::EXPRESS)
   end
@@ -190,24 +197,64 @@ class StreamlineTest < ActiveSupport::TestCase
   end
 
   test "request access multiple" do
-    @streamline.roles << CloudAccess.req_role(CloudAccess::EXPRESS)
     @streamline.expects(:http_post).never
+    set_roles [CloudAccess.req_role(CloudAccess::EXPRESS)]
     @streamline.request_access(CloudAccess::EXPRESS)
     assert @streamline.errors.length == 1
   end
 
   test "request access already has" do
-    @streamline.roles << CloudAccess.auth_role(CloudAccess::EXPRESS)
     @streamline.expects(:http_post).never
+    set_roles [CloudAccess.auth_role(CloudAccess::EXPRESS)]
     @streamline.request_access(CloudAccess::EXPRESS)
     assert @streamline.errors.length == 1
+  end
+
+  test "establish roles implicitly" do
+    roles = [CloudAccess.auth_role(CloudAccess::EXPRESS)]
+    json = {'roles' => roles, 'username' => 'test@example.com'}
+    @streamline.expects(:http_post).once.yields(json)
+    assert_equal roles, @streamline.roles
+    assert_equal roles, @streamline.roles # check for caching values
+  end
+
+  test "entitle checks roles implicitly" do
+    roles = [CloudAccess.auth_role(CloudAccess::EXPRESS)]
+    json = {'roles' => roles, 'username' => 'test@example.com'}
+    @streamline.expects(:http_post).once.yields(json)
+    assert @streamline.entitled?
+    assert @streamline.entitled? # check for caching value
+  end
+  
+  test "entitle depends on req role" do
+    roles = [CloudAccess.req_role(CloudAccess::EXPRESS)]
+    json = {'roles' => roles, 'username' => 'test@example.com'}
+    @streamline.expects(:http_post).once.yields(json)
+    assert_equal false, @streamline.entitled?
+    assert_equal false, @streamline.entitled? #check for caching value
+  end
+
+  test "waiting for entitle checks roles implicitly" do
+    roles = [CloudAccess.req_role(CloudAccess::EXPRESS)]
+    json = {'roles' => roles, 'username' => 'test@example.com'}
+    @streamline.expects(:http_post).once.yields(json)
+    assert @streamline.waiting_for_entitle?
+    assert @streamline.waiting_for_entitle? # check for caching value
+  end
+
+  test "waiting for entitle false when role exists" do
+    roles = [CloudAccess.auth_role(CloudAccess::EXPRESS)]
+    json = {'roles' => roles, 'username' => 'test@example.com'}
+    @streamline.expects(:http_post).once.yields(json)
+    assert_equal false, @streamline.waiting_for_entitle?
+    assert_equal false, @streamline.waiting_for_entitle? # check for caching value
   end
 
   test "establish user" do
     rhlogin = "test@example.com"
     roles = ['authenticated']
     json = {"username" => rhlogin, "roles" => roles}
-    @streamline.expects(:http_post).once.yields(json)
+    @streamline.expects(:http_post).once.yields(json).returns(json)
     @streamline.establish
     assert_equal rhlogin, @streamline.rhlogin
     assert_equal roles, @streamline.roles
@@ -230,7 +277,7 @@ class StreamlineTest < ActiveSupport::TestCase
   test "establish terms" do
     terms = [{"termId" => 1, "termUrl" => "http://www.redhat.com/term1"}]
     json = {"unacknowledgedTerms" => terms}
-    @streamline.expects(:http_post).once.yields(json)
+    @streamline.expects(:http_post).once.yields(json).returns(terms)
     @streamline.establish_terms
     assert_equal 1, @streamline.terms.length
   end
@@ -238,8 +285,8 @@ class StreamlineTest < ActiveSupport::TestCase
   test "establish site terms" do
     terms = [{"termId" => 1, "termUrl" => "http://openshift.redhat.com/term1"}]
     json = {"unacknowledgedTerms" => terms}
-    @streamline.expects(:http_post).once.yields(json)
-    @streamline.establish_terms    
+    @streamline.expects(:http_post).once.yields(json).returns(terms)
+    assert_equal terms, @streamline.establish_terms
     assert_equal 1, @streamline.terms.length
   end
 
@@ -247,8 +294,17 @@ class StreamlineTest < ActiveSupport::TestCase
     terms = [{"termId" => 1, "termUrl" => "http://openshift.redhat.com/term1"},
              {"termId" => 2, "termUrl" => "http://www.redhat.com/term1"}]
     json = {"unacknowledgedTerms" => terms}
-    @streamline.expects(:http_post).once.yields(json)
-    @streamline.establish_terms
+    @streamline.expects(:http_post).once.yields(json).returns(terms)
+    assert_equal terms, @streamline.establish_terms
+    assert_equal 2, @streamline.terms.length
+  end
+  
+  test "establish both terms implicitly" do
+    terms = [{"termId" => 1, "termUrl" => "http://openshift.redhat.com/term1"},
+             {"termId" => 2, "termUrl" => "http://www.redhat.com/term1"}]
+    json = {"unacknowledgedTerms" => terms}
+    @streamline.expects(:http_post).once.yields(json).returns(terms)
+    assert_equal terms, @streamline.terms
     assert_equal 2, @streamline.terms.length
   end
 
@@ -256,17 +312,47 @@ class StreamlineTest < ActiveSupport::TestCase
     @streamline.terms = [{"termId" => 'a', "termUrl" => 'url'},
              {"termId" => 'b', "termUrl" => 'url'}]
     json = {"term" => ['a', 'b']}
-    @streamline.expects(:http_post).once.yields(json)
-    @streamline.accept_terms
+    @streamline.expects(:http_post).once.yields(json).returns(@streamline.terms)
+    assert_equal true, @streamline.accept_terms
     assert_equal 0, @streamline.errors.length
   end
 
   test "accept terms with partial streamline result" do
     @streamline.terms = [{"termId" => 'a', "termUrl" => 'url'},
              {"termId" => 'b', "termUrl" => 'url'}]
-    json = {"term" => ['a']}
-    @streamline.expects(:http_post).once.yields(json)
-    @streamline.accept_terms
+    terms = ['a']
+    json = {"term" => terms}
+    @streamline.expects(:http_post).once.yields(json).returns(terms)
+    assert_equal false, @streamline.accept_terms
     assert_equal 1, @streamline.errors.length
+  end
+
+  test "authenticate success" do
+    @streamline.expects(:http_post).once
+    assert_equal true, @streamline.authenticate("test1", "test1")
+    assert_equal 0, @streamline.errors.length
+  end
+
+  test "get cookie" do
+    assert_nil @streamline.streamline_cookie
+
+    ticket = @streamline.ticket = 'abcdef'
+    name, value = @streamline.streamline_cookie
+    assert_equal :rh_sso, name
+    assert_equal ticket, value[:value]
+  end
+
+  test "authenticate fails" do
+    @streamline.expects(:http_post).once.raises(AccessDeniedException.new)
+    assert_equal false, @streamline.authenticate("test1", "test1")
+    assert_equal 1, @streamline.errors.length
+    assert_equal I18n.t(:login_error, :scope => :streamline), @streamline.errors[:base].first
+  end
+  
+  test "authenticate fails with http not found" do
+    @streamline.expects(:http_post).once.raises(Streamline::StreamlineException.new)
+    assert_equal false, @streamline.authenticate("test1", "test1")
+    assert_equal 1, @streamline.errors.length
+    assert_equal I18n.t(:service_error, :scope => :streamline), @streamline.errors[:base].first
   end
 end

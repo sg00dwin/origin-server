@@ -20,6 +20,14 @@ module StreamlineMock
     @rhlogin = "openshift@redhat.com"
   end
 
+  def terms
+    @terms
+  end
+
+  def roles
+    @roles
+  end
+
   #
   # Get the user's email address
   #
@@ -46,6 +54,16 @@ module StreamlineMock
 
   def change_password(args)
     return {}
+  end
+
+  def authenticate(login, password)
+    @rhlogin = login
+    @ticket = nil
+    true
+  end
+
+  def streamline_cookie
+    [:rh_sso, {:secure => true, :path => '/', :domain => '.redhat.com', :value => 'mock'}]
   end
 
   #
@@ -87,5 +105,13 @@ module StreamlineMock
     else
       false
     end
+  end
+
+  def entitled?
+    has_access(CloudAccess::EXPRESS)
+  end
+
+  def waiting_for_entitle?
+    has_requested(CloudAccess::EXPRESS)
   end
 end

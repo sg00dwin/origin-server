@@ -1,0 +1,15 @@
+- if keys.length == 0
+  We don't have an ssh key for you yet
+
+- keys.each do |ssh_key|
+  %dl
+    = render 'express_ssh_keys/express_ssh_key', :ssh_key => ssh_key
+
+%div{:style => "clear: both"}
+
+.popup.new_ssh_key
+  %span.popup-trigger
+    %input.button.create{:type => 'button', :value => 'Add'}
+
+  #ssh_form.form.popup-content
+    = render 'express_ssh_keys/ssh_key_form', :ssh_key => ExpressSshKey.new(keys.length == 0 ? {:primary => true, :name => ExpressSshKey.primary_key_name} : {})

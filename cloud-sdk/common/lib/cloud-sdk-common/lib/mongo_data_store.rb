@@ -84,20 +84,23 @@ module Cloud::Sdk
       bson = MongoDataStore.collection.find_one( "_id" => user_id )
       return nil if bson.to_s.strip.length == 0
 
-      pkey = bson["_id"]
-      bson.delete("_id")
-      bson.delete("apps")
-      { pkey => bson.to_json }
+      user_bson_to_ret(bson)
     end
 
     def self.get_users
       mcursor = MongoDataStore.collection.find()
       ret = []
       mcursor.each do |bson|
-        bson.delete("_id")
-        ret.push(bson.to_json)
+        ret.push(user_bson_to_ret(bson))
       end
       ret
+    end
+    
+    def self.user_bson_to_ret(bson)
+      pkey = bson["_id"]
+      bson.delete("_id")
+      bson.delete("apps")
+      { pkey => bson.to_json }
     end
 
     def self.get_app(user_id, id)
@@ -107,9 +110,7 @@ module Cloud::Sdk
       return nil if bson["apps"].to_s.strip.length == 0
 
       app_bson = bson["apps"][id]
-      unescape(app_bson)
-
-      { id => app_bson.to_json }
+      app_bson_to_ret(id, app_bson)
     end
   
     def self.get_apps(user_id)
@@ -120,24 +121,18 @@ module Cloud::Sdk
       apps_bson = bson["apps"]
       ret = []
       apps_bson.each do |app_id, app_bson|
-        
-        unescape(app_bson)
-        ret.push({ app_id => app_bson.to_json })
+        ret.push(app_bson_to_ret(app_id, app_bson))
       end
       ret
     end
+    
+    def self.app_bson_to_ret(id, bson)
+      unescape(bson)
+      { id => bson.to_json }
+    end
 
     def self.put_user(user_id, user_json)
-      #TODO this would be better to just set everything but apps
-      bson = MongoDataStore.collection.find_one( "_id" => user_id )
-      if bson
-        apps = bson["apps"]
-        user_json["_id"] = user_id
-        user_json["apps"] = apps if apps
-      else
-        user_json["_id"] = user_id
-      end
-      MongoDataStore.collection.update({ "_id" => user_id }, user_json, { :upsert => true })
+      MongoDataStore.collection.update({ "_id" => user_id }, { "$set" => user_json }, { :upsert => true })
     end
     
     def self.add_user(user_id, user_json)
@@ -181,12 +176,14 @@ module Cloud::Sdk
     end
 
     def self.substitute_chars(app, from_char, to_char)
-      embedded_carts = {}
-      app["embedded"].each do |cart_name, cart_info|
-        cart_name = cart_name.gsub(from_char, to_char)
-        embedded_carts[cart_name] = cart_info
-      end if app and app["embedded"]
-      app["embedded"] = embedded_carts if app
+      if app and app["embedded"]
+        embedded_carts = {}
+        app["embedded"].each do |cart_name, cart_info|
+          cart_name = cart_name.gsub(from_char, to_char)
+          embedded_carts[cart_name] = cart_info
+        end
+        app["embedded"] = embedded_carts
+      end
     end
 
   end

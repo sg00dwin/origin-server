@@ -46,12 +46,12 @@ class District < Cloud::Sdk::Model
   end
   
   def save()
+    Cloud::Sdk::DataStore.instance.save_district(@uuid, self.attributes)
     @previously_changed = changes
     @changed_attributes.clear
     @new_record = false
     @persisted = true
     @deleted = false
-    Cloud::Sdk::DataStore.instance.save_district(@uuid, self.attributes)
     self
   end
   

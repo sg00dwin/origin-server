@@ -101,3 +101,32 @@ a.os-close-link {
 /* falback styles */
 .no-js .edit-widget {}
   
+
+#ssh_container {
+  dt {
+    width: 15%;
+    clear: left;
+    float: left;
+  }
+
+  .primary_key {
+    font-weight: bold;
+  }
+
+  dd.ssh_key_preview {
+    float: left;
+  }
+
+  .os-widget {
+    margin: 0 0 0 2em;
+  }
+
+  .os-widget.new_ssh_key {
+    margin: 0;
+  }
+
+  .new_ssh_key input.create {
+    display: inline;
+    width: auto;
+  }
+}

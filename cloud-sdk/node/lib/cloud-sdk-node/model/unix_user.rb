@@ -112,8 +112,8 @@ module Cloud::SDK::Model
       cloud_name = @config.get("cloud_name") || "CDK"
       authorized_keys_file = File.join(ssh_dir,"authorized_keys")
       shell    = @config.get("user_shell")     || "/bin/bash"
-      key_type = key_type || "ssh-rsa"
-      comment  = comment  || ""
+      key_type = "ssh-rsa" if key_type.to_s.strip.length == 0
+      comment  = "" unless comment
       
       cmd_entry = "command=\"#{shell}\",no-port-forwarding,no-X11-forwarding #{key_type} #{key} #{cloud_name}-#{@uuid}#{comment}\n"
       FileUtils.mkdir_p ssh_dir

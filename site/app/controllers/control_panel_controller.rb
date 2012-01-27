@@ -31,20 +31,25 @@ class ControlPanelController < ApplicationController
     end
       
     Rails.logger.debug "In cp controller. userinfo: #{@userinfo.inspect}"
-    
+
+    ssh_key_string = @userinfo.default_ssh_key.placeholder? ? 'ssh-rsa nossh' : @userinfo.default_ssh_key.key_string
+
     # domain
     if @userinfo.namespace.blank?
-      @domain = ExpressDomain.new
+      @domain = ExpressDomain.new :ssh => ssh_key_string
       @action = 'create'
       Rails.logger.debug 'No domain yet, show create form'
     else
       @domain = ExpressDomain.new :rhlogin => @userinfo.rhlogin,
 				  :namespace => @userinfo.namespace,
-				  :ssh => @userinfo.readable_ssh_key
+				  :ssh => ssh_key_string
       @action = 'update'
       Rails.logger.debug 'Has a domain - show edit form'
     end
-      
+
+    # SSH keys
+    @ssh_keys = @userinfo.ssh_keys
+
     # create app
     @max_apps = Rails.configuration.express_max_apps
     @app = ExpressApp.new

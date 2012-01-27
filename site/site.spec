@@ -12,10 +12,11 @@ Source0:   rhc-site-%{version}.tar.gz
 
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 
-BuildRequires: rubygem-rake
-BuildRequires: rubygem-rails
-BuildRequires: rubygem-barista
-BuildRequires: rubygem-crack
+BuildRequires: libxml2-devel
+BuildRequires: libxslt-devel
+BuildRequires: gcc-c++
+BuildRequires: rubygem-bundler
+BuildRequires: js
 
 Requires:  rhc-common
 Requires:  rhc-server-common
@@ -45,7 +46,8 @@ authorization and also the workflows to request access.
 %setup -q
 
 %build
-rake barista:brew
+bundle install
+bundle exec rake barista:brew
 
 %install
 rm -rf %{buildroot}
@@ -65,11 +67,13 @@ rm -rf %{buildroot}
 %files
 %defattr(0640,root,libra_user,0750)
 %attr(0666,root,libra_user) %{sitedir}/log/production.log
+%attr(0666,-,-) %{sitedir}/log/development.log
 %config(noreplace) %{sitedir}/config/environments/production.rb
 %{sitedir}
 %{htmldir}/app
 
 %post
+/bin/touch %{sitedir}/log/development.log
 /bin/touch %{sitedir}/log/production.log
 chmod 0770 %{sitedir}/tmp
 

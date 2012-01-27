@@ -13,16 +13,19 @@ module Streamline
   attr_accessor :rhlogin, :ticket, :roles, :terms
 
   service_base_url = defined?(Rails) ? Rails.configuration.streamline[:host] + Rails.configuration.streamline[:base_url] : ""
+
   @@login_url = URI.parse(service_base_url + "/login.html")
   @@register_url = URI.parse(service_base_url + "/registration.html")
+
   @@request_access_url = URI.parse(service_base_url + "/requestAccess.html")
   @@roles_url = URI.parse(service_base_url + "/cloudVerify.html")
   @@email_confirm_url = URI.parse(service_base_url + "/confirm.html")
   @@user_info_url = URI.parse(service_base_url + "/userInfo.html")
+
   @@acknowledge_terms_url = URI.parse(service_base_url + "/protected/acknowledgeTerms.html")
   @@unacknowledged_terms_url = URI.parse(service_base_url + "/protected/findUnacknowledgedTerms.html?hostname=openshift.redhat.com&context=OPENSHIFT&locale=en")
+
   @@change_password_url = URI.parse(service_base_url + '/protected/changePassword.html')
-  
   @@request_password_reset_url = URI.parse(service_base_url + '/resetPassword.html')
   @@reset_password_url = URI.parse(service_base_url + '/resetPasswordConfirmed.html')
 
@@ -40,22 +43,32 @@ module Streamline
   #
   # Returns the login
   #
+  # <b>DEPRECATED:</b> Use establish_roles
   def establish
     http_post(@@roles_url) do |json|
-      @roles = json['roles']      
+      @initialized_roles = true
+      @roles = json['roles']
       @rhlogin = json['username']
     end
   end
 
   def establish_terms
-    # If established, just return
-    return if @terms
+    terms
+  end
 
-    # Otherwise, look them up
-    @terms = []
-    http_post(@@unacknowledged_terms_url) do |json|
-      @terms = json['unacknowledgedTerms']
+  def terms
+    @terms ||= http_post(@@unacknowledged_terms_url) do |json|
+      json['unacknowledgedTerms'] || []
     end
+  end
+
+  def roles
+    unless @initialized_roles
+      old_rhlogin = @rhlogin
+      establish
+      raise "Authenticated user #{old_rhlogin} does not match #{@rhlogin}" unless old_rhlogin.nil? || old_rhlogin == rhlogin
+    end
+    @roles
   end
 
   def refresh_roles(force=false)
@@ -71,25 +84,54 @@ module Streamline
     end
   end
 
+  # Clears the current ticket and authenticates with streamline
+  def authenticate(login, password)
+    @ticket = nil
+    Rails.logger.debug 'authenticated user'
+    http_post(@@login_url, {:login => login, :password => password})
+    @rhlogin = login
+    true
+  rescue AccessDeniedException
+    errors.add(:base, I18n.t(:login_error, :scope => :streamline))
+    false
+  rescue Streamline::StreamlineException
+    errors.add(:base, I18n.t(:service_error, :scope => :streamline))
+    false
+  end
+
+  # Return a valid single signon cookie
+  def streamline_cookie
+    [:rh_sso, {
+      :secure => true, 
+      :path => '/', 
+      :domain => '.redhat.com',
+      :value => @ticket
+    }] if @ticket
+  end
+
   def accept_terms
-    establish_terms
     Rails.logger.debug("Calling streamline to accept terms")
-    http_post(build_terms_url(@terms), {}, false) do |json|
-      # Log error on unknown result
-      Rails.logger.error("Streamline accept terms failed") unless json['term']
+    errors.clear
+    unless terms.empty?
+      http_post(build_terms_url(terms), {}, false) do |json|
+        # Log error on unknown result
+        Rails.logger.error("Streamline accept terms failed") unless json['term']
+  
+        # Unless everything was accepted, put an error on the user object
+        json['term'] ||= []
 
-      # Unless everything was accepted, put an error on the user object
-      json['term'] ||= []
-
-      # Convert the accepted ids to strings to comparison
-      # normally they are integers
-      terms_ids = @terms.map{|hash| hash['termId'].to_s}
-      unless (terms_ids - json['term']).empty?
-        Rails.logger.error("Streamline partial terms acceptance. Expected #{terms_ids} got #{json['term']}")
-        errors.add(:base, I18n.t(:terms_error, :scope => :streamline))
+        # Convert the accepted ids to strings to comparison
+        # normally they are integers
+        terms_ids = @terms.map{|hash| hash['termId'].to_s}
+        if (terms_ids - json['term']).empty?
+          @terms.clear
+        else
+          Rails.logger.error("Streamline partial terms acceptance. Expected #{terms_ids} got #{json['term']}")
+          errors.add(:base, I18n.t(:terms_error, :scope => :streamline))
+        end
       end
     end
-    @terms.clear if errors.empty?
+    errors.empty?
   end
   
   def change_password(args)
@@ -142,7 +184,7 @@ module Streamline
 
   #
   # Request access to a cloud solution
-  #
+  #<b>DEPRECATED</b>: Use entitled?
   def request_access(solution)
     if has_requested?(solution)
       Rails.logger.warn("User already requested access")
@@ -180,7 +222,7 @@ module Streamline
 
   #
   # Whether the user is authorized for a given cloud solution
-  #
+  #<b>DEPRECATED</b>: Use entitled?
   def has_access?(solution)
     @roles.index(CloudAccess.auth_role(solution)) != nil
   end
@@ -188,9 +230,35 @@ module Streamline
   #
   # Whether the user has already requested access for a given cloud solution
   #
+  #<b>DEPRECATED</b>: Use waiting_for_entitle?
   def has_requested?(solution)
     @roles.index(CloudAccess.req_role(solution)) != nil
   end
+
+  # Return true if the user has access to OpenShift, and false if they are not yet
+  # granted.  If false is returned call waiting_for_entitlement?
+  def entitled?    
+    return true if roles.include?('cloud_access_1')
+    
+    if roles.include?('cloud_access_request_1')
+      false
+    else
+      http_post(@@request_access_url, {'solution' => CloudAccess::EXPRESS}, false) do |json|
+        if json['solution']
+          refresh_roles(true)
+          true
+        else
+          false
+        end
+      end
+    end
+  end
+
+  # Return true if the user is currently waiting to be entitled
+  def waiting_for_entitle?
+    not roles.include?('cloud_access_1') and roles.include?('cloud_access_request_1')
+  end
+
 
   def http_post(url, args={}, raise_exception_on_error=true)
     begin

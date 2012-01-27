@@ -2,22 +2,23 @@ require 'rubygems'
 require 'aws'
 require 'aws/s3'
 require 'mongo'
+require 'cloud-sdk-controller'
 
 # Configurable params
 $config = {
-  :aws_key => "AKIAITDQ37BWZ5CKAORA",
+  # S3 params
+  :aws_key    => "AKIAITDQ37BWZ5CKAORA",
   :aws_secret => "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",
-  :s3_bucket => "libra_dev",
+  :s3_bucket  => "libra_dev",
 
-  :host => "localhost",
-  :port => "27017",
-  :database_name => "openshift_broker_dev",
-  :collection_name => "user"
+  # Mongo params
+  :host       => "localhost",
+  :port       => 27017,
+  :user       => "libra",
+  :password   => "momo",
+  :db         => "openshift_broker_dev",
+  :collection => "user"
 }
-# This should match DOT_SUBSTITUTE in Cloud::SDK::MongoDataStore
-DOT_SUBSTITUTE = "(ö)"
-# This should match DEFAULT_SSH_KEY_NAME in CloudUser 
-DEFAULT_SSH_KEY_NAME = "default" 
 
 def s3
   # Setup the global access configuration
@@ -36,8 +37,10 @@ def bucket
 end
 
 def mongo_connect
-  $db = Mongo::Connection.new($config[:host], $config[:port]).db($config[:database_name])
-  $coll = $db.collection($config[:collection_name])
+  con = Mongo::Connection.new($config[:host], $config[:port])
+  admin_db = con.db("admin")
+  admin_db.authenticate($config[:user], $config[:password])
+  $coll = con.db($config[:db]).collection($config[:collection])
 end
 
 def mongo_populate
@@ -58,18 +61,19 @@ def mongo_populate
 
       # update ssh keys
       user_data["ssh_keys"] = {} unless user_data["ssh_keys"]
-      user_data["ssh_keys"][DEFAULT_SSH_KEY_NAME] = { "key" => user_data["ssh"], "type" => user_data["ssh_type"] || "ssh-rsa" }
+      user_data["ssh_type"] = "ssh-rsa" if user_data["ssh_type"].to_s.strip.length == 0
+      user_data["ssh_keys"][CloudUser::DEFAULT_SSH_KEY_NAME] = { "key" => user_data["ssh"], "type" => user_data["ssh_type"] }
 
       # Create user bson doc
       bson_doc = { 
-              "_id"  => user_name,
-              "uuid" => user_data["uuid"],
-              "rhlogin" => user_data["rhlogin"],
-              "namespace" => user_data["namespace"],
-              "ssh_keys" => user_data["ssh_keys"],
+              "_id"             => user_name,
+              "uuid"            => user_data["uuid"],
+              "rhlogin"         => user_data["rhlogin"],
+              "namespace"       => user_data["namespace"],
+              "ssh_keys"        => user_data["ssh_keys"],
               "system_ssh_keys" => user_data["system_ssh_keys"],
-              "env_vars" => user_data["env_vars"],
-              "max_gears" => 5
+              "env_vars"        => user_data["env_vars"],
+              "max_gears"       => 5
             }              
         
       # Get all apps for this RH login user
@@ -96,16 +100,17 @@ def mongo_populate
         embedded_carts = {}
         app_data["embedded"].each do |cart_name, cart_info|
           # FIXME: Hack to overcome mongo limitation, key name can't have '.' char
-          cname = cart_name.gsub(/\./, DOT_SUBSTITUTE)
+          cname = cart_name.gsub(Cloud::Sdk::MongoDataStore::DOT, 
+                                 Cloud::Sdk::MongoDataStore::DOT_SUBSTITUTE)
           embedded_carts[cname] = cart_info
         end if app_data["embedded"]
         embedded_carts = nil if embedded_carts.empty?
         app_bson_doc[app_name] = \
                           {
-                            "name" => app_name,
-                            "uuid" => app_data["uuid"],
-                            "framework" => app_data["framework"],
-                            "creation_time" => app_data["creation_time"],
+                            "name"            => app_name,
+                            "uuid"            => app_data["uuid"],
+                            "framework"       => app_data["framework"],
+                            "creation_time"   => app_data["creation_time"],
                             "server_identity" => app_data["server_identity"],
                             "embedded"        => embedded_carts,
                             "aliases"         => app_data["aliases"]

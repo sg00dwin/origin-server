@@ -89,18 +89,46 @@ module Express
           end
         end
       end
+      
+      def inc_externally_reserved_uids_size(district_uuid=nil)
+        if Rails.configuration.districts[:enabled]
+          if @district
+            district_uuid = @district.uuid
+          else
+            district_uuid = get_district_uuid unless district_uuid
+          end
+          if district_uuid && district_uuid != 'NONE'
+            Cloud::Sdk::DataStore.instance.inc_district_externally_reserved_uids_size(district_uuid)
+          end
+        end
+      end
+      
 
       def create(app)
-        result = execute_direct(@@C_CONTROLLER, 'configure', "-c '#{app.uuid}' -i '#{app.uid}'")
-        parse_result(result)
+        result = nil
+        (1..10).each do |i|
+          mcoll_reply = execute_direct(@@C_CONTROLLER, 'configure', "-c '#{app.uuid}' -i '#{app.uid}'")
+          result = parse_result(mcoll_reply)
+          if result.exitcode == 129 && has_uid_or_gid?(app.uid) # Code to indicate uid already taken
+            destroy(app, true)
+            inc_externally_reserved_uids_size
+            app.uid = reserve_uid
+            app.save
+          else
+            break
+          end
+        end
+        result
       end
     
-      def destroy(app, keep_uid=false)
+      def destroy(app, keep_uid=false, uid=nil)
         result = execute_direct(@@C_CONTROLLER, 'deconfigure', "-c '#{app.uuid}'")
         result_io = parse_result(result)
         
+        uid = app.uid unless uid
+        
         unless keep_uid
-          unreserve_uid(app.uid)
+          unreserve_uid(uid)
         end
         return result_io
       end
@@ -282,6 +310,8 @@ module Express
         if keep_uid
           raise Cloud::Sdk::UserException.new("Error moving app.  Old and new servers are the same: #{source_container.id}", 1)
         end
+        
+        orig_uid = app.uid
 
         log_debug "DEBUG: Moving app '#{app.name}' with uuid #{app.uuid} from #{source_container.id} to #{destination_container.id}"
 
@@ -390,7 +420,7 @@ module Express
         (1..num_tries).each do |i|
           begin
             reply.append source_container.run_cartridge_command(app.framework, app, "deconfigure", nil, false)
-            reply.append source_container.destroy(app, keep_uid)
+            reply.append source_container.destroy(app, keep_uid, orig_uid)
             break
           rescue Exception => e
             log_debug "DEBUG: Error deconfiguring old app on try #{i}: #{e.message}"
@@ -592,6 +622,18 @@ module Express
         ApplicationContainerProxy.rpc_exec('libra', @id) do |client|
           client.has_embedded_app(:uuid => app_uuid,
                                   :embedded_type => embedded_type) do |response|
+            output = response[:body][:data][:output]
+            return output == true
+          end
+        end
+      end
+      
+      #
+      # Returns whether this server has already reserved the specified uid as a uid or gid
+      #
+      def has_uid_or_gid?(uid)
+        ApplicationContainerProxy.rpc_exec('libra', @id) do |client|
+          client.has_uid_or_gid(:uid => uid.to_s) do |response|
             output = response[:body][:data][:output]
             return output == true
           end
