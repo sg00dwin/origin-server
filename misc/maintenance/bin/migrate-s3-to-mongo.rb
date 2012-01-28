@@ -105,7 +105,6 @@ def mongo_populate
                                  Cloud::Sdk::MongoDataStore::DOT_SUBSTITUTE)
           embedded_carts[cname] = cart_info
         end if app_data["embedded"]
-        embedded_carts = nil if embedded_carts.empty?
         app_bson_doc[app_name] = \
                           {
                             "name"            => app_name,
@@ -113,9 +112,10 @@ def mongo_populate
                             "framework"       => app_data["framework"],
                             "creation_time"   => app_data["creation_time"],
                             "server_identity" => app_data["server_identity"],
-                            "embedded"        => embedded_carts,
-                            "aliases"         => app_data["aliases"]
+                            "embedded"        => embedded_carts
                           }
+        app_bson_doc[app_name]["uid"] = nil
+        app_bson_doc[app_name]["aliases"] = app_data["aliases"] if app_data["aliases"] 
       end
       bson_doc["consumed_gears"] = app_bson_doc.length
       bson_doc["apps"] = app_bson_doc
