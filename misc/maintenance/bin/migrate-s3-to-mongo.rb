@@ -71,10 +71,11 @@ def mongo_populate
               "rhlogin"         => user_data["rhlogin"],
               "namespace"       => user_data["namespace"],
               "ssh_keys"        => user_data["ssh_keys"],
-              "system_ssh_keys" => user_data["system_ssh_keys"],
-              "env_vars"        => user_data["env_vars"],
               "max_gears"       => 5
-            }              
+            }
+            
+      bson_doc["system_ssh_keys"] = user_data["system_ssh_keys"] if user_data["system_ssh_keys"] 
+      bson_doc["env_vars"] = user_data["env_vars"] if user_data["env_vars"]              
         
       # Get all apps for this RH login user
       app_prefix = "user_info/#{user_name}/apps/"

@@ -46,6 +46,8 @@ ln -s %{cartridgedir}/jobs/libra-cron-hourly %{buildroot}/%{_sysconfdir}/cron.ho
 ln -s %{cartridgedir}/jobs/libra-cron-daily %{buildroot}/%{_sysconfdir}/cron.daily/
 ln -s %{cartridgedir}/jobs/libra-cron-weekly %{buildroot}/%{_sysconfdir}/cron.weekly/
 ln -s %{cartridgedir}/jobs/libra-cron-monthly %{buildroot}/%{_sysconfdir}/cron.monthly/
+
+%post
 service crond restart
 
 
