@@ -1,6 +1,6 @@
 module OpenShift
   module SSH
-    SSH_CMD = "ssh 2> /dev/null -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PasswordAuthentication=no -i " + RSA
+    SSH_CMD = "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PasswordAuthentication=no -i " + RSA
 
     SCP_CMD = "scp 2> /dev/null -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PasswordAuthentication=no -i " + RSA
 
@@ -10,6 +10,7 @@ module OpenShift
       exit_code = 1
       begin
         ssh_cmd = "#{SSH_CMD} root@#{hostname} '#{cmd} 2>&1'"
+        log.debug(ssh_cmd)
         Timeout::timeout(timeout) do
           output = `#{ssh_cmd}`.chomp
           exit_code = $?.exitstatus

@@ -201,6 +201,10 @@ class DevEnv < Thor
         ssh(hostname, "yum update -y --exclude='rhc*'", 1800)
         puts "Done"
   
+        print "Adding openssh-client tools..."
+        ssh(hostname, "yum -y install openssh-clients", 1800)
+        puts "Done"
+
         if options.reboot?
           reboot(instance)
         end
@@ -216,11 +220,10 @@ class DevEnv < Thor
           cmd = 'set -e; sh li-devenv.sh candidate --install_from_source'
         else
           print "Performing clean install with the latest code..."
-          cmd = 'set -e; sh li-devenv.sh'
+          cmd = 'set -e ; sh ~/li-devenv.sh'
           cmd += ' stage' if options.use_stage_repo?
         end
-        output = ssh(hostname, cmd, 1800)
-
+        output = ssh(hostname, cmd, 3600)
         puts "Done"
   
         puts "----------------- Install Output ------------------------"
