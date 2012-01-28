@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.85.18
+Version:   0.85.19
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -84,6 +84,29 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Fri Jan 27 2012 Dan McPherson <dmcphers@redhat.com> 0.85.19-1
+- Updating gem versions (dmcphers@redhat.com)
+- migration changes (dmcphers@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (lnader@dhcp-240-165.mad.redhat.com)
+- US1741 (lnader@dhcp-240-165.mad.redhat.com)
+- add bson_ext (dmcphers@redhat.com)
+- dont go quite as far with the attr tracking (dmcphers@redhat.com)
+- Bug 692401 (dmcphers@redhat.com)
+- handle already reserved uids (dmcphers@redhat.com)
+- Another fix for build issue created in 532e0e8 (aboone@redhat.com)
+- Fix for 532e0e8, also properly set permissions on logs (aboone@redhat.com)
+- Since site is touching the development.log during build, remove touches from
+  devenv.spec (aboone@redhat.com)
+- deploy httpd proxy from migration (dmcphers@redhat.com)
+- rename li-controller to cloud-sdk-node (dmcphers@redhat.com)
+- config cleanup for ticket (dmcphers@redhat.com)
+- Add and remove capacity from a district (dmcphers@redhat.com)
+- cleanup apis (dmcphers@redhat.com)
+- district fixes (dmcphers@redhat.com)
+- restrict app create to within districts within prod (dmcphers@redhat.com)
+- allow install from source plus some districts changes (dmcphers@redhat.com)
+
 * Tue Jan 24 2012 Dan McPherson <dmcphers@redhat.com> 0.85.18-1
 - Updating gem versions (dmcphers@redhat.com)
 - Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
