@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.85.4
+Version:   0.85.5
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -105,6 +105,10 @@ rm -rf %{buildroot}
 %config(noreplace) %{cartridgedir}/info/configuration/
 
 %changelog
+* Fri Jan 27 2012 Dan McPherson <dmcphers@redhat.com> 0.85.5-1
+- Adding status=I to force proxy layer to attempt to connect every time even in
+  error scenarios. (mmcgrath@redhat.com)
+
 * Tue Jan 24 2012 Dan McPherson <dmcphers@redhat.com> 0.85.4-1
 - Updated License value in manifest.yml files. Corrected Apache Software
   License Fedora short name (jhonce@redhat.com)
