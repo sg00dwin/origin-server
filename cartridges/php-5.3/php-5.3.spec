@@ -2,7 +2,7 @@
 
 Summary:   Provides php-5.3 support
 Name:      rhc-cartridge-php-5.3
-Version:   0.85.2
+Version:   0.85.3
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -95,6 +95,10 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Fri Jan 27 2012 Dan McPherson <dmcphers@redhat.com> 0.85.3-1
+- Fixes Bugzilla #785049. (mpatel@redhat.com)
+- remove old obsoletes (dmcphers@redhat.com)
+
 * Tue Jan 24 2012 Dan McPherson <dmcphers@redhat.com> 0.85.2-1
 - Updated License value in manifest.yml files. Corrected Apache Software
   License Fedora short name (jhonce@redhat.com)
