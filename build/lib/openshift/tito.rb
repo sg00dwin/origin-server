@@ -92,7 +92,12 @@ module OpenShift
       end
       unless previous_package_contents == current_package_contents
         sync_dirs << current_sync_dir
-        `echo "#{current_package_contents}" > #{current_package_file}`
+        file = File.open(current_package_file, 'w')
+        begin
+          file.print current_package_contents
+        ensure
+          file.close
+        end
       else
         puts "Latest package already installed for: #{current_package}"
       end
