@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/cron-1.4
 
 Name: rhc-cartridge-cron-1.4
-Version: 0.1.4
+Version: 0.1.5
 Release: 1%{?dist}
 Summary: Embedded cron support for express
 
@@ -74,6 +74,17 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Fri Jan 27 2012 Dan McPherson <dmcphers@redhat.com> 0.1.5-1
+- Cleanup logging + rename to 1minutely for now. (ramr@redhat.com)
+- Fix spec file for minutely addition and pretty print log output.
+  (ramr@redhat.com)
+- Add minutely freq as per a hallway ("t-shirt" folding) conversation - if its
+  too excessive, can be trimmed down to a per-5 minute basis ala the
+  competition. (ramr@redhat.com)
+- deploy httpd proxy from migration (dmcphers@redhat.com)
+- Keep only the last log 2 log files around. tidy doesn't look to clean
+  embedded cartridge log files. (ramr@redhat.com)
+
 * Wed Jan 25 2012 Dan McPherson <dmcphers@redhat.com> 0.1.4-1
 - Log messages if user's $freq job exceeds max run time. (ramr@redhat.com)
 - Add run time limits + added some log messages for auditing purposes.
