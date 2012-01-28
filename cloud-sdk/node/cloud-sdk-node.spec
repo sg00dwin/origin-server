@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Node
 Name:           rubygem-%{gemname}
-Version:        0.3.11
+Version:        0.3.12
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -87,6 +87,16 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Fri Jan 27 2012 Dan McPherson <dmcphers@redhat.com> 0.3.12-1
+- Updating gem versions (dmcphers@redhat.com)
+- Re-enabling 127.0.0.1 ban (mmcgrath@redhat.com)
+- handle already reserved uids (dmcphers@redhat.com)
+- resolve merge conflicts (rpenta@redhat.com)
+- Bug 784809 (dmcphers@redhat.com)
+- cloud-sdk-node: Updated license to ASL 2.0 (jhonce@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- Fix for BugzId 784670 (rpenta@redhat.com)
+
 * Tue Jan 24 2012 Dan McPherson <dmcphers@redhat.com> 0.3.11-1
 - Updating gem versions (dmcphers@redhat.com)
 - Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
