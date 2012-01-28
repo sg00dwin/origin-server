@@ -15,8 +15,17 @@ BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires: libxml2-devel
 BuildRequires: libxslt-devel
 BuildRequires: gcc-c++
-BuildRequires: rubygem-bundler
 BuildRequires: js
+BuildRequires: rubygem-aws-sdk
+BuildRequires: rubygem-barista
+BuildRequires: rubygem-formtastic
+BuildRequires: rubygem-haml
+BuildRequires: rubygem-hpricot
+BuildRequires: rubygem-parseconfig
+BuildRequires: rubygem-rails
+BuildRequires: rubygem-recaptcha
+BuildRequires: rubygem-stomp
+BuildRequires: rubygem-xml-simple
 
 Requires:  rhc-common
 Requires:  rhc-server-common
@@ -46,8 +55,7 @@ authorization and also the workflows to request access.
 %setup -q
 
 %build
-bundle install
-bundle exec rake barista:brew
+rake barista:brew
 
 %install
 rm -rf %{buildroot}
@@ -60,6 +68,7 @@ mkdir -p %{buildroot}%{sitedir}/run
 mkdir -p %{buildroot}%{sitedir}/log
 mkdir -p -m 770 %{buildroot}%{sitedir}/tmp
 touch %{buildroot}%{sitedir}/log/production.log
+touch %{buildroot}%{sitedir}/log/development.log
 
 %clean
 rm -rf %{buildroot}                                
