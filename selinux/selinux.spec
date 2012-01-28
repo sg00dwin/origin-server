@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.85.8
+Version:       0.85.9
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -48,6 +48,24 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Fri Jan 27 2012 Dan McPherson <dmcphers@redhat.com> 0.85.9-1
+- Re-enabling 127.0.0.1 ban (mmcgrath@redhat.com)
+- Dontaudit getattr on any files, too much noise in logs, we are seeing a bogus
+  setattr on /etc/mtab, that we should just ignore.  Started a list of apps
+  that should have the o+x flag removed, since users try to execute these
+  commands and generate AVC messages (dwalsh@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (dwalsh@redhat.com)
+- Allow httpd_t to ignore MCS labels, allow libra_mail_t to output to the
+  inherited terminal (dwalsh@redhat.com)
+- disabling remove (mmcgrath@redhat.com)
+- fixing semanage (mmcgrath@redhat.com)
+- disable allowing 127.0.0.1 binding (mmcgrath@redhat.com)
+- Allow transitions from cron to libra user and enable death of children to be
+  signalled back. (ramr@redhat.com)
+- Re-add cron role - support cron runs. (ramr@redhat.com)
+- More bug fixes. (ramr@redhat.com)
+
 * Tue Jan 24 2012 Dan McPherson <dmcphers@redhat.com> 0.85.8-1
 - Dontaudit leaked file descriptors stdin/sdout from libra initrc domain to
   mail program (dwalsh@redhat.com)
