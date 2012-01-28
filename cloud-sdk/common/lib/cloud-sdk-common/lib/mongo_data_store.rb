@@ -35,23 +35,23 @@ module Cloud::Sdk
       end
     end
     
-    def save(obj_type, user_id, id, obj_json)
-      Rails.logger.debug "MongoDataStore.save(#{obj_type}, #{user_id}, #{id}, #{obj_json})\n\n"
+    def save(obj_type, user_id, id, obj_attrs)
+      Rails.logger.debug "MongoDataStore.save(#{obj_type}, #{user_id}, #{id}, #{obj_attrs})\n\n"
       case obj_type
       when "CloudUser"
-	      MongoDataStore.put_user(user_id, obj_json)
+	      MongoDataStore.put_user(user_id, obj_attrs)
       when "Application"
-	      MongoDataStore.put_app(user_id, id, obj_json)
+	      MongoDataStore.put_app(user_id, id, obj_attrs)
       end
     end
     
-    def create(obj_type, user_id, id, obj_json)
-      Rails.logger.debug "MongoDataStore.create(#{obj_type}, #{user_id}, #{id}, #{obj_json})\n\n"
+    def create(obj_type, user_id, id, obj_attrs)
+      Rails.logger.debug "MongoDataStore.create(#{obj_type}, #{user_id}, #{id}, #{obj_attrs})\n\n"
       case obj_type
       when "CloudUser"
-        MongoDataStore.add_user(user_id, obj_json)
+        MongoDataStore.add_user(user_id, obj_attrs)
       when "Application"
-        MongoDataStore.add_app(user_id, id, obj_json)
+        MongoDataStore.add_app(user_id, id, obj_attrs)
       end
     end
     
@@ -131,27 +131,27 @@ module Cloud::Sdk
       { id => bson.to_json }
     end
 
-    def self.put_user(user_id, user_json)
-      MongoDataStore.collection.update({ "_id" => user_id }, { "$set" => user_json }, { :upsert => true })
+    def self.put_user(user_id, changed_user_attrs)
+      MongoDataStore.collection.update({ "_id" => user_id }, { "$set" => changed_user_attrs }, { :upsert => true })
     end
     
-    def self.add_user(user_id, user_json)
-      user_json["_id"] = user_id
-      MongoDataStore.collection.insert(user_json)
+    def self.add_user(user_id, user_attrs)
+      user_attrs["_id"] = user_id
+      MongoDataStore.collection.insert(user_attrs)
     end
 
-    def self.put_app(user_id, id, app_json)
+    def self.put_app(user_id, id, app_attrs)
       field = "apps.#{id}"
-      escape(app_json)
-      MongoDataStore.collection.update({ "_id" => user_id }, { "$set" => { field => app_json }})
+      escape(app_attrs)
+      MongoDataStore.collection.update({ "_id" => user_id }, { "$set" => { field => app_attrs }})
     end
 
-    def self.add_app(user_id, id, app_json)
+    def self.add_app(user_id, id, app_attrs)
       field = "apps.#{id}"
-      escape(app_json)
+      escape(app_attrs)
       bson = MongoDataStore.collection.find_and_modify({
         :query => { "_id" => user_id, field => { "$exists" => false }, "$where" => "this.consumed_gears < this.max_gears"},
-        :update => { "$set" => { field => app_json }, "$inc" => { "consumed_gears" => 1 }} })
+        :update => { "$set" => { field => app_attrs }, "$inc" => { "consumed_gears" => 1 }} })
       raise Cloud::Sdk::UserException.new("#{user_id} has already reached the application limit", 104) if bson == nil
     end
 
@@ -165,9 +165,9 @@ module Cloud::Sdk
                                        { "$unset" => { field => 1 }, "$inc" => { "consumed_gears" => -1 }})
     end
     
-    def self.escape(app_json)
+    def self.escape(app_attrs)
       # Hack to overcome mongo limitation: Mongo key name can't have '.' char
-      substitute_chars(app_json, DOT, DOT_SUBSTITUTE)
+      substitute_chars(app_attrs, DOT, DOT_SUBSTITUTE)
     end
     
     def self.unescape(app_bson)

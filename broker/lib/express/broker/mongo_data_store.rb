@@ -22,10 +22,10 @@ module Express
         bson_to_district_json(bson)
       end
       
-      def save_district(uuid, district_json)
-        Rails.logger.debug "MongoDataStore.save_district(#{uuid}, #{district_json})\n\n"
-        district_json["_id"] = uuid
-        MongoDataStore.district_collection.update({ "_id" => uuid }, district_json, { :upsert => true })
+      def save_district(uuid, district_attrs)
+        Rails.logger.debug "MongoDataStore.save_district(#{uuid}, #{district_attrs})\n\n"
+        district_attrs["_id"] = uuid
+        MongoDataStore.district_collection.update({ "_id" => uuid }, district_attrs, { :upsert => true })
       end
       
       def delete_district(uuid)

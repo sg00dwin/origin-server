@@ -1,8 +1,8 @@
 require 'test_helper'
 
 class CacheTest < ActiveSupport::TestCase
-  include ApplicationHelper
-=begin
+  include LegacyBrokerHelper
+
   def setup
     super
     @key = "foo"
@@ -58,5 +58,4 @@ class CacheTest < ActiveSupport::TestCase
     assert_equal "orange", val
     assert_equal "orange", Rails.cache.read(@key)
   end
-=end
 end
