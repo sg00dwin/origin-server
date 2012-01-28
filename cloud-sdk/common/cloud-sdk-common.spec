@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Common
 Name:           rubygem-%{gemname}
-Version:        0.3.9
+Version:        0.3.10
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -73,6 +73,14 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Fri Jan 27 2012 Dan McPherson <dmcphers@redhat.com> 0.3.10-1
+- dont go quite as far with the attr tracking (dmcphers@redhat.com)
+- Bug 692401 (dmcphers@redhat.com)
+- deploy httpd proxy from migration (dmcphers@redhat.com)
+- config cleanup for ticket (dmcphers@redhat.com)
+- Bug 784809 (dmcphers@redhat.com)
+- better mongo usage (dmcphers@redhat.com)
+
 * Tue Jan 24 2012 Dan McPherson <dmcphers@redhat.com> 0.3.9-1
 - Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
 - Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
