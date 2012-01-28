@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.85.15
+Version:       0.85.16
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -218,6 +218,30 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Fri Jan 27 2012 Dan McPherson <dmcphers@redhat.com> 0.85.16-1
+- fixing trapuser (mmcgrath@redhat.com)
+- Re-enabling 127.0.0.1 ban (mmcgrath@redhat.com)
+- migration changes (dmcphers@redhat.com)
+- handle already reserved uids (dmcphers@redhat.com)
+- correcting node.spec with description (mmcgrath@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- rename li-controller to cloud-sdk-node (dmcphers@redhat.com)
+- Adding pam_libra dep (mmcgrath@redhat.com)
+- Add and remove capacity from a district (dmcphers@redhat.com)
+- fixing php type (mmcgrath@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- Migrating rack/ruby wsgi/python (mmcgrath@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rmillner@redhat.com)
+- Include examples as a guide, some shuffling. (rmillner@redhat.com)
+- Nat table entries, fix INPUT rule to match DNAT packets, multiport module not
+  required. (rmillner@redhat.com)
+- allow install from source plus some districts changes (dmcphers@redhat.com)
+- Configuration starts with an IP address and netmask rather than integers.
+  (rmillner@redhat.com)
+
 * Tue Jan 24 2012 Dan McPherson <dmcphers@redhat.com> 0.85.15-1
 - adding base 2.0.4 migration (dmcphers@redhat.com)
 
