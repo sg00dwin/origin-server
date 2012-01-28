@@ -2,7 +2,7 @@
 
 Summary:   Provides ruby rack support running on Phusion Passenger
 Name:      rhc-cartridge-rack-1.1
-Version:   0.85.8
+Version:   0.85.9
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -108,6 +108,16 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Fri Jan 27 2012 Dan McPherson <dmcphers@redhat.com> 0.85.9-1
+- rack template requires thread-dump again (bdecoste@gmail.com)
+- Adds PassengerSpawnIPAddress option to rack cartridge configuration. The
+  corresponding changes in rubygem_passenger have been pushed to brew.
+  (mpatel@redhat.com)
+- remove old obsoletes (dmcphers@redhat.com)
+- removed thread-dump require (wdecoste@localhost.localdomain)
+- removed thread-dump require (wdecoste@localhost.localdomain)
+- added thread-dump rubygem (wdecoste@localhost.localdomain)
+
 * Tue Jan 24 2012 Dan McPherson <dmcphers@redhat.com> 0.85.8-1
 - Updated License value in manifest.yml files. Corrected Apache Software
   License Fedora short name (jhonce@redhat.com)
