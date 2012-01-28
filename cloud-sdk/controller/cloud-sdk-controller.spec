@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.3.15
+Version:        0.3.16
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -73,6 +73,29 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Fri Jan 27 2012 Dan McPherson <dmcphers@redhat.com> 0.3.16-1
+- Updating gem versions (dmcphers@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- Don't update ssh key during updating namespace if ssh key is not specified
+  (rpenta@redhat.com)
+- make first sync faster (dmcphers@redhat.com)
+- dont go quite as far with the attr tracking (dmcphers@redhat.com)
+- Bug 692401 (dmcphers@redhat.com)
+- fix for bug# 784416 (rpenta@redhat.com)
+- fix ssh validation (rpenta@redhat.com)
+- resolve merge conflicts (rpenta@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (lnader@dhcp-240-165.mad.redhat.com)
+- bug fixes (lnader@dhcp-240-165.mad.redhat.com)
+- Cucumber tests for domain and application
+  (lnader@dhcp-240-165.mad.redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- cleanup apis (dmcphers@redhat.com)
+- remove unused field (rpenta@redhat.com)
+- Restrict deletion of 'default' ssh key until all client tools are updated
+  (rpenta@redhat.com)
+- Remove RSA_SSH_KEY_MIN_LENGTH check, only specific to rsa (rpenta@redhat.com)
+
 * Tue Jan 24 2012 Dan McPherson <dmcphers@redhat.com> 0.3.15-1
 - Updating gem versions (dmcphers@redhat.com)
 - fix cloud user unit test (rpenta@redhat.com)
