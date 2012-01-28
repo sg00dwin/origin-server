@@ -58,6 +58,7 @@ then
     tito build --test --rpm
   popd > /dev/null
   yum localinstall -y /tmp/tito/noarch/*.rpm
+  build/devenv write_sync_history
   popd > /dev/null
   rm -rf /root/os-client-tools
   rm -rf /root/li-working

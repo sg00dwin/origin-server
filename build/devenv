@@ -112,7 +112,7 @@ class DevEnv < Thor
     end
     
     def rpm_manifest(hostname)
-      print "Retrieving RPM manifest"
+      print "Retrieving RPM manifest..."
       manifest = ssh(hostname, 'rpm -qa | grep rhc-')
       manifest = manifest.split("\n").sort.join(" / ")
       # Trim down the output to 255 characters
@@ -230,11 +230,6 @@ class DevEnv < Thor
         puts "----------------- Install Output ------------------------"
         puts output
         puts "---------------------------------------------------------"
-
-        if options.install_from_source
-          # Setup sync_dirs so first sync will be faster
-          ssh(hostname, 'build/devenv write_sync_history', 120)
-        end
         
         validate_instance(hostname)
         
