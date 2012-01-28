@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.85.6
+Version:   0.85.7
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -78,6 +78,34 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Fri Jan 27 2012 Dan McPherson <dmcphers@redhat.com> 0.85.7-1
+- POST to delete SSH keys instead of DELETE - browser compatibility
+  (aboone@redhat.com)
+- manage multiple SSH keys via the site control panel (aboone@redhat.com)
+- Refactor ExpressApi to expose a class-level http_post method
+  (aboone@redhat.com)
+- Add a helper to generate URLs to the user guide for future topics
+  (ccoleman@redhat.com)
+- Another fix for build issue created in 532e0e8 (aboone@redhat.com)
+- Fix for 532e0e8, also properly set permissions on logs (aboone@redhat.com)
+- Remove therubyracer gem dependency, "js" is already being used
+  (aboone@redhat.com)
+- Unit tests all pass (ccoleman@redhat.com)
+- Make streamline_mock support newer api methods (ccoleman@redhat.com)
+- Streamline library changes (ccoleman@redhat.com)
+- Provide barista dependencies at site build time (aboone@redhat.com)
+- Add BuildRequires: rubygem-crack for site spec (aboone@redhat.com)
+- remove old obsoletes (dmcphers@redhat.com)
+- Consistently link to the Express Console via /app/control_panel
+  (aboone@redhat.com)
+- Allow app names up to 32 chars (fix BZ 784454) (aboone@redhat.com)
+- remove generated javascript from git; generate during build
+  (johnp@redhat.com)
+- reflow popups if they are clipped by the document viewport (johnp@redhat.com)
+- Fixed JS error 'body not defined' caused by previous commit
+  (ccoleman@redhat.com)
+- cleanup (dmcphers@redhat.com)
+
 * Tue Jan 25 2012 John (J5) Palmieri <johnp@redhat.com> 0.85.6-1
 - remove generated javascript and use rake to generate
   javascript during the build
