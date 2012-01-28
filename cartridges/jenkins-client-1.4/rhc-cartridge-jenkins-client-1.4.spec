@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/jenkins-client-1.4
 
 Name: rhc-cartridge-jenkins-client-1.4
-Version: 0.19.2
+Version: 0.19.3
 Release: 1%{?dist}
 Summary: Embedded jenkins client support for express 
 Group: Network/Daemons
@@ -53,6 +53,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Fri Jan 27 2012 Dan McPherson <dmcphers@redhat.com> 0.19.3-1
+- deploy httpd proxy from migration (dmcphers@redhat.com)
+
 * Tue Jan 24 2012 Dan McPherson <dmcphers@redhat.com> 0.19.2-1
 - Updated License value in manifest.yml files. Corrected Apache Software
   License Fedora short name (jhonce@redhat.com)
