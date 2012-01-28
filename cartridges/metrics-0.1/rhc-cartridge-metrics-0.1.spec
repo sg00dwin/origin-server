@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/metrics-0.1
 
 Name: rhc-cartridge-metrics-0.1
-Version: 0.7.1
+Version: 0.7.2
 Release: 1%{?dist}
 Summary: Embedded metrics support for express
 
@@ -48,6 +48,11 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/manifest.yml
 
 %changelog
+* Fri Jan 27 2012 Dan McPherson <dmcphers@redhat.com> 0.7.2-1
+- deploy httpd proxy from migration (dmcphers@redhat.com)
+- Adding status=I to force proxy layer to attempt to connect every time even in
+  error scenarios. (mmcgrath@redhat.com)
+
 * Fri Jan 13 2012 Dan McPherson <dmcphers@redhat.com> 0.7.1-1
 - bump spec numbers (dmcphers@redhat.com)
 
