@@ -213,9 +213,10 @@ class DevEnv < Thor
         script_path = File.expand_path(File.dirname(__FILE__) + "/../misc/devenv/li-devenv.sh")
         scp_to(hostname, script_path, "~/")
         puts "Done"
-  
+        output = ''
         if options.install_from_source
           cmd = 'set -e; sh li-devenv.sh candidate --install_build_prereqs'
+          output += ssh(hostname, cmd, 600)
           print "Performing clean install from source..."
           cmd = 'set -e; sh li-devenv.sh candidate --install_from_source'
         else

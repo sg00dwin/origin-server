@@ -79,7 +79,7 @@ class LegacyBrokerController < ApplicationController
 
     if @req.alter
       #FIXME: Either this needs to be removed or user should pass key name to alter
-      @reply.append cloud_user.update_ssh_key(@req.ssh, @req.key_type, CloudUser::DEFAULT_SSH_KEY_NAME)
+      @reply.append cloud_user.update_ssh_key(@req.ssh, @req.key_type, CloudUser::DEFAULT_SSH_KEY_NAME) if @req.ssh
       
       raise Cloud::Sdk::UserException.new("The supplied namespace '#{@req.namespace}' is not allowed", 106) if Cloud::Sdk::ApplicationContainerProxy.blacklisted? @req.namespace            
       @reply.append cloud_user.update_namespace(@req.namespace)
