@@ -115,7 +115,7 @@ module Cloud::SDK::Model
       key_type = "ssh-rsa" if key_type.to_s.strip.length == 0
       comment  = "" unless comment
       
-      cmd_entry = "command=\"#{shell}\",no-port-forwarding,no-X11-forwarding #{key_type} #{key} #{cloud_name}-#{@uuid}#{comment}\n"
+      cmd_entry = "command=\"#{shell}\",no-X11-forwarding #{key_type} #{key} #{cloud_name}-#{@uuid}#{comment}\n"
       FileUtils.mkdir_p ssh_dir
       FileUtils.chmod(0o0750,ssh_dir)
       File.open(authorized_keys_file, File::WRONLY|File::APPEND|File::CREAT, 0o0440) do |file|

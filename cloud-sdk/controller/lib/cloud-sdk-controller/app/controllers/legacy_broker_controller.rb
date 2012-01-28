@@ -46,11 +46,9 @@ class LegacyBrokerController < ApplicationController
           end
         end
         @reply.append user.add_ssh_key(@req.key_name, @req.ssh, @req.key_type)
-        user.save
       when "remove-key"
         raise Cloud::Sdk::UserKeyException.new("Missing key name", 119) if @req.key_name.nil?
         @reply.append user.remove_ssh_key(@req.key_name)
-        user.save
       when "update-key"
         raise Cloud::Sdk::UserKeyException.new("Missing SSH key or key name", 119) if @req.ssh.nil? or @req.key_name.nil?
         @reply.append user.update_ssh_key(@req.ssh, @req.key_type, @req.key_name)
@@ -93,7 +91,7 @@ class LegacyBrokerController < ApplicationController
          return
        end
        if not cloud_user.applications.empty?
-         @reply.resultIO << "Cannot remove namespace #{cloud_user.namespace}. Remove existing apps first.\n"
+         @reply.resultIO << "Cannot remove namespace #{cloud_user.namespace}. Remove existing app(s) first: "
          @reply.resultIO << cloud_user.applications.map{|a| a.name}.join("\n")
          @reply.exitcode = 106 
          render :json => @reply, :status => :bad_request

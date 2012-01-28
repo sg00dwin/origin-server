@@ -51,15 +51,17 @@ $ ->
         </div>
       """
 
-  ($ '.ssh-widget').osData event: 'ssh_form_return', onEvent: (event) ->
+  ($ '#ssh_container').osData event: 'ssh_key_form_return', onEvent: (event) ->
     ($ '.error', cpDialog).remove()
     if event.osEventStatus == 'success'
       # Success
-      ($ '.current', this).text ( shorten event.osEventData.ssh, 20 )
       ($ '.popup', this).osPopup 'unpop'
       # update form elements with cleansed key
-      $('#ssh_form_express_domain_ssh').val(event.osEventData.ssh)
-      $('#express_domain_ssh').val(event.osEventData.ssh)
+      ssh = event.osEventData.ssh
+      if ssh
+        $('#express_domain_ssh').val(ssh)
+      $('#ssh_container').html event.osEventData.key_html
+      ($ '#ssh_container .popup').osPopup dialog: cpDialog, modal: true, keepindom: true
     else
       # Error
       err_msg = event.osEventData
@@ -104,6 +106,3 @@ $ ->
   ($ 'body').delegate 'form', 'ajax:complete', (event) ->
     ($ this).spin(false)
 
-  # don't show placeholder ssh key if user has not set one up yet
-  if ($('#ssh_form_express_domain_ssh').val().match(/nossh$/))
-    $('#ssh_form_express_domain_ssh').val('')

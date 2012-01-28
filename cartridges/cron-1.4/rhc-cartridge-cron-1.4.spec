@@ -29,19 +29,24 @@ rm -rf $RPM_BUILD_ROOT
 rm -rf %{buildroot}
 mkdir -p %{buildroot}%{cartridgedir}
 mkdir -p %{buildroot}/%{_sysconfdir}/libra/cartridges
+mkdir -p %{buildroot}/%{_sysconfdir}/cron.d
+mkdir -p %{buildroot}/%{_sysconfdir}/cron.minutely
 mkdir -p %{buildroot}/%{_sysconfdir}/cron.hourly
 mkdir -p %{buildroot}/%{_sysconfdir}/cron.daily
 mkdir -p %{buildroot}/%{_sysconfdir}/cron.weekly
 mkdir -p %{buildroot}/%{_sysconfdir}/cron.monthly
+cp jobs/1minutely %{buildroot}/%{_sysconfdir}/cron.d
 cp -r info %{buildroot}%{cartridgedir}/
 cp -r jobs %{buildroot}%{cartridgedir}/
 cp LICENSE %{buildroot}%{cartridgedir}/
 cp COPYRIGHT %{buildroot}%{cartridgedir}/
 ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/libra/cartridges/%{name}
+ln -s %{cartridgedir}/jobs/libra-cron-minutely %{buildroot}/%{_sysconfdir}/cron.minutely/
 ln -s %{cartridgedir}/jobs/libra-cron-hourly %{buildroot}/%{_sysconfdir}/cron.hourly/
 ln -s %{cartridgedir}/jobs/libra-cron-daily %{buildroot}/%{_sysconfdir}/cron.daily/
 ln -s %{cartridgedir}/jobs/libra-cron-weekly %{buildroot}/%{_sysconfdir}/cron.weekly/
 ln -s %{cartridgedir}/jobs/libra-cron-monthly %{buildroot}/%{_sysconfdir}/cron.monthly/
+service crond restart
 
 
 %clean
@@ -55,6 +60,8 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0755,-,-) %{cartridgedir}/info/bin/
 %attr(0755,-,-) %{cartridgedir}/info/lib/
 %attr(0755,-,-) %{cartridgedir}/jobs/
+%attr(0644,-,-) %{_sysconfdir}/cron.d/1minutely
+%attr(0755,-,-) %{_sysconfdir}/cron.minutely/libra-cron-minutely
 %attr(0755,-,-) %{_sysconfdir}/cron.hourly/libra-cron-hourly
 %attr(0755,-,-) %{_sysconfdir}/cron.daily/libra-cron-daily
 %attr(0755,-,-) %{_sysconfdir}/cron.weekly/libra-cron-weekly

@@ -1,0 +1,21 @@
+%dt{:class => ssh_key.primary? ? 'primary_key' : 'additional_key'}
+  = ssh_key.name
+%dd.ssh_key_preview
+  %code
+    = ssh_key.key_string.slice(0, 25) + '...'
+  %span.edit-widget
+    %span.popup
+      %span.popup-trigger
+        = link_to 'Edit', '#'
+      .popup-content
+        = render :partial => 'express_ssh_keys/ssh_key_form', :locals => {:ssh_key => ssh_key}
+
+  - unless ssh_key.primary?
+    %span.edit-widget
+      %span.popup
+        %span.popup-trigger
+          = link_to 'Delete', '#'
+
+        .form.popup-content
+          = render :partial => 'express_ssh_keys/ssh_key_deletion_form', :locals => {:ssh_key => ssh_key}
+

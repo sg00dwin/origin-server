@@ -7,6 +7,7 @@ import syslog
 import glob
 import base64
 import commands
+import selinux
 
 ABSTRACT_SELINUX_LIB = "/usr/libexec/li/cartridges/abstract/info/lib/selinux"
 
@@ -189,10 +190,21 @@ if __name__ == '__main__':
 
 
         allargs = [thearg]
+
     runcon = '/usr/bin/runcon'
     mcs_level = openshift_mcs_level(os.getuid())
 
-    context = 'unconfined_u:system_r:libra_t:%s' % mcs_level
-    os.execv(runcon, [runcon, context, cmd] + allargs)
+    target_context = 'unconfined_u:system_r:libra_t:%s' % mcs_level
+    actual_context = selinux.getcon()[1]
+    # Confirm nothing fishy is going on
+    if target_context != actual_context:
+        print "Invalid context"
+        sys.exit(40)
+    else:
+        # This else is left in because at the time of writing this statement
+        # We have a patched ssh running.  Remove the exit above and it should
+        # work on other platforms.
+        os.execv(runcon, [runcon, context, cmd] + allargs)
+        sys.exit(1)
+    os.execv(cmd, [cmd] + allargs)
     sys.exit(1)
-

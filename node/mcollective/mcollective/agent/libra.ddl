@@ -197,6 +197,28 @@ action "has_embedded_app", :description => "Does this server contain a specified
            :display_as => "Exit Code"
 end
 
+action "has_uid_or_gid", :description => "Returns whether this system has already taken the uid or gid" do
+    display :always
+
+    input :uid,
+        :prompt         => "uid/gid",
+        :description    => "uid/gid",
+        :type           => :string,  # use :number for version mcollective 1.3.2
+        :optional       => false
+
+    output  :time,
+            :description => "The time as a message",
+            :display_as => "Time"
+
+    output  :output,
+            :description => "true or false",
+            :display_as => "Output"
+
+    output :exitcode,
+           :description => "Exit code",
+           :display_as => "Exit Code"
+end
+
 
 action "echo", :description => "echo's a string back" do
     display :always
