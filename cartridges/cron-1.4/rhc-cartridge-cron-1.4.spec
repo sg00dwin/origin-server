@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/cron-1.4
 
 Name: rhc-cartridge-cron-1.4
-Version: 0.1.5
+Version: 0.1.6
 Release: 1%{?dist}
 Summary: Embedded cron support for express
 
@@ -76,6 +76,10 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Fri Jan 27 2012 Dan McPherson <dmcphers@redhat.com> 0.1.6-1
+- add || : (dmcphers@redhat.com)
+- move service restart for cron (dmcphers@redhat.com)
+
 * Fri Jan 27 2012 Dan McPherson <dmcphers@redhat.com> 0.1.5-1
 - Cleanup logging + rename to 1minutely for now. (ramr@redhat.com)
 - Fix spec file for minutely addition and pretty print log output.
