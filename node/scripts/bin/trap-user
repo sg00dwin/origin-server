@@ -14,8 +14,8 @@ ABSTRACT_SELINUX_LIB = "/usr/libexec/li/cartridges/abstract/info/lib/selinux"
 commands_map = {
     "git-receive-pack": "/usr/bin/git-receive-pack",
     "git-upload-pack": "/usr/bin/git-upload-pack",
-    "snapshot": "snapshot.sh",
-    "restore": "restore.sh",
+    "snapshot": "/bin/bash",
+    "restore": "/bin/bash",
     "tail": "/usr/bin/tail",
     "rhcsh": "/bin/bash",
     "true": "/bin/true",
@@ -102,14 +102,14 @@ if __name__ == '__main__':
         sys.exit(2)
     if basecmd in ('snapshot',):
         # This gets called with "snapshot"
-        allargs = []
+        allargs = ['snapshot.sh']
     if basecmd in ('restore',):
         # This gets called with "restore <INCLUDE_GIT>"
         include_git = False
         if len(allargs) > 1 and allargs[1] == 'INCLUDE_GIT':
             include_git = True
 
-        allargs = [] 
+        allargs = ['restore.sh'] 
         if include_git:
             allargs.append('INCLUDE_GIT')
     elif basecmd in ('rhcsh',):
@@ -200,11 +200,11 @@ if __name__ == '__main__':
     if target_context != actual_context:
         print "Invalid context"
         sys.exit(40)
-    else:
         # This else is left in because at the time of writing this statement
         # We have a patched ssh running.  Remove the exit above and it should
         # work on other platforms.
-        os.execv(runcon, [runcon, context, cmd] + allargs)
+        os.execv(runcon, [runcon, target_context, cmd] + allargs)
         sys.exit(1)
-    os.execv(cmd, [cmd] + allargs)
-    sys.exit(1)
+    else:
+        os.execv(cmd, [cmd] + allargs)
+        sys.exit(1)
