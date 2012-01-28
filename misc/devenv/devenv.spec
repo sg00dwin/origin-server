@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.85.8
+Version:   0.85.9
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -239,6 +239,30 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 %{_initddir}/sauce-connect
 
 %changelog
+* Fri Jan 27 2012 Dan McPherson <dmcphers@redhat.com> 0.85.9-1
+- build fixes (dmcphers@redhat.com)
+- Re-enabling 127.0.0.1 ban (mmcgrath@redhat.com)
+- Add back rubygem-rake and rubygem-rspec dependencies for devenv
+  (aboone@redhat.com)
+- Fix for 532e0e8, also properly set permissions on logs (aboone@redhat.com)
+- Remove therubyracer gem dependency, "js" is already being used
+  (aboone@redhat.com)
+- Since site is touching the development.log during build, remove touches from
+  devenv.spec (aboone@redhat.com)
+- Provide barista dependencies at site build time (aboone@redhat.com)
+- Add BuildRequires: rubygem-crack for site spec (aboone@redhat.com)
+- add requires (dmcphers@redhat.com)
+- config cleanup for ticket (dmcphers@redhat.com)
+- Bug 784809 (dmcphers@redhat.com)
+- devenv.spec - changed chgrp before chmod to apply proper rights to su sudo
+  dmesg and rpm 01 25 2012 (tkramer@redhat.com)
+- cleanup (dmcphers@redhat.com)
+- cleanup (dmcphers@redhat.com)
+- add rake and rspec to build prereqs (dmcphers@redhat.com)
+- cleanup (dmcphers@redhat.com)
+- Added rhc-cartridge-cron to list of packages for devenv. (ramr@redhat.com)
+- allow install from source plus some districts changes (dmcphers@redhat.com)
+
 * Tue Jan 24 2012 Dan McPherson <dmcphers@redhat.com> 0.85.8-1
 - resolve merge conflicts (rpenta@redhat.com)
 - Expose internal mongo datastore through rock-mongo UI (rpenta@redhat.com)
