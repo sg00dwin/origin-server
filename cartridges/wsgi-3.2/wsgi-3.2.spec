@@ -2,7 +2,7 @@
 
 Summary:   Provides python-wsgi-3.2 support
 Name:      rhc-cartridge-wsgi-3.2
-Version:   0.85.7
+Version:   0.85.8
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -96,6 +96,9 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Fri Jan 27 2012 Dan McPherson <dmcphers@redhat.com> 0.85.8-1
+- remove old obsoletes (dmcphers@redhat.com)
+
 * Tue Jan 24 2012 Dan McPherson <dmcphers@redhat.com> 0.85.7-1
 - Renaming tests to 2.6 (mmcgrath@redhat.com)
 - python2.6 is being used, not 2.4 (mmcgrath@redhat.com)
