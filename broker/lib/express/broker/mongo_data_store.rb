@@ -1,4 +1,4 @@
-require 'aws'
+require 'pp'
 
 module Express
   module Broker
@@ -23,7 +23,7 @@ module Express
       end
       
       def save_district(uuid, district_attrs)
-        Rails.logger.debug "MongoDataStore.save_district(#{uuid}, #{district_attrs})\n\n"
+        Rails.logger.debug "MongoDataStore.save_district(#{uuid}, #{district_attrs.pretty_inspect})\n\n"
         district_attrs["_id"] = uuid
         MongoDataStore.district_collection.update({ "_id" => uuid }, district_attrs, { :upsert => true })
         district_attrs.delete("_id")

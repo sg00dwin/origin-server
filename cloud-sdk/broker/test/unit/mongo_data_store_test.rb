@@ -15,6 +15,172 @@ class MongoDataStoreTest < ActiveSupport::TestCase
     cu = ds.find("CloudUser", user_id, nil)
     assert_equal(orig_cu, cu)
   end
+  
+  test "delete cloud user" do
+    ds = MongoDataStore.new
+    cu = cloud_user
+    user_id = cu["login"]
+    ds.create("CloudUser", user_id, nil, cu)
+    ds.delete("CloudUser", user_id, nil)
+    cu = ds.find("CloudUser", user_id, nil)
+    assert_equal(nil, cu)
+  end
+  
+  test "save cloud user" do
+    ds = MongoDataStore.new
+    cu = cloud_user
+    user_id = cu["login"]
+    ds.create("CloudUser", user_id, nil, cu)
+    updates = {
+      "max_gears" => 3
+    }
+    ds.save("CloudUser", user_id, nil, updates)
+    cu["max_gears"] = 3
+    updated_cu = ds.find("CloudUser", user_id, nil)
+    assert_equal(cu, updated_cu)
+  end
+  
+  test "find all cloud users" do
+    ds = MongoDataStore.new
+    (1..2).each do |i|
+      cu = cloud_user
+      user_id = cu["login"]
+      ds.create("CloudUser", user_id, nil, cu)
+    end
+    assert(ds.find_all("CloudUser", nil).length >= 2)
+  end
+  
+  test "create and find application" do
+    ds = MongoDataStore.new
+    
+    cu = cloud_user
+    user_id = cu["login"]
+    ds.create("CloudUser", user_id, nil, cu)
+    
+    orig_a = application
+    ds.create("Application", user_id, orig_a["name"], orig_a)
+    a = ds.find("Application", user_id, orig_a["name"])
+    assert_equal(orig_a, a)
+    
+    cu = ds.find("CloudUser", user_id, nil)
+    assert_equal(1, cu['consumed_gears'])
+  end
+  
+  test "create and save application with embedded" do
+    ds = MongoDataStore.new
+    
+    cu = cloud_user
+    user_id = cu["login"]
+    ds.create("CloudUser", user_id, nil, cu)
+    
+    orig_a = application
+    orig_a["embedded"] = {"mysql-5.1" => {"info" => "Connection URL: mysql://..."}}
+    ds.create("Application", user_id, orig_a["name"], orig_a)
+    a = ds.find("Application", user_id, orig_a["name"])
+    assert_equal(orig_a, a)
+    
+    orig_a["embedded"] = {"mongodb-2.0" => {"info" => "Connection URL: mongodb://..."}, "rockmongo-1.1" => {"info" => "URL: http://..."}}
+    ds.save("Application", user_id, orig_a["name"], orig_a)
+    a = ds.find("Application", user_id, orig_a["name"])
+    assert_equal(orig_a, a)
+    
+    cu = ds.find("CloudUser", user_id, nil)
+    assert_equal(1, cu['consumed_gears'])
+  end
+  
+  test "save application" do
+    ds = MongoDataStore.new
+    
+    cu = cloud_user
+    user_id = cu["login"]
+    ds.create("CloudUser", user_id, nil, cu)
+    
+    orig_a = application
+    ds.create("Application", user_id, orig_a["name"], orig_a)
+    
+    b = application
+    ds.create("Application", user_id, b["name"], b)
+    
+    orig_a["aliases"] = ["www.myalias.com"]
+    ds.save("Application", user_id, orig_a["name"], orig_a)
+    a = ds.find("Application", user_id, orig_a["name"])
+    assert_equal(orig_a, a)
+    
+    apps = ds.find_all("Application", user_id)
+    assert_equal(2, apps.length)
+    
+    cu = ds.find("CloudUser", user_id, nil)
+    assert_equal(2, cu['consumed_gears'])
+  end
+  
+  test "delete application" do
+    ds = MongoDataStore.new
+    
+    cu = cloud_user
+    user_id = cu["login"]
+    ds.create("CloudUser", user_id, nil, cu)
+    
+    a = application
+    ds.create("Application", user_id, a["name"], a)
+      
+    b = application
+    ds.create("Application", user_id, b["name"], b)
+    
+    ds.delete("Application", user_id, a["name"])
+    a = ds.find("Application", user_id, a["name"])
+    assert_equal(nil, a)
+      
+    apps = ds.find_all("Application", user_id)
+    assert_equal(1, apps.length)
+    
+    cu = ds.find("CloudUser", user_id, nil)
+    assert_equal(1, cu['consumed_gears'])
+  end
+  
+  test "application limits" do
+    ds = MongoDataStore.new
+    
+    cu = cloud_user
+    user_id = cu["login"]
+    ds.create("CloudUser", user_id, nil, cu)
+    
+    a = nil
+    (1..2).each do |i|
+      a = application
+      ds.create("Application", user_id, a["name"], a)
+    end
+        
+    apps = ds.find_all("Application", user_id)
+    assert_equal(2, apps.length)
+
+    cu = ds.find("CloudUser", user_id, nil)
+    assert_equal(2, cu['consumed_gears'])
+      
+    caught_exception = false
+    begin
+      b = application
+      ds.create("Application", user_id, b["name"], b)
+    rescue Exception => e
+      caught_exception = true
+    end
+    assert(caught_exception)
+    
+    ds.delete("Application", user_id, a["name"])
+    a = ds.find("Application", user_id, a["name"])
+    assert_equal(nil, a)
+      
+    apps = ds.find_all("Application", user_id)
+    assert_equal(1, apps.length)
+    
+    cu = ds.find("CloudUser", user_id, nil)
+    assert_equal(1, cu['consumed_gears'])
+      
+    a = application
+    ds.create("Application", user_id, a["name"], a)
+      
+    apps = ds.find_all("Application", user_id)
+    assert_equal(2, apps.length)
+  end
 
   def cloud_user
     uuid = gen_uuid
@@ -29,6 +195,21 @@ class MongoDataStoreTest < ActiveSupport::TestCase
       "consumed_gears" => 0
     }
     cloud_user
+  end
+  
+  def application
+    uuid = gen_uuid
+    application = {
+      "framework" => "php-5.3", 
+      "creation_time" => DateTime::now().strftime,
+      "uuid" => uuid, 
+      "embedded" => {}, 
+      "aliases" => [], 
+      "name" => "name#{uuid}", 
+      "server_identity" => "1234",
+      "uid" => nil
+    }
+    application
   end
 
 end

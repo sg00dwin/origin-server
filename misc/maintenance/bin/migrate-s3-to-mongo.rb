@@ -65,7 +65,7 @@ def mongo_populate
       user_data["ssh_keys"][CloudUser::DEFAULT_SSH_KEY_NAME] = { "key" => user_data["ssh"], "type" => user_data["ssh_type"] }
 
       # Create user bson doc
-      bson_doc = { 
+      user = { 
               "_id"             => user_name,
               "uuid"            => user_data["uuid"],
               "login"           => user_data["rhlogin"],
@@ -74,13 +74,13 @@ def mongo_populate
               "max_gears"       => 5
             }
             
-      bson_doc["system_ssh_keys"] = user_data["system_ssh_keys"] if user_data["system_ssh_keys"] 
-      bson_doc["env_vars"] = user_data["env_vars"] if user_data["env_vars"]              
+      user["system_ssh_keys"] = user_data["system_ssh_keys"] if user_data["system_ssh_keys"] 
+      user["env_vars"] = user_data["env_vars"] if user_data["env_vars"]              
         
       # Get all apps for this RH login user
       app_prefix = "user_info/#{user_name}/apps/"
       app_info = bucket.objects.with_prefix(app_prefix)
-      app_bson_doc = {}
+      apps = []
       next if not app_info
 
       app_info.map do |app_obj|
@@ -98,30 +98,28 @@ def mongo_populate
         app_data['framework'] = 'python-2.6' if app_data['framework'] == 'wsgi-3.2'
         
         # Create app bson doc
-        embedded_carts = {}
+        embedded_carts = []
         app_data["embedded"].each do |cart_name, cart_info|
-          # FIXME: Hack to overcome mongo limitation, key name can't have '.' char
-          cname = cart_name.gsub(Cloud::Sdk::MongoDataStore::DOT, 
-                                 Cloud::Sdk::MongoDataStore::DOT_SUBSTITUTE)
-          embedded_carts[cname] = cart_info
+          cart_info["framework"] = cart_name
+          embedded_carts.push(cart_info)
         end if app_data["embedded"]
-        app_bson_doc[app_name] = \
-                          {
-                            "name"            => app_name,
-                            "uuid"            => app_data["uuid"],
-                            "framework"       => app_data["framework"],
-                            "creation_time"   => app_data["creation_time"],
-                            "server_identity" => app_data["server_identity"],
-                            "embedded"        => embedded_carts
-                          }
-        app_bson_doc[app_name]["uid"] = nil
-        app_bson_doc[app_name]["aliases"] = app_data["aliases"] if app_data["aliases"] 
+        app = { 
+                "name"            => app_name,
+                "uuid"            => app_data["uuid"],
+                "framework"       => app_data["framework"],
+                "creation_time"   => app_data["creation_time"],
+                "server_identity" => app_data["server_identity"],
+                "uid"             => nil,
+                "embedded"        => embedded_carts
+              }
+        app["aliases"] = app_data["aliases"] if app_data["aliases"]
+        apps.push(app)
       end
-      bson_doc["consumed_gears"] = app_bson_doc.length
-      bson_doc["apps"] = app_bson_doc
+      user["consumed_gears"] = apps.length
+      user["apps"] = apps
 
       # Insert doc into the mongo collection
-      $coll.insert(bson_doc)
+      $coll.insert(user)
     end
   end
 end

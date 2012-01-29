@@ -1,11 +1,10 @@
 require 'rubygems'
 require 'mongo'
+require 'pp'
 
 module Cloud::Sdk
   class MongoDataStore < DataStore
     @cdk_ds_provider = Cloud::Sdk::MongoDataStore
-    DOT = "."
-    DOT_SUBSTITUTE = "(ö)"
  
     def self.provider=(provider_class)
       @cdk_ds_provider = provider_class
@@ -36,7 +35,7 @@ module Cloud::Sdk
     end
     
     def save(obj_type, user_id, id, obj_attrs)
-      Rails.logger.debug "MongoDataStore.save(#{obj_type}, #{user_id}, #{id}, #{obj_attrs})\n\n"
+      Rails.logger.debug "MongoDataStore.save(#{obj_type}, #{user_id}, #{id}, #{obj_attrs.pretty_inspect})\n\n"
       case obj_type
       when "CloudUser"
 	      MongoDataStore.put_user(user_id, obj_attrs)
@@ -46,7 +45,7 @@ module Cloud::Sdk
     end
     
     def create(obj_type, user_id, id, obj_attrs)
-      Rails.logger.debug "MongoDataStore.create(#{obj_type}, #{user_id}, #{id}, #{obj_attrs})\n\n"
+      Rails.logger.debug "MongoDataStore.create(#{obj_type}, #{user_id}, #{id}, #{obj_attrs.pretty_inspect})\n\n"
       case obj_type
       when "CloudUser"
         MongoDataStore.add_user(user_id, obj_attrs)
@@ -103,11 +102,16 @@ module Cloud::Sdk
     end
 
     def self.get_app(user_id, id)
-      field = "apps.#{id}"
-      hash = MongoDataStore.collection.find_one({ "_id" => user_id, field => { "$exists" => true } }, :fields => [field])
+      hash = MongoDataStore.collection.find_one({ "_id" => user_id, "apps.name" => id }, :fields => ["apps"])
       return nil unless hash && !hash.empty?
 
-      app_hash = hash["apps"][id]
+      app_hash = nil
+      hash["apps"].each do |app|
+        if app["name"] == id
+          app_hash = app
+          break
+        end
+      end
       app_hash_to_ret(app_hash)
     end
   
@@ -115,18 +119,11 @@ module Cloud::Sdk
       hash = MongoDataStore.collection.find_one({ "_id" => user_id }, :fields => ["apps"] )
       return [] unless hash && !hash.empty?
       return [] unless hash["apps"] && !hash["apps"].empty?
-
-      apps_hash = hash["apps"]
       ret = []
-      apps_hash.each do |app_id, app_hash|
+      hash["apps"].each do |app_hash|
         ret.push(app_hash_to_ret(app_hash))
       end
       ret
-    end
-    
-    def self.app_hash_to_ret(hash)
-      unescape(hash)
-      hash
     end
 
     def self.put_user(user_id, changed_user_attrs)
@@ -140,17 +137,38 @@ module Cloud::Sdk
     end
 
     def self.put_app(user_id, id, app_attrs)
-      field = "apps.#{id}"
-      escape(app_attrs)
-      MongoDataStore.collection.update({ "_id" => user_id }, { "$set" => { field => app_attrs }})
+      
+      orig_embedded = app_attrs["embedded"] 
+      app_attrs_to_internal(app_attrs)
+      
+      # Would be nice to be able to pull and push here or if addToSet supported embedded docs
+      #MongoDataStore.collection.update({ "_id" => user_id, "apps.name" => id },  { "$pull" => { "apps" => {"name" => id }}, "$push" => { "apps" => app_attrs }})
+      
+      
+      user_hash = MongoDataStore.collection.find_one( "_id" => user_id )
+      
+      index = -1
+      user_hash["apps"].each_with_index do |app, i|
+        if app["name"] == id
+          index = i
+          break
+        end
+      end
+
+      hash = MongoDataStore.collection.find_and_modify({
+        :query => { "_id" => user_id, "apps.#{index}.name" => id},
+        :update => { "$set" => { "apps.#{index}" => app_attrs }} })
+      raise Cloud::Sdk::UserException.new("Concurrent modifications detected for #{user_id}") if hash == nil    
+      app_attrs["embedded"] = orig_embedded
     end
 
     def self.add_app(user_id, id, app_attrs)
-      field = "apps.#{id}"
-      escape(app_attrs)
+      orig_embedded = app_attrs["embedded"]
+      app_attrs_to_internal(app_attrs)
       hash = MongoDataStore.collection.find_and_modify({
-        :query => { "_id" => user_id, field => { "$exists" => false }, "$where" => "this.consumed_gears < this.max_gears"},
-        :update => { "$set" => { field => app_attrs }, "$inc" => { "consumed_gears" => 1 }} })
+        :query => { "_id" => user_id, "apps.name" => { "$nin" => [id] }, "$where" => "this.consumed_gears < this.max_gears"},
+        :update => { "$push" => { "apps" => app_attrs }, "$inc" => { "consumed_gears" => 1 }} })
+      app_attrs["embedded"] = orig_embedded
       raise Cloud::Sdk::UserException.new("#{user_id} has already reached the application limit", 104) if hash == nil
     end
 
@@ -159,30 +177,40 @@ module Cloud::Sdk
     end
 
     def self.delete_app(user_id, id)
-      field = "apps.#{id}"
-      MongoDataStore.collection.update({ "_id" => user_id, field => { "$exists" => true }}, 
-                                       { "$unset" => { field => 1 }, "$inc" => { "consumed_gears" => -1 }})
-    end
-    
-    def self.escape(app_attrs)
-      # Hack to overcome mongo limitation: Mongo key name can't have '.' char
-      substitute_chars(app_attrs, DOT, DOT_SUBSTITUTE)
-    end
-    
-    def self.unescape(app_hash)
-      # Hack to overcome mongo limitation: Mongo key name can't have '.' char
-      substitute_chars(app_hash, DOT_SUBSTITUTE, DOT)
+      MongoDataStore.collection.update({ "_id" => user_id, "apps.name" => id},
+                                       { "$pull" => { "apps" => {"name" => id }}, "$inc" => { "consumed_gears" => -1 }})
     end
 
-    def self.substitute_chars(app, from_char, to_char)
-      if app and app["embedded"]
-        embedded_carts = {}
-        app["embedded"].each do |cart_name, cart_info|
-          cart_name = cart_name.gsub(from_char, to_char)
-          embedded_carts[cart_name] = cart_info
+    def self.app_attrs_to_internal(app_attrs)
+      if app_attrs
+        if app_attrs["embedded"]
+          embedded_carts = []
+          app_attrs["embedded"].each do |cart_name, cart_info|
+            cart_info["framework"] = cart_name
+            embedded_carts.push(cart_info)
+          end
+          app_attrs["embedded"] = embedded_carts
+        else
+          app_attrs["embedded"] = []
         end
-        app["embedded"] = embedded_carts
       end
+      app_attrs
+    end
+    
+    def self.app_hash_to_ret(app_hash)
+      if app_hash
+        if app_hash["embedded"]
+          embedded_carts = {}
+          app_hash["embedded"].each do |cart_info|
+            cart_name = cart_info["framework"]
+            embedded_carts[cart_name] = cart_info
+          end
+          app_hash["embedded"] = embedded_carts
+        else
+          app_hash["embedded"] = {}
+        end
+      end
+      app_hash
     end
 
   end
