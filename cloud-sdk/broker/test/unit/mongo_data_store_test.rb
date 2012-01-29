@@ -10,7 +10,7 @@ class MongoDataStoreTest < ActiveSupport::TestCase
   test "create and find cloud user" do
     ds = MongoDataStore.new
     orig_cu = cloud_user
-    user_id = orig_cu["rhlogin"]
+    user_id = orig_cu["login"]
     ds.create("CloudUser", user_id, nil, orig_cu)
     cu = ds.find("CloudUser", user_id, nil)
     assert_equal(orig_cu, cu)
@@ -19,7 +19,7 @@ class MongoDataStoreTest < ActiveSupport::TestCase
   def cloud_user
     uuid = gen_uuid
     cloud_user = {
-      "rhlogin" => "user_id#{uuid}",
+      "login" => "user_id#{uuid}",
       "uuid" => uuid,
       "system_ssh_keys" => {},
       "env_vars" => {},

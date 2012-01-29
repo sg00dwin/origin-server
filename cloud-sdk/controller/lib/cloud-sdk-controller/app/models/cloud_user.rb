@@ -1,11 +1,11 @@
 class CloudUser < Cloud::Sdk::UserModel
-  attr_accessor :rhlogin, :uuid, :system_ssh_keys, :env_vars, :ssh_keys, :namespace, :max_gears, :consumed_gears
-  primary_key :rhlogin
-  private :rhlogin=, :uuid=, :namespace=
+  attr_accessor :login, :uuid, :system_ssh_keys, :env_vars, :ssh_keys, :namespace, :max_gears, :consumed_gears
+  primary_key :login
+  private :login=, :uuid=, :namespace=
   DEFAULT_SSH_KEY_NAME = "default"
   
-  validates_each :rhlogin do |record, attribute, val|
-    record.errors.add(attribute, {:message => "Invalid characters found in RHlogin '#{val}' ", :code => 107}) if val =~ /["\$\^<>\|%\/;:,\\\*=~]/
+  validates_each :login do |record, attribute, val|
+    record.errors.add(attribute, {:message => "Invalid characters found in login '#{val}' ", :code => 107}) if val =~ /["\$\^<>\|%\/;:,\\\*=~]/
   end
   
   validates_each :namespace do |record, attribute, val|
@@ -28,14 +28,14 @@ class CloudUser < Cloud::Sdk::UserModel
     end if val
   end
 
-  def initialize(rhlogin=nil, ssh=nil, namespace=nil, ssh_type=nil, key_name=nil)
+  def initialize(login=nil, ssh=nil, namespace=nil, ssh_type=nil, key_name=nil)
     super()
     ssh_type = "ssh-rsa" if ssh_type.to_s.strip.length == 0
     self.ssh_keys = {} unless self.ssh_keys
     key_name = CloudUser::DEFAULT_SSH_KEY_NAME if key_name.to_s.strip.length == 0
 
     self.ssh_keys[key_name] = { "key" => ssh, "type" => ssh_type }
-    self.rhlogin = rhlogin
+    self.login = login
     self.namespace = namespace
     self.max_gears = Rails.configuration.cdk[:default_max_gears]
     self.consumed_gears = 0
@@ -48,7 +48,7 @@ class CloudUser < Cloud::Sdk::UserModel
       resultIO.append(create())
     end
     
-    super(@rhlogin)
+    super(@login)
     resultIO
   end
 
@@ -66,12 +66,12 @@ class CloudUser < Cloud::Sdk::UserModel
       dns_service.close
     end
     reply.resultIO << "Namespace #{@namespace} deleted successfully.\n"
-    super(@rhlogin)
+    super(@login)
     reply
   end
 
-  def self.find(rhlogin)
-    super(rhlogin,rhlogin)
+  def self.find(login)
+    super(login,login)
   end
   
   def add_system_ssh_key(app_name, key)
@@ -121,13 +121,13 @@ class CloudUser < Cloud::Sdk::UserModel
     result = ResultIO.new
 
     # validations
-    raise Cloud::Sdk::UserKeyException.new("ERROR: Can't remove all ssh keys for user #{self.rhlogin}", 
+    raise Cloud::Sdk::UserKeyException.new("ERROR: Can't remove all ssh keys for user #{self.login}", 
                                            122) if num_keys_check and self.ssh_keys.size <= 1
     #FIXME: remove this check when client tools are updated
-    raise Cloud::Sdk::UserKeyException.new("ERROR: Can't remove '#{key_name}' ssh key for user #{self.rhlogin}", 
+    raise Cloud::Sdk::UserKeyException.new("ERROR: Can't remove '#{key_name}' ssh key for user #{self.login}", 
                                            124) if num_keys_check and (key_name == CloudUser::DEFAULT_SSH_KEY_NAME)
     key = self.ssh_keys[key_name]
-    raise Cloud::Sdk::UserKeyException.new("ERROR: Key name '#{key_name}' doesn't exist for user #{self.rhlogin}", 118) unless key
+    raise Cloud::Sdk::UserKeyException.new("ERROR: Key name '#{key_name}' doesn't exist for user #{self.login}", 118) unless key
 
     applications.each do |app|
       Rails.logger.debug "DEBUG: Removing ssh key named #{key_name} from app: #{app.name} for user #{@name}"
@@ -146,7 +146,7 @@ class CloudUser < Cloud::Sdk::UserModel
   end
  
   def get_ssh_key
-    raise Cloud::Sdk::UserKeyException.new("ERROR: At least one ssh key doesn't exist for user #{self.rhlogin}", 
+    raise Cloud::Sdk::UserKeyException.new("ERROR: At least one ssh key doesn't exist for user #{self.login}", 
                                            123) unless self.ssh_keys and self.ssh_keys.kind_of?(Hash)
     (self.ssh_keys.key?(CloudUser::DEFAULT_SSH_KEY_NAME)) ? self.ssh_keys[CloudUser::DEFAULT_SSH_KEY_NAME] : self.ssh_keys.keys[0]
   end
@@ -244,15 +244,15 @@ class CloudUser < Cloud::Sdk::UserModel
     notify_observers(:before_cloud_user_create)
     dns_service = Cloud::Sdk::DnsService.instance
     begin
-      if CloudUser.find(@rhlogin)
-        raise Cloud::Sdk::UserException.new("A user with RHLogin '#{@rhlogin}' already exists", 102, resultIO)
+      if CloudUser.find(@login)
+        raise Cloud::Sdk::UserException.new("A user with login '#{@login}' already exists", 102, resultIO)
       end
 
       raise Cloud::Sdk::UserException.new("A namespace with name '#{namespace}' already exists", 103, resultIO) unless dns_service.namespace_available?(@namespace)
 
       begin
-        Rails.logger.debug "DEBUG: Attempting to add namespace '#{@namespace}' for user '#{@rhlogin}'"      
-        resultIO.debugIO << "Creating user entry login:#{@rhlogin} ssh:#{@ssh} namespace:#{@namespace}"
+        Rails.logger.debug "DEBUG: Attempting to add namespace '#{@namespace}' for user '#{@login}'"      
+        resultIO.debugIO << "Creating user entry login:#{@login} ssh:#{@ssh} namespace:#{@namespace}"
         dns_service.register_namespace(@namespace)
         @uuid = Cloud::Sdk::Model.gen_uuid
         dns_service.publish
@@ -260,7 +260,7 @@ class CloudUser < Cloud::Sdk::UserModel
       rescue Exception => e
         Rails.logger.debug e
         begin
-          #Rails.logger.debug "DEBUG: Attempting to remove namespace '#{@namespace}' after failure to add user '#{@rhlogin}'"        
+          #Rails.logger.debug "DEBUG: Attempting to remove namespace '#{@namespace}' after failure to add user '#{@login}'"        
           #dns_service.deregister_namespace(@namespace)
           #dns_service.publish
           notify_observers(:cloud_user_create_error)

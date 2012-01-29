@@ -13,7 +13,7 @@ module Cloud
       
       def generate_broker_key(app)
         iv = app.name
-        token = app.user.rhlogin
+        token = app.user.login
         [iv, token]
       end
       

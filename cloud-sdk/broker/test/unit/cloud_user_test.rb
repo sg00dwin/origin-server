@@ -11,12 +11,12 @@ module Rails
 end
 
 class CloudUserTest < ActiveSupport::TestCase
-  test "validation of rhlogin" do
+  test "validation of login" do
     invalid_chars = '"$^<>|%/;:,\*=~'
     invalid_chars.length.times do |i|
       user = CloudUser.new("test#{invalid_chars[i].chr}login", "ssh", "namespace")
       assert user.invalid?
-      assert 107, user.errors[:rhlogin][0][:exit_code]
+      assert 107, user.errors[:login][0][:exit_code]
     end
     
     user = CloudUser.new("kraman@redhat.com", "ssh", "namespace")
@@ -50,8 +50,8 @@ class CloudUserTest < ActiveSupport::TestCase
   test "create a new user" do
     ssh = "AAAAB3NzaC1yc2EAAAABIwAAAQEAvzdpZ/3+PUi3SkYQc3j8v5W8+PUNqWe7p3xd9r1y4j60IIuCS4aaVqorVPhwrOCPD5W70aeLM/B3oO3QaBw0FJYfYBWvX3oi+FjccuzSmMoyaYweXCDWxyPi6arBqpsSf3e8YQTEkL7fwOQdaZWtW7QHkiDCfcB/LIUZCiaArm2taIXPvaoz/hhHnqB2s3W/zVP2Jf5OkQHsVOTxYr/Hb+/gV3Zrjy+tE9+z2ivL+2M0iTIoSVsUcz0d4g4XpgM8eG9boq1YGzeEhHe1BeliHmAByD8PwU74tOpdpzDnuKf8E9Gnwhsp2yqwUUkkBUoVcv1LXtimkEyIl0dSeRRcMw=="
     namespace = "kraman.cloudsdk.net"
-    rhlogin = "kraman@redhat.com"
-    user = CloudUser.new(rhlogin, ssh, namespace)
+    login = "kraman@redhat.com"
+    user = CloudUser.new(login, ssh, namespace)
      
     observer_seq = sequence("observer_seq")
     
@@ -73,8 +73,8 @@ class CloudUserTest < ActiveSupport::TestCase
   test "create user fails if user already exists" do
     ssh = "AAAAB3NzaC1yc2EAAAABIwAAAQEAvzdpZ/3+PUi3SkYQc3j8v5W8+PUNqWe7p3xd9r1y4j60IIuCS4aaVqorVPhwrOCPD5W70aeLM/B3oO3QaBw0FJYfYBWvX3oi+FjccuzSmMoyaYweXCDWxyPi6arBqpsSf3e8YQTEkL7fwOQdaZWtW7QHkiDCfcB/LIUZCiaArm2taIXPvaoz/hhHnqB2s3W/zVP2Jf5OkQHsVOTxYr/Hb+/gV3Zrjy+tE9+z2ivL+2M0iTIoSVsUcz0d4g4XpgM8eG9boq1YGzeEhHe1BeliHmAByD8PwU74tOpdpzDnuKf8E9Gnwhsp2yqwUUkkBUoVcv1LXtimkEyIl0dSeRRcMw=="
     namespace = "kraman.cloudsdk.net"
-    rhlogin = "kraman@redhat.com"
-    user = CloudUser.new(rhlogin, ssh, namespace)
+    login = "kraman@redhat.com"
+    user = CloudUser.new(login, ssh, namespace)
      
     observer_seq = sequence("observer_seq")
     
@@ -100,8 +100,8 @@ class CloudUserTest < ActiveSupport::TestCase
   test "create user fails if domain already exists" do
     ssh = "AAAAB3NzaC1yc2EAAAABIwAAAQEAvzdpZ/3+PUi3SkYQc3j8v5W8+PUNqWe7p3xd9r1y4j60IIuCS4aaVqorVPhwrOCPD5W70aeLM/B3oO3QaBw0FJYfYBWvX3oi+FjccuzSmMoyaYweXCDWxyPi6arBqpsSf3e8YQTEkL7fwOQdaZWtW7QHkiDCfcB/LIUZCiaArm2taIXPvaoz/hhHnqB2s3W/zVP2Jf5OkQHsVOTxYr/Hb+/gV3Zrjy+tE9+z2ivL+2M0iTIoSVsUcz0d4g4XpgM8eG9boq1YGzeEhHe1BeliHmAByD8PwU74tOpdpzDnuKf8E9Gnwhsp2yqwUUkkBUoVcv1LXtimkEyIl0dSeRRcMw=="
     namespace = "kraman.cloudsdk.net"
-    rhlogin = "kraman@redhat.com"
-    user = CloudUser.new(rhlogin, ssh, namespace)
+    login = "kraman@redhat.com"
+    user = CloudUser.new(login, ssh, namespace)
      
     observer_seq = sequence("observer_seq")
     
@@ -127,12 +127,12 @@ class CloudUserTest < ActiveSupport::TestCase
   test "system ssh key" do
     ssh = "AAAAB3NzaC1yc2EAAAABIwAAAQEAvzdpZ/3+PUi3SkYQc3j8v5W8+PUNqWe7p3xd9r1y4j60IIuCS4aaVqorVPhwrOCPD5W70aeLM/B3oO3QaBw0FJYfYBWvX3oi+FjccuzSmMoyaYweXCDWxyPi6arBqpsSf3e8YQTEkL7fwOQdaZWtW7QHkiDCfcB/LIUZCiaArm2taIXPvaoz/hhHnqB2s3W/zVP2Jf5OkQHsVOTxYr/Hb+/gV3Zrjy+tE9+z2ivL+2M0iTIoSVsUcz0d4g4XpgM8eG9boq1YGzeEhHe1BeliHmAByD8PwU74tOpdpzDnuKf8E9Gnwhsp2yqwUUkkBUoVcv1LXtimkEyIl0dSeRRcMw=="
     namespace = "kraman.cloudsdk.net"
-    rhlogin = "kraman@redhat.com"
+    login = "kraman@redhat.com"
     apps = [mock("app1"), mock("app2")]
     apps.each {|app| app.expects(:add_authorized_ssh_key).returns(ResultIO.new).once}
     apps.each {|app| app.expects(:name).once}    
     
-    user = CloudUser.new(rhlogin, ssh, namespace)
+    user = CloudUser.new(login, ssh, namespace)
     user.expects(:save).once
     user.expects(:applications).returns(apps)
     
@@ -152,12 +152,12 @@ class CloudUserTest < ActiveSupport::TestCase
   test "environment variable" do
     ssh = "AAAAB3NzaC1yc2EAAAABIwAAAQEAvzdpZ/3+PUi3SkYQc3j8v5W8+PUNqWe7p3xd9r1y4j60IIuCS4aaVqorVPhwrOCPD5W70aeLM/B3oO3QaBw0FJYfYBWvX3oi+FjccuzSmMoyaYweXCDWxyPi6arBqpsSf3e8YQTEkL7fwOQdaZWtW7QHkiDCfcB/LIUZCiaArm2taIXPvaoz/hhHnqB2s3W/zVP2Jf5OkQHsVOTxYr/Hb+/gV3Zrjy+tE9+z2ivL+2M0iTIoSVsUcz0d4g4XpgM8eG9boq1YGzeEhHe1BeliHmAByD8PwU74tOpdpzDnuKf8E9Gnwhsp2yqwUUkkBUoVcv1LXtimkEyIl0dSeRRcMw=="
     namespace = "kraman.cloudsdk.net"
-    rhlogin = "kraman@redhat.com"
+    login = "kraman@redhat.com"
     apps = [mock("app1"), mock("app2")]
     apps.each {|app| app.expects(:add_env_var).returns(ResultIO.new).once}
     apps.each {|app| app.expects(:name).once}    
     
-    user = CloudUser.new(rhlogin, ssh, namespace)
+    user = CloudUser.new(login, ssh, namespace)
     user.expects(:save).once
     user.expects(:applications).returns(apps)
     
@@ -177,12 +177,12 @@ class CloudUserTest < ActiveSupport::TestCase
   test "user ssh keys" do
     ssh = "AAAAB3NzaC1yc2EAAAABIwAAAQEAvzdpZ/3+PUi3SkYQc3j8v5W8+PUNqWe7p3xd9r1y4j60IIuCS4aaVqorVPhwrOCPD5W70aeLM/B3oO3QaBw0FJYfYBWvX3oi+FjccuzSmMoyaYweXCDWxyPi6arBqpsSf3e8YQTEkL7fwOQdaZWtW7QHkiDCfcB/LIUZCiaArm2taIXPvaoz/hhHnqB2s3W/zVP2Jf5OkQHsVOTxYr/Hb+/gV3Zrjy+tE9+z2ivL+2M0iTIoSVsUcz0d4g4XpgM8eG9boq1YGzeEhHe1BeliHmAByD8PwU74tOpdpzDnuKf8E9Gnwhsp2yqwUUkkBUoVcv1LXtimkEyIl0dSeRRcMw=="
     namespace = "kraman.cloudsdk.net"
-    rhlogin = "kraman@redhat.com"
+    login = "kraman@redhat.com"
     apps = [mock("app1"), mock("app2")]
     apps.each {|app| app.expects(:add_authorized_ssh_key).returns(ResultIO.new).once}
     apps.each {|app| app.expects(:name).once}    
     
-    user = CloudUser.new(rhlogin, ssh, namespace)
+    user = CloudUser.new(login, ssh, namespace)
     user.expects(:save).once
     user.expects(:applications).returns(apps)
     
@@ -203,8 +203,8 @@ class CloudUserTest < ActiveSupport::TestCase
     #first create a user
     ssh = "AAAAB3NzaC1yc2EAAAABIwAAAQEAvzdpZ/3+PUi3SkYQc3j8v5W8+PUNqWe7p3xd9r1y4j60IIuCS4aaVqorVPhwrOCPD5W70aeLM/B3oO3QaBw0FJYfYBWvX3oi+FjccuzSmMoyaYweXCDWxyPi6arBqpsSf3e8YQTEkL7fwOQdaZWtW7QHkiDCfcB/LIUZCiaArm2taIXPvaoz/hhHnqB2s3W/zVP2Jf5OkQHsVOTxYr/Hb+/gV3Zrjy+tE9+z2ivL+2M0iTIoSVsUcz0d4g4XpgM8eG9boq1YGzeEhHe1BeliHmAByD8PwU74tOpdpzDnuKf8E9Gnwhsp2yqwUUkkBUoVcv1LXtimkEyIl0dSeRRcMw=="
     namespace = "kraman.cloudsdk.net"
-    rhlogin = "kraman@redhat.com"
-    user = CloudUser.new(rhlogin, ssh, namespace)
+    login = "kraman@redhat.com"
+    user = CloudUser.new(login, ssh, namespace)
      
     CloudUser.expects(:find).returns(nil)
     Cloud::Sdk::DnsService.instance.class.any_instance.expects(:namespace_available?).with(namespace).returns(true)

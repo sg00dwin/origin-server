@@ -85,7 +85,7 @@ class LegacyBrokerController < ApplicationController
       @reply.append cloud_user.update_namespace(@req.namespace)
     elsif @req.delete
        if  @req.namespace != cloud_user.namespace
-         @reply.resultIO << "Cannot remove namespace #{@req.namespace}. This namespace is not associated with rhlogin: #{cloud_user.rhlogin}\n"
+         @reply.resultIO << "Cannot remove namespace #{@req.namespace}. This namespace is not associated with login: #{cloud_user.login}\n"
          @reply.exitcode = 106
          render :json => @reply, :status => :bad_request
          return
@@ -113,7 +113,7 @@ class LegacyBrokerController < ApplicationController
 
     @reply.append cloud_user.save
     @reply.data = {
-      :rhlogin    => cloud_user.rhlogin,
+      :rhlogin    => cloud_user.login,
       :uuid       => cloud_user.uuid,
       :rhc_domain => Rails.configuration.cdk[:domain_suffix]
     }.to_json

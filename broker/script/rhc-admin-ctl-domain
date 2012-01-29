@@ -103,7 +103,7 @@ else
     print "User with login: #{login} not found\n"
     exit 1
   end
-  reply.resultIO << "RHLogin: #{user.rhlogin}\n"
+  reply.resultIO << "RHLogin: #{user.login}\n"
   reply.resultIO << "Namespace: #{user.namespace}\n"
   reply.resultIO << "SSH keys:\n"
   user.ssh_keys.each do |name,key|

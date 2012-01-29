@@ -68,7 +68,7 @@ def mongo_populate
       bson_doc = { 
               "_id"             => user_name,
               "uuid"            => user_data["uuid"],
-              "rhlogin"         => user_data["rhlogin"],
+              "login"           => user_data["rhlogin"],
               "namespace"       => user_data["namespace"],
               "ssh_keys"        => user_data["ssh_keys"],
               "max_gears"       => 5

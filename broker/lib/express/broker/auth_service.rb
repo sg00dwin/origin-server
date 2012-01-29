@@ -20,7 +20,7 @@ module Express
         cipher.key = OpenSSL::Digest::SHA512.new(Rails.configuration.auth[:broker_auth_secret]).digest
         cipher.iv = iv = cipher.random_iv
         token = {:app_name => app.name,
-                 :rhlogin => app.user.rhlogin,
+                 :rhlogin => app.user.login,
                  :creation_time => app.creation_time}
         encrypted_token = cipher.update(token.to_json)
         encrypted_token << cipher.final

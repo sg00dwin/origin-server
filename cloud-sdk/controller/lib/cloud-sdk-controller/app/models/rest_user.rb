@@ -4,7 +4,7 @@ class RestUser < Cloud::Sdk::Model
   def initialize(*args)
     if args[0].class == CloudUser
       cloud_user = args[0]
-      self.login = cloud_user.rhlogin
+      self.login = cloud_user.login
     else
       if args[0].class == Hash || args[0].class == ActiveSupport::HashWithIndifferentAccess
         app_hash = args[0]

@@ -107,7 +107,7 @@ def migrate
   s3_queues.each do |users|
     s3_threads << Thread.new do
       users.each do |user|
-        puts "Gathering apps for user: #{user.rhlogin}(#{all_rhlogins_length - rhlogin_cnt}) with uuid: #{user.uuid}"
+        puts "Gathering apps for user: #{user.login}(#{all_rhlogins_length - rhlogin_cnt}) with uuid: #{user.uuid}"
         apps = user.applications
         apps.each do |app|
           app_name = app.name
@@ -203,7 +203,7 @@ def migrate_node(server_identity, apps, node_to_users)
     app = app_hash[:app]
     app_name = app_hash[:name]
     user = users[index]
-    rhlogin = user.rhlogin
+    rhlogin = user.login
     migrate_on_node_args = "#{app.server_identity},#{app.framework},#{app.uuid},#{rhlogin},#{app_name}"
     append_to_file(f, migrate_on_node_args)
   end

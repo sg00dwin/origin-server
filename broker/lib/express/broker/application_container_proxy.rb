@@ -240,7 +240,7 @@ module Express
           reply.append run_cartridge_command('embedded/' + component, app, 'configure')
         rescue Exception => e
           begin
-            Rails.logger.debug "DEBUG: Failed to embed '#{component}' in '#{app.name}' for user '#{app.user.rhlogin}'"
+            Rails.logger.debug "DEBUG: Failed to embed '#{component}' in '#{app.name}' for user '#{app.user.login}'"
             reply.debugIO << "Failed to embed '#{component} in '#{app.name}'"
             reply.append run_cartridge_command('embedded/' + component, app, 'deconfigure')
           ensure
@@ -645,8 +645,8 @@ module Express
         arguments += " '#{arg}'" if arg
           
         if allow_move
-          Nurture.application(app.user.rhlogin, app.user.uuid, app.name, app.user.namespace, framework, command, app.uuid)
-          Apptegic.application(app.user.rhlogin, app.user.uuid, app.name, app.user.namespace, framework, command, app.uuid)
+          Nurture.application(app.user.login, app.user.uuid, app.name, app.user.namespace, framework, command, app.uuid)
+          Apptegic.application(app.user.login, app.user.uuid, app.name, app.user.namespace, framework, command, app.uuid)
         end
         
         result = execute_direct(framework, command, arguments)

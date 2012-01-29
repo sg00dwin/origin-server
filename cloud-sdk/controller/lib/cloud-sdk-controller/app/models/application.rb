@@ -24,7 +24,7 @@ class Application < Cloud::Sdk::UserModel
   end
   
   def self.find(user, app_name)
-    app = super(user.rhlogin, app_name)
+    app = super(user.login, app_name)
     return nil unless app
     app.user = user
     app.reset_state
@@ -32,7 +32,7 @@ class Application < Cloud::Sdk::UserModel
   end
   
   def self.find_all(user)
-    apps = super(user.rhlogin)
+    apps = super(user.login)
     apps.map do |app|
       app.user = user
       app.reset_state
@@ -46,12 +46,12 @@ class Application < Cloud::Sdk::UserModel
   
   #saves the application object in the datastore
   def save
-    super(user.rhlogin)
+    super(user.login)
   end
   
   #deletes the application object from the datastore
   def delete
-    super(user.rhlogin)
+    super(user.login)
   end
   
   def from_json(*args)

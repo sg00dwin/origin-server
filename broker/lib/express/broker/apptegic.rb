@@ -9,9 +9,9 @@ module Express
       #
       # Send application data (start, stop, etc)
       #
-      def self.application(rhlogin, user_uuid, app_name, user_namespace, type, action, app_uuid)
+      def self.application(login, user_uuid, app_name, user_namespace, type, action, app_uuid)
         return unless Rails.configuration.analytics[:apptegic_enabled]
-        Rails.logger.debug "DEBUG: #{Time.now} Sending to Apptegic:application: user='#{rhlogin}' app_uuid='#{app_uuid}' action='#{action}'"
+        Rails.logger.debug "DEBUG: #{Time.now} Sending to Apptegic:application: user='#{login}' app_uuid='#{app_uuid}' action='#{action}'"
         # Why curl?  So I could & at the end.  We don't want this blocking requests
         # Please fix if you can :)  - mmcgrath
         # `curl -s -O /dev/null '#{Rails.configuration.analytics[:apptegic_url]}' \
@@ -19,9 +19,9 @@ module Express
         #--data-urlencode '_at=#{Rails.configuration.analytics[:apptegic_secret]}' \
         #--data-urlencode '_ds=#{Rails.configuration.analytics[:apptegic_dataset]}' \
         #--data-urlencode 'userAgent=#{Thread.current[:user_agent] || "Unknown"}' \
-        #--data-urlencode 'accountId=#{rhlogin}' \
+        #--data-urlencode 'accountId=#{login}' \
         #--data-urlencode 'accountType=regular' \
-        #--data-urlencode 'userId=#{rhlogin}' \
+        #--data-urlencode 'userId=#{login}' \
         #--data-urlencode 'user_uuid=#{user_uuid}' \
         #--data-urlencode 'app_uuid=#{app_uuid}' \
         #--data-urlencode 'app_name=#{app_name}' \
@@ -36,9 +36,9 @@ module Express
         payload["_at"] = Rails.configuration.analytics[:apptegic_secret]
         payload["_ds"] = Rails.configuration.analytics[:apptegic_dataset]
         payload["userAgent"] = Thread.current[:user_agent] || "Unknown"
-        payload["accountId"] = rhlogin
+        payload["accountId"] = login
         payload["accountType"] = "regular"
-        payload["userId"] = rhlogin
+        payload["userId"] = login
         payload["user_uuid"] = user_uuid
         payload["app_uuid"] = app_uuid
         payload["app_name"] = app_name
@@ -104,17 +104,17 @@ module Express
       #
       # Send account data (actual username)
       #
-      def self.libra_contact(rhlogin, uuid, user_namespace, action)
+      def self.libra_contact(login, uuid, user_namespace, action)
         return unless Rails.configuration.analytics[:apptegic_enabled]
-        Rails.logger.debug "DEBUG: #{Time.now} Sending to Apptegic:libra_contact: userId='#{rhlogin}' namespace='#{user_namespace}' action='#{action}'"
+        Rails.logger.debug "DEBUG: #{Time.now} Sending to Apptegic:libra_contact: userId='#{login}' namespace='#{user_namespace}' action='#{action}'"
         #`curl -s -O /dev/null '#{Rails.configuration.analytics[:apptegic_url]}' \
         #--data-urlencode '_ak=#{Rails.configuration.analytics[:apptegic_key]}' \
         #--data-urlencode '_at=#{Rails.configuration.analytics[:apptegic_secret]}' \
         #--data-urlencode '_ds=#{Rails.configuration.analytics[:apptegic_dataset]}' \
         #--data-urlencode 'userAgent=#{Thread.current[:user_agent] || "Unknown"}' \
-        #--data-urlencode 'accountId=#{rhlogin}' \
+        #--data-urlencode 'accountId=#{login}' \
         #--data-urlencode 'accountType=regular' \
-        #--data-urlencode 'userId=#{rhlogin}' \
+        #--data-urlencode 'userId=#{login}' \
         #--data-urlencode 'namespace=#{user_namespace}' \
         #--data-urlencode 'action=#{action}' \
         #--data-urlencode 'user_uuid=#{uuid}' \
@@ -127,9 +127,9 @@ module Express
         payload["_at"] = Rails.configuration.analytics[:apptegic_secret]
         payload["_ds"] = Rails.configuration.analytics[:apptegic_dataset]
         payload["userAgent"] = Thread.current[:user_agent] || "Unknown"
-        payload["accountId"] = rhlogin
+        payload["accountId"] = login
         payload["accountType"] = "regular"
-        payload["userId"] = rhlogin
+        payload["userId"] = login
         payload["namespace"] = user_namespace
         payload["action"] = action
         payload["user_uuid"] = uuid
