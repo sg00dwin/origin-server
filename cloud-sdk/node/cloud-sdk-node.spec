@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Node
 Name:           rubygem-%{gemname}
-Version:        0.3.12
+Version:        0.3.13
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -87,6 +87,9 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Sat Jan 28 2012 Dan McPherson <dmcphers@redhat.com> 0.3.13-1
+- Updating gem versions (dmcphers@redhat.com)
+
 * Fri Jan 27 2012 Dan McPherson <dmcphers@redhat.com> 0.3.12-1
 - Updating gem versions (dmcphers@redhat.com)
 - Re-enabling 127.0.0.1 ban (mmcgrath@redhat.com)
