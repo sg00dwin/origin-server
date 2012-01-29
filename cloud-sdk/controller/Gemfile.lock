@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    cloud-sdk-controller (0.3.16)
+    cloud-sdk-controller (0.3.17)
       activesupport (~> 3.0.10)
       cloud-sdk-common
       json (= 1.4.3)
@@ -16,7 +16,7 @@ GEM
     activesupport (3.0.10)
     bson (1.5.2)
     builder (2.1.2)
-    cloud-sdk-common (0.3.10)
+    cloud-sdk-common (0.3.11)
       activemodel (= 3.0.10)
       json (= 1.4.3)
       mongo (= 1.5.2)
