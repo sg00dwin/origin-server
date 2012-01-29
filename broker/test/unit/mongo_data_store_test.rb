@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class CacheTest < ActiveSupport::TestCase
+class MongoDataStoreTest < ActiveSupport::TestCase
   include Express::Broker
 
   def setup

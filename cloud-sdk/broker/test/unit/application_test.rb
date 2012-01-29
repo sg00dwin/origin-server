@@ -21,13 +21,11 @@ class ApplicationTest < ActiveSupport::TestCase
     
     
     user = mock("user")
-    user.expects(:rhlogin).returns("kraman@redhat.com")
     Application.expects(:notify_observers).with(:before_application_create, anything).in_sequence(observer_seq).once
     Application.expects(:notify_observers).with(:after_application_create, anything).in_sequence(observer_seq).once
-    Cloud::Sdk::ApplicationContainerProxy.expects(:find_available).returns(container)
     application = Application.new(user, "app_name", "app_uuid", "std", "php-5.3")
-    
-    application.create
+    application.expects(:save).returns(nil)
+    application.create(container)
   end
   
   test "destroy" do

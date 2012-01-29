@@ -37,7 +37,7 @@ class CloudUser < Cloud::Sdk::UserModel
     self.ssh_keys[key_name] = { "key" => ssh, "type" => ssh_type }
     self.rhlogin = rhlogin
     self.namespace = namespace
-    self.max_gears = (defined?(Rails.configuration)) ? Rails.configuration.cdk[:default_max_gears] : 5
+    self.max_gears = Rails.configuration.cdk[:default_max_gears]
     self.consumed_gears = 0
   end
   

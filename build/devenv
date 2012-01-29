@@ -527,7 +527,11 @@ END
         end
         threads << Thread.new do
           cmd = "cd li-test/cloud-sdk/controller; rake test"
-          run_ssh(hostname, "Cloud SDK Unit", cmd)
+          run_ssh(hostname, "Cloud SDK Controller Unit", cmd)
+        end
+        threads << Thread.new do
+          cmd = "cd li-test/cloud-sdk/broker; rake test"
+          run_ssh(hostname, "Cloud SDK Broker Unit", cmd)
         end
       end
       
