@@ -73,7 +73,7 @@ Broker::Application.configure do
   }
   
   config.datastore_mongo = {
-    :collections => {:district => "district"}
+    :collections => {:district => "district_test"}
   }
   
   config.analytics = {
@@ -100,7 +100,7 @@ Broker::Application.configure do
       :user => "libra",
       :password => "momo",
       :db => "openshift_broker_dev",
-      :collections => {:user => "user"}
+      :collections => {:user => "user_test"}
     }
   }
 

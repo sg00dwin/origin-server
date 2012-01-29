@@ -58,18 +58,13 @@ module Cloud
       end
       
       def self.json_to_obj(json)
-        id_var = @primary_key || "uuid"
-        obj = self.new.from_json(json.values[0])
-        obj.instance_variable_set("@#{id_var}", json.keys[0])
+        obj = self.new.from_json(json)
         obj.reset_state
         obj
       end
       
       def self.hash_to_obj(hash)
-        id_var = @primary_key || "uuid"
         obj = self.new 
-        obj.instance_variable_set("@#{id_var}", hash.keys[0])
-        hash = hash.values[0]
         hash.each do |k,v|
           obj.instance_variable_set("@#{k}", v)
         end

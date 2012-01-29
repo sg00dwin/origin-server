@@ -97,10 +97,9 @@ module Cloud::Sdk
     end
     
     def self.user_hash_to_ret(hash)
-      pkey = hash["_id"]
       hash.delete("_id")
       hash.delete("apps")
-      { pkey => hash }
+      hash
     end
 
     def self.get_app(user_id, id)
@@ -109,7 +108,7 @@ module Cloud::Sdk
       return nil unless hash && !hash.empty?
 
       app_hash = hash["apps"][id]
-      app_hash_to_ret(id, app_hash)
+      app_hash_to_ret(app_hash)
     end
   
     def self.get_apps(user_id)
@@ -120,14 +119,14 @@ module Cloud::Sdk
       apps_hash = hash["apps"]
       ret = []
       apps_hash.each do |app_id, app_hash|
-        ret.push(app_hash_to_ret(app_id, app_hash))
+        ret.push(app_hash_to_ret(app_hash))
       end
       ret
     end
     
-    def self.app_hash_to_ret(id, hash)
+    def self.app_hash_to_ret(hash)
       unescape(hash)
-      { id => hash }
+      hash
     end
 
     def self.put_user(user_id, changed_user_attrs)

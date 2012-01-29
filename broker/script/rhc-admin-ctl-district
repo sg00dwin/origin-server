@@ -32,7 +32,7 @@ end
 
 def append_district(district, io)
   district.available_uids = "<#{district.available_uids.length} uids hidden>"
-  io << "\n#{district.attributes.pretty_inspect}"
+  io << "\n\n#{district.attributes.pretty_inspect}"
 end
 
 opts = GetoptLong.new(
