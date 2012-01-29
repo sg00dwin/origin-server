@@ -18,7 +18,7 @@ Options:
 -u|--uuid     <district uuid>
     District uuid  (alphanumeric)
 -c|--command <command>
-    (add-node|remove-node|deactivate-node|add-capacity|remove-capacity|destroy)
+    (add-node|remove-node|deactivate-node|add-capacity|remove-capacity|create|destroy)
 -i|--server_identity
     Node server_identity (required)
 -s|--size
@@ -28,6 +28,11 @@ Options:
 -h|--help
     Show Usage info
 USAGE
+end
+
+def append_district(district, io)
+  district.available_uids = "<#{district.available_uids.length} uids hidden>"
+  io << "\n#{district.attributes.pretty_inspect}"
 end
 
 opts = GetoptLong.new(
@@ -73,8 +78,8 @@ if uuid
     puts "--size is required with command: #{command}"
     exit 1
   end
-elsif command
-  puts "--uuid is required with --command"
+elsif command && command != 'create'
+  puts "--uuid is required with --command except for on create"
   exit 1
 end
 
@@ -96,6 +101,12 @@ begin
   when "remove-capacity"
     district.remove_capacity(size)
     reply.resultIO << "Success!"
+  when "create"
+    district = District.new
+    district.construct
+    district.save
+    uuid = district.uuid
+    reply.resultIO << "Successfully created district: #{district.uuid}" if reply.resultIO.string.empty?
   when "destroy"
     unless bypass
       puts <<-WARNING
@@ -123,19 +134,21 @@ begin
   
   else
     if district
-      district.available_uids = '<hidden>'
-      reply.resultIO << district.attributes.pretty_inspect
+      append_district(district, reply.resultIO)
     else
       districts = District.find_all
       unless districts.empty?
         districts.each do |district|
-          district.available_uids = '<hidden>'
-          reply.resultIO << district.attributes.pretty_inspect
+          append_district(district, reply.resultIO)
         end
       else
-        puts "No districts created yet.  Use rhc-admin-create-district to create one."
+        puts "No districts created yet.  Use 'rhc-admin-ctl-district -c create' to create one."
       end
     end
+  end
+  if uuid && command && command != 'destroy'
+    district = District.find(uuid)
+    append_district(district, reply.resultIO)
   end
 rescue Cloud::Sdk::CdkException => e
   reply.errorIO << e.message
