@@ -351,6 +351,12 @@ class Application < Cloud::Sdk::UserModel
   
   private
   
+  def self.hash_to_obj(*args)
+    app = super(*args)
+    app.container ||= Cloud::Sdk::ApplicationContainerProxy.instance(app.server_identity)
+    app
+  end
+  
   def supports_partial_updates?
     return false
   end

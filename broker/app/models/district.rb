@@ -1,48 +1,51 @@
 class District < Cloud::Sdk::Model
   
-  attr_accessor :server_identities, :active_server_identities_size, :uuid, :creation_time, :available_capacity, :available_uids, :max_uid, :externally_reserved_uids_size
+  attr_accessor :server_identities, :active_server_identities_size, :uuid, :creation_time, :available_capacity, :available_uids, :max_uid, :max_capacity, :externally_reserved_uids_size
   primary_key :uuid
 
-  def initialize(uuid=nil)
+  def initialize()
+  end
+  
+  def construct()
+    self.uuid = Cloud::Sdk::Model.gen_uuid
     self.creation_time = DateTime::now().strftime
-    self.uuid = uuid || Cloud::Sdk::Model.gen_uuid
     self.server_identities = {}
     self.available_capacity = Rails.configuration.districts[:max_capacity]
     self.available_uids = []
     self.available_uids.fill(0, Rails.configuration.districts[:max_capacity]) {|i| i+Rails.configuration.districts[:first_uid]}
     self.max_uid = Rails.configuration.districts[:max_capacity] + Rails.configuration.districts[:first_uid] - 1
+    self.max_capacity = Rails.configuration.districts[:max_capacity]
     self.externally_reserved_uids_size = 0
+    self.active_server_identities_size = 0
   end
   
   def self.find(uuid)
-    json = Cloud::Sdk::DataStore.instance.find_district(uuid)
-    return nil unless json
-    district = self.new.from_json(json)
-    district.reset_state
-    district
+    hash = Cloud::Sdk::DataStore.instance.find_district(uuid)
+    return nil unless hash
+    hash_to_district(hash)
   end
   
   def self.find_all()
     data = Cloud::Sdk::DataStore.instance.find_all_districts()
     return [] unless data
-    districts = data.map do |json|
-      district = self.new.from_json(json)
-      district.reset_state
-      district
+    districts = data.map do |hash|
+      hash_to_district(hash)
     end
     districts
   end
 
   def self.find_available()
-    json = Cloud::Sdk::DataStore.instance.find_available_district()
-    return nil unless json
-    district = self.new.from_json(json)
-    district.reset_state
-    district
+    hash = Cloud::Sdk::DataStore.instance.find_available_district()
+    return nil unless hash
+    hash_to_district(hash)
   end
   
   def delete()
-    Cloud::Sdk::DataStore.instance.delete_district(@uuid)
+    if server_identities.empty? && ((available_capacity + externally_reserved_uids_size) == max_capacity)
+      Cloud::Sdk::DataStore.instance.delete_district(@uuid)
+    else
+      raise Cloud::Sdk::CdkException.new("Couldn't destroy district '#{uuid}' because it still contains applications and/or nodes")
+    end
   end
   
   def save()
@@ -57,8 +60,8 @@ class District < Cloud::Sdk::Model
   
   def add_node(server_identity)
     if server_identity
-      other_district_json = Cloud::Sdk::DataStore.instance.find_district_with_node(server_identity)
-      unless other_district_json
+      hash = Cloud::Sdk::DataStore.instance.find_district_with_node(server_identity)
+      unless hash
         unless server_identities.has_key?(server_identity)
           container = Cloud::Sdk::ApplicationContainerProxy.instance(server_identity)
           begin
@@ -77,7 +80,7 @@ class District < Cloud::Sdk::Model
           raise Cloud::Sdk::CdkException.new("Node with server identity: #{server_identity} already belongs to district: #{@uuid}")
         end
       else
-        raise Cloud::Sdk::CdkException.new("Node with server identity: #{server_identity} already belongs to another district: #{other_district_json["uuid"]}")
+        raise Cloud::Sdk::CdkException.new("Node with server identity: #{server_identity} already belongs to another district: #{hash["uuid"]}")
       end
     else
       raise Cloud::Sdk::UserException.new("server_identity is required")
@@ -124,6 +127,7 @@ class District < Cloud::Sdk::Model
       Cloud::Sdk::DataStore.instance.add_district_uids(uuid, additions)
       @available_capacity += num_uids
       @max_uid += num_uids
+      @max_capacity += num_uids
       @available_uids += additions
     else
       raise Cloud::Sdk::CdkException.new("You must supply a positive number of uids to remove")
@@ -153,6 +157,7 @@ class District < Cloud::Sdk::Model
       Cloud::Sdk::DataStore.instance.remove_district_uids(uuid, subtractions)
       @available_capacity -= num_uids
       @max_uid -= num_uids
+      @max_capacity -= num_uids
       @available_uids -= subtractions
     else
       raise Cloud::Sdk::CdkException.new("You must supply a positive number of uids to remove")
@@ -160,5 +165,13 @@ class District < Cloud::Sdk::Model
   end
   
   private
-
+  
+  def self.hash_to_district(hash)
+    district = self.new 
+    hash.each do |k,v|
+      district.instance_variable_set("@#{k}", v)
+    end
+    district.reset_state
+    district
+  end
 end

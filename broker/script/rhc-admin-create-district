@@ -41,6 +41,7 @@ end
 reply = ResultIO.new
 begin
   district = District.new
+  district.construct
   district.save
   reply.resultIO << "Successfully created district: #{district.uuid}" if reply.resultIO.string.empty?
 rescue Cloud::Sdk::CdkException => e

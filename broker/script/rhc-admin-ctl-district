@@ -65,16 +65,16 @@ if uuid
     puts "District #{uuid} not found."
     exit 1
   end
-  unless server_identity || command != 'add-node' || command != 'remove-node' || command != 'deactivate-node'
+  unless server_identity || (command != 'add-node' && command != 'remove-node' && command != 'deactivate-node')
     puts "--server_identity is required with command: #{command}"
     exit 1
   end
-  unless size || command != 'add-capacity' || command != 'remove-capacity'
+  unless size || (command != 'add-capacity' && command != 'remove-capacity')
     puts "--size is required with command: #{command}"
     exit 1
   end
 elsif command
-  puts "--uuid is requied with --command"
+  puts "--uuid is required with --command"
   exit 1
 end
 
@@ -118,12 +118,8 @@ begin
       end
     end
 
-    if district.server_identities.empty? && ((district.available_capacity + district.externally_reserved_uids_size) == district.max_capacity)
-      district.delete
-      reply.resultIO << "Successfully destroyed district: #{uuid}" if reply.resultIO.string.empty?
-    else
-      reply.resultIO << "Couldn't destroy district '#{uuid}' because it still contains applications and/or nodes" if reply.resultIO.string.empty?
-    end
+    district.delete
+    reply.resultIO << "Successfully destroyed district: #{uuid}" if reply.resultIO.string.empty?
   
   else
     if district

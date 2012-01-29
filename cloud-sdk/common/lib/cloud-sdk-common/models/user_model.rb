@@ -7,17 +7,17 @@ module Cloud
       end
       
       def self.find(login, id)        
-        data = DataStore.instance.find(self.name,login,id)
-        return nil unless data
+        hash = DataStore.instance.find(self.name,login,id)
+        return nil unless hash
         
-        json_to_obj(data)
+        hash_to_obj(hash)
       end
       
       def self.find_all(login)
-        data_list = DataStore.instance.find_all(self.name,login)
-        return [] if data_list.empty?
-        data_list.map! do |data|
-          json_to_obj(data)
+        hash_list = DataStore.instance.find_all(self.name,login)
+        return [] if hash_list.empty?
+        hash_list.map! do |hash|
+          hash_to_obj(hash)
         end
       end
       
@@ -61,6 +61,18 @@ module Cloud
         id_var = @primary_key || "uuid"
         obj = self.new.from_json(json.values[0])
         obj.instance_variable_set("@#{id_var}", json.keys[0])
+        obj.reset_state
+        obj
+      end
+      
+      def self.hash_to_obj(hash)
+        id_var = @primary_key || "uuid"
+        obj = self.new 
+        obj.instance_variable_set("@#{id_var}", hash.keys[0])
+        hash = hash.values[0]
+        hash.each do |k,v|
+          obj.instance_variable_set("@#{k}", v)
+        end
         obj.reset_state
         obj
       end
