@@ -48,6 +48,9 @@ RedHatCloud::Application.routes.draw do
       resource :express_domains,
                :controller => "express_domain" do
         match 'edit_namespace' => 'express_domain#account_update', :via => :put
+        match 'edit_sshkey' => 'express_domain#account_update', :via => :put
+        match 'edit_namespace' => 'express_domain#edit_namespace', :via => :get
+        match 'edit_sshkey' => 'express_domain#edit_sshkey', :via => :get
       end
     end
 

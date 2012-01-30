@@ -1,6 +1,6 @@
 class ExpressDomainController < ApplicationController
   before_filter :require_login
-  before_filter :require_user, :only => [:edit, :account_update]
+  before_filter :require_user, :only => [:edit_namespace, :edit_ssh, :account_update]
 
   def create
     # Get only relevant parameters
@@ -85,6 +85,15 @@ class ExpressDomainController < ApplicationController
     @domain = ExpressDomain.new :rhlogin => @userinfo.rhlogin, :namespace => @userinfo.namespace
   end
 
+  def edit_ssh
+    if @userinfo.sshkey
+      @dom_action = 'update'
+    else
+      @dom_action = 'create'
+    end
+    @domain = ExpressDomain.new :rhlogin => @userinfo.rhlogin, :ssh_key => @userinfo.sshkey
+  end
+
   def account_update
     # Get only relevant parameters
     domain_params = params[:express_domain]
@@ -98,6 +107,15 @@ class ExpressDomainController < ApplicationController
 
     @dom_action = domain_params.delete :dom_action
     form_type = domain_params.delete :form_type
+    if form_type == 'sshkey':
+        # do this until we get ssh saving working
+        domain_params[:ssh] = 'ssh-rsa nossh'
+    else
+        ssh_key = @userinfo.ssh_key
+        ssh = "%s %s" % [ssh_key['type'], ssh_key['key']]
+        if ssh:
+            domain_params[:ssh] = ssh
+    end
 
     @domain = ExpressDomain.new(domain_params)
 
