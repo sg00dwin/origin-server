@@ -76,13 +76,13 @@ class ExpressDomainController < ApplicationController
     end
   end
 
-  def edit
-      if @userinfo.namespace
-        @dom_action = 'update'
-      else
-        @dom_action = 'create'
-      end
-      @domain = ExpressDomain.new :rhlogin => @userinfo.rhlogin, :namespace => @userinfo.namespace
+  def edit_namespace
+    if @userinfo.namespace
+      @dom_action = 'update'
+    else
+      @dom_action = 'create'
+    end
+    @domain = ExpressDomain.new :rhlogin => @userinfo.rhlogin, :namespace => @userinfo.namespace
   end
 
   def account_update

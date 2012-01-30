@@ -47,7 +47,7 @@ RedHatCloud::Application.routes.draw do
       end
       resource :express_domains,
                :controller => "express_domain" do
-        match 'edit' => 'express_domain#account_update', :via => :put
+        match 'edit_namespace' => 'express_domain#account_update', :via => :put
       end
     end
 
