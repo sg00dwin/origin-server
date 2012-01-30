@@ -307,7 +307,7 @@ module Express
         
         keep_uid = destination_district_uuid == source_district_uuid
 
-        if keep_uid
+        if source_container.id == destination_container.id
           raise Cloud::Sdk::UserException.new("Error moving app.  Old and new servers are the same: #{source_container.id}", 1)
         end
         

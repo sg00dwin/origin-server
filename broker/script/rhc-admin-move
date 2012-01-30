@@ -26,7 +26,7 @@ options = rpcoptions do |parser, options|
       options[:rhlogin] = rhlogin
     end
     
-    parser.on('-u', '--destination_district_uuid UUID', 'Uuid of the district to move to.  Not to be used in conjunction with -i') do |destination_district_uuid|
+    parser.on('-u', '--destination_district_uuid DISTRICT_UUID', 'Uuid of the district to move to.  Not to be used in conjunction with -i') do |destination_district_uuid|
       options[:destination_district_uuid] = destination_district_uuid
     end
     
