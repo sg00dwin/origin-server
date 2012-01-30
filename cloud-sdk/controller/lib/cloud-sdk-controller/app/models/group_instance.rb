@@ -1,6 +1,6 @@
 class GroupInstance < Cloud::Sdk::UserModel
   attr_accessor :gear_ids, :node_profile, :component_instances, 
-    :name, :cart_name, :profile_name, :group_name
+    :name, :cart_name, :profile_name, :group_name, :reused_by
 
 
   def initialize(cartname, profname, groupname, path)
@@ -9,6 +9,17 @@ class GroupInstance < Cloud::Sdk::UserModel
     self.profile_name = profname
     self.component_instances = []
     self.group_name = groupname
+    self.reused_by = []
+  end
+
+  def merge(cartname, profname, groupname, path)
+    reused = [self.name, self.cart_name, self.profile_name, self.group_name]
+    self.reused_by << reused
+    self.name = path
+    self.cart_name = cartname
+    self.profile_name = profname
+    self.group_name = groupname
+    # component_instances remains a flat collection
   end
 
   def elaborate(group, parent_comp_path, app)

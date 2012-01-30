@@ -74,9 +74,20 @@ class ComponentInstance < Cloud::Sdk::UserModel
   end
 
   def elaborate_cartridge(cart, profile, app)
+    profile.group_overrides.each do |n, v|
+      from = self.name + "." + cart.name + "." + n
+      to = self.name + "." + cart.name + "." + v
+      app.group_override_map[from] = to
+    end
     group_list = profile.groups.map do |k,g|
        gpath = self.name + "." + cart.name + "." + k
-       gi = GroupInstance.new(cart.name, profile.name, k, gpath)
+       mapped_path = app.group_override_map[gpath] || ""
+       gi = group_instance_map[mapped_path]
+       if gi.nil?
+         gi = GroupInstance.new(cart.name, profile.name, k, gpath)
+       else
+         gi.merge(cart.name, profile.name, k, gpath)
+       end
        app.group_instance_map[gpath] = gi
        gi.elaborate(g, self.name, app)
        self.dependencies += gi.component_instances

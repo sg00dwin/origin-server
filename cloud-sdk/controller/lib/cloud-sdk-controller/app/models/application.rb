@@ -2,7 +2,7 @@ require 'state_machine'
 
 class Application < Cloud::Sdk::Cartridge
   attr_accessor :state, :group_instance_map, :comp_instance_map, :conn_endpoints_list,
-                :domain, :creation_time, :uuid, :aliases, :uid, :user
+                :domain, :creation_time, :uuid, :aliases, :uid, :user, :group_override_map
   primary_key :name
   exclude_attributes :user
     
@@ -265,10 +265,23 @@ class Application < Cloud::Sdk::Cartridge
   def elaborate_descriptor
     self.group_instance_map = {} if group_instance_map.nil?
     self.comp_instance_map = {} if comp_instance_map.nil?
+    self.group_override_map = {} if group_override_map.nil?
     
+    @profiles[@default_profile].group_overrides.each do |n, v|
+      from = self.name + "." + n
+      to = self.name + "." + v
+      self.group_override_map[from] = to
+    end
+
     @profiles[@default_profile].groups.each { |k, g|
       gpath = self.name + "." + g.name
-      gi = GroupInstance.new(self.name, self.default_profile, k, gpath)
+      mapped_path = group_override_map[gpath] || ""
+      gi = group_instance_map[mapped_path]
+      if gi.nil?
+        gi = GroupInstance.new(self.name, self.default_profile, k, gpath)
+      else
+        gi.merge(self.name, self.default_profile, k, gpath)
+      end
       self.group_instance_map[gpath] = gi
       gi.elaborate(g, "", self)
     }
@@ -293,6 +306,8 @@ class Application < Cloud::Sdk::Cartridge
         ginst1 = self.group_instance_map[conn.from_comp_inst.group_instance_name]
         ginst2 = self.group_instance_map[conn.to_comp_inst.group_instance_name]
         # these two group instances need to be colocated
+        ginst1.merge(ginst2.cart_name, ginst2.profile_name, ginst2.group_name, ginst2.name)
+        self.group_instance_map[conn.to_comp_inst.group_instance_name] = ginst1
       end
     }
   end

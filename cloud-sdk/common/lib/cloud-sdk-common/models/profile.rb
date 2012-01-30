@@ -1,7 +1,7 @@
 module Cloud::Sdk
   class Profile < Cloud::Sdk::UserModel
     validates_presence_of :name, :groups
-    attr_accessor :name, :provides, :components, :groups,
+    attr_accessor :name, :provides, :components, :groups, :group_overrides,
                   :connections, :property_overrides, :service_overrides,
                   :start_order, :stop_order, :configure_order, :generated
     
@@ -97,6 +97,15 @@ module Cloud::Sdk
         spec_hash["Connections"].each do |n,c|
           conn = Connection.new(n).from_descriptor(c)
           self.connections[conn.name] = conn
+        end
+      end
+
+      self.group_overrides = {}
+      if spec_hash.has_key?("GroupOverrides")
+        spec_hash["GroupOverrides"].each do |go|
+          # each group override is a list
+          map_to = go.pop
+          go.each { |g| group_overrides[g] = map_to }
         end
       end
       self
