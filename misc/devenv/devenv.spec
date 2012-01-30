@@ -78,6 +78,10 @@ mkdir -p %{buildroot}%{sitedir}/log
 # Setup mcollective client log
 touch %{buildroot}%{brokerdir}/log/mcollective-client.log
 
+# Setup rails development logs
+touch %{buildroot}%{brokerdir}/log/development.log
+touch %{buildroot}%{sitedir}/log/development.log
+
 # Setup the jenkins jobs
 mkdir -p %{buildroot}%{jenkins}/jobs
 mv %{buildroot}%{devenvdir}%{jenkins}/jobs/* %{buildroot}%{jenkins}/jobs
@@ -230,6 +234,8 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 %files
 %defattr(-,root,root,-)
 %attr(0666,-,-) %{brokerdir}/log/mcollective-client.log
+%attr(0666,-,-) %{brokerdir}/log/development.log
+%attr(0666,-,-) %{sitedir}/log/development.log
 %config(noreplace) %{jenkins}/jobs/*/*
 %{jenkins}/jobs/sync.rb
 %{devenvdir}
