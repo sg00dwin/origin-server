@@ -10,6 +10,12 @@ module Express
         hash_to_district_ret(hash)
       end
       
+      def find_district_by_name(name)
+        Rails.logger.debug "MongoDataStore.find_district_by_name(#{name})\n\n"
+        hash = MongoDataStore.district_collection.find_one( "name" => name )
+        hash_to_district_ret(hash)
+      end
+      
       def find_all_districts()
         Rails.logger.debug "MongoDataStore.find_all_districts()\n\n"
         mcursor = MongoDataStore.district_collection.find()
@@ -81,10 +87,12 @@ module Express
         MongoDataStore.district_collection.update({"_id" => uuid}, {"$inc" => { "externally_reserved_uids_size" => 1 }})
       end
       
-      def find_available_district
+      def find_available_district(node_profile=nil)
+        node_profile = node_profile ? node_profile : "std"
         hash = MongoDataStore.district_collection.find(
           { "available_capacity" => { "$gt" => 0 }, 
-            "active_server_identities_size" => { "$gt" => 0 } }).sort(["available_capacity", "descending"]).limit(1).next
+            "active_server_identities_size" => { "$gt" => 0 },
+            "node_profile" => node_profile}).sort(["available_capacity", "descending"]).limit(1).next
         hash_to_district_ret(hash)
       end
 

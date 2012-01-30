@@ -137,16 +137,19 @@ class MongoDataStoreTest < ActiveSupport::TestCase
   end
   
   def district
+    uuid = gen_uuid
     district = {
       "server_identities" => {}, 
       "active_server_identities_size" => 0, 
-      "uuid" => gen_uuid,
+      "uuid" => uuid,
       "creation_time" => DateTime::now().strftime,
       "available_capacity" => 10,
       "available_uids" => [1,2,3,4,5,6,7,8,9],
       "max_uid" => 10,
       "max_capacity" => 10,
-      "externally_reserved_uids_size" => 0
+      "externally_reserved_uids_size" => 0,
+      "node_profile" => 'std',
+      "name" => "name#{uuid}"
     }
     district
   end

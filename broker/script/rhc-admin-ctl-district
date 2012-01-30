@@ -19,6 +19,10 @@ Options:
     District uuid  (alphanumeric)
 -c|--command <command>
     (add-node|remove-node|deactivate-node|add-capacity|remove-capacity|create|destroy)
+-n|--name <district name>
+    District name (Used on create or in place of uuid on other commands)
+-p|--node_profile <profile_size>
+    (std(default)|jumbo|exlarge|large|micro) Only needed for create
 -i|--server_identity
     Node server_identity (required)
 -s|--size
@@ -35,11 +39,21 @@ def append_district(district, io)
   io << "\n\n#{district.attributes.pretty_inspect}"
 end
 
+def get_district(uuid, name)
+  if uuid
+    district = District.find(uuid)
+  else
+    district = District.find_by_name(name)
+  end
+end
+
 opts = GetoptLong.new(
     ["--uuid",             "-u", GetoptLong::REQUIRED_ARGUMENT],
     ["--server_identity",  "-i", GetoptLong::REQUIRED_ARGUMENT],
     ["--command",          "-c", GetoptLong::REQUIRED_ARGUMENT],
     ["--size",             "-s", GetoptLong::REQUIRED_ARGUMENT],
+    ["--name",             "-n", GetoptLong::REQUIRED_ARGUMENT],
+    ["--node_profile",     "-p", GetoptLong::REQUIRED_ARGUMENT],
     ["--bypass",           "-b", GetoptLong::NO_ARGUMENT],    
     ["--help",             "-h", GetoptLong::NO_ARGUMENT]
 )
@@ -62,12 +76,24 @@ command  = args['--command']
 server_identity  = args['--server_identity']
 size     = args['--size'] ? args['--size'].to_i : nil
 bypass   = args['--bypass']
+name     = args['--name']
+node_profile = args['--node_profile']
+  
+if node_profile && !(node_profile =~ /\A(jumbo|exlarge|large|micro|std)\z/)
+  puts "Node profile must be on of: (std(default)|jumbo|exlarge|large|micro)"
+  exit 1
+end
 
 district = nil
-if uuid
-  district = District.find(uuid)
-  unless district
-    puts "District #{uuid} not found."
+if uuid || name
+  district = get_district(uuid, name)
+  if !district
+    if command != 'create'
+      puts "District '#{uuid ? uuid : name}' not found."
+      exit 1
+    end
+  elsif command == 'create'
+    puts "District '#{name}' already exists"
     exit 1
   end
   unless server_identity || (command != 'add-node' && command != 'remove-node' && command != 'deactivate-node')
@@ -78,8 +104,12 @@ if uuid
     puts "--size is required with command: #{command}"
     exit 1
   end
-elsif command && command != 'create'
-  puts "--uuid is required with --command except for on create"
+elsif command
+  if command != 'create'
+    puts "--uuid or --name is required with --command"
+  else
+    puts "--name is required with create"
+  end
   exit 1
 end
 
@@ -102,8 +132,9 @@ begin
     district.remove_capacity(size)
     reply.resultIO << "Success!"
   when "create"
+    puts "node_profile not specified.  Using default" unless node_profile
     district = District.new
-    district.construct
+    district.construct(name, node_profile)
     district.save
     uuid = district.uuid
     reply.resultIO << "Successfully created district: #{district.uuid}" if reply.resultIO.string.empty?
@@ -111,7 +142,7 @@ begin
     unless bypass
       puts <<-WARNING
     !!!! WARNING !!!! WARNING !!!! WARNING !!!!
-    You are about to destroy the #{uuid} district.
+    You are about to destroy the #{uuid ? uuid : name} district.
   
     This is NOT reversible, all remote data for this district will be removed.
     WARNING
@@ -130,7 +161,7 @@ begin
     end
 
     district.delete
-    reply.resultIO << "Successfully destroyed district: #{uuid}" if reply.resultIO.string.empty?
+    reply.resultIO << "Successfully destroyed district: #{uuid ? uuid : name}" if reply.resultIO.string.empty?
   
   else
     if district
@@ -146,8 +177,8 @@ begin
       end
     end
   end
-  if uuid && command && command != 'destroy'
-    district = District.find(uuid)
+  if (uuid || name) && command && command != 'destroy'
+    district = get_district(uuid, name)
     append_district(district, reply.resultIO)
   end
 rescue Cloud::Sdk::CdkException => e
