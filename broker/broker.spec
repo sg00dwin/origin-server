@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.85.20
+Version:   0.85.21
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -82,6 +82,16 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Sun Jan 29 2012 Dan McPherson <dmcphers@redhat.com> 0.85.21-1
+- Updating gem versions (dmcphers@redhat.com)
+- Bug 785550 and 785514 (dmcphers@redhat.com)
+- make mongo queryable (dmcphers@redhat.com)
+- change rhlogin to login for sdk (dmcphers@redhat.com)
+- moving rhc-admin-create-district logic to rhc-admin-ctl-district and add more
+  tests (dmcphers@redhat.com)
+- Temporary commit to build (dmcphers@redhat.com)
+- add base cloud-sdk broker (dmcphers@redhat.com)
+
 * Sat Jan 28 2012 Dan McPherson <dmcphers@redhat.com> 0.85.20-1
 - Updating gem versions (dmcphers@redhat.com)
 - mongo performance changes and mongo unit tests (dmcphers@redhat.com)
