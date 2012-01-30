@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/phpmyadmin-3.4
 
 Name: rhc-cartridge-phpmyadmin-3.4
-Version: 0.7.3
+Version: 0.7.4
 Release: 1%{?dist}
 Summary: Embedded phpMyAdmin support for express
 
@@ -55,6 +55,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Sun Jan 29 2012 Dan McPherson <dmcphers@redhat.com> 0.7.4-1
+- Fixed Bug 749751 (twiest@redhat.com)
+
 * Fri Jan 27 2012 Dan McPherson <dmcphers@redhat.com> 0.7.3-1
 - deploy httpd proxy from migration (dmcphers@redhat.com)
 - Adding status=I to force proxy layer to attempt to connect every time even in
