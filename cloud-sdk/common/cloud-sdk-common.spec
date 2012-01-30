@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Common
 Name:           rubygem-%{gemname}
-Version:        0.3.11
+Version:        0.3.12
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -73,6 +73,13 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Sun Jan 29 2012 Dan McPherson <dmcphers@redhat.com> 0.3.12-1
+- Bug 785550 and 785514 (dmcphers@redhat.com)
+- keep applications when you get the user (dmcphers@redhat.com)
+- make mongo queryable (dmcphers@redhat.com)
+- moving rhc-admin-create-district logic to rhc-admin-ctl-district and add more
+  tests (dmcphers@redhat.com)
+
 * Sat Jan 28 2012 Dan McPherson <dmcphers@redhat.com> 0.3.11-1
 - mongo performance changes and mongo unit tests (dmcphers@redhat.com)
 - mongo ds terminology improvements and get basic broker controller tests
