@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.85.10
+Version:   0.85.11
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -245,6 +245,11 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 %{_initddir}/sauce-connect
 
 %changelog
+* Mon Jan 30 2012 Dan McPherson <dmcphers@redhat.com> 0.85.11-1
+- Revert changes to development.log in site,broker,devenv spec
+  (aboone@redhat.com)
+- Reduce number of rubygem dependencies in site build (aboone@redhat.com)
+
 * Sat Jan 28 2012 Dan McPherson <dmcphers@redhat.com> 0.85.10-1
 - Site build - don't use bundler, install all gems via RPM (aboone@redhat.com)
 
