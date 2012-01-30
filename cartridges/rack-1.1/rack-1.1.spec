@@ -2,7 +2,7 @@
 
 Summary:   Provides ruby rack support running on Phusion Passenger
 Name:      rhc-cartridge-rack-1.1
-Version:   0.85.9
+Version:   0.85.10
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -108,6 +108,9 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Mon Jan 30 2012 Dan McPherson <dmcphers@redhat.com> 0.85.10-1
+- bug 785517 (bdecoste@gmail.com)
+
 * Fri Jan 27 2012 Dan McPherson <dmcphers@redhat.com> 0.85.9-1
 - rack template requires thread-dump again (bdecoste@gmail.com)
 - Adds PassengerSpawnIPAddress option to rack cartridge configuration. The
