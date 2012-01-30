@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.3.17
+Version:        0.3.18
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -73,6 +73,15 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Sun Jan 29 2012 Dan McPherson <dmcphers@redhat.com> 0.3.18-1
+- Updating gem versions (dmcphers@redhat.com)
+- remove old gitkeep file (dmcphers@redhat.com)
+- Bug 785550 and 785514 (dmcphers@redhat.com)
+- keep applications when you get the user (dmcphers@redhat.com)
+- make mongo queryable (dmcphers@redhat.com)
+- change rhlogin to login for sdk (dmcphers@redhat.com)
+- add base cloud-sdk broker (dmcphers@redhat.com)
+
 * Sat Jan 28 2012 Dan McPherson <dmcphers@redhat.com> 0.3.17-1
 - Updating gem versions (dmcphers@redhat.com)
 - mongo performance changes and mongo unit tests (dmcphers@redhat.com)
