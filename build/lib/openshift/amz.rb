@@ -264,6 +264,11 @@ module OpenShift
       set_instance_ip(hostname, public_ip)
     end
     
+    def get_internal_hostname(hostname)
+      internal_hostname = ssh(hostname, "hostname")
+      internal_hostname
+    end
+    
     def set_instance_ip(hostname, ip)
       print "Updating the controller to use the ip '#{ip}'..."
       # Both calls below are needed to fix a race condition between ssh and libra-data start times
