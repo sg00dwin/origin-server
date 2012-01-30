@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.85.9
+Version:   0.85.10
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -76,6 +76,11 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Mon Jan 30 2012 Dan McPherson <dmcphers@redhat.com> 0.85.10-1
+- Revert changes to development.log in site,broker,devenv spec
+  (aboone@redhat.com)
+- Reduce number of rubygem dependencies in site build (aboone@redhat.com)
+
 * Sat Jan 28 2012 Dan McPherson <dmcphers@redhat.com> 0.85.9-1
 - 
 
