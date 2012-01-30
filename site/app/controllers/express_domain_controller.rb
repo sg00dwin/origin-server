@@ -77,6 +77,11 @@ class ExpressDomainController < ApplicationController
   end
 
   def edit
+      if @userinfo.namespace
+        @dom_action = 'update'
+      else
+        @dom_action = 'create'
+      end
       @domain = ExpressDomain.new :rhlogin => @userinfo.rhlogin, :namespace => @userinfo.namespace
   end
 
@@ -90,13 +95,24 @@ class ExpressDomainController < ApplicationController
 
     # do this until we get ssh saving working
     domain_params[:ssh] = 'ssh-rsa nossh'
+
+    @dom_action = domain_params.delete :dom_action
+    form_type = domain_params.delete :form_type
+
     @domain = ExpressDomain.new(domain_params)
 
     ajax_response = {}
     if @domain.valid?
       begin
-        @domain.update do |json_response|
-          ajax_response = process_response json_response
+        if @dom_action == 'create'
+          Rails.logger.debug 'creating domain'
+          @domain.create do |json_response|
+            ajax_response = process_response json_response
+          end
+        else
+          @domain.update do |json_response|
+            ajax_response = process_response json_response
+          end
         end
       rescue Exception
         @message = @domain.errors.full_messages.join("; ")
