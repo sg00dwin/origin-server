@@ -140,25 +140,9 @@ module Cloud::Sdk
       
       orig_embedded = app_attrs["embedded"] 
       app_attrs_to_internal(app_attrs)
-      
-      # Would be nice to be able to pull and push here or if addToSet supported embedded docs
-      #MongoDataStore.collection.update({ "_id" => user_id, "apps.name" => id },  { "$pull" => { "apps" => {"name" => id }}, "$push" => { "apps" => app_attrs }})
 
-      user_hash = MongoDataStore.collection.find_one( "_id" => user_id )
-      raise Cloud::Sdk::UserException.new("User not found: #{user_id}") unless user_hash
-      index = -1
-      user_hash["apps"].each_with_index do |app, i|
-        if app["name"] == id
-          index = i
-          break
-        end
-      end
-
-      hash = MongoDataStore.collection.find_and_modify({
-        :query => { "_id" => user_id, "apps.#{index}.name" => id},
-        :update => { "$set" => { "apps.#{index}" => app_attrs }} })
-      app_attrs["embedded"] = orig_embedded
-      raise Cloud::Sdk::UserException.new("Concurrent modifications detected for user: #{user_id}") if hash == nil 
+      MongoDataStore.collection.update({ "_id" => user_id, "apps.name" => id}, { "$set" => { "apps.$" => app_attrs }} )
+      app_attrs["embedded"] = orig_embedded 
     end
 
     def self.add_app(user_id, id, app_attrs)
