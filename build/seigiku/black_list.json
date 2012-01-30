@@ -1,0 +1,12 @@
+{
+  "specfiles" : [
+    "selinux.spec",
+    "devenv.spec",
+    "node.spec",
+    "rhc-cartridge-metrics-0.1.spec",
+    "site.spec",
+    "broker.spec",
+    "server-common.spec",
+    "common.spec"
+  ]
+}
