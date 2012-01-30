@@ -12,20 +12,8 @@ Source0:   rhc-site-%{version}.tar.gz
 
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 
-BuildRequires: libxml2-devel
-BuildRequires: libxslt-devel
-BuildRequires: gcc-c++
 BuildRequires: js
-BuildRequires: rubygem-aws-sdk
-BuildRequires: rubygem-barista
-BuildRequires: rubygem-formtastic
-BuildRequires: rubygem-haml
-BuildRequires: rubygem-hpricot
-BuildRequires: rubygem-parseconfig
-BuildRequires: rubygem-rails
-BuildRequires: rubygem-recaptcha
-BuildRequires: rubygem-stomp
-BuildRequires: rubygem-xml-simple
+BuildRequires: rubygem-coffee-script
 
 Requires:  rhc-common
 Requires:  rhc-server-common
@@ -55,7 +43,11 @@ authorization and also the workflows to request access.
 %setup -q
 
 %build
-rake barista:brew
+for x in `/bin/ls ./app/coffeescripts | /bin/grep \.coffee$ | /bin/sed 's/\.coffee$//'`
+do
+  file="./app/coffeescripts/$x.coffee"
+  /usr/bin/ruby -e "require 'rubygems'; require 'coffee_script'; puts CoffeeScript.compile File.read('$file')" > ./public/javascripts/$x.js
+done
 
 %install
 rm -rf %{buildroot}
