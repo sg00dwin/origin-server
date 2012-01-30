@@ -16,9 +16,6 @@ module Cloud
       include ActiveModel::Observing
       include ActiveModel::Conversion
       
-      @@primary_key = :uuid
-      @@excludes_attributes = []
-      
       def initialize
         @persisted = false
         @new_record = true
@@ -75,6 +72,11 @@ module Cloud
         @primary_key = var_name
       end
       
+      def self.require_update_attributes(*attributes)
+        @requires_update_attributes = [] unless @requires_update_attributes
+        @requires_update_attributes += attributes
+      end
+      
       def self.exclude_attributes(*attributes)
         @excludes_attributes = [] unless @excludes_attributes
         @excludes_attributes += attributes
@@ -108,6 +110,11 @@ module Cloud
       def self.excludes_attributes
         @excludes_attributes = [] unless @excludes_attributes
         @excludes_attributes
+      end
+      
+      def self.requires_update_attributes
+        #nil indicates all fields require updates
+        @requires_update_attributes
       end
 
       def to_xml(options = {})

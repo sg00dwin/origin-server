@@ -112,7 +112,7 @@ module Express
         token = JSON.parse(json_token)
         username = token['rhlogin']
         app_name = token['app_name']
-        creation_time = Time.parse(token['creation_time'])
+        creation_time = token['creation_time']
               
         user = CloudUser.find(username)
         raise Cloud::Sdk::UserValidationException.new unless user

@@ -2,6 +2,7 @@ class CloudUser < Cloud::Sdk::UserModel
   attr_accessor :login, :uuid, :system_ssh_keys, :env_vars, :ssh_keys, :namespace, :max_gears, :consumed_gears, :applications
   primary_key :login
   exclude_attributes :applications
+  require_update_attributes :system_ssh_keys, :env_vars, :ssh_keys
   private :login=, :uuid=, :namespace=
   DEFAULT_SSH_KEY_NAME = "default"
   
@@ -54,8 +55,7 @@ class CloudUser < Cloud::Sdk::UserModel
   end
 
   def applications
-    apps = @applications
-    apps
+    @applications
   end
   
   def self.hash_to_obj(hash)
@@ -111,7 +111,7 @@ class CloudUser < Cloud::Sdk::UserModel
     self.system_ssh_keys = {} unless self.system_ssh_keys    
     result = ResultIO.new
     key = self.system_ssh_keys[app_name]
-    return unless key
+    return result unless key
     applications.each do |app|
       Rails.logger.debug "DEBUG: Removing #{app_name}'s system ssh keys from app: #{app.name}"
       result.append app.remove_authorized_ssh_key(key)
