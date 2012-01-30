@@ -33,7 +33,7 @@ module Cloud
             unless changes.empty?
               changed_attrs = {}
               changes.each do |key, value|
-                changed_attrs[key] = value[1]
+                changed_attrs[key] = value[1] unless self.class.excludes_attributes.include? key.to_sym
               end
               DataStore.instance.save(self.class.name, login, instance_variable_get("@#{id_var}"), changed_attrs)
             end

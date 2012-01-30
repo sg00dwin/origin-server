@@ -24,20 +24,36 @@ class Application < Cloud::Sdk::UserModel
   end
   
   def self.find(user, app_name)
-    app = super(user.login, app_name)
-    return nil unless app
-    app.user = user
-    app.reset_state
+    app = nil
+    if user.applications
+      user.applications.each do |next_app|
+        if next_app.name == app_name
+          app = next_app
+          break
+        end
+      end
+    else
+      app = super(user.login, app_name)
+      return nil unless app
+      app.user = user
+      app.reset_state
+    end
     app
   end
   
   def self.find_all(user)
-    apps = super(user.login)
-    apps.map do |app|
-      app.user = user
-      app.reset_state
-      app
+    apps = nil
+    if user.applications
+      apps = user.applications
+    else
+      apps = super(user.login)
+      apps.each do |app|
+        app.user = user
+        app.reset_state
+      end
+      user.applications = apps
     end
+    apps
   end
   
   def self.get_available_cartridges(cart_type)
@@ -351,8 +367,8 @@ class Application < Cloud::Sdk::UserModel
   
   private
   
-  def self.hash_to_obj(*args)
-    app = super(*args)
+  def self.hash_to_obj(hash)
+    app = super(hash)
     app.container ||= Cloud::Sdk::ApplicationContainerProxy.instance(app.server_identity)
     app
   end

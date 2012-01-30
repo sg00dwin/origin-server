@@ -97,7 +97,9 @@ module Cloud::Sdk
     
     def self.user_hash_to_ret(hash)
       hash.delete("_id")
-      hash.delete("apps")
+      if hash["apps"] 
+        hash["apps"] = apps_hash_to_apps_ret(hash["apps"])
+      end
       hash
     end
 
@@ -119,19 +121,17 @@ module Cloud::Sdk
       hash = MongoDataStore.collection.find_one({ "_id" => user_id }, :fields => ["apps"] )
       return [] unless hash && !hash.empty?
       return [] unless hash["apps"] && !hash["apps"].empty?
-      ret = []
-      hash["apps"].each do |app_hash|
-        ret.push(app_hash_to_ret(app_hash))
-      end
-      ret
+      apps_hash_to_apps_ret(hash["apps"])
     end
 
     def self.put_user(user_id, changed_user_attrs)
-      MongoDataStore.collection.update({ "_id" => user_id }, { "$set" => changed_user_attrs }, { :upsert => true })
+      changed_user_attrs.delete("apps")
+      MongoDataStore.collection.update({ "_id" => user_id }, { "$set" => changed_user_attrs })
     end
     
     def self.add_user(user_id, user_attrs)
       user_attrs["_id"] = user_id
+      user_attrs.delete("apps")
       MongoDataStore.collection.insert(user_attrs)
       user_attrs.delete("_id")
     end
@@ -143,10 +143,9 @@ module Cloud::Sdk
       
       # Would be nice to be able to pull and push here or if addToSet supported embedded docs
       #MongoDataStore.collection.update({ "_id" => user_id, "apps.name" => id },  { "$pull" => { "apps" => {"name" => id }}, "$push" => { "apps" => app_attrs }})
-      
-      
+
       user_hash = MongoDataStore.collection.find_one( "_id" => user_id )
-      
+      raise Cloud::Sdk::UserException.new("User not found: #{user_id}") unless user_hash
       index = -1
       user_hash["apps"].each_with_index do |app, i|
         if app["name"] == id
@@ -158,8 +157,8 @@ module Cloud::Sdk
       hash = MongoDataStore.collection.find_and_modify({
         :query => { "_id" => user_id, "apps.#{index}.name" => id},
         :update => { "$set" => { "apps.#{index}" => app_attrs }} })
-      raise Cloud::Sdk::UserException.new("Concurrent modifications detected for #{user_id}") if hash == nil    
       app_attrs["embedded"] = orig_embedded
+      raise Cloud::Sdk::UserException.new("Concurrent modifications detected for user: #{user_id}") if hash == nil 
     end
 
     def self.add_app(user_id, id, app_attrs)
@@ -212,6 +211,13 @@ module Cloud::Sdk
       end
       app_hash
     end
-
+    
+    def self.apps_hash_to_apps_ret(apps_hash)
+      ret = []
+      apps_hash.each do |app_hash|
+        ret.push(app_hash_to_ret(app_hash))
+      end if apps_hash
+      ret
+    end
   end
 end

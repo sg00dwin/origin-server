@@ -1,6 +1,7 @@
 class CloudUser < Cloud::Sdk::UserModel
-  attr_accessor :login, :uuid, :system_ssh_keys, :env_vars, :ssh_keys, :namespace, :max_gears, :consumed_gears
+  attr_accessor :login, :uuid, :system_ssh_keys, :env_vars, :ssh_keys, :namespace, :max_gears, :consumed_gears, :applications
   primary_key :login
+  exclude_attributes :applications
   private :login=, :uuid=, :namespace=
   DEFAULT_SSH_KEY_NAME = "default"
   
@@ -53,7 +54,27 @@ class CloudUser < Cloud::Sdk::UserModel
   end
 
   def applications
-    Application.find_all(self)
+    apps = @applications
+    apps
+  end
+  
+  def self.hash_to_obj(hash)
+    apps = []
+    if hash["apps"]
+      apps = []
+      hash["apps"].each do |app_hash|
+        app = Application.hash_to_obj(app_hash)
+        apps.push(app)
+      end
+      hash.delete("apps")
+    end
+    user = super(hash)
+    apps.each do |app|
+      app.user = user
+      app.reset_state
+    end
+    user.applications = apps
+    user
   end
   
   def delete

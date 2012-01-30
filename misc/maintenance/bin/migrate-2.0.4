@@ -55,7 +55,12 @@ def migrate_app_on_node(server_identity, framework, uuid, rhlogin, app_name)
                   deployed_httpd_proxy_success = false
                 end
               end
-              raise "Failed deploying httpd proxy for app '#{app_name}' with uuid '#{uuid}' on node '#{server_identity}'" unless deployed_httpd_proxy_success 
+              raise "Failed deploying httpd proxy for app '#{app_name}' with uuid '#{uuid}' on node '#{server_identity}'" unless deployed_httpd_proxy_success
+              unless app.aliases.nil?
+                app.aliases.each do |server_alias|
+                  app.container.add_alias(app, app.framework, server_alias)
+                end
+              end
               migrated = true
             end
           end
