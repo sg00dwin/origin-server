@@ -294,11 +294,18 @@ module Express
         source_district_uuid = source_container.get_district_uuid
         if destination_container.nil?
           unless allow_change_district
-            destination_district_uuid = source_district_uuid
+            if destination_district_uuid && destination_district_uuid != source_district_uuid
+              raise Cloud::Sdk::UserException.new("Error moving app.  Cannot change district from '#{source_district_uuid}' to '#{destination_district_uuid}'.", 1)
+            else
+              destination_district_uuid = source_district_uuid
+            end
           end
           destination_container = ApplicationContainerProxy.find_available_impl(app.node_profile, destination_district_uuid)
           destination_district_uuid = destination_container.get_district_uuid if allow_change_district
         else
+          if destination_district_uuid
+            log_debug "DEBUG: Destination district uuid '#{destination_district_uuid}' is being ignored in favor of destination container #{destination_container.id}"
+          end
           destination_district_uuid = destination_container.get_district_uuid
           unless allow_change_district || (source_district_uuid == destination_district_uuid)
             raise Cloud::Sdk::UserException.new("Resulting move would change districts from '#{source_district_uuid}' to '#{destination_district_uuid}'", 1)
