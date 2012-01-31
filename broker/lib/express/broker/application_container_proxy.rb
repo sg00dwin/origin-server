@@ -299,7 +299,7 @@ module Express
         if destination_container.nil?
           unless allow_change_district
             if destination_district_uuid && destination_district_uuid != source_district_uuid
-              raise Cloud::Sdk::UserException.new("Error moving app.  Cannot change district from '#{source_district_uuid}' to '#{destination_district_uuid}'.", 1)
+              raise Cloud::Sdk::UserException.new("Error moving app.  Cannot change district from '#{source_district_uuid}' to '#{destination_district_uuid}' without allow_change_district flag.", 1)
             else
               destination_district_uuid = source_district_uuid
             end
@@ -354,6 +354,7 @@ module Express
             begin
               unless keep_uid
                 app.uid = destination_container.reserve_uid(destination_district_uuid)
+                log_debug "DEBUG: Reserved uid '#{app.uid}' on district: '#{destination_district_uuid}'"
               end
               log_debug "DEBUG: Creating new account for app '#{app.name}' on #{destination_container.id}"
               reply.append destination_container.create(app)

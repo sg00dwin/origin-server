@@ -106,7 +106,7 @@ if uuid || name
   end
 elsif command
   if command != 'create'
-    puts "--uuid or --name is required with --command"
+    puts "--uuid or --name is required with command: #{command}"
   else
     puts "--name is required with create"
   end
@@ -132,7 +132,7 @@ begin
     district.remove_capacity(size)
     reply.resultIO << "Success!"
   when "create"
-    puts "node_profile not specified.  Using default" unless node_profile
+    puts "node_profile not specified.  Using default: std" unless node_profile
     district = District.new
     district.construct(name, node_profile)
     district.save
