@@ -1,5 +1,7 @@
-= semantic_form_for :sshkey do |f|
+= semantic_form_for :sshkey, :url => edit_sshkey_express_domains_path, :html => { :method => :put } do |f|
   -#= f.label :value, "Paste your public key"
+    = f.hidden_field :dom_action, :value => "update"
+    = f.hidden_field :form_type, :value => 'sshkey'
     = f.text_area :value, :rows => 5
   = f.input :value, :as => :text, :required => false, :label => "Paste your public key"
   = f.buttons do
