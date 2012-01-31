@@ -11,7 +11,7 @@ class ExpressSshKey
   attr_accessor :name, :public_key, :type, :primary, :rhlogin, :key_string, :mode
   attr_accessor :namespace # deprecated
 
-  @@primary_key_name = 'Primary'
+  @@primary_key_name = 'default'
 
   validates_presence_of :public_key
 
