@@ -1,51 +1,90 @@
 module Cloud::Sdk
   class Profile < Cloud::Sdk::UserModel
     validates_presence_of :name, :groups
-    attr_accessor :name, :provides, :components, :groups, :group_overrides,
-                  :connections, :property_overrides, :service_overrides,
+    attr_accessor :name, :provides, :component_name_map, :group_name_map, :group_overrides,
+                  :connection_name_map, :property_overrides, :service_overrides,
                   :start_order, :stop_order, :configure_order, :generated
+    exclude_attributes :component_name_map, :group_name_map, :connection_name_map
+    include_attributes :components, :groups, :connections
     
     def initialize
       self.generated = false
       self.provides = []
+      self.group_overrides = {}
     end
     
-    def components=(hash)
-      components_will_change!
-      @components = {}
-      hash.each do |key, value|
-        if value.class == Hash
-          @components[key] = Component.new(key)
-          @components[key].attributes=value
-        else
-          @components[key] = value
-        end
+    def components=(data)
+      data.each {|comp| add_component(comp)}
+    end
+    
+    def groups=(data)
+      data.each {|group| add_group(group)}
+    end
+    
+    def connections=(data)
+      data.each {|conn| add_connection(conn)}
+    end
+    
+    def components(name=nil)
+      @component_name_map = {} if @component_name_map.nil?
+      if name.nil?
+        @component_name_map.values
+      else
+        @component_name_map[name]
       end
     end
     
-    def groups=(hash)
-      groups_will_change!
-      @groups = {}
-      hash.each do |key, value|
-        if value.class == Hash
-          @groups[key] = Group.new(key)
-          @groups[key].attributes=value
-        else
-          @groups[key] = value
-        end
+    def groups(name=nil)
+      @group_name_map = {} if @group_name_map.nil?
+      if name.nil?
+        @group_name_map.values
+      else
+        @group_name_map[name]
       end
     end
     
-    def connections=(hash)
-      connections_will_change!
-      @connections = {}
-      hash.each do |key, value|
-        if value.class == Hash
-          @connections[key] = Connection.new(key)
-          @connections[key].attributes=value
-        else
-          @connections[key] = value
-        end
+    def connections(name=nil)
+      @connection_name_map = {} if @connection_name_map.nil?
+      if name.nil?
+        @connection_name_map.values
+      else
+        @connection_name_map[name]
+      end
+    end
+    
+    def add_component(comp)
+      component_name_map_will_change!
+      @component_name_map = {} if @component_name_map.nil?
+      if comp.class == Component
+        @component_name_map[comp.name] = comp
+      else
+        key = comp["name"]
+        @component_name_map[key] = Component.new(key)
+        @component_name_map[key].attributes=comp
+      end
+    end
+    
+    def add_group(group)
+      group_name_map_will_change!
+      @group_name_map = {} if @group_name_map.nil?
+      if group.class == Group
+        @group_name_map[group.name] = group
+      else
+        key = group["name"]
+        @group_name_map[key] = Group.new(key)
+        @group_name_map[key].attributes=group
+      end
+    end
+    
+    def add_connection(conn)
+      connection_name_map_will_change!
+      @connection_name_map = {} if @connection_name_map.nil?
+      if conn.class == Connection
+        @connection_name_map[conn.name] = conn
+      else
+        key = conn["name"]
+        @connection_name_map[key] = Connection.new(key)
+        @connection_name_map[key].attributes=conn
       end
     end
 
@@ -62,41 +101,38 @@ module Cloud::Sdk
       self.stop_order = [self.stop_order] if self.stop_order.class == String
       self.configure_order = [self.configure_order] if self.configure_order.class == String
       
-      self.components = {}
       if spec_hash.has_key?("Components")
         spec_hash["Components"].each do |cname, c|
          comp = Component.new.from_descriptor(c)
          comp.name = cname
-         self.components[comp.name] = comp
+         add_component(comp)
        end
       else
         comp_spec_hash = spec_hash.dup.delete_if{|k,v| !["Publishes", "Subscribes"].include?(k) }
         c = Component.new.from_descriptor(comp_spec_hash)
         c.generated = true
-        self.components = {"default" => c}
+        add_component(c)
       end
       
-      self.groups = {}
       if spec_hash.has_key?("Groups")
         spec_hash["Groups"].each do |gname, g|
           group = Group.new.from_descriptor(g)
           group.name = gname
-          self.groups[group.name] = group
+          add_group(group)
         end
       else
         group = Group.new
-        self.components.keys.each do |c|
-          group.component_refs[c]=ComponentRef.new(c).from_descriptor(c)
+        self.components.each do |c|
+          group.add_component_ref(ComponentRef.new(c.name).from_descriptor(c.name))
         end
         group.generated = true
-        self.groups = {"default" => group}
+        add_group(group)
       end
       
-      self.connections = {}
       if spec_hash.has_key?("Connections")
         spec_hash["Connections"].each do |n,c|
           conn = Connection.new(n).from_descriptor(c)
-          self.connections[conn.name] = conn
+          add_connection(conn)
         end
       end
 
@@ -118,26 +154,26 @@ module Cloud::Sdk
       h["Stop-Order"] = @stop_order unless @stop_order.nil? || @stop_order.empty?
       h["Configure-Order"] = @configure_order unless @configure_order.nil? || @configure_order.empty?
   
-      if @components.keys.length == 1 && @components.values.first.generated
-        comp_h = @components.values.first.to_descriptor
+      if self.components.length == 1 && self.components.first.generated
+        comp_h = self.components.first.to_descriptor
         comp_h.delete("Name")
         h.merge!(comp_h)
       else
         h["Components"] = {}
-        @components.each do |k,v|
-          h["Components"][k] = v.to_descriptor
+        self.components.each do |v|
+          h["Components"][v.name] = v.to_descriptor
         end
       end
       
-      unless @groups.keys.length == 1 && @groups.values.first.generated
+      unless self.groups.length == 1 && self.groups.first.generated
         h["Groups"] = {}
-        @groups.each do |k,v|
-          h["Groups"][k] = v.to_descriptor
+        self.groups.each do |v|
+          h["Groups"][v.name] = v.to_descriptor
         end
       end
       h["Connections"] = {}
-      @connections.each do |n,v|
-        h["Connections"][n] = v.to_descriptor
+      self.connections.each do |v|
+        h["Connections"][v.name] = v.to_descriptor
       end
       h
     end

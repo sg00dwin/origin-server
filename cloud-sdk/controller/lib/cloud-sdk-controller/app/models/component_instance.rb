@@ -16,12 +16,12 @@ class ComponentInstance < Cloud::Sdk::UserModel
     event(:destroy_complete) { transition :destroying => :not_created }
   end
 
-  def initialize (cartname, profname, groupname, compname, pathname, gi)
+  def initialize (cartname=nil, profname=nil, groupname=nil, compname=nil, pathname=nil, gi=nil)
     self.name = pathname
     self.parent_cart_name = cartname
     self.parent_cart_profile = profname
     self.parent_cart_group = groupname
-    self.group_instance_name = gi.name
+    self.group_instance_name = gi.name unless gi.nil?
     self.parent_component_name = compname
     self.dependencies = []
   end
@@ -32,10 +32,10 @@ class ComponentInstance < Cloud::Sdk::UserModel
     else
       cart = CartridgeCache::find_cartridge(self.parent_cart_name)
     end
-    profile = cart.profiles[self.parent_cart_profile]
-    group = profile.groups[self.parent_cart_group]
-    comp_name = group.component_refs[self.parent_component_name].component
-    comp = profile.components[comp_name]
+    profile = cart.profiles(self.parent_cart_profile)
+    group = profile.groups(self.parent_cart_group)
+    comp_name = group.component_refs(self.parent_component_name).component
+    comp = profile.components(comp_name)
     return comp,profile,cart
   end
 
@@ -79,14 +79,14 @@ class ComponentInstance < Cloud::Sdk::UserModel
       to = self.name + "." + cart.name + "." + v
       app.group_override_map[from] = to
     end
-    group_list = profile.groups.map do |k,g|
-       gpath = self.name + "." + cart.name + "." + k
+    group_list = profile.groups.map do |g|
+       gpath = self.name + "." + cart.name + "." + g.name
        mapped_path = app.group_override_map[gpath] || ""
-       gi = group_instance_map[mapped_path]
+       gi = app.group_instance_map[mapped_path]
        if gi.nil?
-         gi = GroupInstance.new(cart.name, profile.name, k, gpath)
+         gi = GroupInstance.new(cart.name, profile.name, g.name, gpath)
        else
-         gi.merge(cart.name, profile.name, k, gpath)
+         gi.merge(cart.name, profile.name, g.name, gpath)
        end
        app.group_instance_map[gpath] = gi
        gi.elaborate(g, self.name, app)
@@ -95,9 +95,9 @@ class ComponentInstance < Cloud::Sdk::UserModel
     end
 
     # make connection_endpoints out of provided connections
-    profile.connections.each do |name, conn|
+    profile.connections.each do |conn|
       inst1 = find_component_in_cart(profile, app, conn.components[0], self.name)
-      inst2 = find_component_in_cart(profile, app, conn.components[1])
+      inst2 = find_component_in_cart(profile, app, conn.components[1], self.name)
       self.establish_connections(inst1, inst2, app)
     end
     
@@ -108,7 +108,14 @@ class ComponentInstance < Cloud::Sdk::UserModel
     # assume comp_name is group_name.component_name for now
     # FIXME : it could be a component_name only, feature_name, cartridge_name that 
     #         one of the components depend upon, or a hierarchical name
-    return app.comp_instance_map[parent_path + "." + comp_name]
+    comp_inst = app.comp_instance_map[parent_path + "." + comp_name]
+    if comp_inst.nil?
+      parent_inst = app.comp_instance_map[parent_path]
+      parent_inst.dependencies.each do |dep|
+        dep_inst = app.comp_instance_map[dep]
+      end
+    end
+    return comp_inst
   end
 
   def get_cartridges_for_dependencies(comp, cart)
@@ -120,7 +127,7 @@ class ComponentInstance < Cloud::Sdk::UserModel
     
     depends.each do |feature| 
       cart = CartridgeCache::find_cartridge(feature)
-      raise Exception "Cannot find cartridge for dependency '#{feature}'" if cart.nil?
+      raise Exception.new "Cannot find cartridge for dependency '#{feature}'" if cart.nil?
       capability = feature
       capability = nil if feature==cart.name
       profile = cart.find_profile(capability)

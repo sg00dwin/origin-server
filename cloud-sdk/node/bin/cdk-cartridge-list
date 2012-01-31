@@ -73,6 +73,21 @@ begin
       print "#{e.message}\n#{e.backtrace.inspect}\n" unless $porcelain
     end
   end
+  
+  embedded_cartridge_path = File.join(cartridge_path, "embedded")
+  Dir.foreach(embedded_cartridge_path) do |cart_dir|
+    path = File.join(embedded_cartridge_path, cart_dir, "info", "manifest.yml")
+    next if [".",".."].include? path
+    begin
+      print "Loading #{cart_dir}..." if $cdk_debug
+      carts.push Cloud::Sdk::Cartridge.new.from_descriptor(YAML.load(File.open(path)))
+      print "OK\n" if $cdk_debug
+    rescue Exception => e
+      print "ERROR\n" if $cdk_debug      
+      print "#{e.message}\n#{e.backtrace.inspect}\n" unless $porcelain
+    end
+  end
+  
   print "\n\n\n" if $cdk_debug
   
   if $porcelain

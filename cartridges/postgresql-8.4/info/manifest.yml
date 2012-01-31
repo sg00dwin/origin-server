@@ -1,4 +1,4 @@
-Name: rhc-cartridge-postgresql-8.4
+Name: postgresql-8.4
 Version: 8.4
 Architecture: noarch
 Display-Name: postgres v8.4 

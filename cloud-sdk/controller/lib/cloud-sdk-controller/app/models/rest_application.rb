@@ -1,17 +1,21 @@
 class RestApplication < Cloud::Sdk::Model
-  attr_accessor :name, :version, :display_name,
-                :cartridges, :creation_time, :uuid, 
-                :aliases, :links
+  attr_accessor :framework, :creation_time, :uuid, :embedded, :aliases, :name, :links, :domain_id
+  include LegacyBrokerHelper
   
   def initialize(app, domain_id)
+    self.framework = app.framework
     self.name = app.name
-    self.version = app.version
-    self.display_name = app.display_name
-    self.cartridges = app.requires_feature
     self.creation_time = app.creation_time
     self.uuid = app.uuid
     self.aliases = app.aliases || Array.new
+    self.embedded = app.embedded
     self.domain_id = domain_id
+
+    cart_type = "embedded"
+    cache_key = "cart_list_#{cart_type}"
+    carts = get_cached(cache_key, :expires_in => 21600.seconds) do
+      Application.get_available_cartridges("embedded")
+    end
 
     self.links = [
       Link.new("Get application", "GET", "/domains/#{@domain_id}/applications/#{@name}"),
@@ -30,11 +34,12 @@ class RestApplication < Cloud::Sdk::Model
       Link.new("Delete application", "DELETE", "/domains/#{@domain_id}/applications/#{@name}"),
       
       Link.new("Add embedded cartridge", "POST", "/applications/#{@name}/cartridges",[
-        Param.new("cartridge", "string", "framework-type, e.g.: mysql-5.1", Application.get_available_cartridges.map{|c| c.name}.join(', '))
+        Param.new("cartridge", "string", "framework-type, e.g.: mysql-5.1", carts.join(', '))
       ])
     ]
       
-    unless @requires_feature.nil?
+    unless @embedded.nil?
+      #self.links += [ Link.new("Get embedded cartridges", "GET", "/applications/#{@name}/cartridges")]
       @embedded.each do |key, value|
         Rails.logger.debug "key=#{key} value=#{value}"
         self.links += [

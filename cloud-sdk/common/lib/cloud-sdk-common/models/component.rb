@@ -1,53 +1,83 @@
 module Cloud::Sdk
   class Component < Cloud::Sdk::UserModel
-    attr_accessor :name, :publishes, :subscribes, :generated, :depends, :depends_service
+    attr_accessor :name, :publish_name_map, :subscribe_name_map, :generated, :depends, :depends_service
+    exclude_attributes :publish_name_map, :subscribe_name_map
+    include_attributes :publishes, :subscribes    
     
     def initialize(name=nil)
       self.name = name
       self.generated = false
     end
     
-    def publishes=(hash)
-      publishes_will_change!
-      @publishes = {}
-      hash.each do |key, value|
-        if value.class == Hash
-          @publishes[key] = Connector.new(key)
-          @publishes[key].attributes=value
-        else
-          @publishes[key] = value
-        end
+    def publishes=(data)
+      data.each do |value|
+        add_publish(value)
       end
     end
     
-    def subscribes=(hash)
+    def publishes(name=nil)
+      @publish_name_map = {} if @publish_name_map.nil?
+      if name.nil?
+        @publish_name_map.values
+      else
+        @publish_name_map[name]
+      end
+    end
+    
+    def add_publish(publish)
+      publish_name_map_will_change!
+      publishes_will_change!
+      @publish_name_map = {} if @publish_name_map.nil?
+      if publish.class == Connector
+        @publish_name_map[publish.name] = publish
+      else
+        key = publish["name"]            
+        @publish_name_map[key] = Connector.new
+        @publish_name_map[key].attributes=publish
+      end
+    end
+    
+    def subscribes=(data)
+      data.each do |value|
+        add_subscribe(value)
+      end
+    end
+    
+    def subscribes(name=nil)
+      @subscribe_name_map = {} if @subscribe_name_map.nil?
+      if name.nil?
+        @subscribe_name_map.values
+      else
+        @subscribe_name_map[name]
+      end
+    end
+    
+    def add_subscribe(subscribe)
+      subscribe_name_map_will_change!
       subscribes_will_change!
-      @subscribes = {}
-      hash.each do |key, value|
-        if value.class == Hash
-          @subscribes[key] = Connector.new(key)
-          @subscribes[key].attributes=value
-        else
-          @subscribes[key] = value
-        end
+      @subscribe_name_map = {} if @subscribe_name_map.nil?
+      if subscribe.class == Connector
+        @subscribe_name_map[subscribe.name] = subscribe
+      else        
+        key = subscribe["name"]            
+        @subscribe_name_map[key] = Connector.new
+        @subscribe_name_map[key].attributes=subscribe
       end
     end
     
     def from_descriptor(spec_hash = {})
       self.name = spec_hash["Name"] || "default"
-      self.publishes = {}
       if spec_hash["Publishes"]
         spec_hash["Publishes"].each do |n, p|
           conn = Connector.new(n).from_descriptor(p)
-          self.publishes[conn.name]=conn
+          self.add_publish(conn)
         end
       end
       
-      self.subscribes = {}
       if spec_hash["Subscribes"]
         spec_hash["Subscribes"].each do |n,p|
           conn = Connector.new(n).from_descriptor(p)
-          self.subscribes[conn.name]=conn
+          self.add_subscribe(conn)
         end
       end
       
@@ -59,13 +89,13 @@ module Cloud::Sdk
     
     def to_descriptor
       p = {}
-      self.publishes.each do |k,v|
-        p[k] = v.to_descriptor
+      self.publishes.each do |v|
+        p[v.name] = v.to_descriptor
       end
       
       s = {}
-      self.subscribes.each do |k,v|
-        s[k] = v.to_descriptor
+      self.subscribes.each do |v|
+        s[v.name] = v.to_descriptor
       end
       
       {

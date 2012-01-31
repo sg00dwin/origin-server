@@ -43,27 +43,8 @@ module Express
         OpenShift::Blacklist.in_blacklist?(name)
       end
       
-      IGNORE_CARTS = %w(abstract abstract-httpd embedded)
-      def get_available_cartridges(cart_type)
-        cartridges = []
-        
-        case cart_type
-        when 'standalone'
-          ApplicationContainerProxy.rpc_get_fact('cart_list', @id) do |server, carts|
-            cartridges = carts.split('|')
-          end
-        when 'embedded'
-          ApplicationContainerProxy.rpc_get_fact('embed_cart_list', @id) do |server, embedcarts|
-            cartridges = embedcarts.split('|')
-          end
-        end
-        cartridges.delete_if {|cart| IGNORE_CARTS.include?(cart)}
-        
-        cartridges
-      end
-      
-      def get_cartriges
-        result = execute_direct(@@C_CONTROLLER, 'cartridge-list', "--porcelain --with-descriptors")
+      def get_available_cartridges
+        result = execute_direct(@@C_CONTROLLER, 'list-cartridges', "--porcelain --with-descriptors")
         result = parse_result(result)
         cart_data = JSON.parse(result.resultIO.string)
         cart_data.map! {|c| Cloud::Sdk::Cartridge.new.from_descriptor(YAML.load(c))}
@@ -112,15 +93,19 @@ module Express
       end
       
 
-      def create(app)
+      def create(app, container)
         result = nil
         (1..10).each do |i|
+<<<<<<< HEAD
           mcoll_reply = execute_direct(@@C_CONTROLLER, 'app-create', "-c '#{app.uuid}' -i '#{app.uid}'")
+=======
+          mcoll_reply = execute_direct(@@C_CONTROLLER, 'configure', "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{container.uuid}'  -i '#{container.uid}'")
+>>>>>>> ac5e583... Updating models to improove schems of descriptor in mongo
           result = parse_result(mcoll_reply)
           if result.exitcode == 129 && has_uid_or_gid?(app.uid) # Code to indicate uid already taken
-            destroy(app, true)
+            destroy(app, container, true)
             inc_externally_reserved_uids_size
-            app.uid = reserve_uid
+            container.uid = reserve_uid
             app.save
           else
             break
@@ -129,11 +114,16 @@ module Express
         result
       end
     
+<<<<<<< HEAD
       def destroy(app, keep_uid=false, uid=nil)
         result = execute_direct(@@C_CONTROLLER, 'app-destroy', "-c '#{app.uuid}'")
+=======
+      def destroy(app, container, keep_uid=false, uid=nil)
+        result = execute_direct(@@C_CONTROLLER, 'deconfigure', "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{container.uuid}'")
+>>>>>>> ac5e583... Updating models to improove schems of descriptor in mongo
         result_io = parse_result(result)
         
-        uid = app.uid unless uid
+        uid = container.uid unless uid
         
         if uid && !keep_uid
           unreserve_uid(uid)
@@ -754,7 +744,7 @@ module Express
       end
       
       def run_cartridge_command(framework, app, command, arg=nil, allow_move=true)
-        arguments = "'#{app.name}' '#{app.user.namespace}' '#{app.uuid}'"
+        arguments = "'#{app.name}' '#{app.user.namespace}' '#{app.application_container.uuid}'"
         arguments += " '#{arg}'" if arg
 
         if allow_move

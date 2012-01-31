@@ -1,38 +1,40 @@
 module Cloud::Sdk
   class Group < Cloud::Sdk::UserModel
-    attr_accessor :name, :component_refs, :component_refs, :scaling, :generated
+    attr_accessor :name, :component_ref_name_map, :scaling, :generated
+    exclude_attributes :component_ref_name_map
+    include_attributes :component_refs
     
     def initialize(name="default")
       self.name = name
-      self.component_refs = {}
-      self.component_refs = {}
       self.scaling = Scaling.new
       self.generated = false
     end
     
-    def component_refs=(hash)
-      component_refs_will_change!
-      @component_refs = {}
-      hash.each do |key, value|
-        if value.class == Hash
-          @component_refs[key] = ComponentRef.new(key)
-          @component_refs[key].attributes=value
-        else
-          @component_refs[key] = value
-        end
+    def component_refs=(data)
+      data.each do |value|
+        add_component_ref(value)
       end
     end
     
-    def component_refs=(hash)
+    def component_refs(name=nil)
+      @component_ref_name_map = {} if @component_ref_name_map.nil?
+      if name.nil?
+        @component_ref_name_map.values
+      else
+        @component_ref_name_map[name]
+      end
+    end
+    
+    def add_component_ref(component_ref)
+      component_ref_name_map_will_change!
       component_refs_will_change!
-      @component_refs = {}
-      hash.each do |key, value|
-        if value.class == Hash
-          @component_refs[key] = ComponentRef.new(key)
-          @component_refs[key].attributes=value
-        else
-          @component_refs[key] = value
-        end
+      @component_ref_name_map = {} if @component_ref_name_map.nil?
+      if component_ref.class == ComponentRef
+        @component_ref_name_map[component_ref.name] = component_ref
+      else
+        key = component_ref["name"]            
+        @component_ref_name_map[key] = ComponentRef.new
+        @component_ref_name_map[key].attributes=component_ref
       end
     end
     
@@ -48,10 +50,9 @@ module Cloud::Sdk
     
     def from_descriptor(spec_hash = {})
       self.name = spec_hash["Name"] || "default"
-      self.component_refs = {}
       if spec_hash.has_key?("Components")
         spec_hash["Components"].each do |n,c|
-          self.component_refs[n]=ComponentRef.new(n).from_descriptor(c)
+          self.add_component_ref(ComponentRef.new(n).from_descriptor(c))
         end
       end
       self.scaling.from_descriptor spec_hash["Scaling"] if spec_hash.has_key?("Scaling")
@@ -60,8 +61,8 @@ module Cloud::Sdk
     
     def to_descriptor
       components = {}
-      self.component_refs.each do |n,c|
-        components[n] = c.to_descriptor
+      self.component_refs.each do |c|
+        components[c.name] = c.to_descriptor
       end
 
       {

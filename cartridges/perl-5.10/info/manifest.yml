@@ -1,4 +1,4 @@
-Name: rhc-cartridge-perl
+Name: perl-5.10
 Display-Name: perl v5.10 (noarch)
 Description: Cartridge packaging Perl versions 5.10 
 Version: 1.0.0

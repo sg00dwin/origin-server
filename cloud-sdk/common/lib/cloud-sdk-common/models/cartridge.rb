@@ -2,41 +2,59 @@ module Cloud::Sdk
   class Cartridge < Cloud::Sdk::UserModel
     attr_accessor :name, :version, :architecture, :display_name, :description, :vendor, :license,
                   :provides_feature, :requires_feature, :conflicts_feature, :requires, :default_profile,
-                  :profiles, :path
+                  :path, :profile_name_map
+    exclude_attributes :profile_name_map
+    include_attributes :profiles
     
     def initialize
       super
       self.from_descriptor({"Name" => "unknown-cartridge"})
+      self.profile_name_map = {}
     end
     
     def all_capabilities
       caps = self.provides_feature.dup
-      self.profiles.each do |k,v|
+      self.profiles.each do |v|
         caps += v.provides
       end
       caps.uniq
     end
     
-    def profiles=(hash)
+    def profiles=(data)
+      data.each do |value|
+        add_profile(value)
+      end
+    end
+    
+    def profiles(name=nil)
+      @profile_name_map = {} if @profile_name_map.nil?
+      if name.nil?
+        @profile_name_map.values
+      else
+        @profile_name_map[name]
+      end
+    end
+    
+    def add_profile(profile)
+      profile_name_map_will_change!
       profiles_will_change!
-      @profiles = {}
-      hash.each do |key, value|
-        if value.class == Hash
-          @profiles[key] = Profile.new
-          @profiles[key].attributes=value
-        else
-          @profiles[key] = value
-        end
+      @profile_name_map = {} if @profile_name_map.nil?
+      if profile.class == Profile
+        @profile_name_map[profile.name] = profile
+      else        
+        key = profile["name"]            
+        @profile_name_map[key] = Profile.new
+        @profile_name_map[key].attributes=profile
       end
     end
     
     # Search for a profile that provides specified capabilities
     def find_profile(capability)
       if capability.nil? || self.provides_feature.include?(capability)
-        return self.profiles[self.default_profile] 
+        return @profile_name_map[self.default_profile]
       end
       
-      self.profiles.values.each do |p|
+      self.profiles.each do |p|
         return p if p.provides.include? capability
       end
       nil
@@ -60,12 +78,11 @@ module Cloud::Sdk
       self.conflicts_feature = [self.conflicts_feature] if self.conflicts_feature.class == String
       self.requires = [self.requires] if self.requires.class == String
 
-      self.profiles = {}
       if spec_hash.has_key?("Profiles")
         spec_hash["Profiles"].each do |pname, p|
           profile = Profile.new.from_descriptor(p)
           profile.name = pname
-          self.profiles[pname] = profile
+          add_profile(profile)
         end
       else
         ["Name", "Version", "Architecture", "DisplayName", "License",
@@ -73,10 +90,11 @@ module Cloud::Sdk
           spec_hash.delete(k)
         end
         p = Profile.new.from_descriptor(spec_hash)
+        p.name = "default"
         p.generated = true
-        self.profiles = {"default" => p}
+        add_profile(p)
       end
-      self.default_profile = spec_hash["Default-Profile"] || self.profiles.values.first.name
+      self.default_profile = spec_hash["Default-Profile"] || self.profiles.first.name
       self
     end
     
@@ -96,14 +114,14 @@ module Cloud::Sdk
         "Vendor" => self.vendor
       }
       
-      if self.profiles.values.length == 1 && self.profiles.values.first.generated
-        profile_h = self.profiles.values.first.to_descriptor
+      if self.profiles.length == 1 && self.profiles.first.generated
+        profile_h = self.profiles.first.to_descriptor
         profile_h.delete("Name")
         h.merge!(profile_h)
       else
         h["Profiles"] = {}
-        self.profiles.each do |n,v|
-          h["Profiles"][n] = v.to_descriptor
+        self.profiles.each do |v|
+          h["Profiles"][v.name] = v.to_descriptor
         end
       end
       

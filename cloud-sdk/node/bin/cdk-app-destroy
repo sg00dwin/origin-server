@@ -19,17 +19,18 @@ def usage
     puts <<USAGE
 == Synopsis
 
-cdk-app-destroy: Deletes a new application. 
+cdk-app-destroy: Deletes an application container.
   This command must be run as root.
 
 == Usage
 
-cdk-app-destroy [--with-uuid UUID]
+cdk-app-destroy --with-container-uuid UUID --with-app-uuid APP_UUID
 
 Options:
 -h|--help:
    Prints this message
 
+APP_UUID: Unique identifier for the application
 UUID: Unique identifier for the application
 NAME: The name of the application to create
 
@@ -38,12 +39,13 @@ end
 
 require 'cloud-sdk-node'
 opts = GetoptLong.new(
-    ["--with-uuid",        "-c", GetoptLong::REQUIRED_ARGUMENT],
-    ["--dry-run",          "-n", GetoptLong::NO_ARGUMENT],
-    ["--named",                  GetoptLong::OPTIONAL_ARGUMENT],
-    ["--porcelain",        "-q", GetoptLong::NO_ARGUMENT],
-    ["--debug",            "-d", GetoptLong::NO_ARGUMENT],
-    ["--help",             "-?", GetoptLong::NO_ARGUMENT]
+    ["--with-app-uuid",       "-a", GetoptLong::REQUIRED_ARGUMENT],
+    ["--with-container-uuid", "-c", GetoptLong::REQUIRED_ARGUMENT],
+    ["--dry-run",             "-n", GetoptLong::NO_ARGUMENT],
+    ["--named",                     GetoptLong::OPTIONAL_ARGUMENT],
+    ["--porcelain",           "-q", GetoptLong::NO_ARGUMENT],
+    ["--debug",               "-d", GetoptLong::NO_ARGUMENT],
+    ["--help",                "-?", GetoptLong::NO_ARGUMENT]
 )
 
 args = {}
@@ -59,7 +61,8 @@ if args["--help"]
   exit -1
 end
 
-uuid = args['--with-uuid']
+app_uuid = args['--with-app-uuid']
+uuid = args['--with-container-uuid']
 $dry_run = true if args['--dry-run']
 $cdk_debug = true if args['--debug']
 $porcelin = args['--porcelain'] ? true : false
@@ -70,7 +73,7 @@ unless uuid
 end
 
 begin
-  container = Cloud::Sdk::ApplicationContainer.new(uuid,uuid)
+  container = Cloud::Sdk::ApplicationContainer.new(app_uuid,uuid)
   container.destroy
 rescue Exception => e
   $stderr.puts(e.message)

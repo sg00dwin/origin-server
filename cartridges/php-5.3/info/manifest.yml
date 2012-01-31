@@ -1,4 +1,4 @@
-Name: rhc-cartridge-php
+Name: php-5.3
 Display-Name: php v1.0.0 (noarch)
 Description: Cartridge packaging PHP versions 5.3.2 upto 5.4.0
 Version: 1.0.0
@@ -8,7 +8,6 @@ Provides:
   - "php"
   - "php(version) = 5.3.2"
 Requires:
-  - "www-dynamic"
 Conflicts:
 Native-Requires:
   - "php >= 5.3.2"
@@ -28,12 +27,17 @@ Publishes:
     Type: "FILESYSTEM:doc-root"
   get-php-ini:
     Type: "FILESYSTEM:php-ini"
+  get-proxy-info:
+    Type: "NET_TCP:httpd-proxy-info"
 Subscribes:
   set-mysql-connection-info:
     Type: "NET_TCP:db:mysql"
     Required : false
   set-postgres-connection-info:
     Type: "NET_TCP:db:postgres"
+    Required : false
+  set-doc-url:
+    Type: "STRING:urlpath"
     Required : false
 Scaling:
   Min: 1

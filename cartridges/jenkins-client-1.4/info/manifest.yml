@@ -1,4 +1,4 @@
-Name: rhc-cartridge-jenkins-client-1.4
+Name: jenkins-client-1.4
 Display-Name: jenkins-client v1.4 (noarch)
 Description: Cartridge providing support for creating/managing jenkins jobs
 Version: 1.0.0

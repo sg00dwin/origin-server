@@ -1,45 +1,33 @@
 require 'state_machine'
 
 class Application < Cloud::Sdk::Cartridge
-  attr_accessor :state, :group_instance_map, :comp_instance_map, :conn_endpoints_list,
-                :domain, :creation_time, :uuid, :aliases, :uid, :user, :group_override_map
+  attr_accessor :user, :creation_time, :uuid, :aliases, 
+                :state, :group_instance_map, :comp_instance_map, :conn_endpoints_list,
+                :domain, :group_override_map
   primary_key :name
-  exclude_attributes :user
-    
-  state_machine :state, :initial => :not_created do
-    event(:create) { transition :not_created => :creating }
-    event(:create_complete) { transition :creating => :stopped }
-    event(:create_error) { transition :creating => :destroying }
-    event(:start) { transition :stopped => :starting }
-    event(:start_error) { transition :starting => :stopped }
-    event(:start_complete) { transition :starting => :running }
-    event(:stop) { transition :running => :stopping }
-    event(:stop_error) { transition :stopping => :running }
-    event(:stop_complete) { transition :stopping => :stopped }
-    event(:destroy) { transition :stopped => :destroying }
-    event(:destroy_complete) { transition :destroying => :not_created }
-  end
-
+  exclude_attributes :user, :comp_instance_map, :group_instance_map
+  include_attributes :comp_instances, :group_instances
+  
   validate :extended_validator
 
   def extended_validator
     notify_observers(:validate_application)
   end
 
-  def initialize(user=nil, domain=nil, name=nil, uuid=nil)
-    super()
-    self.user = user
-    self.name = name
-    self.creation_time = DateTime::now().strftime
-    self.uuid = uuid || Cloud::Sdk::Model.gen_uuid
+  #backward compat
+  FRAMEWORK_CART_NAMES = ["python-2.6", "jenkins-1.4", "ruby-1.8", "raw-0.1", "php-5.3", "jbossas-7.0", "perl-5.10"]
+  def framework_cartridge  
+    fcart = self.framework
+    return fcart.split('-')[0..-2].join('-') unless fcart.nil?
+    return nil
   end
   
-  def self.get_available_cartridges
-    Cloud::Sdk::ApplicationContainerProxy.find_available.get_cartriges
-  end
-
-  def framework_cartridge
-    framework.split('-')[0..-2].join('-')
+  def initialize(user=nil, app_name=nil, uuid=nil, node_profile=nil, framework=nil)
+    self.user = user
+    from_descriptor({"Name"=>app_name, "Subscribes"=>{"doc-root"=>{"Type"=>"FILESYSTEM:doc-root"}}})
+    self.creation_time = DateTime::now().strftime
+    self.uuid = uuid || Cloud::Sdk::Model.gen_uuid
+    self.requires_feature = [framework]
   end
   
   def self.find(user, app_name)
@@ -87,6 +75,10 @@ class Application < Cloud::Sdk::Cartridge
     apps
   end
   
+  def self.get_available_cartridges(cart_type=nil)
+    cart_names = CartridgeCache.cartridge_names(cart_type)
+  end
+  
   #saves the application object in the datastore
   def save
     super(user.login)
@@ -99,19 +91,41 @@ class Application < Cloud::Sdk::Cartridge
   
   #creates a new application container on a node and initializes it
   def create(container=nil)
-    reply = ResultIO.new
-    self.class.notify_observers(:before_application_create, {:application => self, :reply => reply})
-    if container
-      self.container = container
-    else
-      self.container = Cloud::Sdk::ApplicationContainerProxy.find_available(self.node_profile)
+    result_io = ResultIO.new
+    self.class.notify_observers(:before_application_create, {:application => self, :reply => result_io})    
+    containers_created = []
+    if @group_instance_map == nil || @comp_instance_map == nil || @group_instance_map.empty? || @comp_instance_map.empty?
+      self.elaborate_descriptor
     end
-    self.server_identity = self.container.id
-    self.uid = self.container.reserve_uid
-    save
-    reply.append self.container.create(self)
-    self.class.notify_observers(:after_application_create, {:application => self, :reply => reply})        
-    reply
+    
+    begin    
+      Rails.logger.debug "Creating application containers"
+      group_instances.uniq.each do |ginst|
+        app_container = ApplicationContainer.new(self, ginst.node_profile)
+        containers_created.push app_container
+        create_result = app_container.create
+        result_io.append create_result
+
+        unless create_result.exitcode == 0
+          raise NodeException.new("Unable to create container on node", "-100", result_io)
+        end
+        ginst.application_containers = [app_container]
+      end
+      self.class.notify_observers(:application_creation_success, {:application => self, :reply => result_io})              
+    rescue Exception => e
+      Rails.logger.debug e.message
+      Rails.logger.debug e.backtrace.join("\n")
+      Rails.logger.debug "Rolling back application container creation"
+      containers_created.each do |app_container|
+        app_container.destroy
+      end
+      group_instances.each {|ginst| ginst.application_containers = []}
+      self.class.notify_observers(:application_creation_failure, {:application => self, :reply => result_io})
+      raise
+    ensure
+      save
+    end
+    self.class.notify_observers(:after_application_create, {:application => self, :reply => result_io})
   end
   
   #convinence method to cleanup an application
@@ -127,8 +141,8 @@ class Application < Cloud::Sdk::Cartridge
   #destroys all application containers
   def destroy
     reply = ResultIO.new
-    self.class.notify_observers(:before_application_destroy, {:application => self, :reply => reply})    
-    reply.append self.container.destroy(self) if self.container
+    self.class.notify_observers(:before_application_destroy, {:application => self, :reply => reply})
+    reply.append self.application_container.get_proxy.destroy(self, self.application_container)
     self.class.notify_observers(:after_application_destroy, {:application => self, :reply => reply})    
     reply
   end
@@ -151,6 +165,31 @@ class Application < Cloud::Sdk::Cartridge
     reply.append process_cartridge_commands(reply.cart_commands)
     self.class.notify_observers(:after_application_deconfigure, {:application => self, :reply => reply})
     reply
+  end
+  
+  def add_authorized_ssh_key(ssh_key, key_type=nil, comment=nil)
+    self.container.add_authorized_ssh_key(self, ssh_key, key_type, comment)
+  end
+  
+  def remove_authorized_ssh_key(ssh_key)
+    self.container.remove_authorized_ssh_key(self, ssh_key)
+  end
+  
+  def add_env_var(key, value)
+    self.container.add_env_var(self, key, value)
+  end
+  
+  def remove_env_var(key)
+    self.container.remove_env_var(self, key)
+  end
+  
+  def add_broker_key
+    iv, token = Cloud::Sdk::AuthService.instance.generate_broker_key(self)
+    self.container.add_broker_auth_key(self, Base64::encode64(iv).gsub("\n", ''), Base64::encode64(token).gsub("\n", ''))
+  end
+  
+  def remove_broker_key
+    self.container.remove_broker_auth_key(self)
   end
   
   def add_system_ssh_keys
@@ -176,29 +215,13 @@ class Application < Cloud::Sdk::Cartridge
     end if @user.env_vars
     reply
   end
-
-  def add_authorized_ssh_key(ssh_key, key_type=nil, comment=nil)
-    self.container.add_authorized_ssh_key(self, ssh_key, key_type, comment)
-  end
-  
-  def remove_authorized_ssh_key(ssh_key)
-    self.container.remove_authorized_ssh_key(self, ssh_key)
-  end
-  
-  def add_env_var(key, value)
-    self.container.add_env_var(self, key, value)
-  end
-  
-  def remove_env_var(key)
-    self.container.remove_env_var(self, key)
-  end
   
   def create_dns
     reply = ResultIO.new
     self.class.notify_observers(:before_create_dns, {:application => self, :reply => reply})    
     dns = Cloud::Sdk::DnsService.instance
     begin
-      public_hostname = @container.get_public_hostname
+      public_hostname = self.container.get_public_hostname
       dns.register_application(@name,@user.namespace, public_hostname)
       dns.publish
     ensure
@@ -228,7 +251,7 @@ class Application < Cloud::Sdk::Cartridge
     dns = Cloud::Sdk::DnsService.instance
     begin
       dns.deregister_application(@name,@user.namespace)
-      public_hostname = @container.get_public_hostname
+      public_hostname = self.container.get_public_hostname
       dns.register_application(@name,@user.namespace, public_hostname)
       dns.publish
     ensure
@@ -238,20 +261,10 @@ class Application < Cloud::Sdk::Cartridge
     reply
   end
   
-  def add_broker_key
-    iv, token = Cloud::Sdk::AuthService.instance.generate_broker_key(self)
-    self.container.add_broker_auth_key(self, Base64::encode64(iv).gsub("\n", ''), Base64::encode64(token).gsub("\n", ''))
-  end
-  
-  def remove_broker_key
-    self.container.remove_broker_auth_key(self)
-  end
-  
   def update_namespace(new_ns, old_ns)
-    
     updated = false
     begin
-      result = self.container.update_namespace(self, @framework, new_ns, old_ns)
+      result = self.container.update_namespace(self, self.framework, new_ns, old_ns)
       process_cartridge_commands(result.cart_commands)
       updated = result.exitcode == 0
     rescue Exception => e
@@ -261,87 +274,37 @@ class Application < Cloud::Sdk::Cartridge
     end
     return updated 
   end
-
-  def elaborate_descriptor
-    self.group_instance_map = {} if group_instance_map.nil?
-    self.comp_instance_map = {} if comp_instance_map.nil?
-    self.group_override_map = {} if group_override_map.nil?
-    
-    @profiles[@default_profile].group_overrides.each do |n, v|
-      from = self.name + "." + n
-      to = self.name + "." + v
-      self.group_override_map[from] = to
-    end
-
-    @profiles[@default_profile].groups.each { |k, g|
-      gpath = self.name + "." + g.name
-      mapped_path = group_override_map[gpath] || ""
-      gi = group_instance_map[mapped_path]
-      if gi.nil?
-        gi = GroupInstance.new(self.name, self.default_profile, k, gpath)
-      else
-        gi.merge(self.name, self.default_profile, k, gpath)
-      end
-      self.group_instance_map[gpath] = gi
-      gi.elaborate(g, "", self)
-    }
-    # make connection_endpoints out of provided connections
-    @profiles[@default_profile].connections.each { |name, conn|
-      inst1 = ComponentInstance::find_component_in_cart(profile, app, conn.components[0], self.name)
-      inst2 = ComponentInstance::find_component_in_cart(profile, app, conn.components[1], self.name)
-      ComponentInstance::establish_connections(inst1, inst2, app)
-    }
-    # check self.comp_instance_map for component instances
-    # check self.group_instance_map for group instances
-    # check self.conn_endpoints_list for list of connection endpoints (fully resolved)
-
-    # resolve group co-locations
-    colocate_groups
-  end
-
-  def colocate_groups
-    self.conn_endpoints_list = [] if self.conn_endpoints_list.nil?
-    self.conn_endpoints_list.each { |conn|
-      if conn.pub.type.match(/^FILESYSTEM/) or conn.pub.type.match(/^AFUNIX/)
-        ginst1 = self.group_instance_map[conn.from_comp_inst.group_instance_name]
-        ginst2 = self.group_instance_map[conn.to_comp_inst.group_instance_name]
-        # these two group instances need to be colocated
-        ginst1.merge(ginst2.cart_name, ginst2.profile_name, ginst2.group_name, ginst2.name)
-        self.group_instance_map[conn.to_comp_inst.group_instance_name] = ginst1
-      end
-    }
-  end
-
+  
   def start
-    self.container.start(self, @framework)
+    self.container.start(self, self.framework)
   end
   
   def stop
-    self.container.stop(self, @framework)
+    self.container.stop(self, self.framework)
   end
   
   def restart
-    self.container.restart(self, @framework)
+    self.container.restart(self, self.framework)
   end
   
   def force_stop
-    self.container.force_stop(self, @framework)
+    self.container.force_stop(self, self.framework)
   end
   
   def reload
-    self.container.reload(self, @framework)
+    self.container.reload(self, self.framework)
   end
   
   def status
-    self.container.status(self, @framework)
+    self.container.status(self, self.framework)
   end
   
   def tidy
-    self.container.tidy(self, @framework)
+    self.container.tidy(self, self.framework)
   end
   
   def threaddump
-    self.container.threaddump(self, @framework)
+    self.container.threaddump(self, self.framework)
   end
 
   def expose_port
@@ -358,11 +321,11 @@ class Application < Cloud::Sdk::Cartridge
     reply = ResultIO.new
     begin
       self.aliases.push(server_alias)
-      reply.append self.container.add_alias(self, @framework, server_alias)
+      reply.append self.container.add_alias(self, self.framework, server_alias)
     rescue Exception => e
       Rails.logger.debug e.message
       Rails.logger.debug e.backtrace.inspect
-      reply.append self.container.remove_alias(self, @framework, server_alias)      
+      reply.append self.container.remove_alias(self, self.framework, server_alias)      
       self.aliases.delete(server_alias)
     ensure
       self.save      
@@ -374,7 +337,7 @@ class Application < Cloud::Sdk::Cartridge
     self.aliases = [] unless self.aliases
     reply = ResultIO.new
     begin
-      reply.append self.container.remove_alias(self, @framework, server_alias)
+      reply.append self.container.remove_alias(self, self.framework, server_alias)
     rescue Exception => e
       Rails.logger.debug e.message
       Rails.logger.debug e.backtrace.inspect
@@ -395,12 +358,12 @@ class Application < Cloud::Sdk::Cartridge
     self.class.notify_observers(:before_add_dependency, {:application => self, :dependency => dep, :reply => reply})
     # Create persistent storage app entry on configure (one of the first things)
     Rails.logger.debug "DEBUG: Adding embedded app info from persistant storage: #{@name}:#{dep}"
-    self.embedded = {} unless self.embedded
+    self.cart_data = {} if @cart_data.nil?
     
-    raise Cloud::Sdk::UserException.new("#{dep} already embedded in '#{@name}'", 101) if self.embedded[dep]
+    raise Cloud::Sdk::UserException.new("#{dep} already embedded in '#{@name}'", 101) if self.embedded.include? dep
     c_reply,component_details = self.container.add_component(self, dep)
     reply.append c_reply
-    self.embedded[dep] = { "info" => component_details }
+    self.cart_data[dep] = { "info" => component_details }
     self.save
     self.class.notify_observers(:after_add_dependency, {:application => self, :dependency => dep, :reply => reply})
     reply
@@ -411,7 +374,7 @@ class Application < Cloud::Sdk::Cartridge
     self.class.notify_observers(:before_remove_dependency, {:application => self, :dependency => dep, :reply => reply})
     self.embedded = {} unless self.embedded
         
-    raise Cloud::Sdk::UserException.new("#{dep} not embedded in '#{@name}', try adding it first", 101) unless self.embedded[dep]
+    raise Cloud::Sdk::UserException.new("#{dep} not embedded in '#{@name}', try adding it first", 101) unless self.embedded.include? dep
     reply.append self.container.remove_component(self, dep)
     self.embedded.delete dep
     self.save
@@ -420,37 +383,160 @@ class Application < Cloud::Sdk::Cartridge
   end
   
   def start_dependency(dep)
-    raise Cloud::Sdk::UserException.new("#{dep} not embedded in '#{@name}', try adding it first", 101) unless self.embedded[dep]    
+    raise Cloud::Sdk::UserException.new("#{dep} not embedded in '#{@name}', try adding it first", 101) unless self.embedded.include? dep
     self.container.start_component(self, dep)
   end
   
   def stop_dependency(dep)
-    raise Cloud::Sdk::UserException.new("#{dep} not embedded in '#{@name}', try adding it first", 101) unless self.embedded[dep]    
+    raise Cloud::Sdk::UserException.new("#{dep} not embedded in '#{@name}', try adding it first", 101) unless self.embedded.include? dep
     self.container.stop_component(self, dep)
   end
   
   def restart_dependency(dep)
-    raise Cloud::Sdk::UserException.new("#{dep} not embedded in '#{@name}', try adding it first", 101) unless self.embedded[dep]    
+    raise Cloud::Sdk::UserException.new("#{dep} not embedded in '#{@name}', try adding it first", 101) unless self.embedded.include? dep
     self.container.restart_component(self, dep)
   end
   
   def reload_dependency(dep)
-    raise Cloud::Sdk::UserException.new("#{dep} not embedded in '#{@name}', try adding it first", 101) unless self.embedded[dep]    
+    raise Cloud::Sdk::UserException.new("#{dep} not embedded in '#{@name}', try adding it first", 101) unless self.embedded.include? dep
     self.container.reload_component(self, dep)
   end
   
   def dependency_status(dep)
-    raise Cloud::Sdk::UserException.new("#{dep} not embedded in '#{@name}', try adding it first", 101) unless self.embedded[dep]  
+    raise Cloud::Sdk::UserException.new("#{dep} not embedded in '#{@name}', try adding it first", 101) unless self.embedded.include? dep
     self.container.component_status(self, dep)
   end
-  
-  private
-  
-  def self.hash_to_obj(hash)
-    app = super(hash)
-    app.container ||= Cloud::Sdk::ApplicationContainerProxy.instance(app.server_identity)
-    app
+
+  def elaborate_descriptor
+    self.group_instance_map = {} if group_instance_map.nil?
+    self.comp_instance_map = {} if comp_instance_map.nil?
+    self.group_override_map = {} if group_override_map.nil?
+    self.conn_endpoints_list = [] if self.conn_endpoints_list.nil?
+    default_profile = @profile_name_map[@default_profile]
+    
+    default_profile.group_overrides.each do |n, v|
+      from = self.name + "." + n
+      to = self.name + "." + v
+      self.group_override_map[from] = to
+    end
+
+    default_profile.groups.each { |g|
+      gpath = self.name + "." + g.name
+      mapped_path = group_override_map[gpath] || ""
+      gi = group_instance_map[mapped_path]
+      if gi.nil?
+        gi = GroupInstance.new(self.name, self.default_profile, g.name, gpath)
+      else
+        gi.merge(self.name, self.default_profile, g.name, gpath)
+      end
+      self.group_instance_map[gpath] = gi
+      gi.elaborate(g, "", self)
+    }
+    # make connection_endpoints out of provided connections
+    default_profile.connections.each { |conn|
+      inst1 = ComponentInstance::find_component_in_cart(profile, app, conn.components[0], self.name)
+      inst2 = ComponentInstance::find_component_in_cart(profile, app, conn.components[1], self.name)
+      ComponentInstance::establish_connections(inst1, inst2, app)
+    }
+    # check self.comp_instance_map for component instances
+    # check self.group_instance_map for group instances
+    # check self.conn_endpoints_list for list of connection endpoints (fully resolved)
+
+    # resolve group co-locations
+    colocate_groups
   end
+
+  def colocate_groups
+    self.conn_endpoints_list.each { |conn|
+      if conn.from_connector.type.match(/^FILESYSTEM/) or conn.from_connector.type.match(/^AFUNIX/)
+        ginst1 = self.group_instance_map[conn.from_comp_inst.group_instance_name]
+        ginst2 = self.group_instance_map[conn.to_comp_inst.group_instance_name]
+        # these two group instances need to be colocated
+        ginst1.merge(ginst2.cart_name, ginst2.profile_name, ginst2.group_name, ginst2.name, ginst2.component_instances)
+        self.group_instance_map[conn.to_comp_inst.group_instance_name] = ginst1
+      end
+    }
+  end
+  
+  #backward compat: get framework cartridge from all application dependencies
+  def framework
+    framework_carts = CartridgeCache.cartridge_names('standalone')
+    self.requires_feature.each do |feature|
+      if framework_carts.include? feature
+        return feature
+      end
+    end
+    return nil
+  end
+  
+  def application_container
+    if self.group_instances.nil?
+      self.elaborate_descriptor
+    end
+    
+    group_instance = self.group_instances.first
+    return nil unless group_instance
+    
+    return group_instance.application_containers.first
+  end
+  
+  #backward compat: get ApplicationContainerProxy
+  def container
+    return nil if self.application_container.nil?
+    return self.application_container.get_proxy
+  end
+  
+  def embedded
+    return self.requires_feature - CartridgeCache.cartridge_names('standalone')
+  end
+  
+  def run_on_all_containers(&block)
+    self.group_instances.uniq.each do |ginst|
+      ginst.application_containers do |container|
+        yield container
+      end
+    end
+  end
+
+  def comp_instances
+    @comp_instance_map = {} if @comp_instance_map.nil?
+    @comp_instance_map.values
+  end
+  
+  def comp_instances=(data)
+    comp_instance_map_will_change!    
+    @comp_instance_map = {} if @comp_instance_map.nil?
+    data.each do |value|
+      if value.class == ComponentInstance
+        @comp_instance_map[value.name] = value
+      else
+        key = value["name"]            
+        @comp_instance_map[key] = ComponentInstance.new
+        @comp_instance_map[key].attributes=value
+      end
+    end
+  end
+
+  def group_instances
+    @group_instance_map = {} if @group_instance_map.nil?
+    @group_instance_map.values
+  end
+  
+  def group_instances=(data)
+    group_instance_map_will_change!    
+    @group_instance_map = {} if @group_instance_map.nil?
+    data.each do |value|
+      if value.class == GroupInstance
+        @group_instance_map[value.name] = value
+      else
+        key = value["name"]            
+        @group_instance_map[key] = GroupInstance.new
+        @group_instance_map[key].attributes=value
+      end
+    end
+  end
+   
+private
   
   def process_cartridge_commands(commands)
     result = ResultIO.new

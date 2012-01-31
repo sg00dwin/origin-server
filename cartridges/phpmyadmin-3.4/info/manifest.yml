@@ -1,4 +1,4 @@
-Name: rhc-cartridge-phpmyadmin
+Name: phpmyadmin-3.4
 Display-Name: phpmyadmin v3.4 (noarch)
 Description: Cartridge packaging phpmyadmin
 Version: 1.1.0
