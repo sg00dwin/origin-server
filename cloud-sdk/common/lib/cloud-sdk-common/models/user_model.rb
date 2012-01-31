@@ -28,9 +28,7 @@ module Cloud
       
       def save(login)
         id_var = self.class.pk || "uuid"
-        if new_record?
-          DataStore.instance.create(self.class.name, login, instance_variable_get("@#{id_var}"), self.attributes)
-        else
+        if persisted?
           if self.class.requires_update_attributes
             changed_attrs = {}
             unless changes.empty?
@@ -46,6 +44,8 @@ module Cloud
           else
             DataStore.instance.save(self.class.name, login, instance_variable_get("@#{id_var}"), self.attributes)
           end
+        else
+          DataStore.instance.create(self.class.name, login, instance_variable_get("@#{id_var}"), self.attributes)
         end
         @previously_changed = changes
         @changed_attributes.clear
