@@ -336,6 +336,7 @@ module Express
           (1..num_tries).each do |i|
             begin
               reply.append source_container.stop(app, app.framework)
+              sleep 1
               break
             rescue Exception => e
               log_debug "DEBUG: Error stopping existing app on try #{i}: #{e.message}"
