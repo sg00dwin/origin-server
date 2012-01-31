@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.85.12
+Version:   0.85.13
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -76,6 +76,12 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Tue Jan 31 2012 Dan McPherson <dmcphers@redhat.com> 0.85.13-1
+- Adding a selenium test for SSH keys and a couple of markup tweaks to support
+  it (aboone@redhat.com)
+- Show default key as "default" instead of "Primary" on site (BZ 785953)
+  (aboone@redhat.com)
+
 * Mon Jan 30 2012 Dan McPherson <dmcphers@redhat.com> 0.85.12-1
 - update json version (dmcphers@redhat.com)
 
