@@ -87,7 +87,6 @@ class ExpressDomainController < ApplicationController
 
   def edit_sshkey
     @dom_action = 'update'
-    
     @domain = ExpressDomain.new :rhlogin => @userinfo.rhlogin, :namespace => @userinfo.namespace
   end
 
@@ -135,7 +134,7 @@ class ExpressDomainController < ApplicationController
     ssh_invalid = true
     if form_type == 'sshkey':
       # ssh keys are always updated
-      @dom_action = 'update'
+      @dom_action = 'update_ssh'
       domain_params[:namespace] = @userinfo.namespace
       if ssh = domain_params[:ssh]
         @ssh_key_validation = validate_ssh(ssh)

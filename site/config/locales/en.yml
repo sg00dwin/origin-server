@@ -48,6 +48,7 @@ en:
     messages:
       domain_create: "Congratulations! You successfully created your domain"
       domain_update: "Congratulations! You successfully updated your domain"
+      domain_update_ssh: "Congratulations! You successfully updated your ssh key"
       app_available: "Congratulations! Your app is live!"
       app_created: "Congratulations! Your app has been created. It may be a few minutes before it is live."
       app_deleted: "Your app has been successfully deleted"
