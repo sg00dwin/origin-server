@@ -134,6 +134,112 @@ class ExpressConsole < OpenShift::SeleniumTestCase
     # TODO assert cannot create more
   end
 
+  def test_ssh_keys
+    @login, pass = dummy_credentials
+
+    signin(@login, pass)
+    @express_console.open
+
+    # no domain, should show placeholder
+    assert driver.find_element(:css => '.ssh-placeholder').displayed?
+
+    create_namespace(@login, pass, @login, false)
+
+    # create a default SSH key
+    driver.find_element(:css => '.ssh-widget .popup-trigger .button.create').click
+
+    form = @express_console.ssh_key_form('default')
+    assert_equal "SSH PUBLIC KEY (DEFAULT)*", form.label(:key_string)   
+
+    key = dummy_ssh_key
+    form.set_value(:key_string, key)
+    form.submit
+
+    await('preview SSH key') { driver.find_element(:css => '#label_ssh_key_default.primary_key') }
+    assert_equal 'default', driver.find_element(:css => '#label_ssh_key_default').text
+    preview = driver.find_element(:css => '#preview_ssh_key_default code').text.sub(/\.\.\.$/, '')
+    assert_equal 0, key.index(preview)
+    
+    # has edit link, but no delete link
+    assert exists?('#preview_ssh_key_default .edit-key-link')
+    assert !exists?('#preview_ssh_key_default .delete-key-link')
+
+    assert_equal 1, driver.find_elements(:css => '.ssh-widget dl dt').length
+    assert_equal 1, driver.find_elements(:css => '.ssh-widget dl dt.primary_key').length
+
+    # create a secondary SSH key
+    driver.find_element(:css => '.ssh-widget .popup-trigger .button.create').click
+
+    form = @express_console.ssh_key_form('new')
+
+    key = dummy_ssh_key
+    form.set_value(:name, 'key1')
+    form.set_value(:key_string, key)
+    form.submit
+
+    await('preview SSH key') { driver.find_element(:css => '#label_ssh_key_key1') }
+    assert_equal 'key1', driver.find_element(:css => '#label_ssh_key_key1').text
+    preview = driver.find_element(:css => '#preview_ssh_key_key1 code').text.sub(/\.\.\.$/, '')
+    assert_equal 0, key.index(preview)
+    
+    # has edit link and delete link
+    assert exists?('#preview_ssh_key_key1 .edit-key-link')
+    assert exists?('#preview_ssh_key_key1 .delete-key-link')
+
+    assert_equal 2, driver.find_elements(:css => '.ssh-widget dl dt').length
+    assert_equal 1, driver.find_elements(:css => '.ssh-widget dl dt.primary_key').length
+
+    # edit the primary key
+    driver.find_element(:css => '#preview_ssh_key_default .edit-key-link').click
+
+    form = @express_console.ssh_key_form('default')
+
+    key = dummy_ssh_key
+    form.set_value(:key_string, key)
+    form.submit
+
+    sleep 1 # wait for display to re-draw
+
+    await('preview SSH key') { driver.find_element(:css => '#label_ssh_key_default') }
+    assert_equal 'default', driver.find_element(:css => '#label_ssh_key_default').text
+    preview = driver.find_element(:css => '#preview_ssh_key_default code').text.sub(/\.\.\.$/, '')
+    assert_equal 0, key.index(preview)
+
+    assert_equal 2, driver.find_elements(:css => '.ssh-widget dl dt').length
+    assert_equal 1, driver.find_elements(:css => '.ssh-widget dl dt.primary_key').length
+
+    # edit the extra key
+    driver.find_element(:css => '#preview_ssh_key_key1 .edit-key-link').click
+
+    form = @express_console.ssh_key_form('key1')
+
+    key = dummy_ssh_key
+    form.set_value(:key_string, key)
+    form.submit
+
+    sleep 1 # wait for display to re-draw
+
+    await('preview SSH key') { driver.find_element(:css => '#label_ssh_key_key1') }
+    assert_equal 'key1', driver.find_element(:css => '#label_ssh_key_key1').text
+    preview = driver.find_element(:css => '#preview_ssh_key_key1 code').text.sub(/\.\.\.$/, '')
+    assert_equal 0, key.index(preview)
+
+    assert_equal 2, driver.find_elements(:css => '.ssh-widget dl dt').length
+    assert_equal 1, driver.find_elements(:css => '.ssh-widget dl dt.primary_key').length
+
+    # delete the extra key
+    driver.find_element(:css => '#preview_ssh_key_key1 .delete-key-link a').click
+    assert driver.find_element(:css => "#key1_delete_form").displayed?
+    driver.find_element(:css => '.popup-content input.delete_button').click
+
+    await("hide delete popup") { !driver.find_element(:css => '#cp-dialog').displayed? }
+
+    assert_equal 1, driver.find_elements(:css => '.ssh-widget dl dt').length
+    assert_equal 1, driver.find_elements(:css => '.ssh-widget dl dt.primary_key').length
+  end
+
+  private
+
   def get_option_value(select_id, preferred_index)
     select = driver.find_elements(:xpath => "//select[@id='#{select_id}']")[0]
     options = select.find_elements(:css => "option")
@@ -170,8 +276,10 @@ class ExpressConsole < OpenShift::SeleniumTestCase
 
   # helper method for creating a namespace
   # post: user is on express console page
-  def create_namespace(login, password, namespace)
-    signin(login, password)
+  def create_namespace(login, password, namespace, log_in=true)
+    if log_in
+      signin(login, password)
+    end
 
     @express_console.open
 
@@ -193,5 +301,9 @@ class ExpressConsole < OpenShift::SeleniumTestCase
 
   def dummy_credentials
     return ["test#{data[:uid]}", data[:password]]
+  end
+
+  def dummy_ssh_key(type='ssh-rsa')
+    "#{type} AAAA#{Time.now.to_f.to_s.sub('.', '/')}B3NzaC1kc3MAAACBAOmtY5dhWtrsoFFlc6hjhTcu7ZEV/V4iCixcpbMedboUfiWz2Fd6x2zLrsx432Dh7IDPz2/KwW5M+h7Ns0E7rLQvJbeB7NAXjKrgTPQiuKmhx+czDQmy5KdINtddHRR0TARpd5aSE6MHTIgav8+9bvM1h5s3S1g7khempam+0Wq/AAAAFQDrV0Jcs+YjxH5OMTAKJOzmEiyAswAAAIBsykXvxFzro6KtGn7gfeyfJSTvE7UtswYi2TqU8Hopbor0fAKKw2oKo3jJB4/fM0sm7s61i0YgLkv++tEDF1xUJnTVElZkRVIdhtNo1CnlOMkLoUnIaCubhbyDaV5oPMMHDx6QrCLz1rUFLwjGoZeuzoqXaY43aTG9dZiFZdB/SQAAAIEArHL0J93k6yz6/8/gfXKMqa1xk+i0F+9ARuw0VzHw3tn1EeVlvAXukS1ZnHriK+08kX3kI4ZQejdKyTAFu4UWLJacjg+jDj5qXeQLxrHE8tXrfLboszQriV5Pg9e2qjwSso4irXkptbomie1IcdlCA0lZC6auIAoLCKa3cILojKE="
   end
 end

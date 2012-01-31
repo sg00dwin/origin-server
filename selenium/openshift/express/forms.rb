@@ -43,6 +43,10 @@ module OpenShift
         end
       end
 
+      def label(field)
+        @page.find_element(:xpath => "//label[@for='#{@fields[field]}' and not(@class)]").text
+      end
+
       def submit
         @page.find_element(:xpath => @submit).click
       end
@@ -104,6 +108,22 @@ module OpenShift
         }
 
       	@submit = "//*[@id='express_app_submit']"
+      end
+    end
+
+    class SshKeyForm < Form
+      def initialize(page, id)
+        super(page,id)
+        prefix = id
+
+        @fields = {
+          :name => "#{prefix}_express_ssh_key_name",
+          :key_string => "#{prefix}_express_ssh_key_key_string",
+          :primary => "#{prefix}_express_ssh_key_primary",
+          :mode => "#{prefix}_express_ssh_key_mode"
+        }
+
+        @submit = "//form[@id='#{id}']//input[@id='express_ssh_key_submit']"
       end
     end
 
