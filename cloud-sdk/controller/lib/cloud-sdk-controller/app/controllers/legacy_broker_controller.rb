@@ -12,7 +12,10 @@ class LegacyBrokerController < ApplicationController
       #FIXME: This is redundant, for now keeping it for backward compatibility
       key_info = user.get_ssh_key
       user_info["ssh_key"] = key_info['key'] 
-      user_info["ssh_type"] = key_info['type'] 
+      user_info["ssh_type"] = key_info['type']
+        
+      user_info["rhlogin"] = user_info["login"]
+      user_info.delete("login")  
       
       user_info[:rhc_domain] = Rails.configuration.cdk[:domain_suffix]
       app_info = {}
