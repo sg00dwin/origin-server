@@ -8,7 +8,15 @@ function start_app {
     do
         . $env_var
     done
-    for cmd in `awk 'BEGIN { for (a in ENVIRON) if (a ~ /_CTL_SCRIPT$/) print ENVIRON[a] }'`
+    for cmd in `awk 'BEGIN { for (a in ENVIRON) if (a ~ /DB_CTL_SCRIPT$/) print ENVIRON[a] }'`
+    do
+        runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $cmd start" || error "Failed to start ${cmd}" 121
+    done
+    for cmd in `awk 'BEGIN { for (a in ENVIRON) if ((a ~ /_CTL_SCRIPT$/) && !(a ~ /DB_CTL_SCRIPT$/) && (a != "OPENSHIFT_APP_CTL_SCRIPT")) print ENVIRON[a] }'`
+    do
+        runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $cmd start" || error "Failed to start ${cmd}" 121
+    done
+    for cmd in `awk 'BEGIN { for (a in ENVIRON) if (a == "OPENSHIFT_APP_CTL_SCRIPT") print ENVIRON[a] }'`
     do
         runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $cmd start" || error "Failed to start ${cmd}" 121
     done
@@ -19,7 +27,15 @@ function stop_app {
     do
         . $env_var
     done
-    for cmd in `awk 'BEGIN { for (a in ENVIRON) if (a ~ /_CTL_SCRIPT$/) print ENVIRON[a] }'`
+    for cmd in `awk 'BEGIN { for (a in ENVIRON) if (a == "OPENSHIFT_APP_CTL_SCRIPT") print ENVIRON[a] }'`
+    do
+        runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $cmd stop" || echo "Failed to stop ${application}" 1>&2
+    done
+    for cmd in `awk 'BEGIN { for (a in ENVIRON) if ((a ~ /_CTL_SCRIPT$/) && !(a ~ /DB_CTL_SCRIPT$/) && (a != "OPENSHIFT_APP_CTL_SCRIPT")) print ENVIRON[a] }'`
+    do
+        runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $cmd stop" || echo "Failed to stop ${application}" 1>&2
+    done
+    for cmd in `awk 'BEGIN { for (a in ENVIRON) if (a ~ /DB_CTL_SCRIPT$/) print ENVIRON[a] }'`
     do
         runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $cmd stop" || echo "Failed to stop ${application}" 1>&2
     done
