@@ -25,6 +25,5 @@ Feature: Account Management
  Scenario: Delete One Namespace
     Given an accepted node
     When I create a new namespace
-    And I make the REST call to delete the namespace
+    And I delete the namespace
     Then a namespace should get deleted
-

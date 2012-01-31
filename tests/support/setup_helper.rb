@@ -7,15 +7,23 @@ require 'logger'
 $domain = "dev.rhcloud.com"
 $temp = "/tmp/rhc"
 
+$client_config = "/etc/openshift/express.conf"
+
 #
-# Client scripts
+# Old RHC Client scripts
 #
 $create_app_script = "/usr/bin/rhc-create-app"
 $create_domain_script = "/usr/bin/rhc-create-domain"
-$client_config = "/etc/openshift/express.conf"
 $ctl_app_script = "/usr/bin/rhc-ctl-app"
 $user_info_script = "/usr/bin/rhc-domain-info"
 $snapshot_script = "/usr/bin/rhc-snapshot"
+
+#
+# New RHC Client scripts
+#
+$rhc_app_script = "/usr/bin/rhc-app"
+$rhc_domain_script = "/usr/bin/rhc-domain"
+$rhc_sshkey_script = "/usr/bin/rhc-sshkey"
 
 # RSA Key constants
 $libra_pub_key = File.expand_path("~/.ssh/libra_id_rsa.pub")

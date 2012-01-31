@@ -76,8 +76,8 @@ module CommandHelper
   end
 
   def rhc_create_domain(app)
-    rhc_do('rhc_create_create_domain') do
-      exit_code = run("#{$create_domain_script} -n #{app.namespace} -l #{app.login} -p fakepw -d")
+    rhc_do('rhc_create_domain') do
+      exit_code = run("#{$rhc_domain_script} create -n #{app.namespace} -l #{app.login} -p fakepw -d")
       app.create_domain_code = exit_code
       return exit_code == 0
     end
@@ -103,7 +103,7 @@ module CommandHelper
       old_file = app.file
       app.file = "#{$temp}/#{new_namespace}.json"
       FileUtils.mv old_file, app.file
-      run("#{$create_domain_script} -n #{new_namespace} -l #{app.login} -p fakepw --alter -d").should == 0
+      run("#{$rhc_domain_script} alter -n #{new_namespace} -l #{app.login} -p fakepw -d").should == 0
       app.persist
     end
   end
@@ -112,26 +112,26 @@ module CommandHelper
     rhc_do('rhc_snapshot') do
       app.snapshot="/tmp/#{app.name}-#{app.namespace}.tar.gz"
       FileUtils.rm_rf app.snapshot
-      run("#{$snapshot_script} -l #{app.login} -a #{app.name} -s '#{app.snapshot}' -p fakepw -d").should == 0
+      run("#{$rhc_app_script} snapshot save -l #{app.login} -a #{app.name} -f '#{app.snapshot}' -p fakepw -d").should == 0
       app.persist
     end
   end
   
   def rhc_restore(app)
     rhc_do('rhc_restore') do
-      run("#{$snapshot_script} -l #{app.login} -a #{app.name} -r '#{app.snapshot}' -p fakepw -d").should == 0
+      run("#{$rhc_app_script} snapshot restore -l #{app.login} -a #{app.name} -f '#{app.snapshot}' -p fakepw -d").should == 0
     end
   end
   
   def rhc_tidy(app)
     rhc_do('rhc_tidy') do
-      run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -c tidy -p fakepw -d").should == 0
+      run("#{$rhc_app_script} tidy -l #{app.login} -a #{app.name} -p fakepw -d").should == 0
     end
   end
 
   def rhc_create_app(app, use_hosts=true)
     rhc_do('rhc_create_app') do
-      cmd = "#{$create_app_script} -l #{app.login} -a #{app.name} -r #{app.repo} -t #{app.type} -p fakepw -d"
+      cmd = "#{$rhc_app_script} create -l #{app.login} -a #{app.name} -r #{app.repo} -t #{app.type} -p fakepw -d"
 
       # Short circuit DNS to speed up the tests by adding a host entry and skipping the DNS validation
       if use_hosts
@@ -154,7 +154,7 @@ module CommandHelper
 
   def rhc_embed_add(app, type)
     rhc_do('rhc_embed_add') do
-      result = run_stdout("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -e add-#{type} -d")
+      result = run_stdout("#{$rhc_app_script} cartridge add -l #{app.login} -a #{app.name} -p fakepw -c #{type} -d")
       if type.start_with?('mysql-')
         app.mysql_hostname = /^Connection URL: mysql:\/\/(.*)\/$/.match(result)[1]
         app.mysql_user = /^ +Root User: (.*)$/.match(result)[1]
@@ -176,7 +176,7 @@ module CommandHelper
   def rhc_embed_remove(app)
     rhc_do('rhc_embed_remove') do
       puts app.name
-      run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -e remove-#{app.embed} -d").should == 0
+      run("#{$rhc_app_script} cartridge remove -l #{app.login} -a #{app.name} -p fakepw -c #{app.embed} -d").should == 0
       app.mysql_hostname = nil
       app.mysql_user = nil
       app.mysql_password = nil
@@ -189,41 +189,41 @@ module CommandHelper
 
   def rhc_ctl_stop(app)
     rhc_do('rhc_ctl_stop') do
-      run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -c stop -d").should == 0
-      run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -c status | grep '#{app.get_stop_string}'").should == 0
+      run("#{$rhc_app_script} stop -l #{app.login} -a #{app.name} -p fakepw -d").should == 0
+      run("#{$rhc_app_script} status -l #{app.login} -a #{app.name} -p fakepw  | grep '#{app.get_stop_string}'").should == 0
     end
   end
 
   def rhc_add_alias(app)
     rhc_do('rhc_add_alias') do
-      run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -c add-alias --alias '#{app.name}-#{app.namespace}.example.com' -d").should == 0
+      run("#{$rhc_app_script} add-alias -l #{app.login} -a #{app.name} -p fakepw --alias '#{app.name}-#{app.namespace}.example.com' -d").should == 0
     end
   end
 
   def rhc_remove_alias(app)
     rhc_do('rhc_remove_alias') do
-      run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -c remove-alias --alias '#{app.name}-#{app.namespace}.example.com' -d").should == 0
+      run("#{$rhc_app_script} remove-alias -l #{app.login} -a #{app.name} -p fakepw --alias '#{app.name}-#{app.namespace}.example.com' -d").should == 0
     end
   end
 
   def rhc_ctl_start(app)
     rhc_do('rhc_ctl_start') do
-      run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -c start -d").should == 0
-      run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -c status | grep '#{app.get_stop_string}'").should == 1
+      run("#{$rhc_app_script} start -l #{app.login} -a #{app.name} -p fakepw -d").should == 0
+      run("#{$rhc_app_script} status -l #{app.login} -a #{app.name} -p fakepw | grep '#{app.get_stop_string}'").should == 1
     end
   end
 
   def rhc_ctl_restart(app)
     rhc_do('rhc_ctl_restart') do
-      run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -c restart -d").should == 0
-      run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -c status | grep '#{app.get_stop_string}'").should == 1
+      run("#{$rhc_app_script} restart -l #{app.login} -a #{app.name} -p fakepw -d").should == 0
+      run("#{$rhc_app_script} status -l #{app.login} -a #{app.name} -p fakepw | grep '#{app.get_stop_string}'").should == 1
     end
   end
 
   def rhc_ctl_destroy(app, use_hosts=true)
     rhc_do('rhc_ctl_destroy') do
-      run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -c destroy -b -d").should == 0
-      run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -c status | grep 'does not exist'").should == 0
+      run("#{$rhc_app_script} destroy -l #{app.login} -a #{app.name} -p fakepw -b -d").should == 0
+      run("#{$rhc_app_script} status -l #{app.login} -a #{app.name} -p fakepw | grep 'does not exist'").should == 0
       run("sed -i '/#{app.name}-#{app.namespace}.dev.rhcloud.com/d' /etc/hosts") if use_hosts
       FileUtils.rm_rf app.repo
       FileUtils.rm_rf app.file
