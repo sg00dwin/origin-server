@@ -51,16 +51,16 @@ module Express
         
         request = RestClient::Request.new(:method => :post, :url =>url, :payload => payload, :headers => headers)
         
-        RestClient.log = '/var/www/libra/broker/log/development.log'
-        request.log_request
+        #RestClient.log = '/var/www/libra/broker/log/development.log'
+        #request.log_request
 
         # for non-blocking
         thread = Thread.new(request){
           begin
             response = request.execute
-            Rails.logger.debug "Response from apptegic #{response.code}"
+            Rails.logger.debug "Response from apptegic: #{response.code}"
           rescue RestClient::ExceptionWithResponse => e
-            Rails.logger.error "ERROR: #{e.response}"
+            Rails.logger.error "Response from apptegic: #{e.response}"
           end
         }
         Rails.logger.debug "DEBUG: #{Time.now} Done sending to Apptegic"
@@ -97,19 +97,18 @@ module Express
         
         headers = {"Content-Type" => "application/x-www-form-urlencoded; charset=UTF-8" }
         
-        #request = RestClient::Request.new(:method => :post, :url =>url, :payload => payload)
         request = RestClient::Request.new(:method => :post, :url =>url, :payload => payload, :headers => headers)
         
-        RestClient.log = '/var/www/libra/broker/log/development.log'
-        request.log_request
+        #RestClient.log = '/var/www/libra/broker/log/development.log'
+        #request.log_request
 
         # for non-blocking pass false
         thread = Thread.new(request){
           begin
             response = request.execute
-            Rails.logger.debug "Response from apptegic #{response.code}"
+            Rails.logger.debug "Response from apptegic: #{response.code}"
           rescue RestClient::ExceptionWithResponse => e
-            Rails.logger.error "ERROR: #{e.response}"
+            Rails.logger.error "Response from apptegic: #{e.response}"
           end
         }
         Rails.logger.debug "DEBUG: #{Time.now} Done sending to Apptegic"
@@ -152,8 +151,8 @@ module Express
         headers = {"Content-Type" => "application/x-www-form-urlencoded; charset=UTF-8" }
         request = RestClient::Request.new(:method => :post, :url =>url, :payload => payload, :headers => headers)
 
-        RestClient.log = '/var/www/libra/broker/log/development.log'
-        request.log_request
+        #RestClient.log = '/var/www/libra/broker/log/development.log'
+        #request.log_request
 
         # for non-blocking pass false
         thread = Thread.new(request){
@@ -161,7 +160,7 @@ module Express
             response = request.execute
             Rails.logger.debug "Response from apptegic #{response.code}"
           rescue RestClient::ExceptionWithResponse => e
-            Rails.logger.error "ERROR: #{e.response}"
+            Rails.logger.error "Response from apptegic #{e.response}"
           end
         }
         Rails.logger.debug "DEBUG: #{Time.now} Done sending to Apptegic"
