@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
   s.files       += %w(README.md Rakefile Gemfile cloud-sdk-node.spec cloud-sdk-node.gemspec COPYRIGHT LICENSE)
   s.executables = Dir[bin_dir].map {|binary| File.basename(binary)}
   s.require_paths = ["lib"]
-  s.add_dependency("json", "1.4.3")
+  s.add_dependency("json", "1.4.6")
   s.add_dependency("highline", "1.5.1")
   s.add_dependency("state_machine", "1.1.1")
   s.add_dependency("parseconfig", "0.5.2")
