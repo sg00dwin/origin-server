@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.85.16
+Version:       0.85.17
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -218,6 +218,12 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Tue Jan 31 2012 Dan McPherson <dmcphers@redhat.com> 0.85.17-1
+- better message (dmcphers@redhat.com)
+- make stop and start order more predictable (dmcphers@redhat.com)
+- use 755 to be consistent (dmcphers@redhat.com)
+- take back _ctl.sh (dmcphers@redhat.com)
+
 * Fri Jan 27 2012 Dan McPherson <dmcphers@redhat.com> 0.85.16-1
 - fixing trapuser (mmcgrath@redhat.com)
 - Re-enabling 127.0.0.1 ban (mmcgrath@redhat.com)
