@@ -136,6 +136,7 @@ class ExpressDomainController < ApplicationController
     if form_type == 'sshkey':
       # ssh keys are always updated
       @dom_action = 'update'
+      domain_params[:namespace] = @userinfo.namespace
       if ssh = domain_params[:ssh]
         @ssh_key_validation = validate_ssh(ssh)
         if @ssh_key_validation[:valid]
@@ -151,7 +152,8 @@ class ExpressDomainController < ApplicationController
       if ssh_key
         ssh = "#{ssh_key[:type]} #{ssh_key[:key]}"
       end
-      if ssh
+
+      if ssh.to_s.strip.length != 0
         domain_params[:ssh] = ssh
       else
         domain_params[:ssh] = 'ssh-rsa nossh'
