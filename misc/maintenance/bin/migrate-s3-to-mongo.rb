@@ -12,8 +12,9 @@ $config = {
   :s3_bucket  => "libra_dev",
 
   # Mongo params
-  :host       => "localhost",
-  :port       => 27017,
+  :replica_set => true,
+  # Replica set example: [[<host-1>, <port-1>], [<host-2>, <port-2>], ...]
+  :host_port => [["localhost", 27017]],
   :user       => "libra",
   :password   => "momo",
   :db         => "openshift_broker_dev",
@@ -37,7 +38,13 @@ def bucket
 end
 
 def mongo_connect
-  con = Mongo::Connection.new($config[:host], $config[:port])
+  if $config[:replica_set]
+    con = Mongo::ReplSetConnection.new(*$config[:host_port] \
+                                       << {:read => :secondary})
+  else
+    con = Mongo::Connection.new($config[:host_port][0], 
+                                $config[:host_port][1])
+  end
   admin_db = con.db("admin")
   admin_db.authenticate($config[:user], $config[:password])
   $coll = con.db($config[:db]).collection($config[:collection])
