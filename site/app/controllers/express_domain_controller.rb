@@ -112,9 +112,12 @@ class ExpressDomainController < ApplicationController
         domain_params[:ssh] = 'ssh-rsa nossh'
     else
         ssh_key = @userinfo.ssh_key
-        ssh = "%s %s" % [ssh_key['type'], ssh_key['key']]
-        if ssh:
-            domain_params[:ssh] = ssh
+        if ssh_key
+          ssh = "%s %s" % [ssh_key['type'], ssh_key['key']]
+        end
+        if ssh
+          domain_params[:ssh] = ssh
+        end
     end
 
     @domain = ExpressDomain.new(domain_params)
