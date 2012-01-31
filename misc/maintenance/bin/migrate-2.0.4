@@ -203,6 +203,9 @@ def migrate_node(server_identity, apps, node_to_users)
   puts "Migrating #{apps.length} apps on node #{server_identity}"
   users = node_to_users[server_identity]
   FileUtils.mkdir_p WORK_DIR
+  error_file = "#{WORK_DIR}/migrate_errors_#{server_identity}"
+  FileUtils.rm_f error_file
+  FileUtils.touch error_file
   log_file = "#{WORK_DIR}/migrate_log_#{server_identity}"
   FileUtils.rm_f log_file
   FileUtils.touch log_file
@@ -220,10 +223,18 @@ def migrate_node(server_identity, apps, node_to_users)
   migrate_node_cmd = "#{__FILE__} '#{f}'"
   output, exit_code = execute_script(migrate_node_cmd)
   puts output
-  file = File.open(log_file, "r")
+  file = File.open(error_file, "r")
   begin
     while (line = file.readline)
       @failures << line.chomp
+    end
+  rescue EOFError
+    file.close
+  end
+  file = File.open(log_file, "r")
+  begin
+    while (line = file.readline)
+      print line
     end
   rescue EOFError
     file.close
@@ -241,24 +252,25 @@ def migrate_from_file(file)
       rhlogin = params[3]
       app_name = params[4]
       migrate_on_node_cmd = "#{__FILE__} '#{server_identity}' '#{framework}' '#{uuid}' '#{rhlogin}' '#{app_name}'"
+      error_file = "#{WORK_DIR}/migrate_errors_#{server_identity}"
       log_file = "#{WORK_DIR}/migrate_log_#{server_identity}"
-      puts "Migrating app '#{app_name}' with uuid '#{uuid}' on node '#{server_identity}' for user: #{rhlogin}"
+      append_to_file(log_file,  "Migrating app '#{app_name}' with uuid '#{uuid}' on node '#{server_identity}' for user: #{rhlogin}")
       num_tries = 2
       (1..num_tries).each do |i|
         begin
           output = migrate_app_on_node(server_identity, framework, uuid, rhlogin, app_name)
-          append_to_file(log_file, migrate_on_node_cmd)
+          append_to_file(log_file, output)
           break
         rescue Exception => e
           if i == num_tries
-            puts "Failed to migrate with cmd: '#{migrate_on_node_cmd}' after #{num_tries} tries with exception: #{e.message}"
-            append_to_file(log_file, migrate_on_node_cmd)
+            append_to_file(log_file, "Failed to migrate with cmd: '#{migrate_on_node_cmd}' after #{num_tries} tries with exception: #{e.message}")
+            append_to_file(error_file, migrate_on_node_cmd)
             break
           else
             if Cloud::Sdk::DataStore.instance.find(Application.name, rhlogin, app_name)
               sleep 4
             else
-              puts "App '#{app_name}' no longer found in datastore with uuid '#{uuid}'.  Ignoring..."
+              append_to_file(log_file, "App '#{app_name}' no longer found in datastore with uuid '#{uuid}'.  Ignoring...")
               break
             end
           end
