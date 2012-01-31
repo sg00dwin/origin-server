@@ -51,7 +51,7 @@ module Express
       
       def unreserve_district_uid(uuid, uid)
         Rails.logger.debug "MongoDataStore.reserve_district_uid(#{uuid})\n\n"
-        MongoDataStore.district_collection.update({"_id" => uuid}, {"$push" => { "available_uids" => uid}, "$inc" => { "available_capacity" => 1 }})
+        MongoDataStore.district_collection.update({"_id" => uuid, "available_uids" => {"$ne" => uid}}, {"$push" => { "available_uids" => uid}, "$inc" => { "available_capacity" => 1 }})
       end
       
       def add_district_node(uuid, server_identity)

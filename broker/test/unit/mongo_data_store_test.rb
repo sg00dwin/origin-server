@@ -68,6 +68,12 @@ class MongoDataStoreTest < ActiveSupport::TestCase
     assert_equal(1, d["available_uids"].length)
     assert_equal(1 , d["available_capacity"])
     assert(d["available_uids"].include?(1))
+      
+    ds.unreserve_district_uid(uuid, 1)
+    d = ds.find_district(uuid)
+    assert_equal(1, d["available_uids"].length)
+    assert_equal(1 , d["available_capacity"])
+    assert(d["available_uids"].include?(1))
   end
   
   test "inc district externally reserved uids size" do
