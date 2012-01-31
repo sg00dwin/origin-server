@@ -18,7 +18,7 @@ module Express
       
       def self.find_available_impl(node_profile=nil, district_uuid=nil)
         if Rails.configuration.districts[:enabled] && (!district_uuid || district_uuid == 'NONE')  
-          district = District.find_available()
+          district = District.find_available(node_profile)
           if district
             district_uuid = district.uuid
             Rails.logger.debug "DEBUG: find_available_impl: district_uuid: #{district_uuid}"
@@ -127,7 +127,7 @@ module Express
         
         uid = app.uid unless uid
         
-        unless keep_uid
+        if uid && !keep_uid
           unreserve_uid(uid)
         end
         return result_io
@@ -187,11 +187,15 @@ module Express
       end
       
       def get_district_uuid
-        rpc_get_fact_direct('district')
+        rpc_get_fact_direct('district_uuid')
       end
       
       def get_ip_address
         rpc_get_fact_direct('ipaddress')
+      end
+      
+      def get_node_profile
+        rpc_get_fact_direct('node_profile')
       end
       
       def start(app, cart)
@@ -294,20 +298,31 @@ module Express
         source_district_uuid = source_container.get_district_uuid
         if destination_container.nil?
           unless allow_change_district
-            destination_district_uuid = source_district_uuid
+            if destination_district_uuid && destination_district_uuid != source_district_uuid
+              raise Cloud::Sdk::UserException.new("Error moving app.  Cannot change district from '#{source_district_uuid}' to '#{destination_district_uuid}' without allow_change_district flag.", 1)
+            else
+              destination_district_uuid = source_district_uuid
+            end
           end
           destination_container = ApplicationContainerProxy.find_available_impl(app.node_profile, destination_district_uuid)
+          log_debug "DEBUG: Destination container: #{destination_container.id}"
           destination_district_uuid = destination_container.get_district_uuid if allow_change_district
         else
+          if destination_district_uuid
+            log_debug "DEBUG: Destination district uuid '#{destination_district_uuid}' is being ignored in favor of destination container #{destination_container.id}"
+          end
           destination_district_uuid = destination_container.get_district_uuid
           unless allow_change_district || (source_district_uuid == destination_district_uuid)
             raise Cloud::Sdk::UserException.new("Resulting move would change districts from '#{source_district_uuid}' to '#{destination_district_uuid}'", 1)
           end
         end
         
+        log_debug "DEBUG: Source district uuid: #{source_district_uuid}"
+        log_debug "DEBUG: Destination district uuid: #{destination_district_uuid}"
         keep_uid = destination_district_uuid == source_district_uuid
+        log_debug "DEBUG: District unchanged keeping uid" if keep_uid
 
-        if keep_uid
+        if source_container.id == destination_container.id
           raise Cloud::Sdk::UserException.new("Error moving app.  Old and new servers are the same: #{source_container.id}", 1)
         end
         
@@ -322,6 +337,7 @@ module Express
           (1..num_tries).each do |i|
             begin
               reply.append source_container.stop(app, app.framework)
+              sleep 1
               break
             rescue Exception => e
               log_debug "DEBUG: Error stopping existing app on try #{i}: #{e.message}"
@@ -340,6 +356,7 @@ module Express
             begin
               unless keep_uid
                 app.uid = destination_container.reserve_uid(destination_district_uuid)
+                log_debug "DEBUG: Reserved uid '#{app.uid}' on district: '#{destination_district_uuid}'"
               end
               log_debug "DEBUG: Creating new account for app '#{app.name}' on #{destination_container.id}"
               reply.append destination_container.create(app)
@@ -700,6 +717,7 @@ module Express
         current_server, current_capacity = nil, nil
         additional_filters = []
         district_uuid = nil if district_uuid == 'NONE'
+        
         if node_profile
           additional_filters.push({:fact => "node_profile",
                                    :value => node_profile,
@@ -721,6 +739,7 @@ module Express
           additional_filters.push({:fact => "district_uuid",
                                    :value => "NONE",
                                    :operator => "=="})
+
         end
     
         rpc_get_fact('capacity', nil, forceRediscovery, additional_filters) do |server, capacity|

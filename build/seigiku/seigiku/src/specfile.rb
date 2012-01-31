@@ -19,6 +19,7 @@ class Specfile < Hash
   INFO_QUERY = 'rpm --specfile %s -q --info'
   # spec_file is full path to spec file
   def initialize(spec_file)
+    store('filesystem_name', spec_file)
     store('requires', [])
     requires = read_from_command(REQUIRES_QUERY % spec_file)
     requires.each {|e| store('requires', e.split.uniq) }

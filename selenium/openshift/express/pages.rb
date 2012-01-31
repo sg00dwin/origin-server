@@ -83,6 +83,10 @@ module OpenShift
         @domain_form = OpenShift::Express::DomainForm.new(page, "new_express_domain")
         @app_form = OpenShift::Express::AppForm.new(page, "new_express_app")
       end
+
+      def ssh_key_form(name='new')
+        OpenShift::Express::SshKeyForm.new(@page, "ssh_key_#{name}")
+      end
     end
   end
 end

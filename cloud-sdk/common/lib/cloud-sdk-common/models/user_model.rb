@@ -28,7 +28,7 @@ module Cloud
       
       def save(login)
         id_var = self.class.pk || "uuid"
-        if @persisted
+        if persisted?
           if self.class.requires_update_attributes
             changed_attrs = {}
             unless changes.empty?

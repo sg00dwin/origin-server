@@ -149,7 +149,7 @@ module Cloud::Sdk
       orig_embedded = app_attrs["embedded"]
       app_attrs_to_internal(app_attrs)
       hash = MongoDataStore.collection.find_and_modify({
-        :query => { "_id" => user_id, "apps.name" => { "$nin" => [id] }, "$where" => "this.consumed_gears < this.max_gears"},
+        :query => { "_id" => user_id, "apps.name" => { "$ne" => id }, "$where" => "this.consumed_gears < this.max_gears"},
         :update => { "$push" => { "apps" => app_attrs }, "$inc" => { "consumed_gears" => 1 }} })
       app_attrs["embedded"] = orig_embedded
       raise Cloud::Sdk::UserException.new("#{user_id} has already reached the application limit", 104) if hash == nil

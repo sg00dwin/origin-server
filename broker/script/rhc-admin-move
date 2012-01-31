@@ -26,11 +26,11 @@ options = rpcoptions do |parser, options|
       options[:rhlogin] = rhlogin
     end
     
-    parser.on('-u', '--destination_district_uuid UUID', 'Uuid of the district to move to.  Not to be used in conjunction with -i') do |destination_district_uuid|
+    parser.on('-u', '--destination_district_uuid DISTRICT_UUID', 'Uuid of the district to move to.  Not to be used in conjunction with -i') do |destination_district_uuid|
       options[:destination_district_uuid] = destination_district_uuid
     end
     
-    parser.on('--allow_change_district') do |v|
+    parser.on('--allow_change_district', 'Must be used in conjunction with -i or -u if changing district') do |v|
       options[:allow_change_district] = true
     end
     options[:allow_change_district] = false unless options[:allow_change_district]

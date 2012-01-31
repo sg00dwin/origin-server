@@ -147,12 +147,12 @@ class CloudUser < Cloud::Sdk::UserModel
     #FIXME: remove this check when client tools are updated
     raise Cloud::Sdk::UserKeyException.new("ERROR: Can't remove '#{key_name}' ssh key for user #{self.login}", 
                                            124) if num_keys_check and (key_name == CloudUser::DEFAULT_SSH_KEY_NAME)
-    key = self.ssh_keys[key_name]
-    raise Cloud::Sdk::UserKeyException.new("ERROR: Key name '#{key_name}' doesn't exist for user #{self.login}", 118) unless key
+    key_info = self.ssh_keys[key_name]
+    raise Cloud::Sdk::UserKeyException.new("ERROR: Key name '#{key_name}' doesn't exist for user #{self.login}", 118) unless key_info
 
     applications.each do |app|
       Rails.logger.debug "DEBUG: Removing ssh key named #{key_name} from app: #{app.name} for user #{@name}"
-      result.append app.remove_authorized_ssh_key(key)
+      result.append app.remove_authorized_ssh_key(key_info["key"])
     end
     
     self.ssh_keys.delete key_name

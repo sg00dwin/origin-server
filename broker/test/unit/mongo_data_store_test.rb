@@ -68,6 +68,12 @@ class MongoDataStoreTest < ActiveSupport::TestCase
     assert_equal(1, d["available_uids"].length)
     assert_equal(1 , d["available_capacity"])
     assert(d["available_uids"].include?(1))
+      
+    ds.unreserve_district_uid(uuid, 1)
+    d = ds.find_district(uuid)
+    assert_equal(1, d["available_uids"].length)
+    assert_equal(1 , d["available_capacity"])
+    assert(d["available_uids"].include?(1))
   end
   
   test "inc district externally reserved uids size" do
@@ -137,16 +143,19 @@ class MongoDataStoreTest < ActiveSupport::TestCase
   end
   
   def district
+    uuid = gen_uuid
     district = {
       "server_identities" => {}, 
       "active_server_identities_size" => 0, 
-      "uuid" => gen_uuid,
+      "uuid" => uuid,
       "creation_time" => DateTime::now().strftime,
       "available_capacity" => 10,
       "available_uids" => [1,2,3,4,5,6,7,8,9],
       "max_uid" => 10,
       "max_capacity" => 10,
-      "externally_reserved_uids_size" => 0
+      "externally_reserved_uids_size" => 0,
+      "node_profile" => 'std',
+      "name" => "name#{uuid}"
     }
     district
   end

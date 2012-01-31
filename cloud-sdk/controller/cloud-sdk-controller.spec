@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.3.18
+Version:        0.3.20
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -73,6 +73,17 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Mon Jan 30 2012 Dan McPherson <dmcphers@redhat.com> 0.3.20-1
+- Updating gem versions (dmcphers@redhat.com)
+- update json version (dmcphers@redhat.com)
+
+* Mon Jan 30 2012 Dan McPherson <dmcphers@redhat.com> 0.3.19-1
+- Updating gem versions (dmcphers@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- fix for bug# 772673 (rpenta@redhat.com)
+- use better update (thx kraman) to update single item in array
+  (dmcphers@redhat.com)
+
 * Sun Jan 29 2012 Dan McPherson <dmcphers@redhat.com> 0.3.18-1
 - Updating gem versions (dmcphers@redhat.com)
 - remove old gitkeep file (dmcphers@redhat.com)

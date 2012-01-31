@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.85.10
+Version:   0.85.12
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -76,6 +76,12 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Mon Jan 30 2012 Dan McPherson <dmcphers@redhat.com> 0.85.12-1
+- update json version (dmcphers@redhat.com)
+
+* Mon Jan 30 2012 Dan McPherson <dmcphers@redhat.com> 0.85.11-1
+- update treetop refs (dmcphers@redhat.com)
+
 * Mon Jan 30 2012 Dan McPherson <dmcphers@redhat.com> 0.85.10-1
 - Revert changes to development.log in site,broker,devenv spec
   (aboone@redhat.com)

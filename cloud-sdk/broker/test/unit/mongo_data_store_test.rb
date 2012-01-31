@@ -106,6 +106,10 @@ class MongoDataStoreTest < ActiveSupport::TestCase
     a = ds.find("Application", user_id, orig_a["name"])
     assert_equal(orig_a, a)
     
+    ds.save("Application", user_id, orig_a["name"], orig_a)
+    a = ds.find("Application", user_id, orig_a["name"])
+    assert_equal(orig_a, a)
+    
     apps = ds.find_all("Application", user_id)
     assert_equal(2, apps.length)
     

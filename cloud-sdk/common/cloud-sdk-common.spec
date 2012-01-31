@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Common
 Name:           rubygem-%{gemname}
-Version:        0.3.12
+Version:        0.3.13
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -73,6 +73,9 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Mon Jan 30 2012 Dan McPherson <dmcphers@redhat.com> 0.3.13-1
+- update json version (dmcphers@redhat.com)
+
 * Sun Jan 29 2012 Dan McPherson <dmcphers@redhat.com> 0.3.12-1
 - Bug 785550 and 785514 (dmcphers@redhat.com)
 - keep applications when you get the user (dmcphers@redhat.com)

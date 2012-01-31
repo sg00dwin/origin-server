@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
   s.files       += %w(README.md Rakefile Gemfile cloud-sdk-common.spec cloud-sdk-common.gemspec LICENSE COPYRIGHT)
   s.require_paths = ["lib"]
 
-  s.add_dependency("json", "1.4.3")
+  s.add_dependency("json", "1.4.6")
   s.add_dependency("activemodel", "3.0.10")
   s.add_dependency("mongo", "1.5.2")
 end

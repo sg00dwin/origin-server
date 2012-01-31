@@ -1,12 +1,12 @@
 class District < Cloud::Sdk::Model
   
-  attr_accessor :server_identities, :active_server_identities_size, :uuid, :creation_time, :available_capacity, :available_uids, :max_uid, :max_capacity, :externally_reserved_uids_size
+  attr_accessor :server_identities, :active_server_identities_size, :uuid, :creation_time, :available_capacity, :available_uids, :max_uid, :max_capacity, :externally_reserved_uids_size, :node_profile, :name
   primary_key :uuid
 
   def initialize()
   end
   
-  def construct()
+  def construct(name, node_profile=nil)
     self.uuid = Cloud::Sdk::Model.gen_uuid
     self.creation_time = DateTime::now().strftime
     self.server_identities = {}
@@ -17,10 +17,18 @@ class District < Cloud::Sdk::Model
     self.max_capacity = Rails.configuration.districts[:max_capacity]
     self.externally_reserved_uids_size = 0
     self.active_server_identities_size = 0
+    self.name = name
+    self.node_profile = node_profile ? node_profile : "std"
   end
   
   def self.find(uuid)
     hash = Cloud::Sdk::DataStore.instance.find_district(uuid)
+    return nil unless hash
+    hash_to_district(hash)
+  end
+  
+  def self.find_by_name(name)
+    hash = Cloud::Sdk::DataStore.instance.find_district_by_name(name)
     return nil unless hash
     hash_to_district(hash)
   end
@@ -34,8 +42,8 @@ class District < Cloud::Sdk::Model
     districts
   end
 
-  def self.find_available()
-    hash = Cloud::Sdk::DataStore.instance.find_available_district()
+  def self.find_available(node_profile=nil)
+    hash = Cloud::Sdk::DataStore.instance.find_available_district(node_profile)
     return nil unless hash
     hash_to_district(hash)
   end
@@ -67,9 +75,14 @@ class District < Cloud::Sdk::Model
           begin
             capacity = container.get_capacity
             if capacity == 0
-              container.set_district(@uuid, true)
-              server_identities[server_identity] = {"active" => true}
-              Cloud::Sdk::DataStore.instance.add_district_node(@uuid, server_identity)
+              container_node_profile = container.get_node_profile
+              if container_node_profile == node_profile 
+                container.set_district(@uuid, true)
+                server_identities[server_identity] = {"active" => true}
+                Cloud::Sdk::DataStore.instance.add_district_node(@uuid, server_identity)
+              else
+                raise Cloud::Sdk::CdkException.new("Node with server identity: #{server_identity} is of node profile '#{container_node_profile}' and needs to be '#{node_profile}' to add to district '#{name}'")  
+              end
             else
               raise Cloud::Sdk::CdkException.new("Node with server identity: #{server_identity} already has apps on it")
             end

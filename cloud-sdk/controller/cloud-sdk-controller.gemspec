@@ -23,7 +23,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_dependency "activesupport", "~> 3.0.10"
-  s.add_dependency "json", "1.4.3"
+  s.add_dependency "json", "1.4.6"
   s.add_dependency "cloud-sdk-common"
   s.add_development_dependency('rake', '0.8.7')  
   s.add_development_dependency('rspec', '1.3.0')

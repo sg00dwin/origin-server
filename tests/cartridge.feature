@@ -9,7 +9,7 @@ Feature: Cartridge Verification Tests
   Scenarios: Application Creation Scenarios
     | app_count |     type     |
     |     1     |  php-5.3     |
-    |     1     |  python-2.6    |
+    |     1     |  python-2.6  |
     |     1     |  perl-5.10   |
     |     1     |  ruby-1.8    |
     |     1     |  jbossas-7.0 |
@@ -25,7 +25,7 @@ Feature: Cartridge Verification Tests
   Scenarios: Application Modification Scenarios
     |      type     |
     |   php-5.3     |
-    |   python-2.6    |
+    |   python-2.6  |
     |   perl-5.10   |
     |   ruby-1.8    |
     |   jbossas-7.0 |
@@ -38,7 +38,7 @@ Feature: Cartridge Verification Tests
   Scenarios: Application Stopping Scenarios
     |      type     |
     |   php-5.3     |
-    |   python-2.6    |
+    |   python-2.6  |
     |   perl-5.10   |
     |   ruby-1.8    |
     |   jbossas-7.0 |
@@ -52,7 +52,7 @@ Feature: Cartridge Verification Tests
   Scenarios: Application Starting Scenarios
     |      type     |
     |   php-5.3     |
-    |   python-2.6    |
+    |   python-2.6  |
     |   perl-5.10   |
     |   ruby-1.8    |
     |   jbossas-7.0 |
@@ -66,7 +66,7 @@ Feature: Cartridge Verification Tests
   Scenarios: Server Alias Scenarios
     |      type     |
     |   php-5.3     |
-    |   python-2.6    |
+    |   python-2.6  |
     |   perl-5.10   |
     |   ruby-1.8    |
     |   jbossas-7.0 |
@@ -80,7 +80,7 @@ Feature: Cartridge Verification Tests
   Scenarios: Application Restart Scenarios
     |      type     |
     |   php-5.3     |
-    |   python-2.6    |
+    |   python-2.6  |
     |   perl-5.10   |
     |   ruby-1.8    |
     |   jbossas-7.0 |
@@ -95,7 +95,7 @@ Feature: Cartridge Verification Tests
   Scenarios: Application Restarting From Stop Scenarios
     |      type     |
     |   php-5.3     |
-    |   python-2.6    |
+    |   python-2.6  |
     |   perl-5.10   |
     |   ruby-1.8    |
     |   jenkins-1.4 |
@@ -108,7 +108,7 @@ Feature: Cartridge Verification Tests
   Scenarios: Application Change Namespace Scenarios
     |      type     |
     |   php-5.3     |
-    |   python-2.6    |
+    |   python-2.6  |
     |   perl-5.10   |
     |   ruby-1.8    |
     |   jbossas-7.0 |
@@ -124,7 +124,7 @@ Feature: Cartridge Verification Tests
   Scenarios: Application Snapshot Scenarios
     |      type     |
     |   php-5.3     |
-    |   python-2.6    |
+    |   python-2.6  |
     |   perl-5.10   |
     |   ruby-1.8    |
     |   jbossas-7.0 |
@@ -139,7 +139,7 @@ Feature: Cartridge Verification Tests
   Scenarios: Application Tidy Scenarios
     |      type     |
     |   php-5.3     |
-    |   python-2.6    |
+    |   python-2.6  |
     |   perl-5.10   |
     |   ruby-1.8    |
     |   jbossas-7.0 |
@@ -154,7 +154,7 @@ Feature: Cartridge Verification Tests
   Scenarios: Application Destroying Scenarios
     |      type     |
     |   php-5.3     |
-    |   python-2.6    |
+    |   python-2.6  |
     |   perl-5.10   |
     |   ruby-1.8    |
     |   jbossas-7.0 |
