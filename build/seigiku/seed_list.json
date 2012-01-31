@@ -1,38 +1,24 @@
 [
-  {"name": "mongodb"},
   {"name": "curl"},
-  {"name": "rubygem-passenger"},
-  {"name": "ruby(abi)",
-   "note": "Is provided by ruby-lib.rpm in ruby.rpm. Tool does not recursively look for Provides clauses."},
-  {"name": "rubygem-rhc",
-   "note": "Spec file currently seeded by hand"},
-  {"name": "qpid-cpp"},
-  {"name": "qpid-qmf"},
-  {"name": "mysql"},
   {"name": "gcc"},
-  {"name": "giflib"},
-  {"name": "libpng"},
   {"name": "ImageMagick"},
-  {"name": "sqlite"},
-  {"name": "java-1.6.0-openjdk"},
-  {"name": "rpm"},
-  {"name": "php"},
-  {"name": "java-devel",
-   "note": "see java-1.6.0-openjdk-devel" },
-  {"name": "libjpeg"},
+  {"name": "libjpeg",
+   "note": "Koji see libjpeg-turbo"},
   {"name": "maven3",
    "note": "Provided by build maven3-3.0.3-4.noarch in the li repo should be refactored to use https://brewweb.devel.redhat.com/packageinfo?packageID=2107"
   },
-  {"name": "ruby-qmf",
-   "note": "Provided by ruby-qpid-qmf.rpm in qpid-qmf.rpm. Tool does not recursively look for Provides clauses."
-  },
-  {"name": "selinux-policy",
-   "note": "Not obvious which tag to add to search. See Brew Build#82438 for list of tags"
-  },
+  {"name": "mysql"},
   {"name": "rhc-cartridge-jbossas-7.0",
    "note": "Progress -- https://fedoraproject.org/wiki/JBossAS7#Current_progress"
   },
   {"name": "rubygem-passenger",
    "note": "Progress -- https://bugzilla.redhat.com/show_bug.cgi?id=470696"
-  }
+  },
+  {"name": "ruby-qmf",
+   "note": "Provided by ruby-qpid-qmf.rpm in qpid-qmf.rpm. Tool does not recursively look for Provides clauses."
+  },
+  {"name": "rpm"},
+  {"name": "ruby"},
+  {"name": "sqlite"},
+  {"name": "uuid"}
 ]
