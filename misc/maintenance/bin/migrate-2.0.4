@@ -14,67 +14,72 @@ WORK_DIR = '/tmp/rhc/migration'
 #
 def migrate_app_on_node(server_identity, framework, uuid, rhlogin, app_name)
   migrate_cmd = "#{__FILE__} '#{server_identity}' '#{framework}' '#{uuid}' '#{rhlogin}' '#{app_name}'"
-  puts "Migrating app on node with: #{migrate_cmd}"
+  output =  "Migrating app on node with: #{migrate_cmd}"
   migrated = false
   user = CloudUser.find(rhlogin)
   if user
     app  = Application.find(user, app_name)
     if app
-      Express::Broker::ApplicationContainerProxy.rpc_exec('libra', server_identity) do |client|
-        client.migrate(:uuid => uuid,
-                       :application => app_name,
-                       :app_type => framework,
-                       :namespace => user.namespace,
-                       :version => '2.0.4') do |response|
-          exit_code = response[:body][:data][:exitcode]
-          output = response[:body][:data][:output]
-          if (output.length > 0)
-            puts "Migrate on node output: #{output}"
-          end
-          if exit_code != 0
-            puts "Migrate on node exit code: #{exit_code}"
-            raise "Failed migrating app. Rerun with: #{migrate_cmd}"
-          else
-            reply = app.container.send(:run_cartridge_command, framework, app, 'deploy-httpd-proxy', nil, false)
-            
-            puts "DEPLOY_HTTP_PROXY DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
-            puts "DEPLOY_HTTP_PROXY ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
-    
-            if reply.exitcode != 0
-              puts "Deploy httpd proxy on node exit code: #{reply.exitcode}"
-              raise "Failed deploying httpd proxy for app '#{app_name}' with uuid '#{uuid}' on node '#{server_identity}'"
-            else
-              deployed_httpd_proxy_success = true
-              app.embedded.each do |cart, cart_info|
-                puts "DEBUG: Deploying httpd proxy for embedded #{cart} for '#{app_name}' with uuid '#{uuid}' on node #{server_identity}"
-                reply.append app.container.send(:run_cartridge_command, "embedded/" + cart, app, "deploy-httpd-proxy", nil, false)
-                puts "DEPLOY_HTTP_PROXY DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
-                puts "DEPLOY_HTTP_PROXY ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
+      begin
+        Timeout::timeout(120) do
+          Express::Broker::ApplicationContainerProxy.rpc_exec('libra', server_identity) do |client|
+            client.migrate(:uuid => uuid,
+                           :application => app_name,
+                           :app_type => framework,
+                           :namespace => user.namespace,
+                           :version => '2.0.4') do |response|
+              exit_code = response[:body][:data][:exitcode]
+              output = response[:body][:data][:output]
+              if (output.length > 0)
+                output += "Migrate on node output: #{output}"
+              end
+              if exit_code != 0
+                output += "Migrate on node exit code: #{exit_code}"
+                raise "Failed migrating app. Rerun with: #{migrate_cmd}"
+              else
+                reply = app.container.send(:run_cartridge_command, framework, app, 'deploy-httpd-proxy', nil, false)
+                
+                output += "DEPLOY_HTTP_PROXY DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
+                output += "DEPLOY_HTTP_PROXY ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
+        
                 if reply.exitcode != 0
-                  puts "Deploy httpd proxy for cart: #{cart} on node exit code: #{reply.exitcode}"
-                  deployed_httpd_proxy_success = false
+                  output += "Deploy httpd proxy on node exit code: #{reply.exitcode}"
+                  raise "Failed deploying httpd proxy for app '#{app_name}' with uuid '#{uuid}' on node '#{server_identity}'"
+                else
+                  deployed_httpd_proxy_success = true
+                  app.embedded.each do |cart, cart_info|
+                    output += "DEBUG: Deploying httpd proxy for embedded #{cart} for '#{app_name}' with uuid '#{uuid}' on node #{server_identity}"
+                    reply.append app.container.send(:run_cartridge_command, "embedded/" + cart, app, "deploy-httpd-proxy", nil, false)
+                    output += "DEPLOY_HTTP_PROXY DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
+                    output += "DEPLOY_HTTP_PROXY ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
+                    if reply.exitcode != 0
+                      output += "Deploy httpd proxy for cart: #{cart} on node exit code: #{reply.exitcode}"
+                      deployed_httpd_proxy_success = false
+                    end
+                  end
+                  raise "Failed deploying httpd proxy for app '#{app_name}' with uuid '#{uuid}' on node '#{server_identity}'" unless deployed_httpd_proxy_success
+                  unless app.aliases.nil?
+                    app.aliases.each do |server_alias|
+                      app.container.add_alias(app, app.framework, server_alias)
+                    end
+                  end
+                  migrated = true
                 end
               end
-              raise "Failed deploying httpd proxy for app '#{app_name}' with uuid '#{uuid}' on node '#{server_identity}'" unless deployed_httpd_proxy_success
-              unless app.aliases.nil?
-                app.aliases.each do |server_alias|
-                  app.container.add_alias(app, app.framework, server_alias)
-                end
-              end
-              migrated = true
             end
           end
         end
+      rescue Timeout::Error
+        raise "Command '#{migrate_cmd}' timed out"
       end
     else
-      puts "App not found: #{app_name}"
-      exit 1
+      raise  "App not found: #{app_name}"
     end
   else
-    puts "User not found: #{rhlogin}"
-    exit 1
+    raise "User not found: #{rhlogin}"
   end
   raise "Migrate on node failed.  Rerun with: #{migrate_cmd}" if !migrated
+  output
 end
 
 #
@@ -198,9 +203,9 @@ def migrate_node(server_identity, apps, node_to_users)
   puts "Migrating #{apps.length} apps on node #{server_identity}"
   users = node_to_users[server_identity]
   FileUtils.mkdir_p WORK_DIR
-  error_file = "#{WORK_DIR}/migrate_errors_#{server_identity}"
-  FileUtils.rm_f error_file
-  FileUtils.touch error_file
+  log_file = "#{WORK_DIR}/migrate_log_#{server_identity}"
+  FileUtils.rm_f log_file
+  FileUtils.touch log_file
   f = "#{WORK_DIR}/migrate_#{server_identity}"
   FileUtils.rm_f f
   FileUtils.touch f
@@ -215,7 +220,7 @@ def migrate_node(server_identity, apps, node_to_users)
   migrate_node_cmd = "#{__FILE__} '#{f}'"
   output, exit_code = execute_script(migrate_node_cmd)
   puts output
-  file = File.open(error_file, "r")
+  file = File.open(log_file, "r")
   begin
     while (line = file.readline)
       @failures << line.chomp
@@ -236,17 +241,18 @@ def migrate_from_file(file)
       rhlogin = params[3]
       app_name = params[4]
       migrate_on_node_cmd = "#{__FILE__} '#{server_identity}' '#{framework}' '#{uuid}' '#{rhlogin}' '#{app_name}'"
-      error_file = "#{WORK_DIR}/migrate_errors_#{server_identity}"
+      log_file = "#{WORK_DIR}/migrate_log_#{server_identity}"
       puts "Migrating app '#{app_name}' with uuid '#{uuid}' on node '#{server_identity}' for user: #{rhlogin}"
       num_tries = 2
       (1..num_tries).each do |i|
         begin
-          migrate_app_on_node(server_identity, framework, uuid, rhlogin, app_name)
+          output = migrate_app_on_node(server_identity, framework, uuid, rhlogin, app_name)
+          append_to_file(log_file, migrate_on_node_cmd)
           break
         rescue Exception => e
           if i == num_tries
             puts "Failed to migrate with cmd: '#{migrate_on_node_cmd}' after #{num_tries} tries with exception: #{e.message}"
-            append_to_file(error_file, migrate_on_node_cmd)
+            append_to_file(log_file, migrate_on_node_cmd)
             break
           else
             if Cloud::Sdk::DataStore.instance.find(Application.name, rhlogin, app_name)
@@ -273,14 +279,13 @@ def self.append_to_file(f, value)
   end
 end
 
-def execute_script(cmd)
-  num_tries = 3
+def execute_script(cmd, num_tries=1, timeout=28800)
   exitcode = nil
   output = ''
   (1..num_tries).each do |i|
     pid = nil
     begin
-      Timeout::timeout(60) do
+      Timeout::timeout(timeout) do
         read, write = IO.pipe
         pid = fork {
           # child
@@ -313,7 +318,7 @@ end
 if ARGV.length == 1
   migrate_from_file(ARGV[0])
 elsif ARGV.length == 5
-  migrate_app_on_node(ARGV[0], ARGV[1], ARGV[2], ARGV[3], ARGV[4])
+  puts migrate_app_on_node(ARGV[0], ARGV[1], ARGV[2], ARGV[3], ARGV[4])
 else
   migrate
 end
