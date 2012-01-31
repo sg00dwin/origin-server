@@ -68,7 +68,7 @@ EOF
         file.close
       end
       
-      FileUtils.chmod(0750, ctl_sh)
+      FileUtils.chmod(0755, ctl_sh)
       FileUtils.chown("root", "root", ctl_sh)
       
     else
