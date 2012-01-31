@@ -29,15 +29,15 @@ function stop_app {
     done
     for cmd in `awk 'BEGIN { for (a in ENVIRON) if (a == "OPENSHIFT_APP_CTL_SCRIPT") print ENVIRON[a] }'`
     do
-        runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $cmd stop" || echo "Failed to stop ${application}" 1>&2
+        runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $cmd stop" || echo "Failed to stop ${cmd}" 1>&2
     done
     for cmd in `awk 'BEGIN { for (a in ENVIRON) if ((a ~ /_CTL_SCRIPT$/) && !(a ~ /DB_CTL_SCRIPT$/) && (a != "OPENSHIFT_APP_CTL_SCRIPT")) print ENVIRON[a] }'`
     do
-        runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $cmd stop" || echo "Failed to stop ${application}" 1>&2
+        runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $cmd stop" || echo "Failed to stop ${cmd}" 1>&2
     done
     for cmd in `awk 'BEGIN { for (a in ENVIRON) if (a ~ /DB_CTL_SCRIPT$/) print ENVIRON[a] }'`
     do
-        runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $cmd stop" || echo "Failed to stop ${application}" 1>&2
+        runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $cmd stop" || echo "Failed to stop ${cmd}" 1>&2
     done
 }
 
