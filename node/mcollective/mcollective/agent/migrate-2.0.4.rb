@@ -50,6 +50,27 @@ module LibraMigration
         end
       end
       
+      ctl_sh = "#{app_dir}/#{app_name}_ctl.sh"
+      output += "Migrating _ctl.sh: #{ctl_sh}\n"
+      file = File.open(ctl_sh, 'w')
+      begin
+file.puts <<EOF
+#!/bin/bash -e
+# Import Environment Variables
+for f in ~/.env/*
+do
+    . $f
+done
+app_ctl.sh $1
+EOF
+
+      ensure
+        file.close
+      end
+      
+      FileUtils.chmod(0750, ctl_sh)
+      FileUtils.chown("root", "root", ctl_sh)
+      
     else
       exitcode = 127
       output += "Application not found to migrate: #{app_home}\n"
