@@ -152,22 +152,24 @@ class ExpressSshKey
   private
 
   def persist(action)
-    data = {
-      :rhlogin => @rhlogin,
-      :action => action, 
-      :key_name => name
-    }
+    if valid?
+      data = {
+        :rhlogin => @rhlogin,
+        :action => action,
+        :key_name => name
+      }
 
-    if "add-key" == action or "update-key" == action
-      data[:ssh] = @public_key
-      data[:key_type] = @type
-    end
+      if "add-key" == action or "update-key" == action
+        data[:ssh] = @public_key
+        data[:key_type] = @type
+      end
 
-    http_post(@@ssh_key_url, data, false) do |json_response|
-      Rails.logger.debug json_response
-      if json_response['exit_code'] > 0
-        Rails.logger.debug "error"
-        errors.add :base, json_response['result']
+      http_post(@@ssh_key_url, data, false) do |json_response|
+        Rails.logger.debug json_response
+        if json_response['exit_code'] > 0
+          Rails.logger.debug "error"
+          errors.add :base, json_response['result']
+        end
       end
     end
   end
