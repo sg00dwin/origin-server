@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.85.26
+Version:   0.85.27
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -79,6 +79,9 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Wed Feb 01 2012 Dan McPherson <dmcphers@redhat.com> 0.85.27-1
+- fix selinux issues with move (dmcphers@redhat.com)
+
 * Tue Jan 31 2012 Dan McPherson <dmcphers@redhat.com> 0.85.26-1
 - Updating gem versions (dmcphers@redhat.com)
 - Mongo connection recovery code for Express/mongo_data_store.rb
