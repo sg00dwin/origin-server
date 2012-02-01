@@ -76,7 +76,6 @@ chmod +x "$PSQL_DIR/"*.sh || error "Failed to chmod new application scripts" 122
 chown $user_id.$group_id -R $PSQL_DIR/ $APP_HOME/.psql_history $APP_HOME/.pgpass || error "Failed to chown new application space.  Please contact support" 123
 # Secure script and root dir (so they can't chown the script)
 chown root.root "$PSQL_DIR" "$PSQL_DIR"/*.sh
-chcon -t libra_var_lib_t -l $mcs_level -R "$PSQL_DIR"
 chcon -t libra_var_lib_t -l $mcs_level $APP_HOME/.psql_history
 chcon -t libra_var_lib_t -l $mcs_level $APP_HOME/.pgpass
 
