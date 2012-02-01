@@ -110,7 +110,8 @@ RedHatCloud::Application.routes.draw do
     match 'control_panel/apps' => 'express_app#list', :as => 'list_apps'
 
     unless Rails.env.production?
-      match 'bootstrap' => 'bootstrap#index'
+      match 'styleguide/:action' => 'styleguide'
+      match 'styleguide' => 'styleguide#index'
     end
 
     # Sample resource route with options:

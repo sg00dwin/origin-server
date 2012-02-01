@@ -8,25 +8,18 @@
     = render "layouts/head" 
 
     -# CSS: implied media="all"
-    = stylesheet_link_tag '/app/stylesheets/bootstrap.css', :media => 'all'
+    = stylesheet_link_tag '/app/stylesheets/styleguide.css', :media => 'all'
     -# Append your own using content_for :stylesheets
     = yield :stylesheets
     -# No longer support :stylesheet_partial
 
   %body{ :class => "#{controller.controller_name} #{controller.action_name}" }
-    = outage_notification
-    
-    %header.universal
-      = render "layouts/header", 
-        :username => session[:login].nil? ? nil : session[:login]
 
     - if content_for? :important_layout
       = yield :important_layout
 
     = content_for?(:sub_layout) ? yield(:sub_layout) : yield
 
-    %footer.universal
-      = render "layouts/footer"
 
     -# Javascript at the bottom for fast page loading
     :ruby
