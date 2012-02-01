@@ -7,6 +7,7 @@ export SAUCE_BROWSER=$2
 export SAUCE_BROWSER_VERSION=$3
 export SAUCE_USERNAME=${SAUCE_USERNAME-"openshift_ci"}
 export SAUCE_ACCESS_KEY=${SAUCE_ACCESS_KEY-"3d67e770-ce7d-482a-8c7f-07aec039d564"}
+export SAUCE_SELENIUM_VERSION=2.9.0
 
 # Launch a host and save the output to parse the hostname
 TMP_FILE=`mktemp`
