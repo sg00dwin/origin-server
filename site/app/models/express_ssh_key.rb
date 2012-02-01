@@ -152,7 +152,8 @@ class ExpressSshKey
   private
 
   def persist(action)
-    if valid?
+    # allow removal of key objects with name only, otherwise validate
+    if 'remove-key' == action || valid?
       data = {
         :rhlogin => @rhlogin,
         :action => action,
