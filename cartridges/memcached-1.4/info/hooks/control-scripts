@@ -62,7 +62,9 @@ function _move_memcached_service() {
    source ${CART_DIR}/abstract/info/lib/network
    load_node_conf
 
-MEMCACHED_DIR="$APP_HOME/memcached-1.4/"   
+MEMCACHED_DIR="$APP_HOME/memcached-1.4/"
+
+chcon -t libra_var_lib_t -l $mcs_level -R "$MEMCACHED_DIR"
 
 . $APP_HOME/.env/OPENSHIFT_INTERNAL_IP
 IP=$OPENSHIFT_INTERNAL_IP

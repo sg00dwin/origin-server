@@ -104,9 +104,11 @@ a.os-close-link {
 
 #ssh_container {
   dt {
-    width: 15%;
+    width: 20%;
     clear: left;
     float: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .primary_key {
