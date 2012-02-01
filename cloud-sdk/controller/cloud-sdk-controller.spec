@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.3.20
+Version:        0.3.21
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -73,6 +73,14 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Tue Jan 31 2012 Dan McPherson <dmcphers@redhat.com> 0.3.21-1
+- Updating gem versions (dmcphers@redhat.com)
+- - Handle both ReplicaSet and normal mongodb connection - Retry for 30 secs
+  (60 times in 0.5 sec frequency) in case of mongo connection failure. - On
+  devenv, configure/start mongod with replicaSet = 1 (rpenta@redhat.com)
+- Bug 786034 (dmcphers@redhat.com)
+- additional test + use new record instead of persisted (dmcphers@redhat.com)
+
 * Mon Jan 30 2012 Dan McPherson <dmcphers@redhat.com> 0.3.20-1
 - Updating gem versions (dmcphers@redhat.com)
 - update json version (dmcphers@redhat.com)

@@ -2,6 +2,7 @@ require 'rubygems'
 require 'aws'
 require 'aws/s3'
 require 'mongo'
+require 'json'
 require 'cloud-sdk-controller'
 
 # Configurable params
@@ -12,8 +13,9 @@ $config = {
   :s3_bucket  => "libra_dev",
 
   # Mongo params
-  :host       => "localhost",
-  :port       => 27017,
+  :replica_set => true,
+  # Replica set example: [[<host-1>, <port-1>], [<host-2>, <port-2>], ...]
+  :host_port => [["localhost", 27017]],
   :user       => "libra",
   :password   => "momo",
   :db         => "openshift_broker_dev",
@@ -37,7 +39,13 @@ def bucket
 end
 
 def mongo_connect
-  con = Mongo::Connection.new($config[:host], $config[:port])
+  if $config[:replica_set]
+    con = Mongo::ReplSetConnection.new(*$config[:host_port] \
+                                       << {:read => :secondary})
+  else
+    con = Mongo::Connection.new($config[:host_port][0], 
+                                $config[:host_port][1])
+  end
   admin_db = con.db("admin")
   admin_db.authenticate($config[:user], $config[:password])
   $coll = con.db($config[:db]).collection($config[:collection])
@@ -53,11 +61,8 @@ def mongo_populate
       user_name = File.basename(File.dirname(user_obj.key))
       user_data_str = user_obj.read
       next if not user_data_str
-      user_data_str.gsub!(/\"\s*:/, "\" => ")
-      user_data_str.gsub!(/null/, "\"\"")
-      #puts user_data_str
       puts user_name
-      user_data = eval(user_data_str)
+      user_data = JSON.parse(user_data_str)
 
       # update ssh keys
       user_data["ssh_keys"] = {} unless user_data["ssh_keys"]
@@ -87,11 +92,7 @@ def mongo_populate
         app_data_str = app_obj.read
         next if (not app_data_str) or app_data_str.empty?
         app_name = app_obj.key.gsub(app_prefix,'')[0..-6]
-        #puts app_name
-        app_data_str.gsub!(/\"\s*:/, "\" => ")
-        app_data_str.gsub!(/null/, "\"\"")
-        #puts app_data_str
-        app_data = eval(app_data_str)
+        app_data = JSON.parse(app_data_str)
 
         # Migrate wsgi/rack to python/ruby
         app_data['framework'] = 'ruby-1.8' if app_data['framework'] == 'rack-1.1'
