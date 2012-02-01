@@ -113,13 +113,12 @@ def migrate
     ds_queues[queue_index] = [] unless ds_queues[queue_index]
     ds_queues[queue_index].push(user)
   end
-  rhlogin_cnt = 0
   ds_threads = []
   mutex = Mutex.new
   ds_queues.each do |users|
     ds_threads << Thread.new do
       users.each do |user|
-        puts "Gathering apps for user: #{user.login}(#{all_rhlogins_length - rhlogin_cnt}) with uuid: #{user.uuid}"
+        puts "Gathering apps for user: #{user.login} with uuid: #{user.uuid}"
         apps = user.applications
         apps.each do |app|
           app_name = app.name
@@ -129,10 +128,9 @@ def migrate
             node_to_users[server_identity] = [] unless node_to_users[server_identity]
             node_to_apps[server_identity] << {:name => app_name, :app => app}
             node_to_users[server_identity] << user
+            app_cnt += 1
           end
         end
-        app_cnt += apps.length
-        rhlogin_cnt += 1
       end
     end
   end
