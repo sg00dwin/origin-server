@@ -109,6 +109,10 @@ RedHatCloud::Application.routes.draw do
     match 'dashboard' => 'control_panel#index', :as => 'dashboard'
     match 'control_panel/apps' => 'express_app#list', :as => 'list_apps'
 
+    unless Rails.env.production?
+      match 'bootstrap' => 'bootstrap#index'
+    end
+
     # Sample resource route with options:
     #   resources :products do
     #     member do

@@ -1,0 +1,49 @@
+- content_for :javascripts do
+  = javascript_include_tag '/app/javascripts/script.js'
+
+!!! 5
+-# http://paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither
+-ie_html :class => 'no-js', :lang => 'en' do
+  %head
+    = render "layouts/head" 
+
+    -# CSS: implied media="all"
+    = stylesheet_link_tag '/app/stylesheets/bootstrap.css', :media => 'all'
+    -# Append your own using content_for :stylesheets
+    = yield :stylesheets
+    -# No longer support :stylesheet_partial
+
+  %body{ :class => "#{controller.controller_name} #{controller.action_name}" }
+    = outage_notification
+    
+    %header.universal
+      = render "layouts/header", 
+        :username => session[:login].nil? ? nil : session[:login]
+
+    - if content_for? :important_layout
+      = yield :important_layout
+
+    = content_for?(:sub_layout) ? yield(:sub_layout) : yield
+
+    %footer.universal
+      = render "layouts/footer"
+
+    -# Javascript at the bottom for fast page loading
+    :ruby
+      scripts = [
+        'jquery.min.js',
+        'rails',
+        'plugins',
+        'jquery.validate.min.js',
+        'jquery.cookie.js',
+        'form'
+      ]
+
+    - scripts.each do |script|
+      = javascript_include_tag "/app/javascripts/#{script}"
+
+    -#  Append your own using content_for :javascripts
+    = yield :javascripts
+
+    -# Omniture code will not load in devenvs to force it to load, just comment out if statement
+    -#= render('shared/omniture_code', :controller => controller.controller_name, :action => controller.action_name, :event => @event ||= '', :evar8 => @evar8 ||= '') if Rails.env.production?
