@@ -362,7 +362,7 @@ module Express
               reply.append destination_container.create(app)
   
               log_debug "DEBUG: Moving content for app '#{app.name}' to #{destination_container.id}"
-              log_debug `eval \`ssh-agent\`; ssh-add /var/www/libra/broker/config/keys/rsync_id_rsa; ssh -o StrictHostKeyChecking=no -A root@#{source_container.get_ip_address} "rsync -a -e 'ssh -o StrictHostKeyChecking=no' /var/lib/libra/#{app.uuid}/ root@#{destination_container.get_ip_address}:/var/lib/libra/#{app.uuid}/"`
+              log_debug `eval \`ssh-agent\`; ssh-add /var/www/libra/broker/config/keys/rsync_id_rsa; ssh -o StrictHostKeyChecking=no -A root@#{source_container.get_ip_address} "rsync -aA#{(app.uid && app.uid == orig_uid) ? 'X' : ''} -e 'ssh -o StrictHostKeyChecking=no' /var/lib/libra/#{app.uuid}/ root@#{destination_container.get_ip_address}:/var/lib/libra/#{app.uuid}/"`
               if $?.exitstatus != 0
                 raise Cloud::Sdk::NodeException.new("Error moving app '#{app.name}' from #{source_container.id} to #{destination_container.id}", 143)
               end
@@ -390,7 +390,7 @@ module Express
                   end
                 end
               rescue Exception => e
-                reply.append destination_container.send(:run_cartridge_command, app.framework, app, "remove-httpd-proxy", nil, false)          
+                reply.append destination_container.send(:run_cartridge_command, app.framework, app, "remove-httpd-proxy", nil, false)
                 raise
               end
   
