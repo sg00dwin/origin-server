@@ -32,6 +32,7 @@ Requires:      libjpeg-devel
 Requires:      libcurl-devel
 Requires:      libpng-devel
 Requires:      giflib-devel
+Requires:      mod_ssl
 Requires(post):   /usr/sbin/semodule
 Requires(post):   /usr/sbin/semanage
 Requires(postun): /usr/sbin/semodule
