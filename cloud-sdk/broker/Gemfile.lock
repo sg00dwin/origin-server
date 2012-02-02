@@ -81,7 +81,6 @@ GEM
     rake (0.8.7)
     rdoc (3.7)
     regin (0.3.7)
-    rest-client (1.6.7)
     stomp (1.1.8)
     thor (0.14.6)
     treetop (1.4.10)
@@ -102,6 +101,5 @@ DEPENDENCIES
   rack
   rails (~> 3.0.10)
   regin
-  rest-client
   stomp
   xml-simple
