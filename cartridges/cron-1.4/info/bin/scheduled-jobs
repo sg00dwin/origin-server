@@ -8,7 +8,7 @@ CART_DIRNAME=${CART_NAME}-$CART_VERSION
 CART_INSTALL_DIR=/usr/libexec/li/cartridges
 CART_INFO_DIR=$CART_INSTALL_DIR/embedded/$CART_DIRNAME/info
 DOP=5  # Degree of Parallelism.
-
+DEVENV_DEBUG=0
 
 function usage() {
    freqs=$(cat $CART_INFO_DIR/configuration/frequencies | tr '\n' '|')
@@ -19,7 +19,9 @@ function usage() {
 function log_message() {
    msg=${1-""}
    [ -z "$msg" ]  &&  return 0
-   logger -i -s "run-scheduled-libra-user-jobs" -p user.info "`date`: $msg"
+   if [ "${DEVENV_DEBUG:-0}" -eq 1 ]; then
+      logger -i -s "run-scheduled-libra-user-jobs" -p user.info "`date`: $msg"
+   fi
 }
 
 

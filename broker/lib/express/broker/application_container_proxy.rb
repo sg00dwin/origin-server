@@ -591,10 +591,10 @@ module Express
                   result.cart_commands.push({:command => "BROKER_KEY_REMOVE", :args => []})
                 end
               else
-                result.debugIO << line
+                #result.debugIO << line
               end
             else # exitcode != 0
-              #result.debugIO << line
+              result.debugIO << line
               Rails.logger.debug "DEBUG: server results: " + line
             end
           end
