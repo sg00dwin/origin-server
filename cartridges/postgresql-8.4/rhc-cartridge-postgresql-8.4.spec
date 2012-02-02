@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/postgresql-8.4
 
 Name: rhc-cartridge-postgresql-8.4
-Version: 0.2.4
+Version: 0.2.5
 Release: 1%{?dist}
 Summary: Embedded postgresql support for express
 
@@ -71,6 +71,11 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Wed Feb 01 2012 Dan McPherson <dmcphers@redhat.com> 0.2.5-1
+- Remove extraneous chcon (thanks dmcphers) - we do this again after db
+  initialization. (ramr@redhat.com)
+- fix postgres move and other selinux move fixes (dmcphers@redhat.com)
+
 * Fri Jan 27 2012 Dan McPherson <dmcphers@redhat.com> 0.2.4-1
 - deploy httpd proxy from migration (dmcphers@redhat.com)
 
