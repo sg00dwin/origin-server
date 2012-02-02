@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.85.19
+Version:       0.85.20
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -218,6 +218,9 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Wed Feb 01 2012 Dan McPherson <dmcphers@redhat.com> 0.85.20-1
+- Bug 786371 (dmcphers@redhat.com)
+
 * Wed Feb 01 2012 Dan McPherson <dmcphers@redhat.com> 0.85.19-1
 - fix selinux issues with move (dmcphers@redhat.com)
 
