@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.85.12
+Version:   0.85.15
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -76,6 +76,26 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Thu Feb 02 2012 Dan McPherson <dmcphers@redhat.com> 0.85.15-1
+- Properly pass ticket when adding/updating/deleting SSH keys
+  (aboone@redhat.com)
+
+* Wed Feb 01 2012 Dan McPherson <dmcphers@redhat.com> 0.85.14-1
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (ffranz@redhat.com)
+- Fixes 785654: added horizontal scroll with overflow-x (ffranz@redhat.com)
+- Fix an issue w/ SSH key deletion (aboone@redhat.com)
+- Ensure additional SSH key is valid before attempting to persist (BZ 785867)
+  (aboone@redhat.com)
+- Fix display of SSH keys with long names (bugzilla 786382) (aboone@redhat.com)
+- More agressively shorten invalid SSH key so it fits in error message
+  (aboone@redhat.com)
+
+* Tue Jan 31 2012 Dan McPherson <dmcphers@redhat.com> 0.85.13-1
+- Adding a selenium test for SSH keys and a couple of markup tweaks to support
+  it (aboone@redhat.com)
+- Show default key as "default" instead of "Primary" on site (BZ 785953)
+  (aboone@redhat.com)
+
 * Mon Jan 30 2012 Dan McPherson <dmcphers@redhat.com> 0.85.12-1
 - update json version (dmcphers@redhat.com)
 

@@ -52,7 +52,7 @@ module Express
           unless Rails.configuration.auth[:integrated]
             return data['rhlogin']
           else
-            login = json['rhlogin']
+            login = data['rhlogin']
             password = params['password']
             return check_login(request, login, password)
           end
@@ -62,7 +62,7 @@ module Express
       private
       
       def check_login(request, user, password)
-        ticket = request.cookies[:rh_sso]
+        ticket = request.cookies['rh_sso']
         rhlogin = nil
         if ticket
           begin

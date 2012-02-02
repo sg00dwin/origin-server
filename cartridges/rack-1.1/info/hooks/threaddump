@@ -39,5 +39,5 @@ runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $CART_DIR/ru
 DATE=`date '+%Y%m%d'`
 client_result "Success"
 client_result ""
-client_result "The thread dump file will be available via 'rhc-tail-files -a appname -f $1/logs/error_log-$DATE-000000-EST'"
+client_result "The thread dump file will be available via 'rhc-tail-files -a $1 -f $1/logs/error_log-$DATE-000000-EST'"
 

@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.85.25
+Version:   0.85.29
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -22,6 +22,7 @@ Requires:  rubygem-rails
 Requires:  rubygem-xml-simple
 Requires:  rubygem-cloud-sdk-controller
 Requires:  rubygem-bson_ext
+Requires:  rubygem-rest-client
 
 BuildArch: noarch
 
@@ -79,6 +80,35 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Thu Feb 02 2012 Dan McPherson <dmcphers@redhat.com> 0.85.29-1
+- Bug 786687 (dmcphers@redhat.com)
+- Moved back rest-client version from 1.6.7 to 1.6.1 Added rubygem-rest-client
+  as a dependency for express broker (kraman@gmail.com)
+
+* Thu Feb 02 2012 Dan McPherson <dmcphers@redhat.com> 0.85.28-1
+- Updating gem versions (dmcphers@redhat.com)
+- Bug fixes for AuthService running in integrated mode (BZ 786330)
+  (aboone@redhat.com)
+
+* Wed Feb 01 2012 Dan McPherson <dmcphers@redhat.com> 0.85.27-1
+- fix selinux issues with move (dmcphers@redhat.com)
+
+* Tue Jan 31 2012 Dan McPherson <dmcphers@redhat.com> 0.85.26-1
+- Updating gem versions (dmcphers@redhat.com)
+- Mongo connection recovery code for Express/mongo_data_store.rb
+  (rpenta@redhat.com)
+- - Handle both ReplicaSet and normal mongodb connection - Retry for 30 secs
+  (60 times in 0.5 sec frequency) in case of mongo connection failure. - On
+  devenv, configure/start mongod with replicaSet = 1 (rpenta@redhat.com)
+- added more debugging statements (lnader@dhcp-240-165.mad.redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (lnader@dhcp-240-165.mad.redhat.com)
+- added more debugging statements (lnader@dhcp-240-165.mad.redhat.com)
+- better logging (dmcphers@redhat.com)
+- add small sleep after stop on move (dmcphers@redhat.com)
+- additional test + use new record instead of persisted (dmcphers@redhat.com)
+- various messaging improvements (dmcphers@redhat.com)
+
 * Mon Jan 30 2012 Dan McPherson <dmcphers@redhat.com> 0.85.25-1
 - Updating gem versions (dmcphers@redhat.com)
 - update json version (dmcphers@redhat.com)

@@ -66,7 +66,7 @@ $ ->
       # Error
       err_msg = event.osEventData
       # truncate long SSH key input so it doesn't overflow
-      err_msg = err_msg.replace(/([^\s]{30})[^\s]+/g, '$1...')
+      err_msg = err_msg.replace(/([^\s]{20})[^\s]+/g, '$1...')
       # prevent XSS by scrubbing HTML tags
       err_msg = err_msg.replace(/>/g, '&gt;').replace(/</g, '&lt;')
       ($ '.os-dialog-container', cpDialog).prepend """
