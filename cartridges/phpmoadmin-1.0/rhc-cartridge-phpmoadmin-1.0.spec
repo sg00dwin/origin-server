@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/phpmoadmin-1.0
 
 Name: rhc-cartridge-phpmoadmin-1.0
-Version: 0.4.3
+Version: 0.4.4
 Release: 1%{?dist}
 Summary: Embedded phpMoAdmin support for express
 
@@ -54,6 +54,10 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Wed Feb 01 2012 Dan McPherson <dmcphers@redhat.com> 0.4.4-1
+- Bug 786317 (dmcphers@redhat.com)
+- fix postgres move and other selinux move fixes (dmcphers@redhat.com)
+
 * Fri Jan 27 2012 Dan McPherson <dmcphers@redhat.com> 0.4.3-1
 - deploy httpd proxy from migration (dmcphers@redhat.com)
 - Adding status=I to force proxy layer to attempt to connect every time even in
