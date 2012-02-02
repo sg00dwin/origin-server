@@ -61,6 +61,10 @@ function _move_cron_service() {
    source ${CART_DIR}/abstract/info/lib/apache
    source ${CART_DIR}/abstract/info/lib/network
    load_node_conf
+   
+   CRON_DIR="$APP_HOME/cron-1.4/"
+   
+   chcon -t libra_var_lib_t -l $mcs_level -R "$CRON_DIR"
 
 }  #  End of function  _move_cron_service.
 

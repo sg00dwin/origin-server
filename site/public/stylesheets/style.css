@@ -1955,6 +1955,8 @@ li.captcha {
 }
 .control_panel .main .content #app_list_container li dd {
   margin-left: 11em;
+  overflow-x: auto;
+  white-space: nowrap;
 }
 .control_panel .main .content #app_list_container li dd.app_type {
   text-transform: uppercase;

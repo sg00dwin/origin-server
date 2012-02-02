@@ -42,6 +42,7 @@
 #include <errno.h>
 #include <limits.h>
 #include <pwd.h>
+#include <grp.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -164,6 +165,31 @@ static void openshift_mcs_level(int uid, security_context_t *scon) {
 	asprintf(scon, "unconfined_u:system_r:libra_t:s0:c%d,c%d", TIER, ORD);
 }
 
+/* checks if a user is on a list of members of the GID 0 group */
+static int is_on_list(char * const *list, const char *member)
+{
+    while (list && *list) {
+        if (strcmp(*list, member) == 0)
+            return 1;
+        list++;
+    }
+    return 0;
+}
+
+static int libra_domain(pam_handle_t *pamh, struct passwd *pw) {
+	struct group *grp;
+
+	if (!pw->pw_uid) return 0;
+
+	if ((grp = pam_modutil_getgrnam (pamh, "wheel")) == NULL) {
+	    grp = pam_modutil_getgrgid (pamh, 0);
+	} 
+	if (!grp) return 1;
+	if (pw->pw_gid == grp->gr_gid) return 0;
+	if (!grp->gr_mem) return 1;
+	return ! is_on_list(grp->gr_mem, pw->pw_name);
+}
+
 PAM_EXTERN int
 pam_sm_open_session(pam_handle_t *pamh, int flags UNUSED,
 		    int argc, const char **argv)
@@ -209,7 +235,8 @@ pam_sm_open_session(pam_handle_t *pamh, int flags UNUSED,
 		pam_syslog(pamh, LOG_ERR, "Unable to find uid for user %s", username);
 		return -1;
 	}
-	if (pw->pw_uid) {
+
+	if (libra_domain(pamh, pw)) {
 		openshift_mcs_level(pw->pw_uid, &user_context);
 	} else {
 		user_context = strdup("unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023");

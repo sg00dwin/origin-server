@@ -4,6 +4,7 @@ class ExpressSshKeysController < ApplicationController
   def create
     @express_ssh_key = ExpressSshKey.new params[:express_ssh_key]
     @express_ssh_key.rhlogin = session[:login]
+    @express_ssh_key.ticket = session[:ticket]
 
     @userinfo = ExpressUserinfo.new :rhlogin => session[:login],
                                     :ticket => session[:ticket]
@@ -28,6 +29,7 @@ class ExpressSshKeysController < ApplicationController
   def destroy
     @express_ssh_key = ExpressSshKey.new params[:express_ssh_key]
     @express_ssh_key.rhlogin = session[:login]
+    @express_ssh_key.ticket = session[:ticket]
     @express_ssh_key.destroy
 
     @userinfo = ExpressUserinfo.new :rhlogin => session[:login],
