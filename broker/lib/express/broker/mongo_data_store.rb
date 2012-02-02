@@ -52,7 +52,7 @@ module Express
       end
       
       def unreserve_district_uid(uuid, uid)
-        Rails.logger.debug "MongoDataStore.reserve_district_uid(#{uuid})\n\n"
+        Rails.logger.debug "MongoDataStore.unreserve_district_uid(#{uuid})\n\n"
         MongoDataStore.update({"_id" => uuid, "available_uids" => {"$ne" => uid}}, {"$push" => { "available_uids" => uid}, "$inc" => { "available_capacity" => 1 }})
       end
       
