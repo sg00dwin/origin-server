@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/cron-1.4
 
 Name: rhc-cartridge-cron-1.4
-Version: 0.1.6
+Version: 0.1.7
 Release: 1%{?dist}
 Summary: Embedded cron support for express
 
@@ -76,6 +76,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Wed Feb 01 2012 Dan McPherson <dmcphers@redhat.com> 0.1.7-1
+- fix postgres move and other selinux move fixes (dmcphers@redhat.com)
+
 * Fri Jan 27 2012 Dan McPherson <dmcphers@redhat.com> 0.1.6-1
 - add || : (dmcphers@redhat.com)
 - move service restart for cron (dmcphers@redhat.com)
