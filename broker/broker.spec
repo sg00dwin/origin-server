@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.85.28
+Version:   0.85.29
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -80,6 +80,11 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Thu Feb 02 2012 Dan McPherson <dmcphers@redhat.com> 0.85.29-1
+- Bug 786687 (dmcphers@redhat.com)
+- Moved back rest-client version from 1.6.7 to 1.6.1 Added rubygem-rest-client
+  as a dependency for express broker (kraman@gmail.com)
+
 * Thu Feb 02 2012 Dan McPherson <dmcphers@redhat.com> 0.85.28-1
 - Updating gem versions (dmcphers@redhat.com)
 - Bug fixes for AuthService running in integrated mode (BZ 786330)
