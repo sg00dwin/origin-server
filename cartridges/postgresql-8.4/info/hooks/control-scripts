@@ -62,7 +62,11 @@ function _move_postgres_service() {
    source ${CART_DIR}/abstract/info/lib/network
    load_node_conf
 
-PSQL_DIR="$APP_HOME/postgresql-8.4/"   
+PSQL_DIR="$APP_HOME/postgresql-8.4/"
+
+chcon -t libra_var_lib_t -l $mcs_level -R "$PSQL_DIR"
+chcon -t libra_var_lib_t -l $mcs_level $APP_HOME/.psql_history
+chcon -t libra_var_lib_t -l $mcs_level $APP_HOME/.pgpass
 
 . $APP_HOME/.env/OPENSHIFT_INTERNAL_IP
 IP=$OPENSHIFT_INTERNAL_IP
@@ -73,6 +77,7 @@ IP=$OPENSHIFT_INTERNAL_IP
 . $APP_HOME/.env/OPENSHIFT_DB_USERNAME
 
 ORIG_DB_HOST=$OPENSHIFT_DB_HOST
+echo "export OPENSHIFT_DB_HOST='$IP'" > $APP_HOME/.env/OPENSHIFT_DB_HOST
 echo "export OPENSHIFT_DB_URL='postgresql://$OPENSHIFT_DB_USERNAME:$OPENSHIFT_DB_PASSWORD@$IP:$OPENSHIFT_DB_PORT/'" > $APP_HOME/.env/OPENSHIFT_DB_URL
 
 sed -i "s,$ORIG_DB_HOST,$IP," $PSQL_DIR/data/postgresql.conf

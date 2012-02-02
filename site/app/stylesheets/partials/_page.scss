@@ -1393,6 +1393,8 @@ li.captcha {
         }
         dd {
           margin-left: 11em;
+          overflow-x: auto;
+          white-space: nowrap;
         }
         dd.app_type {
           text-transform: uppercase;

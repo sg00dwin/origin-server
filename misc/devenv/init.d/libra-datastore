@@ -16,6 +16,7 @@
 
 exec="/usr/bin/mongod"
 prog="mongod"
+pidfile="/var/run/mongodb/mongodb.pid"
 logfile="/var/log/mongodb/mongodb.log"
 options=" --replSet libra_rs --auth --nojournal --smallfiles --oplogSize=16 -f /etc/mongodb.conf"
 
@@ -35,7 +36,7 @@ start() {
 
 stop() {
     echo -n $"Stopping $prog: "
-    killproc $prog
+    killproc -p $pidfile $prog
     retval=$?
     echo
     [ $retval -eq 0 ] && rm -f $lockfile

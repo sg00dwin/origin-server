@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.85.17
+Version:       0.85.19
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -218,6 +218,17 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Wed Feb 01 2012 Dan McPherson <dmcphers@redhat.com> 0.85.19-1
+- fix selinux issues with move (dmcphers@redhat.com)
+
+* Tue Jan 31 2012 Dan McPherson <dmcphers@redhat.com> 0.85.18-1
+- Merge branch 'master' of li-master:/srv/git/li (ramr@redhat.com)
+- Redo commit 92024243d1dc321b81022722ad0c804da9b49060 -- issues cherry
+  picking. Switching to the popen4 extension that closes fd's - popen leaves
+  inherited file descriptors open per the POSIX spec. This is not good for
+  MCollective's usage as any command executed will inherit access to it's qpid
+  socket.  This patch stops that behavior. (ramr@redhat.com)
+
 * Tue Jan 31 2012 Dan McPherson <dmcphers@redhat.com> 0.85.17-1
 - better message (dmcphers@redhat.com)
 - make stop and start order more predictable (dmcphers@redhat.com)

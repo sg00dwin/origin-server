@@ -333,9 +333,11 @@ a.os-close-link:hover {
 /* standard styles */
 /* falback styles */
 #ssh_container dt {
-  width: 15%;
+  width: 20%;
   clear: left;
   float: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 #ssh_container .primary_key {
   font-weight: bold;
@@ -1953,6 +1955,8 @@ li.captcha {
 }
 .control_panel .main .content #app_list_container li dd {
   margin-left: 11em;
+  overflow-x: auto;
+  white-space: nowrap;
 }
 .control_panel .main .content #app_list_container li dd.app_type {
   text-transform: uppercase;

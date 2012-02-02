@@ -54,6 +54,9 @@ CART_INFO_DIR=$CART_DIR/$OPENSHIFT_APP_TYPE/info
 
 unobfuscate_app_home $uuid $namespace $application
 
+restorecon -R $APP_HOME
+chcon_app_dir_and_git
+
 #
 # Find an open localhost IP
 #

@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.85.11
+Version:   0.85.13
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -245,6 +245,15 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 %{_initddir}/sauce-connect
 
 %changelog
+* Tue Jan 31 2012 Dan McPherson <dmcphers@redhat.com> 0.85.13-1
+- Don't kill all mongod processes -- only the libra-datastore one.
+  (ramr@redhat.com)
+
+* Tue Jan 31 2012 Dan McPherson <dmcphers@redhat.com> 0.85.12-1
+- - Handle both ReplicaSet and normal mongodb connection - Retry for 30 secs
+  (60 times in 0.5 sec frequency) in case of mongo connection failure. - On
+  devenv, configure/start mongod with replicaSet = 1 (rpenta@redhat.com)
+
 * Mon Jan 30 2012 Dan McPherson <dmcphers@redhat.com> 0.85.11-1
 - Revert changes to development.log in site,broker,devenv spec
   (aboone@redhat.com)
