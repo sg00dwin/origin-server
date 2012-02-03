@@ -133,9 +133,23 @@ class OpenshiftResource < ActiveResource::Base
     end
   end
 
+  #
+  # Set the user under which changes should be made
+  #
   def as=(as)
     @connection = nil
     @as = as
+  end
+
+
+  def to_json(*opt)
+    respond_to?(:serialize) ? serialize.to_json(*opt) : super(*opt)
+  end
+  def to_xml(*opt)
+    respond_to?(:serialize) ? serialize.to_xml(*opt) : super(*opt)
+  end
+  def to_form(*opt)
+    (respond_to?(:serialize) ? serialize(*opt) : @attributes).to_param
   end
 
   protected
@@ -145,7 +159,6 @@ class OpenshiftResource < ActiveResource::Base
     end
 
     def connection(refresh = false)
-      puts "as=#{@as}"
       @connection = self.class.connection({:as => @as}) if refresh || @connection.nil?
       #raise "No valid user context to run in, set :as" if as.nil?
       #connection.authorization_cookie = as.streamline_cookie
@@ -163,18 +176,29 @@ class SshKey < OpenshiftResource
   belongs_to :user
 
   schema do
-    string :name, :key_type, :value
+    string :name, 'type', :key
+  end
+
+  def type
+    @attributes[:type]
   end
 
   validates :name, :length => {:maximum => 50},
                    :presence => true,
                    :allow_blank => false
-  validates_format_of :key_type,
+  validates_format_of 'type',
                       :with => /^ssh-(rsa|dss)$/,
                       :message => "is not ssh-rsa or ssh-dss"
-  validates :value, :length => {:maximum => 2048},
+  validates :key, :length => {:maximum => 2048},
                     :presence => true,
                     :allow_blank => false
+
+  #
+  # TEMPORARY: bug fix needed in REST API
+  #
+  #def encode(options={})
+  #  send("to_form", options)
+  #end
 
   def to_param
     name
@@ -209,7 +233,7 @@ if __FILE__==$0
   SshKey.prefix='/broker/rest/user/'
   user = TestUser.new 'test1@test1.com'
   begin
-    key = SshKey.new :name => 'a', :value => 'b', :key_type => 'ssh-rsa'
+    key = SshKey.new :name => 'a', :key => 'b', :type => 'ssh-rsa'
     key.as = user
     key.save
     puts key.inspect
@@ -238,18 +262,18 @@ if __FILE__==$0
     end
 
     def test_post_ssh_key
-      key = SshKey.new :key_type => 'ssh-rsa', :name => 'test2', :value => '1234_2'
+      key = SshKey.new :type => 'ssh-rsa', :name => 'test2', :key => '1234_2'
       assert key.save
     end
 
     def test_ssh_key_validation
-      key = SshKey.new :key_type => 'ssh-rsa', :name => 'test2'
+      key = SshKey.new :type => 'ssh-rsa', :name => 'test2'
       assert !key.save
-      assert_equal 1, key.errors[:value].length
+      assert_equal 1, key.errors[:key].length
 
       key.value = ''
       assert !key.save
-      assert_equal 1, key.errors[:value].length
+      assert_equal 1, key.errors[:key].length
 
       key.value = 'a'
       assert key.save
