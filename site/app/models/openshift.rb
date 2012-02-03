@@ -23,12 +23,6 @@ class OpenshiftResource < ActiveResource::Base
   self.site = if defined?(Rails) && Rails.configuration.express_api_url
     Rails.configuration.express_api_url + '/broker/rest'
   else
-    ActiveSupport::XmlMini.backend = 'REXML'
-    ActiveResource::HttpMock.respond_to do |mock|
-      mock.get '/user/keys.xml', {}, [{:type => :rsa, :name => 'test1', :value => '1234' }].to_xml(:root => 'ssh_key')
-      mock.post '/user/keys.xml', {}, {:type => :rsa, :name => 'test2', :value => '1234_2' }.to_xml(:root => 'ssh_key')
-      mock.delete '/user/keys/test1.xml', {}, {}
-    end
     'http://localhost'
   end
 
@@ -54,44 +48,35 @@ class OpenshiftResource < ActiveResource::Base
     @persisted
   end
 
-  def load_attributes_from_response(response)
-    if response['Content-Length'] != "0" && response.body.strip.size > 0
-      load(update_root(self.class.format.decode(response.body)))
-      @persisted = true
-    end
-  end
-
-  def update_root(obj)
-    obj
-  end
- 
-  # 
-  # has_many / belongs_to placeholders
-  #
-  def self.has_many(sym)
-  end
-  def self.belongs_to(sym)
-    self.prefix = "#{self.prefix}#{sym.to_s}/"
-  end
-
-
-  def self.update_connection(connection)
-    connection.proxy = proxy if proxy
-    connection.user = user if user
-    connection.password = password if password
-    connection.auth_type = auth_type if auth_type
-    connection.timeout = timeout if timeout
-    connection.ssl_options = ssl_options if ssl_options
-    connection
-  end
-
   class << self
+
+    def load_attributes_from_response(response)
+      if response['Content-Length'] != "0" && response.body.strip.size > 0
+        load(update_root(self.class.format.decode(response.body)))
+        @persisted = true
+      end
+    end
+
+    def update_root(obj)
+      puts "Root #{obj.inspect}"
+      obj
+    end
+
+    #
+    # has_many / belongs_to placeholders
+    #
+    def has_many(sym)
+    end
+    def belongs_to(sym)
+      prefix = "#{site.path}#{sym.to_s}"
+    end
+
     #
     # Override methods from ActiveResource to make them contextual connection
     # aware
     #
     def delete(id, options = {})
-      connection(options).delete(element_path(id, options))
+      connection(options).delete(element_path(id, options)) #changed
     end
 
     #
@@ -109,6 +94,16 @@ class OpenshiftResource < ActiveResource::Base
     end
 
     private
+      def update_connection(connection)
+        connection.proxy = proxy if proxy
+        connection.user = user if user
+        connection.password = password if password
+        connection.auth_type = auth_type if auth_type
+        connection.timeout = timeout if timeout
+        connection.ssl_options = ssl_options if ssl_options
+        connection
+      end
+
       def find_every(options)
         begin
           case from = options[:from]
@@ -179,10 +174,30 @@ end
 
 
 if __FILE__==$0
-  require 'test/unit/ui/console/testrunner'
+  #require 'test/unit/ui/console/testrunner'
+
+  SshKey.site = 'http://ec2-184-73-148-206.compute-1.amazonaws.com/broker/rest'
+  SshKey.prefix='broker/rest/user/'
+  puts "openshift site: #{SshKey.prefix}"
+  begin
+    SshKey.find(:all).inspect
+  rescue ActiveResource::ConnectionError => e
+    puts "#{e.response}=#{e.response.body}\n#{e.response.inspect}"
+    raise 
+  end
+  puts "-------------------\n"
+
+  if true
+
+  ActiveSupport::XmlMini.backend = 'REXML'
+  ActiveResource::HttpMock.respond_to do |mock|
+    mock.get '/user/keys.xml', {}, [{:type => :rsa, :name => 'test1', :value => '1234' }].to_xml(:root => 'ssh_key')
+    mock.post '/user/keys.xml', {}, {:type => :rsa, :name => 'test2', :value => '1234_2' }.to_xml(:root => 'ssh_key')
+    mock.delete '/user/keys/test1.xml', {}, {}
+  end
+
   require 'test/unit'
   require 'mocha'
-
   class OpenshiftResourceTest < Test::Unit::TestCase
     def test_get_ssh_keys
       items = SshKey.find :all
@@ -234,15 +249,18 @@ if __FILE__==$0
       end
     end
 
+    def test_ssh_key_with_user
+      items = SshKey.find :all, :as => {:login => 'test1', :password => 'password'}
+      assert_equal 1, items.length
+    end
+
     def test_create_cookie
       connection = UserAwareConnection.new 'http://localhost', :xml, TestUser.new
       headers = connection.authorization_header(:post, '/something')
       assert_equal 'rh_sso=1234', headers['Cookie']
     end
   end
+  end
 
-  Test::Unit::UI::Console::TestRunner.run(OpenshiftResourceTest)
-
-  items = SshKey.find :all, :as => {:login => 'test1', :password => 'password'}
-  puts items.inspect
+  #Test::Unit::UI::Console::TestRunner.run(OpenshiftResourceTest)
 end

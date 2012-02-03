@@ -12,6 +12,15 @@ module Streamline
   include ErrorCodes
   attr_accessor :rhlogin, :ticket, :roles, :terms
 
+  class Cookie
+    def initialize(*arguments)
+      @name, @value, @options = arguments
+    end
+    def to_s
+      "#{@name}=#{@value}"
+    end
+  end
+
   service_base_url = defined?(Rails) ? Rails.configuration.streamline[:host] + Rails.configuration.streamline[:base_url] : ""
 
   @@login_url = URI.parse(service_base_url + "/login.html")
@@ -101,12 +110,11 @@ module Streamline
 
   # Return a valid single signon cookie
   def streamline_cookie
-    [:rh_sso, {
-      :secure => true, 
-      :path => '/', 
-      :domain => '.redhat.com',
-      :value => @ticket
-    }] if @ticket
+    Cookie.new :rh_sso, @ticket, {
+      :secure => true,
+      :path => '/',
+      :domain => '.redhat.com'
+    } if @ticket
   end
 
   def accept_terms

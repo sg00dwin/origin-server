@@ -8,6 +8,7 @@ class OpenshiftTest < ActiveSupport::TestCase
   end
   
   test "ssh keys should be successfully retrieved" do
-    SshKey.find :all, :as => @user
+    items = SshKey.find :all, :as => @user
+    assert items.is_a? Array
   end
 end
