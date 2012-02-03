@@ -11,7 +11,9 @@ class UserAwareConnection < ActiveResource::Connection
 
   def authorization_header(http_method, uri)
     headers = super
-    headers['Cookies'] << @as.streamline_cookie if @as.respond_to?(:streamline_cookie) && @as.streamline_cookie
+    if @as.respond_to? :authorization_cookie and @as.authorization_cookie
+      (headers['Cookie'] ||= '') << @as.authorization_cookie.to_s
+    end
     headers
   end
 end
@@ -97,10 +99,8 @@ class OpenshiftResource < ActiveResource::Base
     #
     def connection(options = {}, refresh = false)
       if options[:as]
-        puts 'context aware connection'
         update_connection(UserAwareConnection.new(site, format, options[:as]))
       elsif defined?(@connection) || superclass == Object
-        puts 'context agnostic connection'
         @connection = update_connection(ActiveResource::Connection.new(site, format)) if @connection.nil? || refresh
         @connection
       else
@@ -211,6 +211,33 @@ if __FILE__==$0
     def test_ssh_key_delete
       items = SshKey.find :all
       assert items[0].destroy
+    end
+
+    def test_agnostic_connection
+      assert OpenshiftResource.connection.is_a? ActiveResource::Connection
+      assert OpenshiftResource.connection({:as => {}}).is_a? UserAwareConnection
+    end
+
+    class TestCookie
+      def initialize(name, values)
+        @name = name
+        @values = values
+      end
+      def to_s
+        "#{@name}=#{@values[:value]}"
+      end
+    end
+
+    class TestUser
+      def authorization_cookie
+        TestCookie.new :rh_sso, {:value => '1234'}
+      end
+    end
+
+    def test_create_cookie
+      connection = UserAwareConnection.new 'http://localhost', :xml, TestUser.new
+      headers = connection.authorization_header(:post, '/something')
+      assert_equal 'rh_sso=1234', headers['Cookie']
     end
   end
 
