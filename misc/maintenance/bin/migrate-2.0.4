@@ -15,7 +15,7 @@ WORK_DIR = '/tmp/rhc/migration'
 #
 def migrate_app_on_node(server_identity, framework, uuid, rhlogin, app_name)
   migrate_cmd = "#{__FILE__} '#{server_identity}' '#{framework}' '#{uuid}' '#{rhlogin}' '#{app_name}'"
-  output =  "Migrating app on node with: #{migrate_cmd}"
+  out =  "Migrating app on node with: #{migrate_cmd}\n"
   migrated = false
   begin
     user = CloudUser.find(rhlogin)
@@ -33,29 +33,29 @@ def migrate_app_on_node(server_identity, framework, uuid, rhlogin, app_name)
                 exit_code = response[:body][:data][:exitcode]
                 output = response[:body][:data][:output]
                 if (output.length > 0)
-                  output += "Migrate on node output: #{output}"
+                  out += "Migrate on node output: #{output}\n"
                 end
                 if exit_code != 0
-                  output += "Migrate on node exit code: #{exit_code}"
+                  out += "Migrate on node exit code: #{exit_code}\n"
                   raise "Failed migrating app. Rerun with: #{migrate_cmd}"
                 else
                   reply = app.container.send(:run_cartridge_command, framework, app, 'deploy-httpd-proxy', nil, false)
                   
-                  output += "DEPLOY_HTTP_PROXY DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
-                  output += "DEPLOY_HTTP_PROXY ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
+                  out += "DEPLOY_HTTP_PROXY DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
+                  out += "DEPLOY_HTTP_PROXY ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
           
                   if reply.exitcode != 0
-                    output += "Deploy httpd proxy on node exit code: #{reply.exitcode}"
+                    out += "Deploy httpd proxy on node exit code: #{reply.exitcode}\n"
                     raise "Failed deploying httpd proxy for app '#{app_name}' with uuid '#{uuid}' on node '#{server_identity}'"
                   else
                     deployed_httpd_proxy_success = true
                     app.embedded.each do |cart, cart_info|
-                      output += "DEBUG: Deploying httpd proxy for embedded #{cart} for '#{app_name}' with uuid '#{uuid}' on node #{server_identity}"
+                      out += "DEBUG: Deploying httpd proxy for embedded #{cart} for '#{app_name}' with uuid '#{uuid}' on node #{server_identity}\n"
                       reply.append app.container.send(:run_cartridge_command, "embedded/" + cart, app, "deploy-httpd-proxy", nil, false)
-                      output += "DEPLOY_HTTP_PROXY DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
-                      output += "DEPLOY_HTTP_PROXY ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
+                      out += "DEPLOY_HTTP_PROXY DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
+                      out += "DEPLOY_HTTP_PROXY ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
                       if reply.exitcode != 0
-                        output += "Deploy httpd proxy for cart: #{cart} on node exit code: #{reply.exitcode}"
+                        out += "Deploy httpd proxy for cart: #{cart} on node exit code: #{reply.exitcode}\n"
                         deployed_httpd_proxy_success = false
                       end
                     end
@@ -84,7 +84,7 @@ def migrate_app_on_node(server_identity, framework, uuid, rhlogin, app_name)
   rescue Exception => e
     raise "#{e.message}\n#{e.backtrace}\nOutput:\n#{output}"
   end
-  output
+  out
 end
 
 #
