@@ -74,6 +74,11 @@ module Express
         MongoDataStore.update({"_id" => uuid}, {"$set" => { "server_identities.#{server_identity}" => {"active" => false}}, "$inc" => { "active_server_identities_size" => -1 }})
       end
       
+      def activate_district_node(uuid, server_identity)
+        Rails.logger.debug "MongoDataStore.activate_district_node(#{uuid},#{server_identity})\n\n"
+        MongoDataStore.update({"_id" => uuid}, {"$set" => { "server_identities.#{server_identity}" => {"active" => true}}, "$inc" => { "active_server_identities_size" => 1 }})
+      end
+      
       def add_district_uids(uuid, uids)
         Rails.logger.debug "MongoDataStore.add_district_capacity(#{uuid},#{uids})\n\n"
         MongoDataStore.update({"_id" => uuid}, {"$pushAll" => { "available_uids" => uids }, "$inc" => { "available_capacity" => uids.length, "max_uid" => uids.length, "max_capacity" => uids.length }})
