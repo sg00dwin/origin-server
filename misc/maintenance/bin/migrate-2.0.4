@@ -82,7 +82,7 @@ def migrate_app_on_node(server_identity, framework, uuid, rhlogin, app_name)
     end 
     raise "Migrate on node failed.  Rerun with: #{migrate_cmd}" if !migrated
   rescue Exception => e
-    raise "#{e.message}\n#{e.backtrace}\nOutput:\n#{output}"
+    raise "#{e.message}\n#{e.backtrace}\nOutput:\n#{out}"
   end
   out
 end
