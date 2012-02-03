@@ -3,7 +3,7 @@
 # Creates a thread dump from a jboss-as7 instance
 
 # Exit on any errors
-set -e
+# set -e
 
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
@@ -34,10 +34,15 @@ setup_basic_hook "$1" $2 $3
 # Get the thread dump
 #
 
-runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $CART_DIR/ruby-1.8/info/bin/threaddump.sh $1 $3"
+result=`runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $CART_DIR/ruby-1.8/info/bin/threaddump.sh $1 $3"`
 
-DATE=`date '+%Y%m%d'`
-client_result "Success"
-client_result ""
-client_result "The thread dump file will be available via 'rhc-tail-files -a $1 -f $1/logs/error_log-$DATE-000000-EST'"
+if [$result .eq ""]; then
+    DATE=`date '+%Y%m%d'`
+    client_result "Success"
+    client_result ""
+    client_result "The thread dump file will be available via 'rhc-tail-files -a appname -f $1/logs/error_log-$DATE-000000-EST'"
+else
+    client_result " $result"
+    exit 1
+fi
 
