@@ -14,11 +14,16 @@ class UserAwareConnection < ActiveResource::Connection
     if @as.respond_to? :authorization_cookie and @as.authorization_cookie
       (headers['Cookie'] ||= '') << @as.authorization_cookie.to_s
     end
+    if @as.rhlogin
+      headers['X-rhlogin'] = @as.rhlogin
+    end
+    puts "headers #{headers.inspect}"
     headers
   end
 end
 
 class OpenshiftResource < ActiveResource::Base
+  self.ssl_options = { :verify_mode => OpenSSL::SSL::VERIFY_NONE }
 
   self.site = if defined?(Rails) && Rails.configuration.express_api_url
     Rails.configuration.express_api_url + '/broker/rest'
@@ -176,11 +181,31 @@ end
 if __FILE__==$0
   #require 'test/unit/ui/console/testrunner'
 
-  SshKey.site = 'http://ec2-184-73-148-206.compute-1.amazonaws.com/broker/rest'
-  SshKey.prefix='broker/rest/user/'
-  puts "openshift site: #{SshKey.prefix}"
+  class TestCookie
+    def initialize(name, values)
+      @name = name
+      @values = values
+    end
+    def to_s
+      "#{@name}=#{@values[:value]}"
+    end
+  end
+
+  class TestUser
+    attr :rhlogin
+    def initialize(rhlogin)
+      @rhlogin = rhlogin
+    end
+    def authorization_cookie
+      TestCookie.new :rh_sso, {:value => '1234'}
+    end
+  end
+
+  SshKey.site = 'https://ec2-184-73-148-206.compute-1.amazonaws.com/broker/rest'
+  SshKey.prefix='/broker/rest/user/'
+  user = TestUser.new 'test1@test1.com'
   begin
-    SshKey.find(:all).inspect
+    SshKey.find(:all, :as => user).inspect
   rescue ActiveResource::ConnectionError => e
     puts "#{e.response}=#{e.response.body}\n#{e.response.inspect}"
     raise 
@@ -231,22 +256,6 @@ if __FILE__==$0
     def test_agnostic_connection
       assert OpenshiftResource.connection.is_a? ActiveResource::Connection
       assert OpenshiftResource.connection({:as => {}}).is_a? UserAwareConnection
-    end
-
-    class TestCookie
-      def initialize(name, values)
-        @name = name
-        @values = values
-      end
-      def to_s
-        "#{@name}=#{@values[:value]}"
-      end
-    end
-
-    class TestUser
-      def authorization_cookie
-        TestCookie.new :rh_sso, {:value => '1234'}
-      end
     end
 
     def test_ssh_key_with_user
