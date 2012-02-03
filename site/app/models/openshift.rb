@@ -7,6 +7,7 @@ class UserAwareConnection < ActiveResource::Connection
   def initialize(url, format, as)
     super url, format
     @as = as
+    @user = @as.rhlogin if @as.rhlogin
   end
 
   def authorization_header(http_method, uri)
@@ -89,8 +90,10 @@ class OpenshiftResource < ActiveResource::Base
     #
     def connection(options = {}, refresh = false)
       if options[:as]
+        puts 'user aware connection'
         update_connection(UserAwareConnection.new(site, format, options[:as]))
       elsif defined?(@connection) || superclass == Object
+        puts 'normal connection'
         @connection = update_connection(ActiveResource::Connection.new(site, format)) if @connection.nil? || refresh
         @connection
       else
@@ -116,11 +119,11 @@ class OpenshiftResource < ActiveResource::Base
             instantiate_collection(get(from, options[:params]))
           when String
             path = "#{from}#{query_string(options[:params])}"
-            instantiate_collection(connection(options).get(path, headers) || []) #changed
+            instantiate_collection(format.decode(connection(options).get(path, headers).body) || []) #changed
           else
             prefix_options, query_options = split_options(options[:params])
             path = collection_path(prefix_options, query_options)
-            instantiate_collection( (connection(options).get(path, headers) || []), prefix_options ) #changed
+            instantiate_collection(format.decode(connection(options).get(path, headers).body) || [], prefix_options ) #changed
           end
         rescue ActiveResource::ResourceNotFound
           # Swallowing ResourceNotFound exceptions and return nil - as per
@@ -130,18 +133,19 @@ class OpenshiftResource < ActiveResource::Base
     end
   end
 
+  def as=(as)
+    @connection = nil
+    @as = as
+  end
+
   protected
     # Context of calls made to the object
     def as
       return @as
     end
 
-    def as=(as)
-      @connection = nil
-      @as = as
-    end
-
     def connection(refresh = false)
+      puts "as=#{@as}"
       @connection = self.class.connection({:as => @as}) if refresh || @connection.nil?
       #raise "No valid user context to run in, set :as" if as.nil?
       #connection.authorization_cookie = as.streamline_cookie
@@ -205,6 +209,10 @@ if __FILE__==$0
   SshKey.prefix='/broker/rest/user/'
   user = TestUser.new 'test1@test1.com'
   begin
+    key = SshKey.new :name => 'a', :value => 'b', :key_type => 'ssh-rsa'
+    key.as = user
+    key.save
+    puts key.inspect
     SshKey.find(:all, :as => user).inspect
   rescue ActiveResource::ConnectionError => e
     puts "#{e.response}=#{e.response.body}\n#{e.response.inspect}"
