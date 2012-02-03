@@ -142,7 +142,7 @@ restart_httpd_graceful
 
 
 client_result ""
-client_result "rockmongo-1.1 added.  Please make note of these credentials:"
+client_result "rockmongo-1.1 added.  Please make note of these MongoDB credentials again:"
 client_result ""
 client_result "   RockMongo User    : $OPENSHIFT_NOSQL_DB_USERNAME"
 client_result "   RockMongo Password: $OPENSHIFT_NOSQL_DB_PASSWORD"

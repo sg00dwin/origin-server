@@ -125,7 +125,7 @@ restart_httpd_graceful
 
 
 client_result ""
-client_result "phpMyAdmin 3.4 added.  Please make note of these credentials:"
+client_result "phpMyAdmin 3.4 added.  Please make note of these MySQL credentials again:"
 client_result ""
 client_result "   Root User: $OPENSHIFT_DB_USERNAME"
 client_result "   Root Password: $OPENSHIFT_DB_PASSWORD"
