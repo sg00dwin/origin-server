@@ -1,0 +1,33 @@
+#!/usr/bin/ruby
+require 'rubygems'
+require '/var/www/libra/broker/config/environment'
+
+opts = GetoptLong.new(["--namespace",  "-n", GetoptLong::REQUIRED_ARGUMENT])
+opt = {}
+opts.each do |o, a|
+    opt[o[2..-1]] = a.to_s
+end
+
+$dns = Express::Broker::DnsService.new
+
+def users_delete
+  ds = Cloud::Sdk::MongoDataStore.new
+
+  users = ds.find_all("CloudUser")
+  users.each do |user|
+    user['apps'].each do |app_info|
+      $dns.deregister_application(app_info['name'], user['namespace'])
+    end if user['apps']
+    $dns.deregister_namespace(user['namespace'])
+    ds.delete("CloudUser", user['login'])
+  end if users
+end
+
+if opt['namespace']
+  $dns.deregister_namespace(opt['namespace'])
+else 
+  users_delete
+end
+
+$dns.publish
+$dns.close

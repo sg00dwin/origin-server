@@ -36,6 +36,16 @@ module Cloud::Sdk
       end
     end
     
+    def find_by_uuid(obj_type_of_uuid, uuid)
+      Rails.logger.debug "MongoDataStore.find_by_uuid(#{obj_type_of_uuid}, #{uuid})\n\n"
+      case obj_type_of_uuid
+      when "CloudUser"
+        MongoDataStore.get_user_by_uuid(uuid)
+      when "Application"
+        MongoDataStore.get_user_by_app_uuid(uuid)
+      end
+    end
+    
     def save(obj_type, user_id, id, obj_attrs)
       Rails.logger.debug "MongoDataStore.save(#{obj_type}, #{user_id}, #{id}, #{obj_attrs.pretty_inspect})\n\n"
       case obj_type
@@ -89,10 +99,10 @@ module Cloud::Sdk
         con = Mongo::Connection.new(Rails.configuration.cdk[:datastore_mongo][:host_port][0], 
                                     Rails.configuration.cdk[:datastore_mongo][:host_port][1])
       end
-      admin_db = con.db("admin")
-      admin_db.authenticate(Rails.configuration.cdk[:datastore_mongo][:user],
+      user_db = con.db(Rails.configuration.cdk[:datastore_mongo][:db])
+      user_db.authenticate(Rails.configuration.cdk[:datastore_mongo][:user],
                             Rails.configuration.cdk[:datastore_mongo][:password])
-      con.db(Rails.configuration.cdk[:datastore_mongo][:db])
+      user_db
     end
 
     def self.collection
@@ -133,6 +143,20 @@ module Cloud::Sdk
       hash = MongoDataStore.find_one( "_id" => user_id )
       return nil unless hash && !hash.empty?
 
+      user_hash_to_ret(hash)
+    end
+    
+    def self.get_user_by_uuid(uuid)
+      hash = MongoDataStore.find_one( "uuid" => uuid )
+      return nil unless hash && !hash.empty?
+      
+      user_hash_to_ret(hash)
+    end
+    
+    def self.get_user_by_app_uuid(uuid)
+      hash = MongoDataStore.find_one( "apps.uuid" => uuid )
+      return nil unless hash && !hash.empty?
+      
       user_hash_to_ret(hash)
     end
 

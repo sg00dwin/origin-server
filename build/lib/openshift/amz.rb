@@ -85,6 +85,22 @@ module OpenShift
         filter("state", "available").
         filter("name", filter)
     end
+    
+    def get_specific_ami(conn, filter_val)
+      if filter_val.start_with?("ami")
+        filter_param = "image-id"
+      else
+        filter_param = "name"
+      end 
+      AWS.memoize do
+        devenv_amis = conn.images.with_owner(:self).
+          filter("state", "available").
+          filter(filter_param, filter_val)
+        # Take the last DevEnv AMI - memoize saves a remote call
+        devenv_amis.to_a[0]
+
+      end
+    end
 
     def get_latest_ami(conn, filter_val = DEVENV_WILDCARD)
       AWS.memoize do
@@ -92,7 +108,6 @@ module OpenShift
         devenv_amis = conn.images.with_owner(:self).
           filter("state", "available").
           filter("name", filter_val)
-
         # Take the last DevEnv AMI - memoize saves a remote call
         devenv_amis.to_a.sort_by {|ami| ami.name.split("_")[1].to_i}.last
       end

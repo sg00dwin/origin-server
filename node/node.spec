@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.85.19
+Version:       0.86.1
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -32,6 +32,7 @@ Requires:      libjpeg-devel
 Requires:      libcurl-devel
 Requires:      libpng-devel
 Requires:      giflib-devel
+Requires:      mod_ssl
 Requires(post):   /usr/sbin/semodule
 Requires(post):   /usr/sbin/semanage
 Requires(postun): /usr/sbin/semodule
@@ -218,6 +219,15 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Fri Feb 03 2012 Dan McPherson <dmcphers@redhat.com> 0.86.1-1
+- bump spec numbers (dmcphers@redhat.com)
+- adding mod_ssl (mmcgrath@redhat.com)
+- Allow users in the wheel group to login as unconfined_t otherwize libra_t
+  (dwalsh@redhat.com)
+
+* Wed Feb 01 2012 Dan McPherson <dmcphers@redhat.com> 0.85.20-1
+- Bug 786371 (dmcphers@redhat.com)
+
 * Wed Feb 01 2012 Dan McPherson <dmcphers@redhat.com> 0.85.19-1
 - fix selinux issues with move (dmcphers@redhat.com)
 

@@ -42,10 +42,8 @@ class LegacyBrokerController < ApplicationController
         raise Cloud::Sdk::UserKeyException.new("Missing SSH key or key name", 119) if @req.ssh.nil? or @req.key_name.nil?
         if user.ssh_keys
           user.ssh_keys.each do |key_name, key|
-            raise Cloud::Sdk::UserKeyException.new("Key with name #{@req.key_name} already exists. \
-                                                   Please choose a different name", 120) if key_name == @req.key_name
-            raise Cloud::Sdk::UserKeyException.new("Given public key is already in use. \
-                                                   Use different key or delete conflicting key and retry", 121) if key == @req.ssh
+            raise Cloud::Sdk::UserKeyException.new("Key with name #{@req.key_name} already exists.  Please choose a different name", 120) if key_name == @req.key_name
+            raise Cloud::Sdk::UserKeyException.new("Given public key is already in use.  Use different key or delete conflicting key and retry", 121) if key == @req.ssh
           end
         end
         @reply.append user.add_ssh_key(@req.key_name, @req.ssh, @req.key_type)

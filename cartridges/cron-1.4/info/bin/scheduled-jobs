@@ -9,7 +9,6 @@ CART_INSTALL_DIR=/usr/libexec/li/cartridges
 CART_INFO_DIR=$CART_INSTALL_DIR/embedded/$CART_DIRNAME/info
 DOP=5  # Degree of Parallelism.
 
-
 function usage() {
    freqs=$(cat $CART_INFO_DIR/configuration/frequencies | tr '\n' '|')
    echo "Usage: $0 {run | run-user <uid>} <${freqs%?}>"
@@ -35,9 +34,11 @@ function run_all_scheduled_jobs() {
       exit 1
    fi
 
-   log_message ":START: $freq run of all scheduled jobs"
-   libra_users | xargs -d' ' -I{} -n 1 -P $DOP $0 run-user {} $freq
-   log_message ":END: $freq run of all scheduled jobs"
+   {
+      log_message ":START: $freq run of all scheduled jobs"
+      libra_users | xargs -d' ' -I{} -n 1 -P $DOP $0 run-user {} $freq
+      log_message ":END: $freq run of all scheduled jobs"
+   } &> /dev/null
 }
 
 

@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/phpmyadmin-3.4
 
 Name: rhc-cartridge-phpmyadmin-3.4
-Version: 0.7.4
+Version: 0.8.1
 Release: 1%{?dist}
 Summary: Embedded phpMyAdmin support for express
 
@@ -55,6 +55,15 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Fri Feb 03 2012 Dan McPherson <dmcphers@redhat.com> 0.8.1-1
+- bump spec numbers (dmcphers@redhat.com)
+- Make it clear the phpmyadmin and rockmongo users are just the db users
+  (dmcphers@redhat.com)
+
+* Wed Feb 01 2012 Dan McPherson <dmcphers@redhat.com> 0.7.5-1
+- Bug 786317 (dmcphers@redhat.com)
+- fix postgres move and other selinux move fixes (dmcphers@redhat.com)
+
 * Sun Jan 29 2012 Dan McPherson <dmcphers@redhat.com> 0.7.4-1
 - Fixed Bug 749751 (twiest@redhat.com)
 

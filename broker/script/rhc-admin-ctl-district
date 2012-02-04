@@ -18,7 +18,7 @@ Options:
 -u|--uuid     <district uuid>
     District uuid  (alphanumeric)
 -c|--command <command>
-    (add-node|remove-node|deactivate-node|add-capacity|remove-capacity|create|destroy)
+    (add-node|remove-node|deactivate-node|activate-node|add-capacity|remove-capacity|create|destroy)
 -n|--name <district name>
     District name (Used on create or in place of uuid on other commands)
 -p|--node_profile <profile_size>
@@ -96,7 +96,7 @@ if uuid || name
     puts "District '#{name}' already exists"
     exit 1
   end
-  unless server_identity || (command != 'add-node' && command != 'remove-node' && command != 'deactivate-node')
+  unless server_identity || (command != 'add-node' && command != 'remove-node' && command != 'deactivate-node' && command != 'activate-node')
     puts "--server_identity is required with command: #{command}"
     exit 1
   end
@@ -124,6 +124,9 @@ begin
     reply.resultIO << "Success!"
   when "deactivate-node"
     district.deactivate_node(server_identity)
+    reply.resultIO << "Success!"
+  when "activate-node"
+    district.activate_node(server_identity)
     reply.resultIO << "Success!"
   when "add-capacity"
     district.add_capacity(size)

@@ -2,7 +2,7 @@
 
 Summary:   Provides jenkins-1.4 support
 Name:      rhc-cartridge-jenkins-1.4
-Version:   0.85.4
+Version:   0.86.1
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -75,6 +75,9 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Fri Feb 03 2012 Dan McPherson <dmcphers@redhat.com> 0.86.1-1
+- bump spec numbers (dmcphers@redhat.com)
+
 * Fri Jan 27 2012 Dan McPherson <dmcphers@redhat.com> 0.85.4-1
 - Adding status=I to force proxy layer to attempt to connect every time even in
   error scenarios. (mmcgrath@redhat.com)

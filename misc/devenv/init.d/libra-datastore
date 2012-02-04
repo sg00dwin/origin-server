@@ -88,7 +88,7 @@ rh_configure_mongo() {
         fi
     done
     echo 'db.getMongo().setSlaveOk();
-          use admin
+          use openshift_broker_dev
           db.addUser("libra", "momo")
           exit
          ' | mongo

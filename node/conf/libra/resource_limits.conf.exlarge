@@ -14,6 +14,7 @@ quota_blocks=14979657 # 100G / 7 (where.  1 block = 1024byte
 
 # For no over commitment, should be memory_limit_in_bytes / (Total System Memory - 1G)
 max_apps=7
+max_active_apps=7
 
 # PAM - resource limits
 # limits_core
