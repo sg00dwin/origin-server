@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.86.0
+Version:   0.86.1
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -105,6 +105,9 @@ rm -rf %{buildroot}
 %config(noreplace) %{cartridgedir}/info/configuration/
 
 %changelog
+* Fri Feb 03 2012 Dan McPherson <dmcphers@redhat.com> 0.86.1-1
+- bump spec numbers (dmcphers@redhat.com)
+
 * Wed Feb 01 2012 Dan McPherson <dmcphers@redhat.com> 0.85.9-1
 - bug 785517 (bdecoste@gmail.com)
 
