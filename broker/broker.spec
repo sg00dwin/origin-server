@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.86.0
+Version:   0.86.1
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -80,6 +80,22 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Fri Feb 03 2012 Dan McPherson <dmcphers@redhat.com> 0.86.1-1
+- Updating gem versions (dmcphers@redhat.com)
+- bump spec numbers (dmcphers@redhat.com)
+- add move by uuid (dmcphers@redhat.com)
+- Bug 786709 (dmcphers@redhat.com)
+- fix comment (dmcphers@redhat.com)
+- double url encode rhlogin for apptegic (lnader@dhcp-240-165.mad.redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (lnader@dhcp-240-165.mad.redhat.com)
+- Removing specific version dependency for rest-client from gemfile
+  (kraman@gmail.com)
+- Removing specific version dependency for rest-client from gemfile
+  (kraman@gmail.com)
+- made changes to dns_service.rb so it can be imported and used outside rails
+  (lnader@dhcp-240-165.mad.redhat.com)
+
 * Thu Feb 02 2012 Dan McPherson <dmcphers@redhat.com> 0.85.29-1
 - Bug 786687 (dmcphers@redhat.com)
 - Moved back rest-client version from 1.6.7 to 1.6.1 Added rubygem-rest-client
