@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/postgresql-8.4
 
 Name: rhc-cartridge-postgresql-8.4
-Version: 0.3.0
+Version: 0.3.1
 Release: 1%{?dist}
 Summary: Embedded postgresql support for express
 
@@ -71,6 +71,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Fri Feb 03 2012 Dan McPherson <dmcphers@redhat.com> 0.3.1-1
+- bump spec numbers (dmcphers@redhat.com)
+
 * Wed Feb 01 2012 Dan McPherson <dmcphers@redhat.com> 0.2.5-1
 - Remove extraneous chcon (thanks dmcphers) - we do this again after db
   initialization. (ramr@redhat.com)
