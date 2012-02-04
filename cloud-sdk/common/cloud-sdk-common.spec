@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Common
 Name:           rubygem-%{gemname}
-Version:        0.4.0
+Version:        0.4.1
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -73,6 +73,9 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Fri Feb 03 2012 Dan McPherson <dmcphers@redhat.com> 0.4.1-1
+- bump spec numbers (dmcphers@redhat.com)
+
 * Tue Jan 31 2012 Dan McPherson <dmcphers@redhat.com> 0.3.14-1
 - new record wasnt working so well (dmcphers@redhat.com)
 - additional test + use new record instead of persisted (dmcphers@redhat.com)
