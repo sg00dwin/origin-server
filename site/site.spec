@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.86.0
+Version:   0.86.1
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -76,6 +76,9 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Fri Feb 03 2012 Dan McPherson <dmcphers@redhat.com> 0.86.1-1
+- bump spec numbers (dmcphers@redhat.com)
+
 * Thu Feb 02 2012 Dan McPherson <dmcphers@redhat.com> 0.85.15-1
 - Properly pass ticket when adding/updating/deleting SSH keys
   (aboone@redhat.com)
