@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.85.20
+Version:       0.86.1
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -219,6 +219,12 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Fri Feb 03 2012 Dan McPherson <dmcphers@redhat.com> 0.86.1-1
+- bump spec numbers (dmcphers@redhat.com)
+- adding mod_ssl (mmcgrath@redhat.com)
+- Allow users in the wheel group to login as unconfined_t otherwize libra_t
+  (dwalsh@redhat.com)
+
 * Wed Feb 01 2012 Dan McPherson <dmcphers@redhat.com> 0.85.20-1
 - Bug 786371 (dmcphers@redhat.com)
 

@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/cron-1.4
 
 Name: rhc-cartridge-cron-1.4
-Version: 0.1.7
+Version: 0.2.1
 Release: 1%{?dist}
 Summary: Embedded cron support for express
 
@@ -76,6 +76,16 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Fri Feb 03 2012 Dan McPherson <dmcphers@redhat.com> 0.2.1-1
+- bump spec numbers (dmcphers@redhat.com)
+- Also add the missed libra cron minutely script for: Reducto email and log
+  redirection. (ramr@redhat.com)
+- Reducto email and log redirection. Still log messages - useful for
+  auditing/debugging. (ramr@redhat.com)
+- Fix debug message to only be generated when debug is on ... not needed on
+  production as it could potentially fill up mail spool files.
+  (ramr@redhat.com)
+
 * Wed Feb 01 2012 Dan McPherson <dmcphers@redhat.com> 0.1.7-1
 - fix postgres move and other selinux move fixes (dmcphers@redhat.com)
 
