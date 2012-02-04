@@ -11,8 +11,11 @@ class MongoDataStoreTest < ActiveSupport::TestCase
     ds = MongoDataStore.new
     orig_cu = cloud_user
     user_id = orig_cu["login"]
+    user_uuid = orig_cu["uuid"]
     ds.create("CloudUser", user_id, nil, orig_cu)
     cu = ds.find("CloudUser", user_id, nil)
+    assert_equal(orig_cu, cu)
+    cu = ds.find_by_uuid("CloudUser", user_uuid)
     assert_equal(orig_cu, cu)
   end
   
@@ -53,17 +56,21 @@ class MongoDataStoreTest < ActiveSupport::TestCase
   test "create and find application" do
     ds = MongoDataStore.new
     
-    cu = cloud_user
-    user_id = cu["login"]
-    ds.create("CloudUser", user_id, nil, cu)
+    orig_cu = cloud_user
+    user_id = orig_cu["login"]
+    ds.create("CloudUser", user_id, nil, orig_cu)
     
     orig_a = application
+    a_uuid = orig_a['uuid']
     ds.create("Application", user_id, orig_a["name"], orig_a)
     a = ds.find("Application", user_id, orig_a["name"])
     assert_equal(orig_a, a)
     
     cu = ds.find("CloudUser", user_id, nil)
     assert_equal(1, cu['consumed_gears'])
+      
+    by_uuid_cu = ds.find_by_uuid("Application", a_uuid)
+    assert_equal(cu, by_uuid_cu)
   end
   
   test "create and save application with embedded" do

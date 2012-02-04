@@ -41,6 +41,18 @@ class Application < Cloud::Sdk::UserModel
     app
   end
   
+  def self.find_by_uuid(app_uuid)
+    app = nil
+    user = CloudUser.find_by_uuid(self.name, app_uuid)
+    user.applications.each do |next_app|
+      if next_app.uuid == app_uuid
+        app = next_app
+        break
+      end
+    end
+    app
+  end
+  
   def self.find_all(user)
     apps = nil
     if user.applications
