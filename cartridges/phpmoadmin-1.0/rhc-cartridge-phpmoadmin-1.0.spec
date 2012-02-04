@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/phpmoadmin-1.0
 
 Name: rhc-cartridge-phpmoadmin-1.0
-Version: 0.4.4
+Version: 0.5.0
 Release: 1%{?dist}
 Summary: Embedded phpMoAdmin support for express
 

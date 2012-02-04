@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/cron-1.4
 
 Name: rhc-cartridge-cron-1.4
-Version: 0.1.7
+Version: 0.2.0
 Release: 1%{?dist}
 Summary: Embedded cron support for express
 

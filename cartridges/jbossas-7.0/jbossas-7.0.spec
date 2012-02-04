@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.85.9
+Version:   0.86.0
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
