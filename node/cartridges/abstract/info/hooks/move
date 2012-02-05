@@ -40,11 +40,16 @@ do
     esac
 done
 
-[ $# -eq 3 ] || print_help
+[ $# -eq 3 ] || [ $# -eq 4 ] || print_help
 
 namespace=`basename $2`
 application="$1"
 uuid=$3
+idle=false
+if [ "$4" == "--idle" ]
+then
+  idle=true
+fi
 
 setup_basic_vars
 
@@ -79,6 +84,11 @@ then
   $CART_INFO_DIR/bin/deploy_httpd_proxy.sh $application $namespace $uuid $OPENSHIFT_INTERNAL_IP
 else
   $CART_DIR/abstract/info/bin/deploy_httpd_proxy.sh $application $namespace $uuid $OPENSHIFT_INTERNAL_IP
+fi
+
+if $idle
+then
+  rhc-idler -u $uuid
 fi
 
 restart_httpd_graceful

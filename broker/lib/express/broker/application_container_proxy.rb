@@ -301,7 +301,7 @@ module Express
             if destination_district_uuid && destination_district_uuid != source_district_uuid
               raise Cloud::Sdk::UserException.new("Error moving app.  Cannot change district from '#{source_district_uuid}' to '#{destination_district_uuid}' without allow_change_district flag.", 1)
             else
-              destination_district_uuid = source_district_uuid
+              destination_district_uuid = source_district_uuid unless source_district_uuid == 'NONE'
             end
           end
           destination_container = ApplicationContainerProxy.find_available_impl(app.node_profile, destination_district_uuid)
@@ -332,11 +332,27 @@ module Express
 
         num_tries = 2
         reply = ResultIO.new
+        leave_stopped = false
+        idle = false
         begin
           log_debug "DEBUG: Stopping existing app '#{app.name}' before moving"
           (1..num_tries).each do |i|
             begin
-              reply.append source_container.stop(app, app.framework)
+              result = source_container.stop(app, app.framework)
+              result.cart_commands.each do |command_item|
+                case command_item[:command]
+                when "STATUS"
+                  status = command_item[:args][0]
+                  case status
+                  when "ALREADY_STOPPED"
+                    leave_stopped = true
+                  when "ALREADY_IDLED"
+                    leave_stopped = true
+                    idle = true
+                  end
+                end
+              end
+              reply.append result
               sleep 1
               break
             rescue Exception => e
@@ -369,7 +385,7 @@ module Express
   
               begin
                 log_debug "DEBUG: Performing cartridge level move for '#{app.name}' on #{destination_container.id}"
-                reply.append destination_container.send(:run_cartridge_command, app.framework, app, "move", nil, false)
+                reply.append destination_container.send(:run_cartridge_command, app.framework, app, "move", idle ? '--idle' : nil, false)
                 unless app.embedded.nil?
                   app.embedded.each do |cart, cart_info|
                     log_debug "DEBUG: Performing cartridge level move for embedded #{cart} for '#{app.name}' on #{destination_container.id}"
@@ -390,18 +406,23 @@ module Express
                   end
                 end
               rescue Exception => e
-                reply.append destination_container.send(:run_cartridge_command, app.framework, app, "remove-httpd-proxy", nil, false)
-                raise
+                begin
+                  reply.append destination_container.send(:run_cartridge_command, app.framework, app, "remove-httpd-proxy", nil, false)
+                ensure
+                  raise
+                end
               end
   
-              log_debug "DEBUG: Starting '#{app.name}' after move on #{destination_container.id}"
-              (1..num_tries).each do |i|
-                begin
-                  reply.append destination_container.start(app, app.framework)
-                  break
-                rescue Exception => e
-                  log_debug "DEBUG: Error starting after move on try #{i}: #{e.message}"
-                  raise if i == num_tries
+              unless leave_stopped
+                log_debug "DEBUG: Starting '#{app.name}' after move on #{destination_container.id}"
+                (1..num_tries).each do |i|
+                  begin
+                    reply.append destination_container.start(app, app.framework)
+                    break
+                  rescue Exception => e
+                    log_debug "DEBUG: Error starting after move on try #{i}: #{e.message}"
+                    raise if i == num_tries
+                  end
                 end
               end
   
@@ -412,23 +433,34 @@ module Express
               reply.append app.recreate_dns
               app.save
             rescue Exception => e
-              reply.append destination_container.destroy(app, keep_uid)
-              raise
-            end
-          rescue Exception => e
-            app.embedded.each do |cart, cart_info|
               begin
-                log_debug "DEBUG: Performing cartridge level post-move for embedded #{cart} for '#{app.name}' on #{source_container.id}"
-                reply.append source_container.send(:run_cartridge_command, "embedded/" + cart, app, "post-move", nil, false)
-              rescue Exception => e
-                log_error "ERROR: Error performing cartridge level post-move for embedded #{cart} for '#{app.name}' on #{source_container.id}: #{e.message}"
+                reply.append destination_container.destroy(app, keep_uid)
+              ensure
+                raise
               end
             end
-            raise
+          rescue Exception => e
+            begin
+              app.embedded.each do |cart, cart_info|
+                begin
+                  log_debug "DEBUG: Performing cartridge level post-move for embedded #{cart} for '#{app.name}' on #{source_container.id}"
+                  reply.append source_container.send(:run_cartridge_command, "embedded/" + cart, app, "post-move", nil, false)
+                rescue Exception => e
+                  log_error "ERROR: Error performing cartridge level post-move for embedded #{cart} for '#{app.name}' on #{source_container.id}: #{e.message}"
+                end
+              end
+            ensure
+              raise
+            end
           end
         rescue Exception => e
-          reply.append source_container.run_cartridge_command(app.framework, app, "start", nil, false)
-          raise
+          begin
+            unless leave_stopped
+              reply.append source_container.run_cartridge_command(app.framework, app, "start", nil, false)
+            end
+          ensure
+            raise
+          end
         ensure
           log_debug "URL: http://#{app.name}-#{app.user.namespace}.#{Rails.configuration.cdk[:domain_suffix]}"
         end
@@ -590,6 +622,9 @@ module Express
                 else
                   result.cart_commands.push({:command => "BROKER_KEY_REMOVE", :args => []})
                 end
+              elsif line =~ /^STATUS: /
+                status = line['STATUS: '.length..-1].chomp
+                result.cart_commands.push({:command => "STATUS", :args => [status]})
               else
                 #result.debugIO << line
               end
@@ -660,7 +695,7 @@ module Express
       def run_cartridge_command(framework, app, command, arg=nil, allow_move=true)
         arguments = "'#{app.name}' '#{app.user.namespace}' '#{app.uuid}'"
         arguments += " '#{arg}'" if arg
-          
+
         if allow_move
           Nurture.application(app.user.login, app.user.uuid, app.name, app.user.namespace, framework, command, app.uuid)
           Apptegic.application(app.user.login, app.user.uuid, app.name, app.user.namespace, framework, command, app.uuid)
