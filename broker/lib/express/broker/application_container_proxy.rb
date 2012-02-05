@@ -306,7 +306,7 @@ module Express
           end
           destination_container = ApplicationContainerProxy.find_available_impl(app.node_profile, destination_district_uuid)
           log_debug "DEBUG: Destination container: #{destination_container.id}"
-          destination_district_uuid = destination_container.get_district_uuid if allow_change_district
+          destination_district_uuid = destination_container.get_district_uuid
         else
           if destination_district_uuid
             log_debug "DEBUG: Destination district uuid '#{destination_district_uuid}' is being ignored in favor of destination container #{destination_container.id}"
