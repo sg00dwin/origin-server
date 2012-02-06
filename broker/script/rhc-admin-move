@@ -87,7 +87,7 @@ begin
         puts
         puts "####################### Body Begin ###########################"
         puts resp.read
-        puts "######################## Body End ############################"
+        puts "######################## Body End ############################\n"
     end
 rescue Exception => e
     puts
