@@ -128,6 +128,9 @@ RedHatCloud::Application.routes.draw do
     match 'dashboard' => 'control_panel#index', :as => 'dashboard'
     match 'control_panel/apps' => 'express_app#list', :as => 'list_apps'
 
+    # console applications page
+    match 'console/applications' => 'applications#index'
+
     unless Rails.env.production?
       match 'styleguide/:action' => 'styleguide'
       match 'styleguide' => 'styleguide#index'
