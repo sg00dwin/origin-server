@@ -81,6 +81,69 @@ class RestApi < ActiveResource::Base
     end
   end
 
+  # 
+  # singleton support as https://rails.lighthouseapp.com/projects/8994/tickets/4348-supporting-singleton-resources-in-activeresource
+  #
+  class << self
+    def singleton
+      @singleton = true
+    end
+    def singleton?
+      @singleton if defined? @singleton
+    end
+
+    attr_accessor_with_default(:collection_name) do
+      if singleton?
+        element_name
+      else 
+        ActiveSupport::Inflector.pluralize(element_name)
+      end
+    end
+
+    def element_path(id = nil, prefix_options = {}, query_options = nil) #changed
+      prefix_options, query_options = split_options(prefix_options) if query_options.nil?
+      #"#{prefix(prefix_options)}#{collection_name}/#{URI.escape id.to_s}.#{format.extension}#{query_string(query_options)}"
+      #begin changes
+      path = "#{prefix(prefix_options)}#{collection_name}"
+      unless singleton?
+        raise ArgumentError, 'id is required for non-singleton resources' if id.nil?
+        path << "/#{URI.escape id.to_s}"
+      end
+      path << ".#{format.extension}#{query_string(query_options)}"
+    end
+
+    def find(*arguments)
+      scope   = arguments.slice!(0)
+      options = arguments.slice!(0) || {}
+
+      scope = :one if scope.nil? && singleton? # added
+
+      case scope
+      when :all   then find_every(options)
+      when :first then find_every(options).first
+      when :last  then find_every(options).last
+      when :one   then find_one(options)
+      else             find_single(scope, options)
+      end
+    end
+
+    def find_one(options)
+      as = options[:as] # for user context support
+
+      case from = options[:from]
+      when Symbol
+        instantiate_record(get(from, options[:params]))
+      when String
+        path = "#{from}#{query_string(options[:params])}"
+        instantiate_record(format.decode(connection(options).get(path, headers).body), as) #changed
+      when nil #begin add
+        prefix_options, query_options = split_options(options[:params])
+        path = element_path(nil, prefix_options, query_options)
+        instantiate_record(format.decode(connection(options).get(path, headers).body), as) #end add
+      end
+    end
+  end
+
   #
   # has_many / belongs_to placeholders
   #
@@ -143,6 +206,12 @@ class RestApi < ActiveResource::Base
         connection
       end
 
+      def find_single(scope, options)
+        prefix_options, query_options = split_options(options[:params])
+        path = element_path(scope, prefix_options, query_options)
+        instantiate_record(format.decode(connection.get(path, headers).body), options[:as], prefix_options) #changed
+      end
+
       def find_every(options)
         begin
           as = options[:as]
@@ -199,10 +268,16 @@ class RestApi < ActiveResource::Base
 end
 
 class User < RestApi
+  singleton
+
   has_many :ssh_key
+
+  schema do
+    string :login
+  end
 end
 
-class SshKey < RestApi
+class Key < RestApi
   self.primary_key = 'name'
   self.element_name = 'key'
 
@@ -262,16 +337,14 @@ if __FILE__==$0
     end
   end
 
-  if false and ENV['LIBRA_HOST']
+  if ENV['LIBRA_HOST']
 
-    SshKey.site = "https://#{ENV['LIBRA_HOST']}/broker/rest"
-    SshKey.prefix='/broker/rest/user/'
+    User.site = "https://#{ENV['LIBRA_HOST']}/broker/rest"
+    User.prefix='/broker/rest/'
     user = TestUser.new 'test1@test1.com'
     begin
-      key = SshKey.new :name => 'a', :key => 'b', :type => 'ssh-rsa'
-      key.as = user
-      key.save
-      SshKey.find(:all, :as => user).inspect
+      info = User.find :one, :as => user
+      puts info.inspect
     rescue ActiveResource::ConnectionError => e
       puts "#{e.response}=#{e.response.body}\n#{e.response.inspect}"
       #raise 
@@ -282,9 +355,9 @@ if __FILE__==$0
   if true
 
   require 'active_resource/http_mock'
-
   require 'test/unit'
   require 'mocha'
+
   class RestApiTest < Test::Unit::TestCase
 
     def setup
@@ -292,27 +365,33 @@ if __FILE__==$0
       auth_headers = {'Cookie' => @user.authorization_cookie.to_s, 'Authorization' => 'Basic dGVzdDE6'};
 
       RestApi.site = 'https://localhost'
-      RestApi.prefix = '/user/'
+      Key.prefix = '/user/'
       ActiveSupport::XmlMini.backend = 'REXML'
       ActiveResource::HttpMock.respond_to do |mock|
         mock.get '/user/keys.xml', {'Accept' => 'application/xml'}.merge!(auth_headers), [{:type => :rsa, :name => 'test1', :value => '1234' }].to_xml(:root => 'key')
         mock.post '/user/keys.xml', {'Content-Type' => 'application/xml'}.merge!(auth_headers), {:type => :rsa, :name => 'test2', :value => '1234_2' }.to_xml(:root => 'key')
         mock.delete '/user/keys/test1.xml', {'Accept' => 'application/xml'}.merge!(auth_headers), {}
+
+        mock.get '/user.xml', {'Accept' => 'application/xml'}.merge!(auth_headers), { :login => 'test1' }.to_xml(:root => 'user')
       end
     end
 
-    def test_get_ssh_keys
-      items = SshKey.find :all, :as => @user
+    def test_key_get_all
+      items = Key.find :all, :as => @user
       assert_equal 1, items.length
     end
 
-    def test_post_ssh_key
-      key = SshKey.new :type => 'ssh-rsa', :name => 'test2', :key => '1234_2', :as => @user
+    def test_key_first
+      assert_equal Key.first(:as => @user), Key.find(:all, :as => @user)[0]
+    end
+
+    def test_key_create
+      key = Key.new :type => 'ssh-rsa', :name => 'test2', :key => '1234_2', :as => @user
       assert key.save
     end
 
-    def test_ssh_key_validation
-      key = SshKey.new :type => 'ssh-rsa', :name => 'test2', :as => @user
+    def test_key_validation
+      key = Key.new :type => 'ssh-rsa', :name => 'test2', :as => @user
       assert !key.save
       assert_equal 1, key.errors[:key].length
 
@@ -325,8 +404,8 @@ if __FILE__==$0
       assert key.errors.empty?
     end
 
-    def test_ssh_key_delete
-      items = SshKey.find :all, :as => @user
+    def test_key_delete
+      items = Key.find :all, :as => @user
       assert items[0].destroy
     end
 
@@ -341,6 +420,12 @@ if __FILE__==$0
       connection = RestApi::UserAwareConnection.new 'http://localhost', :xml, TestUser.new('test1')
       headers = connection.authorization_header(:post, '/something')
       assert_equal 'rh_sso=1234', headers['Cookie']
+    end
+
+    def test_user_get
+      user = User.find :one, :as => @user
+      assert user
+      assert_equal 'test1', user.login
     end
   end
   end
