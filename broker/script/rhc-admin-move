@@ -3,6 +3,7 @@
 require "/var/www/libra/broker/config/environment"
 require 'getoptlong'
 require 'mcollective'
+require 'open-uri'
 
 include MCollective::RPC
 
@@ -71,6 +72,26 @@ end
 
 unless app
   puts "ERROR: Application not found: #{options[:app_uuid] ? options[:app_uuid] : options[:app_name]}"
+end
+
+url = "http://#{app.name}-#{app.user.namespace}.#{Rails.configuration.cdk[:domain_suffix]}"
+
+puts "URL: #{url}"
+puts "Login: #{app.user.login}"
+puts "App UUID: #{app.uuid}"
+
+begin
+    open(url) do |resp|
+        puts
+        puts "Status Code: #{resp.status[0]} - #{resp.status[1]}"
+        puts
+        puts "####################### Body Begin ###########################"
+        puts resp.read
+        puts "######################## Body End ############################"
+    end
+rescue Exception => e
+    puts
+    puts "Error accessing URL: #{e.message}"
 end
 
 destination_container = nil
