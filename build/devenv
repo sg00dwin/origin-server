@@ -66,6 +66,16 @@ class DevEnv < Thor
       ssh(hostname, "rm -rf /root/li-test; cd /root/li; git archive --prefix li-test/ --format=tar HEAD | (cd /root && tar --warning=no-timestamp -xf -); mkdir -p /tmp/rhc/junit")
       puts "Done"
     end
+    
+    def scp_remote_tests(hostname)
+      print "Archiving local changes..."
+      `git archive --prefix li-test/ HEAD --output /tmp/li-test.tar`
+      puts "Done"
+      print "Updating tests to remote instance..."
+      scp_to(hostname, "/tmp/li-test.tar", "~/", 600)
+      ssh(hostname, 'rm -rf li-test; tar -xf li-test.tar; mkdir -p /tmp/rhc/junit')
+      puts "Done"
+    end
 
     def download_artifacts(hostname)
       print "Downloading logs and screenshots..."
@@ -352,6 +362,7 @@ class DevEnv < Thor
         register_image(conn, instance, name + '_' + build_num, manifest)
       end
       
+      scp_remote_tests(hostname)
       test_instance(hostname, instance, conn, options)
     ensure
       terminate_instance(instance) if options.terminate?
@@ -535,13 +546,7 @@ class DevEnv < Thor
         update_remote_tests(instance.dns_name)
         puts "Done"
       else
-        print "Archiving local changes..."
-        `git archive --prefix li-test/ HEAD --output /tmp/li-test.tar`
-        puts "Done"
-        print "Updating tests to remote instance..."
-        scp_to(hostname, "/tmp/li-test.tar", "~/", 600)
-        ssh(hostname, 'rm -rf li-test; tar -xf li-test.tar; mkdir -p /tmp/rhc/junit')
-        puts "Done"
+        scp_remote_tests(hostname)
       end
     end
 
