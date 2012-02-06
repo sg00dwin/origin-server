@@ -323,10 +323,16 @@ corenet_udp_bind_generic_port(httpd_t)
 
 mcs_socket_write_all_levels(httpd_t)
 
-# Allow ntpd to bind to localhost
-mcs_socket_write_all_levels(ntpd_t)
+#########
+#
+# Allow binding to localhost for certain daemons
+#
+require {
+    type ntpd_t;
+    type postfix_master_t;
+}
 
-# Allow postfix to bind to localhost
+mcs_socket_write_all_levels(ntpd_t)
 mcs_socket_write_all_levels(postfix_master_t)
 
 #################################
