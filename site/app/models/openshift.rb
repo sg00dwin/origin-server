@@ -25,6 +25,7 @@ end
 
 class OpenshiftResource < ActiveResource::Base
   self.ssl_options = { :verify_mode => OpenSSL::SSL::VERIFY_NONE }
+  self.timeout = 3
 
   self.site = if defined?(Rails) && Rails.configuration.express_api_url
     Rails.configuration.express_api_url + '/broker/rest'
@@ -229,7 +230,7 @@ if __FILE__==$0
     end
   end
 
-  SshKey.site = 'https://ec2-184-73-148-206.compute-1.amazonaws.com/broker/rest'
+  SshKey.site = 'https://ec2-107-20-76-143.compute-1.amazonaws.com/broker/rest'
   SshKey.prefix='/broker/rest/user/'
   user = TestUser.new 'test1@test1.com'
   begin
