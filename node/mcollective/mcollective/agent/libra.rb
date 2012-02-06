@@ -59,7 +59,7 @@ module MCollective
         Log.instance.debug("cartridge_do_action validation = #{request[:cartridge]} #{request[:action]} #{request[:args]}")
         validate :cartridge, /\A[a-zA-Z0-9\.\-\/]+\z/
         validate :cartridge, :shellsafe
-        validate :action, /\A(configure|deconfigure|preconfigure|update-namespace|add-env-var|remove-env-var|remove-authorized-ssh-key|add-authorized-ssh-key|add-broker-auth-key|remove-broker-auth-key|tidy|deploy-httpd-proxy|remove-httpd-proxy|move|pre-move|post-move|info|post-install|post-remove|pre-install|reload|restart|start|status|stop|force-stop|add-alias|remove-alias|threaddump)\Z/
+        validate :action, /\A(app-create|app-destroy|env-var-add|remove-env-var|broker-auth-key-add|broker-auth-key-remove|authorized-ssh-key-add|authorized-ssh-key-remove|configure|deconfigure|preconfigure|update-namespace|tidy|deploy-httpd-proxy|remove-httpd-proxy|move|pre-move|post-move|info|post-install|post-remove|pre-install|reload|restart|start|status|stop|force-stop|add-alias|remove-alias|threaddump)\Z/
         validate :action, :shellsafe
         validate :args, /\A[\w\+\/= @\-\.:\']+\z/
         validate :args, :shellsafe
@@ -68,39 +68,15 @@ module MCollective
         args = request[:args]
         pid, stdin, stdout, stderr = nil, nil, nil, nil
         if cartridge == 'cloud-sdk-node'
-          cmd = nil
-          case action
-          when 'configure'
-            cmd = 'cdk-app-create'
-          when 'deconfigure'
-            cmd = 'cdk-app-destroy'
-          when "add-env-var"
-            cmd = 'cdk-env-var-add'
-          when "remove-env-var"
-            cmd = 'cdk-env-var-remove'
-          when "add-broker-auth-key"
-            cmd = 'cdk-broker-auth-key-add'
-          when "remove-broker-auth-key"
-            cmd = 'cdk-broker-auth-key-remove'
-          when "add-authorized-ssh-key"
-            cmd = 'cdk-authorized-ssh-key-add'
-          when "remove-authorized-ssh-key"
-            cmd = 'cdk-authorized-ssh-key-remove'
-          end
+          cmd = "cdk-#{action}"
           pid, stdin, stdout, stderr = Open4::popen4("/usr/bin/runcon -l s0-s0:c0.c1023 #{cmd} #{args} 2>&1")
         else
           if File.exists? "/usr/libexec/li/cartridges/#{cartridge}/info/hooks/#{action}"                
             pid, stdin, stdout, stderr = Open4::popen4ext(true, "/usr/bin/runcon -l s0-s0:c0.c1023 /usr/libexec/li/cartridges/#{cartridge}/info/hooks/#{action} #{args} 2>&1")
             #pid, stdin, stdout, stderr = Open4::popen4("/usr/bin/runcon -l s0-s0:c0.c1023 /usr/libexec/li/cartridges/#{cartridge}/info/hooks/#{action} #{args} 2>&1")
           else
-            if request[:action] == 'threaddump'
-              reply[:exitcode] = 127
-              reply[:output] = "ERROR: threaddump not found. Only applicable to jbossas applications"
-              reply.fail! "ERROR: threaddump not found. Only applicable to jbossas applications"
-            else
-              reply[:exitcode] = 127
-              reply.fail! "cartridge_do_action ERROR action '#{action}' not found."
-            end
+            reply[:exitcode] = 127
+            reply.fail! "cartridge_do_action ERROR action '#{action}' not found."
           end
         end
         stdin.close
