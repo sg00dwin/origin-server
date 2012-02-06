@@ -66,6 +66,16 @@ class DevEnv < Thor
       ssh(hostname, "rm -rf /root/li-test; cd /root/li; git archive --prefix li-test/ --format=tar HEAD | (cd /root && tar --warning=no-timestamp -xf -); mkdir -p /tmp/rhc/junit")
       puts "Done"
     end
+    
+    def scp_remote_tests(hostname)
+      print "Archiving local changes..."
+      `git archive --prefix li-test/ HEAD --output /tmp/li-test.tar`
+      puts "Done"
+      print "Updating tests to remote instance..."
+      scp_to(hostname, "/tmp/li-test.tar", "~/", 600)
+      ssh(hostname, 'rm -rf li-test; tar -xf li-test.tar; mkdir -p /tmp/rhc/junit')
+      puts "Done"
+    end
 
     def download_artifacts(hostname)
       print "Downloading logs and screenshots..."
@@ -142,6 +152,102 @@ class DevEnv < Thor
       puts "Done"
     end
     
+    def test_instance(hostname, instance, conn, options, image_id=nil)
+      begin
+        if options.unofficial?
+          use_private_ip(hostname)
+        end
+
+        threads = []
+
+        unless options.exclude_internal?
+          threads << Thread.new do
+            cmd = "cd li-test/broker; rake test"
+            run_ssh(hostname, "Broker Unit", cmd)
+          end
+          threads << Thread.new do
+            cmd = "cd li-test/site; rake test"
+            run_ssh(hostname, "Site Unit", cmd)
+          end
+          threads << Thread.new do
+            cmd = "cd li-test/cloud-sdk/controller; rake test"
+            run_ssh(hostname, "Cloud SDK Controller Unit", cmd)
+          end
+          threads << Thread.new do
+            cmd = "cd li-test/cloud-sdk/broker; rake test"
+            run_ssh(hostname, "Cloud SDK Broker Unit", cmd)
+          end
+        end
+
+        threads << Thread.new do
+          unless options.exclude_internal?
+            cmd = "cucumber -f html --out /tmp/rhc/internals.html -f progress -t @internals li-test/tests/"
+            run_ssh(hostname, "Internal", cmd)
+          end
+          unless options.exclude_verification?
+            cmd = "cucumber -f html --out /tmp/rhc/verfication.html -f progress -t @verify li-test/tests/"
+            run_ssh(hostname, "Verification", cmd)
+          end
+        end
+
+        unless options.exclude_web?
+          threads << Thread.new do
+            sauce_opts = {
+              "SAUCE_USERNAME" => (options.sauce_username || SAUCE_USER),
+              "SAUCE_ACCESS_KEY" => (options.sauce_access_key || SAUCE_SECRET),
+              "SAUCE_OS" => (options.sauce_os || SAUCE_OS),
+              "SAUCE_BROWSER" => (options.sauce_browser || SAUCE_BROWSER),
+              "SAUCE_BROWSER_VERSION" => (options.sauce_browser_version || SAUCE_BROWSER_VERSION),
+              "JENKINS_BUILD" => 'unofficial'
+            }
+
+            # If we passed a jenkins build like name, use that for the build number
+            if m = tag.match(/libra_/)
+              sauce_opts['JENKINS_BUILD'] = tag
+            end
+
+            env_string = sauce_opts.keys.map{|k| %Q(#{k}="#{sauce_opts[k]}")}.join(' ')
+
+            puts "Running Sauce tests with the following options:"
+            puts sauce_opts.to_yaml
+
+            cmd = "cd li-test/selenium; #{env_string} ruby ts_web"
+            run_ssh(hostname, "Web Selenium", cmd)
+          end
+        end
+
+        threads.each do |t|
+          t.join
+        end
+
+        validate_instance(hostname)
+
+        # Download the successful artifacts
+        download_artifacts hostname
+    
+        if !options.unofficial?
+          image_id = image_id ? image_id : instance.image_id
+          # Mark the image as verified
+          image = conn.images[image_id]
+          verify_image(image)
+          
+          print "Sending QE ready email..."
+          begin
+            send_verified_email(image_id, image.name)
+          rescue Exception => e
+            print "Failed sending email with message: #{e.message}"
+          end
+        else
+          use_public_ip(hostname)
+        end
+
+        puts "Done"
+
+      ensure
+        terminate_instance(instance) if options.terminate?
+      end
+    end
+    
   end
   
   desc "write_sync_history", "Write out the sync history so updates won't happen for already installed changes"
@@ -156,6 +262,10 @@ class DevEnv < Thor
   method_option :use_stage_repo, :type => :boolean, :desc => "Build instance off the stage repository"
   method_option :reboot, :type => :boolean, :desc => "Reboot the instance after updating"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
+  method_option :unofficial, :type => :boolean, :desc => "For unofficial use.  Do not send emails, etc."
+  method_option :exclude_internal, :type => :boolean, :desc => "Exclude running unit and internal tests"
+  method_option :exclude_verification, :type => :boolean, :desc => "Exclude running verification tests"
+  method_option :exclude_web, :type => :boolean, :desc => "Exclude running Selenium tests"
   method_option :region, :required => false, :desc => "Amazon region override (default us-east-1)"
   method_option :build_clean_ami, :required => false, :desc => "Indicates whether to start from a base RHEL image"
   method_option :install_from_source, :required => false, :desc => "Indicates whether to start from a base RHEL image"
@@ -243,15 +353,20 @@ class DevEnv < Thor
         print "Updating all packages on the system..."
         ssh(hostname, "yum clean metadata; yum update -y --exclude='rhc-devenv'; set -e; yum update -y --exclude='rhc-devenv' --disablerepo=\* --enablerepo=li", 600)
         puts "Done"
-        
+
         validate_instance(hostname)
-        
+
         manifest = rpm_manifest(hostname)
       end
 
+      image_id = nil
       if options.register?
-        register_image(conn, instance, name + '_' + build_num, manifest)
+        image = register_image(conn, instance, name + '_' + build_num, manifest)
+        image_id = image.id
       end
+      
+      scp_remote_tests(hostname)
+      test_instance(hostname, instance, conn, options, image_id)
     ensure
       terminate_instance(instance) if options.terminate?
     end
@@ -385,6 +500,7 @@ class DevEnv < Thor
   method_option :init_repo, :type => :boolean, :desc => "Initialize git repo for syncing and tests (requires --verifier)"
   method_option :instance_type, :required => false, :desc => "Amazon machine type override (default m1.large)"
   method_option :region, :required => false, :desc => "Amazon region override (default us-east-1)"
+  method_option :image_name, :required => false, :desc => "AMI ID or DEVENV name to launch"
   def launch(name)
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
 
@@ -403,8 +519,18 @@ class DevEnv < Thor
     else
       filter = DEVENV_WILDCARD
     end
-    ami = get_latest_ami(conn, filter)
-    puts "Launching latest DevEnv instance #{ami.id}"
+    if options[:image_name]
+      filter = options[:image_name]
+      ami = get_specific_ami(conn, filter)
+    else
+      ami = get_latest_ami(conn, filter)
+    end
+    if ami.nil?
+      puts "No image name '#{options[:image_name]}' found!"
+      exit(1)
+    else
+      puts "Launching latest DevEnv instance #{ami.id}"
+    end
     instance = launch_instance(ami, name)
     hostname = instance.dns_name
     puts "Done"
@@ -423,13 +549,7 @@ class DevEnv < Thor
         update_remote_tests(instance.dns_name)
         puts "Done"
       else
-        print "Archiving local changes..."
-        `git archive --prefix li-test/ HEAD --output /tmp/li-test.tar`
-        puts "Done"
-        print "Updating tests to remote instance..."
-        scp_to(hostname, "/tmp/li-test.tar", "~/", 600)
-        ssh(hostname, 'rm -rf li-test; tar -xf li-test.tar; mkdir -p /tmp/rhc/junit')
-        puts "Done"
+        scp_remote_tests(hostname)
       end
     end
 
@@ -510,98 +630,7 @@ END
     instance = find_instance(conn, tag, true)
     hostname = instance.dns_name
 
-    begin
-      if options.unofficial?
-        use_private_ip(hostname)
-      end
-
-      threads = []
-
-      unless options.exclude_internal?
-        threads << Thread.new do
-          cmd = "cd li-test/broker; rake test"
-          run_ssh(hostname, "Broker Unit", cmd)
-        end
-        threads << Thread.new do
-          cmd = "cd li-test/site; rake test"
-          run_ssh(hostname, "Site Unit", cmd)
-        end
-        threads << Thread.new do
-          cmd = "cd li-test/cloud-sdk/controller; rake test"
-          run_ssh(hostname, "Cloud SDK Controller Unit", cmd)
-        end
-        threads << Thread.new do
-          cmd = "cd li-test/cloud-sdk/broker; rake test"
-          run_ssh(hostname, "Cloud SDK Broker Unit", cmd)
-        end
-      end
-      
-      threads << Thread.new do
-        unless options.exclude_internal?
-          cmd = "cucumber -f html --out /tmp/rhc/internals.html -f progress -t @internals li-test/tests/"
-          run_ssh(hostname, "Internal", cmd)
-        end
-        unless options.exclude_verification?
-          cmd = "cucumber -f html --out /tmp/rhc/verfication.html -f progress -t @verify li-test/tests/"
-          run_ssh(hostname, "Verification", cmd)
-        end
-      end
-
-      unless options.exclude_web?
-        threads << Thread.new do
-          sauce_opts = {
-            "SAUCE_USERNAME" => (options.sauce_username || SAUCE_USER),
-            "SAUCE_ACCESS_KEY" => (options.sauce_access_key || SAUCE_SECRET),
-            "SAUCE_OS" => (options.sauce_os || SAUCE_OS),
-            "SAUCE_BROWSER" => (options.sauce_browser || SAUCE_BROWSER),
-            "SAUCE_BROWSER_VERSION" => (options.sauce_browser_version || SAUCE_BROWSER_VERSION),
-            "JENKINS_BUILD" => 'unofficial'
-          }
-
-          # If we passed a jenkins build like name, use that for the build number
-          if m = tag.match(/libra_/)
-            sauce_opts['JENKINS_BUILD'] = tag
-          end
-
-          env_string = sauce_opts.keys.map{|k| %Q(#{k}="#{sauce_opts[k]}")}.join(' ')
-
-          puts "Running Sauce tests with the following options:"
-          puts sauce_opts.to_yaml
-
-          cmd = "cd li-test/selenium; #{env_string} ruby ts_web"
-          run_ssh(hostname, "Web Selenium", cmd)
-        end
-      end
-      
-      threads.each do |t|
-        t.join
-      end
-
-      validate_instance(hostname)
-
-      # Download the successful artifacts
-      download_artifacts hostname
-
-      if !options.unofficial?
-        # Mark the image as verified
-        image = conn.images[instance.image_id]
-        verify_image(image)
-        
-        print "Sending QE ready email..."
-        begin
-          send_verified_email(instance.image_id, image.name)
-        rescue Exception => e
-          print "Failed sending email with message: #{e.message}"
-        end
-      else
-        use_public_ip(hostname)
-      end
-      
-      puts "Done"
-
-    ensure
-      terminate_instance(instance) if options.terminate?
-    end
+    test_instance(hostname, instance, conn, options)
   end
 
   desc "test_sdk TAG", "Runs the tests on a tagged instance and downloads the results"

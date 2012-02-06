@@ -323,6 +323,12 @@ corenet_udp_bind_generic_port(httpd_t)
 
 mcs_socket_write_all_levels(httpd_t)
 
+# Allow ntpd to bind to localhost
+mcs_socket_write_all_levels(ntpd_t)
+
+# Allow postfix to bind to localhost
+mcs_socket_write_all_levels(postfix_master_t)
+
 #################################
 # Potentially dangerous configs #
 #################################
@@ -428,7 +434,7 @@ manage_dirs_pattern(sshd_t, libra_tmp_t, libra_tmp_t)
 manage_sock_files_pattern(sshd_t, libra_tmp_t, libra_tmp_t)
 allow sshd_t libra_tmp_t:dir mounton;
 
-allow libra_t ptmx_t:chr_file { read write };
+allow libra_t ptmx_t:chr_file { read write ioctl };
 allow libra_t sshd_devpts_t:chr_file { read write ioctl open getattr };
 allow libra_t sshd_t:tcp_socket { read write getattr setopt getopt };
 allow libra_t sshd_t:unix_stream_socket { write read };

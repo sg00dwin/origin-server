@@ -3,6 +3,7 @@
 require "/var/www/libra/broker/config/environment"
 require 'getoptlong'
 require 'mcollective'
+require 'open-uri'
 
 include MCollective::RPC
 
@@ -18,11 +19,15 @@ options = rpcoptions do |parser, options|
       options[:node_profile] = node_profile
     end
 
-    parser.on('-n', '--app APP', 'Application name') do |app_name|
+    parser.on('-n', '--app APP', 'Application name (required with rhlogin)') do |app_name|
       options[:app_name] = app_name
     end
+    
+    parser.on('--app_uuid APP', 'Application uuid (replaces rhlogin and app name') do |app_uuid|
+      options[:app_uuid] = app_uuid
+    end
 
-    parser.on('-l', '--rhlogin RHLOGIN', 'Account to act on') do |rhlogin|
+    parser.on('-l', '--rhlogin RHLOGIN', 'Account to act on (required with app name)') do |rhlogin|
       options[:rhlogin] = rhlogin
     end
     
@@ -36,13 +41,18 @@ options = rpcoptions do |parser, options|
     options[:allow_change_district] = false unless options[:allow_change_district]
 end
 
-unless options.include?(:app_name)
-    puts "Specify app name"
+unless options.include?(:app_name) && options.include?(:rhlogin) || options.include?(:app_uuid)
+    puts "ERROR: Specify app name (-n) and rhlogin (-l) or app uuid (--app_uuid)"
     exit 1
 end
 
-unless options.include?(:rhlogin)
-    puts "Specify rhlogin"
+if options.include?(:app_uuid) and options.include?(:app_name)
+    puts "ERROR: you can't specify both app uuid and app name or rhlogin"
+    exit 1
+end
+
+if options.include?(:app_uuid) and options.include?(:rhlogin)
+    puts "ERROR: you can't specify both app uuid and rhlogin"
     exit 1
 end
 
@@ -52,8 +62,37 @@ if options[:timeout] && options[:timeout] < 30
 end
 #Rails.configuration.rpc_opts = options
 
-user = CloudUser.find(options[:rhlogin])
-app  = Application.find(user, options[:app_name])
+app = nil
+if (options[:app_uuid])
+  app  = Application.find_by_uuid(options[:app_uuid])
+else
+  user = CloudUser.find(options[:rhlogin])
+  app  = Application.find(user, options[:app_name])
+end
+
+unless app
+  puts "ERROR: Application not found: #{options[:app_uuid] ? options[:app_uuid] : options[:app_name]}"
+end
+
+url = "http://#{app.name}-#{app.user.namespace}.#{Rails.configuration.cdk[:domain_suffix]}"
+
+puts "URL: #{url}"
+puts "Login: #{app.user.login}"
+puts "App UUID: #{app.uuid}"
+
+begin
+    open(url) do |resp|
+        puts
+        puts "Status Code: #{resp.status[0]} - #{resp.status[1]}"
+        puts
+        puts "####################### Body Begin ###########################"
+        puts resp.read
+        puts "######################## Body End ############################\n"
+    end
+rescue Exception => e
+    puts
+    puts "Error accessing URL: #{e.message}"
+end
 
 destination_container = nil
 destination_container = Cloud::Sdk::ApplicationContainerProxy.instance(options[:target_server_identity]) if options[:target_server_identity]

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+MAILTO=""
+
 # Constants.
 SERVICE_NAME=cron
 CART_NAME=cron
@@ -8,4 +10,4 @@ CART_DIRNAME=${CART_NAME}-$CART_VERSION
 CART_INSTALL_DIR=/usr/libexec/li/cartridges
 CART_INFO_DIR=$CART_INSTALL_DIR/embedded/$CART_DIRNAME/info
 
-$CART_INFO_DIR/bin/scheduled-jobs run minutely
+$CART_INFO_DIR/bin/scheduled-jobs run minutely &> /dev/null

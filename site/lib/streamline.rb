@@ -133,16 +133,68 @@ module Streamline
     end
     errors.empty?
   end
-  
-  def change_password(args)
-    http_post(@@change_password_url, args) do |json|
-      return json
+ 
+  # 
+  # When invoked with no arguments behaves like an ActiveModel call to save the resource with
+  # an updated password, assuming  @old_password, @password, and @password_confirmation are 
+  # all set. Will invoke 'valid? :change_password' on the resource to ensure that validations
+  # are called.  The return value is true if successful and errors are set.
+  #
+  def change_password(args=nil)
+    if args.nil?
+      if valid? :change_password
+        args = {
+          'oldPassword' => @old_password,
+          'newPassword' => @password,
+          'newPasswordConfirmation' => @password_confirmation
+        }
+        http_post(@@change_password_url, args) do |json|
+          if json['errors']
+            field = :password
+            if json['errors'].include? 'password_incorrect'
+              msg = 'Your old password was incorrect'
+              field = :old_password
+            elsif json['errors'].include? 'password_invalid'
+              msg = 'Please choose a valid new password'
+            else
+              msg = 'Your password could not be changed'
+            end
+            errors.add(field, msg)
+          end
+          errors.empty?
+        end
+      end
+    else
+      # <b>DEPRECATED</b> Will be removed
+      http_post(@@change_password_url, args) do |json|
+        return js
+      end
     end
   end
 
+  #
+  # When called with a single string argument behaves like an ActiveModel call to 
+  # save the resource.  It will use the @email_address instance variable and invoke
+  # 'valid? :reset_password' to ensure validations are called.  The return value is
+  # true if successful and errors are set.
   def request_password_reset(args)
-    http_post(@@request_password_reset_url, args, false) do |json|
-      return json
+    if args.is_a? String
+      if valid? :reset_password
+        args = {
+          :login => @email_address,
+          :url => args
+        }
+        http_post(@@request_password_reset_url, args, false) do |json|
+          if json['errors']
+            errors.add(:base, I18n.t(:service_error, :scope => :streamline))
+          end
+        end
+        errors.has_key? :email_address 
+      end
+    else
+      http_post(@@request_password_reset_url, args, false) do |json|
+        return json
+      end
     end
   end
 
@@ -236,7 +288,8 @@ module Streamline
   end
 
   # Return true if the user has access to OpenShift, and false if they are not yet
-  # granted.  If false is returned call waiting_for_entitlement?
+  # granted.  If false is returned call waiting_for_entitlement?  Will attempt to
+  # request access if the user has never requested it.
   def entitled?    
     return true if roles.include?('cloud_access_1')
     
@@ -254,7 +307,7 @@ module Streamline
     end
   end
 
-  # Return true if the user is currently waiting to be entitled
+  # Return true if the user is currently waiting to be entitled.  No side effects
   def waiting_for_entitle?
     not roles.include?('cloud_access_1') and roles.include?('cloud_access_request_1')
   end

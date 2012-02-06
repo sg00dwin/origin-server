@@ -107,7 +107,7 @@ module Express
       def create(app)
         result = nil
         (1..10).each do |i|
-          mcoll_reply = execute_direct(@@C_CONTROLLER, 'configure', "-c '#{app.uuid}' -i '#{app.uid}'")
+          mcoll_reply = execute_direct(@@C_CONTROLLER, 'app-create', "-c '#{app.uuid}' -i '#{app.uid}'")
           result = parse_result(mcoll_reply)
           if result.exitcode == 129 && has_uid_or_gid?(app.uid) # Code to indicate uid already taken
             destroy(app, true)
@@ -122,7 +122,7 @@ module Express
       end
     
       def destroy(app, keep_uid=false, uid=nil)
-        result = execute_direct(@@C_CONTROLLER, 'deconfigure', "-c '#{app.uuid}'")
+        result = execute_direct(@@C_CONTROLLER, 'app-destroy', "-c '#{app.uuid}'")
         result_io = parse_result(result)
         
         uid = app.uid unless uid
@@ -137,32 +137,32 @@ module Express
         cmd = "-c '#{app.uuid}' -s '#{ssh_key}'"
         cmd += " -t '#{key_type}'" if key_type
         cmd += " -m '-#{message}'" if message
-        result = execute_direct(@@C_CONTROLLER, 'add-authorized-ssh-key', cmd)
+        result = execute_direct(@@C_CONTROLLER, 'authorized-ssh-key-add', cmd)
         parse_result(result)
       end
 
       def remove_authorized_ssh_key(app, ssh_key)
-        result = execute_direct(@@C_CONTROLLER, 'remove-authorized-ssh-key', "-c '#{app.uuid}' -s '#{ssh_key}'")
+        result = execute_direct(@@C_CONTROLLER, 'authorized-ssh-key-remove', "-c '#{app.uuid}' -s '#{ssh_key}'")
         parse_result(result)
       end
 
       def add_env_var(app, key, value)
-        result = execute_direct(@@C_CONTROLLER, 'add-env-var', "-c '#{app.uuid}' -k '#{key}' -v '#{value}'")
+        result = execute_direct(@@C_CONTROLLER, 'env-var-add', "-c '#{app.uuid}' -k '#{key}' -v '#{value}'")
         parse_result(result)
       end
       
       def remove_env_var(app, key)
-        result = execute_direct(@@C_CONTROLLER, 'remove-env-var', "-c '#{app.uuid}' -k '#{key}'")
+        result = execute_direct(@@C_CONTROLLER, 'env-var-remove', "-c '#{app.uuid}' -k '#{key}'")
         parse_result(result)
       end
     
       def add_broker_auth_key(app, iv, token)
-        result = execute_direct(@@C_CONTROLLER, 'add-broker-auth-key', "-c '#{app.uuid}' -i '#{iv}' -t '#{token}'")
+        result = execute_direct(@@C_CONTROLLER, 'broker-auth-key-add', "-c '#{app.uuid}' -i '#{iv}' -t '#{token}'")
         parse_result(result)
       end
     
       def remove_broker_auth_key(app)
-        result = execute_direct(@@C_CONTROLLER, 'remove-broker-auth-key', "-c '#{app.uuid}'")
+        result = execute_direct(@@C_CONTROLLER, 'broker-auth-key-remove', "-c '#{app.uuid}'")
         handle_controller_result(result)
       end
       
@@ -301,12 +301,12 @@ module Express
             if destination_district_uuid && destination_district_uuid != source_district_uuid
               raise Cloud::Sdk::UserException.new("Error moving app.  Cannot change district from '#{source_district_uuid}' to '#{destination_district_uuid}' without allow_change_district flag.", 1)
             else
-              destination_district_uuid = source_district_uuid
+              destination_district_uuid = source_district_uuid unless source_district_uuid == 'NONE'
             end
           end
           destination_container = ApplicationContainerProxy.find_available_impl(app.node_profile, destination_district_uuid)
           log_debug "DEBUG: Destination container: #{destination_container.id}"
-          destination_district_uuid = destination_container.get_district_uuid if allow_change_district
+          destination_district_uuid = destination_container.get_district_uuid
         else
           if destination_district_uuid
             log_debug "DEBUG: Destination district uuid '#{destination_district_uuid}' is being ignored in favor of destination container #{destination_container.id}"
@@ -332,11 +332,27 @@ module Express
 
         num_tries = 2
         reply = ResultIO.new
+        leave_stopped = false
+        idle = false
         begin
           log_debug "DEBUG: Stopping existing app '#{app.name}' before moving"
           (1..num_tries).each do |i|
             begin
-              reply.append source_container.stop(app, app.framework)
+              result = source_container.stop(app, app.framework)
+              result.cart_commands.each do |command_item|
+                case command_item[:command]
+                when "STATUS"
+                  status = command_item[:args][0]
+                  case status
+                  when "ALREADY_STOPPED"
+                    leave_stopped = true
+                  when "ALREADY_IDLED"
+                    leave_stopped = true
+                    idle = true
+                  end
+                end
+              end
+              reply.append result
               sleep 1
               break
             rescue Exception => e
@@ -369,7 +385,7 @@ module Express
   
               begin
                 log_debug "DEBUG: Performing cartridge level move for '#{app.name}' on #{destination_container.id}"
-                reply.append destination_container.send(:run_cartridge_command, app.framework, app, "move", nil, false)
+                reply.append destination_container.send(:run_cartridge_command, app.framework, app, "move", idle ? '--idle' : nil, false)
                 unless app.embedded.nil?
                   app.embedded.each do |cart, cart_info|
                     log_debug "DEBUG: Performing cartridge level move for embedded #{cart} for '#{app.name}' on #{destination_container.id}"
@@ -390,18 +406,23 @@ module Express
                   end
                 end
               rescue Exception => e
-                reply.append destination_container.send(:run_cartridge_command, app.framework, app, "remove-httpd-proxy", nil, false)
-                raise
+                begin
+                  reply.append destination_container.send(:run_cartridge_command, app.framework, app, "remove-httpd-proxy", nil, false)
+                ensure
+                  raise
+                end
               end
   
-              log_debug "DEBUG: Starting '#{app.name}' after move on #{destination_container.id}"
-              (1..num_tries).each do |i|
-                begin
-                  reply.append destination_container.start(app, app.framework)
-                  break
-                rescue Exception => e
-                  log_debug "DEBUG: Error starting after move on try #{i}: #{e.message}"
-                  raise if i == num_tries
+              unless leave_stopped
+                log_debug "DEBUG: Starting '#{app.name}' after move on #{destination_container.id}"
+                (1..num_tries).each do |i|
+                  begin
+                    reply.append destination_container.start(app, app.framework)
+                    break
+                  rescue Exception => e
+                    log_debug "DEBUG: Error starting after move on try #{i}: #{e.message}"
+                    raise if i == num_tries
+                  end
                 end
               end
   
@@ -412,23 +433,34 @@ module Express
               reply.append app.recreate_dns
               app.save
             rescue Exception => e
-              reply.append destination_container.destroy(app, keep_uid)
-              raise
-            end
-          rescue Exception => e
-            app.embedded.each do |cart, cart_info|
               begin
-                log_debug "DEBUG: Performing cartridge level post-move for embedded #{cart} for '#{app.name}' on #{source_container.id}"
-                reply.append source_container.send(:run_cartridge_command, "embedded/" + cart, app, "post-move", nil, false)
-              rescue Exception => e
-                log_error "ERROR: Error performing cartridge level post-move for embedded #{cart} for '#{app.name}' on #{source_container.id}: #{e.message}"
+                reply.append destination_container.destroy(app, keep_uid)
+              ensure
+                raise
               end
             end
-            raise
+          rescue Exception => e
+            begin
+              app.embedded.each do |cart, cart_info|
+                begin
+                  log_debug "DEBUG: Performing cartridge level post-move for embedded #{cart} for '#{app.name}' on #{source_container.id}"
+                  reply.append source_container.send(:run_cartridge_command, "embedded/" + cart, app, "post-move", nil, false)
+                rescue Exception => e
+                  log_error "ERROR: Error performing cartridge level post-move for embedded #{cart} for '#{app.name}' on #{source_container.id}: #{e.message}"
+                end
+              end
+            ensure
+              raise
+            end
           end
         rescue Exception => e
-          reply.append source_container.run_cartridge_command(app.framework, app, "start", nil, false)
-          raise
+          begin
+            unless leave_stopped
+              reply.append source_container.run_cartridge_command(app.framework, app, "start", nil, false)
+            end
+          ensure
+            raise
+          end
         ensure
           log_debug "URL: http://#{app.name}-#{app.user.namespace}.#{Rails.configuration.cdk[:domain_suffix]}"
         end
@@ -590,6 +622,9 @@ module Express
                 else
                   result.cart_commands.push({:command => "BROKER_KEY_REMOVE", :args => []})
                 end
+              elsif line =~ /^STATUS: /
+                status = line['STATUS: '.length..-1].chomp
+                result.cart_commands.push({:command => "STATUS", :args => [status]})
               else
                 #result.debugIO << line
               end
@@ -660,7 +695,7 @@ module Express
       def run_cartridge_command(framework, app, command, arg=nil, allow_move=true)
         arguments = "'#{app.name}' '#{app.user.namespace}' '#{app.uuid}'"
         arguments += " '#{arg}'" if arg
-          
+
         if allow_move
           Nurture.application(app.user.login, app.user.uuid, app.name, app.user.namespace, framework, command, app.uuid)
           Apptegic.application(app.user.login, app.user.uuid, app.name, app.user.namespace, framework, command, app.uuid)

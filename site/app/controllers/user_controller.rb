@@ -7,6 +7,8 @@ require 'yaml'
 
 class UserController < ApplicationController
   
+  before_filter :require_login, :only => :show
+  before_filter :require_user, :only => :show
   protect_from_forgery :except => :create_external
 
   def new(cloud_access_choice=nil)
@@ -104,6 +106,10 @@ class UserController < ApplicationController
       format.js { render :json => {:redirectUrl => user_complete_path } }
       format.html { workflow_redirect }
     end
+  end
+
+  def show
+    @domain ||= ExpressDomain.new :rhlogin => @userinfo.rhlogin, :namespace => @userinfo.namespace
   end
 
   def complete

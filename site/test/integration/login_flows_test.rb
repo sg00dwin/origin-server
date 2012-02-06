@@ -9,18 +9,18 @@ class LoginFlowsTest < ActionDispatch::IntegrationTest
 
   # Make sure unauthenticated users can get to basic pages
   test "browse unauthenticated pages" do
-    [root_path, login_path, express_path, flex_path, web_users_path, partners_path].each do |url|
+    [root_path, login_path, express_path, flex_path, new_account_path, new_password_path, partners_path].each do |url|
       get url
-      assert_response :success
+      assert_response :success, "Requesting #{url}"
     end
   end
 
   # Make sure users are sent to the login controller when requesting 
   # a protected page
   test 'test being redirected to the login controller' do
-    [control_panel_path].each do |url|
+    [control_panel_path, edit_password_path, web_user_path, account_path].each do |url|
       get url
-      assert_redirected_to login_path
+      assert_redirected_to login_path, "Requesting #{url}"
     end
   end
 

@@ -69,15 +69,15 @@
     <hudson.tasks.Shell>
       <command>if [ &quot;$BUILD_CLEAN_AMI&quot; == &quot;true&quot; ]
 then
-  build/devenv build devenv-stage ${BUILD_NUMBER} --register --terminate --use_stage_repo --build_clean_ami
+  build/devenv build devenv-stage ${BUILD_NUMBER} --register --terminate --use_stage_repo --exclude_web --build_clean_ami
 else
-  build/devenv build devenv-stage ${BUILD_NUMBER} --register --terminate --use_stage_repo
+  build/devenv build devenv-stage ${BUILD_NUMBER} --register --terminate --use_stage_repo --exclude_web
 fi</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
     <hudson.tasks.BuildTrigger>
-      <childProjects>libra_ami_verify_stage</childProjects>
+      <childProjects></childProjects>
       <threshold>
         <name>SUCCESS</name>
         <ordinal>0</ordinal>

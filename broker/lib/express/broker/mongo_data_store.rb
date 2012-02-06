@@ -52,7 +52,7 @@ module Express
       end
       
       def unreserve_district_uid(uuid, uid)
-        Rails.logger.debug "MongoDataStore.reserve_district_uid(#{uuid})\n\n"
+        Rails.logger.debug "MongoDataStore.unreserve_district_uid(#{uuid})\n\n"
         MongoDataStore.update({"_id" => uuid, "available_uids" => {"$ne" => uid}}, {"$push" => { "available_uids" => uid}, "$inc" => { "available_capacity" => 1 }})
       end
       
@@ -72,6 +72,11 @@ module Express
       def deactivate_district_node(uuid, server_identity)
         Rails.logger.debug "MongoDataStore.deactivate_district_node(#{uuid},#{server_identity})\n\n"
         MongoDataStore.update({"_id" => uuid}, {"$set" => { "server_identities.#{server_identity}" => {"active" => false}}, "$inc" => { "active_server_identities_size" => -1 }})
+      end
+      
+      def activate_district_node(uuid, server_identity)
+        Rails.logger.debug "MongoDataStore.activate_district_node(#{uuid},#{server_identity})\n\n"
+        MongoDataStore.update({"_id" => uuid}, {"$set" => { "server_identities.#{server_identity}" => {"active" => true}}, "$inc" => { "active_server_identities_size" => 1 }})
       end
       
       def add_district_uids(uuid, uids)

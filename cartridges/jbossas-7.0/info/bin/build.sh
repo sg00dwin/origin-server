@@ -23,10 +23,10 @@ case "$node_profile" in
         OPENSHIFT_MAVEN_XMX="-Xmx208m"
     ;;
     std)
-        OPENSHIFT_MAVEN_XMX="-Xmx208m"
+        OPENSHIFT_MAVEN_XMX="-Xmx396m"
     ;;
     large)
-        OPENSHIFT_MAVEN_XMX="-Xmx396m"
+        OPENSHIFT_MAVEN_XMX="-Xmx792m"
     ;;
     exlarge)
         OPENSHIFT_MAVEN_XMX="-Xmx792m"

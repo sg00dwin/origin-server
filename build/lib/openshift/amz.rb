@@ -85,6 +85,22 @@ module OpenShift
         filter("state", "available").
         filter("name", filter)
     end
+    
+    def get_specific_ami(conn, filter_val)
+      if filter_val.start_with?("ami")
+        filter_param = "image-id"
+      else
+        filter_param = "name"
+      end 
+      AWS.memoize do
+        devenv_amis = conn.images.with_owner(:self).
+          filter("state", "available").
+          filter(filter_param, filter_val)
+        # Take the last DevEnv AMI - memoize saves a remote call
+        devenv_amis.to_a[0]
+
+      end
+    end
 
     def get_latest_ami(conn, filter_val = DEVENV_WILDCARD)
       AWS.memoize do
@@ -92,7 +108,6 @@ module OpenShift
         devenv_amis = conn.images.with_owner(:self).
           filter("state", "available").
           filter("name", filter_val)
-
         # Take the last DevEnv AMI - memoize saves a remote call
         devenv_amis.to_a.sort_by {|ami| ami.name.split("_")[1].to_i}.last
       end
@@ -288,6 +303,7 @@ module OpenShift
     def register_image(conn, instance, name, manifest)
       print "Registering AMI..."
       outer_num_retries = 4
+      image = nil
       (1..outer_num_retries).each do |outer_index|
         image = conn.images.create(:instance_id => instance.id, 
           :name => name,
@@ -315,6 +331,7 @@ module OpenShift
         break if image
       end
       puts "Done"
+      image
     end
 
     def terminate_flagged_instances(conn)

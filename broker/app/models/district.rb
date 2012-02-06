@@ -133,6 +133,21 @@ class District < Cloud::Sdk::Model
     end
   end
   
+  def activate_node(server_identity)
+    if server_identities.has_key?(server_identity)
+      unless server_identities[server_identity]["active"]
+        Cloud::Sdk::DataStore.instance.activate_district_node(@uuid, server_identity)
+        container = Cloud::Sdk::ApplicationContainerProxy.instance(server_identity)
+        container.set_district(@uuid, true)
+        server_identities[server_identity] = {"active" => true}
+      else
+        raise Cloud::Sdk::CdkException.new("Node with server identity: #{server_identity} is already active")
+      end
+    else
+      raise Cloud::Sdk::CdkException.new("Node with server identity: #{server_identity} doesn't belong to district: #{@uuid}")
+    end
+  end
+  
   def add_capacity(num_uids)
     if num_uids > 0
       additions = []

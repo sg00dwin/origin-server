@@ -1,5 +1,6 @@
 class ExpressDomainController < ApplicationController
   before_filter :require_login
+  before_filter :require_user, :only => [:edit_namespace, :edit_sshkey, :account_update]
 
   def create
     # Get only relevant parameters
@@ -8,6 +9,14 @@ class ExpressDomainController < ApplicationController
     # Make sure that if there is an SSH key provided, it's valid
     if ssh = domain_params[:ssh]
       @ssh_key_validation = validate_ssh(ssh)
+      if @ssh_key_validation[:valid]
+        # Ensure we only send the key until the broker supports comments
+        domain_params[:ssh] = "#{@ssh_key_validation[:type]} #{@ssh_key_validation[:key]}"
+      else
+        ssh_invalid = true
+      end
+    else
+      domain_params[:ssh] = 'ssh-rsa nossh'
     end
 
     # check for which domain action we should call
@@ -15,10 +24,7 @@ class ExpressDomainController < ApplicationController
     form_type = domain_params.delete :form_type
     @event = "#{form_type.gsub(/[^\w]/, '')}_form_return"
 
-    if @ssh_key_validation[:valid]
-
-      # Ensure we only send the key until the broker supports comments
-      domain_params[:ssh] = "#{@ssh_key_validation[:type]} #{@ssh_key_validation[:key]}"
+    if !ssh_invalid
 
       Rails.logger.debug "dom_action: #{@dom_action}"
       domain_params[:rhlogin] = session[:login]
@@ -69,6 +75,120 @@ class ExpressDomainController < ApplicationController
       end
     end
   end
+
+  def edit_namespace
+    if @userinfo.namespace
+      @dom_action = 'update'
+    else
+      @dom_action = 'create'
+    end
+    @domain = ExpressDomain.new :rhlogin => @userinfo.rhlogin, :namespace => @userinfo.namespace
+  end
+
+  def edit_sshkey
+    @dom_action = 'update'
+    @domain = ExpressDomain.new :rhlogin => @userinfo.rhlogin, :namespace => @userinfo.namespace
+  end
+
+  def save_domain
+    response = {}
+    if @domain.valid?
+      begin
+        if @dom_action == 'create'
+          Rails.logger.debug 'creating domain'
+          @domain.create do |json_response|
+            response = process_response json_response
+          end
+        else
+          @domain.update do |json_response|
+            response = process_response json_response
+          end
+        end
+      rescue Exception
+        @message = @domain.errors.full_messages.join("; ")
+        @message_type = :error
+        response = {:status => 'error', :data => @message, :event => @event}
+      end
+    else
+      # display validation errors
+      @message = @domain.errors.full_messages.join("; ")
+      @message_type = :error
+      Rails.logger.error "Validation error: #{@message}"
+      response = {:status => 'error', :data => @message, :event => @event}
+    end
+    return response
+  end
+
+  def account_update
+    # Get only relevant parameters
+    domain_params = params[:express_domain]
+
+    domain_params[:rhlogin] = session[:login]
+    domain_params[:ticket] = cookies[:rh_sso]
+    domain_params[:password] = ''
+
+    @dom_action = domain_params.delete :dom_action
+    form_type = domain_params.delete :form_type
+
+    # start from assuming the key is invalid
+    ssh_invalid = true
+    if form_type == 'sshkey':
+      # ssh keys are always updated
+      @dom_action = 'update_ssh'
+      domain_params[:namespace] = @userinfo.namespace
+      if ssh = domain_params[:ssh]
+        @ssh_key_validation = validate_ssh(ssh)
+        if @ssh_key_validation[:valid]
+          # Ensure we only send the key until the broker supports comments
+          domain_params[:ssh] = "#{@ssh_key_validation[:type]} #{@ssh_key_validation[:key]}"
+          ssh_invalid = false
+        end
+      end
+    else
+      # userinfo previously validated ssh key so no need to do so again
+      ssh_key = @userinfo.ssh_key
+      ssh_invalid = false
+      if ssh_key
+        ssh = "#{ssh_key[:type]} #{ssh_key[:key]}"
+      end
+
+      if ssh.to_s.strip.length != 0
+        domain_params[:ssh] = ssh
+      else
+        domain_params[:ssh] = 'ssh-rsa nossh'
+      end
+    end
+
+    @domain = ExpressDomain.new(domain_params)
+
+    if !ssh_invalid
+      response = save_domain
+    else
+      @message = "The SSH key supplied was invalid"
+      @message_type = :error
+      Rails.logger.error "Validation error: #{@message}"
+      response = {:status => 'error', :data => @message, :event => @event}
+    end
+
+    respond_to do |format|
+      if @message_type == :error
+        format.html do
+          flash[@message_type] = @message
+          if form_type == 'sshkey':
+            render :action => :edit_sshkey and return
+          else
+            render :action => :edit_namespace and return
+          end
+        end
+        format.js { render :json => response }
+      else
+        flash[@message_type] = @message
+        format.html { redirect_to account_path }
+        format.js { render :json => response }
+      end
+    end
+  end
+
 
   def process_response(json_response)
     Rails.logger.debug "Domain api result: #{json_response.inspect}"

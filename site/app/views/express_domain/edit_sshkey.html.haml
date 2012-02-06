@@ -1,0 +1,8 @@
+- content_for :page_title do
+  OpenShift Update Ssh key
+
+%section.main
+  .content
+    %h1 Update Your Ssh key
+    = render 'layouts/flashes'
+    = render :partial => 'shared/ssh_key', :locals => { :express_domain => @domain, :dom_action => @dom_action }

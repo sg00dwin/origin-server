@@ -1,0 +1,8 @@
+= form_for :express_domain, :url => edit_namespace_express_domains_path, :html => {:style => 'width:auto;', :method => :put } do |f|
+  = f.hidden_field :dom_action, :value => "#{dom_action}"
+  = f.hidden_field :form_type, :value => 'namespace'
+  %div.inline
+    = f.label :namespace, "http://myapp-", :style => 'display:inline'
+    = f.text_field :namespace, :style => 'display:inline', :value => "#{@domain.namespace}", :autofocus => true
+    = f.label :namespace, ".rhcloud.com", :style => 'display:inline'
+    = f.submit "Save", :style => 'display:inline;width:auto;'

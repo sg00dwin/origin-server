@@ -1,0 +1,8 @@
+- content_for :page_title do
+  OpenShift Update Domain Name
+
+%section.main
+  .content
+    %h1 Update Your Domain Name
+    = render 'layouts/flashes'
+    = render :partial => 'shared/domain', :locals => { :express_domain => @domain, :dom_action => @dom_action }

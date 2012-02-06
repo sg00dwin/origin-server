@@ -58,6 +58,12 @@ class CloudUser < Cloud::Sdk::UserModel
     @applications
   end
   
+  def self.find_by_uuid(obj_type_of_uuid, uuid)
+    hash = Cloud::Sdk::DataStore.instance.find_by_uuid(obj_type_of_uuid, uuid)
+    return nil unless hash
+    hash_to_obj(hash)
+  end
+  
   def self.hash_to_obj(hash)
     apps = []
     if hash["apps"]

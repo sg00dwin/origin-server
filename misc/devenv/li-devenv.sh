@@ -40,6 +40,17 @@ gpgcheck=0
 
 EOF
 
+function install_build_requires {
+  spec_file=$1
+  for s in `grep -e "^BuildRequires:" $spec_file`
+  do
+    if [[ $s =~ ^[a-z]+ ]]
+    then
+      yum install -y $s
+    fi
+  done
+}
+
 if [ "$2" == "--install_from_source" ]
 then
   rm -rf /root/li-working
@@ -49,12 +60,18 @@ then
   pushd /root/li-working > /dev/null
   for x in `find -name *.spec`
   do
-    pushd `dirname $x` > /dev/null
-	tito build --test --rpm
-	popd > /dev/null
+    dir=`dirname $x`
+    if [ "$dir" != "./build/seigiku" ]
+    then
+      install_build_requires "$x"
+      pushd $dir > /dev/null
+	  tito build --test --rpm
+	  popd > /dev/null
+    fi
   done
   cp /tmp/tito/x86_64/*.rpm /tmp/tito/noarch/
   pushd /root/os-client-tools/express > /dev/null
+    install_build_requires "client.spec"
     tito build --test --rpm
   popd > /dev/null
   yum localinstall -y /tmp/tito/noarch/*.rpm
@@ -66,8 +83,7 @@ then
   git init --bare /root/os-client-tools
 elif [ "$2" == "--install_build_prereqs" ]
 then
-  # Would be better to parse these from the BuildRequires: + tito
-  yum -y install ruby rubygems git tito java-devel jpackage-utils pam-devel libselinux-devel selinux-policy gcc-c++ rubygem-rake rubygem-rspec js rubygem-coffee-script
+  yum -y install git tito
 else
   yum -y install rhc-devenv
 fi
