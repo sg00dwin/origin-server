@@ -7,7 +7,7 @@ class PasswordControllerTest < ActionController::TestCase
   end
 
   test "should get too short password error" do
-    expects_integrated
+    return unless Rails.configuration.integrated
     setup_session
     form = get_post_form
     form[:password]='short'
@@ -18,7 +18,7 @@ class PasswordControllerTest < ActionController::TestCase
   end
 
   test "should get password must match error" do
-    expects_integrated
+    return unless Rails.configuration.integrated
     setup_session
     form = get_post_form
     form[:password]='doesntmatch'
@@ -51,7 +51,7 @@ class PasswordControllerTest < ActionController::TestCase
     post(:create, {:web_user => {}})
     assert assigns(:user)
     assert assigns(:user).errors[:email_address].length > 0
-    assert assigns(:user).errors[:password].length > 0
+    assert assigns(:user).errors[:password].length == 0 # password reset only requires e-mail
     assert_response :success
   end
   
@@ -59,7 +59,7 @@ class PasswordControllerTest < ActionController::TestCase
     post(:create, :web_user => get_post_form)
     assert assigns(:user)
     assert assigns(:user).errors.empty?
-    assert_redirected_to :action => 'show'
+    assert_redirected_to :action => 'success'
     assert_template
   end
 
