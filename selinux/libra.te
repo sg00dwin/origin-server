@@ -1,4 +1,4 @@
-policy_module(libra,1.0.31)
+policy_module(libra,1.0.32)
 
 ########################################
 #
@@ -132,6 +132,8 @@ dev_list_sysfs(libra_domain)
 dev_read_rand(libra_domain)
 dev_dontaudit_append_rand(libra_domain)
 dev_dontaudit_write_urand(libra_domain)
+dev_dontaudit_getattr_all_blk_files(libra_domain)
+dev_dontaudit_getattr_all_chr_files(libra_domain)
 
 domain_use_interactive_fds(libra_domain)
 domain_dontaudit_read_all_domains_state(libra_domain)
@@ -435,7 +437,7 @@ allow libra_t sshd_t:unix_stream_socket { write read };
 # Programs that libra instances should not be allowed to execute, that I have 
 # see users attempt to execute
 #
-# rpm, yum
+# rpm, yum, debuginfo-install
 # ping, traceroute, iptables, iptables-multi
 # dmesg
 # su, sudo
