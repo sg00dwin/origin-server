@@ -107,7 +107,7 @@ module Express
       def create(app)
         result = nil
         (1..10).each do |i|
-          mcoll_reply = execute_direct(@@C_CONTROLLER, 'configure', "-c '#{app.uuid}' -i '#{app.uid}'")
+          mcoll_reply = execute_direct(@@C_CONTROLLER, 'app-create', "-c '#{app.uuid}' -i '#{app.uid}'")
           result = parse_result(mcoll_reply)
           if result.exitcode == 129 && has_uid_or_gid?(app.uid) # Code to indicate uid already taken
             destroy(app, true)
@@ -122,7 +122,7 @@ module Express
       end
     
       def destroy(app, keep_uid=false, uid=nil)
-        result = execute_direct(@@C_CONTROLLER, 'deconfigure', "-c '#{app.uuid}'")
+        result = execute_direct(@@C_CONTROLLER, 'app-destroy', "-c '#{app.uuid}'")
         result_io = parse_result(result)
         
         uid = app.uid unless uid
@@ -137,32 +137,32 @@ module Express
         cmd = "-c '#{app.uuid}' -s '#{ssh_key}'"
         cmd += " -t '#{key_type}'" if key_type
         cmd += " -m '-#{message}'" if message
-        result = execute_direct(@@C_CONTROLLER, 'add-authorized-ssh-key', cmd)
+        result = execute_direct(@@C_CONTROLLER, 'authorized-ssh-key-add', cmd)
         parse_result(result)
       end
 
       def remove_authorized_ssh_key(app, ssh_key)
-        result = execute_direct(@@C_CONTROLLER, 'remove-authorized-ssh-key', "-c '#{app.uuid}' -s '#{ssh_key}'")
+        result = execute_direct(@@C_CONTROLLER, 'authorized-ssh-key-remove', "-c '#{app.uuid}' -s '#{ssh_key}'")
         parse_result(result)
       end
 
       def add_env_var(app, key, value)
-        result = execute_direct(@@C_CONTROLLER, 'add-env-var', "-c '#{app.uuid}' -k '#{key}' -v '#{value}'")
+        result = execute_direct(@@C_CONTROLLER, 'env-var-add', "-c '#{app.uuid}' -k '#{key}' -v '#{value}'")
         parse_result(result)
       end
       
       def remove_env_var(app, key)
-        result = execute_direct(@@C_CONTROLLER, 'remove-env-var', "-c '#{app.uuid}' -k '#{key}'")
+        result = execute_direct(@@C_CONTROLLER, 'env-var-remove', "-c '#{app.uuid}' -k '#{key}'")
         parse_result(result)
       end
     
       def add_broker_auth_key(app, iv, token)
-        result = execute_direct(@@C_CONTROLLER, 'add-broker-auth-key', "-c '#{app.uuid}' -i '#{iv}' -t '#{token}'")
+        result = execute_direct(@@C_CONTROLLER, 'broker-auth-key-add', "-c '#{app.uuid}' -i '#{iv}' -t '#{token}'")
         parse_result(result)
       end
     
       def remove_broker_auth_key(app)
-        result = execute_direct(@@C_CONTROLLER, 'remove-broker-auth-key', "-c '#{app.uuid}'")
+        result = execute_direct(@@C_CONTROLLER, 'broker-auth-key-remove', "-c '#{app.uuid}'")
         handle_controller_result(result)
       end
       

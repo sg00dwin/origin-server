@@ -39,14 +39,12 @@ end
 #
 # Setup the district
 #
-district_uuid = nil
+district_uuid = 'NONE'
 district_active = false
 if File.exists?('/etc/libra/district.conf')
   config_file = ParseConfig.new('/etc/libra/district.conf')
   district_uuid = config_file.get_value('uuid') ? config_file.get_value('uuid') : 'NONE'
   district_active = config_file.get_value('active') ? config_file.get_value('active') == "true" : false
-else
-  district_uuid = 'NONE'
 end
 Facter.add(:district_uuid) do
   setcode { district_uuid }
@@ -56,49 +54,44 @@ Facter.add(:district_active) do
 end
 
 #
-# Pull public_ip out of the node_data config
+# Pull public_ip and public_hostname out of the node_data config
 #
+public_ip = 'UNKNOWN'
+public_hostname = 'UNKNOWN'
+if File.exists?('/etc/libra/node_data.conf')
+  config_file = ParseConfig.new('/etc/libra/node_data.conf')
+  public_ip = config_file.get_value('public_ip') ? config_file.get_value('public_ip') : 'UNKNOWN'
+  public_hostname = config_file.get_value('public_hostname') ? config_file.get_value('public_hostname') : 'UNKNOWN'
+end
 Facter.add(:public_ip) do
-    config_file = ParseConfig.new('/etc/libra/node_data.conf')
-    public_ip = config_file.get_value('public_ip') ? config_file.get_value('public_ip') : 'UNKNOWN'
-    setcode { public_ip }
+  setcode { public_ip }
 end
-
-#
-# Pull public_hostname out of the node_data config
-#
 Facter.add(:public_hostname) do
-    config_file = ParseConfig.new('/etc/libra/node_data.conf')
-    public_hostname = config_file.get_value('public_hostname') ? config_file.get_value('public_hostname') : 'UNKNOWN'
-    setcode { public_hostname }
+  setcode { public_hostname }
 end
 
 #
-# Find node_profile type
+# Find node_profile, max_apps, max_active_apps
 #
+node_profile = 'std'
+max_apps = '0'
+max_active_apps = '0'
+if File.exists?('/etc/libra/resource_limits.conf')
+  config_file = ParseConfig.new('/etc/libra/resource_limits.conf')
+  node_profile = config_file.get_value('node_profile') ? config_file.get_value('node_profile') : 'std'
+  max_apps = config_file.get_value('max_apps') ? config_file.get_value('max_apps') : '0'
+  max_active_apps = config_file.get_value('max_active_apps') ? config_file.get_value('max_active_apps') : '0'
+end
 Facter.add(:node_profile) do
-    config_file = ParseConfig.new('/etc/libra/resource_limits.conf')
-    node_profile = config_file.get_value('node_profile') ? config_file.get_value('node_profile') : '0'
-    setcode { node_profile }
+  setcode { node_profile }
 end
-
-#
-# Find Max Apps
-#
 Facter.add(:max_apps) do
-    config_file = ParseConfig.new('/etc/libra/resource_limits.conf')
-    max_apps = config_file.get_value('max_apps') ? config_file.get_value('max_apps') : '0'
-    setcode { max_apps }
+  setcode { max_apps }
+end
+Facter.add(:max_active_apps) do
+  setcode { max_active_apps }
 end
 
-#
-# Find max active apps
-#
-Facter.add(:max_active_apps) do
-    config_file = ParseConfig.new('/etc/libra/resource_limits.conf')
-    max_active_apps = config_file.get_value('max_active_apps') ? config_file.get_value('max_active_apps') : '0'
-    setcode { max_active_apps }
-end
 
 #
 # Find capacity
