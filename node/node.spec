@@ -33,6 +33,7 @@ Requires:      libcurl-devel
 Requires:      libpng-devel
 Requires:      giflib-devel
 Requires:      mod_ssl
+Requires:      haproxy
 Requires(post):   /usr/sbin/semodule
 Requires(post):   /usr/sbin/semanage
 Requires(postun): /usr/sbin/semodule
@@ -112,6 +113,7 @@ perl -p -i -e 's:/cgroup/[^\s]+;:/cgroup/all;:; /blkio|cpuset|devices/ && ($_ = 
 /sbin/chkconfig --add libra-data || :
 /sbin/chkconfig --add libra-cgroups || :
 /sbin/chkconfig --add libra-tc || :
+/sbin/chkconfig --add libra-proxy || :
 #/sbin/service mcollective restart > /dev/null 2>&1 || :
 /sbin/restorecon /etc/init.d/libra || :
 /sbin/restorecon /var/lib/libra || :
@@ -177,6 +179,7 @@ fi
 %attr(0750,-,-) %{_initddir}/libra-data
 %attr(0750,-,-) %{_initddir}/libra-cgroups
 %attr(0750,-,-) %{_initddir}/libra-tc
+%attr(0750,-,-) %{_initddir}/libra-proxy
 %attr(0755,-,-) %{_bindir}/trap-user
 %attr(0750,-,-) %{_bindir}/rhc-ip-prep.sh
 %attr(0750,-,-) %{_bindir}/rhc-iptables.sh
@@ -209,6 +212,7 @@ fi
 %attr(0640,-,-) %config(noreplace) %{_sysconfdir}/oddjobd.conf.d/oddjobd-restorer.conf
 %attr(0640,-,-) %config(noreplace) %{_sysconfdir}/dbus-1/system.d/openshift-restorer.conf
 %attr(0640,-,-) %config(noreplace) %{_sysconfdir}/libra/node.conf
+%attr(0640,-,-) %config(noreplace) %{_sysconfdir}/libra/libra-proxy.cfg
 %attr(0640,-,-) %config(noreplace) %{_sysconfdir}/libra/resource_limits.con*
 %attr(0750,-,-) %config(noreplace) %{_sysconfdir}/cron.daily/libra_tmpwatch.sh
 %attr(0644,-,-) %config(noreplace) %{_sysconfdir}/security/namespace.d/*
