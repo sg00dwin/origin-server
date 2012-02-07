@@ -185,7 +185,7 @@ def migrate(continue=false)
     node_threads << Thread.new do
       thread_group.each do |node_to_apps|
         node_to_apps.each do |server_identity, apps|
-          migrate_node(server_identity)
+          migrate_node(server_identity, continue)
         end
       end
     end
@@ -233,13 +233,13 @@ def write_node_to_file(server_identity, apps, node_to_users)
   end
 end
 
-def migrate_node(server_identity)
+def migrate_node(server_identity, continue)
   puts "Migrating apps on node #{server_identity}"
   error_file = "#{WORK_DIR}/migrate_errors_#{server_identity}"
-  FileUtils.rm_f error_file
+  FileUtils.rm_f error_file unless continue
   FileUtils.touch error_file
   log_file = "#{WORK_DIR}/migrate_log_#{server_identity}"
-  FileUtils.rm_f log_file
+  FileUtils.rm_f log_file unless continue
   FileUtils.touch log_file
   f = "#{WORK_DIR}/migrate_#{server_identity}"
   migrate_node_cmd = "#{__FILE__} '#{f}'"
