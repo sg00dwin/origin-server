@@ -3,7 +3,7 @@
 
 = semantic_form_for ssh_key, :remote => true, :namespace => id, :html => {:id => id} do |form|
   = form.input :name, :as => ssh_key.name ? :hidden : :string
-  - label = ssh_key.name ? "SSH Public Key (#{ssh_key.name})" : "SSH Public Key"
+  - label = ssh_key.name ? "SSH Public Key (#{ssh_key.display_name})" : "SSH Public Key"
   = form.input :key_string, :as => :text, :label => label, :hint => "Your ssh key should start with ssh-rsa or ssh-dss.", :required => true
   = form.input :primary, :as => :hidden
   = form.input :mode, :as => :hidden, :value => ssh_key.name ? "update" : "create"
