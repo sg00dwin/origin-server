@@ -1,9 +1,58 @@
 require 'active_support/core_ext/hash/conversions'
 require 'active_resource'
+require 'active_resource/associations'
+require 'active_resource/reflection'
+
+module ActiveResource
+  module Formats
+    module OpenshiftJsonFormat
+      extend ActiveResource::Formats::JsonFormat
+      extend self
+      
+      def decode(json)
+        decoded = super
+        #puts "decoded #{decoded.inspect}"
+        if decoded.is_a?(Hash) and decoded.has_key?('data')
+          decoded = decoded['data']
+        end
+        if decoded.is_a?(Array)
+          decoded.each { |i| i.delete 'links' }
+        else
+          decoded.delete 'links'
+        end
+        decoded
+      end
+    end
+  end
+end
 
 class RestApi < ActiveResource::Base
+  # ActiveResource association support
+  extend ActiveResource::Associations
+  include ActiveResource::Reflection
 
   class MissingUserContextError < StandardError
+  end
+
+  class SimpleCookie
+    def initialize(name, values)
+      @name = name
+      @values = values
+    end
+    def to_s
+      "#{@name}=#{@values[:value]}"
+    end
+  end
+
+  class Authorization
+    attr :login
+    def initialize(login,ticket=nil)
+      @login = login
+      @ticket = ticket
+    end
+    def authorization_cookie
+      SimpleCookie.new :rh_sso, {:value => @ticket}
+    end
   end
 
   class UserAwareConnection < ActiveResource::Connection
@@ -23,6 +72,11 @@ class RestApi < ActiveResource::Base
       headers
     end
 
+    def request(*arguments)
+      #puts "request #{arguments.inspect}"
+      super
+    end
+
     #
     # Changes made in commit https://github.com/rails/rails/commit/51f1f550dab47c6ec3dcdba7b153258e2a0feb69#activeresource/lib/active_resource/base.rb
     # make GET consistent with other verbs (return response)
@@ -32,13 +86,14 @@ class RestApi < ActiveResource::Base
     end
   end
 
+  self.format = :openshift_json
   self.ssl_options = { :verify_mode => OpenSSL::SSL::VERIFY_NONE }
-  self.timeout = 3
+  self.timeout = 10
 
   self.site = if defined?(Rails) && Rails.configuration.express_api_url
     Rails.configuration.express_api_url + '/broker/rest'
   else
-    'http://localhost'
+    'http://localhost/broker/rest'
   end
 
 
@@ -81,7 +136,22 @@ class RestApi < ActiveResource::Base
     end
   end
 
-  # 
+  #
+  # ActiveResource association support
+  #
+  class << self
+    def find_or_create_resource_for_collection(name)
+      return reflections[name.to_sym].klass if reflections.key?(name.to_sym)
+      find_or_create_resource_for(ActiveSupport::Inflector.singularize(name.to_s))
+    end
+    private
+      def find_or_create_resource_for(name)
+        return reflections[name.to_sym].klass if reflections.key?(name.to_sym)
+        super
+      end
+  end
+
+  #
   # singleton support as https://rails.lighthouseapp.com/projects/8994/tickets/4348-supporting-singleton-resources-in-activeresource
   #
   class << self
@@ -147,13 +217,13 @@ class RestApi < ActiveResource::Base
   #
   # has_many / belongs_to placeholders
   #
-  class << self
-    def has_many(sym)
-    end
-    def belongs_to(sym)
-      prefix = "#{site.path}#{sym.to_s}"
-    end
-  end
+  #class << self
+  #  def has_many(sym)
+  #  end
+  #  def belongs_to(sym)
+  #    prefix = "#{site.path}#{sym.to_s}"
+  #  end
+  #end
 
   # 
   # Experimentation with form conversion, likely to be unnecessary
@@ -195,6 +265,12 @@ class RestApi < ActiveResource::Base
       #end
     end
 
+    # possibly needed to decode gets
+    #def get(custom_method_name, options = {})
+    #  puts 'default get'
+    #  self.class.format.decode(connection(options).get(custom_method_collection_url(custom_method_name, options), headers).body) #changed
+    #end
+
     private
       def update_connection(connection)
         connection.proxy = proxy if proxy
@@ -232,15 +308,15 @@ class RestApi < ActiveResource::Base
           nil
         end
       end
-      
-      def instantiate_collection(collection, as, prefix_options = {})
-        collection.collect! { |record| instantiate_record(record, as, prefix_options) }
+
+      def instantiate_collection(collection, as, prefix_options = {}) #changed
+        collection.collect! { |record| instantiate_record(record, as, prefix_options) } #changed
       end
 
-      def instantiate_record(record, as, prefix_options = {})
+      def instantiate_record(record, as, prefix_options = {}) #changed
         new(record).tap do |resource|
           resource.prefix_options = prefix_options
-          resource.as = as
+          resource.as = as #added
         end
       end
   end
@@ -270,18 +346,71 @@ end
 class User < RestApi
   singleton
 
-  has_many :ssh_key
+  has_many :keys
 
   schema do
     string :login
   end
+
+  has_many :domains
 end
+
+
+class Domain < RestApi
+  schema do
+    string :namespace
+  end
+
+  def name
+    namespace
+  end
+
+  has_many :applications
+  def applications
+    Application.find :all, { :params => { :domain_name => namespace }, :as => as }
+  end
+
+  belongs_to :user
+  def user
+    User.find :one, :as => as
+  end
+end
+
+
+class Application < RestApi
+  schema do
+    string :name, :creation_time
+    string :uuid, :domain_id
+    string :framework, :server_identity
+  end
+
+  has_many :aliases
+  belongs_to :domain
+  self.prefix = "#{RestApi.site.path}/domains/:domain_name/"
+  def domain
+    Domain.find self.prefix_options[:domain_name], :as => as
+  end
+  def domain=(domain)
+    self.prefix_options[:domain_name] = domain.name
+  end
+end
+
+
+class Alias < RestApi
+  schema do
+    string :name
+  end
+
+  belongs_to :application
+end
+
 
 class Key < RestApi
   self.primary_key = 'name'
   self.element_name = 'key'
 
   belongs_to :user
+  self.prefix = "#{RestApi.site.path}/user/"
 
   schema do
     string :name, 'type', :key
@@ -317,42 +446,25 @@ end
 if __FILE__==$0
   require 'test/unit/ui/console/testrunner'
 
-  class TestCookie
-    def initialize(name, values)
-      @name = name
-      @values = values
-    end
-    def to_s
-      "#{@name}=#{@values[:value]}"
-    end
-  end
-
-  class TestUser
-    attr :login
-    def initialize(login)
-      @login = login
-    end
-    def authorization_cookie
-      TestCookie.new :rh_sso, {:value => '1234'}
-    end
-  end
-
   if ENV['LIBRA_HOST']
 
-    User.site = "https://#{ENV['LIBRA_HOST']}/broker/rest"
-    User.prefix='/broker/rest/'
-    user = TestUser.new 'test1@test1.com'
+    RestApi.site = "https://#{ENV['LIBRA_HOST']}/broker/rest"
+    RestApi.prefix='/broker/rest/'
+    user = RestApi::Authorization.new 'test1@test1.com', '1234'
     begin
-      info = User.find :one, :as => user
-      puts info.inspect
+      #info = Key.find :all, :as => user
+      #puts info.inspect
+      #domain = Domain.first :as => user
+      #puts domain.inspect
+      #puts domain.applications.inspect
     rescue ActiveResource::ConnectionError => e
-      puts "#{e.response}=#{e.response.body}\n#{e.response.inspect}"
-      #raise 
+      puts e.response
+      raise
     end
     puts "-------------------\n"
   end
 
-  if true
+  if false
 
   require 'active_resource/http_mock'
   require 'test/unit'
@@ -361,18 +473,24 @@ if __FILE__==$0
   class RestApiTest < Test::Unit::TestCase
 
     def setup
-      @user = TestUser.new 'test1'
+      @user = RestApi::Authorization.new 'test1', '1234'
       auth_headers = {'Cookie' => @user.authorization_cookie.to_s, 'Authorization' => 'Basic dGVzdDE6'};
 
       RestApi.site = 'https://localhost'
       Key.prefix = '/user/'
+      User.prefix = '/'
+      Domain.prefix = '/'
+      Application.prefix = "#{Domain.prefix}domains/:domain_name/"
       ActiveSupport::XmlMini.backend = 'REXML'
       ActiveResource::HttpMock.respond_to do |mock|
-        mock.get '/user/keys.xml', {'Accept' => 'application/xml'}.merge!(auth_headers), [{:type => :rsa, :name => 'test1', :value => '1234' }].to_xml(:root => 'key')
-        mock.post '/user/keys.xml', {'Content-Type' => 'application/xml'}.merge!(auth_headers), {:type => :rsa, :name => 'test2', :value => '1234_2' }.to_xml(:root => 'key')
-        mock.delete '/user/keys/test1.xml', {'Accept' => 'application/xml'}.merge!(auth_headers), {}
+        mock.get '/user/keys.json', {'Accept' => 'application/json'}.merge!(auth_headers), [{:type => :rsa, :name => 'test1', :value => '1234' }].to_json()
+        mock.post '/user/keys.json', {'Content-Type' => 'application/json'}.merge!(auth_headers), {:type => :rsa, :name => 'test2', :value => '1234_2' }.to_json()
+        mock.delete '/user/keys/test1.json', {'Accept' => 'application/json'}.merge!(auth_headers), {}
 
-        mock.get '/user.xml', {'Accept' => 'application/xml'}.merge!(auth_headers), { :login => 'test1' }.to_xml(:root => 'user')
+        mock.get '/user.json', {'Accept' => 'application/json'}.merge!(auth_headers), { :login => 'test1' }.to_json()
+        
+        mock.get '/domains.json', {'Accept' => 'application/json'}.merge!(auth_headers), [{ :namespace => 'adomain' }].to_json()
+        mock.get '/domains/adomain/applications.json', {'Accept' => 'application/json'}.merge!(auth_headers), [{ :name => 'app1' }, { :name => 'app2' }].to_json()
       end
     end
 
@@ -417,7 +535,7 @@ if __FILE__==$0
     end
 
     def test_create_cookie
-      connection = RestApi::UserAwareConnection.new 'http://localhost', :xml, TestUser.new('test1')
+      connection = RestApi::UserAwareConnection.new 'http://localhost', :xml, RestApi::Authorization.new('test1', '1234')
       headers = connection.authorization_header(:post, '/something')
       assert_equal 'rh_sso=1234', headers['Cookie']
     end
@@ -427,8 +545,27 @@ if __FILE__==$0
       assert user
       assert_equal 'test1', user.login
     end
+
+    def test_domains_get
+      domains = Domain.find :all, :as => @user
+      assert_equal 1, domains.length
+      assert_equal "adomain", domains[0].namespace
+    end
+
+    def test_domains_first
+      domain = Domain.first(:as => @user)
+      assert_equal "adomain", domain.namespace
+    end
+
+    def test_domains_applications
+      domain = Domain.first(:as => @user)
+      apps = domain.applications
+      assert_equal 2, apps.length
+      assert_equal 'app1', apps[0].name
+      assert_equal 'app2', apps[1].name
+    end
   end
+  Test::Unit::UI::Console::TestRunner.run(RestApiTest)
   end
 
-  Test::Unit::UI::Console::TestRunner.run(RestApiTest)
 end
