@@ -32,6 +32,7 @@ class ComponentInstance < Cloud::Sdk::UserModel
     else
       cart = CartridgeCache::find_cartridge(self.parent_cart_name)
     end
+    raise Exception.new("Cartridge #{self.parent_cart_name} not found") if cart.nil?
     profile = cart.profiles(self.parent_cart_profile)
     group = profile.groups(self.parent_cart_group)
     comp_name = group.component_refs(self.parent_component_name).component
@@ -86,7 +87,7 @@ class ComponentInstance < Cloud::Sdk::UserModel
        mapped_path = app.group_override_map[gpath] || ""
        gi = app.group_instance_map[mapped_path]
        if gi.nil?
-         gi = GroupInstance.new(cart.name, profile.name, g.name, gpath)
+         gi = GroupInstance.new(app, cart.name, profile.name, g.name, gpath)
        else
          gi.merge(cart.name, profile.name, g.name, gpath)
        end

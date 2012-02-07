@@ -121,49 +121,49 @@ module Express
         return result_io
       end
 
-      def add_authorized_ssh_key(app, ssh_key, key_type=nil, message=nil)
-        cmd = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{app.application_container.uuid}' -s '#{ssh_key}'"
+      def add_authorized_ssh_key(app, gear, ssh_key, key_type=nil, message=nil)
+        cmd = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -s '#{ssh_key}'"
         cmd += " -t '#{key_type}'" if key_type
         cmd += " -m '-#{message}'" if message
         result = execute_direct(@@C_CONTROLLER, 'authorized-ssh-key-add', cmd)
         parse_result(result)
       end
 
-      def remove_authorized_ssh_key(app, ssh_key)
-        result = execute_direct(@@C_CONTROLLER, 'authorized-ssh-key-remove', "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{app.application_container.uuid}' -s '#{ssh_key}'")
+      def remove_authorized_ssh_key(app, gear, ssh_key)
+        result = execute_direct(@@C_CONTROLLER, 'authorized-ssh-key-remove', "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -s '#{ssh_key}'")
         parse_result(result)
       end
 
-      def add_env_var(app, key, value)
-        result = execute_direct(@@C_CONTROLLER, 'env-var-add', "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{app.application_container.uuid}' -k '#{key}' -v '#{value}'")
+      def add_env_var(app, gear, key, value)
+        result = execute_direct(@@C_CONTROLLER, 'env-var-add', "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -k '#{key}' -v '#{value}'")
         parse_result(result)
       end
       
-      def remove_env_var(app, key)
-        result = execute_direct(@@C_CONTROLLER, 'env-var-remove', "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{app.application_container.uuid}' -k '#{key}'")
+      def remove_env_var(app, gear, key)
+        result = execute_direct(@@C_CONTROLLER, 'env-var-remove', "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -k '#{key}'")
         parse_result(result)
       end
     
-      def add_broker_auth_key(app, iv, token)
-        result = execute_direct(@@C_CONTROLLER, 'broker-auth-key-add', "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{app.application_container.uuid}' -i '#{iv}' -t '#{token}'")
+      def add_broker_auth_key(app, gear, iv, token)
+        result = execute_direct(@@C_CONTROLLER, 'broker-auth-key-add', "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -i '#{iv}' -t '#{token}'")
         parse_result(result)
       end
     
-      def remove_broker_auth_key(app)
-        result = execute_direct(@@C_CONTROLLER, 'broker-auth-key-remove', "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{app.application_container.uuid}'")
+      def remove_broker_auth_key(app, gear)
+        result = execute_direct(@@C_CONTROLLER, 'broker-auth-key-remove', "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}'")
         handle_controller_result(result)
       end
       
-      def preconfigure_cartridge(app, cart)
-        run_cartridge_command(cart, app, "preconfigure")
+      def preconfigure_cartridge(app, gear, cart)
+        run_cartridge_command(cart, app, gear, "preconfigure")
       end
       
-      def configure_cartridge(app, cart)
-        run_cartridge_command(cart, app, "configure")
+      def configure_cartridge(app, gear, cart)
+        run_cartridge_command(cart, app, gear, "configure")
       end
       
-      def deconfigure_cartridge(app, cart)
-        run_cartridge_command(cart, app, "deconfigure")
+      def deconfigure_cartridge(app, gear, cart)
+        run_cartridge_command(cart, app, gear, "deconfigure")
       end
       
       def get_public_hostname
@@ -186,36 +186,36 @@ module Express
         rpc_get_fact_direct('node_profile')
       end
       
-      def start(app, cart)
-        run_cartridge_command(cart, app, "start")
+      def start(app, gear, cart)
+        run_cartridge_command(cart, app, gear, "start")
       end
       
-      def stop(app, cart)
-        run_cartridge_command(cart, app, "stop")
+      def stop(app, gear, cart)
+        run_cartridge_command(cart, app, gear, "stop")
       end
       
-      def force_stop(app, cart)
-        run_cartridge_command(cart, app, "force-stop")
+      def force_stop(app, gear, cart)
+        run_cartridge_command(cart, app, gear, "force-stop")
       end
       
-      def restart(app, cart)
-        run_cartridge_command(cart, app, "restart")
+      def restart(app, gear, cart)
+        run_cartridge_command(cart, app, gear, "restart")
       end
       
-      def reload(app, cart)
-        run_cartridge_command(cart, app, "reload")
+      def reload(app, gear, cart)
+        run_cartridge_command(cart, app, gear, "reload")
       end
       
-      def status(app, cart)
-        run_cartridge_command(cart, app, "status")
+      def status(app, gear, cart)
+        run_cartridge_command(cart, app, gear, "status")
       end
       
-      def tidy(app, cart)
-        run_cartridge_command(cart, app, "tidy")
+      def tidy(app, gear, cart)
+        run_cartridge_command(cart, app, gear, "tidy")
       end
       
-      def threaddump(app, cart)
-        run_cartridge_command(cart, app, "threaddump")
+      def threaddump(app, gear, cart)
+        run_cartridge_command(cart, app, gear, "threaddump")
       end
       
       def expose_port(app, cart)
@@ -226,23 +226,23 @@ module Express
         run_cartridge_command(cart, app, "conceal-port")
       end
 
-      def add_alias(app, cart, server_alias)
-        run_cartridge_command(cart, app, "add-alias", server_alias)
+      def add_alias(app, gear, cart, server_alias)
+        run_cartridge_command(cart, app, gear, "add-alias", server_alias)
       end
       
-      def remove_alias(app, cart, server_alias)
-        run_cartridge_command(cart, app, "remove-alias", server_alias)
+      def remove_alias(app, gear, cart, server_alias)
+        run_cartridge_command(cart, app, gear, "remove-alias", server_alias)
       end
       
-      def add_component(app, component)
+      def add_component(app, gear, component)
         reply = ResultIO.new
         begin
-          reply.append run_cartridge_command('embedded/' + component, app, 'configure')
+          reply.append run_cartridge_command('embedded/' + component, app, gear, 'configure')
         rescue Exception => e
           begin
             Rails.logger.debug "DEBUG: Failed to embed '#{component}' in '#{app.name}' for user '#{app.user.login}'"
             reply.debugIO << "Failed to embed '#{component} in '#{app.name}'"
-            reply.append run_cartridge_command('embedded/' + component, app, 'deconfigure')
+            reply.append run_cartridge_command('embedded/' + component, app, gear, 'deconfigure')
           ensure
             raise
           end
@@ -253,29 +253,29 @@ module Express
         [reply, component_details]
       end
       
-      def remove_component(app, component)
+      def remove_component(app, gear, component)
         Rails.logger.debug "DEBUG: Deconfiguring embedded application '#{component}' in application '#{app.name}' on node '#{@id}'"
-        return run_cartridge_command('embedded/' + component, app, 'deconfigure')
+        return run_cartridge_command('embedded/' + component, app, gear, 'deconfigure')
       end
       
-      def start_component(app, component)
-        run_cartridge_command('embedded/' + component, app, "start")
+      def start_component(app, gear, component)
+        run_cartridge_command('embedded/' + component, app, gear, "start")
       end
       
-      def stop_component(app, component)
-        run_cartridge_command('embedded/' + component, app, "stop")
+      def stop_component(app, gear, component)
+        run_cartridge_command('embedded/' + component, app, gear, "stop")
       end
       
-      def restart_component(app, component)
-        run_cartridge_command('embedded/' + component, app, "restart")    
+      def restart_component(app, gear, component)
+        run_cartridge_command('embedded/' + component, app, gear, "restart")    
       end
       
-      def reload_component(app, component)
-        run_cartridge_command('embedded/' + component, app, "reload")    
+      def reload_component(app, gear, component)
+        run_cartridge_command('embedded/' + component, app, gear, "reload")    
       end
       
-      def component_status(app, component)
-        run_cartridge_command('embedded/' + component, app, "status")    
+      def component_status(app, gear, component)
+        run_cartridge_command('embedded/' + component, app, gear, "status")    
       end
       
       def move_app(app, destination_container, destination_district_uuid=nil, allow_change_district=false, node_profile=nil)
@@ -733,8 +733,8 @@ module Express
         end
       end
       
-      def run_cartridge_command(framework, app, command, arg=nil, allow_move=true)
-        arguments = "'#{app.name}' '#{app.user.namespace}' '#{app.application_container.uuid}'"
+      def run_cartridge_command(framework, app, gear, command, arg=nil, allow_move=true)
+        arguments = "'#{app.name}' '#{app.user.namespace}' '#{gear.uuid}'"
         arguments += " '#{arg}'" if arg
 
         if allow_move

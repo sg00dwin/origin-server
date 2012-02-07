@@ -149,15 +149,14 @@ class LegacyBrokerController < ApplicationController
       apps = user.applications
 
       app = Application.new(user, @req.app_name, nil, @req.node_profile, @req.cartridge)
-      container = Cloud::Sdk::ApplicationContainerProxy.find_available(@req.node_profile)
-      check_cartridge_type(app.framework, container, "standalone")
+      check_cartridge_type(app.framework, "standalone")
       if (user.consumed_gears >= user.max_gears)
         raise Cloud::Sdk::UserException.new("#{@login} has already reached the application limit of #{user.max_gears}", 104)
       end
       raise Cloud::Sdk::UserException.new("The supplied application name '#{app.name}' is not allowed", 105) if Cloud::Sdk::ApplicationContainerProxy.blacklisted? app.name
       if app.valid?
         begin
-          @reply.append app.create(container)
+          @reply.append app.create
           @reply.append app.configure_dependencies
           @reply.append app.add_ssh_keys
           @reply.append app.add_system_ssh_keys
@@ -247,7 +246,7 @@ class LegacyBrokerController < ApplicationController
         
     app = get_app_from_request(user)
     
-    check_cartridge_type(@req.cartridge, app.container, "embedded")
+    check_cartridge_type(@req.cartridge, "embedded")
 
     Rails.logger.debug "DEBUG: Performing action '#{@req.action}'"    
     case @req.action
@@ -281,7 +280,7 @@ class LegacyBrokerController < ApplicationController
   end
   
   # Raise an exception if cartridge type isn't supported
-  def check_cartridge_type(framework, container, cart_type)
+  def check_cartridge_type(framework, cart_type)
     carts = Application.get_available_cartridges(cart_type)
     unless carts.include? framework
       if cart_type == 'standalone'

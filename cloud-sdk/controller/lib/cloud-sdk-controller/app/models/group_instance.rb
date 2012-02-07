@@ -1,9 +1,10 @@
 class GroupInstance < Cloud::Sdk::UserModel
-  attr_accessor :application_containers, :node_profile, :component_instances, 
+  attr_accessor :app, :gears, :node_profile, :component_instances, 
     :name, :cart_name, :profile_name, :group_name, :reused_by
+  exclude_attributes :app
 
-
-  def initialize(cartname=nil, profname=nil, groupname=nil, path=nil)
+  def initialize(app, cartname=nil, profname=nil, groupname=nil, path=nil)
+    self.app = app
     self.name = path
     self.cart_name = cartname
     self.profile_name = profname
@@ -23,15 +24,15 @@ class GroupInstance < Cloud::Sdk::UserModel
     # component_instances remains a flat collection
   end
   
-  def application_containers=(data)
-    @application_containers = [] if @application_containers.nil?
+  def gears=(data)
+    @gears = [] if @gears.nil?
     data.each do |hash|
-      if hash.class == ApplicationContainer
-        @application_containers.push hash
+      if hash.class == Gear
+        @gears.push hash
       else
-        application_container = ApplicationContainer.new(self)
-        application_container.attributes=hash
-      @application_containers.push application_container
+        gear = Gear.new(@app)
+        gear.attributes=hash
+      @gears.push gear
       end                             
     end                               
   end
