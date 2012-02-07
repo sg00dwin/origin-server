@@ -23,6 +23,7 @@ Requires:  rubygem-xml-simple
 Requires:  rubygem-cloud-sdk-controller
 Requires:  rubygem-bson_ext
 Requires:  rubygem-rest-client
+Requires:  rubygem-thread-dump
 
 BuildArch: noarch
 
