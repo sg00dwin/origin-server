@@ -5,6 +5,10 @@ require 'active_resource/reflection'
 
 module ActiveResource
   module Formats
+    #
+    # The OpenShift REST API wraps the root resource element which needs
+    # to be unwrapped.
+    #
     module OpenshiftJsonFormat
       extend ActiveResource::Formats::JsonFormat
       extend self
@@ -26,56 +30,66 @@ module ActiveResource
   end
 end
 
+
+#
+# Base class for connecting to the OpenShift REST API using ActiveModel conventions
+#
 class RestApi < ActiveResource::Base
+
   # ActiveResource association support
   extend ActiveResource::Associations
   include ActiveResource::Reflection
 
-  class MissingUserContextError < StandardError
-  end
+  # Raised when the authorization context is missing
+  class MissingAuthorizationError < StandardError ; end
 
-  class SimpleCookie
-    def initialize(name, values)
-      @name = name
-      @values = values
-    end
-    def to_s
-      "#{@name}=#{@values[:value]}"
-    end
-  end
-
+  #
+  # An Authorization object should expose:
+  #
+  #  login - method returning an identifier for the user
+  #
+  # and one of:
+  #
+  #  ticket - the unique ticket for the session
+  #  password - a user password
+  #
   class Authorization
-    attr :login
-    def initialize(login,ticket=nil)
+    attr_reader :login, :ticket, :password
+    def initialize(login,ticket=nil,password=nil)
       @login = login
       @ticket = ticket
-    end
-    def authorization_cookie
-      SimpleCookie.new :rh_sso, {:value => @ticket}
+      @password = password
     end
   end
 
+
+  #
+  # A connection class that contains an authorization object to connect as
+  #
   class UserAwareConnection < ActiveResource::Connection
+
+    # The authorization context
     attr :as
 
     def initialize(url, format, as)
       super url, format
       @as = as
       @user = @as.login if @as.respond_to? :login
+      @password = @as.password if @as.respond_to? :password
     end
 
     def authorization_header(http_method, uri)
       headers = super
-      if @as.respond_to? :authorization_cookie and @as.authorization_cookie
-        (headers['Cookie'] ||= '') << @as.authorization_cookie.to_s
+      if @as.respond_to? :ticket and @as.ticket
+        (headers['Cookie'] ||= '') << "rh_sso=#{@as.ticket}"
       end
       headers
     end
 
-    def request(*arguments)
+    #def request(*arguments)
       #puts "request #{arguments.inspect}"
-      super
-    end
+      #super
+    #end
 
     #
     # Changes made in commit https://github.com/rails/rails/commit/51f1f550dab47c6ec3dcdba7b153258e2a0feb69#activeresource/lib/active_resource/base.rb
@@ -86,10 +100,13 @@ class RestApi < ActiveResource::Base
     end
   end
 
+
+  #
+  # Connection properties
+  #
   self.format = :openshift_json
   self.ssl_options = { :verify_mode => OpenSSL::SSL::VERIFY_NONE }
   self.timeout = 10
-
   self.site = if defined?(Rails) && Rails.configuration.express_api_url
     Rails.configuration.express_api_url + '/broker/rest'
   else
@@ -122,7 +139,6 @@ class RestApi < ActiveResource::Base
   end
 
   class << self
-
     def load_attributes_from_response(response)
       if response['Content-Length'] != "0" && response.body.strip.size > 0
         load(update_root(self.class.format.decode(response.body)))
@@ -135,6 +151,7 @@ class RestApi < ActiveResource::Base
       obj
     end
   end
+
 
   #
   # ActiveResource association support
@@ -150,6 +167,7 @@ class RestApi < ActiveResource::Base
         super
       end
   end
+
 
   #
   # singleton support as https://rails.lighthouseapp.com/projects/8994/tickets/4348-supporting-singleton-resources-in-activeresource
@@ -214,6 +232,7 @@ class RestApi < ActiveResource::Base
     end
   end
 
+
   #
   # has_many / belongs_to placeholders
   #
@@ -224,6 +243,7 @@ class RestApi < ActiveResource::Base
   #    prefix = "#{site.path}#{sym.to_s}"
   #  end
   #end
+
 
   # 
   # Experimentation with form conversion, likely to be unnecessary
@@ -237,6 +257,7 @@ class RestApi < ActiveResource::Base
   def to_form(*opt)
     (respond_to?(:serialize) ? serialize(*opt) : @attributes).to_param
   end
+
 
   #
   # Override methods from ActiveResource to make them contextual connection
@@ -254,7 +275,7 @@ class RestApi < ActiveResource::Base
       if options[:as]
         update_connection(UserAwareConnection.new(site, format, options[:as]))
       else
-        raise MissingUserContextError
+        raise MissingAuthorizationError
       end
       #elsif defined?(@connection) || superclass == Object
       #  #'Accessing RestApi without a user object'
@@ -321,9 +342,6 @@ class RestApi < ActiveResource::Base
       end
   end
 
-  #
-  # Set the user under which changes should be made
-  #
   def as=(as)
     @connection = nil
     @as = as
@@ -343,6 +361,10 @@ class RestApi < ActiveResource::Base
     end
 end
 
+
+#
+# The REST API model object representing the currently authenticated user.
+#
 class User < RestApi
   singleton
 
@@ -356,6 +378,9 @@ class User < RestApi
 end
 
 
+#
+# The REST API model object representing the domain, which may contain multiple applications.
+#
 class Domain < RestApi
   schema do
     string :namespace
@@ -377,6 +402,9 @@ class Domain < RestApi
 end
 
 
+#
+# The REST API model object representing an application instance.
+#
 class Application < RestApi
   schema do
     string :name, :creation_time
@@ -396,6 +424,9 @@ class Application < RestApi
 end
 
 
+#
+# The REST API model object representing a domain name alias to an application.
+#
 class Alias < RestApi
   schema do
     string :name
@@ -405,6 +436,9 @@ class Alias < RestApi
 end
 
 
+#
+# The REST API model object representing an SSH public key.
+#
 class Key < RestApi
   self.primary_key = 'name'
   self.element_name = 'key'
@@ -464,7 +498,7 @@ if __FILE__==$0
     puts "-------------------\n"
   end
 
-  if false
+  if true
 
   require 'active_resource/http_mock'
   require 'test/unit'
@@ -474,7 +508,7 @@ if __FILE__==$0
 
     def setup
       @user = RestApi::Authorization.new 'test1', '1234'
-      auth_headers = {'Cookie' => @user.authorization_cookie.to_s, 'Authorization' => 'Basic dGVzdDE6'};
+      auth_headers = {'Cookie' => "rh_sso=1234", 'Authorization' => 'Basic dGVzdDE6'};
 
       RestApi.site = 'https://localhost'
       Key.prefix = '/user/'
@@ -528,7 +562,7 @@ if __FILE__==$0
     end
 
     def test_agnostic_connection
-      assert_raise RestApi::MissingUserContextError do
+      assert_raise RestApi::MissingAuthorizationError do
         RestApi.connection.is_a? ActiveResource::Connection
       end
       assert RestApi.connection({:as => {}}).is_a? RestApi::UserAwareConnection
