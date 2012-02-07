@@ -14,7 +14,7 @@
 # limitations under the License.
 #++
 
-require File.expand_path('../../../lib/cloud-sdk-node', __FILE__)
+require File.expand_path('../../lib/cloud-sdk-node', __FILE__)
 require 'rubygems'
 require 'mocha'
 require 'test/unit'
