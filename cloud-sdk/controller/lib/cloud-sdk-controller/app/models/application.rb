@@ -1,7 +1,7 @@
 require 'state_machine'
 
 class Application < Cloud::Sdk::Cartridge
-  attr_accessor :user, :creation_time, :uuid, :aliases, 
+  attr_accessor :user, :creation_time, :uuid, :aliases, :cart_data,
                 :state, :group_instance_map, :comp_instance_map, :conn_endpoints_list,
                 :domain, :group_override_map, :working_comp_inst_hash,
                 :working_group_inst_hash

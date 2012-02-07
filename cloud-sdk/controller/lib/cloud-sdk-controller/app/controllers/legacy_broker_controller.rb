@@ -249,7 +249,7 @@ class LegacyBrokerController < ApplicationController
     
     check_cartridge_type(@req.cartridge, app.container, "embedded")
 
-    Rails.logger.debug "DEBUG: Performing action '#{@req.action}' on node '#{app.container.uuid}'"    
+    Rails.logger.debug "DEBUG: Performing action '#{@req.action}'"    
     case @req.action
     when 'configure'
       @reply.append app.add_dependency(@req.cartridge)
