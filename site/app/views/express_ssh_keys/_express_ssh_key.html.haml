@@ -2,7 +2,7 @@
   = ssh_key.name
 %dd.ssh_key_preview{:id => "preview_ssh_key_#{ssh_key.name}"}
   %code
-    = ssh_key.key_string.slice(0, 25) + '...'
+    = ssh_key.to_s.slice(0, 25) + '...'
   %span.edit-widget
     %span.popup
       %span.popup-trigger.edit-key-link
