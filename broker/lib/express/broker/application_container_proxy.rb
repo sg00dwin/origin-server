@@ -468,15 +468,21 @@ module Express
         log_debug "DEBUG: Deconfiguring old app '#{app.name}' on #{source_container.id} after move"
         (1..num_tries).each do |i|
           begin
-            reply.append source_container.run_cartridge_command(app.framework, app, "deconfigure", nil, false)
-            reply.append source_container.destroy(app, keep_uid, orig_uid)
+            begin
+              reply.append source_container.run_cartridge_command(app.framework, app, "deconfigure", nil, false)
+            ensure
+              reply.append source_container.destroy(app, keep_uid, orig_uid)
+            end
             break
           rescue Exception => e
-            log_debug "DEBUG: Error deconfiguring old app on try #{i}: #{e.message}"
-            raise if i == num_tries
+            log_error "ERROR: Error deconfiguring old app on try #{i}: #{e.message}"
+            if i == num_tries
+              log_debug "DEBUG: The application '#{app.name}' with uuid '#{app.uuid}' is now moved to '#{source_container.id}' but not completely deconfigured from '#{destination_container.id}'"
+              raise
+            end
           end
         end
-        log_debug "Successfully moved '#{app.name}' with uuid #{app.uuid} from #{source_container.id} to #{destination_container.id}"
+        log_debug "Successfully moved '#{app.name}' with uuid '#{app.uuid}' from '#{source_container.id}' to '#{destination_container.id}'"
         reply
       end
       
