@@ -127,6 +127,7 @@ class Application < Cloud::Sdk::Cartridge
       save
     end
     self.class.notify_observers(:after_application_create, {:application => self, :reply => result_io})
+    result_io
   end
   
   #convinence method to cleanup an application

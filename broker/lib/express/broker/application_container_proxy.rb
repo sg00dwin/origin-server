@@ -44,7 +44,7 @@ module Express
       end
       
       def get_available_cartridges
-        result = execute_direct(@@C_CONTROLLER, 'list-cartridges', "--porcelain --with-descriptors")
+        result = execute_direct(@@C_CONTROLLER, 'cartridge-list', "--porcelain --with-descriptors")
         result = parse_result(result)
         cart_data = JSON.parse(result.resultIO.string)
         cart_data.map! {|c| Cloud::Sdk::Cartridge.new.from_descriptor(YAML.load(c))}
@@ -122,7 +122,7 @@ module Express
       end
 
       def add_authorized_ssh_key(app, ssh_key, key_type=nil, message=nil)
-        cmd = "-c '#{app.uuid}' -s '#{ssh_key}'"
+        cmd = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{app.application_container.uuid}' -s '#{ssh_key}'"
         cmd += " -t '#{key_type}'" if key_type
         cmd += " -m '-#{message}'" if message
         result = execute_direct(@@C_CONTROLLER, 'authorized-ssh-key-add', cmd)
@@ -130,27 +130,27 @@ module Express
       end
 
       def remove_authorized_ssh_key(app, ssh_key)
-        result = execute_direct(@@C_CONTROLLER, 'authorized-ssh-key-remove', "-c '#{app.uuid}' -s '#{ssh_key}'")
+        result = execute_direct(@@C_CONTROLLER, 'authorized-ssh-key-remove', "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{app.application_container.uuid}' -s '#{ssh_key}'")
         parse_result(result)
       end
 
       def add_env_var(app, key, value)
-        result = execute_direct(@@C_CONTROLLER, 'env-var-add', "-c '#{app.uuid}' -k '#{key}' -v '#{value}'")
+        result = execute_direct(@@C_CONTROLLER, 'env-var-add', "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{app.application_container.uuid}' -k '#{key}' -v '#{value}'")
         parse_result(result)
       end
       
       def remove_env_var(app, key)
-        result = execute_direct(@@C_CONTROLLER, 'env-var-remove', "-c '#{app.uuid}' -k '#{key}'")
+        result = execute_direct(@@C_CONTROLLER, 'env-var-remove', "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{app.application_container.uuid}' -k '#{key}'")
         parse_result(result)
       end
     
       def add_broker_auth_key(app, iv, token)
-        result = execute_direct(@@C_CONTROLLER, 'broker-auth-key-add', "-c '#{app.uuid}' -i '#{iv}' -t '#{token}'")
+        result = execute_direct(@@C_CONTROLLER, 'broker-auth-key-add', "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{app.application_container.uuid}' -i '#{iv}' -t '#{token}'")
         parse_result(result)
       end
     
       def remove_broker_auth_key(app)
-        result = execute_direct(@@C_CONTROLLER, 'broker-auth-key-remove', "-c '#{app.uuid}'")
+        result = execute_direct(@@C_CONTROLLER, 'broker-auth-key-remove', "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{app.application_container.uuid}'")
         handle_controller_result(result)
       end
       

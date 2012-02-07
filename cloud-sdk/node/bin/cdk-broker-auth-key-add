@@ -24,7 +24,7 @@ cdk-broker-auth-key-add: Adds broker auth key to the application.
 
 == Usage
 
-cdk-broker-auth-key-add [--with-uuid UUID] [--with-iv INITIALIZATION_VECTOR] [--with-token TOKEN]
+cdk-broker-auth-key-add  --with-app-uuid APP_UUID --with-container-uuid UUID --with-iv INITIALIZATION_VECTOR --with-token TOKEN
 
 Options:
 -h|--help:
@@ -40,7 +40,8 @@ end
 require 'cloud-sdk-node'
 require 'cloud-sdk-node/utils/shell_exec'
 opts = GetoptLong.new(
-    ["--with-uuid",        "-c", GetoptLong::REQUIRED_ARGUMENT],
+    ["--with-app-uuid",       "-a", GetoptLong::REQUIRED_ARGUMENT],
+    ["--with-container-uuid", "-c", GetoptLong::REQUIRED_ARGUMENT],
     ["--with-iv",          "-i", GetoptLong::REQUIRED_ARGUMENT],
     ["--with-token",       "-t", GetoptLong::REQUIRED_ARGUMENT]
 )
@@ -58,7 +59,8 @@ if args["--help"]
   exit -1
 end
 
-uuid = args['--with-uuid']
+uuid = args['--with-container-uuid']
+app_uuid = args['--with-app-uuid']
 iv = args['--with-iv']
 token = args['--with-token']
 

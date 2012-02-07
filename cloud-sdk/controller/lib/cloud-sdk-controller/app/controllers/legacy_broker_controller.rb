@@ -282,7 +282,7 @@ class LegacyBrokerController < ApplicationController
   
   # Raise an exception if cartridge type isn't supported
   def check_cartridge_type(framework, container, cart_type)
-    carts = container.get_available_cartridges(cart_type)
+    carts = Application.get_available_cartridges(cart_type)
     unless carts.include? framework
       if cart_type == 'standalone'
         raise Cloud::Sdk::UserException.new(110), "Invalid application type (-t|--type) specified: '#{framework}'.  Valid application types are (#{carts.join(', ')})."
