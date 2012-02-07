@@ -460,10 +460,47 @@ class Application < Cloud::Sdk::Cartridge
       if conn.from_connector.type.match(/^FILESYSTEM/) or conn.from_connector.type.match(/^AFUNIX/)
         ginst1 = self.group_instance_map[conn.from_comp_inst.group_instance_name]
         ginst2 = self.group_instance_map[conn.to_comp_inst.group_instance_name]
+        next if ginst1==ginst2
         # these two group instances need to be colocated
         ginst1.merge(ginst2.cart_name, ginst2.profile_name, ginst2.group_name, ginst2.name, ginst2.component_instances)
         self.group_instance_map[conn.to_comp_inst.group_instance_name] = ginst1
       end
+    }
+  end
+
+  def generate_group_overrides(default_profile)
+    if not default_profile.group_overrides.empty?
+      default_profile.group_overrides.each do |n, v|
+        from = self.name + "." + n
+        to = self.name + "." + v
+        self.group_override_map[from] = to
+      end
+    else
+      default_profile = @profile_name_map[@default_profile]
+      first_group = default_profile.groups[0]
+      default_profile.groups.each do |g|
+        next if first_group==g
+        default_profile.group_override_map[self.name + "." + g.name] = self.name + "." + first_group.name
+      end
+    end
+  end
+
+  def auto_merge_top_groups(default_profile)
+    first_group = default_profile.groups[0]
+    gpath = self.name + "." + first_group.name
+    gi = self.group_instance_map[gpath]
+    first_group.component_refs.each { |comp_ref|
+      cpath = self.name + "." + comp_ref.name
+      ci = self.comp_instance_map[cpath]
+      ci.dependencies.each { |cdep|
+        cdepinst = self.comp_instance_map[cdep]
+        ginst = self.group_instance_map[cdepinst.group_instance_name]
+        next if ginst==gi
+        Rails.logger.debug "Auto-merging group #{ginst.name} into #{gi.name}"
+        # merge ginst into gi
+        gi.merge(ginst.cart_name, ginst.profile_name, ginst.group_name, ginst.name, ginst.component_instances)
+        self.group_instance_map[cdepinst.group_instance_name] = gi
+      }
     }
   end
   
