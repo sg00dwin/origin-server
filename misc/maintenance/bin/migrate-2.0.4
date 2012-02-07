@@ -90,7 +90,7 @@ end
 #
 # Migrate applications between 2.0.3 and 2.0.4
 #
-def migrate
+def migrate(continue=false)
   start_time = Time.now.to_i
   puts "Getting all RHLogins..."
   users = []
@@ -171,7 +171,7 @@ def migrate
   thread_groups.each do |thread_group|
     thread_group.each do |node_to_apps|
       node_to_apps.each do |server_identity, apps|
-        write_node_to_file(server_identity, apps, node_to_users)
+        write_node_to_file(server_identity, apps, node_to_users) unless continue
         node_to_apps[server_identity] = nil
       end
     end
@@ -264,13 +264,13 @@ def migrate_node(server_identity)
 end
 
 def migrate_from_file(file)
-  file = File.open(file, "r")
-  begin
-    while (line = file.readline)
+  while true
+    line = File.open(file, &:gets)
+    if line && !line.empty?
       params = line.chomp.split(',')
       server_identity = params[0] 
       framework = params[1]
-      uuid = params[2] 
+      uuid = params[2]
       rhlogin = params[3]
       app_name = params[4]
       migrate_on_node_cmd = "#{__FILE__} '#{server_identity}' '#{framework}' '#{uuid}' '#{rhlogin}' '#{app_name}'"
@@ -282,6 +282,7 @@ def migrate_from_file(file)
         begin
           output = migrate_app_on_node(server_identity, framework, uuid, rhlogin, app_name)
           append_to_file(log_file, output)
+          
           break
         rescue Exception => e
           if i == num_tries
@@ -298,9 +299,10 @@ def migrate_from_file(file)
           end
         end
       end
+      `sed -i '1,1d' #{file}`
+    else
+      break
     end
-  rescue EOFError
-    file.close
   end
 end
 
@@ -350,7 +352,11 @@ def execute_script(cmd, num_tries=1, timeout=28800)
 end
 
 if ARGV.length == 1
-  migrate_from_file(ARGV[0])
+  if ARGV[0] == '--continue'
+    migrate(true)
+  else
+    migrate_from_file(ARGV[0])
+  end
 elsif ARGV.length == 5
   puts migrate_app_on_node(ARGV[0], ARGV[1], ARGV[2], ARGV[3], ARGV[4])
 else
