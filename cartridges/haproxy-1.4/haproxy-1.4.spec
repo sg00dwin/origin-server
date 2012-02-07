@@ -2,7 +2,7 @@
 
 Summary:   Provides haproxy-1.4 support
 Name:      rhc-cartridge-haproxy-1.4
-Version:   0.1
+Version:   0.2
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -82,5 +82,8 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Mon Feb 06 2012 Mike McGrath <mmcgrath@redhat.com> 0.2-1
+- new package built with tito
+
 * Mon Feb 06 2012 Dan McPherson <mmcgrath@redhat.com> 0.1-1
 - Initial packaging
