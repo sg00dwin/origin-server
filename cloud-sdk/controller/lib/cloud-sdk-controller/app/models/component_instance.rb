@@ -41,6 +41,8 @@ class ComponentInstance < Cloud::Sdk::UserModel
 
   def elaborate(app)
     comp,profile,cart = get_component_definition(app)
+
+    self.dependencies = []
     
     # cart map has all the sub-cartridges that will get instantiated through this component instance
     cart_map = get_cartridges_for_dependencies(comp, cart)
@@ -89,6 +91,7 @@ class ComponentInstance < Cloud::Sdk::UserModel
          gi.merge(cart.name, profile.name, g.name, gpath)
        end
        app.group_instance_map[gpath] = gi
+       app.working_group_inst_hash[gpath] = gi
        gi.elaborate(g, self.name, app)
        self.dependencies += gi.component_instances
        gi

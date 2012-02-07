@@ -92,15 +92,10 @@ module Express
         end
       end
       
-
       def create(app, container)
         result = nil
         (1..10).each do |i|
-<<<<<<< HEAD
-          mcoll_reply = execute_direct(@@C_CONTROLLER, 'app-create', "-c '#{app.uuid}' -i '#{app.uid}'")
-=======
-          mcoll_reply = execute_direct(@@C_CONTROLLER, 'configure', "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{container.uuid}'  -i '#{container.uid}'")
->>>>>>> ac5e583... Updating models to improove schems of descriptor in mongo
+          mcoll_reply = execute_direct(@@C_CONTROLLER, 'app-create', "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{container.uuid}'  -i '#{container.uid}'")
           result = parse_result(mcoll_reply)
           if result.exitcode == 129 && has_uid_or_gid?(app.uid) # Code to indicate uid already taken
             destroy(app, container, true)
@@ -114,13 +109,8 @@ module Express
         result
       end
     
-<<<<<<< HEAD
-      def destroy(app, keep_uid=false, uid=nil)
-        result = execute_direct(@@C_CONTROLLER, 'app-destroy', "-c '#{app.uuid}'")
-=======
       def destroy(app, container, keep_uid=false, uid=nil)
-        result = execute_direct(@@C_CONTROLLER, 'deconfigure', "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{container.uuid}'")
->>>>>>> ac5e583... Updating models to improove schems of descriptor in mongo
+        result = execute_direct(@@C_CONTROLLER, 'app-destroy', "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{container.uuid}'")
         result_io = parse_result(result)
         
         uid = container.uid unless uid

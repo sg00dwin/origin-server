@@ -3,7 +3,8 @@ require 'state_machine'
 class Application < Cloud::Sdk::Cartridge
   attr_accessor :user, :creation_time, :uuid, :aliases, 
                 :state, :group_instance_map, :comp_instance_map, :conn_endpoints_list,
-                :domain, :group_override_map
+                :domain, :group_override_map, :working_comp_inst_hash,
+                :working_group_inst_hash
   primary_key :name
   exclude_attributes :user, :comp_instance_map, :group_instance_map
   include_attributes :comp_instances, :group_instances
@@ -410,8 +411,10 @@ class Application < Cloud::Sdk::Cartridge
   def elaborate_descriptor
     self.group_instance_map = {} if group_instance_map.nil?
     self.comp_instance_map = {} if comp_instance_map.nil?
-    self.group_override_map = {} if group_override_map.nil?
-    self.conn_endpoints_list = [] if self.conn_endpoints_list.nil?
+    self.working_comp_inst_hash = {}
+    self.working_group_inst_hash = {}
+    self.group_override_map = {} 
+    self.conn_endpoints_list = [] 
     default_profile = @profile_name_map[@default_profile]
     
     default_profile.group_overrides.each do |n, v|
@@ -430,8 +433,14 @@ class Application < Cloud::Sdk::Cartridge
         gi.merge(self.name, self.default_profile, g.name, gpath)
       end
       self.group_instance_map[gpath] = gi
+      self.working_group_inst_hash[gpath] = gi
       gi.elaborate(g, "", self)
     }
+    # delete entries in {group,comp}_instance_map that do 
+    # not exist in working_{group,comp}_inst_hash
+    self.group_instance_map.delete_if { |k,v| self.working_group_inst_hash[k].nil? }
+    self.comp_instance_map.delete_if { |k,v| self.working_comp_inst_hash[k].nil? }
+    
     # make connection_endpoints out of provided connections
     default_profile.connections.each { |conn|
       inst1 = ComponentInstance::find_component_in_cart(profile, app, conn.components[0], self.name)

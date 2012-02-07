@@ -40,9 +40,11 @@ class GroupInstance < Cloud::Sdk::UserModel
     group_inst_hash = {}
     group.component_refs.each { |comp_ref|
       cpath = (parent_comp_path.empty? ? "" : parent_comp_path + ".") + self.cart_name + "." + comp_ref.name
-      ci = ComponentInstance.new(self.cart_name, self.profile_name, self.group_name, comp_ref.name, cpath, self)
-      self.component_instances << cpath
+      ci = app.comp_instance_map[cpath]
+      ci = ComponentInstance.new(self.cart_name, self.profile_name, self.group_name, comp_ref.name, cpath, self) if ci.nil?
+      self.component_instances << cpath if not self.component_instances.include? cpath
       app.comp_instance_map[cpath] = ci
+      app.working_comp_inst_hash[cpath] = ci
       comp_groups = ci.elaborate(app)
       group_inst_hash[comp_ref.name] = comp_groups
     }
@@ -53,5 +55,10 @@ class GroupInstance < Cloud::Sdk::UserModel
     #   then, make the first three groups of first component also contain
     #   the second component and discard the second component's 3 groups
     #    (to remove groups, erase them from app.comp_instance_map for sure)
+
+    # remove any entries in component_instances that are not part of 
+    # application's working component instance hash, because that indicates
+    # deleted components
+    self.component_instances.delete_if { |cpath| app.working_comp_inst_hash[cpath].nil? }
   end
 end
