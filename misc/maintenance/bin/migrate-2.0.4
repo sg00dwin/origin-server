@@ -361,5 +361,14 @@ if ARGV.length == 1
 elsif ARGV.length == 5
   puts migrate_app_on_node(ARGV[0], ARGV[1], ARGV[2], ARGV[3], ARGV[4])
 else
+  if File.exists?("/tmp/rhc/migration")
+    puts <<-WARNING
+!!!!!!!!!!!!!!!!!!!! EXISTING MIGRATION DATA FOUND !!!!!!!!!!!!!!!!!!!!
+Data from a previous migration exists at /tmp/rhc/migration.  You must 
+either move/remove (Ex: rm -rf /tmp/rhc/migration) that data or pick up
+where it left off with '#{__FILE__} --continue'.
+WARNING
+    exit 1
+  end
   migrate
 end
