@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     cloud-sdk-controller (0.4.1)
-      activesupport (~> 3.0.10)
+      activesupport
       cloud-sdk-common
       json
 
