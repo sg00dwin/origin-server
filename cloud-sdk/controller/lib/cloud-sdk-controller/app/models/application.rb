@@ -15,14 +15,6 @@ class Application < Cloud::Sdk::Cartridge
     notify_observers(:validate_application)
   end
 
-  #backward compat
-  FRAMEWORK_CART_NAMES = ["python-2.6", "jenkins-1.4", "ruby-1.8", "raw-0.1", "php-5.3", "jbossas-7.0", "perl-5.10"]
-  def framework_cartridge  
-    fcart = self.framework
-    return fcart.split('-')[0..-2].join('-') unless fcart.nil?
-    return nil
-  end
-  
   def initialize(user=nil, app_name=nil, uuid=nil, node_profile=nil, framework=nil)
     self.user = user
     from_descriptor({"Name"=>app_name, "Subscribes"=>{"doc-root"=>{"Type"=>"FILESYSTEM:doc-root"}}})
@@ -103,6 +95,10 @@ class Application < Cloud::Sdk::Cartridge
       Rails.logger.debug "Creating application containers"
       group_instances.uniq.each do |ginst|
         app_container = ApplicationContainer.new(self, ginst.node_profile)
+        
+        #backward compat: first containers UUID = app.uuid
+        app_container.uuid = self.uuid if containers_created.size == 0
+        
         containers_created.push app_container
         create_result = app_container.create
         result_io.append create_result
@@ -505,6 +501,13 @@ class Application < Cloud::Sdk::Cartridge
     }
   end
   
+  #backward compat
+  def framework_cartridge  
+    fcart = self.framework
+    return fcart.split('-')[0..-2].join('-') unless fcart.nil?
+    return nil
+  end
+  
   #backward compat: get framework cartridge from all application dependencies
   def framework
     framework_carts = CartridgeCache.cartridge_names('standalone')
@@ -515,7 +518,8 @@ class Application < Cloud::Sdk::Cartridge
     end
     return nil
   end
-  
+
+  #backward compat  
   def application_container
     if self.group_instances.nil?
       self.elaborate_descriptor
