@@ -113,7 +113,7 @@ class MongoDataStoreTest < ActiveSupport::TestCase
     d = district
     uuid = d["uuid"]
     ds.save_district(uuid, d)
-    hostname = `hostname`.chomp + uuid
+    hostname = "node#{uuid}.rhcloud.com"
     ds.add_district_node(uuid, hostname)
     d = ds.find_district(uuid)
     assert(d["server_identities"][hostname]["active"])
@@ -131,10 +131,59 @@ class MongoDataStoreTest < ActiveSupport::TestCase
         
     ds.deactivate_district_node(uuid, hostname)
     d = ds.find_district(uuid)
-    assert(!d["server_identities"][hostname]["active"]) 
+    assert(!d["server_identities"][hostname]["active"])
+      
+    ds.activate_district_node(uuid, hostname)
+    d = ds.find_district(uuid)
+    assert(d["server_identities"][hostname]["active"])
+      
+    ds.deactivate_district_node(uuid, hostname)
+    d = ds.find_district(uuid)
+    assert(!d["server_identities"][hostname]["active"])
  
     ds.remove_district_node(uuid, hostname)
     d = ds.find_district(uuid)  
+    assert(!d["server_identities"][hostname])
+      
+    ds.add_district_node(uuid, hostname)
+    orig_d = ds.find_district(uuid)
+    assert(orig_d["server_identities"][hostname]["active"])
+
+    (1..10).each do |i|
+      hostname_i = "node" + i.to_s + "#{uuid}.rhcloud.com"
+      ds.add_district_node(uuid, hostname_i)
+      d = ds.find_district(uuid)
+      assert(d["server_identities"][hostname_i]["active"])
+      assert(d["server_identities"][hostname]["active"])
+    end
+    
+    d = ds.find_district_with_node(hostname)
+    assert_equal(uuid, d["uuid"])
+    
+    (1..10).each do |i|
+      hostname_i = "node" + i.to_s + "#{uuid}.rhcloud.com"
+      ds.deactivate_district_node(uuid, hostname_i)
+      d = ds.find_district(uuid)
+      assert(!d["server_identities"][hostname_i]["active"])
+      assert(d["server_identities"][hostname]["active"])
+    end
+    
+    (1..10).each do |i|
+      hostname_i = "node" + i.to_s + "#{uuid}.rhcloud.com"
+      ds.remove_district_node(uuid, hostname_i)
+      d = ds.find_district(uuid)
+      assert(!d["server_identities"][hostname_i])
+      assert(d["server_identities"][hostname]["active"])
+    end
+    
+    assert_equal(orig_d, d)
+    
+    ds.deactivate_district_node(uuid, hostname)
+    d = ds.find_district(uuid)
+    assert(!d["server_identities"][hostname]["active"])
+    
+    ds.remove_district_node(uuid, hostname)
+    d = ds.find_district(uuid)
     assert(!d["server_identities"][hostname])
     
     ds.delete_district(uuid)
