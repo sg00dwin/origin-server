@@ -3,7 +3,7 @@ Display-Name: Node v0.6 (noarch)
 Description: Cartridge packaging Node.js support for OpenShift Express
 Version: 0.6.10
 License: ASL 2.0
-Vendor:  
+Vendor:
 Provides:
   - "nodejs"
   - "nodejs (version) = 0.6.10"

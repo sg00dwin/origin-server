@@ -1,9 +1,9 @@
 #!/bin/bash
 #
-#  Destroys a Node instance (Node.js Application).
+# Destroys a Node instance (Node.js Application).
 #
 
-#  Variables.
+# Variables.
 CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
 
 
@@ -15,10 +15,10 @@ function print_help() {
 
 
 #
-#  main():
+# main():
 #
 
-#  Parse arguments.
+# Parse arguments.
 while getopts 'd' OPTION; do
    case $OPTION in
       d)  set -x      ;;
@@ -26,26 +26,26 @@ while getopts 'd' OPTION; do
    esac
 done
 
-#  Ensure arguments.
+# Ensure arguments.
 [ $# -eq 3 ] || print_help
 
-#  Source in common utility functions.
+# Source in common utility functions.
 source ${CART_DIR}/abstract/info/lib/util
 
-#  Deconfigure app.
+# Deconfigure app.
 setup_deconfigure "$1" $2 $3
 
-#  Destroy git repo and stop app.
+# Destroy git repo and stop app.
 destroy_git_repo $application $uuid
 stop_app
 
-#  Confirm stop + no activity in logs.
+# Confirm stop + no activity in logs.
 confirm_pid_gone "${APP_DIR}/run/nodejs.pid"
 confirm_log_files_inactive "$APP_DIR/logs"
 
-#  Blow away the directories.
+# Blow away the directories.
 rm_app_dir
 rm_unobfuscated_app_home $namespace $application
 
-#  And finally, remove virtualhost definition added to Apache.
+# And finally, remove virtualhost definition added to Apache.
 rm_httpd_proxy $uuid $namespace $application
