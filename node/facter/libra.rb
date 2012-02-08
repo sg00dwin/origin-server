@@ -99,18 +99,16 @@ end
 Facter.add(:capacity) do
     git_repos =  Facter.value(:git_repos).to_f
     max_active_apps = Facter.value(:max_active_apps).to_f
-    stopped_app_count =0
+    stopped_app_count = 0
     Dir.glob("/var/lib/libra/*").each { |app_dir|
-        if File.symlink?(app_dir)
-            basename = File.basename(app_dir)
-            app_name = basename.split("-")[0]
-            stop_count = Dir.glob("#{app_dir}/#{app_name}/run/stop_lock").count
-            if stop_count == 1
-                 stopped_app_count = stopped_app_count +1
+        if File.directory?(app_dir)
+            stop_count = Dir.glob("#{app_dir}/*/run/stop_lock").count
+            if stop_count > 0
+                stopped_app_count += 1
             end
         end
     }
-    capacity = ( (git_repos-stopped_app_count) / max_active_apps ) * 100
+    capacity = ( (git_repos - stopped_app_count) / max_active_apps ) * 100
     setcode { capacity.to_s }
 end
 

@@ -170,8 +170,8 @@ class DevEnv < Thor
             run_ssh(hostname, "Site Unit", cmd)
           end
           threads << Thread.new do
-            cmd = "cd li-test/cloud-sdk/controller; rake test"
-            run_ssh(hostname, "Cloud SDK Controller Unit", cmd)
+            cmd = "cd li-test/cloud-sdk/node; rake test"
+            run_ssh(hostname, "Cloud SDK Node Unit", cmd)
           end
           threads << Thread.new do
             cmd = "cd li-test/cloud-sdk/broker; rake test"
