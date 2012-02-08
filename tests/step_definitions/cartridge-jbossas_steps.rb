@@ -95,7 +95,7 @@ Given /^the jbossas service is (running|stopped)$/ do |start_state|
       good_exit = 0
   when 'stopped':
       fix_action = 'stop'
-      good_exit = 0 # was 4 for others
+      good_exit = 0
   end
 
   # check
