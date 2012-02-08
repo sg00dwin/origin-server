@@ -36,6 +36,7 @@ Requires:  rhc-cartridge-rockmongo-1.1
 Requires:  rhc-cartridge-10gen-mms-agent-0.1
 Requires:  rhc-cartridge-postgresql-8.4
 Requires:  rhc-cartridge-cron-1.4
+Requires:  rhc-cartridge-haproxy-1.4
 Requires:  qpid-cpp-server
 Requires:  qpid-cpp-server-ssl
 Requires:  puppet

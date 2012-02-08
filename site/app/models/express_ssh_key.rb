@@ -132,12 +132,20 @@ class ExpressSshKey
     !public_key or public_key == '' or public_key == 'nossh'
   end
 
-  def key_string
+  def to_s
     if not placeholder? and type and public_key
       "#{type} #{public_key}"
     else
       ""
     end
+  end
+
+  def key_string
+    to_s
+  end
+
+  def display_name(max_length=20)
+    shorten(name, max_length)
   end
 
   def as_json(options={})
@@ -192,6 +200,15 @@ class ExpressSshKey
           errors.add :base, json_response['result']
         end
       end
+    end
+  end
+
+  def shorten(str, max_length=20)
+    len = max_length - 3
+    if str and str.length > len
+      str.slice(0, len) + '...'
+    else
+      str
     end
   end
 

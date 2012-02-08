@@ -1,4 +1,4 @@
-policy_module(libra,1.0.31)
+policy_module(libra,1.0.32)
 
 ########################################
 #
@@ -132,6 +132,8 @@ dev_list_sysfs(libra_domain)
 dev_read_rand(libra_domain)
 dev_dontaudit_append_rand(libra_domain)
 dev_dontaudit_write_urand(libra_domain)
+dev_dontaudit_getattr_all_blk_files(libra_domain)
+dev_dontaudit_getattr_all_chr_files(libra_domain)
 
 domain_use_interactive_fds(libra_domain)
 domain_dontaudit_read_all_domains_state(libra_domain)
@@ -321,6 +323,18 @@ corenet_udp_bind_generic_port(httpd_t)
 
 mcs_socket_write_all_levels(httpd_t)
 
+#########
+#
+# Allow binding to localhost for certain daemons
+#
+require {
+    type ntpd_t;
+    type postfix_master_t;
+}
+
+mcs_socket_write_all_levels(ntpd_t)
+mcs_socket_write_all_levels(postfix_master_t)
+
 #################################
 # Potentially dangerous configs #
 #################################
@@ -435,7 +449,7 @@ allow libra_t sshd_t:unix_stream_socket { write read };
 # Programs that libra instances should not be allowed to execute, that I have 
 # see users attempt to execute
 #
-# rpm, yum
+# rpm, yum, debuginfo-install
 # ping, traceroute, iptables, iptables-multi
 # dmesg
 # su, sudo

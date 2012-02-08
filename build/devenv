@@ -152,14 +152,14 @@ class DevEnv < Thor
       puts "Done"
     end
     
-    def test_instance(hostname, instance, conn, options)
+    def test_instance(hostname, instance, conn, options, image_id=nil)
       begin
         if options.unofficial?
           use_private_ip(hostname)
         end
-    
+
         threads = []
-    
+
         unless options.exclude_internal?
           threads << Thread.new do
             cmd = "cd li-test/broker; rake test"
@@ -170,26 +170,28 @@ class DevEnv < Thor
             run_ssh(hostname, "Site Unit", cmd)
           end
           threads << Thread.new do
-            cmd = "cd li-test/cloud-sdk/controller; rake test"
-            run_ssh(hostname, "Cloud SDK Controller Unit", cmd)
+            cmd = "cd li-test/cloud-sdk/node; rake test"
+            run_ssh(hostname, "Cloud SDK Node Unit", cmd)
           end
           threads << Thread.new do
             cmd = "cd li-test/cloud-sdk/broker; rake test"
             run_ssh(hostname, "Cloud SDK Broker Unit", cmd)
           end
         end
-        
+
         threads << Thread.new do
           unless options.exclude_internal?
             cmd = "cucumber -f html --out /tmp/rhc/internals.html -f progress -t @internals li-test/tests/"
             run_ssh(hostname, "Internal", cmd)
           end
+        end
+        threads << Thread.new do
           unless options.exclude_verification?
             cmd = "cucumber -f html --out /tmp/rhc/verfication.html -f progress -t @verify li-test/tests/"
             run_ssh(hostname, "Verification", cmd)
           end
         end
-    
+
         unless options.exclude_web?
           threads << Thread.new do
             sauce_opts = {
@@ -200,48 +202,49 @@ class DevEnv < Thor
               "SAUCE_BROWSER_VERSION" => (options.sauce_browser_version || SAUCE_BROWSER_VERSION),
               "JENKINS_BUILD" => 'unofficial'
             }
-    
+
             # If we passed a jenkins build like name, use that for the build number
             if m = tag.match(/libra_/)
               sauce_opts['JENKINS_BUILD'] = tag
             end
-    
+
             env_string = sauce_opts.keys.map{|k| %Q(#{k}="#{sauce_opts[k]}")}.join(' ')
-    
+
             puts "Running Sauce tests with the following options:"
             puts sauce_opts.to_yaml
-    
+
             cmd = "cd li-test/selenium; #{env_string} ruby ts_web"
             run_ssh(hostname, "Web Selenium", cmd)
           end
         end
-        
+
         threads.each do |t|
           t.join
         end
-    
+
         validate_instance(hostname)
-    
+
         # Download the successful artifacts
         download_artifacts hostname
     
         if !options.unofficial?
+          image_id = image_id ? image_id : instance.image_id
           # Mark the image as verified
-          image = conn.images[instance.image_id]
+          image = conn.images[image_id]
           verify_image(image)
           
           print "Sending QE ready email..."
           begin
-            send_verified_email(instance.image_id, image.name)
+            send_verified_email(image_id, image.name)
           rescue Exception => e
             print "Failed sending email with message: #{e.message}"
           end
         else
           use_public_ip(hostname)
         end
-        
+
         puts "Done"
-    
+
       ensure
         terminate_instance(instance) if options.terminate?
       end
@@ -352,18 +355,20 @@ class DevEnv < Thor
         print "Updating all packages on the system..."
         ssh(hostname, "yum clean metadata; yum update -y --exclude='rhc-devenv'; set -e; yum update -y --exclude='rhc-devenv' --disablerepo=\* --enablerepo=li", 600)
         puts "Done"
-        
+
         validate_instance(hostname)
-        
+
         manifest = rpm_manifest(hostname)
       end
 
+      image_id = nil
       if options.register?
-        register_image(conn, instance, name + '_' + build_num, manifest)
+        image = register_image(conn, instance, name + '_' + build_num, manifest)
+        image_id = image.id
       end
       
       scp_remote_tests(hostname)
-      test_instance(hostname, instance, conn, options)
+      test_instance(hostname, instance, conn, options, image_id)
     ensure
       terminate_instance(instance) if options.terminate?
     end

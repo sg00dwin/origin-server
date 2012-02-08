@@ -12,6 +12,7 @@ gem 'multimap'
 gem 'regin'
 gem 'cloud-sdk-controller'
 gem 'rest-client'
+gem 'thread-dump'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'

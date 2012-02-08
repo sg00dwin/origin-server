@@ -303,6 +303,7 @@ module OpenShift
     def register_image(conn, instance, name, manifest)
       print "Registering AMI..."
       outer_num_retries = 4
+      image = nil
       (1..outer_num_retries).each do |outer_index|
         image = conn.images.create(:instance_id => instance.id, 
           :name => name,
@@ -330,6 +331,7 @@ module OpenShift
         break if image
       end
       puts "Done"
+      image
     end
 
     def terminate_flagged_instances(conn)

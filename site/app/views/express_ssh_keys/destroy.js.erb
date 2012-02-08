@@ -7,7 +7,7 @@
     ajax_response[:status] = 'success'
     ajax_response[:data] = {
       :key_html => render(:partial => 'widgets/ssh_widget'),
-      :ssh => @primary_ssh_key.key_string
+      :ssh => @primary_ssh_key.to_s
     }
   end
 %>

@@ -101,7 +101,7 @@ module Cloud::Sdk
       end
       user_db = con.db(Rails.configuration.cdk[:datastore_mongo][:db])
       user_db.authenticate(Rails.configuration.cdk[:datastore_mongo][:user],
-                            Rails.configuration.cdk[:datastore_mongo][:password])
+                           Rails.configuration.cdk[:datastore_mongo][:password])
       user_db
     end
 
