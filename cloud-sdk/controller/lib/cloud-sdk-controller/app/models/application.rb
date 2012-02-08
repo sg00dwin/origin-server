@@ -551,6 +551,8 @@ class Application < Cloud::Sdk::Cartridge
     cinst = self.comp_instance_map[cpath]
     ComponentInstance::collect_exec_order(self, cinst, self.configure_order)
     ComponentInstance::collect_exec_order(self, cinst, self.start_order)
+    self.configure_order << cpath
+    self.start_order << cpath
   end
 
   def colocate_groups

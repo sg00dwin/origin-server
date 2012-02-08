@@ -24,7 +24,7 @@ class ComponentInstance < Cloud::Sdk::UserModel
     self.group_instance_name = gi.name unless gi.nil?
     self.parent_component_name = compname
     self.dependencies = []
-    self.exec_order
+    self.exec_order = []
   end
 
   def get_component_definition(app)
