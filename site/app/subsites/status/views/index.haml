@@ -1,9 +1,0 @@
-%h1(class="#{header[:class]}") 
-  = header[:message]
-
-%h2 Open Issues
-- @open.each do |issue|
-  = haml :issue, :locals => { :issue => issue }
-%h2 Resolved Issues
-- @resolved.each do |issue|
-  = haml :issue, :locals => { :issue => issue }

@@ -1,8 +1,0 @@
-%ul
-  - (2011..Date.today.year).each do |year|
-    - if Date.today.year == year
-      %li=year
-    - else
-      %li
-        %a{:href => '#'}
-          = year
