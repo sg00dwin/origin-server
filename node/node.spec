@@ -34,6 +34,7 @@ Requires:      libpng-devel
 Requires:      giflib-devel
 Requires:      mod_ssl
 Requires:      haproxy
+Requires:      procmail
 Requires(post):   /usr/sbin/semodule
 Requires(post):   /usr/sbin/semanage
 Requires(postun): /usr/sbin/semodule
