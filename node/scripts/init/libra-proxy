@@ -87,6 +87,25 @@ rollcfg() {
   return 0
 }
 
+
+lockwrap() {
+  lockfile ${cfgfile}.lock
+  oldsum=$( md5sum $cfgfile | awk '{ print $1 }' )
+  "$@"
+  retcode=$?
+  if [ $retcode != 0 ]; then
+    echo "Error: Bad proxy configuration."
+  else
+    newsum=$( md5sum $cfgfile | awk '{ print $1 }' )
+    if [ $oldsum != $newsum ]; then
+      rollcfg
+      retcode=$?
+    fi
+  fi
+  rm -f ${cfgfile}.lock
+  return $retcode
+}
+
 delproxy() {
   # Remove a proxy port from the configuration file
   # Usage delproxy [proxport]
@@ -99,20 +118,6 @@ delproxy() {
 
   sed -i -e '/^listen '"$proxport"':/,/^#End '"$proxport"'/ d' $cfgfile
   return $?
-}
-
-delproxy_r() {
-  lockfile ${cfgfile}.lock
-  delproxy "$1"
-  retcode=$?
-  if [ $retcode != 0 ]; then
-    echo "Error: Bad proxy configuration."
-  else
-    rollcfg
-    retcode=$?
-  fi
-  rm -f ${cfgfile}.lock
-  return $retcode
 }
 
 addproxy() {
@@ -146,33 +151,23 @@ addproxy() {
     fi
   done
 
-  baddr=`getaddr`
+  retval=0
+  if ! grep "^listen $proxport:$dstip:$port" $cfgfile; then
+    baddr=`getaddr`
 
-  delproxy $proxport
+    delproxy $proxport
 
-  cat <<EOF >> $cfgfile
+    cat <<EOF >> $cfgfile
 listen $proxport:$dstip:$port
     mode tcp
     bind $baddr:$proxport
     server $proxport $dstip:$port
 # End $proxport:$dstip:$port
 EOF
-
-  return $?
-}
-
-addproxy_r() {
-  lockfile ${cfgfile}.lock
-  addproxy "$1" "$2" "$3"
-  retcode=$?
-  if [ $retcode != 0 ]; then
-    echo "Error: Bad proxy configuration."
-  else
-    rollcfg
-    retcode=$?
+    retval=$?
   fi
-  rm -f ${cfgfile}.lock
-  return $retcode
+
+  return $retval
 }
 
 start() {
@@ -253,10 +248,10 @@ case "$1" in
         listproxies
         ;;
     delproxy)
-        delproxy_r "$2"
+        lockwrap delproxy "$2"
         ;;
     addproxy)
-        addproxy_r "$2" "$3" "$4"
+        lockwrap addproxy "$2" "$3" "$4"
         ;;
     *)
         echo $"Usage: $0 {start|stop|status|restart|try-restart|reload|force-reload|listproxies|delproxy [proxport]| addproxy [proxport] [ip] [port]}"
