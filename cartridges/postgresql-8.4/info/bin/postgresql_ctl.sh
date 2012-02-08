@@ -11,7 +11,7 @@ export STOPTIMEOUT=10
 
 function _is_service_running() {
    if [ -f $CART_INSTANCE_DIR/pid/postgres.pid ]; then
-      postgres_pid=`$CART_INSTANCE_DIR/pid/postgres.pid 2> /dev/null`
+      postgres_pid=`cat $CART_INSTANCE_DIR/pid/postgres.pid 2> /dev/null`
       myid=`id -u`
       if `ps --pid $postgres_pid 2>&1 | grep postgres > /dev/null 2>&1`  ||  \
          `pgrep -x postgres -u $myid > /dev/null 2>&1`; then
@@ -86,7 +86,7 @@ function _service_restart() {
 #
 # Ensure arguments.
 if ! [ $# -eq 1 ]; then
-    echo "Usage: $0 [start|restart|stop]"
+    echo "Usage: $0 [start|restart|stop|status]"
     exit 1
 fi
 
