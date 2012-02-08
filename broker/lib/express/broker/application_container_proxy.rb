@@ -9,13 +9,12 @@ module Express
   module Broker
     class ApplicationContainerProxy
       @@C_CONTROLLER = 'cloud-sdk-node'
-      attr_accessor :id, :current_capacity, :district, :framework_carts
+      attr_accessor :id, :current_capacity, :district
       
       def initialize(id, current_capacity=nil, district=nil)
         @id = id
         @current_capacity = current_capacity
         @district = district
-        @framework_carts = CartridgeCache.cartridge_names('standalone')
       end
       
       def self.find_available_impl(node_profile=nil, district_uuid=nil)
@@ -156,15 +155,32 @@ module Express
       end
       
       def preconfigure_cartridge(app, gear, cart)
-        run_cartridge_command(cart, app, gear, "preconfigure")
+        if framework_carts.include? cart
+          run_cartridge_command(cart, app, gear, "preconfigure")
+        else
+          #no-op
+          ResultIO.new
+        end
       end
       
       def configure_cartridge(app, gear, cart)
-        run_cartridge_command(cart, app, gear, "configure")
+        if framework_carts.include? cart
+          run_cartridge_command(cart, app, gear, "configure")
+        elsif embedded_carts.include? cart
+          add_component(app,gear,cart)
+        else
+          ResultIO.new
+        end
       end
       
       def deconfigure_cartridge(app, gear, cart)
-        run_cartridge_command(cart, app, gear, "deconfigure")
+        if framework_carts.include? cart
+          run_cartridge_command(cart, app, gear, "deconfigure")
+        elsif embedded_carts.include? cart
+          remove_component(app,gear,cart)
+        else
+          ResultIO.new
+        end        
       end
       
       def get_public_hostname
@@ -188,55 +204,77 @@ module Express
       end
       
       def start(app, gear, cart)
-        if @framework_carts.include?(cart)
+        if framework_carts.include?(cart)
           run_cartridge_command(cart, app, gear, "start")
-        else
+        elsif embedded_carts.include? cart
           start_component(app, gear, cart)
+        else
+          ResultIO.new
         end
       end
       
       def stop(app, gear, cart)
-        if @framework_carts.include?(cart)
+        if framework_carts.include?(cart)
           run_cartridge_command(cart, app, gear, "stop")
-        else
+        elsif embedded_carts.include? cart
           stop_component(app, gear, cart)
+        else
+          ResultIO.new          
         end
       end
       
       def force_stop(app, gear, cart)
-        run_cartridge_command(cart, app, gear, "force-stop")
+        if framework_carts.include?(cart)
+          run_cartridge_command(cart, app, gear, "force-stop")
+        else
+          ResultIO.new          
+        end          
       end
       
       def restart(app, gear, cart)
-        if @framework_carts.include?(cart)
+        if framework_carts.include?(cart)
           run_cartridge_command(cart, app, gear, "restart")
-        else
+        elsif embedded_carts.include? cart
           restart_component(app, gear, cart)
+        else
+          ResultIO.new                  
         end
       end
       
       def reload(app, gear, cart)
-        if @framework_carts.include?(cart)
+        if framework_carts.include?(cart)
           run_cartridge_command(cart, app, gear, "reload")
-        else
+        elsif embedded_carts.include? cart
           reload_component(app, gear, cart)
+        else
+          ResultIO.new          
         end
       end
       
       def status(app, gear, cart)
-        if @framework_carts.include?(cart)
+        if framework_carts.include?(cart)
           run_cartridge_command(cart, app, gear, "status")
-        else
+        elsif embedded_carts.include? cart
           component_status(app, gear, cart)
+        else
+          ResultIO.new          
         end
       end
       
       def tidy(app, gear, cart)
-        run_cartridge_command(cart, app, gear, "tidy")
+        if framework_carts.include?(cart)        
+          run_cartridge_command(cart, app, gear, "tidy") 
+        else
+          ResultIO.new
+        end
       end
       
       def threaddump(app, gear, cart)
-        run_cartridge_command(cart, app, gear, "threaddump")
+        if framework_carts.include?(cart)
+          run_cartridge_command(cart, app, gear, "threaddump")
+        else
+          ResultIO.new
+        end          
       end
       
       def expose_port(app, cart)
@@ -248,11 +286,24 @@ module Express
       end
 
       def add_alias(app, gear, cart, server_alias)
-        run_cartridge_command(cart, app, gear, "add-alias", server_alias)
+        if framework_carts.include?(cart)
+          run_cartridge_command(cart, app, gear, "add-alias", server_alias)
+        else
+          ResultIO.new
+        end
       end
       
       def remove_alias(app, gear, cart, server_alias)
-        run_cartridge_command(cart, app, gear, "remove-alias", server_alias)
+        if framework_carts.include?(cart)        
+          run_cartridge_command(cart, app, gear, "remove-alias", server_alias)
+        else
+          ResultIO.new
+        end
+      end
+      
+      def update_namespace(app, cart, new_ns, old_ns)
+        mcoll_reply = execute_direct(cart, 'update-namespace', "#{app.name} #{new_ns} #{old_ns} #{app.uuid}")
+        parse_result(mcoll_reply)
       end
       
       def move_app(app, destination_container, destination_district_uuid=nil, allow_change_district=false, node_profile=nil)
@@ -508,11 +559,6 @@ module Express
         reply
       end
       
-      def update_namespace(app, cart, new_ns, old_ns)
-        mcoll_reply = execute_direct(cart, 'update-namespace', "#{app.name} #{new_ns} #{old_ns} #{app.uuid}")
-        parse_result(mcoll_reply)
-      end
-      
       #
       # Execute an RPC call for the specified agent.
       # If a server is supplied, only execute for that server.
@@ -559,6 +605,14 @@ module Express
       end
       
       protected
+      
+      def framework_carts
+        @framework_carts ||= CartridgeCache.cartridge_names('standalone')
+      end
+      
+      def embedded_carts
+        @embedded_carts ||= CartridgeCache.cartridge_names('embedded')
+      end
       
       def add_component(app, gear, component)
         reply = ResultIO.new
