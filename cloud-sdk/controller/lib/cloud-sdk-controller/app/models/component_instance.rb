@@ -105,7 +105,11 @@ class ComponentInstance < Cloud::Sdk::UserModel
        gi = app.working_group_inst_hash[mapped_path]
        if gi.nil?
          gi = app.group_instance_map[gpath]
-         gi = GroupInstance.new(app, cart.name, profile.name, g.name, gpath) if gi.nil?
+         if gi.nil?
+           gi = GroupInstance.new(app, cart.name, profile.name, g.name, gpath) 
+         else
+           gi.merge(cart.name, profile.name, g.name, gpath)
+         end
        else
          gi.merge(cart.name, profile.name, g.name, gpath)
        end

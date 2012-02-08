@@ -515,7 +515,11 @@ class Application < Cloud::Sdk::Cartridge
       gi = working_group_inst_hash[mapped_path]
       if gi.nil?
         gi = self.group_instance_map[gpath]
-        gi = GroupInstance.new(self, self.name, self.default_profile, g.name, gpath) if gi.nil?
+        if gi.nil?
+          gi = GroupInstance.new(self, self.name, self.default_profile, g.name, gpath) 
+        else
+          gi.merge(self.name, self.default_profile, g.name, gpath)
+        end
       else
         gi.merge(self.name, self.default_profile, g.name, gpath)
       end
