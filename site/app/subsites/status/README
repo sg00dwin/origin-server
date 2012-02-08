@@ -1,0 +1,6 @@
+This app should allow for status to be viewed from /app/status
+
+It also allows for the status to be updated using the cli.rb file
+
+There is a potential for the file to be locked by whatever user Rails is running as
+If this is the case, the tool may need to be run as root
