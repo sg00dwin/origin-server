@@ -1,7 +1,7 @@
 #!/bin/bash
 if ! [ $# -eq 1 ]
 then
-    echo "Usage: $0 [start|restart|stop]"
+    echo "Usage: $0 [start|restart|stop|status]"
     exit 1
 fi
 
