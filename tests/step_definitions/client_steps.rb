@@ -6,9 +6,11 @@ Given /^an accepted node$/ do
     begin
       pass = `sudo #{accept_node}`.chomp  
       exit_status = $?.exitstatus
-    
-      puts pass if pass != "PASS"
-      puts "Exit status = #{exit_status}" if exit_status != 0
+      
+      if i == num_tries
+        puts pass if pass != "PASS"
+        puts "Exit status = #{exit_status}" if exit_status != 0
+      end
     
       exit_status.should be(0)
       pass.should == "PASS"

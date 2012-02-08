@@ -14,7 +14,6 @@ When /^I create a new namespace OLD$/ do
 end
 
 When /^I make the REST call to delete the namespace$/ do
-  data = '{"rhlogin":"vuvuzuzufuku", "delete":true, "namespace":"vuvuzuzufukuns"}'
-  ec = run("curl -k --key ~/.ssh/libra_id_rsa -d \"json_data=#{data}\" -d \"password=' '\" https://localhost/broker/domain")
+  ec = run("curl -k --data-urlencode \"json_data=#{"{\\\"rhlogin\\\":\\\"vuvuzuzufuku\\\",\\\"delete\\\":true,\\\"namespace\\\":\\\"vuvuzuzufukuns\\\"}"}\" -d \"password=' '\" https://localhost/broker/domain")
   ec.should be == 0
 end
