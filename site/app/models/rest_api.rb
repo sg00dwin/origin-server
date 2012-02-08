@@ -86,12 +86,12 @@ class RestApi < ActiveResource::Base
       headers
     end
 
-    def request(*arguments)
+    #def request(*arguments)
       #puts "request\n#{arguments.inspect}"
-      resp = super
+      #resp = super
       #puts "response\n#{resp.inspect}"
-      resp
-    end
+      #resp
+    #end
 
     #
     # Changes made in commit https://github.com/rails/rails/commit/51f1f550dab47c6ec3dcdba7b153258e2a0feb69#activeresource/lib/active_resource/base.rb
