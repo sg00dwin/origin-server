@@ -82,7 +82,7 @@ function remove_port {
             exit 0
         fi
     done
-    echo "Port not found!" 1>&2
+    client_error "Port not found!"
     exit 67
 }
 
@@ -107,13 +107,12 @@ function remove_ports {
         if [ -z "${OPENSHIFT_PUB_PORT[$proxy_port]}" ]
         then
             remove_port $uuid "$OPENSHIFT_INTERNAL_IP:$OPENSHIFT_INTERNAL_PORT"
-            echo "Found new port: $proxy_port"
             echo "OPENSHIFT_PUB_PORT[$proxy_port]='$OPENSHIFT_INTERNAL_IP:$OPENSHIFT_INTERNAL_PORT'" > $APP_HOME/.env/OPENSHIFT_${proxy_port}_PUB_PORT
             echo "export OPENSHIFT_PUB_PORT" >> $APP_HOME/.env/OPENSHIFT_${proxy_port}_PUB_PORT
             exit 0
         fi
     done
-    echo "All ports are taken, cannot add more" 1>&2
+    client_error "All ports are taken, cannot add more"
     exit 67
 }
 
