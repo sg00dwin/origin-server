@@ -440,6 +440,10 @@ class Application < Cloud::Sdk::Cartridge
     self.cart_data = {} if @cart_data.nil?
     
     raise Cloud::Sdk::UserException.new("#{dep} already embedded in '#{@name}'", 101) if self.embedded.include? dep
+
+    self.requires_feature << dep
+    self.elaborate_descriptor
+
     c_reply,component_details = self.container.add_component(self, dep)
     reply.append c_reply
     self.cart_data[dep] = { "info" => component_details }
@@ -503,18 +507,15 @@ class Application < Cloud::Sdk::Cartridge
     self.conn_endpoints_list = [] 
     default_profile = @profile_name_map[@default_profile]
     
-    default_profile.group_overrides.each do |n, v|
-      from = self.name + "." + n
-      to = self.name + "." + v
-      self.group_override_map[from] = to
-    end
+    generate_group_overrides(default_profile)
 
     default_profile.groups.each { |g|
       gpath = self.name + "." + g.name
       mapped_path = group_override_map[gpath] || ""
-      gi = group_instance_map[mapped_path]
+      gi = working_group_inst_hash[mapped_path]
       if gi.nil?
-        gi = GroupInstance.new(self, self.name, self.default_profile, g.name, gpath)
+        gi = self.group_instance_map[gpath]
+        gi = GroupInstance.new(self, self.name, self.default_profile, g.name, gpath) if gi.nil?
       else
         gi.merge(self.name, self.default_profile, g.name, gpath)
       end
@@ -537,6 +538,9 @@ class Application < Cloud::Sdk::Cartridge
     # check self.group_instance_map for group instances
     # check self.conn_endpoints_list for list of connection endpoints (fully resolved)
 
+    # auto merge top groups
+    auto_merge_top_groups(default_profile)
+
     # resolve group co-locations
     colocate_groups
   end
@@ -550,8 +554,9 @@ class Application < Cloud::Sdk::Cartridge
         ginst2 = self.group_instance_map[cinst2.group_instance_name]
         next if ginst1==ginst2
         # these two group instances need to be colocated
-        ginst1.merge(ginst2.cart_name, ginst2.profile_name, ginst2.group_name, ginst2.name, ginst2.component_instances)
-        self.group_instance_map[cinst2.group_instance_name] = ginst1
+        #ginst1.merge(ginst2.cart_name, ginst2.profile_name, ginst2.group_name, ginst2.name, ginst2.component_instances)
+        ginst1.merge(ginst2)
+        self.group_instance_map[conn.to_comp_inst.group_instance_name] = ginst1
       end
     }
   end
@@ -568,7 +573,7 @@ class Application < Cloud::Sdk::Cartridge
       first_group = default_profile.groups[0]
       default_profile.groups.each do |g|
         next if first_group==g
-        default_profile.group_override_map[self.name + "." + g.name] = self.name + "." + first_group.name
+        self.group_override_map[self.name + "." + g.name] = self.name + "." + first_group.name
       end
     end
   end
@@ -586,7 +591,8 @@ class Application < Cloud::Sdk::Cartridge
         next if ginst==gi
         Rails.logger.debug "Auto-merging group #{ginst.name} into #{gi.name}"
         # merge ginst into gi
-        gi.merge(ginst.cart_name, ginst.profile_name, ginst.group_name, ginst.name, ginst.component_instances)
+        #gi.merge(ginst.cart_name, ginst.profile_name, ginst.group_name, ginst.name, ginst.component_instances)
+        gi.merge(ginst)
         self.group_instance_map[cdepinst.group_instance_name] = gi
       }
     }

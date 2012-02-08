@@ -13,6 +13,20 @@ class GroupInstance < Cloud::Sdk::UserModel
     self.reused_by = []
   end
 
+  def merge(ginst)
+    reused = [self.name, self.cart_name, self.profile_name, self.group_name]
+    self.reused_by << reused
+    self.name = ginst.name
+    self.cart_name = ginst.cart_name
+    self.profile_name = ginst.profile_name
+    self.group_name = ginst.group_name
+    self.component_instances = (self.component_instances + ginst.component_instances).uniq unless ginst.component_instances.nil?
+    if not ginst.gears.nil?
+      self.gears = [] if self.gears.nil?
+      self.gears = self.gears + ginst.gears
+    end
+  end
+
   def merge(cartname, profname, groupname, path, comp_instance_list=nil)
     reused = [self.name, self.cart_name, self.profile_name, self.group_name]
     self.reused_by << reused

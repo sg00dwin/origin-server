@@ -85,9 +85,10 @@ class ComponentInstance < Cloud::Sdk::UserModel
     group_list = profile.groups.map do |g|
        gpath = self.name + "." + cart.name + "." + g.name
        mapped_path = app.group_override_map[gpath] || ""
-       gi = app.group_instance_map[mapped_path]
+       gi = app.working_group_inst_hash[mapped_path]
        if gi.nil?
-         gi = GroupInstance.new(app, cart.name, profile.name, g.name, gpath)
+         gi = app.group_instance_map[gpath]
+         gi = GroupInstance.new(app, cart.name, profile.name, g.name, gpath) if gi.nil?
        else
          gi.merge(cart.name, profile.name, g.name, gpath)
        end
