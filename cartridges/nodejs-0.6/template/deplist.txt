@@ -1,0 +1,8 @@
+#
+#  This file contains a list of Node modules (one per line) to install
+#  alongside your app ("locally") on the OpenShift environment.
+#
+
+#  Any blank lines or lines starting with a hash (#) are ignored.
+#  E.g. uncomment the next line to install express
+#express
