@@ -43,3 +43,13 @@ group :development, :test do
   gem 'mocha', :require => nil
   gem 'hpricot'
 end
+
+gem 'sinatra'
+gem 'datamapper'
+gem 'dm-sqlite-adapter'
+gem 'dm-validations'
+gem 'dm-migrations'
+gem 'dm-timestamps'
+gem 'haml'
+gem 'rack'
+gem 'thor'

@@ -231,6 +231,14 @@ module Express
         run_cartridge_command(cart, app, "threaddump")
       end
       
+      def expose_port(app, cart)
+        run_cartridge_command(cart, app, "expose-port")
+      end
+
+      def conceal_port(app, cart)
+        run_cartridge_command(cart, app, "conceal-port")
+      end
+
       def add_alias(app, cart, server_alias)
         run_cartridge_command(cart, app, "add-alias", server_alias)
       end

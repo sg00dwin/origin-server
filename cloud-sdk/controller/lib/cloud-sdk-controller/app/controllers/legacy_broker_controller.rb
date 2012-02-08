@@ -227,6 +227,12 @@ class LegacyBrokerController < ApplicationController
     when 'threaddump'
       app = get_app_from_request(user)
       @reply.append app.threaddump
+    when 'expose-port'
+      app = get_app_from_request(user)
+      @reply.append app.expose_port
+    when 'conceal-port'
+      app = get_app_from_request(user)
+      @reply.append app.conceal_port
     else
       raise Cloud::Sdk::UserException.new("Invalid action #{@req.action}", 111)
     end
