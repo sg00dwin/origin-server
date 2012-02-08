@@ -41,4 +41,9 @@ ROCKMONGO_CTL_SCRIPT="$ROCKMONGO_DIR/${application}_rockmongo_ctl.sh"
 ADDRESS="$(awk '/Listen/{ print $2 }' $ROCKMONGO_DIR/conf.d/libra.conf)"
 URL="http://$ADDRESS/rockmongo"
 
-runuser --shell /bin/sh "$uuid" -c "/usr/bin/wget -qO- $URL >> /dev/null ; if [ \$? -ne 0 ]; then echo Stopped; else echo Running; fi"
+if output=$(runuser --shell /bin/sh "$uuid" -c "/usr/bin/wget -qO- $URL >> /dev/null ; if [ \$? -ne 0 ]; then echo Stopped; else echo Running; fi" 2>&1)
+then
+    status_client_result "$output"
+else
+    client_result "RockMongo is either stopped or inaccessible"
+fi

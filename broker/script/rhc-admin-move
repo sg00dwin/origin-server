@@ -3,7 +3,6 @@
 require "/var/www/libra/broker/config/environment"
 require 'getoptlong'
 require 'mcollective'
-require 'open-uri'
 
 include MCollective::RPC
 
@@ -79,20 +78,6 @@ url = "http://#{app.name}-#{app.user.namespace}.#{Rails.configuration.cdk[:domai
 puts "URL: #{url}"
 puts "Login: #{app.user.login}"
 puts "App UUID: #{app.uuid}"
-
-begin
-    open(url) do |resp|
-        puts
-        puts "Status Code: #{resp.status[0]} - #{resp.status[1]}"
-        puts
-        puts "####################### Body Begin ###########################"
-        puts resp.read
-        puts "######################## Body End ############################\n"
-    end
-rescue Exception => e
-    puts
-    puts "Error accessing URL: #{e.message}"
-end
 
 destination_container = nil
 destination_container = Cloud::Sdk::ApplicationContainerProxy.instance(options[:target_server_identity]) if options[:target_server_identity]

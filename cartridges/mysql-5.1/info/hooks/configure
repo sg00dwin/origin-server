@@ -114,7 +114,7 @@ grant all on *.* to 'admin'@'$IP' identified by '$password' with grant option;
 flush privileges;" | mysql -u root -S "${MYSQL_DIR}/socket/mysql.sock" mysql > /dev/null || error "Failed to setup initial root user" 187
 
 client_result ""
-client_result "Mysql 5.1 database added.  Please make note of these credentials:"
+client_result "MySQL 5.1 database added.  Please make note of these credentials:"
 client_result ""
 client_result "   Root User: admin"
 client_result "   Root Password: $password"
@@ -122,6 +122,6 @@ client_result "   Database Name: ${application}"
 client_result ""
 client_result "Connection URL: mysql://$IP:3306/"
 client_result ""
-client_result "You can manage your new Mysql database by also embedding phpmyadmin-3.4."
+client_result "You can manage your new MySQL database by also embedding phpmyadmin-3.4."
 
 set_app_info "Connection URL: mysql://$IP:3306/"
