@@ -458,6 +458,10 @@ class Application < Cloud::Sdk::Cartridge
     self.embedded = {} unless self.embedded
         
     raise Cloud::Sdk::UserException.new("#{dep} not embedded in '#{@name}', try adding it first", 101) unless self.embedded.include? dep
+
+    self.requires_feature.delete(dep)
+    self.elaborate_descriptor
+
     reply.append self.container.remove_component(self, dep)
     self.embedded.delete dep
     self.save
