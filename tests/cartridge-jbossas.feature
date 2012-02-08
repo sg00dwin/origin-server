@@ -1,7 +1,7 @@
 @internals
 Feature: JBossAS Application
 
-   Scenario: Create one JBoss AS Application
+   Scenario: Create Delete one JBoss AS Application
      Given an accepted node
      And a new guest account
      When I configure a jbossas application
@@ -21,11 +21,6 @@ Feature: JBossAS Application
      And a jbossas application http proxy directory will exist
      And a jbossas daemon will be running
      And the jbossas daemon log files will exist
-
-   Scenario: Delete one JBoss AS Application
-     Given an accepted node
-     And a new guest account
-     And a new jbossas application
      When I deconfigure the jbossas application
      Then a jbossas application http proxy file will not exist
      Then a jbossas application directory will not exist
@@ -33,29 +28,19 @@ Feature: JBossAS Application
      And a jbossas source tree will not exist
      And the maven repository will not exist
      #And the openshift environment variable files will not exist
-     And a jbossas daemon will not be running
+     And a jbossas daemon will not be running     
 
-   Scenario: Start a JBoss AS Application
-     Given an accepted node
-     And a new guest account
-     And a new jbossas application
-     And the jbossas service is stopped
-     When I start the jbossas service
-     Then a jbossas daemon will be running
-
-   Scenario: Stop a JBoss AS Application
+   Scenario: Stop Start Restart a JBoss AS Application
      Given an accepted node
      And a new guest account
      And a new jbossas application
      And the jbossas service is running
      When I stop the jbossas service
      Then a jbossas daemon will not be running
-
-   Scenario: Restart a JBoss AS Application
-     Given an accepted node
-     And a new guest account
-     And a new jbossas application
-     And the jbossas service is running
+     And the jbossas service is stopped
+     When I start the jbossas service
+     Then a jbossas daemon will be running
      When I restart the jbossas service
      Then a jbossas daemon will be running
+     
 

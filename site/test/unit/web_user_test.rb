@@ -22,4 +22,9 @@ class WebUserTest < ActiveSupport::TestCase
     WebUser.any_instance.expects(:establish)
     user = WebUser.find_by_ticket("1234")
   end
+
+  test "login and rhlogin are identical" do
+    user = WebUser.new(:rhlogin => 'bob')
+    assert_equal user.rhlogin, user.login
+  end
 end

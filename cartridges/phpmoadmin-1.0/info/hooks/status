@@ -41,4 +41,9 @@ PHPMOADMIN_CTL_SCRIPT="$PHPMOADMIN_DIR/${application}_phpmoadmin_ctl.sh"
 ADDRESS="$(awk '/Listen/{ print $2 }' $PHPMOADMIN_DIR/conf.d/libra.conf)"
 URL="http://$ADDRESS/phpmoadmin"
 
-runuser --shell /bin/sh "$uuid" -c "/usr/bin/wget -qO- $URL >> /dev/null ; if [ \$? -ne 0 ]; then echo Stopped; else echo Running; fi"
+if output=$(runuser --shell /bin/sh "$uuid" -c "/usr/bin/wget -qO- $URL >> /dev/null ; if [ \$? -ne 0 ]; then echo Stopped; else echo Running; fi" 2>&1)
+then
+    status_client_result "$output"
+else
+    client_result "PHPMoAdmin is either stopped or inaccessible"
+fi

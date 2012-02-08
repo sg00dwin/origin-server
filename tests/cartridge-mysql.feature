@@ -23,25 +23,7 @@ Feature: MySQL Application Sub-Cartridge
     |type|
     |php|
     
-  Scenario Outline: Start Restart a MySQL database
-    Given an accepted node
-    And a new guest account
-    And a new <type> application
-    And a new mysql database
-    And the mysql daemon is stopped
-    When I start the mysql database
-    Then the mysql daemon will be running
-    When I restart the mysql database
-    Then the mysql daemon will be running
-    And the mysql daemon pid will be different
-    And I deconfigure the mysql database
-
-  Scenarios: Start Restart a MySQL database scenarios
-    |type|
-    |php|
-    
-
-  Scenario Outline: Stop a MySQL database
+  Scenario Outline: Stop Start Restart a MySQL database
     Given an accepted node
     And a new guest account
     And a new <type> application
@@ -49,9 +31,14 @@ Feature: MySQL Application Sub-Cartridge
     And the mysql daemon is running
     When I stop the mysql database
     Then the mysql daemon will not be running
+    When I start the mysql database
+    Then the mysql daemon will be running
+    When I restart the mysql database
+    Then the mysql daemon will be running
+    And the mysql daemon pid will be different
     And I deconfigure the mysql database
 
-  Scenarios: Stop a MySQL database scenarios
+  Scenarios: Stop Start Restart a MySQL database scenarios
     |type|
     |php|
 

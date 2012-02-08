@@ -444,4 +444,29 @@ function unobfuscate_app_home {
     fi
 }
 
+function send_stopped_status {
+    if [ -f $APP_DIR/run/stop_lock ]
+    then
+        HTTP_DIR=`dirname "/etc/httpd/conf.d/libra/${uuid}"*/00000_default.conf`
+        if [ -f $HTTP_DIR/0000000000000_disabled.conf ]
+        then
+            send_status "ALREADY_IDLED"
+        else
+            send_status "ALREADY_STOPPED"
+        fi
+    fi
+}
+
+function status_client_result {
+    output=$1
+    IFS_BAK=$IFS
+IFS="
+"
+    for line in $output
+    do
+        client_result "$line"
+    done
+    IFS=$IFS_BAK
+}
+
 

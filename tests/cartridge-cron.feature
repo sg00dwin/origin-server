@@ -1,7 +1,7 @@
 @internals
 Feature: cron Embedded Cartridge
 
-  Scenario Outline: Add cron to one application
+  Scenario Outline: Add Remove cron to one application
     Given an accepted node
     And a new guest account
     And a new <type> application
@@ -11,17 +11,6 @@ Feature: cron Embedded Cartridge
     And the cron log directory will exist
     And the cron run directory will exist
     And cron jobs will be enabled
-
-  Scenarios: Add cron to one Application Scenarios
-    |type|
-    |php|
-
-
-  Scenario Outline: Remove cron from one Application
-    Given an accepted node
-    And a new guest account
-    And a new <type> application
-    And a new cron
     When I deconfigure cron
     Then the cron directory will not exist
     And the cron control script will not exist
@@ -29,26 +18,11 @@ Feature: cron Embedded Cartridge
     And the cron run directory will not exist
     And cron jobs will not be enabled
 
-  Scenarios: Remove cron from one Application Scenarios
+  Scenarios: Add Remove cron to one Application Scenarios
     |type|
     |php|
 
-
-  Scenario Outline: Start cron
-    Given an accepted node
-    And a new guest account
-    And a new <type> application
-    And a new cron
-    And cron is stopped
-    When I start cron
-    Then cron jobs will be enabled
-
-  Scenarios: Start cron scenarios
-    |type|
-    |php|
-
-
-  Scenario Outline: Stop cron
+  Scenario Outline: Stop Start Restart cron
     Given an accepted node
     And a new guest account
     And a new <type> application
@@ -56,21 +30,13 @@ Feature: cron Embedded Cartridge
     And cron is running
     When I stop cron
     Then cron jobs will not be enabled
-
-  Scenarios: Stop cron scenarios
-    |type|
-    |php|
-
-
-  Scenario Outline: Restart cron
-    Given an accepted node
-    And a new guest account
-    And a new <type> application
-    And a new cron
+    And cron is stopped
+    When I start cron
+    Then cron jobs will be enabled
     And cron is running
     When I restart cron
     Then cron jobs will be enabled
 
-  Scenarios: Restart cron scenarios
+  Scenarios: Stop Start Restart cron scenarios
     |type|
     |php|

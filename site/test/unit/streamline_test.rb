@@ -355,4 +355,8 @@ class StreamlineTest < ActiveSupport::TestCase
     assert_equal 1, @streamline.errors.length
     assert_equal I18n.t(:service_error, :scope => :streamline), @streamline.errors[:base].first
   end
+
+  test "cookie initializes" do
+    assert_equal "hi=value", Streamline::Cookie.new("hi", "value").to_s
+  end
 end
