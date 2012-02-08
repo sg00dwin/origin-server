@@ -46,7 +46,7 @@ fixaddr() {
 
 listproxies() {
   # List out the defined proxies
-  sed -n -r -e 's/^listen ([0-9]+:[0-9\.]+\:[0-9])/\1/; t yi; d; : yi p' $cfgfile
+  sed -n -r -e 's/^listen ([0-9]+):([0-9\.]+):([0-9])/\1 \2 \3/; t yi; d; : yi p' $cfgfile
 }
 
 
