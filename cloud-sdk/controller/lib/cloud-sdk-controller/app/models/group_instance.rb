@@ -53,10 +53,12 @@ class GroupInstance < Cloud::Sdk::UserModel
 
   def elaborate(group, parent_comp_path, app)
     group_inst_hash = {}
+    new_components = []
     group.component_refs.each { |comp_ref|
       cpath = (parent_comp_path.empty? ? "" : parent_comp_path + ".") + self.cart_name + "." + comp_ref.name
       #ci = app.comp_instance_map[cpath]
       ci = ComponentInstance.new(self.cart_name, self.profile_name, self.group_name, comp_ref.name, cpath, self)
+      new_components << cpath
       self.component_instances << cpath if not self.component_instances.include? cpath
       app.comp_instance_map[cpath] = ci
       app.working_comp_inst_hash[cpath] = ci
@@ -75,5 +77,6 @@ class GroupInstance < Cloud::Sdk::UserModel
     # application's working component instance hash, because that indicates
     # deleted components
     self.component_instances.delete_if { |cpath| app.working_comp_inst_hash[cpath].nil? }
+    new_components
   end
 end

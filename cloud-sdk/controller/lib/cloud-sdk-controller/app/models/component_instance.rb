@@ -115,8 +115,8 @@ class ComponentInstance < Cloud::Sdk::UserModel
        end
        app.group_instance_map[gpath] = gi
        app.working_group_inst_hash[gpath] = gi
-       gi.elaborate(g, self.name, app)
-       self.dependencies += gi.component_instances
+       sub_components = gi.elaborate(g, self.name, app)
+       self.dependencies += sub_components
        gi
     end
 
