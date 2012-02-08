@@ -184,6 +184,8 @@ class DevEnv < Thor
             cmd = "cucumber -f html --out /tmp/rhc/internals.html -f progress -t @internals li-test/tests/"
             run_ssh(hostname, "Internal", cmd)
           end
+        end
+        threads << Thread.new do
           unless options.exclude_verification?
             cmd = "cucumber -f html --out /tmp/rhc/verfication.html -f progress -t @verify li-test/tests/"
             run_ssh(hostname, "Verification", cmd)

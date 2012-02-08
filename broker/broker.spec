@@ -50,7 +50,6 @@ touch %{buildroot}%{brokerdir}/log/production.log
 mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-domain %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-app %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-cartridge-do %{buildroot}/%{_bindir}
-mv %{buildroot}%{brokerdir}/script/rhc-admin-deconfigure-on-node %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-move %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-district %{buildroot}/%{_bindir}
 
@@ -73,7 +72,6 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0750,-,-) %{_bindir}/rhc-admin-ctl-domain
 %attr(0750,-,-) %{_bindir}/rhc-admin-ctl-app
 %attr(0750,-,-) %{_bindir}/rhc-admin-cartridge-do
-%attr(0750,-,-) %{_bindir}/rhc-admin-deconfigure-on-node
 %attr(0750,-,-) %{_bindir}/rhc-admin-move
 %attr(0750,-,-) %{_bindir}/rhc-admin-ctl-district
 

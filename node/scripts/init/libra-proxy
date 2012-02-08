@@ -1,0 +1,264 @@
+#!/bin/sh
+#
+# libra-proxy
+#
+# chkconfig:   345 85 15
+# description:  HAProxy is a free, very fast and reliable solution \
+#               offering high availability, load balancing, and \
+#               proxying for TCP and  HTTP-based applications
+# processname: haproxy
+# config:      /etc/libra/libra-proxy.cfg
+# pidfile:     /var/run/libra-proxy.pid
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+# Source networking configuration.
+. /etc/sysconfig/network
+
+# Check that networking is up.
+[ "$NETWORKING" = "no" ] && exit 0
+
+exec="/usr/sbin/haproxy"
+prog=$(basename $exec)
+
+[ -e /etc/sysconfig/libra-proxy ] && . /etc/sysconfig/libra-proxy
+
+lockfile=/var/lock/subsys/libra-proxy
+pidfile=/var/run/libra-proxy.pid
+cfgfile=/etc/libra/libra-proxy.cfg
+
+
+check() {
+    $exec -c -V -f $cfgfile
+}
+
+getaddr() {
+  ip -4 addr show dev eth0 scope global | sed -r -n '/inet/ { s/^.*inet ([0-9\.]+).*/\1/; p }' | head -1
+}
+
+fixaddr() {
+    # Fix eth0's address in case it was changed by the cloud provider
+    baddr=`getaddr`
+    sed -i -r -e '/^[^\#]*bind/ { /127\.[0-9\.]+:/ b; s/([0-9\.]+):/'"$baddr"':/ }' $cfgfile
+}
+
+
+listproxies() {
+  # List out the defined proxies
+  sed -n -r -e 's/^listen ([0-9]+):([0-9\.]+):([0-9])/\1 \2 \3/; t yi; d; : yi p' $cfgfile
+}
+
+
+rollcfg() {
+  # If proxy is running, roll the configuration and block till done
+  if [ -f $lockfile ]; then
+
+    $exec -c -q -f $cfgfile
+    if [ $? -ne 0 ]; then
+      echo "Error: Proxy configuration is corrupt."
+      return 1
+    fi
+
+    oldpid=$( cat $pidfile )
+
+    if ! [ "/proc/$oldpid/exe" -ef "$exec"  ]; then
+      echo "libra-proxy has crashed."
+      return 1
+    fi
+
+    $exec -D -f $cfgfile -p $pidfile -sf "$oldpid"
+    retv=$?
+    if [ $retv != 0 ]; then
+      echo "libra-proxy failed to start"
+      return 1
+    fi
+
+    while [ "/proc/$oldpid/exe" -ef "$exec" ]; do
+      usleep 500000
+    done
+
+    newpid=$( cat $pidfile )
+    if [ $newpid == $oldpid ]; then
+      echo "libra-proxy failed to update"
+      return 1
+    fi
+  fi
+  return 0
+}
+
+delproxy() {
+  # Remove a proxy port from the configuration file
+  # Usage delproxy [proxport]
+  proxport="$1"
+
+  if ! [ "$proxport" -ge 16384 -a "$proxport" -le 65535 ]; then
+    # also catch non-numeric args
+    return 1
+  fi
+
+  sed -i -e '/^listen '"$proxport"':/,/^#End '"$proxport"'/ d' $cfgfile
+  return $?
+}
+
+delproxy_r() {
+  lockfile ${cfgfile}.lock
+  delproxy "$1"
+  retcode=$?
+  if [ $retcode != 0 ]; then
+    echo "Error: Bad proxy configuration."
+  else
+    rollcfg
+    retcode=$?
+  fi
+  rm -f ${cfgfile}.lock
+  return $retcode
+}
+
+addproxy() {
+  # Add a proxy port to the configuration file overwriting
+  # any existing proxy defined for the same port.
+  # Usage addproxy [proxport] [ip] [port]
+  proxport="$1"
+  dstip="$2"
+  port="$3"
+
+  if ! [ "$proxport" -ge 16384 -a "$proxport" -le 65535 ]; then
+    echo "Proxy port must be an integer between 16384 and 65535"
+    return 1
+  fi
+
+  if ! [ "$port" -ge 1 -a "$port" -le 65535 ]; then
+    echo "Dest port must be an integer between 16384 and 65535"
+    return 1
+  fi
+
+  ipbytes=( `echo "$dstip" | sed -e 's/\./ /g'` )
+  if [ ${#ipbytes} -ne 3 ]; then
+    echo "Dest addr must be a valid IP address."
+    return 1
+  fi
+
+  for byt in "${ipbytes[@]}"; do
+    if ! [ "$byt" -ge 0 -a "$byt" -le 255 ]; then
+      echo "Dest addr must be a valid IP address."
+      return 1
+    fi
+  done
+
+  baddr=`getaddr`
+
+  delproxy $proxport
+
+  cat <<EOF >> $cfgfile
+listen $proxport:$dstip:$port
+    mode tcp
+    bind $baddr:$proxport
+    server $proxport $dstip:$port
+# End $proxport:$dstip:$port
+EOF
+
+  return $?
+}
+
+addproxy_r() {
+  lockfile ${cfgfile}.lock
+  addproxy "$1" "$2" "$3"
+  retcode=$?
+  if [ $retcode != 0 ]; then
+    echo "Error: Bad proxy configuration."
+  else
+    rollcfg
+    retcode=$?
+  fi
+  rm -f ${cfgfile}.lock
+  return $retcode
+}
+
+start() {
+    fixaddr
+    $exec -c -q -f $cfgfile
+    if [ $? -ne 0 ]; then
+        echo "Errors in configuration file, check with libra-proxy check."
+        return 1
+    fi
+ 
+    echo -n $"Starting libra-proxy: "
+    # start it up here, usually something like "daemon $exec"
+    daemon --pidfile $pidfile $exec -D -f $cfgfile -p $pidfile
+    retval=$?
+    echo
+    [ $retval -eq 0 ] && touch $lockfile
+    return $retval
+}
+
+stop() {
+    echo -n $"Stopping libra-proxy: "
+    # stop it here, often "killproc $prog"
+    killproc -p $pidfile $prog 
+    retval=$?
+    echo
+    [ $retval -eq 0 ] && rm -f $lockfile
+    return $retval
+}
+
+restart() {
+    $exec -c -q -f $cfgfile
+    if [ $? -ne 0 ]; then
+        echo "Errors in configuration file, check with libra-proxy check."
+        return 1
+    fi
+    stop
+    start
+}
+
+reload() {
+    $exec -c -q -f $cfgfile
+    if [ $? -ne 0 ]; then
+        echo "Errors in configuration file, check with libra-proxy check."
+        return 1
+    fi
+    echo -n $"Reloading libra-proxy: "
+    $exec -D -f $cfgfile -p $pidfile -sf $(cat $pidfile)
+    retval=$?
+    echo
+    return $retval
+}
+
+force_reload() {
+    restart
+}
+
+fdr_status() {
+    status -p $pidfile $prog
+}
+
+case "$1" in
+    start|stop|restart|reload)
+        $1
+        ;;
+    force-reload)
+        force_reload
+        ;;
+    check)
+        check
+        ;;
+    status)
+        fdr_status
+        ;;
+    condrestart|try-restart)
+  	[ ! -f $lockfile ] || restart
+	;;
+    listproxies)
+        listproxies
+        ;;
+    delproxy)
+        delproxy_r "$2"
+        ;;
+    addproxy)
+        addproxy_r "$2" "$3" "$4"
+        ;;
+    *)
+        echo $"Usage: $0 {start|stop|status|restart|try-restart|reload|force-reload|listproxies|delproxy [proxport]| addproxy [proxport] [ip] [port]}"
+        exit 2
+esac
