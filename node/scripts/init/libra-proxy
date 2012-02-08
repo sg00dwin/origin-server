@@ -69,9 +69,12 @@ rollcfg() {
 
     $exec -D -f $cfgfile -p $pidfile -sf "$oldpid"
     retv=$?
-    nrunning=$( fuser /usr/sbin/haproxy 2>/dev/null | wc -w )
-    while [ $nrunning -gt 1 ]; do
-      nrunning=$( fuser /usr/sbin/haproxy 2>/dev/null | wc -w )
+    if [ $retv != 0 ]; then
+      echo "libra-proxy failed to start"
+      return 1
+    fi
+
+    while [ "/proc/$oldpid/exe" -ef "$exec" ]; do
       usleep 500000
     done
 
