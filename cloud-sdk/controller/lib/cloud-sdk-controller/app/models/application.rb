@@ -544,12 +544,14 @@ class Application < Cloud::Sdk::Cartridge
   def colocate_groups
     self.conn_endpoints_list.each { |conn|
       if conn.from_connector.type.match(/^FILESYSTEM/) or conn.from_connector.type.match(/^AFUNIX/)
-        ginst1 = self.group_instance_map[conn.from_comp_inst.group_instance_name]
-        ginst2 = self.group_instance_map[conn.to_comp_inst.group_instance_name]
+        cinst1 = self.comp_instance_map[conn.from_comp_inst]
+        ginst1 = self.group_instance_map[cinst1.group_instance_name]
+        cinst2 = self.comp_instance_map[conn.to_comp_inst]
+        ginst2 = self.group_instance_map[cinst2.group_instance_name]
         next if ginst1==ginst2
         # these two group instances need to be colocated
         ginst1.merge(ginst2.cart_name, ginst2.profile_name, ginst2.group_name, ginst2.name, ginst2.component_instances)
-        self.group_instance_map[conn.to_comp_inst.group_instance_name] = ginst1
+        self.group_instance_map[cinst2.group_instance_name] = ginst1
       end
     }
   end

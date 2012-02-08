@@ -49,4 +49,66 @@ class Gear < Cloud::Sdk::Cartridge
     self.configured_components.delete(comp_inst.name)
     r
   end
+  
+  def start(comp_inst)
+    get_proxy.start(app,self,comp_inst.parent_cart_name)
+  end
+  
+  def stop(comp_inst)
+    get_proxy.stop(app,self,comp_inst.parent_cart_name)    
+  end
+  
+  def restart(comp_inst)
+    get_proxy.stop(app,self,comp_inst.parent_cart_name)    
+  end
+  
+  def force_stop(comp_inst)
+    get_proxy.stop(app,self,comp_inst.parent_cart_name)    
+  end
+  
+  def reload(comp_inst)
+    get_proxy.stop(app,self,comp_inst.parent_cart_name)    
+  end
+  
+  def status(comp_inst)
+    get_proxy.stop(app,self,comp_inst.parent_cart_name)    
+  end
+  
+  def tidy(comp_inst)
+    get_proxy.stop(app,self,comp_inst.parent_cart_name)    
+  end
+  
+  def threaddump(comp_inst)
+    get_proxy.stop(app,self,comp_inst.parent_cart_name)    
+  end
+  
+  def add_alias(server_alias)
+  end
+  
+  def remove_alias(server_alias)
+  end
+    
+  def add_authorized_ssh_key(ssh_key, key_type=nil, comment=nil)
+    get_proxy.add_authorized_ssh_key(app, self, ssh_key, key_type, comment)
+  end
+  
+  def remove_authorized_ssh_key(ssh_key)
+    get_proxy.remove_authorized_ssh_key(app, self, ssh_key)
+  end
+  
+  def add_env_var(key, value)
+    get_proxy.add_env_var(app, self, key, value)
+  end
+  
+  def remove_env_var(key)
+    get_proxy.remove_env_var(app, self, key)
+  end
+  
+  def add_broker_auth_key(iv,token)
+    get_proxy.add_broker_auth_key(app, self, iv, token)
+  end
+  
+  def remove_broker_auth_key
+    get_proxy.remove_broker_auth_key(app, self)    
+  end
 end

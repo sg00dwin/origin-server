@@ -9,12 +9,13 @@ module Express
   module Broker
     class ApplicationContainerProxy
       @@C_CONTROLLER = 'cloud-sdk-node'
-      attr_accessor :id, :current_capacity, :district
+      attr_accessor :id, :current_capacity, :district, :framework_carts
       
       def initialize(id, current_capacity=nil, district=nil)
         @id = id
         @current_capacity = current_capacity
         @district = district
+        @framework_carts = CartridgeCache.cartridge_names('standalone')
       end
       
       def self.find_available_impl(node_profile=nil, district_uuid=nil)
@@ -187,11 +188,19 @@ module Express
       end
       
       def start(app, gear, cart)
-        run_cartridge_command(cart, app, gear, "start")
+        if @framework_carts.include?(cart)
+          run_cartridge_command(cart, app, gear, "start")
+        else
+          start_component(app, gear, cart)
+        end
       end
       
       def stop(app, gear, cart)
-        run_cartridge_command(cart, app, gear, "stop")
+        if @framework_carts.include?(cart)
+          run_cartridge_command(cart, app, gear, "stop")
+        else
+          stop_component(app, gear, cart)
+        end
       end
       
       def force_stop(app, gear, cart)
@@ -199,15 +208,27 @@ module Express
       end
       
       def restart(app, gear, cart)
-        run_cartridge_command(cart, app, gear, "restart")
+        if @framework_carts.include?(cart)
+          run_cartridge_command(cart, app, gear, "restart")
+        else
+          restart_component(app, gear, cart)
+        end
       end
       
       def reload(app, gear, cart)
-        run_cartridge_command(cart, app, gear, "reload")
+        if @framework_carts.include?(cart)
+          run_cartridge_command(cart, app, gear, "reload")
+        else
+          reload_component(app, gear, cart)
+        end
       end
       
       def status(app, gear, cart)
-        run_cartridge_command(cart, app, gear, "status")
+        if @framework_carts.include?(cart)
+          run_cartridge_command(cart, app, gear, "status")
+        else
+          component_status(app, gear, cart)
+        end
       end
       
       def tidy(app, gear, cart)
@@ -232,50 +253,6 @@ module Express
       
       def remove_alias(app, gear, cart, server_alias)
         run_cartridge_command(cart, app, gear, "remove-alias", server_alias)
-      end
-      
-      def add_component(app, gear, component)
-        reply = ResultIO.new
-        begin
-          reply.append run_cartridge_command('embedded/' + component, app, gear, 'configure')
-        rescue Exception => e
-          begin
-            Rails.logger.debug "DEBUG: Failed to embed '#{component}' in '#{app.name}' for user '#{app.user.login}'"
-            reply.debugIO << "Failed to embed '#{component} in '#{app.name}'"
-            reply.append run_cartridge_command('embedded/' + component, app, gear, 'deconfigure')
-          ensure
-            raise
-          end
-        end
-        
-        component_details = reply.appInfoIO.string.empty? ? '' : reply.appInfoIO.string
-        reply.debugIO << "Embedded app details: #{component_details}"
-        [reply, component_details]
-      end
-      
-      def remove_component(app, gear, component)
-        Rails.logger.debug "DEBUG: Deconfiguring embedded application '#{component}' in application '#{app.name}' on node '#{@id}'"
-        return run_cartridge_command('embedded/' + component, app, gear, 'deconfigure')
-      end
-      
-      def start_component(app, gear, component)
-        run_cartridge_command('embedded/' + component, app, gear, "start")
-      end
-      
-      def stop_component(app, gear, component)
-        run_cartridge_command('embedded/' + component, app, gear, "stop")
-      end
-      
-      def restart_component(app, gear, component)
-        run_cartridge_command('embedded/' + component, app, gear, "restart")    
-      end
-      
-      def reload_component(app, gear, component)
-        run_cartridge_command('embedded/' + component, app, gear, "reload")    
-      end
-      
-      def component_status(app, gear, component)
-        run_cartridge_command('embedded/' + component, app, gear, "status")    
       end
       
       def move_app(app, destination_container, destination_district_uuid=nil, allow_change_district=false, node_profile=nil)
@@ -582,6 +559,50 @@ module Express
       end
       
       protected
+      
+      def add_component(app, gear, component)
+        reply = ResultIO.new
+        begin
+          reply.append run_cartridge_command('embedded/' + component, app, gear, 'configure')
+        rescue Exception => e
+          begin
+            Rails.logger.debug "DEBUG: Failed to embed '#{component}' in '#{app.name}' for user '#{app.user.login}'"
+            reply.debugIO << "Failed to embed '#{component} in '#{app.name}'"
+            reply.append run_cartridge_command('embedded/' + component, app, gear, 'deconfigure')
+          ensure
+            raise
+          end
+        end
+        
+        component_details = reply.appInfoIO.string.empty? ? '' : reply.appInfoIO.string
+        reply.debugIO << "Embedded app details: #{component_details}"
+        [reply, component_details]
+      end
+      
+      def remove_component(app, gear, component)
+        Rails.logger.debug "DEBUG: Deconfiguring embedded application '#{component}' in application '#{app.name}' on node '#{@id}'"
+        return run_cartridge_command('embedded/' + component, app, gear, 'deconfigure')
+      end
+      
+      def start_component(app, gear, component)
+        run_cartridge_command('embedded/' + component, app, gear, "start")
+      end
+      
+      def stop_component(app, gear, component)
+        run_cartridge_command('embedded/' + component, app, gear, "stop")
+      end
+      
+      def restart_component(app, gear, component)
+        run_cartridge_command('embedded/' + component, app, gear, "restart")    
+      end
+      
+      def reload_component(app, gear, component)
+        run_cartridge_command('embedded/' + component, app, gear, "reload")    
+      end
+      
+      def component_status(app, gear, component)
+        run_cartridge_command('embedded/' + component, app, gear, "status")    
+      end
       
       def log_debug(message)
         Rails.logger.debug message
