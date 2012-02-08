@@ -50,4 +50,10 @@ setup_basic_hook "$1" $2 $3
 #
 # Check application status
 #
-runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $APP_DIR/${application}_ctl.sh status"
+if output=$(runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $APP_DIR/${application}_ctl.sh status" 2>&1)
+then
+    status_client_result "$output"
+else
+    client_result "Application '${application}' is either stopped or inaccessible"
+fi
+send_stopped_status
