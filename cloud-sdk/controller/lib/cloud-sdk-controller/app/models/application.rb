@@ -531,10 +531,12 @@ class Application < Cloud::Sdk::Cartridge
       self.working_group_inst_hash[gpath] = gi
       gi.elaborate(g, "", self)
     }
+    deleted_components_list = []
     # delete entries in {group,comp}_instance_map that do 
     # not exist in working_{group,comp}_inst_hash
     self.group_instance_map.delete_if { |k,v| self.working_group_inst_hash[k].nil? }
-    self.comp_instance_map.delete_if { |k,v| self.working_comp_inst_hash[k].nil? }
+    self.comp_instance_map.each { |k,v| deleted_components_list << k if self.working_comp_inst_hash[k].nil?  }
+    self.comp_instance_map.delete_if { |k,v| self.working_comp_inst_hash[k].nil?  }
     
     # make connection_endpoints out of provided connections
     default_profile.connections.each { |conn|
@@ -553,6 +555,12 @@ class Application < Cloud::Sdk::Cartridge
     colocate_groups
     
     # get configure_order and start_order
+    get_exec_order(default_profile)
+
+    deleted_components_list
+  end
+
+  def get_exec_order(default_profile)
     self.configure_order = []
     self.start_order = []
     cpath = self.name + "." + default_profile.groups.first.component_refs.first.name
