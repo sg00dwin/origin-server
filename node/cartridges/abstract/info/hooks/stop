@@ -46,19 +46,9 @@ source ${CART_DIR}/abstract/info/lib/util
 
 setup_basic_hook "$1" $2 $3
 
-
 #
 # Stop application
 #
 stop_app
-if [ -f $APP_DIR/run/stop_lock ]
-then
-  HTTP_DIR=`dirname "/etc/httpd/conf.d/libra/${uuid}"*/00000_default.conf`
-  if [ -f $HTTP_DIR/0000000000000_disabled.conf ]
-  then
-    send_status "ALREADY_IDLED"
-  else
-    send_status "ALREADY_STOPPED"
-  fi
-fi
+send_stopped_status
 touch "$APP_DIR/run/stop_lock"

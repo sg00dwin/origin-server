@@ -32,5 +32,9 @@ source ${CART_DIR}/abstract/info/lib/util
 
 setup_basic_hook "$1" $2 $3
 
-
-runuser --shell /bin/sh "$uuid" -c "if ps -ef | grep ${uuid}_agent.py | grep -qv grep > /dev/null; then echo Running; else echo Stopped; fi"
+if output=$(runuser --shell /bin/sh "$uuid" -c "if ps -ef | grep ${uuid}_agent.py | grep -qv grep > /dev/null; then echo Running; else echo Stopped; fi" 2>&1)
+then
+    status_client_result "$output"
+else
+    client_result "10gen-mms-agent is either stopped or inaccessible"
+fi

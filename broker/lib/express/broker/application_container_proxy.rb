@@ -2,6 +2,7 @@ require 'mcollective'
 require 'openshift'
 require 'express/broker/nurture'
 require 'express/broker/apptegic'
+require 'open-uri'
 
 include MCollective::RPC
 module Express
@@ -329,37 +330,77 @@ module Express
         orig_uid = app.uid
 
         log_debug "DEBUG: Moving app '#{app.name}' with uuid #{app.uuid} from #{source_container.id} to #{destination_container.id}"
-
+        
+        url = "http://#{app.name}-#{app.user.namespace}.#{Rails.configuration.cdk[:domain_suffix]}"
+        
         num_tries = 2
         reply = ResultIO.new
         leave_stopped = false
         idle = false
-        begin
-          log_debug "DEBUG: Stopping existing app '#{app.name}' before moving"
-          (1..num_tries).each do |i|
-            begin
-              result = source_container.stop(app, app.framework)
-              result.cart_commands.each do |command_item|
-                case command_item[:command]
-                when "STATUS"
-                  status = command_item[:args][0]
-                  case status
-                  when "ALREADY_STOPPED"
-                    leave_stopped = true
-                  when "ALREADY_IDLED"
-                    leave_stopped = true
-                    idle = true
-                  end
+        log_debug "DEBUG: Getting existing app '#{app.name}' status before moving"
+        (1..num_tries).each do |i|
+          begin
+            result = source_container.status(app, app.framework)
+            result.cart_commands.each do |command_item|
+              case command_item[:command]
+              when "STATUS"
+                status = command_item[:args][0]
+                case status
+                when "ALREADY_STOPPED"
+                  leave_stopped = true
+                when "ALREADY_IDLED"
+                  leave_stopped = true
+                  idle = true
                 end
               end
-              reply.append result
-              break
-            rescue Exception => e
-              log_debug "DEBUG: Error stopping existing app on try #{i}: #{e.message}"
-              raise if i == num_tries
+            end
+            reply.append result
+            break
+          rescue Exception => e
+            log_debug "DEBUG: Error force stopping existing app on try #{i}: #{e.message}"
+            raise if i == num_tries
+          end
+        end
+        
+        if idle
+          log_debug "DEBUG: App '#{app.name}' was idle"
+        elsif leave_stopped
+          log_debug "DEBUG: App '#{app.name}' was stopped"
+        else
+          log_debug "DEBUG: App '#{app.name}' was running"
+        end
+
+        unless leave_stopped
+          log_debug "DEBUG: Accessing url: #{url}"
+          begin
+            open(url) do |resp|
+              log_debug "\nStatus Code: #{resp.status[0]} - #{resp.status[1]}"
+              log_debug "\n####################### Body Begin ###########################"
+              log_debug resp.read
+              log_debug "######################## Body End ############################\n"
+            end
+          rescue Exception => e
+            log_debug "DEBUG: Error accessing URL: #{e.message}"
+          end
+        else
+          log_debug "DEBUG: Not accessing url since application was stopped"
+        end
+
+        begin
+          unless leave_stopped
+            log_debug "DEBUG: Stopping existing app '#{app.name}' before moving"
+            (1..num_tries).each do |i|
+              begin
+                reply.append source_container.stop(app, app.framework)
+                break
+              rescue Exception => e
+                log_debug "DEBUG: Error stopping existing app on try #{i}: #{e.message}"
+                raise if i == num_tries
+              end
             end
           end
-          
+
+          log_debug "DEBUG: Force stopping existing app '#{app.name}' before moving"
           (1..num_tries).each do |i|
             begin
               reply.append source_container.force_stop(app, app.framework)
@@ -369,7 +410,7 @@ module Express
               raise if i == num_tries
             end
           end
-          
+
           begin
             unless app.embedded.nil?
               app.embedded.each do |cart, cart_info|
@@ -471,7 +512,7 @@ module Express
             raise
           end
         ensure
-          log_debug "URL: http://#{app.name}-#{app.user.namespace}.#{Rails.configuration.cdk[:domain_suffix]}"
+          log_debug "URL: #{url}"
         end
 
         log_debug "DEBUG: Deconfiguring old app '#{app.name}' on #{source_container.id} after move"
@@ -582,16 +623,6 @@ module Express
         if (mcoll_result && defined? mcoll_result.results && mcoll_result.results.has_key?(:data))
           output = mcoll_result.results[:data][:output]
           result.exitcode = mcoll_result.results[:data][:exitcode]
-          if command == "status" && app
-            if result.exitcode == 0
-              result.resultIO << output
-            else
-              result.exitcode = 0
-              result.resultIO << "Application '#{app.name}' is either stopped or inaccessible"
-            end
-          else
-            #Rails.logger.debug "--output--\n\n#{output}\n\n"
-          end
         else
           server_identity = app ? ApplicationContainerProxy.find_app(app.uuid, app.name) : nil
           if server_identity && @id != server_identity
