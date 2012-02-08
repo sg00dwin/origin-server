@@ -86,10 +86,12 @@ class RestApi < ActiveResource::Base
       headers
     end
 
-    #def request(*arguments)
-      #puts "request #{arguments.inspect}"
-      #super
-    #end
+    def request(*arguments)
+      #puts "request\n#{arguments.inspect}"
+      resp = super
+      #puts "response\n#{resp.inspect}"
+      resp
+    end
 
     #
     # Changes made in commit https://github.com/rails/rails/commit/51f1f550dab47c6ec3dcdba7b153258e2a0feb69#activeresource/lib/active_resource/base.rb
@@ -106,13 +108,12 @@ class RestApi < ActiveResource::Base
   #
   self.format = :openshift_json
   self.ssl_options = { :verify_mode => OpenSSL::SSL::VERIFY_NONE }
-  self.timeout = 10
+  self.timeout = 60
   self.site = if defined?(Rails) && Rails.configuration.express_api_url
     Rails.configuration.express_api_url + '/broker/rest'
   else
     'http://localhost/broker/rest'
   end
-
 
   # 
   # Track persistence state, merged from 
@@ -121,14 +122,11 @@ class RestApi < ActiveResource::Base
   def initialize(attributes = {}, persisted=false)
     @persisted = persisted
     @as = attributes[:as]
+    attributes.delete :as
     super attributes
   end
 
-  def instantiate_record(record, prefix_options = {})
-    new(record, true).tap do |resource|
-      resource.prefix_options = prefix_options
-    end
-  end
+  # changes to instantiate_record tracked below
 
   def new?
     !persisted?
@@ -245,7 +243,7 @@ class RestApi < ActiveResource::Base
   #end
 
 
-  # 
+  #
   # Experimentation with form conversion, likely to be unnecessary
   #
   def to_json(*opt)
@@ -258,6 +256,19 @@ class RestApi < ActiveResource::Base
     (respond_to?(:serialize) ? serialize(*opt) : @attributes).to_param
   end
 
+  #
+  # Must provide OpenShift compatible error decoding
+  #
+  def load_remote_errors(remote_errors, save_cache=false)
+    case self.class.format
+    when ActiveResource::Formats[:openshift_json]
+      ActiveSupport::JSON.decode(remote_errors.response.body)['messages'].each do |m|
+        errors.add( (m['attribute'] || 'base').to_sym, m['text'].to_s) if m['text']
+      end
+    else
+      super
+    end
+  end
 
   #
   # Override methods from ActiveResource to make them contextual connection
@@ -323,10 +334,11 @@ class RestApi < ActiveResource::Base
             path = collection_path(prefix_options, query_options)
             instantiate_collection(format.decode(connection(options).get(path, headers).body) || [], as, prefix_options ) #changed
           end
-        rescue ActiveResource::ResourceNotFound
+        rescue ActiveResource::ResourceNotFound => e
+          # changed to return empty array on not found
           # Swallowing ResourceNotFound exceptions and return nil - as per
           # ActiveRecord.
-          nil
+          [] #changed
         end
       end
 
@@ -335,7 +347,7 @@ class RestApi < ActiveResource::Base
       end
 
       def instantiate_record(record, as, prefix_options = {}) #changed
-        new(record).tap do |resource|
+        new(record, true).tap do |resource| #changed for persisted flag
           resource.prefix_options = prefix_options
           resource.as = as #added
         end
@@ -385,10 +397,7 @@ class Domain < RestApi
   schema do
     string :namespace
   end
-
-  def name
-    namespace
-  end
+  def id() namespace end
 
   has_many :applications
   def applications
@@ -398,6 +407,10 @@ class Domain < RestApi
   belongs_to :user
   def user
     User.find :one, :as => as
+  end
+
+  def destroy_recursive
+    connection.delete(element_path({:force => true}.merge(prefix_options)), self.class.headers)
   end
 end
 
@@ -411,6 +424,7 @@ class Application < RestApi
     string :uuid, :domain_id
     string :framework, :server_identity
   end
+  def id() name end
 
   has_many :aliases
   belongs_to :domain
@@ -440,16 +454,15 @@ end
 # The REST API model object representing an SSH public key.
 #
 class Key < RestApi
-  self.primary_key = 'name'
   self.element_name = 'key'
-
-  belongs_to :user
-  self.prefix = "#{RestApi.site.path}/user/"
 
   schema do
     string :name, 'type', :key
   end
+  def id() name end
 
+  belongs_to :user
+  self.prefix = "#{RestApi.site.path}/user/"
   def type
     @attributes[:type]
   end
@@ -470,10 +483,6 @@ class Key < RestApi
   #def encode(options={})
   #  send("to_form", options)
   #end
-
-  def to_param
-    name
-  end
 end
 
 
@@ -488,7 +497,20 @@ if __FILE__==$0
     begin
       #info = Key.find :all, :as => user
       #puts info.inspect
-      #domain = Domain.first :as => user
+      domain = Domain.first :as => user
+      if domain
+        puts "Found domain #{domain.inspect}"
+        domain.destroy_recursive
+        puts "Deleted domain #{domain.inspect}\n  errors: #{domain.errors.inspect}"
+      else
+        domain = Domain.new :namespace => "xyz", :as => user
+        domain.to_json
+        if domain.save
+          puts "Saved domain\n #{domain.inspect}"
+        else
+          puts "Unable to save domain\n #{domain.inspect}"
+        end
+      end
       #puts domain.inspect
       #puts domain.applications.inspect
     rescue ActiveResource::ConnectionError => e
