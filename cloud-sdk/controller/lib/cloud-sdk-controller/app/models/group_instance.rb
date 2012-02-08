@@ -13,7 +13,7 @@ class GroupInstance < Cloud::Sdk::UserModel
     self.reused_by = []
   end
 
-  def merge(ginst)
+  def merge_inst(ginst)
     reused = [self.name, self.cart_name, self.profile_name, self.group_name]
     self.reused_by << reused
     self.name = ginst.name

@@ -543,6 +543,14 @@ class Application < Cloud::Sdk::Cartridge
 
     # resolve group co-locations
     colocate_groups
+    
+    # get configure_order and start_order
+    self.configure_order = []
+    self.start_order = []
+    cpath = self.name + "." + default_profile.groups.first.component_refs.first.name
+    cinst = self.comp_instance_map[cpath]
+    ComponentInstance::collect_exec_order(self, cinst, self.configure_order)
+    ComponentInstance::collect_exec_order(self, cinst, self.start_order)
   end
 
   def colocate_groups
@@ -555,7 +563,7 @@ class Application < Cloud::Sdk::Cartridge
         next if ginst1==ginst2
         # these two group instances need to be colocated
         #ginst1.merge(ginst2.cart_name, ginst2.profile_name, ginst2.group_name, ginst2.name, ginst2.component_instances)
-        ginst1.merge(ginst2)
+        ginst1.merge_inst(ginst2)
         self.group_instance_map[conn.to_comp_inst.group_instance_name] = ginst1
       end
     }
@@ -592,7 +600,7 @@ class Application < Cloud::Sdk::Cartridge
         Rails.logger.debug "Auto-merging group #{ginst.name} into #{gi.name}"
         # merge ginst into gi
         #gi.merge(ginst.cart_name, ginst.profile_name, ginst.group_name, ginst.name, ginst.component_instances)
-        gi.merge(ginst)
+        gi.merge_inst(ginst)
         self.group_instance_map[cdepinst.group_instance_name] = gi
       }
     }

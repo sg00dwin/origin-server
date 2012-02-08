@@ -1,6 +1,6 @@
 class ComponentInstance < Cloud::Sdk::UserModel
   attr_accessor :state, :parent_cart_name, :parent_cart_profile, :parent_component_name, :parent_cart_group,
-                :name, :dependencies, :group_instance_name
+                :name, :dependencies, :group_instance_name, :exec_order
   
   state_machine :state, :initial => :not_created do
     event(:create) { transition :not_created => :creating }
@@ -24,6 +24,7 @@ class ComponentInstance < Cloud::Sdk::UserModel
     self.group_instance_name = gi.name unless gi.nil?
     self.parent_component_name = compname
     self.dependencies = []
+    self.exec_order
   end
 
   def get_component_definition(app)
@@ -54,8 +55,15 @@ class ComponentInstance < Cloud::Sdk::UserModel
 
     self.dependencies.each do |dep|
       cinst = app.comp_instance_map[dep]
-      ComponentInstance.establish_connections(cinst, self, app)
+      new_conns = ComponentInstance.establish_connections(cinst, self, app)
+      new_conns.each { |conn|
+        if conn.from_connector.type.match(/^FILESYSTEM/) or conn.from_connector.type.match(/^AFUNIX/)
+          self.exec_order << dep if not self.exec_order.include? dep
+        end
+      }
     end
+
+    self.dependencies.each { |dep| self.exec_order << dep if not self.exec_order.include? dep }
 
     return group_list
   end
@@ -63,17 +71,26 @@ class ComponentInstance < Cloud::Sdk::UserModel
   def self.establish_connections(inst1, inst2, app)
     comp1,prof1,cart1 = inst1.get_component_definition(app)
     comp2,prof2,cart2 = inst2.get_component_definition(app)
+
+    new_connections = []
     
     comp1.publishes.each do |pub|
       comp2.subscribes.each do |sub|
-        app.conn_endpoints_list << ConnectionEndpoint.new(inst1, inst2, pub, sub) if pub.type==sub.type
+        next if not pub.type==sub.type
+        ce = ConnectionEndpoint.new(inst1, inst2, pub, sub) 
+        app.conn_endpoints_list << ce
+        new_connections << ce
       end
     end
     comp1.subscribes.each do |sub|
       comp2.publishes.each do |pub|
-        app.conn_endpoints_list << ConnectionEndpoint.new(inst2, inst1, pub, sub) if pub.type==sub.type
+        next if not pub.type==sub.type
+        ce = ConnectionEndpoint.new(inst2, inst1, pub, sub) 
+        app.conn_endpoints_list << ce
+        new_connections << ce
       end
     end
+    new_connections
   end
 
   def elaborate_cartridge(cart, profile, app)
@@ -121,6 +138,14 @@ class ComponentInstance < Cloud::Sdk::UserModel
       end
     end
     return comp_inst
+  end
+
+  def self.collect_exec_order(app, cinst, return_list)
+    cinst.exec_order.reverse.each do |dep|
+      depinst = app.comp_instance_map[dep]
+      collect_exec_order(app, depinst, return_list)
+      return_list << dep
+    end
   end
 
   def get_cartridges_for_dependencies(comp, cart)
