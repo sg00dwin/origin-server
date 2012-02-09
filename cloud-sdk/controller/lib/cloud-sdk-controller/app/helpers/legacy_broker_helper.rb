@@ -20,7 +20,7 @@ module LegacyBrokerHelper
   end
   
   def check_cartridge_type(framework, container, cart_type)
-    carts = container.get_available_cartridges(cart_type)
+    carts = CartridgeCache.cartridge_names(cart_type)
     Rails.logger.debug "Available cartridges #{carts.join(', ')}"
     unless carts.include? framework
       return false

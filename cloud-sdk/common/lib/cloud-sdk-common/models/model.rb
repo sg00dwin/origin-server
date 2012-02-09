@@ -41,6 +41,7 @@ module Cloud
       end
       
       def self.attr_reader(*accessors)
+        attribute_methods_generated = false
         define_attribute_methods accessors
         
         accessors.each do |m|
@@ -51,6 +52,7 @@ module Cloud
       end
       
       def self.attr_writer(*accessors)
+        attribute_methods_generated = false
         define_attribute_methods accessors
         
         accessors.each do |m|
@@ -72,22 +74,55 @@ module Cloud
         @primary_key = var_name
       end
       
-      def self.require_update_attributes(*attributes)
-        @requires_update_attributes = [] unless @requires_update_attributes
-        @requires_update_attributes += attributes
-      end
-      
       def self.exclude_attributes(*attributes)
         @excludes_attributes = [] unless @excludes_attributes
         @excludes_attributes += attributes
       end
       
-      def attributes
+      def self.include_attributes(*attributes)
+        @includes_attributes = [] unless @includes_attributes
+        @includes_attributes += attributes
+      end
+      
+      def self.includes_attributes
+        @includes_attributes || []
+      end
+      
+      def self.excludes_attributes
+        @excludes_attributes || []
+      end
+      
+      def self.require_update_attributes(*attributes)                                                                                                                                                                                       
+        @requires_update_attributes = [] unless @requires_update_attributes                                                                                                                                                                 
+        @requires_update_attributes += attributes                                                                                                                                                                                           
+      end
+      
+      def self.requires_update_attributes                                                                                                                                                                                                   
+        #nil indicates all fields require updates                                                                                                                                                                                           
+        @requires_update_attributes                                                                                                                                                                                                         
+      end
+      
+      def attributes(should_convert_nested_models=false)
         @attributes = {}
-        self.instance_variable_names.map {|name| name[1..-1]}.each do |name|
-          next if ['attributes', 'changed_attributes', 'previously_changed', 'persisted', 'new_record', 'deleted', 'errors', 'validation_context'].include? name
-          next if self.class.excludes_attributes.include? name.to_sym
-          @attributes[name] = instance_variable_get("@#{name}")
+        
+        klass = self.class
+        var_names = self.instance_variable_names.map{|n| n[1..-1]}
+        while(klass != Cloud::Sdk::Model)
+          var_names += klass.includes_attributes.map{|n| n.to_s}
+          var_names -= ['attributes', 'changed_attributes', 'previously_changed', 'persisted', 'new_record', 'deleted', 'errors', 'validation_context']
+          var_names -= klass.excludes_attributes.map{|n| n.to_s}
+          klass = klass.superclass
+        end
+        
+        var_names.each do |name|
+          #next if ['attributes', 'changed_attributes', 'previously_changed', 'persisted', 'new_record', 'deleted', 'errors', 'validation_context'].include? name
+          #next if self.class.excludes_attributes.include? name.to_sym
+          value = self.send(name.to_s)
+          if should_convert_nested_models
+            @attributes[name] = convert_nested_models(value)
+          else
+            @attributes[name] = value
+          end
         end
         @attributes
       end
@@ -98,6 +133,7 @@ module Cloud
         hash.each do |key,value|
           self.send("#{key}=",value)
         end
+        self
       end
       
       def reset_state
@@ -110,11 +146,6 @@ module Cloud
       def self.excludes_attributes
         @excludes_attributes = [] unless @excludes_attributes
         @excludes_attributes
-      end
-      
-      def self.requires_update_attributes
-        #nil indicates all fields require updates
-        @requires_update_attributes
       end
 
       def to_xml(options = {})
@@ -129,6 +160,52 @@ module Cloud
       def self.pk
         @primary_key
       end
+
+      def convert_nested_models(obj)
+        case obj
+          when Cloud::Sdk::Model
+            obj.attributes(true)
+          when Hash
+            convert_nested_models_in_hash(obj)
+          when Array
+            convert_nested_models_in_array(obj)
+          else
+            obj
+        end
+      end
+      
+      def convert_nested_models_in_hash(hash)
+        ret = {}
+        hash.each do |k,value|
+          case value
+            when Cloud::Sdk::Model
+              ret[k]=convert_nested_models(value)
+            when Hash
+              ret[k]=convert_nested_models_in_hash(value)
+            when Array
+              ret[k]=convert_nested_models_in_array(value)
+            else
+              ret[k]=value
+          end
+        end
+        ret
+      end
+      
+      def convert_nested_models_in_array(arr)
+        arr.map do |value|
+          case value
+            when Cloud::Sdk::Model
+              convert_nested_models(value)
+            when Hash
+              convert_nested_models_in_hash(value)
+            when Array
+              convert_nested_models_in_array(value)
+            else
+              value
+          end
+        end
+      end
+      
     end
   end
 end

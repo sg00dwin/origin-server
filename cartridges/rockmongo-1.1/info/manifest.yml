@@ -1,4 +1,4 @@
-Name: rhc-cartridge-rockmongo
+Name: rockmongo-1.1
 Display-Name: rockmongo v1.1 (noarch)
 Description: Cartridge packaging rockmongo
 Version: 1.1.0
@@ -10,25 +10,24 @@ Requires:
 Conflicts:
 Native-Requires:
 Architecture: noarch
-Descriptor:
-  Reservations:
-    - MEM >= 100MB
-  Components:
-    default:
-       Dependencies: [rhc-cartridge-php]
-       Service-Dependencies: [rhc-cartridge-mongodb-2.0]
-       Publishes:
-          get-serve-info:
-             Type: "NET_TCP:db-config:url"
-       Subscribes:
-          set-mongo-connection-info:
-             Type: "NET_TCP:db:mongodb"
-             Required : true
-   Groups:
-     default:
-       Components:
-         default : default
-       Scaling:
-         Min: 1
-         Max: 1
+Reservations:
+  - MEM >= 100MB
+Components:
+  default:
+    Dependencies: [rhc-cartridge-php]
+    Service-Dependencies: [rhc-cartridge-mongodb-2.0]
+    Publishes:
+      get-serve-info:
+        Type: "NET_TCP:db-config:url"
+    Subscribes:
+      set-mongo-connection-info:
+        Type: "NET_TCP:db:mongodb"
+        Required : true
+Groups:
+  default:
+    Components:
+      default : default
+    Scaling:
+      Min: 1
+      Max: 1
 

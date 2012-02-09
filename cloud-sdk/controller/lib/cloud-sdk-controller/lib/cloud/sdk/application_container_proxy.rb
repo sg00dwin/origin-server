@@ -32,7 +32,7 @@ module Cloud
         reserved_uid
       end
       
-      def get_available_cartridges(cart_type)
+      def get_available_cartridges
       end
       
       def create(app)

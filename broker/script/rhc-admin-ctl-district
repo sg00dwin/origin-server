@@ -193,6 +193,6 @@ rescue Cloud::Sdk::CdkException => e
   reply.errorIO << e.message
 end
 
-print "DEBUG OUTPUT:\n#{reply.debugIO.string}\n\n" unless reply.debugIO.string.empty?
-print "ERROR OUTPUT:\n#{reply.errorIO.string}\n\n" unless reply.errorIO.string.empty?
-print "#{reply.resultIO.string}\n" unless reply.resultIO.string.empty?
+puts "DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
+puts "ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
+puts "#{reply.resultIO.string}" unless reply.resultIO.string.empty?

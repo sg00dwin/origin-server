@@ -1,4 +1,4 @@
-Name: rhc-cartridge-perl
+Name: perl-5.10
 Display-Name: perl v5.10 (noarch)
 Description: Cartridge packaging Perl versions 5.10 
 Version: 1.0.0
@@ -7,7 +7,6 @@ Vendor:
 Provides:
   - "mod_perl"
 Requires:
-  - "www-dynamic"
 Conflicts:
 Native-Requires:
   -  mod_perl
@@ -15,28 +14,27 @@ Native-Requires:
   -  ImageMagick-perl
   -  perl-App-cpanminus
 Architecture: noarch
-Descriptor:
-  Reservations:
-    - MEM >= 100MB
-  Start-Order: rhc-cartridge-perl
-  Publishes:
-    get-doc-root:
-      Type: "FILESYSTEM:doc-root"
-    get-proxy-url:
-      Type: "STRING:proxy-path"
-  Subscribes:
-    set-proxy-path:
-      Type: "STRING:proxy-path"
-    set-mysql-connection-info:
-      Type: "NET_TCP:db:mysql"
-      Required : false
-    set-postgres-connection-info:
-      Type: "NET_TCP:db:postgres"
-      Required : false
-    set-mongo-connection-info:
-      Type: "NET_TCP:db:mongodb"
-      Required : false
-  Scaling:
-    Min: 1
-    Max: -1
+Reservations:
+  - MEM >= 100MB
+Start-Order: rhc-cartridge-perl
+Publishes:
+  get-doc-root:
+    Type: "FILESYSTEM:doc-root"
+  get-proxy-url:
+    Type: "STRING:proxy-path"
+Subscribes:
+  set-proxy-path:
+    Type: "STRING:proxy-path"
+  set-mysql-connection-info:
+    Type: "NET_TCP:db:mysql"
+    Required : false
+  set-postgres-connection-info:
+    Type: "NET_TCP:db:postgres"
+    Required : false
+  set-mongo-connection-info:
+    Type: "NET_TCP:db:mongodb"
+    Required : false
+Scaling:
+  Min: 1
+  Max: -1
 
