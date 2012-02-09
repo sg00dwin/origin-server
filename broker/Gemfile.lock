@@ -112,6 +112,6 @@ DEPENDENCIES
   rack
   rails (~> 3.0.10)
   regin
-  rest-client (= 1.6.1)
+  rest-client
   stomp
   xml-simple
