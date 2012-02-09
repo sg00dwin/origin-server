@@ -380,7 +380,7 @@ class Application < Cloud::Sdk::Cartridge
     reply
   end
   
-  def threaddump(dependency=nil)
+  def system_messages(dependency=nil)
     reply = ResultIO.new
     self.comp_instance_map.each do |comp_inst_name, comp_inst|
       next if !dependency.nil? and (comp_inst.parent_cart_name != dependency)
