@@ -29,8 +29,8 @@ class CartridgeCache
 	  
 	  if cart_type == 'standalone'
       return cart_names & FRAMEWORK_CART_NAMES
-    elsif cart_names == 'embedded'
-      return cart_names - FRAMEWORK_CART_NAMES
+    elsif cart_type == 'embedded'
+      return (cart_names - FRAMEWORK_CART_NAMES)
     else 
       return cart_names
     end

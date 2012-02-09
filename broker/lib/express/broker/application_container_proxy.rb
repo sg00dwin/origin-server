@@ -164,13 +164,18 @@ module Express
       end
       
       def configure_cartridge(app, gear, cart)
+        result_io = ResultIO.new
+        cart_data = nil
+                  
         if framework_carts.include? cart
-          run_cartridge_command(cart, app, gear, "configure")
+          result_io = run_cartridge_command(cart, app, gear, "configure")
         elsif embedded_carts.include? cart
-          add_component(app,gear,cart)
+          result_io, cart_data = add_component(app,gear,cart)
         else
-          ResultIO.new
+          #no-op
         end
+        
+        return result_io, cart_data
       end
       
       def deconfigure_cartridge(app, gear, cart)

@@ -20,7 +20,13 @@ class LegacyBrokerController < ApplicationController
       user_info[:rhc_domain] = Rails.configuration.cdk[:domain_suffix]
       app_info = {}
       user.applications.each do |app|
-        app_info[app.name] = app.as_json
+        app_info[app.name] = {
+          "framework" => app.framework,
+          "creation_time" => app.creation_time,
+          "uuid" => app.uuid,
+          "aliases" => app.aliases,
+          "embedded" => app.embedded
+        }
       end
       
       @reply.data = {:user_info => user_info, :app_info => app_info}.to_json
@@ -198,25 +204,25 @@ class LegacyBrokerController < ApplicationController
       @reply.resultIO << "Successfully destroyed application: #{app.name}" if @reply.resultIO.length == 0
     when 'start'
       app = get_app_from_request(user)
-      @reply.append app.start
+      @reply.append app.start(app.framework)
     when 'stop'
       app = get_app_from_request(user)
-      @reply.append app.stop
+      @reply.append app.stop(app.framework)
     when 'restart'
       app = get_app_from_request(user)
-      @reply.append app.restart
+      @reply.append app.restart(app.framework)
     when 'force-stop'
       app = get_app_from_request(user)
-      @reply.append app.force_stop
+      @reply.append app.force_stop(app.framework)
     when 'reload'
       app = get_app_from_request(user)
-      @reply.append app.reload
+      @reply.append app.reload(app.framework)
     when 'status'
       app = get_app_from_request(user)
-      @reply.append app.status
+      @reply.append app.status(app.framework)
     when 'tidy'
       app = get_app_from_request(user)
-      @reply.append app.tidy      
+      @reply.append app.tidy(app.framework)
     when 'add-alias'
       app = get_app_from_request(user)
       @reply.append app.add_alias @req.server_alias
@@ -225,7 +231,7 @@ class LegacyBrokerController < ApplicationController
       @reply.append app.remove_alias @req.server_alias
     when 'threaddump'
       app = get_app_from_request(user)
-      @reply.append app.threaddump
+      @reply.append app.threaddump(app.framework)
     when 'expose-port'
       app = get_app_from_request(user)
       @reply.append app.expose_port
@@ -244,9 +250,11 @@ class LegacyBrokerController < ApplicationController
     user = CloudUser.find(@login)    
     raise Cloud::Sdk::UserException.new("Invalid user", 99) if user.nil?
         
-    app = get_app_from_request(user)
-    
+    app = get_app_from_request(user)    
     check_cartridge_type(@req.cartridge, "embedded")
+    if @req.action != "configure" and !app.requires_feature.include?(@req.cartridge)
+      raise Cloud::Sdk::UserException.new("#{@req.cartridge} not embedded in '#{app.name}', try adding it first", 101)
+    end
 
     Rails.logger.debug "DEBUG: Performing action '#{@req.action}'"    
     case @req.action
@@ -255,15 +263,15 @@ class LegacyBrokerController < ApplicationController
     when 'deconfigure'
       @reply.append app.remove_dependency(@req.cartridge)
     when 'start'
-      @reply.append app.start_dependency(@req.cartridge)      
+      @reply.append app.start(@req.cartridge)      
     when 'stop'
-      @reply.append app.stop_dependency(@req.cartridge)      
+      @reply.append app.stop(@req.cartridge)      
     when 'restart'
-      @reply.append app.restart_dependency(@req.cartridge)      
+      @reply.append app.restart(@req.cartridge)      
     when 'status'
-      @reply.append app.dependency_status(@req.cartridge)      
+      @reply.append app.status(@req.cartridge)      
     when 'reload'
-      @reply.append app.reload_dependency(@req.cartridge)
+      @reply.append app.reload(@req.cartridge)
     else
       raise Cloud::Sdk::UserException.new("Invalid action #{@req.action}", 111)           
     end

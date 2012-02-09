@@ -28,16 +28,16 @@ class Gear < Cloud::Sdk::Cartridge
   end
   
   def destroy
-    unless container.nil?
-      container.destroy(app,self)
-    end
+    get_proxy.destroy(app,self)
   end
   
   def configure(comp_inst)
     r = ResultIO.new
     return r if self.configured_components.include?(comp_inst.name)
     r.append get_proxy.preconfigure_cartridge(app,self,comp_inst.parent_cart_name)
-    r.append get_proxy.configure_cartridge(app,self,comp_inst.parent_cart_name)
+    result_io,cart_data = get_proxy.configure_cartridge(app,self,comp_inst.parent_cart_name)
+    r.append result_io
+    comp_inst.process_cart_data(cart_data)
     self.configured_components.push(comp_inst.name)
     r
   end
@@ -59,27 +59,27 @@ class Gear < Cloud::Sdk::Cartridge
   end
   
   def restart(comp_inst)
-    get_proxy.stop(app,self,comp_inst.parent_cart_name)    
+    get_proxy.restart(app,self,comp_inst.parent_cart_name)    
   end
   
   def force_stop(comp_inst)
-    get_proxy.stop(app,self,comp_inst.parent_cart_name)    
+    get_proxy.force_stop(app,self,comp_inst.parent_cart_name)    
   end
   
   def reload(comp_inst)
-    get_proxy.stop(app,self,comp_inst.parent_cart_name)    
+    get_proxy.reload(app,self,comp_inst.parent_cart_name)    
   end
   
   def status(comp_inst)
-    get_proxy.stop(app,self,comp_inst.parent_cart_name)    
+    get_proxy.status(app,self,comp_inst.parent_cart_name)    
   end
   
   def tidy(comp_inst)
-    get_proxy.stop(app,self,comp_inst.parent_cart_name)    
+    get_proxy.tidy(app,self,comp_inst.parent_cart_name)    
   end
   
   def threaddump(comp_inst)
-    get_proxy.stop(app,self,comp_inst.parent_cart_name)    
+    get_proxy.threaddump(app,self,comp_inst.parent_cart_name)    
   end
   
   def add_alias(server_alias)

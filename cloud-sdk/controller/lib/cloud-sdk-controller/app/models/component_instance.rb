@@ -1,20 +1,6 @@
 class ComponentInstance < Cloud::Sdk::UserModel
   attr_accessor :state, :parent_cart_name, :parent_cart_profile, :parent_component_name, :parent_cart_group,
-                :name, :dependencies, :group_instance_name, :exec_order
-  
-  state_machine :state, :initial => :not_created do
-    event(:create) { transition :not_created => :creating }
-    event(:create_complete) { transition :creating => :stopped }
-    event(:create_error) { transition :creating => :destroying }
-    event(:start) { transition :stopped => :starting }
-    event(:start_error) { transition :starting => :stopped }
-    event(:start_complete) { transition :starting => :running }
-    event(:stop) { transition :running => :stopping }
-    event(:stop_error) { transition :stopping => :running }
-    event(:stop_complete) { transition :stopping => :stopped }
-    event(:destroy) { transition :stopped => :destroying }
-    event(:destroy_complete) { transition :destroying => :not_created }
-  end
+                :name, :dependencies, :group_instance_name, :exec_order, :cart_data
 
   def initialize (cartname=nil, profname=nil, groupname=nil, compname=nil, pathname=nil, gi=nil)
     self.name = pathname
@@ -25,6 +11,11 @@ class ComponentInstance < Cloud::Sdk::UserModel
     self.parent_component_name = compname
     self.dependencies = []
     self.exec_order = []
+    self.cart_data = []
+  end
+  
+  def process_cart_data(data)
+    self.cart_data.push data
   end
 
   def get_component_definition(app)

@@ -170,10 +170,28 @@ class Application < Cloud::Sdk::Cartridge
     reply
   end
   
-  #configures all cartridges for the application based on computed configure order
+  # configures all cartridges for the application based on the descriptor
   def configure_dependencies
     reply = ResultIO.new
     self.class.notify_observers(:before_application_configure, {:application => self, :reply => reply})
+    
+    removed_component_instances = self.elaborate_descriptor()
+    #remove unused components
+    removed_component_instances.each do |comp_inst_name|
+      comp_inst = self.comp_instance_map[comp_inst_name]
+      group_inst = self.group_instance_map[comp_inst.group_instance_name]
+      run_on_gears(group_inst.gears, reply, false) do |gear, r|
+        r.append gear.deconfigure(comp_inst)
+        r.append process_cartridge_commands(r.cart_commands)
+      end
+      
+      run_on_gears(group_inst.gears, reply, false) do |gear, r|
+        r.append gear.destroy if gear.configured_components.length == 0
+      end
+    end
+    self.cleanup_deleted_components
+    
+    #process new additions
     self.configure_order.each do |comp_inst_name|
       comp_inst = self.comp_instance_map[comp_inst_name]
       group_inst = self.group_instance_map[comp_inst.group_instance_name]
@@ -182,7 +200,7 @@ class Application < Cloud::Sdk::Cartridge
         r.append process_cartridge_commands(r.cart_commands)
       end
     end
-    reply
+    save
     self.class.notify_observers(:after_application_configure, {:application => self, :reply => reply})
     reply
   end
@@ -203,18 +221,171 @@ class Application < Cloud::Sdk::Cartridge
     reply
   end
   
-  def start
+  # @overload start()
+  #   starts all application components in start order
+  # @overload start(dependency)
+  #   Start a particular dependency on all gears that host it.
+  #   @param [String] dependency Name of a cartridge to start
+  def start(dependency=nil)
     reply = ResultIO.new
-    self.class.notify_observers(:before_application_start, {:application => self, :reply => reply})
+    self.class.notify_observers(:before_start, {:application => self, :reply => reply, :dependency => dependency})
     self.start_order.each do |comp_inst_name|
       comp_inst = self.comp_instance_map[comp_inst_name]
+      next if !dependency.nil? and (comp_inst.parent_cart_name != dependency)
+      
       group_inst = self.group_instance_map[comp_inst.group_instance_name]
       run_on_gears(group_inst.gears, reply, false) do |gear, r|
         r.append gear.start(comp_inst)
       end
     end
+    self.class.notify_observers(:after_start, {:application => self, :reply => reply, :dependency => dependency})
+    reply    
+  end
+  
+  # @overload stop()
+  #   Stops all application components in reverse start order
+  # @overload stop(dependency)
+  #   Stop a particular dependency on all gears that host it.
+  #   @param [String] dependency Name of a cartridge to start
+  def stop(dependency=nil)
+    reply = ResultIO.new
+    self.class.notify_observers(:before_stop, {:application => self, :reply => reply, :dependency => dependency})
+    self.start_order.each do |comp_inst_name|
+      comp_inst = self.comp_instance_map[comp_inst_name]
+      next if !dependency.nil? and (comp_inst.parent_cart_name != dependency)
+      
+      group_inst = self.group_instance_map[comp_inst.group_instance_name]
+      run_on_gears(group_inst.gears, reply, false) do |gear, r|
+        r.append gear.stop(comp_inst)
+      end
+    end
+    self.class.notify_observers(:after_stop, {:application => self, :reply => reply, :dependency => dependency})
+    reply    
+  end
+  
+  # @overload stop()
+  #   Force stops all application components in reverse start order
+  # @overload stop(dependency)
+  #   Force stop a particular dependency on all gears that host it.
+  #   @param [String] dependency Name of a cartridge to stop
+  def force_stop(dependency=nil)
+    reply = ResultIO.new
+    self.class.notify_observers(:before_force_stop, {:application => self, :reply => reply, :dependency => dependency})
+    self.start_order.each do |comp_inst_name|
+      comp_inst = self.comp_instance_map[comp_inst_name]
+      next if !dependency.nil? and (comp_inst.parent_cart_name != dependency)
+      
+      group_inst = self.group_instance_map[comp_inst.group_instance_name]
+      run_on_gears(group_inst.gears, reply, false) do |gear, r|
+        r.append gear.force_stop(comp_inst)
+      end
+    end
+    self.class.notify_observers(:after_force_stop, {:application => self, :reply => reply, :dependency => dependency})
+    reply    
+  end
+  
+  # @overload restart()
+  #   Restarts all application components in start order
+  # @overload restart(dependency)
+  #   Restart a particular dependency on all gears that host it.
+  #   @param [String] dependency Name of a cartridge to restart
+  def restart(dependency=nil)
+    reply = ResultIO.new
+    self.class.notify_observers(:before_restart, {:application => self, :reply => reply, :dependency => dependency})
+    self.start_order.each do |comp_inst_name|
+      comp_inst = self.comp_instance_map[comp_inst_name]
+      next if !dependency.nil? and (comp_inst.parent_cart_name != dependency)
+      
+      group_inst = self.group_instance_map[comp_inst.group_instance_name]
+      run_on_gears(group_inst.gears, reply, false) do |gear, r|
+        r.append gear.restart(comp_inst)
+      end
+    end
+    self.class.notify_observers(:after_restart, {:application => self, :reply => reply, :dependency => dependency})
+    reply    
+  end
+  
+  # @overload reload()
+  #   Reloads all application components in start order
+  # @overload reload(dependency)
+  #   Reload a particular dependency on all gears that host it.
+  #   @param [String] dependency Name of a cartridge to reload
+  def reload(dependency=nil)
+    reply = ResultIO.new
+    self.class.notify_observers(:before_reload, {:application => self, :reply => reply, :dependency => dependency})
+    self.start_order.each do |comp_inst_name|
+      comp_inst = self.comp_instance_map[comp_inst_name]
+      next if !dependency.nil? and (comp_inst.parent_cart_name != dependency)
+      
+      group_inst = self.group_instance_map[comp_inst.group_instance_name]
+      run_on_gears(group_inst.gears, reply, false) do |gear, r|
+        r.append gear.reload(comp_inst)
+      end
+    end
+    self.class.notify_observers(:after_reload, {:application => self, :reply => reply, :dependency => dependency})
     reply
-    self.class.notify_observers(:after_application_start, {:application => self, :reply => reply})
+  end
+  
+  # @overload status()
+  #   Retrieves status for all application components
+  # @overload status(dependency)
+  #   Retrieves status for a particular dependency on all gears that host it.
+  #   @param [String] dependency Name of a cartridge
+  def status(dependency=nil)
+    reply = ResultIO.new
+    self.comp_instance_map.each do |comp_inst_name, comp_inst|
+      next if !dependency.nil? and (comp_inst.parent_cart_name != dependency)
+      
+      group_inst = self.group_instance_map[comp_inst.group_instance_name]
+      run_on_gears(group_inst.gears, reply, false) do |gear, r|
+        r.append gear.status(comp_inst)
+      end
+    end
+    reply
+  end
+  
+  # @overload tidy()
+  #   Invokes tidy on all application components
+  # @overload tidy(dependency)
+  #   Invokes tidy for a particular dependency on all gears that host it.
+  #   @param [String] dependency Name of a cartridge
+  def tidy(dependency=nil)
+    reply = ResultIO.new
+    self.comp_instance_map.each do |comp_inst_name, comp_inst|
+      next if !dependency.nil? and (comp_inst.parent_cart_name != dependency)
+      
+      group_inst = self.group_instance_map[comp_inst.group_instance_name]
+      run_on_gears(group_inst.gears, reply, false) do |gear, r|
+        r.append gear.tidy(comp_inst)
+      end
+    end
+    reply
+  end
+  
+  # @overload threaddump()
+  #   Invokes threaddump on all application components
+  # @overload threaddump(dependency)
+  #   Invokes threaddump for a particular dependency on all gears that host it.
+  #   @param [String] dependency Name of a cartridge
+  def threaddump(dependency=nil)
+    reply = ResultIO.new
+    self.comp_instance_map.each do |comp_inst_name, comp_inst|
+      next if !dependency.nil? and (comp_inst.parent_cart_name != dependency)
+      
+      group_inst = self.group_instance_map[comp_inst.group_instance_name]
+      run_on_gears(group_inst.gears, reply, false) do |gear, r|
+        r.append gear.threaddump(comp_inst)
+      end
+    end
+    reply
+  end
+  
+  def expose_port
+    self.container.expose_port(self, @framework)
+  end
+  
+  def conceal_port
+    self.container.conceal_port(self, @framework)
   end
   
   def add_authorized_ssh_key(ssh_key, key_type=nil, comment=nil)
@@ -272,8 +443,8 @@ class Application < Cloud::Sdk::Cartridge
   def add_system_ssh_keys
     reply = ResultIO.new
     run_on_gears(nil,reply,false) do |gear,r|
-      @user.system_ssh_keys.each_value do |ssh_key|
-        r.append gear.add_authorized_ssh_key(ssh_key)
+      @user.system_ssh_keys.each do |key_name, key_info|
+        r.append gear.add_authorized_ssh_key(key_info, nil, key_name)
       end
     end if @user.system_ssh_keys
     reply
@@ -282,8 +453,8 @@ class Application < Cloud::Sdk::Cartridge
   def add_ssh_keys
     reply = ResultIO.new
     run_on_gears(nil,reply,false) do |gear,r|
-      @user.ssh_keys.each_value do |ssh_key|
-        r.append gear.add_authorized_ssh_key(ssh_key)
+      @user.ssh_keys.each do |key_name, key_info|
+        r.append gear.add_authorized_ssh_key(key_info["key"], key_info["type"], key_name)
       end
     end if @user.ssh_keys
     reply
@@ -292,7 +463,7 @@ class Application < Cloud::Sdk::Cartridge
   def add_system_env_vars
     reply = ResultIO.new
     run_on_gears(nil,reply,false) do |gear,r|
-      @user.env_vars.each_value do |key, value|
+      @user.env_vars.each do |key, value|
         r.append gear.add_env_var(key, value)
       end
     end if @user.env_vars
@@ -358,42 +529,6 @@ class Application < Cloud::Sdk::Cartridge
     return updated 
   end
   
-  def stop
-    self.container.stop(self, self.framework)
-  end
-  
-  def restart
-    self.container.restart(self, self.framework)
-  end
-  
-  def force_stop
-    self.container.force_stop(self, self.framework)
-  end
-  
-  def reload
-    self.container.reload(self, self.framework)
-  end
-  
-  def status
-    self.container.status(self, self.framework)
-  end
-  
-  def tidy
-    self.container.tidy(self, self.framework)
-  end
-  
-  def threaddump
-    self.container.threaddump(self, self.framework)
-  end
-
-  def expose_port
-    self.container.expose_port(self, @framework)
-  end
-  
-  def conceal_port
-    self.container.conceal_port(self, @framework)
-  end
-
   def add_alias(server_alias)
     self.aliases = [] unless self.aliases
     raise Cloud::Sdk::UserException.new("Alias '#{server_alias}' already exists for '#{@name}'", 255) if self.aliases.include? server_alias
@@ -440,14 +575,9 @@ class Application < Cloud::Sdk::Cartridge
     self.cart_data = {} if @cart_data.nil?
     
     raise Cloud::Sdk::UserException.new("#{dep} already embedded in '#{@name}'", 101) if self.embedded.include? dep
-
     self.requires_feature << dep
-    self.elaborate_descriptor
+    reply.append self.configure_dependencies
 
-    c_reply,component_details = self.container.add_component(self, dep)
-    reply.append c_reply
-    self.cart_data[dep] = { "info" => component_details }
-    self.save
     self.class.notify_observers(:after_add_dependency, {:application => self, :dependency => dep, :reply => reply})
     reply
   end
@@ -458,47 +588,10 @@ class Application < Cloud::Sdk::Cartridge
     self.embedded = {} unless self.embedded
         
     raise Cloud::Sdk::UserException.new("#{dep} not embedded in '#{@name}', try adding it first", 101) unless self.embedded.include? dep
-
     self.requires_feature.delete(dep)
-    self.elaborate_descriptor
-
-    reply.append self.container.remove_component(self, dep)
-    self.embedded.delete dep
-    self.save
+    reply.append self.configure_dependencies
     self.class.notify_observers(:after_remove_dependency, {:application => self, :dependency => dep, :reply => reply})
     reply
-  end
-  
-  def start_dependency(dep)
-    raise Cloud::Sdk::UserException.new("#{dep} not embedded in '#{@name}', try adding it first", 101) unless self.embedded.include? dep
-    self.container.start_component(self, dep)
-  end
-  
-  def stop_dependency(dep)
-    raise Cloud::Sdk::UserException.new("#{dep} not embedded in '#{@name}', try adding it first", 101) unless self.embedded.include? dep
-    self.container.stop_component(self, dep)
-  end
-  
-  def restart_dependency(dep)
-    raise Cloud::Sdk::UserException.new("#{dep} not embedded in '#{@name}', try adding it first", 101) unless self.embedded.include? dep
-    self.container.restart_component(self, dep)
-  end
-  
-  def reload_dependency(dep)
-    raise Cloud::Sdk::UserException.new("#{dep} not embedded in '#{@name}', try adding it first", 101) unless self.embedded.include? dep
-    self.container.reload_component(self, dep)
-  end
-  
-  # Returns the component status of the embedded dependency
-  # @param [String] dep Dependency name
-  # @return [Hash]
-  #   * :key [String] Gear ID
-  #   * :value [ResultIO]
-  def dependency_status(dep)
-    raise Cloud::Sdk::UserException.new("#{dep} not a dependency of '#{@name}', try adding it first", 101) unless self.requires_feature.include? dep
-    successful_runs, failed_runs = run_on_gears(nil,false) do |gear|
-      gear.component_status(dep)
-    end
   end
 
   # Parse the descriptor and build or update the runtime descriptor structure
@@ -678,7 +771,14 @@ class Application < Cloud::Sdk::Cartridge
   # @return [Array<String>]
   # @deprecated  
   def embedded
-    return self.requires_feature - CartridgeCache.cartridge_names('standalone')
+    embedded_carts = CartridgeCache.cartridge_names('embedded')
+    retval = {}
+    self.comp_instance_map.values.each do |comp_inst|
+      if embedded_carts.include?(comp_inst.parent_cart_name)
+        retval[comp_inst.parent_cart_name] = {"info" => comp_inst.cart_data.first}
+      end
+    end
+    retval
   end
   
   # Provides an array version of the component instance map for saving in the datastore.
@@ -760,6 +860,7 @@ private
       rescue Exception => e
         Rails.logger.error e.message
         Rails.logger.error e.inspect
+        Rails.logger.error e.backtrace.inspect        
         failed_runs.push({:gear => gear, :exception => e})
         if (!result_io.nil? && e.kind_of?(Cloud::Sdk::CdkException) && !e.result_io.nil?)
           result_io.append(retval) 
