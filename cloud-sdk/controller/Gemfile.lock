@@ -28,6 +28,7 @@ GEM
       bson (= 1.5.2)
     rake (0.8.7)
     rspec (1.3.0)
+    state_machine (1.1.2)
 
 PLATFORMS
   ruby
@@ -38,3 +39,4 @@ DEPENDENCIES
   mocha
   rake
   rspec
+  state_machine

@@ -1,4 +1,4 @@
-Name:  rhc-cartridge-jenkins-1.4
+Name:  jenkins-1.4
 Display-Name: Jenkins v0.84.1 (noarch)
 Description: Provides jenkins-1.4 support
 Version:   0.84.1
@@ -14,13 +14,12 @@ Native-Requires:
   - jenkins
   - jenkins-plugin-openshift
 Architecture: noarch
-Descriptor:
-  Reservations:
-    - MEM >= 100MB
-  Provides:
-    get-interface-url:
-      Type: "NET_TCP:jenkins:url"
-  Scaling:
-    Min: 1
-    Max: 1
+Reservations:
+  - MEM >= 100MB
+Publishes:
+  get-interface-url:
+    Type: "NET_TCP:jenkins:url"
+Scaling:
+  Min: 1
+  Max: 1
 

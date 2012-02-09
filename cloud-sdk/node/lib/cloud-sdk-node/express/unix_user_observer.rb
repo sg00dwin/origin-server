@@ -19,9 +19,9 @@ require 'cloud-sdk-node/config'
 require 'cloud-sdk-node/model/unix_user'
 require 'cloud-sdk-node/utils/shell_exec'
 
-module Cloud::SDK::Model
+module Cloud::Sdk
   class UnixUserObserver
-    include Cloud::SDK::Utils::ShellExec
+    include Cloud::Sdk::Utils::ShellExec
     include Object::Singleton
     
     def update(*args)
@@ -37,13 +37,13 @@ module Cloud::SDK::Model
       out,err,rc = shellCmd("service cgconfig status > /dev/null 2>&1")
       if rc == 0
         out,err,rc = shellCmd("service libra-cgroups startuser #{user.name} > /dev/null")
-        raise Cloud::SDK::Model::UserCreationException("Unable to setup cgroups for #{user.name}") unless rc == 0
+        raise Cloud::Sdk::UserCreationException("Unable to setup cgroups for #{user.name}") unless rc == 0
       end
 
       out,err,rc = shellCmd("service libra-tc status > /dev/null 2>&1")
       if rc == 0
         shellCmd("service libra-tc startuser #{user.name} > /dev/null")
-        raise Cloud::SDK::Model::UserCreationException("Unable to setup tc for #{user.name}") unless rc == 0
+        raise Cloud::Sdk::UserCreationException("Unable to setup tc for #{user.name}") unless rc == 0
       end
     end
 
@@ -51,9 +51,9 @@ module Cloud::SDK::Model
     end
     
     def after_initialize_homedir(user)
-      cmd = "/bin/sh #{File.join(Cloud::SDK::SDK_PATH, "express/setup_pam_fs_limits.sh")} #{user.name}"
+      cmd = "/bin/sh #{File.join(Cloud::Sdk::SDK_PATH, "express/setup_pam_fs_limits.sh")} #{user.name}"
       out,err,rc = shellCmd(cmd)
-      raise Cloud::SDK::Model::UserCreationException("Unable to setup pam/fs limits for #{user.name}") unless rc == 0
+      raise Cloud::Sdk::UserCreationException("Unable to setup pam/fs limits for #{user.name}") unless rc == 0
     end
     
     
@@ -68,7 +68,7 @@ module Cloud::SDK::Model
         shellCmd("service libra-cgroups stopuser #{user.name} > /dev/null")
       end
       
-      cmd = "/bin/sh #{File.join(Cloud::SDK::SDK_PATH, "express/teardown_pam_fs_limits.sh")} #{user.name}"
+      cmd = "/bin/sh #{File.join(Cloud::Sdk::SDK_PATH, "express/teardown_pam_fs_limits.sh")} #{user.name}"
       shellCmd(cmd)
     end
     
@@ -91,5 +91,5 @@ module Cloud::SDK::Model
     end
   end
   
-  Cloud::SDK::Model::UnixUser.add_observer(UnixUserObserver.instance)
+  Cloud::Sdk::UnixUser.add_observer(UnixUserObserver.instance)
 end

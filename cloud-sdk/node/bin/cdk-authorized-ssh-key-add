@@ -24,7 +24,7 @@ cdk-authorized-ssh-key-add: Adds an authorized ssh key to the app.
 
 == Usage
 
-cdk-authorized-ssh-key-add [--with-uuid UUID] [--with-ssh-key KEY --with-ssh-key-type KEY_TYPE]
+cdk-authorized-ssh-key-add  --with-app-uuid APP_UUID --with-container-uuid UUID --with-ssh-key KEY --with-ssh-key-type KEY_TYPE
 
 Options:
 -h|--help:
@@ -38,7 +38,8 @@ end
 
 require 'cloud-sdk-node'
 opts = GetoptLong.new(
-    ["--with-uuid",            "-c", GetoptLong::REQUIRED_ARGUMENT],
+    ["--with-app-uuid",       "-a", GetoptLong::REQUIRED_ARGUMENT],
+    ["--with-container-uuid", "-c", GetoptLong::REQUIRED_ARGUMENT],
     ["--with-ssh-key",         "-s", GetoptLong::REQUIRED_ARGUMENT],
     ["--with-ssh-key-type",    "-t", GetoptLong::REQUIRED_ARGUMENT],
     ["--with-ssh-key-comment", "-m", GetoptLong::REQUIRED_ARGUMENT]
@@ -57,7 +58,8 @@ if args["--help"]
   exit -1
 end
 
-uuid = args['--with-uuid']
+uuid = args['--with-container-uuid']
+app_uuid = args['--with-app-uuid']
 ssh_key = args['--with-ssh-key']
 key_type = args['--with-ssh-key-type']
 comment = args['--with-ssh-key-comment']
@@ -68,7 +70,7 @@ unless uuid and ssh_key
 end
 
 begin
-  container = Cloud::SDK::Model::ApplicationContainer.new(uuid,uuid)
+  container = Cloud::Sdk::ApplicationContainer.new(uuid,uuid)
   container.user.add_ssh_key(ssh_key, key_type, comment)
 rescue Exception => e
   $stderr.puts(e.message)

@@ -1,4 +1,4 @@
-Name: raw
+Name: raw-0.1
 Display-Name: raw v1.0.0 (noarch)
 Description: Cartridge providing raw compute power to applications
 Version: 1.0.0
@@ -10,10 +10,9 @@ Requires:
 Conflicts:
 Native-Requires:
 Architecture: noarch
-Descriptor:
-  Reservations:
-    - MEM >= 10MB
-  Scaling:
-    Min: 1
-    Max: -1
+Reservations:
+  - MEM >= 10MB
+Scaling:
+  Min: 1
+  Max: -1
 

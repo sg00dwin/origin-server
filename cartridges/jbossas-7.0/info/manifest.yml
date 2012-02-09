@@ -1,4 +1,4 @@
-Name: jboss-as7
+Name: jbossas-7.0
 Display-Name: JBoss Application Server 7.1.0 (noarch)
 Description: JBoss Application Server - Java EE Application Server
 Version: 7.1.0
@@ -16,32 +16,26 @@ Native-Requires:
   - java-1.6.0
   - maven3
 Architecture: noarch
-Descriptor:
-  Reservations:
-    - MEM >= 100MB
-  Profiles:
-    standalone:
-      &standalone-profile
-      Provides: jboss-standalone, jboss-as7-standalone, jboss-as7.1-standalone
-      Reservations:
-        - MEM >= 100MB
-      Components:
-        jbossas-server:
-          &jbossas-server-component
-          Publishes:
-            get-doc-root:
-              Type: "FILESYSTEM:doc-root"
-            get-internal-uri:
-              Type: "NET_TCP:http"
-          Subscribes:
-            set-jdbc-info:
-              Type: "NET_TCP:jdbc"
-      Groups:
-        app-servers:
-          Components:
-            jbossas-server: jbossas-server
-     
-
-    default:
-      *standalone-profile
-
+Reservations:
+  - MEM >= 100MB
+Profiles:
+  standalone:
+    Provides: jboss-standalone, jboss-as7-standalone, jboss-as7.1-standalone
+    Reservations:
+      - MEM >= 100MB
+    Components:
+      jbossas-server:
+        &jbossas-server-component
+        Publishes:
+          get-doc-root:
+            Type: "FILESYSTEM:doc-root"
+          get-internal-uri:
+            Type: "NET_TCP:http"
+        Subscribes:
+          set-jdbc-info:
+            Type: "NET_TCP:jdbc"
+    Groups:
+      app-servers:
+        Components:
+          jbossas-server: jbossas-server
+Default-Profile: standalone

@@ -15,7 +15,7 @@
 #++
 
 require 'rubygems'
-module Cloud::SDK
+module Cloud::Sdk
   #load plugins
   Config.instance.get("plugins").each do |plugin|
     require "#{plugin}"

@@ -1,0 +1,21 @@
+Name: rhc-cartridge-nodejs-0.6
+Display-Name: Node v0.6 (noarch)
+Description: Cartridge packaging Node.js support for OpenShift Express
+Version: 0.6.10
+License: ASL 2.0
+Vendor:
+Provides:
+  - "nodejs"
+  - "nodejs (version) = 0.6.10"
+  - "nodejs (version) = 0.6"
+Requires:
+Conflicts:
+Native-Requires:
+  - nodejs >= 0.6
+Architecture: noarch
+Descriptor:
+  Reservations:
+    - MEM >= 100MB
+  Scaling:
+    Min: 1
+    Max: -1

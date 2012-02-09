@@ -1,0 +1,47 @@
+#!/bin/bash
+#
+# Confirms all required Node bits are in place or fails.
+#
+set -e
+
+# Variables.
+CART_DIR=/usr/libexec/li/cartridges
+CARTRIDGE_DIR=${CARTRIDGE_DIR:-"$CART_DIR/nodejs-0.6/"}
+
+
+function print_help() {
+    echo "Usage: uuid"
+    exit 1
+}
+
+
+function quit() {
+    echo -e "$1" 1>&2
+    exit 5
+}
+
+
+#
+#  main():
+#
+
+# Load utility functions and node conf.
+source ${CART_DIR}/abstract/info/lib/util
+load_node_conf
+
+# Parse arguments.
+while getopts 'd' OPTION; do
+    case $OPTION in
+        d)  set -x      ;;
+        ?)  print_help  ;;
+    esac
+done
+
+# Ensure arguments.
+[ $# -eq 1 ] || print_help
+
+uuid=$1
+
+# Ensure packages are installed.
+rpm -q nodejs httpd > /dev/null || quit "Missing packages"
+[ -d "$CARTRIDGE_DIR" ] || quit "Missing cartridge dir: $CARTRIDGE_DIR"
