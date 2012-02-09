@@ -66,11 +66,6 @@ Feature: Cartridge Verification Tests
   Scenarios: Server Alias Scenarios
     |      type     |
     |   php-5.3     |
-    |   python-2.6  |
-    |   perl-5.10   |
-    |   ruby-1.8    |
-    |   jbossas-7.0 |
-    |   jenkins-1.4 |
 
   Scenario Outline: Application Restarting
     Given an existing <type> application
@@ -85,20 +80,6 @@ Feature: Cartridge Verification Tests
     |   ruby-1.8    |
     |   jbossas-7.0 |
     |   jenkins-1.4 |
-
-  Scenario Outline: Application Restarting From Stop
-    Given an existing <type> application
-    When the application is stopped
-    And the application is restarted
-    Then the application should be accessible
-
-  Scenarios: Application Restarting From Stop Scenarios
-    |      type     |
-    |   php-5.3     |
-    |   python-2.6  |
-    |   perl-5.10   |
-    |   ruby-1.8    |
-    |   jenkins-1.4 |
     
   Scenario Outline: Application Change Namespace
     Given an existing <type> application
@@ -108,10 +89,6 @@ Feature: Cartridge Verification Tests
   Scenarios: Application Change Namespace Scenarios
     |      type     |
     |   php-5.3     |
-    |   python-2.6  |
-    |   perl-5.10   |
-    |   ruby-1.8    |
-    |   jbossas-7.0 |
     |   jenkins-1.4 |
     
   Scenario Outline: Application Snapshot
@@ -124,12 +101,7 @@ Feature: Cartridge Verification Tests
   Scenarios: Application Snapshot Scenarios
     |      type     |
     |   php-5.3     |
-    |   python-2.6  |
-    |   perl-5.10   |
-    |   ruby-1.8    |
     |   jbossas-7.0 |
-    |   jenkins-1.4 |
-    |   raw-0.1     |
 
   Scenario Outline: Application Tidy
     Given an existing <type> application
@@ -139,12 +111,8 @@ Feature: Cartridge Verification Tests
   Scenarios: Application Tidy Scenarios
     |      type     |
     |   php-5.3     |
-    |   python-2.6  |
-    |   perl-5.10   |
     |   ruby-1.8    |
     |   jbossas-7.0 |
-    |   jenkins-1.4 |
-    |   raw-0.1     |
 
   Scenario Outline: Application Destroying
     Given an existing <type> application
@@ -159,3 +127,4 @@ Feature: Cartridge Verification Tests
     |   ruby-1.8    |
     |   jbossas-7.0 |
     |   jenkins-1.4 |
+    |   raw-0.1     |

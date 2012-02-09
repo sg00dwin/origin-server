@@ -3,7 +3,6 @@
 require "/var/www/libra/broker/config/environment"
 require 'getoptlong'
 require 'mcollective'
-require 'open-uri'
 
 include MCollective::RPC
 
@@ -80,20 +79,9 @@ puts "URL: #{url}"
 puts "Login: #{app.user.login}"
 puts "App UUID: #{app.uuid}"
 
-begin
-    open(url) do |resp|
-        puts
-        puts "Status Code: #{resp.status[0]} - #{resp.status[1]}"
-        puts
-        puts "####################### Body Begin ###########################"
-        puts resp.read
-        puts "######################## Body End ############################\n"
-    end
-rescue Exception => e
-    puts
-    puts "Error accessing URL: #{e.message}"
-end
-
 destination_container = nil
 destination_container = Cloud::Sdk::ApplicationContainerProxy.instance(options[:target_server_identity]) if options[:target_server_identity]
 reply = app.container.move_app(app, destination_container, options[:destination_district_uuid], options[:allow_change_district], options[:node_profile])
+
+puts "################# ADDITIONAL DEBUG OUTPUT #################\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
+puts "################# ADDITIONAL ERROR OUTPUT #################\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?

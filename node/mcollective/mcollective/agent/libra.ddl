@@ -6,7 +6,6 @@ metadata    :name        => "Libra Management",
             :url         => "https://engineering.redhat.com/trac/Libra",
             :timeout     => 60
 
-
 action "cartridge_do", :description => "run a cartridge action" do
     display :always
 
@@ -22,7 +21,7 @@ action "cartridge_do", :description => "run a cartridge action" do
         :prompt         => "Action",
         :description    => "Cartridge hook to run",
         :type           => :string,
-        :validation     => '^(app-create|app-destroy|env-var-add|env-var-remove|broker-auth-key-add|broker-auth-key-remove|authorized-ssh-key-add|authorized-ssh-key-remove|configure|deconfigure|preconfigure|update-namespace|tidy|deploy-httpd-proxy|remove-httpd-proxy|move|pre-move|post-move|info|post-install|post-remove|pre-install|reload|restart|start|status|stop|force-stop|add-alias|remove-alias)$',
+        :validation     => '^(app-create|app-destroy|env-var-add|remove-env-var|broker-auth-key-add|broker-auth-key-remove|authorized-ssh-key-add|authorized-ssh-key-remove|configure|deconfigure|preconfigure|update-namespace|tidy|deploy-httpd-proxy|remove-httpd-proxy|move|pre-move|post-move|info|post-install|post-remove|pre-install|reload|restart|start|status|stop|force-stop|add-alias|remove-alias|cartridge-list)$',
         :optional       => false,
         :maxlength      => 64
 

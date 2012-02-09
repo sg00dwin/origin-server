@@ -30,6 +30,6 @@ then
     $OPENSHIFT_DB_MYSQL_51_DUMP_CLEANUP
 
 else
-    echo "Mysql restore attempted but no dump found!" 1>&2
+    echo "MySQL restore attempted but no dump found!" 1>&2
     echo "$OPENSHIFT_DATA_DIR/mysql_dump_snapshot.gz does not exist" 1>&2
 fi

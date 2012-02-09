@@ -1,7 +1,7 @@
 #!/bin/bash
 if ! [ $# -eq 1 ]
 then
-    echo "Usage: $0 [start|restart|stop]"
+    echo "Usage: $0 [start|restart|stop|status]"
     exit 1
 fi
 
@@ -44,7 +44,7 @@ start() {
         /usr/bin/mysqld_safe --defaults-file=$MYSQL_DIR/etc/my.cnf >/dev/null 2>&1 &
         wait_to_start_as_user
     else
-        echo "Mysql already running" 1>&2
+        echo "MySQL already running" 1>&2
     fi
 }
 
@@ -64,9 +64,9 @@ stop() {
     else
         if `pgrep -x mysqld_safe > /dev/null 2>&1`
         then
-        	echo "Warning: Mysql process exists without a pid file.  Use force-stop to kill." 1>&2
+        	echo "Warning: MySQL process exists without a pid file.  Use force-stop to kill." 1>&2
         else
-            echo "Mysql already stopped" 1>&2
+            echo "MySQL already stopped" 1>&2
         fi
     fi
 }
@@ -85,9 +85,9 @@ case "$1" in
     status)
         if isrunning
         then
-            echo "Mysql is running" 1>&2
+            echo "MySQL is running" 1>&2
         else
-            echo "Mysql is stopped" 1>&2
+            echo "MySQL is stopped" 1>&2
         fi
         exit 0
     ;;

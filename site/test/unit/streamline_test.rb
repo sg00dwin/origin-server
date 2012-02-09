@@ -337,9 +337,8 @@ class StreamlineTest < ActiveSupport::TestCase
     assert_nil @streamline.streamline_cookie
 
     ticket = @streamline.ticket = 'abcdef'
-    name, value = @streamline.streamline_cookie
-    assert_equal :rh_sso, name
-    assert_equal ticket, value[:value]
+    cookie = @streamline.streamline_cookie
+    assert_equal 'rh_sso=abcdef', cookie.to_s
   end
 
   test "authenticate fails" do
@@ -354,5 +353,9 @@ class StreamlineTest < ActiveSupport::TestCase
     assert_equal false, @streamline.authenticate("test1", "test1")
     assert_equal 1, @streamline.errors.length
     assert_equal I18n.t(:service_error, :scope => :streamline), @streamline.errors[:base].first
+  end
+
+  test "cookie initializes" do
+    assert_equal "hi=value", Streamline::Cookie.new("hi", "value").to_s
   end
 end

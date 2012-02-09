@@ -20,7 +20,13 @@ class LegacyBrokerController < ApplicationController
       user_info[:rhc_domain] = Rails.configuration.cdk[:domain_suffix]
       app_info = {}
       user.applications.each do |app|
-        app_info[app.name] = app.as_json
+        app_info[app.name] = {
+          "framework" => app.framework,
+          "creation_time" => app.creation_time,
+          "uuid" => app.uuid,
+          "aliases" => app.aliases,
+          "embedded" => app.embedded
+        }
       end
       
       @reply.data = {:user_info => user_info, :app_info => app_info}.to_json
@@ -149,15 +155,14 @@ class LegacyBrokerController < ApplicationController
       apps = user.applications
 
       app = Application.new(user, @req.app_name, nil, @req.node_profile, @req.cartridge)
-      container = Cloud::Sdk::ApplicationContainerProxy.find_available(@req.node_profile)
-      check_cartridge_type(app.framework, container, "standalone")
+      check_cartridge_type(app.framework, "standalone")
       if (user.consumed_gears >= user.max_gears)
         raise Cloud::Sdk::UserException.new("#{@login} has already reached the application limit of #{user.max_gears}", 104)
       end
       raise Cloud::Sdk::UserException.new("The supplied application name '#{app.name}' is not allowed", 105) if Cloud::Sdk::ApplicationContainerProxy.blacklisted? app.name
       if app.valid?
         begin
-          @reply.append app.create(container)
+          @reply.append app.create
           @reply.append app.configure_dependencies
           @reply.append app.add_ssh_keys
           @reply.append app.add_system_ssh_keys
@@ -199,25 +204,25 @@ class LegacyBrokerController < ApplicationController
       @reply.resultIO << "Successfully destroyed application: #{app.name}" if @reply.resultIO.length == 0
     when 'start'
       app = get_app_from_request(user)
-      @reply.append app.start
+      @reply.append app.start(app.framework)
     when 'stop'
       app = get_app_from_request(user)
-      @reply.append app.stop
+      @reply.append app.stop(app.framework)
     when 'restart'
       app = get_app_from_request(user)
-      @reply.append app.restart
+      @reply.append app.restart(app.framework)
     when 'force-stop'
       app = get_app_from_request(user)
-      @reply.append app.force_stop
+      @reply.append app.force_stop(app.framework)
     when 'reload'
       app = get_app_from_request(user)
-      @reply.append app.reload
+      @reply.append app.reload(app.framework)
     when 'status'
       app = get_app_from_request(user)
-      @reply.append app.status
+      @reply.append app.status(app.framework)
     when 'tidy'
       app = get_app_from_request(user)
-      @reply.append app.tidy      
+      @reply.append app.tidy(app.framework)
     when 'add-alias'
       app = get_app_from_request(user)
       @reply.append app.add_alias @req.server_alias
@@ -226,7 +231,13 @@ class LegacyBrokerController < ApplicationController
       @reply.append app.remove_alias @req.server_alias
     when 'threaddump'
       app = get_app_from_request(user)
-      @reply.append app.threaddump
+      @reply.append app.threaddump(app.framework)
+    when 'expose-port'
+      app = get_app_from_request(user)
+      @reply.append app.expose_port
+    when 'conceal-port'
+      app = get_app_from_request(user)
+      @reply.append app.conceal_port
     else
       raise Cloud::Sdk::UserException.new("Invalid action #{@req.action}", 111)
     end
@@ -239,26 +250,28 @@ class LegacyBrokerController < ApplicationController
     user = CloudUser.find(@login)    
     raise Cloud::Sdk::UserException.new("Invalid user", 99) if user.nil?
         
-    app = get_app_from_request(user)
-    
-    check_cartridge_type(@req.cartridge, app.container, "embedded")
+    app = get_app_from_request(user)    
+    check_cartridge_type(@req.cartridge, "embedded")
+    if @req.action != "configure" and !app.requires_feature.include?(@req.cartridge)
+      raise Cloud::Sdk::UserException.new("#{@req.cartridge} not embedded in '#{app.name}', try adding it first", 101)
+    end
 
-    Rails.logger.debug "DEBUG: Performing action '#{@req.action}' on node '#{app.server_identity}'"    
+    Rails.logger.debug "DEBUG: Performing action '#{@req.action}'"    
     case @req.action
     when 'configure'
       @reply.append app.add_dependency(@req.cartridge)
     when 'deconfigure'
       @reply.append app.remove_dependency(@req.cartridge)
     when 'start'
-      @reply.append app.start_dependency(@req.cartridge)      
+      @reply.append app.start(@req.cartridge)      
     when 'stop'
-      @reply.append app.stop_dependency(@req.cartridge)      
+      @reply.append app.stop(@req.cartridge)      
     when 'restart'
-      @reply.append app.restart_dependency(@req.cartridge)      
+      @reply.append app.restart(@req.cartridge)      
     when 'status'
-      @reply.append app.dependency_status(@req.cartridge)      
+      @reply.append app.status(@req.cartridge)      
     when 'reload'
-      @reply.append app.reload_dependency(@req.cartridge)
+      @reply.append app.reload(@req.cartridge)
     else
       raise Cloud::Sdk::UserException.new("Invalid action #{@req.action}", 111)           
     end
@@ -275,8 +288,8 @@ class LegacyBrokerController < ApplicationController
   end
   
   # Raise an exception if cartridge type isn't supported
-  def check_cartridge_type(framework, container, cart_type)
-    carts = container.get_available_cartridges(cart_type)
+  def check_cartridge_type(framework, cart_type)
+    carts = Application.get_available_cartridges(cart_type)
     unless carts.include? framework
       if cart_type == 'standalone'
         raise Cloud::Sdk::UserException.new(110), "Invalid application type (-t|--type) specified: '#{framework}'.  Valid application types are (#{carts.join(', ')})."

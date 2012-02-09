@@ -24,20 +24,15 @@ Feature: Jenkins Application
      #And the openshift environment variable files will not exist
      And a jenkins daemon will not be running     
 
-   Scenario: Start a Jenkins Application
-     Given an accepted node
-     And a new guest account
-     And a new jenkins application
-     And the jenkins service is stopped
-     When I start the jenkins service
-     Then a jenkins daemon will be running
-     And I deconfigure the jenkins application
-
-   Scenario: Stop a Jenkins Application
+   Scenario: Stop Start a Jenkins Application
      Given an accepted node
      And a new guest account
      And a new jenkins application
      And the jenkins service is running
      When I stop the jenkins service
      Then a jenkins daemon will not be running
+     And the jenkins service is stopped
+     When I start the jenkins service
+     Then a jenkins daemon will be running
      And I deconfigure the jenkins application
+     

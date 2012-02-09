@@ -41,4 +41,9 @@ PHPMYADMIN_CTL_SCRIPT="$PHPMYADMIN_DIR/${application}_phpmyadmin_ctl.sh"
 ADDRESS="$(awk '/Listen/{ print $2 }' $PHPMYADMIN_DIR/conf.d/libra.conf)"
 URL="http://$ADDRESS/server-status?auto"
 
-runuser --shell /bin/sh "$uuid" -c "/usr/bin/wget -qO- $URL"
+if output=$(runuser --shell /bin/sh "$uuid" -c "/usr/bin/wget -qO- $URL" 2>&1)
+then
+    status_client_result "$output"
+else
+    client_result "phpMyAdmin is either stopped or inaccessible"
+fi

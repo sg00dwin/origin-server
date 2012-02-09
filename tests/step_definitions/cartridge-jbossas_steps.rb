@@ -30,11 +30,12 @@ When /^I configure a jbossas application$/ do
     begin
       command = $jbossas_config_format % [app_name, namespace, account_name]
       buffer = []
-      exit_code = runcon command,  'unconfined_u', 'system_r', 'libra_initrc_t', buffer
-      raise Exception.new "Error running #{command}: Exit code: #{exit_code}" if exit_code != 0
+      exit_code = runcon(command, 'unconfined_u', 'system_r', 'libra_initrc_t', buffer)
+      raise "Error running #{command}: Exit code: #{exit_code}" if exit_code != 0
     rescue Exception => e
       command = $jbossas_deconfig_format % [app_name, namespace, account_name]
-      runcon command,  'unconfined_u', 'system_r', 'libra_initrc_t'
+      runcon(command, 'unconfined_u', 'system_r', 'libra_initrc_t')
+      raise
     end
   end
 end
@@ -94,7 +95,7 @@ Given /^the jbossas service is (running|stopped)$/ do |start_state|
       good_exit = 0
   when 'stopped':
       fix_action = 'stop'
-      good_exit = 0 # was 4 for others
+      good_exit = 0
   end
 
   # check

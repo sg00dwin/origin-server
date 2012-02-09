@@ -1,5 +1,5 @@
 class RestApplication < Cloud::Sdk::Model
-  attr_accessor :framework, :creation_time, :uuid, :embedded, :aliases, :name, :server_identity, :links, :domain_id
+  attr_accessor :framework, :creation_time, :uuid, :embedded, :aliases, :name, :links, :domain_id
   include LegacyBrokerHelper
   
   def initialize(app, domain_id)
@@ -8,7 +8,6 @@ class RestApplication < Cloud::Sdk::Model
     self.creation_time = app.creation_time
     self.uuid = app.uuid
     self.aliases = app.aliases || Array.new
-    self.server_identity = app.server_identity
     self.embedded = app.embedded
     self.domain_id = domain_id
 

@@ -19,7 +19,7 @@ function print_help {
 application="$1"
 namespace=`basename $2`
 uuid=$3
-#IP=$4
+IP=$4
 
 CART_DIR=/usr/libexec/li/cartridges
 source ${CART_DIR}/abstract/info/lib/util
@@ -44,6 +44,10 @@ cat <<EOF > "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}.conf"
 
   Alias /health $CART_INFO_DIR/configuration/health.html
   Alias / $CART_INFO_DIR/configuration/index.html
+
+  #ProxyPass /health !
+  #ProxyPass / http://$IP:8080/
+  #ProxyPassReverse / http://$IP:8080/
 </VirtualHost>
 
 <VirtualHost *:443>

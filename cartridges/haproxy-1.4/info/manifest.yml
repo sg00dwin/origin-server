@@ -1,42 +1,21 @@
-Name: rhc-cartridge-php
-Display-Name: php v1.0.0 (noarch)
-Description: Cartridge packaging PHP versions 5.3.2 upto 5.4.0
-Version: 1.0.0
+Name: haproxy
+Display-Name: haproxy v1.4
+Description: Cartridge packaging HAProxy versions 1.4
+Version: 1.4
 License: ASL 2.0
-Vendor:  php.net
+Vendor:  http://haproxy.1wt.eu/
 Provides:
-  - "php"
-  - "php(version) = 5.3.2"
+  - "haproxy"
+  - "haproxy(version) = 1.4"
 Requires:
-  - "www-dynamic"
 Conflicts:
 Native-Requires:
-  - "php >= 5.3.2"
-  - "php < 5.4.0"
-  - "php-pdo"
-  - "php-gd"
-  - "php-xml"
-  - "php-mysql"
-  - "php-pgsql"
-  - "php-pear"
+  - "haproxy >= 1.4"
 Architecture: noarch
-Descriptor:
-  Reservations:
-    - MEM >= 100MB
-  Start-Order: php
-  Publishes:
-    get-doc-root:
-      Type: "FILESYSTEM:doc-root"
-    get-php-ini:
-      Type: "FILESYSTEM:php-ini"
-  Subscribes:
-    set-mysql-connection-info:
-      Type: "NET_TCP:db:mysql"
-      Required : false
-    set-postgres-connection-info:
-      Type: "NET_TCP:db:postgres"
-      Required : false
-  Scaling:
-    Min: 1
-    Max: -1
-
+Publishes:
+  get-balancer-connection-info:
+    Type: "NET_TCP:http:http"
+Subscribes:
+  set-get-proxy-info:
+    Type: "NET_TCP:httpd-proxy-info"
+    Required : false

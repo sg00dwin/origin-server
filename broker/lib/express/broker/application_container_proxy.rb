@@ -2,6 +2,7 @@ require 'mcollective'
 require 'openshift'
 require 'express/broker/nurture'
 require 'express/broker/apptegic'
+require 'open-uri'
 
 include MCollective::RPC
 module Express
@@ -42,25 +43,13 @@ module Express
         OpenShift::Blacklist.in_blacklist?(name)
       end
       
-      IGNORE_CARTS = %w(abstract abstract-httpd embedded)
-      def get_available_cartridges(cart_type)
-        cartridges = []
-        
-        case cart_type
-        when 'standalone'
-          ApplicationContainerProxy.rpc_get_fact('cart_list', @id) do |server, carts|
-            cartridges = carts.split('|')
-          end
-        when 'embedded'
-          ApplicationContainerProxy.rpc_get_fact('embed_cart_list', @id) do |server, embedcarts|
-            cartridges = embedcarts.split('|')
-          end
-        end
-        cartridges.delete_if {|cart| IGNORE_CARTS.include?(cart)}
-        
-        cartridges
+      def get_available_cartridges
+        result = execute_direct(@@C_CONTROLLER, 'cartridge-list', "--porcelain --with-descriptors")
+        result = parse_result(result)
+        cart_data = JSON.parse(result.resultIO.string)
+        cart_data.map! {|c| Cloud::Sdk::Cartridge.new.from_descriptor(YAML.load(c))}
       end
-
+      
       def reserve_uid(district_uuid=nil)
         reserved_uid = nil
         if Rails.configuration.districts[:enabled]
@@ -103,16 +92,15 @@ module Express
         end
       end
       
-
-      def create(app)
+      def create(app, container)
         result = nil
         (1..10).each do |i|
-          mcoll_reply = execute_direct(@@C_CONTROLLER, 'app-create', "-c '#{app.uuid}' -i '#{app.uid}'")
+          mcoll_reply = execute_direct(@@C_CONTROLLER, 'app-create', "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{container.uuid}'  -i '#{container.uid}'")
           result = parse_result(mcoll_reply)
           if result.exitcode == 129 && has_uid_or_gid?(app.uid) # Code to indicate uid already taken
-            destroy(app, true)
+            destroy(app, container, true)
             inc_externally_reserved_uids_size
-            app.uid = reserve_uid
+            container.uid = reserve_uid
             app.save
           else
             break
@@ -121,11 +109,11 @@ module Express
         result
       end
     
-      def destroy(app, keep_uid=false, uid=nil)
-        result = execute_direct(@@C_CONTROLLER, 'app-destroy', "-c '#{app.uuid}'")
+      def destroy(app, container, keep_uid=false, uid=nil)
+        result = execute_direct(@@C_CONTROLLER, 'app-destroy', "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{container.uuid}'")
         result_io = parse_result(result)
         
-        uid = app.uid unless uid
+        uid = container.uid unless uid
         
         if uid && !keep_uid
           unreserve_uid(uid)
@@ -133,49 +121,71 @@ module Express
         return result_io
       end
 
-      def add_authorized_ssh_key(app, ssh_key, key_type=nil, message=nil)
-        cmd = "-c '#{app.uuid}' -s '#{ssh_key}'"
+      def add_authorized_ssh_key(app, gear, ssh_key, key_type=nil, message=nil)
+        cmd = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -s '#{ssh_key}'"
         cmd += " -t '#{key_type}'" if key_type
         cmd += " -m '-#{message}'" if message
         result = execute_direct(@@C_CONTROLLER, 'authorized-ssh-key-add', cmd)
         parse_result(result)
       end
 
-      def remove_authorized_ssh_key(app, ssh_key)
-        result = execute_direct(@@C_CONTROLLER, 'authorized-ssh-key-remove', "-c '#{app.uuid}' -s '#{ssh_key}'")
+      def remove_authorized_ssh_key(app, gear, ssh_key)
+        result = execute_direct(@@C_CONTROLLER, 'authorized-ssh-key-remove', "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -s '#{ssh_key}'")
         parse_result(result)
       end
 
-      def add_env_var(app, key, value)
-        result = execute_direct(@@C_CONTROLLER, 'env-var-add', "-c '#{app.uuid}' -k '#{key}' -v '#{value}'")
+      def add_env_var(app, gear, key, value)
+        result = execute_direct(@@C_CONTROLLER, 'env-var-add', "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -k '#{key}' -v '#{value}'")
         parse_result(result)
       end
       
-      def remove_env_var(app, key)
-        result = execute_direct(@@C_CONTROLLER, 'env-var-remove', "-c '#{app.uuid}' -k '#{key}'")
+      def remove_env_var(app, gear, key)
+        result = execute_direct(@@C_CONTROLLER, 'env-var-remove', "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -k '#{key}'")
         parse_result(result)
       end
     
-      def add_broker_auth_key(app, iv, token)
-        result = execute_direct(@@C_CONTROLLER, 'broker-auth-key-add', "-c '#{app.uuid}' -i '#{iv}' -t '#{token}'")
+      def add_broker_auth_key(app, gear, iv, token)
+        result = execute_direct(@@C_CONTROLLER, 'broker-auth-key-add', "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -i '#{iv}' -t '#{token}'")
         parse_result(result)
       end
     
-      def remove_broker_auth_key(app)
-        result = execute_direct(@@C_CONTROLLER, 'broker-auth-key-remove', "-c '#{app.uuid}'")
+      def remove_broker_auth_key(app, gear)
+        result = execute_direct(@@C_CONTROLLER, 'broker-auth-key-remove', "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}'")
         handle_controller_result(result)
       end
       
-      def preconfigure_cartridge(app, cart)
-        run_cartridge_command(cart, app, "preconfigure")
+      def preconfigure_cartridge(app, gear, cart)
+        if framework_carts.include? cart
+          run_cartridge_command(cart, app, gear, "preconfigure")
+        else
+          #no-op
+          ResultIO.new
+        end
       end
       
-      def configure_cartridge(app, cart)
-        run_cartridge_command(cart, app, "configure")
+      def configure_cartridge(app, gear, cart)
+        result_io = ResultIO.new
+        cart_data = nil
+                  
+        if framework_carts.include? cart
+          result_io = run_cartridge_command(cart, app, gear, "configure")
+        elsif embedded_carts.include? cart
+          result_io, cart_data = add_component(app,gear,cart)
+        else
+          #no-op
+        end
+        
+        return result_io, cart_data
       end
       
-      def deconfigure_cartridge(app, cart)
-        run_cartridge_command(cart, app, "deconfigure")
+      def deconfigure_cartridge(app, gear, cart)
+        if framework_carts.include? cart
+          run_cartridge_command(cart, app, gear, "deconfigure")
+        elsif embedded_carts.include? cart
+          remove_component(app,gear,cart)
+        else
+          ResultIO.new
+        end        
       end
       
       def get_public_hostname
@@ -198,88 +208,107 @@ module Express
         rpc_get_fact_direct('node_profile')
       end
       
-      def start(app, cart)
-        run_cartridge_command(cart, app, "start")
-      end
-      
-      def stop(app, cart)
-        run_cartridge_command(cart, app, "stop")
-      end
-      
-      def force_stop(app, cart)
-        run_cartridge_command(cart, app, "force-stop")
-      end
-      
-      def restart(app, cart)
-        run_cartridge_command(cart, app, "restart")
-      end
-      
-      def reload(app, cart)
-        run_cartridge_command(cart, app, "reload")
-      end
-      
-      def status(app, cart)
-        run_cartridge_command(cart, app, "status")
-      end
-      
-      def tidy(app, cart)
-        run_cartridge_command(cart, app, "tidy")
-      end
-      
-      def threaddump(app, cart)
-        run_cartridge_command(cart, app, "threaddump")
-      end
-      
-      def add_alias(app, cart, server_alias)
-        run_cartridge_command(cart, app, "add-alias", server_alias)
-      end
-      
-      def remove_alias(app, cart, server_alias)
-        run_cartridge_command(cart, app, "remove-alias", server_alias)
-      end
-      
-      def add_component(app, component)
-        reply = ResultIO.new
-        begin
-          reply.append run_cartridge_command('embedded/' + component, app, 'configure')
-        rescue Exception => e
-          begin
-            Rails.logger.debug "DEBUG: Failed to embed '#{component}' in '#{app.name}' for user '#{app.user.login}'"
-            reply.debugIO << "Failed to embed '#{component} in '#{app.name}'"
-            reply.append run_cartridge_command('embedded/' + component, app, 'deconfigure')
-          ensure
-            raise
-          end
+      def start(app, gear, cart)
+        if framework_carts.include?(cart)
+          run_cartridge_command(cart, app, gear, "start")
+        elsif embedded_carts.include? cart
+          start_component(app, gear, cart)
+        else
+          ResultIO.new
         end
-        
-        component_details = reply.appInfoIO.string.empty? ? '' : reply.appInfoIO.string
-        reply.debugIO << "Embedded app details: #{component_details}"
-        [reply, component_details]
       end
       
-      def remove_component(app, component)
-        Rails.logger.debug "DEBUG: Deconfiguring embedded application '#{component}' in application '#{app.name}' on node '#{@id}'"
-        return run_cartridge_command('embedded/' + component, app, 'deconfigure')
+      def stop(app, gear, cart)
+        if framework_carts.include?(cart)
+          run_cartridge_command(cart, app, gear, "stop")
+        elsif embedded_carts.include? cart
+          stop_component(app, gear, cart)
+        else
+          ResultIO.new          
+        end
       end
       
-      def start_component(app, component)
-        run_cartridge_command('embedded/' + component, app, "start")
+      def force_stop(app, gear, cart)
+        if framework_carts.include?(cart)
+          run_cartridge_command(cart, app, gear, "force-stop")
+        else
+          ResultIO.new          
+        end          
       end
       
-      def stop_component(app, component)
-        run_cartridge_command('embedded/' + component, app, "stop")
+      def restart(app, gear, cart)
+        if framework_carts.include?(cart)
+          run_cartridge_command(cart, app, gear, "restart")
+        elsif embedded_carts.include? cart
+          restart_component(app, gear, cart)
+        else
+          ResultIO.new                  
+        end
       end
       
-      def restart_component(app, component)
-        run_cartridge_command('embedded/' + component, app, "restart")    
+      def reload(app, gear, cart)
+        if framework_carts.include?(cart)
+          run_cartridge_command(cart, app, gear, "reload")
+        elsif embedded_carts.include? cart
+          reload_component(app, gear, cart)
+        else
+          ResultIO.new          
+        end
       end
       
-      def reload_component(app, component)
-        run_cartridge_command('embedded/' + component, app, "reload")    
+      def status(app, gear, cart)
+        if framework_carts.include?(cart)
+          run_cartridge_command(cart, app, gear, "status")
+        elsif embedded_carts.include? cart
+          component_status(app, gear, cart)
+        else
+          ResultIO.new          
+        end
       end
       
-      def component_status(app, component)
-        run_cartridge_command('embedded/' + component, app, "status")    
+      def tidy(app, gear, cart)
+        if framework_carts.include?(cart)        
+          run_cartridge_command(cart, app, gear, "tidy") 
+        else
+          ResultIO.new
+        end
+      end
+      
+      def threaddump(app, gear, cart)
+        if framework_carts.include?(cart)
+          run_cartridge_command(cart, app, gear, "threaddump")
+        else
+          ResultIO.new
+        end          
+      end
+      
+      def expose_port(app, cart)
+        run_cartridge_command(cart, app, "expose-port")
+      end
+
+      def conceal_port(app, cart)
+        run_cartridge_command(cart, app, "conceal-port")
+      end
+
+      def add_alias(app, gear, cart, server_alias)
+        if framework_carts.include?(cart)
+          run_cartridge_command(cart, app, gear, "add-alias", server_alias)
+        else
+          ResultIO.new
+        end
+      end
+      
+      def remove_alias(app, gear, cart, server_alias)
+        if framework_carts.include?(cart)        
+          run_cartridge_command(cart, app, gear, "remove-alias", server_alias)
+        else
+          ResultIO.new
+        end
+      end
+      
+      def update_namespace(app, cart, new_ns, old_ns)
+        mcoll_reply = execute_direct(cart, 'update-namespace', "#{app.name} #{new_ns} #{old_ns} #{app.uuid}")
+        parse_result(mcoll_reply)
       end
       
       def move_app(app, destination_container, destination_district_uuid=nil, allow_change_district=false, node_profile=nil)
@@ -329,37 +358,77 @@ module Express
         orig_uid = app.uid
 
         log_debug "DEBUG: Moving app '#{app.name}' with uuid #{app.uuid} from #{source_container.id} to #{destination_container.id}"
-
+        
+        url = "http://#{app.name}-#{app.user.namespace}.#{Rails.configuration.cdk[:domain_suffix]}"
+        
         num_tries = 2
         reply = ResultIO.new
         leave_stopped = false
         idle = false
-        begin
-          log_debug "DEBUG: Stopping existing app '#{app.name}' before moving"
-          (1..num_tries).each do |i|
-            begin
-              result = source_container.stop(app, app.framework)
-              result.cart_commands.each do |command_item|
-                case command_item[:command]
-                when "STATUS"
-                  status = command_item[:args][0]
-                  case status
-                  when "ALREADY_STOPPED"
-                    leave_stopped = true
-                  when "ALREADY_IDLED"
-                    leave_stopped = true
-                    idle = true
-                  end
+        log_debug "DEBUG: Getting existing app '#{app.name}' status before moving"
+        (1..num_tries).each do |i|
+          begin
+            result = source_container.status(app, app.framework)
+            result.cart_commands.each do |command_item|
+              case command_item[:command]
+              when "STATUS"
+                status = command_item[:args][0]
+                case status
+                when "ALREADY_STOPPED"
+                  leave_stopped = true
+                when "ALREADY_IDLED"
+                  leave_stopped = true
+                  idle = true
                 end
               end
-              reply.append result
-              break
-            rescue Exception => e
-              log_debug "DEBUG: Error stopping existing app on try #{i}: #{e.message}"
-              raise if i == num_tries
+            end
+            reply.append result
+            break
+          rescue Exception => e
+            log_debug "DEBUG: Error force stopping existing app on try #{i}: #{e.message}"
+            raise if i == num_tries
+          end
+        end
+        
+        if idle
+          log_debug "DEBUG: App '#{app.name}' was idle"
+        elsif leave_stopped
+          log_debug "DEBUG: App '#{app.name}' was stopped"
+        else
+          log_debug "DEBUG: App '#{app.name}' was running"
+        end
+
+        unless leave_stopped
+          log_debug "DEBUG: Accessing url: #{url}"
+          begin
+            open(url) do |resp|
+              log_debug "\nStatus Code: #{resp.status[0]} - #{resp.status[1]}"
+              log_debug "\n####################### Body Begin ###########################"
+              log_debug resp.read
+              log_debug "######################## Body End ############################\n"
+            end
+          rescue Exception => e
+            log_debug "DEBUG: Error accessing URL: #{e.message}"
+          end
+        else
+          log_debug "DEBUG: Not accessing url since application was stopped"
+        end
+
+        begin
+          unless leave_stopped
+            log_debug "DEBUG: Stopping existing app '#{app.name}' before moving"
+            (1..num_tries).each do |i|
+              begin
+                reply.append source_container.stop(app, app.framework)
+                break
+              rescue Exception => e
+                log_debug "DEBUG: Error stopping existing app on try #{i}: #{e.message}"
+                raise if i == num_tries
+              end
             end
           end
-          
+
+          log_debug "DEBUG: Force stopping existing app '#{app.name}' before moving"
           (1..num_tries).each do |i|
             begin
               reply.append source_container.force_stop(app, app.framework)
@@ -369,7 +438,7 @@ module Express
               raise if i == num_tries
             end
           end
-          
+
           begin
             unless app.embedded.nil?
               app.embedded.each do |cart, cart_info|
@@ -471,7 +540,7 @@ module Express
             raise
           end
         ensure
-          log_debug "URL: http://#{app.name}-#{app.user.namespace}.#{Rails.configuration.cdk[:domain_suffix]}"
+          log_debug "URL: #{url}"
         end
 
         log_debug "DEBUG: Deconfiguring old app '#{app.name}' on #{source_container.id} after move"
@@ -493,11 +562,6 @@ module Express
         end
         log_debug "Successfully moved '#{app.name}' with uuid '#{app.uuid}' from '#{source_container.id}' to '#{destination_container.id}'"
         reply
-      end
-      
-      def update_namespace(app, cart, new_ns, old_ns)
-        mcoll_reply = execute_direct(cart, 'update-namespace', "#{app.name} #{new_ns} #{old_ns} #{app.uuid}")
-        parse_result(mcoll_reply)
       end
       
       #
@@ -547,6 +611,58 @@ module Express
       
       protected
       
+      def framework_carts
+        @framework_carts ||= CartridgeCache.cartridge_names('standalone')
+      end
+      
+      def embedded_carts
+        @embedded_carts ||= CartridgeCache.cartridge_names('embedded')
+      end
+      
+      def add_component(app, gear, component)
+        reply = ResultIO.new
+        begin
+          reply.append run_cartridge_command('embedded/' + component, app, gear, 'configure')
+        rescue Exception => e
+          begin
+            Rails.logger.debug "DEBUG: Failed to embed '#{component}' in '#{app.name}' for user '#{app.user.login}'"
+            reply.debugIO << "Failed to embed '#{component} in '#{app.name}'"
+            reply.append run_cartridge_command('embedded/' + component, app, gear, 'deconfigure')
+          ensure
+            raise
+          end
+        end
+        
+        component_details = reply.appInfoIO.string.empty? ? '' : reply.appInfoIO.string
+        reply.debugIO << "Embedded app details: #{component_details}"
+        [reply, component_details]
+      end
+      
+      def remove_component(app, gear, component)
+        Rails.logger.debug "DEBUG: Deconfiguring embedded application '#{component}' in application '#{app.name}' on node '#{@id}'"
+        return run_cartridge_command('embedded/' + component, app, gear, 'deconfigure')
+      end
+      
+      def start_component(app, gear, component)
+        run_cartridge_command('embedded/' + component, app, gear, "start")
+      end
+      
+      def stop_component(app, gear, component)
+        run_cartridge_command('embedded/' + component, app, gear, "stop")
+      end
+      
+      def restart_component(app, gear, component)
+        run_cartridge_command('embedded/' + component, app, gear, "restart")    
+      end
+      
+      def reload_component(app, gear, component)
+        run_cartridge_command('embedded/' + component, app, gear, "reload")    
+      end
+      
+      def component_status(app, gear, component)
+        run_cartridge_command('embedded/' + component, app, gear, "status")    
+      end
+      
       def log_debug(message)
         Rails.logger.debug message
         puts message
@@ -582,16 +698,6 @@ module Express
         if (mcoll_result && defined? mcoll_result.results && mcoll_result.results.has_key?(:data))
           output = mcoll_result.results[:data][:output]
           result.exitcode = mcoll_result.results[:data][:exitcode]
-          if command == "status" && app
-            if result.exitcode == 0
-              result.resultIO << output
-            else
-              result.exitcode = 0
-              result.resultIO << "Application '#{app.name}' is either stopped or inaccessible"
-            end
-          else
-            #Rails.logger.debug "--output--\n\n#{output}\n\n"
-          end
         else
           server_identity = app ? ApplicationContainerProxy.find_app(app.uuid, app.name) : nil
           if server_identity && @id != server_identity
@@ -707,8 +813,8 @@ module Express
         end
       end
       
-      def run_cartridge_command(framework, app, command, arg=nil, allow_move=true)
-        arguments = "'#{app.name}' '#{app.user.namespace}' '#{app.uuid}'"
+      def run_cartridge_command(framework, app, gear, command, arg=nil, allow_move=true)
+        arguments = "'#{app.name}' '#{app.user.namespace}' '#{gear.uuid}'"
         arguments += " '#{arg}'" if arg
 
         if allow_move

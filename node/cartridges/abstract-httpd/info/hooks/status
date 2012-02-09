@@ -50,4 +50,10 @@ setup_basic_hook "$1" $2 $3
 #
 # Get the status of the application
 #
-runuser --shell /bin/sh "$uuid" -c "/usr/bin/wget -qO- http://$(awk '/Listen/{ print $2 }' $APP_DIR/conf.d/libra.conf)/server-status?auto"
+if output=$(runuser --shell /bin/sh "$uuid" -c "/usr/bin/wget -qO- http://$(awk '/Listen/{ print $2 }' $APP_DIR/conf.d/libra.conf)/server-status?auto" 2>&1)
+then
+    status_client_result "$output"
+else
+    client_result "Application '${application}' is either stopped or inaccessible"
+fi
+send_stopped_status

@@ -24,7 +24,7 @@ cdk-env-var-add: Adds an environment var to the app.
 
 == Usage
 
-cdk-app-create [--with-uuid UUID] [--with-key KEY] [--with-value VALUE]
+cdk-app-create  --with-app-uuid APP_UUID --with-container-uuid UUID --with-key KEY --with-value VALUE
 
 Options:
 -h|--help:
@@ -40,7 +40,8 @@ end
 require 'cloud-sdk-node'
 require 'cloud-sdk-node/utils/shell_exec'
 opts = GetoptLong.new(
-    ["--with-uuid",        "-c", GetoptLong::REQUIRED_ARGUMENT],
+    ["--with-app-uuid",       "-a", GetoptLong::REQUIRED_ARGUMENT],
+    ["--with-container-uuid", "-c", GetoptLong::REQUIRED_ARGUMENT],
     ["--with-key",         "-k", GetoptLong::REQUIRED_ARGUMENT],
     ["--with-value",       "-v", GetoptLong::REQUIRED_ARGUMENT]
 )
@@ -53,7 +54,8 @@ rescue GetoptLong::Error => e
     exit -100
 end
 
-uuid = args['--with-uuid']
+uuid = args['--with-container-uuid']
+app_uuid = args['--with-app-uuid']
 key = args['--with-key']
 value = args['--with-value']
 
@@ -68,7 +70,7 @@ unless uuid and key and value
 end
 
 begin
-  container = Cloud::SDK::Model::ApplicationContainer.new(uuid,uuid)
+  container = Cloud::Sdk::ApplicationContainer.new(uuid,uuid)
   container.user.add_env_var(key, value)
 rescue Exception => e
   $stderr.puts(e.message)

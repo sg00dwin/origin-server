@@ -34,6 +34,7 @@ Requires:      libpng-devel
 Requires:      giflib-devel
 Requires:      mod_ssl
 Requires:      haproxy
+Requires:      procmail
 Requires(post):   /usr/sbin/semodule
 Requires(post):   /usr/sbin/semanage
 Requires(postun): /usr/sbin/semodule
@@ -79,6 +80,7 @@ mkdir -p %{buildroot}/%{_sysconfdir}/security/
 mkdir -p %{buildroot}%{_localstatedir}/lib/libra
 mkdir -p %{buildroot}%{_localstatedir}/run/libra
 mkdir -p %{buildroot}%{_localstatedir}/lib/libra/.httpd.d
+mkdir -p %{buildroot}%{_localstatedir}/lib/libra/.libra-proxy.d
 mkdir -p %{buildroot}/%{_sysconfdir}/httpd/conf.d/
 mkdir -p %{buildroot}/lib64/security/
 ln -s %{_localstatedir}/lib/libra/.httpd.d/ %{buildroot}/%{_sysconfdir}/httpd/conf.d/libra
@@ -120,6 +122,7 @@ perl -p -i -e 's:/cgroup/[^\s]+;:/cgroup/all;:; /blkio|cpuset|devices/ && ($_ = 
 /sbin/restorecon /var/run/libra || :
 /sbin/restorecon /usr/bin/rhc-cgroup-read || :
 /sbin/restorecon /var/lib/libra/.httpd.d/ || :
+/sbin/restorecon /var/lib/libra/.libra-proxy.d/ || :
 /usr/bin/rhc-restorecon || :
 # only enable if cgconfig is
 chkconfig cgconfig && /sbin/service libra-cgroups start > /dev/null 2>&1 || :
@@ -143,6 +146,10 @@ then
     rmdir /etc/httpd/conf.d/libra.bak
 fi
 
+if ! [ -f /var/lib/libra/.libra-proxy.d/libra-proxy.cfg ]; then
+   cp /etc/libra/libra-proxy.cfg /var/lib/libra/.libra-proxy.d/libra-proxy.cfg
+   restorecon /var/lib/libra/.libra-proxy.d/libra-proxy.cfg || :
+fi
 
 
 %preun
@@ -153,6 +160,7 @@ if [ "$1" -eq "0" ]; then
     /sbin/chkconfig --del libra-cgroups || :
     /sbin/chkconfig --del libra-data || :
     /sbin/chkconfig --del libra || :
+    /sbin/chkconfig --del libra-proxy || :
     /usr/sbin/semodule -r libra
     sed -i -e '\:/usr/bin/trap-user:d' /etc/shells
 fi
@@ -194,6 +202,7 @@ fi
 %attr(0755,-,-) %{_bindir}/rhc-cgroup-read
 %dir %attr(0751,root,root) %{_localstatedir}/lib/libra
 %dir %attr(0750,root,root) %{_localstatedir}/lib/libra/.httpd.d
+%dir %attr(0750,root,root) %{_localstatedir}/lib/libra/.libra-proxy.d
 %dir %attr(0700,root,root) %{_localstatedir}/run/libra
 %dir %attr(0755,root,root) %{_libexecdir}/li/cartridges/abstract-httpd/
 %attr(0750,-,-) %{_libexecdir}/li/cartridges/abstract-httpd/info/hooks/
