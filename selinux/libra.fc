@@ -3,6 +3,7 @@
 
 
 /var/lib/libra/.httpd.d(/.*)?         gen_context(system_u:object_r:httpd_config_t,s0)
+/var/lib/libra/.libra-proxy.d(/.*)?   gen_context(system_u:object_r:etc_t,s0)
 /var/lib/libra/.limits.d(/.*)?        gen_context(system_u:object_r:etc_t,s0)
 
 /var/lib/libra(/.*)?            gen_context(system_u:object_r:libra_var_lib_t,s0)
