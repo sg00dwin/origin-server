@@ -21,9 +21,6 @@ done
 
 [ $# -eq 3 ] || print_help
 
-# FIXME:  Still to implement.
-echo "Work in progress -- still to be implemented" 1>&2
-exit 99
 
 CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
 app_type="nodejs-0.6"
@@ -70,6 +67,13 @@ touch "$APP_HOME"/.npmrc
 mkdir "$APP_HOME"/.npm
 chown $user_id.$group_id -R "$APP_HOME"/.npm "$APP_HOME"/.npmrc "$APP_DIR"/conf/node.env
 chcon -t libra_var_lib_t -l $mcs_level -R "$APP_HOME"/.npm "$APP_HOME"/.npmrc "$APP_DIR"/conf/node.env
+
+# Also link to the globally installed npm modules.
+pushd "$APP_DIR" > /dev/null
+npm link mysql pg mongodb
+npm link async connect express node-static request socket.io underscore
+chown -h $user_id.$group_id "$APP_DIR"/node_modules/*
+popd "$APP_DIR" > /dev/null
 
 
 #
