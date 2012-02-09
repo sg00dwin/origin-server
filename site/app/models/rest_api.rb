@@ -43,6 +43,15 @@ class RestApi < ActiveResource::Base
   # Raised when the authorization context is missing
   class MissingAuthorizationError < StandardError ; end
 
+  # Don't include the root in JSON when creating/updating records
+  def encode(options={})
+    tmp = ActiveResource::Base.include_root_in_json
+    ActiveResource::Base.include_root_in_json = false
+    resp = send("to_#{self.class.format.extension}", options)
+    ActiveResource::Base.include_root_in_json = tmp
+    resp
+  end
+
   #
   # An Authorization object should expose:
   #
@@ -136,20 +145,33 @@ class RestApi < ActiveResource::Base
     @persisted
   end
 
-  class << self
-    def load_attributes_from_response(response)
-      if response['Content-Length'] != "0" && response.body.strip.size > 0
-        load(update_root(self.class.format.decode(response.body)))
-        @persisted = true
-      end
-    end
-
-    def update_root(obj)
-      puts "Root #{obj.inspect}"
-      obj
+  def load_attributes_from_response(response)
+    if response['Content-Length'] != "0" && response.body.strip.size > 0
+      load(update_root(self.class.format.decode(response.body)))
+      @persisted = true
+      remove_instance_variable(:@old_id) if @old_id
     end
   end
 
+  def update_root(obj)
+    puts "Root #{obj.inspect}"
+    obj
+  end
+
+  class << self
+    def custom_id(name, mutable=false)
+      @primary_key = name
+      if mutable
+        define_method "#{name}=" do |val|
+          @old_id = @attributes[name]
+          @attributes[name] = val
+        end
+        define_method :id do
+          @old_id || super
+        end
+      end
+    end
+  end
 
   #
   # ActiveResource association support
@@ -396,8 +418,10 @@ end
 class Domain < RestApi
   schema do
     string :namespace
+    string :ssh
   end
-  def id() namespace end
+
+  custom_id :namespace, true
 
   has_many :applications
   def applications
@@ -422,9 +446,10 @@ class Application < RestApi
   schema do
     string :name, :creation_time
     string :uuid, :domain_id
-    string :framework, :server_identity
+    string :cartridge, :server_identity
   end
-  def id() name end
+
+  custom_id :name
 
   has_many :aliases
   belongs_to :domain
@@ -433,7 +458,7 @@ class Application < RestApi
     Domain.find self.prefix_options[:domain_name], :as => as
   end
   def domain=(domain)
-    self.prefix_options[:domain_name] = domain.name
+    self.prefix_options[:domain_name] = domain.namespace
   end
 end
 
@@ -457,7 +482,7 @@ class Key < RestApi
   self.element_name = 'key'
 
   schema do
-    string :name, 'type', :key
+    string :name, 'type', :ssh
   end
   def id() name end
 
@@ -473,16 +498,9 @@ class Key < RestApi
   validates_format_of 'type',
                       :with => /^ssh-(rsa|dss)$/,
                       :message => "is not ssh-rsa or ssh-dss"
-  validates :key, :length => {:maximum => 2048},
+  validates :ssh, :length => {:maximum => 2048},
                     :presence => true,
                     :allow_blank => false
-
-  #
-  # TEMPORARY: bug fix needed in REST API
-  #
-  #def encode(options={})
-  #  send("to_form", options)
-  #end
 end
 
 
@@ -560,27 +578,46 @@ if __FILE__==$0
     end
 
     def test_key_create
-      key = Key.new :type => 'ssh-rsa', :name => 'test2', :key => '1234_2', :as => @user
+      items = Key.find :all, :as => @user
+
+      orig_num_keys = items.length
+
+      key = Key.new :type => 'ssh-rsa', :name => "test#{@ts}", :ssh => @ts, :as => @user
       assert key.save
+
+      items = Key.find :all, :as => @user
+      assert_equal orig_num_keys + 1, items.length
     end
 
     def test_key_validation
       key = Key.new :type => 'ssh-rsa', :name => 'test2', :as => @user
       assert !key.save
-      assert_equal 1, key.errors[:key].length
+      assert_equal 1, key.errors[:ssh].length
 
-      key.key = ''
+      key.ssh = ''
       assert !key.save
-      assert_equal 1, key.errors[:key].length
+      assert_equal 1, key.errors[:ssh].length
 
-      key.key = 'a'
+      key.ssh = 'a'
       assert key.save
       assert key.errors.empty?
     end
 
     def test_key_delete
       items = Key.find :all, :as => @user
-      assert items[0].destroy
+
+      orig_num_keys = items.length
+
+      key = Key.new :type => 'ssh-rsa', :name => "test#{@ts}", :ssh => @ts, :as => @user
+      assert key.save
+
+      items = Key.find :all, :as => @user
+      assert_equal orig_num_keys + 1, items.length
+
+      assert items[1].destroy
+
+      items = Key.find :all, :as => @user
+      assert_equal orig_num_keys, items.length
     end
 
     def test_agnostic_connection
@@ -599,22 +636,47 @@ if __FILE__==$0
     def test_user_get
       user = User.find :one, :as => @user
       assert user
-      assert_equal 'test1', user.login
+      assert_equal @user.login, user.login
     end
 
     def test_domains_get
       domains = Domain.find :all, :as => @user
       assert_equal 1, domains.length
-      assert_equal "adomain", domains[0].namespace
+      assert_equal "xyz#{@ts}", domains[0].namespace
     end
 
     def test_domains_first
       domain = Domain.first(:as => @user)
-      assert_equal "adomain", domain.namespace
+      assert_equal "xyz#{@ts}", domain.namespace
+    end
+
+    def test_domains_update
+      domains = Domain.find :all, :as => @user
+      assert_equal 1, domains.length
+      assert_equal "xyz#{@ts}", domains[0].namespace
+
+      d = domains[0]
+      d.namespace = "abc#{@ts}"
+
+      assert d.save
+
+      domains = Domain.find :all, :as => @user
+      assert_equal 1, domains.length
+      assert_equal "abc#{@ts}", domains[0].namespace
     end
 
     def test_domains_applications
       domain = Domain.first(:as => @user)
+
+      app1 = Application.new :name => 'app1', :cartridge => 'php-5.3', :as => @user
+      app2 = Application.new :name => 'app2', :cartridge => 'php-5.3', :as => @user
+
+      app1.domain = domain
+      app2.domain = domain
+
+      assert app1.save
+      assert app2.save
+
       apps = domain.applications
       assert_equal 2, apps.length
       assert_equal 'app1', apps[0].name
