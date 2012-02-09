@@ -1,12 +1,13 @@
-class Gear < Cloud::Sdk::Cartridge
-  attr_accessor :uuid, :uid, :server_id, :group_inst_id, :node_profile, :container, :app, :configured_components
+class Gear < Cloud::Sdk::UserModel
+  attr_accessor :uuid, :uid, :server_id, :group_instance_name, :node_profile, :container, :app, :configured_components
   primary_key :uuid
   exclude_attributes :container, :app
   
-  def initialize(app, node_profile=nil, uuid=nil, uid=nil)
+  def initialize(app, group_instance, uuid=nil, uid=nil)
     self.app = app
     @uuid = uuid || Cloud::Sdk::Model.gen_uuid
-    self.node_profile = node_profile
+    self.group_instance_name = group_instance.name
+    self.node_profile = group_instance.node_profile
     self.configured_components = []
     get_proxy
   end

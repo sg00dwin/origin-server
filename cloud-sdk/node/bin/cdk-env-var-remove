@@ -41,7 +41,7 @@ require 'cloud-sdk-node/utils/shell_exec'
 opts = GetoptLong.new(
     ["--with-app-uuid",       "-a", GetoptLong::REQUIRED_ARGUMENT],
     ["--with-container-uuid", "-c", GetoptLong::REQUIRED_ARGUMENT],
-    ["--with-key",         "-k", GetoptLong::REQUIRED_ARGUMENT]
+    ["--with-key",            "-k", GetoptLong::REQUIRED_ARGUMENT]
 )
 
 args = {}
@@ -52,7 +52,7 @@ rescue GetoptLong::Error => e
     exit -100
 end
 
-uuid = args['--with-uuid']
+uuid = args['--with-container-uuid']
 key = args['--with-key']
 
 if args["--help"]
