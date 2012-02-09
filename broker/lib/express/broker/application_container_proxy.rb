@@ -282,6 +282,14 @@ module Express
         end          
       end
       
+      def threaddump(app, gear, cart)
+        if framework_carts.include?(cart)
+          run_cartridge_command(cart, app, gear, "system-messages")
+        else
+          ResultIO.new
+        end          
+      end
+      
       def expose_port(app, cart)
         run_cartridge_command(cart, app, "expose-port")
       end

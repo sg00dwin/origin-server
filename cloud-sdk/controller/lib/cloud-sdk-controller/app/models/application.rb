@@ -380,6 +380,19 @@ class Application < Cloud::Sdk::Cartridge
     reply
   end
   
+  def threaddump(dependency=nil)
+    reply = ResultIO.new
+    self.comp_instance_map.each do |comp_inst_name, comp_inst|
+      next if !dependency.nil? and (comp_inst.parent_cart_name != dependency)
+      
+      group_inst = self.group_instance_map[comp_inst.group_instance_name]
+      run_on_gears(group_inst.gears, reply, false) do |gear, r|
+        r.append gear.system_messages(comp_inst)
+      end
+    end
+    reply
+  end
+  
   def expose_port
     self.container.expose_port(self, @framework)
   end
