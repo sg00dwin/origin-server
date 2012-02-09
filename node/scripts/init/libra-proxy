@@ -164,7 +164,7 @@ addproxy() {
   done
 
   retval=0
-  if ! grep "^listen $proxport:$dstip:$port" $cfgfile; then
+  if ! grep -q "^listen $proxport:$dstip:$port" $cfgfile; then
     baddr=`getaddr`
 
     delproxy $proxport
