@@ -282,7 +282,7 @@ module Express
         end          
       end
       
-      def threaddump(app, gear, cart)
+      def system_messages(app, gear, cart)
         if framework_carts.include?(cart)
           run_cartridge_command(cart, app, gear, "system-messages")
         else
