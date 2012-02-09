@@ -147,15 +147,10 @@ class RestApi < ActiveResource::Base
 
   def load_attributes_from_response(response)
     if response['Content-Length'] != "0" && response.body.strip.size > 0
-      load(update_root(self.class.format.decode(response.body)))
+      load(self.class.format.decode(response.body))
       @persisted = true
       remove_instance_variable(:@old_id) if @old_id
     end
-  end
-
-  def update_root(obj)
-    puts "Root #{obj.inspect}"
-    obj
   end
 
   class << self
@@ -503,50 +498,61 @@ class Key < RestApi
                     :allow_blank => false
 end
 
+run_tests = true
 
-if __FILE__==$0
+if __FILE__==$0 && run_tests
+
   require 'test/unit/ui/console/testrunner'
 
-  if ENV['LIBRA_HOST']
-
-    RestApi.site = "https://#{ENV['LIBRA_HOST']}/broker/rest"
-    RestApi.prefix='/broker/rest/'
-    user = RestApi::Authorization.new 'test1@test1.com', '1234'
-    begin
-      #info = Key.find :all, :as => user
-      #puts info.inspect
-      domain = Domain.first :as => user
-      if domain
-        puts "Found domain #{domain.inspect}"
-        domain.destroy_recursive
-        puts "Deleted domain #{domain.inspect}\n  errors: #{domain.errors.inspect}"
-      else
-        domain = Domain.new :namespace => "xyz", :as => user
-        domain.to_json
-        if domain.save
-          puts "Saved domain\n #{domain.inspect}"
-        else
-          puts "Unable to save domain\n #{domain.inspect}"
-        end
-      end
-      #puts domain.inspect
-      #puts domain.applications.inspect
-    rescue ActiveResource::ConnectionError => e
-      puts e.response
-      raise
-    end
-    puts "-------------------\n"
-  end
-
-  if true
-
-  require 'active_resource/http_mock'
   require 'test/unit'
   require 'mocha'
+  require 'base64'
+  require 'time'
+
+  @@integrated = !!ENV['REST_API_TEST_REMOTE']
+
+  unless @@integrated
+    #TODO fix mock tests and remove this warning!
+    puts ""
+    puts "WARNING: mock tests don't work quite yet..."
+    puts "Try running again with the following environment variable(s) set:"
+    puts ""
+    puts "  REST_API_TEST_REMOTE=1"
+    puts "  LIBRA_HOST=ec2-foo.compute-1.amazonaws.com (use an actual devenv hostname)"
+    puts ""
+    exit 1
+  end
 
   class RestApiTest < Test::Unit::TestCase
 
     def setup
+      if @@integrated
+        setup_integrated
+      else
+        setup_mock
+      end
+    end
+
+    def setup_integrated
+      host = ENV['LIBRA_HOST'] || 'localhost'
+      RestApi.site = "https://#{host}/broker/rest"
+      RestApi.prefix='/broker/rest/'
+
+      @ts = Time.now.to_i
+
+      @user = RestApi::Authorization.new "test1+#{@ts}@test1.com", @ts
+
+      auth_headers = {'Authorization' => "Basic #{Base64.encode64("#{@user.login}:#{@user.password}").strip}"}
+
+      domain = Domain.new :namespace => "xyz#{@ts}", :as => @user
+      domain.ssh = "foo"
+      assert domain.save
+    end
+
+    # TODO fix
+    def setup_mock
+      require 'active_resource/http_mock'
+
       @user = RestApi::Authorization.new 'test1', '1234'
       auth_headers = {'Cookie' => "rh_sso=1234", 'Authorization' => 'Basic dGVzdDE6'};
 
@@ -560,9 +566,7 @@ if __FILE__==$0
         mock.get '/user/keys.json', {'Accept' => 'application/json'}.merge!(auth_headers), [{:type => :rsa, :name => 'test1', :value => '1234' }].to_json()
         mock.post '/user/keys.json', {'Content-Type' => 'application/json'}.merge!(auth_headers), {:type => :rsa, :name => 'test2', :value => '1234_2' }.to_json()
         mock.delete '/user/keys/test1.json', {'Accept' => 'application/json'}.merge!(auth_headers), {}
-
         mock.get '/user.json', {'Accept' => 'application/json'}.merge!(auth_headers), { :login => 'test1' }.to_json()
-        
         mock.get '/domains.json', {'Accept' => 'application/json'}.merge!(auth_headers), [{ :namespace => 'adomain' }].to_json()
         mock.get '/domains/adomain/applications.json', {'Accept' => 'application/json'}.merge!(auth_headers), [{ :name => 'app1' }, { :name => 'app2' }].to_json()
       end
@@ -682,8 +686,9 @@ if __FILE__==$0
       assert_equal 'app1', apps[0].name
       assert_equal 'app2', apps[1].name
     end
-  end
+
   Test::Unit::UI::Console::TestRunner.run(RestApiTest)
+
   end
 
 end
