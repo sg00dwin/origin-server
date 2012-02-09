@@ -79,6 +79,12 @@ module Cloud
       
       def force_stop(app, cart)
       end
+ 
+      def expose_port(app, cart)
+      end
+ 
+      def conceal_port(app, cart)
+      end
       
       def restart(app, cart)
       end

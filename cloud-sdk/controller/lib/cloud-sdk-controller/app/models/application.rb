@@ -380,12 +380,30 @@ class Application < Cloud::Sdk::Cartridge
     reply
   end
   
-  def expose_port
-    self.container.expose_port(self, @framework)
+  def expose_port(dependency=nil)
+    reply = ResultIO.new
+    self.comp_instance_map.each do |comp_inst_name, comp_inst|
+      next if !dependency.nil? and (comp_inst.parent_cart_name != dependency)
+
+      group_inst = self.group_instance_map[comp_inst.group_instance_name]
+      run_on_gears(group_inst.gears, reply, false) do |gear, r|
+        r.append gear.conceal_port(comp_inst)
+      end
+    end
+    reply
   end
   
-  def conceal_port
-    self.container.conceal_port(self, @framework)
+  def conceal_port(dependency=nil)
+    reply = ResultIO.new
+    self.comp_instance_map.each do |comp_inst_name, comp_inst|
+      next if !dependency.nil? and (comp_inst.parent_cart_name != dependency)
+
+      group_inst = self.group_instance_map[comp_inst.group_instance_name]
+      run_on_gears(group_inst.gears, reply, false) do |gear, r|
+        r.append gear.expose_port(comp_inst)
+      end
+    end
+    reply
   end
   
   def add_authorized_ssh_key(ssh_key, key_type=nil, comment=nil)
