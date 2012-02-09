@@ -8,7 +8,6 @@ Provides:
   - "ruby-1.8"
   - "ruby(version) = 1.8"
 Requires:
-  - "www-dynamic"
 Conflicts:
 Native-Requires:
   -  sqlite-devel

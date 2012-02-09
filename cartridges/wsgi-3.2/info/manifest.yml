@@ -8,7 +8,6 @@ Provides:
   - "wsgi"
   - "wsgi (version) = 3.2"
 Requires:
-  - "www-dynamic"
 Conflicts:
 Native-Requires:
   - python

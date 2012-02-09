@@ -7,7 +7,6 @@ Vendor:
 Provides:
   - "mod_perl"
 Requires:
-  - "www-dynamic"
 Conflicts:
 Native-Requires:
   -  mod_perl
