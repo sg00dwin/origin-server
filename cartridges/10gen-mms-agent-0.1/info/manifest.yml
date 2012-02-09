@@ -16,11 +16,11 @@ Reservations:
   - MEM >= 100MB
 Components:
   default:
-     Service-Dependencies: [rhc-cartridge-mongodb-2.0]
-     Subscribes:
-        set-mongo-connection-info:
-           Type: "NET_TCP:db:mongodb"
-           Required: true
+    Service-Dependencies: [rhc-cartridge-mongodb-2.0]
+    Subscribes:
+      set-mongo-connection-info:
+        Type: "NET_TCP:db:mongodb"
+        Required: true
 Groups:
   default:
     Components:

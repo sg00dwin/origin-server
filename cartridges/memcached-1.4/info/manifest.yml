@@ -19,7 +19,6 @@ Native-Requires:
 #  - rubygem-memcached
 Profiles:
   standalone:
-    &standalone-profile
     Provides: memcached-standalone
     Components:
       memcached-server:
@@ -33,7 +32,4 @@ Profiles:
         Scaling:
           Min: 1
           Max: 1
-
-  default:
-     *standalone-profile
-      
+Default-Profile: standalone

@@ -109,16 +109,10 @@ Profiles:
        master: 
           *master-component
     Groups:
-       master:
-         Components:
-           posgresql-master: master
-         Scaling:
-           Min: 1
-           Max: -1
-<<<<<<< HEAD
-  default: singleton-master-profile
-=======
-   default:
-      *singleton-master-profile
->>>>>>> 54b52eda813cf07aa0173ac1533e69ed6e0a3099
-    
+      master:
+        Components:
+          posgresql-master: master
+        Scaling:
+          Min: 1
+          Max: -1
+Default-Profile: singleton-master-profile

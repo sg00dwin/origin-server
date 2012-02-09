@@ -20,7 +20,6 @@ Reservations:
   - MEM >= 100MB
 Profiles:
   standalone:
-    &standalone-profile
     Provides: jboss-standalone, jboss-as7-standalone, jboss-as7.1-standalone
     Reservations:
       - MEM >= 100MB
@@ -39,8 +38,4 @@ Profiles:
       app-servers:
         Components:
           jbossas-server: jbossas-server
-   
-
-  default:
-    *standalone-profile
-
+Default-Profile: standalone

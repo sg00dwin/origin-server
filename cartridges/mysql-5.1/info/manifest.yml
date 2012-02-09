@@ -82,6 +82,4 @@ Profiles:
           - mysql-master
           - mysql-slave
     Start-Order:  [master, slaves]
-    
-  default: singleton-master-profile
-    
+Default-Profile: singleton-master-profile
