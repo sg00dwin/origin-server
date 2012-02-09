@@ -82,6 +82,10 @@ class Gear < Cloud::Sdk::Cartridge
     get_proxy.threaddump(app,self,comp_inst.parent_cart_name)    
   end
   
+  def system_messages(comp_inst)
+    get_proxy.system_messages(app,self,comp_inst.parent_cart_name)    
+  end
+  
   def add_alias(server_alias)
   end
   

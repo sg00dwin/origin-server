@@ -95,6 +95,9 @@ module Cloud
       def threaddump(app, cart)
       end
       
+      def system_messages(app, cart)
+      end
+      
       def add_alias(app, cart, server_alias)
       end
       
