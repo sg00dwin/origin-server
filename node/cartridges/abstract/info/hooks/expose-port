@@ -89,6 +89,7 @@ function find_next_port {
 
     source "/var/lib/libra/${uuid}/.env/OPENSHIFT_INTERNAL_IP"
     source "/var/lib/libra/${uuid}/.env/OPENSHIFT_INTERNAL_PORT"
+    source "/var/lib/libra/${uuid}/.env/OPENSHIFT_APP_DNS"
 
     first_port=$(uid_to_portbegin $uid)
     last_port=$(uid_to_portend $uid)
@@ -105,7 +106,7 @@ function find_next_port {
         then
             check_dup $uuid "$OPENSHIFT_INTERNAL_IP:$OPENSHIFT_INTERNAL_PORT"
             service libra-proxy setproxy $proxy_port $OPENSHIFT_INTERNAL_IP:$OPENSHIFT_INTERNAL_PORT
-            client_message "Exposing port: $proxy_port"
+            client_message "Exposing port: $OPENSHIFT_APP_DNS:$proxy_port"
             echo "OPENSHIFT_PUB_PORT[$proxy_port]='$OPENSHIFT_INTERNAL_IP:$OPENSHIFT_INTERNAL_PORT'" > $APP_HOME/.env/OPENSHIFT_${proxy_port}_PUB_PORT
             echo "export OPENSHIFT_PUB_PORT" >> $APP_HOME/.env/OPENSHIFT_${proxy_port}_PUB_PORT
             exit 0
