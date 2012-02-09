@@ -15,11 +15,11 @@ class KeysController < BaseController
     ssh_keys = Array.new
     unless user.ssh_keys.nil?
       user.ssh_keys.each do |name, key|
-        ssh_key = RestSshKey.new(name, key)
+        ssh_key = RestKey.new(name, key["key"], key["type"])
         ssh_keys.push(ssh_key)
       end
     end
-    @reply = RestReply.new(:ok, "SSH", ssh_keys)
+    @reply = RestReply.new(:ok, "keys", ssh_keys)
     respond_with @reply, :status => @reply.status
   end
   
@@ -36,7 +36,7 @@ class KeysController < BaseController
     if user.ssh_keys
       user.ssh_keys.each do |key_name, key|
         if key_name == name
-          @reply = RestReply.new(:ok, "SSH key", RestSshKey.new(key_name, key))
+          @reply = RestReply.new(:ok, "key", RestKey.new(key_name, key["key"], key["type"]))
           respond_with @reply, :status => @reply.status
           return
         end
@@ -50,7 +50,7 @@ class KeysController < BaseController
   
   #POST /user/keys
   def create
-    ssh = params[:ssh]
+    content = params[:content]
     name = params[:name]
     type = params[:type]
     
@@ -62,9 +62,21 @@ class KeysController < BaseController
       return
     end
     
-    if ssh.nil? or name.nil? or type.nil?
+    if content.nil?
       @reply = RestReply.new(:bad_request)
-      @reply.messages.push(Message.new(:error, "Missing required parameters name, ssh or type"))
+      @reply.messages.push(Message.new(:error, "Missing required parameter content"))
+      respond_with @reply, :status => @reply.status
+      return
+    end
+    if name.nil?
+      @reply = RestReply.new(:bad_request)
+      @reply.messages.push(Message.new(:error, "Missing required parameters name"))
+      respond_with @reply, :status => @reply.status
+      return
+    end
+    if type.nil?
+      @reply = RestReply.new(:bad_request)
+      @reply.messages.push(Message.new(:error, "Missing required parameters type"))
       respond_with @reply, :status => @reply.status
       return
     end
@@ -77,8 +89,7 @@ class KeysController < BaseController
           respond_with @reply, :status => @reply.status
           return
         end
-        #TODO fix this
-        if key["ssh"] == ssh
+        if key["key"] == content
           @reply = RestReply.new(:conflict)
           @reply.messages.push(Message.new(:error, "Given public key is already in use. Use different key or delete conflicting key and retry"))
           respond_with @reply, :status => @reply.status
@@ -88,13 +99,14 @@ class KeysController < BaseController
     end
     
     begin
-      user.add_ssh_key(name, ssh, type)
+      user.add_ssh_key(name, content, type)
       user.save
-      ssh_key = RestSshKey.new(name, user.ssh_keys[name])
-      @reply = RestReply.new(:created, "SSH key", ssh_key)
+      ssh_key = RestKey.new(name, user.ssh_keys[name][:key], user.ssh_keys[name][:type])
+      @reply = RestReply.new(:created, "key", ssh_key)
       @reply.messages.push(Message.new(:info, "Created SSH key #{name} for user #{@login}"))
       respond_with @reply, :status => @reply.status
     rescue Exception => e
+      Rails.logger.error e
       @reply = RestReply.new(:internal_server_error)
       @reply.messages.push(Message.new(:error, "Failed to create SSH key for user #{@login}") )
       @reply.messages.push(Message.new(:error, e.message))
@@ -105,7 +117,7 @@ class KeysController < BaseController
   
   #PUT /user/keys/<id>
   def update
-    ssh = params[:ssh]
+    content = params[:content]
     name = params[:id]
     type = params[:type]
     
@@ -120,9 +132,29 @@ class KeysController < BaseController
       return
     end
     
-    if ssh.nil? or name.nil? or type.nil?
+    if content.nil?
       @reply = RestReply.new(:bad_request)
-      @reply.messages.push(Message.new(:error, "Missing required parameters name, type or ssh"))
+      @reply.messages.push(Message.new(:error, "Missing required parameter content"))
+      respond_with(@reply) do |format|
+         format.xml { render :xml => @reply, :status => @reply.status }
+         format.json { render :json => @reply, :status => @reply.status }
+      end
+      return
+    end
+    
+    if name.nil?
+      @reply = RestReply.new(:bad_request)
+      @reply.messages.push(Message.new(:error, "Missing required parameters name"))
+      respond_with(@reply) do |format|
+         format.xml { render :xml => @reply, :status => @reply.status }
+         format.json { render :json => @reply, :status => @reply.status }
+      end
+      return
+    end
+    
+    if type.nil?
+      @reply = RestReply.new(:bad_request)
+      @reply.messages.push(Message.new(:error, "Missing required parameters type"))
       respond_with(@reply) do |format|
          format.xml { render :xml => @reply, :status => @reply.status }
          format.json { render :json => @reply, :status => @reply.status }
@@ -142,10 +174,10 @@ class KeysController < BaseController
 
     begin
       user.remove_ssh_key(name)
-      user.add_ssh_key(name, ssh, type)
+      user.add_ssh_key(name, content, type)
       user.save
-      ssh_key = RestSshKey.new(name, user.ssh_keys[name])
-      @reply = RestReply.new(:ok, "SSH key", ssh_key)
+      ssh_key = RestKey.new(name, user.ssh_keys[name][:key], user.ssh_keys[name][:type])
+      @reply = RestReply.new(:ok, "key", ssh_key)
       @reply.messages.push(Message.new(:info, "Updated SSH key with name #{name} for user #{@login}"))
       respond_with(@reply) do |format|
          format.xml { render :xml => @reply, :status => @reply.status }

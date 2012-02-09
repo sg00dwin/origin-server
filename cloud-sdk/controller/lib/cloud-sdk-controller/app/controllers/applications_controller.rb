@@ -20,7 +20,7 @@ class ApplicationsController < BaseController
         app = RestApplication.new(application, domain_id)
         apps.push(app)
       end
-      @reply = RestReply.new(:ok, "application", apps)
+      @reply = RestReply.new(:ok, "applications", apps)
       respond_with @reply, :status => @reply.status
     end
   end

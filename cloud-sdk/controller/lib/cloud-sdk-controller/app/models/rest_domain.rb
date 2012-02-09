@@ -10,17 +10,25 @@ class RestDomain < Cloud::Sdk::Model
       Application.get_available_cartridges("standalone")
     end
     
-    self.links = [
-      Link.new("Get domain", "GET", "/domains/#{namespace}"),
-      Link.new("List applications", "GET", "/domains/#{namespace}/applications"),
-      Link.new("Create new application", "POST", "/domains/#{namespace}/applications", [
+    self.links = {
+      "GET" => Link.new("Get domain", "GET", "/domains/#{namespace}"),
+      "LIST_APPLICATIONS" => Link.new("List applications", "GET", "/domains/#{namespace}/applications"),
+      "ADD_APPLICATION" => Link.new("Create new application", "POST", "/domains/#{namespace}/applications", [
         Param.new("name", "string", "Name of the application"),
-        Param.new("cartridge", "string", "framework-type, e.g: php-5.3", carts.join(', '))
+        Param.new("cartridge", "string", "framework-type, e.g: php-5.3", carts)
       ]),
-      Link.new("Delete domain", "DELETE", "/domains/#{namespace}",nil,[
+      "CREATE" => Link.new("Create new domain", "POST", "/domains", [
+        Param.new("namespace", "string", "Name of the domain"),
+        Param.new("ssh", "string", "The key portion of an rsa key (excluding ssh-rsa and comment)")
+      ]),
+      "UPDATE" => Link.new("Update domain", "PUT", "/domains/#{namespace}",[
+        Param.new("namespace", "string", "Name of the domain"),
+        Param.new("ssh", "string", "The key portion of an rsa key (excluding ssh-rsa and comment)")
+      ]),
+      "DELETE" => Link.new("Delete domain", "DELETE", "/domains/#{namespace}",nil,[
         OptionalParam.new("force", "boolean", "Force delete domain.  i.e. delete any applications under this domain", "true or false", false)
       ])
-    ]
+    }
   end
   
   def to_xml(options={})
