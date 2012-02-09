@@ -2,7 +2,7 @@
 
 Summary:   Provides Node-0.6 support
 Name:      rhc-cartridge-nodejs-0.6
-Version:   0.1.1
+Version:   0.1.2
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -89,5 +89,8 @@ npm install -g async connect express node-static request socket.io underscore
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Thu Feb 09 2012 Ram Ranganathan <ramr@redhat.com> 0.1.2-1
+- new package built with tito
+
 * Tue Feb 07 2012 Ram Ranganathan <ramr@redhat.com> 0.1.1-1
 - Initial packaging
