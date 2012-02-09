@@ -1,7 +1,7 @@
 - content_for :frameworks do
   %h2 Frameworks
   %p These are the core frameworks that all OpenShift applications are built on.  If you've got your own application ready to check in these are the way to go.
-  = render @framework_types
+  = render @framework_types, :locals => {:create_link => true}
 
 %section.main
   .content
@@ -13,7 +13,7 @@
         .span7
           %h2 Popular Types
           %p These applications have been selected by the OpenShift team to get you started in a hurry. These are good choices when you want to learn more about how OpenShift works.
-          = render @application_types
+          = render @application_types, :locals => {:create_link => true}
         .span5
           = yield :frameworks
     - else
