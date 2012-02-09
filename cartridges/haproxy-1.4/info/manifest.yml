@@ -1,4 +1,4 @@
-Name: rhc-cartridge-haproxy
+Name: haproxy
 Display-Name: haproxy v1.4
 Description: Cartridge packaging HAProxy versions 1.4
 Version: 1.4
@@ -12,18 +12,10 @@ Conflicts:
 Native-Requires:
   - "haproxy >= 1.4"
 Architecture: noarch
-Descriptor:
-  Reservations:
-    - MEM >= 100MB
-  Start-Order: haproxy
-  Publishes:
-    get-balancer-connection-info:
-      Type: "NET_TCP:http:http"
-  Subscribes:
-    set-get-proxy-info:
-      Type: "NET_TCP:httpd-proxy-info"
-      Required : false
-  Scaling:
-    Min: 1
-    Max: -1
-
+Publishes:
+  get-balancer-connection-info:
+    Type: "NET_TCP:http:http"
+Subscribes:
+  set-get-proxy-info:
+    Type: "NET_TCP:httpd-proxy-info"
+    Required : false
