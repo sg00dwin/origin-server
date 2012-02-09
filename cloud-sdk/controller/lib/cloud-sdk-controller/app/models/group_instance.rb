@@ -44,7 +44,7 @@ class GroupInstance < Cloud::Sdk::UserModel
       if hash.class == Gear
         @gears.push hash
       else
-        gear = Gear.new(@app)
+        gear = Gear.new(@app,self)
         gear.attributes=hash
       @gears.push gear
       end                             

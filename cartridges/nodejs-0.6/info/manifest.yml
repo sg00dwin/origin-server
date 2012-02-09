@@ -1,4 +1,4 @@
-Name: rhc-cartridge-nodejs-0.6
+Name: nodejs-0.6
 Display-Name: Node v0.6 (noarch)
 Description: Cartridge packaging Node.js support for OpenShift Express
 Version: 0.6.10

@@ -116,18 +116,19 @@ class Application < Cloud::Sdk::Cartridge
       
       Rails.logger.debug "Creating gears"
       group_instances.uniq.each do |ginst|
-        gear = Gear.new(self, ginst.node_profile)
-        
+        gear = Gear.new(self, ginst)
         #FIXME: backward compat: first gears UUID = app.uuid
         gear.uuid = self.uuid if gears_created.size == 0
         
         gears_created.push gear
         create_result = gear.create
+        ginst.gears = [gear]
+        self.save
         result_io.append create_result
         unless create_result.exitcode == 0
           raise NodeException.new("Unable to create gear on node", "-100", result_io)
         end
-        ginst.gears = [gear]
+
         #TODO: save gears here
       end
       self.class.notify_observers(:application_creation_success, {:application => self, :reply => result_io})              
@@ -135,11 +136,7 @@ class Application < Cloud::Sdk::Cartridge
       Rails.logger.debug e.message
       Rails.logger.debug e.backtrace.join("\n")
       Rails.logger.debug "Rolling back application gear creation"
-      gears_created.each do |gear|
-        gear.destroy
-        #TODO: delete gear here
-      end
-      group_instances.each {|ginst| ginst.gears = []}
+      reply.append self.destroy
       self.class.notify_observers(:application_creation_failure, {:application => self, :reply => result_io})
       raise
     ensure
@@ -163,8 +160,16 @@ class Application < Cloud::Sdk::Cartridge
   def destroy
     reply = ResultIO.new
     self.class.notify_observers(:before_application_destroy, {:application => self, :reply => reply})
-    run_on_gears(nil, reply, true) do |gear, r|
+    s,f = run_on_gears(nil, reply, false) do |gear, r|
       r.append gear.destroy
+      group_instance = self.group_instance_map[gear.group_instance_name]
+      group_instance.gears.delete(gear)
+      self.save
+    end
+          
+    f.each do |data|
+      Rails.logger.debug("Unable to clean up application on gear #{data[:gear]} due to exception #{data[:exception].message}")
+      Rails.logger.debug(data[:exception].backtrace.inspect)
     end
     self.class.notify_observers(:after_application_destroy, {:application => self, :reply => reply})    
     reply
@@ -180,24 +185,41 @@ class Application < Cloud::Sdk::Cartridge
     removed_component_instances.each do |comp_inst_name|
       comp_inst = self.comp_instance_map[comp_inst_name]
       group_inst = self.group_instance_map[comp_inst.group_instance_name]
-      run_on_gears(group_inst.gears, reply, false) do |gear, r|
+      s,f = run_on_gears(group_inst.gears, reply, false) do |gear, r|
         r.append gear.deconfigure(comp_inst)
         r.append process_cartridge_commands(r.cart_commands)
+        self.save
       end
       
       run_on_gears(group_inst.gears, reply, false) do |gear, r|
         r.append gear.destroy if gear.configured_components.length == 0
+        self.save        
       end
     end
     self.cleanup_deleted_components
+    self.save
     
     #process new additions
     self.configure_order.each do |comp_inst_name|
       comp_inst = self.comp_instance_map[comp_inst_name]
       group_inst = self.group_instance_map[comp_inst.group_instance_name]
-      run_on_gears(group_inst.gears, reply, false) do |gear, r|
+      s,f = run_on_gears(group_inst.gears, reply, true) do |gear, r|
         r.append gear.configure(comp_inst)
         r.append process_cartridge_commands(r.cart_commands)
+        self.save
+      end
+      # if there are any failures then deconfigure and destory empty nodes
+      if(f.length > 0)
+        run_on_gears(s.map{|g| g[:gear]}, reply, false) do |gear, r|
+          r.append gear.deconfigure(comp_inst)
+          r.append process_cartridge_commands(r.cart_commands)
+          self.save
+        end
+        run_on_gears(nil, reply, false) do |gear, r|
+          r.append gear.destroy if gear.configured_components.length == 0
+          self.save
+        end
+        raise f[0][:exception]
       end
     end
     save
@@ -214,7 +236,8 @@ class Application < Cloud::Sdk::Cartridge
       group_inst = self.group_instance_map[comp_inst.group_instance_name]
       run_on_gears(group_inst.gears, reply, false) do |gear, r|
         r.append gear.deconfigure(comp_inst)
-        r.append process_cartridge_commands(r.cart_commands)        
+        r.append process_cartridge_commands(r.cart_commands)
+        self.save
       end
     end
     self.class.notify_observers(:after_application_deconfigure, {:application => self, :reply => reply})
@@ -226,7 +249,7 @@ class Application < Cloud::Sdk::Cartridge
   # @overload start(dependency)
   #   Start a particular dependency on all gears that host it.
   #   @param [String] dependency Name of a cartridge to start
-  def start(dependency=nil)
+  def start(dependency=nil, stop_on_failure=true)
     reply = ResultIO.new
     self.class.notify_observers(:before_start, {:application => self, :reply => reply, :dependency => dependency})
     self.start_order.each do |comp_inst_name|
@@ -234,8 +257,12 @@ class Application < Cloud::Sdk::Cartridge
       next if !dependency.nil? and (comp_inst.parent_cart_name != dependency)
       
       group_inst = self.group_instance_map[comp_inst.group_instance_name]
-      run_on_gears(group_inst.gears, reply, false) do |gear, r|
+      s,f = run_on_gears(group_inst.gears, reply, true) do |gear, r|
         r.append gear.start(comp_inst)
+      end
+      
+      if(f.length > 0 and stop_on_failure)
+        self.stop(dependency)
       end
     end
     self.class.notify_observers(:after_start, {:application => self, :reply => reply, :dependency => dependency})
@@ -247,7 +274,7 @@ class Application < Cloud::Sdk::Cartridge
   # @overload stop(dependency)
   #   Stop a particular dependency on all gears that host it.
   #   @param [String] dependency Name of a cartridge to start
-  def stop(dependency=nil)
+  def stop(dependency=nil,force_stop_on_failure=true)
     reply = ResultIO.new
     self.class.notify_observers(:before_stop, {:application => self, :reply => reply, :dependency => dependency})
     self.start_order.each do |comp_inst_name|
@@ -255,8 +282,12 @@ class Application < Cloud::Sdk::Cartridge
       next if !dependency.nil? and (comp_inst.parent_cart_name != dependency)
       
       group_inst = self.group_instance_map[comp_inst.group_instance_name]
-      run_on_gears(group_inst.gears, reply, false) do |gear, r|
+      s,f = run_on_gears(group_inst.gears, reply, false) do |gear, r|
         r.append gear.stop(comp_inst)
+      end
+      
+      if(f.length > 0 && force_stop_on_failure)
+        self.force_stop(dependency)
       end
     end
     self.class.notify_observers(:after_stop, {:application => self, :reply => reply, :dependency => dependency})
@@ -388,6 +419,19 @@ class Application < Cloud::Sdk::Cartridge
       group_inst = self.group_instance_map[comp_inst.group_instance_name]
       run_on_gears(group_inst.gears, reply, false) do |gear, r|
         r.append gear.conceal_port(comp_inst)
+      end
+    end
+    reply
+  end
+
+  def system_messages(dependency=nil)
+    reply = ResultIO.new
+    self.comp_instance_map.each do |comp_inst_name, comp_inst|
+      next if !dependency.nil? and (comp_inst.parent_cart_name != dependency)
+      
+      group_inst = self.group_instance_map[comp_inst.group_instance_name]
+      run_on_gears(group_inst.gears, reply, false) do |gear, r|
+        r.append gear.system_messages(comp_inst)
       end
     end
     reply
@@ -872,16 +916,13 @@ private
       begin
         retval = block.call(gear, result_io)
         successful_runs.push({:gear => gear, :return => retval})
-        if (result_io.append(retval) if !result_io.nil? && retval.class == ResultIO)
-          result_io.append(retval) 
-        end
       rescue Exception => e
         Rails.logger.error e.message
         Rails.logger.error e.inspect
         Rails.logger.error e.backtrace.inspect        
         failed_runs.push({:gear => gear, :exception => e})
-        if (!result_io.nil? && e.kind_of?(Cloud::Sdk::CdkException) && !e.result_io.nil?)
-          result_io.append(retval) 
+        if (!result_io.nil? && e.kind_of?(Cloud::Sdk::CdkException) && !e.resultIO.nil?)
+          result_io.append(e.resultIO) 
         end
         if fail_fast
           return successful_runs, failed_runs
