@@ -1,8 +1,6 @@
 class ControlPanelController < ApplicationController
   before_filter :require_login, :require_user
 
-  layout 'console'
-
   @@exclude_carts = ['raw-0.1', 'jenkins-1.4']
 
   def index
