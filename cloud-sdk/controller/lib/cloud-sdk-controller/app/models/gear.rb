@@ -27,6 +27,14 @@ class Gear < Cloud::Sdk::UserModel
       return self.container.create(app,self)
     end
   end
+
+  def expose_port
+    get_proxy.expose_port(app,self)
+  end
+
+  def conceal_port
+    get_proxy.conceal_port(app,self)
+  end
   
   def destroy
     get_proxy.destroy(app,self)
