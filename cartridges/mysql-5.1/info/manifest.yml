@@ -11,7 +11,6 @@ Native-Requires:
   - mysql-devel
 Profiles:
   singleton-master:
-    &singleton-master-profile
     Provides: mysql-singleton-master
     Components:
       mysql-server:
@@ -82,4 +81,4 @@ Profiles:
           - mysql-master
           - mysql-slave
     Start-Order:  [master, slaves]
-Default-Profile: singleton-master-profile
+Default-Profile: singleton-master

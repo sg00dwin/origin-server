@@ -151,5 +151,4 @@ class ExpressAppController < ApplicationController
     
     render :layout => false
   end
-  
 end
