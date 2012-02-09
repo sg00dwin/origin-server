@@ -4,17 +4,9 @@
 var express = require('express');
 var fs      = require('fs');
 
-//  Local cache for static content [fixed and loaded at startup].
+//  Local cache for static content [fixed and loaded at startup]
 var zcache = { 'index.html': '' };
-
-//  Add contents of index.html to local cache.
-fs.readFile('./index.html', function (err, data) {
-    if (err) {
-        throw err;
-    }
-    zcache['index.html'] = data;
-});
-
+zcache['index.html'] = fs.readFileSync('./index.html'); //  Cache index.html
 
 // Create "express" server.
 var app  = express.createServer();
