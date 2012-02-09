@@ -120,6 +120,18 @@ delproxy() {
   return $?
 }
 
+delproxies() {
+  while [ "$1" ]; do
+    delproxy "$1"
+    if [ $? -ne 0 ]; then
+      echo "Error: Failed at $1"
+      return 1
+    fi
+    shift
+  done
+  return 0
+}
+
 addproxy() {
   # Add a proxy port to the configuration file overwriting
   # any existing proxy defined for the same port.
@@ -169,6 +181,19 @@ EOF
 
   return $retval
 }
+
+addproxies() {
+  while [ "$1" ]; do
+    addproxy "$1" "$2" "$3"
+    if [ $? -ne 0 ]; then
+      echo "Error: Failed at $1 $2 $3"
+      return 1
+    fi
+    shift; shift; shift
+  done
+  return 0
+}
+
 
 start() {
     fixaddr
@@ -248,10 +273,12 @@ case "$1" in
         listproxies
         ;;
     delproxy)
-        lockwrap delproxy "$2"
+        shift
+        lockwrap delproxies "$@"
         ;;
     addproxy)
-        lockwrap addproxy "$2" "$3" "$4"
+        shift
+        lockwrap addproxies "$@"
         ;;
     *)
         echo $"Usage: $0 {start|stop|status|restart|try-restart|reload|force-reload|listproxies|delproxy [proxport]| addproxy [proxport] [ip] [port]}"
