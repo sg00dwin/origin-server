@@ -429,11 +429,18 @@ class Application < RestApi
   has_many :aliases
   belongs_to :domain
   self.prefix = "#{RestApi.site.path}/domains/:domain_name/"
+  def domain_id
+    self.prefix_options[:domain_name] || super
+  end
+  def domain_id=(id)
+    self.prefix_options[:domain_name] = id
+    super
+  end
   def domain
-    Domain.find self.prefix_options[:domain_name], :as => as
+    Domain.find domain_id, :as => as
   end
   def domain=(domain)
-    self.prefix_options[:domain_name] = domain.name
+    domain_id = domain.is_a? String ? domain : domain.name
   end
 end
 

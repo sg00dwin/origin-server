@@ -54,6 +54,9 @@ RedHatCloud::Application.routes.draw do
       end
     end
 
+    resources :applications, :only => [:new, :create]
+    resources :application_types, :only => [:show], :id => /[^\/]+/
+
     # deprecated, move to :account
     resource :user,
              :path => :account,
