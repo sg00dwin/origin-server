@@ -72,6 +72,7 @@ echo "export PATH=$CART_INFO_DIR/bin/:$CART_DIR/abstract/info/bin/:$PATH" > $APP
 # Create virtualhost definition for apache
 #
 export CART_INFO_DIR
+import_env_vars
 $CART_INFO_DIR/bin/deploy_httpd_proxy.sh $application $namespace $uuid $IP
 
 restart_httpd_graceful

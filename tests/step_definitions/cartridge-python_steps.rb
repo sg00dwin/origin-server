@@ -154,7 +154,7 @@ Given /^the python application is (running|stopped)$/ do | start_state |
       good_exit = 0
   when 'stopped':
       fix_action = 'stop'
-      good_exit = 4
+      good_exit = 0
   end
 
   # check
@@ -197,7 +197,7 @@ Then /^the python application will( not)? be running$/ do | negate |
   namespace = @app['namespace']
   app_name = @app['name']
 
-  good_status = negate ? 4 : 0
+  good_status = negate ? 0 : 0
 
   command = "#{$python_hooks}/status %s %s %s" % [app_name, namespace, account_name]
   exit_status = runcon command, 'unconfined_u', 'system_r', 'libra_initrc_t'

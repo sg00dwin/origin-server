@@ -284,7 +284,15 @@ class Application < Cloud::Sdk::UserModel
   def threaddump
     self.container.threaddump(self, @framework)
   end
+
+  def expose_port
+    self.container.expose_port(self, @framework)
+  end
   
+  def conceal_port
+    self.container.conceal_port(self, @framework)
+  end
+
   def add_alias(server_alias)
     self.aliases = [] unless self.aliases
     raise Cloud::Sdk::UserException.new("Alias '#{server_alias}' already exists for '#{@name}'", 255) if self.aliases.include? server_alias

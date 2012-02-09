@@ -26,7 +26,7 @@ prog=$(basename $exec)
 
 lockfile=/var/lock/subsys/libra-proxy
 pidfile=/var/run/libra-proxy.pid
-cfgfile=/etc/libra/libra-proxy.cfg
+cfgfile=/var/lib/libra/.libra-proxy.d/libra-proxy.cfg
 
 
 check() {
@@ -87,6 +87,25 @@ rollcfg() {
   return 0
 }
 
+
+lockwrap() {
+  lockfile ${cfgfile}.lock
+  oldsum=$( md5sum $cfgfile | awk '{ print $1 }' )
+  "$@"
+  retcode=$?
+  if [ $retcode != 0 ]; then
+    echo "Error: Bad proxy configuration."
+  else
+    newsum=$( md5sum $cfgfile | awk '{ print $1 }' )
+    if [ $oldsum != $newsum ]; then
+      rollcfg
+      retcode=$?
+    fi
+  fi
+  rm -f ${cfgfile}.lock
+  return $retcode
+}
+
 delproxy() {
   # Remove a proxy port from the configuration file
   # Usage delproxy [proxport]
@@ -101,18 +120,16 @@ delproxy() {
   return $?
 }
 
-delproxy_r() {
-  lockfile ${cfgfile}.lock
-  delproxy "$1"
-  retcode=$?
-  if [ $retcode != 0 ]; then
-    echo "Error: Bad proxy configuration."
-  else
-    rollcfg
-    retcode=$?
-  fi
-  rm -f ${cfgfile}.lock
-  return $retcode
+delproxies() {
+  while [ "$1" ]; do
+    delproxy "$1"
+    if [ $? -ne 0 ]; then
+      echo "Error: Failed at $1"
+      return 1
+    fi
+    shift
+  done
+  return 0
 }
 
 addproxy() {
@@ -146,34 +163,37 @@ addproxy() {
     fi
   done
 
-  baddr=`getaddr`
+  retval=0
+  if ! grep "^listen $proxport:$dstip:$port" $cfgfile; then
+    baddr=`getaddr`
 
-  delproxy $proxport
+    delproxy $proxport
 
-  cat <<EOF >> $cfgfile
+    cat <<EOF >> $cfgfile
 listen $proxport:$dstip:$port
     mode tcp
     bind $baddr:$proxport
     server $proxport $dstip:$port
 # End $proxport:$dstip:$port
 EOF
-
-  return $?
-}
-
-addproxy_r() {
-  lockfile ${cfgfile}.lock
-  addproxy "$1" "$2" "$3"
-  retcode=$?
-  if [ $retcode != 0 ]; then
-    echo "Error: Bad proxy configuration."
-  else
-    rollcfg
-    retcode=$?
+    retval=$?
   fi
-  rm -f ${cfgfile}.lock
-  return $retcode
+
+  return $retval
 }
+
+addproxies() {
+  while [ "$1" ]; do
+    addproxy "$1" "$2" "$3"
+    if [ $? -ne 0 ]; then
+      echo "Error: Failed at $1 $2 $3"
+      return 1
+    fi
+    shift; shift; shift
+  done
+  return 0
+}
+
 
 start() {
     fixaddr
@@ -253,10 +273,12 @@ case "$1" in
         listproxies
         ;;
     delproxy)
-        delproxy_r "$2"
+        shift
+        lockwrap delproxies "$@"
         ;;
     addproxy)
-        addproxy_r "$2" "$3" "$4"
+        shift
+        lockwrap addproxies "$@"
         ;;
     *)
         echo $"Usage: $0 {start|stop|status|restart|try-restart|reload|force-reload|listproxies|delproxy [proxport]| addproxy [proxport] [ip] [port]}"
