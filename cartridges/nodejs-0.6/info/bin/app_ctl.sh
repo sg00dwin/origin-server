@@ -73,7 +73,9 @@ function _stop_node_service() {
     fi
 
     if [ -n "$node_pid" ]; then
-        /bin/kill $node_pid
+        # FIXME: kill -TERM doesn't seem to be sent to the process.
+        # /bin/kill $node_pid
+        /bin/kill -9 $node_pid
         ret=$?
         if [ $ret -eq 0 ]; then
             TIMEOUT="$STOPTIMEOUT"
@@ -83,12 +85,10 @@ function _stop_node_service() {
                 let TIMEOUT=${TIMEOUT}-1
             done
         fi
-        # rm -f $OPENSHIFT_APP_DIR/run/node.pid
+        rm -f $OPENSHIFT_APP_DIR/run/node.pid
     else
         if `pgrep -x node -u $(id -u)  > /dev/null 2>&1`; then
             echo "Warning: Application '$OPENSHIFT_APP_NAME' Node server exists without a pid file.  Use force-stop to kill." 1>&2
-        else
-            echo "Application '$OPENSHIFT_APP_NAME' is already stopped" 1>&2
         fi
     fi
 
