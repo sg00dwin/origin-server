@@ -68,6 +68,12 @@ ln -s %{cartridgedir}/../abstract/info/hooks/threaddump %{buildroot}%{cartridged
 %clean
 rm -rf %{buildroot}
 
+%post
+# Install npm modules
+npm install -g mysql pg
+npm install -g mongodb --mongodb:native
+npm install -g async connect express node-static request socket.io underscore
+
 %files
 %defattr(-,root,root,-)
 %attr(0750,-,-) %{cartridgedir}/info/hooks/
