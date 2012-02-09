@@ -49,15 +49,11 @@ popd > /dev/null
 #
 IP=`find_open_ip $uid $uuid`
 
-$CART_INFO_DIR/bin/deploy_httpd_config.sh $application $uuid $IP
-
 create_app_ctl_script
 
 populate_repo_dir
 
 secure_app_dir
-
-secure_conf_dirs
 
 chcon_app_dir_and_git
 
@@ -65,8 +61,8 @@ chcon_app_dir_and_git
 # Create files/directories, change ownership and SELinux file security context.
 touch "$APP_HOME"/.npmrc
 mkdir "$APP_HOME"/.npm
-chown $user_id.$group_id -R "$APP_HOME"/.npm "$APP_HOME"/.npmrc "$APP_DIR"/conf/node.env
-chcon -t libra_var_lib_t -l $mcs_level -R "$APP_HOME"/.npm "$APP_HOME"/.npmrc "$APP_DIR"/conf/node.env
+chown $user_id.$group_id -R "$APP_HOME"/.npm "$APP_HOME"/.npmrc
+chcon -t libra_var_lib_t -l $mcs_level -R "$APP_HOME"/.npm "$APP_HOME"/.npmrc
 
 # Also link to the globally installed npm modules.
 pushd "$APP_DIR" > /dev/null

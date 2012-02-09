@@ -54,17 +54,15 @@ function _start_node_service() {
     node_app=${node_app:-"server.js"}
 
     pushd "$OPENSHIFT_REPO_DIR" > /dev/null
-    node $node_opts $node_app $node_app_args > $logfile 2>&1 &
+    node $node_opts $node_app $node_app_args > $logf 2>&1 &
     ret=$?
     npid=$!
     popd > /dev/null
     if [ $ret -eq 0 ]; then
         echo "$npid" > "$OPENSHIFT_APP_DIR/run/node.pid"
     else
-        echo "Application '$OPENSHIFT_APP_NAME' failed to start - $ret" 1>&
+        echo "Application '$OPENSHIFT_APP_NAME' failed to start - $ret" 1>&2
     fi
-
-    wait_to_start_as_user
 
 }  #  End of function  _start_node_service.
 
