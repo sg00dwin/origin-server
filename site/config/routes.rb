@@ -120,10 +120,15 @@ RedHatCloud::Application.routes.draw do
               :as => "express_apps",
               :only => [:new, :create]
 
-    resource  :applications,
-              :controller => "applications",
-              :as => "applications",
-              :only => [:index]
+    scope '/console' do
+      resource  :applications,
+                :controller => "applications" do
+        # console applications page
+        match 'delete' => 'applications#confirm_delete', :via => :get
+        match 'delete' => 'applications#delete', :via => :put
+        match 'index' => 'applications#index'
+      end
+    end
 
     resources :express_ssh_keys
 
@@ -132,9 +137,6 @@ RedHatCloud::Application.routes.draw do
     match 'control_panel' => 'control_panel#index', :as => 'control_panel'
     match 'dashboard' => 'control_panel#index', :as => 'dashboard'
     match 'control_panel/apps' => 'express_app#list', :as => 'list_apps'
-
-    # console applications page
-    match 'console/applications' => 'applications#index'
 
     unless Rails.env.production?
       match 'styleguide/:action' => 'styleguide'

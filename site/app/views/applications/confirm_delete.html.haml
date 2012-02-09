@@ -1,0 +1,14 @@
+-# file: Applications confirm delete
+
+%section.main
+  %header
+    %h2
+      = "Are you sure you want to delete #{@app_name}?"
+  %p
+    This will delete all the code and data associated with the app, and cannot be undone, so make sure this is something you really want to do!
+
+  -# = semantic_form_for @app, :namespace => namespace, :remote => true, :url => applications_delete_path do |form|
+    = form.input :app_name, :as => :hidden, :value => app_name
+    = form.input :cartridge, :as => :hidden, :value => app['framework']
+    = form.submit :value => "Cancel", :class => 'cancel_button'
+    = form.submit :value => "Delete", :class => 'delete_button'
