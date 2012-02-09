@@ -125,7 +125,7 @@ RedHatCloud::Application.routes.draw do
                 :controller => "applications" do
         # console applications page
         match 'delete' => 'applications#confirm_delete', :via => :get
-        match 'delete' => 'applications#delete', :via => :put
+        match 'delete' => 'applications#delete', :via => :post
         match 'index' => 'applications#index'
       end
     end
