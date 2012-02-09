@@ -77,7 +77,7 @@ function remove_port {
         proxy_port=$(($first_port + $port_offset))
         if [ "$new_ip_port" == "${OPENSHIFT_PUB_PORT[$proxy_port]}" ]
         then
-            service libra-proxy delproxy $proxy_port
+            service libra-proxy setproxy $proxy_port del
             rm -f $APP_HOME/.env/OPENSHIFT_${proxy_port}_PUB_PORT
             exit 0
         fi

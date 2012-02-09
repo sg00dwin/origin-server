@@ -39,14 +39,8 @@ getaddr() {
 
 fixaddr() {
     # Fix eth0's address in case it was changed by the cloud provider
-    baddr=`getaddr`
+    baddr=$(getaddr)
     sed -i -r -e '/^[^\#]*bind/ { /127\.[0-9\.]+:/ b; s/([0-9\.]+):/'"$baddr"':/ }' $cfgfile
-}
-
-
-listproxies() {
-  # List out the defined proxies
-  sed -n -r -e 's/^listen ([0-9]+):([0-9\.]+):([0-9])/\1 \2 \3/; t yi; d; : yi p' $cfgfile
 }
 
 
@@ -106,51 +100,22 @@ lockwrap() {
   return $retcode
 }
 
-delproxy() {
-  # Remove a proxy port from the configuration file
-  # Usage delproxy [proxport]
+setproxy() {
+  # Set a proxy entry (either add or delete)
   proxport="$1"
-
-  if ! [ "$proxport" -ge 16384 -a "$proxport" -le 65535 ]; then
-    # also catch non-numeric args
-    return 1
-  fi
-
-  sed -i -e '/^listen '"$proxport"':/,/^#End '"$proxport"'/ d' $cfgfile
-  return $?
-}
-
-delproxies() {
-  while [ "$1" ]; do
-    delproxy "$1"
-    if [ $? -ne 0 ]; then
-      echo "Error: Failed at $1"
-      return 1
-    fi
-    shift
-  done
-  return 0
-}
-
-addproxy() {
-  # Add a proxy port to the configuration file overwriting
-  # any existing proxy defined for the same port.
-  # Usage addproxy [proxport] [ip] [port]
-  proxport="$1"
-  dstip="$2"
-  port="$3"
+  target="$2"
 
   if ! [ "$proxport" -ge 16384 -a "$proxport" -le 65535 ]; then
     echo "Proxy port must be an integer between 16384 and 65535"
     return 1
   fi
 
-  if ! [ "$port" -ge 1 -a "$port" -le 65535 ]; then
-    echo "Dest port must be an integer between 16384 and 65535"
-    return 1
+  if [ "$target" == "delete" -o "$target" == "del" ]; then
+    sed -i -e '/^listen '"$proxport"':/,/^#End '"$proxport"':/ d' $cfgfile
+    return $?
   fi
 
-  ipbytes=( `echo "$dstip" | sed -e 's/\./ /g'` )
+  ipbytes=( $(echo "$target" | cut -f 1 -d : | sed -e 's/\./ /g') )
   if [ ${#ipbytes} -ne 3 ]; then
     echo "Dest addr must be a valid IP address."
     return 1
@@ -163,33 +128,39 @@ addproxy() {
     fi
   done
 
-  retval=0
-  if ! grep "^listen $proxport:$dstip:$port" $cfgfile; then
-    baddr=`getaddr`
-
-    delproxy $proxport
-
-    cat <<EOF >> $cfgfile
-listen $proxport:$dstip:$port
-    mode tcp
-    bind $baddr:$proxport
-    server $proxport $dstip:$port
-# End $proxport:$dstip:$port
-EOF
-    retval=$?
+  port=$(echo $target | cut -f 2 -d :)
+  if ! [ "$port" -ge 1 -a "$port" -le 65535 ]; then
+    echo "Dest port must be an integer between 16384 and 65535"
+    return 1
   fi
 
-  return $retval
+  if grep -q "^listen $proxport:$target" $cfgfile; then
+    return 0
+  fi
+
+  baddr=$(getaddr)
+
+  sed -i -e '/^listen '"$proxport"':/,/^#End '"$proxport"':/ d' $cfgfile
+
+  cat <<EOF >> $cfgfile
+listen $proxport:$target
+    mode tcp
+    bind $baddr:$proxport
+    server $proxport $target
+# End $proxport:$target
+EOF
+
+  return $?
 }
 
-addproxies() {
+setproxies() {
   while [ "$1" ]; do
-    addproxy "$1" "$2" "$3"
+    setproxy "$1" "$2"
     if [ $? -ne 0 ]; then
-      echo "Error: Failed at $1 $2 $3"
+      echo "Error: Failed at $1 $2"
       return 1
     fi
-    shift; shift; shift
+    shift; shift
   done
   return 0
 }
@@ -269,18 +240,11 @@ case "$1" in
     condrestart|try-restart)
   	[ ! -f $lockfile ] || restart
 	;;
-    listproxies)
-        listproxies
-        ;;
-    delproxy)
+    setproxy)
         shift
-        lockwrap delproxies "$@"
-        ;;
-    addproxy)
-        shift
-        lockwrap addproxies "$@"
+        lockwrap setproxies "$@"
         ;;
     *)
-        echo $"Usage: $0 {start|stop|status|restart|try-restart|reload|force-reload|listproxies|delproxy [proxport]| addproxy [proxport] [ip] [port]}"
+        echo $"Usage: $0 {start|stop|status|restart|try-restart|reload|force-reload|setproxy [proxport] [ip:port]}"
         exit 2
 esac
