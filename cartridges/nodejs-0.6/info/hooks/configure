@@ -34,7 +34,7 @@ setup_configure "$1" $2 $3
 check_app_dir_doesnt_exist
 unobfuscate_app_home $uuid $namespace $application
 
-clone_git_repo $application $user_id $group_id $uuid "Node.JS 0.4"
+clone_git_repo $application $user_id $group_id $uuid "Node.js 0.4"
 
 #
 # Create the core of the application
@@ -43,7 +43,8 @@ clone_git_repo $application $user_id $group_id $uuid "Node.JS 0.4"
 mkdir -p "$APP_DIR"
 pushd "$APP_DIR" > /dev/null
 create_standard_app_dirs
-mkdir node_modules logs sessions
+mkdir conf node_modules logs sessions
+cp $CART_INFO_DIR/configuration/node.env conf/
 popd > /dev/null
 
 #
@@ -55,10 +56,6 @@ $CART_INFO_DIR/bin/deploy_httpd_config.sh $application $uuid $IP
 
 create_app_ctl_script
 
-# Pear requires a special pearrc file, this is that file:
-pear config-create "$APP_DIR"/phplib/pear/ "$APP_HOME"/.pearrc > /dev/null 2>&1
-pear -c "$APP_HOME"/.pearrc config-set php_ini "$APP_DIR"/conf/php.ini > /dev/null 2>&1
-
 populate_repo_dir
 
 secure_app_dir
@@ -67,6 +64,14 @@ secure_conf_dirs
 
 chcon_app_dir_and_git
 
+# npm keeps per-user config in ~/.npmrc and cache in ~/.npm/
+# Create files/directories, change ownership and SELinux file security context.
+touch "$APP_HOME"/.npmrc
+mkdir "$APP_HOME"/.npm
+chown $user_id.$group_id -R "$APP_HOME"/.npm "$APP_HOME"/.npmrc "$APP_DIR"/conf/node.env
+chcon -t libra_var_lib_t -l $mcs_level -R "$APP_HOME"/.npm "$APP_HOME"/.npmrc "$APP_DIR"/conf/node.env
+
+
 #
 # Create environment variables
 #
@@ -74,6 +79,9 @@ create_standard_env_vars
 create_standard_network_env_vars
 create_standard_repo_dir_env_var
 create_standard_path_env_var
+
+# And prepend to path variable so that Node app_ctl.sh script is called.
+sed -i 's#export \s*PATH=#export PATH=$CART_INFO_DIR/bin/:#' $APP_HOME/.env/PATH
 
 #
 # Start the server

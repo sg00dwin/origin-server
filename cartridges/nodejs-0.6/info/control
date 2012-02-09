@@ -7,7 +7,7 @@ Conflicts:
 Type: Cartridge
 Role: misc
 Vendor: nodejs.org
-DisplayName: Node.JS-0.6
+DisplayName: Node.js-0.6
 Bundles:
 Description:
 Node.js is a platform built on Chrome's JavaScript runtime for easily building

@@ -33,23 +33,38 @@ function _status_node_service() {
 function _start_node_service() {
     if [ -f $OPENSHIFT_APP_DIR/run/stop_lock ]; then
         echo "Application is explicitly stopped!  Use 'rhc-ctl-app -a ${OPENSHIFT_APP_NAME} -c start' to start back up." 1>&2
+        return 0
     else
         # Check if service is running.
         if _is_node_service_running; then
             echo "Application '$OPENSHIFT_APP_NAME' is already running" 1>&2
-        else
-            pushd "$OPENSHIFT_REPO_DIR" > /dev/null
-            node index.js > $OPENSHIFT_APP_DIR/logs/node.log 2>&1 &
-            ret=$?
-            node_pid=$!
-            if [ $ret -eq 0 ]; then
-                echo "$node_pid > $OPENSHIFT_APP_DIR/run/node.pid
-            else
-                echo "Application '$OPENSHIFT_APP_NAME' failed to start - $ret" 1>&
-            fi
-            wait_to_start_as_user
+            return 0
         fi
     fi
+
+    #  Got here - it means that we need to start up Node.
+
+    envf="$OPENSHIFT_APP_DIR/conf/node.env"
+    logf="$OPENSHIFT_APP_DIR/logs/node.log"
+
+    #  Source environment if it exists.
+    [ -f "$envf" ]  &&  source "$envf"
+
+    #  Ensure we have script file.
+    node_app=${node_app:-"server.js"}
+
+    pushd "$OPENSHIFT_REPO_DIR" > /dev/null
+    node $node_opts $node_app $node_app_args > $logfile 2>&1 &
+    ret=$?
+    npid=$!
+    popd > /dev/null
+    if [ $ret -eq 0 ]; then
+        echo "$npid" > "$OPENSHIFT_APP_DIR/run/node.pid"
+    else
+        echo "Application '$OPENSHIFT_APP_NAME' failed to start - $ret" 1>&
+    fi
+
+    wait_to_start_as_user
 
 }  #  End of function  _start_node_service.
 
