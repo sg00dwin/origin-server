@@ -229,12 +229,12 @@ module Cloud::Sdk
         rescue Errno::EEXIST
         end
       end
-      nil
+      raise RangeError, "User is out of ports"
     end
 
     def proxy_remove_port(proxy_port, prefix_cloud_name=false)
       if not proxy_port_list().include?(proxy_port)
-        return nil
+        raise SecurityError, 'Requested port not allowed: #{proxy_port}'
       end
 
       self.class.notify_observers(:before_proxy_remove_port, self, proxy_port)

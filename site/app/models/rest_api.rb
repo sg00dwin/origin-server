@@ -462,6 +462,18 @@ class Application < RestApi
   def domain=(domain)
     domain_id = domain.is_a? String ? domain : domain.namespace
   end
+  def base_url
+    namespace = domain_id
+    base_domain = Rails.configuration.base_domain
+    "#{@attributes[:name]}-#{namespace}.#{base_domain}"
+  end
+  def web_url
+    url = 'http://' 
+    url << base_url
+  end
+  def git_url
+    "ssh://#{@attributes[:uuid]}@#{base_url}/~/git/#{@attributes[:name]}.git/"
+  end
 end
 
 
