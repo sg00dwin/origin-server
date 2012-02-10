@@ -254,19 +254,19 @@ class ApplicationController < ActionController::Base
       end
     end
   end
-  
+
   # Detect previous login
   def previously_logged_in?
     cookies[:prev_login] ? true : false
   end
-  
+
   private
 
   def new_forms
-    @styleguide_forms = true
+    @new_forms_enabled = true
   end
   def new_forms?
-    @styleguide_forms
+    @new_forms_enabled
   end
 
   def require_login

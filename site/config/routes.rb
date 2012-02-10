@@ -120,6 +120,7 @@ RedHatCloud::Application.routes.draw do
               :as => "express_apps",
               :only => [:new, :create]
 
+    match 'console' => 'console#index', :via => :get
     scope '/console' do
       resources :application_types, :only => [:show], :id => /[^\/]+/
 
