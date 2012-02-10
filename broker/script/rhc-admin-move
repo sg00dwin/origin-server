@@ -8,7 +8,7 @@ include MCollective::RPC
 
 options = rpcoptions do |parser, options|
     parser.define_head "Move an application to another node"
-    parser.banner = "Usage: rhc-move [options]"
+    parser.banner = "Usage: rhc-admin-move [options]"
 
     parser.on('-i', '--target_server_identity TARGET_SERVER_IDENTITY', 'Target server identity (e.g. ip-10-10-10-10)') do |target_server_identity|
       options[:target_server_identity] = target_server_identity
@@ -22,7 +22,7 @@ options = rpcoptions do |parser, options|
       options[:app_name] = app_name
     end
     
-    parser.on('--app_uuid APP', 'Application uuid (replaces rhlogin and app name') do |app_uuid|
+    parser.on('--app_uuid APP_UUID', 'Application uuid (replaces rhlogin and app name)') do |app_uuid|
       options[:app_uuid] = app_uuid
     end
 

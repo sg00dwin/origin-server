@@ -41,6 +41,6 @@ setup_basic_hook "$1" $2 $3
 # Check application status
 #
 
-echo "You can see the job status here:"
-echo "${JENKINS_URL}job/${OPENSHIFT_APP_NAME}-build/"
+client_result "You can see the job status here:"
+client_result "${JENKINS_URL}job/${OPENSHIFT_APP_NAME}-build/"
   
