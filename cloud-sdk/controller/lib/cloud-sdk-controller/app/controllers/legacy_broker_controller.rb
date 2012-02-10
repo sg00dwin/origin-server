@@ -234,10 +234,10 @@ class LegacyBrokerController < ApplicationController
       @reply.append app.threaddump(app.framework)
     when 'expose-port'
       app = get_app_from_request(user)
-      @reply.append app.expose_port
+      @reply.append app.expose_port(app.framework)
     when 'conceal-port'
       app = get_app_from_request(user)
-      @reply.append app.conceal_port
+      @reply.append app.conceal_port(app.framework)
     when 'system-messages'
           app = get_app_from_request(user)
           @reply.append app.system_messages

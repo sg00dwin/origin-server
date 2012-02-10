@@ -27,15 +27,7 @@ class Gear < Cloud::Sdk::UserModel
       return self.container.create(app,self)
     end
   end
-
-  def expose_port
-    get_proxy.expose_port(app,self)
-  end
-
-  def conceal_port
-    get_proxy.conceal_port(app,self)
-  end
-  
+ 
   def destroy
     get_proxy.destroy(app,self)
   end
@@ -86,7 +78,15 @@ class Gear < Cloud::Sdk::UserModel
   def tidy(comp_inst)
     get_proxy.tidy(app,self,comp_inst.parent_cart_name)    
   end
-  
+
+  def expose_port(comp_inst)
+    get_proxy.expose_port(app,self,comp_inst.parent_cart_name)
+  end
+
+  def conceal_port(comp_inst)
+    get_proxy.conceal_port(app,self,comp_inst.parent_cart_name)
+  end
+ 
   def threaddump(comp_inst)
     get_proxy.threaddump(app,self,comp_inst.parent_cart_name)    
   end

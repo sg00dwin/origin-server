@@ -435,20 +435,23 @@ class Application < Cloud::Sdk::Cartridge
     end
     reply
   end
-  
+
+  # Invokes expose_port for a particular dependency on all gears that host it.
+  # @param [String] dependency Name of a cartridge
   def expose_port(dependency=nil)
     reply = ResultIO.new
     self.comp_instance_map.each do |comp_inst_name, comp_inst|
       next if !dependency.nil? and (comp_inst.parent_cart_name != dependency)
 
       group_inst = self.group_instance_map[comp_inst.group_instance_name]
-      run_on_gears(group_inst.gears, reply, false) do |gear, r|
-        r.append gear.conceal_port(comp_inst)
+      s,f = run_on_gears(group_inst.gears, reply, false) do |gear, r|
+        r.append gear.expose_port(comp_inst)
       end
+
+      raise f[0][:exception] if(f.length > 0)
     end
     reply
   end
-
 
   def conceal_port(dependency=nil)
     reply = ResultIO.new
@@ -457,7 +460,7 @@ class Application < Cloud::Sdk::Cartridge
 
       group_inst = self.group_instance_map[comp_inst.group_instance_name]
       run_on_gears(group_inst.gears, reply, false) do |gear, r|
-        r.append gear.expose_port(comp_inst)
+        r.append gear.conceal_port(comp_inst)
       end
     end
     reply
