@@ -58,7 +58,7 @@ create_app_ctl_script
 
 secure_app_dir
 
-setup_app_dir_and_git
+observe_setup_app_dir_and_git
 
 #
 # Create environment variables

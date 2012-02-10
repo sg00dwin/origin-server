@@ -110,11 +110,6 @@ function secure_conf_dirs {
     chown root:root -R "$APP_DIR/conf" "$APP_DIR/conf.d"
 }
 
-function setup_app_dir_and_git {
-  observe_setup_var_lib_dir "$APP_HOME/git/"
-  observe_setup_var_lib_dir "$APP_DIR"
-}
-
 function check_app_dir_doesnt_exist {
     if [ -d "$APP_DIR" ] 
     then
@@ -468,6 +463,15 @@ IFS="
         client_result "$line"
     done
     IFS=$IFS_BAK
+}
+
+function observe_observe_setup_app_dir_and_git {
+  observe_setup_var_lib_dir "$APP_HOME/git/"
+  observe_setup_var_lib_dir "$APP_DIR"
+}
+
+function observe_setup_app_home {
+  restorecon -R $APP_HOME
 }
 
 function observe_setup_var_lib_dir {
