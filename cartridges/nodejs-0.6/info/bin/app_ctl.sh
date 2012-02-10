@@ -121,8 +121,7 @@ for f in ~/.env/*; do
     . $f
 done
 
-# Validate user context.
-validate_user_context.sh
+validate_run_as_user
 
 # Handle commands.
 case "$1" in

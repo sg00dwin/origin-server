@@ -34,5 +34,5 @@ setup_basic_vars
 
 MMS_DIR="$APP_HOME/10gen-mms-agent-0.1"
 
-chcon -t libra_var_lib_t -l $mcs_level -R "$MMS_DIR"
+observe_setup_var_lib_dir "$MMS_DIR"
 

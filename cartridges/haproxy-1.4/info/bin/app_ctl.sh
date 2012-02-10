@@ -17,7 +17,8 @@ then
     echo "Usage: \$0 [start|restart|graceful|graceful-stop|stop]"
     exit 1
 fi
-validate_user_context.sh
+
+validate_run_as_user
 
 . app_ctl_pre.sh
 

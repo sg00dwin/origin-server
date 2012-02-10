@@ -50,7 +50,7 @@ METRICS_CTL_SCRIPT="$METRICS_DIR/${application}_metrics_ctl.sh"
 #
 # Stop app
 #
-runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $METRICS_CTL_SCRIPT stop" || warning "Failed to stop ${application}" 121
+run_as_user "$METRICS_CTL_SCRIPT stop" || warning "Failed to stop ${application}" 121
 
 confirm_pid_gone "${METRICS_DIR}/run/httpd.pid"
 

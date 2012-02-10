@@ -39,4 +39,4 @@ PHPMYADMIN_CTL_SCRIPT="$PHPMYADMIN_DIR/${application}_phpmyadmin_ctl.sh"
 # Start application
 #
 rm -f "$PHPMYADMIN_DIR/run/stop_lock"
-runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $PHPMYADMIN_CTL_SCRIPT restart"
+run_as_user "$PHPMYADMIN_CTL_SCRIPT restart"

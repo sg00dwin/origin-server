@@ -44,7 +44,7 @@ then
   #
   # Disable job
   #
-  if out=$(runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level ${CART_INFO_DIR}/bin/jenkins_job_action disable" 2>&1)
+  if out=$(run_as_user "${CART_INFO_DIR}/bin/jenkins_job_action disable" 2>&1)
   then
       # Existing job was disabled
       client_result ""

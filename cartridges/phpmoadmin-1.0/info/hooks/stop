@@ -38,5 +38,5 @@ PHPMOADMIN_CTL_SCRIPT="$PHPMOADMIN_DIR/${application}_phpmoadmin_ctl.sh"
 #
 # Start application
 #
-runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $PHPMOADMIN_CTL_SCRIPT stop"
+run_as_user "$PHPMOADMIN_CTL_SCRIPT stop"
 touch "$PHPMOADMIN_DIR/run/stop_lock"

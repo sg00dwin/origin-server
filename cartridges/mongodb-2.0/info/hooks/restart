@@ -39,4 +39,4 @@ mongodbctl="$MONGODB_DIR/${application}_mongodb_ctl.sh"
 # Restart application
 #
 rm -f "$MONGODB_DIR/run/stop_lock"
-/bin/su -s /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $mongodbctl restart"
+super_run_as_user "$mongodbctl restart"

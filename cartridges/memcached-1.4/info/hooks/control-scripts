@@ -24,8 +24,7 @@ function print_help() {
 
 function _control_memcached_service() {
    [ $# -lt 1 ]  &&  return 1
-   ctl_cmd="runcon -t libra_t -l $mcs_level $CTL_SCRIPT $1"
-   /bin/su -s /bin/sh "$uuid" -c "$ctl_cmd"
+   super_run_as_user "$CTL_SCRIPT $1"
 
 }  #  End of function  _control_memcached_service.
 
@@ -64,7 +63,7 @@ function _move_memcached_service() {
 
 MEMCACHED_DIR="$APP_HOME/memcached-1.4/"
 
-chcon -t libra_var_lib_t -l $mcs_level -R "$MEMCACHED_DIR"
+observe_setup_var_lib_dir "$MEMCACHED_DIR"
 
 . $APP_HOME/.env/OPENSHIFT_INTERNAL_IP
 IP=$OPENSHIFT_INTERNAL_IP

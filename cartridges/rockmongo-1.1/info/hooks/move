@@ -34,7 +34,7 @@ setup_basic_vars
 
 ROCKMONGO_DIR=`echo $APP_HOME/rockmongo-1.1 | tr -s /`
 
-chcon -t libra_var_lib_t -l $mcs_level -R "$ROCKMONGO_DIR"
+observe_setup_var_lib_dir "$ROCKMONGO_DIR"
 
 CART_INFO_DIR=$CART_DIR/embedded/rockmongo-1.1/info
 

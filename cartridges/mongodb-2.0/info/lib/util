@@ -4,7 +4,7 @@
 MYSQL_LIB_UTIL=true
 
 function start_mongodb {
-    /bin/su -s /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $MONGODB_DIR/${application}_mongodb_ctl.sh start"
+    super_run_as_user "$MONGODB_DIR/${application}_mongodb_ctl.sh start"
     wait_to_start
 }
 
@@ -20,7 +20,7 @@ function wait_to_start {
 
 
 function stop_mongodb {
-    /bin/su -s /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $MONGODB_DIR/${application}_mongodb_ctl.sh stop"
+    super_run_as_user "$MONGODB_DIR/${application}_mongodb_ctl.sh stop"
 }
 
 function start_mongodb_as_user {

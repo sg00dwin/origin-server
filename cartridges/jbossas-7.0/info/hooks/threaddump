@@ -33,7 +33,7 @@ setup_basic_hook "$1" $2 $3
 #
 # Get the thread dump
 #
-runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $APP_DIR/${application}_ctl.sh threaddump"
+run_as_user "$APP_DIR/${application}_ctl.sh threaddump"
 
 client_result "Success"
 client_result ""

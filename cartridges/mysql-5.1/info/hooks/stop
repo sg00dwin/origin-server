@@ -36,5 +36,5 @@ MYSQL_DIR="$APP_HOME/mysql-5.1/"
 #
 # Start application
 #
-/bin/su -s /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $MYSQL_DIR/${application}_mysql_ctl.sh stop"
+super_run_as_user "$MYSQL_DIR/${application}_mysql_ctl.sh stop"
 touch "$MYSQL_DIR/run/stop_lock"

@@ -125,7 +125,7 @@ ln -s $CART_INFO_DIR/bin/10gen_mms_agent_ctl.sh $MMS_CTL_SCRIPT
 #
 chown $user_id.$group_id -R $MMS_DIR || error "Failed to chown new 10gen-mms-agent space.  Please contact support" 123
 chown root.root "$MMS_DIR"
-chcon -t libra_var_lib_t -l $mcs_level -R "$MMS_DIR"
+observe_setup_var_lib_dir "$MMS_DIR"
 
 #
 # Create environment variables. This MUST be before starting rockmongo as the CTL script relies on these.
@@ -136,7 +136,7 @@ echo "export OPENSHIFT_10GEN_MMS_AGENT_CTL_SCRIPT='$MMS_CTL_SCRIPT'" > $APP_HOME
 #
 # Start the server
 #
-runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $MMS_CTL_SCRIPT start" || error "Failed to start ${application}" 121
+run_as_user "$MMS_CTL_SCRIPT start" || error "Failed to start ${application}" 121
 
 client_result ""
 client_result "10gen-mms-agent-0.1 added. " 

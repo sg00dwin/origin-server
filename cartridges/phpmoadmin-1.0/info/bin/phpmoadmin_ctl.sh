@@ -15,8 +15,7 @@ then
     exit 1
 fi
 
-
-validate_user_context.sh
+validate_run_as_user
 
 export PHPRC="${OPENSHIFT_PHPMOADMIN_APP_DIR}conf/php.ini"
 

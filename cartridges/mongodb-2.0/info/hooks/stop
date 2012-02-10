@@ -37,5 +37,5 @@ mongodbctl="$MONGODB_DIR/${application}_mongodb_ctl.sh"
 #
 # Stop application
 #
-/bin/su -s /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $mongodbctl stop"
+super_run_as_user "$mongodbctl stop"
 touch "$MONGODB_DIR/run/stop_lock"

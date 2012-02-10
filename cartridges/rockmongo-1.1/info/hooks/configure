@@ -113,7 +113,7 @@ chown $user_id.$group_id -R $ROCKMONGO_DIR || error "Failed to chown new rockmon
 # Secure script and config dirs.
 chown root.root -R "$ROCKMONGO_DIR/conf" "$ROCKMONGO_DIR/conf.d"
 chown root.root "$ROCKMONGO_DIR"
-chcon -t libra_var_lib_t -l $mcs_level -R "$ROCKMONGO_DIR"
+observe_setup_var_lib_dir "$ROCKMONGO_DIR"
 
 #
 # Create environment variables. This MUST be before starting rockmongo as the CTL script relies on these.
@@ -126,7 +126,7 @@ echo "export OPENSHIFT_ROCKMONGO_CTL_SCRIPT='$ROCKMONGO_CTL_SCRIPT'" > $APP_HOME
 #
 # Start the server
 #
-runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $ROCKMONGO_CTL_SCRIPT start" || error "Failed to start ${application}" 121
+run_as_user "$ROCKMONGO_CTL_SCRIPT start" || error "Failed to start ${application}" 121
 
 
 #
