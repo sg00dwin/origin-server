@@ -11,7 +11,7 @@ home_dirs = Dir.glob("/var/lib/libra/[0-9a-zA-Z]*")
 
 debug=1
 
-def openshift_mcs_level(uid)
+def get_mcs_level(uid)
   setsize=1023
   tier=setsize
   ord=uid
@@ -28,7 +28,7 @@ home_dirs.each do |home_dir|
         begin
             username = home_dir.split('/')[-1]
             user = Etc.getpwnam(username)
-            mcs_level = openshift_mcs_level(user.uid)
+            mcs_level = get_mcs_level(user.uid)
             puts "chcon -t libra_var_lib_t -l #{mcs_level} -R #{home_dir}/[^.]* #{home_dir}/.tmp/*" if debug
             %x[chcon -t libra_var_lib_t -l #{mcs_level} -R #{home_dir}/[^.]* #{home_dir}/.tmp/* ]
         rescue ArgumentError

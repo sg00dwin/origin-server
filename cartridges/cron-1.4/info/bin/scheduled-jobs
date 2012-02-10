@@ -87,7 +87,6 @@ function run_user_scheduled_jobs() {
 #
 source /etc/init.d/functions
 source "${CART_INSTALL_DIR}/abstract/info/lib/util"
-source "${CART_INSTALL_DIR}/abstract/info/lib/selinux"
 
 # Check whether to run all or a specific user's jobs.
 case "$1" in 
