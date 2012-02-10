@@ -24,8 +24,7 @@ function print_help() {
 
 function _control_postgres_service() {
    [ $# -lt 1 ]  &&  return 1
-   ctl_cmd="runcon -t libra_t -l $mcs_level $CTL_SCRIPT $1"
-   /bin/su -s /bin/sh "$uuid" -c "$ctl_cmd"
+   super_run_as_user "$CTL_SCRIPT $1"
 
 }  #  End of function  _control_postgres_service.
 
@@ -64,9 +63,9 @@ function _move_postgres_service() {
 
 PSQL_DIR="$APP_HOME/postgresql-8.4/"
 
-chcon -t libra_var_lib_t -l $mcs_level -R "$PSQL_DIR"
-chcon -t libra_var_lib_t -l $mcs_level $APP_HOME/.psql_history
-chcon -t libra_var_lib_t -l $mcs_level $APP_HOME/.pgpass
+observe_setup_var_lib_dir "$PSQL_DIR"
+observe_setup_var_lib_file $APP_HOME/.psql_history
+observe_setup_var_lib_file $APP_HOME/.pgpass
 
 . $APP_HOME/.env/OPENSHIFT_INTERNAL_IP
 IP=$OPENSHIFT_INTERNAL_IP

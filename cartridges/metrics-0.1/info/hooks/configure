@@ -94,7 +94,7 @@ chown $user_id.$group_id -R $METRICS_DIR || error "Failed to chown new metrics s
 # Secure script and config dirs.
 chown root.root -R "$METRICS_DIR/conf" "$METRICS_DIR/conf.d"
 chown root.root "$METRICS_DIR"
-chcon -t libra_var_lib_t -l $mcs_level -R "$METRICS_DIR"
+observe_setup_var_lib_dir "$METRICS_DIR"
 
 #
 # Create environment variables. This MUST be before starting metrics as the CTL script relies on these.
@@ -107,7 +107,7 @@ echo "export OPENSHIFT_METRICS_CTL_SCRIPT='$METRICS_CTL_SCRIPT'" > $APP_HOME/.en
 #
 # Start the server
 #
-runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $METRICS_CTL_SCRIPT start" || error "Failed to start ${application}" 121
+run_as_user "$METRICS_CTL_SCRIPT start" || error "Failed to start ${application}" 121
 
 #
 # Create virtualhost definition for apache

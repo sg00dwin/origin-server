@@ -16,7 +16,7 @@ then
 fi
 
 
-validate_user_context.sh
+validate_run_as_user
 
 case "$1" in
     start)

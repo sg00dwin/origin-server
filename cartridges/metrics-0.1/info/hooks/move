@@ -51,7 +51,7 @@ setup_basic_vars
 CART_INFO_DIR=$CART_DIR/embedded/metrics-0.1/info
 
 METRICS_DIR="$APP_HOME/metrics-0.1"
-chcon -t libra_var_lib_t -l $mcs_level -R "$METRICS_DIR"
+observe_setup_var_lib_dir "$METRICS_DIR"
 
 METRICS_IP=`embedded_find_open_ip $uid $APP_HOME`
 echo "export OPENSHIFT_METRICS_IP='$METRICS_IP'" > $APP_HOME/.env/OPENSHIFT_METRICS_IP

@@ -94,7 +94,7 @@ chown $user_id.$group_id -R $PHPMYADMIN_DIR || error "Failed to chown new phpmya
 # Secure script and config dirs.
 chown root.root -R "$PHPMYADMIN_DIR/conf" "$PHPMYADMIN_DIR/conf.d"
 chown root.root "$PHPMYADMIN_DIR"
-chcon -t libra_var_lib_t -l $mcs_level -R "$PHPMYADMIN_DIR"
+observe_setup_var_lib_dir "$PHPMYADMIN_DIR"
 
 #
 # Create environment variables. This MUST be before starting phpmyadmin as the CTL script relies on these.
@@ -107,7 +107,7 @@ echo "export OPENSHIFT_PHPMYADMIN_CTL_SCRIPT='$PHPMYADMIN_CTL_SCRIPT'" > $APP_HO
 #
 # Start the server
 #
-runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $PHPMYADMIN_CTL_SCRIPT start" || error "Failed to start ${application}" 121
+run_as_user "$PHPMYADMIN_CTL_SCRIPT start" || error "Failed to start ${application}" 121
 
 
 #

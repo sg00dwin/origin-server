@@ -54,4 +54,4 @@ METRICS_CTL_SCRIPT="$METRICS_DIR/${application}_metrics_ctl.sh"
 # Start application
 #
 rm -f "$METRICS_DIR/run/stop_lock"
-runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $METRICS_CTL_SCRIPT restart"
+run_as_user "$METRICS_CTL_SCRIPT restart"

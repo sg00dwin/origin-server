@@ -64,7 +64,7 @@ chown $user_id.$group_id -R $APP_DIR/../.cpanm/ || error "Failed to chown new ap
 
 secure_conf_dirs
 
-chcon_app_dir_and_git
+setup_app_dir_and_git
 
 #
 # Create environment variables

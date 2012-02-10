@@ -38,5 +38,5 @@ ROCKMONGO_CTL_SCRIPT="$ROCKMONGO_DIR/${application}_rockmongo_ctl.sh"
 #
 # Start application
 #
-runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $ROCKMONGO_CTL_SCRIPT stop"
+run_as_user "$ROCKMONGO_CTL_SCRIPT stop"
 touch "$ROCKMONGO_DIR/run/stop_lock"

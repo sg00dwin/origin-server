@@ -134,7 +134,7 @@ chown $user_id.$group_id -R $PHPMOADMIN_DIR || error "Failed to chown new phpmoa
 # Secure script and config dirs.
 chown root.root -R "$PHPMOADMIN_DIR/conf" "$PHPMOADMIN_DIR/conf.d"
 chown root.root "$PHPMOADMIN_DIR"
-chcon -t libra_var_lib_t -l $mcs_level -R "$PHPMOADMIN_DIR"
+observe_setup_var_lib_dir "$PHPMOADMIN_DIR"
 
 #
 # Create environment variables. This MUST be before starting phpmoadmin as the CTL script relies on these.
@@ -147,7 +147,7 @@ echo "export OPENSHIFT_PHPMOADMIN_CTL_SCRIPT='$PHPMOADMIN_CTL_SCRIPT'" > $APP_HO
 #
 # Start the server
 #
-runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $PHPMOADMIN_CTL_SCRIPT start" || error "Failed to start ${application}" 121
+run_as_user "$PHPMOADMIN_CTL_SCRIPT start" || error "Failed to start ${application}" 121
 
 
 #
