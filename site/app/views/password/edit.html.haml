@@ -1,21 +1,17 @@
 - content_for :page_title do
   OpenShift Change Password
 
-%section.main
-  .content
-    %h1 Change Your Password
-    = semantic_form_for @user, :url => edit_password_path, :html => {:method => :put} do |f|
-      %p When choosing a password we recommend using numbers, symbols, and upper and lower case letters for extra security.
+%h1 Change Your Password
+= semantic_form_for @user, :url => edit_password_path, :html => {:method => :put} do |f|
+  %p When choosing a password we recommend using numbers, symbols, and upper and lower case letters for extra security.
+  = f.inputs do
+    - if @token.nil?
+      = f.input :old_password, :required => true, :hint => link_to("Forget your password?  Reset it now", new_password_path)
+    - else
+      = hidden_field_tag 'token', @token
 
-      - if @token.nil?
-        = f.input :old_password, :required => true
-        = link_to "Forget your password?  Reset it now", new_password_path
-      - else
-        = hidden_field_tag 'token', @token
+    = f.input :password, :as => :password, :required => true
+    = f.input :password_confirmation, :as => :password, :required => true
 
-      = f.input :password, :as => :password, :required => true
-      = f.input :password_confirmation, :as => :password, :required => true
-      -#= f.label :password_confirmation
-      = f.buttons do
-        = f.commit_button :label => 'Change Password'
-      -#= f.commit_button :name => 'Change Password'
+  = f.buttons do
+    = f.commit_button :label => 'Change Password'
