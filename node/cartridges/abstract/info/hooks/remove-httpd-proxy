@@ -25,6 +25,8 @@ CART_DIR=/usr/libexec/li/cartridges
 
 source ${CART_DIR}/abstract/info/lib/util
 
+load_node_conf
+
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
     echo "Remove httpd proxy for an application"
