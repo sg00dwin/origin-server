@@ -120,6 +120,18 @@ RedHatCloud::Application.routes.draw do
               :as => "express_apps",
               :only => [:new, :create]
 
+    scope '/console' do
+      resource  :applications,
+                :controller => "applications" do
+        # console applications page
+        match 'delete' => 'applications#confirm_delete', :via => :get
+        match 'delete' => 'applications#delete', :via => :post
+        match 'add' => 'applications#show_add', :via => :get
+        match 'add' => 'applications#add', :via => :post
+        match 'index' => 'applications#index'
+      end
+    end
+
     resources :express_ssh_keys
 
     match 'express_ssh_key_delete' => 'express_ssh_keys#destroy', :via => [:post]

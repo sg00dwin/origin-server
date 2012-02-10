@@ -92,7 +92,7 @@ module StreamlineMock
   end
 
   def streamline_cookie
-    [:rh_sso, {:secure => true, :path => '/', :domain => '.redhat.com', :value => 'mock'}]
+    "rh_sso=#{@ticket}"
   end
 
   #

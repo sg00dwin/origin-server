@@ -37,4 +37,11 @@ mongodbctl="$MONGODB_DIR/${application}_mongodb_ctl.sh"
 #
 # Get the status of the application
 #
-runuser --shell /bin/sh "$uuid" "$mongodbctl" status
+
+if output=$(runuser --shell /bin/sh "$uuid" "$mongodbctl" status 2>&1)
+then
+    status_client_result "$output"
+else
+    client_result "MongoDB is either stopped or inaccessible"
+fi
+

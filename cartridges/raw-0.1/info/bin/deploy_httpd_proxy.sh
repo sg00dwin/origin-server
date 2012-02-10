@@ -19,7 +19,7 @@ function print_help {
 application="$1"
 namespace=`basename $2`
 uuid=$3
-#IP=$4
+IP=$4
 
 CART_DIR=/usr/libexec/li/cartridges
 source ${CART_DIR}/abstract/info/lib/util
@@ -43,7 +43,14 @@ cat <<EOF > "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}.conf"
   Include /etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}/*.conf
 
   Alias /health $CART_INFO_DIR/configuration/health.html
-  Alias / $CART_INFO_DIR/configuration/index.html
+  Alias /errors $CART_INFO_DIR/configuration
+
+  ProxyPass /health !
+  ProxyPass /errors !
+  ProxyPass / http://$IP:8080/
+  ProxyPassReverse / http://$IP:8080/
+  ProxyErrorOverride On
+  ErrorDocument 503 /errors/503.html
 </VirtualHost>
 
 <VirtualHost *:443>
@@ -54,6 +61,13 @@ $(/bin/cat $CART_INFO_DIR/configuration/node_ssl_template.conf)
   Include /etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}/*.conf
 
   Alias /health $CART_INFO_DIR/configuration/health.html
-  Alias / $CART_INFO_DIR/configuration/index.html
+  Alias /errors $CART_INFO_DIR/configuration
+
+  ProxyPass /health !
+  ProxyPass /errors !
+  ProxyPass / http://$IP:8080/
+  ProxyPassReverse / http://$IP:8080/
+  ProxyErrorOverride On
+  ErrorDocument 503 /errors/503.html
 </VirtualHost>
 EOF

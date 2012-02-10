@@ -1,4 +1,4 @@
-policy_module(libra,1.0.31)
+policy_module(libra,1.0.33)
 
 ########################################
 #
@@ -84,7 +84,7 @@ corenet_tcp_connect_all_ports(libra_net_t)
 #
 # libra general local policy
 #
-allow libra_domain self:process { getattr fork getpgid setpgid setrlimit setsched signal_perms ptrace getsched execmem };
+allow libra_domain self:process { setcurrent getattr fork getpgid setpgid setrlimit setsched signal_perms ptrace getsched execmem };
 dontaudit libra_t self:process getcap;
 
 allow libra_domain self:shm create_shm_perms;
@@ -132,6 +132,8 @@ dev_list_sysfs(libra_domain)
 dev_read_rand(libra_domain)
 dev_dontaudit_append_rand(libra_domain)
 dev_dontaudit_write_urand(libra_domain)
+dev_dontaudit_getattr_all_blk_files(libra_domain)
+dev_dontaudit_getattr_all_chr_files(libra_domain)
 
 domain_use_interactive_fds(libra_domain)
 domain_dontaudit_read_all_domains_state(libra_domain)
@@ -160,6 +162,7 @@ files_dontaudit_getattr_non_security_sockets(libra_domain)
 files_dontaudit_setattr_etc_runtime_files(libra_domain)
 
 libs_exec_lib_files(libra_domain)
+libs_exec_ld_so(libra_domain)
 
 logging_send_syslog_msg(libra_domain)
 logging_inherit_append_all_logs(libra_domain)
@@ -210,6 +213,8 @@ gen_require(`
     type puppet_tmp_t;
 ')
  
+allow unconfined_usertype self:process dyntransition;
+
 role_transition unconfined_r libra_initrc_exec_t system_r;
 unconfined_domain_noaudit(libra_initrc_t)
 mcs_process_set_categories(libra_initrc_t)
@@ -321,6 +326,18 @@ corenet_udp_bind_generic_port(httpd_t)
 
 mcs_socket_write_all_levels(httpd_t)
 
+#########
+#
+# Allow binding to localhost for certain daemons
+#
+require {
+    type ntpd_t;
+    type postfix_master_t;
+}
+
+mcs_socket_write_all_levels(ntpd_t)
+mcs_socket_write_all_levels(postfix_master_t)
+
 #################################
 # Potentially dangerous configs #
 #################################
@@ -421,6 +438,7 @@ libra_search_lib(sshd_t)
 dontaudit sshd_t self:capability sys_admin;
 allow libra_domain sshd_t:process sigchld;
 allow libra_domain sshd_t:unix_stream_socket connectto;
+allow libra_domain sshd_t:unix_dgram_socket write;
 allow sshd_t libra_domain:process { rlimitinh signal };
 manage_dirs_pattern(sshd_t, libra_tmp_t, libra_tmp_t)
 manage_sock_files_pattern(sshd_t, libra_tmp_t, libra_tmp_t)
@@ -428,14 +446,14 @@ allow sshd_t libra_tmp_t:dir mounton;
 
 allow libra_t ptmx_t:chr_file { read write ioctl };
 allow libra_t sshd_devpts_t:chr_file { read write ioctl open getattr };
-allow libra_t sshd_t:tcp_socket { read write getattr setopt getopt };
+allow libra_t sshd_t:tcp_socket { read write getattr setopt getopt shutdown };
 allow libra_t sshd_t:unix_stream_socket { write read };
 
 #
 # Programs that libra instances should not be allowed to execute, that I have 
 # see users attempt to execute
 #
-# rpm, yum
+# rpm, yum, debuginfo-install
 # ping, traceroute, iptables, iptables-multi
 # dmesg
 # su, sudo

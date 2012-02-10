@@ -1,323 +1,1203 @@
-	<div id="container">
-
-		<div id="header-container">
-
-			<header class="wrapper clearfix">
-
-				<div id="title">
-					open<strong>shift</strong>
-					<span class="trademark">&trade;</span>
-				</div>
-			    <aside>management console</aside>
-			    <nav>
-					<ul>
-						<li><a href="#">ffranz@redhat.com</a></li>
-					</ul>
-				</nav>
-
-			</header>
-
-		</div>
-
-		<nav id="main-navigation">
-			<div class="wrapper clearfix">
-				<ul class="tabs">
-					<li><a href="dashboard.html">Dashboard</a></li>
-					<li class="active"><a href="my.html">My Applications</a></li>
-					<li><a href="#">Development Center</a></li>
-					<li class="right"><a href="#">Community</a><span class="count">3</span></li>
-				</ul>
-			</div>
-		</nav>
-
-		<div id="main-container">
-			<div id="main" class="wrapper clearfix">
-
-			    <ul class="breadcrumb">
-					<li><a href="#">Home</a> <span class="divider">/</span></li>
-				    <li><a href="#">Breadcrumb one page</a> <span class="divider">/</span></li>
-				    <li><a href="#">Breadcrumb another</a> <span class="divider">/</span></li>
-				    <li class="active">You are here</li>
-			    </ul>
-
-				<div id="welcome" class="message">
-					<h1>Wahoo!</h1>
-					<p>
-						Vestibulum id ligula porta felis euismod semper. Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit.
-					</p>
-					<button type="button" class="action success huge">Let's get started »</button>
-				</div>
-
-				<div id="namespace" class="message">
-
-					<h1>Create your namespace!</h1>
-
-					<p>
-						The namespace is part of the URL that your OpenShift applications will be available under. 
-					</p>
+ <div class="navbar">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="brand" href="http://openshift.redhat.com">open<strong>shift</strong>
+					<sup>&trade;</sup> <span>management console</span></a>
+       
+          <div class="nav-collapse">
+            <ul class="nav">
+              <li class="active"><a href="#">Dashboard</a></li>
+              <li><a href="#about">My Applications</a></li>
+              <li><a href="#contact">Development Center</a></li>
+            </ul>
+            
+            <ul id="utility-nav" class="navbar-text pull-right">
+             <li><a href="#">Jsmith@redhat.com</a></li>
+             <li><a href="#">Community</a></li>
+          </ul><!-- /#utility-nav -->
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+				
+				<div class="container">
+				
+	<ul class="breadcrumb">
+    <li>
+    <a href="#">Home</a> <span class="divider">/</span>
+    </li>
+    <li>
+    <a href="#">Secondary</a> <span class="divider">/</span>
+    </li>
+    <li class="active">
+    You are here
+    </li>
+   </ul>
+  
+ <section>
+   <div class="hero-unit">
+      <h1>Wahoo!</h1>
+      <p>Vestibulum id ligula porta felis euismod semper. Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. </p>
+      <p><a class="btn btn-primary btn-large">Let's get started &raquo;</a></p>
+   </div>
+   
+   <div class="hero-unit">
+      <h1>Create your namespace!</h1>
+      <p>The namespace is part of the URL that your OpenShift applications will be available under. </p>
+      <form id="" class="well form-inline">
+      	<strong>http://myapps-</strong>
+        <input type="text" class="input">
+        <strong>.rhcloud.com/</strong>
+        <button class="btn btn-primary btn-large" type="submit">Create &raquo;</button>
+      </form>
+   </div>
+ </section> 
+   
+<!-- Grid
+================================================== -->
+   
+				<section id="grid-system">
+				  <div class="page-header">
+				    <h1>Grid system 12 columns</h1>
+				  </div>
+				
+				  <div class="row show-grid">
+				
+				    <div class="span1">1</div>
+				    <div class="span1">1</div>
+				    <div class="span1">1</div>
+				    <div class="span1">1</div>
+				    <div class="span1">1</div>
+				    <div class="span1">1</div>
+				
+				    <div class="span1">1</div>
+				    <div class="span1">1</div>
+				    <div class="span1">1</div>
+				    <div class="span1">1</div>
+				    <div class="span1">1</div>
+				    <div class="span1">1</div>
+				
+				  </div>
+				  <div class="row show-grid">
+				    <div class="span4">4</div>
+				    <div class="span4">4</div>
+				    <div class="span4">4</div>
+				  </div>
+				  <div class="row show-grid">
+				
+				    <div class="span4">4</div>
+				    <div class="span8">8</div>
+				  </div>
+				  <div class="row show-grid">
+				    <div class="span6">6</div>
+				    <div class="span6">6</div>
+				  </div>
+				
+				  <div class="row show-grid">
+				    <div class="span12">12</div>
+				  </div>
+				  
+				  <h2>Offsetting columns</h2>
+					  <div class="row show-grid">
+					    <div class="span4">4</div>
+					    <div class="span4 offset4">4 offset 4</div>
+					  </div><!-- /row -->
+					  <div class="row show-grid">
+					    <div class="span3 offset3">3 offset 3</div>
 					
-					<form class="inline">
-						<fieldset>
-							<div>
-								<label for="namespace-input">http://myapps-</label>
-								<input id="namespace-input" name="namespace-input" size="30" type="text" placeholder="namespace" />
-								<label for="namespace-input">.rhcloud.com/</label>
-								<button type="button" class="action large success">Create »</button>
-								</div>
-						</fieldset>
-					</form>
-				</div>
-
-				<form>
-	        		<fieldset>
-
-						<div class="legend">Example form legend</div>
-
-						<dl>
-							<dt><label for="input1">Some text:</label></dt>
-							<dd><input id="input1" name="input1" size="30" type="text" /></dd>
-						</dl>
-
-						<dl>
-							<dt><label for="input2">Another text:</label></<dt>
-							<dd><input id="input2" name="input2" size="30" type="text" placeholder="With placeholder" /></dd>
-						</dl>
-
-						<dl>
-							<dt><label for="input2">Another text:</label></dt>
-							<dd><input id="input2" name="input2" size="30" type="text" placeholder="With placeholder" value="With value and placeholder" /></dd>
-						</dl>
-
-						<dl>
-							<dt><label for="input3">Number field:</label></<dt>
-							<dd>
-								<input id="input3" name="input3" size="30" type="number" placeholder="Input a number" required />
-							  	<span class="error">This is some error message</span>
-							</dd>
-						</dl>
-
-						<dl>
-							<dt><label for="input4">Email field:</label></dt>
-							<dd>
-								<input id="input4" name="input4" size="30" type="email" placeholder="Input an email" required />
-							  	<span class="error inline">This is some inline error message</span>
-							</dd>
-						</dl>
-
-						<dl>
-							<dt><label for="input5">URL field:</label></dt>
-							<dd><input id="input5" name="input5" size="30" type="url" placeholder="Input a URL" required /></dd>
-						</dl>
-
-						<dl>
-							<dt><label for="input6">Date field:</label></dt>
-							<dd>
-								<input id="input6" name="input6" size="30" type="date" placeholder="Input a date" />
-							  	<span class="help">This is some help text</span>
-							</dd>
-						</dl>
-
-						<dl>
-							<dt><label for="input7">Date and time field:</label></dt>
-							<dd>
-								<input id="input7" name="input7" size="30" type="datetime" placeholder="Input a date and time" />
-							  	<span class="help inline">This is some inline help text</span>
-							</dd>
-						</dl>
-
-						<dl>
-							<dt><label for="input8">Select field:</label></dt>
-							<dd>
-								<select id="input8" name="input8">
-							  		<option></option>
-							  		<option>One value</option>
-							  		<option>Another value</option>
-							  	</select>
-							</dd>
-						</dl>
-
-						<dl>
-							<dt><label for="input9">Textarea field:</label></dt>
-							<dd><textarea id="input9" name="input9" placeholder="Placeholder"></textarea></dd>
-						</dl>
-
-						<dl>
-							<dt><label for="checkboxes">Checkboxes:</label></dt>
-							<dd class="smart">
-								<input id="checkbox1" name="checkboxes" type="checkbox" checked="checked" />
-								<label for="checkbox1">Option 1</label>
-								<input id="checkbox2" name="checkboxes" type="checkbox" />
-								<label for="checkbox2">Option 2</label>
-								<input id="checkbox3" name="checkboxes" type="checkbox" />
-								<label for="checkbox3">Option 3</label>
-							</dd>
-						</dl>
-
-						<div class="actions">
-							<button type="button" class="action secondary strong">Cancel</button>
-							<button type="button" class="action primary strong">Proceed Now »</button>
-						</div>
-
-					</fieldset>
-				</form>
-
-				<p>
-					Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam sodales urna non odio egestas tempor. Nunc vel vehicula ante. Etiam bibendum iaculis libero, eget molestie nisl pharetra in. In semper consequat est, eu porta velit mollis nec.
-				</p>
-
-				<form class="inline">
-					<fieldset>
-						<dl>
-							<dt><label for="input30">Inline example</label></dd>
-							<dd><input id="input30" name="input30" size="30" type="text" placeholder="Something" /></dd>
-						</dl>
-						<button type="button" class="action">Proceed Now »</button>
-					</fieldset>
-				</form>
-					
-				<p>
-					Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam sodales urna non odio egestas tempor. Nunc vel vehicula ante. Etiam bibendum iaculis libero, eget molestie nisl pharetra in. In semper consequat est, eu porta velit mollis nec.
-				</p>
-
-				<div class="alert-message success"><strong>Success!</strong> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam sodales urna non odio egestas tempor.<a class="close" href="#">×</a></div>
-				<div class="alert-message warning"><strong>Warning!</strong> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam sodales urna non odio egestas tempor.<a class="close" href="#">×</a></div>
-				<div class="alert-message error"><strong>Error!</strong> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam sodales urna non odio egestas tempor.<a class="close" href="#">×</a></div>
-				<div class="alert-message info"><strong>Info!</strong> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam sodales urna non odio egestas tempor.<a class="close" href="#">×</a></div>
+					    <div class="span3 offset3">3 offset 3</div>
+					  </div><!-- /row -->
+					  <div class="row show-grid">
+					    <div class="span8 offset4">8 offset 4</div>
+					  </div><!-- /row -->
+  				
+  				<h2>Nesting columns</h2>
+					  <div class="row">
+					    <div class="span6">
+					      <p>To nest your content, just add a new <code>.row</code> and set of <code>.span*</code> columns within an existing <code>.span*</code> column.</p>
+					      <div class="row show-grid">
+					        <div class="span6">
+					          Level 1 of column
+					          <div class="row show-grid">
+					            <div class="span3">
+					              Level 2
+					            </div>
+					            <div class="span3">
+					              Level 2
+					            </div>
+					          </div>
+					        </div>
+					      </div>
+					    </div>
+    
+				</section><!-- /grid-system -->
 				
-				<div class="actions">
-					<a href="#" class="action huge">Cancel</a>
-					<button type="button" class="action secondary huge">Secondary Button</button>
-					<button type="button" class="action huge">Default Button</button>
-					<button type="button" class="action primary huge">Primary Button</button>
-				</div>
 				
-				<div class="actions">
-					<a href="#" class="action large">Cancel</a>
-					<button type="button" class="action secondary large">Secondary Button</button>
-					<button type="button" class="action large">Default Button</button>
-					<button type="button" class="action primary large">Primary Button</button>
-				</div>
 				
-				<div class="actions">
-					<a href="#" class="action">Cancel</a>
-					<button type="button" class="action secondary">Secondary Button</button>
-					<button type="button" class="action">Default Button</button>
-					<button type="button" class="action primary">Primary Button</button>
-				</div>
-				
-				<div class="actions">
-					<a href="#" class="action small">Cancel</a>
-					<button type="button" class="action secondary small">Secondary Button</button>
-					<button type="button" class="action small">Default Button</button>
-					<button type="button" class="action primary small">Primary Button</button>
-				</div>
-				
-				<div class="actions">
-					<button type="button" class="action success">Success Button</button>
-					<button type="button" class="action alert">Alert Button</button>
-					<button type="button" class="action info">Info Button</button>
-					<button type="button" class="action secondary">Secondary Button</button>
-					<button type="button" class="action">Default Button</button>
-					<button type="button" class="action primary">Primary Button</button>
-				</div>
-
-				<div class="grid sample">
-
+				<section>
 					<div class="row">
-						<div class="col1"><p>one</p></div>
-						<div class="col1"><p>one</p></div>
-						<div class="col1"><p>one</p></div>
-						<div class="col1"><p>one</p></div>
-						<div class="col1"><p>one</p></div>
-						<div class="col1"><p>one</p></div>
-						<div class="col1"><p>one</p></div>
-						<div class="col1"><p>one</p></div>
-						<div class="col1"><p>one</p></div>
-						<div class="col1"><p>one</p></div>
-						<div class="col1"><p>one</p></div>
-						<div class="col1 last"><p>one</p></div>
-					</div>
+						<div class="span6">
+						<h3>Example alerts</h3>
+      			<div class="alert alert-success">
+      			  <a class="close">&times;</a>
+      			  <strong>Success!</strong> Nulla vitae elit libero, a pharetra augue. Praesent commodo cursus magna, vel scelerisque nisl consectetur.
+      			</div>
+      			<div class="alert alert-info">
+      			  <a class="close">&times;</a>
+      			  <strong>Information</strong> Nulla vitae elit libero, a pharetra augue. Praesent commodo cursus magna, vel scelerisque nisl consectetur.
+      			</div>
+      			<div class="alert">
+      			  <a class="close">&times;</a>
+      			  <strong>Warning</strong> Nulla vitae elit libero, a pharetra augue. Praesent commodo cursus magna, vel scelerisque nisl consectetur.
+      			</div>
+      			<div class="alert alert-error">
+      			  <a class="close">&times;</a>
+      			  <strong>Error!</strong> Nulla vitae elit libero, a pharetra augue. Praesent commodo cursus magna, vel scelerisque nisl consectetur.
+      			</div>
+      			</div>
+      			<div class="span4 offset1">
+      				<div class="side-block">
+      				
+      					<h4>Help area</h4>
+      					<ul>
+      					  <li>Lorem ipsum dolor sit amet</li>
+      					  <li>Consectetur adipiscing elit</li>
+      					  <li>Integer molestie lorem at massa</li>
+      					  <li>Facilisis in pretium nisl aliquet</li>
+      					  <li>Nulla volutpat aliquam velit
+      					    <ul>
+      					      <li>Phasellus iaculis neque</li>
+      					      <li>Purus sodales ultricies</li>
+      					      <li>Vestibulum laoreet porttitor sem</li>
+      					      <li>Ac tristique libero volutpat at</li>
+      					    </ul>
+      					  </li>
+      					  <li>Faucibus porta lacus fringilla vel</li>
+      					  <li>Aenean sit amet erat nunc</li>
+      					  <li>Eget porttitor lorem</li>
+      					</ul>
 
-					<div class="row">
-						<div class="col2"><p>two</p></div>
-						<div class="col2"><p>two</p></div>
-						<div class="col2"><p>two</p></div>
-						<div class="col2"><p>two</p></div>
-						<div class="col2"><p>two</p></div>
-						<div class="col2 last"><p>two</p></div>
+      				</div><!-- /.help-block -->
+      			</div>
 					</div>
-					
-					<div class="row">
-						<div class="col3"><p>three</p></div>
-						<div class="col3"><p>three</p></div>
-						<div class="col3"><p>three</p></div>
-						<div class="col3 last"><p>three</p></div>
-					</div>
-					
-					<div class="row">
-						<div class="col4"><p>four</p></div>
-						<div class="col4"><p>four</p></div>
-						<div class="col4 last"><p>four</p></div>
-					</div>
-					
-					<div class="row">
-						<div class="col6"><p>six</p></div>
-						<div class="col6 last"><p>six</p></div>
-					</div>
-					
-					<div class="row">
-						<div class="col3"><p>three</p></div>
-						<div class="col6"><p>six</p></div>
-						<div class="col3 last"><p>three</p></div>
-					</div>
-					
-					<div class="row">
-						<div class="col9"><p>nine</p></div>
-						<div class="col3 last"><p>three</p></div>
-					</div>
-					
-				</div>
-				
-				<article>
-					<header>
-						<h1>h1. article header</h1>
-						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam sodales urna non odio egestas tempor. Nunc vel vehicula ante. Etiam bibendum iaculis libero, eget molestie nisl pharetra in. In semper consequat est, eu porta velit mollis nec.</p>
-					</header>
-					<section>
-						<h2>h2. article section</h2>
-						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam sodales urna non odio egestas tempor. Nunc vel vehicula ante. Etiam bibendum iaculis libero, eget molestie nisl pharetra in. In semper consequat est, eu porta velit mollis nec. Curabitur posuere enim eget turpis feugiat tempor. Etiam ullamcorper lorem dapibus velit suscipit ultrices. Proin in est sed erat facilisis pharetra.</p>
-					</section>
-					<section>
-						<h2>h2. article section</h2>
-						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam sodales urna non odio egestas tempor. Nunc vel vehicula ante. Etiam bibendum iaculis libero, eget molestie nisl pharetra in. In semper consequat est, eu porta velit mollis nec. Curabitur posuere enim eget turpis feugiat tempor. Etiam ullamcorper lorem dapibus velit suscipit ultrices. Proin in est sed erat facilisis pharetra.</p>
-					</section>
-					<footer>
-						<h3>h3. article footer</h3>
-						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam sodales urna non odio egestas tempor. Nunc vel vehicula ante. Etiam bibendum iaculis libero, eget molestie nisl pharetra in. In semper consequat est, eu porta velit mollis nec. Curabitur posuere enim eget turpis feugiat tempor.</p>
-					</footer>
-				</article>
-				
-				<aside class="postit">
-					<div class="tape"></div>
-					<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam sodales urna non odio egestas tempor. Nunc vel vehicula ante. Etiam bibendum iaculis libero, eget molestie nisl pharetra in. In semper consequat est, eu porta velit mollis nec. Curabitur posuere enim eget turpis feugiat tempor. Etiam ullamcorper lorem dapibus velit suscipit ultrices.</p>
-				</aside>
-				
-			</div> <!-- #main -->
-		</div> <!-- #main-container -->
+				</section>
 
-		<div id="footer-container">
-			<footer class="wrapper">
-				Copyright &copy; 2011 Red Hat, Inc.
-				<nav>
-					<ul>
-						<li><a href="#">Legal</a></li>
-						<li><a href="#">Privacy Policy</a></li>
-						<li><a href="#">Security</a></li>
-						<li><a href="#">FAQ</a></li>
-						<li><a href="#">Contact</a></li>
-					</ul>
-				</nav>
-			</footer>
-		</div>
+    
+   
+<!-- Forms
+================================================== -->
+<section id="forms">
+  <div class="page-header">
+    <h1>Forms</h1>
+  </div>
 
-	</div>
+  <h2>Four types of forms</h2>
+  <table class="table table-bordered table-striped">
+    <thead>
+      <tr>
+
+        <th>Name</th>
+        <th>Class</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+
+        <th>Vertical (default)</th>
+        <td><code>.form-vertical</code> <span class="muted">(not required)</span></td>
+        <td>Stacked, left-aligned labels over controls</td>
+      </tr>
+      <tr>
+        <th>Inline</th>
+
+        <td><code>.form-inline</code></td>
+        <td>Left-aligned label and inline-block controls for compact style</td>
+      </tr>
+      <tr>
+        <th>Search</th>
+        <td><code>.form-search</code></td>
+        <td></td>
+
+      </tr>
+      <tr>
+        <th>Horizontal</th>
+        <td><code>.form-horizontal</code></td>
+        <td>Float left, right-aligned labels on same line as controls</td>
+      </tr>
+    </tbody>
+
+  </table>
+
+
+  <h2>Example forms <small>using just form controls, no extra markup</small></h2>
+  
+  <div class="row">
+    <div class="span6">
+    	<h3>Basic form</h3>
+      <form>
+        <label>Label name</label>
+        <input type="text" class="span3" placeholder="Type something…"> <span class="help-inline">Associated help text!</span>
+        <label class="checkbox">
+          <input type="checkbox"> Check me out
+        </label>
+
+        <button type="submit" class="btn">Submit</button>
+      </form>
+    </div>
+    
+    <div class="span6">
+    	<h3>Search form</h3>
+      <form class="form-search">
+        <input type="text" class="input-medium search-query">
+        <button type="submit" class="btn">Search</button>
+
+      </form>
+    	<h3>Inline form</h3>
+      <form class="form-search">
+        <input type="text" class="input-small" placeholder="Email">
+        <input type="password" class="input-small" placeholder="Password">
+        <button type="submit" class="btn">Go</button>
+      </form>
+    </div>
+
+  </div><!-- /row -->
+
+  <br>
+
+  <h2>Horizontal forms</h2>
+  <div class="row">
+    <div class="span8">
+      <form class="form-horizontal">
+        <fieldset>
+
+          <legend>Legend</legend>
+          <div class="control-group">
+            <label class="control-label" for="input01">Text input</label>
+            <div class="controls">
+              <input type="text" class="input-xlarge" id="input01">
+              <p class="help-block">Help text</p>
+            </div>
+
+          </div>
+          <div class="control-group">
+            <label class="control-label" for="optionsCheckbox">Checkbox</label>
+            <div class="controls">
+              <label class="checkbox">
+                <input type="checkbox" id="optionsCheckbox" value="option1">
+                Option one is this and that&mdash;be sure to include why it's great
+              </label>
+
+            </div>
+          </div>
+          <div class="control-group">
+            <label class="control-label" for="select01">Select list</label>
+            <div class="controls">
+              <select id="select01">
+                <option>something</option>
+                <option>2</option>
+
+                <option>3</option>
+                <option>4</option>
+                <option>5</option>
+              </select>
+            </div>
+          </div>
+          <div class="control-group">
+
+            <label class="control-label" for="multiSelect">Multi-select</label>
+            <div class="controls">
+              <select multiple="multiple" id="multiSelect">
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+
+                <option>5</option>
+              </select>
+            </div>
+          </div>
+          <div class="control-group">
+            <label class="control-label" for="fileInput">File input</label>
+            <div class="controls">
+              <input class="input-file" id="fileInput" type="file">
+
+            </div>
+          </div>
+          <div class="control-group">
+            <label class="control-label" for="textarea">Textarea</label>
+            <div class="controls">
+              <textarea class="input-xlarge" id="textarea" rows="3"></textarea>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Save changes</button>
+            <button type="reset" class="btn">Cancel</button>
+          </div>
+        </fieldset>
+      </form>
+    </div>
+  </div>
+
+  <br>
+
+  <div class="row">
+    <div class="span8">
+      <form class="form-horizontal">
+
+        <fieldset>
+          <legend>Form control states</legend>
+          <div class="control-group">
+            <label class="control-label" for="focusedInput">Focused input</label>
+            <div class="controls">
+              <input class="input-xlarge focused" id="focusedInput" type="text" value="This is focused…">
+            </div>
+          </div>
+
+          <div class="control-group">
+            <label class="control-label">Uneditable input</label>
+            <div class="controls">
+              <span class="input-xlarge uneditable-input">Some value here</span>
+            </div>
+          </div>
+          <div class="control-group">
+            <label class="control-label" for="disabledInput">Disabled input</label>
+
+            <div class="controls">
+              <input class="input-xlarge disabled" id="disabledInput" type="text" placeholder="Disabled input here…" disabled>
+            </div>
+          </div>
+          <div class="control-group">
+            <label class="control-label" for="optionsCheckbox2">Disabled checkbox</label>
+            <div class="controls">
+              <label class="checkbox">
+
+                <input type="checkbox" id="optionsCheckbox2" value="option1" disabled>
+                This is a disabled checkbox
+              </label>
+            </div>
+          </div>
+          <div class="control-group warning">
+            <label class="control-label" for="inputError">Input with warning</label>
+            <div class="controls">
+              <input type="text" id="inputError">
+
+              <span class="help-inline">Something may have gone wrong</span>
+            </div>
+          </div>
+          <div class="control-group error">
+            <label class="control-label" for="inputError">Input with error</label>
+            <div class="controls">
+              <input type="text" id="inputError">
+              <span class="help-inline">Please correct the error</span>
+
+            </div>
+          </div>
+          <div class="control-group success">
+            <label class="control-label" for="inputError">Input with success</label>
+            <div class="controls">
+              <input type="text" id="inputError">
+              <span class="help-inline">Woohoo!</span>
+            </div>
+
+          </div>
+          <div class="control-group success">
+            <label class="control-label" for="selectError">Select with success</label>
+            <div class="controls">
+              <select id="selectError">
+                <option>1</option>
+                <option>2</option>
+
+                <option>3</option>
+                <option>4</option>
+                <option>5</option>
+              </select>
+              <span class="help-inline">Woohoo!</span>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Save changes</button>
+            <button type="reset" class="btn">Cancel</button>
+          </div>
+        </fieldset>
+      </form>
+    </div>
+    <div class="span4">
+      <h3>Form validation</h3>
+      <p>It also includes validation styles for errors, warnings, and success. To use, add the error class to the surrounding <code>.control-group</code>.</p>
+<pre class="prettyprint linenums">
+&lt;fieldset
+  class="control-group error"&gt;
+  …
+&lt;/fieldset&gt;
+
+</pre>
+    </div>
+  </div>
+
+  <br>
+
+  <div class="row">
+    <div class="span8">
+      <form class="form-horizontal">
+        <fieldset>
+
+          <legend>Extending form controls</legend>
+          <div class="control-group">
+            <label class="control-label">Form sizes</label>
+            <div class="controls docs-input-sizes">
+              <input class="span1" type="text" placeholder=".span1">
+              <input class="span2" type="text" placeholder=".span2">
+              <input class="span3" type="text" placeholder=".span3">
+              <select class="span1">
+
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+                <option>5</option>
+              </select>
+
+              <select class="span2">
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+                <option>5</option>
+
+              </select>
+              <select class="span3">
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+                <option>5</option>
+
+              </select>
+              <p class="help-block">Use the same <code>.span*</code> classes from the grid system for input sizes.</p>
+            </div>
+          </div>
+          <div class="control-group">
+            <label class="control-label" for="prependedInput">Prepended text</label>
+
+            <div class="controls">
+              <div class="input-prepend">
+                <span class="add-on">@</span>
+                <input class="span2" id="prependedInput" size="16" type="text">
+              </div>
+              <p class="help-block">Here's some help text</p>
+            </div>
+          </div>
+
+          <div class="control-group">
+            <label class="control-label" for="appendedInput">Appended text</label>
+            <div class="controls">
+              <div class="input-append">
+                <input class="span2" id="appendedInput" size="16" type="text">
+                <span class="add-on">.00</span>
+              </div>
+              <p class="help-block">Here's more help text</p>
+
+            </div>
+          </div>
+          <div class="control-group">
+            <label class="control-label" for="inlineCheckboxes">Inline checkboxes</label>
+            <div class="controls">
+              <label class="checkbox inline">
+                <input type="checkbox" id="inlineCheckbox1" value="option1"> 1
+              </label>
+
+              <label class="checkbox inline">
+                <input type="checkbox" id="inlineCheckbox2" value="option2"> 2
+              </label>
+              <label class="checkbox inline">
+                <input type="checkbox" id="inlineCheckbox3" value="option3"> 3
+              </label>
+            </div>
+          </div>
+          <div class="control-group">
+
+            <label class="control-label" for="optionsCheckboxList">Checkboxes</label>
+            <div class="controls">
+              <label class="checkbox">
+                <input type="checkbox" name="optionsCheckboxList1" value="option1">
+                Option one is this and that&mdash;be sure to include why it's great
+              </label>
+              <label class="checkbox">
+                <input type="checkbox" name="optionsCheckboxList2" value="option2">
+
+                Option two can also be checked and included in form results
+              </label>
+              <label class="checkbox">
+                <input type="checkbox" name="optionsCheckboxList3" value="option3">
+                Option three can&mdash;yes, you guessed it&mdash;also be checked and included in form results
+              </label>
+              <p class="help-block"><strong>Note:</strong> Labels surround all the options for much larger click areas and a more usable form.</p>
+
+            </div>
+          </div>
+          <div class="control-group">
+            <label class="control-label">Radio buttons</label>
+            <div class="controls">
+              <label class="radio">
+                <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>
+                Option one is this and that&mdash;be sure to include why it's great
+              </label>
+
+              <label class="radio">
+                <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
+                Option two can is something else and selecting it will deselect option one
+              </label>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Save changes</button>
+            <button type="reset" class="btn">Cancel</button>
+
+          </div>
+        </fieldset>
+      </form>
+    </div>
+    <div class="span4">
+      <h3>Prepend &amp; append inputs</h3>
+      <p>Input groups&mdash;with appended or prepended text&mdash;provide an easy way to give more context for your inputs. Great examples include the @ sign for Twitter usernames or $ for finances.</p>
+
+      <hr>
+      <h3>Checkboxes and radios</h3>
+      <p>Up to v1.4, Bootstrap required extra markup around checkboxes and radios to stack them. Now, it's a simple matter of repeating the <code>&lt;label class="checkbox"&gt;</code> that wraps the <code>&lt;input type="checkbox"&gt;</code>.</p>
+      <p>Inline checkboxes and radios are also supported. Just add <code>.inline</code> to any <code>.checkbox</code> or <code>.radio</code> and you're done.</p>
+
+      <hr>
+      <h4>Inline forms and append/prepend</h4>
+      <p>To use prepend or append inputs in an inline form, be sure to place the <code>.add-on</code> and <code>input</code> on the same line, without spaces.</p>
+      <hr>
+      <h4>Form help text</h4>
+
+      <p>To add help text for your form inputs, include inline help text with <code>&lt;span class="help-inline"&gt;</code> or a help text block with <code>&lt;p class="help-block"&gt;</code> after the input element.</p>
+    </div>
+  </div><!-- /row -->
+</section>
+
+
+
+<!-- Buttons
+================================================== -->
+<section id="buttons">
+  <div class="page-header">
+    <h1>Buttons</h1>
+  </div>
+  <table class="table table-bordered table-striped">
+    <thead>
+      <tr>
+        <th>Button</th>
+
+        <th>Class</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="btn" href="#">Default</a></td>
+
+        <td><code>.btn</code></td>
+        <td>Standard gray button with gradient</td>
+      </tr>
+      <tr>
+        <td><a class="btn btn-primary" href="#">Primary</a></td>
+        <td><code>.btn-primary</code></td>
+        <td>Provides extra visual weight and identifies the primary action in a set of buttons</td>
+
+      </tr>
+      <tr>
+        <td><a class="btn btn-info" href="#">Info</a></td>
+        <td><code>.btn-info</code></td>
+        <td>Used as an alternate to the default styles</td>
+      </tr>
+      <tr>
+
+        <td><a class="btn btn-success" href="#">Success</a></td>
+        <td><code>.btn-success</code></td>
+        <td>Indicates a successful or positive action</td>
+      </tr>
+      <tr>
+        <td><a class="btn btn-warning" href="#">Warning</a></td>
+        <td><code>.btn-warning</code></td>
+
+        <td>Indicates caution should be taken with this action</td>
+      </tr>
+      <tr>
+        <td><a class="btn btn-danger" href="#">Danger</a></td>
+        <td><code>.btn-danger</code></td>
+        <td>Indicates a dangerous or potentially negative action</td>
+      </tr>
+
+    </tbody>
+  </table>
+
+  <div class="row">
+    <div class="span4">
+      <h3>Buttons for actions</h3>
+      <p>As a convention, buttons should only be used for actions while hyperlinks are to be used for objects. For instance, "Download" should be a button while "recent activity" should be a link.</p>
+    </div>
+
+    <div class="span4">
+      <h3>For anchors and forms</h3>
+      <p>Button styles can be applied to anything with the <code>.btn</code> applied. However, typically you'll want to apply these to only <code>&lt;a&gt;</code> and <code>&lt;button&gt;</code> elements.</p>
+
+    </div>
+    <div class="span4">
+      <p><strong>Note:</strong> All buttons must include the <code>.btn</code> class. Button styles should be applied to <code>&lt;button&gt;</code> and <code>&lt;a&gt;</code> elements for consistency.</p>
+
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="span4">
+      <h3>Multiple sizes</h3>
+      <p>Fancy larger or smaller buttons? Have at it!</p>
+      <p>
+
+        <a href="#" class="btn btn-large btn-primary">Primary action</a>
+        <a href="#" class="btn btn-large">Action</a>
+      </p>
+      <p>
+        <a href="#" class="btn btn-small btn-primary">Primary action</a>
+        <a href="#" class="btn btn-small">Action</a>
+      </p>
+
+    </div>
+    <div class="span4">
+      <h3>Disabled state</h3>
+      <p>For disabled buttons, use <code>.btn-disabled</code> for links and <code>:disabled</code> for <code>&lt;button&gt;</code> elements.</p>
+
+      <p>
+        <a href="#" class="btn btn-large btn-primary disabled">Primary action</a>
+        <a href="#" class="btn btn-large disabled">Action</a>
+      </p>
+      <p>
+        <button class="btn btn-large btn-primary disabled" disabled="disabled">Primary action</button>
+        <button class="btn btn-large" disabled>Action</button>
+
+      </p>
+    </div>
+    <div class="span4">
+      <h3>Cross browser compatibility</h3>
+      <p>In IE9, we drop the gradient on all buttons in favor of rounded corners as IE9 doesn't crop background gradients to the corners.</p>
+      <p>Related, IE9 jankifies disabled <code>button</code> elements, rendering text gray with a nasty text-shadow&mdash;unfortunately we can't fix this.</p>
+
+    </div>
+  </div>
+</section>
+
+
+
+<section>
+  <h3>Examples</h3>
+  <p>Use them in buttons, button groups for a toolbar, navigation, or prepended form inputs.</p>
+  <div class="row">
+    <div class="span4">
+      <div class="btn-toolbar" style="margin-bottom: 9px">
+        <div class="btn-group">
+          <a class="btn" href="#"><i class="icon-align-left"></i></a>
+
+          <a class="btn" href="#"><i class="icon-align-center"></i></a>
+          <a class="btn" href="#"><i class="icon-align-right"></i></a>
+          <a class="btn" href="#"><i class="icon-align-justify"></i></a>
+        </div>
+        <div class="btn-group">
+          <a class="btn btn-primary" href="#"><i class="icon white user"></i> User</a>
+          <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
+          <ul class="dropdown-menu">
+
+            <li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
+            <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
+            <li><a href="#"><i class="icon-ban-circle"></i> Ban</a></li>
+            <li class="divider"></li>
+            <li><a href="#"><i class="i"></i> Make admin</a></li>
+
+          </ul>
+        </div>
+      </div>
+      <p>
+        <a class="btn" href="#"><i class="icon-refresh"></i> Refresh</a>
+        <a class="btn btn-success" href="#"><i class="icon-shopping-cart icon-white"></i> Checkout</a>
+        <a class="btn btn-danger" href="#"><i class="icon-trash icon-white"></i> Delete</a>
+
+      </p>
+      <p>
+        <a class="btn btn-large" href="#"><i class="icon-comment"></i> Comment</a>
+        <a class="btn btn-small" href="#"><i class="icon-cog"></i> Settings</a>
+        <a class="btn btn-small btn-info" href="#"><i class="icon-info-sign icon-white"></i> More Info</a>
+      </p>
+
+    </div>
+    <div class="span4">
+      <div class="well" style="padding: 8px 0;">
+        <ul class="nav nav-list">
+          <li class="active"><a href="#"><i class="icon-home icon-white"></i> Home</a></li>
+          <li><a href="#"><i class="icon-book"></i> Library</a></li>
+          <li><a href="#"><i class="icon-pencil"></i> Applications</a></li>
+
+          <li><a href="#"><i class="i"></i> Misc</a></li>
+        </ul>
+      </div> <!-- /well -->
+    </div>
+    <div class="span4">
+      <form>
+        <div class="control-group">
+
+          <label class="control-label" for="prependedInput">Email address</label>
+          <div class="controls">
+            <div class="input-prepend">
+              <span class="add-on"><i class="icon-envelope"></i></span>
+              <input class="span2" id="iconInput" type="text">
+            </div>
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+</section>
+
+
+
+<section id="typography">
+<div class="row">
+		 <div class="span4">
+        <h1>h1. Heading</h1>
+        <h2>h2. Heading</h2>
+        <h3>h3. Heading</h3>
+        <h4>h4. Heading</h4>
+        <h5>h5. Heading</h5>
+        <h6>h6. Heading</h6>
+    </div>
+    <div class="span4">
+      <h3>Typographic scale</h3>
+      <p>The entire typographic grid is based on two Less variables in our variables.less file: <code>@baseFontSize</code> and <code>@baseLineHeight</code>. The first is the base font-size used throughout and the second is the base line-height.</p>
+      <p>We use those variables, and some math, to create the margins, paddings, and line-heights of all our type and more.</p>
+    </div>
+    <div class="span4">
+      <h3>Example body text</h3>
+      <p>Nullam quis risus eget urna mollis ornare vel eu leo. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
+      <p>Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Donec sed odio dui.</p>
+    </div>
+  </div>
+</section>
+
+  
+<!-- Tables
+================================================== --> 
+ 
+ <section>
+    <h2>Table options</h2>
+  <table class="table table-bordered table-striped">
+  <thead>
+      <tr>
+        <th>Name</th>
+        <th>Class</th>
+        <th>Description</th>
+
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Default</td>
+        <td class="muted">None</td>
+        <td>No styles, just columns and rows</td>
+
+      </tr>
+      <tr>
+        <td>Basic</td>
+        <td>
+          <code>.table</code>
+        </td>
+        <td>Only horizontal lines between rows</td>
+
+      </tr>
+      <tr>
+        <td>Bordered</td>
+        <td>
+          <code>.table-bordered</code>
+        </td>
+        <td>Rounds corners and adds outter border</td>
+
+      </tr>
+      <tr>
+        <td>Zebra-stripe</td>
+        <td>
+          <code>.table-striped</code>
+        </td>
+        <td>Adds light gray background color to odd rows (1, 3, 5, etc)</td>
+
+      </tr>
+      <tr>
+        <td>Condensed</td>
+        <td>
+          <code>.table-condensed</code>
+        </td>
+        <td>Cuts vertical padding in half, from 8px to 4px, within all <code>td</code> and <code>th</code> elements</td>
+
+      </tr>
+    </tbody>
+  </table>
+
+
+  <h2>Example tables</h2>
+
+  <h3>1. Default table styles</h3>
+  <div class="row">
+
+    <div class="span4">
+      <p>Tables are automatically styled with only a few borders to ensure readability and maintain structure. With 2.0, the <code>.table</code> class is required.</p>
+<pre class="prettyprint linenums">
+&lt;table class="table"&gt;
+  …
+&lt;/table&gt;</pre>
+    </div>
+
+    <div class="span8">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+
+            <th>Language</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>Mark</td>
+
+            <td>Otto</td>
+            <td>CSS</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>Jacob</td>
+            <td>Thornton</td>
+
+            <td>Javascript</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>Stu</td>
+            <td>Dent</td>
+            <td>HTML</td>
+
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+  <h3>2. Striped table</h3>
+  <div class="row">
+
+    <div class="span4">
+      <p>Get a little fancy with your tables by adding zebra-striping&mdash;just add the <code>.table-striped</code> class.</p>
+      <p class="muted"><strong>Note:</strong> Striped tables use the <code>:nth-child</code> CSS selector and is not available in IE7-IE8.</p>
+
+<pre class="prettyprint linenums" style="margin-bottom: 18px;">
+&lt;table class="table table-striped"&gt;
+  …
+&lt;/table&gt;</pre>
+    </div>
+    <div class="span8">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+
+            <th>#</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Language</th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <tr>
+            <td>1</td>
+            <td>Mark</td>
+            <td>Otto</td>
+            <td>CSS</td>
+          </tr>
+          <tr>
+
+            <td>2</td>
+            <td>Jacob</td>
+            <td>Thornton</td>
+            <td>Javascript</td>
+          </tr>
+          <tr>
+            <td>3</td>
+
+            <td>Stu</td>
+            <td>Dent</td>
+            <td>HTML</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+
+  <h3>3. Bordered table</h3>
+  <div class="row">
+    <div class="span4">
+      <p>Add borders around the entire table and rounded corners for aesthetic purposes.</p>
+<pre class="prettyprint linenums">
+&lt;table class="table table-bordered"&gt;
+
+  …
+&lt;/table&gt;</pre>
+    </div>
+    <div class="span8">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>#</th>
+
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Language</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+
+            <td>1</td>
+            <td colspan="2">Mark Otto</td>
+            <td>CSS</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>Jacob</td>
+
+            <td>Thornton</td>
+            <td rowspan="2">Javascript</td>
+          </tr>
+          </tr>
+            <td>3</td>
+            <td>Stu</td>
+            <td>Dent</td>
+
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>Brosef</td>
+            <td>Stalin</td>
+            <td>HTML</td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+  <h3>4. Condensed table</h3>
+  <div class="row">
+    <div class="span4">
+
+      <p>Make your tables more compact by adding the <code>.table-condensed</code> class to cut table cell padding in half (from 8px to 4px).</p>
+<pre class="prettyprint linenums" style="margin-bottom: 18px;">
+&lt;table class="table table-condensed"&gt;
+  …
+&lt;/table&gt;</pre>
+    </div>
+    <div class="span8">
+
+      <table class="table table-condensed">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Language</th>
+
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>Mark</td>
+            <td>Otto</td>
+
+            <td>CSS</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>Jacob</td>
+            <td>Thornton</td>
+            <td>Javascript</td>
+
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>Stu</td>
+            <td>Dent</td>
+            <td>HTML</td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+
+  <h3>5. Combine them all!</h3>
+  <div class="row">
+    <div class="span4">
+
+      <p>Feel free to combine any of the table classes to achieve different looks by utilizing any of the available classes.</p>
+<pre class="prettyprint linenums" style="margin-bottom: 18px;">
+&lt;table class="table table-striped table-bordered table-condensed"&gt;
+  ...
+&lt;/table&gt;</pre>
+    </div>
+    <div class="span8">
+      <table class="table table-striped table-bordered table-condensed">
+        <thead>
+
+          <tr>
+            <th>#</th>
+            <th class="yellow">First Name</th>
+            <th class="blue">Last Name</th>
+            <th class="green">Language</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>Mark</td>
+            <td>Otto</td>
+            <td>CSS</td>
+          </tr>
+
+          <tr>
+            <td>2</td>
+            <td>Jacob</td>
+            <td>Thornton</td>
+            <td>Javascript</td>
+          </tr>
+          <tr>
+
+            <td>3</td>
+            <td>Stu</td>
+            <td>Dent</td>
+            <td>HTML</td>
+          </tr>
+          <tr>
+            <td>4</td>
+
+            <td>Brosef</td>
+            <td>Stalin</td>
+            <td>HTML</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</section>
+
+
+<section>
+	<div class="row">
+    <div class="span3">
+      <h4>Unordered</h4>
+      <p><code>&lt;ul&gt;</code></p>
+      <ul>
+        <li>Lorem ipsum dolor sit amet</li>
+        <li>Consectetur adipiscing elit</li>
+        <li>Integer molestie lorem at massa</li>
+        <li>Facilisis in pretium nisl aliquet</li>
+        <li>Nulla volutpat aliquam velit
+          <ul>
+            <li>Phasellus iaculis neque</li>
+            <li>Purus sodales ultricies</li>
+            <li>Vestibulum laoreet porttitor sem</li>
+            <li>Ac tristique libero volutpat at</li>
+          </ul>
+        </li>
+        <li>Faucibus porta lacus fringilla vel</li>
+        <li>Aenean sit amet erat nunc</li>
+        <li>Eget porttitor lorem</li>
+      </ul>
+    </div>
+    
+    <div class="span3">
+      <h4>Ordered</h4>
+      <p><code>&lt;ol&gt;</code></p>
+      <ol>
+        <li>Lorem ipsum dolor sit amet</li>
+        <li>Consectetur adipiscing elit</li>
+        <li>Integer molestie lorem at massa</li>
+        <li>Facilisis in pretium nisl aliquet</li>
+        <li>Nulla volutpat aliquam velit</li>
+        <li>Faucibus porta lacus fringilla vel</li>
+        <li>Aenean sit amet erat nunc</li>
+        <li>Eget porttitor lorem</li>
+      </ol>
+    </div>
+    
+    <div class="span3">
+      <h4>Unstyled</h4>
+      <p><code>&lt;ul class="unstyled"&gt;</code></p>
+      <ul class="unstyled">
+         <li>Integer molestie lorem at massa</li>
+        <li>Facilisis in pretium nisl aliquet</li>
+        <li>Nulla volutpat aliquam velit
+          <ul>
+            <li>Phasellus iaculis neque</li>
+            <li>Purus sodales ultricies</li>
+          </ul>
+        </li>
+      </ul>
+    <p><code>&lt;ol class="unstyled"&gt;</code></p>
+      <ol class="unstyled">
+        <li>Lorem ipsum dolor sit amet</li>
+        <li>Consectetur adipiscing elit</li>
+        <li>Nulla volutpat aliquam velit
+          <ol>
+            <li>Phasellus iaculis neque</li>
+            <li>Purus sodales ultricies</li>
+            <li>Phasellus iaculis neque</li>
+            <li>Purus sodales ultricies</li>
+          </ol>
+        </li>
+      </ol>
+    </div>
+    
+    
+    <div class="span3">
+      <h4>Description</h4>
+      <p><code>&lt;dl&gt;</code></p>
+      <dl>
+        <dt>Description lists</dt>
+        <dd>A description list is perfect for defining terms.</dd>
+        <dt>Euismod</dt>
+        <dd>Vestibulum id ligula porta felis euismod semper eget lacinia odio sem nec elit.</dd>
+        <dd>Donec id elit non mi porta gravida at eget metus.</dd>
+        <dt>Malesuada porta</dt>
+        <dd>Etiam porta sem malesuada magna mollis euismod.</dd>
+      </dl>
+    </div>
+    
+  </div>
+  
+  
+</section>
+    
+    </div> <!-- /container -->

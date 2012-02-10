@@ -9,15 +9,14 @@ Provides:
 Conflicts:
 Native-Requires: mod_bw
 Architecture: noarch
-Descriptor:
-  Publishes:
-    get-internal-uri:
-      Type: "NET_TCP:HTTP"
-  Subscribes:
-    set-doc-root:
-      Type: "FILESYSTEM:doc-root"
-      Required: false
-    set-proxy-url:
-      Type: "STRING:proxy-path"
-      Required: false
+Publishes:
+  get-internal-uri:
+    Type: "NET_TCP:HTTP"
+Subscribes:
+  set-doc-root:
+    Type: "FILESYSTEM:doc-root"
+    Required: false
+  set-proxy-url:
+    Type: "STRING:proxy-path"
+    Required: false
 

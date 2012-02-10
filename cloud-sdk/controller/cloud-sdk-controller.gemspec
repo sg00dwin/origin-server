@@ -22,11 +22,12 @@ Gem::Specification.new do |s|
   s.files       += %w(README.md Rakefile Gemfile cloud-sdk-controller.spec cloud-sdk-controller.gemspec LICENSE COPYRIGHT)
   s.require_paths = ["lib"]
 
-  s.add_dependency "activesupport", "~> 3.0.10"
-  s.add_dependency "json", "1.4.6"
+  s.add_dependency "activesupport"
+  s.add_dependency "json"
   s.add_dependency "cloud-sdk-common"
-  s.add_development_dependency('rake', '0.8.7')  
-  s.add_development_dependency('rspec', '1.3.0')
-  s.add_development_dependency('bundler', '1.0.10')
-  s.add_development_dependency('mocha', "0.9.8")     
+  s.add_dependency('state_machine')  
+  s.add_development_dependency('rake')  
+  s.add_development_dependency('rspec')
+  s.add_development_dependency('bundler')
+  s.add_development_dependency('mocha')
 end

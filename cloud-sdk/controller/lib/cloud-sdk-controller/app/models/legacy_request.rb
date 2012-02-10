@@ -43,7 +43,7 @@ class LegacyRequest < Cloud::Sdk::Model
   end
   
   validates_each :app_name, :allow_nil =>true do |record, attribute, val|
-    if !(val =~ /\A[\w]+\z/)
+    if !(val =~ /\A[A-Za-z0-9]+\z/)
       record.errors.add attribute, {:message => "Invalid #{attribute} specified: #{val}", :exit_code => 105}
     end
     if val and val.length > APP_NAME_MAX_LENGTH
@@ -100,7 +100,7 @@ class LegacyRequest < Cloud::Sdk::Model
   end
 
   validates_each :server_alias, :allow_nil =>true do |record, attribute, val|
-    if !(val =~ /\A[\w\-\.]+\z/) or (val =~ /rhcloud.com$/)
+    if !(val =~ /\A[\w\-\.]+\z/) or (val =~ /#{Rails.configuration.cdk[:domain_suffix]}$/)
       record.errors.add attribute, {:message => "Invalid ServerAlias specified: #{val}", :exit_code => 105}
     end
   end

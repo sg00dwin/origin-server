@@ -6,7 +6,7 @@
 
 UID_BEGIN=500
 # UID_END=12700   # Too large for port numbers
-UID_END=6500
+UID_END=6499
 NTABLE="rhc-user-table"             # Switchyard for app UID tables
 
 # Cross-app restrictions
@@ -23,20 +23,8 @@ UAPP_NM="25"
 
 
 # Rules for allowing a UID to access a proxy
-PTABLE="rhc-port-table"
-PIFACE="eth0"
-PORT_BEGIN=35531
+PORT_BEGIN=35535
 PORTS_PER_USER=5
-# Example of use:
-# iptables -I rhc-port-table -p tcp --dport 35531:35535 -m owner --uid-owner 500 -j ACCEPT
-
-
-# Proxy inbound and DNAT rules
-XSTABLE="rhc-proxy-servers-table"   # From express servers
-XPTABLE="rhc-proxy-dnat-table"      # DNAT configuration
-# Example of use:
-# iptables -t nat -I rhc-proxy-dnat-table -p tcp --dport 40960 -j DNAT --to-destination 192.168.100.100:8080
-# iptables -I rhc-proxy-servers-table -s 209.132.181.86 -j ACCEPT
 
 
 DEBUG=""
@@ -58,8 +46,6 @@ Usage: $0 [ -h ] [ -i | -n | -s ] [ -b UID ] [ -e UID ] [ -t name ] [ -p name ] 
     -b UID   Beginning UID.  (default: $UID_BEGIN)
     -e UID   Ending UID.  (default: $UID_END)
     -t name  Table Name (default: $UTABLE)
-    -p name  Port Table Name (default: $PTABLE)
-    -i name  Proxy Interface (default: $PIFACE)
 EOF
 }
 
@@ -166,57 +152,35 @@ function uid_to_portend {
   echo $(( $pbegin + $PORTS_PER_USER - 1 ))
 }
 
+
+# Simpler INPUT rule to allow access to all proxy ports
+iptables -I INPUT 4 -p tcp \
+  -dport `uid_to_portbegin $UID_BEGIN`:`uid_to_portend $UID_END` \
+  -m state --state NEW \
+  -j ACCEPT
+
 # Create the table and clear it
-new_table ${NTABLE}
 new_table ${UTABLE}
-new_table ${PTABLE}
-new_table ${XSTABLE}
-new_table ${XPTABLE} nat
 
-# INPUT proxy table from allowed servers only.  Blind guess where to
-# insert this, 4'th place is below the lo and existing connection
-# rules.
-iptables -I INPUT 4 -p tcp -i ${PIFACE} \
-  -m conntrack --ctstate DNAT,NEW \
-  -j ${XSTABLE}
-
-
-# Proxy DNAT to internal servers
-iptables -t nat -A PREROUTING -p tcp -i ${PIFACE} \
-  --dport `uid_to_portbegin $UID_BEGIN`:`uid_to_portend $UID_END` \
-  -j ${XPTABLE}
-
-# Don't do the global UID match in every rule
-iptables -A OUTPUT \
+# Bottom block is system services
+iptables -A OUTPUT -o ${UIFACE} -d ${USAFE_NET}/${USAFE_NM} \
   -m owner --uid-owner ${UID_BEGIN}-${UID_END} \
-  -j ${NTABLE}
+  -j ACCEPT
 
 # Established connections allowed
-iptables -A ${NTABLE} \
+iptables -A OUTPUT -o ${UIFACE} \
+  -m owner --uid-owner ${UID_BEGIN}-${UID_END} \
   -m state --state ESTABLISHED,RELATED \
   -j ACCEPT
 
-# Bottom block is system services
-iptables -A ${NTABLE} -o ${UIFACE} -d ${USAFE_NET}/${USAFE_NM} \
-  -m state --state NEW \
-  -j ACCEPT
-
-# New port proxy connections
-iptables -A ${NTABLE} -p tcp -o ${PIFACE} \
-  --dport `uid_to_portbegin $UID_BEGIN`:`uid_to_portend $UID_END` \
-  -m state --state NEW \
-  -j ${PTABLE}
-
-iptables -A ${PTABLE} -j REJECT --reject-with icmp-host-prohibited
-
 
 # New connections with specific uids get checked on the app table.
-iptables -A ${NTABLE} -o ${UIFACE} -d ${UWHOLE_NET}/${UWHOLE_NM} \
+iptables -A OUTPUT -o ${UIFACE} -d ${UWHOLE_NET}/${UWHOLE_NM} \
   -m state --state NEW \
   -j ${UTABLE}
 
 seq ${UID_BEGIN} ${UID_END} | while read uid; do
-  iptables -A ${UTABLE} -d `uid_to_ip $uid`/25 \
+  iptables -A ${UTABLE} -d `uid_to_ip $uid`/${UAPP_NM} \
     -m owner --uid-owner $uid \
     -j ACCEPT
 done

@@ -47,7 +47,8 @@ module Cloud::Sdk
     end
     
     def save(obj_type, user_id, id, obj_attrs)
-      Rails.logger.debug "MongoDataStore.save(#{obj_type}, #{user_id}, #{id}, #{obj_attrs.pretty_inspect})\n\n"
+      #Rails.logger.debug "MongoDataStore.save(#{obj_type}, #{user_id}, #{id}, #{obj_attrs.pretty_inspect})\n\n"
+      Rails.logger.debug "MongoDataStore.save(#{obj_type}, #{user_id}, #{id}, #hidden)\n\n"
       case obj_type
       when "CloudUser"
 	      MongoDataStore.put_user(user_id, obj_attrs)
@@ -58,6 +59,7 @@ module Cloud::Sdk
     
     def create(obj_type, user_id, id, obj_attrs)
       Rails.logger.debug "MongoDataStore.create(#{obj_type}, #{user_id}, #{id}, #{obj_attrs.pretty_inspect})\n\n"
+      Rails.logger.debug "MongoDataStore.create(#{obj_type}, #{user_id}, #{id}, #hidden)\n\n"      
       case obj_type
       when "CloudUser"
         MongoDataStore.add_user(user_id, obj_attrs)
@@ -213,21 +215,15 @@ module Cloud::Sdk
     end
 
     def self.put_app(user_id, id, app_attrs)
-      
-      orig_embedded = app_attrs["embedded"] 
       app_attrs_to_internal(app_attrs)
-
       MongoDataStore.update({ "_id" => user_id, "apps.name" => id}, { "$set" => { "apps.$" => app_attrs }} )
-      app_attrs["embedded"] = orig_embedded 
     end
 
     def self.add_app(user_id, id, app_attrs)
-      orig_embedded = app_attrs["embedded"]
       app_attrs_to_internal(app_attrs)
       hash = MongoDataStore.find_and_modify({
         :query => { "_id" => user_id, "apps.name" => { "$ne" => id }, "$where" => "this.consumed_gears < this.max_gears"},
         :update => { "$push" => { "apps" => app_attrs }, "$inc" => { "consumed_gears" => 1 }} })
-      app_attrs["embedded"] = orig_embedded
       raise Cloud::Sdk::UserException.new("#{user_id} has already reached the application limit", 104) if hash == nil
     end
 
@@ -241,42 +237,16 @@ module Cloud::Sdk
     end
 
     def self.app_attrs_to_internal(app_attrs)
-      if app_attrs
-        if app_attrs["embedded"]
-          embedded_carts = []
-          app_attrs["embedded"].each do |cart_name, cart_info|
-            cart_info["framework"] = cart_name
-            embedded_carts.push(cart_info)
-          end
-          app_attrs["embedded"] = embedded_carts
-        else
-          app_attrs["embedded"] = []
-        end
-      end
       app_attrs
     end
     
     def self.app_hash_to_ret(app_hash)
-      if app_hash
-        if app_hash["embedded"]
-          embedded_carts = {}
-          app_hash["embedded"].each do |cart_info|
-            cart_name = cart_info["framework"]
-            embedded_carts[cart_name] = cart_info
-          end
-          app_hash["embedded"] = embedded_carts
-        else
-          app_hash["embedded"] = {}
-        end
-      end
       app_hash
     end
     
     def self.apps_hash_to_apps_ret(apps_hash)
       ret = []
-      apps_hash.each do |app_hash|
-        ret.push(app_hash_to_ret(app_hash))
-      end if apps_hash
+      ret = apps_hash.map { |app_hash| app_hash_to_ret(app_hash) } if apps_hash
       ret
     end
   end

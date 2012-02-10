@@ -20,12 +20,24 @@ validate_user_context.sh
 
 case "$1" in
     start)
+    [ -f $OPENSHIFT_REPO_DIR/.openshift/action_hooks/start ] &&
+         $OPENSHIFT_REPO_DIR/.openshift/action_hooks/start
     ;;
     graceful-stop|stop)
+    [ -f $OPENSHIFT_REPO_DIR/.openshift/action_hooks/stop ] &&
+         $OPENSHIFT_REPO_DIR/.openshift/action_hooks/stop
     ;;
     restart|graceful)
+    [ -f $OPENSHIFT_REPO_DIR/.openshift/action_hooks/stop ] &&
+         $OPENSHIFT_REPO_DIR/.openshift/action_hooks/stop
+    [ -f $OPENSHIFT_REPO_DIR/.openshift/action_hooks/start ] &&
+         $OPENSHIFT_REPO_DIR/.openshift/action_hooks/start
     ;;
     reload)
+    [ -f $OPENSHIFT_REPO_DIR/.openshift/action_hooks/stop ] &&
+         $OPENSHIFT_REPO_DIR/.openshift/action_hooks/stop
+    [ -f $OPENSHIFT_REPO_DIR/.openshift/action_hooks/start ] &&
+         $OPENSHIFT_REPO_DIR/.openshift/action_hooks/start
     ;;
     status)
         print_running_processes

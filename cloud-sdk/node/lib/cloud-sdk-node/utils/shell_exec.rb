@@ -18,7 +18,7 @@
 require 'rubygems'
 require 'open3'
 
-module Cloud::SDK::Utils
+module Cloud::Sdk::Utils
   class ShellExecutionException < Exception
     attr_accessor :rc
     def initialize(msg, rc=-1)
@@ -28,9 +28,9 @@ module Cloud::SDK::Utils
   end
 end
 
-module Cloud::SDK::Utils::ShellExec
+module Cloud::Sdk::Utils::ShellExec
   def shellCmd(cmd, pwd=".", ignore_err=true, expected_rc=0)
-    Cloud::SDK::Utils::ShellExec.shellCmd(cmd, pwd, ignore_err, expected_rc)
+    Cloud::Sdk::Utils::ShellExec.shellCmd(cmd, pwd, ignore_err, expected_rc)
   end
   
   def self.shellCmd(cmd, pwd=".", ignore_err=true, expected_rc=0)
@@ -50,11 +50,11 @@ module Cloud::SDK::Utils::ShellExec
       f_rc_file.close
       `rm -f #{rc_file}`
     rescue Exception => e
-      raise Cloud::SDK::Utils::ShellExecutionException.new(e.message) unless ignore_err
+      raise Cloud::Sdk::Utils::ShellExecutionException.new(e.message) unless ignore_err
     end
     
     if !ignore_err and rc != expected_rc 
-      raise Cloud::SDK::Utils::ShellExecutionException.new("Shell command '#{cmd}' returned an error. rc=#{rc}", rc)
+      raise Cloud::Sdk::Utils::ShellExecutionException.new("Shell command '#{cmd}' returned an error. rc=#{rc}", rc)
     end
      
     return [out, err, rc]

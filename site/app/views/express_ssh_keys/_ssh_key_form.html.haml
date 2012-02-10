@@ -1,5 +1,5 @@
 - id = ssh_key.name ? "ssh_key_#{ssh_key.name}" : "ssh_key_new"
-- key_label = ssh_key.name ? "SSH Public Key (#{ssh_key.name})" : "SSH Public Key"
+- key_label = ssh_key.name ? "SSH Public Key (#{ssh_key.display_name})" : "SSH Public Key"
 
 = semantic_form_for ssh_key, :remote => true, :namespace => id, :html => {:id => id} do |form|
   = form.inputs do

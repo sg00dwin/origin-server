@@ -33,6 +33,8 @@ Requires:      libcurl-devel
 Requires:      libpng-devel
 Requires:      giflib-devel
 Requires:      mod_ssl
+Requires:      haproxy
+Requires:      procmail
 Requires(post):   /usr/sbin/semodule
 Requires(post):   /usr/sbin/semanage
 Requires(postun): /usr/sbin/semodule
@@ -78,6 +80,7 @@ mkdir -p %{buildroot}/%{_sysconfdir}/security/
 mkdir -p %{buildroot}%{_localstatedir}/lib/libra
 mkdir -p %{buildroot}%{_localstatedir}/run/libra
 mkdir -p %{buildroot}%{_localstatedir}/lib/libra/.httpd.d
+mkdir -p %{buildroot}%{_localstatedir}/lib/libra/.libra-proxy.d
 mkdir -p %{buildroot}/%{_sysconfdir}/httpd/conf.d/
 mkdir -p %{buildroot}/lib64/security/
 ln -s %{_localstatedir}/lib/libra/.httpd.d/ %{buildroot}/%{_sysconfdir}/httpd/conf.d/libra
@@ -112,12 +115,14 @@ perl -p -i -e 's:/cgroup/[^\s]+;:/cgroup/all;:; /blkio|cpuset|devices/ && ($_ = 
 /sbin/chkconfig --add libra-data || :
 /sbin/chkconfig --add libra-cgroups || :
 /sbin/chkconfig --add libra-tc || :
+/sbin/chkconfig --add libra-proxy || :
 #/sbin/service mcollective restart > /dev/null 2>&1 || :
 /sbin/restorecon /etc/init.d/libra || :
 /sbin/restorecon /var/lib/libra || :
 /sbin/restorecon /var/run/libra || :
 /sbin/restorecon /usr/bin/rhc-cgroup-read || :
 /sbin/restorecon /var/lib/libra/.httpd.d/ || :
+/sbin/restorecon /var/lib/libra/.libra-proxy.d/ || :
 /usr/bin/rhc-restorecon || :
 # only enable if cgconfig is
 chkconfig cgconfig && /sbin/service libra-cgroups start > /dev/null 2>&1 || :
@@ -141,6 +146,10 @@ then
     rmdir /etc/httpd/conf.d/libra.bak
 fi
 
+if ! [ -f /var/lib/libra/.libra-proxy.d/libra-proxy.cfg ]; then
+   cp /etc/libra/libra-proxy.cfg /var/lib/libra/.libra-proxy.d/libra-proxy.cfg
+   restorecon /var/lib/libra/.libra-proxy.d/libra-proxy.cfg || :
+fi
 
 
 %preun
@@ -151,6 +160,7 @@ if [ "$1" -eq "0" ]; then
     /sbin/chkconfig --del libra-cgroups || :
     /sbin/chkconfig --del libra-data || :
     /sbin/chkconfig --del libra || :
+    /sbin/chkconfig --del libra-proxy || :
     /usr/sbin/semodule -r libra
     sed -i -e '\:/usr/bin/trap-user:d' /etc/shells
 fi
@@ -168,6 +178,9 @@ then
     mv /etc/httpd/conf.d/libra/ /etc/httpd/conf.d/libra.bak/
 fi
 
+%triggerin -- haproxy
+/sbin/service libra-proxy condrestart
+
 %files
 %defattr(-,root,root,-)
 %attr(0640,-,-) %{_libexecdir}/mcollective/mcollective/agent/*
@@ -177,6 +190,7 @@ fi
 %attr(0750,-,-) %{_initddir}/libra-data
 %attr(0750,-,-) %{_initddir}/libra-cgroups
 %attr(0750,-,-) %{_initddir}/libra-tc
+%attr(0750,-,-) %{_initddir}/libra-proxy
 %attr(0755,-,-) %{_bindir}/trap-user
 %attr(0750,-,-) %{_bindir}/rhc-ip-prep.sh
 %attr(0750,-,-) %{_bindir}/rhc-iptables.sh
@@ -191,6 +205,7 @@ fi
 %attr(0755,-,-) %{_bindir}/rhc-cgroup-read
 %dir %attr(0751,root,root) %{_localstatedir}/lib/libra
 %dir %attr(0750,root,root) %{_localstatedir}/lib/libra/.httpd.d
+%dir %attr(0750,root,root) %{_localstatedir}/lib/libra/.libra-proxy.d
 %dir %attr(0700,root,root) %{_localstatedir}/run/libra
 %dir %attr(0755,root,root) %{_libexecdir}/li/cartridges/abstract-httpd/
 %attr(0750,-,-) %{_libexecdir}/li/cartridges/abstract-httpd/info/hooks/
@@ -209,6 +224,7 @@ fi
 %attr(0640,-,-) %config(noreplace) %{_sysconfdir}/oddjobd.conf.d/oddjobd-restorer.conf
 %attr(0640,-,-) %config(noreplace) %{_sysconfdir}/dbus-1/system.d/openshift-restorer.conf
 %attr(0640,-,-) %config(noreplace) %{_sysconfdir}/libra/node.conf
+%attr(0640,-,-) %config(noreplace) %{_sysconfdir}/libra/libra-proxy.cfg
 %attr(0640,-,-) %config(noreplace) %{_sysconfdir}/libra/resource_limits.con*
 %attr(0750,-,-) %config(noreplace) %{_sysconfdir}/cron.daily/libra_tmpwatch.sh
 %attr(0644,-,-) %config(noreplace) %{_sysconfdir}/security/namespace.d/*
