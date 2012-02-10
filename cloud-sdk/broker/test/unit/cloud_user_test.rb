@@ -78,7 +78,7 @@ class CloudUserTest < ActiveSupport::TestCase
      
     observer_seq = sequence("observer_seq")
     
-    CloudUser.expects(:find).returns(true)
+    CloudUser.expects(:find).returns(user)
     Cloud::Sdk::DnsService.instance.class.any_instance.expects(:namespace_available?).with(namespace).returns(true).never
          
     CloudUser.expects(:notify_observers).with(:before_cloud_user_create, user).in_sequence(observer_seq).at_least_once
