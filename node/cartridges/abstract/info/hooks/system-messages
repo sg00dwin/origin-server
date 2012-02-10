@@ -34,7 +34,7 @@ result=`grep $3 /var/log/messages`
 
 echo "$result"
 
-client_result "Success $1 $2 $3"
+client_result "Success"
 client_result ""
 
 client_result "`echo $result`"
