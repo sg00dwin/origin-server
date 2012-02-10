@@ -1,7 +1,8 @@
 class PasswordController < ApplicationController
   layout 'console'
 
-  before_filter :require_login, :only=> [:edit, :update]
+  before_filter :require_login, :only => [:edit, :update]
+  before_filter :new_forms
 
   def new
     @user ||= WebUser.new
