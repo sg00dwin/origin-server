@@ -94,13 +94,15 @@ module Cloud::Sdk
     def before_proxy_alloc_next_port(user, proxy_target)
     end
 
-    def after_proxy_alloc_next_port(user, proxy_target)
+    def after_proxy_alloc_next_port(user, proxy_port, proxy_target)
+      shellCmd("service libra-proxy setproxy #{proxy_port} #{proxy_target} &>/dev/null")
     end
 
     def before_proxy_remove_port(user, proxy_port)
     end
 
     def after_proxy_remove_port(user, proxy_port)
+      shellCmd("service libra-proxy setproxy #{proxy_port} delete &>/dev/null")
     end
 
   end
