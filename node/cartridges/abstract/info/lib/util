@@ -465,7 +465,7 @@ IFS="
     IFS=$IFS_BAK
 }
 
-function observe_observe_setup_app_dir_and_git {
+function observe_setup_app_dir_and_git {
   observe_setup_var_lib_dir "$APP_HOME/git/"
   observe_setup_var_lib_dir "$APP_DIR"
 }
