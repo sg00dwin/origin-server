@@ -55,14 +55,14 @@ populate_repo_dir
 
 secure_app_dir
 
-chcon_app_dir_and_git
+setup_app_dir_and_git
 
 # npm keeps per-user config in ~/.npmrc and cache in ~/.npm/
 # Create files/directories, change ownership and SELinux file security context.
 touch "$APP_HOME"/.npmrc
 mkdir "$APP_HOME"/.npm
 chown $user_id.$group_id -R "$APP_HOME"/.npm "$APP_HOME"/.npmrc
-chcon -t libra_var_lib_t -l $mcs_level -R "$APP_HOME"/.npm "$APP_HOME"/.npmrc
+observe_setup_var_lib_dir "$APP_HOME"/.npm "$APP_HOME"/.npmrc
 
 # Also link to the globally installed npm modules.
 pushd "$APP_DIR" > /dev/null

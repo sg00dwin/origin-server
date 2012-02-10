@@ -33,7 +33,7 @@ ROCKMONGO_CTL_SCRIPT="$ROCKMONGO_DIR/${application}_rockmongo_ctl.sh"
 #
 # Stop app
 #
-runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $ROCKMONGO_CTL_SCRIPT stop" || warning "Failed to stop ${application}" 121
+run_as_user "$ROCKMONGO_CTL_SCRIPT stop" || warning "Failed to stop ${application}" 121
 
 confirm_pid_gone "${ROCKMONGO_DIR}/run/httpd.pid"
 

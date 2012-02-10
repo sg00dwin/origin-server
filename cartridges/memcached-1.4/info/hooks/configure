@@ -74,13 +74,13 @@ chmod +x "$MEMCACHED_DIR/"*.sh || error "Failed to chmod new application scripts
 chown $user_id.$group_id -R $MEMCACHED_DIR/ || error "Failed to chown new application space.  Please contact support" 123
 # Secure script and root dir (so they can't chown the script)
 chown root.root "$MEMCACHED_DIR" "$MEMCACHED_DIR"/*.sh
-chcon -t libra_var_lib_t -l $mcs_level -R "$MEMCACHED_DIR"
+observe_setup_var_lib_dir "$MEMCACHED_DIR"
 
 #
 # Overlay default configuration files.
 #
 pushd "$MEMCACHED_DIR" > /dev/null
-chcon -t libra_var_lib_t -l $mcs_level -R "$MEMCACHED_DIR"
+observe_setup_var_lib_dir "$MEMCACHED_DIR"
 sed "s,RHC_MEMCACHED_DIR,$MEMCACHED_DIR," $CART_ETC_DIR/memcached.conf > $MEMCACHED_DIR/data/memcached.conf
 sed -i "s,RHC_BIND_ADDR,$IP," $MEMCACHED_DIR/data/memcached.conf
 popd > /dev/null

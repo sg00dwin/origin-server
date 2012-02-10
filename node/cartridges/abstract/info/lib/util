@@ -10,15 +10,15 @@ function start_app {
     done
     for cmd in `awk 'BEGIN { for (a in ENVIRON) if (a ~ /DB_CTL_SCRIPT$/) print ENVIRON[a] }'`
     do
-        runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $cmd start" || error "Failed to start ${cmd}" 121
+        run_as_user "$cmd start" || error "Failed to start ${cmd}" 121
     done
     for cmd in `awk 'BEGIN { for (a in ENVIRON) if ((a ~ /_CTL_SCRIPT$/) && !(a ~ /DB_CTL_SCRIPT$/) && (a != "OPENSHIFT_APP_CTL_SCRIPT")) print ENVIRON[a] }'`
     do
-        runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $cmd start" || error "Failed to start ${cmd}" 121
+        run_as_user "$cmd start" || error "Failed to start ${cmd}" 121
     done
     for cmd in `awk 'BEGIN { for (a in ENVIRON) if (a == "OPENSHIFT_APP_CTL_SCRIPT") print ENVIRON[a] }'`
     do
-        runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $cmd start" || error "Failed to start ${cmd}" 121
+        run_as_user "$cmd start" || error "Failed to start ${cmd}" 121
     done
 }
 
@@ -29,15 +29,15 @@ function stop_app {
     done
     for cmd in `awk 'BEGIN { for (a in ENVIRON) if (a == "OPENSHIFT_APP_CTL_SCRIPT") print ENVIRON[a] }'`
     do
-        runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $cmd stop" || echo "Failed to stop ${cmd}" 1>&2
+        run_as_user "$cmd stop" || echo "Failed to stop ${cmd}" 1>&2
     done
     for cmd in `awk 'BEGIN { for (a in ENVIRON) if ((a ~ /_CTL_SCRIPT$/) && !(a ~ /DB_CTL_SCRIPT$/) && (a != "OPENSHIFT_APP_CTL_SCRIPT")) print ENVIRON[a] }'`
     do
-        runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $cmd stop" || echo "Failed to stop ${cmd}" 1>&2
+        run_as_user "$cmd stop" || echo "Failed to stop ${cmd}" 1>&2
     done
     for cmd in `awk 'BEGIN { for (a in ENVIRON) if (a ~ /DB_CTL_SCRIPT$/) print ENVIRON[a] }'`
     do
-        runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $cmd stop" || echo "Failed to stop ${cmd}" 1>&2
+        run_as_user "$cmd stop" || echo "Failed to stop ${cmd}" 1>&2
     done
 }
 
@@ -110,8 +110,9 @@ function secure_conf_dirs {
     chown root:root -R "$APP_DIR/conf" "$APP_DIR/conf.d"
 }
 
-function chcon_app_dir_and_git {
-    chcon -t libra_var_lib_t -l $mcs_level -R "$APP_HOME/git/" "$APP_DIR"
+function setup_app_dir_and_git {
+  observe_setup_var_lib_dir "$APP_HOME/git/"
+  observe_setup_var_lib_dir "$APP_DIR"
 }
 
 function check_app_dir_doesnt_exist {
@@ -469,4 +470,40 @@ IFS="
     IFS=$IFS_BAK
 }
 
+function observe_setup_var_lib_dir {
+  chcon -t libra_var_lib_t -l $mcs_level -R $1
+}
+
+function observe_setup_var_lib_file {
+  chcon -t libra_var_lib_t -l $mcs_level $1
+}
+
+function run_as_user {
+  runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $1"
+}
+
+function super_run_as_user {
+  /bin/su -s /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $1"
+}
+
+function daemon_as_user {
+  daemon --user="$uuid" runcon -r system_r -t libra_t -l $mcs_level $1
+}
+
+function validate_run_as_user {
+    source ${CART_DIR}/abstract/info/lib/selinux
+    uuid=$OPENSHIFT_APP_UUID
+    setup_user_vars
+
+    if whoami | grep -q root || ! runcon | grep system_r:libra_t:$mcs_level > /dev/null
+    then
+        echo 1>&2
+        echo "Current context: " `runcon` 1>&2
+        echo 1>&2
+        echo "Please run script in the correct context, try:" 1>&2
+        echo "run_as_user \"<command>\"" 1>&2
+        echo 2>&1
+        exit 15
+    fi
+}
 

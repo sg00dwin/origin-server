@@ -1,5 +1,8 @@
 #!/bin/bash -e
 
+CART_DIR=/usr/libexec/li/cartridges
+source ${CART_DIR}/abstract/info/lib/util
+
 # Import Environment Variables
 for f in ~/.env/*
 do
@@ -12,7 +15,7 @@ then
     exit 1
 fi
 
-validate_user_context.sh
+validate_run_as_user
 
 . app_ctl_pre.sh
 

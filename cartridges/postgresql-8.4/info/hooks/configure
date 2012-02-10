@@ -76,8 +76,8 @@ chmod +x "$PSQL_DIR/"*.sh || error "Failed to chmod new application scripts" 122
 chown $user_id.$group_id -R $PSQL_DIR/ $APP_HOME/.psql_history $APP_HOME/.pgpass || error "Failed to chown new application space.  Please contact support" 123
 # Secure script and root dir (so they can't chown the script)
 chown root.root "$PSQL_DIR" "$PSQL_DIR"/*.sh
-chcon -t libra_var_lib_t -l $mcs_level $APP_HOME/.psql_history
-chcon -t libra_var_lib_t -l $mcs_level $APP_HOME/.pgpass
+observe_setup_var_lib_file $APP_HOME/.psql_history
+observe_setup_var_lib_file $APP_HOME/.pgpass
 
 #
 # Initialize database
@@ -91,7 +91,7 @@ pushd "$PSQL_DIR" > /dev/null
 mkdir data/pg_log
 chmod go-rwx data/pg_log
 chown $user_id.$group_id data/pg_log/ || error "Failed to chown pg_log directory. Please contact support" 126
-chcon -t libra_var_lib_t -l $mcs_level -R "$PSQL_DIR"
+observe_setup_var_lib_dir "$PSQL_DIR"
 sed "s,RHC_PSQLDIR,$PSQL_DIR," $CART_ETC_DIR/postgresql.conf > $PSQL_DIR/data/postgresql.conf
 sed -i "s,RHC_BIND_ADDR,$IP," $PSQL_DIR/data/postgresql.conf
 cp -f $CART_ETC_DIR/pg_hba.conf $PSQL_DIR/data/pg_hba.conf

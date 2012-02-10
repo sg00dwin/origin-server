@@ -50,7 +50,7 @@ then
     sed -i "s/-${old_namespace}.${libra_domain}/-${new_namespace}.${libra_domain}/g" $APP_DIR/data/config.xml
 fi
 
-if ! out=$(runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $CART_INFO_DIR/bin/jenkins_reload" 2>&1)
+if ! out=$(run_as_user "$CART_INFO_DIR/bin/jenkins_reload" 2>&1)
 then
     # An error occurred reloading jenkins configuration
     client_message ""

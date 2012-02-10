@@ -69,16 +69,14 @@ function run_user_scheduled_jobs() {
    # Ensure scripts are executable
    chmod +x -R "$USER_CRON_INSTANCE_DIR/jobs/$freq/"
 
-   # Get mcs level + setup pam.
-   libra_userid=$(id -u "$uuid")
-   mcs_level=$(openshift_mcs_level $libra_userid)
+   setup_user_vars
    setuppam "$uuid"
 
    cmd="$USER_CRON_INSTANCE_DIR/cron_runjobs.sh $freq"
 
    # Ensure cron's embedded in the app.
    if [ -f "$USER_CRON_INSTANCE_DIR/cron_runjobs.sh" ]; then
-      daemon --user="$uuid" runcon -r system_r -t libra_t -l $mcs_level $cmd
+      daemon_as_user $cmd
    fi
 }
 
@@ -88,6 +86,7 @@ function run_user_scheduled_jobs() {
 # main():
 #
 source /etc/init.d/functions
+source "${CART_INSTALL_DIR}/abstract/info/lib/util"
 source "${CART_INSTALL_DIR}/abstract/info/lib/selinux"
 
 # Check whether to run all or a specific user's jobs.

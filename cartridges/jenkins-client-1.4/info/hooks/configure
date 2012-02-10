@@ -86,7 +86,7 @@ then
     # Embedding success
     client_result ""
 else
-    if enable_out=$(runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level ${CART_INFO_DIR}/bin/jenkins_job_action enable" 2>&1)
+    if enable_out=$(run_as_user "${CART_INFO_DIR}/bin/jenkins_job_action enable" 2>&1)
     then
         client_result ""
         client_result "Associated with existing job '${JOB_NAME}' in Jenkins server."

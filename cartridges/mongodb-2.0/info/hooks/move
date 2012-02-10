@@ -37,7 +37,7 @@ source ${CART_INFO_DIR}/lib/util
 
 MONGODB_DIR="$APP_HOME/mongodb-2.0/"
 
-chcon -t libra_var_lib_t -l $mcs_level -R "$MONGODB_DIR"
+observe_setup_var_lib_dir "$MONGODB_DIR"
 
 . $APP_HOME/.env/OPENSHIFT_NOSQL_DB_HOST
 ORIG_DB_HOST=$OPENSHIFT_NOSQL_DB_HOST

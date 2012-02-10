@@ -90,7 +90,7 @@ populate_repo_dir
 
 secure_app_dir
 
-chcon_app_dir_and_git
+setup_app_dir_and_git
 
 #
 # Create environment variables

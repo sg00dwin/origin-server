@@ -73,7 +73,7 @@ ln -s $CART_INFO_DIR/bin/cron_runjobs.sh $CRON_DIR/cron_runjobs.sh
 chmod +x "$CRON_DIR/"*.sh || error "Failed to chmod new application scripts" 122
 chown $user_id.$group_id -R "$CRON_DIR/" || error "Failed to chown new application space.  Please contact support" 123
 chown root.root "$CRON_DIR" "$CRON_DIR"/*.sh
-chcon -t libra_var_lib_t -l $mcs_level -R "$CRON_DIR"
+observe_setup_var_lib_dir "$CRON_DIR"
 
 #
 # Enable job scheduling service (cronjobs).

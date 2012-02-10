@@ -5,7 +5,7 @@ CRON_LIB_UTIL=true
 
 function enable_cronjobs {
     CRON_DIR=${CRON_DIR:-"$APP_HOME/cron-1.4/"}
-    /bin/su -s /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $CRON_DIR/${application}_cron_ctl.sh enable"
+    super_run_as_user "$CRON_DIR/${application}_cron_ctl.sh enable"
     wait_to_enable
 }
 
@@ -15,5 +15,5 @@ function wait_to_enable {
 
 function disable_cronjobs {
     CRON_DIR=${CRON_DIR:-"$APP_HOME/cron-1.4/"}
-    /bin/su -s /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $CRON_DIR/${application}_cron_ctl.sh disable"
+    super_run_as_user "$CRON_DIR/${application}_cron_ctl.sh disable"
 }

@@ -26,7 +26,7 @@ function generate_ssh_keys {
     chmod 0750 "$APP_DIR/data/.ssh/"
     chmod 0640 "$APP_DIR/data/.ssh/jenkins_id_rsa"
     chmod 0640 "$APP_DIR/data/.ssh/jenkins_id_rsa.pub"
-    /usr/bin/chcon -t libra_var_lib_t -l $mcs_level -R "$APP_DIR/data/.ssh/"
+    observe_setup_var_lib_dir "$APP_DIR/data/.ssh/"
 }
 
 CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}

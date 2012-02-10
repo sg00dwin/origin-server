@@ -24,8 +24,7 @@ function print_help() {
 
 function _control_cron_service() {
    [ $# -lt 1 ]  &&  return 1
-   ctl_cmd="runcon -t libra_t -l $mcs_level $CTL_SCRIPT $1"
-   /bin/su -s /bin/sh "$uuid" -c "$ctl_cmd"
+   super_run_as_user "$CTL_SCRIPT $1"
 
 }  #  End of function  _control_cron_service.
 
@@ -64,7 +63,7 @@ function _move_cron_service() {
    
    CRON_DIR="$APP_HOME/cron-1.4/"
    
-   chcon -t libra_var_lib_t -l $mcs_level -R "$CRON_DIR"
+   observe_setup_var_lib_dir "$CRON_DIR"
 
 }  #  End of function  _move_cron_service.
 
