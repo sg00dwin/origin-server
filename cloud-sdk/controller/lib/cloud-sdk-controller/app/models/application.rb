@@ -442,9 +442,10 @@ class Application < Cloud::Sdk::Cartridge
       next if !dependency.nil? and (comp_inst.parent_cart_name != dependency)
 
       group_inst = self.group_instance_map[comp_inst.group_instance_name]
-      run_on_gears(group_inst.gears, reply, false) do |gear, r|
-        r.append gear.conceal_port(comp_inst)
+      s,f = run_on_gears(group_inst.gears, reply, false) do |gear, r|
+        r.append gear.expose_port(comp_inst)
       end
+      raise f[0][:exception] if(f.length > 0)      
     end
     reply
   end
@@ -456,9 +457,10 @@ class Application < Cloud::Sdk::Cartridge
       next if !dependency.nil? and (comp_inst.parent_cart_name != dependency)
 
       group_inst = self.group_instance_map[comp_inst.group_instance_name]
-      run_on_gears(group_inst.gears, reply, false) do |gear, r|
-        r.append gear.expose_port(comp_inst)
+      s,f = run_on_gears(group_inst.gears, reply, false) do |gear, r|
+        r.append gear.conceal_port(comp_inst)
       end
+      raise f[0][:exception] if(f.length > 0)      
     end
     reply
   end
