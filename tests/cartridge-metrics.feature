@@ -1,7 +1,7 @@
 @internals
 Feature: metrics Embedded Cartridge
 
-  Scenario Outline: Add metrics to one application
+  Scenario Outline: Add Remove metrics to one application
     Given an accepted node
     And a new guest account
     And a new <type> application
@@ -11,17 +11,6 @@ Feature: metrics Embedded Cartridge
     And the metrics directory will exist
     And metrics log files will exist
     And the metrics control script will exist
-
-  Scenarios: Add Metrics to one Application Scenarios
-    |type|
-    |php|
-
-
-  Scenario Outline: Remove Metrics from one Application
-    Given an accepted node
-    And a new guest account
-    And a new <type> application
-    And a new metrics
     When I deconfigure metrics
     Then a metrics http proxy file will not exist
     And a metrics httpd will not be running
@@ -29,26 +18,11 @@ Feature: metrics Embedded Cartridge
     And metrics log files will not exist
     And the metrics control script will not exist
 
-  Scenarios: Remove Metrics from one Application Scenarios
+  Scenarios: Add Remove Metrics to one Application Scenarios
     |type|
     |php|
 
-
-  Scenario Outline: Start Metrics
-    Given an accepted node
-    And a new guest account
-    And a new <type> application
-    And a new metrics
-    And metrics is stopped
-    When I start metrics
-    Then a metrics httpd will be running
-
-  Scenarios: Start Metrics scenarios
-    |type|
-    |php|
-
-
-  Scenario Outline: Stop Metrics
+  Scenario Outline: Stop Start Restart Metrics
     Given an accepted node
     And a new guest account
     And a new <type> application
@@ -56,21 +30,13 @@ Feature: metrics Embedded Cartridge
     And metrics is running
     When I stop metrics
     Then a metrics httpd will not be running
-
-  Scenarios: Stop Metrics scenarios
-    |type|
-    |php|
-
-
-  Scenario Outline: Restart Metrics
-    Given an accepted node
-    And a new guest account
-    And a new <type> application
-    And a new metrics
+    And metrics is stopped
+    When I start metrics
+    Then a metrics httpd will be running
     And metrics is running
     When I restart metrics
     Then a metrics httpd will be running
 
-  Scenarios: Restart Metrics scenarios
+  Scenarios: Stop Start Restart Metrics scenarios
     |type|
     |php|

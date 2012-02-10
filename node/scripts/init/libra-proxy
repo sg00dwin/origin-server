@@ -26,7 +26,7 @@ prog=$(basename $exec)
 
 lockfile=/var/lock/subsys/libra-proxy
 pidfile=/var/run/libra-proxy.pid
-cfgfile=/etc/libra/libra-proxy.cfg
+cfgfile=/var/lib/libra/.libra-proxy.d/libra-proxy.cfg
 
 
 check() {
@@ -39,14 +39,8 @@ getaddr() {
 
 fixaddr() {
     # Fix eth0's address in case it was changed by the cloud provider
-    baddr=`getaddr`
+    baddr=$(getaddr)
     sed -i -r -e '/^[^\#]*bind/ { /127\.[0-9\.]+:/ b; s/([0-9\.]+):/'"$baddr"':/ }' $cfgfile
-}
-
-
-listproxies() {
-  # List out the defined proxies
-  sed -n -r -e 's/^listen ([0-9]+):([0-9\.]+):([0-9])/\1 \2 \3/; t yi; d; : yi p' $cfgfile
 }
 
 
@@ -62,7 +56,7 @@ rollcfg() {
 
     oldpid=$( cat $pidfile )
 
-    if ! [ "/proc/$oldpid/exe" -ef "$exec"  ]; then
+    if ! [ "$(readlink /proc/$oldpid/exe)" == "$exec" -o "$(readlink /proc/$oldpid/exe)" == "$exec (deleted)" ]; then
       echo "libra-proxy has crashed."
       return 1
     fi
@@ -74,7 +68,7 @@ rollcfg() {
       return 1
     fi
 
-    while [ "/proc/$oldpid/exe" -ef "$exec" ]; do
+    while [ "$(readlink /proc/$oldpid/exe)" == "$exec" -o "$(readlink /proc/$oldpid/exe)" == "$exec (deleted)" ]; do
       usleep 500000
     done
 
@@ -87,53 +81,41 @@ rollcfg() {
   return 0
 }
 
-delproxy() {
-  # Remove a proxy port from the configuration file
-  # Usage delproxy [proxport]
-  proxport="$1"
 
-  if ! [ "$proxport" -ge 16384 -a "$proxport" -le 65535 ]; then
-    # also catch non-numeric args
-    return 1
-  fi
-
-  sed -i -e '/^listen '"$proxport"':/,/^#End '"$proxport"'/ d' $cfgfile
-  return $?
-}
-
-delproxy_r() {
+lockwrap() {
   lockfile ${cfgfile}.lock
-  delproxy "$1"
+  oldsum=$( md5sum $cfgfile | awk '{ print $1 }' )
+  "$@"
   retcode=$?
   if [ $retcode != 0 ]; then
     echo "Error: Bad proxy configuration."
   else
-    rollcfg
-    retcode=$?
+    newsum=$( md5sum $cfgfile | awk '{ print $1 }' )
+    if [ $oldsum != $newsum ]; then
+      rollcfg
+      retcode=$?
+    fi
   fi
   rm -f ${cfgfile}.lock
   return $retcode
 }
 
-addproxy() {
-  # Add a proxy port to the configuration file overwriting
-  # any existing proxy defined for the same port.
-  # Usage addproxy [proxport] [ip] [port]
+setproxy() {
+  # Set a proxy entry (either add or delete)
   proxport="$1"
-  dstip="$2"
-  port="$3"
+  target="$2"
 
   if ! [ "$proxport" -ge 16384 -a "$proxport" -le 65535 ]; then
     echo "Proxy port must be an integer between 16384 and 65535"
     return 1
   fi
 
-  if ! [ "$port" -ge 1 -a "$port" -le 65535 ]; then
-    echo "Dest port must be an integer between 16384 and 65535"
-    return 1
+  if [ "$target" == "delete" -o "$target" == "del" ]; then
+    sed -i -e '/^listen '"$proxport"':/,/^#End '"$proxport"':/ d' $cfgfile
+    return $?
   fi
 
-  ipbytes=( `echo "$dstip" | sed -e 's/\./ /g'` )
+  ipbytes=( $(echo "$target" | cut -f 1 -d : | sed -e 's/\./ /g') )
   if [ ${#ipbytes} -ne 3 ]; then
     echo "Dest addr must be a valid IP address."
     return 1
@@ -146,34 +128,43 @@ addproxy() {
     fi
   done
 
-  baddr=`getaddr`
+  port=$(echo $target | cut -f 2 -d :)
+  if ! [ "$port" -ge 1 -a "$port" -le 65535 ]; then
+    echo "Dest port must be an integer between 16384 and 65535"
+    return 1
+  fi
 
-  delproxy $proxport
+  if grep -q "^listen $proxport:$target" $cfgfile; then
+    return 0
+  fi
+
+  baddr=$(getaddr)
+
+  sed -i -e '/^listen '"$proxport"':/,/^#End '"$proxport"':/ d' $cfgfile
 
   cat <<EOF >> $cfgfile
-listen $proxport:$dstip:$port
+listen $proxport:$target
     mode tcp
     bind $baddr:$proxport
-    server $proxport $dstip:$port
-# End $proxport:$dstip:$port
+    server $proxport $target
+# End $proxport:$target
 EOF
 
   return $?
 }
 
-addproxy_r() {
-  lockfile ${cfgfile}.lock
-  addproxy "$1" "$2" "$3"
-  retcode=$?
-  if [ $retcode != 0 ]; then
-    echo "Error: Bad proxy configuration."
-  else
-    rollcfg
-    retcode=$?
-  fi
-  rm -f ${cfgfile}.lock
-  return $retcode
+setproxies() {
+  while [ "$1" ]; do
+    setproxy "$1" "$2"
+    if [ $? -ne 0 ]; then
+      echo "Error: Failed at $1 $2"
+      return 1
+    fi
+    shift; shift
+  done
+  return 0
 }
+
 
 start() {
     fixaddr
@@ -249,16 +240,11 @@ case "$1" in
     condrestart|try-restart)
   	[ ! -f $lockfile ] || restart
 	;;
-    listproxies)
-        listproxies
-        ;;
-    delproxy)
-        delproxy_r "$2"
-        ;;
-    addproxy)
-        addproxy_r "$2" "$3" "$4"
+    setproxy)
+        shift
+        lockwrap setproxies "$@"
         ;;
     *)
-        echo $"Usage: $0 {start|stop|status|restart|try-restart|reload|force-reload|listproxies|delproxy [proxport]| addproxy [proxport] [ip] [port]}"
+        echo $"Usage: $0 {start|stop|status|restart|try-restart|reload|force-reload|setproxy [proxport] [ip:port]}"
         exit 2
 esac

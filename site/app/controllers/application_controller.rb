@@ -262,6 +262,13 @@ class ApplicationController < ActionController::Base
   
   private
 
+  def new_forms
+    @styleguide_forms = true
+  end
+  def new_forms?
+    @styleguide_forms
+  end
+
   def require_login
     Rails.logger.debug 'Login required'
     if !session[:login]

@@ -43,6 +43,15 @@ class RestApi < ActiveResource::Base
   # Raised when the authorization context is missing
   class MissingAuthorizationError < StandardError ; end
 
+  # Don't include the root in JSON when creating/updating records
+  def encode(options={})
+    tmp = ActiveResource::Base.include_root_in_json
+    ActiveResource::Base.include_root_in_json = false
+    resp = send("to_#{self.class.format.extension}", options)
+    ActiveResource::Base.include_root_in_json = tmp
+    resp
+  end
+
   #
   # An Authorization object should expose:
   #
@@ -136,20 +145,28 @@ class RestApi < ActiveResource::Base
     @persisted
   end
 
-  class << self
-    def load_attributes_from_response(response)
-      if response['Content-Length'] != "0" && response.body.strip.size > 0
-        load(update_root(self.class.format.decode(response.body)))
-        @persisted = true
-      end
-    end
-
-    def update_root(obj)
-      puts "Root #{obj.inspect}"
-      obj
+  def load_attributes_from_response(response)
+    if response['Content-Length'] != "0" && response.body.strip.size > 0
+      load(self.class.format.decode(response.body))
+      @persisted = true
+      remove_instance_variable(:@old_id) if @old_id
     end
   end
 
+  class << self
+    def custom_id(name, mutable=false)
+      @primary_key = name
+      if mutable
+        define_method "#{name}=" do |val|
+          @old_id = @attributes[name]
+          @attributes[name] = val
+        end
+        define_method :id do
+          @old_id || super
+        end
+      end
+    end
+  end
 
   #
   # ActiveResource association support
@@ -396,8 +413,10 @@ end
 class Domain < RestApi
   schema do
     string :namespace
+    string :ssh
   end
-  def id() namespace end
+
+  custom_id :namespace, true
 
   has_many :applications
   def applications
@@ -422,9 +441,10 @@ class Application < RestApi
   schema do
     string :name, :creation_time
     string :uuid, :domain_id
-    string :framework, :server_identity
+    string :cartridge, :server_identity
   end
-  def id() name end
+
+  custom_id :name
 
   has_many :aliases
   belongs_to :domain
@@ -440,7 +460,7 @@ class Application < RestApi
     Domain.find domain_id, :as => as
   end
   def domain=(domain)
-    domain_id = domain.is_a? String ? domain : domain.name
+    domain_id = domain.is_a? String ? domain : domain.namespace
   end
 end
 
@@ -464,7 +484,7 @@ class Key < RestApi
   self.element_name = 'key'
 
   schema do
-    string :name, 'type', :key
+    string :name, 'type', :ssh
   end
   def id() name end
 
@@ -480,62 +500,66 @@ class Key < RestApi
   validates_format_of 'type',
                       :with => /^ssh-(rsa|dss)$/,
                       :message => "is not ssh-rsa or ssh-dss"
-  validates :key, :length => {:maximum => 2048},
+  validates :ssh, :length => {:maximum => 2048},
                     :presence => true,
                     :allow_blank => false
-
-  #
-  # TEMPORARY: bug fix needed in REST API
-  #
-  #def encode(options={})
-  #  send("to_form", options)
-  #end
 end
 
+run_tests = true
 
-if __FILE__==$0
+if __FILE__==$0 && run_tests
+
   require 'test/unit/ui/console/testrunner'
 
-  if ENV['LIBRA_HOST']
-
-    RestApi.site = "https://#{ENV['LIBRA_HOST']}/broker/rest"
-    RestApi.prefix='/broker/rest/'
-    user = RestApi::Authorization.new 'test1@test1.com', '1234'
-    begin
-      #info = Key.find :all, :as => user
-      #puts info.inspect
-      domain = Domain.first :as => user
-      if domain
-        puts "Found domain #{domain.inspect}"
-        domain.destroy_recursive
-        puts "Deleted domain #{domain.inspect}\n  errors: #{domain.errors.inspect}"
-      else
-        domain = Domain.new :namespace => "xyz", :as => user
-        domain.to_json
-        if domain.save
-          puts "Saved domain\n #{domain.inspect}"
-        else
-          puts "Unable to save domain\n #{domain.inspect}"
-        end
-      end
-      #puts domain.inspect
-      #puts domain.applications.inspect
-    rescue ActiveResource::ConnectionError => e
-      puts e.response
-      raise
-    end
-    puts "-------------------\n"
-  end
-
-  if true
-
-  require 'active_resource/http_mock'
   require 'test/unit'
   require 'mocha'
+  require 'base64'
+  require 'time'
+
+  @@integrated = !!ENV['REST_API_TEST_REMOTE']
+
+  unless @@integrated
+    #TODO fix mock tests and remove this warning!
+    puts ""
+    puts "WARNING: mock tests don't work quite yet..."
+    puts "Try running again with the following environment variable(s) set:"
+    puts ""
+    puts "  REST_API_TEST_REMOTE=1"
+    puts "  LIBRA_HOST=ec2-foo.compute-1.amazonaws.com (use an actual devenv hostname)"
+    puts ""
+    exit 1
+  end
 
   class RestApiTest < Test::Unit::TestCase
 
     def setup
+      if @@integrated
+        setup_integrated
+      else
+        setup_mock
+      end
+    end
+
+    def setup_integrated
+      host = ENV['LIBRA_HOST'] || 'localhost'
+      RestApi.site = "https://#{host}/broker/rest"
+      RestApi.prefix='/broker/rest/'
+
+      @ts = Time.now.to_i
+
+      @user = RestApi::Authorization.new "test1+#{@ts}@test1.com", @ts
+
+      auth_headers = {'Authorization' => "Basic #{Base64.encode64("#{@user.login}:#{@user.password}").strip}"}
+
+      domain = Domain.new :namespace => "xyz#{@ts}", :as => @user
+      domain.ssh = "foo"
+      assert domain.save
+    end
+
+    # TODO fix
+    def setup_mock
+      require 'active_resource/http_mock'
+
       @user = RestApi::Authorization.new 'test1', '1234'
       auth_headers = {'Cookie' => "rh_sso=1234", 'Authorization' => 'Basic dGVzdDE6'};
 
@@ -549,9 +573,7 @@ if __FILE__==$0
         mock.get '/user/keys.json', {'Accept' => 'application/json'}.merge!(auth_headers), [{:type => :rsa, :name => 'test1', :value => '1234' }].to_json()
         mock.post '/user/keys.json', {'Content-Type' => 'application/json'}.merge!(auth_headers), {:type => :rsa, :name => 'test2', :value => '1234_2' }.to_json()
         mock.delete '/user/keys/test1.json', {'Accept' => 'application/json'}.merge!(auth_headers), {}
-
         mock.get '/user.json', {'Accept' => 'application/json'}.merge!(auth_headers), { :login => 'test1' }.to_json()
-        
         mock.get '/domains.json', {'Accept' => 'application/json'}.merge!(auth_headers), [{ :namespace => 'adomain' }].to_json()
         mock.get '/domains/adomain/applications.json', {'Accept' => 'application/json'}.merge!(auth_headers), [{ :name => 'app1' }, { :name => 'app2' }].to_json()
       end
@@ -567,27 +589,46 @@ if __FILE__==$0
     end
 
     def test_key_create
-      key = Key.new :type => 'ssh-rsa', :name => 'test2', :key => '1234_2', :as => @user
+      items = Key.find :all, :as => @user
+
+      orig_num_keys = items.length
+
+      key = Key.new :type => 'ssh-rsa', :name => "test#{@ts}", :ssh => @ts, :as => @user
       assert key.save
+
+      items = Key.find :all, :as => @user
+      assert_equal orig_num_keys + 1, items.length
     end
 
     def test_key_validation
       key = Key.new :type => 'ssh-rsa', :name => 'test2', :as => @user
       assert !key.save
-      assert_equal 1, key.errors[:key].length
+      assert_equal 1, key.errors[:ssh].length
 
-      key.key = ''
+      key.ssh = ''
       assert !key.save
-      assert_equal 1, key.errors[:key].length
+      assert_equal 1, key.errors[:ssh].length
 
-      key.key = 'a'
+      key.ssh = 'a'
       assert key.save
       assert key.errors.empty?
     end
 
     def test_key_delete
       items = Key.find :all, :as => @user
-      assert items[0].destroy
+
+      orig_num_keys = items.length
+
+      key = Key.new :type => 'ssh-rsa', :name => "test#{@ts}", :ssh => @ts, :as => @user
+      assert key.save
+
+      items = Key.find :all, :as => @user
+      assert_equal orig_num_keys + 1, items.length
+
+      assert items[1].destroy
+
+      items = Key.find :all, :as => @user
+      assert_equal orig_num_keys, items.length
     end
 
     def test_agnostic_connection
@@ -606,29 +647,55 @@ if __FILE__==$0
     def test_user_get
       user = User.find :one, :as => @user
       assert user
-      assert_equal 'test1', user.login
+      assert_equal @user.login, user.login
     end
 
     def test_domains_get
       domains = Domain.find :all, :as => @user
       assert_equal 1, domains.length
-      assert_equal "adomain", domains[0].namespace
+      assert_equal "xyz#{@ts}", domains[0].namespace
     end
 
     def test_domains_first
       domain = Domain.first(:as => @user)
-      assert_equal "adomain", domain.namespace
+      assert_equal "xyz#{@ts}", domain.namespace
+    end
+
+    def test_domains_update
+      domains = Domain.find :all, :as => @user
+      assert_equal 1, domains.length
+      assert_equal "xyz#{@ts}", domains[0].namespace
+
+      d = domains[0]
+      d.namespace = "abc#{@ts}"
+
+      assert d.save
+
+      domains = Domain.find :all, :as => @user
+      assert_equal 1, domains.length
+      assert_equal "abc#{@ts}", domains[0].namespace
     end
 
     def test_domains_applications
       domain = Domain.first(:as => @user)
+
+      app1 = Application.new :name => 'app1', :cartridge => 'php-5.3', :as => @user
+      app2 = Application.new :name => 'app2', :cartridge => 'php-5.3', :as => @user
+
+      app1.domain = domain
+      app2.domain = domain
+
+      assert app1.save
+      assert app2.save
+
       apps = domain.applications
       assert_equal 2, apps.length
       assert_equal 'app1', apps[0].name
       assert_equal 'app2', apps[1].name
     end
-  end
+
   Test::Unit::UI::Console::TestRunner.run(RestApiTest)
+
   end
 
 end

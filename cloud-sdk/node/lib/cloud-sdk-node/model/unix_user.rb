@@ -18,9 +18,9 @@
 require 'rubygems'
 require 'cloud-sdk-node/config'
 require 'cloud-sdk-node/utils/shell_exec'
-require 'cloud-sdk-node/model/cdk_model'
+require 'cloud-sdk-common'
 
-module Cloud::SDK::Model
+module Cloud::Sdk
   class UserCreationException < Exception
   end
 
@@ -30,14 +30,14 @@ module Cloud::SDK::Model
   # == Unix User
   #
   # Represents a user account on the system.
-  class UnixUser < CdkModel
-    include Cloud::SDK::Utils::ShellExec
+  class UnixUser < Model
+    include Cloud::Sdk::Utils::ShellExec
     attr_reader :uuid, :uid, :gid, :gecos, :homedir, :application_uuid, :container_uuid
     
-    DEFAULT_SKEL_DIR = File.join(Cloud::SDK::Config::CONF_DIR,"skel")
+    DEFAULT_SKEL_DIR = File.join(Cloud::Sdk::Config::CONF_DIR,"skel")
 
     def initialize(application_uuid, container_uuid, user_uid=nil)
-      @config = Cloud::SDK::Config.instance
+      @config = Cloud::Sdk::Config.instance
       
       @container_uuid = container_uuid
       @application_uuid = application_uuid

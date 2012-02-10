@@ -74,19 +74,9 @@ class ApplicationsController < BaseController
       respond_with @reply, :status => @reply.status
       return
     end
-    Rails.logger.debug "Finding available container"
-    begin
-      container = Cloud::Sdk::ApplicationContainerProxy.find_available(nil)
-    rescue Cloud::Sdk::NodeException => e
-      @reply = RestReply.new(:service_unavailable)
-      message = Message.new(:error, e.message) 
-      @reply.messages.push(message)
-      respond_with @reply, :status => @reply.status
-    end
-    if cartridge.nil? or not check_cartridge_type(cartridge, container, "standalone")
+    if cartridge.nil? or not CartridgeCache.cartridge_names('standalone').include?(cartridge)
       @reply = RestReply.new( :bad_request)
-      carts = get_cached("cart_list_standalone", :expires_in => 21600.seconds) {
-      Application.get_available_cartridges("standalone")}
+      carts = get_cached("cart_list_standalone", :expires_in => 21600.seconds) {Application.get_available_cartridges("standalone")}
       message = Message.new(:error, "Invalid cartridge #{cartridge}.  Valid values are (#{carts.join(', ')})") 
       @reply.messages.push(message)
       respond_with @reply, :status => @reply.status
@@ -105,7 +95,7 @@ class ApplicationsController < BaseController
     if application.valid?
       begin
         Rails.logger.debug "Creating application #{app_name}"
-        application.create(container)
+        application.create
         Rails.logger.debug "Configuring dependencies #{app_name}"
         application.configure_dependencies
         Rails.logger.debug "Adding system ssh keys #{app_name}"

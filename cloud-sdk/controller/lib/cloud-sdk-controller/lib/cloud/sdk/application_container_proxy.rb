@@ -32,7 +32,7 @@ module Cloud
         reserved_uid
       end
       
-      def get_available_cartridges(cart_type)
+      def get_available_cartridges
       end
       
       def create(app)
@@ -93,6 +93,9 @@ module Cloud
       end
       
       def threaddump(app, cart)
+      end
+      
+      def system_messages(app, cart)
       end
       
       def add_alias(app, cart, server_alias)

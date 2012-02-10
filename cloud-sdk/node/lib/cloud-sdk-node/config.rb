@@ -19,8 +19,8 @@ require 'rubygems'
 require 'singleton'
 require 'parseconfig'
 
-module Cloud::SDK
-  # == Cloud SDK Config
+module Cloud::Sdk
+  # == Cloud Sdk Config
   #
   # Allows access to cloud-sdk-node config file.
   #

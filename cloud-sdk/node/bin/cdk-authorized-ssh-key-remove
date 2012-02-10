@@ -24,7 +24,7 @@ cdk-authorized-ssh-key-remove: Removes an authorized ssh key from the app.
 
 == Usage
 
-cdk-authorized-ssh-key-remove [--with-uuid UUID] [--with-ssh-key KEY]
+cdk-authorized-ssh-key-remove  --with-app-uuid APP_UUID --with-container-uuid UUID --with-ssh-key KEY
 
 Options:
 -h|--help:
@@ -39,7 +39,8 @@ end
 require 'cloud-sdk-node'
 require 'cloud-sdk-node/utils/shell_exec'
 opts = GetoptLong.new(
-    ["--with-uuid",        "-c", GetoptLong::REQUIRED_ARGUMENT],
+    ["--with-app-uuid",       "-a", GetoptLong::REQUIRED_ARGUMENT],
+    ["--with-container-uuid", "-c", GetoptLong::REQUIRED_ARGUMENT],
     ["--with-ssh-key",     "-s", GetoptLong::REQUIRED_ARGUMENT]
 )
 
@@ -56,7 +57,8 @@ if args["--help"]
   exit -1
 end
 
-uuid = args['--with-uuid']
+uuid = args['--with-container-uuid']
+app_uuid = args['--with-app-uuid']
 ssh_key = args['--with-ssh-key']
 
 unless uuid and ssh_key
@@ -65,7 +67,7 @@ unless uuid and ssh_key
 end
 
 begin
-  container = Cloud::SDK::Model::ApplicationContainer.new(uuid,uuid)
+  container = Cloud::Sdk::ApplicationContainer.new(uuid,uuid)
   container.user.remove_ssh_key(ssh_key)
 rescue Exception => e
   $stderr.puts(e.message)

@@ -38,14 +38,19 @@ module Cloud
             end
             self.class.requires_update_attributes.each do |key|
               key = key.to_s
-              changed_attrs[key] = instance_variable_get("@#{key}")
+              value = instance_variable_get("@#{key}")
+              if value.kind_of?(Cloud::Sdk::Model)
+                changed_attrs[key] = value.attributes(true)
+              else
+                changed_attrs[key] = value
+              end
             end
             DataStore.instance.save(self.class.name, login, instance_variable_get("@#{id_var}"), changed_attrs) unless changed_attrs.empty?
           else
-            DataStore.instance.save(self.class.name, login, instance_variable_get("@#{id_var}"), self.attributes)
+            DataStore.instance.save(self.class.name, login, instance_variable_get("@#{id_var}"), self.attributes(true))
           end
         else
-          DataStore.instance.create(self.class.name, login, instance_variable_get("@#{id_var}"), self.attributes)
+          DataStore.instance.create(self.class.name, login, instance_variable_get("@#{id_var}"), self.attributes(true))
         end
         @previously_changed = changes
         @changed_attributes.clear
@@ -64,10 +69,8 @@ module Cloud
       end
       
       def self.hash_to_obj(hash)
-        obj = self.new 
-        hash.each do |k,v|
-          obj.instance_variable_set("@#{k}", v)
-        end
+        obj = self.new
+        obj.attributes=hash
         obj.reset_state
         obj
       end

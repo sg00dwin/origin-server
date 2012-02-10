@@ -1,0 +1,40 @@
+#!/bin/bash
+
+# Creates a thread dump from a jboss-as7 instance
+
+# Exit on any errors
+set -e
+
+function print_help {
+    echo "Usage: $0 app-name namespace uuid"
+    echo "Get a thread dump for a running application"
+
+    echo "$0 $@" | logger -p local0.notice -t libra_threaddump
+    exit 1
+}
+
+while getopts 'd' OPTION
+do
+    case $OPTION in
+        d) set -x
+        ;;
+        ?) print_help
+        ;;
+    esac
+done
+
+[ $# -eq 3 ] || print_help
+
+CART_DIR=/usr/libexec/li/cartridges
+source ${CART_DIR}/abstract/info/lib/util
+
+setup_basic_hook "$1" $2 $3
+
+result=`grep $3 /var/log/messages`
+
+echo "$result"
+
+client_result "Success $1 $2 $3"
+client_result ""
+
+client_result "`echo $result`"

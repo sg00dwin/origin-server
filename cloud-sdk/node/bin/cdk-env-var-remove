@@ -24,7 +24,7 @@ cdk-env-var-remove: Removes an env var from the app.
 
 == Usage
 
-cdk-env-var-remove [--with-uuid UUID] [--with-key KEY]
+cdk-env-var-remove  --with-app-uuid APP_UUID --with-container-uuid UUID --with-key KEY
 
 Options:
 -h|--help:
@@ -39,8 +39,9 @@ end
 require 'cloud-sdk-node'
 require 'cloud-sdk-node/utils/shell_exec'
 opts = GetoptLong.new(
-    ["--with-uuid",        "-c", GetoptLong::REQUIRED_ARGUMENT],
-    ["--with-key",         "-k", GetoptLong::REQUIRED_ARGUMENT]
+    ["--with-app-uuid",       "-a", GetoptLong::REQUIRED_ARGUMENT],
+    ["--with-container-uuid", "-c", GetoptLong::REQUIRED_ARGUMENT],
+    ["--with-key",            "-k", GetoptLong::REQUIRED_ARGUMENT]
 )
 
 args = {}
@@ -51,7 +52,7 @@ rescue GetoptLong::Error => e
     exit -100
 end
 
-uuid = args['--with-uuid']
+uuid = args['--with-container-uuid']
 key = args['--with-key']
 
 if args["--help"]
@@ -65,7 +66,7 @@ unless uuid and key
 end
 
 begin
-  container = Cloud::SDK::Model::ApplicationContainer.new(uuid,uuid)
+  container = Cloud::Sdk::ApplicationContainer.new(uuid,uuid)
   container.user.remove_env_var(key)
 rescue Exception => e
   $stderr.puts(e.message)
