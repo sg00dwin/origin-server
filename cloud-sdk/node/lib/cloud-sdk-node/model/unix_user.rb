@@ -233,6 +233,10 @@ module Cloud::Sdk
     end
 
     def proxy_remove_port(proxy_port, prefix_cloud_name=false)
+      if not proxy_port_list().include?(proxy_port)
+        return nil
+      end
+
       self.class.notify_observers(:before_proxy_remove_port, self, proxy_port)
       env_dir = File.join(@homedir,".env")
       key = "#{proxy_port}_PUB_PORT"
