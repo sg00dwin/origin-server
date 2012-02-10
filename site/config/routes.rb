@@ -54,9 +54,6 @@ RedHatCloud::Application.routes.draw do
       end
     end
 
-    resources :applications, :only => [:new, :create]
-    resources :application_types, :only => [:show], :id => /[^\/]+/
-
     # deprecated, move to :account
     resource :user,
              :path => :account,
@@ -124,14 +121,13 @@ RedHatCloud::Application.routes.draw do
               :only => [:new, :create]
 
     scope '/console' do
-      resource  :applications,
+      resources :application_types, :only => [:show], :id => /[^\/]+/
+
+      resources :applications,
                 :controller => "applications" do
-        # console applications page
         match 'delete' => 'applications#confirm_delete', :via => :get
+        # should be updated to be restful
         match 'delete' => 'applications#delete', :via => :post
-        match 'add' => 'applications#show_add', :via => :get
-        match 'add' => 'applications#add', :via => :post
-        match 'index' => 'applications#index'
       end
     end
 
