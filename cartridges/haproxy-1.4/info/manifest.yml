@@ -19,3 +19,4 @@ Subscribes:
   set-get-proxy-info:
     Type: "NET_TCP:httpd-proxy-info"
     Required : false
+
