@@ -517,9 +517,7 @@ class Key < RestApi
                     :allow_blank => false
 end
 
-run_tests = true
-
-if __FILE__==$0 && run_tests
+if __FILE__==$0
 
   require 'test/unit/ui/console/testrunner'
 
