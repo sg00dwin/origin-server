@@ -11,7 +11,7 @@ Feature: Node.js Application
     Then a nodejs application http proxy file will exist
     And a nodejs application git repo will exist
     And a nodejs application source tree will exist
-    And a node process will be running 
+    And a node process will be running
     And nodejs application log files will exist
     When I deconfigure the nodejs application
     Then a nodejs application http proxy file will not exist

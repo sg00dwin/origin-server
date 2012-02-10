@@ -68,7 +68,7 @@ Then /^a nodejs application source tree will( not)? exist$/ do | negate |
   app_name = @app['name']
 
   app_root = "#{$home_root}/#{acct_name}/#{app_name}"
-  status = (File.exists? app_root and File.directory? app_root) 
+  status = (File.exists? app_root and File.directory? app_root)
   # TODO - need to check permissions and SELinux labels
 
   if not negate
@@ -87,7 +87,7 @@ Then /^a node process will( not)? be running$/ do | negate |
   max_tries = 7
   poll_rate = 3
   exit_test = negate ? lambda { |tval| tval == 0 } : lambda { |tval| tval > 0 }
-  
+ 
   tries = 0
   num_node_processes = num_procs acct_name, 'node'
   while (not exit_test.call(num_node_processes) and tries < max_tries)
@@ -169,7 +169,7 @@ Given /^the nodejs application is (running|stopped)$/ do | start_state |
       raise "Unable to %s for %s %s %s" % [fix_action, app_name, namespace, account_name]
     end
     sleep 5
-    
+
     # check exit status
     exit_status = runcon status_command, 'unconfined_u', 'system_r', 'libra_initrc_t'
     if exit_status != good_exit
