@@ -7,8 +7,7 @@ class BaseController < ActionController::Base
       "GET_USER" => Link.new("Get user information", "GET", "/user"),      
       "LIST_DOMAINS" => Link.new("List domains", "GET", "/domains"),
       "ADD_DOMAIN" => Link.new("Create new domain", "POST", "/domains", [
-        Param.new("namespace", "string", "Name of the domain"),
-        Param.new("ssh", "string", "The key portion of an rsa key (excluding ssh-rsa and comment)")
+        Param.new("namespace", "string", "Name of the domain")
       ]),
       "LIST_CARTRIDGES" => Link.new("List cartridges", "GET", "/cartridges")
     }

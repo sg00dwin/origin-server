@@ -30,13 +30,13 @@ class EmbCartEventsController < BaseController
     begin
       case event
         when 'start'
-          application.start_dependency(cartridge)      
+          application.start(cartridge)      
         when 'stop'
-          application.stop_dependency(cartridge)      
+          application.stop(cartridge)      
         when 'restart'
-          application.restart_dependency(cartridge)          
+          application.restart(cartridge)          
         when 'reload'
-          application.reload_dependency(cartridge)
+          application.reload(cartridge)
         else
           @reply = RestReply.new(:bad_request)
           message = Message.new(:error, "Invalid event #{event}.  Valid values are start, stop, restart and reload.")

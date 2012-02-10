@@ -25,7 +25,7 @@ class KeysController < BaseController
   
   #GET /user/keys/<id>
   def show 
-    name = params[:id]
+    id = params[:id]
     user = CloudUser.find(@login)
     if user.nil? or user.ssh_keys.nil?
       @reply = RestReply.new(:not_found)
@@ -35,7 +35,7 @@ class KeysController < BaseController
     end
     if user.ssh_keys
       user.ssh_keys.each do |key_name, key|
-        if key_name == name
+        if key_name == id
           @reply = RestReply.new(:ok, "key", RestKey.new(key_name, key["key"], key["type"]))
           respond_with @reply, :status => @reply.status
           return
@@ -44,7 +44,7 @@ class KeysController < BaseController
     end
 
     @reply = RestReply.new(:not_found)
-    @reply.messages.push(Message.new(:error, "SSH key #{name} for user #{@login} not found"))
+    @reply.messages.push(Message.new(:error, "SSH key #{id} for user #{@login} not found"))
     respond_with @reply, :status => @reply.status
   end
   
@@ -116,8 +116,9 @@ class KeysController < BaseController
   
   #PUT /user/keys/<id>
   def update
+    
+    id = params[:id]
     content = params[:content]
-    name = params[:id]
     type = params[:type]
     
     user = CloudUser.find(@login)
@@ -141,16 +142,6 @@ class KeysController < BaseController
       return
     end
     
-    if name.nil?
-      @reply = RestReply.new(:bad_request)
-      @reply.messages.push(Message.new(:error, "Missing required parameters name"))
-      respond_with(@reply) do |format|
-         format.xml { render :xml => @reply, :status => @reply.status }
-         format.json { render :json => @reply, :status => @reply.status }
-      end
-      return
-    end
-    
     if type.nil?
       @reply = RestReply.new(:bad_request)
       @reply.messages.push(Message.new(:error, "Missing required parameters type"))
@@ -161,9 +152,9 @@ class KeysController < BaseController
       return
     end
     
-    if user.ssh_keys.nil? or not user.ssh_keys.has_key?(name)
+    if user.ssh_keys.nil? or not user.ssh_keys.has_key?(id)
       @reply = RestReply.new(:not_found)
-      @reply.messages.push(Message.new(:error, "SSH key with name #{name} not found for user #{@login}"))
+      @reply.messages.push(Message.new(:error, "SSH key with name #{id} not found for user #{@login}"))
       respond_with(@reply) do |format|
          format.xml { render :xml => @reply, :status => @reply.status }
          format.json { render :json => @reply, :status => @reply.status }
@@ -172,12 +163,11 @@ class KeysController < BaseController
     end
 
     begin
-      user.remove_ssh_key(name)
-      user.add_ssh_key(name, content, type)
+      user.update_ssh_key(content, type, id)
       user.save
-      ssh_key = RestKey.new(name, user.ssh_keys[name][:key], user.ssh_keys[name][:type])
+      ssh_key = RestKey.new(id, user.ssh_keys[id][:key], user.ssh_keys[id][:type])
       @reply = RestReply.new(:ok, "key", ssh_key)
-      @reply.messages.push(Message.new(:info, "Updated SSH key with name #{name} for user #{@login}"))
+      @reply.messages.push(Message.new(:info, "Updated SSH key with name #{id} for user #{@login}"))
       respond_with(@reply) do |format|
          format.xml { render :xml => @reply, :status => @reply.status }
          format.json { render :json => @reply, :status => @reply.status }
@@ -185,7 +175,7 @@ class KeysController < BaseController
     rescue Exception => e
       Rails.logger.error e
       @reply = RestReply.new(:internal_server_error)
-      @reply.messages.push(Message.new(:error, "Failed to update SSH key #{name} for user #{@login} due to:#{e.message}") )
+      @reply.messages.push(Message.new(:error, "Failed to update SSH key #{id} for user #{@login} due to:#{e.message}") )
       respond_with(@reply) do |format|
          format.xml { render :xml => @reply, :status => @reply.status }
          format.json { render :json => @reply, :status => @reply.status }
@@ -196,7 +186,7 @@ class KeysController < BaseController
   
   #DELETE /user/keys/<id>
   def destroy
-    name = params[:id]
+    id = params[:id]
     
     user = CloudUser.find(@login)
     if(user.nil?)
@@ -209,19 +199,9 @@ class KeysController < BaseController
       return
     end
     
-    if name.nil?
-      @reply = RestReply.new(:bad_request)
-      @reply.messages.push(Message.new(:error, "Missing required parameter name"))
-      respond_with(@reply) do |format|
-         format.xml { render :xml => @reply, :status => @reply.status }
-         format.json { render :json => @reply, :status => @reply.status }
-      end
-      return
-    end
-    
-    if user.ssh_keys.nil? or not user.ssh_keys.has_key?(name)
+    if user.ssh_keys.nil? or not user.ssh_keys.has_key?(id)
       @reply = RestReply.new(:not_found)
-      @reply.messages.push(Message.new(:error, "SSH key with name #{name} not found for user #{@login}"))
+      @reply.messages.push(Message.new(:error, "SSH key with name #{id} not found for user #{@login}"))
       respond_with(@reply) do |format|
          format.xml { render :xml => @reply, :status => @reply.status }
          format.json { render :json => @reply, :status => @reply.status }
@@ -230,10 +210,10 @@ class KeysController < BaseController
     end
 
     begin
-      user.remove_ssh_key(name)
+      user.remove_ssh_key(id)
       user.save
       @reply = RestReply.new(:no_content)
-      @reply.messages.push(Message.new(:info, "Deleted SSH key #{name} for user #{@login}"))
+      @reply.messages.push(Message.new(:info, "Deleted SSH key #{id} for user #{@login}"))
       respond_with(@reply) do |format|
          format.xml { render :xml => @reply, :status => @reply.status }
          format.json { render :json => @reply, :status => @reply.status }
@@ -241,7 +221,7 @@ class KeysController < BaseController
     rescue Exception => e
       Rails.logger.error e
       @reply = RestReply.new(:internal_server_error)
-      @reply.messages.push(Message.new(:error, "Failed to delete SSH key #{name} for user #{@login} due to:#{e.message}") )
+      @reply.messages.push(Message.new(:error, "Failed to delete SSH key #{id} for user #{@login} due to:#{e.message}") )
       respond_with(@reply) do |format|
          format.xml { render :xml => @reply, :status => @reply.status }
          format.json { render :json => @reply, :status => @reply.status }

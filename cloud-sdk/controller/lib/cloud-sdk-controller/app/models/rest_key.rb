@@ -9,7 +9,6 @@ class RestKey < Cloud::Sdk::Model
     self.links = {
       "GET" => Link.new("Get SSH key", "GET", "/user/keys/#{name}"),
       "UPDATE" => Link.new("Update SSH key", "PUT", "/user/keys/#{name}", [
-        Param.new("name", "string", "Name of the application"),
         Param.new("type", "string", "Type of Key", ["ssh-rsa", "ssh-dss"]),
         Param.new("content", "string", "The key portion of an rsa key (excluding ssh-rsa and comment)"),
       ]),
