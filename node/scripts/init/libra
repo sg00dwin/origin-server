@@ -52,7 +52,7 @@ function libra_users() {
     grep ":libra guest:" /etc/passwd | cut -d: -f1
 }
 
-function openshift_mcs_level() {
+function get_mcs_level() {
     # UID=$1
 
     SETSIZE=1023
@@ -144,7 +144,7 @@ startapp() {
     # APPSCRIPT=$2
     uid=$(id -u "$1")
     setuppam $1
-    mcs_level=`openshift_mcs_level $uid`
+    mcs_level=`get_mcs_level $uid`
     source /var/lib/libra/$1/.env/OPENSHIFT_RUN_DIR
     if [ -f "${OPENSHIFT_RUN_DIR}/stop_lock" ]
     then
@@ -172,7 +172,7 @@ stopapp() {
     # USERNAME=$1
     # APPSCRIPT=$2
     uid=$(id -u "$1")
-    mcs_level=`openshift_mcs_level $uid`
+    mcs_level=`get_mcs_level $uid`
     print_column -n 59 "    $(basename $2)"
     local OUTPUT=$(daemon --user="$1" --pidfile=httpd_$1-$(basename $2) runcon -t libra_t -l $mcs_level $2 stop)
     RETVAL=$?
@@ -255,7 +255,7 @@ case "$1" in
         run_as=$( echo $ctl_script | awk -F/ '{print $5}')
         echo -n "    Checking http for ${script_name%_ctl.sh}"
         uid=$(id -u "$run_as")
-        mcs_level=`openshift_mcs_level $uid`
+        mcs_level=`get_mcs_level $uid`
         daemon --user=$run_as --pidfile=httpd_${script_name} runcon -t libra_t -l $mcs_level $ctl_script status
         RETVAL=$?
         echo

@@ -24,7 +24,6 @@ set -e
 CART_DIR=/usr/libexec/li/cartridges
 
 source ${CART_DIR}/abstract/info/lib/util
-source ${CART_DIR}/abstract/info/lib/selinux
 source ${CART_DIR}/abstract/info/lib/apache
 source ${CART_DIR}/abstract/info/lib/network
 
@@ -60,7 +59,7 @@ CART_INFO_DIR=$CART_DIR/$OPENSHIFT_APP_TYPE/info
 unobfuscate_app_home $uuid $namespace $application
 
 observe_setup_app_home
-observe_setup_app_dir_and_git
+observe_setup_app_and_git_dirs
 
 #
 # Find an open localhost IP
