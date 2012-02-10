@@ -56,7 +56,7 @@ rollcfg() {
 
     oldpid=$( cat $pidfile )
 
-    if ! [ "/proc/$oldpid/exe" -ef "$exec"  ]; then
+    if ! [ "$(readlink /proc/$oldpid/exe)" == "$exec" -o "$(readlink /proc/$oldpid/exe)" == "$exec (deleted)" ]; then
       echo "libra-proxy has crashed."
       return 1
     fi
@@ -68,7 +68,7 @@ rollcfg() {
       return 1
     fi
 
-    while [ "/proc/$oldpid/exe" -ef "$exec" ]; do
+    while [ "$(readlink /proc/$oldpid/exe)" == "$exec" -o "$(readlink /proc/$oldpid/exe)" == "$exec (deleted)" ]; do
       usleep 500000
     done
 

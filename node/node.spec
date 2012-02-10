@@ -178,6 +178,9 @@ then
     mv /etc/httpd/conf.d/libra/ /etc/httpd/conf.d/libra.bak/
 fi
 
+%triggerin -- haproxy
+/sbin/service libra-proxy condrestart
+
 %files
 %defattr(-,root,root,-)
 %attr(0640,-,-) %{_libexecdir}/mcollective/mcollective/agent/*

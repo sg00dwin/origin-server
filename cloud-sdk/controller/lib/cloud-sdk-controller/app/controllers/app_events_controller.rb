@@ -22,11 +22,15 @@ class AppEventsController < BaseController
         when "start"
           application.start
         when "stop"
-          application.stop  
+          application.stop
         when "force-stop"
-          application.force_stop  
+          application.force_stop
         when "restart"
-          application.restart  
+          application.restart
+        when "expose-port"
+          application.expose_port
+        when "conceal-port"
+          application.conceal_port
         else
           @reply = RestReply.new(:bad_request)
           message = Message.new(:error, "Invalid event #{event}.  Valid events are start, stop, restart, force-stop")

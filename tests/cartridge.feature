@@ -15,7 +15,7 @@ Feature: Cartridge Verification Tests
     |     1     |  jbossas-7.0 |
     |     1     |  nodejs-0.6  |
     |     1     |  jenkins-1.4 |
-    |     1     |  raw-0.1     |
+#    |     1     |  raw-0.1     |
 
   Scenario Outline: Application Modification
     Given an existing <type> application
@@ -85,7 +85,7 @@ Feature: Cartridge Verification Tests
     |   jbossas-7.0 |
     |   nodejs-0.6  |
     |   jenkins-1.4 |
-    
+
   Scenario Outline: Application Change Namespace
     Given an existing <type> application
     When the application namespace is updated
@@ -95,7 +95,7 @@ Feature: Cartridge Verification Tests
     |      type     |
     |   php-5.3     |
     |   jenkins-1.4 |
-    
+
   Scenario Outline: Application Snapshot
     Given an existing <type> application
     When I snapshot the application
@@ -135,5 +135,4 @@ Feature: Cartridge Verification Tests
     |   jbossas-7.0 |
     |   nodejs-0.6  |
     |   jenkins-1.4 |
-    |   raw-0.1     |
-
+#    |   raw-0.1     |
