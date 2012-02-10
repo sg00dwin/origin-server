@@ -16,15 +16,15 @@ class RestUser < Cloud::Sdk::Model
       end
     end
     
-    @links = [
-      Link.new("Get user information", "GET", "/user"),
-      Link.new("Get SSH keys", "GET", "/user/keys"),
-      Link.new("Add new SSH key", "POST", "/user/keys", [
+    @links = {
+      "GET" => Link.new("Get user information", "GET", "/user"),
+      "LIST_KEYS" => Link.new("Get SSH keys", "GET", "/user/keys"),
+      "ADD_KEY" => Link.new("Add new SSH key", "POST", "/user/keys", [
         Param.new("name", "string", "Name of the application"),
-        Param.new("type", "string", "Type of Key", "RSA or DSA"),
-        Param.new("ssh", "string", "The key portion of an rsa key (excluding ssh-rsa and comment)"),
+        Param.new("type", "string", "Type of Key", ["ssh-rsa", "ssh-dss"]),
+        Param.new("content", "string", "The key portion of an rsa key (excluding ssh-rsa and comment)"),
       ]),
-    ]
+    }
   end
   
   def to_xml(options={})

@@ -1,4 +1,4 @@
-class CloudUser < Cloud::Sdk::UserModel
+ class CloudUser < Cloud::Sdk::UserModel
   attr_accessor :login, :uuid, :system_ssh_keys, :env_vars, :ssh_keys, :namespace, :max_gears, :consumed_gears, :applications
   primary_key :login
   exclude_attributes :applications
@@ -32,11 +32,14 @@ class CloudUser < Cloud::Sdk::UserModel
 
   def initialize(login=nil, ssh=nil, namespace=nil, ssh_type=nil, key_name=nil)
     super()
-    ssh_type = "ssh-rsa" if ssh_type.to_s.strip.length == 0
-    self.ssh_keys = {} unless self.ssh_keys
-    key_name = CloudUser::DEFAULT_SSH_KEY_NAME if key_name.to_s.strip.length == 0
-
-    self.ssh_keys[key_name] = { "key" => ssh, "type" => ssh_type }
+    if not ssh.nil?
+      ssh_type = "ssh-rsa" if ssh_type.to_s.strip.length == 0
+      self.ssh_keys = {} unless self.ssh_keys
+      key_name = CloudUser::DEFAULT_SSH_KEY_NAME if key_name.to_s.strip.length == 0
+      self.ssh_keys[key_name] = { "key" => ssh, "type" => ssh_type }
+    else
+      self.ssh_keys = {} unless self.ssh_keys
+    end
     self.login = login
     self.namespace = namespace
     self.max_gears = Rails.configuration.cdk[:default_max_gears]

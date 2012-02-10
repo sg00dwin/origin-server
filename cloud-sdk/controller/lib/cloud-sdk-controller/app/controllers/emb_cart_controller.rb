@@ -12,11 +12,34 @@ class EmbCartController < BaseController
     cartridges = Array.new
     unless application.embedded.nil?
       application.embedded.each do |key, value|
-        cartridge = RestCartridge.new("embedded", key)
+        cartridge = RestCartridge.new("embedded", key, id, domain_id)
         cartridges.push(cartridge)
       end
     end
-    @reply = RestReply.new(:ok, "cartridges", application.embedded)
+    @reply = RestReply.new(:ok, "cartridges", cartridges)
+    respond_with @reply, :status => @reply.status
+  end
+  
+  # GET /domains/[domain_id]/applications/[application_id]/cartridges/[cartridge_id]
+  def show
+    domain_id = params[:domain_id]
+    application_id = params[:application_id]
+    id = params[:id]
+    cloud_user = CloudUser.find(@login)
+    application = Application.find(cloud_user,id)
+    unless application.embedded.nil?
+      application.embedded.each do |key, value|
+        if key == id
+          cartridge = RestCartridge.new("embedded", key, id, domain_id)
+          @reply = RestReply.new(:ok, "cartridge", cartridge)
+          respond_with @reply, :status => @reply.status
+          return
+        end
+      end
+    end
+    @reply = RestReply.new(:not_found)
+    message = Message.new(:error, "Cartridge #{id} for application #{application_id} not found.")
+    @reply.messages.push(message)
     respond_with @reply, :status => @reply.status
   end
   
@@ -58,21 +81,28 @@ class EmbCartController < BaseController
     begin
       application.add_dependency(cartridge)
     rescue Exception => e
+      Rails.logger.error e
       @reply = RestReply.new(:internal_server_error)
-      message = Message.new(:error, "Failed to add #{cartridge} to application #{id}") 
-      @reply.messages.push(message)
-      message = Message.new(:error, e.message) 
+      message = Message.new(:error, "Failed to add #{cartridge} to application #{id} due to #{e.message}") 
       @reply.messages.push(message)
       respond_with @reply, :status => @reply.status
       return
     end
       
     application = Application.find(cloud_user,id)
-    app = RestApplication.new(application, domain_id)
-    @reply = RestReply.new(:ok, "application", app)
-    message = Message.new(:info, "Added #{cartridge} to application #{id}")
-    @reply.messages.push(message)
-    respond_with @reply, :status => @reply.status
+    
+    unless application.embedded.nil?
+      application.embedded.each do |key, value|
+        if key == cartridge
+          cartridge = RestCartridge.new("embedded", key, id, domain_id)
+          @reply = RestReply.new(:created, "cartridge", cartridge)
+          message = Message.new(:info, "Added #{cartridge} to application #{id}")
+          @reply.messages.push(message)
+          respond_with @reply, :status => @reply.status
+          return
+        end
+      end
+    end
   end
   
   # DELETE /domains/[domain_id]/applications/[application_id]/cartridges/[cartridge_id]
@@ -110,9 +140,7 @@ class EmbCartController < BaseController
     rescue Exception => e
       Rails.logger.error "Failed to Remove #{cartridge} from application #{id}: #{e.message}"
       @reply = RestReply.new(:internal_server_error)
-      message = Message.new(:error, "Failed to remove #{cartridge} from application #{id}") 
-      @reply.messages.push(message)
-      message = Message.new(:error, e.message) 
+      message = Message.new(:error, "Failed to remove #{cartridge} from application #{id} due to:#{e.message}") 
       @reply.messages.push(message)
       respond_with(@reply) do |format|
          format.xml { render :xml => @reply, :status => @reply.status }
