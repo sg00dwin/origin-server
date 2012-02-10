@@ -1,6 +1,7 @@
 = semantic_form_for :express_domain, :url => edit_sshkey_express_domains_path, :html => { :method => :put } do |f|
-  = f.hidden_field :dom_action, :value => "update"
-  = f.hidden_field :form_type, :value => 'sshkey'
-  = f.input :ssh, :as => :text, :required => false, :label => "Paste your public key"
+  = f.inputs do
+    = f.hidden_field :dom_action, :value => "update"
+    = f.hidden_field :form_type, :value => 'sshkey'
+    = f.input :ssh, :as => :text, :required => false, :label => "Paste your public key"
   = f.buttons do
-    = f.commit_button :button_html => { :class => 'button', :value => 'Save' }
+    = f.commit_button :button_html => { :class => 'btn btn-primary', :value => 'Save' }

@@ -105,7 +105,8 @@ class Application < Cloud::Sdk::Cartridge
     super(user.login)
   end
   
-  # Processes the application descriptor and creates all the gears necessary to host the application
+  # Processes the application descriptor and creates all the gears necessary to host the application.
+  # Destroys application on all gears if any gear fails
   # @return [ResultIO]
   def create
     result_io = ResultIO.new
@@ -156,7 +157,7 @@ class Application < Cloud::Sdk::Cartridge
     reply
   end
   
-  #destroys all application gears
+  # Destroys all gears. Logs message but does not throw an exception on failure to delete any particular gear.
   def destroy
     reply = ResultIO.new
     self.class.notify_observers(:before_application_destroy, {:application => self, :reply => reply})
@@ -175,7 +176,9 @@ class Application < Cloud::Sdk::Cartridge
     reply
   end
   
-  # configures all cartridges for the application based on the descriptor
+  # Elaborates the descriptor, deconfigures cartridges that were removed and configures cartridges that were added to the application dependencies.
+  # If a node is empty after removing components, then the gear is destroyed. Errors that occur while removing cartridges are logged but no exception is thrown.
+  # If an error occurs while configuring a cartridge, then the cartirdge is deconfigures on all nodes and an exception is thrown.
   def configure_dependencies
     reply = ResultIO.new
     self.class.notify_observers(:before_application_configure, {:application => self, :reply => reply})
@@ -191,6 +194,12 @@ class Application < Cloud::Sdk::Cartridge
         self.save
       end
       
+      f.each do |failed_data|
+        Rails.logger.debug("Failed to deconfigure cartridge #{comp_inst.parent_cart_name} on gear #{failed_data[:gear].server_id}:#{failed_data[:gear].uuid}")
+        Rails.logger.debug("Exception #{failed_data[:exception].message}")
+        Rails.logger.debug("#{failed_data[:exception].backtrace.inspect}")
+      end
+      
       run_on_gears(group_inst.gears, reply, false) do |gear, r|
         r.append gear.destroy if gear.configured_components.length == 0
         self.save        
@@ -203,14 +212,17 @@ class Application < Cloud::Sdk::Cartridge
     self.configure_order.each do |comp_inst_name|
       comp_inst = self.comp_instance_map[comp_inst_name]
       group_inst = self.group_instance_map[comp_inst.group_instance_name]
-      s,f = run_on_gears(group_inst.gears, reply, true) do |gear, r|
-        r.append gear.configure(comp_inst)
-        r.append process_cartridge_commands(r.cart_commands)
-        self.save
-      end
-      # if there are any failures then deconfigure and destory empty nodes
-      if(f.length > 0)
-        run_on_gears(s.map{|g| g[:gear]}, reply, false) do |gear, r|
+      begin
+        run_on_gears(group_inst.gears, reply) do |gear, r|
+          r.append gear.configure(comp_inst)
+          r.append process_cartridge_commands(r.cart_commands)
+          self.save
+        end
+      rescue Exception => e
+        succesful_gears = e.message[:succesful].map{|g| g[:gear]}
+        gear_exception = e.message[:exception]        
+
+        run_on_gears(succesful_gears, reply, false) do |gear, r|
           r.append gear.deconfigure(comp_inst)
           r.append process_cartridge_commands(r.cart_commands)
           self.save
@@ -219,7 +231,7 @@ class Application < Cloud::Sdk::Cartridge
           r.append gear.destroy if gear.configured_components.length == 0
           self.save
         end
-        raise f[0][:exception]
+        raise gear_exception
       end
     end
     save
@@ -227,7 +239,7 @@ class Application < Cloud::Sdk::Cartridge
     reply
   end
   
-  #deconfigure all cartriges for the application
+  # Deconfigure all cartriges for the application. Errors are logged but no exception is thrown.
   def deconfigure_dependencies
     reply = ResultIO.new
     self.class.notify_observers(:before_application_deconfigure, {:application => self, :reply => reply})  
@@ -244,11 +256,10 @@ class Application < Cloud::Sdk::Cartridge
     reply
   end
   
-  # @overload start()
-  #   starts all application components in start order
-  # @overload start(dependency)
-  #   Start a particular dependency on all gears that host it.
-  #   @param [String] dependency Name of a cartridge to start
+  # Start a particular dependency on all gears that host it. 
+  # If unable to start a component, the application is stopped on all gears
+  # @param [String] dependency Name of a cartridge to start. Set to nil for all dependencies.
+  # @param [Boolean] force_stop_on_failure
   def start(dependency=nil, stop_on_failure=true)
     reply = ResultIO.new
     self.class.notify_observers(:before_start, {:application => self, :reply => reply, :dependency => dependency})
@@ -256,25 +267,26 @@ class Application < Cloud::Sdk::Cartridge
       comp_inst = self.comp_instance_map[comp_inst_name]
       next if !dependency.nil? and (comp_inst.parent_cart_name != dependency)
       
-      group_inst = self.group_instance_map[comp_inst.group_instance_name]
-      s,f = run_on_gears(group_inst.gears, reply, true) do |gear, r|
-        r.append gear.start(comp_inst)
-      end
-      
-      if(f.length > 0 and stop_on_failure)
-        self.stop(dependency)
+      begin
+        group_inst = self.group_instance_map[comp_inst.group_instance_name]
+        run_on_gears(group_inst.gears, reply) do |gear, r|
+          r.append gear.start(comp_inst)
+        end
+      rescue Exception => e
+        gear_exception = e.message[:exception]
+        self.stop(dependency,false,false) if stop_on_failure
+        raise gear_exception
       end
     end
     self.class.notify_observers(:after_start, {:application => self, :reply => reply, :dependency => dependency})
-    reply    
+    reply
   end
   
-  # @overload stop()
-  #   Stops all application components in reverse start order
-  # @overload stop(dependency)
-  #   Stop a particular dependency on all gears that host it.
-  #   @param [String] dependency Name of a cartridge to start
-  def stop(dependency=nil,force_stop_on_failure=true)
+  # Stop a particular dependency on all gears that host it.
+  # @param [String] dependency Name of a cartridge to start. Set to nil for all dependencies.
+  # @param [Boolean] force_stop_on_failure
+  # @param [Boolean] throw_exception_on_failure
+  def stop(dependency=nil,force_stop_on_failure=true, throw_exception_on_failure=true)
     reply = ResultIO.new
     self.class.notify_observers(:before_stop, {:application => self, :reply => reply, :dependency => dependency})
     self.start_order.each do |comp_inst_name|
@@ -286,20 +298,19 @@ class Application < Cloud::Sdk::Cartridge
         r.append gear.stop(comp_inst)
       end
       
-      if(f.length > 0 && force_stop_on_failure)
-        self.force_stop(dependency)
+      if(f.length > 0)
+        self.force_stop(dependency,false) if(force_stop_on_failure)
+        raise f[0][:exception] if(throw_exception_on_failure)
       end
     end
     self.class.notify_observers(:after_stop, {:application => self, :reply => reply, :dependency => dependency})
     reply    
   end
   
-  # @overload stop()
-  #   Force stops all application components in reverse start order
-  # @overload stop(dependency)
-  #   Force stop a particular dependency on all gears that host it.
-  #   @param [String] dependency Name of a cartridge to stop
-  def force_stop(dependency=nil)
+  # Force stop a particular dependency on all gears that host it.
+  # @param [String] dependency Name of a cartridge to stop. Set to nil for all dependencies.
+  # @param [Boolean] throw_exception_on_failure
+  def force_stop(dependency=nil, throw_exception_on_failure=true)
     reply = ResultIO.new
     self.class.notify_observers(:before_force_stop, {:application => self, :reply => reply, :dependency => dependency})
     self.start_order.each do |comp_inst_name|
@@ -307,19 +318,18 @@ class Application < Cloud::Sdk::Cartridge
       next if !dependency.nil? and (comp_inst.parent_cart_name != dependency)
       
       group_inst = self.group_instance_map[comp_inst.group_instance_name]
-      run_on_gears(group_inst.gears, reply, false) do |gear, r|
+      s,f = run_on_gears(group_inst.gears, reply, false) do |gear, r|
         r.append gear.force_stop(comp_inst)
       end
+      
+      raise f[0][:exception] if(f.length > 0 and throw_exception_on_failure)
     end
     self.class.notify_observers(:after_force_stop, {:application => self, :reply => reply, :dependency => dependency})
     reply    
   end
   
-  # @overload restart()
-  #   Restarts all application components in start order
-  # @overload restart(dependency)
-  #   Restart a particular dependency on all gears that host it.
-  #   @param [String] dependency Name of a cartridge to restart
+  # Restart a particular dependency on all gears that host it.
+  # @param [String] dependency Name of a cartridge to restart. Set to nil for all dependencies.
   def restart(dependency=nil)
     reply = ResultIO.new
     self.class.notify_observers(:before_restart, {:application => self, :reply => reply, :dependency => dependency})
@@ -328,19 +338,18 @@ class Application < Cloud::Sdk::Cartridge
       next if !dependency.nil? and (comp_inst.parent_cart_name != dependency)
       
       group_inst = self.group_instance_map[comp_inst.group_instance_name]
-      run_on_gears(group_inst.gears, reply, false) do |gear, r|
+      s,f = run_on_gears(group_inst.gears, reply, false) do |gear, r|
         r.append gear.restart(comp_inst)
       end
+      
+      raise f[0][:exception] if(f.length > 0)
     end
     self.class.notify_observers(:after_restart, {:application => self, :reply => reply, :dependency => dependency})
     reply    
   end
   
-  # @overload reload()
-  #   Reloads all application components in start order
-  # @overload reload(dependency)
-  #   Reload a particular dependency on all gears that host it.
-  #   @param [String] dependency Name of a cartridge to reload
+  # Reload a particular dependency on all gears that host it.
+  # @param [String] dependency Name of a cartridge to reload. Set to nil for all dependencies.
   def reload(dependency=nil)
     reply = ResultIO.new
     self.class.notify_observers(:before_reload, {:application => self, :reply => reply, :dependency => dependency})
@@ -349,64 +358,80 @@ class Application < Cloud::Sdk::Cartridge
       next if !dependency.nil? and (comp_inst.parent_cart_name != dependency)
       
       group_inst = self.group_instance_map[comp_inst.group_instance_name]
-      run_on_gears(group_inst.gears, reply, false) do |gear, r|
+      s,f = run_on_gears(group_inst.gears, reply, false) do |gear, r|
         r.append gear.reload(comp_inst)
       end
+      
+      raise f[0][:exception] if(f.length > 0)
     end
     self.class.notify_observers(:after_reload, {:application => self, :reply => reply, :dependency => dependency})
     reply
   end
   
-  # @overload status()
-  #   Retrieves status for all application components
-  # @overload status(dependency)
-  #   Retrieves status for a particular dependency on all gears that host it.
-  #   @param [String] dependency Name of a cartridge
+  # Retrieves status for a particular dependency on all gears that host it.
+  # @param [String] dependency Name of a cartridge
   def status(dependency=nil)
     reply = ResultIO.new
     self.comp_instance_map.each do |comp_inst_name, comp_inst|
       next if !dependency.nil? and (comp_inst.parent_cart_name != dependency)
       
       group_inst = self.group_instance_map[comp_inst.group_instance_name]
-      run_on_gears(group_inst.gears, reply, false) do |gear, r|
+      s,f = run_on_gears(group_inst.gears, reply, false) do |gear, r|
         r.append gear.status(comp_inst)
       end
+      
+      raise f[0][:exception] if(f.length > 0)      
     end
     reply
   end
   
-  # @overload tidy()
-  #   Invokes tidy on all application components
-  # @overload tidy(dependency)
-  #   Invokes tidy for a particular dependency on all gears that host it.
-  #   @param [String] dependency Name of a cartridge
+  # Invokes tidy for a particular dependency on all gears that host it.
+  # @param [String] dependency Name of a cartridge
   def tidy(dependency=nil)
     reply = ResultIO.new
     self.comp_instance_map.each do |comp_inst_name, comp_inst|
       next if !dependency.nil? and (comp_inst.parent_cart_name != dependency)
       
       group_inst = self.group_instance_map[comp_inst.group_instance_name]
-      run_on_gears(group_inst.gears, reply, false) do |gear, r|
+      s,f = run_on_gears(group_inst.gears, reply, false) do |gear, r|
         r.append gear.tidy(comp_inst)
       end
+      
+      raise f[0][:exception] if(f.length > 0)      
     end
     reply
   end
   
-  # @overload threaddump()
-  #   Invokes threaddump on all application components
-  # @overload threaddump(dependency)
-  #   Invokes threaddump for a particular dependency on all gears that host it.
-  #   @param [String] dependency Name of a cartridge
+  # Invokes threaddump for a particular dependency on all gears that host it.
+  # @param [String] dependency Name of a cartridge
   def threaddump(dependency=nil)
     reply = ResultIO.new
     self.comp_instance_map.each do |comp_inst_name, comp_inst|
       next if !dependency.nil? and (comp_inst.parent_cart_name != dependency)
       
       group_inst = self.group_instance_map[comp_inst.group_instance_name]
-      run_on_gears(group_inst.gears, reply, false) do |gear, r|
+      s,f = run_on_gears(group_inst.gears, reply, false) do |gear, r|
         r.append gear.threaddump(comp_inst)
       end
+      
+      raise f[0][:exception] if(f.length > 0)      
+    end
+    reply
+  end
+  
+  # Invokes system_messages for a particular dependency on all gears that host it.
+  # @param [String] dependency Name of a cartridge  
+  def system_messages(dependency=nil)
+    reply = ResultIO.new
+    self.comp_instance_map.each do |comp_inst_name, comp_inst|
+      next if !dependency.nil? and (comp_inst.parent_cart_name != dependency)
+      
+      group_inst = self.group_instance_map[comp_inst.group_instance_name]
+      s,f = run_on_gears(group_inst.gears, reply, false) do |gear, r|
+        r.append gear.system_messages(comp_inst)
+      end
+      
+      raise f[0][:exception] if(f.length > 0)      
     end
     reply
   end
@@ -424,19 +449,7 @@ class Application < Cloud::Sdk::Cartridge
     reply
   end
 
-  def system_messages(dependency=nil)
-    reply = ResultIO.new
-    self.comp_instance_map.each do |comp_inst_name, comp_inst|
-      next if !dependency.nil? and (comp_inst.parent_cart_name != dependency)
-      
-      group_inst = self.group_instance_map[comp_inst.group_instance_name]
-      run_on_gears(group_inst.gears, reply, false) do |gear, r|
-        r.append gear.system_messages(comp_inst)
-      end
-    end
-    reply
-  end
-  
+
   def conceal_port(dependency=nil)
     reply = ResultIO.new
     self.comp_instance_map.each do |comp_inst_name, comp_inst|
@@ -452,33 +465,37 @@ class Application < Cloud::Sdk::Cartridge
   
   def add_authorized_ssh_key(ssh_key, key_type=nil, comment=nil)
     reply = ResultIO.new
-    run_on_gears(nil,reply,false) do |gear,r|
+    s,f = run_on_gears(nil,reply,false) do |gear,r|
       r.append gear.add_authorized_ssh_key(ssh_key, key_type, comment)
     end
+    raise f[0][:exception] if(f.length > 0)    
     reply
   end
   
   def remove_authorized_ssh_key(ssh_key)
     reply = ResultIO.new
-    run_on_gears(nil,reply,false) do |gear,r|
+    s,f = run_on_gears(nil,reply,false) do |gear,r|
       r.append gear.remove_authorized_ssh_key(ssh_key)
     end
+    raise f[0][:exception] if(f.length > 0)    
     reply
   end
   
   def add_env_var(key, value)
     reply = ResultIO.new
-    run_on_gears(nil,reply,false) do |gear,r|
+    s,f = run_on_gears(nil,reply,false) do |gear,r|
       r.append gear.add_env_var(key, value)
     end
+    raise f[0][:exception] if(f.length > 0)  
     reply
   end
   
   def remove_env_var(key)
     reply = ResultIO.new
-    run_on_gears(nil,reply,false) do |gear,r|
+    s,f = run_on_gears(nil,reply,false) do |gear,r|
       r.append gear.remove_env_var(key)
     end
+    raise f[0][:exception] if(f.length > 0)    
     reply
   end
   
@@ -488,17 +505,19 @@ class Application < Cloud::Sdk::Cartridge
     token = Base64::encode64(token).gsub("\n", '')
     
     reply = ResultIO.new
-    run_on_gears(nil,reply,false) do |gear,r|
+    s,f = run_on_gears(nil,reply,false) do |gear,r|
       r.append gear.add_broker_auth_key(iv,token)
     end
+    raise f[0][:exception] if(f.length > 0)    
     reply
   end
   
   def remove_broker_key
     reply = ResultIO.new
-    run_on_gears(nil,reply,false) do |gear,r|
+    s,f = run_on_gears(nil,reply,false) do |gear,r|
       r.append gear.remove_broker_auth_key
     end
+    raise f[0][:exception] if(f.length > 0)    
     reply
   end
   
@@ -597,11 +616,11 @@ class Application < Cloud::Sdk::Cartridge
     reply = ResultIO.new
     begin
       self.aliases.push(server_alias)
-      reply.append self.container.add_alias(self, self.framework, server_alias)
+      reply.append self.container.add_alias(self, self.gear, self.framework, server_alias)
     rescue Exception => e
       Rails.logger.debug e.message
       Rails.logger.debug e.backtrace.inspect
-      reply.append self.container.remove_alias(self, self.framework, server_alias)      
+      reply.append self.container.remove_alias(self, self.gear, self.framework, server_alias)      
       self.aliases.delete(server_alias)
     ensure
       self.save      
@@ -613,7 +632,7 @@ class Application < Cloud::Sdk::Cartridge
     self.aliases = [] unless self.aliases
     reply = ResultIO.new
     begin
-      reply.append self.container.remove_alias(self, self.framework, server_alias)
+      reply.append self.container.remove_alias(self, self.gear, self.framework, server_alias)
     rescue Exception => e
       Rails.logger.debug e.message
       Rails.logger.debug e.backtrace.inspect
@@ -656,135 +675,6 @@ class Application < Cloud::Sdk::Cartridge
     reply
   end
 
-  # Parse the descriptor and build or update the runtime descriptor structure
-  def elaborate_descriptor
-    self.group_instance_map = {} if group_instance_map.nil?
-    self.comp_instance_map = {} if comp_instance_map.nil?
-    self.working_comp_inst_hash = {}
-    self.working_group_inst_hash = {}
-    self.group_override_map = {} 
-    self.conn_endpoints_list = [] 
-    default_profile = @profile_name_map[@default_profile]
-    
-    generate_group_overrides(default_profile)
-
-    default_profile.groups.each { |g|
-      gpath = self.name + "." + g.name
-      mapped_path = group_override_map[gpath] || ""
-      gi = working_group_inst_hash[mapped_path]
-      if gi.nil?
-        gi = self.group_instance_map[gpath]
-        if gi.nil?
-          gi = GroupInstance.new(self, self.name, self.default_profile, g.name, gpath) 
-        else
-          gi.merge(self.name, self.default_profile, g.name, gpath)
-        end
-      else
-        gi.merge(self.name, self.default_profile, g.name, gpath)
-      end
-      self.group_instance_map[gpath] = gi
-      self.working_group_inst_hash[gpath] = gi
-      gi.elaborate(g, "", self)
-    }
-    
-    # make connection_endpoints out of provided connections
-    default_profile.connections.each { |conn|
-      inst1 = ComponentInstance::find_component_in_cart(profile, app, conn.components[0], self.name)
-      inst2 = ComponentInstance::find_component_in_cart(profile, app, conn.components[1], self.name)
-      ComponentInstance::establish_connections(inst1, inst2, app)
-    }
-    # check self.comp_instance_map for component instances
-    # check self.group_instance_map for group instances
-    # check self.conn_endpoints_list for list of connection endpoints (fully resolved)
-
-    # auto merge top groups
-    auto_merge_top_groups(default_profile)
-
-    # resolve group co-locations
-    colocate_groups
-    
-    # get configure_order and start_order
-    get_exec_order(default_profile)
-
-    deleted_components_list = []
-    self.comp_instance_map.each { |k,v| deleted_components_list << k if self.working_comp_inst_hash[k].nil?  }
-    deleted_components_list
-  end
-
-  def cleanup_deleted_components
-    # delete entries in {group,comp}_instance_map that do 
-    # not exist in working_{group,comp}_inst_hash
-    self.group_instance_map.delete_if { |k,v| 
-      v.component_instances.delete(k) if self.working_comp_inst_hash[k].nil? and v.component_instances.include?(k)
-      self.working_group_inst_hash[k].nil? 
-    }
-    self.comp_instance_map.delete_if { |k,v| self.working_comp_inst_hash[k].nil?  }
-  end
-
-  def get_exec_order(default_profile)
-    self.configure_order = []
-    self.start_order = []
-    cpath = self.name + "." + default_profile.groups.first.component_refs.first.name
-    cinst = self.comp_instance_map[cpath]
-    ComponentInstance::collect_exec_order(self, cinst, self.configure_order)
-    ComponentInstance::collect_exec_order(self, cinst, self.start_order)
-    self.configure_order << cpath
-    self.start_order << cpath
-  end
-
-  def colocate_groups
-    self.conn_endpoints_list.each { |conn|
-      if conn.from_connector.type.match(/^FILESYSTEM/) or conn.from_connector.type.match(/^AFUNIX/)
-        cinst1 = self.comp_instance_map[conn.from_comp_inst]
-        ginst1 = self.group_instance_map[cinst1.group_instance_name]
-        cinst2 = self.comp_instance_map[conn.to_comp_inst]
-        ginst2 = self.group_instance_map[cinst2.group_instance_name]
-        next if ginst1==ginst2
-        # these two group instances need to be colocated
-        #ginst1.merge(ginst2.cart_name, ginst2.profile_name, ginst2.group_name, ginst2.name, ginst2.component_instances)
-        ginst1.merge_inst(ginst2)
-        self.group_instance_map[conn.to_comp_inst.group_instance_name] = ginst1
-      end
-    }
-  end
-
-  def generate_group_overrides(default_profile)
-    if not default_profile.group_overrides.empty?
-      default_profile.group_overrides.each do |n, v|
-        from = self.name + "." + n
-        to = self.name + "." + v
-        self.group_override_map[from] = to
-      end
-    else
-      default_profile = @profile_name_map[@default_profile]
-      first_group = default_profile.groups[0]
-      default_profile.groups.each do |g|
-        next if first_group==g
-        self.group_override_map[self.name + "." + g.name] = self.name + "." + first_group.name
-      end
-    end
-  end
-
-  def auto_merge_top_groups(default_profile)
-    first_group = default_profile.groups[0]
-    gpath = self.name + "." + first_group.name
-    gi = self.group_instance_map[gpath]
-    first_group.component_refs.each { |comp_ref|
-      cpath = self.name + "." + comp_ref.name
-      ci = self.comp_instance_map[cpath]
-      ci.dependencies.each { |cdep|
-        cdepinst = self.comp_instance_map[cdep]
-        ginst = self.group_instance_map[cdepinst.group_instance_name]
-        next if ginst==gi
-        Rails.logger.debug "Auto-merging group #{ginst.name} into #{gi.name}"
-        # merge ginst into gi
-        #gi.merge(ginst.cart_name, ginst.profile_name, ginst.group_name, ginst.name, ginst.component_instances)
-        gi.merge_inst(ginst)
-        self.group_instance_map[cdepinst.group_instance_name] = gi
-      }
-    }
-  end
-  
   # Returns the first Gear object on which the application is running
   # @return [Gear]
   # @deprecated  
@@ -902,6 +792,137 @@ class Application < Cloud::Sdk::Cartridge
    
 private
 
+
+  # Parse the descriptor and build or update the runtime descriptor structure
+  def elaborate_descriptor
+    self.group_instance_map = {} if group_instance_map.nil?
+    self.comp_instance_map = {} if comp_instance_map.nil?
+    self.working_comp_inst_hash = {}
+    self.working_group_inst_hash = {}
+    self.group_override_map = {} 
+    self.conn_endpoints_list = [] 
+    default_profile = @profile_name_map[@default_profile]
+    
+    generate_group_overrides(default_profile)
+  
+    default_profile.groups.each { |g|
+      gpath = self.name + "." + g.name
+      mapped_path = group_override_map[gpath] || ""
+      gi = working_group_inst_hash[mapped_path]
+      if gi.nil?
+        gi = self.group_instance_map[gpath]
+        if gi.nil?
+          gi = GroupInstance.new(self, self.name, self.default_profile, g.name, gpath) 
+        else
+          gi.merge(self.name, self.default_profile, g.name, gpath)
+        end
+      else
+        gi.merge(self.name, self.default_profile, g.name, gpath)
+      end
+      self.group_instance_map[gpath] = gi
+      self.working_group_inst_hash[gpath] = gi
+      gi.elaborate(g, "", self)
+    }
+    
+    # make connection_endpoints out of provided connections
+    default_profile.connections.each { |conn|
+      inst1 = ComponentInstance::find_component_in_cart(profile, app, conn.components[0], self.name)
+      inst2 = ComponentInstance::find_component_in_cart(profile, app, conn.components[1], self.name)
+      ComponentInstance::establish_connections(inst1, inst2, app)
+    }
+    # check self.comp_instance_map for component instances
+    # check self.group_instance_map for group instances
+    # check self.conn_endpoints_list for list of connection endpoints (fully resolved)
+  
+    # auto merge top groups
+    auto_merge_top_groups(default_profile)
+  
+    # resolve group co-locations
+    colocate_groups
+    
+    # get configure_order and start_order
+    get_exec_order(default_profile)
+  
+    deleted_components_list = []
+    self.comp_instance_map.each { |k,v| deleted_components_list << k if self.working_comp_inst_hash[k].nil?  }
+    deleted_components_list
+  end
+  
+  def cleanup_deleted_components
+    # delete entries in {group,comp}_instance_map that do 
+    # not exist in working_{group,comp}_inst_hash
+    self.group_instance_map.delete_if { |k,v| 
+      v.component_instances.delete(k) if self.working_comp_inst_hash[k].nil? and v.component_instances.include?(k)
+      self.working_group_inst_hash[k].nil? 
+    }
+    self.comp_instance_map.delete_if { |k,v| self.working_comp_inst_hash[k].nil?  }
+  end
+  
+  def get_exec_order(default_profile)
+    self.configure_order = []
+    self.start_order = []
+    cpath = self.name + "." + default_profile.groups.first.component_refs.first.name
+    cinst = self.comp_instance_map[cpath]
+    ComponentInstance::collect_exec_order(self, cinst, self.configure_order)
+    ComponentInstance::collect_exec_order(self, cinst, self.start_order)
+    self.configure_order << cpath
+    self.start_order << cpath
+  end
+  
+  def colocate_groups
+    self.conn_endpoints_list.each { |conn|
+      if conn.from_connector.type.match(/^FILESYSTEM/) or conn.from_connector.type.match(/^AFUNIX/)
+        cinst1 = self.comp_instance_map[conn.from_comp_inst]
+        ginst1 = self.group_instance_map[cinst1.group_instance_name]
+        cinst2 = self.comp_instance_map[conn.to_comp_inst]
+        ginst2 = self.group_instance_map[cinst2.group_instance_name]
+        next if ginst1==ginst2
+        # these two group instances need to be colocated
+        #ginst1.merge(ginst2.cart_name, ginst2.profile_name, ginst2.group_name, ginst2.name, ginst2.component_instances)
+        ginst1.merge_inst(ginst2)
+        self.group_instance_map[conn.to_comp_inst.group_instance_name] = ginst1
+      end
+    }
+  end
+  
+  def generate_group_overrides(default_profile)
+    if not default_profile.group_overrides.empty?
+      default_profile.group_overrides.each do |n, v|
+        from = self.name + "." + n
+        to = self.name + "." + v
+        self.group_override_map[from] = to
+      end
+    else
+      default_profile = @profile_name_map[@default_profile]
+      first_group = default_profile.groups[0]
+      default_profile.groups.each do |g|
+        next if first_group==g
+        self.group_override_map[self.name + "." + g.name] = self.name + "." + first_group.name
+      end
+    end
+  end
+  
+  def auto_merge_top_groups(default_profile)
+    first_group = default_profile.groups[0]
+    gpath = self.name + "." + first_group.name
+    gi = self.group_instance_map[gpath]
+    first_group.component_refs.each { |comp_ref|
+      cpath = self.name + "." + comp_ref.name
+      ci = self.comp_instance_map[cpath]
+      ci.dependencies.each { |cdep|
+        cdepinst = self.comp_instance_map[cdep]
+        ginst = self.group_instance_map[cdepinst.group_instance_name]
+        next if ginst==gi
+        Rails.logger.debug "Auto-merging group #{ginst.name} into #{gi.name}"
+        # merge ginst into gi
+        #gi.merge(ginst.cart_name, ginst.profile_name, ginst.group_name, ginst.name, ginst.component_instances)
+        gi.merge_inst(ginst)
+        self.group_instance_map[cdepinst.group_instance_name] = gi
+      }
+    }
+  end
+
+
   # Runs the provided block on a set of containers
   # @param [Array<Gear>] Array of containers to run the block on. If nil, will run on all containers.
   # @param [Boolean] fail_fast Stop running immediately if an exception is raised
@@ -922,10 +943,10 @@ private
         Rails.logger.error e.backtrace.inspect        
         failed_runs.push({:gear => gear, :exception => e})
         if (!result_io.nil? && e.kind_of?(Cloud::Sdk::CdkException) && !e.resultIO.nil?)
-          result_io.append(e.resultIO) 
+          result_io.append(e.resultIO)
         end
         if fail_fast
-          return successful_runs, failed_runs
+          raise Exception.new({:succesful => successful_runs, :failed => failed_runs, :exception => e})
         end
       end
     end

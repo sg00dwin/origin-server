@@ -120,15 +120,15 @@ RedHatCloud::Application.routes.draw do
               :as => "express_apps",
               :only => [:new, :create]
 
+    match 'console' => 'console#index', :via => :get
     scope '/console' do
-      resource  :applications,
+      resources :application_types, :only => [:show], :id => /[^\/]+/
+
+      resources :applications,
                 :controller => "applications" do
-        # console applications page
         match 'delete' => 'applications#confirm_delete', :via => :get
+        # should be updated to be restful
         match 'delete' => 'applications#delete', :via => :post
-        match 'add' => 'applications#show_add', :via => :get
-        match 'add' => 'applications#add', :via => :post
-        match 'index' => 'applications#index'
       end
     end
 
