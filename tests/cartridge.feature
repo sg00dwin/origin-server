@@ -13,6 +13,7 @@ Feature: Cartridge Verification Tests
     |     1     |  perl-5.10   |
     |     1     |  ruby-1.8    |
     |     1     |  jbossas-7.0 |
+    |     1     |  nodejs-0.6  |
     |     1     |  jenkins-1.4 |
     |     1     |  raw-0.1     |
 
@@ -29,6 +30,7 @@ Feature: Cartridge Verification Tests
     |   perl-5.10   |
     |   ruby-1.8    |
     |   jbossas-7.0 |
+    |   nodejs-0.6  |
 
   Scenario Outline: Application Stopping
     Given an existing <type> application
@@ -42,6 +44,7 @@ Feature: Cartridge Verification Tests
     |   perl-5.10   |
     |   ruby-1.8    |
     |   jbossas-7.0 |
+    |   nodejs-0.6  |
     |   jenkins-1.4 |
 
   Scenario Outline: Application Starting
@@ -56,6 +59,7 @@ Feature: Cartridge Verification Tests
     |   perl-5.10   |
     |   ruby-1.8    |
     |   jbossas-7.0 |
+    |   nodejs-0.6  |
     |   jenkins-1.4 |
 
   Scenario Outline: Server Alias
@@ -79,6 +83,7 @@ Feature: Cartridge Verification Tests
     |   perl-5.10   |
     |   ruby-1.8    |
     |   jbossas-7.0 |
+    |   nodejs-0.6  |
     |   jenkins-1.4 |
     
   Scenario Outline: Application Change Namespace
@@ -102,6 +107,7 @@ Feature: Cartridge Verification Tests
     |      type     |
     |   php-5.3     |
     |   jbossas-7.0 |
+    |   nodejs-0.6  |
 
   Scenario Outline: Application Tidy
     Given an existing <type> application
@@ -113,6 +119,7 @@ Feature: Cartridge Verification Tests
     |   php-5.3     |
     |   ruby-1.8    |
     |   jbossas-7.0 |
+    |   nodejs-0.6  |
 
   Scenario Outline: Application Destroying
     Given an existing <type> application
@@ -126,5 +133,7 @@ Feature: Cartridge Verification Tests
     |   perl-5.10   |
     |   ruby-1.8    |
     |   jbossas-7.0 |
+    |   nodejs-0.6  |
     |   jenkins-1.4 |
     |   raw-0.1     |
+
