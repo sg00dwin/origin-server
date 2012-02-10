@@ -43,6 +43,5 @@ if [$result .eq ""]; then
     client_result "The thread dump file will be available via 'rhc-tail-files -a ${application} -f ${application}/logs/error_log-$DATE-000000-EST'"
 else
     client_result " $result"
-    exit 1
 fi
 
