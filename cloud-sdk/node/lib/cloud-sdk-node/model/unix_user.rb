@@ -197,7 +197,59 @@ module Cloud::Sdk
       }
       Process.wait  
     end
-    
+
+    def proxy_port_list
+      proxy_ports_per_user = (@config.get("proxy_ports_per_user") || "5").to_i
+      proxy_ports_begin = (@config.get("proxy_ports_begin") || "35531").to_i
+      min_uid = (@config.get("user_min_uid") || "500").to_i
+      max_uid = (@config.get("user_max_uid") || "1500").to_i
+
+      first_port = (@uid - min_uid) * proxy_ports_per_user + proxy_ports_begin
+      last_port = first_port + proxy_ports_per_user - 1
+      (first_port..last_port)
+    end
+
+    def proxy_alloc_next_port(proxy_target, prefix_cloud_name=false)
+      self.class.notify_observers(:before_proxy_alloc_next_port, self, proxy_target)
+      env_dir = File.join(@homedir,".env")
+      proxy_port_list().each do |proxy_port|
+        key = "#{proxy_port}_PUB_PORT"
+        env_var = "PUB_PORT"
+        if prefix_cloud_name
+          key = (@config.get("cloud_name") || "CDK") + "_#{key}"
+          env_var = (@config.get("cloud_name") || "CDK") + "_#{env_var}"
+        end
+        begin
+          File.open(File.join(env_dir, key), File::WRONLY|File::CREAT|File::EXCL) do |file|
+            file.write "#{env_var}[#{proxy_port}]='#{proxy_target}'"
+            file.write "export #{env_var}"
+          end
+          self.class.notify_observers(:after_proxy_alloc_next_port, self, proxy_port, proxy_target)
+          return proxy_port
+        rescue Errno::EEXIST
+        end
+      end
+      nil
+    end
+
+    def proxy_remove_port(proxy_port, prefix_cloud_name=false)
+      if not proxy_port_list().include?(proxy_port)
+        return nil
+      end
+
+      self.class.notify_observers(:before_proxy_remove_port, self, proxy_port)
+      env_dir = File.join(@homedir,".env")
+      key = "#{proxy_port}_PUB_PORT"
+      if prefix_cloud_name
+        key = (@config.get("cloud_name") || "CDK") + "_#{key}"
+      end
+      begin
+        File::unlink(File.join(env_dir, key))
+      rescue Errno::ENOENT
+      end
+      self.class.notify_observers(:after_proxy_remove_port, self, proxy_port)
+    end
+
     private
     
     def initialize_homedir

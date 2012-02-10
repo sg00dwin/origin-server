@@ -151,7 +151,7 @@ pam_sm_setcred(pam_handle_t *pamh UNUSED, int flags UNUSED,
 	return PAM_SUCCESS;
 }
 
-static void openshift_mcs_level(int uid, security_context_t *scon) {
+static void get_mcs_level(int uid, security_context_t *scon) {
 	int SETSIZE = 1023;
 	int TIER = SETSIZE;
 
@@ -237,7 +237,7 @@ pam_sm_open_session(pam_handle_t *pamh, int flags UNUSED,
 	}
 
 	if (libra_domain(pamh, pw)) {
-		openshift_mcs_level(pw->pw_uid, &user_context);
+		get_mcs_level(pw->pw_uid, &user_context);
 	} else {
 		user_context = strdup("unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023");
 	}

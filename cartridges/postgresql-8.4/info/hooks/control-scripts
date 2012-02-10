@@ -56,7 +56,6 @@ function _reload_postgres_service() {
 
 
 function _move_postgres_service() {
-   source ${CART_DIR}/abstract/info/lib/selinux
    source ${CART_DIR}/abstract/info/lib/apache
    source ${CART_DIR}/abstract/info/lib/network
    load_node_conf
@@ -87,7 +86,6 @@ set_app_info "Connection URL: postgresql://$IP:5432/"
 }  #  End of function  _move_postgres_service.
 
 function _pre_move_postgres_service() {
-   source ${CART_DIR}/abstract/info/lib/selinux
    source ${CART_DIR}/abstract/info/lib/apache
    source ${CART_DIR}/abstract/info/lib/network
    load_node_conf
@@ -95,7 +93,6 @@ function _pre_move_postgres_service() {
 }  #  End of function  _pre_move_postgres_service.
 
 function _post_move_postgres_service() {
-   source ${CART_DIR}/abstract/info/lib/selinux
    source ${CART_DIR}/abstract/info/lib/apache
    source ${CART_DIR}/abstract/info/lib/network
    load_node_conf

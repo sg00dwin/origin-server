@@ -90,7 +90,7 @@ populate_repo_dir
 
 secure_app_dir
 
-setup_app_dir_and_git
+observe_setup_app_and_git_dirs
 
 #
 # Create environment variables

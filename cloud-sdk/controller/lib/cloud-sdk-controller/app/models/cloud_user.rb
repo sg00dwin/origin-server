@@ -271,8 +271,10 @@ class CloudUser < Cloud::Sdk::UserModel
     notify_observers(:before_cloud_user_create)
     dns_service = Cloud::Sdk::DnsService.instance
     begin
-      if CloudUser.find(@login)
-        raise Cloud::Sdk::UserException.new("A user with login '#{@login}' already exists", 102, resultIO)
+      user = CloudUser.find(@login)
+      if user
+        #TODO Rework when we allow multiple domains per user
+        raise Cloud::Sdk::UserException.new("User with login '#{@login}' already has a domain with namespace '#{user.namespace}'", 102, resultIO)
       end
 
       raise Cloud::Sdk::UserException.new("A namespace with name '#{namespace}' already exists", 103, resultIO) unless dns_service.namespace_available?(@namespace)

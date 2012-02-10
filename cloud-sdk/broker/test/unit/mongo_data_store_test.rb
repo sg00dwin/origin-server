@@ -86,7 +86,7 @@ class MongoDataStoreTest < ActiveSupport::TestCase
     a = ds.find("Application", user_id, orig_a["name"])
     assert_equal(orig_a, a)
     
-    orig_a["embedded"] = {"mongodb-2.0" => {"info" => "Connection URL: mongodb://..."}, "rockmongo-1.1" => {"info" => "URL: http://..."}}
+    orig_a["embedded"] = {"mysql-5.1" => {"info" => "Connection URL: mysql://..."}}
     ds.save("Application", user_id, orig_a["name"], orig_a)
     a = ds.find("Application", user_id, orig_a["name"])
     assert_equal(orig_a, a)

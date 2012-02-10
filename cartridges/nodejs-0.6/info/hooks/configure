@@ -55,7 +55,7 @@ populate_repo_dir
 
 secure_app_dir
 
-setup_app_dir_and_git
+observe_setup_app_and_git_dirs
 
 # npm keeps per-user config in ~/.npmrc and cache in ~/.npm/
 # Create files/directories, change ownership and SELinux file security context.

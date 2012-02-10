@@ -113,7 +113,7 @@ class Application < Cloud::Sdk::Cartridge
     self.class.notify_observers(:before_application_create, {:application => self, :reply => result_io})
     gears_created = []
     begin
-      self.elaborate_descriptor()
+      elaborate_descriptor()
       
       Rails.logger.debug "Creating gears"
       group_instances.uniq.each do |ginst|
@@ -183,7 +183,7 @@ class Application < Cloud::Sdk::Cartridge
     reply = ResultIO.new
     self.class.notify_observers(:before_application_configure, {:application => self, :reply => reply})
     
-    removed_component_instances = self.elaborate_descriptor()
+    removed_component_instances = elaborate_descriptor()
     #remove unused components
     removed_component_instances.each do |comp_inst_name|
       comp_inst = self.comp_instance_map[comp_inst_name]
@@ -205,7 +205,7 @@ class Application < Cloud::Sdk::Cartridge
         self.save        
       end
     end
-    self.cleanup_deleted_components
+    cleanup_deleted_components
     self.save
     
     #process new additions
@@ -442,9 +442,10 @@ class Application < Cloud::Sdk::Cartridge
       next if !dependency.nil? and (comp_inst.parent_cart_name != dependency)
 
       group_inst = self.group_instance_map[comp_inst.group_instance_name]
-      run_on_gears(group_inst.gears, reply, false) do |gear, r|
-        r.append gear.conceal_port(comp_inst)
+      s,f = run_on_gears(group_inst.gears, reply, false) do |gear, r|
+        r.append gear.expose_port(comp_inst)
       end
+      raise f[0][:exception] if(f.length > 0)      
     end
     reply
   end
@@ -456,9 +457,10 @@ class Application < Cloud::Sdk::Cartridge
       next if !dependency.nil? and (comp_inst.parent_cart_name != dependency)
 
       group_inst = self.group_instance_map[comp_inst.group_instance_name]
-      run_on_gears(group_inst.gears, reply, false) do |gear, r|
-        r.append gear.expose_port(comp_inst)
+      s,f = run_on_gears(group_inst.gears, reply, false) do |gear, r|
+        r.append gear.conceal_port(comp_inst)
       end
+      raise f[0][:exception] if(f.length > 0)      
     end
     reply
   end
@@ -680,7 +682,7 @@ class Application < Cloud::Sdk::Cartridge
   # @deprecated  
   def gear
     if self.group_instances.nil?
-      self.elaborate_descriptor
+      elaborate_descriptor
     end
     
     group_instance = self.group_instances.first

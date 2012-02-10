@@ -70,7 +70,7 @@ secure_app_dir
 
 secure_conf_dirs
 
-setup_app_dir_and_git
+observe_setup_app_and_git_dirs
 
 #
 # Create environment variables

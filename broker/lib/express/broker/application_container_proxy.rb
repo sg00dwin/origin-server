@@ -290,12 +290,12 @@ module Express
         end          
       end
       
-      def expose_port(app, cart)
-        run_cartridge_command(cart, app, "expose-port")
+      def expose_port(app, gear, cart)
+        run_cartridge_command(cart, app, gear, "expose-port")
       end
 
-      def conceal_port(app, cart)
-        run_cartridge_command(cart, app, "conceal-port")
+      def conceal_port(app, gear, cart)
+        run_cartridge_command(cart, app, gear, "conceal-port")
       end
 
       def add_alias(app, gear, cart, server_alias)
