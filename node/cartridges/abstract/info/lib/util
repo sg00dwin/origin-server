@@ -10,15 +10,15 @@ function start_app {
     done
     for cmd in `awk 'BEGIN { for (a in ENVIRON) if (a ~ /DB_CTL_SCRIPT$/) print ENVIRON[a] }'`
     do
-        run_as_user "$cmd start" || error "Failed to start ${cmd}" 121
+        runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $cmd start" || error "Failed to start ${cmd}" 121
     done
     for cmd in `awk 'BEGIN { for (a in ENVIRON) if ((a ~ /_CTL_SCRIPT$/) && !(a ~ /DB_CTL_SCRIPT$/) && (a != "OPENSHIFT_APP_CTL_SCRIPT")) print ENVIRON[a] }'`
     do
-        run_as_user "$cmd start" || error "Failed to start ${cmd}" 121
+        runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $cmd start" || error "Failed to start ${cmd}" 121
     done
     for cmd in `awk 'BEGIN { for (a in ENVIRON) if (a == "OPENSHIFT_APP_CTL_SCRIPT") print ENVIRON[a] }'`
     do
-        run_as_user "$cmd start" || error "Failed to start ${cmd}" 121
+        runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $cmd start" || error "Failed to start ${cmd}" 121
     done
 }
 
@@ -29,15 +29,15 @@ function stop_app {
     done
     for cmd in `awk 'BEGIN { for (a in ENVIRON) if (a == "OPENSHIFT_APP_CTL_SCRIPT") print ENVIRON[a] }'`
     do
-        run_as_user "$cmd stop" || echo "Failed to stop ${cmd}" 1>&2
+        runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $cmd stop" || echo "Failed to stop ${cmd}" 1>&2
     done
     for cmd in `awk 'BEGIN { for (a in ENVIRON) if ((a ~ /_CTL_SCRIPT$/) && !(a ~ /DB_CTL_SCRIPT$/) && (a != "OPENSHIFT_APP_CTL_SCRIPT")) print ENVIRON[a] }'`
     do
-        run_as_user "$cmd stop" || echo "Failed to stop ${cmd}" 1>&2
+        runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $cmd stop" || echo "Failed to stop ${cmd}" 1>&2
     done
     for cmd in `awk 'BEGIN { for (a in ENVIRON) if (a ~ /DB_CTL_SCRIPT$/) print ENVIRON[a] }'`
     do
-        run_as_user "$cmd stop" || echo "Failed to stop ${cmd}" 1>&2
+        runuser --shell /bin/sh "$uuid" -c "runcon -t libra_t -l $mcs_level $cmd stop" || echo "Failed to stop ${cmd}" 1>&2
     done
 }
 
@@ -108,6 +108,10 @@ function secure_app_dir {
 
 function secure_conf_dirs {
     chown root:root -R "$APP_DIR/conf" "$APP_DIR/conf.d"
+}
+
+function chcon_app_dir_and_git {
+    chcon -t libra_var_lib_t -l $mcs_level -R "$APP_HOME/git/" "$APP_DIR"
 }
 
 function check_app_dir_doesnt_exist {
@@ -226,6 +230,7 @@ function remove_broker_auth_key {
 
 function setup_configure {
     source ${CART_DIR}/abstract/info/lib/git
+    source ${CART_DIR}/abstract/info/lib/selinux
     source ${CART_DIR}/abstract/info/lib/network
     source ${CART_DIR}/abstract/info/lib/apache
 	
@@ -256,6 +261,7 @@ function setup_configure {
 }
 
 function setup_deconfigure {
+    source ${CART_DIR}/abstract/info/lib/selinux
     source ${CART_DIR}/abstract/info/lib/git
     source ${CART_DIR}/abstract/info/lib/apache
 
@@ -271,6 +277,7 @@ function setup_deconfigure {
 }
 
 function setup_embedded_configure {
+    source ${CART_DIR}/abstract/info/lib/selinux
     source ${CART_DIR}/abstract/info/lib/network
     source ${CART_DIR}/abstract/info/lib/apache
 
@@ -295,6 +302,7 @@ function setup_embedded_configure {
 }
 
 function setup_embedded_deconfigure {
+    source ${CART_DIR}/abstract/info/lib/selinux
 
     CART_INFO_DIR=$CART_DIR/embedded/$app_type/info
 
@@ -310,6 +318,8 @@ function setup_embedded_deconfigure {
 }
 
 function setup_basic_hook {
+    source ${CART_DIR}/abstract/info/lib/selinux
+
     load_node_conf
 
     uuid=`basename $3`
@@ -328,6 +338,11 @@ function setup_basic_vars {
 function setup_app_dir_vars {
     APP_HOME="$libra_dir/$uuid/"
     APP_DIR=`echo $APP_HOME/$application | tr -s /`
+}
+
+function setup_user_vars {
+    uid=$(id -u "$uuid")
+    mcs_level=`openshift_mcs_level $uid`
 }
 
 function force_kill {
@@ -429,79 +444,4 @@ function unobfuscate_app_home {
     fi
 }
 
-function send_stopped_status {
-    if [ -f $APP_DIR/run/stop_lock ]
-    then
-        HTTP_DIR=`dirname "/etc/httpd/conf.d/libra/${uuid}"*/00000_default.conf`
-        if [ -f $HTTP_DIR/0000000000000_disabled.conf ]
-        then
-            send_status "ALREADY_IDLED"
-        else
-            send_status "ALREADY_STOPPED"
-        fi
-    fi
-}
 
-function status_client_result {
-    output=$1
-    IFS_BAK=$IFS
-IFS="
-"
-    for line in $output
-    do
-        client_result "$line"
-    done
-    IFS=$IFS_BAK
-}
-
-function observe_setup_app_and_git_dirs {
-    observe_setup_var_lib_dir "$APP_HOME/git/"
-    observe_setup_var_lib_dir "$APP_DIR"
-}
-
-function setup_user_vars {
-    uid=$(id -u "$uuid")
-}
-
-function observe_setup_app_home {
-    return 0
-}
-
-function observe_setup_var_lib_dir {
-    return 0
-}
-
-function observe_setup_var_lib_file {
-    return 0
-}
-
-function run_as_user {
-    runuser --shell /bin/sh "$uuid" -c "$1"
-}
-
-function super_run_as_user {
-    /bin/su -s /bin/sh "$uuid" -c "$1"
-}
-
-function daemon_as_user {
-    daemon --user="$uuid" $1
-}
-
-function validate_run_as_user {
-    uuid=$OPENSHIFT_APP_UUID
-    setup_user_vars
-
-    if whoami | grep -q root
-    then
-        echo 1>&2
-        echo "Please run script as the correct user, try:" 1>&2
-        echo "run_as_user \"<command>\"" 1>&2
-        echo 2>&1
-        exit 15
-    fi
-}
-
-if [ -f /usr/libexec/li/cartridges/abstract/info/lib/util_ext ]
-then
-    source /usr/libexec/li/cartridges/abstract/info/lib/util_ext
-fi
