@@ -79,6 +79,12 @@ module Cloud
       
       def force_stop(app, cart)
       end
+ 
+      def expose_port(app, cart)
+      end
+ 
+      def conceal_port(app, cart)
+      end
       
       def restart(app, cart)
       end
@@ -93,6 +99,9 @@ module Cloud
       end
       
       def threaddump(app, cart)
+      end
+      
+      def system_messages(app, cart)
       end
       
       def add_alias(app, cart, server_alias)

@@ -1,12 +1,13 @@
-class Gear < Cloud::Sdk::Cartridge
-  attr_accessor :uuid, :uid, :server_id, :group_inst_id, :node_profile, :container, :app, :configured_components
+class Gear < Cloud::Sdk::UserModel
+  attr_accessor :uuid, :uid, :server_id, :group_instance_name, :node_profile, :container, :app, :configured_components
   primary_key :uuid
   exclude_attributes :container, :app
   
-  def initialize(app, node_profile=nil, uuid=nil, uid=nil)
+  def initialize(app, group_instance, uuid=nil, uid=nil)
     self.app = app
     @uuid = uuid || Cloud::Sdk::Model.gen_uuid
-    self.node_profile = node_profile
+    self.group_instance_name = group_instance.name
+    self.node_profile = group_instance.node_profile
     self.configured_components = []
     get_proxy
   end
@@ -25,6 +26,14 @@ class Gear < Cloud::Sdk::Cartridge
       self.uid = self.container.reserve_uid
       return self.container.create(app,self)
     end
+  end
+
+  def expose_port
+    get_proxy.expose_port(app,self)
+  end
+
+  def conceal_port
+    get_proxy.conceal_port(app,self)
   end
   
   def destroy
@@ -80,6 +89,10 @@ class Gear < Cloud::Sdk::Cartridge
   
   def threaddump(comp_inst)
     get_proxy.threaddump(app,self,comp_inst.parent_cart_name)    
+  end
+  
+  def system_messages(comp_inst)
+    get_proxy.system_messages(app,self,comp_inst.parent_cart_name)    
   end
   
   def add_alias(server_alias)

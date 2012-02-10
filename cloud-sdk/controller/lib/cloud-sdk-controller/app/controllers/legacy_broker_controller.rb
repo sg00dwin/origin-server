@@ -238,6 +238,9 @@ class LegacyBrokerController < ApplicationController
     when 'conceal-port'
       app = get_app_from_request(user)
       @reply.append app.conceal_port
+    when 'system-messages'
+          app = get_app_from_request(user)
+          @reply.append app.system_messages
     else
       raise Cloud::Sdk::UserException.new("Invalid action #{@req.action}", 111)
     end

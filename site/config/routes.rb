@@ -120,6 +120,18 @@ RedHatCloud::Application.routes.draw do
               :as => "express_apps",
               :only => [:new, :create]
 
+    match 'console' => 'console#index', :via => :get
+    scope '/console' do
+      resources :application_types, :only => [:show], :id => /[^\/]+/
+
+      resources :applications,
+                :controller => "applications" do
+        match 'delete' => 'applications#confirm_delete', :via => :get
+        # should be updated to be restful
+        match 'delete' => 'applications#delete', :via => :post
+      end
+    end
+
     resources :express_ssh_keys
 
     match 'express_ssh_key_delete' => 'express_ssh_keys#destroy', :via => [:post]

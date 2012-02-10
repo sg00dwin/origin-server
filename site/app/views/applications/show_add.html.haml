@@ -1,0 +1,12 @@
+-# file: Applications show add
+
+%section.main
+  %header
+    %h2
+      = "Add an Application"
+
+  - semantic_form_for @app, :url => add_applications_path do |form|
+    = form.input :app_name, :label => 'Title'
+    = form.input :cartridge, :as => :select, :collection => @cartlist, :label => 'Type'
+    = form.buttons do
+      = form.commit_button :button_html => { :class => 'button', :value => 'Add' }
