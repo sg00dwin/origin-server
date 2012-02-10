@@ -45,10 +45,9 @@ class EmbCartEventsController < BaseController
           return
       end
     rescue Exception => e
+      Rails.logger.error e
       @reply = RestReply.new(:internal_server_error)
-      message = Message.new(:error, "Failed to add event #{event} on cartridge #{cartridge} for application #{id}") 
-      @reply.messages.push(message)
-      message = Message.new(:error, e.message) 
+      message = Message.new(:error, "Failed to add event #{event} on cartridge #{cartridge} for application #{id} due to:#{e.message}") 
       @reply.messages.push(message)
       respond_with @reply, :status => @reply.status
       return

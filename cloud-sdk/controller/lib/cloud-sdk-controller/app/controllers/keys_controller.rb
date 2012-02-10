@@ -108,8 +108,7 @@ class KeysController < BaseController
     rescue Exception => e
       Rails.logger.error e
       @reply = RestReply.new(:internal_server_error)
-      @reply.messages.push(Message.new(:error, "Failed to create SSH key for user #{@login}") )
-      @reply.messages.push(Message.new(:error, e.message))
+      @reply.messages.push(Message.new(:error, "Failed to create SSH key for user #{@login} due to:#{e.message}") )
       respond_with @reply, :status => @reply.status
       return
     end
@@ -184,9 +183,9 @@ class KeysController < BaseController
          format.json { render :json => @reply, :status => @reply.status }
       end
     rescue Exception => e
+      Rails.logger.error e
       @reply = RestReply.new(:internal_server_error)
-      @reply.messages.push(Message.new(:error, "Failed to update SSH key #{name} for user #{@login}") )
-      @reply.messages.push(Message.new(:error, e.message))
+      @reply.messages.push(Message.new(:error, "Failed to update SSH key #{name} for user #{@login} due to:#{e.message}") )
       respond_with(@reply) do |format|
          format.xml { render :xml => @reply, :status => @reply.status }
          format.json { render :json => @reply, :status => @reply.status }
@@ -240,9 +239,9 @@ class KeysController < BaseController
          format.json { render :json => @reply, :status => @reply.status }
       end
     rescue Exception => e
+      Rails.logger.error e
       @reply = RestReply.new(:internal_server_error)
-      @reply.messages.push(Message.new(:error, "Failed to delete SSH key #{name} for user #{@login}") )
-      @reply.messages.push(Message.new(:error, e.message))
+      @reply.messages.push(Message.new(:error, "Failed to delete SSH key #{name} for user #{@login} due to:#{e.message}") )
       respond_with(@reply) do |format|
          format.xml { render :xml => @reply, :status => @reply.status }
          format.json { render :json => @reply, :status => @reply.status }
