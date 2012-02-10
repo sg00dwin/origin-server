@@ -241,11 +241,9 @@ module Cloud::Sdk
       end
       begin
         File::unlink(File.join(env_dir, key))
-        self.class.notify_observers(:after_proxy_remove_port, self, proxy_port)
-        return true
       rescue Errno::ENOENT
       end
-      nil
+      self.class.notify_observers(:after_proxy_remove_port, self, proxy_port)
     end
 
     private
