@@ -22,7 +22,14 @@ class BaseController < ActionController::Base
   protected
   
   def authenticate
-    if user = authenticate_with_http_basic {|u, p| Cloud::Sdk::AuthService.instance.authenticate(request, u, p)}
+    login = nil
+    password = nil
+    authenticate_with_http_basic { |u, p|
+      login = u
+      password = p
+    }
+    user = Cloud::Sdk::AuthService.instance.authenticate(request, login, password)
+    if user
       @login = user
     else
       request_http_basic_authentication
