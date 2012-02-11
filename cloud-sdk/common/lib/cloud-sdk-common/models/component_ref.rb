@@ -15,8 +15,9 @@ module Cloud::Sdk
       self.component
     end
 
-    def get_name_prefix
-      return "" if self.component.generated
+    def get_name_prefix(profile)
+      comp_obj = profile.components(self.component)
+      return "" if comp_obj.generated
       return "/comp-" + self.name 
     end
   end

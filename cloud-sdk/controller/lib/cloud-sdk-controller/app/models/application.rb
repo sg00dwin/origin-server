@@ -825,7 +825,7 @@ class Application < Cloud::Sdk::Cartridge
       end
       self.group_instance_map[gpath] = gi
       self.working_group_inst_hash[gpath] = gi
-      gi.elaborate(g, self.get_name_prefix, self)
+      gi.elaborate(default_profile, g, self.get_name_prefix, self)
     }
     
     # make connection_endpoints out of provided connections
@@ -867,7 +867,7 @@ private
   def get_exec_order(default_profile)
     self.configure_order = []
     self.start_order = []
-    cpath = self.get_name_prefix + default_profile.groups.first.component_refs.first.get_name_prefix
+    cpath = self.get_name_prefix + default_profile.groups.first.component_refs.first.get_name_prefix(default_profile)
     cinst = self.comp_instance_map[cpath]
     ComponentInstance::collect_exec_order(self, cinst, self.configure_order)
     ComponentInstance::collect_exec_order(self, cinst, self.start_order)
@@ -913,7 +913,7 @@ private
     gpath = self.get_name_prefix + first_group.get_name_prefix
     gi = self.group_instance_map[gpath]
     first_group.component_refs.each { |comp_ref|
-      cpath = self.get_name_prefix + comp_ref.get_name_prefix
+      cpath = self.get_name_prefix + comp_ref.get_name_prefix(default_profile)
       ci = self.comp_instance_map[cpath]
       ci.dependencies.each { |cdep|
         cdepinst = self.comp_instance_map[cdep]
