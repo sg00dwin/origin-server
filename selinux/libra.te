@@ -316,6 +316,7 @@ can_exec(libra_t, postgresql_exec_t)
 corenet_tcp_bind_postgresql_port(libra_t)
 # Do not allow open or create, just allow it to use inherited from kernel
 allow libra_t tmpfs_t:file { read write };
+allow libra_t anon_inodefs_t:file write;
 
 ##########
 # Used for development or when the li controller is running outside

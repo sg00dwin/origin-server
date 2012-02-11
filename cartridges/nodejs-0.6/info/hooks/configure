@@ -41,7 +41,7 @@ mkdir -p "$APP_DIR"
 pushd "$APP_DIR" > /dev/null
 create_standard_app_dirs
 mkdir conf node_modules logs sessions
-cp $CART_INFO_DIR/configuration/node.env conf/
+cp $CART_INFO_DIR/configuration/node.env  conf/
 popd > /dev/null
 
 #
@@ -62,14 +62,14 @@ observe_setup_app_and_git_dirs
 touch "$APP_HOME"/.npmrc
 mkdir "$APP_HOME"/.npm
 chown $user_id.$group_id -R "$APP_HOME"/.npm "$APP_HOME"/.npmrc
-observe_setup_var_lib_dir "$APP_HOME"/.npm "$APP_HOME"/.npmrc
 
-# Also link to the globally installed npm modules.
+# And link to the globally installed npm modules.
 pushd "$APP_DIR" > /dev/null
-npm link mysql pg mongodb
-npm link async connect express node-static request socket.io underscore
+npmgl="$CART_INFO_DIR/configuration/npm_global_module_list"
+module_list=$(perl -ne 'print if /^\s*[^#\s]/' "$npmgl" | tr '\n' ' ')
+npm link $module_list
 chown -h $user_id.$group_id "$APP_DIR"/node_modules/*
-popd "$APP_DIR" > /dev/null
+popd > /dev/null
 
 
 #

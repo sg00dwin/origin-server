@@ -25,6 +25,7 @@ Provides Node.js support to OpenShift
 %build
 rm -rf git_template
 cp -r template/ git_template/
+cp info/configuration/npm_global_module_list git_template
 cd git_template
 git init
 git add -f .
@@ -71,9 +72,9 @@ rm -rf %{buildroot}
 
 %post
 # Install npm modules
-npm install -g mysql pg
+npm install -g $(perl -ne 'print if /^\s*[^#\s]/' %{cartridgedir}/info/configuration/npm_global_module_list | tr '\n' ' ')
+# npm install -g mysql pg
 npm install -g mongodb --mongodb:native
-npm install -g async connect express node-static request socket.io underscore
 
 %files
 %defattr(-,root,root,-)

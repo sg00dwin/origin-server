@@ -221,8 +221,8 @@ module Cloud::Sdk
         end
         begin
           File.open(File.join(env_dir, key), File::WRONLY|File::CREAT|File::EXCL) do |file|
-            file.write "#{env_var}[#{proxy_port}]='#{proxy_target}'"
-            file.write "export #{env_var}"
+            file.write "#{env_var}[#{proxy_port}]='#{proxy_target}'\n"
+            file.write "export #{env_var}\n"
           end
           self.class.notify_observers(:after_proxy_alloc_next_port, self, proxy_port, proxy_target)
           return proxy_port
@@ -234,7 +234,7 @@ module Cloud::Sdk
 
     def proxy_remove_port(proxy_port, prefix_cloud_name=false)
       if not proxy_port_list().include?(proxy_port)
-        raise SecurityError, 'Requested port not allowed: #{proxy_port}'
+        raise SecurityError, "Requested port not allowed: #{proxy_port}"
       end
 
       self.class.notify_observers(:before_proxy_remove_port, self, proxy_port)
