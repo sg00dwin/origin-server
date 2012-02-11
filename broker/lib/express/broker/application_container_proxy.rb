@@ -210,6 +210,10 @@ module Express
         rpc_get_fact_direct('capacity').to_i
       end
       
+      def get_active_capacity
+        rpc_get_fact_direct('active_capacity').to_i
+      end
+      
       def get_district_uuid
         rpc_get_fact_direct('district_uuid')
       end
@@ -913,7 +917,7 @@ module Express
                                    :value => true.to_s,
                                    :operator => "=="})
         else
-          additional_filters.push({:fact => "capacity",
+          additional_filters.push({:fact => "active_capacity",
                                    :value => '100',
                                    :operator => "<"})
           #TODO how do you filter on a fact not being set
@@ -923,13 +927,13 @@ module Express
 
         end
     
-        rpc_get_fact('capacity', nil, forceRediscovery, additional_filters) do |server, capacity|
-          Rails.logger.debug "Next server: #{server} capacity: #{capacity}"
+        rpc_get_fact('active_capacity', nil, forceRediscovery, additional_filters) do |server, capacity|
+          Rails.logger.debug "Next server: #{server} active capacity: #{capacity}"
           if !current_capacity || capacity.to_i < current_capacity.to_i
             current_server = server
             current_capacity = capacity
           end
-          Rails.logger.debug "Current server: #{current_server} capacity: #{current_capacity}"
+          Rails.logger.debug "Current server: #{current_server} active capacity: #{current_capacity}"
         end
         return current_server, current_capacity
       end
