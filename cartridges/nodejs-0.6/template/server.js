@@ -42,23 +42,26 @@ if (typeof ipaddr === "undefined") {
 
 //  terminator === the termination handler.
 function terminator(sig) {
-   if (typeof sig === "undefined") {
-      console.log('Node server stopped.');
-      return;
+   if (typeof sig === "string") {
+      console.log('%s: Received %s - terminating Node server ...',
+                  Date(Date.now()), sig);
+      process.exit(1);
    }
-   console.log('Received %s - terminating Node server ...', sig);
-   process.exit(1);
+   console.log('%s: Node server stopped.', Date(Date.now()) );
 }
 
-//  Process on exit and certain signals.
-process.on('exit',    function() { terminator();          });
-process.on('SIGHUP',  function() { terminator('SIGHUP');  });
-process.on('SIGINT',  function() { terminator('SIGINT');  });
-process.on('SIGQUIT', function() { terminator('SIGQUIT'); });
-process.on('SIGTERM', function() { terminator('SIGTERM'); });
+//  Process on exit and signals.
+process.on('exit', function() { terminator(); });
+
+['SIGHUP', 'SIGINT', 'SIGQUIT', 'SIGILL', 'SIGTRAP', 'SIGABRT', 'SIGBUS',
+ 'SIGFPE', 'SIGUSR1', 'SIGSEGV', 'SIGUSR2', 'SIGPIPE', 'SIGTERM'
+].forEach(function(element, index, array) {
+    process.on(element, function() { terminator(element); });
+});
 
 //  And start the app on that interface (and port).
 app.listen(port, ipaddr, function() {
-   console.log('Node server started on %s:%d ...', ipaddr, port);
+   console.log('%s: Node server started on %s:%d ...', Date(Date.now() ),
+               ipaddr, port);
 });
 
