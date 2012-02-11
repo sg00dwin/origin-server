@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Common
 Name:           rubygem-%{gemname}
-Version:        0.4.1
+Version:        0.4.2
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -73,5 +73,24 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Sat Feb 11 2012 Dan McPherson <dmcphers@redhat.com> 0.4.2-1
+- cleanup specs (dmcphers@redhat.com)
+- fix for finding out whether a component is auto-generated or not
+  (rchopra@redhat.com)
+- change component/group paths in descriptor (rchopra@redhat.com)
+- Updating models to improove schems of descriptor in mongo Moved
+  connection_endpoint to broker (kraman@gmail.com)
+- Added group overrides implementation Added colocation on connections
+  implementation (rchopra@redhat.com)
+- Use cart.requires_feature as dependencies in each component
+  (rchopra@redhat.com)
+- Changes to re-enable app to be saved/retrieved to/from mongo Various bug
+  fixes (kraman@gmail.com)
+- Added basic elaboration of components and connections (rchopra@redhat.com)
+- Creating models for descriptor Fixing manifest files Added command to list
+  installed cartridges and get descriptors (kraman@gmail.com)
+- change state machine dep (dmcphers@redhat.com)
+- move the rest of the controller tests into broker (dmcphers@redhat.com)
+
 * Fri Feb 03 2012 Dan McPherson <dmcphers@redhat.com> 0.4.1-1
 - bump spec numbers (dmcphers@redhat.com)
