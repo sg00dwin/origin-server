@@ -17,4 +17,4 @@
   %dd.app_type
     = app.framework.split('-')[0]
 %div
-
+  = link_to("delete...", application_delete_path(:application_id => app.name))
