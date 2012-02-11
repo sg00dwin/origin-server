@@ -509,7 +509,7 @@ function validate_run_as_user {
     fi
 }
 
-if [ -f /usr/libexec/li/cartridges/abstract/info/lib/util_ext ]
+if [ -f /usr/libexec/li/lib/util_ext ]
 then
-    source /usr/libexec/li/cartridges/abstract/info/lib/util_ext
+    source /usr/libexec/li/lib/util_ext
 fi

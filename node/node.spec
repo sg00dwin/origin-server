@@ -86,6 +86,7 @@ mkdir -p %{buildroot}/lib64/security/
 ln -s %{_localstatedir}/lib/libra/.httpd.d/ %{buildroot}/%{_sysconfdir}/httpd/conf.d/libra
 
 cp -r cartridges %{buildroot}%{_libexecdir}/li
+cp -r lib %{buildroot}%{_libexecdir}/li
 cp -r conf/httpd %{buildroot}%{_sysconfdir}
 cp -r conf/libra %{buildroot}%{_sysconfdir}
 cp -r facter %{buildroot}%{ruby_sitelibdir}/facter
@@ -215,6 +216,7 @@ fi
 %attr(0750,-,-) %{_libexecdir}/li/cartridges/abstract/info/hooks/
 %attr(0755,-,-) %{_libexecdir}/li/cartridges/abstract/info/bin/
 %attr(0755,-,-) %{_libexecdir}/li/cartridges/abstract/info/lib/
+%attr(0755,-,-) %{_libexecdir}/li/lib/
 #%{_libexecdir}/li/cartridges/abstract/info
 %attr(0750,-,-) %{_bindir}/rhc-accept-node
 %attr(0755,-,-) %{_bindir}/rhc-list-ports
