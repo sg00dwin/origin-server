@@ -192,6 +192,7 @@ fi
 %attr(0750,-,-) %{_initddir}/libra-cgroups
 %attr(0750,-,-) %{_initddir}/libra-tc
 %attr(0750,-,-) %{_initddir}/libra-proxy
+%attr(0750,-,-) %{_initddir}/libra-watchman
 %attr(0755,-,-) %{_bindir}/trap-user
 %attr(0750,-,-) %{_bindir}/rhc-ip-prep.sh
 %attr(0750,-,-) %{_bindir}/rhc-iptables.sh
@@ -222,6 +223,7 @@ fi
 %attr(0755,-,-) %{_bindir}/rhc-list-ports
 %attr(0750,-,-) %{_bindir}/rhc-node-account
 %attr(0750,-,-) %{_bindir}/rhc-node-application
+%attr(0750,-,-) %{_bindir}/rhc-watchman
 %attr(0755,-,-) %{_bindir}/rhcsh
 %attr(0640,-,-) %config(noreplace) %{_sysconfdir}/oddjobd.conf.d/oddjobd-restorer.conf
 %attr(0640,-,-) %config(noreplace) %{_sysconfdir}/dbus-1/system.d/openshift-restorer.conf

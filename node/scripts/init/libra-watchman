@@ -1,0 +1,54 @@
+#!/bin/bash
+#
+# libra-watchman	This shell starts the rhc-watchman daemon
+#
+# chkconfig:		345 89 11
+# description:		Monitors libra applications and restarts applications killed off by cgroups
+# processname:		rhc-watchman
+#
+
+daemon_name=rhc-watchman
+daemon_file=/usr/bin/$daemon_name
+daemon_config=/etc/sysconfig/$daemon_name
+pidfile=/var/run/$daemon_name.pid
+
+# source function library
+. /etc/rc.d/init.d/functions
+
+if [ -f "$daemon_config" ]; then
+    . $daemon_config
+fi
+
+start() {
+    echo -n $"Starting Watchman Services: "
+    daemon --pidfile $pidfile --check $daemon_name $daemon_file
+    echo
+}
+
+stop() {
+    echo -n $"Stopping Watchman Services: "
+    killproc -p $pidfile $daemon_file
+    echo
+}
+
+case "$1" in
+  start)
+        start
+        ;;
+  stop)
+        stop
+        ;;
+  status)
+        status -p $pidfile $daemon_file
+        ;;
+  restart)
+        stop
+        start
+        ;;
+  *)
+        echo "Usage: $0 {start|stop|status|restart}" >&2
+        exit 1
+        ;;
+esac
+
+exit 0
