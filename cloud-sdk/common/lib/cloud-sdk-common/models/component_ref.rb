@@ -14,5 +14,10 @@ module Cloud::Sdk
     def to_descriptor
       self.component
     end
+
+    def get_name_prefix
+      return "" if self.component.generated
+      return "/comp-" + self.name 
+    end
   end
 end

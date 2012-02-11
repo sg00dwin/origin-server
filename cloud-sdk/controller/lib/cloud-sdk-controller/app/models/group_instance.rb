@@ -55,7 +55,11 @@ class GroupInstance < Cloud::Sdk::UserModel
     group_inst_hash = {}
     new_components = []
     group.component_refs.each { |comp_ref|
-      cpath = (parent_comp_path.empty? ? "" : parent_comp_path + ".") + self.cart_name + "." + comp_ref.name
+      if self.cart_name == app.name
+        cpath = parent_comp_path + comp_ref.get_name_prefix
+      else
+        cpath = parent_comp_path + "/cart-" + self.cart_name + comp_ref.get_name_prefix
+      end
       #ci = app.comp_instance_map[cpath]
       ci = ComponentInstance.new(self.cart_name, self.profile_name, self.group_name, comp_ref.name, cpath, self)
       new_components << cpath

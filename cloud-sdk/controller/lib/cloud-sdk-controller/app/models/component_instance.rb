@@ -86,12 +86,12 @@ class ComponentInstance < Cloud::Sdk::UserModel
 
   def elaborate_cartridge(cart, profile, app)
     profile.group_overrides.each do |n, v|
-      from = self.name + "." + cart.name + "." + n
-      to = self.name + "." + cart.name + "." + v
+      from = self.name + cart.get_name_prefix + "/" + n
+      to = self.name + cart.get_name_prefix + "/" + v
       app.group_override_map[from] = to
     end
     group_list = profile.groups.map do |g|
-       gpath = self.name + "." + cart.name + "." + g.name
+       gpath = self.name + cart.get_name_prefix + g.get_name_prefix
        mapped_path = app.group_override_map[gpath] || ""
        gi = app.working_group_inst_hash[mapped_path]
        if gi.nil?
@@ -122,10 +122,9 @@ class ComponentInstance < Cloud::Sdk::UserModel
   end
 
   def self.find_component_in_cart(profile, app, comp_name, parent_path) 
-    # assume comp_name is group_name.component_name for now
-    # FIXME : it could be a component_name only, feature_name, cartridge_name that 
+    # FIXME : comp_name could be a component_name only, feature_name, cartridge_name that 
     #         one of the components depend upon, or a hierarchical name
-    comp_inst = app.comp_instance_map[parent_path + "." + comp_name]
+    comp_inst = app.comp_instance_map[parent_path + "/" + comp_name]
     if comp_inst.nil?
       parent_inst = app.comp_instance_map[parent_path]
       parent_inst.dependencies.each do |dep|
