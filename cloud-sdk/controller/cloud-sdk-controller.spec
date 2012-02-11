@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.4.1
+Version:        0.4.2
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -73,6 +73,101 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Sat Feb 11 2012 Dan McPherson <dmcphers@redhat.com> 0.4.2-1
+- Updating gem versions (dmcphers@redhat.com)
+- cleanup specs (dmcphers@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rchopra@redhat.com)
+- fix for finding out whether a component is auto-generated or not
+  (rchopra@redhat.com)
+- Fixed typo (kraman@gmail.com)
+- Provide a way for admin-move script to update embeddec cart information
+  (kraman@gmail.com)
+- Changing server_id to server_identity to be consistent with rest of code
+  (kraman@gmail.com)
+- change component/group paths in descriptor (rchopra@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- Fix broker auth service, bug# 787297 (rpenta@redhat.com)
+- bug fixes and refactoring (lnader@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (lnader@redhat.com)
+- Minor fixes to export/conceal port functions (kraman@gmail.com)
+- Bug 789179 (dmcphers@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (lnader@redhat.com)
+- bug fixes and improvements in REST API (lnader@redhat.com)
+- calling private functions without self qualifier (rchopra@redhat.com)
+- fixing merge (mmcgrath@redhat.com)
+- Fixes to throw exceptions on failures. Fixes to stop app if start fails and
+  other recovery processes. (kraman@gmail.com)
+- fixing alias add/remove (rchopra@redhat.com)
+- Temporary commit to build (mmcgrath@redhat.com)
+- merging (mmcgrath@redhat.com)
+- Added expose and conceal port (mmcgrath@redhat.com)
+- Fixed env var delete on node Added logic to save app after critical steps on
+  node suring create/destroy/configure/deconfigure Handle failures on
+  start/stop of application or cartridge (kraman@gmail.com)
+- bug 722828 (bdecoste@gmail.com)
+- bug 722828 (wdecoste@localhost.localdomain)
+- bug 722828 (wdecoste@localhost.localdomain)
+- What!!! List of cartridges is hardcoded in code ... try something like:   ls
+  /usr/libexec/li/cartridges/ |  grep -Ev 'abstract|abstract-httpd|embedded'
+  its a lil' better!! :^) (ramr@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (lnader@redhat.com)
+- moved links from app to cartridge (lnader@redhat.com)
+- correcting haproxy name (mmcgrath@redhat.com)
+- Fix HAProxy descriptor Add HAProxy to standalone cart list on
+  CartridgeCache(temp till descriptor changes are made on cloud-sdk-node)
+  (kraman@gmail.com)
+- Fixing add/remove embedded cartridges Fixing domain info on legacy broker
+  controller Fixing start/stop/etc app and cart. control calls for legacy
+  broker (kraman@gmail.com)
+- cleanup function to be called after elaboration (rchopra@redhat.com)
+- get the deleted components out of re-elaboration (rchopra@redhat.com)
+- re-elaborate descriptor after remove dependency (rchopra@redhat.com)
+- remove self from dependency of component instance (rchopra@redhat.com)
+- bug fix in re-entrancy code (rchopra@redhat.com)
+- add application to configure/start order (rchopra@redhat.com)
+- auto generate configure/start order (rchopra@redhat.com)
+- auto-merge top groups; minor improvements to re-entrancy algorithm
+  (rchopra@redhat.com)
+- Bug fixes for saving connection list Abstracting difference between
+  framework/embedded cart in application_container_proxy and application
+  (kraman@gmail.com)
+- Renamed ApplicationContainer to Gear to avoid confusion Fixed gear
+  creation/configuration/deconfiguration for framework cartridge Fixed
+  save/load of group insatnce map Removed hacks where app was assuming one gear
+  only Started changes to enable rollback if operation fails (kraman@gmail.com)
+- bug fixes for app dependency manipulation (rchopra@redhat.com)
+- server_identity is container's uuid (rchopra@redhat.com)
+- Added backward compat code to force first application containers uuid =
+  application uuid (kraman@gmail.com)
+- Fixes for re-enabling cli tools. git url is not yet working.
+  (kraman@gmail.com)
+- code for automerging top groups - not integrated yet, to be tested. also a
+  minor bug fix (rchopra@unused-32-159.sjc.redhat.com)
+- Updated code to make it re-enterant. Adding/removing dependencies does not
+  change location of dependencies that did not change.
+  (rchopra@unused-32-159.sjc.redhat.com)
+- Updating models to improove schems of descriptor in mongo Moved
+  connection_endpoint to broker (kraman@gmail.com)
+- Added group overrides implementation Added colocation on connections
+  implementation (rchopra@redhat.com)
+- Use cart.requires_feature as dependencies in each component
+  (rchopra@redhat.com)
+- Changes to re-enable app to be saved/retrieved to/from mongo Various bug
+  fixes (kraman@gmail.com)
+- Added basic elaboration of components and connections (rchopra@redhat.com)
+- Creating models for descriptor Fixing manifest files Added command to list
+  installed cartridges and get descriptors (kraman@gmail.com)
+- bug fixes and enhancements in the rest API (lnader@redhat.com)
+- simplify a lot of the internals test cases (make them faster)
+  (dmcphers@redhat.com)
+- Adding expose-port and conceal-port (mmcgrath@redhat.com)
+- remove extra broker field (dmcphers@redhat.com)
+- change state machine dep (dmcphers@redhat.com)
+- move the rest of the controller tests into broker (dmcphers@redhat.com)
+- stop using hard coded value (dmcphers@redhat.com)
+- print correct image name in streamlined verify process (dmcphers@redhat.com)
+
 * Fri Feb 03 2012 Dan McPherson <dmcphers@redhat.com> 0.4.1-1
 - Updating gem versions (dmcphers@redhat.com)
 - bump spec numbers (dmcphers@redhat.com)
