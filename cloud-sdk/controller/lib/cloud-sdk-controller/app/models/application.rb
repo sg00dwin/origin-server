@@ -734,6 +734,14 @@ class Application < Cloud::Sdk::Cartridge
     end
     retval
   end
+
+  # Provide a way of updating the component information for a given cartridge
+  # @deprecated
+  def set_embedded_cart_info(cart_name, info)
+    self.comp_instance_map.values.each do |comp_inst|
+      comp_inst.cart_data = [info] if cart_data == comp_inst.parent_cart_name
+    end
+  end
   
   # Provides an array version of the component instance map for saving in the datastore.
   # @return [Array<Hash>]
