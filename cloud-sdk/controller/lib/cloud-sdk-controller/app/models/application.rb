@@ -739,7 +739,7 @@ class Application < Cloud::Sdk::Cartridge
   # @deprecated
   def set_embedded_cart_info(cart_name, info)
     self.comp_instance_map.values.each do |comp_inst|
-      comp_inst.cart_data = [info] if cart_data == comp_inst.parent_cart_name
+      comp_inst.cart_data = [info] if cart_name == comp_inst.parent_cart_name
     end
   end
   
