@@ -4,5 +4,7 @@
 #
 
 #  Any blank lines or lines starting with a hash (#) are ignored.
-#  E.g. uncomment the next line to install express
-#express
+#  E.g. uncomment the next line to install sqlite3
+#sqlite3
+
+#  For a list of globally installed modules - see file: npm_global_module_list.
