@@ -16,7 +16,6 @@ PID=`ps -e -o pid,command | grep Rack | grep $1 | grep $2 | awk 'BEGIN {FS=" "}{
 
 if [$PID .eq ""]; then
     echo "Application is stopped. Ruby/Rack applications must be started by accessing the URL for a thread dump"
-    exit 1
 else 
     kill -3 $PID
 fi
