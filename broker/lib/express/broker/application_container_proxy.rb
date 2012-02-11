@@ -134,6 +134,16 @@ module Express
         parse_result(result)
       end
 
+      def proxy_alloc_next_port(app, gear, proxy_target)
+        result = execute_direct(@@C_CONTROLLER, 'proxy-alloc-next-port', "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -t '#{proxy_target}'")
+        parse_result(result)
+      end
+
+      def proxy_remove_port(app, gear, proxy_port)
+        result = execute_direct(@@C_CONTROLLER, 'proxy-remove-port', "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -p '#{proxy_port}'")
+        parse_result(result)
+      end
+
       def add_env_var(app, gear, key, value)
         result = execute_direct(@@C_CONTROLLER, 'env-var-add', "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -k '#{key}' -v '#{value}'")
         parse_result(result)
