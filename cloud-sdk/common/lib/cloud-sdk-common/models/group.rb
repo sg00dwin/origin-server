@@ -70,5 +70,10 @@ module Cloud::Sdk
         "Scaling" => self.scaling.to_descriptor
       }
     end
+
+    def get_name_prefix
+      return "" if self.generated
+      return "/group-" + self.name
+    end
   end
 end

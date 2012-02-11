@@ -1,7 +1,7 @@
 %ul
-  - apps.each do |app_name, app|
+  - @applications.each do |app|
     %li
       - if apps.length < 10:
-        = render 'applications/app_info', :app_name => app_name, :app => app
+        = render 'applications/app_info', :app => app
       - else
-        = render 'applications/app_info_compact', :app_name => app_name, :app => app
+        = render 'applications/app_info_compact', :app => app

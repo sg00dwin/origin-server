@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.86.1
+Version:       0.86.2
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -86,6 +86,7 @@ mkdir -p %{buildroot}/lib64/security/
 ln -s %{_localstatedir}/lib/libra/.httpd.d/ %{buildroot}/%{_sysconfdir}/httpd/conf.d/libra
 
 cp -r cartridges %{buildroot}%{_libexecdir}/li
+cp -r lib %{buildroot}%{_libexecdir}/li
 cp -r conf/httpd %{buildroot}%{_sysconfdir}
 cp -r conf/libra %{buildroot}%{_sysconfdir}
 cp -r facter %{buildroot}%{ruby_sitelibdir}/facter
@@ -215,6 +216,7 @@ fi
 %attr(0750,-,-) %{_libexecdir}/li/cartridges/abstract/info/hooks/
 %attr(0755,-,-) %{_libexecdir}/li/cartridges/abstract/info/bin/
 %attr(0755,-,-) %{_libexecdir}/li/cartridges/abstract/info/lib/
+%attr(0755,-,-) %{_libexecdir}/li/lib/
 #%{_libexecdir}/li/cartridges/abstract/info
 %attr(0750,-,-) %{_bindir}/rhc-accept-node
 %attr(0755,-,-) %{_bindir}/rhc-list-ports
@@ -235,6 +237,70 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Sat Feb 11 2012 Dan McPherson <dmcphers@redhat.com> 0.86.2-1
+- move the selinux logic out of abstract carts entirely (dmcphers@redhat.com)
+- get move working again and add quota support (dmcphers@redhat.com)
+- revert back file from accidental commit (dmcphers@redhat.com)
+- Add proxy script calls to the API (rmillner@redhat.com)
+- add load node conf to remove httpd proxy (dmcphers@redhat.com)
+- more abstracting out selinux (dmcphers@redhat.com)
+- fix typo (dmcphers@redhat.com)
+- better name consistency (dmcphers@redhat.com)
+- first pass at splitting out selinux logic (dmcphers@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rmillner@redhat.com)
+- Cosmetic cleanup. (rmillner@redhat.com)
+- The haproxy restart test failed if haproxy had been re-installed or upgraded.
+  Also, trigger restart of the proxy if haproxy is upgraded.
+  (rmillner@redhat.com)
+- bug 722828 (wdecoste@localhost.localdomain)
+- Hook to fix the proxy back-end if it diverges from the app configuration.
+  (rmillner@redhat.com)
+- Adding DNS name to port exposure (mmcgrath@redhat.com)
+- Creating models for descriptor Fixing manifest files Added command to list
+  installed cartridges and get descriptors (kraman@gmail.com)
+- Re-do proxy setting so that I can do additions and deletions for an app in at
+  most one restart. (rmillner@redhat.com)
+- Quiet grep (rmillner@redhat.com)
+- Process several proxies/ports on one invocation efficiently.
+  (rmillner@redhat.com)
+- Consolidate the lock+restart wrapper and only restart if the configuration
+  actually changed. (rmillner@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rmillner@redhat.com)
+- Move libra-proxy config file to /var/lib/libra/.libra-proxy.d
+  (rmillner@redhat.com)
+- Merge branch 'master' into haproxy (mmcgrath@redhat.com)
+- Adding expose-port and conceal-port (mmcgrath@redhat.com)
+- Adding expose and conceal port (mmcgrath@redhat.com)
+- change status to use normal client_result instead of special handling
+  (dmcphers@redhat.com)
+- Merge branch 'master' into haproxy (mmcgrath@redhat.com)
+- Merge branch 'master' into haproxy (mmcgrath@redhat.com)
+- That method would fail if haproxy is being run for another service.  Test the
+  exit code of the takeover process instead. (rmillner@redhat.com)
+- Edge case where the new process fails to take over ports belonging to the old
+  one. (rmillner@redhat.com)
+- The output of listproxies can be fed back in as proxy definitions.
+  (rmillner@redhat.com)
+- Fixed artifact from copying command line (rmillner@redhat.com)
+- List proxies, add and remove proxies command.  Included locking and wait for
+  state transition to prevent haproxy from getting stepped on.
+  (rmillner@redhat.com)
+- Add procmail for lockfile command (rmillner@redhat.com)
+- Add a boot-time libra-proxy service (rmillner@redhat.com)
+- Adding open_ports script (presently requires root) (mmcgrath@redhat.com)
+- syntax cleanup (dmcphers@redhat.com)
+- removing basename and app_name as they are not used (mmcgrath@redhat.com)
+- capacity should ignore symlinks (mmcgrath@redhat.com)
+- Bug 787994 (dmcphers@redhat.com)
+- Simplify based on the current proxy plan.  Input rules to allow port proxy.
+  (rmillner@redhat.com)
+- Bug 787882 (dmcphers@redhat.com)
+- make actions and cdk commands match (dmcphers@redhat.com)
+- increase std and large gear restrictions (dmcphers@redhat.com)
+- keep apps stopped or idled on move (dmcphers@redhat.com)
+
 * Fri Feb 03 2012 Dan McPherson <dmcphers@redhat.com> 0.86.1-1
 - bump spec numbers (dmcphers@redhat.com)
 - adding mod_ssl (mmcgrath@redhat.com)

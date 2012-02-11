@@ -74,13 +74,14 @@ module Express
             end
             check_access(roles)
             rhlogin = login
-          rescue Cloud::Sdk::AccessDeniedException
-            Rails.logger.debug("Attempted to use previous ticket '#{ticket}' to establish but failed with AccessDenied.  Continuing with normal login...")
+          rescue
+            Rails.logger.debug("Attempted to use previous ticket '#{ticket}' to establish but failed. Continuing with normal login...")
           end
         end
 
         unless rhlogin
           begin
+            return rhlogin if not user or not password
             login_args = {'login' => user, 'password' => password}
             # Establish the authentication ticket
             login = nil

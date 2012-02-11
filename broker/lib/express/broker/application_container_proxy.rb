@@ -92,15 +92,19 @@ module Express
         end
       end
       
-      def create(app, container)
+      def create(app, gear, quota_blocks=nil, quota_files=nil)
         result = nil
         (1..10).each do |i|
-          mcoll_reply = execute_direct(@@C_CONTROLLER, 'app-create', "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{container.uuid}'  -i '#{container.uid}'")
+          cmd = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}'"
+          cmd += " -i '#{gear.uid}'" if gear.uid
+          cmd += " --with-quota-blocks '#{quota_blocks}'" if quota_blocks
+          cmd += " --with-quota-files '#{quota_files}'" if quota_files
+          mcoll_reply = execute_direct(@@C_CONTROLLER, 'app-create', cmd)
           result = parse_result(mcoll_reply)
-          if result.exitcode == 129 && has_uid_or_gid?(app.uid) # Code to indicate uid already taken
-            destroy(app, container, true)
+          if result.exitcode == 129 && has_uid_or_gid?(app.gear.uid) # Code to indicate uid already taken
+            destroy(app, gear, true)
             inc_externally_reserved_uids_size
-            container.uid = reserve_uid
+            gear.uid = reserve_uid
             app.save
           else
             break
@@ -109,11 +113,11 @@ module Express
         result
       end
     
-      def destroy(app, container, keep_uid=false, uid=nil)
-        result = execute_direct(@@C_CONTROLLER, 'app-destroy', "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{container.uuid}'")
+      def destroy(app, gear, keep_uid=false, uid=nil)
+        result = execute_direct(@@C_CONTROLLER, 'app-destroy', "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}'")
         result_io = parse_result(result)
         
-        uid = container.uid unless uid
+        uid = gear.uid unless uid
         
         if uid && !keep_uid
           unreserve_uid(uid)
@@ -131,6 +135,16 @@ module Express
 
       def remove_authorized_ssh_key(app, gear, ssh_key)
         result = execute_direct(@@C_CONTROLLER, 'authorized-ssh-key-remove', "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -s '#{ssh_key}'")
+        parse_result(result)
+      end
+
+      def proxy_alloc_next_port(app, gear, proxy_target)
+        result = execute_direct(@@C_CONTROLLER, 'proxy-alloc-next-port', "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -t '#{proxy_target}'")
+        parse_result(result)
+      end
+
+      def proxy_remove_port(app, gear, proxy_port)
+        result = execute_direct(@@C_CONTROLLER, 'proxy-remove-port', "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -p '#{proxy_port}'")
         parse_result(result)
       end
 
@@ -322,14 +336,8 @@ module Express
       def move_app(app, destination_container, destination_district_uuid=nil, allow_change_district=false, node_profile=nil)
         source_container = app.container
 
-        #unless app.embedded.nil?
-          #raise Cloud::Sdk::UserException.new("Cannot move app '#{app.name}' with mysql embedded",1) if app.embedded.has_key?('mysql-5.1')
-          #raise Cloud::Sdk::UserException.new("Cannot move app '#{app.name}' with mongo embedded",1) if app.embedded.has_key?('mongodb-2.0')
-          #raise Cloud::Sdk::UserException.new("Cannot move app '#{app.name}' with postgresql embedded",1) if app.embedded.has_key?('postgresql-8.4')
-        #end
-
         if node_profile
-          app.node_profile = node_profile
+          app.gear.node_profile = node_profile
         end
 
         source_district_uuid = source_container.get_district_uuid
@@ -341,7 +349,7 @@ module Express
               destination_district_uuid = source_district_uuid unless source_district_uuid == 'NONE'
             end
           end
-          destination_container = ApplicationContainerProxy.find_available_impl(app.node_profile, destination_district_uuid)
+          destination_container = ApplicationContainerProxy.find_available_impl(app.gear.node_profile, destination_district_uuid)
           log_debug "DEBUG: Destination container: #{destination_container.id}"
           destination_district_uuid = destination_container.get_district_uuid
         else
@@ -363,9 +371,9 @@ module Express
           raise Cloud::Sdk::UserException.new("Error moving app.  Old and new servers are the same: #{source_container.id}", 1)
         end
         
-        orig_uid = app.uid
+        orig_uid = app.gear.uid
 
-        log_debug "DEBUG: Moving app '#{app.name}' with uuid #{app.uuid} from #{source_container.id} to #{destination_container.id}"
+        log_debug "DEBUG: Moving app '#{app.name}' with uuid #{app.gear.uuid} from #{source_container.id} to #{destination_container.id}"
         
         url = "http://#{app.name}-#{app.user.namespace}.#{Rails.configuration.cdk[:domain_suffix]}"
         
@@ -373,20 +381,29 @@ module Express
         reply = ResultIO.new
         leave_stopped = false
         idle = false
+        quota_blocks = nil
+        quota_files = nil
         log_debug "DEBUG: Getting existing app '#{app.name}' status before moving"
         (1..num_tries).each do |i|
           begin
-            result = source_container.status(app, app.framework)
+            result = source_container.status(app, app.gear, app.framework)
             result.cart_commands.each do |command_item|
               case command_item[:command]
-              when "STATUS"
-                status = command_item[:args][0]
-                case status
-                when "ALREADY_STOPPED"
-                  leave_stopped = true
-                when "ALREADY_IDLED"
-                  leave_stopped = true
-                  idle = true
+              when "ATTR"
+                key = command_item[:args][0]
+                value = command_item[:args][1]
+                if key == 'status'
+                  case value
+                  when "ALREADY_STOPPED"
+                    leave_stopped = true
+                  when "ALREADY_IDLED"
+                    leave_stopped = true
+                    idle = true
+                  end
+                elsif key == 'quota_blocks'
+                  quota_blocks = value
+                elsif key == 'quota_files'
+                  quota_files = value
                 end
               end
             end
@@ -427,7 +444,7 @@ module Express
             log_debug "DEBUG: Stopping existing app '#{app.name}' before moving"
             (1..num_tries).each do |i|
               begin
-                reply.append source_container.stop(app, app.framework)
+                reply.append source_container.stop(app, app.gear, app.framework)
                 break
               rescue Exception => e
                 log_debug "DEBUG: Error stopping existing app on try #{i}: #{e.message}"
@@ -439,7 +456,7 @@ module Express
           log_debug "DEBUG: Force stopping existing app '#{app.name}' before moving"
           (1..num_tries).each do |i|
             begin
-              reply.append source_container.force_stop(app, app.framework)
+              reply.append source_container.force_stop(app, app.gear, app.framework)
               break
             rescue Exception => e
               log_debug "DEBUG: Error force stopping existing app on try #{i}: #{e.message}"
@@ -451,49 +468,49 @@ module Express
             unless app.embedded.nil?
               app.embedded.each do |cart, cart_info|
                 log_debug "DEBUG: Performing cartridge level pre-move for embedded #{cart} for '#{app.name}' on #{source_container.id}"
-                reply.append source_container.send(:run_cartridge_command, "embedded/" + cart, app, "pre-move", nil, false)
+                reply.append source_container.send(:run_cartridge_command, "embedded/" + cart, app, app.gear, "pre-move", nil, false)
               end
             end
 
             begin
               unless keep_uid
-                app.uid = destination_container.reserve_uid(destination_district_uuid)
-                log_debug "DEBUG: Reserved uid '#{app.uid}' on district: '#{destination_district_uuid}'"
+                app.gear.uid = destination_container.reserve_uid(destination_district_uuid)
+                log_debug "DEBUG: Reserved uid '#{app.gear.uid}' on district: '#{destination_district_uuid}'"
               end
               log_debug "DEBUG: Creating new account for app '#{app.name}' on #{destination_container.id}"
-              reply.append destination_container.create(app)
+              reply.append destination_container.create(app, app.gear, quota_blocks, quota_files)
   
               log_debug "DEBUG: Moving content for app '#{app.name}' to #{destination_container.id}"
-              log_debug `eval \`ssh-agent\`; ssh-add /var/www/libra/broker/config/keys/rsync_id_rsa; ssh -o StrictHostKeyChecking=no -A root@#{source_container.get_ip_address} "rsync -aA#{(app.uid && app.uid == orig_uid) ? 'X' : ''} -e 'ssh -o StrictHostKeyChecking=no' /var/lib/libra/#{app.uuid}/ root@#{destination_container.get_ip_address}:/var/lib/libra/#{app.uuid}/"`
+              log_debug `eval \`ssh-agent\`; ssh-add /var/www/libra/broker/config/keys/rsync_id_rsa; ssh -o StrictHostKeyChecking=no -A root@#{source_container.get_ip_address} "rsync -aA#{(app.gear.uid && app.gear.uid == orig_uid) ? 'X' : ''} -e 'ssh -o StrictHostKeyChecking=no' /var/lib/libra/#{app.gear.uuid}/ root@#{destination_container.get_ip_address}:/var/lib/libra/#{app.gear.uuid}/"`
               if $?.exitstatus != 0
                 raise Cloud::Sdk::NodeException.new("Error moving app '#{app.name}' from #{source_container.id} to #{destination_container.id}", 143)
               end
   
               begin
                 log_debug "DEBUG: Performing cartridge level move for '#{app.name}' on #{destination_container.id}"
-                reply.append destination_container.send(:run_cartridge_command, app.framework, app, "move", idle ? '--idle' : nil, false)
+                reply.append destination_container.send(:run_cartridge_command, app.framework, app, app.gear, "move", idle ? '--idle' : nil, false)
                 unless app.embedded.nil?
                   app.embedded.each do |cart, cart_info|
                     log_debug "DEBUG: Performing cartridge level move for embedded #{cart} for '#{app.name}' on #{destination_container.id}"
-                    embedded_reply = destination_container.send(:run_cartridge_command, "embedded/" + cart, app, "move", nil, false)
+                    embedded_reply = destination_container.send(:run_cartridge_command, "embedded/" + cart, app, app.gear, "move", nil, false)
                     component_details = embedded_reply.appInfoIO.string
                     unless component_details.empty?
-                      app.embedded[cart] = { "info" => component_details }
+                      app.set_embedded_cart_info(cart, component_details)
                     end
                     reply.append embedded_reply
                     log_debug "DEBUG: Performing cartridge level post-move for embedded #{cart} for '#{app.name}' on #{destination_container.id}"
-                    reply.append destination_container.send(:run_cartridge_command, "embedded/" + cart, app, "post-move", nil, false)
+                    reply.append destination_container.send(:run_cartridge_command, "embedded/" + cart, app, app.gear, "post-move", nil, false)
                   end
                 end
 
                 unless app.aliases.nil?
                   app.aliases.each do |server_alias|
-                    destination_container.add_alias(app, app.framework, server_alias)
+                    destination_container.add_alias(app, app.gear, app.framework, server_alias)
                   end
                 end
               rescue Exception => e
                 begin
-                  reply.append destination_container.send(:run_cartridge_command, app.framework, app, "remove-httpd-proxy", nil, false)
+                  reply.append destination_container.send(:run_cartridge_command, app.framework, app, app.gear, "remove-httpd-proxy", nil, false)
                 ensure
                   raise
                 end
@@ -503,7 +520,7 @@ module Express
                 log_debug "DEBUG: Starting '#{app.name}' after move on #{destination_container.id}"
                 (1..num_tries).each do |i|
                   begin
-                    reply.append destination_container.start(app, app.framework)
+                    reply.append destination_container.start(app, app.gear, app.framework)
                     break
                   rescue Exception => e
                     log_debug "DEBUG: Error starting after move on try #{i}: #{e.message}"
@@ -514,13 +531,13 @@ module Express
   
               log_debug "DEBUG: Fixing DNS and s3 for app '#{app.name}' after move"
               log_debug "DEBUG: Changing server identity of '#{app.name}' from '#{source_container.id}' to '#{destination_container.id}'"
-              app.server_identity = destination_container.id
-              app.container = destination_container
+              app.gear.server_identity = destination_container.id
+              app.gear.container = destination_container
               reply.append app.recreate_dns
               app.save
             rescue Exception => e
               begin
-                reply.append destination_container.destroy(app, keep_uid)
+                reply.append destination_container.destroy(app, app.gear, keep_uid)
               ensure
                 raise
               end
@@ -530,7 +547,7 @@ module Express
               app.embedded.each do |cart, cart_info|
                 begin
                   log_debug "DEBUG: Performing cartridge level post-move for embedded #{cart} for '#{app.name}' on #{source_container.id}"
-                  reply.append source_container.send(:run_cartridge_command, "embedded/" + cart, app, "post-move", nil, false)
+                  reply.append source_container.send(:run_cartridge_command, "embedded/" + cart, app, app.gear, "post-move", nil, false)
                 rescue Exception => e
                   log_error "ERROR: Error performing cartridge level post-move for embedded #{cart} for '#{app.name}' on #{source_container.id}: #{e.message}"
                 end
@@ -542,7 +559,7 @@ module Express
         rescue Exception => e
           begin
             unless leave_stopped
-              reply.append source_container.run_cartridge_command(app.framework, app, "start", nil, false)
+              reply.append source_container.run_cartridge_command(app.framework, app, app.gear, "start", nil, false)
             end
           ensure
             raise
@@ -555,20 +572,20 @@ module Express
         (1..num_tries).each do |i|
           begin
             begin
-              reply.append source_container.run_cartridge_command(app.framework, app, "deconfigure", nil, false)
+              reply.append source_container.run_cartridge_command(app.framework, app, app.gear, "deconfigure", nil, false)
             ensure
-              reply.append source_container.destroy(app, keep_uid, orig_uid)
+              reply.append source_container.destroy(app, app.gear, keep_uid, orig_uid)
             end
             break
           rescue Exception => e
             log_error "ERROR: Error deconfiguring old app on try #{i}: #{e.message}"
             if i == num_tries
-              log_debug "DEBUG: The application '#{app.name}' with uuid '#{app.uuid}' is now moved to '#{source_container.id}' but not completely deconfigured from '#{destination_container.id}'"
+              log_debug "DEBUG: The application '#{app.name}' with uuid '#{app.gear.uuid}' is now moved to '#{source_container.id}' but not completely deconfigured from '#{destination_container.id}'"
               raise
             end
           end
         end
-        log_debug "Successfully moved '#{app.name}' with uuid '#{app.uuid}' from '#{source_container.id}' to '#{destination_container.id}'"
+        log_debug "Successfully moved '#{app.name}' with uuid '#{app.gear.uuid}' from '#{source_container.id}' to '#{destination_container.id}'"
         reply
       end
       
@@ -751,9 +768,9 @@ module Express
                 else
                   result.cart_commands.push({:command => "BROKER_KEY_REMOVE", :args => []})
                 end
-              elsif line =~ /^STATUS: /
-                status = line['STATUS: '.length..-1].chomp
-                result.cart_commands.push({:command => "STATUS", :args => [status]})
+              elsif line =~ /^ATTR: /
+                attr = line['ATTR: '.length..-1].chomp.split('=')
+                result.cart_commands.push({:command => "ATTR", :args => [attr[0], attr[1]]})
               else
                 #result.debugIO << line
               end

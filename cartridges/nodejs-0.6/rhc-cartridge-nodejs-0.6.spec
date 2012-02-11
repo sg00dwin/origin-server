@@ -2,7 +2,7 @@
 
 Summary:   Provides Node-0.6 support
 Name:      rhc-cartridge-nodejs-0.6
-Version:   0.1.2
+Version:   0.1.3
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -25,6 +25,7 @@ Provides Node.js support to OpenShift
 %build
 rm -rf git_template
 cp -r template/ git_template/
+cp info/configuration/npm_global_module_list git_template
 cd git_template
 git init
 git add -f .
@@ -71,9 +72,9 @@ rm -rf %{buildroot}
 
 %post
 # Install npm modules
-npm install -g mysql pg
+npm install -g $(perl -ne 'print if /^\s*[^#\s]/' %{cartridgedir}/info/configuration/npm_global_module_list | tr '\n' ' ')
+# npm install -g mysql pg
 npm install -g mongodb --mongodb:native
-npm install -g async connect express node-static request socket.io underscore
 
 %files
 %defattr(-,root,root,-)
@@ -90,6 +91,23 @@ npm install -g async connect express node-static request socket.io underscore
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Sat Feb 11 2012 Dan McPherson <dmcphers@redhat.com> 0.1.3-1
+- Use links in sample server.js rather than a redirect. (ramr@redhat.com)
+- Update build script for handling (ignoring) global npm modules and fix bug to
+  update the modules from deplist.txt in the correct directory.
+  (ramr@redhat.com)
+- Better method of installing global npm modules (more generic).
+  (ramr@redhat.com)
+- Handle signals gracefully in sample app + print log messages w/ timestamps.
+  (ramr@redhat.com)
+- bug 722828 (bdecoste@gmail.com)
+- more abstracting out selinux (dmcphers@redhat.com)
+- better name consistency (dmcphers@redhat.com)
+- first pass at splitting out selinux logic (dmcphers@redhat.com)
+- Fix wrong link to remove-httpd-proxy (hypens not underscores) and fix
+  manifests for Node and Python to allow for nodejs/python app creation.
+  (ramr@redhat.com)
+
 * Thu Feb 09 2012 Ram Ranganathan <ramr@redhat.com> 0.1.2-1
 - new package built with tito
 

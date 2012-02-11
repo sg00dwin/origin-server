@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.4.1
+Version:        0.4.2
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -73,6 +73,101 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Sat Feb 11 2012 Dan McPherson <dmcphers@redhat.com> 0.4.2-1
+- Updating gem versions (dmcphers@redhat.com)
+- cleanup specs (dmcphers@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rchopra@redhat.com)
+- fix for finding out whether a component is auto-generated or not
+  (rchopra@redhat.com)
+- Fixed typo (kraman@gmail.com)
+- Provide a way for admin-move script to update embeddec cart information
+  (kraman@gmail.com)
+- Changing server_id to server_identity to be consistent with rest of code
+  (kraman@gmail.com)
+- change component/group paths in descriptor (rchopra@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- Fix broker auth service, bug# 787297 (rpenta@redhat.com)
+- bug fixes and refactoring (lnader@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (lnader@redhat.com)
+- Minor fixes to export/conceal port functions (kraman@gmail.com)
+- Bug 789179 (dmcphers@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (lnader@redhat.com)
+- bug fixes and improvements in REST API (lnader@redhat.com)
+- calling private functions without self qualifier (rchopra@redhat.com)
+- fixing merge (mmcgrath@redhat.com)
+- Fixes to throw exceptions on failures. Fixes to stop app if start fails and
+  other recovery processes. (kraman@gmail.com)
+- fixing alias add/remove (rchopra@redhat.com)
+- Temporary commit to build (mmcgrath@redhat.com)
+- merging (mmcgrath@redhat.com)
+- Added expose and conceal port (mmcgrath@redhat.com)
+- Fixed env var delete on node Added logic to save app after critical steps on
+  node suring create/destroy/configure/deconfigure Handle failures on
+  start/stop of application or cartridge (kraman@gmail.com)
+- bug 722828 (bdecoste@gmail.com)
+- bug 722828 (wdecoste@localhost.localdomain)
+- bug 722828 (wdecoste@localhost.localdomain)
+- What!!! List of cartridges is hardcoded in code ... try something like:   ls
+  /usr/libexec/li/cartridges/ |  grep -Ev 'abstract|abstract-httpd|embedded'
+  its a lil' better!! :^) (ramr@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (lnader@redhat.com)
+- moved links from app to cartridge (lnader@redhat.com)
+- correcting haproxy name (mmcgrath@redhat.com)
+- Fix HAProxy descriptor Add HAProxy to standalone cart list on
+  CartridgeCache(temp till descriptor changes are made on cloud-sdk-node)
+  (kraman@gmail.com)
+- Fixing add/remove embedded cartridges Fixing domain info on legacy broker
+  controller Fixing start/stop/etc app and cart. control calls for legacy
+  broker (kraman@gmail.com)
+- cleanup function to be called after elaboration (rchopra@redhat.com)
+- get the deleted components out of re-elaboration (rchopra@redhat.com)
+- re-elaborate descriptor after remove dependency (rchopra@redhat.com)
+- remove self from dependency of component instance (rchopra@redhat.com)
+- bug fix in re-entrancy code (rchopra@redhat.com)
+- add application to configure/start order (rchopra@redhat.com)
+- auto generate configure/start order (rchopra@redhat.com)
+- auto-merge top groups; minor improvements to re-entrancy algorithm
+  (rchopra@redhat.com)
+- Bug fixes for saving connection list Abstracting difference between
+  framework/embedded cart in application_container_proxy and application
+  (kraman@gmail.com)
+- Renamed ApplicationContainer to Gear to avoid confusion Fixed gear
+  creation/configuration/deconfiguration for framework cartridge Fixed
+  save/load of group insatnce map Removed hacks where app was assuming one gear
+  only Started changes to enable rollback if operation fails (kraman@gmail.com)
+- bug fixes for app dependency manipulation (rchopra@redhat.com)
+- server_identity is container's uuid (rchopra@redhat.com)
+- Added backward compat code to force first application containers uuid =
+  application uuid (kraman@gmail.com)
+- Fixes for re-enabling cli tools. git url is not yet working.
+  (kraman@gmail.com)
+- code for automerging top groups - not integrated yet, to be tested. also a
+  minor bug fix (rchopra@unused-32-159.sjc.redhat.com)
+- Updated code to make it re-enterant. Adding/removing dependencies does not
+  change location of dependencies that did not change.
+  (rchopra@unused-32-159.sjc.redhat.com)
+- Updating models to improove schems of descriptor in mongo Moved
+  connection_endpoint to broker (kraman@gmail.com)
+- Added group overrides implementation Added colocation on connections
+  implementation (rchopra@redhat.com)
+- Use cart.requires_feature as dependencies in each component
+  (rchopra@redhat.com)
+- Changes to re-enable app to be saved/retrieved to/from mongo Various bug
+  fixes (kraman@gmail.com)
+- Added basic elaboration of components and connections (rchopra@redhat.com)
+- Creating models for descriptor Fixing manifest files Added command to list
+  installed cartridges and get descriptors (kraman@gmail.com)
+- bug fixes and enhancements in the rest API (lnader@redhat.com)
+- simplify a lot of the internals test cases (make them faster)
+  (dmcphers@redhat.com)
+- Adding expose-port and conceal-port (mmcgrath@redhat.com)
+- remove extra broker field (dmcphers@redhat.com)
+- change state machine dep (dmcphers@redhat.com)
+- move the rest of the controller tests into broker (dmcphers@redhat.com)
+- stop using hard coded value (dmcphers@redhat.com)
+- print correct image name in streamlined verify process (dmcphers@redhat.com)
+
 * Fri Feb 03 2012 Dan McPherson <dmcphers@redhat.com> 0.4.1-1
 - Updating gem versions (dmcphers@redhat.com)
 - bump spec numbers (dmcphers@redhat.com)
@@ -80,403 +175,5 @@ rm -rf %{buildroot}
 - Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
 - mongo wrapper: 'use <user-db>' instead of 'use admin' for authentication
   (rpenta@redhat.com)
-
-* Thu Feb 02 2012 Dan McPherson <dmcphers@redhat.com> 0.3.22-1
-- Updating gem versions (dmcphers@redhat.com)
-- Remove unnecessary spaces from SSH key error messages (BZ 786680)
-  (aboone@redhat.com)
-
-* Tue Jan 31 2012 Dan McPherson <dmcphers@redhat.com> 0.3.21-1
-- Updating gem versions (dmcphers@redhat.com)
-- - Handle both ReplicaSet and normal mongodb connection - Retry for 30 secs
-  (60 times in 0.5 sec frequency) in case of mongo connection failure. - On
-  devenv, configure/start mongod with replicaSet = 1 (rpenta@redhat.com)
-- Bug 786034 (dmcphers@redhat.com)
-- additional test + use new record instead of persisted (dmcphers@redhat.com)
-
-* Mon Jan 30 2012 Dan McPherson <dmcphers@redhat.com> 0.3.20-1
-- Updating gem versions (dmcphers@redhat.com)
-- update json version (dmcphers@redhat.com)
-
-* Mon Jan 30 2012 Dan McPherson <dmcphers@redhat.com> 0.3.19-1
-- Updating gem versions (dmcphers@redhat.com)
-- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
-- fix for bug# 772673 (rpenta@redhat.com)
-- use better update (thx kraman) to update single item in array
-  (dmcphers@redhat.com)
-
-* Sun Jan 29 2012 Dan McPherson <dmcphers@redhat.com> 0.3.18-1
-- Updating gem versions (dmcphers@redhat.com)
-- remove old gitkeep file (dmcphers@redhat.com)
-- Bug 785550 and 785514 (dmcphers@redhat.com)
-- keep applications when you get the user (dmcphers@redhat.com)
-- make mongo queryable (dmcphers@redhat.com)
-- change rhlogin to login for sdk (dmcphers@redhat.com)
-- add base cloud-sdk broker (dmcphers@redhat.com)
-
-* Sat Jan 28 2012 Dan McPherson <dmcphers@redhat.com> 0.3.17-1
-- Updating gem versions (dmcphers@redhat.com)
-- mongo performance changes and mongo unit tests (dmcphers@redhat.com)
-
-* Fri Jan 27 2012 Dan McPherson <dmcphers@redhat.com> 0.3.16-1
-- Updating gem versions (dmcphers@redhat.com)
-- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
-- Don't update ssh key during updating namespace if ssh key is not specified
-  (rpenta@redhat.com)
-- make first sync faster (dmcphers@redhat.com)
-- dont go quite as far with the attr tracking (dmcphers@redhat.com)
-- Bug 692401 (dmcphers@redhat.com)
-- fix for bug# 784416 (rpenta@redhat.com)
-- fix ssh validation (rpenta@redhat.com)
-- resolve merge conflicts (rpenta@redhat.com)
-- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
-  (lnader@dhcp-240-165.mad.redhat.com)
-- bug fixes (lnader@dhcp-240-165.mad.redhat.com)
-- Cucumber tests for domain and application
-  (lnader@dhcp-240-165.mad.redhat.com)
-- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
-- cleanup apis (dmcphers@redhat.com)
-- remove unused field (rpenta@redhat.com)
-- Restrict deletion of 'default' ssh key until all client tools are updated
-  (rpenta@redhat.com)
-- Remove RSA_SSH_KEY_MIN_LENGTH check, only specific to rsa (rpenta@redhat.com)
-
-* Tue Jan 24 2012 Dan McPherson <dmcphers@redhat.com> 0.3.15-1
-- Updating gem versions (dmcphers@redhat.com)
-- fix cloud user unit test (rpenta@redhat.com)
-- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
-- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
-- resolve merge conflicts (rpenta@redhat.com)
-- Resolve merge conflicts (rpenta@redhat.com)
-- Any ssh key can be removed (even the default/primary key). Ony restriction
-  will be at least one ssh key should be associated with the domain
-  (rpenta@redhat.com)
-- Resolve merge conflicts (rpenta@redhat.com)
-- ssh keys code refactor (rpenta@redhat.com)
-
-* Tue Jan 24 2012 Dan McPherson <dmcphers@redhat.com> 0.3.14-1
-- Updating gem versions (dmcphers@redhat.com)
-- rubygem-cloud-sdk-controller: Modified license to ASL 2.0 (jhonce@redhat.com)
-
-* Tue Jan 24 2012 Dan McPherson <dmcphers@redhat.com> 0.3.13-1
-- Updating gem versions (dmcphers@redhat.com)
-- fix test case (dmcphers@redhat.com)
-- fix test cases (dmcphers@redhat.com)
-- fix typo (dmcphers@redhat.com)
-- move gear limit checking to mongo (dmcphers@redhat.com)
-
-* Fri Jan 20 2012 Dan McPherson <dmcphers@redhat.com> 0.3.12-1
-- Updating gem versions (dmcphers@redhat.com)
-- build fixes (dmcphers@redhat.com)
-
-* Fri Jan 20 2012 Dan McPherson <dmcphers@redhat.com> 0.3.11-1
-- Updating gem versions (dmcphers@redhat.com)
-- getting to the real districts mongo impl (dmcphers@redhat.com)
-
-* Fri Jan 20 2012 Mike McGrath <mmcgrath@redhat.com> 0.3.10-1
-- Updating gem versions (mmcgrath@redhat.com)
-- fixed XML response from DELETE and PUT (lnader@dhcp-240-165.mad.redhat.com)
-- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
-  (lnader@dhcp-240-165.mad.redhat.com)
-- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
-  (lnader@dhcp-240-165.mad.redhat.com)
-- added ssh key management API (lnader@dhcp-240-165.mad.redhat.com)
-- added ssh key rest model (lnader@dhcp-240-165.mad.redhat.com)
-- REST key management API (lnader@dhcp-240-165.mad.redhat.com)
-
-* Thu Jan 19 2012 Dan McPherson <dmcphers@redhat.com> 0.3.9-1
-- Updating gem versions (dmcphers@redhat.com)
-- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
-  (rchopra@redhat.com)
-- bug fix for rails responder in case of DELETE call. using 'render' for each
-  format instead of relying actionpack for status code. (rchopra@redhat.com)
-- removed pry from cloud-sdk-controller.gemspec
-  (lnader@dhcp-240-165.mad.redhat.com)
-
-* Thu Jan 19 2012 Dan McPherson <dmcphers@redhat.com> 0.3.8-1
-- Updating gem versions (dmcphers@redhat.com)
-- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
-  (lnader@dhcp-240-165.mad.redhat.com)
-- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
-  (lnader@dhcp-240-165.mad.redhat.com)
-- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
-  (lnader@dhcp-240-165.mad.redhat.com)
-- bug fix in cartridge controller (lnader@dhcp-240-165.mad.redhat.com)
-- everything but the delete (lnader@dhcp-240-165.mad.redhat.com)
-- bug fixes (lnader@dhcp-240-165.mad.redhat.com)
-- Merge remote branch 'origin/master' into REST
-  (lnader@dhcp-240-165.mad.redhat.com)
-- renamed controllers (lnader@dhcp-240-165.mad.redhat.com)
-- bug fixes (lnader@dhcp-240-165.mad.redhat.com)
-- Merge branch 'REST' of ssh://git1.ops.rhcloud.com/srv/git/li into REST
-  (lnader@dhcp-240-165.mad.redhat.com)
-- bug fixes in embedded controller (lnader@dhcp-240-165.mad.redhat.com)
-- renamed controller (lnader@dhcp-240-165.mad.redhat.com)
-- new event and embedded controller (lnader@dhcp-240-165.mad.redhat.com)
-- split app controller into 3 controllers (lnader@dhcp-240-165.mad.redhat.com)
-- bug fixes and HTTP status codes in app controller
-  (lnader@dhcp-240-165.mad.redhat.com)
-- Added new method to auth service with support for user/pass based
-  authentication for new REST API (kraman@gmail.com)
-- Completed domain api (kraman@gmail.com)
-- Cleanup and fixes for routes and REST models (kraman@gmail.com)
-- Adding additional routes and fixing merge conflicts (kraman@gmail.com)
-- bug fixes (lnader@dhcp-240-165.mad.redhat.com)
-- new rest cartridge object (lnader@dhcp-240-165.mad.redhat.com)
-- created rest app class (lnader@dhcp-240-165.mad.redhat.com)
-- bug fixes and file name changes (lnader@dhcp-240-165.mad.redhat.com)
-- REST API bug fixes (lnader@dhcp-240-165.mad.redhat.com)
-- REST API bug fixes (lnader@dhcp-240-165.mad.redhat.com)
-- controller file renamed (lnader@dhcp-240-165.mad.redhat.com)
-- Adding route for domains (kraman@gmail.com)
-- Adding user management api routes (kraman@gmail.com)
-- REST API revision 3 (lnader@dhcp-240-165.mad.redhat.com)
-- XML tags for serialized classes are returned as - seperated words instead of
-  camel case (kraman@gmail.com)
-- Creating REST routes. Bugfixes (kraman@gmail.com)
-- REST API revision 2 (lnader@dhcp-240-165.mad.redhat.com)
-- REST API revision (lnader@dhcp-240-165.mad.redhat.com)
-- REST API (lnader@dhcp-240-165.mad.redhat.com)
-
-* Thu Jan 19 2012 Dan McPherson <dmcphers@redhat.com> 0.3.7-1
-- Updating gem versions (dmcphers@redhat.com)
-
-* Thu Jan 19 2012 Dan McPherson <dmcphers@redhat.com> 0.3.6-1
-- Updating gem versions (dmcphers@redhat.com)
-- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
-  (rchopra@redhat.com)
-- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
-  (rchopra@redhat.com)
-- implementation of US1733 - by default the new field is not saved yet
-  (rchopra@redhat.com)
-
-* Thu Jan 19 2012 Dan McPherson <dmcphers@redhat.com> 0.3.5-1
-- Updating gem versions (dmcphers@redhat.com)
-- fix build (dmcphers@redhat.com)
-
-* Wed Jan 18 2012 Mike McGrath <mmcgrath@redhat.com> 0.3.4-1
-- Updating gem versions (mmcgrath@redhat.com)
-
-* Wed Jan 18 2012 Dan McPherson <dmcphers@redhat.com> 0.3.3-1
-- Updating gem versions (dmcphers@redhat.com)
-- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li into s3-to-mongo
-  (rpenta@redhat.com)
-- handle app being removed during migration (dmcphers@redhat.com)
-- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li into s3-to-mongo
-  (rpenta@redhat.com)
-- Merge/resolve conflicts from master (rpenta@redhat.com)
-- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li into s3-to-mongo
-  (rpenta@redhat.com)
-- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li into s3-to-mongo
-  (rpenta@redhat.com)
-- fixes related to mongo datastore (rpenta@redhat.com)
-- Added MongoDataStore model (rpenta@redhat.com)
-
-* Tue Jan 17 2012 Dan McPherson <dmcphers@redhat.com> 0.3.2-1
-- Updating gem versions (dmcphers@redhat.com)
-- fix test case (dmcphers@redhat.com)
-- districts (work in progress) (dmcphers@redhat.com)
-- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
-- Raise UserKeyException instead of UserException when dealing with user ssh
-  keys (rpenta@redhat.com)
-
-* Fri Jan 13 2012 Dan McPherson <dmcphers@redhat.com> 0.3.1-1
-- Updating gem versions (dmcphers@redhat.com)
-- bump spec numbers (dmcphers@redhat.com)
-- Bug 781254 (dmcphers@redhat.com)
-
-* Thu Jan 12 2012 Dan McPherson <dmcphers@redhat.com> 0.2.31-1
-- Updating gem versions (dmcphers@redhat.com)
-- Bump API version to 1.1.2 due to key_type requirement on domain create/update
-  (aboone@redhat.com)
-- add common to controller deps (dmcphers@redhat.com)
-- - Assign default ssh_type when empty string is passed to cloud user.
-  (rpenta@redhat.com)
-
-* Wed Jan 11 2012 Dan McPherson <dmcphers@redhat.com> 0.2.30-1
-- Updating gem versions (dmcphers@redhat.com)
-- remove email from cloud user (dmcphers@redhat.com)
-- grammar change in message to user (rchopra@redhat.com)
-- typo fix in message (rchopra@redhat.com)
-- bugfixes for #773189 and #773139 (rchopra@redhat.com)
-- correctly return 400 for invalid requests (dmcphers@redhat.com)
-
-* Wed Jan 11 2012 Dan McPherson <dmcphers@redhat.com> 0.2.29-1
-- Updating gem versions (dmcphers@redhat.com)
-- Fix for Bugs# 773209, 773176 (rpenta@redhat.com)
-
-* Tue Jan 10 2012 Dan McPherson <dmcphers@redhat.com> 0.2.28-1
-- Updating gem versions (dmcphers@redhat.com)
-- change identified in code review for bug 772673 (abhgupta@redhat.com)
-- Fix for Bug# 772673 -Persist ssh key type in the datastore (currently in s3)
-  (rpenta@redhat.com)
-
-* Mon Jan 09 2012 Dan McPherson <dmcphers@redhat.com> 0.2.27-1
-- Updating gem versions (dmcphers@redhat.com)
-- BugzID# 772760 (kraman@gmail.com)
-- Move jenkins deconfigure to observer. Create convinence method to move app
-  deconfigure and user update logic from admin script and cloud-sdk controller
-  to cloud-sdk models. (kraman@gmail.com)
-
-* Mon Jan 09 2012 Dan McPherson <dmcphers@redhat.com> 0.2.26-1
-- Updating gem versions (dmcphers@redhat.com)
-- TA1166: Move outage notification out of cloud-sdk controller to broker
-  component (kraman@gmail.com)
-
-* Fri Jan 06 2012 Dan McPherson <dmcphers@redhat.com> 0.2.25-1
-- Updating gem versions (dmcphers@redhat.com)
-- fix test case (dmcphers@redhat.com)
-- fixing issues resulting out of code merging (abhgupta@redhat.com)
-- Fixes to enable cloud-sdk-controller tests (kraman@gmail.com)
-
-* Wed Jan 04 2012 Dan McPherson <dmcphers@redhat.com> 0.2.24-1
-- Updating gem versions (dmcphers@redhat.com)
-- fix build break and better error messaging (dmcphers@redhat.com)
-- US1608: support DSA keys (rpenta@redhat.com)
-- US1608: support DSA keys (rpenta@redhat.com)
-- bug-fixes related to Mirage/express merge (rpenta@redhat.com)
-
-* Wed Jan 04 2012 Dan McPherson <dmcphers@redhat.com> 0.2.23-1
-- Updating gem versions (dmcphers@redhat.com)
-- better error handling (dmcphers@redhat.com)
-
-* Wed Jan 04 2012 Dan McPherson <dmcphers@redhat.com> 0.2.22-1
-- Updating gem versions (dmcphers@redhat.com)
-- use user exception (dmcphers@redhat.com)
-- Adding cloud-sdk-controller unit tests (kraman@gmail.com)
-
-* Wed Jan 04 2012 Dan McPherson <dmcphers@redhat.com> 0.2.21-1
-- Updating gem versions (dmcphers@redhat.com)
-- better rollback logic (dmcphers@redhat.com)
-
-* Wed Jan 04 2012 Alex Boone <aboone@redhat.com> 0.2.20-1
-- Updating gem versions (aboone@redhat.com)
-
-* Wed Jan 04 2012 Alex Boone <aboone@redhat.com> 0.2.19-1
-- move fixes (dmcphers@redhat.com)
-
-* Wed Dec 28 2011 Dan McPherson <dmcphers@redhat.com> 0.2.18-1
-- Updating gem versions (dmcphers@redhat.com)
-- Bug 770544 (dmcphers@redhat.com)
-
-* Tue Dec 27 2011 Dan McPherson <dmcphers@redhat.com> 0.2.17-1
-- Updating gem versions (dmcphers@redhat.com)
-- various fixes (dmcphers@redhat.com)
-- add application limit of 5 (dmcphers@redhat.com)
-
-* Tue Dec 27 2011 Dan McPherson <dmcphers@redhat.com> 0.2.16-1
-- Updating gem versions (dmcphers@redhat.com)
-- remove version ref (dmcphers@redhat.com)
-
-* Tue Dec 27 2011 Dan McPherson <dmcphers@redhat.com> 0.2.15-1
-- Updating gem versions (dmcphers@redhat.com)
-- release fixes (dmcphers@redhat.com)
-- Bug 770544 (dmcphers@redhat.com)
-
-* Mon Dec 26 2011 Dan McPherson <dmcphers@redhat.com> 0.2.14-1
-- bump spec numbers (dmcphers@redhat.com)
-- Bug 770406 (dmcphers@redhat.com)
-
-* Fri Dec 23 2011 Dan McPherson <dmcphers@redhat.com> 0.2.13-1
-- bump spec numbers (dmcphers@redhat.com)
-- Bug 77027 (dmcphers@redhat.com)
-- Bug 770085 (dmcphers@redhat.com)
-
-* Thu Dec 22 2011 Dan McPherson <dmcphers@redhat.com> 0.2.12-1
-- bump spec numbers (dmcphers@redhat.com)
-- add better error handling for configure errors (dmcphers@redhat.com)
-
-* Thu Dec 22 2011 Dan McPherson <dmcphers@redhat.com> 0.2.11-1
-- bump spec numbers (dmcphers@redhat.com)
-- Bug 768851 - allow jboss build with only large instance available (devenv)
-  (dmcphers@redhat.com)
-
-* Thu Dec 22 2011 Dan McPherson <dmcphers@redhat.com> 0.2.10-1
-- bump spec numbers (dmcphers@redhat.com)
-- Bug 769358 (dmcphers@redhat.com)
-
-* Wed Dec 21 2011 Dan McPherson <dmcphers@redhat.com> 0.2.9-1
-- bump spec numbers (dmcphers@redhat.com)
-- Bug 769521 (dmcphers@redhat.com)
-- Bug 769565 (dmcphers@redhat.com)
-
-* Wed Dec 21 2011 Dan McPherson <dmcphers@redhat.com> 0.2.8-1
-- bump spec numbers (dmcphers@redhat.com)
-- Bug 769211 (dmcphers@redhat.com)
-- fix typo (dmcphers@redhat.com)
-- Bug 769663 (dmcphers@redhat.com)
-- Bug 769663 (dmcphers@redhat.com)
-
-* Wed Dec 21 2011 Dan McPherson <dmcphers@redhat.com> 0.2.7-1
-- fix spec numbers (dmcphers@redhat.com)
-
-* Wed Dec 21 2011 Mike McGrath <mmcgrath@redhat.com> 0.2.6-1
-- Bump cartridge list cache to 6 hours (aboone@redhat.com)
-
-* Fri Dec 16 2011 Dan McPherson <dmcphers@redhat.com> 0.2.5-1
-- some cleanup of server-common (dmcphers@redhat.com)
-
-* Wed Dec 14 2011 Dan McPherson <dmcphers@redhat.com> 0.2.4-1
-- bump spec numbers (dmcphers@redhat.com)
-
-* Wed Dec 14 2011 Dan McPherson <dmcphers@redhat.com> 0.2.2-1
-- bump spec numbers (dmcphers@redhat.com)
-
-* Wed Dec 14 2011 Dan McPherson <dmcphers@redhat.com> 0.2.1-1
-- bump spec numbers (dmcphers@redhat.com)
-- Adding cartridge list cache. Added nossh to validation for ssh key (BZ
-  767442). Based on 2cbab9d374409 Added secondary ssh key management based on
-  Ravi's work (kraman@gmail.com)
-- Adding first version of app move admin utility (kraman@gmail.com)
-- fix app not found cases (dmcphers@redhat.com)
-- Added ability to add/remove/list secondary ssh keys Added admin tools
-  (kraman@gmail.com)
-- more consistent error handling (dmcphers@redhat.com)
-- get jenkins running again (dmcphers@redhat.com)
-- get create domain working (dmcphers@redhat.com)
-- fix delete (dmcphers@redhat.com)
-- merge code for deletion of namespace into cloud-sdk (rchopra@redhat.com)
-- Merge remote-tracking branch 'origin/master' into mirage (kraman@gmail.com)
-- Added application, cloud_user observers to validate objects and print jenkins
-  related warnings. Added per application user delegation (with ssh keys)
-  (kraman@gmail.com)
-
-* Sun Dec 11 2011 Dan McPherson <dmcphers@redhat.com> 0.1.17-1
-- building cloud sdk (dmcphers@redhat.com)
-- Changed cdk-controller to be rails plugin. Modified express-broker with
-  customizations and integrating cdk-controller (kraman@gmail.com)
-- Checkpoint: Added cartridge populated env vars, broker key reuest and system
-  ssh keys. (kraman@gmail.com)
-- Checkpoint: cartridge and embedded actions work (kraman@gmail.com)
-- observers containing express specific code for user and app creation
-  (rchopra@redhat.com)
-- Checkpoint cart_list_post working (kraman@gmail.com)
-- Bug fixes in DNS service API Added ability to store users in data store API
-  create/modify domain and user_info calls working. (kraman@gmail.com)
-- Checkpoint of cloud-sdk work. Added implementation and bugfixes for
-  Datastore, Auth and node-communication user-info works (kraman@gmail.com)
-- move auth token logic (dmcphers@redhat.com)
-- starting to fill in dnsservice (dmcphers@redhat.com)
-- Flushed out data storage API CloudUser model close to complete Changed
-  AuthAPI methods to be static (kraman@gmail.com)
-- rpm work (dmcphers@redhat.com)
-- Added auth service code. (kraman@gmail.com)
-- Starting work on migration of common logic from broker into common +
-  controller packages (kraman@gmail.com)
-- change common files (dmcphers@redhat.com)
-- Automatic commit of package [rubygem-cloud-sdk-controller] release
-  [0.1.16-1]. (dmcphers@redhat.com)
-- building updates (dmcphers@redhat.com)
-- Automatic commit of package [rubygem-cloud-sdk-controller] release
-  [0.1.15-1]. (dmcphers@redhat.com)
-- engine -> node (dmcphers@redhat.com)
-- more work splitting into 3 gems (dmcphers@redhat.com)
-- split into three gems (dmcphers@redhat.com)
-
-* Tue Nov 29 2011 Dan McPherson <dmcphers@redhat.com> 0.1.16-1
-- building updates (dmcphers@redhat.com)
-
-* Mon Nov 28 2011 Dan McPherson <dmcphers@redhat.com> 0.1.15-1
-- new package built with tito
 
 

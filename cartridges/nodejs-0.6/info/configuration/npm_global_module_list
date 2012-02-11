@@ -1,0 +1,25 @@
+#
+#  This file contains a list of globally installed and available npm modules.
+#
+
+#  DB drivers.
+mysql
+pg
+mongodb
+
+#  Other modules (including frameworks, middleware etc).
+mime
+async
+express
+connect
+node-static
+socket.io
+xml2js
+optimist
+underscore
+testosterone
+funk
+gently
+jade
+request
+jsdom

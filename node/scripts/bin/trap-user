@@ -9,7 +9,7 @@ import base64
 import commands
 import selinux
 
-EXT_LIB = "/usr/libexec/li/cartridges/abstract/info/lib/util_ext"
+EXT_LIB = "/usr/libexec/li/lib/util_ext"
 
 commands_map = {
     "git-receive-pack": "/usr/bin/git-receive-pack",

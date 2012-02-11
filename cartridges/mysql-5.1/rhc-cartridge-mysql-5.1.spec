@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/mysql-5.1
 
 Name: rhc-cartridge-mysql-5.1
-Version: 0.20.1
+Version: 0.20.2
 Release: 1%{?dist}
 Summary: Embedded mysql support for express
 
@@ -53,6 +53,22 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Sat Feb 11 2012 Dan McPherson <dmcphers@redhat.com> 0.20.2-1
+- more abstracting out selinux (dmcphers@redhat.com)
+- first pass at splitting out selinux logic (dmcphers@redhat.com)
+- cucumber test fix embedded.feature : mysql cartridge manifest had default
+  profile misfiring (rchopra@redhat.com)
+- only change admin user on post-move (dmcphers@redhat.com)
+- Updating models to improove schems of descriptor in mongo Moved
+  connection_endpoint to broker (kraman@gmail.com)
+- Fixing manifest yml files (kraman@gmail.com)
+- Creating models for descriptor Fixing manifest files Added command to list
+  installed cartridges and get descriptors (kraman@gmail.com)
+- Merge branch 'master' of li-master:/srv/git/li (ramr@redhat.com)
+- change status to use normal client_result instead of special handling
+  (dmcphers@redhat.com)
+- Cleanup usage message to include status. (ramr@redhat.com)
+
 * Fri Feb 03 2012 Dan McPherson <dmcphers@redhat.com> 0.20.1-1
 - bump spec numbers (dmcphers@redhat.com)
 

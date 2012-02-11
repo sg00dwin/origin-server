@@ -1,5 +1,5 @@
 class Gear < Cloud::Sdk::UserModel
-  attr_accessor :uuid, :uid, :server_id, :group_instance_name, :node_profile, :container, :app, :configured_components
+  attr_accessor :uuid, :uid, :server_identity, :group_instance_name, :node_profile, :container, :app, :configured_components
   primary_key :uuid
   exclude_attributes :container, :app
   
@@ -13,16 +13,16 @@ class Gear < Cloud::Sdk::UserModel
   end
   
   def get_proxy
-    if self.container.nil? and !@server_id.nil?
-      self.container = Cloud::Sdk::ApplicationContainerProxy.instance(@server_id)
+    if self.container.nil? and !@server_identity.nil?
+      self.container = Cloud::Sdk::ApplicationContainerProxy.instance(@server_identity)
     end    
     return self.container
   end
   
   def create
-    if server_id.nil?
+    if server_identity.nil?
       self.container = Cloud::Sdk::ApplicationContainerProxy.find_available(self.node_profile)
-      self.server_id = self.container.id
+      self.server_identity = self.container.id
       self.uid = self.container.reserve_uid
       return self.container.create(app,self)
     end

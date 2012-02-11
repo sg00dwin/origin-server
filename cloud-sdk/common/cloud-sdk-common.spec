@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Common
 Name:           rubygem-%{gemname}
-Version:        0.4.1
+Version:        0.4.2
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -73,154 +73,24 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Sat Feb 11 2012 Dan McPherson <dmcphers@redhat.com> 0.4.2-1
+- cleanup specs (dmcphers@redhat.com)
+- fix for finding out whether a component is auto-generated or not
+  (rchopra@redhat.com)
+- change component/group paths in descriptor (rchopra@redhat.com)
+- Updating models to improove schems of descriptor in mongo Moved
+  connection_endpoint to broker (kraman@gmail.com)
+- Added group overrides implementation Added colocation on connections
+  implementation (rchopra@redhat.com)
+- Use cart.requires_feature as dependencies in each component
+  (rchopra@redhat.com)
+- Changes to re-enable app to be saved/retrieved to/from mongo Various bug
+  fixes (kraman@gmail.com)
+- Added basic elaboration of components and connections (rchopra@redhat.com)
+- Creating models for descriptor Fixing manifest files Added command to list
+  installed cartridges and get descriptors (kraman@gmail.com)
+- change state machine dep (dmcphers@redhat.com)
+- move the rest of the controller tests into broker (dmcphers@redhat.com)
+
 * Fri Feb 03 2012 Dan McPherson <dmcphers@redhat.com> 0.4.1-1
 - bump spec numbers (dmcphers@redhat.com)
-
-* Tue Jan 31 2012 Dan McPherson <dmcphers@redhat.com> 0.3.14-1
-- new record wasnt working so well (dmcphers@redhat.com)
-- additional test + use new record instead of persisted (dmcphers@redhat.com)
-
-* Mon Jan 30 2012 Dan McPherson <dmcphers@redhat.com> 0.3.13-1
-- update json version (dmcphers@redhat.com)
-
-* Sun Jan 29 2012 Dan McPherson <dmcphers@redhat.com> 0.3.12-1
-- Bug 785550 and 785514 (dmcphers@redhat.com)
-- keep applications when you get the user (dmcphers@redhat.com)
-- make mongo queryable (dmcphers@redhat.com)
-- moving rhc-admin-create-district logic to rhc-admin-ctl-district and add more
-  tests (dmcphers@redhat.com)
-
-* Sat Jan 28 2012 Dan McPherson <dmcphers@redhat.com> 0.3.11-1
-- mongo performance changes and mongo unit tests (dmcphers@redhat.com)
-- mongo ds terminology improvements and get basic broker controller tests
-  running again (dmcphers@redhat.com)
-
-* Fri Jan 27 2012 Dan McPherson <dmcphers@redhat.com> 0.3.10-1
-- dont go quite as far with the attr tracking (dmcphers@redhat.com)
-- Bug 692401 (dmcphers@redhat.com)
-- deploy httpd proxy from migration (dmcphers@redhat.com)
-- config cleanup for ticket (dmcphers@redhat.com)
-- Bug 784809 (dmcphers@redhat.com)
-- better mongo usage (dmcphers@redhat.com)
-
-* Tue Jan 24 2012 Dan McPherson <dmcphers@redhat.com> 0.3.9-1
-- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
-- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
-- resolve merge conflicts (rpenta@redhat.com)
-- Resolve merge conflicts (rpenta@redhat.com)
-- Resolve merge conflicts (rpenta@redhat.com)
-- ssh keys code refactor (rpenta@redhat.com)
-
-* Tue Jan 24 2012 Dan McPherson <dmcphers@redhat.com> 0.3.8-1
-- cloud-sdk-common: Modified license to ASL 2.0 (jhonce@redhat.com)
-
-* Tue Jan 24 2012 Dan McPherson <dmcphers@redhat.com> 0.3.7-1
-- fix test cases (dmcphers@redhat.com)
-- move gear limit checking to mongo (dmcphers@redhat.com)
-- improve mongo usage (dmcphers@redhat.com)
-
-* Thu Jan 19 2012 Dan McPherson <dmcphers@redhat.com> 0.3.6-1
-- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
-  (lnader@dhcp-240-165.mad.redhat.com)
-- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
-  (lnader@dhcp-240-165.mad.redhat.com)
-- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
-  (lnader@dhcp-240-165.mad.redhat.com)
-- Merge remote branch 'origin/REST' (lnader@dhcp-240-165.mad.redhat.com)
-- Merge remote branch 'origin/master' into REST
-  (lnader@dhcp-240-165.mad.redhat.com)
-- XML tags for serialized classes are returned as - seperated words instead of
-  camel case (kraman@gmail.com)
-- Creating REST routes. Bugfixes (kraman@gmail.com)
-
-* Thu Jan 19 2012 Dan McPherson <dmcphers@redhat.com> 0.3.5-1
-- fix build (rpenta@redhat.com)
-
-* Wed Jan 18 2012 Mike McGrath <mmcgrath@redhat.com> 0.3.4-1
-- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
-- mongo datastore fixes (rpenta@redhat.com)
-- use two different collections (dmcphers@redhat.com)
-- add broker mongo extensions (dmcphers@redhat.com)
-
-* Wed Jan 18 2012 Dan McPherson <dmcphers@redhat.com> 0.3.3-1
-- enable auth for mongo connection + misc bug fixes (rpenta@redhat.com)
-- configure/start mongod service for new devenv launch (rpenta@redhat.com)
-- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li into s3-to-mongo
-  (rpenta@redhat.com)
-- Merge/resolve conflicts from master (rpenta@redhat.com)
-- s3-to-mongo: code cleanup (rpenta@redhat.com)
-- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li into s3-to-mongo
-  (rpenta@redhat.com)
-- s3-to-mongo: rhc-* cmds are working with mongo datastore (rpenta@redhat.com)
-- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li into s3-to-mongo
-  (rpenta@redhat.com)
-- fixes related to mongo datastore (rpenta@redhat.com)
-- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li into s3-to-mongo
-  (rpenta@redhat.com)
-- s3-to-mongo: bug fixes (rpenta@redhat.com)
-- Added MongoDataStore model (rpenta@redhat.com)
-
-* Tue Jan 17 2012 Dan McPherson <dmcphers@redhat.com> 0.3.2-1
-- districts (work in progress) (dmcphers@redhat.com)
-
-* Fri Jan 13 2012 Dan McPherson <dmcphers@redhat.com> 0.3.1-1
-- bump spec numbers (dmcphers@redhat.com)
-
-* Wed Jan 11 2012 Dan McPherson <dmcphers@redhat.com> 0.2.11-1
-- Fix for Bugs# 773209, 773176 (rpenta@redhat.com)
-
-* Wed Jan 04 2012 Dan McPherson <dmcphers@redhat.com> 0.2.10-1
-- Adding cloud-sdk-controller unit tests (kraman@gmail.com)
-
-* Tue Dec 27 2011 Dan McPherson <dmcphers@redhat.com> 0.2.9-1
-- various fixed (dmcphers@redhat.com)
-
-* Tue Dec 27 2011 Dan McPherson <dmcphers@redhat.com> 0.2.8-1
-- release fixes (dmcphers@redhat.com)
-
-* Fri Dec 23 2011 Dan McPherson <dmcphers@redhat.com> 0.2.7-1
-- Bug 770085 (dmcphers@redhat.com)
-
-* Thu Dec 22 2011 Dan McPherson <dmcphers@redhat.com> 0.2.6-1
-- removing more of server-common (dmcphers@redhat.com)
-
-* Thu Dec 22 2011 Dan McPherson <dmcphers@redhat.com> 0.2.5-1
-- Bug 769716 (dmcphers@redhat.com)
-
-* Wed Dec 14 2011 Dan McPherson <dmcphers@redhat.com> 0.2.4-1
-- bump spec numbers (dmcphers@redhat.com)
-
-* Wed Dec 14 2011 Dan McPherson <dmcphers@redhat.com> 0.2.1-1
-- bump spec numbers (dmcphers@redhat.com)
-- more consistent error handling (dmcphers@redhat.com)
-- fix delete (dmcphers@redhat.com)
-
-* Sun Dec 11 2011 Dan McPherson <dmcphers@redhat.com> 0.1.17-1
-- Changed cdk-controller to be rails plugin. Modified express-broker with
-  customizations and integrating cdk-controller (kraman@gmail.com)
-- Checkpoint: cartridge and embedded actions work (kraman@gmail.com)
-- Bug fixes in DNS service API Added ability to store users in data store API
-  create/modify domain and user_info calls working. (kraman@gmail.com)
-- Checkpoint of cloud-sdk work. Added implementation and bugfixes for
-  Datastore, Auth and node-communication user-info works (kraman@gmail.com)
-- Flushed out data storage API CloudUser model close to complete Changed
-  AuthAPI methods to be static (kraman@gmail.com)
-- rpm work (dmcphers@redhat.com)
-- Starting work on migration of common logic from broker into common +
-  controller packages (kraman@gmail.com)
-- Automatic commit of package [rubygem-cloud-sdk-common] release [0.1.16-1].
-  (dmcphers@redhat.com)
-- building updates (dmcphers@redhat.com)
-- Automatic commit of package [rubygem-cloud-sdk-common] release [0.1.15-1].
-  (dmcphers@redhat.com)
-- engine -> node (dmcphers@redhat.com)
-- more work splitting into 3 gems (dmcphers@redhat.com)
-- split into three gems (dmcphers@redhat.com)
-
-* Tue Nov 29 2011 Dan McPherson <dmcphers@redhat.com> 0.1.16-1
-- building updates (dmcphers@redhat.com)
-
-* Mon Nov 28 2011 Dan McPherson <dmcphers@redhat.com> 0.1.15-1
-- new package built with tito
-
-

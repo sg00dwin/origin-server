@@ -127,5 +127,8 @@ module Cloud::Sdk
       
       h
     end
+    def get_name_prefix
+      return "/cart-" + self.name
+    end
   end
 end
