@@ -26,11 +26,22 @@ if [ -f ${OPENSHIFT_REPO_DIR}deplist.txt ]
 then
     for f in $( (find ${OPENSHIFT_REPO_DIR} -type f | grep -e "\.pm$\|.pl$" | xargs /usr/lib/rpm/perl.req | awk '{ print $1 }' | sed 's/^perl(\(.*\))$/\1/'; cat ${OPENSHIFT_REPO_DIR}deplist.txt ) | sort | uniq)
     do
-        if [ -n "$OPENSHIFT_CPAN_MIRROR" ]
+        if [ -f "${OPENSHIFT_REPO_DIR}/.openshift/markers/disable_cpan_tests" ]
         then
-            cpanm --mirror $OPENSHIFT_CPAN_MIRROR -L ~/${OPENSHIFT_APP_NAME}/perl5lib "$f"
+            echo ".openshift/markers/disable_cpan_tests!  bypassing cpan tests" 1>&2
+            if [ -n "$OPENSHIFT_CPAN_MIRROR" ]
+            then
+                cpanm -n --mirror $OPENSHIFT_CPAN_MIRROR -L ~/${OPENSHIFT_APP_NAME}/perl5lib "$f"
+            else
+                cpanm -n -L ~/${OPENSHIFT_APP_NAME}/perl5lib "$f"
+            fi
         else
-            cpanm -L ~/${OPENSHIFT_APP_NAME}/perl5lib "$f"
+            if [ -n "$OPENSHIFT_CPAN_MIRROR" ]
+            then
+                cpanm --mirror $OPENSHIFT_CPAN_MIRROR -L ~/${OPENSHIFT_APP_NAME}/perl5lib "$f"
+            else
+                cpanm -L ~/${OPENSHIFT_APP_NAME}/perl5lib "$f"
+            fi
         fi
     done
 fi

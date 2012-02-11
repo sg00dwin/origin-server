@@ -1,20 +1,20 @@
 %header
   %h1
-    = app_name
+    = app.name
 %dl.app_info
   %dt
     Public url
   %dd.app_url
-    = app_link_to @userinfo, app_name
+    = link_to app.web_url, app.web_url
 
   %dt
     Repository
   %dd.app_git
-    = git_url_for @userinfo, app_name
+    = app.git_url
 
   %dt
     Type
   %dd.app_type
-    = app['framework'].split('-')[0]
+    = app.framework.split('-')[0]
 %div
-  = link_to 'Delete...', delete_applications_path(:app_name => app_name)
+  = link_to("delete...", application_delete_path(:application_id => app.name))

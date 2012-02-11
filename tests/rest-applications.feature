@@ -8,7 +8,7 @@ Feature: applications
     Given a new guest account
     And I am a valid user
     And I accept "XML"
-    When I send a POST request to "/domains" with the following:"namespace=cucumber&ssh=XYZ123ABC456"
+    When I send a POST request to "/domains" with the following:"namespace=cucumber"
     Then the response should be "201"
     When I send a POST request to "/domains/cucumber/applications" with the following:"name=app&cartridge=php-5.3"
     Then the response should be "201"
@@ -23,7 +23,7 @@ Feature: applications
     Given a new guest account
     And I am a valid user
     And I accept "XML"
-    When I send a POST request to "/domains" with the following:"namespace=cucumber&ssh=XYZ123ABC456"
+    When I send a POST request to "/domains" with the following:"namespace=cucumber"
     Then the response should be "201"
     When I send a POST request to "/domains/cucumber/applications" with the following:"name=app&cartridge=php-5.3"
     Then the response should be "201"
@@ -36,7 +36,7 @@ Feature: applications
     Given a new guest account
     And I am a valid user
     And I accept "XML"
-    When I send a POST request to "/domains" with the following:"namespace=cucumber&ssh=XYZ123ABC456"
+    When I send a POST request to "/domains" with the following:"namespace=cucumber"
     Then the response should be "201"
     When I send a POST request to "/domains/cucumber/applications" with the following:"name=app&cartridge=php-5.3"
     Then the response should be "201"
@@ -51,7 +51,7 @@ Feature: applications
     Given a new guest account
     And I am a valid user
     And I accept "XML"
-    When I send a POST request to "/domains" with the following:"namespace=cucumber&ssh=XYZ123ABC456"
+    When I send a POST request to "/domains" with the following:"namespace=cucumber"
     Then the response should be "201"
     When I send a POST request to "/domains/cucumber/applications" with the following:"name=app&cartridge=php-5.3"
     Then the response should be "201"
@@ -66,7 +66,7 @@ Feature: applications
     Given a new guest account
     And I am a valid user
     And I accept "XML"
-    When I send a POST request to "/domains" with the following:"namespace=cucumber&ssh=XYZ123ABC456"
+    When I send a POST request to "/domains" with the following:"namespace=cucumber"
     Then the response should be "201"
     When I send a POST request to "/domains/cucumber/applications" with the following:"name=app&cartridge=php-5.3"
     Then the response should be "201"
@@ -81,7 +81,7 @@ Feature: applications
     Given a new guest account
     And I am a valid user
     And I accept "XML"
-    When I send a POST request to "/domains" with the following:"namespace=cucumber&ssh=XYZ123ABC456"
+    When I send a POST request to "/domains" with the following:"namespace=cucumber"
     Then the response should be "201"
     When I send a POST request to "/domains/cucumber/applications" with the following:"name=app&cartridge=php-5.3"
     Then the response should be "201"
@@ -96,7 +96,7 @@ Feature: applications
     Given a new guest account
     And I am a valid user
     And I accept "XML"
-    When I send a POST request to "/domains" with the following:"namespace=cucumber&ssh=XYZ123ABC456"
+    When I send a POST request to "/domains" with the following:"namespace=cucumber"
     Then the response should be "201"
     When I send a POST request to "/domains/cucumber/applications" with the following:"name=app&cartridge=php-5.3"
     Then the response should be "201"
@@ -111,7 +111,7 @@ Feature: applications
     Given a new guest account
     And I am a valid user
     And I accept "XML"
-    When I send a POST request to "/domains" with the following:"namespace=cucumber&ssh=XYZ123ABC456"
+    When I send a POST request to "/domains" with the following:"namespace=cucumber"
     Then the response should be "201"
     When I send a POST request to "/domains/cucumber/applications" with the following:"name=app&cartridge=php-5.3"
     Then the response should be "201"
@@ -124,7 +124,7 @@ Feature: applications
     Given a new guest account
     And I am a valid user
     And I accept "XML"
-    When I send a POST request to "/domains" with the following:"namespace=cucumber&ssh=XYZ123ABC456"
+    When I send a POST request to "/domains" with the following:"namespace=cucumber"
     Then the response should be "201"
     When I send a POST request to "/domains/cucumber/applications" with the following:"name=app&cartridge=php-5.3"
     Then the response should be "201"
@@ -139,7 +139,7 @@ Feature: applications
     Given a new guest account
     And I am a valid user
     And I accept "XML"
-    When I send a POST request to "/domains" with the following:"namespace=cucumber&ssh=XYZ123ABC456"
+    When I send a POST request to "/domains" with the following:"namespace=cucumber"
     Then the response should be "201"
     When I send a POST request to "/domains/cucumber/applications" with the following:"name=app&cartridge=bogus"
     Then the response should be "400"
@@ -152,7 +152,7 @@ Feature: applications
     Given a new guest account
     And I am a valid user
     And I accept "XML"
-    When I send a POST request to "/domains" with the following:"namespace=cucumber&ssh=XYZ123ABC456"
+    When I send a POST request to "/domains" with the following:"namespace=cucumber"
     Then the response should be "201"
     When I send a GET request to "/domains/cucumber/applications/app"
     Then the response should be "404"
