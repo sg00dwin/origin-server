@@ -1,19 +1,25 @@
 - content_for :frameworks do
   %h2 Frameworks
   %p These are the core frameworks that all OpenShift applications are built on.  If you've got your own application ready to check in these are the way to go.
-  = render @framework_types, :locals => {:create_link => true}
+  -#= render :collection => @framework_types, :layout => 'thumbnail', :partial => 'application_types/application_type'
+  = render_thumbnails @framework_types, :partial => 'application_types/application_type'
 
 %section.main
   .content
 
+    :css
+      .application_type {background-color: #efefef; padding: 10px; margin-bottom: 20px;}
+      .application_type > aside {float: right; text-align: right;}
+      .application_type > aside > div > * {display: inline}
+
     %h1 Create a New Application
     %p Get started by choosing what kind of application you want to create.  Use the search box to filter the list of types or click on a category in the drop down to narrow down your choice.
-    - if !@application_types.empty?
+    - unless @popular_types.empty?
       .row
         .span7
           %h2 Popular Types
           %p These applications have been selected by the OpenShift team to get you started in a hurry. These are good choices when you want to learn more about how OpenShift works.
-          = render @application_types, :locals => {:create_link => true}
+          = render @popular_types
         .span5
           = yield :frameworks
     - else
