@@ -334,7 +334,7 @@ class RestApi < ActiveResource::Base
       def find_single(scope, options)
         prefix_options, query_options = split_options(options[:params])
         path = element_path(scope, prefix_options, query_options)
-        instantiate_record(format.decode(connection.get(path, headers).body), options[:as], prefix_options) #changed
+        instantiate_record(format.decode(connection(options).get(path, headers).body), options[:as], prefix_options) #changed
       end
 
       def find_every(options)
