@@ -423,6 +423,10 @@ class Domain < RestApi
     Application.find :all, { :params => { :domain_name => namespace }, :as => as }
   end
 
+  def get_application (application_id)
+    Application.find application_id, { :params => { :domain_name => namespace }, :as => as }
+  end
+
   belongs_to :user
   def user
     User.find :one, :as => as
@@ -702,6 +706,12 @@ if __FILE__==$0
       assert_equal 2, apps.length
       assert_equal 'app1', apps[0].name
       assert_equal 'app2', apps[1].name
+
+      # test get_application
+      app1 = domain.get_application('app1')
+      app2 = domain.get_application('app2')
+      assert_equal 'app1', app1.name
+      assert_equal 'app2', app2.name
     end
 
   Test::Unit::UI::Console::TestRunner.run(RestApiTest)
