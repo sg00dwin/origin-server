@@ -116,10 +116,7 @@ class DevEnv < Thor
 
 
       eos
-      if code != 0
-        download_artifacts hostname
-        exit code
-      end
+      code
     end
     
     def rpm_manifest(hostname)
@@ -152,6 +149,15 @@ class DevEnv < Thor
       puts "Done"
     end
     
+    def add_ssh_cmd_to_threads(hostname, threads, failures, title, cmd)
+      threads << Thread.new do
+        exit_code = run_ssh(hostname, title, cmd)
+        if exit_code != 0
+          failures.push([title, cmd])
+        end
+      end
+    end
+    
     def test_instance(hostname, instance, conn, options, image_id=nil)
       begin
         if options.unofficial?
@@ -159,67 +165,65 @@ class DevEnv < Thor
         end
 
         threads = []
+        failures = []
 
         unless options.exclude_internal?
-          threads << Thread.new do
-            cmd = "cd li-test/broker; rake test"
-            run_ssh(hostname, "Broker Unit", cmd)
-          end
-          threads << Thread.new do
-            cmd = "cd li-test/site; rake test"
-            run_ssh(hostname, "Site Unit", cmd)
-          end
-          threads << Thread.new do
-            cmd = "cd li-test/cloud-sdk/node; rake test"
-            run_ssh(hostname, "Cloud SDK Node Unit", cmd)
-          end
-          threads << Thread.new do
-            cmd = "cd li-test/cloud-sdk/broker; rake test"
-            run_ssh(hostname, "Cloud SDK Broker Unit", cmd)
-          end
+          add_ssh_cmd_to_threads(hostname, threads, failures, "Broker Unit", "cd li-test/broker; rake test")
+          add_ssh_cmd_to_threads(hostname, threads, failures, "Site Unit", "cd li-test/site; rake test")
+          add_ssh_cmd_to_threads(hostname, threads, failures, "Cloud SDK Node Unit", "cd li-test/cloud-sdk/node; rake test")
+          add_ssh_cmd_to_threads(hostname, threads, failures, "Cloud SDK Broker Unit", "cd li-test/cloud-sdk/broker; rake test")
         end
 
-        threads << Thread.new do
-          unless options.exclude_internal?
-            cmd = "cucumber -f html --out /tmp/rhc/internals.html -f progress -t @internals li-test/tests/"
-            run_ssh(hostname, "Internal", cmd)
-          end
+        unless options.exclude_internal?
+          add_ssh_cmd_to_threads(hostname, threads, failures, "Internal", "cucumber -f html --out /tmp/rhc/internals.html -f progress -t @internals li-test/tests/")
         end
-        threads << Thread.new do
-          unless options.exclude_verification?
-            cmd = "cucumber -f html --out /tmp/rhc/verfication.html -f progress -t @verify li-test/tests/"
-            run_ssh(hostname, "Verification", cmd)
-          end
+
+        unless options.exclude_verification?
+          add_ssh_cmd_to_threads(hostname, threads, failures, "Verification", "cucumber -f html --out /tmp/rhc/verfication.html -f progress -t @verify li-test/tests/")
         end
 
         unless options.exclude_web?
-          threads << Thread.new do
-            sauce_opts = {
-              "SAUCE_USERNAME" => (options.sauce_username || SAUCE_USER),
-              "SAUCE_ACCESS_KEY" => (options.sauce_access_key || SAUCE_SECRET),
-              "SAUCE_OS" => (options.sauce_os || SAUCE_OS),
-              "SAUCE_BROWSER" => (options.sauce_browser || SAUCE_BROWSER),
-              "SAUCE_BROWSER_VERSION" => (options.sauce_browser_version || SAUCE_BROWSER_VERSION),
-              "JENKINS_BUILD" => 'unofficial'
-            }
+          sauce_opts = {
+            "SAUCE_USERNAME" => (options.sauce_username || SAUCE_USER),
+            "SAUCE_ACCESS_KEY" => (options.sauce_access_key || SAUCE_SECRET),
+            "SAUCE_OS" => (options.sauce_os || SAUCE_OS),
+            "SAUCE_BROWSER" => (options.sauce_browser || SAUCE_BROWSER),
+            "SAUCE_BROWSER_VERSION" => (options.sauce_browser_version || SAUCE_BROWSER_VERSION),
+            "JENKINS_BUILD" => 'unofficial'
+          }
 
-            # If we passed a jenkins build like name, use that for the build number
-            if m = tag.match(/libra_/)
-              sauce_opts['JENKINS_BUILD'] = tag
-            end
-
-            env_string = sauce_opts.keys.map{|k| %Q(#{k}="#{sauce_opts[k]}")}.join(' ')
-
-            puts "Running Sauce tests with the following options:"
-            puts sauce_opts.to_yaml
-
-            cmd = "cd li-test/selenium; #{env_string} ruby ts_web"
-            run_ssh(hostname, "Web Selenium", cmd)
+          # If we passed a jenkins build like name, use that for the build number
+          if m = tag.match(/libra_/)
+            sauce_opts['JENKINS_BUILD'] = tag
           end
+
+          env_string = sauce_opts.keys.map{|k| %Q(#{k}="#{sauce_opts[k]}")}.join(' ')
+
+          puts "Running Sauce tests with the following options:"
+          puts sauce_opts.to_yaml
+
+          add_ssh_cmd_to_threads(hostname, threads, failures, "Web Selenium", "cd li-test/selenium; #{env_string} ruby ts_web")
         end
 
         threads.each do |t|
           t.join
+        end
+        
+        if failures.length > 2
+          download_artifacts hostname
+          exit 1
+        elsif failures.length > 0 && failures.length <= 2
+          ssh(hostname, "rm -rf /tmp/rhc; mkdir -p /tmp/rhc/junit")
+          failures.each do |failure|
+            title = failure[0]
+            cmd = failure[1]
+            puts "Retrying #{title} tests after failure the first time"
+            exit_code = run_ssh(hostname, title, cmd)
+            if exit_code != 0
+              download_artifacts hostname
+              exit exit_code
+            end
+          end
         end
 
         validate_instance(hostname)
@@ -649,8 +653,11 @@ END
     hostname = instance.dns_name
     begin
       cmd = "cd /usr/lib/ruby/gems/*/gems/cloud-sdk*; rake test"
-      run_ssh(hostname, "OpenShift SDK Unit", cmd)
-      
+      exit_code = run_ssh(hostname, "OpenShift SDK Unit", cmd)
+      if exit_code != 0
+        download_artifacts hostname
+        exit exit_code
+      end
       puts "Done"
     ensure
       terminate_instance(instance) if options.terminate?
