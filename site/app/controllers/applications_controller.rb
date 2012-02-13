@@ -57,7 +57,7 @@ class ApplicationsController < ConsoleController
 
     @app_type_options = [["All", ""]]
     seen_app_types = {}
-    @filtered_app_info = {}
+    @filtered_app_info = []
 
     @applications.each do |app|
       app_type = app.framework.split('-')[0]
@@ -69,9 +69,9 @@ class ApplicationsController < ConsoleController
       # filter
       if wildcard_match? @name_filter_value, app.name
         if @app_type_filter_value.nil? || @app_type_filter_value == ""
-          @filtered_app_info[app.name] = app
+          @filtered_app_info << app
         elsif @app_type_filter_value == app_type
-          @filtered_app_info[app.name] = app
+          @filtered_app_info << app
         end
       end
     end
@@ -90,10 +90,10 @@ class ApplicationsController < ConsoleController
         @message = "Application #{app_name} not found"
         @message_type = :error
       elsif @application.valid?
-        @application.delete
+        @application.destroy
         if @application.errors[:base].blank?
           # get message from the JSON
-          @message = @application.message || I18n.t('express_api.messages.app_deleted')
+          @message = I18n.t('express_api.messages.app_deleted')
           @message_type = :success
         else
           @message = @application.errors.full_messages.join("; ")
@@ -173,7 +173,7 @@ class ApplicationsController < ConsoleController
     @application.cartridge = @application_type.cartridge || @application_type.id
 
     if @application.save
-      redirect_to applications_path
+      redirect_to application_path(@application)
     else
       render 'application_types/show'
     end
@@ -183,4 +183,32 @@ class ApplicationsController < ConsoleController
     @application.errors.add(:base, "Unable to create application")
     render 'application_types/show'
   end
+
+  def show
+    app_name = params[:id]
+
+    if app_name.nil?
+      @message_type = :error
+      @message = "No application specified"
+    else
+      @domain = Domain.first :as => session_user
+      @application = @domain.find_application app_name
+      if @application.nil?
+        @message = "Application #{app_name} not found"
+        @message_type = :error
+      end
+    end
+
+    respond_to do |format|
+      if @message_type == :error
+        flash[@message_type] = @message
+        format.html { redirect_to applications_path }
+        format.js { render :json => response }
+      else
+        return render 'applications/show'
+      end
+    end
+  end
+
+
 end

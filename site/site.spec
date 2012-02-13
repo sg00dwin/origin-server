@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.86.2
+Version:   0.86.3
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -76,6 +76,25 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.86.3-1
+- Allow application list to be shown with no domain (ccoleman@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (ccoleman@redhat.com)
+- When dynamic loading occurs, exception for ActiveResource isn't loaded. In
+  staging and production, the console/* and account/* urls should redirect to
+  the control panel (ccoleman@redhat.com)
+- Rescue ActiveResource errors and put their info in the rack env, also ensure
+  no_info.html.haml is properly accessed (ccoleman@redhat.com)
+- Merge branch 'dev/clayton/activeresource_clean' (ccoleman@redhat.com)
+- Return after rendering (ccoleman@redhat.com)
+- Flush out applications_controller#save (ccoleman@redhat.com)
+- Flatten model structure for better Railsisms, rename unit test modules.
+  (ccoleman@redhat.com)
+- Unit tests pass, assignment is working (ccoleman@redhat.com)
+- Refactoring out RestApi to have autoloading work for rails
+  (ccoleman@redhat.com)
+- Improve rendering and details of applications (ccoleman@redhat.com)
+
 * Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.86.2-1
 - Fix for bug 788691 - show app deletion errors in the right place
   (aboone@redhat.com)

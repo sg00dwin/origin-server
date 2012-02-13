@@ -1,6 +1,6 @@
 %header
   %h1
-    = app.name
+    = link_to app.name, application_path(:id => app.name)
 %dl.app_info
   %dt
     Public url
@@ -17,4 +17,5 @@
   %dd.app_type
     = app.framework.split('-')[0]
 %div
+  = link_to("details...", application_path(:id => app.name))
   = link_to("delete...", application_delete_path(:application_id => app.name))

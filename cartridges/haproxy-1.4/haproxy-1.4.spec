@@ -2,7 +2,7 @@
 
 Summary:   Provides haproxy-1.4 support
 Name:      rhc-cartridge-haproxy-1.4
-Version:   0.4.0
+Version:   0.4.1
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -83,6 +83,9 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.4.1-1
+- add a digit to haproxy version (dmcphers@redhat.com)
+
 * Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.4-1
 - fixing filler 1 (mmcgrath@redhat.com)
 - added whitespace for test chante (mmcgrath@redhat.com)

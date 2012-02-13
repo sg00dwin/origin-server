@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.86.2
+Version:   0.86.3
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -204,6 +204,10 @@ chkconfig cgred on
 chkconfig libra-cgroups on
 chkconfig libra-tc on
 
+# Watchman services
+chkconfig libra-watchman on || :
+service libra-watchman start || :
+
 # Populate mcollective certs
 cd /etc/mcollective/ssl/clients
 openssl genrsa -out mcollective-private.pem 1024
@@ -247,6 +251,9 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 %{_initddir}/sauce-connect
 
 %changelog
+* Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.86.3-1
+- start Watchman services (jhonce@redhat.com)
+
 * Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.86.2-1
 - move the selinux logic out of abstract carts entirely (dmcphers@redhat.com)
 - Add Node.js dependency to the devenv spec. (ramr@redhat.com)

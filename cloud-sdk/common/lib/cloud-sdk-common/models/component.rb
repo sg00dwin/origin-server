@@ -98,12 +98,12 @@ module Cloud::Sdk
         s[v.name] = v.to_descriptor
       end
       
-      {
-        "Publishes" => p,
-        "Subscribes" => s,
-        "Dependencies" => self.depends,
-        "Service-Dependencies" => self.depends_service
-      }
+      h = {}
+      h["Publishes"] = p if self.publishes && !self.publishes.empty?
+      h["Subscribes"] = s if self.subscribes && !self.subscribes.empty?
+      h["Dependencies"] = self.depends if self.depends && !self.depends.empty?
+      h["Service-Dependencies"] = self.depends_service if self.depends_service && !self.depends_service.empty?
+      h
     end
   end
 end
