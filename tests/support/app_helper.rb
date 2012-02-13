@@ -26,6 +26,7 @@ module AppHelper
       @hostname = "#{name}-#{namespace}.#{$domain}"
       @repo = "#{$temp}/#{namespace}_#{name}_repo"
       @file = "#{$temp}/#{namespace}.json"
+      @embed = []
     end
 
     def self.create_unique(type, name="test")

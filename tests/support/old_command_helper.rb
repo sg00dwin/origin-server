@@ -95,13 +95,13 @@ module OldCommandHelper
         app.mysql_database.should_not be_nil
       end
 
-      app.embed = type
+      app.embed.push(type)
       app.persist
       return app
     end
   end
 
-  def rhc_embed_remove_old(app)
+  def rhc_embed_remove_old(app, type)
     rhc_do('rhc_embed_remove_old') do
       puts app.name
       run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -e remove-#{app.embed} -d").should == 0
@@ -109,7 +109,7 @@ module OldCommandHelper
       app.mysql_user = nil
       app.mysql_password = nil
       app.mysql_database = nil
-      app.embed = nil
+      app.embed.delete(type)
       app.persist
       return app
     end

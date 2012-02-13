@@ -6,7 +6,7 @@ include AppHelper
 
 Given /^an existing (.+) application with an embedded (.*) cartridge$/ do |type, embed|
   TestApp.find_on_fs.each do |app|
-    if app.type == type and app.embed == embed
+    if app.type == type and app.embed.include?(embed)
       @app = app
       break
     end
@@ -17,7 +17,7 @@ end
 
 Given /^an existing (.+) application( without an embedded cartridge)?$/ do |type, ignore|
   TestApp.find_on_fs.each do |app|
-    if app.type == type and !app.embed
+    if app.type == type and app.embed.empty?
       @app = app
       break
     end
@@ -48,14 +48,14 @@ When /^the embedded (.*) cartridge is added$/ do |type|
   rhc_embed_add(@app, type)
 end
 
-When /^the embedded cartridge is removed$/ do
-  rhc_embed_remove(@app)
+When /^the embedded (.*) cartridge is removed$/ do |type|
+  rhc_embed_remove(@app, type)
 end
 
 When /^the application is changed$/ do
   Dir.chdir(@app.repo) do
     @update = "TEST"
-  
+
     # Make a change to the app index file
     run("sed -i 's/Welcome/#{@update}/' #{@app.get_index_file}")
     run("git commit -a -m 'Test change'")
