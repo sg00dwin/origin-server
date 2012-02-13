@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.86.2
+Version:   0.86.3
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -79,6 +79,12 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.86.3-1
+- Updating gem versions (dmcphers@redhat.com)
+- cleaning up specs to force a build (dmcphers@redhat.com)
+- add back capacity and restrict remove node to 0 capacity nodes
+  (dmcphers@redhat.com)
+
 * Sat Feb 11 2012 Dan McPherson <dmcphers@redhat.com> 0.86.2-1
 - Updating gem versions (dmcphers@redhat.com)
 - get move working again and add quota support (dmcphers@redhat.com)
