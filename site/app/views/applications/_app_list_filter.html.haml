@@ -1,7 +1,0 @@
-= form_tag  applications_path, :method => :put do
-  %div.inline
-    = label_tag :name_filter, "Name", :style => 'display:inline'
-    = text_field_tag :name_filter, @name_filter_value, :style => 'display:inline'
-    = label_tag :app_type_filter, "App type", :style => 'display:inline'
-    = select_tag :app_type_filter, options_for_select(@app_type_options, :selected => @app_type_filter_value)
-    = submit_tag "Filter", :style => 'display:inline;'
