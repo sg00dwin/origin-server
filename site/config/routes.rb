@@ -122,6 +122,7 @@ RedHatCloud::Application.routes.draw do
 
     match 'console' => 'console#index', :via => :get
     scope '/console' do
+      resources :application_types, :only => [:show, :index], :id => /[^\/]+/
       resources :applications,
                 :controller => "applications" do
         match 'delete' => 'applications#confirm_delete', :via => :get
