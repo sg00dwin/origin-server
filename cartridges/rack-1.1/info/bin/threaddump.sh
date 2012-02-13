@@ -15,7 +15,12 @@ fi
 PID=`ps -e -o pid,command | grep Rack | grep $1 | grep $2 | awk 'BEGIN {FS=" "}{print $1}'`
 
 if [$PID .eq ""]; then
-    echo "Application is stopped. Ruby/Rack applications must be started by accessing the URL for a thread dump"
+    if [ -f ${OPENSHIFT_APP_DIR}run/stop_lock ]
+    then
+        echo "Application is stopped.  You must start the application and access it by its URL (http://${OPENSHIFT_APP_DNS}) before you can take a thread dump."
+    else
+        echo "Application is inactive. Ruby/Rack applications must be accessed by their URL (http://${OPENSHIFT_APP_DNS}) before you can take a thread dump."
+    fi
 else 
     kill -3 $PID
 fi
