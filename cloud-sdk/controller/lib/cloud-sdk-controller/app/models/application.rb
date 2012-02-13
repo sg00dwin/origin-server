@@ -222,18 +222,30 @@ class Application < Cloud::Sdk::Cartridge
         succesful_gears = e.message[:succesful].map{|g| g[:gear]}
         gear_exception = e.message[:exception]        
 
+        #remove failed component from all gears
         run_on_gears(succesful_gears, reply, false) do |gear, r|
           r.append gear.deconfigure(comp_inst)
           r.append process_cartridge_commands(r.cart_commands)
           self.save
         end
+        
+        #remove failed cartridge dependency
+        self.requires_feature.delete(comp_inst.parent_cart_name)
+        self.save
+        
+        #destroy any unused gears
         run_on_gears(nil, reply, false) do |gear, r|
           r.append gear.destroy if gear.configured_components.length == 0
           self.save
         end
+        
+        #re-configure to update application model
+        self.configure_dependencies
+        
         raise gear_exception
       end
     end
+    
     save
     self.class.notify_observers(:after_application_configure, {:application => self, :reply => reply})
     reply
