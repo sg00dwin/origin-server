@@ -1,5 +1,5 @@
 %ul
-  - @applications.each do |app|
+  - @filtered_app_info.each do |app|
     %li
       - if apps.length < 10:
         = render 'applications/app_info', :app => app
