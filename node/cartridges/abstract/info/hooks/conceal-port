@@ -22,7 +22,7 @@
 set -e
 
 function print_help {
-    echo "Usage: $0 app-name namespace uuid [target]"
+    echo "Usage: $0 app-name namespace uuid"
     echo "Start a running application"
 
     echo "$0 $@" | logger -p local0.notice -t libra_httpd_start
@@ -49,13 +49,10 @@ setup_basic_hook "$1" $2 $3
 
 uuid=$3
 uid=`id -u $uuid`
-target="$4"
 
 function remove_port {
   uuid=$1
   uid=`id -u $uuid`
-
-  target="$2"
 
   source "/var/lib/libra/${uuid}/.env/OPENSHIFT_INTERNAL_IP"
   source "/var/lib/libra/${uuid}/.env/OPENSHIFT_INTERNAL_PORT"
@@ -66,9 +63,7 @@ function remove_port {
     source "$port_file"
   done
 
-  if [ -z "$target" ]; then
-    target="$OPENSHIFT_INTERNAL_IP:$OPENSHIFT_INTERNAL_PORT"
-  fi
+  target="$OPENSHIFT_INTERNAL_IP:$OPENSHIFT_INTERNAL_PORT"
 
   for proxy_port in "${!OPENSHIFT_PUB_PORT[@]}"
   do
@@ -84,4 +79,4 @@ function remove_port {
   exit 67
 }
 
-remove_port $uuid $target
+remove_port $uuid
