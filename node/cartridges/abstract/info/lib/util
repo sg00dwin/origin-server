@@ -492,7 +492,7 @@ function super_run_as_user {
 }
 
 function daemon_as_user {
-    daemon --user="$uuid" $1
+    daemon --user="$uuid" "$@"
 }
 
 function validate_run_as_user {
