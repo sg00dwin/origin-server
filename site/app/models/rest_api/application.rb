@@ -10,32 +10,23 @@ module RestApi
     end
 
     custom_id :name
+    # TODO: Bug 789752: Rename server attribute to domain_name and replace domain_id with domain_name everywhere
+    alias_attribute :domain_name, :domain_id
 
     has_many :aliases
     belongs_to :domain
-    self.prefix = "#{RestApi.site.path}/domains/:domain_name/"
+    self.prefix = "#{Base.site.path}/domains/:domain_name/"
 
-    def domain_id
-      self.prefix_options[:domain_name] || super
-    end
     def domain_id=(id)
       self.prefix_options[:domain_name] = id
-      domain_id = id
-    end
-
-    # TODO: Bug 789752: Rename server attribute to domain_name and replace domain_id with domain_name everywhere
-    def domain_name
-      domain_id
-    end
-    def domain_name=(name)
-      domain_id = name
+      super
     end
 
     def domain
       Domain.find domain_name, :as => as
     end
     def domain=(domain)
-      domain_name = domain.is_a?(String) ? domain : domain.namespace
+      self.domain_id = domain.is_a?(String) ? domain : domain.namespace
     end
 
     def web_url

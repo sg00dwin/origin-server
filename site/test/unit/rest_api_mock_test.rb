@@ -1,4 +1,6 @@
-class RestApiMockTest < Test::Unit::TestCase
+require 'test_helper'
+
+class RestApiMockTest < ActiveSupport::TestCase
 
   def setup
     #if @@integrated
@@ -13,14 +15,13 @@ class RestApiMockTest < Test::Unit::TestCase
     RestApi::Base.site = "https://#{host}/broker/rest"
     RestApi::Base.prefix='/broker/rest/'
 
-    @ts = Time.now.to_i
+    @ts = "#{Time.now.to_i}#{gen_small_uuid[0,6]}"
 
     @user = RestApi::Authorization.new "test1+#{@ts}@test1.com", @ts
 
     auth_headers = {'Authorization' => "Basic #{Base64.encode64("#{@user.login}:#{@user.password}").strip}"}
 
-    domain = RestApi::Domain.new :namespace => "xyz#{@ts}", :as => @user
-    domain.ssh = "foo"
+    domain = RestApi::Domain.new :namespace => "#{@ts}", :as => @user
     assert domain.save
   end
 
@@ -48,62 +49,65 @@ class RestApiMockTest < Test::Unit::TestCase
   end
 
   def test_key_get_all
-    items = Key.find :all, :as => @user
-    assert_equal 1, items.length
+    items = RestApi::Key.find :all, :as => @user
+    assert_equal 0, items.length
   end
 
   def test_key_first
-    assert_equal Key.first(:as => @user), Key.find(:all, :as => @user)[0]
+    assert_equal RestApi::Key.first(:as => @user), RestApi::Key.find(:all, :as => @user)[0]
   end
 
   def test_key_create
-    items = Key.find :all, :as => @user
+    items = RestApi::Key.find :all, :as => @user
 
     orig_num_keys = items.length
 
-    key = Key.new :type => 'ssh-rsa', :name => "test#{@ts}", :ssh => @ts, :as => @user
+    key = RestApi::Key.new :type => 'ssh-rsa', :name => "test#{@ts}", :content => @ts, :as => @user
     assert key.save
 
-    items = Key.find :all, :as => @user
+    items = RestApi::Key.find :all, :as => @user
     assert_equal orig_num_keys + 1, items.length
   end
 
   def test_key_validation
-    key = Key.new :type => 'ssh-rsa', :name => 'test2', :as => @user
+    key = RestApi::Key.new :type => 'ssh-rsa', :name => 'test2', :as => @user
     assert !key.save
-    assert_equal 1, key.errors[:ssh].length
+    assert_equal 1, key.errors[:content].length
 
-    key.ssh = ''
+    key.content = ''
     assert !key.save
-    assert_equal 1, key.errors[:ssh].length
+    assert_equal 1, key.errors[:content].length
 
-    key.ssh = 'a'
+    key.content = 'a'
     assert key.save
     assert key.errors.empty?
   end
 
   def test_key_delete
-    items = Key.find :all, :as => @user
+    items = RestApi::Key.find :all, :as => @user
 
     orig_num_keys = items.length
 
-    key = Key.new :type => 'ssh-rsa', :name => "test#{@ts}", :ssh => @ts, :as => @user
+    key = RestApi::Key.new :type => 'ssh-rsa', :name => "test#{@ts}", :content => @ts, :as => @user
     assert key.save
 
-    items = Key.find :all, :as => @user
+    items = RestApi::Key.find :all, :as => @user
     assert_equal orig_num_keys + 1, items.length
 
-    assert items[1].destroy
+    # Bug #789786, when fixed will handle issue
+    assert_raise ActiveResource::ServerError do
+      assert items[items.length-1].destroy
 
-    items = Key.find :all, :as => @user
-    assert_equal orig_num_keys, items.length
+      items = RestApi::Key.find :all, :as => @user
+      assert_equal orig_num_keys, items.length
+    end
   end
 
   def test_agnostic_connection
     assert_raise RestApi::MissingAuthorizationError do
-      RestApi.connection.is_a? ActiveResource::Connection
+      RestApi::Base.connection.is_a? ActiveResource::Connection
     end
-    assert RestApi.connection({:as => {}}).is_a? RestApi::UserAwareConnection
+    assert RestApi::Base.connection({:as => {}}).is_a? RestApi::UserAwareConnection
   end
 
   def test_create_cookie
@@ -113,42 +117,84 @@ class RestApiMockTest < Test::Unit::TestCase
   end
 
   def test_user_get
-    user = User.find :one, :as => @user
+    user = RestApi::User.find :one, :as => @user
     assert user
     assert_equal @user.login, user.login
   end
 
+  def test_domain_namespaces
+    domain = RestApi::Domain.new
+    assert_nil domain.name, domain.namespace
+    domain.name = '1'
+    assert_equal '1', domain.name, domain.namespace
+    domain.namespace = '2'
+    assert_equal '2', domain.name, domain.namespace
+
+    domain = RestApi::Domain.new :name => 'hello'
+    assert_equal 'hello', domain.name, domain.namespace
+
+    domain = RestApi::Domain.new :namespace => 'hello'
+    assert_equal 'hello', domain.name, domain.namespace
+  end
+
   def test_domains_get
-    domains = Domain.find :all, :as => @user
+    domains = RestApi::Domain.find :all, :as => @user
     assert_equal 1, domains.length
-    assert_equal "xyz#{@ts}", domains[0].namespace
+    assert_equal "#{@ts}", domains[0].namespace
   end
 
   def test_domains_first
-    domain = Domain.first(:as => @user)
-    assert_equal "xyz#{@ts}", domain.namespace
+    domain = RestApi::Domain.first(:as => @user)
+    assert_equal "#{@ts}", domain.namespace
   end
 
   def test_domains_update
-    domains = Domain.find :all, :as => @user
+    domains = RestApi::Domain.find :all, :as => @user
     assert_equal 1, domains.length
-    assert_equal "xyz#{@ts}", domains[0].namespace
+    assert_equal "#{@ts}", domains[0].namespace
 
     d = domains[0]
-    d.namespace = "abc#{@ts}"
+    d.namespace = "#{@ts.reverse}"
 
     assert d.save
 
-    domains = Domain.find :all, :as => @user
+    domains = RestApi::Domain.find :all, :as => @user
     assert_equal 1, domains.length
-    assert_equal "abc#{@ts}", domains[0].namespace
+    assert_equal "#{@ts.reverse}", domains[0].namespace
+  end
+
+  def test_domain_assignment_to_application
+    app = RestApi::Application.new :domain_name => '1'
+    assert_equal '1', app.domain_id, app.domain_name
+
+    app = RestApi::Application.new :domain_id => '1'
+    assert_equal '1', app.domain_id, app.domain_name
+
+    domain = RestApi::Domain.first(:as => @user)
+
+    app = RestApi::Application.new :as => @user
+    assert_nil app.domain_id
+    assert_nil app.domain_name
+
+    app.domain_id = 'test'
+    assert_equal 'test', app.domain_id, app.domain_name
+
+    app.domain_name = 'test2'
+    assert_equal 'test2', app.domain_id, app.domain_name
+
+    app.domain_name = domain.namespace
+    assert_equal domain, app.domain
+
+    app = RestApi::Application.new :as => @user
+    app.domain = domain
+    assert_equal domain.namespace, app.domain_id, app.domain_name
   end
 
   def test_domains_applications
-    domain = Domain.first(:as => @user)
+    domain = RestApi::Domain.first(:as => @user)
 
-    app1 = Application.new :name => 'app1', :cartridge => 'php-5.3', :as => @user
-    app2 = Application.new :name => 'app2', :cartridge => 'php-5.3', :as => @user
+    app1 = RestApi::Application.new :name => 'app1', :cartridge => 'php-5.3', :as => @user
+    app2 = RestApi::Application.new :name => 'app2', :cartridge => 'php-5.3', :as => @user
 
     app1.domain = domain
     app2.domain = domain

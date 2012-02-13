@@ -9,10 +9,12 @@ module RestApi
     end
 
     custom_id :namespace, true
+    # TODO: Bug 789752: Make namespace consistent with other usages
+    alias_attribute :name, :namespace
 
     has_many :applications
     def applications
-      Application.find :all, { :params => { :domain_name => namespace }, :as => as }
+      Application.find :all, { :params => { :domain_name => name }, :as => as }
     end
 
     belongs_to :user

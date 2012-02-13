@@ -6,12 +6,12 @@ module RestApi
     self.element_name = 'key'
 
     schema do
-      string :name, 'type', :ssh
+      string :name, 'type', :content
     end
     def id() name end
 
     belongs_to :user
-    self.prefix = "#{RestApi.site.path}/user/"
+    self.prefix = "#{RestApi::Base.site.path}/user/"
     def type
       @attributes[:type]
     end
@@ -22,7 +22,7 @@ module RestApi
     validates_format_of 'type',
                         :with => /^ssh-(rsa|dss)$/,
                         :message => "is not ssh-rsa or ssh-dss"
-    validates :ssh, :length => {:maximum => 2048},
+    validates :content, :length => {:maximum => 2048},
                       :presence => true,
                       :allow_blank => false
   end
