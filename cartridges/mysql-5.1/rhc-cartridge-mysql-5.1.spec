@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/mysql-5.1
 
 Name: rhc-cartridge-mysql-5.1
-Version: 0.20.2
+Version: 0.20.3
 Release: 1%{?dist}
 Summary: Embedded mysql support for express
 
@@ -53,6 +53,10 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.20.3-1
+- cleaning up specs to force a build (dmcphers@redhat.com)
+- change default mysql charset to utf-8 (dmcphers@redhat.com)
+
 * Sat Feb 11 2012 Dan McPherson <dmcphers@redhat.com> 0.20.2-1
 - more abstracting out selinux (dmcphers@redhat.com)
 - first pass at splitting out selinux logic (dmcphers@redhat.com)
