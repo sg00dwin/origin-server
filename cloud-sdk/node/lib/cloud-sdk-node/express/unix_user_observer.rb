@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright © 2011 Red Hat, Inc. All rights reserved
 
 # This copyrighted material is made available to anyone wishing to use, modify,
@@ -90,19 +89,6 @@ module Cloud::Sdk
     
     def after_remove_ssh_key(user,key)
     end
-
-    def before_proxy_alloc_next_port(user, proxy_target)
-    end
-
-    def after_proxy_alloc_next_port(user, proxy_target)
-    end
-
-    def before_proxy_remove_port(user, proxy_port)
-    end
-
-    def after_proxy_remove_port(user, proxy_port)
-    end
-
   end
   
   Cloud::Sdk::UnixUser.add_observer(UnixUserObserver.instance)
