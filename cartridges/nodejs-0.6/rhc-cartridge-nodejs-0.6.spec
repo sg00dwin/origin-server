@@ -107,9 +107,3 @@ npm install -g mongodb --mongodb:native
 - Fix wrong link to remove-httpd-proxy (hypens not underscores) and fix
   manifests for Node and Python to allow for nodejs/python app creation.
   (ramr@redhat.com)
-
-* Thu Feb 09 2012 Ram Ranganathan <ramr@redhat.com> 0.1.2-1
-- new package built with tito
-
-* Tue Feb 07 2012 Ram Ranganathan <ramr@redhat.com> 0.1.1-1
-- Initial packaging

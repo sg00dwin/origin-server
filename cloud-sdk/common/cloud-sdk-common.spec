@@ -91,6 +91,3 @@ rm -rf %{buildroot}
   installed cartridges and get descriptors (kraman@gmail.com)
 - change state machine dep (dmcphers@redhat.com)
 - move the rest of the controller tests into broker (dmcphers@redhat.com)
-
-* Fri Feb 03 2012 Dan McPherson <dmcphers@redhat.com> 0.4.1-1
-- bump spec numbers (dmcphers@redhat.com)

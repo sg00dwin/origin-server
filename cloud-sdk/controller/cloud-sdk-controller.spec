@@ -170,7 +170,6 @@ rm -rf %{buildroot}
 
 * Fri Feb 03 2012 Dan McPherson <dmcphers@redhat.com> 0.4.1-1
 - Updating gem versions (dmcphers@redhat.com)
-- bump spec numbers (dmcphers@redhat.com)
 - add move by uuid (dmcphers@redhat.com)
 - Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
 - mongo wrapper: 'use <user-db>' instead of 'use admin' for authentication
