@@ -36,8 +36,6 @@ done
 
 source "$CART_INFO_DIR/configuration/limits"
 
-log_message ":START: $freq cron run for libra user '$OPENSHIFT_APP_UUID'"
-
 # First up check if the cron jobs are enabled.
 CART_INSTANCE_DIR="$OPENSHIFT_HOMEDIR/$CART_DIRNAME"
 if [ ! -f $CART_INSTANCE_DIR/run/jobs.enabled ]; then
@@ -45,12 +43,14 @@ if [ ! -f $CART_INSTANCE_DIR/run/jobs.enabled ]; then
    exit 0
 fi
 
+log_message ":START: $freq cron run for libra user '$OPENSHIFT_APP_UUID'"
+
 # Run all the scripts in the $freq directory if it exists.
 SCRIPTS_DIR="$OPENSHIFT_REPO_DIR/.openshift/cron/$freq"
 if [ -d "$SCRIPTS_DIR" ]; then
    # Run all scripts in the scripts directory serially.
-   executor=bash
-   [ -n "$MAX_RUN_TIME" ]  &&  executor="timeout $MAX_RUN_TIME bash"
+   executor="run-parts"
+   [ -n "$MAX_RUN_TIME" ]  &&  executor="timeout $MAX_RUN_TIME run-parts"
 
    if [ -f "$CART_INSTANCE_DIR/log/cron.$freq.log" ]; then
       mv -f "$CART_INSTANCE_DIR/log/cron.$freq.log" "$CART_INSTANCE_DIR/log/cron.$freq.log.1"
@@ -61,28 +61,23 @@ if [ -d "$SCRIPTS_DIR" ]; then
       echo $separator
       echo "`date`: START $freq cron run"
       echo $separator
-   } >> $CART_INSTANCE_DIR/log/cron.$freq.log
 
-   script_list=$(ls "$SCRIPTS_DIR")
-   $executor <<RUN_USER_SCRIPTS_EOF
-      ls "$SCRIPTS_DIR" | while read f; do
-         [ ! -x "$SCRIPTS_DIR/\$f" ]  &&  chmod +x "$SCRIPTS_DIR/\$f"
-         "$SCRIPTS_DIR/\$f" >> $CART_INSTANCE_DIR/log/cron.$freq.log 2>&1
-      done
-RUN_USER_SCRIPTS_EOF
+      #  Mark executable as we might not always get the perms pushed down.
+      chmod +x "$SCRIPTS_DIR/*"
 
-   status=$?
-   if [ 124 -eq $status ]; then
-      wmsg="Warning: $freq cron run terminated as it exceeded max run time"
-      log_message "$wmsg [$MAX_RUN_TIME] for libra user '$OPENSHIFT_APP_UUID'"
-      echo "$wmsg" >> $CART_INSTANCE_DIR/log/cron.$freq.log
-   fi
+      #  Use run-parts - gives us jobs.{deny,allow} and whitelists.
+      $executor "$SCRIPTS_DIR"
+      status=$?
+      if [ 124 -eq $status ]; then
+         wmsg="Warning: $freq cron run terminated as it exceeded max run time"
+         log_message "$wmsg [$MAX_RUN_TIME] for libra user '$OPENSHIFT_APP_UUID'" > /dev/null 2>&1
+         echo "$wmsg"
+      fi
 
-   {
-      echo $separator >> $CART_INSTANCE_DIR/log/cron.$freq.log
+      echo $separator
       echo "`date`: END $freq cron run - status=$status"
       echo $separator
-   } >> $CART_INSTANCE_DIR/log/cron.$freq.log
+   } >> $CART_INSTANCE_DIR/log/cron.$freq.log 2>&1
 
 fi
 

@@ -14,6 +14,7 @@ BuildArch: noarch
 
 Requires: rhc-node
 Requires: cronie
+Requires: crontabs
 
 
 %description
