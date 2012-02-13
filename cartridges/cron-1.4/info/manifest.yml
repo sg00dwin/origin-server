@@ -8,6 +8,7 @@ License: ASL 2.0
 Provides: rhc-cartridge-cron
 Native-Requires:
   - cronie
+  - crontabs
 Profiles:
   scheduler-service:
     &scheduler-service-profile

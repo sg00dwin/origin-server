@@ -7,8 +7,6 @@ Vendor:  10gen.com
 Provides:
   - "10gen-mms"
 Requires:
-  - pymongo
-  - mms-agent
 Conflicts:
 Native-Requires:
 Architecture: noarch
@@ -16,7 +14,7 @@ Reservations:
   - MEM >= 100MB
 Components:
   default:
-    Service-Dependencies: [rhc-cartridge-mongodb-2.0]
+    Service-Dependencies: ["mongodb-2.0"]
     Subscribes:
       set-mongo-connection-info:
         Type: "NET_TCP:db:mongodb"
