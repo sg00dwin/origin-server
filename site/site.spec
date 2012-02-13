@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.86.1
+Version:   0.86.2
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -76,6 +76,161 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.86.2-1
+- Fix for bug 788691 - show app deletion errors in the right place
+  (aboone@redhat.com)
+- Fix bug 789826 - restrict size of twitter avatars (aboone@redhat.com)
+- Revert "require rest_api" - it seems this is reaking havok with tests
+  (johnp@redhat.com)
+- have the applications controller use the get_application API
+  (johnp@redhat.com)
+- add get_application convinience method to Domain (johnp@redhat.com)
+- pass in options when instantiating a connection in find_single
+  (johnp@redhat.com)
+- require rest_api (johnp@redhat.com)
+- hook up delete app again and port to active resources API (johnp@redhat.com)
+- revamp styleguide (sgoodwin@redhat.com)
+- Fix break in tests - no need for explicit requrie, and unit tests shouldn't
+  be run from non-comand line includes (ccoleman@redhat.com)
+- update to use new activecontroller APIs for showing data (johnp@redhat.com)
+- add helper functions to the app model for getting the app's URLs
+  (johnp@redhat.com)
+- Bug 789281 - Explicitly set EXECJS_RUNTIME and disable barista autocompile
+  (ccoleman@redhat.com)
+- Tomporarily commenting out REST api tests on site (kraman@gmail.com)
+- Create a new console controller which will route to applications (eventually
+  we will have more complex flow here) (ccoleman@redhat.com)
+- Integrate app creation workflow into new console (ccoleman@redhat.com)
+- Merge branch 'master' into dev/clayton/createapp (ccoleman@redhat.com)
+- Update navigation with new application controller (ccoleman@redhat.com)
+- Remove fixed position header CSS, handled flash[:success] messages correctly
+  (ccoleman@redhat.com)
+- Merge branch 'master' into dev/clayton/bootstrap (ccoleman@redhat.com)
+- Formtastic bootstrap markup is only enabled when before_filter :new_forms is
+  defined Simple layout updated to be roughly consistent for now
+  (ccoleman@redhat.com)
+- Updated formtastic to get close to bootstrap (ccoleman@redhat.com)
+- ordered list unstyled (sgoodwin@redhat.com)
+- add the add an application link (johnp@redhat.com)
+- Active Resource - allow toggling between integrated tests and mock tests
+  (aboone@redhat.com)
+- ActiveResource - fix create/update, other fixes (aboone@redhat.com)
+- Reenable create link until it can be contextual (ccoleman@redhat.com)
+- add application (johnp@redhat.com)
+- implement delete app (johnp@redhat.com)
+- add a delete button and confirm page (johnp@redhat.com)
+- commit the filter template and add a flash message to index
+  (johnp@redhat.com)
+- make filters work (johnp@redhat.com)
+- handle nil values (johnp@redhat.com)
+- further filter additions (johnp@redhat.com)
+- initial filter support (johnp@redhat.com)
+- fix typo - point to app_list not app_info (johnp@redhat.com)
+- make sure ApplicationsController is correctly defined (johnp@redhat.com)
+- add the app list and info templates (johnp@redhat.com)
+- added controller and route for console/applications (johnp@redhat.com)
+- updated styleguide to use bootstrap (sgoodwin@redhat.com)
+- General cleanup and refactoring of My Account and related forms to match new
+  console layout Clean up flash presentation Begin investigating formtastic
+  layout (ccoleman@redhat.com)
+- Merge branch 'dev/sgoodwin/bootstrap' (sgoodwin@redhat.com)
+- incorporate bootstrap (sgoodwin@redhat.com)
+- Simple application type controller, layout, and default type population
+  (ccoleman@redhat.com)
+- Creating models for descriptor Fixing manifest files Added command to list
+  installed cartridges and get descriptors (kraman@gmail.com)
+- Revert "Added status subsite" (fotios@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (ccoleman@redhat.com)
+- Fix streamline test (ccoleman@redhat.com)
+- Removed test status db (fotios@redhat.com)
+- Added status subsite (fotios@redhat.com)
+- Merge branch 'dev/clayton/activeresource' (ccoleman@redhat.com)
+- Comment out failing unit tests until bugs are fixed (ccoleman@redhat.com)
+- Deserialize remote errors on 422 ResourceInvalid Delete properly passes
+  requests down Expose 'login' as an alias to 'rhlogin' (ccoleman@redhat.com)
+- Also use the SSH key display name in the edit form (aboone@redhat.com)
+- Cleanup of names, better formatting, and inline doc (ccoleman@redhat.com)
+- Add application, domain, and a backport of an activeresource association
+  framework (ccoleman@redhat.com)
+- fix bug 787079 with long ssh key names, also create and use @ssh_key.to_s
+  method (aboone@redhat.com)
+- Infrastructure for new layouts (ccoleman@redhat.com)
+- Changed bootstrap css: responsive design improvements (ffranz@redhat.com)
+- Initial support for retrieving user info (ccoleman@redhat.com)
+- Remove openshift.rb, moved to rest_api.rb but bungled the merge
+  (ccoleman@redhat.com)
+- Merge branch 'dev/clayton/activeresource' of
+  ssh://git1.ops.rhcloud.com/srv/git/li into dev/clayton/activeresource
+  (ccoleman@redhat.com)
+- More tests, make :as required, pass :as through, merge changes from upstream
+  that simplify how the get{} connection method works (ccoleman@redhat.com)
+- Add timeout of 3s for simple cases (ccoleman@redhat.com)
+- Clarified names of SSH key attributes to match server (ccoleman@redhat.com)
+- Able to make requests to server, next steps are serialization deserialization
+  mapping for wierd backends (ccoleman@redhat.com)
+- Expand authentication (ccoleman@redhat.com)
+- More tests, able to hit server (ccoleman@redhat.com)
+- Set cookie based on user object, pass user object to find / delete
+  (ccoleman@redhat.com)
+- Getting user aware connections working (ccoleman@redhat.com)
+- Simple active resource ssh keys (ccoleman@redhat.com)
+- Fix four failing unit tests (ccoleman@redhat.com)
+- Merge branch 'dev/clayton/bootstrap' (ccoleman@redhat.com)
+- Merge branch 'master' into dev/clayton/my_account_latest
+  (ccoleman@redhat.com)
+- Clarified names of SSH key attributes to match server (ccoleman@redhat.com)
+- Able to make requests to server, next steps are serialization deserialization
+  mapping for wierd backends (ccoleman@redhat.com)
+- Expand authentication (ccoleman@redhat.com)
+- More tests, able to hit server (ccoleman@redhat.com)
+- Set cookie based on user object, pass user object to find / delete
+  (ccoleman@redhat.com)
+- Getting user aware connections working (ccoleman@redhat.com)
+- Simple active resource ssh keys (ccoleman@redhat.com)
+- Updated to use styleguide instead of bootstrap for clarity, available via
+  /app/styleguide (ccoleman@redhat.com)
+- Workaround removed method (ccoleman@redhat.com)
+- add a ssh success message to the en locale (johnp@redhat.com)
+- display ssh key or edit box depending if it is set (johnp@redhat.com)
+- correctly update ssh key (johnp@redhat.com)
+- initial addition of sshkey updating (johnp@redhat.com)
+- make work if ssh key is not yet set (johnp@redhat.com)
+- keep sshkey if set when updating namespace, add start of ssh update
+  (johnp@redhat.com)
+- refactor edit to point to edit_namespace since we are adding edit_ssh
+  (johnp@redhat.com)
+- render flash messages on account page (johnp@redhat.com)
+- use partial to render both create and update keys (johnp@redhat.com)
+- [namespace update] stay on edit page on error and flash error message
+  (johnp@redhat.com)
+- make updating domains from accounts page work (johnp@redhat.com)
+- initial edit namespace from accounts (johnp@redhat.com)
+- Help link is correct Moved reset password to change password form
+  (ccoleman@redhat.com)
+- My account in mostly final form (ccoleman@redhat.com)
+- All password behavior is functional (ccoleman@redhat.com)
+- Use semantic_form_for on new password Provide ActiveModel like
+  request_password_reset models Allow validation for :change_password and
+  :reset_password scopes (ccoleman@redhat.com)
+- Enable user model based change_password method in streamline Use
+  semantic_form_tag in change password (ccoleman@redhat.com)
+- Comment out path for now (ccoleman@redhat.com)
+- More tweaking (ccoleman@redhat.com)
+- Update routes to match older paths (ccoleman@redhat.com)
+- Password controller unit tests (ccoleman@redhat.com)
+- Remove warning in view (ccoleman@redhat.com)
+- Tweaking layout of ssh_key to use semantic_form_tag (ccoleman@redhat.com)
+- More experimentation with users (ccoleman@redhat.com)
+- Restored changes for UserController.reset / request_reset
+  (ccoleman@redhat.com)
+- Changes to templates to experiment with help (ccoleman@redhat.com)
+- Create new password controller, create new /account structure, add some
+  simple helper forms for inline domain display.  Needs lots more testing but
+  represents a simple my account.  Access via /app/account while authenticated.
+  (ccoleman@redhat.com)
+- Bootstrap controller (ccoleman@redhat.com)
+
 * Fri Feb 03 2012 Dan McPherson <dmcphers@redhat.com> 0.86.1-1
 - bump spec numbers (dmcphers@redhat.com)
 
