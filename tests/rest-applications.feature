@@ -161,7 +161,22 @@ Feature: applications
     When I send a DELETE request to "/domains/cucumber"
     Then the response should be "204"
 
-    
+  Scenario: Retrieve application descriptor
+    Given a new guest account
+    And I am a valid user
+    And I accept "XML"
+    When I send a POST request to "/domains" with the following:"namespace=cucumber"
+    Then the response should be "201"
+    When I send a POST request to "/domains/cucumber/applications" with the following:"name=app&cartridge=php-5.3"
+    Then the response should be "201"
+    When I send a POST request to "/domains/cucumber/applications/app/cartridges" with the following:"cartridge=postgresql-8.4"
+    Then the response should be "201"
+	When I send a GET request to "/domains/cucumber/applications/app/descriptor"
+    Then the response descriptor should have "php-5.3,postgresql-8.4" as dependencies
+    When I send a DELETE request to "/domains/cucumber/applications/app"
+    Then the response should be "204"
+    When I send a DELETE request to "/domains/cucumber"
+    Then the response should be "204"    
     
     
   

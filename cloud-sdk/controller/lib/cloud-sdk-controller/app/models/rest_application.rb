@@ -19,6 +19,7 @@ class RestApplication < Cloud::Sdk::Model
 
     self.links = {
       "GET" => Link.new("Get application", "GET", "/domains/#{@domain_id}/applications/#{@name}"),
+      "GET" => Link.new("Get application descriptor", "GET", "/domains/#{@domain_id}/applications/#{@name}/descriptor"),      
       "START" => Link.new("Start application", "POST", "/domains/#{@domain_id}/applications/#{@name}/events", [
         Param.new("event", "string", "event", "start")
       ]),

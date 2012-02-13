@@ -23,6 +23,7 @@ Given /^I send and accept "([^\"]*)"$/ do |type|
 end
 
 Given /^I accept "([^\"]*)"$/ do |type|
+  @accept_type = type
   @header = {:accept => type.to_s.downcase}
 end
 
@@ -101,4 +102,17 @@ Then /^the "([^\"]*)" response should be a "([^\"]*)" array with (\d+) "([^\"]*)
   end
 end
 
+Then /^the response descriptor should have "([^\"]*)" as dependencies$/ do |deps|
+  if @accept_type.upcase == "XML"
+    page = Nokogiri::XML(@response.body)
+    desc_yaml = page.xpath("//response/data")
+  elsif @accept_type.upcase == "JSON"
+    page = JSON.parse(@response.body)
+    desc_yaml = page["data"]
+  end
 
+  desc = YAML.load(desc_yaml.text.to_s)
+  deps.split(",").each do |dep|
+    desc["Requires"].should include(dep)
+  end
+end

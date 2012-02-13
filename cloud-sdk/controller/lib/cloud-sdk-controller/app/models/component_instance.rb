@@ -113,9 +113,9 @@ class ComponentInstance < Cloud::Sdk::UserModel
 
     # make connection_endpoints out of provided connections
     profile.connections.each do |conn|
-      inst1 = find_component_in_cart(profile, app, conn.components[0], self.name)
-      inst2 = find_component_in_cart(profile, app, conn.components[1], self.name)
-      self.establish_connections(inst1, inst2, app)
+      inst1 = ComponentInstance::find_component_in_cart(profile, app, conn.components[0], self.name)
+      inst2 = ComponentInstance::find_component_in_cart(profile, app, conn.components[1], self.name)
+      ComponentInstance::establish_connections(inst1, inst2, app)
     end
     
     return group_list

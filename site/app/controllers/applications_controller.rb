@@ -90,10 +90,10 @@ class ApplicationsController < ConsoleController
         @message = "Application #{app_name} not found"
         @message_type = :error
       elsif @application.valid?
-        @application.delete
+        @application.destroy
         if @application.errors[:base].blank?
           # get message from the JSON
-          @message = @application.message || I18n.t('express_api.messages.app_deleted')
+          @message = I18n.t('express_api.messages.app_deleted')
           @message_type = :success
         else
           @message = @application.errors.full_messages.join("; ")
@@ -183,4 +183,32 @@ class ApplicationsController < ConsoleController
     @application.errors.add(:base, "Unable to create application")
     render 'application_types/show'
   end
+  
+  def show
+    app_name = params[:id]
+
+    if app_name.nil?
+      @message_type = :error
+      @message = "No application specified"
+    else
+      @domain = Domain.first :as => session_user
+      @application = @domain.find_application app_name
+      if @application.nil?
+        @message = "Application #{app_name} not found"
+        @message_type = :error
+      end 
+    end
+
+    respond_to do |format|
+      if @message_type == :error
+        flash[@message_type] = @message
+        format.html { redirect_to applications_path }
+        format.js { render :json => response }
+      else
+        return render 'applications/show'
+      end
+    end
+  end
+  
+
 end

@@ -104,16 +104,18 @@ module Cloud::Sdk
         "Version" => self.version,
         "Architecture" => self.architecture,
         "Display-Name" => self.display_name,
-        "License" => self.license,
-        "Provides" => self.provides_feature,
-        "Requires" => self.requires_feature,
-        "Conflicts" => self.conflicts_feature,
-        "Native-Requires" => self.requires,
-        "Default-Profile" => self.default_profile,
-        "Description" => self.description,
-        "Vendor" => self.vendor
+        "Description" => self.description        
       }
       
+      h["License"] = self.license if self.license
+      h["Provides"] = self.provides_feature if self.provides_feature && !self.provides_feature.empty?
+      h["Requires"] = self.requires_feature if self.requires_feature && !self.requires_feature.empty?
+      h["Conflicts"] = self.conflicts_feature if self.conflicts_feature && !self.conflicts_feature.empty?
+      h["Native-Requires"] = self.requires if self.requires && !self.requires.empty?
+      h["Vendor"] = self.vendor if self.vendor
+      h["Default-Profile"] = self.default_profile if self.profile_name_map && !self.profile_name_map[self.default_profile].nil? &&
+                                                      !self.profile_name_map[self.default_profile].generated
+    
       if self.profiles.length == 1 && self.profiles.first.generated
         profile_h = self.profiles.first.to_descriptor
         profile_h.delete("Name")
@@ -127,6 +129,7 @@ module Cloud::Sdk
       
       h
     end
+    
     def get_name_prefix
       return "/cart-" + self.name
     end

@@ -28,7 +28,6 @@ Native-Requires:
   - uuid-pgsql
 Profiles:
   singleton-master:
-    &singleton-master-profile
     Provides: postgresql-singleton-master
     Components:
       postgresql-server:
@@ -115,4 +114,4 @@ Profiles:
         Scaling:
           Min: 1
           Max: -1
-Default-Profile: singleton-master-profile
+Default-Profile: singleton-master
