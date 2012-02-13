@@ -3,7 +3,7 @@ class ApplicationController < ActionController::Base
   before_filter :check_credentials
 
   rescue_from AccessDeniedException, :with => :redirect_to_logout
-  rescue_from ActiveResource::ConnectionError do |e|
+  rescue_from 'ActiveResource::ConnectionError' do |e|
     if defined? e.response
       env['broker.response'] = e.response.inspect
       env['broker.response.body'] = e.response.body if defined? e.response.body
