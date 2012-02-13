@@ -731,7 +731,8 @@ class Application < Cloud::Sdk::Cartridge
     retval = {}
     self.comp_instance_map.values.each do |comp_inst|
       if embedded_carts.include?(comp_inst.parent_cart_name)
-        retval[comp_inst.parent_cart_name] = {"info" => comp_inst.cart_data.first}
+        retval[comp_inst.parent_cart_name] = {}
+        retval[comp_inst.parent_cart_name] = {"info" => comp_inst.cart_data.first} unless comp_inst.cart_data.first.nil?
       end
     end
     retval
