@@ -171,9 +171,11 @@ module Cloud::Sdk
           h["Groups"][v.name] = v.to_descriptor
         end
       end
-      h["Connections"] = {}
-      self.connections.each do |v|
-        h["Connections"][v.name] = v.to_descriptor
+      if !self.connections.empty?
+        h["Connections"] = {}
+        self.connections.each do |v|
+          h["Connections"][v.name] = v.to_descriptor
+        end
       end
       h
     end
