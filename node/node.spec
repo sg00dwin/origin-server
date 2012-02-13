@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.86.3
+Version:       0.86.4
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -242,6 +242,12 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.86.4-1
+- start Watchman services (jhonce@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- increase active apps to 50 (mmcgrath@redhat.com)
+
 * Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.86.3-1
 - Added ability to specify a specific proxy to tear down. (rmillner@redhat.com)
 - Fixed bug where only the first port was used. Added ability to call with a
