@@ -42,7 +42,7 @@ function super_run_as_user {
 }
 
 function daemon_as_user {
-    daemon --user="$uuid" runcon -r system_r -t libra_t -l $mcs_level $1
+    daemon --user="$uuid" runcon -r system_r -t libra_t -l $mcs_level "$@"
 }
 
 function validate_run_as_user {
