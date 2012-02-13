@@ -226,7 +226,7 @@ module Cloud::Sdk
             file.write "#{env_var}[#{proxy_port}]='#{proxy_target}'"
             file.write "export #{env_var}"
           end
-          self.class.notify_observers(:after_proxy_alloc_next_port, self, proxy_port, proxy_target)
+          self.class.notify_observers(:after_alloc_next_port, self, proxy_port, proxy_target)
           return proxy_port
         rescue Errno::EEXIST
         end
