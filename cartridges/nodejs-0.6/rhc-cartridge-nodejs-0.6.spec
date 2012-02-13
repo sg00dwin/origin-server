@@ -2,7 +2,7 @@
 
 Summary:   Provides Node-0.6 support
 Name:      rhc-cartridge-nodejs-0.6
-Version:   0.1.3
+Version:   0.1.4
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -91,6 +91,9 @@ npm install -g mongodb --mongodb:native
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.1.4-1
+- cleaning up specs to force a build (dmcphers@redhat.com)
+
 * Sat Feb 11 2012 Dan McPherson <dmcphers@redhat.com> 0.1.3-1
 - Use links in sample server.js rather than a redirect. (ramr@redhat.com)
 - Update build script for handling (ignoring) global npm modules and fix bug to
