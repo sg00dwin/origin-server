@@ -134,7 +134,7 @@ RedHatCloud::Application.routes.draw do
         match 'delete' => 'applications#confirm_delete', :via => :get
         match 'delete' => 'applications#delete', :via => :delete
       end
-
+      
       resources :application_types, :only => [:show], :id => /[^\/]+/
     end
 
