@@ -1,7 +1,15 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery
   before_filter :check_credentials
+
   rescue_from AccessDeniedException, :with => :redirect_to_logout
+  rescue_from 'ActiveResource::ConnectionError' do |e|
+    if defined? e.response
+      env['broker.response'] = e.response.inspect
+      env['broker.response.body'] = e.response.body if defined? e.response.body
+    end
+    raise e
+  end
   
   def set_no_cache
     response.headers["Cache-Control"] = "no-cache, no-store, max-age=0, must-revalidate"

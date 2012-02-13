@@ -45,39 +45,36 @@ class ApplicationsController < ConsoleController
     # new restful stuff
     # replace domains with Applications.find :all, :as => session_user
     # in the future
-    @domain = Domain.first :as => session_user
-    @applications = @domain.applications
-    @app_type_filter_value = ""
-    @name_filter_value = ""
-
-    if !params.nil?
-      @app_type_filter_value = params[:app_type_filter]
-      @name_filter_value = params[:name_filter]
+    domain = Domain.first :as => session_user
+    @applications = if domain
+      domain.applications
+    else
+      []
     end
+
+    @app_type_filter_value = params[:app_type_filter]
+    @name_filter_value = params[:name_filter]
 
     @app_type_options = [["All", ""]]
     seen_app_types = {}
     @filtered_app_info = {}
 
-    if !@applications.nil?
-      @applications.each do |app|
-        app_type = app.framework.split('-')[0]
-        if !seen_app_types.has_key? app_type
-          @app_type_options << app_type
-        end
-        seen_app_types[app_type] = true
+    @applications.each do |app|
+      app_type = app.framework.split('-')[0]
+      if !seen_app_types.has_key? app_type
+        @app_type_options << app_type
+      end
+      seen_app_types[app_type] = true
 
-        # filter
-        if wildcard_match? @name_filter_value, app.name
-          if @app_type_filter_value.nil? || @app_type_filter_value == ""
-            @filtered_app_info[app.name] = app
-          elsif @app_type_filter_value == app_type
-            @filtered_app_info[app.name] = app
-          end
+      # filter
+      if wildcard_match? @name_filter_value, app.name
+        if @app_type_filter_value.nil? || @app_type_filter_value == ""
+          @filtered_app_info[app.name] = app
+        elsif @app_type_filter_value == app_type
+          @filtered_app_info[app.name] = app
         end
       end
     end
-    render
   end
 
   def delete
@@ -88,7 +85,7 @@ class ApplicationsController < ConsoleController
 
     if commit == 'Delete'
       @domain = Domain.first :as => session_user
-      @application = @domain.get_application app_name
+      @application = @domain.find_application app_name
       if @application.nil?
         @message = "Application #{app_name} not found"
         @message_type = :error
@@ -127,7 +124,7 @@ class ApplicationsController < ConsoleController
       @message = "No application specified"
     else
       @domain = Domain.first :as => session_user
-      @application = @domain.get_application @app_name
+      @application = @domain.find_application @app_name
 
       if @application.nil?
         @message = "Application #{app_name} not found"
@@ -150,7 +147,40 @@ class ApplicationsController < ConsoleController
   end
 
   def new
-    types = ApplicationType.find :all
-    @framework_types, @application_types = types.partition { |t| t.categories.include?(:framework) }
+    redirect_to application_type_path(ApplicationType.find_empty)
+  end
+
+  def create
+    app_params = params[:application]
+
+    @application_type = ApplicationType.find app_params[:application_type]
+
+    @application = Application.new app_params
+    @application.as = session_user
+
+    # opened bug 789763 to track simplifying this block - with domain_name submission we would
+    # only need to check that domain_name is set (which it should be by the show form)
+    @domain = Domain.find :first, :as => session_user
+    unless @domain
+      @domain = Domain.create :name => @application.domain_name, :as => session_user
+      unless @domain.persisted?
+        @application.valid? # set any errors on the application object
+        return render 'application_types/show'
+      end
+    end
+
+    @application.domain = @domain
+    @application.cartridge = @application_type.cartridge || @application_type.id
+
+    if @application.save
+      redirect_to applications_path
+    else
+      render 'application_types/show'
+    end
+  rescue ActiveResource::ServerError => e
+    Rails.logger.debug "Unable to create application, #{e.response.inspect}" if defined? e.response
+    Rails.logger.debug "Unable to create application, #{e.response.body.inspect}" if defined? e.response.body
+    @application.errors.add(:base, "Unable to create application")
+    render 'application_types/show'
   end
 end

@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.86.1
+Version:   0.86.2
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -247,6 +247,17 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 %{_initddir}/sauce-connect
 
 %changelog
+* Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.86.2-1
+- move the selinux logic out of abstract carts entirely (dmcphers@redhat.com)
+- Add Node.js dependency to the devenv spec. (ramr@redhat.com)
+- more abstracting out selinux (dmcphers@redhat.com)
+- parameterize ami verifies (dmcphers@redhat.com)
+- pulling in haproxy to devenv (mmcgrath@redhat.com)
+- Dev environment gets new input rule for port proxy range
+  (rmillner@redhat.com)
+- test without launching a new instance (dmcphers@redhat.com)
+- dynamically process BuildRequires (dmcphers@redhat.com)
+
 * Fri Feb 03 2012 Dan McPherson <dmcphers@redhat.com> 0.86.1-1
 - bump spec numbers (dmcphers@redhat.com)
 - mongodb: user libra willl have access to openshift_broker_dev db (not an
