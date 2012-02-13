@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/cron-1.4
 
 Name: rhc-cartridge-cron-1.4
-Version: 0.2.1
+Version: 0.2.2
 Release: 1%{?dist}
 Summary: Embedded cron support for express
 
@@ -76,6 +76,17 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.2.2-1
+- more abstracting out selinux (dmcphers@redhat.com)
+- first pass at splitting out selinux logic (dmcphers@redhat.com)
+- Updating models to improove schems of descriptor in mongo Moved
+  connection_endpoint to broker (kraman@gmail.com)
+- Fixing manifest yml files (kraman@gmail.com)
+- Creating models for descriptor Fixing manifest files Added command to list
+  installed cartridges and get descriptors (kraman@gmail.com)
+- change status to use normal client_result instead of special handling
+  (dmcphers@redhat.com)
+
 * Fri Feb 03 2012 Dan McPherson <dmcphers@redhat.com> 0.2.1-1
 - bump spec numbers (dmcphers@redhat.com)
 - Also add the missed libra cron minutely script for: Reducto email and log
