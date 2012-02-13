@@ -22,7 +22,7 @@
 set -e
 
 function print_help {
-    echo "Usage: $0 app-name namespace uuid [target]"
+    echo "Usage: $0 app-name namespace uuid"
     echo "Start a running application"
 
     echo "$0 $@" | logger -p local0.notice -t libra_httpd_start
@@ -49,57 +49,12 @@ setup_basic_hook "$1" $2 $3
 
 uuid=$3
 uid=`id -u $uuid`
-target="$4"
 
 PORT_BEGIN=35531
 PORTS_PER_USER=5
 UID_BEGIN=500
 # UID_END=12700   # Too large for port numbers
 UID_END=6500
-
-UAPP_BASE="127.0.0.0"
-UAPP_NM="25"
-
-function decode_ip {
-  ret=0
-  quad=16777216
-  for byt in `echo "$1" | sed -e 's/\./ /g'`; do
-    ret=$(($ret + $(($byt * $quad))))
-    quad=$(($quad/256))
-  done
-
-  echo $ret
-}
-
-function uid_to_ip {
-  # This works on IPv4.  Switch to a real language
-  # and use inet_ntop/inet_pton for ipv6.
-  block=$((2**$((32 - $UAPP_NM))))
-  start=`decode_ip $UAPP_BASE`
-
-  a=$(($1*$block+$start))
-  h1=$(($a/16777216))
-  h2=$(($(($a%16777216))/65536))
-  h3=$(($(($a%65536))/256))
-  h4=$(($a%256))
-
-  echo "${h1}.${h2}.${h3}.${h4}"
-}
-
-function ip_in_uid_range {
-  uid=$1
-  ip=$2
-
-  first_addr=$(decode_ip $(uid_to_ip $uid))
-  last_addr=$(($first_addr+2**$((32 - $UAPP_NM))-1))
-  addr=$(decode_ip $ip)
-
-  if [ $addr -ge $first_addr -a $addr -le $last_addr ]; then
-    return 0
-  else
-    return 1
-  fi
-}
 
 function uid_to_portbegin {
   echo $(($(($(($1-$UID_BEGIN))*$PORTS_PER_USER))+$PORT_BEGIN))
@@ -113,7 +68,6 @@ function uid_to_portend {
 
 function find_next_port {
   uuid=$1
-  target=$2
   uid=`id -u $uuid`
 
   source "/var/lib/libra/${uuid}/.env/OPENSHIFT_INTERNAL_IP"
@@ -126,12 +80,7 @@ function find_next_port {
   done
 
 
-  if [ -z "$target" ]; then
-    target="$OPENSHIFT_INTERNAL_IP:$OPENSHIFT_INTERNAL_PORT"
-  elif ! ip_in_uid_range $uid $(echo $target |cut -f 1 -d :); then
-    client_error "Target not allowed: $target"
-    exit 8
-  fi
+  target="$OPENSHIFT_INTERNAL_IP:$OPENSHIFT_INTERNAL_PORT"
 
   first_port=$(uid_to_portbegin $uid)
   last_port=$(uid_to_portend $uid)
@@ -161,4 +110,4 @@ function find_next_port {
 }
 
 
-find_next_port $uuid $target
+find_next_port $uuid
