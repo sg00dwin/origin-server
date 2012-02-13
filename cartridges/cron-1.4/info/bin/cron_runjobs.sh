@@ -62,9 +62,6 @@ if [ -d "$SCRIPTS_DIR" ]; then
       echo "`date`: START $freq cron run"
       echo $separator
 
-      #  Mark executable as we might not always get the perms pushed down.
-      chmod +x "$SCRIPTS_DIR/*"
-
       #  Use run-parts - gives us jobs.{deny,allow} and whitelists.
       $executor "$SCRIPTS_DIR"
       status=$?
