@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.86.3
+Version:       0.86.4
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -135,6 +135,7 @@ echo "/usr/bin/trap-user" >> /etc/shells
 /sbin/restorecon /etc/init.d/mcollective || :
 /sbin/restorecon /usr/bin/rhc-restorer* || :
 [ $(/usr/sbin/semanage node -l | /bin/grep -c 255.255.255.128) -lt 1000 ] && /usr/bin/rhc-ip-prep.sh || :
+/sbin/chkconfig --add libra-watchman || :
 
 # Ensure the default users have a more restricted shell then normal.
 #semanage login -m -s guest_u __default__ || :
@@ -157,11 +158,13 @@ fi
 if [ "$1" -eq "0" ]; then
     /sbin/service libra-tc stop > /dev/null 2>&1 || :
     /sbin/service libra-cgroups stop > /dev/null 2>&1 || :
+    /sbin/service libra-watchman stop > /dev/null 2>&1 || :
     /sbin/chkconfig --del libra-tc || :
     /sbin/chkconfig --del libra-cgroups || :
     /sbin/chkconfig --del libra-data || :
     /sbin/chkconfig --del libra || :
     /sbin/chkconfig --del libra-proxy || :
+    /sbin/chkconfig --del libra-watchman || :
     /usr/sbin/semodule -r libra
     sed -i -e '\:/usr/bin/trap-user:d' /etc/shells
 fi
@@ -239,6 +242,12 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.86.4-1
+- start Watchman services (jhonce@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- increase active apps to 50 (mmcgrath@redhat.com)
+
 * Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.86.3-1
 - Added ability to specify a specific proxy to tear down. (rmillner@redhat.com)
 - Fixed bug where only the first port was used. Added ability to call with a
