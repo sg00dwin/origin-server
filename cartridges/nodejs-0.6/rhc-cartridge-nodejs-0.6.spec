@@ -2,7 +2,7 @@
 
 Summary:   Provides Node-0.6 support
 Name:      rhc-cartridge-nodejs-0.6
-Version:   0.1.4
+Version:   0.1.5
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -91,6 +91,12 @@ npm install -g mongodb --mongodb:native
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.1.5-1
+- Add sample/empty directories for minutely,hourly,daily and monthly
+  frequencies as well. (ramr@redhat.com)
+- Add cron example and directories to all the openshift framework templates.
+  (ramr@redhat.com)
+
 * Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.1.4-1
 - cleaning up specs to force a build (dmcphers@redhat.com)
 
