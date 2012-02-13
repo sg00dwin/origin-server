@@ -2,7 +2,7 @@
 
 Summary:   Provides haproxy-1.4 support
 Name:      rhc-cartridge-haproxy-1.4
-Version:   0.3
+Version:   0.4
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -83,6 +83,24 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.4-1
+- fixing filler 1 (mmcgrath@redhat.com)
+- added whitespace for test chante (mmcgrath@redhat.com)
+- bug 722828 (bdecoste@gmail.com)
+- more abstracting out selinux (dmcphers@redhat.com)
+- better name consistency (dmcphers@redhat.com)
+- first pass at splitting out selinux logic (dmcphers@redhat.com)
+- merging (mmcgrath@redhat.com)
+- Fix wrong link to remove-httpd-proxy (hypens not underscores) and fix
+  manifests for Node and Python to allow for nodejs/python app creation.
+  (ramr@redhat.com)
+- correcting haproxy name (mmcgrath@redhat.com)
+- Fix HAProxy descriptor Add HAProxy to standalone cart list on
+  CartridgeCache(temp till descriptor changes are made on cloud-sdk-node)
+  (kraman@gmail.com)
+- Altered haproxy (mmcgrath@redhat.com)
+- removed dependency on www-dynamic (rchopra@redhat.com)
+
 * Mon Feb 06 2012 Mike McGrath <mmcgrath@redhat.com> 0.3-1
 - Adding legal bits (mmcgrath@redhat.com)
 
