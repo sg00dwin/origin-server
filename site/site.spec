@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.86.3
+Version:   0.86.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -76,6 +76,31 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.86.4-1
+- Replace print with Rails.logger.debug in PromoCodeMailer
+  (ccoleman@redhat.com)
+- Merge branch 'dev/clayton/wizards' (ccoleman@redhat.com)
+- Make framework_name safer, throw ApplicationType::NotFound on errors
+  (ccoleman@redhat.com)
+- Fix a typo in site unit tests (aboone@redhat.com)
+- Use bootstrap styles for select boxes Refactor filtering logic to be simpler
+  and extract a model objec t Some railisms for naming of partials Added
+  Application.framework_name which does a lookup on Applicat ionType to get the
+  pretty name (ccoleman@redhat.com)
+- hook up app filtering again and modify for rest api (johnp@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (ffranz@redhat.com)
+- New console: shows basic application info, dedicated application details page
+  (ffranz@redhat.com)
+- fix domain_delete test since we can't have more than one domain right now
+  (johnp@redhat.com)
+- messages doesn't exist on the application object anymore (johnp@redhat.com)
+- fix custom_id for both nonmutable and mutable ids and add tests
+  (johnp@redhat.com)
+- add the destroy code for app deletion (johnp@redhat.com)
+- Active state for clicking on the type elements (ccoleman@redhat.com)
+- Move to 'wizard_steps' styles, fix chrome link clicking (with window.location
+  = <> instead of jquery.trigger/click()) (ccoleman@redhat.com)
+
 * Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.86.3-1
 - Allow application list to be shown with no domain (ccoleman@redhat.com)
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
