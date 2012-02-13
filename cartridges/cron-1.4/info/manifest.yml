@@ -10,7 +10,6 @@ Native-Requires:
   - cronie
 Profiles:
   scheduler-service:
-    &scheduler-service-profile
     Provides: scheduler-service, cron-service
     Components:
       executor:
@@ -29,4 +28,4 @@ Profiles:
         Scaling:
           Min: 1
           Max: 1
-Default-Profile: batch-services
+Default-Profile: scheduler-service
