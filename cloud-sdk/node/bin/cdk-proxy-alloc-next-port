@@ -40,7 +40,7 @@ require 'cloud-sdk-node'
 opts = GetoptLong.new(
     ["--with-app-uuid",       "-a", GetoptLong::REQUIRED_ARGUMENT],
     ["--with-container-uuid", "-c", GetoptLong::REQUIRED_ARGUMENT],
-    ["--with-proxy-target",   "-t", GetoptLong::REQUIRED_ARGUMENT]
+    ["--with-proxy-target",   "-t", GetoptLong::REQUIRED_ARGUMENT],
 )
 
 args = {}
