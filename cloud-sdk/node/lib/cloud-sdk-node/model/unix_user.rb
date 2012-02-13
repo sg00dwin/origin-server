@@ -236,7 +236,7 @@ module Cloud::Sdk
 
     def proxy_remove_port(proxy_port, prefix_cloud_name=false)
       if not proxy_port_list().include?(proxy_port)
-        raise SecurityError, "Requested port not allowed: #{proxy_port}"
+        raise SecurityError, 'Requested port not allowed: #{proxy_port}'
       end
 
       self.class.notify_observers(:before_proxy_remove_port, self, proxy_port)
